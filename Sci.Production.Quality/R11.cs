@@ -184,6 +184,7 @@ select
 	FP.TicketYds,
 	FP.DetailUkey,
 	FP.ActualYds,
+	FP.ActualWidth,
 	Composition,
 	Inspector = Concat (Fp.Inspector, ' ', p.Name) 
 into #tmp1
@@ -208,6 +209,7 @@ select
 	FP.TicketYds,
 	FP.DetailUkey,
 	FP.ActualYds,
+	FP.ActualWidth,
 	Composition,
 	Inspector = Concat (Fp.Inspector, ' ', p.Name) 
 into #tmp2
@@ -311,11 +313,12 @@ select
 	fd.Type,
 	fd.DescriptionEN,
     point = isnull(Defect.point,  0),
-	Defectrate = case when isnull(t.TicketYds, 0) = 0 then 0
-		when t.BrandID = 'LLL' and ISNULL(t.width, 0) = 0 then 0
-		when t.BrandID = 'LLL' then isnull(Defect.point, 0) * 3600 / (t.width * t.TicketYds)
-		else isnull(Defect.point,  0) / t.TicketYds
-		end
+	Defectrate = ISNULL(case when Q.PointRateOption = 1 then Defect.point / NULLIF(t.ActualYds, 0)
+							when Q.PointRateOption = 2 then Defect.point * 3600 / NULLIF(t.ActualYds * t.ActualWidth , 0)
+							when Q.PointRateOption = 3 then Defect.point * 3600 / NULLIF(t.ActualYds * t.width , 0)
+							else Defect.point / NULLIF(t.ActualYds, 0)
+						 end 
+					, 0)
 	,t.Inspector
 INTO #Sheet2
 from #tmp1 t
@@ -328,7 +331,12 @@ outer apply(
     where FIR_PhysicalDetailUKey = t.DetailUkey
     group by dbo.SplitDefectNum(x.Data,0)
 )Defect
-
+outer apply (
+	select PointRateOption
+	from QABrandSetting
+	where Junk = 0 
+	and BrandID = t.BrandID
+)Q
 left join FabricDefect fd on fd.ID = Defect.DefectRecord
 where Defect.DefectRecord is not null or fd.Type is not null
 
@@ -360,11 +368,12 @@ select
 	fd.Type,
 	fd.DescriptionEN,
     point = isnull(Defect.point,  0),
-	Defectrate = case when isnull(t.TicketYds, 0) = 0 then 0
-		when t.BrandID = 'LLL' and ISNULL(t.width, 0) = 0 then 0
-		when t.BrandID = 'LLL' then isnull(Defect.point, 0) * 3600 / (t.width * t.TicketYds)
-		else isnull(Defect.point,  0) / t.TicketYds 
-		end
+	Defectrate = ISNULL(case when Q.PointRateOption = 1 then Defect.point / NULLIF(t.ActualYds, 0)
+							when Q.PointRateOption = 2 then Defect.point * 3600 / NULLIF(t.ActualYds * t.ActualWidth , 0)
+							when Q.PointRateOption = 3 then Defect.point * 3600 / NULLIF(t.ActualYds * t.width , 0)
+							else Defect.point / NULLIF(t.ActualYds, 0)
+						 end 
+					, 0)
 	,t.Inspector
 from #tmp2 t
 outer apply(
@@ -376,6 +385,12 @@ outer apply(
     where FIR_PhysicalDetailUKey = t.DetailUkey
     group by dbo.SplitDefectNum(x.Data,0)
 )Defect
+outer apply (
+	select PointRateOption
+	from QABrandSetting
+	where Junk = 0 
+	and BrandID = t.BrandID
+)Q
 left join FabricDefect fd on fd.ID = Defect.DefectRecord
 where Defect.DefectRecord is not null or fd.Type is not null
 
@@ -720,6 +735,7 @@ select
 	FP.TicketYds,
 	FP.DetailUkey,
 	FP.ActualYds,
+	FP.ActualWidth,
 	Inspector = Concat (Fp.Inspector, ' ', p.Name) 
 into #tmp1
 from #tmpR t
@@ -735,6 +751,7 @@ select
 	FP.TicketYds,
 	FP.DetailUkey,
 	FP.ActualYds,
+	FP.ActualWidth,
 	Inspector = Concat (Fp.Inspector, ' ', p.Name)  
 into #tmp2
 from #tmpT t
@@ -838,11 +855,12 @@ select
 	fd.Type,
 	fd.DescriptionEN,
     point = isnull(Defect.point,  0),
-	Defectrate = case when isnull(t.TicketYds, 0) = 0 then 0
-		when t.BrandID = 'LLL' and ISNULL(t.width, 0) = 0 then 0
-		when t.BrandID = 'LLL' then isnull(Defect.point, 0) * 3600 / (t.width * t.TicketYds)
-		else isnull(Defect.point,  0) / t.TicketYds
-		end
+	Defectrate = ISNULL(case when Q.PointRateOption = 1 then Defect.point / NULLIF(t.ActualYds, 0)
+							when Q.PointRateOption = 2 then Defect.point * 3600 / NULLIF(t.ActualYds * t.ActualWidth , 0)
+							when Q.PointRateOption = 3 then Defect.point * 3600 / NULLIF(t.ActualYds * t.width , 0)
+							else Defect.point / NULLIF(t.ActualYds, 0)
+						 end 
+					, 0)
 	,t.Inspector
 INTO #Sheet2
 from #tmp1 t
@@ -855,7 +873,12 @@ outer apply(
     where FIR_PhysicalDetailUKey = t.DetailUkey
     group by dbo.SplitDefectNum(x.Data,0)
 )Defect
-
+outer apply (
+	select PointRateOption
+	from QABrandSetting
+	where Junk = 0 
+	and BrandID = t.BrandID
+)Q
 left join FabricDefect fd on fd.ID = Defect.DefectRecord
 where Defect.DefectRecord is not null or fd.Type is not null
 
@@ -890,11 +913,12 @@ select
 	fd.Type,
 	fd.DescriptionEN,
     point = isnull(Defect.point,  0),
-	Defectrate = case when isnull(t.TicketYds, 0) = 0 then 0
-		when t.BrandID = 'LLL' and ISNULL(t.width, 0) = 0 then 0
-		when t.BrandID = 'LLL' then isnull(Defect.point, 0) * 3600 / (t.width * t.TicketYds)
-		else isnull(Defect.point,  0) / t.TicketYds 
-		end
+	Defectrate = ISNULL(case when Q.PointRateOption = 1 then Defect.point / NULLIF(t.ActualYds, 0)
+							when Q.PointRateOption = 2 then Defect.point * 3600 / NULLIF(t.ActualYds * t.ActualWidth , 0)
+							when Q.PointRateOption = 3 then Defect.point * 3600 / NULLIF(t.ActualYds * t.width , 0)
+							else Defect.point / NULLIF(t.ActualYds, 0)
+						 end 
+					, 0)
 	,t.Inspector
 from #tmp2 t
 outer apply(
@@ -906,6 +930,12 @@ outer apply(
     where FIR_PhysicalDetailUKey = t.DetailUkey
     group by dbo.SplitDefectNum(x.Data,0)
 )Defect
+outer apply (
+	select PointRateOption
+	from QABrandSetting
+	where Junk = 0 
+	and BrandID = t.BrandID
+)Q
 left join FabricDefect fd on fd.ID = Defect.DefectRecord
 where Defect.DefectRecord is not null or fd.Type is not null
 
