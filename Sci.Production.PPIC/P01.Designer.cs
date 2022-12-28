@@ -731,7 +731,7 @@
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(149, 21);
             this.label3.TabIndex = 16;
-            this.label3.Text = "PF ETA";
+            this.label3.Text = "PF ETA (SP)";
             // 
             // btnIntendedDeliveryDate
             // 
@@ -1869,7 +1869,7 @@
             this.labelKPILETA.Name = "labelKPILETA";
             this.labelKPILETA.Size = new System.Drawing.Size(149, 21);
             this.labelKPILETA.TabIndex = 9;
-            this.labelKPILETA.Text = "KPI L/ETA (Earliest PF)";
+            this.labelKPILETA.Text = "KPI L/ETA ";
             // 
             // labelDetailsPOHandle
             // 
