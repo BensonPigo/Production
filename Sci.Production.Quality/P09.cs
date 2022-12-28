@@ -189,7 +189,7 @@ namespace Sci.Production.Quality
             .Date("TPEContinuityCard", header: "Continuity Card\r\nSupp Sent Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Text("AWBNo", header: "Continuity Card\r\nAWB#", width: Widths.AnsiChars(16), iseditingreadonly: true)
             .Date("FirstDyelot", header: "1st Bulk Dyelot\r\nFty Received Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
-            .Text("TPEFirstDyelot", header: "1st Bulk Dyelot\r\nSupp Sent Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
+            .Text("TPEFirstDyelot1", header: "1st Bulk Dyelot\r\nSupp Sent Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Numeric("T2InspYds", header: "T2 Inspected Yards", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 8, settings: t2IY) // W
             .Numeric("T2DefectPoint", header: "T2 Defect Points", width: Widths.AnsiChars(8), integer_places: 5, settings: t2DP) // W
             .Text("T2Grade", header: "Grade", width: Widths.AnsiChars(8), iseditingreadonly: true)
@@ -529,14 +529,7 @@ select distinct
 	sr.TPETestReport,
 	sr.ContinuityCard,
 	sr.TPEContinuityCard,
-	FirstDyelot.FirstDyelot,
-	TPEFirstDyelot = IIF(FirstDyelot.TPEFirstDyelot is null and f.RibItem = 1
-                        ,'RIB no need first dye lot'
-                        ,IIF(FirstDyelot.SeasonSCIID is null
-                                ,'Still not received and under pushing T2. Please contact with PR if you need L/G first.'
-                                ,format(FirstDyelot.TPEFirstDyelot,'yyyy/MM/dd')
-                            )
-                    ),
+	FirstDyelot.FirstDyelot,	
 	sr.T2InspYds,
 	sr.T2DefectPoint,
 	sr.T2Grade,
@@ -549,7 +542,11 @@ select distinct
     f.Clima,
     sr.AWBNo,
     [bitRefnoColor] = case when f.Clima = 1 then ROW_NUMBER() over(partition by f.Clima, ps.SuppID, psd.Refno, psd.ColorID, Format(Export.CloseDate,'yyyyMM') order by Export.CloseDate) else 0 end,
-    o.SeasonID
+    o.SeasonID,
+    FirstDyelot.TPEFirstDyelot,
+	f.RibItem,
+	FirstDyelot.SeasonSCIID
+	into #tmp
 from Export_Detail ed with(nolock)
 inner join Export with(nolock) on Export.id = ed.id and Export.Confirm = 1
 inner join orders o with(nolock) on o.id = ed.PoID
@@ -558,14 +555,37 @@ left join Po_Supp_Detail psd with(nolock) on psd.id = ed.poid and psd.seq1 = ed.
 left join PO_Supp ps with(nolock) on ps.id = psd.id and ps.SEQ1 = psd. SEQ1
 left join Supp with(nolock) on Supp.ID = ps.SuppID
 left join Season s with(nolock) on s.ID=o.SeasonID and s.BrandID = o.BrandID
-left join Factory fty with (nolock) on fty.ID = Export.Consignee
+left join Factory fty with (nolock) on fty.ID = o.FactoryID
 left join Fabric f with(nolock) on f.SCIRefno =psd.SCIRefno
 Left join #probablySeasonList seasonSCI on seasonSCI.ID = s.SeasonSCIID
+outer apply(
+	select top 1 e2.Consignee
+	from dbo.Export_Detail ed2
+	inner join Export e2 on e2.ID = ed2.ID		
+	left join Po_Supp_Detail psd2 with(nolock) on psd2.id = ed2.poid and psd2.seq1 = ed2.seq1 and psd2.seq2 = ed2.seq2
+	where ed2.SuppID = ps.SuppID and ed2.Refno = psd.Refno and psd2.ColorID = psd.ColorID
+	and exists(select 1 from factory ft where ft.ID = e2.Consignee and ft.IsProduceFty = 1)
+) cons
+outer apply(
+	select ConsigneeList = Stuff((
+		select concat(',',Consignee)
+		from (
+				select 	distinct e2.Consignee
+				from dbo.Export_Detail ed2
+				inner join Export e2 on e2.ID = ed2.ID				
+				left join Po_Supp_Detail psd2 with(nolock) on psd2.id = ed2.poid and psd2.seq1 = ed2.seq1 and psd2.seq2 = ed2.seq2
+				where ed2.SuppID = ps.SuppID and ed2.Refno = psd.Refno and psd2.ColorID = psd.ColorID
+				and not exists(select 1 from factory ft where ft.ID = e2.Consignee and ft.IsProduceFty = 1)
+			) s
+		for xml path ('')
+	) , 1, 1, '')
+) NotCons
 OUTER APPLY(
 	Select Top 1 FirstDyelot,TPEFirstDyelot,SeasonSCIID
 	From dbo.FirstDyelot fd
 	Inner join #probablySeasonList season on fd.SeasonSCIID = season.ID
-	WHERE fd.Refno = psd.Refno and fd.ColorID = psd.ColorID and fd.SuppID = ps.SuppID and fd.TestDocFactoryGroup = fty.TestDocFactoryGroup
+	WHERE fd.Refno = psd.Refno and fd.ColorID = psd.ColorID and fd.SuppID = ps.SuppID 
+	and fd.TestDocFactoryGroup = fty.TestDocFactoryGroup
 		And seasonSCI.RowNo >= season.RowNo
 	Order by season.RowNo Desc
 )FirstDyelot
@@ -594,9 +614,41 @@ and psd.FabricType = 'F'
 and (ed.qty + ed.Foc)>0
 and o.Category in('B','M')
 
-order by ed.id,ed.PoID,ed.Seq1,ed.Seq2
+-- 用temp table提高效率
+select * 
+,TPEFirstDyelot1 = 
+	case 
+	when TPEFirstDyelot is not null then FORMAT(TPEFirstDyelot,'yyyy/MM/dd')
+	when RibItem = 1 then 'RIB no need first dye lot'
+	when isnull(cons.Consignee,'') = '' and  isnull(NotCons.ConsigneeList,'') != '' then  'Shipping mark in ' + NotCons.ConsigneeList
+	when SeasonSCIID is null then 'Still not received and under pushing T2. Please contact with PR if you need L/G first.'
+	end
+from #tmp t
+outer apply(
+	select top 1 e2.Consignee
+	from dbo.Export_Detail ed2
+	inner join Export e2 on e2.ID = ed2.ID		
+	left join Po_Supp_Detail psd2 with(nolock) on psd2.id = ed2.poid and psd2.seq1 = ed2.seq1 and psd2.seq2 = ed2.seq2
+	where ed2.SuppID = t.SuppID and ed2.Refno = t.Refno and psd2.ColorID = t.ColorID
+	and exists(select 1 from factory ft where ft.ID = e2.Consignee and ft.IsProduceFty = 1)
+) cons
+outer apply(
+	select ConsigneeList = Stuff((
+		select concat(',',Consignee)
+		from (
+				select 	distinct e2.Consignee
+				from dbo.Export_Detail ed2
+				inner join Export e2 on e2.ID = ed2.ID				
+				left join Po_Supp_Detail psd2 with(nolock) on psd2.id = ed2.poid and psd2.seq1 = ed2.seq1 and psd2.seq2 = ed2.seq2
+				where ed2.SuppID = t.SuppID and ed2.Refno = t.Refno and psd2.ColorID = t.ColorID
+				and not exists(select 1 from factory ft where ft.ID = e2.Consignee and ft.IsProduceFty = 1)
+			) s
+		for xml path ('')
+	) , 1, 1, '')
+) NotCons
+order by id,PoID,Seq1,Seq2
 
-DROP TABLE #probablySeasonList
+DROP TABLE #probablySeasonList,#tmp
 ";
             #endregion Sqlcmd
             DualResult result = DBProxy.Current.Select(null, sqlcmd, listSQLParameter, out this.dt1);
@@ -810,22 +862,24 @@ VALUES(s.ukey,s.InspectionReport,s.TestReport,s.ContinuityCard,isnull(s.T2InspYd
             #region Sqlcmd
             string sqlcmd = $@"
 select distinct
-    Export.Consignee,
-	ps.SuppID,
-	Supp.AbbEN,
-	psd.Refno,
-	psd.ColorID,
-	o.SeasonID,
-    fd.SeasonSCIID,
-    fd.Period,
-	fd.FirstDyelot  FirstDyelot,
-	TPEFirstDyelot = IIF(fd.TPEFirstDyelot is null and RibItem = 1
-                    ,'RIB no need first dye lot'
-                    ,IIF(fd.SeasonSCIID is null
-                            ,'Still not received and under pushing T2. Please contact with PR if you need L/G first.'
-                            ,format(fd.TPEFirstDyelot,'yyyy/MM/dd')
-                        )
-                )
+o.FtyGroup,
+oFty.IsProduceFty,
+oFty.TestDocFactoryGroup,
+ps.SuppID,
+Supp.AbbEN,
+psd.Refno,
+psd.ColorID,
+o.SeasonID,
+fd.SeasonSCIID,
+fd.Period,
+fd.FirstDyelot FirstDyelot,
+TPEFirstDyelot = IIF(
+    fd.TPEFirstDyelot is null and RibItem = 1
+    ,'RIB no need first dye lot'
+    ,IIF(fd.SeasonSCIID is null
+    ,'Still not received and under pushing T2. Please contact with PR if you need L/G first.'
+    ,format(fd.TPEFirstDyelot,'yyyy/MM/dd'))
+)
 into #tmp
 from Export_Detail ed with(nolock)
 inner join Export with(nolock) on Export.id = ed.id and Export.Confirm = 1
@@ -834,16 +888,18 @@ left join Po_Supp_Detail psd with(nolock) on psd.id = ed.poid and psd.seq1 = ed.
 left join PO_Supp ps with(nolock) on ps.id = psd.id and ps.SEQ1 = psd. SEQ1
 left join Supp with(nolock) on Supp.ID = ps.SuppID
 left join Season s with(nolock) on s.ID=o.SeasonID and s.BrandID = o.BrandID
-left join Factory fty with (nolock) on fty.ID = Export.Consignee
-left outer join FirstDyelot fd with(nolock) on fd.Refno = psd.Refno and fd.ColorID = psd.ColorID and fd.SuppID = ps.SuppID and fd.TestDocFactoryGroup = fty.TestDocFactoryGroup 
+left join Factory oFty on o.FactoryID = oFty.ID
+left outer join FirstDyelot fd with(nolock) on fd.Refno = psd.Refno and fd.ColorID = psd.ColorID and fd.SuppID = ps.SuppID and fd.TestDocFactoryGroup = oFty.TestDocFactoryGroup 
 left join Fabric f with(nolock) on f.SCIRefno =psd.SCIRefno
 where ps.seq1 not like '7%' 
 and psd.FabricType = 'F'
 and (ed.qty + ed.Foc)>0
-and o.Category in('B','M')
+and o.Category in('B','M') 
+and oFty.IsProduceFty = 1
 
-select 
-[TestDocFactoryGroup] = iif(fty.TestDocFactoryGroup is null, b.TestDocFactoryGroup, fty.TestDocFactoryGroup)
+select distinct
+a.IsProduceFty,
+[TestDocFactoryGroup] = iif(a.TestDocFactoryGroup is null, b.TestDocFactoryGroup, a.TestDocFactoryGroup)
 ,[suppid] = iif(a.SuppID is null, b.SuppID,a.Suppid)
 ,[AbbEN] = iif(a.AbbEN is null, (select abben from supp where id=b.suppid), a.abben)
 ,[Refno] = iif(a.Refno is null ,b.Refno,a.refno)
@@ -852,21 +908,32 @@ select
 ,[SeasonSCIID] = iif(a.SeasonSCIID is null,b.SeasonSCIID,a.SeasonSCIID)
 ,[Period] = iif(a.Period is null, b.Period , a.Period)
 ,[FirstDyelot] = iif(a.FirstDyelot is null, b.FirstDyelot, a.FirstDyelot)
-,[TPEFirstDyelot] = iif(a.[TPEFirstDyelot] is null, 
-                        IIF(b.SeasonSCIID is null
-                            ,'Still not received and under pushing T2. Please contact with PR if you need L/G first.'
-                            ,format(b.TPEFirstDyelot,'yyyy/MM/dd')
-                        ),
-                        a.[TPEFirstDyelot])
+,[TPEFirstDyelot] = iif(
+    a.[TPEFirstDyelot] is null, 
+    IIF(b.SeasonSCIID is null
+    ,'Still not received and under pushing T2. Please contact with PR if you need L/G first.'
+    ,format(b.TPEFirstDyelot,'yyyy/MM/dd')
+),
+a.[TPEFirstDyelot])
+into #tmp1
 from #tmp a
-inner join Factory fty with (nolock) on fty.ID = a.Consignee
-full join FirstDyelot b on fty.TestDocFactoryGroup = b.TestDocFactoryGroup
+--inner join Factory fty with (nolock) on fty.ID = a.Consignee
+full join FirstDyelot b on a.TestDocFactoryGroup = b.TestDocFactoryGroup 
 and a.Refno=b.Refno and a.suppid=b.suppid and a.ColorID=b.ColorID 
 where 1=1 and 
-{sqlwhere}
-Order by  SuppID, Refno, ColorID, a.SeasonSCIID
+(
+    {sqlwhere}
+)
+and exists (
+select *
+from Factory fdFty 
+where b.TestDocFactoryGroup = fdFty.TestDocFactoryGroup
+and fdFty.IsProduceFty = 1)
 
-drop table #tmp
+select * from #tmp1
+Order by SuppID, Refno, ColorID, SeasonSCIID
+
+drop table #tmp,#tmp1
 ";
             #endregion Sqlcmd
             DualResult result = DBProxy.Current.Select(null, sqlcmd, listSQLParameter, out this.dt2);
