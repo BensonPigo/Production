@@ -60,6 +60,7 @@
             this.labelPostSewingDays = new Sci.Win.UI.Label();
             this.numericPostSewingDays = new Sci.Win.UI.NumericBox();
             this.checkIsPrintToCMP = new Sci.Win.UI.CheckBox();
+            this.checkIsSubcon = new Sci.Win.UI.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -74,6 +75,7 @@
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.checkIsSubcon);
             this.detailcont.Controls.Add(this.checkIsPrintToCMP);
             this.detailcont.Controls.Add(this.numericPostSewingDays);
             this.detailcont.Controls.Add(this.labelPostSewingDays);
@@ -496,6 +498,18 @@
             this.checkIsPrintToCMP.Text = "是否在CMP Report列印 (IsPrintToCMP)";
             this.checkIsPrintToCMP.UseVisualStyleBackColor = true;
             // 
+            // checkIsSubcon
+            // 
+            this.checkIsSubcon.AutoSize = true;
+            this.checkIsSubcon.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "IsSubCon", true));
+            this.checkIsSubcon.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkIsSubcon.Location = new System.Drawing.Point(364, 217);
+            this.checkIsSubcon.Name = "checkIsSubcon";
+            this.checkIsSubcon.Size = new System.Drawing.Size(219, 21);
+            this.checkIsSubcon.TabIndex = 21;
+            this.checkIsSubcon.Text = "是否需要外發加工 (Is Sub con)";
+            this.checkIsSubcon.UseVisualStyleBackColor = true;
+            // 
             // B14
             // 
             this.ClientSize = new System.Drawing.Size(840, 552);
@@ -558,5 +572,6 @@
         private Win.UI.NumericBox numericPostSewingDays;
         private Win.UI.Label labelPostSewingDays;
         private Win.UI.CheckBox checkIsPrintToCMP;
+        private Win.UI.CheckBox checkIsSubcon;
     }
 }
