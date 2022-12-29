@@ -1745,6 +1745,9 @@ if  not exists (select  1
                 union all
                 select  1
                 from FtyExport with (nolock) where BLno = @BLno
+                union all
+                select 1
+                from TransferExport with (nolock) where BLno = @BLno
 )
 begin
     select  [Code] = 'P05.',
