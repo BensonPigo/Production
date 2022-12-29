@@ -34,14 +34,11 @@
 	[Shortage] [numeric](6, 0) NULL,
 	[Project] [varchar](5) NULL,
 	[CustDate] [date] NULL,
-	[KPI L/ETA] [date] NULL,
-	[SCHD L/ETA(Master SP)] [date] NULL,
 	[LastProductionDate] [date] NULL,
 	[Garment L/T] [numeric](3, 0) NULL,
 	[Delay Reason Code Production ID] [varchar](4) NULL,
 	[Delay Reason Code Production DESC] [varchar](100) NULL,
 	[CDate] [date] NULL,
-	[PFETA] [date] NULL,
 	[New CD Code] [varchar](5) NULL,
 	[Product Type] [varchar](500) NULL,
 	[Fabric Type] [varchar](500) NULL,
@@ -62,13 +59,8 @@
 	[OriQty] [numeric](8, 0) NULL,
 	[Each Cons.] [datetime] NULL,
 	[SCHD L/ETD(Master SP)] [date] NULL,
-	[Act.MTL ETA] [date] NULL,
-	[Act.MTL ETA (N/I Repl.)] [date] NULL,
-	[Sew. MTL ETA(SP)] [date] NULL,
-	[Pkg. MTL ETA(SP)] [date] NULL,
 	[MTL Cmplt (Master SP)] [varchar](10) NULL,
 	[MTL Cmplt (SP)] [varchar](1) NULL,
-	[Pack_LETA] [date] NULL,
 	[PF Remark] [varchar](max) NULL,
 	[FOB1] [numeric](16, 4) NULL,
 	[CMPQ] [numeric](16, 4) NULL,
@@ -117,14 +109,13 @@
 	[FromType] [varchar](2) NOT NULL,
 	[TmpSewing] [numeric](26, 3) NULL,
 	[CPURate] [numeric](3, 1) NULL,
-	[Sew. MTL ETA(SP excl. Repl.)] [date] NULL,
 	[Subcon In Type] [varchar](50) NULL,
 	[Subcon In TypeID] [varchar](2) NOT NULL,
 	[Article] [varchar](1000) NULL,
-	[Ukey] [bigint] NOT NULL,
+	[Ukey] [bigint] IDENTITY(1,1) NOT NULL,
 	[Delay Supp by Ref] [varchar](500) NULL,
-	[SCHD ETA(SP excl. Repl.)] [date] NULL,
 	[OrderDataKey] [varchar](20) NULL,
+	[ProduceRgPMS] [varchar](3) NOT NULL,
  CONSTRAINT [T_OrdersData_PK] PRIMARY KEY CLUSTERED 
 (
 	[SPNO] ASC,
@@ -145,4 +136,7 @@ ALTER TABLE [dbo].[T_OrdersData] ADD  CONSTRAINT [T_OrdersData_FromType]  DEFAUL
 GO
 
 ALTER TABLE [dbo].[T_OrdersData] ADD  DEFAULT ('') FOR [Subcon In TypeID]
+GO
+
+ALTER TABLE [dbo].[T_OrdersData] ADD  CONSTRAINT [DF_T_OrdersData_ProduceRgPMS]  DEFAULT ('') FOR [ProduceRgPMS]
 GO
