@@ -478,6 +478,14 @@ where o.id='{this._id}'";
                 int rowCnt = dt_Sheet2[0].Rows.Count + 8;
                 wkcolor.get_Range(string.Format("A2:{0}2", sc2)).Merge();
                 wkcolor.get_Range(string.Format("A3:{0}3", sc2)).Merge();
+                wkcolor.get_Range("A5:E5").Merge();
+                wkcolor.get_Range("A6:E6").Merge();
+                wkcolor.get_Range("A7:E7").Merge();
+                wkcolor.get_Range("F5:I5").Merge();
+                wkcolor.get_Range("F6:I6").Merge();
+                wkcolor.get_Range("J5:L5").Merge();
+                wkcolor.get_Range("J6:L6").Merge();
+                wkcolor.get_Range("J7:L7").Merge();
                 sxr.FontName = "Times New Roman";
                 sxr.DicDatas.Add(sxr.VPrefix + "tbl2", dtSheet2);
                 #endregion
