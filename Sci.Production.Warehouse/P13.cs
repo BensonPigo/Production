@@ -477,6 +477,8 @@ and ID = '{Sci.Env.User.UserID}'"))
                 .Text("Location", header: "Bulk Location", iseditingreadonly: true) // 7
                 .Text("ContainerCode", header: "Container Code", iseditingreadonly: true).Get(out cbb_ContainerCode)
                 .Numeric("balance", header: "Stock Qty", iseditingreadonly: true, decimal_places: 2, integer_places: 10)
+                .Text("Color", header: "Color", width: Widths.AnsiChars(10), iseditingreadonly: true) // 7
+                .Text("Size", header: "Size", width: Widths.AnsiChars(10), iseditingreadonly: true)
             ;
             #endregion 欄位設定
 
@@ -954,12 +956,18 @@ select  o.FtyGroup
 			                                                         		tcd.ColorID	   = p1.ColorID
 			                                                         FOR XML PATH('')),1,1,'') 
                             else '' end
+        , [Color] =
+			IIF(f.MtlTypeID = 'EMB THREAD' OR f.MtlTypeID = 'SP THREAD' OR f.MtlTypeID = 'THREAD' 
+			,IIF( p1.SuppColor = '' or p1.SuppColor is null,dbo.GetColorMultipleID(o.BrandID,p1.ColorID),p1.SuppColor)
+			,dbo.GetColorMultipleID(o.BrandID,p1.ColorID))
+		, [Size]= p1.SizeSpec
 from dbo.issue_detail as a WITH (NOLOCK) 
 left join Orders o on a.poid = o.id
 left join PO_Supp_Detail p1 WITH (NOLOCK) on p1.ID = a.PoId and p1.seq1 = a.SEQ1 and p1.SEQ2 = a.seq2
 left join PO_Supp p WITH (NOLOCK) on p.ID = p1.ID and p1.seq1 = p.SEQ1
 left join dbo.ftyinventory c WITH (NOLOCK) on c.poid = a.poid and c.seq1 = a.seq1 and c.seq2  = a.seq2 
     and c.stocktype = 'B' and c.roll=a.roll and a.Dyelot = c.Dyelot
+left join fabric f with(nolock) on f.SCIRefno = p1.SCIRefno
 outer apply (
 	select [Tone] = MAX(fs.Tone)
     from FtyInventory fi with (nolock) 

@@ -87,6 +87,11 @@ select  selected = 0
                             else '' end
         ,c.lock
         ,[Tone] = Tone.val
+	    , [Color] =
+			IIF(f.MtlTypeID = 'EMB THREAD' OR f.MtlTypeID = 'SP THREAD' OR f.MtlTypeID = 'THREAD' 
+			,IIF(a.SuppColor = '' or a.SuppColor is null,dbo.GetColorMultipleID(orders.BrandID,a.ColorID),a.SuppColor)
+			,dbo.GetColorMultipleID(orders.BrandID,a.ColorID))
+		, [Size]= a.SizeSpec
 from dbo.PO_Supp_Detail a WITH (NOLOCK) 
 inner join dbo.PO_Supp p with (nolock) on a.ID = p.ID and a.Seq1 = p.Seq1
 inner join dbo.ftyinventory c WITH (NOLOCK) on c.poid = a.id and c.seq1 = a.seq1 and c.seq2  = a.seq2 and c.stocktype = 'B'
