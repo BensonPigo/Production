@@ -23,6 +23,9 @@ namespace Sci.Production.IE
         //private string sewingline2;
         private bool bolSummary;
         private bool bolBalancing;
+        private string phase;
+        private bool latestVersion;
+
         private DataTable printData;
         private StringBuilder sqlCmd = new StringBuilder();
 
@@ -35,6 +38,7 @@ namespace Sci.Production.IE
         {
             this.InitializeComponent();
             this.comboSewingTeam1.SetDataSource();
+            MyUtility.Tool.SetupCombox(this.comboPhase, 1, 1, ",Initial,Prelim,Final");
         }
 
         // Factory
@@ -105,6 +109,8 @@ namespace Sci.Production.IE
             this.team = this.comboSewingTeam1.Text;
             this.bolSummary = this.radioSummary.Checked;
             this.bolBalancing = this.chkBalancing.Checked;
+            this.phase = this.comboPhase.Text;
+            this.latestVersion = this.chkLastVersion.Checked;
 
             return base.ValidateInput();
         }
@@ -126,6 +132,7 @@ select
 	lm.StyleID,
 	lm.ComboType,
 	lm.SeasonID,
+    lm.Phase,
 	lm.BrandID,
 	lm.Version,
 	lm.SewingLineID,
@@ -140,18 +147,19 @@ select
 	EffTarget = EffTarget.Target / 100.0,
 	IIF(lm.HighestCycle*lm.CurrentOperators = 0,0,CONVERT(DECIMAL,lm.TotalCycle)/lm.HighestCycle/lm.CurrentOperators) as LB,
 	[LinebalancingTarget] = LinebalancingTarget.Target / 100.0,
-	[NotHitTargetType] =  iif(lm.Version = 1, (select TypeGroup
-from IEReasonLBRnotHit_1st
-where Ukey = lm.IEReasonLBRnotHit_1stUkey),(select STUFF ((
-				select distinct CONCAT (',', a.TypeGroup) 
-					from (
-						select lbr.TypeGroup
-						from LineMapping_Detail l2 WITH (NOLOCK)
-                        inner join IEReasonLBRNotHit_Detail lbr WITH (NOLOCK) on l2.IEReasonLBRNotHit_DetailUkey = lbr.Ukey and lbr.junk = 0
-						where lm.ID = l2.ID
-					) a 
-					for xml path('')
-			), 1, 1, ''))) ,
+	[NotHitTargetType] =  iif(lm.Version = 1, 
+								(select TypeGroup from IEReasonLBRnotHit_1st where Ukey = lm.IEReasonLBRnotHit_1stUkey),
+								(select STUFF ((
+										select distinct CONCAT (',', a.TypeGroup) 
+											from (
+												select lbr.TypeGroup
+												from LineMapping_Detail l2 WITH (NOLOCK)
+												inner join IEReasonLBRNotHit_Detail lbr WITH (NOLOCK) on l2.IEReasonLBRNotHit_DetailUkey = lbr.Ukey and lbr.junk = 0
+												where lm.ID = l2.ID
+											) a 
+											for xml path('')
+									), 1, 1, ''))
+	) ,
     [TotalNoofNotHitTarget] = iif(lm.Version = 1,0,(select cnt = iif(count(*) = 0, '', cast(count(*) as varchar))
                     from (
 	                    select distinct l2.NO, l2.IEReasonLBRNotHit_DetailUkey
@@ -159,18 +167,19 @@ where Ukey = lm.IEReasonLBRnotHit_1stUkey),(select STUFF ((
 	                    where lm.ID = l2.ID
 	                    and ISNULL(l2.IEReasonLBRNotHit_DetailUkey, '') <> ''
                     )a )),
-	[NotHitTargetReason] =  iif(lm.Version = 1, (select Name
-from IEReasonLBRnotHit_1st
-where Ukey = lm.IEReasonLBRnotHit_1stUkey),(select STUFF ((
-				select distinct CONCAT (',', a.Name ) 
-					from (
-						select lbr.Name 
-						from LineMapping_Detail l2 WITH (NOLOCK)
-                        inner join IEReasonLBRNotHit_Detail lbr WITH (NOLOCK) on l2.IEReasonLBRNotHit_DetailUkey = lbr.Ukey and lbr.junk = 0
-						where lm.ID = l2.ID
-					) a 
-					for xml path('')
-			), 1, 1, ''))) ,
+	[NotHitTargetReason] =  iif(lm.Version = 1, 
+								(select Name from IEReasonLBRnotHit_1st where Ukey = lm.IEReasonLBRnotHit_1stUkey),
+								(select STUFF ((
+									select distinct CONCAT (',', a.Name ) 
+										from (
+											select lbr.Name 
+											from LineMapping_Detail l2 WITH (NOLOCK)
+											inner join IEReasonLBRNotHit_Detail lbr WITH (NOLOCK) on l2.IEReasonLBRNotHit_DetailUkey = lbr.Ukey and lbr.junk = 0
+											where lm.ID = l2.ID
+										) a 
+										for xml path('')
+								), 1, 1, ''))
+	) ,
 	IIF(lm.TaktTime*lm.CurrentOperators = 0,0,CONVERT(DECIMAL,lm.TotalCycle)/lm.TaktTime/lm.CurrentOperators) as LLEF,
 	IIF(lm.HighestCycle * lm.CurrentOperators = 0,0,(ROUND(3600.0/lm.HighestCycle, 2) * (select isnull(CPU,0) from Style WITH (NOLOCK) where lm.BrandID = BrandID and lm.StyleID = ID and lm.SeasonID = SeasonID)/lm.CurrentOperators)) as PPH,
 	isnull((select Name from Pass1 WITH (NOLOCK) where ID = lm.AddName),'') as CreateBy,
@@ -204,6 +213,7 @@ select distinct
 	lm.StyleID,
 	lm.ComboType,
 	lm.SeasonID,
+    lm.Phase,
 	lm.BrandID,
 	lm.Version,
 	lmd.No,
@@ -284,6 +294,24 @@ and (((lmdavg.avgTotalCycle - lmd.TotalCycle) / lmdavg.avgTotalCycle) * 100 >  (
                 this.sqlCmd.Append(string.Format(" and lm.Team = '{0}'", this.team));
             }
 
+            if (!MyUtility.Check.Empty(this.phase))
+            {
+                this.sqlCmd.Append(string.Format(" and lm.Phase = '{0}'", this.phase));
+            }
+
+            if (this.latestVersion)
+            {
+                this.sqlCmd.Append(@"
+ and lm.Version = (
+	select MAX(l.Version)
+	from LineMapping l
+	where l.SewingLineID = lm.SewingLineID
+	and l.Team = lm.Team
+	group by l.SewingLineID, l.Team
+ )
+");
+            }
+
             this.sqlCmd.Append(@"select * from #tmp t");
 
             #region Inline & Sewing Date is not null
@@ -325,8 +353,7 @@ and (
 	{dateQuery}
 	and o.StyleID = t.StyleID and o.SeasonID = t.SeasonID and o.BrandID = t.BrandID
  )
-"
-                    );
+");
             }
             #endregion
 
