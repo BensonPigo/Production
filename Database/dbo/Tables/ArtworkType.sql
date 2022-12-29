@@ -27,6 +27,7 @@
     [IsPrintToCMP]    BIT            CONSTRAINT [DF_ArtworkType_IsPrintToCMP] DEFAULT ((1)) NULL,
     [IsLocalPurchase] BIT            CONSTRAINT [DF_ArtworkType_IsLocalPurchase] DEFAULT ((0)) NULL,
     [IsImportTestDox] BIT            DEFAULT ((0)) NOT NULL,
+    [IsSubCon]        BIT            CONSTRAINT [DF_ArtworkType_IsSubCon] DEFAULT((0)) NOT NULL, 
     CONSTRAINT [PK_ArtworkType] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 
@@ -142,3 +143,5 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'最後修�
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'用來判斷此item是否可以在工廠端當地採購', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'ArtworkType', @level2type = N'COLUMN', @level2name = N'IsLocalPurchase';
 
+GO
+EXECUTE sys.sp_addextendedproperty @name=N'MS_Description', @value=N'是否需要外發加工，主要應用在 WH P54' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'ArtworkType', @level2type=N'COLUMN',@level2name=N'IsSubCon'
