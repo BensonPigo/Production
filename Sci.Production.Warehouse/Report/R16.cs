@@ -91,6 +91,7 @@ select
 	,o.MDivisionID 
 	,o.FactoryID
 	,i.CutplanID
+    ,c.EstCutDate
 	,i.IssueDate
 	,line=(
 		select stuff((
