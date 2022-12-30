@@ -19,6 +19,7 @@
     [WMSLock] BIT NOT NULL DEFAULT ((0)), 
     [ContainerCode] NVARCHAR(100) NULL DEFAULT (''), 
     [BarcodeSeq] VARCHAR(2) NULL DEFAULT (''), 
+    [SubConStatus] VARCHAR(20) CONSTRAINT [DF_AFtyInventory_SubConStatus] DEFAULT(('')) NOT NULL, 
     CONSTRAINT [PK_FtyInventory] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
 
@@ -48,6 +49,7 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'工廠庫�
 
 
 GO
+EXECUTE sys.sp_addextendedproperty @name=N'MS_Description', @value=N'目前是否有在外發加工主要用於發料判斷' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'FtyInventory', @level2type=N'COLUMN',@level2name=N'SubConStatus'
 
 
 

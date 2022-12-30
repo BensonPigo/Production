@@ -15,13 +15,13 @@
               <Width>1.30331cm</Width>
             </TablixColumn>
             <TablixColumn>
-              <Width>1.40915cm</Width>
+              <Width>1.70915cm</Width>
             </TablixColumn>
             <TablixColumn>
               <Width>2.06843cm</Width>
             </TablixColumn>
             <TablixColumn>
-              <Width>4.60784cm</Width>
+              <Width>4.00784cm</Width>
             </TablixColumn>
             <TablixColumn>
               <Width>1.16517cm</Width>
@@ -993,7 +993,7 @@
         <RepeatRowHeaders>true</RepeatRowHeaders>
         <KeepTogether>true</KeepTogether>
         <DataSetName>DataSet1</DataSetName>
-        <Left>0.3175cm</Left>
+        <Left>0.6175cm</Left>
         <Height>2.14396cm</Height>
         <Width>20.42738cm</Width>
         <Style>

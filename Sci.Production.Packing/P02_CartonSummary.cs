@@ -11,15 +11,17 @@ namespace Sci.Production.Packing
     public partial class P02_CartonSummary : Win.Subs.Base
     {
         private string orderID;
+        private string seq;
 
         /// <summary>
         /// P02_CartonSummary
         /// </summary>
         /// <param name="orderID">orderID</param>
-        public P02_CartonSummary(string orderID)
+        public P02_CartonSummary(string orderID, string seq)
         {
             this.InitializeComponent();
             this.orderID = orderID;
+            this.seq = seq;
         }
 
         /// <summary>
@@ -35,8 +37,10 @@ from PackingList_Detail pd WITH (NOLOCK)
 left join LocalItem li WITH (NOLOCK) on li.RefNo = pd.RefNo
 left join LocalSupp ls WITH (NOLOCK) on ls.ID = li.LocalSuppid
 where pd.OrderID = '{0}'
+and pd.OrderShipmodeSeq = '{1}'
 group by pd.RefNo, li.LocalSuppid + '-' + ls.Abb, li.Description, STR(li.CtnLength,8,4)+'*'+STR(li.CtnWidth,8,4)+'*'+STR(li.CtnHeight,8,4), li.CtnUnit",
-                this.orderID);
+                this.orderID,
+                this.seq);
 
             DataTable selectDataTable;
             DualResult selectResult1 = DBProxy.Current.Select(null, sqlCmd, out selectDataTable);

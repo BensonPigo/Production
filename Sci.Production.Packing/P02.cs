@@ -1487,7 +1487,7 @@ order by oa.Seq, iif(os.SizeGroup='N',NULL,os.SizeGroup), os.Seq
         // Carton Dimension
         private void BtnCartonDimension_Click(object sender, EventArgs e)
         {
-            P02_CartonSummary callNextForm = new P02_CartonSummary(this.CurrentMaintain["OrderID"].ToString());
+            P02_CartonSummary callNextForm = new P02_CartonSummary(this.CurrentMaintain["OrderID"].ToString(), this.CurrentMaintain["OrderShipmodeSeq"].ToString());
             callNextForm.ShowDialog(this);
         }
 
