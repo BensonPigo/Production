@@ -305,7 +305,9 @@ and (((lmdavg.avgTotalCycle - lmd.TotalCycle) / lmdavg.avgTotalCycle) * 100 >  (
  and lm.Version = (
 	select MAX(l.Version)
 	from LineMapping l
-	where l.SewingLineID = lm.SewingLineID
+	where l.StyleUKey = lm.StyleUKey
+	and l.FactoryID = lm.FactoryID
+    and l.SewingLineID = lm.SewingLineID
 	and l.Team = lm.Team
 	group by l.SewingLineID, l.Team
  )
