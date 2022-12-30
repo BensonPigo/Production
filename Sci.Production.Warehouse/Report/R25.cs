@@ -181,6 +181,7 @@ select
 	[Description] = dbo.getmtldesc(ed.POID,ed.seq1,ed.seq2,2,0),
 	[MtlType]=case when ed.FabricType = 'F' then 'Fabric'
 				   when ed.FabricType = 'A' then 'Accessory' end,
+    f.MtlTypeID,
 	f.WeaveTypeID,
 	ed.suppid,
 	[SuppName] = supp.AbbEN,
@@ -301,7 +302,7 @@ and ed.PoType = 'G'
 
  select 
 	WK, t.eta, t.FactoryID, Consignee, ShipModeID, CYCFS, Blno, Packages, Vessel, [ProdFactory], OrderTypeID, ProjectID, Category ,
-	BrandID, seasonid, styleid, t.StyleName, t.PoID, seq, Refno,	[Color] , [Description], [MtlType], WeaveTypeID, suppid, [SuppName] 
+	BrandID, seasonid, styleid, t.StyleName, t.PoID, seq, Refno,	[Color] , [Description], [MtlType],MtlTypeID ,WeaveTypeID, suppid, [SuppName] 
 	, UnitId
 	, SizeSpec,
     [ShipQty]=SUM(t.ShipQty),
@@ -328,7 +329,7 @@ OUTER APPLY(
  GROUP BY 
 	WK,t.eta,t.FactoryID,Consignee,ShipModeID,CYCFS,Blno,Packages,Vessel,[ProdFactory],OrderTypeID,ProjectID,Category ,BrandID, seasonid,styleid,t.PoID,seq,
 	Refno,[Color] ,[Description],[MtlType],WeaveTypeID,suppid,[SuppName] ,UnitId,SizeSpec,[ContainerType] ,[ContainerNo] ,PortArrival,
-	t.WhseArrival,KPILETA,[Earliest SCI Delivery],EarlyDays,[MR_Mail],[SMR_Mail],t.EditName,ReceiveQty,StockUnit, t.StyleName
+	t.WhseArrival,KPILETA,[Earliest SCI Delivery],EarlyDays,[MR_Mail],[SMR_Mail],t.EditName,ReceiveQty,StockUnit, t.StyleName,MtlTypeID
 HAVING 1=1
 ";
             if (this.RecLessArv)
