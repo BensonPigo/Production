@@ -26,6 +26,7 @@ namespace Sci.Production.Shipping
             Export_ShippingMemo = 1,
             FtyExport_ShippingMemo = 2,
             GMTBooking_ShippingMemo = 3,
+            TransferExport_ShippingMemo = 4
         }
 
         private ShippingMemoType shippingMemoType;
@@ -53,6 +54,9 @@ namespace Sci.Production.Shipping
                     break;
                 case ShippingMemoType.GMTBooking_ShippingMemo:
                     this.Text = "P05. Shipping Memo";
+                    break;
+                case ShippingMemoType.TransferExport_ShippingMemo:
+                    this.Text = "P16. Shipping Memo";
                     break;
                 default:
                     break;
