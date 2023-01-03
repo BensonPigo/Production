@@ -202,7 +202,8 @@ select
 	EarlyDays=DATEDIFF(day,e.WhseArrival,o.KPILETA),
 	[MR_Mail]=TEPPOHandle.Email,
     [SMR_Mail]=TEPPOSMR.Email,
-    [EditName]=dbo.getTPEPass1(e.EditName)
+    [EditName]=dbo.getTPEPass1(e.EditName),
+	t.TotalRollsCalculated
 INTO #tmp
 from Export e
 Inner join Export_Detail ed on e.ID = ed.ID
@@ -237,6 +238,12 @@ OUTER APPLY(
 		FOR XML PATH('')
 	),1,1,'')
 )ContainerNo
+cross apply(
+	select [TotalRollsCalculated] = count(1)
+	from dbo.View_AllReceivingDetail rd WITH (NOLOCK) 
+	where rd.PoId = ed.POID and rd.Seq1 = ed.SEQ1 and rd.Seq2 = ed.SEQ2 AND ed.FabricType='F'
+	group by rd.WhseArrival,rd.InvNo,rd.ExportId,rd.Id,rd.PoId,RD.seq1,RD.seq2,rd.StockType
+) t
 where exists (select 1 from Factory where o.FactoryId = id and IsProduceFty = 1)
 and ed.PoType = 'G' 
 
@@ -312,6 +319,7 @@ and ed.PoType = 'G'
     [ArriveQty]=  SUM(ArriveQty),
     [ArriveQty_StockUnit]=dbo.[GetUnitQty](UnitId,StockUnit,SUM(ArriveQty)),
 	Receiving_Detail.ReceiveQty,
+    t.TotalRollsCalculated,
 	StockUnit,
     [ContainerType] ,[ContainerNo] ,PortArrival,t.WhseArrival,KPILETA,
 	[Earliest SCI Delivery],
@@ -329,7 +337,7 @@ OUTER APPLY(
  GROUP BY 
 	WK,t.eta,t.FactoryID,Consignee,ShipModeID,CYCFS,Blno,Packages,Vessel,[ProdFactory],OrderTypeID,ProjectID,Category ,BrandID, seasonid,styleid,t.PoID,seq,
 	Refno,[Color] ,[Description],[MtlType],WeaveTypeID,suppid,[SuppName] ,UnitId,SizeSpec,[ContainerType] ,[ContainerNo] ,PortArrival,
-	t.WhseArrival,KPILETA,[Earliest SCI Delivery],EarlyDays,[MR_Mail],[SMR_Mail],t.EditName,ReceiveQty,StockUnit, t.StyleName,MtlTypeID
+    t.WhseArrival,KPILETA,[Earliest SCI Delivery],EarlyDays,[MR_Mail],[SMR_Mail],t.EditName,ReceiveQty,StockUnit, t.StyleName, t.TotalRollsCalculated, MtlTypeID
 HAVING 1=1
 ";
             if (this.RecLessArv)
