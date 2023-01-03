@@ -284,11 +284,24 @@ as (
 		,se.CurrencyID
 		,[Amount] = se.Amount * iif('{this.rateType}' = '', 1, dbo.getRate('{this.rateType}', s.CurrencyID,'USD', s.CDate))
 		,se.AccountID
-        ,[ShippingMemo] = ''
+        ,[ShippingMemo] = shippingmemo.val
     from ShippingAP s WITH (NOLOCK) 
     inner join View_ShareExpense se WITH (NOLOCK) on se.ShippingAPID = s.ID
     inner join TransferExport e WITH (NOLOCK) on se.WKNo = e.ID
     left join Supp WITH (NOLOCK) on supp.ID = e.Forwarder
+    outer apply
+	    (
+		    select val = sd.[S]+CHAR(13)+CHAR(10)+ sd.[D]
+		    from 
+		    (
+			    select top 1 
+			    [S] =ts.Subject,
+			    [D] = ts.Description
+			    from TransferExport_ShippingMemo ts
+			    where e.ID= ts.ID and ts.ShippingExpense = 1
+			    order by adddate desc
+		    )sd
+	    ) shippingmemo
     where s.Type = 'IMPORT'
     AND se.Junk <> 1
 ");

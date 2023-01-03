@@ -66,6 +66,7 @@ select  0 as selected
         , c.stockType
         , c.ukey as ftyinventoryukey
         , ColorID =dbo.GetColorMultipleID(a.BrandId, a.ColorID)
+        , a.RefNo
 from dbo.PO_Supp_Detail a WITH (NOLOCK) 
 inner join dbo.ftyinventory c WITH (NOLOCK) on c.poid = a.id and c.seq1 = a.seq1 and c.seq2  = a.seq2 and c.stocktype = 'O'
 inner join dbo.factory f WITH (NOLOCK) on a.FactoryID=f.id
@@ -294,6 +295,7 @@ and ReasonTypeID='Stock_Remove' AND junk = 0", e.FormattedValue), out dr, null))
             .Text("roll", header: "Roll", iseditingreadonly: true, width: Widths.AnsiChars(6)) // 4
             .Text("dyelot", header: "Dyelot", iseditingreadonly: true, width: Widths.AnsiChars(8)) // 5
             .Text("ColorID", header: "Color", width: Widths.AnsiChars(6), iseditingreadonly: true)
+            .Text("RefNo", header: "Ref#", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .EditText("Description", header: "Description", iseditingreadonly: true, width: Widths.AnsiChars(20)) // 3
             .Numeric("QtyBefore", header: "Original Qty", iseditable: true, decimal_places: 2, integer_places: 10, width: Widths.AnsiChars(6)) // 6
             .Numeric("QtyAfter", header: "Current Qty", decimal_places: 2, integer_places: 10, settings: ns, width: Widths.AnsiChars(6)) // 7

@@ -484,6 +484,7 @@ DROP TABLE #tmp ,#MainData ,#PackingList_Detail,#MainData1
 ----QA R32 5X5 report
 select 
  [ID] = cfa.ID
+,[CFA] = cfa.CFA
 ,[AuditDate] = cfa.AuditDate
 ,[Auditor] = p.Name
 ,[Factory] = cfa.FactoryID
@@ -494,7 +495,8 @@ select
 ,[Colorway] = s.ArticleList
 ,[Season] = SUBSTRING(o.SeasonID,3,2) -- 取後2碼
 ,[SeasonYear] = '20'+SUBSTRING(o.SeasonID,1,2)
-,[Lot] = right(o.CustPONo,2)
+,[Lot] = case when DATALENGTH(o.CustPONo) > 10 and SUBSTRING(CustPONo, 11, 1)  = '-' then  SUBSTRING(o.CustPONo,CHARINDEX('-',o.CustPONo)+1,LEN(o.CustPONo)-CHARINDEX('-',o.CustPONo))
+		 else '' end 
 ,[MetalDetection] = 'PASS'
 ,[NikeDefectCodeID] = gdf.NikeDefectCodeID
 ,[Qty] = cfad.Qty
@@ -585,6 +587,7 @@ and exists (select 1 from Factory f where o.FactoryId = id and f.IsProduceFty = 
 
 select  
 [ID]
+,[CFA] 
 ,[AuditDate] 
 ,[Auditor]
 ,[Factory] 
@@ -610,6 +613,7 @@ set @SqlCmd2 = '
 ;with 
 Q as (
 	select [ID]
+        ,[CFA] 
 		,[AuditDate] 
 		,[Auditor]
 		,[Factory] 
@@ -626,6 +630,7 @@ Q as (
 		,'+@DateString+' 
 	from (
 		select [ID]
+        ,[CFA] 
 		,[AuditDate] 
 		,[Auditor]
 		,[Factory] 
@@ -651,6 +656,7 @@ Q as (
 C as
 (
 	select [ID]
+        ,[CFA] 
 		,[AuditDate] 
 		,[Auditor]
 		,[Factory] 
@@ -668,6 +674,7 @@ C as
 	from (
 		select 
 		[ID]
+        ,[CFA] 
 		,[AuditDate] 
 		,[Auditor]
 		,[Factory] 
@@ -692,7 +699,7 @@ C as
 	) as pt
 )
 select 
-	 Q.[ID]
+	 Q.[CFA]
 	,Q.[AuditDate] 
 	,Q.[Auditor]
 	,Q.[Factory] 

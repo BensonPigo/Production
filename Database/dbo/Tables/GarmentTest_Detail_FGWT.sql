@@ -13,6 +13,7 @@
     [Criteria2] NUMERIC(11, 2) NULL, 
 	SystemType	  varchar (150) NOT NULL CONSTRAINT [DF_GarmentTest_Detail_FGWT_SystemType] DEFAULT(''),
 	Seq	  int NOT NULL CONSTRAINT [DF_GarmentTest_Detail_FGWT_Seq] DEFAULT(0),
+	StandardRemark nvarchar(3000) not null CONSTRAINT [DF_GarmentTest_Detail_FGWT_StandardRemark] default '',
     CONSTRAINT [PK_GarmentTest_Detail_FGWT] PRIMARY KEY CLUSTERED 
 	( ID ASC ,No ASC ,Location ASC ,Type ASC)
 		WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]

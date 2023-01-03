@@ -44,7 +44,6 @@
 	[Color Desc] [nvarchar](150) NULL,
 	[Actual ETA] [date] NULL,
 	[PONo] [varchar](30) NULL,
-	[Last ETA] [date] NULL,
 	[Shipping Schedule] [date] NULL,
 	[Estimate ETA] [date] NULL,
 	[SCI Delivery] [date] NULL,
@@ -91,7 +90,6 @@
 	[Supplier Group] [nvarchar](20) NULL,
 	[Supplier Delivery] [varchar](10) NULL,
 	[Material] [varchar](10) NULL,
-	[Mtl. Complete (Master SP)] [varchar](1) NULL,
 	[Is 3rd Country] [varchar](1) NULL,
 	[TransferBIDate] [datetime] NULL,
 	[GMT complete] [varchar](1) NULL,
@@ -99,8 +97,10 @@
 	[Prod Item] [varchar](20) NULL,
 	[Order Cancel] [varchar](1) NULL,
 	[Mtl. O.Standing Reason] [nvarchar](510) NULL,
-	[KPI L/ETA by Order List] [date] NULL,
 	[Print Date] [date] NULL,
-	[Ukey] [bigint] NULL
+	[Ukey] [bigint] IDENTITY(1,1) NOT NULL,
+	[Mtl. Complete] [varchar](1) NULL,
+	[KPI L/ETA (Order List)] [date] NULL,
+	[KPI L/ETA] [date] NULL
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO

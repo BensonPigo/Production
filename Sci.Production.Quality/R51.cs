@@ -79,9 +79,14 @@ outer apply(
             }
             else if (this.radioDetail_DefectType.Checked)
             {
-                formatJoin = @"left join SubProInsRecord_Defect SRD on SR.Ukey = SRD.SubProInsRecordUkey" + s_d;
-                formatCol = @"  SRD.DefectCode,
-                                SRD.DefectQty,";
+                formatJoin = @"
+left join SubProMachine m on SR.Machine = m.ID and SR.FactoryID = m.FactoryID and SR.SubProcessID = m.SubProcessID
+left join SubProInsRecord_Defect SRD on SR.Ukey = SRD.SubProInsRecordUkey" + s_d;
+                formatCol = @"m.Serial,
+[Junk] = iif(m.Junk = 1, 'Y', 'N'),
+m.Description,
+SRD.DefectCode,                                
+SRD.DefectQty,";
             }
             else
             {

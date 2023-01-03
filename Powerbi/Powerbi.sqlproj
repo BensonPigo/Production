@@ -161,6 +161,13 @@
     <Build Include="dbo\Tables\T_MtltoFTYAnalysis.sql" />
     <Build Include="dbo\Stored Procedures\FTY\P_ImportOustandingPO_Fty.sql" />
     <Build Include="dbo\Stored Procedures\FTY\P_Import_QA_R31.sql" />
+    <Build Include="dbo\Tables\P_SubProInsReport.sql" />
+    <Build Include="dbo\Stored Procedures\FTY\P_ImportSubProInsReport.sql" />
+    <Build Include="dbo\Tables\T_ArtworkType.sql" />
+    <Build Include="dbo\Tables\T_OrdersData.sql" />
+    <Build Include="dbo\Tables\T_OrdersData_ArtworkType.sql" />
+    <Build Include="dbo\Tables\T_OrdersData_ETA.sql" />
+    <Build Include="dbo\Tables\﻿T_ArtworkComparison.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Utility.dll" />
