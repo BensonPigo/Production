@@ -587,6 +587,7 @@ where id = '{this.CurrentMaintain["ID"]}'
         private void ControlColor()
         {
             DataTable gridData;
+            DataTable dt;
             string sqlCmd = string.Format(
                         @"select 1
 from ShareExpense se WITH (NOLOCK) 
@@ -598,6 +599,19 @@ where se.WKNo = '{0}' and se.junk=0", MyUtility.Convert.GetString(this.CurrentMa
                 this.ShowErr(result);
                 return;
             }
+
+            string sqlCmd_TS = string.Format(
+            @"select 1
+              from TransferExport_ShippingMemo se WITH (NOLOCK) 
+              where se.ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
+            DualResult resultTS = DBProxy.Current.Select(null, sqlCmd_TS, out dt);
+            if (!resultTS)
+            {
+                this.ShowErr(resultTS);
+                return;
+            }
+
+            this.btnShippingMemo.ForeColor = dt.Rows.Count > 0 ? Color.Blue : Color.Black;
 
             if (gridData.Rows.Count > 0)
             {
@@ -763,6 +777,25 @@ where ID = '{this.CurrentMaintain["ID"]}'
             else
             {
                 this.detailgridbs.Position = index;
+            }
+        }
+
+        private void BtnShippingMemo_Click(object sender, EventArgs e)
+        {
+            if (MyUtility.Check.Empty(this.CurrentMaintain["ID"]))
+            {
+                return;
+            }
+
+            new ShippingMemo(ShippingMemo.ShippingMemoType.TransferExport_ShippingMemo, this.CurrentMaintain["ID"].ToString()).ShowDialog();
+
+            if (ShippingMemo.IsDataExists(ShippingMemo.ShippingMemoType.TransferExport_ShippingMemo, this.CurrentMaintain["ID"].ToString()))
+            {
+                this.btnShippingMemo.ForeColor = Color.Blue;
+            }
+            else
+            {
+                this.btnShippingMemo.ForeColor = Color.Black;
             }
         }
     }
