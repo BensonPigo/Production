@@ -27,6 +27,7 @@
     TestBeforePicture varbinary(max) NULL,
     TestAfterPicture varbinary(max) NULL,
 	ReportNo varchar(14) not null CONSTRAINT [DF_GarmentTest_Detail_ReportNo] default '',
+	FabricationType varchar(10) not null CONSTRAINT [DF_GarmentTest_Detail_FabricationType] default '',
     CONSTRAINT [PK_GarmentTest_Detail] PRIMARY KEY CLUSTERED ([ID] ASC, [No] ASC)
 );
 
