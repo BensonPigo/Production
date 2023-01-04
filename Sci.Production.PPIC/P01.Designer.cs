@@ -1837,7 +1837,7 @@
             this.labelRMTLETAMasterSP.Name = "labelRMTLETAMasterSP";
             this.labelRMTLETAMasterSP.Size = new System.Drawing.Size(149, 21);
             this.labelRMTLETAMasterSP.TabIndex = 13;
-            this.labelRMTLETAMasterSP.Text = "Act. MTL ETA(Master SP)";
+            this.labelRMTLETAMasterSP.Text = "Actual Mtl. ETA";
             // 
             // labelPkgMTLETASP
             // 
