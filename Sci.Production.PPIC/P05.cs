@@ -214,7 +214,7 @@ where ReasonTypeID = 'Delivery_OutStand'";
                 .Text("Inconsistent", header: "*", width: Widths.AnsiChars(1), iseditingreadonly: true)
                 .Numeric("AlloQty", header: "Allo Qty", iseditingreadonly: true)
                 .Date("KPILETA", header: "KPI L/ETA", iseditingreadonly: true)
-                .Date("MTLETA", header: "Act. MTL ETA(Master SP)", iseditingreadonly: true)
+                .Date("MTLETA", header: "Actual Mtl. ETA", iseditingreadonly: true)
                 .Text("MTLExport", header: string.Empty, width: Widths.AnsiChars(4), iseditingreadonly: true)
                 .Date("SewETA", header: "Sew. MTL ETA(SP)", iseditingreadonly: true)
                 .Date("PackETA", header: "Pkg. MTL ETA(SP)", iseditingreadonly: true)

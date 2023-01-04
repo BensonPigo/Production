@@ -264,7 +264,7 @@
             this.labelSewingScheduleRMtlETA.Name = "labelSewingScheduleRMtlETA";
             this.labelSewingScheduleRMtlETA.Size = new System.Drawing.Size(165, 23);
             this.labelSewingScheduleRMtlETA.TabIndex = 17;
-            this.labelSewingScheduleRMtlETA.Text = "Act. MTL ETA(Master SP)";
+            this.labelSewingScheduleRMtlETA.Text = "Actual Mtl. ETA";
             // 
             // labelPOCombo
             // 
@@ -736,6 +736,7 @@
             this.IsSupportDelete = false;
             this.IsSupportNew = false;
             this.Name = "P01";
+            this.OnLineHelpID = "Sci.Win.Tems.Input1";
             this.Text = "() () ";
             this.WorkAlias = "Cutting";
             this.FormLoaded += new System.EventHandler(this.P01_FormLoaded);
