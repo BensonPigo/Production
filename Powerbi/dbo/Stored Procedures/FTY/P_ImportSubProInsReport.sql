@@ -210,6 +210,11 @@ select	isnull(FactoryID, '')
 		,isnull(CustomColumn1, '')			
 from #tmp
 
+update b
+	set b.TransferDate = getdate()
+from BITableInfo b
+where b.Id = 'P_SubProInsReport'
+
 end
 GO
 
