@@ -1,5 +1,6 @@
 ﻿using Ict;
 using Ict.Win;
+using Sci.Data;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -20,10 +21,16 @@ namespace Sci.Production.Shipping
             this.InitializeComponent();
         }
 
+        /// <inheritdoc/>
+        protected override void OnFormLoaded()
+        {
+            base.OnFormLoaded();
+        }
+
         private string GetRefNoSqlCmd()
         {
             string sqlcmd = @"
-select SCIRefno ,Refno, Description
+select Refno, SCIRefno ,Description
 from view_KHImportItem 
 where 1=1
 ";
@@ -132,17 +139,6 @@ where 1=1
 
             if (!MyUtility.Check.Empty(this.CurrentMaintain))
             {
-                string sqlcmd = this.GetRefNoSqlCmd();
-                sqlcmd += Environment.NewLine + $" and SCIRefNo= '{this.txtSCIRefno.Text}'";
-
-                if (MyUtility.Check.Seek(sqlcmd, out DataRow dr))
-                {
-                    this.txtRefno.Text = dr["Refno"].ToString();
-                }
-            }
-
-            if (!MyUtility.Check.Empty(this.CurrentMaintain))
-            {
                 string sqlcmd = $@"select CDCUnit from KHCustomsDescription where junk=0 and CustomsType = '{this.CurrentMaintain["CustomsType"]}'";
                 if (MyUtility.Check.Seek(sqlcmd, out DataRow dr))
                 {
@@ -226,7 +222,7 @@ where 1=1
             base.ClickSaveAfter();
         }
 
-        private void TxtSCIRefno_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        private void TxtRefno_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             if (MyUtility.Check.Empty(this.CurrentMaintain["CustomsType"]))
             {
@@ -238,7 +234,7 @@ where 1=1
             if (!MyUtility.Check.Empty(this.CurrentMaintain) && this.EditMode)
             {
                 string sqlcmd = this.GetRefNoSqlCmd();
-                Win.Tools.SelectItem item = new Win.Tools.SelectItem(sqlcmd, "25,20,50", this.CurrentMaintain["Refno"].ToString(), "SCIRefno,Refno,Description");
+                Win.Tools.SelectItem item = new Win.Tools.SelectItem(sqlcmd, "20,25,50", this.txtRefno.Text, "Refno,SCIRefno,Description");
                 DialogResult result = item.ShowDialog();
                 if (result == DialogResult.Cancel)
                 {
@@ -251,7 +247,7 @@ where 1=1
             }
         }
 
-        private void TxtSCIRefno_Validating(object sender, CancelEventArgs e)
+        private void TxtRefno_Validating(object sender, CancelEventArgs e)
         {
             if (MyUtility.Check.Empty(this.CurrentMaintain["CustomsType"]))
             {
@@ -261,24 +257,23 @@ where 1=1
                 return;
             }
 
-            if (!MyUtility.Check.Empty(this.CurrentMaintain) && this.EditMode && !MyUtility.Check.Empty(this.txtSCIRefno.Text))
+            if (!MyUtility.Check.Empty(this.CurrentMaintain) && this.EditMode && !MyUtility.Check.Empty(this.txtRefno.Text))
             {
-                DataRow dr;
                 string sqlcmd = this.GetRefNoSqlCmd();
-                sqlcmd += Environment.NewLine + $" and SCIRefNo= '{this.txtSCIRefno.Text}'";
+                sqlcmd += Environment.NewLine + $" and Refno= '{this.txtRefno.Text}'";
 
-                if (!MyUtility.Check.Seek(sqlcmd, out dr))
+                if (!MyUtility.Check.Seek(sqlcmd, out DataRow dr))
                 {
-                    MyUtility.Msg.WarningBox("Cannot find this [Ref#].");
-                    this.txtSCIRefno.Select();
+                    MyUtility.Msg.WarningBox("Cannot find this [Refno].");
                     e.Cancel = true;
                     return;
                 }
                 else
                 {
-                    this.CurrentMaintain["Refno"] = this.txtSCIRefno.Text;
+                    this.CurrentMaintain["vk_Refno"] = dr["Refno"].ToString();
+                    this.CurrentMaintain["Refno"] = dr["SCIRefno"].ToString();
                     this.CurrentMaintain["Description"] = dr["Description"];
-                    this.txtRefno.Text = dr["Refno"].ToString();
+                    this.CurrentMaintain.EndEdit();
                 }
             }
         }
