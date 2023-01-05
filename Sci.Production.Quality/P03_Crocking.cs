@@ -69,7 +69,7 @@ select [CrockingTestOption] = isnull(@CrockingTestOption, 0)
 	seq = CONCAT(a.SEQ1,a.SEQ2),
     b.styleid,b.BrandID,
     c.ExportId,c.WhseArrival,
-    d.ColorID,
+    ColorID = isnull(psdsC.SpecValue ,''),
     e.CrockingDate,e.Crocking,e.nonCrocking,
     [CrockingInspector] = (select name from pass1 where id= e.CrockingInspector),
     f.SuppID,
@@ -78,6 +78,7 @@ from FIR a WITH (NOLOCK)
 left join Orders b WITH (NOLOCK) on a.POID=b.POID
 left join Receiving c WITH (NOLOCK) on a.ReceivingID=c.Id
 left join PO_Supp_Detail d WITH (NOLOCK) on d.ID=a.POID and a.SEQ1=d.SEQ1 and a.seq2=d.SEQ2
+left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = d.id and psdsC.seq1 = d.seq1 and psdsC.seq2 = d.seq2 and psdsC.SpecColumnID = 'Color'
 left join FIR_Laboratory e WITH (NOLOCK) on a.ID=e.ID
 left join PO_Supp f WITH (NOLOCK) on d.ID=f.ID and d.SEQ1=f.SEQ1
 left join Fabric g WITH (NOLOCK) on g.SCIRefno = a.SCIRefno
@@ -986,7 +987,7 @@ left join Fabric g WITH (NOLOCK) on g.SCIRefno = a.SCIRefno
                 b.CrockingEncode,b.HeatEncode,b.WashEncode,
                 ArriveQty,
 				 (
-                Select d.colorid from PO_Supp_Detail d WITH (NOLOCK) Where d.id = a.poid and d.seq1 = a.seq1 and d.seq2 = a.seq2
+                Select isnull(SpecValue ,'') from PO_Supp_Detail_Spec d WITH (NOLOCK) Where d.id = a.poid and d.seq1 = a.seq1 and d.seq2 = a.seq2  and SpecColumnID = 'Color'
                 ) as Colorid,
 				(
 				select Suppid+f.AbbEN as supplier from Supp f WITH (NOLOCK) where a.Suppid=f.ID

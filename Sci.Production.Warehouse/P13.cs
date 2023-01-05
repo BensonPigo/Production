@@ -922,17 +922,15 @@ where (isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
             string masterID = (e.Master == null) ? string.Empty : e.Master["ID"].ToString();
-            this.DetailSelectCommand = string.Format(
-                @"
-
+            this.DetailSelectCommand = $@"
 select  o.FtyGroup
         , a.id
         , a.PoId
         , a.Seq1
         , a.Seq2
         , concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2) as seq
-        , p1.FabricType
-        , p1.stockunit
+        , psd.FabricType
+        , psd.stockunit
         , dbo.getmtldesc(a.poid,a.seq1,a.seq2,2,0) as [description]
         , a.Roll
         , a.Dyelot
@@ -943,8 +941,8 @@ select  o.FtyGroup
         , dbo.Getlocation(c.ukey) location
         , [ContainerCode] = c.ContainerCode
         , a.ukey
-		, p1.NetQty
-		, p1.LossQty
+		, psd.NetQty
+		, psd.LossQty
         , [Article] = case  when a.Seq1 like 'T%' then Stuff((Select distinct concat( ',',tcd.Article) 
 			                                                         From dbo.Orders as o 
 			                                                         Inner Join dbo.Style as s On s.Ukey = o.StyleUkey
@@ -952,8 +950,8 @@ select  o.FtyGroup
 			                                                         Inner Join dbo.Style_ThreadColorCombo_Detail as tcd On tcd.Style_ThreadColorComboUkey = tc.Ukey 
 			                                                         where	o.POID = a.PoId and
 			                                                         		tcd.SuppId = p.SuppId and
-			                                                         		tcd.SCIRefNo   = p1.SCIRefNo	and
-			                                                         		tcd.ColorID	   = p1.ColorID
+			                                                         		tcd.SCIRefNo   = psd.SCIRefNo	and
+			                                                         		tcd.ColorID	   = isnull(psdsC.SpecValue, '')
 			                                                         FOR XML PATH('')),1,1,'') 
                             else '' end
         , [Color] =
@@ -963,8 +961,9 @@ select  o.FtyGroup
 		, [Size]= p1.SizeSpec
 from dbo.issue_detail as a WITH (NOLOCK) 
 left join Orders o on a.poid = o.id
-left join PO_Supp_Detail p1 WITH (NOLOCK) on p1.ID = a.PoId and p1.seq1 = a.SEQ1 and p1.SEQ2 = a.seq2
-left join PO_Supp p WITH (NOLOCK) on p.ID = p1.ID and p1.seq1 = p.SEQ1
+left join PO_Supp_Detail psd WITH (NOLOCK) on psd.ID = a.PoId and psd.seq1 = a.SEQ1 and psd.SEQ2 = a.seq2
+left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
+left join PO_Supp p WITH (NOLOCK) on p.ID = psd.ID and psd.seq1 = p.SEQ1
 left join dbo.ftyinventory c WITH (NOLOCK) on c.poid = a.poid and c.seq1 = a.seq1 and c.seq2  = a.seq2 
     and c.stocktype = 'B' and c.roll=a.roll and a.Dyelot = c.Dyelot
 left join fabric f with(nolock) on f.SCIRefno = p1.SCIRefno
@@ -975,7 +974,8 @@ outer apply (
 	Left join FIR_Shadebone fs with (nolock) on f.ID = fs.ID and fs.Roll = fi.Roll and fs.Dyelot = fi.Dyelot
 	where fi.Ukey = ｃ.Ukey
 ) ShadeboneTone
-Where a.id = '{0}'", masterID);
+Where a.id = '{masterID}'
+";
 
             return base.OnDetailSelectCommandPrepare(e);
         }

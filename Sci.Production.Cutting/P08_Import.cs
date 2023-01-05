@@ -47,6 +47,7 @@ select
     [Balance Qty] = isnull(fi.InQty,0) - isnull(fi.OutQty,0) + isnull(fi.AdjustQty,0) - isnull(fi.ReturnQty,0)
 from PO_Supp_Detail psd with(nolock)
 inner join FtyInventory fi with(nolock) on fi.POID = psd.ID and fi.Seq1 = psd.SEQ1 and fi.Seq2 = psd.SEQ2
+left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
 outer apply(
 	select location = Stuff ((
             select ',' + MtlLocationID 
@@ -55,7 +56,7 @@ outer apply(
             for xml path('')
         ), 1, 1, '')
 )fid
-where psd.Refno = '{dr["Ref#"]}' and psd.ColorID = '{dr["ColorID"]}' and psd.id = '{dr["CuttingID"]}'
+where psd.Refno = '{dr["Ref#"]}' and isnull(psdsC.SpecValue ,'') = '{dr["ColorID"]}' and psd.id = '{dr["CuttingID"]}'
 and isnull(fi.InQty,0) - isnull(fi.OutQty,0) + isnull(fi.AdjustQty,0) - isnull(fi.ReturnQty,0) > 0
 ";
                     SelectItem selectItem = new SelectItem(sql, string.Empty, MyUtility.Convert.GetString(dr["Dyelot"]));
@@ -82,7 +83,8 @@ and isnull(fi.InQty,0) - isnull(fi.OutQty,0) + isnull(fi.AdjustQty,0) - isnull(f
 select  1
 from PO_Supp_Detail psd with(nolock)
 inner join FtyInventory fi with(nolock) on fi.POID = psd.ID and fi.Seq1 = psd.SEQ1 and fi.Seq2 = psd.SEQ2
-where psd.Refno = '{dr["Ref#"]}' and psd.ColorID = '{dr["ColorID"]}' and psd.id = '{dr["CuttingID"]}' and fi.Dyelot = '{e.FormattedValue}'
+left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
+where psd.Refno = '{dr["Ref#"]}' and isnull(psdsC.SpecValue ,'') = '{dr["ColorID"]}' and psd.id = '{dr["CuttingID"]}' and fi.Dyelot = '{e.FormattedValue}'
 and isnull(fi.InQty,0) - isnull(fi.OutQty,0) + isnull(fi.AdjustQty,0) - isnull(fi.ReturnQty,0) > 0
 ";
                 if (MyUtility.Check.Seek(sql))
@@ -190,25 +192,29 @@ outer apply(
 	where t.CuttingSP = @CuttingID And t.IsForecast = 0 AND t.Junk = 0 AND t.LocalOrder = 0 AND t.category not in('M','T')
 ) CutCombo
 outer apply(
-	select ETA = max(FinalETA), Seq1 = min(po3.SEQ1), Seq2 = min(po3.SEQ2)
-	from (
-		select s.FinalETA, s.SEQ1, s.SEQ2
-		from dbo.PO_Supp_Detail s WITH (NOLOCK) 
-		where s.id = o.poid AND s.SCIRefno = bof.SCIRefno AND s.ColorID = c.ColorID 
-			AND s.SEQ1 = 'A1' AND ((s.Special NOT LIKE ('%DIE CUT%')) and s.Special is not null)		
-		union all
-		select b1.FinalETA , s.SEQ1, s.SEQ2
-		from PO_Supp_Detail s WITH (NOLOCK) , PO_Supp_Detail b1 WITH (NOLOCK) 
-		where s.id = o.poid AND s.SCIRefno = bof.SCIRefno AND s.ColorID = c.ColorID 
-			AND s.SEQ1 = 'A1' AND ((s.Special NOT LIKE ('%DIE CUT%')) and s.Special is not null) 
-			AND b1.ID = s.StockPOID   and b1.SEQ1 = s.Stockseq1 and b1.SEQ2 = s.StockSeq2
-	) po3
+    select ETA = max(FinalETA), Seq1 = min(po3.SEQ1), Seq2 = min(po3.SEQ2)
+    from (
+        select psd.FinalETA, psd.SEQ1, psd.SEQ2
+        from dbo.PO_Supp_Detail psd WITH (NOLOCK) 
+        left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
+        where psd.id = o.poid AND psd.SCIRefno = bof.SCIRefno AND isnull(psdsC.SpecValue ,'') = c.ColorID 
+        AND psd.SEQ1 = 'A1' AND ((psd.Special NOT LIKE ('%DIE CUT%')) and psd.Special is not null)
+
+        union all
+        select b1.FinalETA , psd.SEQ1, psd.SEQ2
+        from PO_Supp_Detail psd WITH (NOLOCK)
+        inner join PO_Supp_Detail b1 WITH (NOLOCK) on b1.ID = psd.StockPOID and b1.SEQ1 = psd.Stockseq1 and b1.SEQ2 = psd.StockSeq2
+        left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
+        where psd.id = o.poid AND psd.SCIRefno = bof.SCIRefno AND isnull(psdsC.SpecValue ,'') = c.ColorID 
+        AND psd.SEQ1 = 'A1' AND ((psd.Special NOT LIKE ('%DIE CUT%')) and psd.Special is not null)
+    ) po3
 ) mtl
 outer apply(
-	select ColorDesc = color.Name	
-	from PO_Supp_Detail b  WITH (NOLOCK) ,color WITH (NOLOCK) 
-	where b.ID = o.poid and b.SEQ1 = mtl.Seq1 and b.SEQ2 = mtl.Seq2
-		and color.id = b.ColorID and color.BrandId = o.brandid
+    select ColorDesc = color.Name	
+    from PO_Supp_Detail psd  WITH (NOLOCK)
+    left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
+    left join color WITH (NOLOCK) on color.id = isnull(psdsC.SpecValue ,'')
+    where psd.ID = o.poid and psd.SEQ1 = mtl.Seq1 and psd.SEQ2 = mtl.Seq2 and color.BrandId = o.brandid
 ) col
 where e.Id = @CuttingID and e.CuttingPiece = 1 
 order by MarkerName, ColorID 

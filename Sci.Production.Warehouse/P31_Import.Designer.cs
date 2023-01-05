@@ -105,7 +105,6 @@
             this.txtToSP.Name = "txtToSP";
             this.txtToSP.Size = new System.Drawing.Size(122, 23);
             this.txtToSP.TabIndex = 0;
-            this.txtToSP.Validating += new System.ComponentModel.CancelEventHandler(this.TxtToSP_Validating);
             // 
             // labelToSP
             // 

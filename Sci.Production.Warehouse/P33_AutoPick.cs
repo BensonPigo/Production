@@ -130,7 +130,7 @@ DROP TABLE #tmpQT,#tmpQTFinal,#tmp
 ";
 
                 DataTable dt;
-                DualResult dualResult = MyUtility.Tool.ProcessWithDatatable(this.tmpTable_IssueBreakDown, string.Empty, cmd, out dt, "#tmp"); ; // DBProxy.Current.Select(null, cmd, out dt);
+                DualResult dualResult = MyUtility.Tool.ProcessWithDatatable(this.tmpTable_IssueBreakDown, string.Empty, cmd, out dt, "#tmp");
 
                 if (!dualResult)
                 {
@@ -230,7 +230,6 @@ DROP TABLE #tmpQT,#tmpQTFinal,#tmp
 
             #region SQL
             sqlcmd = $@"
-
 SELECt Article,[Qty]=SUM(Qty) 
 INTO #tmp_sumQty
 FROm #tmp
@@ -251,9 +250,10 @@ WHERE O.ID='{this.poid}' AND tcd.Article IN ( SELECT Article FROM #tmp )
 select
 	SCIRefNo = iif(IsForOtherBrand = 1,TR.FromSCIRefno, psd.SCIRefno),
 	SuppColor = iif(IsForOtherBrand = 1, TR.FromSuppColor, psd.SuppColor),
-	ID,SEQ1,SEQ2,ColorID
+	psd.ID,psd.SEQ1,psd.SEQ2,ColorID = isnull(psdsC.SpecValue, '')
 into #tmpPO_Supp_Detail
 from PO_Supp_Detail psd
+left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
 OUTER APPLY(
 	SELECT top 1 TR.FromSCIRefno,TR.FromSuppColor -- 理應是唯一
 	FROM PO_Supp PS 
@@ -284,7 +284,7 @@ AND EXISTS(
 	WHERE f.SCIRefno = psd.SCIRefNo
 	AND m.IsThread=1 
 )
-AND psd.ColorID <> ''
+AND isnull(psdsC.SpecValue, '')<> ''
 
 ----取得這些物料的項次號，然後取得Order List，如果NULL就直接打勾不用判斷後續
 ---- 傳入OrderID
@@ -356,7 +356,7 @@ SELECT  DISTINCT
 						,1 ,0)
 		, psd.SCIRefno 
         , psd.Refno
-        , psd.ColorID
+        , ColorID = isnull(psdsC.SpecValue, '')
 		, f.DescDetail
 		, [@Qty]= ISNULL(ThreadUsedQtyByBOT.Val,0) + ISNULL(QT.Val,0)
 		, [Use Qty By Stock Unit] = CEILING (ISNULL(ThreadUsedQtyByBOT.Qty,0) * (ISNULL(ThreadUsedQtyByBOT.Val,0) + ISNULL(QT.Val,0))/ 100 * ISNULL(UnitRate.RateValue,1) )--並轉換為Stock Unit
@@ -372,17 +372,19 @@ SELECT  DISTINCT
 					from dbo.issue I2 WITH (NOLOCK) 
 					inner join dbo.Issue_Summary [IS] WITH (NOLOCK) on I2.id = [IS].Id 
 					where I2.type = 'E' and I2.Status = 'Confirmed' 
-					and [IS].Poid=psd.ID AND [IS].SCIRefno=psd.SCIRefno AND [IS].ColorID=psd.ColorID and i2.[EditDate]<GETDATE()
+					and [IS].Poid=psd.ID AND [IS].SCIRefno=psd.SCIRefno AND [IS].ColorID=isnull(psdsC.SpecValue, '') and i2.[EditDate]<GETDATE()
 				)
 INTO #final
 FROM PO_Supp_Detail psd
 inner join #step2 tpsd on tpsd.ID = psd.id and tpsd.SEQ1 = psd.SEQ1 and tpsd.SEQ2 = psd.SEQ2
 INNER JOIN Fabric f ON f.SCIRefno = psd.SCIRefno
+left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
 OUTER APPLY(
-	SELECT TOP 1 a.StockUnit ,u.Description
-	FROM PO_Supp_Detail a
-	INNER JOIN Unit u ON a.StockUnit = u.ID
-	WHERE a.ID =psd.ID	AND a.SCIRefno=psd.SCIRefno AND a.ColorID=psd.ColorID
+	SELECT TOP 1 psd2.StockUnit ,u.Description
+	FROM PO_Supp_Detail psd2
+	INNER JOIN Unit u ON psd2.StockUnit = u.ID
+    left join PO_Supp_Detail_Spec psdsC2 WITH (NOLOCK) on psdsC2.ID = psd2.id and psdsC2.seq1 = psd2.seq1 and psdsC2.seq2 = psd2.seq2 and psdsC2.SpecColumnID = 'Color'
+	WHERE psd2.ID =psd.ID	AND psd2.SCIRefno=psd.SCIRefno AND isnull(psdsC2.SpecValue, '')=isnull(psdsC.SpecValue, '')
 )StockUnit
 OUTER APPLY(
 	SELECT RateValue = IIF(Denominator = 0,0, Numerator / Denominator)
@@ -417,7 +419,7 @@ OUTER APPLY(
 	FROM DBO.GetThreadUsedQtyByBOT(psd.ID,{sqmMachineTypeIDs}) g
     INNER JOIN #step1 s1 on s1.SCIRefNo = g.SCIRefNo AND s1.SuppColor = g.SuppColor and s1.ColorID = g.ColorID AND s1.Article = g.Article
 	INNER JOIN #tmp_sumQty b ON s1.Article = b.Article
-	WHERE g.SCIRefNo= psd.SCIRefNo AND g.SuppColor = psd.SuppColor and g.ColorID = psd.ColorID
+	WHERE g.SCIRefNo= psd.SCIRefNo AND g.SuppColor = psd.SuppColor and g.ColorID = isnull(psdsC.SpecValue, '')
 	GROUP BY g.SCIRefNo, g.ColorID, g.Article, b.QTY
 )ThreadUsedQtyByBOT1
 OUTER APPLY(
@@ -455,7 +457,7 @@ AND EXISTS(
 	WHERE f.SCIRefno = psd.SCIRefNo
 	AND m.IsThread=1 
 )
-AND psd.ColorID <> ''
+AND isnull(psdsC.SpecValue, '') <> ''
 
 
 SELECT  [Selected] 
@@ -508,19 +510,22 @@ OUTER APPLY(
 	SELECT [Qty]=ISNULL(( SUM(Fty.InQty - Fty.OutQty + Fty.AdjustQty - Fty.ReturnQty)) ,0)
 	FROM PO_Supp_Detail psd 
 	LEFT JOIN FtyInventory Fty ON  Fty.poid = psd.ID AND Fty.seq1 = psd.seq1 AND Fty.seq2 = psd.seq2 AND fty.StockType='B'
-	WHERE psd.SCIRefno=t.SCIRefno AND psd.ColorID=t.ColorID AND psd.ID='{this.poid}'
+    left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
+	WHERE psd.SCIRefno=t.SCIRefno AND isnull(psdsC.SpecValue, '')=t.ColorID AND psd.ID='{this.poid}'
 )Balance 
 OUTER APPLY(
 	----列出所有Seq1 Seq2對應到的SuppColor
 	SELECT [Val]=STUFF((
 		SELECT  DISTINCT ',' + SuppColor
 		FROM PO_Supp_Detail y
+        left join PO_Supp_Detail_Spec psdsCy WITH (NOLOCK) on psdsCy.ID = y.id and psdsCy.seq1 = y.seq1 and psdsCy.seq2 = y.seq2 and psdsCy.SpecColumnID = 'Color'
 		WHERE EXISTS( 
 			SELECT 1 --psd.Seq1,psd.Seq2 ,psd.ID ,psd.Seq1, psd.Seq2 ,psd.ColorID
 			FROM PO_Supp_Detail psd 
 			LEFT JOIN FtyInventory Fty ON  Fty.poid = psd.ID AND Fty.seq1 = psd.seq1 AND Fty.seq2 = psd.seq2 AND fty.StockType='B'
-			WHERE psd.SCIRefno=t.SCIRefno AND psd.ColorID = t.ColorID AND psd.ID = '{this.poid}'
-			AND psd.SCIRefno = y.SCIRefno AND psd.ColorID = y.ColorID AND psd.ID = y.ID
+            left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
+			WHERE psd.SCIRefno=t.SCIRefno AND isnull(psdsC.SpecValue, '') = t.ColorID AND psd.ID = '{this.poid}'
+			AND psd.SCIRefno = y.SCIRefno AND isnull(psdsC.SpecValue, '') = isnull(psdsCy.SpecValue, '') AND psd.ID = y.ID
 			AND psd.SEQ1 = y.SEQ1 AND psd.SEQ2 = y.SEQ2
 			GROUP BY psd.seq1,psd.seq2
 			--HAVING ISNULL(( SUM(Fty.InQty - Fty.OutQty + Fty.AdjustQty - Fty.ReturnQty)) ,0) > 0

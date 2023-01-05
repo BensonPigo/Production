@@ -103,7 +103,7 @@ SELECT
 	o.BrandID,
 	Supplier = concat(PS.SuppID,'-'+ S.AbbEN),
 	PSD.Refno,
-	PSD.ColorID,
+	ColorID = isnull(psdsC.SpecValue ,''),
 	psd.SCIRefno,
 	Fabric.WeaveTypeID,
 	Fabric.width,
@@ -127,7 +127,8 @@ Inner join PO_Supp PS on PSD.ID=PS.ID and PSD.SEQ1=PS.SEQ1
 Inner join Supp S on PS.SuppID=S.ID
 Inner join Fabric on PSD.SCIRefno=Fabric.SCIRefno
 Inner join Orders O on F.POID=O.ID
-LEFT JOIN Color c ON psd.BrandId = c.BrandId AND PSD.ColorID = c.ID
+left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
+LEFT JOIN Color c ON psd.BrandId = c.BrandId AND isnull(psdsC.SpecValue ,'') = c.ID
 Where 1=1
 {where1}
 
@@ -146,7 +147,7 @@ SELECT
 	o.BrandID,
 	Supplier = concat(PS.SuppID,'-'+ S.AbbEN),
 	PSD.Refno,
-	PSD.ColorID,
+	ColorID = isnull(psdsC.SpecValue ,''),
 	psd.SCIRefno,
 	Fabric.WeaveTypeID,
 	Fabric.width,
@@ -168,7 +169,8 @@ Inner join PO_Supp PS on PSD.ID=PS.ID and PSD.SEQ1=PS.SEQ1
 Inner join Supp S on PS.SuppID=S.ID
 Inner join Fabric on PSD.SCIRefno=Fabric.SCIRefno
 Inner join Orders O on F.POID=O.ID
-LEFT JOIN Color c ON psd.BrandId = c.BrandId AND PSD.ColorID = c.ID
+left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
+LEFT JOIN Color c ON psd.BrandId = c.BrandId AND isnull(psdsC.SpecValue ,'') = c.ID
 Where 1=1
 {where2}
 ");
@@ -619,7 +621,7 @@ SELECT
 	o.BrandID,	
 	Supplier = concat(PS.SuppID,'-'+ S.AbbEN),
 	PSD.Refno,
-	PSD.ColorID,
+	ColorID = isnull(psdsC.SpecValue ,''),
 	PSD.SCIRefno,
 	c.Name,
 	F.ID,
@@ -650,7 +652,8 @@ inner join Fabric on PSD.SCIRefno = Fabric.SCIRefno
 left join Receiving_Detail RD on RD.PoId = std.FromPOID and RD.Seq1 = std.FromSeq1 and RD.Seq2 = std.FromSeq2 and RD.Roll = std.FromRoll and RD.Dyelot = std. FromDyelot
 left join Receiving R on R.Id = RD.Id 
 left join FIR F on F.ReceivingID = R.ID and F.POID = RD.PoId and F.SEQ1 = RD.Seq1 and F.SEQ2 = RD.Seq2
-left join Color c ON psd.BrandId = c.BrandId AND PSD.ColorID = c.ID
+left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
+left join Color c ON psd.BrandId = c.BrandId AND isnull(psdsC.SpecValue ,'') = c.ID
 outer apply(
 	select Composition = STUFF((
 		select CONCAT('+', FLOOR(fc.percentage), '%', fc.MtltypeId)
@@ -682,7 +685,7 @@ SELECT
 	o.BrandID,	
 	Supplier = concat(PS.SuppID,'-'+ S.AbbEN),
 	PSD.Refno,
-	PSD.ColorID,
+	ColorID = isnull(psdsC.SpecValue ,''),
 	PSD.SCIRefno,
 	c.Name,
 	F.ID,
@@ -710,7 +713,8 @@ inner join Fabric on PSD.SCIRefno = Fabric.SCIRefno
 left join TransferIn_Detail RD on RD.PoId = std.FromPOID and RD.Seq1 = std.FromSeq1 and RD.Seq2 = std.FromSeq2 and RD.Roll = std.FromRoll and RD.Dyelot = std. FromDyelot
 left join TransferIn R on R.Id = RD.Id 
 left join FIR F on F.ReceivingID = R.ID and F.POID = RD.PoId and F.SEQ1 = RD.Seq1 and F.SEQ2 = RD.Seq2
-left join Color c ON psd.BrandId = c.BrandId AND PSD.ColorID = c.ID
+left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
+left join Color c ON psd.BrandId = c.BrandId AND isnull(psdsC.SpecValue ,'') = c.ID
 outer apply(
 	select Composition = STUFF((
 		select CONCAT('+', FLOOR(fc.percentage), '%', fc.MtltypeId)

@@ -1,14 +1,15 @@
-﻿using System;
-using System.Data;
-using System.Windows.Forms;
-using Ict;
-using Sci.Win;
+﻿using Ict;
 using Sci.Data;
-using Excel = Microsoft.Office.Interop.Excel;
+using Sci.Win;
+using System;
+using System.Data;
 using System.Runtime.InteropServices;
+using System.Windows.Forms;
+using Excel = Microsoft.Office.Interop.Excel;
 
 namespace Sci.Production.Warehouse
 {
+    /// <inheritdoc/>
     public partial class R24 : Win.Tems.PrintForm
     {
         private DataTable dt;
@@ -17,6 +18,7 @@ namespace Sci.Production.Warehouse
         private string strM;
         private string strFactory;
 
+        /// <inheritdoc/>
         public R24(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -91,10 +93,11 @@ inner join dbo.SubTransfer_Detail b WITH (NOLOCK) on a.id = b.id
 inner join dbo.Orders WITH (NOLOCK)  on b.fromPoid = Orders.ID
 left join PO_Supp_Detail po3 WITH (NOLOCK) on b.FromPOID=po3.ID
 	and b.FromSeq1=po3.SEQ1 and b.FromSeq2=po3.SEQ2
+left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = po3.id and psdsC.seq1 = po3.seq1 and psdsC.seq2 = po3.seq2 and psdsC.SpecColumnID = 'Color'
 left join FtyInventory ft WITH(NOLOCK) on b.FromPOID=ft.POID
 	and b.FromSeq1=ft.Seq1 and b.FromSeq2 = ft.Seq2 and b.FromRoll=ft.Roll
 	and b.FromStockType=ft.StockType and b.FromDyelot = ft.Dyelot
-left join Color c  WITH(NOLOCK) on c.ID=po3.ColorID and c.BrandId=orders.BrandID
+left join Color c  WITH(NOLOCK) on c.ID=isnull(psdsC.SpecValue, '') and c.BrandId=orders.BrandID
 where a.Status = 'Confirmed' and a.type='A' 
 {0}
 group by Orders.MDivisionID, Orders.FtyGroup, a.issuedate, b.FromPOID, b.FromSeq1, b.FromSeq2,b.FromRoll,b.FromDyelot,po3.StockUnit,c.Name,ft.Ukey,b.ToLocation ,a.AddName ,b.ID

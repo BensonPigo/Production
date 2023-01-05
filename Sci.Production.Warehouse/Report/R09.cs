@@ -1,31 +1,21 @@
-﻿using System;
+﻿using Ict;
+using Sci.Data;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Text;
 using System.Windows.Forms;
-using Ict;
-using Sci.Data;
 
 namespace Sci.Production.Warehouse
 {
+    /// <inheritdoc/>
     public partial class R09 : Win.Tems.PrintForm
     {
-        // string    mdivision, factory, orderby, spno1, spno2, refno1, refno2;
         private string mdivision;
-
-        // string    mdivision, factory, orderby, spno1, spno2, refno1, refno2;
         private string factory;
-
-        // string    mdivision, factory, orderby, spno1, spno2, refno1, refno2;
         private string spno1;
-
-        // string    mdivision, factory, orderby, spno1, spno2, refno1, refno2;
         private string spno2;
-
-        // string    mdivision, factory, orderby, spno1, spno2, refno1, refno2;
         private string refno1;
-
-        // string    mdivision, factory, orderby, spno1, spno2, refno1, refno2;
         private string refno2;
         private DateTime? deadline1;
         private DateTime? deadline2;
@@ -36,6 +26,7 @@ namespace Sci.Production.Warehouse
         private DataTable printData;
         private int filterIndex;
 
+        /// <inheritdoc/>
         public R09(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -413,8 +404,8 @@ select	   M = sl.M
 		, REF = psd.Refno
 		, MtlType = iif(psd.FabricType='F','Fabric',iif(psd.FabricType = 'A','Accessory',psd.fabrictype))
 		, PurchaseUnit = psd.StockUnit
-		, Color = psd.ColorID
-		, Size = psd.SizeSpec
+		, Color = psdsC.SpecValue
+		, Size = psdsS.SpecValue
 		, StockLocation = isnull (mpd.BLocation, '')
 		, ShipQty = Round((isnull(psd.ShipQty, 0) + isnull(psd.ShipFOC, 0)) * v.RateValue, 2)
 		, ArrivedQty = isnull (mpd.InQty, 0)
@@ -433,6 +424,8 @@ from #StockList sl
 left join PO_Supp_Detail psd on sl.POID = psd.ID
 								and sl.Seq1 = psd.SEQ1
 								and sl.Seq2 = psd.SEQ2
+left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
+left join PO_Supp_Detail_Spec psdsS WITH (NOLOCK) on psdsS.ID = psd.id and psdsS.seq1 = psd.seq1 and psdsS.seq2 = psd.seq2 and psdsS.SpecColumnID = 'Size'
 left join Orders o on sl.POID = o.ID
 left join MDivisionPoDetail mpd on sl.POID = mpd.POID
 									and sl.Seq1 = mpd.Seq1

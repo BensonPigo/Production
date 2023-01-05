@@ -1,10 +1,10 @@
-﻿using System;
+﻿using Ict;
+using Sci.Data;
+using System;
 using System.Data;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
-using Sci.Data;
-using Ict;
-using System.Runtime.InteropServices;
 using Excel = Microsoft.Office.Interop.Excel;
 
 namespace Sci.Production.Warehouse
@@ -117,20 +117,20 @@ select distinct
         sp			= a.Poid,
         seq1		= a.seq1,
         seq2		= a.seq2,
-        Refno		= p.Refno,
+        Refno		= psd.Refno,
         Receive.ETA,
-        MaterialType = (case when p.FabricType = 'F'then 'Fabric' 
-							when p.FabricType = 'A'then 'Accessory' 
-							WHEN p.FabricType = 'O' then 'Orher'
-							else p.FabricType 
+        MaterialType = (case when psd.FabricType = 'F'then 'Fabric' 
+							when psd.FabricType = 'A'then 'Accessory' 
+							WHEN psd.FabricType = 'O' then 'Orher'
+							else psd.FabricType 
 						end) + '-' + Fabric.MtlTypeID,
         Category = DropDownList.Name,
         location	= stuff((select ',' + cast(MtlLocationID as varchar) from (select MtlLocationID from FtyInventory_Detail WITH (NOLOCK) where ukey = a.ukey) t for xml path('')), 1, 1, ''),
-        width		= p.Width,
+        width		= psd.Width,
         color		= iif(Fabric.MtlTypeID in ('EMB Thread', 'SP Thread', 'Thread')
-	                , IIF( isnull(p.SuppColor,'')='',dbo.GetColorMultipleID(Orders.BrandID, p.ColorID),p.SuppColor)
-	                , dbo.GetColorMultipleID(Orders.BrandID, p.ColorID)),
-        size		= p.SizeSpec,
+	                , IIF( isnull(psd.SuppColor,'')='',dbo.GetColorMultipleID(Orders.BrandID, isnull(psdsC.SpecValue, '')),psd.SuppColor)
+	                , dbo.GetColorMultipleID(Orders.BrandID, isnull(psdsC.SpecValue, ''))),
+        size		= isnull(psdsS.SpecValue, ''),
         description	= dbo.getMtlDesc(A.Poid,A.SEQ1,A.SEQ2,2,0),
         roll		= a.Roll,
         dyelot		= a.Dyelot,
@@ -148,9 +148,11 @@ select distinct
         Balance		= isnull(a.InQty, 0) - isnull(a.OutQty, 0) + isnull(a.AdjustQty, 0) - isnull(a.ReturnQty, 0)
 from dbo.FtyInventory a WITH (NOLOCK) 
 left join dbo.FtyInventory_Detail b WITH (NOLOCK) on a.Ukey = b.Ukey
-inner join dbo.PO_Supp_Detail p WITH (NOLOCK) on p.id = a.Poid and p.seq1 = a.seq1 and p.seq2 = a.seq2
-left join fabric WITH (NOLOCK) on fabric.SCIRefno = p.SCIRefno
-inner join dbo.orders WITH (NOLOCK) on orders.ID = p.ID
+inner join dbo.PO_Supp_Detail psd WITH (NOLOCK) on psd.id = a.Poid and psd.seq1 = a.seq1 and psd.seq2 = a.seq2
+left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
+left join PO_Supp_Detail_Spec psdsS WITH (NOLOCK) on psdsS.ID = psd.id and psdsS.seq1 = psd.seq1 and psdsS.seq2 = psd.seq2 and psdsS.SpecColumnID = 'Size'
+left join fabric WITH (NOLOCK) on fabric.SCIRefno = psd.SCIRefno
+inner join dbo.orders WITH (NOLOCK) on orders.ID = psd.ID
 outer apply(
 	select distinct name from DropDownList where Type='Pms_MtlCategory'
 	and SUBSTRING(ID,2,1)= orders.Category

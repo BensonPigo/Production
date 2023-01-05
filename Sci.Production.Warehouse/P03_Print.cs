@@ -9,6 +9,7 @@ using Excel = Microsoft.Office.Interop.Excel;
 
 namespace Sci.Production.Warehouse
 {
+    /// <inheritdoc/>
     public partial class P03_Print : Win.Tems.PrintForm
     {
         private DataTable dt;
@@ -16,6 +17,7 @@ namespace Sci.Production.Warehouse
         private string order_by = string.Empty;
         private string junk_where = string.Empty;
 
+        /// <inheritdoc/>
         public P03_Print(DataRow row, int sort_by, bool chk_includeJunk)
         {
             this.InitializeComponent();
@@ -97,8 +99,8 @@ namespace Sci.Production.Warehouse
                                                     ,[HS Code]= FabricHsCode.value
 			                                       ,concat(mt.fabrictype2,'-',Fabric.MtlTypeID) Material_Type
                                                    ,Fabric.WeaveTypeID
-			                                       ,dbo.GetColorMultipleID(b.BrandID,a.ColorID) [Color]
-			                                       ,a.SizeSpec [Size]
+			                                       ,dbo.GetColorMultipleID(b.BrandID,isnull(psdsC.SpecValue, '')) [Color]
+			                                       ,psdsS.SpecValue [Size]
 			                                       ,h.Currencyid [Currency]
 			                                       ,format(a.UsedQty,'#,###,###,###.####')  [Qty]
 			                                       ,format(a.Qty,'#,###,###,###.##')  [Order Qty]
@@ -135,6 +137,8 @@ namespace Sci.Production.Warehouse
 			                                          (select r.Remark  from dbo.Receiving_Detail r WITH (NOLOCK) where POID =a.id and seq1=a.seq1 and seq2=a.seq2 and remark !='') r for xml path('')) [Remark]
 			                                        ,a.junk
                                             from dbo.PO_Supp_Detail a WITH (NOLOCK) 
+                                            left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = a.id and psdsC.seq1 = a.seq1 and psdsC.seq2 = a.seq2 and psdsC.SpecColumnID = 'Color'
+                                            left join PO_Supp_Detail_Spec psdsS WITH (NOLOCK) on psdsS.ID = a.id and psdsS.seq1 = a.seq1 and psdsS.seq2 = a.seq2 and psdsS.SpecColumnID = 'Size'
 			                                left join View_WH_Orders b WITH (NOLOCK) on a.id=b.id
 			                                left join dbo.PO_Supp c WITH (NOLOCK) on c.id=a.id and c.SEQ1=a.SEQ1
                                             left join Fabric with(nolock) on Fabric.SCIRefno = a.SCIRefno

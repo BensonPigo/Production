@@ -16,7 +16,7 @@
     [Remark]         NVARCHAR (600)  CONSTRAINT [DF_Export_Detail_Remark] DEFAULT ('') NULL,
     [PayDesc]        NVARCHAR (600)  CONSTRAINT [DF_Export_Detail_PayDesc] DEFAULT ('') NULL,
     [LastEta]        DATE            NULL,
-    [Refno]          VARCHAR (23)    CONSTRAINT [DF_Export_Detail_Refno] DEFAULT ('') NULL,
+    [Refno]          VARCHAR (36)    CONSTRAINT [DF_Export_Detail_Refno] DEFAULT ('') NULL,
     [SuppID]         VARCHAR (6)     CONSTRAINT [DF_Export_Detail_SuppID] DEFAULT ('') NOT NULL,
     [Pino]           VARCHAR (25)    CONSTRAINT [DF_Export_Detail_Pino] DEFAULT ('') NULL,
     [Description]    NVARCHAR (MAX)  CONSTRAINT [DF_Export_Detail_Description] DEFAULT ('') NULL,
@@ -51,6 +51,8 @@
     [InvoiceNo] VARCHAR(max) CONSTRAINT [DF_Export_Detail_InvoiceNo] DEFAULT ('') NULL,
     CONSTRAINT [PK_Export_Detail] PRIMARY KEY CLUSTERED ([Ukey] ASC, [ShipPlanHandle] ASC)
 );
+
+
 
 
 

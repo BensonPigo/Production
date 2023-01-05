@@ -59,22 +59,23 @@ select distinct 0 as selected
 		,[QtyBefore]= FTI.InQty - FTI.OutQty + FTI.AdjustQty - FTI.ReturnQty 
 		,[QtyAfter]= 0 
         ,[AdjustQty]= 0-(FTI.InQty - FTI.OutQty + FTI.AdjustQty - FTI.ReturnQty)
-        ,[StockUnit] = PO3.StockUnit      
+        ,[StockUnit] = psd.StockUnit      
         ,[location]= dbo.Getlocation(FTI.Ukey)
         , '' reasonid
         , '' reason_nm
-        ,ColorID =dbo.GetColorMultipleID(PO3.BrandId, PO3.ColorID)
+        ,ColorID =dbo.GetColorMultipleID(psd.BrandId, isnull(psdsC.SpecValue, ''))
 from FtyInventory FTI WITH (NOLOCK) 
-left join PO_Supp_Detail PO3 on PO3.ID=FTI.POID 
-and PO3.SEQ1=FTI.Seq1 and PO3.SEQ2=FTI.Seq2 
+left join PO_Supp_Detail psd on psd.ID=FTI.POID and psd.SEQ1=FTI.Seq1 and psd.SEQ2=FTI.Seq2 
+left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
 outer apply (
-	select Description from Fabric where SCIRefno=PO3.SCIRefno
+	select Description from Fabric where SCIRefno=psd.SCIRefno
 ) Fa
 outer apply (
 	select * from dbo.SplitString(
 	(select dbo.Getlocation(FTI.Ukey) 
 		),',') ) lo
-where 1=1 and FTI.StockType='O' ");
+where 1=1 and FTI.StockType='O'
+");
 
                 if (!MyUtility.Check.Empty(sp))
                 {
@@ -101,7 +102,7 @@ where 1=1 and FTI.StockType='O' ");
                 {
                     strSQLCmd.Append(string.Format(
                         @" 
-        and PO3.refno = '{0}' ", refno));
+        and psd.refno = '{0}' ", refno));
                 }
 
                 if (!MyUtility.Check.Empty(location))
@@ -118,7 +119,7 @@ where 1=1 and FTI.StockType='O' ");
                     {
                         strSQLCmd.Append(string.Format(
                             @" 
-        and PO3.FabricType='{0}'  ", fabricType));
+        and psd.FabricType='{0}'  ", fabricType));
                     }
                 }
 
@@ -145,8 +146,6 @@ where 1=1 and FTI.StockType='O' ");
                 this.HideWaitMessage();
             }
         }
-
-        // Form Load
 
         /// <inheritdoc/>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]

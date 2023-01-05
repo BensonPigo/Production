@@ -2,7 +2,7 @@
     [ID]            VARCHAR (13)    NOT NULL,
     [NLCode]        VARCHAR (9)     CONSTRAINT [DF_VNConsumption_Detail _Detail_NLCode] DEFAULT ('') NOT NULL,
     [SCIRefno]      VARCHAR (30)    CONSTRAINT [DF_VNConsumption_Detail _Detail_SCIRefno] DEFAULT ('') NOT NULL,
-    [RefNo]         VARCHAR (23)    CONSTRAINT [DF_VNConsumption_Detail _Detail_RefNo] DEFAULT ('') NOT NULL,
+    [RefNo]         VARCHAR (36)    CONSTRAINT [DF_VNConsumption_Detail _Detail_RefNo] DEFAULT ('') NOT NULL,
     [Qty]           NUMERIC (12, 4) CONSTRAINT [DF_VNConsumption_Detail _Detail_Qty] DEFAULT ((0)) NOT NULL,
     [LocalItem]     BIT             CONSTRAINT [DF_VNConsumption_Detail _Detail_LocalItem] DEFAULT ((0)) NULL,
     [FabricBrandID] VARCHAR (8)     DEFAULT ('') NULL,

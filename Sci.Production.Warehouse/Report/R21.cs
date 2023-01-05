@@ -171,10 +171,10 @@ namespace Sci.Production.Warehouse
 	,[SCI Refno] = psd.SCIRefno
 	,[Description] = d.Description
 	,[Color] = CASE WHEN Fabric.MtlTypeID = 'EMB THREAD' OR Fabric.MtlTypeID = 'SP THREAD' OR Fabric.MtlTypeID = 'THREAD' 
-				    THEN IIF(psd.SuppColor = '',dbo.GetColorMultipleID(o.BrandID, psd.ColorID) , psd.SuppColor)
-				    ELSE psd.ColorID  
+				    THEN IIF(psd.SuppColor = '',dbo.GetColorMultipleID(o.BrandID, isnull(psdsC.SpecValue, '')) , psd.SuppColor)
+				    ELSE isnull(psdsC.SpecValue, '')  
 			   END
-	,[Size] = psd.SizeSpec
+	,[Size] = isnull(psdsS.SpecValue, '')
 	,[Stock Unit] = psd.StockUnit
 	,[Purchase Qty] = dbo.GetUnitQty(psd.PoUnit, psd.StockUnit, psd.Qty)
     ,[Order Qty] = o.Qty
@@ -317,10 +317,10 @@ namespace Sci.Production.Warehouse
 	,[SCI Refno] = psd.SCIRefno
     ,[Description] = d.Description
 	,[Color] = CASE WHEN Fabric.MtlTypeID = 'EMB THREAD' OR Fabric.MtlTypeID = 'SP THREAD' OR Fabric.MtlTypeID = 'THREAD' 
-				    THEN IIF(psd.SuppColor = '',dbo.GetColorMultipleID(o.BrandID, psd.ColorID) , psd.SuppColor)
-				    ELSE psd.ColorID  
+				    THEN IIF(psd.SuppColor = '',dbo.GetColorMultipleID(o.BrandID, isnull(psdsC.SpecValue, '')) , psd.SuppColor)
+				    ELSE isnull(psdsC.SpecValue, '')  
 			   END
-	,[Size] = psd.SizeSpec
+	,[Size] = isnull(psdsS.SpecValue, '')
 	,[Stock Unit] = psd.StockUnit
 	,[Purchase Qty] = round(ISNULL(r.RateValue,1) * psd.Qty,2)
     ,[Order Qty] = o.Qty
@@ -441,6 +441,8 @@ inner join PO p with (nolock) on o.id = p.id
 inner join PO_Supp ps with (nolock) on p.id = ps.id
 inner join PO_Supp_Detail psd with (nolock) on p.id = psd.id and ps.seq1 = psd.seq1
 {(!string.IsNullOrEmpty(this.WorkNo) ? $"INNER JOIN Export_Detail ed ON ed.POID=psd.ID AND ed.Seq1 = psd.SEQ1 and ed.Seq2 = psd.SEQ2 AND ed.ID='{this.WorkNo}'" : string.Empty)}
+left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
+left join PO_Supp_Detail_Spec psdsS WITH (NOLOCK) on psdsS.ID = psd.id and psdsS.seq1 = psd.seq1 and psdsS.seq2 = psd.seq2 and psdsS.SpecColumnID = 'Size'
 left join FtyInventory fi with (nolock) on fi.POID = psd.id and fi.Seq1 = psd.SEQ1 and fi.Seq2 = psd.SEQ2
 left join Fabric WITH (NOLOCK) on psd.SCIRefno = fabric.SCIRefno
 left join Supp on Supp.id = ps.SuppID 
@@ -473,6 +475,8 @@ inner join PO p with (nolock) on o.id = p.id
 inner join PO_Supp ps with (nolock) on p.id = ps.id
 inner join PO_Supp_Detail psd with (nolock) on p.id = psd.id and ps.seq1 = psd.seq1
 {(!string.IsNullOrEmpty(this.WorkNo) ? $"INNER JOIN Export_Detail ed ON ed.POID=psd.ID AND ed.Seq1 = psd.SEQ1 and ed.Seq2 = psd.SEQ2 AND ed.ID='{this.WorkNo}'" : string.Empty)}
+left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
+left join PO_Supp_Detail_Spec psdsS WITH (NOLOCK) on psdsS.ID = psd.id and psdsS.seq1 = psd.seq1 and psdsS.seq2 = psd.seq2 and psdsS.SpecColumnID = 'Size'
 left join MDivisionPoDetail mpd with (nolock) on mpd.POID = psd.id and mpd.Seq1 = psd.SEQ1 and mpd.seq2 = psd.SEQ2
 left join Fabric WITH (NOLOCK) on psd.SCIRefno = fabric.SCIRefno
 left join Supp on Supp.id = ps.SuppID 
@@ -526,7 +530,7 @@ where 1=1
 
             if (!MyUtility.Check.Empty(this.Color))
             {
-                this.sqlcmd.Append(string.Format(" and psd.ColorID = '{0}'", this.Color));
+                this.sqlcmd.Append(string.Format(" and psdsC.SpecValue = '{0}'", this.Color));
             }
 
             if (!MyUtility.Check.Empty(this.MT))
@@ -548,10 +552,10 @@ where 1=1
                 {
                     if (this._reportType == 0)
                     {
-                            {
+                        {
                             this.sqlcmd.Append(string.Format(" and fi.StockType = '{0}'", this.ST));
                         }
-                        }
+                    }
                     else
                     {
                         if (this.ST == "B")
@@ -951,7 +955,7 @@ or
             }
             else
             {
-                result = DBProxy.Current.Select(null,  this.sqlcmd_fin.ToString(), this.parameters, out this.printData);
+                result = DBProxy.Current.Select(null, this.sqlcmd_fin.ToString(), this.parameters, out this.printData);
                 if (!result)
                 {
                     this.HideWaitMessage();

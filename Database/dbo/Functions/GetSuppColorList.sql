@@ -1,5 +1,4 @@
-﻿
-Create Function [dbo].[GetSuppColorList]
+﻿CREATE Function [dbo].[GetSuppColorList]
 (
 	  @SCIRefNo		VarChar(30)				--
 	 ,@SuppID		VarChar(6)				--
@@ -22,22 +21,17 @@ Begin
 		(RowID BigInt Identity(1,1) Not Null, SuppColor Varchar(30));
 	Declare @SuppColorRowID Int;		--Supp. Color Row ID
 	Declare @SuppColorRowCount Int;		--Supp. Color 總資料筆數
-
-	Insert Into @SuppColorCursor
-		(SuppColor)
-		Select SuppColor From dbo.GetSuppColor(@SCIRefNo, @SuppID, @ColorID, @BrandID, @SeasonID, @ProgramID, @StyleID);
 	
-	Select @SuppColorRowID = Min(RowID), @SuppColorRowCount = Max(RowID) From @SuppColorCursor;
-	While @SuppColorRowID <= @SuppColorRowCount
+	Set @SuppColorList = IsNull(stuff(
+								(Select ',' + RTrim(SuppColor)
+								   From Production.dbo.GetSuppColor_NEW(@SCIRefNo, @SuppID, @ColorID, @BrandID, @SeasonID, @ProgramID, @StyleID)
+								  Order by SeqNo
+									For Xml Path('')
+								),1,1,''), '');
+
+	IF(Replace(@SuppColorList,',','') = '')
 	Begin
-		Select @SuppColor = SuppColor
-		  From @SuppColorCursor
-		 Where RowID = @SuppColorRowID;
-		
-		Set @SuppColorList += RTrim(@SuppColor) + ',';
-
-		Set @SuppColorRowID += 1;
-	End;
-
+		Set @SuppColorList = '';
+	End
 	Return @SuppColorList;
 End

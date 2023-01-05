@@ -1,13 +1,13 @@
-﻿using System;
+﻿using Ict;
+using Ict.Win;
+using Sci.Data;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
-using Ict;
-using Ict.Win;
-using Sci.Data;
 
 namespace Sci.Production.Warehouse
 {
@@ -49,15 +49,14 @@ namespace Sci.Production.Warehouse
             else
             {
                 // 建立可以符合回傳的Cursor
-                strSQLCmd.Append(string.Format(
-                    @"
+                strSQLCmd.Append($@"
 select  0 as selected 
         , '' id
         , c.PoId
-        , a.Seq1
-        , a.Seq2
-        , concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2) as seq
-        , dbo.getmtldesc(a.id,a.seq1,a.seq2,2,0) as [Description]
+        , psd.Seq1
+        , psd.Seq2
+        , concat(Ltrim(Rtrim(psd.seq1)), ' ', psd.Seq2) as seq
+        , dbo.getmtldesc(psd.id,psd.seq1,psd.seq2,2,0) as [Description]
         , c.Roll
         , c.Dyelot
         , c.inqty - c.outqty + c.adjustqty - c.ReturnQty as QtyBefore
@@ -65,30 +64,32 @@ select  0 as selected
         , dbo.Getlocation(c.ukey) as location
         , '' reasonid
         , '' reason_nm
-        , a.FabricType
-        , a.stockunit
+        , psd.FabricType
+        , psd.stockunit
         , c.stockType
         , c.ukey as ftyinventoryukey
-        , ColorID =dbo.GetColorMultipleID(a.BrandId, a.ColorID)
-from dbo.PO_Supp_Detail a WITH (NOLOCK) 
-inner join dbo.ftyinventory c WITH (NOLOCK) on c.poid = a.id and c.seq1 = a.seq1 and c.seq2  = a.seq2 and c.stocktype = 'B'
-inner join View_WH_Orders o WITH (NOLOCK) on o.ID = a.ID
+        , ColorID =dbo.GetColorMultipleID(psd.BrandId, isnull(psdsC.SpecValue, ''))
+from dbo.PO_Supp_Detail psd WITH (NOLOCK) 
+inner join dbo.ftyinventory c WITH (NOLOCK) on c.poid = psd.id and c.seq1 = psd.seq1 and c.seq2  = psd.seq2 and c.stocktype = 'B'
+inner join View_WH_Orders o WITH (NOLOCK) on o.ID = psd.ID
 inner join dbo.Factory f WITH (NOLOCK) on o.FactoryID = f.id
-Where   c.lock = 0 
-        and f.mdivisionid='{0}'", Env.User.Keyword));
+left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
+Where c.lock = 0 
+and f.mdivisionid='{Env.User.Keyword}'
+");
 
                 if (!MyUtility.Check.Empty(sp))
                 {
                     strSQLCmd.Append(string.Format(
                         @" 
-        and a.id = '{0}' ", sp));
+        and psd.id = '{0}' ", sp));
                 }
 
                 if (!MyUtility.Check.Empty(refno))
                 {
                     strSQLCmd.Append(string.Format(
                         @" 
-        and a.refno = '{0}' ", refno));
+        and psd.refno = '{0}' ", refno));
                 }
 
                 if (!MyUtility.Check.Empty(location))
@@ -104,14 +105,14 @@ Where   c.lock = 0
                 {
                     strSQLCmd.Append(string.Format(
                         @"
-        and a.seq1 = '{0}'", this.txtSeq.Seq1));
+        and psd.seq1 = '{0}'", this.txtSeq.Seq1));
                 }
 
                 if (!this.txtSeq.CheckSeq2Empty())
                 {
                     strSQLCmd.Append(string.Format(
                         @" 
-        and a.seq2 = '{0}'", this.txtSeq.Seq2));
+        and psd.seq2 = '{0}'", this.txtSeq.Seq2));
                 }
 
                 switch (fabrictype)
@@ -120,11 +121,11 @@ Where   c.lock = 0
                         break;
                     case "F":
                         strSQLCmd.Append(@" 
-        And a.fabrictype = 'F'");
+        And psd.fabrictype = 'F'");
                         break;
                     case "A":
                         strSQLCmd.Append(@" 
-        And a.fabrictype = 'A'");
+        And psd.fabrictype = 'A'");
                         break;
                 }
 

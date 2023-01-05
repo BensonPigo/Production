@@ -1,15 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Text;
-using System.Windows.Forms;
+﻿using Ict;
 using Ict.Win;
 using Sci.Data;
-using Ict;
+using System;
+using System.Collections.Generic;
+using System.Data;
 using System.Linq;
+using System.Text;
+using System.Windows.Forms;
 
 namespace Sci.Production.Warehouse
 {
+    /// <inheritdoc/>
     public partial class P20 : Win.Tems.QueryForm
     {
         private DataSet data = new DataSet();
@@ -17,6 +18,7 @@ namespace Sci.Production.Warehouse
         private DataTable dtInvtrans;
         private DataTable dtFtyInventory;
 
+        /// <inheritdoc/>
         public P20(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -34,8 +36,6 @@ namespace Sci.Production.Warehouse
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-
-            // data.Tables.Add("dtSummary");
 
             // 設定Grid1的顯示欄位
             this.gridStockList.IsEditingReadOnly = true;
@@ -156,14 +156,14 @@ from
 			, i.InputQty
 			, i.OutputQty
 			, i.Qty
-			, fabrictype = concat( case b.FabricType when 'F' then 'Fabric' when 'A' then 'Accessory' else 'Other' end , '-', i.MtlTypeID)
+			, fabrictype = concat( case psd.FabricType when 'F' then 'Fabric' when 'A' then 'Accessory' else 'Other' end , '-', i.MtlTypeID)
 			, i.FactoryID
 			, i.ETA
 			, i.MtlTypeID
 			, i.ProjectID
 			, i.Deadline
 			, i.Refno
-			, [ColorID]=IIF(Fabric.MtlTypeID LIKE '%Thread%' ,IIF(b.SuppColor = '', dbo.GetColorMultipleID (i.BrandID, b.ColorID), b.SuppColor) , b.ColorID)
+			, [ColorID]=IIF(Fabric.MtlTypeID LIKE '%Thread%' ,IIF(psd.SuppColor = '', dbo.GetColorMultipleID (i.BrandID, isnull(psdsC.SpecValue, '')), psd.SuppColor) , isnull(psdsC.SpecValue, ''))
 			, i.Ukey
 			, I.SCIRefno
 			, I.UnitID POUNIT
@@ -171,10 +171,12 @@ from
 			, dbo.GetUnitRate(I.UnitID, [dbo].[GetStockUnitBySPSeq](i.PoID, i.Seq1, i.Seq2)) RATE	
 	from inventory i WITH (NOLOCK) 
 	inner join factory f WITH (NOLOCK) on i.FactoryID = f.ID 
-	left join dbo.PO_Supp_Detail b WITH (NOLOCK) on i.PoID= b.id and i.Seq1 = b.SEQ1 and i.Seq2 = b.SEQ2
-	left join dbo.PO_Supp as s WITH (NOLOCK) on s.ID = b.ID and s.Seq1 = b.SEQ1
-	left join fabric WITH (NOLOCK) on fabric.SCIRefno = b.scirefno
-	where f.Junk = 0 ");
+	left join dbo.PO_Supp_Detail psd WITH (NOLOCK) on i.PoID= psd.id and i.Seq1 = psd.SEQ1 and i.Seq2 = psd.SEQ2
+    left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
+	left join dbo.PO_Supp as s WITH (NOLOCK) on s.ID = psd.ID and s.Seq1 = psd.SEQ1
+	left join fabric WITH (NOLOCK) on fabric.SCIRefno = psd.scirefno
+	where f.Junk = 0
+");
 
             if (!MyUtility.Check.Empty(spno))
             {
@@ -198,7 +200,7 @@ from
 
             if (!MyUtility.Check.Empty(colorID))
             {
-                sqlcmd.Append(" and IIF(Fabric.MtlTypeID LIKE '%Thread%' ,b.SuppColor , b.ColorID) = @ColorID");
+                sqlcmd.Append(" and IIF(Fabric.MtlTypeID LIKE '%Thread%' ,psd.SuppColor , isnull(psdsC.SpecValue, '')) = @ColorID");
             }
 
             if (!MyUtility.Check.Empty(factory))
@@ -268,8 +270,9 @@ from (
     inner join factory f WITH (NOLOCK) on i.FactoryID = f.ID 
     inner join invtrans t WITH (NOLOCK) on t.InventoryUkey = i.Ukey
     inner join #tmp_TpeIventory tp on T.InventoryUkey = tp.Ukey
-    left join dbo.PO_Supp_Detail b WITH (NOLOCK) on i.PoID= b.id and i.Seq1 = b.SEQ1 and i.Seq2 = b.SEQ2
-	left join fabric WITH (NOLOCK) on fabric.SCIRefno = b.scirefno
+    left join dbo.PO_Supp_Detail psd WITH (NOLOCK) on i.PoID= psd.id and i.Seq1 = psd.SEQ1 and i.Seq2 = psd.SEQ2
+    left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
+	left join fabric WITH (NOLOCK) on fabric.SCIRefno = psd.scirefno
     where f.Junk = 0 ");
             if (!MyUtility.Check.Empty(spno))
             {
@@ -296,7 +299,7 @@ from (
 
             if (!MyUtility.Check.Empty(colorID))
             {
-                sqlcmd.Append(" and IIF(Fabric.MtlTypeID LIKE '%Thread%' ,b.SuppColor , b.ColorID) = @ColorID");
+                sqlcmd.Append(" and IIF(Fabric.MtlTypeID LIKE '%Thread%' ,psd.SuppColor , isnull(psdsC.SpecValue, '')) = @ColorID");
             }
 
             if (!MyUtility.Check.Empty(factory))
@@ -329,8 +332,9 @@ from (
     inner join factory f WITH (NOLOCK) on i.FactoryID = f.ID 
     inner join invtrans t WITH (NOLOCK) on T.TransferUkey = I.Ukey and t.type='3'
     inner join #tmp_TpeIventory tp on T.InventoryUkey = tp.Ukey
-    left join dbo.PO_Supp_Detail b WITH (NOLOCK) on i.PoID= b.id and i.Seq1 = b.SEQ1 and i.Seq2 = b.SEQ2
-	left join fabric WITH (NOLOCK) on fabric.SCIRefno = b.scirefno
+    left join dbo.PO_Supp_Detail psd WITH (NOLOCK) on i.PoID= psd.id and i.Seq1 = psd.SEQ1 and i.Seq2 = psd.SEQ2
+    left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
+	left join fabric WITH (NOLOCK) on fabric.SCIRefno = psd.scirefno
     where f.Junk = 0 ");
             if (!MyUtility.Check.Empty(spno))
             {
@@ -357,7 +361,7 @@ from (
 
             if (!MyUtility.Check.Empty(colorID))
             {
-                sqlcmd.Append(" and IIF(Fabric.MtlTypeID LIKE '%Thread%' ,b.SuppColor , b.ColorID) = @ColorID");
+                sqlcmd.Append(" and IIF(Fabric.MtlTypeID LIKE '%Thread%' ,psd.SuppColor , isnull(psdsC.SpecValue, '')) = @ColorID");
             }
 
             if (!MyUtility.Check.Empty(factory))
@@ -382,7 +386,7 @@ order by InventoryUkey,ConfirmDate,ID");
         , f.ReturnQty
         , dbo.Getlocation(f.ukey)  Location
 from FtyInventory f WITH (NOLOCK) 
-left join dbo.PO_Supp_Detail b WITH (NOLOCK) on f.PoID= b.id and f.Seq1 = b.SEQ1 and f.Seq2 = b.SEQ2
+left join dbo.PO_Supp_Detail psd WITH (NOLOCK) on f.PoID= psd.id and f.Seq1 = psd.SEQ1 and f.Seq2 = psd.SEQ2
 where   stocktype='I'");
             if (!MyUtility.Check.Empty(spno))
             {

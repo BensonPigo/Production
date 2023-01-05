@@ -1078,53 +1078,54 @@ drop Table #TmpSource;
         public static string SelePoItemSqlCmd(bool junk = true)
         {
             return @"
-select  p.id,concat(Ltrim(Rtrim(p.seq1)), ' ', p.seq2) as seq
-        , p.Refno   
-        , dbo.getmtldesc(p.id,p.seq1,p.seq2,2,0) as Description 
-        , p.ColorID
+select  psd.id,concat(Ltrim(Rtrim(psd.seq1)), ' ', psd.seq2) as seq
+        , psd.Refno   
+        , dbo.getmtldesc(psd.id,psd.seq1,psd.seq2,2,0) as Description 
+        , ColorID = isnull(psdsC.SpecValue, '')
         , [WH_P07_Color] = Color.Value
-        , p.SizeSpec 
-        , p.FinalETA
+        , SizeSpec= isnull(psdsS.SpecValue, '')
+        , psd.FinalETA
         , isnull(m.InQty, 0) as InQty
-        , p.pounit
-        , StockUnit = dbo.GetStockUnitBySPSeq (p.id, p.seq1, p.seq2)
+        , psd.pounit
+        , StockUnit = dbo.GetStockUnitBySPSeq (psd.id, psd.seq1, psd.seq2)
         , isnull(m.OutQty, 0) as outQty
         , isnull(m.AdjustQty, 0) as AdjustQty
         , isnull(m.ReturnQty, 0) as ReturnQty
         , isnull(m.inqty, 0) - isnull(m.OutQty, 0) + isnull(m.AdjustQty, 0) - isnull(m.ReturnQty, 0) as balance
         , isnull(m.LInvQty, 0) as LInvQty
         , isnull(m.LObQty, 0) as LObQty
-        , p.fabrictype
-        , p.seq1
-        , p.seq2
-        , p.scirefno
-        , Qty = Round (p.qty * v.Ratevalue, 2)
+        , psd.fabrictype
+        , psd.seq1
+        , psd.seq2
+        , psd.scirefno
+        , Qty = Round (psd.qty * v.Ratevalue, 2)
         ,[Status]=IIF(LockStatus.LockCount > 0 ,'Locked','Unlocked')
         ,Fabric.MtlTypeID
-from dbo.PO_Supp_Detail p WITH (NOLOCK) 
-inner join View_WH_Orders o on p.id = o.id
+from dbo.PO_Supp_Detail psd WITH (NOLOCK) 
+inner join View_WH_Orders o on psd.id = o.id
 inner join Factory f on o.FtyGroup = f.id
-left join dbo.mdivisionpodetail m WITH (NOLOCK) on m.poid = p.id and m.seq1 = p.seq1 and m.seq2 = p.seq2
-LEFT JOIN Fabric WITH (NOLOCK) ON p.SCIRefNo=Fabric.SCIRefNo
+inner join View_unitrate v on v.FROM_U = psd.POUnit and v.TO_U = dbo.GetStockUnitBySPSeq (psd.id, psd.seq1, psd.seq2)
+left join dbo.mdivisionpodetail m WITH (NOLOCK) on m.poid = psd.id and m.seq1 = psd.seq1 and m.seq2 = psd.seq2
+left JOIN Fabric WITH (NOLOCK) ON psd.SCIRefNo=Fabric.SCIRefNo
 left join [dbo].[MtlType] mt WITH (NOLOCK) on mt.ID = Fabric.MtlTypeID
-inner join View_unitrate v on v.FROM_U = p.POUnit 
-	                          and v.TO_U = dbo.GetStockUnitBySPSeq (p.id, p.seq1, p.seq2)
+left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
+left join PO_Supp_Detail_Spec psdsS WITH (NOLOCK) on psdsS.ID = psd.id and psdsS.seq1 = psd.seq1 and psdsS.seq2 = psd.seq2 and psdsS.SpecColumnID = 'Size'
 OUTER APPLY(
  SELECT [Value]=
-	 CASE WHEN Fabric.MtlTypeID in ('EMB THREAD','SP THREAD','THREAD') THEN IIF(isnull(p.SuppColor,'') = '', dbo.GetColorMultipleID(o.BrandID,p.ColorID), p.SuppColor)
-		 ELSE dbo.GetColorMultipleID(o.BrandID,p.ColorID)
+	 CASE WHEN Fabric.MtlTypeID in ('EMB THREAD','SP THREAD','THREAD') THEN IIF(isnull(psd.SuppColor,'') = '', dbo.GetColorMultipleID(o.BrandID, isnull(psdsC.SpecValue, '')), psd.SuppColor)
+		 ELSE dbo.GetColorMultipleID(o.BrandID, isnull(psdsC.SpecValue, ''))
 	 END
 )Color
 OUTER APPLY(
 	SELECT [LockCount]=COUNT(UKEY)
 	FROM FtyInventory
 	WHERE POID='{0}'
-	AND Seq1=p.Seq1
-	AND Seq2=p.Seq2
+	AND Seq1=psd.Seq1
+	AND Seq2=psd.Seq2
 	AND Lock = 1
 )LockStatus
-where p.id ='{0}'
-" + (junk ? "and p.Junk = 0" : string.Empty);
+where psd.id ='{0}'
+" + (junk ? "and psd.Junk = 0" : string.Empty);
         }
 
         /// <summary>
@@ -1276,14 +1277,13 @@ with cte as (
     select  Dyelot
             , sum(inqty - OutQty + AdjustQty - ReturnQty) as GroupQty
     from dbo.FtyInventory a WITH (NOLOCK) 
-    inner join dbo.PO_Supp_Detail p WITH (NOLOCK) on  p.id = a.POID 
-                                                      and p.seq1 = a.Seq1 
-                                                      and p.seq2 = a.Seq2
+    inner join dbo.PO_Supp_Detail psd WITH (NOLOCK) on  psd.id = a.POID and psd.seq1 = a.Seq1 and psd.seq2 = a.Seq2
+    inner join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
     where   poid = '{materials["poid"]}' 
             and Stocktype = '{stocktype}' 
             and inqty - OutQty + AdjustQty - ReturnQty > 0
-            and p.SCIRefno = '{materials["scirefno"]}' 
-            and p.ColorID = '{materials["colorid"]}' 
+            and psd.SCIRefno = '{materials["scirefno"]}' 
+            and isnull(psdsC.SpecValue, '') = '{materials["colorid"]}' 
             and a.Seq1 BETWEEN '00' AND '99'
     Group by Dyelot
 ) 
@@ -1313,14 +1313,13 @@ select  location = Stuff ((select ',' + t.mtllocationid
         --,c.GroupQty
 from cte c 
 inner join dbo.FtyInventory a WITH (NOLOCK) on a.Dyelot=c.Dyelot
-inner join dbo.PO_Supp_Detail p WITH (NOLOCK) on  p.id = a.POID 
-                                                  and p.seq1 = a.Seq1 
-                                                  and p.seq2 = a.Seq2
+inner join dbo.PO_Supp_Detail psd WITH (NOLOCK) on  psd.id = a.POID and psd.seq1 = a.Seq1 and psd.seq2 = a.Seq2
+inner join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
 where   poid = '{materials["poid"]}' 
         and Stocktype = '{stocktype}' 
         and inqty - OutQty + AdjustQty - ReturnQty > 0
-        and p.SCIRefno = '{materials["scirefno"]}' 
-        and p.ColorID = '{materials["colorid"]}' 
+        and psd.SCIRefno = '{materials["scirefno"]}' 
+        and isnull(psdsC.SpecValue, '') = '{materials["colorid"]}' 
         and a.Seq1 BETWEEN '00' AND '99'
 ";
             }
@@ -1644,24 +1643,24 @@ where   poid = '{materials["StockPOID"]}'
 
             // 此筆需求數 = 總需求數 - 已經issue總數
             decimal request = decimal.Parse(materials["requestqty"].ToString()) - decimal.Parse(materials["accu_issue"].ToString());
-            sqlcmd = string.Format(
-                @"
+            sqlcmd = $@"
 select distinct a.Seq1, a.Seq2, ctpd.Dyelot 
 ,GroupQty = sum(a.InQty - a.OutQty + a.AdjustQty - a.ReturnQty)
 ,ReleaseQty = ReleaseQty.value
 into #tmp
 from  CutTapePlan_Detail ctpd
 inner join CutTapePlan ctp on ctp.ID = ctpd.ID
-inner join PO_Supp_Detail psd on psd.ColorID = ctpd.ColorID and psd.Refno = ctpd.RefNo and psd.ID = ctp.CuttingID
-inner join FtyInventory a on a.POID = '{0}' and a.Seq1 = psd.Seq1 and a.Seq2 = psd.Seq2 and a.Dyelot = ctpd.Dyelot
+inner join PO_Supp_Detail psd on psd.Refno = ctpd.RefNo and psd.ID = ctp.CuttingID
+inner join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color' and isnull(psdsC.SpecValue, '') = ctpd.ColorID 
+inner join FtyInventory a on a.POID = '{materials["poid"]}' and a.Seq1 = psd.Seq1 and a.Seq2 = psd.Seq2 and a.Dyelot = ctpd.Dyelot
 outer apply(
 	select value= sum(ReleaseQty)
 	from CutTapePlan_Detail
 	where ID = ctp.ID
 	and Dyelot = ctpd.Dyelot
 )ReleaseQty
-where ctpd.id = '{1}' and a.Seq1 between '01' and '99' and a.StockType = '{2}'
-and ctpd.ColorID = '{3}'
+where ctpd.id = '{cutplanid}' and a.Seq1 between '01' and '99' and a.StockType = '{stocktype}'
+and ctpd.ColorID = '{materials["ColorID"]}'
 group by a.Seq1, a.Seq2, ctpd.Dyelot, ctpd.ColorID,ReleaseQty.value
 
 select
@@ -1690,9 +1689,10 @@ select
     , running_total = sum(inqty - OutQty + AdjustQty - ReturnQty) over (order by t.GroupQty DESC,a.Dyelot,(inqty - OutQty + AdjustQty - ReturnQty) desc
                                                         rows between unbounded preceding and current row)
 from #tmp t
-inner join FtyInventory a on a.POID = '{0}' and a.Seq1 = t.Seq1 and a.Seq2 = t.Seq2 and a.Dyelot = t.Dyelot and a.StockType = '{2}'
+inner join FtyInventory a on a.POID = '{materials["poid"]}' and a.Seq1 = t.Seq1 and a.Seq2 = t.Seq2 and a.Dyelot = t.Dyelot and a.StockType = '{stocktype}'
 
-drop table #tmp", materials["poid"], cutplanid, stocktype, materials["ColorID"]);
+drop table #tmp
+";
 
             DualResult result = DBProxy.Current.Select(string.Empty, sqlcmd, out dt);
             if (!result)
@@ -1776,7 +1776,6 @@ drop table #tmp", materials["poid"], cutplanid, stocktype, materials["ColorID"])
 
             // 取得所有項次號(欄位名稱跟Issue_Detail一樣)
             sqlcmd = $@"
-
 select   [POID]=psd.ID
     , psd.Seq1
     , psd.Seq2
@@ -1793,17 +1792,15 @@ select   [POID]=psd.ID
 								 ), 1, 1, '')
     , [FtyInventoryUkey]=a.Ukey
 from dbo.FtyInventory a WITH (NOLOCK) 
-inner join dbo.PO_Supp_Detail psd WITH (NOLOCK) on  psd.id = a.POID 
-												and psd.seq1 = a.Seq1 
-												and psd.seq2 = a.Seq2
-
+inner join dbo.PO_Supp_Detail psd WITH (NOLOCK) on  psd.id = a.POID and psd.seq1 = a.Seq1 and psd.seq2 = a.Seq2
+inner join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
 INNER JOIN Fabric f ON f.SCIRefno = psd.SCIRefno
 INNER JOIN MtlType m ON m.id= f.MtlTypeID
-where    psd.ID = '{material["poid"]}'
-	and psd.SCIRefno = '{material["SCIRefno"]}' 
-	and psd.ColorID = '{material["ColorID"]}' 
-    AND (a.stocktype = 'B' OR a.stocktype IS NULL)
-    AND m.IsThread=1
+where psd.ID = '{material["poid"]}'
+and psd.SCIRefno = '{material["SCIRefno"]}' 
+and isnull(psdsC.SpecValue, '') = '{material["ColorID"]}' 
+AND (a.stocktype = 'B' OR a.stocktype IS NULL)
+AND m.IsThread=1
 ";
 
             DualResult result = DBProxy.Current.Select(string.Empty, sqlcmd, out dt);
@@ -3823,6 +3820,8 @@ where sd.Ukey in ({ukeys})
             {
                 psd_FtyDt = $@"
 left join Production.dbo.PO_Supp_Detail psd with(nolock) on psd.ID = sd.FromPoId and psd.SEQ1 = sd.FromSeq1 and psd.SEQ2 = sd.FromSeq2
+left join Production.dbo.PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
+left join Production.dbo.PO_Supp_Detail_Spec psdsS WITH (NOLOCK) on psdsS.ID = psd.id and psdsS.seq1 = psd.seq1 and psdsS.seq2 = psd.seq2 and psdsS.SpecColumnID = 'Size'
 left join Production.dbo.FtyInventory f with(nolock) on f.POID = isnull(sd.FromPoId, '')
     and f.Seq1 = isnull(sd.FromSeq1, '')
     and f.Seq2 = isnull(sd.FromSeq2, '')
@@ -3841,6 +3840,8 @@ left join FtyInventory fto with(nolock) on fto.POID = isnull(sd.ToPOID, '')
             {
                 psd_FtyDt = $@"
 left join Production.dbo.PO_Supp_Detail psd with(nolock) on psd.ID = sd.PoId and psd.SEQ1 = sd.Seq1 and psd.SEQ2 = sd.Seq2
+left join Production.dbo.PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
+left join Production.dbo.PO_Supp_Detail_Spec psdsS WITH (NOLOCK) on psdsS.ID = psd.id and psdsS.seq1 = psd.seq1 and psdsS.seq2 = psd.seq2 and psdsS.SpecColumnID = 'Size'
 left join Production.dbo.FtyInventory f with(nolock) on f.POID = isnull(sd.PoId, '')
     and f.Seq1 = isnull(sd.Seq1, '')
     and f.Seq2 = isnull(sd.Seq2, '')

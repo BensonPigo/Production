@@ -93,7 +93,7 @@ namespace Sci.Production.Warehouse
 ,a.StockType
 ,a.Ukey ftyinventoryukey
 ,b.Refno
-,b.ColorID
+,ColorID = isnull(psdsC.SpecValue, '')
 ,b.FabricType
 ,b.StockUnit
 ,dbo.getMtlDesc(a.poid,a.seq1,a.seq2,2,0) [description]
@@ -102,7 +102,9 @@ namespace Sci.Production.Warehouse
 ,0.00 as QtyAfter
 from dbo.FtyInventory a WITH (NOLOCK) 
 inner join dbo.PO_Supp_Detail b WITH (NOLOCK) on b.ID = a.POID and b.SEQ1 = a.Seq1 and b.SEQ2 = a.Seq2
-inner join dbo.Factory f on f.ID=b.factoryID"));
+inner join dbo.Factory f on f.ID=b.factoryID
+left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = b.id and psdsC.seq1 = b.seq1 and psdsC.seq2 = b.seq2 and psdsC.SpecColumnID = 'Color'
+"));
 
             if (!MyUtility.Check.Empty(category))
             {

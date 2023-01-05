@@ -1817,10 +1817,6 @@
       <AnsiNulls>On</AnsiNulls>
       <QuotedIdentifier>On</QuotedIdentifier>
     </Build>
-    <Build Include="dbo\Stored Procedures\BoaExpend_Insert.sql">
-      <AnsiNulls>On</AnsiNulls>
-      <QuotedIdentifier>On</QuotedIdentifier>
-    </Build>
     <Build Include="dbo\Stored Procedures\BoaExpend.sql">
       <AnsiNulls>On</AnsiNulls>
       <QuotedIdentifier>On</QuotedIdentifier>
@@ -2764,6 +2760,27 @@
     <Build Include="dbo\Tables\SubconReturn.sql" />
     <Build Include="dbo\Tables\SubconReturn_Detail.sql" />
     <Build Include="dbo\Tables\TransferExport_ShippingMemo.sql" />
+    <Build Include="dbo\Tables\Style_BOA_Location.sql" />
+    <Build Include="dbo\Tables\PO_Supp_Detail_Spec.sql" />
+    <Build Include="dbo\Tables\PO_Supp_Detail_Keyword.sql" />
+    <Build Include="dbo\Tables\Order_BOA_Location.sql" />
+    <Build Include="dbo\Tables\Order_BOA_Expend_Spec.sql" />
+    <Build Include="dbo\Tables\Order_BOA_Expend_Keyword.sql" />
+    <Build Include="dbo\Tables\Keyword_BomType.sql" />
+    <Build Include="dbo\Tables\InventoryRefNo_Spec.sql" />
+    <Build Include="dbo\Tables\BomType.sql" />
+    <Build Include="dbo\Tables\PadPrintReq_Detail.sql" />
+    <Build Include="dbo\Tables\PadPrint_Mold.sql" />
+    <Build Include="dbo\Tables\PadPrint.sql" />
+    <Build Include="dbo\Functions\GetSuppColor_Solution_NEW.sql" />
+    <Build Include="dbo\Functions\GetKeywordValue_New.sql" />
+    <Build Include="dbo\Functions\GetKeyword_New.sql" />
+    <Build Include="dbo\Functions\GetDigitalValue_New.sql" />
+    <Build Include="dbo\Functions\GetBomTypeValue.sql" />
+    <Build Include="dbo\Functions\GetSuppColor_NEW.sql" />
+    <Build Include="dbo\Functions\GetKeywordList.sql" />
+    <Build Include="dbo\Functions\GetBOAExpend_NEW.sql" />
+    <Build Include="dbo\Stored Procedures\BoaExpend_New.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />

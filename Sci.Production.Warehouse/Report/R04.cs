@@ -1,41 +1,28 @@
-﻿using System;
+﻿using Ict;
+using Sci.Data;
+using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
-using Ict;
-using Sci.Data;
-using System.Runtime.InteropServices;
 
 namespace Sci.Production.Warehouse
 {
+    /// <inheritdoc/>
     public partial class R04 : Win.Tems.PrintForm
     {
-        // string reason, factory, brand, mdivisionid, operation;
-        // int ordertypeindex;
         private string factory;
-
-        // string reason, factory, brand, mdivisionid, operation;
-        // int ordertypeindex;
         private string brand;
-
-        // string reason, factory, brand, mdivisionid, operation;
-        // int ordertypeindex;
         private string mdivisionid;
-
-        // string reason, factory, brand, mdivisionid, operation;
-        // int ordertypeindex;
         private string operation;
-
-        // string reason, factory, brand, mdivisionid, operation;
-        // int ordertypeindex;
         private string fabricType;
-
         private DateTime? cfmdate1;
         private DateTime? cfmdate2;
         private DataTable printData;
         private StringBuilder condition = new StringBuilder();
 
+        /// <inheritdoc/>
         public R04(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -104,7 +91,7 @@ namespace Sci.Production.Warehouse
             #endregion
 
             StringBuilder sqlCmd = new StringBuilder();
-            sqlCmd.Append(string.Format(@"
+            sqlCmd.Append(@"
 select  operation = case a.type 
                         when '1' then 'Input' 
                         when '2' then 'Output' 
@@ -164,8 +151,8 @@ select  operation = case a.type
                            where poid = a.InventoryPOID and seq1 = a.InventorySeq1 
                                  and seq2 = a.InventorySeq2 and StockType ='I' ) 
         ,a.Refno
-        ,b.ColorID
-        ,b.SizeSpec
+        ,ColorID = irsC.SpecValue
+        ,SizeSpec = irsS.SpecValue
         ,Qty = Round(dbo.GetUnitQty(d.POUnit, d.StockUnit, a.Qty), 2)
 		,[InventoryQty]=IIF((a.type='2' or a.type='6'), ISNULL( Inventory70.LInvQty ,0)  ,ISNULL( InventoryInv.LInvQty ,0) )
         ,a.UnitID
@@ -178,6 +165,8 @@ inner join PO_Supp_Detail d WITH (NOLOCK) on d.ID = a.InventoryPOID and d.SEQ1 =
 inner join Orders orders on d.id = orders.id
 inner join Factory factory on orders.FactoryID = factory.id
 left join MDivisionPoDetail e WITH (NOLOCK) on e.POID = A.InventoryPOID AND E.SEQ1 = A.InventorySeq1 AND E.Seq2 = A.InventorySeq2
+left join InventoryRefno_Spec irsC on irsC.InventoryRefNoID = b.id and irsC.SpecColumnID = 'Color'
+left join InventoryRefno_Spec irsS on irsS.InventoryRefNoID = b.id and irsS.SpecColumnID = 'Size'
 Outer APPLY(
     SELECT Name
     FROM DropDownList
@@ -209,7 +198,7 @@ OUTER APPLY(
 	WHERE POID=a.InventoryPOID  AND SEQ1=a.InventorySeq1 AND SEQ2=a.InventorySeq2
 )InventoryInv
 
-where 1=1 "));
+where 1=1 ");
             string whereStr = string.Empty;
 
             if (!MyUtility.Check.Empty(this.cfmdate1))

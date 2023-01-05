@@ -1,15 +1,16 @@
-﻿using System;
+﻿using Ict;
+using Sci.Data;
+using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
-using Ict;
-using Sci.Data;
 using Excel = Microsoft.Office.Interop.Excel;
-using System.Runtime.InteropServices;
 
 namespace Sci.Production.Warehouse
 {
+    /// <inheritdoc/>
     public partial class R03 : Win.Tems.PrintForm
     {
         private string season;
@@ -39,6 +40,7 @@ namespace Sci.Production.Warehouse
         private DateTime? ata2;
         private DataTable printData;
 
+        /// <inheritdoc/>
         public R03(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -49,8 +51,6 @@ namespace Sci.Production.Warehouse
             MyUtility.Tool.SetupCombox(this.comboOrderBy, 1, 1, "Supplier,SP#");
             this.comboOrderBy.SelectedIndex = 0;
         }
-
-        // 驗證輸入條件
 
         /// <inheritdoc/>
         protected override bool ValidateInput()
@@ -177,7 +177,7 @@ left join Export ex with (nolock) on ex.ID = exd.ID
             #endregion
 
             StringBuilder sqlCmd = new StringBuilder();
-            sqlCmd.Append(string.Format($@"
+            sqlCmd.Append($@"
 select  F.MDivisionID
         ,O.FactoryID
         ,[Wkno] = wk.wkno
@@ -199,11 +199,10 @@ select  F.MDivisionID
                         when 'O' then 'Other'
 						else PSD.FabricType 
 						end) + '-' + Fabric.MtlTypeID
-        --,dbo.getMtlDesc(PSD.id,PSD.seq1,PSD.seq2,2,0)
 		,ds5.string
         ,[Color] = iif(Fabric.MtlTypeID in ('EMB Thread', 'SP Thread', 'Thread') 
-                , IIF(isnull(PSD.SuppColor,'') = '',dbo.GetColorMultipleID(O.BrandID, PSD.ColorID),PSD.SuppColor)
-                , dbo.GetColorMultipleID(O.BrandID, PSD.ColorID))
+                , IIF(isnull(PSD.SuppColor,'') = '',dbo.GetColorMultipleID(O.BrandID, psdsC.SpecValue),PSD.SuppColor)
+                , dbo.GetColorMultipleID(O.BrandID, psdsC.SpecValue))
         ,PSD.Qty
         ,PSD.NETQty
         ,PSD.NETQty+PSD.LossQty
@@ -215,8 +214,6 @@ select  F.MDivisionID
         ,[Scrap Qty]= isnull(MDPD.LObQty,0)
         ,PSD.POUnit
         ,iif(PSD.Complete=1,'Y','N')
-        --,PSD.ETA
-        --,PSD.FinalETA
         ,orderlist = a.orderlist
         ,MDPD.InQty
         ,PSD.StockUnit
@@ -238,6 +235,7 @@ join dbo.Orders O on o.id = PSD.id
 join dbo.Factory F on f.id = o.FactoryId
 left join dbo.MDivisionPoDetail MDPD on MDPD.POID = PSD.ID and MDPD.Seq1 = PSD.Seq1 and MDPD.Seq2 = PSD.Seq2
 left join dbo.Fabric on fabric.SciRefno = psd.SciRefno
+left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
 {sqlJoinSeparateByWK}
 outer apply(select StyleID from dbo.orders WITH (NOLOCK) where id = PS.id) si
 outer apply
@@ -276,15 +274,15 @@ outer apply
 	SELECT p.SCIRefno
 		, p.Refno
 		, suppcolor = Concat(iif(ISNULL(p.SuppColor,'') = '', '', p.SuppColor)
-							,iif(ISNULL(p.SuppColor,'') != '' and ISNULL(p.ColorID,'') != '',CHAR(10),'')
-						    ,iif(ISNULL(p.ColorID,'') = '', '', p.ColorID + ' - ') 
+							,iif(ISNULL(p.SuppColor,'') != '' and ISNULL(psdsC.SpecValue,'') != '',CHAR(10),'')
+						    ,iif(ISNULL(psdsC.SpecValue,'') = '', '', psdsC.SpecValue + ' - ') 
 							,c.Name)
 		, StockSP = concat(iif(isnull(p.StockPOID,'')='','',p.StockPOID+' ')
 						  ,iif(isnull(p.StockSeq1,'')='','',p.StockSeq1+' ')
 						  ,p.StockSeq2)
 		, po_desc= concat(iif(ISNULL(p.ColorDetail,'') = '', '', 'ColorDetail : ' + p.ColorDetail)
-						 ,iif(ISNULL(p.sizespec,'') = '', '', p.sizespec + ' ')
-						 ,p.SizeUnit
+						 ,iif(ISNULL(psdsS.SpecValue,'') = '', '', psdsS.SpecValue + ' ')
+						 ,psdsU.SpecValue
 						 ,p.Special
 						 ,p.Spec
 						 ,p.Remark)
@@ -293,19 +291,20 @@ outer apply
 		, zn.ZipperName
 	from dbo.po_supp_detail p WITH (NOLOCK)
 	left join fabric f WITH (NOLOCK) on p.SCIRefno = f.SCIRefno
-	left join Color c WITH (NOLOCK) on f.BrandID = c.BrandId and p.ColorID = c.ID 
-	outer apply ( 
-		select Spec,BomZipperInsert 
-		from PO_Supp_Detail tmpPO3
-		where tmpPO3.ID = p.StockPOID and tmpPO3.Seq1 =  p.StockSeq1 and tmpPO3.Seq2 =  p.StockSeq2
-	) stockPO3
+    left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = p.id and psdsC.seq1 = p.seq1 and psdsC.seq2 = p.seq2 and psdsC.SpecColumnID = 'Color'
+    left join PO_Supp_Detail_Spec psdsS WITH (NOLOCK) on psdsS.ID = p.id and psdsS.seq1 = p.seq1 and psdsS.seq2 = p.seq2 and psdsS.SpecColumnID = 'Size'
+    left join PO_Supp_Detail_Spec psdsU WITH (NOLOCK) on psdsU.ID = p.id and psdsU.seq1 = p.seq1 and psdsU.seq2 = p.seq2 and psdsU.SpecColumnID = 'SizeUnit'
+    left join PO_Supp_Detail_Spec psdsZ WITH (NOLOCK) on psdsZ.ID = p.id and psdsZ.seq1 = p.seq1 and psdsZ.seq2 = p.seq2 and psdsZ.SpecColumnID = 'ZipperInsert'
+    left join po_supp_detail stockPO3 WITH (NOLOCK) on stockPO3.ID = p.StockPOID and stockPO3.seq1 = p.StockSeq1 and stockPO3.seq2 = p.StockSeq2
+    left join PO_Supp_Detail_Spec psdsZstockPO3 WITH (NOLOCK) on psdsZstockPO3.ID = p.StockPOID and psdsZstockPO3.seq1 = p.StockSeq1 and psdsZstockPO3.seq2 = p.StockSeq2 and psdsZstockPO3.SpecColumnID = 'ZipperInsert'
+	left join Color c WITH (NOLOCK) on f.BrandID = c.BrandId and psdsC.SpecValue = c.ID 
 	outer apply
 	(
 		Select ZipperName = DropDownList.Name
 		From Production.dbo.DropDownList
-		Where Type = 'Zipper' And ID = iif(stockPO3.BomZipperInsert is null,p.BomZipperInsert ,stockPO3.BomZipperInsert)
+		Where Type = 'Zipper' And ID = iif(psdsZstockPO3.SpecValue is null,psdsZ.SpecValue ,psdsZstockPO3.SpecValue)
 	)zn
-	WHERE p.ID=PSD.id and seq1 = PSD.seq1 and seq2=PSD.seq2
+	WHERE p.ID=PSD.id and p.seq1 = PSD.seq1 and p.seq2 = PSD.seq2
 )ds
 outer apply
 (
@@ -331,8 +330,8 @@ select wkno = stuff((
 	    for xml path('')
 	),1,1,'')
 )Wk
-where 1=1  
-"));
+where 1=1
+");
 
             #region --- 條件組合  ---
             if (!MyUtility.Check.Empty(this.sciDelivery1))

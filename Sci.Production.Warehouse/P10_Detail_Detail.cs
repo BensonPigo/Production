@@ -66,29 +66,28 @@ namespace Sci.Production.Warehouse
             strSQLCmd.Append($@"
 with cte as 
 (
-      select Dyelot
-             , sum(inqty - OutQty + AdjustQty - ReturnQty) as GroupQty
-      from dbo.FtyInventory a WITH (NOLOCK) 
-      inner join dbo.PO_Supp_Detail p WITH (NOLOCK) on p.id = a.POID 
-                                                       and p.seq1 = a.Seq1 
-                                                       and p.seq2 = a.Seq2
-      where poid = '{this.dr_master["poid"]}' 
-            and Stocktype = 'B' 
-            and inqty - OutQty + AdjustQty - ReturnQty > 0
-            and p.Refno = '{this.dr_master["Refno"]}' 
-            and p.ColorID = '{this.dr_master["colorid"]}' 
-            {(this.Type == 0 ? " and a.Seq1 BETWEEN '00' AND '99'" : string.Empty)}--and a.Seq1 BETWEEN '00' AND '99'
-      Group by Dyelot
+    select Dyelot
+    , sum(inqty - OutQty + AdjustQty - ReturnQty) as GroupQty
+    from dbo.FtyInventory a WITH (NOLOCK) 
+    inner join dbo.PO_Supp_Detail psd WITH (NOLOCK) on psd.id = a.POID and psd.seq1 = a.Seq1 and psd.seq2 = a.Seq2
+    inner join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
+    where poid = '{this.dr_master["poid"]}' 
+    and Stocktype = 'B' 
+    and inqty - OutQty + AdjustQty - ReturnQty > 0
+    and psd.Refno = '{this.dr_master["Refno"]}' 
+    and isnull(psdsC.SpecValue, '') = '{this.dr_master["colorid"]}' 
+    {(this.Type == 0 ? " and a.Seq1 BETWEEN '00' AND '99'" : string.Empty)}--and a.Seq1 BETWEEN '00' AND '99'
+    Group by Dyelot
 ) 
 select 0 as selected 
        , id = '' 
-       , PoId = a.id
-       , a.Seq1
-       , a.Seq2
-       , seq = concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2)
-       , a.FabricType
-       , a.stockunit
-       , [Description] = dbo.getmtldesc(a.id,a.seq1,a.seq2,2,0)
+       , PoId = psd.id
+       , psd.Seq1
+       , psd.Seq2
+       , seq = concat(Ltrim(Rtrim(psd.seq1)), ' ', psd.Seq2)
+       , psd.FabricType
+       , psd.stockunit
+       , [Description] = dbo.getmtldesc(psd.id,psd.seq1,psd.seq2,2,0)
        , Roll = Rtrim(Ltrim(c.Roll))
        , Dyelot = Rtrim(Ltrim(c.Dyelot))
        , Qty = 0.00
@@ -101,8 +100,9 @@ select 0 as selected
        , c.adjustqty 
        , c.ReturnQty
        , [Tone] = isnull(ShadeboneTone.Tone,ShadeboneTone2.Tone)
-from dbo.PO_Supp_Detail a WITH (NOLOCK) 
-inner join dbo.ftyinventory c WITH (NOLOCK) on c.poid = a.id and c.seq1 = a.seq1 and c.seq2  = a.seq2 and c.stocktype = 'B'
+from dbo.PO_Supp_Detail psd WITH (NOLOCK) 
+inner join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
+inner join dbo.ftyinventory c WITH (NOLOCK) on c.poid = psd.id and c.seq1 = psd.seq1 and c.seq2  = psd.seq2 and c.stocktype = 'B'
 inner join cte d on d.Dyelot=c.Dyelot
 outer apply (
     select [Tone] = MAX(fs.Tone)
@@ -115,11 +115,12 @@ outer apply (
 	select [Tone] = MAX(fs.Tone)
 	from FIR f with (nolock) 
 	Left join FIR_Shadebone fs with (nolock) on f.ID = fs.ID and fs.Roll = Rtrim(Ltrim(c.Roll)) and fs.Dyelot = Rtrim(Ltrim(c.Dyelot))
-	where f.POID = a.StockPOID and f.SEQ1 = a.StockSeq1 and f.SEQ2 = a.StockSeq2
+	where f.POID = psd.StockPOID and f.SEQ1 = psd.StockSeq1 and f.SEQ2 = psd.StockSeq2
 ) ShadeboneTone2
-Where a.id = '{this.dr_master["poid"]}' and c.lock = 0 and c.inqty - c.outqty + c.adjustqty - c.ReturnQty > 0 
-and a.Refno='{this.dr_master["Refno"]}' and a.colorid='{this.dr_master["colorid"]}' {(this.Type == 0 ? " and ltrim(a.seq1) between '01' and '99'" : string.Empty)}--and ltrim(a.seq1) between '01' and '99'
-order by d.GroupQty DESC,c.Dyelot,balanceqty DESC");
+Where psd.id = '{this.dr_master["poid"]}' and c.lock = 0 and c.inqty - c.outqty + c.adjustqty - c.ReturnQty > 0 
+and psd.Refno='{this.dr_master["Refno"]}' and isnull(psdsC.SpecValue, '')='{this.dr_master["colorid"]}' {(this.Type == 0 ? " and ltrim(psd.seq1) between '01' and '99'" : string.Empty)}
+order by d.GroupQty DESC,c.Dyelot,balanceqty DESC
+");
             #endregion
 
             this.P10_Detail.ShowWaitMessage("Data Loading....");

@@ -27,38 +27,35 @@ namespace Sci.Production.Warehouse
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-            string selectCommand1
-                = string.Format(
-                    @"
-Select  a.FtyGroup
-        ,b.id
-        ,a.StyleID
-        ,a.SeasonID
-        ,a.BrandID
-        , concat(Ltrim(Rtrim(b.seq1)), ' ', b.seq2) as seq --left(b.seq1+' ',3)+b.Seq2 as seq
-        --, colorid = isnull(dbo.GetColorMultipleID(a.BrandID,b.colorid),'')
-		, [ColorID]= IIF(f.MtlTypeID = 'EMB THREAD' OR f.MtlTypeID = 'SP THREAD' OR f.MtlTypeID = 'THREAD' ,b.SuppColor,dbo.GetColorMultipleID(a.BrandID,b.ColorID)) 
-        , b.sizespec
-        , c.suppid
-        , a.sewinline
-        , a.sewline
-        , b.FinalETA
-        , md.inqty - md.outqty + md.adjustqty - md.ReturnQty Balance
-        , b.stockunit 
-        , md.BLocation
-        , [LobQty] = isnull(md.LobQty,0)
+            string selectCommand1 = $@"
+Select
+    a.FtyGroup
+    ,psd.id
+    ,a.StyleID
+    ,a.SeasonID
+    ,a.BrandID
+    , concat(Ltrim(Rtrim(psd.seq1)), ' ', psd.seq2) as seq
+    , [ColorID]= IIF(f.MtlTypeID = 'EMB THREAD' OR f.MtlTypeID = 'SP THREAD' OR f.MtlTypeID = 'THREAD' ,psd.SuppColor,dbo.GetColorMultipleID(a.BrandID,isnull(psdsC.SpecValue, ''))) 
+    , SizeSpec= isnull(psdsS.SpecValue, '')
+    , c.suppid
+    , a.sewinline
+    , a.sewline
+    , psd.FinalETA
+    , md.inqty - md.outqty + md.adjustqty - md.ReturnQty Balance
+    , psd.stockunit 
+    , md.BLocation
+    , [LobQty] = isnull(md.LobQty,0)
 from View_WH_Orders a WITH (NOLOCK) 
-     , po_supp_detail b WITH (NOLOCK) 
-left join fabric f WITH (NOLOCK) on f.SCIRefno = b.SCIRefno
-left join dbo.MDivisionPoDetail md WITH (NOLOCK) on md.POID = b.id and md.seq1 = b.seq1 and md.seq2 = b.seq2
-     , po_supp c WITH (NOLOCK) 
-where   b.refno = '{0}'
-        and a.id = b.id
-        and a.id = c.id
-        and b.seq1 = c.seq1
-        and a.WhseClose is null
+inner join po_supp_detail psd WITH (NOLOCK) on a.id = psd.id
+inner join po_supp c WITH (NOLOCK) on a.id = c.id and psd.seq1 = c.seq1
+left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
+left join PO_Supp_Detail_Spec psdsS WITH (NOLOCK) on psdsS.ID = psd.id and psdsS.seq1 = psd.seq1 and psdsS.seq2 = psd.seq2 and psdsS.SpecColumnID = 'Size'
+left join fabric f WITH (NOLOCK) on f.SCIRefno = psd.SCIRefno
+left join dbo.MDivisionPoDetail md WITH (NOLOCK) on md.POID = psd.id and md.seq1 = psd.seq1 and md.seq2 = psd.seq2
+where psd.refno = '{this.dr["refno"].ToString()}'
+and a.WhseClose is null
 order by ColorID, SizeSpec ,SewinLine
-", this.dr["refno"].ToString());
+";
             DualResult selectResult1 = DBProxy.Current.Select(null, selectCommand1, out this.selectDataTable1);
             if (selectResult1 == false)
             {
@@ -85,14 +82,15 @@ order by ColorID, SizeSpec ,SewinLine
             // if (!dts2.Empty()) comboSize.DataSource = dts3;
             string sizespeccmd = string.Format(
                 @"
-Select distinct b.sizespec ,a.WhseClose
+Select distinct SizeSpec= isnull(psdsS.SpecValue, '') ,a.WhseClose
 into #tmp
 from View_WH_Orders a WITH (NOLOCK) 
 inner join po_supp_detail b WITH (NOLOCK) on a.id = b.id
+left join PO_Supp_Detail_Spec psdsS WITH (NOLOCK) on psdsS.ID = b.id and psdsS.seq1 = b.seq1 and psdsS.seq2 = b.seq2 and psdsS.SpecColumnID = 'Size'
 inner join dbo.MDivisionPoDetail md WITH (NOLOCK) on md.POID = b.id and md.seq1 = b.seq1 and md.seq2 = b.seq2
 inner join  po_supp c WITH (NOLOCK) on a.id = c.id
 where b.scirefno = '{0}'
-group by b.sizespec ,a.WhseClose
+group by isnull(psdsS.SpecValue, '') ,a.WhseClose
 
 select sizespec = 'All' 
 union all 
@@ -154,16 +152,16 @@ drop table #tmp
 
             MyUtility.Tool.SetupCombox(this.cmbFactory, 1, dtfactory);
 
-            string coloridcmd = string.Format(
-                @"
-Select a.BrandID,b.colorid,a.WhseClose
+            string coloridcmd = $@"
+Select a.BrandID,ColorID = isnull(psdsC.SpecValue, ''),a.WhseClose
 into #tmp
 from View_WH_Orders a WITH (NOLOCK) 
-inner join po_supp_detail b WITH (NOLOCK) on a.id = b.id
-inner join dbo.MDivisionPoDetail md WITH (NOLOCK) on md.POID = b.id and md.seq1 = b.seq1 and md.seq2 = b.seq2
+inner join po_supp_detail psd WITH (NOLOCK) on a.id = psd.id
+inner join dbo.MDivisionPoDetail md WITH (NOLOCK) on md.POID = psd.id and md.seq1 = psd.seq1 and md.seq2 = psd.seq2
 inner join  po_supp c WITH (NOLOCK) on a.id = c.id
-where b.scirefno = '{0}' 
-group by a.BrandID,b.colorid,a.WhseClose
+left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
+where psd.scirefno = '{this.dr["scirefno"].ToString()}' 
+group by a.BrandID,isnull(psdsC.SpecValue, ''),a.WhseClose
 
 select colorid = 'All' 
 union all
@@ -183,7 +181,7 @@ from
 )xx
 
 drop table #tmp
-", this.dr["scirefno"].ToString());
+";
             DataTable dtcolorid;
             DualResult selectResult2 = DBProxy.Current.Select(null, coloridcmd, out dtcolorid);
             if (!selectResult2)

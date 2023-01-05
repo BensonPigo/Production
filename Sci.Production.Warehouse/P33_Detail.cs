@@ -1,9 +1,9 @@
-﻿using System;
+﻿using Ict;
+using Ict.Win;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Drawing;
-using Ict.Win;
-using Ict;
 using System.Linq;
 
 namespace Sci.Production.Warehouse
@@ -73,7 +73,7 @@ OUTER APPLY(
 WHERE (FTY.stocktype = 'B' OR FTY.stocktype IS NULL)
 ";
                 if (!(result = MyUtility.Tool.ProcessWithDatatable(
-                        temp, string.Empty,  c, out dtFtyinventory, "#tmp")))
+                        temp, string.Empty, c, out dtFtyinventory, "#tmp")))
                 {
                     MyUtility.Msg.WarningBox(result.ToString());
                     return;
@@ -225,12 +225,14 @@ WHERE (FTY.stocktype = 'B' OR FTY.stocktype IS NULL)
                 string seq1 = item["Seq1"].ToString();
                 string seq2 = item["Seq2"].ToString();
                 string suppColor = MyUtility.GetValue.Lookup($@"
-SELECT SuppColor 
-FROM PO_Supp_Detail WITH(NOLOCK) 
-WHERE ID = '{this.CurrentDetailData["POID"]}' 
-AND SCIRefno = '{this.CurrentDetailData["SCIRefno"]}' 
-AND ColorID='{this.CurrentDetailData["ColorID"]}'
-AND Seq1 = '{seq1}' AND Seq2 = '{seq2}'
+SELECT psd.SuppColor 
+FROM PO_Supp_Detail psd WITH(NOLOCK) 
+inner join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
+WHERE psd.ID = '{this.CurrentDetailData["POID"]}' 
+AND psd.SCIRefno = '{this.CurrentDetailData["SCIRefno"]}' 
+AND psdsC.SpecValue='{this.CurrentDetailData["ColorID"]}'
+AND psd.Seq1 = '{seq1}'
+AND psd.Seq2 = '{seq2}'
 ");
 
                 // 重複就不加進去了

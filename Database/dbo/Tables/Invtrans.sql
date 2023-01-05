@@ -35,7 +35,7 @@
     [ProjectOld]          VARCHAR (5)     CONSTRAINT [DF_Invtrans_ProjectOld] DEFAULT ('') NULL,
     [BrandID]             VARCHAR (8)     CONSTRAINT [DF_Invtrans_BrandID] DEFAULT ('') NULL,
     [BrandGroup]          VARCHAR (8)     CONSTRAINT [DF_Invtrans_BrandGroup] DEFAULT ('') NULL,
-    [Refno]               VARCHAR (20)    CONSTRAINT [DF_Invtrans_Refno] DEFAULT ('') NOT NULL,
+    [Refno]               VARCHAR (36)    CONSTRAINT [DF_Invtrans_Refno] DEFAULT ('') NOT NULL,
     [FabricType]          VARCHAR (1)     CONSTRAINT [DF_Invtrans_FabricType] DEFAULT ('') NOT NULL,
     [FactoryID]           VARCHAR (8)     CONSTRAINT [DF_Invtrans_FactoryID] DEFAULT ('') NOT NULL,
     [MtlTypeID]           VARCHAR (20)    CONSTRAINT [DF_Invtrans_MtlTypeID] DEFAULT ('') NULL,

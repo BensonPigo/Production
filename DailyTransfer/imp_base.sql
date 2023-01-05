@@ -201,6 +201,7 @@ SET
       ,a.AddDate		      =b.AddDate
       ,a.EditName		      =b.EditName
       ,a.EditDate		      =b.EditDate
+      ,a.SeasonForDisplay	  =b.SeasonForDisplay
 
 from Production.dbo.Season as a inner join Trade_To_Pms.dbo.Season as b ON a.id=b.id and a.BrandID = b.BrandID
 -------------------------- INSERT INTO 抓
@@ -216,7 +217,7 @@ INSERT INTO Production.dbo.Season
       ,AddDate
       ,EditName
       ,EditDate
-
+      ,SeasonForDisplay
 )
 select 
        ID
@@ -229,6 +230,7 @@ select
       ,AddDate
       ,EditName
       ,EditDate
+      ,SeasonForDisplay
 from Trade_To_Pms.dbo.Season as b WITH (NOLOCK)
 where not exists(select id from Production.dbo.Season as a WITH (NOLOCK) where a.id = b.id and a.BrandID = b.BrandID)
 
@@ -265,6 +267,7 @@ SET
       ,a.EditName		      =b.EditName
       ,a.EditDate		      =b.EditDate
       ,a.Currencyid		      =b.Currencyid
+      ,a.SuppGroupFabric	  =b.SuppGroupFabric
 
 from Production.dbo.Supp as a inner join Trade_To_Pms.dbo.Supp as b ON a.id=b.id
 -------------------------- INSERT INTO 抓
@@ -291,6 +294,7 @@ INSERT INTO Production.dbo.Supp(
       ,EditName
       ,EditDate
       ,Currencyid
+      ,SuppGroupFabric
 )
 select 
 		ID
@@ -315,6 +319,7 @@ select
       ,EditName
       ,EditDate
       ,Currencyid
+      ,SuppGroupFabric
 from Trade_To_Pms.dbo.Supp as b WITH (NOLOCK)
 where not exists(select id from Production.dbo.Supp as a WITH (NOLOCK) where a.id = b.id)
 
@@ -1072,6 +1077,7 @@ SET
       ,a.AddDate		      =b.AddDate
       ,a.EditName		      =b.EditName
       ,a.EditDate		      =b.EditDate
+      ,a.V_Code		          =b.V_Code
 
 from Production.dbo.Factory_BrandDefinition as a inner join Trade_To_Pms.dbo.Factory_BrandDefinition as b ON a.id=b.id and a.BrandID=b.BrandID and a.CDCodeID=b.CDCodeID
 where b.EditDate > a.EditDate
@@ -1087,6 +1093,7 @@ SET
       ,a.BrandReportCode		      =b.BrandReportCode
       ,a.AddName		      =b.AddName
       ,a.AddDate		      =b.AddDate
+      ,a.V_Code		          =b.V_Code
       --,a.EditName		      =b.EditName
       --,a.EditDate		      =b.EditDate
 
@@ -1105,7 +1112,7 @@ ID
       ,AddDate
       ,EditName
       ,EditDate
-
+      ,V_Code
 )
 select 
 ID
@@ -1119,6 +1126,7 @@ ID
       ,AddDate
       ,EditName
       ,EditDate
+      ,V_Code
 
 from Trade_To_Pms.dbo.Factory_BrandDefinition as b WITH (NOLOCK)
 where not exists(select id from Production.dbo.Factory_BrandDefinition as a WITH (NOLOCK) where a.id = b.id and a.BrandID=b.BrandID and a.CDCodeID=b.CDCodeID)
@@ -2621,7 +2629,9 @@ on t.type=s.type and t.id=s.id
 		t.AddName= s.AddName,
 		t.AddDate= s.AddDate,
 		t.EditName= s.EditName,
-		t.EditDate= s.EditDate
+		t.EditDate= s.EditDate,
+		t.SubKeyword= isnull(s.SubKeyword, 0),
+		t.CannotOperateStock= isnull(s.CannotOperateStock, 0)
 	when not matched by target then 
 		insert(ID
 		,Description
@@ -2635,6 +2645,8 @@ on t.type=s.type and t.id=s.id
 		,AddDate
 		,EditName
 		,EditDate
+        ,SubKeyword
+        ,CannotOperateStock
 		)
 			values(s.ID,
 		s.Description,
@@ -2647,11 +2659,39 @@ on t.type=s.type and t.id=s.id
 		s.AddName,
 		s.AddDate,
 		s.EditName,
-		s.EditDate
+		s.EditDate,
+        isnull(s.SubKeyword, 0),
+        isnull(s.CannotOperateStock, 0)
 		)
 		when not matched by source then
 			delete;
   
+
+        --Keyword_BomType
+	    Merge Production.dbo.Keyword_BomType as t
+	    Using Trade_To_Pms.dbo.Keyword_BomType as s
+	    on t.id=s.id and t.BomType=s.BomType 
+		    when matched then
+		    update set 
+		    t.BomTypeFieldName = isnull(s.BomTypeFieldName, '')
+	    when not matched by target then 
+		    insert (
+                ID
+		        ,BomType
+		        ,BomTypeFieldName
+		    )
+		    values(
+                 isnull(ID, '')
+		        ,isnull(BomType, '')
+		        ,isnull(BomTypeFieldName, '')
+		    )
+		    when not matched by source then
+			    delete;
+
+
+
+
+
 		--Fabric_Supp
 		---------------------------UPDATE 主TABLE跟來源TABLE 為一樣(主TABLE多的話 記起來 ~來源TABLE多的話不理會)
 		UPDATE a
@@ -2670,12 +2710,9 @@ on t.type=s.type and t.id=s.id
 			  ,a.IsECFA		   = b.IsECFA		  
 			  ,a.ItemType	   = b.ItemType	  
 			  ,a.Junk		   = b.Junk		  
-			  ,a.Keyword	   = b.Keyword	  
 			  ,a.Lock		   = b.Lock		  
 			  ,a.LTDay		   = b.LTDay		  
 			  ,a.NOForecast	   = b.NOForecast	  
-			  ,a.OldSys_Ukey   = b.OldSys_Ukey  
-			  ,a.OldSys_Ver	   = b.OldSys_Ver	  
 			  ,a.OrganicCotton = b.OrganicCotton
 			  ,a.POUnit		   = b.POUnit		  
 			  ,a.PreShrink	   = b.PreShrink	  
@@ -2684,7 +2721,7 @@ on t.type=s.type and t.id=s.id
 			  ,a.SeasonID	   = b.SeasonID	  
 			  ,a.ShowSuppColor = b.ShowSuppColor
 			  ,a.SuppRefno	   = b.SuppRefno
-			  ,a.SustainableMaterial	   = b.SustainableMaterial
+			  ,a.IsDefault	   = isnull(b.IsDefault, 0)
 
 		from Production.dbo.Fabric_Supp as a 
 		inner join Trade_To_Pms.dbo.Fabric_Supp as b ON a.SuppID=b.SuppID and a.SCIRefno = b.SCIRefno
@@ -2704,12 +2741,9 @@ on t.type=s.type and t.id=s.id
 				,IsECFA		  
 				,ItemType	  
 				,Junk		  
-				,Keyword	  
 				,Lock		  
 				,LTDay		  
 				,NOForecast	  
-				,OldSys_Ukey  
-				,OldSys_Ver	  
 				,OrganicCotton
 				,POUnit		  
 				,PreShrink	  
@@ -2721,7 +2755,7 @@ on t.type=s.type and t.id=s.id
 				,ukey
 				,SuppID
 				,SCIRefno
-				,SustainableMaterial
+                ,IsDefault
 		)
 		select 
 				 AbbCH	      
@@ -2738,12 +2772,9 @@ on t.type=s.type and t.id=s.id
 				,IsECFA		  
 				,ItemType	  
 				,Junk		  
-				,Keyword	  
 				,Lock		  
 				,LTDay		  
 				,NOForecast	  
-				,OldSys_Ukey  
-				,OldSys_Ver	  
 				,OrganicCotton
 				,POUnit		  
 				,PreShrink	  
@@ -2755,7 +2786,7 @@ on t.type=s.type and t.id=s.id
 				,ukey
 				,SuppID
 				,SCIRefno
-				,SustainableMaterial
+                ,isnull(IsDefault, 0)
 
 		from Trade_To_Pms.dbo.Fabric_Supp as b WITH (NOLOCK)
 		where not exists(select SuppID from Production.dbo.Fabric_Supp as a WITH (NOLOCK) where a.SuppID = b.SuppID and a.SCIRefno = b.SCIRefno)
@@ -2819,7 +2850,9 @@ when matched then
 	t.AddName= s.AddName,
 	t.AddDate= s.AddDate,
 	t.EditName= s.EditName,
-	t.EditDate= s.EditDate
+	t.EditDate= s.EditDate,
+	t.SuppGroupFabric= s.SuppGroupFabric,
+	t.MtlTypeId= s.MtlTypeId
 when not matched by target then
 	insert(ID
 	,Ukey
@@ -2836,6 +2869,8 @@ when not matched by target then
 	,AddDate
 	,EditName
 	,EditDate
+    ,SuppGroupFabric
+    ,MtlTypeId
 	)
 	values(s.ID,
 	s.Ukey,
@@ -2851,7 +2886,10 @@ when not matched by target then
 	s.AddName,
 	s.AddDate,
 	s.EditName,
-	s.EditDate)
+	s.EditDate,
+    s.SuppGroupFabric,
+    s.MtlTypeId
+    )
 when not matched by source then 
 	delete;
 
@@ -5171,5 +5209,47 @@ select
 from Trade_To_Pms.dbo.[Brand_SizeCode] a
 left join production.dbo.[Brand_SizeCode] b on  a.BrandID = b.BrandID  and a.SizeCode = b.SizeCode
 where b.BrandID is null
+
+--BomType
+delete a
+from Production.dbo.BomType a
+left join Trade_To_Pms.dbo.BomType b on a.ID = b.ID
+where b.ID is null
+
+update a set 
+	  [Name]		    = ISNULL(b.[Name], '')
+	, Seq		        = ISNULL(b.Seq, '')
+	, IsInformationSpec = ISNULL(b.IsInformationSpec, 0)
+	, [Junk]		    = ISNULL(b.[Junk], 0)
+	, [AddName]		    = ISNULL(b.[AddName], '')
+	, [AddDate]		    = b.[AddDate]
+	, [EditName]	    = ISNULL(b.[EditName], '')
+	, [EditDate]	    = b.[EditDate]
+from Production.dbo.BomType a
+inner join Trade_To_Pms.dbo.BomType b on a.ID = b.ID
+
+insert Production.dbo.BomType 
+           ([ID]
+           ,[Name]
+           ,[Seq]
+           ,[IsInformationSpec]
+           ,[Junk]
+           ,[AddName]
+           ,[AddDate]
+           ,[EditName]
+           ,[EditDate])
+select
+     isnull(a.[ID]               , '')
+    ,isnull(a.[Name]             , '')
+    ,isnull(a.[Seq]              , 0)
+    ,isnull(a.[IsInformationSpec], 0)
+    ,isnull(a.[Junk]             , 0)
+    ,isnull(a.[AddName]          , '')
+    ,a.[AddDate]
+    ,isnull(a.[EditName]         , '')
+    ,a.[EditDate]
+from Trade_To_Pms.dbo.BomType a
+left join Production.dbo.BomType b on a.ID = b.ID
+where b.ID is null
 
 END

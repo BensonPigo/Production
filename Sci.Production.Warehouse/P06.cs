@@ -295,8 +295,7 @@ where   ted.ID = @ID and
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
             string masterID = (e.Master == null) ? string.Empty : MyUtility.Convert.GetString(e.Master["ID"]);
-            this.DetailSelectCommand = string.Format(
-                @"
+            this.DetailSelectCommand = $@"
 select	ted.InventoryPOID,
 		[FromSeq] = Concat (ted.InventorySeq1, ' ', ted.InventorySeq2),
 		ted.PoID,
@@ -304,8 +303,8 @@ select	ted.InventoryPOID,
 		ted.SuppID,
 		ted.Description,
 		ted.UnitID,
-		[ColorID] = isnull(psdinv.ColorID, psd.ColorID),
-		[SizeSpec] = isnull(psdinv.SizeSpec, psd.SizeSpec),
+		[ColorID] = isnull(psdInvC.SpecValue, psdsC.SpecValue),
+		[SizeSpec] = isnull(psdInvS.SpecValue, psdsS.SpecValue),
 		[PoQty] = round(isnull(dbo.GetUnitQty(ted.UnitID ,IIF(te.TransferType = 'Transfer Out', psdInv.StockUnit,psd.StockUnit), ted.PoQty),0), 2),
 		[ExportQty] = round(isnull(dbo.GetUnitQty(ExportCarton.StockUnitID, IIF(te.TransferType = 'Transfer Out', psdInv.StockUnit,psd.StockUnit), ExportCarton.ExportQty), 0), 2),
 		ExportCarton.Foc,
@@ -367,12 +366,12 @@ select	ted.InventoryPOID,
 from TransferExport_Detail ted with (nolock) 
 inner join TransferExport te with(nolock) on ted.ID = te.ID
 left join Orders o with (nolock) on ted.PoID = o.ID
-left join PO_Supp_Detail psdInv with (nolock) on	ted.InventoryPOID = psdInv.ID and 
-													ted.InventorySeq1 = psdInv.SEQ1 and
-													ted.InventorySeq2 = psdinv.SEQ2
-left join PO_Supp_Detail psd with (nolock) on	ted.PoID = psd.ID and 
-												ted.Seq1 = psd.SEQ1 and
-												ted.Seq2 = psd.SEQ2
+left join PO_Supp_Detail psdInv with (nolock) on ted.InventoryPOID = psdInv.ID and ted.InventorySeq1 = psdInv.SEQ1 and ted.InventorySeq2 = psdinv.SEQ2
+left join PO_Supp_Detail_Spec psdInvC with (nolock) on ted.InventoryPOID = psdInvC.ID and ted.InventorySeq1 = psdInvC.SEQ1 and ted.InventorySeq2 = psdInvC.SEQ2 and psdInvC.SpecColumnID = 'Color'
+left join PO_Supp_Detail_Spec psdInvS with (nolock) on ted.InventoryPOID = psdInvS.ID and ted.InventorySeq1 = psdInvS.SEQ1 and ted.InventorySeq2 = psdInvS.SEQ2 and psdInvS.SpecColumnID = 'Size'
+left join PO_Supp_Detail psd with (nolock) on ted.PoID = psd.ID and ted.Seq1 = psd.SEQ1 and ted.Seq2 = psd.SEQ2
+left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
+left join PO_Supp_Detail_Spec psdsS WITH (NOLOCK) on psdsS.ID = psd.id and psdsS.seq1 = psd.seq1 and psdsS.seq2 = psd.seq2 and psdsS.SpecColumnID = 'Size'
 left join Supp s WITH (NOLOCK) on s.id = ted.SuppID 
 left join Fabric f WITH (NOLOCK) on f.SCIRefno = ted.SCIRefno
 left join Fabric_Supp fs WITH (NOLOCK) on fs.SCIRefno = f.SCIRefno and fs.SuppID = s.ID
@@ -386,8 +385,8 @@ outer apply(
 ) ExportCarton
 OUTER APPLY(
  SELECT [Value]=
-	 CASE WHEN f.MtlTypeID in ('EMB THREAD','SP THREAD','THREAD') THEN IIF(psd.SuppColor = '' or psd.SuppColor is null,dbo.GetColorMultipleID(psd.BrandID,psd.ColorID),psd.SuppColor)
-		 ELSE dbo.GetColorMultipleID(psd.BrandID,psd.ColorID)
+	 CASE WHEN f.MtlTypeID in ('EMB THREAD','SP THREAD','THREAD') THEN IIF(psd.SuppColor = '' or psd.SuppColor is null,dbo.GetColorMultipleID(psd.BrandID,isnull(psdsC.SpecValue, '')),psd.SuppColor)
+		 ELSE dbo.GetColorMultipleID(psd.BrandID,isnull(psdsC.SpecValue, ''))
 	 END
 ) Color
 outer apply(
@@ -407,8 +406,8 @@ outer apply(
 		for xml path ('')
 	) , 1, 1, '')
 ) WK
-where ted.ID = '{0}'
-", masterID);
+where ted.ID = '{masterID}'
+";
             return base.OnDetailSelectCommandPrepare(e);
         }
 

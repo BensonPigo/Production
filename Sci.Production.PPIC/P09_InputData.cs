@@ -62,8 +62,8 @@ namespace Sci.Production.PPIC
                 string seq2 = seqSplit[1];
 
                 DataRow firData;
-                string sqlCmd = string.Format(
-                    @"select a.Seq1,a.Seq2,isnull(psd.ColorID,'') as ColorID,isnull(psd.Refno,'') as Refno,
+                string sqlCmd = $@"
+select a.Seq1,a.Seq2,isnull(psdsC.SpecValue,'') as ColorID,isnull(psd.Refno,'') as Refno,
 isnull(psd.SCIRefno,'') as SCIRefno,iif(e.Eta is null, r.ETA, e.Eta) as ETA,isnull(r.ExportId,'') as ExportId,
 isnull(r.InvNo,'') as InvNo,isnull(sum(rd.ShipQty),0) as EstInQty, isnull(sum(rd.ActualQty),0) as ActInQty,
 dbo.getmtldesc(a.POID,a.Seq1,a.Seq2,2,0) as DescriptionDetail, psd.StockUnit
@@ -72,11 +72,10 @@ left join Receiving r WITH (NOLOCK) on a.ReceivingID = r.Id
 left join Receiving_Detail rd WITH (NOLOCK) on r.Id = rd.Id and a.Seq1 = rd.SEQ1 and a.Seq2 = rd.SEQ2
 left join Export e WITH (NOLOCK) on r.ExportId = e.ID
 left join PO_Supp_Detail psd WITH (NOLOCK) on a.POID = psd.ID and a.Seq1 = psd.SEQ1 and a.Seq2 = psd.SEQ2
-where a.POID = '{0}' and a.Seq1 = '{1}' and a.Seq2 = '{2}' and a.Result = 'F'
-group by a.Seq1,a.Seq2,psd.ColorID,psd.Refno,psd.SCIRefno,iif(e.Eta is null, r.ETA, e.Eta),r.ExportId,r.InvNo,dbo.getmtldesc(a.POID,a.Seq1,a.Seq2,2,0), psd.StockUnit",
-                    MyUtility.Convert.GetString(this.masterData["POID"]),
-                    seq1,
-                    seq2);
+left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
+where a.POID = '{this.masterData["POID"]}' and a.Seq1 = '{seq1}' and a.Seq2 = '{seq2}' and a.Result = 'F'
+group by a.Seq1,a.Seq2,psdsC.SpecValue,psd.Refno,psd.SCIRefno,iif(e.Eta is null, r.ETA, e.Eta),r.ExportId,r.InvNo,dbo.getmtldesc(a.POID,a.Seq1,a.Seq2,2,0), psd.StockUnit
+";
 
                 if (MyUtility.Check.Seek(sqlCmd, out firData))
                 {
@@ -97,24 +96,19 @@ group by a.Seq1,a.Seq2,psd.ColorID,psd.Refno,psd.SCIRefno,iif(e.Eta is null, r.E
                 else
                 {
                     DataRow poData;
-                    sqlCmd = string.Format(
-                        @"select psd.Refno,psd.SCIRefno,psd.seq1,psd.seq2,psd.FabricType,psd.ColorID, 
+                    sqlCmd = $@"
+select psd.Refno,psd.SCIRefno,psd.seq1,psd.seq2,psd.FabricType,ColorID = isnull(psdsC.SpecValue ,''), 
 dbo.getmtldesc(psd.ID,psd.SEQ1,psd.SEQ2,2,0) as DescriptionDetail, psd.StockUnit
 from dbo.PO_Supp_Detail psd WITH (NOLOCK) 
 inner join dbo.Factory f on psd.FactoryID=f.ID
-, dbo.MDivisionPoDetail mpd WITH (NOLOCK) 
-where psd.id ='{0}' 
-and psd.seq1 = '{1} ' 
-and psd.seq2 = '{2}' 
-and f.MDivisionId = '{3}'
-and mpd.POID = psd.ID
-and mpd.Seq1 = psd.SEQ1
-and mpd.Seq2 = psd.SEQ2
-and mpd.InQty > 0",
-                        MyUtility.Convert.GetString(this.masterData["POID"]),
-                        seq1,
-                        seq2,
-                        Env.User.Keyword);
+inner join dbo.MDivisionPoDetail mpd WITH (NOLOCK) on mpd.POID = psd.ID and mpd.Seq1 = psd.SEQ1 and mpd.Seq2 = psd.SEQ2
+left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
+where psd.id ='{this.masterData["POID"]}' 
+and psd.seq1 = '{seq1} ' 
+and psd.seq2 = '{seq2}' 
+and f.MDivisionId = '{Env.User.Keyword}'
+and mpd.InQty > 0
+";
 
                     if (!MyUtility.Check.Seek(sqlCmd, out poData))
                     {

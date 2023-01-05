@@ -81,6 +81,8 @@
     [BrandGender] VARCHAR(10) NOT NULL DEFAULT (''), 
     [Location] VARCHAR(MAX) NOT NULL DEFAULT (''), 
     [NEWCO] VARCHAR NOT NULL DEFAULT (''), 
+    [BrandGender] VARCHAR(10) NULL, 
+    [AgeGroup] VARCHAR(10) NULL, 
     CONSTRAINT [PK_Style] PRIMARY KEY CLUSTERED ([ID] ASC, [BrandID] ASC, [SeasonID] ASC)
 );
 GO

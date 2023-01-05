@@ -8,14 +8,18 @@
     [SuppColor] VARCHAR (30)  CONSTRAINT [DF_Color_SuppColor_SuppColor] DEFAULT ('') NULL,
     [ProgramID] VARCHAR (12)  CONSTRAINT [DF_Color_SuppColor_ProgramID] DEFAULT ('') NULL,
     [StyleID]   VARCHAR (15)  CONSTRAINT [DF_Color_SuppColor_StyleID] DEFAULT ('') NULL,
-    [Refno]     VARCHAR (20)  CONSTRAINT [DF_Color_SuppColor_Refno] DEFAULT ('') NULL,
+    [Refno]     VARCHAR (36)  CONSTRAINT [DF_Color_SuppColor_Refno] DEFAULT ('') NULL,
     [Remark]    NVARCHAR (60) CONSTRAINT [DF_Color_SuppColor_Remark] DEFAULT ('') NULL,
     [AddName]   VARCHAR (10)  CONSTRAINT [DF_Color_SuppColor_AddName] DEFAULT ('') NULL,
     [AddDate]   DATETIME      NULL,
     [EditName]  VARCHAR (10)  CONSTRAINT [DF_Color_SuppColor_EditName] DEFAULT ('') NULL,
     [EditDate]  DATETIME      NULL,
+    [SuppGroupFabric] VARCHAR(8) NULL, 
+    [MtlTypeId] VARCHAR(20) NULL, 
     CONSTRAINT [PK_Color_SuppColor] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
+
+
 
 
 GO

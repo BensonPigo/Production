@@ -129,8 +129,7 @@ order by Seq
 
             #region SQL
             this.cmd = $@"
-
-select distinct a.PoId,a.Seq1,a.Seq2,ps.SuppID,psd.Refno ,psd.ColorID,f.Clima
+select distinct a.PoId,a.Seq1,a.Seq2,ps.SuppID,psd.Refno ,ColorID = isnull(psdsC.SpecValue ,''),f.Clima
 into #tmp1
 from
 (
@@ -159,6 +158,7 @@ from
 left join Orders o on o.ID = a.PoId
 left join PO_Supp ps on ps.ID = a.PoId and ps.SEQ1 = a.Seq1
 left join PO_Supp_Detail psd on psd.ID = a.PoId and psd.SEQ1 = a.Seq1 and psd.SEQ2 = a.Seq2
+left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
 left join Fabric f on f.SCIRefno = psd.SCIRefno 
 where psd.FabricType = 'F'
 {sqlWhere}
@@ -578,9 +578,10 @@ from (
 		from #tmpAllData 
 	) tmp
 outer apply (
-	select a.id,a.seq1,a.seq2,a.SCIRefno,a.ColorID,ps.SuppID,a.RefNo 
+	select a.id,a.seq1,a.seq2,a.SCIRefno,ColorID = isnull(psdsC.SpecValue ,''),ps.SuppID,a.RefNo 
 	from PO_Supp_Detail a
 	inner join PO_Supp ps on a.ID = ps.ID and a.seq1 = ps.seq1 
+    left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = a.id and psdsC.seq1 = a.seq1 and psdsC.seq2 = a.seq2 and psdsC.SpecColumnID = 'Color'
 	where a.id =  tmp.poid
 	and a.seq1 = tmp.seq1
 	and a.seq2 = tmp.seq2
