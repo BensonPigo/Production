@@ -323,6 +323,7 @@ where o.ID is null
 
 update b
     set b.TransferDate = getdate()
+		, b.IS_Trans = 1
 from BITableInfo b
 where b.id = ''P_LoadingProductionOutput''
 '
