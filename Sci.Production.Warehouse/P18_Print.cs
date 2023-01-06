@@ -104,6 +104,9 @@ where   b.id = a.mdivisionid
                     return new DualResult(false, "Data not found!!!");
                 }
 
+                // 抓M的EN NAME
+                DBProxy.Current.Select(string.Empty, $@"select NameEN from MDivision where ID='{Env.User.Keyword}'", out DataTable dtNAME);
+                string rptTitle = dtNAME.Rows[0]["NameEN"].ToString();
                 #endregion
 
                 #region -- 撈表身資料 --
@@ -150,14 +153,11 @@ where a.id = @ID";
                 #endregion
 
                 #region -- 整理表頭資料 --
-
-                // 抓M的EN NAME
                 e.Report.ReportParameters.Add(new ReportParameter("RptTitle", rptTitle));
                 e.Report.ReportParameters.Add(new ReportParameter("ID", id));
                 e.Report.ReportParameters.Add(new ReportParameter("FromFtyID", fromFactory));
                 e.Report.ReportParameters.Add(new ReportParameter("Remark", remark));
                 e.Report.ReportParameters.Add(new ReportParameter("IssueDate", issuedate));
-
                 #endregion
 
                 #region -- 整理表身資料 --
