@@ -71,6 +71,7 @@ select t.poid
 	   , GroupQty = Sum(FTY.InQty - FTY.OutQty + FTY.AdjustQty - FTY.ReturnQty) over (partition by t.dyelot)
        , [DetailFIR] = concat(isnull(Physical.Result,' '),'/',isnull(Weight.Result,' '),'/',isnull(Shadebone.Result,' '),'/',isnull(Continuity.Result,' '),'/',isnull(Odor.Result,' '))
        , [Tone] = isnull(ShadeboneTone.Tone,ShadeboneTone2.Tone)
+       , [GMTWash] = isnull(GMTWash.val, '')
 from #tmp t
 Left join dbo.FtyInventory FTY WITH (NOLOCK) on t.FtyInventoryUkey=FTY.Ukey
 left join dbo.Issue_Summary isum with (nolock) on t.Issue_SummaryUkey = isum.Ukey
@@ -112,6 +113,21 @@ outer apply (select [Tone] = MAX(fs.Tone)
             left join PO_Supp_Detail po3 with (nolock) on po3.ID = t.POID and po3.Seq1 = t.Seq1 and po3.Seq2 = t.Seq2
 	        where f.POID = po3.StockPOID and f.SEQ1 = po3.StockSeq1 and f.SEQ2 = po3.StockSeq2
             ) ShadeboneTone2
+outer apply(
+    select top 1 [val] =  case  when sr.Status = 'Confirmed' then 'Done'
+			                    when tt.Status = 'Confirmed' then 'Ongoing'
+			                    else '' end
+    from TransferToSubcon_Detail ttd with (nolock)
+    inner join TransferToSubcon tt with (nolock) on tt.ID = ttd.ID
+    left join  SubconReturn_Detail srd with (nolock) on srd.TransferToSubcon_DetailUkey = ttd.Ukey
+    left join  SubconReturn sr with (nolock) on sr.ID = srd.ID and sr.Status = 'Confirmed'
+    where   ttd.POID = t.PoId and
+			ttd.Seq1 = t.Seq1 and 
+            ttd.Seq2 = t.Seq2 and
+			ttd.Dyelot = t.Dyelot and 
+            ttd.Roll = t.Roll and
+			ttd.StockType = t.StockType
+) GMTWash
 order by GroupQty desc, t.dyelot, balanceqty desc";
                 if (!(result = MyUtility.Tool.ProcessWithDatatable(
                         temp, string.Empty, cmdd, out dtFtyinventory, "#tmp")))
@@ -188,6 +204,7 @@ order by GroupQty desc, t.dyelot, balanceqty desc";
             .Text("Tone", header: "Shade Band" + Environment.NewLine + "Tone/Grp", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Text("UnrollStatus", header: "Unroll Status", width: Widths.AnsiChars(8), iseditingreadonly: true)
             .Text("RelaxationStatus", header: "Relaxation Status", width: Widths.AnsiChars(8), iseditingreadonly: true)
+            .Text("GMTWash", header: "GMT Wash", width: Widths.AnsiChars(10), iseditingreadonly: true)
             ;
 
             // 僅有自動化工廠 ( System.Automation = 1 )才需要顯示該欄位 by ISP20220035

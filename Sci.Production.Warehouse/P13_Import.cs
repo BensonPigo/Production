@@ -92,6 +92,7 @@ select  selected = 0
 			,IIF(a.SuppColor = '' or a.SuppColor is null,dbo.GetColorMultipleID(orders.BrandID,a.ColorID),a.SuppColor)
 			,dbo.GetColorMultipleID(orders.BrandID,a.ColorID))
 		, [Size]= a.SizeSpec
+        , [GMTWash] = isnull(GMTWash.val, '')
 from dbo.PO_Supp_Detail a WITH (NOLOCK) 
 inner join dbo.PO_Supp p with (nolock) on a.ID = p.ID and a.Seq1 = p.Seq1
 inner join dbo.ftyinventory c WITH (NOLOCK) on c.poid = a.id and c.seq1 = a.seq1 and c.seq2  = a.seq2 and c.stocktype = 'B'
@@ -106,6 +107,21 @@ outer apply(select [val] = isnull(max(Tone), '')
                     f.Seq2 = c.Seq2 and
                     fs.Roll = c.Roll and
                     fs.Dyelot = c.Dyelot) Tone
+outer apply(
+    select top 1 [val] =  case  when sr.Status = 'Confirmed' then 'Done'
+			                    when tt.Status = 'Confirmed' then 'Ongoing'
+			                    else '' end
+    from TransferToSubcon_Detail ttd with (nolock)
+    inner join TransferToSubcon tt with (nolock) on tt.ID = ttd.ID
+    left join  SubconReturn_Detail srd with (nolock) on srd.TransferToSubcon_DetailUkey = ttd.Ukey
+    left join  SubconReturn sr with (nolock) on sr.ID = srd.ID and sr.Status = 'Confirmed'
+    where   ttd.POID = c.PoId and
+			ttd.Seq1 = c.Seq1 and 
+            ttd.Seq2 = c.Seq2 and
+			ttd.Dyelot = c.Dyelot and 
+            ttd.Roll = c.Roll and
+			ttd.StockType = c.StockType
+) GMTWash
 Where a.id = '{0}' and c.inqty - c.outqty + c.adjustqty - c.ReturnQty > 0 AND Orders.category!='A'
     and factory.MDivisionID = '{1}'
 ", sp, Env.User.Keyword));
@@ -246,7 +262,8 @@ Where a.id = '{0}' and c.inqty - c.outqty + c.adjustqty - c.ReturnQty > 0 AND Or
                 .Numeric("balance", header: "Stock Qty", iseditingreadonly: true, decimal_places: 2, integer_places: 10) // 6
                 .Numeric("qty", header: "Issue Qty", decimal_places: 2, integer_places: 10, settings: ns) // 7
                .EditText("Description", header: "Description", iseditingreadonly: true, width: Widths.AnsiChars(25))
-               .Text("Tone", header: "Tone/Grp", iseditingreadonly: true, width: Widths.AnsiChars(8)); // 8
+               .Text("Tone", header: "Tone/Grp", iseditingreadonly: true, width: Widths.AnsiChars(8))
+               .Text("GMTWash", header: "GMT Wash", width: Widths.AnsiChars(10), iseditingreadonly: true); // 8
 
             this.grid1.Columns["qty"].DefaultCellStyle.BackColor = Color.Pink;
 

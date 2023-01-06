@@ -101,6 +101,7 @@ select 0 as selected
        , c.adjustqty 
        , c.ReturnQty
        , [Tone] = isnull(ShadeboneTone.Tone,ShadeboneTone2.Tone)
+       , [GMTWash] = isnull(GMTWash.val, '')
 from dbo.PO_Supp_Detail a WITH (NOLOCK) 
 inner join dbo.ftyinventory c WITH (NOLOCK) on c.poid = a.id and c.seq1 = a.seq1 and c.seq2  = a.seq2 and c.stocktype = 'B'
 inner join cte d on d.Dyelot=c.Dyelot
@@ -117,6 +118,21 @@ outer apply (
 	Left join FIR_Shadebone fs with (nolock) on f.ID = fs.ID and fs.Roll = Rtrim(Ltrim(c.Roll)) and fs.Dyelot = Rtrim(Ltrim(c.Dyelot))
 	where f.POID = a.StockPOID and f.SEQ1 = a.StockSeq1 and f.SEQ2 = a.StockSeq2
 ) ShadeboneTone2
+outer apply(
+    select top 1 [val] =  case  when sr.Status = 'Confirmed' then 'Done'
+			                    when tt.Status = 'Confirmed' then 'Ongoing'
+			                    else '' end
+    from TransferToSubcon_Detail ttd with (nolock)
+    inner join TransferToSubcon tt with (nolock) on tt.ID = ttd.ID
+    left join  SubconReturn_Detail srd with (nolock) on srd.TransferToSubcon_DetailUkey = ttd.Ukey
+    left join  SubconReturn sr with (nolock) on sr.ID = srd.ID and sr.Status = 'Confirmed'
+    where   ttd.POID = c.POID and
+			ttd.Seq1 = c.Seq1 and 
+            ttd.Seq2 = c.Seq2 and
+			ttd.Dyelot = c.Dyelot and 
+            ttd.Roll = c.Roll and
+			ttd.StockType = c.StockType
+) GMTWash
 Where a.id = '{this.dr_master["poid"]}' and c.lock = 0 and c.inqty - c.outqty + c.adjustqty - c.ReturnQty > 0 
 and a.Refno='{this.dr_master["Refno"]}' and a.colorid='{this.dr_master["colorid"]}' {(this.Type == 0 ? " and ltrim(a.seq1) between '01' and '99'" : string.Empty)}--and ltrim(a.seq1) between '01' and '99'
 order by d.GroupQty DESC,c.Dyelot,balanceqty DESC");
@@ -182,7 +198,8 @@ order by d.GroupQty DESC,c.Dyelot,balanceqty DESC");
                 .Numeric("balanceqty", header: "Balance Qty", iseditingreadonly: true, decimal_places: 2, integer_places: 10) // 6
                 .Numeric("qty", header: "Issue Qty", iseditable: true, decimal_places: 2, integer_places: 10, settings: ns) // 7
                 .EditText("Description", header: "Description", iseditingreadonly: true, width: Widths.AnsiChars(25)) // 8
-                .Text("Tone", header: "Shade Band" + Environment.NewLine + "Tone/Grp", width: Widths.AnsiChars(10), iseditingreadonly: true);
+                .Text("Tone", header: "Shade Band" + Environment.NewLine + "Tone/Grp", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                .Text("GMTWash", header: "GMT Wash", width: Widths.AnsiChars(10), iseditingreadonly: true);
 
             this.gridRollNo.Columns["qty"].DefaultCellStyle.BackColor = Color.Pink;
         }
