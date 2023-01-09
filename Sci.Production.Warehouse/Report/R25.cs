@@ -181,7 +181,7 @@ select
 	[Description] = dbo.getmtldesc(ed.POID,ed.seq1,ed.seq2,2,0),
 	[MtlType]=case when ed.FabricType = 'F' then 'Fabric'
 				   when ed.FabricType = 'A' then 'Accessory' end,
-    f.MtlTypeID,
+    [MtlTypeID] = iif(ed.FabricType = 'F', f.MtlTypeID, ''),
 	f.WeaveTypeID,
 	ed.suppid,
 	[SuppName] = supp.AbbEN,
@@ -238,7 +238,7 @@ OUTER APPLY(
 		FOR XML PATH('')
 	),1,1,'')
 )ContainerNo
-cross apply(
+OUTER apply(
 	select [TotalRollsCalculated] = count(1)
 	from dbo.View_AllReceivingDetail rd WITH (NOLOCK) 
 	where rd.PoId = ed.POID and rd.Seq1 = ed.SEQ1 and rd.Seq2 = ed.SEQ2 AND ed.FabricType='F'
