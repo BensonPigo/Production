@@ -198,12 +198,6 @@
     <Compile Include="B11.Designer.cs">
       <DependentUpon>B11.cs</DependentUpon>
     </Compile>
-    <Compile Include="B09.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="B09.Designer.cs">
-      <DependentUpon>B09.cs</DependentUpon>
-    </Compile>
     <Compile Include="B10.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -276,12 +270,6 @@
     </Compile>
     <Compile Include="P02_OriginalData.Designer.cs">
       <DependentUpon>P02_OriginalData.cs</DependentUpon>
-    </Compile>
-    <Compile Include="P02_StandardQtyPlannedCuttingWIP.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="P02_StandardQtyPlannedCuttingWIP.Designer.cs">
-      <DependentUpon>P02_StandardQtyPlannedCuttingWIP.cs</DependentUpon>
     </Compile>
     <Compile Include="P02_WKETA.cs" />
     <Compile Include="P02_WKETA.Designer.cs">
@@ -535,12 +523,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="R01.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="R01.Designer.cs">
-      <DependentUpon>R01.cs</DependentUpon>
-    </Compile>
     <Compile Include="R02.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -552,18 +534,6 @@
     </Compile>
     <Compile Include="R03.Designer.cs">
       <DependentUpon>R03.cs</DependentUpon>
-    </Compile>
-    <Compile Include="R04.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="R04.Designer.cs">
-      <DependentUpon>R04.cs</DependentUpon>
-    </Compile>
-    <Compile Include="R06.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="R06.Designer.cs">
-      <DependentUpon>R06.cs</DependentUpon>
     </Compile>
     <Compile Include="R07.cs">
       <SubType>Form</SubType>
@@ -642,9 +612,6 @@
     <EmbeddedResource Include="B11.resx">
       <DependentUpon>B11.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="B09.resx">
-      <DependentUpon>B09.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="B10.resx">
       <DependentUpon>B10.cs</DependentUpon>
     </EmbeddedResource>
@@ -689,9 +656,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="P02_OriginalData.resx">
       <DependentUpon>P02_OriginalData.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="P02_StandardQtyPlannedCuttingWIP.resx">
-      <DependentUpon>P02_StandardQtyPlannedCuttingWIP.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P02_WKETA.resx">
       <DependentUpon>P02_WKETA.cs</DependentUpon>
@@ -807,20 +771,11 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <EmbeddedResource Include="R01.resx">
-      <DependentUpon>R01.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="R02.resx">
       <DependentUpon>R02.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="R03.resx">
       <DependentUpon>R03.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="R04.resx">
-      <DependentUpon>R04.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="R06.resx">
-      <DependentUpon>R06.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="R07.resx">
       <DependentUpon>R07.cs</DependentUpon>
