@@ -307,9 +307,7 @@ and (((lmdavg.avgTotalCycle - lmd.TotalCycle) / lmdavg.avgTotalCycle) * 100 >  (
 	from LineMapping l
 	where l.StyleUKey = lm.StyleUKey
 	and l.FactoryID = lm.FactoryID
-    and l.SewingLineID = lm.SewingLineID
-	and l.Team = lm.Team
-	group by l.SewingLineID, l.Team
+	group by l.StyleUKey, l.FactoryID
  )
 ");
             }
