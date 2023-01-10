@@ -2376,6 +2376,9 @@ select  pd.ID
         , o.StyleID
         , o.BrandFTYCode
         , p.Dest
+        , [NewSizeCode] = case  when checkMixSize.value > 1 then 'Mix'
+                                when o.BrandID = 'ADIDAS' then NewSizeCode.val
+						        else pd.SizeCode end
 from PackingList_Detail pd WITH (NOLOCK) 
 inner join PackingList p with (nolock) on p.ID = pd.ID
 left join orders o with(nolock) on o.id = pd.OrderID
@@ -2388,6 +2391,13 @@ outer apply (
 			  and pd.CTNStartNo = checkPD.CTNStartNo
 	) distinctSize
 ) checkMixSize
+outer apply (
+	    select [val] = stuff((select ('/'+isnull(z.SizeSpec, x.SizeSpec)) 
+	    from PackingList_Detail pd2 with (nolock)
+	    outer apply(select SizeSpec from Order_SizeSpec os with (nolock) where os.SizeCode = pd2.SizeCode and os.id = o.poid and os.SizeItem = 'S01')x
+		outer apply(select SizeSpec from Order_SizeSpec_OrderCombo oso with (nolock) where oso.SizeCode = pd2.SizeCode and oso.id = o.poid and oso.OrderComboID = o.OrderComboID and SizeItem = 'S01')z
+	    where pd2.id = pd.id and pd2.CTNStartNo = pd.CTNStartNo for xml path('')),1,1,'')
+    ) NewSizeCode
 outer apply (
     select value = sum (ShipQty)
     from PackingList_Detail checkPD With (NoLock)
