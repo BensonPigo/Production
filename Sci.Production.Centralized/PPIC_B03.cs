@@ -23,7 +23,7 @@ namespace Sci.Production.Centralized
             : base(menuitem)
         {
             this.InitializeComponent();
-            this.DefaultFilter = $"exists (select 1 from Trade.dbo.Factory where ID = MailGroup.FactoryID)";
+            this.DefaultFilter = $"exists (select 1 from TradeDB.Trade.dbo.Factory where ID = MailGroup.FactoryID)";
             this.dt.Columns.Add("ToAddress", typeof(string));
             this.listControlBindingSource1.DataSource = this.dt;
             this.GridSetup();
@@ -97,7 +97,7 @@ namespace Sci.Production.Centralized
             if (this.IsDetailInserting)
             {
                 string sqlcmd = $@"select 1 from MailGroup where FactoryID = '{this.CurrentMaintain["FactoryID"]}' and Code = 'P30'";
-                if (MyUtility.Check.Seek(sqlcmd))
+                if (MyUtility.Check.Seek(sqlcmd, "ProductionTPE"))
                 {
                     MyUtility.Msg.WarningBox("<Factory> is duplicate in database. ");
                     return false;
