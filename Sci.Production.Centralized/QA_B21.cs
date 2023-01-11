@@ -65,7 +65,7 @@ namespace Sci.Production.Centralized
 
              if (this.IsDetailInserting)
             {
-                int seq = MyUtility.Convert.GetInt(MyUtility.GetValue.Lookup($"select max(seq) from GarmentDefectCode where GarmentDefectTypeID = '{this.CurrentMaintain["GarmentDefectTypeID"]}' "));
+                int seq = MyUtility.Convert.GetInt(MyUtility.GetValue.Lookup($"select max(seq) from GarmentDefectCode where GarmentDefectTypeID = '{this.CurrentMaintain["GarmentDefectTypeID"]}' ", "ProductionTPE"));
                 seq++;
                 if (seq > 255)
                 {
