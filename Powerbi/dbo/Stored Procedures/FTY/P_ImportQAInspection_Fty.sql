@@ -1,8 +1,9 @@
-﻿CREATE PROCEDURE [dbo].[P_ImportQAInspection_Fty]
+﻿CREATE PROCEDURE [dbo].[P_ImportQAInspection_Fty] 
 	@InspectionDate Date
+
 AS
 BEGIN
-	
+	SET NOCOUNT ON;
 declare @sDate varchar(20) = cast(@InspectionDate as varchar) -- 2020/01/01
 
 declare @SqlCmd_Combin nvarchar(max) =''
@@ -16,6 +17,23 @@ declare @SqlFinal1 nvarchar(max) = ''
 declare @SqlFinal2 nvarchar(max) = ''
 declare @SqlFinal3 nvarchar(max) = ''
 declare @SqlFinal  nvarchar(max) = ''
+
+/*判斷當前Server後, 指定帶入正式機Server名稱*/
+	declare @current_ServerName varchar(50) = (SELECT [Server Name] = @@SERVERNAME)
+	--依不同Server來抓到對應的備機ServerName
+	--declare @current_PMS_ServerName nvarchar(50) 
+	--= (
+	--	select [value] = 
+	--		CASE WHEN @current_ServerName= 'PHL-NEWPMS-02' THEN 'PHL-NEWPMS' -- PH1
+	--			 WHEN @current_ServerName= 'VT1-PH2-PMS2b' THEN 'VT1-PH2-PMS2' -- PH2
+	--			 WHEN @current_ServerName= 'system2017BK' THEN 'SYSTEM2017' -- SNP
+	--			 WHEN @current_ServerName= 'SPS-SQL2' THEN 'SPS-SQL.spscd.com' -- SPS
+	--			 WHEN @current_ServerName= 'SQLBK' THEN 'PMS-SXR' -- SPR
+	--			 WHEN @current_ServerName= 'newerp-bak' THEN 'newerp' -- HZG		
+	--			 WHEN @current_ServerName= 'SQL' THEN 'MainServer' -- HXG
+	--			 when (select top 1 MDivisionID from Production.dbo.Factory) in ('VM2','VM1') then 'SYSTEM2016' -- ESP & SPT
+	--		ELSE '' END
+	--)
 
 	declare @current_PMS_ServerName nvarchar(50) = 'MainServer' 
 
@@ -535,21 +553,25 @@ drop table #Final_P_CFAInspectionRecord_Detail
 
 update b
     set b.TransferDate = getdate()
+		, b.IS_Trans = 1
 from BITableInfo b
 where b.id = ''P_DQSDefect_Summary''
 
 update b
     set b.TransferDate = getdate()
+		, b.IS_Trans = 1
 from BITableInfo b
 where b.id = ''P_DQSDefect_Detail'' 
 
 update b
     set b.TransferDate = getdate()
+		, b.IS_Trans = 1
 from BITableInfo b
 where b.id = ''P_CFAInline_Detail'' 
 
 update b
     set b.TransferDate = getdate()
+		, b.IS_Trans = 1
 from BITableInfo b
 where b.id = ''P_CFAInspectionRecord_Detail'' 
 '

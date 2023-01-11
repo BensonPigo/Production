@@ -168,6 +168,7 @@
     <Build Include="dbo\Tables\T_OrdersData_ArtworkType.sql" />
     <Build Include="dbo\Tables\T_OrdersData_ETA.sql" />
     <Build Include="dbo\Tables\﻿T_ArtworkComparison.sql" />
+    <Build Include="dbo\Stored Procedures\FTY\P_ImportQAInspection_Fty.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Utility.dll" />
