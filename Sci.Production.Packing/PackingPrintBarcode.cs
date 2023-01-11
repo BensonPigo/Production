@@ -172,7 +172,7 @@ namespace Sci.Production.Packing
                                 string style = "Style#.: " + printData.Rows[i]["StyleID"];
                                 string cartonNo = "CTN#.: " + printData.Rows[i]["CTNStartNo"] + " OF " + printData.Rows[i]["CtnQty"];
                                 string poNo = printData.Rows[i]["PONo"].ToString();
-                                string sizeQty = "Size/Qty: " + printData.Rows[i]["NewSizeCode"] + "/" + printData.Rows[i]["ShipQty"];
+                                string sizeQty = "Size/Qty: " + printData.Rows[i]["SizeCode"] + "/" + printData.Rows[i]["ShipQty"];
                                 string brandFTYCode = "Fty Code: " + printData.Rows[i]["BrandFTYCode"].ToString();
                                 string dest = "Dest: " + printData.Rows[i]["Dest"];
                                 #endregion
@@ -436,7 +436,7 @@ namespace Sci.Production.Packing
                         string spNo = "SP#:" + printData.Rows[p]["OrderID"];
                         string cartonNo = "CTN:" + printData.Rows[p]["CTNStartNo"] + " OF " + printData.Rows[p]["CtnQty"];
                         string poNo = "PO#:" + printData.Rows[p]["PONo"];
-                        string sizeQty = "Size/Qty:" + printData.Rows[p]["NewSizeCode"] + "/" + printData.Rows[p]["ShipQty"];
+                        string sizeQty = "Size/Qty:" + printData.Rows[p]["SizeCode"] + "/" + printData.Rows[p]["ShipQty"];
                         string custCTN = printData.Rows[p]["CustCTN"].ToString();
                         #endregion
 
