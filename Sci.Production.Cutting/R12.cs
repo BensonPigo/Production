@@ -47,7 +47,7 @@ namespace Sci.Production.Cutting
             if (!this.txtSeason.Text.Empty())
             {
                 string split = "'" + string.Join("','", this.txtSeason.Text.Split(',')) + "'";
-                where += $"\r\nand o.SeasonID in ({split})";
+                where += $"\r\nand o.SeasonID in (select ID from Season where SeasonSCIID in ({split}))";
             }
 
             if (!this.txtstyle1.Text.Empty())
