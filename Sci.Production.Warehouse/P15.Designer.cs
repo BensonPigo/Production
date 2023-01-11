@@ -56,6 +56,8 @@
             this.btnCallP99 = new Sci.Win.UI.Button();
             this.lblToPlace = new Sci.Win.UI.Label();
             this.txtToPlace = new Sci.Production.Class.TxtToPlace();
+            this.displayDept = new Sci.Win.UI.DisplayBox();
+            this.lblDept = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -72,6 +74,8 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.displayDept);
+            this.masterpanel.Controls.Add(this.lblDept);
             this.masterpanel.Controls.Add(this.lblToPlace);
             this.masterpanel.Controls.Add(this.txtToPlace);
             this.masterpanel.Controls.Add(this.txtLocalSupp1);
@@ -126,6 +130,8 @@
             this.masterpanel.Controls.SetChildIndex(this.txtLocalSupp1, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtToPlace, 0);
             this.masterpanel.Controls.SetChildIndex(this.lblToPlace, 0);
+            this.masterpanel.Controls.SetChildIndex(this.lblDept, 0);
+            this.masterpanel.Controls.SetChildIndex(this.displayDept, 0);
             // 
             // detailpanel
             // 
@@ -220,7 +226,7 @@
             // 
             this.label25.BackColor = System.Drawing.Color.Transparent;
             this.label25.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F);
-            this.label25.Location = new System.Drawing.Point(830, 13);
+            this.label25.Location = new System.Drawing.Point(878, 13);
             this.label25.Name = "label25";
             this.label25.Size = new System.Drawing.Size(115, 23);
             this.label25.TabIndex = 43;
@@ -388,7 +394,7 @@
             this.displayApvDate.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.displayApvDate.Location = new System.Drawing.Point(552, 13);
             this.displayApvDate.Name = "displayApvDate";
-            this.displayApvDate.Size = new System.Drawing.Size(154, 23);
+            this.displayApvDate.Size = new System.Drawing.Size(129, 23);
             this.displayApvDate.TabIndex = 70;
             // 
             // comboType
@@ -437,6 +443,7 @@
             this.txtLocalSupp1.IsFactory = false;
             this.txtLocalSupp1.IsMisc = false;
             this.txtLocalSupp1.IsMiscOverseas = false;
+            this.txtLocalSupp1.IsSintexSubcon = false;
             this.txtLocalSupp1.Location = new System.Drawing.Point(765, 45);
             this.txtLocalSupp1.Name = "txtLocalSupp1";
             this.txtLocalSupp1.Size = new System.Drawing.Size(230, 23);
@@ -471,6 +478,23 @@
             this.txtToPlace.Name = "txtToPlace";
             this.txtToPlace.Size = new System.Drawing.Size(132, 23);
             this.txtToPlace.TabIndex = 76;
+            // 
+            // displayDept
+            // 
+            this.displayDept.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayDept.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayDept.Location = new System.Drawing.Point(765, 13);
+            this.displayDept.Name = "displayDept";
+            this.displayDept.Size = new System.Drawing.Size(114, 23);
+            this.displayDept.TabIndex = 83;
+            // 
+            // lblDept
+            // 
+            this.lblDept.Location = new System.Drawing.Point(684, 13);
+            this.lblDept.Name = "lblDept";
+            this.lblDept.Size = new System.Drawing.Size(78, 23);
+            this.lblDept.TabIndex = 82;
+            this.lblDept.Text = "Department";
             // 
             // P15
             // 
@@ -548,5 +572,7 @@
         private Win.UI.Button btnCallP99;
         private Win.UI.Label lblToPlace;
         private Class.TxtToPlace txtToPlace;
+        private Win.UI.DisplayBox displayDept;
+        private Win.UI.Label lblDept;
     }
 }

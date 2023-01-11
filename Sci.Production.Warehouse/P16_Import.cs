@@ -104,12 +104,14 @@ select selected = 0
        , a.Remark
        , c.lock
        , [Tone] = Tone.val
+       , [LackReason] = iif(a.PPICReasonID is null, '', CONCAT(a.PPICReasonID, '-', p.Description))
 from dbo.Lack_Detail a WITH (NOLOCK) 
 inner join dbo.Lack b WITH (NOLOCK) on b.ID = a.ID
 inner join dbo.ftyinventory c WITH (NOLOCK) on c.poid = b.POID 
 											   and c.seq1 = a.seq1 
 											   and c.seq2  = a.seq2 
 											   and c.stocktype = 'B'
+left join PPICReason p with (nolock) on p.Type = 'FL' and p.ID = a.PPICReasonID
 outer apply(select [val] = isnull(max(Tone), '')
             from FIR f with (nolock)
             inner join FIR_Shadebone  fs with (nolock) on fs.ID = f.ID

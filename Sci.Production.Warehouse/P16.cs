@@ -336,7 +336,8 @@ and ID = '{Sci.Env.User.UserID}'"))
             .Numeric("qty", header: "Issue Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10) // 6
             .Text("Location", header: "Bulk Location", iseditingreadonly: true) // 7
             .Text("ContainerCode", header: "Container Code", iseditingreadonly: true).Get(out cbb_ContainerCode)
-            .Text("Remark", header: "Remark", width: Widths.AnsiChars(20), iseditingreadonly: true);
+            .Text("Remark", header: "Remark", width: Widths.AnsiChars(20), iseditingreadonly: true)
+            .Text("LackReason", header: "Lacking & Replacement Reason", iseditingreadonly: true);
             #endregion 欄位設定
 
             // 僅有自動化工廠 ( System.Automation = 1 )才需要顯示該欄位 by ISP20220035
@@ -817,7 +818,9 @@ select a.id
 	   , a.ukey
 	   , a.FtyInventoryUkey
        , a.Remark
+       , [LackReason] = iif(ld.PPICReasonID is null, '', CONCAT(ld.PPICReasonID, '-', p.Description))
 from dbo.IssueLack_Detail a WITH (NOLOCK) 
+inner join IssueLack il with (nolock) on a.ID = il.ID
 left join PO_Supp_Detail p1 WITH (NOLOCK) on p1.ID = a.PoId 
 											 and p1.seq1 = a.SEQ1 
 											 and p1.SEQ2 = a.seq2
@@ -827,6 +830,9 @@ left join FtyInventory fi WITH (NOLOCK) on a.POID = fi.POID
 										  and a.Roll = fi.Roll 
 										  and a.Dyelot = fi.Dyelot 
 										  and a.StockType = fi.StockType
+left join Lack l with (nolock) on l.POID = a.POID and l.ID = il.RequestID
+left join Lack_Detail ld with (nolock) on ld.ID = l.ID and ld.seq1 = a.SEQ1 and ld.SEQ2 = a.seq2
+left join PPICReason p with (nolock) on p.Type = 'FL' and p.ID = ld.PPICReasonID
 outer apply (
 	select [Tone] = MAX(fs.Tone)
     from FtyInventory fi2 with (nolock) 
