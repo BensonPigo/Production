@@ -214,6 +214,18 @@
       <DependentUpon>P07_QRCodeSticker.cs</DependentUpon>
     </Compile>
     <Compile Include="P26_PrintData.cs" />
+    <Compile Include="P54.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P54.Designer.cs">
+      <DependentUpon>P54.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P54_Import.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P54_Import.Designer.cs">
+      <DependentUpon>P54_Import.cs</DependentUpon>
+    </Compile>
     <Compile Include="P65_PrintData.cs" />
     <Compile Include="P06.cs">
       <SubType>Form</SubType>
@@ -1603,6 +1615,12 @@
       <DependentUpon>P08_ExcelImport.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P26_Print.rdlc" />
+    <EmbeddedResource Include="P54.resx">
+      <DependentUpon>P54.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P54_Import.resx">
+      <DependentUpon>P54_Import.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="P67_Import .resx">
       <DependentUpon>P67_Import .cs</DependentUpon>
     </EmbeddedResource>
