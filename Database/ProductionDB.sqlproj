@@ -2415,8 +2415,6 @@
     <Build Include="dbo\Stored Procedures\CalculateShareExpense.sql" />
     <Build Include="dbo\Stored Procedures\insert_Air_Fir_TnsfIn.sql" />
     <Build Include="dbo\Functions\GetOrderAmount.sql" />
-    <Build Include="dbo\Tables\SubprocessLeadTime_Detail.sql" />
-    <Build Include="dbo\Tables\SubprocessLeadTime.sql" />
     <Build Include="dbo\Tables\SewingOutputTransfer_Detail.sql" />
     <Build Include="dbo\Tables\SewingOutputTransfer.sql" />
     <Build Include="dbo\Functions\GetOrderQtyUpperlimit.sql" />
