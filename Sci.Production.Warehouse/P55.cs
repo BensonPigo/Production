@@ -136,7 +136,7 @@ namespace Sci.Production.Warehouse
 
             if (!MyUtility.Check.Empty(prodText.Text))
             {
-                if (MyUtility.Msg.QuestionBox("The following workorder data duplicated. Do you want to continue?") == DialogResult.No)
+                if (MyUtility.Msg.QuestionBox("Sub con already changed, system will clean detail data, do you want to switch the sub con ?") == DialogResult.No)
                 {
                     return;
                 }
@@ -294,7 +294,7 @@ namespace Sci.Production.Warehouse
             }
 
             sqlcmd = $@"select 
-                        [SP#] = td.id
+                        [SP#] = td.poid
                         ,[Seq] = Concat ( td.Seq1, ' ', td.Seq2 )
                         ,td.Roll
                         ,td.Dyelot
@@ -416,7 +416,7 @@ namespace Sci.Production.Warehouse
             }
 
             string sqlcmd = $@"select 
-                               [SP#] = td.id
+                               [SP#] = td.poid
                                ,[Seq] = Concat ( td.Seq1, ' ', td.Seq2 )
                                ,td.Roll
                                ,td.Dyelot
@@ -440,7 +440,7 @@ namespace Sci.Production.Warehouse
 
             if (dt.Rows.Count != 0)
             {
-                string msg = $"({this.CurrentMaintain["Subcon"]})Fabric already existed in sub con return record.";
+                string msg = $"({this.CurrentMaintain["Subcon"]})Fabric still transfer to other sub con not return yet.";
                 MyUtility.Msg.ShowMsgGrid(dt, msg: msg, caption: "Warning");
                 return;
             }
