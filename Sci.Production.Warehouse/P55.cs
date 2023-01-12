@@ -267,7 +267,7 @@ namespace Sci.Production.Warehouse
 
             if (!MyUtility.Check.Seek($"Select 1 from SubconReturn where ID = '{this.CurrentMaintain["ID"]}'"))
             {
-                this.CurrentMaintain["ID"] = MyUtility.GetValue.GetID(Env.User.Keyword + "BR", "SubconReturn", (DateTime)MyUtility.Convert.GetDate(this.CurrentMaintain["ReturnDate"]));
+                this.CurrentMaintain["ID"] = MyUtility.GetValue.GetID(Env.User.Keyword + "BR", "SubconReturn", (DateTime)MyUtility.Convert.GetDate(this.CurrentMaintain["AddDate"]));
             }
 
             return base.ClickSaveBefore();

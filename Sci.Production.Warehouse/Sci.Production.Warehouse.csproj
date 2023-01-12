@@ -225,6 +225,7 @@
     </Compile>
     <Compile Include="P54_Import.Designer.cs">
       <DependentUpon>P54_Import.cs</DependentUpon>
+	</Compile>
     <Compile Include="P55.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -1637,6 +1638,7 @@
     </EmbeddedResource>
     <EmbeddedResource Include="P54_Import.resx">
      <DependentUpon>P54_Import.cs</DependentUpon>
+	</EmbeddedResource>
     <EmbeddedResource Include="P55.resx">
       <DependentUpon>P55.cs</DependentUpon>
     </EmbeddedResource>
