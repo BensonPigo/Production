@@ -1805,7 +1805,7 @@
             // 
             // dateSCHDLETAMasterSP
             // 
-            this.dateSCHDLETAMasterSP.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "LETA", true));
+            this.dateSCHDLETAMasterSP.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "SCHDLETA", true));
             this.dateSCHDLETAMasterSP.IsSupportEditMode = false;
             this.dateSCHDLETAMasterSP.Location = new System.Drawing.Point(163, 116);
             this.dateSCHDLETAMasterSP.Name = "dateSCHDLETAMasterSP";
