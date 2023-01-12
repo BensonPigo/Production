@@ -181,7 +181,7 @@ select
 	[Description] = dbo.getmtldesc(ed.POID,ed.seq1,ed.seq2,2,0),
 	[MtlType]=case when ed.FabricType = 'F' then 'Fabric'
 				   when ed.FabricType = 'A' then 'Accessory' end,
-    [MtlTypeID] = iif(ed.FabricType = 'F', f.MtlTypeID, ''),
+    f.MtlTypeID,
 	f.WeaveTypeID,
 	ed.suppid,
 	[SuppName] = supp.AbbEN,
