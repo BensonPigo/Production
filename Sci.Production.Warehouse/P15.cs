@@ -285,11 +285,12 @@ namespace Sci.Production.Warehouse
             if (!MyUtility.Check.Empty(MyUtility.GetValue.Lookup(string.Format(@"select apvdate from lack WITH (NOLOCK) where id = '{0}'", this.CurrentMaintain["requestid"]))))
             {
                 DataRow dr;
-                if (MyUtility.Check.Seek(string.Format(@"select apvdate,Shift,SubconName from lack WITH (NOLOCK) where id = '{0}'", this.CurrentMaintain["requestid"]), out dr))
+                if (MyUtility.Check.Seek(string.Format(@"select apvdate,Shift,SubconName,Dept from lack WITH (NOLOCK) where id = '{0}'", this.CurrentMaintain["requestid"]), out dr))
                 {
                     this.displayApvDate.Text = ((DateTime)dr["apvdate"]).ToString(string.Format("{0}", Env.Cfg.DateTimeStringFormat));
                     this.displayBoxShift.Text = dr["Shift"].Equals("D") ? "Day" : dr["Shift"].Equals("N") ? "Night" : "Subcon-Out";
                     this.txtLocalSupp1.TextBox1.Text = dr["SubconName"].ToString();
+                    this.displayDept.Text = dr["Dept"].ToString();
                 }
             }
             else
@@ -335,6 +336,7 @@ and ID = '{Sci.Env.User.UserID}'"))
             .Text("stockunit", header: "Unit", iseditingreadonly: true) // 5
             .Numeric("qty", header: "Issue Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10) // 6
             .Text("Location", header: "Bulk Location", iseditingreadonly: true) // 7
+            .Text("LackReason", header: "Lacking & Replacement Reason", iseditingreadonly: true) // 7
             ;
             #endregion 欄位設定
         }
@@ -781,9 +783,14 @@ where (isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f
 ,dbo.Getlocation(f.Ukey)  as location
 ,a.ukey
 ,a.FtyInventoryUkey
+,[LackReason] = iif(ld.PPICReasonID is null, '', CONCAT(ld.PPICReasonID, '-', p.Description))
 from dbo.IssueLack_Detail a WITH (NOLOCK) 
+inner join IssueLack il with (nolock) on a.ID = il.ID
 left join PO_Supp_Detail p1 WITH (NOLOCK) on p1.ID = a.PoId and p1.seq1 = a.SEQ1 and p1.SEQ2 = a.seq2
 left join FtyInventory f WITH (NOLOCK) on a.POID=f.POID and a.Seq1=f.Seq1 and a.Seq2=f.Seq2 and a.Roll=f.Roll and a.Dyelot=f.Dyelot and a.StockType=f.StockType
+left join Lack l with (nolock) on l.POID = a.POID and l.ID = il.RequestID
+left join Lack_Detail ld with (nolock) on ld.ID = l.ID and ld.seq1 = a.SEQ1 and ld.SEQ2 = a.seq2
+left join PPICReason p with (nolock) on p.Type = 'AL' and p.ID = ld.PPICReasonID
 Where a.id = '{0}'", masterID);
             return base.OnDetailSelectCommandPrepare(e);
         }
