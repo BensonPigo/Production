@@ -238,7 +238,7 @@ OUTER APPLY(
 		FOR XML PATH('')
 	),1,1,'')
 )ContainerNo
-cross apply(
+OUTER apply(
 	select [TotalRollsCalculated] = count(1)
 	from dbo.View_AllReceivingDetail rd WITH (NOLOCK) 
 	where rd.PoId = ed.POID and rd.Seq1 = ed.SEQ1 and rd.Seq2 = ed.SEQ2 AND ed.FabricType='F'

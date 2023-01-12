@@ -1,174 +1,214 @@
-﻿CREATE TABLE [dbo].[LineMapping] (
-    [StyleID]                   VARCHAR (15)   CONSTRAINT [DF_LineMapping_StyleID] DEFAULT ('') NOT NULL,
-    [SeasonID]                  VARCHAR (10)   CONSTRAINT [DF_LineMapping_SeasonID] DEFAULT ('') NOT NULL,
-    [BrandID]                   VARCHAR (8)    CONSTRAINT [DF_LineMapping_BrandID] DEFAULT ('') NOT NULL,
-    [StyleUKey]                 BIGINT         CONSTRAINT [DF_LineMapping_StyleUKey] DEFAULT ((0)) NOT NULL,
-    [Version]                   TINYINT        CONSTRAINT [DF_LineMapping_Version] DEFAULT ((0)) NOT NULL,
-    [FactoryID]                 VARCHAR (8)    CONSTRAINT [DF_LineMapping_FactoryID] DEFAULT ('') NOT NULL,
-    [ComboType]                 VARCHAR (1)    CONSTRAINT [DF_LineMapping_ComboType] DEFAULT ('') NULL,
-    [SewingLineID]              VARCHAR (5)    CONSTRAINT [DF_LineMapping_SewingLineID] DEFAULT ('') NULL,
-    [Team]                      VARCHAR (5)    CONSTRAINT [DF_LineMapping_Team] DEFAULT ('') NULL,
-    [IdealOperators]            TINYINT        CONSTRAINT [DF_LineMapping_IdealOperators] DEFAULT ((0)) NULL,
-    [CurrentOperators]          SMALLINT       CONSTRAINT [DF_LineMapping_CurrentOperators] DEFAULT ((0)) NULL,
-    [StandardOutput]            INT            CONSTRAINT [DF_LineMapping_StandardOutput] DEFAULT ((0)) NULL,
-    [DailyDemand]               INT            CONSTRAINT [DF_LineMapping_DailyDemand] DEFAULT ((0)) NULL,
-    [Workhour]                  NUMERIC (4, 1) CONSTRAINT [DF_LineMapping_Workhour] DEFAULT ((0)) NULL,
-    [NetTime]                   INT            CONSTRAINT [DF_LineMapping_NetTime] DEFAULT ((0)) NULL,
-    [TaktTime]                  INT            CONSTRAINT [DF_LineMapping_TaktTime] DEFAULT ((0)) NULL,
-    [TotalGSD]                  INT            CONSTRAINT [DF_LineMapping_TotalGSD] DEFAULT ((0)) NULL,
-    [TotalCycle]                INT            CONSTRAINT [DF_LineMapping_TotalCycle] DEFAULT ((0)) NULL,
-    [HighestGSD]                NUMERIC (7, 2) CONSTRAINT [DF_LineMapping_HighestGSD] DEFAULT ((0)) NULL,
-    [HighestCycle]              NUMERIC (7, 2) CONSTRAINT [DF_LineMapping_HighestCycle] DEFAULT ((0)) NULL,
-    [ID]                        BIGINT         IDENTITY (1, 1) NOT FOR REPLICATION NOT NULL,
-    [Status]                    VARCHAR (15)   CONSTRAINT [DF_LineMapping_Status] DEFAULT ('') NULL,
-    [IEReasonID]                VARCHAR (5)    CONSTRAINT [DF_LineMapping_IEReasonID] DEFAULT ('') NULL,
-    [AddName]                   VARCHAR (10)   CONSTRAINT [DF_LineMapping_AddName] DEFAULT ('') NULL,
-    [AddDate]                   DATETIME       NULL,
-    [EditName]                  VARCHAR (10)   CONSTRAINT [DF_LineMapping_EditName] DEFAULT ('') NULL,
-    [EditDate]                  DATETIME       NULL,
-    [TimeStudyPhase]            VARCHAR (10)   CONSTRAINT [DF_LineMapping_TimeStudyPhase] DEFAULT ('') NOT NULL,
-    [TimeStudyVersion]          VARCHAR (2)    CONSTRAINT [DF_LineMapping_TimeStudyVersion] DEFAULT ('') NOT NULL,
-    [IEReasonLBRNotHit_1stUkey] BIGINT         NULL,
-    CONSTRAINT [PK_LineMapping] PRIMARY KEY CLUSTERED ([StyleUKey], [FactoryID], [Version])
-);
-
-
-
-
-
-
-
-
-GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Line Mapping', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'LineMapping';
-
-
-GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'款式', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'LineMapping', @level2type = N'COLUMN', @level2name = N'StyleID';
-
-
-GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'季別', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'LineMapping', @level2type = N'COLUMN', @level2name = N'SeasonID';
-
-
-GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'品牌', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'LineMapping', @level2type = N'COLUMN', @level2name = N'BrandID';
-
-
-GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'StyleUkey', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'LineMapping', @level2type = N'COLUMN', @level2name = N'StyleUKey';
-
-
-GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'版本', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'LineMapping', @level2type = N'COLUMN', @level2name = N'Version';
-
-
-GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'工廠別', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'LineMapping', @level2type = N'COLUMN', @level2name = N'FactoryID';
-
-
-GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'套裝部位', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'LineMapping', @level2type = N'COLUMN', @level2name = N'ComboType';
-
-
-GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'生產線', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'LineMapping', @level2type = N'COLUMN', @level2name = N'SewingLineID';
-
-
-GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'生產組別', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'LineMapping', @level2type = N'COLUMN', @level2name = N'Team';
-
-
-GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'預計投入人數', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'LineMapping', @level2type = N'COLUMN', @level2name = N'IdealOperators';
-
-
-GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'現行投入人數', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'LineMapping', @level2type = N'COLUMN', @level2name = N'CurrentOperators';
-
-
-GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'標準產出', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'LineMapping', @level2type = N'COLUMN', @level2name = N'StandardOutput';
-
-
-GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'一天產出件數', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'LineMapping', @level2type = N'COLUMN', @level2name = N'DailyDemand';
-
-
-GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'每日工作時數', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'LineMapping', @level2type = N'COLUMN', @level2name = N'Workhour';
-
-
-GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Net available Time', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'LineMapping', @level2type = N'COLUMN', @level2name = N'NetTime';
-
-
-GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'每產出一件所需秒數', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'LineMapping', @level2type = N'COLUMN', @level2name = N'TaktTime';
-
-
-GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'GSD上的總秒數', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'LineMapping', @level2type = N'COLUMN', @level2name = N'TotalGSD';
-
-
-GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'全部Cycle的總秒數', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'LineMapping', @level2type = N'COLUMN', @level2name = N'TotalCycle';
-
-
-GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'各站中最高的GSD秒數', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'LineMapping', @level2type = N'COLUMN', @level2name = N'HighestGSD';
-
-
-GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'各站中最高的Cycle秒數', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'LineMapping', @level2type = N'COLUMN', @level2name = N'HighestCycle';
-
-
+﻿CREATE TABLE [dbo].[LineMapping](
+	[StyleID] [varchar](15) NOT NULL,
+	[SeasonID] [varchar](10) NOT NULL,
+	[BrandID] [varchar](8) NOT NULL,
+	[StyleUKey] [bigint] NOT NULL,
+	[Version] [tinyint] NOT NULL,
+	[FactoryID] [varchar](8) NOT NULL,
+	[ComboType] [varchar](1) NULL,
+	[SewingLineID] [varchar](5) NULL,
+	[Team] [varchar](5) NULL,
+	[IdealOperators] [tinyint] NULL,
+	[CurrentOperators] [smallint] NULL,
+	[StandardOutput] [int] NULL,
+	[DailyDemand] [int] NULL,
+	[Workhour] [numeric](4, 1) NULL,
+	[NetTime] [int] NULL,
+	[TaktTime] [int] NULL,
+	[TotalGSD] [int] NULL,
+	[TotalCycle] [int] NULL,
+	[HighestGSD] [numeric](7, 2) NULL,
+	[HighestCycle] [numeric](7, 2) NULL,
+	[ID] [bigint] IDENTITY(1,1) NOT FOR REPLICATION NOT NULL,
+	[Status] [varchar](15) NULL,
+	[IEReasonID] [varchar](5) NULL,
+	[AddName] [varchar](10) NULL,
+	[AddDate] [datetime] NULL,
+	[EditName] [varchar](10) NULL,
+	[EditDate] [datetime] NULL,
+	[TimeStudyPhase] [varchar](10) NOT NULL,
+	[TimeStudyVersion] [varchar](2) NOT NULL,
+	[IEReasonLBRNotHit_1stUkey] [bigint] NULL,
+	[Phase] [varchar](20) NOT NULL,
+ CONSTRAINT [PK_LineMapping] PRIMARY KEY CLUSTERED 
+(
+	[StyleUKey] ASC,
+	[Version] ASC,
+	[FactoryID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
 GO
 
-
-
+ALTER TABLE [dbo].[LineMapping] ADD  CONSTRAINT [DF_LineMapping_StyleID]  DEFAULT ('') FOR [StyleID]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'狀態', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'LineMapping', @level2type = N'COLUMN', @level2name = N'Status';
 
-
+ALTER TABLE [dbo].[LineMapping] ADD  CONSTRAINT [DF_LineMapping_SeasonID]  DEFAULT ('') FOR [SeasonID]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Not hit target reason', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'LineMapping', @level2type = N'COLUMN', @level2name = N'IEReasonID';
 
-
+ALTER TABLE [dbo].[LineMapping] ADD  CONSTRAINT [DF_LineMapping_BrandID]  DEFAULT ('') FOR [BrandID]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'新增者', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'LineMapping', @level2type = N'COLUMN', @level2name = N'AddName';
 
-
+ALTER TABLE [dbo].[LineMapping] ADD  CONSTRAINT [DF_LineMapping_StyleUKey]  DEFAULT ((0)) FOR [StyleUKey]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'新增時間', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'LineMapping', @level2type = N'COLUMN', @level2name = N'AddDate';
 
-
+ALTER TABLE [dbo].[LineMapping] ADD  CONSTRAINT [DF_LineMapping_Version]  DEFAULT ((0)) FOR [Version]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'編輯者', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'LineMapping', @level2type = N'COLUMN', @level2name = N'EditName';
 
-
+ALTER TABLE [dbo].[LineMapping] ADD  CONSTRAINT [DF_LineMapping_FactoryID]  DEFAULT ('') FOR [FactoryID]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'編輯時間', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'LineMapping', @level2type = N'COLUMN', @level2name = N'EditDate';
 
-
+ALTER TABLE [dbo].[LineMapping] ADD  CONSTRAINT [DF_LineMapping_ComboType]  DEFAULT ('') FOR [ComboType]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'ID', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'LineMapping', @level2type = N'COLUMN', @level2name = N'ID';
 
-
+ALTER TABLE [dbo].[LineMapping] ADD  CONSTRAINT [DF_LineMapping_SewingLineID]  DEFAULT ('') FOR [SewingLineID]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Fty GSD�� Phase', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'LineMapping', @level2type = N'COLUMN', @level2name = N'TimeStudyPhase';
 
-
+ALTER TABLE [dbo].[LineMapping] ADD  CONSTRAINT [DF_LineMapping_Team]  DEFAULT ('') FOR [Team]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Fty GSD�� version', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'LineMapping', @level2type = N'COLUMN', @level2name = N'TimeStudyVersion';
 
-
+ALTER TABLE [dbo].[LineMapping] ADD  CONSTRAINT [DF_LineMapping_IdealOperators]  DEFAULT ((0)) FOR [IdealOperators]
 GO
-EXEC sp_addextendedproperty @name = N'MS_Description',
-    @value = N'IEReasonLBRNotHit_1st Ukey',
-    @level0type = N'SCHEMA',
-    @level0name = N'dbo',
-    @level1type = N'TABLE',
-    @level1name = N'LineMapping',
-    @level2type = N'COLUMN',
-    @level2name = N'IEReasonLBRNotHit_1stUkey'
+
+ALTER TABLE [dbo].[LineMapping] ADD  CONSTRAINT [DF_LineMapping_CurrentOperators]  DEFAULT ((0)) FOR [CurrentOperators]
+GO
+
+ALTER TABLE [dbo].[LineMapping] ADD  CONSTRAINT [DF_LineMapping_StandardOutput]  DEFAULT ((0)) FOR [StandardOutput]
+GO
+
+ALTER TABLE [dbo].[LineMapping] ADD  CONSTRAINT [DF_LineMapping_DailyDemand]  DEFAULT ((0)) FOR [DailyDemand]
+GO
+
+ALTER TABLE [dbo].[LineMapping] ADD  CONSTRAINT [DF_LineMapping_Workhour]  DEFAULT ((0)) FOR [Workhour]
+GO
+
+ALTER TABLE [dbo].[LineMapping] ADD  CONSTRAINT [DF_LineMapping_NetTime]  DEFAULT ((0)) FOR [NetTime]
+GO
+
+ALTER TABLE [dbo].[LineMapping] ADD  CONSTRAINT [DF_LineMapping_TaktTime]  DEFAULT ((0)) FOR [TaktTime]
+GO
+
+ALTER TABLE [dbo].[LineMapping] ADD  CONSTRAINT [DF_LineMapping_TotalGSD]  DEFAULT ((0)) FOR [TotalGSD]
+GO
+
+ALTER TABLE [dbo].[LineMapping] ADD  CONSTRAINT [DF_LineMapping_TotalCycle]  DEFAULT ((0)) FOR [TotalCycle]
+GO
+
+ALTER TABLE [dbo].[LineMapping] ADD  CONSTRAINT [DF_LineMapping_HighestGSD]  DEFAULT ((0)) FOR [HighestGSD]
+GO
+
+ALTER TABLE [dbo].[LineMapping] ADD  CONSTRAINT [DF_LineMapping_HighestCycle]  DEFAULT ((0)) FOR [HighestCycle]
+GO
+
+ALTER TABLE [dbo].[LineMapping] ADD  CONSTRAINT [DF_LineMapping_Status]  DEFAULT ('') FOR [Status]
+GO
+
+ALTER TABLE [dbo].[LineMapping] ADD  CONSTRAINT [DF_LineMapping_IEReasonID]  DEFAULT ('') FOR [IEReasonID]
+GO
+
+ALTER TABLE [dbo].[LineMapping] ADD  CONSTRAINT [DF_LineMapping_AddName]  DEFAULT ('') FOR [AddName]
+GO
+
+ALTER TABLE [dbo].[LineMapping] ADD  CONSTRAINT [DF_LineMapping_EditName]  DEFAULT ('') FOR [EditName]
+GO
+
+ALTER TABLE [dbo].[LineMapping] ADD  CONSTRAINT [DF_LineMapping_TimeStudyPhase]  DEFAULT ('') FOR [TimeStudyPhase]
+GO
+
+ALTER TABLE [dbo].[LineMapping] ADD  CONSTRAINT [DF_LineMapping_TimeStudyVersion]  DEFAULT ('') FOR [TimeStudyVersion]
+GO
+
+ALTER TABLE [dbo].[LineMapping] ADD  CONSTRAINT [DF_LineMapping_Phase]  DEFAULT ('') FOR [Phase]
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'款式' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'LineMapping', @level2type=N'COLUMN',@level2name=N'StyleID'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'季別' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'LineMapping', @level2type=N'COLUMN',@level2name=N'SeasonID'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'品牌' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'LineMapping', @level2type=N'COLUMN',@level2name=N'BrandID'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'StyleUkey' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'LineMapping', @level2type=N'COLUMN',@level2name=N'StyleUKey'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'版本' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'LineMapping', @level2type=N'COLUMN',@level2name=N'Version'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'工廠別' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'LineMapping', @level2type=N'COLUMN',@level2name=N'FactoryID'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'套裝部位' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'LineMapping', @level2type=N'COLUMN',@level2name=N'ComboType'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'生產線' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'LineMapping', @level2type=N'COLUMN',@level2name=N'SewingLineID'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'生產組別' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'LineMapping', @level2type=N'COLUMN',@level2name=N'Team'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'預計投入人數' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'LineMapping', @level2type=N'COLUMN',@level2name=N'IdealOperators'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'現行投入人數' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'LineMapping', @level2type=N'COLUMN',@level2name=N'CurrentOperators'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'標準產出' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'LineMapping', @level2type=N'COLUMN',@level2name=N'StandardOutput'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'一天產出件數' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'LineMapping', @level2type=N'COLUMN',@level2name=N'DailyDemand'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'每日工作時數' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'LineMapping', @level2type=N'COLUMN',@level2name=N'Workhour'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Net available Time' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'LineMapping', @level2type=N'COLUMN',@level2name=N'NetTime'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'每產出一件所需秒數' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'LineMapping', @level2type=N'COLUMN',@level2name=N'TaktTime'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'GSD上的總秒數' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'LineMapping', @level2type=N'COLUMN',@level2name=N'TotalGSD'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'全部Cycle的總秒數' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'LineMapping', @level2type=N'COLUMN',@level2name=N'TotalCycle'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'各站中最高的GSD秒數' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'LineMapping', @level2type=N'COLUMN',@level2name=N'HighestGSD'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'各站中最高的Cycle秒數' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'LineMapping', @level2type=N'COLUMN',@level2name=N'HighestCycle'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'ID' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'LineMapping', @level2type=N'COLUMN',@level2name=N'ID'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'狀態' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'LineMapping', @level2type=N'COLUMN',@level2name=N'Status'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Not hit target reason' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'LineMapping', @level2type=N'COLUMN',@level2name=N'IEReasonID'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'新增者' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'LineMapping', @level2type=N'COLUMN',@level2name=N'AddName'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'新增時間' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'LineMapping', @level2type=N'COLUMN',@level2name=N'AddDate'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'編輯者' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'LineMapping', @level2type=N'COLUMN',@level2name=N'EditName'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'編輯時間' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'LineMapping', @level2type=N'COLUMN',@level2name=N'EditDate'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Fty GSD的 Phase' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'LineMapping', @level2type=N'COLUMN',@level2name=N'TimeStudyPhase'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Fty GSD的 version' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'LineMapping', @level2type=N'COLUMN',@level2name=N'TimeStudyVersion'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'IEReasonLBRNotHit_1st Ukey' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'LineMapping', @level2type=N'COLUMN',@level2name=N'IEReasonLBRNotHit_1stUkey'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Line Mapping' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'LineMapping'
+GO
