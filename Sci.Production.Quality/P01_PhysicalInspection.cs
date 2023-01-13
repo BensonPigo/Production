@@ -1333,21 +1333,11 @@ and id = '{this.maindr["Receivingid"]}'
                 DataTable dtRealTime;
 
                 string cmd = $@"
-SELECT Yards,FabricdefectID,count(1) cnt
-into #tmp
-FROM [Production].[dbo].[FIR_Physical_Defect_Realtime] 
+SELECT Yards, FabricdefectID, T2 = iif(T2 = 1,'-T2',''), [cnt] = count(1)
+FROM [Production].[dbo].[FIR_Physical_Defect_Realtime] with (nolock)
 where FIR_PhysicalDetailUkey={dtGrid.Rows[rowcount - 1]["detailUkey"]}
-group by Yards,FabricdefectID
+group by Yards,FabricdefectID, T2
 order by Yards
-
-select t.* ,T2 = iif(isnull(s.T2,0)!='','-T2','')
-from #tmp t
-left join [Production].[dbo].[FIR_Physical_Defect_Realtime]  s
-on t.FabricdefectID = s.FabricdefectID  and t.Yards = s.Yards and s.T2=1
-and s.FIR_PhysicalDetailUkey = {dtGrid.Rows[rowcount - 1]["detailUkey"]}
-order by Yards
-
-drop table #tmp
 ";
 
                 if (!(result = DBProxy.Current.Select("Production", cmd, out dtRealTime)))
