@@ -200,6 +200,20 @@ namespace Sci.Production.Warehouse
         {
             DualResult dualResult;
             DataTable dataTable = (DataTable)this.detailgridbs.DataSource;
+
+            if (MyUtility.Check.Empty(this.CurrentMaintain["Subcon"]))
+            {
+                MyUtility.Msg.WarningBox("Sub con  can't be empty!", "Warning");
+                this.txtSubcon.Focus();
+                return false;
+            }
+
+            if (this.DetailDatas.Count == 0)
+            {
+                MyUtility.Msg.WarningBox("Detail can't be empty", "Warning");
+                return false;
+            }
+
             string sqlcmd = string.Empty;
             sqlcmd = $@"select 
                         [SP#] = td.poid
