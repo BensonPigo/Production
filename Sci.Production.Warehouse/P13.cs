@@ -956,17 +956,18 @@ select  o.FtyGroup
                             else '' end
         , [Color] =
 			IIF(f.MtlTypeID = 'EMB THREAD' OR f.MtlTypeID = 'SP THREAD' OR f.MtlTypeID = 'THREAD' 
-			,IIF( p1.SuppColor = '' or p1.SuppColor is null,dbo.GetColorMultipleID(o.BrandID,p1.ColorID),p1.SuppColor)
-			,dbo.GetColorMultipleID(o.BrandID,p1.ColorID))
-		, [Size]= p1.SizeSpec
+			,IIF( psd.SuppColor = '' or psd.SuppColor is null,dbo.GetColorMultipleID(o.BrandID,isnull(psdsC.SpecValue, '')),psd.SuppColor)
+			,dbo.GetColorMultipleID(o.BrandID,isnull(psdsC.SpecValue, '')))
+		, [Size]= isnull(psdsS.SpecValue, '')
 from dbo.issue_detail as a WITH (NOLOCK) 
 left join Orders o on a.poid = o.id
 left join PO_Supp_Detail psd WITH (NOLOCK) on psd.ID = a.PoId and psd.seq1 = a.SEQ1 and psd.SEQ2 = a.seq2
 left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
+left join PO_Supp_Detail_Spec psdsS WITH (NOLOCK) on psdsS.ID = psd.id and psdsS.seq1 = psd.seq1 and psdsS.seq2 = psd.seq2 and psdsS.SpecColumnID = 'Size'
 left join PO_Supp p WITH (NOLOCK) on p.ID = psd.ID and psd.seq1 = p.SEQ1
 left join dbo.ftyinventory c WITH (NOLOCK) on c.poid = a.poid and c.seq1 = a.seq1 and c.seq2  = a.seq2 
     and c.stocktype = 'B' and c.roll=a.roll and a.Dyelot = c.Dyelot
-left join fabric f with(nolock) on f.SCIRefno = p1.SCIRefno
+left join fabric f with(nolock) on f.SCIRefno = psd.SCIRefno
 outer apply (
 	select [Tone] = MAX(fs.Tone)
     from FtyInventory fi with (nolock) 

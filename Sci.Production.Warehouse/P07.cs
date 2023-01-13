@@ -859,7 +859,7 @@ OUTER APPLY(
 where   e.PoID ='{this.CurrentDetailData["poid"]}' 
         and e.id = '{this.CurrentMaintain["exportid"]}'
 and psd.Junk=0
-Order By e.Seq1, e.Seq2, e.Refnoo";
+Order By e.Seq1, e.Seq2, e.Refno";
 
                         DBProxy.Current.Select(null, sqlcmd, out DataTable poitems);
 
