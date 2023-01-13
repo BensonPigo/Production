@@ -722,7 +722,7 @@ OUTER APPLY(
 WHERE psd.id ='{this.poid}' 
 AND m.IsThread=1 
 AND psd.FabricType ='A'
-and psd.ColorID <> ''
+and isnull(psdsC.SpecValue, '') <> ''
 AND psd.Refno='{refno}'
 AND isnull(psdsC.SpecValue, '')='{colorID}'
 AND psd.SCIRefno='{sCIRefno}'

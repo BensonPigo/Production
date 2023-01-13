@@ -520,7 +520,7 @@ OUTER APPLY(
 		FROM PO_Supp_Detail y
         left join PO_Supp_Detail_Spec psdsCy WITH (NOLOCK) on psdsCy.ID = y.id and psdsCy.seq1 = y.seq1 and psdsCy.seq2 = y.seq2 and psdsCy.SpecColumnID = 'Color'
 		WHERE EXISTS( 
-			SELECT 1 --psd.Seq1,psd.Seq2 ,psd.ID ,psd.Seq1, psd.Seq2 ,psd.ColorID
+			SELECT 1 --psd.Seq1,psd.Seq2 ,psd.ID ,psd.Seq1, psd.Seq2 ,isnull(psdsC.SpecValue, '')
 			FROM PO_Supp_Detail psd 
 			LEFT JOIN FtyInventory Fty ON  Fty.poid = psd.ID AND Fty.seq1 = psd.seq1 AND Fty.seq2 = psd.seq2 AND fty.StockType='B'
             left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
