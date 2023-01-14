@@ -1,52 +1,52 @@
-﻿using System;
+﻿using Ict;
+using Sci.Data;
+using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Data;
 using System.Data.SqlClient;
-using System.Drawing;
 using System.Windows.Forms;
-using Ict;
-using Sci.Data;
 
 namespace Sci.Production.IE
 {
     /// <summary>
-    /// B91
+    /// IE_B10
     /// </summary>
-    public partial class B91 : Win.Tems.Input1
+    public partial class B13 : Win.Tems.Input1
     {
         /// <summary>
-        /// B91
+        /// B10
         /// </summary>
-        /// <param name="menuitem">menuitem</param>
-        public B91(ToolStripMenuItem menuitem)
+        /// <param name="menuitem">ToolStripMenuItem</param>
+        public B13(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
             this.InitializeComponent();
         }
 
         /// <summary>
-        /// OnDetailEntered()
+        /// ClickEditAfter
         /// </summary>
-        protected override void OnDetailEntered()
+        protected override void ClickEditAfter()
         {
-            base.OnDetailEntered();
+            base.ClickEditAfter();
         }
 
         /// <inheritdoc/>
         protected override bool ClickSaveBefore()
         {
-            if (this.CurrentMaintain["Description"].Empty())
+            if (string.IsNullOrWhiteSpace(this.CurrentMaintain["Type"].ToString()))
             {
-                MyUtility.Msg.WarningBox("Description cannot be empty!!");
+                MyUtility.Msg.WarningBox("< Attachment Type > can not be empty!");
                 return false;
             }
 
             DualResult result;
             DataTable dt;
 
-            if (MyUtility.Check.Empty(this.CurrentMaintain["ID"]))
+            if (string.IsNullOrWhiteSpace(this.CurrentMaintain["id"].ToString()))
             {
-                if (result = DBProxy.Current.Select(null, "select max_id = max(id) from IEReason  WITH (NOLOCK) WHERE  Type = 'LB'", out dt))
+                if (result = DBProxy.Current.Select(null , "select max_id = max(id) from AttachmentType WITH (NOLOCK)", out dt))
                 {
                     string id = dt.Rows[0]["max_id"].ToString();
                     if (string.IsNullOrWhiteSpace(id))
@@ -57,9 +57,7 @@ namespace Sci.Production.IE
                     {
                         int newID = int.Parse(id) + 1;
                         this.CurrentMaintain["ID"] = Convert.ToString(newID).ToString().PadLeft(5, '0');
-                    }
-
-                    this.CurrentMaintain["Type"] = "LB";
+                        }
                 }
                 else
                 {
@@ -70,10 +68,10 @@ namespace Sci.Production.IE
 
             List<SqlParameter> parameters = new List<SqlParameter>()
                         {
-                            new SqlParameter("@Description", this.CurrentMaintain["Description"].ToString()),
+                            new SqlParameter("@Type", this.CurrentMaintain["Type"].ToString()),
                         };
 
-            result = DBProxy.Current.Select(null, "select ID from IEReason  WITH (NOLOCK) WHERE Type = 'LB' AND Description = @Description", parameters, out dt);
+            result = DBProxy.Current.Select(null, "select ID from AttachmentType WITH (NOLOCK) WHERE Type = @Type", parameters, out dt);
 
             if (!result)
             {
@@ -83,12 +81,12 @@ namespace Sci.Production.IE
 
             if (dt != null && dt.Rows.Count > 0)
             {
-                MyUtility.Msg.WarningBox($@"<Description> already exists as ID:<{dt.Rows[0]["ID"]}>!");
+                MyUtility.Msg.WarningBox("This < Attachment Type > already exists.");
                 return false;
             }
 
+
             return base.ClickSaveBefore();
         }
-
     }
 }

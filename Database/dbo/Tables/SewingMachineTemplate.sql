@@ -6,6 +6,7 @@
     [AddDate]     DATETIME       NULL,
     [EditName]    VARCHAR (10)   NULL,
     [EditDate]    DATETIME       NULL,
+    MoldID varchar(20) NOT NULL CONSTRAINT [DF_SewingMachineTemplate_MoldID] DEFAULT '',
     CONSTRAINT [PK_SewingMachineTemplate] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 
