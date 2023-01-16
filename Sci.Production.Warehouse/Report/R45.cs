@@ -104,11 +104,11 @@ namespace Sci.Production.Warehouse
             {
                 if (this.radioSummary.Checked)
                 {
-                    this.strSQLWhere = " where " + this.strSQLWhere;
+                    this.strSQLWhere = " where psd.FabricType = 'F' and " + this.strSQLWhere;
                 }
                 else
                 {
-                    this.strSQLWhere = " where f.StockType ='B' and " + this.strSQLWhere;
+                    this.strSQLWhere = " where f.StockType ='B' and psd.FabricType = 'F' and " + this.strSQLWhere;
                 }
             }
 
@@ -167,7 +167,6 @@ namespace Sci.Production.Warehouse
 		                                td.Dyelot = tid.Dyelot 
                             )tidQty
                             {this.strSQLWhere}
-                            group by f.POID,f.Seq1,f.Seq2,rdQty.ActualQty,tidQty.Qty,t.Status,s.Status,psd.Refno,psd.StockUnit
 
                             select 
                             [SP#]

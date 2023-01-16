@@ -134,11 +134,15 @@ namespace Sci.Production.Warehouse
             where 
             not exists(
 			select 1
-			from #detailTmp t
-			where	f.POID = t.PoId and 
-					t.Seq = Concat (f.Seq1, ' ',f.Seq2 ) and 
-					f.Roll = t.Roll and 
-					f.Dyelot = t.Dyelot
+	        from SubconReturn t with(nolock)
+            inner join SubconReturn_Detail td with(nolock) on t.ID = td.ID
+            where f.POID = td.PoId and 
+		            f.Seq1 = td.Seq1 and
+		            f.Seq2  = td.Seq2 and 
+		            f.Roll = td.Roll and 
+		            f.Dyelot = td.Dyelot and
+		            f.StockType = td.StockType and 
+		            f.SubConStatus = t.Subcon
 			) 
             and psd.FabricType ='F' 
             and f.StockType ='B' 
@@ -168,7 +172,7 @@ namespace Sci.Production.Warehouse
                 strSQLCmd.Append($@" and psd.Refno = '{this.txtRefno.Text}'");
             }
 
-            DualResult dualResult = MyUtility.Tool.ProcessWithDatatable(this.dt_detail, null, strSQLCmd.ToString(), out this.dtArtwork, "#detailTmp");
+            DualResult dualResult = DBProxy.Current.Select(null, strSQLCmd.ToString(), out this.dtArtwork);
 
             if (!dualResult)
             {
