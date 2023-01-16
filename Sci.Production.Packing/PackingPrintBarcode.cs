@@ -189,7 +189,7 @@ namespace Sci.Production.Packing
                                 tables.Cell(2, 1).Range.Text = spNo;
                                 tables.Cell(3, 1).Range.Text = style;
                                 tables.Cell(3, 2).Range.Text = brandFTYCode;
-                                tables.Cell(3, 3).Range.Text = dest;
+                                tables.Cell(5, 3).Range.Text = dest;
                                 tables.Cell(2, 2).Range.Text = cartonNo;
                                 tables.Cell(1, 2).Range.Text = sizeQty;
                                 if (country)
