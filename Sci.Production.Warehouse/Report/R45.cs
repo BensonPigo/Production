@@ -140,10 +140,14 @@ namespace Sci.Production.Warehouse
 													                              f.Roll = td.Roll and
 													                              f.Dyelot = td.Dyelot and
 													                              f.StockType = td.StockType
-                            left join TransferToSubcon t with(nolock) on t.ID = td.ID 
+                            left join TransferToSubcon t with(nolock) on t.ID = td.ID
+                                                                         and t.Subcon = 'GMT Wash'
+                                                                         and t.Status = 'Confirmed'
                             left join Orders o with(nolock) on f.POID = o.ID
                             left join SubconReturn_Detail sd with(nolock) on td.Ukey = sd.TransferToSubcon_DetailUkey
                             left join SubconReturn s with(nolock) on s.id = sd.ID
+                                                                     and s.Status = 'Confirmed'
+                                                                     and t.Subcon = s.Subcon
                             outer apply
                             (
 	                            select rd.ActualQty
@@ -208,9 +212,13 @@ namespace Sci.Production.Warehouse
 													                              f.Dyelot = td.Dyelot and
 													                              f.StockType = td.StockType
                             left join TransferToSubcon t with(nolock) on t.ID = td.ID 
+                                                                         and t.Subcon = 'GMT Wash'
+                                                                         and t.Status = 'Confirmed'
                             left join Orders o with(nolock) on f.POID = o.ID
                             left join SubconReturn_Detail sd with(nolock) on td.Ukey = sd.TransferToSubcon_DetailUkey
                             left join SubconReturn s with(nolock) on s.id = sd.ID
+                                                                     and s.Status = 'Confirmed'
+                                                                     and t.Subcon = s.Subcon
                             outer apply
                             (
 	                            select rd.ActualQty
