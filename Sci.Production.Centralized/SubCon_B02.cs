@@ -6,8 +6,15 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Centralized
 {
+    /// <summary>
+    /// SubCon_B02
+    /// </summary>
     public partial class SubCon_B02 : Win.Tems.Input1
     {
+        /// <summary>
+        /// SubCon_B02
+        /// </summary>
+        /// <param name="menuitem">menuitem</param>
         public SubCon_B02(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
