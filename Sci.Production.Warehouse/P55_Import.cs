@@ -47,7 +47,7 @@ namespace Sci.Production.Warehouse
             this.grid1.DataSource = this.listControlBindingSource1;
             this.Helper.Controls.Grid.Generator(this.grid1)
                 .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out this.col_chk) // 0
-                .Text("POID", header: "Seq#", iseditingreadonly: true, width: Widths.AnsiChars(12)) // 1
+                .Text("POID", header: "SP#", iseditingreadonly: true, width: Widths.AnsiChars(12)) // 1
                 .Text("Seq", header: "Seq", iseditingreadonly: true) // 2
                 .Text("roll", header: "Roll", iseditingreadonly: true, width: Widths.AnsiChars(6)) // 3
                 .Text("dyelot", header: "Dyelot", iseditingreadonly: true, width: Widths.AnsiChars(8)) // 4
@@ -98,6 +98,7 @@ namespace Sci.Production.Warehouse
             ,f.StockType
             ,f.SubConStatus
             ,[TransferToSubcon_DetailUkey] = td.Ukey
+            ,ID = ''
             from FtyInventory f with(nolock)
             left join PO_Supp_Detail psd with(nolock) on f.POID = psd.ID and
 											                f.Seq1 = psd.SEQ1 and
@@ -142,7 +143,7 @@ namespace Sci.Production.Warehouse
 		            f.Roll = td.Roll and 
 		            f.Dyelot = td.Dyelot and
 		            f.StockType = td.StockType and 
-		            f.SubConStatus = t.Subcon
+		            t.Subcon = '{strSubCon}'
 			) 
             and psd.FabricType ='F' 
             and f.StockType ='B' 
@@ -217,9 +218,17 @@ namespace Sci.Production.Warehouse
                                                                           && row["TransferToSubcon_DetailUkey"].EqualString(tmp["TransferToSubcon_DetailUkey"])
                                                                         ).ToArray();
 
-                tmp.AcceptChanges();
-                tmp.SetAdded();
-                this.dt_detail.ImportRow(tmp);
+                if (findrow.Length > 0)
+                {
+                    findrow[0]["qty"] = tmp["qty"];
+                }
+                else
+                {
+                    tmp["id"] = this.dr_master["id"];
+                    tmp.AcceptChanges();
+                    tmp.SetAdded();
+                    this.dt_detail.ImportRow(tmp);
+                }
             }
 
             this.Close();

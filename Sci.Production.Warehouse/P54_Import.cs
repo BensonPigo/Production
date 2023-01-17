@@ -24,7 +24,7 @@ namespace Sci.Production.Warehouse
         private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
 
         /// <inheritdoc/>
-        public P54_Import(DataRow master,DataTable detail)
+        public P54_Import(DataRow master, DataTable detail)
         {
             this.InitializeComponent();
             this.dr_master = master;
@@ -69,6 +69,7 @@ namespace Sci.Production.Warehouse
         {
             StringBuilder strSQLCmd = new StringBuilder();
             string sp = this.txtSP.Text.TrimEnd();
+            string strSubcon = this.dr_master["SubCon"].ToString();
 
             if (MyUtility.Check.Empty(sp))
             {
@@ -80,6 +81,7 @@ namespace Sci.Production.Warehouse
             strSQLCmd.Append($@"
             select 
             selected = 0 
+            ,id = ''
             ,f.POID
             ,[Seq] = Concat (f.Seq1, ' ',f.Seq2 )
             ,f.Seq1
@@ -129,7 +131,7 @@ namespace Sci.Production.Warehouse
 		            f.Roll = td.Roll and 
 		            f.Dyelot = td.Dyelot and
 		            f.StockType = td.StockType and 
-		            f.SubConStatus = t.Subcon
+		            t.Subcon = '{strSubcon}'
 			) 
             and psd.FabricType ='F' 
             and f.StockType ='B' 
@@ -196,10 +198,17 @@ namespace Sci.Production.Warehouse
                                                                           && row["StockType"].EqualString(tmp["StockType"])
                                                                           && row["Description"].EqualString(tmp["Description"])
                                                                         ).ToArray();
-
-                tmp.AcceptChanges();
-                tmp.SetAdded();
-                this.dt_detail.ImportRow(tmp);
+                if (findrow.Length > 0)
+                {
+                    findrow[0]["qty"] = tmp["qty"];
+                }
+                else
+                {
+                    tmp["id"] = this.dr_master["id"];
+                    tmp.AcceptChanges();
+                    tmp.SetAdded();
+                    this.dt_detail.ImportRow(tmp);
+                }
             }
 
             this.Close();
