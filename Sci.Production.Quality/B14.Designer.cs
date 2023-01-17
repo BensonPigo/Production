@@ -200,7 +200,7 @@
             // txtSerial
             // 
             this.txtSerial.BackColor = System.Drawing.Color.White;
-            this.txtSerial.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Serial#", true));
+            this.txtSerial.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Serial", true));
             this.txtSerial.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtSerial.Location = new System.Drawing.Point(116, 70);
             this.txtSerial.Name = "txtSerial";

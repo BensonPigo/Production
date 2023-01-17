@@ -126,11 +126,11 @@ outer apply(
 	group by PhaseID
 )MaxActFinDate
 inner join Marker m on  m.ActFinDate = MaxActFinDate.ActFinDate
-left join Marker_ML ml on ml.MarkerUkey = m.UKey 
-left join Marker_ML_SizeQty mls on mls.MarkerUkey = m.UKey and mls.MarkerName = ml.MarkerName
-left join SMNotice sm on sm.ID = m.ID
-left join SMNotice_Detail smd on smd.ID = sm.ID and smd.Type = 'M' and  smd.PhaseID in ('BULK','SIZE/S','PP SAMPLE')
-left join Style_BOF sb on sb.StyleUkey = s.Ukey and sb.FabricCode = ml.FabricCode
+inner join Marker_ML ml on ml.MarkerUkey = m.UKey 
+inner join Marker_ML_SizeQty mls on mls.MarkerUkey = m.UKey and mls.MarkerName = ml.MarkerName
+inner join SMNotice sm on sm.ID = m.ID
+inner join SMNotice_Detail smd on smd.ID = sm.ID and smd.Type = 'M' and  smd.PhaseID in ('BULK','SIZE/S','PP SAMPLE')
+inner join Style_BOF sb on sb.StyleUkey = s.Ukey and sb.FabricCode = ml.FabricCode
 left join Fabric f on f.SCIRefno = sb.SCIRefno
 where  1=1
 and smd.PhaseID in ('BULK','SIZE/S','PP SAMPLE')
