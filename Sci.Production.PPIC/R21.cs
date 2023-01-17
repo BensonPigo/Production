@@ -230,7 +230,7 @@ into #tmp
 from  Orders o with (nolock)
 inner join Order_QtyShip oqs with (nolock) on oqs.Id = o.ID
 inner join Factory f with (nolock) on f.ID = o.FactoryID
-inner join PackingList_Detail pld with (nolock) on pld.OrderID = oqs.ID and pld.CTNQty = 1
+inner join PackingList_Detail pld with (nolock) on pld.OrderID = oqs.ID and pld.OrderShipmodeSeq = oqs.Seq and pld.CTNQty = 1
 inner join PackingList p with (nolock) on p.ID = pld.ID
 inner join PackingList_Detail pld2 with (nolock) on pld2.ID = pld.ID and pld2.CTNStartNo = pld.CTNStartNo
 where o.Category in ('B','G') {this.sqlWhere}
