@@ -171,6 +171,8 @@ select
     [Artwork] = Artwork.val,
 	B.OrderID,
     Country.Alias,
+    s.AbbEN,
+    PSD.Refno,
     o.BuyerDelivery,
 	BD.BundleGroup,
     o.SeasonID,
@@ -198,6 +200,10 @@ Left join Bundle_Detail BD WITH (NOLOCK) on SR.BundleNo=BD.BundleNo
 Left join Bundle B WITH (NOLOCK) on BD.ID=B.ID
 Left join Orders O WITH (NOLOCK) on B.OrderID=O.ID
 left join Country on Country.ID = o.Dest
+Left JOIN WorkOrder WO ON WO.CutRef=B.CutRef and b.CutRef <> '' and wo.ID = b.POID and wo.OrderID =b.Orderid
+Left JOIN PO_Supp_Detail PSD WITH (NOLOCK) ON PSD.ID=WO.ID AND PSD.SEQ1 = WO.SEQ1 AND PSD.SEQ2=WO.SEQ2
+Left JOIN PO_SUPP PS WITH (NOLOCK) ON PS.ID= PSD.ID AND PS.SEQ1=PSD.SEQ1
+Left JOIN Supp S WITH (NOLOCK) ON S.ID=PS.SuppID
 outer apply(SELECT val =  Stuff((select distinct concat( '+',SubprocessId)   
                                     from Bundle_Detail_Art bda with (nolock) 
                                     where bda.Bundleno = BD.Bundleno
@@ -223,6 +229,8 @@ select
     [Artwork] = Artwork.val,
 	BR.OrderID,
     Country.Alias,
+    s.AbbEN,
+    PSD.Refno,
     o.BuyerDelivery,
 	BRD.BundleGroup,
     o.SeasonID,
@@ -249,6 +257,12 @@ Left join BundleReplacement_Detail BRD WITH (NOLOCK) on SR.BundleNo=BRD.BundleNo
 Left join BundleReplacement BR WITH (NOLOCK) on BRD.ID=BR.ID
 Left join Orders O WITH (NOLOCK) on BR.OrderID=O.ID
 left join Country on Country.ID = o.Dest
+Left join Bundle_Detail BD WITH (NOLOCK) on SR.BundleNo=BD.BundleNo
+Left JOIN Bundle B WITH (NOLOCK) ON BD.ID=B.ID
+Left JOIN WorkOrder WO ON WO.CutRef=B.CutRef and b.CutRef <> '' and wo.ID = b.POID and wo.OrderID =b.Orderid
+Left JOIN PO_Supp_Detail PSD WITH (NOLOCK) ON PSD.ID=WO.ID AND PSD.SEQ1 = WO.SEQ1 AND PSD.SEQ2=WO.SEQ2
+Left JOIN PO_SUPP PS WITH (NOLOCK) ON PS.ID= PSD.ID AND PS.SEQ1=PSD.SEQ1
+Left JOIN Supp S WITH (NOLOCK) ON S.ID=PS.SuppID
 outer apply(SELECT val =  Stuff((select distinct concat( '+',SubprocessId)   
                                     from Bundle_Detail_Art bda with (nolock) 
                                     where bda.Bundleno = SR.BundleNo
