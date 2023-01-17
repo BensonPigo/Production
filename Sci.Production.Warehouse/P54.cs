@@ -87,6 +87,7 @@ namespace Sci.Production.Warehouse
 
             if (!dualResult)
             {
+                MyUtility.Msg.WarningBox(dualResult.ToString());
                 return false;
             }
 
@@ -263,6 +264,7 @@ namespace Sci.Production.Warehouse
 
             if (!dualResult)
             {
+                MyUtility.Msg.WarningBox(dualResult.ToString());
                 return;
             }
 
@@ -298,6 +300,7 @@ namespace Sci.Production.Warehouse
 
             if (!dualResult)
             {
+                MyUtility.Msg.WarningBox(dualResult.ToString());
                 return;
             }
 
@@ -380,12 +383,14 @@ namespace Sci.Production.Warehouse
                             and sd.Seq2 = td.Seq2
                             and sd.Roll = td.Roll
                             and sd.Dyelot = td.Dyelot
-                            and sd.StockType =td.StockType";
+                            and sd.StockType =td.StockType
+                            and s.Subcon = '{this.CurrentMaintain["Subcon"]}'";
 
             dualResult = MyUtility.Tool.ProcessWithDatatable(dataTable, null, sqlcmd, out DataTable dt);
 
             if (!dualResult)
             {
+                MyUtility.Msg.WarningBox(dualResult.ToString());
                 return;
             }
 

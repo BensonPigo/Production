@@ -70,6 +70,7 @@ namespace Sci.Production.Warehouse
             StringBuilder strSQLCmd = new StringBuilder();
             string sp = this.txtSP.Text.TrimEnd();
             string strSubcon = this.dr_master["SubCon"].ToString();
+            string strID = this.dr_master["ID"].ToString();
 
             if (MyUtility.Check.Empty(sp))
             {
@@ -131,20 +132,22 @@ namespace Sci.Production.Warehouse
 		            f.Roll = td.Roll and 
 		            f.Dyelot = td.Dyelot and
 		            f.StockType = td.StockType and 
-		            t.Subcon = '{strSubcon}'
+		            t.Subcon = '{strSubcon}' and
+                    t.ID != '{strID}'
 			) 
             and psd.FabricType ='F' 
             and f.StockType ='B' 
             and f.SubConStatus = '' 
             and f.POID ='{this.txtSP.Text}'");
 
-            if (!this.txtSeq1.CheckSeq1Empty() && this.txtSeq1.CheckSeq2Empty())
+            if (!this.txtSeq1.Seq1.Empty())
             {
                 strSQLCmd.Append($@" and f.seq1 = '{this.txtSeq1.Seq1}'");
             }
-            else if (!this.txtSeq1.CheckEmpty(showErrMsg: false))
+
+            if (!this.txtSeq1.Seq2.Empty())
             {
-                strSQLCmd.Append($@" and f.seq1 = '{this.txtSeq1.Seq1}' and f.seq2='{this.txtSeq1.Seq2}'");
+                strSQLCmd.Append($@" and f.seq2 = '{this.txtSeq1.Seq2}'");
             }
 
             if (!MyUtility.Check.Empty(this.txtRefno.Text))
@@ -185,22 +188,20 @@ namespace Sci.Production.Warehouse
             foreach (DataRow tmp in dr2)
             {
                 DataRow[] findrow = this.dt_detail.AsEnumerable().Where(row => row.RowState != DataRowState.Deleted
-                                                                          && row["id"].EqualString(this.dr_master["id"])
                                                                           && row["poid"].EqualString(tmp["poid"].ToString())
-                                                                          && row["seq"].EqualString(tmp["seq"])
                                                                           && row["seq1"].EqualString(tmp["seq1"])
                                                                           && row["seq2"].EqualString(tmp["seq2"])
                                                                           && row["roll"].EqualString(tmp["roll"])
                                                                           && row["dyelot"].EqualString(tmp["dyelot"])
-                                                                          && row["Refno"].EqualString(tmp["Refno"])
-                                                                          && row["Qty"].EqualString(tmp["Qty"])
-                                                                          && row["StockUnit"].EqualString(tmp["StockUnit"])
-                                                                          && row["StockType"].EqualString(tmp["StockType"])
-                                                                          && row["Description"].EqualString(tmp["Description"])
                                                                         ).ToArray();
                 if (findrow.Length > 0)
                 {
+                    findrow[0]["seq"] = tmp["seq"];
+                    findrow[0]["Refno"] = tmp["Refno"];
                     findrow[0]["qty"] = tmp["qty"];
+                    findrow[0]["StockUnit"] = tmp["StockUnit"];
+                    findrow[0]["StockType"] = tmp["StockType"];
+                    findrow[0]["Description"] = tmp["Description"];
                 }
                 else
                 {

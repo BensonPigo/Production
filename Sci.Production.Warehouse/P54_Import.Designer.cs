@@ -111,11 +111,11 @@
             // 
             // labelTotal
             // 
-            this.labelTotal.Location = new System.Drawing.Point(439, 22);
+            this.labelTotal.Location = new System.Drawing.Point(429, 22);
             this.labelTotal.Name = "labelTotal";
-            this.labelTotal.Size = new System.Drawing.Size(95, 23);
+            this.labelTotal.Size = new System.Drawing.Size(105, 23);
             this.labelTotal.TabIndex = 3;
-            this.labelTotal.Text = "Total Qty";
+            this.labelTotal.Text = "Total Stock Qty";
             // 
             // btnCancel
             // 
@@ -206,11 +206,13 @@
             // 
             // labelSPNo
             // 
+            this.labelSPNo.BackColor = System.Drawing.Color.SkyBlue;
             this.labelSPNo.Location = new System.Drawing.Point(9, 19);
             this.labelSPNo.Name = "labelSPNo";
             this.labelSPNo.Size = new System.Drawing.Size(95, 23);
             this.labelSPNo.TabIndex = 4;
             this.labelSPNo.Text = "SP#";
+            this.labelSPNo.TextStyle.Color = System.Drawing.Color.Black;
             // 
             // P54_Import
             // 
