@@ -159,6 +159,7 @@ namespace Sci.Production.Warehouse
 
             if (!dualResult)
             {
+                MyUtility.Msg.WarningBox(dualResult.ToString());
                 return;
             }
 

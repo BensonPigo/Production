@@ -234,6 +234,7 @@ namespace Sci.Production.Warehouse
 
             if (!dualResult)
             {
+                MyUtility.Msg.WarningBox(dualResult.ToString());
                 return false;
             }
 
@@ -269,6 +270,7 @@ namespace Sci.Production.Warehouse
 
             if (!dualResult)
             {
+                MyUtility.Msg.WarningBox(dualResult.ToString());
                 return false;
             }
 
@@ -326,6 +328,7 @@ namespace Sci.Production.Warehouse
 
             if (!dualResult)
             {
+                MyUtility.Msg.WarningBox(dualResult.ToString());
                 return;
             }
 
@@ -362,6 +365,7 @@ namespace Sci.Production.Warehouse
 
             if (!dualResult)
             {
+                MyUtility.Msg.WarningBox(dualResult.ToString());
                 return;
             }
 
@@ -449,6 +453,7 @@ namespace Sci.Production.Warehouse
 
             if (!dualResult)
             {
+                MyUtility.Msg.WarningBox(dualResult.ToString());
                 return;
             }
 
