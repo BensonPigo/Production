@@ -194,6 +194,12 @@
       <DependentUpon>P07_PrintAccessorySticker.cs</DependentUpon>
     </Compile>
     <Compile Include="P07_PrintAccessorySticker_Data.cs" />
+    <Compile Include="P19_TKSeparateHistory.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P19_TKSeparateHistory.Designer.cs">
+      <DependentUpon>P19_TKSeparateHistory.cs</DependentUpon>
+    </Compile>
     <Compile Include="P21_PrintBarcode_Data.cs" />
     <Compile Include="P08_ExcelImport.cs">
       <SubType>Form</SubType>
@@ -1589,6 +1595,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="P07_PrintAccessorySticker.resx">
       <DependentUpon>P07_PrintAccessorySticker.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P19_TKSeparateHistory.resx">
+      <DependentUpon>P19_TKSeparateHistory.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P21_PrintBarcode10.rdlc">
       <SubType>Designer</SubType>

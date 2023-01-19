@@ -14,7 +14,12 @@
     [StockUnitID] VARCHAR(8) NOT NULL CONSTRAINT [DF_TransferExport_Detail_Carton_StockUnitID] DEFAULT (''),  
     [StockQty] NUMERIC(11, 2) NOT NULL CONSTRAINT [DF_TransferExport_Detail_Carton_StockQty] DEFAULT (0),  
     [Tone] VARCHAR(8) NOT NULL DEFAULT (''), 
-    CONSTRAINT [PK_TransferExport_Detail_Carton] PRIMARY KEY CLUSTERED ([TransferExport_DetailUkey],[Carton],[LotNo] ASC)
+    [Roll] VARCHAR(30) NOT NULL CONSTRAINT [DF_TransferExport_Detail_Carton_Roll] DEFAULT (''), 
+    [NetKg] NUMERIC(10, 2) NOT NULL CONSTRAINT [DF_TransferExport_Detail_Carton_NetKg] DEFAULT ((0)), 
+    [WeightKg] NUMERIC(10, 2) NOT NULL CONSTRAINT [DF_TransferExport_Detail_Carton_WeightKg] DEFAULT ((0)), 
+    [CBM] NUMERIC(10, 5) NOT NULL CONSTRAINT [DF_TransferExport_Detail_Carton_CBM] DEFAULT ((0)), 
+    [GroupID] NVARCHAR(50) NOT NULL CONSTRAINT [DF_TransferExport_Detail_Carton_GroupID] DEFAULT (''), 
+    CONSTRAINT [PK_TransferExport_Detail_Carton] PRIMARY KEY CLUSTERED ([TransferExport_DetailUkey],[Carton],[LotNo],[Roll] ASC)
 )
 
 GO
@@ -64,7 +69,7 @@ EXEC sp_addextendedproperty @name = N'MS_Description',
     @level2name = N'Carton'
 GO
 EXEC sp_addextendedproperty @name = N'MS_Description',
-    @value = N'捲號',
+    @value = N'布缸號',
     @level0type = N'SCHEMA',
     @level0name = N'dbo',
     @level1type = N'TABLE',
@@ -107,3 +112,48 @@ EXEC sp_addextendedproperty @name = N'MS_Description',
     @level1name = N'TransferExport_Detail_Carton',
     @level2type = N'COLUMN',
     @level2name = N'StockQty'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'布捲號',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'TransferExport_Detail_Carton',
+    @level2type = N'COLUMN',
+    @level2name = N'Roll'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'淨重',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'TransferExport_Detail_Carton',
+    @level2type = N'COLUMN',
+    @level2name = N'NetKg'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'毛重',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'TransferExport_Detail_Carton',
+    @level2type = N'COLUMN',
+    @level2name = N'WeightKg'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'材積',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'TransferExport_Detail_Carton',
+    @level2type = N'COLUMN',
+    @level2name = N'CBM'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'工廠端拆單群組',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'TransferExport_Detail_Carton',
+    @level2type = N'COLUMN',
+    @level2name = N'GroupID'

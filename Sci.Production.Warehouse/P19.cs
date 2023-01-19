@@ -265,6 +265,13 @@ and ID = '{Sci.Env.User.UserID}'"))
             {
                 this.btnCallP99.Visible = false;
             }
+
+            string sqlcmd_BtnTKSeparateHistory = $@"select 1 from TransferOut t with(nolock)
+                                                    inner join TransferOut_Detail td with(nolock) on t.id = td.id
+                                                    left join TransferExport te with(nolock) on td.TransferExportID = te.id
+                                                    where t.id = '{this.CurrentMaintain["ID"].ToString()}' and te.Separated = 1";
+
+            this.BtnTKSeparateHistory.ForeColor = MyUtility.Check.Seek(sqlcmd_BtnTKSeparateHistory) ? Color.Blue : DefaultForeColor;
         }
 
         /// <inheritdoc/>
@@ -538,7 +545,7 @@ ID                         ,
 POID                       ,
 Seq1                       ,
 Seq2                       ,
-Carton                     ,
+Roll                     ,
 LotNo                      ,
 Qty                        ,
 FOC                        ,
@@ -853,7 +860,7 @@ delete  tedc
 from    TransferExport_Detail_Carton tedc
 where   exists(select 1 from #tmp t where 
                 t.TransferExport_DetailUkey = tedc.TransferExport_DetailUkey and
-                t.Roll = tedc.Carton and
+                t.Roll = tedc.Roll and
                 t.Dyelot = tedc.LotNo
                 )         
 ";
@@ -1107,6 +1114,12 @@ Where a.id = '{0}'", masterID);
         private void BtnTransferWK_Click(object sender, EventArgs e)
         {
             new P19_TransferWKImport(this.CurrentMaintain["ID"].ToString(), (DataTable)this.detailgridbs.DataSource, this.CurrentMaintain["MDivisionID"].ToString()).ShowDialog();
+        }
+
+        private void BtnTKSeparateHistory_Click(object sender, EventArgs e)
+        {
+            P19_TKSeparateHistory windows = new P19_TKSeparateHistory(this.CurrentMaintain["ID"].ToString());
+            windows.ShowDialog(this);
         }
     }
 }

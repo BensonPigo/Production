@@ -2765,6 +2765,8 @@
     <Build Include="dbo\Tables\SubconReturn_Detail.sql" />
     <Build Include="dbo\Tables\TransferExport_ShippingMemo.sql" />
     <Build Include="dbo\Functions\GetSCICtnNoFromBarcode.sql" />
+    <Build Include="dbo\Tables\TransferExport_SeparateHistory.sql" />
+    <Build Include="dbo\Tables\TransferExport_StatusHistory.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />
