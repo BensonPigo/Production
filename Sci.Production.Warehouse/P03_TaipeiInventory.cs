@@ -46,7 +46,7 @@ FROM (
 			    when '6' then '6:Return'
 			 end as typename 
             , inv.ConfirmDate
-            , Round(dbo.GetUnitQty(inv.UnitID, po.StockUnit, isnull(inv.Qty, 0.00)), 2) inqty
+            , Round(dbo.GetUnitQty(inv.UnitID, po.StockUnit, isnull(inv.Qty, 0.00)), 4) inqty
             , 0 Allocated
             , TPEPASS1.ID+'-'+TPEPASS1.NAME ConfirmHandle
             , po.StockUnit
@@ -65,7 +65,7 @@ FROM (
             ,SpecificDestination = iif( aa.SpecificDestination> 1 ,1,0)
             , inv.ukey
 			,inv.UnitID
-			,[StockInQty] = Round(isnull(inv.Qty, 0.00), 2)
+			,[StockInQty] = isnull(inv.Qty, 0.00)
 			,[StockAllocatedQty] = 0
     FROM InvTrans Inv WITH (NOLOCK) 
     inner join Po_Supp_Detail po on inv.InventoryPoid = po.id and inv.InventorySeq1 = po.seq1 and inv.InventorySeq2 = po.seq2
@@ -97,7 +97,7 @@ FROM (
 			  end as typename
             , inv.ConfirmDate
             , 0 inqty
-            , Round(dbo.GetUnitQty(inv.UnitID, StockUnit, isnull(inv.Qty, 0.00)), 2) Allocated
+            , Round(dbo.GetUnitQty(inv.UnitID, StockUnit, isnull(inv.Qty, 0.00)), 4) Allocated
             , TPEPASS1.ID+'-'+TPEPASS1.NAME ConfirmHandle
             , po.StockUnit
             , concat(inv.seq70poid, '-', inv.seq70seq1, '-', inv.seq70seq2) as seq70
@@ -116,7 +116,7 @@ FROM (
             , inv.ukey
 			,inv.UnitID
 			,[StockInQty] = 0
-			,[StockAllocatedQty] = Round(isnull(inv.Qty, 0.00), 2)
+			,[StockAllocatedQty] = isnull(inv.Qty, 0.00)
     FROM InvTrans inv WITH (NOLOCK) 
 	left join View_WH_Orders wh  on inv.seq70poid = wh.ID
 	left join Country cn on wh.Dest = cn.ID
@@ -149,8 +149,8 @@ FROM (
 			    when '6' then '6:Return'
 			  end as typename
             , inv.ConfirmDate
-            , Round(dbo.GetUnitQty(inv.UnitID, po.StockUnit, iif(inv.Qty >= 0, inv.Qty, 0)), 2) inqty
-            , Round(dbo.GetUnitQty(inv.UnitID, po.StockUnit, iif(inv.Qty < 0, -inv.Qty, 0)), 2) Allocated
+            , Round(dbo.GetUnitQty(inv.UnitID, po.StockUnit, iif(inv.Qty >= 0, inv.Qty, 0)), 4) inqty
+            , Round(dbo.GetUnitQty(inv.UnitID, po.StockUnit, iif(inv.Qty < 0, -inv.Qty, 0)), 4) Allocated
             , TPEPASS1.ID+'-'+TPEPASS1.NAME ConfirmHandle
             , po.StockUnit
             , concat(inv.seq70poid, '-', inv.seq70seq1, '-', inv.seq70seq2) as seq70
@@ -168,8 +168,8 @@ FROM (
             ,SpecificDestination = iif( aa.SpecificDestination> 1 ,1,0)
             , inv.ukey
 			,inv.UnitID
-			,[StockInQty] = Round(iif(inv.Qty >= 0, inv.Qty, 0), 2)
-			,[StockAllocatedQty] =  Round(iif(inv.Qty < 0, -inv.Qty, 0), 2)
+			,[StockInQty] = iif(inv.Qty >= 0, inv.Qty, 0)
+			,[StockAllocatedQty] =  iif(inv.Qty < 0, -inv.Qty, 0)
     FROM InvTrans inv WITH (NOLOCK) 
 	left join View_WH_Orders wh  on inv.seq70poid = wh.ID
 	left join Country cn on wh.Dest = cn.ID
@@ -227,9 +227,9 @@ GROUP BY    TMP.ID, TMP.TYPE, TMP.typename, TMP.ConfirmDate, TMP.ConfirmHandle, 
                 .Date("confirmdate", header: "Date", width: Widths.AnsiChars(10))
                 .Text("confirmhandle", header: "Handle", width: Widths.AnsiChars(20))
                 .Text("StockUnit", header: "StockUnit", width: Widths.AnsiChars(6))
-                .Numeric("inqty", header: "Stock In Qty\r\n( Stock Unit)", width: Widths.AnsiChars(6), integer_places: 6, decimal_places: 2)
-                .Numeric("Allocated", header: "Stock Allocated Qty\r\n( Stock Unit)", width: Widths.AnsiChars(6), integer_places: 6, decimal_places: 2)
-                .Numeric("balance", header: "Balance Qty\r\n( Stock Unit)", width: Widths.AnsiChars(6), integer_places: 6, decimal_places: 2)
+                .Numeric("inqty", header: "Stock In Qty\r\n( Stock Unit)", width: Widths.AnsiChars(6), integer_places: 6, decimal_places: 4)
+                .Numeric("Allocated", header: "Stock Allocated Qty\r\n( Stock Unit)", width: Widths.AnsiChars(6), integer_places: 6, decimal_places: 4)
+                .Numeric("balance", header: "Balance Qty\r\n( Stock Unit)", width: Widths.AnsiChars(6), integer_places: 6, decimal_places: 4)
                 .Text("seq70", header: "Use for SP#", width: Widths.AnsiChars(20))
                 .Text("UseFactory", header: "Use for Factory", width: Widths.AnsiChars(6))
                 .CheckBox("SpecificDestination", header: "Specific Destination", width: Widths.AnsiChars(26))
