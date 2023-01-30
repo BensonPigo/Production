@@ -23,10 +23,10 @@ namespace Sci.Production.Warehouse
         private DataTable dt_TK = new DataTable();
 
         /// <inheritdoc/>
-        public P19_TKSeparateHistory(string ID)
+        public P19_TKSeparateHistory(string iD)
         {
             this.InitializeComponent();
-            this.strID = ID;
+            this.strID = iD;
         }
 
         /// <inheritdoc/>
@@ -34,11 +34,11 @@ namespace Sci.Production.Warehouse
         {
             #region combo
             string sqlcmd_combo = $@"
-                                    select [ID] = '',[NewID] =''
+                                    select distinct [ID] = '',[NewID] =''
                                     union
                                     select distinct
-                                    [ID] = tes.NewID,
-                                    tes.NewID
+                                    [ID] = isnull(tes.NewID,''),
+                                    isnull(tes.NewID,'')
                                     from TransferOut_Detail tod with(nolock)
                                     left join TransferExport_SeparateHistory tes with(nolock) on tod.TransferExport_DetailUkey = tes.NewDetailUkey
                                     where tod.id = '{this.strID}'";
@@ -95,13 +95,7 @@ namespace Sci.Production.Warehouse
                                 ,[StockUnit] = tes.StockUnitID
                                 ,[Supplier] =ted.SuppID
                                 ,[Description] = ted.[Description]
-                                ,[MaterialType] = Concat(
-					                                case ted.FabricType
-						                                when 'F' then 'Fabric'
-						                                when 'A' then 'Accessory'
-						                                when 'O' then 'Other'
-					                                end
-					                                , '-' +  'Fabric.MtlTypeID')
+                                ,[MaterialType] = MT.val
                                 ,[Color] = SpecValue.val
                                 ,[Reason] = ted.TransferExportReason
                                 ,[ReasonDesc] = Reasondesc.val
@@ -127,6 +121,20 @@ namespace Sci.Production.Warehouse
 	                                from WhseReason
 	                                where Type ='TE' and id =ted.TransferExportReason
                                 )Reasondesc
+                                outer apply
+                                (
+	                                select val =
+	                                 Concat(
+			                                case td.FabricType
+			                                when 'F' then 'Fabric'
+			                                when 'A' then 'Accessory'
+			                                when 'O' then 'Other'
+			                                end
+			                                , '-' +  f.MtlTypeID)
+	                                from TransferExport_Detail td
+	                                left join Fabric f on td.SCIRefno = f.SCIRefno
+	                                where td.Ukey = ted.Ukey
+                                )MT
                                 where tod.id = '{this.strID}' and tod.TransferExport_DetailUkey in (select max(TransferExport_DetailUkey) from TransferOut_Detail group by TransferExport_DetailUkey)
                                 order by [FromSP],[FromSEQ],[ToSP],[ToSEQ],[NewTK] asc";
             DualResult dualResult_TK = DBProxy.Current.Select(null, sqlcmd_TK, out this.dt_TK);
@@ -221,7 +229,7 @@ namespace Sci.Production.Warehouse
                 this.gridPacking.DataSource = this.dt_PK.Select($"NewTK = '{cbVal}'").CopyToDataTable();
             }
         }
-        
+
         private void GridTransferWK_SelectionChanged(object sender, EventArgs e)
         {
             if (MyUtility.Check.Empty(this.gridTransferWK.DataSource))
@@ -247,7 +255,8 @@ namespace Sci.Production.Warehouse
             {
                 return;
             }
-            this.gridPacking.Rows[indexFirst].Selected = false;
+
+            this.gridPacking.Rows[this.indexFirst].Selected = false;
             this.indexFirst = dgvrPacking.Index;
             this.gridPacking.Rows[dgvrPacking.Index].Selected = true;
         }
