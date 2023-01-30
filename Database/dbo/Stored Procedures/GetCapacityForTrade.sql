@@ -22,7 +22,8 @@ select serverName ='[PMS\pmsdb\SPR]' union all
 select serverName ='[PMS\pmsdb\SPS]' union all
 select serverName ='[PMS\pmsdb\HZG]' union all
 select serverName ='[PMS\pmsdb\HXG]' union all
-select serverName ='[PMS\pmsdb\SWR]'
+select serverName ='[PMS\pmsdb\SWR]' union all
+select serverName ='[PMS\pmsdb\PAN]'
 
 Declare @ServerName varchar(30)
 open serverName_cursor

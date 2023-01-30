@@ -107,15 +107,10 @@
             this.label1 = new Sci.Win.UI.Label();
             this.lbshc = new System.Windows.Forms.Label();
             this.btnCutplanChangeHistory = new Sci.Win.UI.Button();
-            this.btnStdQtyWIP = new Sci.Win.UI.Button();
             this.btnDist = new Sci.Win.UI.Button();
             this.label3 = new Sci.Win.UI.Label();
             this.label4 = new Sci.Win.UI.Label();
             this.BtnImportMarker = new Sci.Win.UI.Button();
-            this.dispSubprocess = new Sci.Win.UI.DisplayBox();
-            this.numLeadTime = new Sci.Win.UI.NumericBox();
-            this.label5 = new Sci.Win.UI.Label();
-            this.label6 = new Sci.Win.UI.Label();
             this.BackgroundWorker1 = new System.ComponentModel.BackgroundWorker();
             this.btnExWip = new Sci.Win.UI.Button();
             this.btnKHImportMarker = new Sci.Win.UI.Button();
@@ -153,12 +148,7 @@
             // 
             this.masterpanel.Controls.Add(this.btnKHImportMarker);
             this.masterpanel.Controls.Add(this.btnExWip);
-            this.masterpanel.Controls.Add(this.dispSubprocess);
-            this.masterpanel.Controls.Add(this.numLeadTime);
-            this.masterpanel.Controls.Add(this.label5);
-            this.masterpanel.Controls.Add(this.label6);
             this.masterpanel.Controls.Add(this.BtnImportMarker);
-            this.masterpanel.Controls.Add(this.btnStdQtyWIP);
             this.masterpanel.Controls.Add(this.numBalanceLayer);
             this.masterpanel.Controls.Add(this.numTotalLayer);
             this.masterpanel.Controls.Add(this.labelBalanceLayer);
@@ -198,12 +188,7 @@
             this.masterpanel.Controls.SetChildIndex(this.numTotalLayer, 0);
             this.masterpanel.Controls.SetChildIndex(this.numBalanceLayer, 0);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
-            this.masterpanel.Controls.SetChildIndex(this.btnStdQtyWIP, 0);
             this.masterpanel.Controls.SetChildIndex(this.BtnImportMarker, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label6, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label5, 0);
-            this.masterpanel.Controls.SetChildIndex(this.numLeadTime, 0);
-            this.masterpanel.Controls.SetChildIndex(this.dispSubprocess, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnExWip, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnKHImportMarker, 0);
             // 
@@ -227,7 +212,7 @@
             // refresh
             // 
             this.refresh.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.refresh.Location = new System.Drawing.Point(8142, 561);
+            this.refresh.Location = new System.Drawing.Point(8297, 561);
             // 
             // detailgridcont
             // 
@@ -237,18 +222,6 @@
             this.detailgridcont.Dock = System.Windows.Forms.DockStyle.None;
             this.detailgridcont.Location = new System.Drawing.Point(8, 97);
             this.detailgridcont.Size = new System.Drawing.Size(818, 575);
-            // 
-            // detail2
-            // 
-            this.detail2.Size = new System.Drawing.Size(1203, 713);
-            // 
-            // detailgridcont2
-            // 
-            this.detailgridcont2.Size = new System.Drawing.Size(1197, 667);
-            // 
-            // detailpanel2
-            // 
-            this.detailpanel2.Size = new System.Drawing.Size(1197, 40);
             // 
             // detail
             // 
@@ -415,7 +388,7 @@
             // 
             // labelTotalLayer
             // 
-            this.labelTotalLayer.Location = new System.Drawing.Point(466, 5);
+            this.labelTotalLayer.Location = new System.Drawing.Point(536, 6);
             this.labelTotalLayer.Name = "labelTotalLayer";
             this.labelTotalLayer.Size = new System.Drawing.Size(95, 23);
             this.labelTotalLayer.TabIndex = 16;
@@ -423,7 +396,7 @@
             // 
             // labelBalanceLayer
             // 
-            this.labelBalanceLayer.Location = new System.Drawing.Point(466, 32);
+            this.labelBalanceLayer.Location = new System.Drawing.Point(536, 33);
             this.labelBalanceLayer.Name = "labelBalanceLayer";
             this.labelBalanceLayer.Size = new System.Drawing.Size(95, 23);
             this.labelBalanceLayer.TabIndex = 17;
@@ -435,7 +408,7 @@
             this.displayMarkerName.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.displayMarkerName.Location = new System.Drawing.Point(396, 5);
             this.displayMarkerName.Name = "displayMarkerName";
-            this.displayMarkerName.Size = new System.Drawing.Size(66, 23);
+            this.displayMarkerName.Size = new System.Drawing.Size(137, 23);
             this.displayMarkerName.TabIndex = 4;
             // 
             // displayColor
@@ -444,7 +417,7 @@
             this.displayColor.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.displayColor.Location = new System.Drawing.Point(396, 32);
             this.displayColor.Name = "displayColor";
-            this.displayColor.Size = new System.Drawing.Size(66, 23);
+            this.displayColor.Size = new System.Drawing.Size(137, 23);
             this.displayColor.TabIndex = 5;
             // 
             // numTotalLayer
@@ -452,7 +425,7 @@
             this.numTotalLayer.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.numTotalLayer.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numTotalLayer.IsSupportEditMode = false;
-            this.numTotalLayer.Location = new System.Drawing.Point(564, 5);
+            this.numTotalLayer.Location = new System.Drawing.Point(634, 6);
             this.numTotalLayer.Name = "numTotalLayer";
             this.numTotalLayer.NullValue = new decimal(new int[] {
             0,
@@ -460,7 +433,7 @@
             0,
             0});
             this.numTotalLayer.ReadOnly = true;
-            this.numTotalLayer.Size = new System.Drawing.Size(61, 23);
+            this.numTotalLayer.Size = new System.Drawing.Size(95, 23);
             this.numTotalLayer.TabIndex = 6;
             this.numTotalLayer.Value = new decimal(new int[] {
             0,
@@ -473,7 +446,7 @@
             this.numBalanceLayer.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.numBalanceLayer.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numBalanceLayer.IsSupportEditMode = false;
-            this.numBalanceLayer.Location = new System.Drawing.Point(564, 32);
+            this.numBalanceLayer.Location = new System.Drawing.Point(634, 33);
             this.numBalanceLayer.Name = "numBalanceLayer";
             this.numBalanceLayer.NullValue = new decimal(new int[] {
             0,
@@ -481,7 +454,7 @@
             0,
             0});
             this.numBalanceLayer.ReadOnly = true;
-            this.numBalanceLayer.Size = new System.Drawing.Size(61, 23);
+            this.numBalanceLayer.Size = new System.Drawing.Size(95, 23);
             this.numBalanceLayer.TabIndex = 7;
             this.numBalanceLayer.Value = new decimal(new int[] {
             0,
@@ -1191,17 +1164,6 @@
             this.btnCutplanChangeHistory.UseVisualStyleBackColor = true;
             this.btnCutplanChangeHistory.Click += new System.EventHandler(this.BtnCutplanChangeHistory_Click);
             // 
-            // btnStdQtyWIP
-            // 
-            this.btnStdQtyWIP.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F);
-            this.btnStdQtyWIP.Location = new System.Drawing.Point(455, 61);
-            this.btnStdQtyWIP.Name = "btnStdQtyWIP";
-            this.btnStdQtyWIP.Size = new System.Drawing.Size(81, 30);
-            this.btnStdQtyWIP.TabIndex = 54;
-            this.btnStdQtyWIP.Text = "Std. Qty/WIP";
-            this.btnStdQtyWIP.UseVisualStyleBackColor = true;
-            this.btnStdQtyWIP.Click += new System.EventHandler(this.BtnStdQtyWIP_Click);
-            // 
             // btnDist
             // 
             this.btnDist.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
@@ -1230,59 +1192,13 @@
             // BtnImportMarker
             // 
             this.BtnImportMarker.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F);
-            this.BtnImportMarker.Location = new System.Drawing.Point(536, 61);
+            this.BtnImportMarker.Location = new System.Drawing.Point(454, 61);
             this.BtnImportMarker.Name = "BtnImportMarker";
             this.BtnImportMarker.Size = new System.Drawing.Size(82, 30);
             this.BtnImportMarker.TabIndex = 59;
             this.BtnImportMarker.Text = "Import Marker";
             this.BtnImportMarker.UseVisualStyleBackColor = true;
             this.BtnImportMarker.Click += new System.EventHandler(this.BtnImportMarker_Click);
-            // 
-            // dispSubprocess
-            // 
-            this.dispSubprocess.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.dispSubprocess.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.dispSubprocess.Location = new System.Drawing.Point(710, 31);
-            this.dispSubprocess.Name = "dispSubprocess";
-            this.dispSubprocess.Size = new System.Drawing.Size(120, 23);
-            this.dispSubprocess.TabIndex = 67;
-            // 
-            // numLeadTime
-            // 
-            this.numLeadTime.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.numLeadTime.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.numLeadTime.IsSupportEditMode = false;
-            this.numLeadTime.Location = new System.Drawing.Point(710, 5);
-            this.numLeadTime.Name = "numLeadTime";
-            this.numLeadTime.NullValue = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.numLeadTime.ReadOnly = true;
-            this.numLeadTime.Size = new System.Drawing.Size(61, 23);
-            this.numLeadTime.TabIndex = 66;
-            this.numLeadTime.Value = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            // 
-            // label5
-            // 
-            this.label5.Location = new System.Drawing.Point(628, 31);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(79, 23);
-            this.label5.TabIndex = 65;
-            this.label5.Text = "Subprocess";
-            // 
-            // label6
-            // 
-            this.label6.Location = new System.Drawing.Point(628, 5);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(79, 23);
-            this.label6.TabIndex = 64;
-            this.label6.Text = "Lead Time";
             // 
             // BackgroundWorker1
             // 
@@ -1305,7 +1221,7 @@
             // btnKHImportMarker
             // 
             this.btnKHImportMarker.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F);
-            this.btnKHImportMarker.Location = new System.Drawing.Point(618, 61);
+            this.btnKHImportMarker.Location = new System.Drawing.Point(536, 61);
             this.btnKHImportMarker.Name = "btnKHImportMarker";
             this.btnKHImportMarker.Size = new System.Drawing.Size(107, 30);
             this.btnKHImportMarker.TabIndex = 69;
@@ -1451,16 +1367,11 @@
         private Win.UI.DisplayBox displayTime;
         private Win.UI.Button btnAdditionalrevisedmarker;
         private Win.UI.Button btnCutplanChangeHistory;
-        private Win.UI.Button btnStdQtyWIP;
         private Win.UI.Button btnDist;
         private System.ComponentModel.BackgroundWorker BackgroundWorker1;
         private Win.UI.Label label4;
         private Win.UI.Label label3;
         private Win.UI.Button BtnImportMarker;
-        private Win.UI.DisplayBox dispSubprocess;
-        private Win.UI.NumericBox numLeadTime;
-        private Win.UI.Label label5;
-        private Win.UI.Label label6;
         private Win.UI.Button btnExWip;
         private Win.UI.Button btnKHImportMarker;
         private Win.UI.TextBox txtTone;

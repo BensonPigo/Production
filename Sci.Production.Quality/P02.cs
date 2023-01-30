@@ -233,6 +233,19 @@ Where a.poid='{0}' order by seq1,seq2
                 return;
             }
 
+            string orderTypeSQLcmd = $@"select OrderType = (select a.OrderTypeID+' / '
+                                        from (select distinct OrderTypeID
+                                        from Orders with(nolock)
+                                        where POID = '{this.CurrentMaintain["ID"]}'
+                                        and OrderTypeID <> '') a
+                                        FOR XML PATH(''))
+                                        into #tmp
+
+                                        select SUBSTRING(OrderType,0,LEN(OrderType)-1)
+                                        from #tmp
+                                        drop table #tmp";
+            this.editOrderType.Text = MyUtility.GetValue.Lookup(orderTypeSQLcmd);
+
             DataTable sciTb;
             string query_cmd = string.Format("select * from Getsci('{0}','{1}')", this.CurrentMaintain["ID"], MyUtility.Check.Empty(queryDr) ? string.Empty : queryDr["Category"]);
             DBProxy.Current.Select(null, query_cmd, out sciTb);

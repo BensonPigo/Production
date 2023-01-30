@@ -906,6 +906,7 @@ where s.type='F' and s.Junk=0 and [AVG] * 100 between s.range1 and s.range2
 
 update b
     set b.TransferDate = getdate()
+		, b.IS_Trans = 1
 from BITableInfo b
 where b.id = 'P_QA_R06'
 

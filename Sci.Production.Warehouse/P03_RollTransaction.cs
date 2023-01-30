@@ -95,11 +95,15 @@ Select a.Roll,a.Dyelot
 ,[stocktype] = case when a.stocktype = 'B' then 'Bulk'
                 when a.stocktype = 'I' then 'Invertory'
 			    when a.stocktype = 'O' then 'Scrap' End
-            ,a.InQty,a.OutQty,a.AdjustQty,a.ReturnQty
-            ,a.InQty - a.OutQty + a.AdjustQty - a.ReturnQty as balance
-            ,dbo.Getlocation(a.ukey)  MtlLocationID 
-            ,a.ContainerCode
-            ,Tone = FIRT.TONGrp
+,a.InQty
+,a.OutQty
+,a.AdjustQty
+,a.ReturnQty
+,a.InQty - a.OutQty + a.AdjustQty - a.ReturnQty as balance
+,dbo.Getlocation(a.ukey)  MtlLocationID 
+,a.ContainerCode
+,Tone = FIRT.TONGrp
+,[GMTWash] = isnull(GMTWash.val, '')
 from FtyInventory a WITH (NOLOCK) 
 outer apply(select Max(fs.Tone) as TONGrp from FIR f
                         left join FIR_Shadebone fs on f.ID = fs.ID
@@ -139,6 +143,22 @@ outer apply(
 		for xml path ('')
 	) , 1, 1, '')
 )FullDyelot 
+outer apply(
+    select top 1 [val] =  case  when sr.Status = 'Confirmed' then 'Done'
+			                    when tt.Status = 'Confirmed' then 'Ongoing'
+			                    else '' end
+    from TransferToSubcon_Detail ttd with (nolock)
+    inner join TransferToSubcon tt with (nolock) on tt.ID = ttd.ID
+    left join  SubconReturn_Detail srd with (nolock) on srd.TransferToSubcon_DetailUkey = ttd.Ukey
+    left join  SubconReturn sr with (nolock) on srD.ID = srd.ID and sr.Status = 'Confirmed'
+    where   ttd.POID = a.PoId and
+			ttd.Seq1 = a.Seq1 and 
+            ttd.Seq2 = a.Seq2 and
+			ttd.Dyelot = a.Dyelot and 
+            ttd.Roll = a.Roll and
+			ttd.StockType = a.StockType and
+            tt.Subcon = 'GMT Wash'
+) GMTWash
 where a.Poid = '{0}'
     and a.Seq1 = '{1}'
     and a.Seq2 = '{2}'
@@ -676,7 +696,8 @@ group by IssueDate,inqty,outqty,adjust,ReturnQty,id,Remark,location,tmp.name,tmp
                      .Numeric("Balance", header: "Balance", width: Widths.AnsiChars(10), integer_places: 6, decimal_places: 2)
                      .Text("MtlLocationID", header: "Location", width: Widths.AnsiChars(10))
                      .Text("ContainerCode", header: "Container Code", iseditingreadonly: true).Get(out col_ContainerCode)
-                     .Text("Tone", header: "Ton Grp",width:Widths.AnsiChars(6),iseditingreadonly: true)
+                     .Text("Tone", header: "Ton Grp", width: Widths.AnsiChars(6), iseditingreadonly: true)
+                     .Text("GMTWash", header: "GMT Wash", width: Widths.AnsiChars(10), iseditingreadonly: true)
                      ;
 
                 // 僅有自動化工廠 ( System.Automation = 1 )才需要顯示該欄位 by ISP20220035

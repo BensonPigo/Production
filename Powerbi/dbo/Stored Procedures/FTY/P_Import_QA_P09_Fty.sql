@@ -178,6 +178,7 @@ and T.ETA between '''+@ETA_s_varchar+''' and '''+@ETA_e_varchar+'''
 
 update b
     set b.TransferDate = getdate()
+		, b.IS_Trans = 1
 from BITableInfo b
 where b.id = ''P_QA_P09''
 ';

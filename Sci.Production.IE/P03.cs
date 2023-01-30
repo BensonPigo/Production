@@ -41,6 +41,7 @@ namespace Sci.Production.IE
             this.comboSewingTeam1.SetDataSource();
             this.splitContainer1.Panel1.Controls.Add(this.detailpanel);
             this.detailpanel.Dock = DockStyle.Fill;
+            MyUtility.Tool.SetupCombox(this.comboPhase, 1, 1, ",Initial,Prelim,Final");
         }
 
         /// <summary>
@@ -90,6 +91,7 @@ namespace Sci.Production.IE
             this.comboSewingTeam1.SetDataSource();
             this.splitContainer1.Panel1.Controls.Add(this.detailpanel);
             this.detailpanel.Dock = DockStyle.Fill;
+            MyUtility.Tool.SetupCombox(this.comboPhase, 1, 1, ",Initial,Prelim,Final");
         }
 
         /// <summary>
@@ -1115,6 +1117,29 @@ where Junk = 0
                 MyUtility.Msg.WarningBox("<No .of Hours> cannot be 0!!");
                 this.numNoOfHours.Focus();
                 return false;
+            }
+
+            if (MyUtility.Check.Empty(this.CurrentMaintain["Phase"]))
+            {
+                MyUtility.Msg.WarningBox("<Phase> cannot be empty! Please fill in <Phase> next to <Version>.");
+                this.comboPhase.Focus();
+                return false;
+            }
+            else if (this.CurrentMaintain["Phase"].ToString().EqualString("Final"))
+            {
+                if (MyUtility.Check.Empty(this.CurrentMaintain["SewingLineID"]))
+                {
+                    MyUtility.Msg.WarningBox("Please enter <Sewing Line> since phase is Final.");
+                    this.txtsewingline.Focus();
+                    return false;
+                }
+
+                if (MyUtility.Check.Empty(this.CurrentMaintain["Team"]))
+                {
+                    MyUtility.Msg.WarningBox("Please enter <Team> since phase is Final.");
+                    this.comboSewingTeam1.Focus();
+                    return false;
+                }
             }
             #endregion
 
