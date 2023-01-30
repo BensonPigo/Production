@@ -1,0 +1,529 @@
+﻿using Ict;
+using Ict.Win;
+using Sci.Data;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Transactions;
+using System.Windows.Forms;
+
+namespace Sci.Production.Warehouse
+{
+    /// <inheritdoc/>
+    public partial class P55 : Win.Tems.Input6
+    {
+        /// <inheritdoc/>
+        public P55(ToolStripMenuItem menuitem)
+            : base(menuitem)
+        {
+            this.InitializeComponent();
+            this.DefaultFilter = string.Format($"MDivisionID = '{Env.User.Keyword}'");
+            this.gridicon.Append.Enabled = false;
+            this.gridicon.Append.Visible = false;
+            this.gridicon.Insert.Enabled = false;
+            this.gridicon.Insert.Visible = false;
+        }
+
+        /// <inheritdoc/>
+        protected override void ClickNewAfter()
+        {
+            base.ClickNewAfter();
+            this.CurrentMaintain["MDivisionID"] = Env.User.Keyword;
+            this.CurrentMaintain["FactoryID"] = Env.User.Factory;
+            this.CurrentMaintain["Status"] = "New";
+        }
+
+        /// <inheritdoc/>
+        protected override void OnDetailGridSetup()
+        {
+             #region 欄位設定
+            this.Helper.Controls.Grid.Generator(this.detailgrid)
+                .Text("POID", header: "SP#", width: Widths.AnsiChars(15), iseditingreadonly: true) // 0
+                .Text("Seq", header: "Seq", width: Widths.AnsiChars(6), iseditingreadonly: true) // 1
+                .Text("Roll", header: "Roll", width: Widths.AnsiChars(6), iseditingreadonly: true) // 2
+                .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(8), iseditingreadonly: true) // 3
+                .Text("Refno", header: "Refno", width: Widths.AnsiChars(15), iseditingreadonly: true) // 4
+                .Numeric("ReceivingQty", header: "Receiving Qty", iseditingreadonly: true, decimal_places: 2, integer_places: 10) // 5
+                .Numeric("Qty", header: "Transfer Out Qty", iseditingreadonly: true, decimal_places: 2, integer_places: 10) // 6
+                .Text("StockUnit", header: "Stock Unit", iseditingreadonly: true) // 7
+                .Text("Description", header: "Description", width: Widths.AnsiChars(20), iseditingreadonly: true) // 8
+            ;
+            #endregion 欄位設定
+        }
+
+        /// <inheritdoc/>
+        protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
+        {
+            string masterID = (e.Master == null) ? string.Empty : e.Master["ID"].ToString();
+            this.DetailSelectCommand = $@"
+            select 
+            srd.POID
+            ,[Seq] = Concat ( srd.Seq1, ' ', srd.Seq2 )
+            ,srd.Seq1
+            ,srd.Seq2
+            ,srd.Roll
+            ,srd.Dyelot
+            ,psd.Refno
+            ,[ReceivingQty] = isnull( rdQty.ActualQty,0) + isnull(tidQty.Qty,0)
+            ,psd.StockUnit
+            ,ttsdtQty.Qty
+            ,[Description] = tDescription.val
+            ,srd.Ukey
+            ,srd.ID
+            ,srd.StockType
+            from SubconReturn sr with(nolock)
+            inner join SubconReturn_Detail srd with(nolock) on sr.id = srd.id
+            left join PO_Supp_Detail psd with(nolock) on srd.POID =  psd.ID and srd.Seq1 = psd.SEQ1 and srd.Seq2 = psd.SEQ2
+            outer apply
+            (
+	            select rd.ActualQty 
+	            from Receiving_Detail rd with(nolock)
+	            inner join Receiving r with(nolock) on rd.Id = r.id
+	            where r.Type = 'A' and
+		                srd.POID = rd.PoId and
+		                srd.Seq1 = rd.Seq1 and 
+		                srd.Seq2 = rd.Seq2 and 
+		                srd.Roll = rd.Roll and 
+		                srd.Dyelot = rd.Dyelot
+            )rdQty
+            outer apply
+            (
+	            select tid.Qty
+	            from TransferIn_Detail tid with(nolock)
+	            where  srd.POID = tid.PoId and 
+		               srd.Seq1 = tid.Seq1 and 
+		               srd.Seq2 = tid.Seq2 and
+		               srd.Roll = tid.Roll and 
+		               srd.Dyelot = tid.Dyelot
+            )tidQty
+            outer apply
+            (
+	            select val = dbo.getMtlDesc ( srd.POID, srd.Seq1, srd.Seq2, 2, 0 )
+            )tDescription
+            outer apply
+            (
+	            select 
+	            td.Qty
+	            from TransferToSubcon_Detail td with(nolock)
+	            where td.Ukey = srd.TransferToSubcon_DetailUkey and
+		              td.POID = srd.POID and
+		              td.Seq1 = srd.Seq1 and
+		              td.Seq2 = srd.Seq2 and
+		              td.Roll = srd.Roll and
+		              td.Dyelot = srd.Dyelot
+            )ttsdtQty
+
+            where sr.ID = '{masterID}'";
+            return base.OnDetailSelectCommandPrepare(e);
+        }
+
+        private void TxtSubcon_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        {
+            Win.UI.TextBox prodText = (Win.UI.TextBox)sender;
+            Win.Tools.SelectItem item;
+            string selectCommand = "select ID from ArtworkType where IsSubcon = 1";
+            item = new Win.Tools.SelectItem(selectCommand, "20", prodText.Text);
+            DialogResult returnResult = item.ShowDialog();
+            if (returnResult == DialogResult.Cancel)
+            {
+                return;
+            }
+
+            if (!MyUtility.Check.Empty(prodText.Text))
+            {
+                if (MyUtility.Msg.QuestionBox("Sub con already changed, system will clean detail data, do you want to switch the sub con ?") == DialogResult.No)
+                {
+                    return;
+                }
+
+                ((DataTable)this.detailgridbs.DataSource).Select().ToList().ForEach(r => r.Delete()); // 清除表身
+            }
+
+            prodText.Text = item.GetSelectedString();
+        }
+
+        private void TxtSubcon_Validating(object sender, CancelEventArgs e)
+        {
+            if (MyUtility.Check.Empty(this.txtSubcon.Text))
+            {
+                return;
+            }
+
+            string sqlcmd = $@"select ID from ArtworkType where IsSubcon = 1 and ID = '{this.txtSubcon.Text}'";
+            if (MyUtility.Check.Seek(sqlcmd))
+            {
+                return;
+            }
+
+            MyUtility.Msg.WarningBox(string.Format("Cannot found sub con <{0}>", this.txtSubcon.Text));
+            e.Cancel = true;
+        }
+
+        private void BtnFind_Click(object sender, EventArgs e)
+        {
+            if (MyUtility.Check.Empty(this.detailgridbs.DataSource))
+            {
+                return;
+            }
+
+            DataRow dt = ((DataTable)this.detailgridbs.DataSource).Select($"POID like '%{this.txtLocateForSP.Text.TrimEnd()}%'").FirstOrDefault();
+            if (dt == null)
+            {
+                MyUtility.Msg.WarningBox("Data was not found!!");
+                return;
+            }
+
+            int index = this.detailgridbs.Find("POID", dt["POID"].ToString());
+            this.detailgridbs.Position = index;
+        }
+
+        private void BtnImport_Click(object sender, EventArgs e)
+        {
+            if (MyUtility.Check.Empty(this.CurrentMaintain["Subcon"]))
+            {
+                MyUtility.Msg.WarningBox("Please choose sub con before import material.");
+                return;
+            }
+
+            var win = new P55_Import(this.CurrentMaintain, (DataTable)this.detailgridbs.DataSource);
+            win.ShowDialog(this);
+            this.RenewData();
+        }
+
+        /// <inheritdoc/>
+        protected override bool ClickSaveBefore()
+        {
+            DualResult dualResult;
+            DataTable dataTable = (DataTable)this.detailgridbs.DataSource;
+
+            if (MyUtility.Check.Empty(this.CurrentMaintain["Subcon"]))
+            {
+                MyUtility.Msg.WarningBox("Sub con  can't be empty!", "Warning");
+                this.txtSubcon.Focus();
+                return false;
+            }
+
+            if (this.DetailDatas.Count == 0)
+            {
+                MyUtility.Msg.WarningBox("Detail can't be empty", "Warning");
+                return false;
+            }
+
+            string sqlcmd = string.Empty;
+            sqlcmd = $@"select 
+                        [SP#] = td.poid
+                        ,[Seq] = Concat ( td.Seq1, ' ', td.Seq2 )
+                        ,td.Roll
+                        ,td.Dyelot
+                        ,[Sub con status] = f.SubConStatus 
+                        from FtyInventory f with(nolock)
+                        inner join #tmp td with(nolock) on 
+                        f.POID = td.POID 
+                        and f.Seq1 = td.Seq1
+                        and f.Seq2 = td.Seq2
+                        and f.Roll = td.Roll
+                        and f.Dyelot = td.Dyelot
+                        and f.StockType =td.StockType
+                        where f.SubConStatus <> '{this.CurrentMaintain["Subcon"]}'";
+            dualResult = MyUtility.Tool.ProcessWithDatatable(dataTable, string.Empty, sqlcmd, out DataTable dt);
+
+            if (!dualResult)
+            {
+                MyUtility.Msg.WarningBox(dualResult.ToString());
+                return false;
+            }
+
+            if (dt.Rows.Count != 0)
+            {
+                string msg = $"({this.CurrentMaintain["Subcon"]}) Fabric not transfer to sub con or still transfer to other sub con not return yet.";
+                MyUtility.Msg.ShowMsgGrid(dt, msg: msg, caption: "Warning");
+                return false;
+            }
+
+            sqlcmd = string.Empty;
+            sqlcmd = $@"select 
+                        [SP#] = sd.poid
+                        ,[seq] = Concat (sd.Seq1, ' ', sd.Seq2 )
+                        ,sd.Roll
+                        ,sd.Dyelot
+                        ,[Sub con Return ID] = sd.ID
+                        ,[Sub con Return Status] = s.Status
+                        from SubconReturn s with(nolock)
+                        left join SubconReturn_Detail sd with(nolock) on s.ID = sd.ID
+                        where exists(
+                        select 1 from #tmp ti
+                        where 
+                        sd.POID = ti.PoId
+                        and sd.Seq1  = ti.Seq1 
+                        and sd.Seq2  = ti.Seq2
+                        and sd.Roll = ti.Roll 
+                        and sd.Dyelot = ti.Dyelot
+                        ) 
+                        and s.subcon = '{this.CurrentMaintain["Subcon"]}'
+                        and s.id <> '{this.CurrentMaintain["ID"]}'";
+            dualResult = MyUtility.Tool.ProcessWithDatatable(dataTable, string.Empty, sqlcmd, out DataTable dataTb);
+
+            if (!dualResult)
+            {
+                MyUtility.Msg.WarningBox(dualResult.ToString());
+                return false;
+            }
+
+            if (dataTb.Rows.Count != 0)
+            {
+                string msg = $"({this.CurrentMaintain["Subcon"]})Fabric already existed in other subcon return record.";
+                MyUtility.Msg.ShowMsgGrid(dataTb, msg: msg, caption: "Warning");
+                return false;
+            }
+
+            if (!MyUtility.Check.Seek($"Select 1 from SubconReturn where ID = '{this.CurrentMaintain["ID"]}'"))
+            {
+                this.CurrentMaintain["ID"] = MyUtility.GetValue.GetID(Env.User.Keyword + "BR", "SubconReturn", (DateTime)MyUtility.Convert.GetDate(this.CurrentMaintain["AddDate"]));
+            }
+
+            return base.ClickSaveBefore();
+        }
+
+        /// <inheritdoc/>
+        protected override void ClickConfirm()
+        {
+            base.ClickConfirm();
+            DualResult dualResult;
+            DataTable dataTable = (DataTable)this.detailgridbs.DataSource;
+            string sqlcmd = string.Empty;
+
+            this.RenewData(); // 先重載資料, 避免雙開程式狀況
+            if (this.CurrentMaintain == null)
+            {
+                return;
+            }
+
+            if (MyUtility.Check.Empty(this.CurrentMaintain["ReturnDate"]))
+            {
+                MyUtility.Msg.WarningBox("Return Date cannot be empty.");
+                return;
+            }
+
+            sqlcmd = $@"select 
+                        [SP#] = td.poid
+                        ,[Seq] = Concat ( td.Seq1, ' ', td.Seq2 )
+                        ,td.Roll
+                        ,td.Dyelot
+                        ,[Sub con status] = f.SubConStatus 
+                        from FtyInventory f with(nolock)
+                        inner join #tmp td with(nolock) on 
+                        f.POID = td.POID 
+                        and f.Seq1 = td.Seq1
+                        and f.Seq2 = td.Seq2
+                        and f.Roll = td.Roll
+                        and f.Dyelot = td.Dyelot
+                        and f.StockType =td.StockType
+                        where f.SubConStatus <> '{this.CurrentMaintain["SubCon"]}'";
+            dualResult = MyUtility.Tool.ProcessWithDatatable(dataTable, string.Empty, sqlcmd, out DataTable dt);
+
+            if (!dualResult)
+            {
+                MyUtility.Msg.WarningBox(dualResult.ToString());
+                return;
+            }
+
+            if (dt.Rows.Count != 0)
+            {
+                string msg = $"({this.CurrentMaintain["SubCon"]}) Fabric not transfer to sub con or still transfer to other sub con not return yet";
+                MyUtility.Msg.ShowMsgGrid(dt, msg: msg, caption: "Warning");
+                return;
+            }
+
+            sqlcmd = string.Empty;
+            sqlcmd = $@"select
+                        [SP#] = sd.poid
+                        ,[Seq] = Concat (sd.Seq1, ' ', sd.Seq2 )
+                        ,sd.Roll
+                        ,sd.Dyelot
+                        ,[Sub con Return ID] = sd.ID
+                        ,[Sub con Return Status] = s.Status
+                        from SubconReturn s with(nolock)
+                        left join SubconReturn_Detail sd with(nolock) on s.ID = sd.ID
+                        where exists(
+                        select 1 from #tmp ti
+                        where 
+                        sd.POID = ti.PoId
+                        and sd.Seq1  = ti.Seq1 
+                        and sd.Seq2  = ti.Seq2
+                        and sd.Roll = ti.Roll 
+                        and sd.Dyelot = ti.Dyelot
+                        ) 
+                        and s.subcon = '{this.CurrentMaintain["Subcon"]}'
+                        and s.id <> '{this.CurrentMaintain["ID"]}'";
+
+            dualResult = MyUtility.Tool.ProcessWithDatatable(dataTable, null, sqlcmd, out dt);
+
+            if (!dualResult)
+            {
+                MyUtility.Msg.WarningBox(dualResult.ToString());
+                return;
+            }
+
+            if (dt.Rows.Count != 0)
+            {
+                string msg = $"({this.CurrentMaintain["Subcon"]}) Fabric already existed in other subcon return record.";
+                MyUtility.Msg.ShowMsgGrid(dt, msg: msg, caption: "Warning");
+                return;
+            }
+
+            Exception errMsg = null;
+            using (TransactionScope transactionscope = new TransactionScope())
+            {
+                try
+                {
+                    string sql_tup = $@"update Subconreturn set status = 'Confirmed' where id = '{this.CurrentMaintain["id"]}'";
+                    if (!(dualResult = DBProxy.Current.Execute(null, sql_tup)))
+                    {
+                        throw dualResult.GetException();
+                    }
+
+                    string sql_up = $@"update f 
+                                        set
+                                        SubConStatus = '' 
+                                        from FtyInventory as f with(nolock)
+                                        inner join #tmp td with(nolock) on 
+                                        f.POID = td.POID 
+                                        and f.Seq1 = td.Seq1
+                                        and f.Seq2 = td.Seq2
+                                        and f.Roll = td.Roll
+                                        and f.Dyelot = td.Dyelot
+                                        and f.StockType =td.StockType";
+                    if (!(dualResult = MyUtility.Tool.ProcessWithDatatable(dataTable, string.Empty, sql_up, out DataTable dtt)))
+                    {
+                        throw dualResult.GetException();
+                    }
+
+                    transactionscope.Complete();
+                }
+                catch (Exception ex)
+                {
+                    errMsg = ex;
+                }
+            }
+
+            if (!MyUtility.Check.Empty(errMsg))
+            {
+                this.ShowErr(errMsg);
+                return;
+            }
+
+            MyUtility.Msg.InfoBox("Confirmed successful");
+        }
+
+        /// <inheritdoc/>
+        protected override void ClickUnconfirm()
+        {
+            this.RenewData(); // 先重載資料, 避免雙開程式狀況
+            base.ClickUnconfirm();
+            DualResult dualResult;
+            DataTable dataTable = (DataTable)this.detailgridbs.DataSource;
+            if (this.CurrentMaintain == null ||
+                MyUtility.Msg.QuestionBox("Do you want to unconfirme it?") == DialogResult.No)
+            {
+                return;
+            }
+
+            string sqlcmd = $@"select 
+                               [SP#] = td.poid
+                               ,[Seq] = Concat ( td.Seq1, ' ', td.Seq2 )
+                               ,td.Roll
+                               ,td.Dyelot
+                               ,[Sub con status] = f.SubConStatus 
+                               from FtyInventory f with(nolock)
+                               inner join #tmp td with(nolock) on 
+                               f.POID = td.POID 
+                               and f.Seq1 = td.Seq1
+                               and f.Seq2 = td.Seq2
+                               and f.Roll = td.Roll
+                               and f.Dyelot = td.Dyelot
+                               and f.StockType =td.StockType
+                               where f.SubConStatus <> ''";
+
+            dualResult = MyUtility.Tool.ProcessWithDatatable(dataTable, null, sqlcmd, out DataTable dt);
+
+            if (!dualResult)
+            {
+                MyUtility.Msg.WarningBox(dualResult.ToString());
+                return;
+            }
+
+            if (dt.Rows.Count != 0)
+            {
+                string msg = $"({this.CurrentMaintain["Subcon"]})Fabric still transfer to other sub con not return yet.";
+                MyUtility.Msg.ShowMsgGrid(dt, msg: msg, caption: "Warning");
+                return;
+            }
+
+            Exception errMsg = null;
+            using (TransactionScope transactionscope = new TransactionScope())
+            {
+                try
+                {
+                    string sql_tup = $@"update SubconReturn set status = 'New' where id = '{this.CurrentMaintain["id"]}'";
+                    if (!(dualResult = DBProxy.Current.Execute(null, sql_tup)))
+                    {
+                        throw dualResult.GetException();
+                    }
+
+                    string sql_up = $@"update f 
+                                        set
+                                        SubConStatus = '{this.CurrentMaintain["SubCon"]}' 
+                                        from FtyInventory as f with(nolock)
+                                        inner join #tmp td with(nolock) on 
+                                        f.POID = td.POID 
+                                        and f.Seq1 = td.Seq1
+                                        and f.Seq2 = td.Seq2
+                                        and f.Roll = td.Roll
+                                        and f.Dyelot = td.Dyelot
+                                        and f.StockType =td.StockType";
+                    if (!(dualResult = MyUtility.Tool.ProcessWithDatatable(dataTable, string.Empty, sql_up, out DataTable dtt)))
+                    {
+                        throw dualResult.GetException();
+                    }
+
+                    transactionscope.Complete();
+                }
+                catch (Exception ex)
+                {
+                    errMsg = ex;
+                }
+            }
+
+            MyUtility.Msg.InfoBox("UnConfirmed successful");
+        }
+
+        /// <inheritdoc/>
+        protected override bool ClickEditBefore()
+        {
+            if (this.CurrentMaintain["Status"].ToString() == "Confirmed")
+            {
+                MyUtility.Msg.WarningBox("Data is confirmed, can't modify.", "Warning");
+                return false;
+            }
+
+            return base.ClickEditBefore();
+        }
+
+        /// <inheritdoc/>
+        protected override bool ClickDeleteBefore()
+        {
+            if (this.CurrentMaintain["Status"].ToString() == "Confirmed")
+            {
+                MyUtility.Msg.WarningBox("Data is confirmed, can't delete.", "Warning");
+                return false;
+            }
+
+            return base.ClickDeleteBefore();
+        }
+    }
+}

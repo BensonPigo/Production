@@ -701,6 +701,14 @@ and ID = '{Sci.Env.User.UserID}'"))
             }
             #endregion
 
+            #region 檢查 FtyInventory.SubConStatus
+            List<long> listFtyInventoryUkey = dtIssue_Detail.AsEnumerable().Select(s => MyUtility.Convert.GetLong(s["FtyInventoryUkey"])).ToList();
+            if (!Prgs_WMS.CheckFtyInventorySubConStatus(listFtyInventoryUkey))
+            {
+                return;
+            }
+            #endregion
+
             // 取得 FtyInventory 資料 (包含PO_Supp_Detail.FabricType)
             result = Prgs.GetFtyInventoryData(dtIssue_Detail, this.Name, out DataTable dtOriFtyInventory);
             string ids = string.Empty;
