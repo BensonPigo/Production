@@ -479,6 +479,7 @@ and ID = '{Sci.Env.User.UserID}'"))
                 .Numeric("balance", header: "Stock Qty", iseditingreadonly: true, decimal_places: 2, integer_places: 10)
                 .Text("Color", header: "Color", width: Widths.AnsiChars(10), iseditingreadonly: true) // 7
                 .Text("Size", header: "Size", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                .Text("GMTWash", header: "GMT Wash", width: Widths.AnsiChars(10), iseditingreadonly: true)
             ;
             #endregion 欄位設定
 
@@ -505,6 +506,14 @@ and ID = '{Sci.Env.User.UserID}'"))
             {
                 return;
             }
+
+            #region 檢查 FtyInventory.SubConStatus
+            List<long> listFtyInventoryUkey = this.DetailDatas.Select(s => MyUtility.Convert.GetLong(s["FtyInventoryUkey"])).ToList();
+            if (!Prgs_WMS.CheckFtyInventorySubConStatus(listFtyInventoryUkey))
+            {
+                return;
+            }
+            #endregion
 
             #region 檢查物料Location 是否存在WMS
             if (!PublicPrg.Prgs.Chk_WMS_Location(this.CurrentMaintain["ID"].ToString(), this.Name))
@@ -961,6 +970,8 @@ select  o.FtyGroup
 			,IIF( p1.SuppColor = '' or p1.SuppColor is null,dbo.GetColorMultipleID(o.BrandID,p1.ColorID),p1.SuppColor)
 			,dbo.GetColorMultipleID(o.BrandID,p1.ColorID))
 		, [Size]= p1.SizeSpec
+        , [GMTWash] = isnull(GMTWash.val, '')
+        , [FtyInventoryUkey] = c.Ukey
 from dbo.issue_detail as a WITH (NOLOCK) 
 left join Orders o on a.poid = o.id
 left join PO_Supp_Detail p1 WITH (NOLOCK) on p1.ID = a.PoId and p1.seq1 = a.SEQ1 and p1.SEQ2 = a.seq2
@@ -975,6 +986,22 @@ outer apply (
 	Left join FIR_Shadebone fs with (nolock) on f.ID = fs.ID and fs.Roll = fi.Roll and fs.Dyelot = fi.Dyelot
 	where fi.Ukey = ｃ.Ukey
 ) ShadeboneTone
+outer apply(
+    select top 1 [val] =  case  when sr.Status = 'Confirmed' then 'Done'
+			                    when tt.Status = 'Confirmed' then 'Ongoing'
+			                    else '' end
+    from TransferToSubcon_Detail ttd with (nolock)
+    inner join TransferToSubcon tt with (nolock) on tt.ID = ttd.ID
+    left join  SubconReturn_Detail srd with (nolock) on srd.TransferToSubcon_DetailUkey = ttd.Ukey
+    left join  SubconReturn sr with (nolock) on sr.ID = srd.ID and sr.Status = 'Confirmed'
+    where   ttd.POID = c.PoId and
+			ttd.Seq1 = c.Seq1 and 
+            ttd.Seq2 = c.Seq2 and
+			ttd.Dyelot = c.Dyelot and 
+            ttd.Roll = c.Roll and
+			ttd.StockType = c.StockType and
+            tt.Subcon = 'GMT Wash'
+) GMTWash
 Where a.id = '{0}'", masterID);
 
             return base.OnDetailSelectCommandPrepare(e);

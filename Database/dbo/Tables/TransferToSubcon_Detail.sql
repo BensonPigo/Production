@@ -8,7 +8,7 @@
 		[Dyelot] [varchar](8)		CONSTRAINT [DF_TransferToSubcon_Detail_Dyelot]		DEFAULT ('') NOT NULL,
 		[StockType] [varchar](1)	CONSTRAINT [DF_TransferToSubcon_Detail_StockType]	DEFAULT ('') NOT NULL,
 		[Qty] [numeric](11, 2)		CONSTRAINT [DF_TransferToSubcon_Detail_Qty]			DEFAULT ((0)) NOT NULL,
-		[Ukey] [bigint] NOT NULL,
+		[Ukey] [bigint] IDENTITY(1,1) NOT NULL,
 		CONSTRAINT [PK_TransferToSubcon_Detail] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 		WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 	) ON [PRIMARY]
