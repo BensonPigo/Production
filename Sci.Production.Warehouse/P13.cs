@@ -999,7 +999,8 @@ outer apply(
             ttd.Seq2 = c.Seq2 and
 			ttd.Dyelot = c.Dyelot and 
             ttd.Roll = c.Roll and
-			ttd.StockType = c.StockType
+			ttd.StockType = c.StockType and
+            tt.Subcon = 'GMT Wash'
 ) GMTWash
 Where a.id = '{0}'", masterID);
 

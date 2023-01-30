@@ -156,7 +156,8 @@ outer apply(
             ttd.Seq2 = a.Seq2 and
 			ttd.Dyelot = a.Dyelot and 
             ttd.Roll = a.Roll and
-			ttd.StockType = a.StockType
+			ttd.StockType = a.StockType and
+            tt.Subcon = 'GMT Wash'
 ) GMTWash
 where a.Poid = '{0}'
     and a.Seq1 = '{1}'

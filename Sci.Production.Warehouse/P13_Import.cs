@@ -120,7 +120,8 @@ outer apply(
             ttd.Seq2 = c.Seq2 and
 			ttd.Dyelot = c.Dyelot and 
             ttd.Roll = c.Roll and
-			ttd.StockType = c.StockType
+			ttd.StockType = c.StockType and
+            tt.Subcon = 'GMT Wash'
 ) GMTWash
 Where a.id = '{0}' and c.inqty - c.outqty + c.adjustqty - c.ReturnQty > 0 AND Orders.category!='A'
     and factory.MDivisionID = '{1}'

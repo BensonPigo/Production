@@ -126,7 +126,8 @@ outer apply(
             ttd.Seq2 = t.Seq2 and
 			ttd.Dyelot = t.Dyelot and 
             ttd.Roll = t.Roll and
-			ttd.StockType = t.StockType
+			ttd.StockType = t.StockType and 
+            tt.Subcon = 'GMT Wash'
 ) GMTWash
 order by GroupQty desc, t.dyelot, balanceqty desc";
                 if (!(result = MyUtility.Tool.ProcessWithDatatable(

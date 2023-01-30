@@ -131,7 +131,8 @@ outer apply(
             ttd.Seq2 = c.Seq2 and
 			ttd.Dyelot = c.Dyelot and 
             ttd.Roll = c.Roll and
-			ttd.StockType = c.StockType
+			ttd.StockType = c.StockType and            
+            tt.Subcon = 'GMT Wash'
 ) GMTWash
 Where a.id = '{this.dr_master["poid"]}' and c.lock = 0 and c.inqty - c.outqty + c.adjustqty - c.ReturnQty > 0 
 and a.Refno='{this.dr_master["Refno"]}' and a.colorid='{this.dr_master["colorid"]}' {(this.Type == 0 ? " and ltrim(a.seq1) between '01' and '99'" : string.Empty)}--and ltrim(a.seq1) between '01' and '99'
