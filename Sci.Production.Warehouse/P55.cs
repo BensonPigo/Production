@@ -381,7 +381,7 @@ namespace Sci.Production.Warehouse
             {
                 try
                 {
-                    string sql_tup = $@"update Subconreturn set status = 'Confirmed' where id = '{this.CurrentMaintain["id"]}'";
+                    string sql_tup = $@"update Subconreturn set status = 'Confirmed', EditDate = GetDate(), EditName = '{Env.User.UserID}' where id = '{this.CurrentMaintain["id"]}'";
                     if (!(dualResult = DBProxy.Current.Execute(null, sql_tup)))
                     {
                         throw dualResult.GetException();
@@ -469,7 +469,7 @@ namespace Sci.Production.Warehouse
             {
                 try
                 {
-                    string sql_tup = $@"update SubconReturn set status = 'New' where id = '{this.CurrentMaintain["id"]}'";
+                    string sql_tup = $@"update SubconReturn set status = 'New', EditDate = GetDate(), EditName = '{Env.User.UserID}' where id = '{this.CurrentMaintain["id"]}'";
                     if (!(dualResult = DBProxy.Current.Execute(null, sql_tup)))
                     {
                         throw dualResult.GetException();

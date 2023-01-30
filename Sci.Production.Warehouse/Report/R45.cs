@@ -183,6 +183,7 @@ namespace Sci.Production.Warehouse
                             ,[Balance - GMT Wash] = cast(sum(IIF([TransferToSubconStatus] = 'Confirmed',[ReceivingQty],0)) as float) - cast(sum(IIF([SubconReturnStatus] = 'Confirmed',[ReceivingQty],0)) as float)
                             from #tmp 
                             group by [SP#],[Seq#],[Refno],[StockUnit]
+                            order by [SP#],[Seq#]
                             drop table #tmp";
             }
             else
@@ -272,6 +273,7 @@ namespace Sci.Production.Warehouse
                             ,[ReturnDate]
                             from #tmp 
                             group by [SP#],[Seq#],[Refno],[StockUnit],[Roll],[Dyelot],[ReceivingQty],[TransferOutDate],[ReturnDate],[GMTWash],[TransferToSubconStatus],[SubconReturnStatus]
+                            order by [SP#],[Seq#],[Roll],[Dyelot]
                             drop table #tmp";
             }
 
