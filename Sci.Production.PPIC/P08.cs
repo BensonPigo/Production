@@ -86,11 +86,12 @@ namespace Sci.Production.PPIC
 select rd.*,(rd.Seq1+' '+rd.Seq2) as Seq, f.Description, [dbo].[getMtlDesc](r.POID,rd.Seq1,rd.Seq2,2,0) as Description,
     isnull((select top(1) ExportId from Receiving WITH (NOLOCK) where InvNo = rd.INVNo),'') as ExportID,
     EstReplacementAMT = case when rd.Junk =1 then 0
-						else (select top 1 amount from dbo.GetAmountByUnit(po_price.v, x.Qty, psd.POUnit, 4)) * isnull(dbo.getRate('KP', po_stock.v, 'USD', r.CDate),1)
+						else (select top 1 amount from dbo.GetAmountByUnit(po_price.v, Gu.unit, psd.POUnit, 4)) * isnull(dbo.getRate('KP', po_stock.v, 'USD', r.CDate),1)
 						end
 from ReplacementReport r WITH (NOLOCK) 
 inner join ReplacementReport_Detail rd WITH (NOLOCK) on rd.ID = r.ID
 left join PO_Supp_Detail psd WITH (NOLOCK) on psd.ID = r.POID and psd.SEQ1 = rd.Seq1 and psd.SEQ2 = rd.Seq2
+left join Orders o WITH (NOLOCK) on r.POID = o.ID
 outer apply (
     select v = case 
 					when psd.seq1 like '7%' then isnull((select v = stock.Price
@@ -125,6 +126,8 @@ outer apply (
 					else Supp.Currencyid
 				end
 ) po_stock
+outer apply (select * from dbo.GetUnitRound(psd.BrandID, o.ProgramID, o.Category, psd.POUnit)) GetUnit
+outer apply (select unit = dbo.GetCeiling(x.qty, GetUnit.UnitRound, GetUnit.RoundStep)) Gu
 where r.ID = '{0}'
 order by rd.Seq1,rd.Seq2", masterID);
 
