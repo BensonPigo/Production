@@ -583,7 +583,7 @@
             this.labVersionWarning.ForeColor = System.Drawing.Color.Red;
             this.labVersionWarning.Location = new System.Drawing.Point(636, 117);
             this.labVersionWarning.Name = "labVersionWarning";
-            this.labVersionWarning.Size = new System.Drawing.Size(329, 16);
+            this.labVersionWarning.Size = new System.Drawing.Size(328, 16);
             this.labVersionWarning.TabIndex = 4;
             this.labVersionWarning.Text = "The Apply No. and Apply Version is not latest. ";
             // 

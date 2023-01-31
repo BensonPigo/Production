@@ -784,7 +784,7 @@ namespace Sci.Production.IE
 
             List<SqlParameter> paras = new List<SqlParameter>();
             paras.Add(new SqlParameter("newID", newID));
-            string cmd = "select 1 from SewingMachineAttachment with(nolock) where SewingMachineAttachmentID=@newID";
+            string cmd = "select 1 from SewingMachineAttachment with(nolock) where ID=@newID";
 
             string dbVal = MyUtility.GetValue.Lookup(cmd, paras);
             if (!MyUtility.Check.Empty(dbVal))
@@ -794,7 +794,7 @@ namespace Sci.Production.IE
             }
             else
             {
-                this.CurrentMaintain["SewingMachineAttachmentID"] = newID;
+                this.CurrentMaintain["ID"] = newID;
             }
 
             return base.ClickSaveBefore();

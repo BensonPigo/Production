@@ -524,7 +524,7 @@
             // disSewingMachineAttachmentID
             // 
             this.disSewingMachineAttachmentID.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.disSewingMachineAttachmentID.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "SewingMachineAttachmentID", true));
+            this.disSewingMachineAttachmentID.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ID", true));
             this.disSewingMachineAttachmentID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.disSewingMachineAttachmentID.Location = new System.Drawing.Point(169, 44);
             this.disSewingMachineAttachmentID.Name = "disSewingMachineAttachmentID";

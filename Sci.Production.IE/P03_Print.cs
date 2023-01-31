@@ -35,6 +35,8 @@ namespace Sci.Production.IE
         private decimal count2PPA;
         private bool change = false;
         private bool changePPA = false;
+        private bool nonSewing;
+        private bool isPPA;
 
         /// <summary>
         /// P03_Print
@@ -58,6 +60,12 @@ namespace Sci.Production.IE
         /// <returns>bool</returns>
         protected override bool ValidateInput()
         {
+            if (this.chkpagePPA.Checked && MyUtility.Check.Empty(this.txtPagePPA.Text))
+            {
+                MyUtility.Msg.ErrorBox("PPA can't be empty.");
+                return false;
+            }
+
             if (this.chkpagePPA.Checked && !this.txtPagePPA.Text.ToString().Substring(0, 1).ToUpper().EqualString("P"))
             {
                 MyUtility.Msg.ErrorBox("The first word must be P if the [Change page 2 at No(For PPA)] is checked.");
@@ -85,6 +93,8 @@ namespace Sci.Production.IE
             this.changp = MyUtility.Convert.GetDecimal(this.numpage.Value);
             this.changpPPA = this.txtPagePPA.Text.ToString();
             this.strLanguage = this.comboLanguage.SelectedValue.ToString();
+            this.nonSewing = this.chkNonSewing.Checked;
+            this.isPPA = this.chkPPA.Checked;
             return base.ValidateInput();
         }
 
@@ -101,28 +111,24 @@ namespace Sci.Production.IE
             decimal ttlnocount = MyUtility.Convert.GetInt(this.masterData["CurrentOperators"]);
             if (this.chkpage.Checked && ttlnocount > this.changp)
             {
-                sqlp1 = string.Format(
-                    @"
+                sqlp1 = $@"
 select no = count(distinct no)
 from LineMapping_Detail ld WITH (NOLOCK)
-where ld.ID = {0} 
+where ld.ID = '{MyUtility.Convert.GetString(this.masterData["ID"])}'
 and (ld.IsPPa = 0 or ld.IsPPa is null) 
 and (ld.IsHide = 0 or ld.IsHide is null)
-and no<={1}
-",
-                    MyUtility.Convert.GetString(this.masterData["ID"]),
-                    this.changp);
-                sqlp2 = string.Format(
-                    @"
+and no<={this.changp}
+{(!this.isPPA ? " and ld.IsPPA   != '1' " : string.Empty)}
+";
+                sqlp2 = $@"
 select no = count(distinct no)
 from LineMapping_Detail ld WITH (NOLOCK)
-where ld.ID = {0} 
+where ld.ID = '{MyUtility.Convert.GetString(this.masterData["ID"])} '
 and (ld.IsPPa = 0 or ld.IsPPa is null) 
 and (ld.IsHide = 0 or ld.IsHide is null)
-and no>{1}
-",
-                    MyUtility.Convert.GetString(this.masterData["ID"]),
-                    this.changp);
+and no>{this.changp}
+{(!this.isPPA ? " and ld.IsPPA   != '1' " : string.Empty)}
+";
                 this.count1 = MyUtility.Convert.GetDecimal(MyUtility.GetValue.Lookup(sqlp1));
                 this.count2 = MyUtility.Convert.GetDecimal(MyUtility.GetValue.Lookup(sqlp2));
                 this.change = true;
@@ -136,35 +142,38 @@ and no>{1}
             #region 切分頁計算 takt Page3 PPA
             if (this.chkpagePPA.Checked)
             {
-                sqlp1 = string.Format(
-                    @"
+                sqlp1 = $@"
 select no = count(distinct no)
 from LineMapping_Detail ld WITH (NOLOCK)
-where ld.ID = {0} and IsPPa = 1 and IsHide = 0 and no <= '{1}'
-",
-                    MyUtility.Convert.GetString(this.masterData["ID"]),
-                    this.changpPPA);
-                sqlp2 = string.Format(
-                    @"
+where ld.ID = '{MyUtility.Convert.GetString(this.masterData["ID"])}' 
+and IsPPa = 1 
+and IsHide = 0 
+and no <= '{this.changpPPA}'
+{(!this.isPPA ? " and ld.IsPPA   != '1' " : string.Empty)}
+";
+                sqlp2 = $@"
 select no = count(distinct no)
 from LineMapping_Detail ld WITH (NOLOCK)
-where ld.ID = {0} and IsPPa = 1 and IsHide = 0 and no > '{1}'
-",
-                    MyUtility.Convert.GetString(this.masterData["ID"]),
-                    this.changpPPA);
+where ld.ID = '{MyUtility.Convert.GetString(this.masterData["ID"])}' 
+and IsPPa = 1 
+and IsHide = 0 
+and no > '{this.changpPPA}'
+{(!this.isPPA ? " and ld.IsPPA   != '1' " : string.Empty)}
+";
                 this.count1PPA = MyUtility.Convert.GetDecimal(MyUtility.GetValue.Lookup(sqlp1));
                 this.count2PPA = MyUtility.Convert.GetDecimal(MyUtility.GetValue.Lookup(sqlp2));
                 this.changePPA = true;
             }
             else
             {
-                sqlp1 = string.Format(
-       @"
+                sqlp1 = $@"
 select no = count(distinct no)
 from LineMapping_Detail ld WITH (NOLOCK)
-where ld.ID = {0} and IsPPa = 1 and IsHide = 0
-",
-       MyUtility.Convert.GetString(this.masterData["ID"]));
+where ld.ID = '{MyUtility.Convert.GetString(this.masterData["ID"])}' 
+and IsPPa = 1 
+and IsHide = 0
+{(!this.isPPA ? " and ld.IsPPA   != '1' " : string.Empty)}
+";
                 this.count1PPA = MyUtility.Convert.GetDecimal(MyUtility.GetValue.Lookup(sqlp1));
                 this.changePPA = false;
             }
@@ -173,8 +182,8 @@ where ld.ID = {0} and IsPPa = 1 and IsHide = 0
             string sqlCmd;
 
             #region 第一頁
-            sqlCmd = string.Format(
-                @"
+
+            sqlCmd = $@"
 select   a.GroupKey
         ,a.OperationID
         ,a.Annotation
@@ -184,9 +193,9 @@ select   a.GroupKey
         ,a.Attachment
         ,a.Template
         ,a.ThreadColor
-        ,DescEN = case when '{1}' = 'cn' then isnull(o.DescCH,o.DescEN)
-                       when '{1}' = 'vn' then isnull(o.DescVN,o.DescEN)
-                       when '{1}' = 'kh' then isnull(o.DescKH,o.DescEN)
+        ,DescEN = case when '{this.strLanguage}' = 'cn' then isnull(o.DescCH,o.DescEN)
+                       when '{this.strLanguage}' = 'vn' then isnull(o.DescVN,o.DescEN)
+                       when '{this.strLanguage}' = 'kh' then isnull(o.DescKH,o.DescEN)
             else o.DescEN end
         ,rn = ROW_NUMBER() over(order by case when left(a.No, 1) = 'P' then 1 when a.No <> '' then 2 else 3 end
 										,a.GroupKey ,iif(IsPPa=1,1,0) ,a.NO, a.MachineTypeID, a.Attachment, a.Template, a.ThreadColor)
@@ -198,6 +207,8 @@ select   a.GroupKey
         ,[GroupHeader] = iif(left(a.OperationID, 2) = '--', '', ld.OperationID)
         ,[IsShowinIEP03] = cast(iif( a.OperationID like '--%' , 1, isnull(show.IsShowinIEP03, 1)) as bit)
         ,[OtherBy] = concat(a.MachineTypeID,a.Attachment,a.Template,a.ThreadColor)
+		,a.SewingMachineAttachmentID
+        ,a.MachineCount
 from LineMapping_Detail a 
 left join Operation o WITH (NOLOCK) on o.ID = a.OperationID
 left join MachineType m WITH (NOLOCK) on m.id =  a.MachineTypeID
@@ -217,17 +228,19 @@ outer apply
 	)
 )ld
 outer apply (
-	select IsShowinIEP03 = IIF(isnull(md.IsNotShownInP03, 0) = 0, 1, 0)
-		, IsDesignatedArea = ISNULL(md.IsNonSewingLine,0)
-	from MachineType m WITH (NOLOCK)
-    inner join MachineType_Detail md WITH (NOLOCK) on md.ID = m.ID and md.FactoryID = '{2}'	
-	where o.MachineTypeID = m.ID and m.junk = 0
+	select IsShowinIEP03 = IIF(isnull(md2.IsNotShownInP03, 0) = 0, 1, 0)
+		, IsDesignatedArea = ISNULL(md2.IsNonSewingLine,0)
+	from MachineType m2 WITH (NOLOCK)
+    inner join MachineType_Detail md2 WITH (NOLOCK) on md2.ID = m2.ID and md2.FactoryID = '{MyUtility.Convert.GetString(this.masterData["FactoryID"])}'	
+	where o.MachineTypeID = m2.ID and m2.junk = 0
 )show
-where a.ID = {0}
-",
-                MyUtility.Convert.GetString(this.masterData["ID"]),
-                this.strLanguage,
-                MyUtility.Convert.GetString(this.masterData["FactoryID"]));
+where a.ID = {MyUtility.Convert.GetString(this.masterData["ID"])}
+{(!this.nonSewing ? $@" and not exists(
+    select 1 from MachineType_Detail md where md.ID = m.ID and md.IsNonSewingLine = 1
+)" : string.Empty)}
+{(!this.isPPA ? " and a.IsPPA  != '1' " : string.Empty)}
+
+";
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out this.machineTypeDT);
             if (!result)
             {
@@ -246,23 +259,25 @@ where a.ID = {0}
             this.operationCode = this.machineTypeDT.AsEnumerable().Where(x => x.Field<bool>("IsShowinIEP03")).CopyToDataTable();
             #endregion
             #region Machine Type IsPPa
-            sqlCmd = string.Format(
-                @"
+
+            sqlCmd = $@"
 select   ld.OperationID
         ,ld.MachineTypeID--MachineTypeID = iif(m.MachineGroupID = '','',ld.MachineTypeID)
         ,ld.Annotation
-        ,DescEN = case when '{1}' = 'cn' then isnull(o.DescCH,o.DescEN)
-                       when '{1}' = 'vn' then isnull(o.DescVN,o.DescEN)
-                       when '{1}' = 'kh' then isnull(o.DescKH,o.DescEN)
+        ,DescEN = case when '{this.strLanguage}' = 'cn' then isnull(o.DescCH,o.DescEN)
+                       when '{this.strLanguage}' = 'vn' then isnull(o.DescVN,o.DescEN)
+                       when '{this.strLanguage}' = 'kh' then isnull(o.DescKH,o.DescEN)
             else o.DescEN end
 from LineMapping_Detail ld WITH (NOLOCK)
 left join MachineType m WITH (NOLOCK) on m.id =  MachineTypeID
 left join Operation o WITH (NOLOCK) on o.ID = ld.OperationID
-where ld.ID = {0} and (ld.IsHide = 1 or ld.IsPPa  = 1)
+where ld.ID = {MyUtility.Convert.GetString(this.masterData["ID"])} and (ld.IsHide = 1 or ld.IsPPa  = 1)
 and left(ld.OperationID, 2) != '--'
-order by ld.No,ld.GroupKey",
-                MyUtility.Convert.GetString(this.masterData["ID"]),
-                this.strLanguage);
+{(!this.isPPA ? " and ld.IsPPA != '1' " : string.Empty)}
+order by ld.No,ld.GroupKey
+
+
+";
             result = DBProxy.Current.Select(null, sqlCmd, out this.noppa);
             if (!result)
             {
@@ -274,8 +289,7 @@ order by ld.No,ld.GroupKey",
             #region 第二頁
             if (!this.change)
             {
-                sqlCmd = string.Format(
-                    @"
+                sqlCmd = $@"
 select No 
     ,CT = COUNT(1)
     ,[ActCycle] = Max(ld.ActCycle)
@@ -288,9 +302,9 @@ OUTER APPLY(
 		FROM 
 		(
 			select  ld.*
-					, Description = case when '{1}' = 'cn' then isnull(o.DescCH,o.DescEN)
-                                         when '{1}' = 'vn' then isnull(o.DescVN,o.DescEN)
-                                         when '{1}' = 'kh' then isnull(o.DescKH,o.DescEN)
+					, Description = case when '{this.strLanguage}' = 'cn' then isnull(o.DescCH,o.DescEN)
+                                         when '{this.strLanguage}' = 'vn' then isnull(o.DescVN,o.DescEN)
+                                         when '{this.strLanguage}' = 'kh' then isnull(o.DescKH,o.DescEN)
                                          else o.DescEN end
 					, e.Name as EmployeeName
 					, e.Skill as EmployeeSkill
@@ -298,18 +312,18 @@ OUTER APPLY(
 			from LineMapping_Detail ld WITH (NOLOCK) 
 			left join Employee e WITH (NOLOCK) on ld.EmployeeID = e.ID
 			left join Operation o WITH (NOLOCK) on ld.OperationID = o.ID
-			where ld.ID = {0} AND No <> ''
+			where ld.ID = {MyUtility.Convert.GetString(this.masterData["ID"])} AND No <> ''
 		)a
 	)b
 )ActCycle
-where ld.ID = {0} 
+where ld.ID = {MyUtility.Convert.GetString(this.masterData["ID"])} 
 and (ld.IsPPa = 0 or ld.IsPPa is null) 
 and (ld.IsHide = 0 or ld.IsHide is null)
 and no <> ''
+{(!this.isPPA ? " and ld.IsPPA   != '1' " : string.Empty)}
 GROUP BY NO ,ActCycle.Value
-order by no",
-                    MyUtility.Convert.GetString(this.masterData["ID"]),
-                    this.strLanguage);
+order by no
+";
                 result = DBProxy.Current.Select(null, sqlCmd, out this.nodist);
                 if (!result)
                 {
@@ -322,15 +336,16 @@ order by no",
             else
             {
                 #region
-                sqlCmd = string.Format(
-                    @"
+
+                sqlCmd = $@"
 select id, minno = min(no), maxno = max(no)
 into #tmp
 from(
 	select distinct ld.ID,no
 	from LineMapping_Detail ld WITH (NOLOCK)
-	where ld.ID = {0} and (IsPPa = 0 or IsPPa is null)
-	and no <= {1}
+	where ld.ID = {MyUtility.Convert.GetString(this.masterData["ID"])} and (IsPPa = 0 or IsPPa is null)
+	and no <= {this.changp}
+    {(!this.isPPA ? " and ld.IsPPA   != '1' " : string.Empty)}
 )x
 group by ID
 
@@ -347,9 +362,9 @@ OUTER APPLY(
 		FROM 
 		(
 			select  ld.*
-					, Description = case when '{2}' = 'cn' then isnull(o.DescCH,o.DescEN)
-                                         when '{2}' = 'vn' then isnull(o.DescVN,o.DescEN)
-                                         when '{2}' = 'kh' then isnull(o.DescKH,o.DescEN)
+					, Description = case when '{this.strLanguage}' = 'cn' then isnull(o.DescCH,o.DescEN)
+                                         when '{this.strLanguage}' = 'vn' then isnull(o.DescVN,o.DescEN)
+                                         when '{this.strLanguage}' = 'kh' then isnull(o.DescKH,o.DescEN)
                                          else o.DescEN end
 					, e.Name as EmployeeName
 					, e.Skill as EmployeeSkill
@@ -357,7 +372,7 @@ OUTER APPLY(
 			from LineMapping_Detail ld WITH (NOLOCK) 
 			left join Employee e WITH (NOLOCK) on ld.EmployeeID = e.ID
 			left join Operation o WITH (NOLOCK) on ld.OperationID = o.ID
-			where ld.ID = {0} AND No <> ''
+			where ld.ID = {MyUtility.Convert.GetString(this.masterData["ID"])} AND No <> ''
 		)a
 	)b
 )ActCycle
@@ -365,12 +380,12 @@ where  (ld.IsPPa = 0 or ld.IsPPa is null)
 and (ld.IsHide = 0 or ld.IsHide is null) 
 and no between t.minno and t.maxno
 and no <> ''
+{(!this.isPPA ? " and ld.IsPPA   != '1' " : string.Empty)}
 GROUP BY NO ,ActCycle.Value
 order by no
-",
-                    MyUtility.Convert.GetString(this.masterData["ID"]),
-                    this.changp,
-                    this.strLanguage);
+
+";
+
                 result = DBProxy.Current.Select(null, sqlCmd, out this.nodist);
                 if (!result)
                 {
@@ -378,15 +393,15 @@ order by no
                     return failResult;
                 }
 
-                sqlCmd = string.Format(
-                    @"
+                sqlCmd = $@"
 select id, minno = min(no), maxno = max(no)
 into #tmp
 from(
 	select distinct ld.ID,no
 	from LineMapping_Detail ld WITH (NOLOCK)
-	where ld.ID = {0} and (IsPPa = 0 or IsPPa is null) 
-	and no > {1}
+	where ld.ID = {MyUtility.Convert.GetString(this.masterData["ID"])} and (IsPPa = 0 or IsPPa is null) 
+    {(!this.isPPA ? " and ld.IsPPA   != '1' " : string.Empty)}
+	and no > {this.changp}
 )x
 group by ID
 
@@ -402,9 +417,9 @@ OUTER APPLY(
 		FROM 
 		(
 			select  ld.*
-					, Description = case when '{2}' = 'cn' then isnull(o.DescCH,o.DescEN)
-                                         when '{2}' = 'vn' then isnull(o.DescVN,o.DescEN)
-                                         when '{2}' = 'kh' then isnull(o.DescKH,o.DescEN)
+					, Description = case when '{this.strLanguage}' = 'cn' then isnull(o.DescCH,o.DescEN)
+                                         when '{this.strLanguage}' = 'vn' then isnull(o.DescVN,o.DescEN)
+                                         when '{this.strLanguage}' = 'kh' then isnull(o.DescKH,o.DescEN)
                                          else o.DescEN end
 					, e.Name as EmployeeName
 					, e.Skill as EmployeeSkill
@@ -412,21 +427,18 @@ OUTER APPLY(
 			from LineMapping_Detail ld WITH (NOLOCK) 
 			left join Employee e WITH (NOLOCK) on ld.EmployeeID = e.ID
 			left join Operation o WITH (NOLOCK) on ld.OperationID = o.ID
-			where ld.ID = {0} AND No <> ''
+			where ld.ID = {MyUtility.Convert.GetString(this.masterData["ID"])} AND No <> ''
 		)a
 	)b
 )ActCycle
 where  (ld.IsPPa = 0 or ld.IsPPa is null) 
 and (ld.IsHide = 0 or ld.IsHide is null) 
 and no between t.minno and t.maxno
-and not <> ''
+{(!this.isPPA ? " and ld.IsPPA   != '1' " : string.Empty)}
 GROUP BY NO ,ActCycle.Value
 order by no
 
-",
-                    MyUtility.Convert.GetString(this.masterData["ID"]),
-                    this.changp,
-                    this.strLanguage);
+";
                 result = DBProxy.Current.Select(null, sqlCmd, out this.nodist2);
                 if (!result)
                 {
@@ -440,8 +452,8 @@ order by no
             #region 第三頁 PPA
             if (!this.changePPA)
             {
-                sqlCmd = string.Format(
-                    @"
+
+                sqlCmd = $@"
 select No 
     ,CT = COUNT(1)
     ,[ActCycle] = Max(ld.ActCycle)
@@ -454,9 +466,9 @@ OUTER APPLY(
 		FROM 
 		(
 			select  ld.*
-					, Description = case when '{1}' = 'cn' then isnull(o.DescCH,o.DescEN)
-                                         when '{1}' = 'vn' then isnull(o.DescVN,o.DescEN)
-                                         when '{1}' = 'kh' then isnull(o.DescKH,o.DescEN)
+					, Description = case when '{this.strLanguage}' = 'cn' then isnull(o.DescCH,o.DescEN)
+                                         when '{this.strLanguage}' = 'vn' then isnull(o.DescVN,o.DescEN)
+                                         when '{this.strLanguage}' = 'kh' then isnull(o.DescKH,o.DescEN)
                                          else o.DescEN end
 					, e.Name as EmployeeName
 					, e.Skill as EmployeeSkill
@@ -464,15 +476,16 @@ OUTER APPLY(
 			from LineMapping_Detail ld WITH (NOLOCK) 
 			left join Employee e WITH (NOLOCK) on ld.EmployeeID = e.ID
 			left join Operation o WITH (NOLOCK) on ld.OperationID = o.ID
-			where ld.ID = {0} and IsPPa = 1 and IsHide = 0
+			where ld.ID = {MyUtility.Convert.GetString(this.masterData["ID"])} and IsPPa = 1 and IsHide = 0
 		)a
 	)b
 )ActCycle
-where ld.ID = {0} and IsPPa = 1 and IsHide = 0
+where ld.ID = {MyUtility.Convert.GetString(this.masterData["ID"])} and IsPPa = 1 and IsHide = 0
+    {(!this.isPPA ? " and ld.IsPPA   != '1' " : string.Empty)}
 GROUP BY NO, ActCycle.Value
-order by NO",
-                    MyUtility.Convert.GetString(this.masterData["ID"]),
-                    this.strLanguage);
+order by NO
+
+";
                 result = DBProxy.Current.Select(null, sqlCmd, out this.nodistPPA);
                 if (!result)
                 {
@@ -485,15 +498,16 @@ order by NO",
             else
             {
                 #region
-                sqlCmd = string.Format(
-                    @"
+
+                sqlCmd = $@"
 select id, minno = min(no), maxno = max(no)
 into #tmp
 from(
 	select distinct ld.ID,no
 	from LineMapping_Detail ld WITH (NOLOCK)
-	where ld.ID = {0} and IsPPa = 1 and IsHide = 0 
-	and no <= '{1}'
+	where ld.ID = {MyUtility.Convert.GetString(this.masterData["ID"])} and IsPPa = 1 and IsHide = 0 
+    {(!this.isPPA ? " and ld.IsPPA   != '1' " : string.Empty)}
+	and no <= '{this.changpPPA}'
 )x
 group by ID
 
@@ -510,9 +524,9 @@ OUTER APPLY(
 		FROM 
 		(
 			select  ld.*
-					, Description = case when '{2}' = 'cn' then isnull(o.DescCH,o.DescEN)
-                                         when '{2}' = 'vn' then isnull(o.DescVN,o.DescEN)
-                                         when '{2}' = 'kh' then isnull(o.DescKH,o.DescEN)
+					, Description = case when '{this.strLanguage}' = 'cn' then isnull(o.DescCH,o.DescEN)
+                                         when '{this.strLanguage}' = 'vn' then isnull(o.DescVN,o.DescEN)
+                                         when '{this.strLanguage}' = 'kh' then isnull(o.DescKH,o.DescEN)
                                          else o.DescEN end
 					, e.Name as EmployeeName
 					, e.Skill as EmployeeSkill
@@ -520,19 +534,16 @@ OUTER APPLY(
 			from LineMapping_Detail ld WITH (NOLOCK) 
 			left join Employee e WITH (NOLOCK) on ld.EmployeeID = e.ID
 			left join Operation o WITH (NOLOCK) on ld.OperationID = o.ID
-			where ld.ID = {0} AND No <> '' and IsPPa = 1 and IsHide = 0
+			where ld.ID = {MyUtility.Convert.GetString(this.masterData["ID"])} AND No <> '' and IsPPa = 1 and IsHide = 0
 		)a
 	)b
 )ActCycle
 where IsPPa = 1 and IsHide = 0 
 and no between t.minno and t.maxno
+    {(!this.isPPA ? " and ld.IsPPA   != '1' " : string.Empty)}
 GROUP BY NO, ActCycle.Value
 order by NO
-
-",
-                    MyUtility.Convert.GetString(this.masterData["ID"]),
-                    this.changpPPA,
-                    this.strLanguage);
+";
                 result = DBProxy.Current.Select(null, sqlCmd, out this.nodistPPA);
                 if (!result)
                 {
@@ -540,15 +551,15 @@ order by NO
                     return failResult;
                 }
 
-                sqlCmd = string.Format(
-                    @"
+                sqlCmd = $@"
 select id, minno = min(no), maxno = max(no)
 into #tmp
 from(
 	select distinct ld.ID,no
 	from LineMapping_Detail ld WITH (NOLOCK)
-	where ld.ID = {0} and IsPPa = 1 and IsHide = 0 
-	and no > '{1}'
+	where ld.ID = {MyUtility.Convert.GetString(this.masterData["ID"])} and IsPPa = 1 and IsHide = 0 
+    {(!this.isPPA ? " and ld.IsPPA   != '1' " : string.Empty)}
+	and no > '{this.changpPPA}'
 )x
 group by ID
 
@@ -565,9 +576,9 @@ OUTER APPLY(
 		FROM 
 		(
 			select  ld.*
-					, Description = case when '{2}' = 'cn' then isnull(o.DescCH,o.DescEN)
-                                         when '{2}' = 'vn' then isnull(o.DescVN,o.DescEN)
-                                         when '{2}' = 'kh' then isnull(o.DescKH,o.DescEN)
+					, Description = case when '{this.strLanguage}' = 'cn' then isnull(o.DescCH,o.DescEN)
+                                         when '{this.strLanguage}' = 'vn' then isnull(o.DescVN,o.DescEN)
+                                         when '{this.strLanguage}' = 'kh' then isnull(o.DescKH,o.DescEN)
                                          else o.DescEN end
 					, e.Name as EmployeeName
 					, e.Skill as EmployeeSkill
@@ -575,19 +586,17 @@ OUTER APPLY(
 			from LineMapping_Detail ld WITH (NOLOCK) 
 			left join Employee e WITH (NOLOCK) on ld.EmployeeID = e.ID
 			left join Operation o WITH (NOLOCK) on ld.OperationID = o.ID
-			where ld.ID = {0} AND IsPPa = 1 and IsHide = 0 
+			where ld.ID = {MyUtility.Convert.GetString(this.masterData["ID"])} AND IsPPa = 1 and IsHide = 0 
 		)a
 	)b
 )ActCycle
 where IsPPa = 1 and IsHide = 0 
 and no between t.minno and t.maxno
+    {(!this.isPPA ? " and ld.IsPPA   != '1' " : string.Empty)}
 GROUP BY NO, ActCycle.Value
 order by NO
 
-",
-                    MyUtility.Convert.GetString(this.masterData["ID"]),
-                    this.changpPPA,
-                    this.strLanguage);
+";
                 result = DBProxy.Current.Select(null, sqlCmd, out this.nodist2PPA);
                 if (!result)
                 {
@@ -805,8 +814,8 @@ order by NO
             worksheet.Cells[9, 6] = this.styleCPU;
 
             // 右下簽名位置
-            worksheet.Cells[29, 20] = DateTime.Now.ToString("yyyy/MM/dd");
-            worksheet.Cells[32, 20] = Env.User.UserName;
+            worksheet.Cells[28, 4] = DateTime.Now.ToString("yyyy/MM/dd");
+            worksheet.Cells[30, 4] = Env.User.UserName;
 
             // 左下表頭資料
             worksheet.Cells[36, 4] = this.masterData["Version"];
@@ -814,6 +823,16 @@ order by NO
             worksheet.Cells[40, 4] = currentOperators;
             #endregion
             string[] allMachine = this.operationCode.AsEnumerable().Where(s => !MyUtility.Check.Empty(s["MachineTypeID"])).Select(s => s["MachineTypeID"].ToString()).Distinct().ToArray();
+            var allMachineData = this.operationCode.AsEnumerable().Where(s => !MyUtility.Check.Empty(s["MachineTypeID"]))
+                .Select(s => new {
+                    No = MyUtility.Convert.GetString(s["No"])
+                , MachineCount = MyUtility.Convert.GetBool(s["MachineCount"])
+                , MachineTypeID = s["MachineTypeID"].ToString()
+                , MasterPlusGroup = s["MasterPlusGroup"].ToString()
+                , Template = MyUtility.Convert.GetString(s["Template"])
+                , SewingMachineAttachmentID = MyUtility.Convert.GetString(s["SewingMachineAttachmentID"])
+                });
+
             decimal chartDataEndRow = currentOperators + 1;
             #region 新增長條圖 2 GCtime chart
 
@@ -930,25 +949,58 @@ order by NO
 
             #region MACHINE
             decimal allct = Math.Ceiling((decimal)allMachine.Length / 3);
-            rngToCopy = worksheet.get_Range("A31:A31").EntireRow; // 選取要被複製的資料
-            for (int i = 0; i < allct - 5; i++)
+            // Machine table 只計算MachineCount有勾選的
+            int machineCount = allMachineData.Where(o => o.MachineCount && !MyUtility.Check.Empty(o.MachineTypeID) && !MyUtility.Check.Empty(o.MasterPlusGroup)).Select(o => new { o.MachineTypeID, o.MasterPlusGroup }).Distinct().Count();
+
+            int attachTemplateCount = allMachineData.Where(o => !MyUtility.Check.Empty(o.No) && !MyUtility.Check.Empty(o.Template)).Select(o => new { o.No, o.Template }).Distinct().Count();
+            
+            int copyCount = machineCount >= attachTemplateCount ? machineCount : attachTemplateCount;
+            rngToCopy = worksheet.get_Range("A27:A27").EntireRow; // 選取要被複製的資料
+            for (int i = 0; i < copyCount - 1; i++)
             {
-                Microsoft.Office.Interop.Excel.Range rngToInsert = worksheet.get_Range("A31", Type.Missing).EntireRow; // 選擇要被貼上的位置
+                Microsoft.Office.Interop.Excel.Range rngToInsert = worksheet.get_Range("A27", Type.Missing).EntireRow; // 選擇要被貼上的位置
                 rngToInsert.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown, rngToCopy.Copy(Type.Missing)); // 貼上
             }
 
+            var mmData = allMachineData.Where(o => o.MachineCount && !MyUtility.Check.Empty(o.MachineTypeID) && !MyUtility.Check.Empty(o.MasterPlusGroup))
+                .GroupBy(o => new { o.MachineTypeID, o.MasterPlusGroup })
+                .Select(o => new { o.Key.MachineTypeID, o.Key.MasterPlusGroup, Count = o.Count() });
+
+            var aaData = allMachineData.Where(o => !MyUtility.Check.Empty(o.No) && !MyUtility.Check.Empty(o.Template)).Select(o => new { o.Template, o.No, o.SewingMachineAttachmentID });
+
+            worksheet.Cells[24, 13] = mmData.Sum(o => o.Count);
+
             int surow = 0;
             int sucol = 0;
-            foreach (string item in allMachine)
+            foreach (var item in mmData)
             {
-                worksheet.Cells[27 + surow, 5 + sucol] = item;
+                worksheet.Cells[27 + surow, 10] = item.MachineTypeID;
+                worksheet.Cells[27 + surow, 12] = item.MasterPlusGroup;
+                worksheet.Cells[27 + surow, 13] = item.Count;
                 surow++;
-                if (allct == surow)
-                {
-                    surow = 0;
-                    sucol += 2;
-                }
             }
+
+            worksheet.Cells[24, 17] = aaData.Select(o=>o.SewingMachineAttachmentID).Distinct().Count();
+            worksheet.Cells[25, 17] = aaData.Select(o => o.Template).Distinct().Count();
+            surow = 0;
+            foreach (var item in aaData)
+            {
+                worksheet.Cells[27 + surow, 16] = item.Template;
+                worksheet.Cells[27 + surow, 17] = item.No;
+                worksheet.Cells[27 + surow, 19] = item.SewingMachineAttachmentID;
+                surow++;
+            }
+
+            //foreach (string item in allMachine)
+            //{
+            //    worksheet.Cells[27 + surow, 5 + sucol] = item;
+            //    surow++;
+            //    if (allct == surow)
+            //    {
+            //        surow = 0;
+            //        sucol += 2;
+            //    }
+            //}
             #endregion
 
             #region 預設站數為2站，當超過2站就要新增

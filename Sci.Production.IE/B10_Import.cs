@@ -304,7 +304,7 @@ namespace Sci.Production.IE
 
             string sqlCmd = $@"
 INSERT INTO dbo.SewingMachineAttachment
-           (SewingMachineAttachmentID,MoldID,Description,DescriptionCN,MachineMasterGroupID,AttachmentTypeID,MeasurementID,FoldTypeID,Supplier1PartNo,Supplier1BrandID
+           (ID,MoldID,Description,DescriptionCN,MachineMasterGroupID,AttachmentTypeID,MeasurementID,FoldTypeID,Supplier1PartNo,Supplier1BrandID
            ,Supplier2PartNo,Supplier2BrandID,Supplier3PartNo,Supplier3BrandID,Remark,AddName,AddDate)
 select [ID]
     ,[Attachment Group]
@@ -327,7 +327,7 @@ from #tmp t
 where not exists(
     select 1 
     from SewingMachineAttachment a
-    where a.SewingMachineAttachmentID = t.[ID]
+    where a.ID = t.[ID]
 )
 
 

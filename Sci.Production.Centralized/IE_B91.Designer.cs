@@ -43,7 +43,7 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(829, 263);
+            this.detail.Size = new System.Drawing.Size(829, 274);
             // 
             // detailcont
             // 
@@ -52,20 +52,20 @@
             this.detailcont.Controls.Add(this.label1);
             this.detailcont.Controls.Add(this.lbName);
             this.detailcont.Controls.Add(this.checkJunk);
-            this.detailcont.Size = new System.Drawing.Size(829, 225);
+            this.detailcont.Size = new System.Drawing.Size(829, 236);
             // 
             // detailbtm
             // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 225);
+            this.detailbtm.Location = new System.Drawing.Point(0, 236);
             this.detailbtm.Size = new System.Drawing.Size(829, 38);
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(829, 395);
+            this.browse.Size = new System.Drawing.Size(829, 263);
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(837, 292);
+            this.tabs.Size = new System.Drawing.Size(837, 303);
             // 
             // createby
             // 
@@ -98,7 +98,7 @@
             this.editDescription.BackColor = System.Drawing.Color.White;
             this.editDescription.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Description", true));
             this.editDescription.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.editDescription.Location = new System.Drawing.Point(137, 60);
+            this.editDescription.Location = new System.Drawing.Point(157, 60);
             this.editDescription.Multiline = true;
             this.editDescription.Name = "editDescription";
             this.editDescription.Size = new System.Drawing.Size(497, 128);
@@ -109,14 +109,14 @@
             this.disID.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.disID.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ID", true));
             this.disID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.disID.Location = new System.Drawing.Point(137, 28);
+            this.disID.Location = new System.Drawing.Point(157, 28);
             this.disID.Name = "disID";
             this.disID.Size = new System.Drawing.Size(100, 23);
             this.disID.TabIndex = 39;
             // 
             // label1
             // 
-            this.label1.Location = new System.Drawing.Point(50, 28);
+            this.label1.Location = new System.Drawing.Point(70, 28);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(84, 23);
             this.label1.TabIndex = 38;
@@ -124,7 +124,7 @@
             // 
             // lbName
             // 
-            this.lbName.Location = new System.Drawing.Point(50, 60);
+            this.lbName.Location = new System.Drawing.Point(70, 60);
             this.lbName.Name = "lbName";
             this.lbName.Size = new System.Drawing.Size(84, 23);
             this.lbName.TabIndex = 37;
@@ -132,10 +132,10 @@
             // 
             // IE_B91
             // 
-            this.ClientSize = new System.Drawing.Size(837, 325);
+            this.ClientSize = new System.Drawing.Size(837, 336);
             this.ConnectionName = "ProductionTPE";
             this.DefaultOrder = "ID";
-            this.DefaultWhere = "Type='LB'";
+            this.DefaultWhere = "Type=\'LB\'";
             this.EnableGridJunkColor = true;
             this.IsSupportClip = false;
             this.IsSupportCopy = false;

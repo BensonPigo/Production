@@ -12,6 +12,7 @@ using Sci.Production.PublicForm;
 using System.Data.SqlClient;
 using System.Linq;
 using Sci.Production.Class;
+using System.Net.Mail;
 
 namespace Sci.Production.IE
 {
@@ -152,10 +153,14 @@ select 0 as Selected, isnull(o.SeamLength,0) SeamLength
       ,[IsShow] = cast(iif( td.OperationID like '--%' , 1, isnull(show.val, 1)) as bit)
       ,td.IsSubprocess
       ,[MachineType_IsSubprocess] = isnull(md.IsSubprocess,0)
+      ,td.PPA
+      ,PPAText = ISNULL(d.Name,'')
+      ,IsNonSewingLine =  ISNULL(md.IsNonSewingLine ,0)
 from TimeStudy_Detail td WITH (NOLOCK) 
 left join Operation o WITH (NOLOCK) on td.OperationID = o.ID
 left join MachineType_Detail md WITH (NOLOCK) on md.ID = o.MachineTypeID and md.FactoryID = '{Env.User.Factory}'
 left join Mold m WITH (NOLOCK) on m.ID=td.Mold
+left join DropDownList d (NOLOCK) on d.ID=td.PPA AND d.Type = 'PMS_IEPPA'
 outer apply (
 	 select [val] = IIF(isnull(mt.IsNotShownInP01, 1) = 0, 1, 0)
     from Operation o2
@@ -313,6 +318,8 @@ and IETMSID = '{this.CurrentMaintain["IETMSID"]}'
             base.OnDetailGridSetup();
             DataGridViewGeneratorTextColumnSettings seq = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorTextColumnSettings template = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings pardID = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings ppa = new DataGridViewGeneratorTextColumnSettings();
 
             TxtMachineGroup.CelltxtMachineGroup txtSubReason = (TxtMachineGroup.CelltxtMachineGroup)TxtMachineGroup.CelltxtMachineGroup.GetGridCell();
 
@@ -525,13 +532,13 @@ and o.ID = @id";
                     // {
                     dr["SMV"] = e.FormattedValue.ToString();
                     if (MyUtility.Convert.GetDecimal(e.FormattedValue) == 0)
-                        {
-                            dr["PcsPerHour"] = 0;
-                        }
-                        else
-                        {
-                            dr["PcsPerHour"] = MyUtility.Convert.GetDouble(dr["SMV"]) == 0 ? 0 : MyUtility.Math.Round(3600.0 / MyUtility.Convert.GetDouble(dr["SMV"]), 1);
-                        }
+                    {
+                        dr["PcsPerHour"] = 0;
+                    }
+                    else
+                    {
+                        dr["PcsPerHour"] = MyUtility.Convert.GetDouble(dr["SMV"]) == 0 ? 0 : MyUtility.Math.Round(3600.0 / MyUtility.Convert.GetDouble(dr["SMV"]), 1);
+                    }
 
                     dr.EndEdit();
 
@@ -697,16 +704,13 @@ where Junk = 0";
                 if (this.EditMode && e.Button == MouseButtons.Right)
                 {
                     string sqlcmd = @"
-select ID,DescEN 
-from Mold WITH (NOLOCK) 
-where Junk = 0
-and IsTemplate = 1
-union all
-select ID, Description
-from SewingMachineTemplate WITH (NOLOCK) 
-where Junk = 0";
+select m.ID, m.DescEN, PartID=smt.ID
+from Mold m WITH (NOLOCK)
+right join SewingMachineTemplate smt on m.ID = smt.MoldID
+where m.Junk = 0 and m.IsTemplate = 1 and smt.Junk = 0
+";
 
-                    SelectItem2 item = new SelectItem2(sqlcmd, "ID,DescEN", "13,60,10", this.CurrentDetailData["Template"].ToString(), null, null, null)
+                    SelectItem2 item = new SelectItem2(sqlcmd, "ID,DescEN,PartID", "13,60,20", this.CurrentDetailData["Template"].ToString(), null, null, null)
                     {
                         Width = 666,
                     };
@@ -766,14 +770,11 @@ where o.ID = @OperationID";
 
                     this.CurrentDetailData["Template"] = e.FormattedValue;
                     sqlcmd = @"
-select ID,DescEN 
-from Mold WITH (NOLOCK) 
-where Junk = 0
-and IsTemplate = 1
-union all
-select ID, Description
-from SewingMachineTemplate WITH (NOLOCK) 
-where Junk = 0";
+select m.ID, m.DescEN, PartID=smt.ID
+from Mold m WITH (NOLOCK)
+right join SewingMachineTemplate smt on m.ID = smt.MoldID
+where m.Junk = 0 and m.IsTemplate = 1 and smt.Junk = 0
+";
                     DataTable dt;
                     DBProxy.Current.Select(null, sqlcmd, out dt);
                     string[] getLocation = this.CurrentDetailData["Template"].ToString().Split(',').Distinct().ToArray();
@@ -804,6 +805,164 @@ where Junk = 0";
                 }
             };
             #endregion
+            #region Part ID
+            pardID.EditingMouseDown += (s, e) =>
+            {
+                if (this.EditMode && e.Button == MouseButtons.Right)
+                {
+                    if (e.RowIndex != -1)
+                    {
+                        DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
+
+                        if (MyUtility.Check.Empty(dr["Mold"]))
+                        {
+                            return;
+                        }
+
+                        P01_PartID callNextForm = new P01_PartID(MyUtility.Convert.GetString(dr["Mold"]));
+                        DialogResult result = callNextForm.ShowDialog(this);
+
+
+                        if (result == DialogResult.Cancel)
+                        {
+                            if (callNextForm.P01SelectPartID != null)
+                            {
+                                dr["ID"] = callNextForm.P01SelectPartID["ID"].ToString();
+                                dr.EndEdit();
+                            }
+                        }
+
+                        if (result == DialogResult.OK)
+                        {
+                            if (callNextForm.P01SelectPartID != null)
+                            {
+                                dr["ID"] = callNextForm.P01SelectPartID["ID"].ToString();
+                                dr.EndEdit();
+                            }
+                        }
+                    }
+                }
+            };
+
+            pardID.CellValidating += (s, e) =>
+            {
+                if (this.EditMode)
+                {
+                    if (MyUtility.Check.Empty(e.FormattedValue))
+                    {
+                        return;
+                    }
+
+                    string newSewingMachineAttachmentID = MyUtility.Convert.GetString(e.FormattedValue);
+
+                    string sqlcmd = $@"
+select a.ID
+    ,a.Description
+    ,a.MachineMasterGroupID
+    ,AttachmentTypeID
+    ,MeasurementID
+    ,FoldTypeID
+from SewingMachineAttachment a
+left join AttachmentType b on a.AttachmentTypeID = b.Type 
+left join AttachmentMeasurement c on a.MeasurementID = c.Measurement
+left join AttachmentFoldType d on a.FoldTypeID = d.FoldType 
+where MoldID = '{this.CurrentDetailData["Mold"]}' AND ID = @ID";
+
+                    DataTable dt;
+                    List<SqlParameter> paras = new List<SqlParameter>()
+                                        {
+                                            new SqlParameter("@ID", MyUtility.Convert.GetString(e.FormattedValue)),
+                                        };
+                    DualResult r = DBProxy.Current.Select(null, sqlcmd, paras, out dt);
+
+                    if (!r)
+                    {
+                        e.Cancel = true;
+                        this.ShowErr(r);
+                        return;
+                    }
+
+                    if (dt.Rows == null || dt.Rows.Count == 0)
+                    {
+                        e.Cancel = true;
+                        MyUtility.Msg.WarningBox("Data not found");
+                    }
+                }
+            };
+            #endregion
+            #region PPA
+            ppa.EditingMouseDown += (s, e) =>
+            {
+                if (this.EditMode && e.Button == MouseButtons.Right)
+                {
+                    string sqlcmd = @"
+select PPAID=ID,PPA=Name 
+from DropDownList 
+where Type = 'PMS_IEPPA'
+";
+
+                    SelectItem item = new SelectItem(sqlcmd, "PPA ID,PPA", "10,10", this.CurrentDetailData["PPA"].ToString(), null, null, null)
+                    {
+                        Width = 666,
+                    };
+                    DialogResult result = item.ShowDialog();
+                    if (result == DialogResult.Cancel)
+                    {
+                        return;
+                    }
+
+                    DataRow dr = item.GetSelecteds()[0];
+                    this.CurrentDetailData["PPA"] = dr["PPAID"];
+                    this.CurrentDetailData["PPAText"] = dr["PPA"];
+                }
+            };
+
+            ppa.CellValidating += (s, e) =>
+            {
+                if (this.EditMode)
+                {
+                    if (MyUtility.Check.Empty(e.FormattedValue))
+                    {
+                        return;
+                    }
+
+                    string newSewingMachineAttachmentID = MyUtility.Convert.GetString(e.FormattedValue);
+
+                    string sqlcmd = $@"
+select PPAID=ID,PPA=Name 
+from DropDownList 
+where Type = 'PMS_IEPPA'
+and Name = @PPA
+";
+
+                    DataTable dt;
+                    List<SqlParameter> paras = new List<SqlParameter>()
+                                        {
+                                            new SqlParameter("@PPA", MyUtility.Convert.GetString(e.FormattedValue)),
+                                        };
+                    DualResult r = DBProxy.Current.Select(null, sqlcmd, paras, out dt);
+
+                    if (!r)
+                    {
+                        e.Cancel = true;
+                        this.ShowErr(r);
+                        return;
+                    }
+
+                    if (dt.Rows == null || dt.Rows.Count == 0)
+                    {
+                        e.Cancel = true;
+                        MyUtility.Msg.WarningBox("Data not found");
+                    }
+                    else
+                    {
+                        DataRow dr = dt.Rows[0];
+                        this.CurrentDetailData["PPA"] = dr["PPAID"];
+                        this.CurrentDetailData["PPAText"] = dr["PPA"];
+                    }
+                }
+            };
+            #endregion
             #endregion
 
             template.MaxLength = 100;
@@ -817,10 +976,13 @@ where Junk = 0";
                 .Numeric("Frequency", header: "Frequency", integer_places: 2, decimal_places: 2, maximum: 99.99M, minimum: 0, settings: this.frequency)
                 .Text("MtlFactorID", header: "Factor", width: Widths.AnsiChars(3), iseditingreadonly: true)
                 .Numeric("SMV", header: "SMV (sec)", integer_places: 4, decimal_places: 4, maximum: 9999.9999M, minimum: 0, settings: this.smvsec)
-                 .CheckBox("IsSubprocess", header: "Subprocess", width: Widths.AnsiChars(7), iseditable: true, trueValue: 1, falseValue: 0).Get(out this.col_IsSubprocess)
+                .CheckBox("IsSubprocess", header: "Subprocess", width: Widths.AnsiChars(7), iseditable: true, trueValue: 1, falseValue: 0).Get(out this.col_IsSubprocess)
+                .CheckBox("IsNonSewingLine", header: "Non-Sewing line", width: Widths.AnsiChars(7), iseditable: false, trueValue: 1, falseValue: 0)
+                .Text("PPAText", header: "PPA", width: Widths.AnsiChars(10), settings: ppa)
                 .Text("MachineTypeID", header: "ST/MC Type", width: Widths.AnsiChars(8), settings: this.machine)
                 .Text("MasterPlusGroup", header: "Machine Group", width: Widths.AnsiChars(8), settings: txtSubReason)
                 .Text("Mold", header: "Attachment", width: Widths.AnsiChars(8), settings: this.mold)
+                .Text("ID", header: "Part ID", width: Widths.AnsiChars(25), settings: pardID)
                 .Text("Template", header: "Template", width: Widths.AnsiChars(8), settings: template)
                 .Numeric("PcsPerHour", header: "Pcs/hr", integer_places: 5, decimal_places: 1, iseditingreadonly: true)
                 .Numeric("Sewer", header: "Sewer", integer_places: 2, decimal_places: 1, iseditingreadonly: true)
@@ -1124,10 +1286,10 @@ and s.StyleUnit='PCS'
                     this.CurrentMaintain["StyleID"],
                     this.CurrentMaintain["BrandID"],
                     this.CurrentMaintain["SeasonID"])))
-                {
-                    MyUtility.Msg.WarningBox(string.Format(@"The Stytle：{0}、Season：{1}、Brand：{2} styleunit is 'PCS', You can only create one data in P01. Factory GSD.", this.CurrentMaintain["StyleID"], this.CurrentMaintain["SeasonID"], this.CurrentMaintain["BrandID"]));
-                    return false;
-                }
+            {
+                MyUtility.Msg.WarningBox(string.Format(@"The Stytle：{0}、Season：{1}、Brand：{2} styleunit is 'PCS', You can only create one data in P01. Factory GSD.", this.CurrentMaintain["StyleID"], this.CurrentMaintain["SeasonID"], this.CurrentMaintain["BrandID"]));
+                return false;
+            }
 
             #endregion
 
@@ -1782,6 +1944,9 @@ select id.SEQ,
     [IsShow] = cast(iif( id.OperationID like '--%' , 1, isnull(show.val, 1)) as bit)
     ,IsSubprocess = isnull(md.IsSubprocess,0)
     ,[MachineType_IsSubprocess] = isnull(md.IsSubprocess,0)
+    ,PPA = IIF(id.isPPA = 1 ,'C' , '')
+    ,PPAText = IIF(id.isPPA = 1 ,'Centralized' , '')
+    ,IsNonSewingLine =  ISNULL(md.IsNonSewingLine ,0)
 from Style s WITH (NOLOCK) 
 inner join IETMS i WITH (NOLOCK) on s.IETMSID = i.ID and s.IETMSVersion = i.Version
 inner join IETMS_Detail id WITH (NOLOCK) on i.Ukey = id.IETMSUkey
@@ -2011,13 +2176,13 @@ and s.BrandID = @brandid";
 
             foreach (DataRow dr in dt.Rows)
             {
-              if (dr.RowState != DataRowState.Deleted)
-              {
-                  if (dr["Selected"].ToString() == "1")
-                  {
-                      toDelete.Add(dr);
-                  }
-              }
+                if (dr.RowState != DataRowState.Deleted)
+                {
+                    if (dr["Selected"].ToString() == "1")
+                    {
+                        toDelete.Add(dr);
+                    }
+                }
             }
 
             foreach (DataRow dr in toDelete)

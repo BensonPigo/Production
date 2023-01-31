@@ -17,6 +17,8 @@ namespace Sci.Production.IE
         private string artworktype;
         private string strLanguage;
         private string machineID;
+        private bool nonSewing;
+        private bool isPPA;
         private decimal efficiency;
         private DataTable printData;
         private DataTable dtcustcd;
@@ -51,6 +53,8 @@ namespace Sci.Production.IE
             string[] artworktypearry = this.textArtworkType.Text.Split(',');
             this.artworktype = "'" + artworktypearry.JoinToString("','") + "'";
             this.strLanguage = this.comboLanguage.SelectedValue.ToString();
+            this.nonSewing = this.chkNonSewing.Checked;
+            this.isPPA = this.chkPPA.Checked;
 
             return base.ValidateInput();
         }
@@ -141,8 +145,7 @@ and  ArtworkTypeID in ({this.artworktype})
 
 union all
 ";
-            sqlCmd += string.Format(
-                @"
+            sqlCmd += $@"
 select
     td.Seq
     , td.OperationID
@@ -153,18 +156,21 @@ select
     , td.PcsPerHour
     , td.Sewer
     , td.Annotation
-    , [DescEN] = case when '{2}' = 'cn' then isnull(o.DescCH,o.DescEN)
-                   when '{2}' = 'vn' then isnull(o.DescVN,o.DescEN)
-                   when '{2}' = 'kh' then isnull(o.DescKH,o.DescEN)
+    , [DescEN] = case when '{this.strLanguage}' = 'cn' then isnull(o.DescCH,o.DescEN)
+                   when '{this.strLanguage}' = 'vn' then isnull(o.DescVN,o.DescEN)
+                   when '{this.strLanguage}' = 'kh' then isnull(o.DescKH,o.DescEN)
      else o.DescEN end
     , o.MasterPlusGroup
     , td.Template
 from TimeStudy_Detail td WITH (NOLOCK) 
 left join Operation o WITH (NOLOCK) on td.OperationID = o.ID
 left join MachineType m WITH (NOLOCK) on td.MachineTypeID = m.ID
-where td.ID = {0}
+left join MachineType_Detail md WITH (NOLOCK) on m.ID = md.ID 
+where td.ID = {MyUtility.Convert.GetString(this.masterData["ID"])}
 and td.OperationID not like '--%'
-{1}
+{(this.artworktype == "''" ? string.Empty : $"and m.ArtworkTypeID in ({this.artworktype})")}
+{(!this.nonSewing ? " and md.IsNonSewingLine != 1 " : string.Empty)}
+{(!this.isPPA ? " and td.PPA  != 'C' " : string.Empty)}
 
 union all
 -- OperationID like '--%' 都要顯示, 不依據 artworktype
@@ -178,21 +184,22 @@ select
     , td.PcsPerHour
     , td.Sewer
     , td.Annotation
-    , [DescEN] = case when '{2}' = 'cn' then isnull(o.DescCH,o.DescEN)
-                   when '{2}' = 'vn' then isnull(o.DescVN,o.DescEN)
-                   when '{2}' = 'kh' then isnull(o.DescKH,o.DescEN)
+    , [DescEN] = case when '{this.strLanguage}' = 'cn' then isnull(o.DescCH,o.DescEN)
+                   when '{this.strLanguage}' = 'vn' then isnull(o.DescVN,o.DescEN)
+                   when '{this.strLanguage}' = 'kh' then isnull(o.DescKH,o.DescEN)
      else o.DescEN end
     , o.MasterPlusGroup
     , td.Template
 from TimeStudy_Detail td WITH (NOLOCK) 
 left join Operation o WITH (NOLOCK) on td.OperationID = o.ID
 left join MachineType m WITH (NOLOCK) on td.MachineTypeID = m.ID
-where td.ID = {0}
+left join MachineType_Detail md WITH (NOLOCK) on m.ID = md.ID 
+where td.ID = {MyUtility.Convert.GetString(this.masterData["ID"])}
 and td.OperationID like '--%'
-",
-                MyUtility.Convert.GetString(this.masterData["ID"]),
-                this.artworktype == "''" ? string.Empty : $"and m.ArtworkTypeID in ({this.artworktype})",
-                this.strLanguage);
+{(!this.nonSewing ? " and md.IsNonSewingLine != 1 " : string.Empty)}
+{(!this.isPPA ? " and td.PPA  != 'C' " : string.Empty)}
+
+";
 
             sqlCmd += $@"
 union all

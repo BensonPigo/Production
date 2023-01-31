@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data;
+using System.Data.SqlClient;
 using System.Drawing;
 using System.Windows.Forms;
 using Ict;
@@ -33,62 +35,59 @@ namespace Sci.Production.IE
         /// <inheritdoc/>
         protected override bool ClickSaveBefore()
         {
-            if (this.CurrentMaintain["Type"].Empty())
+            if (this.CurrentMaintain["Description"].Empty())
             {
-                MyUtility.Msg.WarningBox("Type cannot be empty!!");
+                MyUtility.Msg.WarningBox("Description cannot be empty!!");
                 return false;
             }
 
-            if (this.CurrentMaintain["TypeGroup"].Empty())
+            DualResult result;
+            DataTable dt;
+
+            if (MyUtility.Check.Empty(this.CurrentMaintain["ID"]))
             {
-                MyUtility.Msg.WarningBox("TypeGroup cannot be empty!!");
+                if (result = DBProxy.Current.Select(null, "select max_id = max(id) from IEReason  WITH (NOLOCK) WHERE  Type = 'LB'", out dt))
+                {
+                    string id = dt.Rows[0]["max_id"].ToString();
+                    if (string.IsNullOrWhiteSpace(id))
+                    {
+                        this.CurrentMaintain["ID"] = "00001";
+                    }
+                    else
+                    {
+                        int newID = int.Parse(id) + 1;
+                        this.CurrentMaintain["ID"] = Convert.ToString(newID).ToString().PadLeft(5, '0');
+                    }
+
+                    this.CurrentMaintain["Type"] = "LM";
+                }
+                else
+                {
+                    this.ShowErr(result);
+                    return false;
+                }
+            }
+
+            List<SqlParameter> parameters = new List<SqlParameter>()
+                        {
+                            new SqlParameter("@Description", this.CurrentMaintain["Description"].ToString()),
+                        };
+
+            result = DBProxy.Current.Select(null, "select ID from IEReason  WITH (NOLOCK) WHERE Type = 'LM' AND Description = @Description", parameters, out dt);
+
+            if (!result)
+            {
+                this.ShowErr(result);
                 return false;
             }
 
-            if (this.CurrentMaintain["Code"].Empty())
+            if (dt != null && dt.Rows.Count > 0)
             {
-                MyUtility.Msg.WarningBox("Code cannot be empty!!");
+                MyUtility.Msg.WarningBox($@"<Description> already exists as ID:<{dt.Rows[0]["ID"]}>!");
                 return false;
             }
 
             return base.ClickSaveBefore();
-        }
-
-        private void TxtType_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
-        {
-            if (!this.EditMode)
-            {
-                return;
-            }
-
-            string type = this.txtType.Text.ToString();
-            string sql = $@"SELECT Type, TypeGroup FROM IEReasonTypeGroup";
-            if (!type.Empty())
-            {
-                sql += $" Where Type = '{type}'";
-            }
-
-            sql += " order by Type, TypeGroup" + Environment.NewLine;
-            DBProxy.Current.Select("Production", sql, out DataTable dt);
-
-            Win.Tools.SelectItem item = new Win.Tools.SelectItem(
-                dt,
-                "Type,TypeGroup",
-                "20,20",
-                this.txtType.Text)
-            {
-                Width = 650,
-            };
-
-            DialogResult returnResult = item.ShowDialog();
-            if (returnResult == DialogResult.Cancel)
-            {
-                return;
-            }
-
-            this.CurrentMaintain["Type"] = item.GetSelectedString();
-            this.CurrentMaintain["TypeGroup"] = item.GetSelecteds()[0]["TypeGroup"].ToString().TrimEnd();
-            this.ValidateControl();
         }
     }
 }

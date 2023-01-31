@@ -53,12 +53,14 @@ select
         ,iif(id.Location = 'T','Top',iif(id.Location = 'B','Bottom',iif(id.Location = 'I','Inner',iif(id.Location = 'O','Outer','')))) as Type
         ,isnull(o.SeamLength,0)*id.Frequency as ttlSeamLength
         ,[MtlFactorRate] = id.MtlFactorRate 
-
+        ,id.PPA
+        ,PPAText = ISNULL(d.Name,'')
 from Style s WITH (NOLOCK) 
 inner join IETMS i WITH (NOLOCK) on s.IETMSID = i.ID and s.IETMSVersion = i.Version
 inner join IETMS_Detail id WITH (NOLOCK) on i.Ukey = id.IETMSUkey
 left join Operation o WITH (NOLOCK) on id.OperationID = o.ID
 left join MachineType m WITH (NOLOCK) on o.MachineTypeID = m.ID
+left join DropDownList d (NOLOCK) on d.ID=id.PPA AND d.Type = 'PMS_IEPPA'
 --left join MtlFactor mf WITH (NOLOCK) on mf.Type = 'F' and o.MtlFactorID = mf.ID
 where s.Ukey = {0} order by id.SEQ", this.styleUkey);
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out this.gridData1);
@@ -159,6 +161,7 @@ Group by mt.ID,mt.Description,mt.DescCH,mt.RPM,mt.Stitches,ies.location", this.s
                 .Text("Mold", header: "Mold/Att", width: Widths.AnsiChars(20))
                 .EditText("OperationDescEN", header: "Operation Description", width: Widths.AnsiChars(30))
                 .Text("Annotation", header: "Annotation", width: Widths.AnsiChars(30))
+                .Text("PPAText", header: "PPA", width: Widths.AnsiChars(10))
                 .Numeric("Frequency", header: "Freq.", decimal_places: 2)
                 .Text("MtlFactorID", header: "Fac.", width: Widths.AnsiChars(3))
                 .Numeric("MtlFactorRate", header: "Fac%", decimal_places: 2, width: Widths.AnsiChars(3))

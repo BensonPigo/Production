@@ -12,6 +12,7 @@ using Sci.Production.Class;
 using System.Data.SqlClient;
 using System.Reflection;
 using Sci.Production.Prg;
+using Sci.Win.Tools;
 
 namespace Sci.Production.IE
 {
@@ -189,6 +190,10 @@ from (
 	    , ld.Cycle
         , ld.OperationID
         , ld.New
+        , ld.SewingMachineAttachmentID
+        , ld.MoldID
+        , ld.MachineCount
+        , IsMachineTypeID_MM = Cast( IIF( ld.MachineTypeID like 'MM%',1,0) as bit)
         , [ReasonName] = lbr.Name
     from LineMapping_Detail ld WITH (NOLOCK) 
     left join Employee e WITH (NOLOCK) on ld.EmployeeID = e.ID
@@ -197,7 +202,7 @@ from (
     outer apply (
 	    select IsShowinIEP03 = IIF(isnull(md.IsNotShownInP03 ,0) = 0, 1, 0)
 		    , IsDesignatedArea = ISNULL(md.IsNonSewingLine,0)
-	    from Operation o2 WITH (NOLOCK)
+	    from Operation o2 WITH (NOLOCK) 
 	    inner join MachineType m WITH (NOLOCK) on o2.MachineTypeID = m.ID
         inner join MachineType_Detail md WITH (NOLOCK) on md.ID = m.ID and md.FactoryID = '{1}'
 	    where o.ID = o2.ID and m.junk = 0
@@ -294,7 +299,9 @@ and BrandID = '{this.CurrentMaintain["BrandID"]}'
             DataGridViewGeneratorTextColumnSettings notice = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorCheckBoxColumnSettings ppa = new DataGridViewGeneratorCheckBoxColumnSettings();
             DataGridViewGeneratorCheckBoxColumnSettings hide = new DataGridViewGeneratorCheckBoxColumnSettings();
+            DataGridViewGeneratorCheckBoxColumnSettings machineCount = new DataGridViewGeneratorCheckBoxColumnSettings();
 
+            DataGridViewGeneratorTextColumnSettings pardID = new DataGridViewGeneratorTextColumnSettings();
             TxtMachineGroup.CelltxtMachineGroup txtSubReason = (TxtMachineGroup.CelltxtMachineGroup)TxtMachineGroup.CelltxtMachineGroup.GetGridCell();
 
             #region No.的Valid
@@ -639,17 +646,13 @@ where Junk = 0";
                 if (this.EditMode && e.Button == MouseButtons.Right)
                 {
                     string sqlcmd = @"
-select ID,DescEN 
-from Mold WITH (NOLOCK) 
-where Junk = 0
-and IsTemplate = 1
-union all
-select ID, Description
-from SewingMachineTemplate WITH (NOLOCK) 
-where Junk = 0
+select m.ID, m.DescEN, PartID=smt.ID
+from Mold m WITH (NOLOCK)
+right join SewingMachineTemplate smt on m.ID = smt.MoldID
+where m.Junk = 0 and m.IsTemplate = 1 and smt.Junk = 0
 ";
 
-                    Win.Tools.SelectItem2 item = new Win.Tools.SelectItem2(sqlcmd, "ID,DescEN", "13,60,10", this.CurrentDetailData["Template"].ToString(), null, null, null)
+                    SelectItem2 item = new SelectItem2(sqlcmd, "ID,DescEN,PartID", "13,60,20", this.CurrentDetailData["Template"].ToString(), null, null, null)
                     {
                         Width = 666,
                     };
@@ -709,14 +712,10 @@ where o.ID = @OperationID";
 
                     this.CurrentDetailData["Template"] = e.FormattedValue;
                     sqlcmd = @"
-select ID,DescEN 
-from Mold WITH (NOLOCK) 
-where Junk = 0
-and IsTemplate = 1
-union all
-select ID, Description
-from SewingMachineTemplate WITH (NOLOCK) 
-where Junk = 0
+select m.ID, m.DescEN, PartID=smt.ID
+from Mold m WITH (NOLOCK)
+right join SewingMachineTemplate smt on m.ID = smt.MoldID
+where m.Junk = 0 and m.IsTemplate = 1 and smt.Junk = 0
 ";
 
                     DataTable dt;
@@ -749,6 +748,91 @@ where Junk = 0
                 }
             };
             #endregion
+            #region Part ID
+            pardID.EditingMouseDown += (s, e) =>
+            {
+                if (this.EditMode && e.Button == MouseButtons.Right)
+                {
+                    if (e.RowIndex != -1)
+                    {
+                        DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
+
+                        if (MyUtility.Check.Empty(dr["MoldID"]))
+                        {
+                            return;
+                        }
+
+                        P01_PartID callNextForm = new P01_PartID(MyUtility.Convert.GetString(dr["MoldID"]));
+                        DialogResult result = callNextForm.ShowDialog(this);
+
+
+                        if (result == DialogResult.Cancel)
+                        {
+                            if (callNextForm.P01SelectPartID != null)
+                            {
+                                dr["SewingMachineAttachmentID"] = callNextForm.P01SelectPartID["ID"].ToString();
+                                dr.EndEdit();
+                            }
+                        }
+
+                        if (result == DialogResult.OK)
+                        {
+                            if (callNextForm.P01SelectPartID != null)
+                            {
+                                dr["SewingMachineAttachmentID"] = callNextForm.P01SelectPartID["ID"].ToString();
+                                dr.EndEdit();
+                            }
+                        }
+                    }
+                }
+            };
+
+            pardID.CellValidating += (s, e) =>
+            {
+                if (this.EditMode)
+                {
+                    if (MyUtility.Check.Empty(e.FormattedValue))
+                    {
+                        return;
+                    }
+
+                    string newSewingMachineAttachmentID = MyUtility.Convert.GetString(e.FormattedValue);
+
+                    string sqlcmd = $@"
+select a.ID
+    ,a.Description
+    ,a.MachineMasterGroupID
+    ,AttachmentTypeID
+    ,MeasurementID
+    ,FoldTypeID
+from SewingMachineAttachment a
+left join AttachmentType b on a.AttachmentTypeID = b.Type 
+left join AttachmentMeasurement c on a.MeasurementID = c.Measurement
+left join AttachmentFoldType d on a.FoldTypeID = d.FoldType 
+where a.MoldID = '{this.CurrentDetailData["MoldID"]}' AND a.ID = @ID";
+
+                    DataTable dt;
+                    List<SqlParameter> paras = new List<SqlParameter>()
+                                        {
+                                            new SqlParameter("@ID", MyUtility.Convert.GetString(e.FormattedValue)),
+                                        };
+                    DualResult r = DBProxy.Current.Select(null, sqlcmd, paras, out dt);
+
+                    if (!r)
+                    {
+                        e.Cancel = true;
+                        this.ShowErr(r);
+                        return;
+                    }
+
+                    if (dt.Rows == null || dt.Rows.Count == 0)
+                    {
+                        e.Cancel = true;
+                        MyUtility.Msg.WarningBox("Data not found");
+                    }
+                }
+            };
+            #endregion
 
             hide.CellValidating += (s, e) =>
             {
@@ -761,23 +845,6 @@ where Junk = 0
 
                 if (this.EditMode)
                 {
-                    /*
-                     * if (MyUtility.Convert.GetBool(dr["IsGroupHeader"]))
-                    {
-                        MyUtility.Msg.ErrorBox("This operation is [Group Header], cannot modify.");
-                        dr["IsHide"] = 1;
-                        return;
-                    }
-                    */
-
-                    /*
-                    if (MyUtility.Convert.GetBool(dr["IsSewingOperation"]))
-                    {
-                        MyUtility.Msg.ErrorBox("This Artwrok is sewing operation, cannot modify.");
-                        dr["IsHide"] = 1;
-                        return;
-                    }
-                    */
 
                     if (MyUtility.Convert.GetBool(e.FormattedValue))
                     {
@@ -832,6 +899,19 @@ where Junk = 0
                 }
             };
 
+            machineCount.CellValidating += (s, e) =>
+            {
+                if (this.EditMode)
+                {
+                    DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
+                    if (!MyUtility.Check.Empty(dr["IsMachineTypeID_MM"]) && MyUtility.Convert.GetBool(dr["IsMachineTypeID_MM"]) == true && MyUtility.Convert.GetBool(e.FormattedValue))
+                    {
+                        MyUtility.Msg.InfoBox("This operation can't be check.");
+                        dr["MachineCount"] = 0;
+                        dr.EndEdit();
+                    }
+                }
+            };
             threadColor.MaxLength = 1;
             no.MaxLength = 4;
             notice.MaxLength = 600;
@@ -841,6 +921,7 @@ where Junk = 0
             .Text("No", header: "No.", width: Widths.AnsiChars(4), settings: no)
             .CheckBox("IsPPA", header: "PPA", width: Widths.AnsiChars(1), iseditable: true, trueValue: true, falseValue: false, settings: ppa)
             .CheckBox("IsHide", header: "Hide", width: Widths.AnsiChars(1), iseditable: true, trueValue: true, falseValue: false, settings: hide)
+            .CheckBox("MachineCount", header: "Machine Count", width: Widths.AnsiChars(1), iseditable: true, trueValue: true, falseValue: false, settings: machineCount)
             .Text("MachineTypeID", header: "ST/MC type", width: Widths.AnsiChars(10), settings: machine)
             .Text("MasterPlusGroup", header: "Machine Group", width: Widths.AnsiChars(10), settings: txtSubReason)
             .EditText("Description", header: "Operation", width: Widths.AnsiChars(30), iseditingreadonly: true)
@@ -848,6 +929,7 @@ where Junk = 0
             .Numeric("GSD", header: "GSD Time", width: Widths.AnsiChars(5), decimal_places: 2, iseditingreadonly: true)
             .Numeric("Cycle", header: "Cycle Time", width: Widths.AnsiChars(5), integer_places: 4, decimal_places: 2, minimum: 0, settings: cycle)
             .Text("Attachment", header: "Attachment", width: Widths.AnsiChars(10), settings: attachment)
+            .Text("SewingMachineAttachmentID", header: "Part ID", width: Widths.AnsiChars(25), settings: pardID)
             .Text("Template", header: "Template", width: Widths.AnsiChars(10), settings: template)
             .Text("ThreadColor", header: "ThreadColor", width: Widths.AnsiChars(1), settings: threadColor)
             .Text("Notice", header: "Notice", width: Widths.AnsiChars(60), settings: notice)

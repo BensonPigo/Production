@@ -30,6 +30,7 @@
         {
             this.labelLineMappingDisplay = new Sci.Win.UI.Label();
             this.radioPanel1 = new Sci.Win.UI.RadioPanel();
+            this.radioZ_Right = new Sci.Win.UI.RadioButton();
             this.radioU_Right = new Sci.Win.UI.RadioButton();
             this.radioZ_Left = new Sci.Win.UI.RadioButton();
             this.radioU_Left = new Sci.Win.UI.RadioButton();
@@ -43,7 +44,8 @@
             this.labLanguage = new Sci.Win.UI.Label();
             this.chkpagePPA = new System.Windows.Forms.CheckBox();
             this.txtPagePPA = new Sci.Win.UI.TextBox();
-            this.radioZ_Right = new Sci.Win.UI.RadioButton();
+            this.chkPPA = new Sci.Win.UI.CheckBox();
+            this.chkNonSewing = new Sci.Win.UI.CheckBox();
             this.radioPanel1.SuspendLayout();
             this.radioPanel2.SuspendLayout();
             this.SuspendLayout();
@@ -89,6 +91,18 @@
             this.radioPanel1.Name = "radioPanel1";
             this.radioPanel1.Size = new System.Drawing.Size(111, 113);
             this.radioPanel1.TabIndex = 0;
+            // 
+            // radioZ_Right
+            // 
+            this.radioZ_Right.AutoSize = true;
+            this.radioZ_Right.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.radioZ_Right.Location = new System.Drawing.Point(3, 85);
+            this.radioZ_Right.Name = "radioZ_Right";
+            this.radioZ_Right.Size = new System.Drawing.Size(81, 21);
+            this.radioZ_Right.TabIndex = 4;
+            this.radioZ_Right.TabStop = true;
+            this.radioZ_Right.Text = "Z - Right";
+            this.radioZ_Right.UseVisualStyleBackColor = true;
             // 
             // radioU_Right
             // 
@@ -240,21 +254,33 @@
             this.txtPagePPA.Size = new System.Drawing.Size(55, 23);
             this.txtPagePPA.TabIndex = 104;
             // 
-            // radioZ_Right
+            // chkPPA
             // 
-            this.radioZ_Right.AutoSize = true;
-            this.radioZ_Right.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.radioZ_Right.Location = new System.Drawing.Point(3, 85);
-            this.radioZ_Right.Name = "radioZ_Right";
-            this.radioZ_Right.Size = new System.Drawing.Size(81, 21);
-            this.radioZ_Right.TabIndex = 4;
-            this.radioZ_Right.TabStop = true;
-            this.radioZ_Right.Text = "Z - Right";
-            this.radioZ_Right.UseVisualStyleBackColor = true;
+            this.chkPPA.AutoSize = true;
+            this.chkPPA.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkPPA.Location = new System.Drawing.Point(12, 330);
+            this.chkPPA.Name = "chkPPA";
+            this.chkPPA.Size = new System.Drawing.Size(240, 21);
+            this.chkPPA.TabIndex = 106;
+            this.chkPPA.Text = "Include PPA centralized operation";
+            this.chkPPA.UseVisualStyleBackColor = true;
+            // 
+            // chkNonSewing
+            // 
+            this.chkNonSewing.AutoSize = true;
+            this.chkNonSewing.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkNonSewing.Location = new System.Drawing.Point(13, 303);
+            this.chkNonSewing.Name = "chkNonSewing";
+            this.chkNonSewing.Size = new System.Drawing.Size(238, 21);
+            this.chkNonSewing.TabIndex = 105;
+            this.chkNonSewing.Text = "Include non-sewing line operation";
+            this.chkNonSewing.UseVisualStyleBackColor = true;
             // 
             // P03_Print
             // 
-            this.ClientSize = new System.Drawing.Size(527, 337);
+            this.ClientSize = new System.Drawing.Size(527, 382);
+            this.Controls.Add(this.chkPPA);
+            this.Controls.Add(this.chkNonSewing);
             this.Controls.Add(this.txtPagePPA);
             this.Controls.Add(this.chkpagePPA);
             this.Controls.Add(this.labLanguage);
@@ -285,6 +311,8 @@
             this.Controls.SetChildIndex(this.labLanguage, 0);
             this.Controls.SetChildIndex(this.chkpagePPA, 0);
             this.Controls.SetChildIndex(this.txtPagePPA, 0);
+            this.Controls.SetChildIndex(this.chkNonSewing, 0);
+            this.Controls.SetChildIndex(this.chkPPA, 0);
             this.radioPanel1.ResumeLayout(false);
             this.radioPanel1.PerformLayout();
             this.radioPanel2.ResumeLayout(false);
@@ -312,5 +340,7 @@
         private System.Windows.Forms.CheckBox chkpagePPA;
         private Win.UI.TextBox txtPagePPA;
         private Win.UI.RadioButton radioZ_Right;
+        private Win.UI.CheckBox chkPPA;
+        private Win.UI.CheckBox chkNonSewing;
     }
 }
