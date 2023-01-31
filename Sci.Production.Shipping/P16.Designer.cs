@@ -107,6 +107,7 @@
             this.label4 = new Sci.Win.UI.Label();
             this.dateETD = new Sci.Win.UI.DateBox();
             this.label5 = new Sci.Win.UI.Label();
+            this.btnShippingMemo = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -123,6 +124,7 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.btnShippingMemo);
             this.masterpanel.Controls.Add(this.label5);
             this.masterpanel.Controls.Add(this.label4);
             this.masterpanel.Controls.Add(this.chkExportChange);
@@ -283,6 +285,7 @@
             this.masterpanel.Controls.SetChildIndex(this.chkExportChange, 0);
             this.masterpanel.Controls.SetChildIndex(this.label4, 0);
             this.masterpanel.Controls.SetChildIndex(this.label5, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnShippingMemo, 0);
             // 
             // detailpanel
             // 
@@ -348,7 +351,7 @@
             this.labWkNo.Name = "labWkNo";
             this.labWkNo.Size = new System.Drawing.Size(96, 23);
             this.labWkNo.TabIndex = 101;
-            this.labWkNo.Text = "WK No.";
+            this.labWkNo.Text = "TK No.";
             // 
             // labETA
             // 
@@ -1194,6 +1197,16 @@
             this.label5.TabIndex = 175;
             this.label5.Text = "ETD";
             // 
+            // btnShippingMemo
+            // 
+            this.btnShippingMemo.Location = new System.Drawing.Point(848, 136);
+            this.btnShippingMemo.Name = "btnShippingMemo";
+            this.btnShippingMemo.Size = new System.Drawing.Size(128, 30);
+            this.btnShippingMemo.TabIndex = 196;
+            this.btnShippingMemo.Text = "Shipping Memo";
+            this.btnShippingMemo.UseVisualStyleBackColor = true;
+            this.btnShippingMemo.Click += new System.EventHandler(this.BtnShippingMemo_Click);
+            // 
             // P16
             // 
             this.ClientSize = new System.Drawing.Size(1008, 582);
@@ -1310,5 +1323,6 @@
         private Win.UI.Label label4;
         private Win.UI.DateBox dateETD;
         private Win.UI.Label label5;
+        private Win.UI.Button btnShippingMemo;
     }
 }

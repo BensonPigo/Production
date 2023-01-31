@@ -15,17 +15,16 @@ SELECT
 ,[NewFormula]=ISNULL(s.Formula,0)
 ,[AddName]=t.EditName
 ,[AddDate]=t.EditDate
+,[Paper] =t.Paper
+,[DescriptionDetail] = t.DescriptionDetail
 INTO #Formula_Change_Table
 FROM dbo.Part t
 INNER JOIN dbo.SciTrade_To_Pms_Part s
 ON t.id=s.Refno  AND s.Type='P'
 AND t.Formula<> s.Formula
 ;
-IF EXISTS (SELECT 1 FROM #Formula_Change_Table)
-BEGIN
 	INSERT INTO dbo.PartFormula_History ([PartID],[OldFormula],[NewFormula],[AddName],[AddDate])
 	SELECT [PartID],[OldFormula],[NewFormula],[AddName],[AddDate] FROM #Formula_Change_Table
-END
 ;
 DROP TABLE #Formula_Change_Table
 ;
@@ -50,19 +49,23 @@ update t set t.Description = s.Description
 			 , t.Needle = s.Needle
 			 , t.ControlPart = s.ControlParts
 			 , t.MOQ = isnull(convert(int, s.MOQ),0)
+			 , t.Paper = isnull(s.Paper,0)
+			 , t.DescriptionDetail = isnull(s.DescriptionDetail,'')
 from dbo.Part t
 inner join ( select * from dbo.SciTrade_To_Pms_Part WITH (NOLOCK) where type = 'P' ) as s on t.id = s.Refno 
 
-insert into dbo.Part(ID 				, Description 	, Partno 		, MasterGroupID 		, MachineGroupID 	, MachineBrandID
+insert into dbo.Part(ID 		, Description 	, Partno 		, MasterGroupID 	, MachineGroupID 	, MachineBrandID
 	 	 	 , UseUnit 			, PoUnit 		, Price 		, PurchaseBatchQty 	, Junk
 			 , PurchaseFrom 	, SuppID 		, CurrencyID 	, Formula	 		, Fix
-			 , AddName  		, AddDate 		, EditName 		, EditDate 			, Lock , Needle , ControlPart
-			 ,	MOQ)
+			 , AddName  		, AddDate 		, EditName 		, EditDate 			, Lock, Needle , ControlPart
+			 ,	MOQ             , Paper			, DescriptionDetail)
 			 select s.refno 			, s.Description , s.Partno 		, s.MasterGroupID 	, s.MachineGroupID 	, s.MachineBrandID
 					, s.UnitID 		, s.POUnitID 	, s.Price 		, s.BatchQty 		, s.Junk
 					, 'T'  			, s.SuppID 		, s.CurrencyID 	, s.Formula 		, s.Fix
 					, s.AddName 		, s.AddDate  	, s.EditName  	, s.EditDate 		, s.Lock , s.Needle , s.ControlParts
 					, isnull(convert(int, s.MOQ),0)
+					,isnull(s.Paper,0)
+					,isnull(s.DescriptionDetail,'')
 			 from dbo.SciTrade_To_Pms_Part s WITH (NOLOCK) 
 			 where s.type = 'P' and not exists(select 1 from dbo.Part t where t.id=s.Refno)
 
@@ -1107,5 +1110,47 @@ where b.ID is null
 	from dbo.MachinePending s
 	inner join SciPms_To_Trade_MachinePending b on b.id = s.ID
 	WHERE s.SendToTPE IS NULL
+
+	---------------MMSProject--------------
+	update t set t.Name             = s.Name
+				,t.Description      = s.Description
+				,t.Junk             = s.Junk
+				,t.IsDefault        = s.IsDefault
+				,t.SCIProject       = s.SCIProject
+				,t.LocalProject     = t.LocalProject
+				,t.AddName          = s.AddName
+				,t.AddDate          = s.AddDate
+				,t.EditName         = s.EditName
+				,t.EditDate         = s.EditDate
+	from dbo.MMSProject t with(nolock)
+	inner join dbo.SciTrade_To_Pms_MMSProject s with(nolock) on t.id = s.id
+	where t.LocalProject = 0
+
+	insert into dbo.MMSProject(ID,
+							   Name,
+							   Description,
+							   Junk,
+							   IsDefault,
+							   SCIProject,
+							   AddName,
+							   AddDate,
+							   EditName,
+							   EditDate)
+						select s.ID,
+							   s.Name,
+							   s.Description,
+							   s.Junk,
+							   s.IsDefault,
+							   s.SCIProject,
+							   s.AddName,
+							   s.AddDate,
+							   s.EditName,
+							   s.EditDate
+						from dbo.SciTrade_To_Pms_MMSProject s with(nolock)
+						where not exists(select 1 from dbo.MMSProject t with(nolock) where t.id = s.id and t.LocalProject = 0)
+
+	delete t
+	from dbo.MMSProject t
+	where not exists(select 1 from dbo.SciTrade_To_Pms_MMSProject s with(nolock) where t.id=s.id) and t.LocalProject = 0
 
 	END

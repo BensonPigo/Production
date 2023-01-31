@@ -46,10 +46,10 @@ select ked2.*
     ,[StyleID] = s.ID
     ,g.CustCDID
 	,LocationDisp = case
-		when Location = 'T' then 'TOP' 
-        when Location = 'B' then 'BOTTOM' 
-        when Location = 'I' then 'INNER'   
-        when Location = 'O' then 'OUTER'
+		when ked2.[Location] = 'T' then 'TOP' 
+        when ked2.[Location] = 'B' then 'BOTTOM' 
+        when ked2.[Location] = 'I' then 'INNER'   
+        when ked2.[Location] = 'O' then 'OUTER'
         else '' end
 from KHExportDeclaration_Detail ked2
 left join Style s on ked2.StyleUkey = s.Ukey

@@ -417,14 +417,14 @@ select OrderID from #Final s
 	AND t.ComboType=s.ComboType 
 	AND t.OutputDate = s.OutputDate);
 
+update b
+    set b.TransferDate = getdate()
+		, b.IS_Trans = 1
+from BITableInfo b
+where b.id = 'P_SewingDailyOutput'
+
 End
 
 
-update b
-    set b.TransferDate = getdate()
-from BITableInfo b
-where b.id = 'P_SewingDailyOutput'
-GO
-GO
 
 

@@ -14,6 +14,7 @@ using Microsoft.SqlServer.Management.Common;
 using System.Linq;
 using System.Xml.Linq;
 using Sci.Production.Prg;
+using System.Runtime.CompilerServices;
 
 namespace Sci.Production.Win
 {
@@ -41,10 +42,26 @@ namespace Sci.Production.Win
             // Sci.Production.SCHEMAS.PASS1Row data;
             if (ConfigurationManager.AppSettings["TaipeiServer"] != string.Empty)
             {
-                // Assembly a = typeof(Module1).Assembly;
                 this.label4.Visible = true;
                 this.comboBox2.Visible = true;
                 this.checkBoxTestEnvironment.Visible = true;
+
+                // 抓電腦登入名稱
+                string loginAccount = System.Security.Principal.WindowsIdentity.GetCurrent().Name;
+                string[] strSevers = ConfigurationManager.AppSettings["PMSTeam_LoginAccount"].Split(new char[] { ',' });
+                var result = strSevers.Where(c => c.ToUpper().Contains(loginAccount.ToUpper()));
+                if (result.Any())
+                {
+                    this.act.Text = "SCIMIS";
+                    this.pwd.Text = "SCIMIS888";
+                    this.comboBox1.SelectedValue = "MAI";
+                    this.checkBoxTestEnvironment.Checked = true;
+                    this.ChangeTaipeiServer();
+                    this.Account_Valid();
+                    this.ok.Focus();
+                    this.ok.Select();
+                }
+
                 this.ChangeTaipeiServer();
             }
         }
@@ -122,12 +139,12 @@ namespace Sci.Production.Win
             this.Close();
         }
 
-        private void Act_Validated(object sender, CancelEventArgs e)
+        private bool Account_Valid()
         {
             this.comboBox1.DataSource = null;
             if (MyUtility.Check.Empty(this.act.Text.Trim()))
             {
-                return;
+                return true;
             }
 
             DataTable dtPass1;
@@ -145,15 +162,13 @@ namespace Sci.Production.Win
             if (!(this.result = DBProxy.Current.Select(null, sqlCmd, cmds, out dtPass1)))
             {
                 MyUtility.Msg.ErrorBox(this.result.ToString());
-                e.Cancel = true;
-                return;
+                return false;
             }
 
             if (dtPass1.Rows.Count == 0)
             {
                 MyUtility.Msg.WarningBox("Account does not exist!");
-                e.Cancel = true;
-                return;
+                return false;
             }
 
             Dictionary<string, string> factoryOption = new Dictionary<string, string>();
@@ -168,6 +183,16 @@ namespace Sci.Production.Win
                 this.comboBox1.DataSource = new BindingSource(factoryOption, null);
                 this.comboBox1.ValueMember = "Key";
                 this.comboBox1.DisplayMember = "Value";
+            }
+
+            return true;
+        }
+
+        private void Act_Validated(object sender, CancelEventArgs e)
+        {
+            if (this.Account_Valid() == false)
+            {
+                e.Cancel = true;
             }
         }
 
@@ -374,9 +399,8 @@ Script
             }
 
             DBProxy.Current.DefaultModuleName = this.comboBox2.SelectedValue2.ToString();
-            this.act.Text = string.Empty;
-            this.pwd.Text = string.Empty;
             this.comboBox1.DataSource = null;
+            this.Account_Valid();
         }
 
         private void ChangeTaipeiServer()
@@ -408,6 +432,9 @@ Script
 
         private void CheckBoxTestEnvironment_CheckedChanged(object sender, EventArgs e)
         {
+            // 保存當前帳密
+            string currentAct = this.act.Text;
+            string currentPassword = this.pwd.Text;
             if (this.checkBoxTestEnvironment.Checked)
             {
                 ConfigurationManager.AppSettings["TaipeiServer"] = ConfigurationManager.AppSettings["TestingServer"];
@@ -420,6 +447,11 @@ Script
             }
 
             this.ChangeTaipeiServer();
+            this.Account_Valid();
+
+            // 將當前帳密給補回去
+            this.act.Text = currentAct;
+            this.pwd.Text = currentPassword;
         }
     }
 }

@@ -64,6 +64,7 @@ Point9 = 1
 ,CalibrationDate
 ,Operator
 ,MachineID
+,SubmitDate
 from MDCalibrationList
 where 1=1
 and MachineID = '{this.comboMDMachineID.Text}'
@@ -226,6 +227,7 @@ Where Junk = 0
 
             selectDr["MachineID"] = this.comboMDMachineID.Text;
             selectDr["CalibrationDate"] = DateTime.Now;
+            selectDr["SubmitDate"] = DateTime.Now;
             selectDr["Operator"] = Env.User.UserID;
         }
 

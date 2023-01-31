@@ -10,6 +10,7 @@
     [AddDate]   DATETIME      NULL,
     [EditName]  VARCHAR (10)  CONSTRAINT [DF_Country_EditName] DEFAULT ('') NULL,
     [EditDate]  DATETIME      NULL,
+    [SpecificDestination] BIT CONSTRAINT [DF_Country_SpecificDestination] DEFAULT ((0)) NOT NULL, 
     CONSTRAINT [PK_Country] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 
@@ -61,3 +62,13 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'最後修�
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'最後修改時間', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Country', @level2type = N'COLUMN', @level2name = N'EditDate';
 
+
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'倉物物料轉出時需要特別注意 Tone/Grp',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'Country',
+    @level2type = N'COLUMN',
+    @level2name = N'SpecificDestination'

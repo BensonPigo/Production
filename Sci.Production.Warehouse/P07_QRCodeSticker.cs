@@ -4,14 +4,12 @@ using Sci.Data;
 using Sci.Production.Prg;
 using Sci.Production.Prg.Entity;
 using Sci.Production.PublicPrg;
+using Sci.Win;
 using System;
+using System.Collections.Generic;
 using System.Data;
-using System.Drawing;
 using System.Linq;
-using System.Runtime.InteropServices;
-using System.Threading;
 using System.Windows.Forms;
-using Word = Microsoft.Office.Interop.Word;
 
 namespace Sci.Production.Warehouse
 {
@@ -23,6 +21,11 @@ namespace Sci.Production.Warehouse
         private DataTable dtP07_QRCodeSticker;
         private string printType;
         private string callFrom;
+
+        // P07 或者 P18
+        private bool IsP07;
+        private bool IsP18;
+        private string rgCode;
 
         /// <summary>
         /// P07_QRCodeSticker
@@ -37,21 +40,36 @@ namespace Sci.Production.Warehouse
             this.dtP07_QRCodeSticker = dtSource;
             this.printType = printType;
             this.callFrom = callFrom;
-            this.labSortBy.Visible = callFrom == "P07";
-            this.radioPanel1.Visible = callFrom == "P07";
+            this.IsP07 = callFrom == "P07";
+            this.IsP18 = callFrom == "P18";
+            this.labSortBy.Visible = this.IsP07;
+            this.radioPanel1.Visible = this.IsP07;
             this.listControlBindingSource.DataSource = dtSource;
-
+            this.rgCode = MyUtility.GetValue.Lookup("select RgCode from system");
             this.dtP07_QRCodeSticker.Columns.Add("IsQRCodeCreatedByPMS", typeof(bool));
-
             foreach (DataRow dr in this.dtP07_QRCodeSticker.Rows)
             {
-                dr["IsQRCodeCreatedByPMS"] = dr["MINDQRCode"].ToString().IsQRCodeCreatedByPMS();
+                if (this.IsP07)
+                {
+                    dr["IsQRCodeCreatedByPMS"] = dr["MINDQRCode"].ToString().IsQRCodeCreatedByPMS();
+                }
+                else if (this.IsP18) 
+                {
+                    dr["IsQRCodeCreatedByPMS"] = dr["MINDQRCode"].ToString().IsQRCodeCreatedByPMS() && dr["MINDQRCode"].ToString().Left(3) == this.rgCode;
+                }
             }
 
-            if (callFrom == "P07")
+            if (this.IsP07)
             {
                 MyUtility.Tool.SetupCombox(this.comboFilterQRCode, 1, 1, "All,Create by PMS,Not create by PMS");
                 this.comboFilterQRCode.Text = "Create by PMS";
+                this.grid1.ColumnHeaderMouseClick += this.Grid1_ColumnHeaderMouseClick;
+                this.RadioPanel1_ValueChanged(null, null);
+            }
+            else if (this.IsP18)
+            {
+                MyUtility.Tool.SetupCombox(this.comboFilterQRCode, 1, 1, $"All,Create by {this.rgCode},Not Create by {this.rgCode}");
+                this.comboFilterQRCode.Text = $"Create by {this.rgCode}";
                 this.grid1.ColumnHeaderMouseClick += this.Grid1_ColumnHeaderMouseClick;
                 this.RadioPanel1_ValueChanged(null, null);
             }
@@ -84,7 +102,7 @@ namespace Sci.Production.Warehouse
             #region Set Grid Columns
             this.grid1.IsEditingReadOnly = false;
 
-            if (this.callFrom == "P07")
+            if (this.IsP07)
             {
                 this.Helper.Controls.Grid.Generator(this.grid1)
                                 .CheckBox("Sel", header: string.Empty, trueValue: 1, falseValue: 0)
@@ -100,6 +118,22 @@ namespace Sci.Production.Warehouse
                                 .Text("pounit", header: "Purchase" + Environment.NewLine + "Unit", width: Widths.AnsiChars(9), iseditingreadonly: true)
                                 .Text("TtlQty", header: "Total Qty", width: Widths.AnsiChars(13), iseditingreadonly: true)
                                 .Numeric("stockqty", header: "Receiving Qty" + Environment.NewLine + "(Stock Unit)", width: Widths.AnsiChars(6), iseditingreadonly: true)
+                                .Text("MINDQRCode", header: "QR Code", width: Widths.AnsiChars(20), iseditingreadonly: true)
+                ;
+            }
+            else if (this.IsP18)
+            {
+                this.Helper.Controls.Grid.Generator(this.grid1)
+                                .CheckBox("Sel", header: string.Empty, trueValue: 1, falseValue: 0)
+                                .Text("POID", header: "SP#", iseditingreadonly: true)
+                                .Text("SEQ", header: "Seq", iseditingreadonly: true)
+                                .Text("FabricType", header: "Fabric" + Environment.NewLine + "Type", iseditingreadonly: true)
+                                .Numeric("Weight", header: "G.W(kg)", width: Widths.AnsiChars(7), iseditingreadonly: true)
+                                .Numeric("ActualWeight", header: "Act.(kg)", width: Widths.AnsiChars(7), iseditingreadonly: true)
+                                .Text("Roll", header: "Roll#", width: Widths.AnsiChars(7), iseditingreadonly: true)
+                                .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(8), iseditingreadonly: true)
+                                .Numeric("StockQty", header: "In Qty", width: Widths.AnsiChars(9), iseditingreadonly: true)
+                                .Text("StockUnit", header: "Unit", width: Widths.AnsiChars(9), iseditingreadonly: true)
                                 .Text("MINDQRCode", header: "QR Code", width: Widths.AnsiChars(20), iseditingreadonly: true)
                 ;
             }
@@ -134,105 +168,14 @@ namespace Sci.Production.Warehouse
                 dv.Sort = ((DataTable)this.listControlBindingSource.DataSource).DefaultView.Sort;
                 DataTable sortedtable1 = dv.ToTable();
 
-                var barcodeDatas = sortedtable1.AsEnumerable().Where(s => (int)s["Sel"] == 1);
-
+                var barcodeDatas = sortedtable1.AsEnumerable().Where(s => (int)s["Sel"] == 1).ToList();
+                string type = this.printType;
                 #region Print
                 this.ShowWaitMessage("Data Loading ...");
-                Word._Application winword = new Word.Application();
-                Word._Document document;
-                Word.Table tables = null;
 
-                string fileName = "\\Warehouse_P07_Sticker5.dotx";
+                PrintQRCode_RDLC(barcodeDatas, type);
 
-                if (this.printType == "5X5")
-                {
-                    fileName = "\\Warehouse_P07_Sticker5.dotx";
-                }
-                else if (this.printType == "7X7")
-                {
-                    fileName = "\\Warehouse_P07_Sticker7.dotx";
-                }
-                else
-                {
-                    fileName = "\\Warehouse_P07_Sticker10.dotx";
-                }
-
-                object printFile = Sci.Env.Cfg.XltPathDir + fileName;
-                document = winword.Documents.Add(ref printFile);
-                #region PrintBarCode
-                try
-                {
-                    document.Activate();
-                    Word.Tables table = document.Tables;
-
-                    // 計算頁數
-                    winword.Selection.Tables[1].Select();
-                    winword.Selection.Copy();
-                    for (int j = 1; j < barcodeDatas.Count(); j++)
-                    {
-                        winword.Selection.MoveDown();
-                        if (barcodeDatas.Count() > 1)
-                        {
-                            winword.Selection.InsertAfter(Environment.NewLine);
-                            winword.Selection.MoveRight();
-                        }
-
-                        winword.Selection.Paste();
-                    }
-
-                    int qrCodeWidth = this.printType == "10X10" ? 90 : 45;
-
-                    // 填入資料
-                    int i = 0;
-                    foreach (var printItem in barcodeDatas)
-                    {
-                        tables = table[i + 1];
-                        tables.Cell(1, 1).Range.Text = $"QC ID:{printItem["Inspector"]}";
-                        tables.Cell(1, 3).Range.Text = printItem["PoId"].ToString();
-                        tables.Cell(1, 5).Range.Text = printItem["SEQ"].ToString();
-                        tables.Cell(1, 6).Range.Text = $"Insp Date:{printItem["InspDate"]}";
-                        tables.Cell(2, 3).Range.Text = printItem["RefNo"].ToString();
-                        tables.Cell(2, 5).Range.Text = printItem["Location"].ToString();
-                        tables.Cell(3, 3).Range.Text = $"{printItem["Weight"]}KG";
-                        tables.Cell(3, 5).Range.Text = $"{printItem["ActualWeight"]}KG";
-                        Bitmap oriBitmap = printItem["MINDQRCode"].ToString().ToBitmapQRcode(qrCodeWidth, qrCodeWidth);
-                        Clipboard.SetImage(oriBitmap);
-                        Thread.Sleep(100);
-                        tables.Cell(4, 2).Range.Paste();
-                        tables.Cell(4, 4).Range.Paste();
-
-                        tables.Cell(4, 3).Range.Text = printItem["FactoryID"].ToString();
-
-                        tables.Cell(5, 3).Range.Text = printItem["Roll"].ToString();
-                        tables.Cell(5, 5).Range.Text = printItem["Dyelot"].ToString();
-                        tables.Cell(6, 3).Range.Text = printItem["StockQty"].ToString();
-                        tables.Cell(6, 5).Range.Text = printItem["ColorID"].ToString();
-                        tables.Cell(7, 2).Range.Text = printItem["FirRemark"].ToString();
-                        i++;
-                    }
-
-                    // 產生的Word檔不可編輯
-                    winword.ActiveDocument.Protect(Word.WdProtectionType.wdAllowOnlyReading);
-                    winword.Visible = true;
-                }
-                catch (Exception)
-                {
-                    if (winword != null)
-                    {
-                        winword.Quit();
-                    }
-
-                    MyUtility.Msg.WarningBox("Export Word error.");
-                }
-                finally
-                {
-                    Marshal.ReleaseComObject(document);
-                    Marshal.ReleaseComObject(winword);
-                    GC.Collect();
-                    GC.WaitForPendingFinalizers();
-                }
-                #endregion
-                if (this.callFrom == "P07")
+                if (this.IsP07 || this.IsP18)
                 {
                     string ukeys = barcodeDatas.Select(s => s["Ukey"].ToString()).JoinToString(",");
                     WHTableName detailTableName = Prgs.GetWHDetailTableName(this.callFrom);
@@ -253,6 +196,59 @@ namespace Sci.Production.Warehouse
             }
         }
 
+        /// <inheritdoc/>
+        public static void PrintQRCode_RDLC(List<DataRow> barcodeDatas, string type, string form = "")
+        {
+            int qrCodeWidth;
+            string rdlcName;
+            switch (type)
+            {
+                case "5X5":
+                    qrCodeWidth = 90;
+                    rdlcName = "P21_PrintBarcode5.rdlc";
+                    break;
+                case "7X7":
+                    qrCodeWidth = 90;
+                    rdlcName = "P21_PrintBarcode7.rdlc";
+                    break;
+                default:
+                    qrCodeWidth = 100;
+                    rdlcName = "P21_PrintBarcode10.rdlc";
+                    break;
+            }
+
+            string qrcode = form == "P21" ? "Barcode" : "MINDQRCode";
+            ReportDefinition report = new ReportDefinition();
+            report.ReportDataSource = barcodeDatas
+                .Select(s => new P21_PrintBarcode_Data()
+                {
+                    SP = "SP#:" + MyUtility.Convert.GetString(s["PoId"]),
+                    Seq = "SEQ:" + (form == "P21" ? MyUtility.Convert.GetString(s["SEQ1"]) + "-" + MyUtility.Convert.GetString(s["SEQ2"]) : MyUtility.Convert.GetString(s["SEQ"])),
+                    GW = "GW:" + MyUtility.Convert.GetString(s["Weight"]) + "KG",
+                    AW = "AW:" + MyUtility.Convert.GetString(s["ActualWeight"]) + "KG",
+                    Location = "Lct:" + MyUtility.Convert.GetString(s["Location"]),
+                    Refno = "REF#:" + MyUtility.Convert.GetString(s["RefNo"]),
+                    Roll = "Roll#:" + MyUtility.Convert.GetString(s["Roll"]),
+                    Color = "Color:" + MyUtility.Convert.GetString(s["ColorID"]),
+                    Dyelot = "Lot#:" + MyUtility.Convert.GetString(s["Dyelot"]),
+                    Qty = "Yd#:" + MyUtility.Convert.GetString(s["StockQty"]),
+                    FactoryID = MyUtility.Convert.GetString(s["FactoryID"]),
+                    Image = Prgs.ImageToByte(MyUtility.Convert.GetString(s[qrcode]).ToBitmapQRcode(qrCodeWidth, qrCodeWidth)),
+                }).ToList();
+
+            DualResult result = ReportResources.ByEmbeddedResource(typeof(P21_PrintBarcode_Data), rdlcName, out IReportResource reportresource);
+            if (!result)
+            {
+                MyUtility.Msg.ErrorBox(result.ToString());
+                return;
+            }
+
+            report.ReportResource = reportresource;
+
+            // 開啟 report view 直接列印
+            new Win.Subs.ReportView(report) { DirectPrint = true }.Show();
+        }
+
         private void ComboFilterQRCode_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (this.comboFilterQRCode.SelectedIndex < 0)
@@ -260,16 +256,19 @@ namespace Sci.Production.Warehouse
                 return;
             }
 
-            switch (this.comboFilterQRCode.Text)
+            switch (this.comboFilterQRCode.SelectedIndex)
             {
-                case "Create by PMS":
-                    this.listControlBindingSource.Filter = "IsQRCodeCreatedByPMS = true";
+                case 1:
+                    if (this.IsP07 || this.IsP18) {
+                        this.listControlBindingSource.Filter = "IsQRCodeCreatedByPMS = true";
+                    }
+                    else {
+                        this.listControlBindingSource.Filter = "MINDQRCode <> From_OldBarcode";
+                    }
+
                     break;
-                case "Not create by PMS":
+                case 2:
                     this.listControlBindingSource.Filter = "IsQRCodeCreatedByPMS = false";
-                    break;
-                case "Partial Release":
-                    this.listControlBindingSource.Filter = "MINDQRCode <> From_OldBarcode";
                     break;
                 default:
                     this.listControlBindingSource.Filter = string.Empty;
@@ -279,7 +278,7 @@ namespace Sci.Production.Warehouse
 
         private void RadioPanel1_ValueChanged(object sender, EventArgs e)
         {
-            if (this.callFrom == "P07" && this.listControlBindingSource.DataSource != null)
+            if (this.IsP07 && this.listControlBindingSource.DataSource != null)
             {
                 if (this.radioPanel1.Value == "1")
                 {

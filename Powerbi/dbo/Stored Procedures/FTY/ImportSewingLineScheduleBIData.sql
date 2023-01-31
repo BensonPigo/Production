@@ -99,7 +99,8 @@ WHEN MATCHED THEN
 	t.EMBStitch = s.EMBStitch,
 	t.EMBStitchCnt = s.EMBStitchCnt,
 	t.TtlQtyEMB = s.TtlQtyEMB,
-	t.PrintPcs = s.PrintPcs'
+	t.PrintPcs = s.PrintPcs,
+	t.InlineCategory = s.InlineCategory'
 
 set @SqlCmd2 = '
 WHEN NOT MATCHED BY TARGET THEN
@@ -167,6 +168,7 @@ WHEN NOT MATCHED BY TARGET THEN
 	  ,EMBStitchCnt
 	  ,TtlQtyEMB
 	  ,PrintPcs
+	  ,InlineCategory
 	)
 	VALUES(
 	s.APSNo,
@@ -231,7 +233,8 @@ WHEN NOT MATCHED BY TARGET THEN
 	s.EMBStitch,
 	s.EMBStitchCnt,
 	s.TtlQtyEMB,
-	s.PrintPcs
+	s.PrintPcs,
+	s.InlineCategory
 	)
 WHEN NOT MATCHED BY SOURCE AND T.SewingDay between '''+@SDate+''' and '''+@EDate+''' THEN
 DELETE ;
@@ -240,6 +243,7 @@ drop table #Final
 
 update b
     set b.TransferDate = getdate()
+		, b.IS_Trans = 1
 from BITableInfo b
 where b.id = ''P_SewingLineSchedule''
 '

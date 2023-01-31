@@ -200,6 +200,7 @@ select distinct FTYGroup from Factory WITH (NOLOCK) order by FTYGroup"),
                 new SqlParameter("@OrderBy", this.orderby + 1),
                 new SqlParameter("@ExcludeNonRevenue", this.chkExcludeNonRevenue.Checked),
                 new SqlParameter("@ExcludeSampleFactory", this.checkSampleFty.Checked),
+                new SqlParameter("@ExcludeOfMockUp", this.checkExcludeOfMockUp.Checked),
             };
 
             string sqlGetSewingData = @"
@@ -212,7 +213,8 @@ exec dbo.GetMonthlyProductionOutputReport   @StartOutputDate,
                                             @EndSewingLine,
                                             @OrderBy,
                                             @ExcludeNonRevenue,
-                                            @ExcludeSampleFactory
+                                            @ExcludeSampleFactory,
+                                            @ExcludeOfMockUp
 ";
             DataTable[] dtResults;
             DualResult result = DBProxy.Current.Select(null, sqlGetSewingData, listPar, out dtResults);

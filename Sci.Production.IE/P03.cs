@@ -41,6 +41,57 @@ namespace Sci.Production.IE
             this.comboSewingTeam1.SetDataSource();
             this.splitContainer1.Panel1.Controls.Add(this.detailpanel);
             this.detailpanel.Dock = DockStyle.Fill;
+            MyUtility.Tool.SetupCombox(this.comboPhase, 1, 1, ",Initial,Prelim,Final");
+        }
+
+        /// <summary>
+        /// P03
+        /// </summary>
+        /// <param name="styleID"></param>
+        /// <param name="brandID"></param>
+        /// <param name="seasonID"></param>
+        /// <param name="isReadOnly"></param>
+        public P03(string styleID, string brandID, string seasonID, bool isReadOnly = false)
+        {
+            this.InitializeComponent();
+            StringBuilder df = new StringBuilder();
+            df.Append(string.Format("StyleID = '{0}' ", styleID));
+            if (!MyUtility.Check.Empty(brandID))
+            {
+                df.Append(string.Format(" and BrandID ='{0}' ", brandID));
+            }
+
+            if (!MyUtility.Check.Empty(seasonID))
+            {
+                df.Append(string.Format(" and SeasonID ='{0}' ", seasonID));
+            }
+
+            if (isReadOnly)
+            {
+                this.IsSupportEdit = false;
+                this.IsSupportNew = false;
+                this.IsSupportConfirm = false;
+                this.IsSupportCopy = false;
+                this.IsSupportDelete = false;
+                this.IsDeleteOnBrowse = false;
+            }
+            else
+            {
+                this.IsSupportEdit = true;
+                this.IsSupportNew = true;
+                this.IsSupportConfirm = true;
+                this.IsSupportCopy = true;
+                this.IsSupportDelete = true;
+                this.IsDeleteOnBrowse = true;
+            }
+
+            this.DefaultFilter = df.ToString();
+            this.detailgrid.AllowUserToOrderColumns = true;
+            this.InsertDetailGridOnDoubleClick = false;
+            this.comboSewingTeam1.SetDataSource();
+            this.splitContainer1.Panel1.Controls.Add(this.detailpanel);
+            this.detailpanel.Dock = DockStyle.Fill;
+            MyUtility.Tool.SetupCombox(this.comboPhase, 1, 1, ",Initial,Prelim,Final");
         }
 
         /// <summary>
@@ -57,9 +108,13 @@ namespace Sci.Production.IE
         {
             MyUtility.Tool.SetupCombox(this.queryfors, 1, 1, "last 2 years modify,All");
             this.queryfors.SelectedIndex = 0;
-            if (MyUtility.Check.Empty(this.DefaultWhere))
+            if (MyUtility.Check.Empty(this.DefaultWhere) && MyUtility.Check.Empty(this.DefaultFilter))
             {
                 this.DefaultWhere = " AddDate >= DATEADD(YY,-2,GETDATE()) OR EditDate >= DATEADD(YY,-2,GETDATE())";
+            }
+            else
+            {
+                this.queryfors.SelectedIndex = 1;
             }
 
             base.OnFormLoaded();
@@ -1062,6 +1117,29 @@ where Junk = 0
                 MyUtility.Msg.WarningBox("<No .of Hours> cannot be 0!!");
                 this.numNoOfHours.Focus();
                 return false;
+            }
+
+            if (MyUtility.Check.Empty(this.CurrentMaintain["Phase"]))
+            {
+                MyUtility.Msg.WarningBox("<Phase> cannot be empty! Please fill in <Phase> next to <Version>.");
+                this.comboPhase.Focus();
+                return false;
+            }
+            else if (this.CurrentMaintain["Phase"].ToString().EqualString("Final"))
+            {
+                if (MyUtility.Check.Empty(this.CurrentMaintain["SewingLineID"]))
+                {
+                    MyUtility.Msg.WarningBox("Please enter <Sewing Line> since phase is Final.");
+                    this.txtsewingline.Focus();
+                    return false;
+                }
+
+                if (MyUtility.Check.Empty(this.CurrentMaintain["Team"]))
+                {
+                    MyUtility.Msg.WarningBox("Please enter <Team> since phase is Final.");
+                    this.comboSewingTeam1.Focus();
+                    return false;
+                }
             }
             #endregion
 
@@ -2087,7 +2165,6 @@ where i.location = '' and i.[IETMSUkey] = '{0}' and i.ArtworkTypeID = 'Packing' 
                 }
             }
         }
-
     }
 
     /// <inheritdoc/>

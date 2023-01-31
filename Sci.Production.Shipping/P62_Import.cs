@@ -145,6 +145,16 @@ namespace Sci.Production.Shipping
 Declare @ID varchar(15) = '{this.dr_master["ID"]}'
 Declare @ShipMode varchar(60) = '{this.dr_master["ShipModeID"]}'
 
+select ShipQty = sum(pd2.ShipQty),pd2.OrderID,oup.SizeCode,oup.Article ,oup.POPrice
+into #tmp_PackingList_Detail
+from PackingList_Detail pd2 with (nolock)
+inner join PackingList p2 with (nolock) on pd2.ID = p2.ID
+inner join Order_UnitPrice oup with (nolock) on oup.Id= pd2.OrderID
+											and oup.Article = pd2.Article 
+											and oup.SizeCode = pd2.SizeCode
+where exists (select 1 from {"{0}"} g with (nolock) where g.id = p2.INVNo)
+group by pd2.OrderID,oup.SizeCode,oup.Article,oup.POPrice
+
 select
 	selected = 0 
 	, [INVNo] = g.id
@@ -186,12 +196,12 @@ select
 	, [Remark] = g.Remark
 	, g.CustCDID
 	, o.StyleUnit
-    , Location
+    , OL.Location
 	, LocationDisp = case
-		when Location = 'T' then 'TOP' 
-        when Location = 'B' then 'BOTTOM' 
-        when Location = 'I' then 'INNER'   
-        when Location = 'O' then 'OUTER'
+		when OL.Location = 'T' then 'TOP' 
+        when OL.Location = 'B' then 'BOTTOM' 
+        when OL.Location = 'I' then 'INNER'   
+        when OL.Location = 'O' then 'OUTER'
         else '' end
 from {"{0}"} g with (nolock)
 inner join PackingList p with (nolock) on g.ID = p.INVNo
@@ -204,20 +214,11 @@ left join Order_Location OL with (nolock) on OL.OrderID = pd.OrderID
 outer apply (
 	select kd.status 
 		from KHExportDeclaration kd 
-		where 1=1
-		and kd.id=@ID
+		where kd.id = @ID
 ) kd_status
 outer apply(
 	select OrderID,AvgPrice = sum(ShipQty*POPrice)/sum(ShipQty)
-	from (
-		select ShipQty = sum(pd2.ShipQty),pd2.OrderID,oup.SizeCode,oup.Article ,oup.POPrice
-		from PackingList_Detail pd2 with (nolock)
-		inner join PackingList p1 with (nolock) on pd2.ID = p1.ID
-		inner join Order_UnitPrice oup with (nolock) on oup.Id= pd2.OrderID
-		and oup.Article = pd2.Article and oup.SizeCode = pd2.SizeCode
-		where INVNo = g.ID
-		group by pd2.OrderID,oup.SizeCode,oup.Article,oup.POPrice
-	) a
+	from #tmp_PackingList_Detail a
 	where OrderID = o.ID
 	group by OrderID
 )POPrice
@@ -228,7 +229,7 @@ and g.NonDeclare =0
 and (kd_status.status = 'New' or kd_status.Status is null)
 and not exists (select * from KHExportDeclaration_Detail kdd2 where (kdd2.Invno=g.id or kdd2.LocalInvno=g.id) and  kdd2.OrderID=o.ID) 
 {where}
-group by pd.OrderID,o.StyleID,s.Description,o.PoPrice,o.SeasonID,g.ID,s.Ukey,g.BrandID,g.ShipModeID,o.POPrice,g.Forwarder,g.InvDate,g.Shipper,g.Dest,g.SONo,g.Remark,PoPrice.AvgPrice,g.ETD,o.CustPONo,g.CustCDID, o.StyleUnit,r.FOB, isnull(OL.rate, 1),Location
+group by pd.OrderID,o.StyleID,s.Description,o.PoPrice,o.SeasonID,g.ID,s.Ukey,g.BrandID,g.ShipModeID,o.POPrice,g.Forwarder,g.InvDate,g.Shipper,g.Dest,g.SONo,g.Remark,PoPrice.AvgPrice,g.ETD,o.CustPONo,g.CustCDID, o.StyleUnit,r.FOB, isnull(OL.rate, 1),OL.Location
 
 ";
 
@@ -265,8 +266,7 @@ inner join GMTBooking_Detail gd with (nolock) on gd.ID = g.ID
 outer apply (
 	select kd.status 
 		from KHExportDeclaration kd 
-		where 1=1
-		and kd.id=@ID
+		where kd.id = @ID
 ) kd_status
 where   g.ShipModeID = @ShipMode and
         g.NonDeclare = 0 and

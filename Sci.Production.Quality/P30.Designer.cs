@@ -457,7 +457,7 @@
             this.labelRMTLETA.Name = "labelRMTLETA";
             this.labelRMTLETA.Size = new System.Drawing.Size(165, 23);
             this.labelRMTLETA.TabIndex = 26;
-            this.labelRMTLETA.Text = "Act. MTL ETA(Master SP)";
+            this.labelRMTLETA.Text = "Actual Mtl. ETA";
             // 
             // btnFinished
             // 

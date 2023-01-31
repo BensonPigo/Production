@@ -10,6 +10,9 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Class
 {
+    /// <summary>
+    /// Camera_ShowNew
+    /// </summary>
     public partial class Camera_ShowNew : Sci.Win.Forms.Base
     {
         private List<Endline_Camera_Schema> schemas;
@@ -17,14 +20,22 @@ namespace Sci.Production.Class
 
         private double oldWidth;
         private double oldHeight;
+        private bool isShowDeleteHint = false;
 
-        public Camera_ShowNew(string formName, List<Endline_Camera_Schema> src, string Type)
+        /// <summary>
+        /// Camera_ShowNew
+        /// </summary>
+        /// <param name="formName">formName</param>
+        /// <param name="src">src</param>
+        /// <param name="type">Type</param>
+        /// <param name="isShowDeleteHint">isShowDeleteHint</param>
+        public Camera_ShowNew(string formName, List<Endline_Camera_Schema> src, string type, bool isShowDeleteHint = false)
         {
             this.InitializeComponent();
             this.oldWidth = this.Width;
             this.oldHeight = this.Height;
-            this.strType = Type;
-
+            this.strType = type;
+            this.isShowDeleteHint = isShowDeleteHint;
             this.schemas = src;
             this.Text = formName;
             this.Reload(false);
@@ -37,8 +48,8 @@ namespace Sci.Production.Class
                 return;
             }
 
-            double x = (this.Width / this.oldWidth);
-            double y = (this.Height / this.oldHeight);
+            double x = this.Width / this.oldWidth;
+            double y = this.Height / this.oldHeight;
             this.panel1.Controls.Clear();
 
             foreach (var item in this.schemas)
@@ -52,7 +63,7 @@ namespace Sci.Production.Class
                         this.panel1.Controls.Add(picItemShow);
                         break;
                     default:
-                        CameraDisplay picItem = new CameraDisplay();
+                        CameraDisplay picItem = new CameraDisplay(this.isShowDeleteHint);
                         picItem.SetPictureDisplay(item.desc, item.ID, item.Seq, item.image, item.imgPath, x, y, resize);
                         picItem.Dock = DockStyle.Top;
                         this.panel1.Controls.Add(picItem);
@@ -64,7 +75,7 @@ namespace Sci.Production.Class
         }
 
         // 此按鈕只單純用來close
-        private void btnOK_Click(object sender, EventArgs e)
+        private void BtnOK_Click(object sender, EventArgs e)
         {
             this.Close();
         }

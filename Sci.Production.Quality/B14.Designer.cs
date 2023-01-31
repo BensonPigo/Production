@@ -37,6 +37,8 @@
             this.txtSubProcessID = new Sci.Win.UI.TextBox();
             this.txtID = new Sci.Win.UI.TextBox();
             this.editBoxDescription = new Sci.Win.UI.EditBox();
+            this.label1 = new Sci.Win.UI.Label();
+            this.txtSerial = new Sci.Win.UI.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -45,8 +47,14 @@
             this.tabs.SuspendLayout();
             this.SuspendLayout();
             // 
+            // detail
+            // 
+            this.detail.Size = new System.Drawing.Size(899, 258);
+            // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.txtSerial);
+            this.detailcont.Controls.Add(this.label1);
             this.detailcont.Controls.Add(this.editBoxDescription);
             this.detailcont.Controls.Add(this.txtID);
             this.detailcont.Controls.Add(this.txtSubProcessID);
@@ -56,7 +64,13 @@
             this.detailcont.Controls.Add(this.labeDecription);
             this.detailcont.Controls.Add(this.labelMachine);
             this.detailcont.Controls.Add(this.labefactory);
+            this.detailcont.Size = new System.Drawing.Size(899, 220);
             this.detailcont.TabIndex = 0;
+            // 
+            // detailbtm
+            // 
+            this.detailbtm.Location = new System.Drawing.Point(0, 220);
+            this.detailbtm.Size = new System.Drawing.Size(899, 38);
             // 
             // browse
             // 
@@ -105,7 +119,7 @@
             // 
             // labeDecription
             // 
-            this.labeDecription.Location = new System.Drawing.Point(27, 73);
+            this.labeDecription.Location = new System.Drawing.Point(27, 99);
             this.labeDecription.Name = "labeDecription";
             this.labeDecription.Size = new System.Drawing.Size(86, 23);
             this.labeDecription.TabIndex = 3;
@@ -169,11 +183,29 @@
             this.editBoxDescription.BackColor = System.Drawing.Color.White;
             this.editBoxDescription.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Description", true));
             this.editBoxDescription.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.editBoxDescription.Location = new System.Drawing.Point(116, 73);
+            this.editBoxDescription.Location = new System.Drawing.Point(116, 99);
             this.editBoxDescription.Multiline = true;
             this.editBoxDescription.Name = "editBoxDescription";
             this.editBoxDescription.Size = new System.Drawing.Size(447, 99);
             this.editBoxDescription.TabIndex = 21;
+            // 
+            // label1
+            // 
+            this.label1.Location = new System.Drawing.Point(27, 70);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(86, 23);
+            this.label1.TabIndex = 22;
+            this.label1.Text = "Serial#";
+            // 
+            // txtSerial
+            // 
+            this.txtSerial.BackColor = System.Drawing.Color.White;
+            this.txtSerial.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Serial", true));
+            this.txtSerial.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtSerial.Location = new System.Drawing.Point(116, 70);
+            this.txtSerial.Name = "txtSerial";
+            this.txtSerial.Size = new System.Drawing.Size(447, 23);
+            this.txtSerial.TabIndex = 23;
             // 
             // B14
             // 
@@ -211,5 +243,7 @@
         private Win.UI.EditBox editBoxDescription;
         private Win.UI.TextBox txtID;
         private Win.UI.TextBox txtSubProcessID;
+        private Win.UI.TextBox txtSerial;
+        private Win.UI.Label label1;
     }
 }

@@ -73,6 +73,7 @@ namespace Sci.Production.Warehouse
                     @"
 select 	Orders.MDivisionID
         ,Orders.FtyGroup
+        ,b.ID
         ,a.issuedate
 		,poid = b.frompoid 
 		,[Seq] = CONCAT(LTRIM(RTRIM(b.FromSeq1)),' ',LTRIM(RTRIM(b.FromSeq2)))
@@ -96,7 +97,7 @@ left join FtyInventory ft WITH(NOLOCK) on b.FromPOID=ft.POID
 left join Color c  WITH(NOLOCK) on c.ID=po3.ColorID and c.BrandId=orders.BrandID
 where a.Status = 'Confirmed' and a.type='A' 
 {0}
-group by Orders.MDivisionID, Orders.FtyGroup, a.issuedate, b.FromPOID, b.FromSeq1, b.FromSeq2,b.FromRoll,b.FromDyelot,po3.StockUnit,c.Name,ft.Ukey,b.ToLocation ,a.AddName
+group by Orders.MDivisionID, Orders.FtyGroup, a.issuedate, b.FromPOID, b.FromSeq1, b.FromSeq2,b.FromRoll,b.FromDyelot,po3.StockUnit,c.Name,ft.Ukey,b.ToLocation ,a.AddName ,b.ID
 order by Orders.MDivisionID, Orders.FtyGroup, a.issuedate, b.FromPOID, b.FromSeq1, b.FromSeq2
 ", sqlFilter);
                 result = DBProxy.Current.Select(null, sqlcmd, out this.dt);

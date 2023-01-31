@@ -96,6 +96,8 @@ namespace Sci.Production.Shipping
 
             string sqlcmd = $@"
 select	o.ID,
+        o.CustPONo,
+        o.StyleID,
 		[UnitPriceUSD] = ((isnull(o.CPU, 0) + isnull(SubProcessCPU.val, 0)) * isnull(CpuCost.val, 0)) + isnull(SubProcessAMT.val, 0) + isnull(LocalPurchase.val, 0)
 into #tmpUnitPriceUSD
 from Orders o with (nolock)
@@ -129,15 +131,20 @@ SELECT  0 as [selected],
         GB.BrandID,
         GB.ETD,
         GB.ETA,
-        GB.TotalShipQty ,
-		Amount = GB.TotalShipQty * UnitPriceUSD.TTLUnitPriceUSD
+        GB.TotalShipQty,
+		UnitPriceUSD.Amount
 FROM GMTBooking GB with (nolock)
 outer apply(
-	select TTLUnitPriceUSD = sum(t.UnitPriceUSD) 
-	from PackingList p
-	inner join PackingList_Detail pd on pd.ID = p.ID
-	inner join #tmpUnitPriceUSD t on t.ID = pd.OrderID
-	where p.INVNo = gb.ID
+    select Amount = sum(Amount)
+    from(
+	    select Amount = t.UnitPriceUSD * sum(pd.ShipQty)
+	    from PackingList p
+	    inner join PackingList_Detail pd on pd.ID = p.ID
+        inner join Orders o on o.id = pd.OrderID
+	    inner join #tmpUnitPriceUSD t on t.ID = pd.OrderID and t.CustPONo = o.CustPONo and t.StyleID = o.StyleID 
+	    where p.INVNo = gb.ID
+        group by UnitPriceUSD
+    )ttl
 )UnitPriceUSD
 WHERE GB.ETD IS NOT NULL
 AND GB.[Status]='Confirmed'
@@ -214,6 +221,11 @@ drop table #tmpUnitPriceUSD
 
         private void CountSelectQty()
         {
+            if (this.gridGMTbs.DataSource == null)
+            {
+                return;
+            }
+
             var upd_list = ((DataTable)this.gridGMTbs.DataSource).AsEnumerable().Where(x => x["selected"].EqualDecimal(1)).ToList();
             if (upd_list.Count == 0)
             {
@@ -222,8 +234,8 @@ drop table #tmpUnitPriceUSD
                 return;
             }
 
-            this.numbTtlQty.Value = upd_list.Sum(r => Convert.ToDecimal(r["TotalShipQty"]));
-            this.numbTtlAmount.Value = upd_list.Sum(r => Convert.ToDecimal(r["Amount"]));
+            this.numbTtlQty.Value = upd_list.Sum(r => MyUtility.Convert.GetDecimal(r["TotalShipQty"]));
+            this.numbTtlAmount.Value = upd_list.Sum(r => MyUtility.Convert.GetDecimal(r["Amount"]));
         }
 
         private void GridGMTBooking_ColumnHeaderMouseClick(object sender, System.Windows.Forms.DataGridViewCellMouseEventArgs e)

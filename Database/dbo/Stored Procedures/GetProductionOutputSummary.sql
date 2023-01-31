@@ -384,11 +384,16 @@ from @tmpBaseStep1 tbs
 inner join Orders o with(nolock) on o.ID = tbs.ID
 inner join Factory f with(nolock) on f.ID = o.FactoryID and f.junk = 0
 left join @tmpSewingOutput sdd on sdd.OrderId = o.ID
-outer apply (select [CpuRate] = case when o.IsForecast = 1 then (select CpuRate from GetCPURate(o.OrderTypeID, o.ProgramID, o.Category, o.BrandID, 'O'))
+outer apply (select [CpuRate] = case when o.IsForecast = 1 then o.CPUFactor
                                      when o.LocalOrder = 1 then 1
-                                     else (select CpuRate from GetCPURate(o.OrderTypeID, o.ProgramID, o.Category, o.BrandID, 'O')) end
+                                     else o.CPUFactor end
                      ) gcRate
-outer apply (select Qty=sum(shipQty) from Pullout_Detail where orderid = o.id) GetPulloutData
+outer apply (select Qty=sum(pd.ShipQty)
+	from PackingList p with(nolock), PackingList_Detail pd with(nolock)
+	where p.ID = pd.ID 
+		  and p.PulloutID <> '' 
+		  and pd.OrderID = o.ID
+) GetPulloutData
 outer apply (select [SCI] = dateadd(day,-7,o.SciDelivery),
                     [Buyer] = o.BuyerDelivery) KeyDate
 
@@ -509,11 +514,12 @@ declare @tmpPullout_Detail TABLE(
 	[PulloutQty] [INT] NULL
 )
 INSERT INTO @tmpPullout_Detail
-select  pd.OrderID, [PulloutQty] = sum(pd.shipQty)
---into #tmpPullout_Detail
-from Pullout_Detail pd with (nolock)
-where exists (select 1 from @tmpBaseByOrderID tb where tb.ID = pd.OrderID)
-group by pd.OrderID
+select pd.OrderID, [PulloutQty] = sum(pd.shipQty)
+                  from PackingList p with(nolock), PackingList_Detail pd with(nolock)
+                  where p.ID = pd.ID
+                  and p.PulloutID <> ''
+                  and exists (select 1 from @tmpBaseByOrderID tb where tb.ID = pd.OrderID)
+                  group by pd.OrderID
 
 select
 	o.MDivisionID,
@@ -611,7 +617,8 @@ begin
 			[SewingOutput] = ISNULL(SewingOutput, 0),
 			[SewingOutputCPU] = ISNULL(SewingOutputCPU, 0),
 			FtyZone,
-			TransFtyZone 
+			TransFtyZone,
+            IsCancelNeedProduction
 	from @tmpBaseBySource 
 
 	select  FtyGroup,OutputDate,[SewingOutputCPU] = sum(SewingOutputCPU) * -1,FtyZone

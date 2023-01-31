@@ -139,6 +139,9 @@ a.Ukey	= b.Ukey
 ,a.DevRegion = b.DevRegion
 ,a.DevOption = b.DevOption
 ,a.Teamwear = b.Teamwear
+,a.BrandGender = isnull(b.BrandGender,'')
+,a.Location = isnull(b.Location,'')
+,a.NEWCO = isnull(b.NEWCO,'')
 from Production.dbo.Style as a 
 inner join Trade_To_Pms.dbo.Style as b ON a.ID	= b.ID AND a.BrandID	= b.BrandID AND a.SeasonID	= b.SeasonID
 
@@ -226,6 +229,9 @@ ID
 ,DevRegion
 ,DevOption
 ,Teamwear
+,BrandGender
+,Location
+,NEWCO
 )
 output	inserted.ID,
 		inserted.SeasonID,
@@ -301,6 +307,9 @@ select
 ,b.DevRegion
 ,b.DevOption
 ,b.Teamwear
+,isnull(b.BrandGender,'')
+,isnull(b.Location,'')
+,isnull(b.NEWCO,'')
 from Trade_To_Pms.dbo.Style as b WITH (NOLOCK)
 where not exists(select id from Production.dbo.Style as a WITH (NOLOCK) where a.ID=b.ID and a.BrandID=b.BrandID and a.SeasonID=b.SeasonID and a.LocalStyle=1)
 AND not exists(select id from Production.dbo.Style as a WITH (NOLOCK) where a.Ukey=b.Ukey )
@@ -1242,7 +1251,7 @@ a.ColorID	= b.ColorID
 ,a.AddDate	= b.AddDate
 ,a.EditName	= b.EditName
 ,a.EditDate	= b.EditDate
-
+,a.FabricType = isnull(b.FabricType,'')
 from Production.dbo.Style_ColorCombo as a 
 inner join Trade_To_Pms.dbo.Style_ColorCombo as b ON a. StyleUkey	= b. StyleUkey AND a.Article	= b.Article AND a.FabricPanelCode	= b.FabricPanelCode
 -------------------------- INSERT INTO 抓
@@ -1258,6 +1267,7 @@ INSERT INTO Production.dbo.Style_ColorCombo(
 ,AddDate
 ,EditName
 ,EditDate
+,FabricType
 )
 select 
  b.StyleUkey
@@ -1270,6 +1280,7 @@ select
 ,b.AddDate
 ,b.EditName
 ,b.EditDate
+,isnull(b.FabricType,'')
 from Trade_To_Pms.dbo.Style_ColorCombo as b
 where not exists(select 1 from Production.dbo.Style_ColorCombo as a WITH (NOLOCK) where a. StyleUkey	= b. StyleUkey AND a.Article	= b.Article AND a.FabricPanelCode	= b.FabricPanelCode)
 --STYLEJ
@@ -2237,4 +2248,406 @@ when not matched by target then
 when not matched by source AND t.Styleukey IN (SELECT Ukey FROM Trade_To_Pms.dbo.Style) then 
 	delete;
 
+
+------------Style_ArtworkTestDox
+----------------------刪除主TABLE多的資料
+RAISERROR('imp_Style - Starts',0,0)
+Delete Production.dbo.Style_ArtworkTestDox
+from Production.dbo.Style_ArtworkTestDox as a 
+INNER JOIN Trade_To_Pms.dbo.Style as t on a.StyleUkey=t.Ukey
+left join Trade_To_Pms.dbo.Style_ArtworkTestDox as b
+on a.Ukey = b.Ukey
+where b.Ukey is null
+
+
+UPDATE a
+   SET [StyleUkey]=isnull(b.[StyleUkey],0)
+      ,[ArtworkTypeID]=isnull(b.[ArtworkTypeID],'')
+      ,[ArtworkID]=isnull(b.[ArtworkID],'')
+      ,[Article]=isnull(b.[Article],'')
+      ,[F_FabricPanelCode]=isnull(b.[F_FabricPanelCode],'')
+      ,[F_Refno]=isnull(b.[F_Refno],'')
+      ,[A_FabricPanelCode]=isnull(b.[A_FabricPanelCode],'')
+	  ,[A_Refno]=isnull(b.[A_Refno],'')
+	  ,[FabricFaceSide]=isnull(b.[FabricFaceSide],'')
+	  ,[PrintType]=isnull(b.[PrintType],'')
+	  ,[TestNo]=isnull(b.[TestNo],'')
+	  ,[TestResult]=isnull(b.[TestResult],'')
+      ,[Remark]=isnull(b.[Remark],'')
+      ,[AddName]=isnull(b.[AddName],'')
+      ,[AddDate]=b.[AddDate]
+      ,[EditName]=isnull(b.[EditName],'')
+	  ,[EditDate]=b.[EditDate]
+	  ,[SubstrateFormSendDate]=	b.[SubstrateFormSendDate]
+	  ,[FactoryID]=isnull(b.[FactoryID],'')
+	  ,[OrderID]=isnull(b.[OrderID],'')
+	  ,[IsA_FabricPanelCodeCanEmpty]=isnull(b.[IsA_FabricPanelCodeCanEmpty],0)
+from Production.dbo.Style_ArtworkTestDox a
+inner join Trade_To_Pms.dbo.Style_ArtworkTestDox b on b.Ukey = a.Ukey
+
+
+INSERT INTO [dbo].[Style_ArtworkTestDox]
+(	   [Ukey]
+      ,[StyleUkey]
+      ,[ArtworkTypeID]
+      ,[ArtworkID]
+      ,[Article]
+      ,[F_FabricPanelCode]
+      ,[F_Refno]
+      ,[A_FabricPanelCode]
+      ,[A_Refno]
+      ,[FabricFaceSide]
+      ,[PrintType]
+      ,[TestNo]
+      ,[TestResult]
+      ,[Remark]
+      ,[AddName]
+      ,[AddDate]
+      ,[EditName]
+      ,[EditDate]
+      ,[SubstrateFormSendDate]
+      ,[FactoryID]
+      ,[OrderID]
+      ,[IsA_FabricPanelCodeCanEmpty]
+)
+select
+	   a.[Ukey]
+      ,isnull(a.[StyleUkey],0)
+      ,isnull(a.[ArtworkTypeID],'')
+      ,isnull(a.[ArtworkID],'')
+      ,isnull(a.[Article],'')
+      ,isnull(a.[F_FabricPanelCode],'')
+      ,isnull(a.[F_Refno],'')
+      ,isnull(a.[A_FabricPanelCode],'')
+      ,isnull(a.[A_Refno],'')
+      ,isnull(a.[FabricFaceSide],'')
+      ,isnull(a.[PrintType],'')
+      ,isnull(a.[TestNo],'')
+      ,isnull(a.[TestResult],'')
+      ,isnull(a.[Remark],'')
+      ,isnull(a.[AddName],'')
+      ,a.[AddDate]
+      ,isnull(a.[EditName],'')
+      ,a.[EditDate]
+      ,a.[SubstrateFormSendDate]
+      ,isnull(a.[FactoryID],'')
+      ,isnull(a.[OrderID],'')
+      ,isnull(a.[IsA_FabricPanelCodeCanEmpty],0)
+from Trade_To_Pms.dbo.Style_ArtworkTestDox a
+left join Production.dbo.Style_ArtworkTestDox b on b.Ukey = a.Ukey
+where b.Ukey is null
+
+------------Style_CustOrderSize
+----------------------刪除主TABLE多的資料
+RAISERROR('imp_Style - Starts',0,0)
+Delete Production.dbo.Style_CustOrderSize
+from Production.dbo.Style_CustOrderSize as a 
+INNER JOIN Trade_To_Pms.dbo.Style as t on a.StyleUkey=t.Ukey
+left join Trade_To_Pms.dbo.Style_CustOrderSize as b
+on a.StyleUkey = b.StyleUkey
+where b.StyleUkey is null
+
+UPDATE a
+   SET [StyleUkey]=isnull(b.[StyleUkey],0)
+	  ,[SizeCode]=isnull(b.[SizeCode],'')
+	  ,[SizeSpec]=isnull(b.[SizeSpec],'')
+      ,[AddName]=isnull(b.[AddName],'')
+      ,[AddDate]=b.[AddDate]
+      ,[EditName]=isnull(b.[EditName],'')
+	  ,[EditDate]=b.[EditDate]
+from Production.dbo.Style_CustOrderSize a
+inner join Trade_To_Pms.dbo.Style_CustOrderSize b on b.StyleUkey = a.StyleUkey
+
+INSERT INTO [dbo].[Style_CustOrderSize]
+(	  
+      [StyleUkey]
+	  ,[SizeCode]
+	  ,[SizeSpec]
+      ,[AddName]
+      ,[AddDate]
+      ,[EditName]
+      ,[EditDate]
+)
+select	  
+      isnull(a.[StyleUkey],0)
+	  ,isnull(a.[SizeCode],'')
+	  ,isnull(a.[SizeSpec],'')
+      ,isnull(a.[AddName],'')
+      ,a.[AddDate]
+      ,isnull(a.[EditName],'')
+      ,a.[EditDate]
+from Trade_To_Pms.dbo.Style_CustOrderSize a
+left join Production.dbo.Style_CustOrderSize b on b.StyleUkey = a.StyleUkey
+where b.StyleUkey is null
+
+------------Marker
+----------------------刪除主TABLE多的資料
+RAISERROR('imp_Style - Starts',0,0)
+Delete Production.dbo.Marker
+from Production.dbo.Marker as a 
+INNER JOIN Trade_To_Pms.dbo.Style as t on a.StyleUkey=t.Ukey
+left join Trade_To_Pms.dbo.Marker as b
+on a.Ukey = b.Ukey
+where b.Ukey is null
+
+UPDATE a
+   SET 
+        [ID] = isnull(b.id,''),	
+		[Version]  = isnull(b.[Version],''),
+		[BrandID]  = isnull(b.[BrandID],''),
+		[StyleID]  = isnull(b.[StyleID],'') ,
+		[SeasonID] = isnull(b.[SeasonID],'') ,
+		[MarkerNo] = isnull(b.[MarkerNo],'') ,
+		[ActFtyMarker] = isnull(b.[ActFtyMarker],'') ,
+		[PatternID]    = isnull(b.[PatternID],'') ,
+		[PatternNo]    = isnull(b.[PatternNo],'') ,
+		[PatternVersion]  = ISNULL(b.[PatternVersion],''),
+		[MarkerName] = ISNULL(b.[MarkerName] ,''),
+		[MarkerFormat] = ISNULL(b.[MarkerFormat] ,''),
+		[EstFinDate] = b.[EstFinDate] ,
+		[ActFinDate] = b.[ActFinDate],
+		[PLUS] = isnull(b.[PLUS],0),
+		[RevisedReason] = isnull(b.[RevisedReason] ,''),
+		[Status] = ISNULL(b.[Status] ,''),
+		[CFMName] = ISNULL(b.[CFMName] ,''),
+		[StyleRemark] = ISNULL(b.[StyleRemark] ,''),
+		[HisRemark] = ISNULL(b.[HisRemark] ,''),
+		[PendingRemark] = ISNULL(b.[PendingRemark] ,''),
+		[StyleUkey] = ISNULL(b.[StyleUkey] ,0),
+		[AddName] = ISNULL(b.[AddName] ,''),
+		[AddDate]  = b.[AddDate] ,
+		[EditName] = ISNULL(b.[EditName],'') ,
+		[EditDate] = b.[EditDate] ,
+		[KeepPreviousVersion] = ISNULL(b.[KeepPreviousVersion] ,0),
+		[SizeReason] = ISNULL(b.[SizeReason] ,''),
+		[MarkerNoLoss] = ISNULL(b.[MarkerNoLoss] ,0)
+	from Production.dbo.Marker a
+inner join Trade_To_Pms.dbo.Marker b on b.Ukey = a.Ukey
+
+
+INSERT INTO [dbo].[Marker]
+(	   [ID]
+      ,[Version]
+      ,[BrandID]
+      ,[StyleID]
+      ,[SeasonID]
+      ,[MarkerNo]
+      ,[ActFtyMarker]
+      ,[PatternID]
+      ,[PatternNo]
+      ,[PatternVersion]
+      ,[MarkerName]
+      ,[MarkerFormat]
+      ,[EstFinDate]
+      ,[ActFinDate]
+      ,[PLUS]
+      ,[RevisedReason]
+      ,[Status]
+      ,[CFMName]
+      ,[UKey]
+      ,[StyleRemark]
+      ,[HisRemark]
+      ,[PendingRemark]
+      ,[StyleUkey]
+      ,[AddName]
+      ,[AddDate]
+      ,[EditName]
+      ,[EditDate]
+	  ,[KeepPreviousVersion]
+      ,[SizeReason]
+      ,[MarkerNoLoss]
+)
+select
+	   ISNULL(a.[ID],'')
+      ,ISNULL(a.[Version],'')
+      ,ISNULL(a.[BrandID],'')
+      ,ISNULL(a.[StyleID],'')
+      ,ISNULL(a.[SeasonID],'')
+      ,ISNULL(a.[MarkerNo],'')
+      ,ISNULL(a.[ActFtyMarker],'')
+      ,ISNULL(a.[PatternID],'')
+      ,ISNULL(a.[PatternNo],'')
+      ,ISNULL(a.[PatternVersion],'')
+      ,ISNULL(a.[MarkerName],'')
+      ,ISNULL(a.[MarkerFormat],'')
+      ,a.[EstFinDate]
+      ,a.[ActFinDate]
+      ,ISNULL(a.[PLUS],0)
+      ,ISNULL(a.[RevisedReason],'')
+      ,ISNULL(a.[Status],'')
+      ,ISNULL(a.[CFMName],'')
+      ,ISNULL(a.[UKey],0)
+      ,ISNULL(a.[StyleRemark],'')
+      ,ISNULL(a.[HisRemark],'')
+      ,ISNULL(a.[PendingRemark],'')
+      ,ISNULL(a.[StyleUkey],0)
+      ,ISNULL(a.[AddName],'')
+      ,a.[AddDate]
+      ,ISNULL(a.[EditName],'')
+      ,a.[EditDate]
+      ,ISNULL(a.[KeepPreviousVersion],0)
+      ,ISNULL(a.[SizeReason],'')
+      ,ISNULL(a.[MarkerNoLoss],0)
+from Trade_To_Pms.dbo.Marker a
+left join Production.dbo.Marker b on b.Ukey = a.Ukey
+where b.Ukey is null
+
+------------Marker_ML
+----------------------刪除主TABLE多的資料
+RAISERROR('imp_Style - Starts',0,0)
+Delete Production.dbo.Marker_ML
+from Production.dbo.Marker_ML as a 
+inner join Trade_To_Pms.dbo.Marker t on t.Ukey = a.MarkerUkey
+left join Trade_To_Pms.dbo.Marker_ML as b
+on a.ID = b.ID and a.Version = b.Version and a.MarkerName = b.MarkerName
+where b.ID is null
+
+UPDATE a
+   SET 
+        [ID] = ISNULL(b.[ID] ,'')
+      ,[Version] = ISNULL(b.[Version] ,'')
+      ,[MarkerUkey] = ISNULL(b.[MarkerUkey],0)
+      ,[MarkerName] = ISNULL(b.[MarkerName],'')
+      ,[FabricPanelCode] = ISNULL(b.[FabricPanelCode],'')
+      ,[SCIRefno] = ISNULL(b.[SCIRefno],'')
+      ,[MarkerLength] = ISNULL(b.[MarkerLength],'')
+      ,[PatternPanel] = ISNULL(b.[PatternPanel],'')
+      ,[FabricCode] = ISNULL(b.[FabricCode],'')
+      ,[Width] = ISNULL(b.[Width],'')
+      ,[Efficiency] = ISNULL(b.[Efficiency],'')
+      ,[Remark] = ISNULL(b.[Remark],'')
+      ,[ConsPC] = ISNULL(b.[ConsPC],'')
+      ,[Article] = isnull(b.[Article],'')
+      ,[ActCuttingPerimeter] = ISNULL(b.[ActCuttingPerimeter],'')
+      ,[Perimeter] = ISNULL(b.[Perimeter],'')
+      ,[StraightLength] = ISNULL(b.[StraightLength],'')
+      ,[CurvedLength] = ISNULL(b.[CurvedLength],'')
+      ,[TotalCuttingPieceNum] = ISNULL(b.[TotalCuttingPieceNum],'')
+      ,[AllSize] = ISNULL(b.[AllSize],0)
+      ,[OneTwoWay] = ISNULL(b.[OneTwoWay],0)
+      ,[V_Repeat] = ISNULL(b.[V_Repeat],0)
+      ,[H_Repeat] = ISNULL(b.[H_Repeat],0)
+      ,[MatchFabric] = ISNULL(b.[MatchFabric],'')
+      ,[HorizontalCutting] = ISNULL(b.[HorizontalCutting],0)
+      ,[UKey_Old] = ISNULL(b.[UKey_Old],'')
+      ,[Mtl_Key] = ISNULL(b.[Mtl_Key],'')
+      ,[Mtl_Ver] = ISNULL(b.[Mtl_Ver],'')
+	from Production.dbo.Marker_ML a
+inner join Trade_To_Pms.dbo.Marker_ML b 
+on a.ID = b.ID and a.Version = b.Version and a.MarkerName = b.MarkerName
+
+
+INSERT INTO [dbo].[Marker_ML]
+(	   [ID]
+      ,[Version]
+      ,[MarkerUkey]
+      ,[MarkerName]
+      ,[FabricPanelCode]
+      ,[SCIRefno]
+      ,[MarkerLength]
+      ,[PatternPanel]
+      ,[FabricCode]
+      ,[Width]
+      ,[Efficiency]
+      ,[Remark]
+      ,[ConsPC]
+      ,[Article]
+      ,[ActCuttingPerimeter]
+      ,[Perimeter]
+      ,[StraightLength]
+      ,[CurvedLength]
+      ,[TotalCuttingPieceNum]
+      ,[AllSize]
+      ,[OneTwoWay]
+      ,[V_Repeat]
+      ,[H_Repeat]
+      ,[MatchFabric]
+      ,[HorizontalCutting]
+      ,[UKey_Old]
+      ,[Mtl_Key]
+      ,[Mtl_Ver]
+)
+select
+	   ISNULL(a.[ID],'')
+      ,ISNULL(a.[Version],'')
+      ,ISNULL(a.[MarkerUkey],0)
+      ,ISNULL(a.[MarkerName],'')
+      ,ISNULL(a.[FabricPanelCode],'')
+      ,ISNULL(a.[SCIRefno],'')
+      ,ISNULL(a.[MarkerLength],'')
+      ,ISNULL(a.[PatternPanel],'')
+      ,ISNULL(a.[FabricCode],'')
+      ,ISNULL(a.[Width],'')
+      ,ISNULL(a.[Efficiency],'')
+      ,ISNULL(a.[Remark],'')
+      ,ISNULL(a.[ConsPC],'')
+      ,ISNULL(a.[Article],'')
+      ,ISNULL(a.[ActCuttingPerimeter],'')
+      ,ISNULL(a.[Perimeter],'')
+      ,ISNULL(a.[StraightLength],'')
+      ,ISNULL(a.[CurvedLength],'')
+      ,ISNULL(a.[TotalCuttingPieceNum],'')
+      ,ISNULL(a.[AllSize],0)
+      ,ISNULL(a.[OneTwoWay],0)
+      ,ISNULL(a.[V_Repeat],0)
+      ,ISNULL(a.[H_Repeat],0) 
+      ,ISNULL(a.[MatchFabric],'')
+      ,ISNULL(a.[HorizontalCutting],0)
+      ,ISNULL(a.[UKey_Old],'')
+      ,ISNULL(a.[Mtl_Key],'')
+      ,ISNULL(a.[Mtl_Ver],'')
+from Trade_To_Pms.dbo.Marker_ML a
+left join Production.dbo.Marker_ML b 
+on a.ID = b.ID and a.Version = b.Version and a.MarkerName = b.MarkerName
+where b.ID is null
+
+------------Marker_ML_SizeQty
+----------------------刪除主TABLE多的資料
+RAISERROR('imp_Style - Starts',0,0)
+Delete Production.dbo.Marker_ML_SizeQty
+from Production.dbo.Marker_ML_SizeQty as a 
+inner join Trade_To_Pms.dbo.Marker t on t.Ukey = a.MarkerUkey
+left join Trade_To_Pms.dbo.Marker_ML_SizeQty as b
+on a.ID = b.ID and a.Version = b.Version and a.MarkerName = b.MarkerName
+and a.SizeCode = b.SizeCode
+where b.ID is null
+
+
+UPDATE a
+   SET 
+       [ID] = ISNULL(b.[ID],'')
+      ,[Version] = ISNULL(b.[Version],'')
+      ,[MarkerName] = ISNULL(b.[MarkerName],'')
+      ,[SizeCode] = ISNULL(b.[SizeCode],'')
+      ,[Qty] = ISNULL(b.[Qty],0)
+      ,[UKey_Old] = ISNULL(b.[UKey_Old],'')
+	from Production.dbo.Marker_ML_SizeQty a
+inner join Trade_To_Pms.dbo.Marker_ML_SizeQty b 
+on a.ID = b.ID and a.Version = b.Version and a.MarkerName = b.MarkerName
+and a.SizeCode = b.SizeCode
+
+
+INSERT INTO [dbo].[Marker_ML_SizeQty]
+(	   [ID]
+      ,[Version]
+      ,[MarkerUkey]
+      ,[MarkerName]
+      ,[SizeCode]
+      ,[Qty]
+      ,[UKey_Old]
+)
+select
+	   ISNULL(a.[ID],'')    ,ISNULL(a.[Version],'')
+      ,ISNULL(a.[MarkerUkey],0)
+      ,ISNULL(a.[MarkerName],'')
+      ,ISNULL(a.[SizeCode],'')
+      ,ISNULL(a.[Qty],0)
+      ,ISNULL(a.[UKey_Old],'')
+from Trade_To_Pms.dbo.Marker_ML_SizeQty a
+left join Production.dbo.Marker_ML_SizeQty b 
+on a.ID = b.ID and a.Version = b.Version and a.MarkerName = b.MarkerName
+and a.SizeCode = b.SizeCode
+where b.ID is null
+
 END
+ 

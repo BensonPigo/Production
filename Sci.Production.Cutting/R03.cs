@@ -168,7 +168,8 @@ select
 	wo.Seq1,
 	wo.Seq2,
     [ActConsOutput] = cast(isnull(iif(wo.Layer - isnull(acc.AccuCuttingLayer,0) = 0, wo.Cons, acc.AccuCuttingLayer * ML.YDSMarkerLength),0) as numeric(9,4)),
-    [UnfinishedCuttingReasonDesc] = dw.Name
+    [UnfinishedCuttingReasonDesc] = dw.Name,
+    wo.Remark
 into #tmp
 from WorkOrder wo WITH (NOLOCK) 
 inner join Orders o WITH (NOLOCK) on o.id = wo.OrderID
@@ -395,6 +396,7 @@ select
 ,[Marker Length],ActCuttingPerimeter,ActCuttingPerimeterDecimal=0.0,SCIDelivery,BuyerDelivery
 ,[To be combined]=cl.v
 ,t.UnfinishedCuttingReasonDesc
+,t.Remark
 from #tmp t
 --因效能,此欄位outer apply寫在這, 寫在上面會慢5倍
 outer apply(

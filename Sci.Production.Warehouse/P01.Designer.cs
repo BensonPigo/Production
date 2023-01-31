@@ -1358,7 +1358,7 @@
             this.labelSCHDLETAMasterSP.Name = "labelSCHDLETAMasterSP";
             this.labelSCHDLETAMasterSP.Size = new System.Drawing.Size(142, 21);
             this.labelSCHDLETAMasterSP.TabIndex = 139;
-            this.labelSCHDLETAMasterSP.Text = "SCHD L/ETA(Master SP)";
+            this.labelSCHDLETAMasterSP.Text = "SCHD L/ETA";
             // 
             // labelKPILETA
             // 
@@ -1393,7 +1393,7 @@
             this.labelRMTLETAMasterSP.Name = "labelRMTLETAMasterSP";
             this.labelRMTLETAMasterSP.Size = new System.Drawing.Size(144, 21);
             this.labelRMTLETAMasterSP.TabIndex = 146;
-            this.labelRMTLETAMasterSP.Text = "Act. MTL ETA(Master SP)";
+            this.labelRMTLETAMasterSP.Text = "Actual Mtl. ETA";
             // 
             // displayMTLCmpltSP
             // 

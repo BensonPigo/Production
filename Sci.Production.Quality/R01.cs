@@ -261,6 +261,8 @@ select
 	,C.WeaveTypeID
 	,[N/A Physical] = IIF(F.Nonphysical = 1,'Y',' ')
 	,F.Result
+	,[Cut Shadeband Qty (Roll)] = Qty.Roll
+	,[Cut Shadeband] = Shadeband.sCount
 	,F.Physical
 	,[PhysicalInspector] = (select name from Pass1 where id = f.PhysicalInspector)
 	,F.PhysicalDate
@@ -430,6 +432,22 @@ outer apply
 	WHERE a.status = 'Confirmed' and b.stocktype='I'
 	AND b.Poid=f.POID and b.Seq1=f.SEQ1 and b.Seq2=f.SEQ2
 )ILT
+outer apply
+(
+	select Roll = count(Roll+Dyelot) from FIR_Shadebone fs where fs.ID =F.ID and fs.CutTime is not null
+)
+Qty 
+outer apply
+(
+	select
+		[sCount] = iif(isnull(s.Roll,0) = 0 , 0, cast(Qty.Roll as float) / cast(s.Roll as float)) 
+	from
+	(
+		select Roll = count(Roll+Dyelot) 
+		from FIR_Shadebone fs
+		where fs.ID = f.ID 
+	) s
+) Shadeband
 {sqlWhere} 
 ORDER BY POID,SEQ
 OPTION (OPTIMIZE FOR UNKNOWN)
@@ -473,6 +491,8 @@ select
 	,tf.Weight
 	,tf.WeightInspector
 	,tf.WeightDate
+	,tf.[Cut Shadeband Qty (Roll)]
+	,tf.[Cut Shadeband]
 	,tf.ShadeBond
 	,tf.ShadeboneInspector
 	,tf.ShadeBondDate

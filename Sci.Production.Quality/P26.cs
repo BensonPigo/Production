@@ -140,7 +140,7 @@ select c.ReturnTo
 from cfareturn c
 left join Orders o on o.id=c.orderid
 left join Country ct WITH (NOLOCK) on ct.id=o.dest
-left join PackingList_Detail pd WITH (NOLOCK) on  pd.SCICtnNo = c.SCICtnNo 
+left join PackingList_Detail pd WITH (NOLOCK) on  pd.SCICtnNo = c.SCICtnNo and pd.CTNQty = 1
 where 1=1
 {listSQLFilter.JoinToString($"{Environment.NewLine} ")}
 ";

@@ -793,6 +793,8 @@ where o.LocalOrder = 0 and exists (select 1 from Factory where o.FactoryId = id 
             // 刪除欄位
             objSheet.get_Range("CF:CL").EntireColumn.Delete();
 
+            // 移除 CD Code欄位
+            objSheet.get_Range("H:H").EntireColumn.Delete();
             #region Save & Show Excel
             string strExcelName = Class.MicrosoftFile.GetName("Planning_R16");
             Excel.Workbook workbook = objApp.ActiveWorkbook;

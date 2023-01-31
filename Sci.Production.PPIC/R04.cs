@@ -257,16 +257,8 @@ order by MDivisionID,FactoryID",
                     if (xlsSheet != 1)
                     {
                         worksheet.Cells[3, 5] = string.Format("=COUNTA(C7:C{0})", MyUtility.Convert.GetString(ttlCount + 6));
-                        if (this.reportType == 0)
-                        {
-                            worksheet.Cells[4, 5] = string.Format("=COUNTIF(Q7:Q{0},\"=Y\")", MyUtility.Convert.GetString(ttlCount + 6));
-                            worksheet.Cells[3, 16] = string.Format("=SUM(L7:L{0})", MyUtility.Convert.GetString(ttlCount + 6));
-                        }
-                        else
-                        {
-                            worksheet.Cells[4, 5] = string.Format("=COUNTIF(P7:P{0},\"=Y\")", MyUtility.Convert.GetString(ttlCount + 6));
-                            worksheet.Cells[3, 15] = string.Format("=SUM(J7:J{0})", MyUtility.Convert.GetString(ttlCount + 6));
-                        }
+                        worksheet.Cells[4, 5] = string.Format("=COUNTIF(Q7:Q{0},\"=Y\")", MyUtility.Convert.GetString(ttlCount + 6));
+                        worksheet.Cells[3, 16] = string.Format("=SUM(L7:L{0})", MyUtility.Convert.GetString(ttlCount + 6));
                     }
 
                     xlsSheet++;
@@ -290,47 +282,23 @@ order by MDivisionID,FactoryID",
                 objArray[0, 6] = dr["ColorName"];
                 objArray[0, 7] = dr["Refno"];
                 objArray[0, 8] = dr["ApvDate"];
-                if (this.reportType == 0)
-                {
-                    objArray[0, 9] = dr["RejectQty"];
-                    objArray[0, 10] = dr["RequestQty"];
-                    objArray[0, 11] = dr["IssueQty"];
-                    objArray[0, 12] = dr["FinishedDate"];
-                    objArray[0, 13] = dr["Type"];
-                    objArray[0, 14] = dr["Process"];
-                    objArray[0, 15] = dr["Description"];
-                    objArray[0, 16] = dr["OnTime"];
-                    objArray[0, 17] = dr["Remark"];
-                }
-                else
-                {
-                    objArray[0, 9] = dr["RequestQty"];
-                    objArray[0, 10] = dr["IssueQty"];
-                    objArray[0, 11] = dr["FinishedDate"];
-                    objArray[0, 12] = dr["Type"];
-                    objArray[0, 13] = dr["Process"];
-                    objArray[0, 14] = dr["Description"];
-                    objArray[0, 15] = dr["OnTime"];
-                    objArray[0, 16] = dr["Remark"];
-                    objArray[0, 17] = string.Empty;
-                }
+                objArray[0, 9] = dr["RejectQty"];
+                objArray[0, 10] = dr["RequestQty"];
+                objArray[0, 11] = dr["IssueQty"];
+                objArray[0, 12] = dr["FinishedDate"];
+                objArray[0, 13] = dr["Type"];
+                objArray[0, 14] = dr["Process"];
+                objArray[0, 15] = dr["Description"];
+                objArray[0, 16] = dr["OnTime"];
+                objArray[0, 17] = dr["Remark"];
 
                 worksheet.Range[string.Format("A{0}:R{0}", intRowsStart)].Value2 = objArray;
                 intRowsStart++;
             }
 
             worksheet.Cells[3, 5] = string.Format("=COUNTA(C7:C{0})", MyUtility.Convert.GetString(ttlCount + 6));
-            if (this.reportType == 0)
-            {
-                worksheet.Cells[4, 5] = string.Format("=COUNTIF(Q7:Q{0},\"=Y\")", MyUtility.Convert.GetString(ttlCount + 6));
-                worksheet.Cells[3, 16] = string.Format("=SUM(L7:L{0})", MyUtility.Convert.GetString(ttlCount + 6));
-            }
-            else
-            {
-                worksheet.Cells[4, 5] = string.Format("=COUNTIF(P7:P{0},\"=Y\")", MyUtility.Convert.GetString(ttlCount + 6));
-                worksheet.Cells[3, 15] = string.Format("=SUM(J7:J{0})", MyUtility.Convert.GetString(ttlCount + 6));
-            }
-
+            worksheet.Cells[4, 5] = string.Format("=COUNTIF(Q7:Q{0},\"=Y\")", MyUtility.Convert.GetString(ttlCount + 6));
+            worksheet.Cells[3, 16] = string.Format("=SUM(L7:L{0})", MyUtility.Convert.GetString(ttlCount + 6));
             for (int i = 2; i < xlsSheet + 1; i++)
             {
                 worksheet = excel.ActiveWorkbook.Worksheets[i];
@@ -384,8 +352,8 @@ order by MDivisionID,FactoryID",
                 worksheet.Cells[row, 6 + this.reasonData.Rows.Count] = string.Format("=SUM({0}!K7:K1048576)", MyUtility.Convert.GetString(dr["FactoryID"]));
                 if (this.reportType == 0)
                 {
-                worksheet.Cells[row, 7 + this.reasonData.Rows.Count] = string.Format("={0}!O3", MyUtility.Convert.GetString(dr["FactoryID"]));
-                worksheet.Cells[row, 8 + this.reasonData.Rows.Count] = string.Format("=D{0}/C{0}", row);
+                    worksheet.Cells[row, 7 + this.reasonData.Rows.Count] = string.Format("={0}!O3", MyUtility.Convert.GetString(dr["FactoryID"]));
+                    worksheet.Cells[row, 8 + this.reasonData.Rows.Count] = string.Format("=D{0}/C{0}", row);
                 }
                 else
                 {

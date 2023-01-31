@@ -314,7 +314,7 @@ as (
 		, p.PulloutDate
 		, [Forwarder] = g.Forwarder+'-'+isnull(ls.Abb,'') 
 		, s.BLNo
-		, se.CurrencyID
+        , [CurrencyID] = iif('{this.rateType}' = '', se.CurrencyID, 'USD')
 		, p.OrderID
 		, [packingID] = p.ID
         , se.AccountID
@@ -358,7 +358,7 @@ as (
 		, p.PulloutDate
 		, [Forwarder] = g.Forwarder+'-'+isnull(ls.Abb,'') 
 		, s.BLNo
-		, se.CurrencyID
+		, [CurrencyID] = iif('{this.rateType}' = '', se.CurrencyID, 'USD')
 		, p.OrderID
 		, [packingID] = p.ID
         , se.AccountID
@@ -453,7 +453,7 @@ tmpPL as
 		, p.PulloutDate
 		, [Forwarder] = ''
 		, s.BLNo
-		, se.CurrencyID
+		, [CurrencyID] = iif('{this.rateType}' = '', se.CurrencyID, 'USD')
 		, p.OrderID
 		, [packingID] = p.ID
         , se.AccountID
@@ -496,7 +496,7 @@ tmpPL_A2B as
 		, p.PulloutDate
 		, [Forwarder] = ''
 		, s.BLNo
-		, se.CurrencyID
+		, [CurrencyID] = iif('{this.rateType}' = '', se.CurrencyID, 'USD')
 		, p.OrderID
 		, [packingID] = p.ID
         , se.AccountID
@@ -613,7 +613,7 @@ as (
 		, p.PulloutDate
 		, [Forwarder] = g.Forwarder+'-'+isnull(ls.Abb,'')
 		, s.BLNo
-		, se.CurrencyID
+		, [CurrencyID] = iif('{this.rateType}' = '', se.CurrencyID, 'USD')
 		, [Rate] = iif('{this.rateType}' = '', 1, dbo.getRate('{this.rateType}', s.CurrencyID,'USD', s.CDate))
 		, se.AccountID
 		, se.Amount
@@ -665,7 +665,7 @@ as (
 		, p.PulloutDate
 		, [Forwarder] = g.Forwarder+'-'+isnull(ls.Abb,'')
 		, s.BLNo
-		, se.CurrencyID
+		, [CurrencyID] = iif('{this.rateType}' = '', se.CurrencyID, 'USD')
 		, [Rate] = iif('{this.rateType}' = '', 1, dbo.getRate('{this.rateType}', s.CurrencyID,'USD', s.CDate))
 		, se.AccountID
 		, se.Amount
@@ -769,7 +769,7 @@ tmpPL as
 		, p.PulloutDate
 		, [Forwarder] = ''
 		, s.BLNo
-		, se.CurrencyID
+		, [CurrencyID] = iif('{this.rateType}' = '', se.CurrencyID, 'USD')
 		, [Rate] = iif('{this.rateType}' = '', 1, dbo.getRate('{this.rateType}', s.CurrencyID,'USD', s.CDate))
 		, se.AccountID
 		, se.Amount
@@ -820,7 +820,7 @@ tmpPL_A2B as
 		, p.PulloutDate
 		, [Forwarder] = ''
 		, s.BLNo
-		, se.CurrencyID
+		, [CurrencyID] = iif('{this.rateType}' = '', se.CurrencyID, 'USD')
 		, [Rate] = iif('{this.rateType}' = '', 1, dbo.getRate('{this.rateType}', s.CurrencyID,'USD', s.CDate))
 		, se.AccountID
 		, se.Amount
@@ -1351,7 +1351,7 @@ with tmpGB as (
 		, s.BLNo
 		, [FeeType] = se.AccountID+'-'+isnull(a.Name,'')
 		, [Amount] = se.Amount * iif('{this.rateType}' = '', 1, dbo.getRate('{this.rateType}', s.CurrencyID,'USD', s.CDate))
-		, se.CurrencyID
+		, [CurrencyID] = iif('{this.rateType}' = '', se.CurrencyID, 'USD')
 		, [APID] = s.ID 
 		, s.CDate
 		, [ApvDate] = CONVERT(DATE,s.ApvDate) 
@@ -1434,7 +1434,7 @@ tmpGB_A2B as (
 		, s.BLNo
 		, [FeeType] = se.AccountID+'-'+isnull(a.Name,'')
 		, [Amount] = se.Amount * iif('{this.rateType}' = '', 1, dbo.getRate('{this.rateType}', s.CurrencyID,'USD', s.CDate))
-		, se.CurrencyID
+		, [CurrencyID] = iif('{this.rateType}' = '', se.CurrencyID, 'USD')
 		, [APID] = s.ID 
 		, s.CDate
 		, [ApvDate] = CONVERT(DATE,s.ApvDate) 
@@ -1569,7 +1569,7 @@ tmpPL as
 		, s.BLNo
 		, [FeeType] = se.AccountID+'-'+isnull(a.Name,'')
 		, [Amount] = se.Amount * iif('{this.rateType}' = '', 1, dbo.getRate('{this.rateType}', s.CurrencyID,'USD', s.CDate))
-		, se.CurrencyID
+		, [CurrencyID] = iif('{this.rateType}' = '', se.CurrencyID, 'USD')
 		, [APID] = s.ID
 		, s.CDate
 		, [ApvDate] = CONVERT(DATE,s.ApvDate) 
@@ -1651,7 +1651,7 @@ tmpPL_A2B as
 		, s.BLNo
 		, [FeeType] = se.AccountID+'-'+isnull(a.Name,'')
 		, [Amount] = se.Amount * iif('{this.rateType}' = '', 1, dbo.getRate('{this.rateType}', s.CurrencyID,'USD', s.CDate))
-		, se.CurrencyID
+        , [CurrencyID] = iif('{this.rateType}' = '', se.CurrencyID, 'USD')
 		, [APID] = s.ID
 		, s.CDate
 		, [ApvDate] = CONVERT(DATE,s.ApvDate) 
@@ -1995,7 +1995,7 @@ as (
 		, [CBM] = f.Cbm
 		, [Forwarder] = f.Forwarder+'-'+isnull(ls.Abb,'') 
 		, [BLNo] = f.Blno
-		, se.CurrencyID
+		, [CurrencyID] = iif('{this.rateType}' = '', se.CurrencyID, 'USD')
 		, [AccountID]= iif(se.AccountID='','Empty',se.AccountID)
 		, [Amount] = se.Amount * iif('{this.rateType}' = '', 1, dbo.getRate('{this.rateType}', s.CurrencyID,'USD', s.CDate))
         , [ShippingMemo] = (select top 1 Subject + CHAR(13) + CHAR(10) + Description
@@ -2038,7 +2038,7 @@ as (
 		, [CBM] = f.Cbm
 		, [Forwarder] = f.Forwarder+'-'+isnull(ls.Abb,'')
 		, [BLNo] = f.Blno
-		, se.CurrencyID
+		, [CurrencyID] = iif('{this.rateType}' = '', se.CurrencyID, 'USD')
 		, [AccountID]= iif(se.AccountID='','Empty',se.AccountID)
 		, [Amount] = se.Amount * iif('{this.rateType}' = '', 1, dbo.getRate('{this.rateType}', s.CurrencyID,'USD', s.CDate))
         , [ShippingMemo] = (select top 1 Subject + CHAR(13) + CHAR(10) + Description
@@ -2124,15 +2124,28 @@ as (
 		, [CBM] = (select sum(Cbm) from TransferExport_Detail WITH (NOLOCK) where id = f.id)
 		, [Forwarder] = Concat(f.Forwarder, '-' + ls.Abb)
 		, [BLNo] = f.Blno
-		, se.CurrencyID
+		, [CurrencyID] = iif('{this.rateType}' = '', se.CurrencyID, 'USD')
 		, [AccountID]= iif(se.AccountID='','Empty',se.AccountID)
 		, [Amount] = se.Amount * iif('{this.rateType}' = '', 1, dbo.getRate('{this.rateType}', s.CurrencyID,'USD', s.CDate))
-        , [ShippingMemo] = ''
+        , [ShippingMemo] = shippingmemo.val
     from ShippingAP s WITH (NOLOCK) 
     cross join System with (nolock)
     inner join View_ShareExpense se WITH (NOLOCK) on se.ShippingAPID = s.ID and se.Junk = 0
     inner join TransferExport f WITH (NOLOCK) on f.ID = se.InvNo
     left join LocalSupp ls WITH (NOLOCK) on ls.ID = f.Forwarder
+    outer apply
+	(
+		select val = sd.[S]+CHAR(13)+CHAR(10)+ sd.[D]
+		from 
+		(
+			select top 1 
+			[S] =ts.Subject,
+			[D] = ts.Description
+			from TransferExport_ShippingMemo ts
+			where f.ID= ts.ID and ts.ShippingExpense = 1
+			order by ts.AddDate desc
+		)sd
+	) shippingmemo
     where s.Type = 'EXPORT'
 ");
                         }
@@ -2163,15 +2176,28 @@ as (
 		, [CBM] = (select sum(cbm) from TransferExport_Detail WITH (NOLOCK) where id = f.id)
 		, [Forwarder] = Concat(f.Forwarder, '-' + ls.Abb)
 		, [BLNo] = f.Blno
-		, se.CurrencyID
+		, [CurrencyID] = iif('{this.rateType}' = '', se.CurrencyID, 'USD')
 		, [AccountID]= iif(se.AccountID='','Empty',se.AccountID)
 		, [Amount] = se.Amount * iif('{this.rateType}' = '', 1, dbo.getRate('{this.rateType}', s.CurrencyID,'USD', s.CDate))
-        , [ShippingMemo] = ''
+        , [ShippingMemo] = shippingmemo.val
 	from ShippingAP s WITH (NOLOCK) 
     cross join System with (nolock)
 	inner join View_ShareExpense se WITH (NOLOCK) on se.ShippingAPID = s.ID and se.Junk = 0
 	inner join TransferExport f WITH (NOLOCK) on f.ID = se.InvNo
 	left join LocalSupp ls WITH (NOLOCK) on ls.ID = f.Forwarder
+	outer apply
+	(
+		select val = sd.[S]+CHAR(13)+CHAR(10)+ sd.[D]
+		from 
+		(
+			select top 1 
+			[S] =ts.Subject,
+			[D] = ts.Description
+			from TransferExport_ShippingMemo ts
+			where f.ID= ts.ID and ts.ShippingExpense = 1
+			order by ts.AddDate desc
+		)sd
+	) shippingmemo
 	where s.Type = 'EXPORT'
 ");
                         }
@@ -2305,7 +2331,7 @@ select [Type] = 'MATERIAL'
 	, [BLNo] = f.Blno 
 	, [FeeType] = se.AccountID+'-'+isnull(a.Name,'')
 	, [Amount] = se.Amount * iif('{this.rateType}' = '', 1, dbo.getRate('{this.rateType}', s.CurrencyID,'USD', s.CDate))
-	, se.CurrencyID
+	, [CurrencyID] = iif('{this.rateType}' = '', se.CurrencyID, 'USD')
 	, [APID] = s.ID
 	, s.CDate
 	, [ApvDate] = CONVERT(DATE,s.ApvDate)
@@ -2390,8 +2416,8 @@ select [Type] = 'MATERIAL'
     , [Forwarder] = Concat(f.Forwarder, '-' + ls.Abb)
 	, [BLNo] = f.Blno 
 	, [FeeType] = se.AccountID+'-'+isnull(a.Name,'')
-	, [Amount] = se.Amount * iif('{this.rateType}' = '', 1, dbo.getRate('{this.rateType}', s.CurrencyID,'USD', s.CDate))
-	, se.CurrencyID
+	, [Amount] = se.Amount * iif('{this.rateType}' = '', 1, dbo.getRate('{this.rateType}', s.CurrencyID, 'USD', s.CDate))
+	, [CurrencyID] = iif('{this.rateType}' = '', se.CurrencyID, 'USD')
 	, [APID] = s.ID
 	, s.CDate
 	, [ApvDate] = CONVERT(DATE,s.ApvDate)
@@ -2808,7 +2834,7 @@ as (
 		, p.PulloutDate
 		, [Forwarder] = g.Forwarder+'-'+isnull(ls.Abb,'') 
 		, s.BLNo
-		, se.CurrencyID
+        , [CurrencyID] = iif('{this.rateType}' = '', se.CurrencyID, 'USD')
 		, p.OrderID
 		, [packingID] = p.ID
         , se.AccountID
@@ -2854,7 +2880,7 @@ as (
 		, p.PulloutDate
 		, [Forwarder] = g.Forwarder+'-'+isnull(ls.Abb,'') 
 		, s.BLNo
-		, se.CurrencyID
+		, [CurrencyID] = iif('{this.rateType}' = '', se.CurrencyID, 'USD')
 		, p.OrderID
 		, [packingID] = p.ID
         , se.AccountID
@@ -2951,7 +2977,7 @@ tmpPL as
 		, p.PulloutDate
 		, [Forwarder] = ''
 		, s.BLNo
-		, se.CurrencyID
+        , [CurrencyID] = iif('{this.rateType}' = '', se.CurrencyID, 'USD')
 		, p.OrderID
 		, [packingID] = p.ID
         , se.AccountID
@@ -2996,7 +3022,7 @@ tmpPL_A2B as
 		, p.PulloutDate
 		, [Forwarder] = ''
 		, s.BLNo
-		, se.CurrencyID
+        , [CurrencyID] = iif('{this.rateType}' = '', se.CurrencyID, 'USD')
 		, p.OrderID
 		, [packingID] = p.ID
         , se.AccountID
@@ -3274,11 +3300,11 @@ as (
 		, PulloutDate =  f.PortArrival
 		, [Forwarder] = f.Forwarder+'-'+isnull(ls.Abb,'') 
 		, s.BLNo
-		, se.CurrencyID
+		, [CurrencyID] = 'USD'
 		, OrderID=''
 		, [packingID] = ''
         , se.AccountID
-        , [Amount] = se.Amount * iif('FX' = '', 1, dbo.getRate('FX', s.CurrencyID,'USD', s.CDate))
+        , [Amount] = se.Amount * iif('FX' = '', 1, dbo.getRate('FX', s.CurrencyID, 'USD', s.CDate))
     from ShippingAP s WITH (NOLOCK) 
     inner join View_ShareExpense se WITH (NOLOCK) on se.ShippingAPID = s.ID and se.Junk = 0
     inner join FtyExport f WITH (NOLOCK) on f.ID = se.InvNo

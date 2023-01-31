@@ -214,6 +214,30 @@
       <DependentUpon>P07_QRCodeSticker.cs</DependentUpon>
     </Compile>
     <Compile Include="P26_PrintData.cs" />
+    <Compile Include="P54.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P54.Designer.cs">
+      <DependentUpon>P54.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P54_Import.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P54_Import.Designer.cs">
+      <DependentUpon>P54_Import.cs</DependentUpon>
+	</Compile>
+    <Compile Include="P55.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P55.Designer.cs">
+      <DependentUpon>P55.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P55_Import.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P55_Import.Designer.cs">
+      <DependentUpon>P55_Import.cs</DependentUpon>
+    </Compile>
     <Compile Include="P65_PrintData.cs" />
     <Compile Include="P06.cs">
       <SubType>Form</SubType>
@@ -1440,6 +1464,12 @@
     <Compile Include="Report\R07.Designer.cs">
       <DependentUpon>R07.cs</DependentUpon>
     </Compile>
+    <Compile Include="Report\R44.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Report\R44.Designer.cs">
+      <DependentUpon>R44.cs</DependentUpon>
+    </Compile>
     <Compile Include="Report\R26.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -1512,6 +1542,12 @@
     </Compile>
     <Compile Include="Report\R43.Designer.cs">
       <DependentUpon>R43.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Report\R45.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Report\R45.Designer.cs">
+      <DependentUpon>R45.cs</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
@@ -1587,16 +1623,28 @@
     <EmbeddedResource Include="P21_PrintBarcode10.rdlc">
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="P21_PrintBarcode7.rdlc">
+    <EmbeddedResource Include="P21_PrintBarcode5.rdlc">
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="P21_PrintBarcode5.rdlc">
+    <EmbeddedResource Include="P21_PrintBarcode7.rdlc">
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="P08_ExcelImport.resx">
       <DependentUpon>P08_ExcelImport.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P26_Print.rdlc" />
+    <EmbeddedResource Include="P54.resx">
+      <DependentUpon>P54.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P54_Import.resx">
+     <DependentUpon>P54_Import.cs</DependentUpon>
+	</EmbeddedResource>
+    <EmbeddedResource Include="P55.resx">
+      <DependentUpon>P55.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P55_Import.resx">
+      <DependentUpon>P55_Import.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="P67_Import .resx">
       <DependentUpon>P67_Import .cs</DependentUpon>
     </EmbeddedResource>
@@ -2281,6 +2329,9 @@
     <EmbeddedResource Include="Report\R07.resx">
       <DependentUpon>R07.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Report\R44.resx">
+      <DependentUpon>R44.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Report\R26.resx">
       <DependentUpon>R26.cs</DependentUpon>
     </EmbeddedResource>
@@ -2316,6 +2367,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Report\R43.resx">
       <DependentUpon>R43.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Report\R45.resx">
+      <DependentUpon>R45.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
@@ -2432,8 +2486,6 @@
     <None Include="Properties\DataSources\P65_PrintData.datasource" />
     <None Include="Properties\DataSources\P66_PrintData.datasource" />
     <None Include="Sci.Production.Warehouse.ruleset" />
-    <None Include="stylecop.json" />
-    <None Include="stylecop1.json" />
   </ItemGroup>
   <ItemGroup>
     <Analyzer Include="..\packages\StyleCop.Analyzers.1.1.118\analyzers\dotnet\cs\StyleCop.Analyzers.CodeFixes.dll" />

@@ -14,6 +14,8 @@ namespace Sci.Production.Warehouse
     {
         private DateTime? Issuedate1;
         private DateTime? Issuedate2;
+        private string WK1;
+        private string WK2;
         private string SP1;
         private string SP2;
         private string ToPOID1;
@@ -73,8 +75,18 @@ namespace Sci.Production.Warehouse
         /// <inheritdoc/>
         protected override bool ValidateInput()
         {
+            if (!this.dateIssue.HasValue &&
+                this.txtWK1.Text.Empty() &&
+                this.txtWK2.Text.Empty())
+            {
+                MyUtility.Msg.WarningBox("Issue Date, Transfer WK# cannot all be empty.");
+                return false;
+            }
+
             this.Issuedate1 = this.dateIssue.Value1;
             this.Issuedate2 = this.dateIssue.Value2;
+            this.WK1 = this.txtWK1.Text;
+            this.WK2 = this.txtWK2.Text;
             this.SP1 = this.txtSP1.Text;
             this.SP2 = this.txtSP2.Text;
             this.ToPOID1 = this.txtToPOID1.Text;
@@ -118,7 +130,9 @@ namespace Sci.Production.Warehouse
             {
                 sqlCmd.Append(@"
 select
-	t.id,t.MDivisionID,t.FromFtyID,t.FactoryID,t.IssueDate,t.Status
+	t.id
+    ,t.TransferExportID
+    ,t.MDivisionID,t.FromFtyID,t.FactoryID,t.IssueDate,t.Status
 	,td.POID, o.StyleID, p.Refno, p.ColorID, p.SizeSpec
 	,td.Seq1,td.Seq2,td.Roll,td.Dyelot
 	,[StockType] = case when td.StockType = 'B' then 'Bulk'
@@ -139,6 +153,19 @@ where 1=1
                 if (!MyUtility.Check.Empty(this.Issuedate1))
                 {
                     sqlCmd.Append(string.Format(@" and t.IssueDate between '{0}' and '{1}'", this.Issuedate1.Value.ToShortDateString(), this.Issuedate2.Value.ToShortDateString()));
+                }
+
+                if (!MyUtility.Check.Empty(this.WK1) && !MyUtility.Check.Empty(this.WK2))
+                {
+                    sqlCmd.Append($@" and t.TransferExportID between '{this.WK1}' and '{this.WK2}'");
+                }
+                else if (!MyUtility.Check.Empty(this.WK1))
+                {
+                    sqlCmd.Append($@" and t.TransferExportID ='{this.WK1}'");
+                }
+                else if (!MyUtility.Check.Empty(this.WK2))
+                {
+                    sqlCmd.Append($@" and t.TransferExportID ='{this.WK2}'");
                 }
 
                 if (!MyUtility.Check.Empty(this.SP1))
@@ -183,6 +210,7 @@ select
 	,Description = dbo.getMtlDesc(td.POID, td.seq1, td.seq2, 2, 0)
 	,f.MtlTypeID
 	,td.ToPOID,td.ToSeq1,td.ToSeq2
+    ,td.TransferExportID
 from TransferOut t with(nolock)
 inner join TransferOut_Detail td with(nolock) on td.id = t.id
 left join Po_Supp_Detail p WITH (NOLOCK) on td.poid = p.id and td.seq1 = p.seq1 and td.seq2 = p.seq2
@@ -207,6 +235,19 @@ where 1=1
                 if (!MyUtility.Check.Empty(this.Issuedate1))
                 {
                     sqlCmd.Append(string.Format(@" and t.IssueDate between '{0}' and '{1}'", this.Issuedate1.Value.ToShortDateString(), this.Issuedate2.Value.ToShortDateString()));
+                }
+
+                if (!MyUtility.Check.Empty(this.WK1) && !MyUtility.Check.Empty(this.WK2))
+                {
+                    sqlCmd.Append($@" and td.TransferExportID between '{this.WK1}' and '{this.WK2}'");
+                }
+                else if (!MyUtility.Check.Empty(this.WK1))
+                {
+                    sqlCmd.Append($@" and td.TransferExportID ='{this.WK1}'");
+                }
+                else if (!MyUtility.Check.Empty(this.WK2))
+                {
+                    sqlCmd.Append($@" and td.TransferExportID ='{this.WK2}'");
                 }
 
                 if (!MyUtility.Check.Empty(this.SP1))
@@ -256,7 +297,9 @@ where 1=1
             {
                 sqlCmd.Append(@"
 select distinct
-	t.id,t.MDivisionID,t.FromFtyID,t.FactoryID,t.IssueDate,t.Status
+	t.id
+    ,t.TransferExportID
+    ,t.MDivisionID,t.FromFtyID,t.FactoryID,t.IssueDate,t.Status
 	,td.POID, o.StyleID, p.Refno, p.ColorID, p.SizeSpec
 	,td.Seq1, td.Seq2
 	,[StockType] = case when td.StockType = 'B' then 'Bulk'
@@ -287,6 +330,19 @@ where 1=1
                 if (!MyUtility.Check.Empty(this.Issuedate1))
                 {
                     sqlCmd.Append(string.Format(@" and t.IssueDate between '{0}' and '{1}'", this.Issuedate1.Value.ToShortDateString(), this.Issuedate2.Value.ToShortDateString()));
+                }
+
+                if (!MyUtility.Check.Empty(this.WK1) && !MyUtility.Check.Empty(this.WK2))
+                {
+                    sqlCmd.Append($@" and t.TransferExportID between '{this.WK1}' and '{this.WK2}'");
+                }
+                else if (!MyUtility.Check.Empty(this.WK1))
+                {
+                    sqlCmd.Append($@" and t.TransferExportID ='{this.WK1}'");
+                }
+                else if (!MyUtility.Check.Empty(this.WK2))
+                {
+                    sqlCmd.Append($@" and t.TransferExportID ='{this.WK2}'");
                 }
 
                 if (!MyUtility.Check.Empty(this.SP1))
@@ -380,6 +436,19 @@ where 1=1
                 if (!MyUtility.Check.Empty(this.Issuedate1))
                 {
                     sqlCmd.Append(string.Format(@" and t.IssueDate between '{0}' and '{1}'", this.Issuedate1.Value.ToShortDateString(), this.Issuedate2.Value.ToShortDateString()));
+                }
+
+                if (!MyUtility.Check.Empty(this.WK1) && !MyUtility.Check.Empty(this.WK2))
+                {
+                    sqlCmd.Append($@" and td.TransferExportID between '{this.WK1}' and '{this.WK2}'");
+                }
+                else if (!MyUtility.Check.Empty(this.WK1))
+                {
+                    sqlCmd.Append($@" and td.TransferExportID ='{this.WK1}'");
+                }
+                else if (!MyUtility.Check.Empty(this.WK2))
+                {
+                    sqlCmd.Append($@" and td.TransferExportID ='{this.WK2}'");
                 }
 
                 if (!MyUtility.Check.Empty(this.SP1))

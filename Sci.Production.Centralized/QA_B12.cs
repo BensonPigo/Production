@@ -12,11 +12,7 @@ namespace Sci.Production.Centralized
             : base(menuitem)
         {
             this.InitializeComponent();
-
-            if (!DBProxy.Current.DefaultModuleName.Contains("testing"))
-            {
-                this.ConnectionName = "ProductionTPE";
-            }
+            this.ConnectionName = "ProductionTPE";
         }
 
         /// <inheritdoc/>
@@ -45,7 +41,7 @@ namespace Sci.Production.Centralized
             }
 
             if (this.IsDetailInserting &&
-                MyUtility.Check.Seek($"select 1 from SubProDefectCode where SubProcessID='{this.CurrentMaintain["SubProcessID"]}' and DefectCode = '{this.CurrentMaintain["DefectCode"]}'"))
+                MyUtility.Check.Seek($"select 1 from SubProDefectCode where SubProcessID='{this.CurrentMaintain["SubProcessID"]}' and DefectCode = '{this.CurrentMaintain["DefectCode"]}'", "ProductionTPE"))
             {
                 MyUtility.Msg.WarningBox("SubProcess, DefectCode  can not duplicate!");
             }

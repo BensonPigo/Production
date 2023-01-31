@@ -581,7 +581,7 @@ where o.ID in ({0})",
             DataTable excelTable;
             try
             {
-                MyUtility.Tool.ProcessWithDatatable((DataTable)this.listControlBindingSource1.DataSource, "SCIDelivery,BuyerDelivery,ID,BrandID,StyleID,CdCodeID,CDCodeNew,ProductType,FabricType,Lining,Gender,Construction,OrderTypeID,Qty,CPU,SewLine,SewInLine,SewOffLine,CutReadyDate,LETA,ActSewInLine,ActSewOffLine,ArtworkType,SewRemark,MR,SMR", "select * from #tmp", out excelTable);
+                MyUtility.Tool.ProcessWithDatatable((DataTable)this.listControlBindingSource1.DataSource, "SCIDelivery,BuyerDelivery,ID,BrandID,StyleID,CDCodeNew,ProductType,FabricType,Lining,Gender,Construction,OrderTypeID,Qty,CPU,SewLine,SewInLine,SewOffLine,CutReadyDate,LETA,ActSewInLine,ActSewOffLine,ArtworkType,SewRemark,MR,SMR", "select * from #tmp", out excelTable);
             }
             catch (Exception ex)
             {
@@ -590,6 +590,11 @@ where o.ID in ({0})",
             }
 
             Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\PPIC_P13.xltx");
+            Microsoft.Office.Interop.Excel.Worksheet wsSheet;
+            wsSheet = objApp.ActiveWorkbook.Worksheets[1];
+
+            // 移除 C#欄位
+            wsSheet.get_Range("F:F").EntireColumn.Delete();
             MyUtility.Excel.CopyToXls(excelTable, string.Empty, "PPIC_P13.xltx", 1, true, string.Empty, objApp);
         }
 

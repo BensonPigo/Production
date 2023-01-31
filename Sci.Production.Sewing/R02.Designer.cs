@@ -47,6 +47,7 @@
             this.labelM = new Sci.Win.UI.Label();
             this.checkSampleFty = new Sci.Win.UI.CheckBox();
             this.chkExcludeNonRevenue = new Sci.Win.UI.CheckBox();
+            this.checkExcludeOfMockUp = new Sci.Win.UI.CheckBox();
             this.SuspendLayout();
             // 
             // print
@@ -66,15 +67,15 @@
             // 
             // buttonCustomized
             // 
-            this.buttonCustomized.Location = new System.Drawing.Point(337, 123);
+            this.buttonCustomized.Location = new System.Drawing.Point(386, 241);
             // 
             // checkUseCustomized
             // 
-            this.checkUseCustomized.Location = new System.Drawing.Point(373, 126);
+            this.checkUseCustomized.Location = new System.Drawing.Point(412, 243);
             // 
             // txtVersion
             // 
-            this.txtVersion.Location = new System.Drawing.Point(393, 124);
+            this.txtVersion.Location = new System.Drawing.Point(412, 241);
             // 
             // labelDate
             // 
@@ -272,9 +273,21 @@
             this.chkExcludeNonRevenue.Text = "Exclude Non Revenue";
             this.chkExcludeNonRevenue.UseVisualStyleBackColor = true;
             // 
+            // checkExcludeOfMockUp
+            // 
+            this.checkExcludeOfMockUp.AutoSize = true;
+            this.checkExcludeOfMockUp.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkExcludeOfMockUp.Location = new System.Drawing.Point(241, 126);
+            this.checkExcludeOfMockUp.Name = "checkExcludeOfMockUp";
+            this.checkExcludeOfMockUp.Size = new System.Drawing.Size(149, 21);
+            this.checkExcludeOfMockUp.TabIndex = 110;
+            this.checkExcludeOfMockUp.Text = "Exclude of Mock up";
+            this.checkExcludeOfMockUp.UseVisualStyleBackColor = true;
+            // 
             // R02
             // 
             this.ClientSize = new System.Drawing.Size(512, 299);
+            this.Controls.Add(this.checkExcludeOfMockUp);
             this.Controls.Add(this.chkExcludeNonRevenue);
             this.Controls.Add(this.checkSampleFty);
             this.Controls.Add(this.comboM);
@@ -325,6 +338,7 @@
             this.Controls.SetChildIndex(this.comboM, 0);
             this.Controls.SetChildIndex(this.checkSampleFty, 0);
             this.Controls.SetChildIndex(this.chkExcludeNonRevenue, 0);
+            this.Controls.SetChildIndex(this.checkExcludeOfMockUp, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -351,5 +365,6 @@
         private Win.UI.Label labelM;
         private Win.UI.CheckBox checkSampleFty;
         private Win.UI.CheckBox chkExcludeNonRevenue;
+        private Win.UI.CheckBox checkExcludeOfMockUp;
     }
 }

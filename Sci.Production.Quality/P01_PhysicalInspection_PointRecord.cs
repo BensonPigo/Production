@@ -11,6 +11,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
+using static Sci.Production.PublicPrg.Prgs;
 
 namespace Sci.Production.Quality
 {
@@ -59,9 +60,21 @@ order by fd.ID ";
                         continue;
                     }
 
+                    // 排除掉T2字串
+                    // 如果有多筆,那要拆開檢查並塞入T2
+                    string newDefect = string.Empty;
+                    if (dr.IndexOf("-T2") != -1)
+                    {
+                        newDefect = dr.Replace("-T2", string.Empty);
+                    }
+                    else
+                    {
+                        newDefect = dr;
+                    }
+
                     // 第一碼為ID,第二碼為Points
-                    defid = Prgs.SplitDefectNum(dr);
-                    point = MyUtility.Convert.GetInt(Prgs.SplitDefectNum(dr, 1));
+                    defid = Prgs.SplitDefectNum(newDefect);
+                    point = MyUtility.Convert.GetInt(Prgs.SplitDefectNum(newDefect, 1));
                     DataRow[] ary = this.defRecord.Select(string.Format("ID = '{0}'", defid));
                     if (ary.Length > 0)
                     {
@@ -81,7 +94,7 @@ order by fd.ID ";
                     var tempShow = this.picList.Where(t => t.FabricdefectID == dr["ID"].ToString());
                     if (tempShow.Count() != 0)
                     {
-                        var frm = new Camera_ShowNew(dr["ID"].ToString(), tempShow.ToList(), Type: string.Empty);
+                        var frm = new Camera_ShowNew(dr["ID"].ToString(), tempShow.ToList(), type: string.Empty, isShowDeleteHint: true);
                         frm.ShowDialog();
                     }
 
@@ -179,7 +192,7 @@ order by a.FabricdefectID,a.FIR_PhysicalDetailUkey
             // 暫存的照片存在就顯示圖片
             foreach (DataGridViewRow drFabricDefect in this.gridPhysicalInspection.Rows)
             {
-                if (this.picList.Any(s => s.FabricdefectID == drFabricDefect.Cells["ID"].Value.ToString()))
+                if (this.picList.Any(s => s.FabricdefectID == drFabricDefect.Cells["ID"].Value.ToString()) && !MyUtility.Check.Empty(drFabricDefect.Cells["Points"].Value))
                 {
                     drFabricDefect.Cells["showPic"].Value = Resource.image_icon1;
                 }

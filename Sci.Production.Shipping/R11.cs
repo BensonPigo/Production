@@ -1377,8 +1377,21 @@ select	t.IE
 		, t.NoImportChg
 		, t.DoortoDoorDelivery 
         , BrandID = '' 
-        , [ShippingMemo] = ''
+        , [ShippingMemo] = shippingmemo.val
 from TransferExportData t with (nolock)
+outer apply
+(
+	select val = sd.[S]+CHAR(13)+CHAR(10)+ sd.[D]
+	from 
+	(
+		select top 1 
+		[S] =ts.Subject,
+		[D] = ts.Description
+		from TransferExport_ShippingMemo ts
+		where t.ID= ts.ID and ts.ShippingExpense = 1
+		order by ts.AddDate desc
+	)sd
+) shippingmemo
 cross join System s
 ");
                     #endregion

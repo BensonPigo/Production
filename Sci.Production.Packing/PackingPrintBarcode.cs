@@ -83,8 +83,8 @@ namespace Sci.Production.Packing
                                 }
 
                                 #region 準備資料
-                                string barcode = printData.Rows[p]["ID"].ToString() + printData.Rows[p]["CTNStartNo"].ToString().CTNStartNoPrintFormatByBrand(orderID: printData.Rows[p]["OrderID"].ToString());
-                                string barcodeShowText = printData.Rows[p]["ID"].ToString() + printData.Rows[p]["CTNStartNo"].ToString();
+                                string barcode = printData.Rows[p]["SCICtnNo"].ToString().PadRight(23, '0');
+                                string barcodeShowText = printData.Rows[p]["SCICtnNo"].ToString();
                                 string packingNo = "　　　　PackingNo.: " + printData.Rows[p]["ID"];
                                 string spNo = "　　　　SP No.: " + printData.Rows[p]["OrderID"] + "     Dest: " + printData.Rows[p]["Dest"];
                                 string cartonNo = "　　　　Carton No.: " + printData.Rows[p]["CTNStartNo"] + " OF " + printData.Rows[p]["CtnQty"];
@@ -165,16 +165,16 @@ namespace Sci.Production.Packing
                             {
                                 #region New format
                                 #region 準備資料
-                                string barcode = printData.Rows[i]["ID"].ToString() + printData.Rows[i]["CTNStartNo"].ToString().CTNStartNoPrintFormatByBrand(orderID: printData.Rows[i]["OrderID"].ToString());
-                                string barcodeShowText = printData.Rows[i]["ID"].ToString() + printData.Rows[i]["CTNStartNo"].ToString();
-                                string packingNo = "PG#.: " + printData.Rows[i]["ID"];
-                                string spNo = "SP#.: " + printData.Rows[i]["OrderID"];
-                                string style = "Style#.: " + printData.Rows[i]["StyleID"];
-                                string cartonNo = "CTN#.: " + printData.Rows[i]["CTNStartNo"] + " OF " + printData.Rows[i]["CtnQty"];
+                                string barcode = printData.Rows[i]["SCICtnNo"].ToString().PadRight(23, '0');
+                                string barcodeShowText = printData.Rows[i]["SCICtnNo"].ToString();
+                                string packingNo = "PG#:" + printData.Rows[i]["ID"];
+                                string spNo = "SP#:" + printData.Rows[i]["OrderID"];
+                                string style = "Style#:" + printData.Rows[i]["StyleID"];
+                                string cartonNo = "CTN#:" + printData.Rows[i]["CTNStartNo"] + " OF " + printData.Rows[i]["CtnQty"];
                                 string poNo = printData.Rows[i]["PONo"].ToString();
-                                string sizeQty = "Size/Qty: " + printData.Rows[i]["SizeCode"] + "/" + printData.Rows[i]["ShipQty"];
-                                string brandFTYCode = "Fty Code: " + printData.Rows[i]["BrandFTYCode"].ToString();
-                                string dest = "Dest: " + printData.Rows[i]["Dest"];
+                                string sizeQty = "Size/Qty:" + printData.Rows[i]["SizeCode"] + "/" + printData.Rows[i]["ShipQty"];
+                                string brandFTYCode = "Fty Code:" + printData.Rows[i]["BrandFTYCode"].ToString();
+                                string dest = "Dest:" + printData.Rows[i]["Dest"];
                                 #endregion
 
                                 Bitmap oriBitmap = this.NewBarcode(barcode, barcodeShowText);
@@ -189,13 +189,13 @@ namespace Sci.Production.Packing
                                 tables.Cell(2, 1).Range.Text = spNo;
                                 tables.Cell(3, 1).Range.Text = style;
                                 tables.Cell(3, 2).Range.Text = brandFTYCode;
-                                tables.Cell(3, 3).Range.Text = dest;
+                                tables.Cell(5, 3).Range.Text = dest;
                                 tables.Cell(2, 2).Range.Text = cartonNo;
                                 tables.Cell(1, 2).Range.Text = sizeQty;
                                 if (country)
                                 {
                                     string madein = "Made in " + MyUtility.Convert.GetString(MyUtility.GetValue.Lookup($"select Alias from country where id = (select countryid from factory where id = '{Env.User.Factory}')"));
-                                    string deldate = "del date: " + (MyUtility.Check.Empty(printData.Rows[i]["BuyerDelivery"]) ? string.Empty : ((DateTime)printData.Rows[i]["BuyerDelivery"]).ToString("yyyy/MM/dd"));
+                                    string deldate = "del date:" + (MyUtility.Check.Empty(printData.Rows[i]["BuyerDelivery"]) ? string.Empty : ((DateTime)printData.Rows[i]["BuyerDelivery"]).ToString("yyyy/MM/dd"));
                                     tables.Cell(4, 1).Range.Text = madein;
                                     tables.Cell(4, 2).Range.Text = deldate;
                                 }
@@ -207,8 +207,8 @@ namespace Sci.Production.Packing
                             {
                                 #region old format
                                 #region 準備資料
-                                string barcode = printData.Rows[i]["ID"].ToString() + printData.Rows[i]["CTNStartNo"].ToString().CTNStartNoPrintFormatByBrand(orderID: printData.Rows[i]["OrderID"].ToString());
-                                string barcodeShowText = printData.Rows[i]["ID"].ToString() + printData.Rows[i]["CTNStartNo"].ToString();
+                                string barcode = printData.Rows[i]["SCICtnNo"].ToString().PadRight(23, '0');
+                                string barcodeShowText = printData.Rows[i]["SCICtnNo"].ToString();
                                 string packingNo = "　　　　PackingNo.: " + printData.Rows[i]["ID"];
                                 string spNo = "　　　　SP No.: " + printData.Rows[i]["OrderID"];
                                 string cartonNo = "　　　　Carton No.: " + printData.Rows[i]["CTNStartNo"] + " OF " + printData.Rows[i]["CtnQty"];
@@ -231,7 +231,7 @@ namespace Sci.Production.Packing
                             }
                         }
                         #endregion
-                        winword.ActiveDocument.Protect(Word.WdProtectionType.wdAllowOnlyComments, Password: "ScImIs");
+                        // winword.ActiveDocument.Protect(Word.WdProtectionType.wdAllowOnlyComments, Password: "ScImIs");
 
                         #region Save & Show Word
                         winword.Visible = true;
@@ -314,8 +314,8 @@ namespace Sci.Production.Packing
                 {
                     tables = table[i + 1];
                     #region 準備資料
-                    string barcode = printData.Rows[i]["ID"].ToString() + printData.Rows[i]["CTNStartNo"].ToString().CTNStartNoPrintFormatByBrand(orderID: printData.Rows[i]["OrderID"].ToString());
-                    string barcodeSowText = printData.Rows[i]["ID"].ToString() + printData.Rows[i]["CTNStartNo"].ToString();
+                    string barcode = printData.Rows[i]["SCICtnNo"].ToString().PadRight(23, '0');
+                    string barcodeSowText = printData.Rows[i]["SCICtnNo"].ToString();
                     string packingNo = "P/L#.: " + printData.Rows[i]["ID"];
                     string spNo = "SP#.: " + printData.Rows[i]["OrderID"];
                     string poNo = "PO#.: " + printData.Rows[i]["PONo"].ToString();
@@ -431,7 +431,7 @@ namespace Sci.Production.Packing
                         }
 
                         #region 準備資料
-                        string barcode = printData.Rows[p]["ID"].ToString() + printData.Rows[p]["CTNStartNo"].ToString().CTNStartNoPrintFormatByBrand(orderID: printData.Rows[p]["OrderID"].ToString());
+                        string barcode = printData.Rows[p]["SCICtnNo"].ToString();
                         string packingNo = "P/L#:" + printData.Rows[p]["ID"];
                         string spNo = "SP#:" + printData.Rows[p]["OrderID"];
                         string cartonNo = "CTN:" + printData.Rows[p]["CTNStartNo"] + " OF " + printData.Rows[p]["CtnQty"];

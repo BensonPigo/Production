@@ -1375,11 +1375,13 @@
             // 
             // txtcdcode
             // 
-            this.txtcdcode.BackColor = System.Drawing.Color.White;
+            this.txtcdcode.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.txtcdcode.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "CdCodeID", true));
-            this.txtcdcode.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtcdcode.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.txtcdcode.IsSupportEditMode = false;
             this.txtcdcode.Location = new System.Drawing.Point(108, 142);
             this.txtcdcode.Name = "txtcdcode";
+            this.txtcdcode.ReadOnly = true;
             this.txtcdcode.Size = new System.Drawing.Size(54, 23);
             this.txtcdcode.TabIndex = 9;
             this.txtcdcode.Validated += new System.EventHandler(this.Txtcdcode_Validated);

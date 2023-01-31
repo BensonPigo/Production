@@ -78,6 +78,9 @@
     [DevRegion] VARCHAR(2) NULL DEFAULT (''), 
     [DevOption] BIT NULL DEFAULT ((0)), 
     Teamwear bit not null CONSTRAINT [DF_Style_Teamwear] default 0,
+    [BrandGender] VARCHAR(10) NOT NULL DEFAULT (''), 
+    [Location] VARCHAR(MAX) NOT NULL DEFAULT (''), 
+    [NEWCO] VARCHAR NOT NULL DEFAULT (''), 
     CONSTRAINT [PK_Style] PRIMARY KEY CLUSTERED ([ID] ASC, [BrandID] ASC, [SeasonID] ASC)
 );
 GO
@@ -390,3 +393,12 @@ EXEC sp_addextendedproperty @name = N'MS_Description',
     @level1name = N'Style',
     @level2type = N'COLUMN',
     @level2name = N'ThickFabricBulk'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'Location',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'Style',
+    @level2type = N'COLUMN',
+    @level2name = N'Location'

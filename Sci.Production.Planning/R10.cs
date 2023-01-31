@@ -337,8 +337,9 @@ namespace Sci.Production.Planning
                 #region --組WHERE--
                 if (!this.txtMDivision.Text.Empty())
                 {
-                    sqlWheres.Add(" f.MDivisionID = '" + this.mDivisionID + "'");
+                    sqlWheres.Add(" f.ProduceM = '" + this.mDivisionID + "'");
                     loadingWheres.Add("o.MDivisionID ='" + this.mDivisionID + "'");
+                    loadingWheres.Add("f.ProduceM ='" + this.mDivisionID + "'");
 
                     if (!this.txtFactory.Text.Empty())
                     {
@@ -347,7 +348,7 @@ namespace Sci.Production.Planning
 
                     if (this.txtFactory.Text.Empty())
                     {
-                        workWheres.Add(" exists (select 1 from Factory WITH (NOLOCK) where MDivisionID = '" + this.mDivisionID + "' and ID = w.FactoryID)");
+                        workWheres.Add(" exists (select 1 from Factory WITH (NOLOCK) where ProduceM = '" + this.mDivisionID + "' and ID = w.FactoryID)");
                     }
                 }
 
@@ -402,7 +403,12 @@ namespace Sci.Production.Planning
                             Select f.CountryID, f.ID, (ft.TMS*3600)/(select StdTMS from System WITH (NOLOCK)) as Capacity 
                             into  #tmpFtyCapacity
                             From Factory f WITH (NOLOCK), Factory_TMS ft WITH (NOLOCK)
-                            where f.ID = ft.ID and f.Junk = 0 and ft.Year = '{0}' and ft.Month ='{1}' and ft.ArtworkTypeID = 'SEWING'" + sqlWhere +
+                            where f.ID = ft.ID
+                                  and f.Junk = 0
+                                  and ft.Year = '{0}'
+                                  and ft.Month ='{1}'
+                                  and ft.ArtworkTypeID = 'SEWING'
+                                  and f.ProduceM = f.MDivisionID " + sqlWhere +
 
                 @" 
                             -- 撈出各工廠的Loading
@@ -425,7 +431,9 @@ namespace Sci.Production.Planning
                 	              Cross Apply getOutputInformation(o.ID, '{3}') si
                 	              Where o.BuyerDelivery between '{2}' and '{3}'
                 	              And o.Junk = 0
-                	              And o.SubconInType in ('1','2')
+                                  And f.Junk = 0
+                	              And o.SubconInType not in ('1','2')
+                                  and f.ProduceM = f.MDivisionID 
                 	              " + load + @"
                 	              ) a
                             Group by a.CountryID, a.Alias, a.MDivisionID, a.FactoryID, a.Capacity

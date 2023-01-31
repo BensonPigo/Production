@@ -12,6 +12,7 @@
     [Scale] VARCHAR(5) NULL, 
     [Criteria] NUMERIC(11, 2) NULL, 
     [Criteria2] NUMERIC(11, 2) NULL,
+    StandardRemark nvarchar(3000) not null CONSTRAINT [DF_Adidas_FGWT_StandardRemark] default '',
     CONSTRAINT [PK_Adidas_FGWT] PRIMARY KEY CLUSTERED ( Location, ReportType, MtlTypeID, Washing, FabricComposition)
 )
 GO

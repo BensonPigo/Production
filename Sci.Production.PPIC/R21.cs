@@ -199,13 +199,15 @@ namespace Sci.Production.PPIC
         {
 
             string sqlGetDate = $@"
-select  f.KPICode,
+select  [SewLine] = REVERSE(stuff(REVERSE(o.SewLine),1,1,'')) ,
+		f.KPICode,
 		o.FactoryID,
 		[OrderID] = o.ID,
 		oqs.Seq,
 		o.BrandID, 
 		o.StyleID,
 		o.SeasonID,
+		p.Dest,
 		oqs.BuyerDelivery,
 		pld.ID,
 		pld.CTNStartNo,
@@ -228,17 +230,19 @@ into #tmp
 from  Orders o with (nolock)
 inner join Order_QtyShip oqs with (nolock) on oqs.Id = o.ID
 inner join Factory f with (nolock) on f.ID = o.FactoryID
-inner join PackingList_Detail pld with (nolock) on pld.OrderID = oqs.ID and pld.CTNQty = 1
+inner join PackingList_Detail pld with (nolock) on pld.OrderID = oqs.ID and pld.OrderShipmodeSeq = oqs.Seq and pld.CTNQty = 1
 inner join PackingList p with (nolock) on p.ID = pld.ID
 inner join PackingList_Detail pld2 with (nolock) on pld2.ID = pld.ID and pld2.CTNStartNo = pld.CTNStartNo
 where o.Category in ('B','G') {this.sqlWhere}
-group by	f.KPICode,
+group by	o.SewLine,
+			f.KPICode,
 			o.FactoryID,
 			o.ID,
 			oqs.Seq,
 			o.BrandID, 
 			o.StyleID,
 			o.SeasonID,
+			p.Dest,
 			oqs.BuyerDelivery,
 			pld.ID,
 			pld.CTNStartNo,
@@ -257,13 +261,15 @@ group by	f.KPICode,
 			pld.SCICtnNo
 
 
-select	pld.KPICode,
+select	pld.SewLine,
+		pld.KPICode,
 		pld.FactoryID,
 		pld.OrderID,
 		pld.Seq,
 		pld.BrandID, 
 		pld.StyleID,
 		pld.SeasonID,
+		pld.Dest,
 		pld.BuyerDelivery,
 		[PackID] = pld.ID,
 		pld.CTNStartNo,

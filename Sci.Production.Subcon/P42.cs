@@ -207,6 +207,7 @@ and not exists(select 1 from Cutting_WIPExcludePatternPanel cw where cw.PatternP
 
         private void Query()
         {
+            DBProxy.Current.DefaultTimeout = 1800; // timeout時間改為30分鐘
             this.listControlBindingSource1.DataSource = null;
             if (MyUtility.Check.Empty(this.txtSp1.Text) && !MyUtility.Check.Empty(this.txtSp2.Text))
             {
@@ -938,6 +939,7 @@ from #tmp t
 
                 this.listControlBindingSource1.DataSource = dt[0];
                 this.GridSetup(summaryType);
+                DBProxy.Current.DefaultTimeout = 300; // timeout時間改回5分鐘
             }
         }
 
@@ -1095,17 +1097,18 @@ select
     ,SizeCode
 	,b.InOutRule 
 	,[HasInComing]=case when p.PostSewingSubProcess_SL=1 then 'true'
-						when NoBundleCardAfterSubprocess=1 and(InOutRule = 1 or InOutRule = 4) Then 'true'
+						when b.NoBundleCardAfterSubprocess=1 and(InOutRule = 1 or InOutRule = 4) Then 'true'
 						else IIF( bio.InComing IS NOT NULL ,'true','false')
 						end
 	,[HasOutGoing]=case when p.PostSewingSubProcess_SL=1 then 'true'
-						when NoBundleCardAfterSubprocess=1 and InOutRule = 3  Then 'true'
+						when b.NoBundleCardAfterSubprocess=1 and InOutRule = 3  Then 'true'
 						else IIF( bio.OutGoing IS NOT NULL ,'true','false')
 						end
 	,bio.InComing
 	,bio.OutGoing
 	,b.CutRef
     ,b.FabricKind
+	,b.NoBundleCardAfterSubprocess
 into #tmpBundleNo_Complete
 from #tmpBundleNo_SubProcess b
 left join BundleInOut bio with (nolock) on bio.BundleNo = b.BundleNo and bio.SubProcessId = b.SubProcessID and isnull(bio.RFIDProcessLocationID,'') = ''
@@ -1161,7 +1164,7 @@ select
 	,[InComing] = FORMAT(t.InComing,'yyyy/MM/dd HH:mm:ss')
 	,[OutGoing] = FORMAT(t.OutGoing,'yyyy/MM/dd HH:mm:ss')
     ,ps.PostSewingSubProcess
-    ,nb.NoBundleCardAfterSubprocess
+    ,t.NoBundleCardAfterSubprocess
 from #tmpBundleNo_Complete t
 outer apply(
 	select qty=sum(bd.Qty)
@@ -1175,13 +1178,6 @@ outer apply(
     and bda.subProcessid='{subProcess}'
     and bda.PostSewingSubProcess = 1
 )ps
-outer apply(
-    select top 1 NoBundleCardAfterSubprocess
-    from Bundle_Detail_Art bda
-    where bda.BundleNo = t.BundleNo
-    and bda.subProcessid='{subProcess}'
-    and bda.NoBundleCardAfterSubprocess = 1
-)nb
 
 order by t.BundleNo
 
@@ -1331,17 +1327,18 @@ select
     ,[BD_SizeCode]
 	,b.InOutRule 
 	,[HasInComing]=case when p.PostSewingSubProcess_SL=1 then 'true'
-						when NoBundleCardAfterSubprocess=1 and(InOutRule = 1 or InOutRule = 4) Then 'true'
+						when b.NoBundleCardAfterSubprocess=1 and(InOutRule = 1 or InOutRule = 4) Then 'true'
 						else IIF( bio.InComing IS NOT NULL ,'true','false')
 						end
 	,[HasOutGoing]=case when p.PostSewingSubProcess_SL=1 then 'true'
-						when NoBundleCardAfterSubprocess=1 and InOutRule = 3  Then 'true'
+						when b.NoBundleCardAfterSubprocess=1 and InOutRule = 3  Then 'true'
 						else IIF( bio.OutGoing IS NOT NULL ,'true','false')
 						end
 	,bio.InComing
 	,bio.OutGoing
 	,b.CutRef
 	,b.FabricKind
+	,b.NoBundleCardAfterSubprocess
 into #tmpBundleNo_Complete
 from #tmpBundleNo_SubProcess b
 left join BundleInOut bio with (nolock) on bio.BundleNo = b.BundleNo and bio.SubProcessId = b.SubProcessID and isnull(bio.RFIDProcessLocationID,'') = ''
@@ -1397,7 +1394,7 @@ select
 	,[InComing] = FORMAT(t.InComing,'yyyy/MM/dd HH:mm:ss')
 	,[OutGoing] = FORMAT(t.OutGoing,'yyyy/MM/dd HH:mm:ss')
     ,ps.PostSewingSubProcess
-    ,nb.NoBundleCardAfterSubprocess
+    ,t.NoBundleCardAfterSubprocess
 from #tmpBundleNo_Complete t
 outer apply(
 	select qty=sum(bd.Qty)
@@ -1413,13 +1410,6 @@ outer apply(
     and bda.subProcessid='{subProcess}'
     and bda.PostSewingSubProcess = 1
 )ps
-outer apply(
-    select top 1 NoBundleCardAfterSubprocess
-    from Bundle_Detail_Art bda
-    where bda.BundleNo = t.BundleNo
-    and bda.subProcessid='{subProcess}'
-    and bda.NoBundleCardAfterSubprocess = 1
-)nb
 
 drop table #tmpOrders,#tmpBundleNo,#tmpBundleNo_SubProcess,#tmpBundleNo_Complete
 ";
@@ -1454,16 +1444,9 @@ drop table #tmpOrders,#tmpBundleNo,#tmpBundleNo_SubProcess,#tmpBundleNo_Complete
             .Text("OutGoing", header: "Farm Out", width: Widths.AnsiChars(20), iseditingreadonly: true)
             .Text("InComing", header: "Farm In", width: Widths.AnsiChars(20), iseditingreadonly: true)
             .Text("Status", header: "Status", width: Widths.AnsiChars(10), iseditingreadonly: true)
+            .CheckBox("PostSewingSubProcess", header: "Post Sewing\r\nSubProcess", width: Widths.AnsiChars(5), trueValue: 1, falseValue: 0, iseditable: false)
+            .CheckBox("NoBundleCardAfterSubprocess", header: "No Bundle Card\r\nAfter Subprocess", width: Widths.AnsiChars(5), trueValue: 1, falseValue: 0, iseditable: false)
             ;
-
-            string sqlchk = $@"select 1 from SubProcess where id = '{subProcess}' and IsSelection = 1";
-            if (MyUtility.Check.Seek(sqlchk))
-            {
-                this.Helper.Controls.Grid.Generator(this.grid2)
-                .CheckBox("PostSewingSubProcess", header: "Post Sewing\r\nSubProcess", width: Widths.AnsiChars(5), trueValue: 1, falseValue: 0, iseditable: false)
-                .CheckBox("NoBundleCardAfterSubprocess", header: "No Bundle Card\r\nAfter Subprocess", width: Widths.AnsiChars(5), trueValue: 1, falseValue: 0, iseditable: false)
-                ;
-            }
 
             this.grid2.CellFormatting += new DataGridViewCellFormattingEventHandler(this.Grid2_CellFormatting);
 

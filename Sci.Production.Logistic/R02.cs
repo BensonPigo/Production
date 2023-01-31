@@ -66,6 +66,7 @@ namespace Sci.Production.Logistic
         /// <returns>Result</returns>
         protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
+            DBProxy.Current.DefaultTimeout = 900; // 15分鐘
             StringBuilder sqlWHERE = new StringBuilder();
             StringBuilder sqlcmd = new StringBuilder();
 
@@ -125,7 +126,11 @@ select a.MDivisionID,a.FactoryID,a.OrderID,a.StyleID,a.PackingID,a.CTNStartNo,a.
 ,a.ClogLocationId
 ,a.BrandID
 ,a.Cancelled
-,TTLQty,[QtyPerSize],a.PulloutComplete,ActPulloutDate,reason
+,TTLQty
+,[QtyPerSize]
+,a.PulloutComplete
+,ActPulloutDate
+,reason
 from(
     select 
     p.MDivisionID
@@ -151,11 +156,11 @@ from(
     inner join PackingList_Detail pd WITH (NOLOCK) on p.ID = pd.ID
     inner join Orders o WITH (NOLOCK) on o.ID = pd.OrderID
     outer apply(
-	    select ShipQty = sum(podd.ShipQty) 
-	    from Pullout_Detail_Detail podd WITH (NOLOCK) 
-	    inner join Order_Qty oq WITH (NOLOCK) on oq.id=podd.OrderID 
-	    and podd.Article= oq.Article and podd.SizeCode=oq.SizeCode
-	    where podd.OrderID = o.ID
+	    select ShipQty = sum(pad.ShipQty)
+        from PackingList_Detail pad WITH (NOLOCK)
+        inner join Order_Qty oq WITH (NOLOCK) on oq.ID = pad.OrderID and oq.Article = pad.Article and oq.SizeCode = pad.SizeCode
+        inner join PackingList p WITH (NOLOCK) on p.ID = pad.ID
+        where pad.OrderID = o.ID and p.PulloutID <> ''
     )s
     outer apply(
 	    select combo = Stuff((
@@ -212,7 +217,6 @@ p.MDivisionID
 from PackingList p WITH (NOLOCK) 
 inner join PackingList_Detail pd WITH (NOLOCK) on p.ID = pd.ID
 inner join Orders o WITH (NOLOCK) on o.ID = pd.OrderID
-left join Pullout po WITH (NOLOCK) on p.PulloutID = po.ID
 outer apply(
 	select combo = Stuff((
 	    select concat('/',SizeCode+':'+ convert(varchar(10),QtyPerCTN))
@@ -239,7 +243,7 @@ outer apply(
 )rea
 where pd.CTNQty > 0
 and pd.ReceiveDate is not null
-and (p.PulloutID = '' or po.Status = 'New')
+and (p.PulloutID = '' or p.PulloutStatus = 'New')
 and pd.DisposeFromClog= 0
 and o.PulloutComplete = 0
 ");
@@ -254,6 +258,7 @@ order by PulloutComplete desc,ClogLocationId, MDivisionID, FactoryID, OrderID, I
                 return failResult;
             }
 
+            DBProxy.Current.DefaultTimeout = 300; // 改回原本設定
             return Ict.Result.True;
         }
 
@@ -289,44 +294,12 @@ order by PulloutComplete desc,ClogLocationId, MDivisionID, FactoryID, OrderID, I
             worksheet.Cells[2, 10] = this.brand;
             worksheet.Cells[3, 10] = this.mDivision;
 
-            // 填內容值
-            int intRowsStart = 6;
-            object[,] objArray = new object[1, 17];
-            foreach (DataRow dr in this.printData.Rows)
-            {
-                objArray[0, 0] = dr["MDivisionID"];
-                objArray[0, 1] = dr["FactoryID"];
-                objArray[0, 2] = dr["OrderID"];
-                objArray[0, 3] = dr["StyleID"];
-                objArray[0, 4] = dr["PackingID"];
-                objArray[0, 5] = dr["CTNStartNo"];
-                objArray[0, 6] = dr["ReceiveDate"];
-                objArray[0, 7] = dr["CustPONo"];
+            MyUtility.Excel.CopyToXls(this.printData, string.Empty, strXltName, 5, false, null, excel); // 將datatable copy to excel
 
-                objArray[0, 8] = dr["OriClogLocationId"];
-
-                objArray[0, 9] = dr["ClogLocationId"];
-                objArray[0, 10] = dr["BrandID"];
-                objArray[0, 11] = dr["Cancelled"];
-                if (this.Perm.Confirm)
-                {
-                    objArray[0, 12] = dr["TTLQty"];
-                    objArray[0, 13] = dr["QtyPerSize"];
-                    objArray[0, 14] = dr["PulloutComplete"];
-                    objArray[0, 15] = dr["ActPulloutDate"];
-                    objArray[0, 16] = dr["reason"];
-                }
-
-                worksheet.Range[string.Format("A{0}:Q{0}", intRowsStart)].Value2 = objArray;
-                intRowsStart++;
-            }
-
+            // 此欄位只有 Clog R02 擁有 Confirm 權限的使用者可以『看到』，其餘的則移除該欄位。
             if (!this.Perm.Confirm)
             {
-                worksheet.Cells[5, 13] = string.Empty;
-                worksheet.Cells[5, 14] = string.Empty;
-                worksheet.Cells[5, 15] = string.Empty;
-                worksheet.Cells[5, 16] = string.Empty;
+                worksheet.get_Range("M:P").EntireColumn.Delete();
             }
 
             #region Save & Show Excel

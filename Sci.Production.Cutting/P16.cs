@@ -61,6 +61,38 @@ namespace Sci.Production.Cutting
                 curRow["UnfinishedCuttingReason"] = selectItem.GetSelecteds()[0]["ID"];
             };
 
+            unfinishedCuttingReasonSetting.CellValidating += (s, e) =>
+            {
+                if (MyUtility.Check.Empty(e.FormattedValue))
+                {
+                    return;
+                }
+
+                DataRow dr = this.gridCuttingReasonInput.GetDataRow<DataRow>(e.RowIndex);
+                List<SqlParameter> listPar = new List<SqlParameter>() { new SqlParameter("@Name", e.FormattedValue) };
+                string selcmd = @"select ID, Name from DropDownList with (nolock) where type = 'PMS_UnFinCutReason' and Name = @Name";
+                DualResult result = DBProxy.Current.Select(null, selcmd, listPar, out DataTable dt);
+                if (!result)
+                {
+                    this.ShowErr(result);
+                    return;
+                }
+
+                if (dt.Rows.Count == 0)
+                {
+                    MyUtility.Msg.WarningBox($"Reason {e.FormattedValue} not found!");
+                    dr["UnfinishedCuttingReasonDesc"] = string.Empty;
+                    dr["UnfinishedCuttingReason"] = string.Empty;
+                }
+                else
+                {
+                    dr["UnfinishedCuttingReasonDesc"] = dt.Rows[0]["Name"];
+                    dr["UnfinishedCuttingReason"] = dt.Rows[0]["ID"];
+                }
+
+                dr.EndEdit();
+            };
+
             this.Helper.Controls.Grid.Generator(this.gridCuttingReasonInput)
                 .Text("MDivisionID", header: "M", width: Widths.AnsiChars(5), iseditingreadonly: true)
                 .Text("FtyGroup", header: "Factory", width: Widths.Auto(), iseditingreadonly: true)
@@ -71,14 +103,22 @@ namespace Sci.Production.Cutting
                 .Text("BrandID", header: "Brand", width: Widths.AnsiChars(12), iseditingreadonly: true)
                 .Text("StyleID", header: "Style#", width: Widths.AnsiChars(12), iseditingreadonly: true)
                 .Text("Refno", header: "FabRef#", width: Widths.AnsiChars(15), iseditingreadonly: true)
-                .Text("CutRef", header: "Ref#", width: Widths.AnsiChars(15), iseditingreadonly: true)
+                .Text("CutRef", header: "Ref#", width: Widths.AnsiChars(6), iseditingreadonly: true)
+                .Text("Cutno", header: "Cut#", width: Widths.AnsiChars(2), iseditingreadonly: true)
                 .Text("FabricCombo", header: "Combination", width: Widths.Auto(), iseditingreadonly: true)
                 .Text("ColorWay", header: "Color Way", width: Widths.Auto(), iseditingreadonly: true)
                 .Text("ColorID", header: "Color", width: Widths.Auto(), iseditingreadonly: true)
-                .Text("Artwork", header: "Artwork", width: Widths.AnsiChars(12), iseditingreadonly: true)
-                .Text("UnfinishedCuttingReasonDesc", width: Widths.AnsiChars(30), header: "Reason", iseditingreadonly: true, settings: unfinishedCuttingReasonSetting);
+                .Text("Layer", header: "Layer", width: Widths.Auto(), iseditingreadonly: true)
+                .Text("LackingLayers", header: "Lacking Layer", width: Widths.AnsiChars(12), iseditingreadonly: true)
+                .Text("Size", header: "Size", width: Widths.AnsiChars(12), iseditingreadonly: true)
+                .Numeric("BalanceCons", header: "Balance Cons.", width: Widths.AnsiChars(6), decimal_places: 4, integer_places: 5, iseditingreadonly: true)
+                .Date("BuyerDelivery", header: "Buyer Delivery", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                .Text("UnfinishedCuttingReasonDesc", width: Widths.AnsiChars(30), header: "Reason", settings: unfinishedCuttingReasonSetting)
+                .EditText("Remark", header: "Remark", width: Widths.AnsiChars(30))
+                ;
 
             this.gridCuttingReasonInput.Columns["UnfinishedCuttingReasonDesc"].DefaultCellStyle.BackColor = Color.Pink;
+            this.gridCuttingReasonInput.Columns["Remark"].DefaultCellStyle.BackColor = Color.Pink;
         }
 
         private void Query()
@@ -99,6 +139,12 @@ namespace Sci.Production.Cutting
                 listPar.Add(new SqlParameter("@EstCutDateTo", this.dateEstCutDate.DateBox2.Value));
             }
 
+            if (!this.txtfactory.Text.Empty())
+            {
+                sqlWhere += " and o.FtyGroup = @FtyGroup";
+                listPar.Add(new SqlParameter("@FtyGroup", this.txtfactory.Text));
+            }
+
             sqlGetDate = $@"
 select
 	w.MDivisionID,
@@ -111,13 +157,19 @@ select
 	o.StyleID,
     w.Refno,
 	w.CutRef,
+    w.Cutno,
 	w.FabricCombo,
 	[ColorWay] = stuff(Article.Article,1,1,''),
-	w.ColorID, 
-    [LackingLayers] = w.Layer - isnull(acc.AccuCuttingLayer,0),    
+	w.ColorID,   
+    w.Layer,
     Artwork.Artwork,
+    [Size] = Size.Size,
+    [LackingLayers] = w.Layer - isnull(acc.AccuCuttingLayer,0),  
     w.UnfinishedCuttingReason,
+    [BalanceCons] = w.Cons - [ActConsOutput],
+    o.BuyerDelivery,
     [UnfinishedCuttingReasonDesc] = dw.Name,
+    w.Remark,
     w.Ukey
 from WorkOrder w WITH (NOLOCK) 
 inner join Orders o WITH (NOLOCK) on o.id = w.OrderID
@@ -126,6 +178,16 @@ left join DropDownList dw with (nolock) on dw.Type = 'PMS_UnFinCutReason' and dw
 left join fabric f WITH (NOLOCK) on f.SCIRefno = w.SCIRefno
 left join PO_Supp_Detail psd with(nolock) on psd.id = w.id and psd.seq1 = w.seq1 and psd.seq2 = w.seq2
 outer apply(select AccuCuttingLayer = sum(aa.Layer) from cuttingoutput_Detail aa WITH (NOLOCK) where aa.WorkOrderUkey = w.Ukey)acc
+outer apply(select YDSMarkerLength = dbo.MarkerLengthToYDS(w.MarkerLength)) ML
+outer apply(select ActConsOutput = cast(isnull(iif(w.Layer - isnull(acc.AccuCuttingLayer,0) = 0, w.Cons, acc.AccuCuttingLayer * ML.YDSMarkerLength),0) as numeric(9,4)))ActConsOutput
+outer apply(
+select Size = stuff((
+	Select concat(', ' , c.sizecode, '/ ', c.qty)
+	From WorkOrder_SizeRatio c WITH (NOLOCK)
+	Where c.WorkOrderUkey =w.Ukey
+	For XML path('')
+	),1,1,'')
+)Size
 outer apply(
 	select Article = (
 		select distinct concat('/',Article)
@@ -208,7 +270,7 @@ where   w.EstCutDate >= @EstCutDateFrom {sqlWhere} and (w.Layer - isnull(acc.Acc
             foreach (var needSaveItem in needSaveData)
             {
                 sqlUpdate += $@"
-update WorkOrder set UnfinishedCuttingReason = '{needSaveItem["UnfinishedCuttingReason"]}' where Ukey = '{needSaveItem["Ukey"]}'
+update WorkOrder set UnfinishedCuttingReason = '{needSaveItem["UnfinishedCuttingReason"]}', Remark = '{needSaveItem["Remark"]}' where Ukey = '{needSaveItem["Ukey"]}'
 ";
             }
 

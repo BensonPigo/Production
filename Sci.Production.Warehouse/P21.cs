@@ -2,20 +2,17 @@
 using Ict.Win;
 using Sci.Data;
 using Sci.Production.Automation.LogicLayer;
-using Sci.Production.Prg;
 using Sci.Production.Prg.Entity;
 using Sci.Production.PublicPrg;
-using Sci.Win;
 using Sci.Win.Tools;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Drawing;
-using System.Drawing.Imaging;
-using System.IO;
 using System.Linq;
 using System.Transactions;
 using System.Windows.Forms;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace Sci.Production.Warehouse
 {
@@ -145,6 +142,7 @@ namespace Sci.Production.Warehouse
                  .CheckBox("select", header: string.Empty, trueValue: 1, falseValue: 0, settings: col_Select)
                  .Text("ID", header: "Receiving ID", width: Widths.AnsiChars(14), iseditingreadonly: true)
                  .Text("ExportID", header: "WK#", width: Widths.AnsiChars(14), iseditingreadonly: true)
+                 .Date("WhseArrival", header: "Arrive WH Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
                  .Text("poid", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
                  .Text("Seq", header: "Seq", width: Widths.AnsiChars(8), iseditingreadonly: true)
                  .Text("BrandID", header: "Brand", width: Widths.AnsiChars(10), iseditingreadonly: true)
@@ -152,7 +150,8 @@ namespace Sci.Production.Warehouse
                  .Text("Roll", header: "Roll#", width: Widths.AnsiChars(8), iseditingreadonly: true)
                  .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(8), iseditingreadonly: true)
                  .Button(propertyname: "Barcode", header: "Print Barcode", width: Widths.AnsiChars(16), onclick: this.PrintBarcode)
-                 .EditText("Description", header: "Description", width: Widths.AnsiChars(20), iseditingreadonly: true)
+                 .Text("Refno", header: "Ref#", width: Widths.AnsiChars(8), iseditingreadonly: true)
+                 .Text("Stocktransfer", header: "Stock Transfer", width: Widths.AnsiChars(8), iseditingreadonly: true)
                  .Text("Color", header: "Color", width: Widths.AnsiChars(6), iseditingreadonly: true)
                  .Numeric("StockQty", header: "Qty", width: Widths.AnsiChars(10), decimal_places: 2, integer_places: 10, iseditingreadonly: true)
                  .Text("StockTypeDesc", header: "Stock Type", width: Widths.AnsiChars(8), iseditingreadonly: true)
@@ -165,7 +164,8 @@ namespace Sci.Production.Warehouse
                  .Numeric("Weight", header: "G.W(kg)", width: Widths.AnsiChars(8), decimal_places: 2, iseditingreadonly: true)
                  .Numeric("ActualWeight", header: "Act.(kg)", width: Widths.AnsiChars(8), decimal_places: 2, settings: cellActWeight)
                  .Numeric("Differential", header: "Differential", width: Widths.AnsiChars(8), decimal_places: 2, iseditingreadonly: true)
-                 .Text("Remark", header: "Remark", width: Widths.AnsiChars(15))
+                 .EditText("ReceivingRemark", header: "Receiving Remark", width: Widths.AnsiChars(20))
+                 .Text("Remark", header: "Create P26 Remark", width: Widths.AnsiChars(15))
                  .Text("LastRemark", header: "Last P26 Remark data", width: Widths.AnsiChars(15), iseditingreadonly: true)
                  .DateTime("LastEditDate", header: "Last Edit Date", width: Widths.AnsiChars(20), iseditingreadonly: true)
                  .Numeric("rid", header: "rid", width: Widths.AnsiChars(8), decimal_places: 0, iseditingreadonly: true)
@@ -174,6 +174,7 @@ namespace Sci.Production.Warehouse
             this.gridReceiving.Columns["Location"].DefaultCellStyle.BackColor = Color.Pink;
             this.gridReceiving.Columns["Checker"].DefaultCellStyle.BackColor = Color.Pink;
             this.gridReceiving.Columns["ActualWeight"].DefaultCellStyle.BackColor = Color.Pink;
+            this.gridReceiving.Columns["ReceivingRemark"].DefaultCellStyle.BackColor = Color.Pink;
             this.gridReceiving.Columns["Remark"].DefaultCellStyle.BackColor = Color.Pink;
             this.gridReceiving.Columns["CutShadebandTime"].DefaultCellStyle.BackColor = Color.Pink;
             this.gridReceiving.Columns["Fabric2LabTime"].DefaultCellStyle.BackColor = Color.Pink;
@@ -185,99 +186,15 @@ namespace Sci.Production.Warehouse
             if (this.dtReceiving != null && this.dtReceiving.Rows.Count > 0 && this.gridReceiving.CurrentDataRow != null)
             {
                 DataRow dr = this.gridReceiving.CurrentDataRow;
-
                 if (MyUtility.Check.Empty(dr["Barcode"]))
                 {
                     return;
                 }
 
-                string receivingSource = MyUtility.Convert.GetString(dr["ReceivingSource"]);
-                string sp = MyUtility.Convert.GetString(dr["poid"]);
-                string seq = MyUtility.Convert.GetString(dr["Seq"]);
-                string refno = MyUtility.Convert.GetString(dr["refno"]);
-                string dyelot = MyUtility.Convert.GetString(dr["dyelot"]);
-                string color = MyUtility.Convert.GetString(dr["color"]);
-                string roll = MyUtility.Convert.GetString(dr["Roll"]);
-                string qty = MyUtility.Convert.GetString(dr["StockQty"]);
-                string location = MyUtility.Convert.GetString(dr["location"]);
-                string gw = MyUtility.Convert.GetString(dr["Weight"]) + "KG";
-                string aw = MyUtility.Convert.GetString(dr["ActualWeight"]) + "KG";
-                string remark = MyUtility.Convert.GetString(dr["FirRemark"]);
-                string factory = MyUtility.Convert.GetString(dr["FactoryID"]);
-                string inspector = "QCID:" + MyUtility.Convert.GetString(dr["Inspector"]);
-                string inspectdate = "Insp Date:" + MyUtility.Convert.GetString(dr["InspDate"]);
-
-                ReportDefinition report = new ReportDefinition();
-                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("SP", sp));
-                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("seq", seq));
-                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("refno", refno));
-                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("dyelot", dyelot));
-                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("color", color));
-                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("roll", roll));
-                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("qty", qty));
-                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("location", location));
-                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("gw", gw));
-                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("aw", aw));
-                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("remark", remark));
-                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("factory", factory));
-                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("inspector", inspector));
-                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("inspectdate", inspectdate));
-
-                #region QRCode 參數
-                int qrCodeWidth = 90;
-                string rdlcName = "P21_PrintBarcode5.rdlc";
-                if (this.cmbBarcoedType.Text == "10X10")
-                {
-                    qrCodeWidth = 180;
-                    rdlcName = "P21_PrintBarcode10.rdlc";
-                }
-                else if (this.cmbBarcoedType.Text == "7X7")
-                {
-                    rdlcName = "P21_PrintBarcode7.rdlc";
-                }
-                else
-                {
-                    rdlcName = "P21_PrintBarcode5.rdlc";
-                }
-
-                Bitmap oriBitmap = MyUtility.Convert.GetString(dr["Barcode"]).ToBitmapQRcode(qrCodeWidth, qrCodeWidth);
-                string paramValue;
-                using (var b = new Bitmap(oriBitmap))
-                {
-                    using (var ms = new MemoryStream())
-                    {
-                        b.Save(ms, ImageFormat.Png);
-                        paramValue = Convert.ToBase64String(ms.ToArray());
-                    }
-                }
-
-                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Image", paramValue));
-                #endregion
-
-                #region  指定是哪個 RDLC
-                DualResult result = ReportResources.ByEmbeddedResource(typeof(P21_PrintBarcode_Data), rdlcName, out IReportResource reportresource);
-                if (!result)
-                {
-                    this.ShowErr(result);
-                    return;
-                }
-
-                report.ReportDataSource = new List<P21_PrintBarcode_Data>(); // 其實不用, 但寫法需要, 給個空的即可
-                report.ReportResource = reportresource;
-                #endregion
-
-                // 開啟 report view
-                var frm = new Win.Subs.ReportView(report)
-                {
-                    MdiParent = this.MdiParent,
-                    DirectPrint = true,
-                };
-
-                frm.Show();
-
-                string detailTableName = receivingSource == "Receiving" ? "Receiving_Detail" : "TransferIn_Detail";
+                P07_QRCodeSticker.PrintQRCode_RDLC(new List<DataRow>() { dr }, this.cmbBarcoedType.Text, this.Name);
+                string detailTableName = MyUtility.Convert.GetString(dr["ReceivingSource"]) == "Receiving" ? "Receiving_Detail" : "TransferIn_Detail";
                 string sqlcmd = $@"update {detailTableName} set QRCode_PrintDate = Getdate() where ukey ={dr["Ukey"]} and QRCode_PrintDate is null";
-                result = DBProxy.Current.Execute(null, sqlcmd);
+                DualResult result = DBProxy.Current.Execute(null, sqlcmd);
                 if (!result)
                 {
                     this.ShowErr(result);
@@ -507,6 +424,9 @@ from
         ,[InspDate] = Format(fp.InspDate, 'yyyy/MM/dd')
         ,[FirRemark] = fp.Remark
         ,o.FactoryID
+        ,OldReceivingRemark = rd.remark
+        ,ReceivingRemark = rd.remark
+        ,WhseArrival = r.WhseArrival
     from  Receiving r with (nolock)
     inner join Receiving_Detail rd with (nolock) on r.ID = rd.ID
     inner join View_WH_Orders o with (nolock) on o.ID = rd.POID 
@@ -601,6 +521,9 @@ from
         ,[InspDate] = Format(fp.InspDate, 'yyyy/MM/dd hh:mmtt')
         ,[FirRemark] = fp.Remark
         ,o.FactoryID
+        ,OldReceivingRemark = td.Remark
+        ,ReceivingRemark = td.Remark
+        ,WhseArrival = t.IssueDate
     FROM TransferIn t with (nolock)
     INNER JOIN TransferIn_Detail td with (nolock) ON t.ID = td.ID
     INNER JOIN View_WH_Orders o with (nolock) ON o.ID = td.POID
@@ -653,7 +576,7 @@ from
 select  t.*
         ,[LastRemark] = LastEditDate.Remark
         ,[LastEditDate]=LastEditDate.EditDate
-		,[Description] = dbo.getmtldesc(t.POID, t.Seq1, t.Seq2, 2, 0)
+		,[StockTransfer] = dbo.getmtldesc(t.POID, t.Seq1, t.Seq2, null, 0)
         ,[Color] = case when t.MtlTypeID = 'EMB THREAD' OR t.MtlTypeID = 'SP THREAD' OR t.MtlTypeID = 'THREAD' and t.SuppColor = '' then dbo.GetColorMultipleID (t.BrandID, t.ColorID)
 						when t.MtlTypeID = 'EMB THREAD' OR t.MtlTypeID = 'SP THREAD' OR t.MtlTypeID = 'THREAD' and t.SuppColor <> '' then t.SuppColor
 						else t.ColorID end
@@ -780,7 +703,9 @@ drop table #tmp
             var listUpdateReceivingTransferIn = this.dtReceiving.AsEnumerable().Where(x => x.Field<int>("select") == 1
                                                                              && (x.Field<decimal>("ActualWeight") != x.Field<decimal>("OldActualWeight") ||
                                                                                  !MyUtility.Convert.GetDate(x["Fabric2LabTime"]).EqualString(MyUtility.Convert.GetDate(x["OldFabric2LabTime"])) ||
-                                                                                 x.Field<string>("Checker") != x.Field<string>("OldChecker")))
+                                                                                 x.Field<string>("Checker") != x.Field<string>("OldChecker") ||
+                                                                                 x.Field<string>("ReceivingRemark") != x.Field<string>("OldReceivingRemark")
+                                                                                 ))
                                                                                 .Select(s => new
                                                                                 {
                                                                                     ReceivingSource = s["ReceivingSource"].ToString(),
@@ -789,6 +714,7 @@ drop table #tmp
                                                                                     Fabric2LabTime = s["Fabric2LabTime"],
                                                                                     IsNeedUpdateFabric2LabBy = !MyUtility.Convert.GetDate(s["Fabric2LabTime"]).EqualString(MyUtility.Convert.GetDate(s["OldFabric2LabTime"])),
                                                                                     Checker = s["Checker"],
+                                                                                    ReceivingRemark = s["ReceivingRemark"],
                                                                                 });
 
             DataRow[] drArryCutShadebandTime = this.dtReceiving.AsEnumerable().Where(x => x.Field<int>("select") == 1
@@ -952,14 +878,14 @@ Insert into LocationTrans_Detail(   ID,
 
                 if (updateItem.ReceivingSource == "Receiving")
                 {
-                    sqlUpdateReceiving_Detail += $@"update Receiving_Detail set ActualWeight  = {updateItem.ActualWeight} {updateFabric2Lab}, Checker = '{updateItem.Checker}'
+                    sqlUpdateReceiving_Detail += $@"update Receiving_Detail set ActualWeight  = {updateItem.ActualWeight} {updateFabric2Lab}, Checker = '{updateItem.Checker}', Remark = '{updateItem.ReceivingRemark}'
                                                     where   UKey = '{updateItem.Ukey}'
 ";
                 }
 
                 if (updateItem.ReceivingSource == "TransferIn")
                 {
-                    sqlUpdateReceiving_Detail += $@"update TransferIn_Detail set ActualWeight  = {updateItem.ActualWeight} {updateFabric2Lab}, Checker = '{updateItem.Checker}'
+                    sqlUpdateReceiving_Detail += $@"update TransferIn_Detail set ActualWeight  = {updateItem.ActualWeight} {updateFabric2Lab}, Checker = '{updateItem.Checker}', Remark = '{updateItem.ReceivingRemark}'
                                                     where   UKey = '{updateItem.Ukey}'
 ";
                 }

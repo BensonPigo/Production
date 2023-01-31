@@ -5,6 +5,7 @@
     [Point]                  NUMERIC (3)  CONSTRAINT [DF_FIR_Physical_Defect_Point] DEFAULT ((0)) NULL,
     [ID]                     BIGINT       NOT NULL,
     [RealTimeInsert]         BIT          NULL,
+    [T2] BIT NOT NULL, 
     CONSTRAINT [PK_FIR_Physical_Defect] PRIMARY KEY CLUSTERED ([FIR_PhysicalDetailUKey] ASC, [DefectLocation] ASC, [ID] ASC)
 );
 
@@ -32,3 +33,13 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'瑕疵記�
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'點數', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'FIR_Physical_Defect', @level2type = N'COLUMN', @level2name = N'Point';
 
+
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'T2',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'FIR_Physical_Defect',
+    @level2type = N'COLUMN',
+    @level2name = N'T2'

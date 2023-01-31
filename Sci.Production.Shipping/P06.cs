@@ -1905,6 +1905,21 @@ where id='{dr["PackingListID"]}'; ";
                         {
                             ddr.Delete();
                         }
+
+                        // PackingListIDu,也要一併清空PackingList.pulloutID + PulloutStatus
+                        string updatePackinglistCmd = $@"
+Update PackingList 
+set pulloutID = ''
+,PulloutStatus = ''
+where id='{dr["PackingListID"]}' and pulloutID = '{this.CurrentMaintain["id"]}'; ";
+                        if (MyUtility.Check.Empty(plFromRgCode))
+                        {
+                            this.updatePackinglist += updatePackinglistCmd;
+                        }
+                        else
+                        {
+                            this.dicUpdatePackinglistA2B.AddSqlCmdByPLFromRgCode(plFromRgCode, updatePackinglistCmd);
+                        }
                     }
                     #endregion
                     #region 合併計算 ShipQty

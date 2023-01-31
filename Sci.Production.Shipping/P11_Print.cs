@@ -124,8 +124,33 @@ namespace Sci.Production.Shipping
             }
 
             #region Get A2B
-
-            string sqlGetA2BGMT = $@"
+            string sqlGetA2BGMT;
+            if (this.chkOutStanding.Checked)
+            {
+                sqlGetA2BGMT = $@"
+select	ID = '',
+		[GMTBooking] = gb.ID,
+		[InvDate] = cast(null as date),
+        gbd.PLFromRgCode,
+        [PackID] = '',
+        [GRS_WEIGHT] = 0,
+        [Qty] = 0,
+        [OrderID] = '',
+        CustPONo = '',
+        StyleID = '',
+		Description = '',	
+        [ShipQty] = 0,
+        [Dest] = ''
+from GMTBooking gb
+left join GMTBooking_Detail gbd with (nolock) on gbd.ID = gb.ID
+where	1=1
+        {sqlInvDateWhere}
+		{sqlShipperWhere}
+";
+            }
+            else
+            {
+                sqlGetA2BGMT = $@"
 select	bi.ID,
 		[GMTBooking] = gb.ID,
 		[InvDate] = bi.InvDate,
@@ -147,8 +172,9 @@ where	1=1
         {sqlInvDateWhere}
 		{sqlShipperWhere}
 ";
-            DataTable dtA2BGMT;
-            DualResult result = DBProxy.Current.Select(null, sqlGetA2BGMT, listPar, out dtA2BGMT);
+            }
+
+            DualResult result = DBProxy.Current.Select(null, sqlGetA2BGMT, listPar, out DataTable dtA2BGMT);
 
             if (!result)
             {
@@ -157,6 +183,7 @@ where	1=1
             }
 
             DataTable dtA2BResult = new DataTable();
+            dtA2BResult = dtA2BGMT.Copy();
 
             if (dtA2BGMT.Rows.Count > 0)
             {
@@ -193,6 +220,11 @@ group by    t.ID,
 ";
                 foreach (var groupA2BGMT in dtA2BGMT.AsEnumerable().GroupBy(s => s["PLFromRgCode"].ToString()))
                 {
+                    if (MyUtility.Check.Empty(groupA2BGMT.Key))
+                    {
+                        continue;
+                    }
+
                     PackingA2BWebAPI_Model.DataBySql dataBySql = new PackingA2BWebAPI_Model.DataBySql()
                     {
                         SqlString = sqlGetPackingA2B,
@@ -209,10 +241,6 @@ group by    t.ID,
 
                     dtA2BPAcking.MergeTo(ref dtA2BResult);
                 }
-            }
-            else
-            {
-                dtA2BResult = dtA2BGMT.Clone();
             }
 
             #endregion
@@ -307,7 +335,7 @@ bi.ExchangeRate,
 [UnitPricePHP] = tup.UnitPriceUSD * bi.ExchangeRate,
 [AmountPHP] = Round(sum(tbi.ShipQty) * tup.UnitPriceUSD * bi.ExchangeRate, 0)
 from #tmpBIRInvoice tbi
-inner join BIRInvoice bi on tbi.ID = bi.ID
+left join BIRInvoice bi on tbi.ID = bi.ID
 left join #tmpUnitPriceUSD tup on tbi.OrderID = tup.ID
 group by	 tup.UnitPriceUSD,Description,StyleID,GMTBooking,CustPONo,OrderID,tbi.ID,tbi.InvDate,bi.ExchangeRate,tbi.Dest,tbi.GRS_WEIGHT
 

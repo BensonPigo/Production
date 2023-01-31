@@ -112,6 +112,7 @@
             this.displayGSDVersion = new Sci.Win.UI.DisplayBox();
             this.labVersionWarning = new System.Windows.Forms.Label();
             this.comboSewingTeam1 = new Sci.Production.Class.ComboSewingTeam(this.components);
+            this.comboPhase = new Sci.Win.UI.ComboBox();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -133,6 +134,7 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.comboPhase);
             this.masterpanel.Controls.Add(this.comboSewingTeam1);
             this.masterpanel.Controls.Add(this.labVersionWarning);
             this.masterpanel.Controls.Add(this.displayGSDVersion);
@@ -273,11 +275,12 @@
             this.masterpanel.Controls.SetChildIndex(this.displayGSDVersion, 0);
             this.masterpanel.Controls.SetChildIndex(this.labVersionWarning, 0);
             this.masterpanel.Controls.SetChildIndex(this.comboSewingTeam1, 0);
+            this.masterpanel.Controls.SetChildIndex(this.comboPhase, 0);
             // 
             // detailpanel
             // 
-            this.detailpanel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
+            this.detailpanel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.detailpanel.Dock = System.Windows.Forms.DockStyle.None;
             this.detailpanel.Location = new System.Drawing.Point(225, 247);
@@ -1446,6 +1449,7 @@
             this.comboSewingTeam1.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "Team", true));
             this.comboSewingTeam1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboSewingTeam1.FormattingEnabled = true;
+            this.comboSewingTeam1.IssupportEmptyitem = false;
             this.comboSewingTeam1.IssupportJunk = false;
             this.comboSewingTeam1.IsSupportUnselect = true;
             this.comboSewingTeam1.Location = new System.Drawing.Point(395, 147);
@@ -1453,6 +1457,19 @@
             this.comboSewingTeam1.OldText = "";
             this.comboSewingTeam1.Size = new System.Drawing.Size(85, 23);
             this.comboSewingTeam1.TabIndex = 5;
+            // 
+            // comboPhase
+            // 
+            this.comboPhase.BackColor = System.Drawing.Color.White;
+            this.comboPhase.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Phase", true));
+            this.comboPhase.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboPhase.FormattingEnabled = true;
+            this.comboPhase.IsSupportUnselect = true;
+            this.comboPhase.Location = new System.Drawing.Point(106, 5);
+            this.comboPhase.Name = "comboPhase";
+            this.comboPhase.OldText = "";
+            this.comboPhase.Size = new System.Drawing.Size(88, 23);
+            this.comboPhase.TabIndex = 244;
             // 
             // P03
             // 
@@ -1585,5 +1602,6 @@
         private Win.UI.DisplayBox displayGSDStatus;
         private System.Windows.Forms.Label labVersionWarning;
         private Class.ComboSewingTeam comboSewingTeam1;
+        private Win.UI.ComboBox comboPhase;
     }
 }

@@ -122,7 +122,7 @@ DECLARE @tmpOrder_Qty TABLE (
    ,FactoryID VARCHAR(8)
    ,CustCDID VARCHAR(16)
    ,ZipperInsert VARCHAR(5)
-   ,Kit VARCHAR(6)
+   ,Kit VARCHAR(10)
    ,CustCDCountryID VARCHAR(2)
    ,CustPONo VARCHAR(30)
    ,BuyMonth VARCHAR(16)

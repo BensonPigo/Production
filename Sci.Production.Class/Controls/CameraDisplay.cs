@@ -33,21 +33,36 @@ namespace Sci.ManufacturingExecution.Class.Controls
         /// </summary>
         public string ImagePath { get; set; }
 
+        private bool isShowDeleteHint = false;
+
         /// <summary>
-        /// Initializes a new instance of the <see cref="InspectionCameraDefect"/> class.
+        /// CameraDisplay
         /// </summary>
-        public CameraDisplay()
+        /// <param name="isShowDeleteHint">isShowDeleteHint</param>
+        public CameraDisplay(bool isShowDeleteHint = false)
         {
             this.InitializeComponent();
             this.LastItem = false;
+            this.isShowDeleteHint = isShowDeleteHint;
         }
 
-        public void SetPictureDisplay(string desc, string Pkey, int Seq, Bitmap bitmap, string imgPath, double x, double y, bool reSize)
+        /// <summary>
+        /// SetPictureDisplay
+        /// </summary>
+        /// <param name="desc">desc</param>
+        /// <param name="pkey">pkey</param>
+        /// <param name="seq">seq</param>
+        /// <param name="bitmap">bitmap</param>
+        /// <param name="imgPath">imgPath</param>
+        /// <param name="x">x</param>
+        /// <param name="y">y</param>
+        /// <param name="reSize">reSize</param>
+        public void SetPictureDisplay(string desc, string pkey, int seq, Bitmap bitmap, string imgPath, double x, double y, bool reSize)
         {
             this.pictureBox1.Image = Camera_Prg.ResizeImage(Convert.ToInt32(this.pictureBox1.Width * x), Convert.ToInt32((this.pictureBox1.Height + 60) * y), bitmap, reSize);
             this.editDesc.Text = desc;
-            this.Pkey = Pkey;
-            this.Seq = Seq;
+            this.Pkey = pkey;
+            this.Seq = seq;
             this.ImagePath = imgPath;
 
             // 隱藏split分隔線
@@ -73,12 +88,21 @@ namespace Sci.ManufacturingExecution.Class.Controls
                 return;
             }
 
+            if (this.isShowDeleteHint)
+            {
+                DialogResult dialogResult = MyUtility.Msg.QuestionBox("Are you sure you want to delete this picture?");
+                if (dialogResult == DialogResult.No)
+                {
+                    return;
+                }
+            }
+
             ((Panel)this.Parent).Controls.Remove(this);
 
             Camera_Prg.MasterSchemas.RemoveAll(a => a.ID == this.Pkey && a.Seq == this.Seq);
         }
 
-        private void editDesc_Validated(object sender, EventArgs e)
+        private void EditDesc_Validated(object sender, EventArgs e)
         {
             if (Camera_Prg.MasterSchemas == null || Camera_Prg.MasterSchemas.Count == 0)
             {

@@ -372,5 +372,20 @@ namespace Sci.Production.Prg
                 return range.Cells[indexRow, indexCol].Value.ToString();
             }
         }
+
+        /// <summary>
+        /// GetPackScanContent
+        /// </summary>
+        /// <param name="srcBarcode">srcBarcode</param>
+        /// <returns>string</returns>
+        public static string GetPackScanContent(this string srcBarcode)
+        {
+            if (MyUtility.Check.Seek($"select 1 from Packinglist_Detail with (nolock) where SCICtnNo = '{srcBarcode.Left(15)}'"))
+            {
+                return srcBarcode.Left(15);
+            }
+
+            return srcBarcode.Left(16);
+        }
     }
 }

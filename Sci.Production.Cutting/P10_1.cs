@@ -795,7 +795,7 @@ where a.id = '{0}' and a.ukey = b.workorderukey",
             else
             {
                 string selectCommand = $@"
-select id,POID,Seasonid,Styleid,sewline,styleukey,Sewline = case when SewLine like '%/%' then substring(Sewline,1,charindex('/',Sewline,1) - 1) else SewLine end
+select id,POID,Factoryid,Seasonid,Styleid,sewline,styleukey,Sewline = case when SewLine like '%/%' then substring(Sewline,1,charindex('/',Sewline,1) - 1) else SewLine end
 from orders a WITH (NOLOCK)
 where id = '{newvalue}' and mDivisionid='{this.keyword}' ";
                 if (MyUtility.Check.Seek(selectCommand, out DataRow cutdr, null))
@@ -931,6 +931,12 @@ where id = '{newvalue}' and mDivisionid='{this.keyword}' ";
             if (MyUtility.Check.Empty(this.CurrentMaintain["article"]) || MyUtility.Check.Empty(this.CurrentMaintain["PatternPanel"]))
             {
                 this.ShowErr("Fabric Combo and Article can't empty!");
+                return;
+            }
+
+            if (MyUtility.Check.Empty(this.CurrentMaintain["OriginBundleNo"]))
+            {
+                MyUtility.Msg.WarningBox("Origin BundleNo cannot be empty!");
                 return;
             }
 

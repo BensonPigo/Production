@@ -361,7 +361,54 @@ and ExchangeCurrency = 'PHP' order by BeginDate desc
                 return;
             }
 
+            DualResult result;
             string whereInvNo = this.DetailDatas.Where(s => !MyUtility.Check.Empty(s["InvNo"])).Select(s => $"'{s["InvNo"].ToString()}'").JoinToString(",");
+
+            #region get A2B data
+            List<string> listA2B = PackingA2BWebAPI.GetPLFromRgCodeByMutiInvNo(this.DetailDatas.Select(s => s["InvNo"].ToString()).ToList());
+
+            string sqlGetA2bPacking = $@"
+select  p.INVNo,
+        pd.ShipQty,
+        p.GW,
+        pd.OrderID
+from PackingList p with (nolock)
+inner join PackingList_Detail pd with (nolock) on p.ID = pd.ID
+where   p.INVNo in ({whereInvNo})
+";
+            DataTable dtPackingA2B = new DataTable();
+            result = DBProxy.Current.Select(
+                null,
+                @"
+select  p.INVNo,
+        pd.ShipQty,
+        p.GW,
+        pd.OrderID
+from PackingList p with (nolock)
+inner join PackingList_Detail pd with (nolock) on p.ID = pd.ID
+where 1 = 0",
+                out dtPackingA2B);
+
+            if (!result)
+            {
+                this.ShowErr(result);
+                return;
+            }
+
+            foreach (string tarA2B in listA2B)
+            {
+                result = PackingA2BWebAPI.GetDataBySql(tarA2B, sqlGetA2bPacking, out DataTable dtA2BResult);
+                if (!result)
+                {
+                    this.ShowErr(result);
+                    return;
+                }
+
+                dtA2BResult.MergeTo(ref dtPackingA2B);
+            }
+
+            #endregion
+
             string sqlGetGridPOListData = $@"
 Declare @ExchangeRate decimal(18, 8) = {this.CurrentMaintain["ExchangeRate"]}
 
@@ -399,8 +446,10 @@ select	[No] = 0,
 		[AmountUSD] = sum(pd.ShipQty) * tup.UnitPriceUSD,
         [UnitPricePHP] = tup.UnitPriceUSD * @ExchangeRate,
 		[AmountPHP] = Round(sum(pd.ShipQty) * tup.UnitPriceUSD * @ExchangeRate, 0),
-		bd.ID,bd.InvNo,
-        g.Dest,p.GW
+		bd.ID,
+        bd.InvNo,
+        g.Dest,
+        p.GW
 from PackingList p with (nolock)
 left join BIRInvoice_Detail bd with (nolock) on p.INVNo = bd.InvNo
 inner join PackingList_Detail pd with (nolock) on p.ID = pd.ID
@@ -418,13 +467,46 @@ group by      o.CustPONo,
 			bd.id,
 			bd.invno,
             g.Dest,p.GW
+union all
+select	[No] = 0,
+		[OrderID] = o.ID,
+        o.CustPONo,		
+		P.INVNo,
+		o.StyleID,
+		s.Description,
+		tup.UnitPriceUSD,
+		[ShipQty] = sum(p.ShipQty),
+		[AmountUSD] = sum(p.ShipQty) * tup.UnitPriceUSD,
+        [UnitPricePHP] = tup.UnitPriceUSD * @ExchangeRate,
+		[AmountPHP] = Round(sum(p.ShipQty) * tup.UnitPriceUSD * @ExchangeRate, 0),
+		bd.ID,
+        bd.InvNo,
+        g.Dest,
+        p.GW
+from #tmp p with (nolock)
+left join BIRInvoice_Detail bd with (nolock) on p.INVNo = bd.InvNo
+inner join GMTBooking g with (nolock) on g.ID = P.invno
+inner join Orders o with (nolock) on p.OrderID = o.ID
+inner join Style s with (nolock) on s.Ukey = o.StyleUkey
+left join #tmpUnitPriceUSD tup on tup.ID = o.ID
+where p.INVNo in ({whereInvNo})
+group by      o.CustPONo,
+		    o.ID,
+		    o.StyleID,
+            P.INVNo,
+		    s.Description,
+		    tup.UnitPriceUSD,
+			bd.id,
+			bd.invno,
+            g.Dest,p.GW
 
-drop table #tmpUnitPriceUSD
+
+drop table #tmpUnitPriceUSD, #tmp
 ";
 
             DataTable dtPOList;
 
-            DualResult result = DBProxy.Current.Select(null, sqlGetGridPOListData, out dtPOList);
+            result = MyUtility.Tool.ProcessWithDatatable(dtPackingA2B, null, sqlGetGridPOListData, out dtPOList);
 
             if (!result)
             {
@@ -432,23 +514,6 @@ drop table #tmpUnitPriceUSD
                 return;
             }
 
-            List<string> listPLFromRgCode = PackingA2BWebAPI.GetPLFromRgCodeByMutiInvNo(this.DetailDatas.Select(s => s["InvNo"].ToString()).ToList());
-
-            foreach (string plFromRgCode in listPLFromRgCode)
-            {
-                DataTable dtA2BResult;
-                result = PackingA2BWebAPI.GetDataBySql(plFromRgCode, sqlGetGridPOListData, out dtA2BResult);
-
-                if (!result)
-                {
-                    this.ShowErr(result);
-                    return;
-                }
-
-                dtPOList.MergeBySyncColType(dtA2BResult);
-            }
-
-            // 因為A2B會使用webapi抓，所以No要在資料合併完再排序
             if (dtPOList.Rows.Count > 0)
             {
                 dtPOList = dtPOList.AsEnumerable().OrderBy(s => s["CustPONo"]).ThenBy(s => s["OrderID"]).ThenBy(s => s["StyleID"]).CopyToDataTable();

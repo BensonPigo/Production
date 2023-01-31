@@ -7,6 +7,7 @@ using Sci.Production.PublicPrg;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.SqlClient;
 using System.Drawing;
 using System.Linq;
 using System.Transactions;
@@ -265,8 +266,15 @@ drop table #ReTransferToScrapList,#ReTransferToScrapSummary
                 {
                     try
                     {
-                        DualResult result = PublicPrg.Prgs.ReTransferMtlToScrapByPO(subTransferId, transToScrapPO["POID"].ToString(), listMtlItem);
-                        if (!result)
+                        DualResult result;
+                        List<SqlParameter> sqlPar = new List<SqlParameter>();
+                        sqlPar.Add(new SqlParameter("@poid", transToScrapPO["POID"].ToString()));
+                        sqlPar.Add(new SqlParameter("@MDivisionid", Env.User.Keyword));
+                        sqlPar.Add(new SqlParameter("@factoryid", Env.User.UserID));
+                        sqlPar.Add(new SqlParameter("@loginid", Env.User.UserID));
+                        sqlPar.Add(new SqlParameter("@NewID", subTransferId));
+                        sqlPar.Add(new SqlParameter("@FirstClose", false));
+                        if (!(result = DBProxy.Current.ExecuteSP(string.Empty, "dbo.usp_WarehouseClose", sqlPar)))
                         {
                             throw result.GetException();
                         }

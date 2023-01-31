@@ -151,7 +151,7 @@ outer apply(select Article = iif(so.ID = sodd.ID,sodd.Article,''),
 				   EType = iif(so.ID = sodd.ID,sodd.ComboType,sod.ComboType),
 				   OutputQty = iif(so.ID = sodd.ID,sodd.QAQty,sod.QAQty),
 				   CPU = iif(so.ID = sodd.ID,pod.Cpu,pmo.Cpu)) as CValue
-outer apply(select iif(so.ID = sodd.ID,(select * from dbo.GetCPURate(pod.OrderTypeID,pod.ProgramID,pod.Category,pod.BrandID,'O'))
+outer apply(select iif(so.ID = sodd.ID, pod.CPUFactor
 									  ,(select * from dbo.GetCPURate('',pmo.ProgramID,'Mockup',pmo.BrandID,'M'))) as CpuRate) as GetCpuRate
 outer apply(
 	select [SuitRate]=iif(so.ID = sodd.ID

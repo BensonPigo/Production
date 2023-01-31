@@ -414,6 +414,8 @@ ORDER BY O.ID", sqlFilte["DaysSinceInline_Factory"],
 
             worksheet.Rows.AutoFit();
 
+            // 移除CD CODE
+            worksheet.get_Range("I:I").EntireColumn.Delete();
             #region Save & Show Excel
             string strExcelName = Class.MicrosoftFile.GetName("PPIC_R10");
             Excel.Workbook workbook = objApp.ActiveWorkbook;

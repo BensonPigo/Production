@@ -3,13 +3,10 @@ using Ict.Win;
 using Ict.Win.UI;
 using Sci.Data;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
 using System.Windows.Forms;
 
 namespace Sci.Production.Shipping
@@ -263,14 +260,22 @@ ted.ID
 		 when ted.PoType = 'M' and ted.FabricType = 'P' then 'Part' 
 		 when ted.PoType = 'M' and ted.FabricType = 'O' then 'Miscellaneous' 
 	else '' end)
-,[Preshrink] = iif(fs.Preshrink = 1, 'V' ,'')
+,[Preshrink] = iif(fs.Preshrink = 1, 'V' ,''),
+        MaterialType = Concat(
+            case ted.FabricType
+            when 'F' then 'Fabric'
+            when 'A' then 'Accessory'
+            when 'O' then 'Other'
+            end
+            , '-' +  f.MtlTypeID),
+        WK = WK.ExportId
 from TransferExport_Detail ted WITH (NOLOCK) 
 inner join TransferExport te with(nolock) on ted.ID = te.ID
 left join Orders o WITH (NOLOCK) on o.ID = ted.PoID
 left join Supp s WITH (NOLOCK) on s.id = ted.SuppID 
 left join PO_Supp_Detail psdInv WITH (NOLOCK) on psdInv.ID = ted.InventoryPOID and psdInv.SEQ1 = ted.InventorySeq1 and psdInv.SEQ2 = ted.InventorySeq2
 left join PO_Supp_Detail psd WITH (NOLOCK) on psd.ID = ted.PoID and psd.SEQ1 = ted.Seq1 and psd.SEQ2 = ted.Seq2
-left join Fabric f WITH (NOLOCK) on f.SCIRefno = psd.SCIRefno
+left join Fabric f WITH (NOLOCK) on f.SCIRefno = ted.SCIRefno
 left join Fabric_Supp fs WITH (NOLOCK) on fs.SCIRefno = f.SCIRefno and fs.SuppID = s.ID
 outer apply(
 	SELECT [Value] = STUFF((
@@ -290,6 +295,23 @@ outer apply(
 	where tedc.TransferExport_DetailUkey = ted.Ukey
 	group by tedc.StockUnitID
 ) carton
+outer apply(
+	select ExportId = Stuff((
+		select concat(',',ExportId)
+		from (
+				select 	distinct r.ExportId
+				from TransferExport_Detail_Carton tedc with (nolock)
+				inner join Receiving_Detail rd with (nolock) on rd.PoId = ted.InventoryPOID 
+																and rd.Seq1 = ted.InventorySeq1
+																and rd.Seq2 = ted.InventorySeq2 
+																and rd.Roll = tedc.Carton
+																and rd.Dyelot = tedc.LotNo
+				inner join Receiving r with (nolock) on rd.Id = r.Id
+				where ted.Ukey = tedc.TransferExport_DetailUkey
+			) s
+		for xml path ('')
+	) , 1, 1, '')
+) WK
 where ted.ID = '{0}'", masterID);
             return base.OnDetailSelectCommandPrepare(e);
         }
@@ -321,6 +343,7 @@ where ted.ID = '{0}'", masterID);
                 .Text("SEQ", header: "To SEQ", width: Ict.Win.Widths.AnsiChars(8), iseditingreadonly: true)
                 .Text("SuppID", header: "Supplier", width: Ict.Win.Widths.AnsiChars(13), iseditingreadonly: true)
                 .Text("Description", header: "Description", width: Ict.Win.Widths.AnsiChars(20), iseditingreadonly: true)
+                .Text("MaterialType", header: "Material Type", width: Ict.Win.Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("Color", header: "Color", width: Ict.Win.Widths.AnsiChars(6), iseditingreadonly: true)
                 .Text("Size", header: "Size", width: Ict.Win.Widths.AnsiChars(6), iseditingreadonly: true)
                 .Numeric("PoQty", header: "Po Q'ty" + Environment.NewLine + "(Stock Unit)", decimal_places: 2, width: Ict.Win.Widths.AnsiChars(5), iseditingreadonly: true)
@@ -333,6 +356,7 @@ where ted.ID = '{0}'", masterID);
                 .Numeric("WeightKg", header: "G.W.(kg)", decimal_places: 2, iseditingreadonly: true).Get(out this.col_GW)
                 .Numeric("CBM", header: "CBM", decimal_places: 4, iseditingreadonly: true).Get(out this.col_CBM)
                 .Text("ContainerType", header: "ContainerType & No", width: Ict.Win.Widths.AnsiChars(15), iseditingreadonly: true)
+                .Text("WK", header: "WK#", width: Ict.Win.Widths.AnsiChars(16), iseditingreadonly: true)
                 ;
 
             // 設定detailGrid Rows 是否可以編輯
@@ -395,15 +419,6 @@ where ted.ID = '{0}'", masterID);
                 return;
             }
 
-            if (string.Compare(this.CurrentMaintain["FtyStatus"].ToString(), "New", true) != 0)
-            {
-                this.toolbar.cmdEdit.Enabled = true;
-            }
-            else
-            {
-                this.toolbar.cmdEdit.Enabled = false;
-            }
-
             if (string.Compare(this.CurrentMaintain["FtyStatus"].ToString(), "Send", true) == 0 && this.EditMode == false)
             {
                 this.toolbar.cmdConfirm.Enabled = true;
@@ -411,17 +426,6 @@ where ted.ID = '{0}'", masterID);
             else
             {
                 this.toolbar.cmdConfirm.Enabled = false;
-            }
-
-            // Confirmed and FromFactory 不可編輯
-            if (this.IsTransferOut == true &&
-                string.Compare(this.CurrentMaintain["FtyStatus"].ToString(), "Confirmed", true) == 0)
-            {
-                this.toolbar.cmdEdit.Enabled = false;
-            }
-            else
-            {
-                this.toolbar.cmdEdit.Enabled = true;
             }
         }
 
@@ -560,6 +564,7 @@ update TransferExport
 set FtyStatus='Confirmed'
     , editname = '{Env.User.UserID}' 
     , editdate = GETDATE()
+    , FtyConfirmDate = GETDATE()
 where id = '{this.CurrentMaintain["ID"]}'
 ";
                     DualResult result;
@@ -582,6 +587,7 @@ where id = '{this.CurrentMaintain["ID"]}'
         private void ControlColor()
         {
             DataTable gridData;
+            DataTable dt;
             string sqlCmd = string.Format(
                         @"select 1
 from ShareExpense se WITH (NOLOCK) 
@@ -593,6 +599,19 @@ where se.WKNo = '{0}' and se.junk=0", MyUtility.Convert.GetString(this.CurrentMa
                 this.ShowErr(result);
                 return;
             }
+
+            string sqlCmd_TS = string.Format(
+            @"select 1
+              from TransferExport_ShippingMemo se WITH (NOLOCK) 
+              where se.ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
+            DualResult resultTS = DBProxy.Current.Select(null, sqlCmd_TS, out dt);
+            if (!resultTS)
+            {
+                this.ShowErr(resultTS);
+                return;
+            }
+
+            this.btnShippingMemo.ForeColor = dt.Rows.Count > 0 ? Color.Blue : Color.Black;
 
             if (gridData.Rows.Count > 0)
             {
@@ -758,6 +777,25 @@ where ID = '{this.CurrentMaintain["ID"]}'
             else
             {
                 this.detailgridbs.Position = index;
+            }
+        }
+
+        private void BtnShippingMemo_Click(object sender, EventArgs e)
+        {
+            if (MyUtility.Check.Empty(this.CurrentMaintain["ID"]))
+            {
+                return;
+            }
+
+            new ShippingMemo(ShippingMemo.ShippingMemoType.TransferExport_ShippingMemo, this.CurrentMaintain["ID"].ToString()).ShowDialog();
+
+            if (ShippingMemo.IsDataExists(ShippingMemo.ShippingMemoType.TransferExport_ShippingMemo, this.CurrentMaintain["ID"].ToString()))
+            {
+                this.btnShippingMemo.ForeColor = Color.Blue;
+            }
+            else
+            {
+                this.btnShippingMemo.ForeColor = Color.Black;
             }
         }
     }

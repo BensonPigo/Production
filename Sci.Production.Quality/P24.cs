@@ -2,6 +2,7 @@
 using Ict.Win;
 using Sci.Data;
 using Sci.Production.Class;
+using Sci.Production.Prg;
 using Sci.Production.PublicPrg;
 using System;
 using System.Collections.Generic;
@@ -111,9 +112,9 @@ select distinct
 ,[Returnto] = '' 
 ,p2.remark
 ,p2.SCICtnNo
-,p2.ScanQty
-,p2.ScanName
-,p2.ScanEditDate
+,ScanQty = sum(p2.ScanQty)
+,ScanName = p2.ScanName
+,ScanEditDate = max(p2.ScanEditDate)
 from PackingList_Detail p2 WITH (NOLOCK)
 inner join PackingList p1 WITH (NOLOCK) on p2.id=p1.id
 left join Pullout po WITH (NOLOCK) on po.ID=p1.PulloutID
@@ -136,6 +137,18 @@ and p2.CFAReceiveDate  is not null
 and p2.DisposeFromClog= 0
 and (po.Status ='New' or po.Status is null)
 {listSQLFilter.JoinToString($"{Environment.NewLine} ")}
+group by p2.ID
+,p2.CTNStartNo
+,o1.OrderID 
+,o.CustPONo
+,o.StyleID
+,o.SeasonID
+,o.BrandID
+,c.Alias
+,o.BuyerDelivery
+,p2.remark
+,p2.SCICtnNo
+,p2.ScanName
 order by p2.ID,p2.CTNStartNo";
             #endregion
             DualResult result = DBProxy.Current.Select(string.Empty, strCmd, listSQLParameter, out this.selectDataTable);
@@ -238,9 +251,9 @@ select distinct
     ,[Returnto] = '' 
     ,p2.remark
     ,p2.SCICtnNo
-    ,p2.ScanQty
-    ,p2.ScanName
-    ,p2.ScanEditDate
+    ,ScanQty = sum(p2.ScanQty)
+    ,ScanName = p2.ScanName
+    ,ScanEditDate = max(p2.ScanEditDate)
 from PackingList_Detail p2 WITH (NOLOCK)
 inner join PackingList p1 WITH (NOLOCK) on p2.id=p1.id
 left join Pullout po WITH (NOLOCK) on po.ID=p1.PulloutID
@@ -262,8 +275,19 @@ and p1.Type in ('B','L')
 and p2.CFAReceiveDate is not null
 and p2.DisposeFromClog= 0
 and (po.Status ='New' or po.Status is null)
-and p2.id='{sl[1].Substring(0, 13)}'
-and p2.CTNStartNo='{sl[1].Substring(13).TrimStart('^')}'
+and ((p2.id='{sl[1].Substring(0, 13)}' and p2.CTNStartNo='{sl[1].Substring(13).TrimStart('^')}') or p2.SCICtnNo = '{sl[1].GetPackScanContent()}')
+group by p2.ID
+,p2.CTNStartNo
+,o1.OrderID 
+,o.CustPONo
+,o.StyleID
+,o.SeasonID
+,o.BrandID
+,c.Alias
+,o.BuyerDelivery
+,p2.remark
+,p2.SCICtnNo
+,p2.ScanName
 order by p2.ID,p2.CTNStartNo
 ";
                                 if (MyUtility.Check.Seek(sqlCmd, out seekData))
@@ -303,9 +327,9 @@ select distinct
     ,[Returnto] = '' 
     ,p2.remark
     ,p2.SCICtnNo
-    ,p2.ScanQty
-    ,p2.ScanName
-    ,p2.ScanEditDate
+    ,ScanQty = sum(p2.ScanQty)
+    ,ScanName = p2.ScanName
+    ,ScanEditDate = max(p2.ScanEditDate)
 from PackingList_Detail p2 WITH (NOLOCK)
 inner join PackingList p1 WITH (NOLOCK) on p2.id=p1.id
 left join Pullout po WITH (NOLOCK) on po.ID=p1.PulloutID
@@ -328,6 +352,18 @@ and p2.DisposeFromClog= 0
 and p2.CFAReceiveDate is not null
 and (po.Status ='New' or po.Status is null)
 and p2.CustCTN='{sl[1]}'
+group by p2.ID
+,p2.CTNStartNo
+,o1.OrderID 
+,o.CustPONo
+,o.StyleID
+,o.SeasonID
+,o.BrandID
+,c.Alias
+,o.BuyerDelivery
+,p2.remark
+,p2.SCICtnNo
+,p2.ScanName
 order by p2.ID,p2.CTNStartNo
 ";
                                     if (MyUtility.Check.Seek(sqlCmd, out seekData))
@@ -373,9 +409,9 @@ select distinct
     ,[Returnto] = '' 
     ,p2.remark
     ,p2.SCICtnNo
-    ,p2.ScanQty
-    ,p2.ScanName
-    ,p2.ScanEditDate
+    ,ScanQty = sum(p2.ScanQty)
+    ,ScanName = p2.ScanName
+    ,ScanEditDate = max(p2.ScanEditDate)
 from PackingList_Detail p2 WITH (NOLOCK)
 inner join PackingList p1 WITH (NOLOCK) on p2.id=p1.id
 left join Pullout po WITH (NOLOCK) on po.ID=p1.PulloutID
@@ -398,6 +434,18 @@ and p2.CFAReceiveDate is not null
 and p2.DisposeFromClog= 0
 and (po.Status ='New' or po.Status is null)
 and p2.CustCTN='{sl[1]}'
+group by p2.ID
+,p2.CTNStartNo
+,o1.OrderID 
+,o.CustPONo
+,o.StyleID
+,o.SeasonID
+,o.BrandID
+,c.Alias
+,o.BuyerDelivery
+,p2.remark
+,p2.SCICtnNo
+,p2.ScanName
 order by p2.ID,p2.CTNStartNo
 ";
                                 if (MyUtility.Check.Seek(sqlCmd, out seekData))
@@ -559,7 +607,8 @@ INSERT INTO [dbo].[PackingScan_History]
            ,[AddDate]
            ,[LackingQty])
      VALUES
-           ('{Env.User.Keyword}'
+           (
+            '{Env.User.Keyword}'
            ,'{dr["ID"]}'
            ,'{dr["OrderID"]}'
            ,'{dr["CTNStartNo"]}'
@@ -570,7 +619,7 @@ INSERT INTO [dbo].[PackingScan_History]
            ,'{dr["ScanName"]}'
            ,'{Env.User.UserID}'
            ,GETDATE()
-           , (  ISNULL( (
+           ,(  ISNULL( (
                             SELECT SUM(pd.ShipQty)	
                             FROM PackingList_Detail pd 
                             WHERE  pd.ID='{dr["ID"]}' AND pd.CTNStartNo='{dr["CTNStartNo"]}'

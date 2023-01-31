@@ -2415,8 +2415,6 @@
     <Build Include="dbo\Stored Procedures\CalculateShareExpense.sql" />
     <Build Include="dbo\Stored Procedures\insert_Air_Fir_TnsfIn.sql" />
     <Build Include="dbo\Functions\GetOrderAmount.sql" />
-    <Build Include="dbo\Tables\SubprocessLeadTime_Detail.sql" />
-    <Build Include="dbo\Tables\SubprocessLeadTime.sql" />
     <Build Include="dbo\Tables\SewingOutputTransfer_Detail.sql" />
     <Build Include="dbo\Tables\SewingOutputTransfer.sql" />
     <Build Include="dbo\Functions\GetOrderQtyUpperlimit.sql" />
@@ -2746,6 +2744,25 @@
     <Build Include="dbo\Tables\MDCalibrationList.sql" />
     <Build Include="dbo\Tables\M360MINDDispatch.sql" />
     <Build Include="dbo\Stored Procedures\GetSewing_R01.sql" />
+    <Build Include="dbo\Tables\DailyDataExchangeResult.sql" />
+    <Build Include="dbo\Tables\HandoverSpecialToolsUpload.sql" />
+    <Build Include="dbo\Tables\HandoverATUpload.sql" />
+    <Build Include="dbo\Tables\FinalPatternUpload.sql" />
+    <Build Include="dbo\Tables\Style_ArtworkTestDox.sql" />
+    <Build Include="dbo\Tables\Style_CustOrderSize.sql" />
+    <Build Include="dbo\Tables\Brand_SizeCode.sql" />
+    <Build Include="dbo\Tables\Marker_ML_SizeQty.sql" />
+    <Build Include="dbo\Tables\Marker_ML.sql" />
+    <Build Include="dbo\Tables\Marker.sql" />
+    <Build Include="dbo\Functions\ActCuttingPerimeterToInch.sql" />
+    <Build Include="dbo\Functions\MarkerLengthSampleTOTrade.sql" />
+    <Build Include="dbo\Tables\Adidas_FGWT_Fabrication.sql" />
+    <Build Include="dbo\Tables\TransferToSubcon.sql" />
+    <Build Include="dbo\Tables\TransferToSubcon_Detail.sql" />
+    <Build Include="dbo\Tables\SubconReturn.sql" />
+    <Build Include="dbo\Tables\SubconReturn_Detail.sql" />
+    <Build Include="dbo\Tables\TransferExport_ShippingMemo.sql" />
+    <Build Include="dbo\Functions\GetSCICtnNoFromBarcode.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />

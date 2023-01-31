@@ -260,12 +260,30 @@ order by OutputDate
 	                                    c.Category,
 	                                    c.Inline,
 	                                    c.FirstOutputTime,
-                                        c.LastOutputTime
+                                        c.LastOutputTime,
+										sty.ProductType,
+										sty.FabricType,
+										sty.CDNew
                                  FROM ChgOver C WITH (NOLOCK) 
                                  OUTER APPLY (SELECT TOP  1 O.SciDelivery  FROM Orders O WITH (NOLOCK) WHERE O.POID=C.OrderID)SCI 
                                  OUTER APPLY(SELECT S.SewingCell FROM SewingLine S WITH (NOLOCK) WHERE S.ID=C.SewingLineID AND S.FactoryID=C.FactoryID)CELL
-                                 outer apply(select * from style t WITH (NOLOCK) where t.id=c.StyleID and t.SeasonID=c.SeasonID)sty
+                                 --outer apply(select * from style t WITH (NOLOCK) where t.id=c.StyleID and t.SeasonID=c.SeasonID)sty
                                  outer apply(select  * from CDCode_Content cd WITH (NOLOCK) where c.CDCodeID=cd.ID)cd
+                                 Outer apply (
+									SELECT ProductType = r2.Name
+										, FabricType = r1.Name
+										, Lining
+										, Gender
+										, Construction = d1.Name
+										, [CDNew] = s.CDCodeNew
+										,CPU
+									FROM Style s WITH(NOLOCK)
+									left join DropDownList d1 WITH(NOLOCK) on d1.type= 'StyleConstruction' and d1.ID = s.Construction
+									left join Reason r1 WITH(NOLOCK) on r1.ReasonTypeID= 'Fabric_Kind' and r1.ID = s.FabricType
+									left join Reason r2 WITH(NOLOCK) on r2.ReasonTypeID= 'Style_Apparel_Type' and r2.ID = s.ApparelType
+									where s.ID = c.StyleID
+									and s.SeasonID = c.SeasonID
+								 )sty
                                  where c.orderid='{0}'
                                  ORDER BY C.FactoryID,C.SewingLineID,C.Inline",
     this.CurrentMaintain["orderid"]);
@@ -487,7 +505,7 @@ select {0},ID,'{1}',GETDATE() from IEReason WI where Type = 'CP' and Junk = 0",
                 inline.ToShortDateString()));
             #endregion
 
-            string cDCodeID = this.dt1.Rows[0]["CDCodeID"].ToString().Trim();
+            string cDCodeID = MyUtility.Convert.GetString(this.dt1.Rows[0]["CDNew"].ToString().Trim());
             DataRow tYPE = this.GetType(comboType, cDCodeID);
             #region 找出上一筆
 
@@ -503,11 +521,30 @@ select {0},ID,'{1}',GETDATE() from IEReason WI where Type = 'CP' and Junk = 0",
                        c.StyleID,
                        c.Inline,
                        c.CDCodeID,
-                       cd.TopProductionType,
-                       cd.TopFabricType    
+                       sty.ProductType,
+					   sty.FabricType,
+                       sty.CDNew
+                       --cd.TopProductionType,
+                       --cd.TopFabricType,    
+					   --newCDCode.CDCodeNew    
                 FROM ChgOver C WITH (NOLOCK) 
+				Outer apply (
+					SELECT ProductType = r2.Name
+						, FabricType = r1.Name
+						, Lining
+						, Gender
+						, Construction = d1.Name
+						, [CDNew] = s.CDCodeNew
+					FROM Style s WITH(NOLOCK)
+					left join DropDownList d1 WITH(NOLOCK) on d1.type= 'StyleConstruction' and d1.ID = s.Construction
+					left join Reason r1 WITH(NOLOCK) on r1.ReasonTypeID= 'Fabric_Kind' and r1.ID = s.FabricType
+					left join Reason r2 WITH(NOLOCK) on r2.ReasonTypeID= 'Style_Apparel_Type' and r2.ID = s.ApparelType
+					where s.ID = c.StyleID
+					and s.SeasonID = c.SeasonID
+				)sty
                 OUTER APPLY(SELECT S.SewingCell FROM SewingLine S WITH (NOLOCK) WHERE S.ID=C.SewingLineID AND S.FactoryID=C.FactoryID)CELL
-                outer apply(select  * from CDCode_Content cd WITH (NOLOCK) where c.CDCodeID=cd.ID)cd
+                --outer apply(select  * from CDCode_Content cd WITH (NOLOCK) where c.CDCodeID=cd.ID)cd
+                --outer apply(select CDCodeNew from Style where id = c.StyleID and SeasonID = c.SeasonID) newCDCode
                 WHERE Inline >= '{0}'
 		        AND OrderID !='{1}' and StyleID <='{2}' and FactoryID >= '{3}' and SewingLineID >='{4}' and CELL.SewingCell >='{5}'
                 ORDER BY C.FactoryID,C.SewingLineID,C.Inline asc
@@ -549,18 +586,19 @@ select {0},ID,'{1}',GETDATE() from IEReason WI where Type = 'CP' and Junk = 0",
 
                 objSheet.Cells[12, 4] = styleID;  // Style No.
                 objSheet.Cells[13, 4] = cPU;  // CPU/pc
-                objSheet.Cells[14, 4] = cDCodeID;  // CD Code
-                objSheet.Cells[14, 5] = this.dt1.Rows[0]["TopProductionType"];  // Prod. Type
-                objSheet.Cells[14, 6] = this.dt1.Rows[0]["TopFabricType"];  // Fab. Type
+                // objSheet.Cells[14, 4] = cDCodeID;  // CD Code
+                objSheet.Cells[14, 4] = this.dt1.Rows[0]["CDNew"];
+                objSheet.Cells[14, 5] = this.dt1.Rows[0]["ProductType"];  // Prod. Type
+                objSheet.Cells[14, 6] = this.dt1.Rows[0]["FabricType"];  // Fab. Type
 
                 #region 抓上一筆資料
                 if (this.dt1.Rows[0]["SewingLineID"].ToString() == this.dt2.Rows[0]["SewingLineID"].ToString())
                 {
                     objSheet.Cells[12, 9] = this.dt2.Rows[0]["StyleID"].ToString().Trim();  // Style No.
                     objSheet.Cells[13, 9] = previous_CPU;  // CPU/pc
-                    objSheet.Cells[14, 9] = this.dt2.Rows[0]["CDCodeID"].ToString().Trim();  // CD Code
-                    objSheet.Cells[14, 10] = this.dt2.Rows[0]["TopProductionType"];  // Prod. Type
-                    objSheet.Cells[14, 11] = this.dt2.Rows[0]["TopFabricType"];  // Fab. Type
+                    objSheet.Cells[14, 9] = this.dt2.Rows[0]["CDNew"].ToString().Trim();  // CD Code
+                    objSheet.Cells[14, 10] = this.dt2.Rows[0]["ProductType"];  // Prod. Type
+                    objSheet.Cells[14, 11] = this.dt2.Rows[0]["FabricType"];  // Fab. Type
                 }
                 else if (this.dt1.Rows[0]["SewingLineID"] != this.dt2.Rows[0]["SewingLineID"])
                 {
@@ -663,10 +701,9 @@ select {0},ID,'{1}',GETDATE() from IEReason WI where Type = 'CP' and Junk = 0",
                 }
 
                 string efficiency_A = MyUtility.GetValue.Lookup(string.Format(
-                    @"Select IIF('{6}'=0,0,sum(b.QAQty * {5} * AAA.CpuRate) / Sum(a.Manpower * b.WorkHour)*3600 / '{6}'/100)
+                    @"Select IIF('{6}'=0,0,sum(b.QAQty * {5} * c.CPUFactor) / Sum(a.Manpower * b.WorkHour)*3600 / '{6}'/100)
                                                                     from SewingOutput a WITH (NOLOCK) , SewingOutput_Detail b WITH (NOLOCK)  
                                                                     left join Orders c WITH (NOLOCK) on c.ID=b.OrderId
-                                                                    cross apply dbo.GetCPURate(c.OrderTypeID,c.ProgramID,c.Category,c.BrandID,'O') as AAA
                                                                     where a.Id = b.ID and a.OutputDate = '{0}' and a.Team = 'A' and a.FactoryID = '{1}' and a.SewingLineID = '{2}' 
                                                                     and b.OrderID = '{3}' and b.ComboType = '{4}' ",
                     sewingDate,
@@ -677,10 +714,9 @@ select {0},ID,'{1}',GETDATE() from IEReason WI where Type = 'CP' and Junk = 0",
                     cPU,
                     this.StdTMS));
                 string efficiency_B = MyUtility.GetValue.Lookup(string.Format(
-                    @"Select  IIF('{6}'=0,0,sum(b.QAQty * {5} * AAA.CpuRate) / Sum(a.Manpower * b.WorkHour)*3600 / '{6}'/100)  
+                    @"Select  IIF('{6}'=0,0,sum(b.QAQty * {5} * c.CPUFactor) / Sum(a.Manpower * b.WorkHour)*3600 / '{6}'/100)  
                                                                     from SewingOutput a WITH (NOLOCK) , SewingOutput_Detail b WITH (NOLOCK) 
                                                                     left join Orders c WITH (NOLOCK) on c.ID=b.OrderId
-                                                                    cross apply dbo.GetCPURate(c.OrderTypeID,c.ProgramID,c.Category,c.BrandID,'O') as AAA
                                                                     where a.Id = b.ID and a.OutputDate = '{0}' and a.Team = 'B' and a.FactoryID = '{1}' and a.SewingLineID = '{2}' 
                                                                     and b.OrderID = '{3}' and b.ComboType = '{4}' ",
                     sewingDate,
@@ -691,10 +727,9 @@ select {0},ID,'{1}',GETDATE() from IEReason WI where Type = 'CP' and Junk = 0",
                     cPU,
                     this.StdTMS));
                 string pPH_A = MyUtility.GetValue.Lookup(string.Format(
-                    @"Select  sum(b.QAQty * {5} * AAA.CpuRate) / Sum(a.Manpower * b.WorkHour) 
+                    @"Select  sum(b.QAQty * {5} * c.CPUFactor) / Sum(a.Manpower * b.WorkHour) 
                                                                     from SewingOutput a WITH (NOLOCK) , SewingOutput_Detail b WITH (NOLOCK)  
                                                                     left join Orders c WITH (NOLOCK) on c.ID=b.OrderId
-                                                                    cross apply dbo.GetCPURate(c.OrderTypeID,c.ProgramID,c.Category,c.BrandID,'O') as AAA
                                                                     where a.Id = b.ID and a.OutputDate = '{0}' and a.Team = 'A' and a.FactoryID = '{1}' and a.SewingLineID = '{2}' 
                                                                     and b.OrderID = '{3}' and b.ComboType = '{4}' ",
                     sewingDate,
@@ -704,10 +739,9 @@ select {0},ID,'{1}',GETDATE() from IEReason WI where Type = 'CP' and Junk = 0",
                     comboType,
                     cPU));
                 string pPH_B = MyUtility.GetValue.Lookup(string.Format(
-                    @"Select  sum(b.QAQty * {5} * AAA.CpuRate) / Sum(a.Manpower * b.WorkHour) 
+                    @"Select  sum(b.QAQty * {5} * c.CPUFactor) / Sum(a.Manpower * b.WorkHour) 
                                                                     from SewingOutput a WITH (NOLOCK) , SewingOutput_Detail b WITH (NOLOCK) 
                                                                     left join Orders c WITH (NOLOCK) on c.ID=b.OrderId
-                                                                    cross apply dbo.GetCPURate(c.OrderTypeID,c.ProgramID,c.Category,c.BrandID,'O') as AAA
                                                                     where a.Id = b.ID and a.OutputDate = '{0}' and a.Team = 'B' and a.FactoryID = '{1}' and a.SewingLineID = '{2}' 
                                                                     and b.OrderID = '{3}' and b.ComboType = '{4}' ",
                     sewingDate,

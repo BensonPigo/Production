@@ -32,7 +32,7 @@
     [AddDate]                        DATETIME       NULL,
     [EditName]                       VARCHAR (10)   CONSTRAINT [DF_CustCD_EditName] DEFAULT ('') NULL,
     [EditDate]                       DATETIME       NULL,
-    [Kit]                            VARCHAR (6)    DEFAULT ('') NULL,
+    [Kit]                            VARCHAR (10)    DEFAULT ('') NULL,
     [BIRShipTo]                      VARCHAR (300)  NULL,
     [DiamondCustCD]                  VARCHAR (10)   DEFAULT ('') NULL,
     [DiamondCity]                    VARCHAR (100)  DEFAULT ('') NULL,
