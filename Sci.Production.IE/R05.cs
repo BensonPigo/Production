@@ -8,6 +8,7 @@ using System.Runtime.InteropServices;
 using System.Data.SqlClient;
 using System.Collections.Generic;
 using System.Linq;
+using System.Data.SqlTypes;
 
 namespace Sci.Production.IE
 {
@@ -215,7 +216,6 @@ select l.StyleID
 	, l.AddDate
 	, l.EditName
 	, l.EditDate
-    , md.IsNonSewingLine 
 from LineMapping l WITH (NOLOCK)
 inner join LineMapping_Detail ld WITH (NOLOCK) on l.ID =ld.ID and Left(ld.OperationID, 2) <> '--'
 left join Operation o WITH (NOLOCK) on ld.OperationID = o.ID
@@ -295,6 +295,7 @@ select l.StyleID
 	, ld.MachineTypeID
 	, o.MasterPlusGroup
 	, [StdSMV] = round(  idd.SMV * ( isnull(idd.MtlFactorRate ,0) / 100 + 1 ) * idd.Frequency * 60  ,3)
+	, l.Status
 	, l.AddName
 	, l.AddDate
 	, l.EditName
@@ -340,6 +341,7 @@ select l.StyleID
 	, ld.MachineTypeID
 	, o.MasterPlusGroup
 	, [StdSMV] = round(  idd.SMV * ( isnull(idd.MtlFactorRate ,0) / 100 + 1 ) * idd.Frequency * 60  ,3)
+	, l.Status
 	, l.AddName
 	, l.AddDate
 	, l.EditName
@@ -385,16 +387,14 @@ select l.StyleID
 	, [Subprocess] = IIF(ld.IsSubprocess=1 , 'Y' ,'')
 	, [DefaultNonSewingLine] = IIF(md.IsNonSewingLine=1 , 'Y' ,'')
 	, NonSewingLine = IIF(md.IsNonSewingLine=1 , 'Y' ,'')
-    , [DefaultPPA] =  IIF(idd.IsPPA=1 , 'Centralized' ,'')
-    , [PPA] =  IIF(idd.IsPPA=1 , 'Centralized' , 'Sewing line')
 	, ld.MachineTypeID
 	, o.MasterPlusGroup
 	, [StdSMV] = round(  idd.SMV * ( isnull(idd.MtlFactorRate ,0) / 100 + 1 ) * idd.Frequency * 60  ,3)
+	, l.Status
 	, l.AddName
 	, l.AddDate
 	, l.EditName
 	, l.EditDate
-	, idd.IsPPA
 from TimeStudy l WITH (NOLOCK)
 inner join TimeStudy_Detail ld WITH (NOLOCK) on l.ID =ld.ID and Left(ld.OperationID, 2) <> '--'
 inner join Style s WITH (NOLOCK) on s.ID =l.StyleID and s.SeasonID = l.SeasonID and s.BrandID = l.BrandID
@@ -433,16 +433,16 @@ select l.StyleID
 	, [Subprocess] = IIF(ld.IsSubprocess=1 , 'Y' ,'')
 	, [DefaultNonSewingLine] = IIF(md.IsNonSewingLine=1 , 'Y' ,'')
 	, NonSewingLine = IIF(md.IsNonSewingLine=1 , 'Y' ,'')
-    , [DefaultPPA] =  IIF(idd.IsPPA=1 , 'Centralized' ,'')
-    , [PPA] =  IIF(idd.IsPPA=1 , 'Centralized' , 'Sewing line')
 	, ld.MachineTypeID
 	, o.MasterPlusGroup
 	, [StdSMV] = round(  idd.SMV * ( isnull(idd.MtlFactorRate ,0) / 100 + 1 ) * idd.Frequency * 60  ,3)
+	, l.Status
 	, l.AddName
 	, l.AddDate
 	, l.EditName
 	, l.EditDate
-	, idd.IsPPA
+    , md.IsSubprocess
+	, md.IsNonSewingLine 
 from TimeStudy l WITH (NOLOCK)
 inner join TimeStudy_Detail ld WITH (NOLOCK) on l.ID =ld.ID and Left(ld.OperationID, 2) <> '--'
 inner join Style s WITH (NOLOCK) on s.ID =l.StyleID and s.SeasonID = l.SeasonID and s.BrandID = l.BrandID
@@ -602,15 +602,140 @@ and IsNull(l.EditDate, l.AddDate) between @date1 and @date2
                 return false;
             }
 
+            DataTable oriData;
+            DataTable sheet1Data = new DataTable();
+            DataTable sheet2Data = new DataTable();
+            DataTable sheet3Data = new DataTable();
             this.ShowWaitMessage("Starting EXCEL...");
-            string strXltName = Env.Cfg.XltPathDir + "\\IE_R05.xltx";
+            string strXltName = Env.Cfg.XltPathDir;
+
+            oriData = this.printData;
+            if (this.ExcelType == "LineMapping_PPA" && !this.bolIncludeSeparted)
+            {
+                strXltName += "IE_R05_line Mapping_PPA_not include detail.xltx";
+            }
+            else if (this.ExcelType == "LineMapping_PPA" && this.bolIncludeSeparted)
+            {
+                // 砍掉 H欄 Default PPA、 I欄 No.、V欄
+                strXltName += "IE_R05_line Mapping_PPA_include detail.xltx";
+                sheet1Data = this.printData.Select("IsPPA  =  1 ").Any() ? this.printData.Select("IsPPA =  1 ").CopyToDataTable() : new DataTable();
+                sheet2Data = this.printData.Select("IsPPA  =  0 ").Any() ? this.printData.Select("IsPPA =  0 ").CopyToDataTable() : new DataTable();
+
+                if (this.printData.Select("IsPPA  =  1 ").Any())
+                {
+                    sheet1Data.Columns.Remove("DefaultPPA");
+                    sheet1Data.Columns.Remove("No");
+                    sheet1Data.Columns.Remove("IsPPA");
+                }
+                if (this.printData.Select("IsPPA  =  0 ").Any())
+                {
+                    sheet2Data.Columns.Remove("DefaultPPA");
+                    sheet2Data.Columns.Remove("No");
+                    sheet2Data.Columns.Remove("IsPPA");
+                }
+                oriData.Columns.Remove("IsPPA");
+            }
+            else if (this.ExcelType == "LineMapping_Hide" && !this.bolIncludeSeparted)
+            {
+                // 砍掉 H欄 Default PPA、 I欄 No.、V欄
+                strXltName += "IE_R05_line Mapping_Hide_not include detail.xltx";
+            }
+            else if (this.ExcelType == "LineMapping_Hide" && this.bolIncludeSeparted)
+            {
+                strXltName += "IE_R05_line Mapping_Hide_include detail.xltx";
+                // 砍掉 I欄 No.、V欄
+                sheet1Data = this.printData.Select("IsNonSewingLine  =  0 ").Any() ? this.printData.Select("IsNonSewingLine =  0 ").CopyToDataTable() : new DataTable();
+                sheet2Data = this.printData.Select("IsNonSewingLine  =  1 ").Any() ? this.printData.Select("IsNonSewingLine =  1 ").CopyToDataTable() : new DataTable();
+                sheet3Data = this.printData.Select("IsNonSewingLine  IS NULL ").Any() ? this.printData.Select("IsNonSewingLine  IS NULL ").CopyToDataTable() : new DataTable();
+
+                if (this.printData.Select("IsNonSewingLine  =  0 ").Any())
+                {
+                    sheet1Data.Columns.Remove("No");
+                    sheet1Data.Columns.Remove("IsNonSewingLine");
+                }
+                if (this.printData.Select("IsNonSewingLine  =  1 ").Any())
+                {
+                    sheet2Data.Columns.Remove("No");
+                    sheet2Data.Columns.Remove("IsNonSewingLine");
+                }
+                if (this.printData.Select("IsNonSewingLine  IS NULL ").Any())
+                {
+                    sheet3Data.Columns.Remove("No");
+                    sheet3Data.Columns.Remove("IsNonSewingLine");
+                }
+
+                oriData.Columns.Remove("IsNonSewingLine");
+            }
+            else if (this.ExcelType == "FtyGSD_PPA" && !this.bolIncludeSeparted)
+            {
+                strXltName += "IE_R05_Fty GSD_PPA_not include detail.xltx";
+            }
+            else if (this.ExcelType == "FtyGSD_PPA" && this.bolIncludeSeparted)
+            {
+                strXltName += "IE_R05_Fty GSD_PPA_include detail.xltx";
+                // sheet 1、2 砍掉 X欄
+                sheet1Data = this.printData.Select("IsPPA = 1").Any() ? this.printData.Select("IsPPA =  1 ").CopyToDataTable() : new DataTable();
+                sheet2Data = this.printData.Select("IsPPA = 0").Any() ? this.printData.Select("IsPPA =  0 ").CopyToDataTable() : new DataTable();
+
+                if (this.printData.Select("IsPPA = 1").Any())
+                {
+                    sheet1Data.Columns.Remove("IsPPA");
+                }
+                if (this.printData.Select("IsPPA = 0").Any())
+                {
+                    sheet2Data.Columns.Remove("IsPPA");
+                }
+                oriData.Columns.Remove("IsPPA");
+            }
+            else if (this.ExcelType == "FtyGSD_Hide" && !this.bolIncludeSeparted)
+            {
+                strXltName += "IE_R05_Fty GSD_Hide_not include detail.xltx";
+            }
+            else if (this.ExcelType == "FtyGSD_Hide" && this.bolIncludeSeparted)
+            {
+                // sheet 2、3 砍掉 Z、AA欄
+                strXltName += "IE_R05_Fty GSD_Hide_include detail.xltx";
+                sheet1Data = this.printData.Select("IsSubprocess = 1 ").Any() ? this.printData.Select("IsSubprocess = 1 ").CopyToDataTable() : new DataTable();
+                sheet2Data = this.printData.Select("IsNonSewingLine = 0 ").Any() ? this.printData.Select("IsNonSewingLine = 0").CopyToDataTable() : new DataTable();
+
+                if (this.printData.Select("IsSubprocess = 1").Any())
+                {
+                    sheet1Data.Columns.Remove("IsSubprocess");
+                    sheet1Data.Columns.Remove("IsNonSewingLine");
+                }
+                if (this.printData.Select("IsNonSewingLine = 0").Any())
+                {
+                    sheet2Data.Columns.Remove("IsSubprocess");
+                    sheet2Data.Columns.Remove("IsNonSewingLine");
+                }
+                oriData.Columns.Remove("IsSubprocess");
+                oriData.Columns.Remove("IsNonSewingLine");
+            }
+
             Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(strXltName); // 預先開啟excel app
             if (objApp == null)
             {
                 return false;
             }
 
-            MyUtility.Excel.CopyToXls(this.printData, string.Empty, "IE_R05.xltx", 1, false, null, objApp, wSheet: objApp.Sheets[1]); // 將datatable copy to excel
+            MyUtility.Excel.CopyToXls(oriData, string.Empty, "IE_R05.xltx", 1, false, null, objApp, wSheet: objApp.Sheets[1]); // 將datatable copy to excel
+
+            if (sheet1Data.Rows != null && sheet1Data.Rows.Count > 0)
+            {
+                MyUtility.Excel.CopyToXls(sheet1Data, string.Empty, "IE_R05.xltx", 1, false, null, objApp, wSheet: objApp.Sheets[2]);
+            }
+
+            if (sheet2Data.Rows != null && sheet2Data.Rows.Count > 0)
+            {
+                MyUtility.Excel.CopyToXls(sheet2Data, string.Empty, "IE_R05.xltx", 1, false, null, objApp, wSheet: objApp.Sheets[3]);
+            }
+
+            if (sheet3Data.Rows != null && sheet3Data.Rows.Count > 0)
+            {
+                MyUtility.Excel.CopyToXls(sheet3Data, string.Empty, "IE_R05.xltx", 1, false, null, objApp, wSheet: objApp.Sheets[4]);
+            }
+
+            //MyUtility.Excel.CopyToXls(this.printData, string.Empty, "IE_R05.xltx", 1, false, null, objApp, wSheet: objApp.Sheets[1]); // 將datatable copy to excel
             objApp.Cells.EntireRow.AutoFit();
             objApp.Visible = true;
             Marshal.ReleaseComObject(objApp);
