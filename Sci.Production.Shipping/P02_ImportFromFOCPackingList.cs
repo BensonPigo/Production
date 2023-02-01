@@ -97,7 +97,8 @@ where pu.[MDivisionID] = @MDivisionID and pu.[PulloutDate] = @PulloutDate
 ";
             if (!MyUtility.Check.Seek(sqlcmdChk, listParameter, out DataRow dr))
             {
-                MyUtility.Msg.WarningBox($@"Please create pullout report first!!");
+                MyUtility.Msg.WarningBox($@"This Ship. Date <{((DateTime)this.masterData["ShipDate"]).ToString("yyyy/MM/dd")}> does not have a Pullout Report.
+Please create a Pullout Report with this Ship. Date as Pullout Date first!!");
                 return;
             }
 
