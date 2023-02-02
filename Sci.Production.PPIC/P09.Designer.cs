@@ -789,7 +789,7 @@
             // numTtlEstAmt
             // 
             this.numTtlEstAmt.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.numTtlEstAmt.DecimalPlaces = 2;
+            this.numTtlEstAmt.DecimalPlaces = 4;
             this.numTtlEstAmt.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numTtlEstAmt.IsSupportEditMode = false;
             this.numTtlEstAmt.Location = new System.Drawing.Point(176, 271);
