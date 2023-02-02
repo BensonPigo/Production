@@ -18,7 +18,6 @@ namespace Sci.Production.Automation
         // 廠商的資訊基本上都沒使用到, 也不需要使用
         private static readonly string VstrongSuppID = "3A0196";
         private static readonly string moduleName = "AutoWHAccessory";
-        private static readonly string URL = GetSupplierUrl(VstrongSuppID, moduleName);
         private static readonly string suppAPIThread = "snpvsinterface/services/pmstowms";
 
         // 一律呼叫SCI 中繼API, SuppID & ModuleName 會影響到ReSent, 所以必須用SCI
@@ -169,12 +168,17 @@ namespace Sci.Production.Automation
             return true;
         }
 
-        private static string GetJsonBody(DataTable dtDetail, WHTableName detailName, EnumStatus statusAPI)
+        /// <summary>
+        /// GetJsonBody
+        /// </summary>
+        /// <param name="dtDetail">dtDetail</param>
+        /// <param name="detailName">detailName</param>
+        /// <param name="statusAPI">statusAPI</param>
+        /// <returns>string</returns>
+        public static string GetJsonBody(DataTable dtDetail, WHTableName detailName, EnumStatus statusAPI)
         {
             string jsonBody = string.Empty;
 
-            // 呼叫同個Class裡的Method,需要先new物件才行
-            Vstrong_AutoWHAccessory callMethod = new Vstrong_AutoWHAccessory();
             dynamic bodyObject = new ExpandoObject();
             switch (detailName)
             {

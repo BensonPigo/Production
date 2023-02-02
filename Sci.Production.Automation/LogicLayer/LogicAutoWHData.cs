@@ -526,7 +526,7 @@ and psd.FabricType = '{fabricType}'
         }
 
         /// <inheritdoc/>
-        public static bool SendWebAPI_Status(EnumStatus statusAPI, string url, AutomationErrMsgPMS automationErrMsg, string jsonBody)
+        public static DualResult SendWebAPI_Status(EnumStatus statusAPI, string url, AutomationErrMsgPMS automationErrMsg, string jsonBody, bool isShowMsg = true)
         {
             switch (statusAPI)
             {
@@ -534,11 +534,15 @@ and psd.FabricType = '{fabricType}'
                     DualResult result = WH_Auto_SendWebAPI(url, automationErrMsg.suppAPIThread, jsonBody, automationErrMsg);
                     if (!result)
                     {
-                        MyUtility.Msg.WarningBox("WMS system rejected the lock request, please reference below information：" + Environment.NewLine + result.Messages.ToString());
-                        return false;
+                        if (isShowMsg)
+                        {
+                            MyUtility.Msg.WarningBox("WMS system rejected the lock request, please reference below information：" + Environment.NewLine + result.Messages.ToString());
+                        }
+
+                        return result;
                     }
 
-                    return true;
+                    return new DualResult(true);
 
                 case EnumStatus.New:
                 case EnumStatus.Delete:
@@ -548,7 +552,7 @@ and psd.FabricType = '{fabricType}'
                     break;
             }
 
-            return true;
+            return new DualResult(true);
         }
 
         /// <inheritdoc/>

@@ -430,12 +430,22 @@ select ID = @ID
         public DualResult WH_Auto_SendWebAPI(string baseUrl, string requestUri, string jsonBody, AutomationErrMsg automationErrMsg, bool reSented = false)
         {
             DualResult result = new DualResult(true);
+            Dictionary<string, string> requestHeaders = new Dictionary<string, string>();
+            if (MyUtility.Check.Empty(automationErrMsg.CallFrom) || MyUtility.Check.Empty(automationErrMsg.Activity))
+            {
+                requestHeaders = this.GetCustomHeaders();
+                automationErrMsg.CallFrom = requestHeaders["CallFrom"];
+                automationErrMsg.Activity = requestHeaders["Activity"];
+            }
+            else
+            {
+                requestHeaders.Add("CallFrom", automationErrMsg.CallFrom);
+                requestHeaders.Add("Activity", automationErrMsg.Activity);
+            }
+
             WebApiBaseResult webApiBaseResult;
             if (reSented)
             {
-                Dictionary<string, string> requestHeaders = this.GetCustomHeaders();
-                automationErrMsg.CallFrom = requestHeaders["CallFrom"];
-                automationErrMsg.Activity = requestHeaders["Activity"];
                 webApiBaseResult = PmsWebApiUtility45.WebApiTool.WebApiPost(baseUrl, requestUri, jsonBody, 600, requestHeaders);
                 automationErrMsg.json = jsonBody;
 
@@ -466,17 +476,11 @@ select ID = @ID
                     automationErrMsg.errorMsg = webApiBaseResult.responseContent.ToString();
                     automationErrMsg.json = jsonBody;
                     result = new DualResult(false, new Ict.BaseResult.MessageInfo(automationErrMsg.errorMsg));
-                    Dictionary<string, string> requestHeaders = this.GetCustomHeaders();
-                    automationErrMsg.CallFrom = requestHeaders["CallFrom"];
-                    automationErrMsg.Activity = requestHeaders["Activity"];
                     this.SaveAutomationCheckMsg(automationErrMsg);
                 }
                 else if (saveAllmsg)
                 {
                     automationErrMsg.json = jsonBody;
-                    Dictionary<string, string> requestHeaders = this.GetCustomHeaders();
-                    automationErrMsg.CallFrom = requestHeaders["CallFrom"];
-                    automationErrMsg.Activity = requestHeaders["Activity"];
                     this.SaveAutomationCheckMsg(automationErrMsg);
                 }
             }
