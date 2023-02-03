@@ -29,15 +29,13 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            this.bindingSource1 = new Sci.Win.UI.BindingSource(this.components);
             this.panel2 = new Sci.Win.UI.Panel();
             this.btnClose = new Sci.Win.UI.Button();
-            this.bindingSource1 = new Sci.Win.UI.BindingSource(this.components);
             this.gridAccumulatedQty = new Sci.Win.UI.Grid();
-            this.panel1 = new Sci.Win.UI.Panel();
-            this.panel2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSource1)).BeginInit();
+            this.panel2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gridAccumulatedQty)).BeginInit();
-            this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // panel2
@@ -47,7 +45,7 @@
             this.panel2.Location = new System.Drawing.Point(0, 402);
             this.panel2.Name = "panel2";
             this.panel2.Size = new System.Drawing.Size(800, 48);
-            this.panel2.TabIndex = 3;
+            this.panel2.TabIndex = 1;
             // 
             // btnClose
             // 
@@ -81,43 +79,30 @@
             this.gridAccumulatedQty.RowTemplate.Height = 24;
             this.gridAccumulatedQty.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridAccumulatedQty.ShowCellToolTips = false;
-            this.gridAccumulatedQty.Size = new System.Drawing.Size(800, 450);
-            this.gridAccumulatedQty.TabIndex = 1;
+            this.gridAccumulatedQty.Size = new System.Drawing.Size(800, 402);
+            this.gridAccumulatedQty.TabIndex = 2;
             this.gridAccumulatedQty.TabStop = false;
-            // 
-            // panel1
-            // 
-            this.panel1.Controls.Add(this.gridAccumulatedQty);
-            this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel1.Location = new System.Drawing.Point(0, 0);
-            this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(800, 450);
-            this.panel1.TabIndex = 4;
             // 
             // P15P16_ReuqeustList
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.gridAccumulatedQty);
             this.Controls.Add(this.panel2);
-            this.Controls.Add(this.panel1);
             this.Name = "P15P16_ReuqeustList";
             this.OnLineHelpID = "Sci.Win.Subs.Base";
             this.Text = "ReuqeustList";
-            this.panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.bindingSource1)).EndInit();
+            this.panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.gridAccumulatedQty)).EndInit();
-            this.panel1.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
 
         #endregion
-
+        private Win.UI.BindingSource bindingSource1;
         private Win.UI.Panel panel2;
         private Win.UI.Button btnClose;
-        private Win.UI.BindingSource bindingSource1;
         private Win.UI.Grid gridAccumulatedQty;
-        private Win.UI.Panel panel1;
     }
 }
