@@ -186,7 +186,7 @@ select
         ,o.CTNStartNo
         ,[CartonQty] = pl_Qty.ShipQty
         ,[TTLQcOutput] = o.QCQty
-        ,MDPassQty = iif (o.MDScanDate is null, 0, isnull(pl_Qty.ShipQty, 0) - isnull(o.DryRoomMDFailQty,0))
+        ,MDPassQty = iif (o.MDScanDate is null, 0, isnull(pl_Qty.ShipQty, 0) - isnull(o.MDFailQty,0))
         ,[ScanQty] = pl_Qty.ScanQty
         ,o.DryRoomRecdDate
         ,o.MDScanDate

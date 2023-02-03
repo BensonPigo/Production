@@ -61,7 +61,7 @@ namespace Sci.Production.Sewing
 
             string sqlcmd =
                 @"
-select MDFailQty = max (pd.DryRoomMDFailQty)
+select DryRoomMDFailQty = max (pd.DryRoomMDFailQty)
 	,pd.OrderID
 	,o.CustPONo
 	,o.StyleID
@@ -184,7 +184,7 @@ set DryRoomMDFailQty = {this.numericBoxDiscrepancy.Text}, DryRoomMDScanDate = ge
 ,DryRoomMDStatus  = '{strMDStatus}'
 where ID = '{dr["ID"]}' and CTNStartNo = '{dr["CTNStartNo"]}';
 
-insert into MDScan([ScanDate], [MDivisionID], [OrderID], [PackingListID], [CTNStartNo], [AddName], [AddDate], [SCICtnNo], [DryRoomMDFailQty], [CartonQty], [DataRemark])
+insert into MDScan([ScanDate], [MDivisionID], [OrderID], [PackingListID], [CTNStartNo], [AddName], [AddDate], [SCICtnNo], [MDFailQty], [CartonQty], [DataRemark])
 values(getdate(), '{Env.User.Keyword}', '{dr["OrderID"]}', '{dr["ID"]}', '{dr["CTNStartNo"]}', '{Env.User.UserID}', getdate(), '{dr["SCICtnNo"]}', {this.numericBoxDiscrepancy.Text}, {dr["CartonQty"]}, 'Create from PMS');
 
 declare @MDScan_Ukey bigint
