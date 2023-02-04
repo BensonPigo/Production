@@ -84,7 +84,7 @@ namespace Sci.Production.Warehouse
             string sqlcmd_TK = $@"select distinct TransferExport_DetailUkey
                                 into #TkUkeyList
                                 from TransferOut_Detail tod with(nolock)
-                                where tod.id = 'PM1TO22120061'
+                                where tod.id = '{this.strID}'
 	                                and exists (select 1 from TransferExport_SeparateHistory tesh where tod.TransferExport_DetailUkey = tesh.NewDetailUkey)
 
                                 select  
