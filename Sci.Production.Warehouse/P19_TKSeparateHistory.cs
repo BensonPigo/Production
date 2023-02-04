@@ -146,6 +146,7 @@ namespace Sci.Production.Warehouse
 	                                from TransferExport_Detail_Carton tdc with(nolock)
 	                                where tdc.TransferExport_DetailUkey = tul.TransferExport_DetailUkey
                                 )tdaQTY
+                                order by [FromSP], [FromSEQ], [ToSP], [ToSeq], [NewTK]
                                 drop table #TkUkeyList";
             DualResult dualResult_TK = DBProxy.Current.Select(null, sqlcmd_TK, out this.dt_TK);
             if (!dualResult_TK)
@@ -202,7 +203,7 @@ namespace Sci.Production.Warehouse
 								from #TkUkeyList tul
 								left join TransferExport_Detail ted with(nolock) on  tul.TransferExport_DetailUkey = ted.Ukey
 								left join TransferExport_Detail_Carton tdc with(nolock) on ted.Ukey = tdc.TransferExport_DetailUkey
-
+                                order by [FromSP], [FromSEQ], [ToSP], [ToSeq], [NewTK]
 
 								drop table #TkUkeyList";
             DualResult dualResult_PK = DBProxy.Current.Select(null, sqlcmd_PK, out this.dt_PK);
@@ -265,7 +266,11 @@ namespace Sci.Production.Warehouse
 
             DataRow tk_Value = this.gridTransferWK.CurrentDataRow;
             DataGridViewRow dgvrPacking = this.gridPacking.Rows.OfType<DataGridViewRow>().Where(x =>
-                                            (string)x.Cells["NewTK"].Value == tk_Value["NewTK"].ToString()).FirstOrDefault();
+                                            (string)x.Cells["NewTK"].Value == tk_Value["NewTK"].ToString()
+                                            && (string)x.Cells["FromSP"].Value == tk_Value["FromSP"].ToString()
+                                            && (string)x.Cells["FromSEQ"].Value == tk_Value["FromSEQ"].ToString()
+                                            && (string)x.Cells["ToSP"].Value == tk_Value["ToSP"].ToString()
+                                            && (string)x.Cells["ToSEQ"].Value == tk_Value["ToSEQ"].ToString()).FirstOrDefault();
 
             if (dgvrPacking == null)
             {
