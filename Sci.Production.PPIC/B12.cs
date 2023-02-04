@@ -61,12 +61,18 @@ namespace Sci.Production.PPIC
             .Text("SizePage", header: "Size Page", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Text("SourceSize", header: "Source Size", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Text("CustomerSize", header: "Cust Order Size", width: Widths.AnsiChars(10), iseditingreadonly: true)
-
-             // .Button("Upload", header: "Layout PDF", onclick: this.BtnUpload_Click) //先不要有這欄位
+            .Button("Upload", header: "Layout PDF", onclick: this.BtnUpload_Click)
             .Text("Version", header: "Version", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Text("Reason", header: "Junk Reason", width: Widths.AnsiChars(10), iseditingreadonly: false)
             .Text("ReversionMold", header: "Re-Ver. Mold", width: Widths.AnsiChars(2), iseditingreadonly: true)
             ;
+        }
+
+        private void BtnUpload_Click(object sender, EventArgs e)
+        {
+            DataRow drSelect = this.grid_Spec.GetDataRow(this.bs_Spec.Position);
+            B12_Layout callForm = new B12_Layout(drSelect["MoldID"].ToString());
+            callForm.ShowDialog(this);
         }
 
         /// <inheritdoc/>
@@ -130,7 +136,7 @@ Where pm.PadPrint_ukey = @Ukey
 
             #region Load Spec
             sqlCmd = $@"
-Select pms.* 
+Select pms.*  
 From PadPrint_Mold pm
 Left join PadPrint_Mold_Spec pms on pm.PadPrint_ukey = pms.PadPrint_ukey and pm.MoldID = pms.MoldID
 Where pm.PadPrint_ukey = @Ukey

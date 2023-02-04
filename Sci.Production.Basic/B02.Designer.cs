@@ -84,6 +84,9 @@
             this.lineShape2 = new Microsoft.VisualBasic.PowerPacks.LineShape();
             this.lineShape1 = new Microsoft.VisualBasic.PowerPacks.LineShape();
             this.panel1 = new Sci.Win.UI.Panel();
+            this.btnPadPrintPath = new Sci.Win.UI.Button();
+            this.txtPadPrintPath = new Sci.Win.UI.TextBox();
+            this.label19 = new Sci.Win.UI.Label();
             this.label21 = new System.Windows.Forms.Label();
             this.label20 = new System.Windows.Forms.Label();
             this.label18 = new System.Windows.Forms.Label();
@@ -94,6 +97,8 @@
             this.label13 = new System.Windows.Forms.Label();
             this.labLine1 = new System.Windows.Forms.Label();
             this.btnFinalPatternPath = new Sci.Win.UI.Button();
+            this.txtFinalPatternPath = new Sci.Win.UI.TextBox();
+            this.labFinalPatternPath = new Sci.Win.UI.Label();
             this.btnCriticalOperationPath = new Sci.Win.UI.Button();
             this.txtCriticalOperationPath = new Sci.Win.UI.TextBox();
             this.labCriticalOperationPath = new Sci.Win.UI.Label();
@@ -139,8 +144,6 @@
             this.shapeContainer1 = new Microsoft.VisualBasic.PowerPacks.ShapeContainer();
             this.shapeContainer3 = new Microsoft.VisualBasic.PowerPacks.ShapeContainer();
             this.shapeContainer4 = new Microsoft.VisualBasic.PowerPacks.ShapeContainer();
-            this.labFinalPatternPath = new Sci.Win.UI.Label();
-            this.txtFinalPatternPath = new Sci.Win.UI.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownAutoApprovedWhileDateBefore)).BeginInit();
             this.panel1.SuspendLayout();
@@ -611,7 +614,7 @@
             this.txtSketchFilesPath.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtSketchFilesPath.Location = new System.Drawing.Point(185, 395);
             this.txtSketchFilesPath.Name = "txtSketchFilesPath";
-            this.txtSketchFilesPath.Size = new System.Drawing.Size(506, 23);
+            this.txtSketchFilesPath.Size = new System.Drawing.Size(300, 23);
             this.txtSketchFilesPath.TabIndex = 20;
             // 
             // txtCilpFilesPath
@@ -622,7 +625,7 @@
             this.txtCilpFilesPath.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtCilpFilesPath.Location = new System.Drawing.Point(185, 449);
             this.txtCilpFilesPath.Name = "txtCilpFilesPath";
-            this.txtCilpFilesPath.Size = new System.Drawing.Size(506, 23);
+            this.txtCilpFilesPath.Size = new System.Drawing.Size(300, 23);
             this.txtCilpFilesPath.TabIndex = 22;
             // 
             // btnMailTo
@@ -639,7 +642,7 @@
             // btnSketchFilesPath
             // 
             this.btnSketchFilesPath.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
-            this.btnSketchFilesPath.Location = new System.Drawing.Point(696, 395);
+            this.btnSketchFilesPath.Location = new System.Drawing.Point(489, 394);
             this.btnSketchFilesPath.Name = "btnSketchFilesPath";
             this.btnSketchFilesPath.Size = new System.Drawing.Size(30, 25);
             this.btnSketchFilesPath.TabIndex = 30;
@@ -650,7 +653,7 @@
             // btnCilpFilesPath
             // 
             this.btnCilpFilesPath.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
-            this.btnCilpFilesPath.Location = new System.Drawing.Point(696, 449);
+            this.btnCilpFilesPath.Location = new System.Drawing.Point(489, 448);
             this.btnCilpFilesPath.Name = "btnCilpFilesPath";
             this.btnCilpFilesPath.Size = new System.Drawing.Size(30, 25);
             this.btnCilpFilesPath.TabIndex = 32;
@@ -746,6 +749,9 @@
             // panel1
             // 
             this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)));
+            this.panel1.Controls.Add(this.btnPadPrintPath);
+            this.panel1.Controls.Add(this.txtPadPrintPath);
+            this.panel1.Controls.Add(this.label19);
             this.panel1.Controls.Add(this.label21);
             this.panel1.Controls.Add(this.label20);
             this.panel1.Controls.Add(this.label18);
@@ -847,24 +853,54 @@
             this.panel1.Controls.Add(this.dateDailyOutputLockDate);
             this.panel1.Location = new System.Drawing.Point(6, 36);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(1089, 694);
+            this.panel1.Size = new System.Drawing.Size(1089, 609);
             this.panel1.TabIndex = 50;
+            // 
+            // btnPadPrintPath
+            // 
+            this.btnPadPrintPath.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
+            this.btnPadPrintPath.Location = new System.Drawing.Point(489, 562);
+            this.btnPadPrintPath.Name = "btnPadPrintPath";
+            this.btnPadPrintPath.Size = new System.Drawing.Size(30, 25);
+            this.btnPadPrintPath.TabIndex = 95;
+            this.btnPadPrintPath.Text = "...";
+            this.btnPadPrintPath.UseVisualStyleBackColor = true;
+            this.btnPadPrintPath.Click += new System.EventHandler(this.btnPadPrintPath_Click);
+            // 
+            // txtPadPrintPath
+            // 
+            this.txtPadPrintPath.BackColor = System.Drawing.Color.White;
+            this.txtPadPrintPath.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
+            this.txtPadPrintPath.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "PadPrintPath", true));
+            this.txtPadPrintPath.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtPadPrintPath.Location = new System.Drawing.Point(185, 564);
+            this.txtPadPrintPath.Name = "txtPadPrintPath";
+            this.txtPadPrintPath.Size = new System.Drawing.Size(300, 23);
+            this.txtPadPrintPath.TabIndex = 94;
+            // 
+            // label19
+            // 
+            this.label19.Location = new System.Drawing.Point(18, 564);
+            this.label19.Name = "label19";
+            this.label19.Size = new System.Drawing.Size(164, 23);
+            this.label19.TabIndex = 96;
+            this.label19.Text = "PadPrint Files Path";
             // 
             // label21
             // 
             this.label21.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.label21.Location = new System.Drawing.Point(13, 8);
             this.label21.Name = "label21";
-            this.label21.Size = new System.Drawing.Size(2, 676);
+            this.label21.Size = new System.Drawing.Size(2, 585);
             this.label21.TabIndex = 93;
             this.label21.Text = "label21";
             // 
             // label20
             // 
             this.label20.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.label20.Location = new System.Drawing.Point(18, 684);
+            this.label20.Location = new System.Drawing.Point(18, 594);
             this.label20.Name = "label20";
-            this.label20.Size = new System.Drawing.Size(705, 2);
+            this.label20.Size = new System.Drawing.Size(700, 2);
             this.label20.TabIndex = 92;
             this.label20.Text = "label20";
             // 
@@ -873,7 +909,7 @@
             this.label18.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.label18.Location = new System.Drawing.Point(13, 384);
             this.label18.Name = "label18";
-            this.label18.Size = new System.Drawing.Size(705, 2);
+            this.label18.Size = new System.Drawing.Size(700, 2);
             this.label18.TabIndex = 90;
             this.label18.Text = "label18";
             // 
@@ -934,7 +970,7 @@
             // btnFinalPatternPath
             // 
             this.btnFinalPatternPath.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
-            this.btnFinalPatternPath.Location = new System.Drawing.Point(696, 563);
+            this.btnFinalPatternPath.Location = new System.Drawing.Point(1048, 395);
             this.btnFinalPatternPath.Name = "btnFinalPatternPath";
             this.btnFinalPatternPath.Size = new System.Drawing.Size(30, 25);
             this.btnFinalPatternPath.TabIndex = 36;
@@ -942,10 +978,29 @@
             this.btnFinalPatternPath.UseVisualStyleBackColor = true;
             this.btnFinalPatternPath.Click += new System.EventHandler(this.btnFinalPatternPath_Click);
             // 
+            // txtFinalPatternPath
+            // 
+            this.txtFinalPatternPath.BackColor = System.Drawing.Color.White;
+            this.txtFinalPatternPath.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
+            this.txtFinalPatternPath.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "FinalPatternPath", true));
+            this.txtFinalPatternPath.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtFinalPatternPath.Location = new System.Drawing.Point(742, 397);
+            this.txtFinalPatternPath.Name = "txtFinalPatternPath";
+            this.txtFinalPatternPath.Size = new System.Drawing.Size(300, 23);
+            this.txtFinalPatternPath.TabIndex = 26;
+            // 
+            // labFinalPatternPath
+            // 
+            this.labFinalPatternPath.Location = new System.Drawing.Point(529, 396);
+            this.labFinalPatternPath.Name = "labFinalPatternPath";
+            this.labFinalPatternPath.Size = new System.Drawing.Size(210, 23);
+            this.labFinalPatternPath.TabIndex = 83;
+            this.labFinalPatternPath.Text = "Hnadover Final Pattern Path";
+            // 
             // btnCriticalOperationPath
             // 
             this.btnCriticalOperationPath.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
-            this.btnCriticalOperationPath.Location = new System.Drawing.Point(696, 594);
+            this.btnCriticalOperationPath.Location = new System.Drawing.Point(1048, 426);
             this.btnCriticalOperationPath.Name = "btnCriticalOperationPath";
             this.btnCriticalOperationPath.Size = new System.Drawing.Size(30, 25);
             this.btnCriticalOperationPath.TabIndex = 37;
@@ -959,14 +1014,14 @@
             this.txtCriticalOperationPath.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
             this.txtCriticalOperationPath.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "CriticalOperationPath", true));
             this.txtCriticalOperationPath.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtCriticalOperationPath.Location = new System.Drawing.Point(231, 595);
+            this.txtCriticalOperationPath.Location = new System.Drawing.Point(742, 427);
             this.txtCriticalOperationPath.Name = "txtCriticalOperationPath";
-            this.txtCriticalOperationPath.Size = new System.Drawing.Size(460, 23);
+            this.txtCriticalOperationPath.Size = new System.Drawing.Size(300, 23);
             this.txtCriticalOperationPath.TabIndex = 27;
             // 
             // labCriticalOperationPath
             // 
-            this.labCriticalOperationPath.Location = new System.Drawing.Point(18, 595);
+            this.labCriticalOperationPath.Location = new System.Drawing.Point(529, 426);
             this.labCriticalOperationPath.Name = "labCriticalOperationPath";
             this.labCriticalOperationPath.Size = new System.Drawing.Size(210, 23);
             this.labCriticalOperationPath.TabIndex = 80;
@@ -975,7 +1030,7 @@
             // btnHandoverSpecialToolsPath
             // 
             this.btnHandoverSpecialToolsPath.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
-            this.btnHandoverSpecialToolsPath.Location = new System.Drawing.Point(696, 652);
+            this.btnHandoverSpecialToolsPath.Location = new System.Drawing.Point(1048, 484);
             this.btnHandoverSpecialToolsPath.Name = "btnHandoverSpecialToolsPath";
             this.btnHandoverSpecialToolsPath.Size = new System.Drawing.Size(30, 25);
             this.btnHandoverSpecialToolsPath.TabIndex = 39;
@@ -986,7 +1041,7 @@
             // btnHandoverATPath
             // 
             this.btnHandoverATPath.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
-            this.btnHandoverATPath.Location = new System.Drawing.Point(696, 624);
+            this.btnHandoverATPath.Location = new System.Drawing.Point(1048, 456);
             this.btnHandoverATPath.Name = "btnHandoverATPath";
             this.btnHandoverATPath.Size = new System.Drawing.Size(30, 25);
             this.btnHandoverATPath.TabIndex = 38;
@@ -1000,14 +1055,14 @@
             this.txtHandoverSpecialToolsPath.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
             this.txtHandoverSpecialToolsPath.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "HandoverSpecialToolsPath", true));
             this.txtHandoverSpecialToolsPath.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtHandoverSpecialToolsPath.Location = new System.Drawing.Point(231, 653);
+            this.txtHandoverSpecialToolsPath.Location = new System.Drawing.Point(742, 485);
             this.txtHandoverSpecialToolsPath.Name = "txtHandoverSpecialToolsPath";
-            this.txtHandoverSpecialToolsPath.Size = new System.Drawing.Size(460, 23);
+            this.txtHandoverSpecialToolsPath.Size = new System.Drawing.Size(300, 23);
             this.txtHandoverSpecialToolsPath.TabIndex = 29;
             // 
             // labHandoverSpecialToolsPath
             // 
-            this.labHandoverSpecialToolsPath.Location = new System.Drawing.Point(18, 653);
+            this.labHandoverSpecialToolsPath.Location = new System.Drawing.Point(529, 484);
             this.labHandoverSpecialToolsPath.Name = "labHandoverSpecialToolsPath";
             this.labHandoverSpecialToolsPath.Size = new System.Drawing.Size(210, 23);
             this.labHandoverSpecialToolsPath.TabIndex = 76;
@@ -1019,14 +1074,14 @@
             this.txtHandoverATPath.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
             this.txtHandoverATPath.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "HandoverATPath", true));
             this.txtHandoverATPath.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtHandoverATPath.Location = new System.Drawing.Point(231, 624);
+            this.txtHandoverATPath.Location = new System.Drawing.Point(742, 456);
             this.txtHandoverATPath.Name = "txtHandoverATPath";
-            this.txtHandoverATPath.Size = new System.Drawing.Size(460, 23);
+            this.txtHandoverATPath.Size = new System.Drawing.Size(300, 23);
             this.txtHandoverATPath.TabIndex = 28;
             // 
             // labHandoverATPath
             // 
-            this.labHandoverATPath.Location = new System.Drawing.Point(18, 624);
+            this.labHandoverATPath.Location = new System.Drawing.Point(529, 455);
             this.labHandoverATPath.Name = "labHandoverATPath";
             this.labHandoverATPath.Size = new System.Drawing.Size(210, 23);
             this.labHandoverATPath.TabIndex = 74;
@@ -1189,7 +1244,7 @@
             // btnReplacementReport
             // 
             this.btnReplacementReport.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
-            this.btnReplacementReport.Location = new System.Drawing.Point(696, 535);
+            this.btnReplacementReport.Location = new System.Drawing.Point(489, 534);
             this.btnReplacementReport.Name = "btnReplacementReport";
             this.btnReplacementReport.Size = new System.Drawing.Size(30, 25);
             this.btnReplacementReport.TabIndex = 35;
@@ -1203,16 +1258,16 @@
             this.txtReplacementReport.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
             this.txtReplacementReport.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "ReplacementReport", true));
             this.txtReplacementReport.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtReplacementReport.Location = new System.Drawing.Point(231, 536);
+            this.txtReplacementReport.Location = new System.Drawing.Point(185, 536);
             this.txtReplacementReport.Name = "txtReplacementReport";
-            this.txtReplacementReport.Size = new System.Drawing.Size(460, 23);
+            this.txtReplacementReport.Size = new System.Drawing.Size(300, 23);
             this.txtReplacementReport.TabIndex = 25;
             // 
             // label4
             // 
             this.label4.Location = new System.Drawing.Point(18, 536);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(210, 23);
+            this.label4.Size = new System.Drawing.Size(164, 23);
             this.label4.TabIndex = 57;
             this.label4.Text = "Replacement Report ";
             // 
@@ -1231,7 +1286,7 @@
             // btnMarkerOutputPath
             // 
             this.btnMarkerOutputPath.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
-            this.btnMarkerOutputPath.Location = new System.Drawing.Point(696, 506);
+            this.btnMarkerOutputPath.Location = new System.Drawing.Point(489, 505);
             this.btnMarkerOutputPath.Name = "btnMarkerOutputPath";
             this.btnMarkerOutputPath.Size = new System.Drawing.Size(30, 25);
             this.btnMarkerOutputPath.TabIndex = 34;
@@ -1242,7 +1297,7 @@
             // btnMarkerInputPath
             // 
             this.btnMarkerInputPath.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
-            this.btnMarkerInputPath.Location = new System.Drawing.Point(696, 478);
+            this.btnMarkerInputPath.Location = new System.Drawing.Point(489, 477);
             this.btnMarkerInputPath.Name = "btnMarkerInputPath";
             this.btnMarkerInputPath.Size = new System.Drawing.Size(30, 25);
             this.btnMarkerInputPath.TabIndex = 33;
@@ -1256,16 +1311,16 @@
             this.txtMarkerOutputPath.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
             this.txtMarkerOutputPath.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "MarkerOutputPath", true));
             this.txtMarkerOutputPath.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtMarkerOutputPath.Location = new System.Drawing.Point(231, 507);
+            this.txtMarkerOutputPath.Location = new System.Drawing.Point(185, 507);
             this.txtMarkerOutputPath.Name = "txtMarkerOutputPath";
-            this.txtMarkerOutputPath.Size = new System.Drawing.Size(460, 23);
+            this.txtMarkerOutputPath.Size = new System.Drawing.Size(300, 23);
             this.txtMarkerOutputPath.TabIndex = 24;
             // 
             // label3
             // 
             this.label3.Location = new System.Drawing.Point(18, 507);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(210, 23);
+            this.label3.Size = new System.Drawing.Size(164, 23);
             this.label3.TabIndex = 53;
             this.label3.Text = "Marker Files Output Path";
             // 
@@ -1275,23 +1330,23 @@
             this.txtMarkerInputPath.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
             this.txtMarkerInputPath.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "MarkerInputPath", true));
             this.txtMarkerInputPath.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtMarkerInputPath.Location = new System.Drawing.Point(231, 478);
+            this.txtMarkerInputPath.Location = new System.Drawing.Point(185, 478);
             this.txtMarkerInputPath.Name = "txtMarkerInputPath";
-            this.txtMarkerInputPath.Size = new System.Drawing.Size(460, 23);
+            this.txtMarkerInputPath.Size = new System.Drawing.Size(300, 23);
             this.txtMarkerInputPath.TabIndex = 23;
             // 
             // label1
             // 
             this.label1.Location = new System.Drawing.Point(18, 478);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(210, 23);
+            this.label1.Size = new System.Drawing.Size(164, 23);
             this.label1.TabIndex = 51;
             this.label1.Text = "Marker Files Input Path";
             // 
             // btnPicFilesPath
             // 
             this.btnPicFilesPath.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
-            this.btnPicFilesPath.Location = new System.Drawing.Point(696, 422);
+            this.btnPicFilesPath.Location = new System.Drawing.Point(489, 421);
             this.btnPicFilesPath.Name = "btnPicFilesPath";
             this.btnPicFilesPath.Size = new System.Drawing.Size(30, 25);
             this.btnPicFilesPath.TabIndex = 31;
@@ -1307,7 +1362,7 @@
             this.txtPicFilesPath.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtPicFilesPath.Location = new System.Drawing.Point(185, 422);
             this.txtPicFilesPath.Name = "txtPicFilesPath";
-            this.txtPicFilesPath.Size = new System.Drawing.Size(506, 23);
+            this.txtPicFilesPath.Size = new System.Drawing.Size(300, 23);
             this.txtPicFilesPath.TabIndex = 21;
             // 
             // labPicFilesPath
@@ -1440,28 +1495,9 @@
             this.shapeContainer4.TabIndex = 51;
             this.shapeContainer4.TabStop = false;
             // 
-            // labFinalPatternPath
-            // 
-            this.labFinalPatternPath.Location = new System.Drawing.Point(18, 565);
-            this.labFinalPatternPath.Name = "labFinalPatternPath";
-            this.labFinalPatternPath.Size = new System.Drawing.Size(210, 23);
-            this.labFinalPatternPath.TabIndex = 83;
-            this.labFinalPatternPath.Text = "Hnadover Final Pattern Path";
-            // 
-            // txtFinalPatternPath
-            // 
-            this.txtFinalPatternPath.BackColor = System.Drawing.Color.White;
-            this.txtFinalPatternPath.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
-            this.txtFinalPatternPath.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "FinalPatternPath", true));
-            this.txtFinalPatternPath.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtFinalPatternPath.Location = new System.Drawing.Point(231, 565);
-            this.txtFinalPatternPath.Name = "txtFinalPatternPath";
-            this.txtFinalPatternPath.Size = new System.Drawing.Size(460, 23);
-            this.txtFinalPatternPath.TabIndex = 26;
-            // 
             // B02
             // 
-            this.ClientSize = new System.Drawing.Size(1108, 732);
+            this.ClientSize = new System.Drawing.Size(1108, 647);
             this.Controls.Add(this.panel1);
             this.DefaultControl = "numSample";
             this.DefaultControlForEdit = "numSample";
@@ -1597,5 +1633,8 @@
         private System.Windows.Forms.Label label20;
         private Win.UI.TextBox txtFinalPatternPath;
         private Win.UI.Label labFinalPatternPath;
+        private Win.UI.Button btnPadPrintPath;
+        private Win.UI.TextBox txtPadPrintPath;
+        private Win.UI.Label label19;
     }
 }
