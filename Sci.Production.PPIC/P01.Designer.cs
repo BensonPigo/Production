@@ -333,6 +333,7 @@
             this.shapeContainer7 = new Microsoft.VisualBasic.PowerPacks.ShapeContainer();
             this.checkBoxDirectShip = new Sci.Win.UI.CheckBox();
             this.btn_ArtworkTestDox = new Sci.Win.UI.Button();
+            this.chbStyleCarryover = new Sci.Win.UI.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -349,6 +350,7 @@
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.chbStyleCarryover);
             this.detailcont.Controls.Add(this.checkBoxDirectShip);
             this.detailcont.Controls.Add(this.btn_ArtworkTestDox);
             this.detailcont.Controls.Add(this.checkOrganicCotton);
@@ -680,10 +682,10 @@
             this.tabPage1.Controls.Add(this.txttpeuser5);
             this.tabPage1.Controls.Add(this.PcHandleText);
             this.tabPage1.Controls.Add(this.txttpeuser4);
-            this.tabPage1.Location = new System.Drawing.Point(4, 24);
+            this.tabPage1.Location = new System.Drawing.Point(4, 25);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(1000, 691);
+            this.tabPage1.Size = new System.Drawing.Size(897, 395);
             this.tabPage1.TabIndex = 2;
             this.tabPage1.Text = "Detail(s)";
             // 
@@ -1933,7 +1935,7 @@
             this.lineShape7,
             this.lineShape6,
             this.lineShape5});
-            this.shapeContainer2.Size = new System.Drawing.Size(994, 685);
+            this.shapeContainer2.Size = new System.Drawing.Size(990, 679);
             this.shapeContainer2.TabIndex = 8;
             this.shapeContainer2.TabStop = false;
             // 
@@ -3716,7 +3718,7 @@
             this.checkBoxDirectShip.AutoSize = true;
             this.checkBoxDirectShip.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "DirectShip", true));
             this.checkBoxDirectShip.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkBoxDirectShip.Location = new System.Drawing.Point(709, 275);
+            this.checkBoxDirectShip.Location = new System.Drawing.Point(707, 286);
             this.checkBoxDirectShip.Name = "checkBoxDirectShip";
             this.checkBoxDirectShip.Size = new System.Drawing.Size(86, 19);
             this.checkBoxDirectShip.TabIndex = 255;
@@ -3733,6 +3735,19 @@
             this.btn_ArtworkTestDox.Text = "Artwork Test Dox";
             this.btn_ArtworkTestDox.UseVisualStyleBackColor = true;
             this.btn_ArtworkTestDox.Click += new System.EventHandler(this.btn_ArtworkTestDox_Click);
+            // 
+            // chbStyleCarryover
+            // 
+            this.chbStyleCarryover.AutoSize = true;
+            this.chbStyleCarryover.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.chbStyleCarryover.IsSupportEditMode = false;
+            this.chbStyleCarryover.Location = new System.Drawing.Point(825, 286);
+            this.chbStyleCarryover.Name = "chbStyleCarryover";
+            this.chbStyleCarryover.ReadOnly = true;
+            this.chbStyleCarryover.Size = new System.Drawing.Size(107, 19);
+            this.chbStyleCarryover.TabIndex = 256;
+            this.chbStyleCarryover.Text = "Style-Carryover";
+            this.chbStyleCarryover.UseVisualStyleBackColor = true;
             // 
             // P01
             // 
@@ -4070,5 +4085,6 @@
         private Win.UI.Button btnComboType;
         private Win.UI.DateBox dateBox1;
         private Win.UI.Label label4;
+        private Win.UI.CheckBox chbStyleCarryover;
     }
 }

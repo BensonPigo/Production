@@ -230,6 +230,7 @@ select s.Description
 	, s.Gender
 	, [Construction] = d1.Name
     ,s.CDCodeNew
+    ,[NewCO]  = iif(s.NewCO ='2','True','False')
 from Style s WITH (NOLOCK) 
 left join DropDownList d1 WITH(NOLOCK) on d1.type= 'StyleConstruction' and d1.ID = s.Construction
 left join Reason r1 WITH(NOLOCK) on r1.ReasonTypeID= 'Fabric_Kind' and r1.ID = s.FabricType
@@ -242,6 +243,7 @@ where s.Ukey = '{0}'",
                 this.checkExceptionForm.Value = MyUtility.Convert.GetString(styleData["ExpectionForm"]);
                 this.editFtyRemark.Text = MyUtility.Convert.GetString(styleData["FTYRemark"]);
                 this.displayCDCodeNew.Text = MyUtility.Convert.GetString(styleData["CDCodeNew"]);
+                this.chbStyleCarryover.Value = MyUtility.Convert.GetString(styleData["NewCO"]);
                 if (MyUtility.Check.Empty(styleData["ApvDate"]))
                 {
                     this.dateStyleApv.Value = null;
