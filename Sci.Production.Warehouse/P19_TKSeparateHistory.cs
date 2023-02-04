@@ -81,7 +81,13 @@ namespace Sci.Production.Warehouse
                 this.gridTransferWK.Columns[i].SortMode = DataGridViewColumnSortMode.NotSortable;
             }
 
-            string sqlcmd_TK = $@"select distinct
+            string sqlcmd_TK = $@"select distinct TransferExport_DetailUkey
+                                into #TkUkeyList
+                                from TransferOut_Detail tod with(nolock)
+                                where tod.id = 'PM1TO22120061'
+	                                and exists (select 1 from TransferExport_SeparateHistory tesh where tod.TransferExport_DetailUkey = tesh.NewDetailUkey)
+
+                                select  
                                 [FromSP] = ted.InventoryPOID
                                 ,[FromSEQ] = Concat (ted.InventorySeq1, ' ', ted.InventorySeq2)
                                 ,[ToSP] = ted.PoID
@@ -91,7 +97,7 @@ namespace Sci.Production.Warehouse
                                 ,[OriTK] = tes.ID
                                 ,[NewTK] = tes.[NewID]
                                 ,[NewPoQty] = ted.PoQty
-                                ,[NewExportQty] = tdc.StockQty
+                                ,[NewExportQty] = tdaQTY.val
                                 ,[StockUnit] = tes.StockUnitID
                                 ,[Supplier] =ted.SuppID
                                 ,[Description] = ted.[Description]
@@ -99,10 +105,9 @@ namespace Sci.Production.Warehouse
                                 ,[Color] = SpecValue.val
                                 ,[Reason] = ted.TransferExportReason
                                 ,[ReasonDesc] = Reasondesc.val
-                                from TransferOut_Detail tod with(nolock) 
-                                inner join TransferExport_SeparateHistory tes with(nolock) on tod.TransferExport_DetailUkey = tes.NewDetailUkey
-                                left join TransferExport_Detail ted with(nolock) on ted.Ukey = tes.NewDetailUkey
-                                inner join TransferExport_Detail_Carton tdc with(nolock) on ted.Ukey = tdc.TransferExport_DetailUkey
+                                from #TkUkeyList tul
+                                left join TransferExport_Detail ted with(nolock) on  tul.TransferExport_DetailUkey = ted.Ukey
+                                left join TransferExport_SeparateHistory tes with(nolock) on tul.TransferExport_DetailUkey = tes.NewDetailUkey
                                 outer apply
                                 (
 	                                select val = psds.SpecValue
@@ -112,8 +117,8 @@ namespace Sci.Production.Warehouse
 									                                and psd.Seq2 = psds.Seq2
 									                                and psds.SpecColumnID = 'Color'
 	                                where psd.ID = ted.InventoryPOID
-	                                  and psd.Seq1 = ted.InventorySeq1
-	                                  and psd.Seq2 = ted.InventorySeq2
+	                                    and psd.Seq1 = ted.InventorySeq1
+	                                    and psd.Seq2 = ted.InventorySeq2
                                 )SpecValue
                                 outer apply
                                 (
@@ -124,7 +129,7 @@ namespace Sci.Production.Warehouse
                                 outer apply
                                 (
 	                                select val =
-	                                 Concat(
+	                                    Concat(
 			                                case td.FabricType
 			                                when 'F' then 'Fabric'
 			                                when 'A' then 'Accessory'
@@ -135,8 +140,13 @@ namespace Sci.Production.Warehouse
 	                                left join Fabric f on td.SCIRefno = f.SCIRefno
 	                                where td.Ukey = ted.Ukey
                                 )MT
-                                where tod.id = '{this.strID}' and tod.TransferExport_DetailUkey in (select max(TransferExport_DetailUkey) from TransferOut_Detail group by TransferExport_DetailUkey)
-                                order by [FromSP],[FromSEQ],[ToSP],[ToSEQ],[NewTK] asc";
+                                outer apply
+                                (
+	                                select  val = sum(tdc.StockQty)
+	                                from TransferExport_Detail_Carton tdc with(nolock)
+	                                where tdc.TransferExport_DetailUkey = tul.TransferExport_DetailUkey
+                                )tdaQTY
+                                drop table #TkUkeyList";
             DualResult dualResult_TK = DBProxy.Current.Select(null, sqlcmd_TK, out this.dt_TK);
             if (!dualResult_TK)
             {
@@ -169,26 +179,32 @@ namespace Sci.Production.Warehouse
                 this.gridPacking.Columns[i].SortMode = DataGridViewColumnSortMode.NotSortable;
             }
 
-            string sqlcmd_PK = $@"select
-                                [FromSP] = ted.InventoryPOID
-                                ,[FromSEQ] = Concat (ted.InventorySeq1, ' ', ted.InventorySeq2)
-                                ,[ToSP] = ted.PoID
-                                ,[ToSEQ] = Concat (ted.Seq1, ' ', ted.Seq2)
-                                ,[NewTK] =tdc.ID
-                                ,[FtyGroupID] = tdc.GroupID
-                                ,[CartonNo] = tdc.Carton
-                                ,[Roll] = tdc.Roll
-                                ,[Dyelot] = tdc.LotNo
-                                ,[ExportQty] = tdc.StockQty
-                                ,[NetKg] = tdc.NetKg
-                                ,[GWKg] = tdc.WeightKg
-                                ,[CBM] = tdc.CBM
-                                from TransferOut_Detail tod with(nolock)
-                                inner join TransferExport_SeparateHistory tes with(nolock) on tod.TransferExport_DetailUkey = tes.NewDetailUkey
-                                inner join TransferExport_Detail ted with(nolock) on ted.Ukey = tes.NewDetailUkey
-                                inner join TransferExport_Detail_Carton tdc with(nolock) on ted.Ukey = tdc.TransferExport_DetailUkey
-                                where tod.id = '{this.strID}' and tod.TransferExport_DetailUkey in (select max(TransferExport_DetailUkey) from TransferOut_Detail group by TransferExport_DetailUkey)
-                                order by [FromSP],[FromSEQ],[ToSP],[ToSEQ],[NewTK] asc";
+            string sqlcmd_PK = $@"
+                                select distinct TransferExport_DetailUkey
+								into #TkUkeyList
+								from TransferOut_Detail tod with(nolock)
+								where tod.id = '{this.strID}'
+									and exists (select 1 from TransferExport_SeparateHistory tesh where tod.TransferExport_DetailUkey = tesh.NewDetailUkey)
+
+								select  [FromSP] = ted.InventoryPOID
+										,[FromSEQ] = Concat (ted.InventorySeq1, ' ', ted.InventorySeq2)
+										,[ToSP] = ted.PoID
+										,[ToSEQ] = Concat (ted.Seq1, ' ', ted.Seq2)
+										,[NewTK] =tdc.ID
+										,[FtyGroupID] = tdc.GroupID
+										,[CartonNo] = tdc.Carton
+										,[Roll] = tdc.Roll
+										,[Dyelot] = tdc.LotNo
+										,[ExportQty] = tdc.StockQty
+										,[NetKg] = tdc.NetKg
+										,[GWKg] = tdc.WeightKg
+										,[CBM] = tdc.CBM
+								from #TkUkeyList tul
+								left join TransferExport_Detail ted with(nolock) on  tul.TransferExport_DetailUkey = ted.Ukey
+								left join TransferExport_Detail_Carton tdc with(nolock) on ted.Ukey = tdc.TransferExport_DetailUkey
+
+
+								drop table #TkUkeyList";
             DualResult dualResult_PK = DBProxy.Current.Select(null, sqlcmd_PK, out this.dt_PK);
             if (!dualResult_PK)
             {
