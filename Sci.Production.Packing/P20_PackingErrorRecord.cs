@@ -51,7 +51,7 @@ namespace Sci.Production.Packing
             this.txtRemark.Text = this.drDetail["Remark"].ToString();
 
             string selectCommand = $@"
-select * from PackingErrorRecord
+select * from PackErrTransfer_Detail
 where PackID = '{this.drDetail["PackID"]}'
 and CTN = '{this.drDetail["CTN"].ToString()}'
 ";

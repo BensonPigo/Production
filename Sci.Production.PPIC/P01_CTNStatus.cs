@@ -606,7 +606,7 @@ drop table #PackingList_Detail,#Transferclog,#CReceive,#CReturn,#TransferCFA,#Re
             this.listControlBindingSource1.DataSource = transferDetail;
 
             sqlCmd = string.Format(
-				@"
+                @"
 select [PackingListID] =  p.ID 
 ,pd.CTNStartNo
 ,[Scanned] = iif(Scanned.QtyPerCTN=Scanned.ScanQty,'Y','')
@@ -628,8 +628,8 @@ select [PackingListID] =  p.ID
 ,EditCFALocationName=concat(pd.EditCFALocationName,'-'+(select name from pass1 where id=pd.EditCFALocationName))
 ,pd.Remark
 ,pd.Seq
-,pd.MDScanDate
-,pd.MDFailQty
+,pd.DryRoomMDScanDate
+,pd.DryRoomMDFailQty
 ,pd.DRYTransferDate
 ,pd.HaulingDate
 ,pd.PackingAuditDate
@@ -676,8 +676,8 @@ order by p.ID,pd.Seq", this.orderID);
                 .Date("HaulingDate", header: "Hauling Date", width: Widths.AnsiChars(10))
                 .Date("DryReceiveDate", header: "Dry Room Receive Date", width: Widths.AnsiChars(10))
                 .Date("DRYTransferDate", header: "Dry Room Transfer Date", width: Widths.AnsiChars(10))
-                .Date("MDScanDate", header: "MD Room Scan Date", width: Widths.AnsiChars(10))
-                .Text("MDFailQty", header: "MD Discrepancy", width: Widths.AnsiChars(6))
+                .Date("DryRoomMDScanDate", header: "MD Room Scan Date", width: Widths.AnsiChars(10))
+                .Text("DryRoomMDFailQty", header: "MD Discrepancy", width: Widths.AnsiChars(6))
                 .Date("TransferCFADate", header: "Trans. CFA Date", width: Widths.AnsiChars(10))
                 .Date("CFAReceiveDate", header: "CFA Rec. Clog Date", width: Widths.AnsiChars(10))
                 .Date("CFAReturnClogDate", header: "CFA Return Clog Date", width: Widths.AnsiChars(10))

@@ -51,7 +51,7 @@ left join Orders o with (nolock) on o.ID = pd.OrderID
 left join Country c with (nolock) on c.ID = o.Dest
 left join Pullout pu with (nolock) on pu.ID = p.PulloutID
 outer apply(select top 1 pt.* from PackErrTransfer pt with (nolock) where pd.id=pt.PackingListID and pt.OrderID=pd.OrderID and pt.CTNStartNo=pd.CTNStartNo order by pt.AddDate desc)x
-left join PackingError pe with (nolock) on x.PackingErrorID=pe.ID and pe.Type='TP' 
+left join PackingErrorTypeReason pe with (nolock) on x.PackingErrorID=pe.ID and pe.Type='TP' 
  ";
 
         /// <summary>
@@ -505,7 +505,7 @@ t.ID
 ,per.ActionTaken
 ,t.Remark
 from #tmp t
-left join PackingErrorRecord Per with (nolock) on per.PackID = t.ID and Per.CTN = t.CTNStartNo
+left join PackErrTransfer_Detail Per with (nolock) on per.PackID = t.ID and Per.CTN = t.CTNStartNo
 order by t.ID,t.Seq
 
 drop table #tmp

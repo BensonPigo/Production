@@ -77,7 +77,7 @@ outer apply(
 	AND pd.ID=cpe.PackingListID AND pd.OrderID = cpe.OrderID AND pd.CTNStartNo=cpe.CTNStartNo AND pd.SCICtnNo=cpe.SCICtnNo
 	order by cpe.AddDate desc
 )ce
-left join PackingError pe with (nolock)  on ce.PackingErrorID = pe.ID
+left join PackingErrorTypeReason pe with (nolock)  on ce.PackingErrorID = pe.ID
  ";
 
         /// <summary>
@@ -103,7 +103,7 @@ left join PackingError pe with (nolock)  on ce.PackingErrorID = pe.ID
             string strSqlCmd = $@"
 select '' as Error,'' as id
 union all
-select id+'-'+Description as Error,id from PackingError
+select id+'-'+Description as Error,id from PackingErrorTypeReason
 where Type='TP' and Junk=0";
             if (resulterror = DBProxy.Current.Select(null, strSqlCmd, out dtTypeError))
             {
