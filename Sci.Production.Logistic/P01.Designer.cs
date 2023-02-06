@@ -1534,7 +1534,6 @@
             // displayCDCodeNew
             // 
             this.displayCDCodeNew.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayCDCodeNew.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "CdCodeID", true));
             this.displayCDCodeNew.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.displayCDCodeNew.Location = new System.Drawing.Point(267, 169);
             this.displayCDCodeNew.Name = "displayCDCodeNew";
@@ -1544,7 +1543,6 @@
             // displayProductType
             // 
             this.displayProductType.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayProductType.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "CdCodeID", true));
             this.displayProductType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.displayProductType.Location = new System.Drawing.Point(348, 275);
             this.displayProductType.Name = "displayProductType";
@@ -1571,7 +1569,6 @@
             // displayFabricType
             // 
             this.displayFabricType.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayFabricType.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "CdCodeID", true));
             this.displayFabricType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.displayFabricType.Location = new System.Drawing.Point(348, 304);
             this.displayFabricType.Name = "displayFabricType";
@@ -1598,7 +1595,6 @@
             // displayLining
             // 
             this.displayLining.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayLining.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "CdCodeID", true));
             this.displayLining.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.displayLining.Location = new System.Drawing.Point(543, 277);
             this.displayLining.Name = "displayLining";
@@ -1625,7 +1621,6 @@
             // displayGender
             // 
             this.displayGender.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayGender.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "CdCodeID", true));
             this.displayGender.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.displayGender.Location = new System.Drawing.Point(543, 305);
             this.displayGender.Name = "displayGender";
@@ -1652,7 +1647,6 @@
             // displayConstruction
             // 
             this.displayConstruction.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayConstruction.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "CdCodeID", true));
             this.displayConstruction.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.displayConstruction.Location = new System.Drawing.Point(738, 277);
             this.displayConstruction.Name = "displayConstruction";

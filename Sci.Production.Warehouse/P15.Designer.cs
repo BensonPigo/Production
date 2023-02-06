@@ -58,6 +58,11 @@
             this.txtToPlace = new Sci.Production.Class.TxtToPlace();
             this.displayDept = new Sci.Win.UI.DisplayBox();
             this.lblDept = new Sci.Win.UI.Label();
+            this.label1 = new Sci.Win.UI.Label();
+            this.editBoxRequestRemark = new Sci.Win.UI.EditBox();
+            this.label2 = new Sci.Win.UI.Label();
+            this.txtSewingLine = new Sci.Production.Class.TxtToPlace();
+            this.BtnRequestList = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -74,6 +79,11 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.BtnRequestList);
+            this.masterpanel.Controls.Add(this.txtSewingLine);
+            this.masterpanel.Controls.Add(this.label2);
+            this.masterpanel.Controls.Add(this.editBoxRequestRemark);
+            this.masterpanel.Controls.Add(this.label1);
             this.masterpanel.Controls.Add(this.displayDept);
             this.masterpanel.Controls.Add(this.lblDept);
             this.masterpanel.Controls.Add(this.lblToPlace);
@@ -102,13 +112,12 @@
             this.masterpanel.Controls.Add(this.labelIssueDate);
             this.masterpanel.Controls.Add(this.labelID);
             this.masterpanel.Controls.Add(this.shapeContainer1);
-            this.masterpanel.Size = new System.Drawing.Size(998, 184);
+            this.masterpanel.Size = new System.Drawing.Size(998, 211);
             this.masterpanel.Controls.SetChildIndex(this.shapeContainer1, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelID, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelIssueDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.label25, 0);
             this.masterpanel.Controls.SetChildIndex(this.displayID, 0);
-            this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateIssueDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnImport, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelLocateForSP, 0);
@@ -132,16 +141,22 @@
             this.masterpanel.Controls.SetChildIndex(this.lblToPlace, 0);
             this.masterpanel.Controls.SetChildIndex(this.lblDept, 0);
             this.masterpanel.Controls.SetChildIndex(this.displayDept, 0);
+            this.masterpanel.Controls.SetChildIndex(this.label1, 0);
+            this.masterpanel.Controls.SetChildIndex(this.editBoxRequestRemark, 0);
+            this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
+            this.masterpanel.Controls.SetChildIndex(this.label2, 0);
+            this.masterpanel.Controls.SetChildIndex(this.txtSewingLine, 0);
+            this.masterpanel.Controls.SetChildIndex(this.BtnRequestList, 0);
             // 
             // detailpanel
             // 
-            this.detailpanel.Location = new System.Drawing.Point(0, 184);
-            this.detailpanel.Size = new System.Drawing.Size(998, 293);
+            this.detailpanel.Location = new System.Drawing.Point(0, 211);
+            this.detailpanel.Size = new System.Drawing.Size(998, 266);
             // 
             // gridicon
             // 
             this.gridicon.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)));
-            this.gridicon.Location = new System.Drawing.Point(881, 144);
+            this.gridicon.Location = new System.Drawing.Point(890, 170);
             this.gridicon.TabIndex = 10;
             // 
             // refresh
@@ -151,7 +166,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(998, 293);
+            this.detailgridcont.Size = new System.Drawing.Size(998, 266);
             // 
             // detail2
             // 
@@ -255,7 +270,7 @@
             // 
             this.btnImport.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
             this.btnImport.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnImport.Location = new System.Drawing.Point(783, 145);
+            this.btnImport.Location = new System.Drawing.Point(792, 171);
             this.btnImport.Name = "btnImport";
             this.btnImport.Size = new System.Drawing.Size(89, 31);
             this.btnImport.TabIndex = 9;
@@ -268,9 +283,7 @@
             this.shapeContainer1.Location = new System.Drawing.Point(0, 0);
             this.shapeContainer1.Margin = new System.Windows.Forms.Padding(0);
             this.shapeContainer1.Name = "shapeContainer1";
-            this.shapeContainer1.Shapes.AddRange(new Microsoft.VisualBasic.PowerPacks.Shape[] {
-            this.lineShape1});
-            this.shapeContainer1.Size = new System.Drawing.Size(998, 184);
+            this.shapeContainer1.Size = new System.Drawing.Size(998, 211);
             this.shapeContainer1.TabIndex = 54;
             this.shapeContainer1.TabStop = false;
             // 
@@ -285,7 +298,7 @@
             // btnFind
             // 
             this.btnFind.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.btnFind.Location = new System.Drawing.Point(279, 144);
+            this.btnFind.Location = new System.Drawing.Point(279, 170);
             this.btnFind.Name = "btnFind";
             this.btnFind.Size = new System.Drawing.Size(70, 30);
             this.btnFind.TabIndex = 7;
@@ -298,14 +311,14 @@
             this.txtLocateForSP.BackColor = System.Drawing.Color.White;
             this.txtLocateForSP.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtLocateForSP.IsSupportEditMode = false;
-            this.txtLocateForSP.Location = new System.Drawing.Point(128, 148);
+            this.txtLocateForSP.Location = new System.Drawing.Point(128, 170);
             this.txtLocateForSP.Name = "txtLocateForSP";
             this.txtLocateForSP.Size = new System.Drawing.Size(145, 23);
             this.txtLocateForSP.TabIndex = 6;
             // 
             // labelLocateForSP
             // 
-            this.labelLocateForSP.Location = new System.Drawing.Point(16, 148);
+            this.labelLocateForSP.Location = new System.Drawing.Point(16, 170);
             this.labelLocateForSP.Name = "labelLocateForSP";
             this.labelLocateForSP.Size = new System.Drawing.Size(109, 23);
             this.labelLocateForSP.TabIndex = 58;
@@ -314,7 +327,7 @@
             // btnClearQtyIsEmpty
             // 
             this.btnClearQtyIsEmpty.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
-            this.btnClearQtyIsEmpty.Location = new System.Drawing.Point(355, 144);
+            this.btnClearQtyIsEmpty.Location = new System.Drawing.Point(355, 170);
             this.btnClearQtyIsEmpty.Name = "btnClearQtyIsEmpty";
             this.btnClearQtyIsEmpty.Size = new System.Drawing.Size(148, 30);
             this.btnClearQtyIsEmpty.TabIndex = 8;
@@ -324,7 +337,7 @@
             // 
             // labelRemark
             // 
-            this.labelRemark.Location = new System.Drawing.Point(16, 78);
+            this.labelRemark.Location = new System.Drawing.Point(16, 111);
             this.labelRemark.Name = "labelRemark";
             this.labelRemark.Size = new System.Drawing.Size(75, 23);
             this.labelRemark.TabIndex = 59;
@@ -335,7 +348,7 @@
             this.editRemark.BackColor = System.Drawing.Color.White;
             this.editRemark.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "remark", true));
             this.editRemark.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.editRemark.Location = new System.Drawing.Point(97, 78);
+            this.editRemark.Location = new System.Drawing.Point(94, 111);
             this.editRemark.Multiline = true;
             this.editRemark.Name = "editRemark";
             this.editRemark.Size = new System.Drawing.Size(352, 51);
@@ -353,7 +366,7 @@
             // 
             this.btnAccumulatedQty.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
             this.btnAccumulatedQty.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnAccumulatedQty.Location = new System.Drawing.Point(836, 78);
+            this.btnAccumulatedQty.Location = new System.Drawing.Point(845, 78);
             this.btnAccumulatedQty.Name = "btnAccumulatedQty";
             this.btnAccumulatedQty.Size = new System.Drawing.Size(145, 31);
             this.btnAccumulatedQty.TabIndex = 5;
@@ -463,7 +476,7 @@
             // 
             // lblToPlace
             // 
-            this.lblToPlace.Location = new System.Drawing.Point(452, 78);
+            this.lblToPlace.Location = new System.Drawing.Point(452, 111);
             this.lblToPlace.Name = "lblToPlace";
             this.lblToPlace.Size = new System.Drawing.Size(97, 23);
             this.lblToPlace.TabIndex = 77;
@@ -474,7 +487,7 @@
             this.txtToPlace.BackColor = System.Drawing.Color.White;
             this.txtToPlace.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "ToPlace", true));
             this.txtToPlace.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtToPlace.Location = new System.Drawing.Point(552, 78);
+            this.txtToPlace.Location = new System.Drawing.Point(552, 111);
             this.txtToPlace.Name = "txtToPlace";
             this.txtToPlace.Size = new System.Drawing.Size(132, 23);
             this.txtToPlace.TabIndex = 76;
@@ -495,6 +508,56 @@
             this.lblDept.Size = new System.Drawing.Size(78, 23);
             this.lblDept.TabIndex = 82;
             this.lblDept.Text = "Department";
+            // 
+            // label1
+            // 
+            this.label1.Location = new System.Drawing.Point(16, 78);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(109, 23);
+            this.label1.TabIndex = 84;
+            this.label1.Text = "Request Remark";
+            // 
+            // editBoxRequestRemark
+            // 
+            this.editBoxRequestRemark.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.editBoxRequestRemark.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.editBoxRequestRemark.IsSupportEditMode = false;
+            this.editBoxRequestRemark.Location = new System.Drawing.Point(128, 76);
+            this.editBoxRequestRemark.Multiline = true;
+            this.editBoxRequestRemark.Name = "editBoxRequestRemark";
+            this.editBoxRequestRemark.ReadOnly = true;
+            this.editBoxRequestRemark.Size = new System.Drawing.Size(534, 27);
+            this.editBoxRequestRemark.TabIndex = 85;
+            // 
+            // label2
+            // 
+            this.label2.Location = new System.Drawing.Point(665, 78);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(97, 23);
+            this.label2.TabIndex = 86;
+            this.label2.Text = "Sewing Line";
+            // 
+            // txtSewingLine
+            // 
+            this.txtSewingLine.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.txtSewingLine.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.txtSewingLine.IsSupportEditMode = false;
+            this.txtSewingLine.Location = new System.Drawing.Point(765, 78);
+            this.txtSewingLine.Name = "txtSewingLine";
+            this.txtSewingLine.ReadOnly = true;
+            this.txtSewingLine.Size = new System.Drawing.Size(74, 23);
+            this.txtSewingLine.TabIndex = 87;
+            // 
+            // BtnRequestList
+            // 
+            this.BtnRequestList.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
+            this.BtnRequestList.Location = new System.Drawing.Point(845, 115);
+            this.BtnRequestList.Name = "BtnRequestList";
+            this.BtnRequestList.Size = new System.Drawing.Size(145, 30);
+            this.BtnRequestList.TabIndex = 88;
+            this.BtnRequestList.Text = "Request List";
+            this.BtnRequestList.UseVisualStyleBackColor = true;
+            this.BtnRequestList.Click += new System.EventHandler(this.BtnRequestList_Click);
             // 
             // P15
             // 
@@ -574,5 +637,10 @@
         private Class.TxtToPlace txtToPlace;
         private Win.UI.DisplayBox displayDept;
         private Win.UI.Label lblDept;
+        private Win.UI.Button BtnRequestList;
+        private Class.TxtToPlace txtSewingLine;
+        private Win.UI.Label label2;
+        private Win.UI.EditBox editBoxRequestRemark;
+        private Win.UI.Label label1;
     }
 }

@@ -75,6 +75,7 @@ CREATE TABLE [dbo].[System] (
     [HandoverSpecialToolsPath] VARCHAR(80) NOT NULL DEFAULT (''), 
     [CriticalOperationPath] VARCHAR(80) NOT NULL DEFAULT (''), 
     [FinalPatternPath] VARCHAR(80) NOT NULL DEFAULT (''), 
+    [PadPrintPath] VARCHAR(80) NOT NULL DEFAULT (''), 
     CONSTRAINT [PK_RgCode] PRIMARY KEY CLUSTERED ([RgCode] ASC)
 );
 
@@ -400,3 +401,12 @@ EXEC sp_addextendedproperty @name = N'MS_Description',
     @level1name = N'System',
     @level2type = N'COLUMN',
     @level2name = N'FinalPatternPath'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'PadPrintLayout檔案路徑',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'System',
+    @level2type = N'COLUMN',
+    @level2name = N'PadPrintPath'
