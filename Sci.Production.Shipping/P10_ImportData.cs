@@ -102,7 +102,6 @@ inner join  order_qtyship oq WITH (nolock) on pd.orderid = oq.id and pd.ordershi
 inner join  orders o WITH (nolock) on o.ID = oq.Id
 WHERE   p.InvNo in ({0}) and
         o.junk = 0 and
-        o.GMTComplete != 'S'
 ";
 
             sqlCmd.Append(@"
@@ -140,7 +139,6 @@ inner join  orders o WITH (nolock) on o.ID = oq.Id
 WHERE  g.shipplanid = '' 
        AND g.socfmdate IS NOT NULL 
        AND o.junk = 0 
-       AND o.GMTComplete != 'S'
 ");
             if (!MyUtility.Check.Empty(this.txtGBNoStart.Text))
             {
