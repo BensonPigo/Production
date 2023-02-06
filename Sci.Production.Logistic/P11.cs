@@ -209,7 +209,7 @@ where c.Status = 'Confirmed' and c.ID <> '{this.CurrentMaintain["ID"]}'";
 update ClogGarmentDispose set Status = 'Confirmed' , EditName = '{Env.User.UserID}', EditDate = GETDATE() where ID = '{this.CurrentMaintain["ID"]}'
 
 update pd set pd.DisposeFromClog = 1
-, pd.DisposeDate = Getdate()
+, pd.DisposeDate = '{DateTime.Parse(this.CurrentMaintain["DisposeDate"].ToString()).ToString("yyyy/MM/dd")}'
 from PackingList_Detail pd
 where exists (select 1 from ClogGarmentDispose_Detail t where t.ID = '{this.CurrentMaintain["ID"]}' and t.PackingListID = pd.ID and t.CTNStartNO = pd.CTNStartNO)
 ";
