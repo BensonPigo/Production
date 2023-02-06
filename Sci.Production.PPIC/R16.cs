@@ -232,7 +232,7 @@ select main.KPICode
 	,[ClogReceivedCarton] = isnull(pd.ClogReceivedCarton,0)
 	,[ClogReceivedQty]=IIF(main.PartialShipment='Y' ,'NA' ,CAST( ISNULL( pd.ClogReceivedQty,0)  as varchar))
 	,[LastCMPOutputDate]=LastCMPOutputDate.Value
-    ,[ClogReceivedQty]=ISNULL( pd.ClogReceivedQty,0)
+    ,[CReceivedQty]=ISNULL( pd.ClogReceivedQty,0)
 	,ins.LastDQSOutputDate
 	,[DQSQty]=IIF(main.PartialShipment='Y' , 'NA' , CAST( ISNULL( ins.DQSQty,0)  as varchar))
 	,[OST Packing Qty]=IIF(main.PartialShipment='Y' , 'NA' , CAST(( ISNULL(main.OrderQty,0) -  ISNULL(pd.PackingQty,0)) as varchar))
