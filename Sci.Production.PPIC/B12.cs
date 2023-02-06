@@ -61,14 +61,14 @@ namespace Sci.Production.PPIC
             .Text("SizePage", header: "Size Page", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Text("SourceSize", header: "Source Size", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Text("CustomerSize", header: "Cust Order Size", width: Widths.AnsiChars(10), iseditingreadonly: true)
-            .Button("Upload", header: "Layout PDF", onclick: this.BtnUpload_Click)
+            .Button("Download", header: "Layout PDF", onclick: this.BtnDownload_Click)
             .Text("Version", header: "Version", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Text("Reason", header: "Junk Reason", width: Widths.AnsiChars(10), iseditingreadonly: false)
             .Text("ReversionMold", header: "Re-Ver. Mold", width: Widths.AnsiChars(2), iseditingreadonly: true)
             ;
         }
 
-        private void BtnUpload_Click(object sender, EventArgs e)
+        private void BtnDownload_Click(object sender, EventArgs e)
         {
             DataRow drSelect = this.grid_Spec.GetDataRow(this.bs_Spec.Position);
             B12_Layout callForm = new B12_Layout(drSelect["MoldID"].ToString());
