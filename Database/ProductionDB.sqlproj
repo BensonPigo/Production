@@ -2302,7 +2302,7 @@
     <Build Include="dbo\Tables\UserActionLog.sql" />
     <Build Include="dbo\Tables\LocalPO_IrregularPrice.sql" />
     <Build Include="dbo\Tables\ArtworkPO_IrregularPrice.sql" />
-    <Build Include="dbo\Tables\PackingError.sql" />
+    <Build Include="dbo\Tables\PackingErrorTypeReason.sql" />
     <Build Include="dbo\Tables\ClogGarmentDispose.sql" />
     <Build Include="dbo\Tables\ClogGarmentDispose_Detail.sql" />
     <Build Include="dbo\Tables\WorkOrderRevisedMarkerOriginalData_Detail.sql" />
@@ -2697,7 +2697,7 @@
     </Build>
     <Build Include="dbo\Tables\InspectionType.sql" />
     <Build Include="dbo\Tables\InspectionType_Detail.sql" />
-    <Build Include="dbo\Tables\PackingErrorRecord.sql" />
+    <Build Include="dbo\Tables\PackErrTransfer_Detail.sql" />
     <Build Include="dbo\Stored Procedures\GetSewingDailyOutputList.sql" />
     <Build Include="dbo\Stored Procedures\ImportEstShippingReport.sql" />
     <Build Include="dbo\Stored Procedures\Quaility_SearchList.sql" />

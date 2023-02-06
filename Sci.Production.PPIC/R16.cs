@@ -144,6 +144,7 @@ SELECT
     ,ShipQty=isnull(s.ShipQty,0)
     ,o.Qty
 	,f.KPICode 
+    ,[cbsnp] = IIF(o.NeedProduction = 0, 'N','Y')
 into #tmpOrderMain
 FROM Orders o WITH(NOLOCK)
 INNER JOIN Factory f WITH(NOLOCK) ON f.ID=o.FactoryID
@@ -220,6 +221,7 @@ select main.KPICode
 	,main.Category
 	,main.PartialShipment
 	,main.Cancelled
+    ,[Cancelled but still need production] = main.cbsnp
     ,PulloutComplete = case when main.PulloutComplete=1 and main.Qty > isnull(main.ShipQty,0) then 'S'
 							when main.PulloutComplete=1 and main.Qty <= isnull(main.ShipQty,0) then 'Y'
 							when main.PulloutComplete=0 then 'N'
@@ -228,7 +230,7 @@ select main.KPICode
 	,[PackingCarton] = isnull(pd.PackingCarton,0)
 	,[PackingQty] = isnull(pd.PackingQty,0)
 	,[ClogReceivedCarton] = isnull(pd.ClogReceivedCarton,0)
-	,[ClogReceivedQty]=IIF(main.PartialShipment='Y' ,'NA' ,CAST( ISNULL( pd.ClogReceivedQty,0)  as varchar))
+	,[ClogReceivedQty]=ISNULL( pd.ClogReceivedQty,0)
 	,[LastCMPOutputDate]=LastCMPOutputDate.Value
     ,[CMPQty]=IIF(PartialShipment='Y' ,'NA', CAST(ISNULL( CMPQty.Value,0)  as varchar))
 	,ins.LastDQSOutputDate
@@ -236,7 +238,7 @@ select main.KPICode
 	,[OST Packing Qty]=IIF(main.PartialShipment='Y' , 'NA' , CAST(( ISNULL(main.OrderQty,0) -  ISNULL(pd.PackingQty,0)) as varchar))
 	,[OST CMP Qty]=IIF(main.PartialShipment='Y' , 'NA' , CAST((  ISNULL(main.OrderQty,0) -  ISNULL(CMPQty.Value,0))  as varchar))
 	,[OST DQS Qty]=IIF(main.PartialShipment='Y' , 'NA' ,  CAST(( ISNULL(main.OrderQty,0) -  ISNULL(ins.DQSQty,0))  as varchar))
-	,[OST Clog Qty]=IIF(main.PartialShipment='Y' , 'NA' , CAST((  ISNULL(main.OrderQty,0) -  ISNULL(pd.ClogReceivedQty,0))  as varchar))
+	,[OST Clog Qty]=(ISNULL(main.OrderQty,0) - ISNULL(pd.ClogReceivedQty,0))
 	,[OST Clog Carton]= ISNULL(pd.PackingCarton,0) - ISNULL(pd.ClogReceivedCarton,0)
 	,[CFA Inspection result]=oq.CFAFinalInspectResult
 	,[3rd party Insp]=IIF(oq.CFAIs3rdInspect =1,'Y','N')

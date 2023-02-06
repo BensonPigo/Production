@@ -255,14 +255,14 @@ values('{0}','{1}','{2}','{3}','New','{4}',GETDATE());",
         /// <inheritdoc/>
         protected override bool ClickEditBefore()
         {
-            #region  表身任一筆Orders.ID的Orders.GMTComplete 不可為 'S'
-            bool gMTCompleteCheck = this.GMTCompleteCheck();
-            if (!gMTCompleteCheck)
-            {
-                return false;
-            }
-            #endregion
-
+            // 如有問題請查詢：ISP20230067
+            // #region  表身任一筆Orders.ID的Orders.GMTComplete 不可為 'S'
+            // bool gMTCompleteCheck = this.GMTCompleteCheck();
+            // if (!gMTCompleteCheck)
+            // {
+            //    return false;
+            // }
+            // #endregion
             if (MyUtility.Convert.GetString(this.CurrentMaintain["Status"]).ToUpper() != "NEW")
             {
                 MyUtility.Msg.WarningBox("This pullout report already confirmed, can't be edit!!");
@@ -853,14 +853,14 @@ group by t.PackingListID, t.OrderID
         {
             base.ClickConfirm();
 
-            #region  表身任一筆Orders.ID的Orders.GMTComplete 不可為 'S'
-            bool gMTCompleteCheck = this.GMTCompleteCheck();
-            if (!gMTCompleteCheck)
-            {
-                return;
-            }
-            #endregion
-
+            // 如有問題請查詢：ISP20230067
+            // #region  表身任一筆Orders.ID的Orders.GMTComplete 不可為 'S'
+            // bool gMTCompleteCheck = this.GMTCompleteCheck();
+            // if (!gMTCompleteCheck)
+            // {
+            //    return;
+            // }
+            // #endregion
             if (MyUtility.Convert.GetDate(this.CurrentMaintain["PulloutDate"]) > DateTime.Today)
             {
                 MyUtility.Msg.WarningBox("Pullout date can't greater than today!");

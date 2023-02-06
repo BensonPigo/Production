@@ -2529,7 +2529,7 @@ select BuyerDelivery = stuff((
                         worksheet.Cells[k, 3] = dT.Rows[j]["SizeCode"];
                         worksheet.Cells[k, 4] = dT.Rows[j]["ShipQty"];
 
-                        if (MyUtility.Check.Empty(dT.Rows[j]["MDScanDate"]))
+                        if (MyUtility.Check.Empty(dT.Rows[j]["DryRoomMDScanDate"]))
                         {
                             continue;
                         }
@@ -2595,9 +2595,9 @@ select  pd.CTNStartNo,
         a.SizeCode,
         b.ShipQty,
         o.CustPONo,
-        [Result] = IIF(sum(isnull(pd.MDFailQty, 0)) = 0, 'Pass', 'Fail'),
+        [Result] = IIF(sum(isnull(pd.DryRoomMDFailQty, 0)) = 0, 'Pass', 'Fail'),
         [Signature] = Signature.Name,
-        pd.MDScanDate
+        pd.DryRoomMDScanDate
 from PackingList_Detail pd
 left join orders o on o.id = pd.OrderID
 outer apply(
@@ -2619,10 +2619,10 @@ outer apply(
 	for xml path('')),1,1,'')
 )b
 outer apply(
-    select Name from pass1 with (nolock) where ID = pd.MDScanName
+    select Name from pass1 with (nolock) where ID = pd.DryRoomMDScanName
 ) Signature
 where pd.id = '{packingListID}' and o.CustPONo = '{custPONoDT.Rows[i]["CustPONo"]}'
-group by CTNStartNo,a.SizeCode,b.ShipQty,o.CustPONo,Signature.Name,pd.MDScanDate
+group by CTNStartNo,a.SizeCode,b.ShipQty,o.CustPONo,Signature.Name,pd.DryRoomMDScanDate
 order by min(pd.seq)
 ");
             }

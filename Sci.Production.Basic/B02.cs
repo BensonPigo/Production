@@ -173,5 +173,14 @@ namespace Sci.Production.Basic
                 this.txtFinalPatternPath.Text = dir;
             }
         }
+
+        private void btnPadPrintPath_Click(object sender, EventArgs e)
+        {
+            string dir = this.GetDir();
+            if (!MyUtility.Check.Empty(dir))
+            {
+                this.txtPadPrintPath.Text = dir;
+            }
+        }
     }
 }

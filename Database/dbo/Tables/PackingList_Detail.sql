@@ -59,8 +59,8 @@
     [CFALocationID]                       VARCHAR (10)    DEFAULT ('') NULL,
     [EditCFALocationDate]                 DATETIME        NULL,
     [EditCFALocationName]                 VARCHAR (10)    DEFAULT ('') NULL,
-    [MDScanDate]                          DATE            NULL,
-    [MDFailQty]                           INT             DEFAULT ((0)) NOT NULL,
+    [DryRoomMDScanDate]                          DATE            NULL,
+    [DryRoomMDFailQty]                    INT             DEFAULT ((0)) NOT NULL,
     [CFASelectInspDate]                   DATE            NULL,
     [StaggeredCFAInspectionRecordID]      VARCHAR (15)    CONSTRAINT [DF_StaggeredCFAInspectionRecordID] DEFAULT ('') NOT NULL,
     [FirstStaggeredCFAInspectionRecordID] VARCHAR (500)   CONSTRAINT [DF_PackingList_Detail_FirstStaggeredCFAInspectionRecordID] DEFAULT ('') NOT NULL,
@@ -69,14 +69,14 @@
     [PackingReasonERID]                   VARCHAR (5)     CONSTRAINT [DF_PackingList_Detail_PackingReasonERID] DEFAULT ('') NOT NULL,
     [ErrQty]                              SMALLINT        CONSTRAINT [DF_PackingList_Detail_ErrQty] DEFAULT ((0)) NOT NULL,
     [AuditQCName]                         VARCHAR (30)    CONSTRAINT [DF_PackingList_Detail_AuditQCName] DEFAULT ('') NOT NULL,
-    [MDScanName]                          VARCHAR (10)    CONSTRAINT [DF_PackingList_Detail_MDScanName] DEFAULT ('') NOT NULL,
+    [DryRoomMDScanName]                          VARCHAR (10)    CONSTRAINT [DF_PackingList_Detail_DryRoomMDScanName] DEFAULT ('') NOT NULL,
     [PackingErrQty]                       SMALLINT        CONSTRAINT [DF_PackingList_Detail_PackingErrQty] DEFAULT ((0)) NOT NULL,
     [PackingErrorID]                      VARCHAR (8)     CONSTRAINT [DF_PackingList_Detail_PackingErrorID] DEFAULT ('') NOT NULL,
     [HaulingDate] DATE NULL, 
     [OriClogLocationID] NVARCHAR(50) NOT NULL DEFAULT (''), 
     [PackingAuditDate] DATE NULL, 
     [PackingAuditStatus] VARCHAR(4) NOT NULL DEFAULT (''), 
-    [MDStatus] VARCHAR(4) NULL DEFAULT (''), 
+    [DryRoomMDStatus] VARCHAR(4) NULL DEFAULT (''), 
     ClogPackingErrorDate date null,
     ClogPackingErrorID varchar(8) not null constraint [DF_PackingList_Detail_ClogPackingErrorID] DEFAULT '',
     ClogPackingErrorQty smallint not null constraint [DF_PackingList_Detail_ClogPackingErrorQty] DEFAULT 0,
@@ -258,11 +258,11 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'�Ƚc�q�
 
 GO
 
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'�����˴����', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'PackingList_Detail', @level2type = N'COLUMN', @level2name = N'MDScanDate';
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'�����˴����', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'PackingList_Detail', @level2type = N'COLUMN', @level2name = N'DryRoomMDScanDate';
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'�����˴����Ѽƶq', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'PackingList_Detail', @level2type = N'COLUMN', @level2name = N'MDFailQty';
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'�����˴����Ѽƶq', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'PackingList_Detail', @level2type = N'COLUMN', @level2name = N'DryRoomMDFailQty';
 
 
 

@@ -279,7 +279,7 @@ where id = '{this.CurrentMaintain["id"]}'") ? Color.Blue : Color.Black;
             .Numeric("NarrowRequest", header: "1st Estimate Qty", decimal_places: 2, width: Widths.AnsiChars(7), settings: narrowrequest, iseditingreadonly: true)
             .Numeric("TotalRequest", header: "Final Needed Qty", decimal_places: 2, width: Widths.AnsiChars(7), settings: ttlrequest, iseditingreadonly: true)
             .Text("ReplacementUnit", header: "Unit", width: Widths.AnsiChars(8), iseditingreadonly: true)
-            .Numeric("EstReplacementAMT", header: "Est. Replacement\r\nAMT", decimal_places: 2, width: Widths.AnsiChars(7), settings: estReplacementAMT, iseditingreadonly: true)
+            .Numeric("EstReplacementAMT", header: "Est. Replacement\r\nAMT", decimal_places: 4, width: Widths.AnsiChars(7), settings: estReplacementAMT, iseditingreadonly: true)
             .Date("DamageSendDate", header: "Damage\r\nSample Sent\r\nDate", iseditingreadonly: true)
             .Text("AWBNo", header: "AWB# Of\r\nDamage\r\nSample", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Date("ReplacementETA", header: "Replacement\r\nETA", iseditingreadonly: true)
