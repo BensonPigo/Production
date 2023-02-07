@@ -153,6 +153,7 @@ namespace Sci.Production.Warehouse
                  .Text("Refno", header: "Ref#", width: Widths.AnsiChars(8), iseditingreadonly: true)
                  .Text("Stocktransfer", header: "Stock Transfer", width: Widths.AnsiChars(8), iseditingreadonly: true)
                  .Text("Color", header: "Color", width: Widths.AnsiChars(6), iseditingreadonly: true)
+                 .Text("ColorName", header: "Color Name", width: Widths.AnsiChars(10), iseditingreadonly: true)
                  .Numeric("StockQty", header: "Qty", width: Widths.AnsiChars(10), decimal_places: 2, integer_places: 10, iseditingreadonly: true)
                  .Text("StockTypeDesc", header: "Stock Type", width: Widths.AnsiChars(8), iseditingreadonly: true)
                  .DateTime("CutShadebandTime", header: "Cut Shadeband Time", width: Widths.AnsiChars(20), iseditingreadonly: false)
@@ -427,6 +428,7 @@ from
         ,OldReceivingRemark = rd.remark
         ,ReceivingRemark = rd.remark
         ,WhseArrival = r.WhseArrival
+        ,[ColorName] = c.Name
     from  Receiving r with (nolock)
     inner join Receiving_Detail rd with (nolock) on r.ID = rd.ID
     inner join View_WH_Orders o with (nolock) on o.ID = rd.POID 
@@ -446,6 +448,7 @@ from
     left join FIR_Physical fp with (nolock) on  fp.ID = FIR.ID and
                                                 fp.Roll = rd.Roll and
                                                 fp.Dyelot = rd.Dyelot
+    left join Color c with(nolock) on c.ID = psd.ColorID  and c.BrandId = psd.BrandId
     OUTER APPLY(
 
 	    SELECT [MtlLocationID] = STUFF(
@@ -524,6 +527,7 @@ from
         ,OldReceivingRemark = td.Remark
         ,ReceivingRemark = td.Remark
         ,WhseArrival = t.IssueDate
+        ,[ColorName] = c.Name
     FROM TransferIn t with (nolock)
     INNER JOIN TransferIn_Detail td with (nolock) ON t.ID = td.ID
     INNER JOIN View_WH_Orders o with (nolock) ON o.ID = td.POID
@@ -543,6 +547,7 @@ from
     left join FIR_Physical fp with (nolock) on  fp.ID = FIR.ID and
                                                 fp.Roll = td.Roll and
                                                 fp.Dyelot = td.Dyelot
+    left join Color c with(nolock) on c.ID = psd.ColorID  and c.BrandId = psd.BrandId
     OUTER APPLY(
 
 	    SELECT [MtlLocationID] = STUFF(
