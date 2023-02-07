@@ -23,7 +23,7 @@
     [EditName]         VARCHAR (10)    CONSTRAINT [DF_ShippingAP_EditName] DEFAULT ('') NULL,
     [EditDate]         DATETIME        NULL,
     [FactoryID]        VARCHAR (8)     DEFAULT ('') NOT NULL,
-    [ExVoucherID]      VARCHAR (16)    DEFAULT ('') NULL,
+    [ExVoucherID]      VARCHAR (16)    CONSTRAINT [DF_ShippingAP_ExVoucherID] DEFAULT ('') NULL,
     [Reason]           VARCHAR (5)     DEFAULT ('') NULL,
     [VoucherDate]      DATE            NULL,
     [SharedAmtFactory] NUMERIC (12, 2) CONSTRAINT [DF_ShippingAP_SharedAmtFactory] DEFAULT ((0)) NOT NULL,
@@ -31,7 +31,7 @@
     [APPExchageRate]   NUMERIC (11, 6) DEFAULT ((0)) NOT NULL,
     [VoucherEditDate] DATE NULL, 
     [SisFtyAPID] VARCHAR(13) NOT NULL DEFAULT (''), 
-    [CW] NUMERIC(8, 2) NOT NULL DEFAULT ((0)), 
+    [CW] NUMERIC(8, 2) NOT NULL DEFAULT ((0)),
     CONSTRAINT [PK_ShippingAP] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 
@@ -157,8 +157,20 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'��]', @
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'�~�b�ǲ�ID', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'ShippingAP', @level2type = N'COLUMN', @level2name = N'ExVoucherID';
+
 GO
 
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'傳票資訊最後編輯日', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'ShippingAP', @level2type = N'COLUMN', @level2name = N'VoucherEditDate';
 GO
+
+
+GO
+
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'外帳傳票ID',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'ShippingAP',
+    @level2type = N'COLUMN',
+    @level2name = N'ExVoucherID'

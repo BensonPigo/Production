@@ -4,7 +4,7 @@
     [AddDate]      DATETIME       NULL,
     [EditName]     VARCHAR (10)   NULL,
     [EditDate]     DATETIME       NULL,
-    [ExVoucherID]  VARCHAR (16)   NULL,
+    [ExVoucherID]  VARCHAR (16)    CONSTRAINT [DF_BIRInvoice_ExVoucherID] DEFAULT ('') null,
     [Status]       VARCHAR (15)   NULL,
     [Approve]      VARCHAR (10)   NULL,
     [ApproveDate]  DATETIME       NULL,
@@ -34,3 +34,12 @@ GO
 GO
 
 
+
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'外帳傳票ID',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'BIRInvoice',
+    @level2type = N'COLUMN',
+    @level2name = N'ExVoucherID'
