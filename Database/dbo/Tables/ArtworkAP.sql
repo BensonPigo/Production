@@ -22,6 +22,8 @@
     [EditName]      VARCHAR (10)    CONSTRAINT [DF_ArtworkAP_EditName] DEFAULT ('') NULL,
     [EditDate]      DATETIME        NULL,
     [Status]        VARCHAR (15)    CONSTRAINT [DF_ArtworkAP_Status] DEFAULT ('') NULL,
+    [ExVoucherID]   VARCHAR(16)     CONSTRAINT [DF_ArtworkAP_ExVoucherID] DEFAULT ('') NULL, 
+    [ExVoucherDate] DATE            NULL, 
     CONSTRAINT [PK_ArtworkAP] PRIMARY KEY CLUSTERED ([Id] ASC)
 );
 
@@ -129,3 +131,22 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'傳票號�
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'轉傳票日期', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'ArtworkAP', @level2type = N'COLUMN', @level2name = N'VoucherDate';
 
+
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'外帳傳票ID',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'ArtworkAP',
+    @level2type = N'COLUMN',
+    @level2name = N'ExVoucherID'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'外帳轉傳票日期',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'ArtworkAP',
+    @level2type = N'COLUMN',
+    @level2name = N'ExVoucherDate'
