@@ -81,6 +81,11 @@
             this.displayTpeStatus = new Sci.Win.UI.DisplayBox();
             this.displayFtyStatus = new Sci.Win.UI.DisplayBox();
             this.label3 = new Sci.Win.UI.Label();
+            this.label4 = new Sci.Win.UI.Label();
+            this.editRemark_Factory = new Sci.Win.UI.EditBox();
+            this.btnPackingList = new Sci.Win.UI.Button();
+            this.btnStatusHistory = new Sci.Win.UI.Button();
+            this.btnTKSeparateHistory = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -97,6 +102,11 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.btnTKSeparateHistory);
+            this.masterpanel.Controls.Add(this.btnStatusHistory);
+            this.masterpanel.Controls.Add(this.btnPackingList);
+            this.masterpanel.Controls.Add(this.editRemark_Factory);
+            this.masterpanel.Controls.Add(this.label4);
             this.masterpanel.Controls.Add(this.displayFtyStatus);
             this.masterpanel.Controls.Add(this.label3);
             this.masterpanel.Controls.Add(this.displayTpeStatus);
@@ -150,7 +160,7 @@
             this.masterpanel.Controls.Add(this.dateArrivePortDate);
             this.masterpanel.Controls.Add(this.datePLRcvDate);
             this.masterpanel.Controls.Add(this.dateETA);
-            this.masterpanel.Size = new System.Drawing.Size(1089, 269);
+            this.masterpanel.Size = new System.Drawing.Size(1089, 312);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateETA, 0);
             this.masterpanel.Controls.SetChildIndex(this.datePLRcvDate, 0);
@@ -205,20 +215,25 @@
             this.masterpanel.Controls.SetChildIndex(this.displayTpeStatus, 0);
             this.masterpanel.Controls.SetChildIndex(this.label3, 0);
             this.masterpanel.Controls.SetChildIndex(this.displayFtyStatus, 0);
+            this.masterpanel.Controls.SetChildIndex(this.label4, 0);
+            this.masterpanel.Controls.SetChildIndex(this.editRemark_Factory, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnPackingList, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnStatusHistory, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnTKSeparateHistory, 0);
             // 
             // detailpanel
             // 
-            this.detailpanel.Location = new System.Drawing.Point(0, 269);
-            this.detailpanel.Size = new System.Drawing.Size(1089, 208);
+            this.detailpanel.Location = new System.Drawing.Point(0, 312);
+            this.detailpanel.Size = new System.Drawing.Size(1089, 317);
             // 
             // gridicon
             // 
-            this.gridicon.Location = new System.Drawing.Point(961, 218);
+            this.gridicon.Location = new System.Drawing.Point(961, 261);
             this.gridicon.Visible = false;
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(1089, 208);
+            this.detailgridcont.Size = new System.Drawing.Size(1089, 317);
             // 
             // detail2
             // 
@@ -234,29 +249,29 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(1089, 515);
+            this.detail.Size = new System.Drawing.Size(1089, 667);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(1089, 477);
+            this.detailcont.Size = new System.Drawing.Size(1089, 629);
             // 
             // detailbtm
             // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 477);
+            this.detailbtm.Location = new System.Drawing.Point(0, 629);
             this.detailbtm.Size = new System.Drawing.Size(1089, 38);
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(1089, 515);
+            this.browse.Size = new System.Drawing.Size(1089, 667);
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(1097, 544);
+            this.tabs.Size = new System.Drawing.Size(1097, 696);
             // 
             // txtSeq1
             // 
             this.txtSeq1.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            this.txtSeq1.Location = new System.Drawing.Point(224, 235);
+            this.txtSeq1.Location = new System.Drawing.Point(225, 282);
             this.txtSeq1.Name = "txtSeq1";
             this.txtSeq1.Seq1 = "";
             this.txtSeq1.Seq2 = "";
@@ -265,7 +280,7 @@
             // 
             // btnFind
             // 
-            this.btnFind.Location = new System.Drawing.Point(292, 231);
+            this.btnFind.Location = new System.Drawing.Point(293, 278);
             this.btnFind.Name = "btnFind";
             this.btnFind.Size = new System.Drawing.Size(58, 30);
             this.btnFind.TabIndex = 50;
@@ -276,7 +291,7 @@
             // label23
             // 
             this.label23.BackColor = System.Drawing.Color.Transparent;
-            this.label23.Location = new System.Drawing.Point(211, 235);
+            this.label23.Location = new System.Drawing.Point(212, 282);
             this.label23.Name = "label23";
             this.label23.Size = new System.Drawing.Size(10, 23);
             this.label23.TabIndex = 93;
@@ -291,22 +306,22 @@
             this.txtLocateSP.BackColor = System.Drawing.Color.White;
             this.txtLocateSP.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtLocateSP.IsSupportEditMode = false;
-            this.txtLocateSP.Location = new System.Drawing.Point(109, 235);
+            this.txtLocateSP.Location = new System.Drawing.Point(110, 282);
             this.txtLocateSP.Name = "txtLocateSP";
             this.txtLocateSP.Size = new System.Drawing.Size(100, 23);
             this.txtLocateSP.TabIndex = 47;
             // 
             // labelLocateSP
             // 
-            this.labelLocateSP.Location = new System.Drawing.Point(16, 235);
+            this.labelLocateSP.Location = new System.Drawing.Point(15, 282);
             this.labelLocateSP.Name = "labelLocateSP";
-            this.labelLocateSP.Size = new System.Drawing.Size(89, 23);
+            this.labelLocateSP.Size = new System.Drawing.Size(90, 23);
             this.labelLocateSP.TabIndex = 92;
             this.labelLocateSP.Text = "Locate SP#";
             // 
             // btnShippingMark
             // 
-            this.btnShippingMark.Location = new System.Drawing.Point(870, 102);
+            this.btnShippingMark.Location = new System.Drawing.Point(961, 67);
             this.btnShippingMark.Name = "btnShippingMark";
             this.btnShippingMark.Size = new System.Drawing.Size(123, 30);
             this.btnShippingMark.TabIndex = 52;
@@ -389,7 +404,7 @@
             this.numCBM.DecimalPlaces = 5;
             this.numCBM.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numCBM.IsSupportEditMode = false;
-            this.numCBM.Location = new System.Drawing.Point(354, 173);
+            this.numCBM.Location = new System.Drawing.Point(110, 255);
             this.numCBM.Name = "numCBM";
             this.numCBM.NullValue = new decimal(new int[] {
             0,
@@ -408,10 +423,9 @@
             // numWeightKg
             // 
             this.numWeightKg.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.numWeightKg.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "WeightKg", true));
             this.numWeightKg.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numWeightKg.IsSupportEditMode = false;
-            this.numWeightKg.Location = new System.Drawing.Point(429, 146);
+            this.numWeightKg.Location = new System.Drawing.Point(185, 228);
             this.numWeightKg.Name = "numWeightKg";
             this.numWeightKg.NullValue = new decimal(new int[] {
             0,
@@ -430,7 +444,7 @@
             // label15
             // 
             this.label15.BackColor = System.Drawing.Color.Transparent;
-            this.label15.Location = new System.Drawing.Point(420, 146);
+            this.label15.Location = new System.Drawing.Point(176, 228);
             this.label15.Name = "label15";
             this.label15.Size = new System.Drawing.Size(10, 23);
             this.label15.TabIndex = 78;
@@ -443,10 +457,9 @@
             // numNetKg
             // 
             this.numNetKg.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.numNetKg.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "NetKg", true));
             this.numNetKg.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numNetKg.IsSupportEditMode = false;
-            this.numNetKg.Location = new System.Drawing.Point(354, 146);
+            this.numNetKg.Location = new System.Drawing.Point(110, 228);
             this.numNetKg.Name = "numNetKg";
             this.numNetKg.NullValue = new decimal(new int[] {
             0,
@@ -505,18 +518,18 @@
             // labelCBM
             // 
             this.labelCBM.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labelCBM.Location = new System.Drawing.Point(272, 173);
+            this.labelCBM.Location = new System.Drawing.Point(15, 255);
             this.labelCBM.Name = "labelCBM";
-            this.labelCBM.Size = new System.Drawing.Size(79, 23);
+            this.labelCBM.Size = new System.Drawing.Size(90, 23);
             this.labelCBM.TabIndex = 72;
             this.labelCBM.Text = "CBM";
             // 
             // labelNWGW
             // 
             this.labelNWGW.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labelNWGW.Location = new System.Drawing.Point(272, 146);
+            this.labelNWGW.Location = new System.Drawing.Point(15, 228);
             this.labelNWGW.Name = "labelNWGW";
-            this.labelNWGW.Size = new System.Drawing.Size(79, 23);
+            this.labelNWGW.Size = new System.Drawing.Size(90, 23);
             this.labelNWGW.TabIndex = 71;
             this.labelNWGW.Text = "N.W./G.W.";
             // 
@@ -562,11 +575,11 @@
             this.editRemark.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Remark", true));
             this.editRemark.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.editRemark.IsSupportEditMode = false;
-            this.editRemark.Location = new System.Drawing.Point(354, 199);
+            this.editRemark.Location = new System.Drawing.Point(354, 174);
             this.editRemark.Multiline = true;
             this.editRemark.Name = "editRemark";
             this.editRemark.ReadOnly = true;
-            this.editRemark.Size = new System.Drawing.Size(444, 62);
+            this.editRemark.Size = new System.Drawing.Size(226, 131);
             this.editRemark.TabIndex = 66;
             // 
             // displayShipModeID
@@ -644,7 +657,7 @@
             // labelRemark
             // 
             this.labelRemark.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labelRemark.Location = new System.Drawing.Point(272, 199);
+            this.labelRemark.Location = new System.Drawing.Point(272, 174);
             this.labelRemark.Name = "labelRemark";
             this.labelRemark.Size = new System.Drawing.Size(79, 23);
             this.labelRemark.TabIndex = 58;
@@ -820,11 +833,61 @@
             this.label3.TabIndex = 98;
             this.label3.Text = "Fty Status";
             // 
+            // label4
+            // 
+            this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.label4.Location = new System.Drawing.Point(588, 174);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(92, 23);
+            this.label4.TabIndex = 100;
+            this.label4.Text = "Fty Remark";
+            // 
+            // editRemark_Factory
+            // 
+            this.editRemark_Factory.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.editRemark_Factory.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Remark_Factory", true));
+            this.editRemark_Factory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.editRemark_Factory.IsSupportEditMode = false;
+            this.editRemark_Factory.Location = new System.Drawing.Point(683, 174);
+            this.editRemark_Factory.Multiline = true;
+            this.editRemark_Factory.Name = "editRemark_Factory";
+            this.editRemark_Factory.ReadOnly = true;
+            this.editRemark_Factory.Size = new System.Drawing.Size(226, 131);
+            this.editRemark_Factory.TabIndex = 101;
+            // 
+            // btnPackingList
+            // 
+            this.btnPackingList.Location = new System.Drawing.Point(961, 103);
+            this.btnPackingList.Name = "btnPackingList";
+            this.btnPackingList.Size = new System.Drawing.Size(123, 30);
+            this.btnPackingList.TabIndex = 102;
+            this.btnPackingList.Text = "Packing List";
+            this.btnPackingList.UseVisualStyleBackColor = true;
+            this.btnPackingList.Click += new System.EventHandler(this.BtnPackingList_Click);
+            // 
+            // btnStatusHistory
+            // 
+            this.btnStatusHistory.Location = new System.Drawing.Point(961, 139);
+            this.btnStatusHistory.Name = "btnStatusHistory";
+            this.btnStatusHistory.Size = new System.Drawing.Size(123, 30);
+            this.btnStatusHistory.TabIndex = 103;
+            this.btnStatusHistory.Text = "Status History";
+            this.btnStatusHistory.UseVisualStyleBackColor = true;
+            // 
+            // btnTKSeparateHistory
+            // 
+            this.btnTKSeparateHistory.Location = new System.Drawing.Point(915, 174);
+            this.btnTKSeparateHistory.Name = "btnTKSeparateHistory";
+            this.btnTKSeparateHistory.Size = new System.Drawing.Size(169, 30);
+            this.btnTKSeparateHistory.TabIndex = 104;
+            this.btnTKSeparateHistory.Text = "TK Separate History";
+            this.btnTKSeparateHistory.UseVisualStyleBackColor = true;
+            // 
             // P06
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1097, 577);
+            this.ClientSize = new System.Drawing.Size(1097, 729);
             this.GridAlias = "TransferExport_Detail";
             this.IsSupportClip = false;
             this.IsSupportCopy = false;
@@ -912,5 +975,10 @@
         private Win.UI.DateBox dateArrivePortDate;
         private Win.UI.DateBox datePLRcvDate;
         private Win.UI.DateBox dateETA;
+        private Win.UI.EditBox editRemark_Factory;
+        private Win.UI.Label label4;
+        private Win.UI.Button btnTKSeparateHistory;
+        private Win.UI.Button btnStatusHistory;
+        private Win.UI.Button btnPackingList;
     }
 }

@@ -187,6 +187,12 @@
     <Compile Include="P03_Seq.Designer.cs">
       <DependentUpon>P03_Seq.cs</DependentUpon>
     </Compile>
+    <Compile Include="P06_Packing.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P06_Packing.Designer.cs">
+      <DependentUpon>P06_Packing.cs</DependentUpon>
+    </Compile>
     <Compile Include="P07_PrintAccessorySticker.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -1582,6 +1588,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="P03_ReturnQty.resx">
       <DependentUpon>P03_ReturnQty.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P06_Packing.resx">
+      <DependentUpon>P06_Packing.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P07_PrintAccessorySticker.rdlc" />
     <EmbeddedResource Include="P07_QRCodeSticker.resx">
