@@ -708,7 +708,7 @@ select a.CountryID
 	,[CMP Absent] = cm.ManPower
 	,[Subprocess CPU] = s.Price
 	,[TTL DL Working Hour] = f.ManHour
-	,[SUBCON-OUT TO OTHER COMPANIES] = 3rd.TtlCPU
+	,[SUBCON-OUT TO OTHER COMPANIES] = rd.TtlCPU
 from #tmp_excludeInOutTotal a
 left join #tmp_TotalManpower b on a.CountryID = b.CountryID and a.FtyZone = b.FtyZone
 left join #tmp_cpuFactor c on a.CountryID =c.CountryID and a.FtyZone = c.FtyZone
@@ -721,7 +721,7 @@ left join #tmp_CMPAbsent cm on a.CountryID = cm.CountryID and a.FtyZone = cm.Fty
 left join #tmp_SubprocessCPU s on a.CountryID = s.CountryID and a.FtyZone = s.FtyZone
 left join #tmp_ManHour f on a.CountryID = f.CountryID and a.FtyZone = f.FtyZone
 left join #tmp_PAMSAttendance att on a.CountryID = att.CountryID and a.FtyZone = att.FtyZone
-left join #tmp_SewOutPutDataFinal 3rd on 3rd.CountryID = a.CountryID and 3rd.FtyZone = a.FtyZone
+left join #tmp_SewOutPutDataFinal rd on rd.CountryID = a.CountryID and rd.FtyZone = a.FtyZone
 
 declare @_CountryID as varchar(8)
 	, @_FtyZone as varchar(8)
