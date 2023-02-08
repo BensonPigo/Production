@@ -175,6 +175,12 @@
     <Compile Include="B09.Designer.cs">
       <DependentUpon>B09.cs</DependentUpon>
     </Compile>
+    <Compile Include="P03_Spec.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P03_Spec.designer.cs">
+      <DependentUpon>P03_Spec.cs</DependentUpon>
+    </Compile>
     <Compile Include="P06_ExportDetail.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -1564,6 +1570,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="P01_TrimCardPrint.resx">
       <DependentUpon>P01_TrimCardPrint.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P03_Spec.resx">
+      <DependentUpon>P03_Spec.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P06_ExportDetail.resx">
       <DependentUpon>P06_ExportDetail.cs</DependentUpon>
