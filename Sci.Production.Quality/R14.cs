@@ -213,6 +213,7 @@ namespace Sci.Production.Quality
 	                            (
 		                            select distinct CutRef
 		                            from SpreadingInspection_OriCutRef
+                                    where id = so.id
 	                            ) tmp for xml path('')),1,1,'')
                             )oui
                             outer apply
@@ -316,7 +317,7 @@ namespace Sci.Production.Quality
                             [InspectPoint] = sii.Item,
                             [Result] = sii.Result,
                             [DefectCode] = case when sii.Item = 'Marker Check' then MC.val
-					                            when sii.Item = 'Short Width' then CAST(('Fabric Width: ' + pms_f.Width + CHAR(10) + 'Actual Width:' + siid.ColumnValue) as varchar)
+					                            when sii.Item = 'Short Width' then 'Fabric Width: ' + CONVERT( varchar, pms_f.Width) + CHAR(10) + 'Actual Width:' + siid.ColumnValue
 					                            when sii.Item = 'Machine Tension' then 'Speed:' + siid.ColumnValue
 					                            when sii.Item = 'Fabric Defect' then fd.val
 					                            else '' end,
@@ -330,7 +331,7 @@ namespace Sci.Production.Quality
                             left join SpreadingInspection_InsCutRef_Inspection sii with(nolock) on si.Ukey = sii.SpreadingInspectionInsCutRefUkey 
                             left join SpreadingInspection_OriCutRef so with(nolock) on s.id = so.id
                             left join SpreadingInspection_InsCutRef_Inspection_Detail siid with(nolock) on siid.SpreadingInspectionInsCutRefInspectionUkey = sii.Ukey
-                            left join Pass1 p with(nolock) on p.ID = ISNULL(sii.EditName,sii.AddDate)
+                            left join Pass1 p with(nolock) on p.ID = iif(sii.EditName='',sii.AddName,sii.EditName)
 
                             left join SciProduction_WorkOrder pms_wo with(nolock)  on so.WorkOrderUkey =pms_wo.Ukey
                             left join SciProduction_Fabric pms_f with(nolock) on pms_wo.SCIRefno = pms_f.SCIRefno
@@ -350,6 +351,7 @@ namespace Sci.Production.Quality
 	                            (
 		                            select distinct CutRef
 		                            from SpreadingInspection_OriCutRef
+                                    where id = so.id
 	                            ) tmp for xml path('')),1,1,'')
                             )oui
                             outer apply
@@ -431,8 +433,7 @@ namespace Sci.Production.Quality
 			 	                            pms_f_Type = pms_fd.[Type],
 				                            pms_f_EN = pms_fd.DescriptionEN
 				                            from SciProduction_FabricDefect pms_fd with(nolock)
-				                            --where siid.ColumnValue=f.ID
-				                            --and so.WorkOrderUkey= pms_wo.Ukey
+				                            where siid.ColumnValue=pms_fd.ID
 			                            ) s
 		                            for xml path ('')
 	                            ) , 1, 1, '')
