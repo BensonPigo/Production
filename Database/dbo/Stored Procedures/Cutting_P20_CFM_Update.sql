@@ -175,9 +175,9 @@ BEGIN
 			USING #tmp3 AS S
 			ON (T.Orderid = S.orderid and T.Article = S.Article and T.Size = S.SizeCode) 
 			WHEN NOT MATCHED BY TARGET 
-			    THEN INSERT(Orderid,Article,Size ,Qty) VALUES(S.orderid,  S.Article,  S.SizeCode  ,S.WIP_Qty)
+			    THEN INSERT(Orderid,Article,Size ,Qty ,EditDate) VALUES(S.orderid,  S.Article,  S.SizeCode  ,S.WIP_Qty ,GetDate())
 			WHEN MATCHED 
-			    THEN UPDATE SET T.Qty = S.WIP_Qty;
+			    THEN UPDATE SET T.Qty = S.WIP_Qty, EditDate = GetDate();
 
 		--update Cutting.FirstCutDate/ LastCutDate 
 		update c
