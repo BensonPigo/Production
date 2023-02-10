@@ -995,7 +995,7 @@
         <DataSetName>DataSet1</DataSetName>
         <Left>0.6175cm</Left>
         <Height>2.14396cm</Height>
-        <Width>20.42738cm</Width>
+        <Width>20.12738cm</Width>
         <Style>
           <Border>
             <Style>None</Style>
@@ -1645,7 +1645,7 @@
             <Paragraph>
               <TextRuns>
                 <TextRun>
-                  <Value>Prepared by:</Value>
+                  <Value>Print </Value>
                   <Style />
                 </TextRun>
               </TextRuns>
@@ -1674,7 +1674,7 @@
             <Paragraph>
               <TextRuns>
                 <TextRun>
-                  <Value>Checked by:</Value>
+                  <Value>Prepare </Value>
                   <Style />
                 </TextRun>
               </TextRuns>
@@ -1704,7 +1704,7 @@
             <Paragraph>
               <TextRuns>
                 <TextRun>
-                  <Value>Approved by:</Value>
+                  <Value>Approved </Value>
                   <Style />
                 </TextRun>
               </TextRuns>
@@ -1734,7 +1734,7 @@
             <Paragraph>
               <TextRuns>
                 <TextRun>
-                  <Value>Received by:</Value>
+                  <Value>Received  </Value>
                   <Style />
                 </TextRun>
               </TextRuns>
@@ -1747,6 +1747,36 @@
           <Height>0.6cm</Height>
           <Width>2.46063cm</Width>
           <ZIndex>3</ZIndex>
+          <Style>
+            <Border>
+              <Style>None</Style>
+            </Border>
+            <PaddingLeft>2pt</PaddingLeft>
+            <PaddingRight>2pt</PaddingRight>
+            <PaddingTop>2pt</PaddingTop>
+            <PaddingBottom>2pt</PaddingBottom>
+          </Style>
+        </Textbox>
+        <Textbox Name="Textbox38">
+          <CanGrow>true</CanGrow>
+          <KeepTogether>true</KeepTogether>
+          <Paragraphs>
+            <Paragraph>
+              <TextRuns>
+                <TextRun>
+                  <Value>=Parameters!AddName.Value</Value>
+                  <Style />
+                </TextRun>
+              </TextRuns>
+              <Style />
+            </Paragraph>
+          </Paragraphs>
+          <rd:DefaultName>Textbox19</rd:DefaultName>
+          <Top>0.91708cm</Top>
+          <Left>1.05015cm</Left>
+          <Height>0.6cm</Height>
+          <Width>4.35923cm</Width>
+          <ZIndex>4</ZIndex>
           <Style>
             <Border>
               <Style>None</Style>
@@ -1897,6 +1927,12 @@
       <Prompt>ReportParameter1</Prompt>
     </ReportParameter>
     <ReportParameter Name="ConfirmDate">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>ReportParameter1</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="AddName">
       <DataType>String</DataType>
       <Nullable>true</Nullable>
       <AllowBlank>true</AllowBlank>
