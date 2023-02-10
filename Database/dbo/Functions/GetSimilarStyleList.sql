@@ -14,7 +14,7 @@ BEGIN
 	From Style With(nolock)
 	Where Ukey = @StyleUkey
 
-	DECLARE  @tmp_Style_SimilarStyle Table(MasterStyleID varchar(8), MasterBrandID varchar(15), ChildrenStyleID varchar(8), ChildrenBrandID varchar(15))
+	DECLARE  @tmp_Style_SimilarStyle Table(MasterStyleID varchar(15), MasterBrandID varchar(8), ChildrenStyleID varchar(15), ChildrenBrandID varchar(8))
 
 	INSERT INTO @tmp_Style_SimilarStyle
 	Select MasterStyleID, MasterBrandID, ChildrenStyleID, ChildrenBrandID
