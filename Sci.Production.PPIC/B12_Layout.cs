@@ -43,6 +43,8 @@ namespace Sci.Production.PPIC
             #region QueryData
             string sqlcmd = $@"
 select *,[CreatedBy] = AddName +' '+ FORMAT(AddDate,'yyyy/MM/dd hh:mm:ss') 
+,curfailpath = FORMAT(AddDate,'yyyyMM') -- 年月資料夾
+,currentFileName = 'PadPrintNew_Detail' + PKey -- 檔案名稱
 from Clip 
 where TableName = 'PadPrintNew_Detail' 
 and UniqueKey = '{this.moldID}'
@@ -71,7 +73,7 @@ and UniqueKey = '{this.moldID}'
             }
 
             DataRow drSelect = this.grid.GetDataRow(this.listControlBindingSource1.Position);
-            string fullFilePath = Path.Combine(this.strPath, drSelect["SourceFile"].ToString());
+            string fullFilePath = Path.Combine(this.strPath, drSelect["curfailpath"].ToString(), drSelect["currentFileName"].ToString() + Class.PDFFileNameExtension.PDF);
             fullFilePath.OpenFile();
         }
 
@@ -88,20 +90,24 @@ and UniqueKey = '{this.moldID}'
                 return;
             }
 
-            if (!Directory.Exists(this.strPath))
+            string currentPath = Path.Combine(this.strPath, dr["curfailpath"].ToString());
+
+            if (!Directory.Exists(currentPath))
             {
                 MyUtility.Msg.WarningBox("Please check the path setting.");
                 return;
             }
 
-            DirectoryInfo diInfo = new DirectoryInfo(this.strPath);
+            DirectoryInfo diInfo = new DirectoryInfo(currentPath);
             if (!diInfo.Exists)
             {
                 MyUtility.Msg.WarningBox("Please check the path setting.");
                 return;
             }
 
-            FileInfo[] filelist = this.GetFile(diInfo, dr["SourceFile"].ToString()).ToArray();
+            string curFileName = dr["currentFileName"].ToString() + Class.PDFFileNameExtension.PDF;
+
+            FileInfo[] filelist = this.GetFile(diInfo, curFileName).ToArray();
 
             // if (!File.Exists(fullpath))
             if (filelist.Length == 0)
@@ -114,7 +120,7 @@ and UniqueKey = '{this.moldID}'
             {
                 Filter = "*|*",
                 Title = "Save File",
-                FileName = dr["SourceFile"].ToString(),
+                FileName = curFileName,
             };
 
             if (saveFileDialog1.ShowDialog() == DialogResult.OK)
