@@ -86,6 +86,7 @@ select WIP.OrderID,WIP.Article,WIP.Size,WIP.Qty
 into CuttingOutput_WIP
 FROM #tmp1 t, Production.dbo.CuttingOutput_WIP WIP 
 WHERE  t.orderid = WIP.OrderID and t.Article = WIP.Article and t.SizeCode = WIP.Size
+and WIP.EditDate between DATEADD(DAY,-7, GETDATE()) and GETDATE()
 drop table #tmp1
 
 select wd.WorkOrderUkey,wd.ID,wd.OrderID,wd.Article,wd.SizeCode,wd.Qty
