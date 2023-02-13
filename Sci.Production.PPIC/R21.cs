@@ -261,9 +261,9 @@ group by	o.SewLine,
 			pld.SCICtnNo
 
 
-select	pld.SewLine,
-		pld.KPICode,
+select	pld.KPICode,
 		pld.FactoryID,
+		pld.SewLine,
 		pld.OrderID,
 		pld.Seq,
 		pld.BrandID, 
