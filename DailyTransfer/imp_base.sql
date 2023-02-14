@@ -1011,6 +1011,7 @@ SET
 	  ,a.ProduceM	  =b.MDivisionID
 	  ,a.LoadingFactoryGroup	  =b.LoadingFactoryGroup
 	  ,a.PadPrintGroup	=	isnull(b.PadPrintGroup,'')
+	  ,a.IsSubcon = b.IsSubcon
 from Production.dbo.Factory as a inner join Trade_To_Pms.dbo.Factory as b ON a.id=b.id
 --Factory1
 --Factory_TMS
@@ -1189,6 +1190,7 @@ SET
       ,a.Type	      =b.Type	
       ,a.Zone	      =b.Zone	
 	  ,a.FtyZone      =b.FtyZone 
+	  ,a.IsSubcon     =b.IsSubcon
 from Production.dbo.SCIFty as a inner join Trade_To_Pms.dbo.Factory as b ON a.id=b.id
 where b.IsSCI=1
 
@@ -1215,6 +1217,7 @@ INSERT INTO Production.dbo.SCIFty(
 	  ,Type
 	  ,Zone
 	  ,FtyZone
+	  ,IsSubcon
 )
 select 
        ID
@@ -1238,6 +1241,7 @@ select
 	  ,Type
 	  ,Zone
 	  ,FtyZone 
+	  ,IsSubcon
 from Trade_To_Pms.dbo.Factory as b WITH (NOLOCK)
 where not exists(select id from Production.dbo.SCIFty as a WITH (NOLOCK) where a.id = b.id)
 and b.IsSCI=1
