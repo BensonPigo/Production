@@ -109,7 +109,7 @@ Cast(
 ,[MR]  = (select ID + '-' + Name from TPEPass1 where ID = sm.MR)
 ,ActFinDate = m.ActFinDate
 ,o.StyleUkey
-,destRank = DENSE_RANK() over (Partition by o.StyleUkey order by 
+,destRank = DENSE_RANK() over (Partition by m.MarkerNo, sm.SizeGroup order by 
    case when smd.PhaseID = 'BULK' then 1 
         when smd.PhaseID = 'PP SAMPLE' then 2
         when smd.PhaseID = 'SIZE/S' then 3
