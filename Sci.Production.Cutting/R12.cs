@@ -76,93 +76,98 @@ namespace Sci.Production.Cutting
 
             this.sqlcmd.Append($@"
 select m.BrandID
-,m.SeasonID
-,s.ProgramID
-,s.CDCodeNew
-,[ProductType] = (select Name from Reason where ReasontypeID = 'Style_Apparel_Type' and ID = s.ApparelType)
-,smd.PhaseID
-,m.MarkerNo
-,s.ID
-,mls.SizeCode
-,mls.MarkerName
-,sb.Refno
-,ml.FabricPanelCode
-,f.WeightM2
-,mls.Qty
-,ml.MarkerLength
-,[MarkerLength_inch] = Cast(IIF(isnull(ml.MarkerLength, '') = '', 0, dbo.MarkerLengthToYDS(dbo.MarkerLengthSampleTOTrade(ml.MarkerLength,sb.MatchFabric))) as numeric(7,4))
-,ml.Width
-,ml.Efficiency
-,ml.ConsPC
-,ml.OneTwoWay
-,[CutPertmeter] = ISNULL(ml.ActCuttingPerimeter,'')
-,[CutPertmeter_inch] = 
-Cast(
-	case when isnull(ml.ActCuttingPerimeter, '') = '' then 0
-	when isnull(ml.ActCuttingPerimeter, '') not like '%Y%""%' then 0　--不加判斷會掛掉
-	else dbo.ActCuttingPerimeterToInch(ml.ActCuttingPerimeter) end
-	as numeric(20,4)
-)
-,m.ActFtyMarker
-,[CO] = (select Name from DropDownList where Type = 'NewCO_Type' and ID = s.NEWCO)
-,[MarkMarker] = (select ID + '-' + Name from TPEPass1 where ID = m.MarkerName)
-,[MR]  = (select ID + '-' + Name from TPEPass1 where ID = sm.MR)
-,ActFinDate = m.ActFinDate
-,o.StyleUkey
-,destRank = DENSE_RANK() over (Partition by m.MarkerNo, sm.SizeGroup order by 
-   case when smd.PhaseID = 'BULK' then 1 
-        when smd.PhaseID = 'PP SAMPLE' then 2
-        when smd.PhaseID = 'SIZE/S' then 3
-    else 99 end)
+	,m.SeasonID
+	,s.ProgramID
+	,s.CDCodeNew
+	,[ProductType] = (select Name from Reason where ReasontypeID = 'Style_Apparel_Type' and ID = s.ApparelType)
+	,smd.PhaseID
+	,m.MarkerNo
+	,s.ID
+	,mls.SizeCode
+	,mls.MarkerName
+	,sb.Refno
+	,ml.FabricPanelCode
+	,f.WeightM2
+	,mls.Qty
+	,ml.MarkerLength
+	,[MarkerLength_inch] = Cast(IIF(isnull(ml.MarkerLength, '') = '', 0, dbo.MarkerLengthToYDS(dbo.MarkerLengthSampleTOTrade(ml.MarkerLength,sb.MatchFabric))) as numeric(7,4))
+	,ml.Width
+	,ml.Efficiency
+	,ml.ConsPC
+	,ml.OneTwoWay
+	,[CutPertmeter] = ISNULL(ml.ActCuttingPerimeter,'')
+	,[CutPertmeter_inch] = 
+	Cast(
+		case when isnull(ml.ActCuttingPerimeter, '') = '' then 0
+		when isnull(ml.ActCuttingPerimeter, '') not like '%Y%""%' then 0　--不加判斷會掛掉
+		else dbo.ActCuttingPerimeterToInch(ml.ActCuttingPerimeter) end
+		as numeric(20,4)
+	)
+	,m.ActFtyMarker
+	,[CO] = (select Name from DropDownList where Type = 'NewCO_Type' and ID = s.NEWCO)
+	,[MarkMarker] = (select ID + '-' + Name from TPEPass1 where ID = m.MarkerName)
+	,[MR]  = (select ID + '-' + Name from TPEPass1 where ID = sm.MR)
+	,ActFinDate = m.ActFinDate
+	,o.StyleUkey
+	,sm.SizeGroup
+	,destRank = DENSE_RANK() over (Partition by o.StyleUkey, sm.SizeGroup order by 
+	   case when smd.PhaseID = 'BULK' then 1 
+			when smd.PhaseID = 'PP SAMPLE' then 2
+			when smd.PhaseID = 'SIZE/S' then 3
+		else 99 end)
 into #tmp
 from Orders o
 inner join Style s on s.Ukey = o.StyleUkey
 outer apply(
-	select ActFinDate = MAX(ActFinDate),PhaseID
+	select ActFinDate = MAX(ActFinDate),PhaseID, sm.SizeGroup
 	from Marker m
 	inner join SMNotice sm on m.ID = sm.ID
 	inner join SMNotice_Detail smd on smd.ID = sm.ID and smd.Type='M'
 	where m.StyleUkey = s.Ukey
-	group by PhaseID
+	group by PhaseID, sm.SizeGroup
 )MaxActFinDate
 inner join Marker m on  m.ActFinDate = MaxActFinDate.ActFinDate
 inner join Marker_ML ml on ml.MarkerUkey = m.UKey 
 inner join Marker_ML_SizeQty mls on mls.MarkerUkey = m.UKey and mls.MarkerName = ml.MarkerName
-inner join SMNotice sm on sm.ID = m.ID
+inner join SMNotice sm on sm.ID = m.ID and sm.SizeGroup = MaxActFinDate.SizeGroup
 inner join SMNotice_Detail smd on smd.ID = sm.ID and smd.Type = 'M' and  smd.PhaseID in ('BULK','SIZE/S','PP SAMPLE')
 inner join Style_BOF sb on sb.StyleUkey = s.Ukey and sb.FabricCode = ml.FabricCode
 left join Fabric f on f.SCIRefno = sb.SCIRefno
-where  1=1
-and smd.PhaseID in ('BULK','SIZE/S','PP SAMPLE')
+where smd.PhaseID in ('BULK','SIZE/S','PP SAMPLE')
 {where}
 
 select distinct BrandID ,SeasonID
-,ProgramID
-,CDCodeNew
-,[ProductType]
-,PhaseID
-,MarkerNo
-,ID
-,SizeCode
-,MarkerName
-,Refno
-,FabricPanelCode
-,WeightM2
-,Qty
-,MarkerLength
-,[MarkerLength_inch]
-,Width
-,Efficiency
-,ConsPC
-,OneTwoWay
-,[CutPertmeter]
-,[CutPertmeter_inch]
-,ActFtyMarker
-,[CO]
-,[MarkMarker]
-,[MR]
-,ActFinDate
-from #tmp where destRank = 1
+	,ProgramID
+	,CDCodeNew
+	,[ProductType]
+	,PhaseID
+	,MarkerNo
+	,ID
+	,SizeCode
+	,MarkerName
+	,Refno
+	,FabricPanelCode
+	,WeightM2
+	,Qty
+	,MarkerLength
+	,[MarkerLength_inch]
+	,Width
+	,Efficiency
+	,ConsPC
+	,OneTwoWay
+	,[CutPertmeter]
+	,[CutPertmeter_inch]
+	,ActFtyMarker
+	,[CO]
+	,[MarkMarker]
+	,[MR]
+	,ActFinDate
+from #tmp t
+inner join (
+	select t.StyleUkey, t.SizeGroup, destRank = min(t.destRank)
+	from #tmp t 
+	group by t.StyleUkey, t.SizeGroup
+)t2 on t.StyleUkey = t2.StyleUkey and t.SizeGroup = t2.SizeGroup and t.destRank = t2.destRank
 
 drop table #tmp
 ");
