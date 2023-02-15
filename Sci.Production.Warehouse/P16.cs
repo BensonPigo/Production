@@ -951,6 +951,10 @@ where id='{this.txtRequestNo.Text}' and fabrictype='F' and mdivisionid='{Env.Use
             string requestno = row["requestid"].ToString();
             string remark = row["Remark"].ToString();
             string issuedate = ((DateTime)MyUtility.Convert.GetDate(row["issuedate"])).ToShortDateString();
+            string addName = MyUtility.GetValue.Lookup($@"
+select p.Name from IssueLack i
+left join Pass1 p on p.ID=i.AddName
+where i.Id='{row["ID"].ToString()}'");
             #region -- 撈表頭資料 --
             List<SqlParameter> pars = new List<SqlParameter>
             {
@@ -971,6 +975,7 @@ where id='{this.txtRequestNo.Text}' and fabrictype='F' and mdivisionid='{Env.Use
             report.ReportParameters.Add(new ReportParameter("Remark", remark));
             report.ReportParameters.Add(new ReportParameter("issuetime", DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss")));
             report.ReportParameters.Add(new ReportParameter("Dept", this.displayDept.Text));
+            report.ReportParameters.Add(new ReportParameter("AddName", addName));
 
             string sqlcmd = @"
 select b.ApvDate
