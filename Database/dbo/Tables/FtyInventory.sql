@@ -18,7 +18,7 @@
     [ReturnQty] NUMERIC(11, 2) CONSTRAINT [DF_FtyInventory_ReturnQty] NOT NULL DEFAULT ((0)), 
     [WMSLock] BIT NOT NULL DEFAULT ((0)), 
     [ContainerCode] NVARCHAR(100) NULL DEFAULT (''), 
-    [BarcodeSeq] VARCHAR(2) NULL DEFAULT (''), 
+    [BarcodeSeq] VARCHAR(10) NULL DEFAULT (''), 
     [SubConStatus] VARCHAR(20) CONSTRAINT [DF_AFtyInventory_SubConStatus] DEFAULT(('')) NOT NULL, 
     CONSTRAINT [PK_FtyInventory] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );

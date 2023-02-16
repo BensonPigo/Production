@@ -3,10 +3,10 @@ CREATE FUNCTION GetWH_NextBarcodeSeq
 (
 	@barcode varchar(255)
 )
-RETURNS varchar(2)
+RETURNS varchar(10)
 AS
 BEGIN
-	declare @BarcodeSeq varchar(2)
+	declare @BarcodeSeq varchar(10)
 	declare @BarcodeSeqInt int
 	
 	select @BarcodeSeqInt = isnull(cast(Max(Seq) as int), 0) + 1
@@ -32,8 +32,8 @@ BEGIN
 		)x
 	)x
 	
-	set @BarcodeSeq = RIGHT(REPLICATE('0', 2) + CAST(@BarcodeSeqInt as NVARCHAR), 2)
+	set @BarcodeSeq = CAST(@BarcodeSeqInt as VARCHAR(10))
 
-	RETURN @BarcodeSeq
+	RETURN CAST(@BarcodeSeqInt as VARCHAR(10))
 
 END
