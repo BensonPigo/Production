@@ -5,14 +5,14 @@
     [Action]                      VARCHAR (10)  NOT NULL,
     [FromFabric_FtyInventoryUkey] BIGINT        NULL,
     [From_OldBarcode]             VARCHAR (255) NOT NULL,
-    [From_OldBarcodeSeq]          VARCHAR (2)   NOT NULL,
+    [From_OldBarcodeSeq]          VARCHAR (10)   NOT NULL,
     [From_NewBarcode]             VARCHAR (255) NOT NULL,
-    [From_NewBarcodeSeq]          VARCHAR (2)   NOT NULL,
+    [From_NewBarcodeSeq]          VARCHAR (10)   NOT NULL,
     [ToFabric_FtyInventoryUkey]   BIGINT        NULL,
     [To_OldBarcode]               VARCHAR (255) NOT NULL,
-    [To_OldBarcodeSeq]            VARCHAR (2)   NOT NULL,
+    [To_OldBarcodeSeq]            VARCHAR (10)   NOT NULL,
     [To_NewBarcode]               VARCHAR (255) NOT NULL,
-    [To_NewBarcodeSeq]            VARCHAR (2)   NOT NULL,
+    [To_NewBarcodeSeq]            VARCHAR (10)   NOT NULL,
     [CommitTime]                  DATETIME      NULL,
     CONSTRAINT [PK_WHBarcodeTransaction] PRIMARY KEY CLUSTERED ([Function] ASC, [TransactionID] ASC, [TransactionUkey] ASC, [Action] ASC)
 );

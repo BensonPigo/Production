@@ -4302,8 +4302,6 @@ and sd.Ukey in ({ukeys})
                     UpdatethisItem = true,
                 }).ToList();
 
-            Dictionary<string, string> newBarcodeSeq = new Dictionary<string, string>();
-
             if (!isRevise)
             {
                 int indexNewBarcode = 0;
@@ -4889,13 +4887,13 @@ alter table #tmp alter column [Action] [varchar](10)
 alter table #tmp alter column [FromFabric_FtyInventoryUkey] bigint null
 alter table #tmp alter column [ToFabric_FtyInventoryUkey] bigint null
 alter table #tmp alter column [From_OldBarcode] [varchar](255)
-alter table #tmp alter column [From_OldBarcodeSeq] [varchar](2)
+alter table #tmp alter column [From_OldBarcodeSeq] [varchar](10)
 alter table #tmp alter column [From_NewBarcode] [varchar](255)
-alter table #tmp alter column [From_NewBarcodeSeq] [varchar](2)
+alter table #tmp alter column [From_NewBarcodeSeq] [varchar](10)
 alter table #tmp alter column [To_OldBarcode] [varchar](255)
-alter table #tmp alter column [To_OldBarcodeSeq] [varchar](2)
+alter table #tmp alter column [To_OldBarcodeSeq] [varchar](10)
 alter table #tmp alter column [To_NewBarcode] [varchar](255)
-alter table #tmp alter column [To_NewBarcodeSeq] [varchar](2)
+alter table #tmp alter column [To_NewBarcodeSeq] [varchar](10)
 
 merge WHBarcodeTransaction as t
 using #tmp as s 
@@ -6306,7 +6304,7 @@ and ml.IsWMS = 1
             }
 
             int intSeq = MyUtility.Convert.GetInt(seq) + 1;
-            return intSeq.ToString().PadLeft(2, '0');
+            return intSeq.ToString();
         }
 
         /// <inheritdoc/>
