@@ -150,7 +150,7 @@ namespace Sci.Production.Planning
         /// <inheritdoc/>
         protected override DualResult OnAsyncDataLoad(ReportEventArgs e)
         {
-            DBProxy.Current.DefaultTimeout = 900;  // timeout時間改為15分鐘
+            DBProxy.Current.DefaultTimeout = 2700;  // timeout時間改為45分鐘
             if (this.rdMonth.Checked || this.rdHalfMonth.Checked)
             {
                 DualResult result = Ict.Result.True;
