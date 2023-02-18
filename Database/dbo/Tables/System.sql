@@ -76,6 +76,11 @@ CREATE TABLE [dbo].[System] (
     [CriticalOperationPath] VARCHAR(80) NOT NULL DEFAULT (''), 
     [FinalPatternPath] VARCHAR(80) NOT NULL DEFAULT (''), 
     [PadPrintPath] VARCHAR(80) NOT NULL DEFAULT (''), 
+    [CheckRFIDCardDuplicateByWebservice] BIT    CONSTRAINT [DF_System_CheckRFIDCardDuplicateByWebservice] NOT NULL DEFAULT ((0)),
+    [SewlineAvgCPU]               INT            CONSTRAINT [DF_System_SewlineAvgCPU] DEFAULT ((1100)) NULL,
+    [SmallLogoCM]                 DECIMAL (5, 2) CONSTRAINT [DF_System_SmallLogoCM] DEFAULT ((15)) NULL,
+    [IsCombineSubProcess]         BIT            CONSTRAINT [DF_System_IsCombineSubProcess] DEFAULT ((0)) NOT NULL,
+    [IsNoneShellNoCreateAllParts] BIT            CONSTRAINT [DF_System_IsNoneShellNoCreateAllParts] DEFAULT ((0)) NOT NULL,
     CONSTRAINT [PK_RgCode] PRIMARY KEY CLUSTERED ([RgCode] ASC)
 );
 
@@ -89,7 +94,7 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Misc Local 
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Misc Local Purchase �۰�Approve���Ѽ�', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'System', @level2type = N'COLUMN', @level2name = N'MiscPOApproveDay';
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Misc Local Purchase 自動Approve的天數', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'System', @level2type = N'COLUMN', @level2name = N'MiscPOApproveDay';
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'是否要將箱子轉至姊妹廠', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'System', @level2type = N'COLUMN', @level2name = N'CartonTransferToSisterFty';
@@ -291,14 +296,14 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'驗布機�
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'QMS����۰ʽվ����', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'System', @level2type = N'COLUMN', @level2name = N'QMSAutoAdjustMtl';
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'QMS檢驗自動調整長度', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'System', @level2type = N'COLUMN', @level2name = N'QMSAutoAdjustMtl';
 
 
 
 Go
 
 
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'���ҽd���ɸ�|', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'System', @level2type = N'COLUMN', @level2name = N'ShippingMarkTemplatePath';
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'標籤範本檔路徑', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'System', @level2type = N'COLUMN', @level2name = N'ShippingMarkTemplatePath';
 
 
 GO
@@ -410,3 +415,48 @@ EXEC sp_addextendedproperty @name = N'MS_Description',
     @level1name = N'System',
     @level2type = N'COLUMN',
     @level2name = N'PadPrintPath'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'是否特過WS來檢查RFID卡重複使用',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'System',
+    @level2type = N'COLUMN',
+    @level2name = N'CheckRFIDCardDuplicateByWebservice'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'PH 產線平均一天的 CPU',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'System',
+    @level2type = N'COLUMN',
+    @level2name = N'SewlineAvgCPU'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'以下判斷 smalll logo 的長度標準 (CM)',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'System',
+    @level2type = N'COLUMN',
+    @level2name = N'SmallLogoCM'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'是否combine subprocess產生bundle',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'System',
+    @level2type = N'COLUMN',
+    @level2name = N'IsCombineSubProcess'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'是否不產生AllParts',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'System',
+    @level2type = N'COLUMN',
+    @level2name = N'IsNoneShellNoCreateAllParts'

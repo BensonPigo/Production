@@ -151,13 +151,13 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'傳票編�
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'��]', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'ShippingAP', @level2type = N'COLUMN', @level2name = N'Reason';
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'原因', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'ShippingAP', @level2type = N'COLUMN', @level2name = N'Reason';
 
 
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'�~�b�ǲ�ID', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'ShippingAP', @level2type = N'COLUMN', @level2name = N'ExVoucherID';
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'外帳傳票ID', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'ShippingAP', @level2type = N'COLUMN', @level2name = N'ExVoucherID';
 GO
 
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'傳票資訊最後編輯日', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'ShippingAP', @level2type = N'COLUMN', @level2name = N'VoucherEditDate';

@@ -217,5 +217,5 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'特殊寄�
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'HC�k��(3RD,FTY,CUST,HAND)', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Express', @level2type = N'COLUMN', @level2name = N'FreightBy';
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'HC歸屬(3RD,FTY,CUST,HAND)', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Express', @level2type = N'COLUMN', @level2name = N'FreightBy';
 

@@ -105,3 +105,11 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'轉 HTML �
 	, @level2type = N'COLUMN', @level2name = N'DPI';
 ;
 GO	
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'判斷該標籤是否需要自動 [貼標 / 噴碼]',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'ShippingMarkStamp_Detail',
+    @level2type = N'COLUMN',
+    @level2name = N'NotAutomate'
