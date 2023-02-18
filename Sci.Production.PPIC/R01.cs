@@ -220,15 +220,16 @@ namespace Sci.Production.PPIC
                 worksheet.Columns[25].ColumnWidth = 8;
                 worksheet.Columns[26].ColumnWidth = 8;
                 worksheet.Columns[27].ColumnWidth = 8;
-                worksheet.Columns[32].ColumnWidth = 8;
+                worksheet.Columns[28].ColumnWidth = 8;
                 worksheet.Columns[33].ColumnWidth = 8;
-                worksheet.Columns[36].ColumnWidth = 8;
-                worksheet.Columns[37].ColumnWidth = 8;
+                worksheet.Columns[34].ColumnWidth = 8;
+                worksheet.Columns[35].ColumnWidth = 8;
                 worksheet.Columns[38].ColumnWidth = 8;
                 worksheet.Columns[39].ColumnWidth = 8;
                 worksheet.Columns[40].ColumnWidth = 8;
                 worksheet.Columns[41].ColumnWidth = 8;
                 worksheet.Columns[42].ColumnWidth = 8;
+                worksheet.Columns[43].ColumnWidth = 8;
                 #endregion
 
                 if (this.chkGanttChart.Checked)
@@ -611,7 +612,7 @@ where id = '{0}'", Env.User.Factory), null);
                         }
                     }
 
-                    worksheet.Columns[28].ColumnWidth = 30;
+                    worksheet.Columns[28].ColumnWidth = 31;
                     worksheet.Activate();
 
                     #region Save & Show Excel
@@ -652,7 +653,7 @@ where id = '{0}'", Env.User.Factory), null);
                     }
                     else
                     {
-                        worksheet.get_Range("AV:AW").EntireColumn.Delete();
+                        worksheet.get_Range("AW:AX").EntireColumn.Delete();
                     }
 
                     #region Save & Show Excel
@@ -882,6 +883,7 @@ select  s.SewingLineID
             ,o.FtyGroup
 	        ,[CDCodeNew] = sty.CDCodeNew
 	        ,[ProductType] = sty.ProductType
+            ,[MatchFabric] = iif(o.IsNotRepeatOrMapping = 0 ,'Y','N')
 	        ,[FabricType] = sty.FabricType
 	        ,[Lining] = sty.Lining
 	        ,[Gender] = sty.Gender
@@ -1100,6 +1102,7 @@ select  SewingLineID
         , CdCodeID
 	    , CDCodeNew
 	    , ProductType
+        , MatchFabric
 	    , FabricType
 	    , Lining
 	    , Gender
@@ -1213,6 +1216,7 @@ select  s.SewingLineID
 			,[FirststCuttingOutputDate] = FirststCuttingOutputDate.Date
 	        ,[CDCodeNew] = sty.CDCodeNew
 	        ,[ProductType] = sty.ProductType
+            ,[MatchFabric] = iif(o.IsNotRepeatOrMapping = 0 ,'Y','N')
 	        ,[FabricType] = sty.FabricType
 	        ,[Lining] = sty.Lining
 	        ,[Gender] = sty.Gender
@@ -1483,6 +1487,7 @@ select  SewingLineID
         , CdCodeID
 	    , CDCodeNew
 	    , ProductType
+        , MatchFabric
 	    , FabricType
 	    , Lining
 	    , Gender
