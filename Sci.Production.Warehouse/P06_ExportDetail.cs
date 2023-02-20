@@ -36,6 +36,7 @@ namespace Sci.Production.Warehouse
             base.OnLoad(e);
             string sqlcmd = $@"
 select  tdc.Carton,
+        tdc.Roll,
         tdc.LotNo,
         tdc.StockQty,
         tdc.StockUnitID,
@@ -58,7 +59,8 @@ where TransferExport_DetailUkey = '{this.transferExport_DetailUkey}'";
             this.listControlBindingSource1.DataSource = dt;
 
             this.Helper.Controls.Grid.Generator(this.gridExportMaterial)
-            .Text("Carton", header: "Roll", width: Widths.AnsiChars(10))
+            .Text("Carton", header: "Carton No", width: Widths.AnsiChars(10))
+            .Text("Roll", header: "Roll", width: Widths.AnsiChars(10))
             .Text("LotNo", header: "Dyelot", width: Widths.AnsiChars(10))
             .Numeric("StockQty", header: "Export Qty" + Environment.NewLine + "(Stock Unit)", width: Widths.AnsiChars(10), decimal_places: 2)
             .Text("StockUnitID", header: "Stock Unit", width: Widths.AnsiChars(6))

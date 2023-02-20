@@ -2,6 +2,8 @@
 using Ict.Win;
 using Ict.Win.UI;
 using Sci.Data;
+using Sci.Production.Prg.Entity;
+using Sci.Production.PublicForm;
 using System;
 using System.Data;
 using System.Drawing;
@@ -14,9 +16,6 @@ namespace Sci.Production.Shipping
     /// <inheritdoc/>
     public partial class P16 : Sci.Win.Tems.Input6
     {
-        private DataGridViewNumericBoxColumn col_NW;
-        private DataGridViewNumericBoxColumn col_GW;
-        private DataGridViewNumericBoxColumn col_CBM;
 
         /// <summary>
         /// 代表 TK 在這間工廠屬於轉出方
@@ -96,28 +95,6 @@ namespace Sci.Production.Shipping
                 this.chkExportChange.ReadOnly = true;
             }
 
-            // TPE Status
-            if (!MyUtility.Check.Empty(this.CurrentMaintain["Junk"]))
-            {
-                this.dispTPEStatus.Text = "Junk";
-            }
-            else if (!MyUtility.Check.Empty(this.CurrentMaintain["Confirm"]))
-            {
-                this.dispTPEStatus.Text = "[Confirm] To fty can start to Transfer In.";
-            }
-            else if (!MyUtility.Check.Empty(this.CurrentMaintain["Sent"]))
-            {
-                this.dispTPEStatus.Text = "[Sent] From fty can start to Transfer Out.";
-            }
-            else if (MyUtility.Check.Empty(this.CurrentMaintain["Sent"]))
-            {
-                this.dispTPEStatus.Text = "New";
-            }
-            else
-            {
-                this.dispTPEStatus.Text = string.Empty;
-            }
-
             switch (MyUtility.Convert.GetString(this.CurrentMaintain["Payer"]))
             {
                 case "S":
@@ -134,25 +111,10 @@ namespace Sci.Production.Shipping
                     break;
             }
 
-            switch (MyUtility.Convert.GetString(this.CurrentMaintain["FtyStatus"]))
-            {
-                case "New":
-                    this.dispFtyStatus.Value = "New";
-                    break;
-                case "Send":
-                    this.dispFtyStatus.Value = "[Send] From fty WH Confirm";
-                    break;
-                case "Confirmed":
-                    this.dispFtyStatus.Value = "[Confirm] From fty Shipping Confirm";
-                    break;
-                default:
-                    break;
-            }
-
             // 表頭NW,GW,CBM 要從表身加總取得
             string sqlTtl = $@"
 select NetKg = isnull(sum(NetKg),0) , WeightKg = isnull(sum(WeightKg),0), Cbm = isnull(sum(cbm),0)
-from TransferExport_Detail
+from TransferExport_Detail_Carton
 where ID = '{this.CurrentMaintain["ID"]}'
 ";
             if (MyUtility.Check.Seek(sqlTtl, out DataRow drTTl))
@@ -196,6 +158,7 @@ where ExportPort = '{this.CurrentMaintain["ExportPort"]}'
 
             this.labJunk.Visible = MyUtility.Convert.GetString(this.CurrentMaintain["Junk"]) == "True" ? true : false;
             this.labFromE.Visible = MyUtility.Convert.GetString(this.CurrentMaintain["FormE"]) == "True" ? true : false;
+            this.btnTKSeparateHistory.Visible = MyUtility.Convert.GetBool(this.CurrentMaintain["Separated"]);
 
             this.ControlColor();
             this.ChangeRowColor();
@@ -232,9 +195,6 @@ ted.ID
 ,[StockUnit] = IIF(te.TransferType = 'Transfer Out', psdInv.StockUnit,psd.StockUnit)
 ,ted.TransferExportReason
 ,[ReasonDesc] = isnull((select [Description] from WhseReason where Type = 'TE' and ID = ted.TransferExportReason),'')
-,ted.NetKg
-,ted.WeightKg
-,ted.CBM
 ,ted.Refno
 ,ContainerType = isnull(ContainerType.Value,'')
 ,[FindColumn] = rtrim(ted.InventoryPOID)+'-'+(SUBSTRING(ted.InventorySeq1,1,3)+'-'+ted.InventorySeq2)
@@ -355,9 +315,6 @@ where ted.ID = '{0}'", masterID);
                 .Text("StockUnit", header: "Stock Unit", width: Ict.Win.Widths.AnsiChars(6), iseditingreadonly: true)
                 .Text("TransferExportReason", header: "Reason", width: Ict.Win.Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("ReasonDesc", header: "Reason Desc", width: Ict.Win.Widths.AnsiChars(15), iseditingreadonly: true)
-                .Numeric("NetKg", header: "N.W.(kg)", decimal_places: 2, iseditingreadonly: true).Get(out this.col_NW)
-                .Numeric("WeightKg", header: "G.W.(kg)", decimal_places: 2, iseditingreadonly: true).Get(out this.col_GW)
-                .Numeric("CBM", header: "CBM", decimal_places: 4, iseditingreadonly: true).Get(out this.col_CBM)
                 .Text("ContainerType", header: "ContainerType & No", width: Ict.Win.Widths.AnsiChars(15), iseditingreadonly: true)
                 .Text("WK", header: "WK#", width: Ict.Win.Widths.AnsiChars(16), iseditingreadonly: true)
                 ;
@@ -397,20 +354,6 @@ where ted.ID = '{0}'", masterID);
             {
                 return;
             }
-
-            // 只有 Transfer out 才允許編輯此欄位
-            if (this.IsTransferOut == true)
-            {
-                this.col_NW.IsEditingReadOnly = false;
-                this.col_GW.IsEditingReadOnly = false;
-                this.col_CBM.IsEditingReadOnly = false;
-            }
-            else
-            {
-                this.col_NW.IsEditingReadOnly = true;
-                this.col_GW.IsEditingReadOnly = true;
-                this.col_CBM.IsEditingReadOnly = true;
-            }
         }
 
         /// <inheritdoc/>
@@ -422,13 +365,34 @@ where ted.ID = '{0}'", masterID);
                 return;
             }
 
-            if (string.Compare(this.CurrentMaintain["FtyStatus"].ToString(), "Send", true) == 0 && this.EditMode == false)
+            if (string.Compare(this.CurrentMaintain["FtyStatus"].ToString(), TK_FtyStatus.Send, true) == 0 && this.EditMode == false)
             {
                 this.toolbar.cmdConfirm.Enabled = true;
+                this.toolbar.cmdRecall.Enabled = true;
             }
             else
             {
                 this.toolbar.cmdConfirm.Enabled = false;
+                this.toolbar.cmdRecall.Enabled = false;
+            }
+        }
+
+        /// <inheritdoc/>
+        protected override void ClickRecall()
+        {
+            base.ClickRecall();
+            string sqlRecall = $@"
+update TransferExport_Detail_Carton set GroupID = '' where ID = '{this.CurrentMaintain["ID"]}'
+update TransferExport set FtySendDate = null where ID = '{this.CurrentMaintain["ID"]}'
+insert into TransferExport_StatusHistory(ID, OldStatus, NewStatus, OldFtyStatus, NewFtyStatus, UpdateDate)
+values('{this.CurrentMaintain["ID"]}', '', '', '{TK_FtyStatus.Send}', '{TK_FtyStatus.New}', getdate())
+";
+
+            DualResult result = DBProxy.Current.Execute(null, sqlRecall);
+            if (!result)
+            {
+                this.ShowErr(result);
+                return;
             }
         }
 
@@ -564,11 +528,14 @@ where ted.ID = '{0}'", masterID);
                 {
                     string sqlcmd = $@"
 update TransferExport 
-set FtyStatus='Confirmed'
+set FtyStatus='{TK_FtyStatus.Confirmed}'
     , editname = '{Env.User.UserID}' 
     , editdate = GETDATE()
     , FtyConfirmDate = GETDATE()
 where id = '{this.CurrentMaintain["ID"]}'
+
+insert into TransferExport_StatusHistory(ID, OldStatus, NewStatus, OldFtyStatus, NewFtyStatus, UpdateDate)
+values('{this.CurrentMaintain["ID"]}', '{TK_TpeStatus.Sent}', '{TK_TpeStatus.FtyConfirm}', '{TK_FtyStatus.Send}', '{TK_FtyStatus.Confirmed}', getdate())
 ";
                     DualResult result;
                     if (!(result = DBProxy.Current.Execute(null, sqlcmd)))
@@ -624,6 +591,15 @@ where se.WKNo = '{0}' and se.junk=0", MyUtility.Convert.GetString(this.CurrentMa
             {
                 this.btnExpenseData.ForeColor = Color.Black;
             }
+
+            if (this.CurrentMaintain["FtyStatus"].ToString() == "Request Separate")
+            {
+                this.btnTKSeparateHistory.BackColor = Color.LightPink;
+            }
+            else
+            {
+                this.btnTKSeparateHistory.BackColor = Color.Transparent;
+            }
         }
 
         private void BtnShippingMark_Click(object sender, EventArgs e)
@@ -678,7 +654,7 @@ where se.WKNo = '{0}' and se.junk=0", MyUtility.Convert.GetString(this.CurrentMa
             decimal numNetKg = 0;
             string sqlTtl = $@"
 select NetKg = isnull(sum(NetKg),0) , WeightKg = isnull(sum(WeightKg),0), Cbm = isnull(sum(cbm),0)
-from TransferExport_Detail
+from TransferExport_Detail_Carton
 where ID = '{this.CurrentMaintain["ID"]}'
 ";
             if (MyUtility.Check.Seek(sqlTtl, out DataRow drTTl))
@@ -800,6 +776,26 @@ where ID = '{this.CurrentMaintain["ID"]}'
             {
                 this.btnShippingMemo.ForeColor = Color.Black;
             }
+        }
+
+        private void BtnPackingList_Click(object sender, EventArgs e)
+        {
+            new TK_PackingList(this.CurrentMaintain["ID"].ToString()).ShowDialog();
+        }
+
+        private void BtnStatusHistory_Click(object sender, EventArgs e)
+        {
+            new TK_StatusHistory(this.CurrentMaintain["ID"].ToString()).ShowDialog();
+        }
+
+        private void BtnSeparateTKGroup_Click(object sender, EventArgs e)
+        {
+            new P16_Separate_TK_Group(this.CurrentMaintain["ID"].ToString()).ShowDialog();
+        }
+
+        private void BtnTKSeparateHistory_Click(object sender, EventArgs e)
+        {
+            new TK_SeparateHistory(this.CurrentMaintain["ID"].ToString(), TK_SeparateHistory.TK_SeparateHistoryCallFrom.Shipping_P16).ShowDialog();
         }
     }
 }

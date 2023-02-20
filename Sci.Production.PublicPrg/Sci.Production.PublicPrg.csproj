@@ -160,6 +160,8 @@
     <Compile Include="DBProxyPMS.cs" />
     <Compile Include="DllInvoke.cs" />
     <Compile Include="Entity\CallFrom.cs" />
+    <Compile Include="Entity\TK_TPEStatus.cs" />
+    <Compile Include="Entity\TK_FtyStatus.cs" />
     <Compile Include="Entity\FtyInventory.cs" />
     <Compile Include="Entity\IssueQtyBreakdown.cs" />
     <Compile Include="Entity\WHBarcodeTransaction.cs" />

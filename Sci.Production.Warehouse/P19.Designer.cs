@@ -49,6 +49,7 @@
             this.btnImportonTPE = new Sci.Win.UI.Button();
             this.btnCallP99 = new Sci.Win.UI.Button();
             this.btnTransferWK = new Sci.Win.UI.Button();
+            this.btnTKSeparateHistory = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -65,6 +66,7 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.btnTKSeparateHistory);
             this.masterpanel.Controls.Add(this.btnTransferWK);
             this.masterpanel.Controls.Add(this.btnImportonTPE);
             this.masterpanel.Controls.Add(this.btnPrintFabricSticker);
@@ -84,7 +86,7 @@
             this.masterpanel.Controls.Add(this.labelIssueDate);
             this.masterpanel.Controls.Add(this.labelID);
             this.masterpanel.Controls.Add(this.shapeContainer1);
-            this.masterpanel.Size = new System.Drawing.Size(892, 201);
+            this.masterpanel.Size = new System.Drawing.Size(972, 201);
             this.masterpanel.Controls.SetChildIndex(this.shapeContainer1, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelID, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelIssueDate, 0);
@@ -105,11 +107,12 @@
             this.masterpanel.Controls.SetChildIndex(this.btnPrintFabricSticker, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnImportonTPE, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnTransferWK, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnTKSeparateHistory, 0);
             // 
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 201);
-            this.detailpanel.Size = new System.Drawing.Size(892, 148);
+            this.detailpanel.Size = new System.Drawing.Size(972, 276);
             // 
             // gridicon
             // 
@@ -124,7 +127,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(892, 148);
+            this.detailgridcont.Size = new System.Drawing.Size(972, 276);
             // 
             // detail2
             // 
@@ -138,9 +141,19 @@
             // 
             this.detailpanel2.Size = new System.Drawing.Size(886, 40);
             // 
+            // detail
+            // 
+            this.detail.Size = new System.Drawing.Size(972, 515);
+            // 
+            // detailcont
+            // 
+            this.detailcont.Size = new System.Drawing.Size(972, 477);
+            // 
             // detailbtm
             // 
             this.detailbtm.Controls.Add(this.btnCallP99);
+            this.detailbtm.Location = new System.Drawing.Point(0, 477);
+            this.detailbtm.Size = new System.Drawing.Size(972, 38);
             this.detailbtm.Controls.SetChildIndex(this.lbleditby, 0);
             this.detailbtm.Controls.SetChildIndex(this.lblcreateby, 0);
             this.detailbtm.Controls.SetChildIndex(this.editby, 0);
@@ -221,7 +234,7 @@
             this.shapeContainer1.Name = "shapeContainer1";
             this.shapeContainer1.Shapes.AddRange(new Microsoft.VisualBasic.PowerPacks.Shape[] {
             this.lineShape1});
-            this.shapeContainer1.Size = new System.Drawing.Size(892, 201);
+            this.shapeContainer1.Size = new System.Drawing.Size(972, 201);
             this.shapeContainer1.TabIndex = 54;
             this.shapeContainer1.TabStop = false;
             // 
@@ -385,6 +398,18 @@
             this.btnTransferWK.UseVisualStyleBackColor = true;
             this.btnTransferWK.Click += new System.EventHandler(this.BtnTransferWK_Click);
             // 
+            // btnTKSeparateHistory
+            // 
+            this.btnTKSeparateHistory.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
+            this.btnTKSeparateHistory.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.btnTKSeparateHistory.Location = new System.Drawing.Point(552, 87);
+            this.btnTKSeparateHistory.Name = "btnTKSeparateHistory";
+            this.btnTKSeparateHistory.Size = new System.Drawing.Size(203, 31);
+            this.btnTKSeparateHistory.TabIndex = 67;
+            this.btnTKSeparateHistory.Text = "TK Separate History";
+            this.btnTKSeparateHistory.UseVisualStyleBackColor = true;
+            this.btnTKSeparateHistory.Click += new System.EventHandler(this.BtnTKSeparateHistory_Click);
+            // 
             // P19
             // 
             this.ApvChkValue = "New";
@@ -450,5 +475,6 @@
         private Win.UI.Button btnImportonTPE;
         private Win.UI.Button btnCallP99;
         private Win.UI.Button btnTransferWK;
+        private Win.UI.Button btnTKSeparateHistory;
     }
 }

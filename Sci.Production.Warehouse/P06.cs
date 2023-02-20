@@ -1,6 +1,8 @@
 ﻿using Ict;
 using Ict.Win;
 using Sci.Data;
+using Sci.Production.Prg.Entity;
+using Sci.Production.PublicForm;
 using Sci.Win.Tools;
 using System;
 using System.Collections.Generic;
@@ -113,9 +115,9 @@ namespace Sci.Production.Warehouse
             base.Refresh_AfterToolbarStatusBtnClick();
             if (!this.EditMode)
             {
-                this.toolbar.cmdEdit.Enabled = this.CurrentMaintain["FtyStatus"].ToString() == "New";
-                this.toolbar.cmdSend.Enabled = this.CurrentMaintain["FtyStatus"].ToString() == "New";
-                this.toolbar.cmdRecall.Enabled = this.CurrentMaintain["FtyStatus"].ToString() == "Send";
+                this.toolbar.cmdEdit.Enabled = this.CurrentMaintain["FtyStatus"].ToString() == TK_FtyStatus.New;
+                this.toolbar.cmdSend.Enabled = this.CurrentMaintain["FtyStatus"].ToString() == TK_FtyStatus.New;
+                this.toolbar.cmdRecall.Enabled = this.CurrentMaintain["FtyStatus"].ToString() == TK_FtyStatus.Send;
             }
         }
 
@@ -251,9 +253,9 @@ where   ted.ID = @ID and
             base.ClickSend();
 
             string sqlUpdateStatus = $@"
-update TransferExport set FtyStatus = 'Send', FtySendDate = Getdate() where ID = @ID
+update TransferExport set FtyStatus = '{TK_FtyStatus.Send}', FtySendDate = Getdate() where ID = @ID
 insert into TransferExport_StatusHistory(ID, OldStatus, NewStatus, OldFtyStatus, NewFtyStatus, UpdateDate)
-        values('{this.CurrentMaintain["ID"]}', '', '', 'New', 'Send', getdate())
+        values('{this.CurrentMaintain["ID"]}', '', '', '{TK_FtyStatus.New}', '{TK_FtyStatus.Send}', getdate())
 ";
             List<SqlParameter> listParUpdateStatus = new List<SqlParameter>() { new SqlParameter("@ID", this.CurrentMaintain["ID"]) };
 
@@ -280,9 +282,11 @@ insert into TransferExport_StatusHistory(ID, OldStatus, NewStatus, OldFtyStatus,
 
             base.ClickRecall();
 
-            string sqlUpdateStatus = $@"update TransferExport set FtyStatus = 'New',FtySendDate = Null where ID = @ID
+            string sqlUpdateStatus = $@"update TransferExport set FtyStatus = '{TK_FtyStatus.New}',FtySendDate = Null where ID = @ID
 insert into TransferExport_StatusHistory(ID, OldStatus, NewStatus, OldFtyStatus, NewFtyStatus, UpdateDate)
-        values('{this.CurrentMaintain["ID"]}', '', '', 'Send', 'New', getdate())
+        values('{this.CurrentMaintain["ID"]}', '', '', '{TK_FtyStatus.Send}', '{TK_FtyStatus.New}', getdate())
+
+update TransferExport_Detail_Carton set GroupID = '' where ID = @ID
 ";
             List<SqlParameter> listParUpdateStatus = new List<SqlParameter>() { new SqlParameter("@ID", this.CurrentMaintain["ID"]) };
 
@@ -304,9 +308,9 @@ insert into TransferExport_StatusHistory(ID, OldStatus, NewStatus, OldFtyStatus,
             this.lblJunk.Visible = MyUtility.Convert.GetBool(this.CurrentMaintain["Junk"]);
             if (!this.EditMode)
             {
-                this.toolbar.cmdEdit.Enabled = this.CurrentMaintain["FtyStatus"].ToString() == "New";
-                this.toolbar.cmdSend.Enabled = this.CurrentMaintain["FtyStatus"].ToString() == "New";
-                this.toolbar.cmdRecall.Enabled = this.CurrentMaintain["FtyStatus"].ToString() == "Send";
+                this.toolbar.cmdEdit.Enabled = this.CurrentMaintain["FtyStatus"].ToString() == TK_FtyStatus.New;
+                this.toolbar.cmdSend.Enabled = this.CurrentMaintain["FtyStatus"].ToString() == TK_FtyStatus.New;
+                this.toolbar.cmdRecall.Enabled = this.CurrentMaintain["FtyStatus"].ToString() == TK_FtyStatus.Send;
             }
 
             DataRow drTransferExport_Detail_Carton;
@@ -324,11 +328,11 @@ where   ID = '{this.CurrentMaintain["ID"]}'
             this.numCBM.Value = MyUtility.Convert.GetDecimal(drTransferExport_Detail_Carton["CBM"]);
             this.ChangeRowColor();
 
-            this.editRemark_Factory.IsSupportEditMode = this.CurrentMaintain["TransferType"].ToString() == "TransferOut";
+            this.editRemark_Factory.IsSupportEditMode = this.CurrentMaintain["TransferType"].ToString() == "Transfer Out";
 
             this.btnTKSeparateHistory.Visible = MyUtility.Convert.GetBool(this.CurrentMaintain["Separated"]);
 
-            if (this.CurrentMaintain["FtyStatus"].ToString() == "Request Separate")
+            if (this.CurrentMaintain["FtyStatus"].ToString() == TK_FtyStatus.RequestSeparate)
             {
                 this.btnTKSeparateHistory.BackColor = Color.LightPink;
             }
@@ -709,7 +713,18 @@ where ted.ID = '{masterID}'
 
         private void BtnPackingList_Click(object sender, EventArgs e)
         {
-            new P06_Packing(this.CurrentMaintain["ID"].ToString()).ShowDialog();
+            new TK_PackingList(this.CurrentMaintain["ID"].ToString()).ShowDialog();
+            this.OnRefreshClick();
+        }
+
+        private void BtnStatusHistory_Click(object sender, EventArgs e)
+        {
+            new TK_StatusHistory(this.CurrentMaintain["ID"].ToString()).ShowDialog();
+        }
+
+        private void BtnTKSeparateHistory_Click(object sender, EventArgs e)
+        {
+            new TK_SeparateHistory(this.CurrentMaintain["ID"].ToString(), TK_SeparateHistory.TK_SeparateHistoryCallFrom.WH_P06).ShowDialog();
         }
     }
 }

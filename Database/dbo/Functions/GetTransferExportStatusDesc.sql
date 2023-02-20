@@ -3,7 +3,7 @@
 	@Status varchar(20),
 	@StatusColumn varchar(10)
 )
-RETURNS varchar
+RETURNS varchar(100)
 as
 begin
 	declare @result varchar(150)

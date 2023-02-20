@@ -1,6 +1,7 @@
 ﻿using Ict;
 using Ict.Win;
 using Sci.Data;
+using Sci.Production.Prg.Entity;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -150,7 +151,7 @@ outer apply(
     and fi.seq2 = ted.InventorySEQ2
 )Tone
 where   te.ID = @ID and
-        te.FtyStatus = 'New' and
+        te.FtyStatus = '{TK_FtyStatus.New}' and
         te.Sent = 1 and
         exists(select 1 from Factory f with (nolock) 
                                 where f.ID = te.FromFactoryID and 

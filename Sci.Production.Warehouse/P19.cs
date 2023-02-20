@@ -6,6 +6,7 @@ using Sci.Production.Automation;
 using Sci.Production.Automation.LogicLayer;
 using Sci.Production.Prg;
 using Sci.Production.Prg.Entity;
+using Sci.Production.PublicForm;
 using Sci.Production.PublicPrg;
 using System;
 using System.Collections.Generic;
@@ -265,6 +266,15 @@ and ID = '{Sci.Env.User.UserID}'"))
             {
                 this.btnCallP99.Visible = false;
             }
+
+            string whereTransferExportID = this.DetailDatas
+                .Where(s => !MyUtility.Check.Empty(s["TransferExportID"]))
+                .DefaultIfEmpty()
+                .Select(s => s == null ? "''" : $"'{s["TransferExportID"]}'")
+                .Distinct()
+                .JoinToString(",");
+
+            this.btnTKSeparateHistory.Visible = MyUtility.Check.Seek($"select 1 from TransferExport with (nolock) where ID in ({whereTransferExportID}) and Separated = 1");
         }
 
         /// <inheritdoc/>
@@ -538,7 +548,7 @@ ID                         ,
 POID                       ,
 Seq1                       ,
 Seq2                       ,
-Carton                     ,
+Roll                     ,
 LotNo                      ,
 Qty                        ,
 FOC                        ,
@@ -547,7 +557,8 @@ EditDate                   ,
 StockUnitID                ,
 StockQty                   ,
 Tone                       ,
-MINDQRCode
+MINDQRCode,
+Carton
 )
 select  t.TransferExport_DetailUkey,
         t.TransferExportID,
@@ -563,7 +574,8 @@ select  t.TransferExport_DetailUkey,
         isnull(psdInv.StockUnit, ''),
         t.Qty,
         t.Tone,
-        [MINDQRCode] = iif(t.Qty = 0, '', ISNULL(w.MINDQRCode, ''))
+        [MINDQRCode] = iif(t.Qty = 0, '', ISNULL(w.MINDQRCode, '')),
+        ''
 from #tmp t
 inner join TransferExport_Detail ted with (nolock) on ted.Ukey = t.TransferExport_DetailUkey
 left join PO_Supp_Detail psdInv with (nolock) on	ted.InventoryPOID = psdInv.ID and 
@@ -680,7 +692,7 @@ outer apply (
             if (detailFromTransferExport.Any())
             {
                 string whereTransferExportID = detailFromTransferExport.Select(s => $"'{s["TransferExportID"]}'").Distinct().JoinToString(",");
-                string sqlCheckTransferExportStatus = $@"select ID from TransferExport with (nolock) where ID in ({whereTransferExportID}) and FtyStatus <> 'New'";
+                string sqlCheckTransferExportStatus = $@"select ID from TransferExport with (nolock) where ID in ({whereTransferExportID}) and FtyStatus <> '{TK_FtyStatus.New}'";
                 result = DBProxy.Current.Select(null, sqlCheckTransferExportStatus, out DataTable dt);
                 if (!result)
                 {
@@ -844,22 +856,16 @@ having f.balanceQty + sum(d.Qty) < 0
             }
 
             // PMS 的資料更新
-            DataTable dtTransferExportDetail = new DataTable();
-            string sqlDeleteTransferExport_Detail_Carton = $@"
-alter table #tmp alter column Roll varchar(8)
-alter table #tmp alter column Dyelot varchar(8)
+            string sqlDeleteTransferExport_Detail_Carton = string.Empty;
 
-delete  tedc
-from    TransferExport_Detail_Carton tedc
-where   exists(select 1 from #tmp t where 
-                t.TransferExport_DetailUkey = tedc.TransferExport_DetailUkey and
-                t.Roll = tedc.Carton and
-                t.Dyelot = tedc.LotNo
-                )         
-";
             if (this.DetailDatas.Any(s => !MyUtility.Check.Empty(s["TransferExportID"])))
             {
-                dtTransferExportDetail = this.DetailDatas.Where(s => !MyUtility.Check.Empty(s["TransferExportID"])).CopyToDataTable();
+                string whereTransferExport_DetailUkey = this.DetailDatas.Where(s => !MyUtility.Check.Empty(s["TransferExportID"]))
+                    .Select(s => $"'{s["TransferExport_DetailUkey"]}'").JoinToString(",");
+                sqlDeleteTransferExport_Detail_Carton = $@"
+delete  TransferExport_Detail_Carton
+where   TransferExport_DetailUkey in ({whereTransferExport_DetailUkey})       
+";
             }
 
             Exception errMsg = null;
@@ -906,9 +912,9 @@ where   exists(select 1 from #tmp t where
                         throw result.GetException();
                     }
 
-                    if (dtTransferExportDetail.Rows.Count > 0)
+                    if (!MyUtility.Check.Empty(sqlDeleteTransferExport_Detail_Carton))
                     {
-                        if (!(result = MyUtility.Tool.ProcessWithDatatable(dtTransferExportDetail, string.Empty, sqlDeleteTransferExport_Detail_Carton, out resulttb)))
+                        if (!(result = DBProxy.Current.Execute(null, sqlDeleteTransferExport_Detail_Carton)))
                         {
                             throw result.GetException();
                         }
@@ -1109,6 +1115,12 @@ Where a.id = '{masterID}'
         private void BtnTransferWK_Click(object sender, EventArgs e)
         {
             new P19_TransferWKImport(this.CurrentMaintain["ID"].ToString(), (DataTable)this.detailgridbs.DataSource, this.CurrentMaintain["MDivisionID"].ToString()).ShowDialog();
+        }
+
+        private void BtnTKSeparateHistory_Click(object sender, EventArgs e)
+        {
+            long[] transferExport_DetailUkeys = this.DetailDatas.Select(s => MyUtility.Convert.GetLong(s["TransferExport_DetailUkey"])).ToArray();
+            new P19_SeparateHistory(transferExport_DetailUkeys).ShowDialog();
         }
     }
 }

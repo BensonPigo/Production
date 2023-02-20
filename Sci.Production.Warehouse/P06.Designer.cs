@@ -873,6 +873,7 @@
             this.btnStatusHistory.TabIndex = 103;
             this.btnStatusHistory.Text = "Status History";
             this.btnStatusHistory.UseVisualStyleBackColor = true;
+            this.btnStatusHistory.Click += new System.EventHandler(this.BtnStatusHistory_Click);
             // 
             // btnTKSeparateHistory
             // 
@@ -882,6 +883,7 @@
             this.btnTKSeparateHistory.TabIndex = 104;
             this.btnTKSeparateHistory.Text = "TK Separate History";
             this.btnTKSeparateHistory.UseVisualStyleBackColor = true;
+            this.btnTKSeparateHistory.Click += new System.EventHandler(this.BtnTKSeparateHistory_Click);
             // 
             // P06
             // 

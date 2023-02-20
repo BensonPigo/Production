@@ -1,6 +1,6 @@
-﻿namespace Sci.Production.Warehouse
+﻿namespace Sci.Production.PublicForm
 {
-    partial class P06_Packing
+    partial class TK_PackingList
     {
         /// <summary>
         /// Required designer variable.
@@ -71,7 +71,7 @@
             this.gridNotAssignCarton.RowTemplate.Height = 24;
             this.gridNotAssignCarton.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridNotAssignCarton.ShowCellToolTips = false;
-            this.gridNotAssignCarton.Size = new System.Drawing.Size(655, 255);
+            this.gridNotAssignCarton.Size = new System.Drawing.Size(753, 255);
             this.gridNotAssignCarton.SupportEditMode = Sci.Win.UI.AdvEditModesReadOnly.True;
             this.gridNotAssignCarton.TabIndex = 1;
             // 
@@ -113,14 +113,14 @@
             this.gridAssignedCarton.RowTemplate.Height = 24;
             this.gridAssignedCarton.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridAssignedCarton.ShowCellToolTips = false;
-            this.gridAssignedCarton.Size = new System.Drawing.Size(655, 336);
+            this.gridAssignedCarton.Size = new System.Drawing.Size(753, 336);
             this.gridAssignedCarton.SupportEditMode = Sci.Win.UI.AdvEditModesReadOnly.True;
             this.gridAssignedCarton.TabIndex = 4;
             // 
             // label3
             // 
             this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.label3.Location = new System.Drawing.Point(673, 13);
+            this.label3.Location = new System.Drawing.Point(771, 13);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(78, 23);
             this.label3.TabIndex = 5;
@@ -140,21 +140,21 @@
             this.gridCartonList.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
             this.gridCartonList.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.gridCartonList.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.gridCartonList.Location = new System.Drawing.Point(673, 39);
+            this.gridCartonList.Location = new System.Drawing.Point(771, 39);
             this.gridCartonList.Name = "gridCartonList";
             this.gridCartonList.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridCartonList.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridCartonList.RowTemplate.Height = 24;
             this.gridCartonList.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridCartonList.ShowCellToolTips = false;
-            this.gridCartonList.Size = new System.Drawing.Size(323, 640);
+            this.gridCartonList.Size = new System.Drawing.Size(312, 640);
             this.gridCartonList.SupportEditMode = Sci.Win.UI.AdvEditModesReadOnly.True;
             this.gridCartonList.TabIndex = 6;
             // 
             // btnClose
             // 
             this.btnClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnClose.Location = new System.Drawing.Point(916, 687);
+            this.btnClose.Location = new System.Drawing.Point(997, 687);
             this.btnClose.Name = "btnClose";
             this.btnClose.Size = new System.Drawing.Size(80, 30);
             this.btnClose.TabIndex = 7;
@@ -165,7 +165,7 @@
             // btnEditSave
             // 
             this.btnEditSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnEditSave.Location = new System.Drawing.Point(830, 687);
+            this.btnEditSave.Location = new System.Drawing.Point(911, 687);
             this.btnEditSave.Name = "btnEditSave";
             this.btnEditSave.Size = new System.Drawing.Size(80, 30);
             this.btnEditSave.TabIndex = 8;
@@ -176,30 +176,32 @@
             // btnCancelAssingCarton
             // 
             this.btnCancelAssingCarton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnCancelAssingCarton.Location = new System.Drawing.Point(311, 307);
+            this.btnCancelAssingCarton.BackgroundImage = global::Sci.Production.PublicForm.Properties.Resources.Up_arrow_icon;
+            this.btnCancelAssingCarton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+            this.btnCancelAssingCarton.Location = new System.Drawing.Point(392, 307);
             this.btnCancelAssingCarton.Name = "btnCancelAssingCarton";
             this.btnCancelAssingCarton.Size = new System.Drawing.Size(80, 30);
             this.btnCancelAssingCarton.TabIndex = 9;
-            this.btnCancelAssingCarton.Text = "ᐱ";
             this.btnCancelAssingCarton.UseVisualStyleBackColor = true;
             this.btnCancelAssingCarton.Click += new System.EventHandler(this.BtnCancelAssingCarton_Click);
             // 
             // btnAssignCarton
             // 
             this.btnAssignCarton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnAssignCarton.Location = new System.Drawing.Point(397, 307);
+            this.btnAssignCarton.BackgroundImage = global::Sci.Production.PublicForm.Properties.Resources.Down_thick_arrow_icon;
+            this.btnAssignCarton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+            this.btnAssignCarton.Location = new System.Drawing.Point(478, 307);
             this.btnAssignCarton.Name = "btnAssignCarton";
             this.btnAssignCarton.Size = new System.Drawing.Size(80, 30);
             this.btnAssignCarton.TabIndex = 10;
-            this.btnAssignCarton.Text = "ᐯ";
             this.btnAssignCarton.UseVisualStyleBackColor = true;
             this.btnAssignCarton.Click += new System.EventHandler(this.BtnAssignCarton_Click);
             // 
-            // P06_Packing
+            // TK_PackingList
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1008, 729);
+            this.ClientSize = new System.Drawing.Size(1089, 729);
             this.Controls.Add(this.btnAssignCarton);
             this.Controls.Add(this.btnCancelAssingCarton);
             this.Controls.Add(this.btnEditSave);
@@ -210,9 +212,9 @@
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.gridNotAssignCarton);
-            this.Name = "P06_Packing";
+            this.Name = "TK_PackingList";
             this.OnLineHelpID = "Sci.Win.Tems.QueryForm";
-            this.Text = "P06_Packing";
+            this.Text = "P06 Packing List";
             this.Controls.SetChildIndex(this.gridNotAssignCarton, 0);
             this.Controls.SetChildIndex(this.label1, 0);
             this.Controls.SetChildIndex(this.label2, 0);
