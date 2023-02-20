@@ -2574,6 +2574,7 @@ where b.Ukey is null
 RAISERROR('imp_Style - Starts',0,0)
 Delete Production.dbo.Marker_ML
 from Production.dbo.Marker_ML as a 
+inner join Trade_To_Pms.dbo.Marker t on t.Ukey = a.MarkerUkey
 left join Trade_To_Pms.dbo.Marker_ML as b
 on a.ID = b.ID and a.Version = b.Version and a.MarkerName = b.MarkerName
 where b.ID is null
@@ -2682,6 +2683,7 @@ where b.ID is null
 RAISERROR('imp_Style - Starts',0,0)
 Delete Production.dbo.Marker_ML_SizeQty
 from Production.dbo.Marker_ML_SizeQty as a 
+inner join Trade_To_Pms.dbo.Marker t on t.Ukey = a.MarkerUkey
 left join Trade_To_Pms.dbo.Marker_ML_SizeQty as b
 on a.ID = b.ID and a.Version = b.Version and a.MarkerName = b.MarkerName
 and a.SizeCode = b.SizeCode

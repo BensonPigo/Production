@@ -43,6 +43,7 @@
     [InventorySeq2] VARCHAR(2) NOT NULL CONSTRAINT [DF_TransferExport_Detail_InventorySeq2] DEFAULT (''), 
     [InvTrans_Ukey] BIGINT NULL, 
     [TransferExportReason] VARCHAR(5) NOT NULL CONSTRAINT [DF_TransferExport_Detail_TransferExportReason] DEFAULT (''),  
+    [Ori_DetailUkey] BIGINT NULL, 
     CONSTRAINT [PK_TransferExport_Detail] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 )
 
@@ -343,3 +344,12 @@ EXEC sp_addextendedproperty @name = N'MS_Description',
     @level1name = N'TransferExport_Detail',
     @level2type = N'COLUMN',
     @level2name = N'TransferExportReason'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'TK 拆單前的 TransferExport_Detail.Ukey，如果此欄位值與目前的 TransferExport_Detail.Ukey 一致代表該箱沒有拆到其他 TK，主要用在 Transfer Out 更新與拆分',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'TransferExport_Detail',
+    @level2type = N'COLUMN',
+    @level2name = N'Ori_DetailUkey'

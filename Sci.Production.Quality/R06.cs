@@ -774,8 +774,7 @@ from(
 	from #TmpFinal t,#Weight
 ) a
 ,SuppLevel s
-where s.type='F' and s.Junk=0 and [AVG] * 100 between s.range1 and s.range2 
-
+where s.type='F' and s.Junk=0 and [AVG] * 100 between s.range1 and s.range2 {sqlSuppWhere}
   ORDER BY  SUPPID,refno 
 
 select distinct {groupby_col} from #TmpFinal order by {groupby_col} 
