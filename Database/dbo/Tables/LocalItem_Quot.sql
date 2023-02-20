@@ -20,6 +20,10 @@
     [EditName]     VARCHAR (10)    CONSTRAINT [DF_LocalItem_Quot_EditName] DEFAULT ('') NULL,
     [EditDate]     DATETIME        NULL,
     [Ukey]         BIGINT          IDENTITY (1, 1) NOT NULL,
+    [QuotDate1] DATE NULL, 
+    [QuotDate2] DATE NULL, 
+    [QuotDate3] DATE NULL, 
+    [QuotDate4] DATE NULL, 
     CONSTRAINT [PK_LocalItem_Quot] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
 
@@ -113,3 +117,45 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'最後修�
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Ukey', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'LocalItem_Quot', @level2type = N'COLUMN', @level2name = N'Ukey';
 
+
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'報價日期1',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'LocalItem_Quot',
+    @level2type = N'COLUMN',
+    @level2name = N'QuotDate1'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'報價日期2',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'LocalItem_Quot',
+    @level2type = N'COLUMN',
+    @level2name = N'QuotDate2'
+GO
+
+GO
+
+GO
+
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'報價日期3',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'LocalItem_Quot',
+    @level2type = N'COLUMN',
+    @level2name = N'QuotDate3'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'報價日期4',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'LocalItem_Quot',
+    @level2type = N'COLUMN',
+    @level2name = N'QuotDate4'

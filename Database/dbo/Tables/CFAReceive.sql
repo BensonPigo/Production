@@ -33,7 +33,7 @@ EXEC sp_addextendedproperty @name = N'MS_Description',
     @level2type = N'COLUMN',
     @level2name = N'MDivisionID'
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'�q�渹�X', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'CFAReceive', @level2type = N'COLUMN', @level2name = N'OrderID';
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'訂單號碼', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'CFAReceive', @level2type = N'COLUMN', @level2name = N'OrderID';
 
 
 GO
@@ -46,19 +46,19 @@ EXEC sp_addextendedproperty @name = N'MS_Description',
     @level2type = N'COLUMN',
     @level2name = N'PackingListID'
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'�c��', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'CFAReceive', @level2type = N'COLUMN', @level2name = N'CTNStartNo';
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'箱號', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'CFAReceive', @level2type = N'COLUMN', @level2name = N'CTNStartNo';
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'�s�W�H��', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'CFAReceive', @level2type = N'COLUMN', @level2name = N'AddName';
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'新增人員', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'CFAReceive', @level2type = N'COLUMN', @level2name = N'AddName';
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'�s�W�ɶ�', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'CFAReceive', @level2type = N'COLUMN', @level2name = N'AddDate';
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'新增時間', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'CFAReceive', @level2type = N'COLUMN', @level2name = N'AddDate';
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'�������', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'CFAReceive', @level2type = N'COLUMN', @level2name = N'ReceiveDate';
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'接收日期', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'CFAReceive', @level2type = N'COLUMN', @level2name = N'ReceiveDate';
 
 
 GO

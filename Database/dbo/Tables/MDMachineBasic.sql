@@ -12,7 +12,7 @@
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'編輯日期', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'MDMachineBasic', @level2type = N'COLUMN', @level2name = N'Editname';
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'編輯人員', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'MDMachineBasic', @level2type = N'COLUMN', @level2name = N'Editname';
 
 
 GO
