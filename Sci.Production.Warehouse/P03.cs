@@ -496,6 +496,7 @@ where Poid='{dr["id"]}' and seq1='{dr["Seq1"]}' and seq2='{dr["Seq2"]}'", out dr
             .CheckBox("IsHighRisk", header: "HR", width: Widths.AnsiChars(3), iseditable: false, trueValue: 1, falseValue: 0)
             .CheckBox("SustainableMaterial", header: "Recycled", width: Widths.AnsiChars(3), iseditable: false, trueValue: 1, falseValue: 0)
             .EditText("description", header: "Description", iseditingreadonly: true, width: Widths.AnsiChars(33)) // 8
+            .Button("...", null, header: "Spec", width: Widths.AnsiChars(2), onclick: this.BtnSpec)
             .Text("fabrictype2", header: "Material\r\nType", iseditingreadonly: true, width: Widths.AnsiChars(6)) // 7
             .Text("WeaveTypeID", header: "Weave\r\nType", iseditingreadonly: true, width: Widths.AnsiChars(9)) // 7
             .EditText("Article", header: "Article", iseditingreadonly: true, width: Widths.AnsiChars(15)) // 8
@@ -553,6 +554,16 @@ where Poid='{dr["id"]}' and seq1='{dr["Seq1"]}' and seq2='{dr["Seq2"]}'", out dr
             this.displayCalSize.BackColor = Color.FromArgb(255, 170, 100);
             this.displayJunk.BackColor = Color.FromArgb(190, 190, 190);
             this.displayRrLrHr.BackColor = Color.FromArgb(255, 204, 204);
+        }
+
+        private void BtnSpec(object sender, DataGridViewCellEventArgs e)
+        {
+            string poid = this.gridMaterialStatus.CurrentDataRow["id"].ToString();
+            string seq1 = this.gridMaterialStatus.CurrentDataRow["seq1"].ToString();
+            string seq2 = this.gridMaterialStatus.CurrentDataRow["seq2"].ToString();
+            string refno = this.gridMaterialStatus.CurrentDataRow["refno"].ToString();
+            var frm = new P03_Spec(poid, seq1, seq2, refno);
+            frm.ShowDialog();
         }
 
         /// <inheritdoc/>
