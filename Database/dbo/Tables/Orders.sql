@@ -980,12 +980,12 @@ GO
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Global Foundation Range' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders', @level2type=N'COLUMN',@level2name=N'GFR'
 GO
 
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'CFA�c��', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'CfaCTN';
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'CFA箱數', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'CfaCTN';
 
 
 GO
 
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'���ëǽc��', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'DRYCTN';
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'除溼室箱數', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'DRYCTN';
 
 
 GO
@@ -993,27 +993,27 @@ GO
 
 GO
 
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'PulloutComplete �̫᪺��s�ɶ�', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'PulloutCmplDate';
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'PulloutComplete 最後的更新時間', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'PulloutCmplDate';
 
 
 GO
 
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'��ܥi�H��Article���', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'IsBuyBackCrossArticle';
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'表示可以跨Article領用', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'IsBuyBackCrossArticle';
 
 
 GO
 
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'��ܥi�H��Size���', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'IsBuyBackCrossSizeCode';
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'表示可以跨Size領用', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'IsBuyBackCrossSizeCode';
 
 
 GO
 
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Each Cons KPI�ˬd���', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'KpiEachConsCheck';
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Each Cons KPI檢查日期', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'KpiEachConsCheck';
 
 
 GO
 
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'�ư����q��Ͳ������A1:�ư��A0���ư�', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'NonRevenue';
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'排除此訂單生產成本，1:排除，0不排除', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'NonRevenue';
 
 
 GO
@@ -1073,3 +1073,12 @@ EXEC sp_addextendedproperty @name = N'MS_Description',
     @level1name = N'Orders',
     @level2type = N'COLUMN',
     @level2name = N'OrganicCotton'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'預估單分類',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'Orders',
+    @level2type = N'COLUMN',
+    @level2name = N'ForecastCategory'

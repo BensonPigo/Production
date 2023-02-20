@@ -102,19 +102,19 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'組織代�
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'�O���o�����ƬO�_�O�n���n�f����', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Issue', @level2type = N'COLUMN', @level2name = N'ToSisterFty';
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'記錄這項物料是否是要給姊妹場的', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Issue', @level2type = N'COLUMN', @level2name = N'ToSisterFty';
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'�o���n�f�t�������u�t', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Issue', @level2type = N'COLUMN', @level2name = N'ToFactory';
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'發給姊妹廠的哪間工廠', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Issue', @level2type = N'COLUMN', @level2name = N'ToFactory';
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'�}�l�o�ƪ��ɶ�', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Issue', @level2type = N'COLUMN', @level2name = N'IssueStartTime';
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'開始發料的時間', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Issue', @level2type = N'COLUMN', @level2name = N'IssueStartTime';
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'�����o�ƪ��ɶ�', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Issue', @level2type = N'COLUMN', @level2name = N'IssueEndTime';
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'完成發料的時間', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Issue', @level2type = N'COLUMN', @level2name = N'IssueEndTime';
 
 
 GO

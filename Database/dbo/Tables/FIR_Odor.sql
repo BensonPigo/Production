@@ -19,31 +19,31 @@
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'����', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'FIR_Odor', @level2type = N'COLUMN', @level2name = N'Roll';
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'捲號', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'FIR_Odor', @level2type = N'COLUMN', @level2name = N'Roll';
 
 
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'���絲�G', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'FIR_Odor', @level2type = N'COLUMN', @level2name = N'Result';
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'檢驗結果', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'FIR_Odor', @level2type = N'COLUMN', @level2name = N'Result';
 
 
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'�Ƶ�', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'FIR_Odor', @level2type = N'COLUMN', @level2name = N'Remark';
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'備註', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'FIR_Odor', @level2type = N'COLUMN', @level2name = N'Remark';
 
 
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'����H��', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'FIR_Odor', @level2type = N'COLUMN', @level2name = N'Inspector';
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'檢驗人員', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'FIR_Odor', @level2type = N'COLUMN', @level2name = N'Inspector';
 
 
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'������', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'FIR_Odor', @level2type = N'COLUMN', @level2name = N'Inspdate';
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'檢驗日期', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'FIR_Odor', @level2type = N'COLUMN', @level2name = N'Inspdate';
 
 
 
@@ -53,31 +53,31 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'ID', @level
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'�̫�s��H��', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'FIR_Odor', @level2type = N'COLUMN', @level2name = N'EditName';
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'最後編輯人員', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'FIR_Odor', @level2type = N'COLUMN', @level2name = N'EditName';
 
 
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'�̫�s��ɶ�', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'FIR_Odor', @level2type = N'COLUMN', @level2name = N'EditDate';
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'最後編輯時間', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'FIR_Odor', @level2type = N'COLUMN', @level2name = N'EditDate';
 
 
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'����', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'FIR_Odor', @level2type = N'COLUMN', @level2name = N'Dyelot';
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'缸號', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'FIR_Odor', @level2type = N'COLUMN', @level2name = N'Dyelot';
 
 
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'�s�W�H��', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'FIR_Odor', @level2type = N'COLUMN', @level2name = N'AddName';
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'新增人員', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'FIR_Odor', @level2type = N'COLUMN', @level2name = N'AddName';
 
 
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'�s�W�ɶ�', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'FIR_Odor', @level2type = N'COLUMN', @level2name = N'AddDate';
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'新增時間', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'FIR_Odor', @level2type = N'COLUMN', @level2name = N'AddDate';
 
 
 
