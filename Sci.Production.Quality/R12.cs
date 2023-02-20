@@ -536,9 +536,9 @@ left join pass1 p3 with (nolock) on p3.id = i.Inspector
                 if (this.dateArriveWHDate.Value1.Empty() &&
                     this.txtSP1.Text.Empty() && this.txtSP2.Text.Empty() &&
                     this.txtWK1.Text.Empty() && this.txtWK2.Text.Empty() &&
-                    !this.dateInspectionDate.HasValue)
+                    !this.dateInspectionDate.HasValue && this.txtbrand.Text.Empty())
                 {
-                    MyUtility.Msg.WarningBox("Arrive W/H Date, SP#, WK# and Inspection Date can't all empty!");
+                    MyUtility.Msg.WarningBox("Arrive W/H Date, SP#, WK# , Brand and Inspection Date can't all empty!");
                     return false;
                 }
             }
@@ -546,9 +546,9 @@ left join pass1 p3 with (nolock) on p3.id = i.Inspector
             {
                 if (this.dateArriveWHDate.Value1.Empty() &&
                     this.txtSP1.Text.Empty() && this.txtSP2.Text.Empty() &&
-                    this.txtWK1.Text.Empty() && this.txtWK2.Text.Empty())
+                    this.txtWK1.Text.Empty() && this.txtWK2.Text.Empty() && this.txtbrand.Text.Empty())
                 {
-                    MyUtility.Msg.WarningBox("Arrive W/H Date, SP#, WK# can't all empty!");
+                    MyUtility.Msg.WarningBox("Arrive W/H Date, SP#, WK# , Brand can't all empty!");
                     return false;
                 }
             }
@@ -591,6 +591,13 @@ left join pass1 p3 with (nolock) on p3.id = i.Inspector
                 {
                     this.parameters.Add(new SqlParameter("@InsDate1", this.dateInspectionDate.Value1));
                     this.parameters.Add(new SqlParameter("@InsDate2", this.dateInspectionDate.Value2));
+                }
+
+                if (!this.txtbrand.Text.Empty())
+                {
+                    where1 += $"and o.BrandID = @BrandID" + Environment.NewLine;
+                    where2 += $"and o.BrandID = @BrandID" + Environment.NewLine;
+                    this.parameters.Add(new SqlParameter("@BrandID", this.txtbrand.Text));
                 }
 
                 #region Physical
@@ -855,6 +862,13 @@ order by POID, Seq, ExportId, ReceivingID
                 {
                     this.parameters.Add(new SqlParameter("@InsDate1", this.dateInspectionDate.Value1));
                     this.parameters.Add(new SqlParameter("@InsDate2", this.dateInspectionDate.Value2));
+                }
+
+                if (!this.txtbrand.Text.Empty())
+                {
+                    where1 += $"and o.BrandID = @BrandID" + Environment.NewLine;
+                    where2 += $"and o.BrandID = @BrandID" + Environment.NewLine;
+                    this.parameters.Add(new SqlParameter("@BrandID", this.txtbrand.Text));
                 }
 
                 // 基本資料

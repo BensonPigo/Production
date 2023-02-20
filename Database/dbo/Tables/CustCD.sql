@@ -187,30 +187,30 @@ GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Payment Term for Sample', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'CustCD', @level2type = N'COLUMN', @level2name = N'PayTermARIDSample';
 GO
 
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'��ؽX�˽c�K�ȲզX', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'CustCD', @level2type = N'COLUMN', @level2name = N'StickerCombinationUkey';
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'單尺碼裝箱貼紙組合', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'CustCD', @level2type = N'COLUMN', @level2name = N'StickerCombinationUkey';
 
 
 GO
 ;
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'�V�ؽX�˽c�K�ȲզX', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'CustCD', @level2type = N'COLUMN', @level2name = N'StickerCombinationUkey_MixPack';
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'混尺碼裝箱貼紙組合', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'CustCD', @level2type = N'COLUMN', @level2name = N'StickerCombinationUkey_MixPack';
 
 
 GO
 ;
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'���n�ĤT������', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'CustCD', @level2type = N'COLUMN', @level2name = N'Need3rdInspect';
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'須要第三方檢驗', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'CustCD', @level2type = N'COLUMN', @level2name = N'Need3rdInspect';
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'QA �̫�s���', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'CustCD', @level2type = N'COLUMN', @level2name = N'QAEditDate';
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'最後編輯人員', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'CustCD', @level2type = N'COLUMN', @level2name = N'QAEditDate';
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'QA �̫�s��H��', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'CustCD', @level2type = N'COLUMN', @level2name = N'QAEditName';
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'最後編輯日', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'CustCD', @level2type = N'COLUMN', @level2name = N'QAEditName';
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'�Q�X�զX', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'CustCD', @level2type = N'COLUMN', @level2name = N'StampCombinationUkey';
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'噴碼組合', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'CustCD', @level2type = N'COLUMN', @level2name = N'StampCombinationUkey';
 
 
 Go

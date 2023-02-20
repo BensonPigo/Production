@@ -1628,7 +1628,7 @@
       <AnsiNulls>On</AnsiNulls>
       <QuotedIdentifier>On</QuotedIdentifier>
     </Build>
-    <Build Include="dbo\Tables\MDevisionPoDetail.sql" />
+    <Build Include="dbo\Tables\MDivisionPoDetail.sql" />
     <Build Include="dbo\Tables\MDivision.sql">
       <AnsiNulls>On</AnsiNulls>
       <QuotedIdentifier>On</QuotedIdentifier>
@@ -2322,7 +2322,6 @@
     <Build Include="dbo\Tables\ShippingMarkPic_Detail.sql" />
     <Build Include="dbo\Tables\ShippingMarkPic.sql" />
     <Build Include="dbo\Views\View_Style_Artwork.sql" />
-    <Build Include="dbo\Tables\ShippingMarkPicture.sql" />
     <Build Include="dbo\Tables\VNContractQtyAdjust_Detail_Detail.sql" />
     <Build Include="dbo\Tables\VNImportDeclaration_Detail_Detail.sql" />
     <Build Include="dbo\Functions\GetMaterialTypeDesc.sql" />
@@ -2763,6 +2762,18 @@
     <Build Include="dbo\Tables\SubconReturn_Detail.sql" />
     <Build Include="dbo\Tables\TransferExport_ShippingMemo.sql" />
     <Build Include="dbo\Functions\GetSCICtnNoFromBarcode.sql" />
+    <Build Include="dbo\Tables\SewingReason.sql" />
+    <Build Include="dbo\Tables\SewingTeam.sql" />
+    <Build Include="dbo\Tables\ShippingMarkPicture.sql" />
+    <Build Include="dbo\Tables\PadPrint.sql" />
+    <Build Include="dbo\Tables\PadPrint_Mold.sql" />
+    <Build Include="dbo\Tables\PadPrint_Mold_Spec.sql" />
+    <Build Include="dbo\Tables\PadPrintReq.sql" />
+    <Build Include="dbo\Tables\PadPrintReq_Detail.sql" />
+    <Build Include="dbo\Tables\PadPrintReq_Detail_Spec.sql" />
+    <Build Include="dbo\Tables\WHCommandReviseRecord_Transfer.sql" />
+    <Build Include="dbo\Tables\WHCommandReviseRecord_InOutAdjRet.sql" />
+    <Build Include="dbo\Tables\WeaveType.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />
