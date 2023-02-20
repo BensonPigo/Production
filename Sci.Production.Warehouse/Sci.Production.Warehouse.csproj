@@ -1525,12 +1525,6 @@
     <Compile Include="Report\R43.Designer.cs">
       <DependentUpon>R43.cs</DependentUpon>
     </Compile>
-    <Compile Include="P19_SeparateHistory.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="P19_SeparateHistory.Designer.cs">
-      <DependentUpon>P19_SeparateHistory.cs</DependentUpon>
-    </Compile>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="B01.resx">
@@ -2340,9 +2334,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Report\R43.resx">
       <DependentUpon>R43.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="P19_SeparateHistory.resx">
-      <DependentUpon>P19_SeparateHistory.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
