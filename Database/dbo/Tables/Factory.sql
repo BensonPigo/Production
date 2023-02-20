@@ -49,6 +49,7 @@
     [ProduceM]             VARCHAR (8)    CONSTRAINT [DF_Factory_ProduceM] DEFAULT ('') NULL,
     [LoadingFactoryGroup]  VARCHAR (8)    CONSTRAINT [DF_Factory_LoadingFactoryGroup] DEFAULT ('') NULL,
     [PadPrintGroup]        VARCHAR (3)    DEFAULT ('') NOT NULL,
+    [IsSubcon] BIT NOT NULL DEFAULT ((0)), 
     CONSTRAINT [PK_Factory] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 
@@ -222,7 +223,7 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'組織代�
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'��ڥͲ��u�t�� MDivision', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Factory', @level2type = N'COLUMN', @level2name = N'ProduceM';
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'實際生產工廠的 MDivision', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Factory', @level2type = N'COLUMN', @level2name = N'ProduceM';
 
 
 GO
@@ -234,3 +235,13 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'loading歸�
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'PadPrintGroup', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Factory', @level2type = N'COLUMN', @level2name = N'PadPrintGroup';
 
+
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'是否為外發工廠',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'Factory',
+    @level2type = N'COLUMN',
+    @level2name = N'IsSubcon'

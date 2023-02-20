@@ -377,7 +377,8 @@ declare @APSColumnGroup TABLE(
 	[MaxBuyerDelivery] [date] NULL,
 	[MinBuyerDelivery] [date] NULL,
 	[BrandID] [varchar](500) NULL,
-	[OrderID] [varchar](13) NULL
+	[OrderID] [varchar](13) NULL,
+	[MatchFabric] varchar(8) NULL
 )
 insert into @APSColumnGroup
 select
@@ -399,7 +400,8 @@ o.SCIDelivery,
 oq.MaxBuyerDelivery,
 oq.MinBuyerDelivery,
 [BrandID] = o.BrandID,
-s.OrderID
+s.OrderID,
+[MatchFabric] = iif(o.IsNotRepeatOrMapping = 0, 'Y','N')
 from SewingSchedule s with (nolock)
 inner join Orders o WITH (NOLOCK) on o.ID = s.OrderID 
 outer apply(select MaxBuyerDelivery = max(oq.BuyerDelivery), MinBuyerDelivery = min(oq.BuyerDelivery) from Order_QtyShip oq where oq.id = o.id) oq
@@ -577,6 +579,7 @@ declare @APSMain TABLE(
 	[BrandID] [nvarchar](500) NULL,
 	[CDCodeNew] [varchar](Max) NULL,
 	[ProductType] [nvarchar](Max) NULL,
+	[MatchFabric] [varchar](8) NULL,
 	[FabricType] [nvarchar](Max) NULL,
 	[Lining] [varchar](Max) NULL,
 	[Gender] [varchar](Max) NULL,
@@ -633,6 +636,7 @@ select
 	[BrandID] = BrandID.val,
 	sty.CDCodeNew,
 	sty.ProductType,
+	MatchFabric = sp.MatchFabric,
 	sty.FabricType,
 	sty.Lining,
 	sty.Gender,
@@ -652,6 +656,7 @@ outer apply (SELECT val =  Stuff((select distinct concat( ',',CustPONo)   from @
 outer apply (
 	SELECT val =  Stuff((select distinct concat( ',',SP)   from @APSColumnGroup where APSNo = al.APSNo FOR XML PATH('')),1,1,'') 
 		  ,[SP_Combotype] = Stuff((select distinct concat( ',',SP_ComboType)   from @APSColumnGroup where APSNo = al.APSNo FOR XML PATH('')),1,1,'')
+		  ,[MatchFabric] = Stuff((select distinct concat( ',',MatchFabric)   from @APSColumnGroup where APSNo = al.APSNo FOR XML PATH('')),1,1,'')
 			,FirststCuttingOutputDate=(
 				SELECT [Date]=MIN(co2.cDate)
 				FROM  WorkOrder_Distribute wd2 WITH (NOLOCK)
@@ -1134,6 +1139,7 @@ declare  @APSResult TABLE(
 	CDCode varchar(max) null,
 	CDCodeNew varchar(max) null,
 	ProductType nvarchar(max) null,
+	MatchFabric varchar(8) null,
 	FabricType nvarchar(max) null,
 	Lining varchar(max) null,
 	Gender varchar(max) null,
@@ -1211,6 +1217,7 @@ insert into @APSResult(
 	CDCode,
 	CDCodeNew,
 	ProductType,
+	MatchFabric,
 	FabricType,
 	Lining,
 	Gender,
@@ -1282,6 +1289,7 @@ select
 	[CDCode]=apm.CDCode,
 	[CDCodeNew] = apm.CDCodeNew,
 	[ProductType] = apm.ProductType,
+	[MatchFabric] = apm.MatchFabric,
 	[FabricType] = apm.FabricType,
 	[Lining] = apm.Lining,
 	[Gender] = apm.Gender,
@@ -2101,6 +2109,7 @@ select
 	apm.CDCode,
 	apm.CDCodeNew,
 	apm.ProductType,
+	apm.MatchFabric,
 	apm.FabricType,
 	apm.Lining,
 	apm.Gender,

@@ -59,6 +59,7 @@
             this.displayM = new Sci.Win.UI.DisplayBox();
             this.txtUserManager = new Sci.Production.Class.Txtuser();
             this.imageList1 = new System.Windows.Forms.ImageList(this.components);
+            this.chkSubcon = new Sci.Win.UI.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -73,6 +74,7 @@
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.chkSubcon);
             this.detailcont.Controls.Add(this.displayM);
             this.detailcont.Controls.Add(this.labelM);
             this.detailcont.Controls.Add(this.checkUseSBTS);
@@ -411,6 +413,20 @@
             this.imageList1.ImageSize = new System.Drawing.Size(16, 16);
             this.imageList1.TransparentColor = System.Drawing.Color.Transparent;
             // 
+            // chkSubcon
+            // 
+            this.chkSubcon.AutoSize = true;
+            this.chkSubcon.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "IsSubcon", true));
+            this.chkSubcon.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.chkSubcon.IsSupportEditMode = false;
+            this.chkSubcon.Location = new System.Drawing.Point(500, 101);
+            this.chkSubcon.Name = "chkSubcon";
+            this.chkSubcon.ReadOnly = true;
+            this.chkSubcon.Size = new System.Drawing.Size(99, 21);
+            this.chkSubcon.TabIndex = 28;
+            this.chkSubcon.Text = "Subcon out";
+            this.chkSubcon.UseVisualStyleBackColor = true;
+            // 
             // B01
             // 
             this.ClientSize = new System.Drawing.Size(838, 457);
@@ -419,6 +435,7 @@
             this.IsSupportDelete = false;
             this.IsSupportPrint = false;
             this.Name = "B01";
+            this.OnLineHelpID = "Sci.Win.Tems.Input1";
             this.Text = "B01. Company Profile";
             this.UniqueExpress = "ID";
             this.WorkAlias = "Factory";
@@ -467,5 +484,6 @@
         private Win.UI.DisplayBox displayM;
         private Win.UI.Label labelM;
         private System.Windows.Forms.ImageList imageList1;
+        private Win.UI.CheckBox chkSubcon;
     }
 }
