@@ -533,6 +533,7 @@ isnull([dbo].getGarmentLT(o.StyleUkey,o.FactoryID),0) as GMTLT from Orders o WIT
                 this.numUnitPrice.ReadOnly = true;
                 this.numQtyCarton.ReadOnly = true;
                 this.txtDevSample.ReadOnly = true;
+                this.txtOrderType.ReadOnly = true;
             }
         }
 

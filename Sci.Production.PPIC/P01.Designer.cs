@@ -189,7 +189,6 @@
             this.labelOrderType = new Sci.Win.UI.Label();
             this.labelDescription = new Sci.Win.UI.Label();
             this.displayProject = new Sci.Win.UI.DisplayBox();
-            this.displayOrderType = new Sci.Win.UI.DisplayBox();
             this.displayDescription = new Sci.Win.UI.DisplayBox();
             this.labelSMR = new Sci.Win.UI.Label();
             this.labelHandle = new Sci.Win.UI.Label();
@@ -333,6 +332,7 @@
             this.shapeContainer7 = new Microsoft.VisualBasic.PowerPacks.ShapeContainer();
             this.checkBoxDirectShip = new Sci.Win.UI.CheckBox();
             this.btn_ArtworkTestDox = new Sci.Win.UI.Button();
+            this.txtOrderType = new Sci.Win.UI.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -349,6 +349,7 @@
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.txtOrderType);
             this.detailcont.Controls.Add(this.checkBoxDirectShip);
             this.detailcont.Controls.Add(this.btn_ArtworkTestDox);
             this.detailcont.Controls.Add(this.checkOrganicCotton);
@@ -469,7 +470,6 @@
             this.detailcont.Controls.Add(this.labelHandle);
             this.detailcont.Controls.Add(this.labelSMR);
             this.detailcont.Controls.Add(this.displayDescription);
-            this.detailcont.Controls.Add(this.displayOrderType);
             this.detailcont.Controls.Add(this.displayProject);
             this.detailcont.Controls.Add(this.dateBuyerDlv);
             this.detailcont.Controls.Add(this.dateOrigBuyerDlv);
@@ -2235,16 +2235,6 @@
             this.displayProject.Size = new System.Drawing.Size(50, 21);
             this.displayProject.TabIndex = 16;
             // 
-            // displayOrderType
-            // 
-            this.displayOrderType.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayOrderType.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "OrderTypeID", true));
-            this.displayOrderType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayOrderType.Location = new System.Drawing.Point(346, 139);
-            this.displayOrderType.Name = "displayOrderType";
-            this.displayOrderType.Size = new System.Drawing.Size(200, 21);
-            this.displayOrderType.TabIndex = 20;
-            // 
             // displayDescription
             // 
             this.displayDescription.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
@@ -3734,6 +3724,16 @@
             this.btn_ArtworkTestDox.UseVisualStyleBackColor = true;
             this.btn_ArtworkTestDox.Click += new System.EventHandler(this.btn_ArtworkTestDox_Click);
             // 
+            // txtOrderType
+            // 
+            this.txtOrderType.BackColor = System.Drawing.Color.White;
+            this.txtOrderType.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "OrderTypeID", true));
+            this.txtOrderType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtOrderType.Location = new System.Drawing.Point(345, 139);
+            this.txtOrderType.Name = "txtOrderType";
+            this.txtOrderType.Size = new System.Drawing.Size(216, 21);
+            this.txtOrderType.TabIndex = 256;
+            // 
             // P01
             // 
             this.ClientSize = new System.Drawing.Size(1008, 752);
@@ -3783,7 +3783,6 @@
         private Win.UI.Label labelSPNo;
         private System.Windows.Forms.TabPage tabPage1;
         private Win.UI.DisplayBox displayDescription;
-        private Win.UI.DisplayBox displayOrderType;
         private Win.UI.DisplayBox displayProject;
         private Class.Txtdropdownlist txtdropdownlistCategory;
         private Win.UI.Label labelDescription;
@@ -4070,5 +4069,6 @@
         private Win.UI.Button btnComboType;
         private Win.UI.DateBox dateBox1;
         private Win.UI.Label label4;
+        private Win.UI.TextBox txtOrderType;
     }
 }
