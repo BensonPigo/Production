@@ -216,7 +216,7 @@
             this.masterpanel.Controls.Add(this.labETA);
             this.masterpanel.Controls.Add(this.displayNo);
             this.masterpanel.Controls.Add(this.labWkNo);
-            this.masterpanel.Size = new System.Drawing.Size(1000, 400);
+            this.masterpanel.Size = new System.Drawing.Size(875, 400);
             this.masterpanel.Controls.SetChildIndex(this.labWkNo, 0);
             this.masterpanel.Controls.SetChildIndex(this.displayNo, 0);
             this.masterpanel.Controls.SetChildIndex(this.labETA, 0);
@@ -308,7 +308,7 @@
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 400);
-            this.detailpanel.Size = new System.Drawing.Size(1000, 229);
+            this.detailpanel.Size = new System.Drawing.Size(875, 0);
             // 
             // gridicon
             // 
@@ -318,7 +318,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(1000, 229);
+            this.detailgridcont.Size = new System.Drawing.Size(875, 0);
             // 
             // detail2
             // 
@@ -331,19 +331,6 @@
             // detailpanel2
             // 
             this.detailpanel2.Size = new System.Drawing.Size(886, 40);
-            // 
-            // detail
-            // 
-            this.detail.Size = new System.Drawing.Size(1000, 667);
-            // 
-            // detailcont
-            // 
-            this.detailcont.Size = new System.Drawing.Size(1000, 629);
-            // 
-            // detailbtm
-            // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 629);
-            this.detailbtm.Size = new System.Drawing.Size(1000, 38);
             // 
             // browse
             // 
@@ -1298,6 +1285,7 @@
             this.IsSupportCopy = false;
             this.IsSupportDelete = false;
             this.IsSupportNew = false;
+            this.IsSupportRecall = true;
             this.KeyField1 = "ID";
             this.Name = "P16";
             this.OnLineHelpID = "Sci.Win.Tems.Input6";

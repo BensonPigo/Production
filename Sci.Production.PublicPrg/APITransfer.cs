@@ -143,11 +143,12 @@ select  Remark_Factory,
 from TransferExport with (nolock)
 where ID = '{id}'
 
-select  Ukey,
-        TransferExportReason,
-        TransferExportReasonDesc
-from TransferExport_Detail with (nolock)
-where ID = '{id}'
+select  ted.Ukey,
+        ted.TransferExportReason,
+        [TransferExportReasonDesc] = wr.Description
+from TransferExport_Detail ted with (nolock)
+left join WhseReason wr with (nolock) on wr.Type = 'TE' and wr.ID = ted.TransferExportReason
+where ted.ID = '{id}'
 
 select  TransferExport_DetailUkey,
         ID,
@@ -161,7 +162,7 @@ select  TransferExport_DetailUkey,
         EditName,
         EditDate,
         StockUnitID,
-        SotckQty,
+        StockQty,
         Tone,
         MINDQRCode,
         Roll,

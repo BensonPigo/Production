@@ -159,7 +159,7 @@ where ExportPort = '{this.CurrentMaintain["ExportPort"]}'
             this.labJunk.Visible = MyUtility.Convert.GetString(this.CurrentMaintain["Junk"]) == "True" ? true : false;
             this.labFromE.Visible = MyUtility.Convert.GetString(this.CurrentMaintain["FormE"]) == "True" ? true : false;
             this.btnTKSeparateHistory.Visible = MyUtility.Convert.GetBool(this.CurrentMaintain["Separated"]);
-
+            this.btnSeparateTKGroup.Visible = this.CurrentMaintain["FtyStatus"].ToString() == TK_FtyStatus.Send;
             this.ControlColor();
             this.ChangeRowColor();
         }
@@ -384,7 +384,7 @@ where ted.ID = '{0}'", masterID);
             base.ClickRecall();
             string sqlRecall = $@"
 update TransferExport_Detail_Carton set GroupID = '' where ID = '{this.CurrentMaintain["ID"]}'
-update TransferExport set FtySendDate = null where ID = '{this.CurrentMaintain["ID"]}'
+update TransferExport set FtySendDate = null, FtyStatus = '{TK_FtyStatus.New}' where ID = '{this.CurrentMaintain["ID"]}'
 insert into TransferExport_StatusHistory(ID, OldStatus, NewStatus, OldFtyStatus, NewFtyStatus, UpdateDate)
 values('{this.CurrentMaintain["ID"]}', '', '', '{TK_FtyStatus.Send}', '{TK_FtyStatus.New}', getdate())
 ";
@@ -395,6 +395,8 @@ values('{this.CurrentMaintain["ID"]}', '', '', '{TK_FtyStatus.Send}', '{TK_FtySt
                 this.ShowErr(result);
                 return;
             }
+
+            MyUtility.Msg.InfoBox("Recall success");
         }
 
         /// <inheritdoc/>
@@ -494,28 +496,13 @@ values('{this.CurrentMaintain["ID"]}', '', '', '{TK_FtyStatus.Send}', '{TK_FtySt
         /// <inheritdoc/>
         protected override void ClickConfirm()
         {
-            string checkStatus = $"select 1 from TransferExport where ID = '{this.CurrentMaintain["ID"]}' and FtyStatus = 'Confirmed'";
+            string checkStatus = $"select 1 from TransferExport where ID = '{this.CurrentMaintain["ID"]}' and FtyStatus = '{TK_FtyStatus.Confirmed}'";
             if (MyUtility.Check.Seek(checkStatus))
             {
                 MyUtility.Msg.WarningBox("Data is already confirmed, cannot confirm again");
                 this.EnsureToolbarExt();
                 return;
             }
-
-            #region 判斷轉出物料,工廠都必須填上重量資訊
-            if (this.DetailDatas == null || this.DetailDatas.Count <= 0)
-            {
-                return;
-            }
-
-            if (this.DetailDatas.AsEnumerable().Where(r => MyUtility.Convert.GetDecimal(r["ExportQty"]) > 0 &&
-                                                            (MyUtility.Check.Empty(r["NetKg"]) || MyUtility.Check.Empty(r["WeightKg"]))).Any())
-            {
-                MyUtility.Msg.WarningBox("N.W (kg) & G.W.(kg) cannot be empty when Export Q'ty > 0.");
-                this.EnsureToolbarExt();
-                return;
-            }
-            #endregion
 
             if (this.IsTransferOut == false)
             {
@@ -593,7 +580,7 @@ where se.WKNo = '{0}' and se.junk=0", MyUtility.Convert.GetString(this.CurrentMa
                 this.btnExpenseData.ForeColor = Color.Black;
             }
 
-            if (this.CurrentMaintain["FtyStatus"].ToString() == "Request Separate")
+            if (this.CurrentMaintain["FtyStatus"].ToString() == TK_FtyStatus.WHSeparateConfirm)
             {
                 this.btnTKSeparateHistory.BackColor = Color.LightPink;
             }

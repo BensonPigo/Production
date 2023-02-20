@@ -400,6 +400,7 @@ values('{id}', '{TK_TpeStatus.SeparateApproved}', '{TK_TpeStatus.FtyConfirm}', '
 
                 transactionScope.Complete();
             }
+
             MyUtility.Msg.InfoBox("Confirm success");
             this.Query();
         }

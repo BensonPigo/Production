@@ -77,6 +77,8 @@ namespace Sci.Production.Shipping
             DataGridViewGeneratorTextColumnSettings colGroupID = new DataGridViewGeneratorTextColumnSettings();
             colGroupID.CellValidating += (s, e) =>
             {
+                DataRow curRow = this.gridCartonList.GetDataRow(e.RowIndex);
+                curRow["GroupID"] = e.FormattedValue.ToString();
                 DataTable dtCartonList = (DataTable)this.bindingSourceCartonList.DataSource;
 
                 DataTable dtGroupSummary = (DataTable)this.bindingSourceGroupSummary.DataSource;
@@ -177,7 +179,7 @@ select	ted.InventoryPOID,
 into #tmpPackinglist
 from TransferExport_Detail ted with (nolock)
 inner join TransferExport_Detail_Carton tedc with (nolock) on tedc.TransferExport_DetailUkey = ted.Ukey
-where ted.ID = '{this.transferExportID}' and Carton <> ''
+where ted.ID = '{this.transferExportID}' and tedc.Carton <> ''
 
 select  Carton,
         [NetKg] = sum(NetKg),
