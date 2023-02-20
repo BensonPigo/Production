@@ -223,7 +223,7 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'組織代�
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'��ڥͲ��u�t�� MDivision', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Factory', @level2type = N'COLUMN', @level2name = N'ProduceM';
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'實際生產工廠的 MDivision', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Factory', @level2type = N'COLUMN', @level2name = N'ProduceM';
 
 
 GO

@@ -21,7 +21,7 @@ namespace Sci.Production.Planning
     public partial class R10 : Win.Tems.PrintForm
     {
         private DateTime currentTime = DateTime.Now;
-
+        private string strErrorMessage;
         private int reportType = 1;
         private string BrandID = string.Empty;
         private string ArtWorkType = string.Empty;
@@ -150,6 +150,7 @@ namespace Sci.Production.Planning
         /// <inheritdoc/>
         protected override DualResult OnAsyncDataLoad(ReportEventArgs e)
         {
+            DBProxy.Current.DefaultTimeout = 2700;  // timeout時間改為45分鐘
             if (this.rdMonth.Checked || this.rdHalfMonth.Checked)
             {
                 DualResult result = Ict.Result.True;
@@ -599,6 +600,7 @@ namespace Sci.Production.Planning
                 #endregion
             }
 
+            DBProxy.Current.DefaultTimeout = 300;  // timeout時間改回5分鐘
             return new DualResult(true);
         }
 
@@ -713,6 +715,17 @@ namespace Sci.Production.Planning
                 .Select(art => this.ExecSP1(art, paras, dic))
                 .AsSequential()
                 .ToList();
+
+            if (exelis.Contains(false))
+            {
+                this.Invoke(
+                    new Action(() =>
+                    {
+                       MyUtility.Msg.ErrorBox(this.strErrorMessage);
+                    }));
+                this.strErrorMessage = string.Empty;
+                return null;
+            }
 
             int titleHeigh = (reportType == 1) ? 3 : 4;
             int sheetStart = 2; // 起始位置
@@ -845,13 +858,17 @@ namespace Sci.Production.Planning
 
             DataTable[] datas;
             DualResult res = DBProxy.Current.SelectSP(string.Empty, "Planning_Report_R10", plis, out datas);
+            if(this.strErrorMessage != string.Empty && !res)
+            {
+                this.strErrorMessage = res.ToString();
+            }
 
             lock (dic)
             {
                 dic.Add(art, new Tuple<DataTable[], DualResult>(datas, res));
             }
 
-            return true;
+            return res;
         }
 
         /// <summary>

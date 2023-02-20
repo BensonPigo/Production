@@ -329,11 +329,11 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'最後修�
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'�x�_�N�Ԥu�t�i�f�O��', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Export', @level2type = N'COLUMN', @level2name = N'PrepaidFtyImportFee';
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'台北代墊工廠進口費用', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Export', @level2type = N'COLUMN', @level2name = N'PrepaidFtyImportFee';
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'�N�Ԥu�t�i�f�O����', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Export', @level2type = N'COLUMN', @level2name = N'MainExportID08';
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'代墊工廠進口費母單', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Export', @level2type = N'COLUMN', @level2name = N'MainExportID08';
 
 
 GO
