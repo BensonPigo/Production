@@ -2774,6 +2774,9 @@
     <Build Include="dbo\Tables\WHCommandReviseRecord_Transfer.sql" />
     <Build Include="dbo\Tables\WHCommandReviseRecord_InOutAdjRet.sql" />
     <Build Include="dbo\Tables\WeaveType.sql" />
+    <Build Include="dbo\Tables\FinanceRate.sql" />
+    <Build Include="dbo\Tables\FinanceTWRate.sql" />
+    <Build Include="dbo\Tables\SeasonSCI.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />
