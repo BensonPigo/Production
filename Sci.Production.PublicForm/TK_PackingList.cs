@@ -316,6 +316,16 @@ inner join TransferExport_Detail_Carton tdc with (nolock) on    t.TransferExport
                                                                 t.Dyelot = tdc.LotNo
 where   t.NetKg > 0 and t.WeightKg > 0 and t.CBM > 0
 
+-- 抓出有維護Carton的資料，刪除時只針對有多筆carton的資料，避免刪掉原本Carton = '', Qty = 0的資料
+select  TransferExport_DetailUkey,
+        LotNo,
+        Roll
+into #mutiCarton
+from TransferExport_Detail_Carton with (nolock)
+where ID = '{this.transferExportID}'
+group by TransferExport_DetailUkey, LotNo, Roll
+having count(*) > 1
+
 delete  tdc
 from TransferExport_Detail_Carton tdc
 where   not exists(select 1 from #tmp t with (nolock) 
@@ -325,9 +335,15 @@ where   not exists(select 1 from #tmp t with (nolock)
                                     t.Dyelot = tdc.LotNo and
                                     t.StockQty > 0
                     ) and
+        exists(select 1 from #mutiCarton t  with (nolock) 
+                        where   t.TransferExport_DetailUkey = tdc.TransferExport_DetailUkey and
+                                t.Roll = tdc.Roll and
+                                t.LotNo = tdc.LotNo) and
         tdc.ID = '{this.transferExportID}'
 
-drop table #tmp
+
+
+drop table #tmp, #mutiCarton
 ";
 
             result = MyUtility.Tool.ProcessWithDatatable(dtNeedUpdate, null, sqlUpdateTransferExport_Detail_Carton, out DataTable dtEmpty);
