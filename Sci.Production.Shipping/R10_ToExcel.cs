@@ -303,7 +303,7 @@ namespace Sci.Production.Shipping
 
             if (this.reportContent == 1)
             {
-                allColumn = 32;
+                allColumn = 33;
             }
             else
             {
