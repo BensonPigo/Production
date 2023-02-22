@@ -779,6 +779,7 @@ where ID = '{this.CurrentMaintain["ID"]}'
         private void BtnSeparateTKGroup_Click(object sender, EventArgs e)
         {
             new P16_Separate_TK_Group(this.CurrentMaintain["ID"].ToString()).ShowDialog();
+            this.OnRefreshClick();
         }
 
         private void BtnTKSeparateHistory_Click(object sender, EventArgs e)

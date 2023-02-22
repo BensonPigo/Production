@@ -40,17 +40,7 @@ namespace Sci.Production.Shipping
             this.gridPackingList.DataSource = this.bindingSourcePackingList;
             this.gridGroupSummaryInfo.DataSource = this.bindingSourceGroupSummary;
 
-            string ftyStatus = MyUtility.GetValue.Lookup($"select FtyStatus from TransferExport with (nolock) where ID = '{transferExportID}'");
-            if (ftyStatus == TK_FtyStatus.Send)
-            {
-                this.btnRequestSeparate.Visible = true;
-                this.btnEditSave.Visible = true;
-            }
-            else
-            {
-                this.btnRequestSeparate.Visible = false;
-                this.btnEditSave.Visible = false;
-            }
+            this.ButtonControl();
         }
 
         /// <inheritdoc/>
@@ -302,6 +292,10 @@ values('{this.transferExportID}', '{TK_TpeStatus.Sent}', '{TK_TpeStatus.RequestS
 
                 transactionScope.Complete();
             }
+
+            this.Query();
+            this.ButtonControl();
+            MyUtility.Msg.InfoBox("Successful.");
         }
 
         private DualResult FtyStatusCheck()
@@ -322,7 +316,21 @@ values('{this.transferExportID}', '{TK_TpeStatus.Sent}', '{TK_TpeStatus.RequestS
                 default:
                     return new DualResult(true);
             }
+        }
 
+        private void ButtonControl()
+        {
+            string ftyStatus = MyUtility.GetValue.Lookup($"select FtyStatus from TransferExport with (nolock) where ID = '{transferExportID}'");
+            if (ftyStatus == TK_FtyStatus.Send)
+            {
+                this.btnRequestSeparate.Visible = true;
+                this.btnEditSave.Visible = true;
+            }
+            else
+            {
+                this.btnRequestSeparate.Visible = false;
+                this.btnEditSave.Visible = false;
+            }
         }
     }
 }
