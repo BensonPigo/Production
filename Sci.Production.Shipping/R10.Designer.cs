@@ -302,7 +302,7 @@
             // 
             this.radioAirPrepaidExpenseReport.AutoSize = true;
             this.radioAirPrepaidExpenseReport.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.radioAirPrepaidExpenseReport.Location = new System.Drawing.Point(1, 109);
+            this.radioAirPrepaidExpenseReport.Location = new System.Drawing.Point(3, 109);
             this.radioAirPrepaidExpenseReport.Name = "radioAirPrepaidExpenseReport";
             this.radioAirPrepaidExpenseReport.Size = new System.Drawing.Size(201, 21);
             this.radioAirPrepaidExpenseReport.TabIndex = 3;
@@ -314,7 +314,7 @@
             // 
             this.radioDetailListBySPNoByFeeType.AutoSize = true;
             this.radioDetailListBySPNoByFeeType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.radioDetailListBySPNoByFeeType.Location = new System.Drawing.Point(1, 82);
+            this.radioDetailListBySPNoByFeeType.Location = new System.Drawing.Point(3, 82);
             this.radioDetailListBySPNoByFeeType.Name = "radioDetailListBySPNoByFeeType";
             this.radioDetailListBySPNoByFeeType.Size = new System.Drawing.Size(220, 21);
             this.radioDetailListBySPNoByFeeType.TabIndex = 2;
@@ -326,7 +326,7 @@
             // 
             this.radioDetailListbySPNo.AutoSize = true;
             this.radioDetailListbySPNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.radioDetailListbySPNo.Location = new System.Drawing.Point(1, 54);
+            this.radioDetailListbySPNo.Location = new System.Drawing.Point(3, 54);
             this.radioDetailListbySPNo.Name = "radioDetailListbySPNo";
             this.radioDetailListbySPNo.Size = new System.Drawing.Size(137, 21);
             this.radioDetailListbySPNo.TabIndex = 1;
@@ -338,7 +338,7 @@
             // 
             this.radioExportFeeReport.AutoSize = true;
             this.radioExportFeeReport.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.radioExportFeeReport.Location = new System.Drawing.Point(1, 1);
+            this.radioExportFeeReport.Location = new System.Drawing.Point(3, 1);
             this.radioExportFeeReport.Name = "radioExportFeeReport";
             this.radioExportFeeReport.Size = new System.Drawing.Size(141, 21);
             this.radioExportFeeReport.TabIndex = 0;
