@@ -169,7 +169,8 @@ select
 	wo.Seq2,
     [ActConsOutput] = cast(isnull(iif(wo.Layer - isnull(acc.AccuCuttingLayer,0) = 0, wo.Cons, acc.AccuCuttingLayer * ML.YDSMarkerLength),0) as numeric(9,4)),
     [UnfinishedCuttingReasonDesc] = dw.Name,
-    wo.Remark
+    wo.Remark,
+    wo.cutplanID
 into #tmp
 from WorkOrder wo WITH (NOLOCK) 
 inner join Orders o WITH (NOLOCK) on o.id = wo.OrderID
@@ -397,6 +398,7 @@ select
 ,[To be combined]=cl.v
 ,t.UnfinishedCuttingReasonDesc
 ,t.Remark
+,cutplanID
 from #tmp t
 --因效能,此欄位outer apply寫在這, 寫在上面會慢5倍
 outer apply(
