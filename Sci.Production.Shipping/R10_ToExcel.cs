@@ -456,7 +456,8 @@ namespace Sci.Production.Shipping
                     sc2 = $"-{sumCol6105TTL}{intRowsStart}";
                 }
 
-                string sumStartColEng = this.reportType == 1 ? "R" : this.reportContent == 2 ? "V" : "Y";
+                // 新增加欄位也要一併修正這裡
+                string sumStartColEng = this.reportType == 1 ? "R" : this.reportContent == 2 ? "X" : "AB";
                 if (this.reportContent == 1)
                 {
                     objArray[0, totalSumColumn - 1] = string.Format("=SUM({2}{0}:{1}{0}) {3} {4}", intRowsStart, excelSumCol, sumStartColEng, sc1, sc2);
