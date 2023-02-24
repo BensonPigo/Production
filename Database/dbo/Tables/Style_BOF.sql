@@ -14,6 +14,7 @@
     [OneTwoWay]         VARCHAR (1)    NULL,
     [HorizontalCutting] BIT            NULL,
     [VRepeat_C]         NUMERIC (7, 4) NULL,
+    [Special]           BIT            CONSTRAINT [DF_Style_BOF_Special] DEFAULT ((0)) NOT NULL,
     CONSTRAINT [PK_Style_BOF_1] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
 

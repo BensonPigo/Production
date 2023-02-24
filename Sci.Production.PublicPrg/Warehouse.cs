@@ -6500,5 +6500,241 @@ DEALLOCATE _cursor
 ";
             return DBProxy.Current.Execute(null, upcmd);
         }
+
+        #region 產生Temp PO2, PO3
+
+        /// <summary>
+        /// Create Temp PO table
+        /// 從Trade 複製過來
+        /// </summary>
+        /// <param name="sqlConn"> sql connection </param>
+        /// <returns> execute success or not </returns>
+        /// <inheritdoc/>
+        public static DualResult CreateTmpPOTable(SqlConnection sqlConn, int updateType = 0)
+        {
+            var primaryKey = updateType == 0
+                    ? ", Primary Key (ID, Seq1, Seq2, Seq2_Count)"
+                    : ", Primary Key (ID, Seq1, Seq2, Seq2_Count, OrderID)";
+            var addCol = updateType == 0
+                    ? string.Empty
+                    : ", OrderID VarChar(13) default '', OrderList Varchar(max) default ''";
+            var addCol2Spec = updateType == 0
+                    ? string.Empty
+                    : ", OrderList Varchar(max) default ''";
+
+            var sqlCmd = $@"
+Create Table #tmpPO_Supp
+(  RowID BigInt Identity(1,1) Not Null, ID VarChar(13), Seq1 VarChar(3), SuppID VarChar(6) default ''
+    , ShipTermID VarChar(5) default '', PayTermAPID VarChar(5) default ''
+    , Remark NVarChar(Max) default '', Description NVarChar(Max) default '', CompanyID Numeric(2,0) default 0
+    , StyleID VarChar(15), Junk Bit, Primary Key (ID, Seq1)
+);
+
+Create Table #tmpPO_Supp_Detail
+(  RowID BigInt Identity(1,1) Not Null, ID VarChar(13), Seq1 VarChar(3), Seq2 VarChar(2), RefNo VarChar(36) default '', SCIRefNo VarChar(30) default ''
+    , FabricType VarChar(1) default '', Price Numeric(14,4) default 0, UsedQty Numeric(10,4) default 0, Qty Numeric(10,2) default 0
+    , POUnit VarChar(8) default '', Complete Bit default 0, SystemETD Date, CFMETD Date, RevisedETD Date, FinalETD Date, EstETA Date
+    , ShipModeID VarChar(10) default '', PrintDate DateTime, PINO VarChar(25) default '', PIDate Date
+    , ColorID VarChar(6) default '', SuppColor NVarChar(Max) default '', SizeSpec VarChar(15) default '', SizeUnit VarChar(8) default ''
+    , Remark NVarChar(Max) default '', Special NVarChar(Max) default '', Width Numeric(5,2) default 0
+    , StockQty Numeric(12,1) default 0, NetQty Numeric(10,2) default 0, LossQty Numeric(10,2) default 0, SystemNetQty Numeric(10,2) default 0
+    , SystemCreate bit default 0, FOC Numeric(10,2) default 0, Junk bit default 0, ColorDetail NVarChar(200) default ''
+    , BomZipperInsert VarChar(5) default '', BomCustPONo VarChar(30) default ''
+    , ShipQty Numeric(10,2) default 0, Shortage Numeric(10,2) default 0, ShipFOC Numeric(10,2) default 0, ApQty Numeric(10,2) default 0
+    , InputQty Numeric(10,2) default 0, OutputQty Numeric(10,2) default 0, Spec NVarChar(Max) default '', ShipETA Date, SystemLock Date
+    , OutputSeq1 VarChar(3) default '', OutputSeq2 VarChar(2) default '', FactoryID VarChar(8) default ''
+    , StockPOID VarChar(13) default '', StockSeq1 VarChar(3) default '', StockSeq2 VarChar(2) default '', InventoryUkey bigint default 0
+    , KeyWord NVarChar(Max) default '', Article varchar(8)
+    , Seq2_Count Int, Remark_Shell NVarChar(Max) default ''
+    , Status varchar(1), Sel bit default 0, IsForOtherBrand bit, CannotOperateStock bit, Keyword_Original varchar(max)
+    {addCol}
+    {primaryKey}
+
+);
+
+Create Table #tmpPO_Supp_Detail_OrderList
+(  RowID BigInt Identity(1,1) Not Null, ID VarChar(13), Seq1 VarChar(3), Seq2 VarChar(2), OrderID VarChar(13), Seq2_Count Int
+    , Primary Key (ID, Seq1, Seq2, OrderID, Seq2_Count)
+);
+
+Create Table #tmpPO_Supp_Detail_Spec
+(  RowID BigInt Identity(1,1) Not Null, ID VarChar(13), Seq1 VarChar(3), Seq2 VarChar(2), SpecColumnID VarChar(50), SpecValue VarChar(50), Seq2_Count Int
+    {addCol2Spec}
+    , Primary Key (ID, Seq1, Seq2, SpecColumnID, Seq2_Count)
+);
+
+Create Table #tmpPO_Supp_Detail_Keyword
+(  RowID BigInt Identity(1,1) Not Null, ID VarChar(13), Seq1 VarChar(3), Seq2 VarChar(2), KeywordField VarChar(30), KeywordValue VarChar(200), Seq2_Count Int
+    {addCol2Spec}
+    , Primary Key (ID, Seq1, Seq2, KeywordField, Seq2_Count)
+);
+";
+
+            DualResult result = DBProxy.Current.ExecuteByConn(sqlConn, sqlCmd);
+            return result;
+        }
+        #endregion
+
+        #region 轉出BOF至採購單
+
+        /// <summary>
+        /// 將展開後的BOF資料轉入PO
+        /// 從Trade 複製過來
+        /// </summary>
+        /// <param name="sqlConn">sqlConn</param>
+        /// <param name="poID">採購母單</param>
+        /// <param name="brandID">Brand</param>
+        /// <param name="programID">Program</param>
+        /// <param name="category">Category</param>
+        /// <param name="testType">是否為虛擬庫存計算(0: 實際寫入Table; 1: 僅傳出Temp Table; 2: 不回傳Temp Table; 3: 實際寫入Table，但不回傳Temp Table)</param>
+        /// <param name="isExpendArticle"> isExpendArticle </param>
+        /// <inheritdoc />
+        public static DualResult TransferToPO_1_ForBOF(SqlConnection sqlConn, string poID, string brandID, string programID, string category, int testType, bool isExpendArticle)
+        {
+            DualResult result;
+            List<SqlParameter> paras = new List<SqlParameter>();
+
+            // String sqlCmd = "";
+            paras.Add(new SqlParameter("@PoID", poID));
+            paras.Add(new SqlParameter("@BrandID", brandID));
+            paras.Add(new SqlParameter("@ProgramID", programID));
+            paras.Add(new SqlParameter("@Category", category));
+            paras.Add(new SqlParameter("@TestType", testType));
+            paras.Add(new SqlParameter("@IsExpendArticle", isExpendArticle));
+
+            result = DBProxy.Current.ExecuteSPByConn(sqlConn, "TransferToPO_1_ForBOF", paras);
+
+            return result;
+        }
+
+        #endregion
+
+        #region 轉出BOA至採購單
+
+        /// <summary>
+        /// 將展開後的BOA資料轉入PO
+        /// 從Trade 複製過來
+        /// </summary>
+        /// <param name="sqlConn">sqlConn</param>
+        /// <param name="poID">採購母單</param>
+        /// <param name="brandID">Brand</param>
+        /// <param name="programID">Program</param>
+        /// <param name="category">Category</param>
+        /// <param name="testType">是否為虛擬庫存計算(0: 實際寫入Table; 1: 僅傳出Temp Table; 2: 不回傳Temp Table; 3: 實際寫入Table，但不回傳Temp Table)</param>
+        /// <param name="isExpendArticle"> isExpendArticle </param>
+        /// <inheritdoc />
+        public static DualResult TransferToPO_1_ForBOA(SqlConnection sqlConn, string poID, string brandID, string programID, string category, int testType, bool isExpendArticle)
+        {
+            DualResult result;
+            List<SqlParameter> paras = new List<SqlParameter>();
+
+            // String sqlCmd = "";
+            paras.Add(new SqlParameter("@PoID", poID));
+            paras.Add(new SqlParameter("@BrandID", brandID));
+            paras.Add(new SqlParameter("@ProgramID", programID));
+            paras.Add(new SqlParameter("@Category", category));
+            paras.Add(new SqlParameter("@TestType", testType));
+            paras.Add(new SqlParameter("@IsExpendArticle", isExpendArticle));
+
+            result = DBProxy.Current.ExecuteSPByConn(sqlConn, "TransferToPO_1_ForBOA", paras);
+
+            return result;
+        }
+
+        /// <summary>
+        /// Project是否為ARO
+        /// 從Trade 複製過來
+        /// </summary>
+        /// <param name="id"> sp#</param>
+        /// <returns> Expend Article </returns>
+        public static bool IsExpendArticle(string id)
+        {
+            string project = MyUtility.GetValue.Lookup($"select ProjectID from dbo.Orders where ID = '{id}'", string.Empty);
+            return project == "ARO";
+        }
+        #endregion
+
+        #region 轉出A大項至採購單
+
+        /// <summary>
+        /// 將外裁的A1項及QT的A2轉入PO
+        /// 從Trade 複製過來
+        /// </summary>
+        /// <param name="sqlConn">sqlConn</param>
+        /// <param name="poID">採購母單</param>
+        /// <param name="brandID">Brand</param>
+        /// <param name="programID">Program</param>
+        /// <param name="category">Category</param>
+        /// <param name="testType">是否為虛擬庫存計算(0: 實際寫入Table; 1: 僅傳出Temp Table; 2: 不回傳Temp Table; 3: 實際寫入Table，但不回傳Temp Table)</param>
+        /// <inheritdoc />
+        public static DualResult TransferToPO_1_ForAItem(SqlConnection sqlConn, string poID, string brandID, string programID, string category, int testType)
+        {
+            DualResult result;
+            List<SqlParameter> paras = new List<SqlParameter>();
+
+            // String sqlCmd = "";
+            paras.Add(new SqlParameter("@PoID", poID));
+            paras.Add(new SqlParameter("@BrandID", brandID));
+            paras.Add(new SqlParameter("@ProgramID", programID));
+            paras.Add(new SqlParameter("@Category", category));
+            paras.Add(new SqlParameter("@TestType", testType));
+
+            result = DBProxy.Current.ExecuteSPByConn(sqlConn, "TransferToPO_1_ForAItem", paras);
+
+            return result;
+        }
+
+        #endregion
+
+        #region 依照AllowanceCombo將T項及轉入至採購單
+
+        /// <summary>
+        /// 依照AllowanceCombo將T項及轉入至採購單
+        /// 從Trade 複製過來
+        /// </summary>
+        /// <param name="sqlConn">sqlConn</param>
+        /// <param name="poID">採購母單</param>
+        /// <inheritdoc />
+        public static DualResult TransferToPO_1_ForThreadAllowance(SqlConnection sqlConn, string poID)
+        {
+            DualResult result;
+            List<SqlParameter> paras = new List<SqlParameter>();
+
+            paras.Add(new SqlParameter("@PoID", poID));
+            paras.Add(new SqlParameter("@UserID", Env.User.UserID));
+
+            result = DBProxy.Current.ExecuteSPByConn(sqlConn, "TransferToPO_1_ForThreadAllowance", paras);
+
+            return result;
+        }
+
+        #endregion
+
+        #region 將轉出PO的temp Table欄位資料補上
+
+        /// <summary>
+        /// 將轉出PO的欄位資料補上
+        /// </summary>
+        /// <param name="sqlConn">sqlConn</param>
+        /// <param name="poID">採購母單</param>
+        /// <param name="appType">重新產生資料時是否要覆蓋原始資料</param>
+        /// <param name="testType">是否為虛擬庫存計算(0: 實際寫入Table; 1: 僅傳出Temp Table; 2: 不回傳Temp Table; 3: 實際寫入Table，但不回傳Temp Table)</param>
+        /// <inheritdoc />
+        public static DualResult TransferToPO_2(SqlConnection sqlConn, string poID, bool appType, int testType)
+        {
+            DualResult result;
+            List<SqlParameter> paras = new List<SqlParameter>();
+
+            // String sqlCmd = "";
+            paras.Add(new SqlParameter("@PoID", poID));
+            paras.Add(new SqlParameter("@AppType", appType));
+            paras.Add(new SqlParameter("@TestType", testType));
+
+            result = DBProxy.Current.ExecuteSPByConn(sqlConn, "TransferToPO_2", paras);
+
+            return result;
+        }
+
+        #endregion
     }
 }

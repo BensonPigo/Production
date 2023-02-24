@@ -59,6 +59,7 @@
     [BomTypeSeason]           BIT             CONSTRAINT [DF_Fabric_BomTypeSeason] DEFAULT ((0)) NOT NULL,
     [BomTypeCareCode]         BIT             CONSTRAINT [DF_Fabric_BomTypeCareCode] DEFAULT ((0)) NOT NULL,
     [CannotOperateStock]      BIT             CONSTRAINT [DF_Fabric_CannotOperateStock] DEFAULT ((0)) NOT NULL,
+    [IsFOC]                   BIT             CONSTRAINT [DF_Fabric_IsFOC] DEFAULT ((0)) NOT NULL,
     CONSTRAINT [PK_Fabric] PRIMARY KEY CLUSTERED ([SCIRefno] ASC)
 );
 

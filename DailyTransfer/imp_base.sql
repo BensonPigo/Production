@@ -323,6 +323,85 @@ select
 from Trade_To_Pms.dbo.Supp as b WITH (NOLOCK)
 where not exists(select id from Production.dbo.Supp as a WITH (NOLOCK) where a.id = b.id)
 
+--Supp_ReplaceSupplier
+merge Production.dbo.Supp_ReplaceSupplier t 
+using Trade_To_Pms.dbo.Supp_ReplaceSupplier s
+on t.ID = s.ID and t.BrandID = s.BrandID and t.CountryID = s.CountryID and t.IsECFA = s.IsECFA
+when matched then update set
+            t.[SuppID]    = s.[SuppID]
+           ,t.[AddName]   = s.[AddName]
+           ,t.[AddDate]   = s.[AddDate]
+           ,t.[EditName]  = s.[EditName]
+           ,t.[EditDate]  = s.[EditDate]
+           ,t.[FactoryID] = s.[FactoryID]
+when not matched by target then
+	insert(
+            [ID]
+           ,[BrandID]
+           ,[CountryID]
+           ,[SuppID]
+           ,[AddName]
+           ,[AddDate]
+           ,[EditName]
+           ,[EditDate]
+           ,[IsECFA]
+           ,[FactoryID]
+           )
+	values(
+            s.[ID]
+           ,s.[BrandID]
+           ,s.[CountryID]
+           ,s.[SuppID]
+           ,s.[AddName]
+           ,s.[AddDate]
+           ,s.[EditName]
+           ,s.[EditDate]
+           ,s.[IsECFA]
+           ,s.[FactoryID]
+           )
+;
+--Supp_Replace_Detail
+merge Production.dbo.Supp_Replace_Detail t 
+using Trade_To_Pms.dbo.Supp_Replace_Detail s
+on t.SuppGroupFabric = s.SuppGroupFabric and t.Seq = s.Seq
+when matched then update set
+           t.[Type]            = s.[Type]
+           ,t.[FromCountry]     = s.[FromCountry]
+           ,t.[ToCountry]       = s.[ToCountry]
+           ,t.[SuppID]          = s.[SuppID]
+           ,t.[AddName]         = s.[AddName]
+           ,t.[AddDate]         = s.[AddDate]
+           ,t.[EditName]        = s.[EditName]
+           ,t.[EditDate]        = s.[EditDate]
+           ,t.[FactoryKpiCode]  = s.[FactoryKpiCode]
+when not matched by target then
+	insert(
+            [SuppGroupFabric]
+           ,[Seq]
+           ,[Type]
+           ,[FromCountry]
+           ,[ToCountry]
+           ,[SuppID]
+           ,[AddName]
+           ,[AddDate]
+           ,[EditName]
+           ,[EditDate]
+           ,[FactoryKpiCode]
+           )
+	values(
+            s.[SuppGroupFabric]
+           ,s.[Seq]
+           ,s.[Type]
+           ,s.[FromCountry]
+           ,s.[ToCountry]
+           ,s.[SuppID]
+           ,s.[AddName]
+           ,s.[AddDate]
+           ,s.[EditName]
+           ,s.[EditDate]
+           ,s.[FactoryKpiCode]
+           )
+;
 
 --Ability
 --AAbility
@@ -492,6 +571,7 @@ SET
 	  ,a.IsTrimCardOther = b.isTrimCardOther	
 	  ,a.IsThread        = b.IsThread
 	  ,a.LossQtyCalculateType        = b.LossQtyCalculateType
+	  ,a.AllowTransPoForGarmentSP = isnull(b.AllowTransPoForGarmentSP, 0)
 
 from Production.dbo.MtlType as a inner join Trade_To_Pms.dbo.MtlType as b ON a.id=b.id
 where b.EditDate between @DateStart and @DateEnd
@@ -513,7 +593,7 @@ ID
 	  ,isTrimCardOther
 	  ,IsThread
 	  ,LossQtyCalculateType
-
+      ,AllowTransPoForGarmentSP
 )
 select 
 ID
@@ -532,10 +612,30 @@ ID
 	  ,isTrimCardOther
 	  ,IsThread
 	  ,LossQtyCalculateType
-
+      ,isnull(b.AllowTransPoForGarmentSP, 0)
 from Trade_To_Pms.dbo.MtlType as b WITH (NOLOCK)
 where not exists(select id from Production.dbo.MtlType as a WITH (NOLOCK) where a.id = b.id)
 
+--MtlType_Limit
+
+delete MtlType_Limit
+INSERT INTO MtlType_Limit
+           ([ID]
+           ,[PoUnit]
+           ,[LimitDown]
+           ,[AddName]
+           ,[AddDate]
+           ,[EditName]
+           ,[EditDate])
+select
+     isnull([ID], '')
+    ,isnull([PoUnit], '')
+    ,isnull([LimitDown], 0)
+    ,isnull([AddName], '')
+    ,[AddDate]
+    ,isnull([EditName], '')
+    ,[EditDate]
+from Trade_To_Pms.dbo.MtlType_Limit
 
 --Artworktype Artworktype 
 --PMS ¦h,[InhouseOSP]
@@ -1016,6 +1116,7 @@ SET
 	  ,a.ProduceM	  =b.MDivisionID
 	  ,a.LoadingFactoryGroup	  =b.LoadingFactoryGroup
 	  ,a.PadPrintGroup	=	isnull(b.PadPrintGroup,'')
+	  ,a.IsECFA	= isnull(b.IsECFA, 0)
 from Production.dbo.Factory as a inner join Trade_To_Pms.dbo.Factory as b ON a.id=b.id
 --Factory1
 --Factory_TMS
@@ -3309,7 +3410,127 @@ when not matched by target then
       )
 when not matched by source then 
       delete;     
+      
+--------Thread_AllowanceScale---------------
 
+Merge Production.dbo.Thread_AllowanceScale as t
+Using Trade_To_Pms.dbo.Thread_AllowanceScale as s
+on t.ID = s.ID and t.Type = s.Type
+when matched then
+update set                  
+     t.[LowerBound]                     = isnull(s.[LowerBound], 0)
+    ,t.[UpperBound]                     = isnull(s.[UpperBound], 0)
+    ,t.[Allowance]                      = isnull(s.[Allowance], 0)
+    ,t.[Remark]                         = isnull(s.[Remark], '')
+    ,t.[AddName]                        = isnull(s.[AddName], '')
+    ,t.[AddDate]                        = s.[AddDate]                       
+    ,t.[EditName]                       = isnull(s.[EditName], '')
+    ,t.[EditDate]                       = s.[EditDate]                      
+    ,t.[Allowance_UserQtyBelowStandard] = isnull(s.[Allowance_UserQtyBelowStandard], 0)
+when not matched by target then
+      insert(
+            [ID]
+           ,[LowerBound]
+           ,[UpperBound]
+           ,[Allowance]
+           ,[Remark]
+           ,[AddName]
+           ,[AddDate]
+           ,[EditName]
+           ,[EditDate]
+           ,[Allowance_UserQtyBelowStandard]
+           ,[Type]
+           )
+       values(
+            isnull(s.[ID], '')
+           ,isnull(s.[LowerBound], 0)
+           ,isnull(s.[UpperBound], 0)
+           ,isnull(s.[Allowance], 0)
+           ,isnull(s.[Remark], '')
+           ,isnull(s.[AddName], '')
+           ,s.[AddDate]
+           ,isnull(s.[EditName], '')
+           ,s.[EditDate]
+           ,isnull(s.[Allowance_UserQtyBelowStandard], 0)
+           ,isnull(s.[Type], '')
+           )
+           ;
+           
+--------ThreadCommon---------------
+Merge Production.dbo.ThreadCommon as t
+Using Trade_To_Pms.dbo.ThreadCommon as s
+on t.Ukey = s.Ukey
+when matched then
+update set
+            t.[BrandID]  = isnull(s.[BrandID], '')
+           ,t.[Refno]    = isnull(s.[Refno], '')
+           ,t.[ColorId]  = isnull(s.[ColorId], '')
+           ,t.[AddDate]  = s.[AddDate] 
+           ,t.[AddName]  = isnull(s.[AddName], '')
+           ,t.[EditDate] = s.[EditDate]
+           ,t.[EditName] = isnull(s.[EditName], '')
+when not matched by target then
+      insert(
+            [Ukey]
+           ,[BrandID]
+           ,[Refno]
+           ,[ColorId]
+           ,[AddDate]
+           ,[AddName]
+           ,[EditDate]
+           ,[EditName]
+           )
+       values(
+            isnull(s.[Ukey], 0)
+           ,isnull(s.[BrandID], '')
+           ,isnull(s.[Refno], '')
+           ,isnull(s.[ColorId], '')
+           ,s.[AddDate]
+           ,isnull(s.[AddName], '')
+           ,s.[EditDate]
+           ,isnull(s.[EditName], '')
+           )
+           ;
+
+           
+--------ThreadCommon_Detail---------------
+Merge Production.dbo.ThreadCommon_Detail as t
+Using Trade_To_Pms.dbo.ThreadCommon_Detail as s
+on t.Ukey = s.Ukey
+when matched then
+update set
+            t.[ThreadCommonUkey] = isnull(s.[ThreadCommonUkey], 0)
+           ,t.[StartDate]        = s.[StartDate]
+           ,t.[EndDate]          = s.[EndDate]
+           ,t.[AddDate]          = s.[AddDate]
+           ,t.[AddName]          = isnull(s.[AddName], '')
+           ,t.[EditDate]         = s.[EditDate]
+           ,t.[EditName]         = isnull(s.[EditName], '')
+           ,t.[Type]             = isnull(s.[Type], '')
+when not matched by target then
+      insert(
+            [Ukey]
+           ,[ThreadCommonUkey]
+           ,[StartDate]
+           ,[EndDate]
+           ,[AddDate]
+           ,[AddName]
+           ,[EditDate]
+           ,[EditName]
+           ,[Type]
+           )
+       values(
+            isnull(s.[Ukey], 0)
+           ,isnull(s.[ThreadCommonUkey], 0)
+           ,s.[StartDate]
+           ,s.[EndDate]
+           ,s.[AddDate]
+           ,isnull(s.[AddName], '')
+           ,s.[EditDate]
+           ,isnull(s.[EditName], '')
+           ,isnull(s.[Type], '')
+           )
+           ;
 --------SubconReason---------------
 
 Merge Production.dbo.SubconReason as t

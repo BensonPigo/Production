@@ -15,6 +15,7 @@
 		[UseRatio] [numeric](5, 2) NULL,
 		[Allowance] [numeric](4, 2) NULL,
 		[AllowanceTubular] [numeric](4, 2) NULL,
+        [UseRatioHem] [numeric](5,2) CONSTRAINT [DF_Style_ThreadColorCombo_History_Detail_UseRatioHem] DEFAULT ((0)) NOT NULL,
 	PRIMARY KEY CLUSTERED 
 	(
 		[Style_ThreadColorCombo_HistoryUkey] ASC,

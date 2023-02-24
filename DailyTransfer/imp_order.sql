@@ -1464,7 +1464,39 @@ else
 			)
 		when not matched by source AND T.ID IN (SELECT ID FROM #Torder) then 
 			delete;
-
+			
+		--Order_BOF_Expend_OrderList
+		Merge Production.dbo.Order_BOF_Expend_OrderList as t
+		Using (select a.* from Trade_To_Pms.dbo.Order_BOF_Expend_OrderList a WITH (NOLOCK) inner join #Torder b on a.id = b.id) as s
+		on t.Order_BOF_ExpendUkey = s.Order_BOF_ExpendUkey and t.OrderID = s.OrderID
+		when matched then 
+			update set
+                t.[id]       = isnull(s.[id], '')
+               ,t.[AddName]  = isnull(s.[AddName], '')
+               ,t.[AddDate]  = s.[AddDate] 
+               ,t.[EditName] = isnull(s.[EditName], '')
+               ,t.[EditDate] = s.[EditDate]
+		when not matched by target then
+			insert(
+                [id]
+               ,[Order_BOF_ExpendUkey]
+               ,[OrderID]
+               ,[AddName]
+               ,[AddDate]
+               ,[EditName]
+               ,[EditDate]
+               )
+           values (
+                isnull(s.[id], '')
+               ,isnull(s.[Order_BOF_ExpendUkey], 0)
+               ,isnull(s.[OrderID], '')
+               ,isnull(s.[AddName], '')
+               ,s.[AddDate]
+               ,isnull(s.[EditName], '')
+               ,s.[EditDate]
+			)
+		when not matched by source AND T.ID IN (SELECT ID FROM #Torder) then 
+			delete;
 		-------------Order_BOA------------------Bill of Accessory
 		
 		Merge Production.dbo.Order_BOA as t
@@ -1719,6 +1751,40 @@ else
 			)
 		when not matched by source AND T.ID IN (SELECT ID FROM #Torder) then 
 			delete;
+			
+		--Order_BOA_Expend_OrderList
+		Merge Production.dbo.Order_BOA_Expend_OrderList as t
+		Using (select a.* from Trade_To_Pms.dbo.Order_BOA_Expend_OrderList a WITH (NOLOCK) inner join #Torder b on a.id = b.id) as s
+		on t.Order_BOA_ExpendUkey = s.Order_BOA_ExpendUkey and t.OrderID = s.OrderID
+		when matched then 
+			update set
+                t.[id]       = isnull(s.[id], '')
+               ,t.[AddName]  = isnull(s.[AddName], '')
+               ,t.[AddDate]  = s.[AddDate] 
+               ,t.[EditName] = isnull(s.[EditName], '')
+               ,t.[EditDate] = s.[EditDate]
+		when not matched by target then
+			insert(
+                [id]
+               ,[Order_BOA_ExpendUkey]
+               ,[OrderID]
+               ,[AddName]
+               ,[AddDate]
+               ,[EditName]
+               ,[EditDate]
+               )
+           values (
+                isnull(s.[id], '')
+               ,isnull(s.[Order_BOA_ExpendUkey], 0)
+               ,isnull(s.[OrderID], '')
+               ,isnull(s.[AddName], '')
+               ,s.[AddDate]
+               ,isnull(s.[EditName], '')
+               ,s.[EditDate]
+			)
+		when not matched by source AND T.ID IN (SELECT ID FROM #Torder) then 
+			delete;
+
 		---------------Order_BOA_Matching
 		Merge Production.dbo.Order_BOA_Matching as t
 		Using (

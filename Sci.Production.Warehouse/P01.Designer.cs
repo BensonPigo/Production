@@ -182,6 +182,7 @@
             this.dispSewingLine = new Sci.Win.UI.DisplayBox();
             this.labSewingLine = new Sci.Win.UI.Label();
             this.btnMaterialStatusSemifinished = new Sci.Win.UI.Button();
+            this.btnMaterialCompare = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -197,6 +198,7 @@
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.btnMaterialCompare);
             this.detailcont.Controls.Add(this.btnMaterialStatusSemifinished);
             this.detailcont.Controls.Add(this.dispSewingLine);
             this.detailcont.Controls.Add(this.labSewingLine);
@@ -1885,11 +1887,22 @@
             this.btnMaterialStatusSemifinished.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F);
             this.btnMaterialStatusSemifinished.Location = new System.Drawing.Point(606, 600);
             this.btnMaterialStatusSemifinished.Name = "btnMaterialStatusSemifinished";
-            this.btnMaterialStatusSemifinished.Size = new System.Drawing.Size(181, 27);
+            this.btnMaterialStatusSemifinished.Size = new System.Drawing.Size(183, 27);
             this.btnMaterialStatusSemifinished.TabIndex = 230;
             this.btnMaterialStatusSemifinished.Text = "Material Status (Semi-finished)";
             this.btnMaterialStatusSemifinished.UseVisualStyleBackColor = true;
             this.btnMaterialStatusSemifinished.Click += new System.EventHandler(this.BtnMaterialStatusSemifinished_Click);
+            // 
+            // btnMaterialCompare
+            // 
+            this.btnMaterialCompare.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
+            this.btnMaterialCompare.Location = new System.Drawing.Point(804, 600);
+            this.btnMaterialCompare.Name = "btnMaterialCompare";
+            this.btnMaterialCompare.Size = new System.Drawing.Size(183, 27);
+            this.btnMaterialCompare.TabIndex = 232;
+            this.btnMaterialCompare.Text = "Material Compare";
+            this.btnMaterialCompare.UseVisualStyleBackColor = true;
+            this.btnMaterialCompare.Click += new System.EventHandler(this.BtnMaterialCompare_Click);
             // 
             // P01
             // 
@@ -2075,5 +2088,6 @@
         private Win.UI.DisplayBox dispSewingLine;
         private Win.UI.Label labSewingLine;
         private Win.UI.Button btnMaterialStatusSemifinished;
+        private Win.UI.Button btnMaterialCompare;
     }
 }

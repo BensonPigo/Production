@@ -13,6 +13,7 @@
 			[IETMSVersion_Thread] [varchar](3) NULL,
 			[AddName] [varchar](10) NULL,
 			[AddDate] [datetime] NULL,
+            [VersionCOO] VARCHAR (2) CONSTRAINT [DF_Style_ThreadColorCombo_History_Version_VersionCOO] DEFAULT ('') NOT NULL,
 		 CONSTRAINT [PK_Style_ThreadColorCombo_History_Version] PRIMARY KEY CLUSTERED 
 		(
 			[Ukey] ASC

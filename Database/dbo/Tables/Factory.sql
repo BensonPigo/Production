@@ -49,6 +49,7 @@
     [ProduceM]             VARCHAR (8)    CONSTRAINT [DF_Factory_ProduceM] DEFAULT ('') NULL,
     [LoadingFactoryGroup]  VARCHAR (8)    CONSTRAINT [DF_Factory_LoadingFactoryGroup] DEFAULT ('') NULL,
     [PadPrintGroup]        VARCHAR (3)    DEFAULT ('') NOT NULL,
+    [IsECFA]               BIT            CONSTRAINT [DF_Factory_IsECFA] DEFAULT ((0)) NOT NULL,
     CONSTRAINT [PK_Factory] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 

@@ -2781,6 +2781,27 @@
     <Build Include="dbo\Functions\GetKeywordList.sql" />
     <Build Include="dbo\Functions\GetBOAExpend_NEW.sql" />
     <Build Include="dbo\Stored Procedures\BoaExpend_New.sql" />
+    <Build Include="dbo\Tables\ThreadCommon_Detail.sql" />
+    <Build Include="dbo\Tables\ThreadCommon.sql" />
+    <Build Include="dbo\Tables\Thread_AllowanceScale.sql" />
+    <Build Include="dbo\Tables\Order_BOF_Expend_OrderList.sql" />
+    <Build Include="dbo\Tables\Order_BOA_Expend_OrderList.sql" />
+    <Build Include="dbo\Tables\MtlType_Limit.sql" />
+    <Build Include="dbo\Functions\GetECFA_Refno.sql" />
+    <Build Include="dbo\Functions\GetECFA.sql" />
+    <Build Include="dbo\Functions\GetPOSeq.sql" />
+    <Build Include="dbo\Functions\GetThreadReplaceWithValue.sql" />
+    <Build Include="dbo\Functions\GetThreadReplace.sql" />
+    <Build Include="dbo\Stored Procedures\TransferToPO_2.sql" />
+    <Build Include="dbo\Stored Procedures\TransferToPO_1_ForThreadAllowance.sql" />
+    <Build Include="dbo\Stored Procedures\TransferToPO_1_ForBOF.sql" />
+    <Build Include="dbo\Stored Procedures\TransferToPO_1_ForBOA.sql" />
+    <Build Include="dbo\Stored Procedures\TransferToPO_1_ForAItem.sql" />
+    <Build Include="dbo\Functions\GetPo3Spec.sql" />
+    <Build Include="dbo\Tables\Supp_ReplaceSupplier.sql" />
+    <Build Include="dbo\Tables\Supp_Replace_Detail.sql" />
+    <Build Include="dbo\Functions\GetReplaceSupp_Thread.sql" />
+    <Build Include="dbo\Functions\GetReplaceSupp.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />

@@ -175,6 +175,12 @@
     <Compile Include="B09.Designer.cs">
       <DependentUpon>B09.cs</DependentUpon>
     </Compile>
+    <Compile Include="P01_MaterialCompare.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P01_MaterialCompare.Designer.cs">
+      <DependentUpon>P01_MaterialCompare.cs</DependentUpon>
+    </Compile>
     <Compile Include="P03_Spec.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -1564,6 +1570,9 @@
     <EmbeddedResource Include="P01_BatchReTransferMtlToScrap.resx">
       <DependentUpon>P01_BatchReTransferMtlToScrap.cs</DependentUpon>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P01_MaterialCompare.resx">
+      <DependentUpon>P01_MaterialCompare.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P01_ReTransferMtlToScrap.resx">
       <DependentUpon>P01_ReTransferMtlToScrap.cs</DependentUpon>
