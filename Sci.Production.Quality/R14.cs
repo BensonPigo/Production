@@ -232,6 +232,7 @@ namespace Sci.Production.Quality
 		                            SELECT  [Shift] 
 		                            FROM SpreadingInspection_InsCutRef_Inspection  
 		                            where SpreadingInspectionInsCutRefUkey = si.Ukey
+                                    group by [Shift]
 	                            )
 	                            tmp for xml path('')),1,1,'')
                             )sh
