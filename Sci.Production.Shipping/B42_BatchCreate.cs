@@ -161,7 +161,7 @@ and IsSubconIn = 0
                 DateBuyerDeliveryFrom = this.dateBuyerDelivery.Value1,
                 DateBuyerDeliveryTo = this.dateBuyerDelivery.Value2,
                 Style = this.txtstyle.Text,
-                Category = this.comboCategory.SelectedValue.ToString(),
+                Category = MyUtility.Convert.GetString(this.comboCategory.SelectedValue),
                 BrandID = this.txtbrand.Text,
                 ContractID = string.Empty,
             };
