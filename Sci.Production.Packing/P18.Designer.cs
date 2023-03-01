@@ -893,8 +893,6 @@
             // chkAutoCalibration
             // 
             this.chkAutoCalibration.AutoSize = true;
-            this.chkAutoCalibration.Checked = true;
-            this.chkAutoCalibration.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkAutoCalibration.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.chkAutoCalibration.Location = new System.Drawing.Point(9, 212);
             this.chkAutoCalibration.Name = "chkAutoCalibration";
