@@ -89,7 +89,7 @@ namespace Sci.Production.Packing
                                 string spNo = "　　　　SP No.: " + printData.Rows[p]["OrderID"] + "     Dest: " + printData.Rows[p]["Dest"];
                                 string cartonNo = "　　　　Carton No.: " + printData.Rows[p]["CTNStartNo"] + " OF " + printData.Rows[p]["CtnQty"];
                                 string poNo = "　　　　PO No.: " + printData.Rows[p]["PONo"];
-                                string sizeQty = "　　　　Size/Qty: " + printData.Rows[p]["SizeCode"] + "/" + printData.Rows[p]["ShipQty"];
+                                string sizeQty = "　　　　Size/Qty: " + printData.Rows[p]["NewSizeCode"] + "/" + printData.Rows[p]["ShipQty"];
                                 #endregion
 
                                 Bitmap oriBitmap = this.NewBarcode(barcode, barcodeShowText);
@@ -213,7 +213,7 @@ namespace Sci.Production.Packing
                                 string spNo = "　　　　SP No.: " + printData.Rows[i]["OrderID"];
                                 string cartonNo = "　　　　Carton No.: " + printData.Rows[i]["CTNStartNo"] + " OF " + printData.Rows[i]["CtnQty"];
                                 string poNo = "　　　　PO No.: " + printData.Rows[i]["PONo"];
-                                string sizeQty = "　　　　Size/Qty: " + printData.Rows[i]["SizeCode"] + "/" + printData.Rows[i]["ShipQty"];
+                                string sizeQty = "　　　　Size/Qty: " + printData.Rows[i]["NewSizeCode"] + "/" + printData.Rows[i]["ShipQty"];
                                 #endregion
 
                                 Bitmap oriBitmap = this.NewBarcode(barcode, barcodeShowText);
