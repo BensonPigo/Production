@@ -466,7 +466,7 @@
             // 
             this.btnBatchAssign.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
             this.btnBatchAssign.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F);
-            this.btnBatchAssign.Location = new System.Drawing.Point(377, 61);
+            this.btnBatchAssign.Location = new System.Drawing.Point(455, 61);
             this.btnBatchAssign.Name = "btnBatchAssign";
             this.btnBatchAssign.Size = new System.Drawing.Size(78, 30);
             this.btnBatchAssign.TabIndex = 17;
@@ -1192,7 +1192,7 @@
             // BtnImportMarker
             // 
             this.BtnImportMarker.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F);
-            this.BtnImportMarker.Location = new System.Drawing.Point(454, 61);
+            this.BtnImportMarker.Location = new System.Drawing.Point(532, 61);
             this.BtnImportMarker.Name = "BtnImportMarker";
             this.BtnImportMarker.Size = new System.Drawing.Size(82, 30);
             this.BtnImportMarker.TabIndex = 59;
@@ -1212,16 +1212,16 @@
             this.btnExWip.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnExWip.Location = new System.Drawing.Point(270, 56);
             this.btnExWip.Name = "btnExWip";
-            this.btnExWip.Size = new System.Drawing.Size(107, 35);
+            this.btnExWip.Size = new System.Drawing.Size(179, 35);
             this.btnExWip.TabIndex = 68;
-            this.btnExWip.Text = "Exclude fabric combo in WIP";
+            this.btnExWip.Text = "Exclude fabric combo in WIP && Notch Setting";
             this.btnExWip.UseVisualStyleBackColor = true;
             this.btnExWip.Click += new System.EventHandler(this.BtnExWip_Click);
             // 
             // btnKHImportMarker
             // 
             this.btnKHImportMarker.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F);
-            this.btnKHImportMarker.Location = new System.Drawing.Point(536, 61);
+            this.btnKHImportMarker.Location = new System.Drawing.Point(614, 61);
             this.btnKHImportMarker.Name = "btnKHImportMarker";
             this.btnKHImportMarker.Size = new System.Drawing.Size(107, 30);
             this.btnKHImportMarker.TabIndex = 69;
