@@ -709,6 +709,12 @@
     <Compile Include="TxtCentralizedFactory.Designer.cs">
       <DependentUpon>TxtCentralizedFactory.cs</DependentUpon>
     </Compile>
+    <Compile Include="WatermarkEditBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="WatermarkEditBox.Designer.cs">
+      <DependentUpon>WatermarkEditBox.cs</DependentUpon>
+    </Compile>
     <Compile Include="WH_BarcodeEmpty.cs">
       <SubType>Form</SubType>
     </Compile>

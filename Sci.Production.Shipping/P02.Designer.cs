@@ -99,6 +99,8 @@
             this.chkSpecialSending = new Sci.Win.UI.CheckBox();
             this.btnPaymentDetail = new Sci.Win.UI.Button();
             this.btnHistory = new Sci.Win.UI.Button();
+            this.checkBoxDoc = new Sci.Win.UI.CheckBox();
+            this.checkTestingCenter = new Sci.Win.UI.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -115,6 +117,8 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.checkTestingCenter);
+            this.masterpanel.Controls.Add(this.checkBoxDoc);
             this.masterpanel.Controls.Add(this.btnHistory);
             this.masterpanel.Controls.Add(this.btnPaymentDetail);
             this.masterpanel.Controls.Add(this.chkSpecialSending);
@@ -177,7 +181,7 @@
             this.masterpanel.Controls.Add(this.dateETD);
             this.masterpanel.Controls.Add(this.dateETA);
             this.masterpanel.Controls.Add(this.shapeContainer1);
-            this.masterpanel.Size = new System.Drawing.Size(875, 296);
+            this.masterpanel.Size = new System.Drawing.Size(998, 296);
             this.masterpanel.Controls.SetChildIndex(this.shapeContainer1, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateETA, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateETD, 0);
@@ -241,11 +245,13 @@
             this.masterpanel.Controls.SetChildIndex(this.chkSpecialSending, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnPaymentDetail, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnHistory, 0);
+            this.masterpanel.Controls.SetChildIndex(this.checkBoxDoc, 0);
+            this.masterpanel.Controls.SetChildIndex(this.checkTestingCenter, 0);
             // 
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 296);
-            this.detailpanel.Size = new System.Drawing.Size(875, 0);
+            this.detailpanel.Size = new System.Drawing.Size(998, 140);
             // 
             // gridicon
             // 
@@ -254,11 +260,11 @@
             // refresh
             // 
             this.refresh.Anchor = System.Windows.Forms.AnchorStyles.Top;
-            this.refresh.Location = new System.Drawing.Point(7534, 8);
+            this.refresh.Location = new System.Drawing.Point(7905, 8);
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(875, 0);
+            this.detailgridcont.Size = new System.Drawing.Size(998, 140);
             // 
             // detail2
             // 
@@ -274,11 +280,11 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(892, 387);
+            this.detail.Size = new System.Drawing.Size(998, 562);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(892, 261);
+            this.detailcont.Size = new System.Drawing.Size(998, 436);
             // 
             // detailbtm
             // 
@@ -288,8 +294,8 @@
             this.detailbtm.Controls.Add(this.labelRemark);
             this.detailbtm.Controls.Add(this.labelStatupdate);
             this.detailbtm.Controls.Add(this.displayStatupdate);
-            this.detailbtm.Location = new System.Drawing.Point(0, 261);
-            this.detailbtm.Size = new System.Drawing.Size(892, 126);
+            this.detailbtm.Location = new System.Drawing.Point(0, 436);
+            this.detailbtm.Size = new System.Drawing.Size(998, 126);
             this.detailbtm.Controls.SetChildIndex(this.displayStatupdate, 0);
             this.detailbtm.Controls.SetChildIndex(this.labelStatupdate, 0);
             this.detailbtm.Controls.SetChildIndex(this.labelRemark, 0);
@@ -538,7 +544,7 @@
             this.lineShape3,
             this.lineShape2,
             this.lineShape1});
-            this.shapeContainer1.Size = new System.Drawing.Size(875, 296);
+            this.shapeContainer1.Size = new System.Drawing.Size(998, 296);
             this.shapeContainer1.TabIndex = 24;
             this.shapeContainer1.TabStop = false;
             // 
@@ -1053,7 +1059,7 @@
             this.chkSpecialSending.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "IsSpecialSending", true));
             this.chkSpecialSending.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.chkSpecialSending.IsSupportEditMode = false;
-            this.chkSpecialSending.Location = new System.Drawing.Point(8, 85);
+            this.chkSpecialSending.Location = new System.Drawing.Point(8, 89);
             this.chkSpecialSending.Name = "chkSpecialSending";
             this.chkSpecialSending.ReadOnly = true;
             this.chkSpecialSending.Size = new System.Drawing.Size(129, 21);
@@ -1082,6 +1088,32 @@
             this.btnHistory.Text = "History";
             this.btnHistory.UseVisualStyleBackColor = true;
             this.btnHistory.Click += new System.EventHandler(this.BtnHistory_Click);
+            // 
+            // checkBoxDoc
+            // 
+            this.checkBoxDoc.AutoSize = true;
+            this.checkBoxDoc.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.checkBoxDoc.IsSupportEditMode = false;
+            this.checkBoxDoc.Location = new System.Drawing.Point(138, 89);
+            this.checkBoxDoc.Name = "checkBoxDoc";
+            this.checkBoxDoc.ReadOnly = true;
+            this.checkBoxDoc.Size = new System.Drawing.Size(168, 21);
+            this.checkBoxDoc.TabIndex = 67;
+            this.checkBoxDoc.Text = "DOC(Envelope ONLY)";
+            this.checkBoxDoc.UseVisualStyleBackColor = true;
+            // 
+            // checkTestingCenter
+            // 
+            this.checkTestingCenter.AutoSize = true;
+            this.checkTestingCenter.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Testing_Center", true));
+            this.checkTestingCenter.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.checkTestingCenter.Location = new System.Drawing.Point(308, 89);
+            this.checkTestingCenter.Name = "checkTestingCenter";
+            this.checkTestingCenter.ReadOnly = true;
+            this.checkTestingCenter.Size = new System.Drawing.Size(120, 21);
+            this.checkTestingCenter.TabIndex = 68;
+            this.checkTestingCenter.Text = "Testing Center";
+            this.checkTestingCenter.UseVisualStyleBackColor = true;
             // 
             // P02
             // 
@@ -1203,5 +1235,7 @@
         private Win.UI.CheckBox chkSpecialSending;
         private Win.UI.Button btnHistory;
         private Win.UI.Button btnPaymentDetail;
+        private Win.UI.CheckBox checkTestingCenter;
+        private Win.UI.CheckBox checkBoxDoc;
     }
 }

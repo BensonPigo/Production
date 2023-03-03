@@ -38,6 +38,7 @@ CREATE TABLE [dbo].[Express] (
     [ByCustomerAccountID] VARCHAR (15)   CONSTRAINT [DF_Express_ByCustomerAccountID] DEFAULT ('') NULL,
     [ByFtyCarrier]        VARCHAR (8)    CONSTRAINT [DF_Express_ByFtyCarrier] DEFAULT ('') NULL,
     [IsSpecialSending]    BIT            DEFAULT ((0)) NOT NULL,
+    [Testing_Center]      BIT            CONSTRAINT [DF_Express_Testing_Center] DEFAULT ((0)) NOT NULL , 
     CONSTRAINT [PK_Express] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 
@@ -219,3 +220,13 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'特殊寄�
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'HC歸屬(3RD,FTY,CUST,HAND)', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Express', @level2type = N'COLUMN', @level2name = N'FreightBy';
 
+
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'有無測試中心衍生的稅收',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'Express',
+    @level2type = N'COLUMN',
+    @level2name = N'Testing_Center'

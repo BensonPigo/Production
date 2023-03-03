@@ -56,7 +56,7 @@ namespace Sci.Production.Shipping
                 .Text("Category", header: "Category", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("CTNNo", header: "CTN No.", width: Widths.AnsiChars(5), settings: ctnno)
                 .Numeric("NW", header: "N.W. (kg)", integer_places: 5, decimal_places: 3, maximum: 99999.99m, minimum: 0m)
-                .Numeric("Price", header: "Price", integer_places: 6, decimal_places: 4, maximum: 999999.9999m, minimum: 0m)
+                .Numeric("Price", header: "Price", integer_places: 6, decimal_places: 4, maximum: 999999.9999m, minimum: 0m, iseditingreadonly: true)
                 .Numeric("ShipQty", header: "Q'ty", decimal_places: 2, iseditingreadonly: true)
                 .Text("UnitID", header: "Unit", width: Widths.AnsiChars(8))
                 .Text("Receiver", header: "Receiver", width: Widths.AnsiChars(10), settings: receiver)
@@ -113,7 +113,7 @@ Please create a Pullout Report with this Ship. Date as Pullout Date first!!");
                 @"select pd.ID,pd.OrderID,o.SeasonID,o.StyleID,'Sample' as Category,
     '' as CTNNo
     , [NW] = ROUND( TtlGW.GW * ( (pd.ShipQty * 1.0) / (TtlShipQty.Value *1.0)) ,3 ,1)  ----無條件捨去到小數點後第三位
-    , 0.0 as Price
+    , [Price] = s.stdcost
     ,pd.ShipQty
     ,o.StyleUnit as UnitID
     ,'' as Receiver
@@ -124,6 +124,8 @@ Please create a Pullout Report with this Ship. Date as Pullout Date first!!");
 from PackingList_Detail pd WITH (NOLOCK) 
 inner join PackingList p with (Nolock) on pd.id = p.id
 left join Orders o WITH (NOLOCK) on pd.OrderID = o.ID
+left join style s WITH (NOLOCK) on o.StyleUkey = s.Ukey 
+--left join Style s on o.StyleID = s.Id and o.BrandID = s.BrandID and o.SeasonID = s.SeasonID
 left join TPEPass1 t WITH (NOLOCK) on o.SMR = t.ID
 left join factory WITH (NOLOCK)  on o.FactoryID=Factory.ID
 OUTER APPLY(

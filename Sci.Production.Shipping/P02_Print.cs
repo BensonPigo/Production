@@ -322,23 +322,51 @@ group by UnitID", MyUtility.Convert.GetString(this.masterData["ID"]));
                 worksheet.Cells[11, 7] = this.masterData["PortAir"];
 
                 int rownum = 14;
-                object[,] objArray = new object[1, 12];
+                object[,] objArray = new object[1, 13];
                 foreach (DataRow dr in this.detailData.Rows)
                 {
+                    string strHSCODE = string.Empty;
+                    string strType = string.Empty;
+                    string strDescription = dr["Description"].ToString();
+                    string strStyle_Ref = string.Empty;
+
+                    if (dr["CategoryNameFromDD"].ToString() == "Sample")
+                    {
+                        strType = dr["Reason_Gender"].ToString();
+                        strHSCODE = dr["HSCode"].ToString();
+                        strDescription = dr["styleDescription"].ToString();
+                    }
+                    else if (dr["CategoryNameFromDD"].ToString() == "Material")
+                    {
+                        strType = dr["Fabric_MtlTypeID"].ToString();
+                        strHSCODE = dr["Fabric_HsCode"].ToString();
+                        strDescription = dr["fabricDescription"].ToString();
+                    }
+
+                    if (!MyUtility.Check.Empty(dr["StyleID"].ToString()) && !MyUtility.Check.Empty(dr["RefNo"].ToString()))
+                    {
+                        strStyle_Ref = dr["StyleID"] + " / " + dr["RefNo"];
+                    }
+                    else
+                    {
+                        strStyle_Ref = !MyUtility.Check.Empty(dr["StyleID"].ToString()) ? dr["StyleID"].ToString() : dr["RefNo"].ToString();
+                    }
+
                     int iCategory = MyUtility.Convert.GetInt(dr["Category"]);
                     objArray[0, 0] = dr["CTNNo"];
                     objArray[0, 1] = $"{dr["Seq1"]}-{dr["Seq2"]}";
                     objArray[0, 2] = this.CategoryName(iCategory);
-                    objArray[0, 3] = dr["StyleID"];
-                    objArray[0, 4] = dr["RefNo"];
-                    objArray[0, 5] = iCategory == 4 || iCategory == 9 ? dr["MtlDesc"] : dr["Description"];
-                    objArray[0, 6] = dr["Qty"];
-                    objArray[0, 7] = dr["UnitID"];
-                    objArray[0, 8] = "$";
-                    objArray[0, 9] = dr["Price"];
-                    objArray[0, 10] = "$";
-                    objArray[0, 11] = $"=G{rownum}*J{rownum}";
-                    worksheet.Range[string.Format("A{0}:L{0}", rownum)].Value2 = objArray;
+                    objArray[0, 3] = strType; // Type
+                    objArray[0, 4] = strHSCODE; // HS Code
+                    objArray[0, 5] = strStyle_Ref; // Style + Ref#
+                    objArray[0, 6] = strDescription; // Description
+                    objArray[0, 7] = dr["Qty"];
+                    objArray[0, 8] = dr["UnitID"];
+                    objArray[0, 9] = "$";
+                    objArray[0, 10] = dr["Price"];
+                    objArray[0, 11] = "$";
+                    objArray[0, 12] = $"=G{rownum}*J{rownum}";
+                    worksheet.Range[string.Format("A{0}:M{0}", rownum)].Value2 = objArray;
                     rownum++;
                 }
 
