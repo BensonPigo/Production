@@ -7,6 +7,10 @@ using System.Windows.Forms;
 using Ict.Win;
 using Ict;
 using Sci.Data;
+using System.Runtime.CompilerServices;
+using Sci.Production.CallPmsAPI;
+using System.Linq;
+using Microsoft.Office.Interop.Excel;
 
 namespace Sci.Production.Shipping
 {
@@ -146,11 +150,13 @@ order by c.CustomSP",
                 if (MyUtility.Convert.GetString(this.CurrentMaintain["DataFrom"]) == "PACKINGLIST")
                 {
                     sqlCmd = string.Format(
-                        @"select sum(NW) as NW,sum(GW) as GW,sum(ShipQty) as ShipQty,(select sum(ROUND(ed.ExportQty*c.CPU*c.VNMultiple,2))
-from VNExportDeclaration_Detail ed WITH (NOLOCK) 
-inner join VNConsumption c WITH (NOLOCK) on c.CustomSP = ed.CustomSP
-where ed.ID = '{0}'
-and c.VNContractID = '{1}') as CMP 
+                        @"
+select sum(NW) as NW,sum(GW) as GW,sum(ShipQty) as ShipQty
+,(select sum(ROUND(ed.ExportQty*c.CPU*c.VNMultiple,2))
+    from VNExportDeclaration_Detail ed WITH (NOLOCK) 
+    inner join VNConsumption c WITH (NOLOCK) on c.CustomSP = ed.CustomSP
+    where ed.ID = '{0}'
+    and c.VNContractID = '{1}') as CMP 
 from PackingList WITH (NOLOCK) where INVNo = '{2}'",
                         MyUtility.Convert.GetString(this.CurrentMaintain["ID"]),
                         MyUtility.Convert.GetString(this.CurrentMaintain["VNContractID"]),
@@ -159,18 +165,20 @@ from PackingList WITH (NOLOCK) where INVNo = '{2}'",
                 else
                 {
                     sqlCmd = string.Format(
-                        @"select TotalNW as NW,TotalGW as GW,TotalShipQty as ShipQty,(select sum(ROUND(ed.ExportQty*c.CPU*c.VNMultiple,2))
-from VNExportDeclaration_Detail ed WITH (NOLOCK) 
-inner join VNConsumption c WITH (NOLOCK) on c.CustomSP = ed.CustomSP
-where ed.ID = '{0}'
-and c.VNContractID = '{1}') as CMP 
+                        @"
+select TotalNW as NW,TotalGW as GW,TotalShipQty as ShipQty
+,(select sum(ROUND(ed.ExportQty*c.CPU*c.VNMultiple,2))
+    from VNExportDeclaration_Detail ed WITH (NOLOCK) 
+    inner join VNConsumption c WITH (NOLOCK) on c.CustomSP = ed.CustomSP
+    where ed.ID = '{0}'
+    and c.VNContractID = '{1}') as CMP 
 from GMTBooking WITH (NOLOCK) where ID = '{2}'",
                         MyUtility.Convert.GetString(this.CurrentMaintain["ID"]),
                         MyUtility.Convert.GetString(this.CurrentMaintain["VNContractID"]),
                         MyUtility.Convert.GetString(this.CurrentMaintain["InvNo"]));
                 }
 
-                DataTable tmpData;
+                System.Data.DataTable tmpData;
                 DualResult result = DBProxy.Current.Select(null, sqlCmd, out tmpData);
                 if (result && tmpData.Rows.Count > 0)
                 {
@@ -340,7 +348,7 @@ from GMTBooking WITH (NOLOCK) where ID = '{2}'",
 from VNExportDeclaration_Detail ed WITH (NOLOCK) 
 where ed.ID = '{0}'
 group by ed.CustomSP", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
-            DataTable updateData;
+            System.Data.DataTable updateData;
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out updateData);
             if (!result)
             {
@@ -387,10 +395,8 @@ group by ed.CustomSP", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
 
             // 檢查報關數量是否跟Garment Booking數量一致，若不一致會請User確認是否要繼續做Confirmed
             string qty = MyUtility.GetValue.Lookup(string.Format(
-                @"select (isnull((select sum(pd.ShipQty)
-from PackingList p WITH (NOLOCK) 
-inner join PackingList_Detail pd on p.ID = pd.ID
-where p.INVNo = '{0}'),0)-
+                @"
+select (isnull((select TotalShipQty from GMTBooking where id = '{0}'),0)-
 isnull((select sum(ExportQty) as ExportQty from VNExportDeclaration_Detail WITH (NOLOCK) where ID = '{1}'),0)) as BalanceQty",
                 MyUtility.Convert.GetString(this.CurrentMaintain["InvNo"]),
                 MyUtility.Convert.GetString(this.CurrentMaintain["ID"])));
@@ -410,7 +416,7 @@ isnull((select sum(ExportQty) as ExportQty from VNExportDeclaration_Detail WITH 
 from VNExportDeclaration_Detail ed WITH (NOLOCK) 
 where ed.ID = '{0}'
 group by ed.CustomSP", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
-            DataTable updateData;
+            System.Data.DataTable updateData;
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out updateData);
             if (!result)
             {
@@ -420,7 +426,7 @@ group by ed.CustomSP", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
 
             foreach (DataRow dr in updateData.Rows)
             {
-                updateCmds.Add(string.Format("update VNConsumption set PulloutQty = PulloutQty+{0} where CustomSP = '{1}' and VNContractID = '{2}';", MyUtility.Convert.GetString(dr["ExportQty"]), MyUtility.Convert.GetString(dr["CustomSP"]), MyUtility.Convert.GetString(this.CurrentMaintain["VNContractID"])));
+                updateCmds.Add($"update VNConsumption set PulloutQty = PulloutQty+{MyUtility.Convert.GetString(dr["ExportQty"])} where CustomSP = '{MyUtility.Convert.GetString(dr["CustomSP"])}' and VNContractID = '{MyUtility.Convert.GetString(this.CurrentMaintain["VNContractID"])}';");
             }
 
             updateCmds.Add(string.Format("update VNExportDeclaration set EditDate = GETDATE(), EditName = '{0}', Status = 'Confirmed' where ID = '{1}';", Env.User.UserID, MyUtility.Convert.GetString(this.CurrentMaintain["ID"])));
@@ -443,7 +449,7 @@ group by ed.CustomSP", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
 from VNExportDeclaration_Detail ed WITH (NOLOCK) 
 where ed.ID = '{0}'
 group by ed.CustomSP", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
-            DataTable updateData;
+            System.Data.DataTable updateData;
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out updateData);
             if (!result)
             {
@@ -453,7 +459,7 @@ group by ed.CustomSP", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
 
             foreach (DataRow dr in updateData.Rows)
             {
-                updateCmds.Add(string.Format("update VNConsumption set PulloutQty = PulloutQty-{0} where CustomSP = '{1}' and VNContractID = '{2}';", MyUtility.Convert.GetString(dr["ExportQty"]), MyUtility.Convert.GetString(dr["CustomSP"]), MyUtility.Convert.GetString(this.CurrentMaintain["VNContractID"])));
+                updateCmds.Add($"update VNConsumption set PulloutQty = PulloutQty-{MyUtility.Convert.GetString(dr["ExportQty"])} where CustomSP = '{MyUtility.Convert.GetString(dr["CustomSP"])}' and VNContractID = '{MyUtility.Convert.GetString(this.CurrentMaintain["VNContractID"])}';");
             }
 
             updateCmds.Add(string.Format("update VNExportDeclaration set EditDate = GETDATE(), EditName = '{0}', Status = 'New' where ID = '{1}';", Env.User.UserID, MyUtility.Convert.GetString(this.CurrentMaintain["ID"])));
@@ -586,25 +592,40 @@ group by ed.CustomSP", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
             }
         }
 
-        // 產生Detail資料
-        private void GenDetailData()
+        private string DeclareString()
         {
-            #region 組撈資料SQL
-            string sqlCmd = string.Format(
-                @"Declare @invno VARCHAR(25),
+            string strReturn = $@"
+Declare @invno VARCHAR(25),
 		@contractid VARCHAR(15)
 
-SET @invno = '{0}'
-SET @contractid = '{1}'
+SET @invno = '{MyUtility.Convert.GetString(this.CurrentMaintain["InvNo"])}'
+SET @contractid = '{MyUtility.Convert.GetString(this.CurrentMaintain["VNContractID"])}'
+";
+            return strReturn; 
+        }
 
-DECLARE cursor_packingdata CURSOR FOR
+        private string PackingSql(bool isA2B)
+        {
+            string strtmp = isA2B ? string.Empty : "into #tmp";
+            string sqlcmd = $@"
+
 select pd.OrderID,isnull(o.StyleID,'') as StyleID,pd.Article,pd.SizeCode,sum(pd.ShipQty) as TtlShipQty,
 isnull(o.Category,'') as Category,isnull(o.SeasonID,'') as SeasonID,isnull(o.BrandID,'') as BrandID,isnull(o.StyleUkey,0) as StyleUKey
+{strtmp}
 from PackingList p WITH (NOLOCK) 
 inner join PackingList_Detail pd WITH (NOLOCK) on p.ID = pd.ID
 left join Orders o WITH (NOLOCK) on o.ID = pd.OrderID
 where p.INVNo = @invno
 group by pd.OrderID,pd.Article,pd.SizeCode,o.Category,o.StyleID,o.SeasonID,o.BrandID,o.StyleUkey
+";
+            return sqlcmd;
+        }
+
+        private string CustomSPSql()
+        {
+            string sqlcmd = $@"
+DECLARE cursor_packingdata CURSOR FOR
+select * from #tmp
 
 DECLARE @tempCustomSP TABLE (
    CustomSP VARCHAR(8),
@@ -612,6 +633,7 @@ DECLARE @tempCustomSP TABLE (
 )
 
 DECLARE @tempPackingList TABLE (
+   ID VARCHAR(13),
    OrderID VARCHAR(13),
    StyleID VARCHAR(15),
    SeasonID VARCHAR(10),
@@ -679,21 +701,26 @@ BEGIN
 	CLOSE cursor_consumption
 	DEALLOCATE cursor_consumption
 
-	INSERT INTO @tempPackingList (OrderID,StyleID,SeasonID,BrandID,Category,CustomSP,Article,SizeCode,ExportQty,StyleUKey)
-	VALUES (@orderid,@styleid,@seasonid,@brandid,@category,@customsp,@article,@sizecode,@ttlshipqty,@styleukey)
+	INSERT INTO @tempPackingList (ID,OrderID,StyleID,SeasonID,BrandID,Category,CustomSP,Article,SizeCode,ExportQty,StyleUKey)
+	VALUES ('',@orderid,@styleid,@seasonid,@brandid,@category,@customsp,@article,@sizecode,@ttlshipqty,@styleukey)
 	
 	FETCH NEXT FROM cursor_packingdata INTO @orderid,@styleid,@article,@sizecode,@ttlshipqty,@category,@seasonid,@brandid,@styleukey
 END
 CLOSE cursor_packingdata
 DEALLOCATE cursor_packingdata
 
-select * from @tempPackingList",
-                MyUtility.Convert.GetString(this.CurrentMaintain["InvNo"]),
-                MyUtility.Convert.GetString(this.CurrentMaintain["VNContractID"]));
+select * from @tempPackingList
 
-            #endregion
-            DataTable tmpDetail;
-            DualResult result = DBProxy.Current.Select(null, sqlCmd, out tmpDetail);
+drop table #tmp
+";
+
+            return sqlcmd;
+        }
+
+        // 產生Detail資料
+        private void GenDetailData()
+        {
+            DualResult result = DBProxy.Current.Select(null, this.DeclareString() + this.PackingSql(false) + this.CustomSPSql(), out System.Data.DataTable tmpDetail);
             if (!result)
             {
                 MyUtility.Msg.WarningBox("Query data fail, Please try again re-calculate.");
@@ -702,7 +729,7 @@ select * from @tempPackingList",
 
             foreach (DataRow dr in tmpDetail.Rows)
             {
-                DataRow newRow = ((DataTable)this.detailgridbs.DataSource).NewRow();
+                DataRow newRow = ((System.Data.DataTable)this.detailgridbs.DataSource).NewRow();
                 newRow["OrderID"] = dr["OrderID"];
                 newRow["StyleID"] = dr["StyleID"];
                 newRow["SeasonID"] = dr["SeasonID"];
@@ -714,7 +741,13 @@ select * from @tempPackingList",
                 newRow["ExportQty"] = dr["ExportQty"];
                 newRow["StyleUKey"] = dr["StyleUKey"];
 
-                ((DataTable)this.detailgridbs.DataSource).Rows.Add(newRow);
+                ((System.Data.DataTable)this.detailgridbs.DataSource).Rows.Add(newRow);
+            }
+
+            result = this.MergeDetailA2B();
+            if (!result)
+            {
+                return;
             }
         }
 
@@ -747,6 +780,76 @@ select * from @tempPackingList",
 
                 this.GenDetailData();
             }
+        }
+
+        private string GetPackingIDForA2BWhere(IEnumerable<DataRow> dataRows, string plFromRgCode)
+        {
+            return dataRows.Where(s => s["PLFromRgCode"].ToString() == plFromRgCode)
+                                                       .Select(s => $"'{s["PackingListID"].ToString()}'")
+                                                       .JoinToString(",");
+        }
+
+        private DualResult MergeDetailA2B()
+        {
+            string sqlGetGMTBooking_Detail = $"select distinct PLFromRgCode from GMTBooking_Detail with (nolock) where ID = '{this.CurrentMaintain["Invno"]}'";
+            DualResult result = DBProxy.Current.Select(null, sqlGetGMTBooking_Detail, out System.Data.DataTable dtGMTBooking_Detail);
+            if (!result)
+            {
+                this.ShowErr(result);
+                return result;
+            }
+
+            if (dtGMTBooking_Detail.Rows.Count == 0)
+            {
+                return new DualResult(true);
+            }
+
+            var listPLFromRgCode = dtGMTBooking_Detail.AsEnumerable().Select(s => s["PLFromRgCode"].ToString()).Distinct();
+
+            foreach (string pLFromRgCode in listPLFromRgCode)
+            {
+                string sqlGetA2B = this.DeclareString() + this.PackingSql(true);
+
+                result = PackingA2BWebAPI.GetDataBySql(pLFromRgCode, sqlGetA2B, out System.Data.DataTable dtPacking);
+
+                if (!result)
+                {
+                    return result;
+                }
+
+                result = MyUtility.Tool.ProcessWithDatatable(dtPacking, string.Empty, this.DeclareString() + this.CustomSPSql(), out System.Data.DataTable dtResult);
+
+                if (!result)
+                {
+                    return result;
+                }
+
+                System.Data.DataTable dt_Detail = (System.Data.DataTable)this.detailgridbs.DataSource;
+                foreach (DataRow dr in dtResult.Rows)
+                {
+                    DataRow[] findrow;
+                    findrow = dt_Detail.AsEnumerable().Where(row => row.RowState != DataRowState.Deleted
+                                                     && row["OrderID"].EqualString(dr["OrderID"].ToString())
+                                                     && row["StyleID"].EqualString(dr["StyleID"])
+                                                     && row["SeasonID"].EqualString(dr["SeasonID"].ToString())
+                                                     && row["BrandID"].EqualString(dr["BrandID"].ToString())
+                                                     && row["Category"].EqualString(dr["Category"].ToString())
+                                                     && row["CustomSP"].EqualString(dr["CustomSP"].ToString())
+                                                     && row["Article"].EqualString(dr["Article"].ToString())
+                                                     && row["SizeCode"].EqualString(dr["SizeCode"].ToString())
+                                                     ).ToArray();
+
+                    if (findrow.Length == 0)
+                    {
+                        dr["ID"] = this.CurrentMaintain["ID"];
+                        dr.AcceptChanges();
+                        dr.SetAdded();
+                        dt_Detail.ImportRow(dr);
+                    }
+                }
+            }
+
+            return new DualResult(true);
         }
     }
 }
