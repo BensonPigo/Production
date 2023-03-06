@@ -539,7 +539,7 @@ where Poid='{dr["id"]}' and seq1='{dr["Seq1"]}' and seq2='{dr["Seq2"]}'", out dr
             ;
             #endregion
 
-            this.gridMaterialStatus.ColumnFrozen(this.gridMaterialStatus.Columns["fabrictype2"].Index);
+            this.gridMaterialStatus.ColumnFrozen(this.gridMaterialStatus.Columns["seq2"].Index);
             this.gridMaterialStatus.Columns["id"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
             this.gridMaterialStatus.Columns["FinalETA"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
             this.gridMaterialStatus.Columns["CurrencyID"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
