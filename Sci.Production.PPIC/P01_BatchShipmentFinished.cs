@@ -164,6 +164,14 @@ namespace Sci.Production.PPIC
             }
         }
 
+        private void Txtuser1_Validated(object sender, EventArgs e)
+        {
+            if (this.txtuser1.TextBox1.OldValue != this.txtuser1.TextBox1.Text)
+            {
+                this.SetFilter();
+            }
+        }
+
         // update
         private void BtnUpdate_Click(object sender, EventArgs e)
         {
@@ -488,6 +496,11 @@ outer apply (
             if (!MyUtility.Check.Empty(this.dateBuyerDelivery.Value2))
             {
                 stringFilter.Append(string.Format(" and BuyerDelivery <= '{0}'", this.dateBuyerDelivery.Value2));
+            }
+
+            if (!MyUtility.Check.Empty(this.txtuser1.TextBox1.Text))
+            {
+                stringFilter.Append(string.Format(" and MCHandle like '{0}%'", this.txtuser1.TextBox1.Text));
             }
 
             ((DataTable)this.listControlBindingSource1.DataSource).DefaultView.RowFilter = stringFilter.ToString();

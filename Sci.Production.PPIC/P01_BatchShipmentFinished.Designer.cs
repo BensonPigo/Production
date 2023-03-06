@@ -33,6 +33,8 @@
             this.panel1 = new Sci.Win.UI.Panel();
             this.panel2 = new Sci.Win.UI.Panel();
             this.panel3 = new Sci.Win.UI.Panel();
+            this.lbMchandle = new Sci.Win.UI.Label();
+            this.txtuser1 = new Sci.Production.Class.Txtuser();
             this.txtBuyer = new Sci.Win.UI.TextBox();
             this.txtStyle = new Sci.Win.UI.TextBox();
             this.btnToExcel = new Sci.Win.UI.Button();
@@ -64,13 +66,15 @@
             // panel2
             // 
             this.panel2.Dock = System.Windows.Forms.DockStyle.Right;
-            this.panel2.Location = new System.Drawing.Point(848, 0);
+            this.panel2.Location = new System.Drawing.Point(1027, 0);
             this.panel2.Name = "panel2";
             this.panel2.Size = new System.Drawing.Size(10, 427);
             this.panel2.TabIndex = 1;
             // 
             // panel3
             // 
+            this.panel3.Controls.Add(this.lbMchandle);
+            this.panel3.Controls.Add(this.txtuser1);
             this.panel3.Controls.Add(this.txtBuyer);
             this.panel3.Controls.Add(this.txtStyle);
             this.panel3.Controls.Add(this.btnToExcel);
@@ -81,8 +85,26 @@
             this.panel3.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel3.Location = new System.Drawing.Point(10, 0);
             this.panel3.Name = "panel3";
-            this.panel3.Size = new System.Drawing.Size(838, 49);
+            this.panel3.Size = new System.Drawing.Size(1017, 49);
             this.panel3.TabIndex = 0;
+            // 
+            // lbMchandle
+            // 
+            this.lbMchandle.Location = new System.Drawing.Point(340, 13);
+            this.lbMchandle.Name = "lbMchandle";
+            this.lbMchandle.Size = new System.Drawing.Size(67, 23);
+            this.lbMchandle.TabIndex = 6;
+            this.lbMchandle.Text = "Mchandle";
+            // 
+            // txtuser1
+            // 
+            this.txtuser1.DisplayBox1Binding = "";
+            this.txtuser1.Location = new System.Drawing.Point(410, 12);
+            this.txtuser1.Name = "txtuser1";
+            this.txtuser1.Size = new System.Drawing.Size(78, 23);
+            this.txtuser1.TabIndex = 5;
+            this.txtuser1.TextBox1Binding = "";
+            this.txtuser1.TextBox1.Validated += new System.EventHandler(this.Txtuser1_Validated);
             // 
             // txtBuyer
             // 
@@ -108,7 +130,7 @@
             // 
             // btnToExcel
             // 
-            this.btnToExcel.Location = new System.Drawing.Point(736, 9);
+            this.btnToExcel.Location = new System.Drawing.Point(909, 9);
             this.btnToExcel.Name = "btnToExcel";
             this.btnToExcel.Size = new System.Drawing.Size(96, 30);
             this.btnToExcel.TabIndex = 3;
@@ -119,7 +141,7 @@
             // dateBuyerDelivery
             // 
             this.dateBuyerDelivery.IsRequired = false;
-            this.dateBuyerDelivery.Location = new System.Drawing.Point(438, 13);
+            this.dateBuyerDelivery.Location = new System.Drawing.Point(611, 13);
             this.dateBuyerDelivery.Name = "dateBuyerDelivery";
             this.dateBuyerDelivery.Size = new System.Drawing.Size(280, 23);
             this.dateBuyerDelivery.TabIndex = 2;
@@ -128,7 +150,7 @@
             // labelBuyerDelivery
             // 
             this.labelBuyerDelivery.Lines = 0;
-            this.labelBuyerDelivery.Location = new System.Drawing.Point(340, 13);
+            this.labelBuyerDelivery.Location = new System.Drawing.Point(513, 13);
             this.labelBuyerDelivery.Name = "labelBuyerDelivery";
             this.labelBuyerDelivery.Size = new System.Drawing.Size(94, 23);
             this.labelBuyerDelivery.TabIndex = 4;
@@ -159,14 +181,14 @@
             this.panel4.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.panel4.Location = new System.Drawing.Point(10, 382);
             this.panel4.Name = "panel4";
-            this.panel4.Size = new System.Drawing.Size(838, 45);
+            this.panel4.Size = new System.Drawing.Size(1017, 45);
             this.panel4.TabIndex = 1;
             // 
             // btnClose
             // 
             this.btnClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnClose.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.btnClose.Location = new System.Drawing.Point(744, 7);
+            this.btnClose.Location = new System.Drawing.Point(923, 7);
             this.btnClose.Name = "btnClose";
             this.btnClose.Size = new System.Drawing.Size(80, 30);
             this.btnClose.TabIndex = 1;
@@ -176,7 +198,7 @@
             // btnUpdate
             // 
             this.btnUpdate.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnUpdate.Location = new System.Drawing.Point(645, 7);
+            this.btnUpdate.Location = new System.Drawing.Point(824, 7);
             this.btnUpdate.Name = "btnUpdate";
             this.btnUpdate.Size = new System.Drawing.Size(80, 30);
             this.btnUpdate.TabIndex = 0;
@@ -190,7 +212,7 @@
             this.panel5.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel5.Location = new System.Drawing.Point(10, 49);
             this.panel5.Name = "panel5";
-            this.panel5.Size = new System.Drawing.Size(838, 333);
+            this.panel5.Size = new System.Drawing.Size(1017, 333);
             this.panel5.TabIndex = 4;
             // 
             // gridBatchShipmentFinished
@@ -221,14 +243,14 @@
             this.gridBatchShipmentFinished.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridBatchShipmentFinished.RowTemplate.Height = 24;
             this.gridBatchShipmentFinished.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.gridBatchShipmentFinished.Size = new System.Drawing.Size(838, 333);
+            this.gridBatchShipmentFinished.Size = new System.Drawing.Size(1017, 333);
             this.gridBatchShipmentFinished.TabIndex = 0;
             this.gridBatchShipmentFinished.TabStop = false;
             // 
             // P01_BatchShipmentFinished
             // 
             this.CancelButton = this.btnClose;
-            this.ClientSize = new System.Drawing.Size(858, 427);
+            this.ClientSize = new System.Drawing.Size(1037, 427);
             this.Controls.Add(this.panel5);
             this.Controls.Add(this.panel4);
             this.Controls.Add(this.panel3);
@@ -236,6 +258,7 @@
             this.Controls.Add(this.panel1);
             this.DefaultControl = "txtStyle";
             this.Name = "P01_BatchShipmentFinished";
+            this.OnLineHelpID = "Sci.Win.Subs.Base";
             this.Text = "Batch Shipment Finished";
             this.panel3.ResumeLayout(false);
             this.panel3.PerformLayout();
@@ -265,5 +288,7 @@
         private Win.UI.Button btnUpdate;
         private Win.UI.TextBox txtBuyer;
         private Win.UI.TextBox txtStyle;
+        private Win.UI.Label lbMchandle;
+        private Class.Txtuser txtuser1;
     }
 }
