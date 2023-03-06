@@ -134,13 +134,6 @@ namespace Sci.Production.Cutting
             [Cut Cell] = wo.CutCellID,
             [Combination] = wo.FabricCombo,
             [Layers] = sum(wo.Layer),
-            [Layers Level]= case when sum(wo.Layer) between 1 and 5 then '1~5'
-						            when sum(wo.Layer) between 6 and 10 then '6~10'
-						            when sum(wo.Layer) between 11 and 15 then '11~15'
-						            when sum(wo.Layer) between 16 and 30 then '16~30'
-						            when sum(wo.Layer) between 31 and 50 then '31~50'
-						            else '50 above'
-						            end ,
             [LackingLayers] = sum(wo.Layer) - sum(isnull(acc.val,0)),
             [Ratio] = stuff(SQty.val,1,1,''),
             [Consumption] = sum(wo.cons) ,
@@ -241,7 +234,7 @@ namespace Sci.Production.Cutting
             )MW
             drop table #tmp
 
-            select
+            select 
             [M],
             [Factory],
             [Fabrication],
@@ -260,15 +253,21 @@ namespace Sci.Production.Cutting
             [SpreadingNoID],
             [Cut Cell],
             [Combination],
-            [Layers],
-            [Layers Level],
+			[Layer] = sum([Layers]),
+            [Layers Level]= case when sum([Layers]) between 1 and 5 then '1~5'
+						        when sum([Layers]) between 6 and 10 then '6~10'
+						        when sum([Layers]) between 11 and 15 then '11~15'
+						        when sum([Layers]) between 16 and 30 then '16~30'
+						        when sum([Layers]) between 31 and 50 then '31~50'
+						        else '50 above'
+						        end ,
             [LackingLayers],
             [Ratio],
-            [Consumption],
-            [Act. Cons. Output],
-            [Balance Cons.],
-            [Spreading Time (mins)],
-            [Cutting Time (mins)],
+            sum([Consumption]),
+            sum([Act. Cons. Output]),
+            sum([Balance Cons.]),
+            sum([Spreading Time (mins)]),
+            sum([Cutting Time (mins)]),
             [Marker Name],
             [Marker No.],
             [Marker Width],
@@ -282,7 +281,15 @@ namespace Sci.Production.Cutting
             [Delay Reason],
             [Remark]
             from #tmp1
+			
+			group by [M],[Factory],[Fabrication],[Est.Cutting Date],[Act.Cutting Date],[Earliest Sewing Inline],
+            [Sewing Inline(SP)],[Master SP#],[SP#],[Brand],[Style#],[FabRef#],[Switch to Workorder],[Ref#],
+            [Cut#],[SpreadingNoID],[Cut Cell],[Combination],[LackingLayers],[Ratio],[Marker Name],
+            [Marker No.],[Marker Width], [Marker Length],[Cutting Perimeter],[Cutting Perimeter(Decimal)],
+            [Straight Length],[Straight Length (Decimal)],[Curved Length],
+            [Curved Length (Decimal)],[Delay Reason],[Remark]
             drop table #tmp1";
+
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out this.printData);
             if (!result)
             {
