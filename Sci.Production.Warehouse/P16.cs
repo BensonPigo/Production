@@ -452,9 +452,6 @@ where (isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f
 
                 #endregion 檢查負數庫存
             }
-            #region -- 更新表頭狀態資料 --
-
-            #endregion 更新表頭狀態資料
             #region -- update Lack.issuelackid & Lack.issuelackdt
             StringBuilder sqlupd4 = new StringBuilder();
             sqlupd4.Append($@"update dbo.Lack set dbo.Lack.IssueLackDT = GetDate(), IssueLackId = '{this.CurrentMaintain["id"]}' where id = '{this.CurrentMaintain["requestid"]}';");
@@ -511,6 +508,12 @@ where dbo.Lack_Detail.id = '{this.CurrentMaintain["requestid"]}'
                         {
                             throw result.GetException();
                         }
+
+                        // Barcode 需要判斷新的庫存, 在更新 FtyInventory 之後
+                        if (!(result = Prgs.UpdateWH_Barcode(true, (DataTable)this.detailgridbs.DataSource, this.Name, out bool fromNewBarcode, dtOriFtyInventory)))
+                        {
+                            throw result.GetException();
+                        }
                     }
 
                     if (!(result = DBProxy.Current.Execute(null, $"update IssueLack set status='Confirmed', editname = '{Env.User.UserID}' , editdate =  GetDate(), apvname = '{Env.User.UserID}', apvdate = GetDate() where id = '{this.CurrentMaintain["id"]}'")))
@@ -519,12 +522,6 @@ where dbo.Lack_Detail.id = '{this.CurrentMaintain["requestid"]}'
                     }
 
                     if (!(result = DBProxy.Current.Execute(null, sqlupd4.ToString())))
-                    {
-                        throw result.GetException();
-                    }
-
-                    // Barcode 需要判斷新的庫存, 在更新 FtyInventory 之後
-                    if (!(result = Prgs.UpdateWH_Barcode(true, (DataTable)this.detailgridbs.DataSource, this.Name, out bool fromNewBarcode, dtOriFtyInventory)))
                     {
                         throw result.GetException();
                     }
@@ -712,6 +709,12 @@ where (isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f
                         {
                             throw result.GetException();
                         }
+
+                        // Barcode 需要判斷新的庫存, 在更新 FtyInventory 之後
+                        if (!(result = Prgs.UpdateWH_Barcode(false, (DataTable)this.detailgridbs.DataSource, this.Name, out bool fromNewBarcode, dtOriFtyInventory)))
+                        {
+                            throw result.GetException();
+                        }
                     }
 
                     if (!(result = DBProxy.Current.Execute(null, $"update IssueLack set status='New', editname = '{Env.User.UserID}' , editdate = GETDATE(),apvname = '',apvdate = null where id = '{this.CurrentMaintain["id"]}'")))
@@ -720,12 +723,6 @@ where (isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f
                     }
 
                     if (!(result = DBProxy.Current.Execute(null, sqlupd4.ToString())))
-                    {
-                        throw result.GetException();
-                    }
-
-                    // Barcode 需要判斷新的庫存, 在更新 FtyInventory 之後
-                    if (!(result = Prgs.UpdateWH_Barcode(false, (DataTable)this.detailgridbs.DataSource, this.Name, out bool fromNewBarcode, dtOriFtyInventory)))
                     {
                         throw result.GetException();
                     }
