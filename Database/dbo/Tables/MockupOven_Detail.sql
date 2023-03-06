@@ -12,7 +12,11 @@ CREATE TABLE [dbo].[MockupOven_Detail](
 	[Remark] [nvarchar](300) NOT NULL,
 	[EditName] [varchar](10) NOT NULL,
 	[EditDate] [datetime] NULL,
- CONSTRAINT [PK_MockupOven_Detail] PRIMARY KEY CLUSTERED 
+ [ChangeScale] VARCHAR(8) NULL DEFAULT (''), 
+    [ResultChange] VARCHAR(5) NULL DEFAULT (''), 
+    [StainingScale] VARCHAR(8) NULL DEFAULT (''), 
+    [ResultStain] VARCHAR(5) NULL DEFAULT (''), 
+    CONSTRAINT [PK_MockupOven_Detail] PRIMARY KEY CLUSTERED 
 (
 	[Ukey] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
@@ -81,3 +85,38 @@ CREATE NONCLUSTERED INDEX [ReportNo] ON [dbo].[MockupOven_Detail]
 	[ReportNo] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'色差灰階',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'MockupOven_Detail',
+    @level2type = N'COLUMN',
+    @level2name = N'ChangeScale'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'色差檢驗結果',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'MockupOven_Detail',
+    @level2type = N'COLUMN',
+    @level2name = N'ResultChange'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'染色灰階',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'MockupOven_Detail',
+    @level2type = N'COLUMN',
+    @level2name = N'StainingScale'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'染色檢驗結果',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'MockupOven_Detail',
+    @level2type = N'COLUMN',
+    @level2name = N'ResultStain'

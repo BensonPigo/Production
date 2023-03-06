@@ -139,7 +139,14 @@ ORDER BY OQ.sizecode,oq.id,OQ.article
             #region 關閉排序功能
             for (int i = 0; i < this.grid1.ColumnCount; i++)
             {
-                this.grid1.Columns[i].SortMode = DataGridViewColumnSortMode.NotSortable;
+                if (i == 2 || i == 3 || i == 4)
+                {
+                    this.grid1.Columns[i].SortMode = DataGridViewColumnSortMode.Automatic;
+                }
+                else
+                {
+                    this.grid1.Columns[i].SortMode = DataGridViewColumnSortMode.NotSortable;
+                }
             }
             #endregion
 

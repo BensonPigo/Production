@@ -19,3 +19,104 @@
 
 
 
+
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'請款單號',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'ShareExpense_APP',
+    @level2type = N'COLUMN',
+    @level2name = N'ShippingAPID'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'發票號碼',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'ShareExpense_APP',
+    @level2type = N'COLUMN',
+    @level2name = N'InvNo'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'裝箱單號碼',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'ShareExpense_APP',
+    @level2type = N'COLUMN',
+    @level2name = N'PackingListID'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'空運預付單號',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'ShareExpense_APP',
+    @level2type = N'COLUMN',
+    @level2name = N'AirPPID'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'會計科目',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'ShareExpense_APP',
+    @level2type = N'COLUMN',
+    @level2name = N'AccountID'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'幣別',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'ShareExpense_APP',
+    @level2type = N'COLUMN',
+    @level2name = N'CurrencyID'
+GO
+
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'毛重',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'ShareExpense_APP',
+    @level2type = N'COLUMN',
+    @level2name = N'GW'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'工廠責任歸屬的比例',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'ShareExpense_APP',
+    @level2type = N'COLUMN',
+    @level2name = N'RatioFty'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'工廠責任歸屬的總額',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'ShareExpense_APP',
+    @level2type = N'COLUMN',
+    @level2name = N'AmtFty'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'其他責任歸屬的比例',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'ShareExpense_APP',
+    @level2type = N'COLUMN',
+    @level2name = N'RatioOther'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'其他責任歸屬的總額',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'ShareExpense_APP',
+    @level2type = N'COLUMN',
+    @level2name = N'AmtOther'
