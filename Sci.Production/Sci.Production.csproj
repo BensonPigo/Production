@@ -320,6 +320,9 @@
     <None Include="XLT\Centralized_R20_製成品進銷存明細表_FOBTotal.xltx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="XLT\Centrallize_R31.xltx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="XLT\ClogP11_ExcelImportTemplete.xltx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

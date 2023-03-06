@@ -118,8 +118,8 @@ select o.MDivisionID
 	,[CPUPrice] = o.CPU * o.CPUFactor
 	,[totalCpu] = sum(pd.ShipQty) * o.CPU * o.CPUFactor
 	,o.PoPrice
-	,[TotalAmount] = sum(pd.ShipQty) * o.PoPrice
-	,[Cancelled] = iif(o.Junk=1,'Y','N')
+	--,[TotalAmount] = sum(pd.ShipQty) * o.PoPrice
+	--,[Cancelled] = iif(o.Junk=1,'Y','N')
 	,[IsPulloutcompleted] = case when o.Finished = 1 and o.Qty > podd.ShipQty
 								then 'S'
 							       when o.Finished = 1 and o.Qty = podd.ShipQty
