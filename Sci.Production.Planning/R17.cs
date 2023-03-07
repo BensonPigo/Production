@@ -1,4 +1,5 @@
 ﻿using Ict;
+using log4net;
 using Sci.Data;
 using Sci.Production.Class;
 using Sci.Utility.Excel;
@@ -10,6 +11,8 @@ using System.Drawing;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
+using static Ict.Win.WinAPI;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.TaskbarClock;
 using Excel = Microsoft.Office.Interop.Excel;
 
 namespace Sci.Production.Planning
@@ -933,29 +936,31 @@ AND r.ID = TH_Order.ReasonID and (ot.IsGMTMaster = 0 or o.OrderTypeID = '')  and
                 orderDetail_ExcelColumn.Add("L", "OrderQty");
                 orderDetail_ExcelColumn.Add("M", "OnTimeQty");
                 orderDetail_ExcelColumn.Add("N", "FailQty");
-                orderDetail_ExcelColumn.Add("O", "pullOutDate");
-                orderDetail_ExcelColumn.Add("P", "Shipmode");
-                orderDetail_ExcelColumn.Add("Q", "P");
-                orderDetail_ExcelColumn.Add("R", "GMTComplete");
-                orderDetail_ExcelColumn.Add("S", "ReasonID");
-                orderDetail_ExcelColumn.Add("T", "ReasonName");
-                orderDetail_ExcelColumn.Add("U", "MR");
-                orderDetail_ExcelColumn.Add("V", "SMR");
-                orderDetail_ExcelColumn.Add("W", "POHandle");
-                orderDetail_ExcelColumn.Add("X", "POSMR");
-                orderDetail_ExcelColumn.Add("Y", "OrderTypeID");
-                orderDetail_ExcelColumn.Add("Z", "isDevSample");
-                orderDetail_ExcelColumn.Add("AA", "SewouptQty");
-                orderDetail_ExcelColumn.Add("AB", "FOC");
-                orderDetail_ExcelColumn.Add("AC", "SewLastDate");
-                orderDetail_ExcelColumn.Add("AD", "CTNLastReceiveDate");
-                orderDetail_ExcelColumn.Add("AE", "IDDReason");
-                orderDetail_ExcelColumn.Add("AF", "Order_QtyShipCount");
-                orderDetail_ExcelColumn.Add("AG", "Alias");
-                orderDetail_ExcelColumn.Add("AH", "CFAFinalInspectDate");
-                orderDetail_ExcelColumn.Add("AI", "CFAFinalInspectResult");
-                orderDetail_ExcelColumn.Add("AJ", "CFA3rdInspectDate");
-                orderDetail_ExcelColumn.Add("AK", "CFA3rdInspectResult");
+                orderDetail_ExcelColumn.Add("O", "CTNOnTimeQty");
+                orderDetail_ExcelColumn.Add("P", "CTNFailQty");
+                orderDetail_ExcelColumn.Add("Q", "pullOutDate");
+                orderDetail_ExcelColumn.Add("R", "Shipmode");
+                orderDetail_ExcelColumn.Add("S", "P");
+                orderDetail_ExcelColumn.Add("T", "GMTComplete");
+                orderDetail_ExcelColumn.Add("U", "ReasonID");
+                orderDetail_ExcelColumn.Add("V", "ReasonName");
+                orderDetail_ExcelColumn.Add("W", "MR");
+                orderDetail_ExcelColumn.Add("X", "SMR");
+                orderDetail_ExcelColumn.Add("Y", "POHandle");
+                orderDetail_ExcelColumn.Add("Z", "POSMR");
+                orderDetail_ExcelColumn.Add("AA", "OrderTypeID");
+                orderDetail_ExcelColumn.Add("AB", "isDevSample");
+                orderDetail_ExcelColumn.Add("AC", "SewouptQty");
+                orderDetail_ExcelColumn.Add("AD", "FOC");
+                orderDetail_ExcelColumn.Add("AE", "SewLastDate");
+                orderDetail_ExcelColumn.Add("AF", "CTNLastReceiveDate");
+                orderDetail_ExcelColumn.Add("AG", "IDDReason");
+                orderDetail_ExcelColumn.Add("AH", "Order_QtyShipCount");
+                orderDetail_ExcelColumn.Add("AI", "Alias");
+                orderDetail_ExcelColumn.Add("AJ", "CFAFinalInspectDate");
+                orderDetail_ExcelColumn.Add("AK", "CFAFinalInspectResult");
+                orderDetail_ExcelColumn.Add("AL", "CFA3rdInspectDate");
+                orderDetail_ExcelColumn.Add("AM", "CFA3rdInspectResult");
 
                 db_ExcelColumn2.Add("A", "Alias");
                 db_ExcelColumn2.Add("B", "KPICode");
@@ -1093,7 +1098,7 @@ AND r.ID = TH_Order.ReasonID and (ot.IsGMTMaster = 0 or o.OrderTypeID = '')  and
                     {
                         worksheet = excel.ActiveWorkbook.Worksheets[3];
                         worksheet.Name = "Order Detail";
-                        string[] aryTitles = new string[] { "Country", "KPI Group", "Factory", "SP No", "Style", "Seq", "Brand", "Buyer Delivery", "Factory KPI", "Extension", "Delivery By Shipmode", "Order Qty", "On Time Qty", "Fail Qty", "PullOut Date", "ShipMode", "[P]", "Garment Complete", "ReasonID", "Order Reason", "Handle  ", "SMR", "PO Handle", "PO SMR", "Order Type", "Dev. Sample", "Sewing Qty", "FOC Qty", "Last sewing output date", "Last Carton Received Date", "IDD Reason", "Partial shipment", "Alias", "CFA Inspection Date", "CFA final inspection result", "3rd party Inspection date", "3rd party insp. Result" };
+                        string[] aryTitles = new string[] { "Country", "KPI Group", "Factory", "SP No", "Style", "Seq", "Brand", "Buyer Delivery", "Factory KPI", "Extension", "Delivery By Shipmode", "Order Qty", "On Time Qty", "Fail Qty","On Time Qty(Clog rec)","Fail Qty(Clog rec)", "PullOut Date", "ShipMode", "[P]", "Garment Complete", "ReasonID", "Order Reason", "Handle  ", "SMR", "PO Handle", "PO SMR", "Order Type", "Dev. Sample", "Sewing Qty", "FOC Qty", "Last sewing output date", "Last Carton Received Date", "IDD Reason", "Partial shipment", "Alias", "CFA Inspection Date", "CFA final inspection result", "3rd party Inspection date", "3rd party insp. Result" };
                         object[,] objArray_1 = new object[1, aryTitles.Length];
                         for (int intIndex = 0; intIndex < aryTitles.Length; intIndex++)
                         {
