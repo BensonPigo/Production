@@ -136,6 +136,7 @@
       <HintPath>..\_Dll\Sci.Proj.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
@@ -159,9 +160,12 @@
     <Compile Include="DataTableToList.cs" />
     <Compile Include="DBProxyPMS.cs" />
     <Compile Include="DllInvoke.cs" />
+    <Compile Include="Entity\BaseTableEntity.cs" />
     <Compile Include="Entity\CallFrom.cs" />
+    <Compile Include="Entity\ComparePO3Item.cs" />
     <Compile Include="Entity\FtyInventory.cs" />
     <Compile Include="Entity\IssueQtyBreakdown.cs" />
+    <Compile Include="Entity\PO_Supp_DetailCls.cs" />
     <Compile Include="Entity\WHBarcodeTransaction.cs" />
     <Compile Include="Entity\EnumStatus.cs" />
     <Compile Include="Entity\WHTableName.cs" />

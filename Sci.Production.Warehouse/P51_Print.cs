@@ -26,15 +26,15 @@ namespace Sci.Production.Warehouse
 
             List<SqlParameter> pars = new List<SqlParameter>();
             pars.Add(new SqlParameter("@ID", id));
-            DataTable dt;
+
             string cmd = @"
 select  iif(T.stocktype = 'B','Bulk','Inventory') AS stocktype
         ,S.poid AS OrderID,S.seq1  + '-' +S.seq2 as SEQ
         ,S.Roll,S.dyelot
-        ,P.Refno
-        ,P.fabrictype 
-        ,P.ColorID
-        ,P.StockUnit
+        ,psd.Refno
+        ,psd.fabrictype 
+        ,ColorID = isnull(psdsC.SpecValue, '')
+        ,psd.StockUnit
         ,S.QtyBefore AS Bookqty
         ,dbo.Getlocation(fi.ukey) [Location]
         ,S.QtyAfter AS Actualqty 
@@ -42,11 +42,14 @@ select  iif(T.stocktype = 'B','Bulk','Inventory') AS stocktype
         ,[Total1]=sum(S.QtyBefore) OVER (PARTITION BY S.POID ,S.SEQ1,S.SEQ2 )   
         ,[Total2]=sum(S.QtyAfter) OVER (PARTITION BY S.POID ,S.SEQ1,S.SEQ2 )   			
 from dbo.Stocktaking_detail S WITH (NOLOCK) 
-LEFT join dbo.PO_Supp_Detail P WITH (NOLOCK) on P.ID = S.POID and  P.SEQ1 = S.Seq1 and P.seq2 = S.Seq2 
+LEFT join dbo.PO_Supp_Detail psd WITH (NOLOCK) on psd.ID = S.POID and  psd.SEQ1 = S.Seq1 and psd.seq2 = S.Seq2 
+left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
 left join dbo.FtyInventory Fi on s.poid = fi.poid and s.seq1 = fi.seq1 and s.seq2 = fi.seq2
     and s.roll = fi.roll and s.stocktype = fi.stocktype and s.Dyelot = fi.Dyelot
-LEFT JOIN DBO.Stocktaking T  WITH (NOLOCK) ON T.ID = S.Id  WHERE S.Id = @ID";
-            DualResult result = DBProxy.Current.Select(string.Empty,  cmd, pars, out dt);
+LEFT JOIN DBO.Stocktaking T  WITH (NOLOCK) ON T.ID = S.Id
+WHERE S.Id = @ID
+";
+            DualResult result = DBProxy.Current.Select(string.Empty, cmd, pars, out DataTable dt);
 
             string stockType;
             stockType = dt.Rows.Count == 0 ? string.Empty : dt.Rows[0]["stocktype"].ToString();

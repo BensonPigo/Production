@@ -272,8 +272,8 @@ namespace Sci.Production.Warehouse
 
             if (!MyUtility.Check.Empty(this.txtColor.Text))
             {
-                sqlWhere += $" and (psd.SuppColor = '{this.txtColor.Text}' or psd.ColorID = '{this.txtColor.Text}')";
-                sqlWhere2 += $" and (psd.SuppColor = '{this.txtColor.Text}' or psd.ColorID = '{this.txtColor.Text}')";
+                sqlWhere += $" and (psd.SuppColor = '{this.txtColor.Text}' or isnull(psdsC.SpecValue, '') = '{this.txtColor.Text}')";
+                sqlWhere2 += $" and (psd.SuppColor = '{this.txtColor.Text}' or isnull(psdsC.SpecValue, '') = '{this.txtColor.Text}')";
             }
 
             if (!MyUtility.Check.Empty(this.txtRoll.Text))
@@ -420,7 +420,7 @@ from
 		,[OrderSeq2] = cast(ROW_NUMBER() over(order by r.ExportID, rd.Id, rd.EncodeSeq, rd.PoId, rd.Seq1, rd.Seq2, rd.Roll, rd.Dyelot) as int)	
         ,fb.MtlTypeID
 		,psd.SuppColor
-		,psd.ColorID
+		,ColorID = isnull(psdsC.SpecValue, '')
         ,fp.Inspector
         ,[InspDate] = Format(fp.InspDate, 'yyyy/MM/dd')
         ,[FirRemark] = fp.Remark
@@ -440,6 +440,7 @@ from
                                                     rd.Roll = fi.Roll and
                                                     rd.Dyelot  = fi.Dyelot and
                                                     rd.StockType = fi.StockType
+    left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
     left join #tmpStockType st with (nolock) on st.ID = rd.StockType
     left join FIR with (nolock) on  FIR.ReceivingID = rd.ID and 
                                     FIR.POID = rd.POID and 
@@ -519,7 +520,7 @@ from
 		,[OrderSeq2] = cast(ROW_NUMBER() over(order by t.ID, td.PoId, td.Seq1, td.Seq2, td.Roll, td.Dyelot) as int)
         ,fb.MtlTypeID
 		,psd.SuppColor
-		,psd.ColorID
+		,ColorID = isnull(psdsC.SpecValue, '')
         ,fp.Inspector
         ,[InspDate] = Format(fp.InspDate, 'yyyy/MM/dd hh:mmtt')
         ,[FirRemark] = fp.Remark
@@ -539,6 +540,7 @@ from
                                                     td.Roll = fi.Roll and
                                                     td.Dyelot  = fi.Dyelot and
                                                     td.StockType = fi.StockType
+    left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
     INNER JOIN #tmpStockType st with (nolock) on st.ID = td.StockType
     left join FIR with (nolock) on  FIR.ReceivingID = td.ID and 
                                     FIR.POID = td.POID and 

@@ -19,7 +19,7 @@
 	[BrandID] [varchar](8) NULL,
 	[FactoryID] [varchar](8) NULL,
 	[SuppID] [varchar](6) NULL,
-	[Refno] [varchar](23) NULL,
+	[Refno] [varchar](36) NULL,
 	[IsEM] [bit] NULL,
 	[StyleID] [varchar](15) NULL,
 	[ProgramID] [varchar](12) NULL,

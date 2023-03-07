@@ -103,11 +103,12 @@ FROM FIR a WITH (NOLOCK)
 Left join Receiving c WITH (NOLOCK) on c.ID = a.ReceivingID
 Left join TransferIn ti WITH (NOLOCK) on ti.id = a.receivingid
 inner join PO_Supp_Detail d WITH (NOLOCK) on d.id = a.poid and d.seq1 = a.seq1 and d.seq2 = a.seq2
+left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = d.id and psdsC.seq1 = d.seq1 and psdsC.seq2 = d.seq2 and psdsC.SpecColumnID = 'Color'
 LEFT JOIN Supp ON Supp.ID = a.SuppID
 LEFT JOIN Orders o ON o.ID = a.POID
 LEFT JOIN PO_Supp p ON p.ID = a.POID AND p.SEQ1 = a.SEQ1
 LEFT JOIN Export ep ON ep.ID = c.ExportId
-LEFT JOIN Color cl ON d.ColorID = cl.ID AND cl.BrandId = o.BrandID
+LEFT JOIN Color cl ON isnull(psdsC.SpecValue ,'') = cl.ID AND cl.BrandId = o.BrandID
 WHERE 1=1
 ";
                 if (!MyUtility.Check.Empty(this.wkNO))
@@ -177,11 +178,12 @@ FROM FIR a WITH (NOLOCK)
 Left join Receiving c WITH (NOLOCK) on c.ID = a.ReceivingID
 Left join TransferIn ti WITH (NOLOCK) on ti.id = a.receivingid
 inner join PO_Supp_Detail d WITH (NOLOCK) on d.id = a.poid and d.seq1 = a.seq1 and d.seq2 = a.seq2
+left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = d.id and psdsC.seq1 = d.seq1 and psdsC.seq2 = d.seq2 and psdsC.SpecColumnID = 'Color'
 LEFT JOIN Supp ON Supp.ID = a.SuppID
 LEFT JOIN Orders o ON o.ID = a.POID
 LEFT JOIN PO_Supp p ON p.ID = a.POID AND p.SEQ1 = a.SEQ1
 LEFT JOIN Export ep ON ep.ID = c.ExportId
-LEFT JOIN Color cl ON d.ColorID = cl.ID AND cl.BrandId = o.BrandID
+LEFT JOIN Color cl ON isnull(psdsC.SpecValue ,'') = cl.ID AND cl.BrandId = o.BrandID
 WHERE 1=1
 ";
 

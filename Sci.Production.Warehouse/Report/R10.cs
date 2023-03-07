@@ -1,31 +1,21 @@
-﻿using System;
+﻿using Ict;
+using Sci.Data;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Text;
 using System.Windows.Forms;
-using Ict;
-using Sci.Data;
 
 namespace Sci.Production.Warehouse
 {
+    /// <inheritdoc/>
     public partial class R10 : Win.Tems.PrintForm
     {
-        // string    mdivision, factory, orderby, spno1, spno2, refno1, refno2;
         private string mdivision;
-
-        // string    mdivision, factory, orderby, spno1, spno2, refno1, refno2;
         private string factory;
-
-        // string    mdivision, factory, orderby, spno1, spno2, refno1, refno2;
         private string spno1;
-
-        // string    mdivision, factory, orderby, spno1, spno2, refno1, refno2;
         private string spno2;
-
-        // string    mdivision, factory, orderby, spno1, spno2, refno1, refno2;
         private string refno1;
-
-        // string    mdivision, factory, orderby, spno1, spno2, refno1, refno2;
         private string refno2;
         private DateTime? deadline1;
         private DateTime? deadline2;
@@ -35,6 +25,7 @@ namespace Sci.Production.Warehouse
         private DateTime? eta2;
         private DataTable printData;
 
+        /// <inheritdoc/>
         public R10(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -141,8 +132,9 @@ inner join MDivisionPoDetail c WITH (NOLOCK) on c.POID = a.POID and c.seq1 = a.s
 inner join Orders orders on c.poid = orders.id
 inner join Factory d WITH (NOLOCK) on orders.FactoryID = d.id
 cross apply (select m.Refno
-                    ,m.ColorID 
+                    ,ColorID = isnull(psdsC.SpecValue, '')
              from dbo.PO_Supp_Detail m WITH (NOLOCK) 
+             left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = m.id and psdsC.seq1 = m.seq1 and psdsC.seq2 = m.seq2 and psdsC.SpecColumnID = 'Color'
              where m.id = a.POID and m.seq1 = a.seq1 and m.seq2 = a.seq2 ) x
 where LInvQty > 0 ", sqlBuyerDelivery));
             }
@@ -165,8 +157,9 @@ inner join MDivisionPoDetail c WITH (NOLOCK) on c.POID = a.POID and c.seq1 = a.s
 inner join Orders orders on c.poid = orders.id
 inner join Factory d WITH (NOLOCK) on orders.FactoryID = d.id
 cross apply (select d.Refno
-                    ,d.ColorID 
+                    ,ColorID = isnull(psdsC.SpecValue, '')
              from dbo.PO_Supp_Detail d WITH (NOLOCK) 
+             left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = d.id and psdsC.seq1 = d.seq1 and psdsC.seq2 = d.seq2 and psdsC.SpecColumnID = 'Color'
              where d.id = a.POID and d.seq1 = a.seq1 and d.seq2 = a.seq2 ) x
 where LInvQty > 0 "));
             }

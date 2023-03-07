@@ -136,8 +136,8 @@ select [TK No.] = te.ID
                 else ted.FabricType
                 end
                 , '-' +  f.MtlTypeID)
-		, [Color] = psd.ColorID
-		, [Size] = psd.SizeSpec
+		, [Color] = isnull(psdsC.SpecValue, '')
+		, [Size] = isnull(psdsS.SpecValue, '')
 		, [Stock Unit] = psd.StockUnit
 		, [Po Q'ty] = dbo.GetUnitQty (ted.UnitID, psd.StockUnit, ted.PoQty)
 		, [Export Q'ty] = TranserOut.Qty
@@ -156,6 +156,8 @@ left join WhseReason wr with (nolock) on wr.Type = 'TE'
 left join PO_Supp_Detail psd with (nolock) on	ted.POID = psd.ID  
 												and ted.Seq1 = psd.SEQ1 
 												and ted.Seq2 = psd.SEQ2
+left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
+left join PO_Supp_Detail_Spec psdsS WITH (NOLOCK) on psdsS.ID = psd.id and psdsS.seq1 = psd.seq1 and psdsS.seq2 = psd.seq2 and psdsS.SpecColumnID = 'Size'
 outer apply (
 	select Qty = SUM (round(dbo.GetUnitQty(tedc.StockUnitID, psd.StockUnit, tedc.StockQty),2))
 	from TransferExport_Detail_Carton tedc
@@ -213,8 +215,8 @@ select [TK No.] = te.ID
                 else ted.FabricType
                 end
                 , '-' +  f.MtlTypeID)
-		, [Color] = psdinv.ColorID
-		, [Size] = psdinv.SizeSpec
+		, [Color] = isnull(psdInvC.SpecValue, '')
+		, [Size] = isnull(psdInvS.SpecValue, '')
 		, [Stock Unit] = psdinv.StockUnit
 		, [Po Q'ty]
 		, [Export Q'ty] = TranserOut.Qty
@@ -230,9 +232,9 @@ Left join TransferExport_Detail ted with (nolock) on te.ID = ted.ID
 left join Fabric f with (nolock) on ted.SCIRefno = f.SCIRefno
 left join WhseReason wr with (nolock) on wr.Type = 'TE'
 											and ted.TransferExportReason = wr.ID
-left join PO_Supp_Detail psdInv with (nolock) on	ted.InventoryPOID = psdInv.ID  
-													and ted.InventorySeq1 = psdInv.SEQ1 
-													and ted.InventorySeq2 = psdinv.SEQ2
+left join PO_Supp_Detail psdInv with (nolock) on ted.InventoryPOID = psdInv.ID and ted.InventorySeq1 = psdInv.SEQ1 and ted.InventorySeq2 = psdinv.SEQ2
+left join PO_Supp_Detail_Spec psdInvC with (nolock) on ted.InventoryPOID = psdInvC.ID and ted.InventorySeq1 = psdInvC.SEQ1 and ted.InventorySeq2 = psdInvC.SEQ2 and psdInvC.SpecColumnID = 'Color'
+left join PO_Supp_Detail_Spec psdInvS with (nolock) on ted.InventoryPOID = psdInvS.ID and ted.InventorySeq1 = psdInvS.SEQ1 and ted.InventorySeq2 = psdInvS.SEQ2 and psdInvS.SpecColumnID = 'Size'
 outer apply(
 	select ExportId = Stuff((
 		select concat(',',ExportId)
@@ -318,8 +320,8 @@ select [TK No.] = te.ID
 						when 'i' then 'Inventory'
 						when 'o' then 'Scrap'
 					end
-	, [Color] = psd.ColorID
-	, [Size] = psd.SizeSpec
+	, [Color] = isnull(psdsC.SpecValue, '')
+	, [Size] = isnull(psdsS.SpecValue, '')
 	, [Stock Unit] = psd.StockUnit
 	, [Po Q'ty] = dbo.GetUnitQty (ted.UnitID, psd.StockUnit, ted.PoQty)
 	, [Export Q'ty]
@@ -330,6 +332,8 @@ Left join TransferExport_Detail ted with (nolock) on te.ID = ted.ID
 left join Fabric f with (nolock) on ted.SCIRefno = f.SCIRefno
 left join TransferExport_Detail_Carton tedc with (nolock) on ted.Ukey = tedc.TransferExport_DetailUkey
 left join PO_Supp_Detail psd with (nolock) on ted.POID = psd.ID and ted.Seq1 = psd.SEQ1 and ted.Seq2 = psd.SEQ2
+left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
+left join PO_Supp_Detail_Spec psdsS WITH (NOLOCK) on psdsS.ID = psd.id and psdsS.seq1 = psd.seq1 and psdsS.seq2 = psd.seq2 and psdsS.SpecColumnID = 'Size'
 outer apply (select [Export Q'ty] = dbo.GetUnitQty (tedc.StockUnitID, psd.StockUnit, tedc.StockQty))StockUnitQty
 outer apply (
 	select tid.Qty,tid.StockType,ti.Id
@@ -376,8 +380,8 @@ select [TK No.] = te.ID
 						when 'i' then 'Inventory'
 						when 'o' then 'Scrap'
 					end
-	, [Color] = psd.ColorID
-	, [Size] = psd.SizeSpec
+	, [Color] = isnull(psdsC.SpecValue, '')
+	, [Size] = isnull(psdsS.SpecValue, '')
 	, [Stock Unit] = psd.StockUnit
 	, [Po Q'ty] = dbo.GetUnitQty (ted.UnitID, psd.StockUnit, ted.PoQty)
 	, [Export Q'ty]
@@ -387,6 +391,8 @@ from #tmp te
 inner join TransferIn ti with (nolock) on ti.TransferExportID = te.ID
 inner join TransferIn_Detail tid on ti.Id = tid.ID
 left join PO_Supp_Detail psd with (nolock) on tid.POID = psd.ID and tid.Seq1 = psd.SEQ1 and tid.Seq2 = psd.SEQ2
+left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
+left join PO_Supp_Detail_Spec psdsS WITH (NOLOCK) on psdsS.ID = psd.id and psdsS.seq1 = psd.seq1 and psdsS.seq2 = psd.seq2 and psdsS.SpecColumnID = 'Size'
 left join Fabric f with (nolock) on psd.SCIRefno = f.SCIRefno
 outer apply(
 	select ted.*,[Export Q'ty]
@@ -444,8 +450,8 @@ select [TK No.] = te.ID
 							when 'i' then 'Inventory'
 							when 'o' then 'Scrap'
 						  end
-		, [Color] = psdinv.ColorID
-		, [Size] = psdinv.SizeSpec
+		, [Color] = isnull(psdInvC.SpecValue, '')
+		, [Size] = isnull(psdInvS.SpecValue, '')
 		, [Stock Unit] = psdinv.StockUnit
 		, [Po Q'ty]
 		, [Export Q'ty] = tedc.StockQty
@@ -457,9 +463,9 @@ from TransferExport te with (nolock)
 Left join TransferExport_Detail ted with (nolock) on te.ID = ted.ID
 left join Fabric f with (nolock) on ted.SCIRefno = f.SCIRefno
 left join TransferExport_Detail_Carton tedc with (nolock) on ted.Ukey = tedc.TransferExport_DetailUkey
-left join PO_Supp_Detail psdInv with (nolock) on ted.InventoryPOID = psdInv.ID  
-												 and ted.InventorySeq1 = psdInv.SEQ1 
-												 and ted.InventorySeq2 = psdinv.SEQ2
+left join PO_Supp_Detail psdInv with (nolock) on ted.InventoryPOID = psdInv.ID and ted.InventorySeq1 = psdInv.SEQ1 and ted.InventorySeq2 = psdinv.SEQ2
+left join PO_Supp_Detail_Spec psdInvC with (nolock) on ted.InventoryPOID = psdInvC.ID and ted.InventorySeq1 = psdInvC.SEQ1 and ted.InventorySeq2 = psdInvC.SEQ2 and psdInvC.SpecColumnID = 'Color'
+left join PO_Supp_Detail_Spec psdInvS with (nolock) on ted.InventoryPOID = psdInvS.ID and ted.InventorySeq1 = psdInvS.SEQ1 and ted.InventorySeq2 = psdInvS.SEQ2 and psdInvS.SpecColumnID = 'Size'
 left join TransferOut_Detail tod with (nolock) on tedc.TransferExport_DetailUkey = tod.TransferExport_DetailUkey
 													and tedc.Carton = tod.Roll
 													and tedc.LotNo = tod.Dyelot

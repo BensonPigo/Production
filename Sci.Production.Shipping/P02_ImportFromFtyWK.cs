@@ -106,7 +106,7 @@ select Selected = 0
 ,o.SeasonID
 ,o.StyleID
 ,psd.Refno
-,psd.ColorID
+,ColorID = psds.SpecValue
 ,[Supp] = ps.SuppID+'-'+s.AbbEN
 ,[SuppID] = ps.SuppID
 ,[CTNNo] = ''
@@ -124,6 +124,7 @@ select Selected = 0
 ,[AddDate]=''
 from FtyExport_Detail fd
 left join PO_Supp_Detail psd with (nolock) on psd.ID = fd.POID and psd.SEQ1 = fd.Seq1 and psd.SEQ2 = fd.Seq2
+	    left join PO_Supp_Detail_Spec psds WITH (NOLOCK) on psds.ID = psd.id and psds.seq1 = psd.seq1 and psds.seq2 = psd.seq2 and psds.SpecColumnID = 'Color'
 left join PO_Supp ps WITH (NOLOCK) on fd.POID = ps.ID and fd.SEQ1 = ps.SEQ1
 left join Supp s WITH (NOLOCK) on ps.SuppID = s.ID
 left join orders o with(nolock) on o.ID = fd.POID

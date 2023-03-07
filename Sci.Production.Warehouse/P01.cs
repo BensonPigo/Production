@@ -902,5 +902,11 @@ and po3.junk=0
             dlg.ShowDialog();
             this.RenewData();
         }
+
+        private void BtnMaterialCompare_Click(object sender, EventArgs e)
+        {
+            var frm = new P01_MaterialCompare(this.CurrentMaintain["POID"].ToString());
+            frm.ShowDialog(this);
+        }
     }
 }

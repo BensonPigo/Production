@@ -8,6 +8,7 @@ using ZXing;
 using ZXing.QrCode;
 using ZXing.QrCode.Internal;
 using MsExcel = Microsoft.Office.Interop.Excel;
+using System.ComponentModel.DataAnnotations;
 
 namespace Sci.Production.Prg
 {
@@ -386,6 +387,86 @@ namespace Sci.Production.Prg
             }
 
             return srcBarcode.Left(16);
+        }
+
+        private static PropertyInfo GetProperty(Type type, string attributeName)
+        {
+            PropertyInfo property = type.GetProperty(attributeName);
+
+            if (property != null)
+            {
+                return property;
+            }
+
+            return type.GetProperties()
+                 .Where(p => p.IsDefined(typeof(DisplayAttribute), false) && p.GetCustomAttributes(typeof(DisplayAttribute), false).Cast<DisplayAttribute>().Single().Name == attributeName)
+                 .FirstOrDefault();
+        }
+
+        private static object ChangeType(object value, Type type)
+        {
+            if (type.IsGenericType && type.GetGenericTypeDefinition().Equals(typeof(Nullable<>)))
+            {
+                if (value == null)
+                {
+                    return null;
+                }
+
+                return Convert.ChangeType(value, Nullable.GetUnderlyingType(type));
+            }
+
+            return Convert.ChangeType(value, type);
+        }
+
+        /// <summary>
+        /// fill datarow value to object
+        /// </summary>
+        /// <param name="dataRow"> source datarow </param>
+        /// <param name="item"> item of datarow table class </param>
+        public static void DatarowFillObject(DataRow dataRow, object item)
+        {
+            foreach (DataColumn column in dataRow.Table.Columns)
+            {
+                PropertyInfo property = GetProperty(item.GetType(), column.ColumnName);
+
+                if (property != null && dataRow[column] != DBNull.Value /*&& dataRow[column].ToString() != "NULL"*/)
+                {
+                    property.SetValue(item, ChangeType(dataRow[column], property.PropertyType), null);
+                }
+            }
+        }
+
+        public static bool PropertiesEqual<T>(T self, T to, params string[] ignore)
+            where T : class
+        {
+            if (self != null && to != null)
+            {
+                Type type = typeof(T);
+
+                List<string> ignoreList = new List<string>();
+                if (ignore != null)
+                {
+                    ignoreList = new List<string>(ignore);
+                }
+
+                foreach (System.Reflection.PropertyInfo pi in type.GetProperties(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance))
+                {
+                    if (!ignoreList.Contains(pi.Name))
+                    {
+                        object selfValue = type.GetProperty(pi.Name).GetValue(self, null);
+                        object toValue = type.GetProperty(pi.Name).GetValue(to, null);
+
+                        if (selfValue != toValue && (selfValue == null || !selfValue.Equals(toValue)))
+                        {
+                            return false;
+                        }
+                    }
+                }
+
+                return true;
+            }
+
+            return self == to;
         }
     }
 }

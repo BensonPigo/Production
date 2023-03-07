@@ -209,19 +209,21 @@ select  POID = rtrim(i.seq70poid)
 		, psd.FabricType
 		, PSD.Refno
 		, Color
-		, PSD.SizeSpec
 		, [AccuTransferred] = isnull(TransferOut.Qty,0)
+		, SizeSpec= isnull(psdsS.SpecValue, '')
 into #tmp
 from dbo.Invtrans i WITH (NOLOCK) 
 inner join PO_Supp_Detail psd WITH (NOLOCK) on i.InventoryPOID = psd.ID
 												and i.InventorySeq1 = psd.SEQ1
 												and i.InventorySeq2 = psd.SEQ2
+left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
+left join PO_Supp_Detail_Spec psdsS WITH (NOLOCK) on psdsS.ID = psd.id and psdsS.seq1 = psd.seq1 and psdsS.seq2 = psd.seq2 and psdsS.SpecColumnID = 'Size'
 inner join View_WH_Orders o WITH (NOLOCK) on psd.ID = o.ID
 left join Fabric on Fabric.SCIRefno = psd.SCIRefno
 outer apply (
         select Color = IIF(Fabric.MtlTypeID = 'EMB THREAD' OR Fabric.MtlTypeID = 'SP THREAD' OR Fabric.MtlTypeID = 'THREAD' 
-	        ,IIF( PSD.SuppColor = '' or PSD.SuppColor is null,dbo.GetColorMultipleID(o.BrandID,PSD.ColorID),PSD.SuppColor)
-	        ,dbo.GetColorMultipleID(o.BrandID,PSD.ColorID)
+	        ,IIF( PSD.SuppColor = '' or PSD.SuppColor is null,dbo.GetColorMultipleID(o.BrandID, isnull(psdsC.SpecValue, '')),PSD.SuppColor)
+	        ,dbo.GetColorMultipleID(o.BrandID, isnull(psdsC.SpecValue, ''))
 ))c
 outer apply(
 	select Qty = sum(td.Qty)
@@ -238,7 +240,7 @@ outer apply(
 where (i.type='2' or i.type='6')
 		and i.seq70poid = @IssueSP
 		and o.MDivisionID = @MDivisionID
-group by i.seq70poid,rtrim(i.seq70poid), rtrim(i.seq70seq1), i.seq70seq2, i.InventoryPOID, i.InventorySeq1, i.InventorySeq2, psd.StockUnit, psd.FabricType,PSD.Refno, PSD.SizeSpec,c.Color,TransferOut.Qty
+group by i.seq70poid,rtrim(i.seq70poid), rtrim(i.seq70seq1), i.seq70seq2, i.InventoryPOID, i.InventorySeq1, i.InventorySeq2, psd.StockUnit, psd.FabricType,PSD.Refno, psdsS.SpecValue,c.Color,TransferOut.Qty
 
 select  selected = 0
 		, [ExportID] = Stuff((select distinct concat(',', r.ExportId)

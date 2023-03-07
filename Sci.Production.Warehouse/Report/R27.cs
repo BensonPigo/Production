@@ -1,17 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Data.SqlClient;
-using System.Drawing;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using Ict;
+﻿using Ict;
 using Sci.Data;
 using Sci.Win;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Data.SqlClient;
+using System.Runtime.InteropServices;
+using System.Windows.Forms;
 using Excel = Microsoft.Office.Interop.Excel;
 
 namespace Sci.Production.Warehouse
@@ -111,10 +106,10 @@ select	I.ID,
         [Refno] = Fabric.Refno,
 		[Material Type] = Fabric.MtlTypeID,
 		[Description] = dbo.getmtldesc(ID.poid, ID.seq1,ID.seq2,2,0),
-		[Color] = dbo.GetColorMultipleID( PSD.BrandId,  PSD.ColorID),
-		[Size] = PSD.SizeSpec,
+		[Color] = dbo.GetColorMultipleID( PSD.BrandId,  isnull(psdsC.SpecValue, '')),
+		[Size] = isnull(psdsS.SpecValue, ''),
 		[@Qty] = PSD.UsedQty,
-		PSD.SizeUnit,
+		SizeUnit = isnull(psdsU.SpecValue, ''),
 		[Location] = dbo.Getlocation(f.ukey),
 		[AccuIssued] =	isnull((select sum(Issue_Detail.qty) 
 								from dbo.issue WITH (NOLOCK) 
@@ -143,6 +138,9 @@ select	I.ID,
 from Issue I with (nolock)
 Inner join Issue_Detail ID with (nolock) on I.ID=ID.ID
 Inner join po_supp_detail PSD on ID.POID=PSD.ID and ID.SEQ1=PSD.SEQ1 and ID.SEQ2=PSD.SEQ2
+left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
+left join PO_Supp_Detail_Spec psdsS WITH (NOLOCK) on psdsS.ID = psd.id and psdsS.seq1 = psd.seq1 and psdsS.seq2 = psd.seq2 and psdsS.SpecColumnID = 'Size'
+left join PO_Supp_Detail_Spec psdsU WITH (NOLOCK) on psdsU.ID = psd.id and psdsU.seq1 = psd.seq1 and psdsU.seq2 = psd.seq2 and psdsU.SpecColumnID = 'SizeUnit'
 Inner join FtyInventory F on ID.Poid = F.Poid and ID.Seq1 = F.seq1 and ID.seq2 = F.seq2 and ID.roll = F.roll
 left join Fabric on Fabric.SCIRefno = psd.SCIRefno
 where 1 = 1 {sqlWhere}

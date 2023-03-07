@@ -496,6 +496,7 @@ where Poid='{dr["id"]}' and seq1='{dr["Seq1"]}' and seq2='{dr["Seq2"]}'", out dr
             .CheckBox("IsHighRisk", header: "HR", width: Widths.AnsiChars(3), iseditable: false, trueValue: 1, falseValue: 0)
             .CheckBox("SustainableMaterial", header: "Recycled", width: Widths.AnsiChars(3), iseditable: false, trueValue: 1, falseValue: 0)
             .EditText("description", header: "Description", iseditingreadonly: true, width: Widths.AnsiChars(33)) // 8
+            .Button("...", null, header: "Spec", width: Widths.AnsiChars(2), onclick: this.BtnSpec)
             .Text("fabrictype2", header: "Material\r\nType", iseditingreadonly: true, width: Widths.AnsiChars(6)) // 7
             .Text("WeaveTypeID", header: "Weave\r\nType", iseditingreadonly: true, width: Widths.AnsiChars(9)) // 7
             .EditText("Article", header: "Article", iseditingreadonly: true, width: Widths.AnsiChars(15)) // 8
@@ -553,6 +554,16 @@ where Poid='{dr["id"]}' and seq1='{dr["Seq1"]}' and seq2='{dr["Seq2"]}'", out dr
             this.displayCalSize.BackColor = Color.FromArgb(255, 170, 100);
             this.displayJunk.BackColor = Color.FromArgb(190, 190, 190);
             this.displayRrLrHr.BackColor = Color.FromArgb(255, 204, 204);
+        }
+
+        private void BtnSpec(object sender, DataGridViewCellEventArgs e)
+        {
+            string poid = this.gridMaterialStatus.CurrentDataRow["id"].ToString();
+            string seq1 = this.gridMaterialStatus.CurrentDataRow["seq1"].ToString();
+            string seq2 = this.gridMaterialStatus.CurrentDataRow["seq2"].ToString();
+            string refno = this.gridMaterialStatus.CurrentDataRow["refno"].ToString();
+            var frm = new P03_Spec(poid, seq1, seq2, refno);
+            frm.ShowDialog();
         }
 
         /// <inheritdoc/>
@@ -817,12 +828,11 @@ from(
                     , concat(mt.fabrictype2,'-'+Fabric.MtlTypeID) as fabrictype2
 					, Fabric.WeaveTypeID
                     , iif(a.FabricType='F',1,iif(a.FabricType='A',2,3)) as fabrictypeOrderby
-                    --, ColorID = dbo.GetColorMultipleID(Orders.BrandID,a.ColorID) 
                      , ColorID = IIF(Fabric.MtlTypeID = 'EMB THREAD' OR Fabric.MtlTypeID = 'SP THREAD' OR Fabric.MtlTypeID = 'THREAD' 
-                                     ,IIF( a.SuppColor = '' or a.SuppColor is null,dbo.GetColorMultipleID(Orders.BrandID,a.ColorID),a.SuppColor)
-                                     ,dbo.GetColorMultipleID(Orders.BrandID,a.ColorID)
+                                     ,IIF( a.SuppColor = '' or a.SuppColor is null,dbo.GetColorMultipleID(Orders.BrandID,isnull(psdsC.SpecValue, '')),a.SuppColor)
+                                     ,dbo.GetColorMultipleID(Orders.BrandID,isnull(psdsC.SpecValue, ''))
                                  )
-                    , a.SizeSpec
+                    , SizeSpec= isnull(psdsS.SpecValue, '')
                     , ROUND(a.UsedQty, 4) unitqty
                     , Qty = Round(dbo.getUnitQty(a.POUnit, a.StockUnit, isnull(A.Qty, 0)), 2)
                     , NetQty = Round(dbo.getUnitQty(a.POUnit, a.StockUnit, isnull(A.NETQty, 0)), 2)
@@ -938,10 +948,12 @@ from(
             left join supp s WITH (NOLOCK) on s.id = b.suppid
             LEFT JOIN dbo.Factory f on orders.FtyGroup=f.ID
             LEFT JOIN dbo.Style_RRLR_Report  on Style_RRLR_Report.StyleUkey = orders.StyleUkey AND Style_RRLR_Report.SuppID =  b.suppid AND Style_RRLR_Report.Refno = a.RefNo
+            left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = a.id and psdsC.seq1 = a.seq1 and psdsC.seq2 = a.seq2 and psdsC.SpecColumnID = 'Color'
+            left join PO_Supp_Detail_Spec psdsS WITH (NOLOCK) on psdsS.ID = a.id and psdsS.seq1 = a.seq1 and psdsS.seq2 = a.seq2 and psdsS.SpecColumnID = 'Size'
             left join #ArticleForThread aft on	aft.ID = m.POID		and
 												aft.SuppId	   = b.SuppId	and
 												aft.SCIRefNo   = a.SCIRefNo	and
-												aft.ColorID	   = a.ColorID	and
+												aft.ColorID	   = isnull(psdsC.SpecValue, '')	and
 												a.SEQ1 like 'T%' 
 
 			LEFT JOIN Order_BOF ob ON  a.RefNo=ob.RefNo AND a.ID=ob.Id
@@ -984,13 +996,12 @@ from(
                     , concat(mt.fabrictype2,'-'+Fabric.MtlTypeID) as fabrictype2
 					, Fabric.WeaveTypeID
                     , iif(a.FabricType='F',1,iif(a.FabricType='A',2,3)) as fabrictypeOrderby
-                    --, ColorID = dbo.GetColorMultipleID(o.BrandID,a.ColorID) 
                     , ColorID = IIF(Fabric.MtlTypeID = 'EMB THREAD' OR Fabric.MtlTypeID = 'SP THREAD' OR Fabric.MtlTypeID = 'THREAD' 
-                                 ,IIF( a.SuppColor = '' or a.SuppColor is null,dbo.GetColorMultipleID(o.BrandID,a.ColorID),a.SuppColor)
-                                 ,dbo.GetColorMultipleID(o.BrandID,a.ColorID)
+                                 ,IIF( a.SuppColor = '' or a.SuppColor is null,dbo.GetColorMultipleID(o.BrandID,isnull(psdsC.SpecValue, '')),a.SuppColor)
+                                 ,dbo.GetColorMultipleID(o.BrandID,isnull(psdsC.SpecValue, ''))
                                )
 
-                    , a.SizeSpec
+                    , SizeSpec= isnull(psdsS.SpecValue, '')
                     , ROUND(a.UsedQty, 4) unitqty
                     , Qty = Round(dbo.getUnitQty(a.POUnit, a.StockUnit, isnull(A.Qty, 0)), 2)
                     , NetQty = Round(dbo.getUnitQty(a.POUnit, a.StockUnit, isnull(A.NETQty, 0)), 2)
@@ -1100,10 +1111,12 @@ from(
         left join po_supp b WITH (NOLOCK) on a.id = b.id and a.SEQ1 = b.SEQ1
         left join supp s WITH (NOLOCK) on s.id = b.suppid
         LEFT JOIN dbo.Factory f on o.FtyGroup=f.ID
+        left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = a.id and psdsC.seq1 = a.seq1 and psdsC.seq2 = a.seq2 and psdsC.SpecColumnID = 'Color'
+        left join PO_Supp_Detail_Spec psdsS WITH (NOLOCK) on psdsS.ID = a.id and psdsS.seq1 = a.seq1 and psdsS.seq2 = a.seq2 and psdsS.SpecColumnID = 'Size'
 		left join #ArticleForThread aft on	aft.ID = m.POID		and
 									aft.SuppId	   = b.SuppId	and
 									aft.SCIRefNo   = a.SCIRefNo	and
-									aft.ColorID	   = a.ColorID	and
+									aft.ColorID	   = isnull(psdsC.SpecValue, '')	and
 									a.SEQ1 like 'T%' 
 		LEFT JOIN Order_BOF ob ON  a.RefNo=ob.RefNo AND a.ID=ob.Id
 		LEFT JOIN Fabric_Supp fs WITH (NOLOCK) ON fs.SCIRefno = a.SCIRefno AND fs.SuppID = iif(left(a.SEQ1, 1) = '7', a.StockSuppID, b.SuppID) 

@@ -1078,53 +1078,54 @@ drop Table #TmpSource;
         public static string SelePoItemSqlCmd(bool junk = true)
         {
             return @"
-select  p.id,concat(Ltrim(Rtrim(p.seq1)), ' ', p.seq2) as seq
-        , p.Refno   
-        , dbo.getmtldesc(p.id,p.seq1,p.seq2,2,0) as Description 
-        , p.ColorID
+select  psd.id,concat(Ltrim(Rtrim(psd.seq1)), ' ', psd.seq2) as seq
+        , psd.Refno   
+        , dbo.getmtldesc(psd.id,psd.seq1,psd.seq2,2,0) as Description 
+        , ColorID = isnull(psdsC.SpecValue, '')
         , [WH_P07_Color] = Color.Value
-        , p.SizeSpec 
-        , p.FinalETA
+        , SizeSpec= isnull(psdsS.SpecValue, '')
+        , psd.FinalETA
         , isnull(m.InQty, 0) as InQty
-        , p.pounit
-        , StockUnit = dbo.GetStockUnitBySPSeq (p.id, p.seq1, p.seq2)
+        , psd.pounit
+        , StockUnit = dbo.GetStockUnitBySPSeq (psd.id, psd.seq1, psd.seq2)
         , isnull(m.OutQty, 0) as outQty
         , isnull(m.AdjustQty, 0) as AdjustQty
         , isnull(m.ReturnQty, 0) as ReturnQty
         , isnull(m.inqty, 0) - isnull(m.OutQty, 0) + isnull(m.AdjustQty, 0) - isnull(m.ReturnQty, 0) as balance
         , isnull(m.LInvQty, 0) as LInvQty
         , isnull(m.LObQty, 0) as LObQty
-        , p.fabrictype
-        , p.seq1
-        , p.seq2
-        , p.scirefno
-        , Qty = Round (p.qty * v.Ratevalue, 2)
+        , psd.fabrictype
+        , psd.seq1
+        , psd.seq2
+        , psd.scirefno
+        , Qty = Round (psd.qty * v.Ratevalue, 2)
         ,[Status]=IIF(LockStatus.LockCount > 0 ,'Locked','Unlocked')
         ,Fabric.MtlTypeID
-from dbo.PO_Supp_Detail p WITH (NOLOCK) 
-inner join View_WH_Orders o on p.id = o.id
+from dbo.PO_Supp_Detail psd WITH (NOLOCK) 
+inner join View_WH_Orders o on psd.id = o.id
 inner join Factory f on o.FtyGroup = f.id
-left join dbo.mdivisionpodetail m WITH (NOLOCK) on m.poid = p.id and m.seq1 = p.seq1 and m.seq2 = p.seq2
-LEFT JOIN Fabric WITH (NOLOCK) ON p.SCIRefNo=Fabric.SCIRefNo
+inner join View_unitrate v on v.FROM_U = psd.POUnit and v.TO_U = dbo.GetStockUnitBySPSeq (psd.id, psd.seq1, psd.seq2)
+left join dbo.mdivisionpodetail m WITH (NOLOCK) on m.poid = psd.id and m.seq1 = psd.seq1 and m.seq2 = psd.seq2
+left JOIN Fabric WITH (NOLOCK) ON psd.SCIRefNo=Fabric.SCIRefNo
 left join [dbo].[MtlType] mt WITH (NOLOCK) on mt.ID = Fabric.MtlTypeID
-inner join View_unitrate v on v.FROM_U = p.POUnit 
-	                          and v.TO_U = dbo.GetStockUnitBySPSeq (p.id, p.seq1, p.seq2)
+left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
+left join PO_Supp_Detail_Spec psdsS WITH (NOLOCK) on psdsS.ID = psd.id and psdsS.seq1 = psd.seq1 and psdsS.seq2 = psd.seq2 and psdsS.SpecColumnID = 'Size'
 OUTER APPLY(
  SELECT [Value]=
-	 CASE WHEN Fabric.MtlTypeID in ('EMB THREAD','SP THREAD','THREAD') THEN IIF(isnull(p.SuppColor,'') = '', dbo.GetColorMultipleID(o.BrandID,p.ColorID), p.SuppColor)
-		 ELSE dbo.GetColorMultipleID(o.BrandID,p.ColorID)
+	 CASE WHEN Fabric.MtlTypeID in ('EMB THREAD','SP THREAD','THREAD') THEN IIF(isnull(psd.SuppColor,'') = '', dbo.GetColorMultipleID(o.BrandID, isnull(psdsC.SpecValue, '')), psd.SuppColor)
+		 ELSE dbo.GetColorMultipleID(o.BrandID, isnull(psdsC.SpecValue, ''))
 	 END
 )Color
 OUTER APPLY(
 	SELECT [LockCount]=COUNT(UKEY)
 	FROM FtyInventory
 	WHERE POID='{0}'
-	AND Seq1=p.Seq1
-	AND Seq2=p.Seq2
+	AND Seq1=psd.Seq1
+	AND Seq2=psd.Seq2
 	AND Lock = 1
 )LockStatus
-where p.id ='{0}'
-" + (junk ? "and p.Junk = 0" : string.Empty);
+where psd.id ='{0}'
+" + (junk ? "and psd.Junk = 0" : string.Empty);
         }
 
         /// <summary>
@@ -1276,14 +1277,13 @@ with cte as (
     select  Dyelot
             , sum(inqty - OutQty + AdjustQty - ReturnQty) as GroupQty
     from dbo.FtyInventory a WITH (NOLOCK) 
-    inner join dbo.PO_Supp_Detail p WITH (NOLOCK) on  p.id = a.POID 
-                                                      and p.seq1 = a.Seq1 
-                                                      and p.seq2 = a.Seq2
+    inner join dbo.PO_Supp_Detail psd WITH (NOLOCK) on  psd.id = a.POID and psd.seq1 = a.Seq1 and psd.seq2 = a.Seq2
+    inner join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
     where   poid = '{materials["poid"]}' 
             and Stocktype = '{stocktype}' 
             and inqty - OutQty + AdjustQty - ReturnQty > 0
-            and p.SCIRefno = '{materials["scirefno"]}' 
-            and p.ColorID = '{materials["colorid"]}' 
+            and psd.SCIRefno = '{materials["scirefno"]}' 
+            and isnull(psdsC.SpecValue, '') = '{materials["colorid"]}' 
             and a.Seq1 BETWEEN '00' AND '99'
     Group by Dyelot
 ) 
@@ -1313,14 +1313,13 @@ select  location = Stuff ((select ',' + t.mtllocationid
         --,c.GroupQty
 from cte c 
 inner join dbo.FtyInventory a WITH (NOLOCK) on a.Dyelot=c.Dyelot
-inner join dbo.PO_Supp_Detail p WITH (NOLOCK) on  p.id = a.POID 
-                                                  and p.seq1 = a.Seq1 
-                                                  and p.seq2 = a.Seq2
+inner join dbo.PO_Supp_Detail psd WITH (NOLOCK) on  psd.id = a.POID and psd.seq1 = a.Seq1 and psd.seq2 = a.Seq2
+inner join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
 where   poid = '{materials["poid"]}' 
         and Stocktype = '{stocktype}' 
         and inqty - OutQty + AdjustQty - ReturnQty > 0
-        and p.SCIRefno = '{materials["scirefno"]}' 
-        and p.ColorID = '{materials["colorid"]}' 
+        and psd.SCIRefno = '{materials["scirefno"]}' 
+        and isnull(psdsC.SpecValue, '') = '{materials["colorid"]}' 
         and a.Seq1 BETWEEN '00' AND '99'
 ";
             }
@@ -1644,24 +1643,24 @@ where   poid = '{materials["StockPOID"]}'
 
             // 此筆需求數 = 總需求數 - 已經issue總數
             decimal request = decimal.Parse(materials["requestqty"].ToString()) - decimal.Parse(materials["accu_issue"].ToString());
-            sqlcmd = string.Format(
-                @"
+            sqlcmd = $@"
 select distinct a.Seq1, a.Seq2, ctpd.Dyelot 
 ,GroupQty = sum(a.InQty - a.OutQty + a.AdjustQty - a.ReturnQty)
 ,ReleaseQty = ReleaseQty.value
 into #tmp
 from  CutTapePlan_Detail ctpd
 inner join CutTapePlan ctp on ctp.ID = ctpd.ID
-inner join PO_Supp_Detail psd on psd.ColorID = ctpd.ColorID and psd.Refno = ctpd.RefNo and psd.ID = ctp.CuttingID
-inner join FtyInventory a on a.POID = '{0}' and a.Seq1 = psd.Seq1 and a.Seq2 = psd.Seq2 and a.Dyelot = ctpd.Dyelot
+inner join PO_Supp_Detail psd on psd.Refno = ctpd.RefNo and psd.ID = ctp.CuttingID
+inner join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color' and isnull(psdsC.SpecValue, '') = ctpd.ColorID 
+inner join FtyInventory a on a.POID = '{materials["poid"]}' and a.Seq1 = psd.Seq1 and a.Seq2 = psd.Seq2 and a.Dyelot = ctpd.Dyelot
 outer apply(
 	select value= sum(ReleaseQty)
 	from CutTapePlan_Detail
 	where ID = ctp.ID
 	and Dyelot = ctpd.Dyelot
 )ReleaseQty
-where ctpd.id = '{1}' and a.Seq1 between '01' and '99' and a.StockType = '{2}'
-and ctpd.ColorID = '{3}'
+where ctpd.id = '{cutplanid}' and a.Seq1 between '01' and '99' and a.StockType = '{stocktype}'
+and ctpd.ColorID = '{materials["ColorID"]}'
 group by a.Seq1, a.Seq2, ctpd.Dyelot, ctpd.ColorID,ReleaseQty.value
 
 select
@@ -1690,9 +1689,10 @@ select
     , running_total = sum(inqty - OutQty + AdjustQty - ReturnQty) over (order by t.GroupQty DESC,a.Dyelot,(inqty - OutQty + AdjustQty - ReturnQty) desc
                                                         rows between unbounded preceding and current row)
 from #tmp t
-inner join FtyInventory a on a.POID = '{0}' and a.Seq1 = t.Seq1 and a.Seq2 = t.Seq2 and a.Dyelot = t.Dyelot and a.StockType = '{2}'
+inner join FtyInventory a on a.POID = '{materials["poid"]}' and a.Seq1 = t.Seq1 and a.Seq2 = t.Seq2 and a.Dyelot = t.Dyelot and a.StockType = '{stocktype}'
 
-drop table #tmp", materials["poid"], cutplanid, stocktype, materials["ColorID"]);
+drop table #tmp
+";
 
             DualResult result = DBProxy.Current.Select(string.Empty, sqlcmd, out dt);
             if (!result)
@@ -1776,7 +1776,6 @@ drop table #tmp", materials["poid"], cutplanid, stocktype, materials["ColorID"])
 
             // 取得所有項次號(欄位名稱跟Issue_Detail一樣)
             sqlcmd = $@"
-
 select   [POID]=psd.ID
     , psd.Seq1
     , psd.Seq2
@@ -1793,17 +1792,15 @@ select   [POID]=psd.ID
 								 ), 1, 1, '')
     , [FtyInventoryUkey]=a.Ukey
 from dbo.FtyInventory a WITH (NOLOCK) 
-inner join dbo.PO_Supp_Detail psd WITH (NOLOCK) on  psd.id = a.POID 
-												and psd.seq1 = a.Seq1 
-												and psd.seq2 = a.Seq2
-
+inner join dbo.PO_Supp_Detail psd WITH (NOLOCK) on  psd.id = a.POID and psd.seq1 = a.Seq1 and psd.seq2 = a.Seq2
+inner join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
 INNER JOIN Fabric f ON f.SCIRefno = psd.SCIRefno
 INNER JOIN MtlType m ON m.id= f.MtlTypeID
-where    psd.ID = '{material["poid"]}'
-	and psd.SCIRefno = '{material["SCIRefno"]}' 
-	and psd.ColorID = '{material["ColorID"]}' 
-    AND (a.stocktype = 'B' OR a.stocktype IS NULL)
-    AND m.IsThread=1
+where psd.ID = '{material["poid"]}'
+and psd.SCIRefno = '{material["SCIRefno"]}' 
+and isnull(psdsC.SpecValue, '') = '{material["ColorID"]}' 
+AND (a.stocktype = 'B' OR a.stocktype IS NULL)
+AND m.IsThread=1
 ";
 
             DualResult result = DBProxy.Current.Select(string.Empty, sqlcmd, out dt);
@@ -3823,6 +3820,8 @@ where sd.Ukey in ({ukeys})
             {
                 psd_FtyDt = $@"
 left join Production.dbo.PO_Supp_Detail psd with(nolock) on psd.ID = sd.FromPoId and psd.SEQ1 = sd.FromSeq1 and psd.SEQ2 = sd.FromSeq2
+left join Production.dbo.PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
+left join Production.dbo.PO_Supp_Detail_Spec psdsS WITH (NOLOCK) on psdsS.ID = psd.id and psdsS.seq1 = psd.seq1 and psdsS.seq2 = psd.seq2 and psdsS.SpecColumnID = 'Size'
 left join Production.dbo.FtyInventory f with(nolock) on f.POID = isnull(sd.FromPoId, '')
     and f.Seq1 = isnull(sd.FromSeq1, '')
     and f.Seq2 = isnull(sd.FromSeq2, '')
@@ -3841,6 +3840,8 @@ left join FtyInventory fto with(nolock) on fto.POID = isnull(sd.ToPOID, '')
             {
                 psd_FtyDt = $@"
 left join Production.dbo.PO_Supp_Detail psd with(nolock) on psd.ID = sd.PoId and psd.SEQ1 = sd.Seq1 and psd.SEQ2 = sd.Seq2
+left join Production.dbo.PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
+left join Production.dbo.PO_Supp_Detail_Spec psdsS WITH (NOLOCK) on psdsS.ID = psd.id and psdsS.seq1 = psd.seq1 and psdsS.seq2 = psd.seq2 and psdsS.SpecColumnID = 'Size'
 left join Production.dbo.FtyInventory f with(nolock) on f.POID = isnull(sd.PoId, '')
     and f.Seq1 = isnull(sd.Seq1, '')
     and f.Seq2 = isnull(sd.Seq2, '')
@@ -6497,5 +6498,241 @@ DEALLOCATE _cursor
 ";
             return DBProxy.Current.Execute(null, upcmd);
         }
+
+        #region 產生Temp PO2, PO3
+
+        /// <summary>
+        /// Create Temp PO table
+        /// 從Trade 複製過來
+        /// </summary>
+        /// <param name="sqlConn"> sql connection </param>
+        /// <returns> execute success or not </returns>
+        /// <inheritdoc/>
+        public static DualResult CreateTmpPOTable(SqlConnection sqlConn, int updateType = 0)
+        {
+            var primaryKey = updateType == 0
+                    ? ", Primary Key (ID, Seq1, Seq2, Seq2_Count)"
+                    : ", Primary Key (ID, Seq1, Seq2, Seq2_Count, OrderID)";
+            var addCol = updateType == 0
+                    ? string.Empty
+                    : ", OrderID VarChar(13) default '', OrderList Varchar(max) default ''";
+            var addCol2Spec = updateType == 0
+                    ? string.Empty
+                    : ", OrderList Varchar(max) default ''";
+
+            var sqlCmd = $@"
+Create Table #tmpPO_Supp
+(  RowID BigInt Identity(1,1) Not Null, ID VarChar(13), Seq1 VarChar(3), SuppID VarChar(6) default ''
+    , ShipTermID VarChar(5) default '', PayTermAPID VarChar(5) default ''
+    , Remark NVarChar(Max) default '', Description NVarChar(Max) default '', CompanyID Numeric(2,0) default 0
+    , StyleID VarChar(15), Junk Bit, Primary Key (ID, Seq1)
+);
+
+Create Table #tmpPO_Supp_Detail
+(  RowID BigInt Identity(1,1) Not Null, ID VarChar(13), Seq1 VarChar(3), Seq2 VarChar(2), RefNo VarChar(36) default '', SCIRefNo VarChar(30) default ''
+    , FabricType VarChar(1) default '', Price Numeric(14,4) default 0, UsedQty Numeric(10,4) default 0, Qty Numeric(10,2) default 0
+    , POUnit VarChar(8) default '', Complete Bit default 0, SystemETD Date, CFMETD Date, RevisedETD Date, FinalETD Date, EstETA Date
+    , ShipModeID VarChar(10) default '', PrintDate DateTime, PINO VarChar(25) default '', PIDate Date
+    , ColorID VarChar(6) default '', SuppColor NVarChar(Max) default '', SizeSpec VarChar(15) default '', SizeUnit VarChar(8) default ''
+    , Remark NVarChar(Max) default '', Special NVarChar(Max) default '', Width Numeric(5,2) default 0
+    , StockQty Numeric(12,1) default 0, NetQty Numeric(10,2) default 0, LossQty Numeric(10,2) default 0, SystemNetQty Numeric(10,2) default 0
+    , SystemCreate bit default 0, FOC Numeric(10,2) default 0, Junk bit default 0, ColorDetail NVarChar(200) default ''
+    , BomZipperInsert VarChar(5) default '', BomCustPONo VarChar(30) default ''
+    , ShipQty Numeric(10,2) default 0, Shortage Numeric(10,2) default 0, ShipFOC Numeric(10,2) default 0, ApQty Numeric(10,2) default 0
+    , InputQty Numeric(10,2) default 0, OutputQty Numeric(10,2) default 0, Spec NVarChar(Max) default '', ShipETA Date, SystemLock Date
+    , OutputSeq1 VarChar(3) default '', OutputSeq2 VarChar(2) default '', FactoryID VarChar(8) default ''
+    , StockPOID VarChar(13) default '', StockSeq1 VarChar(3) default '', StockSeq2 VarChar(2) default '', InventoryUkey bigint default 0
+    , KeyWord NVarChar(Max) default '', Article varchar(8)
+    , Seq2_Count Int, Remark_Shell NVarChar(Max) default ''
+    , Status varchar(1), Sel bit default 0, IsForOtherBrand bit, CannotOperateStock bit, Keyword_Original varchar(max)
+    {addCol}
+    {primaryKey}
+
+);
+
+Create Table #tmpPO_Supp_Detail_OrderList
+(  RowID BigInt Identity(1,1) Not Null, ID VarChar(13), Seq1 VarChar(3), Seq2 VarChar(2), OrderID VarChar(13), Seq2_Count Int
+    , Primary Key (ID, Seq1, Seq2, OrderID, Seq2_Count)
+);
+
+Create Table #tmpPO_Supp_Detail_Spec
+(  RowID BigInt Identity(1,1) Not Null, ID VarChar(13), Seq1 VarChar(3), Seq2 VarChar(2), SpecColumnID VarChar(50), SpecValue VarChar(50), Seq2_Count Int
+    {addCol2Spec}
+    , Primary Key (ID, Seq1, Seq2, SpecColumnID, Seq2_Count)
+);
+
+Create Table #tmpPO_Supp_Detail_Keyword
+(  RowID BigInt Identity(1,1) Not Null, ID VarChar(13), Seq1 VarChar(3), Seq2 VarChar(2), KeywordField VarChar(30), KeywordValue VarChar(200), Seq2_Count Int
+    {addCol2Spec}
+    , Primary Key (ID, Seq1, Seq2, KeywordField, Seq2_Count)
+);
+";
+
+            DualResult result = DBProxy.Current.ExecuteByConn(sqlConn, sqlCmd);
+            return result;
+        }
+        #endregion
+
+        #region 轉出BOF至採購單
+
+        /// <summary>
+        /// 將展開後的BOF資料轉入PO
+        /// 從Trade 複製過來
+        /// </summary>
+        /// <param name="sqlConn">sqlConn</param>
+        /// <param name="poID">採購母單</param>
+        /// <param name="brandID">Brand</param>
+        /// <param name="programID">Program</param>
+        /// <param name="category">Category</param>
+        /// <param name="testType">是否為虛擬庫存計算(0: 實際寫入Table; 1: 僅傳出Temp Table; 2: 不回傳Temp Table; 3: 實際寫入Table，但不回傳Temp Table)</param>
+        /// <param name="isExpendArticle"> isExpendArticle </param>
+        /// <inheritdoc />
+        public static DualResult TransferToPO_1_ForBOF(SqlConnection sqlConn, string poID, string brandID, string programID, string category, int testType, bool isExpendArticle)
+        {
+            DualResult result;
+            List<SqlParameter> paras = new List<SqlParameter>();
+
+            // String sqlCmd = "";
+            paras.Add(new SqlParameter("@PoID", poID));
+            paras.Add(new SqlParameter("@BrandID", brandID));
+            paras.Add(new SqlParameter("@ProgramID", programID));
+            paras.Add(new SqlParameter("@Category", category));
+            paras.Add(new SqlParameter("@TestType", testType));
+            paras.Add(new SqlParameter("@IsExpendArticle", isExpendArticle));
+
+            result = DBProxy.Current.ExecuteSPByConn(sqlConn, "TransferToPO_1_ForBOF", paras);
+
+            return result;
+        }
+
+        #endregion
+
+        #region 轉出BOA至採購單
+
+        /// <summary>
+        /// 將展開後的BOA資料轉入PO
+        /// 從Trade 複製過來
+        /// </summary>
+        /// <param name="sqlConn">sqlConn</param>
+        /// <param name="poID">採購母單</param>
+        /// <param name="brandID">Brand</param>
+        /// <param name="programID">Program</param>
+        /// <param name="category">Category</param>
+        /// <param name="testType">是否為虛擬庫存計算(0: 實際寫入Table; 1: 僅傳出Temp Table; 2: 不回傳Temp Table; 3: 實際寫入Table，但不回傳Temp Table)</param>
+        /// <param name="isExpendArticle"> isExpendArticle </param>
+        /// <inheritdoc />
+        public static DualResult TransferToPO_1_ForBOA(SqlConnection sqlConn, string poID, string brandID, string programID, string category, int testType, bool isExpendArticle)
+        {
+            DualResult result;
+            List<SqlParameter> paras = new List<SqlParameter>();
+
+            // String sqlCmd = "";
+            paras.Add(new SqlParameter("@PoID", poID));
+            paras.Add(new SqlParameter("@BrandID", brandID));
+            paras.Add(new SqlParameter("@ProgramID", programID));
+            paras.Add(new SqlParameter("@Category", category));
+            paras.Add(new SqlParameter("@TestType", testType));
+            paras.Add(new SqlParameter("@IsExpendArticle", isExpendArticle));
+
+            result = DBProxy.Current.ExecuteSPByConn(sqlConn, "TransferToPO_1_ForBOA", paras);
+
+            return result;
+        }
+
+        /// <summary>
+        /// Project是否為ARO
+        /// 從Trade 複製過來
+        /// </summary>
+        /// <param name="id"> sp#</param>
+        /// <returns> Expend Article </returns>
+        public static bool IsExpendArticle(string id)
+        {
+            string project = MyUtility.GetValue.Lookup($"select ProjectID from dbo.Orders where ID = '{id}'", string.Empty);
+            return project == "ARO";
+        }
+        #endregion
+
+        #region 轉出A大項至採購單
+
+        /// <summary>
+        /// 將外裁的A1項及QT的A2轉入PO
+        /// 從Trade 複製過來
+        /// </summary>
+        /// <param name="sqlConn">sqlConn</param>
+        /// <param name="poID">採購母單</param>
+        /// <param name="brandID">Brand</param>
+        /// <param name="programID">Program</param>
+        /// <param name="category">Category</param>
+        /// <param name="testType">是否為虛擬庫存計算(0: 實際寫入Table; 1: 僅傳出Temp Table; 2: 不回傳Temp Table; 3: 實際寫入Table，但不回傳Temp Table)</param>
+        /// <inheritdoc />
+        public static DualResult TransferToPO_1_ForAItem(SqlConnection sqlConn, string poID, string brandID, string programID, string category, int testType)
+        {
+            DualResult result;
+            List<SqlParameter> paras = new List<SqlParameter>();
+
+            // String sqlCmd = "";
+            paras.Add(new SqlParameter("@PoID", poID));
+            paras.Add(new SqlParameter("@BrandID", brandID));
+            paras.Add(new SqlParameter("@ProgramID", programID));
+            paras.Add(new SqlParameter("@Category", category));
+            paras.Add(new SqlParameter("@TestType", testType));
+
+            result = DBProxy.Current.ExecuteSPByConn(sqlConn, "TransferToPO_1_ForAItem", paras);
+
+            return result;
+        }
+
+        #endregion
+
+        #region 依照AllowanceCombo將T項及轉入至採購單
+
+        /// <summary>
+        /// 依照AllowanceCombo將T項及轉入至採購單
+        /// 從Trade 複製過來
+        /// </summary>
+        /// <param name="sqlConn">sqlConn</param>
+        /// <param name="poID">採購母單</param>
+        /// <inheritdoc />
+        public static DualResult TransferToPO_1_ForThreadAllowance(SqlConnection sqlConn, string poID)
+        {
+            DualResult result;
+            List<SqlParameter> paras = new List<SqlParameter>();
+
+            paras.Add(new SqlParameter("@PoID", poID));
+            paras.Add(new SqlParameter("@UserID", Env.User.UserID));
+
+            result = DBProxy.Current.ExecuteSPByConn(sqlConn, "TransferToPO_1_ForThreadAllowance", paras);
+
+            return result;
+        }
+
+        #endregion
+
+        #region 將轉出PO的temp Table欄位資料補上
+
+        /// <summary>
+        /// 將轉出PO的欄位資料補上
+        /// </summary>
+        /// <param name="sqlConn">sqlConn</param>
+        /// <param name="poID">採購母單</param>
+        /// <param name="appType">重新產生資料時是否要覆蓋原始資料</param>
+        /// <param name="testType">是否為虛擬庫存計算(0: 實際寫入Table; 1: 僅傳出Temp Table; 2: 不回傳Temp Table; 3: 實際寫入Table，但不回傳Temp Table)</param>
+        /// <inheritdoc />
+        public static DualResult TransferToPO_2(SqlConnection sqlConn, string poID, bool appType, int testType)
+        {
+            DualResult result;
+            List<SqlParameter> paras = new List<SqlParameter>();
+
+            // String sqlCmd = "";
+            paras.Add(new SqlParameter("@PoID", poID));
+            paras.Add(new SqlParameter("@AppType", appType));
+            paras.Add(new SqlParameter("@TestType", testType));
+
+            result = DBProxy.Current.ExecuteSPByConn(sqlConn, "TransferToPO_2", paras);
+
+            return result;
+        }
+
+        #endregion
     }
 }

@@ -217,11 +217,11 @@ ted.ID
 ,ted.SuppID
 ,ted.Description
 ,ted.UnitID
-,[Color] = case when psdInv.ColorID is not null then psdInv.ColorID
-			    when psd.ColorID is not null then psd.ColorID
+,[Color] = case when psdsCInv.SpecValue is not null then psdsCInv.SpecValue
+			    when psdsC.SpecValue is not null then psdsC.SpecValue
 				else '' end
-,[Size] = case  when psdInv.SizeSpec is not null then psdInv.SizeSpec
-			    when psd.SizeSpec is not null then psd.SizeSpec
+,[Size] = case  when psdsSInv.SpecValue is not null then psdsSInv.SpecValue
+			    when psdsS.SpecValue is not null then psdsS.SpecValue
 				else '' end
 ,[PoQty] = round(isnull(dbo.GetUnitQty(ted.UnitID ,IIF(te.TransferType = 'Transfer Out', psdInv.StockUnit,psd.StockUnit), ted.PoQty), 0), 2)
 ,[ExportQty] = round(isnull(dbo.GetUnitQty(carton.StockUnitID, IIF(te.TransferType = 'Transfer Out', psdInv.StockUnit,psd.StockUnit), carton.ttlQty), 0), 2)
@@ -274,6 +274,10 @@ inner join TransferExport te with(nolock) on ted.ID = te.ID
 left join Orders o WITH (NOLOCK) on o.ID = ted.PoID
 left join Supp s WITH (NOLOCK) on s.id = ted.SuppID 
 left join PO_Supp_Detail psdInv WITH (NOLOCK) on psdInv.ID = ted.InventoryPOID and psdInv.SEQ1 = ted.InventorySeq1 and psdInv.SEQ2 = ted.InventorySeq2
+left join PO_Supp_Detail_Spec psdsCInv WITH (NOLOCK) on psdsCInv.ID = ted.InventoryPOID and psdsCInv.seq1 = ted.InventorySeq1 and psdsCInv.seq2 = ted.InventorySeq2 and psdsCInv.SpecColumnID = 'Color'
+left join PO_Supp_Detail_Spec psdsSInv WITH (NOLOCK) on psdsSInv.ID = ted.InventoryPOID and psdsSInv.seq1 = ted.InventorySeq1 and psdsSInv.seq2 = ted.InventorySeq2 and psdsSInv.SpecColumnID = 'Size'
+left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = ted.PoID and psdsC.seq1 = ted.seq1 and psdsC.seq2 = ted.seq2 and psdsC.SpecColumnID = 'Color'
+left join PO_Supp_Detail_Spec psdsS WITH (NOLOCK) on psdsS.ID = ted.PoID and psdsS.seq1 = ted.seq1 and psdsS.seq2 = ted.seq2 and psdsS.SpecColumnID = 'Size'
 left join PO_Supp_Detail psd WITH (NOLOCK) on psd.ID = ted.PoID and psd.SEQ1 = ted.Seq1 and psd.SEQ2 = ted.Seq2
 left join Fabric f WITH (NOLOCK) on f.SCIRefno = ted.SCIRefno
 left join Fabric_Supp fs WITH (NOLOCK) on fs.SCIRefno = f.SCIRefno and fs.SuppID = s.ID

@@ -357,20 +357,21 @@ and ID = '{Sci.Env.User.UserID}'"))
                     string sqlcmd;
                     if (this.CurrentDetailData["DataFrom"].Equals("Po_Supp_Detail"))
                     {
-                        sqlcmd = string.Format(
-                            @"
-select  poid = p.ID 
-        , seq = concat(Ltrim(Rtrim(p.seq1)), ' ', p.seq2)
-        , p.seq1
-        , p.seq2
-        , p.Refno
-        , p.ColorID
-        , Description = (select f.DescDetail from fabric f WITH (NOLOCK) where f.SCIRefno = p.scirefno) 
-        , p.scirefno
-        , p.FabricType
-        , stockunit = p.StockUnit
-from dbo.Po_Supp_Detail p WITH (NOLOCK) 
-where p.ID ='{0}'", this.CurrentDetailData["poid"].ToString());
+                        sqlcmd = $@"
+select  poid = psd.ID 
+        , seq = concat(Ltrim(Rtrim(psd.seq1)), ' ', psd.seq2)
+        , psd.seq1
+        , psd.seq2
+        , psd.Refno
+        , ColorID = isnull(psdsC.SpecValue, '')
+        , Description = (select f.DescDetail from fabric f WITH (NOLOCK) where f.SCIRefno = psd.scirefno) 
+        , psd.scirefno
+        , psd.FabricType
+        , stockunit = psd.StockUnit
+from dbo.Po_Supp_Detail psd WITH (NOLOCK) 
+left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
+where psd.ID ='{this.CurrentDetailData["poid"]}'
+";
                     }
                     else
                     {
@@ -383,10 +384,13 @@ select  poid = I.InventoryPOID
         , ColorID=''
         , Description = ''
         , I.FabricType
-        , po.StockUnit
+        , psd.StockUnit
 from dbo.Invtrans I WITH (NOLOCK) 
-left join Po_Supp_Detail po WITH (NOLOCK) on I.InventoryPOID = po.id and I.InventorySeq1 = po.seq1 and I.InventorySeq2 = po.seq2
-where I.InventoryPOID ='{this.CurrentDetailData["poid"]}' and I.type = '3' and FactoryID = '{this.CurrentMaintain["FromFtyID"]}'";
+left join Po_Supp_Detail psd WITH (NOLOCK) on I.InventoryPOID = psd.id and I.InventorySeq1 = psd.seq1 and I.InventorySeq2 = psd.seq2
+where I.InventoryPOID ='{this.CurrentDetailData["poid"]}'
+and I.type = '3'
+and I.FactoryID = '{this.CurrentMaintain["FromFtyID"]}'
+";
                     }
 
                     DBProxy.Current.Select(null, sqlcmd, out dt);
@@ -1525,6 +1529,7 @@ where sd.id = '{this.CurrentMaintain["ID"]}'
                          * 所有 MDivisionPoDetail 資料都在 Transaction 中更新，
                          * 因為要在同一 SqlConnection 之下執行
                          */
+
                         // FtyInventory 庫存
                         DataTable resulttb;
                         string upd_Fty_2F = Prgs.UpdateFtyInventory_IO(2, null, false);
@@ -1608,91 +1613,87 @@ where sd.id = '{this.CurrentMaintain["ID"]}'
         {
             string masterID = (e.Master == null) ? string.Empty : e.Master["ID"].ToString();
             string fromFty = (e.Master == null) ? string.Empty : e.Master["FromFtyID"].ToString();
-            this.DetailSelectCommand = string.Format(
-            @"
-            select  a.id
-                , a.PoId
-                , a.Seq1
-                , a.Seq2
-                , seq = concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2)
-                , a.Roll
-                , a.Dyelot
-                , [Description] = dbo.getMtlDesc(a.poid,a.seq1,a.seq2,2,0)
-                , StockUnit = p.StockUnit
-                , a.Qty
-                , TtlQty = convert(varchar(20),
-			        iif(a.CombineBarcode is null , a.Qty, 
-				        iif(a.Unoriginal is null , ttlQty.value, null))) +' '+ p.StockUnit
-                , a.StockType
-                , a.location
-                , a.ContainerCode
-                , a.ukey
-                , FabricType = isnull(p.FabricType,I.FabricType)
-                , DataFrom = iif(p.FabricType is null,'Invtrans','Po_Supp_Detail')
-		        ,a.Weight
-		        ,a.Remark
-                ,[Fabric] = case when p.FabricType = 'F' then 'Fabric' 
-                                     when p.FabricType = 'A' then 'Accessory'
-                                else '' end
-                , p.Refno
-		        , [ColorID] = Color.Value
-                ,[Barcode] = isnull(Barcode.value,'')
-                ,a.CombineBarcode
-                ,a.Unoriginal 
-                ,[ActualWeight] = isnull(a.ActualWeight, 0)
-                ,a.MDivisionID
-                ,a.CompleteTime
-                ,a.SentToWMS
-                ,[Tone] = a.Tone
-                ,[MINDQRCode] = case when b.Status = 'New' then a.MINDQRCode
-                                     when b.Status = 'Confirmed' and a.MINDQRCode <> '' then a.MINDQRCode
-                                     else ( select top 1 case  when    wbt.To_NewBarcodeSeq = '' then wbt.To_NewBarcode
-                                                               when    wbt.To_NewBarcode = ''  then ''
-                                                               else    Concat(wbt.To_NewBarcode, '-', wbt.To_NewBarcodeSeq)    end
-                                            from   WHBarcodeTransaction wbt with (nolock)
-                                            where  wbt.TransactionUkey = a.Ukey and
-                                                   wbt.Action = 'Confirm'
-                                            order by wbt.CommitTime desc) end
-                ,[MINDChecker] = a.MINDChecker+'-'+(select name from [ExtendServer].ManufacturingExecution.dbo.Pass1 where id = a.MINDChecker)
-                ,[CheckDate] = IIF(a.MINDCheckEditDate IS NULL, a.MINDCheckAddDate,a.MINDCheckEditDate)
-            from dbo.TransferIn_Detail a WITH (NOLOCK) 
-            inner join TransferIn b WITH (NOLOCK) on a.id = b.id
-            left join Po_Supp_Detail p WITH (NOLOCK)  on a.poid = p.id
-                                          and a.seq1 = p.seq1
-                                          and a.seq2 = p.seq2
-            LEFT JOIN Fabric f WITH (NOLOCK) ON p.SCIRefNo=f.SCIRefNo
-            outer apply ( 
-                select top 1 FabricType 
-                from Invtrans I WITH (NOLOCK)  
-                where a.poid = I.InventoryPOID and a.seq1 = I.InventorySeq1 and a.seq2 = I.InventorySeq2 
-                and I.FactoryID = '{1}' and I.type = '3' 
-            ) I
-            outer apply(
-	            select value = sum(Qty)
-	            from TransferIn_Detail t WITH (NOLOCK) 
-	            where t.ID=a.ID
-	            and t.CombineBarcode=a.CombineBarcode
-	            and t.CombineBarcode is not null
-            )ttlQty
-            OUTER APPLY(
-             SELECT [Value]=
-	             CASE WHEN f.MtlTypeID in ('EMB THREAD','SP THREAD','THREAD') THEN IIF( isnull(p.SuppColor,'') = '',dbo.GetColorMultipleID(p.BrandID,p.ColorID),p.SuppColor)
-		             ELSE dbo.GetColorMultipleID(p.BrandID,p.ColorID)
-	             END
-            )Color
-            outer apply(
-	            select value = ft.barcode
-	            from FtyInventory ft
-	            where ft.POID = a.PoId
-	            and ft.Seq1 = a.Seq1 and ft.Seq2 = a.Seq2
-	            and ft.StockType = a.StockType 
-	            and ft.Roll =a.Roll and ft.Dyelot = a.Dyelot
-            )Barcode
-            Where a.id = '{0}'
-            order by a.CombineBarcode,a.Unoriginal,a.POID,a.Seq1,a.Seq2
-            ",
-            masterID,
-            fromFty);
+            this.DetailSelectCommand = $@"
+select  a.id
+    , a.PoId
+    , a.Seq1
+    , a.Seq2
+    , seq = concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2)
+    , a.Roll
+    , a.Dyelot
+    , [Description] = dbo.getMtlDesc(a.poid,a.seq1,a.seq2,2,0)
+    , StockUnit = psd.StockUnit
+    , a.Qty
+    , TtlQty = convert(varchar(20),
+		iif(a.CombineBarcode is null , a.Qty, 
+			iif(a.Unoriginal is null , ttlQty.value, null))) +' '+ psd.StockUnit
+    , a.StockType
+    , a.location
+    , a.ContainerCode
+    , a.ukey
+    , FabricType = isnull(psd.FabricType,I.FabricType)
+    , DataFrom = iif(psd.FabricType is null,'Invtrans','Po_Supp_Detail')
+	,a.Weight
+	,a.Remark
+    ,[Fabric] = case when psd.FabricType = 'F' then 'Fabric' 
+                            when psd.FabricType = 'A' then 'Accessory'
+                    else '' end
+    , psd.Refno
+	, [ColorID] = Color.Value
+    ,[Barcode] = isnull(Barcode.value,'')
+    ,a.CombineBarcode
+    ,a.Unoriginal 
+    ,[ActualWeight] = isnull(a.ActualWeight, 0)
+    ,a.MDivisionID
+    ,a.CompleteTime
+    ,a.SentToWMS
+    ,[Tone] = a.Tone
+    ,[MINDQRCode] = case when b.Status = 'New' then a.MINDQRCode
+                            when b.Status = 'Confirmed' and a.MINDQRCode <> '' then a.MINDQRCode
+                            else ( select top 1 case  when    wbt.To_NewBarcodeSeq = '' then wbt.To_NewBarcode
+                                                    when    wbt.To_NewBarcode = ''  then ''
+                                                    else    Concat(wbt.To_NewBarcode, '-', wbt.To_NewBarcodeSeq)    end
+                                from   WHBarcodeTransaction wbt with (nolock)
+                                where  wbt.TransactionUkey = a.Ukey and
+                                        wbt.Action = 'Confirm'
+                                order by wbt.CommitTime desc) end
+    ,[MINDChecker] = a.MINDChecker+'-'+(select name from [ExtendServer].ManufacturingExecution.dbo.Pass1 where id = a.MINDChecker)
+    ,[CheckDate] = IIF(a.MINDCheckEditDate IS NULL, a.MINDCheckAddDate,a.MINDCheckEditDate)
+from dbo.TransferIn_Detail a WITH (NOLOCK) 
+inner join TransferIn b WITH (NOLOCK) on a.id = b.id
+left join Po_Supp_Detail psd WITH (NOLOCK)  on a.poid = psd.id and a.seq1 = psd.seq1 and a.seq2 = psd.seq2
+left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
+LEFT JOIN Fabric f WITH (NOLOCK) ON psd.SCIRefNo=f.SCIRefNo
+outer apply ( 
+    select top 1 FabricType 
+    from Invtrans I WITH (NOLOCK)  
+    where a.poid = I.InventoryPOID and a.seq1 = I.InventorySeq1 and a.seq2 = I.InventorySeq2 
+    and I.FactoryID = '{fromFty}' and I.type = '3' 
+) I
+outer apply(
+	select value = sum(Qty)
+	from TransferIn_Detail t WITH (NOLOCK) 
+	where t.ID=a.ID
+	and t.CombineBarcode=a.CombineBarcode
+	and t.CombineBarcode is not null
+)ttlQty
+OUTER APPLY(
+    SELECT [Value]=
+	    CASE WHEN f.MtlTypeID in ('EMB THREAD','SP THREAD','THREAD') THEN IIF( isnull(psd.SuppColor,'') = '',dbo.GetColorMultipleID(psd.BrandID,isnull(psdsC.SpecValue, '')),psd.SuppColor)
+		    ELSE dbo.GetColorMultipleID(psd.BrandID,isnull(psdsC.SpecValue, ''))
+	    END
+)Color
+outer apply(
+	select value = ft.barcode
+	from FtyInventory ft
+	where ft.POID = a.PoId
+	and ft.Seq1 = a.Seq1 and ft.Seq2 = a.Seq2
+	and ft.StockType = a.StockType 
+	and ft.Roll =a.Roll and ft.Dyelot = a.Dyelot
+)Barcode
+Where a.id = '{masterID}'
+order by a.CombineBarcode,a.Unoriginal,a.POID,a.Seq1,a.Seq2
+            ";
             return base.OnDetailSelectCommandPrepare(e);
         }
 
@@ -1981,11 +1982,12 @@ where sd.id = '{this.CurrentMaintain["ID"]}'
         inner join TransferExport_Detail ted with (nolock) on ted.ID = te.ID 
         inner join TransferExport_Detail_Carton tdc with (nolock) on ted.Ukey = tdc.TransferExport_DetailUkey
         left join Po_Supp_Detail psd with (nolock) on psd.ID = ted.POID and psd.Seq1 = ted.Seq1 and psd.Seq2 = ted.Seq2
-        LEFT JOIN Fabric f WITH (NOLOCK) ON psd.SCIRefNo = f.SCIRefNo
+        left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
+        left JOIN Fabric f WITH (NOLOCK) ON psd.SCIRefNo = f.SCIRefNo
         OUTER APPLY(
          SELECT [Value]=
-	         CASE WHEN f.MtlTypeID in ('EMB THREAD','SP THREAD','THREAD') THEN IIF( isnull(psd.SuppColor,'') = '',dbo.GetColorMultipleID(psd.BrandID,psd.ColorID),psd.SuppColor)
-		         ELSE dbo.GetColorMultipleID(psd.BrandID,psd.ColorID)
+	         CASE WHEN f.MtlTypeID in ('EMB THREAD','SP THREAD','THREAD') THEN IIF( isnull(psd.SuppColor,'') = '',dbo.GetColorMultipleID(psd.BrandID, isnull(psdsC.SpecValue, '')),psd.SuppColor)
+		         ELSE dbo.GetColorMultipleID(psd.BrandID, isnull(psdsC.SpecValue, ''))
 	         END
         )Color
         where   te.ID = @ID and
@@ -1998,11 +2000,7 @@ where sd.id = '{this.CurrentMaintain["ID"]}'
                 tdc.StockQty > 0
         group by ted.POID, ted.Seq1, ted.Seq2, tdc.Carton, tdc.LotNo, ted.FabricType, psd.StockUnit, psd.Refno, Color.Value, tdc.StockUnitID, psd.StockUnit,Tone, tdc.MINDQRCode
         ";
-
-            DataTable dtTrasnferExport;
-
-            DualResult result = DBProxy.Current.Select(null, sqlGetTrasnferExport, listPar, out dtTrasnferExport);
-
+            DualResult result = DBProxy.Current.Select(null, sqlGetTrasnferExport, listPar, out DataTable dtTrasnferExport);
             if (!result)
             {
                 this.ShowErr(result);

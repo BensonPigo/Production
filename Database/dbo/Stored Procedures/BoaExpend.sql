@@ -79,10 +79,10 @@ Begin
 	End;
 	
 	--若@TestType = 0，表示需實際寫入Table
-	If @TestType = 0 Or @TestType = 3
-	Begin
-		Exec BoaExpend_Insert @ID, @Order_BOAUkey, @UserID;
-	End;
+	--If @TestType = 0 Or @TestType = 3
+	--Begin
+	--	Exec BoaExpend_Insert @ID, @Order_BOAUkey, @UserID;
+	--End;
 
 	Drop Table #Tmp_BoaExpend_OrderList;
 End

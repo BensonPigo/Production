@@ -423,16 +423,20 @@ namespace Sci.Production.Quality
                 this.POID = dr["POID"].ToString().Trim();
                 this.SEQ1 = dr["SEQ1"].ToString().Trim();
                 this.SEQ2 = dr["SEQ2"].ToString().Trim();
-                this.sql = string.Format(
-                    @"select C.ExportID , C.WhseArrival , B.SCIRefno , B.Refno , B.Suppid + '-' + D.AbbEN as supplier
-                                            ,E.ColorID , E.Sizespec , B.ArriveQty , B.ReceivingID
-                                    from AIR_Laboratory A WITH (NOLOCK) 
-                                    left join AIR B WITH (NOLOCK) on A.id=B.id
-                                    left join Receiving C WITH (NOLOCK) on C.id=B.receivingID
-                                    left join Supp D WITH (NOLOCK) on D.ID=B.Suppid
-                                    left join PO_Supp_Detail E WITH (NOLOCK) on E.ID=A.POID and E.SEQ1=A.SEQ1 and E.SEQ2=A.SEQ2
-                                    where A.id={0} and A.poid='{1}' and A.seq1='{2}' and A.seq2='{3}'",
-                    this.ID, this.POID, this.SEQ1, this.SEQ2);
+                this.sql = $@"
+select C.ExportID , C.WhseArrival , B.SCIRefno , B.Refno , B.Suppid + '-' + D.AbbEN as supplier,
+    ColorID = isnull(psdsC.SpecValue ,''),
+    SizeSpec= isnull(psdsS.SpecValue ,''),
+    B.ArriveQty , B.ReceivingID
+from AIR_Laboratory A WITH (NOLOCK) 
+left join AIR B WITH (NOLOCK) on A.id=B.id
+left join Receiving C WITH (NOLOCK) on C.id=B.receivingID
+left join Supp D WITH (NOLOCK) on D.ID=B.Suppid
+left join PO_Supp_Detail E WITH (NOLOCK) on E.ID=A.POID and E.SEQ1=A.SEQ1 and E.SEQ2=A.SEQ2
+left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = E.id and psdsC.seq1 = E.seq1 and psdsC.seq2 = E.seq2 and psdsC.SpecColumnID = 'Color'
+left join PO_Supp_Detail_Spec psdsS WITH (NOLOCK) on psdsS.ID = E.id and psdsS.seq1 = E.seq1 and psdsS.seq2 = E.seq2 and psdsS.SpecColumnID = 'Size'
+where A.id={this.ID} and A.poid='{this.POID}' and A.seq1='{this.SEQ1}' and A.seq2='{this.SEQ2}'
+";
                 MyUtility.Check.Seek(this.sql, out this.ROW);
 
                 dr["SEQ"] = this.SEQ1 + "-" + this.SEQ2;

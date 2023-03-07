@@ -12,7 +12,7 @@
     [LimitHandle]      VARCHAR (10)    CONSTRAINT [DF_Inventory_LimitHandle] DEFAULT ('') NULL,
     [LimitSmr]         VARCHAR (10)    CONSTRAINT [DF_Inventory_LimitSmr] DEFAULT ('') NULL,
     [AuthMr]           VARCHAR (10)    CONSTRAINT [DF_Inventory_AuthMr] DEFAULT ('') NULL,
-    [Refno]            VARCHAR (20)    CONSTRAINT [DF_Inventory_Refno] DEFAULT ('') NOT NULL,
+    [Refno]            VARCHAR (36)    CONSTRAINT [DF_Inventory_Refno] DEFAULT ('') NULL,
     [BrandID]          VARCHAR (8)     CONSTRAINT [DF_Inventory_BrandID] DEFAULT ('') NULL,
     [Payable]          VARCHAR (1)     CONSTRAINT [DF_Inventory_Payable] DEFAULT ('') NULL,
     [CurrencyID]       VARCHAR (3)     CONSTRAINT [DF_Inventory_CurrencyID] DEFAULT ('') NOT NULL,
@@ -43,6 +43,8 @@
     [SuppID]           VARCHAR (6)     NULL DEFAULT (''),
     CONSTRAINT [PK_Inventory] PRIMARY KEY CLUSTERED ([Ukey])
 );
+
+
 
 
 

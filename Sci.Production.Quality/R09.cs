@@ -105,8 +105,8 @@ Select row_number() over(ORDER BY ord.FactoryID, fir.poid, ord.StyleID, fir.SEQ1
 	  , fir.Suppid [Supplier ID]
 	  , (select supp.AbbEN from supp where id= fir.Suppid) [Supplier Name]
 	  , fir.Refno [Reference No]
-	  , d.ColorID [Color Code]
-	  , (select name from Color where id=d.ColorID and BrandId = d.BrandId) [Color Name]
+	  , [Color Code] = isnull(psdsC.SpecValue ,'')
+	  , (select name from Color where id=isnull(psdsC.SpecValue ,'') and BrandId = d.BrandId) [Color Name]
       , fir.poid [SP#]
 	  , ord.StyleID as style
 	  , fir.SEQ1+fir.SEQ2 as [SEQ]
@@ -118,6 +118,7 @@ From FIR fir
 left join FIR_Odor firo on fir.id=firo.id
 inner join orders ord on ord.ID = fir.POID 
 inner join PO_Supp_Detail d on d.id = fir.poid and d.seq1 = fir.seq1 and d.seq2 = fir.seq2
+left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = d.id and psdsC.seq1 = d.seq1 and psdsC.seq2 = d.seq2 and psdsC.SpecColumnID = 'Color'
 Left join dbo.View_AllReceiving rec on rec.id = fir.receivingid
 left join pass1 p on firo.Inspector = p.ID 
 {0}

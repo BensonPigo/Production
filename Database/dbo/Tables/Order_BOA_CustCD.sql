@@ -2,7 +2,7 @@
     [Id]            VARCHAR (13) CONSTRAINT [DF_Order_BOA_CustCD_Id] DEFAULT ('') NOT NULL,
     [Order_BOAUkey] BIGINT       CONSTRAINT [DF_Order_BOA_CustCD_Order_BOAUkey] DEFAULT ((0)) NOT NULL,
     [CustCDID]      VARCHAR (16) CONSTRAINT [DF_Order_BOA_CustCD_CustCDID] DEFAULT ('') NOT NULL,
-    [Refno]         VARCHAR (20) CONSTRAINT [DF_Order_BOA_CustCD_Refno] DEFAULT ('') NOT NULL,
+    [Refno]         VARCHAR (36) CONSTRAINT [DF_Order_BOA_CustCD_Refno] DEFAULT ('') NOT NULL,
     [SCIRefno]      VARCHAR (30) CONSTRAINT [DF_Order_BOA_CustCD_SCIRefno] DEFAULT ('') NULL,
     [AddName]       VARCHAR (10) CONSTRAINT [DF_Order_BOA_CustCD_AddName] DEFAULT ('') NULL,
     [AddDate]       DATETIME     NULL,
@@ -11,6 +11,8 @@
 	[ColumnValue]   VARCHAR (50) NULL
     CONSTRAINT [PK_Order_BOA_CustCD] PRIMARY KEY CLUSTERED ([Order_BOAUkey] ASC, [ColumnValue] ASC)
 );
+
+
 
 
 GO

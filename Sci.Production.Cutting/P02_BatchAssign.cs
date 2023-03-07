@@ -722,14 +722,13 @@ and e.ETA = '{wkETA}'
                     if (dr["Sel"].ToString() == "True")
                     {
                         string chk = $@"
-select Colorid from (
-	select ID,SEQ1,SEQ2,ColorID
-	from PO_Supp_Detail 
-	where ID = '{this.Poid}'
-    and Refno = '{dr["Refno"]}'
-	and Junk != 1
-)a
-where Seq1='{seq1}' and Seq2='{seq2}' 
+select ColorID = isnull(psdsC.SpecValue ,'')
+from PO_Supp_Detail psd
+left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
+where psd.ID = '{this.Poid}'
+and Refno = '{dr["Refno"]}'
+and psd.Junk <> 1
+and psd.Seq1='{seq1}' and psd.Seq2='{seq2}' 
 ";
                         if (MyUtility.Check.Seek(chk, out DataRow drCheckColor))
                         {
@@ -934,7 +933,14 @@ where   id = '{0}'
 
         private void TxtSeq1_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
-            SelectItem item = new SelectItem($@"Select SEQ1,SEQ2,Colorid From PO_Supp_Detail WITH (NOLOCK) Where id='{this.Poid}' and junk=0", "SEQ1,SEQ2,Colorid", this.txtSeq1.Text, false, ",");
+            string sqlcmd = $@"
+select psd.SEQ1, psd.SEQ2, ColorID = isnull(psdsC.SpecValue ,'')
+from PO_Supp_Detail psd
+left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
+where psd.ID = '{this.Poid}'
+and psd.Junk = 0
+";
+            SelectItem item = new SelectItem(sqlcmd, "SEQ1,SEQ2,Colorid", this.txtSeq1.Text, false, ",");
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel)
             {
@@ -947,7 +953,14 @@ where   id = '{0}'
 
         private void TxtSeq2_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
-            SelectItem item = new SelectItem($@"Select SEQ1,SEQ2,Colorid From PO_Supp_Detail WITH (NOLOCK) Where id='{this.Poid}' and junk=0", "SEQ1,SEQ2,Colorid", this.txtSeq2.Text, false, ",");
+            string sqlcmd = $@"
+select psd.SEQ1, psd.SEQ2, ColorID = isnull(psdsC.SpecValue ,'')
+from PO_Supp_Detail psd
+left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
+where psd.ID = '{this.Poid}'
+and psd.Junk = 0
+";
+            SelectItem item = new SelectItem(sqlcmd, "SEQ1,SEQ2,Colorid", this.txtSeq2.Text, false, ",");
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel)
             {

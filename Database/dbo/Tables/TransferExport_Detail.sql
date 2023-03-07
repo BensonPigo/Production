@@ -18,7 +18,7 @@
     [Remark] NVARCHAR(300) NOT NULL CONSTRAINT [DF_TransferExport_Detail_Remark] DEFAULT (''), 
     [PayDesc] NVARCHAR(300) NOT NULL CONSTRAINT [DF_TransferExport_Detail_PayDesc] DEFAULT (''),
     [LastEta] DATE NULL, 
-    [Refno] VARCHAR(23) NOT NULL CONSTRAINT [DF_TransferExport_Detail_Refno] DEFAULT (''), 
+    [Refno] VARCHAR(36) NOT NULL CONSTRAINT [DF_TransferExport_Detail_Refno] DEFAULT (''), 
     [SCIRefno] VARCHAR(30) NOT NULL CONSTRAINT [DF_TransferExport_Detail_SCIRefno] DEFAULT (''), 
     [SuppID] VARCHAR(6) NOT NULL CONSTRAINT [DF_TransferExport_Detail_SuppID] DEFAULT (''), 
     [Pino] VARCHAR(25) NOT NULL CONSTRAINT [DF_TransferExport_Detail_Pino] DEFAULT (''), 

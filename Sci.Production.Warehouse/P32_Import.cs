@@ -210,8 +210,7 @@ left join cte2 on cte2.ToPoid = cte1.FromPoId and cte2.ToSeq1 = cte1.FromSeq1 an
             cbb_stocktype.DisplayMember = "Value";
 
             #region -- Return Mtl List --
-            sqlcmd = string.Format(
-                @"
+            sqlcmd = $@"
 ;with cte1 as(
 	-- 找出這個BorrowBack，發給 登入者所屬 M 的數量
     select  bd.FromPoId
@@ -224,7 +223,7 @@ left join cte2 on cte2.ToPoid = cte1.FromPoId and cte2.ToSeq1 = cte1.FromSeq1 an
     from borrowback_detail bd WITH(NOLOCK)
     inner join Orders orders on bd.FromPOID = orders.ID
     inner join Factory factory on bd.ToFactoryID = factory.ID
-    where bd.id = '{0}' and factory.MDivisionID = '{1}' and orders.Category <> 'A'
+    where bd.id = '{this.dr_master["BorrowId"]}' and factory.MDivisionID = '{Env.User.Keyword}' and orders.Category <> 'A'
     group by bd.FromPoId, bd.FromSeq1, bd.FromSeq2, bd.FromStocktype, bd.FromFactoryID, bd.ToPOID
     )
 ,cte2 as(
@@ -236,7 +235,7 @@ left join cte2 on cte2.ToPoid = cte1.FromPoId and cte2.ToSeq1 = cte1.FromSeq1 an
     from borrowback b WITH (NOLOCK) 
     inner join borrowback_detail bd WITH (NOLOCK) on b.Id= bd.ID 
     inner join Factory factory on bd.ToFactoryID = factory.ID
-    where b.BorrowId='{0}' and b.Status = 'Confirmed' and factory.MDivisionID = '{1}'
+    where b.BorrowId='{this.dr_master["BorrowId"]}' and b.Status = 'Confirmed' and factory.MDivisionID = '{Env.User.Keyword}'
     group by bd.ToPoid, bd.ToSeq1, bd.ToSeq2, bd.ToStocktype
     )
 select  cte1.FromPoId
@@ -244,12 +243,17 @@ select  cte1.FromPoId
         , cte1.FromSeq2 
         , cte1.FromStocktype
 		, cte1.FromFactoryID
-		,psd.Refno, psd.SizeSpec, psd.ColorID ,psd.BrandId,cte1.ToPOID
+		,psd.Refno
+        ,ColorID = isnull(psdsC.SpecValue, '')
+        ,SizeSpec= isnull(psdsS.SpecValue, '')
+        ,psd.BrandId,cte1.ToPOID
 into #tmp
 from cte1 
 left join cte2 on cte2.ToPoid = cte1.FromPoId and cte2.ToSeq1 = cte1.FromSeq1 and cte2.ToSeq2 =  cte1.FromSeq2 
     and cte2.ToStocktype = cte1.FromStocktype
-INNER JOIN PO_Supp_Detail psd ON psd.ID = cte1.FromPoId and psd.Seq1 = cte1.FromSeq1 and psd.Seq2 =  cte1.FromSeq2 ;
+INNER JOIN PO_Supp_Detail psd ON psd.ID = cte1.FromPoId and psd.Seq1 = cte1.FromSeq1 and psd.Seq2 =  cte1.FromSeq2
+left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
+left join PO_Supp_Detail_Spec psdsS WITH (NOLOCK) on psdsS.ID = psd.id and psdsS.seq1 = psd.seq1 and psdsS.seq2 = psd.seq2 and psdsS.SpecColumnID = 'Size'
 
 SELECT DISTINCT Refno, SizeSpec, ColorID ,BrandId INTO #tmp2 FROM #tmp
 
@@ -278,22 +282,26 @@ select  distinct selected = 0
         , location = dbo.Getlocation(c.ukey)
         , Fromlocation = Fromlocation.listValue
         , [description] = dbo.getMtlDesc(bd.topoid,bd.toseq1,bd.toseq2,2,0) 
-        , p.StockUnit
-        , p.FabricType
+        , psd.StockUnit
+        , psd.FabricType
         , ToLocation=''
 from dbo.BorrowBack_Detail as bd WITH (NOLOCK) 
 INNER join #tmp on bd.FromPoId = #tmp.FromPOID and bd.FromSeq1 = #tmp.FromSeq1 and bd.FromSeq2 = #tmp.FromSeq2
-INNER join PO_Supp_Detail p WITH (NOLOCK) on p.ID= #tmp.ToPOID AND #tmp.BrandId=p.BrandId  and #tmp.Refno=p.Refno and #tmp.ColorID=p.ColorID  and #tmp.SizeSpec=p.SizeSpec
-INNER join ftyinventory c WITH (NOLOCK) on  p.id = c.poid and  p.Seq1  = c.seq1 and  p.Seq2 = c.seq2 --and bd.toDyelot = c.Dyelot
+INNER join (
+    PO_Supp_Detail psd WITH (NOLOCK)
+    left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
+    left join PO_Supp_Detail_Spec psdsS WITH (NOLOCK) on psdsS.ID = psd.id and psdsS.seq1 = psd.seq1 and psdsS.seq2 = psd.seq2 and psdsS.SpecColumnID = 'Size'
+) on psd.ID= #tmp.ToPOID AND #tmp.BrandId=psd.BrandId  and #tmp.Refno=psd.Refno and #tmp.ColorID=isnull(psdsC.SpecValue, '')  and #tmp.SizeSpec=isnull(psdsS.SpecValue, '')
+INNER join ftyinventory c WITH (NOLOCK) on  psd.id = c.poid and  psd.Seq1  = c.seq1 and  psd.Seq2 = c.seq2
 INNER join Orders orders on c.POID = orders.ID
 INNER join Factory factory on bd.ToFactoryID= factory.ID
 OUTER apply(
 	select	Top 1 Roll
 			, Dyelot
 	From FtyInventory
-	where	POID =p.id
-			and Seq1 = p.SEQ1
-			and Seq2 = p.SEQ2
+	where	POID =psd.id
+			and Seq1 = psd.SEQ1
+			and Seq2 = psd.SEQ2
 			and Roll = c.Roll
             and Dyelot = c.Dyelot
 ) toSP
@@ -312,11 +320,10 @@ outer apply(
 			for xml path ('')
 		) , 1, 1, '')
 )Fromlocation
-where bd.id='{0}' and c.lock = 0 and c.inqty - c.OutQty + c.AdjustQty - c.ReturnQty> 0 and factory.MDivisionID = '{1}' and orders.Category <> 'A'
+where bd.id='{this.dr_master["BorrowId"]}' and c.lock = 0 and c.inqty - c.OutQty + c.AdjustQty - c.ReturnQty> 0 and factory.MDivisionID = '{Env.User.Keyword}' and orders.Category <> 'A'
       and  c.StockType='B'
 drop table #tmp,#tmp2
-", this.dr_master["BorrowId"],
-                Env.User.Keyword);
+";
 
             result = DBProxy.Current.Select(null, sqlcmd, out DataTable grid1Datas);
 
@@ -409,7 +416,6 @@ drop table #tmp,#tmp2
             this.Close();
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         private bool CheckAndShowInfo(string sp, string seq1, string seq2)
         {
             this.displaySizeSpec.Value = string.Empty;
@@ -418,12 +424,16 @@ drop table #tmp,#tmp2
             this.editDesc.Text = string.Empty;
 
             string sqlcmd = $@"
-select  sizespec
-        ,refno
-        ,colorid
-        ,[description] = dbo.getmtldesc(id,seq1,seq2,2,0) 
-from po_supp_detail WITH (NOLOCK) 
-where id ='{sp}' and seq1 = '{seq1}' and seq2 = '{seq2}'";
+select
+    psd.refno
+    ,[description] = dbo.getmtldesc(psd.id, psd.seq1, psd.seq2, 2, 0) 
+    ,ColorID = isnull(psdsC.SpecValue, '')
+    ,SizeSpec= isnull(psdsS.SpecValue, '')
+from po_supp_detail psd WITH (NOLOCK)
+left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
+left join PO_Supp_Detail_Spec psdsS WITH (NOLOCK) on psdsS.ID = psd.id and psdsS.seq1 = psd.seq1 and psdsS.seq2 = psd.seq2 and psdsS.SpecColumnID = 'Size'
+where psd.id ='{sp}' and psd.seq1 = '{seq1}' and psd.seq2 = '{seq2}'
+";
             if (!MyUtility.Check.Seek(sqlcmd, out DataRow tmp, null))
             {
                 MyUtility.Msg.WarningBox("SP#-Seq is not found!!");

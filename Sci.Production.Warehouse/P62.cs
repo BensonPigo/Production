@@ -152,8 +152,7 @@ namespace Sci.Production.Warehouse
         {
             string masterID = (e.Master == null) ? string.Empty : e.Master["ID"].ToString();
             string cutplanID = (e.Master == null) ? string.Empty : e.Master["cutplanID"].ToString();
-            this.DetailSelectCommand = string.Format(
-                @"
+            this.DetailSelectCommand = $@"
 select  s.*
     , f.Refno
 	, [description] = f.DescDetail
@@ -177,7 +176,7 @@ left join Fabric f on s.SciRefno = f.SciRefno
 outer apply(
 	select RequestQty = sum(c.ReleaseQty) 
 	from dbo.CutTapePlan_Detail c WITH (NOLOCK) 
-	where c.id = '{1}'
+	where c.id = '{cutplanID}'
 	and c.Seq1 = s.Seq1
 	and c.Seq2 = s.Seq2
 ) ec
@@ -186,7 +185,7 @@ outer apply(
 	from Issue a WITH (NOLOCK) 
 	inner join Issue_Summary b WITH (NOLOCK) on a.Id=b.Id 
 	where b.poid = s.poid 
-			and a.CutplanID = '{1}' 
+			and a.CutplanID = '{cutplanID}' 
 			and b.SCIRefno = s.SCIRefno 
 			and b.Colorid = s.Colorid 
 			and a.status = 'Confirmed'
@@ -194,19 +193,20 @@ outer apply(
 			and a.Type = 'I'
 ) accu
 outer apply(
-	select top 1 p.NETQty
-	from PO_Supp_Detail p
-	where p.ID = s.POID and p.SCIRefno = s.SCIRefno and p.ColorID = s.ColorID
-			and p.SEQ1 like 'A%' and p.NETQty <> 0
+	select top 1 psd.NETQty
+	from PO_Supp_Detail psd
+    inner join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
+	where psd.ID = s.POID and psd.SCIRefno = s.SCIRefno and psdsC.SpecValue = s.ColorID
+			and psd.SEQ1 like 'A%' and psd.NETQty <> 0
 )Net
-outer apply(select CuttingID from CutTapePlan where Id = '{1}' )c
+outer apply(select CuttingID from CutTapePlan where Id = '{cutplanID}' )c
 outer apply(
 	select ReqQty = isNull(sum(t2.ReleaseQty), 0)
 	from CutTapePlan t1
 	inner join CutTapePlan_Detail t2 on t1.id = t2.id
 	inner join Issue i on i.CutplanID = t1.ID
 	where t1.CuttingID = c.CuttingID
-	and t1.id <> '{1}'
+	and t1.id <> '{cutplanID}'
 	and i.Status = 'Confirmed'
 	and i.Type = 'I'
 )AccuReq
@@ -221,8 +221,8 @@ outer apply(
 			and i.Type = 'I'
 )AccuIssue
 
-Where s.id = '{0}'", masterID,
-                cutplanID);
+Where s.id = '{masterID}'
+";
 
             return base.OnDetailSelectCommandPrepare(e);
         }
@@ -311,10 +311,11 @@ outer apply(
 			and a.Type = 'I'
 ) accu
 outer apply(
-	select top 1 p.NETQty
-	from PO_Supp_Detail p
-	where p.ID = s.POID and p.SCIRefno = s.SCIRefno and p.ColorID = s.ColorID
-		 and p.SEQ1 like 'A%' and p.NETQty <> 0
+	select top 1 psd.NETQty
+	from PO_Supp_Detail psd
+    inner join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
+	where psd.ID = s.POID and psd.SCIRefno = s.SCIRefno and psdsC.SpecValue = s.ColorID
+			and psd.SEQ1 like 'A%' and psd.NETQty <> 0
 )Net
 outer apply(
 	select aiqqty = isnull(sum(sm.Qty), 0)

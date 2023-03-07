@@ -96,22 +96,24 @@ select i.Id
 ,i.Remark
 ,id.POID
 ,[Seq] = CONCAT(id.Seq1,' ',id.Seq2)
-,po3.Refno
-,po3.ColorID
+,psd.Refno
+,ColorID = isnull(psdsC.SpecValue, '')
 ,f.DescDetail
 ,id.Roll
 ,id.Dyelot
-,po3.StockUnit
+,psd.StockUnit
 ,id.Qty
 ,[BulkLocation] = dbo.Getlocation(fi.Ukey)
 ,[CreateBy] = dbo.getPass1_ExtNo(i.AddName)
 from issue i
 inner join Issue_Detail id on id.Id = i.Id
-left join PO_Supp_Detail po3 on po3.ID = id.POID and po3.SEQ1 = id.Seq1 and po3.SEQ2 = id.Seq2
+left join PO_Supp_Detail psd on psd.ID = id.POID and psd.SEQ1 = id.Seq1 and psd.SEQ2 = id.Seq2
+left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
 left join FtyInventory fi on fi.Ukey = id.FtyInventoryUkey
-left join Fabric f on f.SCIRefno = po3.SCIRefno
+left join Fabric f on f.SCIRefno = psd.SCIRefno
 where i.Type = 'I'
 and i.Status = 'Confirmed'
+
 {sqlWhere}
 order by i.ID, id.POID, id.Seq1, id.Seq2, id.Roll, id.Dyelot
 ";

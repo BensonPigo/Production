@@ -2,7 +2,6 @@
 using Ict.Win;
 using Microsoft.Reporting.WinForms;
 using Sci.Data;
-using Sci.Production.Automation;
 using Sci.Production.Automation.LogicLayer;
 using Sci.Production.Prg.Entity;
 using Sci.Production.PublicPrg;
@@ -15,7 +14,6 @@ using System.Drawing;
 using System.Linq;
 using System.Reflection;
 using System.Text;
-using System.Threading.Tasks;
 using System.Transactions;
 using System.Windows.Forms;
 
@@ -460,15 +458,14 @@ where m.IsWMS = 0";
         {
             string masterID = (e.Master == null) ? string.Empty : e.Master["ID"].ToString();
 
-            this.DetailSelectCommand = string.Format(
-                @"
+            this.DetailSelectCommand = $@"
 select a.id
 	,a.PoId
 	,a.Seq1
 	,a.Seq2
 	,concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2) as seq
-	, p1.colorid
-	, p1.sizespec
+    ,ColorID = isnull(psdsC.SpecValue, '')
+    ,SizeSpec= isnull(psdsS.SpecValue, '')
 	,a.Roll
 	,a.Dyelot
 	,a.Qty
@@ -477,19 +474,14 @@ select a.id
 	,a.ToLocation
 	,a.ftyinventoryukey
 	,a.ukey
-	,p1.Refno
+	,psd.Refno
 	,dbo.getmtldesc(a.poid,a.seq1,a.seq2,2,0) as [description]
 from dbo.LocationTrans_detail a WITH (NOLOCK) 
-outer apply
-(
-	select p1.colorid, p1.sizespec, p1.Refno
-	from PO_Supp_Detail p1 WITH (NOLOCK) 
-	where p1.ID = a.PoId 
-	and p1.seq1 = a.SEQ1 
-	and p1.SEQ2 = a.seq2
-)p1
-Where a.id = '{0}' ", masterID);
-
+left join PO_Supp_Detail psd WITH (NOLOCK) on  psd.ID = a.PoId and psd.seq1 = a.SEQ1 and psd.SEQ2 = a.seq2
+left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
+left join PO_Supp_Detail_Spec psdsS WITH (NOLOCK) on psdsS.ID = psd.id and psdsS.seq1 = psd.seq1 and psdsS.seq2 = psd.seq2 and psdsS.SpecColumnID = 'Size'
+Where a.id = '{masterID}'
+";
             return base.OnDetailSelectCommandPrepare(e);
         }
 
@@ -548,16 +540,16 @@ select a.POID
 		 (a.POID = lag(a.POID,1,'')over (order by a.POID,a.seq1,a.seq2) -- same POID,Seq show first Desc
 		    AND(a.seq1 = lag(a.seq1,1,'')over (order by a.POID,a.seq1,a.seq2))
 		    AND(a.seq2 = lag(a.seq2,1,'')over (order by a.POID,a.seq1,a.seq2))) ,'',	
-		b.Refno + CHAR(13) + CHAR(10) +
+		psd.Refno + CHAR(13) + CHAR(10) +
 					IIF(f.MtlTypeID = 'EMB THREAD' or f.MtlTypeID = 'SP THREAD' OR f.MtlTypeID = 'THREAD' 
-										,IIF( b.SuppColor = '' or b.SuppColor is null,isnull(dbo.GetColorMultipleID(o.BrandID, b.ColorID),''), isnull(b.SuppColor,''))
-										,isnull(dbo.GetColorMultipleID(o.BrandID, b.ColorID),'')
+										,IIF( psd.SuppColor = '' or psd.SuppColor is null,isnull(dbo.GetColorMultipleID(o.BrandID, isnull(psdsC.SpecValue, '')),''), isnull(psd.SuppColor,''))
+										,isnull(dbo.GetColorMultipleID(o.BrandID, isnull(psdsC.SpecValue, '')),'')
 									)+ CHAR(13) + CHAR(10) +
-					isnull(b.SizeSpec,'') + CHAR(13) + CHAR(10) +
-					Concat(iif(b.FabricType='F','Fabric',iif(b.FabricType='A','Accessory',iif(b.FabricType='O','Orher',b.FabricType))), '-',isnull( f.MtlTypeID,'')))
+					isnull(psdsS.SpecValue, '') + CHAR(13) + CHAR(10) +
+					Concat(iif(psd.FabricType='F','Fabric',iif(psd.FabricType='A','Accessory',iif(psd.FabricType='O','Orher',psd.FabricType))), '-',isnull( f.MtlTypeID,'')))
 		,a.Roll
 		,a.Dyelot
-		,unit = b.StockUnit
+		,unit = psd.StockUnit
 		,a.Qty
 		,[StockType] = case a.StockType 
 					when 'B' then 'Bulk'
@@ -568,9 +560,11 @@ select a.POID
         ,[ToLocation] = a.ToLocation    
         ,[Total] = sum(a.Qty) OVER (PARTITION BY a.POID ,a.Seq1,a.Seq2 )    
 from dbo.LocationTrans_detail a  WITH (NOLOCK) 
-left join dbo.PO_Supp_Detail b WITH (NOLOCK) on b.id=a.POID and b.SEQ1=a.Seq1 and b.SEQ2=a.Seq2
-left join orders o with(nolock) on o.ID = b.ID
-left join Fabric f with(nolock) on f.SCIRefno = b.SCIRefno
+left join dbo.PO_Supp_Detail psd WITH (NOLOCK) on psd.id=a.POID and psd.SEQ1=a.Seq1 and psd.SEQ2=a.Seq2
+left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
+left join PO_Supp_Detail_Spec psdsS WITH (NOLOCK) on psdsS.ID = psd.id and psdsS.seq1 = psd.seq1 and psdsS.seq2 = psd.seq2 and psdsS.SpecColumnID = 'Size'
+left join orders o with(nolock) on o.ID = psd.ID
+left join Fabric f with(nolock) on f.SCIRefno = psd.SCIRefno
 where a.id= @ID";
             result = DBProxy.Current.Select(string.Empty, cmd, pars, out dd);
             if (!result)

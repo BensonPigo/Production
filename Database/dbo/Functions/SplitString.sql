@@ -6,7 +6,7 @@ CREATE Function [dbo].[SplitString]
 ) 
 RETURNS @RtnValue table 
 (
-Data nvarchar(50),no Int
+Data nvarchar(Max),no Int
 ) 
 AS 
 BEGIN 

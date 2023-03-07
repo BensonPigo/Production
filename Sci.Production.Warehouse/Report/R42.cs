@@ -260,8 +260,8 @@ select ml.MDivisionID
 		, MaterialType = Concat (iif(psd.FabricType='F','Fabric',iif(psd.FabricType='A','Accessory',iif(psd.FabricType='O','Orher',psd.FabricType))), '-', f.MtlTypeID)
 		, f.WeaveTypeID
 		, Color = IIF(f.MtlTypeID = 'EMB THREAD' OR f.MtlTypeID = 'SP THREAD' OR f.MtlTypeID = 'THREAD' 
-                                     ,IIF( psd.SuppColor = '' or psd.SuppColor is null,dbo.GetColorMultipleID(ml.BrandID,psd.ColorID),psd.SuppColor)
-                                     ,dbo.GetColorMultipleID(ml.BrandID,psd.ColorID)
+                                     ,IIF( psd.SuppColor = '' or psd.SuppColor is null,dbo.GetColorMultipleID(ml.BrandID,isnull(psdsC.SpecValue, '')),psd.SuppColor)
+                                     ,dbo.GetColorMultipleID(ml.BrandID,isnull(psdsC.SpecValue, ''))
                                  )
 		, CurrentStock = fi.InQty - fi.OutQty + fi.AdjustQty - fi.ReturnQty
 		, rl.FirstWhseArrival
@@ -300,7 +300,9 @@ left join FtyInventory fi with(nolock) on ml.POID = fi.POID
 											and fi.StockType = 'O'
 left join PO_Supp_Detail psd with(nolock) on ml.POID = psd.ID
 											and ml.Seq1 = psd.SEQ1
-											and ml.Seq2 = psd.SEQ2											
+											and ml.Seq2 = psd.SEQ2
+left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
+left join PO_Supp_Detail_Spec psdsS WITH (NOLOCK) on psdsS.ID = psd.id and psdsS.seq1 = psd.seq1 and psdsS.seq2 = psd.seq2 and psdsS.SpecColumnID = 'Size'
 left join Fabric f with(nolock) on psd.SCIRefno = f.SCIRefno
 left join #ReceivingList rl on ml.POID = rl.PoId
 								and ml.Seq1 = rl.Seq1 

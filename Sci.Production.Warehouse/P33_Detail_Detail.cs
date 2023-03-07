@@ -1,18 +1,20 @@
-﻿using System;
+﻿using Ict;
+using Ict.Win;
+using Sci.Data;
+using System;
 using System.Data;
 using System.Drawing;
 using System.Text;
-using Ict;
-using Ict.Win;
-using Sci.Data;
 
 namespace Sci.Production.Warehouse
 {
     /// <inheritdoc/>
     public partial class P33_Detail_Detail : Win.Subs.Base
     {
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1401:FieldsMustBePrivate", Justification = "Reviewed.")]
+        /// <inheritdoc/>
+#pragma warning disable SA1401 // Fields should be private
         public Win.Subs.Base P33_Detail;
+#pragma warning restore SA1401 // Fields should be private
         private DataRow dr_master;
         private DataTable dt_detail;
         private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
@@ -69,6 +71,7 @@ SELECT 0 as selected
        , [FtyInventoryUkey]=a.Ukey
        , [POID]='{this.dr_master["poid"].ToString()}'
 FROM dbo.PO_Supp_Detail psd WITH (NOLOCK) 
+left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
 LEFT JOIN FtyInventory a on a.POID = psd.id AND a.seq1=psd.seq1 AND a.seq2=psd.seq2
 OUTER APPLY(
 	SELECT   [MtlLocationID] = STUFF(
@@ -81,10 +84,9 @@ OUTER APPLY(
 )Location
 WHERE psd.id = '{this.dr_master["poid"]}' 
 AND psd.SCIRefno='{this.dr_master["SCIRefno"]}' 
-AND psd.ColorID='{this.dr_master["ColorID"]}'
+AND psdsC.SpecValue='{this.dr_master["ColorID"]}'
 AND (a.stocktype = 'B' OR a.stocktype IS NULL)
 and ISNULL(a.inqty - a.outqty + a.adjustqty,0.00) > 0
-
 ");
             #endregion
 

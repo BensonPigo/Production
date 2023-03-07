@@ -31,7 +31,7 @@ select	f.POID,
 		o.BrandID,
 		f.Suppid,
 		psd.Refno,
-		psd.ColorID,
+		ColorID = isnull(psdsC.SpecValue ,''),
 		[ArriveWH_Date] = a.WhseArrival,
         f.ArriveQty,
         fa.WeaveTypeID,
@@ -42,6 +42,7 @@ from Fir f with (nolock)
 inner join Receiving a with (nolock) on a.Id = f.ReceivingID
 left join Orders o with (nolock) on o.ID = f.POID
 left join PO_Supp_Detail psd with (nolock) on psd.ID = f.POID and psd.SEQ1 = f.SEQ1 and psd.SEQ2 = f.SEQ2
+left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
 left join Fabric fa with (nolock) on fa.SCIRefno = psd.SCIRefno
 outer apply(
     select Roll = count(1)
@@ -75,7 +76,7 @@ select	f.POID,
 		o.BrandID,
 		f.Suppid,
 		psd.Refno,
-		psd.ColorID,
+		ColorID = isnull(psdsC.SpecValue ,''),
 		[ArriveWH_Date] = a.IssueDate,
         f.ArriveQty,
         fa.WeaveTypeID,
@@ -86,6 +87,7 @@ from Fir f with (nolock)
 inner join TransferIn a with (nolock) on a.Id = f.ReceivingID
 left join Orders o with (nolock) on o.ID = f.POID
 left join PO_Supp_Detail psd with (nolock) on psd.ID = f.POID and psd.SEQ1 = f.SEQ1 and psd.SEQ2 = f.SEQ2
+left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
 left join Fabric fa with (nolock) on fa.SCIRefno = psd.SCIRefno
 outer apply(
     select Roll = count(1)
@@ -164,7 +166,7 @@ select
 	o.StyleID,
 	o.BrandID,
 	psd.Refno,
-	psd.ColorID,
+    ColorID = isnull(psdsC.SpecValue ,''),
 	ctRoll = ct.Roll,
 	ctDyelot = ct2.Dyelot,
 	std.Ukey
@@ -174,6 +176,7 @@ inner join SubTransfer_Detail std on std.id = st.id
 inner join Orders O on O.ID = std.FromPOID
 left  join Orders ToOrder on ToOrder.id = std.ToPOID
 inner join PO_Supp_Detail PSD on PSD.ID = std.FromPOID and PSD.SEQ1 = std.FromSeq1 and PSD.SEQ2 = std.FromSeq2
+left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
 inner join PO_Supp PS on PSD.ID = PS.ID and PSD.SEQ1 = PS.SEQ1
 inner join Supp S on PS.SuppID = S.ID
 inner join Fabric fa on PSD.SCIRefno = fa.SCIRefno

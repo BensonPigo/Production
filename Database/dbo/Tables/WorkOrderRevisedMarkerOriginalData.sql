@@ -16,7 +16,7 @@
     [MarkerLength]        VARCHAR (15)   CONSTRAINT [DF_WorkOrderRevisedMarkerOriginalData_MarkerLength] DEFAULT ('') NULL,
     [ConsPC]              NUMERIC (6, 4) CONSTRAINT [DF_WorkOrderRevisedMarkerOriginalData_ConsPC] DEFAULT ((0)) NULL,
     [Cons]                NUMERIC (9, 4) CONSTRAINT [DF_WorkOrderRevisedMarkerOriginalData_Cons] DEFAULT ((0)) NULL,
-    [Refno]               VARCHAR (20)   CONSTRAINT [DF_WorkOrderRevisedMarkerOriginalData_Refno] DEFAULT ('') NULL,
+    [Refno]               VARCHAR (36)   CONSTRAINT [DF_WorkOrderRevisedMarkerOriginalData_Refno] DEFAULT ('') NULL,
     [SCIRefno]            VARCHAR (30)   CONSTRAINT [DF_WorkOrderRevisedMarkerOriginalData_SCIRefno] DEFAULT ('') NULL,
     [MarkerNo]            VARCHAR (10)   CONSTRAINT [DF_WorkOrderRevisedMarkerOriginalData_MarkerNo] DEFAULT ('') NULL,
     [MarkerVersion]       VARCHAR (3)    CONSTRAINT [DF_WorkOrderRevisedMarkerOriginalData_MarkerVersion] DEFAULT ('') NULL,
