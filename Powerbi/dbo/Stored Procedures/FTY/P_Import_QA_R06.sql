@@ -77,6 +77,12 @@ BEGIN
 		WHERE a.ID = b.ID AND a.SEQ1 = b.SEQ1
 	)
 
+	SELECT * INTO #PO_Supp_Detail_Spec FROM [MainServer].Production.dbo.PO_Supp_Detail_Spec  a
+	WHERE EXISTS(
+		SELECT 1 FROM #PO_Supp_Detail b
+		WHERE a.ID = b.ID and a.SEQ1 = b.SEQ1 and a.SEQ2 = b.SEQ2
+	)
+
 	SELECT * INTO #Oven_Detail FROM [MainServer].Production.dbo.Oven_Detail
 	WHERE ID IN (SELECT ID FROM #Oven) 
 
@@ -102,8 +108,11 @@ BEGIN
 
 
 	
-select distinct a.PoId,a.Seq1,a.Seq2,ps.SuppID,psd.Refno ,psd.ColorID,f.Clima, a.FactoryID
-,[WhseArrival]=LEFT(convert(varchar, a.WhseArrival , 111),7)
+select distinct a.PoId,a.Seq1,a.Seq2,ps.SuppID,psd.Refno 
+	, ColorID = pc.SpecValue
+	, f.Clima
+	, a.FactoryID
+	,[WhseArrival]=LEFT(convert(varchar, a.WhseArrival , 111),7)
 into #tmp1
 from
 (
@@ -133,6 +142,7 @@ from
 left join #Orders o on o.ID = a.PoId
 left join #PO_Supp ps on ps.ID = a.PoId and ps.SEQ1 = a.Seq1
 left join #PO_Supp_Detail psd on psd.ID = a.PoId and psd.SEQ1 = a.Seq1 and psd.SEQ2 = a.Seq2
+left join #PO_Supp_Detail_Spec pc on psd.ID = pc.ID and psd.SEQ1 = pc.Seq1 and psd.SEQ2 = pc.Seq2 and pc.SpecColumnID = 'Color'
 left join #Fabric f on f.SCIRefno = psd.SCIRefno 
 where psd.FabricType = 'F'
 
@@ -560,14 +570,18 @@ from (
 		from #tmpAllData 
 	) tmp
 outer apply (
-	select a.id,a.seq1,a.seq2,a.SCIRefno,a.ColorID,ps.SuppID,a.RefNo 
+	select a.id,a.seq1,a.seq2,a.SCIRefno
+		, ColorID = pc.SpecValue
+		, ps.SuppID
+		, a.RefNo 
 	from #PO_Supp_Detail a
 	inner join #PO_Supp ps on a.ID = ps.ID and a.seq1 = ps.seq1 
+	left join #PO_Supp_Detail_Spec pc on a.ID = pc.ID and a.SEQ1 = pc.SEQ1 and a.SEQ2 = pc.SEQ2 and pc.SpecColumnID = 'Color'
 	where a.id =  tmp.poid
 	and a.seq1 = tmp.seq1
 	and a.seq2 = tmp.seq2
-	and ps.SuppID=tmp.SuppID
-	and a.Refno=tmp.Refno
+	and ps.SuppID = tmp.SuppID
+	and a.Refno = tmp.Refno
 )b
 LEFT join #Export_Detail ED ON ED.PoID = TMP.POID AND ED.Seq1 = TMP.SEQ1 AND ED.Seq2 = TMP.SEQ2
 left join #Export d on ED.ID = D.ID AND D.Confirm = 1

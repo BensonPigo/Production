@@ -86,8 +86,6 @@
     <Build Include="Security\DOMAIN_Domain Users.sql" />
     <Build Include="Security\RoleMemberships.sql" />
     <Build Include="dbo\Functions\P_GetOrderLocation_Rate.sql" />
-    <Build Include="dbo\Stored Procedures\PowerBI_OrderComparison.sql" />
-    <Build Include="dbo\Stored Procedures\PowerBI_InventoryAnalysis.sql" />
     <Build Include="dbo\Stored Procedures\P_ImportEfficiencyBI.sql" />
     <Build Include="dbo\Stored Procedures\F_F003_InsertData.sql" />
     <Build Include="dbo\Stored Procedures\F_F002_InsertData.sql" />
