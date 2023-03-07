@@ -11,7 +11,8 @@ BEGIN
 	DECLARE @SqlCmd5 nvarchar(max) ='';
 	
 	DECLARE @ETA_s_varchar varchar(10) = cast( @ETA_s as varchar)
-	DECLARE @ETA_e_varchar varchar(10) = cast( @ETA_e as varchar)
+	DECLARE @ETA_e_varchar varchar(10) = cast( @ETA_e as varchar) 
+
 	declare @current_PMS_ServerName nvarchar(50)  = 'MainServer'
 
 SET @SqlCmd1 = '
@@ -56,11 +57,11 @@ SET @SqlCmd1 = '
 	[T1 Inspected Yards] = isnull(a.T1InspectedYards,0),
 	[T1 Defect Points] = isnull(b.T1DefectPoints,0),
 	[Fabric with clima] = isnull(f.Clima,0),
-	psd.ColorID,
+	ColorID = pc.SpecValue,
     ed.seq1,
     ed.seq2,
 	ed.Ukey,
-    [bitRefnoColor] = case when f.Clima = 1 then ROW_NUMBER() over(partition by f.Clima, ps.SuppID, psd.Refno, psd.ColorID, Format(Export.CloseDate,''yyyyMM'') order by Export.CloseDate) else 0 end,
+    [bitRefnoColor] = case when f.Clima = 1 then ROW_NUMBER() over(partition by f.Clima, ps.SuppID, psd.Refno, pc.SpecValue, Format(Export.CloseDate,''yyyyMM'') order by Export.CloseDate) else 0 end,
 	[FactoryID] = o.FactoryID,
 	Export.Consignee
 into #tmpFinal
@@ -77,12 +78,13 @@ left join ['+@current_PMS_ServerName+'].Production.dbo.Supp with(nolock) on Supp
 left join ['+@current_PMS_ServerName+'].Production.dbo.Season s with(nolock) on s.ID=o.SeasonID and s.BrandID = o.BrandID
 left join ['+@current_PMS_ServerName+'].Production.dbo.Factory fty with (nolock) on fty.ID = Export.Consignee
 left join ['+@current_PMS_ServerName+'].Production.dbo.Fabric f with(nolock) on f.SCIRefno =psd.SCIRefno
+left join ['+@current_PMS_ServerName+'].Production.dbo.PO_Supp_Detail_Spec pc ith(nolock) on psd.ID = pc.ID and psd.SEQ1 = pc.SEQ1 and psd.SEQ1 = pc.SEQ2 and pc.SpecColumnID = ''Color''
 Left join #probablySeasonList seasonSCI on seasonSCI.ID = s.SeasonSCIID
 OUTER APPLY(
 	Select Top 1 FirstDyelot,TPEFirstDyelot,SeasonSCIID
 	From ['+@current_PMS_ServerName+'].Production.dbo.FirstDyelot fd
 	Inner join #probablySeasonList season on fd.SeasonSCIID = season.ID
-	WHERE fd.Refno = psd.Refno and fd.ColorID = psd.ColorID and fd.SuppID = ps.SuppID and fd.TestDocFactoryGroup = fty.TestDocFactoryGroup
+	WHERE fd.Refno = psd.Refno and fd.ColorID = pc.SpecValue and fd.SuppID = ps.SuppID and fd.TestDocFactoryGroup = fty.TestDocFactoryGroup
 		And seasonSCI.RowNo >= season.RowNo
 	Order by season.RowNo Desc
 )FirstDyelot
@@ -103,7 +105,7 @@ outer apply(
 outer apply(
     select [ColorName] = iif(c.Varicolored > 1, c.Name, c.ID)
     from ['+@current_PMS_ServerName+'].Production.dbo.Color c
-    where c.ID = psd.ColorID
+    where c.ID = pc.SpecValue
     and c.BrandID = psd.BrandID 
 )c
 where  Export.ETA between '''+@ETA_s_varchar+''' and '''+@ETA_e_varchar+'''
@@ -116,7 +118,7 @@ and o.Category in(''B'',''M'')
 SET @SqlCmd3 = '
 	drop table #probablySeasonList
 
-	-----?}?lMerge 
+	-----¶}©lMerge 
 	MERGE INTO dbo.P_QA_P09 t
 	USING #tmpFinal s 
 	ON t.WK#=s.WK# AND t.SP#=s.SP# AND t.Seq# = s.Seq#
