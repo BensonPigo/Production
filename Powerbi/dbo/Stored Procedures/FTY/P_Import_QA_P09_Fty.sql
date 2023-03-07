@@ -11,7 +11,8 @@ BEGIN
 	DECLARE @SqlCmd5 nvarchar(max) ='';
 	
 	DECLARE @ETA_s_varchar varchar(10) = cast( @ETA_s as varchar)
-	DECLARE @ETA_e_varchar varchar(10) = cast( @ETA_e as varchar)
+	DECLARE @ETA_e_varchar varchar(10) = cast( @ETA_e as varchar) 
+
 	declare @current_PMS_ServerName nvarchar(50)  = 'MainServer'
 
 SET @SqlCmd1 = '
@@ -60,7 +61,7 @@ SET @SqlCmd1 = '
     ed.seq1,
     ed.seq2,
 	ed.Ukey,
-    [bitRefnoColor] = case when f.Clima = 1 then ROW_NUMBER() over(partition by f.Clima, ps.SuppID, psd.Refno, psd.ColorID, Format(Export.CloseDate,''yyyyMM'') order by Export.CloseDate) else 0 end,
+    [bitRefnoColor] = case when f.Clima = 1 then ROW_NUMBER() over(partition by f.Clima, ps.SuppID, psd.Refno, pc.SpecValue, Format(Export.CloseDate,''yyyyMM'') order by Export.CloseDate) else 0 end,
 	[FactoryID] = o.FactoryID,
 	Export.Consignee
 into #tmpFinal
@@ -117,7 +118,7 @@ and o.Category in(''B'',''M'')
 SET @SqlCmd3 = '
 	drop table #probablySeasonList
 
-	-----?}?lMerge 
+	-----¶}©lMerge 
 	MERGE INTO dbo.P_QA_P09 t
 	USING #tmpFinal s 
 	ON t.WK#=s.WK# AND t.SP#=s.SP# AND t.Seq# = s.Seq#
