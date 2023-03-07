@@ -733,10 +733,11 @@ select {byType},estCutDate{byType2} {sqlFabricKindinto} from #tmp2 group by {byT
             nSheet = 1;
             foreach (DataRow cutrefdr1 in this.CutrefTb.Rows)
             {
-                Clipboard.SetDataObject(this.NewQRcode(MyUtility.Convert.GetString(cutrefdr1["Cutref"])));
+                Bitmap cutRefQRCode = this.NewQRcode(MyUtility.Convert.GetString(cutrefdr1["Cutref"]));
+                Clipboard.SetDataObject(cutRefQRCode, false);
                 worksheet = excel.ActiveWorkbook.Worksheets[nSheet];
                 Excel.Range rng = worksheet.get_Range("T2:U3");
-                worksheet.Paste(rng, false);
+                worksheet.Paste(rng, cutRefQRCode);
                 nSheet++;
             }
 
