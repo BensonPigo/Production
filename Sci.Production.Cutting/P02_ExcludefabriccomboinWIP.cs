@@ -48,6 +48,7 @@ namespace Sci.Production.Cutting
             this.Helper.Controls.Grid.Generator(this.grid1)
                 .Text("FabricCombo", header: "Fabric Combo", width: Widths.AnsiChars(4), iseditingreadonly: true)
                 .CheckBox("ExWip", header: "Exclude in WIP", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0, settings: exWip)
+                .CheckBox("NoNotch", header: "No Notch", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0)
                 .Text("FabricCode", header: "Fabric#", width: Widths.AnsiChars(5), iseditingreadonly: true)
                 .Text("Refno", header: "Refno", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("Description", header: "Description", width: Widths.AnsiChars(55), iseditingreadonly: true)
@@ -64,7 +65,8 @@ select distinct
 	ExWip=CAST(isnull((select 1 from Cutting_WIPExcludePatternPanel cw with(nolock) where cw.ID = oe.Id and cw.PatternPanel = oe.FabricCombo), 0) as bit),
 	oe.FabricCode,f.Refno,f.Description,
     [AddName] = concat(cw.AddName, '-'+ (select name from pass1 where id=cw.AddName)),
-	cw.AddDate
+	cw.AddDate,
+    oe.NoNotch
 from Order_EachCons oe with(nolock)
 inner join Order_BOF bof with(nolock) on bof.Id = oe.Id and bof.FabricCode = oe.FabricCode
 LEFT JOIN Fabric f with(nolock) ON bof.SCIRefno=f.SCIRefno
@@ -91,14 +93,21 @@ and oe.CuttingPiece <> 1
         {
             string sqlcmd = $@"
 Delete Cutting_WIPExcludePatternPanel where id = '{this.id}'
+alter table #tmp alter column FabricCode varchar(3)
 
 insert into Cutting_WIPExcludePatternPanel(ID,PatternPanel,AddName,AddDate)
 select distinct '{this.id}',FabricCombo,'{Sci.Env.User.UserID}',getdate() from #tmp where ExWip = 1
 
 update j set j.Success = 1 from JobCrashLog j where j.JobName = 'SetQtyBySubprocess' and j.Success = 0 and j.OrderID = '{this.id}'
 
+update  oe set oe.NoNotch = t.NoNotch
+from #tmp t
+inner join Order_EachCons oe on oe.ID = '{this.id}' and t.FabricCode = oe.FabricCode
+
 insert into JobCrashLog(JobName, OrderID)
 values('SetQtyBySubprocess' , '{this.id}')
+
+drop table #tmp
 ";
             DataTable sdt = (DataTable)this.listControlBindingSource1.DataSource;
             DualResult result1 = MyUtility.Tool.ProcessWithDatatable(sdt, string.Empty, sqlcmd, out DataTable odt);

@@ -34,6 +34,7 @@
     [isQT]                BIT            CONSTRAINT [DF_Order_EachCons_isQT] DEFAULT ((0)) NULL,
     [MarkerDownloadID]    VARCHAR (25)   NULL,
     [OrderCUkey_Old]      VARCHAR (10)   NULL,
+    [NoNotch] BIT CONSTRAINT [DF_Order_EachCons_NoNotch] DEFAULT ((0)) not NULL,
     CONSTRAINT [PK_Order_EachCons] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
 
@@ -182,3 +183,13 @@ GO
 CREATE NONCLUSTERED INDEX [<Name of Missing Index, sysname,>]
     ON [dbo].[Order_EachCons]([Id] ASC);
 
+
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'紀錄CutPart是否不須放置Notch',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'Order_EachCons',
+    @level2type = N'COLUMN',
+    @level2name = N'NoNotch'

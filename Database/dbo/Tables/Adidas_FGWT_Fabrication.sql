@@ -13,6 +13,7 @@
     [Scale] VARCHAR(5) NULL, 
     [Criteria] NUMERIC(11, 2) NULL, 
     [Criteria2] NUMERIC(11, 2) NULL,
+    [Adidas_FGWT_Fabrication] NVARCHAR(3000) NOT NULL DEFAULT (''), 
     CONSTRAINT [PK_Adidas_FGWT_Fabrication] PRIMARY KEY CLUSTERED ( Location, ReportType, MtlTypeID, Washing, FabricComposition, FabricationType)
 )
 GO

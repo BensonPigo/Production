@@ -96,7 +96,7 @@
             this.Controls.Add(this.grid1);
             this.Name = "P02_ExcludefabriccomboinWIP";
             this.OnLineHelpID = "Sci.Win.Tems.QueryForm";
-            this.Text = "P02_Exclude fabric combo in WIP";
+            this.Text = "P02_Exclude fabric combo in WIP & Notch Setting";
             this.Controls.SetChildIndex(this.grid1, 0);
             this.Controls.SetChildIndex(this.btnSave, 0);
             this.Controls.SetChildIndex(this.btnCancel, 0);
