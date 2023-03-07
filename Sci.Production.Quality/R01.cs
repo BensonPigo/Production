@@ -257,7 +257,11 @@ select
 	,ILT.InvLocationDate
 	,[MinSciDelivery] = (SELECT MinSciDelivery FROM  DBO.GetSCI(F.Poid,O.Category))
 	,[MinBuyerDelivery] = (SELECT MinBuyerDelivery  FROM  DBO.GetSCI(F.Poid,O.Category))
-	,F.Refno,C.Description,P.ColorID,(SP.SuppID+'-'+s.AbbEN)Supplier
+	,F.Refno
+    ,C.Description
+    ,[ColorID] = ps.SpecValue
+    ,[ColorName] = color.Name
+    ,[Supplier] = (SP.SuppID+'-'+s.AbbEN)
 	,C.WeaveTypeID
 	,[N/A Physical] = IIF(F.Nonphysical = 1,'Y',' ')
 	,F.Result
@@ -322,6 +326,7 @@ inner join (
 ) O on O.id = F.POID
 inner join dbo.PO_Supp SP WITH (NOLOCK) on SP.id = F.POID and SP.SEQ1 = F.SEQ1
 inner join dbo.PO_Supp_Detail P WITH (NOLOCK) on P.ID = F.POID and P.SEQ1 = F.SEQ1 and P.SEQ2 = F.SEQ2
+left join dbo.PO_Supp_Detail_Spec ps WITH (NOLOCK) on P.ID = ps.id and P.SEQ1 = ps.SEQ1 and P.SEQ2 = ps.SEQ2 and ps.SpecColumnID='Color'
 inner join supp s WITH (NOLOCK) on s.id = SP.SuppID 
 LEFT JOIN #balanceTmp BalanceQty ON BalanceQty.poid = f.POID and BalanceQty.seq1 = f.seq1 and BalanceQty.seq2 =f.seq2 AND BalanceQty.ID = f.ReceivingID
 left join MDivisionPoDetail mp on mp.POID=f.POID and mp.Seq1=f.SEQ1 and mp.Seq2=f.SEQ2
@@ -448,6 +453,12 @@ outer apply
 		where fs.ID = f.ID 
 	) s
 ) Shadeband
+OUTER APPLY(
+    SELECT Name 
+    FROM Color c WITH (NOLOCK)
+    where c.BrandId = O.BrandID 
+    and c.ID = ps.SpecValue
+)color
 {sqlWhere} 
 ORDER BY POID,SEQ
 OPTION (OPTIMIZE FOR UNKNOWN)
@@ -477,6 +488,7 @@ select
 	,tf.Refno
     ,tf.Description
     ,tf.ColorID
+    ,tf.ColorName
     ,tf.Supplier
 	,tf.WeaveTypeID
 	,tf.[N/A Physical]
