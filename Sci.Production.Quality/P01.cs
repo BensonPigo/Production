@@ -1045,5 +1045,15 @@ and ActualYds > 0
 
             this.detailgrid.SelectRowTo(rowindex);
         }
+
+        private void BtnShadeBandStock_Click(object sender, EventArgs e)
+        {
+            P01_ShadeBandStock p01_ShadeBandStock = new P01_ShadeBandStock(this.CurrentMaintain["ID"].ToString());
+
+            if (p01_ShadeBandStock.existsData)
+            {
+                p01_ShadeBandStock.ShowDialog();
+            }
+        }
     }
 }

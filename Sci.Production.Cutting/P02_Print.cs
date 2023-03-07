@@ -170,10 +170,12 @@ outer apply(
 
             string workorder_cmd = string.Format(
                 @"
-Select a.*,b.Description,b.width,dbo.MarkerLengthToYDS(MarkerLength) as yds 
+Select a.*,b.Description,b.width,dbo.MarkerLengthToYDS(a.MarkerLength) as yds 
     ,shc = iif(isnull(shc.RefNo,'')='','','Shrinkage Issue, Spreading Backward Speed: 2, Loose Tension')
+    ,oe.NoNotch
 from Workorder a WITH (NOLOCK)
-Left Join Fabric b WITH (NOLOCK) on a.SciRefno = b.SciRefno 
+Left Join Fabric b WITH (NOLOCK) on a.SciRefno = b.SciRefno
+Left Join Order_EachCons oe with (nolock) on oe.Ukey = a.Order_EachconsUkey
 outer apply(select RefNo from ShrinkageConcern where RefNo=a.RefNo and Junk=0) shc            
 Where {1}>=@Cutref1 and {1}<=@Cutref2 
 and a.id='{0}'
@@ -860,6 +862,11 @@ select {byType},estCutDate{byType2} {sqlFabricKindinto} from #tmp2 group by {byT
                     worksheet.Cells[12, 6] = workorderArry[0]["MarkerLength"].ToString() + "\n" + workorderArry[0]["yds"].ToString() + "Y (" + unit + "M)";
                     worksheet.Cells[12, 10] = size;
                     worksheet.Cells[12, 12] = ratio;
+                    if (!MyUtility.Convert.GetBool(workorderArry[0]["NoNotch"]))
+                    {
+                        worksheet.Cells[12, 16] = string.Empty;
+                    }
+
                     int l = 11;
                     int la = size.Length / l;
                     int la2 = ratio.Length / l;

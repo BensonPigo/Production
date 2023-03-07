@@ -318,6 +318,12 @@
     <Compile Include="P01_PhysicalInspection_PointRecord.Designer.cs">
       <DependentUpon>P01_PhysicalInspection_PointRecord.cs</DependentUpon>
     </Compile>
+    <Compile Include="P01_ShadeBandStock.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P01_ShadeBandStock.Designer.cs">
+      <DependentUpon>P01_ShadeBandStock.cs</DependentUpon>
+    </Compile>
     <Compile Include="P30_MDFailbyCarton.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -459,71 +465,11 @@
     <Compile Include="P09.Designer.cs">
       <DependentUpon>P09.cs</DependentUpon>
     </Compile>
-    <Compile Include="P14.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="P14.designer.cs">
-      <DependentUpon>P14.cs</DependentUpon>
-    </Compile>
-    <Compile Include="P14_Detail.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="P14_Detail.designer.cs">
-      <DependentUpon>P14_Detail.cs</DependentUpon>
-    </Compile>
-    <Compile Include="P15.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="P15.designer.cs">
-      <DependentUpon>P15.cs</DependentUpon>
-    </Compile>
-    <Compile Include="P15_Detail.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="P15_Detail.designer.cs">
-      <DependentUpon>P15_Detail.cs</DependentUpon>
-    </Compile>
     <Compile Include="P25.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="P25.Designer.cs">
       <DependentUpon>P25.cs</DependentUpon>
-    </Compile>
-    <Compile Include="P13_Detail.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="P13_Detail.Designer.cs">
-      <DependentUpon>P13_Detail.cs</DependentUpon>
-    </Compile>
-    <Compile Include="P13.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="P13.Designer.cs">
-      <DependentUpon>P13.cs</DependentUpon>
-    </Compile>
-    <Compile Include="P12_Detail.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="P12_Detail.Designer.cs">
-      <DependentUpon>P12_Detail.cs</DependentUpon>
-    </Compile>
-    <Compile Include="P12.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="P12.Designer.cs">
-      <DependentUpon>P12.cs</DependentUpon>
-    </Compile>
-    <Compile Include="P11.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="P11.Designer.cs">
-      <DependentUpon>P11.cs</DependentUpon>
-    </Compile>
-    <Compile Include="P11_Detail.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="P11_Detail.Designer.cs">
-      <DependentUpon>P11_Detail.cs</DependentUpon>
     </Compile>
     <Compile Include="P20.cs">
       <SubType>Form</SubType>
@@ -912,6 +858,9 @@
     <EmbeddedResource Include="P01_PhysicalInspection_PointRecord.resx">
       <DependentUpon>P01_PhysicalInspection_PointRecord.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="P01_ShadeBandStock.resx">
+      <DependentUpon>P01_ShadeBandStock.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="P01_ShadeBond_Print_8.rdlc">
       <SubType>Designer</SubType>
     </EmbeddedResource>
@@ -994,38 +943,8 @@
     <EmbeddedResource Include="P09.resx">
       <DependentUpon>P09.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="P14.resx">
-      <DependentUpon>P14.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="P14_Detail.resx">
-      <DependentUpon>P14_Detail.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="P15.resx">
-      <DependentUpon>P15.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="P15_Detail.resx">
-      <DependentUpon>P15_Detail.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="P25.resx">
       <DependentUpon>P25.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="P13_Detail.resx">
-      <DependentUpon>P13_Detail.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="P13.resx">
-      <DependentUpon>P13.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="P12_Detail.resx">
-      <DependentUpon>P12_Detail.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="P12.resx">
-      <DependentUpon>P12.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="P11.resx">
-      <DependentUpon>P11.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="P11_Detail.resx">
-      <DependentUpon>P11_Detail.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P20.resx">
       <DependentUpon>P20.cs</DependentUpon>

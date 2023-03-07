@@ -170,6 +170,7 @@ select
     [ActConsOutput] = cast(isnull(iif(wo.Layer - isnull(acc.AccuCuttingLayer,0) = 0, wo.Cons, acc.AccuCuttingLayer * ML.YDSMarkerLength),0) as numeric(9,4)),
     [UnfinishedCuttingReasonDesc] = dw.Name,
     wo.Remark,
+    wo.cutplanID,
     wo.MarkerVersion,
     wo.Ukey
 into #tmp
@@ -460,7 +461,8 @@ SCIDelivery,
 BuyerDelivery,
 [To be combined]=cl.v,
 t.UnfinishedCuttingReasonDesc,
-t.Remark
+t.Remark,
+cutplanID
 from #tmp t
 left join #tmpMatchFabric tmf on t.Ukey = tmf.Ukey
 --因效能,此欄位outer apply寫在這, 寫在上面會慢5倍
