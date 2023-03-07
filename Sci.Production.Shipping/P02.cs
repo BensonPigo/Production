@@ -940,6 +940,15 @@ Order by CTNNo,Seq1,Seq2", masterID);
                 MyUtility.Msg.WarningBox("Manager can't empty");
                 return false;
             }
+
+            if (this.CurrentMaintain["FromTag"].ToString() == "1" &&
+                this.CurrentMaintain["ToTag"].ToString() == "2" &&
+                this.CurrentMaintain["FromSite"].ToString() == this.CurrentMaintain["ToSite"].ToString())
+            {
+                MyUtility.Msg.WarningBox("<From> and <To> cannot be the same");
+                this.txtTO.Focus();
+                return false;
+            }
             #endregion
 
             #region set Special Sending Value
