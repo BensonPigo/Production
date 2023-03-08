@@ -169,6 +169,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Clog_B03.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Clog_B03.Designer.cs">
+      <DependentUpon>Clog_B03.cs</DependentUpon>
+    </Compile>
     <Compile Include="Packing_B09.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -524,6 +530,9 @@
       <DependentUpon>WH_B01.cs</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="Clog_B03.resx">
+      <DependentUpon>Clog_B03.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Packing_B09.resx">
       <DependentUpon>Packing_B09.cs</DependentUpon>
     </EmbeddedResource>

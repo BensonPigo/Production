@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(P03));
             this.panel5 = new Sci.Win.UI.Panel();
             this.gridReceiveDate = new Sci.Win.UI.Grid();
             this.txtPONo = new Sci.Win.UI.TextBox();
@@ -45,6 +46,11 @@
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.btnImportFromBarcode = new Sci.Win.UI.Button();
             this.panel4 = new Sci.Win.UI.Panel();
+            this.txtRemark = new Sci.Win.UI.TextBox();
+            this.pictureBox = new Sci.Win.UI.PictureBox();
+            this.label4 = new Sci.Win.UI.Label();
+            this.txtReason = new Sci.Win.UI.TextBox();
+            this.label5 = new Sci.Win.UI.Label();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.panel3 = new Sci.Win.UI.Panel();
             this.chkOnlyReqCarton = new Sci.Win.UI.CheckBox();
@@ -67,9 +73,12 @@
             this.lineShape2 = new Microsoft.VisualBasic.PowerPacks.LineShape();
             this.lineShape1 = new Microsoft.VisualBasic.PowerPacks.LineShape();
             this.shapeContainer1 = new Microsoft.VisualBasic.PowerPacks.ShapeContainer();
+            this.shapeContainer3 = new Microsoft.VisualBasic.PowerPacks.ShapeContainer();
             this.panel5.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gridReceiveDate)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
+            this.panel4.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox)).BeginInit();
             this.panel3.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -79,7 +88,7 @@
             this.panel5.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel5.Location = new System.Drawing.Point(10, 187);
             this.panel5.Name = "panel5";
-            this.panel5.Size = new System.Drawing.Size(692, 348);
+            this.panel5.Size = new System.Drawing.Size(692, 313);
             this.panel5.TabIndex = 21;
             // 
             // gridReceiveDate
@@ -103,7 +112,7 @@
             this.gridReceiveDate.RowTemplate.Height = 24;
             this.gridReceiveDate.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridReceiveDate.ShowCellToolTips = false;
-            this.gridReceiveDate.Size = new System.Drawing.Size(692, 348);
+            this.gridReceiveDate.Size = new System.Drawing.Size(692, 313);
             this.gridReceiveDate.TabIndex = 10;
             this.gridReceiveDate.TabStop = false;
             this.gridReceiveDate.ColumnHeaderMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.GridReceiveDate_ColumnHeaderMouseClick);
@@ -175,7 +184,7 @@
             this.panel2.Dock = System.Windows.Forms.DockStyle.Right;
             this.panel2.Location = new System.Drawing.Point(702, 187);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(10, 348);
+            this.panel2.Size = new System.Drawing.Size(10, 313);
             this.panel2.TabIndex = 18;
             // 
             // btnSave
@@ -206,7 +215,7 @@
             this.panel1.Dock = System.Windows.Forms.DockStyle.Left;
             this.panel1.Location = new System.Drawing.Point(0, 187);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(10, 348);
+            this.panel1.Size = new System.Drawing.Size(10, 313);
             this.panel1.TabIndex = 17;
             // 
             // btnImportFromBarcode
@@ -222,11 +231,65 @@
             // 
             // panel4
             // 
+            this.panel4.Controls.Add(this.txtRemark);
+            this.panel4.Controls.Add(this.pictureBox);
+            this.panel4.Controls.Add(this.label4);
+            this.panel4.Controls.Add(this.txtReason);
+            this.panel4.Controls.Add(this.label5);
             this.panel4.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panel4.Location = new System.Drawing.Point(0, 535);
+            this.panel4.Location = new System.Drawing.Point(0, 500);
             this.panel4.Name = "panel4";
-            this.panel4.Size = new System.Drawing.Size(712, 10);
+            this.panel4.Size = new System.Drawing.Size(712, 48);
             this.panel4.TabIndex = 20;
+            // 
+            // txtRemark
+            // 
+            this.txtRemark.BackColor = System.Drawing.Color.White;
+            this.txtRemark.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtRemark.Location = new System.Drawing.Point(240, 13);
+            this.txtRemark.Name = "txtRemark";
+            this.txtRemark.Size = new System.Drawing.Size(168, 23);
+            this.txtRemark.TabIndex = 54;
+            // 
+            // pictureBox
+            // 
+            this.pictureBox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.pictureBox.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.pictureBox.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox.Image")));
+            this.pictureBox.Location = new System.Drawing.Point(414, 6);
+            this.pictureBox.Name = "pictureBox";
+            this.pictureBox.Size = new System.Drawing.Size(27, 32);
+            this.pictureBox.TabIndex = 6;
+            this.pictureBox.TabStop = false;
+            this.pictureBox.WaitOnLoad = true;
+            this.pictureBox.Click += new System.EventHandler(this.PictureBox_Click);
+            // 
+            // label4
+            // 
+            this.label4.Location = new System.Drawing.Point(12, 13);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(57, 23);
+            this.label4.TabIndex = 51;
+            this.label4.Text = "Reason";
+            // 
+            // txtReason
+            // 
+            this.txtReason.BackColor = System.Drawing.Color.White;
+            this.txtReason.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtReason.IsSupportEditMode = false;
+            this.txtReason.Location = new System.Drawing.Point(72, 13);
+            this.txtReason.Name = "txtReason";
+            this.txtReason.Size = new System.Drawing.Size(100, 23);
+            this.txtReason.TabIndex = 52;
+            this.txtReason.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtReason_PopUp);
+            // 
+            // label5
+            // 
+            this.label5.Location = new System.Drawing.Point(175, 13);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(61, 23);
+            this.label5.TabIndex = 53;
+            this.label5.Text = "Remark";
             // 
             // openFileDialog1
             // 
@@ -425,12 +488,6 @@
             this.shapeContainer2.Location = new System.Drawing.Point(0, 0);
             this.shapeContainer2.Margin = new System.Windows.Forms.Padding(0);
             this.shapeContainer2.Name = "shapeContainer2";
-            this.shapeContainer2.Shapes.AddRange(new Microsoft.VisualBasic.PowerPacks.Shape[] {
-            this.lineShape5,
-            this.lineShape4,
-            this.lineShape3,
-            this.lineShape2,
-            this.lineShape1});
             this.shapeContainer2.Size = new System.Drawing.Size(712, 187);
             this.shapeContainer2.TabIndex = 0;
             this.shapeContainer2.TabStop = false;
@@ -484,9 +541,24 @@
             this.shapeContainer1.TabIndex = 0;
             this.shapeContainer1.TabStop = false;
             // 
+            // shapeContainer3
+            // 
+            this.shapeContainer3.Location = new System.Drawing.Point(0, 0);
+            this.shapeContainer3.Margin = new System.Windows.Forms.Padding(0);
+            this.shapeContainer3.Name = "shapeContainer2";
+            this.shapeContainer3.Shapes.AddRange(new Microsoft.VisualBasic.PowerPacks.Shape[] {
+            this.lineShape5,
+            this.lineShape4,
+            this.lineShape3,
+            this.lineShape2,
+            this.lineShape1});
+            this.shapeContainer3.Size = new System.Drawing.Size(712, 187);
+            this.shapeContainer3.TabIndex = 0;
+            this.shapeContainer3.TabStop = false;
+            // 
             // P03
             // 
-            this.ClientSize = new System.Drawing.Size(712, 545);
+            this.ClientSize = new System.Drawing.Size(712, 548);
             this.Controls.Add(this.panel5);
             this.Controls.Add(this.panel2);
             this.Controls.Add(this.panel1);
@@ -504,6 +576,9 @@
             this.panel5.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.gridReceiveDate)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).EndInit();
+            this.panel4.ResumeLayout(false);
+            this.panel4.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox)).EndInit();
             this.panel3.ResumeLayout(false);
             this.panel3.PerformLayout();
             this.ResumeLayout(false);
@@ -550,5 +625,11 @@
         private Win.UI.CheckBox chkOnlyReqCarton;
         private Win.UI.DateRange dateReqDate;
         private Win.UI.Label label3;
+        private Win.UI.TextBox txtRemark;
+        private Win.UI.PictureBox pictureBox;
+        private Win.UI.Label label4;
+        private Win.UI.TextBox txtReason;
+        private Win.UI.Label label5;
+        private Microsoft.VisualBasic.PowerPacks.ShapeContainer shapeContainer3;
     }
 }

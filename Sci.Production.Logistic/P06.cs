@@ -53,6 +53,8 @@ namespace Sci.Production.Logistic
                 .Text("Dest", header: "Destination", width: Widths.AnsiChars(20), iseditable: false)
                 .Text("FactoryID", header: "Factory", width: Widths.AnsiChars(5), iseditable: false)
                 .Date("BuyerDelivery", header: "Buyer Delivery", iseditable: false)
+                .Text("ClogReasonID", header: "Clog Return Reason", width: Widths.AnsiChars(15), iseditable: false)
+                .Text("ClogReasonRemark", header: "Clog Return Remark", width: Widths.AnsiChars(15), iseditable: false)
                 .DateTime("AddDate", header: "Create Date", iseditable: false)
                 .Text("AddName", header: "AddName", width: Widths.AnsiChars(15), iseditable: false)
                 .Text("RepackPackID", header: "Repack To Pack ID", width: Widths.AnsiChars(15), iseditable: false)
@@ -121,6 +123,8 @@ from (
             , isnull (c.Alias, '') as Dest
             , isnull (o.FactoryID, '') as FactoryID
             , oq.BuyerDelivery
+            ,cr.ClogReasonID
+            ,cr.ClogReasonRemark
             , cr.AddDate
 			, AddName = (select concat(id,'-',Name) from pass1 where id = cr.AddName)
 
@@ -229,7 +233,7 @@ order by PackingListID, OrderID, rn");
             objSheets.Cells[2, 2] = Env.User.Keyword;
 
             int r = printDT.Rows.Count;
-            objSheets.get_Range(string.Format("A4:M{0}", r + 3)).Borders.LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlContinuous;
+            objSheets.get_Range(string.Format("A4:O{0}", r + 3)).Borders.LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlContinuous;
 
             DataRow dr;
             MyUtility.Check.Seek(string.Format(@"select NameEN from Factory where id = '{0}'", Env.User.Factory), out dr, null);

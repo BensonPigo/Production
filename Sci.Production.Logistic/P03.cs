@@ -11,6 +11,7 @@ using System.Transactions;
 using Sci.Production.PublicPrg;
 using System.Linq;
 using Sci.Production.Prg;
+using Sci.Win.Tools;
 
 namespace Sci.Production.Logistic
 {
@@ -59,6 +60,7 @@ namespace Sci.Production.Logistic
         {
             base.OnFormLoaded();
             DataGridViewGeneratorCheckBoxColumnSettings col_chk = new DataGridViewGeneratorCheckBoxColumnSettings();
+            DataGridViewGeneratorTextColumnSettings col_Reason = new DataGridViewGeneratorTextColumnSettings();
             col_chk.CellValidating += (s, e) =>
             {
                 DataRow dr = this.gridReceiveDate.GetDataRow<DataRow>(e.RowIndex);
@@ -66,6 +68,28 @@ namespace Sci.Production.Logistic
                 dr.EndEdit();
                 int sint = ((DataTable)this.listControlBindingSource1.DataSource).Select("selected = 1" + (this.chkOnlyReqCarton.Checked ? "AND FtyReqReturnDate IS NOT NULL" : string.Empty)).Length;
                 this.numSelectedCTNQty.Value = sint;
+            };
+
+            col_Reason.EditingMouseDown += (s, e) =>
+            {
+                if (e.RowIndex == -1 || e.Button != MouseButtons.Right)
+                {
+                    return;
+                }
+
+                DataRow dr = this.gridReceiveDate.GetDataRow(e.RowIndex);
+
+                string sqlcmd = $@"select Description from ClogReason where Type = 'CL' and Junk = 0";
+
+                SelectItem sele = new SelectItem(sqlcmd, "20", null) { Width = 333 };
+                DialogResult result = sele.ShowDialog();
+                if (result == DialogResult.Cancel)
+                {
+                    return;
+                }
+
+                dr["ClogReasonID"] = MyUtility.GetValue.Lookup($@"select ID from ClogReason where [Description] = '{sele.GetSelectedString()}' and Type = 'CL' and Junk = 0 ", "Production"); ;
+                e.EditingControl.Text = sele.GetSelectedString();
             };
 
             this.gridReceiveDate.IsEditingReadOnly = false;
@@ -87,7 +111,9 @@ namespace Sci.Production.Logistic
             .Text("Alias", header: "Destination", width: Widths.AnsiChars(12), iseditingreadonly: true)
             .Date("BuyerDelivery", header: "Buyer Delivery", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .CellClogLocation("ClogLocationId", header: "Location No", width: Widths.AnsiChars(10), iseditingreadonly: true)
-            .Text("Remark", header: "Remark", width: Widths.AnsiChars(15), iseditingreadonly: true);
+            .Text("Remark", header: "Save Result", width: Widths.AnsiChars(15), iseditingreadonly: true)
+            .Text("Reason", header: "Reason", width: Widths.AnsiChars(15), iseditingreadonly: true, settings: col_Reason)
+            .Text("ClogReasonRemark", header: "Remark", width: Widths.AnsiChars(15), iseditingreadonly: false);
 
             // 增加CTNStartNo 有中文字的情況之下 按照我們希望的順序排
             int rowIndex = 0;
@@ -160,6 +186,9 @@ select ID
 		, ScanName
         , rn = ROW_NUMBER() over (order by PackingListID, OrderID, (RIGHT (REPLICATE ('0', 6) + rtrim (ltrim (CTNStartNo)), 6)))
         , rn1 = ROW_NUMBER() over (order by TRY_CONVERT (int, CTNStartNo), (RIGHT (REPLICATE ('0', 6) + rtrim (ltrim (CTNStartNo)), 6)))	
+        , ClogReasonID
+        , Reason
+        , ClogReasonRemark
 from (
     Select  distinct '' as ID
             , 1 as selected
@@ -184,6 +213,9 @@ from (
 			, [ScanQty]=ScanQty.Value
 			, b.ScanEditDate
 			, b.ScanName
+            , ClogReasonID = '' 
+            , ClogReasonRemark = '' 
+            , Reason = ''
     from PackingList a WITH (NOLOCK) 
     INNER JOIN  PackingList_Detail b WITH (NOLOCK)  ON a.Id = b.Id 
     LEFT JOIN  Orders c WITH (NOLOCK) ON b.OrderId = c.Id 
@@ -724,6 +756,12 @@ where pd.CustCTN = '{dr["CustCTN"]}' and pd.CTNQty > 0 and pd.DisposeFromClog= 0
 
             foreach (DataRow dr in selectedData)
             {
+                if (MyUtility.Convert.GetString(dr["ClogReasonID"]) == "Other" && MyUtility.Check.Empty(dr["ClogReasonRemark"]))
+                {
+                    MyUtility.Msg.WarningBox($"Please fill in [Remark] since [Reason] is equal to \"Other\" for PackId：{dr["PackingListID"]}, SP#：{dr["OrderID"]}, CTN#：{dr["CTNStartNo"]}.");
+                    return;
+                }
+
                 if (dr["Remark"].ToString().Trim() != string.Empty)
                 {
                     MyUtility.Msg.WarningBox("Some data cannot be received, please check again.");
@@ -764,7 +802,7 @@ where pd.CustCTN = '{dr["CustCTN"]}' and pd.CTNQty > 0 and pd.DisposeFromClog= 0
 declare @MDivisionID as varchar(8) = '{Env.User.Keyword}'
 	, @Userid As nvarchar(10) = '{Env.User.UserID}'
 
-insert into ClogReturn(ReturnDate,MDivisionID,PackingListID,OrderID,CTNStartNo, AddDate,AddName,SCICtnNo)
+insert into ClogReturn(ReturnDate,MDivisionID,PackingListID,OrderID,CTNStartNo, AddDate,AddName,SCICtnNo,ClogReasonID,ClogReasonRemark)
 select GETDATE() ReturnDate
 	,@MDivisionID MDivisionID
 	,PackingListID PackingListID
@@ -773,6 +811,8 @@ select GETDATE() ReturnDate
 	,GETDATE() AddDate
 	,@Userid AddName
 	,SCICtnNo SCICtnNo
+    ,ClogReasonID ClogReasonID
+    ,ClogReasonRemark ClogReasonRemark
 from #tmp ;
 
 
@@ -842,7 +882,7 @@ from #tmp t ;
                 try
                 {
                     // 主要Insert進TransferToClog的資料
-                    result1 = MyUtility.Tool.ProcessWithDatatable(selectedData.CopyToDataTable(), "PackingListID,OrderID,CTNStartNo,SCICtnNo,ScanQty,ScanEditDate,ScanName", sql, out resulttb, "#tmp");
+                    result1 = MyUtility.Tool.ProcessWithDatatable(selectedData.CopyToDataTable(), "PackingListID,OrderID,CTNStartNo,SCICtnNo,ScanQty,ScanEditDate,ScanName,ClogReasonID,ClogReasonRemark", sql, out resulttb, "#tmp");
 
                     if (result1 == false)
                     {
@@ -958,6 +998,42 @@ from #tmp t ;
                         break;
                 }
             }
+        }
+
+        private void PictureBox_Click(object sender, EventArgs e)
+        {
+            if (MyUtility.Check.Empty(this.txtReason.Text) && MyUtility.Check.Empty(this.txtRemark.Text))
+            {
+                return;
+            }
+
+            if ((DataTable)this.listControlBindingSource1.DataSource == null)
+            {
+                return;
+            }
+
+            this.gridReceiveDate.ValidateControl();
+            DataTable dtGridIDD = (DataTable)this.listControlBindingSource1.DataSource;
+            var id = MyUtility.GetValue.Lookup($@"select ID from ClogReason where [Description] = '{this.txtReason.Text}' and Type = 'CL' and Junk = 0 ", "Production");
+            foreach (DataRow drIDD in dtGridIDD.Select("selected = 1"))
+            {
+                drIDD["ClogReasonID"] = id;
+                drIDD["Reason"] = this.txtReason.Text;
+                drIDD["ClogReasonRemark"] = this.txtRemark.Text;
+            }
+        }
+
+        private void TxtReason_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        {
+            string sqlcmd = $@"select Description from ClogReason  where Type = 'CL' and Junk = 0";
+            SelectItem sele = new SelectItem(sqlcmd, "20", null, headercaptions: "Description") { Width = 333 };
+            DialogResult result = sele.ShowDialog();
+            if (result == DialogResult.Cancel)
+            {
+                return;
+            }
+
+            this.txtReason.Text = sele.GetSelectedString();
         }
     }
 }
