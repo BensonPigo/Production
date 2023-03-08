@@ -41,7 +41,6 @@ namespace Sci.Production.Centralized
         /// /// <inheritdoc/>
         protected override bool ClickSaveBefore()
         {
-
             if (MyUtility.Check.Empty(this.CurrentMaintain["ID"]) || MyUtility.Check.Empty(this.CurrentMaintain["Description"]))
             {
                 MyUtility.Msg.WarningBox("< ID > and < Reason > can not be empty!");
@@ -56,10 +55,9 @@ namespace Sci.Production.Centralized
                 if ( listcount.Count > 0)
                 {
                     MyUtility.Msg.WarningBox("This <Reason> already exists.");
-                }
-                return false;
+                    return false;
+                } 
             }
-
 
             this.CurrentMaintain["Type"] = "CL";
 
