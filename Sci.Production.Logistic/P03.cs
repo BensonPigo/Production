@@ -756,7 +756,7 @@ where pd.CustCTN = '{dr["CustCTN"]}' and pd.CTNQty > 0 and pd.DisposeFromClog= 0
 
             foreach (DataRow dr in selectedData)
             {
-                if (MyUtility.Convert.GetString(dr["ClogReasonID"]) == "Other" && MyUtility.Check.Empty(dr["ClogReasonRemark"]))
+                if (MyUtility.Convert.GetString(dr["Reason"]).ToUpper() == "OTHER" && MyUtility.Check.Empty(dr["ClogReasonRemark"]))
                 {
                     MyUtility.Msg.WarningBox($"Please fill in [Remark] since [Reason] is equal to \"Other\" for PackId：{dr["PackingListID"]}, SP#：{dr["OrderID"]}, CTN#：{dr["CTNStartNo"]}.");
                     return;
