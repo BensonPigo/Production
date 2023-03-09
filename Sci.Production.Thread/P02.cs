@@ -1225,7 +1225,7 @@ DECLARE ThreadRequisition_Detail_cur CURSOR FOR
         from dbo.ThreadRequisition_Detail with (nolock)
         where OrderID = '{this.CurrentMaintain["Orderid"].ToString()}' and (UseStockNewConeQty > 0 or UseStockUseConeQty > 0)
 
-declare @Refno varchar(24)
+declare @Refno varchar(36)
 declare @ThreadColorID varchar(15)
 declare @UseStockNewConeQty numeric(6,0)
 declare @UseStockUseConeQty numeric(6,0)
@@ -1377,7 +1377,7 @@ DECLARE ThreadRequisition_Detail_cur CURSOR FOR
         from dbo.ThreadRequisition_Detail with (nolock)
         where OrderID = '{this.CurrentMaintain["Orderid"].ToString()}'  and (UseStockNewConeQty > 0 or UseStockUseConeQty > 0)
 
-declare @Refno varchar(24)
+declare @Refno varchar(36)
 declare @ThreadColorID varchar(15)
 declare @UseStockNewConeQty numeric(6,0)
 declare @UseStockUseConeQty numeric(6,0)
