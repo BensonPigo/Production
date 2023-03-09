@@ -2777,6 +2777,11 @@
     <Build Include="dbo\Tables\FinanceRate.sql" />
     <Build Include="dbo\Tables\FinanceTWRate.sql" />
     <Build Include="dbo\Tables\SeasonSCI.sql" />
+    <Build Include="dbo\Tables\SubProOperator.sql" />
+    <Build Include="dbo\Tables\SubProWorkTime.sql" />
+    <Build Include="dbo\Tables\SubProWorkTime_Detail.sql" />
+    <Build Include="dbo\Tables\SubProRestTime.sql" />
+    <Build Include="dbo\Tables\SubProInsRecord_Operator.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />
