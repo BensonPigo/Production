@@ -1,7 +1,4 @@
-﻿
-
-
-CREATE PROCEDURE [dbo].[usp_switchWorkorder_BySP]
+﻿CREATE PROCEDURE [dbo].[usp_switchWorkorder_BySP]
 	(
 	 @WorkType  varChar(1)=2,--By SP = 2
 	 @Cuttingid  varChar(13),
@@ -49,17 +46,19 @@ Left Join Fabric f WITH (NOLOCK) on f.SCIRefno = ob.SCIRefno
 outer apply(Select c.CuttingLayer  From Construction c WITH (NOLOCK) where c.id = f.ConstructionID)L
 outer apply
 (
-	select top 1 seq1,seq2 
+	select top 1 psd.seq1,psd.seq2 
 	from PO_Supp_Detail psd with(nolock) 
-	where id = @POID and psd.Refno = ob.Refno and Junk = 0 AND Colorid = oec.ColorID and psd.seq1 = ob.Seq1
+    left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.ID and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
+	where psd.id = @POID and psd.Refno = ob.Refno and psd.Junk = 0 AND isnull(psdsC.SpecValue ,'') = oec.ColorID and psd.seq1 = ob.Seq1
 	and psd.OutputSeq1='' and psd.OutputSeq2 = ''
 	order by seq2 desc--�̾ڭ쥻��235��-SEQ1SEQ2�W�h
 )s
 outer apply
 (
-	select top 1 seq1,seq2 --�w�]�������atop1
+	select top 1 psd.seq1,psd.seq2 --�w�]�������atop1
 	from PO_Supp_Detail psd with(nolock) 
-	where id = @POID and psd.Refno = ob.Refno and Junk = 0 AND Colorid = oec.ColorID and psd.seq1 like '7%' and psd.OutputSeq2 != ''
+    left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.ID and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
+	where psd.id = @POID and psd.Refno = ob.Refno and psd.Junk = 0 AND isnull(psdsC.SpecValue ,'') = oec.ColorID and psd.seq1 like '7%' and psd.OutputSeq2 != ''
 )s2
 outer apply(select top 1 A=0 from Order_EachCons_Article  WITH (NOLOCK) where Order_EachConsUkey=oe.Ukey)hasforArticle--�Ƨǥ�,��ForArticle�ƫe
 Where oe.id = @Cuttingid and oe.CuttingPiece = 0--���ե�--and colorid = 'BLK'and FabricCombo = 'FA'and MarkerName = 'MAB9'
@@ -98,7 +97,7 @@ group by s.Inline,o.id,oq.Article,occ.ColorID,oq.SizeCode,occ.PatternPanel,oq.qt
 order by InlineForOrderby,o.id
 --�D�n��ưѼ�
 Declare @MixedSizeMarker varchar(2),@id varchar(13),@SizeCode varchar(8),@FirstSizeCode varchar(8),@colorid varchar(6),
-@Seq1 varchar(3),@Seq2 varchar(3),@MarkerName varchar(20),@MarkerLength varchar(15),@ConsPC numeric(6,4),@Refno varchar(20),@SCIRefno varchar(30),
+@Seq1 varchar(3),@Seq2 varchar(3),@MarkerName varchar(20),@MarkerLength varchar(15),@ConsPC numeric(6,4),@Refno varchar(36),@SCIRefno varchar(30),
 @MarkerNo varchar(10),@MarkerVersion varchar(3),@type int,@AddDate datetime,
 @MarkerDownloadID varchar(25),@FabricCombo varchar(2),@FabricCode varchar(3),@FabricPanelCode varchar(2),@Order_EachConsUkey bigint,
 @Orderqty int,@ThisMarkerColor_Layer int,@ThisMarkerColor_MaxLayer int,@rowid int,@FirstRatio int,@SumRatio int,@SizeRatio int, @tmpUkey int = 0, @tmpUkey2 int = 0,
