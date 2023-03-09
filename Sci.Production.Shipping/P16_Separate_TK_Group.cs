@@ -258,13 +258,16 @@ drop table #tmpPackinglist, #tmpCartonList
             }
 
             string updateSql = $@"
+insert into TransferExport_StatusHistory(ID, OldStatus, NewStatus, OldFtyStatus, NewFtyStatus, UpdateDate)
+select ID, Status, '{TK_TpeStatus.RequestSeparate}', FtyStatus, '{TK_FtyStatus.RequestSeparate}', getdate()
+from TransferExport
+where ID = '{this.transferExportID}'
+
 update TransferExport set   Status = '{TK_TpeStatus.RequestSeparate}',
                             FtyStatus = '{TK_FtyStatus.RequestSeparate}',
                             FtyRequestSeparateDate = getdate()
 where   ID = '{this.transferExportID}'
 
-insert into TransferExport_StatusHistory(ID, OldStatus, NewStatus, OldFtyStatus, NewFtyStatus, UpdateDate)
-values('{this.transferExportID}', '{TK_TpeStatus.Sent}', '{TK_TpeStatus.RequestSeparate}', '{TK_FtyStatus.Send}', '{TK_FtyStatus.RequestSeparate}', getdate())
 ";
 
             TransactionOptions transactionOptions = new TransactionOptions()
