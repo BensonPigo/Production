@@ -517,6 +517,7 @@ values('{this.CurrentMaintain["ID"]}', '', '', '{TK_FtyStatus.Send}', '{TK_FtySt
                     string sqlcmd = $@"
 update TransferExport 
 set FtyStatus='{TK_FtyStatus.Confirmed}'
+    , Status = '{TK_TpeStatus.FtyConfirm}'
     , editname = '{Env.User.UserID}' 
     , editdate = GETDATE()
     , FtyConfirmDate = GETDATE()
