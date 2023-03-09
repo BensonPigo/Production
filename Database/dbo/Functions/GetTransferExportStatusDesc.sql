@@ -1,6 +1,6 @@
 ﻿CREATE FUNCTION [dbo].[GetTransferExportStatusDesc]
 (
-	@Status varchar(20),
+	@Status varchar(50),
 	@StatusColumn varchar(10)
 )
 RETURNS varchar(100)
