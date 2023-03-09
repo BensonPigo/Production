@@ -88,6 +88,17 @@ m.Description,
 SRD.DefectCode,                                
 SRD.DefectQty,";
             }
+            else if (this.radioDetail_Operator.Checked)
+            {
+                formatJoin = @" left join SubProInsRecord_Defect SRD on SR.Ukey = SRD.SubProInsRecordUkey
+                                left join SubProInsRecord_Operator sro with (nolock) on sro.SubProInsRecordUkey = SR.Ukey
+                                left join SubProOperator spo with (nolock) on spo.EmployeeID = sro.SubProOperatorEmployeeID and spo.SubprocessID = SR.SubProcessID
+                            " + s_d;
+                formatCol = @"  SRD.DefectCode,
+                                SRD.DefectQty,
+                                sro.SubProOperatorEmployeeID,
+                                [OperatorName] = iif(isnull(sro.SubProOperatorEmployeeID, '') = '', '', spo.FirstName + ' ' + spo.LastName),";
+            }
             else
             {
                 formatJoin = @"left join SubProInsRecord_Defect SRD on SR.Ukey = SRD.SubProInsRecordUkey
@@ -317,7 +328,25 @@ drop table #tmp,#tmp2
 
             this.PrintData.Columns.Remove("BundleNoCT");
 
-            string filename = this.radioSummary.Checked ? "Quality_R51_Summary.xltx" : this.radioDetail_DefectType.Checked ? "Quality_R51_Detail_DefectType.xltx" : "Quality_R51_Detail_Responseteam.xltx";
+            string filename = string.Empty;
+
+            if (this.radioSummary.Checked)
+            {
+                filename = "Quality_R51_Summary.xltx";
+            }
+            else if (this.radioDetail_DefectType.Checked)
+            {
+                filename = "Quality_R51_Detail_DefectType.xltx";
+            }
+            else if (this.radioDetail_Operator.Checked)
+            {
+                filename = "Quality_R51_Detail_Operator.xltx";
+            }
+            else
+            {
+                filename = "Quality_R51_Detail_Responseteam.xltx";
+            }
+
             Excel.Application excelApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\" + filename); // 預先開啟excel app
 
             Excel.Workbook xlWb = excelApp.ActiveWorkbook as Excel.Workbook;
