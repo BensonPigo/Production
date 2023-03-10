@@ -52,11 +52,15 @@ namespace Sci.Production.Warehouse
                 this.lisSqlParameter.Add(new SqlParameter("@SP2", this.txtSP2.Text));
             }
 
-            if (!MyUtility.Check.Empty(this.dateIssue.Value1) &&
-                !MyUtility.Check.Empty(this.dateIssue.Value2))
+            if (!MyUtility.Check.Empty(this.dateIssue.Value1))
             {
-                this.sqlWherelist.Add("A.IssueDate between @dateTransfer1 and @dateTransfer2");
+                this.sqlWherelist.Add("A.IssueDate >= @dateTransfer1");
                 this.lisSqlParameter.Add(new SqlParameter("@dateTransfer1", this.dateIssue.Value1));
+            }
+
+            if (!MyUtility.Check.Empty(this.dateIssue.Value2))
+            {
+                this.sqlWherelist.Add("A.IssueDate <= @dateTransfer2");
                 this.lisSqlParameter.Add(new SqlParameter("@dateTransfer2", this.dateIssue.Value2));
             }
 

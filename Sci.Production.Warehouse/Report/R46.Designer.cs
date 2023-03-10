@@ -147,6 +147,7 @@
             this.dateIssue.DateBox2.Name = "";
             this.dateIssue.DateBox2.Size = new System.Drawing.Size(129, 23);
             this.dateIssue.DateBox2.TabIndex = 1;
+            this.dateIssue.IsRequired = false;
             this.dateIssue.Location = new System.Drawing.Point(120, 16);
             this.dateIssue.Name = "dateIssue";
             this.dateIssue.Size = new System.Drawing.Size(280, 23);
