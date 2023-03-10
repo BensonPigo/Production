@@ -425,7 +425,7 @@ outer apply (
 ) GetOnsiteSampleFail
 -----------------------------------
 outer apply(
-    Select isFail = iif(ctnr.CTNLastReceiveDate > t.{kpiDate}, 1, 0)
+    Select isFail = iif(isnull(ctnr.CTNLastReceiveDate,GetDate()) > t.{kpiDate}, 1, 0)
 ) as GetCTNFail
 ----------------End----------------
 where t.OrderQty > 0 
