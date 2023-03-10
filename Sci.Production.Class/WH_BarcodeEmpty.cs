@@ -31,7 +31,7 @@ namespace Sci.Production.Class
                 .Text("Roll", header: "Roll", width: Widths.Auto(), iseditingreadonly: true)
                 .Text("Dyelot", header: "Dyelot", width: Widths.Auto(), iseditingreadonly: true)
                 .Text("StockType", header: "Stock Type", width: Widths.Auto(), iseditingreadonly: true)
-                .Numeric("BalanceQty", header: "Balance Qty", width: Widths.Auto(), iseditingreadonly: true)
+                .Numeric("BalanceQty", header: "Balance Qty", width: Widths.Auto(), decimal_places: 2, iseditingreadonly: true)
                 ;
             this.GetData();
         }

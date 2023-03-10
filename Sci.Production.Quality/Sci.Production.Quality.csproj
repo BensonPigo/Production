@@ -227,6 +227,18 @@
     <Compile Include="B17.Designer.cs">
       <DependentUpon>B17.cs</DependentUpon>
     </Compile>
+    <Compile Include="B31.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="B31.Designer.cs">
+      <DependentUpon>B31.cs</DependentUpon>
+    </Compile>
+    <Compile Include="B32.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="B32.Designer.cs">
+      <DependentUpon>B32.cs</DependentUpon>
+    </Compile>
     <Compile Include="B20.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -280,6 +292,12 @@
     </Compile>
     <Compile Include="B28.Designer.cs">
       <DependentUpon>B28.cs</DependentUpon>
+	</Compile>
+    <Compile Include="B33.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="B33.Designer.cs">
+      <DependentUpon>B33.cs</DependentUpon>
     </Compile>
     <Compile Include="P01_Moisture.cs">
       <SubType>Form</SubType>
@@ -812,6 +830,12 @@
     <EmbeddedResource Include="B17.resx">
       <DependentUpon>B17.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="B31.resx">
+      <DependentUpon>B31.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="B32.resx">
+      <DependentUpon>B32.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="B20.resx">
       <DependentUpon>B20.cs</DependentUpon>
     </EmbeddedResource>
@@ -836,8 +860,12 @@
     <EmbeddedResource Include="B26.resx">
       <DependentUpon>B26.cs</DependentUpon>
     </EmbeddedResource>
+
     <EmbeddedResource Include="B28.resx">
       <DependentUpon>B28.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="B33.resx">
+      <DependentUpon>B33.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P01.resx">
       <DependentUpon>P01.cs</DependentUpon>
