@@ -1070,6 +1070,12 @@
     <Compile Include="ShippingMemo.Designer.cs">
       <DependentUpon>ShippingMemo.cs</DependentUpon>
     </Compile>
+    <Compile Include="P16_Separate_TK_Group.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P16_Separate_TK_Group.Designer.cs">
+      <DependentUpon>P16_Separate_TK_Group.cs</DependentUpon>
+    </Compile>
     <Compile Include="Utility_WebAPI.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -1534,6 +1540,9 @@
     <EmbeddedResource Include="ShippingMemo.resx">
       <DependentUpon>ShippingMemo.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="P16_Separate_TK_Group.resx">
+      <DependentUpon>P16_Separate_TK_Group.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Sci.Production.Automation\Sci.Production.Automation.csproj">
@@ -1555,6 +1564,10 @@
     <ProjectReference Include="..\Sci.Production.PPIC\Sci.Production.PPIC.csproj">
       <Project>{b35ffbd5-b004-4929-bf1d-75e2ee403793}</Project>
       <Name>Sci.Production.PPIC</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Sci.Production.PublicForm\Sci.Production.PublicForm.csproj">
+      <Project>{a0afac1d-7488-4271-83f0-9c14baf212fe}</Project>
+      <Name>Sci.Production.PublicForm</Name>
     </ProjectReference>
     <ProjectReference Include="..\Sci.Production.PublicPrg\Sci.Production.PublicPrg.csproj">
       <Project>{4a2f17b7-effe-454c-8f1e-9eebef170bc0}</Project>

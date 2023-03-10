@@ -244,7 +244,7 @@ outer apply(
 				inner join Receiving_Detail rd with (nolock) on rd.PoId = ted.InventoryPOID 
 																and rd.Seq1 = ted.InventorySeq1
 																and rd.Seq2 = ted.InventorySeq2 
-																and rd.Roll = tedc.Carton
+																and rd.Roll = tedc.Roll
 																and rd.Dyelot = tedc.LotNo
 				inner join Receiving r with (nolock) on rd.Id = r.Id
 				where ted.Ukey = tedc.TransferExport_DetailUkey
@@ -313,7 +313,7 @@ select [TK No.] = te.ID
             end
             , '-' +  f.MtlTypeID)
 	, [REF#] = ted.Refno
-	, [Roll] = tedc.Carton
+	, [Roll] = tedc.Roll
 	, [Dyelot] = tedc.LotNo
 	, [Stock Type] = case tid.StockType
 						when 'b' then 'Bulk'
@@ -343,7 +343,7 @@ outer apply (
 	and tid.POID = ted.PoID
 	and tid.Seq1 = ted.Seq1
 	and tid.Seq2 = ted.Seq2
-	and tid.Roll = tedc.Carton
+	and tid.Roll = tedc.Roll
 	and tid.Dyelot = tedc.LotNo
 	and ti.Status = 'Confirmed'
 ) tid
@@ -403,7 +403,7 @@ outer apply(
 	and tid.POID = ted.PoID
 	and tid.Seq1 = ted.Seq1
 	and tid.Seq2 = ted.Seq2
-	and tid.Roll = tedc.Carton
+	and tid.Roll = tedc.Roll
 	and tid.Dyelot = tedc.LotNo
 )ted
 where ti.Status = 'Confirmed'
@@ -443,7 +443,7 @@ select [TK No.] = te.ID
                 end
                 , '-' +  f.MtlTypeID)
 		, [REF#] = ted.Refno
-		, [Roll] = tedc.Carton
+		, [Roll] = tedc.Roll
 		, [Dyelot] = tedc.LotNo
 		, [Stock Type] = case tod.StockType
 							when 'b' then 'Bulk'
@@ -467,7 +467,7 @@ left join PO_Supp_Detail psdInv with (nolock) on ted.InventoryPOID = psdInv.ID a
 left join PO_Supp_Detail_Spec psdInvC with (nolock) on ted.InventoryPOID = psdInvC.ID and ted.InventorySeq1 = psdInvC.SEQ1 and ted.InventorySeq2 = psdInvC.SEQ2 and psdInvC.SpecColumnID = 'Color'
 left join PO_Supp_Detail_Spec psdInvS with (nolock) on ted.InventoryPOID = psdInvS.ID and ted.InventorySeq1 = psdInvS.SEQ1 and ted.InventorySeq2 = psdInvS.SEQ2 and psdInvS.SpecColumnID = 'Size'
 left join TransferOut_Detail tod with (nolock) on tedc.TransferExport_DetailUkey = tod.TransferExport_DetailUkey
-													and tedc.Carton = tod.Roll
+													and tedc.Roll = tod.Roll
 													and tedc.LotNo = tod.Dyelot
 left join TransferOut tfo with (nolock) on tod.ID = tfo.Id
 outer apply (select [Po Q'ty] = dbo.GetUnitQty (ted.UnitID, psdinv.StockUnit, ted.PoQty))StockUnitQty
@@ -480,7 +480,7 @@ outer apply(
 				inner join Receiving_Detail rd with (nolock) on rd.PoId = ted.InventoryPOID 
 																and rd.Seq1 = ted.InventorySeq1
 																and rd.Seq2 = ted.InventorySeq2 
-																and rd.Roll = tedc.Carton
+																and rd.Roll = tedc.Roll
 																and rd.Dyelot = tedc.LotNo
 				inner join Receiving r with (nolock) on rd.Id = r.Id
 				where ted.Ukey = tedc.TransferExport_DetailUkey

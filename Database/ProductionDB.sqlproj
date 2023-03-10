@@ -1817,6 +1817,10 @@
       <AnsiNulls>On</AnsiNulls>
       <QuotedIdentifier>On</QuotedIdentifier>
     </Build>
+    <Build Include="dbo\Stored Procedures\BoaExpend_Insert.sql">
+      <AnsiNulls>On</AnsiNulls>
+      <QuotedIdentifier>On</QuotedIdentifier>
+    </Build>
     <Build Include="dbo\Stored Procedures\BoaExpend.sql">
       <AnsiNulls>On</AnsiNulls>
       <QuotedIdentifier>On</QuotedIdentifier>
@@ -2815,6 +2819,9 @@
     <Build Include="dbo\Tables\Supp_Replace_Detail.sql" />
     <Build Include="dbo\Functions\GetReplaceSupp_Thread.sql" />
     <Build Include="dbo\Functions\GetReplaceSupp.sql" />
+    <Build Include="dbo\Functions\GetTransferExportStatusDesc.sql" />
+    <Build Include="dbo\Tables\TransferExport_SeparateHistory.sql" />
+    <Build Include="dbo\Tables\TransferExport_StatusHistory.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />

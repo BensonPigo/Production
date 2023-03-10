@@ -1964,7 +1964,7 @@ order by a.CombineBarcode,a.Unoriginal,a.POID,a.Seq1,a.Seq2
             [Seq] = concat(Ltrim(Rtrim(ted.Seq1)), ' ', ted.Seq2),
             ted.Seq1,
             ted.Seq2,
-            [Roll] = tdc.Carton,
+            [Roll] = tdc.Roll,
             [Dyelot] = tdc.LotNo,
             [StockType] = 'B',
             [Qty] = isnull(dbo.GetUnitQty(tdc.StockUnitID, psd.StockUnit, sum(isnull(tdc.StockQty, 0))), 0),
@@ -1998,7 +1998,7 @@ order by a.CombineBarcode,a.Unoriginal,a.POID,a.Seq1,a.Seq2
 		                      f.MDivisionID  = '{Env.User.Keyword}' ) and
 		        not exists(select 1 from TransferIn tf with (nolock) where tf.TransferExportID = te.ID and tf.ID <> '{this.CurrentMaintain["ID"]}') and
                 tdc.StockQty > 0
-        group by ted.POID, ted.Seq1, ted.Seq2, tdc.Carton, tdc.LotNo, ted.FabricType, psd.StockUnit, psd.Refno, Color.Value, tdc.StockUnitID, psd.StockUnit,Tone, tdc.MINDQRCode
+        group by ted.POID, ted.Seq1, ted.Seq2, tdc.Roll, tdc.LotNo, ted.FabricType, psd.StockUnit, psd.Refno, Color.Value, tdc.StockUnitID, psd.StockUnit,Tone, tdc.MINDQRCode
         ";
             DualResult result = DBProxy.Current.Select(null, sqlGetTrasnferExport, listPar, out DataTable dtTrasnferExport);
             if (!result)

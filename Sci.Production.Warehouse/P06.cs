@@ -1,6 +1,8 @@
 ﻿using Ict;
 using Ict.Win;
 using Sci.Data;
+using Sci.Production.Prg.Entity;
+using Sci.Production.PublicForm;
 using Sci.Win.Tools;
 using System;
 using System.Collections.Generic;
@@ -113,9 +115,9 @@ namespace Sci.Production.Warehouse
             base.Refresh_AfterToolbarStatusBtnClick();
             if (!this.EditMode)
             {
-                this.toolbar.cmdEdit.Enabled = this.CurrentMaintain["FtyStatus"].ToString() == "New";
-                this.toolbar.cmdSend.Enabled = this.CurrentMaintain["FtyStatus"].ToString() == "New";
-                this.toolbar.cmdRecall.Enabled = this.CurrentMaintain["FtyStatus"].ToString() == "Send";
+                this.toolbar.cmdEdit.Enabled = this.CurrentMaintain["FtyStatus"].ToString() == TK_FtyStatus.New;
+                this.toolbar.cmdSend.Enabled = this.CurrentMaintain["FtyStatus"].ToString() == TK_FtyStatus.New;
+                this.toolbar.cmdRecall.Enabled = this.CurrentMaintain["FtyStatus"].ToString() == TK_FtyStatus.Send;
             }
         }
 
@@ -137,6 +139,20 @@ namespace Sci.Production.Warehouse
             if (MyUtility.Convert.GetBool(this.CurrentMaintain["Junk"]))
             {
                 MyUtility.Msg.WarningBox("This record already Junk can not edit");
+                return;
+            }
+
+            string sqlCheckCartonNoMissed = $@"
+select 1 
+from TransferExport_Detail_Carton with (nolock)
+where   ID = '{this.CurrentMaintain["ID"]}' and
+        StockQty > 0 and
+        Carton = ''
+";
+            bool isCartonNoMissed = MyUtility.Check.Seek(sqlCheckCartonNoMissed);
+            if (isCartonNoMissed)
+            {
+                MyUtility.Msg.WarningBox("Please maintain [Packing List] before send to shipping team.");
                 return;
             }
 
@@ -236,7 +252,11 @@ where   ted.ID = @ID and
 
             base.ClickSend();
 
-            string sqlUpdateStatus = @"update TransferExport set FtyStatus = 'Send', FtySendDate = Getdate() where ID = @ID";
+            string sqlUpdateStatus = $@"
+update TransferExport set FtyStatus = '{TK_FtyStatus.Send}', FtySendDate = Getdate() where ID = @ID
+insert into TransferExport_StatusHistory(ID, OldStatus, NewStatus, OldFtyStatus, NewFtyStatus, UpdateDate)
+        values('{this.CurrentMaintain["ID"]}', '', '', '{TK_FtyStatus.New}', '{TK_FtyStatus.Send}', getdate())
+";
             List<SqlParameter> listParUpdateStatus = new List<SqlParameter>() { new SqlParameter("@ID", this.CurrentMaintain["ID"]) };
 
             result = DBProxy.Current.Execute(null, sqlUpdateStatus, listParUpdateStatus);
@@ -253,6 +273,7 @@ where   ted.ID = @ID and
         /// <inheritdoc/>
         protected override void ClickRecall()
         {
+
             if (!this.IsTransferOut)
             {
                 MyUtility.Msg.WarningBox("Only from factory can use recall button.");
@@ -261,7 +282,12 @@ where   ted.ID = @ID and
 
             base.ClickRecall();
 
-            string sqlUpdateStatus = @"update TransferExport set FtyStatus = 'New',FtySendDate = Null where ID = @ID";
+            string sqlUpdateStatus = $@"update TransferExport set FtyStatus = '{TK_FtyStatus.New}',FtySendDate = Null where ID = @ID
+insert into TransferExport_StatusHistory(ID, OldStatus, NewStatus, OldFtyStatus, NewFtyStatus, UpdateDate)
+        values('{this.CurrentMaintain["ID"]}', '', '', '{TK_FtyStatus.Send}', '{TK_FtyStatus.New}', getdate())
+
+update TransferExport_Detail_Carton set GroupID = '' where ID = @ID
+";
             List<SqlParameter> listParUpdateStatus = new List<SqlParameter>() { new SqlParameter("@ID", this.CurrentMaintain["ID"]) };
 
             DualResult result = DBProxy.Current.Execute(null, sqlUpdateStatus, listParUpdateStatus);
@@ -282,13 +308,38 @@ where   ted.ID = @ID and
             this.lblJunk.Visible = MyUtility.Convert.GetBool(this.CurrentMaintain["Junk"]);
             if (!this.EditMode)
             {
-                this.toolbar.cmdEdit.Enabled = this.CurrentMaintain["FtyStatus"].ToString() == "New";
-                this.toolbar.cmdSend.Enabled = this.CurrentMaintain["FtyStatus"].ToString() == "New";
-                this.toolbar.cmdRecall.Enabled = this.CurrentMaintain["FtyStatus"].ToString() == "Send";
+                this.toolbar.cmdEdit.Enabled = this.CurrentMaintain["FtyStatus"].ToString() == TK_FtyStatus.New;
+                this.toolbar.cmdSend.Enabled = this.CurrentMaintain["FtyStatus"].ToString() == TK_FtyStatus.New;
+                this.toolbar.cmdRecall.Enabled = this.CurrentMaintain["FtyStatus"].ToString() == TK_FtyStatus.Send;
             }
 
-            this.numCBM.Value = this.DetailDatas.Sum(s => MyUtility.Convert.GetDecimal(s["CBM"]));
+            DataRow drTransferExport_Detail_Carton;
+            string sqlGetTransferExport_Detail_Carton = $@"
+select  [NetKg] = isnull(sum(NetKg), 0),
+        [WeightKg] = isnull(sum(WeightKg), 0),
+        [CBM] = isnull(sum(CBM), 0)
+from    TransferExport_Detail_Carton with (nolock)
+where   ID = '{this.CurrentMaintain["ID"]}'
+";
+            MyUtility.Check.Seek(sqlGetTransferExport_Detail_Carton, out drTransferExport_Detail_Carton);
+
+            this.numNetKg.Value = MyUtility.Convert.GetDecimal(drTransferExport_Detail_Carton["NetKg"]);
+            this.numWeightKg.Value = MyUtility.Convert.GetDecimal(drTransferExport_Detail_Carton["WeightKg"]);
+            this.numCBM.Value = MyUtility.Convert.GetDecimal(drTransferExport_Detail_Carton["CBM"]);
             this.ChangeRowColor();
+
+            this.editRemark_Factory.IsSupportEditMode = this.CurrentMaintain["TransferType"].ToString() == "Transfer Out";
+
+            this.btnTKSeparateHistory.Visible = MyUtility.Convert.GetBool(this.CurrentMaintain["Separated"]);
+
+            if (this.CurrentMaintain["FtyStatus"].ToString() == TK_FtyStatus.RequestSeparate)
+            {
+                this.btnTKSeparateHistory.BackColor = Color.LightPink;
+            }
+            else
+            {
+                this.btnTKSeparateHistory.BackColor = Color.Transparent;
+            }
         }
 
         /// <inheritdoc/>
@@ -501,9 +552,6 @@ where ted.ID = '{masterID}'
                 .Text("StockUnit", header: "Stock Unit", width: Widths.AnsiChars(4), iseditingreadonly: true)
                 .Text("TransferExportReason", header: "Reason", width: Widths.AnsiChars(8), settings: settingReason)
                 .Text("ReasonDesc", header: "Reason Desc", width: Widths.AnsiChars(10), iseditingreadonly: true)
-                .Numeric("NetKg", header: "N.W.(kg)", decimal_places: 2, iseditingreadonly: true)
-                .Numeric("WeightKg", header: "G.W.(kg)", decimal_places: 2, iseditingreadonly: true)
-                .Numeric("CBM", header: "CBM", decimal_places: 5, iseditingreadonly: true)
                 .Text("ContainerType", header: "ContainerType & No", width: Widths.AnsiChars(15), iseditingreadonly: true)
                 .Text("WK", header: "WK#", width: Widths.AnsiChars(16), iseditingreadonly: true)
                 ;
@@ -661,6 +709,22 @@ where ted.ID = '{masterID}'
             {
                 this.detailgridbs.Position = index;
             }
+        }
+
+        private void BtnPackingList_Click(object sender, EventArgs e)
+        {
+            new TK_PackingList(this.CurrentMaintain["ID"].ToString()).ShowDialog();
+            this.OnRefreshClick();
+        }
+
+        private void BtnStatusHistory_Click(object sender, EventArgs e)
+        {
+            new TK_StatusHistory(this.CurrentMaintain["ID"].ToString()).ShowDialog();
+        }
+
+        private void BtnTKSeparateHistory_Click(object sender, EventArgs e)
+        {
+            new TK_SeparateHistory(this.CurrentMaintain["ID"].ToString(), TK_SeparateHistory.TK_SeparateHistoryCallFrom.WH_P06).ShowDialog();
         }
     }
 }

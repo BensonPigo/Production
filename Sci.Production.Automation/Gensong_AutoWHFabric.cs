@@ -123,7 +123,17 @@ namespace Sci.Production.Automation
             return true;
         }
 
-        private static bool SentandUpdate(DataTable dt, string formName, EnumStatus statusAPI, EnumStatus action, int typeCreateRecord, AutoRecord autoRecord = null)
+        /// <summary>
+        /// SentandUpdate
+        /// </summary>
+        /// <param name="dt">dt</param>
+        /// <param name="formName">formName</param>
+        /// <param name="statusAPI">statusAPI</param>
+        /// <param name="action">action</param>
+        /// <param name="typeCreateRecord">typeCreateRecord</param>
+        /// <param name="autoRecord">autoRecord</param>
+        /// <returns>bool</returns>
+        public static bool SentandUpdate(DataTable dt, string formName, EnumStatus statusAPI, EnumStatus action, int typeCreateRecord, AutoRecord autoRecord = null)
         {
             // DataTable轉化為JSON
             WHTableName dtNameforAPI = LogicAutoWHData.GetDetailNameforAPI(formName);
