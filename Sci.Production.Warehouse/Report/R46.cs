@@ -40,11 +40,15 @@ namespace Sci.Production.Warehouse
                 return false;
             }
 
-            if (!MyUtility.Check.Empty(this.txtSP1.Text) &&
-                !MyUtility.Check.Empty(this.txtSP2.Text))
+            if (!MyUtility.Check.Empty(this.txtSP1.Text))
             {
-                this.sqlWherelist.Add("ad.POID >= @SP1 and ad.POID <= @SP2");
+                this.sqlWherelist.Add("ad.POID >= @SP1");
                 this.lisSqlParameter.Add(new SqlParameter("@SP1", this.txtSP1.Text));
+            }
+
+            if (!MyUtility.Check.Empty(this.txtSP2.Text))
+            {
+                this.sqlWherelist.Add("ad.POID <= @SP2");
                 this.lisSqlParameter.Add(new SqlParameter("@SP2", this.txtSP2.Text));
             }
 
