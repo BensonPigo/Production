@@ -1,7 +1,7 @@
 ﻿CREATE TABLE [dbo].[PadPrint_Mold](
 	[PadPrint_ukey] [bigint] NOT NULL,
 	[MoldID] [varchar](10)　	CONSTRAINT [DF_PadPrint_Mold_MoldID]  DEFAULT ('') NOT NULL,
-	[Refno] [varchar](23)　		CONSTRAINT [DF_PadPrint_Mold_Refno]  DEFAULT ('') NOT NULL,
+	[Refno] [varchar](36)　		CONSTRAINT [DF_PadPrint_Mold_Refno]  DEFAULT ('') NOT NULL,
 	[BrandID] [varchar](8)　	CONSTRAINT [DF_PadPrint_Mold_BrandID]  DEFAULT ('')　NOT NULL,
 	[Season] [varchar](10)　	CONSTRAINT [DF_PadPrint_Mold_Season]  DEFAULT ('') NOT NULL,
 	[LabelFor] [varchar](1)　	CONSTRAINT [DF_PadPrint_Mold_LabelFor]  DEFAULT ('')  NOT NULL,

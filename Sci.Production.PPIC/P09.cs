@@ -215,10 +215,10 @@ select
 ,[Remark] = psd.Remark
 from ReplacementReport_Detail rd
 inner join PO_Supp_Detail psd on rd.PurchaseID = psd.ID
-and rd.SCIRefno = psd.SCIRefno
-and rd.ColorID = psd.ColorID
-and (psd.SEQ1 = rd.NewSeq1 or psd.OutputSeq1 = rd.NewSeq1)
-and (psd.SEQ2 = rd.NewSeq2 or psd.OutputSeq2 = rd.NewSeq2)
+    and rd.SCIRefno = psd.SCIRefno
+    and (psd.SEQ1 = rd.NewSeq1 or psd.OutputSeq1 = rd.NewSeq1)
+    and (psd.SEQ2 = rd.NewSeq2 or psd.OutputSeq2 = rd.NewSeq2)
+inner join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color' and psdsC.SpecValue = rd.ColorID
 where rd.id = '{this.CurrentMaintain["ID"]}'
 ";
 
@@ -644,19 +644,21 @@ where id = '{this.CurrentMaintain["id"]}'") ? Color.Blue : Color.Black;
                     dr.Delete();
                 }
 
-                string sqlCmd = string.Format(
-                    @"select a.Seq1,a.Seq2, left(a.Seq1+' ',3)+a.Seq2 as Seq,a.Refno,
+                string sqlCmd = $@"
+select a.Seq1,a.Seq2, left(a.Seq1+' ',3)+a.Seq2 as Seq,a.Refno,
 [dbo].getMtlDesc(a.POID,a.Seq1,a.Seq2,2,0) as Description,
-isnull(psd.ColorID,'') as ColorID,isnull(r.InvNo,'') as InvNo,iif(e.Eta is null,r.ETA,e.ETA) as ETA,
+isnull(psdsC.SpecValue,'') as ColorID,isnull(r.InvNo,'') as InvNo,iif(e.Eta is null,r.ETA,e.ETA) as ETA,
 isnull(r.ExportId,'') as ExportId,
 isnull(sum(rd.ShipQty),0) as EstInQty, isnull(sum(rd.ActualQty),0) as ActInQty
 from AIR a WITH (NOLOCK) 
 left join PO_Supp_Detail psd WITH (NOLOCK) on a.POID = psd.ID and a.Seq1 = psd.SEQ1 and a.Seq2 = psd.SEQ2
+left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
 left join Receiving r WITH (NOLOCK) on a.ReceivingID = r.Id
 left join Receiving_Detail rd WITH (NOLOCK) on r.Id = rd.Id and a.Seq1 = rd.SEQ1 and a.Seq2 = rd.SEQ2
 left join Export e WITH (NOLOCK) on r.ExportId = e.ID
-where a.POID = '{0}' and a.Result = 'F'
-group by a.Seq1,a.Seq2, left(a.Seq1+' ',3)+a.Seq2,a.Refno,[dbo].getMtlDesc(a.POID,a.Seq1,a.Seq2,2,0),psd.ColorID,r.InvNo,iif(e.Eta is null,r.ETA,e.ETA),isnull(r.ExportId,'')", this.txtSPNo.Text);
+where a.POID = '{this.txtSPNo.Text}' and a.Result = 'F'
+group by a.Seq1,a.Seq2, left(a.Seq1+' ',3)+a.Seq2,a.Refno,[dbo].getMtlDesc(a.POID,a.Seq1,a.Seq2,2,0),psdsC.SpecValue,r.InvNo,iif(e.Eta is null,r.ETA,e.ETA),isnull(r.ExportId,'')
+";
                 DataTable aIRData;
                 DualResult result = DBProxy.Current.Select(null, sqlCmd, out aIRData);
                 if (!result)

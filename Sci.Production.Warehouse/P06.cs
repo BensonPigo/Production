@@ -1,6 +1,8 @@
 ﻿using Ict;
 using Ict.Win;
 using Sci.Data;
+using Sci.Production.Prg.Entity;
+using Sci.Production.PublicForm;
 using Sci.Win.Tools;
 using System;
 using System.Collections.Generic;
@@ -113,9 +115,9 @@ namespace Sci.Production.Warehouse
             base.Refresh_AfterToolbarStatusBtnClick();
             if (!this.EditMode)
             {
-                this.toolbar.cmdEdit.Enabled = this.CurrentMaintain["FtyStatus"].ToString() == "New";
-                this.toolbar.cmdSend.Enabled = this.CurrentMaintain["FtyStatus"].ToString() == "New";
-                this.toolbar.cmdRecall.Enabled = this.CurrentMaintain["FtyStatus"].ToString() == "Send";
+                this.toolbar.cmdEdit.Enabled = this.CurrentMaintain["FtyStatus"].ToString() == TK_FtyStatus.New;
+                this.toolbar.cmdSend.Enabled = this.CurrentMaintain["FtyStatus"].ToString() == TK_FtyStatus.New;
+                this.toolbar.cmdRecall.Enabled = this.CurrentMaintain["FtyStatus"].ToString() == TK_FtyStatus.Send;
             }
         }
 
@@ -137,6 +139,20 @@ namespace Sci.Production.Warehouse
             if (MyUtility.Convert.GetBool(this.CurrentMaintain["Junk"]))
             {
                 MyUtility.Msg.WarningBox("This record already Junk can not edit");
+                return;
+            }
+
+            string sqlCheckCartonNoMissed = $@"
+select 1 
+from TransferExport_Detail_Carton with (nolock)
+where   ID = '{this.CurrentMaintain["ID"]}' and
+        StockQty > 0 and
+        Carton = ''
+";
+            bool isCartonNoMissed = MyUtility.Check.Seek(sqlCheckCartonNoMissed);
+            if (isCartonNoMissed)
+            {
+                MyUtility.Msg.WarningBox("Please maintain [Packing List] before send to shipping team.");
                 return;
             }
 
@@ -236,7 +252,11 @@ where   ted.ID = @ID and
 
             base.ClickSend();
 
-            string sqlUpdateStatus = @"update TransferExport set FtyStatus = 'Send', FtySendDate = Getdate() where ID = @ID";
+            string sqlUpdateStatus = $@"
+update TransferExport set FtyStatus = '{TK_FtyStatus.Send}', FtySendDate = Getdate() where ID = @ID
+insert into TransferExport_StatusHistory(ID, OldStatus, NewStatus, OldFtyStatus, NewFtyStatus, UpdateDate)
+        values('{this.CurrentMaintain["ID"]}', '', '', '{TK_FtyStatus.New}', '{TK_FtyStatus.Send}', getdate())
+";
             List<SqlParameter> listParUpdateStatus = new List<SqlParameter>() { new SqlParameter("@ID", this.CurrentMaintain["ID"]) };
 
             result = DBProxy.Current.Execute(null, sqlUpdateStatus, listParUpdateStatus);
@@ -253,6 +273,7 @@ where   ted.ID = @ID and
         /// <inheritdoc/>
         protected override void ClickRecall()
         {
+
             if (!this.IsTransferOut)
             {
                 MyUtility.Msg.WarningBox("Only from factory can use recall button.");
@@ -261,7 +282,12 @@ where   ted.ID = @ID and
 
             base.ClickRecall();
 
-            string sqlUpdateStatus = @"update TransferExport set FtyStatus = 'New',FtySendDate = Null where ID = @ID";
+            string sqlUpdateStatus = $@"update TransferExport set FtyStatus = '{TK_FtyStatus.New}',FtySendDate = Null where ID = @ID
+insert into TransferExport_StatusHistory(ID, OldStatus, NewStatus, OldFtyStatus, NewFtyStatus, UpdateDate)
+        values('{this.CurrentMaintain["ID"]}', '', '', '{TK_FtyStatus.Send}', '{TK_FtyStatus.New}', getdate())
+
+update TransferExport_Detail_Carton set GroupID = '' where ID = @ID
+";
             List<SqlParameter> listParUpdateStatus = new List<SqlParameter>() { new SqlParameter("@ID", this.CurrentMaintain["ID"]) };
 
             DualResult result = DBProxy.Current.Execute(null, sqlUpdateStatus, listParUpdateStatus);
@@ -282,21 +308,45 @@ where   ted.ID = @ID and
             this.lblJunk.Visible = MyUtility.Convert.GetBool(this.CurrentMaintain["Junk"]);
             if (!this.EditMode)
             {
-                this.toolbar.cmdEdit.Enabled = this.CurrentMaintain["FtyStatus"].ToString() == "New";
-                this.toolbar.cmdSend.Enabled = this.CurrentMaintain["FtyStatus"].ToString() == "New";
-                this.toolbar.cmdRecall.Enabled = this.CurrentMaintain["FtyStatus"].ToString() == "Send";
+                this.toolbar.cmdEdit.Enabled = this.CurrentMaintain["FtyStatus"].ToString() == TK_FtyStatus.New;
+                this.toolbar.cmdSend.Enabled = this.CurrentMaintain["FtyStatus"].ToString() == TK_FtyStatus.New;
+                this.toolbar.cmdRecall.Enabled = this.CurrentMaintain["FtyStatus"].ToString() == TK_FtyStatus.Send;
             }
 
-            this.numCBM.Value = this.DetailDatas.Sum(s => MyUtility.Convert.GetDecimal(s["CBM"]));
+            DataRow drTransferExport_Detail_Carton;
+            string sqlGetTransferExport_Detail_Carton = $@"
+select  [NetKg] = isnull(sum(NetKg), 0),
+        [WeightKg] = isnull(sum(WeightKg), 0),
+        [CBM] = isnull(sum(CBM), 0)
+from    TransferExport_Detail_Carton with (nolock)
+where   ID = '{this.CurrentMaintain["ID"]}'
+";
+            MyUtility.Check.Seek(sqlGetTransferExport_Detail_Carton, out drTransferExport_Detail_Carton);
+
+            this.numNetKg.Value = MyUtility.Convert.GetDecimal(drTransferExport_Detail_Carton["NetKg"]);
+            this.numWeightKg.Value = MyUtility.Convert.GetDecimal(drTransferExport_Detail_Carton["WeightKg"]);
+            this.numCBM.Value = MyUtility.Convert.GetDecimal(drTransferExport_Detail_Carton["CBM"]);
             this.ChangeRowColor();
+
+            this.editRemark_Factory.IsSupportEditMode = this.CurrentMaintain["TransferType"].ToString() == "Transfer Out";
+
+            this.btnTKSeparateHistory.Visible = MyUtility.Convert.GetBool(this.CurrentMaintain["Separated"]);
+
+            if (this.CurrentMaintain["FtyStatus"].ToString() == TK_FtyStatus.RequestSeparate)
+            {
+                this.btnTKSeparateHistory.BackColor = Color.LightPink;
+            }
+            else
+            {
+                this.btnTKSeparateHistory.BackColor = Color.Transparent;
+            }
         }
 
         /// <inheritdoc/>
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
             string masterID = (e.Master == null) ? string.Empty : MyUtility.Convert.GetString(e.Master["ID"]);
-            this.DetailSelectCommand = string.Format(
-                @"
+            this.DetailSelectCommand = $@"
 select	ted.InventoryPOID,
 		[FromSeq] = Concat (ted.InventorySeq1, ' ', ted.InventorySeq2),
 		ted.PoID,
@@ -304,8 +354,8 @@ select	ted.InventoryPOID,
 		ted.SuppID,
 		ted.Description,
 		ted.UnitID,
-		[ColorID] = isnull(psdinv.ColorID, psd.ColorID),
-		[SizeSpec] = isnull(psdinv.SizeSpec, psd.SizeSpec),
+		[ColorID] = isnull(psdInvC.SpecValue, psdsC.SpecValue),
+		[SizeSpec] = isnull(psdInvS.SpecValue, psdsS.SpecValue),
 		[PoQty] = round(isnull(dbo.GetUnitQty(ted.UnitID ,IIF(te.TransferType = 'Transfer Out', psdInv.StockUnit,psd.StockUnit), ted.PoQty),0), 2),
 		[ExportQty] = round(isnull(dbo.GetUnitQty(ExportCarton.StockUnitID, IIF(te.TransferType = 'Transfer Out', psdInv.StockUnit,psd.StockUnit), ExportCarton.ExportQty), 0), 2),
 		ExportCarton.Foc,
@@ -367,12 +417,12 @@ select	ted.InventoryPOID,
 from TransferExport_Detail ted with (nolock) 
 inner join TransferExport te with(nolock) on ted.ID = te.ID
 left join Orders o with (nolock) on ted.PoID = o.ID
-left join PO_Supp_Detail psdInv with (nolock) on	ted.InventoryPOID = psdInv.ID and 
-													ted.InventorySeq1 = psdInv.SEQ1 and
-													ted.InventorySeq2 = psdinv.SEQ2
-left join PO_Supp_Detail psd with (nolock) on	ted.PoID = psd.ID and 
-												ted.Seq1 = psd.SEQ1 and
-												ted.Seq2 = psd.SEQ2
+left join PO_Supp_Detail psdInv with (nolock) on ted.InventoryPOID = psdInv.ID and ted.InventorySeq1 = psdInv.SEQ1 and ted.InventorySeq2 = psdinv.SEQ2
+left join PO_Supp_Detail_Spec psdInvC with (nolock) on ted.InventoryPOID = psdInvC.ID and ted.InventorySeq1 = psdInvC.SEQ1 and ted.InventorySeq2 = psdInvC.SEQ2 and psdInvC.SpecColumnID = 'Color'
+left join PO_Supp_Detail_Spec psdInvS with (nolock) on ted.InventoryPOID = psdInvS.ID and ted.InventorySeq1 = psdInvS.SEQ1 and ted.InventorySeq2 = psdInvS.SEQ2 and psdInvS.SpecColumnID = 'Size'
+left join PO_Supp_Detail psd with (nolock) on ted.PoID = psd.ID and ted.Seq1 = psd.SEQ1 and ted.Seq2 = psd.SEQ2
+left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
+left join PO_Supp_Detail_Spec psdsS WITH (NOLOCK) on psdsS.ID = psd.id and psdsS.seq1 = psd.seq1 and psdsS.seq2 = psd.seq2 and psdsS.SpecColumnID = 'Size'
 left join Supp s WITH (NOLOCK) on s.id = ted.SuppID 
 left join Fabric f WITH (NOLOCK) on f.SCIRefno = ted.SCIRefno
 left join Fabric_Supp fs WITH (NOLOCK) on fs.SCIRefno = f.SCIRefno and fs.SuppID = s.ID
@@ -386,8 +436,8 @@ outer apply(
 ) ExportCarton
 OUTER APPLY(
  SELECT [Value]=
-	 CASE WHEN f.MtlTypeID in ('EMB THREAD','SP THREAD','THREAD') THEN IIF(psd.SuppColor = '' or psd.SuppColor is null,dbo.GetColorMultipleID(psd.BrandID,psd.ColorID),psd.SuppColor)
-		 ELSE dbo.GetColorMultipleID(psd.BrandID,psd.ColorID)
+	 CASE WHEN f.MtlTypeID in ('EMB THREAD','SP THREAD','THREAD') THEN IIF(psd.SuppColor = '' or psd.SuppColor is null,dbo.GetColorMultipleID(psd.BrandID,isnull(psdsC.SpecValue, '')),psd.SuppColor)
+		 ELSE dbo.GetColorMultipleID(psd.BrandID,isnull(psdsC.SpecValue, ''))
 	 END
 ) Color
 outer apply(
@@ -407,8 +457,8 @@ outer apply(
 		for xml path ('')
 	) , 1, 1, '')
 ) WK
-where ted.ID = '{0}'
-", masterID);
+where ted.ID = '{masterID}'
+";
             return base.OnDetailSelectCommandPrepare(e);
         }
 
@@ -502,9 +552,6 @@ where ted.ID = '{0}'
                 .Text("StockUnit", header: "Stock Unit", width: Widths.AnsiChars(4), iseditingreadonly: true)
                 .Text("TransferExportReason", header: "Reason", width: Widths.AnsiChars(8), settings: settingReason)
                 .Text("ReasonDesc", header: "Reason Desc", width: Widths.AnsiChars(10), iseditingreadonly: true)
-                .Numeric("NetKg", header: "N.W.(kg)", decimal_places: 2, iseditingreadonly: true)
-                .Numeric("WeightKg", header: "G.W.(kg)", decimal_places: 2, iseditingreadonly: true)
-                .Numeric("CBM", header: "CBM", decimal_places: 5, iseditingreadonly: true)
                 .Text("ContainerType", header: "ContainerType & No", width: Widths.AnsiChars(15), iseditingreadonly: true)
                 .Text("WK", header: "WK#", width: Widths.AnsiChars(16), iseditingreadonly: true)
                 ;
@@ -662,6 +709,22 @@ where ted.ID = '{0}'
             {
                 this.detailgridbs.Position = index;
             }
+        }
+
+        private void BtnPackingList_Click(object sender, EventArgs e)
+        {
+            new TK_PackingList(this.CurrentMaintain["ID"].ToString()).ShowDialog();
+            this.OnRefreshClick();
+        }
+
+        private void BtnStatusHistory_Click(object sender, EventArgs e)
+        {
+            new TK_StatusHistory(this.CurrentMaintain["ID"].ToString()).ShowDialog();
+        }
+
+        private void BtnTKSeparateHistory_Click(object sender, EventArgs e)
+        {
+            new TK_SeparateHistory(this.CurrentMaintain["ID"].ToString(), TK_SeparateHistory.TK_SeparateHistoryCallFrom.WH_P06).ShowDialog();
         }
     }
 }

@@ -24,11 +24,6 @@ namespace Sci.Production.Automation
     public class PMSUtilityAutomation : BaseUtilityAutomation
     {
         /// <summary>
-        /// UtilityAutomation
-        /// </summary>
-        public static readonly PMSUtilityAutomation UtilityAutomation = new PMSUtilityAutomation();
-
-        /// <summary>
         /// IsSunrise_FinishingProcessesEnable
         /// </summary>
         public static bool IsSunrise_FinishingProcessesEnable => UtilityAutomation.IsModuleAutomationEnable(Sunrise_FinishingProcesses.sunriseSuppID, Sunrise_FinishingProcesses.moduleName);

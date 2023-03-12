@@ -226,8 +226,7 @@ and ID = '{Sci.Env.User.UserID}'"))
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
             string masterID = (e.Master == null) ? string.Empty : e.Master["ID"].ToString();
-            this.DetailSelectCommand = string.Format(
-                @"
+            this.DetailSelectCommand = $@"
 select 
 AD2.id,
 [Seq]= AD2.Seq1+' '+AD2.Seq2,
@@ -242,23 +241,25 @@ Fa.Description,
 AD2.QtyBefore,
 AD2.QtyAfter,
 [AdjustQty] = AD2.QtyAfter - AD2.QtyBefore,
-Po3.StockUnit,
+psd.StockUnit,
 [location]= dbo.Getlocation(FTI.Ukey),
 FTI.ContainerCode,
 AD2.ReasonId,
 [reason_nm]=Reason.Name,
 AD2.Ukey,
-ColorID =dbo.GetColorMultipleID(PO3.BrandId, PO3.ColorID)
+ColorID =dbo.GetColorMultipleID(psd.BrandId, isnull(psdsC.SpecValue, ''))
 from Adjust_Detail AD2
-inner join PO_Supp_Detail PO3 on PO3.ID=AD2.POID 
+inner join PO_Supp_Detail psd on psd.ID=AD2.POID 
 inner join FtyInventory FTI on FTI.POID=AD2.POID and FTI.Seq1=AD2.Seq1
 	and FTI.Seq2=AD2.Seq2 and FTI.Roll=AD2.Roll and FTI.StockType='O'
-and PO3.SEQ1=AD2.Seq1 and PO3.SEQ2=AD2.Seq2 and FTI.Dyelot = AD2.Dyelot
+    and psd.SEQ1=AD2.Seq1 and psd.SEQ2=AD2.Seq2 and FTI.Dyelot = AD2.Dyelot
+left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
 outer apply (
-	select Description from Fabric where SCIRefno=PO3.SCIRefno
+	select Description from Fabric where SCIRefno=psd.SCIRefno
 ) Fa
 outer apply(select Name from Reason WITH (NOLOCK) where ReasonTypeID='Stock_Adjust' AND ID= AD2.ReasonId and junk=0 ) Reason
-where AD2.Id='{0}' ", masterID);
+where AD2.Id='{masterID}'
+";
             return base.OnDetailSelectCommandPrepare(e);
         }
 

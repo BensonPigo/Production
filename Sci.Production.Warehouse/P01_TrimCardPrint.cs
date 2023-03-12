@@ -292,12 +292,10 @@ where o.iD = '{this.POID}' and article<>''
                     #region 取得新單的Article
 
                     this.sql = $@"
-
 --1.從訂單串回物料
 select distinct StyleID,BrandID,POID,FtyGroup 
 into #tmpOrder
 from orders where id like '{this.orderID}'
-
 
 Select distinct [ID] = PO.POID
 , std.SuppId --Mapping PO_Supp
@@ -308,8 +306,6 @@ Inner Join dbo.Orders as o On o.ID = po.POID
 Inner Join dbo.Style as s On s.Ukey = o.StyleUkey
 Inner Join dbo.Style_ThreadColorCombo as st On st.StyleUkey = s.Ukey
 Inner Join dbo.Style_ThreadColorCombo_Detail as std On std.Style_ThreadColorComboUkey = st.Ukey
-
-
 
 select distinct
 a.ID,SuppId,SCIRefNo,ColorID,
@@ -323,7 +319,6 @@ a.ID,SuppId,SCIRefNo,ColorID,
 into #ArticleForThread
 from #ArticleForThread_Detail a
 
-
 --2.得到跟WH P03 一樣的對應方式
 SELECT DISTINCT [OrderIdList] = stuff((select concat('/',tmp.OrderID) 
 		                                    from (
@@ -335,12 +330,13 @@ SELECT DISTINCT [OrderIdList] = stuff((select concat('/',tmp.OrderID)
 INTO #tmpOrder_Article
 from #tmpOrder as orders WITH (NOLOCK) 
 inner join PO_Supp_Detail a WITH (NOLOCK) on a.id = orders.poid
+left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = a.id and psdsC.seq1 = a.seq1 and psdsC.seq2 = a.seq2 and psdsC.SpecColumnID = 'Color'
 left join dbo.MDivisionPoDetail m WITH (NOLOCK) on  m.POID = a.ID and m.seq1 = a.SEQ1 and m.Seq2 = a.Seq2
 left join po_supp b WITH (NOLOCK) on a.id = b.id and a.SEQ1 = b.SEQ1
 left join #ArticleForThread aft on	aft.ID = m.POID		and
 									aft.SuppId	   = b.SuppId	and
 									aft.SCIRefNo   = a.SCIRefNo	and
-									aft.ColorID	   = a.ColorID	and
+									aft.ColorID	   = psdsC.SpecValue	and
 									a.SEQ1 like 'T%' 
 WHERE  stuff((select concat('/',tmp.OrderID) 
 		                                    from (
@@ -366,8 +362,6 @@ AND aft.Article IS NOT NULL
  )
 --Order List如果是空，代表所有訂單都有用到這個物料
 
-
-
 DROP TABLE #tmpOrder,#ArticleForThread_Detail,#ArticleForThread , #tmpOrder_Article
 ";
 
@@ -386,12 +380,10 @@ DROP TABLE #tmpOrder,#ArticleForThread_Detail,#ArticleForThread , #tmpOrder_Arti
                     #region 取得Article和對應的Color，只挑選出order List有的Article
 
                     this.sql = $@"
-
 --1.從訂單串回物料
 select distinct StyleID,BrandID,POID,FtyGroup 
 into #tmpOrder
 from orders where id like '{this.orderID}'
-
 
 Select distinct [ID] = PO.POID
 , std.SuppId --Mapping PO_Supp
@@ -402,8 +394,6 @@ Inner Join dbo.Orders as o On o.ID = po.POID
 Inner Join dbo.Style as s On s.Ukey = o.StyleUkey
 Inner Join dbo.Style_ThreadColorCombo as st On st.StyleUkey = s.Ukey
 Inner Join dbo.Style_ThreadColorCombo_Detail as std On std.Style_ThreadColorComboUkey = st.Ukey
-
-
 
 select distinct
 a.ID,SuppId,SCIRefNo,ColorID,
@@ -417,7 +407,6 @@ a.ID,SuppId,SCIRefNo,ColorID,
 into #ArticleForThread
 from #ArticleForThread_Detail a
 
-
 --2.得到跟WH P03 一樣的對應方式
 SELECT DISTINCT [OrderIdList] = stuff((select concat('/',tmp.OrderID) 
 		                                    from (
@@ -429,12 +418,13 @@ SELECT DISTINCT [OrderIdList] = stuff((select concat('/',tmp.OrderID)
 INTO #tmpOrder_Article
 from #tmpOrder as orders WITH (NOLOCK) 
 inner join PO_Supp_Detail a WITH (NOLOCK) on a.id = orders.poid
+left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = a.id and psdsC.seq1 = a.seq1 and psdsC.seq2 = a.seq2 and psdsC.SpecColumnID = 'Color'
 left join dbo.MDivisionPoDetail m WITH (NOLOCK) on  m.POID = a.ID and m.seq1 = a.SEQ1 and m.Seq2 = a.Seq2
 left join po_supp b WITH (NOLOCK) on a.id = b.id and a.SEQ1 = b.SEQ1
 left join #ArticleForThread aft on	aft.ID = m.POID		and
 									aft.SuppId	   = b.SuppId	and
 									aft.SCIRefNo   = a.SCIRefNo	and
-									aft.ColorID	   = a.ColorID	and
+									aft.ColorID	   = psdsC.SpecValue	and
 									a.SEQ1 like 'T%' 
 WHERE  stuff((select concat('/',tmp.OrderID) 
 		                                    from (
@@ -461,8 +451,6 @@ AND aft.Article IS NOT NULL
  )
 --Order List如果是空，代表所有訂單都有用到這個物料
 
-
-
 DROP TABLE #tmpOrder,#ArticleForThread_Detail,#ArticleForThread , #tmpOrder_Article
 ";
 
@@ -477,7 +465,6 @@ DROP TABLE #tmpOrder,#ArticleForThread_Detail,#ArticleForThread , #tmpOrder_Arti
                 {
                     #region 重新找一次Article。Style_ThreadColorCombo的也要納入
                     this.sql = $@"
-
 SELECT Article FROM
 (
 	select DISTINCT
@@ -496,10 +483,11 @@ SELECT Article FROM
 					,BOA_Article.Article 
 					)				
 
-	,[ThreadColorID] = IIF(PSD.SuppColor = '',dbo.GetColorMultipleID('{this.BrandID}', PSD.ColorID),PSD.SuppColor)
+	,[ThreadColorID] = IIF(PSD.SuppColor = '',dbo.GetColorMultipleID('{this.BrandID}', isnull(psdsC.SpecValue, '')),PSD.SuppColor)
 	FROM PO_Supp_Detail PSD
 	INNER join Fabric f on f.SCIRefno = PSD.SCIRefno
 	LEFT JOIN PO_Supp_Detail_OrderList pd ON PSD.ID = pd.ID AND PSD.SEQ1= pd.SEQ1 AND PSD.SEQ2= pd.SEQ2
+    LEFT JOIN PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
 	LEFT JOIN Order_BOA boa ON boa.id =psd.ID and boa.SCIRefno = psd.SCIRefno and boa.seq=psd.SEQ1
 	OUTER APPLY(
 		SELECT oba.Article FROM Order_BOA ob
@@ -525,15 +513,16 @@ UNION
  left join Style_ThreadColorCombo_Detail B WITH (NOLOCK) on B.Style_ThreadColorComboUkey = A.Ukey
  where o.ID = '{this.POID}' 
 ";
-
                     result = DBProxy.Current.Select(null, this.sql, out this.dtPrint_LeftColumn);
-
+                    if (!result)
+                    {
+                        return result;
+                    }
                     #endregion
 
                     #region 找出對應的Article、Color，由於舊單的繡線物料不會直接顯示在Seq，因此無法按照新單的做法
 
                     this.sql = $@"
-
 SELECT * FROM
 (
 	select 
@@ -553,11 +542,12 @@ SELECT * FROM
 					,BOA_Article.Article 
 					)				
 
-	,[ThreadColorID] = IIF(PSD.SuppColor = '',dbo.GetColorMultipleID('{this.BrandID}', PSD.ColorID),PSD.SuppColor)
+	,[ThreadColorID] = IIF(PSD.SuppColor = '',dbo.GetColorMultipleID('{this.BrandID}', isnull(psdsC.SpecValue, '')),PSD.SuppColor)
 	FROM PO_Supp_Detail PSD
 	INNER join Fabric f on f.SCIRefno = PSD.SCIRefno
 	LEFT JOIN Order_BOA boa ON boa.id =psd.ID and boa.SCIRefno = psd.SCIRefno and boa.seq=psd.SEQ1
 	LEFT JOIN PO_Supp_Detail_OrderList pd ON PSD.ID = pd.ID AND PSD.SEQ1= pd.SEQ1 AND PSD.SEQ2= pd.SEQ2
+    left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
 	OUTER APPLY(
 		SELECT oba.Article FROM Order_BOA ob
 		LEFT join Order_BOA_Article oba on oba.Order_BoAUkey = ob.Ukey
@@ -584,8 +574,6 @@ UNION
  left join Style_ThreadColorCombo_Detail B WITH (NOLOCK) on B.Style_ThreadColorComboUkey = A.Ukey
  where o.ID = '{this.POID}' --and article<>''
  group by B.Article, B.ColorID-- ,o.ID
-
-
 ORDER BY ThreadColorID ASC
 ";
                     #endregion

@@ -27,7 +27,7 @@
     [ToCurrency]       VARCHAR (3)     NULL,
     [MtlDesc]          NVARCHAR (MAX)  NULL,
     [ETD]              DATE            NULL,
-    [RefNo]            VARCHAR (20)    NULL,
+    [RefNo]            VARCHAR (36)    NULL,
     [SCIRefNo]         VARCHAR (30)    NULL,
     [FabricType]       VARCHAR (10)    NULL,
     [MaterialType]     VARCHAR (20)    NULL,

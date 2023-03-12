@@ -133,7 +133,7 @@ namespace Sci.Production.Quality
     dbo.getPass1(a.Approve) as approve1,
     approveDate,
     approve,
-    d.ColorID,
+    ColorID = isnull(psdsC.SpecValue ,''),
     (Select ID+' - '+ AbbEn From Supp WITH (NOLOCK) Where a.suppid = supp.id) as SuppEn,
     c.ExportID as Wkno
     ,cn.name
@@ -164,7 +164,8 @@ From FIR a WITH (NOLOCK)
 Left join Receiving c WITH (NOLOCK) on c.id = a.receivingid
 Left join TransferIn ti WITH (NOLOCK) on ti.id = a.receivingid
 inner join PO_Supp_Detail d WITH (NOLOCK) on d.id = a.poid and d.seq1 = a.seq1 and d.seq2 = a.seq2
-outer apply(select name from color WITH (NOLOCK) where color.id = d.colorid and color.BrandId = d.BrandId)cn
+left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = d.id and psdsC.seq1 = d.seq1 and psdsC.seq2 = d.seq2 and psdsC.SpecColumnID = 'Color'
+outer apply(select name from color WITH (NOLOCK) where color.id = isnull(psdsC.SpecValue ,'') and color.BrandId = d.BrandId)cn
 Where a.poid='{0}' order by a.seq1,a.seq2", masterID);
             this.DetailSelectCommand = cmd;
             return base.OnDetailSelectCommandPrepare(e);

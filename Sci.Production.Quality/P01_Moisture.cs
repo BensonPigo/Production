@@ -64,7 +64,7 @@ namespace Sci.Production.Quality
                 this.displayRefno.Text = string.Empty;
             }
 
-            string po_supp_detail_cmd = $"select SCIRefno,colorid from PO_Supp_Detail WITH (NOLOCK) where id='{this.maindr["POID"]}' and seq1='{this.maindr["seq1"]}' and seq2='{this.maindr["seq2"]}'";
+            string po_supp_detail_cmd = $"select ColorID = isnull(SpecValue ,'') from PO_Supp_Detail_Spec WITH (NOLOCK) where id='{this.maindr["POID"]}' and seq1='{this.maindr["seq1"]}' and seq2='{this.maindr["seq2"]}' and SpecColumnID = 'Color'";
             if (MyUtility.Check.Seek(po_supp_detail_cmd, out DataRow po_supp_detail_dr))
             {
                 this.displayColor.Text = po_supp_detail_dr["colorid"].ToString();

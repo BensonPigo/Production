@@ -1,5 +1,5 @@
 ﻿CREATE TABLE [dbo].[ShrinkageConcern] (
-    [RefNo]    VARCHAR (20) CONSTRAINT [DF_ShrinkageConcern_RefNo] NOT NULL,
+    [RefNo]    VARCHAR (36) CONSTRAINT [DF_ShrinkageConcern_RefNo] NOT NULL,
     [Junk]     BIT          NULL,
     [AddName]  VARCHAR (10) CONSTRAINT [DF_ShrinkageConcern_AddName] NULL DEFAULT (''),
     [AddDate]  DATETIME     NULL,

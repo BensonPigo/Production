@@ -18,7 +18,7 @@ Begin
 	Begin
 		Create Table #Tmp_BoaExpend
 			(  ExpendUkey BigInt Identity(1,1) Not Null, ID Varchar(13), Order_BOAUkey BigInt
-			 , RefNo VarChar(20), SCIRefNo VarChar(30), Article VarChar(8), ColorID VarChar(6), SuppColor NVarChar(Max)
+			 , RefNo VarChar(36), SCIRefNo VarChar(30), Article VarChar(8), ColorID VarChar(6), SuppColor NVarChar(Max)
 			 , SizeCode VarChar(8), SizeSpec VarChar(15), SizeUnit VarChar(8), Remark NVarChar(Max)
 			 , OrderQty Numeric(6,0)
 			 --, Price Numeric(12,4)
@@ -79,10 +79,10 @@ Begin
 	End;
 	
 	--若@TestType = 0，表示需實際寫入Table
-	If @TestType = 0 Or @TestType = 3
-	Begin
-		Exec BoaExpend_Insert @ID, @Order_BOAUkey, @UserID;
-	End;
+	--If @TestType = 0 Or @TestType = 3
+	--Begin
+	--	Exec BoaExpend_Insert @ID, @Order_BOAUkey, @UserID;
+	--End;
 
 	Drop Table #Tmp_BoaExpend_OrderList;
 End

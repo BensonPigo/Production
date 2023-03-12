@@ -1,6 +1,6 @@
 ﻿CREATE TABLE [dbo].[ThreadTransfer_Detail] (
     [ID]            VARCHAR (13)  CONSTRAINT [DF_ThreadTransfer_Detail_ID] DEFAULT ('') NOT NULL,
-    [Refno]         VARCHAR (21)  CONSTRAINT [DF_ThreadTransfer_Detail_Refno] DEFAULT ('') NOT NULL,
+    [Refno]         VARCHAR (36)  CONSTRAINT [DF_ThreadTransfer_Detail_Refno] DEFAULT ('') NOT NULL,
     [ThreadColorID] VARCHAR (15)  CONSTRAINT [DF_ThreadTransfer_Detail_ThreadColorID] DEFAULT ('') NOT NULL,
     [LocationFrom]  VARCHAR (10)  CONSTRAINT [DF_ThreadTransfer_Detail_LocationFrom] DEFAULT ('') NOT NULL,
     [LocationTo]    VARCHAR (10)  CONSTRAINT [DF_ThreadTransfer_Detail_LocationTo] DEFAULT ('') NOT NULL,

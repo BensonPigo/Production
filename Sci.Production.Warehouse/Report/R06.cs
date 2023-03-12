@@ -1,33 +1,22 @@
-﻿using System;
+﻿using Ict;
+using Sci.Data;
+using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
-using Ict;
-using Sci.Data;
-using System.Runtime.InteropServices;
 using Excel = Microsoft.Office.Interop.Excel;
 
 namespace Sci.Production.Warehouse
 {
+    /// <inheritdoc/>
     public partial class R06 : Win.Tems.PrintForm
     {
-        // string reason, factory, stocktype, fabrictype, mdivisionid, shift;
-        // int ordertypeindex;
         private string factory;
-
-        // string reason, factory, stocktype, fabrictype, mdivisionid, shift;
-        // int ordertypeindex;
         private string fabrictype;
-
-        // string reason, factory, stocktype, fabrictype, mdivisionid, shift;
-        // int ordertypeindex;
         private string mdivisionid;
-
-        // string reason, factory, stocktype, fabrictype, mdivisionid, shift;
-        // int ordertypeindex;
         private string shift;
-
         private DateTime? requestdate1;
         private DateTime? requestdate2;
         private DateTime? issuedate1;
@@ -37,6 +26,7 @@ namespace Sci.Production.Warehouse
         private DataTable printData;
         private StringBuilder condition = new StringBuilder();
 
+        /// <inheritdoc/>
         public R06(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -115,24 +105,22 @@ namespace Sci.Production.Warehouse
             #endregion
 
             StringBuilder sqlCmd = new StringBuilder();
-            sqlCmd.Append(string.Format(@"
-SELECT  --a.MDivisionID,
+            sqlCmd.Append(@"
+SELECT
         a.factoryid
         ,a.OrderID
         ,style = (select styleid from dbo.orders WITH (NOLOCK) where id = a.orderid) 
         ,a.id
         ,cell = (select SewingCell from dbo.SewingLine WITH (NOLOCK) where id= a.SewingLineID and FactoryID = a.FactoryID) 
         ,a.SewingLineID
-        --,b.seq1,b.seq2
         ,seq = concat(b.seq1, ' ', b.seq2)
-        ,c.Refno
-        ,content = (select t.MtlTypeID from dbo.fabric t WITH (NOLOCK) where t.SCIRefno = c.SCIRefno) 
-        ,[description] = dbo.getMtlDesc(c.id,c.seq1,c.seq2,2,0) 
-        ,c.SizeSpec
-        ,c.ColorID
+        , psd.Refno
+        ,content = (select t.MtlTypeID from dbo.fabric t WITH (NOLOCK) where t.SCIRefno =  psd.SCIRefno) 
+        ,[description] = dbo.getMtlDesc( psd.id, psd.seq1, psd.seq2,2,0) 
+        , SizeSpec= isnull(psdsS.SpecValue, '')
+        , ColorID = isnull(psdsC.SpecValue, '')
         ,b.FTYInQty
-        --,c.POUnit,c.StockUnit
-        ,productionQty = Round(dbo.GetUnitQty(c.POUnit, c.StockUnit, (isnull(c.NETQty,0)+isnull(c.LossQty,0))), 2)
+        ,productionQty = Round(dbo.GetUnitQty( psd.POUnit,  psd.StockUnit, (isnull( psd.NETQty,0)+isnull( psd.LossQty,0))), 2)
         ,b.WhseInQty
         ,b.RequestQty
         ,sisType = iif(a.type='L','Lacking','Replacement') 
@@ -148,9 +136,12 @@ SELECT  --a.MDivisionID,
         ,[MTRtime] =  replace(iif(il.status = 'Closed',Str(Datediff(DAY,il.ApvDate,il.editdate)) + 'D' +  Str(Datediff(HOUR,il.ApvDate,il.editdate) % 24) +'H' + Str(Datediff(Minute,il.ApvDate,il.editdate) % 60) + 'M',null),' ','')
 FROM Lack a WITH (NOLOCK) 
 inner join Lack_detail b WITH (NOLOCK) on a.id = b.id
-inner join po_supp_detail c WITH (NOLOCK) on c.ID = a.poid and c.seq1 = B.Seq1 AND C.SEQ2 = B.Seq2
+inner join po_supp_detail psd WITH (NOLOCK) on  psd.ID = a.poid and  psd.seq1 = B.Seq1 AND  psd.SEQ2 = B.Seq2
+left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
+left join PO_Supp_Detail_Spec psdsS WITH (NOLOCK) on psdsS.ID = psd.id and psdsS.seq1 = psd.seq1 and psdsS.seq2 = psd.seq2 and psdsS.SpecColumnID = 'Size'
 left join IssueLack il WITH (NOLOCK) on a.IssueLackId = il.id
-where (a.Status ='Received' or a.Status = 'Confirmed') "));
+where (a.Status ='Received' or a.Status = 'Confirmed')
+");
 
             #region --- 條件組合  ---
 
@@ -214,7 +205,7 @@ where (a.Status ='Received' or a.Status = 'Confirmed') "));
 
             if (!MyUtility.Check.Empty(this.fabrictype))
             {
-                sqlCmd.Append(string.Format(@" and c.fabrictype = '{0}'", this.fabrictype));
+                sqlCmd.Append(string.Format(@" and  psd.fabrictype = '{0}'", this.fabrictype));
             }
 
             sqlCmd.Append(string.Format(@" ORDER BY ApvDate "));

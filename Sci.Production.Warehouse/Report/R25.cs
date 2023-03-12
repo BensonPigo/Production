@@ -1,14 +1,15 @@
-﻿using System;
+﻿using Ict;
+using Sci.Data;
+using System;
 using System.ComponentModel;
 using System.Data;
-using System.Windows.Forms;
-using Ict;
-using Sci.Data;
-using Excel = Microsoft.Office.Interop.Excel;
 using System.Runtime.InteropServices;
+using System.Windows.Forms;
+using Excel = Microsoft.Office.Interop.Excel;
 
 namespace Sci.Production.Warehouse
 {
+    /// <inheritdoc/>
     public partial class R25 : Win.Tems.PrintForm
     {
         private string KPIETA1;
@@ -29,6 +30,7 @@ namespace Sci.Production.Warehouse
         private bool RecLessArv;
         private DataTable dataTable;
 
+        /// <inheritdoc/>
         public R25(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -177,7 +179,7 @@ select
 	ed.PoID,
 	seq = ed.Seq1+' '+ed.Seq2,
 	ed.Refno,
-	[Color] = dbo.GetColorMultipleID(o.BrandID,psd.ColorID) ,
+	[Color] = dbo.GetColorMultipleID(o.BrandID,isnull(psdsC.SpecValue, '')) ,
 	[Description] = dbo.getmtldesc(ed.POID,ed.seq1,ed.seq2,2,0),
 	[MtlType]=case when ed.FabricType = 'F' then 'Fabric'
 				   when ed.FabricType = 'A' then 'Accessory' end,
@@ -187,7 +189,7 @@ select
 	[SuppName] = supp.AbbEN,
 	ed.UnitId,
 	psd.StockUnit,
-    psd.SizeSpec,
+    SizeSpec= isnull(psdsS.SpecValue, ''),
     [ShipQty]=ed.Qty,
     ed.FOC,
     ed.NetKg,
@@ -211,6 +213,8 @@ inner join orders o on o.id = ed.poid
 left join Style s with (nolock) on s.Ukey = o.StyleUkey
 left join supp on supp.id = ed.suppid
 left join PO_Supp_Detail psd on psd.id = ed.PoID and psd.SEQ1 = ed.Seq1 and psd.SEQ2 = ed.Seq2
+left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
+left join PO_Supp_Detail_Spec psdsS WITH (NOLOCK) on psdsS.ID = psd.id and psdsS.seq1 = psd.seq1 and psdsS.seq2 = psd.seq2 and psdsS.SpecColumnID = 'Size'
 left join po on po.id = ed.PoID
 left join TPEPass1 TEPPOHandle on TEPPOHandle.id = po.POHandle
 left join TPEPass1 TEPPOSMR on TEPPOSMR.id = po.POSMR
@@ -349,7 +353,7 @@ HAVING 1=1
 
             #endregion
             #region SQL Data Loading...
-            DualResult result = DBProxy.Current.Select(null, strSql,  out this.dataTable);
+            DualResult result = DBProxy.Current.Select(null, strSql, out this.dataTable);
             #endregion
 
             if (result)

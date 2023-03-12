@@ -278,7 +278,7 @@ and ID = '{Sci.Env.User.UserID}'"))
 
                             string sqlcmd = string.Format(
                                 Prgs.SelePoItemSqlCmd() +
-                                    @"and f.MDivisionID = '{1}' and p.seq1 ='{2}' and p.seq2 = '{3}'",
+                                    @"and f.MDivisionID = '{1}' and psd.seq1 ='{2}' and psd.seq2 = '{3}'",
                                 this.CurrentDetailData["poid"],
                                 Env.User.Keyword,
                                 seq[0],

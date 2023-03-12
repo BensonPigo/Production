@@ -1,6 +1,6 @@
 ﻿CREATE TABLE [dbo].[ThreadIncoming_Detail] (
     [ID]               VARCHAR (13)   CONSTRAINT [DF_ThreadIncoming_Detail_ID] DEFAULT ('') NOT NULL,
-    [Refno]            VARCHAR (21)   CONSTRAINT [DF_ThreadIncoming_Detail_Refno] DEFAULT ('') NOT NULL,
+    [Refno]            VARCHAR (36)   CONSTRAINT [DF_ThreadIncoming_Detail_Refno] DEFAULT ('') NOT NULL,
     [ThreadColorid]    VARCHAR (15)   CONSTRAINT [DF_ThreadIncoming_Detail_ThreadColorid] DEFAULT ('') NOT NULL,
     [NewCone]          NUMERIC (5)    CONSTRAINT [DF_ThreadIncoming_Detail_NewCone] DEFAULT ((0)) NULL,
     [TotalWeight]      NUMERIC (8, 2) CONSTRAINT [DF_ThreadIncoming_Detail_TotalWeight] DEFAULT ((0)) NULL,

@@ -5,7 +5,7 @@
     [Suppid]              VARCHAR (6)     CONSTRAINT [DF_AIR_Suppid] DEFAULT ('') NOT NULL,
     [SCIRefno]            VARCHAR (30)    CONSTRAINT [DF_AIR_SCIRefno] DEFAULT ('') NOT NULL,
     [SEQ2]                VARCHAR (2)     CONSTRAINT [DF__tmp_ms_xx___Seq2__2568315E] DEFAULT ('') NULL,
-    [Refno]               VARCHAR (20)    CONSTRAINT [DF_AIR_BrandRefno] DEFAULT ('') NOT NULL,
+    [Refno]               VARCHAR (36)    CONSTRAINT [DF_AIR_BrandRefno] DEFAULT ('') NOT NULL,
     [ArriveQty]           NUMERIC (11, 2) CONSTRAINT [DF_AIR_ArriveQty] DEFAULT ((0)) NULL,
     [InspQty]             NUMERIC (10, 2) CONSTRAINT [DF_AIR_InspQty] DEFAULT ((0)) NULL,
     [RejectQty]           NUMERIC (10, 2) CONSTRAINT [DF_AIR_RejectQty] DEFAULT ((0)) NULL,

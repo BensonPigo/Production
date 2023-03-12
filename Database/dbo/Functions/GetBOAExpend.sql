@@ -10,7 +10,7 @@ CREATE function [dbo].[GetBOAExpend]
 	 ,@IncludeQtyZero	Bit			= 0			--add by Edward 是否包含數量為0
 )
 RETURNS @Tmp_BoaExpend table (  ExpendUkey BigInt Identity(1,1) Not Null, ID Varchar(13), Order_BOAUkey BigInt
-	 , RefNo VarChar(20), SCIRefNo VarChar(30), Article VarChar(8), ColorID VarChar(6), SuppColor NVarChar(Max)
+	 , RefNo VarChar(36), SCIRefNo VarChar(30), Article VarChar(8), ColorID VarChar(6), SuppColor NVarChar(Max)
 	 , SizeSeq VarChar(2), SizeCode VarChar(8), SizeSpec VarChar(15), SizeUnit VarChar(8), Remark NVarChar(Max)
 	 , OrderQty Numeric(6,0)
 	 --, Price Numeric(12,4)
@@ -59,7 +59,7 @@ WHERE Orders.ID = @ID;
 
 --定義欄位
 DECLARE @SCIRefNo VARCHAR(30);
-DECLARE @RefNo VARCHAR(20);
+DECLARE @RefNo VARCHAR(36);
 --DECLARE @Price NUMERIC(12, 4);
 DECLARE @OrderQty NUMERIC(6, 0);
 DECLARE @UsageQty NUMERIC(11, 2);

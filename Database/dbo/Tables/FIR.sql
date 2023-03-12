@@ -5,7 +5,7 @@
     [SEQ2]                         VARCHAR (2)     CONSTRAINT [DF_FIR_SEQ2] DEFAULT ('') NOT NULL,
     [Suppid]                       VARCHAR (6)     CONSTRAINT [DF_FIR_Suppid] DEFAULT ('') NOT NULL,
     [SCIRefno]                     VARCHAR (30)    CONSTRAINT [DF_FIR_SCIRefno] DEFAULT ('') NOT NULL,
-    [Refno]                        VARCHAR (20)    CONSTRAINT [DF_FIR_BrandRefno] DEFAULT ('') NOT NULL,
+    [Refno]                        VARCHAR (36)    CONSTRAINT [DF_FIR_BrandRefno] DEFAULT ('') NOT NULL,
     [ReceivingID]                  VARCHAR (13)    CONSTRAINT [DF_FIR_ReceivingID] DEFAULT ('') NULL,
     [ReplacementReportID]          VARCHAR (13)    CONSTRAINT [DF_FIR_ReplacementReportID] DEFAULT ('') NULL,
     [ArriveQty]                    NUMERIC (10, 2) CONSTRAINT [DF_FIR_ArriveQty] DEFAULT ((0)) NULL,

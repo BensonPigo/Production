@@ -57,21 +57,25 @@ namespace Sci.Production.Warehouse
         /// <inheritdoc/>
         public void SetDisplayBox(string strpoid, string strseq1, string strseq2)
         {
-            string sqlcmd = string.Format(
-                @"
-select  p.*
-        , concat(Ltrim(Rtrim(p.seq1)), ' ', p.seq2) as seq
-        , dbo.getmtldesc(p.id, p.seq1, p.seq2, 2,0) [description]
-        , (select orderid+',' from (select orderid 
+            string sqlcmd = $@"
+select
+    seq = concat(Ltrim(Rtrim(psd.seq1)), ' ', psd.seq2),
+    psd.StockUnit,
+    psd.UsedQty,
+    psd.special,
+    ColorID = isnull(psdsC.SpecValue, ''),
+    SizeSpec= isnull(psdsS.SpecValue, ''),
+    [description] = dbo.getmtldesc(psd.id, psd.seq1, psd.seq2, 2,0),
+    [orderlist] = (select orderid+',' from (select orderid 
                                     from dbo.po_supp_detail_orderlist WITH (NOLOCK) 
-                                    where   id = p.id 
-                                            and seq1 = p.seq1 
-                                            and seq2 = p.seq2)t for xml path('')) [orderlist]
-from dbo.po_supp_detail p WITH (NOLOCK) 
-where id='{0}' and seq1='{1}' and seq2='{2}'",
-                strpoid,
-                strseq1,
-                strseq2);
+                                    where   id = psd.id 
+                                            and seq1 = psd.seq1 
+                                            and seq2 = psd.seq2)t for xml path(''))
+from po_supp_detail psd WITH (NOLOCK)
+left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
+left join PO_Supp_Detail_Spec psdsS WITH (NOLOCK) on psdsS.ID = psd.id and psdsS.seq1 = psd.seq1 and psdsS.seq2 = psd.seq2 and psdsS.SpecColumnID = 'Size'
+where psd.id='{strpoid}' and psd.seq1='{strseq1}' and psd.seq2='{strseq2}'
+";
 
             if (MyUtility.Check.Seek(sqlcmd, out DataRow dr))
             {

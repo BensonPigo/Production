@@ -18,7 +18,7 @@
     [FactoryID]      VARCHAR (8)   NOT NULL DEFAULT (''),
     [StyleID]        VARCHAR (20)  NOT NULL DEFAULT (''),
     [SuppID]       VARCHAR (6)   NOT NULL DEFAULT (''),
-    [Refno]          VARCHAR (20)  NOT NULL DEFAULT (''),
+    [Refno]          VARCHAR (36)  NOT NULL DEFAULT (''),
     [CustPONo]       VARCHAR (30)  NOT NULL DEFAULT (''),
     [SeasonId]       VARCHAR (10)  NOT NULL DEFAULT (''),
     [BulkMR]         VARCHAR (10)  NOT NULL DEFAULT (''),

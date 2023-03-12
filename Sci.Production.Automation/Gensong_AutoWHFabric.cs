@@ -123,7 +123,17 @@ namespace Sci.Production.Automation
             return true;
         }
 
-        private static bool SentandUpdate(DataTable dt, string formName, EnumStatus statusAPI, EnumStatus action, int typeCreateRecord, AutoRecord autoRecord = null)
+        /// <summary>
+        /// SentandUpdate
+        /// </summary>
+        /// <param name="dt">dt</param>
+        /// <param name="formName">formName</param>
+        /// <param name="statusAPI">statusAPI</param>
+        /// <param name="action">action</param>
+        /// <param name="typeCreateRecord">typeCreateRecord</param>
+        /// <param name="autoRecord">autoRecord</param>
+        /// <returns>bool</returns>
+        public static bool SentandUpdate(DataTable dt, string formName, EnumStatus statusAPI, EnumStatus action, int typeCreateRecord, AutoRecord autoRecord = null)
         {
             // DataTable轉化為JSON
             WHTableName dtNameforAPI = LogicAutoWHData.GetDetailNameforAPI(formName);
@@ -501,12 +511,13 @@ select distinct
     inner join Production.dbo.WorkOrder wo on cp2.WorkorderUkey = wo.Ukey
     LEFT join Production.dbo.PO_Supp_Detail po3 on po3.ID= cp2.PoId 
 	    and po3.SEQ1=wo.Seq1 and po3.SEQ2=wo.Seq2
+    LEFT JOIN Production.dbo.PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = po3.id and psdsC.seq1 = po3.seq1 and psdsC.seq2 = po3.seq2 and psdsC.SpecColumnID = 'Color'
     LEFT JOIN Fabric WITH (NOLOCK) ON po3.SCIRefNo=Fabric.SCIRefNo
     OUTER APPLY(
      SELECT [Value]=
 	     CASE WHEN Fabric.MtlTypeID in ('EMB THREAD','SP THREAD','THREAD') 
-                THEN IIF(po3.SuppColor = '',dbo.GetColorMultipleID(po3.BrandID,po3.ColorID), po3.SuppColor)
-                ELSE dbo.GetColorMultipleID(po3.BrandID,po3.ColorID)
+                THEN IIF(po3.SuppColor = '',dbo.GetColorMultipleID(po3.BrandID,isnull(psdsC.SpecValue ,'')), po3.SuppColor)
+                ELSE dbo.GetColorMultipleID(po3.BrandID,isnull(psdsC.SpecValue ,''))
 	     END
     )Color
     outer apply(

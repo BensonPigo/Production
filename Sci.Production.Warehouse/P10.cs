@@ -13,7 +13,6 @@ using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Transactions;
 using System.Windows.Forms;
 
@@ -195,8 +194,7 @@ namespace Sci.Production.Warehouse
         {
             string masterID = (e.Master == null) ? string.Empty : e.Master["ID"].ToString();
             string cutplanID = (e.Master == null) ? string.Empty : e.Master["cutplanID"].ToString();
-            this.DetailSelectCommand = string.Format(
-                @"
+            this.DetailSelectCommand = $@"
 ;with main as
 (
 	select  a.Id
@@ -208,22 +206,21 @@ namespace Sci.Production.Warehouse
 	        , [description] = f.DescDetail
 	        , [requestqty] = isnull((select sum(cons) 
 		                             from dbo.Cutplan_Detail_Cons c WITH (NOLOCK) 
-		                             inner join dbo.PO_Supp_Detail p WITH (NOLOCK) on p.ID=c.Poid 
-                                                                                      and p.SEQ1 = c.Seq1 
-                                                                                      and p.SEQ2 = c.Seq2
-		                             where  c.id = '{1}' 
+		                             inner join dbo.PO_Supp_Detail psd WITH (NOLOCK) on psd.ID=c.Poid and psd.SEQ1 = c.Seq1 and psd.SEQ2 = c.Seq2
+                                     inner join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
+		                             where  c.id = '{cutplanID}' 
                                             and c.poid = a.poid
-                                            and a.SciRefno = p.SciRefno
-                                            and a.ColorID = p.ColorID), 0.00)
+                                            and a.SciRefno = psd.SciRefno
+                                            and a.ColorID = isnull(psdsC.SpecValue, '')), 0.00)
 	        , [accu_issue] =isnull ((select  sum(qty) 
                                     from Issue c WITH (NOLOCK) 
                                     inner join Issue_Summary b WITH (NOLOCK) on c.Id=b.Id 
                                     where   a.poid = b.poid 
                                             and a.SCIRefno = b.SCIRefno 
                                             and a.Colorid = b.Colorid 
-                                            and c.CutplanID = '{1}' 
+                                            and c.CutplanID = '{cutplanID}' 
                                             and c.status='Confirmed'
-                                            and c.id != '{0}')
+                                            and c.id != '{masterID}')
                                     , 0.00)
 	        , a.Ukey
             , unit = (select top 1 StockUnit 
@@ -242,29 +239,31 @@ namespace Sci.Production.Warehouse
     outer apply (
         select top 1 NetQty = isnull (psd.NetQty, 0)
         from  PO_Supp_Detail psd WITH (NOLOCK) 
+        inner join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
         where psd.NetQty != 0
               and psd.NetQty is not null
               and psd.StockPoid = ''
               and a.Poid = psd.ID
               and a.SciRefno = psd.SciRefno
-              and a.ColorID = psd.ColorID
+              and a.ColorID = isnull(psdsC.SpecValue, '')
               and psd.FabricType = 'F'
     ) Normal
     outer apply (
         select top 1 NetQty = isnull (psd.NetQty, 0)
-        from  PO_Supp_Detail psd WITH (NOLOCK) 
+        from  PO_Supp_Detail psd WITH (NOLOCK)
+        inner join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
         where psd.NetQty != 0
               and psd.NetQty is not null
               and psd.StockPoid != ''
               and a.Poid = psd.ID
               and a.SciRefno = psd.SciRefno
-              and a.ColorID = psd.ColorID
+              and a.ColorID = isnull(psdsC.SpecValue, '')
               and psd.FabricType = 'F'
     ) NonNormal
     outer apply (
         select value = iif (Normal.NetQty != 0, Normal.NetQty, NonNormal.NetQty)
     ) NetQty
-	Where a.id = '{0}'
+	Where a.id = '{masterID}'
 )
 select  a.*
         , tmpQty.arqty 
@@ -281,7 +280,7 @@ outer apply(
                                              ,s.seq2
                                              ,i.CutplanID 
                                     from Issue_Summary s WITH (NOLOCK) 
-                                    inner join Issue i WITH (NOLOCK) on s.Id=i.Id and i.CutplanID!='{1}' and i.status='Confirmed' 
+                                    inner join Issue i WITH (NOLOCK) on s.Id=i.Id and i.CutplanID!='{cutplanID}' and i.status='Confirmed' 
                                     where a.Poid=s.Poid and a.SCIRefno =s.SCIRefno and a.ColorID=s.ColorID
                                ) s on c.Poid=s.poid and c.SEQ1=s.SEQ1 and c.SEQ2=s.SEQ2 and c.ID=s.CutplanID)
                             , 0.00)
@@ -298,8 +297,8 @@ outer apply(
                                         and s.Colorid = a.ColorID 
                                         and i.status = 'Confirmed')
                                 , 0.00)
-) as tmpQty", masterID,
-                cutplanID);
+) as tmpQty
+";
             return base.OnDetailSelectCommandPrepare(e);
         }
 
@@ -500,12 +499,11 @@ outer apply(
                 }
                 else
                 {
-                    sqlcmd = string.Format(
-                        @" 
+                    sqlcmd = $@" 
 with main as(
     select poid
            , t.SCIRefno
-           , t.ColorID
+           , ColorID = isnull(tC.SpecValue, '')
            , t.Refno
            , requestqty = sum(cons)
            , qty = 0.00
@@ -513,59 +511,54 @@ with main as(
                                    from Issue a WITH (NOLOCK) 
                                    inner join Issue_Summary b WITH (NOLOCK) on a.Id=b.Id 
                                    where c.poid = b.poid 
-                                         and a.CutplanID = '{0}' 
+                                         and a.CutplanID = '{this.txtRequest.Text}' 
                                          and t.SCIRefno = b.SCIRefno 
-                                         and t.Colorid = b.Colorid 
+                                         and isnull(tC.SpecValue, '') = b.Colorid 
                                          and a.status = 'Confirmed'
-                                         and a.id != '{1}'), 0.00)
-           , id = '{1}'
+                                         and a.id != '{this.CurrentMaintain["id"]}'), 0.00)
+           , id = '{this.CurrentMaintain["id"]}'
            , NetQty = isnull(NetQty.value, 0)
            , [description] = (select DescDetail 
                               from fabric WITH (NOLOCK) 
                               where scirefno = t.scirefno)
             ,f.WeaveTypeID  
     from dbo.Cutplan_Detail_Cons c WITH (NOLOCK) 
-    inner join dbo.PO_Supp_Detail t WITH (NOLOCK) on t.id = c.Poid 
-                                                     and t.seq1 = c.seq1 
-                                                     and t.seq2 = c.Seq2
+    inner join dbo.PO_Supp_Detail t WITH (NOLOCK) on t.id = c.Poid and t.seq1 = c.seq1 and t.seq2 = c.Seq2
+    left join PO_Supp_Detail_Spec tC WITH (NOLOCK) on tC.ID = t.id and tC.seq1 = t.seq1 and tC.seq2 = t.seq2 and tC.SpecColumnID = 'Color'
     left join Fabric f WITH (NOLOCK) on t.SCIRefno = f.SCIRefno 
     outer apply (
         select top 1 NetQty = isnull (psdAll.NetQty, 0)
         from Cutplan_Detail_Cons cdc WITH (NOLOCK) 
-        inner join PO_Supp_Detail psd WITH (NOLOCK) on psd.id = cdc.Poid 
-                                                       and psd.seq1 = cdc.seq1 
-                                                       and psd.seq2 = cdc.Seq2
-        inner join Po_Supp_Detail psdAll WITH (NOLOCK) on psd.ID = psdAll.ID
-                                                         and psd.SciRefno = psdAll.SciRefno
-                                                         and psd.ColorID = psdAll.ColorID
+        inner join PO_Supp_Detail psd WITH (NOLOCK) on psd.id = cdc.Poid and psd.seq1 = cdc.seq1 and psd.seq2 = cdc.Seq2
+        inner join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
+        inner join Po_Supp_Detail psdAll WITH (NOLOCK) on psd.ID = psdAll.ID and psd.SciRefno = psdAll.SciRefno
+        inner join PO_Supp_Detail_Spec psdsCAll WITH (NOLOCK) on psdsCAll.ID = psd.id and psdsCAll.seq1 = psd.seq1 and psdsCAll.seq2 = psd.seq2 and psdsCAll.SpecColumnID = 'Color' and psdsC.SpecValue = psdsCAll.SpecValue
         where psdAll.NetQty != 0
               and psdAll.NetQty is not null
               and psdAll.StockPoid = ''
 			  and cdc.ID = c.ID
 			  and t.SCIRefno = psd.SCIRefno
-			  and t.ColorID = psd.ColorID
+			  and tC.SpecValue = psdsC.SpecValue
     ) Normal
     outer apply (
         select top 1 NetQty = isnull (psdAll.NetQty, 0)
         from Cutplan_Detail_Cons cdc WITH (NOLOCK) 
-        inner join PO_Supp_Detail psd WITH (NOLOCK) on psd.id = cdc.Poid 
-                                                       and psd.seq1 = cdc.seq1 
-                                                       and psd.seq2 = cdc.Seq2
-        inner join Po_Supp_Detail psdAll WITH (NOLOCK) on psd.ID = psdAll.ID
-                                                         and psd.SciRefno = psdAll.SciRefno
-                                                         and psd.ColorID = psdAll.ColorID
+        inner join PO_Supp_Detail psd WITH (NOLOCK) on psd.id = cdc.Poid and psd.seq1 = cdc.seq1 and psd.seq2 = cdc.Seq2
+        inner join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
+        inner join Po_Supp_Detail psdAll WITH (NOLOCK) on psd.ID = psdAll.ID and psd.SciRefno = psdAll.SciRefno
+        inner join PO_Supp_Detail_Spec psdsCAll WITH (NOLOCK) on psdsCAll.ID = psd.id and psdsCAll.seq1 = psd.seq1 and psdsCAll.seq2 = psd.seq2 and psdsCAll.SpecColumnID = 'Color' and psdsC.SpecValue = psdsCAll.SpecValue
         where psdAll.NetQty != 0
               and psdAll.NetQty is not null
               and psdAll.StockPoid != ''
 			  and cdc.ID = c.ID
 			  and t.SCIRefno = psd.SCIRefno
-			  and t.ColorID = psd.ColorID
+			  and tC.SpecValue = psdsC.SpecValue
     ) NonNormal
 	outer apply (
 		select value = iif (Normal.NetQty != 0, Normal.NetQty, NonNormal.NetQty)
 	) NetQty
-    where c.ID = '{0}'
-    group by poid, t.SCIRefno, t.ColorID, t.Refno, NetQty.value, f.WeaveTypeID  
+    where c.ID = '{this.txtRequest.Text}'
+    group by poid, t.SCIRefno, tC.SpecValue, t.Refno, NetQty.value, f.WeaveTypeID  
 )
 select a.*
        , unit = (select top 1 StockUnit 
@@ -587,7 +580,7 @@ outer apply(
                                                   , i.CutplanID 
                                   from Issue_Summary s WITH (NOLOCK) 
                                   inner join Issue i WITH (NOLOCK) on s.Id = i.Id 
-                                                                      and i.CutplanID != '{0}' 
+                                                                      and i.CutplanID != '{this.txtRequest.Text}' 
                                                                       and i.status = 'Confirmed' 
                                   where a.Poid = s.Poid 
                                         and a.SCIRefno = s.SCIRefno 
@@ -609,8 +602,8 @@ outer apply(
                                       and s.SCIRefno = a.SCIRefno 
                                       and s.Colorid = a.ColorID 
                                       and i.status = 'Confirmed'), 0.00)
-) as tmpQty", this.txtRequest.Text,
-                        this.CurrentMaintain["id"]);
+) as tmpQty
+";
                     DBProxy.Current.Select(null, sqlcmd, out dt);
                     if (MyUtility.Check.Empty(dt) || MyUtility.Check.Empty(dt.Rows.Count))
                     {

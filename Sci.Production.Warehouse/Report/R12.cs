@@ -1,21 +1,21 @@
-﻿using System.Collections.Generic;
-using System.Data;
-using System.Data.SqlClient;
-using System.Runtime.InteropServices;
-using System.Windows.Forms;
-using Ict;
+﻿using Ict;
 using Sci.Data;
 using Sci.Win;
-using Excel = Microsoft.Office.Interop.Excel;
+using System.Collections.Generic;
+using System.Data;
+using System.Data.SqlClient;
+using System.Windows.Forms;
 
 namespace Sci.Production.Warehouse
 {
+    /// <inheritdoc/>
     public partial class R12 : Win.Tems.PrintForm
     {
         private string sqlCmd = string.Empty;
         private List<SqlParameter> listSqlPar = new List<SqlParameter>();
         private DataTable dtResult;
 
+        /// <inheritdoc/>
         public R12(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -96,8 +96,8 @@ select
 	,Description = dbo.getMtlDesc(ild.poid, ild.seq1, ild.seq2, 2, 0)
 	,Unit = psd.StockUnit
 	, psd.RefNo
-	, psd.ColorID
-	, psd.SizeSpec
+	, ColorID = isnull(psdsC.SpecValue, '')
+	, SizeSpec= isnull(psdsS.SpecValue, '')
 	,MaterialType = Concat (iif(psd.FabricType='F','Fabric',iif(psd.FabricType='A','Accessory',iif(psd.FabricType='O','Orher',psd.FabricType))), '-', Fabric.MtlTypeID)
 	,IssueQty = ild.Qty
 	,BulkLocation = dbo.Getlocation(f.Ukey)
@@ -105,6 +105,8 @@ from IssueLack il with (nolock)
 inner join IssueLack_Detail ild with (nolock) on il.ID = ild.ID
 inner join Orders o with (nolock) on o.ID = ild.poid
 left join PO_Supp_Detail psd with (nolock) on psd.ID = ild.POID and psd.SEQ1 = ild.Seq1 and psd.SEQ2 = ild.Seq2 
+left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
+left join PO_Supp_Detail_Spec psdsS WITH (NOLOCK) on psdsS.ID = psd.id and psdsS.seq1 = psd.seq1 and psdsS.seq2 = psd.seq2 and psdsS.SpecColumnID = 'Size'
 left join FtyInventory f with (nolock) on f.POID = ild.POID and f.SEQ1 = ild.Seq1 and f.SEQ2 = ild.Seq2  and f.Roll = ild.Roll and f.Dyelot = ild.Dyelot
 left join Lack l with (nolock) on l.ID = il.RequestID
 left join Fabric  with (nolock) on Fabric.SCIRefno = psd.SCIRefno

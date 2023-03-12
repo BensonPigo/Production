@@ -1,7 +1,7 @@
 ﻿CREATE TABLE [dbo].[MNOrder_BOA] (
     [Id]             VARCHAR (13)   CONSTRAINT [DF_MNOrder_BOA_Id] DEFAULT ('') NULL,
     [UKey]           BIGINT         CONSTRAINT [DF_MNOrder_BOA_UKey] DEFAULT ((0)) NOT NULL,
-    [Refno]          VARCHAR (20)   CONSTRAINT [DF_MNOrder_BOA_Refno] DEFAULT ('') NULL,
+    [Refno]          VARCHAR (36)   CONSTRAINT [DF_MNOrder_BOA_Refno] DEFAULT ('') NULL,
     [SCIRefno]       VARCHAR (30)   CONSTRAINT [DF_MNOrder_BOA_SCIRefno] DEFAULT ('') NULL,
     [SuppID]         VARCHAR (6)    CONSTRAINT [DF_MNOrder_BOA_SuppID] DEFAULT ('') NULL,
     [Seq]            VARCHAR (3)    CONSTRAINT [DF_MNOrder_BOA_Seq] DEFAULT ('') NULL,
@@ -18,6 +18,8 @@
     [FabricUkey_Old] VARCHAR (10)   DEFAULT ('') NULL,
     CONSTRAINT [PK_MNOrder_BOA] PRIMARY KEY CLUSTERED ([UKey] ASC)
 );
+
+
 
 
 

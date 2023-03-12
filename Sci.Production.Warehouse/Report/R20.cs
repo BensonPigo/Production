@@ -10,6 +10,7 @@ using Excel = Microsoft.Office.Interop.Excel;
 
 namespace Sci.Production.Warehouse
 {
+    /// <inheritdoc/>
     public partial class R20 : Win.Tems.PrintForm
     {
         private string dateFormate = "yyyy-MM-dd";
@@ -25,10 +26,10 @@ namespace Sci.Production.Warehouse
         private string Factory;
         private string StartRefno;
         private string EndRefno;
-
         private bool boolCheckQty;
         private DataTable printData;
 
+        /// <inheritdoc/>
         public R20(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -147,15 +148,15 @@ select	SPNo = inv.POID
 		, SuppID = inv.SuppID
 		, Width = invRef.Width
 		, [ColorID]= IIF(Fabric.MtlTypeID LIKE '%Thread%' 
-			            , IIF(psd.SuppColor = '', dbo.GetColorMultipleID (o.BrandID, psd.ColorID), psd.SuppColor)
-			            , psd.ColorID)
-		, Size = invRef.SizeSpec
-		, SizeUnit = invRef.SizeUnit
+			            , IIF(psd.SuppColor = '', dbo.GetColorMultipleID (o.BrandID, isnull(psdsC.SpecValue, '')), psd.SuppColor)
+			            , isnull(psdsC.SpecValue, ''))
+		, Size = irsS.SpecValue
+		, SizeUnit = irsU.SpecValue
 		, Unit = psd.StockUnit
 		, Quantity = inv.Qty
 		, WHActualStockQty = isnull(mpd.LInvQty, 0)
 		, StockFactory = inv.FactoryID
-		, Special = invref.BomZipperInsert
+		, Special = irsZ.SpecValue
 		, Deadline = inv.Deadline
 		, OrderComfirmDate = o.CFMDate
 		, AgingDays = DATEDIFF(dd, o.CFMDate, inv.Deadline)
@@ -166,7 +167,12 @@ inner join Inventory inv on o.ID = inv.POID
 inner join Po_Supp_Detail psd on inv.POID = psd.id 
                                  and inv.seq1 = psd.seq1 
                                  and inv.seq2 = psd.seq2
+left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
 left join InventoryRefno invRef on inv.InventoryRefnoID = invRef.ID
+left join InventoryRefno_Spec irsS on irsS.InventoryRefNoID = invRef.id and irsS.SpecColumnID = 'Size'
+left join InventoryRefno_Spec irsU on irsU.InventoryRefNoID = invRef.id and irsU.SpecColumnID = 'SizeUnit'
+left join InventoryRefno_Spec irsZ on irsZ.InventoryRefNoID = invRef.id and irsZ.SpecColumnID = 'ZipperInsert'
+
 left join MDivisionPoDetail mpd on inv.POID = mpd.POID and inv.Seq1 = mpd.Seq1 and inv.Seq2 = mpd.Seq2
 left join fabric WITH (NOLOCK) on fabric.SCIRefno = psd.scirefno
 {0}", (filte.Count > 0) ? "Where " + filte.JoinToString("\n\r and ") : string.Empty);

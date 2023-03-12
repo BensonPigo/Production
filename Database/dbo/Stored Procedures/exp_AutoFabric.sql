@@ -471,11 +471,12 @@ declare @Today date = CONVERT(date,GETDATE());
 MERGE Receiving_Detail AS T
 USING(
 	SELECT rd.id,r.InvNo,rd.Poid,rd.Seq1,rd.Seq2,rd.Roll,rd.Dyelot,rd.PoUnit,rd.ShipQty,rd.Weight,rd.StockType,rd.Ukey
-,po3.Refno , po3.ColorID,IsInspection = 0
+,po3.Refno , ColorID=ISNULL(psdsC.SpecValue,''),IsInspection = 0
 	FROM Production.dbo.Receiving_Detail rd
 	inner join Production.dbo.Receiving r on rd.id = r.id
 	inner join Production.dbo.PO_Supp_Detail po3 on po3.ID= rd.PoId 
 		and po3.SEQ1=rd.Seq1 and po3.SEQ2=rd.Seq2
+    left join Production.dbo.PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = po3.ID and psdsC.seq1 = po3.seq1 and psdsC.seq2 = po3.seq2 and psdsC.SpecColumnID = 'Color'
 	where convert(date,r.EditDate) =  @Today
 	and exists(
 		select 1 from Production.dbo.PO_Supp_Detail 

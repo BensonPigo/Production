@@ -10,6 +10,7 @@
     [AddDate]         DATETIME     NULL,
     [EditName]        VARCHAR (10) CONSTRAINT [DF_Factory_BrandDefinition_EditName] DEFAULT ('') NULL,
     [EditDate]        DATETIME     NULL,
+    [V_Code] VARCHAR(30) NULL, 
     CONSTRAINT [PK_Factory_BrandDefinition] PRIMARY KEY CLUSTERED ([ID] ASC, [BrandID] ASC, [CDCodeID] ASC)
 );
 

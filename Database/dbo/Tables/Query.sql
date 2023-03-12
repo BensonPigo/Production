@@ -2,7 +2,7 @@
     [Ukey_Old]          CHAR (10)       NULL,
     [Ukey]              BIGINT          NOT NULL,
     [Type]              CHAR (1)        NOT NULL,
-    [Refno]             CHAR (23)       NOT NULL,
+    [Refno]             CHAR (36)       NOT NULL,
     [Picture1]          NVARCHAR (60)   NULL,
     [Picture2]          NVARCHAR (40)   NULL,
     [Junk]              BIT             NULL,

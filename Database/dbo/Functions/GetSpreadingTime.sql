@@ -2,7 +2,7 @@
 CREATE FUNCTION [dbo].[GetSpreadingTime] 
 (
 	@WeaveTypeID varchar(20),
-	@Refno varchar(20), --(用以判斷Roll/UnRoll)、
+	@Refno varchar(36), --(用以判斷Roll/UnRoll)、
 	@NoOfRoll int,
 	@Layer int,
 	@Cons numeric(20,4),
