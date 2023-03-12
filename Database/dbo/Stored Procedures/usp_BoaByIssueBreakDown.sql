@@ -1,9 +1,4 @@
-﻿-- Batch submitted through debugger: SQLQuery7.sql|7|0|C:\Users\JIMMY~1.LIA\AppData\Local\Temp\~vsCB42.sql
--- =============================================
--- Author:		Mike
--- Create date: 2015/12/31
--- Description:	BOA AutoPick Prepare
--- =============================================
+﻿
 CREATE PROCEDURE [dbo].[usp_BoaByIssueBreakDown]
 	@IssueID			varchar(13)				--	Issue ID
 	, @POID				VarChar(13)				--採購母單
@@ -14,8 +9,6 @@ CREATE PROCEDURE [dbo].[usp_BoaByIssueBreakDown]
 	, @IssueType		VarChar(20) = 'Sewing'	-- MtlType.IssueType
 AS
 BEGIN
-	-- SET NOCOUNT ON added to prevent extra result sets from
-	-- interfering with SELECT statements.
 	SET NOCOUNT ON;
 	declare @count as int;
 	create Table #tmpOrder_Qty
@@ -59,8 +52,6 @@ BEGIN
 	Where	Orders.POID = @POID
 			And Orders.Junk = 0
 			AND Issue_Breakdown.ID = @IssueID
-	--Order By ID, FactoryID, CustCDID, ZipperInsert, CustPONo, BuyMonth
-	--	, CountryID, StyleID, Article, Seq, SizeCode;
 
 	select @count = count(1) from #tmpOrder_Qty;
 	if @count = 0
@@ -119,36 +110,33 @@ BEGIN
 			Left Join dbo.Factory WITH (NOLOCK)	On  Factory.ID = Orders.FactoryID
 			Where	Orders.POID = @POID
 					And Orders.Junk = 0
-			--Order By ID, FactoryID, CustCDID, ZipperInsert, CustPONo, BuyMonth
-			--	, CountryID, StyleID, Article, Seq, SizeCode;
 		end
 	end
-
-	Create Table #Tmp_BoaExpend (	
-		ExpendUkey BigInt Identity(1,1) Not Null
-		, ID Varchar(13)
-		, Order_BOAUkey BigInt
-		, RefNo VarChar(20)
-		, SCIRefNo VarChar(30)
-		, Article VarChar(8)
-		, ColorID VarChar(6)
-		, SuppColor NVarChar(Max)
-		, SizeCode VarChar(8)
-		, SizeSpec VarChar(15)
-		, SizeUnit VarChar(8)
-		, Remark NVarChar(Max)
+    
+	Create Table #Tmp_BoaExpend
+	(  ExpendUkey BigInt Identity(1,1) Not Null, ID Varchar(13), Order_BOAUkey BigInt
+		, RefNo VarChar(36), SCIRefNo VarChar(30), Article VarChar(8), ColorID VarChar(6), SuppColor NVarChar(Max)
+		, SizeCode VarChar(8), SizeSpec VarChar(15), SizeUnit VarChar(8), Remark NVarChar(Max)
 		, OrderQty Numeric(6,0)
-		, UsageQty Numeric(9,2)
-		, UsageUnit VarChar(8)
-		, SysUsageQty  Numeric(9,2)
-		, BomZipperInsert VarChar(5)
-		, BomCustPONo VarChar(30)
-		, OrderList VarChar(max)
+        --, Price Numeric(12,4)--pms does not use this column
+        , UsageQty Numeric(11,2), UsageUnit VarChar(8), SysUsageQty  Numeric(11,2)
+		, BomZipperInsert VarChar(5), BomCustPONo VarChar(30), Keyword VarChar(Max), Keyword_Original VarChar(Max), Keyword_xml VarChar(Max), OrderList nvarchar(max), ColorDesc nvarchar(150), Special nvarchar(max)
+		, BomTypeColorID varchar(50), BomTypeSize varchar(50), BomTypeSizeUnit varchar(50), BomTypeZipperInsert varchar(50), BomTypeArticle varchar(50), BomTypeCOO varchar(50)
+		, BomTypeGender varchar(50), BomTypeCustomerSize varchar(50), BomTypeDecLabelSize varchar(50), BomTypeBrandFactoryCode varchar(50), BomTypeStyle varchar(50)
+		, BomTypeStyleLocation varchar(50), BomTypeSeason varchar(50), BomTypeCareCode varchar(50), BomTypeCustomerPO varchar(50)
 		, Primary Key (ExpendUkey)
+		, Index Idx_ID NonClustered (ID, Order_BOAUkey, ColorID) -- table index
 	);
-	Create NonClustered Index Idx_ID on #Tmp_BoaExpend (ID, Order_BOAUkey, ColorID) -- table index
 
-	Exec BoaExpend @POID, @Order_BOAUkey, @TestType, @UserID,0,1;
+    if  (select CFMDate from orders with(nolock) where id = @OrderID) < '2022/08/01'
+    begin
+	    Exec BoaExpend @POID, @Order_BOAUkey, @TestType, @UserID,0,1;
+    end
+    else
+    begin
+	    Exec BoaExpend_New @POID, @Order_BOAUkey, @TestType, @UserID,0,1;
+    end
+
 	Drop Table #tmpOrder_Qty;
 
 	select	p.id as [poid]
@@ -156,8 +144,8 @@ BEGIN
 			, p.seq2
 			, p.SCIRefno
 			, dbo.getMtlDesc(p.id, p.seq1, p.seq2,2,0) [description] 
-			, p.ColorID
-			, p.SizeSpec
+			, ColorID = isnull(psdsC.SpecValue ,'')
+			, SizeSpec = isnull(psdsS.SpecValue ,'')
 			, p.Spec
 			, p.Special
 			, p.Remark 
@@ -165,6 +153,8 @@ BEGIN
 	from dbo.PO_Supp_Detail as p WITH (NOLOCK)
 	inner join dbo.Fabric f WITH (NOLOCK) on f.SCIRefno = p.SCIRefno
 	inner join dbo.MtlType m WITH (NOLOCK) on m.id = f.MtlTypeID
+    left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = p.id and psdsC.seq1 = p.seq1 and psdsC.seq2 = p.seq2 and psdsC.SpecColumnID = 'Color'
+    left join PO_Supp_Detail_Spec psdsS WITH (NOLOCK) on psdsS.ID = p.id and psdsC.seq1 = p.seq1 and psdsC.seq2 = p.seq2 and psdsS.SpecColumnID = 'Size'
 	where p.id=@POID and p.FabricType = 'A' and m.IssueType=@IssueType
 
 	;with cte2 as (

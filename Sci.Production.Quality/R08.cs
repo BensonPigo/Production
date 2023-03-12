@@ -116,7 +116,6 @@ namespace Sci.Production.Quality
             StringBuilder sqlCmd = new StringBuilder();
             sqlCmd.Append(string.Format(
                 @"
-
 SELECT [Inspected Date] = FP.InspDate
        ,[Inspector] = FP.Inspector
        ,o.brandID
@@ -132,7 +131,7 @@ SELECT [Inspected Date] = FP.InspDate
        ,[Roll#] = fp.Roll
        ,[Dyelot#] = fp.Dyelot
 	   ,[Ref#] = RTRIM(p.RefNo)
-	   ,[Color]=dbo.GetColorMultipleID(o.BrandID,p.ColorID)
+	   ,[Color]=dbo.GetColorMultipleID(o.BrandID,isnull(psdsC.SpecValue ,''))
        ,[Arrived YDS] = RD.StockQty
        ,[Actual YDS] = FP.ActualYds
        ,[LthOfDiff] = FP.ActualYds - FP.TicketYds
@@ -162,6 +161,7 @@ LEFT JOIN FIR AS F ON FP.ID=F.ID
 LEFT JOIN View_AllReceivingDetail RD ON RD.PoId= F.POID AND RD.Seq1 = F.SEQ1 AND RD.Seq2 = F.SEQ2
 								AND RD.Roll = FP.Roll AND RD.Dyelot = FP.Dyelot
 LEFT join PO_Supp_Detail p on p.ID = f.poid and p.seq1 = f.seq1 and p.seq2 = f.seq2
+left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = p.id and psdsC.seq1 = p.seq1 and psdsC.seq2 = p.seq2 and psdsC.SpecColumnID = 'Color'
 LEFT join orders o on o.id=f.POID
 LEFT JOIN Fabric on Fabric.SCIRefno  = f.SCIRefno
 LEFT JOIN Issue_Detail isd on FP.Issue_DetailUkey = isd.ukey and isd.IsQMS = 1

@@ -195,40 +195,55 @@ namespace Sci.Production.Warehouse
                 return;
             }
 
-            string sqlcmd
-                = string.Format(
-                    @"
-select 0 as Selected,c.POID,EachConsApv = format(a.EachConsApv,'yyyy/MM/dd'),b.FactoryID,c.MdivisionId
-,format((select max(FinalETA) from 
-	(select po_supp_detail.FinalETA from PO_Supp_Detail WITH (NOLOCK) 
-		WHERE PO_Supp_Detail.ID = B.ID 
-		AND PO_Supp_Detail.SCIRefno = B.SCIRefno AND PO_Supp_Detail.ColorID = b.ColorID 
-	union all
-	select b1.FinalETA from PO_Supp_Detail a1 WITH (NOLOCK) , PO_Supp_Detail b1 WITH (NOLOCK) 
-		where a1.ID = B.ID AND a1.SCIRefno = B.SCIRefno AND a1.ColorID = b.ColorID
-		AND a1.StockPOID = b1.ID and a1.Stockseq1 = b1.SEQ1 and a1.StockSeq2 = b1.SEQ2
-	) tmp),'yyyy/MM/dd') as ETA
+            string sqlcmd = $@"
+select 0 as Selected,c.POID,EachConsApv = format(a.EachConsApv,'yyyy/MM/dd'),psd.FactoryID,c.MdivisionId
+    ,ETA = format(
+    (
+        select max(FinalETA)
+        from 
+        (
+            SELECT psd1.FinalETA
+            FROM PO_Supp_Detail psd1 WITH (NOLOCK)
+            inner join PO_Supp_Detail_Spec psdsC1 WITH (NOLOCK) on psdsC1.ID = psd.id and psdsC1.seq1 = psd.seq1 and psdsC1.seq2 = psd.seq2 and psdsC1.SpecColumnID = 'Color'
+            WHERE psd1.ID = psd.ID 
+            AND psd1.SCIRefno = psd.SCIRefno
+            AND isnull(psdsC1.SpecValue, '') = isnull(psdsC.SpecValue, '')
+
+            UNION ALL
+            SELECT psd2.FinalETA
+            FROM PO_Supp_Detail psd1 WITH (NOLOCK)
+            inner join PO_Supp_Detail psd2 WITH (NOLOCK) on psd1.StockPOID = psd2.ID and psd1.StockSeq1 = psd2.SEQ1 and psd1.StockSeq2 = psd2.SEQ2
+            inner join PO_Supp_Detail_Spec psdsC1 WITH (NOLOCK) on psdsC1.ID = psd.id and psdsC1.seq1 = psd.seq1 and psdsC1.seq2 = psd.seq2 and psdsC1.SpecColumnID = 'Color'
+            WHERE psd1.ID = psd.ID
+            AND psd1.SCIRefno = psd.SCIRefno
+            AND isnull(psdsC1.SpecValue, '') = isnull(psdsC.SpecValue, '')
+        ) tmp
+    ),'yyyy/MM/dd')
 	,format(MIN(a.SewInLine),'yyyy/MM/dd') as FstSewinline
-    ,b.Special AS cutType
-	,qty = round(dbo.GetUnitQty(b.POUnit, stockunit.value, b.Qty), iif(stockunit.value!='',(select unit.Round from unit WITH (NOLOCK) where id = stockunit.value),2))
+    ,psd.Special AS cutType
+	,qty = round(dbo.GetUnitQty(psd.POUnit, stockunit.value, psd.Qty), iif(stockunit.value!='',(select unit.Round from unit WITH (NOLOCK) where id = stockunit.value),2))
 	,stockunit = stockunit.value
-	,b.SizeSpec cutwidth,B.Refno,B.SEQ1,B.SEQ2
+	,isnull(psdsS.SpecValue, '') cutwidth
+    ,psd.Refno,psd.SEQ1,psd.SEQ2
     ,c.TapeInline,c.TapeOffline
 	,min(a.SciDelivery) FstSCIdlv
 	,min(a.BuyerDelivery) FstBuyerDlv
-	,(select color.Name from color WITH (NOLOCK) where color.id = b.ColorID and color.BrandId = a.brandid ) as color
+	,(select color.Name from color WITH (NOLOCK) where color.id = isnull(psdsC.SpecValue, '') and color.BrandId = a.brandid ) as color
     ,a.StyleID
 from orders a WITH (NOLOCK) 
-inner join Po_supp_detail b WITH (NOLOCK) on a.poid = b.id
-inner join dbo.cuttingtape_detail c WITH (NOLOCK) on c.mdivisionid = '{0}' and c.poid = b.id and c.seq1 = b.seq1 and c.seq2 = b.seq2
-outer apply( select value =  iif(b.stockunit = '',dbo.GetStockUnitBySPSeq( b.id,B.SEQ1,B.SEQ2),b.stockunit) ) stockunit
+inner join Po_supp_detail psd WITH (NOLOCK) on a.poid = psd.id
+inner join dbo.cuttingtape_detail c WITH (NOLOCK) on c.mdivisionid = '{Env.User.Keyword}' and c.poid = psd.id and c.seq1 = psd.seq1 and c.seq2 = psd.seq2
+left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
+left join PO_Supp_Detail_Spec psdsS WITH (NOLOCK) on psdsS.ID = psd.id and psdsS.seq1 = psd.seq1 and psdsS.seq2 = psd.seq2 and psdsS.SpecColumnID = 'Size'
+outer apply( select value =  iif(psd.stockunit = '',dbo.GetStockUnitBySPSeq( psd.id,psd.SEQ1,psd.SEQ2),psd.stockunit) ) stockunit
 WHERE A.IsForecast = 0 AND A.Junk = 0 AND A.LocalOrder = 0 AND a.category not in('M','T')
-AND B.SEQ1 = 'A1'
-AND ((B.Special NOT LIKE ('%DIE CUT%')) and B.Special is not null)", Env.User.Keyword);
+AND psd.SEQ1 = 'A1'
+AND ((psd.Special NOT LIKE ('%DIE CUT%')) and psd.Special is not null)
+";
 
             if (!MyUtility.Check.Empty(strFty))
             {
-                sqlcmd += $@" and b.FactoryID ='{strFty}' ";
+                sqlcmd += $@" and psd.FactoryID ='{strFty}' ";
             }
 
             if (!MyUtility.Check.Empty(sciDelivery_b))
@@ -246,9 +261,10 @@ AND ((B.Special NOT LIKE ('%DIE CUT%')) and B.Special is not null)", Env.User.Ke
                 sqlcmd += string.Format(@" and a.BuyerDelivery between '{0}' and '{1}'", buyerdlv_b, buyerdlv_e);
             }
 
-            sqlcmd += "GROUP BY c.MdivisionId,b.FactoryID,c.POID,a.EachConsApv,B.Special,B.Qty,B.SizeSpec,B.Refno,B.SEQ1,B.SEQ2,c.TapeInline,c.TapeOffline,B.ID,B.ColorID,b.SCIRefno,a.brandid,b.POUnit, stockunit.value,a.StyleID";
-
-            sqlcmd += @" ORDER BY b.FactoryID,c.POID";
+            sqlcmd += @"
+GROUP BY c.MdivisionId,psd.FactoryID,c.POID,a.EachConsApv,psd.Special,psd.Qty,psdsS.SpecValue,psd.Refno,psd.SEQ1,psd.SEQ2,c.TapeInline,c.TapeOffline,psd.ID,psdsC.SpecValue,psd.SCIRefno,a.brandid,psd.POUnit, stockunit.value,a.StyleID
+ORDER BY psd.FactoryID,c.POID
+";
             DualResult result;
             if (result = DBProxy.Current.Select(null, sqlcmd, out DataTable dtData))
             {

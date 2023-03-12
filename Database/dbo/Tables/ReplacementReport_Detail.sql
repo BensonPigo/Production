@@ -2,7 +2,7 @@
     [ID]                   VARCHAR (13)   CONSTRAINT [DF_ReplacementReport_Detail_ID] DEFAULT ('') NOT NULL,
     [Seq1]                 VARCHAR (3)    CONSTRAINT [DF_ReplacementReport_Detail_Seq1] DEFAULT ('') NULL,
     [Seq2]                 VARCHAR (2)    CONSTRAINT [DF_ReplacementReport_Detail_Seq2] DEFAULT ('') NULL,
-    [Refno]                VARCHAR (20)   CONSTRAINT [DF_ReplacementReport_Detail_Refno] DEFAULT ('') NULL,
+    [Refno]                VARCHAR (36)   CONSTRAINT [DF_ReplacementReport_Detail_Refno] DEFAULT ('') NULL,
     [SCIRefno]             VARCHAR (30)   CONSTRAINT [DF_ReplacementReport_Detail_SCIRefno] DEFAULT ('') NULL,
     [INVNo]                VARCHAR (25)   CONSTRAINT [DF_ReplacementReport_Detail_INVNo] DEFAULT ('') NULL,
     [ETA]                  DATE           NULL,
@@ -40,6 +40,8 @@
 	[ReplacementUnit] varchar(8) CONSTRAINT [DF_ReplacementReport_Detail_ReplacementUnit] DEFAULT ('') NULL, 
     CONSTRAINT [PK_ReplacementReport_Detail] PRIMARY KEY CLUSTERED ([UKey] ASC)
 );
+
+
 
 
 

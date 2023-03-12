@@ -1,19 +1,19 @@
-﻿using System;
+﻿using Ict;
+using Sci.Data;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Text;
 using System.Windows.Forms;
-using Ict;
-using Sci.Data;
 
 namespace Sci.Production.Warehouse
 {
+    /// <inheritdoc/>
     public partial class R15 : Win.Tems.PrintForm
     {
         private string reason;
         private string mdivision;
         private string factory;
-        private string stocktype = string.Empty;
         private string spno1;
         private string spno2;
         private DateTime? issueDate1;
@@ -21,6 +21,7 @@ namespace Sci.Production.Warehouse
         private DataTable printData;
         private bool isAutomation;
 
+        /// <inheritdoc/>
         public R15(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -49,8 +50,6 @@ namespace Sci.Production.Warehouse
 
             return base.ValidateInput();
         }
-
-        // 非同步取資料
 
         /// <inheritdoc/>
         protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
@@ -111,8 +110,8 @@ select
         ,Description = dbo.getMtlDesc(b.POID, b.Seq1, b.Seq2, 2, 0)
         ,psd.StockUnit
         ,psd.Refno
-        ,psd.ColorID
-        ,psd.SizeSpec
+        ,ColorID = isnull(psdsC.SpecValue, '')
+        ,SizeSpec= isnull(psdsS.SpecValue, '')
         ,MaterialType = Concat (iif(psd.FabricType='F','Fabric',iif(psd.FabricType='A','Accessory',iif(psd.FabricType='O','Orher',psd.FabricType))), '-', Fabric.MtlTypeID)
         ,IssueQty = b.Qty
         ,BulkLocation = dbo.Getlocation(f.Ukey)
@@ -120,6 +119,8 @@ from issue as a WITH (NOLOCK)
 inner join issue_detail b WITH (NOLOCK) on a.id = b.id
 inner join Orders orders on b.POID = orders.id
 left join po_supp_detail psd WITH (NOLOCK) on psd.id = b.poid and psd.seq1 = b.seq1 and psd.seq2 =b.seq2
+left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
+left join PO_Supp_Detail_Spec psdsS WITH (NOLOCK) on psdsS.ID = psd.id and psdsS.seq1 = psd.seq1 and psdsS.seq2 = psd.seq2 and psdsS.SpecColumnID = 'Size'
 left join FtyInventory f with (nolock) on f.POID = b.POID and f.SEQ1 = b.Seq1 and f.SEQ2 = b.Seq2  and f.Roll = b.Roll and f.Dyelot = b.Dyelot
 left join Fabric  with (nolock) on Fabric.SCIRefno = psd.SCIRefno
 where a.type = 'D' AND a.Status = 'Confirmed' 

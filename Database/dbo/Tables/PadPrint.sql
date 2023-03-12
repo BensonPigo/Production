@@ -1,6 +1,6 @@
 ﻿CREATE TABLE [dbo].[PadPrint](
 	[Ukey] [bigint] NOT NULL,
-	[Refno] [varchar](23)　		CONSTRAINT [DF_PadPrint_Refno]  DEFAULT ('') NOT NULL,
+	[Refno] [varchar](36)　		CONSTRAINT [DF_PadPrint_Refno]  DEFAULT ('') NOT NULL,
 	[BrandID] [varchar](8)　	CONSTRAINT [DF_PadPrint_BrandID]  DEFAULT ('') NOT NULL,
 	[Category] [varchar](1)　	CONSTRAINT [DF_PadPrint_Category]  DEFAULT ('') NOT NULL,
 	[SuppID] [varchar](6)		CONSTRAINT [DF_PadPrint_SuppID]  DEFAULT ('')　NOT NULL,
@@ -17,4 +17,3 @@
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-

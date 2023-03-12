@@ -441,7 +441,7 @@ where Factory.MDivisionID = '{0}' and ftyinventory.poid='{1}' and ftyinventory.s
                         if (!MyUtility.Check.Seek(
                             string.Format(
                             Prgs.SelePoItemSqlCmd(false) +
-                                    @" and f.MDivisionID = '{1}' and p.seq1 ='{2}' and p.seq2 = '{3}'", this.CurrentDetailData["poid"],
+                                    @" and f.MDivisionID = '{1}' and psd.seq1 ='{2}' and psd.seq2 = '{3}'", this.CurrentDetailData["poid"],
                             Env.User.Keyword,
                             seq[0],
                             seq[1]), out dr,

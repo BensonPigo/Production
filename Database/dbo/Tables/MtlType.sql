@@ -16,6 +16,7 @@
     [EditDate]             DATETIME       NULL,
     [IsThread]             BIT            NULL,
     [LossQtyCalculateType] VARCHAR (1)    NULL,
+    [AllowTransPoForGarmentSP] BIT   CONSTRAINT [DF_MtlType_AllowTransPoForGarmentSP] DEFAULT ((0)) NOT NULL,
     CONSTRAINT [PK_MtlType] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 

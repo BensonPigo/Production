@@ -57,16 +57,18 @@ namespace Sci.Production.Warehouse
             {
                 #region Get SizeSpec, Refno, Color, Desc
                 string strSQL = $@"
-select  po.SizeSpec
-        , po.Refno
-        , po.ColorID
+select  SizeSpec= isnull(psdsS.SpecValue, '')
+        , psd.Refno
+        , ColorID = isnull(psdsC.SpecValue, '')
         , f.Description
-from PO_Supp_Detail po
-left join Fabric f on po.SCIRefno = f.SCIRefno
-LEFT JOIN Orders o ON o.ID=po.ID
-where   po.id = '{sp}' 
-        and po.seq1 = '{this.txtSeq.Seq1}' 
-        and po.seq2='{this.txtSeq.Seq2}'
+from PO_Supp_Detail psd
+left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
+left join PO_Supp_Detail_Spec psdsS WITH (NOLOCK) on psdsS.ID = psd.id and psdsS.seq1 = psd.seq1 and psdsS.seq2 = psd.seq2 and psdsS.SpecColumnID = 'Size'
+left join Fabric f on psd.SCIRefno = f.SCIRefno
+LEFT JOIN Orders o ON o.ID=psd.ID
+where   psd.id = '{sp}' 
+        and psd.seq1 = '{this.txtSeq.Seq1}' 
+        and psd.seq2='{this.txtSeq.Seq2}'
 		AND o.Category<>'A'
 ";
 
@@ -94,13 +96,13 @@ select  selected = 0
         ,FromRoll = c.Roll 
         ,FromDyelot = c.Dyelot 
         ,fromftyinventoryukey = c.ukey  
-        ,FromPoId = a.id 
-        ,FromSeq1 = a.Seq1 
-        ,FromSeq2 = a.Seq2 
+        ,FromPoId = psd.id 
+        ,FromSeq1 = psd.Seq1 
+        ,FromSeq2 = psd.Seq2 
         ,FromFactoryID = orders.FactoryID
-        ,fromseq = concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2) 
-        ,[Description] = dbo.getmtldesc(a.id,a.seq1,a.seq2,2,0) 
-        ,a.stockunit
+        ,fromseq = concat(Ltrim(Rtrim(psd.seq1)), ' ', psd.Seq2) 
+        ,[Description] = dbo.getmtldesc(psd.id,psd.seq1,psd.seq2,2,0) 
+        ,psd.stockunit
         ,fromstocktype = c.StockType 
         ,balance = c.InQty - c.OutQty + c.AdjustQty - c.ReturnQty
         ,location = dbo.Getlocation(c.ukey)
@@ -113,15 +115,26 @@ select  selected = 0
         ,toseq1 = b.seq1 
         ,toseq2 = b.seq2 
         ,toFactoryID = (select FactoryID from Orders where b.id = Orders.id)
-        ,a.fabrictype
+        ,psd.fabrictype
         ,c.Lock
         ,ToLocation = ''
         ,Fromlocation = Fromlocation.listValue
-from dbo.PO_Supp_Detail a WITH (NOLOCK) 
-inner join dbo.ftyinventory c WITH (NOLOCK) on c.poid = a.id and c.seq1 = a.seq1 and c.seq2  = a.seq2 
+from dbo.PO_Supp_Detail psd WITH (NOLOCK) 
+inner join dbo.ftyinventory c WITH (NOLOCK) on c.poid = psd.id and c.seq1 = psd.seq1 and c.seq2  = psd.seq2 
 inner join Orders on c.poid = Orders.id
 inner join Factory on Orders.FactoryID = Factory.ID
-left join dbo.po_supp_detail b WITH (NOLOCK) on b.Refno = a.Refno and b.SizeSpec = a.SizeSpec and b.ColorID = a.ColorID and b.BrandId = a.BrandId
+left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
+left join PO_Supp_Detail_Spec psdsS WITH (NOLOCK) on psdsS.ID = psd.id and psdsS.seq1 = psd.seq1 and psdsS.seq2 = psd.seq2 and psdsS.SpecColumnID = 'Size'
+outer apply(
+    select psd2.*
+    from po_supp_detail psd2 WITH (NOLOCK)
+    left join PO_Supp_Detail_Spec psdsC2 WITH (NOLOCK) on psdsC2.ID = psd2.id and psdsC2.seq1 = psd2.seq1 and psdsC2.seq2 = psd2.seq2 and psdsC2.SpecColumnID = 'Color'
+    left join PO_Supp_Detail_Spec psdsS2 WITH (NOLOCK) on psdsS2.ID = psd2.id and psdsS2.seq1 = psd2.seq1 and psdsS2.seq2 = psd2.seq2 and psdsS2.SpecColumnID = 'Size'
+    where psd2.Refno = psd.Refno
+    and psd2.BrandId = psd.BrandId
+    and isnull(psdsC2.SpecValue, '') = isnull(psdsC.SpecValue, '')
+    and isnull(psdsS2.SpecValue, '') = isnull(psdsS.SpecValue, '')
+)b
 outer apply(
 	select listValue = Stuff((
 			select concat(',',MtlLocationID)
@@ -137,10 +150,11 @@ outer apply(
 			for xml path ('')
 		) , 1, 1, '')
 )Fromlocation
-Where a.id = '{fromSP}' and b.id = '{sp}' and b.seq1 = '{this.txtSeq.Seq1}' 
+Where psd.id = '{fromSP}' and b.id = '{sp}' and b.seq1 = '{this.txtSeq.Seq1}' 
 and b.seq2='{this.txtSeq.Seq2}' and Factory.MDivisionID = '{Env.User.Keyword}'
 and c.InQty - c.OutQty + c.AdjustQty - c.ReturnQty > 0 and  c.StockType='B'
-AND Orders.Category <> 'A' ");
+AND Orders.Category <> 'A'
+");
 
                 this.ShowWaitMessage("Data Loading....");
                 DualResult result;
@@ -367,44 +381,6 @@ AND Orders.Category <> 'A' ");
             }
 
             this.Close();
-        }
-
-        // To SP# Valid
-        private void TxtToSP_Validating(object sender, CancelEventArgs e)
-        {
-            // string sp = textBox1.Text.TrimEnd();
-
-            // DataRow tmp;
-
-            // if (MyUtility.Check.Empty(sp)) return;
-
-            // if (txtSeq1.checkEmpty(showErrMsg: false))
-            //            {
-            //                if (!MyUtility.Check.Seek(string.Format("select 1 where exists(select * from po_supp_detail WITH (NOLOCK) where id ='{0}')"
-            //                    , sp), null))
-            //                {
-            //                    MyUtility.Msg.WarningBox("SP# is not found!!");
-            //                    e.Cancel = true;
-            //                    return;
-            //                }
-            //            }
-            //            else
-            //            {
-            //                if (!MyUtility.Check.Seek(string.Format(@"select sizespec,refno,colorid,dbo.getmtldesc(id,seq1,seq2,2,0) as [description]
-            //                        from po_supp_detail WITH (NOLOCK) where id ='{0}' and seq1 = '{1}' and seq2 = '{2}'", sp, txtSeq1.seq1, txtSeq1.seq2), out tmp, null))
-            //                {
-            //                    MyUtility.Msg.WarningBox("SP#-Seq is not found!!");
-            //                    e.Cancel = true;
-            //                    return;
-            //                }
-            //                else
-            //                {
-            //                    this.displayBox2.Value = tmp["sizespec"];
-            //                    this.displayBox3.Value = tmp["refno"];
-            //                    this.displayBox4.Value = tmp["colorid"];
-            //                    this.editBox1.Text = tmp["description"].ToString();
-            //                }
-            //            }
         }
 
         private void ChkNoLock_CheckedChanged(object sender, EventArgs e)

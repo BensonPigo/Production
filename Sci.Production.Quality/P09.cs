@@ -519,7 +519,7 @@ select distinct
 	Supp.AbbEN,
 	psd.Refno,
     f.WeaveTypeID,
-	psd.ColorID,
+	ColorID = isnull(psdsC.SpecValue ,''),
     [ColorName] = c.ColorName,
 	Qty = isnull(ed.Qty,0) + isnull(ed.Foc,0),
 	sr.InspectionReport,
@@ -541,7 +541,7 @@ select distinct
     o.BrandID,
     f.Clima,
     sr.AWBNo,
-    [bitRefnoColor] = case when f.Clima = 1 then ROW_NUMBER() over(partition by f.Clima, ps.SuppID, psd.Refno, psd.ColorID, Format(Export.CloseDate,'yyyyMM') order by Export.CloseDate) else 0 end,
+    [bitRefnoColor] = case when f.Clima = 1 then ROW_NUMBER() over(partition by f.Clima, ps.SuppID, psd.Refno, isnull(psdsC.SpecValue ,''), Format(Export.CloseDate,'yyyyMM') order by Export.CloseDate) else 0 end,
     o.SeasonID,
     FirstDyelot.TPEFirstDyelot,
 	f.RibItem,
@@ -558,34 +558,12 @@ left join Season s with(nolock) on s.ID=o.SeasonID and s.BrandID = o.BrandID
 left join Factory fty with (nolock) on fty.ID = o.FactoryID
 left join Fabric f with(nolock) on f.SCIRefno =psd.SCIRefno
 Left join #probablySeasonList seasonSCI on seasonSCI.ID = s.SeasonSCIID
-outer apply(
-	select top 1 e2.Consignee
-	from dbo.Export_Detail ed2
-	inner join Export e2 on e2.ID = ed2.ID		
-	left join Po_Supp_Detail psd2 with(nolock) on psd2.id = ed2.poid and psd2.seq1 = ed2.seq1 and psd2.seq2 = ed2.seq2
-	where ed2.SuppID = ps.SuppID and ed2.Refno = psd.Refno and psd2.ColorID = psd.ColorID
-	and exists(select 1 from factory ft where ft.ID = e2.Consignee and ft.IsProduceFty = 1)
-) cons
-outer apply(
-	select ConsigneeList = Stuff((
-		select concat(',',Consignee)
-		from (
-				select 	distinct e2.Consignee
-				from dbo.Export_Detail ed2
-				inner join Export e2 on e2.ID = ed2.ID				
-				left join Po_Supp_Detail psd2 with(nolock) on psd2.id = ed2.poid and psd2.seq1 = ed2.seq1 and psd2.seq2 = ed2.seq2
-				where ed2.SuppID = ps.SuppID and ed2.Refno = psd.Refno and psd2.ColorID = psd.ColorID
-				and not exists(select 1 from factory ft where ft.ID = e2.Consignee and ft.IsProduceFty = 1)
-			) s
-		for xml path ('')
-	) , 1, 1, '')
-) NotCons
+left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
 OUTER APPLY(
 	Select Top 1 FirstDyelot,TPEFirstDyelot,SeasonSCIID
 	From dbo.FirstDyelot fd
 	Inner join #probablySeasonList season on fd.SeasonSCIID = season.ID
-	WHERE fd.Refno = psd.Refno and fd.ColorID = psd.ColorID and fd.SuppID = ps.SuppID 
-	and fd.TestDocFactoryGroup = fty.TestDocFactoryGroup
+	WHERE fd.Refno = psd.Refno and fd.ColorID = isnull(psdsC.SpecValue ,'') and fd.SuppID = ps.SuppID and fd.TestDocFactoryGroup = fty.TestDocFactoryGroup
 		And seasonSCI.RowNo >= season.RowNo
 	Order by season.RowNo Desc
 )FirstDyelot
@@ -606,7 +584,7 @@ outer apply(
 outer apply(
     select [ColorName] = iif(c.Varicolored > 1, c.Name, c.ID)
     from Color c
-    where c.ID = psd.ColorID
+    where c.ID = isnull(psdsC.SpecValue ,'')
     and c.BrandID = psd.BrandID 
 )c
 {sqlwhere}
@@ -629,7 +607,8 @@ outer apply(
 	from dbo.Export_Detail ed2
 	inner join Export e2 on e2.ID = ed2.ID		
 	left join Po_Supp_Detail psd2 with(nolock) on psd2.id = ed2.poid and psd2.seq1 = ed2.seq1 and psd2.seq2 = ed2.seq2
-	where ed2.SuppID = t.SuppID and ed2.Refno = t.Refno and psd2.ColorID = t.ColorID
+    left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd2.id and psdsC.seq1 = psd2.seq1 and psdsC.seq2 = psd2.seq2 and psdsC.SpecColumnID = 'Color'
+	where ed2.SuppID = t.SuppID and ed2.Refno = t.Refno and isnull(psdsC.SpecValue ,'') = t.ColorID
 	and exists(select 1 from factory ft where ft.ID = e2.Consignee and ft.IsProduceFty = 1)
 ) cons
 outer apply(
@@ -640,7 +619,8 @@ outer apply(
 				from dbo.Export_Detail ed2
 				inner join Export e2 on e2.ID = ed2.ID				
 				left join Po_Supp_Detail psd2 with(nolock) on psd2.id = ed2.poid and psd2.seq1 = ed2.seq1 and psd2.seq2 = ed2.seq2
-				where ed2.SuppID = t.SuppID and ed2.Refno = t.Refno and psd2.ColorID = t.ColorID
+                left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd2.id and psdsC.seq1 = psd2.seq1 and psdsC.seq2 = psd2.seq2 and psdsC.SpecColumnID = 'Color'
+				where ed2.SuppID = t.SuppID and ed2.Refno = t.Refno and isnull(psdsC.SpecValue ,'') = t.ColorID
 				and not exists(select 1 from factory ft where ft.ID = e2.Consignee and ft.IsProduceFty = 1)
 			) s
 		for xml path ('')
@@ -868,7 +848,7 @@ oFty.TestDocFactoryGroup,
 ps.SuppID,
 Supp.AbbEN,
 psd.Refno,
-psd.ColorID,
+	ColorID = isnull(psdsC.SpecValue ,''),
 o.SeasonID,
 fd.SeasonSCIID,
 fd.Period,
@@ -889,7 +869,8 @@ left join PO_Supp ps with(nolock) on ps.id = psd.id and ps.SEQ1 = psd. SEQ1
 left join Supp with(nolock) on Supp.ID = ps.SuppID
 left join Season s with(nolock) on s.ID=o.SeasonID and s.BrandID = o.BrandID
 left join Factory oFty on o.FactoryID = oFty.ID
-left outer join FirstDyelot fd with(nolock) on fd.Refno = psd.Refno and fd.ColorID = psd.ColorID and fd.SuppID = ps.SuppID and fd.TestDocFactoryGroup = oFty.TestDocFactoryGroup 
+left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
+left outer join FirstDyelot fd with(nolock) on fd.Refno = psd.Refno and fd.ColorID = isnull(psdsC.SpecValue ,'') and fd.SuppID = ps.SuppID and fd.TestDocFactoryGroup = oFty.TestDocFactoryGroup 
 left join Fabric f with(nolock) on f.SCIRefno =psd.SCIRefno
 where ps.seq1 not like '7%' 
 and psd.FabricType = 'F'

@@ -1,6 +1,6 @@
 ﻿CREATE TABLE [dbo].[Order_CTNData] (
     [ID]        VARCHAR (13) CONSTRAINT [DF_Order_CTNData_ID] DEFAULT ('') NOT NULL,
-    [RefNo]     VARCHAR (21) CONSTRAINT [DF_Order_CTNData_RefNo] DEFAULT ('') NOT NULL,
+    [RefNo]     VARCHAR (36) CONSTRAINT [DF_Order_CTNData_RefNo] DEFAULT ('') NOT NULL,
     [QtyPerCTN] SMALLINT     CONSTRAINT [DF_Order_CTNData_QtyPerCTN] DEFAULT ((0)) NULL,
     [GMTQty]    INT          CONSTRAINT [DF_Order_CTNData_GMTQty] DEFAULT ((0)) NULL,
     [CTNQty]    INT          CONSTRAINT [DF_Order_CTNData_CTNQty] DEFAULT ((0)) NULL,

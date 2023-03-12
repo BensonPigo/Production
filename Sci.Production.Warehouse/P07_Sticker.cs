@@ -43,17 +43,20 @@ namespace Sci.Production.Warehouse
             DataTable dtDetail;
             string cmdd = @"
 select  r.POID,r.Seq1+' '+r.seq2 as SEQ,r.Roll,r.Dyelot
-    ,r.stockqty,r.StockUnit,s.refno 
-    ,RTRIM(dbo.Getmtldesc(r.poid, r.seq1, r.seq2,2,0)) [Description],s.colorId 
+    ,r.stockqty,r.StockUnit,psd.refno 
+    ,RTRIM(dbo.Getmtldesc(r.poid, r.seq1, r.seq2,2,0)) [Description]
+    ,ColorID = isnull(psdsC.SpecValue, '')
     ,dbo.getTPEPass1( p.posmr )[MRName] 
     , p.posmr, o.Seasonid,o.BrandId,o.styleid ,rec.WhseArrival
     ,Packing = (select ID+',' from (select DISTINCT d.ID from dbo.PackingList_Detail d WITH (NOLOCK) where d.OrderID = r.POID) t for xml path(''))
- from dbo.Receiving_Detail r WITH (NOLOCK) 
- left join dbo.PO_Supp_Detail s WITH (NOLOCK) on s.id=r.POID and s.SEQ1=r.Seq1 and s.SEQ2=r.seq2
- left join dbo.po p WITH (NOLOCK)  on  p.id = r.poid
- left join dbo.View_WH_Orders o WITH (NOLOCK) on o.id = r.PoId
- left join dbo.Receiving rec WITH (NOLOCK) on rec.id = @ID               
- where r.id= @ID";
+from dbo.Receiving_Detail r WITH (NOLOCK) 
+left join dbo.PO_Supp_Detail psd WITH (NOLOCK) on psd.id=r.POID and psd.SEQ1=r.Seq1 and psd.SEQ2=r.seq2
+left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
+left join dbo.po p WITH (NOLOCK)  on  p.id = r.poid
+left join dbo.View_WH_Orders o WITH (NOLOCK) on o.id = r.PoId
+left join dbo.Receiving rec WITH (NOLOCK) on rec.id = r.id
+where r.id= @ID
+";
             result = DBProxy.Current.Select(string.Empty, cmdd, pars, out dtDetail);
             if (!result)
             {

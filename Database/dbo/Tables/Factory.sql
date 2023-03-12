@@ -50,6 +50,7 @@
     [LoadingFactoryGroup]  VARCHAR (8)    CONSTRAINT [DF_Factory_LoadingFactoryGroup] DEFAULT ('') NULL,
     [PadPrintGroup]        VARCHAR (3)    DEFAULT ('') NOT NULL,
     [IsSubcon] BIT NOT NULL DEFAULT ((0)), 
+    [IsECFA]               BIT            CONSTRAINT [DF_Factory_IsECFA] DEFAULT ((0)) NOT NULL,
     CONSTRAINT [PK_Factory] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 

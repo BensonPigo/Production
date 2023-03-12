@@ -69,7 +69,7 @@ select Sel = 0
         , SPNo = trsd.POID
 	    , Seq = Concat (trsd.Seq1, '-', trsd.Seq2)
 	    , Refno = psd.Refno
-	    , Color = psd.ColorID
+	    , Color = isnull(psdsC.SpecValue, '')
 	    , Roll = trsd.Roll
 	    , Dyelot = trsd.Dyelot
 	    , ToFactory = trs.ToMDivisionId      
@@ -88,6 +88,7 @@ left join TransferOut trs on trs.Id=trsd.ID
 left join Po_Supp_Detail psd on trsd.POID = psd.ID
 								and trsd.Seq1 = psd.SEQ1
 								and trsd.Seq2 = psd.SEQ2
+left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
 left join FtyInventory fi with (nolock) on  fi.POID = trsd.POID and 
                                             fi.Seq1 = trsd.Seq1 and 
                                             fi.Seq2 = trsd.Seq2 and 
@@ -100,7 +101,8 @@ outer apply(
                                     where fid.Ukey = fi.Ukey
                                     FOR XML PATH('')),1,1,'') ) FtyLocation
 where trsd.ID = @ID
-order by RowNo";
+order by RowNo
+";
 
             DataTable dtResult;
             DualResult result = DBProxy.Current.Select(string.Empty, strQuerySql, listSqlParameters, out dtResult);

@@ -1,14 +1,14 @@
-﻿using System;
+﻿using Ict;
+using Ict.Win;
+using Sci.Data;
+using Sci.Production.PublicPrg;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Drawing;
+using System.Linq;
 using System.Text;
 using System.Windows.Forms;
-using Ict;
-using Ict.Win;
-using Sci.Data;
-using System.Linq;
-using Sci.Production.PublicPrg;
 
 namespace Sci.Production.Warehouse
 {
@@ -64,8 +64,7 @@ namespace Sci.Production.Warehouse
             #endregion
 
             // 建立可以符合回傳的Cursor
-            sbSQLCmd.Append(string.Format(
-                @"
+            sbSQLCmd.Append($@"
 select  0 as selected 
         , '' id
 		, [ExportID] = Stuff((select distinct concat(',', r.ExportId)				
@@ -94,16 +93,18 @@ select  0 as selected
 		, [ToSeq2]=''
 		, PSD.Refno
 		, Color = IIF(Fabric.MtlTypeID = 'EMB THREAD' OR Fabric.MtlTypeID = 'SP THREAD' OR Fabric.MtlTypeID = 'THREAD' 
-												,IIF( PSD.SuppColor = '' or PSD.SuppColor is null,dbo.GetColorMultipleID(o.BrandID,PSD.ColorID),PSD.SuppColor)
-												,dbo.GetColorMultipleID(o.BrandID,PSD.ColorID)
+												,IIF( PSD.SuppColor = '' or PSD.SuppColor is null,dbo.GetColorMultipleID(o.BrandID, isnull(psdsC.SpecValue, '')),PSD.SuppColor)
+												,dbo.GetColorMultipleID(o.BrandID, isnull(psdsC.SpecValue, ''))
 											)
-		, PSD.SizeSpec
+		, SizeSpec= isnull(psdsS.SpecValue, '')
         , FI.lock
         , [Tone] = Tone.val
 FROM FtyInventory FI WITH (NOLOCK)
 LEFT JOIN View_WH_Orders O WITH (NOLOCK) ON O.ID = FI.POID
 LEFT JOIN Factory F WITH (NOLOCK) ON F.ID = O.FactoryID
 LEFT JOIN PO_Supp_Detail PSD WITH (NOLOCK) ON PSD.ID=FI.POID AND PSD.SEQ1 = FI.SEQ1 AND PSD.SEQ2=FI.SEQ2
+left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
+left join PO_Supp_Detail_Spec psdsS WITH (NOLOCK) on psdsS.ID = psd.id and psdsS.seq1 = psd.seq1 and psdsS.seq2 = psd.seq2 and psdsS.SpecColumnID = 'Size'
 left join Fabric on Fabric.SCIRefno = psd.SCIRefno
 outer apply(select [val] = isnull(max(Tone), '')
             from FIR f with (nolock)
@@ -113,9 +114,10 @@ outer apply(select [val] = isnull(max(Tone), '')
                     f.Seq2 = fi.Seq2 and
                     fs.Roll = fi.Roll and
                     fs.Dyelot = fi.Dyelot) Tone
-Where ( F.MDivisionID = '{0}' OR o.MDivisionID= '{0}' )
+Where ( F.MDivisionID = '{Env.User.Keyword}' OR o.MDivisionID= '{Env.User.Keyword}' )
         and FI.inqty - FI.outqty + FI.adjustqty - FI.ReturnQty > 0         
-        and FI.stocktype = '{1}'", Env.User.Keyword, stocktype));
+        and FI.stocktype = '{stocktype}'
+");
 
             if (!MyUtility.Check.Empty(sp))
             {

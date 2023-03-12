@@ -13,12 +13,12 @@ BEGIN
 --建立tmpe table存放要全部的資料
 DECLARE @tempAllData TABLE (
    ID VARCHAR(13),
-   RefNo VARCHAR(20)
+   RefNo VARCHAR(36)
 )
 
 --宣告變數
 DECLARE @orderid VARCHAR(13),
-		@refno VARCHAR(20),
+		@refno VARCHAR(36),
 		@qtyperctn SMALLINT,
 		@gmtqty INT,
 		@ctnqty INT,

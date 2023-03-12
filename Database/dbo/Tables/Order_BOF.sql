@@ -1,7 +1,7 @@
 ﻿CREATE TABLE [dbo].[Order_BOF] (
     [Id]                 VARCHAR (13)    CONSTRAINT [DF_Order_BOF_Id] DEFAULT ('') NOT NULL,
     [FabricCode]         VARCHAR (3)     CONSTRAINT [DF_Order_BOF_FabricCode] DEFAULT ('') NOT NULL,
-    [Refno]              VARCHAR (20)    CONSTRAINT [DF_Order_BOF_Refno] DEFAULT ('') NOT NULL,
+    [Refno]              VARCHAR (36)    CONSTRAINT [DF_Order_BOF_Refno] DEFAULT ('') NOT NULL,
     [SCIRefno]           VARCHAR (30)    CONSTRAINT [DF_Order_BOF_SCIRefno] DEFAULT ('') NOT NULL,
     [SuppID]             VARCHAR (6)     CONSTRAINT [DF_Order_BOF_SuppID] DEFAULT ('') NOT NULL,
     [ConsPC]             NUMERIC (11, 4) CONSTRAINT [DF_Order_BOF_ConsPC] DEFAULT ((0)) NULL,
@@ -23,6 +23,8 @@
     [LimitDown]          DECIMAL (7, 2)  NULL,
     CONSTRAINT [PK_Order_BOF] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
+
+
 
 
 

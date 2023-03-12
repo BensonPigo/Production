@@ -4,7 +4,7 @@ CREATE TABLE [dbo].[MockupCrocking_Detail](
 	[Ukey] [bigint] IDENTITY(1,1) NOT NULL,
 	[Design] [varchar](100) NOT NULL,
 	[ArtworkColor] [varchar](35) NOT NULL,
-	[FabricRefNo] [varchar](30) NOT NULL,
+	[FabricRefNo] [varchar](36) NOT NULL,
 	[FabricColor] [varchar](35) NOT NULL,
 	[DryScale] [varchar](10) NOT NULL,
 	[WetScale] [varchar](10) NOT NULL,

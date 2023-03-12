@@ -183,11 +183,15 @@ Begin
 		begin		
 			Insert Into @tmpBOA_Expend
 				(  ColorID, SizeSpec, BomZipperInsert, BomCustPONo, Remark, KeyWord, Special, UsageQty)
-				Select ColorID, SizeSpec, BomZipperInsert, BomCustPONo, Remark, Keyword, Special, Sum(UsageQty) as UsageQty
-				  From dbo.Order_BOA_Expend
-				 Where Order_BOAUkey = @BoaUkey
-				 Group by ColorID, SizeSpec, BomZipperInsert, BomCustPONo, Remark, Keyword, Special
-				 Order by ColorID, SizeSpec, BomZipperInsert, BomCustPONo, Remark, Keyword, Special, UsageQty;
+                Select obesC.SpecValue, obesS.SpecValue, obesZ.SpecValue, obesCP.SpecValue, Remark, Keyword, Special, Sum(UsageQty) as UsageQty
+                From dbo.Order_BOA_Expend obe
+                left join Order_BOA_Expend_Spec obesC on obesC.Order_BOA_ExpendUkey = obe.UKEY and obesC.SpecColumnID='Color'
+                left join Order_BOA_Expend_Spec obesS on obesS.Order_BOA_ExpendUkey = obe.UKEY and obesS.SpecColumnID='Size'
+                left join Order_BOA_Expend_Spec obesZ on obesZ.Order_BOA_ExpendUkey = obe.UKEY and obesZ.SpecColumnID='ZipperInsert'
+                left join Order_BOA_Expend_Spec obesCP on obesCP.Order_BOA_ExpendUkey = obe.UKEY and obesCP.SpecColumnID='CustomerPO'
+                Where Order_BOAUkey = @BoaUkey
+                Group by obesC.SpecValue, obesS.SpecValue, obesZ.SpecValue, obesCP.SpecValue, Remark, Keyword, Special
+                Order by obesC.SpecValue, obesS.SpecValue, obesZ.SpecValue, obesCP.SpecValue, Remark, Keyword, Special, UsageQty;
 		
 			--2017.02.13 mark by Ben 暫時Mark
 			--2017.02.23 Cancel mark by Edward 修正GetBOAExpend，keyword部分可正常執行

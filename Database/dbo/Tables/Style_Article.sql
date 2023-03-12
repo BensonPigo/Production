@@ -1,17 +1,21 @@
 ﻿CREATE TABLE [dbo].[Style_Article] (
-    [StyleUkey]   BIGINT         CONSTRAINT [DF_Style_Article_StyleUkey] DEFAULT ((0)) NOT NULL,
-    [Seq]         SMALLINT       CONSTRAINT [DF_Style_Article_Seq] DEFAULT ((0)) NULL,
-    [Article]     VARCHAR (8)    CONSTRAINT [DF_Style_Article_Article] DEFAULT ('') NOT NULL,
-    [TissuePaper] BIT            CONSTRAINT [DF_Style_Article_TissuePaper] DEFAULT ((0)) NULL,
-    [ArticleName] NVARCHAR (100) CONSTRAINT [DF_Style_Article_ArticleName] DEFAULT ('') NULL,
-    [Contents]     NVARCHAR (MAX) CONSTRAINT [DF_Style_Article_Content] DEFAULT ('') NULL,
-    [GarmentLT] NUMERIC(3) NULL DEFAULT ((0)), 
-    [SourceFile] NVARCHAR(266) NOT NULL DEFAULT (''), 
-    [Description] NVARCHAR(60) NOT NULL DEFAULT (''), 
-    [FDUploadDate] DATETIME NULL, 
-    [BuyReadyDate] DATE NULL, 
+    [StyleUkey]         BIGINT         CONSTRAINT [DF_Style_Article_StyleUkey] DEFAULT ((0)) NOT NULL,
+    [Seq]               SMALLINT       CONSTRAINT [DF_Style_Article_Seq] DEFAULT ((0)) NULL,
+    [Article]           VARCHAR (8)    CONSTRAINT [DF_Style_Article_Article] DEFAULT ('') NOT NULL,
+    [TissuePaper]       BIT            CONSTRAINT [DF_Style_Article_TissuePaper] DEFAULT ((0)) NULL,
+    [ArticleName]       NVARCHAR (100) CONSTRAINT [DF_Style_Article_ArticleName] DEFAULT ('') NULL,
+    [Contents]          NVARCHAR (MAX) CONSTRAINT [DF_Style_Article_Content] DEFAULT ('') NULL,
+    [GarmentLT]         NUMERIC (3)    DEFAULT ((0)) NULL,
+    [SourceFile]        NVARCHAR (266) DEFAULT ('') NOT NULL,
+    [Description]       NVARCHAR (60)  DEFAULT ('') NOT NULL,
+    [FDUploadDate]      DATETIME       NULL,
+    [BuyReadyDate]      DATE           NULL,
+    [CertificateNumber] VARCHAR (50)   CONSTRAINT [DF_Style_Article_CertificateNumber] DEFAULT ('') NOT NULL,
+    [SecurityCode]      VARCHAR (50)   CONSTRAINT [DF_Style_Article_SecurityCode] DEFAULT ('') NOT NULL,
     CONSTRAINT [PK_Style_Article] PRIMARY KEY CLUSTERED ([StyleUkey] ASC, [Article] ASC)
 );
+
+
 
 
 GO
@@ -69,3 +73,7 @@ EXEC sp_addextendedproperty @name = N'MS_Description',
     @level1name = N'Style_Article',
     @level2type = N'COLUMN',
     @level2name = N'FDUploadDate'
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Garment L/T', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Style_Article', @level2type = N'COLUMN', @level2name = N'GarmentLT';
+

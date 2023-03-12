@@ -1,9 +1,9 @@
-﻿using System;
-using System.Data;
-using System.Text;
-using Ict;
+﻿using Ict;
 using Ict.Win;
 using Sci.Data;
+using System;
+using System.Data;
+using System.Text;
 
 namespace Sci.Production.Warehouse
 {
@@ -27,25 +27,26 @@ namespace Sci.Production.Warehouse
         {
             base.OnFormLoaded();
             StringBuilder selectCommand1 = new StringBuilder();
-            selectCommand1.Append(string.Format(
-                @"
+            selectCommand1.Append($@"
 select  A.FromPoId
         ,A.FromSeq1
         ,A.FromSeq2
         ,Qty = sum(a.Qty)  
-        ,pd.Refno
+        ,psd.Refno
         ,color_name = c.Name 
         ,stocktype = case when a.FromStocktype ='B' then 'Bulk' 
                           when a.FromStocktype='I' then 'Inventory' 
                           else a.fromstocktype end  
         ,[Description] = dbo.getmtldesc(a.FromPoId,a.FromSeq1,a.FromSeq2,2,0)  
 from dbo.BorrowBack_Detail a WITH (NOLOCK) 
-left join (PO_Supp_Detail pd WITH (NOLOCK) 
-            left join Orders o WITH (NOLOCK) on o.id=pd.ID
-            inner join color c WITH (NOLOCK) on c.id = pd.ColorID AND C.BrandId = o.BrandId
-          ) on a.FromPoId = pd.ID and a.FromSeq1= pd.seq1 and a.FromSeq2 =  pd.seq2
-where a.Id = '{0}'
-GROUP BY A.FromPoId,A.FromSeq1,A.FromSeq2,a.FromStocktype,pd.Refno,c.Name", this.dr["id"].ToString()));
+left join (PO_Supp_Detail psd WITH (NOLOCK) 
+            left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
+            left join Orders o WITH (NOLOCK) on o.id=psd.ID
+            inner join color c WITH (NOLOCK) on c.id = isnull(psdsC.SpecValue, '') AND C.BrandId = o.BrandId
+          ) on a.FromPoId = psd.ID and a.FromSeq1= psd.seq1 and a.FromSeq2 =  psd.seq2
+where a.Id = '{this.dr["id"]}'
+GROUP BY A.FromPoId,A.FromSeq1,A.FromSeq2,a.FromStocktype,psd.Refno,c.Name
+");
 
             DataTable selectDataTable1;
             this.P31.ShowWaitMessage("Data Loading....");

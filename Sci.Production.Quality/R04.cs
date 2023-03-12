@@ -169,7 +169,7 @@ namespace Sci.Production.Quality
                 ,b.seq1+'-'+b.seq2 [seq],c.ReceiveSampleDate
                 ,(select suppid+'-'+supp.AbbEN from dbo.po_supp p WITH (NOLOCK) inner join dbo.supp WITH (NOLOCK) on supp.id = p.SuppID where p.id = b.POID and seq1 = b.seq1) [supplier]
                 ,b.Refno
-                ,(select p.ColorID from dbo.PO_Supp_Detail p WITH (NOLOCK) where p.id = b.POID and seq1 = b.seq1 AND seq2 = b.SEQ2) color
+                ,(select isnull(p.SpecValue ,'') from PO_Supp_Detail_Spec p WITH (NOLOCK) where id = b.POID and seq1 = b.seq1 AND seq2 = b.SEQ2 and SpecColumnID = 'Color') color
                 ,o.Category 
                 ,b.ArriveQty,oven_result.Result,c.Crocking,c.Heat,ColorFastness_result.Result,c.Wash
                 from  FIR b WITH (NOLOCK) 

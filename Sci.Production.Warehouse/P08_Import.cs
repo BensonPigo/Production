@@ -12,11 +12,13 @@ using Sci.Production.PublicPrg;
 
 namespace Sci.Production.Warehouse
 {
+    /// <inheritdoc/>
     public partial class P08_Import : Win.Subs.Base
     {
         private DataRow dr_master;
         private DataTable dt_detail;
 
+        /// <inheritdoc/>
         public P08_Import(DataRow master, DataTable detail)
         {
             this.InitializeComponent();
@@ -150,49 +152,50 @@ WHERE   StockType='{0}'
             string cmd = $@"
 select  [Selected] = 0
         , [ID]=''
-        , [POID] = p.id
-        , [Seq] = concat(Ltrim(Rtrim(p.seq1)), ' ', p.seq2) 
-        , p.Refno   
-        , [Description] = dbo.getmtldesc(p.id,p.seq1,p.seq2,2,0)
-        , p.ColorID
-        , p.SizeSpec 
-        , p.FinalETA
+        , [POID] = psd.id
+        , [Seq] = concat(Ltrim(Rtrim(psd.seq1)), ' ', psd.seq2) 
+        , psd.Refno   
+        , [Description] = dbo.getmtldesc(psd.id,psd.seq1,psd.seq2,2,0)
+        , ColorID = isnull(psdsC.SpecValue, '')
+        , SizeSpec= isnull(psdsS.SpecValue, '')
+        , psd.FinalETA
         , isnull(m.InQty, 0) as InQty
-        , StockUnit = dbo.GetStockUnitBySPSeq (p.id, p.seq1, p.seq2)
-        , p.pounit
-        , p.seq1
-        , p.seq2
-        , p.scirefno
-        , p.FabricType
+        , StockUnit = dbo.GetStockUnitBySPSeq (psd.id, psd.seq1, psd.seq2)
+        , psd.pounit
+        , psd.seq1
+        , psd.seq2
+        , psd.scirefno
+        , psd.FabricType
 		,[Roll]=''
 		,[Dyelot]=''
 		,[StockQty]=0
 		,[Location]=''
         ,[StockType]='B'
 		,[UseQty] = UseQty.Val
-from dbo.PO_Supp_Detail p WITH (NOLOCK) 
-inner join Orders o on p.id = o.id
+from dbo.PO_Supp_Detail psd WITH (NOLOCK) 
+inner join Orders o on psd.id = o.id
 inner join Factory f on o.FtyGroup = f.id
-left join dbo.mdivisionpodetail m WITH (NOLOCK) on m.poid = p.id and m.seq1 = p.seq1 and m.seq2 = p.seq2
-inner join View_unitrate v on v.FROM_U = p.POUnit 
-	                          and v.TO_U = dbo.GetStockUnitBySPSeq (p.id, p.seq1, p.seq2)
+left join dbo.mdivisionpodetail m WITH (NOLOCK) on m.poid = psd.id and m.seq1 = psd.seq1 and m.seq2 = psd.seq2
+inner join View_unitrate v on v.FROM_U = psd.POUnit and v.TO_U = dbo.GetStockUnitBySPSeq (psd.id, psd.seq1, psd.seq2)
+left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
+left join PO_Supp_Detail_Spec psdsS WITH (NOLOCK) on psdsS.ID = psd.id and psdsS.seq1 = psd.seq1 and psdsS.seq2 = psd.seq2 and psdsS.SpecColumnID = 'Size'
 OUTER APPLY(
 	SELECT [LockCount]=COUNT(UKEY)
 	FROM FtyInventory
 	WHERE POID='{poid}'
-	AND Seq1=p.Seq1
-	AND Seq2=p.Seq2
+	AND Seq1=psd.Seq1
+	AND Seq2=psd.Seq2
 	AND Lock = 1
 )LockStatus
 OUTER APPLY(
 	select [Val]=Round(sum(dbo.GetUnitQty(b.POUnit, b.StockUnit, b.Qty)), 2) 
 	from PO_Supp_Detail b WITH (NOLOCK) 
-	where b.id= p.id and b.seq1 = p.seq1 and b.seq2 = p.seq2
+	where b.id= psd.id and b.seq1 = psd.seq1 and b.seq2 = psd.seq2
 )UseQty
 
-where p.id ='{poid}'
-AND left(p.seq1,1) != '7'
-and p.Junk = 0
+where psd.id ='{poid}'
+AND left(psd.seq1,1) != '7'
+and psd.Junk = 0
 ";
             if (!MyUtility.Check.Empty(seq1))
             {

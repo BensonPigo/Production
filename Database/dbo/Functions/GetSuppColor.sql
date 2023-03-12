@@ -20,7 +20,7 @@ Begin
 	--Set NoCount On;
 	Declare @SuppColor Varchar(30);
 	Declare @ShowSuppColor Bit;
-	Declare @RefNo VarChar(20);
+	Declare @RefNo VarChar(36);
 	Declare @BrandGroup VarChar(8);
 
 	Declare @SeqNo_Detail VarChar(2)

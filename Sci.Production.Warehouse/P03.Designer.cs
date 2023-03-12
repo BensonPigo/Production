@@ -37,6 +37,8 @@
             this.labelSPNo = new Sci.Win.UI.Label();
             this.btnQuery = new Sci.Win.UI.Button();
             this.panel3 = new Sci.Win.UI.Panel();
+            this.label1 = new Sci.Win.UI.Label();
+            this.displayRrLrHr = new Sci.Win.UI.DisplayBox();
             this.labelJunk = new Sci.Win.UI.Label();
             this.displayJunk = new Sci.Win.UI.DisplayBox();
             this.labelCalSize = new Sci.Win.UI.Label();
@@ -51,8 +53,6 @@
             this.btnClose = new Sci.Win.UI.Button();
             this.panel2 = new Sci.Win.UI.Panel();
             this.gridMaterialStatus = new Sci.Win.UI.Grid();
-            this.label1 = new Sci.Win.UI.Label();
-            this.displayRrLrHr = new Sci.Win.UI.DisplayBox();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
             this.panel1.SuspendLayout();
             this.panel3.SuspendLayout();
@@ -143,6 +143,28 @@
             this.panel3.Name = "panel3";
             this.panel3.Size = new System.Drawing.Size(1008, 60);
             this.panel3.TabIndex = 3;
+            // 
+            // label1
+            // 
+            this.label1.BackColor = System.Drawing.Color.Transparent;
+            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F);
+            this.label1.Location = new System.Drawing.Point(715, 17);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(29, 23);
+            this.label1.TabIndex = 49;
+            this.label1.Text = "RR/LR/HR";
+            this.label1.TextStyle.Alignment = System.Drawing.ContentAlignment.MiddleRight;
+            this.label1.TextStyle.Color = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            // 
+            // displayRrLrHr
+            // 
+            this.displayRrLrHr.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayRrLrHr.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.displayRrLrHr.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayRrLrHr.Location = new System.Drawing.Point(746, 18);
+            this.displayRrLrHr.Name = "displayRrLrHr";
+            this.displayRrLrHr.Size = new System.Drawing.Size(20, 21);
+            this.displayRrLrHr.TabIndex = 48;
             // 
             // labelJunk
             // 
@@ -317,28 +339,6 @@
             this.gridMaterialStatus.TabStop = false;
             this.gridMaterialStatus.DataError += new System.Windows.Forms.DataGridViewDataErrorEventHandler(this.GridMaterialStatus_DataError);
             this.gridMaterialStatus.Sorted += new System.EventHandler(this.GridMaterialStatus_Sorted);
-            // 
-            // label1
-            // 
-            this.label1.BackColor = System.Drawing.Color.Transparent;
-            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F);
-            this.label1.Location = new System.Drawing.Point(715, 17);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(29, 23);
-            this.label1.TabIndex = 49;
-            this.label1.Text = "RR/LR/HR";
-            this.label1.TextStyle.Alignment = System.Drawing.ContentAlignment.MiddleRight;
-            this.label1.TextStyle.Color = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            // 
-            // displayRrLrHr
-            // 
-            this.displayRrLrHr.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayRrLrHr.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.displayRrLrHr.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayRrLrHr.Location = new System.Drawing.Point(746, 18);
-            this.displayRrLrHr.Name = "displayRrLrHr";
-            this.displayRrLrHr.Size = new System.Drawing.Size(20, 21);
-            this.displayRrLrHr.TabIndex = 48;
             // 
             // P03
             // 
