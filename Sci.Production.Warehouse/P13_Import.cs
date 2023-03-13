@@ -130,13 +130,13 @@ Where psd.id = '{sp}' and c.inqty - c.outqty + c.adjustqty - c.ReturnQty > 0 AND
                 {
                     strSQLCmd.Append(string.Format(
                         @" 
-    and a.seq1 = '{0}' ", this.txtSeq1.Seq1));
+    and psd.seq1 = '{0}' ", this.txtSeq1.Seq1));
                 }
                 else if (!this.txtSeq1.CheckEmpty(showErrMsg: false))
                 {
                     strSQLCmd.Append(string.Format(
                         @" 
-    and a.seq1 = '{0}' and a.seq2='{1}'", this.txtSeq1.Seq1, this.txtSeq1.Seq2));
+    and psd.seq1 = '{0}' and psd.seq2='{1}'", this.txtSeq1.Seq1, this.txtSeq1.Seq2));
                 }
 
                 if (this.IsReason06)
@@ -150,7 +150,7 @@ Where psd.id = '{sp}' and c.inqty - c.outqty + c.adjustqty - c.ReturnQty > 0 AND
 
                 if (string.Compare(this.comboFabricType.SelectedValue.ToString(), "ALL") != 0)
                 {
-                    strSQLCmd.Append($@" and a.FabricType='{this.comboFabricType.SelectedValue}'");
+                    strSQLCmd.Append($@" and psd.FabricType='{this.comboFabricType.SelectedValue}'");
                 }
 
                 this.ShowWaitMessage("Data Loading....");
