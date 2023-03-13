@@ -94,7 +94,7 @@ select [Dispose ID] = a.ID
 ,[Roll] = ad.Roll
 ,[Dyelot] = ad.Dyelot
 ,[Ref#] = psd.Refno
-,[Color] = IIF(f.MtlTypeID = 'EMB THREAD' or f.MtlTypeID = 'SP THREAD' or f.MtlTypeID = 'THREAD', IIF(psd.SuppColor = '' or psd.SuppColor is null, dbo.GetColorMultipleID(vo.BrandID, psd.ColorID), psd.SuppColor), dbo.GetColorMultipleID(vo.BrandID, psd.ColorID))
+,[Color] = IIF(f.MtlTypeID = 'EMB THREAD' or f.MtlTypeID = 'SP THREAD' or f.MtlTypeID = 'THREAD', IIF(psd.SuppColor = '' or psd.SuppColor is null, dbo.GetColorMultipleID(vo.BrandID, psdsC.SpecValue), psd.SuppColor), dbo.GetColorMultipleID(vo.BrandID, psdsC.SpecValue))
 ,[MaterialType] = concat(IIF(psd.FabricType = 'F', 'Fabric', IIF(psd.FabricType = 'A', 'Accessory', IIF(psd.FabricType = 'O', 'Other', psd.FabricType))), '-', f.MtlTypeID)
 ,[WeaveType] = f.WeaveTypeID
 ,[DisposeQty] = ad.QtyBefore-ad.QtyAfter
@@ -105,6 +105,7 @@ from Adjust a
 Inner join Adjust_Detail ad on ad.ID = a.ID
 left join View_WH_Orders vo on vo.ID = ad.POID
 Left join PO_Supp_Detail psd on psd.ID = ad.POID and psd.Seq1 = ad.Seq1 and psd.Seq2 = ad.Seq2
+LEFT JOIN PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
 Left join Fabric f on f.SCIRefno = psd.SCIRefno
 Left join FtyInventory fty on fty.POID = ad.POID and fty.Seq1 = ad.Seq1 and fty.Seq2 = ad.Seq2 and fty.Roll = ad.Roll and fty.Dyelot = ad.Dyelot and fty.StockType = ad.StockType
 where a.Type = 'R' and
