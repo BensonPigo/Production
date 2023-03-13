@@ -10,6 +10,8 @@
     [AddName]       VARCHAR (10) NULL,
     [CompleteTime]  DATETIME     NULL,
     [SCICtnNo] VARCHAR(16) CONSTRAINT [DF_ClogReturn_Detail_SCICtnNo] DEFAULT ('') NOT NULL, 
+    [ClogReasonID] VARCHAR(5) CONSTRAINT [DF_ClogReturn_ClogReasonID] NOT NULL DEFAULT (''), 
+    [ClogReasonRemark] NVARCHAR(200) CONSTRAINT [DF_ClogReturn_ClogReasonRemark] NOT NULL DEFAULT (''), 
     CONSTRAINT [PK_ClogReturn_Detail_1] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 
@@ -71,3 +73,22 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'訂單編�
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'箱號', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'ClogReturn', @level2type = N'COLUMN', @level2name = N'CTNStartNo';
 
+
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'串到ClogReason.ID',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'ClogReturn',
+    @level2type = N'COLUMN',
+    @level2name = N'ClogReasonID'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'紀錄Clog Return的原因備註',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'ClogReturn',
+    @level2type = N'COLUMN',
+    @level2name = N'ClogReasonRemark'

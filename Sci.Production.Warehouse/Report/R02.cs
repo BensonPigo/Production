@@ -11,7 +11,8 @@ namespace Sci.Production.Warehouse
     /// <inheritdoc/>
     public partial class R02 : Win.Tems.PrintForm
     {
-        private DataTable dt;
+        private DataTable dtSummary;
+        private DataTable dtDetail;
         private DateTime? strIssueDate1;
         private DateTime? strIssueDate2;
         private string strM;
@@ -45,8 +46,8 @@ namespace Sci.Production.Warehouse
         /// <inheritdoc/>
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
-            this.SetCount(this.dt.Rows.Count);
-            if (this.dt.Rows.Count == 0)
+            this.SetCount(this.dtSummary.Rows.Count);
+            if (this.dtSummary.Rows.Count == 0)
             {
                 MyUtility.Msg.InfoBox("Data not found!!");
                 return false;
@@ -54,10 +55,13 @@ namespace Sci.Production.Warehouse
 
             try
             {
-                Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Warehouse_R02.xltx"); // 預先開啟excel app
-                MyUtility.Excel.CopyToXls(this.dt, string.Empty, "Warehouse_R02.xltx", 1, showExcel: false, showSaveMsg: false, excelApp: objApp);
-
                 this.ShowWaitMessage("Excel Processing...");
+                Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Warehouse_R02.xltx"); // 預先開啟excel app
+                MyUtility.Excel.CopyToXls(this.dtSummary, string.Empty, "Warehouse_R02.xltx", 1, showExcel: false, showSaveMsg: false, excelApp: objApp, wSheet: objApp.Sheets[1]);
+                MyUtility.Excel.CopyToXls(this.dtDetail, string.Empty, "Warehouse_R02.xltx", 1, showExcel: false, showSaveMsg: false, excelApp: objApp, wSheet: objApp.Sheets[2]);
+
+                objApp.Cells.EntireColumn.AutoFit();
+                objApp.Cells.EntireRow.AutoFit();
 
                 #region Save & Show Excel
                 string strExcelName = Class.MicrosoftFile.GetName("Warehouse_R02");
@@ -108,11 +112,11 @@ namespace Sci.Production.Warehouse
                     @"
 select 	a.MDivisionID
         ,Orders.FactoryID
-        ,a.issuedate
-		,poid = b.frompoid 
-		,seq1 = b.fromseq1 
-		,seq2 = b.fromseq2 
-		,qty = sum(b.qty) 
+        ,a.IssueDate
+		,poid = b.FromPOID 
+		,seq1 = b.FromSeq1 
+		,seq2 = b.FromSeq2 
+		,qty = sum(b.Qty) 
 		,unit =  isnull((select stockunit 
 						 from po_supp_detail WITH (NOLOCK) 
 						 where id= b.FromPOID and seq1 = b.FromSeq1 and seq2 = b.FromSeq2)
@@ -124,14 +128,50 @@ from dbo.SubTransfer a WITH (NOLOCK)
 inner join dbo.SubTransfer_Detail b WITH (NOLOCK) on a.id = b.id
 inner join dbo.Orders on b.fromPoid = Orders.ID
 where a.Status = 'Confirmed' and a.type='D' {0}
-group by a.MDivisionID, Orders.FactoryID, a.issuedate, b.FromPOID, b.FromSeq1, b.FromSeq2, Orders.Junk, Orders.OrderTypeID
-order by a.MDivisionID, Orders.FactoryID, a.issuedate, b.FromPOID, b.FromSeq1, b.FromSeq2
+group by a.MDivisionID, Orders.FactoryID, a.IssueDate, b.FromPOID, b.FromSeq1, b.FromSeq2, Orders.Junk, Orders.OrderTypeID
+order by a.MDivisionID, Orders.FactoryID, a.IssueDate, b.FromPOID, b.FromSeq1, b.FromSeq2
 ", sqlFilter);
-                result = DBProxy.Current.Select(null, sqlcmd, out this.dt);
+                result = DBProxy.Current.Select(null, sqlcmd, out this.dtSummary);
                 if (!result)
                 {
                     return result;
                 }
+
+                sqlcmd = string.Format(
+    @"
+select 	a.MDivisionID
+        ,Orders.FactoryID
+        ,a.IssueDate
+		,poid = b.FromPOID 
+		,seq1 = b.FromSeq1 
+		,seq2 = b.FromSeq2 
+        ,Roll = b.ToRoll
+        ,Dyelot = b.ToDyelot
+        ,Color = isnull((select SpecValue 
+                        from PO_Supp_Detail_Spec psds WITH (NOLOCK) 
+                        where id = b.FromPOID and seq1 = b.FromSeq1 and seq2 = b.FromSeq2 and SpecColumnID='Color')
+                    ,'')
+        ,Location = b.ToLocation
+        ,b.Qty
+		,unit =  isnull((select stockunit 
+						 from po_supp_detail WITH (NOLOCK) 
+						 where id= b.FromPOID and seq1 = b.FromSeq1 and seq2 = b.FromSeq2)
+						,'')
+		,description = RTRIM(LTRIM( dbo.getmtldesc(b.FromPOID,b.FromSeq1,b.FromSeq2,2,0) )) 
+		,[Junk]=IIF(Orders.Junk=1,'Y','N')
+		,Orders.OrderTypeID
+from dbo.SubTransfer a WITH (NOLOCK) 
+inner join dbo.SubTransfer_Detail b WITH (NOLOCK) on a.id = b.id
+inner join dbo.Orders on b.fromPoid = Orders.ID
+where a.Status = 'Confirmed' and a.type='D' {0}
+order by a.MDivisionID, Orders.FactoryID, a.IssueDate, b.FromPOID, b.FromSeq1, b.FromSeq2
+", sqlFilter);
+                result = DBProxy.Current.Select(null, sqlcmd, out this.dtDetail);
+                if (!result)
+                {
+                    return result;
+                }
+
             }
             catch (Exception ex)
             {

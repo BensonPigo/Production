@@ -164,6 +164,12 @@
     <Compile Include="B02.Designer.cs">
       <DependentUpon>B02.cs</DependentUpon>
     </Compile>
+    <Compile Include="B03.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="B03.Designer.cs">
+      <DependentUpon>B03.cs</DependentUpon>
+    </Compile>
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Logistic.cs">
       <DependentUpon>Logistic.xsd</DependentUpon>
@@ -402,6 +408,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="B02.resx">
       <DependentUpon>B02.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="B03.resx">
+      <DependentUpon>B03.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P01.resx">
       <DependentUpon>P01.cs</DependentUpon>
