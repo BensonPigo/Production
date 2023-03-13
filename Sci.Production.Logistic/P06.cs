@@ -53,7 +53,7 @@ namespace Sci.Production.Logistic
                 .Text("Dest", header: "Destination", width: Widths.AnsiChars(20), iseditable: false)
                 .Text("FactoryID", header: "Factory", width: Widths.AnsiChars(5), iseditable: false)
                 .Date("BuyerDelivery", header: "Buyer Delivery", iseditable: false)
-                .Text("ClogReasonID", header: "Clog Return Reason", width: Widths.AnsiChars(15), iseditable: false)
+                .Text("Description", header: "Clog Return Reason", width: Widths.AnsiChars(15), iseditable: false)
                 .Text("ClogReasonRemark", header: "Clog Return Remark", width: Widths.AnsiChars(15), iseditable: false)
                 .DateTime("AddDate", header: "Create Date", iseditable: false)
                 .Text("AddName", header: "AddName", width: Widths.AnsiChars(15), iseditable: false)
@@ -123,7 +123,7 @@ from (
             , isnull (c.Alias, '') as Dest
             , isnull (o.FactoryID, '') as FactoryID
             , oq.BuyerDelivery
-            ,cr.ClogReasonID
+            ,Creason.Description
             ,cr.ClogReasonRemark
             , cr.AddDate
 			, AddName = (select concat(id,'-',Name) from pass1 where id = cr.AddName)
@@ -134,6 +134,7 @@ from (
 
     from  ClogReturn cr WITH (NOLOCK) 
     left join  PackingList_Detail pd WITH (NOLOCK) on pd.ID = cr.PackingListID and pd.CTNStartNo = cr.CTNStartNo 
+    left join  ClogReason Creason with(nolock) on cr.ClogReasonID = Creason.id and Creason.Type = 'CL'
     left join Orders o WITH (NOLOCK) on cr.OrderID =  o.ID
     left join Country c WITH (NOLOCK) on o.Dest = c.ID
     left join Order_QtyShip oq WITH (NOLOCK) on oq.Id = pd.OrderID and oq.Seq = pd.OrderShipmodeSeq
