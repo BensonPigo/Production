@@ -449,7 +449,7 @@ from
     left join FIR_Physical fp with (nolock) on  fp.ID = FIR.ID and
                                                 fp.Roll = rd.Roll and
                                                 fp.Dyelot = rd.Dyelot
-    left join Color c with(nolock) on c.ID = psd.ColorID  and c.BrandId = psd.BrandId
+    left join Color c with(nolock) on c.ID = isnull(psdsC.SpecValue, '') and c.BrandId = psd.BrandId
     OUTER APPLY(
 
 	    SELECT [MtlLocationID] = STUFF(
@@ -549,7 +549,7 @@ from
     left join FIR_Physical fp with (nolock) on  fp.ID = FIR.ID and
                                                 fp.Roll = td.Roll and
                                                 fp.Dyelot = td.Dyelot
-    left join Color c with(nolock) on c.ID = psd.ColorID  and c.BrandId = psd.BrandId
+    left join Color c with(nolock) on c.ID = isnull(psdsC.SpecValue, '') and c.BrandId = psd.BrandId
     OUTER APPLY(
 
 	    SELECT [MtlLocationID] = STUFF(
