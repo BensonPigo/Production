@@ -232,9 +232,8 @@ drop table #tmpTransferExport
             }
 
             this.gridExport.DataSource = dtResults[0];
-            this.bindingGridStock.DataSource = dtResults[1];
             this.stockData = dtResults[1];
-
+            this.bindingGridStock.DataSource = this.StockTypeDataTable(this.cbStockType.Text);
             if (dtResults[0].Rows.Count > 0)
             {
                 this.RefreshRightGrid();
@@ -363,23 +362,30 @@ drop table #tmpTransferExport
             this.UpdateExportQty();
         }
 
-        private void CbStockType_SelectedValueChanged(object sender, EventArgs e)
+        /// <inheritdoc/>
+        private DataTable StockTypeDataTable(string strStockType)
         {
-            if (this.cbStockType.Text == string.Empty)
+            DataTable dt;
+            if (strStockType == string.Empty)
             {
-                this.bindingGridStock.DataSource = this.stockData;
+                dt = this.stockData;
             }
             else
             {
-                var dataTable = this.stockData.Select($"StockTypeDesc = '{this.cbStockType.Text}'").CopyToDataTable();
-                this.bindingGridStock.DataSource = dataTable;
+                dt = this.stockData.Select($"StockTypeDesc = '{this.cbStockType.Text}'").CopyToDataTable();
             }
 
+            return dt;
+        }
+
+        private void CbStockType_SelectedValueChanged(object sender, EventArgs e)
+        {
             if (this.gridExport.SelectedRows.Count == 0)
             {
                 return;
             }
 
+            this.bindingGridStock.DataSource = this.StockTypeDataTable(this.cbStockType.Text);
             this.RefreshRightGrid();
         }
     }
