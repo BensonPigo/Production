@@ -1,7 +1,7 @@
 ﻿CREATE TABLE [dbo].[P_QA_P09](
 	[WK#] [varchar](13) NULL,
 	[FactoryID] [varchar](8) NOT NULL,
-	[Invoice#] [varchar](200) NULL,
+	[Invoice#] [varchar](max) NULL,
 	[ATA] [date] NULL,
 	[ETA] [date] NULL,
 	[Season] [varchar](10) NULL,
@@ -10,7 +10,7 @@
 	[Brand] [varchar](8) NULL,
 	[Supp] [varchar](6) NULL,
 	[Supp Name] [varchar](12) NULL,
-	[Ref#] [varchar](20) NULL,
+	[Ref#] [varchar](36) NULL,
 	[Color] [nvarchar](150) NULL,
 	[Qty] [numeric](12, 2) NULL,
 	[Inspection Report_Fty Received Date] [date] NULL,

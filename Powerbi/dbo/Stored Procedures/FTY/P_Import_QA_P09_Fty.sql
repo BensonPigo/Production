@@ -78,7 +78,7 @@ left join ['+@current_PMS_ServerName+'].Production.dbo.Supp with(nolock) on Supp
 left join ['+@current_PMS_ServerName+'].Production.dbo.Season s with(nolock) on s.ID=o.SeasonID and s.BrandID = o.BrandID
 left join ['+@current_PMS_ServerName+'].Production.dbo.Factory fty with (nolock) on fty.ID = Export.Consignee
 left join ['+@current_PMS_ServerName+'].Production.dbo.Fabric f with(nolock) on f.SCIRefno =psd.SCIRefno
-left join ['+@current_PMS_ServerName+'].Production.dbo.PO_Supp_Detail_Spec pc ith(nolock) on psd.ID = pc.ID and psd.SEQ1 = pc.SEQ1 and psd.SEQ1 = pc.SEQ2 and pc.SpecColumnID = ''Color''
+left join ['+@current_PMS_ServerName+'].Production.dbo.PO_Supp_Detail_Spec pc with(nolock) on psd.ID = pc.ID and psd.SEQ1 = pc.SEQ1 and psd.SEQ1 = pc.SEQ2 and pc.SpecColumnID = ''Color''
 Left join #probablySeasonList seasonSCI on seasonSCI.ID = s.SeasonSCIID
 OUTER APPLY(
 	Select Top 1 FirstDyelot,TPEFirstDyelot,SeasonSCIID
