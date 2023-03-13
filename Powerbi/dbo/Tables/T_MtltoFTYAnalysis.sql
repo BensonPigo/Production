@@ -13,7 +13,7 @@
 	[Seq2] [varchar](2) NULL,
 	[Order Cfm Date] [date] NULL,
 	[Sci Delivery] [date] NULL,
-	[Refno] [varchar](23) NULL,
+	[Refno] [varchar](36) NULL,
 	[SCI Refno] [varchar](30) NULL,
 	[SuppID] [varchar](6) NULL,
 	[SuppName] [nvarchar](12) NULL,
