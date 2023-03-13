@@ -136,7 +136,7 @@ Where psd.id = '{sp}' and c.inqty - c.outqty + c.adjustqty - c.ReturnQty > 0 AND
                 {
                     strSQLCmd.Append(string.Format(
                         @" 
-    and psd.seq1 = '{0}' and a.seq2='{1}'", this.txtSeq1.Seq1, this.txtSeq1.Seq2));
+    and psd.seq1 = '{0}' and psd.seq2='{1}'", this.txtSeq1.Seq1, this.txtSeq1.Seq2));
                 }
 
                 if (this.IsReason06)
