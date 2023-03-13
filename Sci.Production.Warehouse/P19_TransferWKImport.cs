@@ -21,7 +21,7 @@ namespace Sci.Production.Warehouse
     public partial class P19_TransferWKImport : Win.Subs.Base
     {
         private readonly string mainTransferOutID = string.Empty;
-        private DataTable mainDetail;
+        private DataTable mainDetail,stockData;
         private string M;
 
         /// <summary>
@@ -34,6 +34,7 @@ namespace Sci.Production.Warehouse
             this.InitializeComponent();
             this.mainTransferOutID = transferOutID;
             MyUtility.Tool.SetupCombox(this.comboFabricType, 2, 1, ",,F,Fabric,A,Accessory");
+            MyUtility.Tool.SetupCombox(this.cbStockType, 2, 1, ",,B,Bulk,I,Inventory");
             this.EditMode = true;
             this.gridStock.DataSource = this.bindingGridStock;
             this.mainDetail = mainDetail;
@@ -134,7 +135,7 @@ select  ted.InventoryPOID,
         te.ID,
         ted.Ukey,
         [Description] = dbo.getMtlDesc(ted.InventoryPOID, ted.InventorySeq1, ted.InventorySeq2, 2, 0),
-        Tone
+        Tone.Tone
 into #tmpTransferExport
 from    TransferExport te with (nolock)
 inner   join TransferExport_Detail ted with (nolock) on te.ID = ted.ID
@@ -186,7 +187,7 @@ select  [select] = 0,
         te.Description,
         [TransferExportID] = te.ID,
         [TransferExport_DetailUkey] = te.Ukey,
-        Tone
+        te.Tone
 from  #tmpTransferExport te with (nolock)
 inner join FtyInventory fi on te.InventoryPOID = fi.POID and
                               te.InventorySeq1 = fi.Seq1 and
@@ -232,6 +233,7 @@ drop table #tmpTransferExport
 
             this.gridExport.DataSource = dtResults[0];
             this.bindingGridStock.DataSource = dtResults[1];
+            this.stockData = dtResults[1];
 
             if (dtResults[0].Rows.Count > 0)
             {
@@ -359,6 +361,26 @@ drop table #tmpTransferExport
         {
             this.gridStock.ValidateControl();
             this.UpdateExportQty();
+        }
+
+        private void CbStockType_SelectedValueChanged(object sender, EventArgs e)
+        {
+            if (this.cbStockType.Text == string.Empty)
+            {
+                this.bindingGridStock.DataSource = this.stockData;
+            }
+            else
+            {
+                var dataTable = this.stockData.Select($"StockTypeDesc = '{this.cbStockType.Text}'").CopyToDataTable();
+                this.bindingGridStock.DataSource = dataTable;
+            }
+
+            if (this.gridExport.SelectedRows.Count == 0)
+            {
+                return;
+            }
+
+            this.RefreshRightGrid();
         }
     }
 }
