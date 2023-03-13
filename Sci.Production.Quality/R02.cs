@@ -207,7 +207,8 @@ select A.POID
 	,A.refno
 	,[Article] = Style.Article
 	,[MaterialType] = fabric.MtlTypeID
-	,iif(C.Name is null,oc.name,c.name ) name
+	, [Color]  = isnull( psdsC.SpecValue,'')
+	, [Color Name] = c.Name
 	,SizeSpec= isnull(psdsS.SpecValue ,'')
 	,PS.stockunit
 	,(P.SuppID+'-'+s.AbbEN)Supplier
