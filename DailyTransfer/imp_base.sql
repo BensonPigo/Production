@@ -2817,7 +2817,6 @@ on t.type=s.type and t.id=s.id
 			  ,a.Junk		   = b.Junk		  
 			  ,a.Lock		   = b.Lock		  
 			  ,a.LTDay		   = b.LTDay		  
-			  ,a.NOForecast	   = b.NOForecast	  
 			  ,a.OrganicCotton = b.OrganicCotton
 			  ,a.POUnit		   = b.POUnit		  
 			  ,a.PreShrink	   = b.PreShrink	  
@@ -2848,7 +2847,6 @@ on t.type=s.type and t.id=s.id
 				,Junk		  
 				,Lock		  
 				,LTDay		  
-				,NOForecast	  
 				,OrganicCotton
 				,POUnit		  
 				,PreShrink	  
@@ -2879,7 +2877,6 @@ on t.type=s.type and t.id=s.id
 				,Junk		  
 				,Lock		  
 				,LTDay		  
-				,NOForecast	  
 				,OrganicCotton
 				,POUnit		  
 				,PreShrink	  

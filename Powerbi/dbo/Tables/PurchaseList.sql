@@ -20,7 +20,7 @@
 	[Program] [varchar](12) NOT NULL,
 	[Seq1] [varchar](3) NULL,
 	[Seq2] [varchar](2) NULL,
-	[Ref#] [varchar](20) NULL,
+	[Ref#] [varchar](36) NULL,
 	[Brand Ref#] [varchar](50) NULL,
 	[OrderType] [varchar](20) NULL,
 	[Price] [numeric](16, 4) NULL,
