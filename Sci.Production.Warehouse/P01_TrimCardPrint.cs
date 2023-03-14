@@ -7,6 +7,8 @@ using Ict;
 using Word = Microsoft.Office.Interop.Word;
 using System.Linq;
 using System.Runtime.InteropServices;
+using Sci.Production.Class;
+using System.Runtime.DesignerServices;
 
 namespace Sci.Production.Warehouse
 {
@@ -292,10 +294,12 @@ where o.iD = '{this.POID}' and article<>''
                     #region 取得新單的Article
 
                     this.sql = $@"
+
 --1.從訂單串回物料
 select distinct StyleID,BrandID,POID,FtyGroup 
 into #tmpOrder
 from orders where id like '{this.orderID}'
+
 
 Select distinct [ID] = PO.POID
 , std.SuppId --Mapping PO_Supp
@@ -306,6 +310,8 @@ Inner Join dbo.Orders as o On o.ID = po.POID
 Inner Join dbo.Style as s On s.Ukey = o.StyleUkey
 Inner Join dbo.Style_ThreadColorCombo as st On st.StyleUkey = s.Ukey
 Inner Join dbo.Style_ThreadColorCombo_Detail as std On std.Style_ThreadColorComboUkey = st.Ukey
+
+
 
 select distinct
 a.ID,SuppId,SCIRefNo,ColorID,
@@ -319,6 +325,7 @@ a.ID,SuppId,SCIRefNo,ColorID,
 into #ArticleForThread
 from #ArticleForThread_Detail a
 
+
 --2.得到跟WH P03 一樣的對應方式
 SELECT DISTINCT [OrderIdList] = stuff((select concat('/',tmp.OrderID) 
 		                                    from (
@@ -330,13 +337,12 @@ SELECT DISTINCT [OrderIdList] = stuff((select concat('/',tmp.OrderID)
 INTO #tmpOrder_Article
 from #tmpOrder as orders WITH (NOLOCK) 
 inner join PO_Supp_Detail a WITH (NOLOCK) on a.id = orders.poid
-left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = a.id and psdsC.seq1 = a.seq1 and psdsC.seq2 = a.seq2 and psdsC.SpecColumnID = 'Color'
 left join dbo.MDivisionPoDetail m WITH (NOLOCK) on  m.POID = a.ID and m.seq1 = a.SEQ1 and m.Seq2 = a.Seq2
 left join po_supp b WITH (NOLOCK) on a.id = b.id and a.SEQ1 = b.SEQ1
 left join #ArticleForThread aft on	aft.ID = m.POID		and
 									aft.SuppId	   = b.SuppId	and
 									aft.SCIRefNo   = a.SCIRefNo	and
-									aft.ColorID	   = psdsC.SpecValue	and
+									aft.ColorID	   = a.ColorID	and
 									a.SEQ1 like 'T%' 
 WHERE  stuff((select concat('/',tmp.OrderID) 
 		                                    from (
@@ -362,6 +368,8 @@ AND aft.Article IS NOT NULL
  )
 --Order List如果是空，代表所有訂單都有用到這個物料
 
+
+
 DROP TABLE #tmpOrder,#ArticleForThread_Detail,#ArticleForThread , #tmpOrder_Article
 ";
 
@@ -380,10 +388,12 @@ DROP TABLE #tmpOrder,#ArticleForThread_Detail,#ArticleForThread , #tmpOrder_Arti
                     #region 取得Article和對應的Color，只挑選出order List有的Article
 
                     this.sql = $@"
+
 --1.從訂單串回物料
 select distinct StyleID,BrandID,POID,FtyGroup 
 into #tmpOrder
 from orders where id like '{this.orderID}'
+
 
 Select distinct [ID] = PO.POID
 , std.SuppId --Mapping PO_Supp
@@ -394,6 +404,8 @@ Inner Join dbo.Orders as o On o.ID = po.POID
 Inner Join dbo.Style as s On s.Ukey = o.StyleUkey
 Inner Join dbo.Style_ThreadColorCombo as st On st.StyleUkey = s.Ukey
 Inner Join dbo.Style_ThreadColorCombo_Detail as std On std.Style_ThreadColorComboUkey = st.Ukey
+
+
 
 select distinct
 a.ID,SuppId,SCIRefNo,ColorID,
@@ -407,6 +419,7 @@ a.ID,SuppId,SCIRefNo,ColorID,
 into #ArticleForThread
 from #ArticleForThread_Detail a
 
+
 --2.得到跟WH P03 一樣的對應方式
 SELECT DISTINCT [OrderIdList] = stuff((select concat('/',tmp.OrderID) 
 		                                    from (
@@ -418,13 +431,12 @@ SELECT DISTINCT [OrderIdList] = stuff((select concat('/',tmp.OrderID)
 INTO #tmpOrder_Article
 from #tmpOrder as orders WITH (NOLOCK) 
 inner join PO_Supp_Detail a WITH (NOLOCK) on a.id = orders.poid
-left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = a.id and psdsC.seq1 = a.seq1 and psdsC.seq2 = a.seq2 and psdsC.SpecColumnID = 'Color'
 left join dbo.MDivisionPoDetail m WITH (NOLOCK) on  m.POID = a.ID and m.seq1 = a.SEQ1 and m.Seq2 = a.Seq2
 left join po_supp b WITH (NOLOCK) on a.id = b.id and a.SEQ1 = b.SEQ1
 left join #ArticleForThread aft on	aft.ID = m.POID		and
 									aft.SuppId	   = b.SuppId	and
 									aft.SCIRefNo   = a.SCIRefNo	and
-									aft.ColorID	   = psdsC.SpecValue	and
+									aft.ColorID	   = a.ColorID	and
 									a.SEQ1 like 'T%' 
 WHERE  stuff((select concat('/',tmp.OrderID) 
 		                                    from (
@@ -451,6 +463,8 @@ AND aft.Article IS NOT NULL
  )
 --Order List如果是空，代表所有訂單都有用到這個物料
 
+
+
 DROP TABLE #tmpOrder,#ArticleForThread_Detail,#ArticleForThread , #tmpOrder_Article
 ";
 
@@ -465,6 +479,7 @@ DROP TABLE #tmpOrder,#ArticleForThread_Detail,#ArticleForThread , #tmpOrder_Arti
                 {
                     #region 重新找一次Article。Style_ThreadColorCombo的也要納入
                     this.sql = $@"
+
 SELECT Article FROM
 (
 	select DISTINCT
@@ -483,11 +498,10 @@ SELECT Article FROM
 					,BOA_Article.Article 
 					)				
 
-	,[ThreadColorID] = IIF(PSD.SuppColor = '',dbo.GetColorMultipleID('{this.BrandID}', isnull(psdsC.SpecValue, '')),PSD.SuppColor)
+	,[ThreadColorID] = IIF(PSD.SuppColor = '',dbo.GetColorMultipleID('{this.BrandID}', PSD.ColorID),PSD.SuppColor)
 	FROM PO_Supp_Detail PSD
 	INNER join Fabric f on f.SCIRefno = PSD.SCIRefno
 	LEFT JOIN PO_Supp_Detail_OrderList pd ON PSD.ID = pd.ID AND PSD.SEQ1= pd.SEQ1 AND PSD.SEQ2= pd.SEQ2
-    LEFT JOIN PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
 	LEFT JOIN Order_BOA boa ON boa.id =psd.ID and boa.SCIRefno = psd.SCIRefno and boa.seq=psd.SEQ1
 	OUTER APPLY(
 		SELECT oba.Article FROM Order_BOA ob
@@ -513,16 +527,15 @@ UNION
  left join Style_ThreadColorCombo_Detail B WITH (NOLOCK) on B.Style_ThreadColorComboUkey = A.Ukey
  where o.ID = '{this.POID}' 
 ";
+
                     result = DBProxy.Current.Select(null, this.sql, out this.dtPrint_LeftColumn);
-                    if (!result)
-                    {
-                        return result;
-                    }
+
                     #endregion
 
                     #region 找出對應的Article、Color，由於舊單的繡線物料不會直接顯示在Seq，因此無法按照新單的做法
 
                     this.sql = $@"
+
 SELECT * FROM
 (
 	select 
@@ -542,12 +555,11 @@ SELECT * FROM
 					,BOA_Article.Article 
 					)				
 
-	,[ThreadColorID] = IIF(PSD.SuppColor = '',dbo.GetColorMultipleID('{this.BrandID}', isnull(psdsC.SpecValue, '')),PSD.SuppColor)
+	,[ThreadColorID] = IIF(PSD.SuppColor = '',dbo.GetColorMultipleID('{this.BrandID}', PSD.ColorID),PSD.SuppColor)
 	FROM PO_Supp_Detail PSD
 	INNER join Fabric f on f.SCIRefno = PSD.SCIRefno
 	LEFT JOIN Order_BOA boa ON boa.id =psd.ID and boa.SCIRefno = psd.SCIRefno and boa.seq=psd.SEQ1
 	LEFT JOIN PO_Supp_Detail_OrderList pd ON PSD.ID = pd.ID AND PSD.SEQ1= pd.SEQ1 AND PSD.SEQ2= pd.SEQ2
-    left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
 	OUTER APPLY(
 		SELECT oba.Article FROM Order_BOA ob
 		LEFT join Order_BOA_Article oba on oba.Order_BoAUkey = ob.Ukey
@@ -574,6 +586,8 @@ UNION
  left join Style_ThreadColorCombo_Detail B WITH (NOLOCK) on B.Style_ThreadColorComboUkey = A.Ukey
  where o.ID = '{this.POID}' --and article<>''
  group by B.Article, B.ColorID-- ,o.ID
+
+
 ORDER BY ThreadColorID ASC
 ";
                     #endregion
@@ -747,7 +761,7 @@ from (
                 }
                 #endregion
 
-                #region ROW4開始 左側抬頭
+                #region ROW5開始 左側抬頭
                 int nextPage = 1;
                 tables = table[nextPage];
                 if (this.radioFabric.Checked || this.radioAccessory.Checked || this.radioThread.Checked)
@@ -756,11 +770,9 @@ from (
                     {
                         for (int i = 0; i < this.dtPrint_LeftColumn.Rows.Count; i++)
                         {
-                            // 根據 DataRow 數量選取 Table, Dot DataRow = 4
+                            // 根據 DataRow 數量選取 Table, Dot DataRow = 5
                             tables = table[nextPage + (i / 4)];
-                            tables.Cell(4 + (i % 4), 1).Range.Text = this.dtPrint_LeftColumn.Rows[i]["Article"].ToString().Trim();
-
-                            // tables.Cell((i + 4 + 3 * (i / 4)) + rC * j * 7, 1).Range.Text = dtPrint2.Rows[i]["Article"].ToString().Trim();
+                            tables.Cell(5 + ((i % 4) * 2), 1).Range.Text = this.dtPrint_LeftColumn.Rows[i]["Article"].ToString().Trim();
                         }
 
                         nextPage += rC;
@@ -796,6 +808,9 @@ from (
                 nextPage = 1;
                 tables = table[nextPage];
 
+                // 抓取當下.exe執行位置路徑 同抓取Excle範本檔路徑
+                string path = string.Empty;
+
                 if (this.radioFabric.Checked)
                 {
                     for (int i = 0; i < this.dtPrint_Content.Rows.Count; i++)
@@ -816,6 +831,11 @@ from (
                             // 有資料時才顯示Type
                             tables.Cell(2, 2 + (i % 6)).Range.Text = row2Type;
                             tables.Cell(3, 2 + (i % 6)).Range.Text = this.temp;
+
+                            // 第一Row塞入圖片
+                            Microsoft.Office.Interop.Word.Range rng = tables.Cell(4, 2 + (i % 6)).Range;
+                            path = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @".\Resources\") + "Apple_black_long.png";
+                            rng.InlineShapes.AddPicture(path).ConvertToShape().WrapFormat.Type = Word.WdWrapType.wdWrapInline;
                         }
                         #endregion
 
@@ -841,7 +861,17 @@ from (
                             tables = table[nextPage + (i / 6 * rC) + (k / 4)];
 
                             // 填入字串
-                            tables.Cell(4 + (k % 4), 2 + (i % 6)).Range.Text = this.temp;
+                            // 塞入文字 5 7 9 11
+                            int rowStr = 5;
+                            rowStr += (k % 4) * 2;
+                            tables.Cell(rowStr, 2 + (i % 6)).Range.Text = this.temp;
+
+                            // 塞入圖片 6 8 10 12
+                            int rowPic = 6;
+                            rowPic += (k % 4) * 2;
+                            Microsoft.Office.Interop.Word.Range rng = tables.Cell(rowPic, 2 + (i % 6)).Range;
+                            path = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @".\Resources\") + "Apple_black.PNG";
+                            rng.InlineShapes.AddPicture(path).ConvertToShape().WrapFormat.Type = Word.WdWrapType.wdWrapInline;
                         }
                         #endregion
 
@@ -957,6 +987,40 @@ from (
                     #endregion
                 }
                 #endregion
+
+                #region 整理欄位格式
+
+                // 根據 DataRow 數量選取 Table, Dot DataRow = 7
+                int pageCnt = 1 + (this.dtPrint_LeftColumn.Rows.Count / 7);
+
+                for (int p = 1; p <= pageCnt; p++)
+                {
+                    tables = table[p];
+                    for (int r = 1; r <= tables.Rows.Count; r++)
+                    {
+                        for (int c = 1; c <= tables.Columns.Count; c++)
+                        {
+                            // Article合併 5,7,9,11
+                            if (r >= 3 && (r % 2) == 1 && c == 1)
+                            {
+                                // 合併儲存格
+                                tables.Cell(r, 1).Merge(tables.Cell(r + 1, 1));
+
+                                // 上下 水平置中
+                                tables.Cell(r, 1).Range.ParagraphFormat.Alignment = Word.WdParagraphAlignment.wdAlignParagraphCenter;
+                                tables.Cell(r, 1).VerticalAlignment = Word.WdCellVerticalAlignment.wdCellAlignVerticalCenter;
+                            }
+
+                            // 去除圖片和文字中間分隔線
+                            if (r >= 4 && (r % 2) == 0 && c > 1)
+                            {
+                                tables.Cell(r, c).Borders[Microsoft.Office.Interop.Word.WdBorderType.wdBorderTop].Visible = false;
+                            }
+                        }
+                    }
+                }
+                #endregion
+
                 winword.Visible = true;
 
                // winword.Quit(ref missing, ref missing, ref missing);     //close word application
