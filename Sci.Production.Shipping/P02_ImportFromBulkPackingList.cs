@@ -57,7 +57,7 @@ namespace Sci.Production.Shipping
                 .Text("Category", header: "Category", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("CTNNo", header: "CTN No.", width: Widths.AnsiChars(5), settings: ctnno)
                 .Numeric("NW", header: "N.W. (kg)", integer_places: 5, decimal_places: 3, maximum: 99999.99m, minimum: 0m)
-                .Numeric("Price", header: "Price", integer_places: 6, decimal_places: 4, maximum: 999999.9999m, minimum: 0m)
+                .Numeric("Price", header: "Price", integer_places: 6, decimal_places: 4, maximum: 999999.9999m, minimum: 0m,iseditingreadonly:true)
                 .Numeric("ShipQty", header: "Q'ty", decimal_places: 2)
                 .Text("UnitID", header: "Unit", width: Widths.AnsiChars(8))
                 .Text("Receiver", header: "Receiver", width: Widths.AnsiChars(10), settings: receiver)
@@ -118,7 +118,7 @@ and Factory.IsProduceFty=1
         , CTNNo = '' 
 		, [NW] = sum(pd.NWPerPcs * pd.ShipQty)
 		, NW_Ps = sum(pd.NWPerPcs)
-        , Price = 0.0
+        , Price = o.PoPrice
         , ShipQty = sum(pd.ShipQty)
         , UnitID = o.StyleUnit
         , Receiver = '' 

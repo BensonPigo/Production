@@ -586,6 +586,7 @@ where id='{0}' ", this.CurrentMaintain["ID"]);
 
         /// <inheritdoc/>
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
+
         {
             string masterID = (e.Master == null) ? string.Empty : MyUtility.Convert.GetString(e.Master["ID"]);
             this.DetailSelectCommand = string.Format(
@@ -624,8 +625,14 @@ FROM(
             ,pl.PulloutID
             ,pl.Type
             ,ColorID = IIF(f.MtlTypeID = 'EMB THREAD' OR f.MtlTypeID = 'SP THREAD' OR f.MtlTypeID = 'THREAD' 
-                        ,IIF(isnull(p.SuppColor,'') = '',dbo.GetColorMultipleID(o.BrandID,psds.SpecValue) , p.SuppColor)
-                        ,dbo.GetColorMultipleID(o.BrandID,psds.SpecValue))
+			,IIF(isnull(p.SuppColor,'') = '',dbo.GetColorMultipleID(o.BrandID,psds.SpecValue) , p.SuppColor)
+			,dbo.GetColorMultipleID(o.BrandID,psds.SpecValue))
+            ,[fabricDescription] = f.Description
+            ,[styleDescription] = st.Description
+            ,[Reason_Gender] = r.Name +'/' + st.Gender
+            ,[HSCode] = SHC.val
+            ,[Fabric_HsCode] = fhcode.val
+            ,[Fabric_MtlTypeID] = f.MtlTypeID
 	    from Express_Detail ed WITH (NOLOCK) 
 	    left join PO_Supp_Detail p WITH (NOLOCK) on ed.OrderID = p.ID and ed.Seq1 = p.SEQ1 and ed.Seq2 = p.SEQ2
 	    left join PO_Supp_Detail_Spec psds WITH (NOLOCK) on psds.ID = p.id and psds.seq1 = p.seq1 and psds.seq2 = p.seq2 and psds.SpecColumnID = 'Color'
@@ -634,7 +641,25 @@ FROM(
         left join DropDownList dp ON dp.Type='Pms_Sort_HC_DHL_Cate' AND ed.Category = dp.ID
 		left join PackingList pl WITH (NOLOCK) on ed.PackingListID = pl.ID
 		left join Orders o WITH (NOLOCK) on o.ID = ed.OrderID
+        left join Style st WITH (NOLOCK) on o.StyleID = st.Id and o.BrandID = st.BrandID and o.SeasonID = st.SeasonID
+        left join Reason r with(nolock) on st.ApparelType = r.ID and r.ReasonTypeID='Style_Apparel_type'
         left join fabric f WITH (NOLOCK) on f.SCIRefno = p.SCIRefno
+        outer apply
+		(
+			select top 1
+			val = isnull(sh.HSCode1,sh.HSCode2)
+			from Style_HSCode sh
+			where st.Ukey = sh.StyleUkey
+			Order by adddate desc
+		)SHC
+		outer apply
+		(
+			select top 1
+			val = isnull(fh.HsCode,'')
+			from Fabric_HsCode fh with(nolock)
+			where f.SCIRefno = fh.SCIRefno
+            Order by year desc
+		)fhcode
 	    where ed.ID = '{0}'
     )ed
     outer apply(
@@ -646,6 +671,7 @@ FROM(
     )airpp
 ) allData
 Order by CTNNo,Seq1,Seq2", masterID);
+
             return base.OnDetailSelectCommandPrepare(e);
         }
 
@@ -753,6 +779,11 @@ Order by CTNNo,Seq1,Seq2", masterID);
                 // 修改顯示內容
                 this.delete.Text = string.Format("Delete this Record - {0} {1}-{2}", MyUtility.Convert.GetString(this.CurrentDetailData["OrderID"]), MyUtility.Convert.GetString(this.CurrentDetailData["Seq1"]), MyUtility.Convert.GetString(this.CurrentDetailData["Seq2"]));
                 this.edit.Text = string.Format("Edit this Record's detail - {0} {1}-{2}", MyUtility.Convert.GetString(this.CurrentDetailData["OrderID"]), MyUtility.Convert.GetString(this.CurrentDetailData["Seq1"]), MyUtility.Convert.GetString(this.CurrentDetailData["Seq2"]));
+
+                var dataTable = (DataTable)this.detailgridbs.DataSource;
+
+                var list = dataTable.Select("CategoryName = 'Dox'").ToList();
+                this.checkBoxDoc.Checked = dataTable.Rows.Count == list.Count ? true : false;
             }
         }
 
@@ -1717,6 +1748,18 @@ update Express set Status = 'Junk', StatusUpdateDate = GETDATE(), EditName = '{0
             {
                 MyUtility.Msg.WarningBox("You don't have permission to approve.");
                 return;
+            }
+
+            if (this.checkBoxDoc.Checked == false || this.cmbPayer.Text != "Hand Carry")
+            {
+                var dataTable = (DataTable)this.detailgridbs.DataSource;
+
+                var list = dataTable.Select("Qty = 0 or UnitID = '' or CTNNW = 0 ").ToList();
+                if (list.Count != 0)
+                {
+                    MyUtility.Msg.WarningBox("Q'ty or Unit or Carton Weight detail data can't be 0.");
+                    return;
+                }
             }
 
             if (!MyUtility.Check.Seek(string.Format("select ID from Express_Detail WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]))))
