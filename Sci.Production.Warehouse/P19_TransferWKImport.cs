@@ -34,6 +34,7 @@ namespace Sci.Production.Warehouse
             this.InitializeComponent();
             this.mainTransferOutID = transferOutID;
             MyUtility.Tool.SetupCombox(this.comboFabricType, 2, 1, ",,F,Fabric,A,Accessory");
+            MyUtility.Tool.SetupCombox(this.cbStockType, 2, 1, ",,B,Bulk,I,Inventory");
             this.EditMode = true;
             this.gridStock.DataSource = this.bindingGridStock;
             this.mainDetail = mainDetail;
@@ -134,7 +135,7 @@ select  ted.InventoryPOID,
         te.ID,
         ted.Ukey,
         [Description] = dbo.getMtlDesc(ted.InventoryPOID, ted.InventorySeq1, ted.InventorySeq2, 2, 0),
-        Tone
+        Tone.Tone
 into #tmpTransferExport
 from    TransferExport te with (nolock)
 inner   join TransferExport_Detail ted with (nolock) on te.ID = ted.ID
@@ -186,7 +187,7 @@ select  [select] = 0,
         te.Description,
         [TransferExportID] = te.ID,
         [TransferExport_DetailUkey] = te.Ukey,
-        Tone
+        te.Tone
 from  #tmpTransferExport te with (nolock)
 inner join FtyInventory fi on te.InventoryPOID = fi.POID and
                               te.InventorySeq1 = fi.Seq1 and
@@ -232,7 +233,6 @@ drop table #tmpTransferExport
 
             this.gridExport.DataSource = dtResults[0];
             this.bindingGridStock.DataSource = dtResults[1];
-
             if (dtResults[0].Rows.Count > 0)
             {
                 this.RefreshRightGrid();
@@ -258,7 +258,14 @@ drop table #tmpTransferExport
         {
             long transferExportDetailUkey = MyUtility.Convert.GetLong(this.gridExport.GetDataRow(this.gridExport.GetSelectedRowIndex())["Ukey"]);
 
-            this.bindingGridStock.Filter = $"TransferExportDetailUkey = {transferExportDetailUkey}";
+            var strWhere = string.Empty;
+
+            if (this.cbStockType.Text != string.Empty)
+            {
+                strWhere = $"and StockTypeDesc = '{this.cbStockType.Text}'";
+            }
+
+            this.bindingGridStock.Filter = $"TransferExportDetailUkey = {transferExportDetailUkey} " + strWhere;
         }
 
         private void UpdateExportQty()
@@ -359,6 +366,16 @@ drop table #tmpTransferExport
         {
             this.gridStock.ValidateControl();
             this.UpdateExportQty();
+        }
+
+        private void CbStockType_SelectedValueChanged(object sender, EventArgs e)
+        {
+            if (this.gridExport.SelectedRows.Count == 0)
+            {
+                return;
+            }
+
+            this.RefreshRightGrid();
         }
     }
 }
