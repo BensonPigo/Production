@@ -21,7 +21,7 @@ namespace Sci.Production.Warehouse
     public partial class P19_TransferWKImport : Win.Subs.Base
     {
         private readonly string mainTransferOutID = string.Empty;
-        private DataTable mainDetail,stockData;
+        private DataTable mainDetail;
         private string M;
 
         /// <summary>
@@ -232,8 +232,7 @@ drop table #tmpTransferExport
             }
 
             this.gridExport.DataSource = dtResults[0];
-            this.stockData = dtResults[1];
-            this.bindingGridStock.DataSource = this.StockTypeDataTable(this.cbStockType.Text);
+            this.bindingGridStock.DataSource = dtResults[1];
             if (dtResults[0].Rows.Count > 0)
             {
                 this.RefreshRightGrid();
@@ -259,7 +258,14 @@ drop table #tmpTransferExport
         {
             long transferExportDetailUkey = MyUtility.Convert.GetLong(this.gridExport.GetDataRow(this.gridExport.GetSelectedRowIndex())["Ukey"]);
 
-            this.bindingGridStock.Filter = $"TransferExportDetailUkey = {transferExportDetailUkey}";
+            var strWhere = string.Empty;
+
+            if (this.cbStockType.Text != string.Empty)
+            {
+                strWhere = $"and StockTypeDesc = '{this.cbStockType.Text}'";
+            }
+
+            this.bindingGridStock.Filter = $"TransferExportDetailUkey = {transferExportDetailUkey} " + strWhere;
         }
 
         private void UpdateExportQty()
@@ -362,22 +368,6 @@ drop table #tmpTransferExport
             this.UpdateExportQty();
         }
 
-        /// <inheritdoc/>
-        private DataTable StockTypeDataTable(string strStockType)
-        {
-            DataTable dt;
-            if (strStockType == string.Empty)
-            {
-                dt = this.stockData;
-            }
-            else
-            {
-                dt = this.stockData.Select($"StockTypeDesc = '{this.cbStockType.Text}'").CopyToDataTable();
-            }
-
-            return dt;
-        }
-
         private void CbStockType_SelectedValueChanged(object sender, EventArgs e)
         {
             if (this.gridExport.SelectedRows.Count == 0)
@@ -385,7 +375,6 @@ drop table #tmpTransferExport
                 return;
             }
 
-            this.bindingGridStock.DataSource = this.StockTypeDataTable(this.cbStockType.Text);
             this.RefreshRightGrid();
         }
     }
