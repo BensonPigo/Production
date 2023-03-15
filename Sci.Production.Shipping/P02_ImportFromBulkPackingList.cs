@@ -144,7 +144,7 @@ and Factory.IsProduceFty=1
 		where p2.ID = pd.id
 		and Factory.IsProduceFty=1
 	)
-    group by pd.ID, pd.OrderID, pd.CtnStartNo, o.SeasonID, o.StyleID, o.StyleUnit, o.SMR, t.Name, o.BrandID, o.StyleUkey
+    group by pd.ID, pd.OrderID, pd.CtnStartNo, o.SeasonID, o.StyleID, o.StyleUnit, o.SMR, t.Name, o.BrandID, o.StyleUkey,o.PoPrice
 ";
             DataTable selectData;
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out selectData);
