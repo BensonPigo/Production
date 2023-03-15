@@ -9,6 +9,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using Sci.Production.Class;
 using System.Runtime.DesignerServices;
+using System.IO;
 
 namespace Sci.Production.Warehouse
 {
@@ -29,6 +30,8 @@ namespace Sci.Production.Warehouse
         private string BrandID;
         private string POID;
         private List<string> ListColor = new List<string>();
+        private string FabricPath;
+        private string ColorPath;
 
         /// <inheritdoc/>
         public P01_TrimCardPrint(string orderID, string styleID, string seasonID, string factoryID, string brandID, string pOID)
@@ -40,6 +43,13 @@ namespace Sci.Production.Warehouse
             this.FactoryID = factoryID;
             this.BrandID = brandID;
             this.POID = pOID;
+
+            // 取得color & Fabric 圖片檔路徑
+            if (MyUtility.Check.Seek("select FabricPath,ColorPath from System",out DataRow dr))
+            {
+                this.FabricPath = dr["FabricPath"].ToString();
+                this.ColorPath = dr["ColorPath"].ToString();
+            }
         }
 
         // 欄位檢核
@@ -78,6 +88,8 @@ select  A.PatternPanel
 		, B.Refno 
 		, C.Description 
 		, A.FabricPanelCode
+        , C.Picture
+        , C.BrandID
 from Orders o WITH (NOLOCK) 
 inner join Orders allOrder With (NoLock) on o.Poid = allOrder.Poid
 inner join Order_FabricCode A WITH (NOLOCK) on allOrder.ID = a.ID
@@ -115,6 +127,7 @@ select a.ColorID
 	   , B.Name 
 	   , a.FabricPanelCode 
 	   , a.Article
+       , B.Picture
 from Orders o WITH (NOLOCK) 
 inner join Orders allOrder With (NoLock) on o.Poid = allOrder.Poid
 inner join Order_ColorCombo A WITH (NOLOCK) on allOrder.ID = A.ID
@@ -143,7 +156,7 @@ where o.Id='{1}'
                 #region ACCESSORY
                 this.sql = string.Format(
                     @"
-select A.Refno, B.Description 
+select distinct A.Refno, B.Description ,B.Picture, B.BrandID
 from Order_BOA A WITH (NOLOCK) 
 inner join Orders o WITH (NOLOCK) on a.id = o.poid 
 inner join Orders allOrder WITH (NOLOCK) on o.poid = allOrder.poid 
@@ -156,7 +169,7 @@ where o.id = '{0}'
 	  and oa.Article <> '' 
 	  and occ.ColorId<>''
 	  and b.MtlTypeID in (select id from MtlType WITH (NOLOCK) where IsTrimcardOther=0)
-group by A.Refno, B.Description ", this.orderID);
+", this.orderID);
                 result = DBProxy.Current.Select(null, this.sql, out this.dtPrint_Content);
                 if (!result)
                 {
@@ -203,6 +216,7 @@ select distinct A.Refno
 					   order by Seqno
 					   for xml path('')) 
 			          , 1, 1, '')
+       , c.Picture
 from Order_BOA A WITH (NOLOCK) 
 inner join Orders o WITH (NOLOCK) on a.id = o.poid 
 inner join Orders allOrder WITH (NOLOCK) on o.poid = allOrder.poid 
@@ -210,6 +224,7 @@ inner join Order_Article oa With (NoLock) on allOrder.id = oa.id
 inner join Order_ColorCombo occ With(NoLock) on a.id = occ.Id
 												and a.FabricPanelCode = occ.FabricPanelCode
                                                 and oa.Article = occ.Article
+left join Color c with(NoLock) on c.ID=occ.ColorID
 left join Fabric B WITH (NOLOCK) on B.SCIRefno=A.SCIRefno
 where o.id = '{0}' 
 	  and oa.Article <> '' 
@@ -807,7 +822,7 @@ from (
                 #region [ROW3]欄位名,[ROW4]~[ROW7]對應資料
                 nextPage = 1;
                 tables = table[nextPage];
-
+                 
                 // 抓取當下.exe執行位置路徑 同抓取Excle範本檔路徑
                 string path = string.Empty;
 
@@ -834,8 +849,11 @@ from (
 
                             // 第一Row塞入圖片
                             Microsoft.Office.Interop.Word.Range rng = tables.Cell(4, 2 + (i % 6)).Range;
-                            path = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @".\Resources\") + "Apple_black_long.png";
-                            rng.InlineShapes.AddPicture(path).ConvertToShape().WrapFormat.Type = Word.WdWrapType.wdWrapInline;
+                            path = System.IO.Path.Combine(this.FabricPath, this.dtPrint_Content.Rows[i]["BrandID"].ToString().Trim(), this.dtPrint_Content.Rows[i]["Picture"].ToString().Trim());
+                            if (this.FileExists(path))
+                            {
+                                rng.InlineShapes.AddPicture(path).ConvertToShape().WrapFormat.Type = Word.WdWrapType.wdWrapInline;
+                            }
                         }
                         #endregion
 
@@ -870,8 +888,11 @@ from (
                             int rowPic = 6;
                             rowPic += (k % 4) * 2;
                             Microsoft.Office.Interop.Word.Range rng = tables.Cell(rowPic, 2 + (i % 6)).Range;
-                            path = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @".\Resources\") + "Apple_black.PNG";
-                            rng.InlineShapes.AddPicture(path).ConvertToShape().WrapFormat.Type = Word.WdWrapType.wdWrapInline;
+                            path = System.IO.Path.Combine(this.ColorPath, this.rowColor["Picture"].ToString().Trim());
+                            if (this.FileExists(path))
+                            {
+                                rng.InlineShapes.AddPicture(path).ConvertToShape().WrapFormat.Type = Word.WdWrapType.wdWrapInline;
+                            }
                         }
                         #endregion
 
@@ -896,6 +917,14 @@ from (
                             // 有資料時才顯示Type
                             tables.Cell(2, 2 + (i % 6)).Range.Text = row2Type;
                             tables.Cell(3, 2 + (i % 6)).Range.Text = this.temp;
+
+                            // 第一Row塞入圖片
+                            Microsoft.Office.Interop.Word.Range rng = tables.Cell(4, 2 + (i % 6)).Range;
+                            path = System.IO.Path.Combine(this.FabricPath, this.dtPrint_Content.Rows[i]["BrandID"].ToString().Trim(), this.dtPrint_Content.Rows[i]["Picture"].ToString().Trim());
+                            if (this.FileExists(path))
+                            {
+                                rng.InlineShapes.AddPicture(path).ConvertToShape().WrapFormat.Type = Word.WdWrapType.wdWrapInline;
+                            }
                         }
                         #endregion
                         #region 填入Datas
@@ -920,7 +949,22 @@ from (
                             tables = table[nextPage + (i / 6 * rC) + (k / 4)];
 
                             // 填入字串
-                            tables.Cell(4 + (k % 4), 2 + (i % 6)).Range.Text = this.temp;
+                            //tables.Cell(4 + (k % 4), 2 + (i % 6)).Range.Text = this.temp;
+                            // 塞入文字 5 7 9 11
+                            int rowStr = 5;
+                            rowStr += (k % 4) * 2;
+                            tables.Cell(rowStr, 2 + (i % 6)).Range.Text = this.temp;
+
+                            // 塞入圖片 6 8 10 12
+                            int rowPic = 6;
+                            rowPic += (k % 4) * 2;
+                            Microsoft.Office.Interop.Word.Range rng = tables.Cell(rowPic, 2 + (i % 6)).Range;
+                            path = System.IO.Path.Combine(this.ColorPath, this.rowColor["Picture"].ToString().Trim());
+                            if (this.FileExists(path))
+                            {
+                                rng.InlineShapes.AddPicture(path).ConvertToShape().WrapFormat.Type = Word.WdWrapType.wdWrapInline;
+                            }
+
                         }
                         #endregion
                     }
@@ -989,32 +1033,31 @@ from (
                 #endregion
 
                 #region 整理欄位格式
-
-                // 根據 DataRow 數量選取 Table, Dot DataRow = 7
-                int pageCnt = 1 + (this.dtPrint_LeftColumn.Rows.Count / 7);
-
-                for (int p = 1; p <= pageCnt; p++)
+                if (!this.radioOther.Checked)
                 {
-                    tables = table[p];
-                    for (int r = 1; r <= tables.Rows.Count; r++)
+                    for (int p = 1; p <= pagecount; p++)
                     {
-                        for (int c = 1; c <= tables.Columns.Count; c++)
+                        tables = table[p];
+                        for (int r = 1; r <= tables.Rows.Count; r++)
                         {
-                            // Article合併 5,7,9,11
-                            if (r >= 3 && (r % 2) == 1 && c == 1)
+                            for (int c = 1; c <= tables.Columns.Count; c++)
                             {
-                                // 合併儲存格
-                                tables.Cell(r, 1).Merge(tables.Cell(r + 1, 1));
+                                // Article合併 5,7,9,11
+                                if (r >= 3 && (r % 2) == 1 && c == 1)
+                                {
+                                    // 合併儲存格
+                                    tables.Cell(r, 1).Merge(tables.Cell(r + 1, 1));
 
-                                // 上下 水平置中
-                                tables.Cell(r, 1).Range.ParagraphFormat.Alignment = Word.WdParagraphAlignment.wdAlignParagraphCenter;
-                                tables.Cell(r, 1).VerticalAlignment = Word.WdCellVerticalAlignment.wdCellAlignVerticalCenter;
-                            }
+                                    // 上下 水平置中
+                                    tables.Cell(r, 1).Range.ParagraphFormat.Alignment = Word.WdParagraphAlignment.wdAlignParagraphCenter;
+                                    tables.Cell(r, 1).VerticalAlignment = Word.WdCellVerticalAlignment.wdCellAlignVerticalCenter;
+                                }
 
-                            // 去除圖片和文字中間分隔線
-                            if (r >= 4 && (r % 2) == 0 && c > 1)
-                            {
-                                tables.Cell(r, c).Borders[Microsoft.Office.Interop.Word.WdBorderType.wdBorderTop].Visible = false;
+                                // 去除圖片和文字中間分隔線
+                                if (r >= 4 && (r % 2) == 0 && c > 1)
+                                {
+                                    tables.Cell(r, c).Borders[Microsoft.Office.Interop.Word.WdBorderType.wdBorderTop].Visible = false;
+                                }
                             }
                         }
                     }
@@ -1046,6 +1089,17 @@ from (
 
                 // Marshal.FinalReleaseComObject(winword);
             }
+        }
+
+        private bool FileExists(string path)
+        {
+            // 檔案是否存在
+            if (!System.IO.File.Exists(path))
+            {
+                return false;
+            }
+
+            return true;
         }
     }
 }
