@@ -29,8 +29,7 @@ namespace Sci.Production.Centralized
             : base(menuitem)
         {
             this.InitializeComponent();
-            this.comboM.SetDefalutIndex(true);
-            this.comboM.Text = Env.User.Keyword;
+            this.comboM.SetDefalutIndex();
         }
 
         /// <inheritdoc/>

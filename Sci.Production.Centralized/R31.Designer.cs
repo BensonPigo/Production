@@ -46,9 +46,9 @@
             this.label6 = new Sci.Win.UI.Label();
             this.txtPONoEnd = new Sci.Win.UI.TextBox();
             this.txtPONoStart = new Sci.Win.UI.TextBox();
-            this.comboM = new Sci.Production.Class.ComboMDivision(this.components);
             this.txtClogReason = new Sci.Production.Class.TxtClogReason();
             this.txtbrand = new Sci.Production.Class.Txtbrand();
+            this.comboM = new Sci.Production.Class.ComboCentralizedM(this.components);
             this.SuspendLayout();
             // 
             // print
@@ -260,18 +260,6 @@
             this.txtPONoStart.Size = new System.Drawing.Size(130, 23);
             this.txtPONoStart.TabIndex = 149;
             // 
-            // comboM
-            // 
-            this.comboM.BackColor = System.Drawing.Color.White;
-            this.comboM.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboM.FormattingEnabled = true;
-            this.comboM.IsSupportUnselect = true;
-            this.comboM.Location = new System.Drawing.Point(110, 209);
-            this.comboM.Name = "comboM";
-            this.comboM.OldText = "";
-            this.comboM.Size = new System.Drawing.Size(80, 24);
-            this.comboM.TabIndex = 148;
-            // 
             // txtClogReason
             // 
             this.txtClogReason.DisplayBox1Binding = "";
@@ -291,18 +279,30 @@
             this.txtbrand.Size = new System.Drawing.Size(100, 23);
             this.txtbrand.TabIndex = 143;
             // 
+            // comboM
+            // 
+            this.comboM.BackColor = System.Drawing.Color.White;
+            this.comboM.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboM.FormattingEnabled = true;
+            this.comboM.IsSupportUnselect = true;
+            this.comboM.Location = new System.Drawing.Point(109, 208);
+            this.comboM.Name = "comboM";
+            this.comboM.OldText = "";
+            this.comboM.Size = new System.Drawing.Size(80, 24);
+            this.comboM.TabIndex = 155;
+            // 
             // R31
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(570, 299);
+            this.Controls.Add(this.comboM);
             this.Controls.Add(this.label7);
             this.Controls.Add(this.txtSPNoEnd);
             this.Controls.Add(this.txtSPNoStart);
             this.Controls.Add(this.label6);
             this.Controls.Add(this.txtPONoEnd);
             this.Controls.Add(this.txtPONoStart);
-            this.Controls.Add(this.comboM);
             this.Controls.Add(this.txtClogReason);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.comboCancel);
@@ -332,7 +332,6 @@
             this.Controls.SetChildIndex(this.comboCancel, 0);
             this.Controls.SetChildIndex(this.label2, 0);
             this.Controls.SetChildIndex(this.txtClogReason, 0);
-            this.Controls.SetChildIndex(this.comboM, 0);
             this.Controls.SetChildIndex(this.print, 0);
             this.Controls.SetChildIndex(this.toexcel, 0);
             this.Controls.SetChildIndex(this.close, 0);
@@ -345,14 +344,13 @@
             this.Controls.SetChildIndex(this.txtSPNoStart, 0);
             this.Controls.SetChildIndex(this.txtSPNoEnd, 0);
             this.Controls.SetChildIndex(this.label7, 0);
+            this.Controls.SetChildIndex(this.comboM, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
         }
 
         #endregion
-
-        private Class.ComboMDivision comboM;
         private Class.TxtClogReason txtClogReason;
         private Win.UI.Label label2;
         private Win.UI.ComboBox comboCancel;
@@ -372,5 +370,6 @@
         private Win.UI.Label label6;
         private Win.UI.TextBox txtPONoEnd;
         private Win.UI.TextBox txtPONoStart;
+        private Class.ComboCentralizedM comboM;
     }
 }
