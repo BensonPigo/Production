@@ -352,12 +352,13 @@ SELECT DISTINCT [OrderIdList] = stuff((select concat('/',tmp.OrderID)
 INTO #tmpOrder_Article
 from #tmpOrder as orders WITH (NOLOCK) 
 inner join PO_Supp_Detail a WITH (NOLOCK) on a.id = orders.poid
+left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = a.id and psdsC.seq1 = a.seq1 and psdsC.seq2 = a.seq2 and psdsC.SpecColumnID = 'Color'
 left join dbo.MDivisionPoDetail m WITH (NOLOCK) on  m.POID = a.ID and m.seq1 = a.SEQ1 and m.Seq2 = a.Seq2
 left join po_supp b WITH (NOLOCK) on a.id = b.id and a.SEQ1 = b.SEQ1
 left join #ArticleForThread aft on	aft.ID = m.POID		and
 									aft.SuppId	   = b.SuppId	and
 									aft.SCIRefNo   = a.SCIRefNo	and
-									aft.ColorID	   = a.ColorID	and
+									aft.ColorID	   = psdsC.SpecValue	and
 									a.SEQ1 like 'T%' 
 WHERE  stuff((select concat('/',tmp.OrderID) 
 		                                    from (
@@ -446,12 +447,13 @@ SELECT DISTINCT [OrderIdList] = stuff((select concat('/',tmp.OrderID)
 INTO #tmpOrder_Article
 from #tmpOrder as orders WITH (NOLOCK) 
 inner join PO_Supp_Detail a WITH (NOLOCK) on a.id = orders.poid
+left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = a.id and psdsC.seq1 = a.seq1 and psdsC.seq2 = a.seq2 and psdsC.SpecColumnID = 'Color'
 left join dbo.MDivisionPoDetail m WITH (NOLOCK) on  m.POID = a.ID and m.seq1 = a.SEQ1 and m.Seq2 = a.Seq2
 left join po_supp b WITH (NOLOCK) on a.id = b.id and a.SEQ1 = b.SEQ1
 left join #ArticleForThread aft on	aft.ID = m.POID		and
 									aft.SuppId	   = b.SuppId	and
 									aft.SCIRefNo   = a.SCIRefNo	and
-									aft.ColorID	   = a.ColorID	and
+									aft.ColorID	   = psdsC.SpecValue	and
 									a.SEQ1 like 'T%' 
 WHERE  stuff((select concat('/',tmp.OrderID) 
 		                                    from (
@@ -466,10 +468,12 @@ AND aft.Article IS NOT NULL
  select DISTINCT 
  B.Article
  , B.ColorID AS ThreadColorID
+ , c.Picture
  from Orders o WITH (NOLOCK) 
  inner join Orders allOrder With (NoLock) on o.Poid = allOrder.Poid
  inner join Style_ThreadColorCombo A WITH (NOLOCK) on allOrder.StyleUkey = a.StyleUkey
  left join Style_ThreadColorCombo_Detail B WITH (NOLOCK) on B.Style_ThreadColorComboUkey = A.Ukey
+ left join Color c with(nolock) on c.ID = b.ColorID
  where o.ID = '{this.POID}'
  AND (
      EXISTS (SELECT 1 FROM #tmpOrder_Article WHERE [OrderIdList] = allOrder.ID AND Article = B.Article) 
@@ -513,10 +517,11 @@ SELECT Article FROM
 					,BOA_Article.Article 
 					)				
 
-	,[ThreadColorID] = IIF(PSD.SuppColor = '',dbo.GetColorMultipleID('{this.BrandID}', PSD.ColorID),PSD.SuppColor)
+	,[ThreadColorID] = IIF(PSD.SuppColor = '',dbo.GetColorMultipleID('{this.BrandID}',isnull(psdsC.SpecValue, '')),PSD.SuppColor)
 	FROM PO_Supp_Detail PSD
 	INNER join Fabric f on f.SCIRefno = PSD.SCIRefno
 	LEFT JOIN PO_Supp_Detail_OrderList pd ON PSD.ID = pd.ID AND PSD.SEQ1= pd.SEQ1 AND PSD.SEQ2= pd.SEQ2
+    LEFT JOIN PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
 	LEFT JOIN Order_BOA boa ON boa.id =psd.ID and boa.SCIRefno = psd.SCIRefno and boa.seq=psd.SEQ1
 	OUTER APPLY(
 		SELECT oba.Article FROM Order_BOA ob
@@ -544,6 +549,10 @@ UNION
 ";
 
                     result = DBProxy.Current.Select(null, this.sql, out this.dtPrint_LeftColumn);
+                    if (!result)
+                    {
+                        return result;
+                    }
 
                     #endregion
 
@@ -1024,7 +1033,21 @@ from (
                                 // 其中 K 代表, 目前編輯到 FabricPanelCode 的第幾個 Article
                                 tables = table[nextPage + (l / 6 * rC) + (k / 4)];
 
-                                tables.Cell(4 + (k % 4), 2 + (l % 6)).Range.Text = this.temp;
+                                // 填入字串
+                                // 塞入文字 5 7 9 11
+                                int rowStr = 5;
+                                rowStr += (k % 4) * 2;
+                                tables.Cell(rowStr, 2 + (l % 6)).Range.Text = this.temp;
+
+                                // 塞入圖片 6 8 10 12
+                                int rowPic = 6;
+                                rowPic += (k % 4) * 2;
+                                Microsoft.Office.Interop.Word.Range rng = tables.Cell(rowPic, 2 + (l % 6)).Range;
+                                path = System.IO.Path.Combine(this.ColorPath, rowColorA[l]["Picture"].ToString().Trim());
+                                if (this.FileExists(path))
+                                {
+                                    rng.InlineShapes.AddPicture(path).ConvertToShape().WrapFormat.Type = Word.WdWrapType.wdWrapInline;
+                                }
                             }
                         }
                     }
