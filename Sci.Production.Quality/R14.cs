@@ -154,10 +154,10 @@ namespace Sci.Production.Quality
                 [FabricHeight] = isnull(ip_fh.Result,'N/A'),
                 [FabricRelaxation] = isnull(ip_fr.Result,'N/A'),
                 [RejectPointQty] = siifc.[count],
-                [Inspector] =p.[Name],
+                [Inspector] =p.Name,
                 [StartingTime] = siidata.MaxAddDate,
                 [Remark] = si.Remark,
-                [InspectedTime] = DATEDIFF(second, siidata.MinAddDate,siidata.MaxEditDate)
+                [InspectedTime] = DATEDIFF(second,siidata.minAddDate,isnull(isnull(MinEditDate,MaxEditDate),isnull(MaxAddDate,isnull(MinEditDate,MaxEditDate))))
 
                 from SpreadingInspection s 
                 left join SpreadingInspection_InsCutRef si with(nolock) on s.ID = si.ID
@@ -183,9 +183,10 @@ namespace Sci.Production.Quality
                 outer apply
                 (
 	                select 
-					[MinAddDate] = MIN(AddDate),
+	                [MinAddDate] = MIN(AddDate),
 	                [MaxAddDate] = MAX(AddDate),
 	                [MaxEditDate] = Max(EditDate),
+	                [MinEditDate] = Min(EditDate),
 	                [Shift]
 	                from SpreadingInspection_InsCutRef_Inspection 
 	                where SpreadingInspectionInsCutRefUkey = si.Ukey
@@ -197,14 +198,15 @@ namespace Sci.Production.Quality
 	                AddName,
 	                EditName
 	                from SpreadingInspection_InsCutRef_Inspection 
-	                where isnull(EditDate,AddDate) = isnull( siidata.maxeditdate,siidata. MaxAddDate)
+	                where isnull(EditDate,AddDate) = isnull(siidata.MaxEditDate,siidata. MaxAddDate)
                 )siiMaxName
                 outer apply
                 (
 	                select 
-	                [Name]
-	                from Pass1
-	                where ID = isnull(siiMaxName.EditName,siiMaxName.AddName)
+	                Name
+	                from Pass1 p 
+	                inner join SpreadingInspection_InsCutRef_Inspection s on p.ID = iif(s.EditName = '' ,s.addname,s.editname)
+	                where SpreadingInspectionInsCutRefUkey = si.Ukey
                 )p
                 outer apply
                 (
@@ -220,7 +222,7 @@ namespace Sci.Production.Quality
                 (
 	                select val = ROUND(CAST(count(*) as float) / CAST( 10 as float),2) 
 	                from SpreadingInspection_InsCutRef_Inspection
-	                where 34 = ID and Result = 'Pass'
+	                where SpreadingInspectionInsCutRefUkey = si.Ukey and Result = 'Pass'
                 )RFT
                 outer apply
                 (
@@ -286,10 +288,9 @@ namespace Sci.Production.Quality
                 {this.strSQLWhere}
                 Group by pms_wo.FactoryID,oui.[ouiCutRef],si.CutRef,soc.[count],sic.[count],RFT.val,sii.Shift,SP.val,sty.StyleID,m.MarkerNo,pms_f.[Description]
                 ,color.val,size.val,s.[SpreadingNoID],FabricRoll.val,ip_mc.Result,ip_hf.Result,ip_ws.Result,ip_sw.Result,ip_mt.Result
-		        ,ip_fc.Result,ip_ip.Result,ip_fd.Result,ip_fh.Result,ip_fr.Result,siifc.count,p.[Name],siidata.MaxAddDate
-		        ,si.Remark,siidata.MaxEditDate,siidata.MinAddDate
-                 
-";
+                ,ip_fc.Result,ip_ip.Result,ip_fd.Result,ip_fh.Result,ip_fr.Result,siifc.count,siidata.MaxAddDate,siidata.MinEditDate
+                ,si.Remark,siidata.MaxEditDate,siidata.MinAddDate,si.ukey,p.Name
+                ";
             }
             else if (this.radioDetail.Checked)
             {
@@ -301,23 +302,23 @@ namespace Sci.Production.Quality
 			                    when soc.[count] < sic.[count]  then 'Separate' 
 				                else '' end,
                 [InspectDate] = IsNULL(sii.EditDate,sii.AddDate),
-                [RFT] = RFT.Per,
+                [RFT] = RFT.Per ,
                 [Shift] = sii.[Shift],
-                [SP] = SP.val,
+                [SP] = SP.val ,
                 [Style#] = sty.StyleID,
                 [Marker#] = m.MarkerNo,
                 [Fabric Description] = pms_f.[Description],
-                [Color] = color.val,
+                [Color] = color.val ,
                 [Size] = size.val,
                 [Spreading Machine#] = s.SpreadingNoID,
                 [Fabric Roll] = FabricRoll.val,
                 [InspectedPointQty] = siic.[count],
                 [RejectPointQty] = siifc.[count],
-                [InspectPoint] = sii.Item,
+                [InspectPoint] = sii.Item ,
                 [Result] = sii.Result,
-                [DefectCode] = case when sii.Item = 'Marker Check' then isnull(MC.val,'')
-				                when sii.Item = 'Short Width' then 'Fabric Width: ' + CONVERT( varchar, pms_f.Width) + CHAR(10) + 'Actual Width:' + siid.ColumnValue
-				                when sii.Item = 'Machine Tension' then  isnull('Speed:'+ siid.ColumnValue,'')
+                [DefectCode] = case when sii.Item = 'Marker Check' then 'Condition:' + isnull(MC.val,'')
+				                when sii.Item = 'Short Width' then 'Fabric Width: ' + CONVERT( varchar, pms_f.Width) + CHAR(10) + 'Actual Width:' + siid.val
+				                when sii.Item = 'Machine Tension' then  isnull('Speed:'+ siid.val,'')
 				                when sii.Item = 'Fabric Defect' then isnull( fd.val,'')
 				                else '' end ,
                 [LastInspectionDate] = IsNull(sii.EditDate, sii.AddDate),
@@ -328,8 +329,20 @@ namespace Sci.Production.Quality
                 left join SpreadingInspection_InsCutRef si with(nolock) on s.ID = si.ID
                 left join SpreadingInspection_InsCutRef_Inspection sii with(nolock) on si.Ukey = sii.SpreadingInspectionInsCutRefUkey 
 
-                left join SpreadingInspection_InsCutRef_Inspection_Detail siid with(nolock) on siid.SpreadingInspectionInsCutRefInspectionUkey = sii.Ukey
+                --left join SpreadingInspection_InsCutRef_Inspection_Detail siid with(nolock) on siid.SpreadingInspectionInsCutRefInspectionUkey = sii.Ukey
                 left join Pass1 p with(nolock) on p.ID = iif(sii.EditName='',sii.AddName,sii.EditName)
+                outer apply
+                (
+	                select val = Stuff((
+		                select (char(10) + ColumnValue)
+		                from (
+				                select ColumnValue
+				                from SpreadingInspection_InsCutRef_Inspection_Detail with(nolock)
+				                where SpreadingInspectionInsCutRefInspectionUkey = sii.Ukey
+			                ) s
+		                for xml path ('')
+	                ) , 1, 1, '')
+                )siid
                 outer apply( select [count] = count(*) from SpreadingInspection_OriCutRef where  si.ID = ID ) soc
                 outer apply( select [count] = count(*) from SpreadingInspection_InsCutRef where  si.ID = ID  ) sic
                 outer apply 
@@ -347,12 +360,9 @@ namespace Sci.Production.Quality
 	                where so.id = si.id
                 ) m
                 outer apply( select top 1 * from SciProduction_Orders where pms_wo.ID = ID ) sty
-
-
                 outer apply( select [count] = count(*) from SpreadingInspection_InsCutRef_Inspection where SpreadingInspectionInsCutRefUkey = sii.SpreadingInspectionInsCutRefUkey and Result != '') siic
                 outer apply( select [count] = Count(*) from SpreadingInspection_InsCutRef_Inspection where SpreadingInspectionInsCutRefUkey = sii.SpreadingInspectionInsCutRefUkey and Result ='Fail') siifc
                 outer apply( select val = MIN(AddDate) from SpreadingInspection_InsCutRef_Inspection ms where SpreadingInspectionInsCutRefUkey = sii.SpreadingInspectionInsCutRefUkey) st
-
                 outer apply
                 (
                 select [ouiCutRef] = stuff((
@@ -426,9 +436,11 @@ namespace Sci.Production.Quality
 	                select concat(char(10), s.[Description])
 	                from (
 			                select [Description]
-			                from SpreadingDefectCode
-			                where ID = siid.ColumnValue and
-			                [Type] ='MT'
+			                from SpreadingDefectCode sc
+			                where EXISTS (select 1 from SpreadingInspection_InsCutRef_Inspection_Detail siid2 with(nolock) 
+							                where siid2.SpreadingInspectionInsCutRefInspectionUkey = sii.Ukey
+							                and sc.ID = siid2.ColumnValue )
+			                and [Type] ='MT'
 		                ) s
 	                for xml path ('')
                 ) , 1, 1, '')
@@ -442,7 +454,10 @@ namespace Sci.Production.Quality
 			                pms_f_Type = pms_fd.[Type],
 			                pms_f_EN = pms_fd.DescriptionEN
 			                from SciProduction_FabricDefect pms_fd with(nolock)
-			                where siid.ColumnValue = pms_fd.ID
+			                where EXISTS (select 1 from SpreadingInspection_InsCutRef_Inspection_Detail siid2 with(nolock) 
+							                where siid2.SpreadingInspectionInsCutRefInspectionUkey = sii.Ukey
+							                and pms_fd.ID = siid2.ColumnValue )
+			                --siid.ColumnValue = pms_fd.ID 
 		                ) s
 	                for xml path ('')
                 ) , 1, 1, '')
