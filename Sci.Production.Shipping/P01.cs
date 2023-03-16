@@ -11,6 +11,10 @@ using Sci.Win.Tools;
 using System.Transactions;
 using System.Runtime.InteropServices;
 using System.Linq;
+using System.Drawing;
+using System.IO;
+using System.Net.Mail;
+using System.Net.Mime;
 
 namespace Sci.Production.Shipping
 {
@@ -442,19 +446,19 @@ values ('{0}','Status','','New','{1}',GETDATE())",
             return base.ClickPrint();
         }
 
-        private bool ToExcel(bool isSendMail)
+        private Image ToExcel(bool isSendMail)
         {
             if (MyUtility.Check.Empty(this.CurrentMaintain["ID"]))
             {
                 MyUtility.Msg.WarningBox("No data!!");
-                return false;
+                return null;
             }
 
             string strXltName = Env.Cfg.XltPathDir + "\\Shipping_P01.xltx";
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
             if (excel == null)
             {
-                return false;
+                return null;
             }
 
             Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
@@ -485,55 +489,62 @@ values ('{0}','Status','','New','{1}',GETDATE())",
                     break;
             }
 
-            worksheet.Cells[3, 5] = status;
-            worksheet.Cells[3, 8] = Convert.ToDateTime(DateTime.Today).ToString("yyyy/MM/dd");
-            worksheet.Cells[4, 2] = MyUtility.Convert.GetString(this.CurrentMaintain["ID"]);
-            worksheet.Cells[4, 7] = MyUtility.Check.Empty(this.dateBuyerDelivery.Value) ? string.Empty : Convert.ToDateTime(this.dateBuyerDelivery.Value).ToString("yyyy/MM/dd");
-            worksheet.Cells[5, 7] = MyUtility.GetValue.Lookup(string.Format("select Name from TPEPass1 WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["MRHandle"])));
-            worksheet.Cells[6, 2] = MyUtility.Convert.GetString(this.CurrentMaintain["OrderID"]);
-            worksheet.Cells[6, 6] = this.displayFactory.Value;
-            worksheet.Cells[7, 2] = this.displayBrand.Value;
-            worksheet.Cells[7, 4] = MyUtility.GetValue.Lookup(string.Format("select Alias from Country WITH (NOLOCK) where ID = '{0}'", this.txtCountryDestination.TextBox1.Text));
-            worksheet.Cells[8, 2] = this.displayStyleNo.Value;
-            worksheet.Cells[8, 4] = this.displayDescription.Value;
-            worksheet.Cells[9, 2] = this.numOrderQty.Value;
-            worksheet.Cells[10, 2] = MyUtility.Convert.GetString(this.CurrentMaintain["ShipQty"]);
-            worksheet.Cells[10, 4] = MyUtility.Convert.GetString(this.CurrentMaintain["Forwarder"]) + " - " + MyUtility.GetValue.Lookup(string.Format("select Abb from LocalSupp WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["Forwarder"])));
-            worksheet.Cells[10, 6] = MyUtility.Convert.GetString(this.CurrentMaintain["Quotation"]) + "/KG";
-            worksheet.Cells[11, 2] = MyUtility.Convert.GetString(this.CurrentMaintain["GW"]);
-            worksheet.Cells[11, 4] = MyUtility.Convert.GetString(this.CurrentMaintain["Forwarder1"]) + " - " + MyUtility.GetValue.Lookup(string.Format("select Abb from LocalSupp WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["Forwarder1"])));
-            worksheet.Cells[11, 6] = MyUtility.Convert.GetString(this.CurrentMaintain["Quotation1"]) + "/KG";
-            worksheet.Cells[12, 2] = MyUtility.Convert.GetString(this.CurrentMaintain["VW"]);
-            worksheet.Cells[12, 4] = MyUtility.Convert.GetString(this.CurrentMaintain["Forwarder2"]) + " - " + MyUtility.GetValue.Lookup(string.Format("select Abb from LocalSupp WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["Forwarder2"])));
-            worksheet.Cells[12, 6] = MyUtility.Convert.GetString(this.CurrentMaintain["Quotation2"]) + "/KG";
-            worksheet.Cells[13, 2] = this.numExchangeRate.Value;
-            worksheet.Cells[13, 5] = MyUtility.Convert.GetString(this.CurrentMaintain["EstAmount"]);
-            worksheet.Cells[13, 8] = MyUtility.Convert.GetString(this.CurrentMaintain["ActualAmountWVAT"]);
-            worksheet.Cells[14, 2] = MyUtility.Convert.GetString(this.CurrentMaintain["ReasonID"]) + "." + this.displayResponsibilityJustifcation.Value;
-            worksheet.Cells[15, 2] = MyUtility.Convert.GetString(this.CurrentMaintain["ResponsibleFty"]).ToUpper() == "TRUE" ? "Y" : string.Empty;
-            worksheet.Cells[15, 4] = MyUtility.Convert.GetString(this.CurrentMaintain["RatioFty"]) + "%";
-            worksheet.Cells[15, 6] = MyUtility.Convert.GetString(this.CurrentMaintain["ResponsibleFtyNo"]);
-            worksheet.Cells[16, 2] = MyUtility.Convert.GetString(this.CurrentMaintain["ResponsibleSubcon"]).ToUpper() == "TRUE" ? "Y" : string.Empty;
-            worksheet.Cells[16, 4] = MyUtility.Convert.GetString(this.CurrentMaintain["RatioSubcon"]) + "%";
-            worksheet.Cells[16, 6] = MyUtility.Convert.GetString(this.CurrentMaintain["SubconDBCNo"]);
-            worksheet.Cells[16, 8] = MyUtility.Convert.GetString(this.CurrentMaintain["SubConName"]);
-            worksheet.Cells[17, 2] = MyUtility.Convert.GetString(this.CurrentMaintain["ResponsibleSCI"]).ToUpper() == "TRUE" ? "Y" : string.Empty;
-            worksheet.Cells[17, 4] = MyUtility.Convert.GetString(this.CurrentMaintain["RatioSCI"]) + "%";
-            worksheet.Cells[17, 6] = MyUtility.Convert.GetString(this.CurrentMaintain["SCIICRNo"]);
-            worksheet.Cells[17, 8] = MyUtility.Convert.GetString(this.CurrentMaintain["SCIICRRemark"]);
-            worksheet.Cells[18, 2] = MyUtility.Convert.GetString(this.CurrentMaintain["ResponsibleSupp"]).ToUpper() == "TRUE" ? "Y" : string.Empty;
-            worksheet.Cells[18, 4] = MyUtility.Convert.GetString(this.CurrentMaintain["RatioSupp"]) + "%";
-            worksheet.Cells[18, 6] = MyUtility.Convert.GetString(this.CurrentMaintain["SuppDBCNo"]);
-            worksheet.Cells[18, 8] = MyUtility.Convert.GetString(this.CurrentMaintain["SuppDBCRemark"]);
-            worksheet.Cells[19, 2] = MyUtility.Convert.GetString(this.CurrentMaintain["ResponsibleBuyer"]).ToUpper() == "TRUE" ? "Y" : string.Empty;
-            worksheet.Cells[19, 4] = MyUtility.Convert.GetString(this.CurrentMaintain["RatioBuyer"]) + "%";
-            worksheet.Cells[19, 6] = MyUtility.Convert.GetString(this.CurrentMaintain["BuyerDBCNo"]);
-            worksheet.Cells[19, 8] = MyUtility.Convert.GetString(this.CurrentMaintain["BuyerDBCRemark"]);
-            worksheet.Cells[20, 6] = MyUtility.Convert.GetString(this.CurrentMaintain["BuyerICRNo"]);
-            worksheet.Cells[20, 8] = MyUtility.Convert.GetString(this.CurrentMaintain["BuyerICRRemark"]);
-            worksheet.Cells[21, 6] = MyUtility.Convert.GetString(this.CurrentMaintain["BuyerRemark"]);
-            worksheet.Cells[22, 2] = MyUtility.Convert.GetString(this.CurrentMaintain["FtyDesc"]);
-            worksheet.Cells[23, 2] = MyUtility.Convert.GetString(this.CurrentMaintain["MRComment"]);
+            Color colorY_Mark = Color.FromArgb(249, 249, 164);
+
+            worksheet.Cells[3, 3] = MyUtility.Convert.GetString(this.CurrentMaintain["ID"]);
+            worksheet.Cells[2, 6] = status;
+            worksheet.Cells[2, 9] = Convert.ToDateTime(DateTime.Today).ToString("yyyy/MM/dd");
+            worksheet.Cells[4, 3] = MyUtility.GetValue.Lookup($"select Format(BuyerDelivery, 'yyyy/MM/dd') from Order_QtyShip with (nolock) where ID = '{this.CurrentMaintain["OrderID"]}' and Seq = '{this.CurrentMaintain["OrderShipmodeSeq"]}'");
+            worksheet.Cells[4, 8] = MyUtility.GetValue.Lookup(string.Format("select Name from TPEPass1 WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["MRHandle"])));
+            worksheet.Cells[5, 3] = MyUtility.Convert.GetString(this.CurrentMaintain["OrderID"]);
+            worksheet.Cells[5, 7] = this.displayFactory.Value;
+            worksheet.Cells[6, 3] = this.displayBrand.Value;
+            worksheet.Cells[6, 5] = MyUtility.GetValue.Lookup(string.Format("select Alias from Country WITH (NOLOCK) where ID = '{0}'", this.txtCountryDestination.TextBox1.Text));
+            worksheet.Cells[7, 3] = this.displayStyleNo.Value;
+            worksheet.Cells[7, 5] = this.displayDescription.Value;
+            worksheet.Cells[8, 3] = this.numOrderQty.Value;
+            worksheet.Cells[9, 3] = MyUtility.Convert.GetString(this.CurrentMaintain["ShipQty"]);
+            worksheet.Cells[9, 5] = MyUtility.Convert.GetString(this.CurrentMaintain["Forwarder"]) + " - " + MyUtility.GetValue.Lookup(string.Format("select Abb from LocalSupp WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["Forwarder"])));
+            worksheet.Cells[9, 7] = MyUtility.Convert.GetString(this.CurrentMaintain["Quotation"]) + "/KG";
+            worksheet.Cells[9, 8] = MyUtility.Convert.GetString(this.CurrentMaintain["EstAmount"]);
+            worksheet.Cells[10, 3] = MyUtility.Convert.GetString(this.CurrentMaintain["GW"]);
+            worksheet.Cells[10, 5] = MyUtility.Convert.GetString(this.CurrentMaintain["Forwarder1"]) + " - " + MyUtility.GetValue.Lookup(string.Format("select Abb from LocalSupp WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["Forwarder1"])));
+            worksheet.Cells[10, 7] = MyUtility.Convert.GetString(this.CurrentMaintain["Quotation1"]) + "/KG";
+            worksheet.Cells[11, 3] = MyUtility.Convert.GetString(this.CurrentMaintain["VW"]);
+            worksheet.Cells[11, 5] = MyUtility.Convert.GetString(this.CurrentMaintain["Forwarder2"]) + " - " + MyUtility.GetValue.Lookup(string.Format("select Abb from LocalSupp WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["Forwarder2"])));
+            worksheet.Cells[11, 7] = MyUtility.Convert.GetString(this.CurrentMaintain["Quotation2"]) + "/KG";
+            worksheet.Cells[12, 3] = MyUtility.Convert.GetString(this.CurrentMaintain["ReasonID"]) + "." + this.displayResponsibilityJustifcation.Value;
+            worksheet.Cells[13, 3] = MyUtility.Convert.GetString(this.CurrentMaintain["ResponsibleFty"]).ToUpper() == "TRUE" ? "Y" : string.Empty;
+            worksheet.Range["C13:I13"].Interior.Color = MyUtility.Convert.GetString(this.CurrentMaintain["ResponsibleFty"]).ToUpper() == "TRUE" ? colorY_Mark : Color.White;
+            worksheet.Cells[13, 5] = MyUtility.Convert.GetString(this.CurrentMaintain["RatioFty"]) + "%";
+            worksheet.Cells[13, 7] = MyUtility.Convert.GetString(this.CurrentMaintain["ResponsibleFtyNo"]);
+            worksheet.Cells[14, 3] = MyUtility.Convert.GetString(this.CurrentMaintain["ResponsibleSubcon"]).ToUpper() == "TRUE" ? "Y" : string.Empty;
+            worksheet.Range["C14:I14"].Interior.Color = MyUtility.Convert.GetString(this.CurrentMaintain["ResponsibleSubcon"]).ToUpper() == "TRUE" ? colorY_Mark : Color.White;
+            worksheet.Cells[14, 5] = MyUtility.Convert.GetString(this.CurrentMaintain["RatioSubcon"]) + "%";
+            worksheet.Cells[14, 7] = MyUtility.Convert.GetString(this.CurrentMaintain["SubconDBCNo"]);
+            worksheet.Cells[14, 9] = MyUtility.Convert.GetString(this.CurrentMaintain["SubConName"]);
+            worksheet.Cells[15, 3] = MyUtility.Convert.GetString(this.CurrentMaintain["ResponsibleSCI"]).ToUpper() == "TRUE" ? "Y" : string.Empty;
+            worksheet.Range["C15:I15"].Interior.Color = MyUtility.Convert.GetString(this.CurrentMaintain["ResponsibleSCI"]).ToUpper() == "TRUE" ? colorY_Mark : Color.White;
+            worksheet.Cells[15, 5] = MyUtility.Convert.GetString(this.CurrentMaintain["RatioSCI"]) + "%";
+            worksheet.Cells[15, 7] = MyUtility.Convert.GetString(this.CurrentMaintain["SCIICRNo"]);
+            worksheet.Cells[15, 9] = MyUtility.Convert.GetString(this.CurrentMaintain["SCIICRRemark"]);
+            worksheet.Cells[16, 3] = MyUtility.Convert.GetString(this.CurrentMaintain["ResponsibleSupp"]).ToUpper() == "TRUE" ? "Y" : string.Empty;
+            worksheet.Range["C16:I16"].Interior.Color = MyUtility.Convert.GetString(this.CurrentMaintain["ResponsibleSupp"]).ToUpper() == "TRUE" ? colorY_Mark : Color.White;
+            worksheet.Cells[16, 5] = MyUtility.Convert.GetString(this.CurrentMaintain["RatioSupp"]) + "%";
+            worksheet.Cells[16, 7] = MyUtility.Convert.GetString(this.CurrentMaintain["SuppDBCNo"]);
+            worksheet.Cells[16, 9] = MyUtility.Convert.GetString(this.CurrentMaintain["SuppDBCRemark"]);
+            worksheet.Cells[17, 3] = MyUtility.Convert.GetString(this.CurrentMaintain["ResponsibleBuyer"]).ToUpper() == "TRUE" ? "Y" : string.Empty;
+            worksheet.Range["C17:I17"].Interior.Color = MyUtility.Convert.GetString(this.CurrentMaintain["ResponsibleBuyer"]).ToUpper() == "TRUE" ? colorY_Mark : Color.White;
+            worksheet.Cells[17, 5] = MyUtility.Convert.GetString(this.CurrentMaintain["RatioBuyer"]) + "%";
+            worksheet.Cells[17, 7] = MyUtility.Convert.GetString(this.CurrentMaintain["BuyerDBCNo"]);
+            worksheet.Cells[17, 9] = MyUtility.Convert.GetString(this.CurrentMaintain["BuyerDBCRemark"]);
+            worksheet.Cells[18, 7] = MyUtility.Convert.GetString(this.CurrentMaintain["BuyerRemark"]);
+            worksheet.Cells[19, 3] = MyUtility.Convert.GetString(this.CurrentMaintain["FtyDesc"]);
+            worksheet.Cells[20, 3] = MyUtility.Convert.GetString(this.CurrentMaintain["MRComment"]);
+
+            Microsoft.Office.Interop.Excel.Range screenshotRange = worksheet.Range["A1:J33"];
+            screenshotRange.CopyPicture(Microsoft.Office.Interop.Excel.XlPictureAppearance.xlScreen, Microsoft.Office.Interop.Excel.XlCopyPictureFormat.xlBitmap);
+            Image clipboardImage = Clipboard.GetImage();
 
             #region Save Excel
             this.excelFile = Class.MicrosoftFile.GetName("Shipping_P01");
@@ -547,7 +558,7 @@ values ('{0}','Status','','New','{1}',GETDATE())",
                 this.excelFile.OpenFile();
             }
 
-            return true;
+            return clipboardImage;
         }
 
         private void TxtResponsibilityJustifcation_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
@@ -1376,9 +1387,37 @@ where a.ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
                                 .Distinct()
                                 .JoinToString(";");
                 string cc = MyUtility.Convert.GetString(allMail.Rows[0]["PPICMgrMail"]) + ";" + MyUtility.Convert.GetString(allMail.Rows[0]["FtyMgrMail"]) + ";" + MyUtility.Convert.GetString(dr["ToAddress"]);
+                string bcc = MyUtility.Convert.GetString(dr["BccAddress"]);
+                List<string> listResponsible = new List<string>();
+
+                if (MyUtility.Convert.GetBool(this.CurrentMaintain["ResponsibleFty"]))
+                {
+                    listResponsible.Add("Factory");
+                }
+
+                if (MyUtility.Convert.GetBool(this.CurrentMaintain["ResponsibleSubcon"]))
+                {
+                    listResponsible.Add("Subcon");
+                }
+
+                if (MyUtility.Convert.GetBool(this.CurrentMaintain["ResponsibleSCI"]))
+                {
+                    listResponsible.Add("SCI");
+                }
+
+                if (MyUtility.Convert.GetBool(this.CurrentMaintain["ResponsibleSupp"]))
+                {
+                    listResponsible.Add("Supplier");
+                }
+
+                if (MyUtility.Convert.GetBool(this.CurrentMaintain["ResponsibleBuyer"]))
+                {
+                    listResponsible.Add("Buyer");
+                }
+
                 string subject = string.Format(
                     @"<{0}> {1} for SP#{2}, DD{3} - {4}",
-                    MyUtility.Convert.GetString(this.displayFactory.Value),
+                    MyUtility.Convert.GetString(listResponsible.JoinToString(",")),
                     MyUtility.Convert.GetString(this.CurrentMaintain["ID"]),
                     MyUtility.Convert.GetString(this.CurrentMaintain["OrderID"]),
                     Convert.ToDateTime(this.CurrentMaintain["CDate"]).ToString("yyyyMMdd"),
@@ -1415,9 +1454,39 @@ Remind:Please return the air pp request – approved  within 24hrs to avoid any 
                 #endregion
 
                 // 產生Excel
-                this.ToExcel(true);
+                Image screenshotExcelImage = this.ToExcel(true);
 
-                var email = new MailTo(Env.Cfg.MailFrom, mailto, cc, subject, this.excelFile, content.ToString(), visibleForm, visibleForm);
+                // Set the message body to include the image
+                string contentId = Guid.NewGuid().ToString();
+                content.Append(string.Format("<br><img src=\"cid:{0}\">", contentId));
+
+                // Convert the image to a byte array
+                MemoryStream imageStream = new MemoryStream();
+                screenshotExcelImage.Save(imageStream, System.Drawing.Imaging.ImageFormat.Jpeg);
+                byte[] imageBytes = imageStream.ToArray();
+
+                // Add the image as an attachment to the message
+                Attachment imageAttachment = new Attachment(new MemoryStream(imageBytes), "ExcelScreenshot.jpg");
+                imageAttachment.ContentDisposition.Inline = true;
+                imageAttachment.ContentDisposition.DispositionType = DispositionTypeNames.Inline;
+                imageAttachment.ContentId = contentId;
+
+                var email = new MailTo(
+                    Env.Cfg.MailFrom,
+                    mailto,
+                    cc,
+                    bcc,
+                    subject,
+                    content.ToString(),
+                    new List<string>() { this.excelFile },
+                    visibleForm,
+                    visibleForm,
+                    new List<Attachment>() { imageAttachment });
+                //var email = new MailTo(Env.Cfg.MailFrom, "aaron.shie@sportscity.com.tw", "aaron.shie@sportscity.com.tw", "aaron95271234@gmail.com", subject, content.ToString(), new List<string>() { this.excelFile }, visibleForm, visibleForm, new List<Attachment>() { imageAttachment });
+                //email.MailServerIP = "mail.sportscity.com.tw";
+                //email.MailServerAccount = "foxpro";
+                //email.MailServerPassword = "orpxof";
+                //email.From = "foxpro@sportscity.com.tw";
 
                 email.ShowDialog(this);
 
