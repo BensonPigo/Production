@@ -225,6 +225,7 @@ inner join Order_ColorCombo occ With(NoLock) on a.id = occ.Id
 												and a.FabricPanelCode = occ.FabricPanelCode
                                                 and oa.Article = occ.Article
 left join Color c with(NoLock) on c.ID=occ.ColorID
+								and c.BrandId = '{1}'
 left join Fabric B WITH (NOLOCK) on B.SCIRefno=A.SCIRefno
 where o.id = '{0}' 
 	  and oa.Article <> '' 
@@ -474,6 +475,7 @@ AND aft.Article IS NOT NULL
  inner join Style_ThreadColorCombo A WITH (NOLOCK) on allOrder.StyleUkey = a.StyleUkey
  left join Style_ThreadColorCombo_Detail B WITH (NOLOCK) on B.Style_ThreadColorComboUkey = A.Ukey
  left join Color c with(nolock) on c.ID = b.ColorID
+                                    and c.BrandID = '{this.BrandID}'
  where o.ID = '{this.POID}'
  AND (
      EXISTS (SELECT 1 FROM #tmpOrder_Article WHERE [OrderIdList] = allOrder.ID AND Article = B.Article) 
