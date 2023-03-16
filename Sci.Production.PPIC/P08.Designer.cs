@@ -63,7 +63,6 @@
             this.labEstFreight = new Sci.Win.UI.Label();
             this.numSurchargeAmt = new Sci.Win.UI.NumericBox();
             this.label2 = new Sci.Win.UI.Label();
-            this.numTotalUS = new Sci.Win.UI.NumericBox();
             this.label3 = new Sci.Win.UI.Label();
             this.numActFreight = new Sci.Win.UI.NumericBox();
             this.label4 = new Sci.Win.UI.Label();
@@ -96,6 +95,7 @@
             this.txtuserPreparedby = new Sci.Production.Class.Txtuser();
             this.txttpeuserPOHandle = new Sci.Production.Class.Txttpeuser();
             this.txttpeuserPOSMR = new Sci.Production.Class.Txttpeuser();
+            this.numTotalUS = new Sci.Win.UI.NumericBox();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -113,6 +113,7 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.numTotalUS);
             this.masterpanel.Controls.Add(this.lbCompletedShow);
             this.masterpanel.Controls.Add(this.displayCompleteDate);
             this.masterpanel.Controls.Add(this.txttpeuserCompleteName);
@@ -130,7 +131,6 @@
             this.masterpanel.Controls.Add(this.label16);
             this.masterpanel.Controls.Add(this.numEstFreight);
             this.masterpanel.Controls.Add(this.label5);
-            this.masterpanel.Controls.Add(this.numTotalUS);
             this.masterpanel.Controls.Add(this.label3);
             this.masterpanel.Controls.Add(this.numActFreight);
             this.masterpanel.Controls.Add(this.label4);
@@ -200,7 +200,6 @@
             this.masterpanel.Controls.SetChildIndex(this.dateCDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.displayFactory, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelStyleNo, 0);
-            this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateVoucherDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateLockDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelPCSMR, 0);
@@ -226,7 +225,6 @@
             this.masterpanel.Controls.SetChildIndex(this.label4, 0);
             this.masterpanel.Controls.SetChildIndex(this.numActFreight, 0);
             this.masterpanel.Controls.SetChildIndex(this.label3, 0);
-            this.masterpanel.Controls.SetChildIndex(this.numTotalUS, 0);
             this.masterpanel.Controls.SetChildIndex(this.label5, 0);
             this.masterpanel.Controls.SetChildIndex(this.numEstFreight, 0);
             this.masterpanel.Controls.SetChildIndex(this.label16, 0);
@@ -244,6 +242,8 @@
             this.masterpanel.Controls.SetChildIndex(this.txttpeuserCompleteName, 0);
             this.masterpanel.Controls.SetChildIndex(this.displayCompleteDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.lbCompletedShow, 0);
+            this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
+            this.masterpanel.Controls.SetChildIndex(this.numTotalUS, 0);
             // 
             // detailpanel
             // 
@@ -668,30 +668,6 @@
             this.label2.TabIndex = 152;
             this.label2.Text = "Surcharge US$";
             // 
-            // numTotalUS
-            // 
-            this.numTotalUS.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.numTotalUS.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "TTLUS", true));
-            this.numTotalUS.DecimalPlaces = 2;
-            this.numTotalUS.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
-            this.numTotalUS.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.numTotalUS.IsSupportEditMode = false;
-            this.numTotalUS.Location = new System.Drawing.Point(536, 296);
-            this.numTotalUS.Name = "numTotalUS";
-            this.numTotalUS.NullValue = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.numTotalUS.ReadOnly = true;
-            this.numTotalUS.Size = new System.Drawing.Size(72, 23);
-            this.numTotalUS.TabIndex = 157;
-            this.numTotalUS.Value = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            // 
             // label3
             // 
             this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
@@ -1065,6 +1041,29 @@
             this.txttpeuserPOSMR.Size = new System.Drawing.Size(302, 23);
             this.txttpeuserPOSMR.TabIndex = 7;
             // 
+            // numTotalUS
+            // 
+            this.numTotalUS.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numTotalUS.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "TTLUS", true));
+            this.numTotalUS.DecimalPlaces = 2;
+            this.numTotalUS.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numTotalUS.IsSupportEditMode = false;
+            this.numTotalUS.Location = new System.Drawing.Point(536, 296);
+            this.numTotalUS.Name = "numTotalUS";
+            this.numTotalUS.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numTotalUS.ReadOnly = true;
+            this.numTotalUS.Size = new System.Drawing.Size(72, 23);
+            this.numTotalUS.TabIndex = 210;
+            this.numTotalUS.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            // 
             // P08
             // 
             this.ApvChkValue = "Checked";
@@ -1094,9 +1093,9 @@
             this.UniqueExpress = "ID";
             this.WorkAlias = "ReplacementReport";
             this.FormLoaded += new System.EventHandler(this.P08_FormLoaded);
-            this.Controls.SetChildIndex(this.tabs, 0);
             this.Controls.SetChildIndex(this.btnBatch, 0);
             this.Controls.SetChildIndex(this.btnBatchReCalculateResponsibilityDeptAmt, 0);
+            this.Controls.SetChildIndex(this.tabs, 0);
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).EndInit();
             this.masterpanel.ResumeLayout(false);
@@ -1158,7 +1157,6 @@
         private Win.UI.Button btnFreightList;
         private Win.UI.NumericBox numEstFreight;
         private Win.UI.Label label5;
-        private Win.UI.NumericBox numTotalUS;
         private Win.UI.Label label3;
         private Win.UI.NumericBox numActFreight;
         private Win.UI.Label label4;
@@ -1186,5 +1184,6 @@
         private Win.UI.DisplayBox displayCompleteDate;
         private Class.Txttpeuser txttpeuserCompleteName;
         private Win.UI.Label lbCompleted;
+        private Win.UI.NumericBox numTotalUS;
     }
 }
