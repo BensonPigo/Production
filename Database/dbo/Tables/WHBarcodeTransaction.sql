@@ -18,8 +18,8 @@
 );
 GO
 
-CREATE NONCLUSTERED INDEX [TransactionUkeyAction]
-    ON [dbo].[WHBarcodeTransaction]([TransactionUkey] ASC, [Action] ASC);
+CREATE NONCLUSTERED INDEX [M360IssueList]
+    ON [dbo].[WHBarcodeTransaction]([TransactionID] ASC, [TransactionUkey] ASC, [Action] ASC);
 GO
 
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'執行日期及時間', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'WHBarcodeTransaction', @level2type = N'COLUMN', @level2name = N'CommitTime';
