@@ -1,5 +1,6 @@
 ﻿using Ict;
 using Ict.Win;
+using Sci.Data;
 using Sci.Production.Class.Commons;
 using Sci.Production.PPIC;
 using System;
@@ -466,6 +467,7 @@ order by z.seq1,z.seq2,z.Seq
             // 呼叫procedure，取得BOA展開結果
             try
             {
+                DBProxy.Current.DefaultTimeout = 3600;
                 string sizecodes = this.sbSizecode.ToString().Substring(0, this.sbSizecode.ToString().Length - 1).Replace("[", string.Empty).Replace("]", string.Empty);
                 var rESULT = MyUtility.Tool.ProcessWithDatatable(this.dtIssueBreakDown, "OrderID,Article," + sizecodes, sqlcmd, out result, "#tmp");
 
@@ -598,6 +600,7 @@ order by z.seq1,z.seq2,z.Seq
                 dataSet.Dispose();
             }
 
+            DBProxy.Current.DefaultTimeout = 300;
             this.listControlBindingSource1.DataSource = this.BOA_PO;
             this.gridAutoPick.DataSource = this.listControlBindingSource1;
 
@@ -712,6 +715,11 @@ order by z.seq1,z.seq2,z.Seq
 
         private void BtnPick_Click(object sender, EventArgs e)
         {
+            if (this.BOA_PO == null || this.gridAutoPick.DataSource == null)
+            {
+                return;
+            }
+
             this.gridAutoPick.ValidateControl();
             DataRow[] dr2 = this.BOA_PO.Select("Selected = 1");
             if (dr2.Length == 0)
