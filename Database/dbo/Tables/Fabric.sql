@@ -60,6 +60,7 @@
     [BomTypeCareCode]         BIT             CONSTRAINT [DF_Fabric_BomTypeCareCode] DEFAULT ((0)) NOT NULL,
     [CannotOperateStock]      BIT             CONSTRAINT [DF_Fabric_CannotOperateStock] DEFAULT ((0)) NOT NULL,
     [IsFOC]                   BIT             CONSTRAINT [DF_Fabric_IsFOC] DEFAULT ((0)) NOT NULL,
+    [Picture] NVARCHAR(100) NOT NULL DEFAULT (''), 
     CONSTRAINT [PK_Fabric] PRIMARY KEY CLUSTERED ([SCIRefno] ASC)
 );
 
@@ -241,3 +242,12 @@ EXEC sp_addextendedproperty @name = N'MS_Description',
     @level1name = N'Fabric',
     @level2type = N'COLUMN',
     @level2name = N'IsRecycled'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'物料圖片檔案名稱',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'Fabric',
+    @level2type = N'COLUMN',
+    @level2name = N'Picture'
