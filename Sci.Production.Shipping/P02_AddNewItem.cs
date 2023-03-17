@@ -26,7 +26,7 @@ namespace Sci.Production.Shipping
         {
             this.InitializeComponent();
             MyUtility.Tool.SetupCombox(this.comboCategory, 2, 1, "5,Dox,6,Machine/Parts,7,Mock Up,8,Other Sample,9,Other Material");
-            MyUtility.Tool.SetupCombox(this.comboDoxItem, 2, 1, "1,C/O,2,Payment doc,3,Other");
+            MyUtility.Tool.SetupCombox(this.comboDoxItem, 2, 1, ",,1,C/O,2,Payment doc,3,Other");
             this.P02_Info_dataRows = dataRow;
             this.P02_IsDox = IsDox;
         }
@@ -154,7 +154,7 @@ from Style s WITH (NOLOCK) where s.ID = '{0}' and s.SeasonID = '{1}'",
         protected override bool OnSaveBefore()
         {
 
-            if (MyUtility.Convert.GetString(this.P02_Info_dataRows["FreightBy"]).ToUpper() != "HAND CARRY" && !this.P02_IsDox)
+            if ((MyUtility.Convert.GetString(this.P02_Info_dataRows["FreightBy"]).ToUpper() != "HAND CARRY") || !this.P02_IsDox)
             {
                 if (MyUtility.Check.Empty(this.CurrentData["Qty"]))
                 {
@@ -162,6 +162,7 @@ from Style s WITH (NOLOCK) where s.ID = '{0}' and s.SeasonID = '{1}'",
                     MyUtility.Msg.WarningBox("Qty can't empty!");
                     return false;
                 }
+
                 if (MyUtility.Check.Empty(this.CurrentData["UnitID"]))
                 {
                     this.editDescription.Focus();
@@ -237,6 +238,16 @@ from Style s WITH (NOLOCK) where s.ID = '{0}' and s.SeasonID = '{1}'",
                 {
                     this.editRemark.Focus();
                     MyUtility.Msg.WarningBox("Remark can't empty!");
+                    return false;
+                }
+            }
+
+            if (this.comboCategory.Text == "Dox")
+            {
+                if (this.comboDoxItem.Text.Empty())
+                {
+                    this.comboDoxItem.Focus();
+                    MyUtility.Msg.WarningBox("Dox can't empty!");
                     return false;
                 }
             }
@@ -392,25 +403,6 @@ from Express_Detail WITH (NOLOCK) where ID = '{0}' and Seq2 = ''", MyUtility.Con
                 if (this.OperationMode == 2)
                 {
                     this.txtSPNo.ReadOnly = false;
-                }
-            }
-
-            if (this.comboCategory.Text == "Dox")
-            {
-                if (this.comboDoxItem.Items.Count > 0)
-                {
-                    this.comboDoxItem.SelectedIndex = 0;
-                }
-
-                if (this.comboDoxItem.Text == "C/O" || this.comboDoxItem.Text == "Payment doc")
-                {
-                    this.editRemark.WatermarkText = " Please update invoice no.";
-                    this.editRemark.WatermarkColor = SystemColors.GrayText;
-                }
-                else
-                {
-                    this.editRemark.WatermarkText = string.Empty;
-                    this.editRemark.WatermarkColor = SystemColors.WindowText;
                 }
             }
         }

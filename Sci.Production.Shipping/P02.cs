@@ -231,6 +231,10 @@ namespace Sci.Production.Shipping
             this.RenewData();
             this.numericBoxttlGW.Value = MyUtility.Convert.GetDecimal(this.CurrentMaintain["NW"]) + MyUtility.Convert.GetDecimal(this.CurrentMaintain["CTNNW"]);
             this.CompareDetailPrint((DataTable)this.detailgridbs.DataSource, before_dt);
+
+            var dataTable = (DataTable)this.detailgridbs.DataSource;
+            var list = dataTable.Select("CategoryName <> 'Dox'").ToList();
+            this.checkBoxDoc.Checked = list.Count == 0 && dataTable.Rows.Count != 0 ? true : false;
         }
 
         // Context Menu選擇Edit this Record's detail
@@ -587,12 +591,15 @@ where id='{0}' ", this.CurrentMaintain["ID"]);
             this.disSuppabb.Value = MyUtility.GetValue.Lookup(sqlsupp);
 
             this.CarrierbyEnable();
+            var dataTable = (DataTable)this.detailgridbs.DataSource;
+            var list = dataTable.Select("CategoryName <> 'Dox'").ToList();
+            this.checkBoxDoc.Checked = list.Count == 0 && dataTable.Rows.Count != 0 ? true : false;
         }
 
         /// <inheritdoc/>
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
-
         {
+            
             string masterID = (e.Master == null) ? string.Empty : MyUtility.Convert.GetString(e.Master["ID"]);
             this.DetailSelectCommand = string.Format(
                 @"
@@ -784,11 +791,6 @@ Order by CTNNo,Seq1,Seq2", masterID);
                 // 修改顯示內容
                 this.delete.Text = string.Format("Delete this Record - {0} {1}-{2}", MyUtility.Convert.GetString(this.CurrentDetailData["OrderID"]), MyUtility.Convert.GetString(this.CurrentDetailData["Seq1"]), MyUtility.Convert.GetString(this.CurrentDetailData["Seq2"]));
                 this.edit.Text = string.Format("Edit this Record's detail - {0} {1}-{2}", MyUtility.Convert.GetString(this.CurrentDetailData["OrderID"]), MyUtility.Convert.GetString(this.CurrentDetailData["Seq1"]), MyUtility.Convert.GetString(this.CurrentDetailData["Seq2"]));
-
-                var dataTable = (DataTable)this.detailgridbs.DataSource;
-
-                var list = dataTable.Select("CategoryName <> 'Dox'").ToList();
-                this.checkBoxDoc.Checked = list.Count == 0 ? true : false;
             }
         }
 
