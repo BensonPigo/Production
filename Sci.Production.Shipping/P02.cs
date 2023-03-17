@@ -1757,17 +1757,7 @@ update Express set Status = 'Junk', StatusUpdateDate = GETDATE(), EditName = '{0
                 return;
             }
 
-            if (this.checkBoxDoc.Checked == false || this.cmbPayer.Text != "Hand Carry")
-            {
-                var dataTable = (DataTable)this.detailgridbs.DataSource;
 
-                var list = dataTable.Select("Qty = 0 or UnitID = '' or CTNNW = 0 ").ToList();
-                if (list.Count != 0)
-                {
-                    MyUtility.Msg.WarningBox("Q'ty or Unit or Carton Weight detail data can't be 0.");
-                    return;
-                }
-            }
 
             if (!MyUtility.Check.Seek(string.Format("select ID from Express_Detail WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]))))
             {
@@ -1805,10 +1795,21 @@ update Express set Status = 'Junk', StatusUpdateDate = GETDATE(), EditName = '{0
                 return;
             }
 
-            if (MyUtility.Check.Seek(string.Format("select ID from Express_CTNData WITH (NOLOCK) where ID = '{0}' and (CtnLength <= 0 or CtnWidth <= 0 or CtnHeight <= 0 or CTNNW <= 0)", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]))))
+            if (this.checkBoxDoc.Checked == false && this.cmbPayer.Text != "Hand Carry")
             {
-                MyUtility.Msg.WarningBox("Carton Dimension & Weight data can't empty!");
-                return;
+                if (MyUtility.Check.Seek(string.Format("select ID from Express_CTNData WITH (NOLOCK) where ID = '{0}' and (CtnLength <= 0 or CtnWidth <= 0 or CtnHeight <= 0 or CTNNW <= 0)", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]))))
+                {
+                    MyUtility.Msg.WarningBox("Carton Dimension & Weight data can't empty!");
+                    return;
+                }
+
+                var dataTable = (DataTable)this.detailgridbs.DataSource;
+                var list = dataTable.Select("Qty = 0 or UnitID = '' or CTNNW = 0 ").ToList();
+                if (list.Count != 0)
+                {
+                    MyUtility.Msg.WarningBox("Q'ty or Unit or Carton Weight detail data can't be 0.");
+                    return;
+                }
             }
 
             string sqlchk = $@"
