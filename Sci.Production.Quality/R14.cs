@@ -316,9 +316,9 @@ namespace Sci.Production.Quality
                 [RejectPointQty] = siifc.[count],
                 [InspectPoint] = sii.Item ,
                 [Result] = sii.Result,
-                [DefectCode] = case when sii.Item = 'Marker Check' then 'Condition:' + isnull(MC.val,'')
+                [DefectCode] = case when sii.Item = 'Marker Check' then  + isnull(MC.val,'')
 				                when sii.Item = 'Short Width' then 'Fabric Width: ' + CONVERT( varchar, pms_f.Width) + CHAR(10) + 'Actual Width:' + siid.val
-				                when sii.Item = 'Machine Tension' then  isnull('Speed:'+ siid.val,'')
+				                when sii.Item = 'Machine Tension' then  isnull('Speed:'+ mt.val,'')
 				                when sii.Item = 'Fabric Defect' then isnull( fd.val,'')
 				                else '' end ,
                 [LastInspectionDate] = IsNull(sii.EditDate, sii.AddDate),
@@ -440,11 +440,26 @@ namespace Sci.Production.Quality
 			                where EXISTS (select 1 from SpreadingInspection_InsCutRef_Inspection_Detail siid2 with(nolock) 
 							                where siid2.SpreadingInspectionInsCutRefInspectionUkey = sii.Ukey
 							                and sc.ID = siid2.ColumnValue )
-			                and [Type] ='MT'
+			                and [Type] ='MC'
 		                ) s
 	                for xml path ('')
                 ) , 1, 1, '')
                 )MC
+                outer apply
+                (
+                select val = Stuff((
+	                select concat(char(10), s.[Description])
+	                from (
+			                select [Description]
+			                from SpreadingDefectCode sc
+			                where EXISTS (select 1 from SpreadingInspection_InsCutRef_Inspection_Detail siid2 with(nolock) 
+							                where siid2.SpreadingInspectionInsCutRefInspectionUkey = sii.Ukey
+							                and sc.ID = siid2.ColumnValue )
+			                and [Type] ='MT'
+		                ) s
+	                for xml path ('')
+                ) , 1, 1, '')
+                )MT
                 outer apply
                 (
                 select val = Stuff((
@@ -457,13 +472,12 @@ namespace Sci.Production.Quality
 			                where EXISTS (select 1 from SpreadingInspection_InsCutRef_Inspection_Detail siid2 with(nolock) 
 							                where siid2.SpreadingInspectionInsCutRefInspectionUkey = sii.Ukey
 							                and pms_fd.ID = siid2.ColumnValue )
-			                --siid.ColumnValue = pms_fd.ID 
 		                ) s
 	                for xml path ('')
                 ) , 1, 1, '')
                 )FD
                 {this.strSQLWhere}
-                order by SubCutRef";
+                order by [InspectDate],[SubCutRef],sii.Seq";
             }
 
             DualResult result = DBProxy.Current.Select("ManufacturingExecution", sqlcmd, this.lisSqlParameter, out this.printTable);
