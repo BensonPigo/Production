@@ -222,7 +222,7 @@ namespace Sci.Production.Shipping
         // Context Menu選擇Add new Item
         private void AddNewItem()
         {
-            P02_AddNewItem callNewItemForm = new P02_AddNewItem();
+            P02_AddNewItem callNewItemForm = new P02_AddNewItem(this.CurrentMaintain,this.checkBoxDoc.Checked);
             DataRow dr = ((DataTable)this.detailgridbs.DataSource).NewRow();
             dr["ID"] = this.CurrentMaintain["ID"];
             DataTable before_dt = ((DataTable)this.detailgridbs.DataSource).Copy();
@@ -459,6 +459,11 @@ where id='{0}' ", this.CurrentMaintain["ID"]);
 
             this.RenewData();
             this.numericBoxttlGW.Value = MyUtility.Convert.GetDecimal(this.CurrentMaintain["NW"]) + MyUtility.Convert.GetDecimal(this.CurrentMaintain["CTNNW"]);
+
+            var dataTable = (DataTable)this.detailgridbs.DataSource;
+
+            var list = dataTable.Select("CategoryName <> 'Dox'").ToList();
+            this.checkBoxDoc.Checked = list.Count == 0 && dataTable.Rows.Count != 0 ? true : false;
         }
 
         // Context Menu選擇Print
@@ -782,8 +787,8 @@ Order by CTNNo,Seq1,Seq2", masterID);
 
                 var dataTable = (DataTable)this.detailgridbs.DataSource;
 
-                var list = dataTable.Select("CategoryName = 'Dox'").ToList();
-                this.checkBoxDoc.Checked = dataTable.Rows.Count == list.Count ? true : false;
+                var list = dataTable.Select("CategoryName <> 'Dox'").ToList();
+                this.checkBoxDoc.Checked = list.Count == 0 ? true : false;
             }
         }
 

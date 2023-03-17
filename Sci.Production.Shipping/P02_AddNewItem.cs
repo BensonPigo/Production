@@ -16,17 +16,22 @@ namespace Sci.Production.Shipping
     /// </summary>
     public partial class P02_AddNewItem : Win.Subs.Input2A
     {
+        private DataRow P02_Info_dataRows;
+        private bool P02_IsDox;
+
         /// <summary>
         /// P02_AddNewItem
         /// </summary>
-        public P02_AddNewItem()
+        public P02_AddNewItem(DataRow dataRow = null, bool IsDox = false)
         {
             this.InitializeComponent();
             MyUtility.Tool.SetupCombox(this.comboCategory, 2, 1, "5,Dox,6,Machine/Parts,7,Mock Up,8,Other Sample,9,Other Material");
             MyUtility.Tool.SetupCombox(this.comboDoxItem, 2, 1, "1,C/O,2,Payment doc,3,Other");
+            this.P02_Info_dataRows = dataRow;
+            this.P02_IsDox = IsDox;
         }
 
-        /// <inheritdoc/>
+        /// <inheritdoc/>.
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
@@ -148,6 +153,22 @@ from Style s WITH (NOLOCK) where s.ID = '{0}' and s.SeasonID = '{1}'",
         /// <inheritdoc/>
         protected override bool OnSaveBefore()
         {
+
+            if (MyUtility.Convert.GetString(this.P02_Info_dataRows["FreightBy"]).ToUpper() != "HAND CARRY" && !this.P02_IsDox)
+            {
+                if (MyUtility.Check.Empty(this.CurrentData["Qty"]))
+                {
+                    this.editDescription.Focus();
+                    MyUtility.Msg.WarningBox("Qty can't empty!");
+                    return false;
+                }
+                if (MyUtility.Check.Empty(this.CurrentData["UnitID"]))
+                {
+                    this.editDescription.Focus();
+                    MyUtility.Msg.WarningBox("Unit can't empty!");
+                    return false;
+                }
+            }
             #region 檢查必輸欄位
             if (MyUtility.Check.Empty(this.CurrentData["Description"]))
             {
@@ -376,6 +397,11 @@ from Express_Detail WITH (NOLOCK) where ID = '{0}' and Seq2 = ''", MyUtility.Con
 
             if (this.comboCategory.Text == "Dox")
             {
+                if (this.comboDoxItem.Items.Count > 0)
+                {
+                    this.comboDoxItem.SelectedIndex = 0;
+                }
+
                 if (this.comboDoxItem.Text == "C/O" || this.comboDoxItem.Text == "Payment doc")
                 {
                     this.editRemark.WatermarkText = " Please update invoice no.";
@@ -391,7 +417,7 @@ from Express_Detail WITH (NOLOCK) where ID = '{0}' and Seq2 = ''", MyUtility.Con
 
         private void ComboCategory_SelectedValueChanged(object sender, EventArgs e)
         {
-            if(this.comboCategory.Text == "Dox")
+            if (this.comboCategory.Text == "Dox")
             {
                 this.comboDoxItem.Visible = true;
             }

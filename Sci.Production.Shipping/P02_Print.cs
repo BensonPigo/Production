@@ -365,7 +365,7 @@ group by UnitID", MyUtility.Convert.GetString(this.masterData["ID"]));
                     objArray[0, 9] = "$";
                     objArray[0, 10] = dr["Price"];
                     objArray[0, 11] = "$";
-                    objArray[0, 12] = $"=G{rownum}*J{rownum}";
+                    objArray[0, 12] = $"=H{rownum}*K{rownum}";
                     worksheet.Range[string.Format("A{0}:M{0}", rownum)].Value2 = objArray;
                     rownum++;
                 }
@@ -376,20 +376,20 @@ group by UnitID", MyUtility.Convert.GetString(this.masterData["ID"]));
                     int count = 1;
                     foreach (DataRow dr in this.detailSummary.Rows)
                     {
-                        worksheet.Range[string.Format("A{0}:F{0}", MyUtility.Convert.GetString(rownum))].Merge(Type.Missing);
+                        worksheet.Range[string.Format("A{0}:G{0}", MyUtility.Convert.GetString(rownum))].Merge(Type.Missing);
                         if (count == 1)
                         {
                             count++;
                             worksheet.Cells[rownum, 1] = "Total";
 
                             // 文字靠左顯示
-                            worksheet.Range[string.Format("A{0}:F{0}", rownum)].HorizontalAlignment = Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignRight;
+                            worksheet.Range[string.Format("A{0}:G{0}", rownum)].HorizontalAlignment = Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignRight;
                         }
 
-                        worksheet.Cells[rownum, 7] = MyUtility.Convert.GetString(dr["ttlQty"]);
-                        worksheet.Cells[rownum, 8] = MyUtility.Convert.GetString(dr["UnitID"]);
-                        worksheet.Cells[rownum, 11] = "$";
-                        worksheet.Cells[rownum, 12] = $"=sumif(H14:H{lastdetailrow},H{rownum},L14:L{lastdetailrow})";
+                        worksheet.Cells[rownum, 8] = MyUtility.Convert.GetString(dr["ttlQty"]);
+                        worksheet.Cells[rownum, 9] = MyUtility.Convert.GetString(dr["UnitID"]);
+                        worksheet.Cells[rownum, 12] = "$";
+                        worksheet.Cells[rownum, 13] = $"=sumif(I14:I{lastdetailrow},I{rownum},M14:M{lastdetailrow})";
                         rownum++;
                     }
                 }
@@ -408,12 +408,12 @@ group by UnitID", MyUtility.Convert.GetString(this.masterData["ID"]));
 
                 worksheet.Range[string.Format("A5:A{0}", rownum + 2)].Borders.get_Item(Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeLeft).Weight = 2; // 1: 虛線, 2:實線, 3:粗體線
                 worksheet.Range[string.Format("A5:A{0}", rownum + 2)].Borders.get_Item(Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeLeft).LineStyle = 1;
-                worksheet.Range[string.Format("A{0}:L{0}", rownum + 2)].Borders.get_Item(Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeBottom).Weight = 2; // 1: 虛線, 2:實線, 3:粗體線
-                worksheet.Range[string.Format("A{0}:L{0}", rownum + 2)].Borders.get_Item(Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeBottom).LineStyle = 1;
-                worksheet.Range[string.Format("L14:L{0}", rownum + 2)].Borders.get_Item(Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeLeft).Weight = 2; // 1: 虛線, 2:實線, 3:粗體線
-                worksheet.Range[string.Format("L14:L{0}", rownum + 2)].Borders.get_Item(Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeLeft).LineStyle = 1;
-                worksheet.Range[string.Format("L14:L{0}", rownum + 2)].Borders.get_Item(Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeRight).Weight = 2; // 1: 虛線, 2:實線, 3:粗體線
-                worksheet.Range[string.Format("L14:L{0}", rownum + 2)].Borders.get_Item(Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeRight).LineStyle = 1;
+                worksheet.Range[string.Format("A{0}:M{0}", rownum + 2)].Borders.get_Item(Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeBottom).Weight = 2; // 1: 虛線, 2:實線, 3:粗體線
+                worksheet.Range[string.Format("A{0}:M{0}", rownum + 2)].Borders.get_Item(Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeBottom).LineStyle = 1;
+                worksheet.Range[string.Format("M14:M{0}", rownum + 2)].Borders.get_Item(Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeLeft).Weight = 2; // 1: 虛線, 2:實線, 3:粗體線
+                worksheet.Range[string.Format("M14:M{0}", rownum + 2)].Borders.get_Item(Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeLeft).LineStyle = 1;
+                worksheet.Range[string.Format("M14:M{0}", rownum + 2)].Borders.get_Item(Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeRight).Weight = 2; // 1: 虛線, 2:實線, 3:粗體線
+                worksheet.Range[string.Format("M14:M{0}", rownum + 2)].Borders.get_Item(Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeRight).LineStyle = 1;
 
                 // 合併儲存格,文字置左
                 worksheet.Range[string.Format("H{0}:L{0}", MyUtility.Convert.GetString(rownum + 4))].Merge(Type.Missing);
