@@ -516,25 +516,30 @@ values ('{0}','Status','','New','{1}',GETDATE())",
             worksheet.Cells[12, 3] = MyUtility.Convert.GetString(this.CurrentMaintain["ReasonID"]) + "." + this.displayResponsibilityJustifcation.Value;
             worksheet.Cells[13, 3] = MyUtility.Convert.GetString(this.CurrentMaintain["ResponsibleFty"]).ToUpper() == "TRUE" ? "Y" : string.Empty;
             worksheet.Range["C13:I13"].Interior.Color = MyUtility.Convert.GetString(this.CurrentMaintain["ResponsibleFty"]).ToUpper() == "TRUE" ? colorY_Mark : Color.White;
+            worksheet.Range["C13:I13"].Font.Bold = MyUtility.Convert.GetString(this.CurrentMaintain["ResponsibleFty"]).ToUpper() == "TRUE";
             worksheet.Cells[13, 5] = MyUtility.Convert.GetString(this.CurrentMaintain["RatioFty"]) + "%";
             worksheet.Cells[13, 7] = MyUtility.Convert.GetString(this.CurrentMaintain["ResponsibleFtyNo"]);
             worksheet.Cells[14, 3] = MyUtility.Convert.GetString(this.CurrentMaintain["ResponsibleSubcon"]).ToUpper() == "TRUE" ? "Y" : string.Empty;
             worksheet.Range["C14:I14"].Interior.Color = MyUtility.Convert.GetString(this.CurrentMaintain["ResponsibleSubcon"]).ToUpper() == "TRUE" ? colorY_Mark : Color.White;
+            worksheet.Range["C14:I14"].Font.Bold = MyUtility.Convert.GetString(this.CurrentMaintain["ResponsibleSubcon"]).ToUpper() == "TRUE";
             worksheet.Cells[14, 5] = MyUtility.Convert.GetString(this.CurrentMaintain["RatioSubcon"]) + "%";
             worksheet.Cells[14, 7] = MyUtility.Convert.GetString(this.CurrentMaintain["SubconDBCNo"]);
             worksheet.Cells[14, 9] = MyUtility.Convert.GetString(this.CurrentMaintain["SubConName"]);
             worksheet.Cells[15, 3] = MyUtility.Convert.GetString(this.CurrentMaintain["ResponsibleSCI"]).ToUpper() == "TRUE" ? "Y" : string.Empty;
             worksheet.Range["C15:I15"].Interior.Color = MyUtility.Convert.GetString(this.CurrentMaintain["ResponsibleSCI"]).ToUpper() == "TRUE" ? colorY_Mark : Color.White;
+            worksheet.Range["C15:I15"].Font.Bold = MyUtility.Convert.GetString(this.CurrentMaintain["ResponsibleSCI"]).ToUpper() == "TRUE";
             worksheet.Cells[15, 5] = MyUtility.Convert.GetString(this.CurrentMaintain["RatioSCI"]) + "%";
             worksheet.Cells[15, 7] = MyUtility.Convert.GetString(this.CurrentMaintain["SCIICRNo"]);
             worksheet.Cells[15, 9] = MyUtility.Convert.GetString(this.CurrentMaintain["SCIICRRemark"]);
             worksheet.Cells[16, 3] = MyUtility.Convert.GetString(this.CurrentMaintain["ResponsibleSupp"]).ToUpper() == "TRUE" ? "Y" : string.Empty;
             worksheet.Range["C16:I16"].Interior.Color = MyUtility.Convert.GetString(this.CurrentMaintain["ResponsibleSupp"]).ToUpper() == "TRUE" ? colorY_Mark : Color.White;
+            worksheet.Range["C16:I16"].Font.Bold = MyUtility.Convert.GetString(this.CurrentMaintain["ResponsibleSupp"]).ToUpper() == "TRUE";
             worksheet.Cells[16, 5] = MyUtility.Convert.GetString(this.CurrentMaintain["RatioSupp"]) + "%";
             worksheet.Cells[16, 7] = MyUtility.Convert.GetString(this.CurrentMaintain["SuppDBCNo"]);
             worksheet.Cells[16, 9] = MyUtility.Convert.GetString(this.CurrentMaintain["SuppDBCRemark"]);
             worksheet.Cells[17, 3] = MyUtility.Convert.GetString(this.CurrentMaintain["ResponsibleBuyer"]).ToUpper() == "TRUE" ? "Y" : string.Empty;
             worksheet.Range["C17:I17"].Interior.Color = MyUtility.Convert.GetString(this.CurrentMaintain["ResponsibleBuyer"]).ToUpper() == "TRUE" ? colorY_Mark : Color.White;
+            worksheet.Range["C17:I17"].Font.Bold = MyUtility.Convert.GetString(this.CurrentMaintain["ResponsibleBuyer"]).ToUpper() == "TRUE";
             worksheet.Cells[17, 5] = MyUtility.Convert.GetString(this.CurrentMaintain["RatioBuyer"]) + "%";
             worksheet.Cells[17, 7] = MyUtility.Convert.GetString(this.CurrentMaintain["BuyerDBCNo"]);
             worksheet.Cells[17, 9] = MyUtility.Convert.GetString(this.CurrentMaintain["BuyerDBCRemark"]);
@@ -1426,17 +1431,17 @@ where a.ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
                 StringBuilder content = new StringBuilder();
                 #region 組Content
                 content.Append(string.Format(
-                    @"Hi MR team, cc.Production team/GM Team
-Please refer to attachment – air pp request and refer to below datas.
-
-SMR: {0} Ext.{1}, POSMR: {2} Ext.{3}
-{4} - {5} for SP - {6} buyer del: {7} 
-Air q’ty: {8}
-Responsibility: {9}{10}{11}{12}{13}
--Be remind!! ---
-If the responsibility is belong to the supplier or SCI-MR team (posmr team), please key in Debit Note and ICR#, tks!
-If the responsibility is belong to “Buyer”, please remark the reason, tks!
-Remind:Please return the air pp request – approved  within 24hrs to avoid any shipment delay.",
+                    @"<b>Hi MR team, cc.Production team/GM Team<br>
+Please refer to attachment – air pp request and refer to below datas.<br>
+<br>
+SMR: {0} Ext.{1}, POSMR: {2} Ext.{3}<br>
+{4} - {5} for SP - {6} buyer del: {7}<br>
+Air q’ty: {8}<br>
+Responsibility: {9}{10}{11}{12}{13}<br>
+-Be remind!! ---<br>
+If the responsibility is belong to the supplier or SCI-MR team (posmr team), please key in Debit Note and ICR#, tks!<br>
+If the responsibility is belong to “Buyer”, please remark the reason, tks!<br>
+Remind:Please return the air pp request – approved  within 24hrs to avoid any shipment delay.</b>",
                     MyUtility.Convert.GetString(allMail.Rows[0]["SMRName"]),
                     MyUtility.Convert.GetString(allMail.Rows[0]["SMRExtNo"]),
                     MyUtility.Convert.GetString(allMail.Rows[0]["POSMRName"]),
@@ -1482,6 +1487,8 @@ Remind:Please return the air pp request – approved  within 24hrs to avoid any 
                     visibleForm,
                     visibleForm,
                     new List<Attachment>() { imageAttachment });
+
+                // 測試的時候再解開
                 //var email = new MailTo(Env.Cfg.MailFrom, "aaron.shie@sportscity.com.tw", "aaron.shie@sportscity.com.tw", "aaron95271234@gmail.com", subject, content.ToString(), new List<string>() { this.excelFile }, visibleForm, visibleForm, new List<Attachment>() { imageAttachment });
                 //email.MailServerIP = "mail.sportscity.com.tw";
                 //email.MailServerAccount = "foxpro";
