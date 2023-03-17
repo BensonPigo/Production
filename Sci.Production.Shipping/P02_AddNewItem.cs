@@ -153,8 +153,7 @@ from Style s WITH (NOLOCK) where s.ID = '{0}' and s.SeasonID = '{1}'",
         /// <inheritdoc/>
         protected override bool OnSaveBefore()
         {
-
-            if ((MyUtility.Convert.GetString(this.P02_Info_dataRows["FreightBy"]).ToUpper() != "HAND CARRY") || !this.P02_IsDox)
+            if ((MyUtility.Convert.GetString(this.P02_Info_dataRows["FreightBy"]).ToUpper() != "HAND") || !this.P02_IsDox)
             {
                 if (MyUtility.Check.Empty(this.CurrentData["Qty"]))
                 {
