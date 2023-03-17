@@ -133,23 +133,13 @@ select  ted.InventoryPOID,
         ted.Seq2,
         te.ID,
         ted.Ukey,
-        [Description] = dbo.getMtlDesc(ted.InventoryPOID, ted.InventorySeq1, ted.InventorySeq2, 2, 0),
-        Tone
+        [Description] = dbo.getMtlDesc(ted.InventoryPOID, ted.InventorySeq1, ted.InventorySeq2, 2, 0)
 into #tmpTransferExport
 from    TransferExport te with (nolock)
 inner   join TransferExport_Detail ted with (nolock) on te.ID = ted.ID
 left join PO_Supp_Detail psdInv with (nolock) on	ted.InventoryPOID = psdInv.ID and 
 													ted.InventorySeq1 = psdInv.SEQ1 and
 													ted.InventorySeq2 = psdinv.SEQ2
-outer apply(
-    select Tone = MAX(fs.Tone)
-    from dbo.FtyInventory fi WITH (NOLOCK)
-    Left join FIR f with (nolock) on  f.poid = fi.poid and f.seq1 = fi.seq1 and f.seq2 = fi.seq2
-    Left join FIR_Shadebone fs with (nolock) on f.ID = fs.ID and fs.Roll = fi.Roll and fs.Dyelot = fi.Dyelot
-    where fi.POID = ted.InventoryPOID 
-    and fi.seq1 = ted.Inventoryseq1 
-    and fi.seq2 = ted.InventorySEQ2
-)Tone
 where   te.ID = @ID and
         te.FtyStatus = '{TK_FtyStatus.New}' and
         te.Sent = 1 and
@@ -186,12 +176,12 @@ select  [select] = 0,
         te.Description,
         [TransferExportID] = te.ID,
         [TransferExport_DetailUkey] = te.Ukey,
-        Tone
+        fi.Tone
 from  #tmpTransferExport te with (nolock)
 inner join FtyInventory fi on te.InventoryPOID = fi.POID and
                               te.InventorySeq1 = fi.Seq1 and
                               te.InventorySeq2 = fi.Seq2 and
-                              (fi.InQty - fi.OutQty + fi.AdjustQty) > 0
+                              (fi.InQty - fi.OutQty + fi.AdjustQty - ReturnQty) > 0
 union all
 select  [select] = 0,
         [Roll] = '',
@@ -215,7 +205,7 @@ select  [select] = 0,
         te.Description,
         [TransferExportID] = te.ID,
         [TransferExport_DetailUkey] = te.Ukey,
-        Tone
+        Tone = ''
 from    #tmpTransferExport te with (nolock)
 
 

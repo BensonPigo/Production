@@ -806,7 +806,7 @@ select a.id
 	   , seq = concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2)
 	   , a.Roll
 	   , a.Dyelot
-	   , ShadeboneTone.Tone
+	   , fi.Tone
 	   , p1.stockunit
 	   , [Description] = dbo.getMtlDesc(a.poid,a.seq1,a.seq2,2,0) 
 	   , a.Qty
@@ -829,15 +829,6 @@ left join FtyInventory fi WITH (NOLOCK) on a.POID = fi.POID
 										  and a.Dyelot = fi.Dyelot 
 										  and a.StockType = fi.StockType
 left join Lack l with (nolock) on l.POID = a.POID and l.ID = il.RequestID
---left join Lack_Detail ld with (nolock) on ld.ID = l.ID and ld.seq1 = a.SEQ1 and ld.SEQ2 = a.seq2
---left join PPICReason p with (nolock) on p.Type = 'FL' and p.ID = ld.PPICReasonID
-outer apply (
-	select [Tone] = MAX(fs.Tone)
-    from FtyInventory fi2 with (nolock) 
-    Left join FIR f with (nolock) on f.poid = fi2.poid and f.seq1 = fi2.seq1 and f.seq2 = fi2.seq2
-	Left join FIR_Shadebone fs with (nolock) on f.ID = fs.ID and fs.Roll = fi2.Roll and fs.Dyelot = fi2.Dyelot
-	where fi2.Ukey = fi.Ukey
-) ShadeboneTone
 Where a.id = '{0}'", masterID);
             return base.OnDetailSelectCommandPrepare(e);
         }
@@ -1023,20 +1014,13 @@ select  a.POID
         ,dbo.Getlocation(fi.ukey)[Location] 
         ,FI.ContainerCode
         ,a.Remark
-        ,[Tone] = Tone.val
+        ,FI.Tone
 from dbo.IssueLack_detail a WITH (NOLOCK) 
 left join dbo.PO_Supp_Detail b WITH (NOLOCK) on b.id=a.POID and b.SEQ1=a.Seq1 and b.SEQ2=a.seq2
 left join dbo.FtyInventory FI on a.poid = fi.poid and a.seq1 = fi.seq1 and a.seq2 = fi.seq2
     and a.roll = fi.roll and a.stocktype = fi.stocktype and a.Dyelot = fi.Dyelot
-outer apply(select [val] = isnull(max(Tone), '')
-            from FIR f with (nolock)
-            inner join FIR_Shadebone  fs with (nolock) on fs.ID = f.ID
-            where   f.POID = fi.POID and
-                    f.Seq1 = fi.Seq1 and
-                    f.Seq2 = fi.Seq2 and
-                    fs.Roll = fi.Roll and
-                    fs.Dyelot = fi.Dyelot) Tone
-where a.id= @ID";
+where a.id= @ID
+";
             result = DBProxy.Current.Select(string.Empty, sqlcmd, pars, out DataTable dtDetail);
 
             if (!result)
