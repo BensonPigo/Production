@@ -1437,11 +1437,7 @@ Please refer to attachment – air pp request and refer to below datas.<br>
 SMR: {0} Ext.{1}, POSMR: {2} Ext.{3}<br>
 {4} - {5} for SP - {6} buyer del: {7}<br>
 Air q’ty: {8}<br>
-Responsibility: {9}{10}{11}{12}{13}<br>
--Be remind!! ---<br>
-If the responsibility is belong to the supplier or SCI-MR team (posmr team), please key in Debit Note and ICR#, tks!<br>
-If the responsibility is belong to “Buyer”, please remark the reason, tks!<br>
-Remind:Please return the air pp request – approved  within 24hrs to avoid any shipment delay.</b>",
+Responsibility: {9}{10}{11}{12}{13}</b>",
                     MyUtility.Convert.GetString(allMail.Rows[0]["SMRName"]),
                     MyUtility.Convert.GetString(allMail.Rows[0]["SMRExtNo"]),
                     MyUtility.Convert.GetString(allMail.Rows[0]["POSMRName"]),
@@ -1464,6 +1460,14 @@ Remind:Please return the air pp request – approved  within 24hrs to avoid any 
                 // Set the message body to include the image
                 string contentId = Guid.NewGuid().ToString();
                 content.Append(string.Format("<br><img src=\"cid:{0}\">", contentId));
+
+                content.Append(@"
+<b><br>
+-Be remind!! ---
+If the responsibility is belong to the supplier or SCI-MR team (posmr team), please key in Debit Note and ICR#, tks!<br>
+If the responsibility is belong to “Buyer”, please remark the reason, tks!<br>
+Remind:Please return the air pp request – approved  within 24hrs to avoid any shipment delay.</b>
+");
 
                 // Convert the image to a byte array
                 MemoryStream imageStream = new MemoryStream();
