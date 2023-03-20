@@ -99,25 +99,12 @@ select 0 as selected
        , c.outqty
        , c.adjustqty 
        , c.ReturnQty
-       , [Tone] = isnull(ShadeboneTone.Tone,ShadeboneTone2.Tone)
+       , [Tone] = c.Tone
        , [GMTWash] = isnull(GMTWash.val, '')
 from dbo.PO_Supp_Detail psd WITH (NOLOCK) 
 inner join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
 inner join dbo.ftyinventory c WITH (NOLOCK) on c.poid = psd.id and c.seq1 = psd.seq1 and c.seq2 = psd.seq2 and c.stocktype = 'B'
 inner join cte d on d.Dyelot=c.Dyelot
-outer apply (
-    select [Tone] = MAX(fs.Tone)
-    from FtyInventory fi with (nolock) 
-    Left join FIR f with (nolock) on f.poid = fi.poid and f.seq1 = fi.seq1 and f.seq2 = fi.seq2
-    Left join FIR_Shadebone fs with (nolock) on f.ID = fs.ID and fs.Roll = fi.Roll and fs.Dyelot = fi.Dyelot
-    where fi.Ukey = c.Ukey
-) ShadeboneTone
-outer apply (
-	select [Tone] = MAX(fs.Tone)
-	from FIR f with (nolock) 
-	Left join FIR_Shadebone fs with (nolock) on f.ID = fs.ID and fs.Roll = Rtrim(Ltrim(c.Roll)) and fs.Dyelot = Rtrim(Ltrim(c.Dyelot))
-	where f.POID = psd.StockPOID and f.SEQ1 = psd.StockSeq1 and f.SEQ2 = psd.StockSeq2
-) ShadeboneTone2
 outer apply(
     select top 1 [val] =  case  when sr.Status = 'Confirmed' then 'Done'
 			                    when tt.Status = 'Confirmed' then 'Ongoing'

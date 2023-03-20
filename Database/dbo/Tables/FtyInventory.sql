@@ -20,6 +20,7 @@
     [ContainerCode] NVARCHAR(100) NULL DEFAULT (''), 
     [BarcodeSeq] VARCHAR(10) NULL DEFAULT (''), 
     [SubConStatus] VARCHAR(20) CONSTRAINT [DF_AFtyInventory_SubConStatus] DEFAULT(('')) NOT NULL, 
+    [Tone] VARCHAR(8) NOT NULL DEFAULT (('')), 
     CONSTRAINT [PK_FtyInventory] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
 
@@ -168,3 +169,12 @@ EXEC sp_addextendedproperty @name = N'MS_Description',
     @level1name = N'FtyInventory',
     @level2type = N'COLUMN',
     @level2name = N'BarcodeSeq'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'色調',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'FtyInventory',
+    @level2type = N'COLUMN',
+    @level2name = N'Tone'

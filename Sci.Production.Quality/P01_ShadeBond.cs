@@ -349,6 +349,35 @@ namespace Sci.Production.Quality
             selectDr["scale"] = string.Empty;
         }
 
+        /// <inheritdoc/>
+        protected override DualResult OnSavePost()
+        {
+            if (this.gridbs.DataSource != null)
+            {
+                DataTable dt = (DataTable)this.gridbs.DataSource;
+                if (dt.Rows.Count > 0)
+                {
+                    string sqlcmd = $@"
+update FtyInventory
+set Tone = #tmp.Tone
+from #tmp
+inner join FtyInventory on FtyInventory.POID = #tmp.POID
+                       and FtyInventory.Seq1 = #tmp.Seq1
+                       and FtyInventory.Seq2 = #tmp.Seq2
+                       and FtyInventory.Roll = #tmp.Roll
+                       and FtyInventory.Dyelot = #tmp.Dyelot
+";
+                    DualResult result = MyUtility.Tool.ProcessWithDatatable(dt, "POID,Seq1,Seq2,Roll,Dyelot,Tone", sqlcmd, out DataTable odt);
+                    if (!result)
+                    {
+                        return result;
+                    }
+                }
+            }
+
+            return base.OnSavePost();
+        }
+
         private void BtnEncode_Click(object sender, EventArgs e)
         {
             string updatesql = string.Empty;
