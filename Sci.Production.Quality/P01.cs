@@ -496,25 +496,35 @@ and ActualYds > 0
                 .Text("weavetypeid", header: "Weave Type", width: Widths.AnsiChars(20), iseditingreadonly: true)
                 .Date("InspDeadline", header: "Insp. Deadline", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("Result", header: "Over all\n Result", width: Widths.AnsiChars(4), iseditingreadonly: true)
+
+                // Shade
+                .CheckBox("NonShadeBond", header: "Shade\nBandN/A", width: Widths.AnsiChars(2), iseditable: true, trueValue: 1, falseValue: 0, settings: nonSha)
+                .Text("Shadebond", header: "Shade\nBand", width: Widths.AnsiChars(4), iseditingreadonly: true, settings: sha)
+                .Date("ShadeBondDate", header: "Last Shade.\nTest. Date", width: Widths.AnsiChars(10), iseditingreadonly: true, settings: shaD)
+
+                // Physical
                 .CheckBox("NonPhysical", header: "Physical N/A", width: Widths.AnsiChars(2), iseditable: true, trueValue: 1, falseValue: 0, settings: nonPhy)
                 .Text("Physical", header: "Physical\n Inspection", width: Widths.AnsiChars(4), iseditingreadonly: true, settings: phy)
                 .Numeric("TotalInspYds", header: "Act. Ttl Ysd\nInspection", width: Widths.AnsiChars(8), integer_places: 10, decimal_places: 2, iseditingreadonly: true, settings: phyYds)
                 .Date("PhysicalDate", header: "Last Phy.\nInsp. Date", width: Widths.AnsiChars(10), iseditingreadonly: true, settings: phyD)
                 .Text("CustInspNumber", header: "Cust Insp. Number", width: Widths.AnsiChars(12))
-                .CheckBox("NonWeight", header: "Weight N/A", width: Widths.AnsiChars(2), iseditable: true, trueValue: 1, falseValue: 0, settings: nonWei)
-                .Text("Weight", header: "Weight\n Test", width: Widths.AnsiChars(4), iseditingreadonly: true, settings: wei)
-                .Date("WeightDate", header: "Last Wei.\nTest. Date", width: Widths.AnsiChars(10), iseditingreadonly: true, settings: weiD)
-                .CheckBox("NonShadeBond", header: "Shade\nBandN/A", width: Widths.AnsiChars(2), iseditable: true, trueValue: 1, falseValue: 0, settings: nonSha)
-                .Text("Shadebond", header: "Shade\nBand", width: Widths.AnsiChars(4), iseditingreadonly: true, settings: sha)
-                .Date("ShadeBondDate", header: "Last Shade.\nTest. Date", width: Widths.AnsiChars(10), iseditingreadonly: true, settings: shaD)
+
+                // Continuity
                 .CheckBox("NonContinuity", header: "Continuity \nN/A", width: Widths.AnsiChars(2), iseditable: true, trueValue: 1, falseValue: 0, settings: nonCon)
                 .Text("Continuity", header: "Continuity", width: Widths.AnsiChars(5), iseditingreadonly: true, settings: con)
                 .Date("ContinuityDate", header: "Last Cont.\nTest. Date", width: Widths.AnsiChars(10), iseditingreadonly: true, settings: conD)
 
+                // Weight
+                .CheckBox("NonWeight", header: "Weight N/A", width: Widths.AnsiChars(2), iseditable: true, trueValue: 1, falseValue: 0, settings: nonWei)
+                .Text("Weight", header: "Weight\n Test", width: Widths.AnsiChars(4), iseditingreadonly: true, settings: wei)
+                .Date("WeightDate", header: "Last Wei.\nTest. Date", width: Widths.AnsiChars(10), iseditingreadonly: true, settings: weiD)
+
+                // Odor
                 .CheckBox("nonOdor", header: "Odor \nN/A", width: Widths.AnsiChars(2), iseditable: true, trueValue: 1, falseValue: 0, settings: nonOdor)
                 .Text("Odor", header: "Odor", width: Widths.AnsiChars(5), iseditingreadonly: true, settings: odor)
                 .Date("OdorDate", header: "Last Odor\nTest. Date", width: Widths.AnsiChars(10), iseditingreadonly: true, settings: odorD)
 
+                // Moisture
                 .CheckBox("nonMoisture", header: "Moisture \nN/A", width: Widths.AnsiChars(2), iseditable: true, trueValue: 1, falseValue: 0, settings: nonMoisture)
                 .Text("Moisture", header: "Moisture", width: Widths.AnsiChars(5), iseditingreadonly: true, settings: moisture)
                 .Date("MoistureDate", header: "Last Moisture\nTest. Date", width: Widths.AnsiChars(10), iseditingreadonly: true, settings: moistureD)
