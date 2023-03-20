@@ -855,6 +855,11 @@ else
                         throw result.GetException();
                     }
 
+                    if (!(result = Prgs.UpdateFtyInventoryTone((DataTable)this.detailgridbs.DataSource)))
+                    {
+                        throw result.GetException();
+                    }
+
                     transactionscope.Complete();
                 }
                 catch (Exception ex)

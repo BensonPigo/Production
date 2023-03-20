@@ -588,8 +588,8 @@ drop table #tmp, #tmpL, #tmpMatchFabric");
             MyUtility.Excel.CopyToXls(this.printData[0], string.Empty, "Cutting_R03_CuttingScheduleListReport.xltx", 2, false, null, excelapp);
 
             // Perimeter(Decimal)
-            int perimeterCol = this.printData[0].Columns.Count - 3;
-            excelapp.Cells[3, perimeterCol] = $"=IFERROR(LEFT(AP3,SEARCH(\"yd\",AP3,1)-1)+0+(IFERROR(RIGHT(LEFT(AP3,SEARCH(\"\"\"\",AP3,1)-1),2)+0,0)+IFERROR(VLOOKUP(RIGHT(AP3,2)+0,data!$A$1:$B$8,2,TRUE),0))/36,\"\")";
+            int perimeterCol = this.printData[0].Columns.Count - 6;
+            excelapp.Cells[3, perimeterCol] = $"=IFERROR(LEFT(AS3,SEARCH(\"yd\",AS3,1)-1)+0+(IFERROR(RIGHT(LEFT(AS3,SEARCH(\"\"\"\",AS3,1)-1),2)+0,0)+IFERROR(VLOOKUP(RIGHT(AS3,2)+0,data!$A$1:$B$8,2,TRUE),0))/36,\"\")";
             int rowct = this.printData[0].Rows.Count + 2;
 
             // 複製公式 貼到全部列

@@ -778,6 +778,7 @@ SET
     ,a.[BomTypeCareCode]         = isnull(b.[BomTypeCareCode]        , 0)
     ,a.[CannotOperateStock]      = isnull(b.[CannotOperateStock]     , 0)
     ,a.IsFOC = isnull(b.IsFOC, 0)
+	,a.Picture = ISNULL(b.Picture,'')
 from Production.dbo.Fabric as a 
 inner join Trade_To_Pms.dbo.Fabric as b ON a.SCIRefno=b.SCIRefno
 
@@ -833,6 +834,7 @@ INSERT INTO Production.dbo.Fabric(
         ,[BomTypeCareCode]
         ,[CannotOperateStock]
         ,IsFOC
+		,Picture
 )
 select 
       SCIRefno
@@ -886,6 +888,7 @@ select
     ,isnull([BomTypeCareCode]        , 0)
     ,isnull([CannotOperateStock]     , 0)
     ,isnull(IsFOC, 0)
+	,ISNULL(Picture,'')
 from Trade_To_Pms.dbo.Fabric as b WITH (NOLOCK)
 where not exists(select SCIRefno from Production.dbo.Fabric as a WITH (NOLOCK) where a.SCIRefno = b.SCIRefno)
 

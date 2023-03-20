@@ -150,7 +150,8 @@ namespace Sci.Production.Warehouse
                  .Text("Roll", header: "Roll#", width: Widths.AnsiChars(8), iseditingreadonly: true)
                  .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(8), iseditingreadonly: true)
                  .Button(propertyname: "Barcode", header: "Print Barcode", width: Widths.AnsiChars(16), onclick: this.PrintBarcode)
-                 .Text("Refno", header: "Ref#", width: Widths.AnsiChars(8), iseditingreadonly: true)
+                 .Text("Refno", header: "Ref#", width: Widths.AnsiChars(12), iseditingreadonly: true)
+                 .Numeric("Relaxtime", header: "Relaxtime\n(Hours)", width: Widths.AnsiChars(10), decimal_places: 2, integer_places: 7, iseditingreadonly: true)
                  .Text("Stocktransfer", header: "Stock Transfer", width: Widths.AnsiChars(8), iseditingreadonly: true)
                  .Text("Color", header: "Color", width: Widths.AnsiChars(6), iseditingreadonly: true)
                  .Text("ColorName", header: "Color Name", width: Widths.AnsiChars(10), iseditingreadonly: true)
@@ -429,6 +430,7 @@ from
         ,ReceivingRemark = rd.remark
         ,WhseArrival = r.WhseArrival
         ,[ColorName] = c.Name
+        ,[Relaxtime] = rel.Relaxtime
     from  Receiving r with (nolock)
     inner join Receiving_Detail rd with (nolock) on r.ID = rd.ID
     inner join View_WH_Orders o with (nolock) on o.ID = rd.POID 
@@ -472,7 +474,14 @@ from
                          from   WHBarcodeTransaction wbt with (nolock)
                          where  wbt.TransactionUkey = rd.Ukey and
                                 wbt.Action = 'Confirm'
-                         order by CommitTime desc) Barcode
+                         order by CommitTime desc
+    ) Barcode
+    outer apply(
+       select fr.Relaxtime
+        from [ExtendServer].[ManufacturingExecution].[dbo].RefnoRelaxtime rr
+        inner join [ExtendServer].[ManufacturingExecution].[dbo].FabricRelaxation fr on rr.FabricRelaxationID = fr.ID
+        where rr.Refno = psd.Refno
+    ) Rel
     where r.MDivisionID  = '{Env.User.Keyword}'
     AND psd.FabricType ='F'
     {sqlWhere}
@@ -529,6 +538,7 @@ from
         ,ReceivingRemark = td.Remark
         ,WhseArrival = t.IssueDate
         ,[ColorName] = c.Name
+        ,[Relaxtime] = rel.Relaxtime
     FROM TransferIn t with (nolock)
     INNER JOIN TransferIn_Detail td with (nolock) ON t.ID = td.ID
     INNER JOIN View_WH_Orders o with (nolock) ON o.ID = td.POID
@@ -572,7 +582,14 @@ from
                          from   WHBarcodeTransaction wbt with (nolock)
                          where  wbt.TransactionUkey = td.Ukey and
                                 wbt.Action = 'Confirm'
-                         order by CommitTime desc) Barcode
+                         order by CommitTime desc
+    ) Barcode
+    outer apply(
+        select fr.Relaxtime
+        from [ExtendServer].[ManufacturingExecution].[dbo].RefnoRelaxtime rr
+        inner join [ExtendServer].[ManufacturingExecution].[dbo].FabricRelaxation fr on rr.FabricRelaxationID = fr.ID
+        where rr.Refno = psd.Refno
+    ) Rel
     WHERE t.Status='Confirmed' 
     AND t.MDivisionID  = '{Env.User.Keyword}'
     AND psd.FabricType ='F'
