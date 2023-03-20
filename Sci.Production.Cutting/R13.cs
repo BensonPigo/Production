@@ -134,21 +134,13 @@ namespace Sci.Production.Cutting
             [LackingLayers] = isnull(acc.val,0),
             [Ratio] = stuff(SQty.val,1,1,''),
             [Consumption] = sum(wo.cons) ,
-            [Act. Cons. Output] = sum(cast(isnull(iif(wo.Layer - isnull(acc.val,0) = 0, wo.Cons, acc.val * dbo.MarkerLengthToYDS(wo.MarkerLength)),0) as numeric(9,4))) ,
-            [Balance Cons.] = sum(wo.cons) - sum(cast(isnull(iif(wo.Layer - isnull(acc.val,0) = 0, wo.Cons, acc.val * dbo.MarkerLengthToYDS(wo.MarkerLength)),0) as numeric(9,4))),	
             [Marker Name] = wo.Markername,
             [Marker No.] = wo.MarkerNo,
-            [Marker Length] = wo.MarkerLength,
-            [Cutting Perimeter] = wo.ActCuttingPerimeter,
-            [Straight Length] = wo.StraightLength,
-            [Curved Length] = wo.CurvedLength,
-            [Delay Reason] =dw.[Name],
-            [Remark] = wo.Remark
+            [Marker Length] = wo.MarkerLength
             into #tmp
             from WorkOrder wo
             left join Orders o WITH (NOLOCK) on o.id = wo.ID
             left join Cutting c WITH (NOLOCK) on c.ID = o.CuttingSP
-            left join DropDownList dw with (nolock) on dw.Type = 'PMS_UnFinCutReason' and dw.ID = wo.UnfinishedCuttingReason
             left join fabric f WITH (NOLOCK) on f.SCIRefno = wo.SCIRefno
             outer apply(select val = sum(aa.Layer) from cuttingoutput_Detail aa WITH (NOLOCK) where aa.CutRef = wo.CutRef)acc
             outer apply(
@@ -170,8 +162,7 @@ namespace Sci.Production.Cutting
             {this.strWhere}
             group by wo.MDivisionId,wo.FactoryID,f.WeaveTypeID,wo.EstCutDate,MincDate.MincoDate,c.SewInLine,wo.ID,o.BrandID,o.StyleID,
 		                wo.Refno,c.WorkType,wo.CutRef,wo.Cutno,wo.SpreadingNoID,wo.CutCellid,wo.FabricCombo,sqty.val,
-		                wo.Markername,wo.MarkerNo,wo.MarkerLength,wo.ActCuttingPerimeter,wo.StraightLength,wo.CurvedLength,dw.[Name],wo.Remark
-		            ,acc.val
+		                wo.Markername,wo.MarkerNo,wo.MarkerLength,acc.val
             select 
             [M],
             [Factory],
@@ -200,24 +191,26 @@ namespace Sci.Production.Cutting
             [LackingLayers] = sum([Layers])-[LackingLayers],
             [Ratio],
             sum([Consumption]),
-            sum([Act. Cons. Output]),
-            sum([Balance Cons.]),
+            [Act. Cons. Output] = cast(isnull(iif(sum([Layers])-[LackingLayers] = 0, sum([Consumption]), [LackingLayers]* dbo.MarkerLengthToYDS([Marker Length])),0) as numeric(9,4)),
+            [Balance Cons.] = sum([Consumption])- cast(isnull(iif(sum([Layers])-[LackingLayers] = 0, sum([Consumption]), [LackingLayers]* dbo.MarkerLengthToYDS([Marker Length])),0) as numeric(9,4)),
             [Marker Name],
             [Marker No.],
             [Marker Length],
-            [Cutting Perimeter],
-            [Straight Length],
-            [Curved Length],
-            [Delay Reason],
-            [Remark]
-            from #tmp
+            [Cutting Perimeter] = wk.ActCuttingPerimeter,
+            [Straight Length] = wk.StraightLength,
+            [Curved Length] = wk.CurvedLength,
+            [Delay Reason] = dw.[Name],
+            [Remark] = wk.Remark
+            from #tmp t
+            outer apply (select TOP 1 ActCuttingPerimeter,StraightLength,CurvedLength,Remark,UnfinishedCuttingReason from WorkOrder wo with (nolock) where wo.CutRef = t.[Ref#]) wk
+            left join DropDownList dw with (nolock) on dw.Type = 'PMS_UnFinCutReason' and dw.ID = wk.UnfinishedCuttingReason
 			
             group by [M],[Factory],[Fabrication],[Est.Cutting Date],[Act.Cutting Date],[Earliest Sewing Inline],
             [Master SP#],[Brand],[Style#],[FabRef#],[Switch to Workorder],[Ref#],
             [Cut#],[SpreadingNoID],[Cut Cell],[Combination],[LackingLayers],[Ratio],[Marker Name],
-            [Marker No.], [Marker Length],[Cutting Perimeter],
-            [Straight Length],[Curved Length],
-            [Delay Reason],[Remark]
+            [Marker No.], [Marker Length],wk.ActCuttingPerimeter,
+            wk.StraightLength,wk.CurvedLength,
+            dw.[Name],wk.Remark
 
             drop table #tmp";
 
