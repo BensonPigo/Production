@@ -142,12 +142,17 @@ namespace Sci.Production.Cutting
             left join Orders o WITH (NOLOCK) on o.id = wo.ID
             left join Cutting c WITH (NOLOCK) on c.ID = o.CuttingSP
             left join fabric f WITH (NOLOCK) on f.SCIRefno = wo.SCIRefno
-            outer apply(select val = sum(aa.Layer) from cuttingoutput_Detail aa WITH (NOLOCK) where aa.CutRef = wo.CutRef)acc
             outer apply(
-                Select MincoDate = MIN(co.cdate)
+                select val = sum(aa.Layer) 
+                from cuttingoutput_Detail aa WITH (NOLOCK)
+                inner join CuttingOutput c WITH (NOLOCK) on aa.ID = c.ID
+                where aa.CutRef = wo.CutRef and c.FactoryID = wo.FactoryID
+            )acc
+            outer apply(
+                 Select MincoDate = MIN(co.cdate)
 	            From cuttingoutput co WITH (NOLOCK) 
 	            inner join cuttingoutput_detail cod WITH (NOLOCK) on co.id = cod.id
-	            Where cod.CutRef = wo.CutRef and co.Status != 'New' 
+	            Where cod.CutRef = wo.CutRef and co.Status != 'New' and co.FactoryID = wo.FactoryID
             )MincDate
             outer apply(
 	            select val = (
