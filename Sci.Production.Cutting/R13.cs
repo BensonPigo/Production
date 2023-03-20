@@ -114,8 +114,7 @@ namespace Sci.Production.Cutting
         protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             string sqlCmd = $@"
-            select 
-            [M] = wo.MDivisionID,
+            select [M] = wo.MDivisionID,
             [Factory] = wo.FactoryID,
             [Fabrication] = f.WeaveTypeID,
             [Est.Cutting Date]= wo.EstCutDate,
@@ -132,7 +131,7 @@ namespace Sci.Production.Cutting
             [Cut Cell] = wo.CutCellID,
             [Combination] = wo.FabricCombo,
             [Layers] = sum(wo.Layer),
-            [LackingLayers] = sum(wo.Layer) - sum(isnull(acc.val,0)),
+            [LackingLayers] = isnull(acc.val,0),
             [Ratio] = stuff(SQty.val,1,1,''),
             [Consumption] = sum(wo.cons) ,
             [Act. Cons. Output] = sum(cast(isnull(iif(wo.Layer - isnull(acc.val,0) = 0, wo.Cons, acc.val * dbo.MarkerLengthToYDS(wo.MarkerLength)),0) as numeric(9,4))) ,
@@ -144,17 +143,16 @@ namespace Sci.Production.Cutting
             [Straight Length] = wo.StraightLength,
             [Curved Length] = wo.CurvedLength,
             [Delay Reason] =dw.[Name],
-            [Remark] = wo.Remark,
-            f.WeaveTypeID
+            [Remark] = wo.Remark
             into #tmp
-            from WorkOrder wo WITH (NOLOCK) 
-            left join Orders o WITH (NOLOCK) on o.id = wo.OrderID
+            from WorkOrder wo
+            left join Orders o WITH (NOLOCK) on o.id = wo.ID
             left join Cutting c WITH (NOLOCK) on c.ID = o.CuttingSP
             left join DropDownList dw with (nolock) on dw.Type = 'PMS_UnFinCutReason' and dw.ID = wo.UnfinishedCuttingReason
             left join fabric f WITH (NOLOCK) on f.SCIRefno = wo.SCIRefno
             outer apply(select val = sum(aa.Layer) from cuttingoutput_Detail aa WITH (NOLOCK) where aa.CutRef = wo.CutRef)acc
             outer apply(
-                Select MincoDate = iif(sum(cod.Layer) = wo.Layer, Max(co.cdate),null)
+                Select MincoDate = MIN(co.cdate)
 	            From cuttingoutput co WITH (NOLOCK) 
 	            inner join cuttingoutput_detail cod WITH (NOLOCK) on co.id = cod.id
 	            Where cod.CutRef = wo.CutRef and co.Status != 'New' 
@@ -167,19 +165,19 @@ namespace Sci.Production.Cutting
 		            for xml path('')
 	            )
             )as SQty
-
-            where 1=1
+            where 
+            1=1 
             {this.strWhere}
-           group by wo.MDivisionId,wo.FactoryID,f.WeaveTypeID,wo.EstCutDate,MincDate.MincoDate,c.SewInLine,wo.ID,o.BrandID,o.StyleID,
-		    wo.Refno,c.WorkType,wo.CutRef,wo.Cutno,wo.SpreadingNoID,wo.CutCellid,wo.FabricCombo,sqty.val,
-		    wo.Markername,wo.MarkerNo,wo.MarkerLength,wo.ActCuttingPerimeter,wo.StraightLength,wo.CurvedLength,dw.[Name],wo.Remark
-
+            group by wo.MDivisionId,wo.FactoryID,f.WeaveTypeID,wo.EstCutDate,MincDate.MincoDate,c.SewInLine,wo.ID,o.BrandID,o.StyleID,
+		                wo.Refno,c.WorkType,wo.CutRef,wo.Cutno,wo.SpreadingNoID,wo.CutCellid,wo.FabricCombo,sqty.val,
+		                wo.Markername,wo.MarkerNo,wo.MarkerLength,wo.ActCuttingPerimeter,wo.StraightLength,wo.CurvedLength,dw.[Name],wo.Remark
+		            ,acc.val
             select 
             [M],
             [Factory],
             [Fabrication],
             [Est.Cutting Date],
-            [Act.Cutting Date],
+            [Act.Cutting Date] = IIF(sum([Layers]) = [LackingLayers],[Act.Cutting Date],Null),
             [Earliest Sewing Inline],
             [Master SP#], 
             [Brand],
@@ -199,7 +197,7 @@ namespace Sci.Production.Cutting
 					            when sum([Layers]) between 31 and 50 then '31~50'
 					            else '50 above'
 					            end ,
-            [LackingLayers],
+            [LackingLayers] = sum([Layers])-[LackingLayers],
             [Ratio],
             sum([Consumption]),
             sum([Act. Cons. Output]),
@@ -220,6 +218,7 @@ namespace Sci.Production.Cutting
             [Marker No.], [Marker Length],[Cutting Perimeter],
             [Straight Length],[Curved Length],
             [Delay Reason],[Remark]
+
             drop table #tmp";
 
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out this.printData);
