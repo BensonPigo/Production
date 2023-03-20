@@ -182,25 +182,25 @@ select id.POID,
         p.Scirefno,
 	    p.seq1,
 	    p.seq2,
-	    [desc] =IIF((p.ID = lag(p.ID,1,'')over (order by id.POID,p.seq1,p.seq2,Tone.val,fi.ContainerCode,id.Dyelot,id.Roll) 
-					AND(p.seq1 = lag(p.seq1,1,'')over (order by id.POID,p.seq1,p.seq2,Tone.val,fi.ContainerCode,id.Dyelot,id.Roll))
-					AND(p.seq2 = lag(p.seq2,1,'')over (order by id.POID,p.seq1,p.seq2,Tone.val,fi.ContainerCode,id.Dyelot,id.Roll))) 
+	    [desc] =IIF((p.ID = lag(p.ID,1,'')over (order by id.POID,p.seq1,p.seq2,fi.Tone,fi.ContainerCode,id.Dyelot,id.Roll) 
+					AND(p.seq1 = lag(p.seq1,1,'')over (order by id.POID,p.seq1,p.seq2,fi.Tone,fi.ContainerCode,id.Dyelot,id.Roll))
+					AND(p.seq2 = lag(p.seq2,1,'')over (order by id.POID,p.seq1,p.seq2,fi.Tone,fi.ContainerCode,id.Dyelot,id.Roll))) 
 					,''
 					,dbo.getMtlDesc(id.poid,id.seq1,id.seq2,2,0)
 				)
 				------ + Tone------
-				 + char(10) + char(13) + IIF((p.ID = lag(p.ID,1,'')over (order by id.POID,p.seq1,p.seq2,Tone.val,fi.ContainerCode,id.Dyelot,id.Roll) 
-					AND(p.seq1 = lag(p.seq1,1,'')over (order by id.POID,p.seq1,p.seq2,Tone.val,fi.ContainerCode,id.Dyelot,id.Roll))
-					AND(p.seq2 = lag(p.seq2,1,'')over (order by id.POID,p.seq1,p.seq2,Tone.val,fi.ContainerCode,id.Dyelot,id.Roll))
-					AND(Tone.val = lag(Tone.val,1,'')over (order by id.POID,p.seq1,p.seq2,Tone.val,fi.ContainerCode,id.Dyelot,id.Roll))) 
+				 + char(10) + char(13) + IIF((p.ID = lag(p.ID,1,'')over (order by id.POID,p.seq1,p.seq2,fi.Tone,fi.ContainerCode,id.Dyelot,id.Roll) 
+					AND(p.seq1 = lag(p.seq1,1,'')over (order by id.POID,p.seq1,p.seq2,fi.Tone,fi.ContainerCode,id.Dyelot,id.Roll))
+					AND(p.seq2 = lag(p.seq2,1,'')over (order by id.POID,p.seq1,p.seq2,fi.Tone,fi.ContainerCode,id.Dyelot,id.Roll))
+					AND(fi.Tone = lag(fi.Tone,1,'')over (order by id.POID,p.seq1,p.seq2,fi.Tone,fi.ContainerCode,id.Dyelot,id.Roll))) 
 					,''
 					,'Tone/Grp : '
-                    ) + Tone.val
+                    ) + fi.Tone
 				------ + MDesc------
-                    + char(10) + char(13) + IIF((p.ID = lag(p.ID,1,'')over (order by id.POID,p.seq1,p.seq2,Tone.val,fi.ContainerCode,id.Dyelot,id.Roll) 
-					AND(p.seq1 = lag(p.seq1,1,'')over (order by id.POID,p.seq1,p.seq2,Tone.val,fi.ContainerCode,id.Dyelot,id.Roll))
-					AND(p.seq2 = lag(p.seq2,1,'')over (order by id.POID,p.seq1,p.seq2,Tone.val,fi.ContainerCode,id.Dyelot,id.Roll))
-					AND(Tone.val = lag(Tone.val,1,'')over (order by id.POID,p.seq1,p.seq2,Tone.val,fi.ContainerCode,id.Dyelot,id.Roll))) 
+                    + char(10) + char(13) + IIF((p.ID = lag(p.ID,1,'')over (order by id.POID,p.seq1,p.seq2,fi.Tone,fi.ContainerCode,id.Dyelot,id.Roll) 
+					AND(p.seq1 = lag(p.seq1,1,'')over (order by id.POID,p.seq1,p.seq2,fi.Tone,fi.ContainerCode,id.Dyelot,id.Roll))
+					AND(p.seq2 = lag(p.seq2,1,'')over (order by id.POID,p.seq1,p.seq2,fi.Tone,fi.ContainerCode,id.Dyelot,id.Roll))
+					AND(fi.Tone = lag(fi.Tone,1,'')over (order by id.POID,p.seq1,p.seq2,fi.Tone,fi.ContainerCode,id.Dyelot,id.Roll))) 
 					,''
 					,isnull(iif(p.FabricType='F', 'Relaxation Type：'+(select FabricRelaxationID from [dbo].[SciMES_RefnoRelaxtime] where Refno = p.Refno), ''),'')
                     ),
@@ -209,10 +209,10 @@ select id.POID,
 	    id.Qty,
 	    p.StockUnit,
         dbo.Getlocation(fi.ukey) [location],
-        ContainerCode = IIF((p.ID = lag(p.ID,1,'')over (order by id.POID,p.seq1,p.seq2,Tone.val,fi.ContainerCode,id.Dyelot,id.Roll) 
-					AND(p.seq1 = lag(p.seq1,1,'')over (order by id.POID,p.seq1,p.seq2,Tone.val,fi.ContainerCode,id.Dyelot,id.Roll))
-					AND(p.seq2 = lag(p.seq2,1,'')over (order by id.POID,p.seq1,p.seq2,Tone.val,fi.ContainerCode,id.Dyelot,id.Roll))
-					AND(fi.ContainerCode = lag(fi.ContainerCode,1,'')over (order by id.POID,p.seq1,p.seq2,Tone.val,fi.ContainerCode,id.Dyelot,id.Roll))
+        ContainerCode = IIF((p.ID = lag(p.ID,1,'')over (order by id.POID,p.seq1,p.seq2,fi.Tone,fi.ContainerCode,id.Dyelot,id.Roll) 
+					AND(p.seq1 = lag(p.seq1,1,'')over (order by id.POID,p.seq1,p.seq2,fi.Tone,fi.ContainerCode,id.Dyelot,id.Roll))
+					AND(p.seq2 = lag(p.seq2,1,'')over (order by id.POID,p.seq1,p.seq2,fi.Tone,fi.ContainerCode,id.Dyelot,id.Roll))
+					AND(fi.ContainerCode = lag(fi.ContainerCode,1,'')over (order by id.POID,p.seq1,p.seq2,fi.Tone,fi.ContainerCode,id.Dyelot,id.Roll))
 					) 
 					,''
 					,fi.ContainerCode),
@@ -248,14 +248,6 @@ Outer apply (
 	and fi.StockType = rd.StockType
 	and p.FabricType = 'F'
 )rd
-outer apply(select [val] = isnull(max(Tone), '')
-            from FIR f with (nolock)
-            inner join FIR_Shadebone  fs with (nolock) on fs.ID = f.ID
-            where   f.POID = fi.POID and
-                    f.Seq1 = fi.Seq1 and
-                    f.Seq2 = fi.Seq2 and
-                    fs.Roll = fi.Roll and
-                    fs.Dyelot = fi.Dyelot) Tone
 Outer apply (
 	select [Weight] = SUM(td.Weight)
 		, [ActualWeight] = SUM(td.ActualWeight)
@@ -270,7 +262,7 @@ Outer apply (
 	and p.FabricType = 'F'
 )td
 where id.id= @ID
-order by id.POID,p.seq1,p.seq2,Tone.val,fi.ContainerCode,id.Dyelot,id.Roll
+order by id.POID,p.seq1,p.seq2,fi.Tone,fi.ContainerCode,id.Dyelot,id.Roll
 ";
             result = DBProxy.Current.Select(string.Empty, sqlcmd, pars, out DataTable dtDetail);
             if (!result)
@@ -943,7 +935,7 @@ select  o.FtyGroup
         , dbo.getmtldesc(a.poid,a.seq1,a.seq2,2,0) as [description]
         , a.Roll
         , a.Dyelot
-        , ShadeboneTone.Tone
+        , c.Tone
         , a.Qty
         , a.StockType
         , Isnull(c.inqty - c.outqty + c.adjustqty - c.ReturnQty,0.00) as balance
@@ -979,13 +971,6 @@ left join PO_Supp p WITH (NOLOCK) on p.ID = psd.ID and psd.seq1 = p.SEQ1
 left join dbo.ftyinventory c WITH (NOLOCK) on c.poid = a.poid and c.seq1 = a.seq1 and c.seq2  = a.seq2 
     and c.stocktype = 'B' and c.roll=a.roll and a.Dyelot = c.Dyelot
 left join fabric f with(nolock) on f.SCIRefno = psd.SCIRefno
-outer apply (
-	select [Tone] = MAX(fs.Tone)
-    from FtyInventory fi with (nolock) 
-    Left join FIR f with (nolock) on f.poid = fi.poid and f.seq1 = fi.seq1 and f.seq2 = fi.seq2
-	Left join FIR_Shadebone fs with (nolock) on f.ID = fs.ID and fs.Roll = fi.Roll and fs.Dyelot = fi.Dyelot
-	where fi.Ukey = ｃ.Ukey
-) ShadeboneTone
 outer apply(
     select top 1 [val] =  case  when sr.Status = 'Confirmed' then 'Done'
 			                    when tt.Status = 'Confirmed' then 'Ongoing'
