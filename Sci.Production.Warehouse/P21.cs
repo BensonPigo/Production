@@ -151,7 +151,7 @@ namespace Sci.Production.Warehouse
                  .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(8), iseditingreadonly: true)
                  .Button(propertyname: "Barcode", header: "Print Barcode", width: Widths.AnsiChars(16), onclick: this.PrintBarcode)
                  .Text("Refno", header: "Ref#", width: Widths.AnsiChars(12), iseditingreadonly: true)
-                 .Numeric("Relaxtime", header: "Relaxtime(Hours)", width: Widths.AnsiChars(11), decimal_places: 2, integer_places: 7, iseditingreadonly: true)
+                 .Numeric("Relaxtime", header: "Relaxtime\n(Hours)", width: Widths.AnsiChars(10), decimal_places: 2, integer_places: 7, iseditingreadonly: true)
                  .Text("Stocktransfer", header: "Stock Transfer", width: Widths.AnsiChars(8), iseditingreadonly: true)
                  .Text("Color", header: "Color", width: Widths.AnsiChars(6), iseditingreadonly: true)
                  .Text("ColorName", header: "Color Name", width: Widths.AnsiChars(10), iseditingreadonly: true)
