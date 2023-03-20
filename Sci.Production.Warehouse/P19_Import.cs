@@ -98,7 +98,7 @@ select  0 as selected
 											)
 		, SizeSpec= isnull(psdsS.SpecValue, '')
         , FI.lock
-        , [Tone] = Tone.val
+        , FI.Tone
 FROM FtyInventory FI WITH (NOLOCK)
 LEFT JOIN View_WH_Orders O WITH (NOLOCK) ON O.ID = FI.POID
 LEFT JOIN Factory F WITH (NOLOCK) ON F.ID = O.FactoryID
@@ -106,14 +106,6 @@ LEFT JOIN PO_Supp_Detail PSD WITH (NOLOCK) ON PSD.ID=FI.POID AND PSD.SEQ1 = FI.S
 left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
 left join PO_Supp_Detail_Spec psdsS WITH (NOLOCK) on psdsS.ID = psd.id and psdsS.seq1 = psd.seq1 and psdsS.seq2 = psd.seq2 and psdsS.SpecColumnID = 'Size'
 left join Fabric on Fabric.SCIRefno = psd.SCIRefno
-outer apply(select [val] = isnull(max(Tone), '')
-            from FIR f with (nolock)
-            inner join FIR_Shadebone  fs with (nolock) on fs.ID = f.ID
-            where   f.POID = fi.POID and
-                    f.Seq1 = fi.Seq1 and
-                    f.Seq2 = fi.Seq2 and
-                    fs.Roll = fi.Roll and
-                    fs.Dyelot = fi.Dyelot) Tone
 Where ( F.MDivisionID = '{Env.User.Keyword}' OR o.MDivisionID= '{Env.User.Keyword}' )
         and FI.inqty - FI.outqty + FI.adjustqty - FI.ReturnQty > 0         
         and FI.stocktype = '{stocktype}'

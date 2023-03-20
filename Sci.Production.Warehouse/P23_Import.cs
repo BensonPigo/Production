@@ -174,7 +174,7 @@ select  0 AS selected
         , dbo.Getlocation(fi.ukey) as [ToLocation]
         , Fromlocation = Fromlocation.listValue
         , GroupQty = Sum(fi.InQty - fi.OutQty + fi.AdjustQty - fi.ReturnQty) over (partition by #tmp.ToFactoryID, #tmp.poid, #tmp.seq1, #tmp.seq2, fi.dyelot)
-        , ShadeboneTone.Tone
+        , fi.Tone
 from #tmp  
 inner join dbo.FtyInventory fi WITH (NOLOCK) on fi.POID = InventoryPOID 
                                                 and fi.seq1 = Inventoryseq1 
@@ -196,13 +196,6 @@ outer apply(
 			for xml path ('')
 		) , 1, 1, '')
 )Fromlocation
-outer apply (
-	select [Tone] = MAX(fs.Tone)
-    from FtyInventory fi2 with (nolock) 
-    Left join FIR f with (nolock) on f.poid = fi2.poid and f.seq1 = fi2.seq1 and f.seq2 = fi2.seq2
-	Left join FIR_Shadebone fs with (nolock) on f.ID = fs.ID and fs.Roll = fi2.Roll and fs.Dyelot = fi2.Dyelot
-	where fi2.Ukey = fi.Ukey
-) ShadeboneTone
 where fi.Lock = 0
 Order by GroupQty desc, fromdyelot, balanceQty desc
 drop table #tmp", Env.User.Keyword, this.dr_master["id"]));

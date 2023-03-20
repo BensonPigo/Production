@@ -84,7 +84,7 @@ select  selected = 0
 			                                                         FOR XML PATH('')),1,1,'') 
                             else '' end
         ,c.lock
-        ,[Tone] = Tone.val
+        ,c.Tone
 	    , [Color] =
 			IIF(f.MtlTypeID = 'EMB THREAD' OR f.MtlTypeID = 'SP THREAD' OR f.MtlTypeID = 'THREAD' 
 			,IIF(psd.SuppColor = '' or psd.SuppColor is null,dbo.GetColorMultipleID(orders.BrandID,isnull(psdsC.SpecValue, '')),psd.SuppColor)
@@ -99,14 +99,6 @@ inner join dbo.Factory on orders.FactoryID = factory.ID
 INNER JOIN Fabric f on psd.SCIRefNo=f.SCIRefNo
 left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
 left join PO_Supp_Detail_Spec psdsS WITH (NOLOCK) on psdsS.ID = psd.id and psdsS.seq1 = psd.seq1 and psdsS.seq2 = psd.seq2 and psdsS.SpecColumnID = 'Size'
-outer apply(select [val] = isnull(max(Tone), '')
-            from FIR f with (nolock)
-            inner join FIR_Shadebone  fs with (nolock) on fs.ID = f.ID
-            where   f.POID = c.POID and
-                    f.Seq1 = c.Seq1 and
-                    f.Seq2 = c.Seq2 and
-                    fs.Roll = c.Roll and
-                    fs.Dyelot = c.Dyelot) Tone
 outer apply(
     select top 1 [val] =  case  when sr.Status = 'Confirmed' then 'Done'
 			                    when tt.Status = 'Confirmed' then 'Ongoing'

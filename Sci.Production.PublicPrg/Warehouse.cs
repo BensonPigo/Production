@@ -2217,6 +2217,11 @@ DROP TABLE #TmpSource
                             throw result.GetException();
                         }
 
+                        if (!(result = UpdateFtyInventoryTone(dtDetail)))
+                        {
+                            throw result.GetException();
+                        }
+
                         transactionscope.Complete();
                     }
                     catch (Exception ex)
@@ -2689,6 +2694,11 @@ inner join #tmpD as src on   target.ID = src.ToPoid
                             throw result.GetException();
                         }
 
+                        if (!(result = UpdateFtyInventoryTone(dtDetail)))
+                        {
+                            throw result.GetException();
+                        }
+
                         transactionscope.Complete();
                     }
                     catch (Exception ex)
@@ -3137,6 +3147,11 @@ WHERE POID='{pOID}' AND Seq1='{seq11}' AND Seq2='{seq21}'
 
                         // Barcode 需要判斷新的庫存, 在更新 FtyInventory 之後
                         if (!(result = Prgs.UpdateWH_Barcode(true, dtDetail, "P24", out bool fromNewBarcode, dtOriFtyInventory)))
+                        {
+                            throw result.GetException();
+                        }
+
+                        if (!(result = UpdateFtyInventoryTone(dtDetail)))
                         {
                             throw result.GetException();
                         }
@@ -6497,6 +6512,34 @@ CLOSE _cursor
 DEALLOCATE _cursor
 ";
             return DBProxy.Current.Execute(null, upcmd);
+        }
+
+        /// <summary>
+        /// 轉料單Confirm時更新FtyInventory.Tone
+        /// </summary>
+        /// <param name="dt">需有欄位From & To Poid,Seq1,Seq2,Roll,Dyelot,StockType</param>
+        /// <inheritdoc/>
+        public static DualResult UpdateFtyInventoryTone(DataTable dt)
+        {
+            string sqlcmd = @"
+update fto
+set Tone = f.Tone
+from #tmp sd
+inner join FtyInventory f with(nolock) on f.POID = sd.FromPOID
+    and f.Seq1 = sd.FromSeq1
+    and f.Seq2 = sd.FromSeq2
+    and f.Roll = sd.FromRoll
+    and f.Dyelot = sd.FromDyelot
+    and f.StockType = sd.FromStockType
+inner join FtyInventory fto with(nolock) on fto.POID = sd.ToPOID
+    and fto.Seq1 = sd.ToSeq1
+    and fto.Seq2 = sd.ToSeq2
+    and fto.Roll = sd.ToRoll
+    and fto.Dyelot = sd.ToDyelot
+    and fto.StockType = sd.ToStockType
+";
+
+            return MyUtility.Tool.ProcessWithDatatable(dt, string.Empty, sqlcmd, out DataTable odt);
         }
 
         #region 產生Temp PO2, PO3

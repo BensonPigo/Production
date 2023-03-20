@@ -730,7 +730,7 @@ select  [Selected] = 0
         , [description] = dbo.getmtldesc (a.FromPoId, a.FromSeq1, a.FromSeq2, 2, 0)
         , a.FromRoll
         , a.FromDyelot
-        , ShadeboneTone.Tone
+        , fi.Tone
         , a.FromStocktype
         , a.Qty
         , a.ToPoid
@@ -772,14 +772,8 @@ outer apply(
 			for xml path ('')
 		) , 1, 1, '')
 )Fromlocation
-outer apply (
-	select [Tone] = MAX(fs.Tone)
-    from FtyInventory fi2 with (nolock) 
-    Left join FIR f with (nolock) on f.poid = fi2.poid and f.seq1 = fi2.seq1 and f.seq2 = fi2.seq2
-	Left join FIR_Shadebone fs with (nolock) on f.ID = fs.ID and fs.Roll = fi2.Roll and fs.Dyelot = fi2.Dyelot
-	where fi2.Ukey = fi.Ukey
-) ShadeboneTone
-Where a.id = '{0}'", masterID);
+Where a.id = '{0}'
+", masterID);
             return base.OnDetailSelectCommandPrepare(e);
         }
 
