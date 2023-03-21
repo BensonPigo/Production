@@ -36,7 +36,6 @@ namespace Sci.Production.Logistic
             DataTable mDivision;
             DBProxy.Current.Select(null, "select '' as ID union all select ID from MDivision WITH (NOLOCK) ", out mDivision);
             MyUtility.Tool.SetupCombox(this.comboM, 1, mDivision);
-            this.comboM.Text = Env.User.Keyword;
             this.comboCancel.SelectedIndex = 0;
         }
 
