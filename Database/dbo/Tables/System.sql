@@ -81,6 +81,8 @@ CREATE TABLE [dbo].[System] (
     [SmallLogoCM]                 DECIMAL (5, 2) CONSTRAINT [DF_System_SmallLogoCM] DEFAULT ((15)) NULL,
     [IsCombineSubProcess]         BIT            CONSTRAINT [DF_System_IsCombineSubProcess] DEFAULT ((0)) NOT NULL,
     [IsNoneShellNoCreateAllParts] BIT            CONSTRAINT [DF_System_IsNoneShellNoCreateAllParts] DEFAULT ((0)) NOT NULL,
+    [FabricPath] NVARCHAR(120) NOT NULL DEFAULT (''), 
+    [ColorPath] NVARCHAR(120) NOT NULL DEFAULT (''), 
     CONSTRAINT [PK_RgCode] PRIMARY KEY CLUSTERED ([RgCode] ASC)
 );
 
@@ -460,3 +462,21 @@ EXEC sp_addextendedproperty @name = N'MS_Description',
     @level1name = N'System',
     @level2type = N'COLUMN',
     @level2name = N'IsNoneShellNoCreateAllParts'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'物料圖片路徑',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'System',
+    @level2type = N'COLUMN',
+    @level2name = N'FabricPath'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'顏色圖片路徑',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'System',
+    @level2type = N'COLUMN',
+    @level2name = N'ColorPath'

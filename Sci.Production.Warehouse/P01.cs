@@ -13,6 +13,7 @@ using Sci.Production.PublicPrg;
 using System.Linq;
 using Sci.Production.Prg.Entity;
 using System.Transactions;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.ListView;
 
 namespace Sci.Production.Warehouse
 {
@@ -582,6 +583,11 @@ where o.ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]))) ?
 
                         // 上方 Auto Create P25 Confrim 後, 寫入新的 BarCode
                         if (!(result = Prgs.UpdateWH_Barcode(true, dtSubTransfer_Detail, "P25", out bool fromNewBarcode)))
+                        {
+                            throw result.GetException();
+                        }
+
+                        if (!(result = Prgs.UpdateFtyInventoryTone(dtSubTransfer_Detail)))
                         {
                             throw result.GetException();
                         }

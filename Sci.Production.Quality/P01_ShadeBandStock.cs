@@ -89,7 +89,7 @@ select  [Seq] = CONCAT(psd.Seq1, '-', psd.Seq2),
         psd.StockPOID,
         [StockSeq] = CONCAT(psd.StockSeq1, '-', psd.StockSeq2),
         [POID] = psd.ID,
-        psd.ColorID,
+        ColorID = isnull(psdsC.SpecValue ,''),
         r.WhseArrival,
         r.ExportId,
         f.Suppid,
@@ -111,6 +111,7 @@ inner join FIR f with (nolock) on f.POID = psd.StockPOID and f.SEQ1 = psd.StockS
 inner join Fabric with (nolock) on Fabric.SCIRefno = f.SCIRefno
 inner join Receiving r with (nolock) on r.id = f.ReceivingID
 inner join Orders o with (nolock) on o.ID = psd.ID
+LEFT JOIN Production.dbo.PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
 where psd.ID = '{this.poID}'
 
 select * from #tmpShadebondMain

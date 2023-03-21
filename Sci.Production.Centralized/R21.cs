@@ -152,6 +152,11 @@ and (
             List<string> connectionString = new List<string>(); // ←主要是要重組 List connectionString
             foreach (string ss in strSevers)
             {
+                if (ss.IndexOf("testing_PMS", StringComparison.OrdinalIgnoreCase) >= 0)
+                {
+                    continue;
+                }
+
                 var connections = docx.Descendants("modules").Elements().Where(y => y.FirstAttribute.Value.Contains(ss.Split(new char[] { ':' })[0].ToString())).Descendants("connectionStrings").Elements().Where(x => x.FirstAttribute.Value.Contains("Production")).Select(z => z.LastAttribute.Value).ToList()[0].ToString();
                 connectionString.Add(connections);
             }

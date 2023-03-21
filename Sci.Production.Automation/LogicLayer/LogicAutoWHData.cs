@@ -280,21 +280,13 @@ left join Production.dbo.Cutplan c on c.ID = {headerAlias}CutplanID
 ";
                         }
 
-                        otherTables += $@"
-outer apply (
-	select [Tone] = isnull(MAX(fs.Tone), '')
-	from FIR with (nolock) 
-	left join FIR_Shadebone fs with (nolock) on FIR.ID = fs.ID and fs.Roll = f.Roll and fs.Dyelot = f.Dyelot
-	where FIR.poid = f.poid and FIR.seq1 = f.seq1 and FIR.seq2 = f.seq2
-) ShadeboneTone
-";
                         columns += $@"
     ,[Type] = '{formName}'
     ,sd.Qty
     ,[Barcode] = dbo.GetWHBarcodeToGensong('{formName}', sd.ID, sd.Ukey, '{action}', 'F', f.Ukey, 0, {fromNewBarcodeBit},0)
     ,[NewBarcode] = dbo.GetWHBarcodeToGensong('{formName}', sd.ID, sd.Ukey, '{action}', 'T', f.Ukey, 0, {fromNewBarcodeBit},0)
     ,[Description] = dbo.getMtlDesc(psd.ID, psd.Seq1, psd.Seq2, 2, 0)
-    ,ShadeboneTone.Tone
+    ,f.Tone
 ";
 
                         break;
