@@ -114,7 +114,7 @@ select a.POID
 								else cast(iif(ISNULL(td.ActualWeight,0) > 0, td.ActualWeight, td.Weight) as varchar(20))
 							 end							
 					end
-    ,[Tone] = Tone.val
+    ,fi.Tone
 from dbo.TransferOut_Detail a WITH (NOLOCK) 
 LEFT join dbo.PO_Supp_Detail b WITH (NOLOCK) on  b.id=a.POID and b.SEQ1=a.Seq1 and b.SEQ2=a.seq2
 left join dbo.FtyInventory FI on a.poid = fi.poid and a.seq1 = fi.seq1 and a.seq2 = fi.seq2 and a.Dyelot = fi.Dyelot
@@ -132,14 +132,6 @@ Outer apply (
 	and fi.StockType = rd.StockType
 	and b.FabricType = 'F'
 )rd
-outer apply(select [val] = isnull(max(Tone), '')
-            from FIR f with (nolock)
-            inner join FIR_Shadebone  fs with (nolock) on fs.ID = f.ID
-            where   f.POID = fi.POID and
-                    f.Seq1 = fi.Seq1 and
-                    f.Seq2 = fi.Seq2 and
-                    fs.Roll = fi.Roll and
-                    fs.Dyelot = fi.Dyelot) Tone
 Outer apply (
 	select [Weight] = SUM(td.Weight)
 		, [ActualWeight] = SUM(td.ActualWeight)
@@ -187,7 +179,7 @@ select
     td.POID,
     td.Seq1,
     td.Seq2,
-    [TONGrp] = FIRT.TONGrp,
+    a.Tone,
 	[MINDQRCode] = iif(td.Qty = 0, '', iif(isnull(w.To_NewBarcodeSeq, '') = '', w.To_NewBarcode, concat(w.To_NewBarcode, '-', w.To_NewBarcodeSeq)))
 from TransferOut_Detail td with (nolock)
 left join FtyInventory a with (nolock) on td.POID = a.POID and
@@ -196,17 +188,7 @@ left join FtyInventory a with (nolock) on td.POID = a.POID and
 						                    td.Dyelot = a.Dyelot and
 						                    td.Roll = a.Roll and
 						                    td.StockType = a.StockType
-left join WHBarcodeTransaction w with (nolock) on td.Ukey = w.TransactionUkey and w.Action = 'Confirm' and [Function] = 'P19' 
-outer apply
-(
-    select Max(fs.Tone) as TONGrp from FIR f
-    left join FIR_Shadebone fs on f.ID = fs.ID
-    where f.POID = a.POID
-            and f.SEQ1 = a.SEQ1
-            and f.SEQ2 = a.SEQ2
-            and fs.Roll = a.Roll
-            and fs.Dyelot = a.Dyelot
-)FIRT
+left join WHBarcodeTransaction w with (nolock) on td.Ukey = w.TransactionUkey and w.Action = 'Confirm' and [Function] = 'P19'
 where ID = '{this.mainCurrentMaintain["ID"]}'
 order by td.Dyelot, Len(td.Roll), td.Roll
                 ";

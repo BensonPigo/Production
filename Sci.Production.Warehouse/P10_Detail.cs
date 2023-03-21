@@ -1,9 +1,9 @@
-﻿using System;
+﻿using Ict;
+using Ict.Win;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Drawing;
-using Ict.Win;
-using Ict;
 using System.Linq;
 
 namespace Sci.Production.Warehouse
@@ -46,7 +46,7 @@ namespace Sci.Production.Warehouse
             {
                 DataTable dtFtyinventory;
                 DualResult result;
-                string cmdd = @"          
+                string cmdd = @"
 select t.poid
        , t.Seq1
        , t.Seq2
@@ -70,7 +70,7 @@ select t.poid
        , [ContainerCode] = FTY.ContainerCode
 	   , GroupQty = Sum(FTY.InQty - FTY.OutQty + FTY.AdjustQty - FTY.ReturnQty) over (partition by t.dyelot)
        , [DetailFIR] = concat(isnull(Physical.Result,' '),'/',isnull(Weight.Result,' '),'/',isnull(Shadebone.Result,' '),'/',isnull(Continuity.Result,' '),'/',isnull(Odor.Result,' '))
-       , [Tone] = isnull(ShadeboneTone.Tone,ShadeboneTone2.Tone)
+       , [Tone] = FTY.Tone
        , [GMTWash] = isnull(GMTWash.val, '')
 from #tmp t
 Left join dbo.FtyInventory FTY WITH (NOLOCK) on t.FtyInventoryUkey=FTY.Ukey
@@ -101,18 +101,6 @@ outer apply (select  TOP 1 fc.Result
 	        inner join dbo.FIR_Odor fc with (nolock) on f.ID = fc.ID and fc.Roll = t.Roll and fc.Dyelot = t.Dyelot
 	        where poid = t.poid and seq1 = t.seq1 and seq2 = t.seq2 and SCIRefno = isum.SCIRefno
 			order by ISNULL(fc.EditDate,fc.AddDate) DESC ) Odor
-outer apply (select [Tone] = MAX(fs.Tone)
-            from FtyInventory fi with (nolock) 
-            Left join FIR f with (nolock) on f.poid = fi.poid and f.seq1 = fi.seq1 and f.seq2 = fi.seq2
-	        Left join FIR_Shadebone fs with (nolock) on f.ID = fs.ID and fs.Roll = fi.Roll and fs.Dyelot = fi.Dyelot
-	        where fi.Ukey = FTY.Ukey
-			) ShadeboneTone
-outer apply (select [Tone] = MAX(fs.Tone)
-	        from FIR f 
-	        Left join FIR_Shadebone fs with (nolock) on f.ID = fs.ID and fs.Roll = t.Roll and fs.Dyelot = t.Dyelot
-            left join PO_Supp_Detail po3 with (nolock) on po3.ID = t.POID and po3.Seq1 = t.Seq1 and po3.Seq2 = t.Seq2
-	        where f.POID = po3.StockPOID and f.SEQ1 = po3.StockSeq1 and f.SEQ2 = po3.StockSeq2
-            ) ShadeboneTone2
 outer apply(
     select top 1 [val] =  case  when sr.Status = 'Confirmed' then 'Done'
 			                    when tt.Status = 'Confirmed' then 'Ongoing'

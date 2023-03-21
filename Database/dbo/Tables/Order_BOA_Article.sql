@@ -10,3 +10,10 @@
     CONSTRAINT [PK_Order_BOA_Article] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
 
+
+
+
+GO
+CREATE NONCLUSTERED INDEX [ForGetBOAExpend]
+    ON [dbo].[Order_BOA_Article]([Order_BoAUkey] ASC);
+

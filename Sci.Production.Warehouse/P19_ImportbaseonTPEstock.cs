@@ -278,7 +278,7 @@ select  selected = 0
         , Refno
         , Color
         , SizeSpec
-        , [Tone] = Tone.val
+        , fi.Tone
 		, #tmp.[AccuTransferred]
         , fi.Lock
 into    #tmpDetailResult
@@ -287,14 +287,6 @@ left join dbo.FtyInventory fi WITH (NOLOCK) on fi.POID = InventoryPOID
                                                 and fi.seq1 = Inventoryseq1 
                                                 and fi.seq2 = InventorySEQ2 
                                                 and fi.StockType = 'I'
-outer apply(select [val] = isnull(max(Tone), '')
-            from FIR f with (nolock)
-            inner join FIR_Shadebone  fs with (nolock) on fs.ID = f.ID
-            where   f.POID = fi.POID and
-                    f.Seq1 = fi.Seq1 and
-                    f.Seq2 = fi.Seq2 and
-                    fs.Roll = fi.Roll and
-                    fs.Dyelot = fi.Dyelot) Tone
 Order by GroupQty desc, Dyelot, StockBalance desc
 
 select  selected = cast(0 as bit)

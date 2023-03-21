@@ -44,6 +44,7 @@ namespace Sci.Production.Warehouse
         private string sqlcolumn = @"select
 	[M] = o.MDivisionID
 	,[Factory] = o.FactoryID
+    ,[SewLine] = o.SewLine
 	,[SP#] = psd.id
     ,[Category] = case when o.Category='B'then'Bulk'
 						when o.Category='G'then'Garment'

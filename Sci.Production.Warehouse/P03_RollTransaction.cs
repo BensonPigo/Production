@@ -103,17 +103,9 @@ Select a.Roll,a.Dyelot
 ,a.InQty - a.OutQty + a.AdjustQty - a.ReturnQty as balance
 ,dbo.Getlocation(a.ukey)  MtlLocationID 
 ,a.ContainerCode
-,Tone = FIRT.TONGrp
+,a.Tone
 ,[GMTWash] = isnull(GMTWash.val, '')
-from FtyInventory a WITH (NOLOCK) 
-outer apply(select Max(fs.Tone) as TONGrp from FIR f
-                        left join FIR_Shadebone fs on f.ID = fs.ID
-                        where f.POID = a.POID
-		                        and f.SEQ1 = a.SEQ1
-		                        and f.SEQ2 = a.SEQ2
-		                        and fs.Roll = a.Roll
-		                        and fs.Dyelot = a.Dyelot)FIRT
-
+from FtyInventory a WITH (NOLOCK)
 outer apply(
 	select List = Stuff((
 		select concat(',',FullRoll)

@@ -10,6 +10,7 @@
     [AddDate]     DATETIME      NULL,
     [EditName]    VARCHAR (10)  CONSTRAINT [DF_Color_EditName] DEFAULT ('') NULL,
     [EditDate]    DATETIME      NULL,
+    [Picture] NVARCHAR(100) NOT NULL DEFAULT (''), 
     CONSTRAINT [PK_Color] PRIMARY KEY CLUSTERED ([BrandId] ASC, [ID] ASC)
 );
 
@@ -61,3 +62,13 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'最後修�
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'最後修改時間', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Color', @level2type = N'COLUMN', @level2name = N'EditDate';
 
+
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'顏色圖片檔案名稱',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'Color',
+    @level2type = N'COLUMN',
+    @level2name = N'Picture'

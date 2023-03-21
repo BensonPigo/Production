@@ -974,7 +974,7 @@ select a.id,a.PoId,a.Seq1,a.Seq2,concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2) as se
 ,SizeSpec= isnull(psdsS.SpecValue, '')
 ,a.TransferExportID
 ,a.TransferExport_DetailUkey
-    ,Tone = isnull(ShadeboneTone2.Tone, '')
+    ,fi.Tone
 from dbo.TransferOut_Detail a WITH (NOLOCK) 
 left join PO_Supp_Detail psd WITH (NOLOCK) on psd.ID = a.PoId and psd.seq1 = a.SEQ1 and psd.SEQ2 = a.seq2
 left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
@@ -997,12 +997,6 @@ outer apply(
 		for xml path ('')
 	) , 1, 1, '')
 ) WK
-outer apply (
-    select [Tone] = MAX(fs.Tone)
-    from FIR f 
-    Left join FIR_Shadebone fs with (nolock) on f.ID = fs.ID
-    where f.poid = fi.poid and f.seq1 = fi.seq1 and f.seq2 = fi.seq2 and fs.Roll = fi.Roll and fs.Dyelot = fi.Dyelot
-) ShadeboneTone2
 Where a.id = '{masterID}'
 ";
             return base.OnDetailSelectCommandPrepare(e);

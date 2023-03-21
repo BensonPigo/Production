@@ -186,6 +186,7 @@ select 0 as [selected]
         , x.*
         , fi.Remark
 		, psd.FabricType sFabricType
+        , fi.Tone
 into #tmp_FtyInventory
 from dbo.FtyInventory fi WITH (NOLOCK) 
 left join dbo.PO_Supp_Detail psd WITH (NOLOCK) on psd.id = fi.POID and psd.seq1 = fi.seq1 and psd.seq2  = fi.Seq2
@@ -459,12 +460,12 @@ into #tmp_FIR_Result1
 from #tmpFirDetail
 
 --#tmp_FIR_3
-select f.POID,f.SEQ1,f.SEQ2,fi.Dyelot,fi.Roll,Scale = max(fs.Scale),Tone = max(fs.Tone)
+select f.POID,f.SEQ1,f.SEQ2,fi.Dyelot,fi.Roll,Scale = max(fs.Scale),fi.Tone
 into #tmp_FIR_3
 from #tmp_FtyInventory fi
 inner join fir f on f.POID= fi.POID	and f.SEQ1 =fi.Seq1 and f.SEQ2 = fi.Seq2 
 inner join FIR_Shadebone fs on f.id=fs.ID AND F.ShadebondEncode=1 and fi.Dyelot =fs.Dyelot and fi.Roll=fs.Roll
-group by  f.POID,f.SEQ1,f.SEQ2,fi.Dyelot,fi.Roll 
+group by  f.POID,f.SEQ1,f.SEQ2,fi.Dyelot,fi.Roll ,fi.Tone
 
 --#tmp_WashLab
 select distinct f.POID,f.SEQ1,f.SEQ2

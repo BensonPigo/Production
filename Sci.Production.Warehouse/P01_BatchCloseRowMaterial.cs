@@ -326,6 +326,11 @@ Drop table #cte_temp;", Env.User.Keyword, categorySql));
                             throw result.GetException();
                         }
 
+                        if (!(result = Prgs.UpdateFtyInventoryTone(dtSubTransfer_Detail)))
+                        {
+                            throw result.GetException();
+                        }
+
                         transactionscope.Complete();
                     }
                     catch (Exception ex)
