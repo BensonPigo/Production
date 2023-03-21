@@ -5,6 +5,7 @@ using System.Windows.Forms;
 using Ict;
 using Sci.Data;
 using System.Runtime.InteropServices;
+using Sci.Production.CallPmsAPI;
 
 namespace Sci.Production.Logistic
 {
@@ -191,6 +192,7 @@ from(
     and o.PulloutComplete = 1
     and pd.DisposeFromClog= 0
     and p.PulloutID = ''
+    {0}
 ");
             sqlcmd.Append(sqlWHERE);
             sqlcmd.Append(@"
@@ -246,12 +248,16 @@ and pd.ReceiveDate is not null
 and (p.PulloutID = '' or p.PulloutStatus = 'New')
 and pd.DisposeFromClog= 0
 and o.PulloutComplete = 0
+{0}
 ");
             sqlcmd.Append(sqlWHERE);
             sqlcmd.Append(@" )a
 order by PulloutComplete desc,ClogLocationId, MDivisionID, FactoryID, OrderID, ID, Seq");
 
-            DualResult result = DBProxy.Current.Select(null, sqlcmd.ToString(), out this.printData);
+            // 抓本地Packing需排除轉出的資料
+            string sqlGetLocalPacking = string.Format(sqlcmd.ToString(), " and p.PLCtnTrToRgCodeDate is null ");
+
+            DualResult result = DBProxy.Current.Select(null, sqlGetLocalPacking, out this.printData);
             if (!result)
             {
                 DualResult failResult = new DualResult(false, "Query data fail\r\n" + result.ToString());
@@ -259,6 +265,33 @@ order by PulloutComplete desc,ClogLocationId, MDivisionID, FactoryID, OrderID, I
             }
 
             DBProxy.Current.DefaultTimeout = 300; // 改回原本設定
+
+            foreach (string plFromRgCode in PackingA2BWebAPI.GetAllPLFromRgCode())
+            {
+                // 取得需要帶入資料的PackingID
+                string sqlGetA2BPackID = $@"select PackingListID from GMTBooking_Detail with (nolock) where PLFromRgCode = '{plFromRgCode}'";
+                DataTable dtA2BPackID;
+                result = DBProxy.Current.Select(null, sqlGetA2BPackID, out dtA2BPackID);
+                if (!result)
+                {
+                    return result;
+                }
+
+                string whereA2BPackID = dtA2BPackID.AsEnumerable().Select(s => $"'{s["PackingListID"]}'").JoinToString(",");
+
+                // 抓轉入到本地生產的Packing
+                string sqlGetA2BPacking = string.Format(sqlcmd.ToString(), $" and p.PLCtnRecvFMRgCodeDate is not null and p.ID in ({whereA2BPackID})");
+
+                DataTable dtPackA2BResult;
+                result = PackingA2BWebAPI.GetDataBySql(plFromRgCode, sqlGetA2BPacking, out dtPackA2BResult);
+                if (!result)
+                {
+                    return result;
+                }
+
+                dtPackA2BResult.MergeTo(ref this.printData);
+            }
+
             return Ict.Result.True;
         }
 
