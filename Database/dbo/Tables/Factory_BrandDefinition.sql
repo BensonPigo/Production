@@ -4,7 +4,7 @@
     [CDCodeID]        VARCHAR (6)  CONSTRAINT [DF_Factory_BrandDefinition_CDCodeID] DEFAULT ('') NOT NULL,
     [BrandAreaCode]   VARCHAR (30) CONSTRAINT [DF_Factory_BrandDefinition_BrandAreaCode] DEFAULT ('') NULL,
     [BrandFTYCode]    VARCHAR (30) CONSTRAINT [DF_Factory_BrandDefinition_BrandFTYCode] DEFAULT ('') NULL,
-    [BrandVendorCode] VARCHAR (10) CONSTRAINT [DF_Factory_BrandDefinition_BrandVendorCode] DEFAULT ('') NULL,
+    [BrandVendorCode] VARCHAR (50) CONSTRAINT [DF_Factory_BrandDefinition_BrandVendorCode] DEFAULT ('') NULL,
     [BrandReportCode] VARCHAR (30) CONSTRAINT [DF_Factory_BrandDefinition_BrandReportCode] DEFAULT ('') NULL,
     [AddName]         VARCHAR (10) CONSTRAINT [DF_Factory_BrandDefinition_AddName] DEFAULT ('') NULL,
     [AddDate]         DATETIME     NULL,
