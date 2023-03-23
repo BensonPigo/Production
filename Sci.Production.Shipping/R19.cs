@@ -127,12 +127,24 @@ and (   exists (select 1 from Factory where e.FactoryID = id and IsProduceFty = 
 
             #region SQL
             sqlCmd = $@"
-
-
 SELECT e.ID
 ,e.Blno
-,vd.ID
+,[DeclarationID] = vd.ID
 ,vd.DeclareNo
+,[MaterialType] = f.MtlTypeID
+,[RefNo] = f.Refno
+,[Desc] = isnull(f.DescDetail,'')
+,[ReceivingQty] =  iif(ed.PoType='M'
+                        , (case when ed.FabricType = 'M' then mpo.OrderQty
+                                when ed.FabricType = 'P' then ppo.OrderQty 
+			                    when ed.FabricType = 'O' then mipo.OrderQty 
+			                    else 0 
+                            end)
+                        ,psd.Qty)
+,[Unit] = ed.UnitId
+,[CustomsCode] = NLCode.value
+,[HSCode] = HSCode.value
+,[ContractNo] = vd.VNContractID
 ,e.FactoryID
 ,e.Consignee
 ,e.ShipModeID
@@ -163,8 +175,11 @@ SELECT e.ID
 ,[SQCS] = IIF(e.SQCS=1,'Y','N')
 ,[RemarkFromTPE] =ISNULL(e.Remark,'')
 ,[RemarkToTPE] =	ISNULL(e.Remark_Factory,'')
-
+into #tmp
 FROM Export e WITH(NOLOCK)
+left join Export_Detail ed WITH(NOLOCK) on ed.ID = e.ID
+left join PO_Supp_Detail psd WITH (NOLOCK) on psd.ID = ed.PoID and psd.SEQ1 = ed.Seq1 and psd.SEQ2 = ed.Seq2
+left join Fabric f WITH (NOLOCK) on f.SCIRefno = psd.SCIRefno
 LEFT JOIN VNImportDeclaration vd WITH(NOLOCK) ON e.Blno = vd.Blno AND vd.IsFtyExport = 0
 OUTER APPLY(
 	SELECT 1 as [DoorToDoorDelivery]
@@ -184,8 +199,154 @@ OUTER APPLY(
 			and Vessel  =''
 
 )Dtdd
+outer apply(
+	select value = Stuff((
+		select concat(',',NLCode)
+		from (
+				select 	distinct
+					NLCode
+				from dbo.VNImportDeclaration_Detail vdd
+				where vdd.id = vd.ID
+			) s
+		for xml path ('')
+	) , 1, 1, '')
+) NLCode
+outer apply(
+	select value = Stuff((
+		select concat(',',HSCode)
+		from (
+				select 	distinct
+					HSCode
+				from dbo.VNImportDeclaration_Detail vdd
+				where vdd.id = vd.ID
+			) s
+		for xml path ('')
+	) , 1, 1, '')
+) HSCode
+Outer APPLY (
+	select mpod.ID, mpod.Seq1, mpod.Seq2, mpo.FactoryID, OrderQty = sum(mpod.Qty)
+	from SciMachine_MachinePO mpo
+	inner join SciMachine_MachinePO_Detail mpod on mpo.ID = mpod.ID 
+	where ed.FabricType = 'M'
+			and mpod.ID = ed.PoID 
+			and mpod.Seq1 = ed.Seq1 
+			and mpod.Seq2 = ed.Seq2
+	group by  mpod.ID, mpod.Seq1, mpod.Seq2, mpo.FactoryID
+)mpo
+Outer APPLY (
+	select ppod.TPEPOID, ppod.Seq1, ppod.Seq2, ppo.FactoryID, OrderQty = sum(ppod.Qty)
+	from SciMachine_PartPO ppo
+	inner join SciMachine_PartPO_Detail ppod on ppo.ID = ppod.ID 
+	where ed.FabricType = 'P'
+		and ppod.TPEPOID = ed.PoID 
+		and ppod.Seq1 = ed.Seq1 
+		and ppod.Seq2 = ed.Seq2
+	group by ppod.TPEPOID, ppod.Seq1, ppod.Seq2, ppo.FactoryID
+)ppo
+Outer APPLY (
+	select mpod.TPEPOID, mpod.Seq1, mpod.Seq2, mpo.Factoryid, OrderQty = sum(mpod.Qty) 
+	from SciMachine_MiscPO mpo
+	inner join SciMachine_MiscPO_Detail mpod on mpo.ID = mpod.ID 
+	where ed.FabricType = 'O'
+		and mpod.TPEPOID = ed.PoID 
+		and mpod.Seq1 = ed.Seq1 
+		and mpod.Seq2 = ed.Seq2      
+	group by mpod.TPEPOID, mpod.Seq1, mpod.Seq2, mpo.Factoryid
+)mipo
 WHERE {where}
-ORDER BY e.FactoryID, e.ID
+
+
+select distinct
+ID
+,Blno
+,[DeclarationID]
+,DeclareNo
+,[MaterialType] = [MtlTypeID].value
+,[RefNo] = Refno.value
+,[Desc]  = [Desc].value
+,[ReceivingQty] = isnull(ReceivingQty.value,0)
+,[Unit] = Unit.value
+,[CustomsCode]
+,[HSCode]
+,[ContractNo]
+,FactoryID
+,Consignee
+,ShipModeID
+,CYCFS
+,InvNo
+,[Payer]
+,Vessel
+,ExportPort
+,ExportCountry
+,Packages
+,NetKg
+,WeightKg
+,CBM
+,Eta
+,PackingArrival
+,DocArrival
+,PortArrival
+,WhseArrival
+,[NoImportCharge]
+,[Replacement]
+,[Delay]
+,[NonDeclare]
+,[DoorToDoorDelivery]
+,[SQCS]
+,[RemarkFromTPE]
+from #tmp t
+outer apply(
+	select value = Stuff((
+		select concat(',',[MtlTypeID])
+		from (
+			select distinct [MtlTypeID] =  s.MaterialType
+			from #tmp s
+			where s.ID = t.id
+			)s
+		for xml path('')
+		), 1, 1, '')
+)  [MtlTypeID]
+outer apply(
+	select value = Stuff((
+		select concat(',',Refno)
+		from (
+			select distinct Refno =  s.RefNo
+			from #tmp s
+			where s.ID = t.id
+			)s
+		for xml path('')
+		), 1, 1, '')
+)  Refno
+outer apply(
+	select value = Stuff((
+		select concat(',',[Description])
+		from (
+			select distinct [Description] = s.[Desc]
+			from #tmp s
+			where s.ID = t.id
+			)s
+		for xml path('')
+		), 1, 1, '')
+)  [Desc]
+outer apply(
+	select value = Stuff((
+		select concat(',',[Unit])
+		from (
+			select distinct [Unit] =  s.[Unit]
+			from #tmp s
+			where s.ID = t.id
+			)s
+		for xml path('')
+		), 1, 1, '')
+)  [Unit]
+outer apply(
+	select value = sum(s.ReceivingQty) 
+	from #tmp s
+	where s.ID = t.ID
+) ReceivingQty
+ORDER BY FactoryID, ID
+
+drop table #tmp
 ";
             #endregion
 
@@ -213,7 +374,14 @@ ORDER BY e.FactoryID, e.ID
 
             #region Save & Show Excel
 
+            // 限制欄寬長度
             objApp.Visible = true;
+            objApp.Columns[5].ColumnWidth = 20;
+            objApp.Columns[6].ColumnWidth = 20;
+            objApp.Columns[7].ColumnWidth = 30;
+            objApp.Columns[10].ColumnWidth = 30;
+            objApp.Columns[11].ColumnWidth = 30;
+
             Marshal.ReleaseComObject(objApp);
 
             #endregion
