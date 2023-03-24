@@ -142,8 +142,8 @@ SELECT e.ID
                             end)
                         ,psd.Qty)
 ,[Unit] = ed.UnitId
-,[CustomsCode] = NLCode.value
-,[HSCode] = HSCode.value
+,[CustomsCode] = vdd.NLCode
+,[HSCode] = vdd.HSCode
 ,[ContractNo] = vd.VNContractID
 ,e.FactoryID
 ,e.Consignee
@@ -180,7 +180,12 @@ FROM Export e WITH(NOLOCK)
 left join Export_Detail ed WITH(NOLOCK) on ed.ID = e.ID
 left join PO_Supp_Detail psd WITH (NOLOCK) on psd.ID = ed.PoID and psd.SEQ1 = ed.Seq1 and psd.SEQ2 = ed.Seq2
 left join Fabric f WITH (NOLOCK) on f.SCIRefno = psd.SCIRefno
-LEFT JOIN VNImportDeclaration vd WITH(NOLOCK) ON e.Blno = vd.Blno AND vd.IsFtyExport = 0
+LEFT JOIN VNImportDeclaration vd WITH(NOLOCK) ON 
+(
+	(vd.Blno !='' and e.Blno = vd.Blno) 
+	or  
+	e.id = vd.WKNo 
+)　AND vd.IsFtyExport = 0
 OUTER APPLY(
 	SELECT 1 as [DoorToDoorDelivery]
 	FROM Door2DoorDelivery 
@@ -197,32 +202,14 @@ OUTER APPLY(
 			and ImportCountry = e.ImportCountry
 			and ShipModeID = e.ShipModeID
 			and Vessel  =''
-
 )Dtdd
 outer apply(
-	select value = Stuff((
-		select concat(',',NLCode)
-		from (
-				select 	distinct
-					NLCode
-				from dbo.VNImportDeclaration_Detail vdd
-				where vdd.id = vd.ID
-			) s
-		for xml path ('')
-	) , 1, 1, '')
-) NLCode
-outer apply(
-	select value = Stuff((
-		select concat(',',HSCode)
-		from (
-				select 	distinct
-					HSCode
-				from dbo.VNImportDeclaration_Detail vdd
-				where vdd.id = vd.ID
-			) s
-		for xml path ('')
-	) , 1, 1, '')
-) HSCode
+	select 	distinct vddd.NLCode,vdd.HSCode
+	from dbo.VNImportDeclaration_Detail vdd
+	inner join VNImportDeclaration_Detail_Detail vddd on vdd.ID = vddd.ID and vdd.NLCode = vddd.NLCode
+	where vdd.id = vd.ID
+	and vddd.Refno = f.Refno and vddd.FabricType = ed.FabricType
+) vdd
 Outer APPLY (
 	select mpod.ID, mpod.Seq1, mpod.Seq2, mpo.FactoryID, OrderQty = sum(mpod.Qty)
 	from SciMachine_MachinePO mpo
@@ -301,7 +288,7 @@ outer apply(
 		from (
 			select distinct [MtlTypeID] =  s.MaterialType
 			from #tmp s
-			where s.ID = t.id
+			where s.ID = t.id and s.MaterialType = t.MaterialType
 			)s
 		for xml path('')
 		), 1, 1, '')
@@ -312,7 +299,7 @@ outer apply(
 		from (
 			select distinct Refno =  s.RefNo
 			from #tmp s
-			where s.ID = t.id
+			where s.ID = t.id and s.RefNo = t.RefNo
 			)s
 		for xml path('')
 		), 1, 1, '')
@@ -323,7 +310,7 @@ outer apply(
 		from (
 			select distinct [Description] = s.[Desc]
 			from #tmp s
-			where s.ID = t.id
+			where s.ID = t.id and s.[Desc] = t.[Desc]
 			)s
 		for xml path('')
 		), 1, 1, '')
@@ -334,7 +321,7 @@ outer apply(
 		from (
 			select distinct [Unit] =  s.[Unit]
 			from #tmp s
-			where s.ID = t.id
+			where s.ID = t.id and s.Unit = t.Unit
 			)s
 		for xml path('')
 		), 1, 1, '')
@@ -343,6 +330,9 @@ outer apply(
 	select value = sum(s.ReceivingQty) 
 	from #tmp s
 	where s.ID = t.ID
+	and s.MaterialType = t.MaterialType
+	and s.RefNo = t.RefNo
+	and s.Unit = t.Unit
 ) ReceivingQty
 ORDER BY FactoryID, ID
 
@@ -376,11 +366,10 @@ drop table #tmp
 
             // 限制欄寬長度
             objApp.Visible = true;
-            objApp.Columns[5].ColumnWidth = 20;
-            objApp.Columns[6].ColumnWidth = 20;
-            objApp.Columns[7].ColumnWidth = 30;
-            objApp.Columns[10].ColumnWidth = 30;
-            objApp.Columns[11].ColumnWidth = 30;
+
+            // Desc 固定欄寬&取消自動換列 避免資料太多導致整欄高度上長
+            objApp.Columns[7].ColumnWidth = 60;
+            objApp.Columns[7].WrapText = false;
 
             Marshal.ReleaseComObject(objApp);
 

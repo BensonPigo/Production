@@ -136,14 +136,15 @@ select [Category] = (CASE WHEN fe.Type=1 THEN '3rd Country'
 	 , [Desc] = isnull(
 		iif(fe.Type = 4,(select Description from LocalItem WITH (NOLOCK) where RefNo = fed.RefNo)
 			,(select DescDetail from Fabric WITH (NOLOCK) where SCIRefno = fed.SCIRefNo)),'')
-	 , [ReceivingQty] =  case fe.Type when 1 then [3rd].Qty
-									  when 2 then TransferIn.Qty
-									  when 3 then TransferOut.Qty
-									  when 4 then LocalPo.Qty
-									  when 5 then mipo.Qty end
+	 --, [ReceivingQty] =  case fe.Type when 1 then [3rd].Qty
+		--							  when 2 then TransferIn.Qty
+		--							  when 3 then TransferOut.Qty
+		--							  when 4 then LocalPo.Qty
+		--							  when 5 then mipo.Qty end
+	, [ReceivingQty] = fed.Qty
 	 , [Unit] = fed.UnitId
-	 , [CustomsCode] = NLCode.value
-	 , [HSCode] = HSCode.value
+	 , [CustomsCode] = vdd.NLCode
+	 , [HSCode] = vdd.HSCode
 	 , [ContractNo] = vd.VNContractID
 	 , Shipper as [Shipper]
 	 , Consignee as [Consignee]
@@ -172,29 +173,12 @@ LEFT JOIN VNImportDeclaration vd WITH(NOLOCK) ON
 )
 AND vd.IsFtyExport = 1
 outer apply(
-	select value = Stuff((
-		select concat(',',NLCode)
-		from (
-				select 	distinct
-					NLCode
-				from dbo.VNImportDeclaration_Detail vdd
-				where vdd.id = vd.ID
-			) s
-		for xml path ('')
-	) , 1, 1, '')
-) NLCode
-outer apply(
-	select value = Stuff((
-		select concat(',',HSCode)
-		from (
-				select 	distinct
-					HSCode
-				from dbo.VNImportDeclaration_Detail vdd
-				where vdd.id = vd.ID
-			) s
-		for xml path ('')
-	) , 1, 1, '')
-) HSCode
+	select 	distinct vddd.NLCode,vdd.HSCode
+	from dbo.VNImportDeclaration_Detail vdd
+	inner join VNImportDeclaration_Detail_Detail vddd on vdd.ID = vddd.ID and vdd.NLCode = vddd.NLCode
+	where vdd.id = vd.ID
+	and vddd.Refno = fed.Refno 
+) vdd
 Outer APPLY (
 	select Qty = sum(s.ShipQty + s.ShipFOC)
 	from PO_Supp_Detail s
@@ -278,7 +262,7 @@ outer apply(
 		from (
 			select distinct [MtlTypeID] =  s.MaterialType
 			from #tmp_FtyExport s
-			where s.[WK#] = t.[WK#]
+			where s.[WK#] = t.[WK#] and s.MaterialType = t.MaterialType
 			)s
 		for xml path('')
 		), 1, 1, '')
@@ -289,7 +273,7 @@ outer apply(
 		from (
 			select distinct Refno =  s.RefNo
 			from #tmp_FtyExport s
-			where s.[WK#] = t.[WK#]
+			where s.[WK#] = t.[WK#] and s.RefNo = t.RefNo
 			)s
 		for xml path('')
 		), 1, 1, '')
@@ -300,7 +284,7 @@ outer apply(
 		from (
 			select distinct [Description] = s.[Desc]
 			from #tmp_FtyExport s
-			where s.[WK#] = t.[WK#]
+			where s.[WK#] = t.[WK#] and s.[Desc] = t.[Desc]
 			)s
 		for xml path('')
 		), 1, 1, '')
@@ -311,7 +295,7 @@ outer apply(
 		from (
 			select distinct [Unit] =  s.[Unit]
 			from #tmp_FtyExport s
-			where s.[WK#] = t.[WK#]
+			where s.[WK#] = t.[WK#] and s.Unit = t.Unit
 			)s
 		for xml path('')
 		), 1, 1, '')
@@ -320,39 +304,42 @@ outer apply(
 	select value = sum(s.ReceivingQty) 
 	from #tmp_FtyExport s
 	where s.[WK#] = t.[WK#]
+	and s.MaterialType = t.MaterialType
+	and s.RefNo = t.RefNo
+	and s.Unit = t.Unit
 ) ReceivingQty
 
 select * from #tmpFinal	
 order by [WK#]
 
 -- Details
-select ed.ID
+select distinct fed.ID
      , isnull(o.FactoryID,'') as [Prod. Factory]
-     , ed.POID as [SP#]
+     , fed.POID as [SP#]
 	 , isnull(o.BrandID,'') as [Brand]
 	 , o.BuyerDelivery as [Buyer Del.]
 	 , o.SciDelivery as [SCI Del.]
-	 , (left(ed.Seq1+' ',3)+'-'+ed.Seq2) as Seq
-	 , iif(fe.Type = 4,(select Abb from LocalSupp WITH (NOLOCK) where ID = ed.SuppID),(select AbbEN from Supp WITH (NOLOCK) where ID = ed.SuppID)) as [Supplier]
-	 , ed.RefNo as [Ref#]
-	 , isnull(iif(fe.Type = 4,(select Description from LocalItem WITH (NOLOCK) where RefNo = ed.RefNo),(select DescDetail from Fabric WITH (NOLOCK) where SCIRefno = ed.SCIRefNo)),'') as [Description]
-	 , (case when ed.FabricType = 'F' then 'Fabric' when ed.FabricType = 'A' then 'Accessory' else '' end) as [Type]
-	 , ed.MtlTypeID
+	 , (left(fed.Seq1+' ',3)+'-'+fed.Seq2) as Seq
+	 , iif(fe.Type = 4,(select Abb from LocalSupp WITH (NOLOCK) where ID = fed.SuppID),(select AbbEN from Supp WITH (NOLOCK) where ID = fed.SuppID)) as [Supplier]
+	 , fed.RefNo as [Ref#]
+	 , isnull(iif(fe.Type = 4,(select Description from LocalItem WITH (NOLOCK) where RefNo = fed.RefNo),(select DescDetail from Fabric WITH (NOLOCK) where SCIRefno = fed.SCIRefNo)),'') as [Description]
+	 , (case when fed.FabricType = 'F' then 'Fabric' when fed.FabricType = 'A' then 'Accessory' else '' end) as [Type]
+	 , fed.MtlTypeID
 	 , t.[Declaration ID]
 	 , t.[Customs Declare#]
 	 , t.[CustomsCode] 
 	 , t.[HSCode]
 	 , t.[ContractNo]
-	 , ed.UnitID
-	 , ed.Qty
-	 , ed.NetKg as [N.W.(kg)]
-	 , ed.WeightKg as [N.W.(kg)]
-from FtyExport_Detail ed WITH (NOLOCK) 
-inner join FtyExport fe WITH (NOLOCK) on fe.ID = ed.ID
-inner join #tmpFinal t on t.[WK#] = ed.ID
-left join Orders o WITH (NOLOCK) on o.ID = ed.PoID
+	 , fed.UnitID
+	 , fed.Qty
+	 , fed.NetKg as [N.W.(kg)]
+	 , fed.WeightKg as [N.W.(kg)]
+from FtyExport_Detail fed WITH (NOLOCK) 
+inner join FtyExport fe WITH (NOLOCK) on fe.ID = fed.ID
+inner join #tmpFinal t on t.[WK#] = fed.ID and fed.RefNo = t.RefNo
+left join Orders o WITH (NOLOCK) on o.ID = fed.PoID
 where 1=1
-order by ed.ID,ed.POID
+order by fed.ID,fed.POID
 
 drop table #tmp_FtyExport,#tmpFinal;
 ";
@@ -384,17 +371,11 @@ drop table #tmp_FtyExport,#tmpFinal;
 
             // 限制欄寬長度
             objApp.Sheets[1].Columns[1].ColumnWidth = 15;
-            objApp.Sheets[1].Columns[7].ColumnWidth = 20;
-            objApp.Sheets[1].Columns[8].ColumnWidth = 20;
-            objApp.Sheets[1].Columns[9].ColumnWidth = 70;
-            objApp.Sheets[1].Columns[12].ColumnWidth = 20;
-            objApp.Sheets[1].Columns[13].ColumnWidth = 20;
-            objApp.Sheets[1].Rows.AutoFit();
+            objApp.Sheets[1].Columns[9].ColumnWidth = 60;
+            objApp.Sheets[1].Columns[9].WrapText = false;
 
             objApp.Sheets[2].Columns[10].ColumnWidth = 70;
-            objApp.Sheets[2].Columns[15].ColumnWidth = 20;
-            objApp.Sheets[2].Columns[16].ColumnWidth = 20;
-            objApp.Sheets[2].Rows.AutoFit();
+            objApp.Sheets[2].Columns[10].WrapText = false;
             objApp.Visible = true;
             Marshal.ReleaseComObject(objApp);
 
