@@ -258,7 +258,6 @@ OUTER APPLY (
 	 FOR XML PATH('')
 	 ),1,1,'')
 )DefectText
-OUTER APPLY ( select name from dbo.color c where c.id=ps.colorid_old and C.BrandId = x.BrandId) as oc
 OUTER APPLY (
 	select [Article] = Stuff((
 		select distinct concat( ',', tcd.Article) 

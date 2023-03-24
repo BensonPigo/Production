@@ -621,15 +621,6 @@ namespace Sci.Production.Prg.Entity
         }
 
         /// <summary>
-        /// ColorID_Old
-        /// </summary>
-        public string ColorID_Old
-        {
-            get { return this.mColorID_Old; }
-            set { this.mColorID_Old = value; }
-        }
-
-        /// <summary>
         /// Remark_Shell
         /// </summary>
         public string Remark_Shell

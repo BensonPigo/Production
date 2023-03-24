@@ -14,8 +14,6 @@
     [BomTypeZipper]  BIT            CONSTRAINT [DF_MNOrder_BOA_BomTypeZipper] DEFAULT ((0)) NULL,
     [Remark]         NVARCHAR (MAX) CONSTRAINT [DF_MNOrder_BOA_Remark] DEFAULT ('') NULL,
     [Description]    NVARCHAR (MAX) CONSTRAINT [DF_MNOrder_BOA_Description] DEFAULT ('') NULL,
-    [FabricVer_Old]  VARCHAR (2)    DEFAULT ('') NULL,
-    [FabricUkey_Old] VARCHAR (10)   DEFAULT ('') NULL,
     CONSTRAINT [PK_MNOrder_BOA] PRIMARY KEY CLUSTERED ([UKey] ASC)
 );
 
