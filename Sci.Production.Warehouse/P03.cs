@@ -546,6 +546,7 @@ where Poid='{dr["id"]}' and seq1='{dr["Seq1"]}' and seq2='{dr["Seq2"]}'", out dr
             this.gridMaterialStatus.Columns["CurrencyID"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
             this.gridMaterialStatus.Columns["ShipFOC"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
             this.gridMaterialStatus.Columns["InputQty"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+            this.gridMaterialStatus.Columns["fabrictype2"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
             this.gridMaterialStatus.Columns["seq1"].Width = 40;
             this.gridMaterialStatus.DefaultCellStyle.Font = new Font("Microsoft Sans Serif", 8F);
 
