@@ -11,8 +11,6 @@
     [AddDate]     DATETIME       NULL,
     [EditName]    VARCHAR (10)   CONSTRAINT [DF_Fabric_HsCode_EditName] DEFAULT ('') NULL,
     [EditDate]    DATETIME       NULL,
-    [OldSys_Ukey] VARCHAR (10)   CONSTRAINT [DF_Fabric_HsCode_OldSys_Ukey] DEFAULT ('') NULL,
-    [OldSys_Ver]  VARCHAR (2)    CONSTRAINT [DF_Fabric_HsCode_OldSys_Ver] DEFAULT ('') NULL,
     [HSType] VARCHAR NOT NULL DEFAULT (''), 
     [HSCodeT2] VARCHAR(20) NOT NULL DEFAULT (''), 
     CONSTRAINT [PK_Fabric_HsCode] PRIMARY KEY CLUSTERED ([SCIRefno] ASC, [SuppID] ASC, [Year] ASC ,[HSType] ASC)
@@ -74,9 +72,9 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'最後修�
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Fabric_HsCode', @level2type = N'COLUMN', @level2name = N'OldSys_Ukey';
+
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Fabric_HsCode', @level2type = N'COLUMN', @level2name = N'OldSys_Ver';
+
 
