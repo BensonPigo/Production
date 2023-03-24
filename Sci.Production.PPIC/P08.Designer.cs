@@ -28,7 +28,6 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.labelID = new Sci.Win.UI.Label();
             this.labelSPNo = new Sci.Win.UI.Label();
             this.labelPOSMR = new Sci.Win.UI.Label();
@@ -177,7 +176,7 @@
             this.masterpanel.Controls.Add(this.labelPOSMR);
             this.masterpanel.Controls.Add(this.labelSPNo);
             this.masterpanel.Controls.Add(this.labelID);
-            this.masterpanel.Size = new System.Drawing.Size(976, 326);
+            this.masterpanel.Size = new System.Drawing.Size(875, 326);
             this.masterpanel.TabIndex = 1;
             this.masterpanel.Controls.SetChildIndex(this.labelID, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelSPNo, 0);
@@ -248,7 +247,7 @@
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 326);
-            this.detailpanel.Size = new System.Drawing.Size(976, 136);
+            this.detailpanel.Size = new System.Drawing.Size(875, 0);
             // 
             // gridicon
             // 
@@ -261,7 +260,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(976, 136);
+            this.detailgridcont.Size = new System.Drawing.Size(875, 0);
             // 
             // detail2
             // 
@@ -275,19 +274,15 @@
             // 
             this.detailpanel2.Size = new System.Drawing.Size(886, 40);
             // 
-            // detail
-            // 
-            this.detail.Size = new System.Drawing.Size(976, 624);
-            // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(976, 462);
+            this.detailcont.Size = new System.Drawing.Size(892, 225);
             // 
             // detailbtm
             // 
             this.detailbtm.Controls.Add(this.gridReplacement);
-            this.detailbtm.Location = new System.Drawing.Point(0, 462);
-            this.detailbtm.Size = new System.Drawing.Size(976, 162);
+            this.detailbtm.Location = new System.Drawing.Point(0, 225);
+            this.detailbtm.Size = new System.Drawing.Size(892, 162);
             this.detailbtm.TabIndex = 0;
             this.detailbtm.Controls.SetChildIndex(this.lbleditby, 0);
             this.detailbtm.Controls.SetChildIndex(this.lblcreateby, 0);
@@ -787,7 +782,6 @@
             this.gridReplacement.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.gridReplacement.AutoGenerateColumns = false;
             this.gridReplacement.BackgroundColor = System.Drawing.SystemColors.Control;
             this.gridReplacement.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.gridReplacement.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
@@ -795,18 +789,10 @@
             this.gridReplacement.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.gridReplacement.Location = new System.Drawing.Point(3, 6);
             this.gridReplacement.Name = "gridReplacement";
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridReplacement.RowHeadersDefaultCellStyle = dataGridViewCellStyle1;
             this.gridReplacement.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridReplacement.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridReplacement.RowTemplate.Height = 24;
-            this.gridReplacement.Size = new System.Drawing.Size(970, 107);
+            this.gridReplacement.Size = new System.Drawing.Size(886, 107);
             this.gridReplacement.TabIndex = 54;
             // 
             // label7
@@ -1093,9 +1079,9 @@
             this.UniqueExpress = "ID";
             this.WorkAlias = "ReplacementReport";
             this.FormLoaded += new System.EventHandler(this.P08_FormLoaded);
+            this.Controls.SetChildIndex(this.tabs, 0);
             this.Controls.SetChildIndex(this.btnBatch, 0);
             this.Controls.SetChildIndex(this.btnBatchReCalculateResponsibilityDeptAmt, 0);
-            this.Controls.SetChildIndex(this.tabs, 0);
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).EndInit();
             this.masterpanel.ResumeLayout(false);
