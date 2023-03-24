@@ -25,7 +25,6 @@
     [PINO]               VARCHAR (25)    CONSTRAINT [DF_PO_Supp_Detail_PINO] DEFAULT ('') NULL,
     [PIDate]             DATE            NULL,
     [BrandId]            VARCHAR (8)     DEFAULT ('') NULL,
-    [ColorID_Old]        VARCHAR (MAX)   DEFAULT ('') NULL,
     [SuppColor]          NVARCHAR (MAX)  CONSTRAINT [DF_PO_Supp_Detail_SuppColor] DEFAULT ('') NULL,
     [Remark]             NVARCHAR (MAX)  CONSTRAINT [DF_PO_Supp_Detail_Remark] DEFAULT ('') NULL,
     [Special]            NVARCHAR (MAX)  CONSTRAINT [DF_PO_Supp_Detail_Special] DEFAULT ('') NULL,

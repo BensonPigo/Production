@@ -8,7 +8,6 @@
     [AddDate]         DATETIME       NULL,
     [EditName]        VARCHAR (10)   CONSTRAINT [DF_Fabric_Content_EditName] DEFAULT ('') NULL,
     [EditDate]        DATETIME       NULL,
-    [OldSys_GroupKey] VARCHAR (10)   CONSTRAINT [DF_Fabric_Content_OldSys_GroupKey] DEFAULT ('') NULL,
     CONSTRAINT [PK_Fabric_Content] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
 
@@ -54,5 +53,5 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'最後修�
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Fabric_Content', @level2type = N'COLUMN', @level2name = N'OldSys_GroupKey';
+
 

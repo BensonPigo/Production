@@ -5,8 +5,6 @@
     [SCIRefno]       VARCHAR (30)   CONSTRAINT [DF_MNOrder_BOF_SCIRefno] DEFAULT ('') NULL,
     [SuppID]         VARCHAR (6)    CONSTRAINT [DF_MNOrder_BOF_SuppID] DEFAULT ('') NULL,
     [Description]    NVARCHAR (MAX) CONSTRAINT [DF_MNOrder_BOF_Description] DEFAULT ('') NULL,
-    [FabricUkey_Old] VARCHAR (10)   DEFAULT ('') NULL,
-    [FabricVer_OLd ] VARCHAR (2)    DEFAULT ('') NULL,
     CONSTRAINT [PK_MNOrder_BOF] PRIMARY KEY CLUSTERED ([ID] ASC, [FabricCode] ASC)
 );
 
