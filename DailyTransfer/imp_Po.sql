@@ -255,7 +255,7 @@ where not exists(select id from Production.dbo.PO_Supp as a WITH (NOLOCK) where 
 ------------------------------------------------------------------PO2 END
 ------------------------------------------------------------------PO3 START
 --Po3 pms¦hªºÄæ¦ì
---,[BrandId] ,[ColorID_Old]
+--,[BrandId]
 --,[BomFactory]
 --      ,[BomCountry]
 --      ,[BomStyle]
@@ -913,7 +913,6 @@ SET
       ,a.AddDate	      =b.AddDate	
       ,a.EditName	      =b.EditName	
       ,a.EditDate	      =b.EditDate	
-      ,a.OldSys_GroupKey	      =b.OldSys_GroupKey	
 
 from Production.dbo.Fabric_Content as a inner join Trade_To_Pms.dbo.Fabric_Content as b ON a.Ukey=b.Ukey
 -------------------------- INSERT INTO §ì
@@ -927,7 +926,6 @@ INSERT INTO Production.dbo.Fabric_Content(
       ,AddDate
       ,EditName
       ,EditDate
-      ,OldSys_GroupKey
 )
 select 
       SCIRefno
@@ -939,7 +937,6 @@ select
       ,AddDate
       ,EditName
       ,EditDate
-      ,OldSys_GroupKey
 from Trade_To_Pms.dbo.Fabric_Content as b WITH (NOLOCK)
 where not exists(select Ukey from Production.dbo.Fabric_Content as a WITH (NOLOCK) where a.Ukey = b.Ukey)
 
@@ -972,8 +969,6 @@ SET
       ,a.AddDate	      =b.AddDate	
       ,a.EditName	      =b.EditName	
       ,a.EditDate	      =b.EditDate	
-      ,a.OldSys_Ukey	      =b.OldSys_Ukey	
-      ,a.OldSys_Ver	      =b.OldSys_Ver	
 	  ,a.HSCodeT2         =ISNULL(b.HSCodeT2,'')
 
 from Production.dbo.Fabric_HsCode as a inner join Trade_To_Pms.dbo.Fabric_HsCode as b ON a.SCIRefno=b.SCIRefno and  a.SuppID=b.SuppID and a.Year =b.Year and a.HSType =b.HSType
@@ -991,8 +986,6 @@ INSERT INTO Production.dbo.Fabric_HsCode(
       ,AddDate
       ,EditName
       ,EditDate
-      ,OldSys_Ukey
-      ,OldSys_Ver
 	  ,HSType	  
 	  ,HSCodeT2
 )
@@ -1009,8 +1002,6 @@ select
       ,AddDate
       ,EditName
       ,EditDate
-      ,OldSys_Ukey
-      ,OldSys_Ver
 	  ,HSType
 	  ,ISNULL(HSCodeT2,'')
 from Trade_To_Pms.dbo.Fabric_HsCode as b WITH (NOLOCK)
