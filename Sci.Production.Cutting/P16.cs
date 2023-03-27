@@ -272,7 +272,7 @@ group by w.MDivisionID,o.FtyGroup, f.WeaveTypeID,psd.FinalETA,w.EstCutDate,w.ID,
             foreach (var needSaveItem in needSaveData)
             {
                 sqlUpdate += $@"
-update WorkOrder set UnfinishedCuttingReason = '{needSaveItem["UnfinishedCuttingReason"]}', Remark = '{needSaveItem["Remark"]}' where CutRef = '{needSaveItem["CutRef"]}'
+update WorkOrder set UnfinishedCuttingReason = '{needSaveItem["UnfinishedCuttingReason"]}', Remark = '{needSaveItem["Remark"]}' where CutRef = '{needSaveItem["CutRef"]}' and ID = '{needSaveItem["ID"]}'
 ";
             }
 
