@@ -833,7 +833,7 @@ from (
                 #region [ROW3]欄位名,[ROW4]~[ROW7]對應資料
                 nextPage = 1;
                 tables = table[nextPage];
-                 
+
                 // 抓取當下.exe執行位置路徑 同抓取Excle範本檔路徑
                 string path = string.Empty;
 
@@ -879,6 +879,16 @@ from (
                             {// 找出對應的Datas組起來
                                 this.rowColor = this.dtColor.Select(this.sql)[0];
                                 this.temp = this.rowColor["Name"].ToString().Trim() + Environment.NewLine + this.rowColor["ColorID"].ToString().Trim();
+
+                                // 塞入圖片 6 8 10 12
+                                int rowPic = 6;
+                                rowPic += (k % 4) * 2;
+                                Microsoft.Office.Interop.Word.Range rng = tables.Cell(rowPic, 2 + (i % 6)).Range;
+                                path = System.IO.Path.Combine(this.ColorPath, this.rowColor["Picture"].ToString().Trim());
+                                if (this.FileExists(path))
+                                {
+                                    rng.InlineShapes.AddPicture(path).ConvertToShape().WrapFormat.Type = Word.WdWrapType.wdWrapInline;
+                                }
                             }
                             else
                             {
@@ -894,16 +904,6 @@ from (
                             int rowStr = 5;
                             rowStr += (k % 4) * 2;
                             tables.Cell(rowStr, 2 + (i % 6)).Range.Text = this.temp;
-
-                            // 塞入圖片 6 8 10 12
-                            int rowPic = 6;
-                            rowPic += (k % 4) * 2;
-                            Microsoft.Office.Interop.Word.Range rng = tables.Cell(rowPic, 2 + (i % 6)).Range;
-                            path = System.IO.Path.Combine(this.ColorPath, this.rowColor["Picture"].ToString().Trim());
-                            if (this.FileExists(path))
-                            {
-                                rng.InlineShapes.AddPicture(path).ConvertToShape().WrapFormat.Type = Word.WdWrapType.wdWrapInline;
-                            }
                         }
                         #endregion
 
@@ -949,6 +949,16 @@ from (
                             {
                                 this.rowColor = this.dtColor.Select(this.sql)[0];
                                 this.temp = this.rowColor["Name"].ToString().Trim() + Environment.NewLine + this.rowColor["ColorID"].ToString().Trim();
+
+                                // 塞入圖片 6 8 10 12
+                                int rowPic = 6;
+                                rowPic += (k % 4) * 2;
+                                Microsoft.Office.Interop.Word.Range rng = tables.Cell(rowPic, 2 + (i % 6)).Range;
+                                path = System.IO.Path.Combine(this.ColorPath, this.rowColor["Picture"].ToString().Trim());
+                                if (this.FileExists(path))
+                                {
+                                    rng.InlineShapes.AddPicture(path).ConvertToShape().WrapFormat.Type = Word.WdWrapType.wdWrapInline;
+                                }
                             }
                             else
                             {
@@ -965,16 +975,6 @@ from (
                             int rowStr = 5;
                             rowStr += (k % 4) * 2;
                             tables.Cell(rowStr, 2 + (i % 6)).Range.Text = this.temp;
-
-                            // 塞入圖片 6 8 10 12
-                            int rowPic = 6;
-                            rowPic += (k % 4) * 2;
-                            Microsoft.Office.Interop.Word.Range rng = tables.Cell(rowPic, 2 + (i % 6)).Range;
-                            path = System.IO.Path.Combine(this.ColorPath, this.rowColor["Picture"].ToString().Trim());
-                            if (this.FileExists(path))
-                            {
-                                rng.InlineShapes.AddPicture(path).ConvertToShape().WrapFormat.Type = Word.WdWrapType.wdWrapInline;
-                            }
 
                         }
                         #endregion
