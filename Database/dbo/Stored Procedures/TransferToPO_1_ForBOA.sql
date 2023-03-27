@@ -3,7 +3,7 @@
 -- Create date: 2023/02/21
 -- Description:	From trade 只取需要部份 for < WH P01 Material Compare >
 -- =============================================
-Create Procedure [dbo].[TransferToPO_1_ForBOA]
+CREATE Procedure [dbo].[TransferToPO_1_ForBOA]
 	(
 	  @PoID			VarChar(13)		--採購母單
 	 ,@BrandID		VarChar(8)
@@ -73,10 +73,10 @@ Begin
             , Status varchar(1), Sel bit default 0, IsForOtherBrand bit, CannotOperateStock bit, Keyword_Original varchar(max)    
             Primary Key (ID, Seq1, Seq2, Seq2_Count)
         );
-		Create Table #tmpPO_Supp_Detail_OrderList
-			(  RowID BigInt Identity(1,1) Not Null, ID VarChar(13), Seq1 VarChar(3), Seq2 VarChar(2), OrderID VarChar(13), Seq2_Count Int
-			 , Primary Key (ID, Seq1, Seq2, OrderID, Seq2_Count)
-			);
+		--Create Table #tmpPO_Supp_Detail_OrderList
+		--	(  RowID BigInt Identity(1,1) Not Null, ID VarChar(13), Seq1 VarChar(3), Seq2 VarChar(2), OrderID VarChar(13), Seq2_Count Int
+		--	 , Primary Key (ID, Seq1, Seq2, OrderID, Seq2_Count)
+		--	);
 		Create Table #tmpPO_Supp_Detail_Spec
 		(  RowID BigInt Identity(1,1) Not Null, ID VarChar(13), Seq1 VarChar(3), Seq2 VarChar(2), SpecColumnID VarChar(50), SpecValue VarChar(50), Seq2_Count Int
 			, Primary Key (ID, Seq1, Seq2, SpecColumnID, Seq2_Count)
@@ -576,7 +576,7 @@ Begin
 				(Boa_ExpendUkeys, SpecColumnID, SpecValue)
 			Select Order_BOA_ExpendUkey, SpecColumnID, SpecValue
 			From dbo.Order_BOA_Expend_Spec
-			Where Order_BOA_ExpendUkey = @Boa_ExpendUkeys
+			Where Order_BOA_ExpendUkey in (select data from Production.dbo.SplitString(@Boa_ExpendUkeys, ','))
 
 			If @UsageQty < 0
 			Begin
@@ -668,10 +668,12 @@ Begin
 						and  po3.Seq1 = po3s.Seq1
 						and  po3.Seq2 = po3s.Seq2
 						and  po3.Seq2_Count = po3s.Seq2_Count
-						except
+                        union all
 						select SpecColumnID, SpecValue
 						from @tmpOrder_BOA_Expend_Spec
 					) tmp
+                    group by SpecColumnID, SpecValue
+                    having count(*) = 1
 				) getCount
 				Where po3.ID = @PoID
 					And po3.Seq1 = @Seq1_New
@@ -695,34 +697,34 @@ Begin
 					
 					--寫入Temp Table - PO_Supp_Detail_OrderList
 					--當不存在Order_BOA_Expend_OrderList時，將全數OrderList寫入#tmpPO_Supp_Detail_OrderList，最後會判斷刪除
-					If not exists (select 1 from dbo.Order_BOA_Expend_OrderList Where Order_BOA_ExpendUkey in (select data from Production.dbo.SplitString(@Boa_ExpendUkeys, ',')))
-					Begin
-						Insert Into #tmpPO_Supp_Detail_OrderList (ID, Seq1, Seq2, OrderID, Seq2_Count)
-						Select DISTINCT @PoID, @Seq1_New, @Seq2, ID, @Seq2_Count
-						From dbo.Orders
-						Where PoID = @PoID 
-						And Not Exists (Select 1 From #tmpPO_Supp_Detail_OrderList
-										Where ID = @PoID
-											And Seq1 = @Seq1_New
-											And Seq2 = @Seq2
-											And Seq2_Count = @Seq2_Count
-											And OrderID = Orders.ID
-										);
-					End
-					Else
-					Begin
-						Insert Into #tmpPO_Supp_Detail_OrderList (ID, Seq1, Seq2, OrderID, Seq2_Count)
-						Select DISTINCT @PoID, @Seq1_New, @Seq2, OrderID, @Seq2_Count
-						From dbo.Order_BOA_Expend_OrderList
-						Where Order_BOA_ExpendUkey in (select data from Production.dbo.SplitString(@Boa_ExpendUkeys, ','))
-						And Not Exists (Select 1 From #tmpPO_Supp_Detail_OrderList
-										Where ID = @PoID
-											And Seq1 = @Seq1_New
-											And Seq2 = @Seq2
-											And Seq2_Count = @Seq2_Count
-											And OrderID = Order_BOA_Expend_OrderList.OrderID
-										);
-					End
+					--If not exists (select 1 from dbo.Order_BOA_Expend_OrderList Where Order_BOA_ExpendUkey in (select data from Production.dbo.SplitString(@Boa_ExpendUkeys, ',')))
+					--Begin
+					--	Insert Into #tmpPO_Supp_Detail_OrderList (ID, Seq1, Seq2, OrderID, Seq2_Count)
+					--	Select DISTINCT @PoID, @Seq1_New, @Seq2, ID, @Seq2_Count
+					--	From dbo.Orders
+					--	Where PoID = @PoID 
+					--	And Not Exists (Select 1 From #tmpPO_Supp_Detail_OrderList
+					--					Where ID = @PoID
+					--						And Seq1 = @Seq1_New
+					--						And Seq2 = @Seq2
+					--						And Seq2_Count = @Seq2_Count
+					--						And OrderID = Orders.ID
+					--					);
+					--End
+					--Else
+					--Begin
+					--	Insert Into #tmpPO_Supp_Detail_OrderList (ID, Seq1, Seq2, OrderID, Seq2_Count)
+					--	Select DISTINCT @PoID, @Seq1_New, @Seq2, OrderID, @Seq2_Count
+					--	From dbo.Order_BOA_Expend_OrderList
+					--	Where Order_BOA_ExpendUkey in (select data from Production.dbo.SplitString(@Boa_ExpendUkeys, ','))
+					--	And Not Exists (Select 1 From #tmpPO_Supp_Detail_OrderList
+					--					Where ID = @PoID
+					--						And Seq1 = @Seq1_New
+					--						And Seq2 = @Seq2
+					--						And Seq2_Count = @Seq2_Count
+					--						And OrderID = Order_BOA_Expend_OrderList.OrderID
+					--					);
+					--End
 				End;
 				Else
 				Begin
@@ -808,34 +810,34 @@ Begin
 						);
 					--------------------------------------
 					--寫入Temp Table - PO_Supp_Detail_OrderList
-					If not exists (select 1 from dbo.Order_BOA_Expend_OrderList Where Order_BOA_ExpendUkey in (select data from Production.dbo.SplitString(@Boa_ExpendUkeys, ',')))
-					Begin						
-						--當不存在Order_BOA_Expend_OrderList時，將全數OrderList寫入#tmpPO_Supp_Detail_OrderList，最後會判斷刪除
-						Insert Into #tmpPO_Supp_Detail_OrderList (ID, Seq1, Seq2, OrderID, Seq2_Count)
-						Select DISTINCT @PoID, @Seq1_New, @Seq2, ID, @Seq2_Count
-						From dbo.Orders
-						Where PoID = @PoID
-					End
-					Else
-					Begin
-						Insert Into #tmpPO_Supp_Detail_OrderList
-						(ID, Seq1, Seq2, OrderID, Seq2_Count)
-						Select DISTINCT @PoID, @Seq1_New, @Seq2, OrderID, @Seq2_Count
-						From dbo.Order_BOA_Expend_OrderList
-						Where Order_BOA_ExpendUkey in (select data from Production.dbo.SplitString(@Boa_ExpendUkeys, ','));
-					End
+					--If not exists (select 1 from dbo.Order_BOA_Expend_OrderList Where Order_BOA_ExpendUkey in (select data from Production.dbo.SplitString(@Boa_ExpendUkeys, ',')))
+					--Begin						
+					--	--當不存在Order_BOA_Expend_OrderList時，將全數OrderList寫入#tmpPO_Supp_Detail_OrderList，最後會判斷刪除
+					--	Insert Into #tmpPO_Supp_Detail_OrderList (ID, Seq1, Seq2, OrderID, Seq2_Count)
+					--	Select DISTINCT @PoID, @Seq1_New, @Seq2, ID, @Seq2_Count
+					--	From dbo.Orders
+					--	Where PoID = @PoID
+					--End
+					--Else
+					--Begin
+					--	Insert Into #tmpPO_Supp_Detail_OrderList
+					--	(ID, Seq1, Seq2, OrderID, Seq2_Count)
+					--	Select DISTINCT @PoID, @Seq1_New, @Seq2, OrderID, @Seq2_Count
+					--	From dbo.Order_BOA_Expend_OrderList
+					--	Where Order_BOA_ExpendUkey in (select data from Production.dbo.SplitString(@Boa_ExpendUkeys, ','));
+					--End
 					--------------------------------------
 					--寫入Temp Table - PO_Supp_Detail_Spec
 					Insert Into #tmpPO_Supp_Detail_Spec(ID, Seq1, Seq2, SpecColumnID, SpecValue, Seq2_Count)
 					Select @PoID, @Seq1_New, @Seq2, SpecColumnID, SpecValue, @Seq2_Count
 					From dbo.Order_BOA_Expend_Spec
-					Where Order_BOA_ExpendUkey = @Boa_ExpendUkeys
+					Where Order_BOA_ExpendUkey in (select data from Production.dbo.SplitString(@Boa_ExpendUkeys, ','));
 					--------------------------------------
 					--寫入Temp Table - PO_Supp_Detail_Keyword
 					Insert Into #tmpPO_Supp_Detail_Keyword(ID, Seq1, Seq2, KeywordField, KeywordValue, Seq2_Count)
 					Select @PoID, @Seq1_New, @Seq2, KeywordField, KeywordValue, @Seq2_Count
 					From dbo.Order_BOA_Expend_Keyword
-					Where Order_BOA_ExpendUkey = @Boa_ExpendUkeys
+					Where Order_BOA_ExpendUkey in (select data from Production.dbo.SplitString(@Boa_ExpendUkeys, ','));
 					--------------------------------------
 				End;
 			End;
@@ -908,18 +910,18 @@ Begin
 	End;
 	--------------------------------------
 	--當OrderList數等於#tmpPO_Supp_Detail_OrderList數時刪除#tmpPO_Supp_Detail_OrderList
-	delete tmpPo4
-	from #tmpPO_Supp_Detail_OrderList tmpPo4
-	outer apply (select count(*) c From dbo.Orders Where PoID = @PoID) orderlist
-	outer apply (
-		select count(*) c
-		From #tmpPO_Supp_Detail_OrderList tmp
-		where tmp.ID = tmpPo4.ID
-		and tmp.Seq1 = tmpPo4.Seq1
-		and tmp.Seq2 = tmpPo4.Seq2
-		and tmp.Seq2_Count = tmpPo4.Seq2_Count
-	) po4
-	where po4.c = orderlist.c
+	--delete tmpPo4
+	--from #tmpPO_Supp_Detail_OrderList tmpPo4
+	--outer apply (select count(*) c From dbo.Orders Where PoID = @PoID) orderlist
+	--outer apply (
+	--	select count(*) c
+	--	From #tmpPO_Supp_Detail_OrderList tmp
+	--	where tmp.ID = tmpPo4.ID
+	--	and tmp.Seq1 = tmpPo4.Seq1
+	--	and tmp.Seq2 = tmpPo4.Seq2
+	--	and tmp.Seq2_Count = tmpPo4.Seq2_Count
+	--) po4
+	--where po4.c = orderlist.c
 	--------------------------------------
 
 	--Select * From #tmpPO_Supp;
