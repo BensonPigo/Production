@@ -23,9 +23,9 @@ BEGIN
 		, @refno = p.Refno
 		, @suppcolor = CASE WHEN f.MtlTypeID='SP THREAD' AND ThreadColor.SuppColor IS NOT NULL  --繡線顏色可能要從另外的項次號取
 							THEN Concat(iif(ISNULL(ThreadColor.SuppColor,'') = '', '', ThreadColor.SuppColor + CHAR(10)) 
-												  , iif(ISNULL(psdsC.SpecValue,'') = '', '', psdsC.SpecValue + ' - ') + ISNULL(c.Name, ''))
+												  , iif(ISNULL(psdsC.SpecValue,'') = '', '', psdsC.SpecValue + ' - ') + dbo.GetColorMultipleID (p.BrandID, psdsC.SpecValue) )
 							ELSE Concat(iif(ISNULL(p.SuppColor,'') = '', '', p.SuppColor + CHAR(10)) 
-												  , iif(ISNULL(psdsC.SpecValue,'') = '', '', psdsC.SpecValue + ' - ') + ISNULL(c.Name, ''))
+												  , iif(ISNULL(psdsC.SpecValue,'') = '', '', psdsC.SpecValue + ' - ') + dbo.GetColorMultipleID (p.BrandID, psdsC.SpecValue) )
 							END
 		, @StockSP = isnull(concat(p.StockPOID,' ',p.StockSeq1,' ',p.StockSeq2),'')
 		, @po_desc=@po_desc + iif(ISNULL(p.ColorDetail,'') = '', '', 'ColorDetail : ' + p.ColorDetail + CHAR(10))
@@ -41,7 +41,6 @@ BEGIN
         left join PO_Supp_Detail_Spec psdsS WITH (NOLOCK) on psdsS.ID = p.id and psdsS.seq1 = p.seq1 and psdsS.seq2 = p.seq2 and psdsS.SpecColumnID = 'Size'
         left join PO_Supp_Detail_Spec psdsSU WITH (NOLOCK) on psdsSU.ID = p.id and psdsSU.seq1 = p.seq1 and psdsSU.seq2 = p.seq2 and psdsSU.SpecColumnID = 'SizeUnit'
 		left join fabric f WITH (NOLOCK) on p.SCIRefno = f.SCIRefno
-		left join Color c WITH (NOLOCK) on f.BrandID = c.BrandId and psdsC.SpecValue = c.ID 
 		outer apply ( 
 			select Spec, BomZipperInsert = tmpPO3.SpecValue from PO_Supp_Detail_Spec tmpPO3
 			where tmpPO3.ID = IIF(IsNull(p.StockPOID, '') = '' , p.ID, p.StockPOID)
