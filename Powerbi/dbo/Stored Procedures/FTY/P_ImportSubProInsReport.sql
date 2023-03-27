@@ -48,7 +48,7 @@ select
 	SubProResponseTeamID
     ,CustomColumn1
 from Production.dbo.SubProInsRecord SR WITH (NOLOCK)
-inner join Production.dbo.Bundle_Detail BD WITH (NOLOCK) on SR.BundleNo=BD.BundleNo
+Left join Production.dbo.Bundle_Detail BD WITH (NOLOCK) on SR.BundleNo=BD.BundleNo
 Left join Production.dbo.Bundle B WITH (NOLOCK) on BD.ID=B.ID
 Left join Production.dbo.Orders O WITH (NOLOCK) on B.OrderID=O.ID
 left join Production.dbo.Country on Country.ID = o.Dest
@@ -70,7 +70,7 @@ outer apply(
 )SubProResponseTeamID
 outer apply(select ttlSecond = DATEDIFF(Second, SR.AddDate, RepairedDatetime)) ttlSecond
 Where SR.InspectionDate between @StartDate and @EndDate
-UNION all
+UNION
 select
     SR.FactoryID,
     SR.SubProLocationID,
@@ -109,7 +109,7 @@ select
 	SubProResponseTeamID
     ,CustomColumn1--自定義欄位, 在最後一個若有變動,則輸出Excel部分也要一起改
 from Production.dbo.SubProInsRecord SR WITH (NOLOCK)
-inner join Production.dbo.BundleReplacement_Detail BRD WITH (NOLOCK) on SR.BundleNo=BRD.BundleNo
+Left join Production.dbo.BundleReplacement_Detail BRD WITH (NOLOCK) on SR.BundleNo=BRD.BundleNo
 Left join Production.dbo.BundleReplacement BR WITH (NOLOCK) on BRD.ID=BR.ID
 Left join Production.dbo.Orders O WITH (NOLOCK) on BR.OrderID=O.ID
 left join Production.dbo.Country on Country.ID = o.Dest
@@ -130,8 +130,18 @@ outer apply(
 	),1,1,'''')
 )SubProResponseTeamID
 outer apply(select ttlSecond = DATEDIFF(Second, SR.AddDate, RepairedDatetime)) ttlSecond
-Where SR.InspectionDate between @StartDate and @EndDate')
+Where SR.InspectionDate between @StartDate and @EndDate
+')
  
+select *
+into #tmp2
+from (
+	select *, BundleNoCT = COUNT(1) over(partition by t.BundleNo)
+	from #tmp t
+) t
+where BundleNoCT = 1--綁包/補料都沒有,在第一段union會合併成一筆
+or (BundleNoCT > 1 and isnull(t.Orderid, '') <> '')--綁包/補料其中一個有
+
 delete P_SubProInsReport where InspectionDate between @StartDate and @EndDate
 
 insert into P_SubProInsReport(
@@ -208,7 +218,7 @@ select	isnull(FactoryID, '')
 		,isnull(ResolveTime, 0)				
 		,isnull(SubProResponseTeamID, '')	
 		,isnull(CustomColumn1, '')			
-from #tmp
+from #tmp2
 
 update b
 	set b.TransferDate = getdate()
