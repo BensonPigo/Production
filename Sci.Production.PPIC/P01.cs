@@ -825,6 +825,11 @@ WHERE o.ID='{this.CurrentMaintain["ID"]}'
 
         private void TxtStyle_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
+            if (!this.CheckAlreadySewingOutput())
+            {
+                return;
+            }
+
             IList<DataRow> styleData;
             string sqlCmd = "select ID,SeasonID,BrandID,Description,CdCodeID,CPU,StyleUnit,Ukey from Style WITH (NOLOCK) where Junk = 0 ";
             Win.Tools.SelectItem item = new Win.Tools.SelectItem(sqlCmd, "15,8,10,28,5,7,7,6", string.Empty, "Style,Season,Brand,Description,CdCode,CPU,Unit,Ukey", columndecimals: "0,0,0,0,0,3,0,0")
@@ -857,6 +862,12 @@ WHERE o.ID='{this.CurrentMaintain["ID"]}'
         {
             if (this.EditMode && this.txtStyle.OldValue != this.txtStyle.Text)
             {
+                if (!this.CheckAlreadySewingOutput())
+                {
+                    this.txtStyle.Text = this.txtStyle.OldValue;
+                    return;
+                }
+
                 if (MyUtility.Check.Empty(this.txtStyle.Text))
                 {
                     this.SetStyleEmptyColumn();
@@ -871,6 +882,18 @@ WHERE o.ID='{this.CurrentMaintain["ID"]}'
             }
 
             this.chkpopup = false;
+        }
+
+        private bool CheckAlreadySewingOutput()
+        {
+            bool isAlreadySewingOutput = MyUtility.Check.Seek($"select 1 from SewingOutput_Detail with (nolock) where OrderID = '{this.CurrentMaintain["ID"]}'");
+            if (isAlreadySewingOutput)
+            {
+                MyUtility.Msg.WarningBox("Sewing Output of this SP# exist, please delete all output of this SP# before edit style.");
+                return false;
+            }
+
+            return true;
         }
 
         private void SetStyleEmptyColumn()
