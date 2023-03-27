@@ -152,7 +152,7 @@ select
     f.WeaveTypeID,
     psd.FinalETA,
 	w.EstCutDate,
-	w.OrderID,
+	w.ID,
     o.BrandID,
 	o.StyleID,
     w.Refno,
@@ -161,18 +161,17 @@ select
 	w.FabricCombo,
 	[ColorWay] = stuff(Article.Article,1,1,''),
 	w.ColorID,   
-    w.Layer,
+    [Layer] = SUM(w.Layer),
     Artwork.Artwork,
     [Size] = Size.Size,
-    [LackingLayers] = w.Layer - isnull(acc.AccuCuttingLayer,0),  
+    [LackingLayers] = SUM(w.Layer - isnull(acc.AccuCuttingLayer,0)),  
     w.UnfinishedCuttingReason,
-    [BalanceCons] = w.Cons - [ActConsOutput],
+    [BalanceCons] = SUM(w.Cons - [ActConsOutput]),
     o.BuyerDelivery,
     [UnfinishedCuttingReasonDesc] = dw.Name,
-    w.Remark,
-    w.Ukey
+    w.Remark
 from WorkOrder w WITH (NOLOCK) 
-inner join Orders o WITH (NOLOCK) on o.id = w.OrderID
+inner join Orders o WITH (NOLOCK) on o.id = w.ID
 inner join Cutting c WITH (NOLOCK) on c.ID = o.CuttingSP
 left join DropDownList dw with (nolock) on dw.Type = 'PMS_UnFinCutReason' and dw.ID = w.UnfinishedCuttingReason
 left join fabric f WITH (NOLOCK) on f.SCIRefno = w.SCIRefno
@@ -226,7 +225,10 @@ outer apply(
 	,1,1,'')
 )Artwork
 where   w.EstCutDate >= @EstCutDateFrom {sqlWhere} and (w.Layer - isnull(acc.AccuCuttingLayer,0)) > 0
-";
+
+group by w.MDivisionID,o.FtyGroup, f.WeaveTypeID,psd.FinalETA,w.EstCutDate,w.ID,o.BrandID,o.StyleID,
+    w.Refno,w.CutRef,w.Cutno,w.FabricCombo,Article.Article,w.ColorID,Artwork.Artwork,Size.Size,
+	w.UnfinishedCuttingReason,o.BuyerDelivery, dw.Name, w.Remark";
 
             DataTable dtResult;
             DualResult result = DBProxy.Current.Select(null, sqlGetDate, listPar, out dtResult);
@@ -270,7 +272,7 @@ where   w.EstCutDate >= @EstCutDateFrom {sqlWhere} and (w.Layer - isnull(acc.Acc
             foreach (var needSaveItem in needSaveData)
             {
                 sqlUpdate += $@"
-update WorkOrder set UnfinishedCuttingReason = '{needSaveItem["UnfinishedCuttingReason"]}', Remark = '{needSaveItem["Remark"]}' where Ukey = '{needSaveItem["Ukey"]}'
+update WorkOrder set UnfinishedCuttingReason = '{needSaveItem["UnfinishedCuttingReason"]}', Remark = '{needSaveItem["Remark"]}' where CutRef = '{needSaveItem["CutRef"]}'
 ";
             }
 
