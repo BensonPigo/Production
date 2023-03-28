@@ -4,7 +4,12 @@
     [Grade]      VARCHAR (1)  CONSTRAINT [DF_FIR_Grade_Grade] DEFAULT ('') NULL,
     [Result]     VARCHAR (1)  CONSTRAINT [DF_FIR_Grade_Result] DEFAULT ('') NULL,
 	[BrandID]	Varchar(8) NOT NULL  DEFAULT(''),
-    CONSTRAINT [PK_FIR_Grade] PRIMARY KEY CLUSTERED ([WeaveTypeID] ASC, [Percentage] ASC, [BrandID] ASC)
+    [InspectionGroup] VARCHAR NOT NULL DEFAULT (''), 
+    [isFormatInP01] BIT NOT NULL DEFAULT ((0)), 
+    [isResultNotInP01] BIT NOT NULL DEFAULT ((0)), 
+    [Description] VARCHAR(300) NOT NULL DEFAULT (''), 
+    [ShowGrade] VARCHAR NOT NULL DEFAULT (''), 
+    CONSTRAINT [PK_FIR_Grade] PRIMARY KEY CLUSTERED ([WeaveTypeID] ASC, [Percentage] ASC, [BrandID] ASC , [InspectionGroup] asc)
 );
 
 

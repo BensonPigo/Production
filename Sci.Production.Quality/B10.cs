@@ -1,7 +1,9 @@
 ﻿using Sci.Data;
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Data;
+using System.Diagnostics;
 using System.Windows.Forms;
 
 namespace Sci.Production.Quality
@@ -18,7 +20,7 @@ namespace Sci.Production.Quality
         {
             this.ht.Add("Formula1", "(Total Points / Act. Yds Inspected ) x 100");
             this.ht.Add("Formula2", "(Total Points × 3600) ÷ (Act. Yds Inspected × Actual Width)");
-            this.ht.Add("Formula3", "(Total Points × 3600) ÷ (Act. Yds Inspected × Cut. Width)");
+            this.ht.Add("Formula3", "Knit = (Total Points × 3600) ÷ (Ticket Length × Cut. Width)\r\nWoven = (Total Points × 3600) ÷ (Act. Yds Inspected × Cut. Width)\r\n");
 
             // HashTabe add key,Value
             this.SkewnessHt.Add("Formula1", "100 × [ 2 × ( AC - BD ) / ( AC + BD ) ]");
@@ -131,6 +133,62 @@ namespace Sci.Production.Quality
             else
             {
                 this.radioPanel3.ReadOnly = true;
+            }
+
+            if (MyUtility.Convert.GetString(this.CurrentMaintain["brandid"]) == "LLL")
+            {
+                List<string> listGroup = new List<string>() { "A", "B" };
+                List<string> listData = new List<string>();
+                for (int i = 0; i < 5; i++)
+                {
+                    foreach (var item in listGroup)
+                    {
+                        string strSQL = $@"select Percentage from FIR_Grade
+                                           where BrandID ='LLL' 
+                                           and WeaveTypeID = 'KNIT' and Grade = '{item}' 
+                                           and InspectionGroup ='{i + 1}'";
+                        string strGrade = MyUtility.GetValue.Lookup(strSQL, "Production");
+                        listData.Add(strGrade);
+                    }
+                }
+
+                string strMsg = $@"X = Point Rate per 100 square yds
+
+Group 1：X < {listData[0]} = Grade A; {listData[0]} <= X < {listData[1]} = Grade B; X > {listData[1]} = Grand C 
+Group 2：X < {listData[2]} = Grade A; {listData[2]} <= X < {listData[3]} = Grade B; X > {listData[3]} = Grand C 
+Group 3：X < {listData[4]} = Grade A; {listData[4]} <= X < {listData[5]} = Grade B; X > {listData[5]} = Grand C 
+Group 4：X < {listData[6]} = Grade A; {listData[6]} <= X < {listData[7]} = Grade B; X > {listData[7]} = Grand C 
+Group 5：TBC";
+                this.txtFacbricGrade.Text = strMsg;
+            }
+            else
+            {
+                List<string> listGroup = new List<string>() { "A", "B" };
+                List<string> listWeaveType = new List<string> { "KNIT", "WOVEN" };
+                List<string> listData = new List<string>();
+
+                var isBrandID = MyUtility.Check.Seek($"select Percentage from FIR_Grade where BrandID ='{MyUtility.Convert.GetString(this.CurrentMaintain["brandid"])}'", out DataRow dataRow, "Production");
+                var strBrandID = isBrandID ? MyUtility.Convert.GetString(this.CurrentMaintain["brandid"]) : string.Empty;
+
+                foreach (var head in listWeaveType)
+                {
+                    foreach (var item in listGroup)
+                    {
+                        string strSQL = $@"select Percentage from FIR_Grade
+                                           where BrandID ='{strBrandID}'
+                                           and WeaveTypeID = '{head}' 
+                                           and Grade = '{item}'";
+                        string strGrade = MyUtility.GetValue.Lookup(strSQL, "Production");
+                        listData.Add(strGrade);
+                    }
+                }
+
+                string strMsg = $@"X = Point Rate per 100 square yds
+KINT
+X < {listData[0]} = Grade A; {listData[0]} <= X < {listData[1]} = Grade B; X > {listData[1]} = Grand C 
+WOVEN
+X < {listData[2]} = Grade A; {listData[2]}<= X < {listData[3]} = Grade B; X > {listData[3]} = Grand C";
+                this.txtFacbricGrade.Text = strMsg;
             }
 
             base.OnDetailEntered();
