@@ -160,6 +160,10 @@
     <Compile Include="ComboxMaterialTypeAndID.Designer.cs">
       <DependentUpon>ComboxMaterialTypeAndID.cs</DependentUpon>
     </Compile>
+    <Compile Include="Command\DualDisposableResult.cs" />
+    <Compile Include="Command\ProductionEnv.cs" />
+    <Compile Include="Command\ProductionSystem.cs" />
+    <Compile Include="Command\SQL.cs" />
     <Compile Include="Command\User.cs" />
     <Compile Include="Command\UserPrg.cs" />
     <Compile Include="Controls\CameraDisplay.cs">
@@ -174,7 +178,10 @@
     <Compile Include="Controls\CameraDisplay_ShowOnly.designer.cs">
       <DependentUpon>CameraDisplay_ShowOnly.cs</DependentUpon>
     </Compile>
+    <Compile Include="DualResultGeneric.cs" />
     <Compile Include="ExcelFileNameExtension.cs" />
+    <Compile Include="ExtendedMethods\DBWarpperExtension.cs" />
+    <Compile Include="ExtendedMethods\MiscExtensions.cs" />
     <Compile Include="InchTextBox.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -211,7 +218,6 @@
       <DependentUpon>PopupFactoryForAtoB.cs</DependentUpon>
     </Compile>
     <Compile Include="ProductionGridExts.cs" />
-    <Compile Include="ProductionEnv.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Resource1.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -229,6 +235,9 @@
     </Compile>
     <Compile Include="Txtartworktype_fty.Designer.cs">
       <DependentUpon>Txtartworktype_fty.cs</DependentUpon>
+    </Compile>
+    <Compile Include="TxtMultiBrandSupplierGroup.cs">
+      <SubType>Component</SubType>
     </Compile>
     <Compile Include="TxtSewingTeam.cs">
       <SubType>Component</SubType>
@@ -968,6 +977,7 @@
   <ItemGroup>
     <Content Include="Resources\exclamation_mark_PNG86.png" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
