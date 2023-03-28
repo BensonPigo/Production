@@ -97,6 +97,7 @@ namespace Sci.Production.PublicPrg
         #endregion;
         #region 判斷Physical OverallResult, Status
 
+        private static string allResult;
         /// <summary>
         /// 判斷並回寫Physical OverallResult, Status string[0]=Result, string[1]=status
         /// </summary>
@@ -104,40 +105,77 @@ namespace Sci.Production.PublicPrg
         /// <returns>string[]</returns>
         public static string[] GetOverallResult_Status(DataRow maindr)
         {
-            string status = "New";
+            string status = "New"; 
 
-            string allResult;
+            allResult = string.Empty;
+
+            string brandID = MyUtility.GetValue.Lookup($"SELECt BrandID FROM Orders WHERE ID ='{maindr["poid"]}'", "Production");
+
             #region 新改的邏輯
+            if (brandID == "LLL" && maindr["Physical"].ToString() == "LLL G5")
+             {
+                // 判斷Result是Pass的唯一狀況
+                if (
+                    (maindr["Physical"].ToString() == "LLL G5" || MyUtility.Convert.GetBool(maindr["Nonphysical"])) &&
+                    (maindr["Weight"].ToString() == "Pass" || MyUtility.Convert.GetBool(maindr["NonWeight"])) &&
+                    (maindr["ShadeBond"].ToString() == "Pass" || MyUtility.Convert.GetBool(maindr["NonShadeBond"])) &&
+                    (maindr["Continuity"].ToString() == "Pass" || MyUtility.Convert.GetBool(maindr["NonContinuity"])) &&
+                    (maindr["Odor"].ToString() == "Pass" || MyUtility.Convert.GetBool(maindr["NonOdor"])) &&
+                    (maindr["Moisture"].ToString() == "Pass" || MyUtility.Convert.GetBool(maindr["NonMoisture"])))
+                {
+                     allResult = "Pass EXC LLL G5";
+                     status = "Confirmed";
+                }
 
-            // 判斷Result是Pass的唯一狀況
-            if (
-                (maindr["Physical"].ToString() == "Pass" || MyUtility.Convert.GetBool(maindr["Nonphysical"])) &&
-                (maindr["Weight"].ToString() == "Pass" || MyUtility.Convert.GetBool(maindr["NonWeight"])) &&
-                (maindr["ShadeBond"].ToString() == "Pass" || MyUtility.Convert.GetBool(maindr["NonShadeBond"])) &&
-                (maindr["Continuity"].ToString() == "Pass" || MyUtility.Convert.GetBool(maindr["NonContinuity"])) &&
-                (maindr["Odor"].ToString() == "Pass" || MyUtility.Convert.GetBool(maindr["NonOdor"])) &&
-                (maindr["Moisture"].ToString() == "Pass" || MyUtility.Convert.GetBool(maindr["NonMoisture"])))
-            {
-                allResult = "Pass";
-                status = "Confirmed";
-            }
-
-            // 判斷Result 是空值
-            else if (
-                (MyUtility.Check.Empty(maindr["Physical"]) && !MyUtility.Convert.GetBool(maindr["Nonphysical"])) ||
-                (MyUtility.Check.Empty(maindr["Weight"]) && !MyUtility.Convert.GetBool(maindr["NonWeight"])) ||
-                (MyUtility.Check.Empty(maindr["ShadeBond"]) && !MyUtility.Convert.GetBool(maindr["NonShadeBond"])) ||
-                (MyUtility.Check.Empty(maindr["Continuity"]) && !MyUtility.Convert.GetBool(maindr["NonContinuity"])) ||
-                (MyUtility.Check.Empty(maindr["Odor"]) && !MyUtility.Convert.GetBool(maindr["NonOdor"])) ||
-                (MyUtility.Check.Empty(maindr["Moisture"]) && !MyUtility.Convert.GetBool(maindr["NonMoisture"])))
-            {
-                allResult = string.Empty;
+                // 判斷Result 是空值
+                else if (
+                    (MyUtility.Check.Empty(maindr["Physical"]) && !MyUtility.Convert.GetBool(maindr["Nonphysical"])) ||
+                    (MyUtility.Check.Empty(maindr["Weight"]) && !MyUtility.Convert.GetBool(maindr["NonWeight"])) ||
+                    (MyUtility.Check.Empty(maindr["ShadeBond"]) && !MyUtility.Convert.GetBool(maindr["NonShadeBond"])) ||
+                    (MyUtility.Check.Empty(maindr["Continuity"]) && !MyUtility.Convert.GetBool(maindr["NonContinuity"])) ||
+                    (MyUtility.Check.Empty(maindr["Odor"]) && !MyUtility.Convert.GetBool(maindr["NonOdor"])) ||
+                    (MyUtility.Check.Empty(maindr["Moisture"]) && !MyUtility.Convert.GetBool(maindr["NonMoisture"])))
+                {
+                    allResult = string.Empty;
+                }
+                else
+                {
+                     allResult = "Fail EXC LLL G5";
+                }
             }
             else
             {
-                allResult = "Fail";
+                // 判斷Result是Pass的唯一狀況
+                if (
+                    (maindr["Physical"].ToString() == "Pass" || MyUtility.Convert.GetBool(maindr["Nonphysical"])) &&
+                    (maindr["Weight"].ToString() == "Pass" || MyUtility.Convert.GetBool(maindr["NonWeight"])) &&
+                    (maindr["ShadeBond"].ToString() == "Pass" || MyUtility.Convert.GetBool(maindr["NonShadeBond"])) &&
+                    (maindr["Continuity"].ToString() == "Pass" || MyUtility.Convert.GetBool(maindr["NonContinuity"])) &&
+                    (maindr["Odor"].ToString() == "Pass" || MyUtility.Convert.GetBool(maindr["NonOdor"])) &&
+                    (maindr["Moisture"].ToString() == "Pass" || MyUtility.Convert.GetBool(maindr["NonMoisture"])))
+                {
+                    allResult = "Pass";
+                    status = "Confirmed";
+                }
+
+                // 判斷Result 是空值
+                else if (
+                    (MyUtility.Check.Empty(maindr["Physical"]) && !MyUtility.Convert.GetBool(maindr["Nonphysical"])) ||
+                    (MyUtility.Check.Empty(maindr["Weight"]) && !MyUtility.Convert.GetBool(maindr["NonWeight"])) ||
+                    (MyUtility.Check.Empty(maindr["ShadeBond"]) && !MyUtility.Convert.GetBool(maindr["NonShadeBond"])) ||
+                    (MyUtility.Check.Empty(maindr["Continuity"]) && !MyUtility.Convert.GetBool(maindr["NonContinuity"])) ||
+                    (MyUtility.Check.Empty(maindr["Odor"]) && !MyUtility.Convert.GetBool(maindr["NonOdor"])) ||
+                    (MyUtility.Check.Empty(maindr["Moisture"]) && !MyUtility.Convert.GetBool(maindr["NonMoisture"])))
+                {
+                    allResult = string.Empty;
+                }
+                else
+                {
+                    allResult = "Fail";
+                }
+                #endregion
             }
-            #endregion
+
 
             string[] re_str = { allResult, status };
             return re_str;
