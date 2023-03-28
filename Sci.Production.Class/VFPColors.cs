@@ -44,6 +44,11 @@ namespace Sci.Production.Class
         public static Color Yellow_255_255_50 = Color.FromArgb(255, 255, 50);
 
         /// <summary>
+        /// Yellow
+        /// </summary>
+        public static Color Yellow_255_255_0 = Color.FromArgb(255, 255, 0);
+
+        /// <summary>
         /// Red
         /// </summary>
         public static Color Red_255_0_0 = Color.FromArgb(255, 0, 0);
@@ -102,5 +107,10 @@ namespace Sci.Production.Class
         /// Pink 淡粉紅，PO3 判斷PINO,PIDate是否有key
         /// </summary>
         public static Color Pink_255_228_225 = Color.FromArgb(255, 228, 225);
+
+        /// <summary>
+        /// Orange 橘色，B10 判斷是否為On Time
+        /// </summary>
+        public static Color Orange_255_191_143 = Color.FromArgb(255, 191, 143);
     }
 }

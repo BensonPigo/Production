@@ -2827,6 +2827,14 @@
     <Build Include="dbo\Tables\SubProWorkTime_Detail.sql" />
     <Build Include="dbo\Tables\SubProRestTime.sql" />
     <Build Include="dbo\Tables\SubProInsRecord_Operator.sql" />
+    <Build Include="dbo\Tables\UASentReport.sql" />
+    <Build Include="dbo\Tables\NewSentReport.sql" />
+    <Build Include="dbo\Tables\MaterialDocument.sql" />
+    <Build Include="dbo\Tables\MaterialDocument_MtlType.sql" />
+    <Build Include="dbo\Tables\MaterialDocument_Responsbility.sql" />
+    <Build Include="dbo\Tables\MaterialDocument_Supplier.sql" />
+    <Build Include="dbo\Tables\MaterialDocument_WeaveType.sql" />
+    <Build Include="dbo\Tables\BrandRelation.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />

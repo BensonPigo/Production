@@ -292,7 +292,7 @@
     </Compile>
     <Compile Include="B28.Designer.cs">
       <DependentUpon>B28.cs</DependentUpon>
-	</Compile>
+    </Compile>
     <Compile Include="B33.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -347,6 +347,12 @@
     </Compile>
     <Compile Include="P30_MDFailbyCarton.Designer.cs">
       <DependentUpon>P30_MDFailbyCarton.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P50.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P50.Designer.cs">
+      <DependentUpon>P50.cs</DependentUpon>
     </Compile>
     <Compile Include="R13_ShadeBond8_Data.cs" />
     <Compile Include="R13_ShadeBond4_Data.cs" />
@@ -860,7 +866,6 @@
     <EmbeddedResource Include="B26.resx">
       <DependentUpon>B26.cs</DependentUpon>
     </EmbeddedResource>
-
     <EmbeddedResource Include="B28.resx">
       <DependentUpon>B28.cs</DependentUpon>
     </EmbeddedResource>
@@ -1025,6 +1030,9 @@
     <EmbeddedResource Include="P01_PrintFormatReport8.resx">
       <DependentUpon>P01_PrintFormatReport8.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="P50.resx">
+      <DependentUpon>P50.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="R01.resx">
       <DependentUpon>R01.cs</DependentUpon>
     </EmbeddedResource>
@@ -1120,6 +1128,7 @@
     <EmbeddedResource Include="Resource.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resource.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
@@ -1158,6 +1167,9 @@
   <ItemGroup>
     <None Include="Resources\image_icon.png" />
     <None Include="app.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\trffc15.bmp" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
