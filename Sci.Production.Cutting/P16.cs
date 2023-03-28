@@ -99,7 +99,7 @@ namespace Sci.Production.Cutting
                 .Text("WeaveTypeID", header: "Fabrication", width: Widths.Auto(), iseditingreadonly: true)
                 .Date("FinalETA", header: "ETA", width: Widths.Auto(), iseditingreadonly: true)
                 .Date("EstCutDate", header: "Est." + Environment.NewLine + "Cutting Date", width: Widths.Auto(), iseditingreadonly: true)
-                .Text("OrderID", header: "SP#", width: Widths.AnsiChars(15), iseditingreadonly: true)
+                .Text("ID", header: "SP#", width: Widths.AnsiChars(15), iseditingreadonly: true)
                 .Text("BrandID", header: "Brand", width: Widths.AnsiChars(12), iseditingreadonly: true)
                 .Text("StyleID", header: "Style#", width: Widths.AnsiChars(12), iseditingreadonly: true)
                 .Text("Refno", header: "FabRef#", width: Widths.AnsiChars(15), iseditingreadonly: true)
