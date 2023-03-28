@@ -497,13 +497,13 @@ where Poid='{dr["id"]}' and seq1='{dr["Seq1"]}' and seq2='{dr["Seq2"]}'", out dr
             .CheckBox("SustainableMaterial", header: "Recycled", width: Widths.AnsiChars(3), iseditable: false, trueValue: 1, falseValue: 0)
             .EditText("description", header: "Description", iseditingreadonly: true, width: Widths.AnsiChars(33)) // 8
             .Button("...", null, header: "Spec", width: Widths.AnsiChars(2), onclick: this.BtnSpec)
-            .Text("fabrictype2", header: "Material\r\nType", iseditingreadonly: true, width: Widths.AnsiChars(6)) // 7
+            .Text("fabrictype2", header: "Material\r\nType", iseditingreadonly: true, width: Widths.AnsiChars(20)) // 7
             .Text("WeaveTypeID", header: "Weave\r\nType", iseditingreadonly: true, width: Widths.AnsiChars(9)) // 7
             .EditText("Article", header: "Article", iseditingreadonly: true, width: Widths.AnsiChars(15)) // 8
             .Text("ColorID", header: "Color", iseditingreadonly: true, width: Widths.AnsiChars(6)) // 9
             .Text("SizeSpec", header: "Size", iseditingreadonly: true, width: Widths.AnsiChars(2)) // 10
             .EditText("GarmentSize", header: "Garment\r\nSize", iseditingreadonly: true, width: Widths.AnsiChars(2)) // 8
-            .Text("CurrencyID", header: "Currency", iseditingreadonly: true, width: Widths.AnsiChars(2)) // 11
+            .Text("CurrencyID", header: "Currency", iseditingreadonly: true, width: Widths.AnsiChars(5)) // 11
             .Text("unitqty", header: "Qty", iseditingreadonly: true, width: Widths.AnsiChars(2), alignment: DataGridViewContentAlignment.MiddleRight) // 12
             .Text("Qty", header: "Order\r\nQty", iseditingreadonly: true, width: Widths.AnsiChars(6), alignment: DataGridViewContentAlignment.MiddleRight) // 13
             .Text("NETQty", header: "Net\r\nQty", iseditingreadonly: true, width: Widths.AnsiChars(6), alignment: DataGridViewContentAlignment.MiddleRight) // 14
@@ -541,11 +541,6 @@ where Poid='{dr["id"]}' and seq1='{dr["Seq1"]}' and seq2='{dr["Seq2"]}'", out dr
             #endregion
 
             this.gridMaterialStatus.ColumnFrozen(this.gridMaterialStatus.Columns["seq2"].Index);
-            this.gridMaterialStatus.Columns["id"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
-            this.gridMaterialStatus.Columns["FinalETA"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
-            this.gridMaterialStatus.Columns["CurrencyID"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
-            this.gridMaterialStatus.Columns["ShipFOC"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
-            this.gridMaterialStatus.Columns["InputQty"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
             this.gridMaterialStatus.Columns["seq1"].Width = 40;
             this.gridMaterialStatus.DefaultCellStyle.Font = new Font("Microsoft Sans Serif", 8F);
 
