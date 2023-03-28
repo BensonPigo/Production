@@ -111,6 +111,10 @@ select *
 into #tmp2
 from UNPIVOT_1 ;
 
+alter table #tmp2 alter column OrderID varchar(13)
+alter table #tmp2 alter column SizeCode varchar(8)
+alter table #tmp2 alter column Article varchar(8)
+
 delete from #tmp2 where qty = 0;
 
 declare @count as int;
@@ -224,16 +228,44 @@ if @count = 0
 end
 
 Create Table #Tmp_BoaExpend
-(  ExpendUkey BigInt Identity(1,1) Not Null, ID Varchar(13), Order_BOAUkey BigInt
-	, RefNo VarChar(36), SCIRefNo VarChar(30), Article VarChar(8), ColorID VarChar(6), SuppColor NVarChar(Max)
-	, SizeCode VarChar(8), SizeSpec VarChar(15), SizeUnit VarChar(8), Remark NVarChar(Max)
+(   ExpendUkey BigInt Identity(1,1) Not Null, 
+    ID Varchar(13),
+    Order_BOAUkey BigInt
+	, RefNo VarChar(36)
+    , SCIRefNo VarChar(30)
+    , Article VarChar(8)
+    , ColorID VarChar(6)
+    , SuppColor NVarChar(Max)
+	, SizeCode VarChar(8)
+    , SizeSpec VarChar(15)
+    , SizeUnit VarChar(8)
+    , Remark NVarChar(Max)
 	, OrderQty Numeric(6,0)
     --, Price Numeric(12,4)--pms does not use this column
-    , UsageQty Numeric(11,2), UsageUnit VarChar(8), SysUsageQty  Numeric(11,2)
-	, BomZipperInsert VarChar(5), BomCustPONo VarChar(30), Keyword VarChar(Max), Keyword_Original VarChar(Max), Keyword_xml VarChar(Max), OrderList nvarchar(max), ColorDesc nvarchar(150), Special nvarchar(max)
-	, BomTypeColorID varchar(50), BomTypeSize varchar(50), BomTypeSizeUnit varchar(50), BomTypeZipperInsert varchar(50), BomTypeArticle varchar(50), BomTypeCOO varchar(50)
-	, BomTypeGender varchar(50), BomTypeCustomerSize varchar(50), BomTypeDecLabelSize varchar(50), BomTypeBrandFactoryCode varchar(50), BomTypeStyle varchar(50)
-	, BomTypeStyleLocation varchar(50), BomTypeSeason varchar(50), BomTypeCareCode varchar(50), BomTypeCustomerPO varchar(50)
+    , UsageQty Numeric(11,2)
+    , UsageUnit VarChar(8)
+    , SysUsageQty  Numeric(11,2)
+	, BomZipperInsert VarChar(5)
+    , BomCustPONo VarChar(30)
+    , Keyword VarChar(Max)
+    , Keyword_Original VarChar(Max)
+    , Keyword_xml VarChar(Max), OrderList nvarchar(max)
+    , ColorDesc nvarchar(150), Special nvarchar(max)
+	, BomTypeColorID varchar(50)
+    , BomTypeSize varchar(50)
+    , BomTypeSizeUnit varchar(50)
+    , BomTypeZipperInsert varchar(50)
+    , BomTypeArticle varchar(50)
+    , BomTypeCOO varchar(50)
+	, BomTypeGender varchar(50)
+    , BomTypeCustomerSize varchar(50)
+    , BomTypeDecLabelSize varchar(50)
+    , BomTypeBrandFactoryCode varchar(50)
+    , BomTypeStyle varchar(50)
+	, BomTypeStyleLocation varchar(50)
+    , BomTypeSeason varchar(50)
+    , BomTypeCareCode varchar(50)
+    , BomTypeCustomerPO varchar(50)
 	, Primary Key (ExpendUkey)
 	, Index Idx_ID NonClustered (ID, Order_BOAUkey, ColorID) -- table index
 );
