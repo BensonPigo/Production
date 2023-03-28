@@ -364,12 +364,10 @@ drop table #tmp
 
             #region Save & Show Excel
 
-            // 限制欄寬長度
-            objApp.Visible = true;
-
             // Desc 固定欄寬&取消自動換列 避免資料太多導致整欄高度上長
             objApp.Columns[7].ColumnWidth = 60;
-            objApp.Columns[7].WrapText = false;
+            objApp.Sheets[1].Range[$"G2:G{this.PrintTable.Rows.Count + 1}"].WrapText = false;
+            objApp.Visible = true;
 
             Marshal.ReleaseComObject(objApp);
 

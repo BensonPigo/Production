@@ -372,10 +372,10 @@ drop table #tmp_FtyExport,#tmpFinal;
             // 限制欄寬長度
             objApp.Sheets[1].Columns[1].ColumnWidth = 15;
             objApp.Sheets[1].Columns[9].ColumnWidth = 60;
-            objApp.Sheets[1].Columns[9].WrapText = false;
+            objApp.Sheets[1].Range[$"I2:I{this.PrintTable[0].Rows.Count + 1}"].WrapText = false;
 
             objApp.Sheets[2].Columns[10].ColumnWidth = 70;
-            objApp.Sheets[2].Columns[10].WrapText = false;
+            objApp.Sheets[2].Range[$"J2:J{this.PrintTable[1].Rows.Count + 1}"].WrapText = false;
             objApp.Visible = true;
             Marshal.ReleaseComObject(objApp);
 
