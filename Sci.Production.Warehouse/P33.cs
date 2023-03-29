@@ -598,7 +598,58 @@ DROP TABLE #tmp
                         return;
                     }
 
-                    DataTable issueBreakDown_Dt = this.Convert_IssueBreakDown_ToDataTable();
+                    List<IssueQtyBreakdown> modelList = new List<IssueQtyBreakdown>();
+                    foreach (DataRow tempRow in this.dtIssueBreakDown.Rows)
+                    {
+                        int totalQty = 0;
+                        foreach (DataColumn col in this.dtIssueBreakDown.Columns)
+                        {
+                            IssueQtyBreakdown m = new IssueQtyBreakdown()
+                            {
+                                OrderID = tempRow["OrderID"].ToString(),
+                                Article = tempRow["Article"].ToString(),
+                            };
+
+                            if (tempRow[col].GetType().Name == "Decimal")
+                            {
+                                totalQty += Convert.ToInt32(tempRow[col]);
+                            }
+
+                            if (col.ColumnName != "OrderID" && col.ColumnName != "Article")
+                            {
+                                m.SizeCode = col.ColumnName;
+
+                                m.Qty = totalQty;
+                                modelList.Add(m);
+                                totalQty = 0;
+                            }
+                        }
+                    }
+
+                    DataTable t = new DataTable();
+                    t.Columns.Add(new DataColumn() { ColumnName = "Article", DataType = typeof(string) });
+                    t.Columns.Add(new DataColumn() { ColumnName = "SizeCode", DataType = typeof(string) });
+                    t.Columns.Add(new DataColumn() { ColumnName = "Qty", DataType = typeof(int) });
+
+                    var groupByData = modelList.GroupBy(o => new { o.Article, o.SizeCode }).Select(o => new
+                    {
+                        o.Key.Article,
+                        o.Key.SizeCode,
+                        Qty = o.Sum(x => x.Qty),
+                    }).ToList();
+
+                    foreach (var model in groupByData)
+                    {
+                        if (model.Qty > 0)
+                        {
+                            DataRow newDr = t.NewRow();
+                            newDr["Article"] = model.Article;
+                            newDr["SizeCode"] = model.SizeCode;
+                            newDr["Qty"] = model.Qty;
+
+                            t.Rows.Add(newDr);
+                        }
+                    }
                     #endregion
 
                     // 取得預設帶入
@@ -792,12 +843,12 @@ OUTER APPLY(
 	SELECT [Val]=STUFF((
 		SELECT  DISTINCT ',' + SuppColor
 		FROM PO_Supp_Detail y
-        left join PO_Supp_Detail_Spec psdsCy WITH (NOLOCK) on psdsCy.ID = y.id and psdsCy.seq1 = y.seq1 and psdsCy.seq2 = y.seq2 and psdsCy.SpecColumnID = 'Color'
+        inner join PO_Supp_Detail_Spec psdsCy WITH (NOLOCK) on psdsCy.ID = y.id and psdsCy.seq1 = y.seq1 and psdsCy.seq2 = y.seq2 and psdsCy.SpecColumnID = 'Color'
 		WHERE EXISTS( 
 			SELECT 1 
 			FROM PO_Supp_Detail psd 
+            inner join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
 			LEFT JOIN FtyInventory Fty ON  Fty.poid = psd.ID AND Fty.seq1 = psd.seq1 AND Fty.seq2 = psd.seq2 AND fty.StockType='B'
-            left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
 			WHERE psd.SCIRefno=t.SCIRefno AND isnull(psdsC.SpecValue, '') = t.ColorID AND psd.ID = '{this.poid}'
 			AND psd.SCIRefno = y.SCIRefno AND isnull(psdsC.SpecValue, '') = isnull(psdsCy.SpecValue, '') AND psd.ID = y.ID
 			AND psd.SEQ1 = y.SEQ1 AND psd.SEQ2 = y.SEQ2
@@ -813,7 +864,12 @@ DROP TABLE #tmp_sumQty,#step1,#tmp,#final,#final2
 
                     DataRow row;
                     DataTable rtn = null;
-                    MyUtility.Tool.ProcessWithDatatable(issueBreakDown_Dt, string.Empty, sqlcmd, out rtn, "#tmp");
+                    DualResult result1 = MyUtility.Tool.ProcessWithDatatable(t, string.Empty, sqlcmd, out rtn, "#tmp");
+                    if (!result1)
+                    {
+                        this.ShowErr(result1);
+                        return;
+                    }
 
                     if (rtn == null || rtn.Rows.Count == 0)
                     {
@@ -925,8 +981,6 @@ DROP TABLE #tmp_sumQty,#step1,#tmp,#final,#final2
                         }
 
                         DataTable t = new DataTable();
-
-                        // IssueBreakDown_Dt.Columns.Add(new DataColumn() { ColumnName = "OrderID", DataType = typeof(string) });
                         t.Columns.Add(new DataColumn() { ColumnName = "Article", DataType = typeof(string) });
                         t.Columns.Add(new DataColumn() { ColumnName = "SizeCode", DataType = typeof(string) });
                         t.Columns.Add(new DataColumn() { ColumnName = "Qty", DataType = typeof(int) });
@@ -943,8 +997,6 @@ DROP TABLE #tmp_sumQty,#step1,#tmp,#final,#final2
                             if (model.Qty > 0)
                             {
                                 DataRow newDr = t.NewRow();
-
-                                // newDr["OrderID"] = model.OrderID;
                                 newDr["Article"] = model.Article;
                                 newDr["SizeCode"] = model.SizeCode;
                                 newDr["Qty"] = model.Qty;
@@ -1040,7 +1092,7 @@ OUTER APPLY(
 	SELECT TOP 1 PSD2.StockUnit ,u.Description
 	FROM PO_Supp_Detail PSD2 
 	LEFT JOIN Unit u ON u.ID = psd2.StockUnit
-    left join PO_Supp_Detail_Spec psdsC2 WITH (NOLOCK) on psdsC2.ID = PSD2.id and psdsC2.seq1 = PSD2.seq1 and psdsC2.seq2 = PSD2.seq2 and psdsC2.SpecColumnID = 'Color'
+    inner join PO_Supp_Detail_Spec psdsC2 WITH (NOLOCK) on psdsC2.ID = PSD2.id and psdsC2.seq1 = PSD2.seq1 and psdsC2.seq2 = PSD2.seq2 and psdsC2.SpecColumnID = 'Color'
 	WHERE PSD2.ID = psd.id
 	AND PSD2.SCIRefno=psd.SCIRefno
 	AND isnull(psdsC2.SpecValue, '')=isnull(psdsC.SpecValue, '')
@@ -1053,7 +1105,7 @@ OUTER APPLY(
 			SELECt [Qty]=SUM(b.Qty)
 			FROM #step1 a
 			INNER JOIN #tmp_sumQty b ON a.Article = b.Article
-			WHERE SCIRefNo=psd.SCIRefNo AND  ColorID= psd.isnull(psdsC.SpecValue, '') AND a.Article=g.Article
+			WHERE SCIRefNo=psd.SCIRefNo AND  ColorID= isnull(psdsC.SpecValue, '') AND a.Article=g.Article
 			GROUP BY a.Article
 		)
 	FROM DBO.GetThreadUsedQtyByBOT(psd.ID,default) g
@@ -1148,8 +1200,8 @@ FROM #final2 t
 OUTER APPLY(
 	SELECT [Qty]=ISNULL(( SUM(Fty.InQty - Fty.OutQty + Fty.AdjustQty - Fty.ReturnQty)) ,0)
 	FROM PO_Supp_Detail psd 
+    inner join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
 	LEFT JOIN FtyInventory Fty ON  Fty.poid = psd.ID AND Fty.seq1 = psd.seq1 AND Fty.seq2 = psd.seq2 AND fty.StockType='B'
-    left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
 	WHERE psd.SCIRefno=t.SCIRefno AND isnull(psdsC.SpecValue, '') =t.ColorID AND psd.ID='{this.poid}'
 )Balance 
 OUTER APPLY(
@@ -1161,8 +1213,8 @@ OUTER APPLY(
 		WHERE EXISTS( 
 			SELECT 1 
 			FROM PO_Supp_Detail psd 
+            inner join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
 			LEFT JOIN FtyInventory Fty ON  Fty.poid = psd.ID AND Fty.seq1 = psd.seq1 AND Fty.seq2 = psd.seq2 AND fty.StockType='B'
-            left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
 			WHERE psd.SCIRefno=t.SCIRefno AND isnull(psdsC.SpecValue, '') = t.ColorID AND psd.ID = '{this.poid}'
 			AND psd.SCIRefno = y.SCIRefno AND isnull(psdsC.SpecValue, '') = isnull(psdsCy.SpecValue, '') AND psd.ID = y.ID
 			AND psd.SEQ1 = y.SEQ1 AND psd.SEQ2 = y.SEQ2
@@ -1180,7 +1232,13 @@ DROP TABLE #tmp_sumQty,#step1,#tmp,#final,#final2
 
                         DataRow row;
                         DataTable rtn = null;
-                        MyUtility.Tool.ProcessWithDatatable(t, string.Empty, sqlcmd, out rtn, "#tmp");
+                        DualResult result = MyUtility.Tool.ProcessWithDatatable(t, string.Empty, sqlcmd, out rtn, "#tmp");
+                        if (!result)
+                        {
+                            this.ShowErr(result);
+                            return;
+                        }
+
                         if (rtn == null || rtn.Rows.Count == 0)
                         {
                             e.Cancel = true;
