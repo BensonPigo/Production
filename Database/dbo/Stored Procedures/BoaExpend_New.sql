@@ -70,7 +70,7 @@ Begin
 		, BomCustPONo, Keyword, Keyword_Original, Keyword_xml, OrderList, ColorDesc, Special
 		, BomTypeColorID, BomTypeSize, BomTypeSizeUnit, BomTypeZipperInsert, BomTypeArticle, BomTypeCOO, BomTypeGender, BomTypeCustomerSize
 		, BomTypeDecLabelSize, BomTypeBrandFactoryCode, BomTypeStyle, BomTypeStyleLocation, BomTypeSeason, BomTypeCareCode, BomTypeCustomerPO
-	from GetBOAExpend_NEW(@ID, @Order_BOAUkey, @IsGetFabQuot, @IsExpendDetail, @Tmp_Order_Qty, @IsExpendArticle, @IncludeQtyZero)
+	from GetBOAExpend_NEW(@ID, @Order_BOAUkey, @IsGetFabQuot, @IsExpendDetail, @Tmp_Order_Qty, @IsExpendArticle, @IncludeQtyZero, 1)
 	order by RefNo, SCIRefNo, ColorID, Article, SizeSeq, SizeSpec, BomZipperInsert, Keyword, Special
 	
 	--#Tmp_BoaExpend_OrderList
