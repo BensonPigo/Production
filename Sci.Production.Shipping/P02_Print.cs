@@ -305,6 +305,7 @@ group by UnitID", MyUtility.Convert.GetString(this.masterData["ID"]));
             else if (this.reportType == "3")
             {
                 #region Detail Packing List
+
                 string strXltName = Env.Cfg.XltPathDir + "\\Shipping_P02_Print_Invoice + PackingList.xltx";
                 Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
                 Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
@@ -330,17 +331,25 @@ group by UnitID", MyUtility.Convert.GetString(this.masterData["ID"]));
                     string strDescription = dr["Description"].ToString();
                     string strStyle_Ref = string.Empty;
 
-                    if (dr["CategoryNameFromDD"].ToString() == "Sample")
+                    if (dr["CategoryName"].ToString() == "Sample")
                     {
                         strType = dr["Reason_Gender"].ToString();
-                        strHSCODE = dr["HSCode"].ToString();
+                        strHSCODE = dr["HSCode"].ToString() != string.Empty ? dr["HSCode"].ToString().Substring(0, 6) : string.Empty;
                         strDescription = dr["styleDescription"].ToString();
                     }
-                    else if (dr["CategoryNameFromDD"].ToString() == "Material")
+                    else if (dr["CategoryName"].ToString() == "Material")
                     {
                         strType = dr["Fabric_MtlTypeID"].ToString();
-                        strHSCODE = dr["Fabric_HsCode"].ToString();
+                        strHSCODE = dr["Fabric_HsCode"].ToString() != string.Empty ? dr["Fabric_HsCode"].ToString().Substring(0, 6) : string.Empty;
                         strDescription = dr["fabricDescription"].ToString();
+                    }
+                    else if (dr["CategoryName"].ToString() == "Other Sample")
+                    {
+                        strHSCODE = dr["HSCode"].ToString() != string.Empty ? dr["HSCode"].ToString().Substring(0, 6) : string.Empty;
+                    }
+                    else if (dr["CategoryName"].ToString() == "Other Material")
+                    {
+                        strDescription = dr["nDescription"].ToString();
                     }
 
                     if (!MyUtility.Check.Empty(dr["StyleID"].ToString()) && !MyUtility.Check.Empty(dr["RefNo"].ToString()))

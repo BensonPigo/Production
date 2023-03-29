@@ -222,7 +222,7 @@ namespace Sci.Production.Shipping
         // Context Menu選擇Add new Item
         private void AddNewItem()
         {
-            P02_AddNewItem callNewItemForm = new P02_AddNewItem(this.CurrentMaintain,this.checkBoxDoc.Checked);
+            P02_AddNewItem callNewItemForm = new P02_AddNewItem(this.CurrentMaintain, this.checkBoxDoc.Checked);
             DataRow dr = ((DataTable)this.detailgridbs.DataSource).NewRow();
             dr["ID"] = this.CurrentMaintain["ID"];
             DataTable before_dt = ((DataTable)this.detailgridbs.DataSource).Copy();
@@ -266,7 +266,7 @@ namespace Sci.Production.Shipping
 
             if (MyUtility.Convert.GetString(this.CurrentDetailData["Category"]) == "5" || MyUtility.Convert.GetString(this.CurrentDetailData["Category"]) == "6" || MyUtility.Convert.GetString(this.CurrentDetailData["Category"]) == "7" || MyUtility.Convert.GetString(this.CurrentDetailData["Category"]) == "8" || MyUtility.Convert.GetString(this.CurrentDetailData["Category"]) == "9")
             {
-                P02_AddNewItem callNewItemForm = new P02_AddNewItem();
+                P02_AddNewItem callNewItemForm = new P02_AddNewItem(this.CurrentMaintain, this.checkBoxDoc.Checked);
                 callNewItemForm.SetUpdate(this.CurrentDetailData);
                 edit_result = callNewItemForm.ShowDialog(this);
             }
@@ -387,7 +387,7 @@ where ID = '{0}'", this.CurrentMaintain["ID"]);
 
             if (MyUtility.Convert.GetString(this.CurrentDetailData["Category"]) == "5" || MyUtility.Convert.GetString(this.CurrentDetailData["Category"]) == "6" || MyUtility.Convert.GetString(this.CurrentDetailData["Category"]) == "7" || MyUtility.Convert.GetString(this.CurrentDetailData["Category"]) == "8" || MyUtility.Convert.GetString(this.CurrentDetailData["Category"]) == "9")
             {
-                P02_AddNewItem callNewItemForm = new P02_AddNewItem();
+                P02_AddNewItem callNewItemForm = new P02_AddNewItem(this.CurrentMaintain, this.checkBoxDoc.Checked);
                 callNewItemForm.SetDelete(this.CurrentDetailData);
                 callNewItemForm.ShowDialog(this);
             }
@@ -599,7 +599,6 @@ where id='{0}' ", this.CurrentMaintain["ID"]);
         /// <inheritdoc/>
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
-            
             string masterID = (e.Master == null) ? string.Empty : MyUtility.Convert.GetString(e.Master["ID"]);
             this.DetailSelectCommand = string.Format(
                 @"
@@ -610,7 +609,7 @@ SELECT OrderNumber = ROW_NUMBER() over (order by   TRY_CONVERT (int, CTNNo )
       ,allData.* 
 FROM(
     select ed.*
-	    ,case when ed.Category in ('4','9') then ed.MtlDesc else ed.Description end nDescription
+	    ,case when ed.Category in ('4') then ed.MtlDesc else ed.Description end nDescription
 	    ,AirPPno=iif(isnull(ed.PackingListID,'') = '',ed.DutyNo , airpp.AirPPno)
     from
     (
@@ -666,11 +665,11 @@ FROM(
 		)SHC
 		outer apply
 		(
-			select top 1
+            select top 1
 			val = isnull(fh.HsCode,'')
 			from Fabric_HsCode fh with(nolock)
 			where f.SCIRefno = fh.SCIRefno
-            Order by year desc
+            Order by year desc,isnull(EditDate,AddDate)desc
 		)fhcode
 	    where ed.ID = '{0}'
     )ed
@@ -716,8 +715,7 @@ Order by CTNNo,Seq1,Seq2", masterID);
 
                             if (MyUtility.Convert.GetString(dr["Category"]) == "5" || MyUtility.Convert.GetString(dr["Category"]) == "6" || MyUtility.Convert.GetString(dr["Category"]) == "7" || MyUtility.Convert.GetString(dr["Category"]) == "8" || MyUtility.Convert.GetString(dr["Category"]) == "9")
                             {
-                                P02_AddNewItem callNewItemForm = new P02_AddNewItem();
-                                callNewItemForm.SetView(dr);
+                                P02_AddNewItem callNewItemForm = new P02_AddNewItem(this.CurrentMaintain, this.checkBoxDoc.Checked);
                                 callNewItemForm.ShowDialog(this);
                             }
                         }
