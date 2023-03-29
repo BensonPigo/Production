@@ -47,6 +47,7 @@ select
 	ResolveTime = iif(isnull(ttlSecond_RD, 0) = 0, null, ttlSecond_RD),
 	SubProResponseTeamID
     ,CustomColumn1
+	,Fac.MDivisionID
 from Production.dbo.SubProInsRecord SR WITH (NOLOCK)
 Left join Production.dbo.Bundle_Detail BD WITH (NOLOCK) on SR.BundleNo=BD.BundleNo
 Left join Production.dbo.Bundle B WITH (NOLOCK) on BD.ID=B.ID
@@ -69,6 +70,7 @@ outer apply(
 	),1,1,'''')
 )SubProResponseTeamID
 outer apply(select ttlSecond = DATEDIFF(Second, SR.AddDate, RepairedDatetime)) ttlSecond
+outer apply(select MDivisionID from Factory f where f.ID = SR.FactoryID ) Fac
 Where SR.InspectionDate between @StartDate and @EndDate
 UNION
 select
@@ -108,6 +110,7 @@ select
 	iif(isnull(ttlSecond_RD, 0) = 0, null, ttlSecond_RD),
 	SubProResponseTeamID
     ,CustomColumn1--自定義欄位, 在最後一個若有變動,則輸出Excel部分也要一起改
+	,Fac.MDivisionID
 from Production.dbo.SubProInsRecord SR WITH (NOLOCK)
 Left join Production.dbo.BundleReplacement_Detail BRD WITH (NOLOCK) on SR.BundleNo=BRD.BundleNo
 Left join Production.dbo.BundleReplacement BR WITH (NOLOCK) on BRD.ID=BR.ID
@@ -130,6 +133,7 @@ outer apply(
 	),1,1,'''')
 )SubProResponseTeamID
 outer apply(select ttlSecond = DATEDIFF(Second, SR.AddDate, RepairedDatetime)) ttlSecond
+outer apply(select MDivisionID from Factory f where f.ID = SR.FactoryID ) Fac
 Where SR.InspectionDate between @StartDate and @EndDate
 ')
  
@@ -180,7 +184,8 @@ FactoryID
 ,RepairedTime						
 ,ResolveTime						
 ,SubProResponseTeamID				
-,CustomColumn1					   
+,CustomColumn1	
+,MDivisionID
 )
 select	isnull(FactoryID, '')					
 		,isnull(SubProLocationID, '')		
@@ -217,7 +222,8 @@ select	isnull(FactoryID, '')
 		,isnull(RepairedTime, 0)			
 		,isnull(ResolveTime, 0)				
 		,isnull(SubProResponseTeamID, '')	
-		,isnull(CustomColumn1, '')			
+		,isnull(CustomColumn1, '')	
+		,isnull(MDivisionID, '')
 from #tmp2
 
 update b
