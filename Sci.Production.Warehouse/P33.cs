@@ -592,318 +592,14 @@ DROP TABLE #tmp
                     colorID = this.CurrentDetailData["ColorID"].ToString();
                     this.CurrentDetailData["POID"] = this.poid;
 
-                    #region 將IssueBreakDown整理成Datatable
                     if (this.dtIssueBreakDown == null)
                     {
                         return;
                     }
 
-                    List<IssueQtyBreakdown> modelList = new List<IssueQtyBreakdown>();
-                    foreach (DataRow tempRow in this.dtIssueBreakDown.Rows)
-                    {
-                        int totalQty = 0;
-                        foreach (DataColumn col in this.dtIssueBreakDown.Columns)
-                        {
-                            IssueQtyBreakdown m = new IssueQtyBreakdown()
-                            {
-                                OrderID = tempRow["OrderID"].ToString(),
-                                Article = tempRow["Article"].ToString(),
-                            };
-
-                            if (tempRow[col].GetType().Name == "Decimal")
-                            {
-                                totalQty += Convert.ToInt32(tempRow[col]);
-                            }
-
-                            if (col.ColumnName != "OrderID" && col.ColumnName != "Article")
-                            {
-                                m.SizeCode = col.ColumnName;
-
-                                m.Qty = totalQty;
-                                modelList.Add(m);
-                                totalQty = 0;
-                            }
-                        }
-                    }
-
-                    DataTable t = new DataTable();
-                    t.Columns.Add(new DataColumn() { ColumnName = "Article", DataType = typeof(string) });
-                    t.Columns.Add(new DataColumn() { ColumnName = "SizeCode", DataType = typeof(string) });
-                    t.Columns.Add(new DataColumn() { ColumnName = "Qty", DataType = typeof(int) });
-
-                    var groupByData = modelList.GroupBy(o => new { o.Article, o.SizeCode }).Select(o => new
-                    {
-                        o.Key.Article,
-                        o.Key.SizeCode,
-                        Qty = o.Sum(x => x.Qty),
-                    }).ToList();
-
-                    foreach (var model in groupByData)
-                    {
-                        if (model.Qty > 0)
-                        {
-                            DataRow newDr = t.NewRow();
-                            newDr["Article"] = model.Article;
-                            newDr["SizeCode"] = model.SizeCode;
-                            newDr["Qty"] = model.Qty;
-
-                            t.Rows.Add(newDr);
-                        }
-                    }
-                    #endregion
-
-                    // 取得預設帶入
-                    #region 取得預設帶入
-                    sqlcmd = $@"
-SELECt Article,[Qty]=SUM(Qty) 
-INTO #tmp_sumQty
-FROm #tmp
-GROUP BY Article
-
-Select distinct o.ID,tcd.SCIRefNo, tcd.ColorID ,tcd.Article 
-INTO #step1
-From dbo.Orders as o
-Inner Join dbo.Style as s On s.Ukey = o.StyleUkey
-Inner Join dbo.Style_ThreadColorCombo as tc On tc.StyleUkey = s.Ukey
-Inner Join dbo.Style_ThreadColorCombo_Detail as tcd On tcd.Style_ThreadColorComboUkey = tc.Ukey
-WHERE O.ID='{this.poid}' AND tcd.Article IN ( SELECT Article FROM #tmp )
-
-----------------Quiting用量計算--------------------------
-
-select P.ID,OQ.Article,OQ.SizeCode,OCC.FabricPanelCode,OCC.FabricCode
-,OE.ConsPC
-,[Number of Needle for QT] =  ceiling(sqh.Width/sqh.HSize/sqh.NeedleDistance)
-INTO #tmpQT
-from Orders O
-Inner join Order_Qty OQ on O.ID=OQ.ID
-Inner join PO P on O.POID=P.ID
-inner join Order_ColorCombo OCC on O.POID=OCC.Id and OQ.Article=OCC.Article and OCC.FabricCode is not null and OCC.FabricCode !=''
-inner join Order_EachCons oe WITH (NOLOCK) on oe.id = occ.id and oe.FabricCombo = occ.PatternPanel and oe.CuttingPiece = 0 
-inner join Order_EachCons_SizeQty OEZ on OE.Ukey=OEZ.Order_EachConsUkey and OQ.SizeCode=OEZ.SizeCode 
-Inner join Style_QTThreadColorCombo_History SQH on O.styleUkey=SQH.styleUkey and SQH.FabricCode=OE.FabricCode and SQH.FabricPanelCode=OE.FabricPanelCode and P.ThreadVersion=SQH.Version
-where o.ID = '{this.poid}'
-
-select O.ID,OQ.Article,OQ.SizeCode,OCC.FabricPanelCode,OCC.FabricCode
-,SQHD.Seq,SQHD.SCIRefno,SQHD.ColorID,QTt.Val
-INTO #tmpQTFinal
-from Orders O
-Inner join Order_Qty OQ on O.ID=OQ.ID
-Inner join PO P on O.POID=P.ID
-inner join Order_ColorCombo OCC on O.POID=OCC.Id and OQ.Article=OCC.Article and OCC.FabricCode is not null and OCC.FabricCode !=''
-Inner join Style_QTThreadColorCombo_History SQH on O.styleUkey=SQH.styleUkey and SQH.FabricCode=OCC.FabricCode and SQH.FabricPanelCode=OCC.FabricPanelCode and P.ThreadVersion=SQH.Version
-Inner join Style_QTThreadColorCombo_History_Detail SQHD on SQH.Ukey=SQHD.Style_QTThreadColorCombo_HistoryUkey and OQ.Article=SQHD.Article
-OUTER APPLY(
-	SELECT Val=[Number of Needle for QT]* SQHD.Ratio * 0.9144 * qt.ConsPC * s.Qty
-	FROM #tmpQT qt
-	LEFT JOIN #tmp s ON qt.Article = s.Article AND qt.SizeCode = s.SizeCode
-	WHERE qt.ID=o.ID AND qt.Article=oq.Article AND qt.SizeCode=oq.SizeCode
-	AND qt.FabricPanelCode=OCC.FabricPanelCode AND qt.FabricCode =OCC.FabricCode
-)QTt
-where o.ID = '{this.poid}'
-
-
-SELECT  DISTINCT
-  psd.SCIRefno
-, psd.Refno
-, ColorID = isnull(psdsC.SpecValue, '')
-, f.DescDetail
-, [@Qty] = ISNULL(ThreadUsedQtyByBOT.Val,0) + ISNULL(QT.Val,0)
-, [AccuIssued] = (
-					select isnull(sum([IS].qty),0)
-					from dbo.issue I WITH (NOLOCK) 
-					inner join dbo.Issue_Summary [IS] WITH (NOLOCK) on I.id = [IS].Id 
-					where I.type = 'E' and I.Status = 'Confirmed' 
-					and [IS].Poid=psd.id AND [IS].SCIRefno=PSD.SCIRefno AND [IS].ColorID=isnull(psdsC.SpecValue, '') and i.[EditDate]<GETDATE()
-				)
-, [IssueQty]=0.00
-, [Use Qty By Stock Unit] = CEILING (ISNULL(ThreadUsedQtyByBOT.Qty,0) * (ISNULL(ThreadUsedQtyByBOT.Val,0) + ISNULL(QT.Val,0))/ 100 * ISNULL(UnitRate.RateValue,1) )
-, [Stock Unit]=StockUnit.StockUnit
-, [Use Qty By Use Unit] = (ThreadUsedQtyByBOT.Qty * (ISNULL(ThreadUsedQtyByBOT.Val,0) + ISNULL(QT.Val,0)) )
-, [Use Unit]='CM'
-, [Stock Unit Desc.]=StockUnit.Description
-, [OutputQty] = ISNULL(ThreadUsedQtyByBOT.Qty,0)
-, [Balance(Stock Unit)]= 0.00
-, [Location] = ''
-, [POID]=psd.ID 
-, o.MDivisionID
-INTO #final
-FROM PO_Supp_Detail psd
-INNER JOIN Fabric f ON f.SCIRefno = psd.SCIRefno
-INNER JOIN MtlType m ON m.id= f.MtlTypeID
-INNER JOIN Orders o ON psd.ID = o.ID
-left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
-OUTER APPLY(
-	SELECT TOP 1 PSD2.StockUnit ,u.Description
-	FROM PO_Supp_Detail PSD2 
-	LEFT JOIN Unit u ON u.ID = psd2.StockUnit
-    left join PO_Supp_Detail_Spec psdsC2 WITH (NOLOCK) on psdsC2.ID = PSD2.id and psdsC2.seq1 = PSD2.seq1 and psdsC2.seq2 = PSD2.seq2 and psdsC2.SpecColumnID = 'Color'
-	WHERE PSD2.ID = psd.id
-	AND PSD2.SCIRefno=psd.SCIRefno
-	AND isnull(psdsC2.SpecValue, '') = isnull(psdsC.SpecValue, '')
-)StockUnit
-OUTER APPLY(
-	SELECT SCIRefNo
-		,ColorID
-		,[Val]=SUM(((SeamLength  * Frequency * UseRatio ) + (Allowance*Segment))) 
-		,[Qty] = (	
-			SELECt [Qty]=SUM(b.Qty)
-			FROM #step1 a
-			INNER JOIN #tmp_sumQty b ON a.Article = b.Article
-			WHERE SCIRefNo=psd.SCIRefNo AND  ColorID= isnull(psdsC.SpecValue, '') AND a.Article=g.Article
-			GROUP BY a.Article
-		)
-	FROM DBO.GetThreadUsedQtyByBOT(psd.ID,default) g
-	WHERE SCIRefNo= psd.SCIRefNo AND ColorID = isnull(psdsC.SpecValue, '') 
-	AND Article IN (
-		SELECt Article FROM #step1 WHERE SCIRefNo = psd.SCIRefNo  AND ColorID = isnull(psdsC.SpecValue, '')
-	)
-	GROUP BY SCIRefNo,ColorID , Article
-)ThreadUsedQtyByBOT
-OUTER APPLY(
-	SELECT Val = SUM(t.Val)
-	FROM #tmpQTFinal　ｔ
-	WHERE t.SCIRefNo=psd.SCIRefno AND t.ColorID=isnull(psdsC.SpecValue, '')
-)QT
-OUTER APPLY(
-	SELECT RateValue = IIF(Denominator = 0,0, Numerator / Denominator)
-	FROM Unit_Rate
-	WHERE UnitFrom='M' and  UnitTo = StockUnit.StockUnit
-)UnitRate
-
-WHERE psd.id ='{this.poid}' 
-AND m.IsThread=1 
-AND psd.FabricType ='A'
-and isnull(psdsC.SpecValue, '') <> ''
-AND psd.Refno='{refno}'
-AND isnull(psdsC.SpecValue, '')='{colorID}'
-AND psd.SCIRefno='{sCIRefno}'
-
-SELECT    SCIRefno 
-        , Refno
-        , ColorID
-		, DescDetail
-		, [@Qty] = SUM([@Qty])
-        , [AccuIssued]
-        , [IssueQty]
-        , [Use Qty By Stock Unit] = CEILING (SUM([Use Qty By Stock Unit] ))
-        , [Stock Unit]
-        , [Use Qty By Use Unit] = SUM([Use Qty By Use Unit] )
-        , [Use Unit]
-        , [Stock Unit Desc.]
-        , [OutputQty] = SUM([OutputQty])
-        , [Balance(Stock Unit)] = 0
-        , [Location] 
-        , [POID]
-        , MDivisionID
-INTO #final2
-FROM #final
-GROUP BY SCIRefno 
-        , Refno
-        , ColorID
-		, DescDetail
-        , [AccuIssued]
-        , [IssueQty]
-        , [Stock Unit]
-        , [Use Unit]
-        , [Stock Unit Desc.]
-        , [Balance(Stock Unit)]
-        , [Location] 
-        , [POID]
-        , MDivisionID
-
-
-SELECT    SCIRefno 
-        , Refno
-        , ColorID
-		, SuppColor = RealSuppCol.Val
-		, DescDetail
-		, [@Qty] 
-        , [AccuIssued]
-        , [IssueQty]
-        , [Use Qty By Stock Unit]
-        , [Stock Unit]
-        , [Use Qty By Use Unit] 
-        , [Use Unit]
-        , [Stock Unit Desc.]
-        , [OutputQty]
-        , [Balance(Stock Unit)] = Balance.Qty
-        , [Location] 
-        , [POID]
-        , MDivisionID
-FROM #final2 t
-OUTER APPLY(
-	SELECT [Qty]=ISNULL(( SUM(Fty.InQty - Fty.OutQty + Fty.AdjustQty - Fty.ReturnQty)) ,0)
-	FROM PO_Supp_Detail psd 
-	LEFT JOIN FtyInventory Fty ON  Fty.poid = psd.ID AND Fty.seq1 = psd.seq1 AND Fty.seq2 = psd.seq2 AND fty.StockType='B'
-    left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
-	WHERE psd.SCIRefno=t.SCIRefno AND isnull(psdsC.SpecValue, '')=t.ColorID AND psd.ID='{this.poid}'
-)Balance 
-OUTER APPLY(
-	----僅列出Balance 有計算到數量的Seq1 Seq2
-	SELECT [Val]=STUFF((
-		SELECT  DISTINCT ',' + SuppColor
-		FROM PO_Supp_Detail y
-        inner join PO_Supp_Detail_Spec psdsCy WITH (NOLOCK) on psdsCy.ID = y.id and psdsCy.seq1 = y.seq1 and psdsCy.seq2 = y.seq2 and psdsCy.SpecColumnID = 'Color'
-		WHERE EXISTS( 
-			SELECT 1 
-			FROM PO_Supp_Detail psd 
-            inner join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
-			LEFT JOIN FtyInventory Fty ON  Fty.poid = psd.ID AND Fty.seq1 = psd.seq1 AND Fty.seq2 = psd.seq2 AND fty.StockType='B'
-			WHERE psd.SCIRefno=t.SCIRefno AND isnull(psdsC.SpecValue, '') = t.ColorID AND psd.ID = '{this.poid}'
-			AND psd.SCIRefno = y.SCIRefno AND isnull(psdsC.SpecValue, '') = isnull(psdsCy.SpecValue, '') AND psd.ID = y.ID
-			AND psd.SEQ1 = y.SEQ1 AND psd.SEQ2 = y.SEQ2
-			GROUP BY psd.seq1,psd.seq2
-			HAVING ISNULL(( SUM(Fty.InQty - Fty.OutQty + Fty.AdjustQty - Fty.ReturnQty)) ,0) > 0
-		)
-		FOR XML PATH('')
-	),1,1,'')
-)RealSuppCol
-
-DROP TABLE #tmp_sumQty,#step1,#tmp,#final,#final2
-";
-
-                    DataRow row;
-                    DataTable rtn = null;
-                    DualResult result1 = MyUtility.Tool.ProcessWithDatatable(t, string.Empty, sqlcmd, out rtn, "#tmp");
-                    if (!result1)
-                    {
-                        this.ShowErr(result1);
-                        return;
-                    }
-
-                    if (rtn == null || rtn.Rows.Count == 0)
-                    {
-                        MyUtility.Msg.WarningBox("Data not found!", "Refno");
-                        return;
-                    }
-
-                    row = rtn.Rows[0];
-
-                    this.CurrentDetailData["SCIRefno"] = row["SCIRefno"];
-                    this.CurrentDetailData["Refno"] = row["Refno"];
-                    this.CurrentDetailData["ColorID"] = row["ColorID"];
-                    this.CurrentDetailData["SuppColor"] = row["SuppColor"];
-                    this.CurrentDetailData["POID"] = row["POID"];
-                    this.CurrentDetailData["DescDetail"] = row["DescDetail"];
-                    this.CurrentDetailData["@Qty"] = row["@Qty"];
-                    this.CurrentDetailData["Use Unit"] = row["Use Unit"];
-                    this.CurrentDetailData["AccuIssued"] = row["AccuIssued"];
-                    this.CurrentDetailData["IssueQty"] = row["IssueQty"];
-                    this.CurrentDetailData["Use Qty By Stock Unit"] = row["Use Qty By Stock Unit"];
-                    this.CurrentDetailData["Stock Unit"] = row["Stock Unit"];
-                    this.CurrentDetailData["Use Qty By Use Unit"] = row["Use Qty By Use Unit"];
-                    this.CurrentDetailData["Use Unit"] = row["Use Unit"];
-                    this.CurrentDetailData["Stock Unit Desc."] = row["Stock Unit Desc."];
-                    this.CurrentDetailData["OutputQty"] = row["OutputQty"];
-                    this.CurrentDetailData["Balance(Stock Unit)"] = row["Balance(Stock Unit)"];
-                    this.CurrentDetailData["Location"] = row["Location"];
-                    this.CurrentDetailData["MDivisionID"] = row["MDivisionID"];
-
-                    #endregion
-
-                    this.CurrentDetailData.EndEdit();
-                    this.GetSubDetailDatas(this.CurrentDetailData, out DataTable finalSubDt);
-                    finalSubDt.Clear();
+                    // 將IssueBreakDown整理成Datatable
+                    DataTable unPivotBrkQty = this.UnPivotBrkQty();
+                    this.RefnoCellValidating_QT(MyUtility.Convert.GetString(this.CurrentDetailData["Refno"]), unPivotBrkQty, null);
                 }
             };
             refnoSet.CellValidating += (s, e) =>
@@ -946,357 +642,14 @@ DROP TABLE #tmp_sumQty,#step1,#tmp,#final,#final2
                     }
                     else
                     {
-                        #region 將IssueBreakDown整理成Datatable
                         if (this.dtIssueBreakDown == null)
                         {
                             return;
                         }
 
-                        List<IssueQtyBreakdown> modelList = new List<IssueQtyBreakdown>();
-                        foreach (DataRow tempRow in this.dtIssueBreakDown.Rows)
-                        {
-                            int totalQty = 0;
-                            foreach (DataColumn col in this.dtIssueBreakDown.Columns)
-                            {
-                                IssueQtyBreakdown m = new IssueQtyBreakdown()
-                                {
-                                    OrderID = tempRow["OrderID"].ToString(),
-                                    Article = tempRow["Article"].ToString(),
-                                };
-
-                                if (tempRow[col].GetType().Name == "Decimal")
-                                {
-                                    totalQty += Convert.ToInt32(tempRow[col]);
-                                }
-
-                                if (col.ColumnName != "OrderID" && col.ColumnName != "Article")
-                                {
-                                    m.SizeCode = col.ColumnName;
-
-                                    m.Qty = totalQty;
-                                    modelList.Add(m);
-                                    totalQty = 0;
-                                }
-                            }
-                        }
-
-                        DataTable t = new DataTable();
-                        t.Columns.Add(new DataColumn() { ColumnName = "Article", DataType = typeof(string) });
-                        t.Columns.Add(new DataColumn() { ColumnName = "SizeCode", DataType = typeof(string) });
-                        t.Columns.Add(new DataColumn() { ColumnName = "Qty", DataType = typeof(int) });
-
-                        var groupByData = modelList.GroupBy(o => new { o.Article, o.SizeCode }).Select(o => new
-                        {
-                            o.Key.Article,
-                            o.Key.SizeCode,
-                            Qty = o.Sum(x => x.Qty),
-                        }).ToList();
-
-                        foreach (var model in groupByData)
-                        {
-                            if (model.Qty > 0)
-                            {
-                                DataRow newDr = t.NewRow();
-                                newDr["Article"] = model.Article;
-                                newDr["SizeCode"] = model.SizeCode;
-                                newDr["Qty"] = model.Qty;
-
-                                t.Rows.Add(newDr);
-                            }
-                        }
-                        #endregion
-
-                        string colorID = MyUtility.Convert.GetString(this.CurrentDetailData["ColorID"]);
-
-                        #region SQL
-                        string sqlcmd = $@"
-SELECt Article,[Qty]=SUM(Qty) 
-INTO #tmp_sumQty
-FROm #tmp
-GROUP BY Article
-
-Select distinct o.ID,tcd.SCIRefNo, tcd.ColorID ,tcd.Article 
-INTO #step1
-From dbo.Orders as o
-Inner Join dbo.Style as s On s.Ukey = o.StyleUkey
-Inner Join dbo.Style_ThreadColorCombo as tc On tc.StyleUkey = s.Ukey
-Inner Join dbo.Style_ThreadColorCombo_Detail as tcd On tcd.Style_ThreadColorComboUkey = tc.Ukey
-WHERE O.ID='{this.poid}' AND tcd.Article IN ( SELECT Article FROM #tmp )
-
-----------------Quiting用量計算--------------------------
-
-select P.ID,OQ.Article,OQ.SizeCode,OCC.FabricPanelCode,OCC.FabricCode
-,OE.ConsPC
-,[Number of Needle for QT] =  ceiling(sqh.Width/sqh.HSize/sqh.NeedleDistance)
-INTO #tmpQT
-from Orders O
-Inner join Order_Qty OQ on O.ID=OQ.ID
-Inner join PO P on O.POID=P.ID
-inner join Order_ColorCombo OCC on O.POID=OCC.Id and OQ.Article=OCC.Article and OCC.FabricCode is not null and OCC.FabricCode !=''
-inner join Order_EachCons oe WITH (NOLOCK) on oe.id = occ.id and oe.FabricCombo = occ.PatternPanel and oe.CuttingPiece = 0 
-inner join Order_EachCons_SizeQty OEZ on OE.Ukey=OEZ.Order_EachConsUkey and OQ.SizeCode=OEZ.SizeCode 
-Inner join Style_QTThreadColorCombo_History SQH on O.styleUkey=SQH.styleUkey and SQH.FabricCode=OE.FabricCode and SQH.FabricPanelCode=OE.FabricPanelCode and P.ThreadVersion=SQH.Version
-where o.ID = '{this.poid}'
-
-select O.ID,OQ.Article,OQ.SizeCode,OCC.FabricPanelCode,OCC.FabricCode
-,SQHD.Seq,SQHD.SCIRefno,SQHD.ColorID,QTt.Val
-INTO #tmpQTFinal
-from Orders O
-Inner join Order_Qty OQ on O.ID=OQ.ID
-Inner join PO P on O.POID=P.ID
-inner join Order_ColorCombo OCC on O.POID=OCC.Id and OQ.Article=OCC.Article and OCC.FabricCode is not null and OCC.FabricCode !=''
-Inner join Style_QTThreadColorCombo_History SQH on O.styleUkey=SQH.styleUkey and SQH.FabricCode=OCC.FabricCode and SQH.FabricPanelCode=OCC.FabricPanelCode and P.ThreadVersion=SQH.Version
-Inner join Style_QTThreadColorCombo_History_Detail SQHD on SQH.Ukey=SQHD.Style_QTThreadColorCombo_HistoryUkey and OQ.Article=SQHD.Article
-OUTER APPLY(
-	SELECT Val=[Number of Needle for QT]* SQHD.Ratio * 0.9144 * qt.ConsPC * s.Qty
-	FROM #tmpQT qt
-	LEFT JOIN #tmp s ON qt.Article = s.Article AND qt.SizeCode = s.SizeCode
-	WHERE qt.ID=o.ID AND qt.Article=oq.Article AND qt.SizeCode=oq.SizeCode
-	AND qt.FabricPanelCode=OCC.FabricPanelCode AND qt.FabricCode =OCC.FabricCode
-)QTt
-where o.ID = '{this.poid}'
-
-----------------Quiting用量計算--------------------------
-
-SELECT  DISTINCT
-  psd.SCIRefno
-, psd.Refno
-, ColorID = isnull(psdsC.SpecValue, '')
-, f.DescDetail
-, [@Qty] = ISNULL(ThreadUsedQtyByBOT.Val,0) + ISNULL(QT.Val,0)
-, [AccuIssued] = (
-					select isnull(sum([IS].qty),0)
-					from dbo.issue I WITH (NOLOCK) 
-					inner join dbo.Issue_Summary [IS] WITH (NOLOCK) on I.id = [IS].Id 
-					where I.type = 'E' and I.Status = 'Confirmed' 
-					and [IS].Poid=psd.id AND [IS].SCIRefno=PSD.SCIRefno AND [IS].ColorID=isnull(psdsC.SpecValue, '') and i.[EditDate]<GETDATE()
-				)
-, [IssueQty]=0.00
-, [Use Qty By Stock Unit] = CEILING( ISNULL(ThreadUsedQtyByBOT.Qty,0) * (ISNULL(ThreadUsedQtyByBOT.Val,0) + ISNULL(QT.Val,0)) / 100 * ISNULL(UnitRate.RateValue,1) )
-, [Stock Unit]=StockUnit.StockUnit
-, [Use Qty By Use Unit] = (ThreadUsedQtyByBOT.Qty * (ISNULL(ThreadUsedQtyByBOT.Val,0) + ISNULL(QT.Val,0)) )
-, [Use Unit]='CM'
-, [Stock Unit Desc.]=StockUnit.Description
-, [OutputQty] = ISNULL(ThreadUsedQtyByBOT.Qty,0)
-, [Balance(Stock Unit)]= 0.00
-, [Location] = ''
-, [POID]=psd.ID 
-, o.MDivisionID
-INTO #final
-FROM PO_Supp_Detail psd
-INNER JOIN Fabric f ON f.SCIRefno = psd.SCIRefno
-INNER JOIN MtlType m ON m.id= f.MtlTypeID
-INNER JOIN Orders o ON psd.ID = o.ID
-left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
-OUTER APPLY(
-	SELECT TOP 1 PSD2.StockUnit ,u.Description
-	FROM PO_Supp_Detail PSD2 
-	LEFT JOIN Unit u ON u.ID = psd2.StockUnit
-    inner join PO_Supp_Detail_Spec psdsC2 WITH (NOLOCK) on psdsC2.ID = PSD2.id and psdsC2.seq1 = PSD2.seq1 and psdsC2.seq2 = PSD2.seq2 and psdsC2.SpecColumnID = 'Color'
-	WHERE PSD2.ID = psd.id
-	AND PSD2.SCIRefno=psd.SCIRefno
-	AND isnull(psdsC2.SpecValue, '')=isnull(psdsC.SpecValue, '')
-)StockUnit
-OUTER APPLY(
-	SELECT SCIRefNo
-		,ColorID
-		,[Val]=SUM(((SeamLength  * Frequency * UseRatio ) + (Allowance*Segment))) 
-		,[Qty] = (	
-			SELECt [Qty]=SUM(b.Qty)
-			FROM #step1 a
-			INNER JOIN #tmp_sumQty b ON a.Article = b.Article
-			WHERE SCIRefNo=psd.SCIRefNo AND  ColorID= isnull(psdsC.SpecValue, '') AND a.Article=g.Article
-			GROUP BY a.Article
-		)
-	FROM DBO.GetThreadUsedQtyByBOT(psd.ID,default) g
-	WHERE SCIRefNo= psd.SCIRefNo AND ColorID = isnull(psdsC.SpecValue, '')  
-	AND Article IN (
-		SELECt Article FROM #step1 WHERE SCIRefNo = psd.SCIRefNo  AND ColorID = isnull(psdsC.SpecValue, '')
-	)
-	GROUP BY SCIRefNo,ColorID , Article
-)ThreadUsedQtyByBOT
-OUTER APPLY(
-	SELECT Val = SUM(t.Val)
-	FROM #tmpQTFinal　ｔ
-	WHERE t.SCIRefNo=psd.SCIRefno AND t.ColorID=isnull(psdsC.SpecValue, '')
-)QT
-OUTER APPLY(
-	SELECT RateValue = IIF(Denominator = 0,0, Numerator / Denominator)
-	FROM Unit_Rate
-	WHERE UnitFrom='M' and  UnitTo = StockUnit.StockUnit
-)UnitRate
-WHERE psd.id ='{this.poid}' 
-AND m.IsThread=1 
-AND psd.FabricType ='A'
-and isnull(psdsC.SpecValue, '') <> ''
-
-AND psd.Refno='{e.FormattedValue}'
-
-";
-
-                        if (!MyUtility.Check.Empty(colorID))
-                        {
-                            sqlcmd += $"AND isnull(psdsC.SpecValue, '')='{colorID}' ";
-                        }
-                        else
-                        {
-                            sqlcmd += $"AND isnull(psdsC.SpecValue, '') <> '' ";
-                        }
-
-                        sqlcmd += $@"
-SELECT    SCIRefno 
-        , Refno
-        , ColorID
-		, DescDetail
-		, [@Qty] = SUM([@Qty])
-        , [AccuIssued]
-        , [IssueQty]
-        , [Use Qty By Stock Unit] = CEILING (SUM([Use Qty By Stock Unit] ))
-        , [Stock Unit]
-        , [Use Qty By Use Unit] = SUM([Use Qty By Use Unit] )
-        , [Use Unit]
-        , [Stock Unit Desc.]
-        , [OutputQty] = SUM([OutputQty])
-        , [Balance(Stock Unit)] = 0
-        , [Location] 
-        , [POID]
-        , MDivisionID
-INTO #final2
-FROM #final
-GROUP BY SCIRefno 
-        , Refno
-        , ColorID
-		, DescDetail
-        , [AccuIssued]
-        , [IssueQty]
-        , [Stock Unit]
-        , [Use Unit]
-        , [Stock Unit Desc.]
-        , [Balance(Stock Unit)]
-        , [Location] 
-        , [POID]
-        , MDivisionID
-
-
-SELECT    SCIRefno 
-        , Refno
-        , ColorID
-		, SuppColor = RealSuppCol.Val
-		, DescDetail
-		, [@Qty] 
-        , [AccuIssued]
-        , [IssueQty]
-        , [Use Qty By Stock Unit]
-        , [Stock Unit]
-        , [Use Qty By Use Unit] 
-        , [Use Unit]
-        , [Stock Unit Desc.]
-        , [OutputQty]
-        , [Balance(Stock Unit)] = Balance.Qty
-        , [Location] 
-        , [POID]
-        , MDivisionID
-FROM #final2 t
-OUTER APPLY(
-	SELECT [Qty]=ISNULL(( SUM(Fty.InQty - Fty.OutQty + Fty.AdjustQty - Fty.ReturnQty)) ,0)
-	FROM PO_Supp_Detail psd 
-    inner join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
-	LEFT JOIN FtyInventory Fty ON  Fty.poid = psd.ID AND Fty.seq1 = psd.seq1 AND Fty.seq2 = psd.seq2 AND fty.StockType='B'
-	WHERE psd.SCIRefno=t.SCIRefno AND isnull(psdsC.SpecValue, '') =t.ColorID AND psd.ID='{this.poid}'
-)Balance 
-OUTER APPLY(
-	----僅列出Balance 有計算到數量的Seq1 Seq2
-	SELECT [Val]=STUFF((
-		SELECT  DISTINCT ',' + SuppColor
-		FROM PO_Supp_Detail y
-        left join PO_Supp_Detail_Spec psdsCy WITH (NOLOCK) on psdsCy.ID = y.id and psdsCy.seq1 = y.seq1 and psdsCy.seq2 = y.seq2 and psdsCy.SpecColumnID = 'Color'
-		WHERE EXISTS( 
-			SELECT 1 
-			FROM PO_Supp_Detail psd 
-            inner join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
-			LEFT JOIN FtyInventory Fty ON  Fty.poid = psd.ID AND Fty.seq1 = psd.seq1 AND Fty.seq2 = psd.seq2 AND fty.StockType='B'
-			WHERE psd.SCIRefno=t.SCIRefno AND isnull(psdsC.SpecValue, '') = t.ColorID AND psd.ID = '{this.poid}'
-			AND psd.SCIRefno = y.SCIRefno AND isnull(psdsC.SpecValue, '') = isnull(psdsCy.SpecValue, '') AND psd.ID = y.ID
-			AND psd.SEQ1 = y.SEQ1 AND psd.SEQ2 = y.SEQ2
-			GROUP BY psd.seq1,psd.seq2
-			HAVING ISNULL(( SUM(Fty.InQty - Fty.OutQty + Fty.AdjustQty - Fty.ReturnQty)) ,0) > 0
-		)
-		FOR XML PATH('')
-	),1,1,'')
-)RealSuppCol
-
-DROP TABLE #tmp_sumQty,#step1,#tmp,#final,#final2
-";
-
-                        #endregion
-
-                        DataRow row;
-                        DataTable rtn = null;
-                        DualResult result = MyUtility.Tool.ProcessWithDatatable(t, string.Empty, sqlcmd, out rtn, "#tmp");
-                        if (!result)
-                        {
-                            this.ShowErr(result);
-                            return;
-                        }
-
-                        if (rtn == null || rtn.Rows.Count == 0)
-                        {
-                            e.Cancel = true;
-                            MyUtility.Msg.WarningBox("Data not found!", "Refno");
-                            return;
-                        }
-                        else
-                        {
-                            row = rtn.Rows[0];
-
-                            // 當兩筆資料以上時，增加判斷SCIRefno、Refno、Color
-                            if (rtn.Rows.Count > 1)
-                            {
-                                var queryRow = rtn.AsEnumerable().Where(x => x.Field<string>("SCIRefno").EqualString(this.CurrentDetailData["SCIRefno"]) &&
-                                                              x.Field<string>("Refno").EqualString(this.CurrentDetailData["Refno"]) &&
-                                                              x.Field<string>("ColorID").EqualString(this.CurrentDetailData["ColorID"]));
-                                if (queryRow.Any())
-                                {
-                                    row = queryRow.FirstOrDefault();
-                                }
-                            }
-
-                            if (MyUtility.Check.Empty(colorID))
-                            {
-                                // CurrentDetailData["SCIRefno"] = row["SCIRefno"];
-                                this.CurrentDetailData["Refno"] = e.FormattedValue;
-
-                                // CurrentDetailData["DescDetail"] = row["DescDetail"];
-                                this.CurrentDetailData["POID"] = this.poid;
-                            }
-                            else
-                            {
-                                this.CurrentDetailData["SCIRefno"] = row["SCIRefno"];
-                                this.CurrentDetailData["Refno"] = row["Refno"];
-                                this.CurrentDetailData["ColorID"] = row["ColorID"];
-                                this.CurrentDetailData["SuppColor"] = row["SuppColor"];
-                                this.CurrentDetailData["POID"] = row["POID"];
-                                this.CurrentDetailData["DescDetail"] = row["DescDetail"];
-                                this.CurrentDetailData["@Qty"] = row["@Qty"];
-                                this.CurrentDetailData["Use Unit"] = row["Use Unit"];
-                                this.CurrentDetailData["AccuIssued"] = row["AccuIssued"];
-
-                                this.CurrentDetailData["IssueQty"] = row["IssueQty"];
-                                this.CurrentDetailData["Use Qty By Stock Unit"] = row["Use Qty By Stock Unit"];
-                                this.CurrentDetailData["Stock Unit"] = row["Stock Unit"];
-                                this.CurrentDetailData["Use Qty By Use Unit"] = row["Use Qty By Use Unit"];
-                                this.CurrentDetailData["Use Unit"] = row["Use Unit"];
-                                this.CurrentDetailData["Stock Unit Desc."] = row["Stock Unit Desc."];
-                                this.CurrentDetailData["OutputQty"] = row["OutputQty"];
-                                this.CurrentDetailData["Balance(Stock Unit)"] = row["Balance(Stock Unit)"];
-                                this.CurrentDetailData["Location"] = row["Location"];
-                                this.CurrentDetailData["MDivisionID"] = row["MDivisionID"];
-                            }
-
-                            this.CurrentDetailData.EndEdit();
-                            this.GetSubDetailDatas(this.CurrentDetailData, out DataTable finalSubDt);
-                            finalSubDt.Clear();
-                        }
+                        // 將IssueBreakDown整理成Datatable
+                        DataTable unPivotBrkQty = this.UnPivotBrkQty();
+                        this.RefnoCellValidating_QT(MyUtility.Convert.GetString(e.FormattedValue), unPivotBrkQty, e);
                     }
                 }
             };
@@ -1467,15 +820,13 @@ DROP TABLE #tmp
                     colorID = this.CurrentDetailData["ColorID"].ToString();
                     this.CurrentDetailData["POID"] = this.poid;
 
-                    #region 將IssueBreakDown整理成Datatable
                     if (this.dtIssueBreakDown == null)
                     {
                         return;
                     }
 
-                    DataTable issueBreakDown_Dt = this.Convert_IssueBreakDown_ToDataTable();
-
-                    #endregion
+                    // 將IssueBreakDown整理成Datatable
+                    DataTable unPivotBrkQty = this.UnPivotBrkQty();
 
                     // 取得預設帶入
                     #region 取得預設帶入
@@ -1669,12 +1020,12 @@ OUTER APPLY(
 	SELECT [Val]=STUFF((
 		SELECT  DISTINCT ',' + SuppColor
 		FROM PO_Supp_Detail y
-        left join PO_Supp_Detail_Spec psdsCy WITH (NOLOCK) on psdsCy.ID = y.id and psdsCy.seq1 = y.seq1 and psdsCy.seq2 = y.seq2 and psdsCy.SpecColumnID = 'Color'
+        inner join PO_Supp_Detail_Spec psdsCy WITH (NOLOCK) on psdsCy.ID = y.id and psdsCy.seq1 = y.seq1 and psdsCy.seq2 = y.seq2 and psdsCy.SpecColumnID = 'Color'
 		WHERE EXISTS( 
 			SELECT 1 
 			FROM PO_Supp_Detail psd 
+            inner join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
 			LEFT JOIN FtyInventory Fty ON  Fty.poid = psd.ID AND Fty.seq1 = psd.seq1 AND Fty.seq2 = psd.seq2 AND fty.StockType='B'
-            left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
 			WHERE psd.SCIRefno=t.SCIRefno AND isnull(psdsC.SpecValue, '') = t.ColorID AND psd.ID = '{this.poid}'
 			AND psd.SCIRefno = y.SCIRefno AND isnull(psdsC.SpecValue, '') = isnull(psdsCy.SpecValue, '') AND psd.ID = y.ID
 			AND psd.SEQ1 = y.SEQ1 AND psd.SEQ2 = y.SEQ2
@@ -1689,7 +1040,7 @@ DROP TABLE #tmp_sumQty,#step1,#tmp,#final,#final2
 ";
                     DataRow row;
                     DataTable rtn = null;
-                    MyUtility.Tool.ProcessWithDatatable(issueBreakDown_Dt, string.Empty, sqlcmd, out rtn, "#tmp");
+                    MyUtility.Tool.ProcessWithDatatable(unPivotBrkQty, string.Empty, sqlcmd, out rtn, "#tmp");
 
                     if (rtn == null || rtn.Rows.Count == 0)
                     {
@@ -2033,12 +1384,12 @@ OUTER APPLY(
 	SELECT [Val]=STUFF((
 		SELECT  DISTINCT ',' + SuppColor
 		FROM PO_Supp_Detail y
-        left join PO_Supp_Detail_Spec psdsCy WITH (NOLOCK) on psdsCy.ID = y.id and psdsCy.seq1 = y.seq1 and psdsCy.seq2 = y.seq2 and psdsCy.SpecColumnID = 'Color'
+        inner join PO_Supp_Detail_Spec psdsCy WITH (NOLOCK) on psdsCy.ID = y.id and psdsCy.seq1 = y.seq1 and psdsCy.seq2 = y.seq2 and psdsCy.SpecColumnID = 'Color'
 		WHERE EXISTS( 
 			SELECT 1 
 			FROM PO_Supp_Detail psd 
+            inner join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
 			LEFT JOIN FtyInventory Fty ON  Fty.poid = psd.ID AND Fty.seq1 = psd.seq1 AND Fty.seq2 = psd.seq2 AND fty.StockType='B'
-            left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
 			WHERE psd.SCIRefno=t.SCIRefno AND isnull(psdsC.SpecValue, '') = t.ColorID AND psd.ID = '{this.poid}'
 			AND psd.SCIRefno = y.SCIRefno AND isnull(psdsC.SpecValue, '') = isnull(psdsCy.SpecValue, '') AND psd.ID = y.ID
 			AND psd.SEQ1 = y.SEQ1 AND psd.SEQ2 = y.SEQ2
@@ -3906,6 +3257,357 @@ order by [OrderID],[Article]
                 return true;
             }
         }
+
+        private DataTable UnPivotBrkQty()
+        {
+            List<IssueQtyBreakdown> modelList = new List<IssueQtyBreakdown>();
+            foreach (DataRow tempRow in this.dtIssueBreakDown.Rows)
+            {
+                int totalQty = 0;
+                foreach (DataColumn col in this.dtIssueBreakDown.Columns)
+                {
+                    IssueQtyBreakdown m = new IssueQtyBreakdown()
+                    {
+                        OrderID = tempRow["OrderID"].ToString(),
+                        Article = tempRow["Article"].ToString(),
+                    };
+
+                    if (tempRow[col].GetType().Name == "Decimal")
+                    {
+                        totalQty += Convert.ToInt32(tempRow[col]);
+                    }
+
+                    if (col.ColumnName != "OrderID" && col.ColumnName != "Article")
+                    {
+                        m.SizeCode = col.ColumnName;
+
+                        m.Qty = totalQty;
+                        modelList.Add(m);
+                        totalQty = 0;
+                    }
+                }
+            }
+
+            DataTable t = new DataTable();
+            t.Columns.Add(new DataColumn() { ColumnName = "Article", DataType = typeof(string) });
+            t.Columns.Add(new DataColumn() { ColumnName = "SizeCode", DataType = typeof(string) });
+            t.Columns.Add(new DataColumn() { ColumnName = "Qty", DataType = typeof(int) });
+
+            var groupByData = modelList.GroupBy(o => new { o.Article, o.SizeCode }).Select(o => new
+            {
+                o.Key.Article,
+                o.Key.SizeCode,
+                Qty = o.Sum(x => x.Qty),
+            }).ToList();
+
+            foreach (var model in groupByData)
+            {
+                if (model.Qty > 0)
+                {
+                    DataRow newDr = t.NewRow();
+                    newDr["Article"] = model.Article;
+                    newDr["SizeCode"] = model.SizeCode;
+                    newDr["Qty"] = model.Qty;
+
+                    t.Rows.Add(newDr);
+                }
+            }
+
+            return t;
+        }
+
+        private void RefnoCellValidating_QT(string refno, DataTable t, Ict.Win.UI.DataGridViewCellValidatingEventArgs e)
+        {
+            string colorID = MyUtility.Convert.GetString(this.CurrentDetailData["ColorID"]);
+
+            #region SQL
+            string sqlcmd = $@"
+SELECt Article,[Qty]=SUM(Qty) 
+INTO #tmp_sumQty
+FROm #tmp
+GROUP BY Article
+
+Select distinct o.ID,tcd.SCIRefNo, tcd.ColorID ,tcd.Article 
+INTO #step1
+From dbo.Orders as o
+Inner Join dbo.Style as s On s.Ukey = o.StyleUkey
+Inner Join dbo.Style_ThreadColorCombo as tc On tc.StyleUkey = s.Ukey
+Inner Join dbo.Style_ThreadColorCombo_Detail as tcd On tcd.Style_ThreadColorComboUkey = tc.Ukey
+WHERE O.ID='{this.poid}' AND tcd.Article IN ( SELECT Article FROM #tmp )
+
+----------------Quiting用量計算--------------------------
+
+select P.ID,OQ.Article,OQ.SizeCode,OCC.FabricPanelCode,OCC.FabricCode
+,OE.ConsPC
+,[Number of Needle for QT] =  ceiling(sqh.Width/sqh.HSize/sqh.NeedleDistance)
+INTO #tmpQT
+from Orders O
+Inner join Order_Qty OQ on O.ID=OQ.ID
+Inner join PO P on O.POID=P.ID
+inner join Order_ColorCombo OCC on O.POID=OCC.Id and OQ.Article=OCC.Article and OCC.FabricCode is not null and OCC.FabricCode !=''
+inner join Order_EachCons oe WITH (NOLOCK) on oe.id = occ.id and oe.FabricCombo = occ.PatternPanel and oe.CuttingPiece = 0 
+inner join Order_EachCons_SizeQty OEZ on OE.Ukey=OEZ.Order_EachConsUkey and OQ.SizeCode=OEZ.SizeCode 
+Inner join Style_QTThreadColorCombo_History SQH on O.styleUkey=SQH.styleUkey and SQH.FabricCode=OE.FabricCode and SQH.FabricPanelCode=OE.FabricPanelCode and P.ThreadVersion=SQH.Version
+where o.ID = '{this.poid}'
+
+select O.ID,OQ.Article,OQ.SizeCode,OCC.FabricPanelCode,OCC.FabricCode
+,SQHD.Seq,SQHD.SCIRefno,SQHD.ColorID,QTt.Val
+INTO #tmpQTFinal
+from Orders O
+Inner join Order_Qty OQ on O.ID=OQ.ID
+Inner join PO P on O.POID=P.ID
+inner join Order_ColorCombo OCC on O.POID=OCC.Id and OQ.Article=OCC.Article and OCC.FabricCode is not null and OCC.FabricCode !=''
+Inner join Style_QTThreadColorCombo_History SQH on O.styleUkey=SQH.styleUkey and SQH.FabricCode=OCC.FabricCode and SQH.FabricPanelCode=OCC.FabricPanelCode and P.ThreadVersion=SQH.Version
+Inner join Style_QTThreadColorCombo_History_Detail SQHD on SQH.Ukey=SQHD.Style_QTThreadColorCombo_HistoryUkey and OQ.Article=SQHD.Article
+OUTER APPLY(
+	SELECT Val=[Number of Needle for QT]* SQHD.Ratio * 0.9144 * qt.ConsPC * s.Qty
+	FROM #tmpQT qt
+	LEFT JOIN #tmp s ON qt.Article = s.Article AND qt.SizeCode = s.SizeCode
+	WHERE qt.ID=o.ID AND qt.Article=oq.Article AND qt.SizeCode=oq.SizeCode
+	AND qt.FabricPanelCode=OCC.FabricPanelCode AND qt.FabricCode =OCC.FabricCode
+)QTt
+where o.ID = '{this.poid}'
+
+----------------Quiting用量計算--------------------------
+
+SELECT  DISTINCT
+  psd.SCIRefno
+, psd.Refno
+, ColorID = isnull(psdsC.SpecValue, '')
+, f.DescDetail
+, [@Qty] = ISNULL(ThreadUsedQtyByBOT.Val,0) + ISNULL(QT.Val,0)
+, [AccuIssued] = (
+					select isnull(sum([IS].qty),0)
+					from dbo.issue I WITH (NOLOCK) 
+					inner join dbo.Issue_Summary [IS] WITH (NOLOCK) on I.id = [IS].Id 
+					where I.type = 'E' and I.Status = 'Confirmed' 
+					and [IS].Poid=psd.id AND [IS].SCIRefno=PSD.SCIRefno AND [IS].ColorID=isnull(psdsC.SpecValue, '') and i.[EditDate]<GETDATE()
+				)
+, [IssueQty]=0.00
+, [Use Qty By Stock Unit] = CEILING( ISNULL(ThreadUsedQtyByBOT.Qty,0) * (ISNULL(ThreadUsedQtyByBOT.Val,0) + ISNULL(QT.Val,0)) / 100 * ISNULL(UnitRate.RateValue,1) )
+, [Stock Unit]=StockUnit.StockUnit
+, [Use Qty By Use Unit] = (ThreadUsedQtyByBOT.Qty * (ISNULL(ThreadUsedQtyByBOT.Val,0) + ISNULL(QT.Val,0)) )
+, [Use Unit]='CM'
+, [Stock Unit Desc.]=StockUnit.Description
+, [OutputQty] = ISNULL(ThreadUsedQtyByBOT.Qty,0)
+, [Balance(Stock Unit)]= 0.00
+, [Location] = ''
+, [POID]=psd.ID 
+, o.MDivisionID
+INTO #final
+FROM PO_Supp_Detail psd
+INNER JOIN Fabric f ON f.SCIRefno = psd.SCIRefno
+INNER JOIN MtlType m ON m.id= f.MtlTypeID
+INNER JOIN Orders o ON psd.ID = o.ID
+left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
+OUTER APPLY(
+	SELECT TOP 1 PSD2.StockUnit ,u.Description
+	FROM PO_Supp_Detail PSD2 
+	LEFT JOIN Unit u ON u.ID = psd2.StockUnit
+    inner join PO_Supp_Detail_Spec psdsC2 WITH (NOLOCK) on psdsC2.ID = PSD2.id and psdsC2.seq1 = PSD2.seq1 and psdsC2.seq2 = PSD2.seq2 and psdsC2.SpecColumnID = 'Color'
+	WHERE PSD2.ID = psd.id
+	AND PSD2.SCIRefno=psd.SCIRefno
+	AND isnull(psdsC2.SpecValue, '')=isnull(psdsC.SpecValue, '')
+)StockUnit
+OUTER APPLY(
+	SELECT SCIRefNo
+		,ColorID
+		,[Val]=SUM(((SeamLength  * Frequency * UseRatio ) + (Allowance*Segment))) 
+		,[Qty] = (	
+			SELECt [Qty]=SUM(b.Qty)
+			FROM #step1 a
+			INNER JOIN #tmp_sumQty b ON a.Article = b.Article
+			WHERE SCIRefNo=psd.SCIRefNo AND  ColorID= isnull(psdsC.SpecValue, '') AND a.Article=g.Article
+			GROUP BY a.Article
+		)
+	FROM DBO.GetThreadUsedQtyByBOT(psd.ID,default) g
+	WHERE SCIRefNo= psd.SCIRefNo AND ColorID = isnull(psdsC.SpecValue, '')  
+	AND Article IN (
+		SELECt Article FROM #step1 WHERE SCIRefNo = psd.SCIRefNo  AND ColorID = isnull(psdsC.SpecValue, '')
+	)
+	GROUP BY SCIRefNo,ColorID , Article
+)ThreadUsedQtyByBOT
+OUTER APPLY(
+	SELECT Val = SUM(t.Val)
+	FROM #tmpQTFinal　ｔ
+	WHERE t.SCIRefNo=psd.SCIRefno AND t.ColorID=isnull(psdsC.SpecValue, '')
+)QT
+OUTER APPLY(
+	SELECT RateValue = IIF(Denominator = 0,0, Numerator / Denominator)
+	FROM Unit_Rate
+	WHERE UnitFrom='M' and  UnitTo = StockUnit.StockUnit
+)UnitRate
+WHERE psd.id ='{this.poid}' 
+AND m.IsThread=1 
+AND psd.FabricType ='A'
+and isnull(psdsC.SpecValue, '') <> ''
+
+AND psd.Refno='{refno}'
+
+";
+
+            if (!MyUtility.Check.Empty(colorID))
+            {
+                sqlcmd += $"AND isnull(psdsC.SpecValue, '')='{colorID}' ";
+            }
+            else
+            {
+                sqlcmd += $"AND isnull(psdsC.SpecValue, '') <> '' ";
+            }
+
+            sqlcmd += $@"
+SELECT    SCIRefno 
+        , Refno
+        , ColorID
+		, DescDetail
+		, [@Qty] = SUM([@Qty])
+        , [AccuIssued]
+        , [IssueQty]
+        , [Use Qty By Stock Unit] = CEILING (SUM([Use Qty By Stock Unit] ))
+        , [Stock Unit]
+        , [Use Qty By Use Unit] = SUM([Use Qty By Use Unit] )
+        , [Use Unit]
+        , [Stock Unit Desc.]
+        , [OutputQty] = SUM([OutputQty])
+        , [Balance(Stock Unit)] = 0
+        , [Location] 
+        , [POID]
+        , MDivisionID
+INTO #final2
+FROM #final
+GROUP BY SCIRefno 
+        , Refno
+        , ColorID
+		, DescDetail
+        , [AccuIssued]
+        , [IssueQty]
+        , [Stock Unit]
+        , [Use Unit]
+        , [Stock Unit Desc.]
+        , [Balance(Stock Unit)]
+        , [Location] 
+        , [POID]
+        , MDivisionID
+
+
+SELECT    SCIRefno 
+        , Refno
+        , ColorID
+		, SuppColor = RealSuppCol.Val
+		, DescDetail
+		, [@Qty] 
+        , [AccuIssued]
+        , [IssueQty]
+        , [Use Qty By Stock Unit]
+        , [Stock Unit]
+        , [Use Qty By Use Unit] 
+        , [Use Unit]
+        , [Stock Unit Desc.]
+        , [OutputQty]
+        , [Balance(Stock Unit)] = Balance.Qty
+        , [Location] 
+        , [POID]
+        , MDivisionID
+FROM #final2 t
+OUTER APPLY(
+	SELECT [Qty]=ISNULL(( SUM(Fty.InQty - Fty.OutQty + Fty.AdjustQty - Fty.ReturnQty)) ,0)
+	FROM PO_Supp_Detail psd 
+    inner join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
+	LEFT JOIN FtyInventory Fty ON  Fty.poid = psd.ID AND Fty.seq1 = psd.seq1 AND Fty.seq2 = psd.seq2 AND fty.StockType='B'
+	WHERE psd.SCIRefno=t.SCIRefno AND isnull(psdsC.SpecValue, '') =t.ColorID AND psd.ID='{this.poid}'
+)Balance 
+OUTER APPLY(
+	----僅列出Balance 有計算到數量的Seq1 Seq2
+	SELECT [Val]=STUFF((
+		SELECT  DISTINCT ',' + SuppColor
+		FROM PO_Supp_Detail y
+        left join PO_Supp_Detail_Spec psdsCy WITH (NOLOCK) on psdsCy.ID = y.id and psdsCy.seq1 = y.seq1 and psdsCy.seq2 = y.seq2 and psdsCy.SpecColumnID = 'Color'
+		WHERE EXISTS( 
+			SELECT 1 
+			FROM PO_Supp_Detail psd 
+            inner join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
+			LEFT JOIN FtyInventory Fty ON  Fty.poid = psd.ID AND Fty.seq1 = psd.seq1 AND Fty.seq2 = psd.seq2 AND fty.StockType='B'
+			WHERE psd.SCIRefno=t.SCIRefno AND isnull(psdsC.SpecValue, '') = t.ColorID AND psd.ID = '{this.poid}'
+			AND psd.SCIRefno = y.SCIRefno AND isnull(psdsC.SpecValue, '') = isnull(psdsCy.SpecValue, '') AND psd.ID = y.ID
+			AND psd.SEQ1 = y.SEQ1 AND psd.SEQ2 = y.SEQ2
+			GROUP BY psd.seq1,psd.seq2
+			HAVING ISNULL(( SUM(Fty.InQty - Fty.OutQty + Fty.AdjustQty - Fty.ReturnQty)) ,0) > 0
+		)
+		FOR XML PATH('')
+	),1,1,'')
+)RealSuppCol
+
+DROP TABLE #tmp_sumQty,#step1,#tmp,#final,#final2
+";
+            #endregion
+
+            DataRow row;
+            DualResult result = MyUtility.Tool.ProcessWithDatatable(t, string.Empty, sqlcmd, out DataTable rtn);
+            if (!result)
+            {
+                this.ShowErr(result);
+                return;
+            }
+
+            if (rtn.Rows.Count == 0)
+            {
+                if (e != null)
+                {
+                    e.Cancel = true;
+                }
+
+                MyUtility.Msg.WarningBox("Data not found!", "Refno");
+                return;
+            }
+
+            row = rtn.Rows[0];
+
+            // 當兩筆資料以上時，增加判斷SCIRefno、Refno、Color
+            if (rtn.Rows.Count > 1)
+            {
+                var queryRow = rtn.AsEnumerable().Where(x => x.Field<string>("SCIRefno").EqualString(this.CurrentDetailData["SCIRefno"]) &&
+                                              x.Field<string>("Refno").EqualString(this.CurrentDetailData["Refno"]) &&
+                                              x.Field<string>("ColorID").EqualString(this.CurrentDetailData["ColorID"]));
+                if (queryRow.Any())
+                {
+                    row = queryRow.FirstOrDefault();
+                }
+            }
+
+            if (MyUtility.Check.Empty(colorID))
+            {
+                this.CurrentDetailData["Refno"] = refno;
+                this.CurrentDetailData["POID"] = this.poid;
+            }
+            else
+            {
+                this.CurrentDetailData["SCIRefno"] = row["SCIRefno"];
+                this.CurrentDetailData["Refno"] = row["Refno"];
+                this.CurrentDetailData["ColorID"] = row["ColorID"];
+                this.CurrentDetailData["SuppColor"] = row["SuppColor"];
+                this.CurrentDetailData["POID"] = row["POID"];
+                this.CurrentDetailData["DescDetail"] = row["DescDetail"];
+                this.CurrentDetailData["@Qty"] = row["@Qty"];
+                this.CurrentDetailData["Use Unit"] = row["Use Unit"];
+                this.CurrentDetailData["AccuIssued"] = row["AccuIssued"];
+
+                this.CurrentDetailData["IssueQty"] = row["IssueQty"];
+                this.CurrentDetailData["Use Qty By Stock Unit"] = row["Use Qty By Stock Unit"];
+                this.CurrentDetailData["Stock Unit"] = row["Stock Unit"];
+                this.CurrentDetailData["Use Qty By Use Unit"] = row["Use Qty By Use Unit"];
+                this.CurrentDetailData["Use Unit"] = row["Use Unit"];
+                this.CurrentDetailData["Stock Unit Desc."] = row["Stock Unit Desc."];
+                this.CurrentDetailData["OutputQty"] = row["OutputQty"];
+                this.CurrentDetailData["Balance(Stock Unit)"] = row["Balance(Stock Unit)"];
+                this.CurrentDetailData["Location"] = row["Location"];
+                this.CurrentDetailData["MDivisionID"] = row["MDivisionID"];
+            }
+
+            this.CurrentDetailData.EndEdit();
+            this.GetSubDetailDatas(this.CurrentDetailData, out DataTable finalSubDt);
+            finalSubDt.Clear();
+        }
+
         #endregion
 
         private void BtnCallP99_Click(object sender, EventArgs e)
