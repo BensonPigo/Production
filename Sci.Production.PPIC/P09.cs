@@ -90,7 +90,9 @@ select rd.*,(rd.Seq1 + ' ' +rd.Seq2) as Seq, f.Description, [dbo].[getMtlDesc](r
 						end
 from ReplacementReport r WITH (NOLOCK) 
 inner join ReplacementReport_Detail rd WITH (NOLOCK) on rd.ID = r.ID
-left join PO_Supp_Detail psd WITH (NOLOCK) on psd.ID = r.POID and psd.SEQ1 = rd.Seq1 and psd.SEQ2 = rd.Seq2
+left join PO_Supp_Detail psd WITH (NOLOCK) on psd.ID = r.POID 
+                                          and psd.SEQ1 = iif(isnull(rd.NewSeq1,'') != '', rd.NewSeq1, rd.Seq1)
+                                          and psd.SEQ2 = iif(isnull(rd.NewSeq2,'') != '', rd.NewSeq2, rd.Seq2)
 left join Orders o WITH (NOLOCK) on r.POID = o.ID
 outer apply (
     select v = case 
@@ -119,10 +121,9 @@ outer apply (
 	                                                    from PO_Supp_Detail stock WITH (NOLOCK)
 														left join PO_Supp pstock WITH (NOLOCK) on pstock.ID = stock.ID and pstock.SEQ1 = stock.SEQ1
 														left join Supp sstock WITH (NOLOCK) on sstock.ID = pstock.SuppID
-	                                                    where	psd.SEQ1 like '7%'
-			                                                and psd.StockPOID = stock.ID
-			                                                and psd.StockSeq1 = stock.SEQ1
-			                                                and psd.StockSeq2 = stock.SEQ2), 0)
+	                                                    where stock.ID = IIF(IsNull(psd.StockPOID, '') = '' , psd.ID, psd.StockPOID)
+			                                            and stock.SEQ1 = IIF(IsNull(psd.StockPOID, '') = '' , psd.SEQ1, psd.StockSeq1)
+			                                            and stock.SEQ2 = IIF(IsNull(psd.StockPOID, '') = '' , psd.SEQ2, psd.StockSeq2)), 0)
 					else Supp.Currencyid
 				end
 ) po_stock
