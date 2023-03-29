@@ -716,6 +716,7 @@ Order by CTNNo,Seq1,Seq2", masterID);
                             if (MyUtility.Convert.GetString(dr["Category"]) == "5" || MyUtility.Convert.GetString(dr["Category"]) == "6" || MyUtility.Convert.GetString(dr["Category"]) == "7" || MyUtility.Convert.GetString(dr["Category"]) == "8" || MyUtility.Convert.GetString(dr["Category"]) == "9")
                             {
                                 P02_AddNewItem callNewItemForm = new P02_AddNewItem(this.CurrentMaintain, this.checkBoxDoc.Checked);
+                                callNewItemForm.SetView(dr);
                                 callNewItemForm.ShowDialog(this);
                             }
                         }
