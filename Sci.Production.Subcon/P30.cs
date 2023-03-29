@@ -307,7 +307,6 @@ where a.RequestID <> '' and lpd.qty-lld.qty-a.Qty<0";
                     m.grid1.Columns[0].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
                     m.grid1.Columns[1].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
                     m.grid1.Columns[2].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-                    m.grid1.Columns[3].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
                     m.text_Find.Width = 140;
                     m.btn_Find.Location = new Point(150, 6);
                     m.btn_Find.Anchor = AnchorStyles.Left | AnchorStyles.Top;
