@@ -287,7 +287,7 @@ namespace Sci.Production.Quality
                 )FabricRoll
                 {this.strSQLWhere}
                 Group by pms_wo.FactoryID,oui.[ouiCutRef],si.CutRef,soc.[count],sic.[count],RFT.val,sii.Shift,SP.val,sty.StyleID,m.MarkerNo,pms_f.[Description]
-                ,color.val,size.val,s.[SpreadingNoID],FabricRoll.val,ip_mc.Result,ip_hf.Result,ip_ws.Result,ip_sw.Result,ip_mt.Result
+                ,color.val,size.val,si.[SpreadingNoID],FabricRoll.val,ip_mc.Result,ip_hf.Result,ip_ws.Result,ip_sw.Result,ip_mt.Result
                 ,ip_fc.Result,ip_ip.Result,ip_fd.Result,ip_fh.Result,ip_fr.Result,siifc.count,siidata.MaxAddDate,siidata.MinEditDate
                 ,si.Remark,siidata.MaxEditDate,siidata.MinAddDate,si.ukey,p.Name
                 ";
