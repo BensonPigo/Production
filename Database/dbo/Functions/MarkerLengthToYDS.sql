@@ -6,69 +6,76 @@ CREATE Function [dbo].[MarkerLengthToYDS]
 Returns Numeric(7,4)
 As
 Begin
-	Declare @MarkerYds Numeric(7,4)
-	Set @MarkerYds = 0;
-	
-	Declare @LocateYd Int;
-	Declare @LocateInch Int;
-	Declare @LocateS1 Int;
-	Declare @LocateS2 Int;
-	Declare @LocateS3 Int;
-
-	Set @LocateYd = CharIndex('Y', @MarkerLength);
-	Set @LocateInch = CharIndex('-', @MarkerLength);
-	Set @LocateS1 = CharIndex('/', @MarkerLength);
-	Set @LocateS2 = CharIndex('+', @MarkerLength);
-	Set @LocateS3 = CharIndex('"', @MarkerLength);
-	If @LocateS3 = 0
-	Begin
-		Set @LocateS3 = Len(@MarkerLength) + 1;
-	End;
-
-	Declare @Yds Numeric(7,4);
-	Declare @Inch Numeric(7,4);
-	Declare @M1 Numeric(7,4);
-	Declare @M2 Numeric(7,4);
-	Declare @M3 Numeric(7,4);
-
-	Set @Yds = Cast(iif(SubString(@MarkerLength, 1, @LocateYd - 1)='',0,SubString(@MarkerLength, 1, @LocateYd - 1)) as Numeric(7,4));
-	Set @Inch = Cast(iif(SubString(@MarkerLength, @LocateYd + 1, @LocateInch - @LocateYd - 1)='',0,SubString(@MarkerLength, @LocateYd + 1, @LocateInch - @LocateYd - 1)) as Numeric(7,4));
-	
-	if(@LocateInch + 1 = @LocateS2) --表示沒有M1,M2
-		Set @M1 = 0;
+	if @MarkerLength = ''
+	begin
+		return 0
+	end
 	else
-		Set @M1 = Cast(iif(SubString(@MarkerLength, @LocateInch + 1, @LocateS1 - @LocateInch - 1)='',0,SubString(@MarkerLength, @LocateInch + 1, @LocateS1 - @LocateInch - 1)) as Numeric(7,4));
-
-
-	If @LocateS2 = 0
-	Begin
-		if(@LocateInch+1 = @LocateS2)
-			Set @M2 = 0;
-		else
-			Set @M2 = Cast(iif(SubString(@MarkerLength, @LocateS1 + 1, @LocateS3 - @LocateS1 - 1)='',0,SubString(@MarkerLength, @LocateS1 + 1, @LocateS3 - @LocateS1 - 1)) as Numeric(7,4));		
-
-		Set @M3 = 0;
-	End;
-	Else
-	Begin
-		if(@LocateInch+1 = @LocateS2)
-			Set @M2 = 0;
-		else
-			Set @M2 = Cast(iif(SubString(@MarkerLength, @LocateS1 + 1, @LocateS2 - @LocateS1 - 1)='',0,SubString(@MarkerLength, @LocateS1 + 1, @LocateS2 - @LocateS1 - 1)) as Numeric(7,4));
+	begin
+		Declare @MarkerYds Numeric(7,4)
+		Set @MarkerYds = 0;
 	
-		Set @M3 = Cast(iif(SubString(@MarkerLength, @LocateS2 + 1, @LocateS3 - @LocateS2 - 1)='',0,SubString(@MarkerLength, @LocateS2 + 1, @LocateS3 - @LocateS2 - 1)) as Numeric(7,4));
-	End;
+		Declare @LocateYd Int;
+		Declare @LocateInch Int;
+		Declare @LocateS1 Int;
+		Declare @LocateS2 Int;
+		Declare @LocateS3 Int;
+
+		Set @LocateYd = CharIndex('Y', @MarkerLength);
+		Set @LocateInch = CharIndex('-', @MarkerLength);
+		Set @LocateS1 = CharIndex('/', @MarkerLength);
+		Set @LocateS2 = CharIndex('+', @MarkerLength);
+		Set @LocateS3 = CharIndex('"', @MarkerLength);
+		If @LocateS3 = 0
+		Begin
+			Set @LocateS3 = Len(@MarkerLength) + 1;
+		End;
+
+		Declare @Yds Numeric(7,4);
+		Declare @Inch Numeric(7,4);
+		Declare @M1 Numeric(7,4);
+		Declare @M2 Numeric(7,4);
+		Declare @M3 Numeric(7,4);
+
+		Set @Yds = Cast(iif(SubString(@MarkerLength, 1, @LocateYd - 1)='',0,SubString(@MarkerLength, 1, @LocateYd - 1)) as Numeric(7,4));
+		Set @Inch = Cast(iif(SubString(@MarkerLength, @LocateYd + 1, @LocateInch - @LocateYd - 1)='',0,SubString(@MarkerLength, @LocateYd + 1, @LocateInch - @LocateYd - 1)) as Numeric(7,4));
 	
-	If @M2 = 0
-	Begin
-		Set @MarkerYds = ((@Yds * 36) + @Inch + @M3) / 36
-	End;
-	Else
-	Begin
-		Set @MarkerYds = ((@Yds * 36) + @Inch + @M3 + (@M1 / @M2)) / 36
-	End;
+		if(@LocateInch + 1 = @LocateS2) --表示沒有M1,M2
+			Set @M1 = 0;
+		else
+			Set @M1 = Cast(iif(SubString(@MarkerLength, @LocateInch + 1, @LocateS1 - @LocateInch - 1)='',0,SubString(@MarkerLength, @LocateInch + 1, @LocateS1 - @LocateInch - 1)) as Numeric(7,4));
 
-	-- Return the result of the function
-	Return @MarkerYds
 
+		If @LocateS2 = 0
+		Begin
+			if(@LocateInch+1 = @LocateS2)
+				Set @M2 = 0;
+			else
+				Set @M2 = Cast(iif(SubString(@MarkerLength, @LocateS1 + 1, @LocateS3 - @LocateS1 - 1)='',0,SubString(@MarkerLength, @LocateS1 + 1, @LocateS3 - @LocateS1 - 1)) as Numeric(7,4));		
+
+			Set @M3 = 0;
+		End;
+		Else
+		Begin
+			if(@LocateInch+1 = @LocateS2)
+				Set @M2 = 0;
+			else
+				Set @M2 = Cast(iif(SubString(@MarkerLength, @LocateS1 + 1, @LocateS2 - @LocateS1 - 1)='',0,SubString(@MarkerLength, @LocateS1 + 1, @LocateS2 - @LocateS1 - 1)) as Numeric(7,4));
+	
+			Set @M3 = Cast(iif(SubString(@MarkerLength, @LocateS2 + 1, @LocateS3 - @LocateS2 - 1)='',0,SubString(@MarkerLength, @LocateS2 + 1, @LocateS3 - @LocateS2 - 1)) as Numeric(7,4));
+		End;
+	
+		If @M2 = 0
+		Begin
+			Set @MarkerYds = ((@Yds * 36) + @Inch + @M3) / 36
+		End;
+		Else
+		Begin
+			Set @MarkerYds = ((@Yds * 36) + @Inch + @M3 + (@M1 / @M2)) / 36
+		End;
+
+		-- Return the result of the function
+		Return @MarkerYds
+	end
+	return  @MarkerYds
 End
