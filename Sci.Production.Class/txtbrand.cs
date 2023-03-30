@@ -11,6 +11,24 @@ namespace Sci.Production.Class
     {
         private bool multi_select = false;
 
+        private Control MyDocument { get; set; } = null;   // 欄位.存入要取值的<控制項>
+
+        /// <inheritdoc />
+        //[Category("Custom Properties")]
+        //[Description("選擇畫面上[Document]的控制項名稱，僅篩選出對應該Brand的資料")]
+        public Control MyDocumentdName
+        {
+            get
+            {
+                return this.MyDocument;
+            }
+
+            set
+            {
+                this.MyDocument = value;
+            }
+        }
+
         /// <summary>
         /// Multi Select
         /// </summary>

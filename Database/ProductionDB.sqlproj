@@ -2835,6 +2835,7 @@
     <Build Include="dbo\Tables\MaterialDocument_Supplier.sql" />
     <Build Include="dbo\Tables\MaterialDocument_WeaveType.sql" />
     <Build Include="dbo\Tables\BrandRelation.sql" />
+    <Build Include="dbo\Tables\ExportRefnoSentReport.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />
