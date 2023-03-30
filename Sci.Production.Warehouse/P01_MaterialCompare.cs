@@ -304,7 +304,7 @@ Select #tmpPO_Supp_Detail.RefNo
 , StockUnitQty = Sum(dbo.GetUnitQty(#tmpPO_Supp_Detail.POUnit, Po_Supp_Detail.StockUnit,#tmpPO_Supp_Detail.Qty))
 , BomSpec.*
 From #tmpPO_Supp_Detail
-outer apply(select top 1 StockUnit from Po_Supp_Detail where Po_Supp_Detail.id = #tmpPO_Supp_Detail.id and Po_Supp_Detail.SEQ1 = #tmpPO_Supp_Detail.SEQ1 and Po_Supp_Detail.SEQ2 = #tmpPO_Supp_Detail.SEQ2)Po_Supp_Detail
+outer apply(select top 1 StockUnit from Po_Supp_Detail where Po_Supp_Detail.id = #tmpPO_Supp_Detail.id and Po_Supp_Detail.Refno = #tmpPO_Supp_Detail.Refno and Po_Supp_Detail.StockUnit <> '')Po_Supp_Detail
 outer apply (
 	select SpecColor = p.Color
 	, SpecSize = p.Size
