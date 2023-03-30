@@ -334,18 +334,26 @@ group by UnitID", MyUtility.Convert.GetString(this.masterData["ID"]));
                     if (dr["CategoryName"].ToString() == "Sample")
                     {
                         strType = dr["Reason_Gender"].ToString();
-                        strHSCODE = dr["HSCode"].ToString() != string.Empty ? dr["HSCode"].ToString().Substring(0, 6) : string.Empty;
+                        var strHC = MyUtility.Convert.GetString(dr["HSCode"]).Replace(".", "");
+                        strHC = strHC.Replace(",", "");
+                        strHSCODE = strHC.Length > 6 ? strHC.Substring(0, 6) : strHC;
                         strDescription = dr["styleDescription"].ToString();
                     }
                     else if (dr["CategoryName"].ToString() == "Material")
                     {
                         strType = dr["Fabric_MtlTypeID"].ToString();
-                        strHSCODE = dr["Fabric_HsCode"].ToString() != string.Empty ? dr["Fabric_HsCode"].ToString().Substring(0, 6) : string.Empty;
+
+                        var strHC = MyUtility.Convert.GetString(dr["Fabric_HsCode"]).Replace(".", "");
+                        strHC = strHC.Replace(",", "");
+                        strHSCODE = strHC.Length > 6 ? strHC.Substring(0, 6) : strHC;
+
                         strDescription = dr["fabricDescription"].ToString();
                     }
                     else if (dr["CategoryName"].ToString() == "Other Sample")
                     {
-                        strHSCODE = dr["HSCode"].ToString() != string.Empty ? dr["HSCode"].ToString().Substring(0, 6) : string.Empty;
+                        var strHC = MyUtility.Convert.GetString(dr["HSCode"]).Replace(".", "");
+                        strHC = strHC.Replace(",", "");
+                        strHSCODE = strHC.Length > 6 ? strHC.Substring(0, 6) : strHC;
                     }
                     else if (dr["CategoryName"].ToString() == "Other Material")
                     {

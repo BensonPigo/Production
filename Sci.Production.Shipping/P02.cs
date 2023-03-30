@@ -145,6 +145,10 @@ namespace Sci.Production.Shipping
             this.numericBoxttlGW.Value = MyUtility.Convert.GetDecimal(this.CurrentMaintain["NW"]) + MyUtility.Convert.GetDecimal(this.CurrentMaintain["CTNNW"]);
 
             this.CompareDetailPrint((DataTable)this.detailgridbs.DataSource, before_dt);
+
+            var dataTable = (DataTable)this.detailgridbs.DataSource;
+            var list = dataTable.Select("CategoryName <> 'Dox'").ToList();
+            this.checkBoxDoc.Checked = list.Count == 0 && dataTable.Rows.Count != 0 ? true : false;
         }
 
         // Context Menu選擇Import Bulk PL#
@@ -157,6 +161,10 @@ namespace Sci.Production.Shipping
             this.numericBoxttlGW.Value = MyUtility.Convert.GetDecimal(this.CurrentMaintain["NW"]) + MyUtility.Convert.GetDecimal(this.CurrentMaintain["CTNNW"]);
 
             this.CompareDetailPrint((DataTable)this.detailgridbs.DataSource, before_dt);
+
+            var dataTable = (DataTable)this.detailgridbs.DataSource;
+            var list = dataTable.Select("CategoryName <> 'Dox'").ToList();
+            this.checkBoxDoc.Checked = list.Count == 0 && dataTable.Rows.Count != 0 ? true : false;
         }
 
         // Context Menu選擇Import from FOC PL# (Garment FOC)
@@ -169,6 +177,10 @@ namespace Sci.Production.Shipping
             this.numericBoxttlGW.Value = MyUtility.Convert.GetDecimal(this.CurrentMaintain["NW"]) + MyUtility.Convert.GetDecimal(this.CurrentMaintain["CTNNW"]);
 
             this.CompareDetailPrint((DataTable)this.detailgridbs.DataSource, before_dt);
+
+            var dataTable = (DataTable)this.detailgridbs.DataSource;
+            var list = dataTable.Select("CategoryName <> 'Dox'").ToList();
+            this.checkBoxDoc.Checked = list.Count == 0 && dataTable.Rows.Count != 0 ? true : false;
         }
 
         // Context Menu選擇Import from purchase (Material)
@@ -191,6 +203,10 @@ namespace Sci.Production.Shipping
             this.RenewData();
             this.numericBoxttlGW.Value = MyUtility.Convert.GetDecimal(this.CurrentMaintain["NW"]) + MyUtility.Convert.GetDecimal(this.CurrentMaintain["CTNNW"]);
             this.CompareDetailPrint((DataTable)this.detailgridbs.DataSource, before_dt);
+
+            var dataTable = (DataTable)this.detailgridbs.DataSource;
+            var list = dataTable.Select("CategoryName <> 'Dox'").ToList();
+            this.checkBoxDoc.Checked = list.Count == 0 && dataTable.Rows.Count != 0 ? true : false;
         }
 
         // P02_ImportFromPOTransferOutNo
@@ -345,6 +361,10 @@ where ID = '{0}'", this.CurrentMaintain["ID"]);
             #endregion
             this.RenewData();
             this.numericBoxttlGW.Value = MyUtility.Convert.GetDecimal(this.CurrentMaintain["NW"]) + MyUtility.Convert.GetDecimal(this.CurrentMaintain["CTNNW"]);
+
+            var dataTable = (DataTable)this.detailgridbs.DataSource;
+            var list = dataTable.Select("CategoryName <> 'Dox'").ToList();
+            this.checkBoxDoc.Checked = list.Count == 0 && dataTable.Rows.Count != 0 ? true : false;
 
             DataRow[] after_row = ((DataTable)this.detailgridbs.DataSource).Select(string.Format(" OrderId = '{0}' and Seq1 = '{1}' and Seq2 = '{2}' and Category = '{3}' ", before_orderid, before_seq1, before_seq2, before_category));
             if (after_row.Length == 0)
@@ -652,7 +672,7 @@ FROM(
         left join DropDownList dp ON dp.Type='Pms_Sort_HC_DHL_Cate' AND ed.Category = dp.ID
 		left join PackingList pl WITH (NOLOCK) on ed.PackingListID = pl.ID
 		left join Orders o WITH (NOLOCK) on o.ID = ed.OrderID
-        left join Style st WITH (NOLOCK) on o.StyleID = st.Id and o.BrandID = st.BrandID and o.SeasonID = st.SeasonID
+        left join Style st WITH (NOLOCK) on ed.StyleID = st.Id and ed.BrandID = st.BrandID and ed.SeasonID = st.SeasonID
         left join Reason r with(nolock) on st.ApparelType = r.ID and r.ReasonTypeID='Style_Apparel_type'
         left join fabric f WITH (NOLOCK) on f.SCIRefno = p.SCIRefno
         outer apply
