@@ -37,6 +37,7 @@
     [ResolveTime] INT NOT NULL CONSTRAINT [PK_P_SubProInsReport_ResolveTime] default (0), 
     [SubProResponseTeamID] VARCHAR(1000) NOT NULL CONSTRAINT [PK_P_SubProInsReport_SubProResponseTeamID] default (''), 
     [CustomColumn1] VARCHAR(300) NOT NULL CONSTRAINT [PK_P_SubProInsReport_CustomColumn1] default (''), 
+    [MDivisionID] VARCHAR(8) NOT NULL CONSTRAINT [DF_P_SubProInsReport_MDivisionID] DEFAULT (''), 
     --台北BI不用PK
     CONSTRAINT [PK_P_SubProInsReport] PRIMARY KEY ([Ukey])
 )
