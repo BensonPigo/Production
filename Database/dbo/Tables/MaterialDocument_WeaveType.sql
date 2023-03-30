@@ -2,7 +2,7 @@
 (
 	[DocumentName]      varchar(100)    CONSTRAINT [DF_MaterialDocument_WeaveType_DocumentName]         DEFAULT ('') NOT NULL, 
     [BrandID]           VARCHAR(8)      CONSTRAINT [DF_MaterialDocument_WeaveType_BrandID]              DEFAULT ('') NOT NULL , 
-    [WeaveTypeId]       VARCHAR(8)      CONSTRAINT [DF_MaterialDocument_WeaveType_WeaveTypeId]          DEFAULT ('') NOT NULL , 
+    [WeaveTypeId]       VARCHAR(20)      CONSTRAINT [DF_MaterialDocument_WeaveType_WeaveTypeId]          DEFAULT ('') NOT NULL , 
     CONSTRAINT [PK_MaterialDocument_WeaveType] PRIMARY KEY ([DocumentName], [BrandID], [WeaveTypeId]) ,
 )
 

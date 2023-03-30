@@ -49,7 +49,7 @@ namespace Sci.Production.Class
             // if (!this.IsSupportEditMode) { return; }
             string selecteds = this.Text;
             string sqlCMD = $@"Select RTRIM(s1.ID) as ID, RTRIM(s2.ID) as SuppGroupID,s1.AbbEN as Name,s1.CountryID as Country From Supp s1                              
-                              Inner Join Trade.dbo.BrandRelation as bs WITH (NOLOCK) ON bs.BrandID = '{this.myBrand.Text}' and bs.SuppID = s1.ID
+                              Inner Join dbo.BrandRelation as bs WITH (NOLOCK) ON bs.BrandID = '{this.myBrand.Text}' and bs.SuppID = s1.ID
                               inner join Supp s2 on bs.SuppGroup = s2.ID
                               Where s2.junk =0 
                               GROUP BY s1.ID,s2.ID,s1.AbbEN,s1.CountryID
