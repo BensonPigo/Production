@@ -49,9 +49,8 @@ namespace Sci.Production.Quality
         private void GetMaterialDocument()
         {
             DataTable dt;
-            string where = !Env.User.IsAdmin ? $" and BrandID in (SELECT BrandID FROM PASS_AuthBrand WHERE ID ='{Env.User.UserID}')" : string.Empty;
 
-            string sql = $"Select distinct DocumentName From MaterialDocument WHERE FileRule in (1,2) {where} and junk = 0";
+            string sql = $"Select distinct DocumentName From MaterialDocument WHERE FileRule in (1,2) and junk = 0";
             var result = DBProxy.Current.Select(string.Empty, sql, out dt);
             if (result && dt.Rows.Count > 0)
             {
@@ -158,7 +157,7 @@ namespace Sci.Production.Quality
                         SELECT
 	                        RowNo = ROW_NUMBER() OVER (ORDER BY Month)
                             ,ID INTO #probablySeasonList
-                        FROM Trade.dbo.Season Where BrandID = @BrandID
+                        FROM dbo.Season Where BrandID = @BrandID
 
                         SELECT ID,RowNo FROM #probablySeasonList
                         WHERE RowNo = (SELECT RowNo FROM #probablySeasonList WHERE ID =@SeasonID)+{expiration - 1}",
@@ -203,7 +202,7 @@ namespace Sci.Production.Quality
                         new SqlParameter("BrandID", this.drBasic["BrandID"]),
                     };
 
-                    DBProxy.Current.Execute("GASA", sql, plis);
+                    DBProxy.Current.Execute(null, sql, plis);
                 }
             };
 
@@ -253,7 +252,7 @@ namespace Sci.Production.Quality
                         SELECT
 	                        RowNo = ROW_NUMBER() OVER (ORDER BY Month)
                             ,ID INTO #probablySeasonList
-                        FROM Trade.dbo.Season Where BrandID = @BrandID
+                        FROM dbo.Season Where BrandID = @BrandID
 
                         SELECT ID,RowNo FROM #probablySeasonList
                         WHERE RowNo = (SELECT RowNo FROM #probablySeasonList WHERE ID =@SeasonID)+{expiration - 1}",
@@ -299,7 +298,7 @@ namespace Sci.Production.Quality
                         new SqlParameter("BrandID", this.drBasic["BrandID"]),
                     };
 
-                    DBProxy.Current.Execute("GASA", sql, plis);
+                    DBProxy.Current.Execute(null, sql, plis);
                 }
             };
 
@@ -357,7 +356,7 @@ namespace Sci.Production.Quality
                     SELECT
 	                    RowNo = ROW_NUMBER() OVER (ORDER BY Month)
                        ,ID INTO #probablySeasonList
-                    FROM Trade.dbo.Season Where BrandID = @BrandID
+                    FROM dbo.Season Where BrandID = @BrandID
 
                     SELECT main.ID FROM #probablySeasonList main
                     Outer Apply (
@@ -396,7 +395,7 @@ namespace Sci.Production.Quality
                         new SqlParameter("BrandID", this.drBasic["BrandID"]),
                     };
 
-                    DBProxy.Current.Execute("GASA", sql, plis);
+                    DBProxy.Current.Execute(null, sql, plis);
                 }
             };
 
@@ -450,7 +449,7 @@ namespace Sci.Production.Quality
                         SELECT
 	                        RowNo = ROW_NUMBER() OVER (ORDER BY Month)
                            ,ID INTO #probablySeasonList
-                        FROM Trade.dbo.Season Where BrandID = @BrandID
+                        FROM dbo.Season Where BrandID = @BrandID
 
                         SELECT main.ID FROM #probablySeasonList main
                         Outer Apply (
@@ -499,7 +498,7 @@ namespace Sci.Production.Quality
                         new SqlParameter("BrandID", this.drBasic["BrandID"]),
                     };
 
-                    DBProxy.Current.Execute("GASA", sql, plis);
+                    DBProxy.Current.Execute(null, sql, plis);
                 }
             };
 
@@ -576,7 +575,7 @@ namespace Sci.Production.Quality
                         new SqlParameter("BrandID", this.drBasic["BrandID"]),
                     };
 
-                    DBProxy.Current.Execute("GASA", sql, plis);
+                    DBProxy.Current.Execute(null, sql, plis);
                 }
             };
 
@@ -671,7 +670,7 @@ namespace Sci.Production.Quality
                         new SqlParameter("BrandID", this.drBasic["BrandID"]),
                     };
 
-                    DBProxy.Current.Execute("GASA", sql, plis);
+                    DBProxy.Current.Execute(null, sql, plis);
                 }
             };
 
@@ -693,7 +692,7 @@ namespace Sci.Production.Quality
                 return;
             }
 
-            using (var dlg = new Clip("UASentReport", id, true, alianClipConnectionName: "GASA"))
+            using (var dlg = new Clip("UASentReport", id, true))
             {
                 dlg.ShowDialog();
             }
@@ -721,8 +720,6 @@ namespace Sci.Production.Quality
                 this.ShowWarning("[Document Name] and [Brand] can't be empty!");
                 return;
             }
-
-            string where = !Env.User.IsAdmin ? $" and BrandID in (SELECT BrandID FROM PASS_AuthBrand WHERE ID ='{Env.User.UserID}')" : string.Empty;
 
             string cmd = $@"
             Select m.* ,MtlType = MtlType.value,WeaveType = WeaveType.value,supplier = supp.value
@@ -752,7 +749,7 @@ namespace Sci.Production.Quality
 			            FOR XML PATH (''))
 		            , 1, 1, '')
             ) supp
-            Where documentName = @documentName and brandID = @brandID and m.FileRule in ('1','2') {where} and m.junk = 0";
+            Where documentName = @documentName and brandID = @brandID and m.FileRule in ('1','2') and m.junk = 0";
 
             var res = DBProxy.Current.SeekEx(cmd, "documentName", this.cboDocumentname.Text, "brandID", this.txtBrand1.Text);
             if (!res)
@@ -769,10 +766,9 @@ namespace Sci.Production.Quality
 
             this.drBasic = res.ExtendedData;
 
-            //this.UI_grid.IsEditingReadOnly = this.drBasic["Responsibility"].ToString() != "T";
-            //this.BtnFileUpload.Enabled = this.drBasic["Responsibility"].ToString() == "T";
-            //this.BtnUpdate.Enabled = this.drBasic["Responsibility"].ToString() == "T";
-
+            // this.UI_grid.IsEditingReadOnly = this.drBasic["Responsibility"].ToString() != "T";
+            // this.BtnFileUpload.Enabled = this.drBasic["Responsibility"].ToString() == "T";
+            // this.BtnUpdate.Enabled = this.drBasic["Responsibility"].ToString() == "T";
             this.colColorID.Visible = this.drBasic["FileRule"].ToString() != "1";
             this.colColorDesc.Visible = this.drBasic["FileRule"].ToString() != "1";
 
@@ -882,7 +878,7 @@ namespace Sci.Production.Quality
             SELECT
 	            RowNo = ROW_NUMBER() OVER (ORDER BY Month)
                ,ID INTO #probablySeasonList
-            FROM Trade.dbo.Season Where BrandID = @BrandID
+            FROM dbo.Season Where BrandID = @BrandID
 
             select  
               TestReportTestDate = CONVERT(VARCHAR(10), sr.TestReportTestDate, 23)
@@ -916,13 +912,13 @@ namespace Sci.Production.Quality
              INNER JOIN Season WITH (NOLOCK) on o.SeasonID = Season.ID and o.BrandID = Season.BrandID
 		     INNER JOIN Style s WITH(NOLOCK) on s.Ukey = o.StyleUkey		 
              Inner Join Supp WITH (NOLOCK) on po2.SuppID = Supp.ID
-             INNER Join Trade.dbo.BrandRelation as bs WITH (NOLOCK) ON bs.BrandID = o.BrandID and bs.SuppID = Supp.ID
+             INNER Join dbo.BrandRelation as bs WITH (NOLOCK) ON bs.BrandID = o.BrandID and bs.SuppID = Supp.ID
              Inner Join Supp s2 WITH (NOLOCK) on s2.ID = bs.SuppGroup 
              Outer Apply(
                   SELECT Color FROM GetPo3Spec(IIF(IsNull(po3.StockPOID, '') = '' , po3.ID, stockPO3.ID),IIF(IsNull(po3.StockPOID, '') = '' , po3.Seq1, stockPO3.Seq1),IIF(IsNull(po3.StockPOID, '') = '' , po3.Seq2, stockPO3.Seq2)) po3Spec
              )po3Spec
              LEFT JOIN  Color WITH (NOLOCK) ON Color.BrandId = o.BrandID AND Color.ID = po3Spec.Color
-             {(this.chkUploadRecord.Checked ? "Inner" : "LEFT")} JOIN [EDIAP].Gasa.dbo.UASentReport sr WITH (NOLOCK) on sr.SuppID = s2.ID  and sr.BrandRefno = f.BrandRefNo and (@FileRule = 1 or (@FileRule = 2 and sr.ColorID = Color.ID)) and sr.BrandID = o.BrandID and sr.DocumentName = @DocumentName
+             {(this.chkUploadRecord.Checked ? "Inner" : "LEFT")} JOIN UASentReport sr WITH (NOLOCK) on sr.SuppID = s2.ID  and sr.BrandRefno = f.BrandRefNo and (@FileRule = 1 or (@FileRule = 2 and sr.ColorID = Color.ID)) and sr.BrandID = o.BrandID and sr.DocumentName = @DocumentName
              Left join #probablySeasonList seasonList on seasonList.ID = sr.TestSeasonID
              Outer apply(
                     select top 1 value = Responsibility FROM MaterialDocument_Responsbility where DocumentName = @documentName and BrandID = @brandID and SuppID = s2.ID
@@ -1101,7 +1097,7 @@ namespace Sci.Production.Quality
                         SELECT
 	                        RowNo = ROW_NUMBER() OVER (ORDER BY Month)
                             ,ID INTO #probablySeasonList
-                        FROM Trade.dbo.Season Where BrandID = @BrandID
+                        FROM dbo.Season Where BrandID = @BrandID
 
                         SELECT ID,RowNo FROM #probablySeasonList
                         WHERE RowNo = (SELECT RowNo FROM #probablySeasonList WHERE ID =@SeasonID)+{expiration - 1}",
@@ -1139,7 +1135,7 @@ namespace Sci.Production.Quality
                     SELECT
                     RowNo = ROW_NUMBER() OVER (ORDER BY Month)
                     ,ID INTO #probablySeasonList
-                    FROM Trade.dbo.Season Where BrandID = @BrandID
+                    FROM dbo.Season Where BrandID = @BrandID
 
                     SELECT RowNo FROM #probablySeasonList
                     WHERE RowNo = (SELECT RowNo FROM #probablySeasonList WHERE ID =@SeasonID)+{expiration - 1}",
@@ -1191,7 +1187,7 @@ namespace Sci.Production.Quality
                         new SqlParameter("BrandID", this.drBasic["BrandID"]),
                     };
 
-                    DBProxy.Current.Execute("GASA", sql, plis);
+                    DBProxy.Current.Execute(null, sql, plis);
 
                     switch (this.UI_grid.CurrentCell.ColumnIndex)
                     {
@@ -1262,7 +1258,7 @@ namespace Sci.Production.Quality
             string updateData = string.Empty;
             string updateCol = string.Empty;
             string dueSeason = string.Empty;
-            string saveFilePath = DBProxy.Current.LookupEx<string>($@"select path From [EDIAP].Gasa.dbo.CustomizedClipPath WHERE TableName ='UASentReport'").ExtendedData;
+            string saveFilePath = DBProxy.Current.LookupEx<string>($@"select path From CustomizedClipPath WHERE TableName ='UASentReport'").ExtendedData;
             DateTime now = DateTime.Now;
             saveFilePath = Path.Combine(saveFilePath, now.ToString("yyyyMM"));
             int seasonRow = 0;
@@ -1346,15 +1342,15 @@ namespace Sci.Production.Quality
 
 
                     DECLARE @OutputTbl TABLE (ID bigint)
-                    IF EXISTS(select 1 FROM Gasa.dbo.UASentReport WHERE BrandRefno = '{r["BrandRefno"]}' and ColorID = '{r["ColorID"]}' and SuppID = '{r["SuppID"]}' and DocumentName = '{this.drBasic["DocumentName"]}' and BrandID = '{this.drBasic["BrandID"]}')
+                    IF EXISTS(select 1 FROM dbo.UASentReport WHERE BrandRefno = '{r["BrandRefno"]}' and ColorID = '{r["ColorID"]}' and SuppID = '{r["SuppID"]}' and DocumentName = '{this.drBasic["DocumentName"]}' and BrandID = '{this.drBasic["BrandID"]}')
                     Begin
-                        Update Gasa.dbo.UASentReport SET  TestReport = getdate(), EditName = '{Env.User.UserID}' ,EditDate = getdate() {updateCol} 
+                        Update dbo.UASentReport SET  TestReport = getdate(), EditName = '{Env.User.UserID}' ,EditDate = getdate() {updateCol} 
                         output inserted.Ukey into @OutputTbl
                         WHERE BrandRefno = '{r["BrandRefno"]}' and ColorID = '{r["ColorID"]}' and SuppID = '{r["SuppID"]}' and DocumentName = '{this.drBasic["DocumentName"]}' and BrandID = '{this.drBasic["BrandID"]}'
                     End
                     Else
                      Begin
-                        Insert Into Gasa.dbo.[UASentReport]
+                        Insert Into dbo.[UASentReport]
                          (
                            [BrandRefno]
                           ,[ColorID]
@@ -1387,7 +1383,7 @@ namespace Sci.Production.Quality
                      End
 
                     INSERT INTO Clip 
-                    SELECT files.Pkey, 'UASentReport', ID, files.FileName, 'File Upload', @UserID, getdate(),''
+                    SELECT files.Pkey, 'UASentReport', ID, files.FileName, 'File Upload', @UserID, getdate()
                      FROM @OutputTbl
                     Outer Apply(
                         select [Pkey] = SUBSTRING(Data,0,11),FileName = SUBSTRING(Data,12,len(Data)-11) from splitstring(@ClipPkey,'?')
@@ -1401,7 +1397,7 @@ namespace Sci.Production.Quality
                         new SqlParameter("FileName", ofdFileName.SafeFileName),
                     };
                     DataTable dtUkey = new DataTable();
-                    var result = DBProxy.Current.Select("GASA", sql, plis, out dtUkey);
+                    var result = DBProxy.Current.Select(null, sql, plis, out dtUkey);
                     if (!result)
                     {
                         this.ShowErr(result);
@@ -1473,7 +1469,7 @@ namespace Sci.Production.Quality
                 SELECT
 	                RowNo = ROW_NUMBER() OVER (ORDER BY Month)
                    ,ID INTO #probablySeasonList
-                FROM Trade.dbo.Season Where BrandID = @BrandID
+                FROM dbo.Season Where BrandID = @BrandID
 
                 SELECT main.ID FROM #probablySeasonList main
                 Outer Apply (
@@ -1507,7 +1503,7 @@ namespace Sci.Production.Quality
                     SELECT
 	                    RowNo = ROW_NUMBER() OVER (ORDER BY Month)
                        ,ID INTO #probablySeasonList
-                    FROM Trade.dbo.Season Where BrandID = @BrandID
+                    FROM dbo.Season Where BrandID = @BrandID
 
                     SELECT ID,RowNo FROM #probablySeasonList
                     WHERE RowNo = (SELECT RowNo FROM #probablySeasonList WHERE ID =@SeasonID)+{expiration - 1}",
@@ -1529,7 +1525,7 @@ namespace Sci.Production.Quality
                 SELECT
 	                RowNo = ROW_NUMBER() OVER (ORDER BY Month)
                    ,ID INTO #probablySeasonList
-                FROM Trade.dbo.Season Where BrandID = @BrandID
+                FROM dbo.Season Where BrandID = @BrandID
 
                 SELECT main.ID FROM #probablySeasonList main
                 Outer Apply (
