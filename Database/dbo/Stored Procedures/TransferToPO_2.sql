@@ -60,10 +60,10 @@ Begin
 		(  RowID BigInt Identity(1,1) Not Null, ID VarChar(13), Seq1 VarChar(3), Seq2 VarChar(2), SpecColumnID VarChar(50), SpecValue VarChar(50), Seq2_Count Int
 			, Primary Key (ID, Seq1, Seq2, SpecColumnID, Seq2_Count)
 		);
-		Create Table #tmpPO_Supp_Detail_Keyword
-		(  RowID BigInt Identity(1,1) Not Null, ID VarChar(13), Seq1 VarChar(3), Seq2 VarChar(2), KeywordField VarChar(30), KeywordValue VarChar(200), Seq2_Count Int
-			, Primary Key (ID, Seq1, Seq2, KeywordField, Seq2_Count)
-		);
+		--Create Table #tmpPO_Supp_Detail_Keyword
+		--(  RowID BigInt Identity(1,1) Not Null, ID VarChar(13), Seq1 VarChar(3), Seq2 VarChar(2), KeywordField VarChar(30), KeywordValue VarChar(200), Seq2_Count Int
+		--	, Primary Key (ID, Seq1, Seq2, KeywordField, Seq2_Count)
+		--);
 	End;
 	----------------------------------------------------------------------
 	--Declare @ExecDate DateTime;
@@ -374,12 +374,12 @@ Begin
 					And Seq1 = @Seq1
 					And Seq2_Count = @Seq2_Count;
 
-				Update #tmpPO_Supp_Detail_Keyword
-				   Set Seq1 = @NewSeq1_Chr
-					 , Seq2 = @NewSeq2_Chr
-				 Where ID = @PoID
-				   And Seq1 = @Seq1
-				   And Seq2_Count = @Seq2_Count;
+				--Update #tmpPO_Supp_Detail_Keyword
+				--   Set Seq1 = @NewSeq1_Chr
+				--	 , Seq2 = @NewSeq2_Chr
+				-- Where ID = @PoID
+				--   And Seq1 = @Seq1
+				--   And Seq2_Count = @Seq2_Count;
 			End;
 			Set @tmpPo_Supp_DetailRowID += 1;
 		End;

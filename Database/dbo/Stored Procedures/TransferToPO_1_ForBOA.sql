@@ -81,10 +81,10 @@ Begin
 		(  RowID BigInt Identity(1,1) Not Null, ID VarChar(13), Seq1 VarChar(3), Seq2 VarChar(2), SpecColumnID VarChar(50), SpecValue VarChar(50), Seq2_Count Int
 			, Primary Key (ID, Seq1, Seq2, SpecColumnID, Seq2_Count)
 		);
-		Create Table #tmpPO_Supp_Detail_Keyword
-		(  RowID BigInt Identity(1,1) Not Null, ID VarChar(13), Seq1 VarChar(3), Seq2 VarChar(2), KeywordField VarChar(30), KeywordValue VarChar(200), Seq2_Count Int
-			, Primary Key (ID, Seq1, Seq2, KeywordField, Seq2_Count)
-		);
+		--Create Table #tmpPO_Supp_Detail_Keyword
+		--(  RowID BigInt Identity(1,1) Not Null, ID VarChar(13), Seq1 VarChar(3), Seq2 VarChar(2), KeywordField VarChar(30), KeywordValue VarChar(200), Seq2_Count Int
+		--	, Primary Key (ID, Seq1, Seq2, KeywordField, Seq2_Count)
+		--);
 		
 	End;
 	----------------------------------------------------------------------
@@ -656,29 +656,40 @@ Begin
 				   And Keyword = IsNull(@Keyword, '')
 				   And Special = IsNull(@Special, '');
 				*/
-
+                
 				Select @Seq2_Count = Max(po3.Seq2_Count)
 				From #tmpPO_Supp_Detail po3
 				Outer Apply (
-					select count(*) c
-					from (
-						select SpecColumnID, SpecValue
-						from #tmpPO_Supp_Detail_Spec po3s
-						where po3.ID = po3s.ID
-						and  po3.Seq1 = po3s.Seq1
-						and  po3.Seq2 = po3s.Seq2
-						and  po3.Seq2_Count = po3s.Seq2_Count
-                        union all
-						select SpecColumnID, SpecValue
-						from @tmpOrder_BOA_Expend_Spec
+					select count(*) c from (
+						(
+							select SpecColumnID, SpecValue
+							from #tmpPO_Supp_Detail_Spec po3s
+							where po3.ID = po3s.ID
+							and  po3.Seq1 = po3s.Seq1
+							and  po3.Seq2 = po3s.Seq2
+							and  po3.Seq2_Count = po3s.Seq2_Count
+							except
+							select SpecColumnID, SpecValue
+							from @tmpOrder_BOA_Expend_Spec
+						)
+						union
+						(
+							select SpecColumnID, SpecValue
+							from @tmpOrder_BOA_Expend_Spec
+							except
+							select SpecColumnID, SpecValue
+							from #tmpPO_Supp_Detail_Spec po3s
+							where po3.ID = po3s.ID
+							and  po3.Seq1 = po3s.Seq1
+							and  po3.Seq2 = po3s.Seq2
+							and  po3.Seq2_Count = po3s.Seq2_Count
+						)
 					) tmp
-                    group by SpecColumnID, SpecValue
-                    having count(*) = 1
 				) getCount
 				Where po3.ID = @PoID
 					And po3.Seq1 = @Seq1_New
 					And po3.SCIRefNo = @SCIRefNo
-					And getCount.c = 0
+					And isnull(getCount.c, 0) = 0
 
 				If IsNull(@Seq2_Count, 0) != 0
 				Begin
@@ -834,10 +845,10 @@ Begin
 					Where Order_BOA_ExpendUkey in (select data from Production.dbo.SplitString(@Boa_ExpendUkeys, ','));
 					--------------------------------------
 					--寫入Temp Table - PO_Supp_Detail_Keyword
-					Insert Into #tmpPO_Supp_Detail_Keyword(ID, Seq1, Seq2, KeywordField, KeywordValue, Seq2_Count)
-					Select @PoID, @Seq1_New, @Seq2, KeywordField, KeywordValue, @Seq2_Count
-					From dbo.Order_BOA_Expend_Keyword
-					Where Order_BOA_ExpendUkey in (select data from Production.dbo.SplitString(@Boa_ExpendUkeys, ','));
+					--Insert Into #tmpPO_Supp_Detail_Keyword(ID, Seq1, Seq2, KeywordField, KeywordValue, Seq2_Count)
+					--Select @PoID, @Seq1_New, @Seq2, KeywordField, KeywordValue, @Seq2_Count
+					--From dbo.Order_BOA_Expend_Keyword
+					--Where Order_BOA_ExpendUkey in (select data from Production.dbo.SplitString(@Boa_ExpendUkeys, ','));
 					--------------------------------------
 				End;
 			End;
