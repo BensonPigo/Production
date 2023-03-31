@@ -569,7 +569,7 @@ select  t.TransferExport_DetailUkey,
         getdate(),
         isnull(psdInv.StockUnit, ''),
         t.Qty,
-        t.Tone,
+        isnull(t.Tone, ''),
         [MINDQRCode] = iif(t.Qty = 0, '', ISNULL(w.MINDQRCode, ''))
 from #tmp t
 inner join TransferExport_Detail ted with (nolock) on ted.Ukey = t.TransferExport_DetailUkey
