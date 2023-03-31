@@ -899,7 +899,7 @@ namespace Sci.Production.Quality
                ,sr.EditDate
                ,sr.Ukey
                ,[SeasonRow] = seasonList.RowNo
-               ,canModify = CAST(iif((chkNoRes.value is null and '{this.drBasic["Responsibility"]}' = 'T') or chkNoRes.value = 'T', 1, 0) AS BIT)
+               ,canModify = CAST(iif((chkNoRes.value is null and '{this.drBasic["Responsibility"]}' = 'F') or chkNoRes.value = 'F', 1, 0) AS BIT)
              INTO #tmp
              from PO_Supp_Detail po3 WITH (NOLOCK)
             LEFT JOIN PO_Supp_Detail stockPO3 with (nolock) on iif(po3.StockPOID >'', 1, 0) = 0 AND stockPO3.ID =  po3.StockPOID
