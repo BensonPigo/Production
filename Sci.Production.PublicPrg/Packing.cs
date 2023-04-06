@@ -2377,7 +2377,7 @@ select  pd.ID
         , o.BrandFTYCode
         , p.Dest
         , [NewSizeCode] = case  when checkMixSize.value > 1 then 'Mix'
-						        else NewSizeCode.val end
+						        else isnull(NewSizeCode.val, pd.SizeCode) end
 from PackingList_Detail pd WITH (NOLOCK) 
 inner join PackingList p with (nolock) on p.ID = pd.ID
 left join orders o with(nolock) on o.id = pd.OrderID
