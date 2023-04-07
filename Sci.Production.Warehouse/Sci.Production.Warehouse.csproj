@@ -206,12 +206,30 @@
       <DependentUpon>P07_PrintAccessorySticker.cs</DependentUpon>
     </Compile>
     <Compile Include="P07_PrintAccessorySticker_Data.cs" />
+    <Compile Include="P23_Print.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P23_Print.Designer.cs">
+      <DependentUpon>P23_Print.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P22_PrintFabricSticker.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P22_PrintFabricSticker.Designer.cs">
+      <DependentUpon>P22_PrintFabricSticker.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P22_Print.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P22_Print.Designer.cs">
+      <DependentUpon>P22_Print.cs</DependentUpon>
+    </Compile>
     <Compile Include="P15P16_ReuqeustList.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="P15P16_ReuqeustList.Designer.cs">
       <DependentUpon>P15P16_ReuqeustList.cs</DependentUpon>
-	</Compile>
+    </Compile>
     <Compile Include="P19_TKSeparateHistory.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -1656,9 +1674,19 @@
     <EmbeddedResource Include="P07_PrintAccessorySticker.resx">
       <DependentUpon>P07_PrintAccessorySticker.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="P23_Print.resx">
+      <DependentUpon>P23_Print.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P22_PrintFabricSticker.resx">
+      <DependentUpon>P22_PrintFabricSticker.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P22_Print.resx">
+      <DependentUpon>P22_Print.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="P15P16_ReuqeustList.resx">
       <DependentUpon>P15P16_ReuqeustList.cs</DependentUpon>
-	</EmbeddedResource>
+    </EmbeddedResource>
     <EmbeddedResource Include="P19_TKSeparateHistory.resx">
       <DependentUpon>P19_TKSeparateHistory.cs</DependentUpon>
     </EmbeddedResource>
