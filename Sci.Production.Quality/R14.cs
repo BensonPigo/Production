@@ -158,7 +158,6 @@ namespace Sci.Production.Quality
                 [StartingTime] = siidata.MaxAddDate,
                 [Remark] = si.Remark,
                 [InspectedTime] = DATEDIFF(second,siidata.minAddDate,isnull(isnull(MinEditDate,MaxEditDate),isnull(MaxAddDate,isnull(MinEditDate,MaxEditDate))))
-
                 from SpreadingInspection s 
                 left join SpreadingInspection_InsCutRef si with(nolock) on s.ID = si.ID
                 left join SpreadingInspection_OriCutRef so with(nolock) on s.id = so.id
@@ -202,11 +201,24 @@ namespace Sci.Production.Quality
                 )siiMaxName
                 outer apply
                 (
-	                select 
-	                Name
-	                from Pass1 p 
-	                inner join SpreadingInspection_InsCutRef_Inspection s on p.ID = iif(s.EditName = '' ,s.addname,s.editname)
-	                where SpreadingInspectionInsCutRefUkey = si.Ukey
+
+					select [Name] = stuff((
+	                select concat(char(10),tmp.Name) from
+	                (
+		                select 
+						Name
+						from Pass1 p 
+						inner join SpreadingInspection_InsCutRef_Inspection s on p.ID =s.EditName 
+						where SpreadingInspectionInsCutRefUkey = si.Ukey and s.EditName != ''
+						union
+						select 
+						 Name
+						from Pass1 p 
+						inner join SpreadingInspection_InsCutRef_Inspection s on p.ID =s.AddName 
+						where SpreadingInspectionInsCutRefUkey = si.Ukey and s.AddName != ''
+
+	                ) tmp for xml path('')),1,1,'')
+
                 )p
                 outer apply
                 (
@@ -301,7 +313,7 @@ namespace Sci.Production.Quality
                 [Activate] = case when soc.[count] > sic.[count] then 'Combine'
 			                    when soc.[count] < sic.[count]  then 'Separate' 
 				                else '' end,
-                [InspectDate] = IsNULL(sii.EditDate,sii.AddDate),
+                [InspectDate] = iif(sii.Result = '',null,convert(date,IsNULL(sii.EditDate,sii.AddDate))),
                 [RFT] = RFT.Per ,
                 [Shift] = sii.[Shift],
                 [SP] = SP.val ,
@@ -321,7 +333,7 @@ namespace Sci.Production.Quality
 				                when sii.Item = 'Machine Tension' then  isnull('Speed:'+ mt.val,'')
 				                when sii.Item = 'Fabric Defect' then isnull( fd.val,'')
 				                else '' end ,
-                [LastInspectionDate] = IsNull(sii.EditDate, sii.AddDate),
+                [LastInspectionDate] = iif(sii.Result = '',null, IsNull(sii.EditDate, sii.AddDate)),
                 [Inspector] =p.[Name],
                 [StartingTime] = st.val,
                 [Remark] = si.Remark
@@ -476,8 +488,13 @@ namespace Sci.Production.Quality
 	                for xml path ('')
                 ) , 1, 1, '')
                 )FD
+                outer apply(
+					 select min(convert(date,lista.AddDate)) as date1 
+					 from SpreadingInspection_InsCutRef_Inspection lista
+					 where sii.SpreadingInspectionInsCutRefUkey = lista.SpreadingInspectionInsCutRefUkey
+				) firstinspdate
                 {this.strSQLWhere}
-                order by [InspectDate],[SubCutRef],sii.Seq";
+                order by firstinspdate.date1,  [SubCutRef],sii.Seq";
             }
 
             DualResult result = DBProxy.Current.Select("ManufacturingExecution", sqlcmd, this.lisSqlParameter, out this.printTable);
