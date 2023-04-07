@@ -47,7 +47,7 @@ BEGIN
 				/convert(float,count(*)),4)*100),0)
 			 from fir a
 			 left join FIR_Laboratory b on a.ID=b.ID
-			 left join Receiving c on a.ReceivingID=c.Id 
+			 left join Receiving c WITH(NOLOCK) on a.ReceivingID=c.Id 
 			 where a.POID = po.ID
 			 )
 			from PO where PO.ID=@POID
