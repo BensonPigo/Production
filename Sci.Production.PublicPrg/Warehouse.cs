@@ -6593,10 +6593,10 @@ Create Table #tmpPO_Supp_Detail
 
 );
 
-Create Table #tmpPO_Supp_Detail_OrderList
-(  RowID BigInt Identity(1,1) Not Null, ID VarChar(13), Seq1 VarChar(3), Seq2 VarChar(2), OrderID VarChar(13), Seq2_Count Int
-    , Primary Key (ID, Seq1, Seq2, OrderID, Seq2_Count)
-);
+--Create Table #tmpPO_Supp_Detail_OrderList
+--(  RowID BigInt Identity(1,1) Not Null, ID VarChar(13), Seq1 VarChar(3), Seq2 VarChar(2), OrderID VarChar(13), Seq2_Count Int
+--    , Primary Key (ID, Seq1, Seq2, OrderID, Seq2_Count)
+--);
 
 Create Table #tmpPO_Supp_Detail_Spec
 (  RowID BigInt Identity(1,1) Not Null, ID VarChar(13), Seq1 VarChar(3), Seq2 VarChar(2), SpecColumnID VarChar(50), SpecValue VarChar(50), Seq2_Count Int
@@ -6604,11 +6604,11 @@ Create Table #tmpPO_Supp_Detail_Spec
     , Primary Key (ID, Seq1, Seq2, SpecColumnID, Seq2_Count)
 );
 
-Create Table #tmpPO_Supp_Detail_Keyword
-(  RowID BigInt Identity(1,1) Not Null, ID VarChar(13), Seq1 VarChar(3), Seq2 VarChar(2), KeywordField VarChar(30), KeywordValue VarChar(200), Seq2_Count Int
-    {addCol2Spec}
-    , Primary Key (ID, Seq1, Seq2, KeywordField, Seq2_Count)
-);
+--Create Table #tmpPO_Supp_Detail_Keyword
+--(  RowID BigInt Identity(1,1) Not Null, ID VarChar(13), Seq1 VarChar(3), Seq2 VarChar(2), KeywordField VarChar(30), KeywordValue VarChar(200), Seq2_Count Int
+--    {addCol2Spec}
+--    , Primary Key (ID, Seq1, Seq2, KeywordField, Seq2_Count)
+--);
 ";
 
             DualResult result = DBProxy.Current.ExecuteByConn(sqlConn, sqlCmd);
@@ -6736,13 +6736,14 @@ Create Table #tmpPO_Supp_Detail_Keyword
         /// <param name="sqlConn">sqlConn</param>
         /// <param name="poID">採購母單</param>
         /// <inheritdoc />
-        public static DualResult TransferToPO_1_ForThreadAllowance(SqlConnection sqlConn, string poID)
+        public static DualResult TransferToPO_1_ForThreadAllowance(SqlConnection sqlConn, string poID, bool isMaterialCompare = false)
         {
             DualResult result;
             List<SqlParameter> paras = new List<SqlParameter>();
 
             paras.Add(new SqlParameter("@PoID", poID));
             paras.Add(new SqlParameter("@UserID", Env.User.UserID));
+            paras.Add(new SqlParameter("@ForMaterialCompare", isMaterialCompare));
 
             result = DBProxy.Current.ExecuteSPByConn(sqlConn, "TransferToPO_1_ForThreadAllowance", paras);
 

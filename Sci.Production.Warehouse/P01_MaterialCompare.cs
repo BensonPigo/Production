@@ -281,7 +281,7 @@ namespace Sci.Production.Warehouse
                 return null;
             }
 
-            result = Prgs.TransferToPO_1_ForThreadAllowance(sqlConn, poID);
+            result = Prgs.TransferToPO_1_ForThreadAllowance(sqlConn, poID, true);
             if (!result)
             {
                 MyUtility.Msg.ErrorBox(result.ToString());
@@ -297,31 +297,14 @@ namespace Sci.Production.Warehouse
             }
 
             sqlCmd = @"
-Select ID = #tmpPO_Supp_Detail.ID
-    , #tmpPO_Supp_Detail.Seq1
-    , #tmpPO_Supp_Detail.Seq2
-    , #tmpPO_Supp_Detail.RefNo
-    , #tmpPO_Supp_Detail.SCIRefNo
-    , #tmpPO_Supp.SuppID
-    , tmpOrderList.OrderIdList
-    , Po_Supp_Detail.StockUnit
-    , StockNetQty = dbo.GetUnitQty(#tmpPO_Supp_Detail.POUnit, Po_Supp_Detail.StockUnit, #tmpPO_Supp_Detail.NetQty)
-    , StockLossQty = dbo.GetUnitQty(#tmpPO_Supp_Detail.POUnit, Po_Supp_Detail.StockUnit, #tmpPO_Supp_Detail.LossQty)
-    , StockUnitQty = dbo.GetUnitQty(#tmpPO_Supp_Detail.POUnit, Po_Supp_Detail.StockUnit, #tmpPO_Supp_Detail.Qty)
-    , StockFOC = dbo.GetUnitQty(#tmpPO_Supp_Detail.POUnit, Po_Supp_Detail.StockUnit, #tmpPO_Supp_Detail.FOC)
-    , BomSpec.*
+Select #tmpPO_Supp_Detail.RefNo
+, Po_Supp_Detail.StockUnit
+, StockNetQty = Sum(dbo.GetUnitQty(#tmpPO_Supp_Detail.POUnit, Po_Supp_Detail.StockUnit,#tmpPO_Supp_Detail.NetQty))
+, StockLossQty = Sum(dbo.GetUnitQty(#tmpPO_Supp_Detail.POUnit, Po_Supp_Detail.StockUnit,#tmpPO_Supp_Detail.LossQty))
+, StockUnitQty = Sum(dbo.GetUnitQty(#tmpPO_Supp_Detail.POUnit, Po_Supp_Detail.StockUnit,#tmpPO_Supp_Detail.Qty))
+, BomSpec.*
 From #tmpPO_Supp_Detail
-Left Join (Select ID, Seq1, Seq2, OrderIdList = (Select SubString(OrderID,9,5)+'/' From #tmpPO_Supp_Detail_OrderList as tmp Where tmp.ID = #tmpPO_Supp_Detail_OrderList.ID And tmp.Seq1 = #tmpPO_Supp_Detail_OrderList.Seq1 And tmp.Seq2 = #tmpPO_Supp_Detail_OrderList.Seq2 for XML path('')) 
-            From #tmpPO_Supp_Detail_OrderList
-            Group by ID, Seq1, Seq2
-            ) as tmpOrderList
-    On     #tmpPO_Supp_Detail.ID = tmpOrderList.ID
-    And #tmpPO_Supp_Detail.Seq1 = tmpOrderList.Seq1
-    And #tmpPO_Supp_Detail.Seq2 = tmpOrderList.Seq2
-Left join Fabric on Fabric.SciRefno = #tmpPO_Supp_Detail.SciRefno
-Left join #tmpPO_Supp on #tmpPO_Supp_Detail.id = #tmpPO_Supp.id and #tmpPO_Supp_Detail.Seq1 = #tmpPO_Supp.Seq1
-left join Po_Supp_Detail on Po_Supp_Detail.id = #tmpPO_Supp_Detail.id and Po_Supp_Detail.SEQ1 = #tmpPO_Supp_Detail.SEQ1 and Po_Supp_Detail.SEQ2 = #tmpPO_Supp_Detail.SEQ2
---Outer Apply (Select * From dbo.GetStatusByPO(#tmpPO_Supp_Detail.ID, #tmpPO_Supp_Detail.Seq1, '')) as PoStatus
+outer apply(select top 1 StockUnit from Po_Supp_Detail where Po_Supp_Detail.id = #tmpPO_Supp_Detail.id and Po_Supp_Detail.Refno = #tmpPO_Supp_Detail.Refno and Po_Supp_Detail.StockUnit <> '')Po_Supp_Detail
 outer apply (
 	select SpecColor = p.Color
 	, SpecSize = p.Size
@@ -350,7 +333,11 @@ outer apply (
 	) as p
 ) BomSpec
 where #tmpPO_Supp_Detail.Seq1 not like 'A%'
-Order by #tmpPO_Supp_Detail.ID, #tmpPO_Supp_Detail.Seq1, #tmpPO_Supp_Detail.Seq2
+Group by #tmpPO_Supp_Detail.RefNo
+, BomSpec.SpecColor, BomSpec.SpecSize, BomSpec.SpecSizeUnit, BomSpec.SpecZipperInsert, BomSpec.SpecArticle
+, BomSpec.SpecCOO, BomSpec.SpecGender, BomSpec.SpecCustomerSize, BomSpec.SpecDecLabelSize, BomSpec.SpecBrandFactoryCode
+, BomSpec.SpecStyle, BomSpec.SpecStyleLocation, BomSpec.SpecSeason, BomSpec.SpecCareCode, BomSpec.SpecCustomerPO
+, Po_Supp_Detail.StockUnit
 ";
             result = DBProxy.Current.SelectByConn(sqlConn, sqlCmd, out tmpPo_Supp_Detail);
             if (!result)
@@ -365,24 +352,22 @@ Order by #tmpPO_Supp_Detail.ID, #tmpPO_Supp_Detail.Seq1, #tmpPO_Supp_Detail.Seq2
             tmpPo_Supp_Detail.AsEnumerable().ToList().ForEach(row => newPO3.Add(new ComparePO3Item(row, ComparePO3VersionEnu.New)));
 
             string oldCmd = @"
-select ID = po3.ID
-    , po3.Seq1
-    , po3.Seq2
-    , po3.RefNo
-    , po3.SCIRefNo
-    , po2.SuppID
-    , viewPo3.ShowCfmETD, viewPo3.ShowRevisedETD, viewPo3.FirstETA
-    , po3.StockUnit
-    , StockNetQty = dbo.GetUnitQty(po3.POUnit, po3.StockUnit, NetQty)
-    , StockLossQty = dbo.GetUnitQty(po3.POUnit, po3.StockUnit, LossQty)
-    , StockUnitQty = dbo.GetUnitQty(po3.POUnit, po3.StockUnit, Qty)
-    , StockFOC = dbo.GetUnitQty(po3.POUnit, po3.StockUnit, FOC)
-    , BomSpec.*
+select po3.Seq1, po3.Seq2, po3.RefNo
+, po2.SuppID, viewPo3.ShowCfmETD, viewPo3.ShowRevisedETD, viewPo3.FirstETA
+, po3.StockUnit
+, StockNetQty = dbo.GetUnitQty(po3.POUnit, po3.StockUnit, po3.NetQty)
+, StockLossQty = dbo.GetUnitQty(po3.POUnit, po3.StockUnit, po3.LossQty)
+, StockUnitQty = dbo.GetUnitQty(po3.POUnit, po3.StockUnit, po3.Qty)
+, StockFOC = dbo.GetUnitQty(po3.POUnit, po3.StockUnit, po3.FOC)
+, OrderIdList = PO_Supp_Detail_OrderList_Show.OrderList
+, BomSpec.*
 from Production.dbo.PO_Supp_Detail po3 
 outer apply (select seq1New = iif(po3.Seq1 like '7%', po3.OutputSeq1, po3.Seq1)
 					, seq2New = iif(po3.Seq1 like '7%', po3.OutputSeq2, po3.Seq2)) newItem
 inner join Production.dbo.PO_Supp po2 on po3.ID = po2.ID and newItem.seq1New = po2.SEQ1
 left join View_Po3WithStock viewPo3 on po3.id = viewPo3.ID and po3.Seq1 = viewPo3.Seq1 and po3.Seq2 = viewPo3.Seq2
+Left Join dbo.PO_Supp_Detail_OrderList_Show
+    On viewPo3.ID = PO_Supp_Detail_OrderList_Show.ID and viewPo3.Seq1 = PO_Supp_Detail_OrderList_Show.Seq1 and viewPo3.Seq2 = PO_Supp_Detail_OrderList_Show.Seq2
 outer apply (
 	select SpecColor = p.Color
 	, SpecSize = p.Size
@@ -410,10 +395,8 @@ outer apply (
 		MAX(SpecValue) for BomTypeID in (Color, Size, SizeUnit, ZipperInsert, Article, COO, Gender, CustomerSize, DecLabelSize, BrandFactoryCode, Style, StyleLocation, Season, CareCode, CustomerPO)
 	) as p
 ) BomSpec
-where po3.id = @poid
+where po3.id = @poID
 and po3.Seq1 not like 'A%'
-
-drop table #tmpPO_Supp,#tmpPO_Supp_Detail,#tmpPO_Supp_Detail_Keyword,#tmpPO_Supp_Detail_OrderList,#tmpPO_Supp_Detail_Spec
 ";
 
             DualResult dualResult = DBProxy.Current.Select(null, oldCmd, new List<SqlParameter>() { new SqlParameter("@poID", poID) }, out DataTable oldPO3Tbl);
