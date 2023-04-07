@@ -10,6 +10,7 @@ using System.Transactions;
 using Sci.Production.PublicPrg;
 using System.Linq;
 using Sci.Production.Prg;
+using System.Text;
 
 namespace Sci.Production.Logistic
 {
@@ -537,6 +538,28 @@ where pd.CustCTN = '{dr["CustCTN"]}' and pd.CTNQty > 0 and pd.DisposeFromClog= 0
                     MyUtility.Msg.WarningBox("Some data cannot be received, please check again.");
                     return;
                 }
+            }
+
+            StringBuilder warningmsg = new StringBuilder();
+            foreach (DataRow dr in selectedData)
+            {
+                if (MyUtility.Check.Seek(
+                    $@"
+select ReceiveDate 
+from PackingList_Detail WITH (NOLOCK)
+where ID = '{dr["id"].ToString().Trim()}' 
+and OrderID = '{dr["OrderID"].ToString().Trim()}'
+and CTNStartNo = '{dr["CTNStartNo"].ToString().Trim()}'
+and DisposeFromClog = 0", out DataRow drSelect))
+                {
+                    warningmsg.Append($@"<CNT#: {dr["id"]}{dr["CTNStartNo"]}> This CTN# has been received." + Environment.NewLine);
+                    continue;
+                }
+            }
+
+            if (warningmsg.ToString().Length > 0)
+            {
+                MyUtility.Msg.WarningBox(warningmsg.ToString());
             }
 
             IList<string> insertCmds = new List<string>();
