@@ -574,7 +574,7 @@ SET
 	  ,a.AllowTransPoForGarmentSP = isnull(b.AllowTransPoForGarmentSP, 0)
 
 from Production.dbo.MtlType as a inner join Trade_To_Pms.dbo.MtlType as b ON a.id=b.id
-where b.EditDate between @DateStart and @DateEnd
+
 -------------------------- INSERT INTO §ì
 INSERT INTO Production.dbo.MtlType(
 ID
@@ -1731,6 +1731,15 @@ Delete Production.dbo.LossRateAccessory_Limit
 from Production.dbo.LossRateAccessory_Limit as a left join Trade_To_Pms.dbo.LossRateAccessory_Limit as b
 on a.MtltypeId = b.MtltypeId and a.UsageUnit = b.UsageUnit
 where b.MtltypeId is null
+
+UPDATE a SET 
+       LimitUp  = b.LimitUp 
+      ,AddName  = b.AddName 
+      ,AddDate  = b.AddDate 
+      ,EditName = b.EditName
+      ,EditDate = b.EditDate
+from Production.dbo.LossRateAccessory_Limit as a 
+inner join Trade_To_Pms.dbo.LossRateAccessory_Limit as b on a.MtltypeId = b.MtltypeId and a.UsageUnit = b.UsageUnit
 
 -------------------------- INSERT INTO ¤£INSERT wasteªºÄæ¦ì
 INSERT INTO Production.dbo.LossRateAccessory_Limit(

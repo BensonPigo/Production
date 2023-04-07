@@ -3,11 +3,12 @@
 -- Create date: 2023/02/21
 -- Description:	From trade 只取需要部份 for < WH P01 Material Compare >
 -- =============================================
-Create Procedure [dbo].[TransferToPO_1_ForThreadAllowance]
+CREATE Procedure [dbo].[TransferToPO_1_ForThreadAllowance]
 (
 	  @PoID			VarChar(13)		--採購母單
 	 ,@UserID		VarChar(10) = ''
 	 ,@ForReport	bit = 0			-- 報表Purchase_P01_07使用
+	 ,@ForMaterialCompare	bit = 0	-- MaterialCompare使用
 )
 As
 Begin
@@ -51,10 +52,10 @@ Begin
             , Status varchar(1), Sel bit default 0, IsForOtherBrand bit, CannotOperateStock bit, Keyword_Original varchar(max)    
             Primary Key (ID, Seq1, Seq2, Seq2_Count)
         );
-		Create Table #tmpPO_Supp_Detail_OrderList
-			(  RowID BigInt Identity(1,1) Not Null, ID VarChar(13), Seq1 VarChar(3), Seq2 VarChar(2), OrderID VarChar(13), Seq2_Count Int
-			 , Primary Key (ID, Seq1, Seq2, OrderID, Seq2_Count)
-			);
+		--Create Table #tmpPO_Supp_Detail_OrderList
+		--	(  RowID BigInt Identity(1,1) Not Null, ID VarChar(13), Seq1 VarChar(3), Seq2 VarChar(2), OrderID VarChar(13), Seq2_Count Int
+		--	 , Primary Key (ID, Seq1, Seq2, OrderID, Seq2_Count)
+		--	);
 		Create Table #tmpPO_Supp_Detail_Spec
 		(  RowID BigInt Identity(1,1) Not Null, ID VarChar(13), Seq1 VarChar(3), Seq2 VarChar(2), SpecColumnID VarChar(50), SpecValue VarChar(50), Seq2_Count Int
 			, Primary Key (ID, Seq1, Seq2, SpecColumnID, Seq2_Count)
@@ -182,7 +183,7 @@ Begin
 	Declare @Status varchar(1);
 
 	Declare @tmpSeq1 VarChar(3);
-	Declare @transEDI bit = 0;
+	--Declare @transEDI bit = 0;
 	Declare @MinQty Numeric(10,2);
 	Declare @POQty Numeric(10,2);
 	Declare @OutputQty Numeric(10,2);
@@ -197,9 +198,11 @@ Begin
 	--Status 1:Insert 2:Update Qty = 0 3: Update Qty
 	Create Table #SameSCIGroup 
 		( RowID BigInt Identity(1,1) Not Null, StyleID varchar(15), SuppID VarChar(6),Seq1 VarChar(3), Seq2 VarChar(2)
-			, SCIRefNo VarChar(30) default '', ColorID Varchar(6), SuppColor NVarChar(Max) default ''
+			, SCIRefNo VarChar(30) default '', ColorID Varchar(6), SuppColor NVarChar(Max) default '', IsForOtherBrand bit
 			, NewQty Numeric(10,2), OriQty Numeric(10,2), NewLossQty Numeric(10,2), OriLossQty Numeric(10,2)
-			, Status varchar(1), transEDI bit default 0, MinQty Numeric(10,2), LimitUp Numeric(10,2)
+			, Status varchar(1)
+            --, transEDI bit default 0
+            , MinQty Numeric(10,2), LimitUp Numeric(10,2)
 			, NewNetQty Numeric(10,2), OriNetQty Numeric(10,2), OutputQty Numeric(10,2)
 		);
 	---------------------------------------------
@@ -578,6 +581,9 @@ Begin
 		End
 
 		IF OBJECT_ID('tempdb..#tmpResult') IS NOT NULL DROP TABLE #tmpResult
+
+        --PMS 此 SP 只有 WH P01 使用 @ForMaterialCompare = 1
+
 		--使用FULL JOIN判斷是否有新增/刪除採購項
 		--當New不為空且Ori為空代表新增 或 當New不為空且Ori不為空且尚未上傳EDI => Status = 1
 		--當New為空且Ori不為空代表刪除 => Status = 2 (Update Qty = 0)
@@ -587,52 +593,77 @@ Begin
 		Select DENSE_RANK() over(order by StyleID, SuppId, SCIRefNo, ColorID, SuppColor) RowID,*
 		Into #tmpResult
 		From (
-			Select StyleID = isnull(Ori.StyleID, New.StyleID)
-			, SuppId = isnull(Ori.SuppId, New.SuppId)
-			, Seq1 = isnull(Ori.Seq1, '')
-			, Seq2 = isnull(Ori.Seq2, '')
-			, Refno = isnull(New.Refno, Ori.Refno)
-			, SCIRefNo = isnull(New.SCIRefNo, Ori.SCIRefNo)
-			, ColorID = isnull(New.ColorID, Ori.Color)
-			, SuppColor = isnull(New.SuppColor, Ori.SuppColor)
-			, POUnit = isnull(New.POUnit, Ori.POUnit)
-			, Type = isnull(New.Type, Ori.FabricType)
-			, NewQty = New.POQty + isnull(New.Foc, 0)
-			, OriQty = isnull(iif(Ori.Junk = 1 , 0, Ori.Qty) + isnull(Ori.OutputQty, 0), 0) + isnull(Ori.Foc, 0)
-			, NewLossQty = New.LossQty
-			, OriLossQty = isnull(Ori.LossQty, 0)
-			, NewNetQty = New.NetQty
-			, OriNetQty = isnull(Ori.NetQty, 0)
-			, Status = IIF(New.SCIRefNo is not null and Ori.SCIRefNo is null, '1', IIF(New.SCIRefNo is null and Ori.SCIRefNo is not null, '2', IIF(TransEDI = 1,'3','1')))
-			, TransEDI = isnull(TransEDI, 0)
-			, MinQty = New.MinQty
-			, OutputQty = isnull(Ori.OutputQty, 0)
+			Select New.StyleID
+			, New.SuppId
+			, Seq1 = cast('' as varchar(3))
+			, Seq2 = cast('' as varchar(3))
+			, New.Refno
+			, New.SCIRefNo
+			, New.ColorID
+			, New.SuppColor
 			, New.IsForOtherBrand
-			from
-			(select * from #tmpFinal where PoID = @CurPoID) New
-			Full join 		
-			(select po2.SuppId, isnull(@StyleID, @StyleID) StyleID, po3.*, po3Spec.Color, TransEDI = 0
-			from PO_Supp po2
-			inner join PO_Supp_Detail po3 on po2.ID = po3.ID and po2.Seq1 = po3.Seq1
-			outer apply dbo.GetPo3Spec(po3.ID, po3.Seq1, po3.Seq2) po3Spec
-			outer apply (select count(*) c from PO_Supp_Detail where ID = po3.ID and OutputSeq1 = po3.Seq1 and OutputSeq2 = po3.Seq2 and Junk = 0) IsOutput
-			--outer apply (select count(*) c from PurchaseOrderList WITH (NOLOCK) where POID = po2.ID and Seq1 = po2.Seq1) trasEDI
-			--outer apply (Select PoStatus = SUBSTRING(PoStatus, 1, 1) From Production.dbo.GetStatusByPO(po3.ID, po3.Seq1, po3.Seq2)) getPoStatus
-			where po2.ID = @CurPoID
-				And (@Category = 'A' or (@Category <> 'A' and po2.Seq1 like 'T%'))
-				And (po3.Junk = 0 or (po3.Junk = 1 and IsOutput.c > 0 ))
-				And @ForReport = 0
-			) Ori
-			On New.SuppId = Ori.SuppId
-			And New.SCIRefNo = Ori.SCIRefNo
-			And New.ColorID = Ori.Color
-			And New.SuppColor = Ori.SuppColor
-			And New.StyleID = Ori.StyleID
+			, New.POUnit
+			, New.Type
+			, NewQty = New.POQty + isnull(New.Foc, 0)
+			, OriQty = 0
+			, NewLossQty = New.LossQty
+			, OriLossQty = 0
+			, NewNetQty = New.NetQty
+			, OriNetQty = 0
+			, Status = 1
+			--, TransEDI = 0
+			, MinQty = New.MinQty
+			, OutputQty = 0
+			from #tmpFinal New where PoID = @CurPoID
+			--Select StyleID = isnull(Ori.StyleID, New.StyleID)
+			--, SuppId = isnull(Ori.SuppId, New.SuppId)
+			--, Seq1 = isnull(Ori.Seq1, '')
+			--, Seq2 = isnull(Ori.Seq2, '')
+			--, Refno = isnull(New.Refno, Ori.Refno)
+			--, SCIRefNo = isnull(New.SCIRefNo, Ori.SCIRefNo)
+			--, ColorID = isnull(New.ColorID, Ori.Color)
+			--, SuppColor = isnull(New.SuppColor, Ori.SuppColor)
+			--, IsForOtherBrand = isnull(New.IsForOtherBrand, Ori.IsForOtherBrand)
+			--, POUnit = isnull(New.POUnit, Ori.POUnit)
+			--, Type = isnull(New.Type, Ori.FabricType)
+			--, NewQty = New.POQty + isnull(New.Foc, 0)
+			--, OriQty = isnull(iif(Ori.Junk = 1 , 0, Ori.Qty) + isnull(Ori.OutputQty, 0), 0) + isnull(Ori.Foc, 0)
+			--, NewLossQty = New.LossQty
+			--, OriLossQty = isnull(Ori.LossQty, 0)
+			--, NewNetQty = New.NetQty
+			--, OriNetQty = isnull(Ori.NetQty, 0)
+			--, Status = IIF(New.SCIRefNo is not null and Ori.SCIRefNo is null, '1', IIF(New.SCIRefNo is null and Ori.SCIRefNo is not null, '2', IIF(TransEDI = 1,'3','1')))
+			--, TransEDI = isnull(TransEDI, 0)
+			--, MinQty = New.MinQty
+			--, OutputQty = isnull(Ori.OutputQty, 0)
+			--from
+			--(select * from #tmpFinal where PoID = @CurPoID) New
+			--Full join 		
+			--(select po2.SuppId, @StyleID StyleID, po3.*, po3Spec.Color, TransEDI = 0
+			--from PO_Supp po2
+			--inner join PO_Supp_Detail po3 on po2.ID = po3.ID and po2.Seq1 = po3.Seq1
+			--outer apply dbo.GetPo3Spec(po3.ID, po3.Seq1, po3.Seq2) po3Spec
+			--outer apply (select count(*) c from PO_Supp_Detail where ID = po3.ID and OutputSeq1 = po3.Seq1 and OutputSeq2 = po3.Seq2 and Junk = 0) IsOutput
+			----outer apply (select count(*) c from PurchaseOrderList WITH (NOLOCK) where POID = po2.ID and Seq1 = po2.Seq1) trasEDI
+			----outer apply (Select PoStatus = SUBSTRING(PoStatus, 1, 1) From Production.dbo.GetStatusByPO(po3.ID, po3.Seq1, po3.Seq2)) getPoStatus
+			--where po2.ID = @CurPoID
+			--	And (@Category = 'A' or (@Category <> 'A' and po2.Seq1 like 'T%'))
+			--	And (po3.Junk = 0 or (po3.Junk = 1 and IsOutput.c > 0 ))
+			--	And @ForReport = 0
+			--	And @ForMaterialCompare = 0
+			--) Ori
+			--On New.SuppId = Ori.SuppId
+			--And New.SCIRefNo = Ori.SCIRefNo
+			--And New.ColorID = Ori.Color
+			--And New.SuppColor = Ori.SuppColor
+			--And New.StyleID = Ori.StyleID
+			--And New.IsForOtherBrand = Ori.IsForOtherBrand
 		) a
-
+        
+        --select * from #tmpResult
 		--將原本的PO_Supp寫入#tmpPO_Supp
-		Insert Into #tmpPO_Supp	(ID, Seq1, SuppID/*, ShipTermID, PayTermAPID, Remark, Description, CompanyID, StyleID*/, Junk)
-		select ID, Seq1, SuppID/*, ShipTermID, PayTermAPID, Remark, Description, CompanyID, isnull(StyleID, @StyleID)*/, isnull(getJunk.Junk, 1)
+		Insert Into #tmpPO_Supp	(ID, Seq1, SuppID/*, ShipTermID, PayTermAPID, Remark, Description, CompanyID*/, StyleID, Junk)
+		select ID, Seq1, SuppID/*, ShipTermID, PayTermAPID, Remark, Description, CompanyID*/, @StyleID, isnull(getJunk.Junk, 1)
 		from PO_Supp po2
 		outer apply (select top 1 Junk from PO_Supp_Detail po3 where po3.ID = po2.ID and po3.Seq1 = po2.SEQ1 and po3.Junk = 0) getJunk
 		where ID = @CurPoID And po2.Seq1 like 'T%' And @ForReport = 0
@@ -652,7 +683,8 @@ Begin
 			Begin
 				Select top 1 
 				@Seq1 = isnull(Seq1, '')			
-				, @transEDI = TransEDI
+				--, @transEDI = TransEDI
+			    , @IsForOtherBrand = isnull(IsForOtherBrand, 0)
 				From #tmpResult Where SuppId = @SuppID and StyleID = @StyleID and Seq1 != '' and isnull(IsForOtherBrand, 0) = @IsForOtherBrand Order By Seq1
 
 				IF @Seq1 = ''
@@ -663,7 +695,8 @@ Begin
 					Set @Seq1 = IIF(@Category <> 'A', 'T' + cast(@tmpSeq1 + 1 as nvarchar), RIGHT(REPLICATE('0', 2) + CAST(@tmpSeq1 + 1 as nvarchar), 2))
 				End
 
-				Update #tmpResult Set Seq1 = @Seq1, TransEDI = @transEDI where RowID = @tmpResultRowID
+				Update #tmpResult Set Seq1 = @Seq1--, TransEDI = @transEDI
+                where RowID = @tmpResultRowID
 			End
 
 			set @tmpResultRowID += 1;
@@ -676,10 +709,12 @@ Begin
 			truncate table #SameSCIGroup;
 
 			Insert Into #SameSCIGroup
-			(StyleID, SuppID, Seq1, Seq2, SCIRefNo, ColorID, SuppColor, NewQty, OriQty, NewLossQty, OriLossQty, Status, transEDI, MinQty, OutputQty
+			(StyleID, SuppID, Seq1, Seq2, SCIRefNo, ColorID, SuppColor, IsForOtherBrand, NewQty, OriQty, NewLossQty, OriLossQty, Status--, transEDI
+            , MinQty, OutputQty
 			,NewNetQty ,OriNetQty)
 			Select
-			StyleID, SuppID, Seq1, Seq2, SCIRefNo, ColorID, SuppColor, NewQty, OriQty, NewLossQty, OriLossQty, Status, transEDI, MinQty, OutputQty
+			StyleID, SuppID, Seq1, Seq2, SCIRefNo, ColorID, SuppColor, IsForOtherBrand, NewQty, OriQty, NewLossQty, OriLossQty, Status--, transEDI
+            , MinQty, OutputQty
 			,NewNetQty, OriNetQty
 			From #tmpResult
 			Where RowID = @tmpResultRowID
@@ -717,7 +752,7 @@ Begin
 				, @NewNetQty = NewNetQty
 				, @OriNetQty = OriNetQty
 				, @Status = Status
-				, @transEDI = transEDI
+				--, @transEDI = transEDI
 				, @Qty = isnull(OriQty, NewQty)
 				, @NetQty = isnull(OriNetQty, NewNetQty)
 				, @LossQty = isnull(OriLossQty, NewLossQty)
@@ -725,6 +760,7 @@ Begin
 				, @POQty = 0
 				, @OutputQty = OutputQty
 				, @IsFoc = Isnull(getIsFOC.IsFOC, 0)
+				, @IsForOtherBrand = IsForOtherBrand
 				From #SameSCIGroup
 				Outer apply (
 					Select f.IsFOC 
@@ -733,150 +769,150 @@ Begin
 				) getIsFOC
 				Where RowID = @SameSCIGroupRowID
 
-				IF @Status = '3' --Update Qty
-				Begin
-					IF @DiffQty = 0
-					Begin
-						set @Status = 0
-					End
+				--IF @Status = '3' --Update Qty
+				--Begin
+				--	IF @DiffQty = 0
+				--	Begin
+				--		set @Status = 0
+				--	End
 
-					set @POQty = @OriQty - @OutputQty
-					set @BalanceQty = @POQty + @OutputQty
+				--	set @POQty = @OriQty - @OutputQty
+				--	set @BalanceQty = @POQty + @OutputQty
 
-					--POQty
-					IF @DiffQty < 0
-					Begin
-						-- '將差異數填入於舊項次，預設不勾選，僅針對數量作更新'
-						IF ABS(@DiffQty) > @OriQty
-						Begin
-							set @Qty = 0
-							set @DiffQty = @DiffQty + @OriQty
-						End
-						Else
-						Begin
-							set @Qty = @OriQty + @DiffQty
-							set @DiffQty = 0
-						End
-					End
+				--	--POQty
+				--	IF @DiffQty < 0
+				--	Begin
+				--		-- '將差異數填入於舊項次，預設不勾選，僅針對數量作更新'
+				--		IF ABS(@DiffQty) > @OriQty
+				--		Begin
+				--			set @Qty = 0
+				--			set @DiffQty = @DiffQty + @OriQty
+				--		End
+				--		Else
+				--		Begin
+				--			set @Qty = @OriQty + @DiffQty
+				--			set @DiffQty = 0
+				--		End
+				--	End
 
-					-- NetQty增加
-					IF @DiffNetQty >= 0 or (@DiffQty <= 0 and @NewNetQty > @OriNetQty)
-					Begin
-						IF @BalanceQty >= @NewNetQty
-						Begin
-							set @NetQty = @NewNetQty
-							set @DiffNetQty = 0
-							set @BalanceQty -= @NewNetQty
-						End
-						Else
-						Begin
-							set @tmpDiffNetQty = iif(@DiffNetQty > @OriLossQty, @OriLossQty, @DiffNetQty)
+				--	-- NetQty增加
+				--	IF @DiffNetQty >= 0 or (@DiffQty <= 0 and @NewNetQty > @OriNetQty)
+				--	Begin
+				--		IF @BalanceQty >= @NewNetQty
+				--		Begin
+				--			set @NetQty = @NewNetQty
+				--			set @DiffNetQty = 0
+				--			set @BalanceQty -= @NewNetQty
+				--		End
+				--		Else
+				--		Begin
+				--			set @tmpDiffNetQty = iif(@DiffNetQty > @OriLossQty, @OriLossQty, @DiffNetQty)
 
-							set @NetQty = @BalanceQty - @OriLossQty + iif(@DiffNetQty > @OriLossQty, @OriLossQty, @DiffNetQty)
-							set @DiffNetQty -= (@BalanceQty - @OriNetQty - @OriLossQty + @tmpDiffNetQty)
-							set @BalanceQty -= @NetQty
-						End
-					End
-					Else IF @DiffNetQty < 0
-					Begin
-						-- NetQty減少
-						IF ABS(@DiffNetQty) > @OriNetQty
-						Begin
-							set @NetQty = 0
-							set @DiffNetQty = @DiffNetQty + @OriNetQty
-						End
-						Else
-						Begin
-							set @NetQty = @OriNetQty + @DiffNetQty
-							set @DiffNetQty = 0
-							set @BalanceQty -= @NetQty
-						End
-					End
+				--			set @NetQty = @BalanceQty - @OriLossQty + iif(@DiffNetQty > @OriLossQty, @OriLossQty, @DiffNetQty)
+				--			set @DiffNetQty -= (@BalanceQty - @OriNetQty - @OriLossQty + @tmpDiffNetQty)
+				--			set @BalanceQty -= @NetQty
+				--		End
+				--	End
+				--	Else IF @DiffNetQty < 0
+				--	Begin
+				--		-- NetQty減少
+				--		IF ABS(@DiffNetQty) > @OriNetQty
+				--		Begin
+				--			set @NetQty = 0
+				--			set @DiffNetQty = @DiffNetQty + @OriNetQty
+				--		End
+				--		Else
+				--		Begin
+				--			set @NetQty = @OriNetQty + @DiffNetQty
+				--			set @DiffNetQty = 0
+				--			set @BalanceQty -= @NetQty
+				--		End
+				--	End
 
-					-- LossQty增加
-					IF @DiffLossQty >= 0 or (@DiffQty <= 0 and @NewLossQty > @OriLossQty)
-					Begin
-						IF @BalanceQty >= @NewLossQty or @OriLossQty > @NewLossQty
-						Begin
-							set @LossQty = @NewLossQty
-							set @DiffLossQty = 0
-							set @BalanceQty -= @NewLossQty
-						End
-						Else
-						Begin
-							set @LossQty = @BalanceQty
-							set @DiffLossQty -= (@BalanceQty - @OriLossQty)
-							set @BalanceQty = 0
-						End
-					End
-					Else IF @DiffLossQty < 0
-					Begin
-						-- LossQty減少
-						-- '將差異數填入於舊項次，預設不勾選，僅針對數量作更新'
-						IF ABS(@DiffLossQty) > @OriLossQty
-						Begin
-							set @LossQty = 0
-							set @DiffLossQty = @DiffLossQty + @OriLossQty
-						End
-						Else
-						Begin
-							IF @BalanceQty >= @OriLossQty + @DiffLossQty
-							Begin
-								set @LossQty = @OriLossQty + @DiffLossQty
-								set @DiffLossQty = 0
-								set @BalanceQty -= @LossQty
-							End
-							Else
-							Begin
-								set @LossQty = @BalanceQty
-								set @DiffLossQty = @OriLossQty + @DiffLossQty - @BalanceQty
-								set @BalanceQty = 0
-							End
-						End
-					End
+				--	-- LossQty增加
+				--	IF @DiffLossQty >= 0 or (@DiffQty <= 0 and @NewLossQty > @OriLossQty)
+				--	Begin
+				--		IF @BalanceQty >= @NewLossQty or @OriLossQty > @NewLossQty
+				--		Begin
+				--			set @LossQty = @NewLossQty
+				--			set @DiffLossQty = 0
+				--			set @BalanceQty -= @NewLossQty
+				--		End
+				--		Else
+				--		Begin
+				--			set @LossQty = @BalanceQty
+				--			set @DiffLossQty -= (@BalanceQty - @OriLossQty)
+				--			set @BalanceQty = 0
+				--		End
+				--	End
+				--	Else IF @DiffLossQty < 0
+				--	Begin
+				--		-- LossQty減少
+				--		-- '將差異數填入於舊項次，預設不勾選，僅針對數量作更新'
+				--		IF ABS(@DiffLossQty) > @OriLossQty
+				--		Begin
+				--			set @LossQty = 0
+				--			set @DiffLossQty = @DiffLossQty + @OriLossQty
+				--		End
+				--		Else
+				--		Begin
+				--			IF @BalanceQty >= @OriLossQty + @DiffLossQty
+				--			Begin
+				--				set @LossQty = @OriLossQty + @DiffLossQty
+				--				set @DiffLossQty = 0
+				--				set @BalanceQty -= @LossQty
+				--			End
+				--			Else
+				--			Begin
+				--				set @LossQty = @BalanceQty
+				--				set @DiffLossQty = @OriLossQty + @DiffLossQty - @BalanceQty
+				--				set @BalanceQty = 0
+				--			End
+				--		End
+				--	End
 
-					-- 判斷是否小於最低採購量
-					IF @DiffQty = 0 And @OriTtlQty < @MinQty
-					Begin
-						Set @DiffQty = @MinQty - @OriTtlQty
-					End
+				--	-- 判斷是否小於最低採購量
+				--	IF @DiffQty = 0 And @OriTtlQty < @MinQty
+				--	Begin
+				--		Set @DiffQty = @MinQty - @OriTtlQty
+				--	End
 				
-					Insert Into #tmpPO_Supp_Detail
-					(  ID, Seq1, Seq2, RefNo, SCIRefNo, FabricType
-                        --, Price
-                        --, UsedQty
-                        , Qty, POUnit
-						, ColorID, SuppColor
-                        --, Remark
-                        , NetQty
-                        , LossQty, SystemNetQty, OutputQty 
-						, SizeSpec, Complete
-						, Seq2_Count, Status, IsForOtherBrand
-					)
-					select @CurPoID, @Seq1, @Seq2, Refno, tmp.SCIRefno, Type
-                        --, tmpPrice.Price
-                        --, UsedQty
-                        , @POQty, POUnit,
-						RTrim(LTrim(tmp.ColorID)), tmp.SuppColor
-                        --, ''
-                        , @NetQty, @LossQty, @NetQty, @OutputQty,
-						'', 0,
-						0, --ROW_NUMBER() over(partition by Seq1 order by tmp.SCIRefno, tmp.ColorID, tmp.SuppColor),
-						@Status, tmp.IsForOtherBrand
-					from #tmpFinal tmp	
-					--outer apply (Select IsNull(Production.dbo.GetPriceFromMtl(tmp.SCIRefno, tmp.SuppID, @SeasonID, POQty, @Category, @CfmDate, '', tmp.ColorID, @FactoryID), 0) as Price) as tmpPrice
-					where PoID = @CurPoID and StyleID = @StyleID and SuppId = @SuppID and SCIRefNo = @SCIRefNo and ColorID = @ColorID and SuppColor = @SuppColor
+				--	Insert Into #tmpPO_Supp_Detail
+				--	(  ID, Seq1, Seq2, RefNo, SCIRefNo, FabricType
+    --                    --, Price
+    --                    --, UsedQty
+    --                    , Qty, POUnit
+				--		, ColorID, SuppColor
+    --                    --, Remark
+    --                    , NetQty
+    --                    , LossQty, SystemNetQty, OutputQty 
+				--		, SizeSpec, Complete
+				--		, Seq2_Count, Status, IsForOtherBrand
+				--	)
+				--	select @CurPoID, @Seq1, @Seq2, Refno, tmp.SCIRefno, Type
+    --                    --, tmpPrice.Price
+    --                    --, UsedQty
+    --                    , @POQty, POUnit,
+				--		RTrim(LTrim(tmp.ColorID)), tmp.SuppColor
+    --                    --, ''
+    --                    , @NetQty, @LossQty, @NetQty, @OutputQty,
+				--		'', 0,
+				--		0, --ROW_NUMBER() over(partition by Seq1 order by tmp.SCIRefno, tmp.ColorID, tmp.SuppColor),
+				--		@Status, @IsForOtherBrand
+				--	from #tmpFinal tmp	
+				--	--outer apply (Select IsNull(Production.dbo.GetPriceFromMtl(tmp.SCIRefno, tmp.SuppID, @SeasonID, POQty, @Category, @CfmDate, '', tmp.ColorID, @FactoryID), 0) as Price) as tmpPrice
+				--	where PoID = @CurPoID and StyleID = @StyleID and SuppId = @SuppID and SCIRefNo = @SCIRefNo and ColorID = @ColorID and SuppColor = @SuppColor and IsForOtherBrand = @IsForOtherBrand
 
-					IF @DiffQty > 0
-					Begin
-						-- '將差異數成立於新大項，且預設勾選轉出'
-						set @Status = 1
-						set @Seq2 = ''
-						set @Qty = 0
-						set @NetQty = 0
-						set @LossQty = 0
-					End
-				End
+				--	IF @DiffQty > 0
+				--	Begin
+				--		-- '將差異數成立於新大項，且預設勾選轉出'
+				--		set @Status = 1
+				--		set @Seq2 = ''
+				--		set @Qty = 0
+				--		set @NetQty = 0
+				--		set @LossQty = 0
+				--	End
+				--End
 
 				IF @Status = '1' --Insert
 				Begin
@@ -914,21 +950,21 @@ Begin
 						set @DiffLossQty = 0
 					End
 
-					IF	@transEDI = 1
-					Begin
-						Select top 1 @Seq1 = Seq1 from #tmpPO_Supp where ID = @CurPoID and Seq1 = @Seq1 and SuppID = @SuppID and StyleID = @StyleID order by Seq1 desc
+					--IF	@transEDI = 1
+					--Begin
+					--	Select top 1 @Seq1 = Seq1 from #tmpPO_Supp where ID = @CurPoID and Seq1 = @Seq1 and SuppID = @SuppID and StyleID = @StyleID order by Seq1 desc
 					
-						IF Len(@Seq1) > 2
-							set @Seq1 = SUBSTRING(@Seq1, 1, 2) + Char(ASCII(SUBSTRING(@Seq1, 3, 1)) + 1)
-						Else
-							set @Seq1 = @Seq1 + Char(65)	
+					--	IF Len(@Seq1) > 2
+					--		set @Seq1 = SUBSTRING(@Seq1, 1, 2) + Char(ASCII(SUBSTRING(@Seq1, 3, 1)) + 1)
+					--	Else
+					--		set @Seq1 = @Seq1 + Char(65)	
 											
-						-- 產生新#tmpPO_Supp項次時並無寫入Junk, 可用來判斷編列Seq1是否重複
-						While exists (select 1 from #tmpPO_Supp where ID = @CurPoID and Seq1 = @Seq1 and Junk is not null)
-						Begin
-							set @Seq1 = SUBSTRING(@Seq1, 1, 2) + Char(ASCII(SUBSTRING(@Seq1, 3, 1)) + 1)	
-						End
-					End
+					--	-- 產生新#tmpPO_Supp項次時並無寫入Junk, 可用來判斷編列Seq1是否重複
+					--	While exists (select 1 from #tmpPO_Supp where ID = @CurPoID and Seq1 = @Seq1 and Junk is not null)
+					--	Begin
+					--		set @Seq1 = SUBSTRING(@Seq1, 1, 2) + Char(ASCII(SUBSTRING(@Seq1, 3, 1)) + 1)	
+					--	End
+					--End
 
 					-- 判斷@Seq1是否與已Junk的PO_Supp.Seq1相同
 					While exists (select 1 from #tmpPO_Supp where ID = @CurPoID and Seq1 = @Seq1 and Junk = 1)
@@ -938,9 +974,15 @@ Begin
 						Else
 							set @Seq1 = @Seq1 + Char(65)
 					End
-
-					IF not exists (select 1 from #tmpPO_Supp where ID = @CurPoID and Seq1 = @Seq1 and SuppID = @SuppID and StyleID = @StyleID)
+                    
+                    --上方@transEDI = 1在trade會編出T1A項
+                    --這種資料是因為重算用量後發現不足而補買的數量
+                    --PMS transEDI=0 在這段會有pkey(ID,Seq1)重複問題, 所以判斷exists只用pkey
+                    --Material Compare中沒有是因為當下還沒實際存在T1A項, 也不會顯示所以不用管T1A項
+                    --select @StyleID
+					IF not exists (select 1 from #tmpPO_Supp where ID = @CurPoID and Seq1 = @Seq1 and SuppID = @SuppID and StyleID = @StyleID) 
 					Begin
+                    --select * from  #tmpPO_Supp
 						Insert Into #tmpPO_Supp	(ID, Seq1, SuppID, StyleID)
 						select @CurPoID, @Seq1, @SuppID, @StyleID
 					End
@@ -969,7 +1011,7 @@ Begin
 					-- @SameSCIGroupRowCount > 1 代表之前已經買過相同料
 					-- @transEDI = 1 and @SameSCIGroupRowCount = 1 為已上傳EDI後又重轉增購的狀況(e.g. T1 => "T1A")
 					Set @IncludePOQty = 0;
-					IF (@SameSCIGroupRowCount > 1 or (@transEDI = 1 and @SameSCIGroupRowCount = 1))
+					IF (@SameSCIGroupRowCount > 1 /*or (@transEDI = 1 and @SameSCIGroupRowCount = 1)*/)
 					Begin
 						Set @IncludePOQty = 1;
 					End
@@ -1001,45 +1043,45 @@ Begin
                         , isnull(@NetQty, tmp.NetQty), isnull(@LossQty, tmp.LossQty), isnull(@NetQty, tmp.NetQty),
 						'', 0,
 						0,--ROW_NUMBER() over(partition by Seq1 order by tmp.SCIRefno, tmp.ColorID, tmp.SuppColor),
-						@Status, 1, IIF(@POQty = 0 And @IsFOC = 0, 1, 0), tmp.IsForOtherBrand
+						@Status, 1, IIF(@POQty = 0 And @IsFOC = 0, 1, 0), @IsForOtherBrand
 					from #tmpFinal tmp	
 					--outer apply (Select IsNull(Production.dbo.GetPriceFromMtl(tmp.SCIRefno, tmp.SuppID, @SeasonID, POQty, @Category, @CfmDate, '', tmp.ColorID, @FactoryID), 0) as Price) as tmpPrice
-					where PoID = @CurPoID and StyleID = @StyleID and SuppId = @SuppID and SCIRefNo = @SCIRefNo and ColorID = @ColorID and SuppColor = @SuppColor
+					where PoID = @CurPoID and StyleID = @StyleID and SuppId = @SuppID and SCIRefNo = @SCIRefNo and ColorID = @ColorID and SuppColor = @SuppColor and IsForOtherBrand = @IsForOtherBrand
 				End
 			
-				IF @Status = '2' --Delete => Update Qty = 0
-				Begin
+				--IF @Status = '2' --Delete => Update Qty = 0
+				--Begin
 
-					If @transEDI = 1
-					Begin
-						set @POQty = @OriQty
-					End
+				--	--If @transEDI = 1
+				--	--Begin
+				--	--	set @POQty = @OriQty
+				--	--End
 
-					Insert Into #tmpPO_Supp_Detail
-					(  ID, Seq1, Seq2, RefNo, SCIRefNo, FabricType
-                        --, Price
-                        --, UsedQty
-                        , Qty, POUnit
-						, ColorID, SuppColor
-                        --, Remark
-                        , NetQty, LossQty, SystemNetQty
-						, SizeSpec, Complete
-						, Seq2_Count, Status, Sel
-					)
-					select @CurPoID, @Seq1, @Seq2, Refno, tmp.SCIRefno, Type
-                        --, tmpPrice.Price
-                        --, 0
-                        , @POQty, POUnit,
-						RTrim(LTrim(tmp.ColorID)), tmp.SuppColor
-                        --, ''
-                        , 0, 0, 0,
-						'', 0,
-						0, --ROW_NUMBER() over(partition by Seq1 order by tmp.SCIRefno, tmp.ColorID, tmp.SuppColor),
-						@Status, iif(@transEDI = 1, 0, 1)
-					from #tmpResult tmp	
-					--outer apply (Select IsNull(Production.dbo.GetPriceFromMtl(tmp.SCIRefno, tmp.SuppID, @SeasonID, 0, @Category, @CfmDate, '', tmp.ColorID, @FactoryID), 0) as Price) as tmpPrice
-					where RowID = @tmpResultRowID and Seq1 = @Seq1 and Seq2 = @Seq2
-				End
+				--	Insert Into #tmpPO_Supp_Detail
+				--	(  ID, Seq1, Seq2, RefNo, SCIRefNo, FabricType
+    --                    --, Price
+    --                    --, UsedQty
+    --                    , Qty, POUnit
+				--		, ColorID, SuppColor
+    --                    --, Remark
+    --                    , NetQty, LossQty, SystemNetQty
+				--		, SizeSpec, Complete
+				--		, Seq2_Count, Status, Sel
+				--	)
+				--	select @CurPoID, @Seq1, @Seq2, Refno, tmp.SCIRefno, Type
+    --                    --, tmpPrice.Price
+    --                    --, 0
+    --                    , @POQty, POUnit,
+				--		RTrim(LTrim(tmp.ColorID)), tmp.SuppColor
+    --                    --, ''
+    --                    , 0, 0, 0,
+				--		'', 0,
+				--		0, --ROW_NUMBER() over(partition by Seq1 order by tmp.SCIRefno, tmp.ColorID, tmp.SuppColor),
+				--		@Status, iif(@transEDI = 1, 0, 1)
+				--	from #tmpResult tmp	
+				--	--outer apply (Select IsNull(Production.dbo.GetPriceFromMtl(tmp.SCIRefno, tmp.SuppID, @SeasonID, 0, @Category, @CfmDate, '', tmp.ColorID, @FactoryID), 0) as Price) as tmpPrice
+				--	where RowID = @tmpResultRowID and Seq1 = @Seq1 and Seq2 = @Seq2
+				--End
 
 				set @SameSCIGroupRowID += 1;
 			End
@@ -1279,11 +1321,11 @@ Begin
 		select @PoComboCount = count(*) from dbo.Orders where Orders.POID = @CurPoID
 
 		--當OrderList數不等於 Po Combo數時才寫入
-		Insert Into #tmpPO_Supp_Detail_OrderList
-		(ID, Seq1, Seq2, OrderID, Seq2_Count)
-		select @CurPoID, Seq1, Seq2, ID, Seq2_Count from #tmp tmp
-		outer apply (select count(*) c from #tmp where tmp.Seq2_Count = Seq2_Count) Count
-		where Count.c != @PoComboCount
+		--Insert Into #tmpPO_Supp_Detail_OrderList
+		--(ID, Seq1, Seq2, OrderID, Seq2_Count)
+		--select @CurPoID, Seq1, Seq2, ID, Seq2_Count from #tmp tmp
+		--outer apply (select count(*) c from #tmp where tmp.Seq2_Count = Seq2_Count) Count
+		--where Count.c != @PoComboCount
 
 		set @ComboListRowID += 1;
 	End
