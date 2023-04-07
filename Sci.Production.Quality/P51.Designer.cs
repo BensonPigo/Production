@@ -208,39 +208,14 @@
             // txtUser1
             // 
             this.txtUser1.AllowSelectResign = false;
+            this.txtUser1.DisplayBox1Binding = "";
             this.txtUser1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.txtUser1.Location = new System.Drawing.Point(128, 122);
             this.txtUser1.Margin = new System.Windows.Forms.Padding(0);
             this.txtUser1.Name = "txtUser1";
             this.txtUser1.Size = new System.Drawing.Size(280, 22);
             this.txtUser1.TabIndex = 10;
-            // 
-            // 
-            // 
-            this.txtUser1.TextBox1.BackColor = System.Drawing.Color.White;
-            this.txtUser1.TextBox1.Dock = System.Windows.Forms.DockStyle.Left;
-            this.txtUser1.TextBox1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.txtUser1.TextBox1.ForeColor = System.Drawing.Color.Red;
-            this.txtUser1.TextBox1.Location = new System.Drawing.Point(0, 0);
-            this.txtUser1.TextBox1.Margin = new System.Windows.Forms.Padding(1);
-            this.txtUser1.TextBox1.MaxLength = 10;
-            this.txtUser1.TextBox1.Name = "textId";
-            this.txtUser1.TextBox1.Size = new System.Drawing.Size(94, 23);
-            this.txtUser1.TextBox1.TabIndex = 0;
             this.txtUser1.TextBox1Binding = "";
-            // 
-            // 
-            // 
-            this.txtUser1.DisplayBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.txtUser1.DisplayBox1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.txtUser1.DisplayBox1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.txtUser1.DisplayBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.txtUser1.DisplayBox1.Location = new System.Drawing.Point(94, 0);
-            this.txtUser1.DisplayBox1.Margin = new System.Windows.Forms.Padding(0);
-            this.txtUser1.DisplayBox1.Name = "textName";
-            this.txtUser1.DisplayBox1.Size = new System.Drawing.Size(186, 23);
-            this.txtUser1.DisplayBox1.TabIndex = 1;
-            this.txtUser1.DisplayBox1Binding = "";
             // 
             // label3
             // 
@@ -377,9 +352,9 @@
             // txtSeason1
             // 
             this.txtSeason1.BackColor = System.Drawing.Color.White;
+            this.txtSeason1.BrandObjectName = this.txtBrand1;
             this.txtSeason1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtSeason1.Location = new System.Drawing.Point(541, 121);
-            this.txtSeason1.BrandObjectName = this.txtBrand1;
             this.txtSeason1.Name = "txtSeason1";
             this.txtSeason1.Size = new System.Drawing.Size(162, 23);
             this.txtSeason1.TabIndex = 11;
@@ -398,13 +373,15 @@
             // txtStyle1
             // 
             this.txtStyle1.BackColor = System.Drawing.Color.White;
-            this.txtStyle1.BrandObjectName = this.txtBrand1;            
+            this.txtStyle1.BrandObjectName = this.txtBrand1;
             this.txtStyle1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtStyle1.Location = new System.Drawing.Point(128, 176);
             this.txtStyle1.Name = "txtStyle1";
             this.txtStyle1.SeasonObjectName = this.txtSeason1;
             this.txtStyle1.Size = new System.Drawing.Size(162, 23);
             this.txtStyle1.TabIndex = 1171;
+            this.txtStyle1.TarBrand = null;
+            this.txtStyle1.TarSeason = null;
             // 
             // label9
             // 
@@ -461,7 +438,7 @@
             this.txtMultiSupplier1.Size = new System.Drawing.Size(200, 23);
             this.txtMultiSupplier1.TabIndex = 1174;
             // 
-            // P47
+            // P51
             // 
             this.ClientSize = new System.Drawing.Size(972, 612);
             this.Controls.Add(this.txtMultiSupplier1);
@@ -499,9 +476,9 @@
             this.Controls.Add(this.Btn_Find);
             this.Controls.Add(this.panel1);
             this.EditMode = true;
-            this.Name = "P47";
+            this.Name = "P51";
             this.OnLineHelpID = "Sci.Win.Tems.QueryForm";
-            this.Text = "P47. Material Document upload by Shipment";
+            this.Text = "P51. Material Document upload by Shipment";
             this.Controls.SetChildIndex(this.panel1, 0);
             this.Controls.SetChildIndex(this.Btn_Find, 0);
             this.Controls.SetChildIndex(this.Btn_NewSearch, 0);

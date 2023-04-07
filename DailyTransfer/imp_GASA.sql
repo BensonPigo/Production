@@ -17,13 +17,25 @@ BEGIN
 
 	Merge Production.dbo.FirstDyelot  as t
 	Using (select * from Trade_To_Pms.dbo.FirstDyelot )as s
-	on t.TestDocFactoryGroup = s.TestDocFactoryGroup and t.Refno = s.Refno and t.SuppID =s. SuppID and t.ColorID =s.ColorID and t.SeasonSCIID = s.SeasonSCIID
+	on t.TestDocFactoryGroup = s.TestDocFactoryGroup 
+	and t.Refno = s.Refno 
+	and t.SuppID =s. SuppID 
+	and t.ColorID =s.ColorID 
+	and t.SeasonSCIID = s.SeasonSCIID
 	when matched then update set 
 		t.TPEFirstDyelot =s.FirstDyelot,
-		t.Period  =s.Period 
+		t.Period  =s.Period ,
+		t.BrandRefno¡@=s.BrandRefno,
+		t.AWBno = s.AWBno,
+		t.AddName = s.AddName,
+		t.AddDate = s.AddDate,
+		t.ReceivedDate = s.ReceivedDate,
+		t.ReceivedRemark = s.ReceivedRemark,
+		t.DocumentName = s.DocumentName,
+		t.BrandID = s.BrandID
 	when not matched by target then 	
-		insert(TestDocFactoryGroup,  [Refno],  [SuppID],  [ColorID],  TPEFirstDyelot ,SeasonSCIID,    Period )
-		values(s.TestDocFactoryGroup,s.[Refno],s.[SuppID],s.[ColorID],s.[FirstDyelot],s.SeasonSCIID,s.Period );
+		insert(TestDocFactoryGroup,  [Refno],  [SuppID],  [ColorID],  TPEFirstDyelot ,SeasonSCIID,    Period,BrandRefno,AWBno,AddName,AddDate,ReceivedDate,ReceivedRemark,DocumentName,BrandID )
+		values(s.TestDocFactoryGroup,s.[Refno],s.[SuppID],s.[ColorID],s.[FirstDyelot],s.SeasonSCIID,s.Period ,s.BrandRefno,s.AWBno,s.AddName,s.AddDate,s.ReceivedDate,s.ReceivedRemark,s.DocumentName,s.BrandID);
 END
 
 
