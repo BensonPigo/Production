@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Text;
+using System.Windows.Forms;
 using Ict;
 using Ict.Win;
 using Sci.Data;
@@ -17,12 +18,17 @@ namespace Sci.Production.Warehouse
         private string printType;
 
         /// <inheritdoc/>
-        public P22_PrintFabricSticker(DataTable fromdt, DataTable todt, string printType)
+        public P22_PrintFabricSticker(DataTable fromdt, DataTable todt, string printType, string callFormName)
         {
             this.InitializeComponent();
             this.fromdt = fromdt;
             this.todt = todt;
             this.printType = printType;
+            if (callFormName == "P22")
+            {
+                this.label1.Text = "From Bulk";
+                this.label2.Text = "To Inventory";
+            }
         }
 
         /// <inheritdoc/>
@@ -30,12 +36,13 @@ namespace Sci.Production.Warehouse
         {
             base.OnFormLoaded();
             this.EditMode = true;
-            DataGridViewGeneratorCheckBoxColumnSettings col_Selected = new DataGridViewGeneratorCheckBoxColumnSettings { HeaderAction = DataGridViewGeneratorCheckBoxHeaderAction.None };
+            DataGridViewGeneratorCheckBoxColumnSettings col_Selected = new DataGridViewGeneratorCheckBoxColumnSettings();
             col_Selected.CellEditable += (s, e) =>
             {
                 DataRow dr = this.grid1.GetDataRow(e.RowIndex);
                 e.IsEditable = MyUtility.Convert.GetDecimal(dr["Qty"]) > 0;
             };
+
             this.grid1.IsEditingReadOnly = false;
             this.Helper.Controls.Grid.Generator(this.grid1)
                 .CheckBox("Sel", header: string.Empty, trueValue: 1, falseValue: 0, settings: col_Selected)
@@ -48,12 +55,13 @@ namespace Sci.Production.Warehouse
                 .Text("Barcode", header: "QR Code", width: Widths.AnsiChars(30), iseditingreadonly: true)
                  ;
 
-            DataGridViewGeneratorCheckBoxColumnSettings col_Selected2 = new DataGridViewGeneratorCheckBoxColumnSettings { HeaderAction = DataGridViewGeneratorCheckBoxHeaderAction.None };
+            DataGridViewGeneratorCheckBoxColumnSettings col_Selected2 = new DataGridViewGeneratorCheckBoxColumnSettings();
             col_Selected2.CellEditable += (s, e) =>
             {
                 DataRow dr = this.grid2.GetDataRow(e.RowIndex);
                 e.IsEditable = MyUtility.Convert.GetDecimal(dr["Qty"]) > 0;
             };
+
             this.grid2.IsEditingReadOnly = false;
             this.Helper.Controls.Grid.Generator(this.grid2)
                 .CheckBox("Sel", header: string.Empty, trueValue: 1, falseValue: 0, settings: col_Selected2)
@@ -89,6 +97,30 @@ namespace Sci.Production.Warehouse
             }
 
             P07_QRCodeSticker.PrintQRCode_RDLC(dt.AsEnumerable().ToList(), this.printType, "P22");
+        }
+
+        private void Grid1_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
+        {
+            if (e.ColumnIndex == 0)
+            {
+                this.grid1.ValidateControl();
+                foreach (DataRow row in this.fromdt.Rows)
+                {
+                    row["Sel"] = MyUtility.Convert.GetDecimal(row["Qty"]) > 0;
+                }
+            }
+        }
+
+        private void Grid2_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
+        {
+            if (e.ColumnIndex == 0)
+            {
+                this.grid2.ValidateControl();
+                foreach (DataRow row in this.todt.Rows)
+                {
+                    row["Sel"] = MyUtility.Convert.GetDecimal(row["Qty"]) > 0;
+                }
+            }
         }
     }
 }

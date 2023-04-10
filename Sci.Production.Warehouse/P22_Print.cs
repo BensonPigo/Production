@@ -58,7 +58,7 @@ namespace Sci.Production.Warehouse
             }
             else if (this.radioQRCodeSticker.Checked)
             {
-                QRCodeSticker(MyUtility.Convert.GetString(this.CurrentMaintain["ID"]), this.comboType.Text);
+                QRCodeSticker(MyUtility.Convert.GetString(this.CurrentMaintain["ID"]), this.comboType.Text, "P22");
             }
 
             return true;
@@ -144,7 +144,7 @@ where a.id = '{this.CurrentMaintain["ID"]}'
         }
 
         /// <inheritdoc/>
-        public static void QRCodeSticker(string id, string type)
+        public static void QRCodeSticker(string id, string type, string callFormName)
         {
             string sqlcmd = $@"
 select sd.*
@@ -276,7 +276,7 @@ drop table #tmp,#tmpFrom
                 return;
             }
 
-            new P22_PrintFabricSticker(dts[0], dts[1], type).ShowDialog();
+            new P22_PrintFabricSticker(dts[0], dts[1], type, callFormName).ShowDialog();
         }
     }
 }

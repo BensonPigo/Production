@@ -58,7 +58,7 @@ namespace Sci.Production.Warehouse
             }
             else if (this.radioQRCodeSticker.Checked)
             {
-                P22_Print.QRCodeSticker(MyUtility.Convert.GetString(this.CurrentMaintain["ID"]), this.comboType.Text);
+                P22_Print.QRCodeSticker(MyUtility.Convert.GetString(this.CurrentMaintain["ID"]), this.comboType.Text, "P23");
             }
 
             return true;

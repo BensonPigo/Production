@@ -31,19 +31,19 @@
             this.components = new System.ComponentModel.Container();
             this.btnPrint = new Sci.Win.UI.Button();
             this.grid1 = new Sci.Win.UI.Grid();
+            this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.label1 = new Sci.Win.UI.Label();
             this.label2 = new Sci.Win.UI.Label();
             this.grid2 = new Sci.Win.UI.Grid();
-            this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.listControlBindingSource2 = new Sci.Win.UI.ListControlBindingSource(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.grid1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.grid2)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource2)).BeginInit();
             this.SuspendLayout();
             // 
@@ -64,6 +64,9 @@
             this.grid1.AllowUserToAddRows = false;
             this.grid1.AllowUserToDeleteRows = false;
             this.grid1.AllowUserToResizeRows = false;
+            this.grid1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.grid1.BackgroundColor = System.Drawing.SystemColors.Control;
             this.grid1.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
             this.grid1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
@@ -82,6 +85,7 @@
             this.grid1.Size = new System.Drawing.Size(1008, 278);
             this.grid1.TabIndex = 1;
             this.grid1.TabStop = false;
+            this.grid1.ColumnHeaderMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.Grid1_ColumnHeaderMouseClick);
             // 
             // splitContainer1
             // 
@@ -146,6 +150,7 @@
             this.grid2.Size = new System.Drawing.Size(1008, 269);
             this.grid2.TabIndex = 2;
             this.grid2.TabStop = false;
+            this.grid2.ColumnHeaderMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.Grid2_ColumnHeaderMouseClick);
             // 
             // P22_PrintFabricSticker
             // 
@@ -156,12 +161,12 @@
             this.Text = "Print Fabric Sticker";
             this.Controls.SetChildIndex(this.splitContainer1, 0);
             ((System.ComponentModel.ISupportInitialize)(this.grid1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).EndInit();
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.grid2)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource2)).EndInit();
             this.ResumeLayout(false);
 
