@@ -113,7 +113,7 @@
             this.Btn_Find.Location = new System.Drawing.Point(832, 19);
             this.Btn_Find.Name = "Btn_Find";
             this.Btn_Find.Size = new System.Drawing.Size(119, 30);
-            this.Btn_Find.TabIndex = 113;
+            this.Btn_Find.TabIndex = 14;
             this.Btn_Find.Text = "Find";
             this.Btn_Find.UseVisualStyleBackColor = true;
             this.Btn_Find.Click += new System.EventHandler(this.Btn_Find_Click);
@@ -124,7 +124,7 @@
             this.Btn_NewSearch.Location = new System.Drawing.Point(832, 55);
             this.Btn_NewSearch.Name = "Btn_NewSearch";
             this.Btn_NewSearch.Size = new System.Drawing.Size(119, 30);
-            this.Btn_NewSearch.TabIndex = 114;
+            this.Btn_NewSearch.TabIndex = 15;
             this.Btn_NewSearch.Text = "Clear";
             this.Btn_NewSearch.UseVisualStyleBackColor = true;
             this.Btn_NewSearch.Click += new System.EventHandler(this.Btn_NewSearch_Click);
@@ -137,7 +137,7 @@
             this.txtBrand1.MyDocumentdName = this.cboDocumentname;
             this.txtBrand1.Name = "txtBrand1";
             this.txtBrand1.Size = new System.Drawing.Size(162, 23);
-            this.txtBrand1.TabIndex = 2;
+            this.txtBrand1.TabIndex = 1;
             // 
             // cboDocumentname
             // 
@@ -150,7 +150,7 @@
             this.cboDocumentname.Name = "cboDocumentname";
             this.cboDocumentname.OldText = "";
             this.cboDocumentname.Size = new System.Drawing.Size(280, 24);
-            this.cboDocumentname.TabIndex = 1;
+            this.cboDocumentname.TabIndex = 0;
             this.cboDocumentname.SelectedIndexChanged += new System.EventHandler(this.CboDocumentname_SelectedIndexChanged);
             // 
             // label14
@@ -195,7 +195,7 @@
             this.txtBrandRefno.Location = new System.Drawing.Point(541, 94);
             this.txtBrandRefno.Name = "txtBrandRefno";
             this.txtBrandRefno.Size = new System.Drawing.Size(162, 23);
-            this.txtBrandRefno.TabIndex = 9;
+            this.txtBrandRefno.TabIndex = 8;
             // 
             // label4
             // 
@@ -214,7 +214,7 @@
             this.txtUser1.Margin = new System.Windows.Forms.Padding(0);
             this.txtUser1.Name = "txtUser1";
             this.txtUser1.Size = new System.Drawing.Size(280, 22);
-            this.txtUser1.TabIndex = 10;
+            this.txtUser1.TabIndex = 9;
             this.txtUser1.TextBox1Binding = "";
             // 
             // label3
@@ -232,7 +232,7 @@
             this.txtRefno.Location = new System.Drawing.Point(128, 94);
             this.txtRefno.Name = "txtRefno";
             this.txtRefno.Size = new System.Drawing.Size(162, 23);
-            this.txtRefno.TabIndex = 8;
+            this.txtRefno.TabIndex = 7;
             // 
             // label12
             // 
@@ -255,7 +255,7 @@
             this.txtUpdate.Location = new System.Drawing.Point(128, 580);
             this.txtUpdate.Name = "txtUpdate";
             this.txtUpdate.Size = new System.Drawing.Size(139, 23);
-            this.txtUpdate.TabIndex = 12;
+            this.txtUpdate.TabIndex = 17;
             // 
             // label5
             // 
@@ -271,7 +271,7 @@
             this.BtnFileUpload.Location = new System.Drawing.Point(12, 207);
             this.BtnFileUpload.Name = "BtnFileUpload";
             this.BtnFileUpload.Size = new System.Drawing.Size(119, 30);
-            this.BtnFileUpload.TabIndex = 1152;
+            this.BtnFileUpload.TabIndex = 16;
             this.BtnFileUpload.Text = "File Upload";
             this.BtnFileUpload.UseVisualStyleBackColor = true;
             this.BtnFileUpload.Click += new System.EventHandler(this.BtnFileUpload_Click);
@@ -337,7 +337,7 @@
             this.BtnUpdate.Location = new System.Drawing.Point(273, 576);
             this.BtnUpdate.Name = "BtnUpdate";
             this.BtnUpdate.Size = new System.Drawing.Size(28, 30);
-            this.BtnUpdate.TabIndex = 1158;
+            this.BtnUpdate.TabIndex = 18;
             this.BtnUpdate.UseVisualStyleBackColor = true;
             this.BtnUpdate.Click += new System.EventHandler(this.BtnUpdate_Click);
             // 
@@ -357,7 +357,7 @@
             this.txtSeason1.Location = new System.Drawing.Point(541, 121);
             this.txtSeason1.Name = "txtSeason1";
             this.txtSeason1.Size = new System.Drawing.Size(162, 23);
-            this.txtSeason1.TabIndex = 11;
+            this.txtSeason1.TabIndex = 10;
             // 
             // chkNonValidDoc
             // 
@@ -366,7 +366,7 @@
             this.chkNonValidDoc.Location = new System.Drawing.Point(541, 39);
             this.chkNonValidDoc.Name = "chkNonValidDoc";
             this.chkNonValidDoc.Size = new System.Drawing.Size(125, 21);
-            this.chkNonValidDoc.TabIndex = 1164;
+            this.chkNonValidDoc.TabIndex = 3;
             this.chkNonValidDoc.Text = "None valid doc.";
             this.chkNonValidDoc.UseVisualStyleBackColor = true;
             // 
@@ -379,7 +379,7 @@
             this.txtStyle1.Name = "txtStyle1";
             this.txtStyle1.SeasonObjectName = this.txtSeason1;
             this.txtStyle1.Size = new System.Drawing.Size(162, 23);
-            this.txtStyle1.TabIndex = 1171;
+            this.txtStyle1.TabIndex = 13;
             this.txtStyle1.TarBrand = null;
             this.txtStyle1.TarSeason = null;
             // 
@@ -398,7 +398,7 @@
             this.txtColor.Location = new System.Drawing.Point(128, 148);
             this.txtColor.Name = "txtColor";
             this.txtColor.Size = new System.Drawing.Size(162, 23);
-            this.txtColor.TabIndex = 1168;
+            this.txtColor.TabIndex = 11;
             // 
             // label8
             // 
@@ -415,7 +415,7 @@
             this.txtPINO.Location = new System.Drawing.Point(541, 148);
             this.txtPINO.Name = "txtPINO";
             this.txtPINO.Size = new System.Drawing.Size(162, 23);
-            this.txtPINO.TabIndex = 1172;
+            this.txtPINO.TabIndex = 12;
             // 
             // label11
             // 
@@ -436,7 +436,7 @@
             this.txtMultiSupplier1.PopUpMode = Sci.Win.UI.TextBoxPopUpMode.EditModeAndReadOnly;
             this.txtMultiSupplier1.ReadOnly = true;
             this.txtMultiSupplier1.Size = new System.Drawing.Size(200, 23);
-            this.txtMultiSupplier1.TabIndex = 1174;
+            this.txtMultiSupplier1.TabIndex = 2;
             // 
             // P51
             // 
