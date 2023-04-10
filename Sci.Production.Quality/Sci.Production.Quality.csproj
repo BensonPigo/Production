@@ -227,6 +227,12 @@
     <Compile Include="B17.Designer.cs">
       <DependentUpon>B17.cs</DependentUpon>
     </Compile>
+    <Compile Include="B30.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="B30.Designer.cs">
+      <DependentUpon>B30.cs</DependentUpon>
+    </Compile>
     <Compile Include="B31.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -292,12 +298,18 @@
     </Compile>
     <Compile Include="B28.Designer.cs">
       <DependentUpon>B28.cs</DependentUpon>
-	</Compile>
+    </Compile>
     <Compile Include="B33.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="B33.Designer.cs">
       <DependentUpon>B33.cs</DependentUpon>
+    </Compile>
+    <Compile Include="B29.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="B29.Designer.cs">
+      <DependentUpon>B29.cs</DependentUpon>
     </Compile>
     <Compile Include="P01_Moisture.cs">
       <SubType>Form</SubType>
@@ -830,6 +842,9 @@
     <EmbeddedResource Include="B17.resx">
       <DependentUpon>B17.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="B30.resx">
+      <DependentUpon>B30.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="B31.resx">
       <DependentUpon>B31.cs</DependentUpon>
     </EmbeddedResource>
@@ -860,12 +875,15 @@
     <EmbeddedResource Include="B26.resx">
       <DependentUpon>B26.cs</DependentUpon>
     </EmbeddedResource>
-
     <EmbeddedResource Include="B28.resx">
       <DependentUpon>B28.cs</DependentUpon>
     </EmbeddedResource>
+	  
     <EmbeddedResource Include="B33.resx">
       <DependentUpon>B33.cs</DependentUpon>
+	</EmbeddedResource>
+    <EmbeddedResource Include="B29.resx">
+      <DependentUpon>B29.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P01.resx">
       <DependentUpon>P01.cs</DependentUpon>

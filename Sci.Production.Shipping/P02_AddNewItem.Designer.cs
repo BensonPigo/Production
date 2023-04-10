@@ -30,7 +30,6 @@
         {
             this.labelStyle = new Sci.Win.UI.Label();
             this.labelSeason = new Sci.Win.UI.Label();
-            this.editRemark = new Sci.Win.UI.EditBox();
             this.labelBrand = new Sci.Win.UI.Label();
             this.comboCategory = new Sci.Win.UI.ComboBox();
             this.txtReceiver = new Sci.Win.UI.TextBox();
@@ -58,6 +57,8 @@
             this.txtbrand = new Sci.Production.Class.Txtbrand();
             this.txtTeamLeader = new Sci.Win.UI.TextBox();
             this.displayTeamLeader = new Sci.Win.UI.DisplayBox();
+            this.editRemark = new Sci.Production.Class.WatermarkEditBox();
+            this.comboDoxItem = new Sci.Win.UI.ComboBox();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.btmcont.SuspendLayout();
             this.SuspendLayout();
@@ -77,7 +78,6 @@
             // 
             // labelStyle
             // 
-            this.labelStyle.Lines = 0;
             this.labelStyle.Location = new System.Drawing.Point(490, 9);
             this.labelStyle.Name = "labelStyle";
             this.labelStyle.Size = new System.Drawing.Size(36, 23);
@@ -86,27 +86,14 @@
             // 
             // labelSeason
             // 
-            this.labelSeason.Lines = 0;
             this.labelSeason.Location = new System.Drawing.Point(298, 9);
             this.labelSeason.Name = "labelSeason";
             this.labelSeason.Size = new System.Drawing.Size(53, 23);
             this.labelSeason.TabIndex = 154;
             this.labelSeason.Text = "Season";
             // 
-            // editRemark
-            // 
-            this.editRemark.BackColor = System.Drawing.Color.White;
-            this.editRemark.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Remark", true));
-            this.editRemark.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.editRemark.Location = new System.Drawing.Point(100, 257);
-            this.editRemark.Multiline = true;
-            this.editRemark.Name = "editRemark";
-            this.editRemark.Size = new System.Drawing.Size(572, 56);
-            this.editRemark.TabIndex = 13;
-            // 
             // labelBrand
             // 
-            this.labelBrand.Lines = 0;
             this.labelBrand.Location = new System.Drawing.Point(413, 229);
             this.labelBrand.Name = "labelBrand";
             this.labelBrand.Size = new System.Drawing.Size(70, 23);
@@ -122,9 +109,11 @@
             this.comboCategory.IsSupportUnselect = true;
             this.comboCategory.Location = new System.Drawing.Point(99, 175);
             this.comboCategory.Name = "comboCategory";
+            this.comboCategory.OldText = "";
             this.comboCategory.Size = new System.Drawing.Size(121, 24);
             this.comboCategory.TabIndex = 8;
             this.comboCategory.SelectedIndexChanged += new System.EventHandler(this.ComboCategory_SelectedIndexChanged);
+            this.comboCategory.SelectedValueChanged += new System.EventHandler(this.ComboCategory_SelectedValueChanged);
             // 
             // txtReceiver
             // 
@@ -139,7 +128,6 @@
             // 
             // labelReceiver
             // 
-            this.labelReceiver.Lines = 0;
             this.labelReceiver.Location = new System.Drawing.Point(413, 202);
             this.labelReceiver.Name = "labelReceiver";
             this.labelReceiver.Size = new System.Drawing.Size(70, 23);
@@ -184,7 +172,6 @@
             // 
             // labelUnit
             // 
-            this.labelUnit.Lines = 0;
             this.labelUnit.Location = new System.Drawing.Point(413, 149);
             this.labelUnit.Name = "labelUnit";
             this.labelUnit.Size = new System.Drawing.Size(70, 23);
@@ -230,7 +217,6 @@
             // 
             // labelCTNNo
             // 
-            this.labelCTNNo.Lines = 0;
             this.labelCTNNo.Location = new System.Drawing.Point(413, 122);
             this.labelCTNNo.Name = "labelCTNNo";
             this.labelCTNNo.Size = new System.Drawing.Size(70, 23);
@@ -303,7 +289,6 @@
             // 
             // labelRemark
             // 
-            this.labelRemark.Lines = 0;
             this.labelRemark.Location = new System.Drawing.Point(9, 257);
             this.labelRemark.Name = "labelRemark";
             this.labelRemark.Size = new System.Drawing.Size(87, 23);
@@ -312,7 +297,6 @@
             // 
             // labelTeamLeader
             // 
-            this.labelTeamLeader.Lines = 0;
             this.labelTeamLeader.Location = new System.Drawing.Point(9, 203);
             this.labelTeamLeader.Name = "labelTeamLeader";
             this.labelTeamLeader.Size = new System.Drawing.Size(87, 23);
@@ -321,7 +305,6 @@
             // 
             // labelCategory
             // 
-            this.labelCategory.Lines = 0;
             this.labelCategory.Location = new System.Drawing.Point(9, 176);
             this.labelCategory.Name = "labelCategory";
             this.labelCategory.Size = new System.Drawing.Size(87, 23);
@@ -330,7 +313,6 @@
             // 
             // labelNW
             // 
-            this.labelNW.Lines = 0;
             this.labelNW.Location = new System.Drawing.Point(413, 176);
             this.labelNW.Name = "labelNW";
             this.labelNW.Size = new System.Drawing.Size(71, 23);
@@ -339,7 +321,6 @@
             // 
             // labelQty
             // 
-            this.labelQty.Lines = 0;
             this.labelQty.Location = new System.Drawing.Point(9, 149);
             this.labelQty.Name = "labelQty";
             this.labelQty.Size = new System.Drawing.Size(87, 23);
@@ -348,7 +329,6 @@
             // 
             // labelPrice
             // 
-            this.labelPrice.Lines = 0;
             this.labelPrice.Location = new System.Drawing.Point(9, 122);
             this.labelPrice.Name = "labelPrice";
             this.labelPrice.Size = new System.Drawing.Size(87, 23);
@@ -357,7 +337,6 @@
             // 
             // labelDescription
             // 
-            this.labelDescription.Lines = 0;
             this.labelDescription.Location = new System.Drawing.Point(9, 36);
             this.labelDescription.Name = "labelDescription";
             this.labelDescription.Size = new System.Drawing.Size(87, 23);
@@ -366,7 +345,6 @@
             // 
             // labelSPNo
             // 
-            this.labelSPNo.Lines = 0;
             this.labelSPNo.Location = new System.Drawing.Point(9, 9);
             this.labelSPNo.Name = "labelSPNo";
             this.labelSPNo.Size = new System.Drawing.Size(87, 23);
@@ -395,6 +373,8 @@
             this.txtstyle.Name = "txtstyle";
             this.txtstyle.Size = new System.Drawing.Size(130, 23);
             this.txtstyle.TabIndex = 2;
+            this.txtstyle.TarBrand = null;
+            this.txtstyle.TarSeason = null;
             this.txtstyle.Validated += new System.EventHandler(this.Txtstyle_Validated);
             // 
             // txtbrand
@@ -429,9 +409,39 @@
             this.displayTeamLeader.Size = new System.Drawing.Size(221, 23);
             this.displayTeamLeader.TabIndex = 161;
             // 
+            // editRemark
+            // 
+            this.editRemark.BackColor = System.Drawing.Color.White;
+            this.editRemark.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Remark", true));
+            this.editRemark.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.editRemark.Location = new System.Drawing.Point(100, 257);
+            this.editRemark.Multiline = true;
+            this.editRemark.Name = "editRemark";
+            this.editRemark.Size = new System.Drawing.Size(572, 60);
+            this.editRemark.TabIndex = 162;
+            this.editRemark.WatermarkColor = System.Drawing.Color.Empty;
+            this.editRemark.WatermarkText = null;
+            // 
+            // comboDoxItem
+            // 
+            this.comboDoxItem.BackColor = System.Drawing.Color.White;
+            this.comboDoxItem.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "SubCategory", true));
+            this.comboDoxItem.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboDoxItem.FormattingEnabled = true;
+            this.comboDoxItem.IsSupportUnselect = true;
+            this.comboDoxItem.Location = new System.Drawing.Point(230, 175);
+            this.comboDoxItem.Name = "comboDoxItem";
+            this.comboDoxItem.OldText = "";
+            this.comboDoxItem.Size = new System.Drawing.Size(121, 24);
+            this.comboDoxItem.TabIndex = 163;
+            this.comboDoxItem.Visible = false;
+            this.comboDoxItem.SelectedValueChanged += new System.EventHandler(this.ComboDoxItem_SelectedValueChanged);
+            // 
             // P02_AddNewItem
             // 
             this.ClientSize = new System.Drawing.Size(684, 363);
+            this.Controls.Add(this.comboDoxItem);
+            this.Controls.Add(this.editRemark);
             this.Controls.Add(this.displayTeamLeader);
             this.Controls.Add(this.txtTeamLeader);
             this.Controls.Add(this.txtbrand);
@@ -439,7 +449,6 @@
             this.Controls.Add(this.txtseason);
             this.Controls.Add(this.labelStyle);
             this.Controls.Add(this.labelSeason);
-            this.Controls.Add(this.editRemark);
             this.Controls.Add(this.labelBrand);
             this.Controls.Add(this.comboCategory);
             this.Controls.Add(this.txtReceiver);
@@ -463,6 +472,7 @@
             this.Controls.Add(this.labelDescription);
             this.Controls.Add(this.labelSPNo);
             this.Name = "P02_AddNewItem";
+            this.OnLineHelpID = "Sci.Win.Subs.Input2A";
             this.Text = "International Air/Express - Add new item";
             this.WorkAlias = "Express_Detail";
             this.Controls.SetChildIndex(this.btmcont, 0);
@@ -488,7 +498,6 @@
             this.Controls.SetChildIndex(this.txtReceiver, 0);
             this.Controls.SetChildIndex(this.comboCategory, 0);
             this.Controls.SetChildIndex(this.labelBrand, 0);
-            this.Controls.SetChildIndex(this.editRemark, 0);
             this.Controls.SetChildIndex(this.labelSeason, 0);
             this.Controls.SetChildIndex(this.labelStyle, 0);
             this.Controls.SetChildIndex(this.txtseason, 0);
@@ -496,6 +505,8 @@
             this.Controls.SetChildIndex(this.txtbrand, 0);
             this.Controls.SetChildIndex(this.txtTeamLeader, 0);
             this.Controls.SetChildIndex(this.displayTeamLeader, 0);
+            this.Controls.SetChildIndex(this.editRemark, 0);
+            this.Controls.SetChildIndex(this.comboDoxItem, 0);
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).EndInit();
             this.btmcont.ResumeLayout(false);
             this.ResumeLayout(false);
@@ -507,7 +518,6 @@
 
         private Win.UI.Label labelStyle;
         private Win.UI.Label labelSeason;
-        private Win.UI.EditBox editRemark;
         private Win.UI.Label labelBrand;
         private Win.UI.ComboBox comboCategory;
         private Win.UI.TextBox txtReceiver;
@@ -535,5 +545,7 @@
         private Class.Txtbrand txtbrand;
         private Win.UI.TextBox txtTeamLeader;
         private Win.UI.DisplayBox displayTeamLeader;
+        private Class.WatermarkEditBox editRemark;
+        private Win.UI.ComboBox comboDoxItem;
     }
 }

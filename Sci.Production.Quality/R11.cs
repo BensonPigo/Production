@@ -317,7 +317,7 @@ select
     point = isnull(Defect.point,  0),
 	Defectrate = ISNULL(case when Q.PointRateOption = 1 then Defect.point / NULLIF(t.ActualYds, 0)
 							when Q.PointRateOption = 2 then Defect.point * 3600 / NULLIF(t.ActualYds * t.ActualWidth , 0)
-							when Q.PointRateOption = 3 then Defect.point * 3600 / NULLIF(t.ActualYds * t.width , 0)
+							when Q.PointRateOption = 3 then iif(t.WeaveTypeID = 'KNIT',Defect.point * 3600 / NULLIF(t.TicketYds * t.width , 0),Defect.point * 3600 / NULLIF(t.ActualYds * t.width , 0))
 							else Defect.point / NULLIF(t.ActualYds, 0)
 						 end 
 					, 0)
@@ -372,7 +372,7 @@ select
     point = isnull(Defect.point,  0),
 	Defectrate = ISNULL(case when Q.PointRateOption = 1 then Defect.point / NULLIF(t.ActualYds, 0)
 							when Q.PointRateOption = 2 then Defect.point * 3600 / NULLIF(t.ActualYds * t.ActualWidth , 0)
-							when Q.PointRateOption = 3 then Defect.point * 3600 / NULLIF(t.ActualYds * t.width , 0)
+							when Q.PointRateOption = 3 then iif(t.WeaveTypeID = 'KNIT',Defect.point * 3600 / NULLIF(t.TicketYds * t.width , 0),Defect.point * 3600 / NULLIF(t.ActualYds * t.width , 0))
 							else Defect.point / NULLIF(t.ActualYds, 0)
 						 end 
 					, 0)
@@ -861,7 +861,7 @@ select
     point = isnull(Defect.point,  0),
 	Defectrate = ISNULL(case when Q.PointRateOption = 1 then Defect.point / NULLIF(t.ActualYds, 0)
 							when Q.PointRateOption = 2 then Defect.point * 3600 / NULLIF(t.ActualYds * t.ActualWidth , 0)
-							when Q.PointRateOption = 3 then Defect.point * 3600 / NULLIF(t.ActualYds * t.width , 0)
+							when Q.PointRateOption = 3 then iif(t.WeaveTypeID = 'KNIT',Defect.point * 3600 / NULLIF(t.TicketYds * t.width , 0),Defect.point * 3600 / NULLIF(t.ActualYds * t.width , 0))
 							else Defect.point / NULLIF(t.ActualYds, 0)
 						 end 
 					, 0)
@@ -919,7 +919,7 @@ select
     point = isnull(Defect.point,  0),
 	Defectrate = ISNULL(case when Q.PointRateOption = 1 then Defect.point / NULLIF(t.ActualYds, 0)
 							when Q.PointRateOption = 2 then Defect.point * 3600 / NULLIF(t.ActualYds * t.ActualWidth , 0)
-							when Q.PointRateOption = 3 then Defect.point * 3600 / NULLIF(t.ActualYds * t.width , 0)
+							when Q.PointRateOption = 3 then iif(t.WeaveTypeID = 'KNIT',Defect.point * 3600 / NULLIF(t.TicketYds * t.width , 0),Defect.point * 3600 / NULLIF(t.ActualYds * t.width , 0))
 							else Defect.point / NULLIF(t.ActualYds, 0)
 						 end 
 					, 0)

@@ -24,6 +24,7 @@
     [EditName]      VARCHAR (10)    CONSTRAINT [DF_Express_Detail_EditName] DEFAULT ('') NULL,
     [EditDate]      DATETIME        NULL,
     [PackingListID] VARCHAR (13)    CONSTRAINT [DF__Express_D__Packi__089BAC90] DEFAULT ('') NULL,
+    [SubCategory]   VARCHAR         CONSTRAINT [DF_Express_Detail_SubCategory] DEFAULT ('') NOT NULL, 
     CONSTRAINT [PK_Express_Detail] PRIMARY KEY CLUSTERED ([ID] ASC, [OrderID] ASC, [Seq1] ASC, [Seq2] ASC, [CTNNo] ASC, [Category] ASC)
 );
 
@@ -131,3 +132,12 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'最後修�
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'最後修改時間', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Express_Detail', @level2type = N'COLUMN', @level2name = N'EditDate';
 
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'Category選項的子分類',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'Express_Detail',
+    @level2type = N'COLUMN',
+    @level2name = N'SubCategory'
