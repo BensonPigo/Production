@@ -38,31 +38,31 @@
             // 
             // print
             // 
-            this.print.Location = new System.Drawing.Point(441, 21);
+            this.print.Location = new System.Drawing.Point(424, 21);
             // 
             // toexcel
             // 
             this.toexcel.Enabled = false;
-            this.toexcel.Location = new System.Drawing.Point(441, 57);
+            this.toexcel.Location = new System.Drawing.Point(424, 57);
             // 
             // close
             // 
-            this.close.Location = new System.Drawing.Point(441, 93);
+            this.close.Location = new System.Drawing.Point(424, 93);
             // 
             // buttonCustomized
             // 
             this.buttonCustomized.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonCustomized.Location = new System.Drawing.Point(395, 125);
+            this.buttonCustomized.Location = new System.Drawing.Point(378, 125);
             // 
             // checkUseCustomized
             // 
             this.checkUseCustomized.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.checkUseCustomized.Location = new System.Drawing.Point(421, 134);
+            this.checkUseCustomized.Location = new System.Drawing.Point(404, 134);
             // 
             // txtVersion
             // 
             this.txtVersion.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtVersion.Location = new System.Drawing.Point(421, 134);
+            this.txtVersion.Location = new System.Drawing.Point(404, 134);
             // 
             // radioTransferSlip
             // 
@@ -98,7 +98,7 @@
             this.comboType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboType.FormattingEnabled = true;
             this.comboType.IsSupportUnselect = true;
-            this.comboType.Location = new System.Drawing.Point(251, 62);
+            this.comboType.Location = new System.Drawing.Point(214, 60);
             this.comboType.Name = "comboType";
             this.comboType.OldText = "";
             this.comboType.Size = new System.Drawing.Size(121, 24);
@@ -107,7 +107,7 @@
             // label2
             // 
             this.label2.BackColor = System.Drawing.Color.Transparent;
-            this.label2.Location = new System.Drawing.Point(209, 63);
+            this.label2.Location = new System.Drawing.Point(172, 61);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(39, 23);
             this.label2.TabIndex = 10;
@@ -121,9 +121,9 @@
             this.radioQRCodeSticker.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.radioQRCodeSticker.Location = new System.Drawing.Point(17, 60);
             this.radioQRCodeSticker.Name = "radioQRCodeSticker";
-            this.radioQRCodeSticker.Size = new System.Drawing.Size(189, 24);
+            this.radioQRCodeSticker.Size = new System.Drawing.Size(146, 24);
             this.radioQRCodeSticker.TabIndex = 9;
-            this.radioQRCodeSticker.Text = "Issue QR Code Sticker";
+            this.radioQRCodeSticker.Text = "QR Code Sticker";
             this.radioQRCodeSticker.UseVisualStyleBackColor = true;
             this.radioQRCodeSticker.Value = "2";
             // 
