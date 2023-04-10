@@ -334,8 +334,8 @@ namespace Sci.Production.Quality
 				                when sii.Item = 'Fabric Defect' then isnull( fd.val,'')
 				                else '' end ,
                 [LastInspectionDate] = iif(sii.Result = '',null, IsNull(sii.EditDate, sii.AddDate)),
-                [Inspector] =p.[Name],
-                [StartingTime] = st.val,
+                [Inspector] =iif(sii.Result = '',null,p.[Name]),
+                [StartingTime] = iif(sii.Result = '',null,st.val),
                 [Remark] = si.Remark
                 from SpreadingInspection s 
                 left join SpreadingInspection_InsCutRef si with(nolock) on s.ID = si.ID
