@@ -361,6 +361,9 @@ select
     ,rd.MINDCheckEditDate
     ,AbbEN = (select Supp.AbbEN from Supp with (nolock) where Supp.id =ps.SuppID)
     ,rdStockType = rd.StockType
+    ,ForInspection = iif(rd.ForInspection = 1, 'Y', '')
+    ,rd.ForInspectionTime
+    ,OneYardForWashing = iif(rd.OneYardForWashing = 1, 'Y', '')
 into #tmpMind
 from  Receiving r with (nolock)
 inner join Receiving_Detail rd with (nolock) on r.ID = rd.ID
@@ -386,6 +389,66 @@ OUTER APPLY(
 where   psd.FabricType ='F' and r.Type = 'A'
 {whereReceiving}
 
+union all
+select
+	[ReceivingID] = r.ID
+	,[ExportID] = ''
+	,[ArriveDate] = r.IssueDate
+	,rd.PoId
+    ,rd.seq1
+    ,rd.seq2
+	,[Seq] = rd.Seq1 + ' ' + rd.Seq2
+	,o.BrandID
+	,psd.refno
+	,fb.WeaveTypeID
+	,[Color] = iif(fb.MtlTypeID = 'EMB THREAD' OR fb.MtlTypeID = 'SP THREAD' OR fb.MtlTypeID = 'THREAD' 
+				, IIF(psd.SuppColor = '', dbo.GetColorMultipleID (o.BrandID, isnull(psdsC.SpecValue, '')) , psd.SuppColor)
+				, isnull(psdsC.SpecValue, ''))
+	,rd.Roll
+	,rd.Dyelot
+	,[StockQty] = rd.Qty
+	,StockType = isnull (ddl.Name, rd.StockType)
+	,Location= dbo.Getlocation(fi.Ukey)
+	,rd.Weight
+	,rd.ActualWeight
+	,[CutShadebandTime]=cutTime.CutTime
+	,cutTime.CutBy
+	,rd.Fabric2LabBy
+	,rd.Fabric2LabTime
+    ,rd.Checker
+    ,IsQRCodeCreatedByPMS = iif (dbo.IsQRCodeCreatedByPMS(rd.MINDQRCode) = 1, 'Create from PMS', '')
+    ,rd.MINDChecker
+    ,rd.QRCode_PrintDate
+    ,rd.MINDCheckAddDate
+    ,rd.MINDCheckEditDate
+    ,AbbEN = (select Supp.AbbEN from Supp with (nolock) where Supp.id =ps.SuppID)
+    ,rdStockType = rd.StockType
+    ,ForInspection = iif(rd.ForInspection = 1, 'Y', '')
+    ,rd.ForInspectionTime
+    ,OneYardForWashing = iif(rd.OneYardForWashing = 1, 'Y', '')
+from  TransferIn r with (nolock)
+inner join TransferIn_Detail rd with (nolock) on r.ID = rd.ID
+inner join Orders o with (nolock) on o.ID = rd.POID 
+inner join PO_Supp_Detail psd with (nolock) on rd.PoId = psd.ID and rd.Seq1 = psd.SEQ1 and rd.Seq2 = psd.SEQ2
+inner join PO_Supp ps with (nolock) on ps.ID = psd.id and ps.SEQ1 = psd.SEQ1
+inner join Fabric fb with (nolock) on psd.SCIRefno = fb.SCIRefno
+left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
+left join DropDownList ddl WITH (NOLOCK) on ddl.Type = 'Pms_StockType'
+                                            and REPLACE(ddl.ID,'''','') = rd.StockType
+left join FtyInventory fi with (nolock) on  fi.POID = rd.POID and 
+                                            fi.Seq1 = rd.Seq1 and 
+                                            fi.Seq2 = rd.Seq2 and 
+                                            fi.Roll = rd.Roll and
+                                            fi.Dyelot = rd.Dyelot and
+                                            fi.StockType = rd.StockType
+OUTER APPLY(
+	SELECT  fs.CutTime,fs.CutBy
+	FROM FIR f
+	INNER JOIN FIR_Shadebone fs with (nolock) on f.id = fs.ID 	
+	WHERE  r.id = f.ReceivingID and rd.PoId = F.POID and rd.Seq1 = F.SEQ1 and rd.Seq2 = F.SEQ2 AND rd.Roll = fs.Roll and rd.Dyelot = fs.Dyelot
+) cutTime
+where   psd.FabricType ='F' 
+{whereTransferIn}
 select  ReceivingID
 		,ExportID
 		,ArriveDate
@@ -409,6 +472,9 @@ select  ReceivingID
         ,MINDCheckAddDate
         ,MINDCheckEditDate
         ,AbbEN
+        ,ForInspection
+        ,ForInspectionTime
+        ,OneYardForWashing
 from #tmpMind rd
 OUTER APPLY(
     select top 1 LastP26RemarkData =  lt.Remark
