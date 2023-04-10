@@ -7,6 +7,7 @@ using Ict;
 using Sci.Data;
 using System.Data.SqlClient;
 using Sci.Production.PublicPrg;
+using System.Drawing;
 
 namespace Sci.Production.Shipping
 {
@@ -15,16 +16,22 @@ namespace Sci.Production.Shipping
     /// </summary>
     public partial class P02_AddNewItem : Win.Subs.Input2A
     {
+        private DataRow P02_Info_dataRows;
+        private bool P02_IsDox;
+
         /// <summary>
         /// P02_AddNewItem
         /// </summary>
-        public P02_AddNewItem()
+        public P02_AddNewItem(DataRow dataRow = null, bool IsDox = false)
         {
             this.InitializeComponent();
             MyUtility.Tool.SetupCombox(this.comboCategory, 2, 1, "5,Dox,6,Machine/Parts,7,Mock Up,8,Other Sample,9,Other Material");
+            MyUtility.Tool.SetupCombox(this.comboDoxItem, 2, 1, ",,1,C/O,2,Payment doc,3,Other");
+            this.P02_Info_dataRows = dataRow;
+            this.P02_IsDox = IsDox;
         }
 
-        /// <inheritdoc/>
+        /// <inheritdoc/>.
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
@@ -87,10 +94,7 @@ from Orders WITH (NOLOCK) where ID = '{0}'", this.txtSPNo.Text), out orderData))
                     this.CurrentData["StyleID"] = orderData["StyleID"];
                     this.CurrentData["BrandID"] = orderData["BrandID"];
                     this.CurrentData["Leader"] = orderData["SMR"];
-                    if (MyUtility.Check.Empty(this.CurrentData["Description"]))
-                    {
-                        this.CurrentData["Description"] = orderData["Description"];
-                    }
+                    this.CurrentData["Description"] = orderData["Description"];
                 }
                 else
                 {
@@ -99,6 +103,7 @@ from Orders WITH (NOLOCK) where ID = '{0}'", this.txtSPNo.Text), out orderData))
                     this.CurrentData["StyleID"] = string.Empty;
                     this.CurrentData["BrandID"] = string.Empty;
                     this.CurrentData["Leader"] = string.Empty;
+                    this.CurrentData["Description"] = string.Empty;
                 }
             }
         }
@@ -148,6 +153,22 @@ from Style s WITH (NOLOCK) where s.ID = '{0}' and s.SeasonID = '{1}'",
         /// <inheritdoc/>
         protected override bool OnSaveBefore()
         {
+            if (!this.P02_IsDox && MyUtility.Convert.GetString(this.P02_Info_dataRows["FreightBy"]).ToUpper() != "HAND")
+            {
+                if (MyUtility.Check.Empty(this.CurrentData["Qty"]))
+                {
+                    this.editDescription.Focus();
+                    MyUtility.Msg.WarningBox("Qty can't empty!");
+                    return false;
+                }
+
+                if (MyUtility.Check.Empty(this.CurrentData["UnitID"]))
+                {
+                    this.editDescription.Focus();
+                    MyUtility.Msg.WarningBox("Unit can't empty!");
+                    return false;
+                }
+            }
             #region 檢查必輸欄位
             if (MyUtility.Check.Empty(this.CurrentData["Description"]))
             {
@@ -204,6 +225,28 @@ from Style s WITH (NOLOCK) where s.ID = '{0}' and s.SeasonID = '{1}'",
                 {
                     this.txtstyle.Focus();
                     MyUtility.Msg.WarningBox("Style can't empty!");
+                    return false;
+                }
+            }
+
+            if (this.comboCategory.Text == "Other Sample" || this.comboCategory.Text == "Other Material" ||
+                this.comboDoxItem.Text == "C/O" || this.comboDoxItem.Text == "Payment doc" ||
+                 this.comboDoxItem.Text == "Other")
+            {
+                if (MyUtility.Check.Empty(this.CurrentData["Remark"]))
+                {
+                    this.editRemark.Focus();
+                    MyUtility.Msg.WarningBox("Remark can't empty!");
+                    return false;
+                }
+            }
+
+            if (this.comboCategory.Text == "Dox")
+            {
+                if (this.comboDoxItem.Text.Empty())
+                {
+                    this.comboDoxItem.Focus();
+                    MyUtility.Msg.WarningBox("Dox can't empty!");
                     return false;
                 }
             }
@@ -344,6 +387,8 @@ from Express_Detail WITH (NOLOCK) where ID = '{0}' and Seq2 = ''", MyUtility.Con
 
             if (this.comboCategory.SelectedValue.Equals("8") || this.comboCategory.SelectedValue.Equals("9"))
             {
+                this.editRemark.WatermarkText = " Please advise the reason of select other sample / other material.";
+                this.editRemark.WatermarkColor = SystemColors.GrayText;
                 this.txtSPNo.Text = string.Empty;
                 this.CurrentData["Category"] = this.comboCategory.SelectedValue;
                 this.CurrentData["OrderID"] = string.Empty;
@@ -352,9 +397,40 @@ from Express_Detail WITH (NOLOCK) where ID = '{0}' and Seq2 = ''", MyUtility.Con
             }
             else
             {
+                this.editRemark.WatermarkText = string.Empty;
+                this.editRemark.WatermarkColor = SystemColors.WindowText;
                 if (this.OperationMode == 2)
                 {
                     this.txtSPNo.ReadOnly = false;
+                }
+            }
+        }
+
+        private void ComboCategory_SelectedValueChanged(object sender, EventArgs e)
+        {
+            if (this.comboCategory.Text == "Dox")
+            {
+                this.comboDoxItem.Visible = true;
+            }
+            else
+            {
+                this.comboDoxItem.Visible = false;
+            }
+        }
+
+        private void ComboDoxItem_SelectedValueChanged(object sender, EventArgs e)
+        {
+            if (this.comboCategory.Text == "Dox")
+            {
+                if (this.comboDoxItem.Text == "C/O" || this.comboDoxItem.Text == "Payment doc")
+                {
+                    this.editRemark.WatermarkText = " Please update invoice no.";
+                    this.editRemark.WatermarkColor = SystemColors.GrayText;
+                }
+                else
+                {
+                    this.editRemark.WatermarkText = string.Empty;
+                    this.editRemark.WatermarkColor = SystemColors.WindowText;
                 }
             }
         }

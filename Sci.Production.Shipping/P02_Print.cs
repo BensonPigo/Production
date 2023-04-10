@@ -305,6 +305,7 @@ group by UnitID", MyUtility.Convert.GetString(this.masterData["ID"]));
             else if (this.reportType == "3")
             {
                 #region Detail Packing List
+
                 string strXltName = Env.Cfg.XltPathDir + "\\Shipping_P02_Print_Invoice + PackingList.xltx";
                 Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
                 Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
@@ -322,23 +323,67 @@ group by UnitID", MyUtility.Convert.GetString(this.masterData["ID"]));
                 worksheet.Cells[11, 7] = this.masterData["PortAir"];
 
                 int rownum = 14;
-                object[,] objArray = new object[1, 12];
+                object[,] objArray = new object[1, 13];
                 foreach (DataRow dr in this.detailData.Rows)
                 {
+                    string strHSCODE = string.Empty;
+                    string strType = string.Empty;
+                    string strDescription = dr["Description"].ToString();
+                    string strStyle_Ref = string.Empty;
+
+                    if (dr["CategoryName"].ToString() == "Sample")
+                    {
+                        strType = dr["Reason_Gender"].ToString();
+                        var strHC = MyUtility.Convert.GetString(dr["HSCode"]).Replace(".", "");
+                        strHC = strHC.Replace(",", "");
+                        strHSCODE = strHC.Length > 6 ? strHC.Substring(0, 6) : strHC;
+                        strDescription = dr["styleDescription"].ToString();
+                    }
+                    else if (dr["CategoryName"].ToString() == "Material")
+                    {
+                        strType = dr["Fabric_MtlTypeID"].ToString();
+
+                        var strHC = MyUtility.Convert.GetString(dr["Fabric_HsCode"]).Replace(".", "");
+                        strHC = strHC.Replace(",", "");
+                        strHSCODE = strHC.Length > 6 ? strHC.Substring(0, 6) : strHC;
+
+                        strDescription = dr["fabricDescription"].ToString();
+                    }
+                    else if (dr["CategoryName"].ToString() == "Other Sample")
+                    {
+                        var strHC = MyUtility.Convert.GetString(dr["HSCode"]).Replace(".", "");
+                        strHC = strHC.Replace(",", "");
+                        strHSCODE = strHC.Length > 6 ? strHC.Substring(0, 6) : strHC;
+                    }
+                    else if (dr["CategoryName"].ToString() == "Other Material")
+                    {
+                        strDescription = dr["nDescription"].ToString();
+                    }
+
+                    if (!MyUtility.Check.Empty(dr["StyleID"].ToString()) && !MyUtility.Check.Empty(dr["RefNo"].ToString()))
+                    {
+                        strStyle_Ref = dr["StyleID"] + " / " + dr["RefNo"];
+                    }
+                    else
+                    {
+                        strStyle_Ref = !MyUtility.Check.Empty(dr["StyleID"].ToString()) ? dr["StyleID"].ToString() : dr["RefNo"].ToString();
+                    }
+
                     int iCategory = MyUtility.Convert.GetInt(dr["Category"]);
                     objArray[0, 0] = dr["CTNNo"];
                     objArray[0, 1] = $"{dr["Seq1"]}-{dr["Seq2"]}";
                     objArray[0, 2] = this.CategoryName(iCategory);
-                    objArray[0, 3] = dr["StyleID"];
-                    objArray[0, 4] = dr["RefNo"];
-                    objArray[0, 5] = iCategory == 4 || iCategory == 9 ? dr["MtlDesc"] : dr["Description"];
-                    objArray[0, 6] = dr["Qty"];
-                    objArray[0, 7] = dr["UnitID"];
-                    objArray[0, 8] = "$";
-                    objArray[0, 9] = dr["Price"];
-                    objArray[0, 10] = "$";
-                    objArray[0, 11] = $"=G{rownum}*J{rownum}";
-                    worksheet.Range[string.Format("A{0}:L{0}", rownum)].Value2 = objArray;
+                    objArray[0, 3] = strType; // Type
+                    objArray[0, 4] = strHSCODE; // HS Code
+                    objArray[0, 5] = strStyle_Ref; // Style + Ref#
+                    objArray[0, 6] = strDescription; // Description
+                    objArray[0, 7] = dr["Qty"];
+                    objArray[0, 8] = dr["UnitID"];
+                    objArray[0, 9] = "$";
+                    objArray[0, 10] = dr["Price"];
+                    objArray[0, 11] = "$";
+                    objArray[0, 12] = $"=H{rownum}*K{rownum}";
+                    worksheet.Range[string.Format("A{0}:M{0}", rownum)].Value2 = objArray;
                     rownum++;
                 }
 
@@ -348,20 +393,20 @@ group by UnitID", MyUtility.Convert.GetString(this.masterData["ID"]));
                     int count = 1;
                     foreach (DataRow dr in this.detailSummary.Rows)
                     {
-                        worksheet.Range[string.Format("A{0}:F{0}", MyUtility.Convert.GetString(rownum))].Merge(Type.Missing);
+                        worksheet.Range[string.Format("A{0}:G{0}", MyUtility.Convert.GetString(rownum))].Merge(Type.Missing);
                         if (count == 1)
                         {
                             count++;
                             worksheet.Cells[rownum, 1] = "Total";
 
                             // 文字靠左顯示
-                            worksheet.Range[string.Format("A{0}:F{0}", rownum)].HorizontalAlignment = Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignRight;
+                            worksheet.Range[string.Format("A{0}:G{0}", rownum)].HorizontalAlignment = Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignRight;
                         }
 
-                        worksheet.Cells[rownum, 7] = MyUtility.Convert.GetString(dr["ttlQty"]);
-                        worksheet.Cells[rownum, 8] = MyUtility.Convert.GetString(dr["UnitID"]);
-                        worksheet.Cells[rownum, 11] = "$";
-                        worksheet.Cells[rownum, 12] = $"=sumif(H14:H{lastdetailrow},H{rownum},L14:L{lastdetailrow})";
+                        worksheet.Cells[rownum, 8] = MyUtility.Convert.GetString(dr["ttlQty"]);
+                        worksheet.Cells[rownum, 9] = MyUtility.Convert.GetString(dr["UnitID"]);
+                        worksheet.Cells[rownum, 12] = "$";
+                        worksheet.Cells[rownum, 13] = $"=sumif(I14:I{lastdetailrow},I{rownum},M14:M{lastdetailrow})";
                         rownum++;
                     }
                 }
@@ -380,12 +425,12 @@ group by UnitID", MyUtility.Convert.GetString(this.masterData["ID"]));
 
                 worksheet.Range[string.Format("A5:A{0}", rownum + 2)].Borders.get_Item(Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeLeft).Weight = 2; // 1: 虛線, 2:實線, 3:粗體線
                 worksheet.Range[string.Format("A5:A{0}", rownum + 2)].Borders.get_Item(Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeLeft).LineStyle = 1;
-                worksheet.Range[string.Format("A{0}:L{0}", rownum + 2)].Borders.get_Item(Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeBottom).Weight = 2; // 1: 虛線, 2:實線, 3:粗體線
-                worksheet.Range[string.Format("A{0}:L{0}", rownum + 2)].Borders.get_Item(Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeBottom).LineStyle = 1;
-                worksheet.Range[string.Format("L14:L{0}", rownum + 2)].Borders.get_Item(Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeLeft).Weight = 2; // 1: 虛線, 2:實線, 3:粗體線
-                worksheet.Range[string.Format("L14:L{0}", rownum + 2)].Borders.get_Item(Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeLeft).LineStyle = 1;
-                worksheet.Range[string.Format("L14:L{0}", rownum + 2)].Borders.get_Item(Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeRight).Weight = 2; // 1: 虛線, 2:實線, 3:粗體線
-                worksheet.Range[string.Format("L14:L{0}", rownum + 2)].Borders.get_Item(Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeRight).LineStyle = 1;
+                worksheet.Range[string.Format("A{0}:M{0}", rownum + 2)].Borders.get_Item(Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeBottom).Weight = 2; // 1: 虛線, 2:實線, 3:粗體線
+                worksheet.Range[string.Format("A{0}:M{0}", rownum + 2)].Borders.get_Item(Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeBottom).LineStyle = 1;
+                worksheet.Range[string.Format("M14:M{0}", rownum + 2)].Borders.get_Item(Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeLeft).Weight = 2; // 1: 虛線, 2:實線, 3:粗體線
+                worksheet.Range[string.Format("M14:M{0}", rownum + 2)].Borders.get_Item(Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeLeft).LineStyle = 1;
+                worksheet.Range[string.Format("M14:M{0}", rownum + 2)].Borders.get_Item(Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeRight).Weight = 2; // 1: 虛線, 2:實線, 3:粗體線
+                worksheet.Range[string.Format("M14:M{0}", rownum + 2)].Borders.get_Item(Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeRight).LineStyle = 1;
 
                 // 合併儲存格,文字置左
                 worksheet.Range[string.Format("H{0}:L{0}", MyUtility.Convert.GetString(rownum + 4))].Merge(Type.Missing);
