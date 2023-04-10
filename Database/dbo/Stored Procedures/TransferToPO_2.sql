@@ -3,7 +3,7 @@
 -- Create date: 2023/02/16
 -- Description:	From trade 只取需要部份 for < WH P01 Material Compare >
 -- =============================================
-Create Procedure [dbo].[TransferToPO_2]
+CREATE Procedure [dbo].[TransferToPO_2]
 	(
 	  @PoID			VarChar(13)		--採購母單
 	 ,@AppType		Bit				--重新產生資料時是否要覆蓋原始資料 -- < WH P01 Material Compare > = 0
@@ -52,18 +52,18 @@ Begin
             , Status varchar(1), Sel bit default 0, IsForOtherBrand bit, CannotOperateStock bit, Keyword_Original varchar(max)    
             Primary Key (ID, Seq1, Seq2, Seq2_Count)
         );
-		Create Table #tmpPO_Supp_Detail_OrderList
-			(  RowID BigInt Identity(1,1) Not Null, ID VarChar(13), Seq1 VarChar(3), Seq2 VarChar(2), OrderID VarChar(13), Seq2_Count Int
-			 , Primary Key (ID, Seq1, Seq2, OrderID, Seq2_Count)
-			);
+		--Create Table #tmpPO_Supp_Detail_OrderList
+		--	(  RowID BigInt Identity(1,1) Not Null, ID VarChar(13), Seq1 VarChar(3), Seq2 VarChar(2), OrderID VarChar(13), Seq2_Count Int
+		--	 , Primary Key (ID, Seq1, Seq2, OrderID, Seq2_Count)
+		--	);
 		Create Table #tmpPO_Supp_Detail_Spec
 		(  RowID BigInt Identity(1,1) Not Null, ID VarChar(13), Seq1 VarChar(3), Seq2 VarChar(2), SpecColumnID VarChar(50), SpecValue VarChar(50), Seq2_Count Int
 			, Primary Key (ID, Seq1, Seq2, SpecColumnID, Seq2_Count)
 		);
-		Create Table #tmpPO_Supp_Detail_Keyword
-		(  RowID BigInt Identity(1,1) Not Null, ID VarChar(13), Seq1 VarChar(3), Seq2 VarChar(2), KeywordField VarChar(30), KeywordValue VarChar(200), Seq2_Count Int
-			, Primary Key (ID, Seq1, Seq2, KeywordField, Seq2_Count)
-		);
+		--Create Table #tmpPO_Supp_Detail_Keyword
+		--(  RowID BigInt Identity(1,1) Not Null, ID VarChar(13), Seq1 VarChar(3), Seq2 VarChar(2), KeywordField VarChar(30), KeywordValue VarChar(200), Seq2_Count Int
+		--	, Primary Key (ID, Seq1, Seq2, KeywordField, Seq2_Count)
+		--);
 	End;
 	----------------------------------------------------------------------
 	--Declare @ExecDate DateTime;
@@ -359,13 +359,13 @@ Begin
 				   --And Seq2 = @Seq2
 				   And Seq2_Count = @Seq2_Count;
 				
-				Update #tmpPO_Supp_Detail_OrderList
-				   Set Seq1 = @NewSeq1_Chr
-					 , Seq2 = @NewSeq2_Chr
-				 Where ID = @PoID
-				   And Seq1 = @Seq1
-				   --And Seq2 = @Seq2
-				   And Seq2_Count = @Seq2_Count;
+				--Update #tmpPO_Supp_Detail_OrderList
+				--   Set Seq1 = @NewSeq1_Chr
+				--	 , Seq2 = @NewSeq2_Chr
+				-- Where ID = @PoID
+				--   And Seq1 = @Seq1
+				--   --And Seq2 = @Seq2
+				--   And Seq2_Count = @Seq2_Count;
 
 				Update #tmpPO_Supp_Detail_Spec
 					Set Seq1 = @NewSeq1_Chr
@@ -374,12 +374,12 @@ Begin
 					And Seq1 = @Seq1
 					And Seq2_Count = @Seq2_Count;
 
-				Update #tmpPO_Supp_Detail_Keyword
-				   Set Seq1 = @NewSeq1_Chr
-					 , Seq2 = @NewSeq2_Chr
-				 Where ID = @PoID
-				   And Seq1 = @Seq1
-				   And Seq2_Count = @Seq2_Count;
+				--Update #tmpPO_Supp_Detail_Keyword
+				--   Set Seq1 = @NewSeq1_Chr
+				--	 , Seq2 = @NewSeq2_Chr
+				-- Where ID = @PoID
+				--   And Seq1 = @Seq1
+				--   And Seq2_Count = @Seq2_Count;
 			End;
 			Set @tmpPo_Supp_DetailRowID += 1;
 		End;

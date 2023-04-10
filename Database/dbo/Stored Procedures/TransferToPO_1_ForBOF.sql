@@ -3,7 +3,7 @@
 -- Create date: 2023/02/21
 -- Description:	From trade 只取需要部份 for < WH P01 Material Compare >
 -- =============================================
-Create Procedure [dbo].[TransferToPO_1_ForBOF]
+CREATE Procedure [dbo].[TransferToPO_1_ForBOF]
 	(
 	  @PoID			VarChar(13)		--採購母單
 	 ,@BrandID		VarChar(8)
@@ -69,10 +69,10 @@ Begin
             , Status varchar(1), Sel bit default 0, IsForOtherBrand bit, CannotOperateStock bit, Keyword_Original varchar(max)    
             Primary Key (ID, Seq1, Seq2, Seq2_Count)
         );
-		Create Table #tmpPO_Supp_Detail_OrderList
-			(  RowID BigInt Identity(1,1) Not Null, ID VarChar(13), Seq1 VarChar(3), Seq2 VarChar(2), OrderID VarChar(13), Seq2_Count Int
-			 , Primary Key (ID, Seq1, Seq2, OrderID, Seq2_Count)
-			);
+		--Create Table #tmpPO_Supp_Detail_OrderList
+		--	(  RowID BigInt Identity(1,1) Not Null, ID VarChar(13), Seq1 VarChar(3), Seq2 VarChar(2), OrderID VarChar(13), Seq2_Count Int
+		--	 , Primary Key (ID, Seq1, Seq2, OrderID, Seq2_Count)
+		--	);
 		Create Table #tmpPO_Supp_Detail_Spec
 		(  RowID BigInt Identity(1,1) Not Null, ID VarChar(13), Seq1 VarChar(3), Seq2 VarChar(2), SpecColumnID VarChar(50), SpecValue VarChar(50), Seq2_Count Int
 			, Primary Key (ID, Seq1, Seq2, SpecColumnID, Seq2_Count)
@@ -478,14 +478,14 @@ Begin
 											   ) as tmpCount
 									  );
 				
-				If @ExceptRowCount > 0
-				Begin
-					Insert Into #tmpPO_Supp_Detail_OrderList
-						(ID, Seq1, Seq2, OrderID, Seq2_Count)
-						Select DISTINCT @PoID, @Seq1_New, @Seq2, OrderID, @Seq2_Count
-						  From dbo.Order_BOF_Expend_OrderList
-						 Where Order_BOF_ExpendUkey in (select data from Production.dbo.SplitString(@Bof_ExpendUkeys, ','));
-				End;
+				--If @ExceptRowCount > 0
+				--Begin
+				--	Insert Into #tmpPO_Supp_Detail_OrderList
+				--		(ID, Seq1, Seq2, OrderID, Seq2_Count)
+				--		Select DISTINCT @PoID, @Seq1_New, @Seq2, OrderID, @Seq2_Count
+				--		  From dbo.Order_BOF_Expend_OrderList
+				--		 Where Order_BOF_ExpendUkey in (select data from Production.dbo.SplitString(@Bof_ExpendUkeys, ','));
+				--End;
 				--------------------------------------
 				--寫入Temp Table - PO_Supp_Detail_Spec
 				Insert Into #tmpPO_Supp_Detail_Spec

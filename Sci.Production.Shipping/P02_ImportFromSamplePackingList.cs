@@ -57,7 +57,7 @@ namespace Sci.Production.Shipping
                 .Text("Category", header: "Category", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("CTNNo", header: "CTN No.", width: Widths.AnsiChars(5), settings: ctnno)
                 .Numeric("NW", header: "N.W. (kg)", integer_places: 5, decimal_places: 3, maximum: 99999.99m, minimum: 0m)
-                .Numeric("Price", header: "Price", integer_places: 6, decimal_places: 4, maximum: 999999.9999m, minimum: 0m)
+                .Numeric("Price", header: "Price", integer_places: 6, decimal_places: 4, maximum: 999999.9999m, minimum: 0m, iseditingreadonly: true)
                 .Numeric("ShipQty", header: "Q'ty", decimal_places: 2, iseditingreadonly: true)
                 .Text("UnitID", header: "Unit", width: Widths.AnsiChars(8))
                 .Text("Receiver", header: "Receiver", width: Widths.AnsiChars(10), settings: receiver)
@@ -122,7 +122,7 @@ from (
         , CTNNo = '' 
         , GW = p.GW
 		, TtlShipQty = p.ShipQty
-        , Price = 0.0
+        , Price = o.PoPrice
         , ShipQty = Sum (pd.ShipQty)
         , UnitID = o.StyleUnit
         , Receiver = '' 
@@ -138,7 +138,7 @@ from (
     where pd.ID = '{0}'
           and Factory.IsProduceFty=1
           and p.Type = 'S'
-    group by pd.ID, pd.OrderID, o.SeasonID, o.StyleID, p.ShipQty, p.GW, o.StyleUnit, o.SMR, t.Name, o.BrandID, o.StyleUkey
+    group by pd.ID, pd.OrderID, o.SeasonID, o.StyleID, p.ShipQty, p.GW, o.StyleUnit, o.SMR, t.Name, o.BrandID, o.StyleUkey,o.PoPrice
 ) getSamplePL
 ", this.txtSamplePL.Text);
             DataTable selectData;

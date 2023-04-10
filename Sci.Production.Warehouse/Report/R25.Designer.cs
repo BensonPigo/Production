@@ -58,16 +58,31 @@
             // 
             // print
             // 
-            this.print.Location = new System.Drawing.Point(494, 12);
+            this.print.Location = new System.Drawing.Point(385, 295);
             this.print.Visible = false;
             // 
             // toexcel
             // 
-            this.toexcel.Location = new System.Drawing.Point(494, 48);
+            this.toexcel.Location = new System.Drawing.Point(494, 16);
             // 
             // close
             // 
-            this.close.Location = new System.Drawing.Point(494, 84);
+            this.close.Location = new System.Drawing.Point(494, 52);
+            // 
+            // buttonCustomized
+            // 
+            this.buttonCustomized.Location = new System.Drawing.Point(448, 103);
+            this.buttonCustomized.Visible = true;
+            // 
+            // checkUseCustomized
+            // 
+            this.checkUseCustomized.Location = new System.Drawing.Point(474, 139);
+            this.checkUseCustomized.Visible = true;
+            // 
+            // txtVersion
+            // 
+            this.txtVersion.Location = new System.Drawing.Point(474, 166);
+            this.txtVersion.Visible = true;
             // 
             // label2
             // 
@@ -373,6 +388,8 @@
             this.Controls.Add(this.label8);
             this.Controls.Add(this.txtSP2);
             this.Controls.Add(this.txtSP1);
+            this.IsSupportCustomized = true;
+            this.IsSupportPrint = false;
             this.Name = "R25";
             this.OnLineHelpID = "Sci.Win.Tems.PrintForm";
             this.Text = "R25. Import Schedule List(Fabric/Accessory)";

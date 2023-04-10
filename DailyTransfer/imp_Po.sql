@@ -779,6 +779,7 @@ SET
     ,a.[CannotOperateStock]      = isnull(b.[CannotOperateStock]     , 0)
     ,a.IsFOC = isnull(b.IsFOC, 0)
 	,a.Picture = ISNULL(b.Picture,'')
+    , a.InspectionGroup = isnull(b.InspectionGroup,'')
 from Production.dbo.Fabric as a 
 inner join Trade_To_Pms.dbo.Fabric as b ON a.SCIRefno=b.SCIRefno
 
@@ -835,6 +836,7 @@ INSERT INTO Production.dbo.Fabric(
         ,[CannotOperateStock]
         ,IsFOC
 		,Picture
+       ,InspectionGroup
 )
 select 
       SCIRefno
@@ -889,6 +891,7 @@ select
     ,isnull([CannotOperateStock]     , 0)
     ,isnull(IsFOC, 0)
 	,ISNULL(Picture,'')
+    , isnull(InspectionGroup,'')
 from Trade_To_Pms.dbo.Fabric as b WITH (NOLOCK)
 where not exists(select SCIRefno from Production.dbo.Fabric as a WITH (NOLOCK) where a.SCIRefno = b.SCIRefno)
 

@@ -29,9 +29,9 @@
         private void InitializeComponent()
         {
             this.radioPanel1 = new Sci.Win.UI.RadioPanel();
+            this.radioOption3 = new Sci.Win.UI.RadioButton();
             this.radioOption1 = new Sci.Win.UI.RadioButton();
             this.radioOption2 = new Sci.Win.UI.RadioButton();
-            this.txtFormula = new Sci.Win.UI.TextBox();
             this.checkJunk = new Sci.Win.UI.CheckBox();
             this.label3 = new Sci.Win.UI.Label();
             this.label2 = new Sci.Win.UI.Label();
@@ -51,7 +51,9 @@
             this.label5 = new Sci.Win.UI.Label();
             this.label6 = new Sci.Win.UI.Label();
             this.label7 = new Sci.Win.UI.Label();
-            this.radioOption3 = new Sci.Win.UI.RadioButton();
+            this.txtFormula = new System.Windows.Forms.TextBox();
+            this.label8 = new Sci.Win.UI.Label();
+            this.txtFacbricGrade = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -66,10 +68,13 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(712, 441);
+            this.detail.Size = new System.Drawing.Size(712, 625);
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.txtFacbricGrade);
+            this.detailcont.Controls.Add(this.label8);
+            this.detailcont.Controls.Add(this.txtFormula);
             this.detailcont.Controls.Add(this.radioPanel3);
             this.detailcont.Controls.Add(this.radioPanel2);
             this.detailcont.Controls.Add(this.radioPanel1);
@@ -80,26 +85,25 @@
             this.detailcont.Controls.Add(this.label7);
             this.detailcont.Controls.Add(this.btnMoistureStandardList);
             this.detailcont.Controls.Add(this.label4);
-            this.detailcont.Controls.Add(this.txtFormula);
             this.detailcont.Controls.Add(this.checkJunk);
             this.detailcont.Controls.Add(this.label3);
             this.detailcont.Controls.Add(this.label2);
             this.detailcont.Controls.Add(this.label1);
             this.detailcont.Controls.Add(this.txtbrand);
-            this.detailcont.Size = new System.Drawing.Size(712, 403);
+            this.detailcont.Size = new System.Drawing.Size(712, 587);
             // 
             // detailbtm
             // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 403);
+            this.detailbtm.Location = new System.Drawing.Point(0, 587);
             this.detailbtm.Size = new System.Drawing.Size(712, 38);
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(712, 441);
+            this.browse.Size = new System.Drawing.Size(712, 511);
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(720, 470);
+            this.tabs.Size = new System.Drawing.Size(720, 654);
             // 
             // radioPanel1
             // 
@@ -113,6 +117,19 @@
             this.radioPanel1.Size = new System.Drawing.Size(268, 28);
             this.radioPanel1.TabIndex = 8;
             this.radioPanel1.ValueChanged += new System.EventHandler(this.RadioPanel1_ValueChanged);
+            // 
+            // radioOption3
+            // 
+            this.radioOption3.AutoCheck = false;
+            this.radioOption3.AutoSize = true;
+            this.radioOption3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.radioOption3.Location = new System.Drawing.Point(173, 4);
+            this.radioOption3.Name = "radioOption3";
+            this.radioOption3.Size = new System.Drawing.Size(76, 21);
+            this.radioOption3.TabIndex = 2;
+            this.radioOption3.Text = "Option3";
+            this.radioOption3.UseVisualStyleBackColor = true;
+            this.radioOption3.Value = "3";
             // 
             // radioOption1
             // 
@@ -139,17 +156,6 @@
             this.radioOption2.Text = "Option2";
             this.radioOption2.UseVisualStyleBackColor = true;
             this.radioOption2.Value = "2";
-            // 
-            // txtFormula
-            // 
-            this.txtFormula.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.txtFormula.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.txtFormula.IsSupportEditMode = false;
-            this.txtFormula.Location = new System.Drawing.Point(164, 97);
-            this.txtFormula.Name = "txtFormula";
-            this.txtFormula.ReadOnly = true;
-            this.txtFormula.Size = new System.Drawing.Size(355, 23);
-            this.txtFormula.TabIndex = 1;
             // 
             // checkJunk
             // 
@@ -214,7 +220,7 @@
             this.radioPanel2.Controls.Add(this.radioForWetDry);
             this.radioPanel2.Controls.Add(this.radioForWeftWarp);
             this.radioPanel2.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "CrockingTestOption", true));
-            this.radioPanel2.Location = new System.Drawing.Point(164, 127);
+            this.radioPanel2.Location = new System.Drawing.Point(164, 283);
             this.radioPanel2.Name = "radioPanel2";
             this.radioPanel2.ReadOnly = true;
             this.radioPanel2.Size = new System.Drawing.Size(373, 56);
@@ -248,7 +254,7 @@
             // 
             // label4
             // 
-            this.label4.Location = new System.Drawing.Point(30, 127);
+            this.label4.Location = new System.Drawing.Point(30, 283);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(131, 23);
             this.label4.TabIndex = 9;
@@ -260,7 +266,7 @@
             this.radioPanel3.Controls.Add(this.SkewnessOption1);
             this.radioPanel3.Controls.Add(this.SkewnessOption2);
             this.radioPanel3.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "SkewnessOption", true));
-            this.radioPanel3.Location = new System.Drawing.Point(164, 185);
+            this.radioPanel3.Location = new System.Drawing.Point(164, 341);
             this.radioPanel3.Name = "radioPanel3";
             this.radioPanel3.ReadOnly = true;
             this.radioPanel3.Size = new System.Drawing.Size(279, 28);
@@ -309,7 +315,7 @@
             // pictureBox1
             // 
             this.pictureBox1.Image = null;
-            this.pictureBox1.Location = new System.Drawing.Point(164, 251);
+            this.pictureBox1.Location = new System.Drawing.Point(164, 407);
             this.pictureBox1.Name = "pictureBox1";
             this.pictureBox1.Size = new System.Drawing.Size(157, 133);
             this.pictureBox1.TabIndex = 16;
@@ -321,7 +327,7 @@
             this.txtSkewnessFormula.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.txtSkewnessFormula.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.txtSkewnessFormula.IsSupportEditMode = false;
-            this.txtSkewnessFormula.Location = new System.Drawing.Point(164, 219);
+            this.txtSkewnessFormula.Location = new System.Drawing.Point(164, 375);
             this.txtSkewnessFormula.Name = "txtSkewnessFormula";
             this.txtSkewnessFormula.ReadOnly = true;
             this.txtSkewnessFormula.Size = new System.Drawing.Size(246, 23);
@@ -329,7 +335,7 @@
             // 
             // label5
             // 
-            this.label5.Location = new System.Drawing.Point(30, 251);
+            this.label5.Location = new System.Drawing.Point(30, 407);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(131, 23);
             this.label5.TabIndex = 15;
@@ -337,7 +343,7 @@
             // 
             // label6
             // 
-            this.label6.Location = new System.Drawing.Point(30, 219);
+            this.label6.Location = new System.Drawing.Point(30, 375);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(131, 23);
             this.label6.TabIndex = 14;
@@ -345,28 +351,45 @@
             // 
             // label7
             // 
-            this.label7.Location = new System.Drawing.Point(30, 186);
+            this.label7.Location = new System.Drawing.Point(30, 342);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(131, 23);
             this.label7.TabIndex = 13;
             this.label7.Text = "Skewness Option";
             // 
-            // radioOption3
+            // txtFormula
             // 
-            this.radioOption3.AutoCheck = false;
-            this.radioOption3.AutoSize = true;
-            this.radioOption3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.radioOption3.Location = new System.Drawing.Point(173, 4);
-            this.radioOption3.Name = "radioOption3";
-            this.radioOption3.Size = new System.Drawing.Size(76, 21);
-            this.radioOption3.TabIndex = 2;
-            this.radioOption3.Text = "Option3";
-            this.radioOption3.UseVisualStyleBackColor = true;
-            this.radioOption3.Value = "3";
+            this.txtFormula.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.txtFormula.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.txtFormula.Location = new System.Drawing.Point(164, 97);
+            this.txtFormula.Multiline = true;
+            this.txtFormula.Name = "txtFormula";
+            this.txtFormula.ReadOnly = true;
+            this.txtFormula.Size = new System.Drawing.Size(454, 41);
+            this.txtFormula.TabIndex = 17;
+            // 
+            // label8
+            // 
+            this.label8.Location = new System.Drawing.Point(30, 141);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(131, 23);
+            this.label8.TabIndex = 18;
+            this.label8.Text = "Fabric Grade";
+            // 
+            // txtFacbricGrade
+            // 
+            this.txtFacbricGrade.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.txtFacbricGrade.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.txtFacbricGrade.Location = new System.Drawing.Point(164, 141);
+            this.txtFacbricGrade.Multiline = true;
+            this.txtFacbricGrade.Name = "txtFacbricGrade";
+            this.txtFacbricGrade.ReadOnly = true;
+            this.txtFacbricGrade.Size = new System.Drawing.Size(454, 136);
+            this.txtFacbricGrade.TabIndex = 19;
             // 
             // B10
             // 
-            this.ClientSize = new System.Drawing.Size(720, 503);
+            this.ClientSize = new System.Drawing.Size(720, 687);
             this.DefaultControl = "txtbrand";
             this.DefaultControlForEdit = "txtbrand";
             this.IsDeleteOnBrowse = false;
@@ -402,7 +425,6 @@
         private Win.UI.RadioPanel radioPanel1;
         private Win.UI.RadioButton radioOption1;
         private Win.UI.RadioButton radioOption2;
-        private Win.UI.TextBox txtFormula;
         private Win.UI.CheckBox checkJunk;
         private Win.UI.Label label3;
         private Win.UI.Label label2;
@@ -423,5 +445,8 @@
         private Win.UI.Label label7;
         private Win.UI.RadioButton SkewnessOption3;
         private Win.UI.RadioButton radioOption3;
+        private System.Windows.Forms.TextBox txtFormula;
+        private System.Windows.Forms.TextBox txtFacbricGrade;
+        private Win.UI.Label label8;
     }
 }

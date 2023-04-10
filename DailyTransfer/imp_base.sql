@@ -574,7 +574,7 @@ SET
 	  ,a.AllowTransPoForGarmentSP = isnull(b.AllowTransPoForGarmentSP, 0)
 
 from Production.dbo.MtlType as a inner join Trade_To_Pms.dbo.MtlType as b ON a.id=b.id
-where b.EditDate between @DateStart and @DateEnd
+
 -------------------------- INSERT INTO §ì
 INSERT INTO Production.dbo.MtlType(
 ID
@@ -1731,6 +1731,15 @@ Delete Production.dbo.LossRateAccessory_Limit
 from Production.dbo.LossRateAccessory_Limit as a left join Trade_To_Pms.dbo.LossRateAccessory_Limit as b
 on a.MtltypeId = b.MtltypeId and a.UsageUnit = b.UsageUnit
 where b.MtltypeId is null
+
+UPDATE a SET 
+       LimitUp  = b.LimitUp 
+      ,AddName  = b.AddName 
+      ,AddDate  = b.AddDate 
+      ,EditName = b.EditName
+      ,EditDate = b.EditDate
+from Production.dbo.LossRateAccessory_Limit as a 
+inner join Trade_To_Pms.dbo.LossRateAccessory_Limit as b on a.MtltypeId = b.MtltypeId and a.UsageUnit = b.UsageUnit
 
 -------------------------- INSERT INTO ¤£INSERT wasteªºÄæ¦ì
 INSERT INTO Production.dbo.LossRateAccessory_Limit(
@@ -3965,6 +3974,11 @@ SET  a.WeaveTypeID	= b.WeaveTypeID
     ,a.Grade		= b.Grade
     ,a.Result		= b.Result
     ,a.BrandID		= b.BrandID
+    ,a.InspectionGroup = b.InspectionGroup
+    ,a.isFormatInP01 = b.isFormatInP01
+    ,a.isResultNotInP01 = b.isResultNotInP01
+    ,a.Description = b.Description
+    ,a.ShowGrade = b.ShowGrade
 FROM Production.dbo.FIR_Grade a 
 INNER JOIN Trade_To_Pms.dbo.FIR_Grade as b  
 ON a.WeaveTypeID=b.WeaveTypeID AND a.Percentage=b.Percentage AND a.BrandID=b.BrandID 
@@ -3975,22 +3989,32 @@ INSERT INTO Production.dbo.FIR_Grade
            ,Percentage
            ,Grade
            ,Result
-           ,BrandID)
+           ,BrandID
+           ,InspectionGroup
+           ,isFormatInP01
+           ,isResultNotInP01
+           ,Description
+           ,ShowGrade)
 SELECT   WeaveTypeID
 		,Percentage
 		,Grade
 		,Result
 		,BrandID
+        ,InspectionGroup
+        ,isFormatInP01
+        ,isResultNotInP01
+        ,Description
+        ,ShowGrade
 FROM Trade_To_Pms.dbo.FIR_Grade b
 WHERE NOT EXISTS(
 	SELECT  1
 	FROM Production.dbo.FIR_Grade a WITH (NOLOCK)
-	WHERE a.WeaveTypeID=b.WeaveTypeID AND a.Percentage=b.Percentage AND a.BrandID=b.BrandID 
+	WHERE a.WeaveTypeID=b.WeaveTypeID AND a.Percentage=b.Percentage AND a.BrandID=b.BrandID and a.InspectionGroup = b.InspectionGroup
 )
 
 DELETE Production.dbo.FIR_Grade
 FROM Production.dbo.FIR_Grade a
-LEFT JOIN Trade_To_Pms.dbo.FIR_Grade b ON a.WeaveTypeID=b.WeaveTypeID AND a.Percentage=b.Percentage AND a.BrandID=b.BrandID 
+LEFT JOIN Trade_To_Pms.dbo.FIR_Grade b ON a.WeaveTypeID=b.WeaveTypeID AND a.Percentage=b.Percentage AND a.BrandID=b.BrandID and a.InspectionGroup = b.InspectionGroup
 WHERE b.Grade is null
 
 

@@ -380,7 +380,8 @@ HAVING 1=1
                 com.WriteTable(this.dataTable, 2);
 
                 Excel.Worksheet worksheet = objApp.Sheets[1];
-
+                this.CreateCustomizedExcel(ref worksheet);
+                this.HideWaitMessage();
                 #region Save & Show Excel
                 string strExcelName = Class.MicrosoftFile.GetName("Warehouse_R25");
                 objApp.ActiveWorkbook.SaveAs(strExcelName);
@@ -390,7 +391,6 @@ HAVING 1=1
 
                 strExcelName.OpenFile();
                 #endregion
-                this.HideWaitMessage();
             }
             else
             {
