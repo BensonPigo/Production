@@ -2184,12 +2184,13 @@ DROP TABLE #TmpSource
                         {
                             throw result.GetException();
                         }
-                        #endregion
 
                         if (!(result = MyUtility.Tool.ProcessWithObject(data_Fty_AA4T, string.Empty, updateLocak, out resulttb, "#TmpSource", conn: sqlConn)))
                         {
                             throw result.GetException();
                         }
+
+                        #endregion
 
                         #region MDivisionPoDetail
                         upd_MD_8T.Append(UpdateMPoDetail(8, data_MD_8T, true, sqlConn: sqlConn));
@@ -2207,6 +2208,12 @@ DROP TABLE #TmpSource
                         #endregion
 
                         if (!(result = DBProxy.Current.Execute(null, $"update SubTransfer set status = 'Confirmed', editname = '{Env.User.UserID}', editdate = GETDATE() where id = '{dr["id"]}'")))
+                        {
+                            throw result.GetException();
+                        }
+
+                        // 在更新 FtyInventory 之後, 更新 SubTransfer_Detail.FromBalanceQty = (From)FtyInventory 剩餘量
+                        if (!(result = UpdateSubTransfer_DetailFromBalanceQty(MyUtility.Convert.GetString(dr["id"]), true)))
                         {
                             throw result.GetException();
                         }
@@ -2684,6 +2691,12 @@ inner join #tmpD as src on   target.ID = src.ToPoid
                         }
 
                         if (!(result = DBProxy.Current.Execute(null, sqlupd3)))
+                        {
+                            throw result.GetException();
+                        }
+
+                        // 在更新 FtyInventory 之後, 更新 SubTransfer_Detail.FromBalanceQty = (From)FtyInventory 剩餘量
+                        if (!(result = UpdateSubTransfer_DetailFromBalanceQty(subTransfer_ID, true)))
                         {
                             throw result.GetException();
                         }
@@ -6540,6 +6553,28 @@ inner join FtyInventory fto with(nolock) on fto.POID = sd.ToPOID
 ";
 
             return MyUtility.Tool.ProcessWithDatatable(dt, string.Empty, sqlcmd, out DataTable odt);
+        }
+
+        /// <summary>
+        /// Confirm 時計算此單 From 轉給 To 的總量後 From 的庫存剩餘庫 並將剩餘數紀錄在 SubTransfer_Detail.FromBalanceQty
+        /// </summary>
+        /// <inheritdoc/>
+        public static DualResult UpdateSubTransfer_DetailFromBalanceQty(string id, bool isConfirm)
+        {
+            string updateValue = isConfirm ? "f.InQty - f.OutQty + f.AdjustQty - f.ReturnQty" : "0";
+            string sqlcmd = $@"
+Update sd
+Set FromBalanceQty = {updateValue}
+from SubTransfer_Detail sd with(nolock) 
+inner join FtyInventory f with(nolock) on f.POID = sd.FromPOID
+    and f.Seq1 = sd.FromSeq1
+    and f.Seq2 = sd.FromSeq2
+    and f.Roll = sd.FromRoll
+    and f.Dyelot = sd.FromDyelot
+    and f.StockType = sd.FromStockType
+where sd.id = '{id}'
+";
+            return DBProxy.Current.Execute(null, sqlcmd);
         }
 
         #region 產生Temp PO2, PO3
