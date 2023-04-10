@@ -566,7 +566,7 @@
             this.displayTotalLot.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayTotalLot.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.displayTotalLot.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayTotalLot.Location = new System.Drawing.Point(579, 225);
+            this.displayTotalLot.Location = new System.Drawing.Point(598, 225);
             this.displayTotalLot.Name = "displayTotalLot";
             this.displayTotalLot.Size = new System.Drawing.Size(55, 21);
             this.displayTotalLot.TabIndex = 245;
@@ -574,7 +574,7 @@
             // label5
             // 
             this.label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.label5.Location = new System.Drawing.Point(473, 225);
+            this.label5.Location = new System.Drawing.Point(492, 225);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(103, 23);
             this.label5.TabIndex = 244;
@@ -585,7 +585,7 @@
             this.displayInspectedLot.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayInspectedLot.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.displayInspectedLot.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayInspectedLot.Location = new System.Drawing.Point(832, 228);
+            this.displayInspectedLot.Location = new System.Drawing.Point(832, 227);
             this.displayInspectedLot.Name = "displayInspectedLot";
             this.displayInspectedLot.Size = new System.Drawing.Size(55, 21);
             this.displayInspectedLot.TabIndex = 247;
@@ -593,7 +593,7 @@
             // label6
             // 
             this.label6.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.label6.Location = new System.Drawing.Point(700, 226);
+            this.label6.Location = new System.Drawing.Point(700, 225);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(129, 23);
             this.label6.TabIndex = 246;

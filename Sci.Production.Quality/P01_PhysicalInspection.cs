@@ -146,7 +146,8 @@ namespace Sci.Production.Quality
                                         where 
                                         rvd.poid = '{this.maindr["POID"].ToString()}' and
                                         rvd.seq1 = '{this.maindr["Seq1"].ToString()}' and
-                                        rvd.Seq2 = '{this.maindr["Seq2"].ToString()}'
+                                        rvd.Seq2 = '{this.maindr["Seq2"].ToString()}' and
+                                        f.ReceivingID = '{this.maindr["ReceivingID"].ToString()}'
                                         union
                                         select trfd.poid, trfd.Roll,trfd.Dyelot, fp.Result from TransferIn_Detail trfd
                                         inner join FIR f on f.POID = trfd.PoId and f.SEQ1 = trfd.Seq1 and f.SEQ2 = trfd.Seq2
@@ -154,20 +155,22 @@ namespace Sci.Production.Quality
                                         where 
                                         trfd.poid = '{this.maindr["POID"].ToString()}' and
                                         trfd.seq1 = '{this.maindr["Seq1"].ToString()}' and
-                                        trfd.Seq2 = '{this.maindr["Seq2"].ToString()}'
+                                        trfd.Seq2 = '{this.maindr["Seq2"].ToString()}' and
+                                        f.ReceivingID = '{this.maindr["ReceivingID"].ToString()}'
                                         ) TotalRollnumberTEST";
             this.displayTotlalRoll.Text = MyUtility.GetValue.Lookup(sqlcmd_TotalRoll, "Production");
 
             string sqlcmd_InspectedRoll = $@"select count(InspectedRollnumberTEST.Roll) as InspectedRollnumber
                                             from(
                                             select rvd.poid, rvd.Roll,rvd.Dyelot, fp.Result from Receiving_Detail rvd
-                                            inner join FIR f on f.POID = rvd.PoId and f.SEQ1 = rvd.Seq1 and f.SEQ2 = rvd.Seq2
+                                            inner join FIR f on f.POID = rvd.PoId and f.SEQ1 = rvd.Seq1 and f.SEQ2 = rvd.Seq2 and f.ReceivingID = rvd.Id
                                             left join FIR_Physical fp on fp.ID = f.ID and rvd.Roll = fp.roll and rvd.Dyelot = fp.Dyelot
                                             where 
                                             rvd.poid = '{this.maindr["POID"].ToString()}' and 
                                             rvd.seq1 = '{this.maindr["Seq1"].ToString()}' and
-                                            rvd.Seq2 = '{this.maindr["Seq2"].ToString()}' and 
-                                            fp.Result<>''
+                                            rvd.Seq2 = '{this.maindr["Seq2"].ToString()}' and
+                                            f.ReceivingID = '{this.maindr["ReceivingID"].ToString()}' and
+                                            fp.Result<>'' 
                                             union
                                             select trfd.poid, trfd.Roll,trfd.Dyelot, fp.Result from TransferIn_Detail trfd
                                             inner join FIR f on f.POID = trfd.PoId and f.SEQ1 = trfd.Seq1 and f.SEQ2 = trfd.Seq2
@@ -176,6 +179,7 @@ namespace Sci.Production.Quality
                                             trfd.poid = '{this.maindr["POID"].ToString()}' and
                                             trfd.seq1 = '{this.maindr["Seq1"].ToString()}' and
                                             trfd.Seq2 = '{this.maindr["Seq2"].ToString()}' and
+                                            f.ReceivingID = '{this.maindr["ReceivingID"].ToString()}' and
                                             fp.Result<>''
                                             ) InspectedRollnumberTEST";
             this.displayInspectedRoll.Text = MyUtility.GetValue.Lookup(sqlcmd_InspectedRoll, "Production");
@@ -183,12 +187,13 @@ namespace Sci.Production.Quality
             string sqlcmd_TotalNumber = $@"select Count(distinct Dyelot) as TotalLotNumber
                                             from(
                                             select rvd.Dyelot from Receiving_Detail rvd
-                                            inner join FIR f on f.POID = rvd.PoId and f.SEQ1 = rvd.Seq1 and f.SEQ2 = rvd.Seq2
+                                            inner join FIR f on f.POID = rvd.PoId and f.SEQ1 = rvd.Seq1 and f.SEQ2 = rvd.Seq2 and f.ReceivingID = rvd.Id
                                             left join FIR_Physical fp on fp.ID = f.ID and rvd.Roll = fp.roll and rvd.Dyelot = fp.Dyelot
                                             where 
                                             rvd.poid = '{this.maindr["POID"].ToString()}' and
                                             rvd.seq1 = '{this.maindr["Seq1"].ToString()}' and
-                                            rvd.Seq2 = '{this.maindr["Seq2"].ToString()}'
+                                            rvd.Seq2 = '{this.maindr["Seq2"].ToString()}' and
+                                            f.ReceivingID = '{this.maindr["ReceivingID"].ToString()}'
                                             union
                                             select trfd.Dyelot from TransferIn_Detail trfd
                                             inner join FIR f on f.POID = trfd.PoId and f.SEQ1 = trfd.Seq1 and f.SEQ2 = trfd.Seq2
@@ -196,18 +201,20 @@ namespace Sci.Production.Quality
                                             where 
                                             trfd.poid = '{this.maindr["POID"].ToString()}' and
                                             trfd.seq1 = '{this.maindr["Seq1"].ToString()}' and
-                                            trfd.Seq2 = '{this.maindr["Seq2"].ToString()}' ) TotalLotNumberTEST";
+                                            trfd.Seq2 = '{this.maindr["Seq2"].ToString()}' and
+                                            f.ReceivingID = '{this.maindr["ReceivingID"].ToString()}') TotalLotNumberTEST";
             this.displayTotalLot.Text = MyUtility.GetValue.Lookup(sqlcmd_TotalNumber, "Production");
 
             string sqlcmd_InspectedLot = $@"select Count(distinct Dyelot) as InspectedLotNumber
                                             from(
                                             select rvd.Dyelot from Receiving_Detail rvd
-                                            inner join FIR f on f.POID = rvd.PoId and f.SEQ1 = rvd.Seq1 and f.SEQ2 = rvd.Seq2
+                                            inner join FIR f on f.POID = rvd.PoId and f.SEQ1 = rvd.Seq1 and f.SEQ2 = rvd.Seq2 and f.ReceivingID = rvd.Id
                                             left join FIR_Physical fp on fp.ID = f.ID and rvd.Roll = fp.roll and rvd.Dyelot = fp.Dyelot
                                             where 
                                             rvd.poid = '{this.maindr["POID"].ToString()}' and
                                             rvd.seq1 = '{this.maindr["Seq1"].ToString()}' and
                                             rvd.Seq2 = '{this.maindr["Seq2"].ToString()}' and
+                                            f.ReceivingID = '{this.maindr["ReceivingID"].ToString()}' and
                                             fp.Result<>''
                                             union
                                             select trfd.Dyelot from TransferIn_Detail trfd
@@ -217,6 +224,7 @@ namespace Sci.Production.Quality
                                             trfd.poid = '{this.maindr["POID"].ToString()}' and
                                             trfd.seq1 = '{this.maindr["Seq1"].ToString()}' and
                                             trfd.Seq2 = '{this.maindr["Seq2"].ToString()}' and
+                                            f.ReceivingID = '{this.maindr["ReceivingID"].ToString()}' and
                                             fp.Result<>'') InspectedLotNumberTEST";
             this.displayInspectedLot.Text = MyUtility.GetValue.Lookup(sqlcmd_InspectedLot, "Production");
         }
