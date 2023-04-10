@@ -183,9 +183,9 @@ left join Fabric f WITH (NOLOCK) on f.SCIRefno = psd.SCIRefno
 LEFT JOIN VNImportDeclaration vd WITH(NOLOCK) ON 
 (
 	(vd.Blno !='' and e.Blno = vd.Blno) 
-	or  
-	e.id = vd.WKNo 
-)　AND vd.IsFtyExport = 0
+	or  	
+	(vd.BLNo = '' and vd.WKNo = e.ID)
+)　AND vd.IsFtyExport = 0　and vd.Status = 'Confirmed'
 OUTER APPLY(
 	SELECT 1 as [DoorToDoorDelivery]
 	FROM Door2DoorDelivery 
@@ -204,12 +204,27 @@ OUTER APPLY(
 			and Vessel  =''
 )Dtdd
 outer apply(
-	select 	distinct vddd.NLCode,vdd.HSCode
-	from dbo.VNImportDeclaration_Detail vdd
-	inner join VNImportDeclaration_Detail_Detail vddd on vdd.ID = vddd.ID and vdd.NLCode = vddd.NLCode
-	where vdd.id = vd.ID
-	and vddd.Refno = f.Refno and vddd.FabricType = ed.FabricType
-) vdd
+	select value = Stuff((
+		select concat(',',[CustomsCode])
+		from (
+			select distinct [CustomsCode] =  vdd.NLCode
+			from dbo.VNImportDeclaration_Detail vdd
+			where vdd.id = vd.ID
+			)s
+		for xml path('')
+		), 1, 1, '')
+)  [CustomsCode]
+outer apply(
+	select value = Stuff((
+		select concat(',',[HSCode])
+		from (
+			select distinct [HSCode] =  vdd.HSCode
+			from dbo.VNImportDeclaration_Detail vdd
+			where vdd.id = vd.ID
+			)s
+		for xml path('')
+		), 1, 1, '')
+)  [HSCode]
 Outer APPLY (
 	select mpod.ID, mpod.Seq1, mpod.Seq2, mpo.FactoryID, OrderQty = sum(mpod.Qty)
 	from SciMachine_MachinePO mpo
