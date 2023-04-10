@@ -53,7 +53,7 @@ namespace Sci.Production.Warehouse
                 {
                     dr["IsQRCodeCreatedByPMS"] = dr["MINDQRCode"].ToString().IsQRCodeCreatedByPMS();
                 }
-                else if (this.IsP18) 
+                else if (this.IsP18)
                 {
                     dr["IsQRCodeCreatedByPMS"] = dr["MINDQRCode"].ToString().IsQRCodeCreatedByPMS() && dr["MINDQRCode"].ToString().Left(3) == this.rgCode;
                 }
@@ -217,21 +217,39 @@ namespace Sci.Production.Warehouse
                     break;
             }
 
-            string qrcode = form == "P21" ? "Barcode" : "MINDQRCode";
+            string qrcode;
+            string qty;
+            switch (form)
+            {
+                case "P21":
+                    qrcode = "Barcode";
+                    qty = "StockQty";
+                    break;
+                case "P22":
+                case "P23":
+                    qrcode = "Barcode";
+                    qty = "Qty";
+                    break;
+                default:
+                    qrcode = "MINDQRCode";
+                    qty = "StockQty";
+                    break;
+            }
+
             ReportDefinition report = new ReportDefinition();
             report.ReportDataSource = barcodeDatas
                 .Select(s => new P21_PrintBarcode_Data()
                 {
                     SP = "SP#:" + MyUtility.Convert.GetString(s["PoId"]),
                     Seq = "SEQ:" + (form == "P21" ? MyUtility.Convert.GetString(s["SEQ1"]) + "-" + MyUtility.Convert.GetString(s["SEQ2"]) : MyUtility.Convert.GetString(s["SEQ"])),
-                    GW = "GW:" + MyUtility.Convert.GetString(s["Weight"]) + "KG",
-                    AW = "AW:" + MyUtility.Convert.GetString(s["ActualWeight"]) + "KG",
+                    GW = "GW:" + (s.IsNull("Weight") ? " " : MyUtility.Convert.GetString(s["Weight"]) + "KG"),
+                    AW = "AW:" + (s.IsNull("ActualWeight") ? " " : MyUtility.Convert.GetString(s["ActualWeight"]) + "KG"),
                     Location = "Lct:" + MyUtility.Convert.GetString(s["Location"]),
                     Refno = "REF#:" + MyUtility.Convert.GetString(s["RefNo"]),
                     Roll = "Roll#:" + MyUtility.Convert.GetString(s["Roll"]),
                     Color = "Color:" + MyUtility.Convert.GetString(s["ColorID"]),
                     Dyelot = "Lot#:" + MyUtility.Convert.GetString(s["Dyelot"]),
-                    Qty = "Yd#:" + MyUtility.Convert.GetString(s["StockQty"]),
+                    Qty = "Yd#:" + MyUtility.Convert.GetString(s[qty]),
                     FactoryID = MyUtility.Convert.GetString(s["FactoryID"]),
                     Image = Prgs.ImageToByte(MyUtility.Convert.GetString(s[qrcode]).ToBitmapQRcode(qrCodeWidth, qrCodeWidth)),
                 }).ToList();
