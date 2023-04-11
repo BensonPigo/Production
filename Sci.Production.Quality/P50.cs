@@ -19,6 +19,7 @@ using Sci.Win.Tools;
 using System.Data.SqlClient;
 using Sci.Production.Class;
 using Sci.Production.Class.Command;
+using System.Threading;
 
 namespace Sci.Production.Quality
 {
@@ -692,9 +693,43 @@ namespace Sci.Production.Quality
                 return;
             }
 
+            string sqlcmd = $@"select 
+            [FileName] = TableName + PKey,
+            SourceFile
+            from Clip
+            where TableName = 'UASentReport' and 
+            UniqueKey = '{id}'";
+            DualResult dualResult = DBProxy.Current.Select(null, sqlcmd, out DataTable dt);
+            if (!dualResult)
+            {
+                MyUtility.Msg.WarningBox(dualResult.ToString());
+            }
+
+            List<string> list = new List<string>();
+            string filePath = MyUtility.GetValue.Lookup("select [path] from CustomizedClipPath where TableName = 'UASentReport'");
+            var saveFilePath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            foreach (DataRow dataRow in dt.Rows)
+            {
+                string fileName = dataRow["FileName"].ToString() + Path.GetExtension(dataRow["SourceFile"].ToString());
+                lock (FileDownload_UpData.DownloadFileAsync("http://misap.sportscity.com.tw:16888/api/FileDownload/GetFile", filePath + "\\" + DateTime.Now.ToString("yyyyMM"), fileName, saveFilePath))
+                {
+                }
+            }
+
             using (var dlg = new Clip("UASentReport", id, true))
             {
                 dlg.ShowDialog();
+
+                foreach (DataRow dataRow in dt.Rows)
+                {
+                    string fileName = dataRow["FileName"].ToString() + Path.GetExtension(dataRow["SourceFile"].ToString());
+                    string deleteFile = Path.Combine(saveFilePath, fileName);
+                    if (File.Exists(deleteFile))
+                    {
+                        File.Delete(deleteFile);
+                        Console.WriteLine($"刪除 {filePath} 成功！");
+                    }
+                }
             }
         }
 
