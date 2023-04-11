@@ -142,8 +142,8 @@ SELECT e.ID
                             end)
                         ,psd.Qty)
 ,[Unit] = ed.UnitId
-,[CustomsCode] = vdd.NLCode
-,[HSCode] = vdd.HSCode
+,[CustomsCode] = [CustomsCode].value
+,[HSCode] = [HSCode].value
 ,[ContractNo] = vd.VNContractID
 ,e.FactoryID
 ,e.Consignee
