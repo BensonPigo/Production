@@ -795,7 +795,7 @@ namespace Sci.Production.Quality
 
             if (res.ExtendedData == null)
             {
-                MyUtility.Msg.ErrorBox("找不到基本檔設定!");
+                MyUtility.Msg.ErrorBox("Basic setting not found!");
                 return;
             }
 
@@ -1296,7 +1296,6 @@ namespace Sci.Production.Quality
             string saveFilePath = DBProxy.Current.LookupEx<string>($@"select path From CustomizedClipPath WHERE TableName ='UASentReport'").ExtendedData;
             DateTime now = DateTime.Now;
             saveFilePath = Path.Combine(saveFilePath, now.ToString("yyyyMM"));
-            int seasonRow = 0;
             decimal expiration = MyUtility.Convert.GetDecimal(this.drBasic["Expiration"]);
             List<string> pkeys = new List<string>();
             string[] files = ofdFileName.FileNames;
@@ -1307,15 +1306,13 @@ namespace Sci.Production.Quality
                 string newFileName = "UASentReport" + pkey + Path.GetExtension(ofdFileName.FileName);
                 string filenamme = Path.GetFileName(file);
                 pkeys.Add(pkey + "-" + filenamme);
-                string newfile = Path.Combine(saveFilePath, newFileName);
-                var dirinfo = new DirectoryInfo(saveFilePath);
-                if (!dirinfo.Exists)
-                {
-                    dirinfo.Create();
-                }
 
                 count++;
-                File.Copy(file, newfile, true);
+
+                // call API上傳檔案到Trade
+                lock (FileDownload_UpData.UploadFile("http://misap.sportscity.com.tw:16888/api/FileUpload/PostFile", saveFilePath, newFileName, ofdFileName.FileName))
+                {
+                }
             }
 
             if (!this.txtTestSeason.Text.Empty())

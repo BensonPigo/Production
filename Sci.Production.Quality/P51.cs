@@ -382,9 +382,46 @@ Update ExportRefnoSentReport SET  AWBNO = @updateData, EditName = @UserID ,EditD
                 tableName = "ExportRefnoSentReport";
             }
 
-            using (var dlg = new Clip(tableName, id, true, alianClipConnectionName: "Production"))
+            string sqlcmd = $@"select 
+            [FileName] = TableName + PKey,
+            SourceFile
+            from Clip
+            where TableName = '{tableName}' and 
+            UniqueKey = '{id}'";
+            DualResult dualResult = DBProxy.Current.Select(null, sqlcmd, out DataTable dt);
+            if (!dualResult)
+            {
+                MyUtility.Msg.WarningBox(dualResult.ToString());
+            }
+
+            List<string> list = new List<string>();
+            string filePath = MyUtility.GetValue.Lookup($"select [path] from CustomizedClipPath where TableName = '{tableName}'");
+
+            // 組ClipPath
+            string clippath = MyUtility.GetValue.Lookup($"select ClipPath from System");
+            string saveFilePath = clippath + "\\" + DateTime.Now.ToString("yyyyMM");
+
+            foreach (DataRow dataRow in dt.Rows)
+            {
+                string fileName = dataRow["FileName"].ToString() + Path.GetExtension(dataRow["SourceFile"].ToString());
+                lock (FileDownload_UpData.DownloadFileAsync("http://misap.sportscity.com.tw:16888/api/FileDownload/GetFile", filePath + "\\" + DateTime.Now.ToString("yyyyMM"), fileName, saveFilePath))
+                {
+                }
+            }
+
+            using (var dlg = new Clip(tableName, id, true))
             {
                 dlg.ShowDialog();
+
+                foreach (DataRow dataRow in dt.Rows)
+                {
+                    string fileName = dataRow["FileName"].ToString() + Path.GetExtension(dataRow["SourceFile"].ToString());
+                    string deleteFile = Path.Combine(saveFilePath, fileName);
+                    if (File.Exists(deleteFile))
+                    {
+                        File.Delete(deleteFile);
+                    }
+                }
             }
         }
 
@@ -894,15 +931,12 @@ Update ExportRefnoSentReport SET  {(isUpdateAwbNo ? "AWBNO" : "ReportDate")} = @
                 string filenamme = Path.GetFileName(file);
                 pkeys.Add(pkey + "-" + filenamme);
 
-                string newfile = Path.Combine(saveFilePath, newFileName);
-                var dirinfo = new DirectoryInfo(saveFilePath);
-                if (!dirinfo.Exists)
-                {
-                    dirinfo.Create();
-                }
-
                 count++;
-                File.Copy(ofdFileName.FileName, newfile, true);
+
+                // call API上傳檔案到Trade
+                lock (FileDownload_UpData.UploadFile("http://misap.sportscity.com.tw:16888/api/FileUpload/PostFile", saveFilePath, newFileName, ofdFileName.FileName))
+                {
+                }
             }
 
             dt.ExtNotDeletedRowsForeach(r =>
@@ -1016,7 +1050,7 @@ SELECT TOP 1 ID FROM @OutputTbl
                     List<SqlParameter> plis = new List<SqlParameter>()
                     {
                         new SqlParameter("UserID", Env.User.UserID),
-                         new SqlParameter("ClipPkey", string.Join("?", pkeys)),
+                        new SqlParameter("ClipPkey", string.Join("?", pkeys)),
                         new SqlParameter("tableName", tableName),
                     };
                     DataTable dtUkey = new DataTable();

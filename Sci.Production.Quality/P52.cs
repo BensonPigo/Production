@@ -1,12 +1,14 @@
 ﻿using Ict;
 using Ict.Win;
 using Sci.Data;
+using Sci.Production.Class;
 using Sci.Production.Class.Command;
 using Sci.Win.Tools;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 
@@ -174,9 +176,46 @@ namespace Sci.Production.Quality
                     break;
             }
 
-            using (var dlg = new Clip(tableName, id, false, alianClipConnectionName: "Production"))
+            string sqlcmd = $@"select 
+            [FileName] = TableName + PKey,
+            SourceFile
+            from Clip
+            where TableName = '{tableName}' and 
+            UniqueKey = '{id}'";
+            DualResult dualResult = DBProxy.Current.Select(null, sqlcmd, out DataTable dt);
+            if (!dualResult)
+            {
+                MyUtility.Msg.WarningBox(dualResult.ToString());
+            }
+
+            List<string> list = new List<string>();
+            string filePath = MyUtility.GetValue.Lookup($"select [path] from CustomizedClipPath where TableName = '{tableName}'");
+
+            // 組ClipPath
+            string clippath = MyUtility.GetValue.Lookup($"select ClipPath from System");
+            string saveFilePath = clippath + "\\" + DateTime.Now.ToString("yyyyMM");
+
+            foreach (DataRow dataRow in dt.Rows)
+            {
+                string fileName = dataRow["FileName"].ToString() + Path.GetExtension(dataRow["SourceFile"].ToString());
+                lock (FileDownload_UpData.DownloadFileAsync("http://misap.sportscity.com.tw:16888/api/FileDownload/GetFile", filePath + "\\" + DateTime.Now.ToString("yyyyMM"), fileName, saveFilePath))
+                {
+                }
+            }
+
+            using (var dlg = new Clip(tableName, id, true))
             {
                 dlg.ShowDialog();
+
+                foreach (DataRow dataRow in dt.Rows)
+                {
+                    string fileName = dataRow["FileName"].ToString() + Path.GetExtension(dataRow["SourceFile"].ToString());
+                    string deleteFile = Path.Combine(saveFilePath, fileName);
+                    if (File.Exists(deleteFile))
+                    {
+                        File.Delete(deleteFile);
+                    }
+                }
             }
         }
 
