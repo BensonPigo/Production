@@ -26,6 +26,8 @@
     [TransactionID]    VARCHAR (30)   NULL,
     [QMSMachineID]     VARCHAR (20)   NULL DEFAULT (''),
     [StartTime] DATETIME NULL, 
+    [IsGrandCCanUse] BIT NOT NULL DEFAULT ((0)), 
+    [GrandCCanUseReason] NVARCHAR(300) NOT NULL DEFAULT (''), 
     CONSTRAINT [PK_FIR_Physical] PRIMARY KEY CLUSTERED ([DetailUkey] ASC)
 );
 

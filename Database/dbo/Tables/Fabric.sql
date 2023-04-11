@@ -61,6 +61,7 @@
     [CannotOperateStock]      BIT             CONSTRAINT [DF_Fabric_CannotOperateStock] DEFAULT ((0)) NOT NULL,
     [IsFOC]                   BIT             CONSTRAINT [DF_Fabric_IsFOC] DEFAULT ((0)) NOT NULL,
     [Picture] NVARCHAR(100) NOT NULL DEFAULT (''), 
+    [InspectionGroup]        VARCHAR(1)      CONSTRAINT [DF_Fabric_InspectionGroup] DEFAULT ('') NOT NULL
     CONSTRAINT [PK_Fabric] PRIMARY KEY CLUSTERED ([SCIRefno] ASC)
 );
 

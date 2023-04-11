@@ -145,8 +145,8 @@ outer apply(select ttlSecond_RD = DATEDIFF(Second, StartResolveDate, EndResolveD
 
             if (!this.comboMDivision1.Text.Empty())
             {
-                sqlwhere1.Append("\r\nand B.MDivisionID= @M");
-                sqlwhere2.Append("\r\nand BR.MDivisionID= @M");
+                sqlwhere1.Append("\r\nand Fac.MDivisionID= @M");
+                sqlwhere2.Append("\r\nand Fac.MDivisionID= @M");
                 this.Parameters.Add(new SqlParameter("@Mp", SqlDbType.VarChar, 8) { Value = this.comboMDivision1.Text });
                 declare.Append("\r\ndeclare @M varchar(8) = @Mp");
             }
@@ -171,6 +171,7 @@ outer apply(select ttlSecond_RD = DATEDIFF(Second, StartResolveDate, EndResolveD
             this.Sqlcmd.Append($@"
 select
     SR.FactoryID,
+    Fac.MDivisionID,
     SR.SubProLocationID,
 	SR.InspectionDate,
     O.SewInLine,
@@ -219,6 +220,7 @@ outer apply(SELECT val =  Stuff((select distinct concat( '+',SubprocessId)
                                     from Bundle_Detail_Art bda with (nolock) 
                                     where bda.Bundleno = BD.Bundleno
                                     FOR XML PATH('')),1,1,'') ) Artwork
+outer apply(select MDivisionID from Factory f where f.ID = SR.FactoryID and f.Junk =0) Fac
 {formatJoin}
 outer apply(select ttlSecond = DATEDIFF(Second, SR.AddDate, RepairedDatetime)) ttlSecond
 Where 1=1
@@ -229,6 +231,7 @@ UNION
 
 select
     SR.FactoryID,
+    Fac.MDivisionID,
     SR.SubProLocationID,
 	SR.InspectionDate,
     O.SewInLine,
@@ -278,6 +281,7 @@ outer apply(SELECT val =  Stuff((select distinct concat( '+',SubprocessId)
                                     from Bundle_Detail_Art bda with (nolock) 
                                     where bda.Bundleno = SR.BundleNo
                                     FOR XML PATH('')),1,1,'') ) Artwork
+outer apply(select MDivisionID from Factory f where f.ID = SR.FactoryID and f.Junk =0) Fac
 {formatJoin}
 outer apply(select ttlSecond = DATEDIFF(Second, SR.AddDate, RepairedDatetime)) ttlSecond
 Where 1=1

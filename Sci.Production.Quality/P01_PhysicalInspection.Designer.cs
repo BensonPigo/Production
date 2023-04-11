@@ -69,6 +69,8 @@
             this.txtCustInspNumber = new Sci.Win.UI.TextBox();
             this.txtuserApprover = new Sci.Production.Class.Txtuser();
             this.txtsupplier = new Sci.Production.Class.Txtsupplier();
+            this.label2 = new Sci.Win.UI.Label();
+            this.txtGroup = new Sci.Win.UI.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.btmcont.SuspendLayout();
@@ -208,7 +210,7 @@
             // labelBrandRefno
             // 
             this.labelBrandRefno.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labelBrandRefno.Location = new System.Drawing.Point(16, 102);
+            this.labelBrandRefno.Location = new System.Drawing.Point(15, 102);
             this.labelBrandRefno.Name = "labelBrandRefno";
             this.labelBrandRefno.Size = new System.Drawing.Size(75, 23);
             this.labelBrandRefno.TabIndex = 110;
@@ -237,7 +239,7 @@
             // labelSCIRefno
             // 
             this.labelSCIRefno.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labelSCIRefno.Location = new System.Drawing.Point(16, 132);
+            this.labelSCIRefno.Location = new System.Drawing.Point(15, 132);
             this.labelSCIRefno.Name = "labelSCIRefno";
             this.labelSCIRefno.Size = new System.Drawing.Size(75, 23);
             this.labelSCIRefno.TabIndex = 113;
@@ -354,7 +356,7 @@
             // labelApprover
             // 
             this.labelApprover.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labelApprover.Location = new System.Drawing.Point(16, 163);
+            this.labelApprover.Location = new System.Drawing.Point(15, 196);
             this.labelApprover.Name = "labelApprover";
             this.labelApprover.Size = new System.Drawing.Size(75, 23);
             this.labelApprover.TabIndex = 129;
@@ -365,9 +367,9 @@
             this.displayApprover.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayApprover.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.displayApprover.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayApprover.Location = new System.Drawing.Point(399, 163);
+            this.displayApprover.Location = new System.Drawing.Point(398, 196);
             this.displayApprover.Name = "displayApprover";
-            this.displayApprover.Size = new System.Drawing.Size(197, 21);
+            this.displayApprover.Size = new System.Drawing.Size(189, 21);
             this.displayApprover.TabIndex = 130;
             // 
             // btnToExcel
@@ -478,7 +480,7 @@
             // txtuserApprover
             // 
             this.txtuserApprover.DisplayBox1Binding = "";
-            this.txtuserApprover.Location = new System.Drawing.Point(94, 162);
+            this.txtuserApprover.Location = new System.Drawing.Point(93, 195);
             this.txtuserApprover.Name = "txtuserApprover";
             this.txtuserApprover.Size = new System.Drawing.Size(305, 23);
             this.txtuserApprover.TabIndex = 131;
@@ -493,9 +495,31 @@
             this.txtsupplier.TabIndex = 109;
             this.txtsupplier.TextBox1Binding = "";
             // 
+            // label2
+            // 
+            this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.label2.Location = new System.Drawing.Point(15, 164);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(75, 23);
+            this.label2.TabIndex = 238;
+            this.label2.Text = "Group";
+            // 
+            // txtGroup
+            // 
+            this.txtGroup.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.txtGroup.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.txtGroup.IsSupportEditMode = false;
+            this.txtGroup.Location = new System.Drawing.Point(94, 166);
+            this.txtGroup.Name = "txtGroup";
+            this.txtGroup.ReadOnly = true;
+            this.txtGroup.Size = new System.Drawing.Size(147, 23);
+            this.txtGroup.TabIndex = 239;
+            // 
             // P01_PhysicalInspection
             // 
             this.ClientSize = new System.Drawing.Size(993, 733);
+            this.Controls.Add(this.txtGroup);
+            this.Controls.Add(this.label2);
             this.Controls.Add(this.txtCustInspNumber);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.txtPhysicalInspector);
@@ -585,6 +609,8 @@
             this.Controls.SetChildIndex(this.txtPhysicalInspector, 0);
             this.Controls.SetChildIndex(this.label1, 0);
             this.Controls.SetChildIndex(this.txtCustInspNumber, 0);
+            this.Controls.SetChildIndex(this.label2, 0);
+            this.Controls.SetChildIndex(this.txtGroup, 0);
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).EndInit();
             this.btmcont.ResumeLayout(false);
@@ -636,5 +662,7 @@
         private Win.UI.Label labinspector;
         private Win.UI.Label label1;
         private Win.UI.TextBox txtCustInspNumber;
+        private Win.UI.Label label2;
+        private Win.UI.TextBox txtGroup;
     }
 }
