@@ -228,7 +228,8 @@ where   w.EstCutDate >= @EstCutDateFrom {sqlWhere} and (w.Layer - isnull(acc.Acc
 
 group by w.MDivisionID,o.FtyGroup, f.WeaveTypeID,psd.FinalETA,w.EstCutDate,w.ID,o.BrandID,o.StyleID,
     w.Refno,w.CutRef,w.Cutno,w.FabricCombo,Article.Article,w.ColorID,Artwork.Artwork,Size.Size,
-	w.UnfinishedCuttingReason,o.BuyerDelivery, dw.Name, w.Remark";
+	w.UnfinishedCuttingReason,o.BuyerDelivery, dw.Name, w.Remark
+order by w.FabricCombo asc,w.ID asc,w.EstCutDate asc";
 
             DataTable dtResult;
             DualResult result = DBProxy.Current.Select(null, sqlGetDate, listPar, out dtResult);
