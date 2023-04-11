@@ -1,6 +1,9 @@
 ﻿using Ict;
 using Ict.Win;
+using Microsoft.Reporting.WinForms;
 using Sci.Data;
+using Sci.Production.Prg;
+using Sci.Production.PublicPrg;
 using Sci.Win;
 using System;
 using System.Collections.Generic;
@@ -294,8 +297,11 @@ where id = @MDivision";
                     this.ShowErr(result);
                 }
 
+                int qrCodeWidth = 90;
+                byte[] imageBytes = Prgs.ImageToByte(id.ToBitmapQRcode(qrCodeWidth, qrCodeWidth));
                 string rptTitle = dt.Rows[0]["NameEn"].ToString();
                 ReportDefinition report = new ReportDefinition();
+                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("ImageID", Convert.ToBase64String(imageBytes)));
                 report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("RptTitle", rptTitle));
                 report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("ID", id));
                 report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Remark", remark));

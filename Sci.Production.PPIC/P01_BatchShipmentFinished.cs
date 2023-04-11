@@ -63,7 +63,8 @@ namespace Sci.Production.PPIC
                 .Date("BuyerDelivery", header: "Buyer Delivery", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("POCombo", header: "PO Combo", width: Widths.AnsiChars(50), iseditingreadonly: true)
                 .Text("MCHandle", header: "MCHandle", width: Widths.AnsiChars(20), iseditingreadonly: true)
-                .Text("MaterialLockStatus", header: "Material Lock Status", width: Widths.AnsiChars(5), iseditingreadonly: true);
+                .Text("MaterialLockStatus", header: "Material Lock Status", width: Widths.AnsiChars(5), iseditingreadonly: true)
+                .Text("Junk", header: "Include Cancel Order", width: Widths.AnsiChars(5), iseditingreadonly: true);
         }
 
         // Style#
@@ -317,7 +318,7 @@ select SP = (select ID + ','
             int intRowsStart = 2;
             int dataRowCount = gridData.DefaultView.Count;
             int rownum = 0;
-            object[,] objArray = new object[1, 7];
+            object[,] objArray = new object[1, 8];
             foreach (DataRowView dr in gridData.DefaultView)
             {
                 objArray[0, 0] = dr["POID"];
@@ -327,8 +328,8 @@ select SP = (select ID + ','
                 objArray[0, 4] = dr["POCombo"];
                 objArray[0, 5] = dr["MCHandle"];
                 objArray[0, 6] = dr["MaterialLockStatus"];
-
-                worksheet.Range[string.Format("A{0}:G{0}", intRowsStart + rownum)].Value2 = objArray;
+                objArray[0, 7] = dr["Junk"];
+                worksheet.Range[string.Format("A{0}:H{0}", intRowsStart + rownum)].Value2 = objArray;
                 rownum++;
             }
 
@@ -439,6 +440,7 @@ select Selected = 1
 	   , MCHandle = (o.MCHandle + ' - ' + isnull(p.Name, ''))
 	   , o.Category
 	   , [MaterialLockStatus] = ISNULL(f.MaterialLockStatus, '')
+       ,[Junk] = iif(o.Junk = 1 ,'Y','N')
 from (
 	select * 
 	from #wantToClose

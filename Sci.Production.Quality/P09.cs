@@ -175,7 +175,7 @@ namespace Sci.Production.Quality
             .Text("BrandID", header: "Brand", width: Widths.AnsiChars(8), iseditingreadonly: true)
             .Text("SuppID", header: "Supp", width: Widths.AnsiChars(8), iseditingreadonly: true)
             .Text("AbbEN", header: "Supp Name", width: Widths.AnsiChars(8), iseditingreadonly: true)
-            .Text("Refno", header: "Ref#", width: Widths.AnsiChars(8), iseditingreadonly: true, settings: refno)
+            .Text("BrandRefNo", header: "Ref#", width: Widths.AnsiChars(8), iseditingreadonly: true, settings: refno)
             .Text("WeaveTypeID", header: "Weave Type", width: Widths.AnsiChars(8), iseditingreadonly: true)
 
             .Text("ColorName", header: "Color", width: Widths.AnsiChars(8), iseditingreadonly: true)
@@ -354,9 +354,9 @@ namespace Sci.Production.Quality
                 cols.Add(MyUtility.Convert.GetString(dr["seq"]));
             }
 
-            if (!MyUtility.Check.Empty(dr["Refno"]))
+            if (!MyUtility.Check.Empty(dr["BrandRefNo"]))
             {
-                cols.Add(MyUtility.Convert.GetString(dr["Refno"]));
+                cols.Add(MyUtility.Convert.GetString(dr["BrandRefNo"]));
             }
 
             if (!MyUtility.Check.Empty(dr["ColorID"]))
@@ -571,6 +571,7 @@ select distinct
 	ps.SuppID,
 	Supp.AbbEN,
 	psd.Refno,
+	f.BrandRefNo,
     f.WeaveTypeID,
 	ColorID = isnull(psdsC.SpecValue ,''),
     [ColorName] = c.ColorName,
