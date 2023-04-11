@@ -140,45 +140,53 @@ namespace Sci.Production.Quality
 
             string sqlcmd_TotalRoll = $@"select count(TotalRollnumberTEST.Roll) as TotalRollnumber
                                         from(
-                                        select rvd.poid, rvd.Roll,rvd.Dyelot, fp.Result from Receiving_Detail rvd
-                                        inner join FIR f on f.POID = rvd.PoId and f.SEQ1 = rvd.Seq1 and f.SEQ2 = rvd.Seq2
-                                        left join FIR_Physical fp on fp.ID = f.ID and rvd.Roll = fp.roll and rvd.Dyelot = fp.Dyelot
+                                        select rd.poid, rd.Roll,rd.Dyelot, fp.Result
+                                        from Fir_Physical fp  with(nolock)
+                                        inner join FIR f  with(nolock) on fp.id = f.id 
+                                        inner join Receiving r  with(nolock) on r.id = f.ReceivingID
+                                        inner join Receiving_Detail rd  with(nolock) on rd.Id = r.Id and f.POID = rd.PoId and f.Seq1 = rd.Seq1 and f.Seq2 = rd.Seq2 and rd.Roll = fp.Roll and rd.Dyelot = fp.Dyelot
                                         where 
-                                        rvd.poid = '{this.maindr["POID"].ToString()}' and
-                                        rvd.seq1 = '{this.maindr["Seq1"].ToString()}' and
-                                        rvd.Seq2 = '{this.maindr["Seq2"].ToString()}' and
+                                        f.poid = '{this.maindr["POID"].ToString()}' and
+                                        f.seq1 = '{this.maindr["Seq1"].ToString()}' and
+                                        f.Seq2 = '{this.maindr["Seq2"].ToString()}' and
                                         f.ReceivingID = '{this.maindr["ReceivingID"].ToString()}'
                                         union
-                                        select trfd.poid, trfd.Roll,trfd.Dyelot, fp.Result from TransferIn_Detail trfd
-                                        inner join FIR f on f.POID = trfd.PoId and f.SEQ1 = trfd.Seq1 and f.SEQ2 = trfd.Seq2
-                                        left join FIR_Physical fp on fp.ID = f.ID and trfd.Roll = fp.roll and trfd.Dyelot = fp.Dyelot
+                                        select td.poid, td.Roll,td.Dyelot, fp.Result
+                                        from Fir_Physical fp  with(nolock)
+                                        inner join FIR f  with(nolock) on fp.id = f.id 
+                                        inner join TransferIn t WITH (NOLOCK) on f.ReceivingID = t.Id
+                                        inner join TransferIn_Detail td WITH (NOLOCK) on td.id = t.id and f.POID = td.PoId and f.Seq1 = td.Seq1 and f.Seq2 = td.Seq2 and td.Roll = fp.Roll and td.Dyelot = fp.Dyelot
                                         where 
-                                        trfd.poid = '{this.maindr["POID"].ToString()}' and
-                                        trfd.seq1 = '{this.maindr["Seq1"].ToString()}' and
-                                        trfd.Seq2 = '{this.maindr["Seq2"].ToString()}' and
+                                        f.poid = '{this.maindr["POID"].ToString()}' and
+                                        f.seq1 = '{this.maindr["Seq1"].ToString()}' and
+                                        f.Seq2 = '{this.maindr["Seq2"].ToString()}' and
                                         f.ReceivingID = '{this.maindr["ReceivingID"].ToString()}'
                                         ) TotalRollnumberTEST";
             this.displayTotlalRoll.Text = MyUtility.GetValue.Lookup(sqlcmd_TotalRoll, "Production");
 
             string sqlcmd_InspectedRoll = $@"select count(InspectedRollnumberTEST.Roll) as InspectedRollnumber
                                             from(
-                                            select rvd.poid, rvd.Roll,rvd.Dyelot, fp.Result from Receiving_Detail rvd
-                                            inner join FIR f on f.POID = rvd.PoId and f.SEQ1 = rvd.Seq1 and f.SEQ2 = rvd.Seq2 and f.ReceivingID = rvd.Id
-                                            left join FIR_Physical fp on fp.ID = f.ID and rvd.Roll = fp.roll and rvd.Dyelot = fp.Dyelot
+                                            select rd.poid, rd.Roll,rd.Dyelot, fp.Result
+                                            from Fir_Physical fp  with(nolock)
+                                            inner join FIR f  with(nolock) on fp.id = f.id 
+                                            inner join Receiving r  with(nolock) on r.id = f.ReceivingID
+                                            inner join Receiving_Detail rd  with(nolock) on rd.Id = r.Id and f.POID = rd.PoId and f.Seq1 = rd.Seq1 and f.Seq2 = rd.Seq2 and rd.Roll = fp.Roll and rd.Dyelot = fp.Dyelot
                                             where 
-                                            rvd.poid = '{this.maindr["POID"].ToString()}' and 
-                                            rvd.seq1 = '{this.maindr["Seq1"].ToString()}' and
-                                            rvd.Seq2 = '{this.maindr["Seq2"].ToString()}' and
+                                            f.poid = '{this.maindr["POID"].ToString()}' and
+                                            f.seq1 = '{this.maindr["Seq1"].ToString()}' and
+                                            f.Seq2 = '{this.maindr["Seq2"].ToString()}' and
                                             f.ReceivingID = '{this.maindr["ReceivingID"].ToString()}' and
                                             fp.Result<>'' 
                                             union
-                                            select trfd.poid, trfd.Roll,trfd.Dyelot, fp.Result from TransferIn_Detail trfd
-                                            inner join FIR f on f.POID = trfd.PoId and f.SEQ1 = trfd.Seq1 and f.SEQ2 = trfd.Seq2
-                                            left join FIR_Physical fp on fp.ID = f.ID and trfd.Roll = fp.roll and trfd.Dyelot = fp.Dyelot
+                                            select td.poid, td.Roll,td.Dyelot, fp.Result
+                                            from Fir_Physical fp  with(nolock)
+                                            inner join FIR f  with(nolock) on fp.id = f.id 
+                                            inner join TransferIn t WITH (NOLOCK) on f.ReceivingID = t.Id
+                                            inner join TransferIn_Detail td WITH (NOLOCK) on td.id = t.id and f.POID = td.PoId and f.Seq1 = td.Seq1 and f.Seq2 = td.Seq2 and td.Roll = fp.Roll and td.Dyelot = fp.Dyelot
                                             where 
-                                            trfd.poid = '{this.maindr["POID"].ToString()}' and
-                                            trfd.seq1 = '{this.maindr["Seq1"].ToString()}' and
-                                            trfd.Seq2 = '{this.maindr["Seq2"].ToString()}' and
+                                            f.poid = '{this.maindr["POID"].ToString()}' and
+                                            f.seq1 = '{this.maindr["Seq1"].ToString()}' and
+                                            f.Seq2 = '{this.maindr["Seq2"].ToString()}' and
                                             f.ReceivingID = '{this.maindr["ReceivingID"].ToString()}' and
                                             fp.Result<>''
                                             ) InspectedRollnumberTEST";
@@ -186,44 +194,52 @@ namespace Sci.Production.Quality
 
             string sqlcmd_TotalNumber = $@"select Count(distinct Dyelot) as TotalLotNumber
                                             from(
-                                            select rvd.Dyelot from Receiving_Detail rvd
-                                            inner join FIR f on f.POID = rvd.PoId and f.SEQ1 = rvd.Seq1 and f.SEQ2 = rvd.Seq2 and f.ReceivingID = rvd.Id
-                                            left join FIR_Physical fp on fp.ID = f.ID and rvd.Roll = fp.roll and rvd.Dyelot = fp.Dyelot
+                                            select rd.Dyelot 
+                                            from Fir_Physical fp  with(nolock)
+                                            inner join FIR f with(nolock) on fp.id = f.id 
+                                            inner join Receiving r  with(nolock) on r.id = f.ReceivingID
+                                            inner join Receiving_Detail rd  with(nolock) on rd.Id = r.Id and f.POID = rd.PoId and f.Seq1 = rd.Seq1 and f.Seq2 = rd.Seq2 and rd.Roll = fp.Roll and rd.Dyelot = fp.Dyelot
                                             where 
-                                            rvd.poid = '{this.maindr["POID"].ToString()}' and
-                                            rvd.seq1 = '{this.maindr["Seq1"].ToString()}' and
-                                            rvd.Seq2 = '{this.maindr["Seq2"].ToString()}' and
+                                            f.poid = '{this.maindr["POID"].ToString()}' and
+                                            f.seq1 = '{this.maindr["Seq1"].ToString()}' and
+                                            f.Seq2 = '{this.maindr["Seq2"].ToString()}' and
                                             f.ReceivingID = '{this.maindr["ReceivingID"].ToString()}'
                                             union
-                                            select trfd.Dyelot from TransferIn_Detail trfd
-                                            inner join FIR f on f.POID = trfd.PoId and f.SEQ1 = trfd.Seq1 and f.SEQ2 = trfd.Seq2
-                                            left join FIR_Physical fp on fp.ID = f.ID and trfd.Roll = fp.roll and trfd.Dyelot = fp.Dyelot
+                                            select td.Dyelot
+                                            from Fir_Physical fp  with(nolock)
+                                            inner join FIR f  with(nolock) on fp.id = f.id 
+                                            inner join TransferIn t WITH (NOLOCK) on f.ReceivingID = t.Id
+                                            inner join TransferIn_Detail td WITH (NOLOCK) on td.id = t.id and f.POID = td.PoId and f.Seq1 = td.Seq1 and f.Seq2 = td.Seq2 and td.Roll = fp.Roll and td.Dyelot = fp.Dyelot
                                             where 
-                                            trfd.poid = '{this.maindr["POID"].ToString()}' and
-                                            trfd.seq1 = '{this.maindr["Seq1"].ToString()}' and
-                                            trfd.Seq2 = '{this.maindr["Seq2"].ToString()}' and
+                                            f.poid = '{this.maindr["POID"].ToString()}' and
+                                            f.seq1 = '{this.maindr["Seq1"].ToString()}' and
+                                            f.Seq2 = '{this.maindr["Seq2"].ToString()}' and
                                             f.ReceivingID = '{this.maindr["ReceivingID"].ToString()}') TotalLotNumberTEST";
             this.displayTotalLot.Text = MyUtility.GetValue.Lookup(sqlcmd_TotalNumber, "Production");
 
             string sqlcmd_InspectedLot = $@"select Count(distinct Dyelot) as InspectedLotNumber
                                             from(
-                                            select rvd.Dyelot from Receiving_Detail rvd
-                                            inner join FIR f on f.POID = rvd.PoId and f.SEQ1 = rvd.Seq1 and f.SEQ2 = rvd.Seq2 and f.ReceivingID = rvd.Id
-                                            left join FIR_Physical fp on fp.ID = f.ID and rvd.Roll = fp.roll and rvd.Dyelot = fp.Dyelot
+                                            select rd.Dyelot 
+                                            from Fir_Physical fp  with(nolock)
+                                            inner join FIR f  with(nolock) on fp.id = f.id 
+                                            inner join Receiving r  with(nolock) on r.id = f.ReceivingID
+                                            inner join Receiving_Detail rd  with(nolock) on rd.Id = r.Id and f.POID = rd.PoId and f.Seq1 = rd.Seq1 and f.Seq2 = rd.Seq2 and rd.Roll = fp.Roll and rd.Dyelot = fp.Dyelot
                                             where 
-                                            rvd.poid = '{this.maindr["POID"].ToString()}' and
-                                            rvd.seq1 = '{this.maindr["Seq1"].ToString()}' and
-                                            rvd.Seq2 = '{this.maindr["Seq2"].ToString()}' and
+                                            f.poid = '{this.maindr["POID"].ToString()}' and
+                                            f.seq1 = '{this.maindr["Seq1"].ToString()}' and
+                                            f.Seq2 = '{this.maindr["Seq2"].ToString()}' and
                                             f.ReceivingID = '{this.maindr["ReceivingID"].ToString()}' and
                                             fp.Result<>''
                                             union
-                                            select trfd.Dyelot from TransferIn_Detail trfd
-                                            inner join FIR f on f.POID = trfd.PoId and f.SEQ1 = trfd.Seq1 and f.SEQ2 = trfd.Seq2
-                                            left join FIR_Physical fp on fp.ID = f.ID and trfd.Roll = fp.roll and trfd.Dyelot = fp.Dyelot
+                                            select td.Dyelot
+                                            from Fir_Physical fp  with(nolock)
+                                            inner join FIR f  with(nolock) on fp.id = f.id 
+                                            inner join TransferIn t WITH (NOLOCK) on f.ReceivingID = t.Id
+                                            inner join TransferIn_Detail td WITH (NOLOCK) on td.id = t.id and f.POID = td.PoId and f.Seq1 = td.Seq1 and f.Seq2 = td.Seq2 and td.Roll = fp.Roll and td.Dyelot = fp.Dyelot
                                             where 
-                                            trfd.poid = '{this.maindr["POID"].ToString()}' and
-                                            trfd.seq1 = '{this.maindr["Seq1"].ToString()}' and
-                                            trfd.Seq2 = '{this.maindr["Seq2"].ToString()}' and
+                                            f.poid = '{this.maindr["POID"].ToString()}' and
+                                            f.seq1 = '{this.maindr["Seq1"].ToString()}' and
+                                            f.Seq2 = '{this.maindr["Seq2"].ToString()}' and
                                             f.ReceivingID = '{this.maindr["ReceivingID"].ToString()}' and
                                             fp.Result<>'') InspectedLotNumberTEST";
             this.displayInspectedLot.Text = MyUtility.GetValue.Lookup(sqlcmd_InspectedLot, "Production");
