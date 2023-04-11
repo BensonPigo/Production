@@ -182,7 +182,7 @@
     <Compile Include="ExcelFileNameExtension.cs" />
     <Compile Include="ExtendedMethods\DBWarpperExtension.cs" />
     <Compile Include="ExtendedMethods\MiscExtensions.cs" />
-    <Compile Include="HTTPFileDownloadANDUpData.cs" />
+    <Compile Include="FileDownload_UpData.cs" />
     <Compile Include="InchTextBox.cs">
       <SubType>Component</SubType>
     </Compile>
