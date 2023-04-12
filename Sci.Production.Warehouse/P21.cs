@@ -150,9 +150,11 @@ namespace Sci.Production.Warehouse
                  .Text("Roll", header: "Roll#", width: Widths.AnsiChars(8), iseditingreadonly: true)
                  .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(8), iseditingreadonly: true)
                  .Button(propertyname: "Barcode", header: "Print Barcode", width: Widths.AnsiChars(16), onclick: this.PrintBarcode)
-                 .Text("Refno", header: "Ref#", width: Widths.AnsiChars(8), iseditingreadonly: true)
+                 .Text("Refno", header: "Ref#", width: Widths.AnsiChars(12), iseditingreadonly: true)
+                 .Numeric("Relaxtime", header: "Relaxtime\n(Hours)", width: Widths.AnsiChars(10), decimal_places: 2, integer_places: 7, iseditingreadonly: true)
                  .Text("Stocktransfer", header: "Stock Transfer", width: Widths.AnsiChars(8), iseditingreadonly: true)
                  .Text("Color", header: "Color", width: Widths.AnsiChars(6), iseditingreadonly: true)
+                 .Text("ColorName", header: "Color Name", width: Widths.AnsiChars(10), iseditingreadonly: true)
                  .Numeric("StockQty", header: "Qty", width: Widths.AnsiChars(10), decimal_places: 2, integer_places: 10, iseditingreadonly: true)
                  .Text("StockTypeDesc", header: "Stock Type", width: Widths.AnsiChars(8), iseditingreadonly: true)
                  .DateTime("CutShadebandTime", header: "Cut Shadeband Time", width: Widths.AnsiChars(20), iseditingreadonly: false)
@@ -271,8 +273,8 @@ namespace Sci.Production.Warehouse
 
             if (!MyUtility.Check.Empty(this.txtColor.Text))
             {
-                sqlWhere += $" and (psd.SuppColor = '{this.txtColor.Text}' or psd.ColorID = '{this.txtColor.Text}')";
-                sqlWhere2 += $" and (psd.SuppColor = '{this.txtColor.Text}' or psd.ColorID = '{this.txtColor.Text}')";
+                sqlWhere += $" and (psd.SuppColor = '{this.txtColor.Text}' or isnull(psdsC.SpecValue, '') = '{this.txtColor.Text}')";
+                sqlWhere2 += $" and (psd.SuppColor = '{this.txtColor.Text}' or isnull(psdsC.SpecValue, '') = '{this.txtColor.Text}')";
             }
 
             if (!MyUtility.Check.Empty(this.txtRoll.Text))
@@ -419,7 +421,7 @@ from
 		,[OrderSeq2] = cast(ROW_NUMBER() over(order by r.ExportID, rd.Id, rd.EncodeSeq, rd.PoId, rd.Seq1, rd.Seq2, rd.Roll, rd.Dyelot) as int)	
         ,fb.MtlTypeID
 		,psd.SuppColor
-		,psd.ColorID
+		,ColorID = isnull(psdsC.SpecValue, '')
         ,fp.Inspector
         ,[InspDate] = Format(fp.InspDate, 'yyyy/MM/dd')
         ,[FirRemark] = fp.Remark
@@ -427,6 +429,8 @@ from
         ,OldReceivingRemark = rd.remark
         ,ReceivingRemark = rd.remark
         ,WhseArrival = r.WhseArrival
+        ,[ColorName] = c.Name
+        ,[Relaxtime] = rel.Relaxtime
     from  Receiving r with (nolock)
     inner join Receiving_Detail rd with (nolock) on r.ID = rd.ID
     inner join View_WH_Orders o with (nolock) on o.ID = rd.POID 
@@ -438,6 +442,7 @@ from
                                                     rd.Roll = fi.Roll and
                                                     rd.Dyelot  = fi.Dyelot and
                                                     rd.StockType = fi.StockType
+    left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
     left join #tmpStockType st with (nolock) on st.ID = rd.StockType
     left join FIR with (nolock) on  FIR.ReceivingID = rd.ID and 
                                     FIR.POID = rd.POID and 
@@ -446,6 +451,7 @@ from
     left join FIR_Physical fp with (nolock) on  fp.ID = FIR.ID and
                                                 fp.Roll = rd.Roll and
                                                 fp.Dyelot = rd.Dyelot
+    left join Color c with(nolock) on c.ID = isnull(psdsC.SpecValue, '') and c.BrandId = psd.BrandId
     OUTER APPLY(
 
 	    SELECT [MtlLocationID] = STUFF(
@@ -468,7 +474,14 @@ from
                          from   WHBarcodeTransaction wbt with (nolock)
                          where  wbt.TransactionUkey = rd.Ukey and
                                 wbt.Action = 'Confirm'
-                         order by CommitTime desc) Barcode
+                         order by CommitTime desc
+    ) Barcode
+    outer apply(
+       select fr.Relaxtime
+        from [ExtendServer].[ManufacturingExecution].[dbo].RefnoRelaxtime rr
+        inner join [ExtendServer].[ManufacturingExecution].[dbo].FabricRelaxation fr on rr.FabricRelaxationID = fr.ID
+        where rr.Refno = psd.Refno
+    ) Rel
     where r.MDivisionID  = '{Env.User.Keyword}'
     AND psd.FabricType ='F'
     {sqlWhere}
@@ -516,7 +529,7 @@ from
 		,[OrderSeq2] = cast(ROW_NUMBER() over(order by t.ID, td.PoId, td.Seq1, td.Seq2, td.Roll, td.Dyelot) as int)
         ,fb.MtlTypeID
 		,psd.SuppColor
-		,psd.ColorID
+		,ColorID = isnull(psdsC.SpecValue, '')
         ,fp.Inspector
         ,[InspDate] = Format(fp.InspDate, 'yyyy/MM/dd hh:mmtt')
         ,[FirRemark] = fp.Remark
@@ -524,6 +537,8 @@ from
         ,OldReceivingRemark = td.Remark
         ,ReceivingRemark = td.Remark
         ,WhseArrival = t.IssueDate
+        ,[ColorName] = c.Name
+        ,[Relaxtime] = rel.Relaxtime
     FROM TransferIn t with (nolock)
     INNER JOIN TransferIn_Detail td with (nolock) ON t.ID = td.ID
     INNER JOIN View_WH_Orders o with (nolock) ON o.ID = td.POID
@@ -535,6 +550,7 @@ from
                                                     td.Roll = fi.Roll and
                                                     td.Dyelot  = fi.Dyelot and
                                                     td.StockType = fi.StockType
+    left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
     INNER JOIN #tmpStockType st with (nolock) on st.ID = td.StockType
     left join FIR with (nolock) on  FIR.ReceivingID = td.ID and 
                                     FIR.POID = td.POID and 
@@ -543,6 +559,7 @@ from
     left join FIR_Physical fp with (nolock) on  fp.ID = FIR.ID and
                                                 fp.Roll = td.Roll and
                                                 fp.Dyelot = td.Dyelot
+    left join Color c with(nolock) on c.ID = isnull(psdsC.SpecValue, '') and c.BrandId = psd.BrandId
     OUTER APPLY(
 
 	    SELECT [MtlLocationID] = STUFF(
@@ -565,7 +582,14 @@ from
                          from   WHBarcodeTransaction wbt with (nolock)
                          where  wbt.TransactionUkey = td.Ukey and
                                 wbt.Action = 'Confirm'
-                         order by CommitTime desc) Barcode
+                         order by CommitTime desc
+    ) Barcode
+    outer apply(
+        select fr.Relaxtime
+        from [ExtendServer].[ManufacturingExecution].[dbo].RefnoRelaxtime rr
+        inner join [ExtendServer].[ManufacturingExecution].[dbo].FabricRelaxation fr on rr.FabricRelaxationID = fr.ID
+        where rr.Refno = psd.Refno
+    ) Rel
     WHERE t.Status='Confirmed' 
     AND t.MDivisionID  = '{Env.User.Keyword}'
     AND psd.FabricType ='F'

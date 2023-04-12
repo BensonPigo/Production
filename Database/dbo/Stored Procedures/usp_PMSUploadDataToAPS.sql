@@ -1,6 +1,5 @@
 ﻿
 
-
 CREATE PROCEDURE [dbo].[usp_PMSUploadDataToAPS]
 
 AS
@@ -253,7 +252,7 @@ set DELF=''Y'',
 FROM '+@SerDbDboTb+N' t
 where 
 not exists(select 1 from #tmp2 s where t.RCID collate Chinese_Taiwan_Stroke_CI_AS =s.sRCID)
-and CONVERT(date, t.OTDD collate Chinese_Taiwan_Stroke_CI_AS) >= DATEADD(DAY, -15, GETDATE())
+and CONVERT(date, t.OTDD collate Chinese_Taiwan_Stroke_CI_AS) >= DATEADD(DAY, -7, GETDATE())
 and DELF <> ''Y''
 
 IF OBJECT_ID(''tempdb.dbo.#tmp'', ''U'') IS NOT NULL DROP TABLE #tmp2

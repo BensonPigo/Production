@@ -9,6 +9,7 @@
     [EditDate]  DATETIME        NULL,
     [SysDate]   DATETIME        NULL, 
     [CurrencyID] VARCHAR(3) NOT NULL DEFAULT (''), 
+    [ExVoucherID] VARCHAR(16)   CONSTRAINT [DF_Debit_Schedule_ExVoucherID] DEFAULT ('') NULL, 
     CONSTRAINT [PK_Debit_Schedule] PRIMARY KEY ([ID], [IssueDate])
 );
 
@@ -58,3 +59,13 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'系統日�
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'工廠沖帳傳票號碼', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Debit_Schedule', @level2type = N'COLUMN', @level2name = N'VoucherID';
 
+
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'外帳傳票ID',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'Debit_Schedule',
+    @level2type = N'COLUMN',
+    @level2name = N'ExVoucherID'

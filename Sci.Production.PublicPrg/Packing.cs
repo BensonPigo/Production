@@ -2376,6 +2376,8 @@ select  pd.ID
         , o.StyleID
         , o.BrandFTYCode
         , p.Dest
+        , [NewSizeCode] = case  when checkMixSize.value > 1 then 'Mix'
+						        else isnull(NewSizeCode.val, pd.SizeCode) end
 from PackingList_Detail pd WITH (NOLOCK) 
 inner join PackingList p with (nolock) on p.ID = pd.ID
 left join orders o with(nolock) on o.id = pd.OrderID
@@ -2388,6 +2390,13 @@ outer apply (
 			  and pd.CTNStartNo = checkPD.CTNStartNo
 	) distinctSize
 ) checkMixSize
+outer apply (
+	    select [val] = stuff((select ('/'+isnull(z.SizeSpec, x.SizeSpec)) 
+	    from PackingList_Detail pd2 with (nolock)
+	    outer apply(select SizeSpec from Order_SizeSpec os with (nolock) where os.SizeCode = pd2.SizeCode and os.id = o.poid and os.SizeItem = 'S01')x
+		outer apply(select SizeSpec from Order_SizeSpec_OrderCombo oso with (nolock) where oso.SizeCode = pd2.SizeCode and oso.id = o.poid and oso.OrderComboID = o.OrderComboID and SizeItem = 'S01')z
+	    where pd2.id = pd.id and pd2.CTNStartNo = pd.CTNStartNo for xml path('')),1,1,'')
+    ) NewSizeCode
 outer apply (
     select value = sum (ShipQty)
     from PackingList_Detail checkPD With (NoLock)
@@ -2529,7 +2538,7 @@ select BuyerDelivery = stuff((
                         worksheet.Cells[k, 3] = dT.Rows[j]["SizeCode"];
                         worksheet.Cells[k, 4] = dT.Rows[j]["ShipQty"];
 
-                        if (MyUtility.Check.Empty(dT.Rows[j]["MDScanDate"]))
+                        if (MyUtility.Check.Empty(dT.Rows[j]["DryRoomMDScanDate"]))
                         {
                             continue;
                         }
@@ -2595,9 +2604,9 @@ select  pd.CTNStartNo,
         a.SizeCode,
         b.ShipQty,
         o.CustPONo,
-        [Result] = IIF(sum(isnull(pd.MDFailQty, 0)) = 0, 'Pass', 'Fail'),
+        [Result] = IIF(sum(isnull(pd.DryRoomMDFailQty, 0)) = 0, 'Pass', 'Fail'),
         [Signature] = Signature.Name,
-        pd.MDScanDate
+        pd.DryRoomMDScanDate
 from PackingList_Detail pd
 left join orders o on o.id = pd.OrderID
 outer apply(
@@ -2619,10 +2628,10 @@ outer apply(
 	for xml path('')),1,1,'')
 )b
 outer apply(
-    select Name from pass1 with (nolock) where ID = pd.MDScanName
+    select Name from pass1 with (nolock) where ID = pd.DryRoomMDScanName
 ) Signature
 where pd.id = '{packingListID}' and o.CustPONo = '{custPONoDT.Rows[i]["CustPONo"]}'
-group by CTNStartNo,a.SizeCode,b.ShipQty,o.CustPONo,Signature.Name,pd.MDScanDate
+group by CTNStartNo,a.SizeCode,b.ShipQty,o.CustPONo,Signature.Name,pd.DryRoomMDScanDate
 order by min(pd.seq)
 ");
             }

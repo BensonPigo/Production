@@ -189,7 +189,7 @@ where POID='{0}'
     a.SCIRefno, 
     b.CrockingEncode,b.HeatEncode,b.WashEncode,
     ArriveQty,
-	Colorid = (Select d.colorid from PO_Supp_Detail d WITH (NOLOCK) Where d.id = a.poid and d.seq1 = a.seq1 and d.seq2 = a.seq2),
+	Colorid = (Select isnull(SpecValue ,'') from PO_Supp_Detail_Spec d WITH (NOLOCK) Where d.id = a.poid and d.seq1 = a.seq1 and d.seq2 = a.seq2  and SpecColumnID = 'Color'),
     Supplier = (select concat(Suppid,f.AbbEN) as supplier from Supp f WITH (NOLOCK) where a.Suppid=f.ID),
     b.ReceiveSampleDate,b.InspDeadline,b.Result,b.Crocking,b.nonCrocking,b.CrockingDate,b.nonHeat,Heat,b.HeatDate,
     b.nonWash,b.Wash,b.WashDate,a.ReceivingID

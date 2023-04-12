@@ -501,13 +501,13 @@ select
 ,[NikeDefectCodeID] = gdf.NikeDefectCodeID
 ,[Qty] = cfad.Qty
 ,[Result] = cfa.Result
-,[row] =  ROW_NUMBER() over(partition by cfad.ID order by gdf.NikeDefectCodeID )
+,[row] = iif(isnull(gdf.NikeDefectCodeID,1) = 1 ,1 , ROW_NUMBER() over(partition by cfad.ID order by gdf.NikeDefectCodeID asc))
 into #tmpMain
 FROM CFAInspectionRecord cfa
 inner join CFAInspectionRecord_OrderSEQ cfao on cfao.ID = cfa.id 
 inner join orders o on o.id = cfao.OrderID
-inner join CFAInspectionRecord_Detail cfad on cfad.ID = cfa.ID
-inner join GarmentDefectCode gdf on gdf.id = cfad.GarmentDefectCodeID
+left join CFAInspectionRecord_Detail cfad on cfad.ID = cfa.ID
+left join GarmentDefectCode gdf on gdf.id = cfad.GarmentDefectCodeID
 left join Pass1 p on p.ID = cfa.CFA
 outer apply(
 	select ArticleList = Stuff((

@@ -79,6 +79,7 @@
             this.label1 = new Sci.Win.UI.Label();
             this.displayMoisture = new Sci.Win.UI.DisplayBox();
             this.labelMoisture = new Sci.Win.UI.Label();
+            this.btnShadeBandStock = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -95,6 +96,7 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.btnShadeBandStock);
             this.masterpanel.Controls.Add(this.txtLocateforWK);
             this.masterpanel.Controls.Add(this.labelLocateforWK);
             this.masterpanel.Controls.Add(this.txtSEQ1);
@@ -124,7 +126,7 @@
             this.masterpanel.Controls.Add(this.labelSeason);
             this.masterpanel.Controls.Add(this.labelStyle);
             this.masterpanel.Controls.Add(this.labelSP);
-            this.masterpanel.Size = new System.Drawing.Size(886, 188);
+            this.masterpanel.Size = new System.Drawing.Size(1004, 188);
             this.masterpanel.Controls.SetChildIndex(this.labelSP, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelStyle, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelSeason, 0);
@@ -155,11 +157,12 @@
             this.masterpanel.Controls.SetChildIndex(this.txtSEQ1, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelLocateforWK, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtLocateforWK, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnShadeBandStock, 0);
             // 
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 188);
-            this.detailpanel.Size = new System.Drawing.Size(886, 442);
+            this.detailpanel.Size = new System.Drawing.Size(1004, 442);
             // 
             // gridicon
             // 
@@ -171,7 +174,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(886, 442);
+            this.detailgridcont.Size = new System.Drawing.Size(1004, 442);
             // 
             // detail2
             // 
@@ -187,11 +190,11 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(886, 668);
+            this.detail.Size = new System.Drawing.Size(1004, 668);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(886, 630);
+            this.detailcont.Size = new System.Drawing.Size(1004, 630);
             // 
             // detailbtm
             // 
@@ -212,7 +215,7 @@
             this.detailbtm.Controls.Add(this.displayavailablemodified);
             this.detailbtm.Controls.Add(this.labelavailablemodified);
             this.detailbtm.Location = new System.Drawing.Point(0, 630);
-            this.detailbtm.Size = new System.Drawing.Size(886, 38);
+            this.detailbtm.Size = new System.Drawing.Size(1004, 38);
             this.detailbtm.Controls.SetChildIndex(this.lbleditby, 0);
             this.detailbtm.Controls.SetChildIndex(this.lblcreateby, 0);
             this.detailbtm.Controls.SetChildIndex(this.editby, 0);
@@ -237,11 +240,11 @@
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(886, 668);
+            this.browse.Size = new System.Drawing.Size(1004, 668);
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(894, 697);
+            this.tabs.Size = new System.Drawing.Size(1012, 697);
             // 
             // createby
             // 
@@ -754,9 +757,19 @@
             this.labelMoisture.Text = "Moisture";
             this.labelMoisture.TextStyle.Color = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             // 
+            // btnShadeBandStock
+            // 
+            this.btnShadeBandStock.Location = new System.Drawing.Point(811, 15);
+            this.btnShadeBandStock.Name = "btnShadeBandStock";
+            this.btnShadeBandStock.Size = new System.Drawing.Size(181, 30);
+            this.btnShadeBandStock.TabIndex = 160;
+            this.btnShadeBandStock.Text = "Shade Band of Stock";
+            this.btnShadeBandStock.UseVisualStyleBackColor = true;
+            this.btnShadeBandStock.Click += new System.EventHandler(this.BtnShadeBandStock_Click);
+            // 
             // P01
             // 
-            this.ClientSize = new System.Drawing.Size(894, 730);
+            this.ClientSize = new System.Drawing.Size(1012, 730);
             this.DefaultControlForEdit = "txtLocateforWK";
             this.DefaultDetailOrder = "seq1,seq2,Receivingid";
             this.DefaultOrder = "id";
@@ -850,5 +863,6 @@
         private Win.UI.Label label1;
         private Win.UI.DisplayBox displayMoisture;
         private Win.UI.Label labelMoisture;
+        private Win.UI.Button btnShadeBandStock;
     }
 }

@@ -18,37 +18,37 @@
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'����H��', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'SewingOutput_DailyUnlock', @level2type = N'COLUMN', @level2name = N'UnLockName';
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'解鎖人員', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'SewingOutput_DailyUnlock', @level2type = N'COLUMN', @level2name = N'UnLockName';
 
 
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'������', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'SewingOutput_DailyUnlock', @level2type = N'COLUMN', @level2name = N'UnLockDate';
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'解鎖日期', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'SewingOutput_DailyUnlock', @level2type = N'COLUMN', @level2name = N'UnLockDate';
 
 
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'���X����ݨD�H��', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'SewingOutput_DailyUnlock', @level2type = N'COLUMN', @level2name = N'RequestName';
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'提出解鎖需求人員', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'SewingOutput_DailyUnlock', @level2type = N'COLUMN', @level2name = N'RequestName';
 
 
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'���X����ݨD���', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'SewingOutput_DailyUnlock', @level2type = N'COLUMN', @level2name = N'RequestDate';
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'提出解鎖需求日期', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'SewingOutput_DailyUnlock', @level2type = N'COLUMN', @level2name = N'RequestDate';
 
 
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'�Ƶ�', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'SewingOutput_DailyUnlock', @level2type = N'COLUMN', @level2name = N'Remark';
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'備註', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'SewingOutput_DailyUnlock', @level2type = N'COLUMN', @level2name = N'Remark';
 
 
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'��]�N�X', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'SewingOutput_DailyUnlock', @level2type = N'COLUMN', @level2name = N'ReasonID';
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'原因代碼', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'SewingOutput_DailyUnlock', @level2type = N'COLUMN', @level2name = N'ReasonID';
 
 
 

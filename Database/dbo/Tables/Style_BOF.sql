@@ -1,21 +1,24 @@
 ﻿CREATE TABLE [dbo].[Style_BOF] (
     [StyleUkey]         BIGINT         CONSTRAINT [DF_Style_BOF_StyleUkey] DEFAULT ((0)) NOT NULL,
     [FabricCode]        VARCHAR (3)    CONSTRAINT [DF_Style_BOF_FabricCode] DEFAULT ('') NOT NULL,
-    [Refno]             VARCHAR (20)   CONSTRAINT [DF_Style_BOF_Refno] DEFAULT ('') NULL,
+    [Refno]             VARCHAR (36)   CONSTRAINT [DF_Style_BOF_Refno] DEFAULT ('') NULL,
     [SCIRefno]          VARCHAR (30)   CONSTRAINT [DF_Style_BOF_SCIRefno] DEFAULT ('') NULL,
     [Kind]              VARCHAR (1)    CONSTRAINT [DF_Style_BOF_Kind] DEFAULT ('') NULL,
     [Ukey]              BIGINT         CONSTRAINT [DF_Style_BOF_Ukey] DEFAULT ((0)) NOT NULL,
     [SuppIDBulk]        VARCHAR (6)    CONSTRAINT [DF_Style_BOF_SuppIDBulk] DEFAULT ('') NULL,
     [SuppIDSample]      VARCHAR (6)    CONSTRAINT [DF_Style_BOF_SuppIDSample] DEFAULT ('') NULL,
-    [ConsPc]            NUMERIC (8, 4) NULL,
+    [ConsPc]            NUMERIC (12, 4) NULL,
     [MatchFabric]       VARCHAR (1)    NULL,
     [HRepeat]           NUMERIC (7, 4) NULL,
     [VRepeat]           NUMERIC (7, 4) NULL,
     [OneTwoWay]         VARCHAR (1)    NULL,
     [HorizontalCutting] BIT            NULL,
     [VRepeat_C]         NUMERIC (7, 4) NULL,
+    [Special]           BIT            CONSTRAINT [DF_Style_BOF_Special] DEFAULT ((0)) NOT NULL,
     CONSTRAINT [PK_Style_BOF_1] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
+
+
 
 
 

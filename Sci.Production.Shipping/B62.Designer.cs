@@ -228,24 +228,24 @@
             // 
             // labSCIRef
             // 
-            this.labSCIRef.Location = new System.Drawing.Point(33, 46);
+            this.labSCIRef.Location = new System.Drawing.Point(352, 44);
             this.labSCIRef.Name = "labSCIRef";
-            this.labSCIRef.Size = new System.Drawing.Size(136, 23);
+            this.labSCIRef.Size = new System.Drawing.Size(107, 23);
             this.labSCIRef.TabIndex = 19;
             this.labSCIRef.Text = "SCIRefNo";
             this.labSCIRef.TextStyle.Alignment = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // txtSCIRefno
             // 
-            this.txtSCIRefno.BackColor = System.Drawing.Color.White;
+            this.txtSCIRefno.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.txtSCIRefno.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "RefNo", true));
-            this.txtSCIRefno.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtSCIRefno.Location = new System.Drawing.Point(172, 46);
+            this.txtSCIRefno.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.txtSCIRefno.IsSupportEditMode = false;
+            this.txtSCIRefno.Location = new System.Drawing.Point(462, 44);
             this.txtSCIRefno.Name = "txtSCIRefno";
+            this.txtSCIRefno.ReadOnly = true;
             this.txtSCIRefno.Size = new System.Drawing.Size(151, 23);
             this.txtSCIRefno.TabIndex = 20;
-            this.txtSCIRefno.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtSCIRefno_PopUp);
-            this.txtSCIRefno.Validating += new System.ComponentModel.CancelEventHandler(this.TxtSCIRefno_Validating);
             // 
             // txtDesc
             // 
@@ -300,20 +300,21 @@
             // 
             // txtRefno
             // 
-            this.txtRefno.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.txtRefno.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.txtRefno.IsSupportEditMode = false;
-            this.txtRefno.Location = new System.Drawing.Point(462, 46);
+            this.txtRefno.BackColor = System.Drawing.Color.White;
+            this.txtRefno.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "vk_Refno", true));
+            this.txtRefno.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtRefno.Location = new System.Drawing.Point(172, 44);
             this.txtRefno.Name = "txtRefno";
-            this.txtRefno.ReadOnly = true;
             this.txtRefno.Size = new System.Drawing.Size(151, 23);
             this.txtRefno.TabIndex = 84;
+            this.txtRefno.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtRefno_PopUp);
+            this.txtRefno.Validating += new System.ComponentModel.CancelEventHandler(this.TxtRefno_Validating);
             // 
             // labRefno
             // 
-            this.labRefno.Location = new System.Drawing.Point(352, 46);
+            this.labRefno.Location = new System.Drawing.Point(33, 44);
             this.labRefno.Name = "labRefno";
-            this.labRefno.Size = new System.Drawing.Size(107, 23);
+            this.labRefno.Size = new System.Drawing.Size(136, 23);
             this.labRefno.TabIndex = 83;
             this.labRefno.Text = "RefNo";
             this.labRefno.TextStyle.Alignment = System.Drawing.ContentAlignment.MiddleRight;

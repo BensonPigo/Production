@@ -1,12 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Diagnostics;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using Ict;
 using Ict.Win;
 using Sci.Data;
+using Sci.Production.PublicForm;
 
 namespace Sci.Production.Planning
 {
@@ -61,6 +64,59 @@ namespace Sci.Production.Planning
         /// <returns>bool</returns>
         protected override bool ClickSaveBefore()
         {
+            this.gridArtworkType.ValidateControl();
+            DataTable errorTable = new DataTable("errorTable");
+            errorTable.Columns.Add("Artwork Type");
+            errorTable.Columns.Add("Article");
+            errorTable.Columns.Add("Artwork");
+            errorTable.Columns.Add("Artwork Name");
+            errorTable.Columns.Add("Cut Part");
+            errorTable.Columns.Add("Supplier");
+            errorTable.Columns.Add("Name");
+            errorTable.Columns.Add("Size");
+            errorTable.Columns.Add("Taipei Price");
+            errorTable.Columns.Add("Local Price");
+
+            var list = ((DataTable)this.detailgridbs.DataSource).AsEnumerable().Where(s => s.RowState == DataRowState.Added || s.RowState == DataRowState.Detached);
+            for (int i = 0; i < this.gridArtworkType.RowCount; i++)
+            {
+                DataRow gridArtworkTypedataRow = this.gridArtworkType.GetDataRow(i);
+                if (list != null)
+                {
+                    foreach (DataRow dataRow in list)
+                    {
+                        if (MyUtility.Convert.GetDecimal(dataRow["Price"]) > MyUtility.Convert.GetDecimal(gridArtworkTypedataRow["Cost"])
+                        && MyUtility.Convert.GetString(dataRow["UKEY"]) == MyUtility.Convert.GetString(gridArtworkTypedataRow["UKEY"])
+                        && MyUtility.Check.Empty(dataRow["Remark"]))
+                        {
+                            DataRow workRow = errorTable.NewRow();
+                            workRow["Artwork Type"] = gridArtworkTypedataRow["artworktypeid"];
+                            workRow["Article"] = gridArtworkTypedataRow["article"];
+                            workRow["Artwork"] = gridArtworkTypedataRow["artworkid"];
+                            workRow["Artwork Name"] = gridArtworkTypedataRow["artworkname"];
+                            workRow["Cut Part"] = gridArtworkTypedataRow["patterncode"];
+                            workRow["Supplier"] = dataRow["localsuppid"];
+                            workRow["Name"] = dataRow["suppname"];
+                            workRow["Size"] = dataRow["SizeCode"];
+                            workRow["Taipei Price"] = gridArtworkTypedataRow["Cost"];
+                            workRow["Local Price"] = dataRow["price"];
+                            errorTable.Rows.Add(workRow);
+                        }
+                    }
+                }
+            }
+
+            if (errorTable.Rows.Count != 0)
+            {
+                string msg = "Local Quotation has exceeded Taipei Quotation and no reason entered, are you sure you want to saving?\r\nPlease refer to the list below.";
+                MessageYESNO win = new MessageYESNO(msg, errorTable, "Warning");
+                win.ShowDialog(this);
+                if (!win.isYN)
+                {
+                    return false;
+                }
+            }
+
             this.detailgridbs.Filter = string.Empty;
             StringBuilder warningmsg = new StringBuilder();
             foreach (DataRow row in this.DetailDatas)
@@ -279,7 +335,10 @@ order by Seq ASC
             .Date("wash", header: "Wash Test", width: Widths.AnsiChars(10))
             .Date("mockup", header: "Mockup Test", width: Widths.AnsiChars(10))
             .ComboBox("priceApv", header: "Price Approve").Get(out col_PriceApv)
+            .Text("Remark", header: "Remark", width: Widths.AnsiChars(10))
             ;
+            this.detailgrid.Columns["Remark"].DefaultCellStyle.BackColor = Color.Pink;
+            this.detailgrid.Columns["Remark"].DefaultCellStyle.ForeColor = Color.Red;
             #endregion 欄位設定
 
             col_PriceApv.DataSource = new BindingSource(comboBox1_RowSource, null);

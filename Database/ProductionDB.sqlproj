@@ -1628,7 +1628,7 @@
       <AnsiNulls>On</AnsiNulls>
       <QuotedIdentifier>On</QuotedIdentifier>
     </Build>
-    <Build Include="dbo\Tables\MDevisionPoDetail.sql" />
+    <Build Include="dbo\Tables\MDivisionPoDetail.sql" />
     <Build Include="dbo\Tables\MDivision.sql">
       <AnsiNulls>On</AnsiNulls>
       <QuotedIdentifier>On</QuotedIdentifier>
@@ -2302,7 +2302,7 @@
     <Build Include="dbo\Tables\UserActionLog.sql" />
     <Build Include="dbo\Tables\LocalPO_IrregularPrice.sql" />
     <Build Include="dbo\Tables\ArtworkPO_IrregularPrice.sql" />
-    <Build Include="dbo\Tables\PackingError.sql" />
+    <Build Include="dbo\Tables\PackingErrorTypeReason.sql" />
     <Build Include="dbo\Tables\ClogGarmentDispose.sql" />
     <Build Include="dbo\Tables\ClogGarmentDispose_Detail.sql" />
     <Build Include="dbo\Tables\WorkOrderRevisedMarkerOriginalData_Detail.sql" />
@@ -2322,7 +2322,6 @@
     <Build Include="dbo\Tables\ShippingMarkPic_Detail.sql" />
     <Build Include="dbo\Tables\ShippingMarkPic.sql" />
     <Build Include="dbo\Views\View_Style_Artwork.sql" />
-    <Build Include="dbo\Tables\ShippingMarkPicture.sql" />
     <Build Include="dbo\Tables\VNContractQtyAdjust_Detail_Detail.sql" />
     <Build Include="dbo\Tables\VNImportDeclaration_Detail_Detail.sql" />
     <Build Include="dbo\Functions\GetMaterialTypeDesc.sql" />
@@ -2415,8 +2414,6 @@
     <Build Include="dbo\Stored Procedures\CalculateShareExpense.sql" />
     <Build Include="dbo\Stored Procedures\insert_Air_Fir_TnsfIn.sql" />
     <Build Include="dbo\Functions\GetOrderAmount.sql" />
-    <Build Include="dbo\Tables\SubprocessLeadTime_Detail.sql" />
-    <Build Include="dbo\Tables\SubprocessLeadTime.sql" />
     <Build Include="dbo\Tables\SewingOutputTransfer_Detail.sql" />
     <Build Include="dbo\Tables\SewingOutputTransfer.sql" />
     <Build Include="dbo\Functions\GetOrderQtyUpperlimit.sql" />
@@ -2699,7 +2696,7 @@
     </Build>
     <Build Include="dbo\Tables\InspectionType.sql" />
     <Build Include="dbo\Tables\InspectionType_Detail.sql" />
-    <Build Include="dbo\Tables\PackingErrorRecord.sql" />
+    <Build Include="dbo\Tables\PackErrTransfer_Detail.sql" />
     <Build Include="dbo\Stored Procedures\GetSewingDailyOutputList.sql" />
     <Build Include="dbo\Stored Procedures\ImportEstShippingReport.sql" />
     <Build Include="dbo\Stored Procedures\Quaility_SearchList.sql" />
@@ -2768,6 +2765,73 @@
     <Build Include="dbo\Tables\AttachmentType.sql" />
     <Build Include="dbo\Tables\AttachmentMeasurement.sql" />
     <Build Include="dbo\Tables\AttachmentFoldType.sql" />
+    <Build Include="dbo\Tables\SewingReason.sql" />
+    <Build Include="dbo\Tables\SewingTeam.sql" />
+    <Build Include="dbo\Tables\ShippingMarkPicture.sql" />
+    <Build Include="dbo\Tables\PadPrint.sql" />
+    <Build Include="dbo\Tables\PadPrint_Mold.sql" />
+    <Build Include="dbo\Tables\PadPrint_Mold_Spec.sql" />
+    <Build Include="dbo\Tables\PadPrintReq.sql" />
+    <Build Include="dbo\Tables\PadPrintReq_Detail.sql" />
+    <Build Include="dbo\Tables\PadPrintReq_Detail_Spec.sql" />
+    <Build Include="dbo\Tables\WHCommandReviseRecord_Transfer.sql" />
+    <Build Include="dbo\Tables\WHCommandReviseRecord_InOutAdjRet.sql" />
+    <Build Include="dbo\Tables\WeaveType.sql" />
+    <Build Include="dbo\Tables\FinanceRate.sql" />
+    <Build Include="dbo\Tables\FinanceTWRate.sql" />
+    <Build Include="dbo\Tables\SeasonSCI.sql" />
+    <Build Include="dbo\Tables\Style_BOA_Location.sql" />
+    <Build Include="dbo\Tables\PO_Supp_Detail_Spec.sql" />
+    <Build Include="dbo\Tables\PO_Supp_Detail_Keyword.sql" />
+    <Build Include="dbo\Tables\Order_BOA_Location.sql" />
+    <Build Include="dbo\Tables\Order_BOA_Expend_Spec.sql" />
+    <Build Include="dbo\Tables\Order_BOA_Expend_Keyword.sql" />
+    <Build Include="dbo\Tables\Keyword_BomType.sql" />
+    <Build Include="dbo\Tables\InventoryRefNo_Spec.sql" />
+    <Build Include="dbo\Tables\BomType.sql" />
+    <Build Include="dbo\Tables\PadPrintReq_Detail.sql" />
+    <Build Include="dbo\Tables\PadPrint_Mold.sql" />
+    <Build Include="dbo\Tables\PadPrint.sql" />
+    <Build Include="dbo\Functions\GetSuppColor_Solution_NEW.sql" />
+    <Build Include="dbo\Functions\GetKeywordValue_New.sql" />
+    <Build Include="dbo\Functions\GetKeyword_New.sql" />
+    <Build Include="dbo\Functions\GetDigitalValue_New.sql" />
+    <Build Include="dbo\Functions\GetBomTypeValue.sql" />
+    <Build Include="dbo\Functions\GetSuppColor_NEW.sql" />
+    <Build Include="dbo\Functions\GetKeywordList.sql" />
+    <Build Include="dbo\Functions\GetBOAExpend_NEW.sql" />
+    <Build Include="dbo\Stored Procedures\BoaExpend_New.sql" />
+    <Build Include="dbo\Tables\ThreadCommon_Detail.sql" />
+    <Build Include="dbo\Tables\ThreadCommon.sql" />
+    <Build Include="dbo\Tables\Thread_AllowanceScale.sql" />
+    <Build Include="dbo\Tables\Order_BOF_Expend_OrderList.sql" />
+    <Build Include="dbo\Tables\Order_BOA_Expend_OrderList.sql" />
+    <Build Include="dbo\Tables\MtlType_Limit.sql" />
+    <Build Include="dbo\Functions\GetECFA_Refno.sql" />
+    <Build Include="dbo\Functions\GetECFA.sql" />
+    <Build Include="dbo\Functions\GetPOSeq.sql" />
+    <Build Include="dbo\Functions\GetThreadReplaceWithValue.sql" />
+    <Build Include="dbo\Functions\GetThreadReplace.sql" />
+    <Build Include="dbo\Stored Procedures\TransferToPO_2.sql" />
+    <Build Include="dbo\Stored Procedures\TransferToPO_1_ForThreadAllowance.sql" />
+    <Build Include="dbo\Stored Procedures\TransferToPO_1_ForBOF.sql" />
+    <Build Include="dbo\Stored Procedures\TransferToPO_1_ForBOA.sql" />
+    <Build Include="dbo\Stored Procedures\TransferToPO_1_ForAItem.sql" />
+    <Build Include="dbo\Functions\GetPo3Spec.sql" />
+    <Build Include="dbo\Tables\Supp_ReplaceSupplier.sql" />
+    <Build Include="dbo\Tables\Supp_Replace_Detail.sql" />
+    <Build Include="dbo\Functions\GetReplaceSupp_Thread.sql" />
+    <Build Include="dbo\Functions\GetReplaceSupp.sql" />
+    <Build Include="dbo\Functions\GetTransferExportStatusDesc.sql" />
+    <Build Include="dbo\Tables\TransferExport_SeparateHistory.sql" />
+    <Build Include="dbo\Tables\TransferExport_StatusHistory.sql" />
+    <Build Include="dbo\Tables\SubProOperator.sql" />
+    <Build Include="dbo\Tables\SubProWorkTime.sql" />
+    <Build Include="dbo\Tables\SubProWorkTime_Detail.sql" />
+    <Build Include="dbo\Tables\SubProRestTime.sql" />
+    <Build Include="dbo\Tables\SubProInsRecord_Operator.sql" />
+    <Build Include="dbo\Tables\LostFinalInspNotification.sql" />
+    <Build Include="dbo\Views\PO_Supp_Detail_OrderList_Show.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />

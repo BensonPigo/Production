@@ -26,6 +26,13 @@ namespace Sci.Production.Warehouse
         private DataTable dtlack;
         private string Type;
 
+        /// <summary>
+        /// P15_Import
+        /// </summary>
+        /// <param name="master">master</param>
+        /// <param name="detail">detail</param>
+        /// <param name="type">type</param>
+        /// <param name="title">title</param>
         public P15_Import(DataRow master, DataTable detail, string type, string title)
         {
             this.Text = title.ToString();
@@ -73,12 +80,14 @@ select  selected = 0
 	   				  		and seq1 = c.seq1
 	   				  		and seq2 = c.seq2)
         ,c.lock
+        ,[LackReason] = iif(b.PPICReasonID is null, '', CONCAT(b.PPICReasonID, '-', p.Description))
 from dbo.lack a WITH (NOLOCK) 
 inner join dbo.Lack_Detail b WITH (NOLOCK) on a.ID = b.ID
 LEFT join dbo.ftyinventory c WITH (NOLOCK) on c.poid = a.POID 
 											   and c.seq1 = b.seq1 
 											   and c.seq2  = b.seq2 
 											   and c.stocktype = 'B'
+left join PPICReason p with (nolock) on p.Type = 'AL' and p.ID = b.PPICReasonID
 LEFT join Orders o ON o.ID=a.POID
 where a.id = '{0}' 
 and o.Category != 'A'

@@ -136,6 +136,8 @@
             // chkOutstanding
             // 
             this.chkOutstanding.AutoSize = true;
+            this.chkOutstanding.Checked = true;
+            this.chkOutstanding.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkOutstanding.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.chkOutstanding.Location = new System.Drawing.Point(257, 56);
             this.chkOutstanding.Name = "chkOutstanding";

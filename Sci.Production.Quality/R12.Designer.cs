@@ -52,6 +52,8 @@
             this.radioButton2 = new Sci.Win.UI.RadioButton();
             this.radioButton1 = new Sci.Win.UI.RadioButton();
             this.label9 = new Sci.Win.UI.Label();
+            this.lblBrand = new Sci.Win.UI.Label();
+            this.txtbrand = new Sci.Production.Class.Txtbrand();
             this.radioPanelTransaction.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -164,7 +166,7 @@
             // label1
             // 
             this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.label1.Location = new System.Drawing.Point(17, 179);
+            this.label1.Location = new System.Drawing.Point(17, 212);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(105, 23);
             this.label1.TabIndex = 142;
@@ -241,7 +243,7 @@
             // label7
             // 
             this.label7.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.label7.Location = new System.Drawing.Point(17, 209);
+            this.label7.Location = new System.Drawing.Point(17, 242);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(105, 23);
             this.label7.TabIndex = 149;
@@ -260,7 +262,7 @@
             "Shade Band",
             "Continuity",
             "Odor"});
-            this.comboInspection.Location = new System.Drawing.Point(125, 180);
+            this.comboInspection.Location = new System.Drawing.Point(125, 213);
             this.comboInspection.Name = "comboInspection";
             this.comboInspection.OldText = "";
             this.comboInspection.Size = new System.Drawing.Size(121, 24);
@@ -278,7 +280,7 @@
             "Fail",
             "Pass/Fail",
             "Not yet inspected"});
-            this.comboInspectionResult.Location = new System.Drawing.Point(125, 210);
+            this.comboInspectionResult.Location = new System.Drawing.Point(125, 243);
             this.comboInspectionResult.Name = "comboInspectionResult";
             this.comboInspectionResult.OldText = "";
             this.comboInspectionResult.Size = new System.Drawing.Size(121, 24);
@@ -289,7 +291,7 @@
             this.radioWKSeq.AutoSize = true;
             this.radioWKSeq.Checked = true;
             this.radioWKSeq.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.radioWKSeq.Location = new System.Drawing.Point(125, 240);
+            this.radioWKSeq.Location = new System.Drawing.Point(125, 273);
             this.radioWKSeq.Name = "radioWKSeq";
             this.radioWKSeq.Size = new System.Drawing.Size(109, 21);
             this.radioWKSeq.TabIndex = 10;
@@ -301,7 +303,7 @@
             // 
             this.radioRollDyelot.AutoSize = true;
             this.radioRollDyelot.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.radioRollDyelot.Location = new System.Drawing.Point(125, 267);
+            this.radioRollDyelot.Location = new System.Drawing.Point(125, 300);
             this.radioRollDyelot.Name = "radioRollDyelot";
             this.radioRollDyelot.Size = new System.Drawing.Size(118, 21);
             this.radioRollDyelot.TabIndex = 11;
@@ -311,7 +313,7 @@
             // label8
             // 
             this.label8.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.label8.Location = new System.Drawing.Point(17, 239);
+            this.label8.Location = new System.Drawing.Point(17, 272);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(105, 23);
             this.label8.TabIndex = 154;
@@ -364,9 +366,30 @@
             this.label9.Text = "Transaction";
             this.label9.TextStyle.Color = System.Drawing.Color.Black;
             // 
+            // lblBrand
+            // 
+            this.lblBrand.Location = new System.Drawing.Point(17, 184);
+            this.lblBrand.Name = "lblBrand";
+            this.lblBrand.RectStyle.Color = System.Drawing.Color.SkyBlue;
+            this.lblBrand.Size = new System.Drawing.Size(105, 23);
+            this.lblBrand.TabIndex = 156;
+            this.lblBrand.Text = "Brand";
+            this.lblBrand.TextStyle.Color = System.Drawing.Color.Black;
+            // 
+            // txtbrand
+            // 
+            this.txtbrand.BackColor = System.Drawing.Color.White;
+            this.txtbrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtbrand.Location = new System.Drawing.Point(128, 184);
+            this.txtbrand.Name = "txtbrand";
+            this.txtbrand.Size = new System.Drawing.Size(66, 23);
+            this.txtbrand.TabIndex = 157;
+            // 
             // R12
             // 
-            this.ClientSize = new System.Drawing.Size(559, 312);
+            this.ClientSize = new System.Drawing.Size(559, 349);
+            this.Controls.Add(this.txtbrand);
+            this.Controls.Add(this.lblBrand);
             this.Controls.Add(this.radioPanelTransaction);
             this.Controls.Add(this.label9);
             this.Controls.Add(this.label8);
@@ -420,6 +443,8 @@
             this.Controls.SetChildIndex(this.label8, 0);
             this.Controls.SetChildIndex(this.label9, 0);
             this.Controls.SetChildIndex(this.radioPanelTransaction, 0);
+            this.Controls.SetChildIndex(this.lblBrand, 0);
+            this.Controls.SetChildIndex(this.txtbrand, 0);
             this.radioPanelTransaction.ResumeLayout(false);
             this.radioPanelTransaction.PerformLayout();
             this.ResumeLayout(false);
@@ -452,5 +477,7 @@
         private Win.UI.RadioButton radioButton2;
         private Win.UI.RadioButton radioButton1;
         private Win.UI.Label label9;
+        private Win.UI.Label lblBrand;
+        private Class.Txtbrand txtbrand;
     }
 }

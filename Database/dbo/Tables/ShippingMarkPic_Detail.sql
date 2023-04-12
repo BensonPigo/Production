@@ -96,3 +96,29 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'圖檔位�
 , @level2type = N'COLUMN', @level2name = N'FilePath';
 ;	
 GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'紙箱高度 (mm)',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'ShippingMarkPic_Detail',
+    @level2type = N'COLUMN',
+    @level2name = N'CtnHeight'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'標籤黏貼的位置是否會超過紙箱的高度',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'ShippingMarkPic_Detail',
+    @level2type = N'COLUMN',
+    @level2name = N'IsOverCtnHt'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'判斷該標籤是否需要自動 [貼標 / 噴碼]',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'ShippingMarkPic_Detail',
+    @level2type = N'COLUMN',
+    @level2name = N'NotAutomate'

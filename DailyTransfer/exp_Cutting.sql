@@ -72,21 +72,22 @@ INTO  CuttingOutput_Detail_Detail
 FROM Pms_To_Trade.dbo.CuttingOutput CUT1, Production.dbo.CuttingOutput_Detail_Detail CUT3 
 WHERE CUT1. ID = CUT3. ID
 
-Select distinct orderid = o.ID,wd.SizeCode,wd.article
-into #tmp1
-from Production.dbo.Orders o WITH (NOLOCK)
-inner join Production.dbo.WorkOrder_Distribute wd  on o.id = wd.OrderID
-inner join Production.dbo.Order_ColorCombo occ on o.poid = occ.id and occ.Article = wd.Article
-inner join Production.dbo.order_Eachcons cons on occ.id = cons.id and cons.FabricCombo = occ.PatternPanel and cons.CuttingPiece='0'
-inner join Production.dbo.CuttingOutput_Detail cud on cud.WorkOrderUkey = wd.WorkOrderUkey
-inner join Pms_To_Trade.dbo.CuttingOutput CUT1 on CUT1.ID = cud.ID
-where occ.FabricCode !='' and occ.FabricCode is not null 
+--Select distinct orderid = o.ID,wd.SizeCode,wd.article
+--into #tmp1
+--from Production.dbo.Orders o WITH (NOLOCK)
+--inner join Production.dbo.WorkOrder_Distribute wd  on o.id = wd.OrderID
+--inner join Production.dbo.Order_ColorCombo occ on o.poid = occ.id and occ.Article = wd.Article
+--inner join Production.dbo.order_Eachcons cons on occ.id = cons.id and cons.FabricCombo = occ.PatternPanel and cons.CuttingPiece='0'
+--inner join Production.dbo.CuttingOutput_Detail cud on cud.WorkOrderUkey = wd.WorkOrderUkey
+--inner join Pms_To_Trade.dbo.CuttingOutput CUT1 on CUT1.ID = cud.ID
+--where occ.FabricCode !='' and occ.FabricCode is not null 
 
+-- Only for CuttingOutput_WIP
 select WIP.OrderID,WIP.Article,WIP.Size,WIP.Qty
 into CuttingOutput_WIP
-FROM #tmp1 t, Production.dbo.CuttingOutput_WIP WIP 
-WHERE  t.orderid = WIP.OrderID and t.Article = WIP.Article and t.SizeCode = WIP.Size
-drop table #tmp1
+FROM Production.dbo.CuttingOutput_WIP WIP 
+where WIP.EditDate between DATEADD(DAY,-7, GETDATE()) and GETDATE()
+
 
 select wd.WorkOrderUkey,wd.ID,wd.OrderID,wd.Article,wd.SizeCode,wd.Qty
 into Workorder_Distribute

@@ -1,6 +1,9 @@
 ﻿using Ict;
 using Ict.Win;
+using Microsoft.Reporting.WinForms;
 using Sci.Data;
+using Sci.Production.Prg;
+using Sci.Production.PublicPrg;
 using Sci.Win;
 using System;
 using System.Collections.Generic;
@@ -164,7 +167,7 @@ select  [Sel] = 0
 	    ,isd.Dyelot
 	    ,isd.PoId
 	    ,isd.Seq1+'-'+isd.Seq2 AS SEQ
-	    ,[RefNo]=p.RefNo
+	    ,[RefNo]=psd.RefNo
 	    ,[Location] = Location.MtlLocationID
 	    ,[Weight] = isnull(rd.Weight, isnull(td.Weight, 0))
 	    ,[ActualWeight] = isnull(rd.ActualWeight, isnull(td.ActualWeight, 0))
@@ -188,11 +191,12 @@ select  [Sel] = 0
         ,o.FactoryID
         ,[FirRemark] = fp.Remark
 	    ,[ColorID]=Color.Value 
-	    ,[FabricType] = case when p.FabricType = 'F' then 'Fabric'
-                             when p.FabricType = 'A' then 'Accessory'
+	    ,[FabricType] = case when psd.FabricType = 'F' then 'Fabric'
+                             when psd.FabricType = 'A' then 'Accessory'
                              else 'Other' end
 from dbo.Issue_Detail isd WITH (NOLOCK) 
-LEFT join dbo.PO_Supp_Detail p WITH (NOLOCK) on p.ID = isd.POID and  p.SEQ1 = isd.Seq1 and P.seq2 = isd.Seq2 
+left join dbo.PO_Supp_Detail psd WITH (NOLOCK) on psd.ID = isd.POID and  psd.SEQ1 = isd.Seq1 and psd.seq2 = isd.Seq2 
+left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
 left join Ftyinventory  fi with (nolock) on    isd.POID = fi.POID and
                                                isd.Seq1 = fi.Seq1 and
                                                isd.Seq2 = fi.Seq2 and
@@ -212,8 +216,8 @@ left join TransferIn_Detail td with (nolock) on isd.POID = td.POID and
                                                isd.Dyelot  = td.Dyelot and
                                                isd.StockType = td.StockType
 left join View_WH_Orders o WITH (NOLOCK) on o.ID = isd.PoId
-LEFT JOIN Fabric f WITH (NOLOCK) ON p.SCIRefNo=f.SCIRefNo
-LEFT JOIN color c on c.id = p.colorid and c.BrandId = p.BrandId 
+LEFT JOIN Fabric f WITH (NOLOCK) ON psd.SCIRefNo=f.SCIRefNo
+LEFT JOIN color c on c.id = isnull(psdsC.SpecValue, '') and c.BrandId = psd.BrandId 
 left join FIR with (nolock) on  FIR.POID = isd.POID and 
                                 FIR.Seq1 = isd.Seq1 and 
                                 FIR.Seq2 = isd.Seq2
@@ -223,8 +227,8 @@ left join FIR_Physical fp with (nolock) on  fp.ID = FIR.ID and
                                             fp.Dyelot = isd.Dyelot
 OUTER APPLY(
  SELECT [Value]=
-	 CASE WHEN f.MtlTypeID in ('EMB THREAD','SP THREAD','THREAD') THEN IIF(p.SuppColor = '' or p.SuppColor is null, dbo.GetColorMultipleID(o.BrandID,p.ColorID),p.SuppColor)
-		 ELSE dbo.GetColorMultipleID(o.BrandID,p.ColorID)
+	 CASE WHEN f.MtlTypeID in ('EMB THREAD','SP THREAD','THREAD') THEN IIF(psd.SuppColor = '' or psd.SuppColor is null, dbo.GetColorMultipleID(o.BrandID,isnull(psdsC.SpecValue, '')),psd.SuppColor)
+		 ELSE dbo.GetColorMultipleID(o.BrandID,isnull(psdsC.SpecValue, ''))
 	 END
 )Color
 OUTER APPLY(
@@ -293,8 +297,11 @@ where id = @MDivision";
                     this.ShowErr(result);
                 }
 
+                int qrCodeWidth = 90;
+                byte[] imageBytes = Prgs.ImageToByte(id.ToBitmapQRcode(qrCodeWidth, qrCodeWidth));
                 string rptTitle = dt.Rows[0]["NameEn"].ToString();
                 ReportDefinition report = new ReportDefinition();
+                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("ImageID", Convert.ToBase64String(imageBytes)));
                 report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("RptTitle", rptTitle));
                 report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("ID", id));
                 report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Remark", remark));
@@ -362,10 +369,7 @@ where id in (select distinct poid from issue_detail WITH (NOLOCK) where id = @ID
                 #endregion
 
                 #region  抓表身資料
-                pars = new List<SqlParameter>
-                {
-                    new SqlParameter("@ID", id),
-                };
+                pars = new List<SqlParameter> { new SqlParameter("@ID", id) };
                 sqlcmd = @"
 select  [Poid] = IIF (( t.poid = lag (t.poid,1,'') over (order by t.poid, t.seq1, t.seq2, t.Dyelot, t.Roll) 
 			            AND (t.seq1 = lag (t.seq1, 1, '') over (order by t.poid, t.seq1, t.seq2, t.Dyelot, t.Roll))
@@ -394,7 +398,7 @@ select  [Poid] = IIF (( t.poid = lag (t.poid,1,'') over (order by t.poid, t.seq1
         , MDesc = 'Relaxation Type：'+(select FabricRelaxationID from [dbo].[SciMES_RefnoRelaxtime] where Refno = p.Refno)
         , t.Roll
         , t.Dyelot
-        , Tone = isnull(ShadeboneTone.Tone,ShadeboneTone2.Tone)
+        , Tone = b.Tone
         , t.Qty
         , p.StockUnit
         , [location]=dbo.Getlocation(b.ukey)      
@@ -415,20 +419,8 @@ outer apply (
     select value = iif (left (t.seq1, 1) != '7', ''
                                                , '**PLS USE STOCK FROM SP#:' + iif (isnull (concat (p.StockPOID, p.StockSeq1, p.StockSeq2), '') = '', '',concat (p.StockPOID, p.StockSeq1, p.StockSeq2)) + '**')
 ) as stock7X
-outer apply (
-	select [Tone] = MAX(fs.Tone)
-	from FtyInventory fi with (nolock) 
-	Left join FIR f with (nolock) on f.poid = fi.poid and f.seq1 = fi.seq1 and f.seq2 = fi.seq2
-	Left join FIR_Shadebone fs with (nolock) on f.ID = fs.ID and fs.Roll = fi.Roll and fs.Dyelot = fi.Dyelot
-	where fi.Ukey = b.Ukey
-) ShadeboneTone
-outer apply (
-	select [Tone] = MAX(fs.Tone)
-	from FIR f 
-	Left join FIR_Shadebone fs with (nolock) on f.ID = fs.ID and fs.Roll = t.Roll and fs.Dyelot = t.Dyelot
-	where f.POID = p.StockPOID and f.SEQ1 = p.StockSeq1 and f.SEQ2 = p.StockSeq2
-) ShadeboneTone2
-where t.id= @ID";
+where t.id= @ID
+";
                 result = DBProxy.Current.Select(string.Empty, sqlcmd, pars, out DataTable bb);
                 if (!result)
                 {

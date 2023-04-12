@@ -237,7 +237,7 @@ select
 	pd.OrderShipmodeSeq,
 	ShipQty = sum(pd.ShipQty),
 	ScanQty = sum(iif(pd.ScanEditDate is  not null and pd.Lacking = 0,pd.ScanQty, 0)),
-	PackingError = Concat(pd.PackingErrorID, '-', (select top 1 Description from PackingError where Type = 'TP' and id = pd.PackingErrorID)),
+	PackingError = Concat(pd.PackingErrorID, '-', (select top 1 Description from PackingErrorTypeReason where Type = 'TP' and id = pd.PackingErrorID)),
 	pd.PackingErrQty,
 	pd.PackErrTransferDate
 into #tmpPD
@@ -335,7 +335,7 @@ from #tmpPD pd
 inner join orders o on o.ID = pd.OrderID
 inner join Order_QtyShip oq on oq.ID = o.ID and oq.Seq = pd.OrderShipmodeSeq
 inner join PackErrTransfer pe with(nolock) on pe.PackingListID = pd.id and pe.CTNStartNo = pd.CTNStartNo
-left join PackingError per on per.ID = pe.PackingErrorID and per.Type = 'TP'
+left join PackingErrorTypeReason per on per.ID = pe.PackingErrorID and per.Type = 'TP'
 
 outer apply(select top 1 PackingErrQty1st = ErrQty from PackErrTransfer pe with(nolock) where pe.PackingListID = pd.id and pe.CTNStartNo = pd.CTNStartNo and pe.PackingErrorID  = '00006' order by AddDate)ErrQty
 outer apply(

@@ -27,11 +27,21 @@ namespace Sci.Production.Automation
         /// <inheritdoc/>
         public static string Sci => BaseUtilityAutomation.Sci;
 
-        /// <inheritdoc/>
-        public static bool IsAutomationEnable => PMSUtilityAutomation.UtilityAutomation.IsAutomationEnable;
+        private static BaseUtilityAutomation utilityAutomation = new PMSUtilityAutomation();
+
+        /// <summary>
+        /// SetUtilityAutomation
+        /// </summary>
+        public static BaseUtilityAutomation SetUtilityAutomation
+        {
+            set { utilityAutomation = value; }
+        }
 
         /// <inheritdoc/>
-        public static string ModuleType => PMSUtilityAutomation.UtilityAutomation.ModuleType;
+        public static bool IsAutomationEnable => utilityAutomation.IsAutomationEnable;
+
+        /// <inheritdoc/>
+        public static string ModuleType => utilityAutomation.ModuleType;
 
         /// <summary>
         /// IsModuleAutomationEnable
@@ -41,7 +51,7 @@ namespace Sci.Production.Automation
         /// <returns>bool</returns>
         public static bool IsModuleAutomationEnable(string suppid, string module)
         {
-            return PMSUtilityAutomation.UtilityAutomation.IsModuleAutomationEnable(suppid, module);
+            return utilityAutomation.IsModuleAutomationEnable(suppid, module);
         }
 
         /// <summary>
@@ -52,7 +62,7 @@ namespace Sci.Production.Automation
         /// <returns>dynamic</returns>
         public static dynamic AppendBaseInfo(dynamic bodyObject, string apiTag)
         {
-            return PMSUtilityAutomation.UtilityAutomation.AppendBaseInfo(bodyObject, apiTag);
+            return utilityAutomation.AppendBaseInfo(bodyObject, apiTag);
         }
 
         /// <summary>
@@ -61,7 +71,7 @@ namespace Sci.Production.Automation
         /// <param name="automationErrMsg">Automation Err Msg</param>
         public static void SaveAutomationErrMsg(AutomationErrMsg automationErrMsg)
         {
-            PMSUtilityAutomation.UtilityAutomation.SaveAutomationErrMsg(automationErrMsg);
+            utilityAutomation.SaveAutomationErrMsg(automationErrMsg);
         }
 
         /// <summary>
@@ -70,7 +80,7 @@ namespace Sci.Production.Automation
         /// <param name="automationErrMsg">Automation Err Msg</param>
         public static void SaveAutomationCheckMsg(AutomationErrMsg automationErrMsg)
         {
-            PMSUtilityAutomation.UtilityAutomation.SaveAutomationCheckMsg(automationErrMsg);
+            utilityAutomation.SaveAutomationCheckMsg(automationErrMsg);
         }
 
         /// <summary>
@@ -81,7 +91,7 @@ namespace Sci.Production.Automation
         /// <returns>AutomationTransRecord Ukey</returns>
         public static long SaveAutomationTransRecord(AutomationErrMsg automationErrMsg, bool isAutoWH = true)
         {
-            return PMSUtilityAutomation.UtilityAutomation.SaveAutomationTransRecord(automationErrMsg, isAutoWH);
+            return utilityAutomation.SaveAutomationTransRecord(automationErrMsg, isAutoWH);
         }
 
         /// <summary>
@@ -104,7 +114,7 @@ namespace Sci.Production.Automation
         /// <returns>DualResult</returns>
         public static DualResult SendWebAPISaveAutomationCreateRecord(string baseUrl, string requestUri, string jsonBody, AutomationErrMsg automationErrMsg)
         {
-            return PMSUtilityAutomation.UtilityAutomation.SendWebAPISaveAutomationCreateRecord(baseUrl, requestUri, jsonBody, automationErrMsg);
+            return utilityAutomation.SendWebAPISaveAutomationCreateRecord(baseUrl, requestUri, jsonBody, automationErrMsg);
         }
 
         /// <summary>
@@ -117,7 +127,7 @@ namespace Sci.Production.Automation
         /// <returns>DualResult</returns>
         public static DualResult SendWebAPI(string baseUrl, string requestUri, string jsonBody, AutomationErrMsg automationErrMsg)
         {
-            return PMSUtilityAutomation.UtilityAutomation.SendWebAPI(baseUrl, requestUri, jsonBody, automationErrMsg);
+            return utilityAutomation.SendWebAPI(baseUrl, requestUri, jsonBody, automationErrMsg);
         }
 
         /// <summary>
@@ -130,7 +140,7 @@ namespace Sci.Production.Automation
         /// <returns>DualResult</returns>
         public static async Task<DualResult> SendWebAPIAsync(string baseUrl, string requestUri, string jsonBody, AutomationErrMsg automationErrMsg)
         {
-            return await PMSUtilityAutomation.UtilityAutomation.SendWebAPIAsync(baseUrl, requestUri, jsonBody, automationErrMsg);
+            return await utilityAutomation.SendWebAPIAsync(baseUrl, requestUri, jsonBody, automationErrMsg);
         }
 
         /// <summary>
@@ -139,7 +149,7 @@ namespace Sci.Production.Automation
         /// <returns>Dictionary</returns>
         public static Dictionary<string, string> GetCustomHeaders()
         {
-            return PMSUtilityAutomation.UtilityAutomation.GetCustomHeaders();
+            return utilityAutomation.GetCustomHeaders();
         }
 
         /// <summary>
@@ -153,45 +163,14 @@ namespace Sci.Production.Automation
         /// <returns>DualResult</returns>
         public static DualResult WH_Auto_SendWebAPI(string baseUrl, string requestUri, string jsonBody, AutomationErrMsg automationErrMsg, bool reSented = false)
         {
-            return PMSUtilityAutomation.UtilityAutomation.WH_Auto_SendWebAPI(baseUrl: baseUrl, requestUri: requestUri, jsonBody: jsonBody, automationErrMsg: automationErrMsg, reSented: reSented);
+            return utilityAutomation.WH_Auto_SendWebAPI(baseUrl: baseUrl, requestUri: requestUri, jsonBody: jsonBody, automationErrMsg: automationErrMsg, reSented: reSented);
         }
 
         /// <summary>
         /// Automation Err Msg PMS
         /// </summary>
-        public class AutomationErrMsgPMS : AutomationErrMsg
+        public class AutomationErrMsgPMS : BaseUtilityAutomation.AutomationErrMsgPMS
         {
-            /// <summary>
-            /// Initializes a new instance of the <see cref="AutomationErrMsgPMS"/> class.
-            /// </summary>
-            public AutomationErrMsgPMS()
-            {
-                this.suppID = Sci;
-                this.moduleName = Sci;
-            }
-
-            /// <summary>
-            /// Set Err Info
-            /// </summary>
-            /// <param name="result">DualResult</param>
-            public void SetErrInfo(DualResult result)
-            {
-                this.errorCode = string.Empty;
-                this.errorMsg = result.GetException().ToString();
-                this.json = string.Empty;
-            }
-
-            /// <summary>
-            /// SetErrInfo
-            /// </summary>
-            /// <param name="ex">ex</param>
-            /// <param name="json">json</param>
-            public void SetErrInfo(Exception ex, string json)
-            {
-                this.errorCode = "995";
-                this.errorMsg = "From PMS Exception" + Environment.NewLine + ex.ToString();
-                this.json = json;
-            }
         }
 
         /// <summary>
@@ -200,7 +179,7 @@ namespace Sci.Production.Automation
         /// <returns>WebApiURL.URL</returns>
         public static string GetSciUrl()
         {
-            return PMSUtilityAutomation.UtilityAutomation.GetSciUrl();
+            return utilityAutomation.GetSciUrl();
         }
 
         /// <summary>
@@ -211,7 +190,7 @@ namespace Sci.Production.Automation
         /// <returns>WebApiURL.URL</returns>
         public static string GetSupplierUrl(string supp, string moduleName)
         {
-            return PMSUtilityAutomation.UtilityAutomation.GetSupplierUrl(supp, moduleName);
+            return utilityAutomation.GetSupplierUrl(supp, moduleName);
         }
 
         /// <inheritdoc/>

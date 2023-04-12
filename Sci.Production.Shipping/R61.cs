@@ -80,7 +80,8 @@ select [WK#] = kid.ExportID
      , [B/L#] = kid.BLNo 
      , [FTY] = kid.FactoryID
      , [Consignee] = kid.Consignee 
-     , [Ref#] = kid.RefNo 
+    ,  vk_Refno = (select top 1 vk.Refno from View_KHImportItem vk with(nolock) where kid.RefNo =vk.SCIRefno order by vk.Refno)
+     , [SCIRefno] = kid.RefNo 
      , [Description] = Kid.Description 
      , [Q'ty] = Kid.Qty 
      , [Unit] = Kid.UnitID 

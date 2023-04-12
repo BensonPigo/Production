@@ -20,6 +20,7 @@
     [Type]         VARCHAR (1)    DEFAULT ('') NOT NULL,
     [Zone]         VARCHAR (6)    DEFAULT ('') NULL,
     [FtyZone] VARCHAR(8) NULL, 
+    [IsSubcon] BIT NOT NULL DEFAULT ((0)), 
     CONSTRAINT [PK_SCIFty] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 
@@ -97,3 +98,13 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'最後修�
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'工廠地區別', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'SCIFty', @level2type = N'COLUMN', @level2name = N'Zone';
 
+
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'是否為外發工廠',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'SCIFty',
+    @level2type = N'COLUMN',
+    @level2name = N'IsSubcon'

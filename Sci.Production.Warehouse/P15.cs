@@ -264,6 +264,27 @@ namespace Sci.Production.Warehouse
         /// <inheritdoc/>
         protected override DualResult OnRenewDataDetailPost(RenewDataPostEventArgs e)
         {
+            if (MyUtility.Check.Empty(e.Master["ID"]))
+            {
+                return null;
+            }
+
+            string sqlcmd = $@"select distinct l.Remark,l.SewingLineID
+                                from IssueLack il
+                                inner join IssueLack_Detail ild with(nolock) on il.id = ild.id
+                                left join Lack l with (nolock) on l.POID = ild.POID and l.ID = il.RequestID
+                                where il.id ='{MyUtility.Convert.GetString(e.Master["ID"])}'";
+            DualResult dualResult = DBProxy.Current.Select(null, sqlcmd, out DataTable dt);
+            if (!dualResult)
+            {
+                MyUtility.Msg.ErrorBox(MyUtility.Convert.GetString(dualResult.Messages));
+                return dualResult;
+            }
+
+            DataRow dataRow = dt.Rows[0];
+            this.editBoxRequestRemark.Text = MyUtility.Convert.GetString(dataRow["Remark"]);
+            this.txtSewingLine.Text = MyUtility.Convert.GetString(dataRow["SewingLineID"]);
+
             return base.OnRenewDataDetailPost(e);
         }
 
@@ -285,11 +306,12 @@ namespace Sci.Production.Warehouse
             if (!MyUtility.Check.Empty(MyUtility.GetValue.Lookup(string.Format(@"select apvdate from lack WITH (NOLOCK) where id = '{0}'", this.CurrentMaintain["requestid"]))))
             {
                 DataRow dr;
-                if (MyUtility.Check.Seek(string.Format(@"select apvdate,Shift,SubconName from lack WITH (NOLOCK) where id = '{0}'", this.CurrentMaintain["requestid"]), out dr))
+                if (MyUtility.Check.Seek(string.Format(@"select apvdate,Shift,SubconName,Dept from lack WITH (NOLOCK) where id = '{0}'", this.CurrentMaintain["requestid"]), out dr))
                 {
                     this.displayApvDate.Text = ((DateTime)dr["apvdate"]).ToString(string.Format("{0}", Env.Cfg.DateTimeStringFormat));
                     this.displayBoxShift.Text = dr["Shift"].Equals("D") ? "Day" : dr["Shift"].Equals("N") ? "Night" : "Subcon-Out";
                     this.txtLocalSupp1.TextBox1.Text = dr["SubconName"].ToString();
+                    this.displayDept.Text = dr["Dept"].ToString();
                 }
             }
             else
@@ -324,6 +346,7 @@ and ID = '{Sci.Env.User.UserID}'"))
         /// <inheritdoc/>
         protected override void OnDetailGridSetup()
         {
+
             #region 欄位設定
             this.Helper.Controls.Grid.Generator(this.detailgrid)
             .CellPOIDWithSeqRollDyelot("poid", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true) // 0
@@ -335,6 +358,8 @@ and ID = '{Sci.Env.User.UserID}'"))
             .Text("stockunit", header: "Unit", iseditingreadonly: true) // 5
             .Numeric("qty", header: "Issue Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10) // 6
             .Text("Location", header: "Bulk Location", iseditingreadonly: true) // 7
+
+            // .Text("LackReason", header: "Lacking & Replacement Reason", iseditingreadonly: true) // 7
             ;
             #endregion 欄位設定
         }
@@ -781,9 +806,14 @@ where (isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f
 ,dbo.Getlocation(f.Ukey)  as location
 ,a.ukey
 ,a.FtyInventoryUkey
+--,[LackReason] = iif(ld.PPICReasonID is null, '', CONCAT(ld.PPICReasonID, '-', p.Description))
 from dbo.IssueLack_Detail a WITH (NOLOCK) 
+inner join IssueLack il with (nolock) on a.ID = il.ID
 left join PO_Supp_Detail p1 WITH (NOLOCK) on p1.ID = a.PoId and p1.seq1 = a.SEQ1 and p1.SEQ2 = a.seq2
 left join FtyInventory f WITH (NOLOCK) on a.POID=f.POID and a.Seq1=f.Seq1 and a.Seq2=f.Seq2 and a.Roll=f.Roll and a.Dyelot=f.Dyelot and a.StockType=f.StockType
+left join Lack l with (nolock) on l.POID = a.POID and l.ID = il.RequestID
+--left join Lack_Detail ld with (nolock) on ld.ID = l.ID and ld.seq1 = a.SEQ1 and ld.SEQ2 = a.seq2
+--left join PPICReason p with (nolock) on p.Type = 'AL' and p.ID = ld.PPICReasonID
 Where a.id = '{0}'", masterID);
             return base.OnDetailSelectCommandPrepare(e);
         }
@@ -1009,6 +1039,18 @@ where a.id= @ID";
         private void BtnCallP99_Click(object sender, EventArgs e)
         {
             P99_CallForm.CallForm(this.CurrentMaintain["ID"].ToString(), "P15", this);
+        }
+
+        private void BtnRequestList_Click(object sender, EventArgs e)
+        {
+            if (MyUtility.Check.Empty(this.CurrentMaintain["requestid"]))
+            {
+                MyUtility.Msg.WarningBox("Please fill-in the Request# first.");
+                return;
+            }
+
+            P15P16_ReuqeustList win = new P15P16_ReuqeustList("P15", this.CurrentMaintain);
+            win.ShowDialog(this);
         }
     }
 }

@@ -1,5 +1,5 @@
 ﻿CREATE TABLE [dbo].[ThreadStock] (
-    [Refno]            VARCHAR (21) CONSTRAINT [DF_ThreadStock_Refno] DEFAULT ('') NOT NULL,
+    [Refno]            VARCHAR (36) CONSTRAINT [DF_ThreadStock_Refno] DEFAULT ('') NOT NULL,
     [ThreadColorID]    VARCHAR (15) CONSTRAINT [DF_ThreadStock_ThreadColorID] DEFAULT ('') NOT NULL,
     [NewCone]          NUMERIC (5)  CONSTRAINT [DF_ThreadStock_NewCone] DEFAULT ((0)) NULL,
     [UsedCone]         NUMERIC (5)  CONSTRAINT [DF_ThreadStock_UsedCone] DEFAULT ((0)) NULL,

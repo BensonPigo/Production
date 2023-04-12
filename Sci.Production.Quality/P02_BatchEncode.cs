@@ -88,10 +88,10 @@ a.Status,(seq1+seq2) as seq,
 f.WeaveTypeID,
 c.whseArrival,
 (
-    dbo.GetColorMultipleID((select top 1 o.BrandID from orders o where o.POID =a.poid) ,(Select d.colorid from PO_Supp_Detail d WITH (NOLOCK) Where d.id = a.poid and d.seq1 = a.seq1 and d.seq2 = a.seq2))
+    dbo.GetColorMultipleID((select top 1 o.BrandID from orders o where o.POID =a.poid) ,(Select isnull(SpecValue ,'') from PO_Supp_Detail_Spec d WITH (NOLOCK) Where d.id = a.poid and d.seq1 = a.seq1 and d.seq2 = a.seq2  and SpecColumnID = 'Color'))
 ) as Colorid,
 (
-    Select d.SizeSpec from PO_Supp_Detail d WITH (NOLOCK) Where d.id = a.poid and d.seq1 = a.seq1 and d.seq2 = a.seq2
+    Select isnull(SpecValue ,'') from PO_Supp_Detail_Spec d WITH (NOLOCK) Where d.id = a.poid and d.seq1 = a.seq1 and d.seq2 = a.seq2 and SpecColumnID = 'Size'
 ) as Size,
 (
     Select d.StockUnit from PO_Supp_Detail d WITH (NOLOCK) Where d.id = a.poid and d.seq1 = a.seq1 and d.seq2 = a.seq2

@@ -2,7 +2,7 @@
     [ID]              VARCHAR (13)   CONSTRAINT [DF_PO_Factory_ID] DEFAULT ('') NOT NULL,
     [SEQ1]            VARCHAR (3)    CONSTRAINT [DF_PO_Factory_SEQ1] DEFAULT ('') NOT NULL,
     [SEQ2]            VARCHAR (2)    CONSTRAINT [DF_PO_Factory_SEQ2] DEFAULT ('') NOT NULL,
-    [Refno]           VARCHAR (20)   CONSTRAINT [DF_PO_Factory_Refno] DEFAULT ('') NOT NULL,
+    [Refno]           VARCHAR (36)   CONSTRAINT [DF_PO_Factory_Refno] DEFAULT ('') NOT NULL,
     [SCIRefno]        VARCHAR (26)   CONSTRAINT [DF_PO_Factory_SCIRefno] DEFAULT ('') NULL,
     [FabricType]      VARCHAR (1)    CONSTRAINT [DF_PO_Factory_FabricType] DEFAULT ('') NOT NULL,
     [Qty]             NUMERIC (8, 2) CONSTRAINT [DF_PO_Factory_Qty] DEFAULT ((0)) NULL,

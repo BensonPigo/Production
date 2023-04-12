@@ -2080,7 +2080,7 @@ drop table #tmp,#tmp2,#tmp3
 
         // 最後一欄 , 有新增欄位要改這
         // 注意!新增欄位也要新增到StandardReport_Detail(Customized)。
-        private int lastColA = 154;
+        private int lastColA = 153;
 
         /// <inheritdoc/>
         protected override bool OnToExcel(Win.ReportDefinition report)

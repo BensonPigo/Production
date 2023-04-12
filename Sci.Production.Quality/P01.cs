@@ -113,9 +113,9 @@ namespace Sci.Production.Quality
     PhysicalDate,
     Physical,
     NonWeight, 
-    Weight,
+    a.Weight,
     WeightDate,
-    Weight,
+    a.Weight,
     NonShadebond,
     Shadebond,
     ShadebondDate,
@@ -133,7 +133,7 @@ namespace Sci.Production.Quality
     dbo.getPass1(a.Approve) as approve1,
     approveDate,
     approve,
-    d.ColorID,
+    ColorID = isnull(psdsC.SpecValue ,''),
     (Select ID+' - '+ AbbEn From Supp WITH (NOLOCK) Where a.suppid = supp.id) as SuppEn,
     c.ExportID as Wkno
     ,cn.name
@@ -159,12 +159,15 @@ namespace Sci.Production.Quality
 	MoistureStandard1_Comparison,
 	MoistureStandard2_Comparison,
     a.CustInspNumber,
-    Complete = IIF(d.Complete=1,'Y','N')
+    Complete = IIF(d.Complete=1,'Y','N'),
+    b.InspectionGroup
 From FIR a WITH (NOLOCK) 
 Left join Receiving c WITH (NOLOCK) on c.id = a.receivingid
 Left join TransferIn ti WITH (NOLOCK) on ti.id = a.receivingid
 inner join PO_Supp_Detail d WITH (NOLOCK) on d.id = a.poid and d.seq1 = a.seq1 and d.seq2 = a.seq2
-outer apply(select name from color WITH (NOLOCK) where color.id = d.colorid and color.BrandId = d.BrandId)cn
+left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = d.id and psdsC.seq1 = d.seq1 and psdsC.seq2 = d.seq2 and psdsC.SpecColumnID = 'Color'
+outer apply(select name from color WITH (NOLOCK) where color.id = isnull(psdsC.SpecValue ,'') and color.BrandId = d.BrandId)cn
+left join Fabric b WITH (NOLOCK) on b.SCIRefno =d.SCIrefno
 Where a.poid='{0}' order by a.seq1,a.seq2", masterID);
             this.DetailSelectCommand = cmd;
             return base.OnDetailSelectCommandPrepare(e);
@@ -495,25 +498,43 @@ and ActualYds > 0
                 .Text("weavetypeid", header: "Weave Type", width: Widths.AnsiChars(20), iseditingreadonly: true)
                 .Date("InspDeadline", header: "Insp. Deadline", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("Result", header: "Over all\n Result", width: Widths.AnsiChars(4), iseditingreadonly: true)
+
+                // Shade
+                .CheckBox("NonShadeBond", header: "Shade\nBandN/A", width: Widths.AnsiChars(2), iseditable: true, trueValue: 1, falseValue: 0, settings: nonSha)
+                .Text("Shadebond", header: "Shade\nBand", width: Widths.AnsiChars(4), iseditingreadonly: true, settings: sha)
+                .Date("ShadeBondDate", header: "Last Shade.\nTest. Date", width: Widths.AnsiChars(10), iseditingreadonly: true, settings: shaD)
+
+                // Physical
                 .CheckBox("NonPhysical", header: "Physical N/A", width: Widths.AnsiChars(2), iseditable: true, trueValue: 1, falseValue: 0, settings: nonPhy)
                 .Text("Physical", header: "Physical\n Inspection", width: Widths.AnsiChars(4), iseditingreadonly: true, settings: phy)
                 .Numeric("TotalInspYds", header: "Act. Ttl Ysd\nInspection", width: Widths.AnsiChars(8), integer_places: 10, decimal_places: 2, iseditingreadonly: true, settings: phyYds)
                 .Date("PhysicalDate", header: "Last Phy.\nInsp. Date", width: Widths.AnsiChars(10), iseditingreadonly: true, settings: phyD)
                 .Text("CustInspNumber", header: "Cust Insp. Number", width: Widths.AnsiChars(12))
+
+                // Continuity
+                .Text("InspectionGroup", header: "Group", width: Widths.AnsiChars(12), iseditingreadonly: true)
                 .CheckBox("NonWeight", header: "Weight N/A", width: Widths.AnsiChars(2), iseditable: true, trueValue: 1, falseValue: 0, settings: nonWei)
                 .Text("Weight", header: "Weight\n Test", width: Widths.AnsiChars(4), iseditingreadonly: true, settings: wei)
                 .Date("WeightDate", header: "Last Wei.\nTest. Date", width: Widths.AnsiChars(10), iseditingreadonly: true, settings: weiD)
                 .CheckBox("NonShadeBond", header: "Shade\nBandN/A", width: Widths.AnsiChars(2), iseditable: true, trueValue: 1, falseValue: 0, settings: nonSha)
                 .Text("Shadebond", header: "Shade\nBand", width: Widths.AnsiChars(4), iseditingreadonly: true, settings: sha)
                 .Date("ShadeBondDate", header: "Last Shade.\nTest. Date", width: Widths.AnsiChars(10), iseditingreadonly: true, settings: shaD)
+
                 .CheckBox("NonContinuity", header: "Continuity \nN/A", width: Widths.AnsiChars(2), iseditable: true, trueValue: 1, falseValue: 0, settings: nonCon)
                 .Text("Continuity", header: "Continuity", width: Widths.AnsiChars(5), iseditingreadonly: true, settings: con)
                 .Date("ContinuityDate", header: "Last Cont.\nTest. Date", width: Widths.AnsiChars(10), iseditingreadonly: true, settings: conD)
 
+                // Weight
+                .CheckBox("NonWeight", header: "Weight N/A", width: Widths.AnsiChars(2), iseditable: true, trueValue: 1, falseValue: 0, settings: nonWei)
+                .Text("Weight", header: "Weight\n Test", width: Widths.AnsiChars(4), iseditingreadonly: true, settings: wei)
+                .Date("WeightDate", header: "Last Wei.\nTest. Date", width: Widths.AnsiChars(10), iseditingreadonly: true, settings: weiD)
+
+                // Odor
                 .CheckBox("nonOdor", header: "Odor \nN/A", width: Widths.AnsiChars(2), iseditable: true, trueValue: 1, falseValue: 0, settings: nonOdor)
                 .Text("Odor", header: "Odor", width: Widths.AnsiChars(5), iseditingreadonly: true, settings: odor)
                 .Date("OdorDate", header: "Last Odor\nTest. Date", width: Widths.AnsiChars(10), iseditingreadonly: true, settings: odorD)
 
+                // Moisture
                 .CheckBox("nonMoisture", header: "Moisture \nN/A", width: Widths.AnsiChars(2), iseditable: true, trueValue: 1, falseValue: 0, settings: nonMoisture)
                 .Text("Moisture", header: "Moisture", width: Widths.AnsiChars(5), iseditingreadonly: true, settings: moisture)
                 .Date("MoistureDate", header: "Last Moisture\nTest. Date", width: Widths.AnsiChars(10), iseditingreadonly: true, settings: moistureD)
@@ -1044,6 +1065,16 @@ and ActualYds > 0
             }
 
             this.detailgrid.SelectRowTo(rowindex);
+        }
+
+        private void BtnShadeBandStock_Click(object sender, EventArgs e)
+        {
+            P01_ShadeBandStock p01_ShadeBandStock = new P01_ShadeBandStock(this.CurrentMaintain["ID"].ToString());
+
+            if (p01_ShadeBandStock.existsData)
+            {
+                p01_ShadeBandStock.ShowDialog();
+            }
         }
     }
 }

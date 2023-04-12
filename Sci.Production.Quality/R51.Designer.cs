@@ -48,6 +48,7 @@
             this.radioDetail_Responseteam = new Sci.Win.UI.RadioButton();
             this.txtsubprocess = new Sci.Production.Class.Txtsubprocess();
             this.label7 = new Sci.Win.UI.Label();
+            this.radioDetail_Operator = new Sci.Win.UI.RadioButton();
             this.SuspendLayout();
             // 
             // print
@@ -269,7 +270,9 @@
             // 
             this.txtsubprocess.BackColor = System.Drawing.Color.White;
             this.txtsubprocess.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtsubprocess.IsRFIDProcess = true;
             this.txtsubprocess.Location = new System.Drawing.Point(126, 70);
+            this.txtsubprocess.MultiSelect = true;
             this.txtsubprocess.Name = "txtsubprocess";
             this.txtsubprocess.Size = new System.Drawing.Size(130, 23);
             this.txtsubprocess.TabIndex = 140;
@@ -284,9 +287,21 @@
             this.label7.Text = "SubProcess";
             this.label7.TextStyle.Color = System.Drawing.Color.Black;
             // 
+            // radioDetail_Operator
+            // 
+            this.radioDetail_Operator.AutoSize = true;
+            this.radioDetail_Operator.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.radioDetail_Operator.Location = new System.Drawing.Point(126, 303);
+            this.radioDetail_Operator.Name = "radioDetail_Operator";
+            this.radioDetail_Operator.Size = new System.Drawing.Size(149, 21);
+            this.radioDetail_Operator.TabIndex = 142;
+            this.radioDetail_Operator.Text = "By Detail(Operator)";
+            this.radioDetail_Operator.UseVisualStyleBackColor = true;
+            // 
             // R51
             // 
-            this.ClientSize = new System.Drawing.Size(496, 340);
+            this.ClientSize = new System.Drawing.Size(496, 363);
+            this.Controls.Add(this.radioDetail_Operator);
             this.Controls.Add(this.label7);
             this.Controls.Add(this.txtsubprocess);
             this.Controls.Add(this.radioDetail_Responseteam);
@@ -334,6 +349,7 @@
             this.Controls.SetChildIndex(this.radioDetail_Responseteam, 0);
             this.Controls.SetChildIndex(this.txtsubprocess, 0);
             this.Controls.SetChildIndex(this.label7, 0);
+            this.Controls.SetChildIndex(this.radioDetail_Operator, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -359,5 +375,6 @@
         private Win.UI.RadioButton radioDetail_Responseteam;
         private Class.Txtsubprocess txtsubprocess;
         private Win.UI.Label label7;
+        private Win.UI.RadioButton radioDetail_Operator;
     }
 }

@@ -188,7 +188,6 @@
             // 
             // labelID
             // 
-            this.labelID.Lines = 0;
             this.labelID.Location = new System.Drawing.Point(8, 7);
             this.labelID.Name = "labelID";
             this.labelID.Size = new System.Drawing.Size(50, 23);
@@ -197,7 +196,6 @@
             // 
             // labelDate
             // 
-            this.labelDate.Lines = 0;
             this.labelDate.Location = new System.Drawing.Point(8, 37);
             this.labelDate.Name = "labelDate";
             this.labelDate.Size = new System.Drawing.Size(50, 23);
@@ -206,7 +204,6 @@
             // 
             // labelInvNo
             // 
-            this.labelInvNo.Lines = 0;
             this.labelInvNo.Location = new System.Drawing.Point(8, 67);
             this.labelInvNo.Name = "labelInvNo";
             this.labelInvNo.Size = new System.Drawing.Size(50, 23);
@@ -244,7 +241,6 @@
             // 
             // labelContractNo
             // 
-            this.labelContractNo.Lines = 0;
             this.labelContractNo.Location = new System.Drawing.Point(308, 7);
             this.labelContractNo.Name = "labelContractNo";
             this.labelContractNo.Size = new System.Drawing.Size(125, 23);
@@ -253,7 +249,6 @@
             // 
             // labelPortofExport
             // 
-            this.labelPortofExport.Lines = 0;
             this.labelPortofExport.Location = new System.Drawing.Point(308, 37);
             this.labelPortofExport.Name = "labelPortofExport";
             this.labelPortofExport.Size = new System.Drawing.Size(125, 23);
@@ -262,7 +257,6 @@
             // 
             // labelCustomdeclareno
             // 
-            this.labelCustomdeclareno.Lines = 0;
             this.labelCustomdeclareno.Location = new System.Drawing.Point(308, 67);
             this.labelCustomdeclareno.Name = "labelCustomdeclareno";
             this.labelCustomdeclareno.Size = new System.Drawing.Size(125, 23);
@@ -326,7 +320,6 @@
             // 
             // labelQty
             // 
-            this.labelQty.Lines = 0;
             this.labelQty.Location = new System.Drawing.Point(8, 7);
             this.labelQty.Name = "labelQty";
             this.labelQty.Size = new System.Drawing.Size(30, 23);
@@ -378,7 +371,6 @@
             // 
             // labelNW
             // 
-            this.labelNW.Lines = 0;
             this.labelNW.Location = new System.Drawing.Point(170, 7);
             this.labelNW.Name = "labelNW";
             this.labelNW.Size = new System.Drawing.Size(30, 23);
@@ -409,7 +401,6 @@
             // 
             // labelGW
             // 
-            this.labelGW.Lines = 0;
             this.labelGW.Location = new System.Drawing.Point(341, 7);
             this.labelGW.Name = "labelGW";
             this.labelGW.Size = new System.Drawing.Size(30, 23);
@@ -440,7 +431,6 @@
             // 
             // labelCMP
             // 
-            this.labelCMP.Lines = 0;
             this.labelCMP.Location = new System.Drawing.Point(507, 7);
             this.labelCMP.Name = "labelCMP";
             this.labelCMP.Size = new System.Drawing.Size(35, 23);
@@ -464,6 +454,7 @@
             this.JunkChkValue = "Confirmed";
             this.KeyField1 = "ID";
             this.Name = "P41";
+            this.OnLineHelpID = "Sci.Win.Tems.Input6";
             this.Text = "P41. Export Declaration";
             this.UnApvChkValue = "Confirmed";
             this.UniqueExpress = "ID";

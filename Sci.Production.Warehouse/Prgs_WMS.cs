@@ -1,4 +1,5 @@
 ﻿using Ict;
+using Sci.Data;
 using Sci.Production.Automation;
 using Sci.Production.Automation.LogicLayer;
 using Sci.Production.Prg.Entity;
@@ -6,6 +7,7 @@ using Sci.Production.PublicPrg;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Runtime.CompilerServices;
 
 namespace Sci.Production.Warehouse
 {
@@ -140,6 +142,46 @@ namespace Sci.Production.Warehouse
             List<AutoRecord> autoRecordList = new List<AutoRecord>();
             WMSprocess(doTask, dtDetail, formName, statusAPI, action, dthasFabricType, isP99, fromNewBarcode, 1, autoRecordList); // 先寫入DB AutomationCreateRecord ( Json ... 等)
             WMSprocess(doTask, dtDetail, formName, statusAPI, action, dthasFabricType, isP99, fromNewBarcode, 2, autoRecordList); // 再傳API(這可能會很久)
+        }
+
+        /// <summary>
+        /// ISP20221590 檢查FtyInventory.SubConStatus
+        /// </summary>
+        /// <param name="listFtyInventoryUkey">listFtyInventoryUkey</param>
+        /// <returns>bool</returns>
+        public static bool CheckFtyInventorySubConStatus(List<long> listFtyInventoryUkey)
+        {
+            if (listFtyInventoryUkey.Count() == 0)
+            {
+                return true;
+            }
+
+            string whereFtyInventoryUkey = listFtyInventoryUkey.Select(s => $"'{s}'").JoinToString(",");
+            string sqlCheck = $@"
+select  [SP#] = f.POID,
+        [Seq] = Concat(f.Seq1, ' ', f.Seq2),
+        f.Roll,
+        f.Dyelot,
+        [Sub con status] = f.SubConStatus
+from FtyInventory f with (nolock)
+where   f.Ukey in ({whereFtyInventoryUkey}) and
+        f.SubConStatus <> ''
+";
+            DataTable dtResult;
+            DualResult result = DBProxy.Current.Select(null, sqlCheck, out dtResult);
+
+            if (!result)
+            {
+                MyUtility.Msg.getExceptionMsg(result.GetException());
+            }
+
+            if (dtResult.Rows.Count == 0)
+            {
+                return true;
+            }
+
+            MyUtility.Msg.ShowMsgGrid(dtResult, "Fabric transfer to sub con not return yet.", "SubConStatus");
+            return false;
         }
     }
 }

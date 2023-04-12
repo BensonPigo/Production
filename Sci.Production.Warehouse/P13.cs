@@ -182,25 +182,25 @@ select id.POID,
         p.Scirefno,
 	    p.seq1,
 	    p.seq2,
-	    [desc] =IIF((p.ID = lag(p.ID,1,'')over (order by id.POID,p.seq1,p.seq2,Tone.val,fi.ContainerCode,id.Dyelot,id.Roll) 
-					AND(p.seq1 = lag(p.seq1,1,'')over (order by id.POID,p.seq1,p.seq2,Tone.val,fi.ContainerCode,id.Dyelot,id.Roll))
-					AND(p.seq2 = lag(p.seq2,1,'')over (order by id.POID,p.seq1,p.seq2,Tone.val,fi.ContainerCode,id.Dyelot,id.Roll))) 
+	    [desc] =IIF((p.ID = lag(p.ID,1,'')over (order by id.POID,p.seq1,p.seq2,fi.Tone,fi.ContainerCode,id.Dyelot,id.Roll) 
+					AND(p.seq1 = lag(p.seq1,1,'')over (order by id.POID,p.seq1,p.seq2,fi.Tone,fi.ContainerCode,id.Dyelot,id.Roll))
+					AND(p.seq2 = lag(p.seq2,1,'')over (order by id.POID,p.seq1,p.seq2,fi.Tone,fi.ContainerCode,id.Dyelot,id.Roll))) 
 					,''
 					,dbo.getMtlDesc(id.poid,id.seq1,id.seq2,2,0)
 				)
 				------ + Tone------
-				 + char(10) + char(13) + IIF((p.ID = lag(p.ID,1,'')over (order by id.POID,p.seq1,p.seq2,Tone.val,fi.ContainerCode,id.Dyelot,id.Roll) 
-					AND(p.seq1 = lag(p.seq1,1,'')over (order by id.POID,p.seq1,p.seq2,Tone.val,fi.ContainerCode,id.Dyelot,id.Roll))
-					AND(p.seq2 = lag(p.seq2,1,'')over (order by id.POID,p.seq1,p.seq2,Tone.val,fi.ContainerCode,id.Dyelot,id.Roll))
-					AND(Tone.val = lag(Tone.val,1,'')over (order by id.POID,p.seq1,p.seq2,Tone.val,fi.ContainerCode,id.Dyelot,id.Roll))) 
+				 + char(10) + char(13) + IIF((p.ID = lag(p.ID,1,'')over (order by id.POID,p.seq1,p.seq2,fi.Tone,fi.ContainerCode,id.Dyelot,id.Roll) 
+					AND(p.seq1 = lag(p.seq1,1,'')over (order by id.POID,p.seq1,p.seq2,fi.Tone,fi.ContainerCode,id.Dyelot,id.Roll))
+					AND(p.seq2 = lag(p.seq2,1,'')over (order by id.POID,p.seq1,p.seq2,fi.Tone,fi.ContainerCode,id.Dyelot,id.Roll))
+					AND(fi.Tone = lag(fi.Tone,1,'')over (order by id.POID,p.seq1,p.seq2,fi.Tone,fi.ContainerCode,id.Dyelot,id.Roll))) 
 					,''
 					,'Tone/Grp : '
-                    ) + Tone.val
+                    ) + fi.Tone
 				------ + MDesc------
-                    + char(10) + char(13) + IIF((p.ID = lag(p.ID,1,'')over (order by id.POID,p.seq1,p.seq2,Tone.val,fi.ContainerCode,id.Dyelot,id.Roll) 
-					AND(p.seq1 = lag(p.seq1,1,'')over (order by id.POID,p.seq1,p.seq2,Tone.val,fi.ContainerCode,id.Dyelot,id.Roll))
-					AND(p.seq2 = lag(p.seq2,1,'')over (order by id.POID,p.seq1,p.seq2,Tone.val,fi.ContainerCode,id.Dyelot,id.Roll))
-					AND(Tone.val = lag(Tone.val,1,'')over (order by id.POID,p.seq1,p.seq2,Tone.val,fi.ContainerCode,id.Dyelot,id.Roll))) 
+                    + char(10) + char(13) + IIF((p.ID = lag(p.ID,1,'')over (order by id.POID,p.seq1,p.seq2,fi.Tone,fi.ContainerCode,id.Dyelot,id.Roll) 
+					AND(p.seq1 = lag(p.seq1,1,'')over (order by id.POID,p.seq1,p.seq2,fi.Tone,fi.ContainerCode,id.Dyelot,id.Roll))
+					AND(p.seq2 = lag(p.seq2,1,'')over (order by id.POID,p.seq1,p.seq2,fi.Tone,fi.ContainerCode,id.Dyelot,id.Roll))
+					AND(fi.Tone = lag(fi.Tone,1,'')over (order by id.POID,p.seq1,p.seq2,fi.Tone,fi.ContainerCode,id.Dyelot,id.Roll))) 
 					,''
 					,isnull(iif(p.FabricType='F', 'Relaxation Type：'+(select FabricRelaxationID from [dbo].[SciMES_RefnoRelaxtime] where Refno = p.Refno), ''),'')
                     ),
@@ -209,10 +209,10 @@ select id.POID,
 	    id.Qty,
 	    p.StockUnit,
         dbo.Getlocation(fi.ukey) [location],
-        ContainerCode = IIF((p.ID = lag(p.ID,1,'')over (order by id.POID,p.seq1,p.seq2,Tone.val,fi.ContainerCode,id.Dyelot,id.Roll) 
-					AND(p.seq1 = lag(p.seq1,1,'')over (order by id.POID,p.seq1,p.seq2,Tone.val,fi.ContainerCode,id.Dyelot,id.Roll))
-					AND(p.seq2 = lag(p.seq2,1,'')over (order by id.POID,p.seq1,p.seq2,Tone.val,fi.ContainerCode,id.Dyelot,id.Roll))
-					AND(fi.ContainerCode = lag(fi.ContainerCode,1,'')over (order by id.POID,p.seq1,p.seq2,Tone.val,fi.ContainerCode,id.Dyelot,id.Roll))
+        ContainerCode = IIF((p.ID = lag(p.ID,1,'')over (order by id.POID,p.seq1,p.seq2,fi.Tone,fi.ContainerCode,id.Dyelot,id.Roll) 
+					AND(p.seq1 = lag(p.seq1,1,'')over (order by id.POID,p.seq1,p.seq2,fi.Tone,fi.ContainerCode,id.Dyelot,id.Roll))
+					AND(p.seq2 = lag(p.seq2,1,'')over (order by id.POID,p.seq1,p.seq2,fi.Tone,fi.ContainerCode,id.Dyelot,id.Roll))
+					AND(fi.ContainerCode = lag(fi.ContainerCode,1,'')over (order by id.POID,p.seq1,p.seq2,fi.Tone,fi.ContainerCode,id.Dyelot,id.Roll))
 					) 
 					,''
 					,fi.ContainerCode),
@@ -248,14 +248,6 @@ Outer apply (
 	and fi.StockType = rd.StockType
 	and p.FabricType = 'F'
 )rd
-outer apply(select [val] = isnull(max(Tone), '')
-            from FIR f with (nolock)
-            inner join FIR_Shadebone  fs with (nolock) on fs.ID = f.ID
-            where   f.POID = fi.POID and
-                    f.Seq1 = fi.Seq1 and
-                    f.Seq2 = fi.Seq2 and
-                    fs.Roll = fi.Roll and
-                    fs.Dyelot = fi.Dyelot) Tone
 Outer apply (
 	select [Weight] = SUM(td.Weight)
 		, [ActualWeight] = SUM(td.ActualWeight)
@@ -270,7 +262,7 @@ Outer apply (
 	and p.FabricType = 'F'
 )td
 where id.id= @ID
-order by id.POID,p.seq1,p.seq2,Tone.val,fi.ContainerCode,id.Dyelot,id.Roll
+order by id.POID,p.seq1,p.seq2,fi.Tone,fi.ContainerCode,id.Dyelot,id.Roll
 ";
             result = DBProxy.Current.Select(string.Empty, sqlcmd, pars, out DataTable dtDetail);
             if (!result)
@@ -479,6 +471,7 @@ and ID = '{Sci.Env.User.UserID}'"))
                 .Numeric("balance", header: "Stock Qty", iseditingreadonly: true, decimal_places: 2, integer_places: 10)
                 .Text("Color", header: "Color", width: Widths.AnsiChars(10), iseditingreadonly: true) // 7
                 .Text("Size", header: "Size", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                .Text("GMTWash", header: "GMT Wash", width: Widths.AnsiChars(10), iseditingreadonly: true)
             ;
             #endregion 欄位設定
 
@@ -505,6 +498,14 @@ and ID = '{Sci.Env.User.UserID}'"))
             {
                 return;
             }
+
+            #region 檢查 FtyInventory.SubConStatus
+            List<long> listFtyInventoryUkey = this.DetailDatas.Select(s => MyUtility.Convert.GetLong(s["FtyInventoryUkey"])).ToList();
+            if (!Prgs_WMS.CheckFtyInventorySubConStatus(listFtyInventoryUkey))
+            {
+                return;
+            }
+            #endregion
 
             #region 檢查物料Location 是否存在WMS
             if (!PublicPrg.Prgs.Chk_WMS_Location(this.CurrentMaintain["ID"].ToString(), this.Name))
@@ -922,29 +923,27 @@ where (isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
             string masterID = (e.Master == null) ? string.Empty : e.Master["ID"].ToString();
-            this.DetailSelectCommand = string.Format(
-                @"
-
+            this.DetailSelectCommand = $@"
 select  o.FtyGroup
         , a.id
         , a.PoId
         , a.Seq1
         , a.Seq2
         , concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2) as seq
-        , p1.FabricType
-        , p1.stockunit
+        , psd.FabricType
+        , psd.stockunit
         , dbo.getmtldesc(a.poid,a.seq1,a.seq2,2,0) as [description]
         , a.Roll
         , a.Dyelot
-        , ShadeboneTone.Tone
+        , c.Tone
         , a.Qty
         , a.StockType
         , Isnull(c.inqty - c.outqty + c.adjustqty - c.ReturnQty,0.00) as balance
         , dbo.Getlocation(c.ukey) location
         , [ContainerCode] = c.ContainerCode
         , a.ukey
-		, p1.NetQty
-		, p1.LossQty
+		, psd.NetQty
+		, psd.LossQty
         , [Article] = case  when a.Seq1 like 'T%' then Stuff((Select distinct concat( ',',tcd.Article) 
 			                                                         From dbo.Orders as o 
 			                                                         Inner Join dbo.Style as s On s.Ukey = o.StyleUkey
@@ -952,30 +951,44 @@ select  o.FtyGroup
 			                                                         Inner Join dbo.Style_ThreadColorCombo_Detail as tcd On tcd.Style_ThreadColorComboUkey = tc.Ukey 
 			                                                         where	o.POID = a.PoId and
 			                                                         		tcd.SuppId = p.SuppId and
-			                                                         		tcd.SCIRefNo   = p1.SCIRefNo	and
-			                                                         		tcd.ColorID	   = p1.ColorID
+			                                                         		tcd.SCIRefNo   = psd.SCIRefNo	and
+			                                                         		tcd.ColorID	   = isnull(psdsC.SpecValue, '')
 			                                                         FOR XML PATH('')),1,1,'') 
                             else '' end
         , [Color] =
 			IIF(f.MtlTypeID = 'EMB THREAD' OR f.MtlTypeID = 'SP THREAD' OR f.MtlTypeID = 'THREAD' 
-			,IIF( p1.SuppColor = '' or p1.SuppColor is null,dbo.GetColorMultipleID(o.BrandID,p1.ColorID),p1.SuppColor)
-			,dbo.GetColorMultipleID(o.BrandID,p1.ColorID))
-		, [Size]= p1.SizeSpec
+			,IIF( psd.SuppColor = '' or psd.SuppColor is null,dbo.GetColorMultipleID(o.BrandID,isnull(psdsC.SpecValue, '')),psd.SuppColor)
+			,dbo.GetColorMultipleID(o.BrandID,isnull(psdsC.SpecValue, '')))
+		, [Size]= isnull(psdsS.SpecValue, '')
+        , [GMTWash] = isnull(GMTWash.val, '')
+        , [FtyInventoryUkey] = c.Ukey
 from dbo.issue_detail as a WITH (NOLOCK) 
 left join Orders o on a.poid = o.id
-left join PO_Supp_Detail p1 WITH (NOLOCK) on p1.ID = a.PoId and p1.seq1 = a.SEQ1 and p1.SEQ2 = a.seq2
-left join PO_Supp p WITH (NOLOCK) on p.ID = p1.ID and p1.seq1 = p.SEQ1
+left join PO_Supp_Detail psd WITH (NOLOCK) on psd.ID = a.PoId and psd.seq1 = a.SEQ1 and psd.SEQ2 = a.seq2
+left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
+left join PO_Supp_Detail_Spec psdsS WITH (NOLOCK) on psdsS.ID = psd.id and psdsS.seq1 = psd.seq1 and psdsS.seq2 = psd.seq2 and psdsS.SpecColumnID = 'Size'
+left join PO_Supp p WITH (NOLOCK) on p.ID = psd.ID and psd.seq1 = p.SEQ1
 left join dbo.ftyinventory c WITH (NOLOCK) on c.poid = a.poid and c.seq1 = a.seq1 and c.seq2  = a.seq2 
     and c.stocktype = 'B' and c.roll=a.roll and a.Dyelot = c.Dyelot
-left join fabric f with(nolock) on f.SCIRefno = p1.SCIRefno
-outer apply (
-	select [Tone] = MAX(fs.Tone)
-    from FtyInventory fi with (nolock) 
-    Left join FIR f with (nolock) on f.poid = fi.poid and f.seq1 = fi.seq1 and f.seq2 = fi.seq2
-	Left join FIR_Shadebone fs with (nolock) on f.ID = fs.ID and fs.Roll = fi.Roll and fs.Dyelot = fi.Dyelot
-	where fi.Ukey = ｃ.Ukey
-) ShadeboneTone
-Where a.id = '{0}'", masterID);
+left join fabric f with(nolock) on f.SCIRefno = psd.SCIRefno
+outer apply(
+    select top 1 [val] =  case  when sr.Status = 'Confirmed' then 'Done'
+			                    when tt.Status = 'Confirmed' then 'Ongoing'
+			                    else '' end
+    from TransferToSubcon_Detail ttd with (nolock)
+    inner join TransferToSubcon tt with (nolock) on tt.ID = ttd.ID
+    left join  SubconReturn_Detail srd with (nolock) on srd.TransferToSubcon_DetailUkey = ttd.Ukey
+    left join  SubconReturn sr with (nolock) on sr.ID = srd.ID and sr.Status = 'Confirmed'
+    where   ttd.POID = c.PoId and
+			ttd.Seq1 = c.Seq1 and 
+            ttd.Seq2 = c.Seq2 and
+			ttd.Dyelot = c.Dyelot and 
+            ttd.Roll = c.Roll and
+			ttd.StockType = c.StockType and
+            tt.Subcon = 'GMT Wash'
+) GMTWash
+Where a.id = '{masterID}'
+";
 
             return base.OnDetailSelectCommandPrepare(e);
         }

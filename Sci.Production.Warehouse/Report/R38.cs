@@ -1,12 +1,11 @@
-﻿using System;
+﻿using Ict;
+using Sci.Data;
 using System.Collections.Generic;
 using System.Data;
-using System.Windows.Forms;
 using System.Data.SqlClient;
-using Ict;
-using Sci.Data;
-using Excel = Microsoft.Office.Interop.Excel;
 using System.Runtime.InteropServices;
+using System.Windows.Forms;
+using Excel = Microsoft.Office.Interop.Excel;
 
 namespace Sci.Production.Warehouse
 {
@@ -104,7 +103,7 @@ select	fi.POID
         ,MtlLocationID = dbo.Getlocation(fi.ukey)
         ,Description = dbo.getMtlDesc(fi.POID, fi.Seq1,fi.Seq2,2,0) 
         ,o.StyleID
-        ,pd. ColorID
+        ,ColorID = isnull(psdsC.SpecValue, '')
         ,BuyerDelivery = x.earliest_BuyerDelivery
         ,SciDelivery = x.earliest_SciDelivery
         ,o.BrandID
@@ -112,7 +111,8 @@ select	fi.POID
         from FtyInventory  fi WITH (NOLOCK)
         left join FtyInventory_Detail fid  WITH (NOLOCK) on fi.Ukey = fid.Ukey
         left join Orders o WITH (NOLOCK)  on fi.POID = o.ID
-        left join PO_Supp_Detail pd   WITH (NOLOCK) on fi.POID = pd.ID and fi.Seq1 = pd.Seq1 and fi.Seq2 = pd.Seq2
+        left join PO_Supp_Detail psd   WITH (NOLOCK) on fi.POID = psd.ID and fi.Seq1 = psd.Seq1 and fi.Seq2 = psd.Seq2
+        left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
         cross apply
         (
         	select  earliest_BuyerDelivery = min(o1.BuyerDelivery)  

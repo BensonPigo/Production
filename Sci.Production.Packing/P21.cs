@@ -107,7 +107,7 @@ select distinct
 from PackErrTransfer pe with(nolock)
 left join orders o with(nolock) on pe.OrderID = o.ID
 left join Country with(nolock) on Country.id = o.Dest
-left join PackingError perr with (nolock) on pe.PackingErrorID = perr.ID and perr.Type='TP'
+left join PackingErrorTypeReason perr with (nolock) on pe.PackingErrorID = perr.ID and perr.Type='TP'
 left join PackingList_Detail pd WITH (NOLOCK) on  pd.SCICtnNo = pe.SCICtnNo 
 outer apply(
 	select top 1 CFMDate,AddName

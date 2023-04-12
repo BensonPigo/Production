@@ -56,6 +56,7 @@ begin
 	from dbo.AutomationErrMsg with (nolock)
 	where ReSented = 0 and 
 		  JSON <> '' and
+		  AddDate > DATEADD( MONTH, -3, GETDATE()) and 
 		  SuppAPIThread in ('api/GuoziAGV/SentDataByApiTag',
 		  'api/GuoziAGV/SentDeleteDataByApiTag',
 		  'api/SunriseFinishingProcesses/SentDataByApiTag', 

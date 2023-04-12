@@ -175,6 +175,18 @@
     <Compile Include="B09.Designer.cs">
       <DependentUpon>B09.cs</DependentUpon>
     </Compile>
+    <Compile Include="P01_MaterialCompare.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P01_MaterialCompare.Designer.cs">
+      <DependentUpon>P01_MaterialCompare.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P03_Spec.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P03_Spec.designer.cs">
+      <DependentUpon>P03_Spec.cs</DependentUpon>
+    </Compile>
     <Compile Include="P06_ExportDetail.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -194,6 +206,36 @@
       <DependentUpon>P07_PrintAccessorySticker.cs</DependentUpon>
     </Compile>
     <Compile Include="P07_PrintAccessorySticker_Data.cs" />
+    <Compile Include="P23_Print.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P23_Print.Designer.cs">
+      <DependentUpon>P23_Print.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P22_PrintFabricSticker.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P22_PrintFabricSticker.Designer.cs">
+      <DependentUpon>P22_PrintFabricSticker.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P22_Print.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P22_Print.Designer.cs">
+      <DependentUpon>P22_Print.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P15P16_ReuqeustList.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P15P16_ReuqeustList.Designer.cs">
+      <DependentUpon>P15P16_ReuqeustList.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P19_TKSeparateHistory.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P19_TKSeparateHistory.Designer.cs">
+      <DependentUpon>P19_TKSeparateHistory.cs</DependentUpon>
+    </Compile>
     <Compile Include="P21_PrintBarcode_Data.cs" />
     <Compile Include="P08_ExcelImport.cs">
       <SubType>Form</SubType>
@@ -214,6 +256,30 @@
       <DependentUpon>P07_QRCodeSticker.cs</DependentUpon>
     </Compile>
     <Compile Include="P26_PrintData.cs" />
+    <Compile Include="P54.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P54.Designer.cs">
+      <DependentUpon>P54.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P54_Import.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P54_Import.Designer.cs">
+      <DependentUpon>P54_Import.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P55.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P55.Designer.cs">
+      <DependentUpon>P55.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P55_Import.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P55_Import.Designer.cs">
+      <DependentUpon>P55_Import.cs</DependentUpon>
+    </Compile>
     <Compile Include="P65_PrintData.cs" />
     <Compile Include="P06.cs">
       <SubType>Form</SubType>
@@ -1519,6 +1585,18 @@
     <Compile Include="Report\R43.Designer.cs">
       <DependentUpon>R43.cs</DependentUpon>
     </Compile>
+    <Compile Include="Report\R45.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Report\R45.Designer.cs">
+      <DependentUpon>R45.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Report\R46.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Report\R46.Designer.cs">
+      <DependentUpon>R46.cs</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="B01.resx">
@@ -1559,11 +1637,17 @@
       <DependentUpon>P01_BatchReTransferMtlToScrap.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="P01_MaterialCompare.resx">
+      <DependentUpon>P01_MaterialCompare.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="P01_ReTransferMtlToScrap.resx">
       <DependentUpon>P01_ReTransferMtlToScrap.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P01_TrimCardPrint.resx">
       <DependentUpon>P01_TrimCardPrint.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P03_Spec.resx">
+      <DependentUpon>P03_Spec.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P06_ExportDetail.resx">
       <DependentUpon>P06_ExportDetail.cs</DependentUpon>
@@ -1590,6 +1674,22 @@
     <EmbeddedResource Include="P07_PrintAccessorySticker.resx">
       <DependentUpon>P07_PrintAccessorySticker.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="P23_Print.resx">
+      <DependentUpon>P23_Print.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P22_PrintFabricSticker.resx">
+      <DependentUpon>P22_PrintFabricSticker.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P22_Print.resx">
+      <DependentUpon>P22_Print.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P15P16_ReuqeustList.resx">
+      <DependentUpon>P15P16_ReuqeustList.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P19_TKSeparateHistory.resx">
+      <DependentUpon>P19_TKSeparateHistory.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="P21_PrintBarcode10.rdlc">
       <SubType>Designer</SubType>
     </EmbeddedResource>
@@ -1603,6 +1703,18 @@
       <DependentUpon>P08_ExcelImport.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P26_Print.rdlc" />
+    <EmbeddedResource Include="P54.resx">
+      <DependentUpon>P54.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P54_Import.resx">
+      <DependentUpon>P54_Import.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P55.resx">
+      <DependentUpon>P55.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P55_Import.resx">
+      <DependentUpon>P55_Import.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="P67_Import .resx">
       <DependentUpon>P67_Import .cs</DependentUpon>
     </EmbeddedResource>
@@ -2326,6 +2438,12 @@
     <EmbeddedResource Include="Report\R43.resx">
       <DependentUpon>R43.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Report\R45.resx">
+      <DependentUpon>R45.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Report\R46.resx">
+      <DependentUpon>R46.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Sci.Production.Automation\Sci.Production.Automation.csproj">
@@ -2441,10 +2559,18 @@
     <None Include="Properties\DataSources\P65_PrintData.datasource" />
     <None Include="Properties\DataSources\P66_PrintData.datasource" />
     <None Include="Sci.Production.Warehouse.ruleset" />
+    <None Include="stylecop.json" />
+    <None Include="stylecop1.json" />
   </ItemGroup>
   <ItemGroup>
     <Analyzer Include="..\packages\StyleCop.Analyzers.1.1.118\analyzers\dotnet\cs\StyleCop.Analyzers.CodeFixes.dll" />
     <Analyzer Include="..\packages\StyleCop.Analyzers.1.1.118\analyzers\dotnet\cs\StyleCop.Analyzers.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Down_thick_arrow_icon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Up_arrow_icon.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

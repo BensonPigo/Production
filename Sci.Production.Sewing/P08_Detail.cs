@@ -39,7 +39,7 @@ namespace Sci.Production.Sewing
             base.OnFormLoaded();
             if (this.dtDetail == null || this.dtDetail.Columns.Count == 0)
             {
-                string sqlcmd = $@"    select MDScanUKey		,PackingReasonID		,Qty		,Remarks =  (select Description from PackingReason WHERE Type='MD' AND Junk=0 and id = md.PackingReasonID)               ,CanEdit = 0    from MDScan_Detail md     where md.MDScanUKey = (        select top 1 m.Ukey        from MDScan m        where exists(			select 1 from PackingList_Detail pd 			where (pd.ID = '{this.drData["ID"]}'             and pd.CTNStartNo = '{this.drData["CTNStartNo"]}')			and  pd.ID = m.PackingListID and pd.OrderID = m.OrderID  and pd.CTNStartNo = m.CTNStartNo and pd.MDStatus <> 'Pass')        order by m.AddDate desc    )";
+                string sqlcmd = $@"    select MDScanUKey		,PackingReasonID		,Qty		,Remarks =  (select Description from PackingReason WHERE Type='MD' AND Junk=0 and id = md.PackingReasonID)               ,CanEdit = 0    from MDScan_Detail md     where md.MDScanUKey = (        select top 1 m.Ukey        from MDScan m        where exists(			select 1 from PackingList_Detail pd 			where (pd.ID = '{this.drData["ID"]}'             and pd.CTNStartNo = '{this.drData["CTNStartNo"]}')			and  pd.ID = m.PackingListID and pd.OrderID = m.OrderID  and pd.CTNStartNo = m.CTNStartNo and pd.DryRoomMDStatus <> 'Pass')        order by m.AddDate desc    )";
                 DualResult result = DBProxy.Current.Select(string.Empty, sqlcmd, out DataTable dtDBSource);
                 if (result)
                 {
@@ -160,7 +160,7 @@ and SCICtnNo = '{this.drData["SCICtnNo"]}' and OrderID = '{this.drData["OrderID"
             if (this.dtDetail == null || this.dtDetail.Columns.Count == 0)
             {
                 // 按下Close 代表return 原本資料回上一層
-                string sqlcmd = $@"    select MDScanUKey		,PackingReasonID		,Qty		,Remarks =  (select Description from PackingReason WHERE Type='MD' AND Junk=0 and id = md.PackingReasonID)               ,CanEdit = 0    from MDScan_Detail md     where md.MDScanUKey = (        select top 1 m.Ukey        from MDScan m        where exists(			select 1 from PackingList_Detail pd 			where (pd.ID = '{this.drData["ID"]}'             and pd.CTNStartNo = '{this.drData["CTNStartNo"]}')			and  pd.ID = m.PackingListID and pd.OrderID = m.OrderID  and pd.CTNStartNo = m.CTNStartNo and pd.MDStatus <> 'Pass')        order by m.AddDate desc    )";
+                string sqlcmd = $@"    select MDScanUKey		,PackingReasonID		,Qty		,Remarks =  (select Description from PackingReason WHERE Type='MD' AND Junk=0 and id = md.PackingReasonID)               ,CanEdit = 0    from MDScan_Detail md     where md.MDScanUKey = (        select top 1 m.Ukey        from MDScan m        where exists(			select 1 from PackingList_Detail pd 			where (pd.ID = '{this.drData["ID"]}'             and pd.CTNStartNo = '{this.drData["CTNStartNo"]}')			and  pd.ID = m.PackingListID and pd.OrderID = m.OrderID  and pd.CTNStartNo = m.CTNStartNo and pd.DryRoomMDStatus <> 'Pass')        order by m.AddDate desc    )";
                 DualResult result = DBProxy.Current.Select(string.Empty, sqlcmd, out DataTable dtDBSource);
                 if (result)
                 {

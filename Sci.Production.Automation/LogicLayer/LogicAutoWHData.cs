@@ -158,7 +158,7 @@ and exists(
     ,Fabric.WeaveTypeID
     ,[MtlType] = Fabric.MtlTypeID
     ,psd.Refno
-    ,[SizeCode] = psd.SizeSpec
+    ,[SizeCode] = isnull(psdsS.SpecValue ,'')
 ";
 
             if (fabricType == "F")
@@ -178,7 +178,7 @@ and exists(
     ,sd.Weight
     ,[Barcode] = dbo.GetWHBarcodeToGensong('{formName}', sd.ID, sd.Ukey, '{action}', 'F', f.Ukey, 0, {fromNewBarcodeBit},0)
     ,[IsInspection] = convert(bit, 0)
-    ,[Color] = dbo.GetColorMultipleID_MtlType(psd.BrandID, psd.ColorID, Fabric.MtlTypeID, psd.SuppColor)
+    ,[Color] = dbo.GetColorMultipleID_MtlType(psd.BrandID, isnull(psdsC.SpecValue ,''), Fabric.MtlTypeID, psd.SuppColor)
 ";
                         break;
                     case WHTableName.TransferIn_Detail:
@@ -195,7 +195,7 @@ and exists(
     ,sd.Weight
     ,[Barcode] = dbo.GetWHBarcodeToGensong('{formName}', sd.ID, sd.Ukey, '{action}', 'F', f.Ukey, 0, {fromNewBarcodeBit},0)
     ,[IsInspection] = convert(bit, 0)
-    ,[Color] = dbo.GetColorMultipleID_MtlType(psd.BrandID, psd.ColorID, Fabric.MtlTypeID, psd.SuppColor)
+    ,[Color] = dbo.GetColorMultipleID_MtlType(psd.BrandID, isnull(psdsC.SpecValue ,''), Fabric.MtlTypeID, psd.SuppColor)
 ";
                         break;
 
@@ -225,7 +225,7 @@ and exists(
 
     ,psd.Refno
     ,[Description] = dbo.getMtlDesc(psd.ID, psd.Seq1, psd.Seq2, 2, 0)
-    ,[Color] = dbo.GetColorMultipleID_MtlType(psd.BrandID, psd.ColorID, Fabric.MtlTypeID, psd.SuppColor)
+    ,[Color] = dbo.GetColorMultipleID_MtlType(psd.BrandID, isnull(psdsC.SpecValue ,''), Fabric.MtlTypeID, psd.SuppColor)
     ,Fabric.WeaveTypeID
 ";
                         if (detailTableName == WHTableName.SubTransfer_Detail)
@@ -243,7 +243,7 @@ and exists(
     ,StockUnit = dbo.GetStockUnitBySpSeq (sd.POID, sd.seq1, sd.seq2)
     ,[Barcode] = dbo.GetWHBarcodeToGensong('{formName}', sd.ID, sd.Ukey, '{action}', 'F', f.Ukey, 0, {fromNewBarcodeBit},0)
     ,[Description] = dbo.getMtlDesc(psd.ID, psd.Seq1, psd.Seq2, 2, 0)
-    ,[Color] = dbo.GetColorMultipleID_MtlType(psd.BrandID, psd.ColorID, Fabric.MtlTypeID, psd.SuppColor)
+    ,[Color] = dbo.GetColorMultipleID_MtlType(psd.BrandID, isnull(psdsC.SpecValue ,''), Fabric.MtlTypeID, psd.SuppColor)
 ";
                         break;
 
@@ -280,21 +280,13 @@ left join Production.dbo.Cutplan c on c.ID = {headerAlias}CutplanID
 ";
                         }
 
-                        otherTables += $@"
-outer apply (
-	select [Tone] = isnull(MAX(fs.Tone), '')
-	from FIR with (nolock) 
-	left join FIR_Shadebone fs with (nolock) on FIR.ID = fs.ID and fs.Roll = f.Roll and fs.Dyelot = f.Dyelot
-	where FIR.poid = f.poid and FIR.seq1 = f.seq1 and FIR.seq2 = f.seq2
-) ShadeboneTone
-";
                         columns += $@"
     ,[Type] = '{formName}'
     ,sd.Qty
     ,[Barcode] = dbo.GetWHBarcodeToGensong('{formName}', sd.ID, sd.Ukey, '{action}', 'F', f.Ukey, 0, {fromNewBarcodeBit},0)
     ,[NewBarcode] = dbo.GetWHBarcodeToGensong('{formName}', sd.ID, sd.Ukey, '{action}', 'T', f.Ukey, 0, {fromNewBarcodeBit},0)
     ,[Description] = dbo.getMtlDesc(psd.ID, psd.Seq1, psd.Seq2, 2, 0)
-    ,ShadeboneTone.Tone
+    ,f.Tone
 ";
 
                         break;
@@ -326,7 +318,7 @@ outer apply (
     ,sd.ToLocation
     ,f.Barcode
     ,[Qty] = isnull(f.InQty,0) -isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f.ReturnQty,0)
-    ,[Color] = dbo.GetColorMultipleID_MtlType(psd.BrandID, psd.ColorID, Fabric.MtlTypeID, psd.SuppColor)
+    ,[Color] = dbo.GetColorMultipleID_MtlType(psd.BrandID, isnull(psdsC.SpecValue ,''), Fabric.MtlTypeID, psd.SuppColor)
     ,[Description] = dbo.getMtlDesc(psd.ID, psd.Seq1, psd.Seq2, 2, 0)
 ";
                         break;
@@ -348,7 +340,7 @@ outer apply (
     ,[PoUnit] = iif('{formName}' = 'P07', sd.PoUnit, '')
     ,[ShipQty] = iif('{formName}' = 'P07', sd.ShipQty, 0.00)
     ,[Weight] = iif('{formName}' = 'P07', sd.Weight, 0.00)
-    ,[Color] = dbo.GetColorMultipleID_MtlType(psd.BrandID, psd.ColorID, Fabric.MtlTypeID, psd.SuppColor)
+    ,[Color] = dbo.GetColorMultipleID_MtlType(psd.BrandID, isnull(psdsC.SpecValue ,''), Fabric.MtlTypeID, psd.SuppColor)
 ";
                         break;
                     case WHTableName.TransferIn_Detail:
@@ -363,7 +355,7 @@ outer apply (
     ,[PoUnit] = ''
     ,ShipQty = 0.0
     ,sd.Weight
-    ,[Color] = dbo.GetColorMultipleID_MtlType(psd.BrandID, psd.ColorID, Fabric.MtlTypeID, psd.SuppColor)
+    ,[Color] = dbo.GetColorMultipleID_MtlType(psd.BrandID, isnull(psdsC.SpecValue ,''), Fabric.MtlTypeID, psd.SuppColor)
 ";
                         break;
 
@@ -372,7 +364,7 @@ outer apply (
                         columns += $@"
     ,sd.Qty
     ,StockUnit = dbo.GetStockUnitBySpSeq (sd.POID, sd.seq1, sd.seq2)
-    ,[Color] = dbo.GetColorMultipleID_MtlType(psd.BrandID, psd.ColorID, Fabric.MtlTypeID, psd.SuppColor)
+    ,[Color] = dbo.GetColorMultipleID_MtlType(psd.BrandID, isnull(psdsC.SpecValue ,''), Fabric.MtlTypeID, psd.SuppColor)
 ";
                         break;
 
@@ -407,10 +399,10 @@ outer apply (
     ,sd.CompleteTime
 
     ,psd.Refno
-    ,[SizeCode] = psd.SizeSpec
+    ,[SizeCode] = isnull(psdsS.SpecValue ,'')
     ,[StockUnit] = dbo.GetStockUnitBySPSeq(f.PoId, f.Seq1 ,f.Seq2)
     ,[MtlType] = Fabric.MtlTypeID
-    ,[Color] = dbo.GetColorMultipleID_MtlType(psd.BrandID, psd.ColorID, Fabric.MtlTypeID, psd.SuppColor)
+    ,[Color] = dbo.GetColorMultipleID_MtlType(psd.BrandID, isnull(psdsC.SpecValue ,''), Fabric.MtlTypeID, psd.SuppColor)
 ";
                         if (detailTableName == WHTableName.SubTransfer_Detail)
                         {
@@ -431,7 +423,7 @@ outer apply (
     ,psd.StockPOID
     ,psd.StockSeq1
     ,psd.StockSeq2
-    ,[Color] = dbo.GetColorMultipleID_MtlType(psd.BrandID, psd.ColorID, Fabric.MtlTypeID, psd.SuppColor)
+    ,[Color] = dbo.GetColorMultipleID_MtlType(psd.BrandID, isnull(psdsC.SpecValue ,''), Fabric.MtlTypeID, psd.SuppColor)
 ";
                         break;
 
@@ -458,7 +450,7 @@ outer apply (
     ,sd.ToLocation
     ,[Qty] = isnull(f.InQty,0) -isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f.ReturnQty,0)
     ,[StockUnit] = dbo.GetStockUnitBySPSeq(sd.PoId, sd.Seq1 ,sd.Seq2)
-    ,[Color] = dbo.GetColorMultipleID_MtlType(psd.BrandID, psd.ColorID, Fabric.MtlTypeID, psd.SuppColor)
+    ,[Color] = dbo.GetColorMultipleID_MtlType(psd.BrandID, isnull(psdsC.SpecValue ,''), Fabric.MtlTypeID, psd.SuppColor)
     ,[Description] = dbo.getMtlDesc(psd.ID, psd.Seq1, psd.Seq2, 2, 0)
 ";
                         break;
@@ -526,7 +518,7 @@ and psd.FabricType = '{fabricType}'
         }
 
         /// <inheritdoc/>
-        public static bool SendWebAPI_Status(EnumStatus statusAPI, string url, AutomationErrMsgPMS automationErrMsg, string jsonBody)
+        public static DualResult SendWebAPI_Status(EnumStatus statusAPI, string url, AutomationErrMsgPMS automationErrMsg, string jsonBody, bool isShowMsg = true)
         {
             switch (statusAPI)
             {
@@ -534,11 +526,15 @@ and psd.FabricType = '{fabricType}'
                     DualResult result = WH_Auto_SendWebAPI(url, automationErrMsg.suppAPIThread, jsonBody, automationErrMsg);
                     if (!result)
                     {
-                        MyUtility.Msg.WarningBox("WMS system rejected the lock request, please reference below information：" + Environment.NewLine + result.Messages.ToString());
-                        return false;
+                        if (isShowMsg)
+                        {
+                            MyUtility.Msg.WarningBox("WMS system rejected the lock request, please reference below information：" + Environment.NewLine + result.Messages.ToString());
+                        }
+
+                        return result;
                     }
 
-                    return true;
+                    return new DualResult(true);
 
                 case EnumStatus.New:
                 case EnumStatus.Delete:
@@ -548,7 +544,7 @@ and psd.FabricType = '{fabricType}'
                     break;
             }
 
-            return true;
+            return new DualResult(true);
         }
 
         /// <inheritdoc/>

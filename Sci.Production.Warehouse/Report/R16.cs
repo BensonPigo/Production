@@ -1,13 +1,14 @@
-﻿using System;
-using System.Data;
-using System.Windows.Forms;
-using Ict;
+﻿using Ict;
 using Sci.Data;
+using System;
+using System.Data;
 using System.Runtime.InteropServices;
+using System.Windows.Forms;
 using Excel = Microsoft.Office.Interop.Excel;
 
 namespace Sci.Production.Warehouse
 {
+    /// <inheritdoc/>
     public partial class R16 : Win.Tems.PrintForm
     {
         private string mdivision;
@@ -18,14 +19,13 @@ namespace Sci.Production.Warehouse
         private DateTime? issueDate2;
         private DataTable printData;
 
+        /// <inheritdoc/>
         public R16(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
             this.InitializeComponent();
             this.txtMdivision.Text = Env.User.Keyword;
         }
-
-        // 驗證輸入條件
 
         /// <inheritdoc/>
         protected override bool ValidateInput()
@@ -45,8 +45,6 @@ namespace Sci.Production.Warehouse
 
             return base.ValidateInput();
         }
-
-        // 非同步取資料
 
         /// <inheritdoc/>
         protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
@@ -110,7 +108,7 @@ select
 	,SP=id.POID
 	,Seq=CONCAT(LTRIM(RTRIM(id.Seq1)),' ',LTRIM(RTRIM(id.Seq2)))
 	,psd.Refno
-	,psd.ColorID
+	,ColorID = isnull(psdsC.SpecValue, '')
 	,DescDetail=LTRIM(RTRIM(f.DescDetail))
     ,f.WeaveTypeID
 	,r.Relaxtime
@@ -147,6 +145,7 @@ inner join issue_detail id WITH (NOLOCK) on i.id = id.id
 inner join Orders o WITH (NOLOCK) on id.POID = o.id
 inner join Cutplan c WITH (NOLOCK) on c.ID = i.CutplanID
 left join po_supp_detail psd WITH (NOLOCK) on psd.id = id.poid and psd.seq1 = id.seq1 and psd.seq2 =id.seq2
+left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
 left join Fabric f WITH (NOLOCK) on f.SCIRefno  = psd.SCIRefno
 left join FtyInventory fi WITH (NOLOCK) on fi.POID = id.POID and fi.Seq1 = id.Seq1 and fi.Seq2 = id.Seq2 and fi.Roll = id.Roll and fi.Dyelot = id.Dyelot and id.StockType = fi.StockType
 left join (

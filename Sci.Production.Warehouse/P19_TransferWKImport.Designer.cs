@@ -42,6 +42,8 @@
             this.bindingGridStock = new Sci.Win.UI.BindingSource(this.components);
             this.label3 = new Sci.Win.UI.Label();
             this.displayTotal = new Sci.Win.UI.DisplayBox();
+            this.cbStockType = new Sci.Win.UI.ComboBox();
+            this.label4 = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.splitGrid)).BeginInit();
             this.splitGrid.Panel1.SuspendLayout();
             this.splitGrid.Panel2.SuspendLayout();
@@ -209,11 +211,34 @@
             this.displayTotal.Size = new System.Drawing.Size(103, 23);
             this.displayTotal.TabIndex = 9;
             // 
+            // cbStockType
+            // 
+            this.cbStockType.BackColor = System.Drawing.Color.White;
+            this.cbStockType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.cbStockType.FormattingEnabled = true;
+            this.cbStockType.IsSupportUnselect = true;
+            this.cbStockType.Location = new System.Drawing.Point(602, 9);
+            this.cbStockType.Name = "cbStockType";
+            this.cbStockType.OldText = "";
+            this.cbStockType.Size = new System.Drawing.Size(121, 24);
+            this.cbStockType.TabIndex = 11;
+            this.cbStockType.SelectedValueChanged += new System.EventHandler(this.CbStockType_SelectedValueChanged);
+            // 
+            // label4
+            // 
+            this.label4.Location = new System.Drawing.Point(524, 9);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(75, 23);
+            this.label4.TabIndex = 10;
+            this.label4.Text = "Stock Type";
+            // 
             // P19_TransferWKImport
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1065, 546);
+            this.Controls.Add(this.cbStockType);
+            this.Controls.Add(this.label4);
             this.Controls.Add(this.displayTotal);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.btnClose);
@@ -254,5 +279,7 @@
         private Win.UI.BindingSource bindingGridStock;
         private Win.UI.Label label3;
         private Win.UI.DisplayBox displayTotal;
+        private Win.UI.ComboBox cbStockType;
+        private Win.UI.Label label4;
     }
 }

@@ -160,7 +160,7 @@ select [ID]
       ,[PackingReasonIDForTypeEG]
       ,[PackingReasonIDForTypeEO]
       ,[PackingReasonIDForTypeET]
-from PackingErrorRecord p 
+from PackErrTransfer_Detail p 
 where PackID = '{this.drDetail["PackID"]}'
 and CTN = '{this.drDetail["CTN"].ToString()}'
 ";

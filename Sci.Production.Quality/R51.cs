@@ -88,6 +88,17 @@ m.Description,
 SRD.DefectCode,                                
 SRD.DefectQty,";
             }
+            else if (this.radioDetail_Operator.Checked)
+            {
+                formatJoin = @" left join SubProInsRecord_Defect SRD on SR.Ukey = SRD.SubProInsRecordUkey
+                                left join SubProInsRecord_Operator sro with (nolock) on sro.SubProInsRecordUkey = SR.Ukey
+                                left join SubProOperator spo with (nolock) on spo.EmployeeID = sro.SubProOperatorEmployeeID and spo.SubprocessID = SR.SubProcessID
+                            " + s_d;
+                formatCol = @"  SRD.DefectCode,
+                                SRD.DefectQty,
+                                sro.SubProOperatorEmployeeID,
+                                [OperatorName] = iif(isnull(sro.SubProOperatorEmployeeID, '') = '', '', spo.FirstName + ' ' + spo.LastName),";
+            }
             else
             {
                 formatJoin = @"left join SubProInsRecord_Defect SRD on SR.Ukey = SRD.SubProInsRecordUkey
@@ -134,8 +145,8 @@ outer apply(select ttlSecond_RD = DATEDIFF(Second, StartResolveDate, EndResolveD
 
             if (!this.comboMDivision1.Text.Empty())
             {
-                sqlwhere1.Append("\r\nand B.MDivisionID= @M");
-                sqlwhere2.Append("\r\nand BR.MDivisionID= @M");
+                sqlwhere1.Append("\r\nand Fac.MDivisionID= @M");
+                sqlwhere2.Append("\r\nand Fac.MDivisionID= @M");
                 this.Parameters.Add(new SqlParameter("@Mp", SqlDbType.VarChar, 8) { Value = this.comboMDivision1.Text });
                 declare.Append("\r\ndeclare @M varchar(8) = @Mp");
             }
@@ -160,6 +171,7 @@ outer apply(select ttlSecond_RD = DATEDIFF(Second, StartResolveDate, EndResolveD
             this.Sqlcmd.Append($@"
 select
     SR.FactoryID,
+    Fac.MDivisionID,
     SR.SubProLocationID,
 	SR.InspectionDate,
     O.SewInLine,
@@ -171,6 +183,8 @@ select
     [Artwork] = Artwork.val,
 	B.OrderID,
     Country.Alias,
+    s.AbbEN,
+    PSD.Refno,
     o.BuyerDelivery,
 	BD.BundleGroup,
     o.SeasonID,
@@ -198,10 +212,15 @@ Left join Bundle_Detail BD WITH (NOLOCK) on SR.BundleNo=BD.BundleNo
 Left join Bundle B WITH (NOLOCK) on BD.ID=B.ID
 Left join Orders O WITH (NOLOCK) on B.OrderID=O.ID
 left join Country on Country.ID = o.Dest
+Left JOIN WorkOrder WO ON WO.CutRef=B.CutRef and b.CutRef <> '' and wo.ID = b.POID and wo.OrderID =b.Orderid
+Left JOIN PO_Supp_Detail PSD WITH (NOLOCK) ON PSD.ID=WO.ID AND PSD.SEQ1 = WO.SEQ1 AND PSD.SEQ2=WO.SEQ2
+Left JOIN PO_SUPP PS WITH (NOLOCK) ON PS.ID= PSD.ID AND PS.SEQ1=PSD.SEQ1
+Left JOIN Supp S WITH (NOLOCK) ON S.ID=PS.SuppID
 outer apply(SELECT val =  Stuff((select distinct concat( '+',SubprocessId)   
                                     from Bundle_Detail_Art bda with (nolock) 
                                     where bda.Bundleno = BD.Bundleno
                                     FOR XML PATH('')),1,1,'') ) Artwork
+outer apply(select MDivisionID from Factory f where f.ID = SR.FactoryID and f.Junk =0) Fac
 {formatJoin}
 outer apply(select ttlSecond = DATEDIFF(Second, SR.AddDate, RepairedDatetime)) ttlSecond
 Where 1=1
@@ -212,6 +231,7 @@ UNION
 
 select
     SR.FactoryID,
+    Fac.MDivisionID,
     SR.SubProLocationID,
 	SR.InspectionDate,
     O.SewInLine,
@@ -223,6 +243,8 @@ select
     [Artwork] = Artwork.val,
 	BR.OrderID,
     Country.Alias,
+    s.AbbEN,
+    PSD.Refno,
     o.BuyerDelivery,
 	BRD.BundleGroup,
     o.SeasonID,
@@ -249,10 +271,17 @@ Left join BundleReplacement_Detail BRD WITH (NOLOCK) on SR.BundleNo=BRD.BundleNo
 Left join BundleReplacement BR WITH (NOLOCK) on BRD.ID=BR.ID
 Left join Orders O WITH (NOLOCK) on BR.OrderID=O.ID
 left join Country on Country.ID = o.Dest
+Left join Bundle_Detail BD WITH (NOLOCK) on SR.BundleNo=BD.BundleNo
+Left JOIN Bundle B WITH (NOLOCK) ON BD.ID=B.ID
+Left JOIN WorkOrder WO ON WO.CutRef=B.CutRef and b.CutRef <> '' and wo.ID = b.POID and wo.OrderID =b.Orderid
+Left JOIN PO_Supp_Detail PSD WITH (NOLOCK) ON PSD.ID=WO.ID AND PSD.SEQ1 = WO.SEQ1 AND PSD.SEQ2=WO.SEQ2
+Left JOIN PO_SUPP PS WITH (NOLOCK) ON PS.ID= PSD.ID AND PS.SEQ1=PSD.SEQ1
+Left JOIN Supp S WITH (NOLOCK) ON S.ID=PS.SuppID
 outer apply(SELECT val =  Stuff((select distinct concat( '+',SubprocessId)   
                                     from Bundle_Detail_Art bda with (nolock) 
                                     where bda.Bundleno = SR.BundleNo
                                     FOR XML PATH('')),1,1,'') ) Artwork
+outer apply(select MDivisionID from Factory f where f.ID = SR.FactoryID and f.Junk =0) Fac
 {formatJoin}
 outer apply(select ttlSecond = DATEDIFF(Second, SR.AddDate, RepairedDatetime)) ttlSecond
 Where 1=1
@@ -303,7 +332,25 @@ drop table #tmp,#tmp2
 
             this.PrintData.Columns.Remove("BundleNoCT");
 
-            string filename = this.radioSummary.Checked ? "Quality_R51_Summary.xltx" : this.radioDetail_DefectType.Checked ? "Quality_R51_Detail_DefectType.xltx" : "Quality_R51_Detail_Responseteam.xltx";
+            string filename = string.Empty;
+
+            if (this.radioSummary.Checked)
+            {
+                filename = "Quality_R51_Summary.xltx";
+            }
+            else if (this.radioDetail_DefectType.Checked)
+            {
+                filename = "Quality_R51_Detail_DefectType.xltx";
+            }
+            else if (this.radioDetail_Operator.Checked)
+            {
+                filename = "Quality_R51_Detail_Operator.xltx";
+            }
+            else
+            {
+                filename = "Quality_R51_Detail_Responseteam.xltx";
+            }
+
             Excel.Application excelApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\" + filename); // 預先開啟excel app
 
             Excel.Workbook xlWb = excelApp.ActiveWorkbook as Excel.Workbook;

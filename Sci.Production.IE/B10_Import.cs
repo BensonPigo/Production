@@ -1,12 +1,20 @@
 ﻿using System;
+using System.CodeDom;
+using System.Collections.Generic;
 using System.Data;
+using System.Data.SqlClient;
 using System.Data.SqlTypes;
 using System.Drawing;
+using System.IO;
 using System.Text;
 using System.Windows.Forms;
 using Ict;
 using Ict.Win;
 using Microsoft.Office.Interop.Excel;
+using Microsoft.SqlServer.Management.Smo;
+using Microsoft.VisualBasic.PowerPacks;
+using static System.Net.Mime.MediaTypeNames;
+using static Sci.MyUtility;
 using DataTable = System.Data.DataTable;
 
 namespace Sci.Production.IE
@@ -18,13 +26,17 @@ namespace Sci.Production.IE
     {
         private DataTable grid2Data = new DataTable();
         private DataTable detailData;
+        private string destination_path;
+
         /// <summary>
         /// B10_Import
         /// </summary>
         public B10_Import()
         {
+            this.destination_path = MyUtility.GetValue.Lookup("select PicPath from System WITH (NOLOCK)", null);
             this.InitializeComponent();
         }
+
         /// <summary>
         /// OnFormLoaded
         /// </summary>
@@ -63,8 +75,14 @@ namespace Sci.Production.IE
             this.grid2Data.Columns.Add("Supplier Part#-3", typeof(string));
             this.grid2Data.Columns.Add("Supplier Brand-3", typeof(string));
             this.grid2Data.Columns.Add("Remark", typeof(string));
-            //this.grid2Data.Columns.Add("Picture1", typeof(string));
-            //this.grid2Data.Columns.Add("Picture2", typeof(string));
+
+            this.grid2Data.Columns.Add("Picture1_File", typeof(byte[]));
+            this.grid2Data.Columns.Add("Picture2_File", typeof(byte[]));
+            this.grid2Data.Columns.Add("Picture1", typeof(string));
+            this.grid2Data.Columns.Add("Picture2", typeof(string));
+            this.grid2Data.Columns.Add("HasPicture1", typeof(bool));
+            this.grid2Data.Columns.Add("HasPicture2", typeof(bool));
+
             this.grid2Data.Columns.Add("ErrMsg", typeof(string));
 
             this.listControlBindingSource2.DataSource = this.grid2Data;
@@ -88,6 +106,8 @@ namespace Sci.Production.IE
                 .Text("Supplier Part#-3", header: "Supplier Part#-3", width: Widths.AnsiChars(15))
                 .Text("Supplier Brand-3", header: "Supplier Brand-3", width: Widths.AnsiChars(15))
                 .Text("Remark", header: "Remark", width: Widths.AnsiChars(100))
+                .CheckBox("HasPicture1", header: "Has Picture1", width: Widths.AnsiChars(5), trueValue: 1, falseValue: 0)
+                .CheckBox("HasPicture2", header: "Has Picture2", width: Widths.AnsiChars(5), trueValue: 1, falseValue: 0)
                 .Text("ErrMsg", header: "Error Message", width: Widths.AnsiChars(100));
 
             for (int i = 0; i < this.gridDetail.ColumnCount; i++)
@@ -271,12 +291,71 @@ namespace Sci.Production.IE
                                 newRow["Remark"] = remarkVal.Length > 3000 ? remarkVal.Substring(0, 3000) : remarkVal;
 
                                 // 必填欄位不為空才可以填入
-                                if (!MyUtility.Check.Empty(sewingMachineAttachmentIDVal) && !MyUtility.Check.Empty(machineMasterIDVal) && !MyUtility.Check.Empty(typeVal) 
+                                if (!MyUtility.Check.Empty(sewingMachineAttachmentIDVal) && !MyUtility.Check.Empty(machineMasterIDVal) && !MyUtility.Check.Empty(typeVal)
                                     && !MyUtility.Check.Empty(measurementVal) && !MyUtility.Check.Empty(directionFoldTypeVal))
                                 {
                                     this.grid2Data.Rows.Add(newRow);
                                 }
 
+                            }
+
+                            // 取得Sheet上的圖形集合
+                            Shapes shapes = worksheet.Shapes;
+
+                            // 當前Sheet是否有圖片
+                            bool hasShape = shapes.Count > 0;
+
+                            foreach (Microsoft.Office.Interop.Excel.Shape currentShape in shapes)
+                            {
+                                // 取得當前圖片，是在哪一個儲存格
+                                Microsoft.Office.Interop.Excel.Range picRange = currentShape.TopLeftCell;
+
+                                // picRange.Row的起點是1，加上Excel第一列是標題，所以要-2才能對應到DataTable第一列
+                                int shapeRow = picRange.Row - 2;
+
+                                // 判斷：(1)圖形所在的儲存格，跟目前讀取到的Row是不是一樣的，以及是不是放在第R(18)和S(19)欄  (2) 所有圖片都讀取完，就不再做
+                                // Picture1
+                                if (picRange.Column == 18)
+                                {
+                                    // 取得圖形
+                                    currentShape.CopyPicture(XlPictureAppearance.xlScreen, XlCopyPictureFormat.xlBitmap);
+                                    if (Clipboard.ContainsImage())
+                                    {
+                                        // 取得二進位資料
+                                        byte[] imageData = null;
+                                        using (MemoryStream imagestream = new MemoryStream())
+                                        {
+                                            Clipboard.GetImage().Save(imagestream, System.Drawing.Imaging.ImageFormat.Jpeg);
+                                            imageData = imagestream.ToArray();
+                                        }
+
+
+                                        this.grid2Data.Rows[shapeRow]["Picture1_File"] = imageData;
+                                        this.grid2Data.Rows[shapeRow]["Picture1"] = Guid.NewGuid() + "-1.jpg";
+                                        this.grid2Data.Rows[shapeRow]["HasPicture1"] = true;
+                                    }
+                                }
+
+                                // Picture2
+                                if (picRange.Column == 19)
+                                {
+                                    // 取得圖形
+                                    currentShape.CopyPicture(XlPictureAppearance.xlScreen, XlCopyPictureFormat.xlBitmap);
+                                    if (Clipboard.ContainsImage())
+                                    {
+                                        // 取得二進位資料
+                                        byte[] imageData = null;
+                                        using (MemoryStream imagestream = new MemoryStream())
+                                        {
+                                            Clipboard.GetImage().Save(imagestream, System.Drawing.Imaging.ImageFormat.Jpeg);
+                                            imageData = imagestream.ToArray();
+                                        }
+
+                                        this.grid2Data.Rows[shapeRow]["Picture2_File"] = imageData;
+                                        this.grid2Data.Rows[shapeRow]["Picture2"] = Guid.NewGuid() + "-2.jpg";
+                                        this.grid2Data.Rows[shapeRow]["HasPicture2"] = true;
+                                    }
+                                }
                             }
 
                             dr["Status"] = "Check & Import Completed.";
@@ -302,10 +381,42 @@ namespace Sci.Production.IE
                 return;
             }
 
+            List<SqlParameter> para = new List<SqlParameter>();
+
+            foreach (DataRow dr in this.grid2Data.Rows)
+            {
+                byte[] picture1 = null;
+                if (dr["Picture1_File"] != null && dr["Picture1_File"] != DBNull.Value)
+                {
+                    string fileName = dr["Picture1"].ToString();
+                    picture1 = (byte[])dr["Picture1_File"];
+
+                    // 轉成圖片
+                    MemoryStream oMemoryStream = new MemoryStream(picture1);
+                    System.Drawing.Image oImage = System.Drawing.Image.FromStream(oMemoryStream);
+                    oImage.Save(this.destination_path + fileName);
+                }
+
+                byte[] picture2 = null;
+                if (dr["Picture2_File"] != null && dr["Picture2_File"] != DBNull.Value)
+                {
+                    string fileName = dr["Picture2"].ToString();
+                    picture2 = (byte[])dr["Picture2_File"];
+
+                    // 轉成圖片
+                    MemoryStream oMemoryStream = new MemoryStream(picture2);
+                    System.Drawing.Image oImage = System.Drawing.Image.FromStream(oMemoryStream);
+                    oImage.Save(this.destination_path + fileName);
+                }
+            }
+
+            this.grid2Data.Columns.Remove("Picture1_File");
+            this.grid2Data.Columns.Remove("Picture2_File");
+
             string sqlCmd = $@"
 INSERT INTO dbo.SewingMachineAttachment
            (ID,MoldID,Description,DescriptionCN,MachineMasterGroupID,AttachmentTypeID,MeasurementID,FoldTypeID,Supplier1PartNo,Supplier1BrandID
-           ,Supplier2PartNo,Supplier2BrandID,Supplier3PartNo,Supplier3BrandID,Remark,AddName,AddDate)
+           ,Supplier2PartNo,Supplier2BrandID,Supplier3PartNo,Supplier3BrandID,Remark,Picture1,Picture2,AddName,AddDate)
 select [ID]
     ,[Attachment Group]
     ,[Description]
@@ -321,6 +432,8 @@ select [ID]
     ,[Supplier Part#-3]
     ,[Supplier Brand-3]
     ,[Remark]
+    ,ISNULL([Picture1] ,'')
+    ,ISNULL([Picture2] ,'')
     ,'{Sci.Env.User.UserID}'
     ,GETDATE()
 from #tmp t
@@ -335,6 +448,8 @@ where not exists(
 
             DualResult result = MyUtility.Tool.ProcessWithDatatable(this.grid2Data, string.Empty, sqlCmd, out System.Data.DataTable dt);
 
+            this.grid2Data.Columns.Add("Picture1_File", typeof(byte[]));
+            this.grid2Data.Columns.Add("Picture2_File", typeof(byte[]));
             if (!result)
             {
                 this.ShowErr(result);

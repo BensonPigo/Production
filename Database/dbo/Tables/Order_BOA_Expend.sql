@@ -1,38 +1,36 @@
 ﻿CREATE TABLE [dbo].[Order_BOA_Expend] (
-    [Id]              VARCHAR (13)    CONSTRAINT [DF_Order_BOA_Expend_Id] DEFAULT ('') NOT NULL,
-    [UKEY]            BIGINT          CONSTRAINT [DF_Order_BOA_Expend_UKEY] DEFAULT ((0)) NOT NULL,
-    [Order_BOAUkey]   BIGINT          CONSTRAINT [DF_Order_BOA_Expend_Order_BOAUkey] DEFAULT ((0)) NOT NULL,
-    [OrderQty]        NUMERIC (6)     CONSTRAINT [DF_Order_BOA_Expend_OrderQty] DEFAULT ((0)) NULL,
-    [Refno]           VARCHAR (20)    CONSTRAINT [DF_Order_BOA_Expend_Refno] DEFAULT ('') NOT NULL,
-    [SCIRefno]        VARCHAR (30)    CONSTRAINT [DF_Order_BOA_Expend_SCIRefno] DEFAULT ('') NOT NULL,
-    [Price]           NUMERIC (16, 4) CONSTRAINT [DF_Order_BOA_Expend_Price] DEFAULT ((0)) NULL,
-    [UsageQty]        NUMERIC (11, 2) CONSTRAINT [DF_Order_BOA_Expend_UsageQty] DEFAULT ((0)) NULL,
-    [UsageUnit]       VARCHAR (8)     CONSTRAINT [DF_Order_BOA_Expend_UsageUnit] DEFAULT ('') NULL,
-    [Article]         VARCHAR (8)     CONSTRAINT [DF_Order_BOA_Expend_Article] DEFAULT ('') NULL,
-    [ColorId]         NVARCHAR (70)   CONSTRAINT [DF_Order_BOA_Expend_ColorId] DEFAULT ('') NULL,
-    [SuppColor]       NVARCHAR (MAX)  CONSTRAINT [DF_Order_BOA_Expend_SuppColor] DEFAULT ('') NULL,
-    [SizeCode]        VARCHAR (8)     CONSTRAINT [DF_Order_BOA_Expend_SizeCode] DEFAULT ('') NULL,
-    [Sizespec]        VARCHAR (15)    CONSTRAINT [DF_Order_BOA_Expend_Sizespec] DEFAULT ('') NULL,
-    [SizeUnit]        VARCHAR (8)     CONSTRAINT [DF_Order_BOA_Expend_SizeUnit] DEFAULT ('') NULL,
-    [OrderIdList]     NVARCHAR (MAX)  CONSTRAINT [DF_Order_BOA_Expend_OrderIdList] DEFAULT ('') NULL,
-    [SysUsageQty]     NUMERIC (11, 2) CONSTRAINT [DF_Order_BOA_Expend_SysUsageQty] DEFAULT ((0)) NOT NULL,
-    [Remark]          NVARCHAR (MAX)  CONSTRAINT [DF_Order_BOA_Expend_Remark] DEFAULT ('') NULL,
-    [BomFactory]      VARCHAR (8)     CONSTRAINT [DF_Order_BOA_Expend_BomFactory] DEFAULT ('') NULL,
-    [BomCountry]      VARCHAR (2)     CONSTRAINT [DF_Order_BOA_Expend_BomCountry] DEFAULT ('') NULL,
-    [BomStyle]        VARCHAR (15)    CONSTRAINT [DF_Order_BOA_Expend_BomStyle] DEFAULT ('') NULL,
-    [BomCustCD]       VARCHAR (20)    CONSTRAINT [DF_Order_BOA_Expend_BomCustCD] DEFAULT ('') NULL,
-    [BomArticle]      VARCHAR (8)     CONSTRAINT [DF_Order_BOA_Expend_BomArticle] DEFAULT ('') NULL,
-    [BomZipperInsert] VARCHAR (5)     CONSTRAINT [DF_Order_BOA_Expend_BomZipperInsert] DEFAULT ('') NULL,
-    [BomBuymonth]     VARCHAR (10)    CONSTRAINT [DF_Order_BOA_Expend_BomBuymonth] DEFAULT ('') NULL,
-    [BomCustPONo]     VARCHAR (30)    CONSTRAINT [DF_Order_BOA_Expend_BomCustPONo] DEFAULT ('') NULL,
-    [AddName]         VARCHAR (10)    CONSTRAINT [DF_Order_BOA_Expend_AddName] DEFAULT ('') NULL,
-    [AddDate]         DATETIME        NULL,
-    [EditName]        VARCHAR (10)    CONSTRAINT [DF_Order_BOA_Expend_EditName] DEFAULT ('') NULL,
-    [EditDate]        DATETIME        NULL,
-    [Keyword]         VARCHAR (MAX)   NULL,
-    [Special]         NVARCHAR (MAX)  NULL,
+    [Id]               VARCHAR (13)    CONSTRAINT [DF_Order_BOA_Expend_Id] DEFAULT ('') NOT NULL,
+    [UKEY]             BIGINT          CONSTRAINT [DF_Order_BOA_Expend_UKEY] DEFAULT ((0)) NOT NULL,
+    [Order_BOAUkey]    BIGINT          CONSTRAINT [DF_Order_BOA_Expend_Order_BOAUkey] DEFAULT ((0)) NOT NULL,
+    [OrderQty]         NUMERIC (6)     CONSTRAINT [DF_Order_BOA_Expend_OrderQty] DEFAULT ((0)) NULL,
+    [Refno]            VARCHAR (36)    CONSTRAINT [DF_Order_BOA_Expend_Refno] DEFAULT ('') NULL,
+    [SCIRefno]         VARCHAR (30)    CONSTRAINT [DF_Order_BOA_Expend_SCIRefno] DEFAULT ('') NOT NULL,
+    [Price]            NUMERIC (16, 4) CONSTRAINT [DF_Order_BOA_Expend_Price] DEFAULT ((0)) NULL,
+    [UsageQty]         NUMERIC (11, 2) CONSTRAINT [DF_Order_BOA_Expend_UsageQty] DEFAULT ((0)) NULL,
+    [UsageUnit]        VARCHAR (8)     CONSTRAINT [DF_Order_BOA_Expend_UsageUnit] DEFAULT ('') NULL,
+    [Article]          VARCHAR (8)     CONSTRAINT [DF_Order_BOA_Expend_Article] DEFAULT ('') NULL,
+    [SuppColor]        NVARCHAR (MAX)  CONSTRAINT [DF_Order_BOA_Expend_SuppColor] DEFAULT ('') NULL,
+    [SizeCode]         VARCHAR (8)     CONSTRAINT [DF_Order_BOA_Expend_SizeCode] DEFAULT ('') NULL,
+    [OrderIdList]      NVARCHAR (MAX)  CONSTRAINT [DF_Order_BOA_Expend_OrderIdList] DEFAULT ('') NULL,
+    [SysUsageQty]      NUMERIC (11, 2) CONSTRAINT [DF_Order_BOA_Expend_SysUsageQty] DEFAULT ((0)) NOT NULL,
+    [Remark]           NVARCHAR (MAX)  CONSTRAINT [DF_Order_BOA_Expend_Remark] DEFAULT ('') NULL,
+    [BomFactory]       VARCHAR (8)     CONSTRAINT [DF_Order_BOA_Expend_BomFactory] DEFAULT ('') NULL,
+    [BomCountry]       VARCHAR (2)     CONSTRAINT [DF_Order_BOA_Expend_BomCountry] DEFAULT ('') NULL,
+    [BomStyle]         VARCHAR (15)    CONSTRAINT [DF_Order_BOA_Expend_BomStyle] DEFAULT ('') NULL,
+    [BomCustCD]        VARCHAR (20)    CONSTRAINT [DF_Order_BOA_Expend_BomCustCD] DEFAULT ('') NULL,
+    [BomArticle]       VARCHAR (8)     CONSTRAINT [DF_Order_BOA_Expend_BomArticle] DEFAULT ('') NULL,
+    [BomBuymonth]      VARCHAR (10)    CONSTRAINT [DF_Order_BOA_Expend_BomBuymonth] DEFAULT ('') NULL,
+    [AddName]          VARCHAR (10)    CONSTRAINT [DF_Order_BOA_Expend_AddName] DEFAULT ('') NULL,
+    [AddDate]          DATETIME        NULL,
+    [EditName]         VARCHAR (10)    CONSTRAINT [DF_Order_BOA_Expend_EditName] DEFAULT ('') NULL,
+    [EditDate]         DATETIME        NULL,
+    [Keyword]          VARCHAR (MAX)   NULL,
+    [Special]          NVARCHAR (MAX)  NULL,
+    [Keyword_Original] VARCHAR (MAX)   CONSTRAINT [DF_Order_BOA_Expend_Keyword_Original] DEFAULT ('') NOT NULL,
     CONSTRAINT [PK_Order_BOA_Expend] PRIMARY KEY CLUSTERED ([UKEY] ASC)
 );
+
+
 
 
 
@@ -86,7 +84,7 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Article', @
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'色號', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Order_BOA_Expend', @level2type = N'COLUMN', @level2name = N'ColorId';
+
 
 
 GO
@@ -98,11 +96,11 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'尺寸代�
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'尺寸', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Order_BOA_Expend', @level2type = N'COLUMN', @level2name = N'Sizespec';
+
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'尺寸單位', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Order_BOA_Expend', @level2type = N'COLUMN', @level2name = N'SizeUnit';
+
 
 
 GO
@@ -138,7 +136,7 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'顏色組',
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'拉鍊', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Order_BOA_Expend', @level2type = N'COLUMN', @level2name = N'BomZipperInsert';
+
 
 
 GO
@@ -146,7 +144,7 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'訂單月�
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'客戶的訂單單號', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Order_BOA_Expend', @level2type = N'COLUMN', @level2name = N'BomCustPONo';
+
 
 
 GO
@@ -163,4 +161,9 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'最後修�
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'最後修改時間', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Order_BOA_Expend', @level2type = N'COLUMN', @level2name = N'EditDate';
+
+
+GO
+CREATE NONCLUSTERED INDEX [Order_BOA_Expend_ID_Order_BOAUkey]
+    ON [dbo].[Order_BOA_Expend]([Id] ASC, [Order_BOAUkey] ASC);
 

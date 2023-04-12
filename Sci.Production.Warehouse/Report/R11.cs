@@ -1,45 +1,27 @@
-﻿using System;
+﻿using Ict;
+using Sci.Data;
+using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
-using Ict;
-using Sci.Data;
-using System.Runtime.InteropServices;
 using Excel = Microsoft.Office.Interop.Excel;
 
 namespace Sci.Production.Warehouse
 {
+    /// <inheritdoc/>
     public partial class R11 : Win.Tems.PrintForm
     {
-        // string season, factory, brand, mdivision, orderby, spno1, spno2, fabrictype, stocktype, refno1, refno2;
         private string season;
-
-        // string season, factory, brand, mdivision, orderby, spno1, spno2, fabrictype, stocktype, refno1, refno2;
         private string factory;
-
-        // string season, factory, brand, mdivision, orderby, spno1, spno2, fabrictype, stocktype, refno1, refno2;
         private string brand;
-
-        // string season, factory, brand, mdivision, orderby, spno1, spno2, fabrictype, stocktype, refno1, refno2;
         private string mdivision;
-
-        // string season, factory, brand, mdivision, orderby, spno1, spno2, fabrictype, stocktype, refno1, refno2;
         private string spno1;
-
-        // string season, factory, brand, mdivision, orderby, spno1, spno2, fabrictype, stocktype, refno1, refno2;
         private string spno2;
-
-        // string season, factory, brand, mdivision, orderby, spno1, spno2, fabrictype, stocktype, refno1, refno2;
         private string fabrictype;
-
-        // string season, factory, brand, mdivision, orderby, spno1, spno2, fabrictype, stocktype, refno1, refno2;
         private string stocktype;
-
-        // string season, factory, brand, mdivision, orderby, spno1, spno2, fabrictype, stocktype, refno1, refno2;
         private string refno1;
-
-        // string season, factory, brand, mdivision, orderby, spno1, spno2, fabrictype, stocktype, refno1, refno2;
         private string refno2;
         private DateTime? issueDate1;
         private DateTime? issueDate2;
@@ -47,6 +29,7 @@ namespace Sci.Production.Warehouse
         private DateTime? buyerDelivery2;
         private DataTable printData;
 
+        /// <inheritdoc/>
         public R11(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -132,26 +115,26 @@ with cte as (
             ,seq2 = sd.fromseq2
             ,roll = sd.FromRoll
             ,dyelot = sd.FromDyelot
-            ,p.Refno
+            ,psd.Refno
             ,[description] = dbo.getMtlDesc(sd.FromPOID,sd.FromSeq1,sd.fromseq2,2,0) 
-            ,fabrictype = iif(p.FabricType = 'F','Fabric','Accessory') 
-            ,weaventype = iif(p.FabricType = 'F',(select fabric.weavetypeid 
+            ,fabrictype = iif(psd.FabricType = 'F','Fabric','Accessory') 
+            ,weaventype = iif(psd.FabricType = 'F',(select fabric.weavetypeid 
                                                   from dbo.fabric WITH (NOLOCK) 
-                                                  where fabric.scirefno = p.scirefno)
+                                                  where fabric.scirefno = psd.scirefno)
                                                 ,(select fabric.mtltypeid 
                                                   from dbo.fabric WITH (NOLOCK) 
-                                                  where fabric.scirefno = p.scirefno))
-            , ColorID = dbo.GetColorMultipleID(o.BrandID,p.ColorID) 
-            , p.SizeSpec
+                                                  where fabric.scirefno = psd.scirefno))
+            , ColorID = dbo.GetColorMultipleID(o.BrandID,isnull(psdsC.SpecValue, '')) 
+            , SizeSpec= isnull(psdsS.SpecValue, '')
             ,s.MDivisionID
             ,o.FactoryID
             ,o.BrandID
             ,o.SeasonID
-            ,p.POUnit
-            ,p.StockUnit
-            ,p.Price
-            ,unitprice = round(p.Price 
-                               / (select unit.PriceRate from dbo.Unit WITH (NOLOCK) where id = p.POUnit) 
+            ,psd.POUnit
+            ,psd.StockUnit
+            ,psd.Price
+            ,unitprice = round(psd.Price 
+                               / (select unit.PriceRate from dbo.Unit WITH (NOLOCK) where id = psd.POUnit) 
                                * dbo.getRate('FX'
                                               ,(select supp.CurrencyId 
                                                 from dbo.Supp WITH (NOLOCK) 
@@ -171,10 +154,10 @@ with cte as (
                            from dbo.Supp WITH (NOLOCK) 
                            inner join dbo.po_supp on po_supp.suppid = supp.id 
                            where po_supp.id = sd.FromPOID and po_supp.seq1 = sd.FromSeq1) 
-            ,p.Qty + p.FOC as Qty
-            ,p.NETQty
-            ,p.LossQty
-            ,scrapqty = Round(dbo.GetUnitQty(p.StockUnit, p.POUnit, sum(sd.Qty)), 2)
+            ,psd.Qty + psd.FOC as Qty
+            ,psd.NETQty
+            ,psd.LossQty
+            ,scrapqty = Round(dbo.GetUnitQty(psd.StockUnit, psd.POUnit, sum(sd.Qty)), 2)
             ,location = dbo.Getlocation(fi.ukey)
             ,s.IssueDate
 			,o.StyleID
@@ -185,10 +168,12 @@ with cte as (
 from dbo.orders o WITH (NOLOCK) 
 inner join dbo.SubTransfer_Detail sd WITH (NOLOCK) on o.id = sd.FromPOID
 inner join dbo.SubTransfer s WITH (NOLOCK) on s.id = sd.id
-inner join dbo.PO_Supp_Detail p WITH (NOLOCK) on p.id = sd.FromPOID and p.seq1 = sd.FromSeq1 and p.seq2 = sd.FromSeq2
+inner join dbo.PO_Supp_Detail psd WITH (NOLOCK) on psd.id = sd.FromPOID and psd.seq1 = sd.FromSeq1 and psd.seq2 = sd.FromSeq2
+left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
+left join PO_Supp_Detail_Spec psdsS WITH (NOLOCK) on psdsS.ID = psd.id and psdsS.seq1 = psd.seq1 and psdsS.seq2 = psd.seq2 and psdsS.SpecColumnID = 'Size'
 left join dbo.FtyInventory Fi on sd.FromPoid = fi.poid and sd.fromSeq1 = fi.seq1 and sd.fromSeq2 = fi.seq2 
     and sd.fromRoll = fi.roll and sd.fromStocktype = fi.stocktype and sd.fromDyelot = fi.Dyelot
-left join PO_Supp ps on ps.id = p.id and ps. SEQ1 = p.SEQ1
+left join PO_Supp ps on ps.id = psd.id and ps. SEQ1 = psd.SEQ1
 where s.Status = 'Confirmed' 
 ");
 
@@ -275,7 +260,7 @@ where s.Status = 'Confirmed'
 
             if (!MyUtility.Check.Empty(this.fabrictype))
             {
-                sqlCmd.Append(string.Format(@" and p.FabricType = '{0}'", this.fabrictype));
+                sqlCmd.Append(string.Format(@" and psd.FabricType = '{0}'", this.fabrictype));
             }
 
             if (!MyUtility.Check.Empty(this.brand))
@@ -288,7 +273,7 @@ where s.Status = 'Confirmed'
             if (!MyUtility.Check.Empty(this.refno1) && !MyUtility.Check.Empty(this.refno2))
             {
                 // Refno 兩個都輸入則尋找 Refno1 - Refno2 區間的資料
-                sqlCmd.Append(" and p.refno >= @refno1 and p.refno <= @refno2");
+                sqlCmd.Append(" and psd.refno >= @refno1 and psd.refno <= @refno2");
                 sp_refno1.Value = this.refno1;
                 sp_refno2.Value = this.refno2;
                 cmds.Add(sp_refno1);
@@ -297,20 +282,20 @@ where s.Status = 'Confirmed'
             else if (!MyUtility.Check.Empty(this.refno1))
             {
                 // 只輸入 Refno1
-                sqlCmd.Append(" and p.refno like @refno1");
+                sqlCmd.Append(" and psd.refno like @refno1");
                 sp_refno1.Value = this.refno1 + "%";
                 cmds.Add(sp_refno1);
             }
             else if (!MyUtility.Check.Empty(this.refno2))
             {
                 // 只輸入 Refno2
-                sqlCmd.Append(" and p.refno like @refno2");
+                sqlCmd.Append(" and psd.refno like @refno2");
                 sp_refno2.Value = this.refno2 + "%";
                 cmds.Add(sp_refno2);
             }
             #endregion
 
-            sqlCmd.Append(@" group by sd.FromPOID, sd.FromSeq1, sd.fromseq2,sd.FromRoll,sd.FromDyelot, p.Refno, p.SCIRefno, p.FabricType,s.MDivisionID, o.FactoryID, o.BrandID, o.SeasonID, p.POUnit, p.StockUnit,p.Price ,p.Qty + p.FOC, p.NETQty, p.LossQty, s.IssueDate,fi.ukey,p.ColorID, p.SizeSpec,o.StyleID,o.OrderTypeID, o.Category,ps.SuppID,Fi.InQty)");
+            sqlCmd.Append(@" group by sd.FromPOID, sd.FromSeq1, sd.fromseq2,sd.FromRoll,sd.FromDyelot, psd.Refno, psd.SCIRefno, psd.FabricType,s.MDivisionID, o.FactoryID, o.BrandID, o.SeasonID, psd.POUnit, psd.StockUnit,psd.Price ,psd.Qty + psd.FOC, psd.NETQty, psd.LossQty, s.IssueDate,fi.ukey,isnull(psdsC.SpecValue, ''), isnull(psdsS.SpecValue, ''),o.StyleID,o.OrderTypeID, o.Category,ps.SuppID,Fi.InQty)");
 
             // List & Summary 各撈自己需要的欄位
             if (this.radioSummary.Checked)

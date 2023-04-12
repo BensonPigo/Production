@@ -4,8 +4,15 @@ using Ict;
 
 namespace Sci.Production.Centralized
 {
+    /// <summary>
+    /// Sewing_B01
+    /// </summary>
     public partial class Sewing_B01 : Win.Tems.Input1
     {
+        /// <summary>
+        /// Sewing_B01
+        /// </summary>
+        /// <param name="menuitem">menuitem</param>
         public Sewing_B01(ToolStripMenuItem menuitem)
             : base(menuitem)
         {

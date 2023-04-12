@@ -78,10 +78,10 @@ select Sel = 0
 	    , Seq = Concat (isd.Seq1, '-', isd.Seq2)
 	    , Refno = isnull (psd.Refno, '')
 	    , Color = case when f.MtlTypeID = 'SP THREAD' and ThreadColor.SuppColor is not null 
-		    					THEN iif(ISNULL(ThreadColor.SuppColor,'') = '',  dbo.GetColorMultipleID(o.BrandID,psd.ColorID), ThreadColor.SuppColor) 
+		    					THEN iif(ISNULL(ThreadColor.SuppColor,'') = '',  dbo.GetColorMultipleID(o.BrandID,isnull(psdsC.SpecValue, '')), ThreadColor.SuppColor) 
 		    			  when f.MtlTypeID = 'SP THREAD' and ThreadColor.SuppColor is null 
-		    					THEN IIF(psd.SuppColor = '' or psd.SuppColor is null,   dbo.GetColorMultipleID(o.BrandID,psd.ColorID), psd.SuppColor)
-		    		 else  isnull (psd.ColorID, '') end
+		    					THEN IIF(psd.SuppColor = '' or psd.SuppColor is null,   dbo.GetColorMultipleID(o.BrandID,isnull(psdsC.SpecValue, '')), psd.SuppColor)
+		    		 else  isnull (isnull(psdsC.SpecValue, ''), '') end
 	    , Roll = isd.Roll
 	    , Dyelot = isd.Dyelot
 	    , Qty = isd.Qty
@@ -97,8 +97,9 @@ left join Orders o with (nolock) on o.ID=isd.POID
 left join Po_Supp_Detail psd with (nolock) on isd.POID = psd.ID
 								and isd.Seq1 = psd.SEQ1
 								and isd.Seq2 = psd.SEQ2
+left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
 left join Fabric f with (nolock) on psd.SCIRefno = f.SCIRefno
-left join Color c WITH (NOLOCK) on f.BrandID = c.BrandId and psd.ColorID = c.ID 
+left join Color c WITH (NOLOCK) on f.BrandID = c.BrandId and isnull(psdsC.SpecValue, '') = c.ID 
 left join FtyInventory fi with (nolock) on  fi.POID = isd.POID and 
                                             fi.Seq1 = isd.Seq1 and 
                                             fi.Seq2 = isd.Seq2 and 
@@ -117,10 +118,9 @@ outer apply(
                                     FOR XML PATH('')),1,1,'') 
             ) BulkLocation
 where isd.ID = @ID
-order by RowNo";
-
-            DataTable dtResult;
-            DualResult result = DBProxy.Current.Select(string.Empty, gridSql, listSqlParameters, out dtResult);
+order by RowNo
+";
+            DualResult result = DBProxy.Current.Select(string.Empty, gridSql, listSqlParameters, out DataTable dtResult);
             this.listControlBindingSource.DataSource = dtResult;
 
             if (result == false)

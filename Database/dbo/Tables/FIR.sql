@@ -5,7 +5,7 @@
     [SEQ2]                         VARCHAR (2)     CONSTRAINT [DF_FIR_SEQ2] DEFAULT ('') NOT NULL,
     [Suppid]                       VARCHAR (6)     CONSTRAINT [DF_FIR_Suppid] DEFAULT ('') NOT NULL,
     [SCIRefno]                     VARCHAR (30)    CONSTRAINT [DF_FIR_SCIRefno] DEFAULT ('') NOT NULL,
-    [Refno]                        VARCHAR (20)    CONSTRAINT [DF_FIR_BrandRefno] DEFAULT ('') NOT NULL,
+    [Refno]                        VARCHAR (36)    CONSTRAINT [DF_FIR_BrandRefno] DEFAULT ('') NOT NULL,
     [ReceivingID]                  VARCHAR (13)    CONSTRAINT [DF_FIR_ReceivingID] DEFAULT ('') NULL,
     [ReplacementReportID]          VARCHAR (13)    CONSTRAINT [DF_FIR_ReplacementReportID] DEFAULT ('') NULL,
     [ArriveQty]                    NUMERIC (10, 2) CONSTRAINT [DF_FIR_ArriveQty] DEFAULT ((0)) NULL,
@@ -263,25 +263,25 @@ GO
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'����������', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'FIR', @level2type = N'COLUMN', @level2name = N'nonOdor';
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'不需檢驗氣味', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'FIR', @level2type = N'COLUMN', @level2name = N'nonOdor';
 
 
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'���Encode', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'FIR', @level2type = N'COLUMN', @level2name = N'OdorEncode';
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'氣味Encode', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'FIR', @level2type = N'COLUMN', @level2name = N'OdorEncode';
 
 
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'���������', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'FIR', @level2type = N'COLUMN', @level2name = N'OdorDate';
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'氣味檢驗日期', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'FIR', @level2type = N'COLUMN', @level2name = N'OdorDate';
 
 
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'���Result', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'FIR', @level2type = N'COLUMN', @level2name = N'Odor';
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'氣味Result', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'FIR', @level2type = N'COLUMN', @level2name = N'Odor';
 
 
 

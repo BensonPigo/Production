@@ -1322,9 +1322,10 @@ from (
     inner join #tmpTransactionTpe ttt on ttt.PoId = mdp.POID and
                                          ttt.Seq1=mdp.seq1 and 
                                          ttt.Seq2=mdp.Seq2
+    left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
 	left join Fabric f WITH (NOLOCK) on psd.SCIRefno = f.SCIRefno
     left join Color c WITH (NOLOCK) on psd.BrandID = c.BrandID 
-                                       and psd.ColorID = c.ID
+                                       and psdsC.SpecValue = c.ID
     where t.WhseClose is null or t.WhseClose >= @GenerateDate
     
     union all

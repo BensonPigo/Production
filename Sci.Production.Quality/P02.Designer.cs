@@ -59,6 +59,8 @@
             this.dateCompletionDate = new Sci.Win.UI.DateBox();
             this.btnBatchEncode = new Sci.Win.UI.Button();
             this.chkInspAutoLockAcc = new Sci.Win.UI.CheckBox();
+            this.label1 = new Sci.Win.UI.Label();
+            this.editOrderType = new Sci.Win.UI.EditBox();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -75,6 +77,8 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.editOrderType);
+            this.masterpanel.Controls.Add(this.label1);
             this.masterpanel.Controls.Add(this.chkInspAutoLockAcc);
             this.masterpanel.Controls.Add(this.btnBatchEncode);
             this.masterpanel.Controls.Add(this.txtSEQ1);
@@ -139,6 +143,8 @@
             this.masterpanel.Controls.SetChildIndex(this.txtSEQ1, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnBatchEncode, 0);
             this.masterpanel.Controls.SetChildIndex(this.chkInspAutoLockAcc, 0);
+            this.masterpanel.Controls.SetChildIndex(this.label1, 0);
+            this.masterpanel.Controls.SetChildIndex(this.editOrderType, 0);
             // 
             // detailpanel
             // 
@@ -507,6 +513,29 @@
             this.chkInspAutoLockAcc.Text = "Auto Lock/Unlock Accessory";
             this.chkInspAutoLockAcc.UseVisualStyleBackColor = true;
             // 
+            // label1
+            // 
+            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.label1.Location = new System.Drawing.Point(12, 135);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(73, 23);
+            this.label1.TabIndex = 163;
+            this.label1.Text = "Order Type";
+            // 
+            // editOrderType
+            // 
+            this.editOrderType.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.editOrderType.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "AIRRemark", true));
+            this.editOrderType.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.editOrderType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.editOrderType.IsSupportEditMode = false;
+            this.editOrderType.Location = new System.Drawing.Point(88, 133);
+            this.editOrderType.Multiline = true;
+            this.editOrderType.Name = "editOrderType";
+            this.editOrderType.ReadOnly = true;
+            this.editOrderType.Size = new System.Drawing.Size(511, 26);
+            this.editOrderType.TabIndex = 164;
+            // 
             // P02
             // 
             this.ClientSize = new System.Drawing.Size(952, 714);
@@ -525,6 +554,7 @@
             this.KeyField1 = "id";
             this.KeyField2 = "poid";
             this.Name = "P02";
+            this.OnLineHelpID = "Sci.Win.Tems.Input6";
             this.Text = "P02.Accessory Inspection";
             this.UniqueExpress = "POID";
             this.WorkAlias = "PO";
@@ -581,5 +611,7 @@
         private Win.UI.DateBox dateEarliestEstCutDate;
         private Win.UI.Button btnBatchEncode;
         private Win.UI.CheckBox chkInspAutoLockAcc;
+        private Win.UI.EditBox editOrderType;
+        private Win.UI.Label label1;
     }
 }

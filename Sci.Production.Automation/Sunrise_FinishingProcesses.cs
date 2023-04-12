@@ -139,15 +139,15 @@ namespace Sci.Production.Automation
             object postBody;
             string[] structureID = orderID.Split(',');
 
-            int sendApiCount = MyUtility.Convert.GetInt(Math.Ceiling(structureID.Length / 500.0));
+            int sendApiCount = MyUtility.Convert.GetInt(Math.Ceiling(structureID.Length / 50.0));
             Dictionary<string, object> dataTable = new Dictionary<string, object>();
             dataTable.Add("orderTransTable", orderTransTable);
 
-            // 先以500筆為單位拆分後再傳出
+            // 先以50筆為單位拆分後再傳出
             for (int i = 0; i < sendApiCount; i++)
             {
-                int skipCount = i * 500;
-                var orderIDs = structureID.Skip(skipCount).Take(500).Select(s => new { ID = s });
+                int skipCount = i * 50;
+                var orderIDs = structureID.Skip(skipCount).Take(50).Select(s => new { ID = s });
                 dataTable.Add(tableArray, orderIDs);
                 postBody = new { TableArray = new string[] { tableArray }, DataTable = dataTable };
 

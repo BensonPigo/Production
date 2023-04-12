@@ -74,7 +74,7 @@ from (
 		T.Dest,
 		T.OrderTypeID,
 		T.ProgramID,
-		T.CdCodeID,
+		CdCodeID = '''',
 		ProductionFamilyID = '''',
 		T.FtyGroup,
 		t.[PulloutComplete],
@@ -147,7 +147,7 @@ SET @SqlCmd2 = '
 		T.Dest,
 		T.OrderTypeID,
 		T.ProgramID,
-		T.CdCodeID,
+		CdCodeID = '''',
 		ProductionFamilyID = '''',
 		T.FtyGroup,
 		[PulloutComplete],
@@ -323,6 +323,7 @@ where o.ID is null
 
 update b
     set b.TransferDate = getdate()
+		, b.IS_Trans = 1
 from BITableInfo b
 where b.id = ''P_LoadingProductionOutput''
 '

@@ -505,14 +505,14 @@ where sdh.ID = '{0}'", this.CurrentMaintain["id"]);
                 return result;
             }
 
-            #region  表身任一筆Orders.ID的Orders.GMTComplete 不可為 'S'
-            bool gMTCompleteCheck = this.GMTCompleteCheck();
-            if (!gMTCompleteCheck)
-            {
-                return false;
-            }
-            #endregion
-
+            // 如有問題請查詢：ISP20230067
+            // #region  表身任一筆Orders.ID的Orders.GMTComplete 不可為 'S'
+            // bool gMTCompleteCheck = this.GMTCompleteCheck();
+            // if (!gMTCompleteCheck)
+            // {
+            //    return false;
+            // }
+            // #endregion
             if (MyUtility.Convert.GetString(this.CurrentMaintain["Status"]) == "Confirmed")
             {
                 MyUtility.Msg.WarningBox(string.Format("This record status is < {0} >, can't be edit!", MyUtility.Convert.GetString(this.CurrentMaintain["Status"])));
@@ -1202,14 +1202,14 @@ left join LocalSupp ls WITH (NOLOCK) on g.Forwarder = ls.ID
         {
             base.ClickConfirm();
 
-            #region  表身任一筆Orders.ID的Orders.GMTComplete 不可為 'S'
-            bool gMTCompleteCheck = this.GMTCompleteCheck();
-            if (!gMTCompleteCheck)
-            {
-                return;
-            }
-            #endregion
-
+            // 如有問題請查詢：ISP20230067
+            // #region  表身任一筆Orders.ID的Orders.GMTComplete 不可為 'S'
+            // bool gMTCompleteCheck = this.GMTCompleteCheck();
+            // if (!gMTCompleteCheck)
+            // {
+            //    return;
+            // }
+            // #endregion
             this.CheckIDD();
             this.CheckPulloutputIDD();
             List<string> listPLFromRgCode = PackingA2BWebAPI.GetPLFromRgCodeByShipPlanID(this.CurrentMaintain["ID"].ToString());

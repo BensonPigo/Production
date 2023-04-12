@@ -356,7 +356,7 @@
             this.Name = "P20_PackingErrorRecord";
             this.OnLineHelpID = "Sci.Win.Subs.Input4";
             this.Text = "Packing Error Record";
-            this.WorkAlias = "PackingErrorRecord";
+            this.WorkAlias = "PackErrTransfer_Detail";
             this.Controls.SetChildIndex(this.btmcont, 0);
             this.Controls.SetChildIndex(this.gridcont, 0);
             this.Controls.SetChildIndex(this.txtSPNo, 0);

@@ -13,6 +13,7 @@ using Sci.Production.PublicPrg;
 using System.Linq;
 using Sci.Production.Prg.Entity;
 using System.Transactions;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.ListView;
 
 namespace Sci.Production.Warehouse
 {
@@ -122,7 +123,7 @@ namespace Sci.Production.Warehouse
             }
             else
             {
-                var frm = new P01_BatchCloseRowMaterial(this.dataType);
+                var frm = new P01_BatchCloseRowMaterial(this.dataType, this.WHP01_CheckBarcodeEmpty);
                 this.ShowWaitMessage("Data Loading....");
                 frm.QueryData(true);
                 this.HideWaitMessage();
@@ -517,6 +518,12 @@ where o.ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]))) ?
                 return;
             }
 
+            bool checkBarcodeEmptyResult = this.WHP01_CheckBarcodeEmpty(dr["poid"].ToString());
+            if (!checkBarcodeEmptyResult)
+            {
+                return;
+            }
+
             if (!MyUtility.Check.Seek(string.Format("select MDivisionID from dbo.Factory where ID='{0}' and MDivisionID='{1}'", MyUtility.Convert.GetString(this.CurrentMaintain["FtyGroup"]), Env.User.Keyword)))
             {
                 MyUtility.Msg.WarningBox("Insufficient permissions!!");
@@ -574,19 +581,13 @@ where o.ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]))) ?
                             throw result.GetException();
                         }
 
-                        // 檢查 Barcode不可為空
-                        if (dtSubTransfer_Detail.Rows.Count > 0)
-                        {
-                            Prgs.GetFtyInventoryData(dtSubTransfer_Detail, "P25", out DataTable dtOriFtyInventory);
-                            if (!Prgs.CheckBarCode(dtOriFtyInventory, "P25"))
-                            {
-                                transactionscope.Dispose();
-                                return;
-                            }
-                        }
-
                         // 上方 Auto Create P25 Confrim 後, 寫入新的 BarCode
                         if (!(result = Prgs.UpdateWH_Barcode(true, dtSubTransfer_Detail, "P25", out bool fromNewBarcode)))
+                        {
+                            throw result.GetException();
+                        }
+
+                        if (!(result = Prgs.UpdateFtyInventoryTone(dtSubTransfer_Detail)))
                         {
                             throw result.GetException();
                         }
@@ -901,6 +902,62 @@ and po3.junk=0
             var dlg = new PFHis(false, dr["ID"].ToString(), string.Empty, string.Empty, dr);
             dlg.ShowDialog();
             this.RenewData();
+        }
+
+        private void BtnMaterialCompare_Click(object sender, EventArgs e)
+        {
+            var frm = new P01_MaterialCompare(this.CurrentMaintain["POID"].ToString());
+            frm.ShowDialog(this);
+        }
+
+        /// <summary>
+        /// WHP01_CheckBarcodeEmpty
+        /// </summary>
+        /// <param name="poID">poID</param>
+        /// <returns>bool</returns>
+        private bool WHP01_CheckBarcodeEmpty(string poID)
+        {
+            string sqlGetFtyInventory = $@"
+select  f.Ukey
+        ,f.MDivisionPoDetailUkey
+        ,f.POID
+        ,f.Seq1
+        ,f.Seq2
+        ,f.Roll
+        ,f.StockType
+        ,f.Dyelot
+        ,f.InQty
+        ,f.OutQty
+        ,f.AdjustQty
+        ,f.LockName
+        ,f.LockDate
+        ,f.Lock
+        ,f.Remark
+        ,f.Barcode
+        ,f.ReturnQty
+        ,f.WMSLock
+        ,f.ContainerCode
+        ,f.BarcodeSeq
+        ,f.SubConStatus
+        ,[BalanceQty] = isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f.ReturnQty,0)
+        ,psd.FabricType
+from dbo.FtyInventory f WITH (NOLOCK)
+left join Production.dbo.PO_Supp_Detail psd with(nolock) on psd.ID = f.POID and psd.SEQ1 = f.SEQ1 and psd.SEQ2 = f.SEQ2
+WHERE f.POID = '{poID}'
+    and f.Stocktype = 'B'
+    and ISNULL(f.InQty,0.0) - ISNULL(f.OutQty,0.0) + ISNULL(f.AdjustQty,0.0) - ISNULL(f.ReturnQty,0.0) > 0 
+    and f.Lock = 0
+";
+
+            DataTable dtInvetory;
+            DualResult result = DBProxy.Current.Select(null, sqlGetFtyInventory, out dtInvetory);
+            if (!result)
+            {
+                this.ShowErr(result);
+                return false;
+            }
+
+            return Prgs.CheckBarCode(dtInvetory, "P01");
         }
     }
 }

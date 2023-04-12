@@ -21,6 +21,7 @@
     [EditName]     VARCHAR (10)   CONSTRAINT [DF_Supp_EditName] DEFAULT ('') NULL,
     [EditDate]     DATETIME       NULL,
     [Currencyid]   VARCHAR (3)    NULL,
+    [SuppGroupFabric] VARCHAR(8) NULL, 
     CONSTRAINT [PK_Supp] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 

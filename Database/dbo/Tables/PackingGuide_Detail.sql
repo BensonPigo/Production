@@ -91,3 +91,20 @@ EXEC sp_addextendedproperty @name = N'MS_Description',
 	@level2type = N'COLUMN',
 	@level2name = N'PrePackQty'
 GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'單色單碼裝箱，尾箱數量過少時是否可以合併在同一 SKU 的最後一箱',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'PackingGuide_Detail',
+    @level2type = N'COLUMN',
+    @level2name = N'CombineBalance'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'混尺碼裝箱各色組尺寸 1 個塑膠袋裝入的件數',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'PackingGuide_Detail',
+    @level2type = N'COLUMN',
+    @level2name = N'PrePackQty'

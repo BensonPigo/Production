@@ -1,4 +1,4 @@
-CREATE TABLE [dbo].ShippingMarkPicture(
+﻿CREATE TABLE [dbo].ShippingMarkPicture(
 	BrandID [varchar](8) NOT NULL CONSTRAINT [DF_ShippingMarkPicture_BrandID] DEFAULT ('') ,
 	Category [varchar](10) NOT NULL CONSTRAINT [DF_ShippingMarkPicture_Category] DEFAULT ('') ,
 	ShippingMarkCombinationUkey [bigint] NOT NULL CONSTRAINT [DF_ShippingMarkPicture_ShippingMarkCombinationUkey] DEFAULT (0) ,
@@ -14,5 +14,13 @@ CREATE TABLE [dbo].ShippingMarkPicture(
 (		Ukey ASC	)
 WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY];
-GO
 
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'紙箱高度 (mm)',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'ShippingMarkPicture',
+    @level2type = N'COLUMN',
+    @level2name = N'CtnHeight'

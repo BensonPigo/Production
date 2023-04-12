@@ -225,12 +225,14 @@ select  [SewLine] = REVERSE(stuff(REVERSE(o.SewLine),1,1,'')) ,
 		pld.DisposeDate,
 		[PulloutComplete] = iif(o.PulloutComplete = 1, 'Y', 'N'),
 		p.PulloutDate,
-		pld.SCICtnNo
+		pld.SCICtnNo,
+		o.CustPONo,
+		o.SciDelivery
 into #tmp
 from  Orders o with (nolock)
 inner join Order_QtyShip oqs with (nolock) on oqs.Id = o.ID
 inner join Factory f with (nolock) on f.ID = o.FactoryID
-inner join PackingList_Detail pld with (nolock) on pld.OrderID = oqs.ID and pld.CTNQty = 1
+inner join PackingList_Detail pld with (nolock) on pld.OrderID = oqs.ID and pld.OrderShipmodeSeq = oqs.Seq and pld.CTNQty = 1
 inner join PackingList p with (nolock) on p.ID = pld.ID
 inner join PackingList_Detail pld2 with (nolock) on pld2.ID = pld.ID and pld2.CTNStartNo = pld.CTNStartNo
 where o.Category in ('B','G') {this.sqlWhere}
@@ -258,18 +260,22 @@ group by	o.SewLine,
 			pld.DisposeDate,
 			o.PulloutComplete,
 			p.PulloutDate,
-			pld.SCICtnNo
+			pld.SCICtnNo,
+			o.CustPONo,
+			o.SciDelivery
 
 
-select	pld.SewLine,
-		pld.KPICode,
+select	pld.KPICode,
 		pld.FactoryID,
+		pld.SewLine,
 		pld.OrderID,
 		pld.Seq,
 		pld.BrandID, 
 		pld.StyleID,
+		pld.CustPONo,
 		pld.SeasonID,
 		pld.Dest,
+		pld.SciDelivery,
 		pld.BuyerDelivery,
 		[PackID] = pld.ID,
 		pld.CTNStartNo,

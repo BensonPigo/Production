@@ -20,7 +20,9 @@
     [CODate]         DATE           NULL,
     [FOBRemark] VARCHAR(200) NULL DEFAULT (''), 
     [WeightRemark] VARCHAR(200) NULL DEFAULT (''), 
-    CONSTRAINT [PK_KHExportDeclaration_Detail] PRIMARY KEY CLUSTERED ([ID] ASC, [INVNo] ASC, [OrderID] ASC)
+    [Location]      VARCHAR(1)    CONSTRAINT [DF_KHExportDeclaration_Detail_Location]   DEFAULT ('') ,
+    [StyleUnit] VARCHAR(8)  CONSTRAINT [DF_KHExportDeclaration_Detail_StyleUnit]  DEFAULT ('') NULL, 
+    CONSTRAINT [PK_KHExportDeclaration_Detail] PRIMARY KEY CLUSTERED ([ID] ASC, [INVNo] ASC, [OrderID] ASC,[Location] ASC)
 );
 
 
@@ -120,3 +122,21 @@ EXEC sp_addextendedproperty @name = N'MS_Description',
     @level1name = N'KHExportDeclaration_Detail',
     @level2type = N'COLUMN',
     @level2name = N'WeightRemark'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'部位(T/B/I/O)',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'KHExportDeclaration_Detail',
+    @level2type = N'COLUMN',
+    @level2name = N'Location'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'款式單位',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'KHExportDeclaration_Detail',
+    @level2type = N'COLUMN',
+    @level2name = N'StyleUnit'

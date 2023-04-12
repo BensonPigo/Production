@@ -21,6 +21,7 @@
     [EditDate]    DATETIME        NULL,
     [VoucherID]   VARCHAR (16)    CONSTRAINT [DF_LocalAP_VarcherNo] DEFAULT ('') NULL,
     [Status]      VARCHAR (15)    CONSTRAINT [DF_LocalAP_Status] DEFAULT ('') NULL,
+    [ExVoucherID] VARCHAR(16)     CONSTRAINT [DF_LocalAP_ExVoucherID] DEFAULT (''), 
     CONSTRAINT [PK_LocalAP] PRIMARY KEY CLUSTERED ([Id] ASC)
 );
 
@@ -126,3 +127,13 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'組織代�
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'傳票編號', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'LocalAP', @level2type = N'COLUMN', @level2name = N'VoucherID';
 
+
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'外帳傳票ID',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'LocalAP',
+    @level2type = N'COLUMN',
+    @level2name = N'ExVoucherID'

@@ -86,11 +86,14 @@ namespace Sci.Production.PPIC
 select rd.*,(rd.Seq1+' '+rd.Seq2) as Seq, f.Description, [dbo].[getMtlDesc](r.POID,rd.Seq1,rd.Seq2,2,0) as Description,
     isnull((select top(1) ExportId from Receiving WITH (NOLOCK) where InvNo = rd.INVNo),'') as ExportID,
     EstReplacementAMT = case when rd.Junk =1 then 0
-						else (select top 1 amount from dbo.GetAmountByUnit(po_price.v, x.Qty, psd.POUnit, 4)) * isnull(dbo.getRate('KP', po_stock.v, 'USD', r.CDate),1)
+						else (select top 1 amount from dbo.GetAmountByUnit(po_price.v, Gu.unit, psd.POUnit, 4)) * isnull(dbo.getRate('KP', po_stock.v, 'USD', r.CDate),1)
 						end
 from ReplacementReport r WITH (NOLOCK) 
 inner join ReplacementReport_Detail rd WITH (NOLOCK) on rd.ID = r.ID
-left join PO_Supp_Detail psd WITH (NOLOCK) on psd.ID = r.POID and psd.SEQ1 = rd.Seq1 and psd.SEQ2 = rd.Seq2
+left join PO_Supp_Detail psd WITH (NOLOCK) on psd.ID = r.POID 
+                                          and psd.SEQ1 = iif(isnull(rd.NewSeq1,'') != '', rd.NewSeq1, rd.Seq1)
+                                          and psd.SEQ2 = iif(isnull(rd.NewSeq2,'') != '', rd.NewSeq2, rd.Seq2)
+left join Orders o WITH (NOLOCK) on r.POID = o.ID
 outer apply (
     select v = case 
 					when psd.seq1 like '7%' then isnull((select v = stock.Price
@@ -118,13 +121,14 @@ outer apply (
 	                                                    from PO_Supp_Detail stock WITH (NOLOCK)
 														left join PO_Supp pstock WITH (NOLOCK) on pstock.ID = stock.ID and pstock.SEQ1 = stock.SEQ1
 														left join Supp sstock WITH (NOLOCK) on sstock.ID = pstock.SuppID
-	                                                    where	psd.SEQ1 like '7%'
-			                                                and psd.StockPOID = stock.ID
-			                                                and psd.StockSeq1 = stock.SEQ1
-			                                                and psd.StockSeq2 = stock.SEQ2), 0)
+	                                                    where stock.ID = IIF(IsNull(psd.StockPOID, '') = '' , psd.ID, psd.StockPOID)
+			                                            and stock.SEQ1 = IIF(IsNull(psd.StockPOID, '') = '' , psd.SEQ1, psd.StockSeq1)
+			                                            and stock.SEQ2 = IIF(IsNull(psd.StockPOID, '') = '' , psd.SEQ2, psd.StockSeq2)), 0)
 					else Supp.Currencyid
 				end
 ) po_stock
+outer apply (select * from dbo.GetUnitRound(psd.BrandID, o.ProgramID, o.Category, psd.POUnit)) GetUnit
+outer apply (select unit = dbo.GetCeiling(x.qty, GetUnit.UnitRound, GetUnit.RoundStep)) Gu
 where r.ID = '{0}'
 order by rd.Seq1,rd.Seq2", masterID);
 
@@ -202,10 +206,10 @@ select
 ,[Remark] = psd.Remark
 from ReplacementReport_Detail rd
 inner join PO_Supp_Detail psd on rd.PurchaseID = psd.ID
-and rd.SCIRefno = psd.SCIRefno
-and rd.ColorID = psd.ColorID
-and (psd.SEQ1 = rd.NewSeq1 or psd.OutputSeq1 = rd.NewSeq1)
-and (psd.SEQ2 = rd.NewSeq2 or psd.OutputSeq2 = rd.NewSeq2)
+    and rd.SCIRefno = psd.SCIRefno
+    and (psd.SEQ1 = rd.NewSeq1 or psd.OutputSeq1 = rd.NewSeq1)
+    and (psd.SEQ2 = rd.NewSeq2 or psd.OutputSeq2 = rd.NewSeq2)
+inner join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color' and psdsC.SpecValue = rd.ColorID 
 where rd.id = '{this.CurrentMaintain["ID"]}'
 ";
 
@@ -632,18 +636,21 @@ where id = '{this.CurrentMaintain["id"]}'") ? Color.Blue : Color.Black;
                     dr.Delete();
                 }
 
-                string sqlCmd = string.Format(
-                    @"select f.Seq1,f.Seq2, left(f.Seq1+' ',3)+f.Seq2 as Seq,f.Refno,
+                string sqlCmd = $@"
+select f.Seq1,f.Seq2, left(f.Seq1+' ',3)+f.Seq2 as Seq,f.Refno,
 [dbo].getMtlDesc(f.POID,f.Seq1,f.Seq2,2,0) as Description,
-isnull(psd.ColorID,'') as ColorID,isnull(r.InvNo,'') as InvNo,iif(e.Eta is null,r.ETA,e.ETA) as ETA,isnull(r.ExportId,'') as ExportId,
+isnull(psdsC.SpecValue ,'') as ColorID,isnull(r.InvNo,'') as InvNo,iif(e.Eta is null,r.ETA,e.ETA) as ETA,isnull(r.ExportId,'') as ExportId,
 isnull(sum(fp.TicketYds),0) as EstInQty, isnull(sum(fp.ActualYds),0) as ActInQty
 from FIR f WITH (NOLOCK) 
 left join FIR_Physical fp WITH (NOLOCK) on f.ID = fp.ID
 left join PO_Supp_Detail psd WITH (NOLOCK) on f.POID = psd.ID and f.Seq1 = psd.SEQ1 and f.Seq2 = psd.SEQ2
+left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
 left join Receiving r WITH (NOLOCK) on f.ReceivingID = r.Id
 left join Export e WITH (NOLOCK) on r.ExportId = e.ID
-where f.POID = '{0}' and f.Result = 'F'
-group by f.Seq1,f.Seq2, left(f.Seq1+' ',3)+f.Seq2,f.Refno,[dbo].getMtlDesc(f.POID,f.Seq1,f.Seq2,2,0),psd.ColorID,r.InvNo,iif(e.Eta is null,r.ETA,e.ETA),isnull(r.ExportId,'')", this.txtSPNo.Text);
+where f.POID = '{this.txtSPNo.Text}'
+and f.Result = 'F'
+group by f.Seq1,f.Seq2, left(f.Seq1+' ',3)+f.Seq2,f.Refno,[dbo].getMtlDesc(f.POID,f.Seq1,f.Seq2,2,0),psdsC.SpecValue ,r.InvNo,iif(e.Eta is null,r.ETA,e.ETA),isnull(r.ExportId,'')
+";
                 DataTable firData;
                 DualResult result = DBProxy.Current.Select(null, sqlCmd, out firData);
                 if (!result)

@@ -29,9 +29,6 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
             this.gridBatchAssignCellEstCutDate = new Sci.Win.UI.Grid();
             this.btnClose = new Sci.Win.UI.Button();
             this.shapeContainer1 = new Microsoft.VisualBasic.PowerPacks.ShapeContainer();
@@ -39,7 +36,6 @@
             this.btnConfirm = new Sci.Win.UI.Button();
             this.shapeContainer2 = new Microsoft.VisualBasic.PowerPacks.ShapeContainer();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-            this.splitContainer2 = new System.Windows.Forms.SplitContainer();
             this.panel1 = new System.Windows.Forms.Panel();
             this.labelBatchUpdateEstCutDate = new Sci.Win.UI.Label();
             this.dateBoxWKETA = new Sci.Win.UI.DateBox();
@@ -75,33 +71,16 @@
             this.txtCutCell = new Sci.Production.Class.TxtCell();
             this.labelCutCell = new Sci.Win.UI.Label();
             this.labelFabricCombo = new Sci.Win.UI.Label();
-            this.tabControl1 = new Sci.Win.UI.TabControl();
-            this.tabByGarment = new System.Windows.Forms.TabPage();
-            this.progressBar1 = new System.Windows.Forms.ProgressBar();
-            this.gridGarment = new Sci.Win.UI.Grid();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
-            this.tabByFabric_Panel_Code = new System.Windows.Forms.TabPage();
-            this.progressBar2 = new System.Windows.Forms.ProgressBar();
-            this.gridFabric_Panel_Code = new Sci.Win.UI.Grid();
             this.listControlBindingSource2 = new Sci.Win.UI.ListControlBindingSource(this.components);
-            this.bgWorkerUpdateInfo = new System.ComponentModel.BackgroundWorker();
             ((System.ComponentModel.ISupportInitialize)(this.gridBatchAssignCellEstCutDate)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).BeginInit();
-            this.splitContainer2.Panel1.SuspendLayout();
-            this.splitContainer2.Panel2.SuspendLayout();
-            this.splitContainer2.SuspendLayout();
             this.panel1.SuspendLayout();
             this.panel7.SuspendLayout();
-            this.tabControl1.SuspendLayout();
-            this.tabByGarment.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.gridGarment)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
-            this.tabByFabric_Panel_Code.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.gridFabric_Panel_Code)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource2)).BeginInit();
             this.SuspendLayout();
             // 
@@ -120,14 +99,6 @@
             this.gridBatchAssignCellEstCutDate.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.gridBatchAssignCellEstCutDate.Location = new System.Drawing.Point(0, 0);
             this.gridBatchAssignCellEstCutDate.Name = "gridBatchAssignCellEstCutDate";
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridBatchAssignCellEstCutDate.RowHeadersDefaultCellStyle = dataGridViewCellStyle1;
             this.gridBatchAssignCellEstCutDate.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridBatchAssignCellEstCutDate.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridBatchAssignCellEstCutDate.RowTemplate.Height = 24;
@@ -194,14 +165,14 @@
             this.splitContainer1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.splitContainer1.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
             this.splitContainer1.Location = new System.Drawing.Point(1, 0);
             this.splitContainer1.Name = "splitContainer1";
             this.splitContainer1.Orientation = System.Windows.Forms.Orientation.Horizontal;
             // 
             // splitContainer1.Panel1
             // 
-            this.splitContainer1.Panel1.Controls.Add(this.splitContainer2);
+            this.splitContainer1.Panel1.Controls.Add(this.panel1);
+            this.splitContainer1.Panel1.Controls.Add(this.panel7);
             // 
             // splitContainer1.Panel2
             // 
@@ -209,29 +180,6 @@
             this.splitContainer1.Size = new System.Drawing.Size(1003, 530);
             this.splitContainer1.SplitterDistance = 257;
             this.splitContainer1.TabIndex = 44;
-            // 
-            // splitContainer2
-            // 
-            this.splitContainer2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.splitContainer2.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
-            this.splitContainer2.Location = new System.Drawing.Point(0, 0);
-            this.splitContainer2.Name = "splitContainer2";
-            // 
-            // splitContainer2.Panel1
-            // 
-            this.splitContainer2.Panel1.Controls.Add(this.panel1);
-            this.splitContainer2.Panel1.Controls.Add(this.panel7);
-            this.splitContainer2.Panel1.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            // 
-            // splitContainer2.Panel2
-            // 
-            this.splitContainer2.Panel2.Controls.Add(this.tabControl1);
-            this.splitContainer2.Panel2.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.splitContainer2.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.splitContainer2.Size = new System.Drawing.Size(1003, 257);
-            this.splitContainer2.SplitterDistance = 526;
-            this.splitContainer2.SplitterWidth = 3;
-            this.splitContainer2.TabIndex = 44;
             // 
             // panel1
             // 
@@ -251,10 +199,10 @@
             this.panel1.Controls.Add(this.label2);
             this.panel1.Controls.Add(this.txtSeq2);
             this.panel1.Controls.Add(this.txtSeq1);
-            this.panel1.Location = new System.Drawing.Point(-7, 142);
+            this.panel1.Location = new System.Drawing.Point(-1, 141);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(531, 114);
-            this.panel1.TabIndex = 48;
+            this.panel1.Size = new System.Drawing.Size(1004, 114);
+            this.panel1.TabIndex = 50;
             // 
             // labelBatchUpdateEstCutDate
             // 
@@ -413,10 +361,10 @@
             this.panel7.Controls.Add(this.txtCutCell);
             this.panel7.Controls.Add(this.labelCutCell);
             this.panel7.Controls.Add(this.labelFabricCombo);
-            this.panel7.Location = new System.Drawing.Point(-1, 3);
+            this.panel7.Location = new System.Drawing.Point(5, 2);
             this.panel7.Name = "panel7";
-            this.panel7.Size = new System.Drawing.Size(525, 139);
-            this.panel7.TabIndex = 47;
+            this.panel7.Size = new System.Drawing.Size(998, 139);
+            this.panel7.TabIndex = 49;
             // 
             // labelSPNo
             // 
@@ -585,134 +533,6 @@
             this.labelFabricCombo.TabIndex = 5;
             this.labelFabricCombo.Text = "FabricCombo";
             // 
-            // tabControl1
-            // 
-            this.tabControl1.Controls.Add(this.tabByGarment);
-            this.tabControl1.Controls.Add(this.tabByFabric_Panel_Code);
-            this.tabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tabControl1.Location = new System.Drawing.Point(0, 0);
-            this.tabControl1.Name = "tabControl1";
-            this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(474, 257);
-            this.tabControl1.TabIndex = 4;
-            // 
-            // tabByGarment
-            // 
-            this.tabByGarment.Controls.Add(this.progressBar1);
-            this.tabByGarment.Controls.Add(this.gridGarment);
-            this.tabByGarment.Location = new System.Drawing.Point(4, 25);
-            this.tabByGarment.Name = "tabByGarment";
-            this.tabByGarment.Padding = new System.Windows.Forms.Padding(3);
-            this.tabByGarment.Size = new System.Drawing.Size(466, 228);
-            this.tabByGarment.TabIndex = 0;
-            this.tabByGarment.Text = "By Garment";
-            // 
-            // progressBar1
-            // 
-            this.progressBar1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.progressBar1.Location = new System.Drawing.Point(358, 199);
-            this.progressBar1.Name = "progressBar1";
-            this.progressBar1.Size = new System.Drawing.Size(100, 23);
-            this.progressBar1.Step = 1;
-            this.progressBar1.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
-            this.progressBar1.TabIndex = 3;
-            // 
-            // gridGarment
-            // 
-            this.gridGarment.AllowUserToAddRows = false;
-            this.gridGarment.AllowUserToDeleteRows = false;
-            this.gridGarment.AllowUserToResizeRows = false;
-            this.gridGarment.BackgroundColor = System.Drawing.SystemColors.Control;
-            this.gridGarment.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
-            this.gridGarment.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.gridGarment.DataSource = this.listControlBindingSource1;
-            this.gridGarment.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.gridGarment.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
-            this.gridGarment.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
-            this.gridGarment.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.gridGarment.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.gridGarment.Location = new System.Drawing.Point(3, 3);
-            this.gridGarment.Name = "gridGarment";
-            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridGarment.RowHeadersDefaultCellStyle = dataGridViewCellStyle2;
-            this.gridGarment.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
-            this.gridGarment.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
-            this.gridGarment.RowTemplate.Height = 24;
-            this.gridGarment.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.gridGarment.ShowCellToolTips = false;
-            this.gridGarment.Size = new System.Drawing.Size(460, 222);
-            this.gridGarment.TabIndex = 2;
-            this.gridGarment.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.Grid_CellFormatting);
-            this.gridGarment.CellPainting += new System.Windows.Forms.DataGridViewCellPaintingEventHandler(this.Grid_CellPainting);
-            // 
-            // tabByFabric_Panel_Code
-            // 
-            this.tabByFabric_Panel_Code.Controls.Add(this.progressBar2);
-            this.tabByFabric_Panel_Code.Controls.Add(this.gridFabric_Panel_Code);
-            this.tabByFabric_Panel_Code.Location = new System.Drawing.Point(4, 25);
-            this.tabByFabric_Panel_Code.Name = "tabByFabric_Panel_Code";
-            this.tabByFabric_Panel_Code.Padding = new System.Windows.Forms.Padding(3);
-            this.tabByFabric_Panel_Code.Size = new System.Drawing.Size(466, 228);
-            this.tabByFabric_Panel_Code.TabIndex = 1;
-            this.tabByFabric_Panel_Code.Text = "By Fabric_Panel_Code";
-            // 
-            // progressBar2
-            // 
-            this.progressBar2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.progressBar2.Location = new System.Drawing.Point(358, 199);
-            this.progressBar2.Name = "progressBar2";
-            this.progressBar2.Size = new System.Drawing.Size(100, 23);
-            this.progressBar2.Step = 1;
-            this.progressBar2.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
-            this.progressBar2.TabIndex = 6;
-            // 
-            // gridFabric_Panel_Code
-            // 
-            this.gridFabric_Panel_Code.AllowUserToAddRows = false;
-            this.gridFabric_Panel_Code.AllowUserToDeleteRows = false;
-            this.gridFabric_Panel_Code.AllowUserToResizeRows = false;
-            this.gridFabric_Panel_Code.BackgroundColor = System.Drawing.SystemColors.Control;
-            this.gridFabric_Panel_Code.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
-            this.gridFabric_Panel_Code.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.gridFabric_Panel_Code.DataSource = this.listControlBindingSource2;
-            this.gridFabric_Panel_Code.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.gridFabric_Panel_Code.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
-            this.gridFabric_Panel_Code.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
-            this.gridFabric_Panel_Code.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.gridFabric_Panel_Code.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.gridFabric_Panel_Code.Location = new System.Drawing.Point(3, 3);
-            this.gridFabric_Panel_Code.Name = "gridFabric_Panel_Code";
-            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridFabric_Panel_Code.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
-            this.gridFabric_Panel_Code.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
-            this.gridFabric_Panel_Code.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
-            this.gridFabric_Panel_Code.RowTemplate.Height = 24;
-            this.gridFabric_Panel_Code.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.gridFabric_Panel_Code.ShowCellToolTips = false;
-            this.gridFabric_Panel_Code.Size = new System.Drawing.Size(460, 222);
-            this.gridFabric_Panel_Code.TabIndex = 5;
-            this.gridFabric_Panel_Code.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.Grid_CellFormatting);
-            this.gridFabric_Panel_Code.CellPainting += new System.Windows.Forms.DataGridViewCellPaintingEventHandler(this.Grid_CellPainting);
-            // 
-            // bgWorkerUpdateInfo
-            // 
-            this.bgWorkerUpdateInfo.WorkerReportsProgress = true;
-            this.bgWorkerUpdateInfo.WorkerSupportsCancellation = true;
-            this.bgWorkerUpdateInfo.DoWork += new System.ComponentModel.DoWorkEventHandler(this.BgWorkerUpdateInfo_DoWork);
-            this.bgWorkerUpdateInfo.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.BgWorkerUpdateInfo_ProgressChanged);
-            // 
             // P02_BatchAssign
             // 
             this.ClientSize = new System.Drawing.Size(1006, 572);
@@ -724,26 +544,16 @@
             this.Name = "P02_BatchAssign";
             this.OnLineHelpID = "Sci.Win.Subs.Base";
             this.Text = "Batch Assign Cell/Est. Cut Date";
-            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.P02_BatchAssign_FormClosing);
             ((System.ComponentModel.ISupportInitialize)(this.gridBatchAssignCellEstCutDate)).EndInit();
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
-            this.splitContainer2.Panel1.ResumeLayout(false);
-            this.splitContainer2.Panel2.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).EndInit();
-            this.splitContainer2.ResumeLayout(false);
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
             this.panel7.ResumeLayout(false);
             this.panel7.PerformLayout();
-            this.tabControl1.ResumeLayout(false);
-            this.tabByGarment.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.gridGarment)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).EndInit();
-            this.tabByFabric_Panel_Code.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.gridFabric_Panel_Code)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource2)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -759,7 +569,6 @@
         private Win.UI.Button btnConfirm;
         private Microsoft.VisualBasic.PowerPacks.ShapeContainer shapeContainer2;
         private System.Windows.Forms.SplitContainer splitContainer1;
-        private System.Windows.Forms.SplitContainer splitContainer2;
         private Win.UI.ListControlBindingSource listControlBindingSource1;
         private Win.UI.ListControlBindingSource listControlBindingSource2;
         private System.Windows.Forms.Panel panel1;
@@ -797,13 +606,5 @@
         private Class.TxtCell txtCutCell;
         private Win.UI.Label labelCutCell;
         private Win.UI.Label labelFabricCombo;
-        private Win.UI.TabControl tabControl1;
-        private System.Windows.Forms.TabPage tabByGarment;
-        private System.Windows.Forms.TabPage tabByFabric_Panel_Code;
-        private Win.UI.Grid gridGarment;
-        private Win.UI.Grid gridFabric_Panel_Code;
-        private System.Windows.Forms.ProgressBar progressBar1;
-        private System.ComponentModel.BackgroundWorker bgWorkerUpdateInfo;
-        private System.Windows.Forms.ProgressBar progressBar2;
     }
 }

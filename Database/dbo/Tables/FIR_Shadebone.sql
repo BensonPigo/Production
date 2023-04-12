@@ -85,23 +85,23 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'最後編�
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'�ŤU�����ɶ�', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'FIR_Shadebone', @level2type = N'COLUMN', @level2name = N'CutTime';
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'剪下布的時間', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'FIR_Shadebone', @level2type = N'COLUMN', @level2name = N'CutTime';
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'�K����W���ɶ�', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'FIR_Shadebone', @level2type = N'COLUMN', @level2name = N'PasteTime';
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'貼到文件上的時間', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'FIR_Shadebone', @level2type = N'COLUMN', @level2name = N'PasteTime';
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'�����浹QA���ɶ�', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'FIR_Shadebone', @level2type = N'COLUMN', @level2name = N'PassQATime';
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'文件轉交給QA的時間', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'FIR_Shadebone', @level2type = N'COLUMN', @level2name = N'PassQATime';
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'���s�񪺦�m', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'FIR_Shadebone', @level2type = N'COLUMN', @level2name = N'ShadebandDocLocationID';
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'文件存放的位置', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'FIR_Shadebone', @level2type = N'COLUMN', @level2name = N'ShadebandDocLocationID';
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'�t�d�� Shadeband ���H��', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'FIR_Shadebone', @level2type = N'COLUMN', @level2name = N'CutBy';
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'負責剪 Shadeband 的人員', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'FIR_Shadebone', @level2type = N'COLUMN', @level2name = N'CutBy';
 
 
 

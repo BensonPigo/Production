@@ -10,6 +10,7 @@
     [AddDate]       DATETIME      NULL,
     [EditName]      VARCHAR (10)  CONSTRAINT [DF_IETMS_EditName] DEFAULT ('') NULL,
     [EditDate]      DATETIME      NULL,
+    [GSDType]       VARCHAR (1)   CONSTRAINT [DF_IETMS_GSDType] DEFAULT ('') NOT NULL,
     CONSTRAINT [PK_IETMS] PRIMARY KEY CLUSTERED ([ID] ASC, [Version] ASC)
 );
 

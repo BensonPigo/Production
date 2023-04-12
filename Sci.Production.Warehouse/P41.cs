@@ -1,14 +1,16 @@
-﻿using System;
+﻿using Ict.Win;
+using Sci.Data;
+using System;
 using System.Data;
 using System.Drawing;
 using System.Windows.Forms;
-using Ict.Win;
-using Sci.Data;
 
 namespace Sci.Production.Warehouse
 {
+    /// <inheritdoc/>
     public partial class P41 : Win.Tems.QueryForm
     {
+        /// <inheritdoc/>
         public P41(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -117,35 +119,51 @@ namespace Sci.Production.Warehouse
                 return;
             }
 
-            string sqlcmd
-                = string.Format(
-                    @"select B.FactoryID,c.POID,concat(Ltrim(Rtrim(b.seq1)), ' ', b.Seq2) as seq,a.EachConsApv
-,(SELECT MAX(FinalETA) FROM 
-	(SELECT PO_SUPP_DETAIL.FinalETA FROM PO_Supp_Detail WITH (NOLOCK) 
-		WHERE PO_Supp_Detail.ID = B.ID 
-		AND PO_Supp_Detail.SCIRefno = B.SCIRefno AND PO_Supp_Detail.ColorID = b.ColorID 
-	UNION ALL
-	SELECT B1.FinalETA FROM PO_Supp_Detail a1 WITH (NOLOCK) , PO_Supp_Detail b1 WITH (NOLOCK) 
-		WHERE a1.ID = B.ID AND a1.SCIRefno = B.SCIRefno AND a1.ColorID = b.ColorID
-		AND a1.StockPOID = b1.ID and a1.StockSeq1 = b1.SEQ1 and a1.StockSeq2 = b1.SEQ2
-	) tmp) as ETA
+            string sqlcmd = $@"
+select psd.FactoryID,c.POID,concat(Ltrim(Rtrim(psd.seq1)), ' ', psd.Seq2) as seq,a.EachConsApv
+    ,ETA =
+    (
+        SELECT MAX(FinalETA)
+        FROM 
+        (
+            SELECT psd1.FinalETA
+            FROM PO_Supp_Detail psd1 WITH (NOLOCK)
+            inner join PO_Supp_Detail_Spec psdsC1 WITH (NOLOCK) on psdsC1.ID = psd.id and psdsC1.seq1 = psd.seq1 and psdsC1.seq2 = psd.seq2 and psdsC1.SpecColumnID = 'Color'
+            WHERE psd1.ID = psd.ID 
+            AND psd1.SCIRefno = psd.SCIRefno
+            AND isnull(psdsC1.SpecValue, '') = isnull(psdsC.SpecValue, '')
+
+            UNION ALL
+            SELECT psd2.FinalETA
+            FROM PO_Supp_Detail psd1 WITH (NOLOCK)
+            inner join PO_Supp_Detail psd2 WITH (NOLOCK) on psd1.StockPOID = psd2.ID and psd1.StockSeq1 = psd2.SEQ1 and psd1.StockSeq2 = psd2.SEQ2
+            inner join PO_Supp_Detail_Spec psdsC1 WITH (NOLOCK) on psdsC1.ID = psd.id and psdsC1.seq1 = psd.seq1 and psdsC1.seq2 = psd.seq2 and psdsC1.SpecColumnID = 'Color'
+            WHERE psd1.ID = psd.ID
+            AND psd1.SCIRefno = psd.SCIRefno
+            AND isnull(psdsC1.SpecValue, '') = isnull(psdsC.SpecValue, '')
+        ) tmp
+    )
 	,MIN(a.SewInLine) as FstSewinline
-    ,b.Special
-    ,b.SizeSpec
-	,Qty = round(dbo.GetUnitQty(b.POUnit, b.StockUnit, b.Qty), (select unit.Round from unit WITH (NOLOCK) where id = b.StockUnit)) 
+    ,psd.Special
+    ,SizeSpec= isnull(psdsS.SpecValue, '')
+	,Qty = round(dbo.GetUnitQty(psd.POUnit, psd.StockUnit, psd.Qty), (select unit.Round from unit WITH (NOLOCK) where id = psd.StockUnit)) 
     ,min(a.SciDelivery) SCIdlv
     ,min(a.BuyerDelivery) BuyerDlv
-    ,B.Refno
+    ,psd.Refno
     ,a.BrandID
-    ,(select color.Name from color WITH (NOLOCK) where color.id = b.ColorID and color.BrandId = a.brandid ) as color
-	,b.stockunit	
-    ,B.SEQ1
-    ,B.SEQ2
-    ,c.TapeInline,c.TapeOffline		    	
-from dbo.orders a WITH (NOLOCK) inner join dbo.po_supp_detail b WITH (NOLOCK) on a.poid = b.id
-inner join dbo.cuttingtape_detail c WITH (NOLOCK) on c.mdivisionid = '{0}' and c.poid = b.id and c.seq1 = b.seq1 and c.seq2 = b.seq2
+    ,(select color.Name from color WITH (NOLOCK) where color.id = isnull(psdsC.SpecValue, '') and color.BrandId = a.brandid ) as color
+	,psd.stockunit	
+    ,psd.SEQ1
+    ,psd.SEQ2
+    ,c.TapeInline,c.TapeOffline
+from dbo.orders a WITH (NOLOCK)
+inner join dbo.po_supp_detail psd WITH (NOLOCK) on a.poid = psd.id
+inner join dbo.cuttingtape_detail c WITH (NOLOCK) on c.mdivisionid = '{Env.User.Keyword}' and c.poid = psd.id and c.seq1 = psd.seq1 and c.seq2 = psd.seq2
+left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
+left join PO_Supp_Detail_Spec psdsS WITH (NOLOCK) on psdsS.ID = psd.id and psdsS.seq1 = psd.seq1 and psdsS.seq2 = psd.seq2 and psdsS.SpecColumnID = 'Size'
 WHERE A.IsForecast = 0 AND A.Junk = 0 AND A.LocalOrder = 0
-AND (B.Special LIKE ('%EMB-APPLIQUE%') or B.Special LIKE ('%EMB APPLIQUE%'))", Env.User.Keyword);
+AND (psd.Special LIKE ('%EMB-APPLIQUE%') or psd.Special LIKE ('%EMB APPLIQUE%'))
+";
             if (!MyUtility.Check.Empty(sciDelivery_b))
             {
                 sqlcmd += string.Format(@" and a.SciDelivery between '{0}' and '{1}'", sciDelivery_b, sciDelivery_e);
@@ -161,24 +179,10 @@ AND (B.Special LIKE ('%EMB-APPLIQUE%') or B.Special LIKE ('%EMB APPLIQUE%'))", E
                 sqlcmd += string.Format(@" and a.BuyerDelivery between '{0}' and '{1}'", buyerdlv_b, buyerdlv_e);
             }
 
-            sqlcmd += "GROUP BY c.mdivisionid,c.POID,a.EachConsApv,B.Special,B.Qty,B.SizeSpec,B.Refno,B.SEQ1,B.SEQ2,c.TapeInline,c.TapeOffline,B.ID,B.ColorID,b.SCIRefno,a.brandid,b.POUnit,b.stockunit,B.FactoryID";
-
-            // 20161220 CheckBox 選項用 checkBoxs_Status() 取代
-//            if (eachchk && mtletachk) sqlcmd += @" having EachConsApv is not null and (SELECT MAX(FinalETA) FROM
-// (SELECT B1.FinalETA FROM PO_Supp_Detail a1, PO_Supp_Detail b1
-// WHERE a1.ID = B.ID AND a1.SCIRefno = B.SCIRefno AND a1.ColorID = b.ColorID
-// AND a1.StockPOID = b1.ID and a1.StockSeq1 = b1.SEQ1 and a1.StockSeq2 = b1.SEQ2
-// ) tmp) is not null";
-//            else
-//            {
-//                if (eachchk) sqlcmd += " having EachConsApv is not null";
-//                if (mtletachk) sqlcmd += @" having (SELECT MAX(FinalETA) FROM
-// (SELECT B1.FinalETA FROM PO_Supp_Detail a1, PO_Supp_Detail b1
-// WHERE a1.ID = B.ID AND a1.SCIRefno = B.SCIRefno AND a1.ColorID = b.ColorID
-// AND a1.StockPOID = b1.ID and a1.StockSeq1 = b1.SEQ1 and a1.StockSeq2 = b1.SEQ2
-// ) tmp) is not null";
-//            }
-            sqlcmd += @" ORDER BY c.mdivisionid,c.POID";
+            sqlcmd += @"
+GROUP BY c.mdivisionid,c.POID,a.EachConsApv,psd.Special,psd.Qty,psdsS.SpecValue,psd.Refno,psd.SEQ1,psd.SEQ2,c.TapeInline,c.TapeOffline,psd.ID,psdsC.SpecValue,psd.SCIRefno,a.brandid,psd.POUnit,psd.stockunit,psd.FactoryID
+ORDER BY c.mdivisionid,c.POID
+";
             Ict.DualResult result;
             if (result = DBProxy.Current.Select(null, sqlcmd, out dtData))
             {

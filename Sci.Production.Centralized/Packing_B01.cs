@@ -29,7 +29,7 @@ namespace Sci.Production.Centralized
             if (string.IsNullOrWhiteSpace(this.CurrentMaintain["id"].ToString()))
             {
                 this.CurrentMaintain["type"] = "OG";
-                if (cbResult = DBProxy.Current.Select(null, "select max(id) max_id from PackingReason WITH (NOLOCK) where type='OG'", out whseReasonDt))
+                if (cbResult = DBProxy.Current.Select("ProductionTPE", "select max(id) max_id from PackingReason WITH (NOLOCK) where type='OG'", out whseReasonDt))
                 {
                     string id = whseReasonDt.Rows[0]["max_id"].ToString();
                     if (string.IsNullOrWhiteSpace(id))

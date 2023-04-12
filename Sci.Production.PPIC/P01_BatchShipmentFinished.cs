@@ -63,7 +63,8 @@ namespace Sci.Production.PPIC
                 .Date("BuyerDelivery", header: "Buyer Delivery", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("POCombo", header: "PO Combo", width: Widths.AnsiChars(50), iseditingreadonly: true)
                 .Text("MCHandle", header: "MCHandle", width: Widths.AnsiChars(20), iseditingreadonly: true)
-                .Text("MaterialLockStatus", header: "Material Lock Status", width: Widths.AnsiChars(5), iseditingreadonly: true);
+                .Text("MaterialLockStatus", header: "Material Lock Status", width: Widths.AnsiChars(5), iseditingreadonly: true)
+                .Text("Junk", header: "Include Cancel Order", width: Widths.AnsiChars(5), iseditingreadonly: true);
         }
 
         // Style#
@@ -159,6 +160,14 @@ namespace Sci.Production.PPIC
             }
 
             if (this.dateBuyerDelivery.Value2 != this.dateBuyerDelivery.OldValue2)
+            {
+                this.SetFilter();
+            }
+        }
+
+        private void Txtuser1_Validated(object sender, EventArgs e)
+        {
+            if (this.txtuser1.TextBox1.OldValue != this.txtuser1.TextBox1.Text)
             {
                 this.SetFilter();
             }
@@ -309,7 +318,7 @@ select SP = (select ID + ','
             int intRowsStart = 2;
             int dataRowCount = gridData.DefaultView.Count;
             int rownum = 0;
-            object[,] objArray = new object[1, 7];
+            object[,] objArray = new object[1, 8];
             foreach (DataRowView dr in gridData.DefaultView)
             {
                 objArray[0, 0] = dr["POID"];
@@ -319,8 +328,8 @@ select SP = (select ID + ','
                 objArray[0, 4] = dr["POCombo"];
                 objArray[0, 5] = dr["MCHandle"];
                 objArray[0, 6] = dr["MaterialLockStatus"];
-
-                worksheet.Range[string.Format("A{0}:G{0}", intRowsStart + rownum)].Value2 = objArray;
+                objArray[0, 7] = dr["Junk"];
+                worksheet.Range[string.Format("A{0}:H{0}", intRowsStart + rownum)].Value2 = objArray;
                 rownum++;
             }
 
@@ -431,6 +440,7 @@ select Selected = 1
 	   , MCHandle = (o.MCHandle + ' - ' + isnull(p.Name, ''))
 	   , o.Category
 	   , [MaterialLockStatus] = ISNULL(f.MaterialLockStatus, '')
+       ,[Junk] = iif(o.Junk = 1 ,'Y','N')
 from (
 	select * 
 	from #wantToClose
@@ -488,6 +498,11 @@ outer apply (
             if (!MyUtility.Check.Empty(this.dateBuyerDelivery.Value2))
             {
                 stringFilter.Append(string.Format(" and BuyerDelivery <= '{0}'", this.dateBuyerDelivery.Value2));
+            }
+
+            if (!MyUtility.Check.Empty(this.txtuser1.TextBox1.Text))
+            {
+                stringFilter.Append(string.Format(" and MCHandle like '{0}%'", this.txtuser1.TextBox1.Text));
             }
 
             ((DataTable)this.listControlBindingSource1.DataSource).DefaultView.RowFilter = stringFilter.ToString();

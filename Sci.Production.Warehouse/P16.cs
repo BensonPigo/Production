@@ -337,6 +337,8 @@ and ID = '{Sci.Env.User.UserID}'"))
             .Text("Location", header: "Bulk Location", iseditingreadonly: true) // 7
             .Text("ContainerCode", header: "Container Code", iseditingreadonly: true).Get(out cbb_ContainerCode)
             .Text("Remark", header: "Remark", width: Widths.AnsiChars(20), iseditingreadonly: true);
+
+            // .Text("LackReason", header: "Lacking & Replacement Reason", iseditingreadonly: true);
             #endregion 欄位設定
 
             // 僅有自動化工廠 ( System.Automation = 1 )才需要顯示該欄位 by ISP20220035
@@ -450,9 +452,6 @@ where (isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f
 
                 #endregion 檢查負數庫存
             }
-            #region -- 更新表頭狀態資料 --
-
-            #endregion 更新表頭狀態資料
             #region -- update Lack.issuelackid & Lack.issuelackdt
             StringBuilder sqlupd4 = new StringBuilder();
             sqlupd4.Append($@"update dbo.Lack set dbo.Lack.IssueLackDT = GetDate(), IssueLackId = '{this.CurrentMaintain["id"]}' where id = '{this.CurrentMaintain["requestid"]}';");
@@ -509,6 +508,12 @@ where dbo.Lack_Detail.id = '{this.CurrentMaintain["requestid"]}'
                         {
                             throw result.GetException();
                         }
+
+                        // Barcode 需要判斷新的庫存, 在更新 FtyInventory 之後
+                        if (!(result = Prgs.UpdateWH_Barcode(true, (DataTable)this.detailgridbs.DataSource, this.Name, out bool fromNewBarcode, dtOriFtyInventory)))
+                        {
+                            throw result.GetException();
+                        }
                     }
 
                     if (!(result = DBProxy.Current.Execute(null, $"update IssueLack set status='Confirmed', editname = '{Env.User.UserID}' , editdate =  GetDate(), apvname = '{Env.User.UserID}', apvdate = GetDate() where id = '{this.CurrentMaintain["id"]}'")))
@@ -517,12 +522,6 @@ where dbo.Lack_Detail.id = '{this.CurrentMaintain["requestid"]}'
                     }
 
                     if (!(result = DBProxy.Current.Execute(null, sqlupd4.ToString())))
-                    {
-                        throw result.GetException();
-                    }
-
-                    // Barcode 需要判斷新的庫存, 在更新 FtyInventory 之後
-                    if (!(result = Prgs.UpdateWH_Barcode(true, (DataTable)this.detailgridbs.DataSource, this.Name, out bool fromNewBarcode, dtOriFtyInventory)))
                     {
                         throw result.GetException();
                     }
@@ -710,6 +709,12 @@ where (isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f
                         {
                             throw result.GetException();
                         }
+
+                        // Barcode 需要判斷新的庫存, 在更新 FtyInventory 之後
+                        if (!(result = Prgs.UpdateWH_Barcode(false, (DataTable)this.detailgridbs.DataSource, this.Name, out bool fromNewBarcode, dtOriFtyInventory)))
+                        {
+                            throw result.GetException();
+                        }
                     }
 
                     if (!(result = DBProxy.Current.Execute(null, $"update IssueLack set status='New', editname = '{Env.User.UserID}' , editdate = GETDATE(),apvname = '',apvdate = null where id = '{this.CurrentMaintain["id"]}'")))
@@ -718,12 +723,6 @@ where (isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f
                     }
 
                     if (!(result = DBProxy.Current.Execute(null, sqlupd4.ToString())))
-                    {
-                        throw result.GetException();
-                    }
-
-                    // Barcode 需要判斷新的庫存, 在更新 FtyInventory 之後
-                    if (!(result = Prgs.UpdateWH_Barcode(false, (DataTable)this.detailgridbs.DataSource, this.Name, out bool fromNewBarcode, dtOriFtyInventory)))
                     {
                         throw result.GetException();
                     }
@@ -807,7 +806,7 @@ select a.id
 	   , seq = concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2)
 	   , a.Roll
 	   , a.Dyelot
-	   , ShadeboneTone.Tone
+	   , fi.Tone
 	   , p1.stockunit
 	   , [Description] = dbo.getMtlDesc(a.poid,a.seq1,a.seq2,2,0) 
 	   , a.Qty
@@ -817,7 +816,9 @@ select a.id
 	   , a.ukey
 	   , a.FtyInventoryUkey
        , a.Remark
+       --, [LackReason] = iif(ld.PPICReasonID is null, '', CONCAT(ld.PPICReasonID, '-', p.Description))
 from dbo.IssueLack_Detail a WITH (NOLOCK) 
+inner join IssueLack il with (nolock) on a.ID = il.ID
 left join PO_Supp_Detail p1 WITH (NOLOCK) on p1.ID = a.PoId 
 											 and p1.seq1 = a.SEQ1 
 											 and p1.SEQ2 = a.seq2
@@ -827,13 +828,7 @@ left join FtyInventory fi WITH (NOLOCK) on a.POID = fi.POID
 										  and a.Roll = fi.Roll 
 										  and a.Dyelot = fi.Dyelot 
 										  and a.StockType = fi.StockType
-outer apply (
-	select [Tone] = MAX(fs.Tone)
-    from FtyInventory fi2 with (nolock) 
-    Left join FIR f with (nolock) on f.poid = fi2.poid and f.seq1 = fi2.seq1 and f.seq2 = fi2.seq2
-	Left join FIR_Shadebone fs with (nolock) on f.ID = fs.ID and fs.Roll = fi2.Roll and fs.Dyelot = fi2.Dyelot
-	where fi2.Ukey = fi.Ukey
-) ShadeboneTone
+left join Lack l with (nolock) on l.POID = a.POID and l.ID = il.RequestID
 Where a.id = '{0}'", masterID);
             return base.OnDetailSelectCommandPrepare(e);
         }
@@ -944,6 +939,10 @@ where id='{this.txtRequestNo.Text}' and fabrictype='F' and mdivisionid='{Env.Use
             string requestno = row["requestid"].ToString();
             string remark = row["Remark"].ToString();
             string issuedate = ((DateTime)MyUtility.Convert.GetDate(row["issuedate"])).ToShortDateString();
+            string addName = MyUtility.GetValue.Lookup($@"
+select p.Name from IssueLack i
+left join Pass1 p on p.ID=i.AddName
+where i.Id='{row["ID"].ToString()}'");
             #region -- 撈表頭資料 --
             List<SqlParameter> pars = new List<SqlParameter>
             {
@@ -964,6 +963,7 @@ where id='{this.txtRequestNo.Text}' and fabrictype='F' and mdivisionid='{Env.Use
             report.ReportParameters.Add(new ReportParameter("Remark", remark));
             report.ReportParameters.Add(new ReportParameter("issuetime", DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss")));
             report.ReportParameters.Add(new ReportParameter("Dept", this.displayDept.Text));
+            report.ReportParameters.Add(new ReportParameter("AddName", addName));
 
             string sqlcmd = @"
 select b.ApvDate
@@ -1014,20 +1014,13 @@ select  a.POID
         ,dbo.Getlocation(fi.ukey)[Location] 
         ,FI.ContainerCode
         ,a.Remark
-        ,[Tone] = Tone.val
+        ,FI.Tone
 from dbo.IssueLack_detail a WITH (NOLOCK) 
 left join dbo.PO_Supp_Detail b WITH (NOLOCK) on b.id=a.POID and b.SEQ1=a.Seq1 and b.SEQ2=a.seq2
 left join dbo.FtyInventory FI on a.poid = fi.poid and a.seq1 = fi.seq1 and a.seq2 = fi.seq2
     and a.roll = fi.roll and a.stocktype = fi.stocktype and a.Dyelot = fi.Dyelot
-outer apply(select [val] = isnull(max(Tone), '')
-            from FIR f with (nolock)
-            inner join FIR_Shadebone  fs with (nolock) on fs.ID = f.ID
-            where   f.POID = fi.POID and
-                    f.Seq1 = fi.Seq1 and
-                    f.Seq2 = fi.Seq2 and
-                    fs.Roll = fi.Roll and
-                    fs.Dyelot = fi.Dyelot) Tone
-where a.id= @ID";
+where a.id= @ID
+";
             result = DBProxy.Current.Select(string.Empty, sqlcmd, pars, out DataTable dtDetail);
 
             if (!result)
@@ -1092,6 +1085,45 @@ where a.id= @ID";
         private void BtnCallP99_Click(object sender, EventArgs e)
         {
             P99_CallForm.CallForm(this.CurrentMaintain["ID"].ToString(), this.Name, this);
+        }
+
+        /// <inheritdoc/>
+        protected override DualResult OnRenewDataDetailPost(RenewDataPostEventArgs e)
+        {
+            if (MyUtility.Check.Empty(e.Master["ID"]))
+            {
+                return null;
+            }
+
+            string sqlcmd = $@"select distinct l.Remark,l.SewingLineID
+                                from IssueLack il
+                                inner join IssueLack_Detail ild with(nolock) on il.id = ild.id
+                                left join Lack l with (nolock) on l.POID = ild.POID and l.ID = il.RequestID
+                                where il.id ='{MyUtility.Convert.GetString(e.Master["ID"])}'";
+            DualResult dualResult = DBProxy.Current.Select(null, sqlcmd, out DataTable dt);
+            if (!dualResult)
+            {
+                MyUtility.Msg.ErrorBox(MyUtility.Convert.GetString(dualResult.Messages));
+                return dualResult;
+            }
+
+            DataRow dataRow = dt.Rows[0];
+            this.editBoxRequestRemark.Text = MyUtility.Convert.GetString(dataRow["Remark"]);
+            this.txtSewingLine.Text = MyUtility.Convert.GetString(dataRow["SewingLineID"]);
+
+            return base.OnRenewDataDetailPost(e);
+        }
+
+        private void BtnRequestList_Click(object sender, EventArgs e)
+        {
+            if (MyUtility.Check.Empty(this.CurrentMaintain["requestid"]))
+            {
+                MyUtility.Msg.WarningBox("Please fill-in the Request# first.");
+                return;
+            }
+
+            P15P16_ReuqeustList win = new P15P16_ReuqeustList("P16", this.CurrentMaintain);
+            win.ShowDialog(this);
         }
     }
 }

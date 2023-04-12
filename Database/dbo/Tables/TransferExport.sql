@@ -60,7 +60,7 @@
     [OTResponsibleFty2] VARCHAR(8) NOT NULL CONSTRAINT [DF_TransferExport_OTResponsibleFty2] DEFAULT (''), 
     [CIFTerms] BIT NOT NULL CONSTRAINT [DF_TransferExport_CIFTerms] DEFAULT ((0)), 
     [Sent] BIT NOT NULL CONSTRAINT [DF_TransferExport_Sent] DEFAULT ((0)), 
-    [FtyStatus] VARCHAR(15) NOT NULL CONSTRAINT [DF_TransferExport_FtyStatus] DEFAULT (''), 
+    [FtyStatus] VARCHAR(30) NOT NULL CONSTRAINT [DF_TransferExport_FtyStatus] DEFAULT (''), 
     [NoCharges] BIT NOT NULL CONSTRAINT [DF_TransferExport_NoCharges] DEFAULT ((0)), 
 	[FtyTruckFee] numeric(10,2) NOT NULL CONSTRAINT [DF_TransferExport_FtyTruckFee] DEFAULT ((0)), 
 	[MainWKID] varchar(13) NOT NULL CONSTRAINT [DF_TransferExport_MainWKID] DEFAULT ('') ,
@@ -70,6 +70,13 @@
     [TransferType] VARCHAR(12) NOT NULL DEFAULT (''), 
     [FtySendDate] DATETIME NULL, 
     [FtyConfirmDate] DATETIME NULL, 
+    [Separated] BIT NOT NULL CONSTRAINT [DF_TransferExport_Separated] DEFAULT ((0)), 
+    [FtyRequestSeparateDate] DATETIME NULL, 
+    [TPESeparateApprovedDate] DATETIME NULL, 
+    [WHSpearateConfirmDate] DATETIME NULL, 
+    [ShippingSeparateConfirmDate] DATETIME NULL, 
+    [Status] VARCHAR(20) NOT NULL CONSTRAINT [DF_TransferExport_Status] DEFAULT (''), 
+    [Remark_Factory] NVARCHAR(2000) NOT NULL CONSTRAINT [DF_TransferExport_Remark_Factory] DEFAULT (''), 
     CONSTRAINT [PK_TransferExport] PRIMARY KEY CLUSTERED ([ID] ASC)
 )
 
@@ -417,9 +424,7 @@ EXEC sp_addextendedproperty @name = N'MS_Description',
     @level2name = N'Sent'
 GO
 EXEC sp_addextendedproperty @name = N'MS_Description',
-    @value = N'工廠端 WK 的處理狀態
-New > Send > Confirm
-',
+    @value = N'台北 TK 的狀態(New, Sent, Request Separate, Separate Approved, Separate Reject, Fty Confirm, Confirm, Close, Junk)',
     @level0type = N'SCHEMA',
     @level0name = N'dbo',
     @level1type = N'TABLE',
@@ -462,3 +467,66 @@ EXEC sp_addextendedproperty @name = N'MS_Description',
     @level1name = N'TransferExport',
     @level2type = N'COLUMN',
     @level2name = N'FtyConfirmDate'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'該單據是否曾經有過成功拆單',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'TransferExport',
+    @level2type = N'COLUMN',
+    @level2name = N'Separated'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'工廠請求拆分 TK 的日期',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'TransferExport',
+    @level2type = N'COLUMN',
+    @level2name = N'FtyRequestSeparateDate'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'台北核准工廠拆分 TK 的請求',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'TransferExport',
+    @level2type = N'COLUMN',
+    @level2name = N'TPESeparateApprovedDate'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'工廠倉庫確認拆分後的結果',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'TransferExport',
+    @level2type = N'COLUMN',
+    @level2name = N'WHSpearateConfirmDate'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'工廠船務確認拆分後的結果',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'TransferExport',
+    @level2type = N'COLUMN',
+    @level2name = N'ShippingSeparateConfirmDate'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'台北 TK 的狀態(New, Sent, Request Separate, Separate Approved, Separate Reject, Fty Confirm, Confirm, Close, Junk)',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'TransferExport',
+    @level2type = N'COLUMN',
+    @level2name = N'Status'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'工廠備註',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'TransferExport',
+    @level2type = N'COLUMN',
+    @level2name = N'Remark_Factory'

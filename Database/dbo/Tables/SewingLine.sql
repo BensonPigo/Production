@@ -12,6 +12,9 @@
     [LastInpsectionTime] DATETIME       NULL,
     [IdleTime]           INT            CONSTRAINT [DF_SewingLine_IdleTime] DEFAULT ((0)) NOT NULL,
     [LineGroup]          NVARCHAR (50)  CONSTRAINT [DF_SewingLine_LineGroup] DEFAULT ('') NULL,
+    [DQSQtyPCT] SMALLINT NOT NULL, 
+    [DQSQtyPCTEditName] VARCHAR(10) NOT NULL DEFAULT (''), 
+    [DQSQtyPCTEditDate] DATETIME NULL, 
     CONSTRAINT [PK_SewingLine] PRIMARY KEY CLUSTERED ([ID] ASC, [FactoryID] ASC)
 );
 
@@ -61,3 +64,22 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'最後修�
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'不同區顯示只顯示此Group下的Line', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'SewingLine', @level2type = N'COLUMN', @level2name = N'LineGroup';
+
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'最後檢驗時間',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'SewingLine',
+    @level2type = N'COLUMN',
+    @level2name = N'LastInpsectionTime'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'閒置時間(分鐘)',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'SewingLine',
+    @level2type = N'COLUMN',
+    @level2name = N'IdleTime'

@@ -1,13 +1,12 @@
-﻿using System;
-using System.Data;
-using System.Drawing;
-using System.Text;
-using Ict;
+﻿using Ict;
 using Ict.Win;
 using Sci.Data;
-using System.Linq;
-using Sci.Production.Prg;
 using Sci.Production.PublicPrg;
+using System;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
 
 namespace Sci.Production.Warehouse
 {
@@ -52,18 +51,17 @@ namespace Sci.Production.Warehouse
             else
             {
                 // 建立可以符合回傳的Cursor
-                strSQLCmd.Append(string.Format(
-                    @"
+                strSQLCmd.Append($@"
 select  selected = 0  
         , Orders.FtyGroup
         , id = '' 
-        , PoId = a.id 
-        , a.Seq1
-        , a.Seq2
-        , seq = concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2) 
-        , a.FabricType
-        , a.stockunit
-        , [Description] = dbo.getmtldesc(a.id,a.seq1,a.seq2,2,0) 
+        , PoId = psd.id 
+        , psd.Seq1
+        , psd.Seq2
+        , seq = concat(Ltrim(Rtrim(psd.seq1)), ' ', psd.Seq2) 
+        , psd.FabricType
+        , psd.stockunit
+        , [Description] = dbo.getmtldesc(psd.id,psd.seq1,psd.seq2,2,0) 
         , Roll = Rtrim(Ltrim(c.Roll))
         , Dyelot = Rtrim(Ltrim(c.Dyelot))
         , Qty = 0.00 
@@ -71,55 +69,66 @@ select  selected = 0
         , ftyinventoryukey = c.ukey  
         , location = dbo.Getlocation(c.ukey)
         , balance = c.inqty - c.outqty + c.adjustqty - c.ReturnQty
-		,a.NetQty
-		,a.LossQty
-        , [FabricTypeName] = (select name from DropDownList where Type='FabricType_Condition' and a.FabricType = id)
-        , [Article] = case  when a.Seq1 like 'T%' then Stuff((Select distinct concat( ',',tcd.Article) 
+		,psd.NetQty
+		,psd.LossQty
+        , [FabricTypeName] = (select name from DropDownList where Type='FabricType_Condition' and psd.FabricType = id)
+        , [Article] = case  when psd.Seq1 like 'T%' then Stuff((Select distinct concat( ',',tcd.Article) 
 			                                                         From dbo.Orders as o 
 			                                                         Inner Join dbo.Style as s On s.Ukey = o.StyleUkey
 			                                                         Inner Join dbo.Style_ThreadColorCombo as tc On tc.StyleUkey = s.Ukey
 			                                                         Inner Join dbo.Style_ThreadColorCombo_Detail as tcd On tcd.Style_ThreadColorComboUkey = tc.Ukey 
-			                                                         where	o.POID = a.ID and
+			                                                         where	o.POID = psd.ID and
 			                                                         		tcd.SuppId = p.SuppId and
-			                                                         		tcd.SCIRefNo   = a.SCIRefNo	and
-			                                                         		tcd.ColorID	   = a.ColorID
+			                                                         		tcd.SCIRefNo   = psd.SCIRefNo	and
+			                                                         		tcd.ColorID	   =isnull(psdsC.SpecValue, '')
 			                                                         FOR XML PATH('')),1,1,'') 
                             else '' end
         ,c.lock
-        ,[Tone] = Tone.val
+        ,c.Tone
 	    , [Color] =
 			IIF(f.MtlTypeID = 'EMB THREAD' OR f.MtlTypeID = 'SP THREAD' OR f.MtlTypeID = 'THREAD' 
-			,IIF(a.SuppColor = '' or a.SuppColor is null,dbo.GetColorMultipleID(orders.BrandID,a.ColorID),a.SuppColor)
-			,dbo.GetColorMultipleID(orders.BrandID,a.ColorID))
-		, [Size]= a.SizeSpec
-from dbo.PO_Supp_Detail a WITH (NOLOCK) 
-inner join dbo.PO_Supp p with (nolock) on a.ID = p.ID and a.Seq1 = p.Seq1
-inner join dbo.ftyinventory c WITH (NOLOCK) on c.poid = a.id and c.seq1 = a.seq1 and c.seq2  = a.seq2 and c.stocktype = 'B'
+			,IIF(psd.SuppColor = '' or psd.SuppColor is null,dbo.GetColorMultipleID(orders.BrandID,isnull(psdsC.SpecValue, '')),psd.SuppColor)
+			,dbo.GetColorMultipleID(orders.BrandID,isnull(psdsC.SpecValue, '')))
+		, [Size]= isnull(psdsS.SpecValue, '')
+        , [GMTWash] = isnull(GMTWash.val, '')
+from dbo.PO_Supp_Detail psd WITH (NOLOCK) 
+inner join dbo.PO_Supp p with (nolock) on psd.ID = p.ID and psd.Seq1 = p.Seq1
+inner join dbo.ftyinventory c WITH (NOLOCK) on c.poid = psd.id and c.seq1 = psd.seq1 and c.seq2  = psd.seq2 and c.stocktype = 'B'
 inner join dbo.Orders on c.poid = orders.id
 inner join dbo.Factory on orders.FactoryID = factory.ID
-INNER JOIN Fabric f on a.SCIRefNo=f.SCIRefNo
-outer apply(select [val] = isnull(max(Tone), '')
-            from FIR f with (nolock)
-            inner join FIR_Shadebone  fs with (nolock) on fs.ID = f.ID
-            where   f.POID = c.POID and
-                    f.Seq1 = c.Seq1 and
-                    f.Seq2 = c.Seq2 and
-                    fs.Roll = c.Roll and
-                    fs.Dyelot = c.Dyelot) Tone
-Where a.id = '{0}' and c.inqty - c.outqty + c.adjustqty - c.ReturnQty > 0 AND Orders.category!='A'
-    and factory.MDivisionID = '{1}'
-", sp, Env.User.Keyword));
+INNER JOIN Fabric f on psd.SCIRefNo=f.SCIRefNo
+left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
+left join PO_Supp_Detail_Spec psdsS WITH (NOLOCK) on psdsS.ID = psd.id and psdsS.seq1 = psd.seq1 and psdsS.seq2 = psd.seq2 and psdsS.SpecColumnID = 'Size'
+outer apply(
+    select top 1 [val] =  case  when sr.Status = 'Confirmed' then 'Done'
+			                    when tt.Status = 'Confirmed' then 'Ongoing'
+			                    else '' end
+    from TransferToSubcon_Detail ttd with (nolock)
+    inner join TransferToSubcon tt with (nolock) on tt.ID = ttd.ID
+    left join  SubconReturn_Detail srd with (nolock) on srd.TransferToSubcon_DetailUkey = ttd.Ukey
+    left join  SubconReturn sr with (nolock) on sr.ID = srd.ID and sr.Status = 'Confirmed'
+    where   ttd.POID = c.PoId and
+			ttd.Seq1 = c.Seq1 and 
+            ttd.Seq2 = c.Seq2 and
+			ttd.Dyelot = c.Dyelot and 
+            ttd.Roll = c.Roll and
+			ttd.StockType = c.StockType and
+            tt.Subcon = 'GMT Wash'
+) GMTWash
+Where psd.id = '{sp}' and c.inqty - c.outqty + c.adjustqty - c.ReturnQty > 0 AND Orders.category!='A'
+    and factory.MDivisionID = '{Env.User.Keyword}'
+");
                 if (!this.txtSeq1.CheckSeq1Empty() && this.txtSeq1.CheckSeq2Empty())
                 {
                     strSQLCmd.Append(string.Format(
                         @" 
-    and a.seq1 = '{0}' ", this.txtSeq1.Seq1));
+    and psd.seq1 = '{0}' ", this.txtSeq1.Seq1));
                 }
                 else if (!this.txtSeq1.CheckEmpty(showErrMsg: false))
                 {
                     strSQLCmd.Append(string.Format(
                         @" 
-    and a.seq1 = '{0}' and a.seq2='{1}'", this.txtSeq1.Seq1, this.txtSeq1.Seq2));
+    and psd.seq1 = '{0}' and psd.seq2='{1}'", this.txtSeq1.Seq1, this.txtSeq1.Seq2));
                 }
 
                 if (this.IsReason06)
@@ -133,7 +142,7 @@ Where a.id = '{0}' and c.inqty - c.outqty + c.adjustqty - c.ReturnQty > 0 AND Or
 
                 if (string.Compare(this.comboFabricType.SelectedValue.ToString(), "ALL") != 0)
                 {
-                    strSQLCmd.Append($@" and a.FabricType='{this.comboFabricType.SelectedValue}'");
+                    strSQLCmd.Append($@" and psd.FabricType='{this.comboFabricType.SelectedValue}'");
                 }
 
                 this.ShowWaitMessage("Data Loading....");
@@ -246,7 +255,8 @@ Where a.id = '{0}' and c.inqty - c.outqty + c.adjustqty - c.ReturnQty > 0 AND Or
                 .Numeric("balance", header: "Stock Qty", iseditingreadonly: true, decimal_places: 2, integer_places: 10) // 6
                 .Numeric("qty", header: "Issue Qty", decimal_places: 2, integer_places: 10, settings: ns) // 7
                .EditText("Description", header: "Description", iseditingreadonly: true, width: Widths.AnsiChars(25))
-               .Text("Tone", header: "Tone/Grp", iseditingreadonly: true, width: Widths.AnsiChars(8)); // 8
+               .Text("Tone", header: "Tone/Grp", iseditingreadonly: true, width: Widths.AnsiChars(8))
+               .Text("GMTWash", header: "GMT Wash", width: Widths.AnsiChars(10), iseditingreadonly: true); // 8
 
             this.grid1.Columns["qty"].DefaultCellStyle.BackColor = Color.Pink;
 
@@ -302,7 +312,7 @@ Where a.id = '{0}' and c.inqty - c.outqty + c.adjustqty - c.ReturnQty > 0 AND Or
                                                                           && row["dyelot"].EqualString(tmp["dyelot"])).ToArray();
 
                 // .Select(string.Format("poid = '{0}' and seq1 = '{1}' and seq2 = '{2}' and roll ='{3}'and dyelot='{4}'"
-                    // , tmp["poid"].ToString(), tmp["seq1"].ToString(), tmp["seq2"].ToString(), tmp["roll"].ToString(), tmp["dyelot"].ToString()));
+                // , tmp["poid"].ToString(), tmp["seq1"].ToString(), tmp["seq2"].ToString(), tmp["roll"].ToString(), tmp["dyelot"].ToString()));
                 if (findrow.Length > 0)
                 {
                     findrow[0]["qty"] = tmp["qty"];

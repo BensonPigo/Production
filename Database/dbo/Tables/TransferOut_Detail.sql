@@ -17,6 +17,7 @@
     [SentToWMS] BIT NOT NULL DEFAULT ((0)), 
     [TransferExportID] VARCHAR(13)  CONSTRAINT [DF_TransferOut_Detail_TransferExportID] DEFAULT ('') NOT NULL, 
     [TransferExport_DetailUkey] BIGINT  CONSTRAINT [DF_TransferOut_Detail_TransferExport_DetailUkey] DEFAULT ((0)) NULL, 
+    [ActualWeight] NUMERIC(7, 2) NULL　CONSTRAINT [DF_TransferIn_Detail_ActualWeight] DEFAULT ((0)), 
     CONSTRAINT [PK_TransferOut_Detail] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
 GO
@@ -45,3 +46,13 @@ GO
 CREATE NONCLUSTERED INDEX [<Name of Missing Index, sysname,>]
     ON [dbo].[TransferOut_Detail]([ID] ASC);
 
+
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'貨物實際重量',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'TransferOut_Detail',
+    @level2type = N'COLUMN',
+    @level2name = N'ActualWeight'

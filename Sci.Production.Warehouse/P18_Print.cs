@@ -1,15 +1,15 @@
-﻿using System;
+﻿using Ict;
+using Ict.Win;
+using Microsoft.Reporting.WinForms;
+using Sci.Data;
+using Sci.Win;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
-using Ict;
-using Ict.Win;
-using Microsoft.Reporting.WinForms;
-using Sci.Data;
-using Sci.Win;
 using Excel = Microsoft.Office.Interop.Excel;
 
 namespace Sci.Production.Warehouse
@@ -105,10 +105,7 @@ where   b.id = a.mdivisionid
                 }
 
                 // 抓M的EN NAME
-                DataTable dtNAME;
-                DBProxy.Current.Select(
-                    string.Empty,
-                    string.Format(@"select NameEN from MDivision where ID='{0}'", Env.User.Keyword), out dtNAME);
+                DBProxy.Current.Select(string.Empty, $@"select NameEN from MDivision where ID='{Env.User.Keyword}'", out DataTable dtNAME);
                 string rptTitle = dtNAME.Rows[0]["NameEN"].ToString();
                 #endregion
 
@@ -156,14 +153,11 @@ where a.id = @ID";
                 #endregion
 
                 #region -- 整理表頭資料 --
-
-                // 抓M的EN NAME
                 e.Report.ReportParameters.Add(new ReportParameter("RptTitle", rptTitle));
                 e.Report.ReportParameters.Add(new ReportParameter("ID", id));
                 e.Report.ReportParameters.Add(new ReportParameter("FromFtyID", fromFactory));
                 e.Report.ReportParameters.Add(new ReportParameter("Remark", remark));
                 e.Report.ReportParameters.Add(new ReportParameter("IssueDate", issuedate));
-
                 #endregion
 
                 #region -- 整理表身資料 --
@@ -189,13 +183,12 @@ where a.id = @ID";
             else
             {
                 string cmd = $@"
-
 select  a.Roll
 		, a.Dyelot
 		, a.POID
         , a.Seq1 + '-' + a.seq2 as SEQ
-		, b.Refno
-		, Color = dbo.GetColorMultipleID(b.BrandID, b.ColorID)
+		, psd.Refno
+		, Color = dbo.GetColorMultipleID(psd.BrandID, isnull(psdsC.SpecValue, ''))
 		, ColorName = c.Name
 		, f.WeaveTypeID
 		, o.BrandID
@@ -211,11 +204,12 @@ select  a.Roll
         , a.ContainerCode
 		, a.Remark
 from dbo.TransferIn_detail a WITH (NOLOCK) 
-left join dbo.PO_Supp_Detail b WITH (NOLOCK) on b.id = a.POID 
-                                                and b.SEQ1 = a.Seq1 
-                                                and b.SEQ2=a.seq2
-left join Color c WITH (NOLOCK) on c.ID = b.ColorID AND c.BrandId = b.BrandId
-LEFT JOIN Fabric f WITH (NOLOCK) ON b.SCIRefNo=f.SCIRefNo
+left join dbo.PO_Supp_Detail psd WITH (NOLOCK) on psd.id = a.POID 
+                                                and psd.SEQ1 = a.Seq1 
+                                                and psd.SEQ2=a.seq2
+left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
+left join Color c WITH (NOLOCK) on c.ID = isnull(psdsC.SpecValue, '') AND c.BrandId = psd.BrandId
+LEFT JOIN Fabric f WITH (NOLOCK) ON psd.SCIRefNo=f.SCIRefNo
 left join View_WH_Orders o WITH (NOLOCK) on o.ID = a.POID
 WHERE a.ID = '{id}'
 ";
@@ -279,18 +273,18 @@ WHERE a.ID = '{id}'
 select [Sel] = 0
 	, td.POID
 	, [SEQ] = concat(td.Seq1,'-', td.Seq2)
-	, [FabricType] = Case p.FabricType
+	, [FabricType] = Case psd.FabricType
 					When 'F' then 'Fabric'
 					When 'A' then 'Accessory'
 					When 'O' then 'Other'
-					Else p.FabricType
+					Else psd.FabricType
 				end
 	, td.Weight
 	, td.ActualWeight
 	, td.Roll
 	, td.Dyelot
 	, [StockQty] = td.Qty
-	, p.StockUnit
+	, psd.StockUnit
 	, [MINDQRCode] = iif(td.MINDQRCode <> '', 
                td.MINDQRCode,
                (select top 1 case  when    wbt.To_NewBarcodeSeq = '' then wbt.To_NewBarcode
@@ -302,7 +296,7 @@ select [Sel] = 0
                 order by CommitTime desc)
            )
 	, [Location] = Location.MtlLocationID
-	, [RefNo] = p.RefNo
+	, [RefNo] = psd.RefNo
 	, [ColorID] = Color.Value 
 	, [FactoryID] = o.FactoryID
     , [SortCmbPOID] = ISNULL(cmb.PoId, td.PoId)
@@ -313,7 +307,8 @@ select [Sel] = 0
     , td.Unoriginal
     , td.Ukey
 from TransferIn_Detail td WITH (NOLOCK) 
-left join dbo.PO_Supp_Detail p WITH (NOLOCK) on p.ID = td.POID and  p.SEQ1 = td.Seq1 and P.seq2 = td.Seq2 
+left join dbo.PO_Supp_Detail psd WITH (NOLOCK) on psd.ID = td.POID and  psd.SEQ1 = td.Seq1 and psd.seq2 = td.Seq2 
+left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
 left join Ftyinventory  fi with (nolock) on td.POID = fi.POID and
                                             td.Seq1 = fi.Seq1 and
                                             td.Seq2 = fi.Seq2 and
@@ -321,15 +316,15 @@ left join Ftyinventory  fi with (nolock) on td.POID = fi.POID and
                                             td.Dyelot  = fi.Dyelot and
                                             td.StockType = fi.StockType
 left join View_WH_Orders o WITH (NOLOCK) on o.ID = td.PoId
-LEFT JOIN Fabric f WITH (NOLOCK) ON p.SCIRefNo=f.SCIRefNo
+LEFT JOIN Fabric f WITH (NOLOCK) ON psd.SCIRefNo=f.SCIRefNo
 left join Receiving_Detail cmb on  td.Id = cmb.Id
 									and td.CombineBarcode = cmb.CombineBarcode
 									and cmb.CombineBarcode is not null
 									and ISNULL(cmb.Unoriginal,0) = 0
 OUTER APPLY(
  SELECT [Value]=
-	 CASE WHEN f.MtlTypeID in ('EMB THREAD','SP THREAD','THREAD') THEN IIF(p.SuppColor = '' or p.SuppColor is null, dbo.GetColorMultipleID(o.BrandID,p.ColorID),p.SuppColor)
-		 ELSE dbo.GetColorMultipleID(o.BrandID,p.ColorID)
+	 CASE WHEN f.MtlTypeID in ('EMB THREAD','SP THREAD','THREAD') THEN IIF(psd.SuppColor = '' or psd.SuppColor is null, dbo.GetColorMultipleID(o.BrandID, isnull(psdsC.SpecValue, '')),psd.SuppColor)
+		 ELSE dbo.GetColorMultipleID(o.BrandID, isnull(psdsC.SpecValue, ''))
 	 END
 )Color
 OUTER APPLY(

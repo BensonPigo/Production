@@ -323,9 +323,16 @@ where o.StyleUkey = @styleukey and not exists (select 1 from SewingOutput_Detail
 --撈出要更新的Order_TMSCost資料
 OrderTMSCost
 as 
-(select 'ORDER' as TableName,t.ArtworkTypeID,iif(t.CNTAID <> 0,cast(t.TMS*n.Qty as float)/(t.CNTAID*n.Qty),0) as TMS,
-iif(t.CNTAID <> 0,cast(t.Stitch*n.Qty as float)/(t.CNTAID*n.Qty),0) as Stitch,iif(t.CNTAID <> 0,cast(t.Cost*n.Qty as float)/(t.CNTAID*n.Qty),0) as Cost,
-n.ID as OrderID, isnull(ot.ArtworkTypeID,'') as OrderArtWork, a.Seq, a.ArtworkUnit,n.Qty
+(select [TableName] = 'ORDER',
+		t.ArtworkTypeID,
+		[TMS] = iif(t.CNTAID*n.Qty <> 0, cast(t.TMS*n.Qty as float)/(t.CNTAID*n.Qty),0),
+		[Stitch] = iif(t.CNTAID*n.Qty <> 0,cast(t.Stitch*n.Qty as float)/(t.CNTAID*n.Qty),0),
+		[Cost] = iif(t.CNTAID*n.Qty <> 0,cast(t.Cost*n.Qty as float)/(t.CNTAID*n.Qty),0),
+		[OrderID] = n.ID, 
+		[OrderArtWork] = isnull(ot.ArtworkTypeID,''),
+		a.Seq,
+		a.ArtworkUnit,
+		n.Qty
 from TMSCost t 
 inner join NoOutputOrderID n on 1=1
 inner join Order_TmsCost ot WITH (NOLOCK) on n.ID = ot.ID and t.ArtworkTypeID = ot.ArtworkTypeID
@@ -334,9 +341,16 @@ left join ArtworkType a WITH (NOLOCK) on ot.ArtworkTypeID = a.ID
 --撈出要更新的Style_TMSCost資料
 StyleTMSCost
 as
-(select 'STYLE' as TableName,t.ArtworkTypeID,iif(t.CNTAID <> 0,cast(t.TMS as float)/t.CNTAID,0) as TMS,
-iif(t.CNTAID <> 0,cast(t.Stitch as float)/t.CNTAID,0) as Stitch,iif(t.CNTAID <> 0,cast(t.Cost as float)/t.CNTAID,0) as Cost,
-'' as OrderID, t.ArtworkTypeID as OrderArtWork, a.Seq, a.ArtworkUnit,0 as QTY
+(select [TableName] = 'STYLE',
+		t.ArtworkTypeID,
+		[TMS] = iif(t.CNTAID <> 0,cast(t.TMS as float)/t.CNTAID,0),
+		[Stitch] = iif(t.CNTAID <> 0,cast(t.Stitch as float)/t.CNTAID,0),
+		[Cost] = iif(t.CNTAID <> 0,cast(t.Cost as float)/t.CNTAID,0),
+		[OrderID] = '',
+		[OrderArtWork] = t.ArtworkTypeID,
+		a.Seq,
+		a.ArtworkUnit,
+		[QTY] = 0
 from TMSCost t
 left join Style_TmsCost st WITH (NOLOCK) on st.StyleUkey = @styleukey and st.ArtworkTypeID = t.ArtworkTypeID
 left join ArtworkType a WITH (NOLOCK) on st.ArtworkTypeID = a.ID

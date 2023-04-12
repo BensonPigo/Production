@@ -226,13 +226,12 @@ WHERE NOT EXISTS(
                 else
                 {
                     dr["SEQ"] = datas.Rows[i]["seq1"].ToString().PadRight(3, ' ') + "-" + datas.Rows[i]["seq2"].ToString().TrimEnd();
-
-                    // dr["SEQ"] = datas.Rows[i]["seq1"].ToString() + "- " + datas.Rows[i]["seq2"].ToString();
                     dr["SCIRefno"] = dtpo.Rows[0]["SCIRefno"].ToString();
                     dr["Refno"] = dtpo.Rows[0]["Refno"].ToString();
-                    dr["Colorid"] = dtpo.Rows[0]["Colorid"].ToString();
                     dr["Supplier"] = dtsupp.Rows[0]["supplier"].ToString();
                     dr["LastUpdate"] = datas.Rows[i]["EditName"].ToString() + " - " + datas.Rows[i]["EditDate"].ToString();
+
+                    dr["Colorid"] = MyUtility.GetValue.Lookup($"select ColorID = isnull(SpecValue ,'') from PO_Supp_Detail_Spec WITH (NOLOCK) where id='{this.PoID}' and seq1='{datas.Rows[i]["seq1"]}' and seq2='{datas.Rows[i]["seq2"]}' and SpecColumnID = 'Color'");
                 }
 
                 i++;
@@ -299,7 +298,10 @@ WHERE NOT EXISTS(
                 if (e.Button == MouseButtons.Right)
                 {
                     DataRow dr = this.grid.GetDataRow(e.RowIndex);
-                    string item_cmd = string.Format("select seq1 +'-'+ seq2 AS SEQ,scirefno,refno,colorid from PO_Supp_Detail WITH (NOLOCK) where id='{0}' and FabricType='F'", this.PoID);
+                    string item_cmd = $@"
+select RTRIM(seq1) +'-'+ RTRIM(seq2) AS SEQ,scirefno,refno,
+    colorid = (Select isnull(SpecValue ,'') from PO_Supp_Detail_Spec psdsC WITH (NOLOCK) Where psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color')
+from PO_Supp_Detail psd WITH (NOLOCK) where id='{this.PoID}' and FabricType='F'";
                     SelectItem item = new SelectItem(item_cmd, "5,5,15,12", dr["SEQ"].ToString());
                     DialogResult dresult = item.ShowDialog();
                     if (dresult == DialogResult.Cancel)
@@ -339,7 +341,10 @@ WHERE NOT EXISTS(
                 if (e.Button == MouseButtons.Right)
                 {
                     DataRow dr = this.grid.GetDataRow(e.RowIndex);
-                    string item_cmd = string.Format("select seq1 +'-'+ seq2 AS SEQ,scirefno,refno,colorid from PO_Supp_Detail WITH (NOLOCK) where id='{0}' and FabricType='F'", this.PoID);
+                    string item_cmd = $@"
+select RTRIM(seq1) +'-'+ RTRIM(seq2) AS SEQ,scirefno,refno,
+    colorid = (Select isnull(SpecValue ,'') from PO_Supp_Detail_Spec psdsC WITH (NOLOCK) Where psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color')
+from PO_Supp_Detail psd WITH (NOLOCK) where id='{this.PoID}' and FabricType='F'";
                     SelectItem item = new SelectItem(item_cmd, "5,5,15,12", dr["SEQ"].ToString());
                     DialogResult dresult = item.ShowDialog();
                     if (dresult == DialogResult.Cancel)
@@ -437,9 +442,11 @@ WHERE NOT EXISTS(
                     dr["SEQ"] = dr["seq1"] + "-" + dr["seq2"];
                 }
 
-                DBProxy.Current.Select(
-                    null,
-                    string.Format("select scirefno,refno,colorid from PO_Supp_Detail WITH (NOLOCK) where id='{0}' and seq1='{1}' and seq2='{2}' and FabricType='F'", this.PoID, dr["seq1"], dr["seq2"]), out dt1);
+                string sqlcmd = $@"
+select scirefno,refno,
+    colorid = (Select isnull(SpecValue ,'') from PO_Supp_Detail_Spec psdsC WITH (NOLOCK) Where psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color')
+from PO_Supp_Detail psd WITH (NOLOCK) where id='{this.PoID}' and seq1='{dr["seq1"]}' and seq2='{dr["seq2"]}' and FabricType='F'";
+                DBProxy.Current.Select(null, sqlcmd, out dt1);
                 dr["scirefno"] = dt1.Rows[0]["scirefno"].ToString();
                 dr["refno"] = dt1.Rows[0]["refno"].ToString();
                 dr["colorid"] = dt1.Rows[0]["colorid"].ToString();

@@ -192,7 +192,7 @@ order by a.FabricdefectID,a.FIR_PhysicalDetailUkey
             // 暫存的照片存在就顯示圖片
             foreach (DataGridViewRow drFabricDefect in this.gridPhysicalInspection.Rows)
             {
-                if (this.picList.Any(s => s.FabricdefectID == drFabricDefect.Cells["ID"].Value.ToString()))
+                if (this.picList.Any(s => s.FabricdefectID == drFabricDefect.Cells["ID"].Value.ToString()) && !MyUtility.Check.Empty(drFabricDefect.Cells["Points"].Value))
                 {
                     drFabricDefect.Cells["showPic"].Value = Resource.image_icon1;
                 }

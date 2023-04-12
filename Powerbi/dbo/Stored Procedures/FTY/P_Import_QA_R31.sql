@@ -472,6 +472,7 @@ DROP TABLE #tmpFinal
 
 update b
     set b.TransferDate = getdate()
+		, b.IS_Trans = 1
 from BITableInfo b
 where b.id = ''P_QA_R31''
 '

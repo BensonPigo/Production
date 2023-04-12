@@ -169,7 +169,10 @@ select
 	wo.Seq2,
     [ActConsOutput] = cast(isnull(iif(wo.Layer - isnull(acc.AccuCuttingLayer,0) = 0, wo.Cons, acc.AccuCuttingLayer * ML.YDSMarkerLength),0) as numeric(9,4)),
     [UnfinishedCuttingReasonDesc] = dw.Name,
-    wo.Remark
+    wo.Remark,
+    wo.cutplanID,
+    wo.MarkerVersion,
+    wo.Ukey
 into #tmp
 from WorkOrder wo WITH (NOLOCK) 
 inner join Orders o WITH (NOLOCK) on o.id = wo.OrderID
@@ -386,18 +389,82 @@ where 1=1
             }
             #endregion
             sqlCmd.Append(@"
-select 
-[M],[Factory],[Fabrication],[FinalETA],[PPIC Close],WKETA,[Est.Cutting Date],[Act.Cutting Date],[Earliest Sewing Inline],[Sewing Inline(SP)],[Master SP#],[SP#],[Brand]
-,[Style#],[FabRef#],[Switch to Workorder],[Ref#],[Seq],[Cut#],[SpreadingNoID],[Cut Cell],[Sewing Line],[Sewing Cell],[Combination],[Exclude In WIP]
-,[Color Way],[Color],Artwork.Artwork,[Layers],[LackingLayers],[Qty],[Ratio],[OrderQty],[ExcessQty],[Consumption],[ActConsOutput]
-,[BalanceCons] = [Consumption] - [ActConsOutput]
-,[Spreading Time (mins)],[Cutting Time (mins)]
-,t.Markername,t.MarkerNo,w.Width
-,[Marker Length],ActCuttingPerimeter,ActCuttingPerimeterDecimal=0.0,SCIDelivery,BuyerDelivery
-,[To be combined]=cl.v
-,t.UnfinishedCuttingReasonDesc
-,t.Remark
+--取得 Match Fabric
+select  t.Ukey,
+        [MatchFabric] = MarkerInfo.MatchFabric + char(10) + MarkerInfo.OneTwoWay + ' ' + MarkerInfo.HorizontalCutting
+into #tmpMatchFabric
 from #tmp t
+cross apply(
+    select  top 1 [MatchFabric] = ( case ml.MatchFabric
+                                    when '1' then concat('Body Mapping:V-Repeat ',IIF(ml.V_Repeat is null,'',CAST(ml.V_Repeat AS VARCHAR)))
+                                    when '2' then concat('Checker:V-Repeat ',IIF(ml.V_Repeat is null,'',CAST(ml.V_Repeat AS VARCHAR)),' Checker:H-Repeat '+IIF(ml.H_Repeat is null,'',CAST(ml.H_Repeat AS VARCHAR)))
+                                    when '3' then concat('Horizontal stripe:V-Repeat ',IIF(ml.V_Repeat is null,'',CAST(ml.V_Repeat AS VARCHAR)))
+                                    when '4' then concat('Straight stripe:H-Repeat ',IIF(ml.H_Repeat is null,'',CAST(ml.H_Repeat AS VARCHAR)))
+                                    else '' end),
+                  [OneTwoWay] = IIF(ml.OneTwoWay=1, 'one way cutting', ''),
+                  [HorizontalCutting] = IIF(ml.HorizontalCutting =1, 'Straight fabric use Horizontal cutting', '')
+    from    Marker m with (nolock)
+    inner join Marker_ML ml with (nolock) on ml.ID = m.ID and m.Version = ml.Version and ml.MarkerName = t.Markername
+    inner join DropDownList d on ml.MatchFabric = d.ID and type = 'MatchFabric'
+    where   t.MarkerVersion = m.Version and t.MarkerNo = m.MarkerNo 
+    order by m.EditDate desc
+) MarkerInfo
+
+select 
+[M],
+[Factory],
+tmf.MatchFabric,
+[Fabrication],
+[FinalETA],
+[PPIC Close],
+WKETA,
+[Est.Cutting Date],
+[Act.Cutting Date],
+[Earliest Sewing Inline],
+[Sewing Inline(SP)],
+[Master SP#],
+[SP#],
+[Brand],
+[Style#],
+[FabRef#],
+[Switch to Workorder],
+[Ref#],
+[Seq],
+[Cut#],
+[SpreadingNoID],
+[Cut Cell],
+[Sewing Line],
+[Sewing Cell],
+[Combination],
+[Exclude In WIP],
+[Color Way],
+[Color],
+Artwork.Artwork,
+[Layers],
+[LackingLayers],
+[Qty],
+[Ratio],
+[OrderQty],
+[ExcessQty],
+[Consumption],
+[ActConsOutput],
+[BalanceCons] = [Consumption] - [ActConsOutput],
+[Spreading Time (mins)],
+[Cutting Time (mins)],
+t.Markername,
+t.MarkerNo,
+w.Width,
+[Marker Length],
+ActCuttingPerimeter,
+ActCuttingPerimeterDecimal=0.0,
+SCIDelivery,
+BuyerDelivery,
+[To be combined]=cl.v,
+t.UnfinishedCuttingReasonDesc,
+t.Remark,
+cutplanID
+from #tmp t
+left join #tmpMatchFabric tmf on t.Ukey = tmf.Ukey
 --因效能,此欄位outer apply寫在這, 寫在上面會慢5倍
 outer apply(
 	select Artwork=stuff((
@@ -432,11 +499,12 @@ outer apply(
 )cl
 outer apply(
 	SELECT top 1 OBE.Width
-	FROM Order_BOF OB WITH (NOLOCK)
-	INNER JOIN Order_BOF_Expend OBE WITH (NOLOCK) ON OBE.Order_BOFUkey = OB.Ukey
-	INNER JOIN PO_Supp PS WITH (NOLOCK) ON PS.ID = OB.Id --AND PS.SuppID = OB.SuppID
-	INNER JOIN PO_Supp_Detail PSD WITH (NOLOCK) ON PSD.ID= OB.Id AND PSD.RefNo = OB.Refno AND PSD.ColorID = OBE.ColorId --and ps.SEQ1 = psd.SEQ1
-	WHERE PSD.ID =t.[Master SP#] AND PSD.SEQ1=t.Seq1 AND PSD.SEQ2=t.SEQ2
+	FROM Order_BOF OB 
+	INNER JOIN Order_BOF_Expend OBE ON OBE.Order_BOFUkey = OB.Ukey
+	INNER JOIN PO_Supp PS ON PS.ID = OB.Id --AND PS.SuppID = OB.SuppID
+	INNER JOIN PO_Supp_Detail PSD ON PSD.ID= OB.Id AND PSD.RefNo = OB.Refno
+    INNER JOIN PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
+	WHERE PSD.ID =t.[Master SP#] AND PSD.SEQ1=t.Seq1 AND PSD.SEQ2=t.SEQ2 AND isnull(psdsC.SpecValue ,'') = OBE.ColorId
 )w
 
 order by [M],[Factory],[Est.Cutting Date],[Act.Cutting Date],[Earliest Sewing Inline],[Cut#]
@@ -491,7 +559,7 @@ order by rn
 '
 exec (@exT)
 
-drop table #tmp,#tmpL");
+drop table #tmp, #tmpL, #tmpMatchFabric");
 
             DBProxy.Current.DefaultTimeout = 900;
             DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), out this.printData);
@@ -520,8 +588,8 @@ drop table #tmp,#tmpL");
             MyUtility.Excel.CopyToXls(this.printData[0], string.Empty, "Cutting_R03_CuttingScheduleListReport.xltx", 2, false, null, excelapp);
 
             // Perimeter(Decimal)
-            int perimeterCol = this.printData[0].Columns.Count - 3;
-            excelapp.Cells[3, perimeterCol] = $"=IFERROR(LEFT(AP3,SEARCH(\"yd\",AP3,1)-1)+0+(IFERROR(RIGHT(LEFT(AP3,SEARCH(\"\"\"\",AP3,1)-1),2)+0,0)+IFERROR(VLOOKUP(RIGHT(AP3,2)+0,data!$A$1:$B$8,2,TRUE),0))/36,\"\")";
+            int perimeterCol = this.printData[0].Columns.Count - 6;
+            excelapp.Cells[3, perimeterCol] = $"=IFERROR(LEFT(AS3,SEARCH(\"yd\",AS3,1)-1)+0+(IFERROR(RIGHT(LEFT(AS3,SEARCH(\"\"\"\",AS3,1)-1),2)+0,0)+IFERROR(VLOOKUP(RIGHT(AS3,2)+0,data!$A$1:$B$8,2,TRUE),0))/36,\"\")";
             int rowct = this.printData[0].Rows.Count + 2;
 
             // 複製公式 貼到全部列

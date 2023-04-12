@@ -145,7 +145,7 @@ select
 		o.*
 		, pd.PackingListID
         , pd.CtnStartNo
-        , MDFailQty = isnull(pd.MDFailQty, 0)
+        , MDFailQty = isnull(pd.DryRoomMDFailQty, 0)
 		, pd.ScanEditDate
 		, pd.DRYReceiveDate
 into #tmp_Detail_P
@@ -155,7 +155,7 @@ outer apply(
 		PackingListID = pd.ID
         ,pd.CtnStartNo
 		--這邊取 max 是因為 OrderID,OrderShipmodeSeq,PackingListID,CtnStartNo 有多筆(混Size)時, 數量會double
-        ,MDFailQty = Max (pd.MDFailQty)      
+        ,DryRoomMDFailQty = Max (pd.DryRoomMDFailQty)      
 		,ScanEditDate = Max (pd.ScanEditDate)   
 		,DRYReceiveDate = Max (pd.DRYReceiveDate)
 	from PackingList_Detail pd with(nolock)

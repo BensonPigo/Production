@@ -10,7 +10,7 @@ BEGIN
 	-- interfering with SELECT statements.
 	SET NOCOUNT ON;
 
-	DECLARE @Result varchar(15);
+	DECLARE @Result varchar(20);
 	DECLARE @dyelot varchar(8);
 	DECLARE @err_msg nvarchar(max);
 	
@@ -72,7 +72,7 @@ BEGIN
 						set
 							PhysicalDate = GetDate()
 							,PhysicalEncode=1
-							,Physical = IIF(EXISTS(SELECT 1 FROM DBO.FIR_Physical WITH (NOLOCK) WHERE ID = @FirID and result = 'Fail'),'Fail','Pass')
+							,Physical =iif(exists(select 1 from DBO.FIR_Physical WITH (NOLOCK) WHERE ID = @FirID and grade ='LLL G5'),'LLL G5' ,IIF(EXISTS(SELECT 1 FROM DBO.FIR_Physical WITH (NOLOCK) WHERE ID = @FirID and result = 'Fail'),'Fail','Pass'))
 							,PhysicalInspector=@Login
 
 							,EditName=@Login

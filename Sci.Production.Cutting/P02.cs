@@ -506,15 +506,6 @@ where WorkOrderUkey={0}", masterID);
             this.col_wketa.Width = 77;
             this.btnQuantityBreakdown.ForeColor = MyUtility.Check.Seek(string.Format("select ID from Order_Qty WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]))) ? Color.Blue : Color.Black;
 
-            #region 取得 LeadTime 和 Subprocess
-            var orders = this.distqtyTb.AsEnumerable().Where(w => w.RowState != DataRowState.Deleted)
-                .Select(s => MyUtility.Convert.GetString(s["OrderID"])).Distinct().ToList();
-
-            var leadTimeList = Prgs.GetLeadTimeList(orders, out string annotationStr);
-            this.dispSubprocess.Text = annotationStr;
-            this.numLeadTime.Value = leadTimeList.Count > 0 ? leadTimeList[0].LeadTimeDay : 0;
-            #endregion
-
             #region 檢查MarkerNo ,MarkerVersion ,MarkerDownloadID是否與Order_Eachcons不同
             if (this.DetailDatas.Where(s => !s["MarkerNo"].Equals(s["EachconsMarkerNo"]) ||
                                            !s["MarkerVersion"].Equals(s["EachconsMarkerVersion"]) ||
@@ -2624,52 +2615,28 @@ END";
             // 相同[Fabric Combo]為編碼組合
             // 合併CutNo組合, [Fabric Combo]+[Fab_Panel Code]+[Marker No]+[Marker Name]+[Est. Cut Date]再加Size Ratio通常Size Ratio會一樣, 但可以手改
             // 合併CutNo組合的6欄一樣的資料,算裁剪總和,判斷有沒有超過最大裁剪數Construction.CuttingLayer, 若沒超過則CutNo編碼一樣
+            // 2023/2/17 ISP20230121 改回原規則
             this.GridValid();
             this.detailgrid.ValidateControl();
+            int maxcutno;
 
             foreach (DataRow dr in this.DetailDatas)
             {
                 if (MyUtility.Check.Empty(dr["cutno"]) && !MyUtility.Check.Empty(dr["estcutdate"]))
                 {
-                    string estcutdate = ((DateTime)dr["estcutdate"]).ToString("yyyy/MM/dd");
                     DataTable wk = (DataTable)this.detailgridbs.DataSource;
-
-                    // 編碼組合找出最大 + 1
-                    decimal maxNo = 1 + MyUtility.Convert.GetDecimal(wk.Compute("Max(cutno)", $"FabricCombo ='{dr["FabricCombo"]}'"));
-
-                    // 找合併組合相同資料, 且還沒產生Cutref
-                    DataRow[] sdr = wk.Select($"FabricCombo ='{dr["FabricCombo"]}' and FabricPanelCode ='{dr["FabricPanelCode"]}' and MarkerNo ='{dr["MarkerNo"]}' and Markername ='{dr["Markername"]}' and estcutdate ='{estcutdate}' and SizeCode ='{dr["SizeCode"]}' and isnull(CutRef,'') = ''");
-
-                    decimal sumLayer = sdr.AsEnumerable().Where(w => w.RowState != DataRowState.Deleted).Sum(s => MyUtility.Convert.GetDecimal(s["Layer"]));
-
-                    // 最大裁剪數看其中一筆即可
-                    if (sumLayer > MyUtility.Convert.GetDecimal(dr["CuttingLayer"]))
+                    string temp = wk.Compute("Max(cutno)", string.Format("FabricCombo ='{0}'", dr["FabricCombo"])).ToString();
+                    if (MyUtility.Check.Empty(temp))
                     {
-                        dr["cutno"] = maxNo;
+                        maxcutno = 1;
                     }
                     else
                     {
-                        decimal hm = 0;
-                        if (sdr.Length > 0)
-                        {
-                            hm = sdr.AsEnumerable().Max(m => MyUtility.Convert.GetDecimal(m["cutno"]));
-                        }
-
-                        if (hm != 0)
-                        {
-                            foreach (var item in sdr.AsEnumerable().Where(w => MyUtility.Check.Empty(w["cutno"])))
-                            {
-                                item["cutno"] = hm;
-                            }
-                        }
-                        else
-                        {
-                            foreach (var item in sdr)
-                            {
-                                item["cutno"] = maxNo;
-                            }
-                        }
+                        int maxno = Convert.ToInt32(wk.Compute("Max(cutno)", string.Format("FabricCombo ='{0}'", dr["FabricCombo"])));
+                        maxcutno = maxno + 1;
                     }
+
+                    dr["cutno"] = maxcutno;
                 }
             }
         }
@@ -2695,15 +2662,7 @@ END";
         {
             this.GridValid();
             this.detailgrid.ValidateControl();
-            var frm = new P02_BatchAssign((DataTable)this.detailgridbs.DataSource, this.CurrentMaintain["ID"].ToString(), this.distqtyTb);
-            frm.ShowDialog(this);
-        }
-
-        private void BtnStdQtyWIP_Click(object sender, EventArgs e)
-        {
-            this.GridValid();
-            this.detailgrid.ValidateControl();
-            var frm = new P02_StandardQtyPlannedCuttingWIP(this.CurrentMaintain["ID"].ToString(), this.distqtyTb);
+            var frm = new P02_BatchAssign((DataTable)this.detailgridbs.DataSource, this.CurrentMaintain["ID"].ToString());
             frm.ShowDialog(this);
         }
 

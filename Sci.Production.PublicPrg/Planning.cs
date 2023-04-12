@@ -181,6 +181,23 @@ union all
 select * from #BundleLocal
 
 --回找 Bundle 資料, 展開到 Patterncode
+select Orderid, BundleNo, ID, Qty
+into #tmp_Bundle_Detail_Order
+from Bundle_Detail_Order bdo
+where exists (select 1 from #AllOrders x0 where bdo.Orderid = x0.Orderid)
+
+select ID, BundleGroup, BundleNo, Sizecode, Patterncode, IsPair
+into #tmp_Bundle_Detail 
+from Bundle_Detail bund WITH (NOLOCK) 
+where exists (select 1 from #tmp_Bundle_Detail_Order bdo where bund.BundleNo = bdo.BundleNo and bdo.ID = bund.Id)
+and exists (select 1 from #AllOrders x0 where bunD.Sizecode = x0.Sizecode)
+
+select ID, PatternPanel, FabricPanelCode, Article, AddDate
+into #tmp_Bundle
+from Bundle bun WITH (NOLOCK)
+where exists (select 1 from #tmp_Bundle_Detail bund where bun.id = bund.id)
+and exists (select 1 from #AllOrders x0 where bun.Article = x0.Article and bun.PatternPanel = x0.PatternPanel and bun.FabricPanelCode = x0.FabricPanelCode)
+
 select
     bunD.ID
     , bunD.BundleGroup
@@ -195,15 +212,10 @@ select
     , Qty = sum(bdo.Qty)
     , bunD.IsPair
 into #tmp_Bundle_QtyBySubprocess
-from Bundle_Detail_Order bdo WITH (NOLOCK)
-inner join Bundle_Detail bund WITH (NOLOCK) on bund.BundleNo = bdo.BundleNo
-inner join Bundle bun WITH (NOLOCK) on bun.id = bund.id
-where 1=1
---這3個 exists 先盡可能將資料縮減(調整效能), 但不是5個條件同時交集, 所以最後還要再 exists 同時篩選5個條件
-and exists (select 1 from #AllOrders x0 where bdo.Orderid = x0.Orderid)
-and exists (select 1 from #AllOrders x0 where bunD.Sizecode = x0.Sizecode)
-and exists (select 1 from #AllOrders x0 where bun.Article = x0.Article and bun.PatternPanel = x0.PatternPanel and bun.FabricPanelCode = x0.FabricPanelCode)
-and exists (
+from #tmp_Bundle_Detail_Order bdo WITH (NOLOCK)
+inner join #tmp_Bundle_Detail bund WITH (NOLOCK) on bund.BundleNo = bdo.BundleNo and bdo.ID = bund.Id
+inner join #tmp_Bundle bun WITH (NOLOCK) on bun.id = bund.id
+where exists (
 	select 1
 	from #AllOrders x0
 	where bdo.Orderid = x0.Orderid
@@ -215,6 +227,8 @@ and exists (
 group by bdo.Orderid,
 bunD.ID, bunD.BundleGroup, bunD.BundleNo, bunD.Sizecode, bunD.Patterncode, bunD.IsPair,
 bun.AddDate, bun.PatternPanel, bun.FabricPanelCode, bun.Article
+
+drop table #tmp_Bundle, #tmp_Bundle_Detail, #tmp_Bundle_Detail_Order
 
 select *
 into #tmp_Bundle_Detail_Art

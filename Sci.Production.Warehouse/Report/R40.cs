@@ -1,13 +1,13 @@
-﻿using System;
+﻿using Ict;
+using Sci.Data;
+using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Windows.Forms;
 using System.Data.SqlClient;
-using Ict;
-using Sci.Data;
-using Excel = Microsoft.Office.Interop.Excel;
-using System.Runtime.InteropServices;
 using System.Linq;
+using System.Runtime.InteropServices;
+using System.Windows.Forms;
+using Excel = Microsoft.Office.Interop.Excel;
 
 namespace Sci.Production.Warehouse
 {
@@ -171,8 +171,8 @@ select * into #tmpResult
 			,psd.refno
 			,fb.WeaveTypeID
 			,[Color] = iif(fb.MtlTypeID = 'EMB THREAD' OR fb.MtlTypeID = 'SP THREAD' OR fb.MtlTypeID = 'THREAD' 
-						, IIF(psd.SuppColor = '', dbo.GetColorMultipleID (o.BrandID, psd.ColorID) , psd.SuppColor)
-						, psd.ColorID)
+						, IIF(psd.SuppColor = '', dbo.GetColorMultipleID (o.BrandID, isnull(psdsC.SpecValue, '')) , psd.SuppColor)
+						, isnull(psdsC.SpecValue, ''))
 			,rd.Roll
 		    ,rd.Dyelot
 			,rd.StockQty
@@ -191,6 +191,7 @@ select * into #tmpResult
 		inner join PO_Supp_Detail psd with (nolock) on rd.PoId = psd.ID and rd.Seq1 = psd.SEQ1 and rd.Seq2 = psd.SEQ2
         inner join PO_Supp ps with (nolock) on ps.ID = psd.id and ps.SEQ1 = psd.SEQ1
 		inner join Fabric fb with (nolock) on psd.SCIRefno = fb.SCIRefno
+        left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
         left join DropDownList ddl WITH (NOLOCK) on ddl.Type = 'Pms_StockType'
                                                     and REPLACE(ddl.ID,'''','') = rd.StockType
 		OUTER APPLY(
@@ -211,8 +212,8 @@ select * into #tmpResult
 			,psd.refno
 			,fb.WeaveTypeID
 			,[Color] = iif(fb.MtlTypeID = 'EMB THREAD' OR fb.MtlTypeID = 'SP THREAD' OR fb.MtlTypeID = 'THREAD' 
-						, IIF(psd.SuppColor = '', dbo.GetColorMultipleID (o.BrandID, psd.ColorID) , psd.SuppColor)
-						, psd.ColorID)
+						, IIF(psd.SuppColor = '', dbo.GetColorMultipleID (o.BrandID, isnull(psdsC.SpecValue, '')) , psd.SuppColor)
+						, isnull(psdsC.SpecValue, ''))
 			,rd.Roll
 		    ,rd.Dyelot
 			,[StockQty] = rd.Qty
@@ -231,6 +232,7 @@ select * into #tmpResult
 		INNER JOIN PO_Supp_Detail psd with (nolock) on rd.PoId = psd.ID and rd.Seq1 = psd.SEQ1 and rd.Seq2 = psd.SEQ2
         inner join PO_Supp ps with (nolock) on ps.ID = psd.id and ps.SEQ1 = psd.SEQ1
 		INNER JOIN Fabric fb with (nolock) on psd.SCIRefno = fb.SCIRefno
+        left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
         left join DropDownList ddl WITH (NOLOCK) on ddl.Type = 'Pms_StockType'
                                                     and REPLACE(ddl.ID,'''','') = rd.StockType
 		OUTER APPLY(
@@ -338,8 +340,8 @@ select
 	,psd.refno
 	,fb.WeaveTypeID
 	,[Color] = iif(fb.MtlTypeID = 'EMB THREAD' OR fb.MtlTypeID = 'SP THREAD' OR fb.MtlTypeID = 'THREAD' 
-				, IIF(psd.SuppColor = '', dbo.GetColorMultipleID (o.BrandID, psd.ColorID) , psd.SuppColor)
-				, psd.ColorID)
+				, IIF(psd.SuppColor = '', dbo.GetColorMultipleID (o.BrandID, isnull(psdsC.SpecValue, '')) , psd.SuppColor)
+				, isnull(psdsC.SpecValue, ''))
 	,rd.Roll
 	,rd.Dyelot
 	,rd.StockQty
@@ -366,6 +368,7 @@ inner join Orders o with (nolock) on o.ID = rd.POID
 inner join PO_Supp_Detail psd with (nolock) on rd.PoId = psd.ID and rd.Seq1 = psd.SEQ1 and rd.Seq2 = psd.SEQ2
 inner join PO_Supp ps with (nolock) on ps.ID = psd.id and ps.SEQ1 = psd.SEQ1
 inner join Fabric fb with (nolock) on psd.SCIRefno = fb.SCIRefno
+left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
 left join DropDownList ddl WITH (NOLOCK) on ddl.Type = 'Pms_StockType'
                                             and REPLACE(ddl.ID,'''','') = rd.StockType
 left join FtyInventory fi with (nolock) on  fi.POID = rd.POID and 

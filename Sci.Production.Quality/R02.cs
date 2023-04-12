@@ -207,8 +207,9 @@ select A.POID
 	,A.refno
 	,[Article] = Style.Article
 	,[MaterialType] = fabric.MtlTypeID
-	,iif(C.Name is null,oc.name,c.name ) name
-	,PS.SizeSpec
+	, [Color]  = isnull( psdsC.SpecValue,'')
+	, [Color Name] = c.Name
+	,SizeSpec= isnull(psdsS.SpecValue ,'')
 	,PS.stockunit
 	,(P.SuppID+'-'+s.AbbEN)Supplier
 	,[OrderQty] = Round(dbo.getUnitQty(PS.POUnit, PS.StockUnit, isnull(PS.Qty, 0)), 2)
@@ -243,8 +244,10 @@ inner join (
 ) x on x. id = A.POID
 inner join dbo.PO_Supp P WITH (NOLOCK) on P.id = A.POID and P.SEQ1 = A.SEQ1 
 inner join dbo.PO_Supp_Detail PS WITH (NOLOCK) on PS.ID = A.POID and PS.SEQ1 = A.SEQ1 and PS.SEQ2 = A.SEQ2
-left join dbo.Color C WITH (NOLOCK) on C.ID = PS.ColorID and C.BrandId = x.BrandId
 inner join supp s WITH (NOLOCK) on s.id = P.SuppID
+left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = PS.id and psdsC.seq1 = PS.seq1 and psdsC.seq2 = PS.seq2 and psdsC.SpecColumnID = 'Color'
+left join PO_Supp_Detail_Spec psdsS WITH (NOLOCK) on psdsS.ID = PS.id and psdsS.seq1 = PS.seq1 and psdsS.seq2 = PS.seq2 and psdsS.SpecColumnID = 'Size'
+left join dbo.Color C WITH (NOLOCK) on C.ID = isnull(psdsC.SpecValue ,'') and C.BrandId = x.BrandId
 left join fabric WITH (NOLOCK) on fabric.SCIRefno = PS.scirefno
 left join dbo.AIR_Laboratory AIRL WITH (NOLOCK) on AIRL.ID = A.ID     
 OUTER APPLY (
@@ -255,7 +258,6 @@ OUTER APPLY (
 	 FOR XML PATH('')
 	 ),1,1,'')
 )DefectText
-OUTER APPLY ( select name from dbo.color c where c.id=ps.colorid_old and C.BrandId = x.BrandId) as oc
 OUTER APPLY (
 	select [Article] = Stuff((
 		select distinct concat( ',', tcd.Article) 
@@ -265,7 +267,7 @@ OUTER APPLY (
 		where s.Ukey = x.StyleUkey
         and tcd.SuppId = P.SuppId
         and tcd.SCIRefNo = PS.SCIRefNo
-        and tcd.ColorID = PS.ColorID
+        and tcd.ColorID = isnull(psdsC.SpecValue ,'')
         and PS.SEQ1 like 'T%' 
         and exists (select 1 from MDivisionPoDetail m WITH (NOLOCK) where m.POID = x.ID)
 	FOR XML PATH('')),1,1,'') 

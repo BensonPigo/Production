@@ -218,6 +218,12 @@
     <Compile Include="B11.Designer.cs">
       <DependentUpon>B11.cs</DependentUpon>
     </Compile>
+    <Compile Include="B12_Layout.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="B12_Layout.designer.cs">
+      <DependentUpon>B12_Layout.cs</DependentUpon>
+    </Compile>
     <Compile Include="DualDisposableResult.cs" />
     <Compile Include="Extension.cs" />
     <Compile Include="P01.cs">
@@ -911,6 +917,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="B11.resx">
       <DependentUpon>B11.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="B12_Layout.resx">
+      <DependentUpon>B12_Layout.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P01.resx">
       <DependentUpon>P01.cs</DependentUpon>

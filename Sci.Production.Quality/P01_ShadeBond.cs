@@ -99,7 +99,7 @@ namespace Sci.Production.Quality
                 this.displayRefno.Text = string.Empty;
             }
 
-            string po_supp_detail_cmd = string.Format("select SCIRefno,colorid from PO_Supp_Detail WITH (NOLOCK) where id='{0}' and seq1='{1}' and seq2='{2}'", this.maindr["POID"], this.maindr["seq1"], this.maindr["seq2"]);
+            string po_supp_detail_cmd = $"select ColorID = isnull(SpecValue ,'') from PO_Supp_Detail_Spec WITH (NOLOCK) where id='{this.maindr["POID"]}' and seq1='{this.maindr["seq1"]}' and seq2='{this.maindr["seq2"]}' and SpecColumnID = 'Color'";
             if (MyUtility.Check.Seek(po_supp_detail_cmd, out DataRow po_supp_detail_dr))
             {
                 this.displayColor.Text = po_supp_detail_dr["colorid"].ToString();
@@ -347,6 +347,35 @@ namespace Sci.Production.Quality
             selectDr["SEQ1"] = this.maindr["SEQ1"];
             selectDr["SEQ2"] = this.maindr["SEQ2"];
             selectDr["scale"] = string.Empty;
+        }
+
+        /// <inheritdoc/>
+        protected override DualResult OnSavePost()
+        {
+            if (this.gridbs.DataSource != null)
+            {
+                DataTable dt = (DataTable)this.gridbs.DataSource;
+                if (dt.Rows.Count > 0)
+                {
+                    string sqlcmd = $@"
+update FtyInventory
+set Tone = #tmp.Tone
+from #tmp
+inner join FtyInventory on FtyInventory.POID = #tmp.POID
+                       and FtyInventory.Seq1 = #tmp.Seq1
+                       and FtyInventory.Seq2 = #tmp.Seq2
+                       and FtyInventory.Roll = #tmp.Roll
+                       and FtyInventory.Dyelot = #tmp.Dyelot
+";
+                    DualResult result = MyUtility.Tool.ProcessWithDatatable(dt, "POID,Seq1,Seq2,Roll,Dyelot,Tone", sqlcmd, out DataTable odt);
+                    if (!result)
+                    {
+                        return result;
+                    }
+                }
+            }
+
+            return base.OnSavePost();
         }
 
         private void BtnEncode_Click(object sender, EventArgs e)

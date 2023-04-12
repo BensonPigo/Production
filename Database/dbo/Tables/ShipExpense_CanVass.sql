@@ -19,6 +19,10 @@
     [EditName]     VARCHAR (10)    CONSTRAINT [DF_ShipExpense_CanVass_EditName] DEFAULT ('') NULL,
     [EditDate]     DATETIME        NULL,
     [UKey]         BIGINT          IDENTITY (1, 1) NOT NULL,
+    [QuotDate1] DATETIME NULL, 
+    [QuotDate2] DATETIME NULL, 
+    [QuotDate3] DATETIME NULL, 
+    [QuotDate4] DATETIME NULL, 
     CONSTRAINT [PK_ShipExpense_CanVass] PRIMARY KEY CLUSTERED ([UKey] ASC)
 );
 
@@ -108,3 +112,40 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'最後修�
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'ShipExpense_CanVass', @level2type = N'COLUMN', @level2name = N'UKey';
 
+
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'報價日期1',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'ShipExpense_CanVass',
+    @level2type = N'COLUMN',
+    @level2name = N'QuotDate1'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'報價日期2',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'ShipExpense_CanVass',
+    @level2type = N'COLUMN',
+    @level2name = N'QuotDate2'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'報價日期3',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'ShipExpense_CanVass',
+    @level2type = N'COLUMN',
+    @level2name = N'QuotDate3'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'報價日期4',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'ShipExpense_CanVass',
+    @level2type = N'COLUMN',
+    @level2name = N'QuotDate4'

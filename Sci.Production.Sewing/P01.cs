@@ -243,6 +243,7 @@ and SunriseNid != 0
             string masterID = (e.Master == null) ? string.Empty : MyUtility.Convert.GetString(e.Master["ID"]);
             this.DetailSelectCommand = string.Format(
                 @"
+SET ARITHABORT ON
 select  sd.*
         , [RFT] = CONVERT(VARCHAR, convert(Decimal(18,2), iif(sd.InlineQty = 0, 0, ROUND(sd.QAQty* 1.0 / sd.InlineQty * 1.0 * 100 ,2)))) +'%'
         , [Tips] = iif( (SELECT MAX(ID) FROM SewingSchedule ss WITH (NOLOCK) WHERE ss.OrderID = sd.OrderId and ss.FactoryID = s.FactoryID and ss.SewingLineID = s.SewingLineID)  is null,'Data Migration (not belong to this line#)','') 
@@ -433,6 +434,7 @@ where   ss.FactoryID = '{0}'
 
                         DataTable ordersData;
                         string sqlCmd = $@"
+SET ARITHABORT ON
 select  o.IsForecast
         , o.SewLine
         , o.CPU
@@ -3406,6 +3408,7 @@ group by InspectionDate, FactoryID, Line, Shift, Team, OrderId, Article, Locatio
             List<SqlParameter> listPar = new List<SqlParameter>() { new SqlParameter("@outputDate", this.CurrentMaintain["OutputDate"])};
 
             string sqlcmd = $@"
+SET ARITHABORT ON
 select t.OrderId
 ,t.Article
 ,t.ComboType

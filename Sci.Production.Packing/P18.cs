@@ -1009,7 +1009,7 @@ WHERE o.ID='{dr.OrderID}'");
                 if (!MyUtility.Check.Empty(this.upd_sql_barcode))
                 {
                     DataTable dtUpdateID;
-                    using (new MethodWatch(60, "WH.P18_UpdBarCode"))
+                    using (new MethodWatch(30, "WH.P18_UpdBarCode"))
                     {
                         if (!(sql_result = DBProxy.Current.Select(null, this.upd_sql_barcode, out dtUpdateID)))
                         {
@@ -1021,7 +1021,7 @@ WHERE o.ID='{dr.OrderID}'");
                     if (dtUpdateID.Rows.Count > 0)
                     {
                         List<string> listID = dtUpdateID.AsEnumerable().Select(s => s["ID"].ToString()).ToList();
-                        using (new MethodWatch(60, "WH.P18_TaskCallWebAPI"))
+                        using (new MethodWatch(50, "WH.P18_TaskCallWebAPI"))
                         {
                             this.TaskCallWebAPI(listID);
                         }
@@ -1526,15 +1526,18 @@ drop table #tmpUpdatedID
             string sql = $@"
             select  ScanName, isnull(iif(ps.name is null, convert(nvarchar(10),pd.ScanEditDate,112), ps.name+'-'+convert(nvarchar(10),pd.ScanEditDate,120)),'') as PassName,
                     pd.ScanEditDate
-            from PackingList_Detail pd
+            from PackingList_Detail pd WITH (NOLOCK)
             left join pass1 ps WITH (NOLOCK) on pd.ScanName = ps.id
             where pd.id = '{this.selecedPK.ID}' 
             and pd.CTNStartNo = '{this.selecedPK.CTNStartNo}'";
 
-            if (MyUtility.Check.Seek(sql, out drPassName))
+            using (new MethodWatch(20, "Packing.P18_AfterCompleteScanCarton"))
             {
-                passName = MyUtility.Convert.GetString(drPassName["PassName"]);
-                scanName = MyUtility.Convert.GetString(drPassName["ScanName"]);
+                if (MyUtility.Check.Seek(sql, out drPassName))
+                {
+                    passName = MyUtility.Convert.GetString(drPassName["PassName"]);
+                    scanName = MyUtility.Convert.GetString(drPassName["ScanName"]);
+                }
             }
 
             DataRow[] dt_scanDetailrow = this.dt_scanDetail.Select($"ID = '{this.selecedPK.ID}' and CTNStartNo = '{this.selecedPK.CTNStartNo}'");

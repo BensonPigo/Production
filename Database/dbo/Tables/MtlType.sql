@@ -16,6 +16,7 @@
     [EditDate]             DATETIME       NULL,
     [IsThread]             BIT            NULL,
     [LossQtyCalculateType] VARCHAR (1)    NULL,
+    [AllowTransPoForGarmentSP] BIT   CONSTRAINT [DF_MtlType_AllowTransPoForGarmentSP] DEFAULT ((0)) NOT NULL,
     CONSTRAINT [PK_MtlType] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 
@@ -87,5 +88,5 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'最後修�
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'�O�_���u', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'MtlType', @level2type = N'COLUMN', @level2name = N'IsThread';
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'是否為線', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'MtlType', @level2type = N'COLUMN', @level2name = N'IsThread';
 

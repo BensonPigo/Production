@@ -84,7 +84,7 @@ left join Pullout pu with (nolock) on pu.ID = p.PulloutID
             string strSqlCmd = $@"
 select '' as Error,'' as id
 union all
-select id+'-'+Description as Error,id from PackingError
+select id+'-'+Description as Error,id from PackingErrorTypeReason
 where Type='TP' and Junk=0";
             if (resulterror = DBProxy.Current.Select(null, strSqlCmd, out dtTypeError))
             {
@@ -375,7 +375,7 @@ select t.*,  per.Line,
     EO_Description = (select pr.Description from PackingReason pr where pr.type = 'EO' and id = per.PackingReasonIDForTypeEO),
     ET_Description = (select pr.Description from PackingReason pr where pr.type = 'ET' and id = per.PackingReasonIDForTypeET)
 from #tmp t
-left join PackingErrorRecord Per with (nolock) on per.PackID = t.ID and Per.CTN = t.CTNStartNo
+left join PackErrTransfer_Detail Per with (nolock) on per.PackID = t.ID and Per.CTN = t.CTNStartNo
 order by t.ID,t.Seq
 
 drop table #tmp
@@ -790,7 +790,7 @@ t.ID
     ,ET_Description = (select pr.Description from PackingReason pr where pr.type = 'ET' and id = per.PackingReasonIDForTypeET)
 ,t.Remark
 from #tmp t
-left join PackingErrorRecord Per with (nolock) on per.PackID = t.ID and Per.CTN = t.CTNStartNo
+left join PackErrTransfer_Detail Per with (nolock) on per.PackID = t.ID and Per.CTN = t.CTNStartNo
 order by t.ID,t.Seq
 
 drop table #tmp

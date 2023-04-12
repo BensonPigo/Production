@@ -265,6 +265,13 @@ and ID = '{Sci.Env.User.UserID}'"))
             {
                 this.btnCallP99.Visible = false;
             }
+
+            string sqlcmd_BtnTKSeparateHistory = $@"select 1 from TransferOut t with(nolock)
+                                                    inner join TransferOut_Detail td with(nolock) on t.id = td.id
+                                                    left join TransferExport te with(nolock) on td.TransferExportID = te.id
+                                                    where t.id = '{this.CurrentMaintain["ID"].ToString()}' and te.Separated = 1";
+
+            this.BtnTKSeparateHistory.ForeColor = MyUtility.Check.Seek(sqlcmd_BtnTKSeparateHistory) ? Color.Blue : DefaultForeColor;
         }
 
         /// <inheritdoc/>
@@ -538,7 +545,7 @@ ID                         ,
 POID                       ,
 Seq1                       ,
 Seq2                       ,
-Carton                     ,
+Roll                     ,
 LotNo                      ,
 Qty                        ,
 FOC                        ,
@@ -562,7 +569,7 @@ select  t.TransferExport_DetailUkey,
         getdate(),
         isnull(psdInv.StockUnit, ''),
         t.Qty,
-        t.Tone,
+        isnull(t.Tone, ''),
         [MINDQRCode] = iif(t.Qty = 0, '', ISNULL(w.MINDQRCode, ''))
 from #tmp t
 inner join TransferExport_Detail ted with (nolock) on ted.Ukey = t.TransferExport_DetailUkey
@@ -853,7 +860,7 @@ delete  tedc
 from    TransferExport_Detail_Carton tedc
 where   exists(select 1 from #tmp t where 
                 t.TransferExport_DetailUkey = tedc.TransferExport_DetailUkey and
-                t.Roll = tedc.Carton and
+                t.Roll = tedc.Roll and
                 t.Dyelot = tedc.LotNo
                 )         
 ";
@@ -942,13 +949,12 @@ where   exists(select 1 from #tmp t where
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
             string masterID = (e.Master == null) ? string.Empty : e.Master["ID"].ToString();
-            this.DetailSelectCommand = string.Format(
-                @"
+            this.DetailSelectCommand = $@"
 select a.id,a.PoId,a.Seq1,a.Seq2,concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2) as seq
 ,a.Roll
 ,a.Dyelot
 ,dbo.getMtlDesc(a.poid,a.seq1,a.seq2,2,0) as [Description]
-,p1.StockUnit
+,psd.StockUnit
 ,a.Qty
 ,a.StockType
 ,a.ukey
@@ -960,19 +966,21 @@ select a.id,a.PoId,a.Seq1,a.Seq2,concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2) as se
 ,a.ToSeq2
 ,[ToSeq] = a.ToSeq1 +' ' + a.ToSeq2
 ,wk.ExportId
-, p1.Refno
+, psd.Refno
 , Color = IIF(Fabric.MtlTypeID = 'EMB THREAD' OR Fabric.MtlTypeID = 'SP THREAD' OR Fabric.MtlTypeID = 'THREAD' 
-										,IIF( p1.SuppColor = '' or p1.SuppColor is null,dbo.GetColorMultipleID(o.BrandID,p1.ColorID),p1.SuppColor)
-										,dbo.GetColorMultipleID(o.BrandID,p1.ColorID)
+										,IIF( psd.SuppColor = '' or psd.SuppColor is null,dbo.GetColorMultipleID(o.BrandID, isnull(psdsC.SpecValue, '')),psd.SuppColor)
+										,dbo.GetColorMultipleID(o.BrandID, isnull(psdsC.SpecValue, ''))
 									)
-, p1.SizeSpec
+,SizeSpec= isnull(psdsS.SpecValue, '')
 ,a.TransferExportID
 ,a.TransferExport_DetailUkey
-    ,Tone = isnull(ShadeboneTone2.Tone, '')
+    ,fi.Tone
 from dbo.TransferOut_Detail a WITH (NOLOCK) 
-left join PO_Supp_Detail p1 WITH (NOLOCK) on p1.ID = a.PoId and p1.seq1 = a.SEQ1 and p1.SEQ2 = a.seq2
-left join View_WH_Orders o WITH (NOLOCK) on p1.ID = o.ID
-left join Fabric on Fabric.SCIRefno = p1.SCIRefno
+left join PO_Supp_Detail psd WITH (NOLOCK) on psd.ID = a.PoId and psd.seq1 = a.SEQ1 and psd.SEQ2 = a.seq2
+left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
+left join PO_Supp_Detail_Spec psdsS WITH (NOLOCK) on psdsS.ID = psd.id and psdsS.seq1 = psd.seq1 and psdsS.seq2 = psd.seq2 and psdsS.SpecColumnID = 'Size'
+left join View_WH_Orders o WITH (NOLOCK) on psd.ID = o.ID
+left join Fabric on Fabric.SCIRefno = psd.SCIRefno
 left join FtyInventory FI on a.POID = FI.POID and a.Seq1 = FI.Seq1 and a.Seq2 = FI.Seq2 and a.Dyelot = FI.Dyelot
     and a.Roll = FI.Roll and a.StockType = FI.StockType
 outer apply(
@@ -989,13 +997,8 @@ outer apply(
 		for xml path ('')
 	) , 1, 1, '')
 ) WK
-outer apply (
-    select [Tone] = MAX(fs.Tone)
-    from FIR f 
-    Left join FIR_Shadebone fs with (nolock) on f.ID = fs.ID
-    where f.poid = fi.poid and f.seq1 = fi.seq1 and f.seq2 = fi.seq2 and fs.Roll = fi.Roll and fs.Dyelot = fi.Dyelot
-) ShadeboneTone2
-Where a.id = '{0}'", masterID);
+Where a.id = '{masterID}'
+";
             return base.OnDetailSelectCommandPrepare(e);
         }
 
@@ -1107,6 +1110,12 @@ Where a.id = '{0}'", masterID);
         private void BtnTransferWK_Click(object sender, EventArgs e)
         {
             new P19_TransferWKImport(this.CurrentMaintain["ID"].ToString(), (DataTable)this.detailgridbs.DataSource, this.CurrentMaintain["MDivisionID"].ToString()).ShowDialog();
+        }
+
+        private void BtnTKSeparateHistory_Click(object sender, EventArgs e)
+        {
+            P19_TKSeparateHistory windows = new P19_TKSeparateHistory(this.CurrentMaintain["ID"].ToString());
+            windows.ShowDialog(this);
         }
     }
 }

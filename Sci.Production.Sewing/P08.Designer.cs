@@ -301,7 +301,7 @@
             this.Controls.Add(this.lbScanCartonsBarcode);
             this.Name = "P08";
             this.OnLineHelpID = "Sci.Win.Tems.QueryForm";
-            this.Text = "P08.MD Room Scan";
+            this.Text = "P08.Dry Room MD Scan";
             this.Controls.SetChildIndex(this.lbScanCartonsBarcode, 0);
             this.Controls.SetChildIndex(this.lbDiscrepancy, 0);
             this.Controls.SetChildIndex(this.txtScanCartonsBarcode, 0);

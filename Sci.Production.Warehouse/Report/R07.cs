@@ -1,14 +1,15 @@
-﻿using System;
-using System.Data;
-using System.Windows.Forms;
-using Ict;
-using Sci.Win;
+﻿using Ict;
 using Sci.Data;
-using Excel = Microsoft.Office.Interop.Excel;
+using Sci.Win;
+using System;
+using System.Data;
 using System.Runtime.InteropServices;
+using System.Windows.Forms;
+using Excel = Microsoft.Office.Interop.Excel;
 
 namespace Sci.Production.Warehouse
 {
+    /// <inheritdoc/>
     public partial class R07 : Win.Tems.PrintForm
     {
         private DataTable dt;
@@ -17,6 +18,7 @@ namespace Sci.Production.Warehouse
         private string strM;
         private string strFactory;
 
+        /// <inheritdoc/>
         public R07(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -69,8 +71,7 @@ namespace Sci.Production.Warehouse
                     sqlFilter += string.Format(" and o.FtyGroup = '{0}'", this.strFactory);
                 }
 
-                string sqlcmd = string.Format(
-                    @"
+                string sqlcmd = $@"
 select s.Id
 	,o.MDivisionID
 	,o.FactoryID
@@ -80,7 +81,7 @@ select s.Id
 	,sd.FromRoll
 	,sd.FromDyelot
 	,[Description] = ltrim(rtrim(dbo.getMtlDesc(sd.FromPOID, sd.FromSeq1, sd.FromSeq2, 2, 0)))
-	,po.StockUnit
+	,psd.StockUnit
 	,c.Name
 	,sd.Qty
 	,sd.ToPOID
@@ -91,21 +92,22 @@ select s.Id
 from SubTransfer s with (nolock)
 inner join SubTransfer_Detail sd with (nolock) on s.Id = sd.ID
 inner join Orders o with (nolock) on sd.ToPOID = o.ID
-left join PO_Supp_Detail po with (nolock) on sd.FromPOID = po.ID 
-										and sd.FromSeq1 = po.SEQ1 
-										and sd.FromSeq2 = po.SEQ2
-left join Color c with (nolock) on po.ColorID = c.ID and po.BrandId = c.BrandId
+left join PO_Supp_Detail psd with (nolock) on sd.FromPOID = psd.ID 
+										and sd.FromSeq1 = psd.SEQ1 
+										and sd.FromSeq2 = psd.SEQ2
+left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
+left join Color c with (nolock) on psdsC.SpecValue = c.ID and psd.BrandId = c.BrandId
 left join FtyInventory fty with (nolock) on sd.FromPOID = fty.POID 
 											and sd.FromSeq1 = fty.Seq1 
 											and sd.FromSeq2 = fty.Seq2 
 											and sd.FromStockType = fty.StockType
 											and sd.FromRoll = fty.Roll
 											and sd.FromDyelot = fty.Dyelot 
-where {0}
+where {sqlFilter}
 and s.Status = 'Confirmed'
 and s.Type = 'B'
 order by s.IssueDate,s.Id,o.MDivisionID,o.FactoryID,sd.FromPOID,sd.FromSeq1,sd.FromSeq2,sd.FromRoll,sd.FromDyelot
-", sqlFilter);
+";
 
                 result = DBProxy.Current.Select(null, sqlcmd, out this.dt);
                 if (!result)

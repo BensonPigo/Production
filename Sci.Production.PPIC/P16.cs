@@ -148,13 +148,14 @@ order by o.BuyerDelivery,o.ID
             #endregion
             #region 2
             string sqlcmd2 = $@"
-select Refno,ColorID,FabricType,id,
-Qty = Sum(Round(dbo.getUnitQty(Po_Supp_Detail.POUnit, Po_Supp_Detail.StockUnit, isnull(Po_Supp_Detail.Qty, 0)), 2)) +
-      Sum(Round(dbo.getUnitQty(Po_Supp_Detail.POUnit, Po_Supp_Detail.StockUnit, isnull(Po_Supp_Detail.FOC, 0)), 2))
-into #tmp 
-from Po_Supp_Detail with(nolock)
-where FabricType = 'F' and id = '{this.txtSPNo.Text}' and junk=0
-group by Refno,ColorID,FabricType,id
+select psd.Refno,ColorID = isnull(psdsC.SpecValue ,''),psd.FabricType,psd.id,
+    Qty = Sum(Round(dbo.getUnitQty(psd.POUnit, psd.StockUnit, isnull(psd.Qty, 0)), 2)) +
+      Sum(Round(dbo.getUnitQty(psd.POUnit, psd.StockUnit, isnull(psd.FOC, 0)), 2))
+into #tmp
+from Po_Supp_Detail psd with(nolock)
+left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
+where psd.FabricType = 'F' and psd.id = '{this.txtSPNo.Text}' and psd.junk=0
+group by psd.Refno,psdsC.SpecValue,psd.FabricType,psd.id
 
 select 
 	t.Refno,
@@ -172,8 +173,9 @@ outer apply(
 		select concat(',',format( ETA,'yyyy/MM/dd'))
 		from(
 			select distinct ETA
-			from Po_Supp_Detail with(nolock) 
-			where FabricType = t.FabricType and id = t.ID and Refno = t.Refno and ColorID = t.ColorID and ETA is not null  and junk=0
+			from Po_Supp_Detail psd with(nolock) 
+            inner join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
+			where FabricType = t.FabricType and psd.id = t.ID and Refno = t.Refno and psdsC.SpecValue = t.ColorID and ETA is not null  and junk=0
 		)x
 		for xml path('')),
 	1,1,'')
@@ -186,8 +188,9 @@ outer apply(
 			from Fabric f with(nolock) 
 			where f.SCIRefno in (
 				select distinct SCIRefno 
-				from Po_Supp_Detail with(nolock) 
-				where FabricType = t.FabricType and id = t.ID and Refno = t.Refno and ColorID = t.ColorID)  and junk=0
+				from Po_Supp_Detail psd with(nolock) 
+                inner join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
+				where FabricType = t.FabricType and psd.id = t.ID and Refno = t.Refno and psdsC.SpecValue = t.ColorID)  and junk=0
 		)a
 		for xml path('')),
 	1,1,'')
@@ -197,16 +200,18 @@ outer apply(
 		bqty = sum(Round(dbo.getUnitQty(POUnit, StockUnit, isnull(ShipQty, 0)), 2)) +
 			   sum(Round(dbo.getUnitQty(POUnit, StockUnit, isnull(ShipFOC, 0)), 2)) - 
 			   sum(b.InQty)
-	from Po_Supp_Detail a with(nolock) 
-	left join MDivisionPoDetail b with(nolock) on a.id = b.POID and a.SEQ1 = b.Seq1 and a.SEQ2 = b.Seq2
-	where FabricType = t.FabricType and id = t.ID and Refno = t.Refno and ColorID = t.ColorID and a.seq1 not like '7%'
-	and a.seq1 <> 'A1'and a.seq1 <> 'A2'  and a.junk=0
+	from Po_Supp_Detail psd with(nolock) 
+    inner join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
+	inner join MDivisionPoDetail b with(nolock) on psd.id = b.POID and psd.SEQ1 = b.Seq1 and psd.SEQ2 = b.Seq2
+	where psd.FabricType = t.FabricType and psd.id = t.ID and Refno = t.Refno and psdsC.SpecValue = t.ColorID and psd.seq1 not like '7%'
+	and psd.seq1 <> 'A1'and psd.seq1 <> 'A2'  and psd.junk=0
 )b
 outer apply(
 	select InQty = SUM(Round(dbo.getUnitQty(POUnit, StockUnit, isnull(QTY, 0)), 2))
-	from Po_Supp_Detail a with(nolock) 
-	where FabricType = t.FabricType and id = t.ID and Refno = t.Refno and ColorID = t.ColorID and a.seq1 like '7%'  and a.junk=0 and
-	(select ShipETA from Po_Supp_Detail with(nolock) where id = a.StockPOID and Seq1 = a.StockSeq1 and Seq2 = A.StockSeq2)<=GETDATE()
+	from Po_Supp_Detail psd with(nolock) 
+    inner join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
+	where psd.FabricType = t.FabricType and psd.id = t.ID and Refno = t.Refno and psdsC.SpecValue = t.ColorID and psd.seq1 like '7%'  and psd.junk=0 and
+	(select ShipETA from Po_Supp_Detail with(nolock) where psd.id = psd.StockPOID and Seq1 = psd.StockSeq1 and Seq2 = psd.StockSeq2)<=GETDATE()
 )c
 order by  t.Refno
 drop table #tmp

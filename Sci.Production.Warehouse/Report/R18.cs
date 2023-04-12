@@ -14,7 +14,6 @@ namespace Sci.Production.Warehouse
     public partial class R18 : Win.Tems.PrintForm
     {
         private DataTable PrintData;
-
         private string category;
 
         /// <inheritdoc/>
@@ -75,9 +74,9 @@ namespace Sci.Production.Warehouse
                 @"
 with cte as (
     select  isnull(o.FactoryID,y.FactoryID) factoryid
-		    , pd.id
-		    , pd.seq1
-		    , pd.seq2
+		    , psd.id
+		    , psd.seq1
+		    , psd.seq2
 		    , supplier = (select supp.id+'-'+supp.AbbEN 
 						    from dbo.supp WITH (NOLOCK) 
 						    where po.suppid = supp.id)
@@ -86,26 +85,26 @@ with cte as (
 		    , brandid = ISNULL(o.BrandID,y.BrandID) 
 		    , o.Category
 		    , [ExFactoryDate] = o.SciDelivery
-		    , pd.ETA
-		    , pd.FinalETA
+		    , psd.ETA
+		    , psd.FinalETA
 		    , o.BuyerDelivery
 		    , o.SciDelivery
-		    , pd.Complete
-		    , pd.Refno
-            , [MtlType] = Concat(   case  when pd.FabricType = 'F' then 'Fabric'
-                                    when pd.FabricType = 'A' then 'Accessory'
-                                    when pd.FabricType = 'O' then 'Orher'
-                                    else pd.FabricType end, '-', Fabric.MtlTypeID)
-		    , pd.Width
-		    , pd.ColorID
-		    , pd.SizeSpec
-		    , [description] = isnull(ltrim(rtrim(dbo.getMtlDesc(pd.id,pd.seq1,pd.seq2,2,0))), '') 
+		    , psd.Complete
+		    , psd.Refno
+            , [MtlType] = Concat(   case  when psd.FabricType = 'F' then 'Fabric'
+                                    when psd.FabricType = 'A' then 'Accessory'
+                                    when psd.FabricType = 'O' then 'Orher'
+                                    else psd.FabricType end, '-', Fabric.MtlTypeID)
+		    , psd.Width
+		    , ColorID = isnull(psdsC.SpecValue, '')
+		    , SizeSpec= isnull(psdsS.SpecValue, '')
+		    , [description] = isnull(ltrim(rtrim(dbo.getMtlDesc(psd.id,psd.seq1,psd.seq2,2,0))), '') 
 		    , y.Deadline
-		    , pd.Qty
-		    , pd.ShipQty
-		    , pd.InputQty
-		    , pd.OutputQty
-		    , taipeiBalance = pd.InputQty - pd.OutputQty
+		    , psd.Qty
+		    , psd.ShipQty
+		    , psd.InputQty
+		    , psd.OutputQty
+		    , taipeiBalance = psd.InputQty - psd.OutputQty
 		    , mpd.InQty
 		    , mpd.OutQty
 		    , mpd.AdjustQty
@@ -119,20 +118,22 @@ with cte as (
 					    from (select distinct Export.id 
 							    from dbo.Export WITH (NOLOCK) 
 							    inner join dbo.Export_Detail WITH (NOLOCK) on Export_Detail.id = Export.id  
-							    where export.Junk=0 and poid = pd.id and seq1 = pd.seq1 and seq2 = pd.seq2)t 
+							    where export.Junk=0 and poid = psd.id and seq1 = psd.seq1 and seq2 = psd.seq2)t 
 					    for xml path(''))
 		    , blno = (select t.Blno+',' 
 					    from (select distinct Blno 
 						    from dbo.Export WITH (NOLOCK) 
 						    inner join dbo.Export_Detail WITH (NOLOCK) on Export_Detail.id = Export.id  
-						    where export.Junk=0 and poid = pd.id and seq1 = pd.seq1 and seq2 = pd.seq2 and Blno !='')t 
+						    where export.Junk=0 and poid = psd.id and seq1 = psd.seq1 and seq2 = psd.seq2 and Blno !='')t 
 					    for xml path(''))
-    from dbo.PO_Supp_Detail pd WITH (NOLOCK) 
-    inner join dbo.Po_Supp po with (NoLock) on pd.ID = po.ID and pd.Seq1 = po.Seq1
-    inner join orders o with(nolock) on o.id = pd.id
+    from dbo.PO_Supp_Detail psd WITH (NOLOCK) 
+    inner join dbo.Po_Supp po with (NoLock) on psd.ID = po.ID and psd.Seq1 = po.Seq1
+    inner join orders o with(nolock) on o.id = psd.id
     inner join factory f with(nolock) on o.FactoryID = f.id
-    left join Fabric with (nolock) on Fabric.SCIRefno = pd.SCIRefno
-    left join dbo.MDivisionPoDetail mpd WITH (NOLOCK) on mpd.POID = pd.id and mpd.seq1 = pd.seq1 and mpd.seq2= pd.SEQ2
+    left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
+    left join PO_Supp_Detail_Spec psdsS WITH (NOLOCK) on psdsS.ID = psd.id and psdsS.seq1 = psd.seq1 and psdsS.seq2 = psd.seq2 and psdsS.SpecColumnID = 'Size'
+    left join Fabric with (nolock) on Fabric.SCIRefno = psd.SCIRefno
+    left join dbo.MDivisionPoDetail mpd WITH (NOLOCK) on mpd.POID = psd.id and mpd.seq1 = psd.seq1 and mpd.seq2= psd.SEQ2
     outer apply
     (
         select  i.FactoryID
@@ -141,9 +142,9 @@ with cte as (
                 , i.BrandID
                 , deadline = max(i.Deadline)  
         from dbo.Inventory i WITH (NOLOCK) 
-        where i.POID = pd.id 
-              and i.Seq1 = pd.seq1 
-              and i.seq2 = pd.SEQ2
+        where i.POID = psd.id 
+              and i.Seq1 = psd.seq1 
+              and i.seq2 = psd.SEQ2
         group by i.FactoryID,i.StyleID,i.SeasonID,i.BrandID
     ) y", Env.User.Keyword));
 
@@ -158,21 +159,21 @@ with cte as (
                 from dbo.FtyInventory fi WITH (NOLOCK) 
                 inner join dbo.FtyInventory_Detail fid WITH (NOLOCK) on fid.Ukey = fi.Ukey 
                 where fid.MtlLocationid=''
-    ) q on q.POID = pd.ID 
-           and q.seq1 = pd.seq1 
-           and q.seq2 = pd.SEQ2");
+    ) q on q.POID = psd.ID 
+           and q.seq1 = psd.seq1 
+           and q.seq2 = psd.SEQ2");
             }
 
             sqlcmd.Append(string.Format(@" where 1=1 and f.IsProduceFty = 1 "));
 
             if (!MyUtility.Check.Empty(spno))
             {
-                sqlcmd.Append(string.Format(@" and pd.id='{0}'", spno));
+                sqlcmd.Append(string.Format(@" and psd.id='{0}'", spno));
             }
 
             if (!MyUtility.Check.Empty(refno))
             {
-                sqlcmd.Append(string.Format(@" and pd.Refno ='{0}'", refno));
+                sqlcmd.Append(string.Format(@" and psd.Refno ='{0}'", refno));
             }
 
             if (MyUtility.Check.Empty(buyerDeliveryStart) == false)
@@ -202,12 +203,12 @@ with cte as (
 
             if (!MyUtility.Check.Empty(colorid))
             {
-                sqlcmd.Append(string.Format(@" and pd.ColorID ='{0}'", colorid));
+                sqlcmd.Append(string.Format(@" and psdsC.SpecValue ='{0}'", colorid));
             }
 
             if (!MyUtility.Check.Empty(sizespec))
             {
-                sqlcmd.Append(string.Format(@" and pd.SizeSpec = '{0}'", sizespec));
+                sqlcmd.Append(string.Format(@" and psdsS.SpecValue = '{0}'", sizespec));
             }
 
             sqlcmd.Append(@"

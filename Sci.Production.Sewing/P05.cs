@@ -302,6 +302,22 @@ where   o.MDivisionID = '{this.CurrentMaintain["MDivisionID"]}'
                     return;
                 }
 
+                string ChkSubconOut = $@"
+select 1
+from  Orders o WITH (NOLOCK) 
+inner join Factory f on o.FactoryID = f.ID
+where   o.MDivisionID = '{this.CurrentMaintain["MDivisionID"]}'
+        and o.ID = '{e.FormattedValue}'
+        and f.isSubcon = 0
+";
+                if (MyUtility.Check.Seek(ChkSubconOut))
+                {
+                    MyUtility.Msg.WarningBox("Wrong FTY code for subcon out. Please ask TPE Planning team to update FTY code to subcon out fty.");
+                    this.CurrentDetailData["OrderID"] = string.Empty;
+                    e.Cancel = true;
+                    return;
+                }
+
                 DualResult result;
                 result = this.GetComboType();
                 if (result == false)

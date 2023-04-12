@@ -254,7 +254,7 @@ namespace Sci.Production.Quality
             ,w.MinSciDelivery
             ,w.MinBuyerDelivery
             ,dbo.getMtlDesc(t.poid,t.seq1,t.seq2,1,0) [description]
-            ,dbo.GetColorMultipleID(O.BrandId,PSD.ColorID) [ColorID]
+            ,dbo.GetColorMultipleID(O.BrandId,isnull(psdsC.SpecValue ,'')) [ColorID]
             ,PS.SuppID
             ,Weave.WeaveTypeID
             ,t.id [ReceivingID]
@@ -267,6 +267,7 @@ namespace Sci.Production.Quality
 			           " + oWhere + @" ) x on x.id = T.POID
             inner join dbo.PO_Supp ps WITH (NOLOCK) on ps.id = T.POID and ps.SEQ1 = T.SEQ1
             inner join dbo.PO_Supp_Detail psd WITH (NOLOCK) on psd.ID = T.POID and psd.SEQ1 = T.SEQ1 and psd.SEQ2 = T.SEQ2
+            left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
             outer apply dbo.getsci(t.poid,x.category) as w
             outer apply(
 	            select case when x.Category='M' then DATEADD(day,7,t.WhseArrival)

@@ -98,23 +98,22 @@ namespace Sci.Production.Quality
             #region Sql Command
 
             string strCmd = $@"
-select distinct
-[selected] = 0 
-,p2.ID
-,p2.CTNStartNo
-,o1.OrderID 
-,o.CustPONo
-,o.StyleID
-,o.SeasonID
-,o.BrandID
-,c.Alias
-,o.BuyerDelivery
-,[Returnto] = '' 
-,p2.remark
-,p2.SCICtnNo
-,ScanQty = sum(p2.ScanQty)
-,ScanName = p2.ScanName
-,ScanEditDate = max(p2.ScanEditDate)
+select distinct [selected] = 0 
+    ,p2.ID
+    ,p2.CTNStartNo
+    ,o1.OrderID 
+    ,o.CustPONo
+    ,o.StyleID
+    ,o.SeasonID
+    ,o.BrandID
+    ,c.Alias
+    ,o.BuyerDelivery
+    ,[Returnto] = '' 
+    ,p2.remark
+    ,p2.SCICtnNo
+	,ScanQty = sum(p2.ScanQty)
+	,ScanName = pd.ScanName
+	,ScanEditDate = pd.ScanEditDate
 from PackingList_Detail p2 WITH (NOLOCK)
 inner join PackingList p1 WITH (NOLOCK) on p2.id=p1.id
 left join Pullout po WITH (NOLOCK) on po.ID=p1.PulloutID
@@ -130,6 +129,21 @@ outer apply(
 		for xml path('')
 	),1,1,'')
 ) o1
+outer apply (
+	select ScanEditDate = max(pd.ScanEditDate)
+		, ScanName = max(pd.ScanName)
+	from PackingList_Detail pd WITH (NOLOCK)
+	where pd.ID = p2.ID
+	and pd.OrderID = p2.OrderID
+	and pd.CTNStartNo = p2.CTNStartNo
+	and pd.ScanEditDate in (
+		select ScanEditDate = max(pd2.ScanEditDate)
+		from PackingList_Detail pd2 WITH (NOLOCK)
+		where pd.ID = pd2.ID
+		and pd.OrderID = pd2.OrderID
+		and pd.CTNStartNo = pd2.CTNStartNo
+	)
+)pd
 where p2.CTNStartNo<>''
 and p1.Mdivisionid='{Env.User.Keyword}'
 and p1.Type in ('B','L')
@@ -138,17 +152,18 @@ and p2.DisposeFromClog= 0
 and (po.Status ='New' or po.Status is null)
 {listSQLFilter.JoinToString($"{Environment.NewLine} ")}
 group by p2.ID
-,p2.CTNStartNo
-,o1.OrderID 
-,o.CustPONo
-,o.StyleID
-,o.SeasonID
-,o.BrandID
-,c.Alias
-,o.BuyerDelivery
-,p2.remark
-,p2.SCICtnNo
-,p2.ScanName
+	,p2.CTNStartNo
+	,o1.OrderID 
+	,o.CustPONo
+	,o.StyleID
+	,o.SeasonID
+	,o.BrandID
+	,c.Alias
+	,o.BuyerDelivery
+	,p2.remark
+	,p2.SCICtnNo
+	,pd.ScanName
+	,pd.ScanEditDate
 order by p2.ID,p2.CTNStartNo";
             #endregion
             DualResult result = DBProxy.Current.Select(string.Empty, strCmd, listSQLParameter, out this.selectDataTable);

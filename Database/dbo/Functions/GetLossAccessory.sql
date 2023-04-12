@@ -51,10 +51,10 @@ Begin
 	Declare @LimitUp Numeric(7,2);
 	Declare @LimitDown Numeric(7,2);
 	Declare @LossUnit Numeric(1,0);
-	Declare @PlusLoss Numeric(2,0);
+	Declare @PlusLoss Numeric(3,1);
 	Declare @PerQty Numeric(5,0);
 	Declare @PlusQty Numeric(3,0);
-	Declare @FOC Numeric(2,0);
+	Declare @FOC Numeric(3,1);
 
 	Declare @LossYDS Numeric(12,2);
 	Declare @LossYDS_FOC Numeric(12,2);
@@ -154,6 +154,7 @@ Begin
 		  From @tmpBOA
 		 Where RowID = @tmpBOARowID;
 		
+		--Set Scirefno 相關
 		Set @MtltypeID = '';
 		Set @UsageUnit = '';
 		set @POUnit = '';
@@ -183,18 +184,31 @@ Begin
 		begin		
 			Insert Into @tmpBOA_Expend
 				(  ColorID, SizeSpec, BomZipperInsert, BomCustPONo, Remark, KeyWord, Special, UsageQty)
-				Select ColorID, SizeSpec, BomZipperInsert, BomCustPONo, Remark, Keyword, Special, Sum(UsageQty) as UsageQty
+				Select boa_spec.Color, boa_spec.Size, boa_spec.ZipperInsert, boa_spec.CustomerPO, Remark, Keyword, Special, Sum(UsageQty) as UsageQty
 				  From dbo.Order_BOA_Expend
+				  outer apply (
+					select *
+					from 
+					(
+						select BomTypeID = BomType.ID, SpecValue = isnull(spec.SpecValue, '')
+						from Production.dbo.BomType with (nolock)
+						left join dbo.Order_BOA_Expend_Spec spec with (nolock) on spec.Order_BOA_ExpendUkey = Order_BOA_Expend.UKEY and BomType.ID = spec.SpecColumnID
+					)tmp
+					pivot
+					(
+						MAX(SpecValue) for BomTypeID in (Color, Size, SizeUnit, ZipperInsert, Article, COO, Gender, CustomerSize, DecLabelSize, BrandFactoryCode, Style, StyleLocation, Season, CareCode, CustomerPO)
+					) as p
+				  ) boa_spec
 				 Where Order_BOAUkey = @BoaUkey
-				 Group by ColorID, SizeSpec, BomZipperInsert, BomCustPONo, Remark, Keyword, Special
-				 Order by ColorID, SizeSpec, BomZipperInsert, BomCustPONo, Remark, Keyword, Special, UsageQty;
+				 Group by boa_spec.Color, boa_spec.Size, boa_spec.ZipperInsert, boa_spec.CustomerPO, Remark, Keyword, Special
+				 Order by boa_spec.Color, boa_spec.Size, boa_spec.ZipperInsert, boa_spec.CustomerPO, Remark, Keyword, Special, UsageQty;
 		
 			--2017.02.13 mark by Ben 暫時Mark
 			--2017.02.23 Cancel mark by Edward 修正GetBOAExpend，keyword部分可正常執行
 			--若不存在Boa展開，則預跑一次Boa展開資料
 			if not exists(select 1 from @tmpBOA_Expend)
 				Begin
-
+                
 					delete from @Tmp_Order_Qty
 
 					insert into @Tmp_Order_Qty 
@@ -286,11 +300,9 @@ Begin
 						   And SizeSpec = @SizeSpec
 						   And BomZipperInsert = @BomZipperInsert
 						   And BomCustPONo = @BomCustPONo
-						   And Remark = @Remark
+						   --And (@IsIgnoreRemark = 1 Or (@IsIgnoreRemark = 0 And Remark = IsNull(@Remark, '')))
 						   And Keyword = @Keyword
 						   And Special = @Special
-						   And LimitUp = @LimitUp
-						   And LimitDown = @LimitDown
 						   And MtltypeID = @MtltypeID
 						   And UsageUnit = @UsageUnit
 						   And POUnit = @POUnit
@@ -299,6 +311,8 @@ Begin
 			Begin
 				Update @BOA_TotalUsage
 				   Set UsageQty += @UsageQty
+					, LimitUp = iif(@LimitUp > LimitUp, @LimitUp, LimitUp)
+					, LimitDown = iif(@LimitDown < LimitDown, @LimitDown, LimitDown)
 				 Where Seq1 = @Seq1
 				   And SCIRefNo = @SCIRefNo
 				   And SuppID = @SuppID
@@ -310,11 +324,9 @@ Begin
 				   And SizeSpec = @SizeSpec
 				   And BomZipperInsert = @BomZipperInsert
 				   And BomCustPONo = @BomCustPONo
-				   And Remark = @Remark
+				   --And (@IsIgnoreRemark = 1 Or (@IsIgnoreRemark = 0 And Remark = IsNull(@Remark, '')))
 				   And Keyword = @Keyword
 				   And Special = @Special
-				   And LimitUp = @LimitUp
-				   And LimitDown = @LimitDown
 				   And MtltypeID = @MtltypeID
 				   And UsageUnit = @UsageUnit
 				   And POUnit = @POUnit
@@ -460,7 +472,7 @@ Begin
 							 And LossType = @LossType
 							 And MtltypeID = @MtltypeID
 							 And ColorID = @ColorID
-							 And Remark = @Remark
+							 --And (@IsIgnoreRemark = 1 Or (@IsIgnoreRemark = 0 And Remark = IsNull(@Remark, '')))
 							 And Keyword = @Keyword
 							 And Special = @Special
 							 And SizeSpec = @SizeSpec
@@ -490,7 +502,7 @@ Begin
 					And LossType = @LossType
 					And MtltypeID = @MtltypeID
 					And ColorID = @ColorID
-					And Remark = @Remark
+					--And (@IsIgnoreRemark = 1 Or (@IsIgnoreRemark = 0 And Remark = IsNull(@Remark, '')))
 					And Keyword = @Keyword
 					And Special = @Special
 					And SizeSpec = @SizeSpec

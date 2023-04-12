@@ -46,6 +46,10 @@
             this.dateSewingDate = new Sci.Win.UI.DateRange();
             this.lbInlineDate = new Sci.Win.UI.Label();
             this.labelInlineDate = new Sci.Win.UI.Label();
+            this.lbPhase = new Sci.Win.UI.Label();
+            this.lbVersion = new Sci.Win.UI.Label();
+            this.chkLastVersion = new Sci.Win.UI.CheckBox();
+            this.comboPhase = new Sci.Win.UI.ComboBox();
             this.radioPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -90,7 +94,7 @@
             // 
             // labelTeam
             // 
-            this.labelTeam.Location = new System.Drawing.Point(13, 120);
+            this.labelTeam.Location = new System.Drawing.Point(13, 151);
             this.labelTeam.Name = "labelTeam";
             this.labelTeam.Size = new System.Drawing.Size(86, 23);
             this.labelTeam.TabIndex = 97;
@@ -146,14 +150,14 @@
             this.dateInlineDate.DateBox2.Size = new System.Drawing.Size(129, 23);
             this.dateInlineDate.DateBox2.TabIndex = 1;
             this.dateInlineDate.IsRequired = false;
-            this.dateInlineDate.Location = new System.Drawing.Point(102, 150);
+            this.dateInlineDate.Location = new System.Drawing.Point(102, 181);
             this.dateInlineDate.Name = "dateInlineDate";
             this.dateInlineDate.Size = new System.Drawing.Size(280, 23);
             this.dateInlineDate.TabIndex = 4;
             // 
             // lbReportType
             // 
-            this.lbReportType.Location = new System.Drawing.Point(14, 220);
+            this.lbReportType.Location = new System.Drawing.Point(14, 251);
             this.lbReportType.Name = "lbReportType";
             this.lbReportType.Size = new System.Drawing.Size(85, 23);
             this.lbReportType.TabIndex = 233;
@@ -163,7 +167,7 @@
             // 
             this.radioPanel1.Controls.Add(this.radioSummary);
             this.radioPanel1.Controls.Add(this.radioDetail);
-            this.radioPanel1.Location = new System.Drawing.Point(102, 220);
+            this.radioPanel1.Location = new System.Drawing.Point(102, 251);
             this.radioPanel1.Name = "radioPanel1";
             this.radioPanel1.Size = new System.Drawing.Size(192, 25);
             this.radioPanel1.TabIndex = 6;
@@ -196,7 +200,7 @@
             // 
             this.chkBalancing.AutoSize = true;
             this.chkBalancing.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.chkBalancing.Location = new System.Drawing.Point(102, 254);
+            this.chkBalancing.Location = new System.Drawing.Point(102, 285);
             this.chkBalancing.Name = "chkBalancing";
             this.chkBalancing.Size = new System.Drawing.Size(297, 21);
             this.chkBalancing.TabIndex = 7;
@@ -211,7 +215,7 @@
             this.comboSewingTeam1.IssupportEmptyitem = true;
             this.comboSewingTeam1.IssupportJunk = true;
             this.comboSewingTeam1.IsSupportUnselect = true;
-            this.comboSewingTeam1.Location = new System.Drawing.Point(102, 119);
+            this.comboSewingTeam1.Location = new System.Drawing.Point(102, 150);
             this.comboSewingTeam1.Name = "comboSewingTeam1";
             this.comboSewingTeam1.OldText = "";
             this.comboSewingTeam1.Size = new System.Drawing.Size(88, 24);
@@ -233,14 +237,14 @@
             this.dateSewingDate.DateBox2.Name = "";
             this.dateSewingDate.DateBox2.Size = new System.Drawing.Size(129, 23);
             this.dateSewingDate.DateBox2.TabIndex = 1;
-            this.dateSewingDate.Location = new System.Drawing.Point(102, 182);
+            this.dateSewingDate.Location = new System.Drawing.Point(102, 213);
             this.dateSewingDate.Name = "dateSewingDate";
             this.dateSewingDate.Size = new System.Drawing.Size(280, 23);
             this.dateSewingDate.TabIndex = 5;
             // 
             // lbInlineDate
             // 
-            this.lbInlineDate.Location = new System.Drawing.Point(14, 182);
+            this.lbInlineDate.Location = new System.Drawing.Point(14, 213);
             this.lbInlineDate.Name = "lbInlineDate";
             this.lbInlineDate.RectStyle.BorderColor = System.Drawing.Color.Black;
             this.lbInlineDate.RectStyle.BorderWidth = 1F;
@@ -254,7 +258,7 @@
             // 
             // labelInlineDate
             // 
-            this.labelInlineDate.Location = new System.Drawing.Point(13, 150);
+            this.labelInlineDate.Location = new System.Drawing.Point(13, 181);
             this.labelInlineDate.Name = "labelInlineDate";
             this.labelInlineDate.RectStyle.BorderColor = System.Drawing.Color.Black;
             this.labelInlineDate.RectStyle.BorderWidth = 1F;
@@ -266,9 +270,52 @@
             this.labelInlineDate.TextStyle.BorderColor = System.Drawing.Color.Black;
             this.labelInlineDate.TextStyle.Color = System.Drawing.Color.Black;
             // 
+            // lbPhase
+            // 
+            this.lbPhase.Location = new System.Drawing.Point(13, 119);
+            this.lbPhase.Name = "lbPhase";
+            this.lbPhase.Size = new System.Drawing.Size(86, 23);
+            this.lbPhase.TabIndex = 240;
+            this.lbPhase.Text = "Phase";
+            // 
+            // lbVersion
+            // 
+            this.lbVersion.Location = new System.Drawing.Point(14, 319);
+            this.lbVersion.Name = "lbVersion";
+            this.lbVersion.Size = new System.Drawing.Size(86, 23);
+            this.lbVersion.TabIndex = 241;
+            this.lbVersion.Text = "Version";
+            // 
+            // chkLastVersion
+            // 
+            this.chkLastVersion.AutoSize = true;
+            this.chkLastVersion.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkLastVersion.Location = new System.Drawing.Point(102, 319);
+            this.chkLastVersion.Name = "chkLastVersion";
+            this.chkLastVersion.Size = new System.Drawing.Size(116, 21);
+            this.chkLastVersion.TabIndex = 242;
+            this.chkLastVersion.Text = "Latest version";
+            this.chkLastVersion.UseVisualStyleBackColor = true;
+            // 
+            // comboPhase
+            // 
+            this.comboPhase.BackColor = System.Drawing.Color.White;
+            this.comboPhase.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboPhase.FormattingEnabled = true;
+            this.comboPhase.IsSupportUnselect = true;
+            this.comboPhase.Location = new System.Drawing.Point(102, 118);
+            this.comboPhase.Name = "comboPhase";
+            this.comboPhase.OldText = "";
+            this.comboPhase.Size = new System.Drawing.Size(88, 24);
+            this.comboPhase.TabIndex = 243;
+            // 
             // R01
             // 
-            this.ClientSize = new System.Drawing.Size(531, 320);
+            this.ClientSize = new System.Drawing.Size(531, 382);
+            this.Controls.Add(this.comboPhase);
+            this.Controls.Add(this.chkLastVersion);
+            this.Controls.Add(this.lbVersion);
+            this.Controls.Add(this.lbPhase);
             this.Controls.Add(this.labelInlineDate);
             this.Controls.Add(this.lbInlineDate);
             this.Controls.Add(this.dateSewingDate);
@@ -311,6 +358,10 @@
             this.Controls.SetChildIndex(this.dateSewingDate, 0);
             this.Controls.SetChildIndex(this.lbInlineDate, 0);
             this.Controls.SetChildIndex(this.labelInlineDate, 0);
+            this.Controls.SetChildIndex(this.lbPhase, 0);
+            this.Controls.SetChildIndex(this.lbVersion, 0);
+            this.Controls.SetChildIndex(this.chkLastVersion, 0);
+            this.Controls.SetChildIndex(this.comboPhase, 0);
             this.radioPanel1.ResumeLayout(false);
             this.radioPanel1.PerformLayout();
             this.ResumeLayout(false);
@@ -337,5 +388,9 @@
         private Win.UI.DateRange dateSewingDate;
         private Win.UI.Label lbInlineDate;
         private Win.UI.Label labelInlineDate;
+        private Win.UI.Label lbPhase;
+        private Win.UI.Label lbVersion;
+        private Win.UI.CheckBox chkLastVersion;
+        private Win.UI.ComboBox comboPhase;
     }
 }

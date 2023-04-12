@@ -7,6 +7,9 @@ using Ict;
 using Word = Microsoft.Office.Interop.Word;
 using System.Linq;
 using System.Runtime.InteropServices;
+using Sci.Production.Class;
+using System.Runtime.DesignerServices;
+using System.IO;
 
 namespace Sci.Production.Warehouse
 {
@@ -27,6 +30,8 @@ namespace Sci.Production.Warehouse
         private string BrandID;
         private string POID;
         private List<string> ListColor = new List<string>();
+        private string FabricPath;
+        private string ColorPath;
 
         /// <inheritdoc/>
         public P01_TrimCardPrint(string orderID, string styleID, string seasonID, string factoryID, string brandID, string pOID)
@@ -38,6 +43,13 @@ namespace Sci.Production.Warehouse
             this.FactoryID = factoryID;
             this.BrandID = brandID;
             this.POID = pOID;
+
+            // 取得color & Fabric 圖片檔路徑
+            if (MyUtility.Check.Seek("select FabricPath,ColorPath from System",out DataRow dr))
+            {
+                this.FabricPath = dr["FabricPath"].ToString();
+                this.ColorPath = dr["ColorPath"].ToString();
+            }
         }
 
         // 欄位檢核
@@ -76,6 +88,8 @@ select  A.PatternPanel
 		, B.Refno 
 		, C.Description 
 		, A.FabricPanelCode
+        , C.Picture
+        , C.BrandID
 from Orders o WITH (NOLOCK) 
 inner join Orders allOrder With (NoLock) on o.Poid = allOrder.Poid
 inner join Order_FabricCode A WITH (NOLOCK) on allOrder.ID = a.ID
@@ -113,6 +127,7 @@ select a.ColorID
 	   , B.Name 
 	   , a.FabricPanelCode 
 	   , a.Article
+       , B.Picture
 from Orders o WITH (NOLOCK) 
 inner join Orders allOrder With (NoLock) on o.Poid = allOrder.Poid
 inner join Order_ColorCombo A WITH (NOLOCK) on allOrder.ID = A.ID
@@ -141,7 +156,7 @@ where o.Id='{1}'
                 #region ACCESSORY
                 this.sql = string.Format(
                     @"
-select A.Refno, B.Description 
+select distinct A.Refno, B.Description ,B.Picture, B.BrandID
 from Order_BOA A WITH (NOLOCK) 
 inner join Orders o WITH (NOLOCK) on a.id = o.poid 
 inner join Orders allOrder WITH (NOLOCK) on o.poid = allOrder.poid 
@@ -154,7 +169,7 @@ where o.id = '{0}'
 	  and oa.Article <> '' 
 	  and occ.ColorId<>''
 	  and b.MtlTypeID in (select id from MtlType WITH (NOLOCK) where IsTrimcardOther=0)
-group by A.Refno, B.Description ", this.orderID);
+", this.orderID);
                 result = DBProxy.Current.Select(null, this.sql, out this.dtPrint_Content);
                 if (!result)
                 {
@@ -201,6 +216,7 @@ select distinct A.Refno
 					   order by Seqno
 					   for xml path('')) 
 			          , 1, 1, '')
+       , c.Picture
 from Order_BOA A WITH (NOLOCK) 
 inner join Orders o WITH (NOLOCK) on a.id = o.poid 
 inner join Orders allOrder WITH (NOLOCK) on o.poid = allOrder.poid 
@@ -208,6 +224,8 @@ inner join Order_Article oa With (NoLock) on allOrder.id = oa.id
 inner join Order_ColorCombo occ With(NoLock) on a.id = occ.Id
 												and a.FabricPanelCode = occ.FabricPanelCode
                                                 and oa.Article = occ.Article
+left join Color c with(NoLock) on c.ID=occ.ColorID
+								and c.BrandId = '{1}'
 left join Fabric B WITH (NOLOCK) on B.SCIRefno=A.SCIRefno
 where o.id = '{0}' 
 	  and oa.Article <> '' 
@@ -335,12 +353,13 @@ SELECT DISTINCT [OrderIdList] = stuff((select concat('/',tmp.OrderID)
 INTO #tmpOrder_Article
 from #tmpOrder as orders WITH (NOLOCK) 
 inner join PO_Supp_Detail a WITH (NOLOCK) on a.id = orders.poid
+left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = a.id and psdsC.seq1 = a.seq1 and psdsC.seq2 = a.seq2 and psdsC.SpecColumnID = 'Color'
 left join dbo.MDivisionPoDetail m WITH (NOLOCK) on  m.POID = a.ID and m.seq1 = a.SEQ1 and m.Seq2 = a.Seq2
 left join po_supp b WITH (NOLOCK) on a.id = b.id and a.SEQ1 = b.SEQ1
 left join #ArticleForThread aft on	aft.ID = m.POID		and
 									aft.SuppId	   = b.SuppId	and
 									aft.SCIRefNo   = a.SCIRefNo	and
-									aft.ColorID	   = a.ColorID	and
+									aft.ColorID	   = psdsC.SpecValue	and
 									a.SEQ1 like 'T%' 
 WHERE  stuff((select concat('/',tmp.OrderID) 
 		                                    from (
@@ -429,12 +448,13 @@ SELECT DISTINCT [OrderIdList] = stuff((select concat('/',tmp.OrderID)
 INTO #tmpOrder_Article
 from #tmpOrder as orders WITH (NOLOCK) 
 inner join PO_Supp_Detail a WITH (NOLOCK) on a.id = orders.poid
+left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = a.id and psdsC.seq1 = a.seq1 and psdsC.seq2 = a.seq2 and psdsC.SpecColumnID = 'Color'
 left join dbo.MDivisionPoDetail m WITH (NOLOCK) on  m.POID = a.ID and m.seq1 = a.SEQ1 and m.Seq2 = a.Seq2
 left join po_supp b WITH (NOLOCK) on a.id = b.id and a.SEQ1 = b.SEQ1
 left join #ArticleForThread aft on	aft.ID = m.POID		and
 									aft.SuppId	   = b.SuppId	and
 									aft.SCIRefNo   = a.SCIRefNo	and
-									aft.ColorID	   = a.ColorID	and
+									aft.ColorID	   = psdsC.SpecValue	and
 									a.SEQ1 like 'T%' 
 WHERE  stuff((select concat('/',tmp.OrderID) 
 		                                    from (
@@ -449,10 +469,13 @@ AND aft.Article IS NOT NULL
  select DISTINCT 
  B.Article
  , B.ColorID AS ThreadColorID
+ , c.Picture
  from Orders o WITH (NOLOCK) 
  inner join Orders allOrder With (NoLock) on o.Poid = allOrder.Poid
  inner join Style_ThreadColorCombo A WITH (NOLOCK) on allOrder.StyleUkey = a.StyleUkey
  left join Style_ThreadColorCombo_Detail B WITH (NOLOCK) on B.Style_ThreadColorComboUkey = A.Ukey
+ left join Color c with(nolock) on c.ID = b.ColorID
+                                    and c.BrandID = '{this.BrandID}'
  where o.ID = '{this.POID}'
  AND (
      EXISTS (SELECT 1 FROM #tmpOrder_Article WHERE [OrderIdList] = allOrder.ID AND Article = B.Article) 
@@ -496,10 +519,11 @@ SELECT Article FROM
 					,BOA_Article.Article 
 					)				
 
-	,[ThreadColorID] = IIF(PSD.SuppColor = '',dbo.GetColorMultipleID('{this.BrandID}', PSD.ColorID),PSD.SuppColor)
+	,[ThreadColorID] = IIF(PSD.SuppColor = '',dbo.GetColorMultipleID('{this.BrandID}',isnull(psdsC.SpecValue, '')),PSD.SuppColor)
 	FROM PO_Supp_Detail PSD
 	INNER join Fabric f on f.SCIRefno = PSD.SCIRefno
 	LEFT JOIN PO_Supp_Detail_OrderList pd ON PSD.ID = pd.ID AND PSD.SEQ1= pd.SEQ1 AND PSD.SEQ2= pd.SEQ2
+    LEFT JOIN PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
 	LEFT JOIN Order_BOA boa ON boa.id =psd.ID and boa.SCIRefno = psd.SCIRefno and boa.seq=psd.SEQ1
 	OUTER APPLY(
 		SELECT oba.Article FROM Order_BOA ob
@@ -527,6 +551,10 @@ UNION
 ";
 
                     result = DBProxy.Current.Select(null, this.sql, out this.dtPrint_LeftColumn);
+                    if (!result)
+                    {
+                        return result;
+                    }
 
                     #endregion
 
@@ -759,7 +787,7 @@ from (
                 }
                 #endregion
 
-                #region ROW4開始 左側抬頭
+                #region ROW5開始 左側抬頭
                 int nextPage = 1;
                 tables = table[nextPage];
                 if (this.radioFabric.Checked || this.radioAccessory.Checked || this.radioThread.Checked)
@@ -768,11 +796,9 @@ from (
                     {
                         for (int i = 0; i < this.dtPrint_LeftColumn.Rows.Count; i++)
                         {
-                            // 根據 DataRow 數量選取 Table, Dot DataRow = 4
+                            // 根據 DataRow 數量選取 Table, Dot DataRow = 5
                             tables = table[nextPage + (i / 4)];
-                            tables.Cell(4 + (i % 4), 1).Range.Text = this.dtPrint_LeftColumn.Rows[i]["Article"].ToString().Trim();
-
-                            // tables.Cell((i + 4 + 3 * (i / 4)) + rC * j * 7, 1).Range.Text = dtPrint2.Rows[i]["Article"].ToString().Trim();
+                            tables.Cell(5 + ((i % 4) * 2), 1).Range.Text = this.dtPrint_LeftColumn.Rows[i]["Article"].ToString().Trim();
                         }
 
                         nextPage += rC;
@@ -808,6 +834,9 @@ from (
                 nextPage = 1;
                 tables = table[nextPage];
 
+                // 抓取當下.exe執行位置路徑 同抓取Excle範本檔路徑
+                string path = string.Empty;
+
                 if (this.radioFabric.Checked)
                 {
                     for (int i = 0; i < this.dtPrint_Content.Rows.Count; i++)
@@ -828,6 +857,14 @@ from (
                             // 有資料時才顯示Type
                             tables.Cell(2, 2 + (i % 6)).Range.Text = row2Type;
                             tables.Cell(3, 2 + (i % 6)).Range.Text = this.temp;
+
+                            // 第一Row塞入圖片
+                            Microsoft.Office.Interop.Word.Range rng = tables.Cell(4, 2 + (i % 6)).Range;
+                            path = System.IO.Path.Combine(this.FabricPath, this.dtPrint_Content.Rows[i]["BrandID"].ToString().Trim(), this.dtPrint_Content.Rows[i]["Picture"].ToString().Trim());
+                            if (this.FileExists(path))
+                            {
+                                rng.InlineShapes.AddPicture(path).ConvertToShape().WrapFormat.Type = Word.WdWrapType.wdWrapInline;
+                            }
                         }
                         #endregion
 
@@ -842,6 +879,16 @@ from (
                             {// 找出對應的Datas組起來
                                 this.rowColor = this.dtColor.Select(this.sql)[0];
                                 this.temp = this.rowColor["Name"].ToString().Trim() + Environment.NewLine + this.rowColor["ColorID"].ToString().Trim();
+
+                                // 塞入圖片 6 8 10 12
+                                int rowPic = 6;
+                                rowPic += (k % 4) * 2;
+                                Microsoft.Office.Interop.Word.Range rng = tables.Cell(rowPic, 2 + (i % 6)).Range;
+                                path = System.IO.Path.Combine(this.ColorPath, this.rowColor["Picture"].ToString().Trim());
+                                if (this.FileExists(path))
+                                {
+                                    rng.InlineShapes.AddPicture(path).ConvertToShape().WrapFormat.Type = Word.WdWrapType.wdWrapInline;
+                                }
                             }
                             else
                             {
@@ -853,7 +900,10 @@ from (
                             tables = table[nextPage + (i / 6 * rC) + (k / 4)];
 
                             // 填入字串
-                            tables.Cell(4 + (k % 4), 2 + (i % 6)).Range.Text = this.temp;
+                            // 塞入文字 5 7 9 11
+                            int rowStr = 5;
+                            rowStr += (k % 4) * 2;
+                            tables.Cell(rowStr, 2 + (i % 6)).Range.Text = this.temp;
                         }
                         #endregion
 
@@ -878,6 +928,14 @@ from (
                             // 有資料時才顯示Type
                             tables.Cell(2, 2 + (i % 6)).Range.Text = row2Type;
                             tables.Cell(3, 2 + (i % 6)).Range.Text = this.temp;
+
+                            // 第一Row塞入圖片
+                            Microsoft.Office.Interop.Word.Range rng = tables.Cell(4, 2 + (i % 6)).Range;
+                            path = System.IO.Path.Combine(this.FabricPath, this.dtPrint_Content.Rows[i]["BrandID"].ToString().Trim(), this.dtPrint_Content.Rows[i]["Picture"].ToString().Trim());
+                            if (this.FileExists(path))
+                            {
+                                rng.InlineShapes.AddPicture(path).ConvertToShape().WrapFormat.Type = Word.WdWrapType.wdWrapInline;
+                            }
                         }
                         #endregion
                         #region 填入Datas
@@ -891,6 +949,16 @@ from (
                             {
                                 this.rowColor = this.dtColor.Select(this.sql)[0];
                                 this.temp = this.rowColor["Name"].ToString().Trim() + Environment.NewLine + this.rowColor["ColorID"].ToString().Trim();
+
+                                // 塞入圖片 6 8 10 12
+                                int rowPic = 6;
+                                rowPic += (k % 4) * 2;
+                                Microsoft.Office.Interop.Word.Range rng = tables.Cell(rowPic, 2 + (i % 6)).Range;
+                                path = System.IO.Path.Combine(this.ColorPath, this.rowColor["Picture"].ToString().Trim());
+                                if (this.FileExists(path))
+                                {
+                                    rng.InlineShapes.AddPicture(path).ConvertToShape().WrapFormat.Type = Word.WdWrapType.wdWrapInline;
+                                }
                             }
                             else
                             {
@@ -902,7 +970,12 @@ from (
                             tables = table[nextPage + (i / 6 * rC) + (k / 4)];
 
                             // 填入字串
-                            tables.Cell(4 + (k % 4), 2 + (i % 6)).Range.Text = this.temp;
+                            //tables.Cell(4 + (k % 4), 2 + (i % 6)).Range.Text = this.temp;
+                            // 塞入文字 5 7 9 11
+                            int rowStr = 5;
+                            rowStr += (k % 4) * 2;
+                            tables.Cell(rowStr, 2 + (i % 6)).Range.Text = this.temp;
+
                         }
                         #endregion
                     }
@@ -962,13 +1035,60 @@ from (
                                 // 其中 K 代表, 目前編輯到 FabricPanelCode 的第幾個 Article
                                 tables = table[nextPage + (l / 6 * rC) + (k / 4)];
 
-                                tables.Cell(4 + (k % 4), 2 + (l % 6)).Range.Text = this.temp;
+                                // 填入字串
+                                // 塞入文字 5 7 9 11
+                                int rowStr = 5;
+                                rowStr += (k % 4) * 2;
+                                tables.Cell(rowStr, 2 + (l % 6)).Range.Text = this.temp;
+
+                                // 塞入圖片 6 8 10 12
+                                int rowPic = 6;
+                                rowPic += (k % 4) * 2;
+                                Microsoft.Office.Interop.Word.Range rng = tables.Cell(rowPic, 2 + (l % 6)).Range;
+                                path = System.IO.Path.Combine(this.ColorPath, rowColorA[l]["Picture"].ToString().Trim());
+                                if (this.FileExists(path))
+                                {
+                                    rng.InlineShapes.AddPicture(path).ConvertToShape().WrapFormat.Type = Word.WdWrapType.wdWrapInline;
+                                }
                             }
                         }
                     }
                     #endregion
                 }
                 #endregion
+
+                #region 整理欄位格式
+                if (!this.radioOther.Checked)
+                {
+                    for (int p = 1; p <= pagecount; p++)
+                    {
+                        tables = table[p];
+                        for (int r = 1; r <= tables.Rows.Count; r++)
+                        {
+                            for (int c = 1; c <= tables.Columns.Count; c++)
+                            {
+                                // Article合併 5,7,9,11
+                                if (r >= 3 && (r % 2) == 1 && c == 1)
+                                {
+                                    // 合併儲存格
+                                    tables.Cell(r, 1).Merge(tables.Cell(r + 1, 1));
+
+                                    // 上下 水平置中
+                                    tables.Cell(r, 1).Range.ParagraphFormat.Alignment = Word.WdParagraphAlignment.wdAlignParagraphCenter;
+                                    tables.Cell(r, 1).VerticalAlignment = Word.WdCellVerticalAlignment.wdCellAlignVerticalCenter;
+                                }
+
+                                // 去除圖片和文字中間分隔線
+                                if (r >= 4 && (r % 2) == 0 && c > 1)
+                                {
+                                    tables.Cell(r, c).Borders[Microsoft.Office.Interop.Word.WdBorderType.wdBorderTop].Visible = false;
+                                }
+                            }
+                        }
+                    }
+                }
+                #endregion
+
                 winword.Visible = true;
 
                // winword.Quit(ref missing, ref missing, ref missing);     //close word application
@@ -994,6 +1114,17 @@ from (
 
                 // Marshal.FinalReleaseComObject(winword);
             }
+        }
+
+        private bool FileExists(string path)
+        {
+            // 檔案是否存在
+            if (!System.IO.File.Exists(path))
+            {
+                return false;
+            }
+
+            return true;
         }
     }
 }

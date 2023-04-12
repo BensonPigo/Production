@@ -145,6 +145,10 @@ namespace Sci.Production.Shipping
             this.numericBoxttlGW.Value = MyUtility.Convert.GetDecimal(this.CurrentMaintain["NW"]) + MyUtility.Convert.GetDecimal(this.CurrentMaintain["CTNNW"]);
 
             this.CompareDetailPrint((DataTable)this.detailgridbs.DataSource, before_dt);
+
+            var dataTable = (DataTable)this.detailgridbs.DataSource;
+            var list = dataTable.Select("CategoryName <> 'Dox'").ToList();
+            this.checkBoxDoc.Checked = list.Count == 0 && dataTable.Rows.Count != 0 ? true : false;
         }
 
         // Context Menu選擇Import Bulk PL#
@@ -157,6 +161,10 @@ namespace Sci.Production.Shipping
             this.numericBoxttlGW.Value = MyUtility.Convert.GetDecimal(this.CurrentMaintain["NW"]) + MyUtility.Convert.GetDecimal(this.CurrentMaintain["CTNNW"]);
 
             this.CompareDetailPrint((DataTable)this.detailgridbs.DataSource, before_dt);
+
+            var dataTable = (DataTable)this.detailgridbs.DataSource;
+            var list = dataTable.Select("CategoryName <> 'Dox'").ToList();
+            this.checkBoxDoc.Checked = list.Count == 0 && dataTable.Rows.Count != 0 ? true : false;
         }
 
         // Context Menu選擇Import from FOC PL# (Garment FOC)
@@ -169,6 +177,10 @@ namespace Sci.Production.Shipping
             this.numericBoxttlGW.Value = MyUtility.Convert.GetDecimal(this.CurrentMaintain["NW"]) + MyUtility.Convert.GetDecimal(this.CurrentMaintain["CTNNW"]);
 
             this.CompareDetailPrint((DataTable)this.detailgridbs.DataSource, before_dt);
+
+            var dataTable = (DataTable)this.detailgridbs.DataSource;
+            var list = dataTable.Select("CategoryName <> 'Dox'").ToList();
+            this.checkBoxDoc.Checked = list.Count == 0 && dataTable.Rows.Count != 0 ? true : false;
         }
 
         // Context Menu選擇Import from purchase (Material)
@@ -191,6 +203,10 @@ namespace Sci.Production.Shipping
             this.RenewData();
             this.numericBoxttlGW.Value = MyUtility.Convert.GetDecimal(this.CurrentMaintain["NW"]) + MyUtility.Convert.GetDecimal(this.CurrentMaintain["CTNNW"]);
             this.CompareDetailPrint((DataTable)this.detailgridbs.DataSource, before_dt);
+
+            var dataTable = (DataTable)this.detailgridbs.DataSource;
+            var list = dataTable.Select("CategoryName <> 'Dox'").ToList();
+            this.checkBoxDoc.Checked = list.Count == 0 && dataTable.Rows.Count != 0 ? true : false;
         }
 
         // P02_ImportFromPOTransferOutNo
@@ -222,7 +238,7 @@ namespace Sci.Production.Shipping
         // Context Menu選擇Add new Item
         private void AddNewItem()
         {
-            P02_AddNewItem callNewItemForm = new P02_AddNewItem();
+            P02_AddNewItem callNewItemForm = new P02_AddNewItem(this.CurrentMaintain, this.checkBoxDoc.Checked);
             DataRow dr = ((DataTable)this.detailgridbs.DataSource).NewRow();
             dr["ID"] = this.CurrentMaintain["ID"];
             DataTable before_dt = ((DataTable)this.detailgridbs.DataSource).Copy();
@@ -231,6 +247,10 @@ namespace Sci.Production.Shipping
             this.RenewData();
             this.numericBoxttlGW.Value = MyUtility.Convert.GetDecimal(this.CurrentMaintain["NW"]) + MyUtility.Convert.GetDecimal(this.CurrentMaintain["CTNNW"]);
             this.CompareDetailPrint((DataTable)this.detailgridbs.DataSource, before_dt);
+
+            var dataTable = (DataTable)this.detailgridbs.DataSource;
+            var list = dataTable.Select("CategoryName <> 'Dox'").ToList();
+            this.checkBoxDoc.Checked = list.Count == 0 && dataTable.Rows.Count != 0 ? true : false;
         }
 
         // Context Menu選擇Edit this Record's detail
@@ -262,7 +282,7 @@ namespace Sci.Production.Shipping
 
             if (MyUtility.Convert.GetString(this.CurrentDetailData["Category"]) == "5" || MyUtility.Convert.GetString(this.CurrentDetailData["Category"]) == "6" || MyUtility.Convert.GetString(this.CurrentDetailData["Category"]) == "7" || MyUtility.Convert.GetString(this.CurrentDetailData["Category"]) == "8" || MyUtility.Convert.GetString(this.CurrentDetailData["Category"]) == "9")
             {
-                P02_AddNewItem callNewItemForm = new P02_AddNewItem();
+                P02_AddNewItem callNewItemForm = new P02_AddNewItem(this.CurrentMaintain, this.checkBoxDoc.Checked);
                 callNewItemForm.SetUpdate(this.CurrentDetailData);
                 edit_result = callNewItemForm.ShowDialog(this);
             }
@@ -342,6 +362,10 @@ where ID = '{0}'", this.CurrentMaintain["ID"]);
             this.RenewData();
             this.numericBoxttlGW.Value = MyUtility.Convert.GetDecimal(this.CurrentMaintain["NW"]) + MyUtility.Convert.GetDecimal(this.CurrentMaintain["CTNNW"]);
 
+            var dataTable = (DataTable)this.detailgridbs.DataSource;
+            var list = dataTable.Select("CategoryName <> 'Dox'").ToList();
+            this.checkBoxDoc.Checked = list.Count == 0 && dataTable.Rows.Count != 0 ? true : false;
+
             DataRow[] after_row = ((DataTable)this.detailgridbs.DataSource).Select(string.Format(" OrderId = '{0}' and Seq1 = '{1}' and Seq2 = '{2}' and Category = '{3}' ", before_orderid, before_seq1, before_seq2, before_category));
             if (after_row.Length == 0)
             {
@@ -383,7 +407,7 @@ where ID = '{0}'", this.CurrentMaintain["ID"]);
 
             if (MyUtility.Convert.GetString(this.CurrentDetailData["Category"]) == "5" || MyUtility.Convert.GetString(this.CurrentDetailData["Category"]) == "6" || MyUtility.Convert.GetString(this.CurrentDetailData["Category"]) == "7" || MyUtility.Convert.GetString(this.CurrentDetailData["Category"]) == "8" || MyUtility.Convert.GetString(this.CurrentDetailData["Category"]) == "9")
             {
-                P02_AddNewItem callNewItemForm = new P02_AddNewItem();
+                P02_AddNewItem callNewItemForm = new P02_AddNewItem(this.CurrentMaintain, this.checkBoxDoc.Checked);
                 callNewItemForm.SetDelete(this.CurrentDetailData);
                 callNewItemForm.ShowDialog(this);
             }
@@ -459,6 +483,11 @@ where id='{0}' ", this.CurrentMaintain["ID"]);
 
             this.RenewData();
             this.numericBoxttlGW.Value = MyUtility.Convert.GetDecimal(this.CurrentMaintain["NW"]) + MyUtility.Convert.GetDecimal(this.CurrentMaintain["CTNNW"]);
+
+            var dataTable = (DataTable)this.detailgridbs.DataSource;
+
+            var list = dataTable.Select("CategoryName <> 'Dox'").ToList();
+            this.checkBoxDoc.Checked = list.Count == 0 && dataTable.Rows.Count != 0 ? true : false;
         }
 
         // Context Menu選擇Print
@@ -582,6 +611,9 @@ where id='{0}' ", this.CurrentMaintain["ID"]);
             this.disSuppabb.Value = MyUtility.GetValue.Lookup(sqlsupp);
 
             this.CarrierbyEnable();
+            var dataTable = (DataTable)this.detailgridbs.DataSource;
+            var list = dataTable.Select("CategoryName <> 'Dox'").ToList();
+            this.checkBoxDoc.Checked = list.Count == 0 && dataTable.Rows.Count != 0 ? true : false;
         }
 
         /// <inheritdoc/>
@@ -597,7 +629,7 @@ SELECT OrderNumber = ROW_NUMBER() over (order by   TRY_CONVERT (int, CTNNo )
       ,allData.* 
 FROM(
     select ed.*
-	    ,case when ed.Category in ('4','9') then ed.MtlDesc else ed.Description end nDescription
+	    ,case when ed.Category in ('4') then ed.MtlDesc else ed.Description end nDescription
 	    ,AirPPno=iif(isnull(ed.PackingListID,'') = '',ed.DutyNo , airpp.AirPPno)
     from
     (
@@ -624,16 +656,41 @@ FROM(
             ,pl.PulloutID
             ,pl.Type
             ,ColorID = IIF(f.MtlTypeID = 'EMB THREAD' OR f.MtlTypeID = 'SP THREAD' OR f.MtlTypeID = 'THREAD' 
-                        ,IIF(isnull(p.SuppColor,'') = '',dbo.GetColorMultipleID(o.BrandID,p.ColorID) , p.SuppColor)
-                        ,dbo.GetColorMultipleID(o.BrandID,p.ColorID))
+			,IIF(isnull(p.SuppColor,'') = '',dbo.GetColorMultipleID(o.BrandID,psds.SpecValue) , p.SuppColor)
+			,dbo.GetColorMultipleID(o.BrandID,psds.SpecValue))
+            ,[fabricDescription] = f.Description
+            ,[styleDescription] = st.Description
+            ,[Reason_Gender] = r.Name +'/' + st.Gender
+            ,[HSCode] = SHC.val
+            ,[Fabric_HsCode] = fhcode.val
+            ,[Fabric_MtlTypeID] = f.MtlTypeID
 	    from Express_Detail ed WITH (NOLOCK) 
 	    left join PO_Supp_Detail p WITH (NOLOCK) on ed.OrderID = p.ID and ed.Seq1 = p.SEQ1 and ed.Seq2 = p.SEQ2
+	    left join PO_Supp_Detail_Spec psds WITH (NOLOCK) on psds.ID = p.id and psds.seq1 = p.seq1 and psds.seq2 = p.seq2 and psds.SpecColumnID = 'Color'
 	    left join Supp s WITH (NOLOCK) on ed.SuppID = s.ID
 	    left join Express_CTNData ec WITH (NOLOCK) on ed.ID = ec.ID and ed.CTNNo = ec.CTNNo
         left join DropDownList dp ON dp.Type='Pms_Sort_HC_DHL_Cate' AND ed.Category = dp.ID
 		left join PackingList pl WITH (NOLOCK) on ed.PackingListID = pl.ID
 		left join Orders o WITH (NOLOCK) on o.ID = ed.OrderID
+        left join Style st WITH (NOLOCK) on ed.StyleID = st.Id and ed.BrandID = st.BrandID and ed.SeasonID = st.SeasonID
+        left join Reason r with(nolock) on st.ApparelType = r.ID and r.ReasonTypeID='Style_Apparel_type'
         left join fabric f WITH (NOLOCK) on f.SCIRefno = p.SCIRefno
+        outer apply
+		(
+			select top 1
+			val = isnull(sh.HSCode1,sh.HSCode2)
+			from Style_HSCode sh
+			where st.Ukey = sh.StyleUkey
+			Order by adddate desc
+		)SHC
+		outer apply
+		(
+            select top 1
+			val = isnull(fh.HsCode,'')
+			from Fabric_HsCode fh with(nolock)
+			where f.SCIRefno = fh.SCIRefno
+            Order by year desc,isnull(EditDate,AddDate)desc
+		)fhcode
 	    where ed.ID = '{0}'
     )ed
     outer apply(
@@ -645,6 +702,7 @@ FROM(
     )airpp
 ) allData
 Order by CTNNo,Seq1,Seq2", masterID);
+
             return base.OnDetailSelectCommandPrepare(e);
         }
 
@@ -677,7 +735,7 @@ Order by CTNNo,Seq1,Seq2", masterID);
 
                             if (MyUtility.Convert.GetString(dr["Category"]) == "5" || MyUtility.Convert.GetString(dr["Category"]) == "6" || MyUtility.Convert.GetString(dr["Category"]) == "7" || MyUtility.Convert.GetString(dr["Category"]) == "8" || MyUtility.Convert.GetString(dr["Category"]) == "9")
                             {
-                                P02_AddNewItem callNewItemForm = new P02_AddNewItem();
+                                P02_AddNewItem callNewItemForm = new P02_AddNewItem(this.CurrentMaintain, this.checkBoxDoc.Checked);
                                 callNewItemForm.SetView(dr);
                                 callNewItemForm.ShowDialog(this);
                             }
@@ -938,6 +996,15 @@ Order by CTNNo,Seq1,Seq2", masterID);
             {
                 this.txtUserManager.TextBox1.Focus();
                 MyUtility.Msg.WarningBox("Manager can't empty");
+                return false;
+            }
+
+            if (this.CurrentMaintain["FromTag"].ToString() == "1" &&
+                this.CurrentMaintain["ToTag"].ToString() == "2" &&
+                this.CurrentMaintain["FromSite"].ToString() == this.CurrentMaintain["ToSite"].ToString())
+            {
+                MyUtility.Msg.WarningBox("<From> and <To> cannot be the same");
+                this.txtTO.Focus();
                 return false;
             }
             #endregion
@@ -1709,6 +1776,8 @@ update Express set Status = 'Junk', StatusUpdateDate = GETDATE(), EditName = '{0
                 return;
             }
 
+
+
             if (!MyUtility.Check.Seek(string.Format("select ID from Express_Detail WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]))))
             {
                 MyUtility.Msg.WarningBox("There's no detail data, don't need to approve.");
@@ -1745,10 +1814,21 @@ update Express set Status = 'Junk', StatusUpdateDate = GETDATE(), EditName = '{0
                 return;
             }
 
-            if (MyUtility.Check.Seek(string.Format("select ID from Express_CTNData WITH (NOLOCK) where ID = '{0}' and (CtnLength <= 0 or CtnWidth <= 0 or CtnHeight <= 0 or CTNNW <= 0)", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]))))
+            if (this.checkBoxDoc.Checked == false && this.cmbPayer.Text != "Hand Carry")
             {
-                MyUtility.Msg.WarningBox("Carton Dimension & Weight data can't empty!");
-                return;
+                if (MyUtility.Check.Seek(string.Format("select ID from Express_CTNData WITH (NOLOCK) where ID = '{0}' and (CtnLength <= 0 or CtnWidth <= 0 or CtnHeight <= 0 or CTNNW <= 0)", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]))))
+                {
+                    MyUtility.Msg.WarningBox("Carton Dimension & Weight data can't empty!");
+                    return;
+                }
+
+                var dataTable = (DataTable)this.detailgridbs.DataSource;
+                var list = dataTable.Select("Qty = 0 or UnitID = '' or CTNNW = 0 ").ToList();
+                if (list.Count != 0)
+                {
+                    MyUtility.Msg.WarningBox("Q'ty or Unit or Carton Weight detail data can't be 0.");
+                    return;
+                }
             }
 
             string sqlchk = $@"

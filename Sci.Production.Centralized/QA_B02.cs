@@ -12,11 +12,7 @@ namespace Sci.Production.Centralized
             : base(menuitem)
         {
             this.InitializeComponent();
-
-            if (!DBProxy.Current.DefaultModuleName.Contains("testing"))
-            {
-                this.ConnectionName = "ProductionTPE";
-            }
+            this.ConnectionName = "ProductionTPE";
         }
 
         /// <inheritdoc/>

@@ -19,14 +19,16 @@ namespace Sci.Production.Warehouse
     {
         private DataTable dtBatch;
         private string DataType;
+        private Func<string, bool> whP01_CheckBarcodeEmpty;
 
         /// <inheritdoc/>
-        public P01_BatchCloseRowMaterial(string dataType)
+        public P01_BatchCloseRowMaterial(string dataType, Func<string, bool> whP01_CheckBarcodeEmpty)
         {
             this.InitializeComponent();
             MyUtility.Tool.SetupCombox(this.comboCategory, 2, 1, ",All,B,Bulk,S,Sample,M,Material");
             this.comboCategory.SelectedIndex = 0;
             this.DataType = dataType;
+            this.whP01_CheckBarcodeEmpty = whP01_CheckBarcodeEmpty;
         }
 
         // Find Now Button
@@ -265,6 +267,14 @@ Drop table #cte_temp;", Env.User.Keyword, categorySql));
                 this.ShowWaitMessage(string.Format("Closing R/Mtl of {0}.", tmp["poid"]));
                 bool existsFtyInventoryLock = MyUtility.Check.Seek($"select 1 from FtyInventory with (nolock) where POID = '{tmp["poid"]}' and StockType='B' and Lock = 1");
 
+                // 檢查 Barcode不可為空
+                bool checkBarcodeEmptyResult = this.whP01_CheckBarcodeEmpty(tmp["poid"].ToString());
+                if (!checkBarcodeEmptyResult)
+                {
+                    this.HideWaitMessage();
+                    return;
+                }
+
                 if (existsFtyInventoryLock)
                 {
                     lockPOID.Add(MyUtility.Convert.GetString(tmp["poid"]));
@@ -310,19 +320,13 @@ Drop table #cte_temp;", Env.User.Keyword, categorySql));
                             throw result.GetException();
                         }
 
-                        // 檢查 Barcode不可為空
-                        if (dtSubTransfer_Detail.Rows.Count > 0)
-                        {
-                            Prgs.GetFtyInventoryData(dtSubTransfer_Detail, "P25", out DataTable dtOriFtyInventory);
-                            if (!Prgs.CheckBarCode(dtOriFtyInventory, "P25"))
-                            {
-                                transactionscope.Dispose();
-                                return;
-                            }
-                        }
-
                         // 上方 Auto Create P25 Confrim 後, 寫入新的 BarCode
                         if (!(result = Prgs.UpdateWH_Barcode(true, dtSubTransfer_Detail, "P25", out bool fromNewBarcode)))
+                        {
+                            throw result.GetException();
+                        }
+
+                        if (!(result = Prgs.UpdateFtyInventoryTone(dtSubTransfer_Detail)))
                         {
                             throw result.GetException();
                         }

@@ -159,7 +159,7 @@ BEGIN
 		and sotd.FromOrderID = Orders.ID
 	)tfr
 	outer apply (select SewOutputQty = dbo.GetSewingQtybyRate(Orders.ID, null, null ) + isnull(tfr.TransferQty, 0)) oq -- PMS無實體欄位, 用此Function取得
-	outer apply (select iif(ArtworkType.ArtworkUnit = 'STITCH', Order_TmsCost.Qty / 1000,
+	outer apply (select iif(ArtworkType.ArtworkUnit = 'STITCH', Order_TmsCost.Qty / 1000.0,
 						iif(ArtworkType.ArtworkUnit = 'PPU', Order_TmsCost.Price,
 						iif(ArtworkType.ProductionUnit = 'Qty', Order_TmsCost.Qty,
 						IIF( @CalculateCPU = 1, Order_TmsCost.Tms / @mStandardTMS, Order_TmsCost.Tms / 60 )))) as cTms) amt
@@ -250,7 +250,7 @@ BEGIN
 	left join Style on Style.BrandID = FactoryOrder.BrandID AND Style.SeasonID = FactoryOrder.SeasonID AND Style.ID = FactoryOrder.StyleID
 	left join Style_TmsCost on Style.UKey = Style_TMSCost.StyleUkey And Style_TmsCost.ArtworkTypeID = @ArtWorkType
 	left join ArtworkType on ArtworkType.Id = @ArtWorkType
-	outer apply (select iif(ArtworkType.ArtworkUnit = 'STITCH', Style_TMSCost.Qty / 1000,
+	outer apply (select iif(ArtworkType.ArtworkUnit = 'STITCH', Style_TMSCost.Qty / 1000.0,
 						iif(ArtworkType.ArtworkUnit = 'PPU', Style_TmsCost.Price,
 						iif(ArtworkType.ProductionUnit = 'Qty', Style_TMSCost.Qty,
 						IIF(@CalculateCPU = 1, Style_TMSCost.Tms / @mStandardTMS, Style_TMSCost.Tms / 60 )))) as cTms) amt
@@ -285,7 +285,7 @@ BEGIN
 	left join Style on Style.BrandID = Orders.BrandID AND Style.SeasonID = Orders.SeasonID AND Style.ID = Orders.StyleID
 	left join Style_TmsCost on Style.UKey = Style_TMSCost.StyleUkey And Style_TmsCost.ArtworkTypeID = @ArtWorkType
 	left join ArtworkType on ArtworkType.Id = @ArtWorkType
-	outer apply (select iif(ArtworkType.ArtworkUnit = 'STITCH', Style_TMSCost.Qty / 1000,
+	outer apply (select iif(ArtworkType.ArtworkUnit = 'STITCH', Style_TMSCost.Qty / 1000.0,
 						iif(ArtworkType.ArtworkUnit = 'PPU', Style_TmsCost.Price,
 						iif(ArtworkType.ProductionUnit = 'Qty', Style_TMSCost.Qty,
 						IIF(@CalculateCPU = 1, Style_TMSCost.Tms / @mStandardTMS, Style_TMSCost.Tms / 60 )))) as cTms) amt
@@ -482,7 +482,7 @@ BEGIN
 				from Factory_Tms
 				left join ArtworkType on ArtworkType.Id = Factory_TMS.ArtworkTypeID
 				outer apply (select IIF(@ArtWorkType = 'Sewing', ROUND(Factory_TMS.Tms * 3600 / @mStandardTMS, 0),
-							iif(ArtworkType.ArtworkUnit = 'STITCH', Factory_TMS.Tms / 1000,
+							iif(ArtworkType.ArtworkUnit = 'STITCH', Factory_TMS.Tms / 1000.0,
 							iif(ArtworkType.ProductionUnit = 'Qty', Factory_TMS.Tms,
 							IIF(@CalculateCPU = 1, ROUND(Factory_Tms.Tms * 60 / @mStandardTMS, 0), Factory_TMS.TMS )))) as Capacity) cc
 				where YEAR = @Year and ArtworkTypeID = @ArtWorkType

@@ -5,20 +5,23 @@
     [Action]                      VARCHAR (10)  NOT NULL,
     [FromFabric_FtyInventoryUkey] BIGINT        NULL,
     [From_OldBarcode]             VARCHAR (255) NOT NULL,
-    [From_OldBarcodeSeq]          VARCHAR (2)   NOT NULL,
+    [From_OldBarcodeSeq]          VARCHAR (10)   NOT NULL,
     [From_NewBarcode]             VARCHAR (255) NOT NULL,
-    [From_NewBarcodeSeq]          VARCHAR (2)   NOT NULL,
+    [From_NewBarcodeSeq]          VARCHAR (10)   NOT NULL,
     [ToFabric_FtyInventoryUkey]   BIGINT        NULL,
     [To_OldBarcode]               VARCHAR (255) NOT NULL,
-    [To_OldBarcodeSeq]            VARCHAR (2)   NOT NULL,
+    [To_OldBarcodeSeq]            VARCHAR (10)   NOT NULL,
     [To_NewBarcode]               VARCHAR (255) NOT NULL,
-    [To_NewBarcodeSeq]            VARCHAR (2)   NOT NULL,
+    [To_NewBarcodeSeq]            VARCHAR (10)   NOT NULL,
     [CommitTime]                  DATETIME      NULL,
     CONSTRAINT [PK_WHBarcodeTransaction] PRIMARY KEY CLUSTERED ([Function] ASC, [TransactionID] ASC, [TransactionUkey] ASC, [Action] ASC)
 );
-
-
 GO
+
+CREATE NONCLUSTERED INDEX [M360IssueList]
+    ON [dbo].[WHBarcodeTransaction]([TransactionID] ASC, [TransactionUkey] ASC, [Action] ASC);
+GO
+
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'執行日期及時間', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'WHBarcodeTransaction', @level2type = N'COLUMN', @level2name = N'CommitTime';
 
 
