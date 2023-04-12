@@ -3981,7 +3981,7 @@ SET  a.WeaveTypeID	= b.WeaveTypeID
     ,a.ShowGrade = b.ShowGrade
 FROM Production.dbo.FIR_Grade a 
 INNER JOIN Trade_To_Pms.dbo.FIR_Grade as b  
-ON a.WeaveTypeID=b.WeaveTypeID AND a.Percentage=b.Percentage AND a.BrandID=b.BrandID 
+ON a.WeaveTypeID=b.WeaveTypeID AND a.Percentage=b.Percentage AND a.BrandID=b.BrandID and a.InspectionGroup = b.InspectionGroup
 
 
 INSERT INTO Production.dbo.FIR_Grade
