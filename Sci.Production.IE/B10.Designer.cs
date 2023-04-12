@@ -394,7 +394,7 @@
             this.txtAttachmentTypeID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtAttachmentTypeID.Location = new System.Drawing.Point(169, 220);
             this.txtAttachmentTypeID.Name = "txtAttachmentTypeID";
-            this.txtAttachmentTypeID.Size = new System.Drawing.Size(134, 23);
+            this.txtAttachmentTypeID.Size = new System.Drawing.Size(348, 23);
             this.txtAttachmentTypeID.TabIndex = 30;
             this.txtAttachmentTypeID.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtAttachmentTypeID_PopUp);
             this.txtAttachmentTypeID.Validating += new System.ComponentModel.CancelEventHandler(this.TxtAttachmentTypeID_Validating);
@@ -406,7 +406,7 @@
             this.txtMeasurementID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtMeasurementID.Location = new System.Drawing.Point(169, 252);
             this.txtMeasurementID.Name = "txtMeasurementID";
-            this.txtMeasurementID.Size = new System.Drawing.Size(134, 23);
+            this.txtMeasurementID.Size = new System.Drawing.Size(348, 23);
             this.txtMeasurementID.TabIndex = 31;
             this.txtMeasurementID.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtMeasurementID_PopUp);
             this.txtMeasurementID.Validating += new System.ComponentModel.CancelEventHandler(this.TxtMeasurementID_Validating);

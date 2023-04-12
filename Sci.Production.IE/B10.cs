@@ -124,6 +124,38 @@ namespace Sci.Production.IE
                 this.ShowErr(result);
             }
 
+            sqlCmd = $@"SELECT ID, Description FROM SciMachine_MachineMasterGroup WHERE Junk=0 AND ID=@ID";
+            parameters.Clear();
+            parameters.Add(new SqlParameter("@ID", this.CurrentMaintain["MachineMasterGroupID"]));
+            if (result = DBProxy.Current.Select(null, sqlCmd, parameters, out dt))
+            {
+                if (dt != null && dt.Rows.Count > 0)
+                {
+                    string disMachineMasterGroupID = MyUtility.Convert.GetString(dt.Rows[0]["Description"]);
+                    this.disMachineMasterGroupID.Text = disMachineMasterGroupID;
+                }
+            }
+            else
+            {
+                this.ShowErr(result);
+            }
+
+            sqlCmd = $@"SELECT FoldType,Description FROM AttachmentFoldType WHERE FoldType = @FoldType and Junk=0";
+            parameters.Clear();
+            parameters.Add(new SqlParameter("@FoldType", this.CurrentMaintain["FoldTypeID"]));
+            if (result = DBProxy.Current.Select(null, sqlCmd, parameters, out dt))
+            {
+                if (dt != null && dt.Rows.Count > 0)
+                {
+                    string disFoldTypeID = MyUtility.Convert.GetString(dt.Rows[0]["Description"]);
+                    this.disFoldTypeID.Text = disFoldTypeID;
+                }
+            }
+            else
+            {
+                this.ShowErr(result);
+            }
+
             /*判斷路徑下圖片檔找不到,就將ImageLocation帶空值*/
             if (MyUtility.Check.Empty(this.CurrentMaintain["Picture1"]))
             {

@@ -274,7 +274,6 @@ namespace Sci.Production.IE
                                 string supplierBrand1Val = MyUtility.Excel.GetExcelCellValue(objCellArray[1, 12], "C").ToString();
                                 newRow["Supplier Brand-1"] = supplierBrand1Val.Length > 60 ? supplierBrand1Val.Substring(0, 60) : supplierBrand1Val;
 
-
                                 string supplierPart2Val = MyUtility.Excel.GetExcelCellValue(objCellArray[1, 13], "C").ToString();
                                 newRow["Supplier Part#-2"] = supplierPart2Val.Length > 60 ? supplierPart2Val.Substring(0, 60) : supplierPart2Val;
 
@@ -296,8 +295,9 @@ namespace Sci.Production.IE
                                 {
                                     this.grid2Data.Rows.Add(newRow);
                                 }
-
                             }
+
+                            #region 抓取Excel圖片
 
                             // 取得Sheet上的圖形集合
                             Shapes shapes = worksheet.Shapes;
@@ -357,6 +357,7 @@ namespace Sci.Production.IE
                                     }
                                 }
                             }
+                            #endregion
 
                             dr["Status"] = "Check & Import Completed.";
                         }
@@ -424,7 +425,7 @@ select [ID]
     ,[Machine Master ID]
     ,[Type]
     ,[Measurement]
-    ,[Direction/Fold Type]
+    ,ISNULL( (select TOP 1 FoldType from AttachmentFoldType a where a.FoldType = t.[Direction/Fold Type])   ,'')
     ,[Supplier Part#-1]
     ,[Supplier Brand-1]
     ,[Supplier Part#-2]
@@ -442,9 +443,23 @@ where not exists(
     from SewingMachineAttachment a
     where a.ID = t.[ID]
 )
-
-
-            ";
+and not exists(
+    select 1 from SewingMachineAttachment a
+    where a.MachineMasterGroupID = t.[Machine Master ID] and a.AttachmentTypeID = t.[Type] and a.MeasurementID = t.[Measurement] and a.FoldTypeID = t.[Direction/Fold Type]
+) ----MachineMasterGroupID + AttachmentTypeID + MeasurementID + FoldTypeID不可重複
+AND exists(
+    SELECT 1 FROM AttachmentFoldType a WHERE a.FoldType = t.[Direction/Fold Type] and Junk=0
+)----排除FoldTypeID 不存在
+AND exists(
+    SELECT 1 FROM AttachmentMeasurement a WHERE a.Measurement = t.[Measurement] and Junk=0
+)----排除Measurement 不存在
+AND exists(
+    SELECT 1 FROM SciMachine_MachineMasterGroup a WHERE a.ID = t.[Machine Master ID]  and Junk=0
+)----排除Machine 不存在
+AND exists(
+    SELECT 1 FROM AttachmentType a WHERE a.Type = t.[Type]  and Junk=0
+)----排除Type 不存在
+";
 
             DualResult result = MyUtility.Tool.ProcessWithDatatable(this.grid2Data, string.Empty, sqlCmd, out System.Data.DataTable dt);
 
@@ -458,7 +473,6 @@ where not exists(
             else
             {
                 MyUtility.Msg.InfoBox("Success!!");
-
             }
         }
 
