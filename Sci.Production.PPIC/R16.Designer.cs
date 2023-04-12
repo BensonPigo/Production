@@ -181,6 +181,8 @@
             // chkExcludeSis
             // 
             this.chkExcludeSis.AutoSize = true;
+            this.chkExcludeSis.Checked = true;
+            this.chkExcludeSis.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkExcludeSis.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.chkExcludeSis.Location = new System.Drawing.Point(257, 84);
             this.chkExcludeSis.Name = "chkExcludeSis";
