@@ -201,6 +201,7 @@ select FactoryID = iif(ed.PoType='M'
         , ed.Carton
 		, o.OrderTypeID
 		,[TPERemark] = psd.Remark
+        ,o.KPILETA
 from Export_Detail ed WITH (NOLOCK) 
 left join Orders o WITH (NOLOCK) on o.ID = ed.PoID
 left join Supp s WITH (NOLOCK) on s.id = ed.SuppID 
@@ -305,6 +306,7 @@ drop table #tmp, #tmp_MachinePO, #tmp_MiscPO, #tmp_PartPO", masterID);
                 .Text("POID", header: "SP#", width: Widths.AnsiChars(13))
                 .Text("Carton", header: "Carton#", width: Widths.AnsiChars(8), iseditingreadonly: true, settings: ts)
                 .Date("SCIDlv", header: "Earliest SCI Del", width: Widths.AnsiChars(9))
+                .Date("KPILETA", header: "KPI L/ETA", width: Widths.AnsiChars(9), iseditingreadonly: true)
                 .Text("Category", header: "Category", width: Widths.AnsiChars(8))
                 .Date("InspDate", header: "Inspect Dead Line", width: Widths.AnsiChars(9))
                 .Text("Seq", header: "SEQ", width: Widths.AnsiChars(3))
