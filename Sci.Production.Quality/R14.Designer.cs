@@ -317,7 +317,7 @@
             this.Controls.Add(this.lbLastInsDate);
             this.Name = "R14";
             this.OnLineHelpID = "Sci.Win.Tems.PrintForm";
-            this.Text = "R14. Spreading Inspection Repor";
+            this.Text = "R14. Spreading Inspection Report";
             this.Controls.SetChildIndex(this.print, 0);
             this.Controls.SetChildIndex(this.toexcel, 0);
             this.Controls.SetChildIndex(this.close, 0);
