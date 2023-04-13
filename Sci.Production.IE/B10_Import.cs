@@ -393,9 +393,11 @@ namespace Sci.Production.IE
                     picture1 = (byte[])dr["Picture1_File"];
 
                     // 轉成圖片
-                    MemoryStream oMemoryStream = new MemoryStream(picture1);
-                    System.Drawing.Image oImage = System.Drawing.Image.FromStream(oMemoryStream);
-                    oImage.Save(this.destination_path + fileName);
+                    using (MemoryStream oMemoryStream = new MemoryStream(picture1))
+                    {
+                        System.Drawing.Image oImage = System.Drawing.Image.FromStream(oMemoryStream);
+                        oImage.Save(this.destination_path + fileName);
+                    }
                 }
 
                 byte[] picture2 = null;
@@ -405,9 +407,11 @@ namespace Sci.Production.IE
                     picture2 = (byte[])dr["Picture2_File"];
 
                     // 轉成圖片
-                    MemoryStream oMemoryStream = new MemoryStream(picture2);
-                    System.Drawing.Image oImage = System.Drawing.Image.FromStream(oMemoryStream);
-                    oImage.Save(this.destination_path + fileName);
+                    using (MemoryStream oMemoryStream = new MemoryStream(picture2))
+                    {
+                        System.Drawing.Image oImage = System.Drawing.Image.FromStream(oMemoryStream);
+                        oImage.Save(this.destination_path + fileName);
+                    }
                 }
             }
 
