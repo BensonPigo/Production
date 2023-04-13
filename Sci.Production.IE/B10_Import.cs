@@ -446,7 +446,7 @@ where not exists(
     select 1 
     from SewingMachineAttachment a
     where a.ID = t.[ID]
-)
+)----排除已存在ID
 and not exists(
     select 1 from SewingMachineAttachment a
     where a.MachineMasterGroupID = t.[Machine Master ID] and a.AttachmentTypeID = t.[Type] and a.MeasurementID = t.[Measurement] and a.FoldTypeID = t.[Direction/Fold Type]
@@ -463,6 +463,8 @@ AND exists(
 AND exists(
     SELECT 1 FROM AttachmentType a WHERE a.Type = t.[Type]  and Junk=0
 )----排除Type 不存在
+AND t.[ID] = t.[Machine Master ID] + '-' + t.[Type] + '-' + t.[Measurement] + '-' + t.[Direction/Fold Type]
+---- ID 的規則是 MachineMasterGroupID、AttachmentTypeID、MeasurementID、FoldTypeID四個欄位用 - 串起來
 ";
 
             DualResult result = MyUtility.Tool.ProcessWithDatatable(this.grid2Data, string.Empty, sqlCmd, out System.Data.DataTable dt);
