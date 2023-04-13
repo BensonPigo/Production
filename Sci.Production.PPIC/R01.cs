@@ -8,6 +8,7 @@ using Ict;
 using Sci.Data;
 using Excel = Microsoft.Office.Interop.Excel;
 using System.Runtime.InteropServices;
+using System.Data.SqlTypes;
 
 namespace Sci.Production.PPIC
 {
@@ -188,7 +189,25 @@ namespace Sci.Production.PPIC
                 worksheet = objApp.Sheets[3];
                 worksheet.Select();
                 this.printData.Columns.Remove("StyleName");
-                result = MyUtility.Excel.CopyToXls(this.printData, string.Empty, "PPIC_R01_Style_PerEachSewingDate.xltx", 1, false, string.Empty, objApp, false, worksheet, false);
+
+                DataTable pintDataFilter = this.printData.Copy();
+
+                if (!this.chkIncludeCompleteSchedule.Checked)
+                {
+                    if (!MyUtility.Check.Empty(this.SewingDate1))
+                    {
+                        pintDataFilter = pintDataFilter.Select($@" SewingDay >= '{Convert.ToDateTime(this.SewingDate1):yyyy/MM/dd}' ").CopyToDataTable();
+
+                    }
+
+                    if (!MyUtility.Check.Empty(this.SewingDate2))
+                    {
+                        pintDataFilter = pintDataFilter.Select($@" SewingDay <= '{Convert.ToDateTime(this.SewingDate2):yyyy/MM/dd}'").CopyToDataTable();
+
+                    }
+                }
+
+                result = MyUtility.Excel.CopyToXls(pintDataFilter, string.Empty, "PPIC_R01_Style_PerEachSewingDate.xltx", 1, false, string.Empty, objApp, false, worksheet, false);
 
                 if (!result)
                 {
