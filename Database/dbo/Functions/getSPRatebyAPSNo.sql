@@ -1,6 +1,6 @@
 ﻿CREATE FUNCTION [dbo].[getSPRatebyAPSNo]
 (
-	@APSNo varchar(20)=706082
+	@APSNo varchar(20)
 )
 RETURNS
 @table TABLE 
@@ -27,11 +27,10 @@ select
 	s.ComboType,
 	s.Inline,
 	s.AlloQty
-from SewingSchedule s  WITH (NOLOCK) 
+from SewingSchedule s WITH (NOLOCK) 
 inner join Orders o WITH (NOLOCK) on o.ID = s.OrderID  
-inner join Factory f with (nolock) on f.id = s.FactoryID and Type <> 'S'
-where 1 = 1 
-and s.APSNo = @APSNo
+inner join Factory f WITH (NOLOCK) on f.id = s.FactoryID and Type <> 'S'
+where s.APSNo = @APSNo
 and s.APSno <> 0
 
 -- 找出 < Suncon > 不為空的 OrderID -- < Suncon > not empty rule (ISP20210759)
@@ -40,7 +39,7 @@ insert into @SunconNotEmpty
 select distinct ot.ID
 from Order_TmsCost ot WITH (NOLOCK) 
 inner join ArtworkType at WITH (NOLOCK) on at.ID = ot.ArtworkTypeID and at.ID in('PRINTING','PRINTING PPU')
-left join LocalSupp ls on ls.id = ot.LocalSuppID
+left join LocalSupp ls WITH (NOLOCK) on ls.id = ot.LocalSuppID
 where exists(select 1 from @APSBase where orderid = ot.id)
 and ot.ArtworkTypeID = 'PRINTING'
 and IIF(ot.InhouseOSP = 'O', ls.abb, ot.LocalSuppID) <> ''
@@ -68,10 +67,10 @@ declare @SP_Qty Table(
 	AlloQty int NULL
 )
 insert into @SP_Qty
-select @APSNo,s.OrderID, sum(AlloQty)
-from SewingSchedule s
-inner join @SP_ComboType c on c.OrderID = s.OrderID and c.ComboType = s.ComboType
+select @APSNo,s.OrderID, sum(s.AlloQty)
+from SewingSchedule s WITH (NOLOCK)
 where APSNo = @APSNo
+and exists (select 1 from @SP_ComboType c where c.OrderID = s.OrderID and c.ComboType = s.ComboType)
 group by s.OrderID
 
 insert into @table
