@@ -975,8 +975,8 @@ order by NO
             foreach (var item in mmData)
             {
                 worksheet.Cells[27 + surow, 10] = item.MachineTypeID;
-                worksheet.Cells[27 + surow, 12] = item.MasterPlusGroup;
-                worksheet.Cells[27 + surow, 13] = item.Count;
+                worksheet.Cells[27 + surow, 11] = item.MasterPlusGroup;
+                //worksheet.Cells[27 + surow, 13] = item.Count;
                 surow++;
             }
 
