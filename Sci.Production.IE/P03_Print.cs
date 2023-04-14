@@ -956,10 +956,12 @@ order by NO
 
             int copyCount = machineCount >= attachTemplateCount ? machineCount : attachTemplateCount;
             rngToCopy = worksheet.get_Range("A27:A27").EntireRow; // 選取要被複製的資料
+            int maxhineEndRow = 27;
             for (int i = 0; i < copyCount - 1; i++)
             {
                 Microsoft.Office.Interop.Excel.Range rngToInsert = worksheet.get_Range("A27", Type.Missing).EntireRow; // 選擇要被貼上的位置
                 rngToInsert.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown, rngToCopy.Copy(Type.Missing)); // 貼上
+                maxhineEndRow++;
             }
 
             var mmData = allMachineData.Where(o => o.MachineCount && !MyUtility.Check.Empty(o.MachineTypeID) && !MyUtility.Check.Empty(o.MasterPlusGroup))
@@ -968,7 +970,8 @@ order by NO
 
             var aaData = allMachineData.Where(o => !MyUtility.Check.Empty(o.No) && !MyUtility.Check.Empty(o.Template)).Select(o => new { o.Template, o.No, o.SewingMachineAttachmentID });
 
-            worksheet.Cells[24, 13] = mmData.Sum(o => o.Count);
+            //worksheet.Cells[24, 13] = mmData.Sum(o => o.Count);
+            worksheet.Cells[24, 13] = $@"=SUM(M27:M{maxhineEndRow})";
 
             int surow = 0;
             int sucol = 0;

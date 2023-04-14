@@ -65,26 +65,24 @@ namespace Sci.Production.IE
                 }
             }
 
-            if (this.IsDetailInserting)
-            {
-                List<SqlParameter> parameters = new List<SqlParameter>()
+            List<SqlParameter> parameters = new List<SqlParameter>()
                         {
                             new SqlParameter("@FoldType", this.CurrentMaintain["FoldType"].ToString()),
+                            new SqlParameter("@ID", this.CurrentMaintain["ID"].ToString()),
                         };
 
-                result = DBProxy.Current.Select(null, "select ID from AttachmentFoldType WITH (NOLOCK) WHERE FoldType = @FoldType", parameters, out dt);
+            result = DBProxy.Current.Select(null, "select ID from AttachmentFoldType WITH (NOLOCK) WHERE FoldType = @FoldType", parameters, out dt);
 
-                if (!result)
-                {
-                    this.ShowErr(result);
-                    return false;
-                }
+            if (!result)
+            {
+                this.ShowErr(result);
+                return false;
+            }
 
-                if (dt != null && dt.Rows.Count > 0)
-                {
-                    MyUtility.Msg.WarningBox("This < Fold Type > already exists.");
-                    return false;
-                }
+            if (dt != null && dt.Rows.Count > 0 && this.IsDetailInserting)
+            {
+                MyUtility.Msg.WarningBox("This < Fold Type > already exists.");
+                return false;
             }
 
             return base.ClickSaveBefore();

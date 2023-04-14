@@ -67,27 +67,26 @@ namespace Sci.Production.IE
                 }
             }
 
-            if (this.IsDetailInserting)
-            {
-                List<SqlParameter> parameters = new List<SqlParameter>()
+            List<SqlParameter> parameters = new List<SqlParameter>()
                         {
                             new SqlParameter("@Measurement", this.CurrentMaintain["Measurement"].ToString()),
+                            new SqlParameter("@ID", this.CurrentMaintain["ID"].ToString()),
                         };
 
-                result = DBProxy.Current.Select(null, "select ID from AttachmentMeasurement WITH (NOLOCK) WHERE Measurement = @Measurement", parameters, out dt);
+            result = DBProxy.Current.Select(null, "select ID from AttachmentMeasurement WITH (NOLOCK) WHERE Measurement = @Measurement AND ID = @ID", parameters, out dt);
 
-                if (!result)
-                {
-                    this.ShowErr(result);
-                    return false;
-                }
-
-                if (dt != null && dt.Rows.Count > 0)
-                {
-                    MyUtility.Msg.WarningBox("This < Attachment Measurement > already exists.");
-                    return false;
-                }
+            if (!result)
+            {
+                this.ShowErr(result);
+                return false;
             }
+
+            if (dt != null && dt.Rows.Count > 0 && this.IsDetailInserting)
+            {
+                MyUtility.Msg.WarningBox("This < Attachment Measurement > already exists.");
+                return false;
+            }
+
             return base.ClickSaveBefore();
         }
     }
