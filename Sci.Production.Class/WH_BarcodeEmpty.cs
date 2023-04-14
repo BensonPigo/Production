@@ -10,13 +10,15 @@ namespace Sci.Production.Class
     public partial class WH_BarcodeEmpty : Sci.Win.Tems.QueryForm
     {
         private DataTable dtFty;
+        private bool isSubTransferOrBorrowBack;
 
         /// <inheritdoc/>
-        public WH_BarcodeEmpty(DataTable dt, string Msg)
+        public WH_BarcodeEmpty(DataTable dt, string msg, bool isSubTransferOrBorrowBack = false)
         {
             this.InitializeComponent();
             this.dtFty = dt;
-            this.labMsg.Text = Msg;
+            this.labMsg.Text = msg;
+            this.isSubTransferOrBorrowBack = isSubTransferOrBorrowBack;
         }
 
         /// <inheritdoc/>
@@ -38,6 +40,7 @@ namespace Sci.Production.Class
 
         private void GetData()
         {
+            string balanceQty = this.isSubTransferOrBorrowBack ? "t.Qty" : "InQty-OutQty+AdjustQty-ReturnQty";
             string sqlcmd = $@"
 select POID,Seq = Seq1 + ' ' + Seq2,Roll,Dyelot
 ,StockType = case StockType 
@@ -45,14 +48,11 @@ select POID,Seq = Seq1 + ' ' + Seq2,Roll,Dyelot
 			when 'B' then 'Bulk'
 			when 'O' then 'Scrap'
 			else StockType end 
-, BalanceQty = InQty-OutQty+AdjustQty-ReturnQty
+, BalanceQty = {balanceQty}
 from FtyInventory f
-where exists(
-	select 1 from #tmp t
-	where t.ukey = f.Ukey
-)
+inner join #tmp t on t.ukey = f.Ukey
 ";
-            DualResult result = MyUtility.Tool.ProcessWithDatatable(this.dtFty, "", sqlcmd, out DataTable dtS);
+            DualResult result = MyUtility.Tool.ProcessWithDatatable(this.dtFty, string.Empty, sqlcmd, out DataTable dtS);
             if (!result)
             {
                 this.ShowErr(result);
