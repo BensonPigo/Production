@@ -46,7 +46,7 @@ namespace Sci.Production.IE
 
             if (string.IsNullOrWhiteSpace(this.CurrentMaintain["id"].ToString()))
             {
-                if (result = DBProxy.Current.Select(null , "select max_id = max(id) from AttachmentType WITH (NOLOCK)", out dt))
+                if (result = DBProxy.Current.Select(null, "select max_id = max(id) from AttachmentType WITH (NOLOCK)", out dt))
                 {
                     string id = dt.Rows[0]["max_id"].ToString();
                     if (string.IsNullOrWhiteSpace(id))
@@ -57,7 +57,7 @@ namespace Sci.Production.IE
                     {
                         int newID = int.Parse(id) + 1;
                         this.CurrentMaintain["ID"] = Convert.ToString(newID).ToString().PadLeft(5, '0');
-                        }
+                    }
                 }
                 else
                 {
@@ -66,25 +66,27 @@ namespace Sci.Production.IE
                 }
             }
 
-            List<SqlParameter> parameters = new List<SqlParameter>()
+            if (this.IsDetailInserting)
+            {
+                List<SqlParameter> parameters = new List<SqlParameter>()
                         {
                             new SqlParameter("@Type", this.CurrentMaintain["Type"].ToString()),
                         };
 
-            result = DBProxy.Current.Select(null, "select ID from AttachmentType WITH (NOLOCK) WHERE Type = @Type", parameters, out dt);
+                result = DBProxy.Current.Select(null, "select ID from AttachmentType WITH (NOLOCK) WHERE Type = @Type", parameters, out dt);
 
-            if (!result)
-            {
-                this.ShowErr(result);
-                return false;
+                if (!result)
+                {
+                    this.ShowErr(result);
+                    return false;
+                }
+
+                if (dt != null && dt.Rows.Count > 0)
+                {
+                    MyUtility.Msg.WarningBox("This < Attachment Type > already exists.");
+                    return false;
+                }
             }
-
-            if (dt != null && dt.Rows.Count > 0)
-            {
-                MyUtility.Msg.WarningBox("This < Attachment Type > already exists.");
-                return false;
-            }
-
 
             return base.ClickSaveBefore();
         }

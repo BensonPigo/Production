@@ -47,7 +47,7 @@ namespace Sci.Production.IE
 
             if (string.IsNullOrWhiteSpace(this.CurrentMaintain["id"].ToString()))
             {
-                if (result = DBProxy.Current.Select(null , "select max_id = max(id) from AttachmentMeasurement WITH (NOLOCK)", out dt))
+                if (result = DBProxy.Current.Select(null, "select max_id = max(id) from AttachmentMeasurement WITH (NOLOCK)", out dt))
                 {
                     string id = dt.Rows[0]["max_id"].ToString();
                     if (string.IsNullOrWhiteSpace(id))
@@ -67,25 +67,27 @@ namespace Sci.Production.IE
                 }
             }
 
-            List<SqlParameter> parameters = new List<SqlParameter>()
+            if (this.IsDetailInserting)
+            {
+                List<SqlParameter> parameters = new List<SqlParameter>()
                         {
                             new SqlParameter("@Measurement", this.CurrentMaintain["Measurement"].ToString()),
                         };
 
-            result = DBProxy.Current.Select(null, "select ID from AttachmentMeasurement WITH (NOLOCK) WHERE Measurement = @Measurement", parameters, out dt);
+                result = DBProxy.Current.Select(null, "select ID from AttachmentMeasurement WITH (NOLOCK) WHERE Measurement = @Measurement", parameters, out dt);
 
-            if (!result)
-            {
-                this.ShowErr(result);
-                return false;
+                if (!result)
+                {
+                    this.ShowErr(result);
+                    return false;
+                }
+
+                if (dt != null && dt.Rows.Count > 0)
+                {
+                    MyUtility.Msg.WarningBox("This < Attachment Measurement > already exists.");
+                    return false;
+                }
             }
-
-            if (dt != null && dt.Rows.Count > 0)
-            {
-                MyUtility.Msg.WarningBox("This < Attachment Measurement > already exists.");
-                return false;
-            }
-
             return base.ClickSaveBefore();
         }
     }

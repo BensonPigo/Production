@@ -953,7 +953,7 @@ order by NO
             int machineCount = allMachineData.Where(o => o.MachineCount && !MyUtility.Check.Empty(o.MachineTypeID) && !MyUtility.Check.Empty(o.MasterPlusGroup)).Select(o => new { o.MachineTypeID, o.MasterPlusGroup }).Distinct().Count();
 
             int attachTemplateCount = allMachineData.Where(o => !MyUtility.Check.Empty(o.No) && !MyUtility.Check.Empty(o.Template)).Select(o => new { o.No, o.Template }).Distinct().Count();
-            
+
             int copyCount = machineCount >= attachTemplateCount ? machineCount : attachTemplateCount;
             rngToCopy = worksheet.get_Range("A27:A27").EntireRow; // 選取要被複製的資料
             for (int i = 0; i < copyCount - 1; i++)

@@ -61,12 +61,12 @@
             this.txtSupplier1PartNo = new Sci.Win.UI.TextBox();
             this.txtSupplier3PartNo = new Sci.Win.UI.TextBox();
             this.txtSupplier2PartNo = new Sci.Win.UI.TextBox();
-            this.editRemark = new Sci.Win.UI.EditBox();
             this.txtSupplier1BrandID = new Sci.Win.UI.TextBox();
             this.txtSupplier2BrandID = new Sci.Win.UI.TextBox();
             this.txtSupplier3BrandID = new Sci.Win.UI.TextBox();
             this.disSewingMachineAttachmentID = new Sci.Win.UI.DisplayBox();
             this.btnImport = new Sci.Win.UI.Button();
+            this.editRemark = new Sci.Win.UI.EditBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -84,11 +84,11 @@
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.editRemark);
             this.detailcont.Controls.Add(this.disSewingMachineAttachmentID);
             this.detailcont.Controls.Add(this.txtSupplier3BrandID);
             this.detailcont.Controls.Add(this.txtSupplier2BrandID);
             this.detailcont.Controls.Add(this.txtSupplier1BrandID);
-            this.detailcont.Controls.Add(this.editRemark);
             this.detailcont.Controls.Add(this.txtSupplier2PartNo);
             this.detailcont.Controls.Add(this.txtSupplier3PartNo);
             this.detailcont.Controls.Add(this.txtSupplier1PartNo);
@@ -474,17 +474,6 @@
             this.txtSupplier2PartNo.Size = new System.Drawing.Size(165, 23);
             this.txtSupplier2PartNo.TabIndex = 39;
             // 
-            // editRemark
-            // 
-            this.editRemark.BackColor = System.Drawing.Color.White;
-            this.editRemark.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Remark", true));
-            this.editRemark.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.editRemark.Location = new System.Drawing.Point(169, 417);
-            this.editRemark.Multiline = true;
-            this.editRemark.Name = "editRemark";
-            this.editRemark.Size = new System.Drawing.Size(405, 101);
-            this.editRemark.TabIndex = 45;
-            // 
             // txtSupplier1BrandID
             // 
             this.txtSupplier1BrandID.BackColor = System.Drawing.Color.White;
@@ -528,7 +517,7 @@
             this.disSewingMachineAttachmentID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.disSewingMachineAttachmentID.Location = new System.Drawing.Point(169, 44);
             this.disSewingMachineAttachmentID.Name = "disSewingMachineAttachmentID";
-            this.disSewingMachineAttachmentID.Size = new System.Drawing.Size(165, 23);
+            this.disSewingMachineAttachmentID.Size = new System.Drawing.Size(348, 23);
             this.disSewingMachineAttachmentID.TabIndex = 49;
             // 
             // btnImport
@@ -540,6 +529,17 @@
             this.btnImport.Text = "Import";
             this.btnImport.UseVisualStyleBackColor = true;
             this.btnImport.Click += new System.EventHandler(this.BtnImport_Click);
+            // 
+            // editRemark
+            // 
+            this.editRemark.BackColor = System.Drawing.Color.White;
+            this.editRemark.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Remark", true));
+            this.editRemark.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.editRemark.Location = new System.Drawing.Point(168, 417);
+            this.editRemark.Multiline = true;
+            this.editRemark.Name = "editRemark";
+            this.editRemark.Size = new System.Drawing.Size(447, 123);
+            this.editRemark.TabIndex = 50;
             // 
             // B10
             // 
@@ -553,6 +553,7 @@
             this.Name = "B10";
             this.OnLineHelpID = "Sci.Win.Tems.Input1";
             this.Text = "B10. Sewing Machine Attachment";
+            this.UniqueExpress = "Ukey";
             this.WorkAlias = "SewingMachineAttachment";
             this.Controls.SetChildIndex(this.tabs, 0);
             this.Controls.SetChildIndex(this.btnImport, 0);
@@ -577,7 +578,6 @@
         private Win.UI.Label labelDescription;
         private Win.UI.Label labelID;
         private Win.UI.EditBox editDescription;
-        private Win.UI.EditBox editRemark;
         private Win.UI.TextBox txtSupplier2PartNo;
         private Win.UI.TextBox txtSupplier3PartNo;
         private Win.UI.TextBox txtSupplier1PartNo;
@@ -612,5 +612,6 @@
         private Win.UI.Label labelPicture1;
         private Win.UI.DisplayBox disSewingMachineAttachmentID;
         private Win.UI.Button btnImport;
+        private Win.UI.EditBox editRemark;
     }
 }

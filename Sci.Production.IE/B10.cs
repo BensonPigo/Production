@@ -82,7 +82,6 @@ namespace Sci.Production.IE
                 new SqlParameter("@supplier3BrandID", supplier3BrandID),
             };
             string sqlCmd = $@"Select Name From ExtendServer.Machine.dbo.PartBrand where ID = @supplier1BrandID";
-
             if (result = DBProxy.Current.Select(null, sqlCmd, parameters, out dt))
             {
                 if (dt != null && dt.Rows.Count > 0)
@@ -134,6 +133,10 @@ namespace Sci.Production.IE
                     string disMachineMasterGroupID = MyUtility.Convert.GetString(dt.Rows[0]["Description"]);
                     this.disMachineMasterGroupID.Text = disMachineMasterGroupID;
                 }
+                else
+                {
+                    this.disMachineMasterGroupID.Text = string.Empty;
+                }
             }
             else
             {
@@ -149,6 +152,10 @@ namespace Sci.Production.IE
                 {
                     string disFoldTypeID = MyUtility.Convert.GetString(dt.Rows[0]["Description"]);
                     this.disFoldTypeID.Text = disFoldTypeID;
+                }
+                else
+                {
+                    this.disMachineMasterGroupID.Text = string.Empty;
                 }
             }
             else
@@ -182,6 +189,9 @@ namespace Sci.Production.IE
             {
                 this.picture2.ImageLocation = string.Empty;
             }
+
+            // 換行處理
+            this.CurrentMaintain["Remark"] = this.CurrentMaintain["Remark"].ToString().Replace("\n", Environment.NewLine);
         }
 
         private void TxtMoldID_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
@@ -812,21 +822,24 @@ namespace Sci.Production.IE
                 return false;
             }
 
-            string newID = $@"{this.CurrentMaintain["MachineMasterGroupID"]}-{this.CurrentMaintain["AttachmentTypeID"]}-{this.CurrentMaintain["MeasurementID"]}-{this.CurrentMaintain["FoldTypeID"]}";
-
-            List<SqlParameter> paras = new List<SqlParameter>();
-            paras.Add(new SqlParameter("newID", newID));
-            string cmd = "select 1 from SewingMachineAttachment with(nolock) where ID=@newID";
-
-            string dbVal = MyUtility.GetValue.Lookup(cmd, paras);
-            if (!MyUtility.Check.Empty(dbVal))
+            if (this.IsDetailInserting)
             {
-                MyUtility.Msg.InfoBox("<Machine>,<Type>,<Measurement>,<Direction/Fold Type> is duplicate key.");
-                return false;
-            }
-            else
-            {
-                this.CurrentMaintain["ID"] = newID;
+                string newID = $@"{this.CurrentMaintain["MachineMasterGroupID"]}-{this.CurrentMaintain["AttachmentTypeID"]}-{this.CurrentMaintain["MeasurementID"]}-{this.CurrentMaintain["FoldTypeID"]}";
+
+                List<SqlParameter> paras = new List<SqlParameter>();
+                paras.Add(new SqlParameter("newID", newID));
+                string cmd = "select 1 from SewingMachineAttachment with(nolock) where ID=@newID";
+
+                string dbVal = MyUtility.GetValue.Lookup(cmd, paras);
+                if (!MyUtility.Check.Empty(dbVal))
+                {
+                    MyUtility.Msg.InfoBox("<Machine>,<Type>,<Measurement>,<Direction/Fold Type> is duplicate key.");
+                    return false;
+                }
+                else
+                {
+                    this.CurrentMaintain["ID"] = newID;
+                }
             }
 
             return base.ClickSaveBefore();

@@ -544,11 +544,7 @@ and BrandID = '{this.CurrentMaintain["BrandID"]}'
 select ID,DescEN 
 from Mold WITH (NOLOCK) 
 where Junk = 0
-and IsAttachment = 1
-union all
-select ID, Description
-from SewingMachineAttachment WITH (NOLOCK) 
-where Junk = 0";
+and IsAttachment = 1";
 
                     Win.Tools.SelectItem2 item = new Win.Tools.SelectItem2(sqlcmd, "ID,DescEN", "13,60,10", this.CurrentDetailData["Attachment"].ToString(), null, null, null)
                     {
@@ -656,7 +652,7 @@ where m.Junk = 0 and m.IsTemplate = 1 and smt.Junk = 0
 
                     SelectItem2 item = new SelectItem2(sqlcmd, "ID,DescEN,PartID", "13,60,20", this.CurrentDetailData["Template"].ToString(), null, null, null)
                     {
-                        Width = 666,
+                        Width = 1000,
                     };
                     DialogResult result = item.ShowDialog();
                     if (result == DialogResult.Cancel)

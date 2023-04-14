@@ -244,7 +244,7 @@ namespace Sci.Production.IE
                                 newRow["Attachment Group"] = moldIDVal.Length > 20 ? moldIDVal.Substring(0, 20) : moldIDVal;
 
                                 string sewingMachineAttachmentIDVal = MyUtility.Excel.GetExcelCellValue(objCellArray[1, 2], "C").ToString();
-                                newRow["ID"] = sewingMachineAttachmentIDVal.Length > 20 ? sewingMachineAttachmentIDVal.Substring(0, 20) : sewingMachineAttachmentIDVal;
+                                newRow["ID"] = sewingMachineAttachmentIDVal.Length > 200 ? sewingMachineAttachmentIDVal.Substring(0, 200) : sewingMachineAttachmentIDVal;
 
                                 string descriptionVal = MyUtility.Excel.GetExcelCellValue(objCellArray[1, 3], "C").ToString();
                                 newRow["Description"] = descriptionVal.Length > 200 ? descriptionVal.Substring(0, 200) : descriptionVal;

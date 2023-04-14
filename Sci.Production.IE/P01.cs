@@ -156,6 +156,7 @@ select 0 as Selected, isnull(o.SeamLength,0) SeamLength
       ,td.PPA
       ,PPAText = ISNULL(d.Name,'')
       ,IsNonSewingLine =  ISNULL(md.IsNonSewingLine ,0)
+      ,td.SewingMachineAttachmentID
 from TimeStudy_Detail td WITH (NOLOCK) 
 left join Operation o WITH (NOLOCK) on td.OperationID = o.ID
 left join MachineType_Detail md WITH (NOLOCK) on md.ID = o.MachineTypeID and md.FactoryID = '{Env.User.Factory}'
@@ -603,10 +604,7 @@ select ID,DescEN
 from Mold WITH (NOLOCK) 
 where Junk = 0
 and IsAttachment = 1
-union all
-select ID, Description
-from SewingMachineAttachment WITH (NOLOCK) 
-where Junk = 0";
+";
                     SelectItem2 item = new SelectItem2(sqlcmd, "ID,DescEN", "13,60,10", this.CurrentDetailData["Mold"].ToString(), null, null, null)
                     {
                         Width = 666,
@@ -712,7 +710,7 @@ where m.Junk = 0 and m.IsTemplate = 1 and smt.Junk = 0
 
                     SelectItem2 item = new SelectItem2(sqlcmd, "ID,DescEN,PartID", "13,60,20", this.CurrentDetailData["Template"].ToString(), null, null, null)
                     {
-                        Width = 666,
+                        Width = 1000,
                     };
                     DialogResult result = item.ShowDialog();
                     if (result == DialogResult.Cancel)
@@ -827,7 +825,7 @@ where m.Junk = 0 and m.IsTemplate = 1 and smt.Junk = 0
                         {
                             if (callNextForm.P01SelectPartID != null)
                             {
-                                dr["ID"] = callNextForm.P01SelectPartID["ID"].ToString();
+                                dr["SewingMachineAttachmentID"] = callNextForm.P01SelectPartID["ID"].ToString();
                                 dr.EndEdit();
                             }
                         }
@@ -836,7 +834,7 @@ where m.Junk = 0 and m.IsTemplate = 1 and smt.Junk = 0
                         {
                             if (callNextForm.P01SelectPartID != null)
                             {
-                                dr["ID"] = callNextForm.P01SelectPartID["ID"].ToString();
+                                dr["SewingMachineAttachmentID"] = callNextForm.P01SelectPartID["ID"].ToString();
                                 dr.EndEdit();
                             }
                         }
@@ -866,7 +864,7 @@ from SewingMachineAttachment a
 left join AttachmentType b on a.AttachmentTypeID = b.Type 
 left join AttachmentMeasurement c on a.MeasurementID = c.Measurement
 left join AttachmentFoldType d on a.FoldTypeID = d.FoldType 
-where MoldID = '{this.CurrentDetailData["Mold"]}' AND ID = @ID";
+where MoldID = '{this.CurrentDetailData["Mold"]}' AND a.ID = @ID";
 
                     DataTable dt;
                     List<SqlParameter> paras = new List<SqlParameter>()
@@ -982,7 +980,7 @@ and Name = @PPA
                 .Text("MachineTypeID", header: "ST/MC Type", width: Widths.AnsiChars(8), settings: this.machine)
                 .Text("MasterPlusGroup", header: "Machine Group", width: Widths.AnsiChars(8), settings: txtSubReason)
                 .Text("Mold", header: "Attachment", width: Widths.AnsiChars(8), settings: this.mold)
-                .Text("ID", header: "Part ID", width: Widths.AnsiChars(25), settings: pardID)
+                .Text("SewingMachineAttachmentID", header: "Part ID", width: Widths.AnsiChars(50), settings: pardID)
                 .Text("Template", header: "Template", width: Widths.AnsiChars(8), settings: template)
                 .Numeric("PcsPerHour", header: "Pcs/hr", integer_places: 5, decimal_places: 1, iseditingreadonly: true)
                 .Numeric("Sewer", header: "Sewer", integer_places: 2, decimal_places: 1, iseditingreadonly: true)

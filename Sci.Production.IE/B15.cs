@@ -32,7 +32,6 @@ namespace Sci.Production.IE
             base.ClickEditAfter();
         }
 
-
         /// <inheritdoc/>
         protected override bool ClickSaveBefore()
         {
@@ -46,7 +45,7 @@ namespace Sci.Production.IE
             DataTable dt;
             if (string.IsNullOrWhiteSpace(this.CurrentMaintain["id"].ToString()))
             {
-                if (result = DBProxy.Current.Select(null , "select max_id = max(id) from AttachmentFoldType WITH (NOLOCK)", out dt))
+                if (result = DBProxy.Current.Select(null, "select max_id = max(id) from AttachmentFoldType WITH (NOLOCK)", out dt))
                 {
                     string id = dt.Rows[0]["max_id"].ToString();
                     if (string.IsNullOrWhiteSpace(id))
@@ -56,7 +55,7 @@ namespace Sci.Production.IE
                     else
                     {
                         int newID = int.Parse(id) + 1;
-                        this.CurrentMaintain["ID"] = Convert.ToString(newID).ToString().PadLeft(5, '0');                        
+                        this.CurrentMaintain["ID"] = Convert.ToString(newID).ToString().PadLeft(5, '0');
                     }
                 }
                 else
@@ -66,23 +65,26 @@ namespace Sci.Production.IE
                 }
             }
 
-            List<SqlParameter> parameters = new List<SqlParameter>()
+            if (this.IsDetailInserting)
+            {
+                List<SqlParameter> parameters = new List<SqlParameter>()
                         {
                             new SqlParameter("@FoldType", this.CurrentMaintain["FoldType"].ToString()),
                         };
 
-            result = DBProxy.Current.Select(null, "select ID from AttachmentFoldType WITH (NOLOCK) WHERE FoldType = @FoldType", parameters, out dt);
+                result = DBProxy.Current.Select(null, "select ID from AttachmentFoldType WITH (NOLOCK) WHERE FoldType = @FoldType", parameters, out dt);
 
-            if (!result)
-            {
-                this.ShowErr(result);
-                return false;
-            }
+                if (!result)
+                {
+                    this.ShowErr(result);
+                    return false;
+                }
 
-            if (dt != null && dt.Rows.Count > 0)
-            {
-                MyUtility.Msg.WarningBox("This < Fold Type > already exists.");
-                return false;
+                if (dt != null && dt.Rows.Count > 0)
+                {
+                    MyUtility.Msg.WarningBox("This < Fold Type > already exists.");
+                    return false;
+                }
             }
 
             return base.ClickSaveBefore();
