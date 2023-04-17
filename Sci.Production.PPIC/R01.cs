@@ -1177,7 +1177,7 @@ drop table #tmp_main,#tmp_PFRemark,#tmp_WorkHour,#tmpOrderArtwork,#tmp_CutInLine
 ");
             #endregion
 
-            DBProxy.Current.DefaultTimeout = 900;
+            DBProxy.Current.DefaultTimeout = 1800;
             result = DBProxy.Current.Select(null, sqlCmd.ToString(), out this.printData);
             DBProxy.Current.DefaultTimeout = 300;
             return result;
@@ -1570,7 +1570,7 @@ drop table #tmp_main,#tmp_PFRemark,#tmp_WorkHour,#tmpOrderArtwork,#tmp_Qty,#tmp_
 ");
             #endregion
 
-            DBProxy.Current.DefaultTimeout = 900;
+            DBProxy.Current.DefaultTimeout = 1800;
             result = DBProxy.Current.Select(null, sqlCmd.ToString(), out this.printData);
             DBProxy.Current.DefaultTimeout = 300;
             return result;
@@ -1617,7 +1617,7 @@ drop table #tmp_main,#tmp_PFRemark,#tmp_WorkHour,#tmpOrderArtwork,#tmp_Qty,#tmp_
 
             #endregion
 
-            DBProxy.Current.DefaultTimeout = 900;
+            DBProxy.Current.DefaultTimeout = 1800;
             DataTable[] dtsResult;
             result = DBProxy.Current.Select(null, sqlCmd.ToString().Substring(0, sqlCmd.Length - 1), out dtsResult);
             DBProxy.Current.DefaultTimeout = 300;
