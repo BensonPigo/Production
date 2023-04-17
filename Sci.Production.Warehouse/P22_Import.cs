@@ -76,14 +76,24 @@ with cte as
     ,pd.POUnit
     ,pd.StockUnit  
     ,pd.Refno
+    ,[Color] = Color.Value
 	from dbo.PO_Supp_Detail pd WITH (NOLOCK) 
 	inner join View_WH_Orders o WITH (NOLOCK) on o.id = pd.id
     inner join dbo.Factory f WITH (NOLOCK) on f.id = o.FtyGroup
+	left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = pd.id and psdsC.seq1 = pd.seq1 and psdsC.seq2 = pd.seq2 and psdsC.SpecColumnID = 'Color'
+	left join orders ord on ord.id = pd.id
+	left join Fabric fa WITH (NOLOCK) on fa.SCIRefno = pd.SCIRefno
 	cross apply
 	(select max(i.ConfirmDate) taipei_issue_date,sum(i.Qty) taipei_qty
 		from dbo.Invtrans i WITH (NOLOCK) 
 		where (i.type='1' OR I.TYPE='4') and i.InventoryPOID = pd.ID and i.InventorySeq1 = pd.seq1 and i.InventorySeq2 = pd.SEQ2
 	) x
+	OUTER APPLY(
+	 SELECT [Value]=
+		CASE WHEN fa.MtlTypeID in ('EMB THREAD','SP THREAD','THREAD') THEN IIF(pd.SuppColor = '' or pd.SuppColor is null, dbo.GetColorMultipleID(ord.BrandID, psdsC.SpecValue), pd.SuppColor)
+		ELSE dbo.GetColorMultipleID(ord.BrandID, psdsC.SpecValue)
+		END
+	)Color
 	where f.MDivisionID ='{0}' and pd.id = @poid --AND X.taipei_qty > 0
 )
 select  m.ToFactoryID
@@ -99,6 +109,7 @@ select  m.ToFactoryID
         , dbo.GetUnitQty(POUnit, StockUnit, m.taipei_qty) as taipei_qty 
         , m.POUnit
         , accu_qty 
+        ,Color
 into #tmp
 from cte m 
 outer apply
@@ -151,6 +162,7 @@ select 0 AS selected,'' as id,o.FactoryID FromFactoryID
     ,dbo.getMtlDesc(fi.poid, fi.seq1, fi.seq2, 2, 0) as [description]
     , Fromlocation = Fromlocation.listValue
     ,fi.Tone
+    ,Color
 from #tmp cte 
 inner join dbo.FtyInventory fi WITH (NOLOCK) on 
                                                 fi.POID = cte.poid 
@@ -419,7 +431,7 @@ WHERE   StockType='{dr["tostocktype"]}'
 
                 // FtyDetailBS.Filter = "outqty >0";
             }
-        }
+            }
 
         private void BtnUpdateAllLocation_Click(object sender, EventArgs e)
         {

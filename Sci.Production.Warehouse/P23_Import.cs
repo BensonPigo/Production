@@ -68,7 +68,7 @@ namespace Sci.Production.Warehouse
             , StockUnit = StockUnit.value
             , Round(dbo.GetUnitQty(POUnit, StockUnit.value, pd.Qty), 2) poqty
             , o.FactoryID ToFactoryID
-	        , dbo.getMtlDesc(poid,seq1,seq2,2,0) as [description]
+	        , dbo.getMtlDesc(pd.id,pd.seq1,pd.seq2,2,0) as [description]
 	        , x.InventoryPOID
             , x.InventorySeq1
             , x.InventorySeq2
@@ -76,7 +76,11 @@ namespace Sci.Production.Warehouse
             , x.lastest
             , Round(dbo.GetUnitQty(POUnit, StockUnit.value, x.taipei_qty), 2) taipei_qty
             , pd.Refno
+            ,[Color] = Color.Value
     from dbo.PO_Supp_Detail pd WITH (NOLOCK) 
+	left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = pd.id and psdsC.seq1 = pd.seq1 and psdsC.seq2 = pd.seq2 and psdsC.SpecColumnID = 'Color'
+	left join orders ord on ord.id = pd.id
+	left join Fabric fa WITH (NOLOCK) on fa.SCIRefno = pd.SCIRefno
     outer apply (
         select value = dbo.GetStockUnitBySPSeq (pd.id, pd.seq1, pd.seq2)
     ) StockUnit
@@ -99,6 +103,12 @@ namespace Sci.Production.Warehouse
                 and (i.type='2' or i.type='6')
         group by i.InventoryPOID, i.InventorySeq1, i.InventorySeq2
     )x
+	OUTER APPLY(
+	 SELECT [Value]=
+		CASE WHEN fa.MtlTypeID in ('EMB THREAD','SP THREAD','THREAD') THEN IIF(pd.SuppColor = '' or pd.SuppColor is null, dbo.GetColorMultipleID(ord.BrandID, psdsC.SpecValue), pd.SuppColor)
+		ELSE dbo.GetColorMultipleID(ord.BrandID, psdsC.SpecValue)
+		END
+	)Color
     where exists (select 1 
 	              from View_WH_Orders o2 WITH (NOLOCK)
 	              inner join Factory f WITH (NOLOCK) on o2.FactoryID = f.ID
@@ -175,6 +185,7 @@ select  0 AS selected
         , Fromlocation = Fromlocation.listValue
         , GroupQty = Sum(fi.InQty - fi.OutQty + fi.AdjustQty - fi.ReturnQty) over (partition by #tmp.ToFactoryID, #tmp.poid, #tmp.seq1, #tmp.seq2, fi.dyelot)
         , fi.Tone
+        ,Color
 from #tmp  
 inner join dbo.FtyInventory fi WITH (NOLOCK) on fi.POID = InventoryPOID 
                                                 and fi.seq1 = Inventoryseq1 
