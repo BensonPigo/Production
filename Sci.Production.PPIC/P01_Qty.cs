@@ -15,6 +15,7 @@ namespace Sci.Production.PPIC
     /// </summary>
     public partial class P01_Qty : Win.Subs.Base
     {
+        private bool isPPIC_P01_Class;
         private string orderID;
         private string poID;
         private string poCombo;
@@ -22,6 +23,9 @@ namespace Sci.Production.PPIC
         private DataTable grid2Data;
         private DataTable grid3Data;
         private DataTable grid4Data;  // 存Qty資料
+        private DataTable grid5Data;
+        private DataTable grid6Data;
+
         private DataTable grid1Data_OriQty;
         private DataTable grid2Data_OriQty;
         private DataTable grid3Data_OriQty;
@@ -33,7 +37,8 @@ namespace Sci.Production.PPIC
         /// <param name="orderID">string OrderID</param>
         /// <param name="pOID">string POID</param>
         /// <param name="pOCombo">string POCombo</param>
-        public P01_Qty(string orderID, string pOID, string pOCombo)
+        /// <param name="isPPIC_P01">isPPIC_P01</param>
+        public P01_Qty(string orderID, string pOID, string pOCombo, bool isPPIC_P01 = false)
         {
             this.InitializeComponent();
             this.orderID = orderID;
@@ -43,6 +48,11 @@ namespace Sci.Production.PPIC
             this.displaySPPOCombination.Value = this.poCombo;
             this.displayColorwayPOCombination.Value = this.poCombo;
             this.displayDeliveryPOCombination.Value = this.poCombo;
+            this.isPPIC_P01_Class = isPPIC_P01;
+
+            // 預設TabPage 隱藏
+            this.tabPage5.Parent = null;
+            this.tabPage6.Parent = null;
         }
 
         /// <inheritdoc/>
@@ -592,6 +602,122 @@ order by rnk, RowNo",
             this.listControlBindingSource2.DataSource = this.grid2Data;
             this.listControlBindingSource3.DataSource = this.grid3Data;
             this.listControlBindingSource4.DataSource = this.grid4Data;
+
+            #region TabPage 5 Grid 設定
+            this.grid1.IsEditingReadOnly = true;
+            this.grid1.DataSource = this.listControlBindingSource6;
+            gen = this.Helper.Controls.Grid.Generator(this.grid1);
+            this.CreateGrid(gen, "int", "TotalQty", "Total", Widths.AnsiChars(6));
+            this.CreateGrid(gen, "string", "OrderID", "SP#", Widths.AnsiChars(6));
+            this.CreateGrid(gen, "string", "ID", "Garment SP#", Widths.AnsiChars(6));
+            this.CreateGrid(gen, "string", "Article", "Colorway", Widths.AnsiChars(8));
+            if (headerData != null && headerData.Rows.Count > 0)
+            {
+                foreach (DataRow dr in headerData.Rows)
+                {
+                    this.CreateGrid(gen, "int", MyUtility.Convert.GetString(dr["SizeCode"]), MyUtility.Convert.GetString(dr["SizeCode"]), Widths.AnsiChars(8));
+                }
+            }
+
+            this.CreateGrid(gen, "date", "BuyerDelivery", "Buyer Delivery", Widths.AnsiChars(10));
+            #endregion
+
+            #region TabPage 6 Grid 設定
+            this.grid2.IsEditingReadOnly = true;
+            this.grid2.DataSource = this.listControlBindingSource7;
+            gen = this.Helper.Controls.Grid.Generator(this.grid2);
+            this.CreateGrid(gen, "int", "TotalQty", "Total", Widths.AnsiChars(6));
+            this.CreateGrid(gen, "string", "OrderID", "SP#", Widths.AnsiChars(6));
+            this.CreateGrid(gen, "string", "ID", "From SP#", Widths.AnsiChars(6));
+            this.CreateGrid(gen, "string", "Article", "Colorway", Widths.AnsiChars(8));
+            if (headerData != null && headerData.Rows.Count > 0)
+            {
+                foreach (DataRow dr in headerData.Rows)
+                {
+                    this.CreateGrid(gen, "int", MyUtility.Convert.GetString(dr["SizeCode"]), MyUtility.Convert.GetString(dr["SizeCode"]), Widths.AnsiChars(8));
+                }
+            }
+
+            this.CreateGrid(gen, "date", "BuyerDelivery", "Buyer Delivery", Widths.AnsiChars(10));
+            #endregion
+
+            if (this.isPPIC_P01_Class)
+            {
+                string strSize = MyUtility.Check.Empty(pivot.ToString()) ? "[ ]" : pivot.ToString().Substring(0, pivot.ToString().Length - 1);
+                string sQLcmd_TabPag5 = $@"select 1
+                            from Orders
+                            where 
+                            Category ='B' 
+                            and OrderTypeID +BrandID in (select ID+BrandID from OrderType where IsGMTMaster = 1)
+                            and ID = '{this.orderID}'";
+                var isTabPag5 = MyUtility.GetValue.Lookup(sQLcmd_TabPag5) == "1" ? true : false;
+                if (isTabPag5)
+                {
+                    this.tabPage5.Parent = this.tabControl1; // 顯示TabPage
+                    string sqlTable5 = $@"
+                    with 
+                    tmpData as (
+	                    select 
+                        o.BuyerDelivery
+                        , Article
+                        ,SizeCode
+                        ,oqg.Qty
+                        , oqg.ID
+                        ,[OrderID] = o.ID
+                        from Order_Qty_Garment oqg with(nolock) 
+                        inner join Orders o with(nolock) on o.ID = oqg.id
+                        where oqg.OrderIDFrom = '{this.orderID}'  and o.Junk = 0
+                    ),
+                    pivotData as
+                    (
+                            select *
+                            from tmpData
+                            pivot( 
+                                sum(Qty) for SizeCode in ({strSize})
+                            ) a
+                    )
+                    select *
+                            , (select sum(isnull(Qty,0)) from tmpData where  ID = p.ID) as TotalQty
+                    from pivotData p";
+                    result = DBProxy.Current.Select(null, sqlTable5, out this.grid5Data);
+                    this.listControlBindingSource6.DataSource = this.grid5Data;
+                }
+
+                string sQLcmd_TabPage6 = $@"select 1 from Orders where Category ='G' and id = '{this.orderID}'";
+                var isTabPag6 = MyUtility.GetValue.Lookup(sQLcmd_TabPage6) == "1" ? true : false;
+                if (isTabPag6)
+                {
+                    this.tabPage6.Parent = this.tabControl1; // 顯示TabPage
+
+                    string sqlTable6 = $@"
+                    with 
+                    tmpData as (
+	                    select 
+                        o.BuyerDelivery
+                        ,oqg.Article
+                        ,oqg.SizeCode
+                        ,oqg.Qty
+                        ,oqg.ID
+                        ,[OrderID] = o.ID
+                        from Order_Qty_Garment oqg with(nolock) 
+                        inner join Orders o with(nolock) on o.ID = oqg.id
+                        where oqg.ID  = '{this.orderID}' and oqg.Junk = 0
+                    ),
+                    pivotData as
+                    (
+                            select *
+                            from tmpData
+                            pivot( 
+                                sum(Qty) for SizeCode in ({strSize})
+                            ) a
+                    )
+                    select *
+                            , (select sum(isnull(Qty,0)) from tmpData where  ID = p.ID) as TotalQty
+                    from pivotData p";
+                    result = DBProxy.Current.Select(null, sqlTable6, out this.grid6Data);
+                    this.listControlBindingSource7.DataSource = this.grid6Data;
+                }
+            }
         }
 
         /// <summary>
