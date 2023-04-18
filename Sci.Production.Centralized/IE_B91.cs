@@ -81,7 +81,7 @@ namespace Sci.Production.Centralized
                 return false;
             }
 
-            if (dt != null && dt.Rows.Count > 0)
+            if (dt != null && dt.Rows.Count > 0 && this.IsDetailInserting)
             {
                 MyUtility.Msg.WarningBox($@"<Description> already exists as ID:<{dt.Rows[0]["ID"]}>!");
                 return false;

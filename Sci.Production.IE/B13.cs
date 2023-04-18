@@ -69,7 +69,6 @@ namespace Sci.Production.IE
             List<SqlParameter> parameters = new List<SqlParameter>()
                         {
                             new SqlParameter("@Type", this.CurrentMaintain["Type"].ToString()),
-                            new SqlParameter("@ID", this.CurrentMaintain["ID"].ToString()),
                         };
 
             result = DBProxy.Current.Select(null, "select ID from AttachmentType WITH (NOLOCK) WHERE Type = @Type", parameters, out dt);

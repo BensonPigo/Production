@@ -68,7 +68,6 @@ namespace Sci.Production.IE
             List<SqlParameter> parameters = new List<SqlParameter>()
                         {
                             new SqlParameter("@FoldType", this.CurrentMaintain["FoldType"].ToString()),
-                            new SqlParameter("@ID", this.CurrentMaintain["ID"].ToString()),
                         };
 
             result = DBProxy.Current.Select(null, "select ID from AttachmentFoldType WITH (NOLOCK) WHERE FoldType = @FoldType", parameters, out dt);

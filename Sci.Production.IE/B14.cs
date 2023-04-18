@@ -70,10 +70,9 @@ namespace Sci.Production.IE
             List<SqlParameter> parameters = new List<SqlParameter>()
                         {
                             new SqlParameter("@Measurement", this.CurrentMaintain["Measurement"].ToString()),
-                            new SqlParameter("@ID", this.CurrentMaintain["ID"].ToString()),
                         };
 
-            result = DBProxy.Current.Select(null, "select ID from AttachmentMeasurement WITH (NOLOCK) WHERE Measurement = @Measurement AND ID = @ID", parameters, out dt);
+            result = DBProxy.Current.Select(null, "select ID from AttachmentMeasurement WITH (NOLOCK) WHERE Measurement = @Measurement ", parameters, out dt);
 
             if (!result)
             {

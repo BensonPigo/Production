@@ -191,7 +191,7 @@ namespace Sci.Production.IE
             }
 
             // 換行處理
-            this.CurrentMaintain["Remark"] = this.CurrentMaintain["Remark"].ToString().Replace("\n", Environment.NewLine);
+            this.CurrentMaintain["Remark"] = this.CurrentMaintain["Remark"].ToString().Replace("\n", Environment.NewLine).Replace("\r", Environment.NewLine);
         }
 
         private void TxtMoldID_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
@@ -659,7 +659,7 @@ namespace Sci.Production.IE
             OpenFileDialog file = new OpenFileDialog
             {
                 InitialDirectory = "c:\\", // 預設路徑
-                Filter = "Image Files(*.BMP;*.JPG;*.GIF)|*.BMP;*.JPG;*.GIF|All files (*.*)|*.*", // 使用檔名
+                Filter = "Image Files(*.BMP;*.JPG;*.GIF)|*.BMP;*.JPG;*.JPEG;*.PNG;*.GIF|All files (*.*)|*.*", // 使用檔名
                 FilterIndex = 1,
                 RestoreDirectory = true,
             };
