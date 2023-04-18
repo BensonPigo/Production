@@ -3720,6 +3720,7 @@ order by Barcode desc
             {
                 DataTable emptyBarcodedt = new DataTable();
                 emptyBarcodedt.Columns.Add("Ukey");
+                emptyBarcodedt.Columns.Add("Qty");
 
                 foreach (DataRow dr in dtDetail.Select("Qty >= 0 and FabricType = 'F' and isnull(Barcode, '') = ''"))
                 {
@@ -3730,12 +3731,13 @@ order by Barcode desc
                 {
                     DataRow newrow = emptyBarcodedt.NewRow();
                     newrow["Ukey"] = dr["ToUkey"];
+                    newrow["Qty"] = dr["Qty"];
                     emptyBarcodedt.Rows.Add(newrow);
                 }
 
                 if (emptyBarcodedt.Rows.Count > 0)
                 {
-                    Class.WH_BarcodeEmpty wH_Barcode = new Class.WH_BarcodeEmpty(emptyBarcodedt, "FtyInventory barcode can't empty");
+                    Class.WH_BarcodeEmpty wH_Barcode = new Class.WH_BarcodeEmpty(emptyBarcodedt, "FtyInventory barcode can't empty", true);
                     wH_Barcode.ShowDialog();
                     return false;
                 }
