@@ -199,12 +199,12 @@ and psd.Junk = 0
 ";
             if (!MyUtility.Check.Empty(seq1))
             {
-                cmd += $"AND p.Seq1 = '{seq1}'" + Environment.NewLine;
+                cmd += $"AND psd.Seq1 = '{seq1}'" + Environment.NewLine;
             }
 
             if (!MyUtility.Check.Empty(seq2))
             {
-                cmd += $"AND p.Seq2 = '{seq2}'" + Environment.NewLine;
+                cmd += $"AND psd.Seq2 = '{seq2}'" + Environment.NewLine;
             }
 
             DataTable dt;
