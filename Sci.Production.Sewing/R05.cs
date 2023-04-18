@@ -13,13 +13,17 @@ namespace Sci.Production.Sewing
     public partial class R05 : Win.Tems.PrintForm
     {
         private DataTable printData;
-        private DateTime? date1;
-        private DateTime? date2;
+        private DateTime? buyerDate1;
+        private DateTime? buyerDate2;
+        private DateTime? sciDate1;
+        private DateTime? sciDate2;
         private string factory;
         private string sp_from;
         private string sp_to;
         private string brand;
         private string status;
+        private string reportType;
+        private string sqlCmd;
 
         /// <summary>
         /// R05
@@ -29,32 +33,52 @@ namespace Sci.Production.Sewing
             : base(menuitem)
         {
             this.InitializeComponent();
-
-            // MyUtility.Tool.SetupCombox(cb_status, 1, 1, ",Unfinished,Finished,Excess,All");
+            MyUtility.Tool.SetupCombox(this.comboReportType, 2, 1, "G,Garment Order Allocate Output,B,Booking Order Assign to Garment Order");
             this.cb_status.SelectedIndex = 0;
+            this.comboReportType.SelectedIndex = 0;
         }
 
         /// <inheritdoc/>
         protected override bool ValidateInput()
         {
-            this.date1 = this.dateBuyerDelivery.Value1;
-            this.date2 = this.dateBuyerDelivery.Value2;
+            this.buyerDate1 = this.dateBuyerDelivery.Value1;
+            this.buyerDate2 = this.dateBuyerDelivery.Value2;
+            this.sciDate1 = this.dateSCIDelivery.Value1;
+            this.sciDate2 = this.dateSCIDelivery.Value2;
             this.factory = this.txtfactory.Text;
             this.sp_from = this.txtsp_from.Text;
             this.sp_to = this.txtsp_to.Text;
             this.brand = this.txtbrand.Text;
-            this.status = this.cb_status.Text;
-
+            this.status = this.comboReportType.SelectedIndex == 0 ? this.cb_status.Text : string.Empty;
+            this.reportType = this.comboReportType.SelectedValue.ToString();
             return base.ValidateInput();
         }
 
         /// <inheritdoc/>
         protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
+            if (this.reportType == "G")
+            {
+                this.sqlCmd = this.SQL_GarmentOrder();
+            }
+            else if (this.reportType == "B")
+            {
+                this.sqlCmd = this.SQL_BookingOrder();
+            }
+
+            return Ict.Result.True;
+        }
+
+        private string SQL_GarmentOrder()
+        {
             StringBuilder sqlCmd = new StringBuilder();
             sqlCmd.Append(string.Format(@"
                         Select  [Sp#] = OQG.ID
                                 ,[StyleID] = O.StyleID
+		                        , o.BuyerDelivery
+		                        , o.SciDelivery
+		                        , o.CPU
+		                        , [BtoG] = g.BtoG
                                 ,[Brand] = O.BrandID
                                 ,[Season] = O.SeasonID
                                 ,[*] = SL.Location
@@ -104,22 +128,56 @@ namespace Sci.Production.Sewing
                                     		and SewingOutput_Detail_Detail_Garment.SizeCode =OQG.SizeCode
                                     		and SewingOutput_Detail_Detail_Garment.OrderIDfrom = OQG.OrderIDFrom
                                     ) as SODDG2
+                        outer apply (
+	                        SELECT [BtoG] = IIF(COUNT(*) > 1 , 'O' ,IIF(SUM(g.[gQTY]) = SUM(g.[bQTY]), 'A' ,'O'))
+	                        FROM (
+		                        SELECT [gPOID] = g3.POID,
+			                        [bPOID] = b3.POID,
+			                        [gQTY] = SUM(g3.Qty),
+			                        [bQTY] = SUM(b3.Qty)
+		                        FROM Order_Qty_Garment og3
+		                        INNER JOIN Orders g3 ON og3.ID = g3.ID
+		                        INNER JOIN Orders b3 ON og3.OrderIDFrom = b3.ID 
+		                        INNER JOIN (
+				                        SELECT DISTINCT [gPOID] = g2.POID, 
+					                        [bPOID] = b2.POID
+				                        FROM Order_Qty_Garment og2 
+				                        INNER JOIN Orders g2 ON og2.ID = g2.ID
+				                        INNER JOIN Orders b2 ON og2.OrderIDFrom = b2.ID 
+				                        INNER JOIN Order_Qty_Garment og1 ON og1.ID = OQG.ID AND og1.Junk = 0
+				                        INNER JOIN Orders g1 ON og1.ID = g1.ID AND g1.Category = 'G'
+				                        INNER JOIN Orders b1 ON og1.OrderIDFrom = b1.ID AND b1.Category = 'B'
+				                        WHERE (g1.POID = g2.POID OR b1.POID = b2.POID)
+			                        ) tmp ON (g3.POID = tmp.gPOID OR b3.POID = tmp.bPOID) AND og3.Junk = 0
+		                        GROUP BY g3.POID, b3.POID
+	                        )g 
+                        ) g
                         where 1 = 1 
                 "));
 
-            if (!MyUtility.Check.Empty(this.date1))
+            if (!MyUtility.Check.Empty(this.buyerDate1))
             {
-                sqlCmd.Append(string.Format(" and O.BuyerDelivery >= '{0}' ", Convert.ToDateTime(this.date1).ToString("yyyy/MM/dd")));
+                sqlCmd.Append(string.Format(" and o.BuyerDelivery >= '{0}' ", Convert.ToDateTime(this.buyerDate1).ToString("yyyy/MM/dd")));
             }
 
-            if (!MyUtility.Check.Empty(this.date2))
+            if (!MyUtility.Check.Empty(this.buyerDate2))
             {
-                sqlCmd.Append(string.Format(" and O.BuyerDelivery <= '{0}' ", Convert.ToDateTime(this.date2).ToString("yyyy/MM/dd")));
+                sqlCmd.Append(string.Format(" and o.BuyerDelivery <= '{0}' ", Convert.ToDateTime(this.buyerDate2).ToString("yyyy/MM/dd")));
+            }
+
+            if (!MyUtility.Check.Empty(this.sciDate1))
+            {
+                sqlCmd.Append(string.Format(" and o.SciDelivery >= '{0}' ", Convert.ToDateTime(this.sciDate1).ToString("yyyy/MM/dd")));
+            }
+
+            if (!MyUtility.Check.Empty(this.sciDate2))
+            {
+                sqlCmd.Append(string.Format(" and o.SciDelivery <= '{0}' ", Convert.ToDateTime(this.sciDate2).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.factory))
             {
-                sqlCmd.Append(string.Format(" and O.FtyGroup = '{0}'", this.factory));
+                sqlCmd.Append(string.Format(" and o.FtyGroup = '{0}'", this.factory));
             }
 
             if (!MyUtility.Check.Empty(this.sp_from))
@@ -134,7 +192,7 @@ namespace Sci.Production.Sewing
 
             if (!MyUtility.Check.Empty(this.brand))
             {
-                sqlCmd.Append(string.Format(" and O.BrandID = '{0}'", this.brand));
+                sqlCmd.Append(string.Format(" and o.BrandID = '{0}'", this.brand));
             }
 
             string status_condistion = string.Empty;
@@ -157,19 +215,130 @@ namespace Sci.Production.Sewing
                 sqlCmd.Append(@") as alldata where " + status_condistion);
             }
 
-            DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), out this.printData);
+            return sqlCmd.ToString();
+        }
+
+        private string SQL_BookingOrder()
+        {
+            string sqlWhere = string.Empty;
+            if (!MyUtility.Check.Empty(this.buyerDate1))
+            {
+                sqlWhere += string.Format(" and o.BuyerDelivery >= '{0}' ", Convert.ToDateTime(this.buyerDate1).ToString("yyyy/MM/dd"));
+            }
+
+            if (!MyUtility.Check.Empty(this.buyerDate2))
+            {
+                sqlWhere += string.Format(" and o.BuyerDelivery <= '{0}' ", Convert.ToDateTime(this.buyerDate2).ToString("yyyy/MM/dd"));
+            }
+
+            if (!MyUtility.Check.Empty(this.sciDate1))
+            {
+                sqlWhere += string.Format(" and o.SciDelivery >= '{0}' ", Convert.ToDateTime(this.sciDate1).ToString("yyyy/MM/dd"));
+            }
+
+            if (!MyUtility.Check.Empty(this.sciDate2))
+            {
+                sqlWhere += string.Format(" and o.SciDelivery <= '{0}' ", Convert.ToDateTime(this.sciDate2).ToString("yyyy/MM/dd"));
+            }
+
+            if (!MyUtility.Check.Empty(this.factory))
+            {
+                sqlWhere += string.Format(" and o.FtyGroup = '{0}'", this.factory);
+            }
+
+            if (!MyUtility.Check.Empty(this.sp_from))
+            {
+                sqlWhere += string.Format(" and o.ID >= '{0}'", this.sp_from);
+            }
+
+            if (!MyUtility.Check.Empty(this.sp_to))
+            {
+                sqlWhere += string.Format(" and o.ID <= '{0}'", this.sp_to);
+            }
+
+            if (!MyUtility.Check.Empty(this.brand))
+            {
+                sqlWhere += string.Format(" and o.BrandID = '{0}'", this.brand);
+            }
+
+            string sqlCmd = $@"
+select [Sp#] = o.ID	
+	, [Style] = o.StyleID
+	, [Buyer Delivery] = o.BuyerDelivery
+	, [SCI Delivery] = o.SciDelivery
+	, [KPI LETA] = o.KPILETA
+	, [PF ETA] = o.PFETA
+	, o.CPU
+	, [B --> G Garment Type] = g.BtoG
+	, [Brand] = o.BrandID
+	, [Season] = o.SeasonID
+	, [Garment SP#] = og.ID
+	, [Article] = og.Article
+	, og.SizeCode
+	, og.Qty
+into #tmp
+from Order_Qty_Garment og
+inner join Orders o WITH(NOLOCK) on og.OrderIDFrom = o.ID and o.Category = 'B'
+outer apply (
+	SELECT [BtoG] = IIF(COUNT(*) > 1 , 'O' ,IIF(SUM(g.[gQTY]) = SUM(g.[bQTY]), 'A' ,'O'))
+	FROM (
+		SELECT [gPOID] = g3.POID,
+			[bPOID] = b3.POID,
+			[gQTY] = SUM(g3.Qty),
+			[bQTY] = SUM(b3.Qty)
+		FROM Order_Qty_Garment og3
+		INNER JOIN Orders g3 ON og3.ID = g3.ID
+		INNER JOIN Orders b3 ON og3.OrderIDFrom = b3.ID 
+		INNER JOIN (
+				SELECT DISTINCT [gPOID] = g2.POID, 
+					[bPOID] = b2.POID
+				FROM Order_Qty_Garment og2 
+				INNER JOIN Orders g2 ON og2.ID = g2.ID
+				INNER JOIN Orders b2 ON og2.OrderIDFrom = b2.ID 
+				INNER JOIN Order_Qty_Garment og1 ON og1.ID = og.ID AND og1.Junk = 0
+				INNER JOIN Orders g1 ON og1.ID = g1.ID AND g1.Category = 'G'
+				INNER JOIN Orders b1 ON og1.OrderIDFrom = b1.ID AND b1.Category = 'B'
+				WHERE (g1.POID = g2.POID OR b1.POID = b2.POID)
+			) tmp ON (g3.POID = tmp.gPOID OR b3.POID = tmp.bPOID) AND og3.Junk = 0
+		GROUP BY g3.POID, b3.POID
+	)g 
+) g
+where 1 = 1
+{sqlWhere}
+and og.Junk = 0
+
+DECLARE @cols AS NVARCHAR(MAX), @query AS NVARCHAR(MAX)
+
+SELECT @cols = STUFF((SELECT ',' + QUOTENAME(SizeCode)
+                      FROM #tmp
+					  GROUP BY SizeCode
+					  ORDER BY 
+							CASE WHEN TRY_CONVERT(INT, SizeCode) IS NOT NULL THEN SizeCode ELSE 999 END,
+							SizeCode COLLATE Latin1_General_100_CI_AI
+                      FOR XML PATH(''), TYPE
+                     ).value('.', 'NVARCHAR(MAX)'), 1, 1, '')
+
+
+SET @query = 'SELECT * FROM ( SELECT * FROM #tmp t ) src
+              PIVOT ( MAX(Qty) FOR SizeCode IN (' + @cols + ') ) piv'
+EXECUTE(@query)
+
+
+drop table #tmp
+                ";
+            return sqlCmd;
+        }
+
+        /// <inheritdoc/>
+        protected override bool OnToExcel(Win.ReportDefinition report)
+        {
+            DualResult result = DBProxy.Current.Select(null, this.sqlCmd, out this.printData);
             if (!result)
             {
                 DualResult failResult = new DualResult(false, "Query data fail\r\n" + result.ToString());
                 return failResult;
             }
 
-            return Ict.Result.True;
-        }
-
-        /// <inheritdoc/>
-        protected override bool OnToExcel(Win.ReportDefinition report)
-        {
             // 顯示筆數於PrintForm上Count欄位
             this.SetCount(this.printData.Rows.Count);
 
@@ -180,19 +349,64 @@ namespace Sci.Production.Sewing
             }
 
             this.ShowWaitMessage("Starting EXCEL...");
+            bool excelresult = false;
+            if (this.reportType == "G")
+            {
+                excelresult = this.ExcelCreateGarment();
+            }
+            else if (this.reportType == "B")
+            {
+                excelresult = this.ExcelCreateBooking();
+            }
+
+            if (!excelresult)
+            {
+                MyUtility.Msg.WarningBox(excelresult.ToString(), "Warning");
+            }
+            this.HideWaitMessage();
+            return true;
+        }
+
+        private bool ExcelCreateGarment()
+        {
             string excelFile = "Sewing_R05_GarmentOrderAllocateOutputReport.xltx";
             Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + excelFile); // 開excelapp
             Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
-
             bool result = MyUtility.Excel.CopyToXls(this.printData, string.Empty, xltfile: excelFile, headerRow: 1, excelApp: objApp);
+            return result;
+        }
 
-            if (!result)
+        private bool ExcelCreateBooking()
+        {
+            string excelFile = "Sewing_R05_BookingOrderAssigntoGarmentOrderReport.xltx";
+            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + excelFile); // 開excelapp
+            Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
+
+            for (int c = 1; c <= this.printData.Columns.Count; c++)
             {
-                MyUtility.Msg.WarningBox(result.ToString(), "Warning");
+                objSheets.Cells[1, c].Copy();
+                if (c < this.printData.Columns.Count)
+                {
+                    objSheets.Cells[1, c + 1].PasteSpecial(Microsoft.Office.Interop.Excel.XlPasteType.xlPasteFormats, Microsoft.Office.Interop.Excel.XlPasteSpecialOperation.xlPasteSpecialOperationNone, false, false);
+                }
             }
 
-            this.HideWaitMessage();
-            return true;
+            for (int c = 1; c <= this.printData.Columns.Count; c++)
+            {
+                objSheets.Cells[1, c] = this.printData.Columns[c - 1].ToString();
+            }
+
+            bool result = MyUtility.Excel.CopyToXls(this.printData, string.Empty, xltfile: excelFile, headerRow: 1, excelApp: objApp);
+            return result;
+        }
+
+        private void ComboReportType_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            this.cb_status.Enabled = true;
+            if (((ComboBox)sender).SelectedIndex == 1)
+            {
+                this.cb_status.Enabled = false;
+            }
         }
     }
 }
