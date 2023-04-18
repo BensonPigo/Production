@@ -313,6 +313,7 @@ on t.poid = s.poid and t.seq1 = s.seq1 and t.seq2 = s.seq2;";
         /// *   8.  更新AdjustQty
         /// *   26. 更新Location
         /// *   37. 更新Return QTY
+        /// *   66. 更新Tone
         /// </summary>
         /// <param name="type">type</param>
         /// <param name="datas">datas</param>
@@ -631,6 +632,30 @@ drop table #tmp_L_K
                     sqlcmd += @"drop table #tmpS1, #tmpS11; 
                                 drop table #TmpSource;";
                     #endregion
+                    break;
+                case 66:
+                    sqlcmd = $@"
+alter table #TmpSource alter column poid varchar(20)
+alter table #TmpSource alter column seq1 varchar(3)
+alter table #TmpSource alter column seq2 varchar(3)
+alter table #TmpSource alter column stocktype varchar(1)
+alter table #TmpSource alter column roll varchar(15)
+alter table #TmpSource alter column dyelot varchar(8)
+alter table #TmpSource alter column FabricType varchar(1)
+
+update f
+set Tone = sd.Tone
+from #TmpSource sd
+inner join FtyInventory f with(nolock) on f.POID = sd.poid
+    and f.Seq1 = sd.seq1
+    and f.Seq2 = sd.seq2
+    and f.Roll = sd.roll
+    and f.Dyelot = sd.dyelot
+    and f.StockType = sd.stocktype
+where sd.FabricType = 'F'
+
+drop table #TmpSource;
+";
                     break;
                 case 70:
                     #region 更新Ftyinventor.Barcode 第一層

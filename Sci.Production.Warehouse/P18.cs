@@ -1088,6 +1088,24 @@ where   d.Id = '{0}'
             string upd_Fty_2T = Prgs.UpdateFtyInventory_IO(2, null, true, mtlAutoLock);
             #endregion 更新庫存數量  ftyinventory
 
+            #region -- ftyinventory Tone --
+
+            var data_Fty_Tone = (from b in this.DetailDatas
+                               select new
+                               {
+                                   poid = b.Field<string>("poid"),
+                                   seq1 = b.Field<string>("seq1"),
+                                   seq2 = b.Field<string>("seq2"),
+                                   stocktype = b.Field<string>("stocktype"),
+                                   FabricType = b.Field<string>("FabricType"),
+                                   Tone = b.Field<string>("Tone"),
+                                   roll = b.Field<string>("roll"),
+                                   dyelot = b.Field<string>("dyelot"),
+                               }).ToList();
+
+            string upd_Fty_Tone = Prgs.UpdateFtyInventory_IO(66, null, true, mtlAutoLock);
+            #endregion ftyinventory Tone
+
             #region 更新 Po_Supp_Detail StockUnit
             string sql_UpdatePO_Supp_Detail = @";
 alter table #Tmp alter column poid varchar(20)
@@ -1110,76 +1128,6 @@ when matched then
     update
     set target.StockUnit = src.StockUnit;
 ";
-            #endregion
-
-            #region 更新FIR,AIR資料 & 寫入PMSFile 在 insert_Air_Fir 內
-
-            List<SqlParameter> fir_Air_Proce = new List<SqlParameter>
-            {
-                new SqlParameter("@ID", this.CurrentMaintain["ID"]),
-                new SqlParameter("@LoginID", Env.User.UserID),
-            };
-            if (!(result = DBProxy.Current.Select(string.Empty, " exec dbo.insert_Air_Fir_TnsfIn @ID,@LoginID", fir_Air_Proce, out DataTable[] airfirids)))
-            {
-                this.ShowErr(result);
-                return;
-            }
-
-            if (airfirids[0].Rows.Count > 0 || airfirids[1].Rows.Count > 0)
-            {
-                // 寫入PMSFile
-                string cmd = @"SET XACT_ABORT ON
-";
-                var firinsertlist = airfirids[0].AsEnumerable().Where(w => !MyUtility.Check.Empty(w["id"]));
-                if (firinsertlist.Any())
-                {
-                    string firInsertIDs = firinsertlist.Select(s => MyUtility.Convert.GetString(s["id"])).Distinct().JoinToString(",");
-                    cmd += $@"
-INSERT INTO SciPMSFile_FIR_Laboratory (ID)
-select ID from FIR_Laboratory t WITH(NOLOCK) where id in ({firInsertIDs})
-and not exists (select 1 from SciPMSFile_FIR_Laboratory s (NOLOCK) where s.ID = t.ID )
-";
-                }
-
-                var firDeletelist = airfirids[0].AsEnumerable().Where(w => !MyUtility.Check.Empty(w["deID"]));
-                if (firDeletelist.Any())
-                {
-                    string firDeleteIDs = firDeletelist.Select(s => MyUtility.Convert.GetString(s["deID"])).Distinct().JoinToString(",");
-                    cmd += $@"
-Delete SciPMSFile_FIR_Laboratory where id in ({firDeleteIDs})
-and ID NOT IN(select ID from FIR_Laboratory)";
-                }
-
-                var airinsertlist = airfirids[1].AsEnumerable().Where(w => !MyUtility.Check.Empty(w["id"]));
-                if (airinsertlist.Any())
-                {
-                    string airInsertIDs = airinsertlist.Select(s => MyUtility.Convert.GetString(s["id"])).Distinct().JoinToString(",");
-                    cmd += $@"
-INSERT INTO SciPMSFile_AIR_Laboratory (ID,POID,SEQ1,SEQ2)
-select  ID,POID,SEQ1,SEQ2 from AIR_Laboratory t WITH(NOLOCK) where id in ({airInsertIDs})
-and not exists (select 1 from SciPMSFile_AIR_Laboratory s WITH(NOLOCK) where s.ID = t.ID AND s.POID = t.POID AND s.SEQ1 = t.SEQ1 AND s.SEQ2 = t.SEQ2 )
-";
-                }
-
-                var airDeletelist = airfirids[1].AsEnumerable().Where(w => !MyUtility.Check.Empty(w["deID"]));
-                if (airDeletelist.Any())
-                {
-                    string airDeleteIDs = airDeletelist.Select(s => MyUtility.Convert.GetString(s["deID"])).Distinct().JoinToString(",");
-                    cmd += $@"
-Delete a 
-from SciPMSFile_AIR_Laboratory a
-where id in ({airDeleteIDs})
-and NOT EXISTS(select 1 from AIR_Laboratory b    where a.ID = b.ID AND a.POID=b.POID AND a.Seq1=b.Seq1 AND a.Seq2=b.Seq2)
-";
-                }
-
-                result = DBProxy.Current.Execute(null, cmd);
-                if (!result)
-                {
-                    this.ShowErr(result);
-                    return;
-                }
-            }
             #endregion
 
             #region 檢查MINDQRCode是否有在其他單子重複，有重複就update成空白, where 拆開來是因為效能(有index但有時候無效)
@@ -1224,6 +1172,76 @@ and exists(select 1 from WHBarcodeTransaction wht with (nolock) where [Function]
                 {
                     try
                     {
+                        #region 更新FIR,AIR資料 & 寫入PMSFile 在 insert_Air_Fir 內
+
+                        List<SqlParameter> fir_Air_Proce = new List<SqlParameter>
+            {
+                new SqlParameter("@ID", this.CurrentMaintain["ID"]),
+                new SqlParameter("@LoginID", Env.User.UserID),
+            };
+                        if (!(result = DBProxy.Current.SelectByConn(sqlConn, " exec dbo.insert_Air_Fir_TnsfIn @ID,@LoginID", fir_Air_Proce, out DataTable[] airfirids)))
+                        {
+                            this.ShowErr(result);
+                            return;
+                        }
+
+                        if (airfirids[0].Rows.Count > 0 || airfirids[1].Rows.Count > 0)
+                        {
+                            // 寫入PMSFile
+                            string cmd = @"SET XACT_ABORT ON
+";
+                            var firinsertlist = airfirids[0].AsEnumerable().Where(w => !MyUtility.Check.Empty(w["id"]));
+                            if (firinsertlist.Any())
+                            {
+                                string firInsertIDs = firinsertlist.Select(s => MyUtility.Convert.GetString(s["id"])).Distinct().JoinToString(",");
+                                cmd += $@"
+INSERT INTO SciPMSFile_FIR_Laboratory (ID)
+select ID from FIR_Laboratory t WITH(NOLOCK) where id in ({firInsertIDs})
+and not exists (select 1 from SciPMSFile_FIR_Laboratory s (NOLOCK) where s.ID = t.ID )
+";
+                            }
+
+                            var firDeletelist = airfirids[0].AsEnumerable().Where(w => !MyUtility.Check.Empty(w["deID"]));
+                            if (firDeletelist.Any())
+                            {
+                                string firDeleteIDs = firDeletelist.Select(s => MyUtility.Convert.GetString(s["deID"])).Distinct().JoinToString(",");
+                                cmd += $@"
+Delete SciPMSFile_FIR_Laboratory where id in ({firDeleteIDs})
+and ID NOT IN(select ID from FIR_Laboratory)";
+                            }
+
+                            var airinsertlist = airfirids[1].AsEnumerable().Where(w => !MyUtility.Check.Empty(w["id"]));
+                            if (airinsertlist.Any())
+                            {
+                                string airInsertIDs = airinsertlist.Select(s => MyUtility.Convert.GetString(s["id"])).Distinct().JoinToString(",");
+                                cmd += $@"
+INSERT INTO SciPMSFile_AIR_Laboratory (ID,POID,SEQ1,SEQ2)
+select  ID,POID,SEQ1,SEQ2 from AIR_Laboratory t WITH(NOLOCK) where id in ({airInsertIDs})
+and not exists (select 1 from SciPMSFile_AIR_Laboratory s WITH(NOLOCK) where s.ID = t.ID AND s.POID = t.POID AND s.SEQ1 = t.SEQ1 AND s.SEQ2 = t.SEQ2 )
+";
+                            }
+
+                            var airDeletelist = airfirids[1].AsEnumerable().Where(w => !MyUtility.Check.Empty(w["deID"]));
+                            if (airDeletelist.Any())
+                            {
+                                string airDeleteIDs = airDeletelist.Select(s => MyUtility.Convert.GetString(s["deID"])).Distinct().JoinToString(",");
+                                cmd += $@"
+Delete a 
+from SciPMSFile_AIR_Laboratory a
+where id in ({airDeleteIDs})
+and NOT EXISTS(select 1 from AIR_Laboratory b    where a.ID = b.ID AND a.POID=b.POID AND a.Seq1=b.Seq1 AND a.Seq2=b.Seq2)
+";
+                            }
+
+                            result = DBProxy.Current.ExecuteByConn(sqlConn, cmd);
+                            if (!result)
+                            {
+                                this.ShowErr(result);
+                                return;
+                            }
+                        }
+                        #endregion
+
                         /*
                             * 先更新 FtyInventory 後更新 MDivisionPoDetail
                             * 所有 MDivisionPoDetail 資料都在 Transaction 中更新，
@@ -1232,6 +1250,12 @@ and exists(select 1 from WHBarcodeTransaction wht with (nolock) where [Function]
                         // FtyInventory 庫存
                         DataTable resulttb;
                         if (!(result = MyUtility.Tool.ProcessWithObject(data_Fty_2T, string.Empty, upd_Fty_2T, out resulttb, "#TmpSource", conn: sqlConn)))
+                        {
+                            throw result.GetException();
+                        }
+
+                        // FtyInventory Tone一定要在更新庫存後面執行
+                        if (!(result = MyUtility.Tool.ProcessWithObject(data_Fty_Tone, string.Empty, upd_Fty_Tone, out resulttb, "#TmpSource", conn: sqlConn)))
                         {
                             throw result.GetException();
                         }
