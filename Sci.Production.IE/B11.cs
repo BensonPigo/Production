@@ -106,5 +106,39 @@ namespace Sci.Production.IE
                 }
             }
         }
+
+        /// <inheritdoc/>
+        protected override bool ClickSaveBefore()
+        {
+            if (this.CurrentMaintain["ID"].Empty())
+            {
+                MyUtility.Msg.WarningBox("ID cannot be empty!!");
+                return false;
+            }
+
+            DualResult result;
+            DataTable dt;
+
+            List<SqlParameter> parameters = new List<SqlParameter>()
+                        {
+                            new SqlParameter("@ID", this.CurrentMaintain["ID"].ToString()),
+                        };
+
+            result = DBProxy.Current.Select(null, "select ID from SewingMachineTemplate  WITH (NOLOCK) WHERE ID = @ID", parameters, out dt);
+
+            if (!result)
+            {
+                this.ShowErr(result);
+                return false;
+            }
+
+            if (dt != null && dt.Rows.Count > 0 && this.IsDetailInserting)
+            {
+                MyUtility.Msg.WarningBox($@"<ID> already exists as ID:<{dt.Rows[0]["ID"]}>!");
+                return false;
+            }
+
+            return base.ClickSaveBefore();
+        }
     }
 }
