@@ -636,7 +636,7 @@ order by rnk, RowNo",
                 {
                     this.CreateGrid(gen, "int", MyUtility.Convert.GetString(dr["SizeCode"]), MyUtility.Convert.GetString(dr["SizeCode"]), Widths.AnsiChars(8));
                     pivot1.Append(string.Format("[{0}],", MyUtility.Convert.GetString(dr["SizeCode"])));
-                    strSizeCode_5 += $@" ,[{MyUtility.Convert.GetString(dr["SizeCode"])}] = isnull(p.[{MyUtility.Convert.GetString(dr["SizeCode"])}],0)" + Environment.NewLine;
+                    strSizeCode_5 += $@" ,[{MyUtility.Convert.GetString(dr["SizeCode"])}] =p.[{MyUtility.Convert.GetString(dr["SizeCode"])}]" + Environment.NewLine;
                 }
             }
 
@@ -674,7 +674,7 @@ order by rnk, RowNo",
                 {
                     this.CreateGrid(gen, "int", MyUtility.Convert.GetString(dr["SizeCode"]), MyUtility.Convert.GetString(dr["SizeCode"]), Widths.AnsiChars(8));
                     pivot2.Append(string.Format("[{0}],", MyUtility.Convert.GetString(dr["SizeCode"])));
-                    strSizeCode_6 += $@" ,[{MyUtility.Convert.GetString(dr["SizeCode"])}] = isnull(p.[{MyUtility.Convert.GetString(dr["SizeCode"])}],0)" + Environment.NewLine;
+                    strSizeCode_6 += $@" ,[{MyUtility.Convert.GetString(dr["SizeCode"])}] = p.[{MyUtility.Convert.GetString(dr["SizeCode"])}]" + Environment.NewLine;
                 }
             }
 
@@ -1466,6 +1466,12 @@ EXEC sp_executesql @sql", this.poID);
                 for (int i = 0; i < columns1; i++)
                 {
                     objSheets.Cells[2, i + 1] = ptb1.Columns[i].ColumnName;
+
+                    // 欄位Format：文字
+                    if (ptb1.Columns[i].ColumnName == "Colorway")
+                    {
+                        objSheets.Columns[i + 1].NumberFormat = "@";
+                    }
                 }
 
                 string r1 = MyUtility.Excel.ConvertNumericToExcelColumn(columns1);
@@ -1482,6 +1488,23 @@ EXEC sp_executesql @sql", this.poID);
                 for (int i = 0; i < columns2; i++)
                 {
                     objSheets.Cells[3, i + 1] = ptb2.Columns[i].ColumnName;
+
+                    // 欄位Format：文字
+                    if (ptb2.Columns[i].ColumnName == "Sp#" ||
+                        ptb2.Columns[i].ColumnName == "Colorway" ||
+                        ptb2.Columns[i].ColumnName == "Color" ||
+                        ptb2.Columns[i].ColumnName == "Destination" ||
+                        ptb2.Columns[i].ColumnName == "CustCD" ||
+                        ptb2.Columns[i].ColumnName == "Kit#")
+                    {
+                        objSheets.Columns[i + 1].NumberFormat = "@";
+                    }
+
+                    // 顯示日期
+                    if (ptb2.Columns[i].ColumnName == "Buyer Delivery")
+                    {
+                        objSheets.Columns[i + 1].NumberFormat = "yyyy/MM/dd";
+                    }
                 }
 
                 string r2 = MyUtility.Excel.ConvertNumericToExcelColumn(columns2);
@@ -1500,6 +1523,12 @@ EXEC sp_executesql @sql", this.poID);
                 for (int i = 0; i < columns3; i++)
                 {
                     objSheets.Cells[3, i + 1] = ptb3.Columns[i].ColumnName;
+
+                    // 欄位Format：文字
+                    if (ptb3.Columns[i].ColumnName == "Colorway")
+                    {
+                        objSheets.Columns[i + 1].NumberFormat = "@";
+                    }
                 }
 
                 string r3 = MyUtility.Excel.ConvertNumericToExcelColumn(columns3);
@@ -1518,6 +1547,18 @@ EXEC sp_executesql @sql", this.poID);
                 for (int i = 0; i < columns4; i++)
                 {
                     objSheets.Cells[3, i + 1] = ptb4.Columns[i].ColumnName;
+
+                    // 顯示日期
+                    if (ptb4.Columns[i].ColumnName == "Buyer Delivery")
+                    {
+                        objSheets.Columns[i + 1].NumberFormat = "yyyy/MM/dd";
+                    }
+
+                    // 欄位Format：文字
+                    if (ptb4.Columns[i].ColumnName == "Colorway")
+                    {
+                        objSheets.Columns[i + 1].NumberFormat = "@";
+                    }
                 }
 
                 string r4 = MyUtility.Excel.ConvertNumericToExcelColumn(columns4);
@@ -1536,9 +1577,19 @@ EXEC sp_executesql @sql", this.poID);
                 for (int i = 0; i < this.grid5Data.Columns.Count; i++)
                 {
                     objSheets.Cells[2, i + 1] = this.grid5Data.Columns[i].ColumnName;
+
+                    // 顯示日期
                     if (this.grid5Data.Columns[i].ColumnName == "Buyer Delivery")
                     {
                         objSheets.Columns[i + 1].NumberFormat = "yyyy/MM/dd";
+                    }
+
+                    // 欄位Format：文字
+                    if (this.grid5Data.Columns[i].ColumnName == "Colorway" ||
+                        this.grid5Data.Columns[i].ColumnName == "SP#" ||
+                        this.grid5Data.Columns[i].ColumnName == "Garment SP#")
+                    {
+                        objSheets.Columns[i + 1].NumberFormat = "@";
                     }
                 }
 
@@ -1558,9 +1609,19 @@ EXEC sp_executesql @sql", this.poID);
                 for (int i = 0; i < this.grid6Data.Columns.Count; i++)
                 {
                     objSheets.Cells[2, i + 1] = this.grid6Data.Columns[i].ColumnName;
+
+                    // 顯示日期
                     if (this.grid6Data.Columns[i].ColumnName == "Buyer Delivery")
                     {
                         objSheets.Columns[i + 1].NumberFormat = "yyyy/MM/dd";
+                    }
+
+                    // 欄位Format：文字
+                    if (this.grid6Data.Columns[i].ColumnName == "Colorway" ||
+                        this.grid6Data.Columns[i].ColumnName == "SP#" ||
+                        this.grid6Data.Columns[i].ColumnName == "From SP#")
+                    {
+                        objSheets.Columns[i + 1].NumberFormat = "@";
                     }
                 }
 
