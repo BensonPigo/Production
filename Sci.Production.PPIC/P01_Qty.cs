@@ -615,9 +615,18 @@ order by rnk, RowNo",
             this.CreateGrid(gen, "string", "Colorway", "Colorway", Widths.AnsiChars(8));
 
             // SizeCode 查詢
-            string sqlSizeCode_5 = $@"select distinct SizeCode from Order_Qty_Garment oqg with(nolock)
-                                        inner join Orders o with(nolock) on o.ID = oqg.id
-                                        where oqg.OrderIDFrom = '{this.orderID}'  and o.Junk = 0";
+            string sqlSizeCode_5 = $@"select 
+                                    os.SizeCode
+                                    from Order_SizeCode os 
+                                    where 
+                                    EXISTS (
+	                                    select 1
+	                                    from Order_Qty_Garment oqg with(nolock) 
+	                                    inner join Orders o with(nolock) on o.ID = oqg.id
+	                                    where oqg.OrderIDFrom = '{this.orderID}'  and oqg.Junk = 0
+	                                    and o.poid = os.id and os.SizeCode = oqg.SizeCode
+                                    ) 
+                                    order by os.Seq";
             string strSizeCode_5 = string.Empty;
             DBProxy.Current.Select(null, sqlSizeCode_5, out DataTable dt_5);
             StringBuilder pivot1 = new StringBuilder();
@@ -643,9 +652,19 @@ order by rnk, RowNo",
             this.CreateGrid(gen, "string", "From SP#", "From SP#", Widths.AnsiChars(13));
             this.CreateGrid(gen, "string", "Colorway", "Colorway", Widths.AnsiChars(8));
 
-            string sqlSizeCode_6 = $@"select distinct SizeCode from Order_Qty_Garment oqg with(nolock)
+            string sqlSizeCode_6 = $@"select 
+                                    os.SizeCode
+                                    from Order_SizeCode os 
+                                    where 
+                                    EXISTS (
+	                                    select 1
+                                        from Order_Qty_Garment oqg with(nolock) 
                                         inner join Orders o with(nolock) on o.ID = oqg.id
-                                        where oqg.ID = '{this.orderID}'  and o.Junk = 0";
+                                        where oqg.ID  = '{this.orderID}' and oqg.Junk = 0
+	                                    and os.id = o.POID and os.SizeCode = oqg.SizeCode
+                                    ) 
+                                    order by os.Seq";
+
             string strSizeCode_6 = string.Empty;
             DBProxy.Current.Select(null, sqlSizeCode_6, out DataTable dt_6);
             StringBuilder pivot2 = new StringBuilder();
@@ -679,31 +698,49 @@ order by rnk, RowNo",
                     with 
                     tmpData as (
 	                    select 
-	                    [SP#] = o.ID
+	                    [SP#] = oqg.OrderIDFrom
                         ,[Garment SP#] = oqg.ID
                         ,[Colorway] = Article
                         ,SizeCode
                         ,oqg.Qty
+                        ,[RowNo] = ''
                         from Order_Qty_Garment oqg with(nolock) 
                         inner join Orders o with(nolock) on o.ID = oqg.id
-                        where oqg.OrderIDFrom = '{this.orderID}'  and o.Junk = 0
+                        where oqg.OrderIDFrom = '{this.orderID}'  and oqg.Junk = 0
+                    ),
+                    SubTotal as (
+                          select 
+	                    SP# =''
+	                    ,[Garment SP#] = ''
+	                    ,'TTL' as Article
+	                    , SizeCode
+	                    , SUM(Qty) as Qty
+                        ,[RowNo] = '99999'
+                          from tmpData a
+                          group by SizeCode
+                    ),
+                    UnionData as (
+                          select * from tmpData
+                          union all
+                          select * from SubTotal
                     ),
                     pivotData as
                     (
                             select *
-                            from tmpData
+                            from UnionData
                             pivot( 
                                 sum(Qty) for SizeCode in ({strSize})
                             ) a
                     )
                     select
-	                [Total] = (select sum(isnull(Qty,0)) from tmpData where [SP#] = p.[SP#] and [Garment SP#] = p.[Garment SP#] and [Colorway] = p.[Colorway])
+	                [Total] = (select sum(isnull(Qty,0)) from UnionData where [SP#] = p.[SP#] and [Garment SP#] = p.[Garment SP#] and [Colorway] = p.[Colorway])
 			        ,p.[SP#]
 					,p.[Garment SP#]
 					,p.[Colorway]
                     {strSizeCode_5}
                     ,[Buyer Delivery] = convert(date,(select BuyerDelivery from Orders where  ID = p.[SP#]))
-                    from pivotData p";
+                    from pivotData p
+                    order by RowNo";
                     result = DBProxy.Current.Select(null, sqlTable5, out this.grid5Data);
                     this.listControlBindingSource6.DataSource = this.grid5Data;
                 }
@@ -723,26 +760,44 @@ order by rnk, RowNo",
 	                    ,[Colorway] = Article
                         ,SizeCode
                         ,oqg.Qty
+                        ,[RowNo] = ''
                         from Order_Qty_Garment oqg with(nolock) 
                         inner join Orders o with(nolock) on o.ID = oqg.id
                         where oqg.ID  = '{this.orderID}' and oqg.Junk = 0
                     ),
+                    SubTotal as (
+                          select 
+	                    SP# =''
+	                    ,[From SP#] = ''
+	                    ,'TTL' as Article
+	                    , SizeCode
+	                    , SUM(Qty) as Qty
+                        ,[RowNo] = '999999'
+                          from tmpData a
+                          group by SizeCode
+                    ),
+                    UnionData as (
+                          select * from tmpData
+                          union all
+                          select * from SubTotal
+                    ),
                     pivotData as
                     (
                             select *
-                            from tmpData
+                            from UnionData
                             pivot( 
                                 sum(Qty) for SizeCode in ({strSize})
                             ) a
                     )
                     select
-                    [Total] = (select sum(isnull(Qty,0)) from tmpData where [SP#] = p.[SP#] and [From SP#] = p.[From SP#] and [Colorway] = p.[Colorway])
+                    [Total] = (select sum(isnull(Qty,0)) from UnionData where [SP#] = p.[SP#] and [From SP#] = p.[From SP#] and [Colorway] = p.[Colorway])
                     ,p.[SP#]
 					,p.[From SP#]
 					,p.[Colorway]
 	                {strSizeCode_6}
 	                ,[Buyer Delivery] = convert(date,(select BuyerDelivery from Orders where  ID = p.[SP#]))
-                    from pivotData p";
+                    from pivotData p
+                    order by RowNo";
                     result = DBProxy.Current.Select(null, sqlTable6, out this.grid6Data);
                     this.listControlBindingSource7.DataSource = this.grid6Data;
                 }
