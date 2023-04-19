@@ -327,28 +327,44 @@ into #tmp
 from Order_Qty_Garment og
 inner join Orders o WITH(NOLOCK) on og.OrderIDFrom = o.ID and o.Category = 'B'
 outer apply (
-	SELECT [BtoG] = IIF(COUNT(*) > 1 , 'O' ,IIF(SUM(g.[gQTY]) = SUM(g.[bQTY]), 'A' ,'O'))
+	SELECT [BtoG] = CASE 
+		 	 WHEN COUNT(*) > 1 THEN 'O'
+		 	 WHEN g4.gQty = b4.bQty THEN 'A'
+			 WHEN g4.gQty <> b4.bQty THEN 'O'
+		 	 ELSE ''
+		  END
 	FROM (
-		SELECT [gPOID] = g3.POID,
-			[bPOID] = b3.POID,
-			[gQTY] = SUM(g3.Qty),
-			[bQTY] = SUM(b3.Qty)
-		FROM Order_Qty_Garment og3
-		INNER JOIN Orders g3 ON og3.ID = g3.ID
-		INNER JOIN Orders b3 ON og3.OrderIDFrom = b3.ID 
-		INNER JOIN (
-				SELECT DISTINCT [gPOID] = g2.POID, 
-					[bPOID] = b2.POID
-				FROM Order_Qty_Garment og2 
-				INNER JOIN Orders g2 ON og2.ID = g2.ID
-				INNER JOIN Orders b2 ON og2.OrderIDFrom = b2.ID 
-				INNER JOIN Order_Qty_Garment og1 ON og1.ID = og.ID AND og1.Junk = 0
-				INNER JOIN Orders g1 ON og1.ID = g1.ID AND g1.Category = 'G'
-				INNER JOIN Orders b1 ON og1.OrderIDFrom = b1.ID AND b1.Category = 'B'
-				WHERE (g1.POID = g2.POID OR b1.POID = b2.POID)
-			) tmp ON (g3.POID = tmp.gPOID OR b3.POID = tmp.bPOID) AND og3.Junk = 0
-		GROUP BY g3.POID, b3.POID
-	)g 
+		  SELECT DISTINCT [gPOID] = g3.POID,
+			   [bPOID] = b3.POID
+		  FROM Order_Qty_Garment og3 WITH (NOLOCK)
+		  INNER JOIN Orders g3 WITH (NOLOCK) ON og3.ID = g3.ID AND g3.Category = 'G'
+		  INNER JOIN Orders b3 WITH (NOLOCK) ON og3.OrderIDFrom = b3.ID AND b3.Category = 'B'
+		  INNER JOIN (
+			    SELECT DISTINCT [gPOID] = g2.POID, 
+				     [bPOID] = b2.POID
+			    FROM Order_Qty_Garment og2 WITH (NOLOCK)
+			    INNER JOIN Orders g2 WITH (NOLOCK) ON og2.ID = g2.ID AND g2.Category = 'G'
+			    INNER JOIN Orders b2 WITH (NOLOCK) ON og2.OrderIDFrom = b2.ID  AND b2.Category = 'B'
+			    INNER JOIN Order_Qty_Garment og1 WITH (NOLOCK) ON og1.ID = og.ID AND og1.Junk = 0
+			    INNER JOIN Orders g1 WITH (NOLOCK) ON og1.ID = g1.ID AND g1.Category = 'G'
+			    INNER JOIN Orders b1 WITH (NOLOCK) ON og1.OrderIDFrom = b1.ID AND b1.Category = 'B'
+			    WHERE (g1.POID = g2.POID OR b1.POID = b2.POID)
+				and og2.Junk = 0
+		  ) tmp ON (g3.POID = tmp.gPOID OR b3.POID = tmp.bPOID) AND og3.Junk = 0
+	) tmp 
+	OUTER APPLY (
+		SELECT [gQty] = SUM(g4.Qty) 
+		FROM Orders g4 WITH (NOLOCK) 
+		WHERE tmp.gPOID = g4.POID 
+		and g4.Category = 'G'
+	) g4
+	OUTER APPLY (
+		SELECT [bQty] = SUM(b4.Qty) 
+		FROM Orders b4 WITH (NOLOCK) 
+		WHERE tmp.bPOID = b4.POID 
+		and b4.Category = 'B'
+	) b4 
+	GROUP BY g4.gQty, b4.bQty
 ) g
 where 1 = 1
 {sqlWhere}
