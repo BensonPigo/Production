@@ -187,7 +187,7 @@ where 1 = 1
             }
 
             sqlCmd.Append($@"
-select t.[Sp#]
+select distinct t.[Sp#]
 	, g.BtoG
 into #tmp_Order_Qty_Garment
 from ( select distinct [Sp#] from #tmp t {status_condistion}) t
@@ -237,9 +237,9 @@ select t.[Sp#]
 	 , t.BuyerDelivery
 	 , t.SciDelivery
 	 , t.CPU
+     , g.[BtoG]
      , t.[Brand]
-     , t.[Season]
-	 , g.[BtoG]
+     , t.[Season]	 
      , t.[*]
      , t.[From SP#]
      , t.[Article]
