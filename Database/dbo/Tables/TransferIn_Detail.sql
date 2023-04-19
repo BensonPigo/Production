@@ -34,7 +34,8 @@ CREATE TABLE [dbo].[TransferIn_Detail](
 	[UpdateActualWeightTime] [datetime] NULL,
 	[UpdateLocationTime] [datetime] NULL,
 	[ForInspectionTime] [datetime] NULL,
- CONSTRAINT [PK_TransferIn_Detail] PRIMARY KEY CLUSTERED 
+ [OneYardForWashing_AdjustID] VARCHAR(13) NULL, 
+    CONSTRAINT [PK_TransferIn_Detail] PRIMARY KEY CLUSTERED 
 (
 	[Ukey] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
@@ -163,3 +164,11 @@ GO
 
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'轉廠入明細' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'TransferIn_Detail'
 GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'系統自動建立的發料單',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'TransferIn_Detail',
+    @level2type = N'COLUMN',
+    @level2name = N'OneYardForWashing_AdjustID'
