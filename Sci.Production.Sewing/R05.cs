@@ -196,7 +196,7 @@ outer apply (
 		 	 WHEN COUNT(*) > 1 THEN 'O'
 		 	 WHEN g4.gQty = b4.bQty THEN 'A'
 			 WHEN g4.gQty <> b4.bQty THEN 'O'
-		 	 ELSE ''
+		 	 ELSE 'O' -- 不是A就是O
 		  END
 	FROM (
 		  SELECT DISTINCT [gPOID] = g3.POID,
@@ -316,22 +316,22 @@ select [Sp#] = o.ID
 	, [KPI LETA] = o.KPILETA
 	, [PF ETA] = o.PFETA
 	, o.CPU
-	, [B --> G Garment Type] = g.BtoG
+	, [B --> G Garment Type] = ISNULL(g.BtoG, 'O') -- 不是A就是O
 	, [Brand] = o.BrandID
 	, [Season] = o.SeasonID
-	, [Garment SP#] = og.ID
-	, [Article] = og.Article
-	, og.SizeCode
-	, og.Qty
+	, [Garment SP#] = ISNULL(og.ID, '')
+	, [Article] = ISNULL(og.Article, '')
+	, [SizeCode] = ISNULL(og.SizeCode, 'ZZZZZZ')
+	, [Qty] = og.Qty
 into #tmp
-from Order_Qty_Garment og
-inner join Orders o WITH(NOLOCK) on og.OrderIDFrom = o.ID and o.Category = 'B'
+from Orders o WITH(NOLOCK) 
+left join Order_Qty_Garment og WITH(NOLOCK) on og.OrderIDFrom = o.ID and og.Junk = 0
 outer apply (
 	SELECT [BtoG] = CASE 
 		 	 WHEN COUNT(*) > 1 THEN 'O'
 		 	 WHEN g4.gQty = b4.bQty THEN 'A'
 			 WHEN g4.gQty <> b4.bQty THEN 'O'
-		 	 ELSE ''
+		 	 ELSE 'O' -- 不是A就是O
 		  END
 	FROM (
 		  SELECT DISTINCT [gPOID] = g3.POID,
@@ -368,12 +368,13 @@ outer apply (
 ) g
 where 1 = 1
 {sqlWhere}
-and og.Junk = 0
+and o.Category = 'B'
 
 DECLARE @cols AS NVARCHAR(MAX), @query AS NVARCHAR(MAX)
 
 SELECT @cols = STUFF((SELECT ',' + QUOTENAME(SizeCode)
                       FROM #tmp
+                      WHERE SizeCode <> 'ZZZZZZ'
 					  GROUP BY SizeCode
 					  ORDER BY 
 							CASE WHEN TRY_CONVERT(INT, SizeCode) IS NOT NULL THEN SizeCode ELSE 999 END,
