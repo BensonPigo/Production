@@ -433,8 +433,8 @@
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.totalQtyGrid);
-            this.splitContainer1.Size = new System.Drawing.Size(1005, 708);
-            this.splitContainer1.SplitterDistance = 790;
+            this.splitContainer1.Size = new System.Drawing.Size(999, 520);
+            this.splitContainer1.SplitterDistance = 684;
             this.splitContainer1.TabIndex = 1;
             // 
             // gridMaterialLock
@@ -452,14 +452,14 @@
             this.gridMaterialLock.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
             this.gridMaterialLock.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.gridMaterialLock.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.gridMaterialLock.Location = new System.Drawing.Point(6, 3);
+            this.gridMaterialLock.Location = new System.Drawing.Point(6, 6);
             this.gridMaterialLock.Name = "gridMaterialLock";
             this.gridMaterialLock.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridMaterialLock.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridMaterialLock.RowTemplate.Height = 24;
             this.gridMaterialLock.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridMaterialLock.ShowCellToolTips = false;
-            this.gridMaterialLock.Size = new System.Drawing.Size(781, 520);
+            this.gridMaterialLock.Size = new System.Drawing.Size(673, 511);
             this.gridMaterialLock.TabIndex = 0;
             this.gridMaterialLock.TabStop = false;
             // 
@@ -478,14 +478,14 @@
             this.totalQtyGrid.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
             this.totalQtyGrid.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.totalQtyGrid.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.totalQtyGrid.Location = new System.Drawing.Point(6, 3);
+            this.totalQtyGrid.Location = new System.Drawing.Point(6, 6);
             this.totalQtyGrid.Name = "totalQtyGrid";
             this.totalQtyGrid.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.totalQtyGrid.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.totalQtyGrid.RowTemplate.Height = 24;
             this.totalQtyGrid.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.totalQtyGrid.ShowCellToolTips = false;
-            this.totalQtyGrid.Size = new System.Drawing.Size(202, 520);
+            this.totalQtyGrid.Size = new System.Drawing.Size(302, 511);
             this.totalQtyGrid.TabIndex = 1;
             this.totalQtyGrid.TabStop = false;
             // 

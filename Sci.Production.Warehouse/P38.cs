@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -209,10 +210,21 @@ namespace Sci.Production.Warehouse
             this.totalQtyGrid.DataSource = this.totalQtyDataTable;
             this.Helper.Controls.Grid.Generator(this.totalQtyGrid)
                  .Text("Poid", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
-                 .Text("Seq", header: "Seq", width: Widths.AnsiChars(3), iseditingreadonly: true)
-                  .Numeric("BalanceQty", header: "Ttl\r\nBalance Qty", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2, iseditingreadonly: true)
+                 .Text("Seq", header: "Seq", width: Widths.AnsiChars(6), iseditingreadonly: true)
+                  .Numeric("BalanceQty", header: "Ttl\r\nBalance Qty", width: Widths.AnsiChars(12), integer_places: 8, decimal_places: 2, iseditingreadonly: true)
                   ;
             #endregion
+            this.checkHidden.Checked = true;
+            if (this.checkHidden.Checked)
+            {
+                this.splitContainer1.Panel2Collapsed = true;
+                this.splitContainer1.Panel2.Hide();
+            }
+            else
+            {
+                this.splitContainer1.Panel2Collapsed = false;
+                this.splitContainer1.Panel2.Show();
+            }
         }
 
         private void ResetTotalTable()
@@ -246,32 +258,41 @@ namespace Sci.Production.Warehouse
             }
 
             var dt = (DataTable)this.listControlBindingSource1.DataSource;
-            var selectedCount = dt.Select("Selected = '1' ").ToList().Count;
+            List<DataRow> selectedDataRow = dt.AsEnumerable().Where(x => x.Field<int>("Selected") == 1).ToList();
 
             // 全選
-            if (selectedCount > 0)
+            if (selectedDataRow.Count > 0)
             {
                 this.ResetTotalTable();
-                List<DataRow> duplicateRows = new List<DataRow>();
-                var groupedRows = from row in dt.AsEnumerable()
-                                  group row by new { Poid = row["POID"], Seq1 = row["SEQ1"], Seq2 = row["SEQ2"] } into grp
-                                  where grp.Count() > 1
-                                  select grp;
 
-                foreach (var group in groupedRows)
+                var distinctRows = dt.AsEnumerable()
+                                    .GroupBy(r => new {
+                                        Poid = r.Field<string>("POID"),
+                                        Seq1 = r.Field<string>("SEQ1"),
+                                        Seq2 = r.Field<string>("SEQ2"),
+                                    })
+                                    .Select(g => g.First())
+                                    .ToList();
+
+                foreach (var groupDRow in distinctRows)
                 {
-                    var sumQty = dt.AsEnumerable().Where(x => x.Field<string>("Poid") == (string)group.Key.Poid &&
-                                                                  x.Field<string>("Seq1") == (string)group.Key.Seq1 &&
-                                                                  x.Field<string>("Seq2") == (string)group.Key.Seq2)
-                                                     .Sum(x => x.Field<decimal>("BalanceQty"));
+                    var sumQty = dt.AsEnumerable().Where(x => x.Field<string>("Poid") == (string)groupDRow["Poid"] &&
+                                                                  x.Field<string>("Seq1") == (string)groupDRow["Seq1"] &&
+                                                                  x.Field<string>("Seq2") == (string)groupDRow["Seq2"])
+                                                .Sum(x => x.Field<decimal>("BalanceQty"));
+
+                    var groupTable = dt.AsEnumerable().Where(x => x.Field<string>("Poid") == (string)groupDRow["Poid"] &&
+                                                                  x.Field<string>("Seq1") == (string)groupDRow["Seq1"] &&
+                                                                  x.Field<string>("Seq2") == (string)(string)groupDRow["Seq2"])
+                                                             .CopyToDataTable();
 
                     DataRow add_row = this.totalQtyDataTable.NewRow();
-                    add_row["Poid"] = (string)group.Key.Poid;
-                    add_row["Seq"] = (string)group.Key.Seq1 + "-" + (string)group.Key.Seq2;
-                    add_row["Seq1"] = (string)group.Key.Seq1;
-                    add_row["Seq2"] = (string)group.Key.Seq2;
+                    add_row["Poid"] = (string)groupDRow["Poid"];
+                    add_row["Seq"] = (string)groupDRow["Seq1"] + "-" + (string)(string)groupDRow["Seq2"];
+                    add_row["Seq1"] = (string)groupDRow["Seq1"];
+                    add_row["Seq2"] = (string)(string)groupDRow["Seq2"];
                     add_row["BalanceQty"] = sumQty;
-                    add_row["Count"] = group.Count();
+                    add_row["Count"] = groupTable.Rows.Count;
                     this.totalQtyDataTable.Rows.Add(add_row);
                 }
 
@@ -279,7 +300,7 @@ namespace Sci.Production.Warehouse
             }
 
             // 全取消
-            if (selectedCount == 0)
+            if (selectedDataRow.Count == 0)
             {
                 this.ResetTotalTable();
             }
@@ -1006,19 +1027,23 @@ inner join ftyinventory f with (NoLock) on t.ukey = f.ukey";
                 return;
             }
 
+            List<SqlParameter> listSqlParameter = new List<SqlParameter>();
+            listSqlParameter.Add(new SqlParameter("@Remark", this.txtBatchRemark.Text));
             string sqlCmd = $@"update f
-                               set f.Remark = '{this.txtBatchRemark.Text}'
+                               set f.Remark = @Remark
                                from #tmp t with(nolock)
                                inner join FtyInventory f with(nolock) on t.poid = f.poid and 
                                                                          t.seq1 = f.seq1 and
                                                                          t.seq2 = f.seq2 and
                                                                          t.Roll = f.Roll and
-                                                                         t.Dyelot = f.Dyelot";
+                                                                         t.Dyelot = f.Dyelot and 
+                                                                         f.StockType = (case t.StockType when 'Bulk' then'B'  when 'Inventory' then 'I' else t.StockType end )";
 
-            DualResult dualResult = MyUtility.Tool.ProcessWithDatatable(selectedValue.CopyToDataTable(), null, sqlCmd, out DataTable dataTable);
-            if (!dualResult)
+            DualResult dualResult = MyUtility.Tool.ProcessWithDatatable(selectedValue.CopyToDataTable(), null, sqlCmd, out DataTable dataTable, paramters: listSqlParameter);
+             if (!dualResult)
             {
                 MyUtility.Msg.ErrorBox(dualResult.ToString());
+                return;
             }
 
             List<DataRow> dataRows = dt.AsEnumerable().Where(x => x.Field<int>("Selected") == 1).ToList();
