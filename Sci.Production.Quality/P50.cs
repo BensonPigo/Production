@@ -707,7 +707,10 @@ namespace Sci.Production.Quality
 
             List<string> list = new List<string>();
             string filePath = MyUtility.GetValue.Lookup("select [path] from CustomizedClipPath where TableName = 'UASentReport'");
-            var saveFilePath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+
+            // 組ClipPath
+            string clippath = MyUtility.GetValue.Lookup($"select ClipPath from System");
+            string saveFilePath = clippath + "\\" + DateTime.Now.ToString("yyyyMM");
             foreach (DataRow dataRow in dt.Rows)
             {
                 string fileName = dataRow["FileName"].ToString() + Path.GetExtension(dataRow["SourceFile"].ToString());
