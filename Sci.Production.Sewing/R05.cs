@@ -366,7 +366,7 @@ outer apply (
 	) b4 
 	GROUP BY g4.gQty, b4.bQty
 ) g
-where 1 = 1
+where exists (select 1 from OrderType ot WITH(NOLOCK) where ot.ID = o.OrderTypeID and ot.BrandID = o.BrandID and ot.IsGMTMaster = 1)
 {sqlWhere}
 and o.Category = 'B'
 
