@@ -30,6 +30,13 @@
         {
             this.components = new System.ComponentModel.Container();
             this.panel1 = new Sci.Win.UI.Panel();
+            this.checkHidden = new Sci.Win.UI.CheckBox();
+            this.txtToneGrp = new Sci.Win.UI.TextBox();
+            this.label8 = new Sci.Win.UI.Label();
+            this.txtDyelot = new Sci.Win.UI.TextBox();
+            this.label7 = new Sci.Win.UI.Label();
+            this.txtReamark = new Sci.Win.UI.TextBox();
+            this.label6 = new Sci.Win.UI.Label();
             this.comboFIR = new Sci.Win.UI.ComboBox();
             this.label5 = new Sci.Win.UI.Label();
             this.labLocation = new Sci.Win.UI.Label();
@@ -52,8 +59,13 @@
             this.comboStatus = new Sci.Win.UI.ComboBox();
             this.btnQuery = new Sci.Win.UI.Button();
             this.panel2 = new Sci.Win.UI.Panel();
+            this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.gridMaterialLock = new Sci.Win.UI.Grid();
+            this.totalQtyGrid = new Sci.Win.UI.Grid();
             this.panel3 = new Sci.Win.UI.Panel();
+            this.btnUpdate = new Sci.Win.UI.Button();
+            this.txtBatchRemark = new Sci.Win.UI.TextBox();
+            this.label9 = new Sci.Win.UI.Label();
             this.btnExcel = new Sci.Win.UI.Button();
             this.btnLock = new Sci.Win.UI.Button();
             this.btnClose = new Sci.Win.UI.Button();
@@ -61,13 +73,25 @@
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.panel1.SuspendLayout();
             this.panel2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
+            this.splitContainer1.Panel1.SuspendLayout();
+            this.splitContainer1.Panel2.SuspendLayout();
+            this.splitContainer1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gridMaterialLock)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.totalQtyGrid)).BeginInit();
             this.panel3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
             this.SuspendLayout();
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.checkHidden);
+            this.panel1.Controls.Add(this.txtToneGrp);
+            this.panel1.Controls.Add(this.label8);
+            this.panel1.Controls.Add(this.txtDyelot);
+            this.panel1.Controls.Add(this.label7);
+            this.panel1.Controls.Add(this.txtReamark);
+            this.panel1.Controls.Add(this.label6);
             this.panel1.Controls.Add(this.comboFIR);
             this.panel1.Controls.Add(this.label5);
             this.panel1.Controls.Add(this.labLocation);
@@ -92,8 +116,75 @@
             this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(1008, 105);
+            this.panel1.Size = new System.Drawing.Size(1008, 137);
             this.panel1.TabIndex = 0;
+            // 
+            // checkHidden
+            // 
+            this.checkHidden.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.checkHidden.AutoSize = true;
+            this.checkHidden.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkHidden.Location = new System.Drawing.Point(839, 105);
+            this.checkHidden.Name = "checkHidden";
+            this.checkHidden.Size = new System.Drawing.Size(158, 21);
+            this.checkHidden.TabIndex = 27;
+            this.checkHidden.Text = "Hidden total qty form";
+            this.checkHidden.UseVisualStyleBackColor = true;
+            this.checkHidden.Click += new System.EventHandler(this.CheckHidden_Click);
+            // 
+            // txtToneGrp
+            // 
+            this.txtToneGrp.BackColor = System.Drawing.Color.White;
+            this.txtToneGrp.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtToneGrp.Location = new System.Drawing.Point(499, 76);
+            this.txtToneGrp.MaxLength = 13;
+            this.txtToneGrp.Name = "txtToneGrp";
+            this.txtToneGrp.Size = new System.Drawing.Size(122, 23);
+            this.txtToneGrp.TabIndex = 25;
+            // 
+            // label8
+            // 
+            this.label8.Location = new System.Drawing.Point(410, 76);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(86, 23);
+            this.label8.TabIndex = 26;
+            this.label8.Text = "Tone/Grp";
+            // 
+            // txtDyelot
+            // 
+            this.txtDyelot.BackColor = System.Drawing.Color.White;
+            this.txtDyelot.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtDyelot.Location = new System.Drawing.Point(285, 76);
+            this.txtDyelot.MaxLength = 13;
+            this.txtDyelot.Name = "txtDyelot";
+            this.txtDyelot.Size = new System.Drawing.Size(122, 23);
+            this.txtDyelot.TabIndex = 23;
+            // 
+            // label7
+            // 
+            this.label7.Location = new System.Drawing.Point(196, 76);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(86, 23);
+            this.label7.TabIndex = 24;
+            this.label7.Text = "Dyelot";
+            // 
+            // txtReamark
+            // 
+            this.txtReamark.BackColor = System.Drawing.Color.White;
+            this.txtReamark.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtReamark.Location = new System.Drawing.Point(71, 107);
+            this.txtReamark.MaxLength = 13;
+            this.txtReamark.Name = "txtReamark";
+            this.txtReamark.Size = new System.Drawing.Size(336, 23);
+            this.txtReamark.TabIndex = 21;
+            // 
+            // label6
+            // 
+            this.label6.Location = new System.Drawing.Point(9, 107);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(59, 23);
+            this.label6.TabIndex = 22;
+            this.label6.Text = "Remark";
             // 
             // comboFIR
             // 
@@ -318,12 +409,33 @@
             // 
             // panel2
             // 
-            this.panel2.Controls.Add(this.gridMaterialLock);
-            this.panel2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel2.Location = new System.Drawing.Point(0, 105);
+            this.panel2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.panel2.Controls.Add(this.splitContainer1);
+            this.panel2.Location = new System.Drawing.Point(0, 137);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(1008, 556);
+            this.panel2.Size = new System.Drawing.Size(1008, 532);
             this.panel2.TabIndex = 0;
+            // 
+            // splitContainer1
+            // 
+            this.splitContainer1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.splitContainer1.Location = new System.Drawing.Point(3, 6);
+            this.splitContainer1.Name = "splitContainer1";
+            // 
+            // splitContainer1.Panel1
+            // 
+            this.splitContainer1.Panel1.Controls.Add(this.gridMaterialLock);
+            // 
+            // splitContainer1.Panel2
+            // 
+            this.splitContainer1.Panel2.Controls.Add(this.totalQtyGrid);
+            this.splitContainer1.Size = new System.Drawing.Size(1005, 708);
+            this.splitContainer1.SplitterDistance = 790;
+            this.splitContainer1.TabIndex = 1;
             // 
             // gridMaterialLock
             // 
@@ -340,28 +452,87 @@
             this.gridMaterialLock.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
             this.gridMaterialLock.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.gridMaterialLock.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.gridMaterialLock.Location = new System.Drawing.Point(3, 3);
+            this.gridMaterialLock.Location = new System.Drawing.Point(6, 3);
             this.gridMaterialLock.Name = "gridMaterialLock";
             this.gridMaterialLock.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridMaterialLock.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridMaterialLock.RowTemplate.Height = 24;
             this.gridMaterialLock.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridMaterialLock.ShowCellToolTips = false;
-            this.gridMaterialLock.Size = new System.Drawing.Size(1002, 487);
+            this.gridMaterialLock.Size = new System.Drawing.Size(781, 520);
             this.gridMaterialLock.TabIndex = 0;
             this.gridMaterialLock.TabStop = false;
             // 
+            // totalQtyGrid
+            // 
+            this.totalQtyGrid.AllowUserToAddRows = false;
+            this.totalQtyGrid.AllowUserToDeleteRows = false;
+            this.totalQtyGrid.AllowUserToResizeRows = false;
+            this.totalQtyGrid.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.totalQtyGrid.BackgroundColor = System.Drawing.SystemColors.Control;
+            this.totalQtyGrid.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
+            this.totalQtyGrid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.totalQtyGrid.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
+            this.totalQtyGrid.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
+            this.totalQtyGrid.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.totalQtyGrid.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
+            this.totalQtyGrid.Location = new System.Drawing.Point(6, 3);
+            this.totalQtyGrid.Name = "totalQtyGrid";
+            this.totalQtyGrid.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
+            this.totalQtyGrid.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
+            this.totalQtyGrid.RowTemplate.Height = 24;
+            this.totalQtyGrid.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.totalQtyGrid.ShowCellToolTips = false;
+            this.totalQtyGrid.Size = new System.Drawing.Size(202, 520);
+            this.totalQtyGrid.TabIndex = 1;
+            this.totalQtyGrid.TabStop = false;
+            // 
             // panel3
             // 
+            this.panel3.Controls.Add(this.btnUpdate);
+            this.panel3.Controls.Add(this.txtBatchRemark);
+            this.panel3.Controls.Add(this.label9);
             this.panel3.Controls.Add(this.btnExcel);
             this.panel3.Controls.Add(this.btnLock);
             this.panel3.Controls.Add(this.btnClose);
             this.panel3.Controls.Add(this.btnUnlock);
             this.panel3.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panel3.Location = new System.Drawing.Point(0, 601);
+            this.panel3.Location = new System.Drawing.Point(0, 669);
             this.panel3.Name = "panel3";
             this.panel3.Size = new System.Drawing.Size(1008, 60);
             this.panel3.TabIndex = 1;
+            // 
+            // btnUpdate
+            // 
+            this.btnUpdate.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
+            this.btnUpdate.Location = new System.Drawing.Point(413, 11);
+            this.btnUpdate.Name = "btnUpdate";
+            this.btnUpdate.Size = new System.Drawing.Size(80, 30);
+            this.btnUpdate.TabIndex = 25;
+            this.btnUpdate.Text = "Update";
+            this.btnUpdate.UseVisualStyleBackColor = true;
+            this.btnUpdate.Click += new System.EventHandler(this.BtnUpdate_Click);
+            // 
+            // txtBatchRemark
+            // 
+            this.txtBatchRemark.BackColor = System.Drawing.Color.White;
+            this.txtBatchRemark.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtBatchRemark.Location = new System.Drawing.Point(71, 15);
+            this.txtBatchRemark.MaxLength = 13;
+            this.txtBatchRemark.Name = "txtBatchRemark";
+            this.txtBatchRemark.Size = new System.Drawing.Size(336, 23);
+            this.txtBatchRemark.TabIndex = 23;
+            // 
+            // label9
+            // 
+            this.label9.Location = new System.Drawing.Point(9, 15);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(59, 23);
+            this.label9.TabIndex = 24;
+            this.label9.Text = "Remark";
             // 
             // btnExcel
             // 
@@ -409,7 +580,7 @@
             // 
             // P38
             // 
-            this.ClientSize = new System.Drawing.Size(1008, 661);
+            this.ClientSize = new System.Drawing.Size(1008, 729);
             this.Controls.Add(this.panel3);
             this.Controls.Add(this.panel2);
             this.Controls.Add(this.panel1);
@@ -424,8 +595,14 @@
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
             this.panel2.ResumeLayout(false);
+            this.splitContainer1.Panel1.ResumeLayout(false);
+            this.splitContainer1.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
+            this.splitContainer1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.gridMaterialLock)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.totalQtyGrid)).EndInit();
             this.panel3.ResumeLayout(false);
+            this.panel3.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).EndInit();
             this.ResumeLayout(false);
 
@@ -463,5 +640,17 @@
         private Class.TxtMtlLocation txtMtlLocation;
         private Win.UI.ComboBox comboFIR;
         private Win.UI.Label label5;
+        private System.Windows.Forms.SplitContainer splitContainer1;
+        private Win.UI.Grid totalQtyGrid;
+        private Win.UI.TextBox txtToneGrp;
+        private Win.UI.Label label8;
+        private Win.UI.TextBox txtDyelot;
+        private Win.UI.Label label7;
+        private Win.UI.TextBox txtReamark;
+        private Win.UI.Label label6;
+        private Win.UI.CheckBox checkHidden;
+        private Win.UI.Button btnUpdate;
+        private Win.UI.TextBox txtBatchRemark;
+        private Win.UI.Label label9;
     }
 }
