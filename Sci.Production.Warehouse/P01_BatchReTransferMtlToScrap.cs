@@ -290,6 +290,7 @@ drop table #ReTransferToScrapList,#ReTransferToScrapSummary
                             Prgs.GetFtyInventoryData(dtSubTransfer_Detail, "P25", out DataTable dtOriFtyInventory);
                             if (!Prgs.CheckBarCode(dtOriFtyInventory, "P25"))
                             {
+                                this.HideWaitMessage();
                                 transactionscope.Dispose();
                                 return;
                             }
@@ -298,6 +299,7 @@ drop table #ReTransferToScrapList,#ReTransferToScrapSummary
                         // 上方 Auto Create P25 Confrim 後, 寫入新的 BarCode
                         if (!(result = Prgs.UpdateWH_Barcode(true, dtSubTransfer_Detail, "P25", out bool fromNewBarcode)))
                         {
+                            this.HideWaitMessage();
                             throw result.GetException();
                         }
 
@@ -305,6 +307,7 @@ drop table #ReTransferToScrapList,#ReTransferToScrapSummary
                     }
                     catch (Exception ex)
                     {
+                        this.HideWaitMessage();
                         errMsg = ex;
                     }
                 }
