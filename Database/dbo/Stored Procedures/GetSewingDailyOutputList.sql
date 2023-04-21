@@ -232,9 +232,11 @@ select t.*
     ,[LastShift] = IIF(t.Shift <> 'O' and t.Category <> 'M' and t.LocalOrder = 1, 'I',t.Shift) 
     ,[FtyType] = f.Type
     ,[FtyCountry] = f.CountryID
-    ,[CumulateDate] = CumulateDate.val
+    ,[CumulateDate_Before] = CumulateDate.val
     ,[SPFactory] = o.FactoryID
-into #tmp1stFilter
+	,[MasterStyleID] = m.MasterStyleID
+	,[MasterBrandID] = m.MasterBrandID
+into #tmp1stFilter_First
 from #tmpSewingGroup t
 left join Factory f on t.FactoryID = f.ID
 left join Orders o on t.OrderId = o.ID
@@ -263,6 +265,20 @@ outer apply (	select val = IIF(Count(1)=0, 1, Count(1))
 												w.Date <= t.OutputDate
 									)
 ) CumulateDate
+Outer apply (
+	select distinct MasterBrandID, MasterStyleID 
+	from (
+		select MasterBrandID,MasterStyleID 
+		from Style_SimilarStyle s2 WITH (NOLOCK) 
+		where exists( select 1 from Style s with (nolock) 
+						where s.Ukey = o.StyleUkey and s2.MasterStyleID = s.ID and s2.MasterBrandID = s.BrandID)
+		union all
+		select MasterBrandID,MasterStyleID
+		from Style_SimilarStyle s2 WITH (NOLOCK) 
+		where exists( select 1 from Style s with (nolock) 
+						where s.Ukey = o.StyleUkey and s2.ChildrenStyleID = s.ID and s2.ChildrenBrandID = s.BrandID)
+	)m
+)m
 where	(	
 			not exists(select 1 from #CategoryCondition) or
 			(exists(select 1 from #CategoryCondition where Category = 'L') and t.LocalOrder = 1) or
@@ -270,6 +286,18 @@ where	(
 		) and
 		(@Brand = '' or t.OrderBrandID = @Brand or t.MockupBrandID = @Brand) and
 		(@CDCode = '' or t.OrderCdCodeID = @CDCode or t.MockupCDCodeID = @CDCode)
+
+select t.*
+	, [CumulateDate] = coalesce(t2.CumulateDate_Max, t.CumulateDate_Before, 0)
+into #tmp1stFilter
+from #tmp1stFilter_First t 
+left join (
+	select MasterStyleID, MasterBrandID
+		, [CumulateDate_Max] = MAX(CumulateDate_Before)
+	from #tmp1stFilter_First
+	where MasterStyleID <> ''
+	group by MasterStyleID, MasterBrandID
+)t2 on t.MasterStyleID = t2.MasterStyleID and t.MasterBrandID = t2.MasterBrandID
 
 if(@Include_Artwork = 1)
 begin
