@@ -279,6 +279,7 @@ select	pld.KPICode,
 		pld.BuyerDelivery,
 		[PackID] = pld.ID,
 		pld.CTNStartNo,
+		Size.val,
 		pld.ShipQty,
 		pld.Status,
 		[HaulingScanTime] = Hauling.AddDate,
@@ -314,6 +315,13 @@ outer apply(
 	where pd.SCICtnNo = pld.SCICtnNo
 	and pd.ID = pld.ID
 )QtyPerCTN
+outer apply(
+	select [val] = Stuff((select distinct concat( '/',SizeCode) 
+						 from PackingList_Detail pd with(nolock)
+						 where	pd.ID = pld.ID and
+								pd.CtnStartNo = pld.CtnStartNo
+						 FOR XML PATH('')), 1, 1, '')
+) Size
 outer apply(
 	select ScanTime = t.AddDate, AuditFailQty = t.Qty
 	from CTNPackingAudit t with(nolock)
