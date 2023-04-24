@@ -65,6 +65,9 @@ select s.id
     ,o.SubconInSisterFty
     ,[SewingReasonDesc]=isnull(sr.SewingReasonDesc,'')
     ,o.SciDelivery
+	,[LockStatus] = CASE WHEN s.Status = 'Locked' THEN 'Monthly Lock' 
+						 WHEN s.Status = 'Sent' THEN 'Daily Lock' 
+						 ELSE '' END
 into #tmpSewingDetail
 from Production.dbo.System WITH (NOLOCK),Production.dbo.SewingOutput s WITH (NOLOCK) 
 inner join Production.dbo.SewingOutput_Detail sd WITH (NOLOCK) on sd.ID = s.ID
@@ -130,6 +133,7 @@ select distinct ID
 	,[Lining] = sty.Lining
 	,[Gender] = sty.Gender
 	,[Construction] = sty.Construction
+	,t.LockStatus
 into #tmpSewingGroup
 from #tmpSewingDetail t
 outer apply(
@@ -272,6 +276,7 @@ select * INTO #Final from(
 		,t.Lining
 		,t.Gender
 		,t.Construction
+		,t.LockStatus
     from #tmp1stFilter t )a
 order by MDivisionID,FactoryID,OutputDate,SewingLineID,Shift,Team,OrderId,Article,SizeCode
 
@@ -345,6 +350,7 @@ WHEN MATCHED THEN
 		,t.Lining = s.Lining
 		,t.Gender = s.Gender
 		,t.Construction = s.Construction
+		,t.LockStatus = s.LockStatus
 WHEN NOT MATCHED THEN
     INSERT VALUES (
 			s.MDivisionID
@@ -398,6 +404,7 @@ WHEN NOT MATCHED THEN
 		   ,s.Lining
 		   ,s.Gender
 		   ,s.Construction
+		   ,s.LockStatus
 		  );
 
 delete t

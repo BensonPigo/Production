@@ -51,6 +51,7 @@
 	[Lining] [varchar](20) NULL,
 	[Gender] [varchar](10) NULL,
 	[Construction] [nvarchar](50) NULL,
+	[LockStatus] [varchar](12) Not NULL,
  CONSTRAINT [PK_P_SewingDailyOutput] PRIMARY KEY CLUSTERED 
 (
 	[Ukey] ASC,
@@ -180,6 +181,9 @@ ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_
 GO
 
 ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_SewingReasonDesc]  DEFAULT ('') FOR [SewingReasonDesc]
+GO
+
+ALTER TABLE [dbo].[P_SewingDailyOutput] ADD  CONSTRAINT [DF_P_SewingDailyOutput_LockStatus]  DEFAULT ('') FOR [LockStatus]
 GO
 
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'SewingOutput_Detail_Ukey' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_SewingDailyOutput', @level2type=N'COLUMN',@level2name=N'Ukey'
@@ -318,4 +322,7 @@ EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'原因描述' 
 GO
 
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'飛雁交期' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_SewingDailyOutput', @level2type=N'COLUMN',@level2name=N'SciDelivery'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'產出的Lock狀態' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_SewingDailyOutput', @level2type=N'COLUMN',@level2name=N'LockStatus'
 GO
