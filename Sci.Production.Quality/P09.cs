@@ -175,7 +175,7 @@ namespace Sci.Production.Quality
             .Text("BrandID", header: "Brand", width: Widths.AnsiChars(8), iseditingreadonly: true)
             .Text("SuppID", header: "Supp", width: Widths.AnsiChars(8), iseditingreadonly: true)
             .Text("AbbEN", header: "Supp Name", width: Widths.AnsiChars(8), iseditingreadonly: true)
-            .Text("BrandRefNo", header: "Ref#", width: Widths.AnsiChars(8), iseditingreadonly: true, settings: refno)
+            .Text("RefNo", header: "Ref#", width: Widths.AnsiChars(8), iseditingreadonly: true, settings: refno)
             .Text("WeaveTypeID", header: "Weave Type", width: Widths.AnsiChars(8), iseditingreadonly: true)
 
             .Text("ColorName", header: "Color", width: Widths.AnsiChars(8), iseditingreadonly: true)
@@ -336,7 +336,7 @@ namespace Sci.Production.Quality
             return true;
         }
 
-        private string Filename(DataRow dr, string type)
+        private string Filename(string columnName, DataRow dr, string type)
         {
             List<string> cols = new List<string>();
             if (!MyUtility.Check.Empty(dr["ID"]))
@@ -354,9 +354,9 @@ namespace Sci.Production.Quality
                 cols.Add(MyUtility.Convert.GetString(dr["seq"]));
             }
 
-            if (!MyUtility.Check.Empty(dr["BrandRefNo"]))
+            if (!MyUtility.Check.Empty(dr[columnName]))
             {
-                cols.Add(MyUtility.Convert.GetString(dr["BrandRefNo"]));
+                cols.Add(MyUtility.Convert.GetString(dr[columnName]));
             }
 
             if (!MyUtility.Check.Empty(dr["ColorID"]))
@@ -796,7 +796,17 @@ VALUES(s.ukey,s.InspectionReport,s.TestReport,s.ContinuityCard,isnull(s.T2InspYd
 
                 if (ftpDir.Count > 0)
                 {
-                    string filename = this.Filename(dr, type);
+                    string filename = this.Filename("Refno", dr, type);
+                    string[] fs = ftpDir.Where(r => r.ToUpper().Contains(filename.ToUpper())).ToArray();
+                    foreach (string item in fs)
+                    {
+                        filesDic.Add(item, filepath);
+                    }
+                }
+
+                if (filesDic.Count == 0)
+                {
+                    string filename = this.Filename("BrandRefNo", dr, type);
                     string[] fs = ftpDir.Where(r => r.ToUpper().Contains(filename.ToUpper())).ToArray();
                     foreach (string item in fs)
                     {
