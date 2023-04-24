@@ -173,7 +173,7 @@
             this.txtReamark.BackColor = System.Drawing.Color.White;
             this.txtReamark.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtReamark.Location = new System.Drawing.Point(71, 107);
-            this.txtReamark.MaxLength = 13;
+            this.txtReamark.MaxLength = 32767;
             this.txtReamark.Name = "txtReamark";
             this.txtReamark.Size = new System.Drawing.Size(336, 23);
             this.txtReamark.TabIndex = 21;
@@ -521,7 +521,7 @@
             this.txtBatchRemark.BackColor = System.Drawing.Color.White;
             this.txtBatchRemark.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtBatchRemark.Location = new System.Drawing.Point(71, 15);
-            this.txtBatchRemark.MaxLength = 13;
+            this.txtBatchRemark.MaxLength = 32767;
             this.txtBatchRemark.Name = "txtBatchRemark";
             this.txtBatchRemark.Size = new System.Drawing.Size(336, 23);
             this.txtBatchRemark.TabIndex = 23;

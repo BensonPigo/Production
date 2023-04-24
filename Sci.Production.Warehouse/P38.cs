@@ -1020,9 +1020,8 @@ inner join ftyinventory f with (NoLock) on t.ukey = f.ukey";
         {
             var dt = (DataTable)this.listControlBindingSource1.DataSource;
 
-            var selectedValue = dt.Select("Selected = 1");
-
-            if (selectedValue.Length == 0)
+            List<DataRow> selectedValue = dt.AsEnumerable().Where(x => x.Field<int>("Selected") == 1).ToList();
+            if (selectedValue.Count == 0)
             {
                 return;
             }
@@ -1040,14 +1039,13 @@ inner join ftyinventory f with (NoLock) on t.ukey = f.ukey";
                                                                          f.StockType = (case t.StockType when 'Bulk' then'B'  when 'Inventory' then 'I' else t.StockType end )";
 
             DualResult dualResult = MyUtility.Tool.ProcessWithDatatable(selectedValue.CopyToDataTable(), null, sqlCmd, out DataTable dataTable, paramters: listSqlParameter);
-             if (!dualResult)
+            if (!dualResult)
             {
                 MyUtility.Msg.ErrorBox(dualResult.ToString());
                 return;
             }
 
-            List<DataRow> dataRows = dt.AsEnumerable().Where(x => x.Field<int>("Selected") == 1).ToList();
-            foreach (DataRow dr in dataRows)
+            foreach (DataRow dr in selectedValue)
             {
                 dr["Remark"] = this.txtBatchRemark.Text;
                 dr.EndEdit();
