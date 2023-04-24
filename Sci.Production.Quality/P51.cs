@@ -12,6 +12,7 @@ using Sci.Win.Tools;
 using System.Data.SqlClient;
 using Sci.Production.Class;
 using Sci.Production.Class.Command;
+using System.Runtime.CompilerServices;
 
 namespace Sci.Production.Quality
 {
@@ -411,6 +412,7 @@ Update ExportRefnoSentReport SET  AWBNO = @updateData, EditName = @UserID ,EditD
 
             using (var dlg = new Clip(tableName, id, true))
             {
+                dlg.EditMode = false;
                 dlg.ShowDialog();
 
                 foreach (DataRow dataRow in dt.Rows)
