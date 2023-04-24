@@ -55,7 +55,7 @@ namespace Sci.Production.Quality
             this.txtuserApprover.TextBox1.IsSupportEditMode = false;
             this.txtuserApprover.TextBox1.ReadOnly = true;
 
-            string order_cmd = string.Format("Select * from orders WITH (NOLOCK) where id='{0}'", this.maindr["POID"]);
+            string order_cmd = string.Format("Select * from View_WH_Orders WITH (NOLOCK) where id='{0}'", this.maindr["POID"]);
             DataRow order_dr;
             if (MyUtility.Check.Seek(order_cmd, out order_dr))
             {
@@ -625,7 +625,7 @@ select ToAddress = stuff ((select concat (';', tmp.email)
             string seasonID = string.Empty;
             string continuityEncode = string.Empty;
             DualResult xresult1;
-            string cmd = $@"select Roll,Dyelot,WeightM2,averageWeightM2,Difference,A.Result,A.Inspdate,Inspector,B.ContinuityEncode,C.SeasonID from FIR_Weight a WITH (NOLOCK) left join FIR b WITH (NOLOCK) on a.ID=b.ID LEFT JOIN ORDERS C ON B.POID=C.ID where a.ID='{this.textID.Text}'";
+            string cmd = $@"select Roll,Dyelot,WeightM2,averageWeightM2,Difference,A.Result,A.Inspdate,Inspector,B.ContinuityEncode,C.SeasonID from FIR_Weight a WITH (NOLOCK) left join FIR b WITH (NOLOCK) on a.ID=b.ID LEFT JOIN View_WH_Orders C ON B.POID=C.ID where a.ID='{this.textID.Text}'";
             xresult1 = DBProxy.Current.Select("Production", cmd, out dt1);
 
             if (xresult1)
@@ -709,7 +709,7 @@ select ToAddress = stuff ((select concat (';', tmp.email)
 
             DataRow drOrder;
             MyUtility.Check.Seek(
-                $@"select o.CustPONo,s.StyleName from dbo.orders o WITH (NOLOCK) 
+                $@"select o.CustPONo,s.StyleName from dbo.View_WH_Orders o WITH (NOLOCK) 
 left join dbo.style s on o.StyleUkey = s.ukey where o.ID = '{this.maindr["POID"].ToString()}'", out drOrder);
             excelHeadData.PONumber = drOrder["CustPONo"].ToString();
             excelHeadData.StyleName = drOrder["StyleName"].ToString();
