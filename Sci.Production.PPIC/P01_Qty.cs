@@ -15,6 +15,9 @@ namespace Sci.Production.PPIC
     /// </summary>
     public partial class P01_Qty : Win.Subs.Base
     {
+        private bool isPPIC_P01_Class;
+        private bool isTabPag5;
+        private bool isTabPag6;
         private string orderID;
         private string poID;
         private string poCombo;
@@ -22,6 +25,9 @@ namespace Sci.Production.PPIC
         private DataTable grid2Data;
         private DataTable grid3Data;
         private DataTable grid4Data;  // 存Qty資料
+        private DataTable grid5Data;
+        private DataTable grid6Data;
+
         private DataTable grid1Data_OriQty;
         private DataTable grid2Data_OriQty;
         private DataTable grid3Data_OriQty;
@@ -33,7 +39,8 @@ namespace Sci.Production.PPIC
         /// <param name="orderID">string OrderID</param>
         /// <param name="pOID">string POID</param>
         /// <param name="pOCombo">string POCombo</param>
-        public P01_Qty(string orderID, string pOID, string pOCombo)
+        /// <param name="isPPIC_P01">isPPIC_P01</param>
+        public P01_Qty(string orderID, string pOID, string pOCombo, bool isPPIC_P01 = false)
         {
             this.InitializeComponent();
             this.orderID = orderID;
@@ -43,6 +50,11 @@ namespace Sci.Production.PPIC
             this.displaySPPOCombination.Value = this.poCombo;
             this.displayColorwayPOCombination.Value = this.poCombo;
             this.displayDeliveryPOCombination.Value = this.poCombo;
+            this.isPPIC_P01_Class = isPPIC_P01;
+
+            // 預設TabPage 隱藏
+            this.tabPage5.Parent = null;
+            this.tabPage6.Parent = null;
         }
 
         /// <inheritdoc/>
@@ -592,6 +604,204 @@ order by rnk, RowNo",
             this.listControlBindingSource2.DataSource = this.grid2Data;
             this.listControlBindingSource3.DataSource = this.grid3Data;
             this.listControlBindingSource4.DataSource = this.grid4Data;
+
+            #region TabPage 5 Grid 設定
+            this.grid1.IsEditingReadOnly = true;
+            this.grid1.DataSource = this.listControlBindingSource6;
+            gen = this.Helper.Controls.Grid.Generator(this.grid1);
+            this.CreateGrid(gen, "int", "Total", "Total", Widths.AnsiChars(6));
+            this.CreateGrid(gen, "string", "SP#", "SP#", Widths.AnsiChars(13));
+            this.CreateGrid(gen, "string", "Garment SP#", "Garment SP#", Widths.AnsiChars(13));
+            this.CreateGrid(gen, "string", "Colorway", "Colorway", Widths.AnsiChars(8));
+
+            // SizeCode 查詢
+            string sqlSizeCode_5 = $@"select 
+                                    os.SizeCode
+                                    from Order_SizeCode os 
+                                    where 
+                                    EXISTS (
+	                                    select 1
+	                                    from Order_Qty_Garment oqg with(nolock) 
+	                                    inner join Orders o with(nolock) on o.ID = oqg.id
+	                                    where oqg.OrderIDFrom = '{this.orderID}'  and oqg.Junk = 0
+	                                    and o.poid = os.id and os.SizeCode = oqg.SizeCode
+                                    ) 
+                                    order by os.Seq";
+            string strSizeCode_5 = string.Empty;
+            DBProxy.Current.Select(null, sqlSizeCode_5, out DataTable dt_5);
+            StringBuilder pivot1 = new StringBuilder();
+            if (dt_5 != null && dt_5.Rows.Count > 0)
+            {
+                foreach (DataRow dr in dt_5.Rows)
+                {
+                    this.CreateGrid(gen, "int", MyUtility.Convert.GetString(dr["SizeCode"]), MyUtility.Convert.GetString(dr["SizeCode"]), Widths.AnsiChars(8));
+                    pivot1.Append(string.Format("[{0}],", MyUtility.Convert.GetString(dr["SizeCode"])));
+                    strSizeCode_5 += $@" ,[{MyUtility.Convert.GetString(dr["SizeCode"])}] =p.[{MyUtility.Convert.GetString(dr["SizeCode"])}]" + Environment.NewLine;
+                }
+            }
+
+            this.CreateGrid(gen, "date", "Buyer Delivery", "Buyer Delivery", Widths.AnsiChars(10));
+            #endregion
+
+            #region TabPage 6 Grid 設定
+            this.grid2.IsEditingReadOnly = true;
+            this.grid2.DataSource = this.listControlBindingSource7;
+            gen = this.Helper.Controls.Grid.Generator(this.grid2);
+            this.CreateGrid(gen, "int", "Total", "Total", Widths.AnsiChars(6));
+            this.CreateGrid(gen, "string", "SP#", "SP#", Widths.AnsiChars(13));
+            this.CreateGrid(gen, "string", "From SP#", "From SP#", Widths.AnsiChars(13));
+            this.CreateGrid(gen, "string", "Colorway", "Colorway", Widths.AnsiChars(8));
+
+            string sqlSizeCode_6 = $@"select 
+                                    os.SizeCode
+                                    from Order_SizeCode os 
+                                    where 
+                                    EXISTS (
+	                                    select 1
+                                        from Order_Qty_Garment oqg with(nolock) 
+                                        inner join Orders o with(nolock) on o.ID = oqg.id
+                                        where oqg.ID  = '{this.orderID}' and oqg.Junk = 0
+	                                    and os.id = o.POID and os.SizeCode = oqg.SizeCode
+                                    ) 
+                                    order by os.Seq";
+
+            string strSizeCode_6 = string.Empty;
+            DBProxy.Current.Select(null, sqlSizeCode_6, out DataTable dt_6);
+            StringBuilder pivot2 = new StringBuilder();
+            if (dt_6 != null && dt_6.Rows.Count > 0)
+            {
+                foreach (DataRow dr in dt_6.Rows)
+                {
+                    this.CreateGrid(gen, "int", MyUtility.Convert.GetString(dr["SizeCode"]), MyUtility.Convert.GetString(dr["SizeCode"]), Widths.AnsiChars(8));
+                    pivot2.Append(string.Format("[{0}],", MyUtility.Convert.GetString(dr["SizeCode"])));
+                    strSizeCode_6 += $@" ,[{MyUtility.Convert.GetString(dr["SizeCode"])}] = p.[{MyUtility.Convert.GetString(dr["SizeCode"])}]" + Environment.NewLine;
+                }
+            }
+
+            this.CreateGrid(gen, "date", "Buyer Delivery", "Buyer Delivery", Widths.AnsiChars(10));
+            #endregion
+
+            if (this.isPPIC_P01_Class)
+            {
+                string sQLcmd_TabPag5 = $@"select 1
+                            from Orders
+                            where 
+                            Category ='B' 
+                            and OrderTypeID +BrandID in (select ID+BrandID from OrderType where IsGMTMaster = 1)
+                            and ID = '{this.orderID}'";
+                this.isTabPag5 = MyUtility.GetValue.Lookup(sQLcmd_TabPag5) == "1" ? true : false;
+                if (this.isTabPag5)
+                {
+                    string strSize = MyUtility.Check.Empty(pivot1.ToString()) ? "[ ]" : pivot1.ToString().Substring(0, pivot1.ToString().Length - 1);
+                    this.tabPage5.Parent = this.tabControl1; // 顯示TabPage
+                    string sqlTable5 = $@"
+                    with 
+                    tmpData as (
+	                    select 
+	                    [SP#] = oqg.OrderIDFrom
+                        ,[Garment SP#] = oqg.ID
+                        ,[Colorway] = Article
+                        ,SizeCode
+                        ,oqg.Qty
+                        ,[RowNo] = ''
+                        from Order_Qty_Garment oqg with(nolock) 
+                        inner join Orders o with(nolock) on o.ID = oqg.id
+                        where oqg.OrderIDFrom = '{this.orderID}'  and oqg.Junk = 0
+                    ),
+                    SubTotal as (
+                          select 
+	                    SP# =''
+	                    ,[Garment SP#] = ''
+	                    ,'TTL' as Article
+	                    , SizeCode
+	                    , SUM(Qty) as Qty
+                        ,[RowNo] = '99999'
+                          from tmpData a
+                          group by SizeCode
+                    ),
+                    UnionData as (
+                          select * from tmpData
+                          union all
+                          select * from SubTotal
+                    ),
+                    pivotData as
+                    (
+                            select *
+                            from UnionData
+                            pivot( 
+                                sum(Qty) for SizeCode in ({strSize})
+                            ) a
+                    )
+                    select
+	                [Total] = (select sum(isnull(Qty,0)) from UnionData where [SP#] = p.[SP#] and [Garment SP#] = p.[Garment SP#] and [Colorway] = p.[Colorway])
+			        ,p.[SP#]
+					,p.[Garment SP#]
+					,p.[Colorway]
+                    {strSizeCode_5}
+                    ,[Buyer Delivery] = convert(date,(select BuyerDelivery from Orders where  ID = p.[SP#]))
+                    from pivotData p
+                    order by RowNo";
+                    result = DBProxy.Current.Select(null, sqlTable5, out this.grid5Data);
+                    this.listControlBindingSource6.DataSource = this.grid5Data;
+                }
+
+                string sQLcmd_TabPage6 = $@"select 1 from Orders where Category ='G' and id = '{this.orderID}'";
+                this.isTabPag6 = MyUtility.GetValue.Lookup(sQLcmd_TabPage6) == "1" ? true : false;
+                if (this.isTabPag6)
+                {
+                    this.tabPage6.Parent = this.tabControl1; // 顯示TabPage
+                    string strSize = MyUtility.Check.Empty(pivot2.ToString()) ? "[ ]" : pivot2.ToString().Substring(0, pivot2.ToString().Length - 1);
+                    string sqlTable6 = $@"
+                    with 
+                    tmpData as (
+	                    select 
+	                    [SP#] = o.ID
+                        ,[From SP#] = oqg.OrderIDFrom
+	                    ,[Colorway] = Article
+                        ,SizeCode
+                        ,oqg.Qty
+                        ,[RowNo] = ''
+                        from Order_Qty_Garment oqg with(nolock) 
+                        inner join Orders o with(nolock) on o.ID = oqg.id
+                        where oqg.ID  = '{this.orderID}' and oqg.Junk = 0
+                    ),
+                    SubTotal as (
+                          select 
+	                    SP# =''
+	                    ,[From SP#] = ''
+	                    ,'TTL' as Article
+	                    , SizeCode
+	                    , SUM(Qty) as Qty
+                        ,[RowNo] = '999999'
+                          from tmpData a
+                          group by SizeCode
+                    ),
+                    UnionData as (
+                          select * from tmpData
+                          union all
+                          select * from SubTotal
+                    ),
+                    pivotData as
+                    (
+                            select *
+                            from UnionData
+                            pivot( 
+                                sum(Qty) for SizeCode in ({strSize})
+                            ) a
+                    )
+                    select
+                    [Total] = (select sum(isnull(Qty,0)) from UnionData where [SP#] = p.[SP#] and [From SP#] = p.[From SP#] and [Colorway] = p.[Colorway])
+                    ,p.[SP#]
+					,p.[From SP#]
+					,p.[Colorway]
+	                {strSizeCode_6}
+	                ,[Buyer Delivery] = convert(date,(select BuyerDelivery from Orders where  ID = p.[SP#]))
+                    from pivotData p
+                    order by RowNo";
+                    result = DBProxy.Current.Select(null, sqlTable6, out this.grid6Data);
+                    this.listControlBindingSource7.DataSource = this.grid6Data;
+                }
+            }
         }
 
         /// <summary>
@@ -1256,6 +1466,12 @@ EXEC sp_executesql @sql", this.poID);
                 for (int i = 0; i < columns1; i++)
                 {
                     objSheets.Cells[2, i + 1] = ptb1.Columns[i].ColumnName;
+
+                    // 欄位Format：文字
+                    if (ptb1.Columns[i].ColumnName == "Colorway")
+                    {
+                        objSheets.Columns[i + 1].NumberFormat = "@";
+                    }
                 }
 
                 string r1 = MyUtility.Excel.ConvertNumericToExcelColumn(columns1);
@@ -1272,6 +1488,23 @@ EXEC sp_executesql @sql", this.poID);
                 for (int i = 0; i < columns2; i++)
                 {
                     objSheets.Cells[3, i + 1] = ptb2.Columns[i].ColumnName;
+
+                    // 欄位Format：文字
+                    if (ptb2.Columns[i].ColumnName == "Sp#" ||
+                        ptb2.Columns[i].ColumnName == "Colorway" ||
+                        ptb2.Columns[i].ColumnName == "Color" ||
+                        ptb2.Columns[i].ColumnName == "Destination" ||
+                        ptb2.Columns[i].ColumnName == "CustCD" ||
+                        ptb2.Columns[i].ColumnName == "Kit#")
+                    {
+                        objSheets.Columns[i + 1].NumberFormat = "@";
+                    }
+
+                    // 顯示日期
+                    if (ptb2.Columns[i].ColumnName == "Buyer Delivery")
+                    {
+                        objSheets.Columns[i + 1].NumberFormat = "yyyy/MM/dd";
+                    }
                 }
 
                 string r2 = MyUtility.Excel.ConvertNumericToExcelColumn(columns2);
@@ -1290,6 +1523,12 @@ EXEC sp_executesql @sql", this.poID);
                 for (int i = 0; i < columns3; i++)
                 {
                     objSheets.Cells[3, i + 1] = ptb3.Columns[i].ColumnName;
+
+                    // 欄位Format：文字
+                    if (ptb3.Columns[i].ColumnName == "Colorway")
+                    {
+                        objSheets.Columns[i + 1].NumberFormat = "@";
+                    }
                 }
 
                 string r3 = MyUtility.Excel.ConvertNumericToExcelColumn(columns3);
@@ -1308,6 +1547,18 @@ EXEC sp_executesql @sql", this.poID);
                 for (int i = 0; i < columns4; i++)
                 {
                     objSheets.Cells[3, i + 1] = ptb4.Columns[i].ColumnName;
+
+                    // 顯示日期
+                    if (ptb4.Columns[i].ColumnName == "Buyer Delivery")
+                    {
+                        objSheets.Columns[i + 1].NumberFormat = "yyyy/MM/dd";
+                    }
+
+                    // 欄位Format：文字
+                    if (ptb4.Columns[i].ColumnName == "Colorway")
+                    {
+                        objSheets.Columns[i + 1].NumberFormat = "@";
+                    }
                 }
 
                 string r4 = MyUtility.Excel.ConvertNumericToExcelColumn(columns4);
@@ -1318,6 +1569,84 @@ EXEC sp_executesql @sql", this.poID);
                 objSheets.Cells[2, 1] = "PO Combination :" + this.displayDeliveryPOCombination.Text;
                 objSheets.get_Range("A1", r4 + "3").Interior.Color = Color.LightGreen;
                 objSheets.get_Range("A3", r4 + "3").AutoFilter(1);
+            }
+
+            if (this.grid5Data != null && this.grid5Data.Rows.Count > 0)
+            {
+                objSheets = objApp.ActiveWorkbook.Worksheets[5];
+                for (int i = 0; i < this.grid5Data.Columns.Count; i++)
+                {
+                    objSheets.Cells[2, i + 1] = this.grid5Data.Columns[i].ColumnName;
+
+                    // 顯示日期
+                    if (this.grid5Data.Columns[i].ColumnName == "Buyer Delivery")
+                    {
+                        objSheets.Columns[i + 1].NumberFormat = "yyyy/MM/dd";
+                    }
+
+                    // 欄位Format：文字
+                    if (this.grid5Data.Columns[i].ColumnName == "Colorway" ||
+                        this.grid5Data.Columns[i].ColumnName == "SP#" ||
+                        this.grid5Data.Columns[i].ColumnName == "Garment SP#")
+                    {
+                        objSheets.Columns[i + 1].NumberFormat = "@";
+                    }
+                }
+
+                string r5 = MyUtility.Excel.ConvertNumericToExcelColumn(this.grid5Data.Columns.Count);
+                objSheets.get_Range("A1", r5 + "1").Merge(false);
+                MyUtility.Excel.CopyToXls(this.grid5Data, string.Empty, "PPIC_P01_Qtybreakdown.xltx", 2, false, null, objApp, wSheet: objSheets);
+                objSheets.Cells[1, 1] = "Qty breakdown (" + this.poID + ")";
+                objSheets.Cells[1, 1].HorizontalAlignment = Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignCenter;
+                objSheets.Cells[1, 1].VerticalAlignment = Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignCenter;
+                objSheets.get_Range("A1", r5 + "2").Interior.Color = Color.LightGreen;
+                objSheets.get_Range("A2", r5 + "2").AutoFilter(1);
+            }
+
+            if (this.grid6Data != null && this.grid6Data.Rows.Count > 0)
+            {
+                objSheets = objApp.ActiveWorkbook.Worksheets[6];
+                for (int i = 0; i < this.grid6Data.Columns.Count; i++)
+                {
+                    objSheets.Cells[2, i + 1] = this.grid6Data.Columns[i].ColumnName;
+
+                    // 顯示日期
+                    if (this.grid6Data.Columns[i].ColumnName == "Buyer Delivery")
+                    {
+                        objSheets.Columns[i + 1].NumberFormat = "yyyy/MM/dd";
+                    }
+
+                    // 欄位Format：文字
+                    if (this.grid6Data.Columns[i].ColumnName == "Colorway" ||
+                        this.grid6Data.Columns[i].ColumnName == "SP#" ||
+                        this.grid6Data.Columns[i].ColumnName == "From SP#")
+                    {
+                        objSheets.Columns[i + 1].NumberFormat = "@";
+                    }
+                }
+
+                string r6 = MyUtility.Excel.ConvertNumericToExcelColumn(this.grid6Data.Columns.Count);
+                objSheets.get_Range("A1", r6 + "1").Merge(false);
+                MyUtility.Excel.CopyToXls(this.grid6Data, string.Empty, "PPIC_P01_Qtybreakdown.xltx", 2, false, null, objApp, wSheet: objSheets);
+                objSheets.Cells[1, 1] = "Qty breakdown (" + this.poID + ")";
+                objSheets.Cells[1, 1].HorizontalAlignment = Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignCenter;
+                objSheets.Cells[1, 1].VerticalAlignment = Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignCenter;
+                objSheets.get_Range("A1", r6 + "2").Interior.Color = Color.LightGreen;
+                objSheets.get_Range("A2", r6 + "2").AutoFilter(1);
+            }
+
+            // 隱藏第五分頁
+            if (!this.isTabPag5)
+            {
+                objSheets = objApp.ActiveWorkbook.Worksheets[5];
+                objSheets.Visible = Microsoft.Office.Interop.Excel.XlSheetVisibility.xlSheetHidden;
+            }
+
+            // 隱藏第六分頁
+            if (!this.isTabPag6)
+            {
+                objSheets = objApp.ActiveWorkbook.Worksheets[6];
+                objSheets.Visible = Microsoft.Office.Interop.Excel.XlSheetVisibility.xlSheetHidden;
             }
 
             for (int i = 1; i <= 4; i++)
