@@ -119,6 +119,9 @@ namespace Sci.Production.Cutting
             }
 
             this.detailgrid.Click += this.Detailgrid_Click;
+
+            this.btnAutoDistributeSP.Click += this.BtnAutoDistributeSP_Click;
+            this.btnAutoDistributeSP.EditMode = Win.UI.AdvEditModes.EnableOnEdit;
         }
 
         private void Detailgrid_Click(object sender, EventArgs e)
@@ -246,6 +249,7 @@ Select
     ,fromukey = a.ukey
     ,CuttingLayer = iif(isnull(cs.CuttingLayer,0) = 0, 100 ,cs.CuttingLayer)
     ,ImportML = cast(0 as bit)
+    ,CanDoAutoDistribute = cast(0 as bit)
 from Workorder a WITH (NOLOCK)
 left join fabric c WITH (NOLOCK) on c.SCIRefno = a.SCIRefno
 left join Construction cs WITH (NOLOCK) on cs.ID = ConstructionID
@@ -359,7 +363,14 @@ where a.id = '{masterID}'
             #endregion
 
             #region distqtyTb
-            cmdsql = string.Format(@"Select *,0 as newKey From Workorder_distribute WITH (NOLOCK) Where id='{0}'", masterID);
+            string sqlWorkorder_distribute = @"
+Select  wd.*,
+        o.SewInline,
+        0 as newKey 
+From Workorder_distribute wd WITH (NOLOCK)
+left join Orders o  with (nolock) on o.ID = wd.OrderID
+Where wd.id = '{0}'";
+            cmdsql = string.Format(sqlWorkorder_distribute, masterID);
             dr = DBProxy.Current.Select(null, cmdsql, out this.distqtyTb);
             if (!dr)
             {
@@ -695,10 +706,11 @@ where WorkOrderUkey={0}", masterID);
                 .Numeric("Qty", header: "Ratio", width: Widths.AnsiChars(5), integer_places: 6, maximum: 999999, minimum: 0).Get(out this.col_sizeRatio_qty);
 
             this.Helper.Controls.Grid.Generator(this.gridDistributetoSPNo)
-                .Text("orderid", header: "SP#", width: Widths.AnsiChars(15)).Get(out this.col_dist_sp)
-                .Text("article", header: "Article", width: Widths.AnsiChars(8)).Get(out this.col_dist_article)
+                .Text("orderid", header: "SP#", width: Widths.AnsiChars(13)).Get(out this.col_dist_sp)
+                .Text("article", header: "Article", width: Widths.AnsiChars(7)).Get(out this.col_dist_article)
                 .Text("SizeCode", header: "Size", width: Widths.AnsiChars(4)).Get(out this.col_dist_size)
-                .Numeric("Qty", header: "Qty", width: Widths.AnsiChars(3), integer_places: 6, maximum: 999999, minimum: 0).Get(out this.col_dist_qty);
+                .Numeric("Qty", header: "Qty", width: Widths.AnsiChars(3), integer_places: 6, maximum: 999999, minimum: 0).Get(out this.col_dist_qty)
+                .Date("SewInline", header: "Inline Date", width: Widths.AnsiChars(8), iseditingreadonly: true);
 
             this.Helper.Controls.Grid.Generator(this.gridQtyBreakdown)
                 .Text("id", header: "SP#", width: Widths.AnsiChars(13))
@@ -4039,6 +4051,49 @@ DEALLOCATE CURSOR_
 
             this.OnRefreshClick();
             MyUtility.Msg.InfoBox("Import complete");
+        }
+
+        private void BtnAutoDistributeSP_Click(object sender, EventArgs e)
+        {
+            if (!this.EditMode)
+            {
+                return;
+            }
+
+            this.detailgrid.EndEdit();
+
+            // 先將可分配的WorkOrder 下面的WorkOrder_Distribute清空
+            foreach (DataRow drWorkOrder in this.DetailDatas)
+            {
+                drWorkOrder["CanDoAutoDistribute"] = false;
+
+                // 有CutplanID不清空
+                if (!MyUtility.Check.Empty(drWorkOrder["CutplanID"]))
+                {
+                    continue;
+                }
+
+                // 有建立bundle不清空
+                if (MyUtility.Check.Seek($"select 1 from Bundle with (nolock) where CutRef = '{drWorkOrder["CutRef"]}' and POID = '{this.CurrentMaintain["ID"]}'"))
+                {
+                    continue;
+                }
+
+                drWorkOrder["CanDoAutoDistribute"] = true;
+                DeleteThirdDatas(this.distqtyTb, MyUtility.Convert.GetLong(drWorkOrder["Ukey"]), MyUtility.Convert.GetLong(drWorkOrder["NewKey"]));
+            }
+
+            // 開始重新分配WorkOrder_Distribute
+            foreach (DataRow drWorkOrder in this.DetailDatas.Where(s => MyUtility.Convert.GetBool(s["CanDoAutoDistribute"])))
+            {
+                var p02_AutoDistToSP = new P02_AutoDistToSP(drWorkOrder, this.sizeratioTb, this.distqtyTb, this.PatternPanelTb);
+                DualResult result = p02_AutoDistToSP.DoAutoDistribute();
+                if (!result)
+                {
+                    this.ShowErr(result);
+                    return;
+                }
+            }
         }
     }
 }
