@@ -114,6 +114,7 @@
             this.BackgroundWorker1 = new System.ComponentModel.BackgroundWorker();
             this.btnExWip = new Sci.Win.UI.Button();
             this.btnKHImportMarker = new Sci.Win.UI.Button();
+            this.btnAutoDistributeSP = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -146,6 +147,7 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.btnAutoDistributeSP);
             this.masterpanel.Controls.Add(this.btnKHImportMarker);
             this.masterpanel.Controls.Add(this.btnExWip);
             this.masterpanel.Controls.Add(this.BtnImportMarker);
@@ -191,6 +193,7 @@
             this.masterpanel.Controls.SetChildIndex(this.BtnImportMarker, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnExWip, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnKHImportMarker, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnAutoDistributeSP, 0);
             // 
             // detailpanel
             // 
@@ -1229,6 +1232,16 @@
             this.btnKHImportMarker.UseVisualStyleBackColor = true;
             this.btnKHImportMarker.Click += new System.EventHandler(this.BtnKHImportMarker_Click);
             // 
+            // btnAutoDistributeSP
+            // 
+            this.btnAutoDistributeSP.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F);
+            this.btnAutoDistributeSP.Location = new System.Drawing.Point(729, 5);
+            this.btnAutoDistributeSP.Name = "btnAutoDistributeSP";
+            this.btnAutoDistributeSP.Size = new System.Drawing.Size(98, 51);
+            this.btnAutoDistributeSP.TabIndex = 70;
+            this.btnAutoDistributeSP.Text = "WorkOrder SP# distribute.";
+            this.btnAutoDistributeSP.UseVisualStyleBackColor = true;
+            // 
             // P02
             // 
             this.ClientSize = new System.Drawing.Size(1211, 775);
@@ -1376,5 +1389,6 @@
         private Win.UI.Button btnKHImportMarker;
         private Win.UI.TextBox txtTone;
         private Win.UI.Label lblTone;
+        private Win.UI.Button btnAutoDistributeSP;
     }
 }
