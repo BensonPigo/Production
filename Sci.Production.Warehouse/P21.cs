@@ -12,7 +12,6 @@ using System.Drawing;
 using System.Linq;
 using System.Transactions;
 using System.Windows.Forms;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace Sci.Production.Warehouse
 {
@@ -431,6 +430,13 @@ from
         ,WhseArrival = r.WhseArrival
         ,[ColorName] = c.Name
         ,[Relaxtime] = rel.Relaxtime
+        ,o.StyleID
+        ,StockTypeName = 
+            case rd.StockType
+            when 'b' then 'Bulk'
+            when 'i' then 'Inventory'
+            when 'o' then 'Scrap'
+            end
     from  Receiving r with (nolock)
     inner join Receiving_Detail rd with (nolock) on r.ID = rd.ID
     inner join View_WH_Orders o with (nolock) on o.ID = rd.POID 
@@ -539,6 +545,13 @@ from
         ,WhseArrival = t.IssueDate
         ,[ColorName] = c.Name
         ,[Relaxtime] = rel.Relaxtime
+        ,o.StyleID
+        ,StockTypeName = 
+            case td.StockType
+            when 'b' then 'Bulk'
+            when 'i' then 'Inventory'
+            when 'o' then 'Scrap'
+            end
     FROM TransferIn t with (nolock)
     INNER JOIN TransferIn_Detail td with (nolock) ON t.ID = td.ID
     INNER JOIN View_WH_Orders o with (nolock) ON o.ID = td.POID
