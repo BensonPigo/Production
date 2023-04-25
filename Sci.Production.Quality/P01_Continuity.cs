@@ -62,7 +62,7 @@ namespace Sci.Production.Quality
                 this.btnCopyFabricFromIns.Enabled = false;
             }
 
-            string order_cmd = string.Format("Select * from orders WITH (NOLOCK) where id='{0}'", this.maindr["POID"]);
+            string order_cmd = string.Format("Select * from View_WH_Orders WITH (NOLOCK) where id='{0}'", this.maindr["POID"]);
             DataRow order_dr;
             if (MyUtility.Check.Seek(order_cmd, out order_dr))
             {
@@ -625,7 +625,12 @@ select ToAddress = stuff ((select concat (';', tmp.email)
             DualResult xresult1;
             string continuityEncode = string.Empty;
             string seasonID = string.Empty;
-            if (xresult1 = DBProxy.Current.Select("Production", string.Format("select Roll,Dyelot,Scale,a.Result,a.Inspdate,Inspector,a.Remark,B.ContinuityEncode,C.SeasonID from FIR_Continuity a WITH (NOLOCK) left join FIR b WITH (NOLOCK) on a.ID=b.ID LEFT JOIN ORDERS C ON B.POID=C.ID where a.ID='{0}'", this.textID.Text), out dt1))
+            if (xresult1 = DBProxy.Current.Select("Production", string.Format(@"
+select Roll,Dyelot,Scale,a.Result,a.Inspdate,Inspector,a.Remark,B.ContinuityEncode,C.SeasonID 
+from FIR_Continuity a WITH (NOLOCK) 
+left join FIR b WITH (NOLOCK) on a.ID=b.ID 
+LEFT JOIN View_WH_Orders C ON B.POID=C.ID 
+where a.ID='{0}'", this.textID.Text), out dt1))
             {
                 if (dt1.Rows.Count > 0)
                 {
@@ -690,7 +695,7 @@ select ToAddress = stuff ((select concat (';', tmp.email)
 
             ReportDefinition report = new ReportDefinition();
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("FactoryNameEN", MyUtility.GetValue.Lookup("NameEN", Env.User.Factory, "Factory", "ID")));
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("FactoryID", MyUtility.GetValue.Lookup("FactoryID", this.displaySP.Text, "Orders", "ID")));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("FactoryID", MyUtility.GetValue.Lookup("FactoryID", this.displaySP.Text, "View_WH_Orders", "ID")));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("POID", this.displaySP.Text));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("StyleID", this.displayStyle.Text));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Color", this.displayColor.Text));

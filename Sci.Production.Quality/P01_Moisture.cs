@@ -37,7 +37,7 @@ namespace Sci.Production.Quality
             this.txtsupplier.TextBox1.IsSupportEditMode = false;
             this.txtsupplier.TextBox1.ReadOnly = true;
 
-            string order_cmd = $"Select * from orders WITH (NOLOCK) where id='{this.maindr["POID"]}'";
+            string order_cmd = $"Select * from View_WH_Orders WITH (NOLOCK) where id='{this.maindr["POID"]}'";
             if (MyUtility.Check.Seek(order_cmd, out DataRow order_dr))
             {
                 this.displayBrand.Text = order_dr["Brandid"].ToString();
