@@ -99,6 +99,15 @@ namespace Sci.Production.Shipping
                 this.txtWKNo.Text = this.txtWKNo.Text.Replace("'", string.Empty);
             }
 
+            var checkHC = MyUtility.GetValue.Lookup($"select ID from Express_Detail ed WHERE ed.DutyNo = '{this.txtWKNo.Text}'");
+            if (!MyUtility.Check.Empty(checkHC))
+            {
+                if (MyUtility.Convert.GetString(this.masterData["ID"]) != checkHC)
+                {
+                    MyUtility.Msg.WarningBox($"The Fty WK# is already imported to another HC#({checkHC})");
+                    return;
+                }
+            }
             string sqlCmd =
                 $@"
 select Selected = 0 
@@ -194,8 +203,11 @@ and fd.ID ='{this.txtWKNo.Text}'
                 sqlChk = $@"select ExpressID from FtyExport where ID = '{dr["ID"]}' and ExpressID !=''";
                 if (MyUtility.Check.Seek(sqlChk, out drChk))
                 {
-                    MyUtility.Msg.WarningBox($@"Fty WK# <{dr["ID"]}> already exists in HC No. <{drChk["ExpressID"]}>");
-                    return;
+                    if ((string)this.masterData["ID"] != (string)drChk["ExpressID"])
+                    {
+                        MyUtility.Msg.WarningBox($@"Fty WK# <{dr["ID"]}> already exists in HC No. <{drChk["ExpressID"]}>");
+                        return;
+                    }
                 }
 
                 insertCmds.Add($@"
