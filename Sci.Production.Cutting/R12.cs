@@ -83,6 +83,7 @@ select m.BrandID
 	,smd.PhaseID
 	,m.MarkerNo
 	,s.ID
+    ,[Colorway] = saArticle.val
 	,mls.SizeCode
 	,mls.MarkerName
 	,sb.Refno
@@ -133,6 +134,19 @@ inner join SMNotice sm on sm.ID = m.ID and sm.SizeGroup = MaxActFinDate.SizeGrou
 inner join SMNotice_Detail smd on smd.ID = sm.ID and smd.Type = 'M' and  smd.PhaseID in ('BULK','SIZE/S','PP SAMPLE')
 inner join Style_BOF sb on sb.StyleUkey = s.Ukey and sb.FabricCode = ml.FabricCode
 left join Fabric f on f.SCIRefno = sb.SCIRefno
+outer apply
+(
+	SELECT val = stuff(
+	(
+	select concat(',',Article)
+	FROM
+	(
+		SELECT  Article
+		FROM Style_Article sa  
+		where sa.StyleUkey  = o.StyleUkey
+	)
+	tmp for xml path('')),1,1,'')
+)saArticle
 where smd.PhaseID in ('BULK','SIZE/S','PP SAMPLE')
 {where}
 
@@ -143,6 +157,7 @@ select distinct BrandID ,SeasonID
 	,PhaseID
 	,MarkerNo
 	,ID
+    ,Colorway
 	,SizeCode
 	,MarkerName
 	,Refno
