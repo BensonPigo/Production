@@ -82,7 +82,7 @@ namespace Sci.Production.Quality
 
             string title = MyUtility.GetValue.Lookup($"select NameEN from Factory WITH (NOLOCK) where id='{Env.User.Factory}'");
             string invno = dt_Exp.Rows.Count == 0 ? string.Empty : dt_Exp.Rows[0]["ID"].ToString();
-            string brandID = MyUtility.GetValue.Lookup($"SELECT BrandID FROM Orders WHERE ID = '{this.maindr["POID"]}'");
+            string brandID = MyUtility.GetValue.Lookup($"SELECT BrandID FROM View_WH_Orders WHERE ID = '{this.maindr["POID"]}'");
 
             int packages = MyUtility.Convert.GetInt(MyUtility.GetValue.Lookup($@"
  select top 1 Packages

@@ -67,7 +67,7 @@ namespace Sci.Production.Quality
             this.txtuserApprover.TextBox1.IsSupportEditMode = false;
             this.txtuserApprover.TextBox1.ReadOnly = true;
 
-            string order_cmd = string.Format("Select * from orders WITH (NOLOCK) where id='{0}'", this.maindr["POID"]);
+            string order_cmd = string.Format("Select * from View_WH_Orders WITH (NOLOCK) where id='{0}'", this.maindr["POID"]);
             if (MyUtility.Check.Seek(order_cmd, out DataRow order_dr))
             {
                 this.displayBrand.Text = order_dr["Brandid"].ToString();
@@ -310,6 +310,7 @@ namespace Sci.Production.Quality
             .Text("Scale", header: "Scale", width: Widths.AnsiChars(5), settings: scalecell)
             .Text("Result", header: "Result", width: Widths.AnsiChars(5), iseditingreadonly: true, settings: resulCell)
             .Text("Tone", header: "Tone/Grp", width: Widths.AnsiChars(8))
+            .Text("ShadebandDocLocationID", header: "ShadeBand Location", width: Widths.AnsiChars(8), iseditingreadonly: true)
             .Date("InspDate", header: "Insp.Date", width: Widths.AnsiChars(10))
             .CellUser("Inspector", header: "Inspector", width: Widths.AnsiChars(10), userNamePropertyName: "Name", settings: inspectorCell)
             .Text("Name", header: "Name", width: Widths.AnsiChars(20))
@@ -766,7 +767,12 @@ select Roll,Dyelot,TicketYds,Scale,Result,Tone
             }
             #endregion
             #region Excel 表頭值
-            sql = string.Format("select Roll,Dyelot,Scale,a.Result,a.Inspdate,Inspector,a.Remark,B.ContinuityEncode,C.SeasonID from FIR_Shadebone a WITH (NOLOCK) left join FIR b WITH (NOLOCK) on a.ID=b.ID LEFT JOIN ORDERS C ON B.POID=C.ID where a.ID='{0}'", this.ID);
+            sql = string.Format(@"
+select Roll,Dyelot,Scale,a.Result,a.Inspdate,Inspector,a.Remark,B.ContinuityEncode,C.SeasonID 
+from FIR_Shadebone a WITH (NOLOCK) 
+left join FIR b WITH (NOLOCK) on a.ID=b.ID 
+LEFT JOIN View_WH_Orders C ON B.POID=C.ID 
+where a.ID='{0}'", this.ID);
             xresult = DBProxy.Current.Select("Production", sql, out DataTable dt1);
             if (!xresult)
             {
@@ -797,7 +803,7 @@ select Roll,Dyelot,TicketYds,Scale,Result,Tone
             objSheets.Cells[2, 8] = this.displayStyle.Text.ToString();
             objSheets.Cells[2, 10] = seasonID;
 
-            string mCHandle = MyUtility.GetValue.Lookup($"SELECT MCHandle FROM Orders WHERE ID='{this.displaySP.Text.ToString()}'");
+            string mCHandle = MyUtility.GetValue.Lookup($"SELECT MCHandle FROM View_WH_Orders WHERE ID='{this.displaySP.Text.ToString()}'");
             objSheets.Cells[3, 2] = MyUtility.GetValue.Lookup($"SELECT dbo.getPass1_ExtNo('{mCHandle}')");
 
             objSheets.Cells[3, 4] = continuityEncode;
@@ -861,7 +867,7 @@ select Roll,Dyelot,TicketYds,Scale,Result,Tone
             string title = dt_title.Rows.Count == 0 ? string.Empty : dt_title.Rows[0]["NameEN"].ToString();
             string suppid = this.txtsupplier.TextBox1.Text + " - " + this.txtsupplier.DisplayBox1.Text;
             string invno = dt_Exp.Rows.Count == 0 ? string.Empty : dt_Exp.Rows[0]["ID"].ToString();
-            string brandID = MyUtility.GetValue.Lookup($"SELECT BrandID FROM Orders WHERE ID = '{this.displaySP.Text}'");
+            string brandID = MyUtility.GetValue.Lookup($"SELECT BrandID FROM View_WH_Orders WHERE ID = '{this.displaySP.Text}'");
 
             ReportDefinition report = new ReportDefinition();
 
