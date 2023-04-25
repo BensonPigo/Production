@@ -22,7 +22,8 @@ namespace Sci.Production.Quality
         private DataTable[] PrintData;
 
         private string baseReceivingSql = @"
-select	f.POID,
+select  [Category] = ddl.[Name],
+        f.POID,
 		[Seq] = CONCAT(f.SEQ1, ' ', f.SEQ2),
         o.FactoryID,
 		a.ExportId,
@@ -32,6 +33,7 @@ select	f.POID,
 		f.Suppid,
 		psd.Refno,
 		ColorID = isnull(psdsC.SpecValue ,''),
+        [Cutting Date] = o.CutInLine,
 		[ArriveWH_Date] = a.WhseArrival,
         f.ArriveQty,
         fa.WeaveTypeID,
@@ -41,6 +43,7 @@ select	f.POID,
 from Fir f with (nolock)
 inner join Receiving a with (nolock) on a.Id = f.ReceivingID
 left join Orders o with (nolock) on o.ID = f.POID
+left join DropDownList ddl with(nolock) on o.Category = ddl.id and ddl.[Type] = 'Category'
 left join PO_Supp_Detail psd with (nolock) on psd.ID = f.POID and psd.SEQ1 = f.SEQ1 and psd.SEQ2 = f.SEQ2
 left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
 left join Fabric fa with (nolock) on fa.SCIRefno = psd.SCIRefno
@@ -67,7 +70,8 @@ where 1 = 1
 ";
 
         private string baseTransferInSql = @"
-select	f.POID,
+select	[Category] = ddl.[Name],
+        f.POID,
 		[Seq] = CONCAT(f.SEQ1, ' ', f.SEQ2),
         o.FactoryID,
 		[ExportId] = '',
@@ -77,6 +81,7 @@ select	f.POID,
 		f.Suppid,
 		psd.Refno,
 		ColorID = isnull(psdsC.SpecValue ,''),
+        [Cutting Date] = o.CutInLine,
 		[ArriveWH_Date] = a.IssueDate,
         f.ArriveQty,
         fa.WeaveTypeID,
@@ -86,6 +91,7 @@ select	f.POID,
 from Fir f with (nolock)
 inner join TransferIn a with (nolock) on a.Id = f.ReceivingID
 left join Orders o with (nolock) on o.ID = f.POID
+left join DropDownList ddl with(nolock) on o.Category = ddl.id and ddl.[Type] = 'Category'
 left join PO_Supp_Detail psd with (nolock) on psd.ID = f.POID and psd.SEQ1 = f.SEQ1 and psd.SEQ2 = f.SEQ2
 left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
 left join Fabric fa with (nolock) on fa.SCIRefno = psd.SCIRefno
@@ -170,10 +176,14 @@ select
 	ctRoll = ct.Roll,
 	ctDyelot = ct2.Dyelot,
 	std.Ukey
+	,[Category] = ddl.Name
+	,[CuttingData] = o.CutInLine
+	,[ArriveWHData] = a.{6}
 into #tmp{2}
 from SubTransfer st
 inner join SubTransfer_Detail std on std.id = st.id
 inner join Orders O on O.ID = std.FromPOID
+left join DropDownList ddl with(nolock) on o.Category = ddl.id and ddl.[Type] = 'Category'
 left  join Orders ToOrder on ToOrder.id = std.ToPOID
 inner join PO_Supp_Detail PSD on PSD.ID = std.FromPOID and PSD.SEQ1 = std.FromSeq1 and PSD.SEQ2 = std.FromSeq2
 left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
@@ -231,6 +241,7 @@ Where st.type = 'B' and st.Status = 'Confirmed' and PSD.FabricType = 'F'
         private string B2A_select = @"
 select
 	f.ToPOID,
+    f.Category,
 	f.ToSeq,
     f.ToFty,
 	f.TransferID,
@@ -243,6 +254,8 @@ select
 	f.Suppid,
 	f.Refno,
 	f.ColorID,
+	f.CuttingData,
+	f.ArriveWHData,
 	f.IssueDate,
 	TransferQty = sum(f.TransferQty),
 	f.WeaveTypeID,
@@ -270,7 +283,7 @@ left join pass1 p1 with (nolock) on p1.id = f.{1}Inspector
 where 1=1
 {8}
 group by f.ToPOID,f.ToSeq,f.FromFty,f.ToFty,f.TransferID,f.FromPOID,f.FromSeq,f.WK,f.ReceivingID,f.StyleID,f.BrandID,f.Suppid,
-	f.Refno,f.ColorID,f.IssueDate,f.WeaveTypeID,f.ctRoll,f.ctDyelot,f.Approve,f.ApproveDate,p1.Name,
+	f.Refno,f.ColorID,f.IssueDate,f.WeaveTypeID,f.ctRoll,f.ctDyelot,f.Approve,f.ApproveDate,p1.Name,f.Category,f.ArriveWHData,f.CuttingData,
 	f.Non{1},f.{1},f.{1}Inspector,f.{1}Date
 	{7}
 ";
@@ -875,8 +888,8 @@ order by POID, Seq, ExportId, ReceivingID
                 }
 
                 // 基本資料
-                this.Sqlcmd = string.Format(this.B2A_sqlcmd, "Receiving_Detail", "Receiving", "R", where1, "a.ExportId", "inner") +
-                    string.Format(this.B2A_sqlcmd, "TransferIn_Detail", "TransferIn", "T", where2, "''", "left");
+                this.Sqlcmd = string.Format(this.B2A_sqlcmd, "Receiving_Detail", "Receiving", "R", where1, "a.ExportId", "inner", "WhseArrival") +
+                    string.Format(this.B2A_sqlcmd, "TransferIn_Detail", "TransferIn", "T", where2, "''", "left", "IssueDate");
 
                 // 要撈哪些
                 switch (this.comboInspection.Text)
