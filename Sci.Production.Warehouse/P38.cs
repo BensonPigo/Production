@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -20,6 +21,7 @@ namespace Sci.Production.Warehouse
     {
         private const byte UnLock = 0;
         private const byte Lock = 1;
+        private DataTable totalQtyDataTable;
 
         /// <inheritdoc/>
         public P38(ToolStripMenuItem menuitem)
@@ -41,6 +43,7 @@ namespace Sci.Production.Warehouse
             Ict.Win.UI.DataGridViewTextBoxColumn columnStatus = new Ict.Win.UI.DataGridViewTextBoxColumn();
             DataGridViewGeneratorTextColumnSettings ns = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorTextColumnSettings remark = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorCheckBoxColumnSettings col_chk = new DataGridViewGeneratorCheckBoxColumnSettings();
 
             ns.CellMouseDoubleClick += (s, e) =>
                 {
@@ -80,11 +83,88 @@ namespace Sci.Production.Warehouse
                  }
              };
 
+            col_chk.CellValidating += (s, e) =>
+            {
+                if (e.RowIndex == -1)
+                {
+                    return; // 沒東西 return
+                }
+
+                DataRow thisRow = this.gridMaterialLock.GetDataRow(e.RowIndex);
+                if (thisRow == null)
+                {
+                    return;
+                }
+
+                var oldValue = thisRow["selected"].ToString() == "1" ? true : false;
+                var newValue = e.FormattedValue.ToString().ToUpper();
+                if (oldValue.ToString().ToUpper() == newValue)
+                {
+                    return;
+                }
+
+                string strPoid = (string)thisRow["Poid"];
+                string strSeq1 = (string)thisRow["Seq1"];
+                string strSeq2 = (string)thisRow["Seq2"];
+                var qty = (decimal)thisRow["balanceqty"];
+                var isCheck = (bool)e.FormattedValue;
+
+                // 處理 CheckBox 的選擇事件
+                if (isCheck)
+                {
+                    // 選擇 CheckBox 的處理
+                    var detailCount = this.totalQtyDataTable.AsEnumerable().Where(
+                        row => row.Field<string>("Poid") == strPoid &&
+                                row.Field<string>("Seq1") == strSeq1 &&
+                                row.Field<string>("Seq2") == strSeq2)
+                        .ToList().Count();
+                    if (detailCount == 0)
+                    {
+                        DataRow row = this.totalQtyDataTable.NewRow();
+                        row["Poid"] = strPoid;
+                        row["Seq"] = strSeq1 + "-" + strSeq2;
+                        row["Seq1"] = strSeq1;
+                        row["Seq2"] = strSeq2;
+                        row["BalanceQty"] = (decimal)thisRow["BalanceQty"];
+                        row["Count"] = 1;
+                        this.totalQtyDataTable.Rows.Add(row);
+                    }
+                    else
+                    {
+                        int rowIndex = this.totalQtyDataTable.Rows.IndexOf(this.totalQtyDataTable.Select($"poid = '{strPoid}' and seq1 = '{strSeq1}' and seq2 = '{strSeq2}'").FirstOrDefault());
+                        this.totalQtyDataTable.Rows[rowIndex]["BalanceQty"] = (decimal)this.totalQtyDataTable.Rows[rowIndex]["BalanceQty"] + (decimal)thisRow["BalanceQty"];
+                        this.totalQtyDataTable.Rows[rowIndex]["Count"] = (int)this.totalQtyDataTable.Rows[rowIndex]["Count"] + 1;
+                    }
+                }
+                else
+                {
+                    // 取消 CheckBox 的處理
+                    var deleteRow = this.totalQtyDataTable.Select($"Poid = '{strPoid}' and Seq1 ='{strSeq1}' and Seq2 = '{strSeq2}'").FirstOrDefault();
+                    if (deleteRow == null)
+                    {
+                        return;
+                    }
+
+                    if ((int)deleteRow["Count"] == 1)
+                    {
+                        this.totalQtyDataTable.Rows.Remove(deleteRow);
+                    }
+                    else
+                    {
+                        int rowIndex = this.totalQtyDataTable.Rows.IndexOf(this.totalQtyDataTable.Select($"poid = '{strPoid}' and seq1 = '{strSeq1}' and seq2 = '{strSeq2}'").FirstOrDefault());
+                        this.totalQtyDataTable.Rows[rowIndex]["BalanceQty"] = (decimal)this.totalQtyDataTable.Rows[rowIndex]["BalanceQty"] - (decimal)thisRow["BalanceQty"];
+                        this.totalQtyDataTable.Rows[rowIndex]["Count"] = (int)this.totalQtyDataTable.Rows[rowIndex]["Count"] - 1;
+                    }
+                }
+
+                this.totalQtyGrid.DataSource = this.totalQtyDataTable;
+            };
+
             #region -- 設定Grid1的顯示欄位 --
             this.gridMaterialLock.IsEditingReadOnly = false; // 必設定, 否則CheckBox會顯示圖示
             this.gridMaterialLock.DataSource = this.listControlBindingSource1;
             this.Helper.Controls.Grid.Generator(this.gridMaterialLock)
-                .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0)
+                .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0, settings: col_chk)
                  .Text("POID", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
                  .Text("seq1", header: "Seq1", width: Widths.AnsiChars(3), iseditingreadonly: true)
                   .Text("seq2", header: "Seq2", width: Widths.AnsiChars(2), iseditingreadonly: true)
@@ -121,7 +201,109 @@ namespace Sci.Production.Warehouse
             this.gridMaterialLock.Columns["Remark"].DefaultCellStyle.BackColor = Color.Pink;
             this.gridMaterialLock.Columns["Remark"].DefaultCellStyle.ForeColor = Color.Red;
 
+            this.gridMaterialLock.ColumnHeaderMouseClick += this.Detailgrid_ColumnHeaderMouseClick;
+            this.gridMaterialLock.RowHeadersVisible = false;
             #endregion
+
+            #region -- 設定totalQtyGrid的顯示欄位 --
+            this.totalQtyGrid.IsEditingReadOnly = false; // 必設定, 否則CheckBox會顯示圖示
+            this.totalQtyGrid.DataSource = this.totalQtyDataTable;
+            this.Helper.Controls.Grid.Generator(this.totalQtyGrid)
+                 .Text("Poid", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
+                 .Text("Seq", header: "Seq", width: Widths.AnsiChars(6), iseditingreadonly: true)
+                  .Numeric("BalanceQty", header: "Ttl\r\nBalance Qty", width: Widths.AnsiChars(12), integer_places: 8, decimal_places: 2, iseditingreadonly: true)
+                  ;
+            #endregion
+            this.checkHidden.Checked = true;
+            if (this.checkHidden.Checked)
+            {
+                this.splitContainer1.Panel2Collapsed = true;
+                this.splitContainer1.Panel2.Hide();
+            }
+            else
+            {
+                this.splitContainer1.Panel2Collapsed = false;
+                this.splitContainer1.Panel2.Show();
+            }
+        }
+
+        private void ResetTotalTable()
+        {
+            this.totalQtyDataTable = new DataTable();
+            this.totalQtyDataTable.Columns.Add("Poid", typeof(string));
+            this.totalQtyDataTable.Columns.Add("Seq1", typeof(string));
+            this.totalQtyDataTable.Columns.Add("Seq2", typeof(string));
+            this.totalQtyDataTable.Columns.Add("Seq", typeof(string));
+            this.totalQtyDataTable.Columns.Add("BalanceQty", typeof(decimal));
+            this.totalQtyDataTable.Columns.Add("Count", typeof(int));
+            this.totalQtyGrid.DataSource = this.totalQtyDataTable;
+        }
+
+        private void Detailgrid_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
+        {
+            if (this.gridMaterialLock == null)
+            {
+                return;
+            }
+
+            if (this.gridMaterialLock.CurrentCell == null)
+            {
+                return;
+            }
+
+            string columnName = this.gridMaterialLock.CurrentCell.OwningColumn.Name;
+            if (columnName.ToUpper() != "SELECTED")
+            {
+                return;
+            }
+
+            var dt = (DataTable)this.listControlBindingSource1.DataSource;
+            List<DataRow> selectedDataRow = dt.AsEnumerable().Where(x => x.Field<int>("Selected") == 1).ToList();
+
+            // 全選
+            if (selectedDataRow.Count > 0)
+            {
+                this.ResetTotalTable();
+
+                var distinctRows = dt.AsEnumerable()
+                                    .GroupBy(r => new {
+                                        Poid = r.Field<string>("POID"),
+                                        Seq1 = r.Field<string>("SEQ1"),
+                                        Seq2 = r.Field<string>("SEQ2"),
+                                    })
+                                    .Select(g => g.First())
+                                    .ToList();
+
+                foreach (var groupDRow in distinctRows)
+                {
+                    var sumQty = dt.AsEnumerable().Where(x => x.Field<string>("Poid") == (string)groupDRow["Poid"] &&
+                                                                  x.Field<string>("Seq1") == (string)groupDRow["Seq1"] &&
+                                                                  x.Field<string>("Seq2") == (string)groupDRow["Seq2"])
+                                                .Sum(x => x.Field<decimal>("BalanceQty"));
+
+                    var groupTable = dt.AsEnumerable().Where(x => x.Field<string>("Poid") == (string)groupDRow["Poid"] &&
+                                                                  x.Field<string>("Seq1") == (string)groupDRow["Seq1"] &&
+                                                                  x.Field<string>("Seq2") == (string)(string)groupDRow["Seq2"])
+                                                             .CopyToDataTable();
+
+                    DataRow add_row = this.totalQtyDataTable.NewRow();
+                    add_row["Poid"] = (string)groupDRow["Poid"];
+                    add_row["Seq"] = (string)groupDRow["Seq1"] + "-" + (string)(string)groupDRow["Seq2"];
+                    add_row["Seq1"] = (string)groupDRow["Seq1"];
+                    add_row["Seq2"] = (string)(string)groupDRow["Seq2"];
+                    add_row["BalanceQty"] = sumQty;
+                    add_row["Count"] = groupTable.Rows.Count;
+                    this.totalQtyDataTable.Rows.Add(add_row);
+                }
+
+                this.totalQtyGrid.DataSource = this.totalQtyDataTable;
+            }
+
+            // 全取消
+            if (selectedDataRow.Count == 0)
+            {
+                this.ResetTotalTable();
+            }
         }
 
         private void BtnClose_Click(object sender, EventArgs e)
@@ -132,6 +314,7 @@ namespace Sci.Production.Warehouse
         [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         private void BtnQuery_Click(object sender, EventArgs e)
         {
+            this.ResetTotalTable();
             StringBuilder strSQLCmd = new StringBuilder();
             string sp1 = this.txtSP.Text.TrimEnd() + '%';
             string strMtlLocation = string.Empty;
@@ -294,6 +477,21 @@ and psd.FabricType in ({0})", this.comboDropDownList1.SelectedValue));
             {
                 strSQLCmd.Append($@"
 and fi2.MtlLocationID ='{this.txtMtlLocation.Text}'");
+            }
+
+            if (!MyUtility.Check.Empty(this.txtDyelot.Text))
+            {
+                strSQLCmd.Append($@" and fi.Dyelot = '{this.txtDyelot.Text}'");
+            }
+
+            if (!MyUtility.Check.Empty(this.txtToneGrp.Text))
+            {
+                strSQLCmd.Append($@" and fi.Tone = '{this.txtToneGrp.Text}'");
+            }
+
+            if (!MyUtility.Check.Empty(this.txtReamark.Text))
+            {
+                strSQLCmd.Append($@" and fi.Remark like '%{this.txtReamark.Text}%'");
             }
 
             strSQLCmd.Append($@"
@@ -802,6 +1000,58 @@ inner join ftyinventory f with (NoLock) on t.ukey = f.ukey";
             }
 
             this.listControlBindingSource1.Filter = this.comboFIR.Text == "ALL" ? string.Empty : $"FIR = '{this.comboFIR.Text}'";
+        }
+
+        private void CheckHidden_Click(object sender, EventArgs e)
+        {
+            if (this.checkHidden.Checked)
+            {
+                this.splitContainer1.Panel2Collapsed = true;
+                this.splitContainer1.Panel2.Hide();
+            }
+            else
+            {
+                this.splitContainer1.Panel2Collapsed = false;
+                this.splitContainer1.Panel2.Show();
+            }
+        }
+
+        private void BtnUpdate_Click(object sender, EventArgs e)
+        {
+            var dt = (DataTable)this.listControlBindingSource1.DataSource;
+
+            List<DataRow> selectedValue = dt.AsEnumerable().Where(x => x.Field<int>("Selected") == 1).ToList();
+            if (selectedValue.Count == 0)
+            {
+                return;
+            }
+
+            List<SqlParameter> listSqlParameter = new List<SqlParameter>();
+            listSqlParameter.Add(new SqlParameter("@Remark", this.txtBatchRemark.Text));
+            string sqlCmd = $@"update f
+                               set f.Remark = @Remark
+                               from #tmp t with(nolock)
+                               inner join FtyInventory f with(nolock) on t.poid = f.poid and 
+                                                                         t.seq1 = f.seq1 and
+                                                                         t.seq2 = f.seq2 and
+                                                                         t.Roll = f.Roll and
+                                                                         t.Dyelot = f.Dyelot and 
+                                                                         f.StockType = (case t.StockType when 'Bulk' then'B'  when 'Inventory' then 'I' else t.StockType end )";
+
+            DualResult dualResult = MyUtility.Tool.ProcessWithDatatable(selectedValue.CopyToDataTable(), null, sqlCmd, out DataTable dataTable, paramters: listSqlParameter);
+            if (!dualResult)
+            {
+                MyUtility.Msg.ErrorBox(dualResult.ToString());
+                return;
+            }
+
+            foreach (DataRow dr in selectedValue)
+            {
+                dr["Remark"] = this.txtBatchRemark.Text;
+                dr.EndEdit();
+            }
+
+            MyUtility.Msg.InfoBox("Update remark successful.");
         }
     }
 }

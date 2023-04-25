@@ -198,6 +198,7 @@
             this.txtRest1Start.Name = "txtRest1Start";
             this.txtRest1Start.Size = new System.Drawing.Size(53, 23);
             this.txtRest1Start.TabIndex = 16;
+            this.txtRest1Start.Validating += new System.ComponentModel.CancelEventHandler(this.TxtRest1Start_Validating);
             // 
             // txtRest1End
             // 
@@ -209,6 +210,7 @@
             this.txtRest1End.Name = "txtRest1End";
             this.txtRest1End.Size = new System.Drawing.Size(53, 23);
             this.txtRest1End.TabIndex = 17;
+            this.txtRest1End.Validating += new System.ComponentModel.CancelEventHandler(this.TxtRest1End_Validating);
             // 
             // txtRest2Start
             // 
@@ -220,6 +222,7 @@
             this.txtRest2Start.Name = "txtRest2Start";
             this.txtRest2Start.Size = new System.Drawing.Size(53, 23);
             this.txtRest2Start.TabIndex = 18;
+            this.txtRest2Start.Validating += new System.ComponentModel.CancelEventHandler(this.TxtRest2Start_Validating);
             // 
             // txtRest2End
             // 
@@ -231,6 +234,7 @@
             this.txtRest2End.Name = "txtRest2End";
             this.txtRest2End.Size = new System.Drawing.Size(53, 23);
             this.txtRest2End.TabIndex = 19;
+            this.txtRest2End.Validating += new System.ComponentModel.CancelEventHandler(this.TxtRest2End_Validating);
             // 
             // txtfactory
             // 

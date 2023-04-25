@@ -143,6 +143,7 @@ select  operation = case a.type
                             else 0.00
                        end 
         ,InventorySpSeq = a.InventoryPOID+'-'+a.InventorySeq1+'-'+a.InventorySeq2 
+        ,InventorySpSeason = invOrders.SeasonID
         ,InventoryProjectID = (select ProjectID from dbo.orders WITH (NOLOCK) where id = a.InventoryPOID) 
         ,InventoryFactoryID = (select FactoryID from dbo.orders WITH (NOLOCK) where id = a.InventoryPOID) 
         ,MR_Input = Round(dbo.GetUnitQty(d.POUnit, d.StockUnit, d.InputQty), 2)
@@ -162,7 +163,8 @@ select  operation = case a.type
 from dbo.invtrans a WITH (NOLOCK) 
 inner join InventoryRefno b WITH (NOLOCK) on b.id = a.InventoryRefnoId
 inner join PO_Supp_Detail d WITH (NOLOCK) on d.ID = a.InventoryPOID and d.SEQ1 = a.InventorySeq1 and d.seq2 =  a.InventorySeq2
-inner join Orders orders on d.id = orders.id
+inner join Orders orders with (nolock) on d.id = orders.id
+left join Orders invOrders with (nolock) on invOrders.ID = a.InventoryPOID
 inner join Factory factory on orders.FactoryID = factory.id
 left join MDivisionPoDetail e WITH (NOLOCK) on e.POID = A.InventoryPOID AND E.SEQ1 = A.InventorySeq1 AND E.Seq2 = A.InventorySeq2
 left join InventoryRefno_Spec irsC on irsC.InventoryRefNoID = b.id and irsC.SpecColumnID = 'Color'

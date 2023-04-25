@@ -41,14 +41,47 @@ namespace Sci.Production.Quality
         {
             if (MyUtility.Check.Empty(this.CurrentMaintain["FactoryID"]) ||
                 MyUtility.Check.Empty(this.CurrentMaintain["Shift"]) ||
-                MyUtility.Check.Empty(this.CurrentMaintain["SubprocessID"]))
+                MyUtility.Check.Empty(this.CurrentMaintain["SubprocessID"]) ||
+                MyUtility.Check.Empty(this.CurrentMaintain["StartDate"]))
             {
-                MyUtility.Msg.WarningBox("<Factory>, <Subprocess> and <Shift> cannot empty.");
+                MyUtility.Msg.WarningBox("<Start Date>,<Factory>, <Subprocess> and <Shift> cannot empty.");
 
                 return false;
             }
 
             return base.ClickSaveBefore();
+        }
+
+        private void TxtRest1Start_Validating(object sender, CancelEventArgs e)
+        {
+            if (this.txtRest1Start.Text == ":")
+            {
+                this.CurrentMaintain["Rest1Start"] = DBNull.Value;
+            }
+        }
+
+        private void TxtRest1End_Validating(object sender, CancelEventArgs e)
+        {
+            if (this.txtRest1End.Text == ":")
+            {
+                this.CurrentMaintain["Rest1End"] = DBNull.Value;
+            }
+        }
+
+        private void TxtRest2Start_Validating(object sender, CancelEventArgs e)
+        {
+            if (this.txtRest2Start.Text == ":")
+            {
+                this.CurrentMaintain["Rest2Start"] = DBNull.Value;
+            }
+        }
+
+        private void TxtRest2End_Validating(object sender, CancelEventArgs e)
+        {
+            if (this.txtRest2End.Text == ":")
+            {
+                this.CurrentMaintain["Rest2End"] = DBNull.Value;
+            }
         }
     }
 }
