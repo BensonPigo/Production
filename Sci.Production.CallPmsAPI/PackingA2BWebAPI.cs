@@ -145,7 +145,11 @@ namespace Sci.Production.CallPmsAPI
 
         public static string GetPLFromRgCodeByPackID(string packID)
         {
-            string sqlGetPLFromRgCode = $"select distinct PLFromRgCode from GMTBooking_Detail with (nolock) where PackingListID = '{packID}'";
+            string sqlGetPLFromRgCode = $@"
+select distinct PLFromRgCode 
+from GMTBooking_Detail with (nolock)
+where   PackingListID = '{packID}' and
+        exists(select 1 from SystemWebAPIURL s with (nolock) where s.SystemName = GMTBooking_Detail.PLFromRgCode and s.Junk = 0)";
             DataTable dtResult;
             DualResult result = DBProxy.Current.Select(null, sqlGetPLFromRgCode, out dtResult);
             if (!result)
@@ -167,7 +171,8 @@ namespace Sci.Production.CallPmsAPI
         {
             string sqlGetPLFromRgCode = $@"
 select distinct PLFromRgCode 
-from GMTBooking_Detail with (nolock) ";
+from GMTBooking_Detail with (nolock) 
+where exists(select 1 from SystemWebAPIURL s with (nolock) where s.SystemName = GMTBooking_Detail.PLFromRgCode and s.Junk = 0)";
             DataTable dtResult;
             DualResult result = DBProxy.Current.Select(null, sqlGetPLFromRgCode, out dtResult);
             if (!result)
@@ -190,7 +195,8 @@ from GMTBooking_Detail with (nolock) ";
             string sqlGetPLFromRgCode = $@"
 select distinct PLFromRgCode 
 from GMTBooking_Detail with (nolock) 
-where ID in (select InvNo from Pullout_Detail with (nolock) where ID = '{pulloutID}')";
+where   ID in (select InvNo from Pullout_Detail with (nolock) where ID = '{pulloutID}') and
+        exists(select 1 from SystemWebAPIURL s with (nolock) where s.SystemName = GMTBooking_Detail.PLFromRgCode and s.Junk = 0)";
             DataTable dtResult;
             DualResult result = DBProxy.Current.Select(null, sqlGetPLFromRgCode, out dtResult);
             if (!result)
@@ -215,7 +221,11 @@ where ID in (select InvNo from Pullout_Detail with (nolock) where ID = '{pullout
                 return new List<string>();
             }
 
-            string sqlGetPLFromRgCode = $"select distinct PLFromRgCode from GMTBooking_Detail with (nolock) where ID in ({listInvNo.Select(s => $"'{s.Replace("'", "")}'").JoinToString(",")})";
+            string sqlGetPLFromRgCode = $@"
+select distinct PLFromRgCode
+from GMTBooking_Detail with (nolock)
+where   ID in ({listInvNo.Select(s => $"'{s.Replace("'", "")}'").JoinToString(",")}) and
+        exists(select 1 from SystemWebAPIURL s with (nolock) where s.SystemName = GMTBooking_Detail.PLFromRgCode and s.Junk = 0)";
             DataTable dtResult;
             DualResult result = DBProxy.Current.Select(null, sqlGetPLFromRgCode, out dtResult);
             if (!result)
@@ -235,7 +245,11 @@ where ID in (select InvNo from Pullout_Detail with (nolock) where ID = '{pullout
 
         public static List<string> GetPLFromRgCodeByInvNo(string InvNo)
         {
-            string sqlGetPLFromRgCode = $"select distinct PLFromRgCode from GMTBooking_Detail with (nolock) where ID = '{InvNo}'";
+            string sqlGetPLFromRgCode = $@"
+select distinct PLFromRgCode 
+from GMTBooking_Detail with (nolock)
+where   ID = '{InvNo}' and
+        exists(select 1 from SystemWebAPIURL s with (nolock) where s.SystemName = GMTBooking_Detail.PLFromRgCode and s.Junk = 0)";
             DataTable dtResult;
             DualResult result = DBProxy.Current.Select(null, sqlGetPLFromRgCode, out dtResult);
             if (!result)
@@ -258,7 +272,8 @@ where ID in (select InvNo from Pullout_Detail with (nolock) where ID = '{pullout
             string sqlGetPLFromRgCode = $@"
 select distinct gd.PLFromRgCode 
 from GMTBooking_Detail gd with (nolock) 
-where exists(select 1 from GMTBooking g with (nolock) where g.ShipPlanID = '{shipPlanID}' and g.ID = gd.ID)";
+where   exists(select 1 from GMTBooking g with (nolock) where g.ShipPlanID = '{shipPlanID}' and g.ID = gd.ID) and
+        exists(select 1 from SystemWebAPIURL s with (nolock) where s.SystemName = gd.PLFromRgCode and s.Junk = 0)";
 
             DataTable dtResult;
             DualResult result = DBProxy.Current.Select(null, sqlGetPLFromRgCode, out dtResult);
