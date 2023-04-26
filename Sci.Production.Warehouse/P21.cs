@@ -435,7 +435,7 @@ from
         ,[ColorName] = c.Name
         ,[Relaxtime] = rel.Relaxtime
 		,[LocalMR] = dbo.GetPass1(LocalMR)
-		,[Supplier] = Concat (ps.ID, ' - ', Supp.AbbEn)
+		,[Supplier] = Concat (ps.SuppID, ' - ', Supp.AbbEn)
     from  Receiving r with (nolock)
     inner join Receiving_Detail rd with (nolock) on r.ID = rd.ID
     inner join View_WH_Orders o with (nolock) on o.ID = rd.POID 
@@ -547,7 +547,7 @@ from
         ,[ColorName] = c.Name
         ,[Relaxtime] = rel.Relaxtime
 		,[LocalMR] = dbo.GetPass1(LocalMR)
-		,[Supplier] = Concat (ps.ID, ' - ', Supp.AbbEn)
+		,[Supplier] = Concat (ps.SuppID, ' - ', Supp.AbbEn)
     FROM TransferIn t with (nolock)
     INNER JOIN TransferIn_Detail td with (nolock) ON t.ID = td.ID
     INNER JOIN View_WH_Orders o with (nolock) ON o.ID = td.POID
