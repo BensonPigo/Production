@@ -119,7 +119,7 @@
                           <rd:DefaultName>Textbox1</rd:DefaultName>
                           <Top>1.15cm</Top>
                           <Left>2.12494cm</Left>
-                          <Height>0.21cm</Height>
+                          <Height>0.26cm</Height>
                           <Width>2.19547cm</Width>
                           <ZIndex>3</ZIndex>
                           <Style>
@@ -198,7 +198,7 @@
                                 <TextRun>
                                   <Value>=Fields!GW.Value</Value>
                                   <Style>
-                                    <FontSize>4.1pt</FontSize>
+                                    <FontSize>4.5pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                   </Style>
                                 </TextRun>
@@ -211,7 +211,7 @@
                           <rd:DefaultName>Textbox1</rd:DefaultName>
                           <Top>1.15cm</Top>
                           <Left>0.00003cm</Left>
-                          <Height>0.21cm</Height>
+                          <Height>0.26cm</Height>
                           <Width>2.12492cm</Width>
                           <ZIndex>6</ZIndex>
                           <Style>
@@ -372,7 +372,7 @@
                                 <TextRun>
                                   <Value>=Fields!AW.Value</Value>
                                   <Style>
-                                    <FontSize>4.1pt</FontSize>
+                                    <FontSize>4.5pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                   </Style>
                                 </TextRun>
@@ -383,8 +383,8 @@
                             </Paragraph>
                           </Paragraphs>
                           <rd:DefaultName>Textbox1</rd:DefaultName>
-                          <Top>1.36001cm</Top>
-                          <Height>0.31cm</Height>
+                          <Top>1.41001cm</Top>
+                          <Height>0.26cm</Height>
                           <Width>2.12492cm</Width>
                           <ZIndex>11</ZIndex>
                           <Style>
@@ -541,9 +541,9 @@
                             </Paragraph>
                           </Paragraphs>
                           <rd:DefaultName>Textbox1</rd:DefaultName>
-                          <Top>1.36001cm</Top>
+                          <Top>1.41001cm</Top>
                           <Left>2.12492cm</Left>
-                          <Height>0.31cm</Height>
+                          <Height>0.26cm</Height>
                           <Width>2.19547cm</Width>
                           <ZIndex>15</ZIndex>
                           <Style>
