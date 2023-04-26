@@ -145,7 +145,10 @@ namespace Sci.Production.Warehouse
                  .Date("WhseArrival", header: "Arrive WH Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
                  .Text("poid", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
                  .Text("Seq", header: "Seq", width: Widths.AnsiChars(8), iseditingreadonly: true)
+                 .Text("FactoryID", header: "Factory", width: Widths.AnsiChars(6), iseditingreadonly: true)
+                 .Text("Supplier", header: "Supplier", width: Widths.AnsiChars(21), iseditingreadonly: true)
                  .Text("BrandID", header: "Brand", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                 .Text("LocalMR", header: "Local MR", width: Widths.AnsiChars(15), iseditingreadonly: true)
                  .Text("WeaveTypeID", header: "Weave Type", width: Widths.AnsiChars(10), iseditingreadonly: true)
                  .Text("Roll", header: "Roll#", width: Widths.AnsiChars(8), iseditingreadonly: true)
                  .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(8), iseditingreadonly: true)
@@ -431,10 +434,14 @@ from
         ,WhseArrival = r.WhseArrival
         ,[ColorName] = c.Name
         ,[Relaxtime] = rel.Relaxtime
+		,[LocalMR] = dbo.GetPass1(LocalMR)
+		,[Supplier] = Concat (ps.SuppID, ' - ', Supp.AbbEn)
     from  Receiving r with (nolock)
     inner join Receiving_Detail rd with (nolock) on r.ID = rd.ID
     inner join View_WH_Orders o with (nolock) on o.ID = rd.POID 
     inner join PO_Supp_Detail psd with (nolock) on rd.PoId = psd.ID and rd.Seq1 = psd.SEQ1 and rd.Seq2 = psd.SEQ2
+	inner join PO_Supp ps with(nolock) on ps.id = psd.id and ps.SEQ1 = psd. SEQ1
+	inner join Supp with(nolock) on Supp.ID = ps.SuppID
     inner join Fabric fb with (nolock) on psd.SCIRefno = fb.SCIRefno
     inner join Ftyinventory  fi with (nolock) on    rd.POID = fi.POID and
                                                     rd.Seq1 = fi.Seq1 and
@@ -539,10 +546,14 @@ from
         ,WhseArrival = t.IssueDate
         ,[ColorName] = c.Name
         ,[Relaxtime] = rel.Relaxtime
+		,[LocalMR] = dbo.GetPass1(LocalMR)
+		,[Supplier] = Concat (ps.SuppID, ' - ', Supp.AbbEn)
     FROM TransferIn t with (nolock)
     INNER JOIN TransferIn_Detail td with (nolock) ON t.ID = td.ID
     INNER JOIN View_WH_Orders o with (nolock) ON o.ID = td.POID
     INNER JOIN PO_Supp_Detail psd with (nolock) on td.PoId = psd.ID and td.Seq1 = psd.SEQ1 and td.Seq2 = psd.SEQ2
+	inner join PO_Supp ps with(nolock) on ps.id = psd.id and ps.SEQ1 = psd. SEQ1
+	inner join Supp with(nolock) on Supp.ID = ps.SuppID
     INNER JOIN Fabric fb with (nolock) on psd.SCIRefno = fb.SCIRefno
     INNER JOIN Ftyinventory  fi with (nolock) on    td.POID = fi.POID and
                                                     td.Seq1 = fi.Seq1 and

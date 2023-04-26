@@ -159,6 +159,11 @@ from (
                 sqlCmd.Append(string.Format(" and a.ID = '{0}'", this.txtPackID.Text.ToString().Trim()));
             }
 
+            if (this.ckOnlyDisplay.Checked)
+            {
+                sqlCmd.Append(" and b.ScanEditDate is not null");
+            }
+
             sqlCmd.Append(@"
 ) detail
 ORDER BY Id, OrderID, orderByCTNStartNo, CTNSTartNo;");
