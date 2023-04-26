@@ -1772,9 +1772,7 @@ update Express set Status = 'Junk', StatusUpdateDate = GETDATE(), EditName = '{0
             this.RenewData();
 
             string sqlcmdHC = $@"select * from Express_Detail where id = '{this.CurrentMaintain["ID"]}'";
-
             DualResult dualResult = DBProxy.Current.Select(null, sqlcmdHC, out DataTable dataTableHC);
-
             if (!dualResult)
             {
                 MyUtility.Msg.ErrorBox(dualResult.ToString());
@@ -1783,19 +1781,22 @@ update Express set Status = 'Junk', StatusUpdateDate = GETDATE(), EditName = '{0
 
             foreach (DataRow dataRow in dataTableHC.Rows)
             {
-                int iHC = dataTableHC.AsEnumerable().Where(x => x.Field<string>("DutyNo") == (string)dataRow["DutyNo"]).Count();
-                int iWK = Convert.ToInt32(MyUtility.GetValue.Lookup($@"select [Count] = count(*) from FtyExport_Detail where id = '{(string)dataRow["DutyNo"]}'"));
-
-                if (iHC < iWK)
+                if ((string)dataRow["Category"] == "4")
                 {
-                    MyUtility.Msg.WarningBox($"Please import complete information into Fty WK#({(string)dataRow["DutyNo"]}).");
-                    return;
-                }
+                    int iHC = dataTableHC.AsEnumerable().Where(x => x.Field<string>("DutyNo") == (string)dataRow["DutyNo"]).Count();
+                    int iWK = Convert.ToInt32(MyUtility.GetValue.Lookup($@"select [Count] = count(*) from FtyExport_Detail where id = '{(string)dataRow["DutyNo"]}'"));
 
-                if (iHC > iWK)
-                {
-                    MyUtility.Msg.WarningBox($"Data from wk#({(string)dataRow["DutyNo"]}) has been changed, please confirm.");
-                    return;
+                    if (iHC < iWK)
+                    {
+                        MyUtility.Msg.WarningBox($"Please import complete information into Fty WK#({(string)dataRow["DutyNo"]}).");
+                        return;
+                    }
+
+                    if (iHC > iWK)
+                    {
+                        MyUtility.Msg.WarningBox($"Data from wk#({(string)dataRow["DutyNo"]}) has been changed, please confirm.");
+                        return;
+                    }
                 }
             }
 
