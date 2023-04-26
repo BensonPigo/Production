@@ -1262,7 +1262,7 @@ GO
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Mdivision' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_PPICMASTERLIST', @level2type=N'COLUMN',@level2name=N'M'
 GO
 
-EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Factory' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_PPICMASTERLIST', @level2type=N'COLUMN',@level2name=N'Factory'
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Factory' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_PPICMASTERLIST', @level2type=N'COLUMN',@level2name=N'FactoryID'
 GO
 
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'BuyerDelivery日期' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_PPICMASTERLIST', @level2type=N'COLUMN',@level2name=N'Delivery'
