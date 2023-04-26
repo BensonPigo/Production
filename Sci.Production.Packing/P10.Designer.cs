@@ -47,13 +47,13 @@
             this.panel4 = new Sci.Win.UI.Panel();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.panel3 = new Sci.Win.UI.Panel();
+            this.ckOnlyDisplay = new Sci.Win.UI.CheckBox();
             this.shapeContainer2 = new Microsoft.VisualBasic.PowerPacks.ShapeContainer();
             this.lineShape5 = new Microsoft.VisualBasic.PowerPacks.LineShape();
             this.lineShape4 = new Microsoft.VisualBasic.PowerPacks.LineShape();
             this.lineShape3 = new Microsoft.VisualBasic.PowerPacks.LineShape();
             this.lineShape2 = new Microsoft.VisualBasic.PowerPacks.LineShape();
             this.lineShape1 = new Microsoft.VisualBasic.PowerPacks.LineShape();
-            this.ckOnlyDisplay = new Sci.Win.UI.CheckBox();
             this.panel5.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gridDetail)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
@@ -238,6 +238,17 @@
             this.panel3.Size = new System.Drawing.Size(712, 123);
             this.panel3.TabIndex = 19;
             // 
+            // ckOnlyDisplay
+            // 
+            this.ckOnlyDisplay.AutoSize = true;
+            this.ckOnlyDisplay.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.ckOnlyDisplay.Location = new System.Drawing.Point(12, 57);
+            this.ckOnlyDisplay.Name = "ckOnlyDisplay";
+            this.ckOnlyDisplay.Size = new System.Drawing.Size(244, 21);
+            this.ckOnlyDisplay.TabIndex = 10;
+            this.ckOnlyDisplay.Text = "Only display Scan ＆ Pack cartons";
+            this.ckOnlyDisplay.UseVisualStyleBackColor = true;
+            // 
             // shapeContainer2
             // 
             this.shapeContainer2.Location = new System.Drawing.Point(0, 0);
@@ -292,17 +303,6 @@
             this.lineShape1.X2 = 706;
             this.lineShape1.Y1 = 7;
             this.lineShape1.Y2 = 7;
-            // 
-            // ckOnlyDisplay
-            // 
-            this.ckOnlyDisplay.AutoSize = true;
-            this.ckOnlyDisplay.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.ckOnlyDisplay.Location = new System.Drawing.Point(12, 57);
-            this.ckOnlyDisplay.Name = "ckOnlyDisplay";
-            this.ckOnlyDisplay.Size = new System.Drawing.Size(230, 21);
-            this.ckOnlyDisplay.TabIndex = 10;
-            this.ckOnlyDisplay.Text = "Only display Scan & Pack cartons";
-            this.ckOnlyDisplay.UseVisualStyleBackColor = true;
             // 
             // P10
             // 
