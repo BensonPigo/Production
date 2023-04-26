@@ -1770,13 +1770,41 @@ update Express set Status = 'Junk', StatusUpdateDate = GETDATE(), EditName = '{0
         {
             base.ClickConfirm();
             this.RenewData();
+
+            string sqlcmdHC = $@"select * from Express_Detail where id = '{this.CurrentMaintain["ID"]}'";
+            DualResult dualResult = DBProxy.Current.Select(null, sqlcmdHC, out DataTable dataTableHC);
+            if (!dualResult)
+            {
+                MyUtility.Msg.ErrorBox(dualResult.ToString());
+                return;
+            }
+
+            foreach (DataRow dataRow in dataTableHC.Rows)
+            {
+                if ((string)dataRow["Category"] == "4")
+                {
+                    int iHC = dataTableHC.AsEnumerable().Where(x => x.Field<string>("DutyNo") == (string)dataRow["DutyNo"]).Count();
+                    int iWK = Convert.ToInt32(MyUtility.GetValue.Lookup($@"select [Count] = count(*) from FtyExport_Detail where id = '{(string)dataRow["DutyNo"]}'"));
+
+                    if (iHC < iWK)
+                    {
+                        MyUtility.Msg.WarningBox($"Please import complete information into Fty WK#({(string)dataRow["DutyNo"]}).");
+                        return;
+                    }
+
+                    if (iHC > iWK)
+                    {
+                        MyUtility.Msg.WarningBox($"Data from wk#({(string)dataRow["DutyNo"]}) has been changed, please confirm.");
+                        return;
+                    }
+                }
+            }
+
             if (!(PublicPrg.Prgs.GetAuthority(MyUtility.Convert.GetString(this.CurrentMaintain["Handle"])) || PublicPrg.Prgs.GetAuthority(MyUtility.Convert.GetString(this.CurrentMaintain["Manager"]))))
             {
                 MyUtility.Msg.WarningBox("You don't have permission to approve.");
                 return;
             }
-
-
 
             if (!MyUtility.Check.Seek(string.Format("select ID from Express_Detail WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]))))
             {
