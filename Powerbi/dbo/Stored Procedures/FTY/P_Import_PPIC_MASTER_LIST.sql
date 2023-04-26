@@ -7,7 +7,7 @@ BEGIN
 
 	create table #tmp_P_PPICMASTERLIST (
 			[M] VARCHAR(8) NULL ,
-			[Factory] VARCHAR(8) NULL ,
+			[FactoryID] VARCHAR(8) NULL ,
 			[Delivery] DATE NULL ,
 			[Delivery(YYYYMM)] VARCHAR(6) NULL ,
 			[Earliest SCIDlv] DATE NULL ,
@@ -357,7 +357,7 @@ BEGIN
 	insert into #tmp_P_PPICMASTERLIST
 	exec [PMS\testing\PH1].[Production].[dbo].[PPIC_R03_FORBI] @SCIDeliveryS, @SCIDeliveryE 
 
-	insert into P_PPICMASTERLIST([M], [Factory], [Delivery], [Delivery(YYYYMM)], [Earliest SCIDlv], [SCIDlv], [KEY], [IDD]
+	insert into P_PPICMASTERLIST([M], [FactoryID], [Delivery], [Delivery(YYYYMM)], [Earliest SCIDlv], [SCIDlv], [KEY], [IDD]
 		, [CRD], [CRD(YYYYMM)], [Check CRD], [OrdCFM], [CRD-OrdCFM], [SPNO], [Category], [Est. download date], [Buy Back]
 		, [Cancelled], [NeedProduction], [Dest], [Style], [Style Name], [Modular Parent], [CPUAdjusted], [Similar Style]
 		, [Season], [Garment L/T], [Order Type], [Project], [PackingMethod], [Hanger pack], [Order#], [Buy Month], [PONO]
@@ -413,7 +413,7 @@ BEGIN
 		, [TTL_SUBLIMATION PRINT (TMS)], [TTL_SUBLIMATION ROLLER (TMS)], [TTL_SUBLIMATION SPRAY (TMS)], [TTL_ULTRASONIC (TMS)], [TTL_ULTRASONIC MACHINE (TMS)]
 		, [TTL_ULTRASONIC-ELASTIC (TMS)], [TTL_ULTRASONIC-LABEL ASM (TMS)], [TTL_ULTRASONIC-TAPE CUT (TMS)], [TTL_VELCRO MACHINE (TMS)], [TTL_VELCROED M/C (TMS)]
 		, [TTL_WELDED (TMS)], [TTL_WELTED M/C (TMS)], [TTL_ZIG ZAG (TMS)], [TTL_ZIPPER HOT PRESS (TMS)])
-	select [M], [Factory], [Delivery], [Delivery(YYYYMM)], [Earliest SCIDlv], [SCIDlv], [KEY], [IDD]
+	select [M], [FactoryID], [Delivery], [Delivery(YYYYMM)], [Earliest SCIDlv], [SCIDlv], [KEY], [IDD]
 		, [CRD], [CRD(YYYYMM)], [Check CRD], [OrdCFM], [CRD-OrdCFM], [SPNO], [Category], [Est. download date], [Buy Back]
 		, [Cancelled], [NeedProduction], [Dest], [Style], [Style Name], [Modular Parent], [CPUAdjusted], [Similar Style]
 		, [Season], [Garment L/T], [Order Type], [Project], [PackingMethod], [Hanger pack], [Order#], [Buy Month], [PONO]
@@ -474,7 +474,7 @@ BEGIN
 
 	update p
 		set p.[M] = t.[M] 
-			, p.[Factory] = t.[Factory] 
+			, p.[FactoryID] = t.[FactoryID] 
 			, p.[Delivery] = t.[Delivery] 
 			, p.[Delivery(YYYYMM)] = t.[Delivery(YYYYMM)] 
 			, p.[Earliest SCIDlv] = t.[Earliest SCIDlv] 

@@ -1205,7 +1205,7 @@ BEGIN
 	) a
 
 	select [M] = b.MDivisionID
-		, [Factory] = b.FactoryID
+		, [FactoryID] = b.FactoryID
 		, [Delivery] = b.BuyerDelivery
 		, [Delivery(YYYYMM)] = FORMAT(b.BuyerDelivery, 'yyyyMM')
 		, [Earliest SCIDlv] = b.EarliestSCIDlv
