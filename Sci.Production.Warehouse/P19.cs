@@ -324,6 +324,8 @@ and ID = '{Sci.Env.User.UserID}'"))
             .Text("Tone", header: "Tone/Grp", iseditingreadonly: true)
             .ComboBox("Stocktype", header: "Stock Type", width: Widths.AnsiChars(8), iseditable: false).Get(out cbb_stocktype) // 7
             .Text("Location", header: "Location", iseditingreadonly: true) // 8
+            .Numeric("RecvKG", header: "Recv (kg)", width: Widths.AnsiChars(10), decimal_places: 2, integer_places: 10, iseditingreadonly: true)
+            .Text("StyleID", header: "Style", iseditingreadonly: true)
             .Text("ContainerCode", header: "Container Code", iseditingreadonly: true).Get(out cbb_ContainerCode)
             .Text("ToPOID", header: "To POID", width: Widths.AnsiChars(13), iseditingreadonly: true)
             .Text("ToSeq", header: "To Seq", width: Widths.AnsiChars(6), iseditingreadonly: true)
@@ -974,7 +976,18 @@ select a.id,a.PoId,a.Seq1,a.Seq2,concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2) as se
 ,SizeSpec= isnull(psdsS.SpecValue, '')
 ,a.TransferExportID
 ,a.TransferExport_DetailUkey
-    ,fi.Tone
+,fi.Tone
+,[StyleID] = o.StyleID
+,[RecvKG] = case when rd.ActualQty is not null 
+			then case when rd.ActualQty <> a.Qty
+					then ''
+					else cast(iif(ISNULL(rd.ActualWeight,0) > 0, rd.ActualWeight, rd.Weight) as varchar(20))
+					end
+			else case when td.ActualQty <> a.Qty
+					then ''
+					else cast(iif(ISNULL(td.ActualWeight,0) > 0, td.ActualWeight, td.Weight) as varchar(20))
+					end							
+		end
 from dbo.TransferOut_Detail a WITH (NOLOCK) 
 left join PO_Supp_Detail psd WITH (NOLOCK) on psd.ID = a.PoId and psd.seq1 = a.SEQ1 and psd.SEQ2 = a.seq2
 left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
@@ -997,6 +1010,32 @@ outer apply(
 		for xml path ('')
 	) , 1, 1, '')
 ) WK
+Outer apply (
+	select [Weight] = SUM(rd.Weight)
+		, [ActualWeight] = SUM(rd.ActualWeight)
+		, [ActualQty] = SUM(rd.ActualQty)
+	from Receiving_Detail rd WITH (NOLOCK) 
+	where fi.POID = rd.PoId
+	and fi.Seq1 = rd.Seq1
+	and fi.Seq2 = rd.Seq2 
+	and fi.Dyelot = rd.Dyelot
+	and fi.Roll = rd.Roll
+	and fi.StockType = rd.StockType
+    and psd.FabricType = 'F'
+)rd
+Outer apply (
+	select [Weight] = SUM(td.Weight)
+		, [ActualWeight] = SUM(td.ActualWeight)
+		, [ActualQty] = SUM(td.Qty)
+	from TransferIn_Detail td WITH (NOLOCK) 
+	where fi.POID = td.PoId
+	and fi.Seq1 = td.Seq1
+	and fi.Seq2 = td.Seq2 
+	and fi.Dyelot = td.Dyelot
+	and fi.Roll = td.Roll
+	and fi.StockType = td.StockType
+    and psd.FabricType = 'F'
+)td
 Where a.id = '{masterID}'
 ";
             return base.OnDetailSelectCommandPrepare(e);
