@@ -1,25 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
 using System.Data;
-using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 using Ict;
 using Ict.Win;
 using Sci.Data;
-using Sci.Utility.Excel;
-using Excel = Microsoft.Office.Interop.Excel;
 using System.IO;
-using Sci.Utility;
-using System.Transactions;
-using System.Text.RegularExpressions;
-using Sci.Win.Tools;
 using System.Data.SqlClient;
 using Sci.Production.Class;
 using Sci.Production.Class.Command;
-using System.Threading;
+using static Ict.Win.UI.DataGridView;
+using Ict.Win.Defs;
+//using Microsoft.Office.Interop.Excel;
 
 namespace Sci.Production.Quality
 {
@@ -719,7 +713,80 @@ namespace Sci.Production.Quality
                 }
             }
 
-            using (var dlg = new Clip("UASentReport", id, true))
+            #region 傳遞額外的參數
+            if (!row.Table.Columns.Contains("BasicBrandID"))
+            {
+                row.Table.Columns.Add("BasicBrandID", typeof(string));
+            }
+
+            if (!row.Table.Columns.Contains("BasicDocumentName"))
+            {
+                row.Table.Columns.Add("BasicDocumentName", typeof(string));
+            }
+
+            DataRow dr = row.Table.NewRow();
+            if (!this.txtTestSeason.Text.Empty())
+            {
+                dr["TestSeasonID"] = this.txtTestSeason.Text;
+                dr["dueSeason"] = this.txtDueSeason.Text;
+            }
+
+            if (this.dateTestDate.Value.HasValue)
+            {
+                dr["TestReportTestDate"] = MyUtility.Convert.GetDate(this.dateTestDate.Value).ToYYYYMMDD();
+                if (this.DueDate.Value.HasValue)
+                {
+                    dr["dueDate"] = MyUtility.Convert.GetDate(this.DueDate.Value).ToYYYYMMDD();
+                }
+            }
+
+            var now = DateTime.Now;
+
+            if (dr["Ukey"].Empty())
+            {
+                dr["AddName"] = Env.User.UserID;
+                dr["AddDate"] = now;
+            }
+            else
+            {
+                dr["EditName"] = Env.User.UserID;
+                dr["EditDate"] = now;
+            }
+
+            dr["BasicBrandID"] = this.drBasic["BrandID"];
+            dr["BasicDocumentName"] = this.drBasic["DocumentName"];
+            if (this.DueDate.Value.HasValue)
+            {
+                dr["dueDate"] = MyUtility.Convert.GetDate(this.DueDate.Value).ToYYYYMMDD();
+            }
+
+            string updateCol = string.Empty;
+            if (!this.txtTestSeason.Text.Empty())
+            {
+                updateCol += $",TestSeasonID = '{this.txtTestSeason.Text}',DueSeason = '{this.txtDueSeason.Text}' ";
+            }
+
+            if (this.dateTestDate.Value.HasValue)
+            {
+                updateCol += $",TestReportTestDate = '{this.dateTestDate.Text}'";
+                if (this.dateTestDate.Value > DateTime.Now)
+                {
+                    MyUtility.Msg.ErrorBox("[Teset Date] can't bigger than Today!", "Error");
+                    return;
+                }
+
+                if (this.DueDate.Value.HasValue)
+                {
+                    updateCol += $",DueDate = '{this.DueDate.Text}'";
+                }
+            }
+
+            dr["updateCol_Where"] = updateCol;
+
+            row.Table.Rows.Add(dr);
+            #endregion
+
+            using (var dlg = new PublicForm.Clip("UASentReport", id, true, row, apiUrlFile: "http://misap.sportscity.com.tw:16888/api/FileDelete/RemoveFile"))
             {
                 dlg.ShowDialog();
 

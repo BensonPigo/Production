@@ -28,7 +28,6 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             this.grid1 = new Sci.Win.UI.Grid();
             this.btnClose = new Sci.Win.UI.Button();
             this.btnToExcel = new Sci.Win.UI.Button();
@@ -99,14 +98,6 @@
             this.grid1.Location = new System.Drawing.Point(0, 0);
             this.grid1.Name = "grid1";
             this.grid1.ReadOnly = true;
-            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.grid1.RowHeadersDefaultCellStyle = dataGridViewCellStyle2;
             this.grid1.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.grid1.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.grid1.RowTemplate.Height = 24;
@@ -147,6 +138,7 @@
             this.KeyField1 = "IETMSUkey";
             this.MaximizeBox = false;
             this.Name = "CIPF";
+            this.OnLineHelpID = "Sci.Win.Subs.Input4";
             this.Text = "IE CIPF";
             this.WorkAlias = "IETMS_Summary_detail";
             this.Controls.SetChildIndex(this.btmcont, 0);

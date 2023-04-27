@@ -1,16 +1,11 @@
-﻿using Ict;
+﻿using Newtonsoft.Json;
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Net;
-using System.Resources;
+using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using static Ict.Win.UI.FileView;
 
 namespace Sci.Production.Class
 {
@@ -51,7 +46,14 @@ namespace Sci.Production.Class
             }
         }
 
-        /// <inheritdoc/>
+        /// <summary>
+        /// upLoad File by API
+        /// </summary>
+        /// <param name="url">API URL</param>
+        /// <param name="filePath">Destination File Path</param>
+        /// <param name="fileName">Destination New File Name</param>
+        /// <param name="sourceFile">Source File Full Path + Name</param>
+        /// <returns>empty</returns>
         public static async Task UploadFile(string url, string filePath, string fileName, string sourceFile)
         {
             try
@@ -63,6 +65,7 @@ namespace Sci.Production.Class
                     throw new Exception("檔案大小超過 15MB 的上限！");
                 }
 
+                url = "http://localhost:48926/api/FileUpload/PostFile"; // for test
                 var request = (HttpWebRequest)WebRequest.Create(url);
                 request.Method = "POST";
                 request.Headers.Add("FilePath", filePath);
@@ -129,5 +132,69 @@ namespace Sci.Production.Class
                 MessageBox.Show($"Download failed: {ex.Message}");
             }
         }
+
+        public static async Task DeleteFileAsync(string url, string filePath, string fileName)
+        {
+            try
+            {
+                //url = "http://localhost:48926/api/FileDelete/RemoveFile"; // for test
+                var httpWebRequest = (HttpWebRequest)HttpWebRequest.Create(url);
+                httpWebRequest.Timeout = 60000; // 60秒
+                httpWebRequest.Headers.Add("FilePath", filePath);
+                httpWebRequest.Headers.Add("FileName", fileName);
+
+                httpWebRequest.KeepAlive = false; // 關閉 Keep-Alive
+                var httpWebResponse = (HttpWebResponse)await httpWebRequest.GetResponseAsync().ConfigureAwait(false);
+
+                // 發送請求
+                using (HttpWebResponse response = (HttpWebResponse)httpWebRequest.GetResponse())
+                {
+                    // 取得回應
+                    using (Stream stream = response.GetResponseStream())
+                    {
+                        StreamReader reader = new StreamReader(stream);
+                    }
+                }
+
+                httpWebResponse.Dispose();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        //public static async Task DeleteFile(string url, string filePath, string fileName)
+        //{
+        //    try
+        //    {
+        //        using (var client = new HttpClient())
+        //        {
+        //            // 設定API請求內容
+        //            var request = new
+        //            {
+        //                FilePath = $@"\\{filePath}\{fileName}"
+        //            };
+
+        //            // 呼叫API端點
+        //            var response = await client.DeleteAsync(url, new StringContent(JsonConvert.SerializeObject(request), Encoding.UTF8, "application/json"));
+
+        //            // 處理API回應
+        //            if (response.IsSuccessStatusCode)
+        //            {
+        //                Console.WriteLine("檔案已刪除");
+        //            }
+        //            else
+        //            {
+        //                Console.WriteLine("刪除檔案失敗");
+        //            }
+        //        }
+        //    }
+        //    catch (Exception)
+        //    {
+
+        //        throw;
+        //    }
+        //}
     }
 }

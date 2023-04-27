@@ -410,9 +410,40 @@ Update ExportRefnoSentReport SET  AWBNO = @updateData, EditName = @UserID ,EditD
                 }
             }
 
-            using (var dlg = new Clip(tableName, id, true))
+            #region 傳遞額外的參數
+            if (!row.Table.Columns.Contains("BasicBrandID"))
             {
-                dlg.EditMode = false;
+                row.Table.Columns.Add("BasicBrandID", typeof(string));
+            }
+
+            if (!row.Table.Columns.Contains("BasicDocumentName"))
+            {
+                row.Table.Columns.Add("BasicDocumentName", typeof(string));
+            }
+
+            DataRow dr = row.Table.NewRow();
+
+            var now = DateTime.Now;
+
+            if (dr["Ukey"].Empty())
+            {
+                dr["AddName"] = Env.User.UserID;
+                dr["AddDate"] = now;
+            }
+            else
+            {
+                dr["EditName"] = Env.User.UserID;
+                dr["EditDate"] = now;
+            }
+
+            dr["BasicBrandID"] = this.drBasic["BrandID"];
+            dr["BasicDocumentName"] = this.drBasic["DocumentName"];
+
+            row.Table.Rows.Add(dr);
+            #endregion
+
+            using (var dlg = new PublicForm.Clip(tableName, id, true, row, apiUrlFile: "http://misap.sportscity.com.tw:16888/api/FileDelete/RemoveFile"))
+            {
                 dlg.ShowDialog();
 
                 foreach (DataRow dataRow in dt.Rows)
