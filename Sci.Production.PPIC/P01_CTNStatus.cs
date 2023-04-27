@@ -633,6 +633,12 @@ select [PackingListID] =  p.ID
 ,pd.DRYTransferDate
 ,pd.HaulingDate
 ,pd.PackingAuditDate
+,pd.PackingAuditStatus
+,pd.HaulingStatus
+,pd.DryRoomMDstatus
+,pd.M360MDScanDate
+,pd.M360MDFailQty
+,pd.M360MDStatus
 from PackingList p WITH (NOLOCK) ,PackingList_Detail pd WITH (NOLOCK) 
 outer apply(
 	select sum(QtyPerCTN) QtyPerCTN ,sum(ScanQty) ScanQty 
@@ -673,11 +679,17 @@ order by p.ID,pd.Seq", this.orderID);
                 .Date("ReceiveDate", header: "Rec. Date", width: Widths.AnsiChars(10))
                 .Date("ReturnDate", header: "Return Date", width: Widths.AnsiChars(10))
                 .Date("PackingAuditDate", header: "Packing Audit Date", width: Widths.AnsiChars(10))
+                .Text("PackingAuditStatus", header: "Packing Audit Status", width: Widths.AnsiChars(10))
                 .Date("HaulingDate", header: "Hauling Date", width: Widths.AnsiChars(10))
+                .Text("HaulingStatus", header: "Hauling Status", width: Widths.AnsiChars(10))
                 .Date("DryReceiveDate", header: "Dry Room Receive Date", width: Widths.AnsiChars(10))
                 .Date("DRYTransferDate", header: "Dry Room Transfer Date", width: Widths.AnsiChars(10))
-                .Date("DryRoomMDScanDate", header: "MD Room Scan Date", width: Widths.AnsiChars(10))
-                .Text("DryRoomMDFailQty", header: "MD Discrepancy", width: Widths.AnsiChars(6))
+                .Date("DryRoomMDScanDate", header: "Dry Room MD ScanDate", width: Widths.AnsiChars(10))
+                .Text("DryRoomMDFailQty", header: "Dry Room MD Discrepancy", width: Widths.AnsiChars(6))
+                .Text("DryRoomMDstatus", header: "Dry Room MD Status", width: Widths.AnsiChars(10))
+                .Date("M360MDScanDate", header: "M360 MDScanDate", width: Widths.AnsiChars(10))
+                .Text("M360MDFailQty", header: "M360 MD Discrepancy", width: Widths.AnsiChars(6))
+                .Text("M360MDStatus", header: "M360 M360MDStatus", width: Widths.AnsiChars(10))
                 .Date("TransferCFADate", header: "Trans. CFA Date", width: Widths.AnsiChars(10))
                 .Date("CFAReceiveDate", header: "CFA Rec. Clog Date", width: Widths.AnsiChars(10))
                 .Date("CFAReturnClogDate", header: "CFA Return Clog Date", width: Widths.AnsiChars(10))

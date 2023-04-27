@@ -49,10 +49,13 @@ namespace Sci.Production.Sewing
                .Text("Barcode", header: "Barcode", width: Widths.AnsiChars(15), iseditingreadonly: false)
                .Text("ReceivedBy", header: "Scan By", width: Widths.Auto(), iseditingreadonly: true)
                .Text("AddDate", header: "Scan Time", width: Widths.Auto(), iseditingreadonly: true)
+               .Text("ReturntoProduction", header: "Return to Production", iseditingreadonly: false)
+               .Text("Remark", header: "Return to Production Remarks", iseditingreadonly: false)
                .Text("RepackPackID", header: "Repack To Pack ID", width: Widths.AnsiChars(15), iseditable: false)
                .Text("RepackOrderID", header: "Repack To SP#", width: Widths.AnsiChars(15), iseditable: false)
                .Text("RepackCtnStartNo", header: "Repack To CTN#", width: Widths.AnsiChars(6), iseditable: false)
-               .Text("DataRemark", header: "Data Remark", width: Widths.AnsiChars(12), iseditable: false);
+               .Text("DataRemark", header: "Data Remark", width: Widths.AnsiChars(12), iseditable: false)
+               .Text("SewingLineID", header: "Line#", iseditingreadonly: false);
             #endregion
 
             #region GridDetail Setting
@@ -137,14 +140,17 @@ select md.ScanDate
 				            )) ,1,1,'')	    
 		, ReceivedBy = dbo.getPass1(md.AddName)
         , [AddDate] = format(md.AddDate, 'yyyy/MM/dd HH:mm:ss')
+        , [Status] = case when md.MDFailQty = 0 then 'Pass'
+			when md.MDFailQty > 0 then 'Hold'
+			else 'Please check Discrepancy'
+			end
+        , [ReturntoProduction] = iif(md.Status = 'Return', 'Yes', '')
+        , md.Remark
 	    , [RepackPackID] = iif(pd.OrigID != '',pd.ID, pd.OrigID)
         , [RepackOrderID] = iif(pd.OrigOrderID != '',pd.OrderID, pd.OrigOrderID)
         , [RepackCtnStartNo] = iif(pd.OrigCTNStartNo != '',pd.CTNStartNo, pd.OrigCTNStartNo)
         ,md.DataRemark
-		,[Status] = case when md.MDFailQty = 0 then 'Pass'
-			when md.MDFailQty > 0 then 'Hold'
-			else 'Please check Discrepancy'
-			end
+        ,[SewingLineID] = sw_Line.val
 		,md.Ukey
 into #tmp
 from MDScan md with(nolock)
@@ -162,7 +168,14 @@ outer apply (
 ) PD
 left join Order_QtyShip os on pd.OrderID = os.Id
 							and pd.OrderShipmodeSeq = os.Seq
-
+outer apply (
+	SELECT val = Stuff((
+		select distinct concat('/', SewingLineID) 
+		from SewingSchedule s WITH(NOLOCK)
+		where s.OrderID = md.OrderID
+		FOR XML PATH(''))
+	,1,1,'')
+)sw_Line
 where 1=1
         {sqlwhere}
 
@@ -180,9 +193,10 @@ drop table #tmp
 
 ";
             DataSet datas = null;
-            if (!PublicPrg.Prgs.SelectSet(string.Empty, sqlcmd, out datas))
+            DualResult result = PublicPrg.Prgs.SelectSet(string.Empty, sqlcmd, out datas);
+            if (!result)
             {
-                MyUtility.Msg.WarningBox(sqlcmd, "DB error!!");
+                this.ShowErr(result);
                 this.HideWaitMessage();
                 return;
             }
@@ -250,7 +264,7 @@ drop table #tmp
             Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];
 
             // 移除最後一欄Ukey
-            objSheets.Columns["W"].Delete();
+            objSheets.Columns["Z"].Delete();
             #region Save & Show Excel
             string strExcelName = Class.MicrosoftFile.GetName("Sewing_P09");
             Microsoft.Office.Interop.Excel.Workbook workbook = objApp.ActiveWorkbook;

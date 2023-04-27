@@ -11,7 +11,10 @@
 	[AddDate] [datetime] NULL,
 	[SCICtnNo] [varchar](16) NOT NULL,
 	[DataRemark] [nvarchar](200) NOT NULL  CONSTRAINT [DF_MDScan_DataRemark] DEFAULT (''),
- CONSTRAINT [PK_MDScan] PRIMARY KEY CLUSTERED 
+	[Status] VARCHAR(6) NOT NULL  CONSTRAINT [DF_MDScan_Status] DEFAULT (''),
+    [Remark] NVARCHAR(MAX) NOT NULL  CONSTRAINT [DF_MDScan_Remark] DEFAULT (''),
+    [IsFromM360] BIT NOT NULL  CONSTRAINT [DF_MDScan_IsFromM360] DEFAULT (0),
+    CONSTRAINT [PK_MDScan] PRIMARY KEY CLUSTERED 
 (
 	[Ukey] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
@@ -56,3 +59,32 @@ GO
 
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'SCI內部箱號' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'MDScan', @level2type=N'COLUMN',@level2name=N'SCICtnNo'
 GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'MD狀態
+通過 : Pass
+不通過 : Hold
+退回 : Return',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'MDScan',
+    @level2type = N'COLUMN',
+    @level2name = N'Status'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'退回原因備註',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'MDScan',
+    @level2type = N'COLUMN',
+    @level2name = N'Remark'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'是否來自M360',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'MDScan',
+    @level2type = N'COLUMN',
+    @level2name = N'IsFromM360'
