@@ -1670,7 +1670,7 @@ where a.ID='{0}'", this.FirID), out dt1))
 
             excel.Cells[4, 6] = this.displayArriveQty.Text;
             excel.Cells[4, 8] = dtSumQty.Rows[0]["TotalTicketYds"]; // Inspected Qty
-            excel.Cells[4, 10] = dt1.Rows[0]["PhysicalEncode"].ToString() == "1" ? "Y" : "N";
+            excel.Cells[4, 10] = dt1.Rows[0]["PhysicalEncode"].ToString().ToUpper() == "TRUE" ? "Y" : "N";
 
             #endregion
 
