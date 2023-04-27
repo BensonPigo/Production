@@ -90,6 +90,9 @@ from (
 		,t.FMSister
 		,t.SampleGroup
 		,t.OrderReason
+		,t.BuyBackReason
+		,t.LastProductionDate
+		,t.CRDDate
 	from #tmp t
 	Outer apply (
 		SELECT s.CDCodeNew
@@ -163,6 +166,9 @@ SET @SqlCmd2 = '
 		,t.FMSister
 		,t.SampleGroup
 		,t.OrderReason
+		,t.BuyBackReason
+		,t.LastProductionDate
+		,t.CRDDate
 	from #tmp T
 	LEFT JOIN ['+@current_PMS_ServerName+'].Production.dbo.SCIFty f WITH(NOLOCK) ON f.ID= T.TransFtyZone
 	Outer apply (
@@ -240,7 +246,10 @@ set	    t.MDivisionID =  s.MDivisionID,
 		t.Construction =  s.Construction,
 		t.[FM Sister] = s.FMSister,
 		t.[Sample Group] = s.SampleGroup,
-		t.[Order Reason] = s.OrderReason
+		t.[Order Reason] = s.OrderReason,
+		t.[BuyBackReason] = s.[BuyBackReason],
+		t.[LastProductionDate] = s.[LastProductionDate],
+		t.[CRDDate] = s.[CRDDate]
 from P_LoadingProductionOutput as t
 inner join #Final s 
 on t.FactoryID=s.FactoryID  
@@ -297,7 +306,10 @@ insert into P_LoadingProductionOutput
 	s.Construction,
 	s.FMSister,
 	s.SampleGroup,
-	s.OrderReason
+	s.OrderReason,
+	s.[BuyBackReason],
+	s.[LastProductionDate],
+	s.[CRDDate]
 from #Final s
 where not exists(
 	select 1 from P_LoadingProductionOutput t 
