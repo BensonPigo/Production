@@ -2829,6 +2829,7 @@
     <Build Include="dbo\Tables\SubProInsRecord_Operator.sql" />
     <Build Include="dbo\Tables\LostFinalInspNotification.sql" />
     <Build Include="dbo\Views\PO_Supp_Detail_OrderList_Show.sql" />
+    <Build Include="dbo\Tables\Fabric_UnrollandRelax.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />
