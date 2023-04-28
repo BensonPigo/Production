@@ -2830,6 +2830,7 @@
     <Build Include="dbo\Tables\LostFinalInspNotification.sql" />
     <Build Include="dbo\Views\PO_Supp_Detail_OrderList_Show.sql" />
     <Build Include="dbo\Tables\Fabric_UnrollandRelax.sql" />
+    <Build Include="dbo\Functions\GetUnrollRelaxationCompletion.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />
