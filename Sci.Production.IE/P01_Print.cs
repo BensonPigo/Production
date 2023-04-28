@@ -146,7 +146,7 @@ and  ArtworkTypeID in ({this.artworktype})
 union all
 ";
             sqlCmd += $@"
-select
+select DISTINCT
     td.Seq
     , td.OperationID
     , td.MachineTypeID
@@ -169,12 +169,12 @@ left join MachineType_Detail md WITH (NOLOCK) on m.ID = md.ID
 where td.ID = {MyUtility.Convert.GetString(this.masterData["ID"])}
 and td.OperationID not like '--%'
 {(this.artworktype == "''" ? string.Empty : $"and m.ArtworkTypeID in ({this.artworktype})")}
-{(!this.nonSewing ? " and md.IsNonSewingLine != 1 " : string.Empty)}
+{(!this.nonSewing ? " and ISNULL(md.IsNonSewingLine ,0) != 1 " : string.Empty)}
 {(!this.isPPA ? " and td.PPA  != 'C' " : string.Empty)}
 
 union all
 -- OperationID like '--%' 都要顯示, 不依據 artworktype
-select
+select DISTINCT
     td.Seq
     , td.OperationID
     , td.MachineTypeID
@@ -196,7 +196,7 @@ left join MachineType m WITH (NOLOCK) on td.MachineTypeID = m.ID
 left join MachineType_Detail md WITH (NOLOCK) on m.ID = md.ID 
 where td.ID = {MyUtility.Convert.GetString(this.masterData["ID"])}
 and td.OperationID like '--%'
-{(!this.nonSewing ? " and md.IsNonSewingLine != 1 " : string.Empty)}
+{(!this.nonSewing ? " and ISNULL(md.IsNonSewingLine ,0) != 1 " : string.Empty)}
 {(!this.isPPA ? " and td.PPA  != 'C' " : string.Empty)}
 
 ";

@@ -19,6 +19,7 @@ namespace Sci.Production.IE
     public partial class P01_PartID : Win.Subs.Base
     {
         private DataTable gridData;
+        private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
 
         private DataRow _P01SelectPartID;
         private string _MoldID;
@@ -55,7 +56,7 @@ namespace Sci.Production.IE
         {
             DataGridViewGeneratorTextColumnSettings s1 = new DataGridViewGeneratorTextColumnSettings();
             base.OnFormLoaded();
-            this.gridDetail.IsEditingReadOnly = true;
+            this.gridDetail.IsEditingReadOnly = false;
             this.gridDetail.DataSource = this.listControlBindingSource1;
 
             s1.CellMouseDoubleClick += (s, e) =>
@@ -72,6 +73,7 @@ namespace Sci.Production.IE
             };
 
             this.Helper.Controls.Grid.Generator(this.gridDetail)
+                .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0)
                 .Text("ID", header: "ID", width: Widths.AnsiChars(25), iseditingreadonly: true)
                  .Text("Description", header: "Description English", width: Widths.AnsiChars(35), iseditingreadonly: true)
                  .Text("MachineMasterGroupID", header: "Machine", width: Widths.AnsiChars(15), iseditingreadonly: true)
@@ -81,7 +83,8 @@ namespace Sci.Production.IE
                  ;
 
             string sqlCmd = $@"
-select a.ID
+select Selected = CAST( 0 as bit)
+    ,a.ID
     ,a.Description
     ,a.MachineMasterGroupID
     ,AttachmentTypeID
@@ -91,10 +94,19 @@ from SewingMachineAttachment a
 left join AttachmentType b on a.AttachmentTypeID = b.Type 
 left join AttachmentMeasurement c on a.MeasurementID = c.Measurement
 left join AttachmentFoldType d on a.FoldTypeID = d.FoldType 
-where MoldID= @MoldID 
+where 1 = 1
 ";
             List<SqlParameter> paras = new List<SqlParameter>();
-            paras.Add(new SqlParameter($@"@MoldID", this._MoldID));
+            if (this._MoldID.Split(',').Length > 1)
+            {
+                sqlCmd += $@"and MoldID IN ('{string.Join("','", this._MoldID.Split(','))}') ";
+            }
+            else
+            {
+                paras.Add(new SqlParameter($@"@MoldID", this._MoldID));
+                sqlCmd += "and MoldID = @MoldID ";
+            }
+
             DualResult result = DBProxy.Current.Select(null, sqlCmd, paras, out this.gridData);
             if (!result)
             {
@@ -109,6 +121,12 @@ where MoldID= @MoldID
         {
             StringBuilder filterCondition = new StringBuilder();
             List<SqlParameter> paras = new List<SqlParameter>();
+
+            List<string> descList = new List<string>();
+            if (!string.IsNullOrEmpty(this.txtDescription.Text))
+            {
+                descList = this.txtDescription.Text.Split(';').Where(o => !string.IsNullOrEmpty(o)).ToList();
+            }
 
             if (!MyUtility.Check.Empty(this.txtType.Text))
             {
@@ -130,9 +148,14 @@ where MoldID= @MoldID
                 filterCondition.Append($@" and FoldTypeID like '%{this.txtDirectionFoldType.Text.Trim()}%' ");
             }
 
-            if (!MyUtility.Check.Empty(this.txtDescription.Text))
+            //if (!MyUtility.Check.Empty(this.txtDescription.Text))
+            //{
+            //    filterCondition.Append($@" and Description like '%{this.txtDescription.Text.Trim()}%' ");
+            //}
+
+            if (descList.Any())
             {
-                filterCondition.Append($@" and Description like '%{this.txtDescription.Text.Trim()}%' ");
+                filterCondition.Append($@" and (Description like '%{string.Join("%' OR Description like '%", descList)}%' ) ");
             }
 
             if (filterCondition.Length > 0)
@@ -157,10 +180,16 @@ where MoldID= @MoldID
                 return;
             }
 
+            // 取出打勾的DataRow
+            DataRow[] selectedDataRows = this.gridData.Select("Selected = 1");
+
             DataGridViewSelectedRowCollection selectRows = this.gridDetail.SelectedRows;
             foreach (DataGridViewRow datarow in selectRows)
             {
                 this._P01SelectPartID = ((DataRowView)datarow.DataBoundItem).Row;
+
+                // 把勾選的值整理過，塞進ID裡面讓外層可以抓到
+                this._P01SelectPartID["ID"] = string.Join(",", selectedDataRows.Select(o => o["ID"]).ToList());
             }
 
             this.DialogResult = DialogResult.OK;

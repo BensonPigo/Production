@@ -418,10 +418,7 @@ namespace Sci.Production.IE
             this.grid2Data.Columns.Remove("Picture1_File");
             this.grid2Data.Columns.Remove("Picture2_File");
 
-            string sqlCmd = $@"
-INSERT INTO dbo.SewingMachineAttachment
-           (ID,MoldID,Description,DescriptionCN,MachineMasterGroupID,AttachmentTypeID,MeasurementID,FoldTypeID,Supplier1PartNo,Supplier1BrandID
-           ,Supplier2PartNo,Supplier2BrandID,Supplier3PartNo,Supplier3BrandID,Remark,Picture1,Picture2,AddName,AddDate)
+            string sqlCmd = $@"-----選出符合條件可以塞的資料
 select [ID]
     ,[Attachment Group]
     ,[Description]
@@ -429,7 +426,7 @@ select [ID]
     ,[Machine Master ID]
     ,[Type]
     ,[Measurement]
-    ,ISNULL( (select TOP 1 FoldType from AttachmentFoldType a where a.FoldType = t.[Direction/Fold Type])   ,'')
+    ,FoldType = ISNULL( (select TOP 1 FoldType from AttachmentFoldType a where a.FoldType = t.[Direction/Fold Type])   ,'')
     ,[Supplier Part#-1]
     ,[Supplier Brand-1]
     ,[Supplier Part#-2]
@@ -437,10 +434,11 @@ select [ID]
     ,[Supplier Part#-3]
     ,[Supplier Brand-3]
     ,[Remark]
-    ,ISNULL([Picture1] ,'')
-    ,ISNULL([Picture2] ,'')
-    ,'{Sci.Env.User.UserID}'
-    ,GETDATE()
+    ,Picture1 = ISNULL([Picture1] ,'')
+    ,Picture2 = ISNULL([Picture2] ,'')
+    ,AddName = '{Sci.Env.User.UserID}'
+    ,AddDate = GETDATE()
+INTO #InsertData
 from #tmp t
 where not exists(
     select 1 
@@ -465,10 +463,59 @@ AND exists(
 )----排除Type 不存在
 AND t.[ID] = t.[Machine Master ID] + '-' + t.[Type] + '-' + t.[Measurement] + '-' + t.[Direction/Fold Type]
 ---- ID 的規則是 MachineMasterGroupID、AttachmentTypeID、MeasurementID、FoldTypeID四個欄位用 - 串起來
+
+
+
+-----找出不能塞的資料
+select *
+    ,ErrMsg1 = CASE WHEN exists(
+                        select 1 
+                        from SewingMachineAttachment a
+                        where a.ID = t.[ID]
+                    ) THEN 'ID Existed.' 
+                    WHEN exists(
+                        select 1 from SewingMachineAttachment a
+                        where a.MachineMasterGroupID = t.[Machine Master ID] and a.AttachmentTypeID = t.[Type] and a.MeasurementID = t.[Measurement] and a.FoldTypeID = t.[Direction/Fold Type]
+                    ) THEN 'ID Existed.'
+                    WHEN not exists(
+                        SELECT 1 FROM AttachmentFoldType a WHERE a.FoldType = t.[Direction/Fold Type] and Junk=0
+                    ) THEN 'FoldType not Existed.'
+                    WHEN not exists(
+                        SELECT 1 FROM AttachmentMeasurement a WHERE a.Measurement = t.[Measurement] and Junk=0
+                    ) THEN 'Measurement not Existed.'
+                    WHEN not exists(
+                        SELECT 1 FROM SciMachine_MachineMasterGroup a WHERE a.ID = t.[Machine Master ID]  and Junk=0
+                    ) THEN 'Machine not Existed.'
+                    WHEN not exists(
+                        SELECT 1 FROM AttachmentType a WHERE a.Type = t.[Type]  and Junk=0
+                    ) THEN 'Attachment Type not Existed.'
+
+                    WHEN t.[ID] != t.[Machine Master ID] + '-' + t.[Type] + '-' + t.[Measurement] + '-' + t.[Direction/Fold Type] 
+                      THEN 'ID does not fit to (machine + type + measurement + fold type)'
+
+                    ELSE '' 
+                END
+INTO #FailData
+from #tmp t
+
+
+
+-----開始塞SewingMachineAttachment
+INSERT INTO dbo.SewingMachineAttachment
+           (ID,MoldID,Description,DescriptionCN,MachineMasterGroupID,AttachmentTypeID,MeasurementID,FoldTypeID,Supplier1PartNo,Supplier1BrandID
+           ,Supplier2PartNo,Supplier2BrandID,Supplier3PartNo,Supplier3BrandID,Remark,Picture1,Picture2,AddName,AddDate)
+select *
+from #InsertData
+
+select *
+from #FailData
+drop table #InsertData ,#FailData
 ";
 
             DualResult result = MyUtility.Tool.ProcessWithDatatable(this.grid2Data, string.Empty, sqlCmd, out System.Data.DataTable dt);
 
+            dt.Columns.Add("Picture1_File", typeof(byte[]));
+            dt.Columns.Add("Picture2_File", typeof(byte[]));
             this.grid2Data.Columns.Add("Picture1_File", typeof(byte[]));
             this.grid2Data.Columns.Add("Picture2_File", typeof(byte[]));
             if (!result)
@@ -478,6 +525,16 @@ AND t.[ID] = t.[Machine Master ID] + '-' + t.[Type] + '-' + t.[Measurement] + '-
             }
             else
             {
+                foreach (DataRow row in dt.Rows)
+                {
+                    row["ErrMsg"] = row["ErrMsg1"];
+                }
+
+                dt.Columns.Remove("ErrMsg1");
+
+                this.grid2Data = dt;
+                this.listControlBindingSource2.DataSource = this.grid2Data;
+                this.gridDetail.DataSource = this.listControlBindingSource2;
                 MyUtility.Msg.InfoBox("Success!!");
             }
         }

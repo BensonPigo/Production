@@ -7,6 +7,7 @@ using Sci.Data;
 using System.Runtime.InteropServices;
 using System.IO;
 using System.Linq;
+using System.Data.SqlClient;
 
 namespace Sci.Production.IE
 {
@@ -26,6 +27,7 @@ namespace Sci.Production.IE
         private DataTable nodistPPA;
         private DataTable nodist2PPA;
         private DataTable noppa;
+        private List<AttachmentData> AttachmentDataList;
         private decimal styleCPU;
         private decimal changp;
         private string changpPPA;
@@ -118,7 +120,7 @@ where ld.ID = '{MyUtility.Convert.GetString(this.masterData["ID"])}'
 and (ld.IsPPa = 0 or ld.IsPPa is null) 
 and (ld.IsHide = 0 or ld.IsHide is null)
 and no<={this.changp}
-{(!this.isPPA ? " and ld.IsPPA   != '1' " : string.Empty)}
+{(!this.isPPA ? " and ld.PPA != 'C' " : string.Empty)}
 ";
                 sqlp2 = $@"
 select no = count(distinct no)
@@ -127,7 +129,7 @@ where ld.ID = '{MyUtility.Convert.GetString(this.masterData["ID"])} '
 and (ld.IsPPa = 0 or ld.IsPPa is null) 
 and (ld.IsHide = 0 or ld.IsHide is null)
 and no>{this.changp}
-{(!this.isPPA ? " and ld.IsPPA   != '1' " : string.Empty)}
+{(!this.isPPA ? " and ld.PPA != 'C'  " : string.Empty)}
 ";
                 this.count1 = MyUtility.Convert.GetDecimal(MyUtility.GetValue.Lookup(sqlp1));
                 this.count2 = MyUtility.Convert.GetDecimal(MyUtility.GetValue.Lookup(sqlp2));
@@ -149,7 +151,7 @@ where ld.ID = '{MyUtility.Convert.GetString(this.masterData["ID"])}'
 and IsPPa = 1 
 and IsHide = 0 
 and no <= '{this.changpPPA}'
-{(!this.isPPA ? " and ld.IsPPA   != '1' " : string.Empty)}
+{(!this.isPPA ? " and ld.PPA != 'C'  " : string.Empty)}
 ";
                 sqlp2 = $@"
 select no = count(distinct no)
@@ -158,7 +160,7 @@ where ld.ID = '{MyUtility.Convert.GetString(this.masterData["ID"])}'
 and IsPPa = 1 
 and IsHide = 0 
 and no > '{this.changpPPA}'
-{(!this.isPPA ? " and ld.IsPPA   != '1' " : string.Empty)}
+{(!this.isPPA ? " and ld.PPA != 'C'  " : string.Empty)}
 ";
                 this.count1PPA = MyUtility.Convert.GetDecimal(MyUtility.GetValue.Lookup(sqlp1));
                 this.count2PPA = MyUtility.Convert.GetDecimal(MyUtility.GetValue.Lookup(sqlp2));
@@ -172,7 +174,7 @@ from LineMapping_Detail ld WITH (NOLOCK)
 where ld.ID = '{MyUtility.Convert.GetString(this.masterData["ID"])}' 
 and IsPPa = 1 
 and IsHide = 0
-{(!this.isPPA ? " and ld.IsPPA   != '1' " : string.Empty)}
+{(!this.isPPA ? " and ld.PPA != 'C'  " : string.Empty)}
 ";
                 this.count1PPA = MyUtility.Convert.GetDecimal(MyUtility.GetValue.Lookup(sqlp1));
                 this.changePPA = false;
@@ -238,9 +240,12 @@ where a.ID = {MyUtility.Convert.GetString(this.masterData["ID"])}
 {(!this.nonSewing ? $@" and not exists(
     select 1 from MachineType_Detail md where md.ID = m.ID and md.IsNonSewingLine = 1
 )" : string.Empty)}
-{(!this.isPPA ? " and a.IsPPA  != '1' " : string.Empty)}
+{(!this.isPPA ? " and a.PPA != 'C' " : string.Empty)}
 
 ";
+
+            List<AttachmentData> tmpAttachmentDataList = new List<AttachmentData>();
+            this.AttachmentDataList = new List<AttachmentData>();
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out this.machineTypeDT);
             if (!result)
             {
@@ -254,6 +259,61 @@ where a.ID = {MyUtility.Convert.GetString(this.masterData["ID"])}
             {
                 DualResult failResult = new DualResult(false, "no detail data to Print");
                 return failResult;
+            }
+
+            foreach (DataRow dr in this.machineTypeDT.Rows)
+            {
+                AttachmentData rawData = new AttachmentData();
+                rawData.No = MyUtility.Convert.GetString(dr["No"]);
+                rawData.STMC_Type = MyUtility.Convert.GetString(dr["MachineTypeID"]);
+                rawData.MachineGroup = MyUtility.Convert.GetString(dr["MasterPlusGroup"]);
+                rawData.Template = MyUtility.Convert.GetString(dr["Template"]);
+
+                rawData.Attachment = MyUtility.Convert.GetString(dr["Attachment"]);
+                rawData.PartID = MyUtility.Convert.GetString(dr["SewingMachineAttachmentID"]);
+
+                tmpAttachmentDataList.Add(rawData);
+            }
+
+            foreach (var rawData in tmpAttachmentDataList)
+            {
+
+                if (MyUtility.Check.Empty(rawData.Attachment) || !rawData.Attachment.Split(',').Where(o => !string.IsNullOrEmpty(o)).Any())
+                {
+                    continue;
+                }
+
+                var attList = rawData.Attachment.Split(',').Where(o => !string.IsNullOrEmpty(o));
+                var partList = !MyUtility.Check.Empty(rawData.PartID) && rawData.PartID.Split(',').Where(o => !string.IsNullOrEmpty(o)).Any() ?
+                    rawData.PartID.Split(',').Where(o => !string.IsNullOrEmpty(o)).ToList() : new List<string>();
+
+                foreach (var att in attList)
+                {
+                    AttachmentData newData = rawData;
+
+                    // 覆蓋Attachment
+                    newData.Attachment = att;
+
+                    foreach (var part in partList)
+                    {
+                        // 判斷Part 隸屬於這個Attachment
+                        string sql = $@" select 1 from SewingMachineAttachment  where MoldID = @Attachment and ID = @PartID ";
+                        List<SqlParameter> paras = new List<SqlParameter>()
+                        {
+                            new SqlParameter("@Attachment", att),
+                            new SqlParameter("@PartID", part),
+                        };
+                        bool isPartMatch = MyUtility.Check.Seek(sql, paras);
+
+                        if (isPartMatch)
+                        {
+                            // 覆蓋PartID
+                            newData.PartID = part;
+                            this.AttachmentDataList.Add(newData);
+                        }
+                    }
+                }
+
             }
 
             this.operationCode = this.machineTypeDT.AsEnumerable().Where(x => x.Field<bool>("IsShowinIEP03")).CopyToDataTable();
@@ -273,7 +333,7 @@ left join MachineType m WITH (NOLOCK) on m.id =  MachineTypeID
 left join Operation o WITH (NOLOCK) on o.ID = ld.OperationID
 where ld.ID = {MyUtility.Convert.GetString(this.masterData["ID"])} and (ld.IsHide = 1 or ld.IsPPa  = 1)
 and left(ld.OperationID, 2) != '--'
-{(!this.isPPA ? " and ld.IsPPA != '1' " : string.Empty)}
+{(!this.isPPA ? " and ld.PPA != 'C' " : string.Empty)}
 order by ld.No,ld.GroupKey
 
 
@@ -320,7 +380,7 @@ where ld.ID = {MyUtility.Convert.GetString(this.masterData["ID"])}
 and (ld.IsPPa = 0 or ld.IsPPa is null) 
 and (ld.IsHide = 0 or ld.IsHide is null)
 and no <> ''
-{(!this.isPPA ? " and ld.IsPPA   != '1' " : string.Empty)}
+{(!this.isPPA ? " and ld.PPA != 'C' " : string.Empty)}
 GROUP BY NO ,ActCycle.Value
 order by no
 ";
@@ -345,7 +405,7 @@ from(
 	from LineMapping_Detail ld WITH (NOLOCK)
 	where ld.ID = {MyUtility.Convert.GetString(this.masterData["ID"])} and (IsPPa = 0 or IsPPa is null)
 	and no <= {this.changp}
-    {(!this.isPPA ? " and ld.IsPPA   != '1' " : string.Empty)}
+    {(!this.isPPA ? " and ld.PPA != 'C'  " : string.Empty)}
 )x
 group by ID
 
@@ -380,7 +440,7 @@ where  (ld.IsPPa = 0 or ld.IsPPa is null)
 and (ld.IsHide = 0 or ld.IsHide is null) 
 and no between t.minno and t.maxno
 and no <> ''
-{(!this.isPPA ? " and ld.IsPPA   != '1' " : string.Empty)}
+{(!this.isPPA ? " and ld.PPA != 'C'  " : string.Empty)}
 GROUP BY NO ,ActCycle.Value
 order by no
 
@@ -400,7 +460,7 @@ from(
 	select distinct ld.ID,no
 	from LineMapping_Detail ld WITH (NOLOCK)
 	where ld.ID = {MyUtility.Convert.GetString(this.masterData["ID"])} and (IsPPa = 0 or IsPPa is null) 
-    {(!this.isPPA ? " and ld.IsPPA   != '1' " : string.Empty)}
+    {(!this.isPPA ? " and ld.PPA != 'C'  " : string.Empty)}
 	and no > {this.changp}
 )x
 group by ID
@@ -434,7 +494,7 @@ OUTER APPLY(
 where  (ld.IsPPa = 0 or ld.IsPPa is null) 
 and (ld.IsHide = 0 or ld.IsHide is null) 
 and no between t.minno and t.maxno
-{(!this.isPPA ? " and ld.IsPPA   != '1' " : string.Empty)}
+{(!this.isPPA ? " and ld.PPA != 'C' " : string.Empty)}
 GROUP BY NO ,ActCycle.Value
 order by no
 
@@ -481,7 +541,7 @@ OUTER APPLY(
 	)b
 )ActCycle
 where ld.ID = {MyUtility.Convert.GetString(this.masterData["ID"])} and IsPPa = 1 and IsHide = 0
-    {(!this.isPPA ? " and ld.IsPPA   != '1' " : string.Empty)}
+    {(!this.isPPA ? " and ld.PPA != 'C' " : string.Empty)}
 GROUP BY NO, ActCycle.Value
 order by NO
 
@@ -506,7 +566,7 @@ from(
 	select distinct ld.ID,no
 	from LineMapping_Detail ld WITH (NOLOCK)
 	where ld.ID = {MyUtility.Convert.GetString(this.masterData["ID"])} and IsPPa = 1 and IsHide = 0 
-    {(!this.isPPA ? " and ld.IsPPA   != '1' " : string.Empty)}
+    {(!this.isPPA ? " and ld.PPA != 'C' " : string.Empty)}
 	and no <= '{this.changpPPA}'
 )x
 group by ID
@@ -540,7 +600,7 @@ OUTER APPLY(
 )ActCycle
 where IsPPa = 1 and IsHide = 0 
 and no between t.minno and t.maxno
-    {(!this.isPPA ? " and ld.IsPPA   != '1' " : string.Empty)}
+    {(!this.isPPA ? " and ld.PPA != 'C' " : string.Empty)}
 GROUP BY NO, ActCycle.Value
 order by NO
 ";
@@ -558,7 +618,7 @@ from(
 	select distinct ld.ID,no
 	from LineMapping_Detail ld WITH (NOLOCK)
 	where ld.ID = {MyUtility.Convert.GetString(this.masterData["ID"])} and IsPPa = 1 and IsHide = 0 
-    {(!this.isPPA ? " and ld.IsPPA   != '1' " : string.Empty)}
+    {(!this.isPPA ? " and ld.PPA != 'C' " : string.Empty)}
 	and no > '{this.changpPPA}'
 )x
 group by ID
@@ -592,7 +652,7 @@ OUTER APPLY(
 )ActCycle
 where IsPPa = 1 and IsHide = 0 
 and no between t.minno and t.maxno
-    {(!this.isPPA ? " and ld.IsPPA   != '1' " : string.Empty)}
+    {(!this.isPPA ? " and ld.PPA != 'C' " : string.Empty)}
 GROUP BY NO, ActCycle.Value
 order by NO
 
@@ -824,13 +884,14 @@ order by NO
             #endregion
             string[] allMachine = this.operationCode.AsEnumerable().Where(s => !MyUtility.Check.Empty(s["MachineTypeID"])).Select(s => s["MachineTypeID"].ToString()).Distinct().ToArray();
             var allMachineData = this.operationCode.AsEnumerable().Where(s => !MyUtility.Check.Empty(s["MachineTypeID"]))
-                .Select(s => new {
-                    No = MyUtility.Convert.GetString(s["No"])
-                , MachineCount = MyUtility.Convert.GetBool(s["MachineCount"])
-                , MachineTypeID = s["MachineTypeID"].ToString()
-                , MasterPlusGroup = s["MasterPlusGroup"].ToString()
-                , Template = MyUtility.Convert.GetString(s["Template"])
-                , SewingMachineAttachmentID = MyUtility.Convert.GetString(s["SewingMachineAttachmentID"])
+                .Select(s => new
+                {
+                    No = MyUtility.Convert.GetString(s["No"]),
+                    MachineCount = MyUtility.Convert.GetBool(s["MachineCount"]),
+                    MachineTypeID = s["MachineTypeID"].ToString(),
+                    MasterPlusGroup = s["MasterPlusGroup"].ToString(),
+                    Template = MyUtility.Convert.GetString(s["Template"]),
+                    SewingMachineAttachmentID = MyUtility.Convert.GetString(s["SewingMachineAttachmentID"]),
                 });
 
             decimal chartDataEndRow = currentOperators + 1;
@@ -916,7 +977,7 @@ order by NO
             if (showMachineType)
             {
                 var noPPA = this.machineTypeDT.AsEnumerable()
-                            .Where(s => (s["IsShowinIEP03"].Equals(false) || s["IsHide"].Equals(true)) && s["OperationID"].ToString().Length >=2 && !s["OperationID"].ToString().Substring(0, 2).EqualString("--"))
+                            .Where(s => (s["IsShowinIEP03"].Equals(false) || s["IsHide"].Equals(true)) && s["OperationID"].ToString().Length >= 2 && !s["OperationID"].ToString().Substring(0, 2).EqualString("--"))
                             .Select(s => new
                             {
                                 rn = s["rn"].ToString(),
@@ -952,7 +1013,7 @@ order by NO
             // Machine table 只計算MachineCount有勾選的
             int machineCount = allMachineData.Where(o => o.MachineCount && !MyUtility.Check.Empty(o.MachineTypeID) && !MyUtility.Check.Empty(o.MasterPlusGroup)).Select(o => new { o.MachineTypeID, o.MasterPlusGroup }).Distinct().Count();
 
-            int attachTemplateCount = allMachineData.Where(o => !MyUtility.Check.Empty(o.No) && !MyUtility.Check.Empty(o.Template)).Select(o => new { o.No, o.Template }).Distinct().Count();
+            int attachTemplateCount = this.AttachmentDataList.Count();
 
             int copyCount = machineCount >= attachTemplateCount ? machineCount : attachTemplateCount;
             rngToCopy = worksheet.get_Range("A27:A27").EntireRow; // 選取要被複製的資料
@@ -979,31 +1040,22 @@ order by NO
             {
                 worksheet.Cells[27 + surow, 10] = item.MachineTypeID;
                 worksheet.Cells[27 + surow, 11] = item.MasterPlusGroup;
-                //worksheet.Cells[27 + surow, 13] = item.Count;
                 surow++;
             }
 
-            worksheet.Cells[24, 17] = aaData.Select(o=>o.SewingMachineAttachmentID).Distinct().Count();
-            worksheet.Cells[25, 17] = aaData.Select(o => o.Template).Distinct().Count();
+            worksheet.Cells[24, 17] = this.AttachmentDataList.Select(o => o.Attachment).Distinct().Count();
+            worksheet.Cells[25, 17] = this.AttachmentDataList.Select(o => o.Template).Distinct().Count();
+
             surow = 0;
-            foreach (var item in aaData)
+            foreach (var item in this.AttachmentDataList)
             {
-                worksheet.Cells[27 + surow, 16] = item.Template;
+                worksheet.Cells[27 + surow, 16] = item.Attachment;
                 worksheet.Cells[27 + surow, 17] = item.No;
-                worksheet.Cells[27 + surow, 19] = item.SewingMachineAttachmentID;
+                worksheet.Cells[27 + surow, 19] = item.PartID;
+
                 surow++;
             }
 
-            //foreach (string item in allMachine)
-            //{
-            //    worksheet.Cells[27 + surow, 5 + sucol] = item;
-            //    surow++;
-            //    if (allct == surow)
-            //    {
-            //        surow = 0;
-            //        sucol += 2;
-            //    }
-            //}
             #endregion
 
             #region 預設站數為2站，當超過2站就要新增
@@ -1603,6 +1655,21 @@ order by NO
             #endregion
 
             #endregion
+        }
+
+        private class AttachmentData
+        {
+            public string No { get; set; }
+
+            public string STMC_Type { get; set; }
+
+            public string MachineGroup { get; set; }
+
+            public string Attachment { get; set; }
+
+            public string Template { get; set; }
+
+            public string PartID { get; set; }
         }
 
         private class GCTimeChartData

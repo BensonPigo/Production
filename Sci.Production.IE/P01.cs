@@ -615,6 +615,11 @@ and IsAttachment = 1
                         return;
                     }
 
+                    if (MyUtility.Convert.GetString(this.CurrentDetailData["Mold"]) != item.GetSelectedString())
+                    {
+                        this.CurrentDetailData["SewingMachineAttachmentID"] = string.Empty;
+                    }
+
                     this.CurrentDetailData["Mold"] = item.GetSelectedString();
                 }
             };
@@ -657,7 +662,7 @@ where o.ID = @OperationID";
                         operationList = dtOperation.Rows[0]["Mold"].ToString().Replace(";", ",").Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries).Distinct().ToList();
                         if (e.FormattedValue.Empty())
                         {
-                            this.CurrentDetailData["Mold"] = dtOperation.Rows[0]["Mold"].ToString();
+                            this.CurrentDetailData["Mold"] = string.Empty;
                             return;
                         }
                     }
@@ -692,6 +697,11 @@ where Junk = 0";
                         return;
                     }
 
+                    if (MyUtility.Convert.GetString(this.CurrentDetailData["Mold"]) != string.Join(",", getMold.ToList()))
+                    {
+                        this.CurrentDetailData["SewingMachineAttachmentID"] = string.Empty;
+                    }
+
                     this.CurrentDetailData["Mold"] = string.Join(",", getMold.ToList());
                 }
             };
@@ -702,13 +712,13 @@ where Junk = 0";
                 if (this.EditMode && e.Button == MouseButtons.Right)
                 {
                     string sqlcmd = @"
-select m.ID, m.DescEN, PartID=smt.ID
+select PartID = smt.ID , m.DescEN ,MoldID = m.ID
 from Mold m WITH (NOLOCK)
 right join SewingMachineTemplate smt on m.ID = smt.MoldID
 where m.Junk = 0 and m.IsTemplate = 1 and smt.Junk = 0
 ";
 
-                    SelectItem2 item = new SelectItem2(sqlcmd, "ID,DescEN,PartID", "13,60,20", this.CurrentDetailData["Template"].ToString(), null, null, null)
+                    SelectItem2 item = new SelectItem2(sqlcmd, "MoldID,DescEN,PartID", "13,60,20", this.CurrentDetailData["Template"].ToString(), null, null, null)
                     {
                         Width = 1000,
                     };
@@ -718,7 +728,17 @@ where m.Junk = 0 and m.IsTemplate = 1 and smt.Junk = 0
                         return;
                     }
 
-                    this.CurrentDetailData["Template"] = item.GetSelectedString();
+                    IList<DataRow> selectedRows = item.GetSelecteds();
+
+                    if (selectedRows.Any())
+                    {
+                        var t = selectedRows.ToList();
+                        this.CurrentDetailData["Template"] = string.Join(",", t.Select(o => o["PartID"]).ToList());
+                    }
+                    else
+                    {
+                        this.CurrentDetailData["Template"] = string.Empty;
+                    }
                 }
             };
 
@@ -768,7 +788,7 @@ where o.ID = @OperationID";
 
                     this.CurrentDetailData["Template"] = e.FormattedValue;
                     sqlcmd = @"
-select m.ID, m.DescEN, PartID=smt.ID
+select PartID = smt.ID , m.DescEN ,MoldID = m.ID
 from Mold m WITH (NOLOCK)
 right join SewingMachineTemplate smt on m.ID = smt.MoldID
 where m.Junk = 0 and m.IsTemplate = 1 and smt.Junk = 0
@@ -781,7 +801,7 @@ where m.Junk = 0 and m.IsTemplate = 1 and smt.Junk = 0
                     List<string> trueTemplate = new List<string>();
                     foreach (string item in getLocation)
                     {
-                        if (!dt.AsEnumerable().Any(row => row["id"].EqualString(item)) && !item.EqualString(string.Empty))
+                        if (!dt.AsEnumerable().Any(row => row["PartID"].EqualString(item)) && !item.EqualString(string.Empty))
                         {
                             selectId &= false;
                             errTemplate.Add(item);
@@ -852,6 +872,7 @@ where m.Junk = 0 and m.IsTemplate = 1 and smt.Junk = 0
                     }
 
                     string newSewingMachineAttachmentID = MyUtility.Convert.GetString(e.FormattedValue);
+                    string moldID = this.CurrentDetailData["Mold"].ToString();
 
                     string sqlcmd = $@"
 select a.ID
@@ -864,13 +885,23 @@ from SewingMachineAttachment a
 left join AttachmentType b on a.AttachmentTypeID = b.Type 
 left join AttachmentMeasurement c on a.MeasurementID = c.Measurement
 left join AttachmentFoldType d on a.FoldTypeID = d.FoldType 
-where MoldID = '{this.CurrentDetailData["Mold"]}' AND a.ID = @ID";
+where a.MoldID IN ('{string.Join("','", moldID.Split(','))}') ";
+
+                    List<SqlParameter> paras = new List<SqlParameter>();
+
+                    // SewingMachineAttachment.ID可以多選
+                    if (newSewingMachineAttachmentID.Split(',').Length > 1)
+                    {
+                        sqlcmd += $@" AND a.ID IN ('{string.Join("','", newSewingMachineAttachmentID.Split(','))}')";
+                    }
+                    else
+                    {
+                        sqlcmd += " AND a.ID = @ID";
+                        paras.Add(new SqlParameter("@ID", MyUtility.Convert.GetString(e.FormattedValue)));
+                    }
 
                     DataTable dt;
-                    List<SqlParameter> paras = new List<SqlParameter>()
-                                        {
-                                            new SqlParameter("@ID", MyUtility.Convert.GetString(e.FormattedValue)),
-                                        };
+
                     DualResult r = DBProxy.Current.Select(null, sqlcmd, paras, out dt);
 
                     if (!r)
@@ -921,6 +952,8 @@ where Type = 'PMS_IEPPA'
                 {
                     if (MyUtility.Check.Empty(e.FormattedValue))
                     {
+                        this.CurrentDetailData["PPA"] = string.Empty;
+                        this.CurrentDetailData["PPAText"] = string.Empty;
                         return;
                     }
 
