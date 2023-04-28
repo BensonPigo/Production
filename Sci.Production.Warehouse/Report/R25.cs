@@ -179,7 +179,8 @@ select
 	ed.PoID,
 	seq = ed.Seq1+' '+ed.Seq2,
 	ed.Refno,
-	[Color] = dbo.GetColorMultipleID(o.BrandID,isnull(psdsC.SpecValue, '')) ,
+	[Color] = psdsC.SpecValue,
+	[Color Name] = dbo.GetColorMultipleID(o.BrandID,isnull(psdsC.SpecValue, '')) ,
 	[Description] = dbo.getmtldesc(ed.POID,ed.seq1,ed.seq2,2,0),
 	[MtlType]=case when ed.FabricType = 'F' then 'Fabric'
 				   when ed.FabricType = 'A' then 'Accessory' end,
@@ -313,7 +314,7 @@ and ed.PoType = 'G'
 
  select 
 	WK, t.eta, t.FactoryID, Consignee, ShipModeID, CYCFS, Blno, Packages, Vessel, [ProdFactory], OrderTypeID, ProjectID, Category ,
-	BrandID, seasonid, styleid, t.StyleName, t.PoID, seq, Refno,	[Color] , [Description], [MtlType],MtlTypeID ,WeaveTypeID, suppid, [SuppName] 
+	BrandID, seasonid, styleid, t.StyleName, t.PoID, seq, Refno,[Color],[Color Name],[Description], [MtlType],MtlTypeID ,WeaveTypeID, suppid, [SuppName] 
 	, UnitId
 	, SizeSpec,
     [ShipQty]=SUM(t.ShipQty),
@@ -340,7 +341,7 @@ OUTER APPLY(
 )Receiving_Detail
  GROUP BY 
 	WK,t.eta,t.FactoryID,Consignee,ShipModeID,CYCFS,Blno,Packages,Vessel,[ProdFactory],OrderTypeID,ProjectID,Category ,BrandID, seasonid,styleid,t.PoID,seq,
-	Refno,[Color] ,[Description],[MtlType],WeaveTypeID,suppid,[SuppName] ,UnitId,SizeSpec,[ContainerType] ,[ContainerNo] ,PortArrival,
+	Refno,[Color] ,[Description],[MtlType],WeaveTypeID,suppid,[SuppName] ,UnitId,SizeSpec,[ContainerType] ,[ContainerNo] ,PortArrival,[Color Name],
     t.WhseArrival,KPILETA,[Earliest SCI Delivery],EarlyDays,[MR_Mail],[SMR_Mail],t.EditName,ReceiveQty,StockUnit, t.StyleName, t.TotalRollsCalculated, MtlTypeID
 HAVING 1=1
 ";
