@@ -1,8 +1,10 @@
-﻿using Newtonsoft.Json;
+﻿using log4net.Util;
+using Newtonsoft.Json;
 using System;
 using System.IO;
 using System.Net;
 using System.Net.Http;
+using System.Security.AccessControl;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -12,13 +14,21 @@ namespace Sci.Production.Class
     /// <inheritdoc/>
     public static class FileDownload_UpData
     {
+       
         /// <inheritdoc/>
         public static async Task DownloadFileAsync(string url, string filePath, string fileName, string saveFilePath)
         {
             try
             {
                 // url = "http://localhost:48926/api/FileDownload/GetFile"; // for test
+                string MaterialDoc_Path = @"\\evamgr\Clip\Trade\Material Doc";
                 var httpWebRequest = (HttpWebRequest)HttpWebRequest.Create(url);
+
+                if (!filePath.ToUpper().Contains(MaterialDoc_Path.ToUpper()))
+                {
+                    throw new Exception("path is incorrect！");
+                }
+
                 httpWebRequest.Timeout = 60000; // 60秒
                 httpWebRequest.Headers.Add("FilePath", filePath);
                 httpWebRequest.Headers.Add("FileName", Convert.ToBase64String(Encoding.UTF8.GetBytes(fileName)));
@@ -32,7 +42,13 @@ namespace Sci.Production.Class
                 // }
                 using (var respStream = httpWebResponse.GetResponseStream())
                 {
+                    if (Directory.Exists(saveFilePath) == false)
+                    {
+                        Directory.CreateDirectory(saveFilePath);
+                    }
+
                     var savePath = Path.Combine(saveFilePath, fileName);
+
                     using (var fileStream = new FileStream(savePath, FileMode.Create))
                     {
                         await respStream.CopyToAsync(fileStream);
