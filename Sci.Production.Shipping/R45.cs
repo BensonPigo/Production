@@ -11,9 +11,9 @@ using Sci.Win;
 namespace Sci.Production.Shipping
 {
     /// <summary>
-    /// R19
+    /// R45
     /// </summary>
-    public partial class R19 : Win.Tems.PrintForm
+    public partial class R45 : Win.Tems.PrintForm
     {
         private DataTable PrintTable;
         private string eta_s;
@@ -25,10 +25,10 @@ namespace Sci.Production.Shipping
         private string shipMode;
 
         /// <summary>
-        /// R19
+        /// R45
         /// </summary>
         /// <param name="menuitem">menuitem</param>
-        public R19(ToolStripMenuItem menuitem)
+        public R45(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
             this.InitializeComponent();
@@ -127,12 +127,24 @@ and (   exists (select 1 from Factory where e.FactoryID = id and IsProduceFty = 
 
             #region SQL
             sqlCmd = $@"
-
-
 SELECT e.ID
 ,e.Blno
-,vd.ID
+,[DeclarationID] = vd.ID
 ,vd.DeclareNo
+,[MaterialType] = f.MtlTypeID
+,[RefNo] = f.Refno
+,[Desc] = isnull(f.DescDetail,'')
+,[ReceivingQty] =  iif(ed.PoType='M'
+                        , (case when ed.FabricType = 'M' then mpo.OrderQty
+                                when ed.FabricType = 'P' then ppo.OrderQty 
+			                    when ed.FabricType = 'O' then mipo.OrderQty 
+			                    else 0 
+                            end)
+                        ,psd.Qty)
+,[Unit] = ed.UnitId
+,[CustomsCode] = [CustomsCode].value
+,[HSCode] = [HSCode].value
+,[ContractNo] = vd.VNContractID
 ,e.FactoryID
 ,e.Consignee
 ,e.ShipModeID
@@ -163,9 +175,17 @@ SELECT e.ID
 ,[SQCS] = IIF(e.SQCS=1,'Y','N')
 ,[RemarkFromTPE] =ISNULL(e.Remark,'')
 ,[RemarkToTPE] =	ISNULL(e.Remark_Factory,'')
-
+into #tmp
 FROM Export e WITH(NOLOCK)
-LEFT JOIN VNImportDeclaration vd WITH(NOLOCK) ON e.Blno = vd.Blno AND vd.IsFtyExport = 0
+left join Export_Detail ed WITH(NOLOCK) on ed.ID = e.ID
+left join PO_Supp_Detail psd WITH (NOLOCK) on psd.ID = ed.PoID and psd.SEQ1 = ed.Seq1 and psd.SEQ2 = ed.Seq2
+left join Fabric f WITH (NOLOCK) on f.SCIRefno = psd.SCIRefno
+LEFT JOIN VNImportDeclaration vd WITH(NOLOCK) ON 
+(
+	(vd.Blno !='' and e.Blno = vd.Blno) 
+	or  	
+	(vd.BLNo = '' and vd.WKNo = e.ID)
+)　AND vd.IsFtyExport = 0　and vd.Status = 'Confirmed'
 OUTER APPLY(
 	SELECT 1 as [DoorToDoorDelivery]
 	FROM Door2DoorDelivery 
@@ -182,10 +202,156 @@ OUTER APPLY(
 			and ImportCountry = e.ImportCountry
 			and ShipModeID = e.ShipModeID
 			and Vessel  =''
-
 )Dtdd
+outer apply(
+	select value = Stuff((
+		select concat(',',[CustomsCode])
+		from (
+			select distinct [CustomsCode] =  vdd.NLCode
+			from dbo.VNImportDeclaration_Detail vdd
+			where vdd.id = vd.ID
+			)s
+		for xml path('')
+		), 1, 1, '')
+)  [CustomsCode]
+outer apply(
+	select value = Stuff((
+		select concat(',',[HSCode])
+		from (
+			select distinct [HSCode] =  vdd.HSCode
+			from dbo.VNImportDeclaration_Detail vdd
+			where vdd.id = vd.ID
+			)s
+		for xml path('')
+		), 1, 1, '')
+)  [HSCode]
+Outer APPLY (
+	select mpod.ID, mpod.Seq1, mpod.Seq2, mpo.FactoryID, OrderQty = sum(mpod.Qty)
+	from SciMachine_MachinePO mpo
+	inner join SciMachine_MachinePO_Detail mpod on mpo.ID = mpod.ID 
+	where ed.FabricType = 'M'
+			and mpod.ID = ed.PoID 
+			and mpod.Seq1 = ed.Seq1 
+			and mpod.Seq2 = ed.Seq2
+	group by  mpod.ID, mpod.Seq1, mpod.Seq2, mpo.FactoryID
+)mpo
+Outer APPLY (
+	select ppod.TPEPOID, ppod.Seq1, ppod.Seq2, ppo.FactoryID, OrderQty = sum(ppod.Qty)
+	from SciMachine_PartPO ppo
+	inner join SciMachine_PartPO_Detail ppod on ppo.ID = ppod.ID 
+	where ed.FabricType = 'P'
+		and ppod.TPEPOID = ed.PoID 
+		and ppod.Seq1 = ed.Seq1 
+		and ppod.Seq2 = ed.Seq2
+	group by ppod.TPEPOID, ppod.Seq1, ppod.Seq2, ppo.FactoryID
+)ppo
+Outer APPLY (
+	select mpod.TPEPOID, mpod.Seq1, mpod.Seq2, mpo.Factoryid, OrderQty = sum(mpod.Qty) 
+	from SciMachine_MiscPO mpo
+	inner join SciMachine_MiscPO_Detail mpod on mpo.ID = mpod.ID 
+	where ed.FabricType = 'O'
+		and mpod.TPEPOID = ed.PoID 
+		and mpod.Seq1 = ed.Seq1 
+		and mpod.Seq2 = ed.Seq2      
+	group by mpod.TPEPOID, mpod.Seq1, mpod.Seq2, mpo.Factoryid
+)mipo
 WHERE {where}
-ORDER BY e.FactoryID, e.ID
+
+
+select distinct
+ID
+,Blno
+,[DeclarationID]
+,DeclareNo
+,[MaterialType] = [MtlTypeID].value
+,[RefNo] = Refno.value
+,[Desc]  = [Desc].value
+,[ReceivingQty] = isnull(ReceivingQty.value,0)
+,[Unit] = Unit.value
+,[CustomsCode]
+,[HSCode]
+,[ContractNo]
+,FactoryID
+,Consignee
+,ShipModeID
+,CYCFS
+,InvNo
+,[Payer]
+,Vessel
+,ExportPort
+,ExportCountry
+,Packages
+,NetKg
+,WeightKg
+,CBM
+,Eta
+,PackingArrival
+,DocArrival
+,PortArrival
+,WhseArrival
+,[NoImportCharge]
+,[Replacement]
+,[Delay]
+,[NonDeclare]
+,[DoorToDoorDelivery]
+,[SQCS]
+,[RemarkFromTPE]
+from #tmp t
+outer apply(
+	select value = Stuff((
+		select concat(',',[MtlTypeID])
+		from (
+			select distinct [MtlTypeID] =  s.MaterialType
+			from #tmp s
+			where s.ID = t.id and s.MaterialType = t.MaterialType
+			)s
+		for xml path('')
+		), 1, 1, '')
+)  [MtlTypeID]
+outer apply(
+	select value = Stuff((
+		select concat(',',Refno)
+		from (
+			select distinct Refno =  s.RefNo
+			from #tmp s
+			where s.ID = t.id and s.RefNo = t.RefNo
+			)s
+		for xml path('')
+		), 1, 1, '')
+)  Refno
+outer apply(
+	select value = Stuff((
+		select concat(',',[Description])
+		from (
+			select distinct [Description] = s.[Desc]
+			from #tmp s
+			where s.ID = t.id and s.[Desc] = t.[Desc]
+			)s
+		for xml path('')
+		), 1, 1, '')
+)  [Desc]
+outer apply(
+	select value = Stuff((
+		select concat(',',[Unit])
+		from (
+			select distinct [Unit] =  s.[Unit]
+			from #tmp s
+			where s.ID = t.id and s.Unit = t.Unit
+			)s
+		for xml path('')
+		), 1, 1, '')
+)  [Unit]
+outer apply(
+	select value = sum(s.ReceivingQty) 
+	from #tmp s
+	where s.ID = t.ID
+	and s.MaterialType = t.MaterialType
+	and s.RefNo = t.RefNo
+	and s.Unit = t.Unit
+) ReceivingQty
+ORDER BY FactoryID, ID
+
+drop table #tmp
 ";
             #endregion
 
@@ -208,12 +374,16 @@ ORDER BY e.FactoryID, e.ID
 
             this.ShowWaitMessage("Excel processing...");
 
-            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Shipping_R19.xltx"); // 預先開啟excel app
-            MyUtility.Excel.CopyToXls(this.PrintTable, string.Empty, "Shipping_R19.xltx", 1, false, null, objApp); // 將datatable copy to excel
+            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Shipping_R45.xltx"); // 預先開啟excel app
+            MyUtility.Excel.CopyToXls(this.PrintTable, string.Empty, "Shipping_R45.xltx", 1, false, null, objApp); // 將datatable copy to excel
 
             #region Save & Show Excel
 
+            // Desc 固定欄寬&取消自動換列 避免資料太多導致整欄高度上長
+            objApp.Columns[7].ColumnWidth = 60;
+            objApp.Sheets[1].Range[$"G2:G{this.PrintTable.Rows.Count + 1}"].WrapText = false;
             objApp.Visible = true;
+
             Marshal.ReleaseComObject(objApp);
 
             #endregion
