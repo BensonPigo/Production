@@ -87,20 +87,28 @@ namespace Sci.Production.PublicForm
                 {
                     CharacterCasing = CharacterCasing.Normal,
                 })
-                //.Numeric("SIZE", header: "Size", integer_places: 10)
+                // .Numeric("SIZE", header: "Size", integer_places: 10)
                 .Text("PKEY", header: "UKey", width: Widths.AnsiChars(10))
                 .Text("ADDDATE", header: "Created by", width: Widths.AnsiChars(25), settings: new DataGridViewGeneratorTextColumnSettings()
                 {
                     CellFormatting = (s, e) =>
                     {
                         var view = this.grid.GetData<DataRowView>(e.RowIndex);
-                        if (null == view) return;
+                        if (null == view)
+                        {
+                            return;
+                        }
+
                         var data = (Sci.Win.SYS.CLIPRow)view.Row;
 
-                        string value = !data.IsADDNAMENull() ? data.ADDNAME : "";
+                        string value = !data.IsADDNAMENull() ? data.ADDNAME : string.Empty;
                         if (!data.IsADDDATENull())
                         {
-                            if (0 < value.Length) value += " ";
+                            if (0 < value.Length)
+                            {
+                                value += " ";
+                            }
+
                             value += data.ADDDATE.ToString("yyyy/MM/dd HH:mm");
                         }
 
@@ -119,7 +127,8 @@ namespace Sci.Production.PublicForm
             this.mailto.Click += this.mailto_Click;
             this.close.Click += this.close_Click;
 
-            this.grid.CellMouseDoubleClick += this.Grid_CellMouseDoubleClick; ;
+            this.grid.CellMouseDoubleClick += this.Grid_CellMouseDoubleClick;
+            ;
         }
 
         private DataRow _dr;
@@ -147,8 +156,16 @@ namespace Sci.Production.PublicForm
 
         private void Grid_CellMouseDoubleClick(object sender, DataGridViewCellMouseEventArgs e)
         {
-            if (MouseButtons.Right == e.Button) return;
-            if (-1 == e.RowIndex) return;
+            if (MouseButtons.Right == e.Button)
+            {
+                return;
+            }
+
+            if (-1 == e.RowIndex)
+            {
+                return;
+            }
+
             this.openfile_Click(sender, e);
         }
 
@@ -183,7 +200,11 @@ namespace Sci.Production.PublicForm
         /// </summary>
         protected override void OnFormDispose()
         {
-            if (null != this.savefiledialog) this.savefiledialog.Dispose();
+            if (null != this.savefiledialog)
+            {
+                this.savefiledialog.Dispose();
+            }
+
             base.OnFormDispose();
         }
 
@@ -243,7 +264,7 @@ namespace Sci.Production.PublicForm
         /// Property of table name.
         /// </summary>
         [Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public string TableName { get { return this._tablename ?? ""; } }
+        public string TableName { get { return this._tablename ?? string.Empty; } }
 
         /// <summary>
         /// Field of usercode.
@@ -254,7 +275,7 @@ namespace Sci.Production.PublicForm
         /// Property of Usercode.
         /// </summary>
         [Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public string UID { get { return this._uid ?? ""; } }
+        public string UID { get { return this._uid ?? string.Empty; } }
 
         /// <summary>
         /// Field of limitedClip.
@@ -265,7 +286,7 @@ namespace Sci.Production.PublicForm
         /// Property of limitedClip
         /// </summary>
         [Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public string LimitedClip { get { return _limitedClip ?? ""; } }
+        public string LimitedClip { get { return _limitedClip ?? string.Empty; } }
 
         /// <summary>
         /// Field of AlianClipConnectionName
@@ -276,7 +297,7 @@ namespace Sci.Production.PublicForm
         /// Property of AlianClipConnectionName
         /// </summary>
         [Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public string AlianClipConnectionName { get { return _alianClipConnectionName ?? ""; } }
+        public string AlianClipConnectionName { get { return _alianClipConnectionName ?? string.Empty; } }
 
         /////// <summary>
         /////// Property of first clip time.
@@ -311,7 +332,7 @@ namespace Sci.Production.PublicForm
                 this.remove.Enabled = this.EditMode;
                 this.openfile.Enabled = true;
                 this.download.Enabled = true;
-                this.mailto.Enabled = true;
+                // this.mailto.Enabled = true;
             }
             else
             {
@@ -320,7 +341,7 @@ namespace Sci.Production.PublicForm
                 this.remove.Enabled = false;
                 this.openfile.Enabled = false;
                 this.download.Enabled = false;
-                this.mailto.Enabled = false;
+                // this.mailto.Enabled = false;
             }
         }
 
@@ -333,10 +354,14 @@ namespace Sci.Production.PublicForm
             DualResult result;
 
             Sci.Win.SYS.CLIPDataTable datas = null;
-            DateTime? firstcliptime = null; string yyyymm = null, fullpath = null;
+            DateTime? firstcliptime = null;
+            string yyyymm = null, fullpath = null;
             if (!(result = AsyncHelper.Current.DataLoading(this, () =>
             {
-                if (!(result = PrivUtils.GetClips(this.TableName, this.UID, this.LimitedClip, out datas, _alianClipConnectionName))) return result;
+                if (!(result = PrivUtils.GetClips(this.TableName, this.UID, this.LimitedClip, out datas, _alianClipConnectionName)))
+                {
+                    return result;
+                }
 
                 if (0 < datas.Count)
                 {
@@ -355,7 +380,10 @@ namespace Sci.Production.PublicForm
                 }
 
                 return Result.True;
-            }))) return result;
+            })))
+            {
+                return result;
+            }
 
             this._datas = datas;
             ////_firstcliptime = firstcliptime;
@@ -378,8 +406,15 @@ namespace Sci.Production.PublicForm
 
             foreach (var it in datas)
             {
-                if (it.IsADDDATENull()) continue;
-                if (!firstcliptime.HasValue || firstcliptime > it.ADDDATE) firstcliptime = it.ADDDATE;
+                if (it.IsADDDATENull())
+                {
+                    continue;
+                }
+
+                if (!firstcliptime.HasValue || firstcliptime > it.ADDDATE)
+                {
+                    firstcliptime = it.ADDDATE;
+                }
             }
 
             return firstcliptime;
@@ -531,7 +566,10 @@ namespace Sci.Production.PublicForm
         protected override void OnGridRowChanged(int rowindex)
         {
             base.OnGridRowChanged(rowindex);
-            if (this._buttonenable != (-1 != rowindex)) this.SetButton();
+            if (this._buttonenable != (-1 != rowindex))
+            {
+                this.SetButton();
+            }
         }
 
         /// <summary>
@@ -555,171 +593,51 @@ namespace Sci.Production.PublicForm
             using (var frm = new Clip01(this.TableName, this.UID, string.Empty, this._clipdir, this.LimitedClip, _alianClipConnectionName, this._dr))
             {
                 frm.ShowDialog();
+                this.Load();
 
-                if (frm.Inserteds != null && frm.Inserteds.Count > 0)
+                #region 把檔案從trade重新抓下來
+                string filePath = MyUtility.GetValue.Lookup($"select [path] from CustomizedClipPath where TableName = '{this._tablename}'");
+
+                // 組ClipPath
+                string clippath = MyUtility.GetValue.Lookup($"select ClipPath from System");
+                string saveFilePath = clippath + "\\" + DateTime.Now.ToString("yyyyMM");
+
+                string sqlcmd = $@"select 
+                [FileName] = TableName + PKey,
+                SourceFile
+                from Clip
+                where TableName = '{this._tablename}' and 
+                UniqueKey = '{this._uid}'";
+                DualResult dualResult = DBProxy.Current.Select(null, sqlcmd, out DataTable dt);
+                if (!dualResult)
                 {
-                    foreach (var it in frm.Inserteds)
+                    MyUtility.Msg.WarningBox(dualResult.ToString());
+                }
+
+                // 先刪除原本下載的檔案
+                foreach (DataRow dataRow in dt.Rows)
+                {
+                    string fileName = dataRow["FileName"].ToString() + Path.GetExtension(dataRow["SourceFile"].ToString());
+                    string deleteFile = Path.Combine(saveFilePath, fileName);
+                    if (File.Exists(deleteFile))
                     {
-                        var data = this._datas.NewCLIPRow();
-                        data.ItemArray = it.ItemArray;
-                        this._datas.AddCLIPRow(data);
+                        File.Delete(deleteFile);
                     }
                 }
 
+                // 再下載所有檔案
+                foreach (DataRow dataRow in dt.Rows)
+                {
+                    string fileName = dataRow["FileName"].ToString() + Path.GetExtension(dataRow["SourceFile"].ToString());
+                    lock (FileDownload_UpData.DownloadFileAsync("http://misap.sportscity.com.tw:16888/api/FileDownload/GetFile", filePath + "\\" + DateTime.Now.ToString("yyyyMM"), fileName, saveFilePath))
+                    {
+                    }
+                }
+
+                #endregion
+
                 this._path = null;
-
-                //gridbs.ResetBindings(false);
-                //grid.Invalidate();//seem some pc not re-paint?
             }
-
-            // if (this._dr == null)
-            // {
-            //     return;
-            // }
-
-            // // 呼叫File 選擇視窗
-            // OpenFileDialog ofdFileName = ProductionEnv.GetOpenFileDialog();
-            // ofdFileName.Multiselect = true;
-            // if (ofdFileName.ShowDialog() == DialogResult.OK)
-            // {
-            //     if (!File.Exists(ofdFileName.FileName))
-            //     {
-            //         this.ShowErr("Import File is not exist");
-            //         return;
-            //     }
-            // }
-            // else
-            // {
-            //     return;
-            // }
-
-            // DateTime now = DateTime.Now;
-            //string saveFilePath = Path.Combine(this._clipdir, now.ToString("yyyyMM"));
-            // List<string> pkeys = new List<string>();
-            // string[] files = ofdFileName.FileNames;
-            // int count = 0;
-            // foreach (string file in files)
-            // {
-            //     string pkey = this.GetPKeyPre() + count.ToString().PadLeft(2, '0');
-            //     string newFileName = this._tablename + pkey + Path.GetExtension(ofdFileName.FileName);
-            //     string filenamme = Path.GetFileName(file);
-            //     pkeys.Add(pkey + "-" + filenamme);
-
-            //     count++;
-
-            //     // call API上傳檔案到Trade
-            //     lock (FileDownload_UpData.UploadFile("http://misap.sportscity.com.tw:16888/api/FileUpload/PostFile", saveFilePath, newFileName, ofdFileName.FileName))
-            //     {
-            //     }
-            // }
-
-            // if (this._tablename == "UASentReport")
-            // {
-            //     if (!this.txtTestSeason.Text.Empty())
-            //     {
-            //         r["TestSeasonID"] = this.txtTestSeason.Text;
-            //         r["dueSeason"] = this.txtDueSeason.Text;
-            //     }
-
-            //     if (this.dateTestDate.Value.HasValue)
-            //     {
-            //         r["TestReportTestDate"] = MyUtility.Convert.GetDate(this.dateTestDate.Value).ToYYYYMMDD();
-            //         if (this.DueDate.Value.HasValue)
-            //         {
-            //             r["dueDate"] = MyUtility.Convert.GetDate(this.DueDate.Value).ToYYYYMMDD();
-            //         }
-            //     }
-
-            //     if (r["Ukey"].Empty())
-            //     {
-            //         r["AddName"] = Env.User.UserID;
-            //         r["AddDate"] = now;
-            //     }
-            //     else
-            //     {
-            //         r["EditName"] = Env.User.UserID;
-            //         r["EditDate"] = now;
-            //     }
-
-            //     r["TestReport"] = MyUtility.Convert.GetDate(now).ToYYYYMMDD();
-
-            //     string addUpdate = string.Empty;
-
-            //     string sql = $@"
-
-
-            //         DECLARE @OutputTbl TABLE (ID bigint)
-            //         IF EXISTS(select 1 FROM dbo.UASentReport WHERE BrandRefno = '{r["BrandRefno"]}' and ColorID = '{r["ColorID"]}' and SuppID = '{r["SuppID"]}' and DocumentName = '{this.drBasic["DocumentName"]}' and BrandID = '{this.drBasic["BrandID"]}')
-            //         Begin
-            //             Update dbo.UASentReport SET  TestReport = getdate(), EditName = '{Env.User.UserID}' ,EditDate = getdate() {updateCol} 
-            //             output inserted.Ukey into @OutputTbl
-            //             WHERE BrandRefno = '{r["BrandRefno"]}' and ColorID = '{r["ColorID"]}' and SuppID = '{r["SuppID"]}' and DocumentName = '{this.drBasic["DocumentName"]}' and BrandID = '{this.drBasic["BrandID"]}'
-            //         End
-            //         Else
-            //          Begin
-            //             Insert Into dbo.[UASentReport]
-            //              (
-            //                [BrandRefno]
-            //               ,[ColorID]
-            //               ,[SuppID]
-            //               ,[TestReport]
-            //               ,[TestReportTestDate]
-            //               ,[AddDate]
-            //               ,[AddName]
-            //               ,[DocumentName]
-            //               ,[BrandID]
-            //               ,[TestSeasonID]
-            //               ,[DueSeason]
-            //               ,[DueDate]
-            //             )
-            //             output inserted.Ukey into @OutputTbl
-            //             Values(
-            //               '{r["BrandRefno"]}'
-            //              ,'{r["ColorID"]}'
-            //              ,'{r["SuppID"]}'
-            //              ,getdate()
-            //              ,{(!this.dateTestDate.Value.HasValue ? "null" : $"'{this.dateTestDate.Text}'")}
-            //              ,getdate()
-            //              ,'{Env.User.UserID}'
-            //              ,'{this.drBasic["DocumentName"]}'
-            //              ,'{this.drBasic["BrandID"]}'
-            //              ,'{this.txtTestSeason.Text}'
-            //              ,'{this.txtDueSeason.Text}'
-            //              ,{(!this.DueDate.Value.HasValue ? "null" : $"'{this.DueDate.Text}'")}
-            //             )
-            //          End
-
-            //         INSERT INTO Clip 
-            //         SELECT files.Pkey, 'UASentReport', ID, files.FileName, 'File Upload', @UserID, getdate()
-            //          FROM @OutputTbl
-            //         Outer Apply(
-            //             select [Pkey] = SUBSTRING(Data,0,11),FileName = SUBSTRING(Data,12,len(Data)-11) from splitstring(@ClipPkey,'?')
-            //         )files
-
-            //         SELECT TOP 1 ID FROM @OutputTbl";
-            //     List<SqlParameter> plis = new List<SqlParameter>()
-            //         {
-            //             new SqlParameter("UserID", Env.User.UserID),
-            //             new SqlParameter("ClipPkey", string.Join("?", pkeys)),
-            //             new SqlParameter("FileName", ofdFileName.SafeFileName),
-            //         };
-            //     DataTable dtUkey = new DataTable();
-            //     var result = DBProxy.Current.Select(null, sql, plis, out dtUkey);
-            //     if (!result)
-            //     {
-            //         this.ShowErr(result);
-            //         return;
-            //     }
-
-            //     r["Ukey"] = dtUkey.Rows[0][0];
-            // }
-            // else
-            // {
-
-            // }
-
-            // dt.AcceptChanges();
-            // MyUtility.Msg.InfoBox("Update Success!");
         }
 
         private string GetPKeyPre()
@@ -727,10 +645,10 @@ namespace Sci.Production.PublicForm
             var dtm_sys = DateTime.Now;
 
             string pkey = string.Empty;
-            pkey += CHARs[dtm_sys.Year % 100].ToString() + CHARs[dtm_sys.Month].ToString() + CHARs[dtm_sys.Day].ToString();
-            pkey += CHARs[dtm_sys.Hour].ToString();
-            pkey += CHARs[dtm_sys.Minute / CHARs.Length].ToString() + CHARs[dtm_sys.Minute % CHARs.Length].ToString();
-            pkey += CHARs[dtm_sys.Second / CHARs.Length].ToString() + CHARs[dtm_sys.Second % CHARs.Length].ToString();
+            pkey += this.CHARs[dtm_sys.Year % 100].ToString() + this.CHARs[dtm_sys.Month].ToString() + this.CHARs[dtm_sys.Day].ToString();
+            pkey += this.CHARs[dtm_sys.Hour].ToString();
+            pkey += this.CHARs[dtm_sys.Minute / this.CHARs.Length].ToString() + this.CHARs[dtm_sys.Minute % this.CHARs.Length].ToString();
+            pkey += this.CHARs[dtm_sys.Second / this.CHARs.Length].ToString() + this.CHARs[dtm_sys.Second % this.CHARs.Length].ToString();
 
             return pkey;
         }
@@ -744,7 +662,12 @@ namespace Sci.Production.PublicForm
         {
             DualResult result;
 
-            var data = this.GetSelected(); if (null == data) return;
+            var data = this.GetSelected();
+            if (null == data)
+            {
+                return;
+            }
+
             if (data.IsSOURCEFILENull() || this._clipdir.Length == 0 || this._clipdir == null)
             {
                 if (!(result = PrivUtils.DeleteClipRow(data, _alianClipConnectionName)))
@@ -1021,7 +944,11 @@ namespace Sci.Production.PublicForm
         {
             DualResult result;
 
-            var data = this.GetSelected(); if (null == data) return;
+            var data = this.GetSelected();
+            if (null == data)
+            {
+                return;
+            }
 
             string file;
             if (!(result = GetClipFile(data, this._clipdir, this.mappingClipDic, out file)))
@@ -1081,7 +1008,6 @@ namespace Sci.Production.PublicForm
 
             return result;
         }
-
 
         /// <summary>
         /// 不顯示畫面, 直接夾檔
@@ -1170,73 +1096,7 @@ namespace Sci.Production.PublicForm
         /// <param name="addTime"></param>
         /// <param name="alianClipConnectionName"></param>
         /// <returns>success or not</returns>
-        //private DualResult AddClip_API(IList<Sci.Win.SYS.CLIPRow> datas, string dir = null, string _yyyymm = null, DateTime? addTime = null, string alianClipConnectionName = "")
-        //{
-        //    DualResult result = Result.True;
-        //    var dtm_sys = addTime ?? DateTime.Now;
-        //    foreach (var it in datas)
-        //    {
-        //        it.ADDDATE = dtm_sys;
-        //    }
-
-        //    string yyyymm = _yyyymm;
-        //    if (yyyymm == null || yyyymm.Length == 0)
-        //    {
-        //        yyyymm = dtm_sys.ToString("yyyyMM");
-        //    }
-
-        //    // 呼叫File 選擇視窗
-        //    OpenFileDialog ofdFileName = ProductionEnv.GetOpenFileDialog();
-        //    ofdFileName.Multiselect = true;
-        //    if (ofdFileName.ShowDialog() == DialogResult.OK)
-        //    {
-        //        if (!File.Exists(ofdFileName.FileName))
-        //        {
-        //            this.ShowErr("Import File is not exist");
-        //            return;
-        //        }
-        //    }
-        //    else
-        //    {
-        //        return;
-        //    }
-
-        //    string clipDir = null;
-        //    if (!(result = PrivUtils.GetClipDir(out clipDir)))
-        //    {
-        //        return result;
-        //    }
-
-         
-        //    DateTime now = DateTime.Now;
-        //    string saveFilePath = Path.Combine(this._clipdir, now.ToString("yyyyMM"));
-
-        //    dir = Path.Combine(clipDir, yyyymm);
-
-        //    // call API上傳檔案到Trade
-        //    lock (FileDownload_UpData.UploadFile("http://misap.sportscity.com.tw:16888/api/FileUpload/PostFile", saveFilePath, newFileName, ofdFileName.FileName))
-        //    {
-        //    }
-
-        //    //if (dir == null || dir.Length == 0)
-        //    //{
-        //    //    string clipDir = null;
-        //    //    if (!(result = PrivUtils.GetClipDir(out clipDir)))
-        //    //    {
-        //    //        return result;
-        //    //    }
-
-        //    //    dir = Path.Combine(clipDir, yyyymm);
-        //    //}
-
-        //    if (!(result = PrivUtils.AddClips(datas, dir, alianClipConnectionName)))
-        //    {
-        //        return result;
-        //    }
-
-        //    return result;
-        //}
-
+        
         /// <summary>
         /// 不顯示畫面, 直接夾檔
         /// </summary>

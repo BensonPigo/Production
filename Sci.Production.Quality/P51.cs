@@ -302,13 +302,13 @@ Update NewSentReport SET  AWBNO = @updateData, EditName = @UserID ,EditDate = ge
                         List<SqlParameter> plis = new List<SqlParameter>()
                     {
                          new SqlParameter("ExportID", row["ExportID"]),
-                        new SqlParameter("POID", row["POID"]),
-                        new SqlParameter("Seq1", row["Seq1"]),
-                        new SqlParameter("Seq2", row["Seq2"]),
-                        new SqlParameter("UserID", Env.User.UserID),
-                        new SqlParameter("updateData", newValue),
-                        new SqlParameter("DocumentName", this.drBasic["DocumentName"]),
-                        new SqlParameter("BrandID", this.drBasic["BrandID"]),
+                         new SqlParameter("POID", row["POID"]),
+                         new SqlParameter("Seq1", row["Seq1"]),
+                         new SqlParameter("Seq2", row["Seq2"]),
+                         new SqlParameter("UserID", Env.User.UserID),
+                         new SqlParameter("updateData", newValue),
+                         new SqlParameter("DocumentName", this.drBasic["DocumentName"]),
+                         new SqlParameter("BrandID", this.drBasic["BrandID"]),
                     };
 
                         var result = DBProxy.Current.Execute("", sql, plis);
@@ -421,25 +421,21 @@ Update ExportRefnoSentReport SET  AWBNO = @updateData, EditName = @UserID ,EditD
                 row.Table.Columns.Add("BasicDocumentName", typeof(string));
             }
 
-            DataRow dr = row.Table.NewRow();
-
             var now = DateTime.Now;
 
-            if (dr["Ukey"].Empty())
+            if (row["Ukey"].Empty())
             {
-                dr["AddName"] = Env.User.UserID;
-                dr["AddDate"] = now;
+                row["AddName"] = Env.User.UserID;
+                row["AddDate"] = now;
             }
             else
             {
-                dr["EditName"] = Env.User.UserID;
-                dr["EditDate"] = now;
+                row["EditName"] = Env.User.UserID;
+                row["EditDate"] = now;
             }
 
-            dr["BasicBrandID"] = this.drBasic["BrandID"];
-            dr["BasicDocumentName"] = this.drBasic["DocumentName"];
-
-            row.Table.Rows.Add(dr);
+            row["BasicBrandID"] = this.drBasic["BrandID"];
+            row["BasicDocumentName"] = this.drBasic["DocumentName"];
             #endregion
 
             using (var dlg = new PublicForm.Clip(tableName, id, true, row, apiUrlFile: "http://misap.sportscity.com.tw:16888/api/FileDelete/RemoveFile"))
@@ -658,8 +654,8 @@ Update ExportRefnoSentReport SET  AWBNO = @updateData, EditName = @UserID ,EditD
 		 and NAME in(select data from splitstring(@Category,','))
 		 FOR XML PATH (''))
 	 , 1, 1, '')",
-     "Category",
-this.drBasic["Category"]).ExtendedData;
+                "Category",
+                this.drBasic["Category"]).ExtendedData;
 
             conditions.AppendLine($" and o.Category in (select data from splitstring('{category}',','))");
 
@@ -851,13 +847,13 @@ Update NewSentReport SET  {(isUpdateAwbNo ? "AWBNO" : "ReportDate")} = @updateDa
                         List<SqlParameter> plis = new List<SqlParameter>()
                     {
                          new SqlParameter("ExportID", r["ExportID"]),
-                        new SqlParameter("POID", r["POID"]),
-                        new SqlParameter("Seq1", r["Seq1"]),
-                        new SqlParameter("Seq2", r["Seq2"]),
-                        new SqlParameter("UserID", Env.User.UserID),
-                        new SqlParameter("updateData", updateData),
-                        new SqlParameter("DocumentName", this.drBasic["DocumentName"]),
-                        new SqlParameter("BrandID", this.drBasic["BrandID"]),
+                         new SqlParameter("POID", r["POID"]),
+                         new SqlParameter("Seq1", r["Seq1"]),
+                         new SqlParameter("Seq2", r["Seq2"]),
+                         new SqlParameter("UserID", Env.User.UserID),
+                         new SqlParameter("updateData", updateData),
+                         new SqlParameter("DocumentName", this.drBasic["DocumentName"]),
+                         new SqlParameter("BrandID", this.drBasic["BrandID"]),
                     };
 
                         DBProxy.Current.Execute("", sql, plis);

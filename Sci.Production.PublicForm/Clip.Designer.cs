@@ -109,6 +109,7 @@
             this.mailto.TabIndex = 5;
             this.mailto.Text = "Mail to";
             this.mailto.UseVisualStyleBackColor = true;
+            this.mailto.Visible = false;
             // 
             // download
             // 

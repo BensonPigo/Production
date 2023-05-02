@@ -724,40 +724,44 @@ namespace Sci.Production.Quality
                 row.Table.Columns.Add("BasicDocumentName", typeof(string));
             }
 
-            DataRow dr = row.Table.NewRow();
+            if (!row.Table.Columns.Contains("updateCol_Where"))
+            {
+                row.Table.Columns.Add("updateCol_Where", typeof(string));
+            }
+
             if (!this.txtTestSeason.Text.Empty())
             {
-                dr["TestSeasonID"] = this.txtTestSeason.Text;
-                dr["dueSeason"] = this.txtDueSeason.Text;
+                row["TestSeasonID"] = this.txtTestSeason.Text;
+                row["dueSeason"] = this.txtDueSeason.Text;
             }
 
             if (this.dateTestDate.Value.HasValue)
             {
-                dr["TestReportTestDate"] = MyUtility.Convert.GetDate(this.dateTestDate.Value).ToYYYYMMDD();
+                row["TestReportTestDate"] = MyUtility.Convert.GetDate(this.dateTestDate.Value).ToYYYYMMDD();
                 if (this.DueDate.Value.HasValue)
                 {
-                    dr["dueDate"] = MyUtility.Convert.GetDate(this.DueDate.Value).ToYYYYMMDD();
+                    row["dueDate"] = MyUtility.Convert.GetDate(this.DueDate.Value).ToYYYYMMDD();
                 }
             }
 
             var now = DateTime.Now;
 
-            if (dr["Ukey"].Empty())
+            if (row["Ukey"].Empty())
             {
-                dr["AddName"] = Env.User.UserID;
-                dr["AddDate"] = now;
+                row["AddName"] = Env.User.UserID;
+                row["AddDate"] = now;
             }
             else
             {
-                dr["EditName"] = Env.User.UserID;
-                dr["EditDate"] = now;
+                row["EditName"] = Env.User.UserID;
+                row["EditDate"] = now;
             }
 
-            dr["BasicBrandID"] = this.drBasic["BrandID"];
-            dr["BasicDocumentName"] = this.drBasic["DocumentName"];
+            row["BasicBrandID"] = this.drBasic["BrandID"];
+            row["BasicDocumentName"] = this.drBasic["DocumentName"];
             if (this.DueDate.Value.HasValue)
             {
-                dr["dueDate"] = MyUtility.Convert.GetDate(this.DueDate.Value).ToYYYYMMDD();
+                row["dueDate"] = MyUtility.Convert.GetDate(this.DueDate.Value).ToYYYYMMDD();
             }
 
             string updateCol = string.Empty;
@@ -781,9 +785,7 @@ namespace Sci.Production.Quality
                 }
             }
 
-            dr["updateCol_Where"] = updateCol;
-
-            row.Table.Rows.Add(dr);
+            row["updateCol_Where"] = updateCol;
             #endregion
 
             using (var dlg = new PublicForm.Clip("UASentReport", id, true, row, apiUrlFile: "http://misap.sportscity.com.tw:16888/api/FileDelete/RemoveFile"))

@@ -1,4 +1,4 @@
-﻿Create PROCEDURE  [dbo].[imp_ MaterialDoc]
+﻿Create PROCEDURE  [dbo].[imp_MaterialDoc]
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -25,6 +25,7 @@ BEGIN
 	inner join [Trade_To_Pms].[dbo].UASentReport  as b with(nolock) on a.BrandRefno = b.BrandRefno and a.ColorID = b.ColorID and a.SuppID = b.SuppID and a.DocumentName = b.DocumentName and a.BrandID = b.BrandID
 	where isnull(a.EditDate,a.AddDate) < isnull(b.EditDate,b.AddDate)
 	-------------------------- INSERT INTO 
+	set IDENTITY_INSERT UASentReport on
 	INSERT INTO [Production].[dbo].UASentReport
 	 (
 		BrandRefno
@@ -42,6 +43,7 @@ BEGIN
 		,AddName
 		,EditDate
 		,Editname
+		,Ukey
 	)
 	SELECT
 		BrandRefno
@@ -59,9 +61,10 @@ BEGIN
 		,AddName
 		,EditDate
 		,Editname
+		,Ukey
 	from [Trade_To_Pms].[dbo].UASentReport as b WITH (NOLOCK)
 	where not exists(select 1 from [Production].[dbo].UASentReport as a WITH (NOLOCK) where a.BrandRefno = b.BrandRefno and a.ColorID = b.ColorID and a.SuppID = b.SuppID and a.DocumentName = b.DocumentName and a.BrandID = b.BrandID)
-
+	set IDENTITY_INSERT UASentReport off
 
 	/*NewSentReport */
 	-------UPDATE
@@ -97,6 +100,7 @@ BEGIN
 		)
 	)
 	-------------------------- INSERT INTO 
+	set IDENTITY_INSERT NewSentReport on
 	INSERT INTO [Production].[dbo].NewSentReport
 	 (
 	   [ExportID]
@@ -111,8 +115,6 @@ BEGIN
       ,[EditName]
       ,[EditDate]
       ,[AWBno]
-      ,[FtyInspectionReport]
-      ,[FtyContinuityCard]
       ,[T2InspYds]
       ,[T2DefectPoint]
       ,[T2Grade]
@@ -133,8 +135,6 @@ BEGIN
       ,[EditName]
       ,[EditDate]
       ,[AWBno]
-      ,[FtyInspectionReport]
-      ,[FtyContinuityCard]
       ,[T2InspYds]
       ,[T2DefectPoint]
       ,[T2Grade]
@@ -150,7 +150,7 @@ BEGIN
 		and a.DocumentName = b.DocumentName 
 		and a.BrandID = b.BrandID
 	)
-
+	set IDENTITY_INSERT NewSentReport off
 
 	/* ExportRefnoSentReport */
 	-------UPDATE
@@ -185,6 +185,7 @@ BEGIN
 		)
 	)
 	-------------------------- INSERT INTO 
+	set IDENTITY_INSERT ExportRefnoSentReport on
 	INSERT INTO [Production].[dbo].ExportRefnoSentReport
 	 (
 	   [ExportID]
@@ -225,5 +226,6 @@ BEGIN
 		and a.DocumentName = b.DocumentName 
 		and a.BrandID = b.BrandID
 	)
+	set IDENTITY_INSERT ExportRefnoSentReport off
 
 end

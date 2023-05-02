@@ -347,42 +347,6 @@ namespace Sci.Production.PublicForm
                 return;
             }
 
-            // 呼叫File 選擇視窗
-          //  OpenFileDialog ofdFileName = ProductionEnv.GetOpenFileDialog();
-          //  ofdFileName.Multiselect = true;
-          //  if (ofdFileName.ShowDialog() == DialogResult.OK)
-          //  {
-          //      if (!File.Exists(ofdFileName.FileName))
-          //      {
-          //          this.ShowErr("File is not exist");
-          //          return;
-          //      }
-          //  }
-          //  else
-          //  {
-          //      return;
-          //  }
-
-          //  DateTime now = DateTime.Now;
-          //  string saveFilePath = Path.Combine(this._clipdir, now.ToString("yyyyMM"));
-          ////  List<string> pkeys = new List<string>();
-          //  string[] files = ofdFileName.FileNames;
-          //  int count = 0;
-          //  foreach (string file in files)
-          //  {
-          //      string pkey = this.GetPKeyPre() + count.ToString().PadLeft(2, '0');
-          //      string newFileName = this.TableName + pkey + Path.GetExtension(ofdFileName.FileName);
-          //      string filenamme = Path.GetFileName(file);
-          //      pkeys.Add(pkey + "-" + filenamme);
-
-          //      count++;
-
-          //      // call API上傳檔案到Trade
-          //      lock (FileDownload_UpData.UploadFile("http://misap.sportscity.com.tw:16888/api/FileUpload/PostFile", saveFilePath, newFileName, ofdFileName.FileName))
-          //      {
-          //      }
-          //  }
-
             int ix = 0;
             string[] pkeys = this.GetPKeys(datas.Count);
             var dtm_sys = DateTime.Now;
@@ -397,7 +361,7 @@ namespace Sci.Production.PublicForm
                 string filename = this.GetClipFileName(it);
                 string saveFilePath = dir;
 
-                //call API上傳檔案到Trade
+                // call API上傳檔案到Trade
                 lock (FileDownload_UpData.UploadFile("http://misap.sportscity.com.tw:16888/api/FileUpload/PostFile", saveFilePath, newFileName, it.LOCALFILE))
                 {
                 }
@@ -445,14 +409,14 @@ namespace Sci.Production.PublicForm
                          ,'{this._dr["ColorID"]}'
                          ,'{this._dr["SuppID"]}'
                          ,getdate()
-                         ,{this._dr["TestReportTestDate"]}
+                         ,{(MyUtility.Check.Empty(this._dr["TestReportTestDate"]) ? "null" : $"'{this._dr["TestReportTestDate"]}'")}
                          ,getdate()
                          ,'{Env.User.UserID}'
                          ,'{this._dr["BasicDocumentName"]}'
                          ,'{this._dr["BasicBrandID"]}'
                          ,'{this._dr["TestSeasonID"]}'
                          ,'{this._dr["DueSeason"]}'
-                         ,{this._dr["DueDate"]}
+                         ,{(MyUtility.Check.Empty(this._dr["DueDate"]) ? "null" : $"'{this._dr["DueDate"]}'")}
                         )
                      End
 
@@ -595,42 +559,8 @@ SELECT TOP 1 ID FROM @OutputTbl
                     }
 
                     this._dr["Ukey"] = dtUkey.Rows[0][0];
-
                 }
             }
-
-            //{
-            //    var dtm_sys = DateTime.Now;
-            //    string yyyymm = dtm_sys.ToString("yyyyMM");
-            //    string dir = Path.Combine(this._clipdir, yyyymm);
-
-            //    if (_limitedClip != "")
-            //    {
-            //        if (!(result = Clip.AddLimitedClip(datas, dir, yyyymm, dtm_sys, _limitedClip)))
-            //        {
-            //            this.ShowErr(result);
-            //            return;
-            //        }
-            //    }
-            //    else
-            //    {
-            //        if (!(result = Clip.AddClip_API(datas, dir, yyyymm, dtm_sys, _alianClipConnectionName)))
-            //        {
-            //            this.ShowErr(result);
-            //            return;
-            //        }
-            //    }
-
-            //    this._inserteds = datas;
-            //}
-
-            //if (this._sysuser != null && this._openpath != null)
-            //{
-            //    if (!(result = PrivUtils.SetClipPath(this._sysuser.UserID, this._openpath)))
-            //    {
-            //        Logs.UI.LogErrorByCaller("設定 CLIPPATH 時發生錯誤。", result);
-            //    }
-            //}
 
             this.DialogResult = DialogResult.OK;
             this.Close();

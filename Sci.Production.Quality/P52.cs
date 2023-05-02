@@ -205,6 +205,7 @@ namespace Sci.Production.Quality
 
             using (var dlg = new Clip(tableName, id, true))
             {
+                dlg.EditMode = false;
                 dlg.ShowDialog();
 
                 foreach (DataRow dataRow in dt.Rows)
@@ -482,11 +483,7 @@ inner join #tmp s on s.Ukey = t.Ukey
 update t
 set FTYReceivedReport = s.FTYReceivedReport
 from FirstDyelot t
-inner join #tmp s on s.TestDocFactoryGroup = t.TestDocFactoryGroup
-    and s.Refno = t.Refno
-    and s.SuppID = t.SuppID
-    and s.ColorID = t.ColorID
-    and s.SeasonSCIID = t.SeasonSCIID
+inner join #tmp s on s.Ukey = t.Ukey
 ";
                         break;
                     case "4":
@@ -494,12 +491,7 @@ inner join #tmp s on s.TestDocFactoryGroup = t.TestDocFactoryGroup
 update t
 set FTYReceivedReport = s.FTYReceivedReport
 from NewSentReport t
-inner join #tmp s on s.ExportID = t.ExportID
-    and s.POID = t.POID
-    and s.Seq1 = t.Seq1
-    and s.Seq2 = t.Seq2
-    and s.DocumentName = t.DocumentName
-    and s.BrandID = t.BrandID
+inner join #tmp s on s.Ukey = t.Ukey
 ";
                         break;
                     case "5":
@@ -507,11 +499,7 @@ inner join #tmp s on s.ExportID = t.ExportID
 update t
 set FTYReceivedReport = s.FTYReceivedReport
 from ExportRefnoSentReport t
-inner join #tmp s on s.ExportID = t.ExportID
-    and s.BrandRefno = t.BrandRefno
-    and s.ColorID = t.ColorID
-    and s.DocumentName = t.DocumentName
-    and s.BrandID = t.BrandID
+inner join #tmp s on s.Ukey = t.Ukey
 ";
                         break;
                     default:
@@ -622,9 +610,10 @@ WHERE  sr.SuppID in (select top 1 SuppGroup FROM BrandRelation where SuppID = @S
                     break;
                 case "3":
                     sql = @"
-Select DocSeason = SeasonSCIID
+Select DocSeason = SeasonID
        ,Period 
        ,TestDocFactoryGroup
+       ,FTYReceivedReport
        ,ReceivedRemark
        ,FirstDyelot
        ,AddName
@@ -634,7 +623,7 @@ Select DocSeason = SeasonSCIID
        ,FileRule = '3'
 FROM dbo.FirstDyelot 
 WHERE SuppID in (select top 1 SuppGroup FROM BrandRelation where SuppID = @SuppID) and BrandRefno = @BrandRefno and ColorID = @ColorID and BrandID = @BrandID and DocumentName = @DocumentName
-Order by SeasonSCIID desc";
+Order by SeasonID desc";
                     parmes.Add(new SqlParameter("@SuppID", mainrow["SuppID"]));
                     parmes.Add(new SqlParameter("@BrandRefno", mainrow["BrandRefno"]));
                     parmes.Add(new SqlParameter("@BrandID", mainrow["BrandID"]));
@@ -647,6 +636,7 @@ Select Ukey
        ,ReportDate = CONVERT(VARCHAR(10), ReportDate, 23)
        ,AWBNO 
        ,ExportID
+       ,FTYReceivedReport
        ,AddName
        ,AddDate
        ,EditName
@@ -666,6 +656,7 @@ WHERE PoID = @PoID and Seq1 = @Seq1 and Seq2 = @Seq2 and BrandID = @BrandID and 
 Select  sr.Ukey
        ,ReportDate = CONVERT(VARCHAR(10), sr.ReportDate, 23)
        ,sr.AWBNO 
+       ,FTYReceivedReport
        ,sr.ExportID
        ,sr.AddName
        ,sr.AddDate

@@ -1,7 +1,7 @@
 ﻿
 	CREATE TABLE [dbo].[UASentReport]
 	(
-		BrandRefno				varchar (20)		CONSTRAINT[DF_UASentReport_BrandRefno]		DEFAULT('')     NOT NULL ,
+		BrandRefno				varchar (50)		CONSTRAINT[DF_UASentReport_BrandRefno]		DEFAULT('')     NOT NULL ,
 		ColorID					varchar (6)			CONSTRAINT[DF_UASentReport_ColorID]			DEFAULT('')     NOT NULL ,
 		SuppID					varchar (6)			CONSTRAINT[DF_UASentReport_SuppID]			DEFAULT('')     NOT NULL ,
 		DocumentName			varchar (100)		CONSTRAINT[DF_UASentReport_DocumentName]	DEFAULT('')     NOT NULL ,

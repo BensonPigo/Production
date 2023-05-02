@@ -136,6 +136,7 @@
             this.txtBrand1.BackColor = System.Drawing.Color.White;
             this.txtBrand1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtBrand1.Location = new System.Drawing.Point(608, 9);
+            this.txtBrand1.MyDocumentdName = null;
             this.txtBrand1.Name = "txtBrand1";
             this.txtBrand1.Size = new System.Drawing.Size(139, 23);
             this.txtBrand1.TabIndex = 2;
@@ -208,6 +209,7 @@
             // 
             // txtUser1
             // 
+            this.txtUser1.AllowSelectResign = false;
             this.txtUser1.DisplayBox1Binding = "";
             this.txtUser1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.txtUser1.Location = new System.Drawing.Point(128, 125);
@@ -392,6 +394,7 @@
             this.txtStyle1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtStyle1.Location = new System.Drawing.Point(608, 124);
             this.txtStyle1.Name = "txtStyle1";
+            this.txtStyle1.SeasonObjectName = null;
             this.txtStyle1.Size = new System.Drawing.Size(139, 23);
             this.txtStyle1.TabIndex = 1167;
             this.txtStyle1.TarBrand = null;
