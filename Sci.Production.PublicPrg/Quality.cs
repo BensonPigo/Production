@@ -25,7 +25,7 @@ namespace Sci.Production.PublicPrg
         /// <returns>DataRow</returns>
         public static DualResult QueryQaInspectionHeader(string poid, out DataRow orderDr)
         {
-            string query = string.Format("Select distinct a.styleid, a.seasonid,a.brandid,a.cutinline,a.category from Orders a WITH (NOLOCK) Where a.poid ='{0}'", poid);
+            string query = string.Format("Select distinct a.styleid, a.seasonid,a.brandid,a.cutinline,a.category from View_WH_Orders a WITH (NOLOCK) Where a.poid ='{0}'", poid);
             DualResult dResult = DBProxy.Current.Select(null, query, out DataTable queryTb);
             if (dResult && queryTb.Rows.Count > 0)
             {

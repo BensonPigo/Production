@@ -160,7 +160,8 @@ namespace Sci.Production.Quality
 	MoistureStandard2_Comparison,
     a.CustInspNumber,
     Complete = IIF(d.Complete=1,'Y','N'),
-    b.InspectionGroup
+    b.InspectionGroup,
+    [Inspection] = convert(varchar(20),convert(decimal(20,2),TotalInspYds/ArriveQty*100)) + '%'
 From FIR a WITH (NOLOCK) 
 Left join Receiving c WITH (NOLOCK) on c.id = a.receivingid
 Left join TransferIn ti WITH (NOLOCK) on ti.id = a.receivingid
@@ -504,6 +505,8 @@ and ActualYds > 0
                 .Text("Shadebond", header: "Shade\nBand", width: Widths.AnsiChars(4), iseditingreadonly: true, settings: sha)
                 .Date("ShadeBondDate", header: "Last Shade.\nTest. Date", width: Widths.AnsiChars(10), iseditingreadonly: true, settings: shaD)
 
+                .Text("Inspection", header: "Inspection%", iseditingreadonly: true)
+
                 // Physical
                 .CheckBox("NonPhysical", header: "Physical N/A", width: Widths.AnsiChars(2), iseditable: true, trueValue: 1, falseValue: 0, settings: nonPhy)
                 .Text("Physical", header: "Physical\n Inspection", width: Widths.AnsiChars(4), iseditingreadonly: true, settings: phy)
@@ -512,19 +515,12 @@ and ActualYds > 0
                 .Text("CustInspNumber", header: "Cust Insp. Number", width: Widths.AnsiChars(12))
 
                 // Continuity
-                .Text("InspectionGroup", header: "Group", width: Widths.AnsiChars(12), iseditingreadonly: true)
-                .CheckBox("NonWeight", header: "Weight N/A", width: Widths.AnsiChars(2), iseditable: true, trueValue: 1, falseValue: 0, settings: nonWei)
-                .Text("Weight", header: "Weight\n Test", width: Widths.AnsiChars(4), iseditingreadonly: true, settings: wei)
-                .Date("WeightDate", header: "Last Wei.\nTest. Date", width: Widths.AnsiChars(10), iseditingreadonly: true, settings: weiD)
-                .CheckBox("NonShadeBond", header: "Shade\nBandN/A", width: Widths.AnsiChars(2), iseditable: true, trueValue: 1, falseValue: 0, settings: nonSha)
-                .Text("Shadebond", header: "Shade\nBand", width: Widths.AnsiChars(4), iseditingreadonly: true, settings: sha)
-                .Date("ShadeBondDate", header: "Last Shade.\nTest. Date", width: Widths.AnsiChars(10), iseditingreadonly: true, settings: shaD)
-
                 .CheckBox("NonContinuity", header: "Continuity \nN/A", width: Widths.AnsiChars(2), iseditable: true, trueValue: 1, falseValue: 0, settings: nonCon)
                 .Text("Continuity", header: "Continuity", width: Widths.AnsiChars(5), iseditingreadonly: true, settings: con)
                 .Date("ContinuityDate", header: "Last Cont.\nTest. Date", width: Widths.AnsiChars(10), iseditingreadonly: true, settings: conD)
 
                 // Weight
+                .Text("InspectionGroup", header: "Group", width: Widths.AnsiChars(12), iseditingreadonly: true)
                 .CheckBox("NonWeight", header: "Weight N/A", width: Widths.AnsiChars(2), iseditable: true, trueValue: 1, falseValue: 0, settings: nonWei)
                 .Text("Weight", header: "Weight\n Test", width: Widths.AnsiChars(4), iseditingreadonly: true, settings: wei)
                 .Date("WeightDate", header: "Last Wei.\nTest. Date", width: Widths.AnsiChars(10), iseditingreadonly: true, settings: weiD)

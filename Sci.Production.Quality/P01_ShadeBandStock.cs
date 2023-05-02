@@ -110,7 +110,7 @@ from PO_Supp_Detail psd with (nolock)
 inner join FIR f with (nolock) on f.POID = psd.StockPOID and f.SEQ1 = psd.StockSeq1 and f.SEQ2 = psd.StockSeq2 
 inner join Fabric with (nolock) on Fabric.SCIRefno = f.SCIRefno
 inner join Receiving r with (nolock) on r.id = f.ReceivingID
-inner join Orders o with (nolock) on o.ID = psd.ID
+inner join View_WH_Orders o with (nolock) on o.ID = psd.ID
 LEFT JOIN Production.dbo.PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
 where psd.ID = '{this.poID}'
 

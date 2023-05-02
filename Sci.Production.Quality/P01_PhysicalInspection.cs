@@ -74,7 +74,7 @@ namespace Sci.Production.Quality
             // SendMail
             this.btnSendMail.Enabled = MyUtility.Convert.GetBool(this.maindr["PhysicalEncode"]);
 
-            string order_cmd = string.Format("Select * from orders WITH (NOLOCK) where id='{0}'", this.maindr["POID"]);
+            string order_cmd = string.Format("Select * from View_WH_Orders WITH (NOLOCK) where id='{0}'", this.maindr["POID"]);
             DataRow order_dr;
             if (MyUtility.Check.Seek(order_cmd, out order_dr))
             {
@@ -1554,7 +1554,12 @@ and not exists
 
             DataTable dt1;
             if (result = DBProxy.Current.Select("Production", string.Format(
-               "select Roll,Dyelot,A.Result,A.Inspdate,Inspector,B.ContinuityEncode,C.SeasonID,B.TotalInspYds,B.ArriveQty,B.PhysicalEncode  from FIR_Physical a WITH (NOLOCK) left join FIR b WITH (NOLOCK) on a.ID=b.ID LEFT JOIN ORDERS C ON B.POID=C.ID where a.ID='{0}'", this.FirID), out dt1))
+               @"
+select Roll,Dyelot,A.Result,A.Inspdate,Inspector,B.ContinuityEncode,C.SeasonID,B.TotalInspYds,B.ArriveQty,B.PhysicalEncode  
+from FIR_Physical a WITH (NOLOCK) 
+left join FIR b WITH (NOLOCK) on a.ID=b.ID 
+LEFT JOIN View_WH_Orders C ON B.POID=C.ID 
+where a.ID='{0}'", this.FirID), out dt1))
             {
                 if (dt1.Rows.Count <= 0)
                 {
@@ -1665,7 +1670,7 @@ and not exists
 
             excel.Cells[4, 6] = this.displayArriveQty.Text;
             excel.Cells[4, 8] = dtSumQty.Rows[0]["TotalTicketYds"]; // Inspected Qty
-            excel.Cells[4, 10] = dt1.Rows[0]["PhysicalEncode"].ToString() == "1" ? "Y" : "N";
+            excel.Cells[4, 10] = dt1.Rows[0]["PhysicalEncode"].ToString().ToUpper() == "TRUE" ? "Y" : "N";
 
             #endregion
 
@@ -2029,7 +2034,7 @@ from (
     select distinct email 
     from (
         select email = iif( isnull(p.email,'') = '', isnull(m.ToAddress,''),isnull(p.email,''))
-		from Orders o
+		from View_WH_Orders o
 		left join Pass1 p on o.MCHandle = p.ID
 		left join MailGroup m on m.Code = '007' and o.FactoryID = m.FactoryID
         where o.ID='{this.displaySP.Text}'
@@ -2044,7 +2049,7 @@ for xml path('')
 
                     string ccMailGroup = MyUtility.GetValue.Lookup($@"
 select m.CCAddress 
-from Orders o 
+from View_WH_Orders o 
 inner join MailGroup m on m.Code = '007' and o.FactoryID = m.FactoryID
 where o.ID = '{this.displaySP.Text}'");
 
@@ -2062,11 +2067,11 @@ where o.ID = '{this.displaySP.Text}'");
             if (MyUtility.Convert.GetBool(this.maindr["PhysicalEncode"]) && this.maindr["Status"].ToString() == "Approved")
             {
                 // *****Send Excel Email 完成 需寄給Factory MC*****
-                string sqlcmd = $@"select EMail from Pass1 p inner join Orders o on o.MCHandle = p.id where o.id='{this.maindr["POID"]}'";
+                string sqlcmd = $@"select EMail from Pass1 p inner join View_WH_Orders o on o.MCHandle = p.id where o.id='{this.maindr["POID"]}'";
                 string mailto = MyUtility.GetValue.Lookup(sqlcmd);
                 if (MyUtility.Check.Empty(mailto))
                 {
-                    sqlcmd = $@"select EMail from TPEPass1 p inner join Orders o on o.MCHandle = p.id where o.id='{this.maindr["POID"]}'";
+                    sqlcmd = $@"select EMail from TPEPass1 p inner join View_WH_Orders o on o.MCHandle = p.id where o.id='{this.maindr["POID"]}'";
                     mailto = MyUtility.GetValue.Lookup(sqlcmd);
                 }
 
