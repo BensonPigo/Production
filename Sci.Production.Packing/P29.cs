@@ -51,7 +51,9 @@ namespace Sci.Production.Packing
                 .Text("AuditBy", header: "Audit By", iseditingreadonly: true)
                 .Text("AuditTime", header: "Audit Time", iseditingreadonly: true)
                 .Date("PassDate", header: "Pass Date", iseditingreadonly: true)
-                ;
+                .Text("ReturntoProduction", header: "Return to Production", iseditingreadonly: false)
+                .Text("Remark", header: "Return to Production Remarks", iseditingreadonly: false)
+                .Text("SewingLineID", header: "Line#", iseditingreadonly: false);
             #endregion
 
             #region GridDetail Setting
@@ -150,11 +152,11 @@ select [PackingAuditDate] = c.PackingAuditDate
 	,[AuditBy] = c.AddName + '-' + pass1.Name
 	,[AuditTime] = Format(c.AddDate, 'yyyy/MM/dd HH:mm:ss')
 	,[PassDate] = PassDate.AddDate
-    ,[Status] = case when c.Qty = 0 then 'Pass'
-			when c.Qty > 0 then 'Hold'
-			else 'Please check Discrepancy'
-			end
-	,c.ID
+    ,c.Status
+    ,[ReturntoProduction] = iif(c.Status = 'Return', 'Yes', '')
+    ,c.Remark
+    ,[SewingLineID] = sw_Line.val
+    ,c.ID
 into #tmp
 from CTNPackingAudit c WITH(NOLOCK)
 inner join Orders o WITH(NOLOCK) on c.OrderID = o.ID
@@ -189,6 +191,14 @@ outer apply (
     and pd.CTNStartNo = c.CTNStartNo
     and pd.Orderid = c.Orderid
 ) PD
+outer apply (
+	SELECT val = Stuff((
+		select distinct concat('/', SewingLineID) 
+		from SewingSchedule s WITH(NOLOCK)
+		where s.OrderID = c.OrderID
+		FOR XML PATH(''))
+	,1,1,'')
+)sw_Line
 where 1 = 1
 {strWhere}
 
@@ -277,7 +287,7 @@ drop table #mesPass1
             Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];
 
             // 移除最後一欄ID
-            objSheets.Columns["T"].Delete();
+            objSheets.Columns["W"].Delete();
             #region Save & Show Excel
             string strExcelName = Class.MicrosoftFile.GetName("Packing_P29");
             Microsoft.Office.Interop.Excel.Workbook workbook = objApp.ActiveWorkbook;
