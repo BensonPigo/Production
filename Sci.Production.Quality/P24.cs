@@ -123,8 +123,9 @@ outer apply(
 	select OrderID = stuff((
 		select concat('/',OrderID)
 		from (
-			select distinct OrderID from PackingList_Detail pd WITH (NOLOCK)
-			where p2.orderid=pd.orderid
+			select distinct OrderID 
+            from PackingList_Detail pd WITH (NOLOCK)
+			where p2.ID=pd.ID
 		) o1
 		for xml path('')
 	),1,1,'')
