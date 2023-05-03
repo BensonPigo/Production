@@ -1010,6 +1010,18 @@
     <Compile Include="R43.Designer.cs">
       <DependentUpon>R43.cs</DependentUpon>
     </Compile>
+    <Compile Include="R45.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="R45.designer.cs">
+      <DependentUpon>R45.cs</DependentUpon>
+    </Compile>
+    <Compile Include="R46.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="R46.designer.cs">
+      <DependentUpon>R46.cs</DependentUpon>
+    </Compile>
     <Compile Include="R61.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -1524,6 +1536,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="R43.resx">
       <DependentUpon>R43.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="R45.resx">
+      <DependentUpon>R45.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="R46.resx">
+      <DependentUpon>R46.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="R61.resx">
       <DependentUpon>R61.cs</DependentUpon>
