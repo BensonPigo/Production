@@ -189,6 +189,14 @@ namespace Sci.Production.PPIC
             this.btnHSCode.ForeColor = MyUtility.Check.Seek(string.Format("select StyleUkey from Style_HSCode WITH (NOLOCK) where StyleUkey = {0}", MyUtility.Convert.GetString(this.CurrentMaintain["UKey"]))) ? Color.Blue : Color.Black;
             this.btnFtyLT.ForeColor = MyUtility.Check.Seek(string.Format("select StyleUkey from Style_GMTLTFty WITH (NOLOCK) where StyleUkey = {0}", MyUtility.Convert.GetString(this.CurrentMaintain["UKey"]))) ? Color.Blue : Color.Black;
             this.btnComboType.ForeColor = MyUtility.Check.Seek(string.Format("select StyleUkey from Style_Location WITH (NOLOCK) where StyleUkey = {0}", MyUtility.Convert.GetString(this.CurrentMaintain["UKey"]))) ? Color.Blue : Color.Black;
+            this.btnPadPrintColor.ForeColor = MyUtility.Check.Seek($@"
+select 1
+from Style_Article sa
+left join Style_Article_PadPrint sap on sap.StyleUkey = sa.StyleUkey and sap.Article = sa.Article
+left join Color c on c.ID = sap.ColorID and c.BrandId = '{this.CurrentMaintain["BrandID"]}'
+where sa.StyleUkey = '{this.CurrentMaintain["UKey"]}'
+") ? Color.Blue : Color.Black;
+
             if (!MyUtility.Check.Empty(this.CurrentMaintain["ApvDate"]))
             {
                 DateTime? lastTime = (DateTime?)this.CurrentMaintain["ApvDate"];
@@ -943,6 +951,43 @@ from NewCDCode where Classifty = 'ApparelType' and TypeName = '{this.comboProduc
 ";
             this.CurrentMaintain["ApparelType"] = this.comboProductType1.SelectedValue;
             this.CurrentMaintain["StyleUnit"] = MyUtility.GetValue.Lookup(sqlGetStyleUnit);
+        }
+
+        private void btnPadPrintColor_Click(object sender, EventArgs e)
+        {
+            if (MyUtility.Check.Empty(this.CurrentMaintain["ID"]))
+            {
+                return;
+            }
+
+            string sqlcmd = $@"
+select sa.Article
+,[Article Name] = sa.ArticleName
+,[Pad Print Color] = isnull(sap.ColorID,'')
+,[Pad Print Color Description] = isnull(c.Name,'')
+,[Qty] = isnull(sap.Qty,0)
+from Style_Article sa
+left join Style_Article_PadPrint sap on sap.StyleUkey = sa.StyleUkey and sap.Article = sa.Article
+left join Color c on c.ID = sap.ColorID and c.BrandId = '{this.CurrentMaintain["BrandID"]}'
+where sa.StyleUkey = '{this.CurrentMaintain["UKey"]}'
+order by sa.Seq";
+
+            DualResult result;
+            if (!(result = DBProxy.Current.Select(string.Empty,sqlcmd, out DataTable dtPadPrint)))
+            {
+                this.ShowErr(sqlcmd);
+                return;
+            }
+
+            var m = MyUtility.Msg.ShowMsgGrid(dtPadPrint, "Pad Print Color");
+
+            m.Width = 850;
+            m.grid1.Columns[0].Width = 100;
+            m.grid1.Columns[1].Width = 250;
+            m.grid1.Columns[2].Width = 80;
+            m.grid1.Columns[3].Width = 200;
+            m.grid1.Columns[4].Width = 80;
+            m.TopMost = true;
         }
     }
 }
