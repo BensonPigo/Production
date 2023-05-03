@@ -15,6 +15,7 @@
     [DQSQtyPCT] SMALLINT NOT NULL, 
     [DQSQtyPCTEditName] VARCHAR(10) NOT NULL DEFAULT (''), 
     [DQSQtyPCTEditDate] DATETIME NULL, 
+    [DQSWFTPCT] numeric(3, 1) CONSTRAINT [DF_SewingLine_DQSWFTPCT] DEFAULT ((0)) NOT NULL,
     CONSTRAINT [PK_SewingLine] PRIMARY KEY CLUSTERED ([ID] ASC, [FactoryID] ASC)
 );
 
@@ -83,3 +84,12 @@ EXEC sp_addextendedproperty @name = N'MS_Description',
     @level1name = N'SewingLine',
     @level2type = N'COLUMN',
     @level2name = N'IdleTime'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'調整WFT%',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'SewingLine',
+    @level2type = N'COLUMN',
+    @level2name = N'DQSWFTPCT'
