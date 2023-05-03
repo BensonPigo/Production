@@ -38,8 +38,8 @@
             this.dateOoutputDate = new Sci.Win.UI.DateRange();
             this.chk_Accumulate_output = new Sci.Win.UI.CheckBox();
             this.chk_Include_Artwork = new Sci.Win.UI.CheckBox();
-            this.chkSewingReasonID = new Sci.Win.UI.CheckBox();
-            this.chkType = new Sci.Win.UI.CheckBox();
+            this.chkSubconOut = new Sci.Win.UI.CheckBox();
+            this.chkExcludeSampleFty = new Sci.Win.UI.CheckBox();
             this.comboFactory = new Sci.Production.Class.ComboCentralizedFactory(this.components);
             this.comboM = new Sci.Production.Class.ComboCentralizedM(this.components);
             this.txtCDCode = new Sci.Production.Class.Txtcdcode();
@@ -154,7 +154,7 @@
             // 
             this.chk_Accumulate_output.AutoSize = true;
             this.chk_Accumulate_output.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.chk_Accumulate_output.Location = new System.Drawing.Point(291, 173);
+            this.chk_Accumulate_output.Location = new System.Drawing.Point(291, 149);
             this.chk_Accumulate_output.Name = "chk_Accumulate_output";
             this.chk_Accumulate_output.Size = new System.Drawing.Size(193, 21);
             this.chk_Accumulate_output.TabIndex = 100;
@@ -167,34 +167,34 @@
             this.chk_Include_Artwork.Checked = true;
             this.chk_Include_Artwork.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chk_Include_Artwork.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.chk_Include_Artwork.Location = new System.Drawing.Point(291, 146);
+            this.chk_Include_Artwork.Location = new System.Drawing.Point(291, 122);
             this.chk_Include_Artwork.Name = "chk_Include_Artwork";
             this.chk_Include_Artwork.Size = new System.Drawing.Size(155, 21);
             this.chk_Include_Artwork.TabIndex = 101;
             this.chk_Include_Artwork.Text = "Include Artwork data";
             this.chk_Include_Artwork.UseVisualStyleBackColor = true;
             // 
-            // chkSewingReasonID
+            // chkSubconOut
             // 
-            this.chkSewingReasonID.AutoSize = true;
-            this.chkSewingReasonID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.chkSewingReasonID.Location = new System.Drawing.Point(291, 227);
-            this.chkSewingReasonID.Name = "chkSewingReasonID";
-            this.chkSewingReasonID.Size = new System.Drawing.Size(267, 21);
-            this.chkSewingReasonID.TabIndex = 102;
-            this.chkSewingReasonID.Text = "Only show sewing reason is not empty";
-            this.chkSewingReasonID.UseVisualStyleBackColor = true;
+            this.chkSubconOut.AutoSize = true;
+            this.chkSubconOut.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkSubconOut.Location = new System.Drawing.Point(291, 256);
+            this.chkSubconOut.Name = "chkSubconOut";
+            this.chkSubconOut.Size = new System.Drawing.Size(135, 21);
+            this.chkSubconOut.TabIndex = 102;
+            this.chkSubconOut.Text = "Only Subcon Out";
+            this.chkSubconOut.UseVisualStyleBackColor = true;
             // 
-            // chkType
+            // chkExcludeSampleFty
             // 
-            this.chkType.AutoSize = true;
-            this.chkType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.chkType.Location = new System.Drawing.Point(291, 119);
-            this.chkType.Name = "chkType";
-            this.chkType.Size = new System.Drawing.Size(172, 21);
-            this.chkType.TabIndex = 227;
-            this.chkType.Text = "Exclude sample factory";
-            this.chkType.UseVisualStyleBackColor = true;
+            this.chkExcludeSampleFty.AutoSize = true;
+            this.chkExcludeSampleFty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkExcludeSampleFty.Location = new System.Drawing.Point(291, 178);
+            this.chkExcludeSampleFty.Name = "chkExcludeSampleFty";
+            this.chkExcludeSampleFty.Size = new System.Drawing.Size(178, 21);
+            this.chkExcludeSampleFty.TabIndex = 227;
+            this.chkExcludeSampleFty.Text = "Exclude Sample Factory";
+            this.chkExcludeSampleFty.UseVisualStyleBackColor = true;
             // 
             // comboFactory
             // 
@@ -276,7 +276,7 @@
             // 
             this.chkOnlyCancelOrder.AutoSize = true;
             this.chkOnlyCancelOrder.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.chkOnlyCancelOrder.Location = new System.Drawing.Point(291, 200);
+            this.chkOnlyCancelOrder.Location = new System.Drawing.Point(291, 205);
             this.chkOnlyCancelOrder.Name = "chkOnlyCancelOrder";
             this.chkOnlyCancelOrder.Size = new System.Drawing.Size(144, 21);
             this.chkOnlyCancelOrder.TabIndex = 231;
@@ -287,7 +287,7 @@
             // 
             this.chkExcludeNonRevenue.AutoSize = true;
             this.chkExcludeNonRevenue.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.chkExcludeNonRevenue.Location = new System.Drawing.Point(291, 254);
+            this.chkExcludeNonRevenue.Location = new System.Drawing.Point(291, 232);
             this.chkExcludeNonRevenue.Name = "chkExcludeNonRevenue";
             this.chkExcludeNonRevenue.Size = new System.Drawing.Size(167, 21);
             this.chkExcludeNonRevenue.TabIndex = 232;
@@ -419,10 +419,10 @@
             this.Controls.Add(this.comboShift);
             this.Controls.Add(this.lbShift);
             this.Controls.Add(this.comboCategory);
-            this.Controls.Add(this.chkType);
+            this.Controls.Add(this.chkExcludeSampleFty);
             this.Controls.Add(this.comboFactory);
             this.Controls.Add(this.comboM);
-            this.Controls.Add(this.chkSewingReasonID);
+            this.Controls.Add(this.chkSubconOut);
             this.Controls.Add(this.chk_Include_Artwork);
             this.Controls.Add(this.chk_Accumulate_output);
             this.Controls.Add(this.txtCDCode);
@@ -454,10 +454,10 @@
             this.Controls.SetChildIndex(this.txtCDCode, 0);
             this.Controls.SetChildIndex(this.chk_Accumulate_output, 0);
             this.Controls.SetChildIndex(this.chk_Include_Artwork, 0);
-            this.Controls.SetChildIndex(this.chkSewingReasonID, 0);
+            this.Controls.SetChildIndex(this.chkSubconOut, 0);
             this.Controls.SetChildIndex(this.comboM, 0);
             this.Controls.SetChildIndex(this.comboFactory, 0);
-            this.Controls.SetChildIndex(this.chkType, 0);
+            this.Controls.SetChildIndex(this.chkExcludeSampleFty, 0);
             this.Controls.SetChildIndex(this.print, 0);
             this.Controls.SetChildIndex(this.toexcel, 0);
             this.Controls.SetChildIndex(this.close, 0);
@@ -494,10 +494,10 @@
         private Class.Txtcdcode txtCDCode;
         private Win.UI.CheckBox chk_Accumulate_output;
         private Win.UI.CheckBox chk_Include_Artwork;
-        private Win.UI.CheckBox chkSewingReasonID;
+        private Win.UI.CheckBox chkSubconOut;
         private Class.ComboCentralizedM comboM;
         private Class.ComboCentralizedFactory comboFactory;
-        private Win.UI.CheckBox chkType;
+        private Win.UI.CheckBox chkExcludeSampleFty;
         private Class.ComboDropDownList comboCategory;
         private Win.UI.ComboBox comboShift;
         private Win.UI.Label lbShift;
