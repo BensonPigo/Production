@@ -51,6 +51,7 @@ namespace Sci.Production.Quality
                .Text("BrandID", header: "Brand", width: Widths.AnsiChars(10), iseditingreadonly: true)
                .Text("supplier", header: "Supplier", width: Widths.AnsiChars(17), iseditingreadonly: true)
                .Text("Refno", header: "Refno", width: Widths.AnsiChars(17), iseditingreadonly: true)
+               .Text("BrandRefno", header: "BrandRefno", width: Widths.AnsiChars(17), iseditingreadonly: true)
                .Text("Color", header: "Color", width: Widths.AnsiChars(10), iseditingreadonly: true)
                .Numeric("Qty", header: "Qty", width: Widths.AnsiChars(11), iseditingreadonly: true, integer_places: 8, decimal_places: 2)
                ;
@@ -323,8 +324,7 @@ o.FactoryID,
        MtltypeId,
 	   POID = p3.ID,
        Seq = p3.Seq1 + '-' + p3.Seq2,
-	   Season = o.SeasonID,
-	   
+	   Season = o.SeasonID,	   
        p3.Seq1,
        p3.Seq2,
        p2.SuppID,
@@ -578,10 +578,13 @@ Select sr.Ukey
        ,sr.EditDate
        ,FileRule = '1'
 FROM UASentReport sr
-WHERE  sr.SuppID in (select top 1 SuppGroup FROM BrandRelation where SuppID = @SuppID)  and sr.BrandRefno = @BrandRefno and sr.BrandID = @BrandID and sr.DocumentName = @DocumentName
+WHERE  sr.SuppID in (select top 1 SuppGroup FROM BrandRelation where SuppID = @SuppID)  
+and (sr.BrandRefno = @BrandRefno  or sr.BrandRefno = @Refno)
+and sr.BrandID = @BrandID and sr.DocumentName = @DocumentName
                     ";
                     parmes.Add(new SqlParameter("@SuppID", mainrow["SuppID"]));
                     parmes.Add(new SqlParameter("@BrandRefno", mainrow["BrandRefno"]));
+                    parmes.Add(new SqlParameter("@Refno", mainrow["Refno"]));
                     parmes.Add(new SqlParameter("@BrandID", mainrow["BrandID"]));
                     parmes.Add(new SqlParameter("@DocumentName", row["DocumentName"]));
                     break;
@@ -600,10 +603,13 @@ Select sr.Ukey
        ,sr.EditDate
        ,FileRule = '2'
 FROM UASentReport sr
-WHERE  sr.SuppID in (select top 1 SuppGroup FROM BrandRelation where SuppID = @SuppID)  and sr.BrandRefno = @BrandRefno and sr.ColorID = @ColorID and sr.BrandID = @BrandID and sr.DocumentName = @DocumentName 
+WHERE  sr.SuppID in (select top 1 SuppGroup FROM BrandRelation where SuppID = @SuppID)  
+and (sr.BrandRefno = @BrandRefno  or sr.BrandRefno = @Refno)
+and sr.ColorID = @ColorID and sr.BrandID = @BrandID and sr.DocumentName = @DocumentName 
                     ";
                     parmes.Add(new SqlParameter("@SuppID", mainrow["SuppID"]));
                     parmes.Add(new SqlParameter("@BrandRefno", mainrow["BrandRefno"]));
+                    parmes.Add(new SqlParameter("@Refno", mainrow["Refno"]));
                     parmes.Add(new SqlParameter("@BrandID", mainrow["BrandID"]));
                     parmes.Add(new SqlParameter("@ColorID", mainrow["Color"]));
                     parmes.Add(new SqlParameter("@DocumentName", row["DocumentName"]));
@@ -622,10 +628,13 @@ Select DocSeason = SeasonID
        ,EditDate
        ,FileRule = '3'
 FROM dbo.FirstDyelot 
-WHERE SuppID in (select top 1 SuppGroup FROM BrandRelation where SuppID = @SuppID) and BrandRefno = @BrandRefno and ColorID = @ColorID and BrandID = @BrandID and DocumentName = @DocumentName
+WHERE SuppID in (select top 1 SuppGroup FROM BrandRelation where SuppID = @SuppID) 
+and (sr.BrandRefno = @BrandRefno  or sr.BrandRefno = @Refno)
+and ColorID = @ColorID and BrandID = @BrandID and DocumentName = @DocumentName
 Order by SeasonID desc";
                     parmes.Add(new SqlParameter("@SuppID", mainrow["SuppID"]));
                     parmes.Add(new SqlParameter("@BrandRefno", mainrow["BrandRefno"]));
+                    parmes.Add(new SqlParameter("@Refno", mainrow["Refno"]));
                     parmes.Add(new SqlParameter("@BrandID", mainrow["BrandID"]));
                     parmes.Add(new SqlParameter("@ColorID", mainrow["Color"]));
                     parmes.Add(new SqlParameter("@DocumentName", row["DocumentName"]));
@@ -665,10 +674,13 @@ Select  sr.Ukey
        ,FileRule = '5'
 FROM ExportRefnoSentReport sr
 INNER JOIN Export e on sr.ExportID = e.ID
-WHERE sr.ColorID = @ColorID and sr.BrandRefno = @BrandRefno and sr.BrandID = @BrandID and sr.DocumentName = @DocumentName
+WHERE sr.ColorID = @ColorID 
+and (sr.BrandRefno = @BrandRefno  or sr.BrandRefno = @Refno)
+and sr.BrandID = @BrandID and sr.DocumentName = @DocumentName
 and exists(select 1 FROM Export_Detail ed WITH (NOLOCK) inner join Fabric f2 WITH (NOLOCK) on f2.SCIRefno = ed.SCIRefNo where ed.ID = e.ID and ed.POID = @POID and f2.BrandRefno = sr.BrandRefno)
                     ";
                     parmes.Add(new SqlParameter("@BrandRefno", mainrow["BrandRefno"]));
+                    parmes.Add(new SqlParameter("@Refno", mainrow["Refno"]));
                     parmes.Add(new SqlParameter("@POID", mainrow["POID"]));
                     parmes.Add(new SqlParameter("@ColorID", mainrow["Color"]));
                     parmes.Add(new SqlParameter("@BrandID", mainrow["BrandID"]));
