@@ -629,7 +629,7 @@ Select DocSeason = SeasonID
        ,FileRule = '3'
 FROM dbo.FirstDyelot 
 WHERE SuppID in (select top 1 SuppGroup FROM BrandRelation where SuppID = @SuppID) 
-and (sr.BrandRefno = @BrandRefno  or sr.BrandRefno = @Refno)
+and (BrandRefno = @BrandRefno  or BrandRefno = @Refno)
 and ColorID = @ColorID and BrandID = @BrandID and DocumentName = @DocumentName
 Order by SeasonID desc";
                     parmes.Add(new SqlParameter("@SuppID", mainrow["SuppID"]));
