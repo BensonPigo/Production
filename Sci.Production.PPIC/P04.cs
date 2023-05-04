@@ -11,6 +11,7 @@ using System.IO;
 using System.Data.SqlClient;
 using Sci.Production.Automation;
 using System.Threading.Tasks;
+using Sci.Production.PublicForm;
 
 namespace Sci.Production.PPIC
 {
@@ -191,10 +192,8 @@ namespace Sci.Production.PPIC
             this.btnComboType.ForeColor = MyUtility.Check.Seek(string.Format("select StyleUkey from Style_Location WITH (NOLOCK) where StyleUkey = {0}", MyUtility.Convert.GetString(this.CurrentMaintain["UKey"]))) ? Color.Blue : Color.Black;
             this.btnPadPrintColor.ForeColor = MyUtility.Check.Seek($@"
 select 1
-from Style_Article sa
-left join Style_Article_PadPrint sap on sap.StyleUkey = sa.StyleUkey and sap.Article = sa.Article
-left join Color c on c.ID = sap.ColorID and c.BrandId = '{this.CurrentMaintain["BrandID"]}'
-where sa.StyleUkey = '{this.CurrentMaintain["UKey"]}'
+from Style_Article_PadPrint 
+where StyleUkey = '{this.CurrentMaintain["UKey"]}'
 ") ? Color.Blue : Color.Black;
 
             if (!MyUtility.Check.Empty(this.CurrentMaintain["ApvDate"]))
@@ -967,7 +966,7 @@ select sa.Article
 ,[Pad Print Color Description] = isnull(c.Name,'')
 ,[Qty] = isnull(sap.Qty,0)
 from Style_Article sa
-left join Style_Article_PadPrint sap on sap.StyleUkey = sa.StyleUkey and sap.Article = sa.Article
+inner join Style_Article_PadPrint sap on sap.StyleUkey = sa.StyleUkey and sap.Article = sa.Article
 left join Color c on c.ID = sap.ColorID and c.BrandId = '{this.CurrentMaintain["BrandID"]}'
 where sa.StyleUkey = '{this.CurrentMaintain["UKey"]}'
 order by sa.Seq";
@@ -979,15 +978,10 @@ order by sa.Seq";
                 return;
             }
 
-            var m = MyUtility.Msg.ShowMsgGrid(dtPadPrint, "Pad Print Color");
-
-            m.Width = 850;
-            m.grid1.Columns[0].Width = 100;
-            m.grid1.Columns[1].Width = 250;
-            m.grid1.Columns[2].Width = 80;
-            m.grid1.Columns[3].Width = 200;
-            m.grid1.Columns[4].Width = 80;
-            m.TopMost = true;
+            JustGrid form = new JustGrid("Pad Print Color", dtPadPrint);
+            form.Width = 600;
+            form.Height = 350;
+            form.Show(this);
         }
     }
 }
