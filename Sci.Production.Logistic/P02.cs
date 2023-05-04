@@ -560,6 +560,7 @@ and DisposeFromClog = 0", out DataRow drSelect))
             if (warningmsg.ToString().Length > 0)
             {
                 MyUtility.Msg.WarningBox(warningmsg.ToString());
+                return;
             }
 
             IList<string> insertCmds = new List<string>();
