@@ -125,15 +125,16 @@ where 1 = 1
             List<string> descList = new List<string>();
             if (!string.IsNullOrEmpty(this.txtDescription.Text))
             {
-                descList = this.txtDescription.Text.Split(';').Where(o => !string.IsNullOrEmpty(o)).ToList();
+                string tmp = this.txtDescription.Text.Replace("'", "''");
+                descList = tmp.Split(';').Where(o => !string.IsNullOrEmpty(o)).ToList();
 
-                for (int i = 0; i <= descList.Count - 1; i++)
-                {
-                    if (descList[i] == "'")
-                    {
-                        descList[i] = "''";
-                    }
-                }
+                //for (int i = 0; i <= descList.Count - 1; i++)
+                //{
+                //    if (descList[i] == "'")
+                //    {
+                //        descList[i] = "''";
+                //    }
+                //}
             }
 
             if (!MyUtility.Check.Empty(this.txtType.Text))
@@ -155,11 +156,6 @@ where 1 = 1
             {
                 filterCondition.Append($@" and FoldTypeID like '%{this.txtDirectionFoldType.Text.Trim()}%' ");
             }
-
-            //if (!MyUtility.Check.Empty(this.txtDescription.Text))
-            //{
-            //    filterCondition.Append($@" and Description like '%{this.txtDescription.Text.Trim()}%' ");
-            //}
 
             if (descList.Any())
             {
