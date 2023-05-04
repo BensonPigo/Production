@@ -981,7 +981,7 @@ order by sa.Seq";
             JustGrid form = new JustGrid("Pad Print Color", dtPadPrint);
             form.Width = 600;
             form.Height = 350;
-            form.Show(this);
+            form.ShowDialog(this);
         }
     }
 }
