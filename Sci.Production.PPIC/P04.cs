@@ -11,6 +11,7 @@ using System.IO;
 using System.Data.SqlClient;
 using Sci.Production.Automation;
 using System.Threading.Tasks;
+using Sci.Production.PublicForm;
 
 namespace Sci.Production.PPIC
 {
@@ -189,6 +190,12 @@ namespace Sci.Production.PPIC
             this.btnHSCode.ForeColor = MyUtility.Check.Seek(string.Format("select StyleUkey from Style_HSCode WITH (NOLOCK) where StyleUkey = {0}", MyUtility.Convert.GetString(this.CurrentMaintain["UKey"]))) ? Color.Blue : Color.Black;
             this.btnFtyLT.ForeColor = MyUtility.Check.Seek(string.Format("select StyleUkey from Style_GMTLTFty WITH (NOLOCK) where StyleUkey = {0}", MyUtility.Convert.GetString(this.CurrentMaintain["UKey"]))) ? Color.Blue : Color.Black;
             this.btnComboType.ForeColor = MyUtility.Check.Seek(string.Format("select StyleUkey from Style_Location WITH (NOLOCK) where StyleUkey = {0}", MyUtility.Convert.GetString(this.CurrentMaintain["UKey"]))) ? Color.Blue : Color.Black;
+            this.btnPadPrintColor.ForeColor = MyUtility.Check.Seek($@"
+select 1
+from Style_Article_PadPrint 
+where StyleUkey = '{this.CurrentMaintain["UKey"]}'
+") ? Color.Blue : Color.Black;
+
             if (!MyUtility.Check.Empty(this.CurrentMaintain["ApvDate"]))
             {
                 DateTime? lastTime = (DateTime?)this.CurrentMaintain["ApvDate"];
@@ -943,6 +950,38 @@ from NewCDCode where Classifty = 'ApparelType' and TypeName = '{this.comboProduc
 ";
             this.CurrentMaintain["ApparelType"] = this.comboProductType1.SelectedValue;
             this.CurrentMaintain["StyleUnit"] = MyUtility.GetValue.Lookup(sqlGetStyleUnit);
+        }
+
+        private void btnPadPrintColor_Click(object sender, EventArgs e)
+        {
+            if (MyUtility.Check.Empty(this.CurrentMaintain["ID"]))
+            {
+                return;
+            }
+
+            string sqlcmd = $@"
+select sa.Article
+,[Article Name] = sa.ArticleName
+,[Pad Print Color] = isnull(sap.ColorID,'')
+,[Pad Print Color Description] = isnull(c.Name,'')
+,[Qty] = isnull(sap.Qty,0)
+from Style_Article sa
+inner join Style_Article_PadPrint sap on sap.StyleUkey = sa.StyleUkey and sap.Article = sa.Article
+left join Color c on c.ID = sap.ColorID and c.BrandId = '{this.CurrentMaintain["BrandID"]}'
+where sa.StyleUkey = '{this.CurrentMaintain["UKey"]}'
+order by sa.Seq";
+
+            DualResult result;
+            if (!(result = DBProxy.Current.Select(string.Empty,sqlcmd, out DataTable dtPadPrint)))
+            {
+                this.ShowErr(sqlcmd);
+                return;
+            }
+
+            JustGrid form = new JustGrid("Pad Print Color", dtPadPrint);
+            form.Width = 600;
+            form.Height = 350;
+            form.ShowDialog(this);
         }
     }
 }
