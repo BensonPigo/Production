@@ -59,12 +59,17 @@
             this.comboMaterialType = new System.Windows.Forms.ComboBox();
             this.grid_Report = new Sci.Win.UI.Grid();
             this.bs_Report = new Sci.Win.UI.ListControlBindingSource(this.components);
+            this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             ((System.ComponentModel.ISupportInitialize)(this.grid_Material)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.bs_Material)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.grid_Document)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.bs_Document)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.grid_Report)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.bs_Report)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
+            this.splitContainer1.Panel1.SuspendLayout();
+            this.splitContainer1.Panel2.SuspendLayout();
+            this.splitContainer1.SuspendLayout();
             this.SuspendLayout();
             // 
             // txtSP
@@ -126,7 +131,7 @@
             // btnSave
             // 
             this.btnSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnSave.Location = new System.Drawing.Point(748, 595);
+            this.btnSave.Location = new System.Drawing.Point(767, 565);
             this.btnSave.Name = "btnSave";
             this.btnSave.Size = new System.Drawing.Size(80, 30);
             this.btnSave.TabIndex = 23;
@@ -137,7 +142,7 @@
             // btnClose
             // 
             this.btnClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnClose.Location = new System.Drawing.Point(834, 595);
+            this.btnClose.Location = new System.Drawing.Point(853, 565);
             this.btnClose.Name = "btnClose";
             this.btnClose.Size = new System.Drawing.Size(80, 30);
             this.btnClose.TabIndex = 24;
@@ -150,25 +155,23 @@
             this.grid_Material.AllowUserToAddRows = false;
             this.grid_Material.AllowUserToDeleteRows = false;
             this.grid_Material.AllowUserToResizeRows = false;
-            this.grid_Material.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
             this.grid_Material.BackgroundColor = System.Drawing.SystemColors.Control;
             this.grid_Material.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
             this.grid_Material.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.grid_Material.DataSource = this.bs_Material;
+            this.grid_Material.Dock = System.Windows.Forms.DockStyle.Fill;
             this.grid_Material.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
             this.grid_Material.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
             this.grid_Material.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.grid_Material.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.grid_Material.Location = new System.Drawing.Point(14, 125);
+            this.grid_Material.Location = new System.Drawing.Point(0, 0);
             this.grid_Material.Name = "grid_Material";
             this.grid_Material.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.grid_Material.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.grid_Material.RowTemplate.Height = 24;
             this.grid_Material.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.grid_Material.ShowCellToolTips = false;
-            this.grid_Material.Size = new System.Drawing.Size(714, 293);
+            this.grid_Material.Size = new System.Drawing.Size(669, 292);
             this.grid_Material.TabIndex = 117;
             // 
             // grid_Document
@@ -176,25 +179,23 @@
             this.grid_Document.AllowUserToAddRows = false;
             this.grid_Document.AllowUserToDeleteRows = false;
             this.grid_Document.AllowUserToResizeRows = false;
-            this.grid_Document.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
             this.grid_Document.BackgroundColor = System.Drawing.SystemColors.Control;
             this.grid_Document.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
             this.grid_Document.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.grid_Document.DataSource = this.bs_Document;
+            this.grid_Document.Dock = System.Windows.Forms.DockStyle.Fill;
             this.grid_Document.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
             this.grid_Document.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
             this.grid_Document.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.grid_Document.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.grid_Document.Location = new System.Drawing.Point(734, 125);
+            this.grid_Document.Location = new System.Drawing.Point(0, 0);
             this.grid_Document.Name = "grid_Document";
             this.grid_Document.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.grid_Document.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.grid_Document.RowTemplate.Height = 24;
             this.grid_Document.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.grid_Document.ShowCellToolTips = false;
-            this.grid_Document.Size = new System.Drawing.Size(190, 293);
+            this.grid_Document.Size = new System.Drawing.Size(253, 292);
             this.grid_Document.TabIndex = 171;
             // 
             // bs_Document
@@ -384,14 +385,33 @@
             this.grid_Report.RowTemplate.Height = 24;
             this.grid_Report.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.grid_Report.ShowCellToolTips = false;
-            this.grid_Report.Size = new System.Drawing.Size(910, 163);
+            this.grid_Report.Size = new System.Drawing.Size(926, 135);
             this.grid_Report.TabIndex = 1179;
+            // 
+            // splitContainer1
+            // 
+            this.splitContainer1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.splitContainer1.Location = new System.Drawing.Point(14, 126);
+            this.splitContainer1.Name = "splitContainer1";
+            // 
+            // splitContainer1.Panel1
+            // 
+            this.splitContainer1.Panel1.Controls.Add(this.grid_Material);
+            // 
+            // splitContainer1.Panel2
+            // 
+            this.splitContainer1.Panel2.Controls.Add(this.grid_Document);
+            this.splitContainer1.Size = new System.Drawing.Size(926, 292);
+            this.splitContainer1.SplitterDistance = 669;
+            this.splitContainer1.TabIndex = 1180;
             // 
             // P52
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(936, 631);
+            this.ClientSize = new System.Drawing.Size(952, 603);
+            this.Controls.Add(this.splitContainer1);
             this.Controls.Add(this.grid_Report);
             this.Controls.Add(this.comboMaterialType);
             this.Controls.Add(this.txtColor);
@@ -410,8 +430,6 @@
             this.Controls.Add(this.txtseq2);
             this.Controls.Add(this.txtSeq1);
             this.Controls.Add(this.label3);
-            this.Controls.Add(this.grid_Document);
-            this.Controls.Add(this.grid_Material);
             this.Controls.Add(this.btnClose);
             this.Controls.Add(this.btnSave);
             this.Controls.Add(this.btnQuery);
@@ -431,8 +449,6 @@
             this.Controls.SetChildIndex(this.btnQuery, 0);
             this.Controls.SetChildIndex(this.btnSave, 0);
             this.Controls.SetChildIndex(this.btnClose, 0);
-            this.Controls.SetChildIndex(this.grid_Material, 0);
-            this.Controls.SetChildIndex(this.grid_Document, 0);
             this.Controls.SetChildIndex(this.label3, 0);
             this.Controls.SetChildIndex(this.txtSeq1, 0);
             this.Controls.SetChildIndex(this.txtseq2, 0);
@@ -451,12 +467,17 @@
             this.Controls.SetChildIndex(this.txtColor, 0);
             this.Controls.SetChildIndex(this.comboMaterialType, 0);
             this.Controls.SetChildIndex(this.grid_Report, 0);
+            this.Controls.SetChildIndex(this.splitContainer1, 0);
             ((System.ComponentModel.ISupportInitialize)(this.grid_Material)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.bs_Material)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.grid_Document)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.bs_Document)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.grid_Report)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.bs_Report)).EndInit();
+            this.splitContainer1.Panel1.ResumeLayout(false);
+            this.splitContainer1.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
+            this.splitContainer1.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -493,5 +514,6 @@
         private Win.UI.Grid grid_Report;
         private Win.UI.ListControlBindingSource bs_Document;
         private Win.UI.ListControlBindingSource bs_Report;
+        private System.Windows.Forms.SplitContainer splitContainer1;
     }
 }
