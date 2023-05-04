@@ -196,31 +196,32 @@ select ID,deID from @tempFir
 
 declare @tempAir table(id bigint,deID bigint )	
 RAISERROR('insert_Air_Fir - Starts',0,0)
-Merge dbo.Air as t
-using (
-	select	a.*,
-			b.InspDeadLine
-	 from #tempTableAll a
-		left join #InspDeadLine b on a.PoId = b.PoId and a.Seq1 =b.Seq1 and a.Seq2 = b.Seq2
-		where fabricType='A'
- ) as s
-on t.poid=s.poid and t.seq1=s.seq1 and t.seq2=s.seq2 and t.receivingid=s.id 
-when matched then
- update set
- t.suppid=s.suppid,
- t.scirefno=s.scirefno,
- t.refno=s.refno,
- t.ArriveQty = s.ArriveQty,
- t.InspDeadLine = s.InspDeadLine,
- t.AddName=s.AddName,
- t.AddDate=s.AddDate
- when not matched by target then
- insert([PoId],[SEQ1],[SEQ2],[SuppID],[SCIRefno],[Refno],[ReceivingID],[ArriveQty],[InspDeadLine],[AddName],[AddDate])
- values(s.PoId,iif(len(s.Seq1)<=2,s.Seq1+' ',s.Seq1),s.Seq2,s.SuppID,s.SCIRefno,s.Refno,s.Id,s.ArriveQty,s.InspDeadLine,s.AddName,AddDate)
-when not matched by source and t.ReceivingID=@ID then
- delete
- output inserted.id as Id ,DELETED.id as deID
- into @tempAir;
+ update	a set a.suppid=ta.suppid,
+			  a.scirefno=ta.scirefno,
+			  a.refno=ta.refno,
+			  a.ArriveQty = ta.ArriveQty,
+			  a.InspDeadLine = b.InspDeadLine,
+			  a.AddName=ta.AddName,
+			  a.AddDate=ta.AddDate
+ output inserted.id as Id ,DELETED.id as deID into @tempAir
+ from dbo.Air a
+ inner join #tempTableAll ta on a.poid=ta.poid and a.seq1=ta.seq1 and a.seq2=ta.seq2 and a.receivingid=ta.id and ta.fabricType='A'
+ left join #InspDeadLine b on ta.PoId = b.PoId and ta.Seq1 =b.Seq1 and ta.Seq2 = b.Seq2
+
+ insert into dbo.Air([PoId],[SEQ1],[SEQ2],[SuppID],[SCIRefno],[Refno],[ReceivingID],[ArriveQty],[InspDeadLine],[AddName],[AddDate])
+	output inserted.id as Id ,null as deID into @tempAir
+	select ta.PoId,iif(len(ta.Seq1)<=2,ta.Seq1+' ',ta.Seq1),ta.Seq2,ta.SuppID,ta.SCIRefno,ta.Refno,ta.Id,ta.ArriveQty,b.InspDeadLine,ta.AddName,ta.AddDate
+	from #tempTableAll ta
+	left join #InspDeadLine b on ta.PoId = b.PoId and ta.Seq1 =b.Seq1 and ta.Seq2 = b.Seq2
+	where	ta.fabricType='A' and 
+			not exists(select 1 from dbo.Air a where a.poid=ta.poid and a.seq1=ta.seq1 and a.seq2=ta.seq2 and a.receivingid=ta.id)
+
+ delete a
+ output null as Id ,DELETED.id as deID into @tempAir
+ from dbo.Air a
+ where	a.ReceivingID=@ID and
+		not exists (select 1 from #tempTableAll ta where a.poid=ta.poid and a.seq1=ta.seq1 and a.seq2=ta.seq2 and a.receivingid=ta.id and ta.fabricType = 'A')
+ 
 
 --------------AIR_Laboratory
 RAISERROR('insert_Air_Fir - Starts',0,0)
