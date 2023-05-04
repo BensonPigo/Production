@@ -270,50 +270,129 @@ where a.ID = {MyUtility.Convert.GetString(this.masterData["ID"])}
                 rawData.Template = MyUtility.Convert.GetString(dr["Template"]);
 
                 rawData.Attachment = MyUtility.Convert.GetString(dr["Attachment"]);
-                rawData.PartID = MyUtility.Convert.GetString(dr["SewingMachineAttachmentID"]);
+                rawData.AttachmentPartID = MyUtility.Convert.GetString(dr["SewingMachineAttachmentID"]);
 
                 tmpAttachmentDataList.Add(rawData);
             }
 
+            /*  資料分成以下兩種，然後Attachment和Template都會有多筆(用逗號隔開)
+                ST/MC Type + Machine Group + No. + Attachment + PartID
+                ST/MC Type + Machine Group + No. + Template + PartID
+                其中，上面Template的PartID沒有有紀錄在表身，要動態查
+             */
             foreach (var rawData in tmpAttachmentDataList)
             {
-
-                if (MyUtility.Check.Empty(rawData.Attachment) || !rawData.Attachment.Split(',').Where(o => !string.IsNullOrEmpty(o)).Any())
+                string tt = string.Empty;
+                if (MyUtility.Check.Empty(rawData.Attachment) && MyUtility.Check.Empty(rawData.Template))
                 {
                     continue;
                 }
 
-                var attList = rawData.Attachment.Split(',').Where(o => !string.IsNullOrEmpty(o));
-                var partList = !MyUtility.Check.Empty(rawData.PartID) && rawData.PartID.Split(',').Where(o => !string.IsNullOrEmpty(o)).Any() ?
-                    rawData.PartID.Split(',').Where(o => !string.IsNullOrEmpty(o)).ToList() : new List<string>();
-
-                foreach (var att in attList)
+                // Attachment不為空
+                if (!MyUtility.Check.Empty(rawData.Attachment) && rawData.Attachment.Split(',').Where(o => !string.IsNullOrEmpty(o)).Any())
                 {
-                    AttachmentData newData = rawData;
+                    var attList = rawData.Attachment.Split(',').Where(o => !string.IsNullOrEmpty(o));
+                    var partList = !MyUtility.Check.Empty(rawData.AttachmentPartID) && rawData.AttachmentPartID.Split(',').Where(o => !string.IsNullOrEmpty(o)).Any() ?
+                        rawData.AttachmentPartID.Split(',').Where(o => !string.IsNullOrEmpty(o)).ToList() : new List<string>();
 
-                    // 覆蓋Attachment
-                    newData.Attachment = att;
-
-                    foreach (var part in partList)
+                    foreach (var att in attList)
                     {
-                        // 判斷Part 隸屬於這個Attachment
-                        string sql = $@" select 1 from SewingMachineAttachment  where MoldID = @Attachment and ID = @PartID ";
-                        List<SqlParameter> paras = new List<SqlParameter>()
+                        if (partList.Any())
                         {
-                            new SqlParameter("@Attachment", att),
-                            new SqlParameter("@PartID", part),
-                        };
-                        bool isPartMatch = MyUtility.Check.Seek(sql, paras);
+                            foreach (var part in partList)
+                            {
+                                // 覆蓋Attachment
+                                AttachmentData newData = new AttachmentData()
+                                {
+                                    No = rawData.No,
+                                    STMC_Type = rawData.STMC_Type,
+                                    MachineGroup = rawData.MachineGroup,
+                                    Attachment = att,
+                                };
 
-                        if (isPartMatch)
+                                // 判斷Part 隸屬於這個Attachment
+                                string sql = $@" select 1 from SewingMachineAttachment  where MoldID = @Attachment and ID = @PartID ";
+                                List<SqlParameter> paras = new List<SqlParameter>()
+                                {
+                                    new SqlParameter("@Attachment", att),
+                                    new SqlParameter("@PartID", part),
+                                };
+                                bool isPartMatch = MyUtility.Check.Seek(sql, paras);
+
+                                if (isPartMatch)
+                                {
+                                    // 覆蓋PartID
+                                    newData.AttachmentPartID = part;
+                                    bool exists = this.AttachmentDataList.Where(o => o.No == newData.No && o.STMC_Type == newData.STMC_Type && o.MachineGroup == newData.MachineGroup && o.Attachment == newData.Attachment && o.AttachmentPartID == newData.AttachmentPartID).Any();
+                                    if (!exists)
+                                    {
+                                        this.AttachmentDataList.Add(newData);
+                                    }
+                                }
+                            }
+                        }
+                        else
                         {
-                            // 覆蓋PartID
-                            newData.PartID = part;
+                            // 覆蓋Attachment
+                            AttachmentData newData = rawData;
+                            newData.Attachment = att;
                             this.AttachmentDataList.Add(newData);
                         }
                     }
                 }
 
+                // Template不為空，要動態查Template的PartID
+                if (!MyUtility.Check.Empty(rawData.Template) && rawData.Template.Split(',').Where(o => !string.IsNullOrEmpty(o)).Any())
+                {
+                    var templateList = rawData.Template.Split(',').Where(o => !string.IsNullOrEmpty(o));
+
+                    foreach (var template in templateList)
+                    {
+                        // 覆蓋Template
+                        AttachmentData newData = new AttachmentData()
+                        {
+                            No = rawData.No,
+                            STMC_Type = rawData.STMC_Type,
+                            MachineGroup = rawData.MachineGroup,
+                            Template = template,
+                        };
+
+                        // 覆蓋Attachment
+                        newData.Template = template;
+
+                        string sql = $@"
+select PartID = smt.ID , m.DescEN ,MoldID = m.ID
+from Mold m WITH (NOLOCK)
+right join SewingMachineTemplate smt on m.ID = smt.MoldID
+where m.Junk = 0 and m.IsTemplate = 1 and smt.Junk = 0 AND smt.ID = @Template
+";
+                        List<SqlParameter> paras = new List<SqlParameter>()
+                        {
+                            new SqlParameter("@Template", template),
+                        };
+
+                        DataTable dt;
+                        DualResult r = DBProxy.Current.Select(null, sql, paras, out dt);
+
+                        if (!r)
+                        {
+                            this.ShowErr(r);
+                        }
+
+                        string moldID = string.Empty;
+                        if (dt.Rows != null && dt.Rows.Count > 0)
+                        {
+                            moldID = MyUtility.Convert.GetString(dt.Rows[0]["MoldID"]);
+                        }
+
+                        newData.TemplateMoldID = moldID;
+                        bool exists = this.AttachmentDataList.Where(o => o.No == newData.No && o.STMC_Type == newData.STMC_Type && o.MachineGroup == newData.MachineGroup && o.Template == newData.Template && o.TemplateMoldID == newData.TemplateMoldID).Any();
+                        if (!exists)
+                        {
+                            this.AttachmentDataList.Add(newData);
+                        }
+                    }
+                }
             }
 
             this.operationCode = this.machineTypeDT.AsEnumerable().Where(x => x.Field<bool>("IsShowinIEP03")).CopyToDataTable();
@@ -1013,7 +1092,9 @@ order by NO
             // Machine table 只計算MachineCount有勾選的
             int machineCount = allMachineData.Where(o => o.MachineCount && !MyUtility.Check.Empty(o.MachineTypeID) && !MyUtility.Check.Empty(o.MasterPlusGroup)).Select(o => new { o.MachineTypeID, o.MasterPlusGroup }).Distinct().Count();
 
-            int attachTemplateCount = this.AttachmentDataList.Count();
+            var attachCount = this.AttachmentDataList.Where(o => !string.IsNullOrEmpty(o.Attachment)).Select(o => new { o.No, o.STMC_Type, o.MachineGroup, o.Attachment, o.AttachmentPartID }).Distinct();
+            var templateCount = this.AttachmentDataList.Where(o => !string.IsNullOrEmpty(o.Template)).Select(o => new { o.No, o.STMC_Type, o.MachineGroup, o.Template, o.TemplateMoldID }).Distinct();
+            int attachTemplateCount = attachCount.Count() + templateCount.Count();
 
             int copyCount = machineCount >= attachTemplateCount ? machineCount : attachTemplateCount;
             rngToCopy = worksheet.get_Range("A27:A27").EntireRow; // 選取要被複製的資料
@@ -1043,15 +1124,25 @@ order by NO
                 surow++;
             }
 
-            worksheet.Cells[24, 17] = this.AttachmentDataList.Select(o => o.Attachment).Distinct().Count();
-            worksheet.Cells[25, 17] = this.AttachmentDataList.Select(o => o.Template).Distinct().Count();
+            worksheet.Cells[24, 17] = attachCount.Count();
+            worksheet.Cells[25, 17] = templateCount.Count();
 
             surow = 0;
-            foreach (var item in this.AttachmentDataList)
+
+            foreach (var item in attachCount)
             {
                 worksheet.Cells[27 + surow, 16] = item.Attachment;
                 worksheet.Cells[27 + surow, 17] = item.No;
-                worksheet.Cells[27 + surow, 19] = item.PartID;
+                worksheet.Cells[27 + surow, 19] = item.AttachmentPartID;
+
+                surow++;
+            }
+
+            foreach (var item in templateCount)
+            {
+                worksheet.Cells[27 + surow, 16] = item.Template;
+                worksheet.Cells[27 + surow, 17] = item.No;
+                worksheet.Cells[27 + surow, 19] = item.TemplateMoldID;
 
                 surow++;
             }
@@ -1664,12 +1755,14 @@ order by NO
             public string STMC_Type { get; set; }
 
             public string MachineGroup { get; set; }
+            public string AttachmentCount { get; set; }
 
             public string Attachment { get; set; }
+            public string AttachmentPartID { get; set; }
 
             public string Template { get; set; }
+            public string TemplateMoldID { get; set; }
 
-            public string PartID { get; set; }
         }
 
         private class GCTimeChartData

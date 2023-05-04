@@ -126,6 +126,14 @@ where 1 = 1
             if (!string.IsNullOrEmpty(this.txtDescription.Text))
             {
                 descList = this.txtDescription.Text.Split(';').Where(o => !string.IsNullOrEmpty(o)).ToList();
+
+                for (int i = 0; i <= descList.Count - 1; i++)
+                {
+                    if (descList[i] == "'")
+                    {
+                        descList[i] = "''";
+                    }
+                }
             }
 
             if (!MyUtility.Check.Empty(this.txtType.Text))

@@ -687,7 +687,7 @@ right join SewingMachineTemplate smt on m.ID = smt.MoldID
 where m.Junk = 0 and m.IsTemplate = 1 and smt.Junk = 0
 ";
 
-                    SelectItem2 item = new SelectItem2(sqlcmd, "MoldID,DescEN,PartID", "13,60,20", this.CurrentDetailData["Template"].ToString(), null, null, null)
+                    SelectItem2 item = new SelectItem2(sqlcmd, "PartID,DescEN,MoldID", "13,60,20", this.CurrentDetailData["Template"].ToString(), null, null, null)
                     {
                         Width = 1000,
                     };
