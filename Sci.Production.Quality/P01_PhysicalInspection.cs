@@ -258,6 +258,9 @@ namespace Sci.Production.Quality
             datas.Columns.Add("SEQ2", typeof(string));
             datas.Columns.Add("NewKey", typeof(int));
             datas.Columns.Add("LthOfDiff", typeof(decimal));
+            datas.Columns.Add("Weight", typeof(decimal));
+            datas.Columns.Add("ActualWeight", typeof(decimal));
+            datas.Columns.Add("Differential", typeof(decimal));
 
             datas.Columns.Add("ReGrade", typeof(string));
             int i = 0;
@@ -276,6 +279,37 @@ namespace Sci.Production.Quality
                 dr["SEQ1"] = this.maindr["SEQ1"];
                 dr["SEQ2"] = this.maindr["SEQ2"];
                 dr["LthOfDiff"] = MyUtility.Convert.GetDecimal(dr["ActualYds"]) - MyUtility.Convert.GetDecimal(dr["TicketYds"]);
+
+                // 新增Receiving_Detail & TransferIn_Detail來源
+                string sqlcmd = $@"
+select [Weight] = IIF(ISNULL(rd.weight,0) = 0 ,ISNULL(td.weight,0),ISNULL(rd.weight,0))
+,[ActualWeight] = IIF(ISNULL(rd.ActualWeight,0) = 0 ,ISNULL(td.ActualWeight,0),ISNULL(rd.ActualWeight,0))
+,[Differential] = IIF(ISNULL(rd.ActualWeight,0) = 0 ,ISNULL(td.ActualWeight,0),ISNULL(rd.ActualWeight,0))-IIF(ISNULL(rd.weight,0) = 0 ,ISNULL(td.weight,0),ISNULL(rd.weight,0))
+from FIR_Physical fp
+inner join fir f on fp.ID = f.ID
+left join Receiving_Detail rd on rd.PoId = f.POID
+	and rd.Seq1 = f.SEQ1 and rd.Seq2 = f.SEQ2
+	and rd.Roll = fp.Roll and rd.Dyelot = fp.Dyelot
+	and rd.Id = f.ReceivingID
+left join TransferIn_Detail td on td.PoId = f.POID
+	and td.Seq1 = f.SEQ1 and td.Seq2 = f.SEQ2
+	and td.Roll = fp.Roll and td.Dyelot = fp.Dyelot
+	and td.Id = f.ReceivingID
+where fp.DetailUkey = '{dr["DetailUkey"]}'
+";
+                if (MyUtility.Check.Seek(sqlcmd, out DataRow dr_R))
+                {
+                    dr["Weight"] = dr_R["Weight"];
+                    dr["ActualWeight"] = dr_R["ActualWeight"];
+                    dr["Differential"] = dr_R["Differential"];
+                }
+                else
+                {
+                    dr["Weight"] = 0;
+                    dr["ActualWeight"] = 0;
+                    dr["Differential"] = 0;
+                }
+
                 i++;
             }
             #region 撈取下一層資料Defect
@@ -795,6 +829,9 @@ where Fir.ID = '{this.FirID}'"));
             .Text("Grade", header: "Grade", width: Widths.AnsiChars(1), iseditingreadonly: true).Get(out this.col_color)
             .CheckBox("IsGrandCCanUse", header: "Grand C But Can Use", width: Widths.AnsiChars(5), iseditable: true, trueValue: 1, falseValue: 0)
             .Text("GrandCCanUseReason", header: "Grand C But Can Use Reason", width: Widths.AnsiChars(20))
+            .Numeric("Weight", header: "G.W(kg)", width: Widths.AnsiChars(5), iseditingreadonly: true, integer_places: 7, decimal_places: 2)
+            .Numeric("ActualWeight", header: "Act.(kg)", width: Widths.AnsiChars(5), iseditingreadonly: true, integer_places: 7, decimal_places: 2)
+            .Numeric("Differential", header: "Differential", width: Widths.AnsiChars(5), iseditingreadonly: true, integer_places: 7, decimal_places: 2)
             .CheckBox("moisture", header: "Moisture", width: Widths.AnsiChars(2), iseditable: true, trueValue: 1, falseValue: 0)
             .Text("Remark", header: "Remark", width: Widths.AnsiChars(20))
             .Date("InspDate", header: "Insp.Date", width: Widths.AnsiChars(10))
