@@ -170,6 +170,8 @@
     <Build Include="dbo\Tables\PurchaseAnalysis.sql" />
     <Build Include="dbo\Tables\P_Factory.sql" />
     <Build Include="dbo\Tables\P_ArtWorkType.sql" />
+    <Build Include="dbo\Tables\P_PPICMasterList_ArtworkType.sql" />
+    <Build Include="dbo\Stored Procedures\FTY\P_Import_PPIC_MASTER_LIST_ArtWorkType.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Utility.dll" />
