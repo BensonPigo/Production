@@ -1,0 +1,4 @@
+﻿CREATE TABLE [dbo].[P_SDP]
+(
+	[Id] INT NOT NULL PRIMARY KEY
+)
