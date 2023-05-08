@@ -231,7 +231,16 @@ select
 	,[SortCmbDyelot] = ISNULL(cmb.Dyelot,R.Dyelot)
     ,R.Unoriginal
     ,R.Ukey
+    ,StockTypeName = 
+        case R.StockType
+        when 'b' then 'Bulk'
+        when 'i' then 'Inventory'
+        when 'o' then 'Scrap'
+        end
+    ,o.StyleID
+    ,Receiving.WhseArrival
 from dbo.Receiving_Detail R WITH (NOLOCK) 
+left join Receiving WITH (NOLOCK) on Receiving.id = R.id
 LEFT join dbo.PO_Supp_Detail psd WITH (NOLOCK) on psd.ID = R.POID and  psd.SEQ1 = R.Seq1 and psd.seq2 = R.Seq2 
 left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
 left join Ftyinventory  fi with (nolock) on    R.POID = fi.POID and
