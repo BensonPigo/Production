@@ -129,8 +129,6 @@ and (   exists (select 1 from Factory where e.FactoryID = id and IsProduceFty = 
             sqlCmd = $@"
 SELECT e.ID
 ,e.Blno
-,[DeclarationID] = vd.ID
-,vd.DeclareNo
 ,[MaterialType] = f.MtlTypeID
 ,[RefNo] = f.Refno
 ,[Desc] = isnull(f.DescDetail,'')
@@ -142,9 +140,6 @@ SELECT e.ID
                             end)
                         ,psd.Qty)
 ,[Unit] = ed.UnitId
-,[CustomsCode] = [CustomsCode].value
-,[HSCode] = [HSCode].value
-,[ContractNo] = vd.VNContractID
 ,e.FactoryID
 ,e.Consignee
 ,e.ShipModeID
@@ -180,12 +175,6 @@ FROM Export e WITH(NOLOCK)
 left join Export_Detail ed WITH(NOLOCK) on ed.ID = e.ID
 left join PO_Supp_Detail psd WITH (NOLOCK) on psd.ID = ed.PoID and psd.SEQ1 = ed.Seq1 and psd.SEQ2 = ed.Seq2
 left join Fabric f WITH (NOLOCK) on f.SCIRefno = psd.SCIRefno
-LEFT JOIN VNImportDeclaration vd WITH(NOLOCK) ON 
-(
-	(vd.Blno !='' and e.Blno = vd.Blno) 
-	or  	
-	(vd.BLNo = '' and vd.WKNo = e.ID)
-)　AND vd.IsFtyExport = 0　and vd.Status = 'Confirmed'
 OUTER APPLY(
 	SELECT 1 as [DoorToDoorDelivery]
 	FROM Door2DoorDelivery 
@@ -203,28 +192,6 @@ OUTER APPLY(
 			and ShipModeID = e.ShipModeID
 			and Vessel  =''
 )Dtdd
-outer apply(
-	select value = Stuff((
-		select concat(',',[CustomsCode])
-		from (
-			select distinct [CustomsCode] =  vdd.NLCode
-			from dbo.VNImportDeclaration_Detail vdd
-			where vdd.id = vd.ID
-			)s
-		for xml path('')
-		), 1, 1, '')
-)  [CustomsCode]
-outer apply(
-	select value = Stuff((
-		select concat(',',[HSCode])
-		from (
-			select distinct [HSCode] =  vdd.HSCode
-			from dbo.VNImportDeclaration_Detail vdd
-			where vdd.id = vd.ID
-			)s
-		for xml path('')
-		), 1, 1, '')
-)  [HSCode]
 Outer APPLY (
 	select mpod.ID, mpod.Seq1, mpod.Seq2, mpo.FactoryID, OrderQty = sum(mpod.Qty)
 	from SciMachine_MachinePO mpo
@@ -259,21 +226,23 @@ WHERE {where}
 
 
 select distinct
-ID
-,Blno
-,[DeclarationID]
+t.ID
+,t.Blno
+,[DeclarationID] = vd.ID
 ,DeclareNo
 ,[MaterialType] = [MtlTypeID].value
-,[RefNo] = Refno.value
+,[RefNo] = vddd.Refno
 ,[Desc]  = [Desc].value
 ,[ReceivingQty] = isnull(ReceivingQty.value,0)
 ,[Unit] = Unit.value
-,[CustomsCode]
-,[HSCode]
-,[ContractNo]
+,[CustomsCode] = vddd.NLCode
+,[HSCode] = vdd.HSCode
+,[Customs Qty] = ROUND(vddd.Qty,2)
+,[Customs Unit] = vdd.UnitID
+,[ContractNo] = vd.VNContractID
 ,FactoryID
 ,Consignee
-,ShipModeID
+,t.ShipModeID
 ,CYCFS
 ,InvNo
 ,[Payer]
@@ -297,6 +266,14 @@ ID
 ,[SQCS]
 ,[RemarkFromTPE]
 from #tmp t
+LEFT JOIN VNImportDeclaration vd WITH(NOLOCK) ON 
+(
+	(vd.Blno !='' and t.Blno = vd.Blno) 
+	or  	
+	(vd.BLNo = '' and vd.WKNo = t.ID)
+)　AND vd.IsFtyExport = 0　and vd.Status = 'Confirmed'
+left join VNImportDeclaration_Detail vdd on vdd.ID = vd.ID
+inner join VNImportDeclaration_Detail_Detail vddd on vddd.ID = vd.ID and vddd.NLCode = vdd.NLCode and t.Refno = vddd.Refno
 outer apply(
 	select value = Stuff((
 		select concat(',',[MtlTypeID])
@@ -308,17 +285,6 @@ outer apply(
 		for xml path('')
 		), 1, 1, '')
 )  [MtlTypeID]
-outer apply(
-	select value = Stuff((
-		select concat(',',Refno)
-		from (
-			select distinct Refno =  s.RefNo
-			from #tmp s
-			where s.ID = t.id and s.RefNo = t.RefNo
-			)s
-		for xml path('')
-		), 1, 1, '')
-)  Refno
 outer apply(
 	select value = Stuff((
 		select concat(',',[Description])
