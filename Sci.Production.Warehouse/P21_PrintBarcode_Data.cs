@@ -1,6 +1,4 @@
-﻿using System.Drawing;
-
-namespace Sci.Production.Warehouse
+﻿namespace Sci.Production.Warehouse
 {
     /// <inheritdoc/>
 #pragma warning disable SA1516 // Elements should be separated by blank line
@@ -18,6 +16,9 @@ namespace Sci.Production.Warehouse
         public string Dyelot { get; set; }
         public string Qty { get; set; }
         public string FactoryID { get; set; }
+        public string StockType { get; set; }
+        public string StyleID { get; set; }
+        public string WhseArrival { get; set; }
         public byte[] Image { get; set; }
     }
 #pragma warning restore SA1516 // Elements should be separated by blank line
