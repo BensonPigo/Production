@@ -869,6 +869,23 @@ where (isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f
                         throw result.GetException();
                     }
 
+                    // 更新完庫存後 RemainingQty
+                    string sqlUpdateRemainingQty = $@"
+Update sd set
+    RemainingQty = f.InQty - f.OutQty + f.AdjustQty - f.ReturnQty
+from Issue_Detail sd with(nolock)
+inner join Production.dbo.FtyInventory f with(nolock) on f.POID = isnull(sd.PoId, '')
+    and f.Seq1 = isnull(sd.Seq1, '')
+    and f.Seq2 = isnull(sd.Seq2, '')
+    and f.Roll = isnull(sd.Roll, '')
+	and f.Dyelot = isnull(sd.Dyelot, '')
+    and f.StockType = isnull(sd.StockType, '')
+";
+                    if (!(result = DBProxy.Current.Execute(null, sqlUpdateRemainingQty)))
+                    {
+                        throw result.GetException();
+                    }
+
                     string sqUnrollActualQty = $@"
 update Issue_Detail set UnrollActualQty = Qty where id = '{this.CurrentMaintain["ID"]}'
 ";

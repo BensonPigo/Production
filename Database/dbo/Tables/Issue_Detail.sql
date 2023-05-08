@@ -30,6 +30,7 @@
     [M360MINDDispatchUkey] BIGINT          NULL,
     [DispatchScanTime] DATETIME NULL, 
     [DispatchScanner] VARCHAR(10) NOT NULL DEFAULT (''), 
+    [RemainingQty] NUMERIC(11, 2) NOT NULL DEFAULT ((0)), 
     CONSTRAINT [PK_Issue_Detail] PRIMARY KEY CLUSTERED ([ukey] ASC),
     CONSTRAINT [FK_Issue_Detail_Issue_Detail] FOREIGN KEY ([ukey]) REFERENCES [dbo].[Issue_Detail] ([ukey])
 );
@@ -205,3 +206,12 @@ EXEC sp_addextendedproperty @name = N'MS_Description',
     @level1name = N'Issue_Detail',
     @level2type = N'COLUMN',
     @level2name = N'DispatchScanner'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'發料後剩下多少庫存',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'Issue_Detail',
+    @level2type = N'COLUMN',
+    @level2name = N'RemainingQty'
