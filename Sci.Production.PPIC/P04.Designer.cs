@@ -133,6 +133,7 @@
             this.txttpeuserHandle = new Sci.Production.Class.Txttpeuser();
             this.txttpeuserSMR = new Sci.Production.Class.Txttpeuser();
             this.txtcdcode = new Sci.Production.Class.Txtcdcode();
+            this.btnPadPrintColor = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -150,6 +151,7 @@
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.btnPadPrintColor);
             this.detailcont.Controls.Add(this.txtcdcodenew);
             this.detailcont.Controls.Add(this.lbConstruction);
             this.detailcont.Controls.Add(this.lbGender);
@@ -1386,6 +1388,17 @@
             this.txtcdcode.TabIndex = 9;
             this.txtcdcode.Validated += new System.EventHandler(this.Txtcdcode_Validated);
             // 
+            // btnPadPrintColor
+            // 
+            this.btnPadPrintColor.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
+            this.btnPadPrintColor.Location = new System.Drawing.Point(778, 376);
+            this.btnPadPrintColor.Name = "btnPadPrintColor";
+            this.btnPadPrintColor.Size = new System.Drawing.Size(180, 30);
+            this.btnPadPrintColor.TabIndex = 95;
+            this.btnPadPrintColor.Text = "Pad Print Color";
+            this.btnPadPrintColor.UseVisualStyleBackColor = true;
+            this.btnPadPrintColor.Click += new System.EventHandler(this.btnPadPrintColor_Click);
+            // 
             // P04
             // 
             this.ClientSize = new System.Drawing.Size(1008, 632);
@@ -1522,5 +1535,6 @@
         private Win.UI.TextBox txtcdcodenew;
         private Class.ComboPictureSize comboPictureSize2;
         private Class.ComboPictureSize comboPictureSize1;
+        private Win.UI.Button btnPadPrintColor;
     }
 }

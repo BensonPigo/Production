@@ -168,7 +168,7 @@ exec GetSewingDailyOutputList   @M
             }
             this.ShowWaitMessage("Starting EXCEL...");
             string excelName = string.Empty;
-            R04_ToExcel.ToExcel(true,show_Accumulate_output, printData, null,ref excelName);
+            R04_ToExcel.ToExcel(true, this.show_Accumulate_output, this.printData, null, ref excelName);
             this.HideWaitMessage();
             return true;
         }

@@ -1,6 +1,6 @@
 ﻿
 
---�N�ھڶǤJ�ѼơA��s PO.FIRInspPercent �� PO.AIRInspPercent
+--將根據傳入參數，更新 PO.FIRInspPercent 或 PO.AIRInspPercent
 CREATE PROCEDURE [dbo].[UpdateInspPercent] 
 (
 	@Type varchar(50) = '' --FIR , AIR , FIRLab, LabColorFastness
@@ -40,15 +40,13 @@ BEGIN
 		IF @Type = 'FIRLab'
 		BEGIN
 			update PO
-			set PO.FIRLabInspPercent = 
-			(select cnt= isnull(
-				convert(varchar,
-				round(convert(float,sum(case when b.Result <>'' or (nonCrocking=1 and nonWash=1 and nonHeat=1) then 1 else 0 end))
-				/convert(float,count(*)),4)*100),0)
-			 from fir a
-			 left join FIR_Laboratory b on a.ID=b.ID
-			 left join Receiving c WITH(NOLOCK) on a.ReceivingID=c.Id 
-			 where a.POID = po.ID
+			set PO.FIRLabInspPercent = (
+				select cnt= isnull(
+					convert(varchar,
+					round(convert(float, sum(case when b.Result <> '' or (b.nonCrocking = 1 and b.nonWash = 1 and b.nonHeat = 1) then 1 else 0 end))
+					/convert(float, count(1)), 4) * 100), 0)
+			 	from FIR_Laboratory b 
+				where exists (select 1 from FIR a WITH(NOLOCK) where a.POID = @POID and a.ID = b.ID)
 			 )
 			from PO where PO.ID=@POID
 		END
@@ -102,16 +100,17 @@ BEGIN
 			where P.ID=@POID
 		END
 
-			IF @Type='AIRLab'
+		IF @Type='AIRLab'
 		BEGIN
 			UPDATE p
 			SET 
-			AIRLabInspPercent= (   select 
-				cnt= isnull(convert(varchar,round(convert(float,sum(case when Result<>'' OR( NonOven='True' and NonWash='True') then 1					else 0 end))/convert(float,count(*)),4)*100),0)
-			from AIR_Laboratory 
-			where POID=@POID )
+			AIRLabInspPercent= (
+				select cnt = isnull(convert(varchar, round(convert(float, sum(case when Result <>'' OR(NonOven = 1 and NonWash = 1) then 1 else 0 end)) / convert(float,count(1)) ,4) * 100), 0)
+				from AIR_Laboratory 
+				where POID = @POID 
+			)
 			FROM [PO] p
-			where P.ID=@POID
+			where P.ID = @POID
 		END
 
 

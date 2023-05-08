@@ -1,9 +1,9 @@
 ﻿CREATE TABLE [dbo].[DropDownList] (
     [Type]        VARCHAR (20)   CONSTRAINT [DF_DropDownList_Type] DEFAULT ('') NOT NULL,
     [ID]          VARCHAR (50)   CONSTRAINT [DF_DropDownList_ID] DEFAULT ('') NOT NULL,
-    [Name]        NVARCHAR (50)  CONSTRAINT [DF_DropDownList_Name] DEFAULT ('') NULL,
+    [Name]        NVARCHAR (100)  CONSTRAINT [DF_DropDownList_Name] DEFAULT ('') NULL,
     [RealLength]  NUMERIC (2)    CONSTRAINT [DF_DropDownList_RealLength] DEFAULT ((0)) NOT NULL,
-    [Description] NVARCHAR (200) CONSTRAINT [DF_DropDownList_Description] DEFAULT ('') NULL,
+    [Description] NVARCHAR (400) CONSTRAINT [DF_DropDownList_Description] DEFAULT ('') NULL,
     [Seq]         INT            CONSTRAINT [DF_DropDownList_Seq] DEFAULT ((0)) NOT NULL,
     [Conditions] VARCHAR(500) NOT NULL DEFAULT (''), 
     CONSTRAINT [PK_DropDownList] PRIMARY KEY CLUSTERED ([Type] ASC, [ID] ASC)
