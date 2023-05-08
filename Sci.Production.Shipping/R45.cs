@@ -237,7 +237,7 @@ t.ID
 ,[Unit] = Unit.value
 ,[CustomsCode] = vddd.NLCode
 ,[HSCode] = vdd.HSCode
-,[Customs Qty] = ROUND(vdd.Qty,2)
+,[Customs Qty] = ROUND(vddd.Qty,2)
 ,[Customs Unit] = vdd.UnitID
 ,[ContractNo] = vd.VNContractID
 ,FactoryID
