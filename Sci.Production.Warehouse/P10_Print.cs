@@ -194,6 +194,14 @@ select  [Sel] = 0
 	    ,[FabricType] = case when psd.FabricType = 'F' then 'Fabric'
                              when psd.FabricType = 'A' then 'Accessory'
                              else 'Other' end
+        ,StockTypeName = 
+            case isd.StockType
+            when 'b' then 'Bulk'
+            when 'i' then 'Inventory'
+            when 'o' then 'Scrap'
+            end
+        ,o.StyleID
+        ,WhseArrival = isnull(Receiving.WhseArrival, TransferIn.IssueDate)
 from dbo.Issue_Detail isd WITH (NOLOCK) 
 left join dbo.PO_Supp_Detail psd WITH (NOLOCK) on psd.ID = isd.POID and  psd.SEQ1 = isd.Seq1 and psd.seq2 = isd.Seq2 
 left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
@@ -215,6 +223,9 @@ left join TransferIn_Detail td with (nolock) on isd.POID = td.POID and
                                                isd.Roll = td.Roll and
                                                isd.Dyelot  = td.Dyelot and
                                                isd.StockType = td.StockType
+left join Receiving WITH (NOLOCK) on Receiving.id = rd.id
+left join TransferIn WITH (NOLOCK) on TransferIn.id = td.id
+
 left join View_WH_Orders o WITH (NOLOCK) on o.ID = isd.PoId
 LEFT JOIN Fabric f WITH (NOLOCK) ON psd.SCIRefNo=f.SCIRefNo
 LEFT JOIN color c on c.id = isnull(psdsC.SpecValue, '') and c.BrandId = psd.BrandId 

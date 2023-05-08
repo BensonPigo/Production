@@ -1,5 +1,4 @@
 ﻿using Ict;
-using Ict.Win;
 using Microsoft.Reporting.WinForms;
 using Sci.Data;
 using Sci.Win;
@@ -8,7 +7,6 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
-using System.Reflection;
 using System.Runtime.InteropServices;
 using Excel = Microsoft.Office.Interop.Excel;
 
@@ -238,7 +236,8 @@ WHERE a.ID = '{id}'
                 MyUtility.Msg.WarningBox("Data is not confirmed, cannot print.");
                 return false;
             }
-            DataTable dataTable_QRCode= new DataTable();
+
+            DataTable dataTable_QRCode = new DataTable();
             this.ValidateInput();
             this.ShowWaitMessage("Loading...");
             DualResult result = this.LoadData_QRCode(out dataTable_QRCode);
@@ -306,7 +305,16 @@ select [Sel] = 0
 	, [SortCmbDyelot] = ISNULL(cmb.Dyelot, td.Dyelot)
     , td.Unoriginal
     , td.Ukey
+    ,StockTypeName = 
+        case td.StockType
+        when 'b' then 'Bulk'
+        when 'i' then 'Inventory'
+        when 'o' then 'Scrap'
+        end
+    ,o.StyleID
+    ,WhseArrival = TransferIn.IssueDate
 from TransferIn_Detail td WITH (NOLOCK) 
+left join TransferIn WITH (NOLOCK) on TransferIn.id = td.id
 left join dbo.PO_Supp_Detail psd WITH (NOLOCK) on psd.ID = td.POID and  psd.SEQ1 = td.Seq1 and psd.seq2 = td.Seq2 
 left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
 left join Ftyinventory  fi with (nolock) on td.POID = fi.POID and
