@@ -442,6 +442,7 @@ namespace Sci.Production.Packing
 
                         tables.Cell(((p % pageItemCount) * 3) + 1, 1).Range.Text = packingNo + Environment.NewLine + spNo + Environment.NewLine + poNo;
                         tables.Cell(((p % pageItemCount) * 3) + 2, 1).Range.Text = sizeQty + "  " + cartonNo;
+                        tables.Cell(((p % pageItemCount) * 3) + 2, 1).FitText = true;
                         tables.Cell(((p % pageItemCount) * 3) + 3, 1).Range.Text = custCTN;
 
                         Bitmap oriBitmap = this.NewQRcode(barcode);
