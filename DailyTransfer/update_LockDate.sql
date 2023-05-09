@@ -26,6 +26,14 @@ and Lock is null and Status='Confirmed'
 
 update System set SewLock=@Lockdate
 
+
+if (select cnt = count(1) from SewingMonthlyLock) <= 0
+begin 
+	insert into SewingMonthlyLock(FactoryID)	
+	select ID from Factory where Junk = 0
+end
+
+
 update SewingMonthlyLock
    set LockDate=@Lockdate
      , EditName = 'SCIMIS'
