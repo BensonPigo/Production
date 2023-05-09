@@ -602,11 +602,12 @@ outer apply(
 where 1=1
 {where}
 
-select distinct bdo.Orderid,b.Article,b.Sizecode,bdo.BundleNo,s.SubProcessID,s.ShowSeq,s.InOutRule,s.IsRFIDDefault,b.IsEXCESS
+select distinct bdo.Orderid,b.Article,bd.Sizecode,bdo.BundleNo,s.SubProcessID,s.ShowSeq,s.InOutRule,s.IsRFIDDefault,b.IsEXCESS
 into #tmpBundleNo
-from Bundle_Detail_Order bdo
+from Bundle_Detail_Order bdo WITH (NOLOCK)
 inner join Bundle b WITH (NOLOCK) on b.id = bdo.Id
-inner join #tmpOrders o on bdo.Orderid = o.ID and b.MDivisionID = o.MDivisionID and b.Article = o.Article and b.Sizecode = o.SizeCode
+inner join Bundle_Detail bd WITH (NOLOCK) on b.id = bd.Id
+inner join #tmpOrders o on bdo.Orderid = o.ID and b.MDivisionID = o.MDivisionID and b.Article = o.Article and bd.Sizecode = o.SizeCode
 cross join(
 	select SubProcessID=id,s.ShowSeq,s.InOutRule,s.IsRFIDDefault
 	from SubProcess s
@@ -799,8 +800,9 @@ outer apply(
 	    from #tmpBundleInspection bi  with(nolock)
 		inner join Bundle_Detail_Order bdo WITH (NOLOCK) on bdo.Orderid = o.ID and bdo.BundleNo = bi.BundleNo
         inner join Bundle b with(nolock) on b.id = bdo.id
+		inner join Bundle_Detail bd WITH (NOLOCK) on b.id = bd.Id
 		where o.MDivisionID = b.MDivisionID
-		and b.Article = o.Article and b.SizeCode = o.Sizecode
+		and b.Article = o.Article and bd.SizeCode = o.Sizecode
 		and not exists(select 1 from Cutting_WIPExcludePatternPanel cw where cw.PatternPanel = b.PatternPanel and cw.ID = b.POID)
 	    group by ReasonID
 	    for xml path('''')
