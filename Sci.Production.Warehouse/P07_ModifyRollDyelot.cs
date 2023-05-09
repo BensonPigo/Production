@@ -554,7 +554,7 @@ from (
         private void BtnCommit_Click(object sender, EventArgs e)
         {
             DualResult result;
-            var modifyDrList = this.source.AsEnumerable().Where(s => s.RowState == DataRowState.Modified);
+            var modifyDrList = this.source.AsEnumerable().Where(s => s.RowState == DataRowState.Modified).ToList();
             if (modifyDrList.Count() == 0)
             {
                 MyUtility.Msg.InfoBox("No data has been changed!");
@@ -564,6 +564,38 @@ from (
             if (modifyDrList.Where(s => MyUtility.Check.Empty(s["Roll"]) || MyUtility.Check.Empty(s["Dyelot"])).Any())
             {
                 MyUtility.Msg.WarningBox("Roll# & Dyelot# can't be empty!!");
+                return;
+            }
+
+            // 修改到Roll或Dyelot 檢查
+            string msg = string.Empty;
+            foreach (var drModify in modifyDrList)
+            {
+                string original_Roll = drModify["roll", DataRowVersion.Original].ToString();
+                string current_Roll = drModify["roll", DataRowVersion.Current].ToString();
+                string original_Dyelot = drModify["dyelot", DataRowVersion.Original].ToString();
+                string current_Dyelot = drModify["dyelot", DataRowVersion.Current].ToString();
+                if (original_Roll != current_Roll || original_Dyelot != current_Dyelot)
+                {
+                    string sqlcheckUniquekey = $@"
+select 1
+from {this.gridAlias} sd
+where RTRIM(Ltrim(sd.POID)) = RTRIM(Ltrim('{drModify["POID"]}'))
+and RTRIM(Ltrim(sd.Seq1)) = RTRIM(Ltrim('{drModify["Seq1"]}'))
+and RTRIM(Ltrim(sd.Seq2)) = RTRIM(Ltrim('{drModify["Seq2"]}'))
+and RTRIM(Ltrim(sd.Roll)) = RTRIM(Ltrim('{current_Roll}'))
+and RTRIM(Ltrim(sd.Dyelot)) = RTRIM(Ltrim('{current_Dyelot}'))
+";
+                    if (MyUtility.Check.Seek(sqlcheckUniquekey))
+                    {
+                        msg += $@"SP#: {drModify["poid"]} Seq#: {drModify["seq1"]}-{drModify["seq2"]} Roll#: {drModify["roll"]} Dyelot: {drModify["Dyelot"]}." + Environment.NewLine;
+                    }
+                }
+            }
+
+            if (!MyUtility.Check.Empty(msg))
+            {
+                MyUtility.Msg.WarningBox("Roll# & Dyelot# already existed!!\r\n" + msg);
                 return;
             }
 
