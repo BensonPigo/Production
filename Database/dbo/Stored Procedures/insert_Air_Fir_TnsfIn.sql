@@ -12,28 +12,28 @@ BEGIN TRANSACTION
 BEGIN TRY
 
 select 
-[ID] = a.id,
-[PoId]=a.PoId,
-[SEQ1]=a.Seq1,
-[SEQ2]=a.Seq2,
-[SuppID]=C.SuppID,
-[SCIRefno]=b.SCIRefno,
-[Refno]=b.Refno,
-[TransferInID]=a.Id,
-[TransferInQty]= a.Qty,
-[AddName]=@LoginID,
-[AddDate]= CONVERT(date,getdate()),
-[MinSciDelivery] = (select MinSciDelivery from GetSCI(a.PoId,d.Category)) ,
-[KPILETA] = d.KPILETA,
-[Category]=d.Category,
-[IssueDate] = e.IssueDate,
-[fabricType]=b.FabricType,
-[NonPhysical]		= isnull(qts.NonPhysical, 0)	  ,
-[NonWeight]	= isnull(qts.NonWeight, 0)	  ,
-[NonShadebond]	= isnull(qts.NonShadebond, 0)  ,
-[NonContinuity]	= isnull(qts.NonContinuity, 0)  ,
-[NonOdor]			= isnull(qts.NonOdor, 0)		  ,
-[NonMoisture]		= IIF(exists(select 1 from Brand_QAMoistureStandardList where brandid = b.BrandId) and isnull(qts.NonMoisture, 0) = 0, 0, 1) 
+	[ID] = a.id,
+	[PoId]=a.PoId,
+	[SEQ1]=a.Seq1,
+	[SEQ2]=a.Seq2,
+	[SuppID]=C.SuppID,
+	[SCIRefno]=b.SCIRefno,
+	[Refno]=b.Refno,
+	[TransferInID]=a.Id,
+	[TransferInQty]= a.Qty,
+	[AddName]=@LoginID,
+	[AddDate]= CONVERT(date,getdate()),
+	[MinSciDelivery] = (select MinSciDelivery from GetSCI(a.PoId,d.Category)) ,
+	[KPILETA] = d.KPILETA,
+	[Category]=d.Category,
+	[IssueDate] = e.IssueDate,
+	[fabricType]=b.FabricType,
+	[NonPhysical]		= isnull(qts.NonPhysical, 0)	  ,
+	[NonWeight]	= isnull(qts.NonWeight, 0)	  ,
+	[NonShadebond]	= isnull(qts.NonShadebond, 0)  ,
+	[NonContinuity]	= isnull(qts.NonContinuity, 0)  ,
+	[NonOdor]			= isnull(qts.NonOdor, 0)		  ,
+	[NonMoisture]		= IIF(exists(select 1 from Brand_QAMoistureStandardList where brandid = b.BrandId) and isnull(qts.NonMoisture, 0) = 0, 0, 1) 
 into #tempTableAll
 from TransferIn_Detail a
 inner join PO_Supp_Detail b on a.PoId=b.ID and a.Seq1=b.SEQ1 and a.Seq2=b.SEQ2
@@ -55,7 +55,9 @@ else
 		set @fabricType ='A'			
 	end
 
-select distinct InspDeadLine,PoId,SEQ1,SEQ2 into #InspDeadLine from (
+select distinct InspDeadLine,PoId,SEQ1,SEQ2 
+into #InspDeadLine 
+from (
 		select CONVERT(date,dateadd(DAY,+7,IssueDate)) as InspDeadLine,* from #tempTableAll
 		where Category='M'
 		union 
@@ -78,15 +80,16 @@ select distinct InspDeadLine,PoId,SEQ1,SEQ2 into #InspDeadLine from (
 		where Category<>'M'
 		and (DATEDIFF(day,CONVERT(date,Kpileta),convert(date,MinSciDelivery))) < 21 
 		and (datediff(day,convert(date,DATEADD(day,-21, [MinSciDelivery])),CONVERT(date,[IssueDate])))>= 1
-		)a
-		where a.fabricType=@fabricType	
+)a
+where a.fabricType=@fabricType	
 
 		
 --Fir
 
-	declare @tempFir table(id bigint,deID bigint )	
+declare @tempFir table(id bigint,deID bigint )	
 
-RAISERROR('insert_Air_Fir_TnsfIn - Starts',0,0)
+RAISERROR('insert_Air_Fir_TnsfIn - Fir',0,0)
+
 Merge dbo.Fir as t
 using (
 	--select * from #tempTableAll	where fabricType='F'
@@ -161,7 +164,7 @@ when not matched by source and t.ReceivingID=@ID then
  into @tempFir;
  
 -------FIR_Laboratory
-RAISERROR('insert_Air_Fir_TnsfIn - Starts',0,0)
+RAISERROR('insert_Air_Fir_TnsfIn - fir_laboratory',0,0)
 MERGE dbo.fir_laboratory AS t 
 using(SELECT a.*, 
              Isnull(c.SkewnessOption, '1') AS SkewnessOptionID 
@@ -193,35 +196,42 @@ select ID,deID from @tempFir
 ---- Air
 
 declare @tempAir table(id bigint,deID bigint )	
-RAISERROR('insert_Air_Fir_TnsfIn - Starts',0,0)
-Merge dbo.Air as t
-using (
-	select	a.*,
-			b.InspDeadLine
-	 from #tempTableAll a
-		left join #InspDeadLine b on a.PoId = b.PoId and a.Seq1 =b.Seq1 and a.Seq2 = b.Seq2
-		where fabricType='A'
- ) as s
-on t.poid=s.poid and t.seq1=s.seq1 and t.seq2=s.seq2 and t.receivingid=s.id 
-when matched then
- update set
- t.suppid=s.suppid,
- t.scirefno=s.scirefno,
- t.refno=s.refno,
- t.ArriveQty = s.TransferInQty,
- t.InspDeadLine = s.InspDeadLine,
- t.AddName=s.AddName,
- t.AddDate=s.AddDate
- when not matched by target then
- insert([PoId],[SEQ1],[SEQ2],[SuppID],[SCIRefno],[Refno],[ReceivingID],[ArriveQty],[InspDeadLine],[AddName],[AddDate])
- values(s.PoId,iif(len(s.Seq1)<=2,s.Seq1+' ',s.Seq1),s.Seq2,s.SuppID,s.SCIRefno,s.Refno,s.Id,s.TransferInQty,s.InspDeadLine,s.AddName,AddDate)
-when not matched by source and t.ReceivingID=@ID then
- delete
- output inserted.id as Id ,DELETED.id as deID
- into @tempAir;
+RAISERROR('insert_Air_Fir_TnsfIn - Air',0,0)
+update t
+	set t.suppid = s.suppid,
+		 t.scirefno = s.scirefno,
+		 t.refno = s.refno,
+		 t.ArriveQty = s.TransferInQty,
+		 t.InspDeadLine = s.InspDeadLine,
+		 t.AddName = s.AddName,
+		 t.AddDate = s.AddDate
+from dbo.Air as t
+inner join (
+	select	a.*, b.InspDeadLine
+	from #tempTableAll a
+	left join #InspDeadLine b on a.PoId = b.PoId and a.Seq1 =b.Seq1 and a.Seq2 = b.Seq2
+	where a.fabricType='A'
+) s on t.poid = s.poid and t.seq1 = s.seq1 and t.seq2 = s.seq2 and t.receivingid = s.id 
+
+insert into dbo.Air([PoId], [SEQ1], [SEQ2], [SuppID], [SCIRefno], [Refno], [ReceivingID], [ArriveQty], [InspDeadLine], [AddName], [AddDate])
+output inserted.id as Id ,null as deID into @tempAir
+select s.PoId ,iif(len(s.Seq1) <= 2, s.Seq1 + ' ', s.Seq1), s.Seq2, s.SuppID, s.SCIRefno, s.Refno, s.Id, s.TransferInQty, s.InspDeadLine, s.AddName, s.AddDate
+from (
+	select	a.*, b.InspDeadLine
+	from #tempTableAll a
+	left join #InspDeadLine b on a.PoId = b.PoId and a.Seq1 =b.Seq1 and a.Seq2 = b.Seq2
+	where a.fabricType='A'
+) s
+where not exists (select 1 from dbo.Air t where t.poid = s.poid and t.seq1 = s.seq1 and t.seq2 = s.seq2 and t.receivingid = s.id)
+
+delete t
+output null as Id ,DELETED.id as deID into @tempAir
+from dbo.Air t
+where t.ReceivingID = @ID
+and not exists (select 1 from #tempTableAll s where t.poid = s.poid and t.seq1 = s.seq1 and t.seq2 = s.seq2 and t.receivingid = s.id and s.fabricType = 'A')
 
 --------------AIR_Laboratory
-RAISERROR('insert_Air_Fir_TnsfIn - Starts',0,0)
+RAISERROR('insert_Air_Fir_TnsfIn - AIR_Laboratory',0,0)
 Merge dbo.AIR_Laboratory as t
 using( 
 select * from dbo.air where id in (select id from @tempAir ) 
@@ -234,10 +244,10 @@ values(s.id,s.poid,s.seq1,s.seq2,s.InspDeadline);
 delete dbo.AIR_Laboratory where id in  (select deID from @tempAir where id is null)
 
 select ID,deID from @tempAir 
---------------FIR_Shadebone 
-RAISERROR('insert_Air_Fir_TnsfIn - Starts',0,0)
 
---FabricType = F�~����H�U�q��
+--------------FIR_Shadebone 
+RAISERROR('insert_Air_Fir_TnsfIn - FIR_Shadebone',0,0)
+
 IF EXISTS(
 SELECT 1 
 FROM TransferIn_Detail r
