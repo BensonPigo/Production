@@ -14,21 +14,31 @@ BEGIN
 	-- interfering with SELECT statements.
 	SET NOCOUNT ON;
 
-	select wd.OrderID,wd.SizeCode,wd.Article,wp.PatternPanel,wd.WorkOrderUkey,
-		cutqty= iif(sum(cod.Layer*ws.Qty)>wd.Qty,wd.Qty,sum(cod.Layer*ws.Qty)),
-		o.MDivisionid,
-		TotalCutQty=sum(cod.Layer*ws.qty)
+	select distinct o.ID,  o.MDivisionid
+	into #tmpPOID 
+	from CuttingOutput_Detail cd WITH (NOLOCK)
+	inner join Orders o with (nolock) on cd.CuttingID = o.POID
+	where cd.id = @id
+
+	select	wd.OrderID, 
+			wd.SizeCode, 
+			wd.Article, 
+			wp.PatternPanel, 
+			wd.WorkOrderUkey, 
+			cutqty = iif(sum(cod.Layer * ws.Qty) > wd.Qty, wd.Qty, sum(cod.Layer * ws.Qty)), 
+			o.MDivisionid, 
+			TotalCutQty = sum(cod.Layer * ws.qty) 
 	into #CutQtytmp1
-	from WorkOrder_Distribute wd WITH (NOLOCK)
+	from #tmpPOID o with (nolock)
+	inner join WorkOrder_Distribute wd WITH (NOLOCK) on o.id = wd.OrderID		
 	inner join WorkOrder_PatternPanel wp WITH (NOLOCK) on wp.WorkOrderUkey = wd.WorkOrderUkey
 	inner join WorkOrder_SizeRatio ws WITH (NOLOCK) on ws.WorkOrderUkey = wd.WorkOrderUkey and ws.SizeCode = wd.SizeCode
 	inner join CuttingOutput_Detail cod on cod.WorkOrderUkey = wd.WorkOrderUkey
-	inner join CuttingOutput co WITH (NOLOCK) on co.id = cod.id and co.Status <> 'New'
-	inner join orders o WITH (NOLOCK) on o.id = wd.OrderID
-	where ((co.cdate <= @Cdate and @type=0) or (co.cdate < @Cdate and @type=1) or @type = 2)
-	and exists (select 1 from CuttingOutput_Detail WITH (NOLOCK) where CuttingOutput_Detail.ID = @ID and CuttingID = o.poid)
+	inner join CuttingOutput co WITH (NOLOCK) on co.id = cod.id
+	where	((@type=0 and co.cdate <= @Cdate) or (@type=1 and co.cdate < @Cdate) or @type = 2) and
+			co.Status <> 'New'
 	group by wd.OrderID,wd.SizeCode,wd.Article,wp.PatternPanel,o.MDivisionid,wd.Qty,wd.WorkOrderUkey
-	OPTION(RECOMPILE)
+
 	------------------
 	select * ,AccuCutQty=sum(cutqty) over(partition by WorkOrderUkey,patternpanel,sizecode order by WorkOrderUkey,orderid)
 		,Rowid=ROW_NUMBER() over(partition by WorkOrderUkey,patternpanel,sizecode order by WorkOrderUkey,orderid)
@@ -46,4 +56,6 @@ BEGIN
 	select OrderID,SizeCode,Article,PatternPanel,MDivisionid,[cutqty] = sum(cQty)
 	from #tmp2_1
 	group by OrderID,SizeCode,Article,PatternPanel,MDivisionid
+
+	drop table #CutQtytmp1, #CutQtytmp2, #Lagtmp, #tmp2_1
 END
