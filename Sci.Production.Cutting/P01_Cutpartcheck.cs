@@ -35,15 +35,20 @@ namespace Sci.Production.Cutting
         {
             #region CUTTING_P01_CutPartsCheck  [Prd Qty]數量計算
             string sql = string.Empty, sql2 = string.Empty;
-            if (this._WorkType == "1")
+            if (this._WorkType == "1" || this._WorkType == "2")
             {
                 sql = string.Format(
                     @";with a as (
-	                    select a.CuttingSP,b.ID,b.Article,b.SizeCode
-                           ,( select sum(OQ.qty)
-		                    from order_Qty OQ WITH (NOLOCK) 
-		                    where OQ.ID=b.ID and OQ.Article=b.Article and OQ.SizeCode=b.SizeCode ) Qty
-                            ,c.ColorID,c.PatternPanel
+	                    select  a.CuttingSP
+                                ,b.ID
+                                ,b.Article
+                                ,b.SizeCode
+                                ,( select sum(OQ.qty)
+		                            from order_Qty OQ WITH (NOLOCK) 
+		                            where OQ.ID=b.ID and OQ.Article=b.Article and OQ.SizeCode=b.SizeCode ) Qty
+                                ,c.ColorID
+                                ,c.PatternPanel
+                                ,[IsCancel] = Cast(iif(a.Junk = 1 and a.NeedProduction = 0, 1, 0) as bit)
 	                    from Orders a WITH (NOLOCK) 
 	                    inner join order_Qty b WITH (NOLOCK) on a.id = b.id
 	                    inner join Order_ColorCombo c WITH (NOLOCK) on c.id = a.POID and c.Article = b.Article 
@@ -52,38 +57,21 @@ namespace Sci.Production.Cutting
 	                    where a.cuttingsp = '{0}'
                     ) ", this._cutid);
                 sql2 = string.Format(
-                    @"Select x.poid,y.ID,y.Article,y.SizeCode
-                                           ,( select sum(OQ.qty)
-		                                    from order_Qty OQ WITH (NOLOCK) 
-		                                    where OQ.ID=y.ID and OQ.Article=y.Article and OQ.SizeCode=y.SizeCode ) QTY
-                                            ,'' as Colorid,'=' as Patternpanel,null as cutqty,null as Variance 
-	                                    from (Select id,POID from Orders z WITH (NOLOCK) where z.cuttingsp = '{0}') as x,order_Qty y 
-	                                    where y.id = x.id", this._cutid);
-            }
-            else if (this._WorkType == "2")
-            {
-                sql = string.Format(
-                    @"with a as (
-	                    select a.CuttingSP,b.ID,b.Article,b.SizeCode
-                            ,( select sum(OQ.qty)
-		                    from order_Qty OQ WITH (NOLOCK) 
-		                    where OQ.ID=b.ID and OQ.Article=b.Article and OQ.SizeCode=b.SizeCode ) Qty
-                            ,c.ColorID,c.PatternPanel
-	                    from Orders a WITH (NOLOCK) 
-	                    inner join order_Qty b WITH (NOLOCK) on a.id = b.id
-	                    inner join Order_ColorCombo c WITH (NOLOCK) on c.id = a.POID and c.Article = b.Article 
-                            and c.FabricCode is not null and c.FabricCode != ''
-                            and c.FabricPanelCode in (select distinct FabricPanelCode from Order_EachCons WITH (NOLOCK) WHERE ID='{0}' and CuttingPiece = 0)  --排除外裁
-	                    where a.cuttingsp = '{0}'
-                    )  ", this._cutid);
-                sql2 = string.Format(
-                    @"Select x.poid,y.ID,y.Article,y.SizeCode
-                                            ,( select sum(OQ.qty)
-		                                    from order_Qty OQ WITH (NOLOCK) 
-		                                    where OQ.ID=y.ID and OQ.Article=y.Article and OQ.SizeCode=y.SizeCode ) QTY
-                                            ,'' as Colorid,'=' as Patternpanel,null as cutqty,null as Variance 
-	                                    from (Select id,POID from Orders z WITH (NOLOCK) where z.cuttingsp = '{0}') as x,order_Qty y 
-	                                    where y.id = x.id", this._cutid);
+                    @"Select    x.poid
+                                ,y.ID
+                                ,y.Article
+                                ,y.SizeCode
+                                ,( select sum(OQ.qty)
+		                             from order_Qty OQ WITH (NOLOCK) 
+		                             where OQ.ID=y.ID and OQ.Article=y.Article and OQ.SizeCode=y.SizeCode ) QTY
+                                ,'' as Colorid
+                                ,'=' as Patternpanel
+                                ,[IsCancel] = Cast(iif(x.Junk = 1 and x.NeedProduction = 0, 1, 0) as bit)
+                                ,null as cutqty
+                                ,null as Variance 
+	                  from Orders x with (nolock)
+                      inner join order_Qty y with (nolock) on  y.id = x.id
+                      where x.cuttingsp = '{0}'  ", this._cutid);
             }
             #endregion
             if (sql != string.Empty && sql2 != string.Empty)
@@ -116,7 +104,14 @@ namespace Sci.Production.Cutting
         order by c.id,article,z.seq,PatternPanel",
             this._cutid,
             sql2);
-                DualResult dr = DBProxy.Current.Select(null, sqlcmd, out DataTable gridtb);
+
+                DualResult result = DBProxy.Current.Select(null, sqlcmd, out DataTable gridtb);
+
+                if (!result)
+                {
+                    this.ShowErr(result);
+                    return;
+                }
 
                 for (int i = gridtb.Rows.Count - 1; i > 0; i--)
                 {
@@ -162,12 +157,19 @@ namespace Sci.Production.Cutting
                     return;
                 }
 
-                int index = e.RowIndex;
-                for (int i = 0; i < e.RowCount; i++)
+                foreach (DataGridViewRow gridDr in this.gridCutpartcheck.Rows)
                 {
-                    DataGridViewRow dr = this.gridCutpartcheck.Rows[index];
-                    dr.DefaultCellStyle.BackColor = dr.Cells[4].Value.ToString().EqualString("=") ? Color.Pink : backDefaultColor;
-                    index++;
+                    DataRow dr = this.gridCutpartcheck.GetDataRow(gridDr.Index);
+
+                    gridDr.DefaultCellStyle.BackColor = dr["Patternpanel"].ToString().EqualString("=") ? Color.Pink : backDefaultColor;
+                    if (MyUtility.Convert.GetBool(dr["IsCancel"]))
+                    {
+                        gridDr.DefaultCellStyle.ForeColor = Color.Gray;
+                    }
+                    else
+                    {
+                        gridDr.DefaultCellStyle.ForeColor = Color.Black;
+                    }
                 }
             };
             #endregion
