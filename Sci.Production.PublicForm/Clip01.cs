@@ -362,7 +362,7 @@ namespace Sci.Production.PublicForm
                 string saveFilePath = dir;
 
                 // call API上傳檔案到Trade
-                lock (FileDownload_UpData.UploadFile("http://misap.sportscity.com.tw:16888/api/FileUpload/PostFile", saveFilePath, newFileName, it.LOCALFILE))
+                lock (FileDownload_UpData.UploadFile("http://pmsap.sportscity.com.tw:16888/api/FileUpload/PostFile", saveFilePath, newFileName, it.LOCALFILE))
                 {
                 }
 
