@@ -199,7 +199,7 @@ namespace Sci.Production.Quality
             foreach (DataRow dataRow in dt.Rows)
             {
                 string fileName = dataRow["FileName"].ToString() + Path.GetExtension(dataRow["SourceFile"].ToString());
-                lock (FileDownload_UpData.DownloadFileAsync("http://misap.sportscity.com.tw:16888/api/FileDownload/GetFile", filePath + "\\" + DateTime.Now.ToString("yyyyMM"), fileName, saveFilePath))
+                lock (FileDownload_UpData.DownloadFileAsync("http://pmsap.sportscity.com.tw:16888/api/FileDownload/GetFile", filePath + "\\" + DateTime.Now.ToString("yyyyMM"), fileName, saveFilePath))
                 {
                 }
             }

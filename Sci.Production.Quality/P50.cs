@@ -708,7 +708,7 @@ namespace Sci.Production.Quality
             foreach (DataRow dataRow in dt.Rows)
             {
                 string fileName = dataRow["FileName"].ToString() + Path.GetExtension(dataRow["SourceFile"].ToString());
-                lock (FileDownload_UpData.DownloadFileAsync("http://misap.sportscity.com.tw:16888/api/FileDownload/GetFile", filePath + "\\" + DateTime.Now.ToString("yyyyMM"), fileName, saveFilePath))
+                lock (FileDownload_UpData.DownloadFileAsync("http://pmsap.sportscity.com.tw:16888/api/FileDownload/GetFile", filePath + "\\" + DateTime.Now.ToString("yyyyMM"), fileName, saveFilePath))
                 {
                 }
             }
@@ -788,7 +788,7 @@ namespace Sci.Production.Quality
             row["updateCol_Where"] = updateCol;
             #endregion
 
-            using (var dlg = new PublicForm.Clip("UASentReport", id, true, row, apiUrlFile: "http://misap.sportscity.com.tw:16888/api/FileDelete/RemoveFile"))
+            using (var dlg = new PublicForm.Clip("UASentReport", id, true, row, apiUrlFile: "http://pmsap.sportscity.com.tw:16888/api/FileDelete/RemoveFile"))
             {
                 dlg.ShowDialog();
 
@@ -1382,7 +1382,7 @@ namespace Sci.Production.Quality
                 count++;
 
                 // call API上傳檔案到Trade
-                lock (FileDownload_UpData.UploadFile("http://misap.sportscity.com.tw:16888/api/FileUpload/PostFile", saveFilePath, newFileName, ofdFileName.FileName))
+                lock (FileDownload_UpData.UploadFile("http://pmsap.sportscity.com.tw:16888/api/FileUpload/PostFile", saveFilePath, newFileName, ofdFileName.FileName))
                 {
                 }
             }

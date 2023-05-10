@@ -405,7 +405,7 @@ Update ExportRefnoSentReport SET  AWBNO = @updateData, EditName = @UserID ,EditD
             foreach (DataRow dataRow in dt.Rows)
             {
                 string fileName = dataRow["FileName"].ToString() + Path.GetExtension(dataRow["SourceFile"].ToString());
-                lock (FileDownload_UpData.DownloadFileAsync("http://misap.sportscity.com.tw:16888/api/FileDownload/GetFile", filePath + "\\" + DateTime.Now.ToString("yyyyMM"), fileName, saveFilePath))
+                lock (FileDownload_UpData.DownloadFileAsync("http://pmsap.sportscity.com.tw:16888/api/FileDownload/GetFile", filePath + "\\" + DateTime.Now.ToString("yyyyMM"), fileName, saveFilePath))
                 {
                 }
             }
@@ -438,7 +438,7 @@ Update ExportRefnoSentReport SET  AWBNO = @updateData, EditName = @UserID ,EditD
             row["BasicDocumentName"] = this.drBasic["DocumentName"];
             #endregion
 
-            using (var dlg = new PublicForm.Clip(tableName, id, true, row, apiUrlFile: "http://misap.sportscity.com.tw:16888/api/FileDelete/RemoveFile"))
+            using (var dlg = new PublicForm.Clip(tableName, id, true, row, apiUrlFile: "http://pmsap.sportscity.com.tw:16888/api/FileDelete/RemoveFile"))
             {
                 dlg.ShowDialog();
 
@@ -963,7 +963,7 @@ Update ExportRefnoSentReport SET  {(isUpdateAwbNo ? "AWBNO" : "ReportDate")} = @
                 count++;
 
                 // call API上傳檔案到Trade
-                lock (FileDownload_UpData.UploadFile("http://misap.sportscity.com.tw:16888/api/FileUpload/PostFile", saveFilePath, newFileName, ofdFileName.FileName))
+                lock (FileDownload_UpData.UploadFile("http://pmsap.sportscity.com.tw:16888/api/FileUpload/PostFile", saveFilePath, newFileName, ofdFileName.FileName))
                 {
                 }
             }
