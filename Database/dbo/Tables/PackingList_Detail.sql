@@ -180,6 +180,9 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'CFA需要�
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'除溼室收箱日', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'PackingList_Detail', @level2type = N'COLUMN', @level2name = N'DRYReceiveDate';
 GO
+CREATE NONCLUSTERED INDEX [IDX_PackingList_Detail_ID]
+    ON [dbo].[PackingList_Detail]([ID] ASC);
+GO
 CREATE NONCLUSTERED INDEX [NonClusteredIndex-forOrderID]
     ON [dbo].[PackingList_Detail]([OrderID] ASC);
 GO
