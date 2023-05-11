@@ -157,8 +157,7 @@ namespace Sci.Production.Quality
                 [Inspector] =p.Name,
                 [StartingTime] = siidata.MaxAddDate,
                 [Remark] = si.Remark,
-                [InspectedTime] = DATEDIFF(second,siidata.minAddDate,isnull(isnull(MinEditDate,MaxEditDate),isnull(MaxAddDate,isnull(MinEditDate,MaxEditDate)))),
-                [OrderType] = sty.OrderTypeID 
+                [InspectedTime] = DATEDIFF(second,siidata.minAddDate,isnull(isnull(MinEditDate,MaxEditDate),isnull(MaxAddDate,isnull(MinEditDate,MaxEditDate))))
                 from SpreadingInspection s 
                 left join SpreadingInspection_InsCutRef si with(nolock) on s.ID = si.ID
                 left join SpreadingInspection_OriCutRef so with(nolock) on s.id = so.id
@@ -302,7 +301,7 @@ namespace Sci.Production.Quality
                 Group by pms_wo.FactoryID,oui.[ouiCutRef],si.CutRef,soc.[count],sic.[count],RFT.val,sii.Shift,SP.val,sty.StyleID,m.MarkerNo,pms_f.[Description]
                 ,color.val,size.val,si.[SpreadingNoID],FabricRoll.val,ip_mc.Result,ip_hf.Result,ip_ws.Result,ip_sw.Result,ip_mt.Result
                 ,ip_fc.Result,ip_ip.Result,ip_fd.Result,ip_fh.Result,ip_fr.Result,siifc.count,siidata.MaxAddDate,siidata.MinEditDate
-                ,si.Remark,siidata.MaxEditDate,siidata.MinAddDate,si.ukey,p.Name,sty.OrderTypeID 
+                ,si.Remark,siidata.MaxEditDate,siidata.MinAddDate,si.ukey,p.Name
                 ";
             }
             else if (this.radioDetail.Checked)
@@ -337,8 +336,7 @@ namespace Sci.Production.Quality
                 [LastInspectionDate] = iif(sii.Result = '',null, IsNull(sii.EditDate, sii.AddDate)),
                 [Inspector] =iif(sii.Result = '',null,p.[Name]),
                 [StartingTime] = iif(sii.Result = '',null,st.val),
-                [Remark] = si.Remark,
-                [OrderType] = sty.OrderTypeID 
+                [Remark] = si.Remark
                 from SpreadingInspection s 
                 left join SpreadingInspection_InsCutRef si with(nolock) on s.ID = si.ID
                 left join SpreadingInspection_InsCutRef_Inspection sii with(nolock) on si.Ukey = sii.SpreadingInspectionInsCutRefUkey 
