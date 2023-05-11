@@ -5506,4 +5506,250 @@ from Trade_To_Pms.dbo.BomType a
 left join Production.dbo.BomType b on a.ID = b.ID
 where b.ID is null
 
+
+/*MaterialDocument */
+----------------------Delete
+Delete [Production].[dbo].[MaterialDocument]
+from [Production].[dbo].[MaterialDocument]as a
+left join [Trade_To_Pms].[dbo].[MaterialDocument]  as b
+on a.DocumentName = b.DocumentName and a.BrandID = b.BrandID
+where b.DocumentName is null and b.BrandID is null
+---------------------------UPDATE
+UPDATE a
+SET 
+--a.DocumentName
+--,a.BrandID
+a.Description = b.Description
+,a.FabricType = b.FabricType
+,a.Target = b.Target
+,a.FileRule = b.FileRule
+,a.Expiration = b.Expiration
+,a.Filepath = b.Filepath
+,a.ActiveSeason = b.ActiveSeason
+,a.EndSeason = b.EndSeason
+,a.Responsibility = b.Responsibility
+,a.Category = b.Category
+,a.ExcludeProgram = b.ExcludeProgram
+,a.ExcludeReplace = b.ExcludeReplace
+,a.ExcludeStock = b.ExcludeStock
+,a.MtlTypeClude = b.MtlTypeClude
+,a.SupplierClude = b.SupplierClude
+,a.Junk = b.Junk
+,a.AddDate = b.AddDate
+,a.AddName = b.AddName
+,a.EditDate = b.EditDate
+,a.Editname = b.Editname
+from [Production].[dbo].[MaterialDocument] as a with(nolock)
+inner join [Trade_To_Pms].[dbo].[MaterialDocument]  as b with(nolock) on a.DocumentName = b.DocumentName and a.BrandID = b.BrandID
+-------------------------- INSERT INTO 
+INSERT INTO [Production].[dbo].[MaterialDocument]
+ (
+	DocumentName
+	,BrandID
+	,Description
+	,FabricType
+	,Target
+	,FileRule
+	,Expiration
+	,Filepath
+	,ActiveSeason
+	,EndSeason
+	,Responsibility
+	,Category
+	,ExcludeProgram
+	,ExcludeReplace
+	,ExcludeStock
+	,MtlTypeClude
+	,SupplierClude
+	,Junk
+	,AddDate
+	,AddName
+	,EditDate
+	,Editname
+)
+SELECT
+	DocumentName
+	,BrandID
+	,Description
+	,FabricType
+	,Target
+	,FileRule
+	,Expiration
+	,Filepath
+	,ActiveSeason
+	,EndSeason
+	,Responsibility
+	,Category
+	,ExcludeProgram
+	,ExcludeReplace
+	,ExcludeStock
+	,MtlTypeClude
+	,SupplierClude
+	,Junk
+	,AddDate
+	,AddName
+	,EditDate
+	,Editname
+from [Trade_To_Pms].[dbo].[MaterialDocument] as b WITH (NOLOCK)
+where not exists(select DocumentName,BrandID from [Production].[dbo].[MaterialDocument] as a WITH (NOLOCK) where a.DocumentName = b.DocumentName and a.BrandID = b.BrandID)
+
+
+/*MaterialDocument_MtlType */
+----------------------Delete
+Delete [Production].[dbo].MaterialDocument_MtlType
+from [Production].[dbo].MaterialDocument_MtlType as a with(nolock)
+left join [Trade_To_Pms].[dbo].MaterialDocument_MtlType  as b with(nolock)
+on a.DocumentName = b.DocumentName and a.BrandID = b.BrandID and a.MtltypeId = b.MtltypeId
+where b.DocumentName is null
+	and b.BrandID is null 
+	and b.MtltypeId is null
+	and exists(select 1 from [Trade_To_Pms].[dbo].[MaterialDocument] t where t.DocumentName = b.DocumentName  and t.BrandID = b.BrandID) 
+
+
+-------------------------- INSERT INTO
+INSERT INTO [Production].[dbo].MaterialDocument_MtlType
+ (
+	DocumentName
+	,BrandID
+	,MtltypeId
+)
+SELECT
+	DocumentName
+	,BrandID
+	,MtltypeId
+from [Trade_To_Pms].[dbo].[MaterialDocument_MtlType] as b WITH (NOLOCK)
+where not exists(select DocumentName,BrandID,MtltypeId from [Production].[dbo].[MaterialDocument_MtlType] as a WITH (NOLOCK) where a.DocumentName = b.DocumentName and a.BrandID = b.BrandID and a.MtltypeId = b.MtltypeId)
+
+/*MaterialDocument_Responsbility */
+----------------------Delete
+Delete [Production].[dbo].MaterialDocument_Responsbility
+from [Production].[dbo].MaterialDocument_Responsbility as a with(nolock)
+left join [Trade_To_Pms].[dbo].MaterialDocument_Responsbility  as b with(nolock) on a.DocumentName = b.DocumentName and a.BrandID = b.BrandID and a.SuppID = b.SuppID
+where 
+b.DocumentName is null 
+and b.BrandID is null
+and b.SuppID is null
+and exists(select 1 from [Trade_To_Pms].[dbo].[MaterialDocument] t where t.DocumentName = b.DocumentName  and t.BrandID = b.BrandID) 
+
+---------------------------UPDATE
+UPDATE a
+SET 
+--DocumentName
+--BrandID
+--SuppID
+a.Responsibility = b.Responsibility
+from [Production].[dbo].MaterialDocument_Responsbility as a with(nolock)
+inner join [Trade_To_Pms].[dbo].MaterialDocument_Responsbility  as b with(nolock) on a.DocumentName = b.DocumentName and a.BrandID = b.BrandID
+-------------------------- INSERT INTO 
+INSERT INTO [Production].[dbo].MaterialDocument_Responsbility
+ (
+	DocumentName
+	,BrandID
+	,SuppID
+	,Responsibility
+)
+SELECT
+	DocumentName
+	,BrandID
+	,SuppID
+	,Responsibility
+from [Trade_To_Pms].[dbo].MaterialDocument_Responsbility as b WITH (NOLOCK)
+where not exists(select DocumentName,BrandID from [Production].[dbo].MaterialDocument_Responsbility as a WITH (NOLOCK) where a.DocumentName = b.DocumentName and a.BrandID = b.BrandID and a.SuppID = b.SuppID)
+
+
+/*MaterialDocument_Supplier*/
+----------------------Delete
+Delete [Production].[dbo].MaterialDocument_Supplier
+from [Production].[dbo].MaterialDocument_Supplier as a left join [Trade_To_Pms].[dbo].MaterialDocument_Supplier  as b
+on a.DocumentName = b.DocumentName and a.BrandID = b.BrandID and a.SuppID = b.SuppID
+where 
+b.DocumentName is null 
+and b.BrandID is null
+and b.SuppID is null
+and exists(select 1 from [Trade_To_Pms].[dbo].[MaterialDocument] t where t.DocumentName = b.DocumentName  and t.BrandID = b.BrandID) 
+-------------------------- INSERT INTO 
+INSERT INTO [Production].[dbo].MaterialDocument_Supplier
+ (
+	DocumentName
+	,BrandID
+	,SuppID
+)
+SELECT
+	DocumentName
+	,BrandID
+	,SuppID
+from [Trade_To_Pms].[dbo].MaterialDocument_Supplier as b WITH (NOLOCK)
+where not exists(select DocumentName,BrandID from [Production].[dbo].MaterialDocument_Supplier as a WITH (NOLOCK) where a.DocumentName = b.DocumentName and a.BrandID = b.BrandID and a.SuppID = b.SuppID)
+
+
+/*MaterialDocument_WeaveType*/
+----------------------Delete
+Delete [Production].[dbo].MaterialDocument_WeaveType
+from [Production].[dbo].MaterialDocument_WeaveType as a left join [Trade_To_Pms].[dbo].MaterialDocument_WeaveType  as b
+on a.DocumentName = b.DocumentName and a.BrandID = b.BrandID and a.WeaveTypeId = b.WeaveTypeId
+where 
+b.DocumentName is null 
+and b.BrandID is null
+and b.WeaveTypeId is null
+and exists(select 1 from [Trade_To_Pms].[dbo].[MaterialDocument] t where t.DocumentName = b.DocumentName  and t.BrandID = b.BrandID) 
+-------------------------- INSERT INTO 
+INSERT INTO [Production].[dbo].MaterialDocument_WeaveType
+ (
+	DocumentName
+	,BrandID
+	,WeaveTypeId
+)
+SELECT
+	DocumentName
+	,BrandID
+	,WeaveTypeId
+from [Trade_To_Pms].[dbo].MaterialDocument_WeaveType as b WITH (NOLOCK)
+where not exists(select DocumentName,BrandID from [Production].[dbo].MaterialDocument_WeaveType as a WITH (NOLOCK) where a.DocumentName = b.DocumentName and a.BrandID = b.BrandID and a.WeaveTypeId = b.WeaveTypeId)
+
+
+/*BrandRelation*/
+----------------------Delete
+Delete [Production].[dbo].BrandRelation
+from [Production].[dbo].BrandRelation as a left join [Trade_To_Pms].[dbo].BrandRelation  as b
+on a.SuppGroup = b.SuppGroup and a.BrandID = b.BrandID and a.SuppID = b.SuppID
+where 
+b.SuppGroup is null 
+and b.BrandID is null
+and b.SuppID is null
+
+---------------------------UPDATE 
+UPDATE a
+SET 
+--BrandID
+--SuppGroup
+--SuppID
+a.AddDate = b.AddDate
+,a.AddName = b.AddName
+,a.EditDate = b.EditDate
+,a.Editname = b.Editname
+from [Production].[dbo].BrandRelation as a with(nolock)
+inner join [Trade_To_Pms].[dbo].BrandRelation  as b with(nolock) on a.SuppGroup = b.SuppGroup and a.BrandID = b.BrandID and a.SuppID = b.SuppID
+-------------------------- INSERT INTO 
+INSERT INTO [Production].[dbo].BrandRelation
+ (
+	 BrandID
+	,SuppGroup
+	,SuppID
+	,AddDate
+	,AddName
+	,EditDate
+	,Editname
+)
+SELECT
+	 BrandID
+	,SuppGroup
+	,SuppID
+	,AddDate
+	,AddName
+	,EditDate
+	,Editname
+from [Trade_To_Pms].[dbo].BrandRelation as b WITH (NOLOCK)
+where not exists(select BrandID,SuppGroup,SuppID from [Production].[dbo].BrandRelation as a WITH (NOLOCK) where a.SuppGroup = b.SuppGroup and a.BrandID = b.BrandID and a.SuppID = b.SuppID)
+
+
 END

@@ -47,15 +47,16 @@ FROM Production.dbo.SentReport
 WHERE EditDate >= @DateStart
 ;
 
-SELECT [TestDocFactoryGroup]
-      ,[Refno]
-      ,[SuppID]
+SELECT [SuppID]
+	  ,[TestDocFactoryGroup]
+      ,[BrandRefno]      
       ,[ColorID]
-      ,[SeasonSCIID]
+      ,[SeasonID]
       ,[Period]
       ,[FirstDyelot]
       ,[EditName]
       ,[EditDate]
+	  ,[FTYReceivedReport]
 INTO FirstDyelot
 FROM Production.dbo.FirstDyelot
 WHERE EditDate >= @DateStart

@@ -224,7 +224,6 @@
     <Compile Include="B12_Layout.designer.cs">
       <DependentUpon>B12_Layout.cs</DependentUpon>
     </Compile>
-    <Compile Include="DualDisposableResult.cs" />
     <Compile Include="Extension.cs" />
     <Compile Include="P01.cs">
       <SubType>Form</SubType>
@@ -857,9 +856,6 @@
     </Compile>
     <Compile Include="R21.Designer.cs">
       <DependentUpon>R21.cs</DependentUpon>
-    </Compile>
-    <Compile Include="SCIControl.cs">
-      <SubType>Code</SubType>
     </Compile>
     <Compile Include="SMNoticePrg.cs">
       <SubType>Code</SubType>
