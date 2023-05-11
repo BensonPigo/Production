@@ -145,6 +145,8 @@ select [Category] = (CASE WHEN fe.Type=1 THEN '3rd Country'
 	 , [Unit] = fed.UnitId
 	 , [CustomsCode] = vdd.NLCode
 	 , [HSCode] = vdd.HSCode
+	 , [Customs Qty] = ROUND(vdd.Qty,2)
+	 , [Customs Unit] = vdd.UnitID
 	 , [ContractNo] = vd.VNContractID
 	 , Shipper as [Shipper]
 	 , Consignee as [Consignee]
@@ -173,11 +175,12 @@ LEFT JOIN VNImportDeclaration vd WITH(NOLOCK) ON
 )
 AND vd.IsFtyExport = 1
 outer apply(
-	select 	distinct vddd.NLCode,vdd.HSCode
+	select 	vddd.NLCode,vdd.HSCode,vdd.UnitID,Qty = sum(vddd.Qty)
 	from dbo.VNImportDeclaration_Detail vdd
 	inner join VNImportDeclaration_Detail_Detail vddd on vdd.ID = vddd.ID and vdd.NLCode = vddd.NLCode
 	where vdd.id = vd.ID
 	and vddd.Refno = fed.Refno 
+	group by vddd.NLCode,vdd.HSCode,vdd.UnitID
 ) vdd
 Outer APPLY (
 	select Qty = sum(s.ShipQty + s.ShipFOC)
@@ -237,6 +240,8 @@ select distinct
 	 , [Unit] =  Unit.value
 	 , [CustomsCode]
 	 , [HSCode]
+	 , [Customs Qty]
+	 , [Customs Unit]
 	 , [ContractNo] 
 	 , [Shipper]
 	 , [Consignee]
@@ -329,6 +334,8 @@ select distinct fed.ID
 	 , t.[Customs Declare#]
 	 , t.[CustomsCode] 
 	 , t.[HSCode]
+	 , t.[Customs Qty]
+	 , t.[Customs Unit]
 	 , t.[ContractNo]
 	 , fed.UnitID
 	 , fed.Qty

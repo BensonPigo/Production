@@ -50,6 +50,9 @@
 	[Sample Group] [nvarchar](50) NULL,
 	[Order Reason] [nvarchar](500) NULL,
 	[Ukey] [bigint] IDENTITY(1,1) NOT NULL,
+	[BuyBackReason] varchar (20) NOT NULL CONSTRAINT [DF_P_LoadingProductionOutput_BuyBackReason] DEFAULT(('')),
+	[LastProductionDate] date  NULL ,
+	[CRDDate] date  NULL 
  CONSTRAINT [PK_P_LoadingProductionOutput] PRIMARY KEY CLUSTERED 
 (
 	[Ukey] ASC,
@@ -58,3 +61,20 @@
 ) ON [PRIMARY]
 
 GO
+	EXEC sys.sp_addextendedproperty 
+	@level0type=N'SCHEMA',@level0name=N'dbo',
+	@level1type=N'TABLE',@level1name=N'P_LoadingProductionOutput', 
+	@level2type=N'COLUMN',@level2name=N'BuyBackReason' ,
+	@name=N'MS_Description', @value=N'BuyBack Reason' 
+go
+	EXEC sys.sp_addextendedproperty 
+	@level0type=N'SCHEMA',@level0name=N'dbo',
+	@level1type=N'TABLE',@level1name=N'P_LoadingProductionOutput', 
+	@level2type=N'COLUMN',@level2name=N'LastProductionDate' ,
+	@name=N'MS_Description', @value=N'LastProductionDate' 
+go
+	EXEC sys.sp_addextendedproperty 
+	@level0type=N'SCHEMA',@level0name=N'dbo',
+	@level1type=N'TABLE',@level1name=N'P_LoadingProductionOutput', 
+	@level2type=N'COLUMN',@level2name=N'CRDDate' ,
+	@name=N'MS_Description', @value=N'CRD date.'
