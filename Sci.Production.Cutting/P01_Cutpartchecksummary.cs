@@ -163,6 +163,16 @@ and o.junk = 0
                 string art = string.Empty;
                 foreach (DataGridViewRow dr in this.gridCutpartchecksummary.Rows)
                 {
+                    DataRow sourceDr = this.gridCutpartchecksummary.GetDataRow(dr.Index);
+                    if (MyUtility.Convert.GetBool(sourceDr["IsCancel"]))
+                    {
+                        dr.DefaultCellStyle.ForeColor = Color.Gray;
+                    }
+                    else
+                    {
+                        dr.DefaultCellStyle.ForeColor = Color.Black;
+                    }
+
                     if (index == 0)
                     {
                         art = dr.Cells[1].Value.ToString();
@@ -178,16 +188,6 @@ and o.junk = 0
                     else
                     {
                         this.gridCutpartchecksummary.Rows[index - 1].DefaultCellStyle.BackColor = backDefaultColor;
-                    }
-
-                    DataRow sourceDr = this.gridCutpartchecksummary.GetDataRow(dr.Index);
-                    if (MyUtility.Convert.GetBool(sourceDr["IsCancel"]))
-                    {
-                        dr.DefaultCellStyle.ForeColor = Color.Gray;
-                    }
-                    else
-                    {
-                        dr.DefaultCellStyle.ForeColor = Color.Black;
                     }
 
                     index++;
