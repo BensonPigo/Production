@@ -4,7 +4,7 @@
 -- Create date: 20160903
 -- Description:	<Description,,>
 -- =============================================
-Create PROCEDURE imp_Style 
+alter PROCEDURE imp_Style 
 	-- Add the parameters for the stored procedure here
 
 AS
@@ -2479,6 +2479,80 @@ from Trade_To_Pms.dbo.Style_CustOrderSize a
 left join Production.dbo.Style_CustOrderSize b on b.StyleUkey = a.StyleUkey
 where b.StyleUkey is null
 
+------------Style_UnitPrice
+----------------------刪除主TABLE多的資料
+select distinct * into #tmp_Style_UnitPrice from Trade_To_Pms.dbo.Style_UnitPrice 
+
+
+RAISERROR('imp_Style - Starts',0,0)
+Delete Production.dbo.Style_UnitPrice
+from Production.dbo.Style_UnitPrice as a 
+INNER JOIN Trade_To_Pms.dbo.Style as t on a.StyleUkey=t.Ukey
+left join #tmp_Style_UnitPrice as b
+on a.Ukey = b.Ukey
+where b.Ukey is null
+
+UPDATE a
+   SET 
+	  [StyleUkey] = isnull(b.[StyleUkey],0)      
+      ,[CountryID] = isnull(b.[CountryID],'')
+      ,[CurrencyID] = ISNULL(b.[CurrencyID],'')
+      ,[PoPrice] = ISNULL(b.[PoPrice],0)
+      ,[QuotCost] = ISNULL(b.[QuotCost],0)
+      ,[CustCDID] = ISNULL(b.[CustCDID],'')
+      ,[DestPrice] = ISNULL(b.[DestPrice],0)
+      ,[OriginalPrice] = ISNULL(b.[OriginalPrice],0)
+      ,[AddName] = ISNULL(b.[AddName],'')
+      ,[AddDate] = b.[AddDate]
+      ,[EditName] = ISNULL(b.[EditName],'')
+      ,[EditDate] = b.[EditDate]
+      ,[StyleUkey_Old] = ISNULL(b.[StyleUkey_Old],'')
+      ,[COO] = ISNULL(b.[COO],'')
+      ,[FactoryID] = ISNULL(b.[FactoryID],'')
+from Production.dbo.Style_UnitPrice a
+inner join #tmp_Style_UnitPrice b on b.Ukey = a.Ukey
+
+INSERT INTO [dbo].[Style_UnitPrice]
+(	  
+      [StyleUkey]
+      ,[Ukey]
+      ,[CountryID]
+      ,[CurrencyID]
+      ,[PoPrice]
+      ,[QuotCost]
+      ,[CustCDID]
+      ,[DestPrice]
+      ,[OriginalPrice]
+      ,[AddName]
+      ,[AddDate]
+      ,[EditName]
+      ,[EditDate]
+      ,[StyleUkey_Old]
+      ,[COO]
+      ,[FactoryID]
+)
+select	  
+      isnull(a.[StyleUkey],0)
+      ,isnull(a.[Ukey],0)
+      ,isnull(a.[CountryID],'')
+      ,isnull(a.[CurrencyID],'')
+      ,isnull(a.[PoPrice],0)
+      ,isnull(a.[QuotCost],0)
+      ,isnull(a.[CustCDID],'')
+      ,isnull(a.[DestPrice],0)
+      ,isnull(a.[OriginalPrice],0)
+      ,isnull(a.[AddName],'')
+      ,a.[AddDate]
+      ,isnull(a.[EditName],'')
+      ,a.[EditDate]
+      ,isnull(a.[StyleUkey_Old],'')
+      ,isnull(a.[COO],'')
+      ,isnull(a.[FactoryID],'')
+from #tmp_Style_UnitPrice a
+left join Production.dbo.Style_UnitPrice b on b.Ukey = a.Ukey
+where b.Ukey is null
+
+drop table #tmp_Style_UnitPrice
 ------------Marker
 ----------------------刪除主TABLE多的資料
 RAISERROR('imp_Style - Starts',0,0)
