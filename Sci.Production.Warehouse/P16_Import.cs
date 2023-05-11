@@ -62,8 +62,7 @@ namespace Sci.Production.Warehouse
             #region -- 抓lack的資料 --
 
             // grid1
-            strSQLCmd.Append(string.Format(
-                @"
+            strSQLCmd.Append($@"
 select poid = rtrim(a.POID) 
 	   , b.seq1
 	   , b.seq2
@@ -71,17 +70,21 @@ select poid = rtrim(a.POID)
 	   , [description] = dbo.getMtlDesc(a.poid,b.seq1,b.seq2,2,0)
 	   , b.RequestQty
        , b.Remark
+       , psd.Refno
+       , [Color] = dbo.GetColorMultipleID_MtlType(psd.BrandID, isnull(psdsC.SpecValue ,''), Fabric.MtlTypeID, psd.SuppColor)
 from dbo.lack a WITH (NOLOCK) 
 inner join dbo.Lack_Detail b WITH (NOLOCK) on a.ID = b.ID
+INNER JOIN Po_Supp_Detail psd WITH (NOLOCK) on psd.ID = a.POID and psd.Seq1 = b.Seq1 and psd.Seq2 = b.Seq2
+INNER JOIN Fabric with(nolock) on Fabric.SCIRefno = psd.SCIRefno
+LEFT JOIN PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
 LEFT JOIN Orders o ON o.ID = a.POID
-where a.id = '{0}'
+where a.id = '{this.dr_master["requestid"]}'
 AND o.Category <> 'A';
-", this.dr_master["requestid"]));
+");
             strSQLCmd.Append(Environment.NewLine); // 換行
 
             // grid2
-            strSQLCmd.Append(string.Format(
-                @"
+            strSQLCmd.Append($@"
 select selected = 0
 	   , id = '' 
 	   , poid = rtrim(c.PoId) 
@@ -113,9 +116,9 @@ inner join dbo.ftyinventory c WITH (NOLOCK) on c.poid = b.POID
 											   and c.stocktype = 'B'
 left join PPICReason p with (nolock) on p.Type = 'FL' and p.ID = a.PPICReasonID
 LEFT JOIN Orders o ON o.ID=c.PoId
-Where a.id = '{0}' 
+Where a.id = '{this.dr_master["requestid"]}' 
 	  AND o.Category!='A'
-", this.dr_master["requestid"]));
+");
 
             // 判斷LACKING
             if (this.Type != "Lacking")

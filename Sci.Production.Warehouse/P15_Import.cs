@@ -58,8 +58,7 @@ namespace Sci.Production.Warehouse
             #region -- 抓lack的資料 --
 
             // grid1
-            strSQLCmd.Append(string.Format(
-                @"
+            strSQLCmd.Append($@"
 select  selected = 0
         , id = ''
         ,poid = rtrim(a.POID) 
@@ -81,17 +80,22 @@ select  selected = 0
 	   				  		and seq2 = c.seq2)
         ,c.lock
         ,[LackReason] = iif(b.PPICReasonID is null, '', CONCAT(b.PPICReasonID, '-', p.Description))
+        , psd.Refno
+        , [Color] = dbo.GetColorMultipleID_MtlType(psd.BrandID, isnull(psdsC.SpecValue ,''), Fabric.MtlTypeID, psd.SuppColor)
 from dbo.lack a WITH (NOLOCK) 
 inner join dbo.Lack_Detail b WITH (NOLOCK) on a.ID = b.ID
+INNER JOIN Po_Supp_Detail psd WITH (NOLOCK) on psd.ID = a.POID and psd.Seq1 = b.Seq1 and psd.Seq2 = b.Seq2
+INNER JOIN Fabric with(nolock) on Fabric.SCIRefno = psd.SCIRefno
+LEFT JOIN PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
 LEFT join dbo.ftyinventory c WITH (NOLOCK) on c.poid = a.POID 
 											   and c.seq1 = b.seq1 
 											   and c.seq2  = b.seq2 
 											   and c.stocktype = 'B'
 left join PPICReason p with (nolock) on p.Type = 'AL' and p.ID = b.PPICReasonID
 LEFT join Orders o ON o.ID=a.POID
-where a.id = '{0}' 
+where a.id = '{this.dr_master["requestid"]}' 
 and o.Category != 'A'
-", this.dr_master["requestid"]));
+");
             strSQLCmd.Append(Environment.NewLine); // 換行
 
            // string AA = strSQLCmd.ToString();
