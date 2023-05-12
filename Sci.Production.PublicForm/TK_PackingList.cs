@@ -141,6 +141,10 @@ namespace Sci.Production.PublicForm
             this.gridCartonList.Columns["CBM"].DefaultCellStyle.BackColor = Color.Pink;
 
             this.Query();
+
+            var dtA = (DataTable)this.bindingSourceAssignedCarton.DataSource;
+            var dtN = (DataTable)this.bindingSourceNotAssignCarton.DataSource;
+            this.btnEditSave.Enabled = (dtA == null || dtN == null) || (dtA.Rows.Count == 0 && dtN.Rows.Count == 0) ? false : true;
         }
 
         private void BtnEditSave_Click(object sender, EventArgs e)
