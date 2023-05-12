@@ -110,10 +110,11 @@ Please create a Pullout Report with this Ship. Date as Pullout Date first!!");
             #endregion
 
             string sqlCmd = string.Format(
-                @"select pd.ID,pd.OrderID,o.SeasonID,o.StyleID,'Sample' as Category,
+                @"
+select pd.ID,pd.OrderID,o.SeasonID,o.StyleID,'Sample' as Category,
     '' as CTNNo
     , [NW] = ROUND( TtlGW.GW * ( (pd.ShipQty * 1.0) / (TtlShipQty.Value *1.0)) ,3 ,1)  ----無條件捨去到小數點後第三位
-    , [Price] = s.stdcost
+    , [Price] = isnull(Style_UnitPrice.PoPrice,0)
     ,pd.ShipQty
     ,o.StyleUnit as UnitID
     ,'' as Receiver
@@ -134,6 +135,13 @@ OUTER APPLY(
 OUTER APPLY(
 	SELECT GW FROM PackingList WHERE ID = pd.ID 
 )TtlGW
+outer apply(
+	select top 1 POPrice 
+	from Style_UnitPrice su
+	where su.CountryID='--'
+	and su.StyleUkey = s.Ukey
+)Style_UnitPrice
+
 where pd.ID = '{0}'
         and p.Type = 'F'
         and Factory.IsProduceFty=1", this.txtFOCPL.Text);
