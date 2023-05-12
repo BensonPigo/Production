@@ -40,7 +40,6 @@ SELECT
 	,CFAInspectionResult = oq.CFAFinalInspectResult
 	,[3rdPartyInspection] = IIF(oq.CFAIs3rdInspect =1,'Y','N')
 	,[3rdPartyInspectionResult] = oq.CFA3rdInspectResult
-	,GarmentMaster = IIF(ot.IsGMTMaster = 1, 'Y', '')
 into #tmpOrderMain
 FROM Production.dbo.Orders o WITH(NOLOCK)
 INNER JOIN Production.dbo.Factory f WITH(NOLOCK) ON f.ID=o.FactoryID
@@ -141,7 +140,6 @@ select
 	,main.CFAInspectionResult
 	,main.[3rdPartyInspection]
 	,main.[3rdPartyInspectionResult]
-	,main.GarmentMaster
 into #final
 from #tmpOrderMain main
 left join #tmpPackingList_Detail pd on pd.OrderID = main.id and pd.OrderShipmodeSeq = main.Seq
@@ -192,8 +190,7 @@ SET
 	t.CancelledButStillNeedProduction = s.CancelledButStillNeedProduction,
 	t.CFAInspectionResult = s.CFAInspectionResult,
 	t.[3rdPartyInspection] = s.[3rdPartyInspection],
-	t.[3rdPartyInspectionResult] = s.[3rdPartyInspectionResult],
-	t.GarmentMaster = s.GarmentMaster
+	t.[3rdPartyInspectionResult] = s.[3rdPartyInspectionResult]	
 from P_OustandingPO t
 inner join #Final s  
 		ON t.FactoryID=s.FactoryID  
@@ -232,8 +229,7 @@ select  s.FactoryID,
 		s.CancelledButStillNeedProduction,
 		s.CFAInspectionResult,
 		s.[3rdPartyInspection],
-		s.[3rdPartyInspectionResult],
-		s.GarmentMaster
+		s.[3rdPartyInspectionResult]
 from #Final s
 where not exists(
 	select 1 from P_OustandingPO t 
