@@ -141,6 +141,10 @@ namespace Sci.Production.PublicForm
             this.gridCartonList.Columns["CBM"].DefaultCellStyle.BackColor = Color.Pink;
 
             this.Query();
+
+            var dtA = (DataTable)this.bindingSourceAssignedCarton.DataSource;
+            var dtN = (DataTable)this.bindingSourceNotAssignCarton.DataSource;
+            this.btnEditSave.Enabled = (dtA == null || dtN == null) || (dtA.Select("StockQty > 0").Count() == 0 && dtN.Select("StockQty > 0").Count() == 0) ? false : true;
         }
 
         private void BtnEditSave_Click(object sender, EventArgs e)
@@ -447,6 +451,13 @@ where ted.ID = '{this.transferExportID}'
 
         private void BtnCancelAssingCarton_Click(object sender, EventArgs e)
         {
+            var dt = (DataTable)this.bindingSourceAssignedCarton.DataSource;
+
+            if (dt == null)
+            {
+                return;
+            }
+
             var selectRow = ((DataTable)this.bindingSourceAssignedCarton.DataSource).AsEnumerable().Where(s => MyUtility.Convert.GetBool(s["select"]));
 
             if (!selectRow.Any())
@@ -509,6 +520,13 @@ Dyelot = '{dr["Dyelot"]}'";
 
         private void BtnAssignCarton_Click(object sender, EventArgs e)
         {
+            var dt = (DataTable)this.bindingSourceNotAssignCarton.DataSource;
+
+            if (dt == null)
+            {
+                return;
+            }
+
             var selectRow = ((DataTable)this.bindingSourceNotAssignCarton.DataSource).AsEnumerable().Where(s => MyUtility.Convert.GetBool(s["select"]));
 
             if (!selectRow.Any())
