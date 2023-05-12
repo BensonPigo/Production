@@ -144,7 +144,7 @@ namespace Sci.Production.PublicForm
 
             var dtA = (DataTable)this.bindingSourceAssignedCarton.DataSource;
             var dtN = (DataTable)this.bindingSourceNotAssignCarton.DataSource;
-            this.btnEditSave.Enabled = (dtA == null || dtN == null) || (dtA.Rows.Count == 0 && dtN.Rows.Count == 0) ? false : true;
+            this.btnEditSave.Enabled = (dtA == null || dtN == null) || (dtA.Select("StockQty > 0").Count() == 0 && dtN.Select("StockQty > 0").Count() == 0) ? false : true;
         }
 
         private void BtnEditSave_Click(object sender, EventArgs e)
