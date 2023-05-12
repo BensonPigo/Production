@@ -447,6 +447,13 @@ where ted.ID = '{this.transferExportID}'
 
         private void BtnCancelAssingCarton_Click(object sender, EventArgs e)
         {
+            var dt = (DataTable)this.bindingSourceAssignedCarton.DataSource;
+
+            if (dt == null)
+            {
+                return;
+            }
+
             var selectRow = ((DataTable)this.bindingSourceAssignedCarton.DataSource).AsEnumerable().Where(s => MyUtility.Convert.GetBool(s["select"]));
 
             if (!selectRow.Any())
@@ -509,6 +516,13 @@ Dyelot = '{dr["Dyelot"]}'";
 
         private void BtnAssignCarton_Click(object sender, EventArgs e)
         {
+            var dt = (DataTable)this.bindingSourceNotAssignCarton.DataSource;
+
+            if (dt == null)
+            {
+                return;
+            }
+
             var selectRow = ((DataTable)this.bindingSourceNotAssignCarton.DataSource).AsEnumerable().Where(s => MyUtility.Convert.GetBool(s["select"]));
 
             if (!selectRow.Any())
