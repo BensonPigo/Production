@@ -196,7 +196,7 @@ select * into #tmpResult
                                                     and REPLACE(ddl.ID,'''','') = rd.StockType
 		OUTER APPLY(
 		    SELECT  fs.CutTime,fs.CutBy
-		    FROM FIR f
+		    FROM FIR f with (nolock)
 		    INNER JOIN FIR_Shadebone fs with (nolock) on f.id = fs.ID 	
 		    WHERE  r.id = f.ReceivingID and rd.PoId = F.POID and rd.Seq1 = F.SEQ1 and rd.Seq2 = F.SEQ2 AND rd.Roll = fs.Roll and rd.Dyelot = fs.Dyelot
 		) cutTime
@@ -237,7 +237,7 @@ select * into #tmpResult
                                                     and REPLACE(ddl.ID,'''','') = rd.StockType
 		OUTER APPLY(
 		    SELECT  fs.CutTime,fs.CutBy
-		    FROM FIR f
+		    FROM FIR f with (nolock)
 		    INNER JOIN FIR_Shadebone fs with (nolock) on f.id = fs.ID 	
 		    WHERE  r.id = f.ReceivingID and rd.PoId = F.POID and rd.Seq1 = F.SEQ1 and rd.Seq2 = F.SEQ2 AND rd.Roll = fs.Roll and rd.Dyelot = fs.Dyelot
 		)cutTime
@@ -382,7 +382,7 @@ left join FtyInventory fi with (nolock) on  fi.POID = rd.POID and
                                             fi.StockType = rd.StockType
 OUTER APPLY(
 	SELECT  fs.CutTime,fs.CutBy
-	FROM FIR f
+	FROM FIR f with (nolock)
 	INNER JOIN FIR_Shadebone fs with (nolock) on f.id = fs.ID 	
 	WHERE  r.id = f.ReceivingID and rd.PoId = F.POID and rd.Seq1 = F.SEQ1 and rd.Seq2 = F.SEQ2 AND rd.Roll = fs.Roll and rd.Dyelot = fs.Dyelot
 ) cutTime
@@ -443,7 +443,7 @@ left join FtyInventory fi with (nolock) on  fi.POID = rd.POID and
                                             fi.StockType = rd.StockType
 OUTER APPLY(
 	SELECT  fs.CutTime,fs.CutBy
-	FROM FIR f
+	FROM FIR f with (nolock)
 	INNER JOIN FIR_Shadebone fs with (nolock) on f.id = fs.ID 	
 	WHERE  r.id = f.ReceivingID and rd.PoId = F.POID and rd.Seq1 = F.SEQ1 and rd.Seq2 = F.SEQ2 AND rd.Roll = fs.Roll and rd.Dyelot = fs.Dyelot
 ) cutTime
@@ -478,8 +478,8 @@ select  ReceivingID
 from #tmpMind rd
 OUTER APPLY(
     select top 1 LastP26RemarkData =  lt.Remark
-	FROM LocationTrans lt
-	INNER JOIN LocationTrans_detail ltd ON lt.ID=ltd.ID
+	FROM LocationTrans lt with (nolock)
+	INNER JOIN LocationTrans_detail ltd with (nolock) ON lt.ID=ltd.ID
     where lt.Status='Confirmed'
     and ltd.poid = rd.poid and ltd.seq1 = rd.seq1 and ltd.seq2 = rd.seq2  AND ltd.Roll = rd.Roll and ltd.Dyelot = rd.Dyelot and ltd.StockType = rd.rdStockType
     order by EditDate desc
