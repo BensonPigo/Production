@@ -145,7 +145,6 @@ SELECT
     ,o.Qty
 	,f.KPICode 
     ,[cbsnp] = IIF(o.NeedProduction = 0, 'N','Y')
-    ,[GarmentMaster] = IIF(ot.IsGMTMaster = 1, 'Y', '')
 into #tmpOrderMain
 FROM Orders o WITH(NOLOCK)
 INNER JOIN Factory f WITH(NOLOCK) ON f.ID=o.FactoryID
@@ -220,7 +219,6 @@ select main.KPICode
 	,main.ShipmodeID
     ,main.dest
 	,main.Category
-    ,main.[GarmentMaster]
 	,main.PartialShipment
 	,main.Cancelled
     ,[Cancelled but still need production] = main.cbsnp
@@ -284,13 +282,13 @@ DROP TABLE #tmpOrderMain,#tmpPackingList_Detail,#tmpInspection,#tmpInspection_St
 
             Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
             objSheets.get_Range("J:J").ColumnWidth = 8;
-            objSheets.get_Range("N:N").ColumnWidth = 8;
-            objSheets.get_Range("O:O").ColumnWidth = 9;
-            objSheets.get_Range("P:T").ColumnWidth = 8;
-            objSheets.get_Range("U:AC").ColumnWidth = 8;
+            objSheets.get_Range("M:M").ColumnWidth = 8;
+            objSheets.get_Range("N:N").ColumnWidth = 9;
+            objSheets.get_Range("O:S").ColumnWidth = 8;
+            objSheets.get_Range("T:AB").ColumnWidth = 8;
             objSheets.get_Range("G:G").ColumnWidth = 10;
-            objSheets.get_Range("W:W").ColumnWidth = 10;
-            objSheets.get_Range("U:U").ColumnWidth = 10;
+            objSheets.get_Range("V:V").ColumnWidth = 10;
+            objSheets.get_Range("T:T").ColumnWidth = 10;
 
             #region Save & Show Excel
             string strExcelName = Class.MicrosoftFile.GetName("PPIC_R16");
