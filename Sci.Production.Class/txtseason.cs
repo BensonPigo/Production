@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel;
 using System.Windows.Forms;
+using Ict.Win.UI;
 using Sci.Win.UI;
 
 namespace Sci.Production.Class
@@ -17,11 +18,15 @@ namespace Sci.Production.Class
             this.Size = new System.Drawing.Size(80, 23);
         }
 
+        private Control myBrand;    // 欄位.存入要取值的<控制項>
+
         /// <summary>
         /// Season.BrandID
         /// </summary>
         [Category("Custom Properties")]
         public Control BrandObjectName { get; set; }
+
+        internal Txtstyle objStyle { get; set; } = null;
 
         /// <inheritdoc/>
         protected override void OnValidating(CancelEventArgs e)
@@ -63,12 +68,25 @@ namespace Sci.Production.Class
         {
             base.OnPopUp(e);
 
-            Win.Tools.SelectItem item;
-            string selectCommand = "select distinct ID from Production.dbo.Season WITH (NOLOCK) order by id desc";
+            string strStyle = string.Empty;
+            string strBrand = string.Empty;
+            if (this.objStyle != null)
+            {
+                strStyle = ((Txtstyle)this.objStyle).Text;
+            }
+
             if (this.BrandObjectName != null && !string.IsNullOrWhiteSpace((string)this.BrandObjectName.Text))
             {
-                selectCommand = string.Format("select distinct ID from Production.dbo.Season WITH (NOLOCK) where BrandID = '{0}' order by id desc", this.BrandObjectName.Text);
+                strBrand = this.BrandObjectName.Text;
             }
+
+            Win.Tools.SelectItem item;
+            string selectCommand = $@"
+Select distinct ID From Season WITH (NOLOCK)
+Where ('{strBrand}' = '' or BrandID in (select Data From SplitString('{strBrand}', ','))) 
+And ('{strStyle}' = '' or ID in ( select SeasonID from Style where Style.ID = '{strStyle}'))
+order by id desc
+";
 
             item = new Win.Tools.SelectItem(selectCommand, "11", this.Text)
             {

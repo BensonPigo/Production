@@ -10,6 +10,7 @@ using Sci.Win.UI;
 
 using MsExcel = Microsoft.Office.Interop.Excel;
 using System.Drawing;
+using Sci.Production.Class.Command;
 
 namespace Sci.Production.Class.Commons
 {

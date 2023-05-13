@@ -34,6 +34,27 @@ namespace Sci.Production.Class
         [Category("Custom Properties")]
         public Control BrandObjectName { get; set; }
 
+        private Control objSeason;  // 欄位.回傳要取回的值<控制項>
+
+        [Category("Custom Properties")]
+        [Description("回傳入season 若Form裡有此欄位")]
+        public Control SeasonObjectName
+        {
+            get
+            {
+                return this.objSeason;
+            }
+
+            set
+            {
+                this.objSeason = value;
+                if (this.objSeason is Txtseason)
+                {
+                    ((Txtseason)this.objSeason).objStyle = this;
+                }
+            }
+        }
+
         /// <inheritdoc/>
         protected override void OnValidating(CancelEventArgs e)
         {
