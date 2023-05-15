@@ -3624,6 +3624,11 @@ where wd.WorkOrderUkey is null
             this.detailgridbs.ResumeBinding();
             this.detailgrid.SelectRowTo(0);
             ((DataTable)this.detailgridbs.DataSource).AcceptChanges();
+
+            if (MyUtility.Convert.GetString(this.CurrentMaintain["WorkType"]) == "2")
+            {
+                this.btnAutoDistributeSP.Enabled = false;
+            }
         }
 
         private void TxtBoxMarkerNo_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
@@ -4074,7 +4079,8 @@ DEALLOCATE CURSOR_
                 }
 
                 // 有建立bundle不清空
-                if (MyUtility.Check.Seek($"select 1 from Bundle with (nolock) where CutRef = '{drWorkOrder["CutRef"]}' and POID = '{this.CurrentMaintain["ID"]}'"))
+                if (!MyUtility.Check.Empty(drWorkOrder["CutRef"]) &&
+                    MyUtility.Check.Seek($"select 1 from Bundle with (nolock) where CutRef = '{drWorkOrder["CutRef"]}' and POID = '{this.CurrentMaintain["ID"]}'"))
                 {
                     continue;
                 }
