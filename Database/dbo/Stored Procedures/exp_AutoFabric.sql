@@ -112,7 +112,7 @@ BEGIN
 	[Type] [VARCHAR](3) NOT NULL,
 	[CutplanID] [VARCHAR](13) NOT NULL,
 	[EstCutdate] [date] NULL,
-	[SpreadingNoID] [VARCHAR](3) NOT NULL,
+	[SpreadingNoID] [VARCHAR](5) NOT NULL,
 	[PoId] [VARCHAR](13) NOT NULL,
 	[Seq1] [VARCHAR](3) NOT NULL,
 	[Seq2] [VARCHAR](2) NOT NULL,

@@ -36,7 +36,7 @@
     [ActCuttingPerimeter] NVARCHAR (15)  NULL,
     [StraightLength]      VARCHAR (15)   NULL,
     [CurvedLength]        VARCHAR (15)   NULL,
-    [SpreadingNoID]       VARCHAR (3)    NULL,
+    [SpreadingNoID]       VARCHAR (5)    NULL,
     CONSTRAINT [PK_WorkOrderRevisedMarkerOriginalData] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
 
