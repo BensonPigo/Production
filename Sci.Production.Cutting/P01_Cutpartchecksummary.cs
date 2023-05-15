@@ -48,19 +48,27 @@ namespace Sci.Production.Cutting
             #endregion
 
             #region 建立Grid
-            string settbsql = "Select a.id,article,a.sizecode,a.qty,'' as complete"; // 寫SQL建立Table
+            string settbsql = @"
+Select  a.id
+        ,a.article
+        ,a.sizecode
+        ,a.qty,'' as complete
+"; // 寫SQL建立Table
 
             // 組動態欄位
             foreach (DataRow dr in this.fabcodetb.Rows)
             {
-                settbsql = settbsql + ", 0 as " + dr["PatternPanel"];
+                settbsql += ", 0 as " + dr["PatternPanel"];
             }
 
-            settbsql = settbsql + string.Format(
-                @" From Order_Qty a WITH (NOLOCK) ,orders b WITH (NOLOCK) ,Order_SizeCode c WITH (NOLOCK) 
-                                                Where b.cuttingsp ='{0}' and a.id = b.id 
-                                                and c.id=b.poid and c.SizeCode = a.SizeCode
-                                                order by id,article,c.Seq",
+            settbsql += string.Format(
+                @"  
+                    ,[IsCancel] = Cast(iif(b.Junk = 1 and b.NeedProduction = 0, 1, 0) as bit)
+                    From Order_Qty a WITH (NOLOCK) 
+                    inner join orders b WITH (NOLOCK)  on a.id = b.id 
+                    inner join Order_SizeCode c WITH (NOLOCK) on c.id = b.poid and c.SizeCode = a.SizeCode
+                    Where b.cuttingsp ='{0}' 
+                    order by a.id, a.article, c.Seq",
                 this.cutid);
             DualResult gridResult = DBProxy.Current.Select(null, settbsql, out DataTable gridtb);
             if (!gridResult)
@@ -155,6 +163,16 @@ and o.junk = 0
                 string art = string.Empty;
                 foreach (DataGridViewRow dr in this.gridCutpartchecksummary.Rows)
                 {
+                    DataRow sourceDr = this.gridCutpartchecksummary.GetDataRow(dr.Index);
+                    if (MyUtility.Convert.GetBool(sourceDr["IsCancel"]))
+                    {
+                        dr.DefaultCellStyle.ForeColor = Color.Gray;
+                    }
+                    else
+                    {
+                        dr.DefaultCellStyle.ForeColor = Color.Black;
+                    }
+
                     if (index == 0)
                     {
                         art = dr.Cells[1].Value.ToString();
@@ -191,7 +209,8 @@ and o.junk = 0
 
                     DataRow dr = this.gridCutpartchecksummary.GetDataRow(e.RowIndex);
 
-                    if (MyUtility.Convert.GetDecimal(dr[e.ColumnIndex]) < MyUtility.Convert.GetDecimal(dr["Qty"]))
+                    if (MyUtility.Convert.GetDecimal(dr[e.ColumnIndex]) < MyUtility.Convert.GetDecimal(dr["Qty"]) &&
+                        !MyUtility.Convert.GetBool(dr["IsCancel"]))
                     {
                         e.CellStyle.ForeColor = Color.Red;
                         if (MyUtility.Convert.GetDecimal(dr[e.ColumnIndex]) > 0 && dr["Complete"].ToString() != string.Empty)

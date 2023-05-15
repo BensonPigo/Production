@@ -36,7 +36,7 @@
     [ActCuttingPerimeter] NVARCHAR (15)  NULL,
     [StraightLength]      VARCHAR (15)   NULL,
     [CurvedLength]        VARCHAR (15)   NULL,
-    [SpreadingNoID]       VARCHAR (3)    NULL,
+    [SpreadingNoID]       VARCHAR (5)    NULL,
     [Shift]               VARCHAR (1)    DEFAULT ('') NOT NULL,
     [WKETA]               DATE           NULL,
     [Tone] VARCHAR(15) CONSTRAINT [DF_WorkOrder_Tone] DEFAULT ('') not NULL,

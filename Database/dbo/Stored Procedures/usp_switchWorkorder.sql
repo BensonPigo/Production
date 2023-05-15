@@ -19,7 +19,7 @@ BEGIN
 	-- ���X�Ҧ�Cuttingid ��SP#
 	--Declare @sptable Table(id varchar(13))
 	Select id into #spTable 
-	from Orders WITH (NOLOCK) where cuttingsp = @Cuttingid and (Orders.Junk=0 or Orders.Junk=1 and Orders.NeedProduction=1)
+	from Orders WITH (NOLOCK) where cuttingsp = @Cuttingid and (Orders.Junk=0 or (Orders.Junk=1 and Orders.NeedProduction=1))
 	--�����̲�EachCons_Color_Article
 	Select a.ConsPC,a.CuttingWidth,a.FabricCode,a.FabricCombo,a.Id,a.FabricPanelCode,a.MarkerDownloadID,
 			a.MarkerLength,a.MarkerName,a.MarkerNo,a.MarkerVersion,a.Ukey,a.Width,
@@ -65,19 +65,19 @@ BEGIN
 	SET @POID = 'Im default'
 	Select distinct @POID = POID
 	From Orders  WITH (NOLOCK) 
-	Where Cuttingsp = @Cuttingid and (Orders.Junk=0 or Orders.Junk=1 and Orders.NeedProduction=1)
+	Where Cuttingsp = @Cuttingid and (Orders.Junk=0 or (Orders.Junk=1 and Orders.NeedProduction=1))
 
 	---------�ըC��SP#��Article,Size,Qty,PatternPanel,inline
 	Select distinct e.id,a.article,a.colorid,e.sizecode,a.PatternPanel,e.qty as orderqty, 0 as disqty,f.Inline,sr.SCIRefno,a.FabricPanelCode
 	Into #_tmpdisQty
 	from Order_ColorCombo a  WITH (NOLOCK) 
 	inner join Order_EachCons b  WITH (NOLOCK) on a.id = b.id and b.cuttingpiece='0' and  b.FabricCombo = a.PatternPanel
-	inner join (Select d.*,cuttingsp from Order_Qty d  WITH (NOLOCK) ,(Select id,cuttingsp from Orders  WITH (NOLOCK)  where cuttingsp = @Cuttingid and (Orders.Junk=0 or Orders.Junk=1 and Orders.NeedProduction=1)) c Where c.id = d.id) e
+	inner join (Select d.*,cuttingsp from Order_Qty d  WITH (NOLOCK) ,(Select id,cuttingsp from Orders  WITH (NOLOCK)  where cuttingsp = @Cuttingid and (Orders.Junk=0 or (Orders.Junk=1 and Orders.NeedProduction=1))) c Where c.id = d.id) e
 	on e.cuttingsp = a.id and e.Article = a.Article
 	left join 
 	(Select a.inline,b.Article,b.SizeCode,a.OrderID 
 	from SewingSchedule a  WITH (NOLOCK) ,SewingSchedule_Detail b  WITH (NOLOCK) ,
-		(Select id from Orders  WITH (NOLOCK)  where cuttingsp = @Cuttingid and (Orders.Junk=0 or Orders.Junk=1 and Orders.NeedProduction=1)) c 
+		(Select id from Orders  WITH (NOLOCK)  where cuttingsp = @Cuttingid and (Orders.Junk=0 or (Orders.Junk=1 and Orders.NeedProduction=1))) c 
 		where c.id = a.orderid and a.id = b.id and mDivisionid = @mDivisionid) f 
 	on f.OrderID = e.id and f.Article = e.Article and f.SizeCode = e.SizeCode 
 	outer apply(
