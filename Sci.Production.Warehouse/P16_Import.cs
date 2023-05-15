@@ -70,13 +70,8 @@ select poid = rtrim(a.POID)
 	   , [description] = dbo.getMtlDesc(a.poid,b.seq1,b.seq2,2,0)
 	   , b.RequestQty
        , b.Remark
-       , psd.Refno
-       , [Color] = dbo.GetColorMultipleID_MtlType(psd.BrandID, isnull(psdsC.SpecValue ,''), Fabric.MtlTypeID, psd.SuppColor)
 from dbo.lack a WITH (NOLOCK) 
 inner join dbo.Lack_Detail b WITH (NOLOCK) on a.ID = b.ID
-INNER JOIN Po_Supp_Detail psd WITH (NOLOCK) on psd.ID = a.POID and psd.Seq1 = b.Seq1 and psd.Seq2 = b.Seq2
-INNER JOIN Fabric with(nolock) on Fabric.SCIRefno = psd.SCIRefno
-LEFT JOIN PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
 LEFT JOIN Orders o ON o.ID = a.POID
 where a.id = '{this.dr_master["requestid"]}'
 AND o.Category <> 'A';
@@ -108,12 +103,17 @@ select selected = 0
        , c.lock
        , c.Tone
        , [LackReason] = iif(a.PPICReasonID is null, '', CONCAT(a.PPICReasonID, '-', p.Description))
+       , psd.Refno
+       , [Color] = dbo.GetColorMultipleID_MtlType(psd.BrandID, isnull(psdsC.SpecValue ,''), Fabric.MtlTypeID, psd.SuppColor)
 from dbo.Lack_Detail a WITH (NOLOCK) 
 inner join dbo.Lack b WITH (NOLOCK) on b.ID = a.ID
 inner join dbo.ftyinventory c WITH (NOLOCK) on c.poid = b.POID 
 											   and c.seq1 = a.seq1 
 											   and c.seq2  = a.seq2 
 											   and c.stocktype = 'B'
+INNER JOIN Po_Supp_Detail psd WITH (NOLOCK) on psd.ID = b.POID and psd.Seq1 = a.Seq1 and psd.Seq2 = a.Seq2
+INNER JOIN Fabric with(nolock) on Fabric.SCIRefno = psd.SCIRefno
+LEFT JOIN PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
 left join PPICReason p with (nolock) on p.Type = 'FL' and p.ID = a.PPICReasonID
 LEFT JOIN Orders o ON o.ID=c.PoId
 Where a.id = '{this.dr_master["requestid"]}' 

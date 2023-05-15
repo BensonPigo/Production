@@ -1382,7 +1382,6 @@
           </Style>
         </Textbox>
         <Textbox Name="Textbox13">
-          <CanGrow>true</CanGrow>
           <KeepTogether>true</KeepTogether>
           <Paragraphs>
             <Paragraph>
@@ -1657,7 +1656,6 @@
           </Style>
         </Textbox>
         <Textbox Name="Textbox18">
-          <CanGrow>true</CanGrow>
           <KeepTogether>true</KeepTogether>
           <Paragraphs>
             <Paragraph>
