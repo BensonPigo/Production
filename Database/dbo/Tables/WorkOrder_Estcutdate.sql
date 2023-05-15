@@ -7,8 +7,8 @@
     [ID]               VARCHAR (13) CONSTRAINT [DF_WorkOrder_Estcutdate_ID] DEFAULT ('') NULL,
     [OrgCutCellid]     VARCHAR (2)  NULL,
     [NewCutCellid]     VARCHAR (2)  NULL,
-    [OrgSpreadingNoID] VARCHAR (3)  NULL,
-    [NewSpreadingNoID] VARCHAR (3)  NULL,
+    [OrgSpreadingNoID] VARCHAR (5)  NULL,
+    [NewSpreadingNoID] VARCHAR (5)  NULL,
     [AddDate]          DATETIME     NULL,
     [AddName]          VARCHAR (10) CONSTRAINT [DF_WorkOrder_Estcutdate_AddName] DEFAULT ('') NOT NULL,
     CONSTRAINT [PK_WorkOrder_Estcutdate] PRIMARY KEY CLUSTERED ([Ukey] ASC)
