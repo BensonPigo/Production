@@ -861,7 +861,7 @@ where (isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f
 
                     if (!(result = this.SentSpreadingSchedule()))
                     {
-                        throw result.GetException();
+                        throw new Exception(result.Messages[0].Message);
                     }
 
                     if (!(result = DBProxy.Current.Execute(null, $"update Issue set status = 'Confirmed', editname = '{Env.User.UserID}', editdate = GETDATE() where id = '{this.CurrentMaintain["id"]}'")))
@@ -1139,7 +1139,7 @@ where (isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f
 
                     if (!(result = this.SentSpreadingSchedule()))
                     {
-                        throw result.GetException();
+                        throw new Exception(result.Messages[0].Message);
                     }
 
                     // Barcode 需要判斷新的庫存, 在更新 FtyInventory 之後
