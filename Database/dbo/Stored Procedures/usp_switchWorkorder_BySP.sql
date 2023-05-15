@@ -14,7 +14,7 @@ update cutting set WorkType =2 where id = @Cuttingid
 
 Declare @POID varchar(13) 
 Declare @FactoryID varchar(8) 
-Select distinct @POID = POID,@FactoryID=FtyGroup From Orders  WITH (NOLOCK) Where Cuttingsp = @Cuttingid and (Junk=0 or Junk=1 and NeedProduction=1)
+Select distinct @POID = POID,@FactoryID=FtyGroup From Orders  WITH (NOLOCK) Where Cuttingsp = @Cuttingid and (Junk=0 or (Junk=1 and NeedProduction=1))
 
 select *,Order_EachConsUkey = 0 into #tmp_WorkOrder_Distribute from [WorkOrder_Distribute] where 1=0
 alter table #tmp_WorkOrder_Distribute add colorid varchar(6)
@@ -91,7 +91,7 @@ outer apply(
 	from Order_BoF ob WITH (NOLOCK) 
 	where ob.Id = oe.id and ob.FabricCode = occ.FabricCode
 )sr
-where o.CuttingSP = @Cuttingid and (o.Junk=0 or o.Junk=1 and o.NeedProduction=1)
+where o.CuttingSP = @Cuttingid and (o.Junk=0 or (o.Junk=1 and o.NeedProduction=1))
 
 group by s.Inline,o.id,oq.Article,occ.ColorID,oq.SizeCode,occ.PatternPanel,oq.qty ,sr.SCIRefno,occ.FabricPanelCode
 order by InlineForOrderby,o.id
