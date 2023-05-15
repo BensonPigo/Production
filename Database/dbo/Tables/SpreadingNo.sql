@@ -1,5 +1,5 @@
 ﻿CREATE TABLE [dbo].[SpreadingNo] (
-    [ID]          VARCHAR (3)   NOT NULL,
+    [ID]          VARCHAR (5)   NOT NULL,
     [MDivisionid] VARCHAR (8)   NULL,
     [Description] NVARCHAR (60) NULL,
     [Junk]        BIT           CONSTRAINT [DF_SpreadingNo_Junk] DEFAULT ((0)) NULL,

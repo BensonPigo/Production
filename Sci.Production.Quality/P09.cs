@@ -599,7 +599,7 @@ select distinct
     o.SeasonID,
     FirstDyelot.TPEFirstDyelot,
 	f.RibItem,
-	FirstDyelot.SeasonSCIID
+	SeasonSCIID = FirstDyelot.SeasonID
 	into #tmp
 from Export_Detail ed with(nolock)
 inner join Export with(nolock) on Export.id = ed.id and Export.Confirm = 1
@@ -614,10 +614,10 @@ left join Fabric f with(nolock) on f.SCIRefno =psd.SCIRefno
 Left join #probablySeasonList seasonSCI on seasonSCI.ID = s.SeasonSCIID
 left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
 OUTER APPLY(
-	Select Top 1 FirstDyelot,TPEFirstDyelot,SeasonSCIID
+	Select Top 1 FirstDyelot,TPEFirstDyelot,SeasonID
 	From dbo.FirstDyelot fd
-	Inner join #probablySeasonList season on fd.SeasonSCIID = season.ID
-	WHERE fd.Refno = psd.Refno and fd.ColorID = isnull(psdsC.SpecValue ,'') and fd.SuppID = ps.SuppID and fd.TestDocFactoryGroup = fty.TestDocFactoryGroup
+	Inner join #probablySeasonList season on fd.SeasonID = season.ID
+	WHERE fd.BrandRefno = psd.Refno and fd.ColorID = isnull(psdsC.SpecValue ,'') and fd.SuppID = ps.SuppID and fd.TestDocFactoryGroup = fty.TestDocFactoryGroup
 		And seasonSCI.RowNo >= season.RowNo
 	Order by season.RowNo Desc
 )FirstDyelot
@@ -914,13 +914,13 @@ Supp.AbbEN,
 psd.Refno,
 	ColorID = isnull(psdsC.SpecValue ,''),
 o.SeasonID,
-fd.SeasonSCIID,
+SeasonSCIID = fd.SeasonID,
 fd.Period,
 fd.FirstDyelot FirstDyelot,
 TPEFirstDyelot = IIF(
     fd.TPEFirstDyelot is null and RibItem = 1
     ,'RIB no need first dye lot'
-    ,IIF(fd.SeasonSCIID is null
+    ,IIF(fd.SeasonID is null
     ,'Still not received and under pushing T2. Please contact with PR if you need L/G first.'
     ,format(fd.TPEFirstDyelot,'yyyy/MM/dd'))
 )
@@ -934,7 +934,10 @@ left join Supp with(nolock) on Supp.ID = ps.SuppID
 left join Season s with(nolock) on s.ID=o.SeasonID and s.BrandID = o.BrandID
 left join Factory oFty on o.FactoryID = oFty.ID
 left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
-left outer join FirstDyelot fd with(nolock) on fd.Refno = psd.Refno and fd.ColorID = isnull(psdsC.SpecValue ,'') and fd.SuppID = ps.SuppID and fd.TestDocFactoryGroup = oFty.TestDocFactoryGroup 
+left outer join FirstDyelot fd with(nolock) on fd.BrandRefno = psd.Refno 
+    and fd.ColorID = isnull(psdsC.SpecValue ,'') 
+    and fd.SuppID = ps.SuppID 
+    and fd.TestDocFactoryGroup = oFty.TestDocFactoryGroup 
 left join Fabric f with(nolock) on f.SCIRefno =psd.SCIRefno
 where ps.seq1 not like '7%' 
 and psd.FabricType = 'F'
@@ -964,7 +967,7 @@ into #tmp1
 from #tmp a
 --inner join Factory fty with (nolock) on fty.ID = a.Consignee
 full join FirstDyelot b on a.TestDocFactoryGroup = b.TestDocFactoryGroup 
-and a.Refno=b.Refno and a.suppid=b.suppid and a.ColorID=b.ColorID 
+and a.Refno=b.BrandRefno and a.suppid=b.suppid and a.ColorID=b.ColorID 
 where 1=1 and 
 (
     {sqlwhere}
@@ -1030,7 +1033,7 @@ inner join
 	from #tmp
 	group by  TestDocFactoryGroup,Suppid,Refno,ColorID,SeasonSCIID
 ) s
-on t.Refno = s.Refno and t.SuppID = s.SuppID and t.ColorID = s.ColorID and t.TestDocFactoryGroup = s.TestDocFactoryGroup and t.SeasonSCIID = s.SeasonSCIID
+on t.BrandRefno = s.Refno and t.SuppID = s.SuppID and t.ColorID = s.ColorID and t.TestDocFactoryGroup = s.TestDocFactoryGroup and t.SeasonID = s.SeasonSCIID
 ;
 ";
             DataTable odt;

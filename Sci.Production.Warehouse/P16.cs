@@ -158,6 +158,8 @@ namespace Sci.Production.Warehouse
             this.CurrentMaintain["FabricType"] = "F";
             this.CurrentMaintain["IssueDate"] = DateTime.Now;
             this.txtLocalSupp1.TextBox1.ReadOnly = true;
+            this.editBoxPPICRemark.Text = string.Empty;
+            this.txtSewingLine.Text = string.Empty;
         }
 
         /// <inheritdoc/>
@@ -322,24 +324,21 @@ and ID = '{Sci.Env.User.UserID}'"))
         /// <inheritdoc/>
         protected override void OnDetailGridSetup()
         {
-            Ict.Win.UI.DataGridViewTextBoxColumn cbb_ContainerCode;
-
-            #region 欄位設定
             this.Helper.Controls.Grid.Generator(this.detailgrid)
-            .CellPOIDWithSeqRollDyelot("poid", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true) // 0
-            .Text("seq", header: "Seq", width: Widths.AnsiChars(6), iseditingreadonly: true) // 1
-            .Text("roll", header: "Roll", width: Widths.AnsiChars(6), iseditingreadonly: true) // 2
-            .Text("dyelot", header: "Dyelot", width: Widths.AnsiChars(8), iseditingreadonly: true) // 3
-            .Text("Tone", header: "Tone/Grp", width: Widths.AnsiChars(10), iseditingreadonly: true)
-            .EditText("Description", header: "Description", width: Widths.AnsiChars(20), iseditingreadonly: true) // 4
-            .Text("stockunit", header: "Unit", iseditingreadonly: true) // 5
-            .Numeric("qty", header: "Issue Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10) // 6
-            .Text("Location", header: "Bulk Location", iseditingreadonly: true) // 7
-            .Text("ContainerCode", header: "Container Code", iseditingreadonly: true).Get(out cbb_ContainerCode)
-            .Text("Remark", header: "Remark", width: Widths.AnsiChars(20), iseditingreadonly: true);
-
-            // .Text("LackReason", header: "Lacking & Replacement Reason", iseditingreadonly: true);
-            #endregion 欄位設定
+                .CellPOIDWithSeqRollDyelot("poid", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
+                .Text("seq", header: "Seq", width: Widths.AnsiChars(6), iseditingreadonly: true)
+                .Text("roll", header: "Roll", width: Widths.AnsiChars(6), iseditingreadonly: true)
+                .Text("dyelot", header: "Dyelot", width: Widths.AnsiChars(8), iseditingreadonly: true)
+                .Text("Tone", header: "Tone/Grp", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                .EditText("Description", header: "Description", width: Widths.AnsiChars(20), iseditingreadonly: true)
+                .Text("stockunit", header: "Unit", iseditingreadonly: true)
+                .Numeric("qty", header: "Issue Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10)
+                .Text("Location", header: "Bulk Location", iseditingreadonly: true)
+                .Text("ContainerCode", header: "Container Code", iseditingreadonly: true).Get(out Ict.Win.UI.DataGridViewTextBoxColumn cbb_ContainerCode)
+                .Text("Remark", header: "Remark", width: Widths.AnsiChars(20), iseditingreadonly: true)
+                .Text("Refno", header: "Ref#", width: Widths.AnsiChars(20), iseditingreadonly: true)
+                .Text("Color", header: "Color", width: Widths.AnsiChars(20), iseditingreadonly: true)
+                ;
 
             // 僅有自動化工廠 ( System.Automation = 1 )才需要顯示該欄位 by ISP20220035
             cbb_ContainerCode.Visible = Automation.UtilityAutomation.IsAutomationEnable;
@@ -797,39 +796,30 @@ where (isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
             string masterID = (e.Master == null) ? string.Empty : e.Master["ID"].ToString();
-            this.DetailSelectCommand = string.Format(
-                @"
-select a.id
-	   , a.PoId
-	   , a.Seq1
-	   , a.Seq2
-	   , seq = concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2)
-	   , a.Roll
-	   , a.Dyelot
-	   , fi.Tone
-	   , p1.stockunit
-	   , [Description] = dbo.getMtlDesc(a.poid,a.seq1,a.seq2,2,0) 
-	   , a.Qty
-	   , a.StockType
-	   , location = dbo.Getlocation(fi.Ukey) 
-       , [ContainerCode] = fi.ContainerCode
-	   , a.ukey
-	   , a.FtyInventoryUkey
-       , a.Remark
-       --, [LackReason] = iif(ld.PPICReasonID is null, '', CONCAT(ld.PPICReasonID, '-', p.Description))
-from dbo.IssueLack_Detail a WITH (NOLOCK) 
-inner join IssueLack il with (nolock) on a.ID = il.ID
-left join PO_Supp_Detail p1 WITH (NOLOCK) on p1.ID = a.PoId 
-											 and p1.seq1 = a.SEQ1 
-											 and p1.SEQ2 = a.seq2
-left join FtyInventory fi WITH (NOLOCK) on a.POID = fi.POID 
-										  and a.Seq1 = fi.Seq1 
-										  and a.Seq2 = fi.Seq2 
-										  and a.Roll = fi.Roll 
-										  and a.Dyelot = fi.Dyelot 
-										  and a.StockType = fi.StockType
-left join Lack l with (nolock) on l.POID = a.POID and l.ID = il.RequestID
-Where a.id = '{0}'", masterID);
+            this.DetailSelectCommand = $@"
+SELECT sd.*
+	   , SEQ = concat(Ltrim(Rtrim(sd.seq1)), ' ', sd.Seq2)
+	   , [Description] = dbo.getMtlDesc(sd.poid,sd.seq1,sd.seq2,2,0) 
+	   , psd.stockunit
+       , psd.Refno
+       , f.ContainerCode
+	   , f.Tone
+       , [location] = dbo.Getlocation(f.Ukey)
+       , [Color] = dbo.GetColorMultipleID_MtlType(psd.BrandID, ISNULL(psdsC.SpecValue ,''), Fabric.MtlTypeID, psd.SuppColor)
+FROM IssueLack_Detail sd WITH (NOLOCK) 
+INNER JOIN IssueLack s WITH (NOLOCK) on sd.ID = s.ID
+INNER JOIN PO_Supp_Detail psd WITH (NOLOCK) on psd.ID = sd.PoId AND psd.seq1 = sd.SEQ1 AND psd.SEQ2 = sd.seq2
+INNER JOIN Fabric WITH (NOLOCK)  on Fabric.SCIRefno = psd.SCIRefno
+INNER JOIN FtyInventory f WITH (NOLOCK) on sd.POID = f.POID 
+										  AND sd.Seq1 = f.Seq1 
+										  AND sd.Seq2 = f.Seq2 
+										  AND sd.Roll = f.Roll 
+										  AND sd.Dyelot = f.Dyelot 
+										  AND sd.StockType = f.StockType
+LEFT JOIN PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id AND psdsC.seq1 = psd.seq1 AND psdsC.seq2 = psd.seq2 AND psdsC.SpecColumnID = 'Color'
+LEFT JOIN Lack l WITH (NOLOCK) on l.POID = sd.POID AND l.ID = s.RequestID
+Where sd.id = '{masterID}'
+";
             return base.OnDetailSelectCommandPrepare(e);
         }
 
@@ -891,30 +881,34 @@ Where a.id = '{0}'", masterID);
 
         private void TxtRequestNo_Validating(object sender, CancelEventArgs e)
         {
-            if (!MyUtility.Check.Seek(
-                $@"select [type],[apvdate],[issuelackid],[Shift],[SubconName] from dbo.lack WITH (NOLOCK) 
-where id='{this.txtRequestNo.Text}' and fabrictype='F' and mdivisionid='{Env.User.Keyword}'", out DataRow dr))
+            string sqlcmd = $@"
+select type,apvdate,issuelackid,Shift,SubconName,Remark
+from lack WITH (NOLOCK) 
+where id='{this.txtRequestNo.Text}'
+and fabrictype='F'
+and mdivisionid='{Env.User.Keyword}'
+";
+
+            if (!MyUtility.Check.Seek(sqlcmd, out DataRow dr))
             {
                 e.Cancel = true;
                 MyUtility.Msg.WarningBox("Please check requestid is Fabric.", "Data not found!!");
                 this.txtRequestNo.Text = string.Empty;
                 return;
             }
-            else
-            {
-                if (MyUtility.Check.Empty(dr["apvdate"]))
-                {
-                    e.Cancel = true;
-                    MyUtility.Msg.WarningBox("Request is not approved!!");
-                    return;
-                }
 
-                if (!MyUtility.Check.Empty(dr["issuelackid"]))
-                {
-                    e.Cancel = true;
-                    MyUtility.Msg.WarningBox(string.Format("This request# ({0}) already issued by {1}.", this.txtRequestNo.Text, dr["issuelackid"]));
-                    return;
-                }
+            if (MyUtility.Check.Empty(dr["apvdate"]))
+            {
+                e.Cancel = true;
+                MyUtility.Msg.WarningBox("Request is not approved!!");
+                return;
+            }
+
+            if (!MyUtility.Check.Empty(dr["issuelackid"]))
+            {
+                e.Cancel = true;
+                MyUtility.Msg.WarningBox(string.Format("This request# ({0}) already issued by {1}.", this.txtRequestNo.Text, dr["issuelackid"]));
+                return;
             }
 
             this.CurrentMaintain["requestid"] = this.txtRequestNo.Text;
@@ -922,6 +916,7 @@ where id='{this.txtRequestNo.Text}' and fabrictype='F' and mdivisionid='{Env.Use
             this.displayApvDate.Text = ((DateTime)dr["apvdate"]).ToString(string.Format("{0}", Env.Cfg.DateTimeStringFormat));
             this.displayBoxShift.Text = dr["Shift"].Equals("D") ? "Day" : dr["Shift"].Equals("N") ? "Night" : "Subcon-Out";
             this.txtLocalSupp1.TextBox1.Text = dr["SubconName"].ToString();
+            this.editBoxPPICRemark.Text = MyUtility.Convert.GetString(dr["Remark"]);
         }
 
         /// <inheritdoc/>
@@ -960,6 +955,7 @@ where i.Id='{row["ID"].ToString()}'");
             report.ReportParameters.Add(new ReportParameter("RptTitle", rptTitle));
             report.ReportParameters.Add(new ReportParameter("ID", id));
             report.ReportParameters.Add(new ReportParameter("Request", requestno));
+            report.ReportParameters.Add(new ReportParameter("PPICRemark", this.editBoxPPICRemark.Text));
             report.ReportParameters.Add(new ReportParameter("Remark", remark));
             report.ReportParameters.Add(new ReportParameter("issuetime", DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss")));
             report.ReportParameters.Add(new ReportParameter("Dept", this.displayDept.Text));
@@ -1108,7 +1104,7 @@ where a.id= @ID
             }
 
             DataRow dataRow = dt.Rows[0];
-            this.editBoxRequestRemark.Text = MyUtility.Convert.GetString(dataRow["Remark"]);
+            this.editBoxPPICRemark.Text = MyUtility.Convert.GetString(dataRow["Remark"]);
             this.txtSewingLine.Text = MyUtility.Convert.GetString(dataRow["SewingLineID"]);
 
             return base.OnRenewDataDetailPost(e);

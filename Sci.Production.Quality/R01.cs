@@ -280,6 +280,8 @@ select
 	,F.ShadeBond
 	,[ShadeboneInspector] = (select name from Pass1 where id = f.ShadeboneInspector)
 	,F.ShadeBondDate
+	,[Shade_Band_Pass] =  [Shade_Band_Pass].cnt
+	,[Shade_Band_Fail] =  [Shade_Band_Fail].cnt
 	,F.Continuity
 	,[ContinuityInspector] = (select name from Pass1 where id = f.ContinuityInspector)
 	,F.ContinuityDate
@@ -456,6 +458,18 @@ outer apply
 		where fs.ID = f.ID 
 	) s
 ) Shadeband
+outer apply(
+	select cnt = count(1) 
+	from FIR_Shadebone t
+	where UPPER(Result) = UPPER('Pass')
+	and t.ID = f.ID
+) [Shade_Band_Pass]
+outer apply(
+	select cnt = count(1) 
+	from FIR_Shadebone t
+	where UPPER(Result) = UPPER('Fail')
+	and t.ID = f.ID
+) [Shade_Band_Fail]
 OUTER APPLY(
     SELECT Name 
     FROM Color c WITH (NOLOCK)
@@ -513,6 +527,8 @@ select
 	,tf.ShadeBond
 	,tf.ShadeboneInspector
 	,tf.ShadeBondDate
+	,tf.[Shade_Band_Pass]
+	,tf.[Shade_Band_Fail]
 	,tf.Continuity
 	,tf.ContinuityInspector
 	,tf.ContinuityDate

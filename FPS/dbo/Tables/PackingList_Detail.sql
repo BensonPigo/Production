@@ -1,0 +1,28 @@
+﻿CREATE TABLE [dbo].[PackingList_Detail] (
+    [ID]               VARCHAR (13)   NOT NULL,
+    [SCICtnNo]         VARCHAR (16)   NOT NULL,
+    [CustCTN]          VARCHAR (30)   NOT NULL,
+    [PulloutDate]      DATE           NULL,
+    [OrderID]          VARCHAR (13)   NOT NULL,
+    [OrderShipmodeSeq] VARCHAR (2)    NOT NULL,
+    [Article]          VARCHAR (8)    NOT NULL,
+    [SizeCode]         VARCHAR (8)    NOT NULL,
+    [ShipQty]          INT            NULL,
+    [Barcode]          VARCHAR (30)   NULL,
+    [GW]               NUMERIC (7, 3) NULL,
+    [CtnRefno]         VARCHAR (21)   NULL,
+    [CtnLength]        NUMERIC (8, 4) NULL,
+    [CtnWidth]         NUMERIC (8, 4) NULL,
+    [CtnHeight]        NUMERIC (8, 4) NULL,
+    [CtnUnit]          VARCHAR (8)    NULL,
+    [Junk]             BIT            DEFAULT ((0)) NULL,
+    [CmdTime]          DATETIME       NOT NULL,
+    [SunriseUpdated]   BIT            DEFAULT ((0)) NOT NULL,
+    [GenSongUpdated]   BIT            DEFAULT ((0)) NOT NULL,
+    [PackingCTN]       VARCHAR (19)   DEFAULT ('') NOT NULL,
+    [HTMLSetting]      BIT            CONSTRAINT [DF_PackingList_Detail_HTMLSetting] DEFAULT ((0)) NOT NULL,
+    [PicSetting]       BIT            CONSTRAINT [DF_PackingList_Detail_PicSetting] DEFAULT ((0)) NOT NULL,
+    [IsMixPacking]     BIT            CONSTRAINT [DF_PackingList_Detail_IsMixPacking] DEFAULT ((0)) NOT NULL,
+    CONSTRAINT [PK_PackingList_Detail] PRIMARY KEY CLUSTERED ([SCICtnNo] ASC, [Article] ASC, [SizeCode] ASC, [OrderID] ASC, [OrderShipmodeSeq] ASC)
+);
+
