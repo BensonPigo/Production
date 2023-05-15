@@ -10,8 +10,8 @@
     [Description]       NVARCHAR (60)  DEFAULT ('') NOT NULL,
     [FDUploadDate]      DATETIME       NULL,
     [BuyReadyDate]      DATE           NULL,
-    [CertificateNumber] VARCHAR (50)   CONSTRAINT [DF_Style_Article_CertificateNumber] DEFAULT ('') NOT NULL,
-    [SecurityCode]      VARCHAR (50)   CONSTRAINT [DF_Style_Article_SecurityCode] DEFAULT ('') NOT NULL,
+    [CertificateNumber] VARCHAR (100)   CONSTRAINT [DF_Style_Article_CertificateNumber] DEFAULT ('') NOT NULL,
+    [SecurityCode]      VARCHAR (100)   CONSTRAINT [DF_Style_Article_SecurityCode] DEFAULT ('') NOT NULL,
     CONSTRAINT [PK_Style_Article] PRIMARY KEY CLUSTERED ([StyleUkey] ASC, [Article] ASC)
 );
 
