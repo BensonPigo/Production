@@ -2,12 +2,6 @@
 Create PROCEDURE [dbo].[exp_GASA]
 AS
 
-IF OBJECT_ID(N'dbo.SentReport') IS NOT NULL
-BEGIN
-  DROP TABLE SentReport
-END
-
-
 IF OBJECT_ID(N'dbo.FirstDyelot') IS NOT NULL
 BEGIN
   DROP TABLE FirstDyelot
@@ -31,21 +25,6 @@ else
 	Insert into Pms_To_Trade.dbo.dateInfo(Name,DateStart,DateEnd,Remark)
 	values (@DateInfoName,@DateStart,@DateStart,@Remark);
 ------------------------------------------------------------------------------------------------------
-
-SELECT [Export_DetailUkey]
-      ,[InspectionReport]
-      ,[TestReport]
-      ,[ContinuityCard]
-      ,[T2InspYds]
-      ,[T2DefectPoint]
-      ,[T2Grade]
-      ,[EditName]
-      ,[EditDate]
-      ,[TestReportCheckClima]
-INTO SentReport
-FROM Production.dbo.SentReport
-WHERE EditDate >= @DateStart
-;
 
 SELECT [SuppID]
 	  ,[TestDocFactoryGroup]
