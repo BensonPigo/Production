@@ -116,13 +116,13 @@ namespace Sci.Production.Subcon
 
             if (!MyUtility.Check.Empty(this.CutRef1))
             {
-                joinWorkOrder = "inner join Workorder w WITH (NOLOCK, index(CutRefNo)) on b.CutRef = w.CutRef and w.MDivisionId = b.MDivisionid ";
+                joinWorkOrder = "inner join Workorder w WITH (NOLOCK, index(CutRefNo)) on b.CutRef = w.CutRef ";
                 sqlWhereFirstQuery.Append(string.Format(@" and w.CutRef >= '{0}' ", this.CutRef1));
             }
 
             if (!MyUtility.Check.Empty(this.CutRef2))
             {
-                joinWorkOrder = "inner join Workorder w WITH (NOLOCK, index(CutRefNo)) on b.CutRef = w.CutRef and w.MDivisionId = b.MDivisionid ";
+                joinWorkOrder = "inner join Workorder w WITH (NOLOCK, index(CutRefNo)) on b.CutRef = w.CutRef ";
                 sqlWhereFirstQuery.Append(string.Format(@" and w.CutRef <= '{0}' ", this.CutRef2));
             }
 
@@ -199,13 +199,13 @@ namespace Sci.Production.Subcon
 
             if (!MyUtility.Check.Empty(this.dateEstCutDate1))
             {
-                joinWorkOrder = "inner join Workorder w WITH (NOLOCK, index(CutRefNo)) on b.CutRef = w.CutRef and w.MDivisionId = b.MDivisionid ";
+                joinWorkOrder = "inner join Workorder w WITH (NOLOCK, index(CutRefNo)) on b.CutRef = w.CutRef ";
                 sqlWhereFirstQuery.Append(string.Format(@" and w.EstCutDate >= convert(date,'{0}')", Convert.ToDateTime(this.dateEstCutDate1).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.dateEstCutDate2))
             {
-                joinWorkOrder = "inner join Workorder w WITH (NOLOCK, index(CutRefNo)) on b.CutRef = w.CutRef and w.MDivisionId = b.MDivisionid ";
+                joinWorkOrder = "inner join Workorder w WITH (NOLOCK, index(CutRefNo)) on b.CutRef = w.CutRef ";
                 sqlWhereFirstQuery.Append(string.Format(@" and w.EstCutDate <= convert(date,'{0}')", Convert.ToDateTime(this.dateEstCutDate2).ToString("yyyy/MM/dd")));
             }
 
@@ -403,7 +403,6 @@ outer apply(
 		    from WorkOrder wo WITH (NOLOCK, Index(CutRefNo)) 
 		    where   wo.CutRef = b.CutRef 
                     and wo.ID = b.POID
-                    and wo.MDivisionID = b.MDivisionID
             and wo.SpreadingNoID is not null
             and wo.SpreadingNoID != ''
 		    for xml path('')
@@ -447,7 +446,7 @@ outer apply(
 			[EstCutDate] = MAX(w.EstCutDate),
 			[CuttingOutputDate] = MAX(co.cDate)
 	from #result r
-	inner join WorkOrder w with (nolock) on w.CutRef = r.[Cut Ref#] and w.MDivisionId = r.M and w.id = r.[Master SP#]
+	inner join WorkOrder w with (nolock) on w.CutRef = r.[Cut Ref#] and w.id = r.[Master SP#]
 	left join CuttingOutput_Detail cod with (nolock) on cod.WorkOrderUkey = w.Ukey
 	left join CuttingOutput co  with (nolock) on co.ID = cod.ID
     where r.[Cut Ref#] <> ''

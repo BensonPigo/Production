@@ -140,7 +140,6 @@ outer apply
 	from workorder w WITH (NOLOCK) 
 	where w.id = b.POID 
 	and w.cutref = b.CutRef
-	and w.MDivisionID = b.MDivisionID
 ) EstCutDate
 where 1=1
 and o.mDivisionid='{Env.User.Keyword}'

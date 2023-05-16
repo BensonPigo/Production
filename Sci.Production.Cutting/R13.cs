@@ -146,7 +146,7 @@ namespace Sci.Production.Cutting
                 select val = sum(aa.Layer) 
                 from cuttingoutput_Detail aa WITH (NOLOCK)
                 inner join CuttingOutput c WITH (NOLOCK) on aa.ID = c.ID
-                where aa.CutRef = wo.CutRef and c.FactoryID = wo.FactoryID
+                where aa.CutRef = wo.CutRef
             )acc
             outer apply(
                  Select MincoDate = MIN(co.cdate)

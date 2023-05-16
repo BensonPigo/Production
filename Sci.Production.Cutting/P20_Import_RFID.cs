@@ -211,7 +211,7 @@ SELECT distinct WO.ukey
     FROM BundleInOut BIO WITH (NOLOCK) 
     inner join Bundle_Detail BD WITH (NOLOCK)  on BD.BundleNo = BIO.BundleNo
     inner join Bundle B WITH (NOLOCK)  on BD.Id = B.ID and B.cutref <> ''
-    inner join workorder WO WITH (NOLOCK)  on WO.cutref=B.cutref and WO.ID=B.POID and WO.MDivisionID  = b.MDivisionID 
+    inner join workorder WO WITH (NOLOCK)  on WO.cutref=B.cutref and WO.ID=B.POID
     where BIO.subprocessid='SORTING' 
     and isnull(bio.RFIDProcessLocationID,'') = '' {2}
 
@@ -270,7 +270,7 @@ outer apply(select CuttingLayer = case when cl.CuttingLayer > WO.Layer - isnull(
                     when cl.CuttingLayer < 0 then 0
                     else cl.CuttingLayer
                     end) final
-where WO.mDivisionid = '{0}' 
+where 1=1
 and wo.Layer >  isnull(acc.AccuCuttingLayer,0)
 and WO.CutRef != ''
 and WO.ukey not in ( {1} )   
