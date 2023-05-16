@@ -2,17 +2,7 @@ Create PROCEDURE [dbo].[imp_GASA]
 AS
 BEGIN
 SET NOCOUNT ON;
-	Merge Production.dbo.SentReport as t
-	Using (select * from Trade_To_Pms.dbo.SentReport)as s
-	on t.Export_DetailUkey = s.Export_DetailUkey when matched then update set 
-		t.TPEInspectionReport =s.InspectionReport,
-		t.TPETestReport =s.TestReport,
-		t.TPEContinuityCard =s.ContinuityCard,
-		t.AWBNo  = isnull(s.AWBNo,'') 
-	when not matched by target then 	
-		insert(  [Export_DetailUkey],  TPEInspectionReport,  TPETestReport, TPEContinuityCard,		   AWBNo )
-		values(s.[Export_DetailUkey],s.[InspectionReport] ,s.[TestReport] ,s.[ContinuityCard],isnull(s.AWBNo,'') );
-
+	
 	Merge Production.dbo.FirstDyelot  as t
 	Using (select * from Trade_To_Pms.dbo.FirstDyelot )as s
 	on t.TestDocFactoryGroup = s.TestDocFactoryGroup 
