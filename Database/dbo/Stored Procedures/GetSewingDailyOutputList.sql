@@ -228,6 +228,12 @@ left join #tmpOutputDate t on t.SewingLineID = w.SewingLineID and t.FactoryID = 
 where w.Holiday=0 and isnull(w.Hours,0) != 0 and w.Date >= (select dateadd(day,-240, min(MinOutputDate)) from #tmpOutputDate) and  w.Date <= (select max(MaxOutputDate) from #tmpOutputDate)
 order by  FactoryID, t.SewingLineID ,t.OrderStyle, t.MockupStyle, w.Date
 
+select w.FactoryID , w.Date
+	, [RID] = ROW_NUMBER() over(partition by w.FactoryID order by w.Date)
+into #tmpWorkHour_Factory
+from #tmpWorkHour w
+group by w.FactoryID, w.Date
+
 select t.*
     ,[LastShift] = IIF(t.Shift <> 'O' and t.Category <> 'M' and t.LocalOrder = 1, 'I',t.Shift) 
     ,[FtyType] = f.Type
@@ -292,12 +298,39 @@ select t.*
 into #tmp1stFilter
 from #tmp1stFilter_First t 
 left join (
-	select MasterStyleID, MasterBrandID
-		, [CumulateDate_Max] = MAX(CumulateDate_Before)
-	from #tmp1stFilter_First
-	where MasterStyleID <> ''
-	group by MasterStyleID, MasterBrandID
-)t2 on t.MasterStyleID = t2.MasterStyleID and t.MasterBrandID = t2.MasterBrandID
+	select t.MasterBrandID
+		, t.MasterStyleID
+		, t.OutputDate
+		, t.FactoryID
+		, [CumulateDate_Max] = t.CumulateDate_Max + ROW_NUMBER() OVER (PARTITION BY t.MasterStyleID, t.MasterBrandID, t.FactoryID, (RID - Seq) ORDER BY t.MasterStyleID, t.MasterBrandID, t.FactoryID, RID) - 1
+	from 
+	(
+		select t.*
+			, t2.CumulateDate_Max
+			, [SEQ] = ROW_NUMBER() over(partition by t.MasterStyleID, t.MasterBrandID, t.FactoryID order by t.OutputDate)
+		from 
+		(
+			select distinct t.MasterStyleID, t.MasterBrandID, t.OutputDate, t.FactoryID, w.RID
+			from #tmp1stFilter_First t
+			left join #tmpWorkHour_Factory w on w.FactoryID = t.FactoryID and w.Date = t.OutputDate
+			where MasterStyleID <> ''
+		)t
+		outer apply (
+			select MasterStyleID, MasterBrandID, FactoryID, OutputDate
+				, [CumulateDate_Max] = MAX(CumulateDate_Before)
+			from #tmp1stFilter_First t2
+			where t.MasterStyleID = t2.MasterStyleID
+			and t.MasterBrandID = t2.MasterBrandID
+			and OutputDate in (
+				select MIN(OutputDate)
+				from #tmp1stFilter_First a
+				where a.MasterStyleID = t2.MasterStyleID
+				and a.MasterBrandID = t2.MasterBrandID	
+			)
+			group by MasterStyleID, MasterBrandID, FactoryID, OutputDate
+		) t2
+	)t
+)t2 on t.MasterStyleID = t2.MasterStyleID and t.MasterBrandID = t2.MasterBrandID and t.FactoryID = t2.FactoryID and t.OutputDate = t2.OutputDate
 
 if(@Include_Artwork = 1)
 begin
