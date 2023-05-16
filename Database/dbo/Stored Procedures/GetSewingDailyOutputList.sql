@@ -294,7 +294,8 @@ where	(
 		(@CDCode = '' or t.OrderCdCodeID = @CDCode or t.MockupCDCodeID = @CDCode)
 
 select t.*
-	, [CumulateDate] = coalesce(t2.CumulateDate_Max, t.CumulateDate_Before, 0)
+	, [CumulateDate] = coalesce(t.CumulateDate_Before, 0)
+	, [CumulateDateSimilar] = coalesce(t2.CumulateDateSimilar, 0)
 into #tmp1stFilter
 from #tmp1stFilter_First t 
 left join (
@@ -302,7 +303,7 @@ left join (
 		, t.MasterStyleID
 		, t.OutputDate
 		, t.FactoryID
-		, [CumulateDate_Max] = t.CumulateDate_Max + ROW_NUMBER() OVER (PARTITION BY t.MasterStyleID, t.MasterBrandID, t.FactoryID, (RID - Seq) ORDER BY t.MasterStyleID, t.MasterBrandID, t.FactoryID, RID) - 1
+		, [CumulateDateSimilar] = t.CumulateDate_Max + ROW_NUMBER() OVER (PARTITION BY t.MasterStyleID, t.MasterBrandID, t.FactoryID, (RID - Seq) ORDER BY t.MasterStyleID, t.MasterBrandID, t.FactoryID, RID) - 1
 	from 
 	(
 		select t.*
@@ -472,6 +473,7 @@ select	MDivisionID
 		,[EFF] = EFF
 		,[RFT] = RFT
 		,CumulateDate
+		,CumulateDateSimilar
 		,DateRange
 		,InlineQty'
 		if(@ShowAccumulate_output = 1)
@@ -541,7 +543,8 @@ from(
 		,CPUSewer = IIF(ROUND(ActManPower*WorkHour,2)>0,(IIF(t.Category=''M'',MockupCPU*MockupCPUFactor,OrderCPU*OrderCPUFactor*Rate)*t.QAQty)/ROUND(ActManPower*WorkHour,2),0)
 		,EFF = ROUND(IIF(ROUND(ActManPower*WorkHour,2)>0,((IIF(t.Category=''M'',MockupCPU*MockupCPUFactor,OrderCPU*OrderCPUFactor*Rate)*t.QAQty)/(ROUND(ActManPower*WorkHour,2)*3600/StdTMS))*100,0),1)
 		,RFT = IIF(ori_InlineQty = 0, 0, ROUND(ori_QAQty* 1.0 / ori_InlineQty * 1.0 * 100 ,2))
-		,CumulateDate = IIF(CumulateDate > 180,''>180'',CONVERT(VARCHAR,CumulateDate))
+		,CumulateDate = IIF(CumulateDate > 180, ''>180'', CONVERT(VARCHAR, CumulateDate))
+		,CumulateDateSimilar = IIF(CumulateDateSimilar > 180, ''>180'', CONVERT(VARCHAR, CumulateDateSimilar))
 		,DateRange = IIF(CumulateDate >= 10,''>=10'',CONVERT(VARCHAR,CumulateDate))
 		,InlineQty'
 
