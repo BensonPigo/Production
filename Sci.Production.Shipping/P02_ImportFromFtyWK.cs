@@ -180,8 +180,8 @@ and fd.ID ='{this.txtWKNo.Text}'
             }
 
             DataTable dt = (DataTable)this.listControlBindingSource1.DataSource;
-            var selectDT = dt.AsEnumerable().Where(x => x.Field<int>("Selected") == 1).TryCopyToDataTable(dt);
-            if (dt.Rows.Count == 0)
+            var selectDT = dt.AsEnumerable().Where(x => MyUtility.Convert.GetInt(x["Selected"]) == 1).TryCopyToDataTable(dt);
+            if (selectDT.Rows.Count == 0)
             {
                 MyUtility.Msg.WarningBox("No data, cannot import!");
                 return;
