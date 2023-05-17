@@ -75,13 +75,18 @@
     [HaulingDate] DATE NULL, 
     [OriClogLocationID] NVARCHAR(50) NOT NULL DEFAULT (''), 
     [PackingAuditDate] DATE NULL, 
-    [PackingAuditStatus] VARCHAR(4) NOT NULL DEFAULT (''), 
-    [DryRoomMDStatus] VARCHAR(4) NULL DEFAULT (''), 
+    [PackingAuditStatus] VARCHAR(6) NOT NULL DEFAULT (''), 
+    [DryRoomMDStatus] VARCHAR(6) NULL DEFAULT (''), 
     ClogPackingErrorDate date null,
     ClogPackingErrorID varchar(8) not null constraint [DF_PackingList_Detail_ClogPackingErrorID] DEFAULT '',
     ClogPackingErrorQty smallint not null constraint [DF_PackingList_Detail_ClogPackingErrorQty] DEFAULT 0,
     [ScanPackMDDate] DATETIME NULL, 
     [ClogScanPackMDDate] DATETIME NULL, 
+    [HaulingStatus] VARCHAR(6) not null constraint [DF_PackingList_Detail_HaulingStatus] DEFAULT '',
+    [M360MDStatus] VARCHAR(6) not null constraint [DF_PackingList_Detail_M360MDStatus] DEFAULT '',
+    [M360MDScanDate] DATE NULL, 
+    [M360MDFailQty] INT not null constraint [DF_PackingList_Detail_[M360MDFailQty] DEFAULT 0,
+    [M360MDScanName] VARCHAR(10) not null constraint [DF_PackingList_Detail_M360MDScanName] DEFAULT '',
     CONSTRAINT [PK_Ukey] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
 
@@ -174,6 +179,9 @@ GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'CFA需要檢驗的箱子', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'PackingList_Detail', @level2type = N'COLUMN', @level2name = N'CFANeedInsp';
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'除溼室收箱日', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'PackingList_Detail', @level2type = N'COLUMN', @level2name = N'DRYReceiveDate';
+GO
+CREATE NONCLUSTERED INDEX [IDX_PackingList_Detail_ID]
+    ON [dbo].[PackingList_Detail]([ID] ASC);
 GO
 CREATE NONCLUSTERED INDEX [NonClusteredIndex-forOrderID]
     ON [dbo].[PackingList_Detail]([OrderID] ASC);
@@ -317,3 +325,54 @@ EXEC sp_addextendedproperty @name = N'MS_Description',
     @level1name = N'PackingList_Detail',
     @level2type = N'COLUMN',
     @level2name = N'ClogScanPackMDDate'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'Hauling狀態
+通過 : status = Haul
+退回 : status = Return',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'PackingList_Detail',
+    @level2type = N'COLUMN',
+    @level2name = N'HaulingStatus'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'(M360)MD狀態
+通過 : Pass
+不通過 : Hold
+退回 : Return
+',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'PackingList_Detail',
+    @level2type = N'COLUMN',
+    @level2name = N'M360MDStatus'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'(M360)MD日期',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'PackingList_Detail',
+    @level2type = N'COLUMN',
+    @level2name = N'M360MDScanDate'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'(M360)MD Fail數',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'PackingList_Detail',
+    @level2type = N'COLUMN',
+    @level2name = N'M360MDFailQty'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'(M360)MD登入ID',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'PackingList_Detail',
+    @level2type = N'COLUMN',
+    @level2name = N'M360MDScanName'

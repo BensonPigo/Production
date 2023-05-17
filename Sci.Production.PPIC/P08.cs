@@ -360,6 +360,12 @@ where id = '{this.CurrentMaintain["id"]}'") ? Color.Blue : Color.Black;
                 return false;
             }
 
+            if (MyUtility.Check.Empty(this.CurrentMaintain["FactoryID"]))
+            {
+                MyUtility.Msg.WarningBox("Can't Save/Confirm if  Factory column is null.");
+                return false;
+            }
+
             #endregion
 
             // by ISP20220600 匯入採購單,是否卡SP#
@@ -821,6 +827,12 @@ where ReplacementReportID = '{0}'", MyUtility.Convert.GetString(this.CurrentMain
             if (!Prgs.GetAuthority(MyUtility.Convert.GetString(this.CurrentMaintain["ApvName"])))
             {
                 MyUtility.Msg.WarningBox("only the \"PPIC/Factory Mgr\" and his manager can do Confirm ");
+                return;
+            }
+
+            if (MyUtility.Check.Empty(this.CurrentMaintain["FactoryID"]))
+            {
+                MyUtility.Msg.WarningBox("Can't Save/Confirm if  Factory column is null.");
                 return;
             }
 

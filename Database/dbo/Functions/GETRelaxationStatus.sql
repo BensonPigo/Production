@@ -1,7 +1,7 @@
 ﻿
-CREATE FUNCTION GETRelaxationStatus
+CREATE FUNCTION [dbo].[GETRelaxationStatus]
 (
-    @Issue_DetailUkey bigint
+    @Barcode varchar(255)
 )
 Returns varchar(20)
 As
@@ -15,7 +15,7 @@ BEGIN
             when RelaxationStartTime is not null and RelaxationEndTime > GETDATE() then 'Ongoing'
             when RelaxationStartTime is not null and RelaxationEndTime <= GETDATE() then 'Done'
             end
-        from Issue_Detail
-        where ukey =  @Issue_DetailUkey
+        from Fabric_UnrollandRelax
+        where barcode =  @Barcode
     )
 END

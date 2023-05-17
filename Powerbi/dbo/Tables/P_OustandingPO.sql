@@ -7,7 +7,7 @@
     [BuyerDelivery]     DATE         NULL,
     [Seq]               VARCHAR (2)  CONSTRAINT [DF_P_OustandingPO_Seq] DEFAULT ('') NOT NULL,
     [ShipModeID]        VARCHAR (10) CONSTRAINT [DF_P_OustandingPO_ShipModeID] DEFAULT ('') NOT NULL,
-    [Category]          VARCHAR (10) CONSTRAINT [DF_P_OustandingPO_Category] DEFAULT ('') NOT NULL,
+    [Category]          VARCHAR (10) CONSTRAINT [DF_P_OustandingPO_Category] DEFAULT ('') NOT NULL,    
     [PartialShipment]   VARCHAR (1)  CONSTRAINT [DF_P_OustandingPO_PartialShipment] DEFAULT ('') NOT NULL,
     [Junk]              VARCHAR (1)  CONSTRAINT [DF_P_OustandingPO_Junk] DEFAULT ('') NOT NULL,
     [OrderQty]          INT          CONSTRAINT [DF_P_OustandingPO_OrderQty] DEFAULT ((0)) NOT NULL,
@@ -26,6 +26,11 @@
     [OSTClogCtn]        INT          CONSTRAINT [DF_P_OustandingPO_OSTClogCtn] DEFAULT ((0)) NOT NULL,
     [PulloutComplete]   VARCHAR (1)  CONSTRAINT [DF_P_OustandingPO_PulloutCompleted] DEFAULT ('') NOT NULL,
     [Dest]              VARCHAR (30) NULL,
+    [KPIGroup]          VARCHAR (8) CONSTRAINT [DF_P_OustandingPO_KPIGroup] DEFAULT ('') NOT NULL,
+    [CancelledButStillNeedProduction] VARCHAR(8) NOT NULL DEFAULT (''), 
+    [CFAInspectionResult] VARCHAR(16) NOT NULL DEFAULT (''), 
+    [3rdPartyInspection] VARCHAR(8) NOT NULL DEFAULT (''), 
+    [3rdPartyInspectionResult] VARCHAR(16) NOT NULL DEFAULT (''), 
     CONSTRAINT [PK_P_OustandingPO] PRIMARY KEY CLUSTERED ([FactoryID] ASC, [OrderID] ASC, [Seq] ASC)
 );
 

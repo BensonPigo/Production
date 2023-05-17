@@ -51,6 +51,38 @@ namespace Sci.Production.Cutting
             this.GridFilter();
         }
 
+        /// <summary>
+        /// DoAutoDistribute 自動做Distribute，不用開視窗選擇
+        /// </summary>
+        /// <returns>DualResult</returns>
+        public DualResult DoAutoDistribute()
+        {
+            this.Query();
+
+            DataTable dtWorkOrder_Distribute = this.SourceDt.AsEnumerable().Where(s => MyUtility.Convert.GetDecimal(s["BalQty"]) > 0).TryCopyToDataTable(this.SourceDt);
+            if (dtWorkOrder_Distribute.Rows.Count == 0)
+            {
+                return new DualResult(true);
+            }
+
+            try
+            {
+                int seqBySewInline = 1;
+                foreach (DataRow dr in dtWorkOrder_Distribute.AsEnumerable().OrderBy(s => MyUtility.Convert.GetDate(s["SewInline"])))
+                {
+                    dr["Seq"] = seqBySewInline.ToString();
+                    seqBySewInline++;
+                }
+
+                this.DoDistribute(dtWorkOrder_Distribute);
+                return new DualResult(true);
+            }
+            catch (Exception ex)
+            {
+                return new DualResult(false, ex);
+            }
+        }
+
         private void Query()
         {
             string sizes = this.SizeratioTb.AsEnumerable()
@@ -81,12 +113,16 @@ SELECT distinct
     WorkOrderUkey = cast({this.Detailrow["Ukey"]} as bigint),
     NewKey = cast({this.Detailrow["NewKey"]} as bigint),
 	oc.ColorID,
-    ID = '{this.Detailrow["ID"]}'
+    ID = '{this.Detailrow["ID"]}',
+    o.SewInline
 FROM order_qty oq 
 INNER JOIN orders o ON o.id = oq.id 
 INNER join Order_ColorCombo oc on oc.Id = o.poid and oc.Article = oq.Article and oc.FabricType = 'F'
-WHERE o.poid = '{this.Detailrow["ID"]}' and oq.SizeCode in ('{sizes}') and oc.ColorID = '{this.Detailrow["ColorID"]}'
-and oc.FabricPanelCode in ('{fabricPanelCode}')
+WHERE   o.poid = '{this.Detailrow["ID"]}' and
+        oq.SizeCode in ('{sizes}') and 
+        oc.ColorID = '{this.Detailrow["ColorID"]}' and
+        oc.FabricPanelCode in ('{fabricPanelCode}') and
+        (o.Junk = 0 or o.NeedProduction = 1)
 ORDER BY OQ.sizecode,oq.id,OQ.article 
 ";
             DualResult result = DBProxy.Current.Select(null, sqlcmd, out this.SourceDt);
@@ -266,16 +302,8 @@ ORDER BY OQ.sizecode,oq.id,OQ.article
             this.numBalQty.Value = this.numDistQty.Value - MyUtility.Convert.GetInt(this.SourceDt.Compute("sum(balQty)", "Sel = 1"));
         }
 
-        private void BtnDist_Click(object sender, EventArgs e)
+        private void DoDistribute(DataTable processDT)
         {
-            this.grid1.ValidateControl();
-            DataTable processDT = this.SourceDt.Select("Sel = 1").TryCopyToDataTable(this.SourceDt);
-            if (processDT.Rows.Count == 0)
-            {
-                MyUtility.Msg.WarningBox("Please selected datas first!");
-                return;
-            }
-
             // 準備每個 SizeCode 能分配總數的清單
             var sList = processDT.AsEnumerable().Select(s => MyUtility.Convert.GetString(s["SizeCode"])).ToList();
             var sizeTtlQty = this.SizeratioTb
@@ -339,6 +367,19 @@ ORDER BY OQ.sizecode,oq.id,OQ.article
                 row.SetAdded();
                 this.DistqtyTb.ImportRow(row);
             }
+        }
+
+        private void BtnDist_Click(object sender, EventArgs e)
+        {
+            this.grid1.ValidateControl();
+            DataTable processDT = this.SourceDt.Select("Sel = 1").TryCopyToDataTable(this.SourceDt);
+            if (processDT.Rows.Count == 0)
+            {
+                MyUtility.Msg.WarningBox("Please selected datas first!");
+                return;
+            }
+
+            this.DoDistribute(processDT);
 
             this.Close();
         }

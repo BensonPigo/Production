@@ -71,6 +71,14 @@
             this.txtsupplier = new Sci.Production.Class.Txtsupplier();
             this.label2 = new Sci.Win.UI.Label();
             this.txtGroup = new Sci.Win.UI.TextBox();
+            this.displayTotlalRoll = new Sci.Win.UI.DisplayBox();
+            this.label3 = new Sci.Win.UI.Label();
+            this.displayInspectedRoll = new Sci.Win.UI.DisplayBox();
+            this.label4 = new Sci.Win.UI.Label();
+            this.displayTotalLot = new Sci.Win.UI.DisplayBox();
+            this.label5 = new Sci.Win.UI.Label();
+            this.displayInspectedLot = new Sci.Win.UI.DisplayBox();
+            this.label6 = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.btmcont.SuspendLayout();
@@ -92,8 +100,8 @@
             // 
             // gridcont
             // 
-            this.gridcont.Location = new System.Drawing.Point(12, 229);
-            this.gridcont.Size = new System.Drawing.Size(969, 454);
+            this.gridcont.Location = new System.Drawing.Point(12, 288);
+            this.gridcont.Size = new System.Drawing.Size(969, 395);
             // 
             // undo
             // 
@@ -325,7 +333,7 @@
             this.checkNonInspection.AutoSize = true;
             this.checkNonInspection.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.checkNonInspection.IsSupportEditMode = false;
-            this.checkNonInspection.Location = new System.Drawing.Point(593, 198);
+            this.checkNonInspection.Location = new System.Drawing.Point(593, 257);
             this.checkNonInspection.Name = "checkNonInspection";
             this.checkNonInspection.ReadOnly = true;
             this.checkNonInspection.Size = new System.Drawing.Size(121, 21);
@@ -335,7 +343,7 @@
             // 
             // btnApprove
             // 
-            this.btnApprove.Location = new System.Drawing.Point(906, 192);
+            this.btnApprove.Location = new System.Drawing.Point(906, 251);
             this.btnApprove.Name = "btnApprove";
             this.btnApprove.Size = new System.Drawing.Size(75, 30);
             this.btnApprove.TabIndex = 127;
@@ -345,7 +353,7 @@
             // 
             // btnEncode
             // 
-            this.btnEncode.Location = new System.Drawing.Point(815, 192);
+            this.btnEncode.Location = new System.Drawing.Point(815, 251);
             this.btnEncode.Name = "btnEncode";
             this.btnEncode.Size = new System.Drawing.Size(80, 30);
             this.btnEncode.TabIndex = 128;
@@ -432,7 +440,7 @@
             // 
             // btnSendMail
             // 
-            this.btnSendMail.Location = new System.Drawing.Point(720, 193);
+            this.btnSendMail.Location = new System.Drawing.Point(720, 252);
             this.btnSendMail.Name = "btnSendMail";
             this.btnSendMail.Size = new System.Drawing.Size(85, 30);
             this.btnSendMail.TabIndex = 141;
@@ -515,9 +523,93 @@
             this.txtGroup.Size = new System.Drawing.Size(147, 23);
             this.txtGroup.TabIndex = 239;
             // 
+            // displayTotlalRoll
+            // 
+            this.displayTotlalRoll.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayTotlalRoll.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.displayTotlalRoll.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayTotlalRoll.Location = new System.Drawing.Point(128, 225);
+            this.displayTotlalRoll.Name = "displayTotlalRoll";
+            this.displayTotlalRoll.Size = new System.Drawing.Size(55, 21);
+            this.displayTotlalRoll.TabIndex = 241;
+            // 
+            // label3
+            // 
+            this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.label3.Location = new System.Drawing.Point(15, 225);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(110, 23);
+            this.label3.TabIndex = 240;
+            this.label3.Text = "Total Roll number#";
+            // 
+            // displayInspectedRoll
+            // 
+            this.displayInspectedRoll.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayInspectedRoll.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.displayInspectedRoll.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayInspectedRoll.Location = new System.Drawing.Point(383, 225);
+            this.displayInspectedRoll.Name = "displayInspectedRoll";
+            this.displayInspectedRoll.Size = new System.Drawing.Size(55, 21);
+            this.displayInspectedRoll.TabIndex = 243;
+            // 
+            // label4
+            // 
+            this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.label4.Location = new System.Drawing.Point(247, 225);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(133, 23);
+            this.label4.TabIndex = 242;
+            this.label4.Text = "Inspected Roll number";
+            // 
+            // displayTotalLot
+            // 
+            this.displayTotalLot.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayTotalLot.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.displayTotalLot.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayTotalLot.Location = new System.Drawing.Point(598, 225);
+            this.displayTotalLot.Name = "displayTotalLot";
+            this.displayTotalLot.Size = new System.Drawing.Size(55, 21);
+            this.displayTotalLot.TabIndex = 245;
+            // 
+            // label5
+            // 
+            this.label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.label5.Location = new System.Drawing.Point(492, 225);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(103, 23);
+            this.label5.TabIndex = 244;
+            this.label5.Text = "Total Lot Number";
+            // 
+            // displayInspectedLot
+            // 
+            this.displayInspectedLot.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayInspectedLot.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.displayInspectedLot.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayInspectedLot.Location = new System.Drawing.Point(832, 227);
+            this.displayInspectedLot.Name = "displayInspectedLot";
+            this.displayInspectedLot.Size = new System.Drawing.Size(55, 21);
+            this.displayInspectedLot.TabIndex = 247;
+            // 
+            // label6
+            // 
+            this.label6.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.label6.Location = new System.Drawing.Point(700, 225);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(129, 23);
+            this.label6.TabIndex = 246;
+            this.label6.Text = "Inspected Lot Number";
+            // 
             // P01_PhysicalInspection
             // 
             this.ClientSize = new System.Drawing.Size(993, 733);
+            this.Controls.Add(this.displayInspectedLot);
+            this.Controls.Add(this.label6);
+            this.Controls.Add(this.displayTotalLot);
+            this.Controls.Add(this.label5);
+            this.Controls.Add(this.displayInspectedRoll);
+            this.Controls.Add(this.label4);
+            this.Controls.Add(this.displayTotlalRoll);
+            this.Controls.Add(this.label3);
             this.Controls.Add(this.txtGroup);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.txtCustInspNumber);
@@ -611,6 +703,14 @@
             this.Controls.SetChildIndex(this.txtCustInspNumber, 0);
             this.Controls.SetChildIndex(this.label2, 0);
             this.Controls.SetChildIndex(this.txtGroup, 0);
+            this.Controls.SetChildIndex(this.label3, 0);
+            this.Controls.SetChildIndex(this.displayTotlalRoll, 0);
+            this.Controls.SetChildIndex(this.label4, 0);
+            this.Controls.SetChildIndex(this.displayInspectedRoll, 0);
+            this.Controls.SetChildIndex(this.label5, 0);
+            this.Controls.SetChildIndex(this.displayTotalLot, 0);
+            this.Controls.SetChildIndex(this.label6, 0);
+            this.Controls.SetChildIndex(this.displayInspectedLot, 0);
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).EndInit();
             this.btmcont.ResumeLayout(false);
@@ -664,5 +764,13 @@
         private Win.UI.TextBox txtCustInspNumber;
         private Win.UI.Label label2;
         private Win.UI.TextBox txtGroup;
+        private Win.UI.DisplayBox displayTotlalRoll;
+        private Win.UI.Label label3;
+        private Win.UI.DisplayBox displayInspectedRoll;
+        private Win.UI.Label label4;
+        private Win.UI.DisplayBox displayTotalLot;
+        private Win.UI.Label label5;
+        private Win.UI.DisplayBox displayInspectedLot;
+        private Win.UI.Label label6;
     }
 }

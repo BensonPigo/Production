@@ -263,6 +263,7 @@ WHERE   StockType='{0}'
             .Text("fromdyelot", header: "Dyelot", width: Widths.AnsiChars(8), iseditingreadonly: true) // 3
             .Text("Tone", header: "Tone/Grp", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .EditText("Description", header: "Description", width: Widths.AnsiChars(20), iseditingreadonly: true) // 4
+            .Text("Color", header: "Color", width: Widths.AnsiChars(6), iseditingreadonly: true)
             .Text("stockunit", header: "Stock" + Environment.NewLine + "Unit", iseditingreadonly: true) // 5
             .Text("Location", header: "From" + Environment.NewLine + "Location", iseditingreadonly: true) // 6
             .Text("FromContainerCode", header: "From" + Environment.NewLine + "Container Code", iseditingreadonly: true).Get(out from_ContainerCode)
@@ -594,8 +595,12 @@ select [Selected] = 0
     ,a.fromftyinventoryukey
     ,a.ukey
     ,dbo.Getlocation(fi.ukey) location
+    ,[Color] = Color.Value
 from dbo.SubTransfer_detail a WITH (NOLOCK) 
 left join PO_Supp_Detail p1 WITH (NOLOCK) on p1.ID = a.FromPoId and p1.seq1 = a.FromSeq1 and p1.SEQ2 = a.FromSeq2
+left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = p1.id and psdsC.seq1 = p1.seq1 and psdsC.seq2 = p1.seq2 and psdsC.SpecColumnID = 'Color'
+left join orders o on o.id = p1.id
+left join Fabric f WITH (NOLOCK) on f.SCIRefno = p1.SCIRefno
 left join FtyInventory FI on a.fromPoid = fi.poid and a.fromSeq1 = fi.seq1 and a.fromSeq2 = fi.seq2 and a.fromDyelot = fi.Dyelot
     and a.fromRoll = fi.roll and a.fromStocktype = fi.stocktype
 outer apply(
@@ -613,6 +618,12 @@ outer apply(
 			for xml path ('')
 		) , 1, 1, '')
 )Fromlocation
+OUTER APPLY(
+ SELECT [Value]=
+	CASE WHEN f.MtlTypeID in ('EMB THREAD','SP THREAD','THREAD') THEN IIF(p1.SuppColor = '' or p1.SuppColor is null, dbo.GetColorMultipleID(o.BrandID, psdsC.SpecValue), p1.SuppColor)
+	ELSE dbo.GetColorMultipleID(o.BrandID, psdsC.SpecValue)
+	END
+)Color
 Where a.id = '{0}'", masterID);
             return base.OnDetailSelectCommandPrepare(e);
         }

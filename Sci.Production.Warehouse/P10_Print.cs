@@ -163,37 +163,38 @@ order by psd.Refno,isd.POID,isd.Roll
 
             string sql = @"
 select  [Sel] = 0
-        ,isd.Roll
-	    ,isd.Dyelot
+		,isd.Ukey
 	    ,isd.PoId
 	    ,isd.Seq1+'-'+isd.Seq2 AS SEQ
+        ,isd.Roll
+	    ,isd.Dyelot
+	    ,[StockQty] = isd.Qty
+        ,StockTypeName = 
+            case isd.StockType
+            when 'b' then 'Bulk'
+            when 'i' then 'Inventory'
+            when 'o' then 'Scrap'
+            end
+        ,o.StyleID
 	    ,[RefNo]=psd.RefNo
-	    ,[Location] = Location.MtlLocationID
+	    ,FabricType =
+            case when psd.FabricType = 'F' then 'Fabric'
+                 when psd.FabricType = 'A' then 'Accessory'
+                 else 'Other' end
+		,psd.BrandID
+        ,psdsC.SpecValue
+        ,psd.SuppColor
+        ,o.FactoryID
+        ,f.MtlTypeID
+		,Ftyinventoryukey = fi.ukey
 	    ,[Weight] = isnull(rd.Weight, isnull(td.Weight, 0))
 	    ,[ActualWeight] = isnull(rd.ActualWeight, isnull(td.ActualWeight, 0))
+        ,WhseArrival = isnull(Receiving.WhseArrival, TransferIn.IssueDate)
         ,fp.Inspector
         ,[InspDate] = Format(fp.InspDate, 'yyyy/MM/dd')
-	    ,[MINDQRCode] = (select top 1 case  when    wbt.To_NewBarcodeSeq = '' then wbt.To_NewBarcode
-                                                when    wbt.To_NewBarcode = ''  then ''
-                                                else    Concat(wbt.To_NewBarcode, '-', wbt.To_NewBarcodeSeq)    end
-                             from   WHBarcodeTransaction wbt with (nolock)
-                             where  wbt.TransactionUkey = isd.Ukey and
-                                    wbt.Action = 'Confirm'
-                             order by CommitTime desc)
-	    ,From_OldBarcode = (select top 1 case  when    wbt.From_OldBarcodeSeq = '' then wbt.From_OldBarcode
-                                                when    wbt.From_OldBarcode = ''  then ''
-                                                else    Concat(wbt.From_OldBarcode, '-', wbt.From_OldBarcodeSeq)    end
-                             from   WHBarcodeTransaction wbt with (nolock)
-                             where  wbt.TransactionUkey = isd.Ukey and
-                                    wbt.Action = 'Confirm'
-                             order by CommitTime desc)
-	    ,[StockQty] = isd.Qty
-        ,o.FactoryID
         ,[FirRemark] = fp.Remark
-	    ,[ColorID]=Color.Value 
-	    ,[FabricType] = case when psd.FabricType = 'F' then 'Fabric'
-                             when psd.FabricType = 'A' then 'Accessory'
-                             else 'Other' end
+        ,isd.id
+into #tmp
 from dbo.Issue_Detail isd WITH (NOLOCK) 
 left join dbo.PO_Supp_Detail psd WITH (NOLOCK) on psd.ID = isd.POID and  psd.SEQ1 = isd.Seq1 and psd.seq2 = isd.Seq2 
 left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
@@ -215,6 +216,8 @@ left join TransferIn_Detail td with (nolock) on isd.POID = td.POID and
                                                isd.Roll = td.Roll and
                                                isd.Dyelot  = td.Dyelot and
                                                isd.StockType = td.StockType
+left join Receiving WITH (NOLOCK) on Receiving.id = rd.id
+left join TransferIn WITH (NOLOCK) on TransferIn.id = td.id
 left join View_WH_Orders o WITH (NOLOCK) on o.ID = isd.PoId
 LEFT JOIN Fabric f WITH (NOLOCK) ON psd.SCIRefNo=f.SCIRefNo
 LEFT JOIN color c on c.id = isnull(psdsC.SpecValue, '') and c.BrandId = psd.BrandId 
@@ -225,22 +228,33 @@ left join FIR with (nolock) on  FIR.POID = isd.POID and
 left join FIR_Physical fp with (nolock) on  fp.ID = FIR.ID and
                                             fp.Roll = isd.Roll and
                                             fp.Dyelot = isd.Dyelot
-OUTER APPLY(
- SELECT [Value]=
-	 CASE WHEN f.MtlTypeID in ('EMB THREAD','SP THREAD','THREAD') THEN IIF(psd.SuppColor = '' or psd.SuppColor is null, dbo.GetColorMultipleID(o.BrandID,isnull(psdsC.SpecValue, '')),psd.SuppColor)
-		 ELSE dbo.GetColorMultipleID(o.BrandID,isnull(psdsC.SpecValue, ''))
-	 END
-)Color
-OUTER APPLY(
-	    SELECT [MtlLocationID] = STUFF(
-			    (
-			    SELECT DISTINCT IIF(fid.MtlLocationID IS NULL OR fid.MtlLocationID = '' ,'' , ','+fid.MtlLocationID)
-			    FROM FtyInventory_Detail fid
-			    WHERE fid.Ukey = fi.Ukey
-			    FOR XML PATH('') )
-			    , 1, 1, '')
-    )Location
-where isd.id = @ID";
+where isd.id = @ID
+
+select t.*,
+	[Location] = dbo.Getlocation(t.Ftyinventoryukey),
+	[ColorID] = dbo.GetColorMultipleID_MtlType(t.BrandID, t.SpecValue, t.MtlTypeID, t.SuppColor),	
+	[MINDQRCode] = (
+        select case when wbt.To_NewBarcodeSeq = '' then wbt.To_NewBarcode
+                    when wbt.To_NewBarcode = '' then ''
+                    else Concat(wbt.To_NewBarcode, '-', wbt.To_NewBarcodeSeq) end
+        from WHBarcodeTransaction wbt with (nolock)
+        where wbt.TransactionUkey = t.Ukey
+        and wbt.TransactionID = t.id
+        and wbt.Action = 'Confirm'
+    )
+	,From_OldBarcode = (
+        select case when wbt.From_OldBarcodeSeq = '' then wbt.From_OldBarcode
+                    when wbt.From_OldBarcode = '' then ''
+                    else Concat(wbt.From_OldBarcode, '-', wbt.From_OldBarcodeSeq) end
+        from WHBarcodeTransaction wbt with (nolock)
+        where wbt.TransactionUkey = t.Ukey
+        and wbt.TransactionID = t.id
+        and wbt.Action = 'Confirm'
+    )
+from #tmp t
+
+drop table #tmp
+";
 
             return DBProxy.Current.Select(string.Empty, sql, pars, out dtBarcode);
         }

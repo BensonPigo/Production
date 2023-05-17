@@ -280,6 +280,8 @@ select
 	,F.ShadeBond
 	,[ShadeboneInspector] = (select name from Pass1 where id = f.ShadeboneInspector)
 	,F.ShadeBondDate
+	,[Shade_Band_Pass] =  [Shade_Band_Pass].cnt
+	,[Shade_Band_Fail] =  [Shade_Band_Fail].cnt
 	,F.Continuity
 	,[ContinuityInspector] = (select name from Pass1 where id = f.ContinuityInspector)
 	,F.ContinuityDate
@@ -306,6 +308,8 @@ select
 	,RESULT4 = CFD.Result
 	,[CFInspector] = cfd2.Name
 	,ps1.LocalMR
+    ,[Category] = ddl.Name
+	,[Cutting Date] = o.CutInLine
 into #tmpFinal
 from dbo.FIR F WITH (NOLOCK) 
 cross apply(
@@ -320,10 +324,11 @@ cross apply(
     group by rd.WhseArrival,rd.InvNo,rd.ExportId,rd.Id,rd.PoId,RD.seq1,RD.seq2,rd.StockType
 ) t
 inner join (
-    select distinct poid,O.factoryid,O.BrandID,O.StyleID,O.SeasonID,O.Category,id 
+    select distinct poid,O.factoryid,O.BrandID,O.StyleID,O.SeasonID,O.Category,id ,CutInLine
     from dbo.Orders o WITH (NOLOCK)  
     {oWhere}
 ) O on O.id = F.POID
+left join DropDownList ddl with(nolock) on o.Category = ddl.ID and ddl.Type = 'Category'
 inner join dbo.PO_Supp SP WITH (NOLOCK) on SP.id = F.POID and SP.SEQ1 = F.SEQ1
 inner join dbo.PO_Supp_Detail P WITH (NOLOCK) on P.ID = F.POID and P.SEQ1 = F.SEQ1 and P.SEQ2 = F.SEQ2
 left join dbo.PO_Supp_Detail_Spec ps WITH (NOLOCK) on P.ID = ps.id and P.SEQ1 = ps.SEQ1 and P.SEQ2 = ps.SEQ2 and ps.SpecColumnID='Color'
@@ -453,6 +458,18 @@ outer apply
 		where fs.ID = f.ID 
 	) s
 ) Shadeband
+outer apply(
+	select cnt = count(1) 
+	from FIR_Shadebone t
+	where UPPER(Result) = UPPER('Pass')
+	and t.ID = f.ID
+) [Shade_Band_Pass]
+outer apply(
+	select cnt = count(1) 
+	from FIR_Shadebone t
+	where UPPER(Result) = UPPER('Fail')
+	and t.ID = f.ID
+) [Shade_Band_Fail]
 OUTER APPLY(
     SELECT Name 
     FROM Color c WITH (NOLOCK)
@@ -465,7 +482,8 @@ OPTION (OPTIMIZE FOR UNKNOWN)
 
 
 select
-     tf.POID
+    tf.Category
+    ,tf.POID
 	,tf.SEQ
 	,tf.factoryid
 	,tf.BrandID
@@ -473,6 +491,7 @@ select
 	,tf.SeasonID
 	,tf.ExportId
 	,tf.InvNo
+    ,tf.[Cutting Date]
 	,tf.WhseArrival
 	,tf.StockQty1
     ,tf.InvStock
@@ -508,6 +527,8 @@ select
 	,tf.ShadeBond
 	,tf.ShadeboneInspector
 	,tf.ShadeBondDate
+	,tf.[Shade_Band_Pass]
+	,tf.[Shade_Band_Fail]
 	,tf.Continuity
 	,tf.ContinuityInspector
 	,tf.ContinuityDate

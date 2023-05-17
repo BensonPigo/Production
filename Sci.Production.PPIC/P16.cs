@@ -211,7 +211,7 @@ outer apply(
 	from Po_Supp_Detail psd with(nolock) 
     inner join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
 	where psd.FabricType = t.FabricType and psd.id = t.ID and Refno = t.Refno and psdsC.SpecValue = t.ColorID and psd.seq1 like '7%'  and psd.junk=0 and
-	(select ShipETA from Po_Supp_Detail with(nolock) where psd.id = psd.StockPOID and Seq1 = psd.StockSeq1 and Seq2 = psd.StockSeq2)<=GETDATE()
+	(select ShipETA from Po_Supp_Detail with(nolock) where id = psd.StockPOID and Seq1 = psd.StockSeq1 and Seq2 = psd.StockSeq2)<=GETDATE()
 )c
 order by  t.Refno
 drop table #tmp

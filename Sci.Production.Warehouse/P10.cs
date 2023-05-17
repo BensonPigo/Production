@@ -861,7 +861,7 @@ where (isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f
 
                     if (!(result = this.SentSpreadingSchedule()))
                     {
-                        throw result.GetException();
+                        throw new Exception(result.Messages[0].Message);
                     }
 
                     if (!(result = DBProxy.Current.Execute(null, $"update Issue set status = 'Confirmed', editname = '{Env.User.UserID}', editdate = GETDATE() where id = '{this.CurrentMaintain["id"]}'")))
@@ -869,8 +869,36 @@ where (isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f
                         throw result.GetException();
                     }
 
+                    // 更新完庫存後 RemainingQty
+                    string sqlUpdateRemainingQty = $@"
+Update sd set
+    RemainingQty = f.InQty - f.OutQty + f.AdjustQty - f.ReturnQty
+from Issue_Detail sd with(nolock)
+inner join Production.dbo.FtyInventory f with(nolock) on f.POID = isnull(sd.PoId, '')
+    and f.Seq1 = isnull(sd.Seq1, '')
+    and f.Seq2 = isnull(sd.Seq2, '')
+    and f.Roll = isnull(sd.Roll, '')
+	and f.Dyelot = isnull(sd.Dyelot, '')
+    and f.StockType = isnull(sd.StockType, '')
+    and sd.id = '{this.CurrentMaintain["ID"]}'
+";
+                    if (!(result = DBProxy.Current.Execute(null, sqlUpdateRemainingQty)))
+                    {
+                        throw result.GetException();
+                    }
+
                     string sqUnrollActualQty = $@"
-update Issue_Detail set UnrollActualQty = Qty where id = '{this.CurrentMaintain["ID"]}'
+INSERT INTO dbo.Fabric_UnrollandRelax (Barcode, POID, Seq1, Seq2, Roll, Dyelot, StockType,UnrollActualQty)
+SELECT DISTINCT w.To_NewBarcode, sd.POID, sd.Seq1, sd.Seq2, sd.Roll, sd.Dyelot, sd.StockType, sd.Qty
+FROM Issue_Detail sd WITH (NOLOCK)
+INNER JOIN WHBarcodeTransaction w WITH (NOLOCK) 
+    ON w.TransactionID = sd.ID
+    AND w.TransactionUkey = sd.Ukey
+    AND w.Action = 'Confirm'
+LEFT JOIN Fabric_UnrollandRelax fu 
+    ON fu.Barcode = w.To_NewBarcode
+WHERE sd.id = '{this.CurrentMaintain["ID"]}' 
+    AND fu.Barcode IS NULL
 ";
                     if (!(result = DBProxy.Current.Execute(null, sqUnrollActualQty)))
                     {
@@ -882,9 +910,9 @@ update Issue_Detail set UnrollActualQty = Qty where id = '{this.CurrentMaintain[
                         string dtUkey = dtNeedUnroll.AsEnumerable().Select(s => MyUtility.Convert.GetString(s["Ukey"])).ToList().JoinToString(",");
                         string sqlUnroll = $@"
 -- 先全部清空，除了已經完成的
-update Issue_Detail set NeedUnroll = 0, UnrollStatus = '' where id = '{this.CurrentMaintain["ID"]}' and UnrollStatus not in ('Done')
+update Issue_Detail set NeedUnroll = 0 where id = '{this.CurrentMaintain["ID"]}'
 --再重新更新需要的
-update Issue_Detail set NeedUnroll = 1, UnrollStatus = 'Ongoing' where Ukey in ({dtUkey}) and UnrollStatus = ''
+update Issue_Detail set NeedUnroll = 1 where Ukey in ({dtUkey})
 
 update Issue set IncludeUnrollRelaxationRoll = 1 where id = '{this.CurrentMaintain["ID"]}'
 ";
@@ -896,7 +924,7 @@ update Issue set IncludeUnrollRelaxationRoll = 1 where id = '{this.CurrentMainta
                     else
                     {
                         string sqlUnroll = $@"
-update Issue_Detail set NeedUnroll = 0, UnrollActualQty = Qty where id = '{this.CurrentMaintain["ID"]}'
+update Issue_Detail set NeedUnroll = 0 where id = '{this.CurrentMaintain["ID"]}'
 update Issue set IncludeUnrollRelaxationRoll = 0 where id = '{this.CurrentMaintain["id"]}'
 ";
                         if (!(result = DBProxy.Current.Execute(null, sqlUnroll)))
@@ -963,6 +991,18 @@ where	i.Id = '{this.CurrentMaintain["ID"]}' and
         {
             this.RenewData(); // 先重載資料, 避免雙開程式狀況
             base.ClickUnconfirm();
+
+            string strSeek = $@"select * 
+                                from SciProduction_Issue_Detail pms_id with(nolock)
+                                inner join SpreadingInspection_InsCutRef_Fabric sif with(nolock) on sif.IssueDetailUkey = pms_id.Ukey
+                                where pms_id.id = '{this.CurrentMaintain["ID"]}'";
+
+            if (MyUtility.Check.Seek(strSeek, "ManufacturingExecution"))
+            {
+                MyUtility.Msg.WarningBox("QA_R14. Spreading Inspection data already exists, cannot unconfirm.");
+                return;
+            }
+
             if (this.CurrentMaintain == null ||
                 MyUtility.Msg.QuestionBox("Do you want to unconfirme it?") == DialogResult.No)
             {
@@ -1127,7 +1167,7 @@ where (isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f
 
                     if (!(result = this.SentSpreadingSchedule()))
                     {
-                        throw result.GetException();
+                        throw new Exception(result.Messages[0].Message);
                     }
 
                     // Barcode 需要判斷新的庫存, 在更新 FtyInventory 之後

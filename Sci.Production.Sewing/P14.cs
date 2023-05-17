@@ -46,7 +46,10 @@ namespace Sci.Production.Sewing
                 .Date("SCIDelivery", header: "SCI Delivery", iseditingreadonly: false)
                 .Text("Barcode", header: "Barcode", iseditingreadonly: false)
                 .Text("ScanBy", header: "Scan By", iseditingreadonly: false)
-                .Text("ScanTime", header: "Scan Time", iseditingreadonly: false);
+                .Text("ScanTime", header: "Scan Time", iseditingreadonly: false)
+                .Text("ReturntoProduction", header: "Return to Production", iseditingreadonly: false)
+                .Text("Remark", header: "Return to Production Remarks", iseditingreadonly: false)
+                .Text("SewingLineID", header: "Line#", iseditingreadonly: false);
             #endregion
         }
 
@@ -138,6 +141,9 @@ select [ScanDate] = c.HaulingDate
 	,[Barcode] = pd_Barcode.Barcode
 	,[ScanBy] = isnull(mesp1.IdAndName, c.AddName)
 	,[ScanTime] = Format(c.AddDate, 'yyyy/MM/dd HH:mm:ss')
+    ,c.Remark
+    ,[ReturntoProduction] = iif(c.Status = 'Return', 'Yes', '')
+    ,[SewingLineID] = sw_Line.val
 from CTNHauling c WITH(NOLOCK)
 inner join Orders o WITH(NOLOCK) on c.OrderID = o.ID
 left join Country co WITH(NOLOCK) on o.Dest = co.ID
@@ -155,6 +161,14 @@ outer apply (
 		FOR XML PATH(''))
 	,1,1,'')
 )pd_Barcode
+outer apply (
+	SELECT val = Stuff((
+		select distinct concat('/', SewingLineID) 
+		from SewingSchedule s WITH(NOLOCK)
+		where s.OrderID = c.OrderID
+		FOR XML PATH(''))
+	,1,1,'')
+)sw_Line
 where 1 = 1
 {strWhere}
 order by c.PackingListID, c.CTNStartNo, c.HaulingDate

@@ -151,6 +151,8 @@ and not exists(select 1 from Cutting_WIPExcludePatternPanel cw where cw.PatternP
 
                         this.ShowBundleQtyStatus(drSelected, column.ColumnName, summaryType);
                     };
+
+					/*
                     subprocess.CellFormatting += (s, e) =>
                     {
                         DataRow drSelected = this.grid1.GetDataRow(e.RowIndex);
@@ -169,6 +171,7 @@ and not exists(select 1 from Cutting_WIPExcludePatternPanel cw where cw.PatternP
                                 break;
                         }
                     };
+					*/
 
                     subprocess.CellFormatting += (s, e) =>
                     {
@@ -188,6 +191,16 @@ and not exists(select 1 from Cutting_WIPExcludePatternPanel cw where cw.PatternP
                                 drSelected[column.ColumnName + "_value"] = DBNull.Value;
                                 e.CellStyle.BackColor = Color.White;
                                 break;
+                        }
+
+                        if (int.TryParse(drSelected[column.ColumnName + "_value"].ToString(), out int processValue))
+                        {
+                            int.TryParse(drSelected["TotalQty"].ToString(), out int totalQty);
+
+                            if (processValue >= totalQty)
+                            {
+                                e.CellStyle.BackColor = Color.Green;
+                            }
                         }
                     };
                     this.Helper.Controls.Grid.Generator(this.grid1)
@@ -443,9 +456,9 @@ outer apply(select PostSewingSubProcess_SL =iif(isnull(PostSewingSubProcess,0) =
 
 
 SELECT Orderid,	BundleNo,InOutRule,SubProcessID
-,[CompleteCount]=CompleteCount.Value
-,[NotYetCount]=NotYetCount.Value
-,[OnGoingCount]=OnGoingCount.Value
+	,[CompleteCount]=CompleteCount.Value
+	,[NotYetCount]=NotYetCount.Value
+	,[OnGoingCount]=OnGoingCount.Value
 INTO #tmpBundleNo_Complete
 FROM #tmpBundleNo_Complete2 t
 OUTER APPLY(
@@ -454,11 +467,10 @@ OUTER APPLY(
 	WHERE Orderid=t.Orderid 
 	AND SubProcessID=t.SubProcessID
 	AND InOutRule=t.InOutRule
-	AND SubProcessID=t.SubProcessID
 	AND (
-			(HasInComing='true' AND HasOutGoing='true') OR
-			(InOutRule = '1' AND HasInComing='true') OR
-			(InOutRule = '2' AND HasOutGoing='true')
+			(HasInComing = 'true' AND HasOutGoing = 'true') OR
+			((InOutRule = '1' OR InOutRule = '4' ) AND HasInComing = 'true') OR
+			((InOutRule = '2' OR InOutRule = '3' ) AND HasOutGoing = 'true')
 		)
 )CompleteCount
 OUTER APPLY(
@@ -467,12 +479,11 @@ OUTER APPLY(
 	WHERE Orderid=t.Orderid 
 	AND SubProcessID=t.SubProcessID
 	AND InOutRule=t.InOutRule
-	AND SubProcessID=t.SubProcessID
 	AND IsEXCESS = 0
 	AND (
-			(HasInComing!='true' AND HasOutGoing!='true') OR
-			(InOutRule = '1' AND HasInComing='false') OR
-			(InOutRule = '2' AND HasOutGoing='false')
+			(HasInComing = 'false' AND HasOutGoing = 'false') OR
+			(InOutRule = '1' AND HasInComing = 'false') OR
+			(InOutRule = '2' AND HasOutGoing = 'false')
 		)
 )NotYetCount
 OUTER APPLY(
@@ -481,27 +492,24 @@ OUTER APPLY(
 	WHERE Orderid=t.Orderid 
 	AND SubProcessID=t.SubProcessID
 	AND InOutRule=t.InOutRule
-	AND SubProcessID=t.SubProcessID
-	AND ( (HasInComing='true' AND HasOutGoing!='true') OR (HasInComing!='true' AND HasOutGoing='true'))
+	AND ( (HasInComing = 'true' AND HasOutGoing = 'false') OR (HasInComing = 'false' AND HasOutGoing = 'true'))
 	AND InOutRule NOT IN ('1','2')
 )OnGoingCount
 
 select
 	t.Orderid,
 	t.SubProcessID,
-	Status=case when CompleteCount > 0 AND OnGoingCount=0 AND NotYetCount=0 then 'Complete'
-				when NotYetCount > 0 AND OnGoingCount = 0 AND CompleteCount=0 then 'Not Yet Load'
-				when NotYetCount = 0 AND OnGoingCount = 0 AND CompleteCount=0 then 'Not Yet Load'
+	Status = CASE WHEN NotYetCount >= 0 AND OnGoingCount = 0 AND CompleteCount=0 then 'Not Yet Load'
 				ELSE 'OnGoing'
-				end
+				END
 into #tmp
 from #tmpBundleNo_Complete t
 
 select
-bi.BundleNo,
-bi.ReasonID,
-bi.DefectQty,
-bi.ReplacementQty
+	bi.BundleNo,
+	bi.ReasonID,
+	bi.DefectQty,
+	bi.ReplacementQty
 into #tmpBundleInspection
 from dbo.SciMES_BundleInspection bi  with(nolock)
 where exists(select 1   from #tmpOrders o 
@@ -594,11 +602,12 @@ outer apply(
 where 1=1
 {where}
 
-select distinct bdo.Orderid,b.Article,b.Sizecode,bdo.BundleNo,s.SubProcessID,s.ShowSeq,s.InOutRule,s.IsRFIDDefault,b.IsEXCESS
+select distinct bdo.Orderid,b.Article,bd.Sizecode,bdo.BundleNo,s.SubProcessID,s.ShowSeq,s.InOutRule,s.IsRFIDDefault,b.IsEXCESS
 into #tmpBundleNo
-from Bundle_Detail_Order bdo
+from Bundle_Detail_Order bdo WITH (NOLOCK)
 inner join Bundle b WITH (NOLOCK) on b.id = bdo.Id
-inner join #tmpOrders o on bdo.Orderid = o.ID and b.MDivisionID = o.MDivisionID and b.Article = o.Article and b.Sizecode = o.SizeCode
+inner join Bundle_Detail bd WITH (NOLOCK) on b.id = bd.Id
+inner join #tmpOrders o on bdo.Orderid = o.ID and b.MDivisionID = o.MDivisionID and b.Article = o.Article and bd.Sizecode = o.SizeCode
 cross join(
 	select SubProcessID=id,s.ShowSeq,s.InOutRule,s.IsRFIDDefault
 	from SubProcess s
@@ -697,9 +706,9 @@ left join BundleInOut bunIOL with (nolock) on bunIOL.BundleNo = b.BundleNo and b
 outer apply(select PostSewingSubProcess_SL =iif(isnull(PostSewingSubProcess,0) = 1 and bunIOS.OutGoing is not null and bunIOL.InComing is not null, 1, 0))p
 
 SELECT Orderid,	Article,Sizecode,BundleNo,InOutRule,SubProcessID
-,[CompleteCount]=CompleteCount.Value
-,[NotYetCount]=NotYetCount.Value
-,[OnGoingCount]=OnGoingCount.Value
+	,[CompleteCount]=CompleteCount.Value
+	,[NotYetCount]=NotYetCount.Value
+	,[OnGoingCount]=OnGoingCount.Value
 INTO #tmpBundleNo_Complete
 FROM #tmpBundleNo_Complete2 t
 OUTER APPLY(
@@ -712,9 +721,9 @@ OUTER APPLY(
 	AND InOutRule=t.InOutRule
 	AND SubProcessID=t.SubProcessID
 	AND (
-			(HasInComing='true' AND HasOutGoing='true') OR
-			(InOutRule = '1' AND HasInComing='true') OR
-			(InOutRule = '2' AND HasOutGoing='true')
+			(HasInComing = 'true' AND HasOutGoing = 'true') OR
+			((InOutRule = '1' OR InOutRule = '4') AND HasInComing = 'true') OR
+			((InOutRule = '2' OR InOutRule = '3') AND HasOutGoing = 'true')
 		)
 )CompleteCount
 OUTER APPLY(
@@ -728,9 +737,9 @@ OUTER APPLY(
 	AND SubProcessID=t.SubProcessID
 	AND IsEXCESS = 0
 	AND (
-			(HasInComing!='true' AND HasOutGoing!='true') OR
-			(InOutRule = '1' AND HasInComing='false') OR
-			(InOutRule = '2' AND HasOutGoing='false')
+			(HasInComing = 'false' AND HasOutGoing = 'false') OR
+			(InOutRule = '1' AND HasInComing = 'false') OR
+			(InOutRule = '2' AND HasOutGoing = 'false')
 		)
 )NotYetCount
 OUTER APPLY(
@@ -742,7 +751,7 @@ OUTER APPLY(
 	AND SubProcessID=t.SubProcessID
 	AND InOutRule=t.InOutRule
 	AND SubProcessID=t.SubProcessID
-	AND ( (HasInComing='true' AND HasOutGoing!='true') OR (HasInComing!='true' AND HasOutGoing='true'))
+	AND ( (HasInComing = 'true' AND HasOutGoing = 'false') OR (HasInComing = 'false' AND HasOutGoing = 'true'))
 	AND InOutRule NOT IN ('1','2')
 )OnGoingCount
 
@@ -751,18 +760,17 @@ select
 	t.Article,
 	t.Sizecode,
 	t.SubProcessID,
-	Status=case when CompleteCount > 0 AND OnGoingCount=0 AND NotYetCount=0 then 'Complete'
-				when NotYetCount > 0 AND OnGoingCount = 0 AND CompleteCount=0 then 'Not Yet Load'
+	Status = CASE WHEN NotYetCount >= 0 AND OnGoingCount = 0 AND CompleteCount=0 then 'Not Yet Load'
 				ELSE 'OnGoing'
-				end
+				END
 into #tmp
 from #tmpBundleNo_Complete t
 
 select
-bi.BundleNo,
-bi.ReasonID,
-bi.DefectQty,
-bi.ReplacementQty
+	bi.BundleNo,
+	bi.ReasonID,
+	bi.DefectQty,
+	bi.ReplacementQty
 into #tmpBundleInspection
 from dbo.SciMES_BundleInspection bi  with(nolock)
 where exists(select 1   from #tmpOrders o 
@@ -792,8 +800,9 @@ outer apply(
 	    from #tmpBundleInspection bi  with(nolock)
 		inner join Bundle_Detail_Order bdo WITH (NOLOCK) on bdo.Orderid = o.ID and bdo.BundleNo = bi.BundleNo
         inner join Bundle b with(nolock) on b.id = bdo.id
+		inner join Bundle_Detail bd WITH (NOLOCK) on b.id = bd.Id
 		where o.MDivisionID = b.MDivisionID
-		and b.Article = o.Article and b.SizeCode = o.Sizecode
+		and b.Article = o.Article and bd.SizeCode = o.Sizecode
 		and not exists(select 1 from Cutting_WIPExcludePatternPanel cw where cw.PatternPanel = b.PatternPanel and cw.ID = b.POID)
 	    group by ReasonID
 	    for xml path('''')
@@ -842,8 +851,6 @@ group by s.OrderID, s.SubProcessID
                 {
                     sqlCmd += $@"
 select s.OrderID, s.SubprocessID 
-    , InQtyBySet = SUM(s.InQtyBySet)
-	, OutQtyBySet = SUM(s.OutQtyBySet)
 	, FinishedQtyBySet = SUM(s.FinishedQtyBySet)
 into #tmp_SetQtyBySubprocess
 from 
@@ -852,13 +859,15 @@ from
         , s.Article
         , s.SizeCode 
         , s.SubprocessID
-	    , InQtyBySet = MIN(s.InQtyBySet)
-	    , OutQtyBySet = MIN(s.OutQtyBySet)
-	    , FinishedQtyBySet = MIN(s.FinishedQtyBySet)
+		, [FinishedQtyBySet] = CASE WHEN p.InOutRule = 2 or p.InOutRule = 3 then MIN(s.OutQtyBySet)
+									 WHEN p.InOutRule = 1 or p.InOutRule = 4 then MIN(s.InQtyBySet)
+								 ELSE MIN(s.FinishedQtyBySet)
+								 END
     from SetQtyBySubprocess s WITH (NOLOCK)
+	inner join SubProcess p WITH (NOLOCK) on s.SubprocessID = p.Id
     where exists (select 1 from #tmp_SetQtyBySubprocess_Last t where t.OrderID = s.OrderID and t.SubProcessID = s.SubProcessID and t.TransferTime = s.TransferTime)
     and SubProcessID in ('{string.Join("','", subprocessIDs)}')
-	group by s.OrderID, s.Article, s.SizeCode, s.SubprocessID
+	group by s.OrderID, s.Article, s.SizeCode, s.SubprocessID, p.InOutRule
 )s
 group by s.OrderID, s.SubprocessID
 ";
@@ -876,14 +885,16 @@ group by s.OrderID, s.SubprocessID
      , s.Article
      , s.SizeCode 
      , s.SubprocessID
-    , InQtyBySet = MIN(s.InQtyBySet)
-    , OutQtyBySet = MIN(s.OutQtyBySet)
-    , FinishedQtyBySet = MIN(s.FinishedQtyBySet)
+	 , [FinishedQtyBySet] = CASE WHEN p.InOutRule = 2 or p.InOutRule = 3 then MIN(s.OutQtyBySet)
+									 WHEN p.InOutRule = 1 or p.InOutRule = 4 then MIN(s.InQtyBySet)
+								 ELSE MIN(s.FinishedQtyBySet)
+								 END
 into #tmp_SetQtyBySubprocess
 from SetQtyBySubprocess s WITH (NOLOCK)
+inner join SubProcess p WITH (NOLOCK) on s.SubprocessID = p.Id
 where exists (select 1 from #tmp_SetQtyBySubprocess_Last t where t.OrderID = s.OrderID and t.SubProcessID = s.SubProcessID and t.TransferTime = s.TransferTime)
 and SubProcessID in ('{string.Join("','", subprocessIDs)}')
-group by s.OrderID, s.Article, s.SizeCode, s.SubprocessID
+group by s.OrderID, s.Article, s.SizeCode, s.SubprocessID, p.InOutRule
 ";
 
                     foreach (string subprocessID in subprocessIDs)
@@ -1155,7 +1166,7 @@ select
     ,Article
     ,BundleGroup
     ,SizeCode
-	,Status=case when (HasInComing='true' AND HasOutGoing='true') OR (InOutRule = '1' AND HasInComing='true' ) OR (InOutRule = '2' AND HasOutGoing='true' )then 'Complete'		
+	,Status=case when (HasInComing='true' AND HasOutGoing='true') OR ((InOutRule = '1' OR InOutRule = '4') AND HasInComing='true' ) OR ((InOutRule = '2' OR InOutRule = '3') AND HasOutGoing='true' )then 'Complete'	
 			  	 when (HasInComing='false' AND HasOutGoing='false') OR (InOutRule = '1' AND HasInComing='false' ) OR (InOutRule = '2' AND HasOutGoing='false' )then 'Not Yet Load'
 			 	 when InOutRule='3' AND HasInComing='true' AND HasOutGoing='false' then 'OnGoing'				
 				 when InOutRule='4' AND HasInComing='false' AND HasOutGoing='true' then 'OnGoing'				
@@ -1385,7 +1396,7 @@ select
     ,Article
     ,BundleGroup
     ,SizeCode
-	,Status=case when (HasInComing='true' AND HasOutGoing='true') OR (InOutRule = '1' AND HasInComing='true' ) OR (InOutRule = '2' AND HasOutGoing='true' )then 'Complete'		
+	,Status=case when (HasInComing='true' AND HasOutGoing='true') OR ((InOutRule = '1' OR InOutRule = '4') AND HasInComing='true' ) OR ((InOutRule = '2' OR InOutRule = '3') AND HasOutGoing='true' )then 'Complete'	
 			  	 when (HasInComing='false' AND HasOutGoing='false') OR (InOutRule = '1' AND HasInComing='false' ) OR (InOutRule = '2' AND HasOutGoing='false' )then 'Not Yet Load'
 			 	 when InOutRule='3' AND HasInComing='true' AND HasOutGoing='false' then 'OnGoing'				
 				 when InOutRule='4' AND HasInComing='false' AND HasOutGoing='true' then 'OnGoing'				

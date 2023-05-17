@@ -1103,7 +1103,7 @@ WHERE o.ID='{this.CurrentMaintain["ID"]}'
             }
             else
             {
-                P01_Qty callNextForm = new P01_Qty(MyUtility.Convert.GetString(this.CurrentMaintain["ID"]), MyUtility.Convert.GetString(this.CurrentMaintain["POID"]), this.editPOCombo.Text);
+                P01_Qty callNextForm = new P01_Qty(MyUtility.Convert.GetString(this.CurrentMaintain["ID"]), MyUtility.Convert.GetString(this.CurrentMaintain["POID"]), this.editPOCombo.Text, true);
                 callNextForm.ShowDialog(this);
             }
         }

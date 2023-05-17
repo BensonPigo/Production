@@ -2832,6 +2832,23 @@
     <Build Include="dbo\Tables\SubProInsRecord_Operator.sql" />
     <Build Include="dbo\Tables\LostFinalInspNotification.sql" />
     <Build Include="dbo\Views\PO_Supp_Detail_OrderList_Show.sql" />
+    <Build Include="dbo\Tables\UASentReport.sql" />
+    <Build Include="dbo\Tables\NewSentReport.sql" />
+    <Build Include="dbo\Tables\MaterialDocument.sql" />
+    <Build Include="dbo\Tables\MaterialDocument_MtlType.sql" />
+    <Build Include="dbo\Tables\MaterialDocument_Responsbility.sql" />
+    <Build Include="dbo\Tables\MaterialDocument_Supplier.sql" />
+    <Build Include="dbo\Tables\MaterialDocument_WeaveType.sql" />
+    <Build Include="dbo\Tables\BrandRelation.sql" />
+    <Build Include="dbo\Tables\ExportRefnoSentReport.sql" />
+    <Build Include="dbo\Tables\Style_UnitPrice.sql" />
+    <Build Include="dbo\Tables\複製Clip.sql">
+      <AnsiNulls>On</AnsiNulls>
+      <QuotedIdentifier>On</QuotedIdentifier>
+    </Build>
+    <Build Include="dbo\Tables\GASAClip.sql" />
+    <Build Include="dbo\Tables\Fabric_UnrollandRelax.sql" />
+    <Build Include="dbo\Functions\GetUnrollRelaxationCompletion.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />

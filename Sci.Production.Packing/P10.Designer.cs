@@ -47,6 +47,7 @@
             this.panel4 = new Sci.Win.UI.Panel();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.panel3 = new Sci.Win.UI.Panel();
+            this.ckOnlyDisplay = new Sci.Win.UI.CheckBox();
             this.shapeContainer2 = new Microsoft.VisualBasic.PowerPacks.ShapeContainer();
             this.lineShape5 = new Microsoft.VisualBasic.PowerPacks.LineShape();
             this.lineShape4 = new Microsoft.VisualBasic.PowerPacks.LineShape();
@@ -219,6 +220,7 @@
             // 
             // panel3
             // 
+            this.panel3.Controls.Add(this.ckOnlyDisplay);
             this.panel3.Controls.Add(this.btnSave);
             this.panel3.Controls.Add(this.btnClose);
             this.panel3.Controls.Add(this.txtPO);
@@ -235,6 +237,17 @@
             this.panel3.Name = "panel3";
             this.panel3.Size = new System.Drawing.Size(712, 123);
             this.panel3.TabIndex = 19;
+            // 
+            // ckOnlyDisplay
+            // 
+            this.ckOnlyDisplay.AutoSize = true;
+            this.ckOnlyDisplay.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.ckOnlyDisplay.Location = new System.Drawing.Point(12, 57);
+            this.ckOnlyDisplay.Name = "ckOnlyDisplay";
+            this.ckOnlyDisplay.Size = new System.Drawing.Size(244, 21);
+            this.ckOnlyDisplay.TabIndex = 10;
+            this.ckOnlyDisplay.Text = "Only display Scan ＆ Pack cartons";
+            this.ckOnlyDisplay.UseVisualStyleBackColor = true;
             // 
             // shapeContainer2
             // 
@@ -343,5 +356,6 @@
         private Microsoft.VisualBasic.PowerPacks.LineShape lineShape3;
         private Microsoft.VisualBasic.PowerPacks.LineShape lineShape2;
         private Microsoft.VisualBasic.PowerPacks.LineShape lineShape1;
+        private Win.UI.CheckBox ckOnlyDisplay;
     }
 }

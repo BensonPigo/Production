@@ -2,12 +2,6 @@
 Create PROCEDURE [dbo].[exp_GASA]
 AS
 
-IF OBJECT_ID(N'dbo.SentReport') IS NOT NULL
-BEGIN
-  DROP TABLE SentReport
-END
-
-
 IF OBJECT_ID(N'dbo.FirstDyelot') IS NOT NULL
 BEGIN
   DROP TABLE FirstDyelot
@@ -32,30 +26,16 @@ else
 	values (@DateInfoName,@DateStart,@DateStart,@Remark);
 ------------------------------------------------------------------------------------------------------
 
-SELECT [Export_DetailUkey]
-      ,[InspectionReport]
-      ,[TestReport]
-      ,[ContinuityCard]
-      ,[T2InspYds]
-      ,[T2DefectPoint]
-      ,[T2Grade]
-      ,[EditName]
-      ,[EditDate]
-      ,[TestReportCheckClima]
-INTO SentReport
-FROM Production.dbo.SentReport
-WHERE EditDate >= @DateStart
-;
-
-SELECT [TestDocFactoryGroup]
-      ,[Refno]
-      ,[SuppID]
+SELECT [SuppID]
+	  ,[TestDocFactoryGroup]
+      ,[BrandRefno]      
       ,[ColorID]
-      ,[SeasonSCIID]
+      ,[SeasonID]
       ,[Period]
       ,[FirstDyelot]
       ,[EditName]
       ,[EditDate]
+	  ,[FTYReceivedReport]
 INTO FirstDyelot
 FROM Production.dbo.FirstDyelot
 WHERE EditDate >= @DateStart

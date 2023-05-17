@@ -23,6 +23,17 @@ namespace Sci.Production.Class
 
         private string myUsername = null;
 
+        private bool isAllowResign = false;
+
+        /// <inheritdoc />
+        [Category("Custom Properties")]
+        [Description("是否允許選擇離職人員")]
+        public bool AllowSelectResign
+        {
+            get { return this.isAllowResign; }
+            set { this.isAllowResign = value; }
+        }
+
         /// <inheritdoc/>
         public Win.UI.TextBox TextBox1 { get; private set; }
 

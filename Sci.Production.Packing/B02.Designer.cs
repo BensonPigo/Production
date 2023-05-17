@@ -33,6 +33,8 @@
             this.checkJunk = new Sci.Win.UI.CheckBox();
             this.displayID = new Sci.Win.UI.DisplayBox();
             this.textBox1 = new Sci.Win.UI.TextBox();
+            this.txtLocalDescription = new Sci.Win.UI.TextBox();
+            this.label1 = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -47,6 +49,8 @@
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.txtLocalDescription);
+            this.detailcont.Controls.Add(this.label1);
             this.detailcont.Controls.Add(this.textBox1);
             this.detailcont.Controls.Add(this.displayID);
             this.detailcont.Controls.Add(this.checkJunk);
@@ -127,6 +131,24 @@
             this.textBox1.Size = new System.Drawing.Size(409, 23);
             this.textBox1.TabIndex = 7;
             // 
+            // txtLocalDescription
+            // 
+            this.txtLocalDescription.BackColor = System.Drawing.Color.White;
+            this.txtLocalDescription.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "LocalDescription", true));
+            this.txtLocalDescription.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtLocalDescription.Location = new System.Drawing.Point(186, 126);
+            this.txtLocalDescription.Name = "txtLocalDescription";
+            this.txtLocalDescription.Size = new System.Drawing.Size(372, 23);
+            this.txtLocalDescription.TabIndex = 9;
+            // 
+            // label1
+            // 
+            this.label1.Location = new System.Drawing.Point(70, 126);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(113, 23);
+            this.label1.TabIndex = 8;
+            this.label1.Text = "Local Description";
+            // 
             // B02
             // 
             this.ClientSize = new System.Drawing.Size(839, 457);
@@ -160,5 +182,7 @@
         private Win.UI.CheckBox checkJunk;
         private Win.UI.DisplayBox displayID;
         private Win.UI.TextBox textBox1;
+        private Win.UI.TextBox txtLocalDescription;
+        private Win.UI.Label label1;
     }
 }

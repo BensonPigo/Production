@@ -1,6 +1,7 @@
 ﻿using Ict;
 using Ict.Win;
 using Sci.Data;
+using Sci.Production.Prg;
 using Sci.Production.PublicPrg;
 using System;
 using System.Collections.Generic;
@@ -62,6 +63,8 @@ namespace Sci.Production.Shipping
                 .Text("POID", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
                 .Text("Seq1", header: "Seq1#", width: Widths.AnsiChars(3), iseditingreadonly: true)
                 .Text("Seq2", header: "Seq2#", width: Widths.AnsiChars(2), iseditingreadonly: true)
+                .Text("Type", header: "Type", width: Widths.AnsiChars(3), iseditingreadonly: true)
+                .Text("MtlTypeID", header: "Material Type", width: Widths.AnsiChars(2), iseditingreadonly: true)
                 .Text("Supp", header: "Supplier", width: Widths.AnsiChars(15), iseditingreadonly: true)
                 .Text("Receiver", header: "Receiver", width: Widths.AnsiChars(10), settings: receiver, iseditingreadonly: false)
                 .Text("Leader", header: "Team Leader", width: Widths.AnsiChars(10), iseditingreadonly: true)
@@ -97,12 +100,24 @@ namespace Sci.Production.Shipping
                 this.txtWKNo.Text = this.txtWKNo.Text.Replace("'", string.Empty);
             }
 
+            var checkHC = MyUtility.GetValue.Lookup($"select ID from Express_Detail ed WHERE ed.DutyNo = '{this.txtWKNo.Text}'");
+            if (!MyUtility.Check.Empty(checkHC))
+            {
+                if (MyUtility.Convert.GetString(this.masterData["ID"]) != checkHC)
+                {
+                    MyUtility.Msg.WarningBox($"The Fty WK# is already imported to another HC#({checkHC})");
+                    return;
+                }
+            }
             string sqlCmd =
                 $@"
 select Selected = 0 
 ,fd.ID
 ,fd.POID
-,fd.Seq1,fd.Seq2
+,fd.Seq1
+,fd.Seq2
+,[Type] = (case when fd.[FabricType] = 'F' then 'Fabric' when fd.[FabricType] = 'A' then 'Accessory' else '' end)
+,fd.[MtlTypeID]
 ,o.SeasonID
 ,o.StyleID
 ,psd.Refno
@@ -128,7 +143,16 @@ left join PO_Supp_Detail psd with (nolock) on psd.ID = fd.POID and psd.SEQ1 = fd
 left join PO_Supp ps WITH (NOLOCK) on fd.POID = ps.ID and fd.SEQ1 = ps.SEQ1
 left join Supp s WITH (NOLOCK) on ps.SuppID = s.ID
 left join orders o with(nolock) on o.ID = fd.POID
-where fd.ID ='{this.txtWKNo.Text}'
+where
+not exists (
+    select 1 
+    from Express_Detail ed with(nolock)
+    WHERE ed.DutyNo = fd.id
+    and ed.OrderID = fd.POID
+    and ed.Seq1 = fd.Seq1
+    and ed.Seq2 = fd.Seq2
+)
+and fd.ID ='{this.txtWKNo.Text}'
 ";
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out DataTable selectData);
             if (!result)
@@ -150,34 +174,45 @@ where fd.ID ='{this.txtWKNo.Text}'
         {
             this.gridImport.ValidateControl();
             this.listControlBindingSource1.EndEdit();
+            if (this.listControlBindingSource1.DataSource == null)
+            {
+                return;
+            }
 
             DataTable dt = (DataTable)this.listControlBindingSource1.DataSource;
-            if (dt == null || dt.Rows.Count == 0)
+            var selectDT = dt.AsEnumerable().Where(x => MyUtility.Convert.GetInt(x["Selected"]) == 1).TryCopyToDataTable(dt);
+            if (selectDT.Rows.Count == 0)
             {
                 MyUtility.Msg.WarningBox("No data, cannot import!");
                 return;
             }
 
-            if (!this.BeforeUpdate(dt))
+            if (!this.BeforeUpdate(selectDT))
             {
                 return;
             }
 
             IList<string> insertCmds = new List<string>();
-            foreach (DataRow dr in dt.Rows)
+            foreach (DataRow dr in selectDT.Rows)
             {
-                string sqlChk = $@"select ID from Express_Detail where DutyNo = '{dr["ID"]}'";
+                string sqlChk = $@"select ID,DutyNo from Express_Detail where DutyNo = '{dr["ID"]}'";
                 if (MyUtility.Check.Seek(sqlChk, out DataRow drChk))
                 {
-                    MyUtility.Msg.WarningBox($@"Fty WK# <{dr["ID"]}> already exists in HC No. <{drChk["ID"]}>");
-                    return;
+                    if ((string)this.masterData["ID"] != (string)drChk["ID"])
+                    {
+                        MyUtility.Msg.WarningBox($@"Fty WK# <{dr["ID"]}> already exists in HC No. <{drChk["ID"]}>");
+                        return;
+                    }
                 }
 
                 sqlChk = $@"select ExpressID from FtyExport where ID = '{dr["ID"]}' and ExpressID !=''";
                 if (MyUtility.Check.Seek(sqlChk, out drChk))
                 {
-                    MyUtility.Msg.WarningBox($@"Fty WK# <{dr["ID"]}> already exists in HC No. <{drChk["ExpressID"]}>");
-                    return;
+                    if ((string)this.masterData["ID"] != (string)drChk["ExpressID"])
+                    {
+                        MyUtility.Msg.WarningBox($@"Fty WK# <{dr["ID"]}> already exists in HC No. <{drChk["ExpressID"]}>");
+                        return;
+                    }
                 }
 
                 insertCmds.Add($@"
@@ -244,6 +279,13 @@ where ID = '{dr["ID"]}'
             }
 
             MyUtility.Msg.InfoBox("Import complete!!");
+
+            DataRow[] drfound = dt.Select("selected = 1");
+
+            foreach (var item in drfound)
+            {
+               dt.Rows.Remove(item);
+            }
         }
 
         private bool BeforeUpdate(DataTable sourcedt)

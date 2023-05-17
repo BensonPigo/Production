@@ -51,7 +51,7 @@ namespace Sci.Production.Quality
             this.txtuserApprover.TextBox1.IsSupportEditMode = false;
             this.txtuserApprover.TextBox1.ReadOnly = true;
 
-            string order_cmd = string.Format("Select * from orders WITH (NOLOCK) where id='{0}'", this.maindr["POID"]);
+            string order_cmd = string.Format("Select * from View_WH_Orders WITH (NOLOCK) where id='{0}'", this.maindr["POID"]);
             DataRow order_dr;
             if (MyUtility.Check.Seek(order_cmd, out order_dr))
             {
@@ -587,7 +587,12 @@ select ToAddress = stuff ((select concat (';', tmp.email)
             string odorEncode = string.Empty;
             string seasonID = string.Empty;
             if (xresult1 = DBProxy.Current.Select("Production", string.Format(
-            "select Roll,Dyelot,a.Result,a.Inspdate,Inspector,a.Remark,B.OdorEncode,C.SeasonID from FIR_Odor a WITH (NOLOCK) left join FIR b WITH (NOLOCK) on a.ID=b.ID LEFT JOIN ORDERS C ON B.POID=C.ID where a.ID='{0}'", this.textID.Text), out dt1))
+            @"
+select Roll,Dyelot,a.Result,a.Inspdate,Inspector,a.Remark,B.OdorEncode,C.SeasonID
+from FIR_Odor a WITH (NOLOCK) 
+left join FIR b WITH (NOLOCK) on a.ID=b.ID 
+LEFT JOIN View_WH_Orders C ON B.POID=C.ID 
+where a.ID='{0}'", this.textID.Text), out dt1))
             {
                 if (dt1.Rows.Count > 0)
                 {

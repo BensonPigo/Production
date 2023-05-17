@@ -35,6 +35,11 @@ SELECT
 	,[OrderQty]= isnull(oq.Qty,0)
     ,ShipQty=isnull(s.ShipQty,0)
     ,o.Qty
+	,f.KPICode
+	,CancelledButStillNeedProduction = IIF(o.NeedProduction = 0, 'N','Y')
+	,CFAInspectionResult = oq.CFAFinalInspectResult
+	,[3rdPartyInspection] = IIF(oq.CFAIs3rdInspect =1,'Y','N')
+	,[3rdPartyInspectionResult] = oq.CFA3rdInspectResult
 into #tmpOrderMain
 FROM Production.dbo.Orders o WITH(NOLOCK)
 INNER JOIN Production.dbo.Factory f WITH(NOLOCK) ON f.ID=o.FactoryID
@@ -130,6 +135,11 @@ select
 	,[OSTDQSQty]=IIF(main.PartialShipment='Y' ,  'NA' ,  CAST(( ISNULL(main.OrderQty,0) -  ISNULL(ins.DQSQty,0))  as varchar))
 	,[OSTClogQty]=IIF(main.PartialShipment='Y' , 'NA' , CAST((  ISNULL(main.OrderQty,0) -  ISNULL(pd.ClogReceivedQty,0))  as varchar))
 	,[OSTClogCtn]= ISNULL(pd.PackingCarton,0) - ISNULL(pd.ClogReceivedCarton,0)
+	,main.KPICode
+	,main.CancelledButStillNeedProduction
+	,main.CFAInspectionResult
+	,main.[3rdPartyInspection]
+	,main.[3rdPartyInspectionResult]
 into #final
 from #tmpOrderMain main
 left join #tmpPackingList_Detail pd on pd.OrderID = main.id and pd.OrderShipmodeSeq = main.Seq
@@ -175,7 +185,12 @@ SET
 	t.OSTClogQty =  s.OSTClogQty,
 	t.OSTClogCtn =  s.OSTClogCtn,
 	t.PulloutComplete = s.PulloutComplete,
-	t.dest = s.dest
+	t.dest = s.dest,
+	t.KPIGroup = s.KPICode,
+	t.CancelledButStillNeedProduction = s.CancelledButStillNeedProduction,
+	t.CFAInspectionResult = s.CFAInspectionResult,
+	t.[3rdPartyInspection] = s.[3rdPartyInspection],
+	t.[3rdPartyInspectionResult] = s.[3rdPartyInspectionResult]	
 from P_OustandingPO t
 inner join #Final s  
 		ON t.FactoryID=s.FactoryID  
@@ -209,7 +224,12 @@ select  s.FactoryID,
 		s.OSTClogQty,
 		s.OSTClogCtn,
 		s.PulloutComplete,
-		s.dest
+		s.dest,
+		s.KPICode,
+		s.CancelledButStillNeedProduction,
+		s.CFAInspectionResult,
+		s.[3rdPartyInspection],
+		s.[3rdPartyInspectionResult]
 from #Final s
 where not exists(
 	select 1 from P_OustandingPO t 

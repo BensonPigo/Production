@@ -251,6 +251,9 @@ namespace Sci.Production.Warehouse
                     Dyelot = "Lot#:" + MyUtility.Convert.GetString(s["Dyelot"]),
                     Qty = "Yd#:" + MyUtility.Convert.GetString(s[qty]),
                     FactoryID = MyUtility.Convert.GetString(s["FactoryID"]),
+                    StockType = "Stock Type:" + MyUtility.Convert.GetString(s["StockTypeName"]),
+                    StyleID = "Style:" + MyUtility.Convert.GetString(s["StyleID"]),
+                    WhseArrival = "Arrive WH Date:" + (MyUtility.Check.Empty(s["WhseArrival"]) ? string.Empty: ((DateTime)s["WhseArrival"]).ToString("yyyy/MM/dd")),
                     Image = Prgs.ImageToByte(MyUtility.Convert.GetString(s[qrcode]).ToBitmapQRcode(qrCodeWidth, qrCodeWidth)),
                 }).ToList();
 

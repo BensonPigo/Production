@@ -51,23 +51,24 @@
             this.btnLastDownloadAPSDate = new Sci.Win.UI.Button();
             this.comboSubProcess = new Sci.Win.UI.ComboBox();
             this.labelSubProcess = new Sci.Win.UI.Label();
+            this.chkIncludeCompleteSchedule = new Sci.Win.UI.CheckBox();
             this.SuspendLayout();
             // 
             // print
             // 
-            this.print.Location = new System.Drawing.Point(379, 28);
+            this.print.Location = new System.Drawing.Point(422, 28);
             this.print.Size = new System.Drawing.Size(115, 30);
             this.print.TabIndex = 9;
             // 
             // toexcel
             // 
-            this.toexcel.Location = new System.Drawing.Point(379, 64);
+            this.toexcel.Location = new System.Drawing.Point(422, 64);
             this.toexcel.Size = new System.Drawing.Size(115, 30);
             this.toexcel.TabIndex = 10;
             // 
             // close
             // 
-            this.close.Location = new System.Drawing.Point(379, 100);
+            this.close.Location = new System.Drawing.Point(422, 100);
             this.close.Size = new System.Drawing.Size(115, 30);
             this.close.TabIndex = 11;
             // 
@@ -317,7 +318,7 @@
             // 
             this.btnLastDownloadAPSDate.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnLastDownloadAPSDate.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
-            this.btnLastDownloadAPSDate.Location = new System.Drawing.Point(379, 136);
+            this.btnLastDownloadAPSDate.Location = new System.Drawing.Point(422, 136);
             this.btnLastDownloadAPSDate.Name = "btnLastDownloadAPSDate";
             this.btnLastDownloadAPSDate.Size = new System.Drawing.Size(115, 66);
             this.btnLastDownloadAPSDate.TabIndex = 554;
@@ -345,9 +346,21 @@
             this.labelSubProcess.TabIndex = 558;
             this.labelSubProcess.Text = "Sub Process";
             // 
+            // chkIncludeCompleteSchedule
+            // 
+            this.chkIncludeCompleteSchedule.AutoSize = true;
+            this.chkIncludeCompleteSchedule.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkIncludeCompleteSchedule.Location = new System.Drawing.Point(332, 291);
+            this.chkIncludeCompleteSchedule.Name = "chkIncludeCompleteSchedule";
+            this.chkIncludeCompleteSchedule.Size = new System.Drawing.Size(196, 21);
+            this.chkIncludeCompleteSchedule.TabIndex = 559;
+            this.chkIncludeCompleteSchedule.Text = "Include complete Schedule";
+            this.chkIncludeCompleteSchedule.UseVisualStyleBackColor = true;
+            // 
             // R01
             // 
-            this.ClientSize = new System.Drawing.Size(506, 345);
+            this.ClientSize = new System.Drawing.Size(549, 345);
+            this.Controls.Add(this.chkIncludeCompleteSchedule);
             this.Controls.Add(this.comboSubProcess);
             this.Controls.Add(this.labelSubProcess);
             this.Controls.Add(this.btnLastDownloadAPSDate);
@@ -406,6 +419,7 @@
             this.Controls.SetChildIndex(this.btnLastDownloadAPSDate, 0);
             this.Controls.SetChildIndex(this.labelSubProcess, 0);
             this.Controls.SetChildIndex(this.comboSubProcess, 0);
+            this.Controls.SetChildIndex(this.chkIncludeCompleteSchedule, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -436,5 +450,6 @@
         private Win.UI.Button btnLastDownloadAPSDate;
         private Win.UI.ComboBox comboSubProcess;
         private Win.UI.Label labelSubProcess;
+        private Win.UI.CheckBox chkIncludeCompleteSchedule;
     }
 }

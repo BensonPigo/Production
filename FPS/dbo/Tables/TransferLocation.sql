@@ -1,15 +1,17 @@
 ﻿CREATE TABLE [dbo].[TransferLocation] (
     [ID]             BIGINT         NOT NULL,
-    [SCICtnNo]       VARCHAR (15)   NOT NULL,
+    [SCICtnNo]       VARCHAR (16)   NOT NULL,
     [CustCTN]        VARCHAR (30)   NOT NULL,
     [GW]             NUMERIC (7, 3) NULL,
-    [ClogLocationId] NVARCHAR(50)   NULL,
-    [Pallet]         NVARCHAR (50)   NULL,
+    [ClogLocationId] NVARCHAR (50)  NULL,
+    [Pallet]         NVARCHAR (50)  NULL,
     [Time]           DATETIME       NOT NULL,
     [SCIUpdate]      BIT            DEFAULT ((0)) NOT NULL,
     [Type]           VARCHAR (15)   DEFAULT ('') NOT NULL,
     CONSTRAINT [PK_TransferLocation] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
+
+
 
 
 GO

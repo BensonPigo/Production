@@ -8,6 +8,7 @@ using Ict;
 using Sci.Data;
 using Excel = Microsoft.Office.Interop.Excel;
 using System.Runtime.InteropServices;
+using System.Data.SqlTypes;
 
 namespace Sci.Production.PPIC
 {
@@ -188,7 +189,25 @@ namespace Sci.Production.PPIC
                 worksheet = objApp.Sheets[3];
                 worksheet.Select();
                 this.printData.Columns.Remove("StyleName");
-                result = MyUtility.Excel.CopyToXls(this.printData, string.Empty, "PPIC_R01_Style_PerEachSewingDate.xltx", 1, false, string.Empty, objApp, false, worksheet, false);
+
+                DataTable pintDataFilter = this.printData.Copy();
+
+                if (!this.chkIncludeCompleteSchedule.Checked)
+                {
+                    if (!MyUtility.Check.Empty(this.SewingDate1))
+                    {
+                        pintDataFilter = pintDataFilter.Select($@" SewingDay >= '{Convert.ToDateTime(this.SewingDate1):yyyy/MM/dd}' ").CopyToDataTable();
+
+                    }
+
+                    if (!MyUtility.Check.Empty(this.SewingDate2))
+                    {
+                        pintDataFilter = pintDataFilter.Select($@" SewingDay <= '{Convert.ToDateTime(this.SewingDate2):yyyy/MM/dd}'").CopyToDataTable();
+
+                    }
+                }
+
+                result = MyUtility.Excel.CopyToXls(pintDataFilter, string.Empty, "PPIC_R01_Style_PerEachSewingDate.xltx", 1, false, string.Empty, objApp, false, worksheet, false);
 
                 if (!result)
                 {
@@ -1158,7 +1177,7 @@ drop table #tmp_main,#tmp_PFRemark,#tmp_WorkHour,#tmpOrderArtwork,#tmp_CutInLine
 ");
             #endregion
 
-            DBProxy.Current.DefaultTimeout = 900;
+            DBProxy.Current.DefaultTimeout = 1800;
             result = DBProxy.Current.Select(null, sqlCmd.ToString(), out this.printData);
             DBProxy.Current.DefaultTimeout = 300;
             return result;
@@ -1551,7 +1570,7 @@ drop table #tmp_main,#tmp_PFRemark,#tmp_WorkHour,#tmpOrderArtwork,#tmp_Qty,#tmp_
 ");
             #endregion
 
-            DBProxy.Current.DefaultTimeout = 900;
+            DBProxy.Current.DefaultTimeout = 1800;
             result = DBProxy.Current.Select(null, sqlCmd.ToString(), out this.printData);
             DBProxy.Current.DefaultTimeout = 300;
             return result;
@@ -1598,7 +1617,7 @@ drop table #tmp_main,#tmp_PFRemark,#tmp_WorkHour,#tmpOrderArtwork,#tmp_Qty,#tmp_
 
             #endregion
 
-            DBProxy.Current.DefaultTimeout = 900;
+            DBProxy.Current.DefaultTimeout = 1800;
             DataTable[] dtsResult;
             result = DBProxy.Current.Select(null, sqlCmd.ToString().Substring(0, sqlCmd.Length - 1), out dtsResult);
             DBProxy.Current.DefaultTimeout = 300;

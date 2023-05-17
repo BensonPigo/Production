@@ -61,7 +61,7 @@
             this.txtSewingLine = new Sci.Win.UI.TextBox();
             this.label4 = new Sci.Win.UI.Label();
             this.label8 = new Sci.Win.UI.Label();
-            this.editBoxRequestRemark = new Sci.Win.UI.EditBox();
+            this.editBoxPPICRemark = new Sci.Win.UI.EditBox();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -78,7 +78,7 @@
             // 
             // masterpanel
             // 
-            this.masterpanel.Controls.Add(this.editBoxRequestRemark);
+            this.masterpanel.Controls.Add(this.editBoxPPICRemark);
             this.masterpanel.Controls.Add(this.label8);
             this.masterpanel.Controls.Add(this.txtSewingLine);
             this.masterpanel.Controls.Add(this.label4);
@@ -143,7 +143,7 @@
             this.masterpanel.Controls.SetChildIndex(this.label4, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtSewingLine, 0);
             this.masterpanel.Controls.SetChildIndex(this.label8, 0);
-            this.masterpanel.Controls.SetChildIndex(this.editBoxRequestRemark, 0);
+            this.masterpanel.Controls.SetChildIndex(this.editBoxPPICRemark, 0);
             // 
             // detailpanel
             // 
@@ -288,11 +288,11 @@
             // 
             // lineShape1
             // 
-            //this.lineShape1.Name = "lineShape1";
-            //this.lineShape1.X1 = 17;
-            //this.lineShape1.X2 = 975;
-            //this.lineShape1.Y1 = 145;
-            //this.lineShape1.Y2 = 145;
+            this.lineShape1.Name = "";
+            this.lineShape1.X1 = 0;
+            this.lineShape1.X2 = 0;
+            this.lineShape1.Y1 = 0;
+            this.lineShape1.Y2 = 0;
             // 
             // btnFind
             // 
@@ -338,19 +338,19 @@
             // 
             this.label1.Location = new System.Drawing.Point(16, 107);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(75, 23);
+            this.label1.Size = new System.Drawing.Size(79, 23);
             this.label1.TabIndex = 59;
-            this.label1.Text = "Remark";
+            this.label1.Text = "WH Remark";
             // 
             // editBox1
             // 
             this.editBox1.BackColor = System.Drawing.Color.White;
             this.editBox1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "remark", true));
             this.editBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.editBox1.Location = new System.Drawing.Point(97, 107);
+            this.editBox1.Location = new System.Drawing.Point(98, 107);
             this.editBox1.Multiline = true;
             this.editBox1.Name = "editBox1";
-            this.editBox1.Size = new System.Drawing.Size(565, 66);
+            this.editBox1.Size = new System.Drawing.Size(564, 66);
             this.editBox1.TabIndex = 3;
             // 
             // label2
@@ -533,20 +533,21 @@
             // 
             this.label8.Location = new System.Drawing.Point(16, 74);
             this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(115, 23);
+            this.label8.Size = new System.Drawing.Size(88, 23);
             this.label8.TabIndex = 86;
-            this.label8.Text = "Request Remark";
+            this.label8.Text = "PPIC Remark";
             // 
-            // editBoxRequestRemark
+            // editBoxPPICRemark
             // 
-            this.editBoxRequestRemark.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.editBoxRequestRemark.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.editBoxRequestRemark.Location = new System.Drawing.Point(134, 73);
-            this.editBoxRequestRemark.Multiline = true;
-            this.editBoxRequestRemark.Name = "editBoxRequestRemark";
-            this.editBoxRequestRemark.ReadOnly = true;
-            this.editBoxRequestRemark.Size = new System.Drawing.Size(528, 24);
-            this.editBoxRequestRemark.TabIndex = 87;
+            this.editBoxPPICRemark.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.editBoxPPICRemark.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.editBoxPPICRemark.IsSupportEditMode = false;
+            this.editBoxPPICRemark.Location = new System.Drawing.Point(107, 73);
+            this.editBoxPPICRemark.Multiline = true;
+            this.editBoxPPICRemark.Name = "editBoxPPICRemark";
+            this.editBoxPPICRemark.ReadOnly = true;
+            this.editBoxPPICRemark.Size = new System.Drawing.Size(555, 24);
+            this.editBoxPPICRemark.TabIndex = 87;
             // 
             // P16
             // 
@@ -625,7 +626,7 @@
         private Win.UI.Label lblDept;
         private Win.UI.Button btnPrintFabricSticker;
         private Win.UI.Button btnCallP99;
-        private Win.UI.EditBox editBoxRequestRemark;
+        private Win.UI.EditBox editBoxPPICRemark;
         private Win.UI.Label label8;
         private Win.UI.TextBox txtSewingLine;
         private Win.UI.Label label4;

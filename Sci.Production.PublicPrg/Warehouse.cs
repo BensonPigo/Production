@@ -1,6 +1,7 @@
 ﻿using Ict;
 using Sci;
 using Sci.Data;
+using Sci.Production.Prg;
 using Sci.Production.Prg.Entity;
 using System;
 using System.Collections.Generic;
@@ -313,6 +314,7 @@ on t.poid = s.poid and t.seq1 = s.seq1 and t.seq2 = s.seq2;";
         /// *   8.  更新AdjustQty
         /// *   26. 更新Location
         /// *   37. 更新Return QTY
+        /// *   66. 更新Tone
         /// </summary>
         /// <param name="type">type</param>
         /// <param name="datas">datas</param>
@@ -631,6 +633,30 @@ drop table #tmp_L_K
                     sqlcmd += @"drop table #tmpS1, #tmpS11; 
                                 drop table #TmpSource;";
                     #endregion
+                    break;
+                case 66:
+                    sqlcmd = $@"
+alter table #TmpSource alter column poid varchar(20)
+alter table #TmpSource alter column seq1 varchar(3)
+alter table #TmpSource alter column seq2 varchar(3)
+alter table #TmpSource alter column stocktype varchar(1)
+alter table #TmpSource alter column roll varchar(15)
+alter table #TmpSource alter column dyelot varchar(8)
+alter table #TmpSource alter column FabricType varchar(1)
+
+update f
+set Tone = sd.Tone
+from #TmpSource sd
+inner join FtyInventory f with(nolock) on f.POID = sd.poid
+    and f.Seq1 = sd.seq1
+    and f.Seq2 = sd.seq2
+    and f.Roll = sd.roll
+    and f.Dyelot = sd.dyelot
+    and f.StockType = sd.stocktype
+where sd.FabricType = 'F'
+
+drop table #TmpSource;
+";
                     break;
                 case 70:
                     #region 更新Ftyinventor.Barcode 第一層
@@ -3720,6 +3746,7 @@ order by Barcode desc
             {
                 DataTable emptyBarcodedt = new DataTable();
                 emptyBarcodedt.Columns.Add("Ukey");
+                emptyBarcodedt.Columns.Add("Qty");
 
                 foreach (DataRow dr in dtDetail.Select("Qty >= 0 and FabricType = 'F' and isnull(Barcode, '') = ''"))
                 {
@@ -3730,12 +3757,13 @@ order by Barcode desc
                 {
                     DataRow newrow = emptyBarcodedt.NewRow();
                     newrow["Ukey"] = dr["ToUkey"];
+                    newrow["Qty"] = dr["Qty"];
                     emptyBarcodedt.Rows.Add(newrow);
                 }
 
                 if (emptyBarcodedt.Rows.Count > 0)
                 {
-                    Class.WH_BarcodeEmpty wH_Barcode = new Class.WH_BarcodeEmpty(emptyBarcodedt, "FtyInventory barcode can't empty");
+                    Class.WH_BarcodeEmpty wH_Barcode = new Class.WH_BarcodeEmpty(emptyBarcodedt, "FtyInventory barcode can't empty", true);
                     wH_Barcode.ShowDialog();
                     return false;
                 }
@@ -3785,7 +3813,7 @@ inner join #tmp s on s.POID = sd.PoId
         }
 
         /// <inheritdoc/>
-        public static DualResult GetFtyInventoryData(DataTable dtDetail, string function, out DataTable dt)
+        public static DualResult GetFtyInventoryData(DataTable dtDetail, string function, out DataTable dt, AbstractDBProxyPMS proxyPMS = null)
         {
             WHTableName detailTableName = GetWHDetailTableName(function);
             string psd_FtyDt = GetWHjoinPSD_Fty(detailTableName);
@@ -3835,7 +3863,7 @@ FROM {detailTableName} sd with(nolock)
 {psd_FtyDt}
 where sd.Ukey in ({ukeys})
 ";
-            return DBProxy.Current.Select("Production", sqlcmd, out dt);
+            return proxyPMS == null ? DBProxy.Current.Select("Production", sqlcmd, out dt) : proxyPMS.Select("Production", sqlcmd, out dt);
         }
 
         /// <inheritdoc/>
@@ -3889,7 +3917,7 @@ left join Production.dbo.FtyInventory f with(nolock) on f.POID = isnull(sd.PoId,
         /// <param name="isRevise">P99 的 Revise 功能</param>
         /// <param name="isDelete">P99 的 Delete 功能</param>
         /// <inheritdoc/>
-        public static DualResult UpdateWH_Barcode(bool isConfirmed, DataTable dtDetailSource, string function, out bool fromNewBarcode, DataTable oriFtyInventory = null, bool isRevise = false, bool isDelete = false, bool getOriFtyInventory = false)
+        public static DualResult UpdateWH_Barcode(bool isConfirmed, DataTable dtDetailSource, string function, out bool fromNewBarcode, DataTable oriFtyInventory = null, bool isRevise = false, bool isDelete = false, bool getOriFtyInventory = false, AbstractDBProxyPMS proxyPMS = null)
         {
             // 庫存0 = 沒or清空 Barcode
             // ↓在不覆蓋移動目標 Barcode 原則下↓
@@ -3932,7 +3960,8 @@ left join Production.dbo.FtyInventory f with(nolock) on f.POID = isnull(sd.PoId,
             // Batch Create 並 confirm 的程式沒有 Ukey
             if (!dtDetail.Columns.Contains("Ukey"))
             {
-                if (!(result = DBProxy.Current.Select("Production", $"select * from {detailTableName} with(nolock) where id = '{dtDetail.Rows[0]["ID"]}'", out dtDetail)))
+                string sqldetail = $"select * from {detailTableName} with(nolock) where id = '{dtDetail.Rows[0]["ID"]}'";
+                if (!(result = proxyPMS == null ? DBProxy.Current.Select("Production", sqldetail, out dtDetail) : proxyPMS.Select("Production", sqldetail, out dtDetail)))
                 {
                     return result;
                 }
@@ -4124,10 +4153,21 @@ where 1=1
 and sd.FabricType = 'F'
 
 ";
-                DBProxy._OpenConnection("Production", out sqlConnection);
-                using (sqlConnection)
+                if (proxyPMS == null)
                 {
-                    result = MyUtility.Tool.ProcessWithDatatable(dtDetail, string.Empty, sqlcmd, out dt, conn: sqlConnection);
+                    DBProxy._OpenConnection("Production", out sqlConnection); // for MES
+                    using (sqlConnection)
+                    {
+                        result = MyUtility.Tool.ProcessWithDatatable(dtDetail, string.Empty, sqlcmd, out dt, conn: sqlConnection);
+                        if (!result)
+                        {
+                            return result;
+                        }
+                    }
+                }
+                else
+                {
+                    result = proxyPMS.ProcessWithDatatable("Production", dtDetail, string.Empty, sqlcmd, out dt);
                     if (!result)
                     {
                         return result;
@@ -4192,7 +4232,7 @@ and sd.Ukey in ({ukeys})
 ";
                 }
 
-                result = DBProxy.Current.Select("Production", sqlcmd, out dt);
+                result = proxyPMS == null ? DBProxy.Current.Select("Production", sqlcmd, out dt) : proxyPMS.Select("Production", sqlcmd, out dt);
                 if (!result)
                 {
                     return result;
@@ -4756,10 +4796,36 @@ and w.Action = '{item.Action}'";
 
             if (wHBarcodeTransaction.Where(w => w.UpdatethisItem).Any())
             {
-                DBProxy._OpenConnection("Production", out sqlConnection);
-                using (sqlConnection)
+                string sqlUpdateReceiving_Detail = $@"
+    update rd set rd.MINDQRCode = t.To_NewBarcode
+    from {detailTableName} rd 
+    inner join #tmp t on rd.Ukey = t.TransactionUkey
+    where rd.MINDQRCode = ''
+";
+                if (proxyPMS == null)
                 {
-                    if (!(result = MyUtility.Tool.ProcessWithObject(wHBarcodeTransaction.Where(w => w.UpdatethisItem), string.Empty, UpdateWHBarcodeTransaction(), out odt, conn: sqlConnection)))
+                    DBProxy._OpenConnection("Production", out sqlConnection); // for MES
+                    using (sqlConnection)
+                    {
+                        if (!(result = MyUtility.Tool.ProcessWithObject(wHBarcodeTransaction.Where(w => w.UpdatethisItem), string.Empty, UpdateWHBarcodeTransaction(), out odt, conn: sqlConnection)))
+                        {
+                            return result;
+                        }
+
+                        if (detailTableName == WHTableName.Receiving_Detail ||
+                            detailTableName == WHTableName.TransferIn_Detail)
+                        {
+                            result = DBProxy.Current.ExecuteByConn(sqlConnection, sqlUpdateReceiving_Detail);
+                            if (!result)
+                            {
+                                return result;
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    if (!(result = proxyPMS.ProcessWithDatatable("Production", wHBarcodeTransaction.Where(w => w.UpdatethisItem).ToList().ToDataTable(), string.Empty, UpdateWHBarcodeTransaction(), out odt)))
                     {
                         return result;
                     }
@@ -4767,13 +4833,7 @@ and w.Action = '{item.Action}'";
                     if (detailTableName == WHTableName.Receiving_Detail ||
                         detailTableName == WHTableName.TransferIn_Detail)
                     {
-                        string sqlUpdateReceiving_Detail = $@"
-    update rd set rd.MINDQRCode = t.To_NewBarcode
-    from {detailTableName} rd 
-    inner join #tmp t on rd.Ukey = t.TransactionUkey
-    where rd.MINDQRCode = ''
-";
-                        result = DBProxy.Current.ExecuteByConn(sqlConnection, sqlUpdateReceiving_Detail);
+                        result = proxyPMS.Execute(sqlUpdateReceiving_Detail, "Production");
                         if (!result)
                         {
                             return result;
@@ -4822,10 +4882,20 @@ and w.Action = '{item.Action}'";
                     break;
             }
 
-            DBProxy._OpenConnection("Production", out sqlConnection);
-            using (sqlConnection)
+            if (proxyPMS == null)
             {
-                if (!(result = MyUtility.Tool.ProcessWithObject(data_FtyBarcode, string.Empty, UpdateFtyInventoryBarCode(), out odt, conn: sqlConnection)))
+                DBProxy._OpenConnection("Production", out sqlConnection); // for MES
+                using (sqlConnection)
+                {
+                    if (!(result = MyUtility.Tool.ProcessWithObject(data_FtyBarcode, string.Empty, UpdateFtyInventoryBarCode(), out odt, conn: sqlConnection)))
+                    {
+                        return result;
+                    }
+                }
+            }
+            else
+            {
+                if (!(result = proxyPMS.ProcessWithDatatable("Production", data_FtyBarcode.ToList().ToDataTable(), string.Empty, UpdateFtyInventoryBarCode(), out odt)))
                 {
                     return result;
                 }
@@ -4856,10 +4926,20 @@ and w.Action = '{item.Action}'";
                         item.BarcodeSeq = toBarcode.To_NewBarcodeSeq;
                     }
 
-                    DBProxy._OpenConnection("Production", out sqlConnection);
-                    using (sqlConnection)
+                    if (proxyPMS == null)
                     {
-                        if (!(result = MyUtility.Tool.ProcessWithObject(data_To_FtyBarcode, string.Empty, UpdateFtyInventoryBarCode(), out odt, conn: sqlConnection)))
+                        DBProxy._OpenConnection("Production", out sqlConnection);
+                        using (sqlConnection)
+                        {
+                            if (!(result = MyUtility.Tool.ProcessWithObject(data_To_FtyBarcode, string.Empty, UpdateFtyInventoryBarCode(), out odt, conn: sqlConnection)))
+                            {
+                                return result;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        if (!(result = proxyPMS.ProcessWithDatatable("Production", data_To_FtyBarcode.ToDataTable(), string.Empty, UpdateFtyInventoryBarCode(), out odt)))
                         {
                             return result;
                         }

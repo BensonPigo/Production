@@ -128,7 +128,7 @@ BEGIN
 
 			--by ID,FabricCombo,Article,SizeCode 計算 ConsPC 佔比率
 			select a.ID,a.FabricCombo,a.Article,a.SizeCode,
-				 ConsRate = (a.ConsPC / x.TTLCons)
+				 ConsRate = iif(isnull(x.TTLCons, 0) = 0, 0, (a.ConsPC / x.TTLCons))
 			into #tmpConsRate
 			from #tmpASF a
 			inner join (

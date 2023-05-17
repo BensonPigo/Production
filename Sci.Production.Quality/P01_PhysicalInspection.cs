@@ -74,7 +74,7 @@ namespace Sci.Production.Quality
             // SendMail
             this.btnSendMail.Enabled = MyUtility.Convert.GetBool(this.maindr["PhysicalEncode"]);
 
-            string order_cmd = string.Format("Select * from orders WITH (NOLOCK) where id='{0}'", this.maindr["POID"]);
+            string order_cmd = string.Format("Select * from View_WH_Orders WITH (NOLOCK) where id='{0}'", this.maindr["POID"]);
             DataRow order_dr;
             if (MyUtility.Check.Seek(order_cmd, out order_dr))
             {
@@ -137,6 +137,96 @@ namespace Sci.Production.Quality
 
             string sqlCmd = $"select InspectionGroup from Fabric where SCIRefno = '{this.maindr["SCIRefno"].ToString()}'";
             this.txtGroup.Text = MyUtility.GetValue.Lookup(sqlCmd, "Production");
+
+            string sqlcmd_TotalRoll = $@"select count(TotalRollnumberTEST.Roll) as TotalRollnumber
+                                        from(
+                                        select rd.Roll
+	                                    from Receiving_Detail rd with(nolock)
+                                        where 
+                                        rd.poid = '{this.maindr["POID"].ToString()}' and
+                                        rd.seq1 = '{this.maindr["Seq1"].ToString()}' and
+                                        rd.Seq2 = '{this.maindr["Seq2"].ToString()}' and
+                                        rd.ID = '{this.maindr["ReceivingID"].ToString()}'
+                                        union
+	                                    select td.Roll
+	                                    from TransferIn_Detail td with(nolock)
+                                        where 
+                                        td.poid = '{this.maindr["POID"].ToString()}' and
+                                        td.seq1 = '{this.maindr["Seq1"].ToString()}' and
+                                        td.Seq2 = '{this.maindr["Seq2"].ToString()}' and
+                                        td.ID = '{this.maindr["ReceivingID"].ToString()}'
+                                        ) TotalRollnumberTEST";
+            this.displayTotlalRoll.Text = MyUtility.GetValue.Lookup(sqlcmd_TotalRoll, "Production");
+
+            string sqlcmd_InspectedRoll = $@"select count(InspectedRollnumberTEST.Roll) as InspectedRollnumber
+                                            from(
+                                            select rd.Roll
+	                                        from Receiving_Detail rd
+	                                        inner join FIR f on f.ReceivingID = rd.Id and f.POID = rd.PoId and f.SEQ1 = rd.Seq1 and f.SEQ2 = rd.Seq2
+	                                        inner join FIR_Physical fp on f.id = fp.ID and fp.Roll = rd.Roll and fp.Dyelot = fp.Dyelot
+                                            where 
+                                            rd.poid = '{this.maindr["POID"].ToString()}' and
+                                            rd.seq1 = '{this.maindr["Seq1"].ToString()}' and
+                                            rd.Seq2 = '{this.maindr["Seq2"].ToString()}' and
+                                            rd.ID = '{this.maindr["ReceivingID"].ToString()}' and
+                                            fp.Result<>'' 
+                                            union
+	                                        select td.Roll
+	                                        from TransferIn_Detail td
+	                                        inner join FIR f on f.ReceivingID = td.Id and f.POID = td.PoId and f.SEQ1 = td.Seq1 and f.SEQ2 = td.Seq2
+	                                        inner join FIR_Physical fp on f.id = fp.ID and fp.Roll = td.Roll and fp.Dyelot = fp.Dyelot
+                                            where 
+                                            td.poid = '{this.maindr["POID"].ToString()}' and
+                                            td.seq1 = '{this.maindr["Seq1"].ToString()}' and
+                                            td.Seq2 = '{this.maindr["Seq2"].ToString()}' and
+                                            td.ID = '{this.maindr["ReceivingID"].ToString()}' and
+                                            fp.Result<>''
+                                            ) InspectedRollnumberTEST";
+            this.displayInspectedRoll.Text = MyUtility.GetValue.Lookup(sqlcmd_InspectedRoll, "Production");
+
+            string sqlcmd_TotalNumber = $@"select Count(distinct Dyelot) as TotalLotNumber
+                                            from(
+                                            select rd.Dyelot
+                                            from Receiving_Detail rd with(nolock)
+                                            where 
+                                            rd.poid = '{this.maindr["POID"].ToString()}' and
+                                            rd.seq1 = '{this.maindr["Seq1"].ToString()}' and
+                                            rd.Seq2 = '{this.maindr["Seq2"].ToString()}' and
+                                            rd.ID = '{this.maindr["ReceivingID"].ToString()}'
+                                            union
+	                                        select td.Dyelot
+	                                        from TransferIn_Detail td with(nolock)
+	                                        where 
+                                            td.poid = '{this.maindr["POID"].ToString()}' and
+                                            td.seq1 = '{this.maindr["Seq1"].ToString()}' and
+                                            td.Seq2 = '{this.maindr["Seq2"].ToString()}' and
+                                            td.ID = '{this.maindr["ReceivingID"].ToString()}') TotalLotNumberTEST";
+            this.displayTotalLot.Text = MyUtility.GetValue.Lookup(sqlcmd_TotalNumber, "Production");
+
+            string sqlcmd_InspectedLot = $@"select Count(distinct Dyelot) as InspectedLotNumber
+                                            from(
+	                                        select rd.Dyelot
+	                                        from Receiving_Detail rd
+	                                        inner join FIR f on f.ReceivingID = rd.Id and f.POID = rd.PoId and f.SEQ1 = rd.Seq1 and f.SEQ2 = rd.Seq2
+	                                        inner join FIR_Physical fp on f.id = fp.ID and fp.Roll = rd.Roll and fp.Dyelot = fp.Dyelot
+	                                        where 
+                                            rd.poid = '{this.maindr["POID"].ToString()}' and
+                                            rd.seq1 = '{this.maindr["Seq1"].ToString()}' and
+                                            rd.Seq2 = '{this.maindr["Seq2"].ToString()}' and
+                                            rd.ID = '{this.maindr["ReceivingID"].ToString()}' and
+                                            fp.Result<>''
+                                            union
+	                                        select td.Dyelot
+	                                        from TransferIn_Detail td
+	                                        inner join FIR f on f.ReceivingID = td.Id and f.POID = td.PoId and f.SEQ1 = td.Seq1 and f.SEQ2 = td.Seq2
+	                                        inner join FIR_Physical fp on f.id = fp.ID and fp.Roll = td.Roll and fp.Dyelot = fp.Dyelot
+	                                        where  
+                                            td.poid = '{this.maindr["POID"].ToString()}' and
+                                            td.seq1 = '{this.maindr["Seq1"].ToString()}' and
+                                            td.Seq2 = '{this.maindr["Seq2"].ToString()}' and
+                                            td.ID = '{this.maindr["ReceivingID"].ToString()}' and
+                                            fp.Result<>'') InspectedLotNumberTEST";
+            this.displayInspectedLot.Text = MyUtility.GetValue.Lookup(sqlcmd_InspectedLot, "Production");
         }
 
         private DataTable datas2;
@@ -168,6 +258,9 @@ namespace Sci.Production.Quality
             datas.Columns.Add("SEQ2", typeof(string));
             datas.Columns.Add("NewKey", typeof(int));
             datas.Columns.Add("LthOfDiff", typeof(decimal));
+            datas.Columns.Add("Weight", typeof(decimal));
+            datas.Columns.Add("ActualWeight", typeof(decimal));
+            datas.Columns.Add("Differential", typeof(decimal));
 
             datas.Columns.Add("ReGrade", typeof(string));
             int i = 0;
@@ -186,6 +279,37 @@ namespace Sci.Production.Quality
                 dr["SEQ1"] = this.maindr["SEQ1"];
                 dr["SEQ2"] = this.maindr["SEQ2"];
                 dr["LthOfDiff"] = MyUtility.Convert.GetDecimal(dr["ActualYds"]) - MyUtility.Convert.GetDecimal(dr["TicketYds"]);
+
+                // 新增Receiving_Detail & TransferIn_Detail來源
+                string sqlcmd = $@"
+select [Weight] = IIF(ISNULL(rd.weight,0) = 0 ,ISNULL(td.weight,0),ISNULL(rd.weight,0))
+,[ActualWeight] = IIF(ISNULL(rd.ActualWeight,0) = 0 ,ISNULL(td.ActualWeight,0),ISNULL(rd.ActualWeight,0))
+,[Differential] = IIF(ISNULL(rd.ActualWeight,0) = 0 ,ISNULL(td.ActualWeight,0),ISNULL(rd.ActualWeight,0))-IIF(ISNULL(rd.weight,0) = 0 ,ISNULL(td.weight,0),ISNULL(rd.weight,0))
+from FIR_Physical fp
+inner join fir f on fp.ID = f.ID
+left join Receiving_Detail rd on rd.PoId = f.POID
+	and rd.Seq1 = f.SEQ1 and rd.Seq2 = f.SEQ2
+	and rd.Roll = fp.Roll and rd.Dyelot = fp.Dyelot
+	and rd.Id = f.ReceivingID
+left join TransferIn_Detail td on td.PoId = f.POID
+	and td.Seq1 = f.SEQ1 and td.Seq2 = f.SEQ2
+	and td.Roll = fp.Roll and td.Dyelot = fp.Dyelot
+	and td.Id = f.ReceivingID
+where fp.DetailUkey = '{dr["DetailUkey"]}'
+";
+                if (MyUtility.Check.Seek(sqlcmd, out DataRow dr_R))
+                {
+                    dr["Weight"] = dr_R["Weight"];
+                    dr["ActualWeight"] = dr_R["ActualWeight"];
+                    dr["Differential"] = dr_R["Differential"];
+                }
+                else
+                {
+                    dr["Weight"] = 0;
+                    dr["ActualWeight"] = 0;
+                    dr["Differential"] = 0;
+                }
+
                 i++;
             }
             #region 撈取下一層資料Defect
@@ -705,6 +829,9 @@ where Fir.ID = '{this.FirID}'"));
             .Text("Grade", header: "Grade", width: Widths.AnsiChars(1), iseditingreadonly: true).Get(out this.col_color)
             .CheckBox("IsGrandCCanUse", header: "Grand C But Can Use", width: Widths.AnsiChars(5), iseditable: true, trueValue: 1, falseValue: 0)
             .Text("GrandCCanUseReason", header: "Grand C But Can Use Reason", width: Widths.AnsiChars(20))
+            .Numeric("Weight", header: "G.W(kg)", width: Widths.AnsiChars(5), iseditingreadonly: true, integer_places: 7, decimal_places: 2)
+            .Numeric("ActualWeight", header: "Act.(kg)", width: Widths.AnsiChars(5), iseditingreadonly: true, integer_places: 7, decimal_places: 2)
+            .Numeric("Differential", header: "Differential", width: Widths.AnsiChars(5), iseditingreadonly: true, integer_places: 7, decimal_places: 2)
             .CheckBox("moisture", header: "Moisture", width: Widths.AnsiChars(2), iseditable: true, trueValue: 1, falseValue: 0)
             .Text("Remark", header: "Remark", width: Widths.AnsiChars(20))
             .Date("InspDate", header: "Insp.Date", width: Widths.AnsiChars(10))
@@ -1464,7 +1591,12 @@ and not exists
 
             DataTable dt1;
             if (result = DBProxy.Current.Select("Production", string.Format(
-               "select Roll,Dyelot,A.Result,A.Inspdate,Inspector,B.ContinuityEncode,C.SeasonID,B.TotalInspYds,B.ArriveQty,B.PhysicalEncode  from FIR_Physical a WITH (NOLOCK) left join FIR b WITH (NOLOCK) on a.ID=b.ID LEFT JOIN ORDERS C ON B.POID=C.ID where a.ID='{0}'", this.FirID), out dt1))
+               @"
+select Roll,Dyelot,A.Result,A.Inspdate,Inspector,B.ContinuityEncode,C.SeasonID,B.TotalInspYds,B.ArriveQty,B.PhysicalEncode  
+from FIR_Physical a WITH (NOLOCK) 
+left join FIR b WITH (NOLOCK) on a.ID=b.ID 
+LEFT JOIN View_WH_Orders C ON B.POID=C.ID 
+where a.ID='{0}'", this.FirID), out dt1))
             {
                 if (dt1.Rows.Count <= 0)
                 {
@@ -1575,7 +1707,7 @@ and not exists
 
             excel.Cells[4, 6] = this.displayArriveQty.Text;
             excel.Cells[4, 8] = dtSumQty.Rows[0]["TotalTicketYds"]; // Inspected Qty
-            excel.Cells[4, 10] = dt1.Rows[0]["PhysicalEncode"].ToString() == "1" ? "Y" : "N";
+            excel.Cells[4, 10] = dt1.Rows[0]["PhysicalEncode"].ToString().ToUpper() == "TRUE" ? "Y" : "N";
 
             #endregion
 
@@ -1939,7 +2071,7 @@ from (
     select distinct email 
     from (
         select email = iif( isnull(p.email,'') = '', isnull(m.ToAddress,''),isnull(p.email,''))
-		from Orders o
+		from View_WH_Orders o
 		left join Pass1 p on o.MCHandle = p.ID
 		left join MailGroup m on m.Code = '007' and o.FactoryID = m.FactoryID
         where o.ID='{this.displaySP.Text}'
@@ -1954,7 +2086,7 @@ for xml path('')
 
                     string ccMailGroup = MyUtility.GetValue.Lookup($@"
 select m.CCAddress 
-from Orders o 
+from View_WH_Orders o 
 inner join MailGroup m on m.Code = '007' and o.FactoryID = m.FactoryID
 where o.ID = '{this.displaySP.Text}'");
 
@@ -1972,11 +2104,11 @@ where o.ID = '{this.displaySP.Text}'");
             if (MyUtility.Convert.GetBool(this.maindr["PhysicalEncode"]) && this.maindr["Status"].ToString() == "Approved")
             {
                 // *****Send Excel Email 完成 需寄給Factory MC*****
-                string sqlcmd = $@"select EMail from Pass1 p inner join Orders o on o.MCHandle = p.id where o.id='{this.maindr["POID"]}'";
+                string sqlcmd = $@"select EMail from Pass1 p inner join View_WH_Orders o on o.MCHandle = p.id where o.id='{this.maindr["POID"]}'";
                 string mailto = MyUtility.GetValue.Lookup(sqlcmd);
                 if (MyUtility.Check.Empty(mailto))
                 {
-                    sqlcmd = $@"select EMail from TPEPass1 p inner join Orders o on o.MCHandle = p.id where o.id='{this.maindr["POID"]}'";
+                    sqlcmd = $@"select EMail from TPEPass1 p inner join View_WH_Orders o on o.MCHandle = p.id where o.id='{this.maindr["POID"]}'";
                     mailto = MyUtility.GetValue.Lookup(sqlcmd);
                 }
 
