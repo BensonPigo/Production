@@ -2844,6 +2844,8 @@
       <QuotedIdentifier>On</QuotedIdentifier>
     </Build>
     <Build Include="dbo\Tables\GASAClip.sql" />
+    <Build Include="dbo\Tables\Fabric_UnrollandRelax.sql" />
+    <Build Include="dbo\Functions\GetUnrollRelaxationCompletion.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />

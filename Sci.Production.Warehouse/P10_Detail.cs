@@ -50,8 +50,8 @@ namespace Sci.Production.Warehouse
 select t.poid
        , t.Seq1
        , t.Seq2
-       , t.UnrollStatus
-       , RelaxationStatus = dbo.GETRelaxationStatus(t.Ukey)
+       , fu.UnrollStatus
+       , RelaxationStatus = dbo.GETRelaxationStatus(To_NewBarcode)
        , roll = Rtrim(Ltrim(t.roll))
        , dyelot = Rtrim(Ltrim(t.dyelot))
        , t.Qty
@@ -75,6 +75,10 @@ select t.poid
 from #tmp t
 Left join dbo.FtyInventory FTY WITH (NOLOCK) on t.FtyInventoryUkey=FTY.Ukey
 left join dbo.Issue_Summary isum with (nolock) on t.Issue_SummaryUkey = isum.Ukey
+left join WHBarcodeTransaction w with (nolock) on w.TransactionID = t.ID
+                                              and w.TransactionUkey = t.Ukey
+                                              and w.Action = 'Confirm'
+left join Fabric_UnrollandRelax fu with (nolock) on fu.Barcode = w.To_NewBarcode
 outer apply (select  TOP 1 fp.Result
             from dbo.FIR f with (nolock) 
 	        inner join dbo.FIR_Physical fp with (nolock) on f.ID = fp.ID and fp.Roll = t.Roll and fp.Dyelot = t.Dyelot
@@ -117,9 +121,9 @@ outer apply(
 			ttd.StockType = t.StockType and 
             tt.Subcon = 'GMT Wash'
 ) GMTWash
-order by GroupQty desc, t.dyelot, balanceqty desc";
-                if (!(result = MyUtility.Tool.ProcessWithDatatable(
-                        temp, string.Empty, cmdd, out dtFtyinventory, "#tmp")))
+order by GroupQty desc, t.dyelot, balanceqty desc
+";
+                if (!(result = MyUtility.Tool.ProcessWithDatatable(temp, string.Empty, cmdd, out dtFtyinventory, "#tmp")))
                 {
                     MyUtility.Msg.WarningBox(result.ToString());
                     return;
