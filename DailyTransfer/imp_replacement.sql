@@ -42,7 +42,7 @@ BEGIN
 	--Merge Replace2
 	Merge Production.dbo.ReplacementReport_Detail as t
 	Using (select * from Trade_To_Pms.dbo.ReplacementReport_Detail WITH (NOLOCK) where id in (select id from @tReplace)) as s
-	on t.ukey=s.ukey
+	on t.ukey=s.ukey AND t.ID = s.ID
 		when matched then
 		update set
 	    t.EstInQty = s.EstInQty,
