@@ -154,6 +154,10 @@ namespace Sci.Production.Warehouse
                  .Button(propertyname: "Barcode", header: "Print Barcode", width: Widths.AnsiChars(16), onclick: this.PrintBarcode)
                  .Text("Refno", header: "Ref#", width: Widths.AnsiChars(12), iseditingreadonly: true)
                  .Numeric("Relaxtime", header: "Relaxtime\n(Hours)", width: Widths.AnsiChars(10), decimal_places: 2, integer_places: 7, iseditingreadonly: true)
+                 .DateTime("UnrollStartTime", header: "Unroll\r\nStart Time", width: Widths.AnsiChars(20), iseditingreadonly: true)
+                 .DateTime("UnrollEndTime", header: "Unroll\r\nEnd Time", width: Widths.AnsiChars(20), iseditingreadonly: true)
+                 .DateTime("RelaxationStartTime", header: "Relax\r\nStart Time", width: Widths.AnsiChars(20), iseditingreadonly: true)
+                 .DateTime("RelaxationEndTime", header: "Relax\r\nEnd Time", width: Widths.AnsiChars(20), iseditingreadonly: true)
                  .Text("Stocktransfer", header: "Stock Transfer", width: Widths.AnsiChars(8), iseditingreadonly: true)
                  .Text("Color", header: "Color", width: Widths.AnsiChars(6), iseditingreadonly: true)
                  .Text("ColorName", header: "Color Name", width: Widths.AnsiChars(10), iseditingreadonly: true)
@@ -379,21 +383,13 @@ from
         ,[Seq] = rd.Seq1 + ' ' + rd.Seq2
         ,rd.Roll
         ,rd.Dyelot
-        ,[Barcode] =    iif(rd.MINDQRCode <> '', 
-                            rd.MINDQRCode,
-                            (select top 1 case  when    wbt.To_NewBarcodeSeq = '' then wbt.To_NewBarcode
-                                                when    wbt.To_NewBarcode = ''  then ''
-                                                else    Concat(wbt.To_NewBarcode, '-', wbt.To_NewBarcodeSeq)    end
-                             from   WHBarcodeTransaction wbt with (nolock)
-                             where  wbt.TransactionUkey = rd.Ukey and
-                                    wbt.Action = 'Confirm'
-                             order by CommitTime desc)
-                        )
+        ,[Barcode] = case when rd.MINDQRCode <> '' then rd.MINDQRCode
+                          when w.To_NewBarcode = ''  then ''
+                          when w.To_NewBarcodeSeq = '' then w.To_NewBarcode
+                          else Concat(w.To_NewBarcode, '-', w.To_NewBarcodeSeq) end
         ,rd.StockQty
         ,[StockTypeDesc] = st.Name
         ,rd.StockType
-        --,rd.Location
-        --,[OldLocation] = rd.Location
         ,[Location]=Location.MtlLocationID
         ,[OldLocation] = Location.MtlLocationID
         ,rd.Weight
@@ -442,6 +438,10 @@ from
             when 'i' then 'Inventory'
             when 'o' then 'Scrap'
             end
+        ,fu.UnrollStartTime
+        ,fu.UnrollEndTime
+        ,fu.RelaxationStartTime
+        ,fu.RelaxationEndTime
     from  Receiving r with (nolock)
     inner join Receiving_Detail rd with (nolock) on r.ID = rd.ID
     inner join View_WH_Orders o with (nolock) on o.ID = rd.POID 
@@ -465,6 +465,10 @@ from
                                                 fp.Roll = rd.Roll and
                                                 fp.Dyelot = rd.Dyelot
     left join Color c with(nolock) on c.ID = isnull(psdsC.SpecValue, '') and c.BrandId = psd.BrandId
+    left join WHBarcodeTransaction w with (nolock) on w.TransactionID = rd.ID
+                                                  and w.TransactionUkey = rd.Ukey
+                                                  and w.Action = 'Confirm'
+    left join Fabric_UnrollandRelax fu with (nolock) on fu.Barcode = w.To_NewBarcode
     OUTER APPLY(
 
 	    SELECT [MtlLocationID] = STUFF(
@@ -509,7 +513,10 @@ from
         ,[Seq] = td.Seq1 + ' ' + td.Seq2
         ,td.Roll
         ,td.Dyelot
-        ,[Barcode] = Barcode.val
+        ,[Barcode] = case when td.MINDQRCode <> '' then td.MINDQRCode
+                          when w.To_NewBarcode = ''  then ''
+                          when w.To_NewBarcodeSeq = '' then w.To_NewBarcode
+                          else Concat(w.To_NewBarcode, '-', w.To_NewBarcodeSeq) end
         ,[StockQty]=td.Qty
         ,[StockTypeDesc] = st.Name
         ,td.StockType
@@ -561,6 +568,10 @@ from
             when 'i' then 'Inventory'
             when 'o' then 'Scrap'
             end
+        ,fu.UnrollStartTime
+        ,fu.UnrollEndTime
+        ,fu.RelaxationStartTime
+        ,fu.RelaxationEndTime
     FROM TransferIn t with (nolock)
     INNER JOIN TransferIn_Detail td with (nolock) ON t.ID = td.ID
     INNER JOIN View_WH_Orders o with (nolock) ON o.ID = td.POID
@@ -584,6 +595,10 @@ from
                                                 fp.Roll = td.Roll and
                                                 fp.Dyelot = td.Dyelot
     left join Color c with(nolock) on c.ID = isnull(psdsC.SpecValue, '') and c.BrandId = psd.BrandId
+    left join WHBarcodeTransaction w with (nolock) on w.TransactionID = td.ID
+                                                  and w.TransactionUkey = td.Ukey
+                                                  and w.Action = 'Confirm'
+    left join Fabric_UnrollandRelax fu with (nolock) on fu.Barcode = w.To_NewBarcode
     OUTER APPLY(
 
 	    SELECT [MtlLocationID] = STUFF(
@@ -600,14 +615,6 @@ from
 	    INNER JOIN FIR_Shadebone fs with (nolock) on f.id = fs.ID 	
 	    WHERE  t.id = f.ReceivingID and td.PoId = F.POID and td.Seq1 = F.SEQ1 and td.Seq2 = F.SEQ2 AND td.Roll = fs.Roll and td.Dyelot = fs.Dyelot
     )cutTime
-    OUTER APPLY (select top 1 [val] = case  when    wbt.To_NewBarcodeSeq = '' then wbt.To_NewBarcode
-                                            when    wbt.To_NewBarcode = ''  then ''
-                                            else    Concat(wbt.To_NewBarcode, '-', wbt.To_NewBarcodeSeq)    end
-                         from   WHBarcodeTransaction wbt with (nolock)
-                         where  wbt.TransactionUkey = td.Ukey and
-                                wbt.Action = 'Confirm'
-                         order by CommitTime desc
-    ) Barcode
     outer apply(
         select fr.Relaxtime
         from [ExtendServer].[ManufacturingExecution].[dbo].RefnoRelaxtime rr
@@ -648,14 +655,13 @@ DROP TABLE #tmpStockType, #tmpFinal
                 return;
             }
 
+            this.gridReceiving.DataSource = this.dtReceiving;
             if (this.dtReceiving.Rows.Count == 0)
             {
                 MyUtility.Msg.WarningBox("Data not found");
-                this.gridReceiving.DataSource = this.dtReceiving;
                 return;
             }
 
-            this.gridReceiving.DataSource = this.dtReceiving;
             this.GridFormatChange();
             this.numSelectCnt.Value = 0;
         }
