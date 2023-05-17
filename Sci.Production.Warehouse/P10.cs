@@ -880,6 +880,7 @@ inner join Production.dbo.FtyInventory f with(nolock) on f.POID = isnull(sd.PoId
     and f.Roll = isnull(sd.Roll, '')
 	and f.Dyelot = isnull(sd.Dyelot, '')
     and f.StockType = isnull(sd.StockType, '')
+    and sd.id = '{this.CurrentMaintain["ID"]}'
 ";
                     if (!(result = DBProxy.Current.Execute(null, sqlUpdateRemainingQty)))
                     {
