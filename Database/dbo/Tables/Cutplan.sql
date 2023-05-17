@@ -11,7 +11,7 @@
     [EditName]    VARCHAR (10) CONSTRAINT [DF_Cutplan_EditName] DEFAULT ('') NULL,
     [EditDate]    DATETIME     NULL,
     [POID]        VARCHAR (13) CONSTRAINT [DF_Cutplan_POID] DEFAULT ('') NULL,
-    [SpreadingNoID] VARCHAR(3) NULL, 
+    [SpreadingNoID] VARCHAR(5) NULL, 
     CONSTRAINT [PK_Cutplan] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 

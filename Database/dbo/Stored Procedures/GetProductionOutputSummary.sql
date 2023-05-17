@@ -574,7 +574,10 @@ select
     o.SewInLine,
     o.SewOffLine,
     tb.TransFtyZone,
-	[OrderReason] = OrderReason.ResName
+	[OrderReason] = OrderReason.ResName,
+	[BuyBackReason] = o.BuyBackReason,
+	[LastProductionDate] = o.LastProductionDate,
+	[CRDDate] = o.CRDDate
 from @tmpBaseByOrderID tb 
 inner join Orders o with(nolock) on o.id = tb.ID
 inner join Factory f with(nolock) on f.ID = o.FactoryID and f.junk = 0

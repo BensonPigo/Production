@@ -1,5 +1,5 @@
 ﻿CREATE TABLE [dbo].[ReplacementReport_Detail] (
-    [ID]                   VARCHAR (13)   CONSTRAINT [DF_ReplacementReport_Detail_ID] DEFAULT ('') NOT NULL,
+    [ID]                   VARCHAR (13) NOT NULL,
     [Seq1]                 VARCHAR (3)    CONSTRAINT [DF_ReplacementReport_Detail_Seq1] DEFAULT ('') NULL,
     [Seq2]                 VARCHAR (2)    CONSTRAINT [DF_ReplacementReport_Detail_Seq2] DEFAULT ('') NULL,
     [Refno]                VARCHAR (36)   CONSTRAINT [DF_ReplacementReport_Detail_Refno] DEFAULT ('') NULL,
@@ -38,7 +38,7 @@
     [PurchaseID]           VARCHAR (13)   DEFAULT ('') NULL,
     [FinalNeedQty] NUMERIC(9, 2) CONSTRAINT [DF_ReplacementReport_Detail_FinalNeedQty] DEFAULT (0) NOT NULL, 
 	[ReplacementUnit] varchar(8) CONSTRAINT [DF_ReplacementReport_Detail_ReplacementUnit] DEFAULT ('') NULL, 
-    CONSTRAINT [PK_ReplacementReport_Detail] PRIMARY KEY CLUSTERED ([UKey] ASC)
+    CONSTRAINT [PK_ReplacementReport_Detail] PRIMARY KEY CLUSTERED ([UKey] ASC, [ID] ASC)
 );
 
 
