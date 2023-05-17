@@ -690,7 +690,7 @@ namespace Sci.Production.Quality
             string sqlcmd = $@"select 
             [FileName] = TableName + PKey,
             SourceFile
-            from Clip
+            from GASAClip
             where TableName = 'UASentReport' and 
             UniqueKey = '{id}'";
             DualResult dualResult = DBProxy.Current.Select(null, sqlcmd, out DataTable dt);
@@ -1486,7 +1486,7 @@ namespace Sci.Production.Quality
                         )
                      End
 
-                    INSERT INTO Clip 
+                    INSERT INTO GASAClip 
                     SELECT files.Pkey, 'UASentReport', ID, files.FileName, 'File Upload', @UserID, getdate()
                      FROM @OutputTbl
                     Outer Apply(
