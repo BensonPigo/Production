@@ -143,6 +143,7 @@ select  operation = case a.type
                             else 0.00
                        end 
         ,InventorySpSeq = a.InventoryPOID+'-'+a.InventorySeq1+'-'+a.InventorySeq2 
+        ,[Stk Brand] = a.BrandID
         ,InventorySpSeason = invOrders.SeasonID
         ,InventoryProjectID = (select ProjectID from dbo.orders WITH (NOLOCK) where id = a.InventoryPOID) 
         ,InventoryFactoryID = (select FactoryID from dbo.orders WITH (NOLOCK) where id = a.InventoryPOID) 
