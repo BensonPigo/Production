@@ -1,6 +1,7 @@
 ﻿using Ict;
 using Ict.Win;
 using Sci.Data;
+using Sci.Production.Prg;
 using Sci.Production.PublicPrg;
 using System;
 using System.Collections.Generic;
@@ -173,10 +174,14 @@ and fd.ID ='{this.txtWKNo.Text}'
         {
             this.gridImport.ValidateControl();
             this.listControlBindingSource1.EndEdit();
+            if (this.listControlBindingSource1.DataSource == null)
+            {
+                return;
+            }
 
             DataTable dt = (DataTable)this.listControlBindingSource1.DataSource;
-            var selectDT = dt.AsEnumerable().Where(x => x.Field<int>("Selected") == 1).CopyToDataTable();
-            if (dt == null || dt.Rows.Count == 0)
+            var selectDT = dt.AsEnumerable().Where(x => x.Field<int>("Selected") == 1).TryCopyToDataTable(dt);
+            if (dt.Rows.Count == 0)
             {
                 MyUtility.Msg.WarningBox("No data, cannot import!");
                 return;
