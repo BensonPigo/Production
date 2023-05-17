@@ -19,21 +19,17 @@
     [MINDReleaser]         VARCHAR (10)    CONSTRAINT [DF_Issue_Detail_MINDReleaser] DEFAULT ('') NOT NULL,
     [MINDReleaseDate]      DATETIME        NULL,
     [NeedUnroll]           BIT             CONSTRAINT [DF_Issue_Detail_NeedUnroll] DEFAULT ((0)) NOT NULL,
-    [UnrollStatus]         VARCHAR (10)    CONSTRAINT [DF_Issue_Detail_UnrollStatus] DEFAULT ('') NOT NULL,
-    [UnrollStartTime]      DATETIME        NULL,
-    [UnrollEndTime]        DATETIME        NULL,
-    [RelaxationStartTime]  DATETIME        NULL,
-    [RelaxationEndTime]    DATETIME        NULL,
-    [UnrollScanner]        VARCHAR (10)    DEFAULT ('') NOT NULL,
-    [UnrollActualQty]      NUMERIC (11, 2) DEFAULT ((0)) NOT NULL,
-    [UnrollRemark]         NVARCHAR (100)  DEFAULT ('') NOT NULL,
     [M360MINDDispatchUkey] BIGINT          NULL,
-    [DispatchScanTime] DATETIME NULL, 
-    [DispatchScanner] VARCHAR(10) NOT NULL DEFAULT (''), 
     [RemainingQty] NUMERIC(11, 2) NOT NULL DEFAULT ((0)), 
+    [DispatchScanTime]     DATETIME        NULL,
+    [DispatchScanner]      VARCHAR (10)    CONSTRAINT [DF_Issue_Detail_DispatchScanner] DEFAULT ('') NOT NULL,
     CONSTRAINT [PK_Issue_Detail] PRIMARY KEY CLUSTERED ([ukey] ASC),
     CONSTRAINT [FK_Issue_Detail_Issue_Detail] FOREIGN KEY ([ukey]) REFERENCES [dbo].[Issue_Detail] ([ukey])
 );
+
+
+
+
 
 
 
@@ -135,31 +131,31 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'是否為QM
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'倉庫攤開布捲狀態 Ongoing, Done', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Issue_Detail', @level2type = N'COLUMN', @level2name = N'UnrollStatus';
 
-
-
-
-GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'倉庫攤開布捲開始時間', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Issue_Detail', @level2type = N'COLUMN', @level2name = N'UnrollStartTime';
 
 
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'倉庫攤開布捲完成時間', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Issue_Detail', @level2type = N'COLUMN', @level2name = N'UnrollEndTime';
 
-
-
-
-GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'倉庫鬆布開始時間', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Issue_Detail', @level2type = N'COLUMN', @level2name = N'RelaxationStartTime';
 
 
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'倉庫鬆布完成時間', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Issue_Detail', @level2type = N'COLUMN', @level2name = N'RelaxationEndTime';
+
+
+
+
+
+GO
+
+
+
+
+
+GO
+
 
 
 
@@ -172,15 +168,15 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Confirm 單
 
 GO
 
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'M360 Unroll 掃描 Unroll Location 的使用者', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Issue_Detail', @level2type = N'COLUMN', @level2name = N'UnrollScanner';
 
-
-GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'M360 Unroll 階段備註', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Issue_Detail', @level2type = N'COLUMN', @level2name = N'UnrollRemark';
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'M360 Unroll 階段實際收到的數量', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Issue_Detail', @level2type = N'COLUMN', @level2name = N'UnrollActualQty';
+
+
+
+GO
+
 
 
 GO
