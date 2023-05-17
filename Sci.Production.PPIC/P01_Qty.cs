@@ -115,28 +115,6 @@ namespace Sci.Production.PPIC
 
             btop.Rows.Add(btopdr);
             this.listControlBindingSource5.DataSource = btop;
-
-            // 設定Grid2的顯示欄位
-            this.gridCombBySPNo.IsEditingReadOnly = true;
-            this.gridCombBySPNo.DataSource = this.listControlBindingSource2;
-            gen = this.Helper.Controls.Grid.Generator(this.gridCombBySPNo);
-            this.CreateGrid(gen, "int", "TotalQty", "Total", Widths.AnsiChars(6));
-            this.CreateGrid(gen, "string", "ID", "SP#", Widths.AnsiChars(15));
-            this.CreateGrid(gen, "string", "Article", "Colorway", Widths.AnsiChars(8));
-            this.CreateGrid(gen, "string", "ColorID", "Color", Widths.AnsiChars(8));
-            this.CreateGrid(gen, "string", "Alias", "Destination", Widths.AnsiChars(15));
-            this.CreateGrid(gen, "string", "CustCDID", "CustCD", Widths.AnsiChars(12));
-            this.CreateGrid(gen, "string", "Kit", "KIT#", Widths.AnsiChars(10));
-            if (headerData != null && headerData.Rows.Count > 0)
-            {
-                foreach (DataRow dr in headerData.Rows)
-                {
-                    this.CreateGrid(gen, "int", MyUtility.Convert.GetString(dr["SizeCode"]), MyUtility.Convert.GetString(dr["SizeCode"]), Widths.AnsiChars(8));
-                }
-            }
-
-            this.CreateGrid(gen, "string", "BuyerDelivery", "Buyer Delivery", Widths.AnsiChars(8));
-
             // 設定Grid3的顯示欄位
             this.gridColorway.IsEditingReadOnly = true;
             this.gridColorway.DataSource = this.listControlBindingSource3;
@@ -169,7 +147,6 @@ namespace Sci.Production.PPIC
             // 凍結欄位
             this.gridQtyBDown.Columns[1].Frozen = true;
             this.gridqtybdownTop.Columns[1].Frozen = true;
-            this.gridCombBySPNo.Columns[2].Frozen = true;
             this.gridColorway.Columns[1].Frozen = true;
             this.gridDelivery.Columns[2].Frozen = true;
 
@@ -279,6 +256,8 @@ with tmpData as (
 			 , c.Alias
 			 , o.CustCDID
 			 , CustCD.Kit
+             ,o.CustPONo
+			 ,[SpecialField] = o.Customize1
              , iif(o.junk = 1 , '' ,oq.SizeCode) as SizeCode
              , iif(o.junk = 1 , 0 ,oq.Qty) as Qty 
              , DENSE_RANK() OVER (ORDER BY o.ID) as rnk
@@ -301,6 +280,8 @@ SubTotal as (
 			 , Alias = ''
 			 , CustCDID = ''
 			 , Kit = ''
+             , CustPONo = ''
+			 ,[SpecialField] = ''
              , SizeCode
              , Qty = SUM(Qty)
              , rnk = 99999
@@ -338,6 +319,9 @@ with tmpData as (
 			 , c.Alias
 			 , o.CustCDID
 			 , CustCD.Kit
+             ,o.CustPONo
+			 ,[SpecialField] = o.Customize1
+			 ,[TT_SpecialField] = b.Customize1
              , iif(o.junk = 1 , '' ,oq.SizeCode) as SizeCode
              , iif(o.junk = 1 , 0 ,oq.OriQty) as OriQty
              , DENSE_RANK() OVER (ORDER BY o.ID) as rnk
@@ -346,6 +330,7 @@ with tmpData as (
       inner join Order_Qty oq WITH (NOLOCK) on o.ID = oq.ID
 	  left join Country c  WITH (NOLOCK) on c.ID = o.Dest
 	  left join CustCD WITH (NOLOCK) on CustCD.BrandID  = o.BrandID  and CustCD.ID = o.CustCDID 
+      left join Brand b with(nolock) on o.BrandID = b.ID
       outer apply (
 			select top 1 ColorID
 			from Order_ColorCombo occ WITH (NOLOCK)
@@ -360,6 +345,9 @@ SubTotal as (
 			 , Alias = ''
 			 , CustCDID = ''
 			 , Kit = ''
+             ,CustPONo = ''
+			 ,[SpecialField] = ''
+			 ,[TT_SpecialField] = ''
              , SizeCode
              , Qty = SUM(OriQty)
              , rnk = 99999 
@@ -387,6 +375,44 @@ order by rnk",
                 MyUtility.Check.Empty(pivot.ToString()) ? "[ ]" : pivot.ToString().Substring(0, pivot.ToString().Length - 1));
 
             result = DBProxy.Current.Select(null, sqlCmd, out this.grid2Data_OriQty);
+
+            // 設定Grid2的顯示欄位
+            this.gridCombBySPNo.IsEditingReadOnly = true;
+            this.gridCombBySPNo.DataSource = this.listControlBindingSource2;
+            gen = this.Helper.Controls.Grid.Generator(this.gridCombBySPNo);
+            this.CreateGrid(gen, "int", "TotalQty", "Total", Widths.AnsiChars(6));
+            this.CreateGrid(gen, "string", "ID", "SP#", Widths.AnsiChars(15));
+            this.CreateGrid(gen, "string", "Article", "Colorway", Widths.AnsiChars(8));
+            this.CreateGrid(gen, "string", "ColorID", "Color", Widths.AnsiChars(8));
+            this.CreateGrid(gen, "string", "Alias", "Destination", Widths.AnsiChars(15));
+            this.CreateGrid(gen, "string", "CustCDID", "CustCD", Widths.AnsiChars(12));
+            this.CreateGrid(gen, "string", "Kit", "KIT#", Widths.AnsiChars(10));
+
+            if (headerData != null && headerData.Rows.Count > 0)
+            {
+                foreach (DataRow dr in headerData.Rows)
+                {
+                    this.CreateGrid(gen, "int", MyUtility.Convert.GetString(dr["SizeCode"]), MyUtility.Convert.GetString(dr["SizeCode"]), Widths.AnsiChars(8));
+                }
+            }
+
+            this.CreateGrid(gen, "string", "BuyerDelivery", "Buyer Delivery", Widths.AnsiChars(8));
+            this.CreateGrid(gen, "string", "CustPONo", "PO No.", Widths.AnsiChars(15));
+
+            string sqlcmd = $@"
+                select 
+                b.Customize1
+                from orders o with(nolock)
+                left join brand b with(nolock) on o.BrandID = b.ID
+                where o.id = '{this.orderID}'";
+            string columnName = MyUtility.GetValue.Lookup(sqlcmd);
+            if (columnName != string.Empty)
+            {
+                this.CreateGrid(gen, "string", "SpecialField", columnName, Widths.AnsiChars(15));
+            }
+
+            // 凍結欄位
+            this.gridCombBySPNo.Columns[2].Frozen = true;
             #endregion
 
             #region 撈Grid3資料
@@ -955,6 +981,8 @@ tmpData as (
 			 , c.Alias
 			 , o.CustCDID
 			 , CustCD.Kit
+			 ,o.CustPONo
+			 ,[SpecialField] = o.Customize1
              , iif(o.junk = 1 , '''' ,oq.SizeCode) as SizeCode
              , iif(o.junk = 1 , 0 ,oq.Qty) as Qty
              , DENSE_RANK() OVER (ORDER BY o.ID) as rnk
@@ -979,6 +1007,8 @@ SubTotal as (
 			 , Alias = ''''
 			 , CustCDID = ''''
 			 , Kit = ''''
+			　,CustPONo = ''''
+			 ,[SpecialField] = ''''
              , SizeCode
              , SUM(Qty) as Qty             
              , 99999 as rnk
@@ -1006,8 +1036,11 @@ select TotalQty = (select sum(Qty) from UnionData where ID = p.ID and Article = 
        , Destination = Alias
 	   , CustCD = CustCDID
 	   , Kit# = Kit
+
        , '+@cols+'
        , [Buyer Delivery] = p.BuyerDelivery
+	   ,[PO No.] = p.CustPONo
+	   ,[SpecialField] = p.SpecialField
 from pivotData p
 order by rnk, RowNo'
 
@@ -1245,6 +1278,8 @@ tmpData as (
            , c.Alias
 		   , o.CustCDID
 		   , CustCD.Kit
+		   ,o.CustPONo
+		   ,[SpecialField] = o.Customize1
            , iif(o.junk = 1 , '''' ,oq.SizeCode) as SizeCode
            , iif(o.junk = 1 , 0 ,oq.OriQty) as OriQty 
            , DENSE_RANK() OVER (ORDER BY o.ID) as rnk
@@ -1254,7 +1289,7 @@ tmpData as (
     inner join Order_Qty oq WITH (NOLOCK) on o.ID = oq.ID
     inner join SortBy sb on oq.Article = sb.Article
     left join Country c WITH (NOLOCK) on c.ID = o.Dest
-	left join CustCD WITH (NOLOCK) on CustCD.BrandID  = o.BrandID  and CustCD.ID = o.CustCDID 
+	left join CustCD WITH (NOLOCK) on CustCD.BrandID  = o.BrandID  and CustCD.ID = o.CustCDID
     outer apply (
 			select top 1 ColorID
 			from Order_ColorCombo occ WITH (NOLOCK)
@@ -1269,6 +1304,8 @@ SubTotal as (
            , Alias = ''''
 		   , CustCDID = ''''
 		   , Kit = ''''
+		   ,CustPONo = ''''
+		   ,[SpecialField] = ''''
            , SizeCode
            , SUM(OriQty) as Qty
            , 99999 as rnk
@@ -1296,6 +1333,8 @@ select (select sum(OriQty) from UnionData where ID = p.ID and Article = p.Articl
 	   , Kit# = Kit
        , '+@cols+'
        , [Buyer Delivery] = p.BuyerDelivery
+	   ,[PO No.] = p.CustPONo
+	   ,[SpecialField] = p.SpecialField
 from pivotData p
 order by rnk, RowNo'
 
@@ -1435,6 +1474,25 @@ order by rnk, RowNo'
 EXEC sp_executesql @sql", this.poID);
                 DBProxy.Current.Select(null, sqlcmd4, out ptb4);
                 #endregion
+            }
+
+            string sqlcmd = $@"
+            select 
+            b.Customize1
+            from orders o with(nolock)
+            left join brand b with(nolock) on o.BrandID = b.ID
+            where o.id = '{this.orderID}'";
+            string columnName = MyUtility.GetValue.Lookup(sqlcmd);
+            if (ptb2 != null)
+            {
+                if (columnName == string.Empty)
+                {
+                    ptb2.Columns.Remove("SpecialField");
+                }
+                else
+                {
+                    ptb2.Columns["SpecialField"].ColumnName = columnName;
+                }
             }
 
             int columns1 = 0, columns2 = 0, columns3 = 0, columns4 = 0;
