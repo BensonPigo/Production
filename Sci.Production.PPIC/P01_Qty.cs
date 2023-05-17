@@ -258,7 +258,6 @@ with tmpData as (
 			 , CustCD.Kit
              ,o.CustPONo
 			 ,[SpecialField] = o.Customize1
-			 ,[TT_SpecialField] = b.Customize1
              , iif(o.junk = 1 , '' ,oq.SizeCode) as SizeCode
              , iif(o.junk = 1 , 0 ,oq.Qty) as Qty 
              , DENSE_RANK() OVER (ORDER BY o.ID) as rnk
@@ -267,7 +266,6 @@ with tmpData as (
       inner join Order_Qty oq WITH (NOLOCK) on o.ID = oq.ID
 	  left join Country c  WITH (NOLOCK) on c.ID = o.Dest
 	  left join CustCD WITH (NOLOCK) on CustCD.BrandID  = o.BrandID  and CustCD.ID = o.CustCDID 
-      left join Brand b with(nolock) on o.BrandID = b.ID
       outer apply (
 			select top 1 ColorID
 			from Order_ColorCombo occ WITH (NOLOCK)
@@ -284,7 +282,6 @@ SubTotal as (
 			 , Kit = ''
              , CustPONo = ''
 			 ,[SpecialField] = ''
-			 ,[TT_SpecialField] = ''
              , SizeCode
              , Qty = SUM(Qty)
              , rnk = 99999
@@ -390,12 +387,6 @@ order by rnk",
             this.CreateGrid(gen, "string", "Alias", "Destination", Widths.AnsiChars(15));
             this.CreateGrid(gen, "string", "CustCDID", "CustCD", Widths.AnsiChars(12));
             this.CreateGrid(gen, "string", "Kit", "KIT#", Widths.AnsiChars(10));
-            this.CreateGrid(gen, "string", "CustPONo", "PO No.", Widths.AnsiChars(15));
-
-            if (this.grid2Data.Select("TT_SpecialField = '' ").Length != this.grid2Data.Rows.Count)
-            {
-                this.CreateGrid(gen, "string", "SpecialField", "Special field 1", Widths.AnsiChars(15));
-            }
 
             if (headerData != null && headerData.Rows.Count > 0)
             {
@@ -406,6 +397,19 @@ order by rnk",
             }
 
             this.CreateGrid(gen, "string", "BuyerDelivery", "Buyer Delivery", Widths.AnsiChars(8));
+            this.CreateGrid(gen, "string", "CustPONo", "PO No.", Widths.AnsiChars(15));
+
+            string sqlcmd = $@"
+                select 
+                b.Customize1
+                from orders o with(nolock)
+                left join brand b with(nolock) on o.BrandID = b.ID
+                where o.id = '{this.orderID}'";
+            string columnName = MyUtility.GetValue.Lookup(sqlcmd);
+            if (columnName != string.Empty)
+            {
+                this.CreateGrid(gen, "string", "SpecialField", columnName, Widths.AnsiChars(15));
+            }
 
             // 凍結欄位
             this.gridCombBySPNo.Columns[2].Frozen = true;
@@ -979,7 +983,6 @@ tmpData as (
 			 , CustCD.Kit
 			 ,o.CustPONo
 			 ,[SpecialField] = o.Customize1
-			 ,[TT_SpecialField] = b.Customize1
              , iif(o.junk = 1 , '''' ,oq.SizeCode) as SizeCode
              , iif(o.junk = 1 , 0 ,oq.Qty) as Qty
              , DENSE_RANK() OVER (ORDER BY o.ID) as rnk
@@ -990,7 +993,6 @@ tmpData as (
       inner join SortBy sb on oq.Article = sb.Article
 	  left join Country c WITH (NOLOCK) on c.ID = o.Dest
 	  left join CustCD WITH (NOLOCK) on CustCD.BrandID  = o.BrandID  and CustCD.ID = o.CustCDID 
-	  left join Brand b with(nolock) on o.BrandID = b.ID
       outer apply (
 			select top 1 ColorID
 			from Order_ColorCombo occ WITH (NOLOCK)
@@ -1007,7 +1009,6 @@ SubTotal as (
 			 , Kit = ''''
 			　,CustPONo = ''''
 			 ,[SpecialField] = ''''
-			 ,[TT_SpecialField] = ''''
              , SizeCode
              , SUM(Qty) as Qty             
              , 99999 as rnk
@@ -1035,11 +1036,11 @@ select TotalQty = (select sum(Qty) from UnionData where ID = p.ID and Article = 
        , Destination = Alias
 	   , CustCD = CustCDID
 	   , Kit# = Kit
-	   ,[PO No.] = p.CustPONo
-	   ,[Special Field 1] = p.SpecialField
-	   ,[TT_SpecialField] = p.TT_SpecialField 
+
        , '+@cols+'
        , [Buyer Delivery] = p.BuyerDelivery
+	   ,[PO No.] = p.CustPONo
+	   ,[SpecialField] = p.SpecialField
 from pivotData p
 order by rnk, RowNo'
 
@@ -1279,7 +1280,6 @@ tmpData as (
 		   , CustCD.Kit
 		   ,o.CustPONo
 		   ,[SpecialField] = o.Customize1
-		   ,[TT_SpecialField] = b.Customize1
            , iif(o.junk = 1 , '''' ,oq.SizeCode) as SizeCode
            , iif(o.junk = 1 , 0 ,oq.OriQty) as OriQty 
            , DENSE_RANK() OVER (ORDER BY o.ID) as rnk
@@ -1290,7 +1290,6 @@ tmpData as (
     inner join SortBy sb on oq.Article = sb.Article
     left join Country c WITH (NOLOCK) on c.ID = o.Dest
 	left join CustCD WITH (NOLOCK) on CustCD.BrandID  = o.BrandID  and CustCD.ID = o.CustCDID
-    left join Brand b with(nolock) on o.BrandID = b.ID
     outer apply (
 			select top 1 ColorID
 			from Order_ColorCombo occ WITH (NOLOCK)
@@ -1307,7 +1306,6 @@ SubTotal as (
 		   , Kit = ''''
 		   ,CustPONo = ''''
 		   ,[SpecialField] = ''''
-		   ,[TT_SpecialField] = ''''
            , SizeCode
            , SUM(OriQty) as Qty
            , 99999 as rnk
@@ -1333,11 +1331,10 @@ select (select sum(OriQty) from UnionData where ID = p.ID and Article = p.Articl
        , Destination = Alias
 	   , CustCD = CustCDID
 	   , Kit# = Kit
-	   ,[PO No.] = p.CustPONo
-	   ,[Special Field 1] = p.SpecialField
-	   ,[TT_SpecialField] = p.TT_SpecialField 
        , '+@cols+'
        , [Buyer Delivery] = p.BuyerDelivery
+	   ,[PO No.] = p.CustPONo
+	   ,[SpecialField] = p.SpecialField
 from pivotData p
 order by rnk, RowNo'
 
@@ -1479,12 +1476,24 @@ EXEC sp_executesql @sql", this.poID);
                 #endregion
             }
 
-            if (ptb2.Select("TT_SpecialField = ''").Length == ptb2.Rows.Count)
+            string sqlcmd = $@"
+            select 
+            b.Customize1
+            from orders o with(nolock)
+            left join brand b with(nolock) on o.BrandID = b.ID
+            where o.id = '{this.orderID}'";
+            string columnName = MyUtility.GetValue.Lookup(sqlcmd);
+            if (ptb2 != null)
             {
-                ptb2.Columns.Remove("Special Field 1");
+                if (columnName == string.Empty)
+                {
+                    ptb2.Columns.Remove("SpecialField");
+                }
+                else
+                {
+                    ptb2.Columns["SpecialField"].ColumnName = columnName;
+                }
             }
-
-            ptb2.Columns.Remove("TT_SpecialField");
 
             int columns1 = 0, columns2 = 0, columns3 = 0, columns4 = 0;
             if (ptb1 != null)
