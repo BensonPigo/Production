@@ -1,7 +1,7 @@
 ﻿CREATE TABLE [dbo].[ExportRefnoSentReport]
 (
     [ExportID] VARCHAR(13) NOT NULL DEFAULT (''), 
-    [BrandRefno] VARCHAR(13) NOT NULL DEFAULT (''), 
+    [BrandRefno] VARCHAR(50) NOT NULL DEFAULT (''), 
     [ColorID] VARCHAR(3) NOT NULL DEFAULT (''), 
     [DocumentName] VARCHAR(100) NOT NULL DEFAULT (''), 
     [BrandID] VARCHAR(8) NOT NULL DEFAULT (''), 
