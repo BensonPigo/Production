@@ -40,6 +40,10 @@ SELECT
 	,CFAInspectionResult = oq.CFAFinalInspectResult
 	,[3rdPartyInspection] = IIF(oq.CFAIs3rdInspect =1,'Y','N')
 	,[3rdPartyInspectionResult] = oq.CFA3rdInspectResult
+    ,[BookingSP] = CASE WHEN o.Category='G' THEN OrderQtyGarment.value
+                        WHEN ot.IsGMTMaster=1 THEN 'Y' 
+                   ELSE ''
+                   END
 into #tmpOrderMain
 FROM Production.dbo.Orders o WITH(NOLOCK)
 INNER JOIN Production.dbo.Factory f WITH(NOLOCK) ON f.ID=o.FactoryID
@@ -56,8 +60,18 @@ outer apply(
 	and podd.Article= oq.Article and podd.SizeCode=oq.SizeCode
 	where podd.OrderID = o.ID
 )s
+outer apply(
+    select value = STUFF((
+        select CONCAT(',',OrderIDFrom)
+        from(
+            select distinct OrderIDFrom
+            from Production.dbo.Order_Qty_Garment WITH(NOLOCK)
+            where ID = o.ID
+        )s
+        for xml path('')
+        ),1,1,'')
+) OrderQtyGarment 
 where o.Category IN ('B','G') 
-and isnull(ot.IsGMTMaster,0) = 0
 AND ((oq.BuyerDelivery >= @SDate AND oq.BuyerDelivery <= @EDate) 
 	or (o.EditDate >= Cast(getdate()-2 as date))
 )
@@ -116,6 +130,7 @@ select
 	,main.Dest
 	,main.Category
 	,main.PartialShipment
+	,main.BookingSP
 	,main.Cancelled
     ,PulloutComplete = case when main.PulloutComplete=1 and main.Qty > isnull(main.ShipQty,0) then 'S'
 							when main.PulloutComplete=1 and main.Qty <= isnull(main.ShipQty,0) then 'Y'
@@ -169,6 +184,7 @@ SET
 	t.ShipModeID =  s.ShipModeID,
 	t.Category =  s.Category,
 	t.PartialShipment =  s.PartialShipment,
+	t.BookingSP = s.BookingSP,
 	t.Junk =  s.Cancelled,
 	t.OrderQty =  s.OrderQty,
 	t.PackingCtn =  s.PackingCarton,
@@ -190,7 +206,7 @@ SET
 	t.CancelledButStillNeedProduction = s.CancelledButStillNeedProduction,
 	t.CFAInspectionResult = s.CFAInspectionResult,
 	t.[3rdPartyInspection] = s.[3rdPartyInspection],
-	t.[3rdPartyInspectionResult] = s.[3rdPartyInspectionResult]	
+	t.[3rdPartyInspectionResult] = s.[3rdPartyInspectionResult]
 from P_OustandingPO t
 inner join #Final s  
 		ON t.FactoryID=s.FactoryID  
@@ -208,6 +224,7 @@ select  s.FactoryID,
 		s.ShipModeID,
 		s.Category,
 		s.PartialShipment,
+		s.BookingSP,
 		s.Cancelled,
 		s.OrderQty,
 		s.PackingCarton,
