@@ -386,7 +386,7 @@ Update ExportRefnoSentReport SET  AWBNO = @updateData, EditName = @UserID ,EditD
             string sqlcmd = $@"select 
             [FileName] = TableName + PKey,
             SourceFile
-            from Clip
+            from GASAClip
             where TableName = '{tableName}' and 
             UniqueKey = '{id}'";
             DualResult dualResult = DBProxy.Current.Select(null, sqlcmd, out DataTable dt);
@@ -1026,7 +1026,7 @@ begin
         )
      End
     
-    INSERT INTO Clip 
+    INSERT INTO GASAClip 
     SELECT files.Pkey, @tableName, ID, files.FileName, 'File Upload', @UserID, getdate()
     FROM @OutputTbl
     Outer Apply(
@@ -1067,7 +1067,7 @@ BEGIN
         )
      End
     
-    INSERT INTO Clip 
+    INSERT INTO GASAClip 
     SELECT files.Pkey, @tableName, ID, files.FileName, 'File Upload', @UserID, getdate()
     FROM @OutputTbl
     Outer Apply(
