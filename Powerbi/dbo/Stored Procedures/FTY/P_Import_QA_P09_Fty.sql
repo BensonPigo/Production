@@ -44,11 +44,11 @@ SET @SqlCmd1 = '
 	[Continuity Card_Supp Sent Date] = sr.TPEContinuityCard,
 	[Continuity Card_AWB#] = sr.AWBNo,
 	[1st Bulk Dyelot_Fty Received Date] = FirstDyelot.FirstDyelot,
-	[1st Bulk Dyelot_Supp Sent Date]  = IIF(FirstDyelot.TPEFirstDyelot is null and f.RibItem = 1
+	[1st Bulk Dyelot_Supp Sent Date]  = IIF(FirstDyelot.FirstDyelot is null and f.RibItem = 1
                         ,''RIB no need first dye lot''
-                        ,IIF(FirstDyelot.SeasonSCIID is null
+                        ,IIF(FirstDyelot.SeasonID is null
                                 ,''Still not received and under pushing T2. Please contact with PR if you need L/G first.''
-                                ,format(FirstDyelot.TPEFirstDyelot,''yyyy/MM/dd'')
+                                ,format(FirstDyelot.FirstDyelot,''yyyy/MM/dd'')
                             )
                     ),
 	[T2 Inspected Yards] = isnull(sr.T2InspYds,0),
@@ -81,10 +81,10 @@ left join ['+@current_PMS_ServerName+'].Production.dbo.Fabric f with(nolock) on 
 left join ['+@current_PMS_ServerName+'].Production.dbo.PO_Supp_Detail_Spec pc with(nolock) on psd.ID = pc.ID and psd.SEQ1 = pc.SEQ1 and psd.SEQ1 = pc.SEQ2 and pc.SpecColumnID = ''Color''
 Left join #probablySeasonList seasonSCI on seasonSCI.ID = s.SeasonSCIID
 OUTER APPLY(
-	Select Top 1 FirstDyelot,TPEFirstDyelot,SeasonSCIID
+	Select Top 1 FirstDyelot,SeasonID
 	From ['+@current_PMS_ServerName+'].Production.dbo.FirstDyelot fd
-	Inner join #probablySeasonList season on fd.SeasonSCIID = season.ID
-	WHERE fd.Refno = psd.Refno and fd.ColorID = pc.SpecValue and fd.SuppID = ps.SuppID and fd.TestDocFactoryGroup = fty.TestDocFactoryGroup
+	Inner join #probablySeasonList season on fd.SeasonID = season.ID
+	WHERE fd.BrandRefno = psd.Refno and fd.ColorID = pc.SpecValue and fd.SuppID = ps.SuppID and fd.TestDocFactoryGroup = fty.TestDocFactoryGroup
 		And seasonSCI.RowNo >= season.RowNo
 	Order by season.RowNo Desc
 )FirstDyelot
