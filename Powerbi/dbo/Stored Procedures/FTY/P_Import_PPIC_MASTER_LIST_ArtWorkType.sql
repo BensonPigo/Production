@@ -28,19 +28,31 @@ BEGIN
 	END
 
 	-- 撈取ArtworkType相關資訊---
-	select ID
-			, unit = nu.nUnit
-			, SEQ
-			, isOri = 1
+	select *
 	into #UseArtworkType
-	FROM [MainServer].[Production].[dbo].ArtworkType with (nolock)
-	OUTER APPLY (
-		SELECT [nUnit] = CASE WHEN ArtworkUnit = 'PPU' THEN 'PPU'
-							WHEN ProductionUnit = 'TMS' THEN 'TMS'
-						ELSE 'Price'
-						END 
-	) nu
-	where Junk = 0
+	from
+	(
+		select ID
+				, unit = nu.nUnit
+				, SEQ
+				, isOri = 1
+		FROM [MainServer].[Production].[dbo].ArtworkType with (nolock)
+		OUTER APPLY (
+			SELECT [nUnit] = CASE WHEN ArtworkUnit = 'PPU' THEN 'PPU'
+								WHEN ProductionUnit = 'TMS' THEN 'TMS'
+							ELSE 'Price'
+							END 
+		) nu
+		where Junk = 0
+		union
+		select ID
+				 , ArtworkUnit
+				 , SEQ
+				 , isOri = 1
+		from [MainServer].[Production].[dbo].ArtworkType with (nolock)
+		where Junk = 0 
+		and ArtworkUnit NOT IN ('', 'PPU')
+	)a 
 
 
 	--訂單串接ArtworkType資訊，訂單包含一般訂單與Local訂單，其中Local訂單有姊妹廠代工的狀況(SubconInType in '1','2')，若有此情況需產生兩筆同樣的資訊其中[Value],[TTL_Value],[SubconInType]一正一負進行紀錄
