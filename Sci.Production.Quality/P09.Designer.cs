@@ -29,11 +29,10 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.tabControl1 = new Sci.Win.UI.TabControl();
             this.tabInspectionReport = new System.Windows.Forms.TabPage();
+            this.label9 = new Sci.Win.UI.Label();
             this.dateATA = new Sci.Win.UI.DateRange();
             this.label8 = new Sci.Win.UI.Label();
             this.label7 = new System.Windows.Forms.Label();
@@ -51,6 +50,7 @@
             this.label2 = new Sci.Win.UI.Label();
             this.label1 = new Sci.Win.UI.Label();
             this.tab1stBulkDyelot = new System.Windows.Forms.TabPage();
+            this.label10 = new Sci.Win.UI.Label();
             this.displayBoxapvSeasonNull = new Sci.Win.UI.DisplayBox();
             this.labapprovedSeasoinNull = new Sci.Win.UI.Label();
             this.btnQuery2 = new Sci.Win.UI.Button();
@@ -86,11 +86,12 @@
             this.tabControl1.Location = new System.Drawing.Point(0, 0);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(1191, 524);
+            this.tabControl1.Size = new System.Drawing.Size(1191, 605);
             this.tabControl1.TabIndex = 0;
             // 
             // tabInspectionReport
             // 
+            this.tabInspectionReport.Controls.Add(this.label9);
             this.tabInspectionReport.Controls.Add(this.dateATA);
             this.tabInspectionReport.Controls.Add(this.label8);
             this.tabInspectionReport.Controls.Add(this.label7);
@@ -110,9 +111,22 @@
             this.tabInspectionReport.Location = new System.Drawing.Point(4, 25);
             this.tabInspectionReport.Name = "tabInspectionReport";
             this.tabInspectionReport.Padding = new System.Windows.Forms.Padding(3);
-            this.tabInspectionReport.Size = new System.Drawing.Size(1183, 495);
+            this.tabInspectionReport.Size = new System.Drawing.Size(1183, 576);
             this.tabInspectionReport.TabIndex = 0;
             this.tabInspectionReport.Text = "Inspection Report";
+            // 
+            // label9
+            // 
+            this.label9.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
+            this.label9.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(128)))));
+            this.label9.Location = new System.Drawing.Point(7, 508);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(1165, 23);
+            this.label9.TabIndex = 14;
+            this.label9.Text = "This function only Query and download old files. If you want to upload files, ple" +
+    "ase use QA P50, P51. If you want to backfill the date when the factory received " +
+    "the report, please use QA P52.";
+            this.label9.TextStyle.Color = System.Drawing.Color.Black;
             // 
             // dateATA
             // 
@@ -148,7 +162,7 @@
             this.label7.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label7.AutoSize = true;
             this.label7.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label7.Location = new System.Drawing.Point(36, 466);
+            this.label7.Location = new System.Drawing.Point(36, 547);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(689, 15);
             this.label7.TabIndex = 11;
@@ -160,7 +174,7 @@
             this.displayBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.displayBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox1.Location = new System.Drawing.Point(7, 463);
+            this.displayBox1.Location = new System.Drawing.Point(7, 544);
             this.displayBox1.Name = "displayBox1";
             this.displayBox1.Size = new System.Drawing.Size(23, 23);
             this.displayBox1.TabIndex = 10;
@@ -168,7 +182,7 @@
             // btnClose
             // 
             this.btnClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnClose.Location = new System.Drawing.Point(1092, 459);
+            this.btnClose.Location = new System.Drawing.Point(1092, 540);
             this.btnClose.Name = "btnClose";
             this.btnClose.Size = new System.Drawing.Size(80, 30);
             this.btnClose.TabIndex = 9;
@@ -179,7 +193,8 @@
             // btnSave
             // 
             this.btnSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnSave.Location = new System.Drawing.Point(1006, 459);
+            this.btnSave.Enabled = false;
+            this.btnSave.Location = new System.Drawing.Point(1006, 540);
             this.btnSave.Name = "btnSave";
             this.btnSave.Size = new System.Drawing.Size(80, 30);
             this.btnSave.TabIndex = 8;
@@ -190,7 +205,7 @@
             // btnDownloadFile
             // 
             this.btnDownloadFile.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnDownloadFile.Location = new System.Drawing.Point(870, 459);
+            this.btnDownloadFile.Location = new System.Drawing.Point(870, 540);
             this.btnDownloadFile.Name = "btnDownloadFile";
             this.btnDownloadFile.Size = new System.Drawing.Size(130, 30);
             this.btnDownloadFile.TabIndex = 7;
@@ -216,20 +231,12 @@
             this.grid1.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.grid1.Location = new System.Drawing.Point(0, 42);
             this.grid1.Name = "grid1";
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.grid1.RowHeadersDefaultCellStyle = dataGridViewCellStyle1;
             this.grid1.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.grid1.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.grid1.RowTemplate.Height = 24;
             this.grid1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.grid1.ShowCellToolTips = false;
-            this.grid1.Size = new System.Drawing.Size(1172, 411);
+            this.grid1.Size = new System.Drawing.Size(1172, 452);
             this.grid1.TabIndex = 8;
             // 
             // btnQuery
@@ -318,6 +325,7 @@
             // 
             // tab1stBulkDyelot
             // 
+            this.tab1stBulkDyelot.Controls.Add(this.label10);
             this.tab1stBulkDyelot.Controls.Add(this.displayBoxapvSeasonNull);
             this.tab1stBulkDyelot.Controls.Add(this.labapprovedSeasoinNull);
             this.tab1stBulkDyelot.Controls.Add(this.btnQuery2);
@@ -333,9 +341,22 @@
             this.tab1stBulkDyelot.Location = new System.Drawing.Point(4, 25);
             this.tab1stBulkDyelot.Name = "tab1stBulkDyelot";
             this.tab1stBulkDyelot.Padding = new System.Windows.Forms.Padding(3);
-            this.tab1stBulkDyelot.Size = new System.Drawing.Size(1183, 495);
+            this.tab1stBulkDyelot.Size = new System.Drawing.Size(1183, 576);
             this.tab1stBulkDyelot.TabIndex = 1;
             this.tab1stBulkDyelot.Text = "1st Bulk Dyelot";
+            // 
+            // label10
+            // 
+            this.label10.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
+            this.label10.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(128)))));
+            this.label10.Location = new System.Drawing.Point(5, 505);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(1165, 23);
+            this.label10.TabIndex = 144;
+            this.label10.Text = "This function only Query and download old files. If you want to upload files, ple" +
+    "ase use QA P50, P51. If you want to backfill the date when the factory received " +
+    "the report, please use QA P52.";
+            this.label10.TextStyle.Color = System.Drawing.Color.Black;
             // 
             // displayBoxapvSeasonNull
             // 
@@ -343,7 +364,7 @@
             this.displayBoxapvSeasonNull.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayBoxapvSeasonNull.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.displayBoxapvSeasonNull.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBoxapvSeasonNull.Location = new System.Drawing.Point(18, 463);
+            this.displayBoxapvSeasonNull.Location = new System.Drawing.Point(18, 544);
             this.displayBoxapvSeasonNull.Name = "displayBoxapvSeasonNull";
             this.displayBoxapvSeasonNull.Size = new System.Drawing.Size(20, 21);
             this.displayBoxapvSeasonNull.TabIndex = 143;
@@ -353,7 +374,7 @@
             this.labapprovedSeasoinNull.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.labapprovedSeasoinNull.BackColor = System.Drawing.Color.Transparent;
             this.labapprovedSeasoinNull.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F);
-            this.labapprovedSeasoinNull.Location = new System.Drawing.Point(41, 462);
+            this.labapprovedSeasoinNull.Location = new System.Drawing.Point(41, 543);
             this.labapprovedSeasoinNull.Name = "labapprovedSeasoinNull";
             this.labapprovedSeasoinNull.Size = new System.Drawing.Size(305, 23);
             this.labapprovedSeasoinNull.TabIndex = 142;
@@ -374,7 +395,7 @@
             // button1
             // 
             this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.button1.Location = new System.Drawing.Point(1095, 459);
+            this.button1.Location = new System.Drawing.Point(1095, 540);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(80, 30);
             this.button1.TabIndex = 15;
@@ -385,7 +406,8 @@
             // btnSave2
             // 
             this.btnSave2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnSave2.Location = new System.Drawing.Point(1009, 459);
+            this.btnSave2.Enabled = false;
+            this.btnSave2.Location = new System.Drawing.Point(1009, 540);
             this.btnSave2.Name = "btnSave2";
             this.btnSave2.Size = new System.Drawing.Size(80, 30);
             this.btnSave2.TabIndex = 14;
@@ -411,20 +433,12 @@
             this.grid2.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.grid2.Location = new System.Drawing.Point(6, 42);
             this.grid2.Name = "grid2";
-            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.grid2.RowHeadersDefaultCellStyle = dataGridViewCellStyle2;
             this.grid2.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.grid2.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.grid2.RowTemplate.Height = 24;
             this.grid2.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.grid2.ShowCellToolTips = false;
-            this.grid2.Size = new System.Drawing.Size(1169, 411);
+            this.grid2.Size = new System.Drawing.Size(1169, 449);
             this.grid2.TabIndex = 8;
             // 
             // txtColor
@@ -502,7 +516,7 @@
             // 
             // P09
             // 
-            this.ClientSize = new System.Drawing.Size(1191, 524);
+            this.ClientSize = new System.Drawing.Size(1191, 605);
             this.Controls.Add(this.tabControl1);
             this.DefaultControl = "txtSPNo";
             this.Name = "P09";
@@ -561,5 +575,7 @@
         private Win.UI.DisplayBox displayBox1;
         private Win.UI.DateRange dateATA;
         private Win.UI.Label label8;
+        private Win.UI.Label label9;
+        private Win.UI.Label label10;
     }
 }
