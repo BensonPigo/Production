@@ -2229,14 +2229,15 @@ else
 				t.LETA				= s.LETA,
 				t.Remark			= s.Remark,
 				t.AddName			= s.AddName,
-				t.AddDate			= s.AddDate
+				t.AddDate			= s.AddDate,
+				t.PackLETA			= s.PackLETA
 		when not matched by target then
 			insert (
 				Id			, NewSciDelivery	, OldSciDelivery	, LETA		, Remark
-				, AddName	, AddDate			, Ukey
+				, AddName	, AddDate			, Ukey              , PackLETA
 			) values (
 				s.Id		, s.NewSciDelivery	, s.OldSciDelivery	, s.LETA	, s.Remark
-				, s.AddName	, s.AddDate			, s.Ukey
+				, s.AddName	, s.AddDate			, s.Ukey            , s.PackLETA
 			)
 		when not matched by source and t.id in (select id from #TOrder) then
 			delete;
