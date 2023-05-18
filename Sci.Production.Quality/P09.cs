@@ -180,36 +180,36 @@ namespace Sci.Production.Quality
 
             .Text("ColorName", header: "Color", width: Widths.AnsiChars(8), iseditingreadonly: true)
             .Numeric("Qty", header: "Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10, iseditingreadonly: true)
-            .Date("InspectionReport", header: "Inspection Report\r\nFty Received Date", width: Widths.AnsiChars(10)) // W (Pink)
+            .Date("InspectionReport", header: "Inspection Report\r\nFty Received Date", width: Widths.AnsiChars(10), iseditingreadonly: true) // W (Pink)
             .Date("TPEInspectionReport", header: "Inspection Report\r\nSupp Sent Date", width: Widths.AnsiChars(10), iseditingreadonly: true, settings: inspection)
-            .Date("TestReport", header: "Test Report\r\nFty Received Date", width: Widths.AnsiChars(10)) // W (Pink)
-            .CheckBox("TestReportCheckClima", header: "Test Report\r\n Check Clima", trueValue: 1, falseValue: 0, iseditable: true, settings: col_CheckClima).Get(out this.col_TestReportCheckClima)
+            .Date("TestReport", header: "Test Report\r\nFty Received Date", width: Widths.AnsiChars(10), iseditingreadonly: true) // W (Pink)
+            .CheckBox("TestReportCheckClima", header: "Test Report\r\n Check Clima", trueValue: 1, falseValue: 0, iseditable: false, settings: col_CheckClima).Get(out this.col_TestReportCheckClima)
             .Date("TPETestReport", header: "Test Report\r\nSupp Sent Date", width: Widths.AnsiChars(10), iseditingreadonly: true, settings: test)
-            .Date("ContinuityCard", header: "Continuity Card\r\nFty Received Date", width: Widths.AnsiChars(10)) // W (Pink)
+            .Date("ContinuityCard", header: "Continuity Card\r\nFty Received Date", width: Widths.AnsiChars(10), iseditingreadonly: true) // W (Pink)
             .Date("TPEContinuityCard", header: "Continuity Card\r\nSupp Sent Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Text("AWBNo", header: "Continuity Card\r\nAWB#", width: Widths.AnsiChars(16), iseditingreadonly: true)
-            .Date("FirstDyelot", header: "1st Bulk Dyelot\r\nFty Received Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
-            .Text("TPEFirstDyelot1", header: "1st Bulk Dyelot\r\nSupp Sent Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
-            .Numeric("T2InspYds", header: "T2 Inspected Yards", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 8, settings: t2IY) // W
-            .Numeric("T2DefectPoint", header: "T2 Defect Points", width: Widths.AnsiChars(8), integer_places: 5, settings: t2DP) // W
+            .Date("FTYReceivedReport", header: "1st Bulk Dyelot\r\nFty Received Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
+            .Text("FirstDyelot", header: "1st Bulk Dyelot\r\nSupp Sent Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
+            .Numeric("T2InspYds", header: "T2 Inspected Yards", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 8, settings: t2IY, iseditingreadonly: true) // W
+            .Numeric("T2DefectPoint", header: "T2 Defect Points", width: Widths.AnsiChars(8), integer_places: 5, settings: t2DP, iseditingreadonly: true) // W
             .Text("T2Grade", header: "Grade", width: Widths.AnsiChars(8), iseditingreadonly: true)
             .Text("T1InspectedYards", header: "T1 Inspected Yards", width: Widths.AnsiChars(8), iseditingreadonly: true)
             .Text("T1DefectPoints", header: "T1 Defect Points", width: Widths.AnsiChars(8), iseditingreadonly: true)
             ;
             #endregion Set_grid1 Columns
             #region Color
-            this.grid1.Columns["InspectionReport"].DefaultCellStyle.BackColor = Color.Pink;
-            this.grid1.Columns["TestReport"].DefaultCellStyle.BackColor = Color.Pink;
-            this.grid1.Columns["ContinuityCard"].DefaultCellStyle.BackColor = Color.Pink;
-            this.grid1.Columns["T2InspYds"].DefaultCellStyle.BackColor = Color.Pink;
-            this.grid1.Columns["T2DefectPoint"].DefaultCellStyle.BackColor = Color.Pink;
+            //this.grid1.Columns["InspectionReport"].DefaultCellStyle.BackColor = Color.Pink;
+            //this.grid1.Columns["TestReport"].DefaultCellStyle.BackColor = Color.Pink;
+            //this.grid1.Columns["ContinuityCard"].DefaultCellStyle.BackColor = Color.Pink;
+            //this.grid1.Columns["T2InspYds"].DefaultCellStyle.BackColor = Color.Pink;
+            //this.grid1.Columns["T2DefectPoint"].DefaultCellStyle.BackColor = Color.Pink;
             #endregion Color
             #endregion tabPage1_grid1
             #region tabPage2
             #region settings Event
-            DataGridViewGeneratorDateColumnSettings firstDyelot = new DataGridViewGeneratorDateColumnSettings();
+            DataGridViewGeneratorDateColumnSettings fTYReceivedReport = new DataGridViewGeneratorDateColumnSettings();
 
-            firstDyelot.CellValidating += (s, e) =>
+            fTYReceivedReport.CellValidating += (s, e) =>
             {
                 if (e.RowIndex == -1)
                 {
@@ -225,7 +225,7 @@ namespace Sci.Production.Quality
                 if (MyUtility.Check.Empty(dr["SeasonSCIID"]) && !MyUtility.Check.Empty(e.FormattedValue))
                 {
                     MyUtility.Msg.WarningBox("Approved Seanson is empty, you can't enter the data , please reference 1st Bulk Dyelot Supp Sent Date column information。");
-                    dr["FirstDyelot"] = DBNull.Value;
+                    dr["FTYReceivedReport"] = DBNull.Value;
                     dr.EndEdit();
                 }
             };
@@ -241,14 +241,14 @@ namespace Sci.Production.Quality
             .Text("SeasonID", header: "Season", width: Widths.AnsiChars(8), iseditingreadonly: true)
             .Text("SeasonSCIID", header: "Approved Season", width: Widths.AnsiChars(8), iseditingreadonly: true).Get(out this.col_ApprovedSeason)
             .Numeric("Period", header: "Period", width: Widths.AnsiChars(6), iseditingreadonly: true)
-            .Date("FirstDyelot", header: "1st Bulk Dyelot\r\nFty Received Date", width: Widths.AnsiChars(10), settings: firstDyelot).Get(out this.col_FirstDyelot) // W (Pink)
-            .Text("TPEFirstDyelot", header: "1st Bulk Dyelot\r\nSupp Sent Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
+            .Date("FTYReceivedReport", header: "1st Bulk Dyelot\r\nFty Received Date", width: Widths.AnsiChars(10), settings: fTYReceivedReport, iseditingreadonly: true).Get(out this.col_FirstDyelot) // W (Pink)
+            .Text("FirstDyelot", header: "1st Bulk Dyelot\r\nSupp Sent Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
             ;
             #endregion Set_grid2 Columns
             #region Color
-            this.grid2.Columns["FirstDyelot"].DefaultCellStyle.BackColor = Color.Pink;
-            this.Change_Color();
-            this.grid2.RowEnter += this.Grid2_RowEnter;
+            //this.grid2.Columns["FirstDyelot"].DefaultCellStyle.BackColor = Color.Pink;
+            //this.Change_Color();
+            //this.grid2.RowEnter += this.Grid2_RowEnter;
             #endregion Color
             #endregion tabPage2
         }
@@ -266,7 +266,7 @@ namespace Sci.Production.Quality
                 return;
             }
 
-            bool canEdit = this.CheckPage2_Row_CanEdit(data["TPEFirstDyelot"].ToString());
+            bool canEdit = this.CheckPage2_Row_CanEdit(data["FirstDyelot"].ToString());
 
             if (canEdit)
             {
@@ -293,7 +293,7 @@ namespace Sci.Production.Quality
                      return;
                  }
 
-                 bool canEdit = this.CheckPage2_Row_CanEdit(dr["TPEFirstDyelot"].ToString());
+                 bool canEdit = this.CheckPage2_Row_CanEdit(dr["FirstDyelot"].ToString());
                  if (!canEdit)
                  {
                      this.grid2.Rows[e.RowIndex].DefaultCellStyle.BackColor = Color.FromArgb(190, 190, 190);
@@ -583,7 +583,7 @@ select distinct
 	sr.TPETestReport,
 	sr.ContinuityCard,
 	sr.TPEContinuityCard,
-	FirstDyelot.FirstDyelot,	
+	FirstDyelot.FTYReceivedReport,	
 	sr.T2InspYds,
 	sr.T2DefectPoint,
 	sr.T2Grade,
@@ -597,7 +597,7 @@ select distinct
     sr.AWBNo,
     [bitRefnoColor] = case when f.Clima = 1 then ROW_NUMBER() over(partition by f.Clima, ps.SuppID, psd.Refno, isnull(psdsC.SpecValue ,''), Format(Export.CloseDate,'yyyyMM') order by Export.CloseDate) else 0 end,
     o.SeasonID,
-    FirstDyelot.TPEFirstDyelot,
+    FirstDyelot.FirstDyelot,
 	f.RibItem,
 	SeasonSCIID = FirstDyelot.SeasonID
 	into #tmp
@@ -614,7 +614,7 @@ left join Fabric f with(nolock) on f.SCIRefno =psd.SCIRefno
 Left join #probablySeasonList seasonSCI on seasonSCI.ID = s.SeasonSCIID
 left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
 OUTER APPLY(
-	Select Top 1 FirstDyelot,TPEFirstDyelot,SeasonID
+	Select Top 1 FirstDyelot,FTYReceivedReport,SeasonID
 	From dbo.FirstDyelot fd
 	Inner join #probablySeasonList season on fd.SeasonID = season.ID
 	WHERE fd.BrandRefno = psd.Refno and fd.ColorID = isnull(psdsC.SpecValue ,'') and fd.SuppID = ps.SuppID and fd.TestDocFactoryGroup = fty.TestDocFactoryGroup
@@ -648,9 +648,9 @@ and o.Category in('B','M')
 
 -- 用temp table提高效率
 select * 
-,TPEFirstDyelot1 = 
+,FirstDyelot = 
 	case 
-	when TPEFirstDyelot is not null then FORMAT(TPEFirstDyelot,'yyyy/MM/dd')
+	when FirstDyelot is not null then FORMAT(FirstDyelot,'yyyy/MM/dd')
 	when RibItem = 1 then 'RIB no need first dye lot'
 	when isnull(cons.Consignee,'') = '' and  isnull(NotCons.ConsigneeList,'') != '' then  'Shipping mark in ' + NotCons.ConsigneeList
 	when SeasonSCIID is null then 'Still not received and under pushing T2. Please contact with PR if you need L/G first.'
@@ -889,7 +889,7 @@ VALUES(s.ukey,s.InspectionReport,s.TestReport,s.ContinuityCard,isnull(s.T2InspYd
             if (!MyUtility.Check.Empty(this.txtRefno.Text))
             {
                 listSQLParameter.Add(new SqlParameter("@Refno", this.txtRefno.Text));
-                sqlwheres.Add(" (a.Refno = @Refno or b.Refno = @Refno)");
+                sqlwheres.Add(" (a.Refno = @Refno or b.BrandRefno = @Refno)");
             }
 
             if (!MyUtility.Check.Empty(this.txtColor.Text))
@@ -916,13 +916,13 @@ psd.Refno,
 o.SeasonID,
 SeasonSCIID = fd.SeasonID,
 fd.Period,
-fd.FirstDyelot FirstDyelot,
-TPEFirstDyelot = IIF(
-    fd.TPEFirstDyelot is null and RibItem = 1
+fd.FTYReceivedReport,
+FirstDyelot = IIF(
+    fd.FirstDyelot is null and RibItem = 1
     ,'RIB no need first dye lot'
     ,IIF(fd.SeasonID is null
     ,'Still not received and under pushing T2. Please contact with PR if you need L/G first.'
-    ,format(fd.TPEFirstDyelot,'yyyy/MM/dd'))
+    ,format(fd.FirstDyelot,'yyyy/MM/dd'))
 )
 into #tmp
 from Export_Detail ed with(nolock)
@@ -950,19 +950,19 @@ a.IsProduceFty,
 [TestDocFactoryGroup] = iif(a.TestDocFactoryGroup is null, b.TestDocFactoryGroup, a.TestDocFactoryGroup)
 ,[suppid] = iif(a.SuppID is null, b.SuppID,a.Suppid)
 ,[AbbEN] = iif(a.AbbEN is null, (select abben from supp where id=b.suppid), a.abben)
-,[Refno] = iif(a.Refno is null ,b.Refno,a.refno)
+,[Refno] = iif(a.Refno is null ,b.brandrefno,a.refno)
 ,[ColorID] = iif(a.ColorID is null , b.ColorID, a.ColorID)
 ,[SeasonID] = a.SeasonID
-,[SeasonSCIID] = iif(a.SeasonSCIID is null,b.SeasonSCIID,a.SeasonSCIID)
+,[SeasonSCIID] = iif(a.SeasonSCIID is null,b.SeasonID,a.SeasonSCIID)
 ,[Period] = iif(a.Period is null, b.Period , a.Period)
-,[FirstDyelot] = iif(a.FirstDyelot is null, b.FirstDyelot, a.FirstDyelot)
-,[TPEFirstDyelot] = iif(
-    a.[TPEFirstDyelot] is null, 
-    IIF(b.SeasonSCIID is null
+,[FTYReceivedReport] = iif(a.FTYReceivedReport is null, b.FTYReceivedReport, a.FTYReceivedReport)
+,[FirstDyelot] = iif(
+    a.[FirstDyelot] is null, 
+    IIF(b.SeasonID is null
     ,'Still not received and under pushing T2. Please contact with PR if you need L/G first.'
-    ,format(b.TPEFirstDyelot,'yyyy/MM/dd')
+    ,format(b.FirstDyelot,'yyyy/MM/dd')
 ),
-a.[TPEFirstDyelot])
+a.[FirstDyelot])
 into #tmp1
 from #tmp a
 --inner join Factory fty with (nolock) on fty.ID = a.Consignee
