@@ -32,6 +32,7 @@
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.tabControl1 = new Sci.Win.UI.TabControl();
             this.tabInspectionReport = new System.Windows.Forms.TabPage();
+            this.label9 = new Sci.Win.UI.Label();
             this.dateATA = new Sci.Win.UI.DateRange();
             this.label8 = new Sci.Win.UI.Label();
             this.label7 = new System.Windows.Forms.Label();
@@ -49,6 +50,7 @@
             this.label2 = new Sci.Win.UI.Label();
             this.label1 = new Sci.Win.UI.Label();
             this.tab1stBulkDyelot = new System.Windows.Forms.TabPage();
+            this.label10 = new Sci.Win.UI.Label();
             this.displayBoxapvSeasonNull = new Sci.Win.UI.DisplayBox();
             this.labapprovedSeasoinNull = new Sci.Win.UI.Label();
             this.btnQuery2 = new Sci.Win.UI.Button();
@@ -66,8 +68,6 @@
             this.inspectionReportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.testReportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
-            this.label9 = new Sci.Win.UI.Label();
-            this.label10 = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
             this.tabControl1.SuspendLayout();
             this.tabInspectionReport.SuspendLayout();
@@ -114,6 +114,19 @@
             this.tabInspectionReport.Size = new System.Drawing.Size(1183, 576);
             this.tabInspectionReport.TabIndex = 0;
             this.tabInspectionReport.Text = "Inspection Report";
+            // 
+            // label9
+            // 
+            this.label9.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
+            this.label9.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(128)))));
+            this.label9.Location = new System.Drawing.Point(7, 508);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(1165, 23);
+            this.label9.TabIndex = 14;
+            this.label9.Text = "This function only Query and download old files. If you want to upload files, ple" +
+    "ase use QA P50, P51. If you want to backfill the date when the factory received " +
+    "the report, please use QA P52.";
+            this.label9.TextStyle.Color = System.Drawing.Color.Black;
             // 
             // dateATA
             // 
@@ -332,6 +345,19 @@
             this.tab1stBulkDyelot.TabIndex = 1;
             this.tab1stBulkDyelot.Text = "1st Bulk Dyelot";
             // 
+            // label10
+            // 
+            this.label10.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
+            this.label10.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(128)))));
+            this.label10.Location = new System.Drawing.Point(5, 505);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(1165, 23);
+            this.label10.TabIndex = 144;
+            this.label10.Text = "This function only Query and download old files. If you want to upload files, ple" +
+    "ase use QA P50, P51. If you want to backfill the date when the factory received " +
+    "the report, please use QA P52.";
+            this.label10.TextStyle.Color = System.Drawing.Color.Black;
+            // 
             // displayBoxapvSeasonNull
             // 
             this.displayBoxapvSeasonNull.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
@@ -487,30 +513,6 @@
             this.testReportToolStripMenuItem.Size = new System.Drawing.Size(176, 22);
             this.testReportToolStripMenuItem.Text = "Test Report";
             this.testReportToolStripMenuItem.Click += new System.EventHandler(this.TestReportToolStripMenuItem_Click);
-            // 
-            // label9
-            // 
-            this.label9.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(128)))));
-            this.label9.Location = new System.Drawing.Point(7, 508);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(1165, 23);
-            this.label9.TabIndex = 14;
-            this.label9.Text = "This function only Query and download old files. If you want to upload files, ple" +
-    "ase use QA P50, P51. If you want to backfill the date when the factory received " +
-    "the report, please use QA P52.";
-            this.label9.TextStyle.Color = System.Drawing.Color.Black;
-            // 
-            // label10
-            // 
-            this.label10.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(128)))));
-            this.label10.Location = new System.Drawing.Point(5, 505);
-            this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(1165, 23);
-            this.label10.TabIndex = 144;
-            this.label10.Text = "This function only Query and download old files. If you want to upload files, ple" +
-    "ase use QA P50, P51. If you want to backfill the date when the factory received " +
-    "the report, please use QA P52.";
-            this.label10.TextStyle.Color = System.Drawing.Color.Black;
             // 
             // P09
             // 
