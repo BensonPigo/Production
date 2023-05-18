@@ -559,7 +559,7 @@ from(
 )a
 
 ------#FabricInspDoc Approved 1st Bulk Dyelot Provided %
-select DISTINCT b.Refno, b.ColorID, b.SuppID,tmp.WhseArrival,tmp.FactoryID,tmp.PoId, d.Consignee, c.SeasonSCIID DyelotSeasion
+select DISTINCT b.Refno, b.ColorID, b.SuppID,tmp.WhseArrival,tmp.FactoryID,tmp.PoId, d.Consignee, c.SeasonID DyelotSeasion
 , c.FirstDyelot, e.SeasonSCIID, c.Period, f.RibItem 
 into #tmp_DyelotMain 
 from (
@@ -586,7 +586,7 @@ outer apply (
 LEFT join #Export_Detail ED ON ED.PoID = TMP.POID AND ED.Seq1 = TMP.SEQ1 AND ED.Seq2 = TMP.SEQ2
 left join #Export d on ED.ID = D.ID AND D.Confirm = 1
 left JOIN #Factory fty with (nolock) on fty.ID = d.Consignee
-left JOIN #FIRSTDYELOT c on b.Refno = c.Refno and b.ColorID = c.ColorID and b.SuppID = c.SuppID  AND c.TestDocFactoryGroup = fty.TestDocFactoryGroup 
+left JOIN #FIRSTDYELOT c on b.Refno = c.BrandRefno and b.ColorID = c.ColorID and b.SuppID = c.SuppID  AND c.TestDocFactoryGroup = fty.TestDocFactoryGroup 
 left join #Orders o on ed.PoID = o.id and o.Category in ('B','M')
 left JOIN #Season e on o.SeasonID  = e.ID and o.BrandID = e.BrandID --and e.SeasonSCIID = c.SeasonSCIID
 left join #Fabric f on f.SCIRefno = b.SCIRefno 
