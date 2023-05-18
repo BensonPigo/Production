@@ -892,13 +892,14 @@ order by rnk, RowNo",
                 string sqlcmd1 = string.Format(
                     @"
 DECLARE @ID nvarchar(20) = '{0}'
+DECLARE @POID nvarchar(20) = '{1}'
 DECLARE @cols NVARCHAR(MAX)= N''
 SELECT @cols = @cols + iif(@cols = N'',QUOTENAME(SizeCode),N',' + QUOTENAME(SizeCode))
 FROM (
     select distinct osc.SizeCode,osc.Seq,SizeGroup = iif(osc.SizeGroup = 'N', '', osc.SizeGroup)
 	from Orders o WITH (NOLOCK) 
 	inner join Order_SizeCode osc WITH (NOLOCK) on osc.Id = o.ID 
-    where o.ID = @ID
+    where o.ID = @POID 
 )a
 order by SizeGroup,seq
 
@@ -948,7 +949,8 @@ select (select sum(Qty) from UnionData where Article = p.Article) as TotalQty
 from pivotData p
 order by RowNO'
 
-EXEC sp_executesql @sql", this.orderID);
+EXEC sp_executesql @sql", this.orderID, this.poID);
+
                 DBProxy.Current.Select(null, sqlcmd1, out ptb1);
 
                 string sqlcmd2 = string.Format(
@@ -1190,13 +1192,14 @@ EXEC sp_executesql @sql", this.poID);
                 string sqlcmd1 = string.Format(
                     @"
 DECLARE @ID nvarchar(20) = '{0}'
+DECLARE @POID nvarchar(20) = '{1}'
 DECLARE @cols NVARCHAR(MAX)= N''
 SELECT @cols = @cols + iif(@cols = N'',QUOTENAME(SizeCode),N',' + QUOTENAME(SizeCode))
 FROM (
       	select distinct osc.SizeCode,osc.Seq,SizeGroup = iif(osc.SizeGroup = 'N', '', osc.SizeGroup)
 	    from Orders o WITH (NOLOCK) 
 	    inner join Order_SizeCode osc WITH (NOLOCK) on osc.Id = o.ID 
-        where o.ID = @ID
+        where o.ID = @POID 
 )a
 order by SizeGroup,seq
 
@@ -1245,7 +1248,7 @@ select (select sum(OriQty) from UnionData where Article = p.Article) as TotalQty
 from pivotData p
 order by RowNo'
 
-EXEC sp_executesql @sql", this.orderID);
+EXEC sp_executesql @sql", this.orderID, this.poID);
                 DBProxy.Current.Select(null, sqlcmd1, out ptb1);
 
                 string sqlcmd2 = string.Format(
