@@ -182,7 +182,7 @@ namespace Sci.Production.Quality
             .Numeric("Qty", header: "Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10, iseditingreadonly: true)
             .Date("InspectionReport", header: "Inspection Report\r\nFty Received Date", width: Widths.AnsiChars(10), iseditingreadonly: true) // W (Pink)
             .Date("TPEInspectionReport", header: "Inspection Report\r\nSupp Sent Date", width: Widths.AnsiChars(10), iseditingreadonly: true, settings: inspection)
-            .Date("TestReport", header: "Test Report\r\nFty Received Date", width: Widths.AnsiChars(10)) // W (Pink)
+            .Date("TestReport", header: "Test Report\r\nFty Received Date", width: Widths.AnsiChars(10), iseditingreadonly: true) // W (Pink)
             .CheckBox("TestReportCheckClima", header: "Test Report\r\n Check Clima", trueValue: 1, falseValue: 0, iseditable: false, settings: col_CheckClima).Get(out this.col_TestReportCheckClima)
             .Date("TPETestReport", header: "Test Report\r\nSupp Sent Date", width: Widths.AnsiChars(10), iseditingreadonly: true, settings: test)
             .Date("ContinuityCard", header: "Continuity Card\r\nFty Received Date", width: Widths.AnsiChars(10), iseditingreadonly: true) // W (Pink)
@@ -889,7 +889,7 @@ VALUES(s.ukey,s.InspectionReport,s.TestReport,s.ContinuityCard,isnull(s.T2InspYd
             if (!MyUtility.Check.Empty(this.txtRefno.Text))
             {
                 listSQLParameter.Add(new SqlParameter("@Refno", this.txtRefno.Text));
-                sqlwheres.Add(" (a.Refno = @Refno or b.Refno = @Refno)");
+                sqlwheres.Add(" (a.Refno = @Refno or b.BrandRefno = @Refno)");
             }
 
             if (!MyUtility.Check.Empty(this.txtColor.Text))
