@@ -260,7 +260,7 @@ where id = '{this.CurrentMaintain["ID"]}'
         /// <inheritdoc/>
         protected override DualResult ClickDelete()
         {
-            string updatesql = $@"update GMTBooking set BIRID = null  where BIRID = '{this.CurrentMaintain["ID"]}'";
+            string updatesql = $@"update GMTBooking set CMTInvoiceNo = ''  where CMTInvoiceNo = '{this.CurrentMaintain["ID"]}'";
             DualResult result = DBProxy.Current.Execute(null, updatesql);
             if (!result)
             {

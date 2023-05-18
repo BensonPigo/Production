@@ -166,7 +166,7 @@ select	bi.ID,
         [Dest] = ''
 from BIRInvoice bi with (nolock)
 inner join BIRInvoice_Detail bd with (nolock) on bi.ID = bd.ID
-inner join GMTBooking gb on bi.ID = gb.BIRID
+inner join GMTBooking gb on bi.ID = gb.CMTInvoiceNo
 inner join GMTBooking_Detail gbd with (nolock) on gbd.ID = gb.ID
 where	1=1
         {sqlInvDateWhere}
