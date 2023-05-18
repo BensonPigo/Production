@@ -175,6 +175,12 @@
     <Compile Include="Clog_B03.Designer.cs">
       <DependentUpon>Clog_B03.cs</DependentUpon>
     </Compile>
+    <Compile Include="IE_B14.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="IE_B14.Designer.cs">
+      <DependentUpon>IE_B14.cs</DependentUpon>
+    </Compile>
     <Compile Include="Packing_B09.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -538,6 +544,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Clog_B03.resx">
       <DependentUpon>Clog_B03.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="IE_B14.resx">
+      <DependentUpon>IE_B14.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Packing_B09.resx">
       <DependentUpon>Packing_B09.cs</DependentUpon>

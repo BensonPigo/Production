@@ -60,6 +60,7 @@
     <Folder Include="dbo\" />
     <Folder Include="dbo\Tables\" />
     <Folder Include="dbo\Stored Procedures" />
+    <Folder Include="dbo\Views" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="dbo\Tables\ChangeMemo_ContactWindow.sql" />
@@ -94,5 +95,6 @@
     <Build Include="dbo\Tables\Adidas_FGWT.sql" />
     <Build Include="dbo\Tables\MachineType_Detail.sql" />
     <Build Include="dbo\Tables\MailGroup.sql" />
+    <Build Include="dbo\Views\View_DropdownList.sql" />
   </ItemGroup>
 </Project>
