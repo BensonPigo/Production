@@ -180,7 +180,7 @@ namespace Sci.Production.Quality
             string sqlcmd = $@"select 
             [FileName] = TableName + PKey,
             SourceFile
-            from Clip
+            from GASAClip
             where TableName = '{tableName}' and 
             UniqueKey = '{id}'";
             DualResult dualResult = DBProxy.Current.Select(null, sqlcmd, out DataTable dt);
