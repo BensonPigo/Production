@@ -898,7 +898,11 @@ where not exists(select SCIRefno from Production.dbo.Fabric as a WITH (NOLOCK) w
 -- ManufacturingExecution.RefnoRelaxtime
 insert into [dbo].[SciMES_RefnoRelaxtime] (Refno, AddName, AddDate)
 select a.Refno,'SCIMIS',GETDATE()
-from (select distinct Refno from Production.dbo.Fabric) a
+from (
+	select distinct Refno 
+	from Production.dbo.Fabric f
+	where f.Type = 'F'
+) a
 left join [dbo].[SciMES_RefnoRelaxtime] b WITH (NOLOCK) on b.Refno = a.Refno
 where b.Refno is null
 
