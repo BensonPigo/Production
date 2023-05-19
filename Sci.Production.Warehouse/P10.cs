@@ -900,6 +900,7 @@ left join FtyInventory on FtyInventory.Ukey = sd.FtyInventoryUkey
 WHERE sd.id = '{this.CurrentMaintain["ID"]}' 
     AND fu.Barcode IS NULL
 
+INSERT INTO dbo.Fabric_UnrollandRelax (Barcode, POID, Seq1, Seq2, Roll, Dyelot, StockType,UnrollActualQty)
 select a.To_NewBarcode, b.POID, b.Seq1, b.Seq2, b.Roll, b.Dyelot, b.StockType, b.Qty
 from(select distinct To_NewBarcode from #tmp) a
 outer apply(
