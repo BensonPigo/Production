@@ -1,13 +1,12 @@
 ﻿CREATE PROCEDURE [dbo].[GetLoadingvsCapacity]
 AS
 	declare @Date_S date = DATEADD(YEAR, DATEDIFF(YEAR, 0, GETDATE()) -1, 0) + 7				-- 要抓2022/01/01
-	declare @Date_E date = DATEADD(YEAR,3,DATEADD(YEAR,DATEDIFF(YEAR,0,getdate()),0))+6  --當前日期
+	declare @Date_E date = DATEADD(YEAR,3,DATEADD(YEAR,DATEDIFF(YEAR,0,getdate()),0))+6			--當前日期
 	declare @YearMonth_S date =  DATEADD(YEAR,-1,DATEADD(YEAR,DATEDIFF(YEAR,0,getdate()),0))	--一年前的1/1
-	declare @YearMonth_E date = DATEADD(YEAR,3,DATEADD(YEAR,DATEDIFF(YEAR,0,getdate()),0))-1 --二年後的12/31
-	--CREATE TABLE ##SourceA  
+	declare @YearMonth_E date = DATEADD(YEAR,3,DATEADD(YEAR,DATEDIFF(YEAR,0,getdate()),0))-1	--二年後的12/31
+
 	declare @SourceA  TABLE
 	(
-		--[ID][VARCHAR](25) null, 
 		[FACTORYID] [VARCHAR](25) NULL,
 		[MDivisionID] [VARCHAR](25) NULL,
 		[ArtworkTypeID] [VARCHAR](25) NULL,
@@ -23,7 +22,6 @@ AS
 	, sumValue = sum(Value)
 	, a.[Key]
 	, a.[Half key]
-	--into #SourceA
 	from(
 		/************************** Orders **************************/
 		Select 
@@ -31,10 +29,10 @@ AS
 		,o.FactoryID
 		,o.MDivisionID
 		,ArtworkTypeID = artT.ID
-		,[Value] = case When artT.ProductionUnit = 'TMS' Then isnull(o.Qty * tms * 1.0 / 1400 * getCPURate.CpuRate,0)
-						When artT.ArtworkUnit = 'STITCH' Then isnull(o.Qty * tmsCost.Qty * 1.0 / 1000 * getCPURate.CpuRate,0)
-						When artT.ArtworkUnit = 'PPU' Then isnull(o.Qty * tmsCost.Price * getCPURate.CpuRate,0)
-						When artT.ProductionUnit = 'Qty' Then isnull(o.Qty * tmsCost.Qty * getCPURate.CpuRate,0)
+		,[Value] = case When artT.ProductionUnit = 'TMS' Then isnull(convert(numeric(6,0), o.Qty) * tms * 1.0 / 1400 * getCPURate.CpuRate,0)
+						When artT.ArtworkUnit = 'STITCH' Then isnull(convert(numeric(6,0),o.Qty) * tmsCost.Qty * 1.0 / 1000 * getCPURate.CpuRate,0)
+						When artT.ArtworkUnit = 'PPU' Then isnull(convert(numeric(6,0),o.Qty) * tmsCost.Price * getCPURate.CpuRate,0)
+						When artT.ProductionUnit = 'Qty' Then isnull(convert(numeric(6,0),o.Qty) * tmsCost.Qty * getCPURate.CpuRate,0)
 						Else isnull(o.Qty * getCPURate.CpuRate,0)
 						End
 		,[Key] = convert(varchar(6),dateadd(day,-7,o.SCIDelivery),112)
@@ -59,10 +57,10 @@ AS
 		,o.FactoryID
 		,o.MDivisionID
 		,ArtworkTypeID = at.ID
-		,[Value] = case When at.ProductionUnit = 'TMS' Then o.Qty * tms * 1.0 / 1400 * getCPURate.CpuRate
-					   When at.ArtworkUnit = 'STITCH' Then  o.Qty * tmsCost.Qty * 1.0 / 1000 * getCPURate.CpuRate
-					   When at.ArtworkUnit = 'PPU' Then isnull(o.Qty * tmsCost.Price * getCPURate.CpuRate,0)
-					   When at.ProductionUnit = 'Qty' Then o.Qty * tmsCost.Qty * getCPURate.CpuRate
+		,[Value] = case When at.ProductionUnit = 'TMS' Then convert(numeric(6,0), o.Qty) * tms * 1.0 / 1400 * getCPURate.CpuRate
+					   When at.ArtworkUnit = 'STITCH' Then  convert(numeric(6,0), o.Qty) * convert(numeric(6,0), tmsCost.Qty) * 1.0 / 1000 * getCPURate.CpuRate
+					   When at.ArtworkUnit = 'PPU' Then isnull(convert(numeric(6,0), o.Qty) * tmsCost.Price * getCPURate.CpuRate,0)
+					   When at.ProductionUnit = 'Qty' Then convert(numeric(6,0), o.Qty) * convert(numeric(6,0), tmsCost.Qty) * getCPURate.CpuRate
 					   Else o.Qty * getCPURate.CpuRate
 					   End
 		,[Key] =  convert(varchar(6),dateadd(day,-7, o.BuyerDelivery), 112)
@@ -88,11 +86,11 @@ AS
 		, o.FactoryID
 		, f.MDivisionID
 		, ArtworkTypeID = artT.ID
-		, Value = case When artT.ProductionUnit = 'TMS' Then o.Qty * tms * 1.0 / 1400 * getCPURate.CpuRate
-			When artT.ArtworkUnit = 'STITCH' Then  o.Qty * tmsCost.Qty * 1.0 / 1000 * getCPURate.CpuRate
-			When artT.ArtworkUnit = 'PPU' Then isnull(o.Qty * tmsCost.Price * getCPURate.CpuRate,0)
-			When artT.ProductionUnit = 'Qty' Then o.Qty * tmsCost.Qty * getCPURate.CpuRate
-			Else o.Qty * getCPURate.CpuRate
+		, Value = case When artT.ProductionUnit = 'TMS' Then convert(numeric(6,0), o.Qty) * tms * 1.0 / 1400 * getCPURate.CpuRate
+			When artT.ArtworkUnit = 'STITCH' Then  convert(numeric(6,0), o.Qty) * convert(numeric(6,0), tmsCost.Qty) * 1.0 / 1000 * getCPURate.CpuRate
+			When artT.ArtworkUnit = 'PPU' Then isnull(convert(numeric(6,0), o.Qty) * tmsCost.Price * getCPURate.CpuRate,0)
+			When artT.ProductionUnit = 'Qty' Then convert(numeric(6,0), o.Qty) * convert(numeric(6,0), tmsCost.Qty) * getCPURate.CpuRate
+			Else convert(numeric(6,0), o.Qty) * getCPURate.CpuRate
 			End
 		, [Key]               =  convert(varchar(6),dateadd(day,-7, o.SCIDelivery), 112)
 		, [Half key] = case
@@ -119,11 +117,11 @@ AS
 		, FactoryID = o.ProgramID
 		, Factory.MDivisionID
 		, ArtworkTypeID = at.ID
-		, Value = case When at.ProductionUnit = 'TMS' Then o.Qty * tms / GetStandardTMS.StdTMS * getCPURate.CpuRate
-			When at.ArtworkUnit = 'STITCH' Then  o.Qty * tmsCost.Qty / 1000 * getCPURate.CpuRate
-			When at.ArtworkUnit = 'PPU' Then isnull(o.Qty * tmsCost.Price * getCPURate.CpuRate,0)
-			When at.ProductionUnit = 'Qty' Then o.Qty * tmsCost.Qty * getCPURate.CpuRate
-			Else o.Qty * getCPURate.CpuRate
+		, Value = case When at.ProductionUnit = 'TMS' Then convert(numeric(6,0), o.Qty) * tms / GetStandardTMS.StdTMS * getCPURate.CpuRate
+			When at.ArtworkUnit = 'STITCH' Then  convert(numeric(6,0), o.Qty) * convert(numeric(6,0), tmsCost.Qty) / 1000 * getCPURate.CpuRate
+			When at.ArtworkUnit = 'PPU' Then isnull(convert(numeric(6,0), o.Qty) * tmsCost.Price * getCPURate.CpuRate,0)
+			When at.ProductionUnit = 'Qty' Then convert(numeric(6,0), o.Qty) * convert(numeric(6,0), tmsCost.Qty) * getCPURate.CpuRate
+			Else convert(numeric(6,0), o.Qty) * getCPURate.CpuRate
 			End * -1
 		, [Key]               =  convert(varchar(6),dateadd(day,-7, o.SCIDelivery), 112)
 		, [Half key] = case
@@ -183,7 +181,7 @@ AS
 		outer apply (Select top 1 StdTMS From System) GetStandardTMS
 		outer apply (Select sum(isnull(sumValue,0))sumValue From @SourceA as tmpSumValue where tmpSumValue.[Half Key] = keyTable.[Half Key] and tmpSumValue.FactoryID = Factory.ID and tmpSumValue.ArtworkTypeID = at.ID and tmpSumValue.MDivisionID = Factory.MDivisionID)tmpSumValue
 		outer apply (Select WorkDay = fw.HalfMonth1 + fw.HalfMonth2) GetWorkingDay
-		outer apply (Select Capacity = iif(at.ArtworkUnit = '', isnull(ftms.TMS, 0) / GetStandardTMS.StdTMS * IIF(ftms.ArtworkTypeID = 'SEWING', 3600, 60), isnull(ftms.TMS, 0))) GetCapacity
+		outer apply (Select Capacity = iif(at.ArtworkUnit = '', isnull(ftms.TMS, 0) / convert( numeric(5,0) ,GetStandardTMS.StdTMS) * IIF(ftms.ArtworkTypeID = 'SEWING', 3600, 60), isnull(ftms.TMS, 0))) GetCapacity
 		outer apply (Select Capacity = Round(iif(GetWorkingDay.WorkDay = 0, 0, GetCapacity.Capacity * fw.HalfMonth1 / GetWorkingDay.WorkDay),6)) GetCapacityHalf1
 		outer apply (Select Capacity = Round(iif(GetWorkingDay.WorkDay = 0, 0, GetCapacity.Capacity * fw.HalfMonth2 / GetWorkingDay.WorkDay),6)) GetCapacityHalf2
 		Where Factory.IsSCI = 1 And at.Junk = 0
