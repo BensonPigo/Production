@@ -1214,7 +1214,9 @@ BEGIN
 		, [IDD] = b.IDD
 		, [CRD] = b.CRDDate
 		, [CRD(YYYYMM)] = FORMAT(b.CRDDate, 'yyyyMM')
-		, [Check CRD] = case when b.BuyerDelivery <> b.CRDDate then 'Y' else '' end
+		, [Check CRD] = case when b.BuyerDelivery is null or b.CRDDate is null then 'Y'
+							when b.BuyerDelivery <> b.CRDDate then 'Y' 
+							else '' end
 		, [OrdCFM] = b.CFMDate
 		, [CRD-OrdCFM] = case when b.CRDDate is null or b.CFMDate is null then 0 else DATEDIFF(day, b.CRDDate, b.CFMDate) end
 		, [SPNO] = b.ID
@@ -1272,7 +1274,7 @@ BEGIN
 		, [Total Sewing Output] = b.TtlSewQty
 		, [Cut Qty] = b.CutQty
 		, [By Comb] = case when b.WorkType = 1 then 'Y' else '' end
-		, [Cutting Status] = case when b.CutQty > b.Qty then 'Y' else '' end
+		, [Cutting Status] = case when b.CutQty >= b.Qty then 'Y' else '' end
 		, [Packing Qty] = b.PackingQty
 		, [Packing FOC Qty] = b.PackingFOCQty
  		, [Booking Qty] = b.BookingQty
