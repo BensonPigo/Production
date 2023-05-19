@@ -174,7 +174,7 @@ select [ID] as [Pack ID]
 
             if (this.dateTransfer.HasValue2)
             {
-                sqlWhere += " and o.PLCtnTrToRgCodeDate  <= @PLCtnTrToRgCodeDateTo";
+                sqlWhere += " and p.PLCtnTrToRgCodeDate  <= @PLCtnTrToRgCodeDateTo";
                 listPar.Add(new SqlParameter("@PLCtnTrToRgCodeDateTo", this.dateTransfer.Value2));
             }
 
