@@ -10,7 +10,9 @@ using System.Data;
 using System.Data.SqlClient;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Windows.Forms;
+using System.Windows.Forms.VisualStyles;
 
 namespace Sci.Production.Quality
 {
@@ -26,7 +28,7 @@ namespace Sci.Production.Quality
         {
             this.InitializeComponent();
             this.EditMode = true;
-            MyUtility.Tool.SetupCombox(this.comboMaterialType, 2, 1, @"F,Fabric,A,Accessory");
+            //MyUtility.Tool.SetupCombox(this.comboMaterialType, 2, 1, @"F,Fabric,A,Accessory");
         }
 
         private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
@@ -40,6 +42,7 @@ namespace Sci.Production.Quality
             this.SetupGrid_Material();
             this.SetupGrid_Document();
             this.SetupGrid_Report(string.Empty);
+            MyUtility.Tool.SetupCombox(this.comboMaterialType, 2, 1, @"F,Fabric,A,Accessory");
         }
 
         private void SetupGrid_Material()
@@ -695,6 +698,207 @@ and exists(select 1 FROM Export_Detail ed WITH (NOLOCK) inner join Fabric f2 WIT
             }
 
             this.bs_Report.DataSource = dt;
+        }
+
+        private void btn_ToExcel_Click(object sender, EventArgs e)
+        {
+            DataTable dtMaterial = ((MaterialtableDataSet)((BindingSource)this.grid_Material.DataSource).DataSource).PO;
+            if (dtMaterial.Rows.Count <= 0)
+            {
+                MyUtility.Msg.WarningBox("Data not Found.");
+                return;
+            }
+
+            string sqlcmd = $@"
+Select RowNo = ROW_NUMBER() OVER(ORDER by Month), ID 
+Into #probablySeasonList
+From SeasonSCI
+
+select distinct
+selected = cast(0 as bit),
+FileExistI= cast(0 as bit),
+FileExistT= cast(0 as bit),
+ed.id,
+ed.InvoiceNo,
+Export.ETA,
+ATA = Export.WhseArrival,
+seasonID = s.ID,
+ed.PoID,
+seq=ed.seq1+'-'+ed.seq2,
+o.BrandId,
+ps.SuppID,
+Supp.AbbEN,
+psd.Refno,
+f.BrandRefNo,
+f.WeaveTypeID,
+ColorID = isnull(psdsC.SpecValue ,''),
+[ColorName] = c.ColorName,
+Qty = isnull(ed.Qty,0) + isnull(ed.Foc,0),
+FirstDyelot.FirstDyelot, 
+FirstDyelot_FTYReceivedReport = FirstDyelot.FTYReceivedReport,
+a.T1InspectedYards,
+b.T1DefectPoints,
+ed.seq1,
+ed.seq2,
+f.Clima,
+sr.AWBNo,
+Export.CloseDate,
+--o.SeasonID,
+f.RibItem
+into #tmpBasc
+from Export_Detail ed with(nolock)
+inner join Export with(nolock) on Export.id = ed.id and Export.Confirm = 1
+inner join orders o with(nolock) on o.id = ed.PoID
+left join NewSentReport sr with (nolock) on sr.exportID = ed.ID and sr.poid = ed.PoID and sr.Seq1 =ed.Seq1 and sr.Seq2 = ed.Seq2
+left join Po_Supp_Detail psd with(nolock) on psd.id = ed.poid and psd.seq1 = ed.seq1 and psd.seq2 = ed.seq2
+left join PO_Supp ps with(nolock) on ps.id = psd.id and ps.SEQ1 = psd. SEQ1
+left join Supp with(nolock) on Supp.ID = ps.SuppID
+left join Season s with(nolock) on s.ID=o.SeasonID and s.BrandID = o.BrandID
+left join Factory fty with (nolock) on fty.ID = o.FactoryID
+left join Fabric f with(nolock) on f.SCIRefno =psd.SCIRefno
+Left join #probablySeasonList seasonSCI on seasonSCI.ID = s.SeasonSCIID
+left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
+OUTER APPLY(
+	Select Top 1 FirstDyelot,FTYReceivedReport,SeasonID
+	From dbo.FirstDyelot fd
+	Inner join #probablySeasonList season on fd.SeasonID = season.ID
+	WHERE fd.BrandRefno = psd.Refno and fd.ColorID = isnull(psdsC.SpecValue ,'') and fd.SuppID = ps.SuppID and fd.TestDocFactoryGroup = fty.TestDocFactoryGroup
+		And seasonSCI.RowNo >= season.RowNo
+	Order by season.RowNo Desc
+)FirstDyelot
+outer apply(
+	select T1InspectedYards=sum(fp.ActualYds)
+	from fir f
+	left join FIR_Physical fp on fp.id=f.id
+	left join Receiving r on r.id= f.ReceivingID
+	where r.InvNo=ed.ID and f.POID=ed.PoID and f.SEQ1 =ed.Seq1 and f.SEQ2 =ed.Seq2
+)a
+outer apply(
+	select T1DefectPoints = sum(fp.TotalPoint)
+	from fir f
+	left join FIR_Physical fp on fp.id=f.id
+	left join Receiving r on r.id= f.ReceivingID
+	where r.InvNo=ed.ID and f.POID=ed.PoID and f.SEQ1 =ed.Seq1 and f.SEQ2 =ed.Seq2
+)b
+outer apply(
+	select [ColorName] = iif(c.Varicolored > 1, c.Name, c.ID)
+	from Color c
+	where c.ID = isnull(psdsC.SpecValue ,'')
+	and c.BrandID = psd.BrandID 
+)c
+where 1=1
+and exists(
+	select * from #tmp t
+	where t.poid = ed.PoID
+	and t.Seq1 = ed.Seq1	
+	and t.seq2 = ed.Seq2
+	and t.Type = f.Type
+)
+
+select t.*
+,sr.documentName
+,sr.ReportDate
+,sr.T2InspYds
+,sr.T2DefectPoint
+,sr.T2Grade
+into #tmpReportDate
+from #tmpBasc t
+left join NewSentReport sr with (nolock) on sr.exportID = t.ID and sr.poid = t.PoID and sr.Seq1 =t.Seq1 and sr.Seq2 = t.Seq2
+
+
+select t.*
+,sr.documentName
+,sr.FTYReceivedReport
+,sr.T2InspYds
+,sr.T2DefectPoint
+,sr.T2Grade
+into #tmpFTYReceivedReport
+from #tmpBasc t
+left join NewSentReport sr with (nolock) on sr.exportID = t.ID and sr.poid = t.PoID and sr.Seq1 =t.Seq1 and sr.Seq2 = t.Seq2
+
+
+select 
+[WK#] = a.ID
+,[Invoice#] = a.InvoiceNo
+,[ATA] = a.ATA
+,[ETA] = a.Eta
+,[Season] = a.seasonID
+,[SP#] = a.PoID
+,[Seq#] = a.seq
+,[Brand] = a.BrandID
+,[SuppID] = a.SuppID
+,[Supp Name] = a.AbbEN
+,[Ref#] = a.Refno
+,[Weave Type] = a.WeaveTypeID
+,[Color] = a.ColorID
+,[Qty] = a.Qty
+,[Inspection Report Fty Received Date] = c.[Inspection Report]
+,[Inspection Report Supp Sent Date] = b.[Inspection Report]
+,[Test Report Fty Received Date] = c.[Test report]
+,[Test Report Supp Sent Date] = b.[Test report]
+,[Continuity Card Fty Received Date] = c.[Continuity card]
+,[Continuity Card Supp Sent Date] = b.[Continuity card]
+,[Continuity Card AWB#]=a.AWBno
+,[1st Bulk Dyelot Fty Received Date] = a.FirstDyelot_FTYReceivedReport
+,[1st Bulk Dyelot Supp Sent Date] = a.FirstDyelot
+,[T2 Inspected Yards] = b.T2InspYds
+,[T2 Defect Points] = b.T2DefectPoint
+,[Grade] = b.T2Grade
+,[T1 Inspected Yards] = b.T1InspectedYards
+,[T1 Defect Points] = b.T1DefectPoints
+from #tmpBasc a
+inner join (
+	select *
+	from #tmpReportDate t
+	pivot(
+		max(ReportDate)
+		for documentname in([Continuity card],[Inspection Report],[Test report])
+	) aa
+)b on a.ID = b.ID and a.PoID = b.PoID and a.Seq1=b.Seq1 and a.Seq2=b.Seq2
+inner join (
+	select *
+	from #tmpFTYReceivedReport t
+	pivot(
+		max(FTYReceivedReport)
+		for documentname in([Continuity card],[Inspection Report],[Test report])
+	) aa
+)c on a.ID = c.ID and a.PoID = c.PoID and a.Seq1 = c.Seq1 and a.Seq2 = c.Seq2
+
+
+drop table #probablySeasonList,#tmpBasc,#tmpFTYReceivedReport,#tmpReportDate
+";
+
+            DualResult result = MyUtility.Tool.ProcessWithDatatable(dtMaterial, string.Empty, sqlcmd, out DataTable dtEx, "#tmp");
+            if (!result)
+            {
+                this.ShowErr(result);
+            }
+
+            if (dtEx.Rows.Count <= 0)
+            {
+                MyUtility.Msg.WarningBox("Data not Found.");
+                return;
+            }
+
+            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Quality_P52.xltx"); // 預先開啟excel app
+            objApp.Visible = false;
+            MyUtility.Excel.CopyToXls(dtEx, string.Empty, "Quality_P52.xltx", 1, false, null, objApp);      // 將datatable copy to excel
+            objApp.Cells.EntireColumn.AutoFit();    // 自動欄寬
+            objApp.Cells.EntireRow.AutoFit();       ////自動欄高
+
+            string excelFile = Class.MicrosoftFile.GetName("Quality_P52");
+            objApp.ActiveWorkbook.SaveAs(excelFile);
+            objApp.Quit();
+            Marshal.ReleaseComObject(objApp);
+            excelFile.OpenFile();
+        }
+
+        private void comboMaterialType_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (!MyUtility.Check.Empty(this.comboMaterialType.SelectedValue))
+            {
+                this.Find();
+            }
         }
     }
 
