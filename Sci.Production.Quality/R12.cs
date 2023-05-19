@@ -40,6 +40,7 @@ select  [Category] = ddl.[Name],
         ct.Roll,
         ct2.Dyelot,
         {0}
+        ,o.OrderTypeID 
 from Fir f with (nolock)
 inner join Receiving a with (nolock) on a.Id = f.ReceivingID
 left join Orders o with (nolock) on o.ID = f.POID
@@ -88,6 +89,7 @@ select	[Category] = ddl.[Name],
         ct.Roll,
         ct2.Dyelot,
         {0}
+        ,o.OrderTypeID 
 from Fir f with (nolock)
 inner join TransferIn a with (nolock) on a.Id = f.ReceivingID
 left join Orders o with (nolock) on o.ID = f.POID
@@ -179,6 +181,7 @@ select
 	,[Category] = ddl.Name
 	,[CuttingData] = o.CutInLine
 	,[ArriveWHData] = a.{6}
+    ,o.OrderTypeID 
 into #tmp{2}
 from SubTransfer st
 inner join SubTransfer_Detail std on std.id = st.id
@@ -277,6 +280,7 @@ select
 	f.ApproveDate
 
     {6}
+    ,OrderTypeID 
 from #tmp{0} f
 left join pass1 p1 with (nolock) on p1.id = f.{1}Inspector
 {2}
@@ -284,8 +288,10 @@ where 1=1
 {8}
 group by f.ToPOID,f.ToSeq,f.FromFty,f.ToFty,f.TransferID,f.FromPOID,f.FromSeq,f.WK,f.ReceivingID,f.StyleID,f.BrandID,f.Suppid,
 	f.Refno,f.ColorID,f.IssueDate,f.WeaveTypeID,f.ctRoll,f.ctDyelot,f.Approve,f.ApproveDate,p1.Name,f.Category,f.ArriveWHData,f.CuttingData,
+    f.OrderTypeID,
 	f.Non{1},f.{1},f.{1}Inspector,f.{1}Date
 	{7}
+
 ";
 
         /// <inheritdoc/>
