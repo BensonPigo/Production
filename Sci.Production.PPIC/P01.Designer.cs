@@ -3741,10 +3741,11 @@
             // chbStyleCarryover
             // 
             this.chbStyleCarryover.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.chbStyleCarryover.Location = new System.Drawing.Point(0, 0);
+            this.chbStyleCarryover.Location = new System.Drawing.Point(825, 283);
             this.chbStyleCarryover.Name = "chbStyleCarryover";
             this.chbStyleCarryover.Size = new System.Drawing.Size(104, 24);
             this.chbStyleCarryover.TabIndex = 257;
+            this.chbStyleCarryover.Text = "Carryover";
             // 
             // P01
             // 
