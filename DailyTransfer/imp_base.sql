@@ -5751,5 +5751,39 @@ SELECT
 from [Trade_To_Pms].[dbo].BrandRelation as b WITH (NOLOCK)
 where not exists(select BrandID,SuppGroup,SuppID from [Production].[dbo].BrandRelation as a WITH (NOLOCK) where a.SuppGroup = b.SuppGroup and a.BrandID = b.BrandID and a.SuppID = b.SuppID)
 
+/*AutomatedLineMappingConditionSetting*/
+delete [Production].[dbo].AutomatedLineMappingConditionSetting
+
+insert into [Production].[dbo].AutomatedLineMappingConditionSetting
+			(
+				Ukey
+				,MDivisionID
+				,FactoryID
+				,FunctionIE
+				,Verify
+				,Condition1
+				,Condition2
+				,Condition3
+				,Junk
+				,AddName
+				,AddDate
+				,EditName
+				,EditDate
+			)
+select	Ukey
+		,MDivisionID
+		,FactoryID
+		,FunctionIE
+		,Verify
+		,Condition1
+		,Condition2
+		,Condition3
+		,Junk
+		,AddName
+		,AddDate
+		,EditName
+		,EditDate
+from	[Trade_To_Pms].[dbo].AutomatedLineMappingConditionSetting
+
 
 END

@@ -54,16 +54,34 @@ namespace Sci.Production.Class
             {
                 string unionAllItem = this.addAllItem ? "select [ID] = 'ALL', [Name] = 'ALL' , [Seq] = 0 union all" : string.Empty;
                 string selectCommand = $@"
-select *
-from (
-    {unionAllItem}
-    select  ID
-            , Name = rtrim(Name)
-            , Seq
-    from DropDownList WITH (NOLOCK) 
-    where Type = '{this.Type}' 
+IF OBJECT_ID('View_DropDownList', 'V') IS NOT NULL
+BEGIN
+    -- 視圖存在的處理邏輯
+    select *
+    from (
+        {unionAllItem}
+        select  ID
+                , Name = rtrim(Name)
+                , Seq
+        from View_DropDownList WITH (NOLOCK) 
+        where Type = '{this.Type}' 
+    ) a
+END
+ELSE
+BEGIN
+    select *
+    from (
+        {unionAllItem}
+        select  ID
+                , Name = rtrim(Name)
+                , Seq
+        from DropDownList WITH (NOLOCK) 
+        where Type = '{this.Type}' 
     ) a
 order by Seq
+END
+
+
 
 ";
 

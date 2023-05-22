@@ -2839,6 +2839,8 @@
     <Build Include="dbo\Tables\BrandRelation.sql" />
     <Build Include="dbo\Tables\ExportRefnoSentReport.sql" />
     <Build Include="dbo\Tables\Style_UnitPrice.sql" />
+    <Build Include="dbo\Tables\AutomatedLineMappingConditionSetting.sql" />
+    <Build Include="dbo\Tables\AutomatedLineMappingConditionSetting_History.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />

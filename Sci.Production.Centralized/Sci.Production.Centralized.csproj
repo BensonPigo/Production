@@ -181,6 +181,18 @@
     <Compile Include="IE_B14.Designer.cs">
       <DependentUpon>IE_B14.cs</DependentUpon>
     </Compile>
+    <Compile Include="IE_B15.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="IE_B15.Designer.cs">
+      <DependentUpon>IE_B15.cs</DependentUpon>
+    </Compile>
+    <Compile Include="IE_B15_History.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="IE_B15_History.Designer.cs">
+      <DependentUpon>IE_B15_History.cs</DependentUpon>
+    </Compile>
     <Compile Include="Packing_B09.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -547,6 +559,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="IE_B14.resx">
       <DependentUpon>IE_B14.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="IE_B15.resx">
+      <DependentUpon>IE_B15.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="IE_B15_History.resx">
+      <DependentUpon>IE_B15_History.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Packing_B09.resx">
       <DependentUpon>Packing_B09.cs</DependentUpon>
