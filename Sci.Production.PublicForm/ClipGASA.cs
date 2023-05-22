@@ -15,13 +15,21 @@ using Ict.Win.Defs;
 using Sci.Data;
 using Sci.Win;
 using System.Data.SqlClient;
+//using static Sci.Win.SYS;
+using System.CodeDom.Compiler;
+using System.Diagnostics;
+using System.Collections;
+using System.Runtime.Serialization;
+using System.Xml.Schema;
+using System.Xml.Serialization;
+using static Sci.Win.SYS;
 
 namespace Sci.Production.PublicForm
 {
     /// <summary>
     /// Clip subpage class.
     /// </summary>
-    public partial class Clip : Sci.Win.Tools.BaseGrid
+    public partial class ClipGASA : Sci.Win.Tools.BaseGrid
     {
         /// <summary>
         /// 
@@ -30,30 +38,30 @@ namespace Sci.Production.PublicForm
 
         private string CHARs = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="data"></param>
-        /// <param name="dir"></param>
-        /// <param name="clipDir"></param>
-        /// <returns></returns>
-        internal static DualResult GetClipDirYYYYMM(Sci.Win.SYS.CLIPRow data, out string dir, string clipDir = null)
-        {
-            clipDir = clipDir ?? PrivUtils.GetClipRootPath(data.TABLENAME, _alianClipConnectionName);
-            dir = null;
-            try
-            {
-                string yyyymm = null;
-                yyyymm = data.ADDDATE.ToString("yyyyMM");
-                dir = Path.Combine(clipDir, yyyymm);
-            }
-            catch (Exception ex)
-            {
-                return Result.F(ex);
-            }
+        ///// <summary>
+        ///// 
+        ///// </summary>
+        ///// <param name="data"></param>
+        ///// <param name="dir"></param>
+        ///// <param name="clipDir"></param>
+        ///// <returns></returns>
+        //internal static DualResult GetClipDirYYYYMM(Sci.Win.SYS.CLIPRow data, out string dir, string clipDir = null)
+        //{
+        //    clipDir = clipDir ?? PrivUtils.GetClipRootPath(data.TABLENAME, _alianClipConnectionName);
+        //    dir = null;
+        //    try
+        //    {
+        //        string yyyymm = null;
+        //        yyyymm = data.ADDDATE.ToString("yyyyMM");
+        //        dir = Path.Combine(clipDir, yyyymm);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return Result.F(ex);
+        //    }
 
-            return Result.True;
-        }
+        //    return Result.True;
+        //}
 
         private static Dictionary<string, string[]> FillMappingClipDic(string alianClipConnectionName = "")
         {
@@ -73,13 +81,13 @@ namespace Sci.Production.PublicForm
         /// <summary>
         /// Constructor of Clip.
         /// </summary>
-        protected Clip()
+        protected ClipGASA()
         {
             this.InitializeComponent();
 
             this.grid.MultiSelect = true;
 
-            this.Text = "Clip"; 
+            this.Text = "Clip";
             this.grid.IsEditable = true;
             this.Helper.Controls.Grid.Generator(this.grid)
                 .Text("SOURCEFILE", header: "File Name", width: Widths.AnsiChars(35))
@@ -87,7 +95,6 @@ namespace Sci.Production.PublicForm
                 {
                     CharacterCasing = CharacterCasing.Normal,
                 })
-                // .Numeric("SIZE", header: "Size", integer_places: 10)
                 .Text("PKEY", header: "UKey", width: Widths.AnsiChars(10))
                 .Text("ADDDATE", header: "Created by", width: Widths.AnsiChars(25), settings: new DataGridViewGeneratorTextColumnSettings()
                 {
@@ -99,7 +106,7 @@ namespace Sci.Production.PublicForm
                             return;
                         }
 
-                        var data = (Sci.Win.SYS.CLIPRow)view.Row;
+                        var data = (CLIPGASARow)view.Row;
 
                         string value = !data.IsADDNAMENull() ? data.ADDNAME : string.Empty;
                         if (!data.IsADDDATENull())
@@ -141,7 +148,7 @@ namespace Sci.Production.PublicForm
         /// <param name="canedit">Flag of CanEdit.</param>
         /// <param name="limitedClip">Limited Clip</param>
         /// <param name="alianClipConnectionName">alian Clip ConnectionName</param>
-        public Clip(string tablename, string uid, bool canedit, DataRow dr, string limitedClip = "", string alianClipConnectionName = "", string apiUrlFile = "")
+        public ClipGASA(string tablename, string uid, bool canedit, DataRow dr, string limitedClip = "", string alianClipConnectionName = "", string apiUrlFile = "")
             : this()
         {
             this._tablename = tablename;
@@ -590,7 +597,7 @@ namespace Sci.Production.PublicForm
         /// <param name="e">Event Args information.</param>
         void nem_Click(object sender, EventArgs e)
         {
-            using (var frm = new Clip01(this.TableName, this.UID, string.Empty, this._clipdir, this.LimitedClip, _alianClipConnectionName, this._dr))
+            using (var frm = new ClipGASA01(this.TableName, this.UID, string.Empty, this._clipdir, this.LimitedClip, _alianClipConnectionName, this._dr))
             {
                 frm.ShowDialog();
                 this.Load();
@@ -605,7 +612,7 @@ namespace Sci.Production.PublicForm
                 string sqlcmd = $@"select 
                 [FileName] = TableName + PKey,
                 SourceFile
-                from Clip
+                from GASAClip
                 where TableName = '{this._tablename}' and 
                 UniqueKey = '{this._uid}'";
                 DualResult dualResult = DBProxy.Current.Select(null, sqlcmd, out DataTable dt);
@@ -972,77 +979,77 @@ namespace Sci.Production.PublicForm
             this.Close();
         }
 
-                /// <summary>
-        /// 不顯示畫面, 直接夾檔
-        /// </summary>
-        /// <param name="tablename">Table name</param>
-        /// <param name="uniqueID">a unique value in {tablename} </param>
-        /// <param name="userID">who add clip (refer to Pass1.ID )</param>
-        /// <param name="description"> description of files </param>
-        /// <param name="alianClipConnectionName"> alian Clip Connection Name </param>
-        /// <param name="clipFiles">one or more strings for each file (full path)</param>
-        /// <returns>success or not</returns>
-        public static DualResult AddAlianClip(string tablename, string uniqueID, string userID, string description, string alianClipConnectionName, params string[] clipFiles)
-        {
-            DualResult result = Result.True;
-            Sci.Win.SYS.CLIPDataTable datas = new Sci.Win.SYS.CLIPDataTable();
-            List<Sci.Win.SYS.CLIPRow> clip_data = new List<Sci.Win.SYS.CLIPRow>();
-            for (int i = 0; i < clipFiles.Length; i++)
-            {
-                var fileinfo = new FileInfo(clipFiles[i]);
-                var data = datas.NewCLIPRow();
-                data.TABLENAME = tablename;
-                data.UNIQUEKEY = uniqueID;
-                data.ADDNAME = userID;
-                data.PKEY = i.ToString("0000000000");
-                data.DESCRIPTION = description;
-                data.SOURCEFILE = fileinfo.Name;
-                data.LOCALFILE = fileinfo.FullName;
-                data.SIZE = fileinfo.Length;
+        //        /// <summary>
+        ///// 不顯示畫面, 直接夾檔
+        ///// </summary>
+        ///// <param name="tablename">Table name</param>
+        ///// <param name="uniqueID">a unique value in {tablename} </param>
+        ///// <param name="userID">who add clip (refer to Pass1.ID )</param>
+        ///// <param name="description"> description of files </param>
+        ///// <param name="alianClipConnectionName"> alian Clip Connection Name </param>
+        ///// <param name="clipFiles">one or more strings for each file (full path)</param>
+        ///// <returns>success or not</returns>
+        //public static DualResult AddAlianClip(string tablename, string uniqueID, string userID, string description, string alianClipConnectionName, params string[] clipFiles)
+        //{
+        //    DualResult result = Result.True;
+        //    Sci.Win.SYS.CLIPDataTable datas = new Sci.Win.SYS.CLIPDataTable();
+        //    List<Sci.Win.SYS.CLIPRow> clip_data = new List<Sci.Win.SYS.CLIPRow>();
+        //    for (int i = 0; i < clipFiles.Length; i++)
+        //    {
+        //        var fileinfo = new FileInfo(clipFiles[i]);
+        //        var data = datas.NewCLIPRow();
+        //        data.TABLENAME = tablename;
+        //        data.UNIQUEKEY = uniqueID;
+        //        data.ADDNAME = userID;
+        //        data.PKEY = i.ToString("0000000000");
+        //        data.DESCRIPTION = description;
+        //        data.SOURCEFILE = fileinfo.Name;
+        //        data.LOCALFILE = fileinfo.FullName;
+        //        data.SIZE = fileinfo.Length;
 
-                clip_data.Add(data);
-            }
+        //        clip_data.Add(data);
+        //    }
 
-            result = AddClip(clip_data, alianClipConnectionName: alianClipConnectionName);
-            datas.Dispose();
+        //    result = AddClip(clip_data, alianClipConnectionName: alianClipConnectionName);
+        //    datas.Dispose();
 
-            return result;
-        }
+        //    return result;
+        //}
 
-        /// <summary>
-        /// 不顯示畫面, 直接夾檔
-        /// </summary>
-        /// <param name="tablename">Table name</param>
-        /// <param name="uniqueID">a unique value in {tablename} </param>
-        /// <param name="userID">who add clip (refer to Pass1.ID )</param>
-        /// <param name="description"> description of files </param>
-        /// <param name="clipFiles">one or more strings for each file (full path)</param>
-        /// <returns>success or not</returns>
-        public static DualResult AddClip(string tablename, string uniqueID, string userID, string description, params string[] clipFiles)
-        {
-            DualResult result = Result.True;
-            Sci.Win.SYS.CLIPDataTable datas = new Sci.Win.SYS.CLIPDataTable();
-            List<Sci.Win.SYS.CLIPRow> clip_data = new List<Sci.Win.SYS.CLIPRow>();
-            for (int i = 0; i < clipFiles.Length; i++)
-            {
-                var fileinfo = new FileInfo(clipFiles[i]);
-                var data = datas.NewCLIPRow();
-                data.TABLENAME = tablename;
-                data.UNIQUEKEY = uniqueID;
-                data.ADDNAME = userID;
-                data.PKEY = i.ToString("0000000000");
-                data.DESCRIPTION = description;
-                data.SOURCEFILE = fileinfo.Name;
-                data.LOCALFILE = fileinfo.FullName;
-                data.SIZE = fileinfo.Length;
+        ///// <summary>
+        ///// 不顯示畫面, 直接夾檔
+        ///// </summary>
+        ///// <param name="tablename">Table name</param>
+        ///// <param name="uniqueID">a unique value in {tablename} </param>
+        ///// <param name="userID">who add clip (refer to Pass1.ID )</param>
+        ///// <param name="description"> description of files </param>
+        ///// <param name="clipFiles">one or more strings for each file (full path)</param>
+        ///// <returns>success or not</returns>
+        //public static DualResult AddClip(string tablename, string uniqueID, string userID, string description, params string[] clipFiles)
+        //{
+        //    DualResult result = Result.True;
+        //    Sci.Win.SYS.CLIPDataTable datas = new Sci.Win.SYS.CLIPDataTable();
+        //    List<Sci.Win.SYS.CLIPRow> clip_data = new List<Sci.Win.SYS.CLIPRow>();
+        //    for (int i = 0; i < clipFiles.Length; i++)
+        //    {
+        //        var fileinfo = new FileInfo(clipFiles[i]);
+        //        var data = datas.NewCLIPRow();
+        //        data.TABLENAME = tablename;
+        //        data.UNIQUEKEY = uniqueID;
+        //        data.ADDNAME = userID;
+        //        data.PKEY = i.ToString("0000000000");
+        //        data.DESCRIPTION = description;
+        //        data.SOURCEFILE = fileinfo.Name;
+        //        data.LOCALFILE = fileinfo.FullName;
+        //        data.SIZE = fileinfo.Length;
 
-                clip_data.Add(data);
-            }
+        //        clip_data.Add(data);
+        //    }
 
-            result = AddClip(clip_data);
-            datas.Dispose();
-            return result;
-        }
+        //    result = AddClip(clip_data);
+        //    datas.Dispose();
+        //    return result;
+        //}
 
         /// <summary>
         /// 
@@ -1097,40 +1104,40 @@ namespace Sci.Production.PublicForm
         /// <param name="alianClipConnectionName"></param>
         /// <returns>success or not</returns>
         
-        /// <summary>
-        /// 不顯示畫面, 直接夾檔
-        /// </summary>
-        /// <param name="tablename">Table name</param>
-        /// <param name="uniqueID">a unique value in {tablename} </param>
-        /// <param name="userID">who add clip (refer to Pass1.ID )</param>
-        /// <param name="description"> description of files </param>
-        /// <param name="clipFiles">one or more strings for each file (full path)</param>
-        /// <returns>success or not</returns>
-        public static DualResult AddLimitedClip(string tablename, string uniqueID, string userID, string description, string limitedClip, params string[] clipFiles)
-        {
-            DualResult result = Result.True;
-            Sci.Win.SYS.CLIPDataTable datas = new Sci.Win.SYS.CLIPDataTable();
-            List<Sci.Win.SYS.CLIPRow> clip_data = new List<Sci.Win.SYS.CLIPRow>();
-            for (int i = 0; i < clipFiles.Length; i++)
-            {
-                var fileinfo = new FileInfo(clipFiles[i]);
-                var data = datas.NewCLIPRow();
-                data.TABLENAME = tablename;
-                data.UNIQUEKEY = uniqueID;
-                data.ADDNAME = userID;
-                data.PKEY = i.ToString("0000000000");
-                data.DESCRIPTION = description;
-                data.SOURCEFILE = fileinfo.Name;
-                data.LOCALFILE = fileinfo.FullName;
-                data.SIZE = fileinfo.Length;
+        ///// <summary>
+        ///// 不顯示畫面, 直接夾檔
+        ///// </summary>
+        ///// <param name="tablename">Table name</param>
+        ///// <param name="uniqueID">a unique value in {tablename} </param>
+        ///// <param name="userID">who add clip (refer to Pass1.ID )</param>
+        ///// <param name="description"> description of files </param>
+        ///// <param name="clipFiles">one or more strings for each file (full path)</param>
+        ///// <returns>success or not</returns>
+        //public static DualResult AddLimitedClip(string tablename, string uniqueID, string userID, string description, string limitedClip, params string[] clipFiles)
+        //{
+        //    DualResult result = Result.True;
+        //    Sci.Win.SYS.CLIPDataTable datas = new Sci.Win.SYS.CLIPDataTable();
+        //    List<Sci.Win.SYS.CLIPRow> clip_data = new List<Sci.Win.SYS.CLIPRow>();
+        //    for (int i = 0; i < clipFiles.Length; i++)
+        //    {
+        //        var fileinfo = new FileInfo(clipFiles[i]);
+        //        var data = datas.NewCLIPRow();
+        //        data.TABLENAME = tablename;
+        //        data.UNIQUEKEY = uniqueID;
+        //        data.ADDNAME = userID;
+        //        data.PKEY = i.ToString("0000000000");
+        //        data.DESCRIPTION = description;
+        //        data.SOURCEFILE = fileinfo.Name;
+        //        data.LOCALFILE = fileinfo.FullName;
+        //        data.SIZE = fileinfo.Length;
 
-                clip_data.Add(data);
-            }
+        //        clip_data.Add(data);
+        //    }
 
-            result = AddLimitedClip(clip_data, limitedClip: limitedClip);
-            datas.Dispose();
-            return result;
-        }
+        //    result = AddLimitedClip(clip_data, limitedClip: limitedClip);
+        //    datas.Dispose();
+        //    return result;
+        //}
 
         /// <summary>
         /// 
@@ -1172,58 +1179,58 @@ namespace Sci.Production.PublicForm
             return result;
         }
 
-        /// <summary>
-        /// 列出所有的附檔
-        /// </summary>
-        /// <param name="tableName"></param>
-        /// <param name="uniqueID"></param>
-        /// <param name="files"></param>
-        /// <param name="alianClipConnectionName"></param>
-        /// <returns></returns>
-        public static DualResult GetAllClipFiles(string tableName, string uniqueID, out string[] files, string alianClipConnectionName = "")
-        {
-            files = null;
-            var result = Result.True;
-            string clipRootDir = null;
+        ///// <summary>
+        ///// 列出所有的附檔
+        ///// </summary>
+        ///// <param name="tableName"></param>
+        ///// <param name="uniqueID"></param>
+        ///// <param name="files"></param>
+        ///// <param name="alianClipConnectionName"></param>
+        ///// <returns></returns>
+        //public static DualResult GetAllClipFiles(string tableName, string uniqueID, out string[] files, string alianClipConnectionName = "")
+        //{
+        //    files = null;
+        //    var result = Result.True;
+        //    string clipRootDir = null;
 
-            Sci.Win.SYS.CLIPDataTable datas = null;
-            if (!(result = PrivUtils.GetClips(tableName, uniqueID, out datas, alianClipConnectionName))) { return result; }
+        //    Sci.Win.SYS.CLIPDataTable datas = null;
+        //    if (!(result = PrivUtils.GetClips(tableName, uniqueID, out datas, alianClipConnectionName))) { return result; }
 
-            clipRootDir = PrivUtils.GetClipRootPath(tableName, alianClipConnectionName);
+        //    clipRootDir = PrivUtils.GetClipRootPath(tableName, alianClipConnectionName);
 
-            var allClips = new List<string>();
-            var missClips = new List<string>();
-            try
-            {
-                var mappingClipDic = FillMappingClipDic(alianClipConnectionName);
-                foreach (var data in datas)
-                {
-                    string fileFullPath;
-                    if (GetClipFile(data, clipRootDir, mappingClipDic, out fileFullPath))
-                    {
-                        allClips.Add(fileFullPath);
-                    }
-                    else
-                    {
-                        missClips.Add(data.SOURCEFILE);
-                    }
-                }
+        //    var allClips = new List<string>();
+        //    var missClips = new List<string>();
+        //    try
+        //    {
+        //        var mappingClipDic = FillMappingClipDic(alianClipConnectionName);
+        //        foreach (var data in datas)
+        //        {
+        //            string fileFullPath;
+        //            if (GetClipFile(data, clipRootDir, mappingClipDic, out fileFullPath))
+        //            {
+        //                allClips.Add(fileFullPath);
+        //            }
+        //            else
+        //            {
+        //                missClips.Add(data.SOURCEFILE);
+        //            }
+        //        }
 
-                files = allClips.ToArray();
-            }
-            catch (Exception ex)
-            {
-                return Result.F(ex);
-            }
+        //        files = allClips.ToArray();
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return Result.F(ex);
+        //    }
 
-            if (missClips.Count != 0)
-            {
-                string miss = Environment.NewLine + string.Join(Environment.NewLine, missClips);
-                result = Result.F("These files are not found..." + miss);
-            }
+        //    if (missClips.Count != 0)
+        //    {
+        //        string miss = Environment.NewLine + string.Join(Environment.NewLine, missClips);
+        //        result = Result.F("These files are not found..." + miss);
+        //    }
 
-            return result;
-        }
+        //    return result;
+        //}
 
         /// <summary>
         /// 列出所有的附檔
@@ -1279,50 +1286,50 @@ namespace Sci.Production.PublicForm
             return result;
         }
 
-        /// <summary>
-        /// input 1 隨單號 + tableName刪除其所有的副擋
-        /// </summary>
-        /// <param name="tableName">tableName</param>
-        /// <param name="uniqueID">單號</param>
-        /// <param name="alianClipConnectionName">alian Clip ConnectionName</param>
-        /// <returns>ok or not</returns>
-        public static DualResult DeleteClip(string tableName, string uniqueID)
-        {
-            DualResult result;
+        ///// <summary>
+        ///// input 1 隨單號 + tableName刪除其所有的副擋
+        ///// </summary>
+        ///// <param name="tableName">tableName</param>
+        ///// <param name="uniqueID">單號</param>
+        ///// <param name="alianClipConnectionName">alian Clip ConnectionName</param>
+        ///// <returns>ok or not</returns>
+        //public static DualResult DeleteClip(string tableName, string uniqueID)
+        //{
+        //    DualResult result;
 
-            // 1. 刪除擋案
-            result = DeleteClip_File(tableName, uniqueID);
-            if (!result)
-            {
-                return result;
-            }
+        //    // 1. 刪除擋案
+        //    result = DeleteClip_File(tableName, uniqueID);
+        //    if (!result)
+        //    {
+        //        return result;
+        //    }
 
-            // 2. 先刪除DB記錄
-            result = DeleteClip_DB(tableName, uniqueID);
+        //    // 2. 先刪除DB記錄
+        //    result = DeleteClip_DB(tableName, uniqueID);
 
-            return result;
-        }
+        //    return result;
+        //}
 
-        /// <summary>
-        /// input 1 隨單號 + tableName刪除其所有的副擋
-        /// </summary>
-        /// <param name="tableName">tableName</param>
-        /// <param name="uniqueID">單號</param>
-        /// <param name="alianClipConnectionName">alian Clip ConnectionName</param>
-        /// <returns>ok or not</returns>
-        public static DualResult DeleteAlianClip(string tableName, string uniqueID, string alianClipConnectionName)
-        {
-            DualResult result;
+        ///// <summary>
+        ///// input 1 隨單號 + tableName刪除其所有的副擋
+        ///// </summary>
+        ///// <param name="tableName">tableName</param>
+        ///// <param name="uniqueID">單號</param>
+        ///// <param name="alianClipConnectionName">alian Clip ConnectionName</param>
+        ///// <returns>ok or not</returns>
+        //public static DualResult DeleteAlianClip(string tableName, string uniqueID, string alianClipConnectionName)
+        //{
+        //    DualResult result;
 
-            // 1. 刪除擋案
-            result = DeleteClip_File(tableName, uniqueID, alianClipConnectionName);
-            if (!result) { return result; }
+        //    // 1. 刪除擋案
+        //    result = DeleteClip_File(tableName, uniqueID, alianClipConnectionName);
+        //    if (!result) { return result; }
 
-            // 2. 先刪除DB記錄
-            result = DeleteClip_DB(tableName, uniqueID, alianClipConnectionName);
+        //    // 2. 先刪除DB記錄
+        //    result = DeleteClip_DB(tableName, uniqueID, alianClipConnectionName);
 
-            return result;
-        }
+        //    return result;
+        //}
 
         private static DualResult DeleteClip_File(string tableName, string uniqueID, string alianClipConnectionName = "")
         {
@@ -1398,4 +1405,581 @@ namespace Sci.Production.PublicForm
             return result;
         }
     }
+
+    //
+    // 摘要:
+    //     Represents the strongly named DataTable class.
+    [Serializable]
+    [XmlSchemaProvider("GetTypedTableSchema")]
+    public class CLIPGASADataTable : TypedTableBase<CLIPGASARow>
+    {
+        private DataColumn columnTABLENAME;
+
+        private DataColumn columnUNIQUEKEY;
+
+        private DataColumn columnSOURCEFILE;
+
+        private DataColumn columnDESCRIPTION;
+
+        private DataColumn columnPKEY;
+
+        private DataColumn columnADDNAME;
+
+        private DataColumn columnADDDATE;
+
+        private DataColumn columnSIZE;
+
+        private DataColumn columnLOCALFILE;
+
+        private DataColumn columnTYPE;
+
+        [DebuggerNonUserCode]
+        [GeneratedCode("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+        public DataColumn TABLENAMEColumn => columnTABLENAME;
+
+        [DebuggerNonUserCode]
+        [GeneratedCode("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+        public DataColumn UNIQUEKEYColumn => columnUNIQUEKEY;
+
+        [DebuggerNonUserCode]
+        [GeneratedCode("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+        public DataColumn SOURCEFILEColumn => columnSOURCEFILE;
+
+        [DebuggerNonUserCode]
+        [GeneratedCode("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+        public DataColumn DESCRIPTIONColumn => columnDESCRIPTION;
+
+        [DebuggerNonUserCode]
+        [GeneratedCode("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+        public DataColumn PKEYColumn => columnPKEY;
+
+        [DebuggerNonUserCode]
+        [GeneratedCode("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+        public DataColumn ADDNAMEColumn => columnADDNAME;
+
+        [DebuggerNonUserCode]
+        [GeneratedCode("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+        public DataColumn ADDDATEColumn => columnADDDATE;
+
+        [DebuggerNonUserCode]
+        [GeneratedCode("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+        public DataColumn SIZEColumn => columnSIZE;
+
+        [DebuggerNonUserCode]
+        [GeneratedCode("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+        public DataColumn LOCALFILEColumn => columnLOCALFILE;
+
+        [DebuggerNonUserCode]
+        [GeneratedCode("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+        public DataColumn TYPEColumn => columnTYPE;
+
+        [DebuggerNonUserCode]
+        [GeneratedCode("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+        [Browsable(false)]
+        public int Count => base.Rows.Count;
+
+        [DebuggerNonUserCode]
+        [GeneratedCode("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+        public CLIPGASARow this[int index] => (CLIPGASARow)base.Rows[index];
+
+        //[GeneratedCode("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+        //public event CLIPRowChangeEventHandler CLIPRowChanging;
+
+        //[GeneratedCode("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+        //public event CLIPRowChangeEventHandler CLIPRowChanged;
+
+        //[GeneratedCode("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+        //public event CLIPRowChangeEventHandler CLIPRowDeleting;
+
+        //[GeneratedCode("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+        //public event CLIPRowChangeEventHandler CLIPRowDeleted;
+
+        [DebuggerNonUserCode]
+        [GeneratedCode("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+        public CLIPGASADataTable()
+        {
+            base.TableName = "GASAClip";
+            BeginInit();
+            InitClass();
+            EndInit();
+        }
+
+        [DebuggerNonUserCode]
+        [GeneratedCode("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+        internal CLIPGASADataTable(DataTable table)
+        {
+            base.TableName = table.TableName;
+            if (table.CaseSensitive != table.DataSet.CaseSensitive)
+            {
+                base.CaseSensitive = table.CaseSensitive;
+            }
+
+            if (table.Locale.ToString() != table.DataSet.Locale.ToString())
+            {
+                base.Locale = table.Locale;
+            }
+
+            if (table.Namespace != table.DataSet.Namespace)
+            {
+                base.Namespace = table.Namespace;
+            }
+
+            base.Prefix = table.Prefix;
+            base.MinimumCapacity = table.MinimumCapacity;
+        }
+
+        [DebuggerNonUserCode]
+        [GeneratedCode("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+        protected CLIPGASADataTable(SerializationInfo info, StreamingContext context)
+            : base(info, context)
+        {
+            InitVars();
+        }
+
+        [DebuggerNonUserCode]
+        [GeneratedCode("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+        public void AddCLIPRow(CLIPGASARow row)
+        {
+            base.Rows.Add(row);
+        }
+
+        [DebuggerNonUserCode]
+        [GeneratedCode("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+        public CLIPGASARow AddCLIPRow(string TABLENAME, string UNIQUEKEY, string SOURCEFILE, string DESCRIPTION, string PKEY, string ADDNAME, DateTime ADDDATE, long SIZE, string LOCALFILE, string TYPE)
+        {
+            CLIPGASARow cLIPRow = (CLIPGASARow)NewRow();
+            object[] array2 = (cLIPRow.ItemArray = new object[10] { TABLENAME, UNIQUEKEY, SOURCEFILE, DESCRIPTION, PKEY, ADDNAME, ADDDATE, SIZE, LOCALFILE, TYPE });
+            base.Rows.Add(cLIPRow);
+            return cLIPRow;
+        }
+
+        [DebuggerNonUserCode]
+        [GeneratedCode("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+        public CLIPGASARow FindByPKEY(string PKEY)
+        {
+            return (CLIPGASARow)base.Rows.Find(new object[1] { PKEY });
+        }
+
+        [DebuggerNonUserCode]
+        [GeneratedCode("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+        public override DataTable Clone()
+        {
+            CLIPGASADataTable cLIPDataTable = (CLIPGASADataTable)base.Clone();
+            cLIPDataTable.InitVars();
+            return cLIPDataTable;
+        }
+
+        [DebuggerNonUserCode]
+        [GeneratedCode("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+        protected override DataTable CreateInstance()
+        {
+            return new CLIPGASADataTable();
+        }
+
+        [DebuggerNonUserCode]
+        [GeneratedCode("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+        internal void InitVars()
+        {
+            columnTABLENAME = base.Columns["TABLENAME"];
+            columnUNIQUEKEY = base.Columns["UNIQUEKEY"];
+            columnSOURCEFILE = base.Columns["SOURCEFILE"];
+            columnDESCRIPTION = base.Columns["DESCRIPTION"];
+            columnPKEY = base.Columns["PKEY"];
+            columnADDNAME = base.Columns["ADDNAME"];
+            columnADDDATE = base.Columns["ADDDATE"];
+            columnSIZE = base.Columns["SIZE"];
+            columnLOCALFILE = base.Columns["LOCALFILE"];
+            columnTYPE = base.Columns["TYPE"];
+        }
+
+        [DebuggerNonUserCode]
+        [GeneratedCode("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+        private void InitClass()
+        {
+            columnTABLENAME = new DataColumn("TABLENAME", typeof(string), null, MappingType.Element);
+            base.Columns.Add(columnTABLENAME);
+            columnUNIQUEKEY = new DataColumn("UNIQUEKEY", typeof(string), null, MappingType.Element);
+            base.Columns.Add(columnUNIQUEKEY);
+            columnSOURCEFILE = new DataColumn("SOURCEFILE", typeof(string), null, MappingType.Element);
+            base.Columns.Add(columnSOURCEFILE);
+            columnDESCRIPTION = new DataColumn("DESCRIPTION", typeof(string), null, MappingType.Element);
+            base.Columns.Add(columnDESCRIPTION);
+            columnPKEY = new DataColumn("PKEY", typeof(string), null, MappingType.Element);
+            base.Columns.Add(columnPKEY);
+            columnADDNAME = new DataColumn("ADDNAME", typeof(string), null, MappingType.Element);
+            base.Columns.Add(columnADDNAME);
+            columnADDDATE = new DataColumn("ADDDATE", typeof(DateTime), null, MappingType.Element);
+            base.Columns.Add(columnADDDATE);
+            columnSIZE = new DataColumn("SIZE", typeof(long), null, MappingType.Element);
+            base.Columns.Add(columnSIZE);
+            columnLOCALFILE = new DataColumn("LOCALFILE", typeof(string), null, MappingType.Element);
+            base.Columns.Add(columnLOCALFILE);
+            columnTYPE = new DataColumn("TYPE", typeof(string), null, MappingType.Element);
+            base.Columns.Add(columnTYPE);
+            base.Constraints.Add(new UniqueConstraint("Constraint1", new DataColumn[1] { columnPKEY }, isPrimaryKey: true));
+            columnPKEY.AllowDBNull = false;
+            columnPKEY.Unique = true;
+            columnPKEY.MaxLength = 12;
+        }
+
+        [DebuggerNonUserCode]
+        [GeneratedCode("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+        public CLIPGASARow NewCLIPRow()
+        {
+            return (CLIPGASARow)NewRow();
+        }
+
+        [DebuggerNonUserCode]
+        [GeneratedCode("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+        public void RemoveCLIPRow(CLIPGASARow row)
+        {
+            base.Rows.Remove(row);
+        }
+    }
+
+    //
+    // 摘要:
+    //     Represents strongly named DataRow class.
+    public class CLIPGASARow : DataRow
+    {
+        private CLIPGASADataTable tableCLIP;
+
+        [DebuggerNonUserCode]
+        [GeneratedCode("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+        public string TABLENAME
+        {
+            get
+            {
+                try
+                {
+                    return (string)base[tableCLIP.TABLENAMEColumn];
+                }
+                catch (InvalidCastException innerException)
+                {
+                    throw new StrongTypingException("資料表 'GASAClip' 中資料行 'TABLENAME' 的值是 DBNull。", innerException);
+                }
+            }
+            set
+            {
+                base[tableCLIP.TABLENAMEColumn] = value;
+            }
+        }
+
+        [DebuggerNonUserCode]
+        [GeneratedCode("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+        public string UNIQUEKEY
+        {
+            get
+            {
+                try
+                {
+                    return (string)base[tableCLIP.UNIQUEKEYColumn];
+                }
+                catch (InvalidCastException innerException)
+                {
+                    throw new StrongTypingException("資料表 'GASAClip' 中資料行 'UNIQUEKEY' 的值是 DBNull。", innerException);
+                }
+            }
+            set
+            {
+                base[tableCLIP.UNIQUEKEYColumn] = value;
+            }
+        }
+
+        [DebuggerNonUserCode]
+        [GeneratedCode("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+        public string SOURCEFILE
+        {
+            get
+            {
+                try
+                {
+                    return (string)base[tableCLIP.SOURCEFILEColumn];
+                }
+                catch (InvalidCastException innerException)
+                {
+                    throw new StrongTypingException("資料表 'GASAClip' 中資料行 'SOURCEFILE' 的值是 DBNull。", innerException);
+                }
+            }
+            set
+            {
+                base[tableCLIP.SOURCEFILEColumn] = value;
+            }
+        }
+
+        [DebuggerNonUserCode]
+        [GeneratedCode("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+        public string DESCRIPTION
+        {
+            get
+            {
+                try
+                {
+                    return (string)base[tableCLIP.DESCRIPTIONColumn];
+                }
+                catch (InvalidCastException innerException)
+                {
+                    throw new StrongTypingException("資料表 'GASAClip' 中資料行 'DESCRIPTION' 的值是 DBNull。", innerException);
+                }
+            }
+            set
+            {
+                base[tableCLIP.DESCRIPTIONColumn] = value;
+            }
+        }
+
+        [DebuggerNonUserCode]
+        [GeneratedCode("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+        public string PKEY
+        {
+            get
+            {
+                return (string)base[tableCLIP.PKEYColumn];
+            }
+            set
+            {
+                base[tableCLIP.PKEYColumn] = value;
+            }
+        }
+
+        [DebuggerNonUserCode]
+        [GeneratedCode("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+        public string ADDNAME
+        {
+            get
+            {
+                try
+                {
+                    return (string)base[tableCLIP.ADDNAMEColumn];
+                }
+                catch (InvalidCastException innerException)
+                {
+                    throw new StrongTypingException("資料表 'GASAClip' 中資料行 'ADDNAME' 的值是 DBNull。", innerException);
+                }
+            }
+            set
+            {
+                base[tableCLIP.ADDNAMEColumn] = value;
+            }
+        }
+
+        [DebuggerNonUserCode]
+        [GeneratedCode("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+        public DateTime ADDDATE
+        {
+            get
+            {
+                try
+                {
+                    return (DateTime)base[tableCLIP.ADDDATEColumn];
+                }
+                catch (InvalidCastException innerException)
+                {
+                    throw new StrongTypingException("資料表 'GASAClip' 中資料行 'ADDDATE' 的值是 DBNull。", innerException);
+                }
+            }
+            set
+            {
+                base[tableCLIP.ADDDATEColumn] = value;
+            }
+        }
+
+        [DebuggerNonUserCode]
+        [GeneratedCode("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+        public long SIZE
+        {
+            get
+            {
+                try
+                {
+                    return (long)base[tableCLIP.SIZEColumn];
+                }
+                catch (InvalidCastException innerException)
+                {
+                    throw new StrongTypingException("資料表 'GASAClip' 中資料行 'SIZE' 的值是 DBNull。", innerException);
+                }
+            }
+            set
+            {
+                base[tableCLIP.SIZEColumn] = value;
+            }
+        }
+
+        [DebuggerNonUserCode]
+        [GeneratedCode("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+        public string LOCALFILE
+        {
+            get
+            {
+                try
+                {
+                    return (string)base[tableCLIP.LOCALFILEColumn];
+                }
+                catch (InvalidCastException innerException)
+                {
+                    throw new StrongTypingException("資料表 'GASAClip' 中資料行 'LOCALFILE' 的值是 DBNull。", innerException);
+                }
+            }
+            set
+            {
+                base[tableCLIP.LOCALFILEColumn] = value;
+            }
+        }
+
+        [DebuggerNonUserCode]
+        [GeneratedCode("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+        public string TYPE
+        {
+            get
+            {
+                try
+                {
+                    return (string)base[tableCLIP.TYPEColumn];
+                }
+                catch (InvalidCastException innerException)
+                {
+                    throw new StrongTypingException("資料表 'GASAClip' 中資料行 'TYPE' 的值是 DBNull。", innerException);
+                }
+            }
+            set
+            {
+                base[tableCLIP.TYPEColumn] = value;
+            }
+        }
+
+        [DebuggerNonUserCode]
+        [GeneratedCode("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+        internal CLIPGASARow(DataRowBuilder rb)
+            : base(rb)
+        {
+            tableCLIP = (CLIPGASADataTable)base.Table;
+        }
+
+        [DebuggerNonUserCode]
+        [GeneratedCode("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+        public bool IsTABLENAMENull()
+        {
+            return IsNull(tableCLIP.TABLENAMEColumn);
+        }
+
+        [DebuggerNonUserCode]
+        [GeneratedCode("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+        public void SetTABLENAMENull()
+        {
+            base[tableCLIP.TABLENAMEColumn] = Convert.DBNull;
+        }
+
+        [DebuggerNonUserCode]
+        [GeneratedCode("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+        public bool IsUNIQUEKEYNull()
+        {
+            return IsNull(tableCLIP.UNIQUEKEYColumn);
+        }
+
+        [DebuggerNonUserCode]
+        [GeneratedCode("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+        public void SetUNIQUEKEYNull()
+        {
+            base[tableCLIP.UNIQUEKEYColumn] = Convert.DBNull;
+        }
+
+        [DebuggerNonUserCode]
+        [GeneratedCode("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+        public bool IsSOURCEFILENull()
+        {
+            return IsNull(tableCLIP.SOURCEFILEColumn);
+        }
+
+        [DebuggerNonUserCode]
+        [GeneratedCode("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+        public void SetSOURCEFILENull()
+        {
+            base[tableCLIP.SOURCEFILEColumn] = Convert.DBNull;
+        }
+
+        [DebuggerNonUserCode]
+        [GeneratedCode("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+        public bool IsDESCRIPTIONNull()
+        {
+            return IsNull(tableCLIP.DESCRIPTIONColumn);
+        }
+
+        [DebuggerNonUserCode]
+        [GeneratedCode("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+        public void SetDESCRIPTIONNull()
+        {
+            base[tableCLIP.DESCRIPTIONColumn] = Convert.DBNull;
+        }
+
+        [DebuggerNonUserCode]
+        [GeneratedCode("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+        public bool IsADDNAMENull()
+        {
+            return IsNull(tableCLIP.ADDNAMEColumn);
+        }
+
+        [DebuggerNonUserCode]
+        [GeneratedCode("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+        public void SetADDNAMENull()
+        {
+            base[tableCLIP.ADDNAMEColumn] = Convert.DBNull;
+        }
+
+        [DebuggerNonUserCode]
+        [GeneratedCode("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+        public bool IsADDDATENull()
+        {
+            return IsNull(tableCLIP.ADDDATEColumn);
+        }
+
+        [DebuggerNonUserCode]
+        [GeneratedCode("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+        public void SetADDDATENull()
+        {
+            base[tableCLIP.ADDDATEColumn] = Convert.DBNull;
+        }
+
+        [DebuggerNonUserCode]
+        [GeneratedCode("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+        public bool IsSIZENull()
+        {
+            return IsNull(tableCLIP.SIZEColumn);
+        }
+
+        [DebuggerNonUserCode]
+        [GeneratedCode("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+        public void SetSIZENull()
+        {
+            base[tableCLIP.SIZEColumn] = Convert.DBNull;
+        }
+
+        [DebuggerNonUserCode]
+        [GeneratedCode("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+        public bool IsLOCALFILENull()
+        {
+            return IsNull(tableCLIP.LOCALFILEColumn);
+        }
+
+        [DebuggerNonUserCode]
+        [GeneratedCode("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+        public void SetLOCALFILENull()
+        {
+            base[tableCLIP.LOCALFILEColumn] = Convert.DBNull;
+        }
+
+        [DebuggerNonUserCode]
+        [GeneratedCode("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+        public bool IsTYPENull()
+        {
+            return IsNull(tableCLIP.TYPEColumn);
+        }
+
+        [DebuggerNonUserCode]
+        [GeneratedCode("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+        public void SetTYPENull()
+        {
+            base[tableCLIP.TYPEColumn] = Convert.DBNull;
+        }
+    }
+
 }

@@ -207,9 +207,12 @@ namespace Sci.Production.Quality
                 }
             }
 
-            using (var dlg = new Clip(tableName, id, true))
+            //using (var dlg = new Clip(tableName, id, true))
+            //{
+            //    dlg.EditMode = false;
+            //    dlg.ShowDialog();
+            using (var dlg = new PublicForm.ClipGASA(tableName, id, true, row, apiUrlFile: "http://pmsap.sportscity.com.tw:16888/api/FileDelete/RemoveFile"))
             {
-                dlg.EditMode = false;
                 dlg.ShowDialog();
 
                 foreach (DataRow dataRow in dt.Rows)
