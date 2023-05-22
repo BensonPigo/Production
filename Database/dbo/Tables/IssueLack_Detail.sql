@@ -13,6 +13,7 @@
     [Remark] NVARCHAR(60) NOT NULL DEFAULT (''), 
     [CompleteTime] DATETIME NULL, 
     [SentToWMS] BIT NOT NULL DEFAULT ((0)), 
+    [RemainingQty] NUMERIC(11, 2) NOT NULL DEFAULT ((0)), 
     CONSTRAINT [PK_IssueLack_Detail] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
 
@@ -54,3 +55,12 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'發料數�
 GO
 
 
+
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'補料後剩下多少庫存',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'IssueLack_Detail',
+    @level2type = N'COLUMN',
+    @level2name = N'RemainingQty'
