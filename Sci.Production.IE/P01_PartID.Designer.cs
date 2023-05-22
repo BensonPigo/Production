@@ -260,6 +260,7 @@
             this.gridDetail.Size = new System.Drawing.Size(798, 422);
             this.gridDetail.TabIndex = 0;
             this.gridDetail.TabStop = false;
+            this.gridDetail.ColumnHeaderMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.gridDetail_ColumnHeaderMouseClick);
             // 
             // P01_PartID
             // 

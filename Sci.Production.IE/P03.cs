@@ -199,7 +199,6 @@ from (
         , ld.MachineCount
         , IsMachineTypeID_MM = Cast( IIF( ld.MachineTypeID like 'MM%',1,0) as bit)
         , [ReasonName] = lbr.Name
-        , IsFromCopyGSD = Cast(0 as bit)
     from LineMapping_Detail ld WITH (NOLOCK) 
     left join Employee e WITH (NOLOCK) on ld.EmployeeID = e.ID
     left join Operation o WITH (NOLOCK) on ld.OperationID = o.ID
@@ -544,11 +543,19 @@ and BrandID = '{this.CurrentMaintain["BrandID"]}'
             attachment.EditingMouseDown += (s, e) =>
             {
                 DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
-                bool isFromCopyGSD = MyUtility.Convert.GetBool(dr["IsFromCopyGSD"]);
-                if (this.EditMode && e.Button == MouseButtons.Right && !isFromCopyGSD)
+                if (this.EditMode && e.Button == MouseButtons.Right)
                 {
+                    DataTable GSD = this.GetDataFromP01();
 
-                    string sqlcmd = @"
+                    if (GSD != null && !MyUtility.Check.Empty(this.CurrentDetailData["Attachment"]) && GSD.AsEnumerable().Where(o => MyUtility.Convert.GetString(o["OriNo"]) == MyUtility.Convert.GetString(this.CurrentDetailData["OriNo"])
+                        && MyUtility.Convert.GetString(o["OperationID"]) == MyUtility.Convert.GetString(this.CurrentDetailData["OperationID"])
+                        && MyUtility.Convert.GetString(o["Attachment"]) == MyUtility.Convert.GetString(this.CurrentDetailData["Attachment"])).Any())
+                    {
+                        MyUtility.Msg.InfoBox("Data from GSD can not be wmpty.");
+                        return;
+                    }
+
+                        string sqlcmd = @"
 select ID,DescEN 
 from Mold WITH (NOLOCK) 
 where Junk = 0
@@ -579,11 +586,15 @@ and IsAttachment = 1";
                 if (this.EditMode)
                 {
                     DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
-                    bool isFromCopyGSD = MyUtility.Convert.GetBool(dr["IsFromCopyGSD"]);
 
-                    if (isFromCopyGSD && MyUtility.Convert.GetString(this.CurrentDetailData["Attachment"]) != e.FormattedValue.ToString())
+                    DataTable GSD = this.GetDataFromP01();
+
+                    if (GSD != null && !MyUtility.Check.Empty(this.CurrentDetailData["Attachment"]) && MyUtility.Convert.GetString(this.CurrentDetailData["Attachment"]) != e.FormattedValue.ToString()
+                    && GSD.AsEnumerable().Where(o => MyUtility.Convert.GetString(o["OriNo"]) == MyUtility.Convert.GetString(this.CurrentDetailData["OriNo"])
+                        && MyUtility.Convert.GetString(o["OperationID"]) == MyUtility.Convert.GetString(this.CurrentDetailData["OperationID"])
+                        && MyUtility.Convert.GetString(o["Attachment"]) == MyUtility.Convert.GetString(this.CurrentDetailData["Attachment"])).Any())
                     {
-                        MyUtility.Msg.InfoBox("Data from GSD can't be modify.");
+                        MyUtility.Msg.InfoBox("Data from GSD can not be wmpty.");
                         e.FormattedValue = MyUtility.Convert.GetString(this.CurrentDetailData["Attachment"]);
                         this.CurrentDetailData["Attachment"] = e.FormattedValue;
                         return;
@@ -680,6 +691,16 @@ where Junk = 0";
             {
                 if (this.EditMode && e.Button == MouseButtons.Right)
                 {
+                    DataTable GSD = this.GetDataFromP01();
+
+                    if (GSD != null && !MyUtility.Check.Empty(this.CurrentDetailData["Template"]) && GSD.AsEnumerable().Where(o => MyUtility.Convert.GetString(o["OriNo"]) == MyUtility.Convert.GetString(this.CurrentDetailData["OriNo"])
+                        && MyUtility.Convert.GetString(o["OperationID"]) == MyUtility.Convert.GetString(this.CurrentDetailData["OperationID"])
+                        && MyUtility.Convert.GetString(o["Template"]) == MyUtility.Convert.GetString(this.CurrentDetailData["Template"])).Any())
+                    {
+                        MyUtility.Msg.InfoBox("Data from GSD can not be wmpty.");
+                        return;
+                    }
+
                     string sqlcmd = @"
 select PartID = smt.ID , m.DescEN ,MoldID = m.ID
 from Mold m WITH (NOLOCK)
@@ -715,6 +736,24 @@ where m.Junk = 0 and m.IsTemplate = 1 and smt.Junk = 0
             {
                 if (this.EditMode)
                 {
+                    DataTable GSD = this.GetDataFromP01();
+
+                    if (GSD != null && !MyUtility.Check.Empty(this.CurrentDetailData["Template"]) && MyUtility.Convert.GetString(this.CurrentDetailData["Template"]) != e.FormattedValue.ToString()
+                    && GSD.AsEnumerable().Where(o => MyUtility.Convert.GetString(o["OriNo"]) == MyUtility.Convert.GetString(this.CurrentDetailData["OriNo"])
+                        && MyUtility.Convert.GetString(o["OperationID"]) == MyUtility.Convert.GetString(this.CurrentDetailData["OperationID"])
+                        && MyUtility.Convert.GetString(o["Template"]) == MyUtility.Convert.GetString(this.CurrentDetailData["Template"])).Any())
+                    {
+                        MyUtility.Msg.InfoBox("Data from GSD can not be wmpty.");
+                        e.FormattedValue = MyUtility.Convert.GetString(this.CurrentDetailData["Template"]);
+                        this.CurrentDetailData["Template"] = e.FormattedValue;
+                        return;
+                    }
+
+                    if (MyUtility.Convert.GetString(this.CurrentDetailData["Template"]) == e.FormattedValue.ToString())
+                    {
+                        return;
+                    }
+
                     List<SqlParameter> cmds = new List<SqlParameter>() { new SqlParameter { ParameterName = "@OperationID", Value = MyUtility.Convert.GetString(this.CurrentDetailData["OperationID"]) } };
                     string sqlcmd = @"
 select [Mold] = STUFF((
@@ -807,7 +846,7 @@ where m.Junk = 0 and m.IsTemplate = 1 and smt.Junk = 0
                             return;
                         }
 
-                        P01_PartID callNextForm = new P01_PartID(MyUtility.Convert.GetString(dr["MoldID"]));
+                        P01_PartID callNextForm = new P01_PartID(MyUtility.Convert.GetString(dr["MoldID"]), MyUtility.Convert.GetString(dr["SewingMachineAttachmentID"]));
                         DialogResult result = callNextForm.ShowDialog(this);
 
 
@@ -1530,6 +1569,11 @@ WHERE Ukey={item["Ukey"]}
         /// </summary>
         protected override void OnDetailGridDelete()
         {
+            if (this.CurrentMaintain == null || this.CurrentDetailData == null)
+            {
+                return;
+            }
+
             if (this.detailgrid.Rows.Count != 0)
             {
                 if (this.CurrentDetailData["New"].ToString().ToUpper() == "FALSE")
@@ -2043,6 +2087,89 @@ order by case when ld.No = '' then 1
             this.Distable();
         }
 
+        private DataTable GetDataFromP01()
+        {
+            DataRow timeStudy;
+            DataTable timeStudy_Detail;
+            string sqlCmd = string.Format(
+                @"
+select t.* 
+from TimeStudy t WITH (NOLOCK) 
+	 , Style s WITH (NOLOCK) 
+where t.StyleID = s.ID 
+	  and t.BrandID = s.BrandID 
+	  and t.SeasonID = s.SeasonID 
+	  and s.Ukey = {0}
+	  and t.ComboType = '{1}'",
+                this.CurrentMaintain["StyleUkey"].ToString(),
+                this.CurrentMaintain["ComboType"].ToString());
+
+            if (!MyUtility.Check.Seek(sqlCmd, out timeStudy))
+            {
+                MyUtility.Msg.WarningBox("Fty GSD data not found!!");
+                return  null;
+            }
+
+            sqlCmd = $@"
+select ID = null
+	   , No = ''
+	   , OriNo = td.Seq
+	   , td.Annotation
+	   , GSD = td.SMV
+	   , TotalGSD = td.SMV
+	   , Cycle = td.SMV
+	   , TotalCycle = td.SMV
+	   , td.MachineTypeID
+	   , [Attachment] = STUFF((
+					select concat(',' ,s.Data)
+					from SplitString(td.Mold, ',') s
+					where not exists (select 1 from Mold m WITH (NOLOCK) where s.Data = m.ID and (m.Junk = 1 or m.IsTemplate = 1)) 
+					for xml path ('')) 
+				,1,1,'')
+	    , [Template] = STUFF((
+					select concat(',' ,s.Data)
+					from SplitString(td.Template, ',') s
+					where not exists (select 1 from Mold m WITH (NOLOCK) where s.Data = m.ID and (m.Junk = 1 or m.IsAttachment = 1)) 
+					for xml path ('')) 
+				,1,1,'')
+	   , td.OperationID
+	   , MoldID = td.Mold
+       , td.SewingMachineAttachmentID
+	   , GroupKey = 0
+	   , New = 0
+	   , EmployeeID = ''
+	   , Description = IIF(td.MachineTypeID IS NULL OR td.MachineTypeID = '' ,td.OperationID ,o.DescEN )
+	   , EmployeeName = ''
+	   , EmployeeSkill = ''
+	   , Efficiency = 100
+       , IsPPA = iif(CHARINDEX('--', td.OperationID) > 0, 0, iif(td.SMV > 0, 0, 1))
+       ,o.MasterPlusGroup
+	   ,[IsHide] = cast(
+			   case when SUBSTRING(td.OperationID, 1, 2) = '--' then 1
+			   when show.IsDesignatedArea = 1 then 1
+			   when isnull(td.IsSubprocess,0) = 1 then 1
+			   else 0 
+			   end			
+		as bit)
+	   ,[IsGroupHeader] = cast(iif(SUBSTRING(td.OperationID, 1, 2) = '--', 1, 0) as bit)
+       ,[IsShow] = cast(iif( td.OperationID like '--%' , 1, isnull(show.IsShowinIEP03, 1)) as bit)
+from TimeStudy_Detail td WITH (NOLOCK)
+left join Operation o WITH (NOLOCK) on td.OperationID = o.ID
+outer apply (
+	select IsShowinIEP03 = IIF(isnull(md.IsNotShownInP03, 0) = 0, 1, 0)
+		, IsDesignatedArea = ISNULL(md.IsNonSewingLine,0)
+	from MachineType m WITH (NOLOCK)
+    inner join MachineType_Detail md WITH (NOLOCK) on md.ID = m.ID and md.FactoryID = 'MWI'	
+	where o.MachineTypeID = m.ID and m.junk = 0
+)show
+where td.ID = '{timeStudy["ID"]}'
+";
+
+            DualResult result = DBProxy.Current.Select(null, sqlCmd, out timeStudy_Detail);
+
+            return timeStudy_Detail;
+        }
+
         // Copy from GSD
         private void BtnCopyFromGSD_Click(object sender, EventArgs e)
         {
@@ -2120,7 +2247,8 @@ select distinct
 	,[IsHide] = cast(iif(ISNULL(md.IsNonSewingLine,0) = 1, 1, 0) as bit)
 	,[IsGroupHeader] = 0
     ,[IsShow] = cast(IIF(isnull(md.IsNotShownInP03, 0) = 0, 1, 0) as bit)
-    , IsFromCopyGSD = Cast( 0 as bit)
+	,PPA = ''
+    ,PPAText =''
 from [IETMS_Summary] i, Operation op
 left join MachineType_Detail md WITH (NOLOCK) on md.ID = op.MachineTypeID and md.FactoryID = '{2}'
 where i.location = '' and i.[IETMSUkey] = '{0}' and i.ArtworkTypeID = 'Cutting' and op.ID='PROCIPF00001'
@@ -2168,9 +2296,11 @@ select ID = null
 		as bit)
 	   ,[IsGroupHeader] = cast(iif(SUBSTRING(td.OperationID, 1, 2) = '--', 1, 0) as bit)
        ,[IsShow] = cast(iif( td.OperationID like '--%' , 1, isnull(show.IsShowinIEP03, 1)) as bit)
-       , IsFromCopyGSD = Cast( IIF(td.Mold <> '' AND td.SewingMachineAttachmentID IS NOT NULL ,1,0) as bit)
+	   ,td.PPA
+       ,PPAText = ISNULL(d.Name,'')
 from TimeStudy_Detail td WITH (NOLOCK)
 left join Operation o WITH (NOLOCK) on td.OperationID = o.ID
+left join DropDownList d (NOLOCK) on d.ID=td.PPA AND d.Type = 'PMS_IEPPA'
 outer apply (
 	select IsShowinIEP03 = IIF(isnull(md.IsNotShownInP03, 0) = 0, 1, 0)
 		, IsDesignatedArea = ISNULL(md.IsNonSewingLine,0)
@@ -2208,7 +2338,8 @@ select distinct
 	,[IsHide] = cast(iif(ISNULL(md.IsNonSewingLine,0) = 1, 1, 0) as bit)
 	,[IsGroupHeader] = 0
     ,[IsShow] = cast(IIF(isnull(md.IsNotShownInP03, 0) = 0, 1, 0) as bit)
-    , IsFromCopyGSD = Cast( 0 as bit)
+	,PPA = ''
+    ,PPAText =''
 from [IETMS_Summary] i, Operation op
 left join MachineType_Detail md WITH (NOLOCK) on md.ID = op.MachineTypeID and md.FactoryID = '{2}'
 where i.location = '' and i.[IETMSUkey] = '{0}' and i.ArtworkTypeID = 'Inspection' and op.ID='PROCIPF00002'
@@ -2241,7 +2372,8 @@ select distinct
 	,[IsHide] = cast(iif(ISNULL(md.IsNonSewingLine,0) = 1, 1, 0) as bit)
 	,[IsGroupHeader] = 0
     ,[IsShow] = cast(IIF(isnull(md.IsNotShownInP03, 0) = 0, 1, 0) as bit)
-    , IsFromCopyGSD = Cast( 0 as bit)
+	,PPA = ''
+    ,PPAText =''
 from [IETMS_Summary] i, Operation op
 left join MachineType_Detail md WITH (NOLOCK) on md.ID = op.MachineTypeID and md.FactoryID = '{2}'
 where i.location = '' and i.[IETMSUkey] = '{0}' and i.ArtworkTypeID = 'Pressing' and op.ID='PROCIPF00004'
@@ -2274,7 +2406,8 @@ select distinct
 	,[IsHide] = cast(iif(ISNULL(md.IsNonSewingLine,0) = 1, 1, 0) as bit)
 	,[IsGroupHeader] = 0
     ,[IsShow] = cast(IIF(isnull(md.IsNotShownInP03, 0) = 0, 1, 0) as bit)
-    , IsFromCopyGSD = Cast( 0 as bit)
+	,PPA = ''
+    ,PPAText =''
 from [IETMS_Summary] i, Operation op
 left join MachineType_Detail md WITH (NOLOCK) on md.ID = op.MachineTypeID and md.FactoryID = '{2}'
 where i.location = '' and i.[IETMSUkey] = '{0}' and i.ArtworkTypeID = 'Packing' and op.ID='PROCIPF00003'

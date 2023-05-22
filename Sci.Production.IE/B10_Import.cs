@@ -112,7 +112,7 @@ namespace Sci.Production.IE
 
             for (int i = 0; i < this.gridDetail.ColumnCount; i++)
             {
-                this.gridDetail.Columns[i].SortMode = DataGridViewColumnSortMode.NotSortable;
+                //this.gridDetail.Columns[i].SortMode = DataGridViewColumnSortMode.NotSortable;
             }
         }
 

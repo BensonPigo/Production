@@ -106,6 +106,7 @@ select
     seq = '0',
 	OperationID = '--CUTTING',	
 	MachineTypeID = null,
+    PPA = '',
 	Mold = null,
 	Frequency = round(ProTMS, 4),
 	SMV = round(ProTMS, 4),	
@@ -127,6 +128,7 @@ select
     seq = '0',
 	OperationID = 'PROCIPF00001',	
 	MachineTypeID = 'CUT',
+    PPA = '',
 	Mold = null,
 	Frequency = round(ProTMS, 4),
 	SMV = round(ProTMS, 4),	
@@ -150,6 +152,7 @@ select DISTINCT
     td.Seq
     , td.OperationID
     , td.MachineTypeID
+    , PPA = ISNULL(d.Name,'')
     , td.Mold
     , td.Frequency
     , td.SMV
@@ -166,6 +169,7 @@ from TimeStudy_Detail td WITH (NOLOCK)
 left join Operation o WITH (NOLOCK) on td.OperationID = o.ID
 left join MachineType m WITH (NOLOCK) on td.MachineTypeID = m.ID
 left join MachineType_Detail md WITH (NOLOCK) on m.ID = md.ID 
+left join DropDownList d (NOLOCK) on d.ID=td.PPA AND d.Type = 'PMS_IEPPA'
 where td.ID = {MyUtility.Convert.GetString(this.masterData["ID"])}
 and td.OperationID not like '--%'
 {(this.artworktype == "''" ? string.Empty : $"and m.ArtworkTypeID in ({this.artworktype})")}
@@ -178,6 +182,7 @@ select DISTINCT
     td.Seq
     , td.OperationID
     , td.MachineTypeID
+    , PPA =  ISNULL(d.Name,'')
     , td.Mold
     , td.Frequency
     , td.SMV
@@ -194,6 +199,7 @@ from TimeStudy_Detail td WITH (NOLOCK)
 left join Operation o WITH (NOLOCK) on td.OperationID = o.ID
 left join MachineType m WITH (NOLOCK) on td.MachineTypeID = m.ID
 left join MachineType_Detail md WITH (NOLOCK) on m.ID = md.ID 
+left join DropDownList d (NOLOCK) on d.ID=td.PPA AND d.Type = 'PMS_IEPPA'
 where td.ID = {MyUtility.Convert.GetString(this.masterData["ID"])}
 and td.OperationID like '--%'
 {(!this.nonSewing ? " and ISNULL(md.IsNonSewingLine ,0) != 1 " : string.Empty)}
@@ -207,6 +213,7 @@ select
     seq = '9960',
 	OperationID = '--IPF',	
 	MachineTypeID = null,
+    PPA = '',
 	Mold = null,
 	Frequency = sum(round(ProTMS, 4)),
 	SMV = sum(round(ProTMS, 4)),	
@@ -230,6 +237,7 @@ select
     seq = '9970',
 	OperationID = 'PROCIPF00002',	
 	MachineTypeID = 'M',
+    PPA = '',
 	Mold = null,
 	Frequency = round(ProTMS, 4),
 	SMV = round(ProTMS, 4),	
@@ -251,6 +259,7 @@ select
     seq = '9980',
 	OperationID = 'PROCIPF00004',	
 	MachineTypeID = 'MM2',
+    PPA = '',
 	Mold = null,
 	Frequency = round(ProTMS, 4),
 	SMV = round(ProTMS, 4),	
@@ -272,6 +281,7 @@ select
     seq = '9990',
 	OperationID = 'PROCIPF00003',	
 	MachineTypeID = 'MM2',
+    PPA = '',
 	Mold = null,
 	Frequency = round(ProTMS, 4),
 	SMV = round(ProTMS, 4),	
@@ -401,20 +411,20 @@ group by isnull(m.ArtworkTypeID,'')",
             worksheet.Cells[1, 1] = string.Format("Factory GSD - {0}", MyUtility.Convert.GetString(this.masterData["Phase"]));
             worksheet.Cells[3, 2] = MyUtility.Convert.GetString(this.masterData["StyleID"]);
             worksheet.Cells[3, 5] = MyUtility.Convert.GetString(this.masterData["SeasonID"]);
-            worksheet.Cells[3, 7] = cdcodeID;
-            worksheet.Cells[2, 7] = cdCodeNew;
-            worksheet.Cells[2, 8] = "Product Type:" + productType;
-            worksheet.Cells[2, 9] = "Fabric Type:" + fabricType;
-            worksheet.Cells[3, 8] = "Lining:" + lining;
-            worksheet.Cells[3, 9] = "Gender:" + gender;
-            worksheet.Cells[2, 11] = "Construction:" + construction;
-            worksheet.Cells[3, 12] = Convert.ToDateTime(DateTime.Today).ToString("yyyy/MM/dd");
-            worksheet.Cells[4, 14] = MyUtility.Convert.GetString(this.efficiency) + "%";
+            worksheet.Cells[3, 8] = cdcodeID;
+            worksheet.Cells[2, 8] = cdCodeNew;
+            worksheet.Cells[2, 9] = "Product Type:" + productType;
+            worksheet.Cells[2, 10] = "Fabric Type:" + fabricType;
+            worksheet.Cells[3, 9] = "Lining:" + lining;
+            worksheet.Cells[3, 10] = "Gender:" + gender;
+            worksheet.Cells[2, 12] = "Construction:" + construction;
+            worksheet.Cells[3, 13] = Convert.ToDateTime(DateTime.Today).ToString("yyyy/MM/dd");
+            worksheet.Cells[4, 15] = MyUtility.Convert.GetString(this.efficiency) + "%";
             worksheet.Columns[3].ColumnWidth = 18.4;
 
             // 填內容值
             int intRowsStart = 5;
-            object[,] objArray = new object[1, 14];
+            object[,] objArray = new object[1, 15];
             foreach (DataRow dr in this.printData.Rows)
             {
                 objArray[0, 0] = intRowsStart - 4;
@@ -422,17 +432,18 @@ group by isnull(m.ArtworkTypeID,'')",
                 objArray[0, 2] = dr["OperationID"];
                 objArray[0, 3] = dr["MachineTypeID"];
                 objArray[0, 4] = dr["MasterPlusGroup"];
-                objArray[0, 5] = dr["Mold"];
-                objArray[0, 6] = dr["Template"];
-                objArray[0, 7] = dr["DescEN"];
-                objArray[0, 8] = dr["Annotation"];
-                objArray[0, 9] = dr["Frequency"];
-                objArray[0, 10] = dr["SMV"];
-                objArray[0, 11] = dr["PcsPerHour"];
-                objArray[0, 12] = dr["Sewer"];
-                objArray[0, 13] = MyUtility.Math.Round(MyUtility.Convert.GetDecimal(dr["PcsPerHour"]) * (this.efficiency / 100), 1);
+                objArray[0, 5] = dr["PPA"];
+                objArray[0, 6] = dr["Mold"];
+                objArray[0, 7] = dr["Template"];
+                objArray[0, 8] = dr["DescEN"];
+                objArray[0, 9] = dr["Annotation"];
+                objArray[0, 10] = dr["Frequency"];
+                objArray[0, 11] = dr["SMV"];
+                objArray[0, 12] = dr["PcsPerHour"];
+                objArray[0, 13] = dr["Sewer"];
+                objArray[0, 14] = MyUtility.Math.Round(MyUtility.Convert.GetDecimal(dr["PcsPerHour"]) * (this.efficiency / 100), 1);
 
-                worksheet.Range[string.Format("A{0}:N{0}", intRowsStart)].Value2 = objArray;
+                worksheet.Range[string.Format("A{0}:O{0}", intRowsStart)].Value2 = objArray;
                 intRowsStart++;
             }
 
@@ -440,14 +451,14 @@ group by isnull(m.ArtworkTypeID,'')",
             worksheet.Range[string.Format("A{0}:B{0}", intRowsStart)].Merge(Type.Missing);
             worksheet.Range[string.Format("A{0}:B{0}", intRowsStart)].HorizontalAlignment = Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignLeft;
             worksheet.Cells[intRowsStart, 1] = "Machine:";
-            worksheet.Range[string.Format("C{0}:N{0}", intRowsStart)].Merge(Type.Missing);
-            worksheet.Range[string.Format("C{0}:N{0}", intRowsStart)].HorizontalAlignment = Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignLeft;
+            worksheet.Range[string.Format("C{0}:O{0}", intRowsStart)].Merge(Type.Missing);
+            worksheet.Range[string.Format("C{0}:O{0}", intRowsStart)].HorizontalAlignment = Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignLeft;
 
             // Machine:
             worksheet.Cells[intRowsStart, 3] = this.machineID;
 
-            worksheet.Range[string.Format("A{0}:N{0}", intRowsStart)].Borders.get_Item(Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeBottom).Weight = 3; // 1: 虛線, 2:實線, 3:粗體線
-            worksheet.Range[string.Format("A{0}:N{0}", intRowsStart)].Borders.get_Item(Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeBottom).LineStyle = 1;
+            worksheet.Range[string.Format("A{0}:O{0}", intRowsStart)].Borders.get_Item(Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeBottom).Weight = 3; // 1: 虛線, 2:實線, 3:粗體線
+            worksheet.Range[string.Format("A{0}:O{0}", intRowsStart)].Borders.get_Item(Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeBottom).LineStyle = 1;
 
             intRowsStart++;
             worksheet.Range[string.Format("A{0}:C{0}", intRowsStart)].Merge(Type.Missing);
@@ -456,7 +467,7 @@ group by isnull(m.ArtworkTypeID,'')",
             worksheet.Cells[intRowsStart, 4] = MyUtility.Convert.GetString(this.masterData["TotalSewingTime"]);
             worksheet.Cells[intRowsStart, 5] = "Sec.";
             worksheet.Cells[intRowsStart, 7] = "Prepared by:";
-            worksheet.Range[string.Format("H{0}:N{0}", intRowsStart)].Merge(Type.Missing);
+            worksheet.Range[string.Format("H{0}:O{0}", intRowsStart)].Merge(Type.Missing);
             string cipfrow = string.Empty;
             if (this.chkCutting.Checked || this.chkInspection.Checked || this.chkPacking.Checked || this.chkPressing.Checked)
             {

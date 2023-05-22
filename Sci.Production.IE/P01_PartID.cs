@@ -23,6 +23,7 @@ namespace Sci.Production.IE
 
         private DataRow _P01SelectPartID;
         private string _MoldID;
+        private string _SewingMachineAttachmentID;
 
         /// <summary>
         /// p01SelectOperationCode
@@ -43,9 +44,10 @@ namespace Sci.Production.IE
         /// <summary>
         /// P01_SelectOperationCode
         /// </summary>
-        public P01_PartID(string moldID)
+        public P01_PartID(string moldID ,string sewingMachineAttachmentID)
         {
             this._MoldID = moldID;
+            this._SewingMachineAttachmentID = sewingMachineAttachmentID;
             this.InitializeComponent();
         }
 
@@ -82,8 +84,31 @@ namespace Sci.Production.IE
                  .Text("FoldTypeID", header: "Direction/Fold Type", width: Widths.AnsiChars(10), iseditingreadonly: true)
                  ;
 
+            string selected = string.Empty;
+
+            List<SqlParameter> paras = new List<SqlParameter>();
+            if (MyUtility.Check.Empty(this._SewingMachineAttachmentID))
+            {
+                selected = $@"0";
+            }
+            else
+            {
+                List<string> paraList = new List<string>();
+                int idx = 0;
+                foreach (var item in this._SewingMachineAttachmentID.Split(','))
+                {
+                    paraList.Add($@"@item{idx}");
+                    paras.Add(new SqlParameter($@"@item{idx}", item));
+                    idx++;
+                }
+
+                selected = $@"
+( IIF( a.ID IN ({string.Join(",", paraList)})  , 1 , 0) )
+";
+            }
+
             string sqlCmd = $@"
-select Selected = CAST( 0 as bit)
+select Selected = CAST( {selected} as bit)
     ,a.ID
     ,a.Description
     ,a.MachineMasterGroupID
@@ -96,7 +121,6 @@ left join AttachmentMeasurement c on a.MeasurementID = c.Measurement
 left join AttachmentFoldType d on a.FoldTypeID = d.FoldType 
 where 1 = 1
 ";
-            List<SqlParameter> paras = new List<SqlParameter>();
             if (this._MoldID.Split(',').Length > 1)
             {
                 sqlCmd += $@"and MoldID IN ('{string.Join("','", this._MoldID.Split(','))}') ";
@@ -159,7 +183,7 @@ where 1 = 1
 
             if (descList.Any())
             {
-                filterCondition.Append($@" and (Description like '%{string.Join("%' OR Description like '%", descList)}%' ) ");
+                filterCondition.Append($@" and (Description like '%{string.Join("%' and Description like '%", descList)}%' ) ");
             }
 
             if (filterCondition.Length > 0)
@@ -197,6 +221,29 @@ where 1 = 1
             }
 
             this.DialogResult = DialogResult.OK;
+        }
+
+        // Select
+        private void gridDetail_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
+        {
+            //if (MyUtility.Check.Empty(this.gridDetail.DataSource))
+            //{
+            //    return;
+            //}
+
+            //if (e.ColumnIndex == 0)
+            //{
+
+            //    //foreach (DataRow dr in ((DataTable)this.gridDetail.DataSource).Rows)
+            //    //{
+            //    //    if (dr.RowState != DataRowState.Deleted)
+            //    //    {
+            //    //        dr["Selected"] = 0;
+            //    //    }
+            //    //}
+
+            //}
+
         }
     }
 }

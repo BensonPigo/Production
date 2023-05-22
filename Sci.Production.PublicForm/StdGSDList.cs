@@ -12,7 +12,7 @@ namespace Sci.Production.PublicForm
     public partial class StdGSDList : Win.Subs.Base
     {
         private long styleUkey;
-        private DataTable gridData1;
+        public DataTable gridData1;
         private DataTable gridData2;
         private DataTable gridData3;
         private DataTable tmpData;
@@ -26,6 +26,8 @@ namespace Sci.Production.PublicForm
             this.InitializeComponent();
             this.styleUkey = styleUKey;
             MyUtility.Tool.SetupCombox(this.comboTypeFilter, 2, 1, "A,All,T,Top,B,Bottom,I,Inner,O,Outer");
+
+            this.GetGridData1();
         }
 
         /// <inheritdoc/>
@@ -35,40 +37,10 @@ namespace Sci.Production.PublicForm
             #region 撈Grid資料
 
             #region Std. GSD
-            string sqlCmd = string.Format(
-                @"
-select 
-        id.SEQ
-        ,id.Location
-        ,id.OperationID
-        ,isnull(m.Description,'') as MachineDesc
-        ,id.Mold
-        ,isnull(o.DescEN,'') as OperationDescEN
-        ,id.Annotation
-        ,id.Frequency
-        ,isnull(id.MtlFactorID,'') as MtlFactorID
-        ,[SMV] = isnull(id.SMV,0)
-        ,[newSMV] = isnull(id.SMV,0) * id.Frequency  * (1 + (id.MtlFactorRate / 100))
-        ,isnull(o.SeamLength,0) as SeamLength
-        ,iif(id.Location = 'T','Top',iif(id.Location = 'B','Bottom',iif(id.Location = 'I','Inner',iif(id.Location = 'O','Outer','')))) as Type
-        ,isnull(o.SeamLength,0)*id.Frequency as ttlSeamLength
-        ,[MtlFactorRate] = id.MtlFactorRate 
-        ,id.PPA
-        ,PPAText = ISNULL(d.Name,'')
-from Style s WITH (NOLOCK) 
-inner join IETMS i WITH (NOLOCK) on s.IETMSID = i.ID and s.IETMSVersion = i.Version
-inner join IETMS_Detail id WITH (NOLOCK) on i.Ukey = id.IETMSUkey
-left join Operation o WITH (NOLOCK) on id.OperationID = o.ID
-left join MachineType m WITH (NOLOCK) on o.MachineTypeID = m.ID
-left join DropDownList d (NOLOCK) on d.ID=id.PPA AND d.Type = 'PMS_IEPPA'
---left join MtlFactor mf WITH (NOLOCK) on mf.Type = 'F' and o.MtlFactorID = mf.ID
-where s.Ukey = {0} order by id.SEQ", this.styleUkey);
-            DualResult result = DBProxy.Current.Select(null, sqlCmd, out this.gridData1);
-            if (!result)
-            {
-                MyUtility.Msg.ErrorBox("Query IETMS fail!\r\n" + result.ToString());
-            }
+            string sqlCmd = string.Empty;
+            DualResult result = new DualResult(true);
 
+            this.GetGridData1();
             this.listControlBindingSource1.DataSource = this.gridData1;
             #endregion
 
@@ -191,6 +163,42 @@ Group by mt.ID,mt.Description,mt.DescCH,mt.RPM,mt.Stitches,ies.location", this.s
                  .Numeric("tms", header: "TMS(sec)", width: Widths.AnsiChars(8));
         }
 
+        private void GetGridData1()
+        {
+            string sqlCmd = string.Format(
+                @"
+select 
+        id.SEQ
+        ,id.Location
+        ,id.OperationID
+        ,isnull(m.Description,'') as MachineDesc
+        ,id.Mold
+        ,isnull(o.DescEN,'') as OperationDescEN
+        ,id.Annotation
+        ,id.Frequency
+        ,isnull(id.MtlFactorID,'') as MtlFactorID
+        ,[SMV] = isnull(id.SMV,0)
+        ,[newSMV] = isnull(id.SMV,0) * id.Frequency  * (1 + (id.MtlFactorRate / 100))
+        ,isnull(o.SeamLength,0) as SeamLength
+        ,iif(id.Location = 'T','Top',iif(id.Location = 'B','Bottom',iif(id.Location = 'I','Inner',iif(id.Location = 'O','Outer','')))) as Type
+        ,isnull(o.SeamLength,0)*id.Frequency as ttlSeamLength
+        ,[MtlFactorRate] = id.MtlFactorRate 
+        ,id.PPA
+        ,PPAText = ISNULL(d.Name,'')
+from Style s WITH (NOLOCK) 
+inner join IETMS i WITH (NOLOCK) on s.IETMSID = i.ID and s.IETMSVersion = i.Version
+inner join IETMS_Detail id WITH (NOLOCK) on i.Ukey = id.IETMSUkey
+left join Operation o WITH (NOLOCK) on id.OperationID = o.ID
+left join MachineType m WITH (NOLOCK) on o.MachineTypeID = m.ID
+left join DropDownList d (NOLOCK) on d.ID=id.PPA AND d.Type = 'PMS_IEPPA'
+--left join MtlFactor mf WITH (NOLOCK) on mf.Type = 'F' and o.MtlFactorID = mf.ID
+where s.Ukey = {0} order by id.SEQ", this.styleUkey);
+            DualResult result = DBProxy.Current.Select(null, sqlCmd, out this.gridData1);
+            if (!result)
+            {
+                MyUtility.Msg.ErrorBox("Query IETMS fail!\r\n" + result.ToString());
+            }
+        }
         private void BtnCIPF_Click(object sender, EventArgs e)
         {
             string ietmsUKEY = MyUtility.GetValue.Lookup($@"

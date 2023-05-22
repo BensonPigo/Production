@@ -599,6 +599,19 @@ and o.ID = @id";
             {
                 if (this.EditMode && e.Button == MouseButtons.Right)
                 {
+                    DataTable GsdTable = this.GetStdGSD();
+                    if (!MyUtility.Check.Empty(this.CurrentDetailData["Mold"]))
+                    {
+                        string seqNo = MyUtility.Convert.GetString(this.CurrentDetailData["Seq"]);
+                        string OperationID = MyUtility.Convert.GetString(this.CurrentDetailData["OperationID"]);
+                        string AttachmentID = MyUtility.Convert.GetString(this.CurrentDetailData["Mold"]);
+                        if (GsdTable.AsEnumerable().Where(o => o["SEQ"].ToString() == seqNo && o["OperationID"].ToString() == OperationID && o["Mold"].ToString() == AttachmentID).Any())
+                        {
+                            MyUtility.Msg.WarningBox("Data from Std. GSD can not be modify.");
+                            return;
+                        }
+                    }
+
                     string sqlcmd = @"
 select ID,DescEN 
 from Mold WITH (NOLOCK) 
@@ -626,8 +639,23 @@ and IsAttachment = 1
 
             this.mold.CellValidating += (s, e) =>
             {
+
                 if (this.EditMode)
                 {
+                    DataTable GsdTable = this.GetStdGSD();
+                    if (!MyUtility.Check.Empty(this.CurrentDetailData["Mold"]) && MyUtility.Convert.GetString(this.CurrentDetailData["Mold"]) != MyUtility.Convert.GetString(e.FormattedValue))
+                    {
+                        string seqNo = MyUtility.Convert.GetString(this.CurrentDetailData["Seq"]);
+                        string OperationID = MyUtility.Convert.GetString(this.CurrentDetailData["OperationID"]);
+                        string AttachmentID = MyUtility.Convert.GetString(this.CurrentDetailData["Mold"]);
+                        if (GsdTable.AsEnumerable().Where(o => o["SEQ"].ToString() == seqNo && o["OperationID"].ToString() == OperationID && o["Mold"].ToString() == AttachmentID).Any())
+                        {
+                            e.Cancel = true;
+                            MyUtility.Msg.WarningBox("Data from Std. GSD can not be modify.");
+                            return;
+                        }
+                    }
+
                     List<SqlParameter> cmds = new List<SqlParameter>() { new SqlParameter { ParameterName = "@OperationID", Value = MyUtility.Convert.GetString(this.CurrentDetailData["OperationID"]) } };
                     string sqlcmd = @"
 select [Mold] = STUFF((
@@ -837,7 +865,7 @@ where m.Junk = 0 and m.IsTemplate = 1 and smt.Junk = 0
                             return;
                         }
 
-                        P01_PartID callNextForm = new P01_PartID(MyUtility.Convert.GetString(dr["Mold"]));
+                        P01_PartID callNextForm = new P01_PartID(MyUtility.Convert.GetString(dr["Mold"]), MyUtility.Convert.GetString(dr["SewingMachineAttachmentID"]));
                         DialogResult result = callNextForm.ShowDialog(this);
 
 
@@ -892,7 +920,16 @@ where a.MoldID IN ('{string.Join("','", moldID.Split(','))}') ";
                     // SewingMachineAttachment.ID可以多選
                     if (newSewingMachineAttachmentID.Split(',').Length > 1)
                     {
-                        sqlcmd += $@" AND a.ID IN ('{string.Join("','", newSewingMachineAttachmentID.Split(','))}')";
+                        List<string> paraList = new List<string>();
+                        int idx = 0;
+                        foreach (var item in newSewingMachineAttachmentID.Split(','))
+                        {
+                            paraList.Add($@"@item{idx}");
+                            paras.Add(new SqlParameter($@"@item{idx}", item));
+                            idx++;
+                        }
+
+                        sqlcmd += $@" AND a.ID IN ({string.Join(",", paraList)})";
                     }
                     else
                     {
@@ -2078,6 +2115,42 @@ and s.BrandID = @brandid ", Env.User.Factory);
             {
                 MyUtility.Msg.WarningBox("Style not found!!");
             }
+        }
+
+        // GetStdGSD
+        public DataTable GetStdGSD()
+        {
+
+            // sql參數
+            SqlParameter sp1 = new SqlParameter();
+            SqlParameter sp2 = new SqlParameter();
+            SqlParameter sp3 = new SqlParameter();
+            sp1.ParameterName = "@id";
+            sp1.Value = this.CurrentMaintain["StyleID"].ToString();
+            sp2.ParameterName = "@seasonid";
+            sp2.Value = this.CurrentMaintain["SeasonID"].ToString();
+            sp3.ParameterName = "@brandid";
+            sp3.Value = this.CurrentMaintain["BrandID"].ToString();
+
+            IList<SqlParameter> cmds = new List<SqlParameter>
+            {
+                sp1,
+                sp2,
+                sp3,
+            };
+
+            string sqlCmd = "select Ukey from Style WITH (NOLOCK) where ID = @id and SeasonID = @seasonid and BrandID = @brandid";
+            DataTable styleUkey;
+            DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out styleUkey);
+            if (!result)
+            {
+                MyUtility.Msg.WarningBox("SQL Connection fail!!\r\n" + result.ToString());
+                return null;
+            }
+
+            StdGSDList callNextForm = new StdGSDList(MyUtility.Convert.GetLong(styleUkey.Rows[0]["UKey"]));
+
+            return callNextForm.gridData1;
         }
 
         /// <summary>
