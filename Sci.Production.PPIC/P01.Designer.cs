@@ -1967,8 +1967,8 @@
             this.lineShape8.Name = "lineShape8";
             this.lineShape8.X1 = 0;
             this.lineShape8.X2 = 987;
-            this.lineShape8.Y1 = 360;
-            this.lineShape8.Y2 = 360;
+            this.lineShape8.Y1 = 390;
+            this.lineShape8.Y2 = 390;
             // 
             // lineShape7
             // 
