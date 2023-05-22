@@ -10,19 +10,18 @@ using Ict.Win;
 using Sci.Win.Tools;
 using Sci.Production.Class;
 using Sci.Production.Class.Command;
-using Sci.Production.Prg.Entity;
-using Ict.Win.Defs;
 using Sci.Data;
 using Sci.Win;
 using System.Data.SqlClient;
-//using static Sci.Win.SYS;
 using System.CodeDom.Compiler;
 using System.Diagnostics;
-using System.Collections;
 using System.Runtime.Serialization;
-using System.Xml.Schema;
 using System.Xml.Serialization;
-using static Sci.Win.SYS;
+using System.ComponentModel.Design;
+using System.Data.Common;
+using System.Threading;
+using System.Collections;
+using System.Xml.Schema;
 
 namespace Sci.Production.PublicForm
 {
@@ -36,7 +35,7 @@ namespace Sci.Production.PublicForm
         /// </summary>
         private Dictionary<string, string[]> mappingClipDic;
 
-        private string CHARs = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        private static string CHARs = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
         ///// <summary>
         ///// 
@@ -228,7 +227,7 @@ namespace Sci.Production.PublicForm
         /// <summary>
         /// Data collection of gird.
         /// </summary>
-        private Sci.Win.SYS.CLIPDataTable _datas;
+        private CLIPGASADataTable _datas;
 
         /////// <summary>
         /////// Field of first clip time.
@@ -360,37 +359,64 @@ namespace Sci.Production.PublicForm
         {
             DualResult result;
 
-            Sci.Win.SYS.CLIPDataTable datas = null;
+            CLIPGASADataTable datas = null;
+            //CLIPDataTable datas = null;
             DateTime? firstcliptime = null;
             string yyyymm = null, fullpath = null;
-            if (!(result = AsyncHelper.Current.DataLoading(this, () =>
-            {
-                if (!(result = PrivUtils.GetClips(this.TableName, this.UID, this.LimitedClip, out datas, _alianClipConnectionName)))
-                {
-                    return result;
-                }
 
-                if (0 < datas.Count)
-                {
-                    firstcliptime = GetFirstClipTime(datas);
-
-                    if (firstcliptime.HasValue)
-                    {
-                        yyyymm = firstcliptime.Value.ToString("yyyyMM");
-                        fullpath = Path.Combine(this._clipdir, yyyymm);
-
-                        if (!(result = PrivUtils.SetClipSize(datas, Path.Combine(this._clipdir, yyyymm))))
-                        {
-                            Logs.UI.LogErrorByCaller(result);
-                        }
-                    }
-                }
-
-                return Result.True;
-            })))
+            if (!(result = GetGASAClips(this.TableName, this.UID, this.LimitedClip, out datas, _alianClipConnectionName)))
+            //if (!(result = PrivUtils.GetClips(this.TableName, this.UID, this.LimitedClip, out datas, _alianClipConnectionName)))
             {
                 return result;
             }
+
+            DataRow dr = datas.NewRow();
+
+            if (0 < datas.Count)
+            {
+                firstcliptime = GetFirstClipTime(datas);
+
+                if (firstcliptime.HasValue)
+                {
+                    yyyymm = firstcliptime.Value.ToString("yyyyMM");
+                    fullpath = Path.Combine(this._clipdir, yyyymm);
+
+                    if (!(result = SetClipSize(datas, Path.Combine(this._clipdir, yyyymm))))
+                    {
+                        Logs.UI.LogErrorByCaller(result);
+                    }
+                }
+            }
+
+            //if (!(result = AsyncHelper.Current.DataLoading(this, () =>
+            //{
+            //    if (!(result = GetGASAClips(this.TableName, this.UID, this.LimitedClip, out datas, _alianClipConnectionName)))
+            //    //if (!(result = PrivUtils.GetClips(this.TableName, this.UID, this.LimitedClip, out datas, _alianClipConnectionName)))
+            //    {
+            //        return result;
+            //    }
+
+            //    if (0 < datas.Count)
+            //    {
+            //        firstcliptime = GetFirstClipTime(datas);
+
+            //        if (firstcliptime.HasValue)
+            //        {
+            //            yyyymm = firstcliptime.Value.ToString("yyyyMM");
+            //            fullpath = Path.Combine(this._clipdir, yyyymm);
+
+            //            if (!(result = SetClipSize(datas, Path.Combine(this._clipdir, yyyymm))))
+            //            {
+            //                Logs.UI.LogErrorByCaller(result);
+            //            }
+            //        }
+            //    }
+
+            //    return Result.True;
+            //})))
+            //{
+            //    return result;
+            //}
 
             this._datas = datas;
             ////_firstcliptime = firstcliptime;
@@ -402,15 +428,261 @@ namespace Sci.Production.PublicForm
             return Result.True;
         }
 
+        public DualResult GetGASAClips(string tablename, string uniquekey, out CLIPGASADataTable datas, string alianClipConnectionName = "")
+        {
+            datas = null;
+            if (tablename == null || tablename.Length == 0)
+            {
+                return Ict.Result.F_ArgNull("tablename");
+            }
+
+            if (uniquekey == null)
+            {
+                return Ict.Result.F_ArgNull("uid");
+            }
+
+            try
+            {
+                DualResult result;
+                if (!(result = DBProxy.Current.OpenConnection(alianClipConnectionName, out var connection)))
+                {
+                    return result;
+                }
+
+                using (connection)
+                {
+                    CLIPGASATableAdapter cLIPTableAdapter = new CLIPGASATableAdapter();
+                    cLIPTableAdapter.Connection = connection;
+                    DBProxy.Current.Select(alianClipConnectionName, "SELECT 1 FROM sys.columns \r\n                                  WHERE Name = N'Type'\r\n                                  AND Object_ID = Object_ID(N'GASAClip')", out DataTable datas2);
+                    if (datas2 != null && datas2.Rows.Count > 0)
+                    {
+                        datas = cLIPTableAdapter.GetContainType(tablename, uniquekey);
+                    }
+                    else
+                    {
+                        datas = cLIPTableAdapter.Gets(tablename, uniquekey);
+                    }
+                }
+            }
+            catch (Exception exception)
+            {
+                return new DualResult(result: false, description: @"進行 IForm 開啟記錄時發生錯誤。",exception: exception);
+            }
+
+            return Ict.Result.True;
+        }
+
+        public static DualResult GetGASAClips(string tablename, string uniquekey, string limitedClip, out CLIPGASADataTable datas, string alianClipConnectionName = "")
+        {
+            datas = null;
+            if (tablename == null || tablename.Length == 0)
+            {
+                return Ict.Result.F_ArgNull("tablename");
+            }
+
+            if (uniquekey == null)
+            {
+                return Ict.Result.F_ArgNull("uid");
+            }
+
+            CLIPGASADataTable cLIPDataTable = null;
+            try
+            {
+                DualResult result;
+                if (!(result = DBProxy.Current.OpenConnection(alianClipConnectionName, out var connection)))
+                {
+                    return result;
+                }
+
+                using (connection)
+                {
+                    CLIPGASATableAdapter cLIPTableAdapter = new CLIPGASATableAdapter();
+                    cLIPTableAdapter.Connection = connection;
+                    DBProxy.Current.Select(alianClipConnectionName, "SELECT 1 FROM sys.columns \r\n                                  WHERE Name = N'Type'\r\n                                  AND Object_ID = Object_ID(N'GASAClip')", out DataTable datas2);
+                    if (datas2 != null && datas2.Rows.Count > 0)
+                    {
+                        datas = cLIPTableAdapter.GetContainType(tablename, uniquekey);
+                        cLIPDataTable = cLIPTableAdapter.GetContainType(tablename + "#" + limitedClip, uniquekey);
+                        foreach (CLIPGASARow row in cLIPDataTable.Rows)
+                        {
+                            CLIPGASARow cLIPRow2 = datas.NewCLIPRow();
+                            cLIPRow2.ItemArray = row.ItemArray;
+                            cLIPRow2.TABLENAME = tablename;
+                            datas.AddCLIPRow(cLIPRow2);
+                        }
+                    }
+                    else
+                    {
+                        //tablename = "GASAClip";
+                        datas = cLIPTableAdapter.Gets(tablename, uniquekey);
+                        cLIPDataTable = cLIPTableAdapter.Gets(tablename + "#" + limitedClip, uniquekey);
+                        foreach (CLIPGASARow row2 in cLIPDataTable.Rows)
+                        {
+                            CLIPGASARow cLIPRow4 = datas.NewCLIPRow();
+                            cLIPRow4.ItemArray = row2.ItemArray;
+                            cLIPRow4.TABLENAME = tablename;
+                            datas.AddCLIPRow(cLIPRow4);
+                        }
+                    }
+                }
+            }
+            catch (Exception exception)
+            {
+                return new DualResult(result: false, description: @"進行 IForm 開啟記錄時發生錯誤。", exception: exception);
+            }
+
+            return Ict.Result.True;
+        }
+
+        //
+        // 摘要:
+        //     get file size and set the size information in datarow.
+        //
+        // 參數:
+        //   datas:
+        //     DataRows of Clip information.
+        //
+        //   dir:
+        //     Path dir of Clip.
+        //
+        // 傳回:
+        //     result of the method is executed.
+        public static DualResult SetClipSize(CLIPGASADataTable datas, string dir)
+        {
+            if (dir == null || dir.Length == 0)
+            {
+                return Ict.Result.F_ArgNull("dir");
+            }
+
+            if (datas == null || datas.Count == 0)
+            {
+                return Ict.Result.True;
+            }
+
+            if (!Directory.Exists(dir))
+            {
+                return Ict.Result.True;
+            }
+
+            foreach (CLIPGASARow row in datas.Rows)
+            {
+                string clipFileName = GetClipFileName(row);
+                if (clipFileName == null)
+                {
+                    continue;
+                }
+
+                try
+                {
+                    string fileName = Path.Combine(dir, clipFileName);
+                    FileInfo fileInfo = new FileInfo(fileName);
+                    if (fileInfo.Exists)
+                    {
+                        row.SIZE = fileInfo.Length;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Logs.UI.LogErrorByCaller("判斷 '{0}' CLIP 檔案大小時發生錯誤。".InvariantFormat(clipFileName), ex);
+                }
+            }
+
+            return Ict.Result.True;
+        }
+
+        //
+        // 摘要:
+        //     get Clip file name.
+        //
+        // 參數:
+        //   data:
+        //     Clip DataRow
+        //
+        // 傳回:
+        //     file name of Clip.
+        private static string GetClipFileName(CLIPGASARow data)
+        {
+            if (data.IsTABLENAMENull() || data.IsSOURCEFILENull())
+            {
+                return null;
+            }
+
+            return data.TABLENAME + data.PKEY + Path.GetExtension(data.SOURCEFILE);
+        }
+
+        //
+        // 摘要:
+        //     get Clip file name.
+        //
+        // 參數:
+        //   data:
+        //     Clip DataRow
+        //
+        //   filename:
+        //     file name of Clip.
+        //
+        // 傳回:
+        //     result of the method is executed.
+        public static DualResult GetClipFileName(CLIPGASARow data, out string filename)
+        {
+            filename = null;
+            if (data == null)
+            {
+                return Ict.Result.F_ArgNull("data");
+            }
+
+            if (data.IsTABLENAMENull())
+            {
+                return new DualResult(result: false, description: "尚未設定 TABLENAME。");
+            }
+
+            if (data.IsSOURCEFILENull())
+            {
+                return new DualResult(result: false, description: "尚未設定 SOURCEFILE。");
+            }
+
+            filename = data.TABLENAME + data.PKEY + Path.GetExtension(data.SOURCEFILE);
+            return Ict.Result.True;
+        }
+
+        public static DualResult DeleteClipRow(CLIPGASARow data, string alianClipConnectionName = "")
+        {
+            if (data == null)
+            {
+                return Ict.Result.F_ArgNull("data");
+            }
+
+            try
+            {
+                DualResult result;
+                if (!(result = DBProxy.Current.OpenConnection(alianClipConnectionName, out var connection)))
+                {
+                    return result;
+                }
+
+                using (connection)
+                {
+                    CLIPGASATableAdapter cLIPTableAdapter = new CLIPGASATableAdapter();
+                    cLIPTableAdapter.Connection = connection;
+                    cLIPTableAdapter.Delete(data.PKEY);
+                }
+            }
+            catch (Exception exception)
+            {
+                return new DualResult(result: false,description: "刪除 CLIP 資料時發生錯誤。",exception: exception);
+            }
+
+            return Ict.Result.True;
+        }
+
         /// <summary>
         /// Get first clip time from current collection.
         /// </summary>
         /// <param name="datas">Current collection.</param>
         /// <returns>First datetime.</returns>
-        private static DateTime? GetFirstClipTime(IEnumerable<Sci.Win.SYS.CLIPRow> datas)
+        private static DateTime? GetFirstClipTime(IEnumerable<CLIPGASARow> datas)
         {
             DateTime? firstcliptime = null;
-
             foreach (var it in datas)
             {
                 if (it.IsADDDATENull())
@@ -427,18 +699,29 @@ namespace Sci.Production.PublicForm
             return firstcliptime;
         }
 
-        private List<Sci.Win.SYS.CLIPRow> GetSelectItems()
+        private List<CLIPGASARow> GetSelectItems()
         {
-            return this.grid.SelectedRows.Cast<DataGridViewRow>().Select(row => (Sci.Win.SYS.CLIPRow)((DataRowView)row.DataBoundItem).Row).ToList();
+            return this.grid.SelectedRows.Cast<DataGridViewRow>().Select(row => (CLIPGASARow)((DataRowView)row.DataBoundItem).Row).ToList();
         }
+
+        //
+        // 摘要:
+        //     get Clip file name.
+        //
+        // 參數:
+        //   data:
+        //     Clip DataRow
+        //
+        // 傳回:
+        //     file name of Clip.
 
         /// <summary>
         /// Get the selected row.
         /// </summary>
         /// <returns>Row of selected.</returns>
-        private Sci.Win.SYS.CLIPRow GetSelected()
+        private CLIPGASARow GetSelected()
         {
-            return (Sci.Win.SYS.CLIPRow)this.grid.CurrentDataRow;
+            return (CLIPGASARow)this.grid.CurrentDataRow;
         }
 
         /// <summary>
@@ -447,7 +730,7 @@ namespace Sci.Production.PublicForm
         /// <param name="data">Specified row.</param>
         /// <param name="file">File name string.</param>
         /// <returns>Result of process.</returns>
-        private static DualResult GetClipFile(Sci.Win.SYS.CLIPRow data, string clipRootDir, Dictionary<string, string[]> mappingClipDic, out string file)
+        private static DualResult GetClipFile(CLIPGASARow data, string clipRootDir, Dictionary<string, string[]> mappingClipDic, out string file)
         {
             file = null;
             DualResult result;
@@ -467,7 +750,7 @@ namespace Sci.Production.PublicForm
             string appConfigRoot = Path.Combine(Env.Cfg.ClipDir, yyyyMM);
 
             // 先用新的方法找
-            if (!(result = PrivUtils.GetClipFileName(data, out filename)))
+            if (!(result = GetClipFileName(data, out filename)))
             {
                 return result;
             }
@@ -519,7 +802,7 @@ namespace Sci.Production.PublicForm
         /// <param name="clipDir"></param>
         /// <param name="filename"></param>
         /// <returns></returns>
-        private static DualResult GetOlderClipFileName(Sci.Win.SYS.CLIPRow data, string clipDir, Dictionary<string, string[]> mappingClipDic, out string filename)
+        private static DualResult GetOlderClipFileName(CLIPGASARow data, string clipDir, Dictionary<string, string[]> mappingClipDic, out string filename)
         {
             var result = Result.True;
             string newFileName = filename = data.TABLENAME.ToUpper() + "_" + data.PKEY + Path.GetExtension(data.SOURCEFILE);
@@ -647,15 +930,15 @@ namespace Sci.Production.PublicForm
             }
         }
 
-        private string GetPKeyPre()
+        public static string GetPKeyPre()
         {
             var dtm_sys = DateTime.Now;
 
             string pkey = string.Empty;
-            pkey += this.CHARs[dtm_sys.Year % 100].ToString() + this.CHARs[dtm_sys.Month].ToString() + this.CHARs[dtm_sys.Day].ToString();
-            pkey += this.CHARs[dtm_sys.Hour].ToString();
-            pkey += this.CHARs[dtm_sys.Minute / this.CHARs.Length].ToString() + this.CHARs[dtm_sys.Minute % this.CHARs.Length].ToString();
-            pkey += this.CHARs[dtm_sys.Second / this.CHARs.Length].ToString() + this.CHARs[dtm_sys.Second % this.CHARs.Length].ToString();
+            pkey += CHARs[dtm_sys.Year % 100].ToString() + CHARs[dtm_sys.Month].ToString() + CHARs[dtm_sys.Day].ToString();
+            pkey += CHARs[dtm_sys.Hour].ToString();
+            pkey += CHARs[dtm_sys.Minute / CHARs.Length].ToString() + CHARs[dtm_sys.Minute % CHARs.Length].ToString();
+            pkey += CHARs[dtm_sys.Second / CHARs.Length].ToString() + CHARs[dtm_sys.Second % CHARs.Length].ToString();
 
             return pkey;
         }
@@ -677,7 +960,7 @@ namespace Sci.Production.PublicForm
 
             if (data.IsSOURCEFILENull() || this._clipdir.Length == 0 || this._clipdir == null)
             {
-                if (!(result = PrivUtils.DeleteClipRow(data, _alianClipConnectionName)))
+                if (!(result = DeleteClipRow(data, _alianClipConnectionName)))
                 {
                     this.ShowErr(result);
                     return;
@@ -709,7 +992,7 @@ namespace Sci.Production.PublicForm
             string filename;
 
             // 先用新的方法找
-            if (!(result = PrivUtils.GetClipFileName(data, out filename)))
+            if (!(result = GetClipFileName(data, out filename)))
             {
                 return;
             }
@@ -722,7 +1005,7 @@ namespace Sci.Production.PublicForm
                 return;
             }
 
-            if (!(result = PrivUtils.DeleteClipRow(data, _alianClipConnectionName)))
+            if (!(result = DeleteClipRow(data, _alianClipConnectionName)))
             {
                 this.ShowErr(result);
             }
@@ -793,11 +1076,11 @@ namespace Sci.Production.PublicForm
         /// Download SingleFile
         /// </summary>
         /// <param name="datas"> STS.CLIPRow list </param>
-        private void FileDownload(List<Sci.Win.SYS.CLIPRow> datas)
+        private void FileDownload(List<CLIPGASARow> datas)
         {
             DualResult result;
 
-            Dictionary<Sci.Win.SYS.CLIPRow, string> files = new Dictionary<Sci.Win.SYS.CLIPRow, string>();
+            Dictionary<CLIPGASARow, string> files = new Dictionary<CLIPGASARow, string>();
             foreach (var data in datas)
             {
                 string file;
@@ -1060,7 +1343,7 @@ namespace Sci.Production.PublicForm
         /// <param name="addTime"></param>
         /// <param name="alianClipConnectionName"></param>
         /// <returns>success or not</returns>
-        internal static DualResult AddClip(IList<Sci.Win.SYS.CLIPRow> datas, string dir = null, string _yyyymm = null, DateTime? addTime = null, string alianClipConnectionName = "")
+        internal static DualResult AddClip(IList<CLIPGASARow> datas, string dir = null, string _yyyymm = null, DateTime? addTime = null, string alianClipConnectionName = "")
         {
             DualResult result = Result.True;
             var dtm_sys = addTime ?? DateTime.Now;
@@ -1086,7 +1369,7 @@ namespace Sci.Production.PublicForm
                 dir = Path.Combine(clipDir, yyyymm);
             }
 
-            if (!(result = PrivUtils.AddClips(datas, dir, alianClipConnectionName)))
+            if (!(result = AddClips(datas, dir, alianClipConnectionName)))
             {
                 return result;
             }
@@ -1148,7 +1431,7 @@ namespace Sci.Production.PublicForm
         /// <param name="addTime"></param>
         ///  <param name="limitedClip"></param>
         /// <returns>success or not</returns>
-        internal static DualResult AddLimitedClip(IList<Sci.Win.SYS.CLIPRow> datas, string dir = null, string _yyyymm = null, DateTime? addTime = null, string limitedClip = "")
+        internal static DualResult AddLimitedClip(IList<CLIPGASARow> datas, string dir = null, string _yyyymm = null, DateTime? addTime = null, string limitedClip = "")
         {
             DualResult result = Result.True;
             var dtm_sys = addTime ?? DateTime.Now;
@@ -1174,63 +1457,210 @@ namespace Sci.Production.PublicForm
                 dir = Path.Combine(clipDir, yyyymm);
             }
 
-            if (!(result = PrivUtils.AddClips(datas, dir, _limitedClip))) { return result; }
+            if (!(result = AddClips(datas, dir, _limitedClip))) { return result; }
 
             return result;
         }
 
-        ///// <summary>
-        ///// 列出所有的附檔
-        ///// </summary>
-        ///// <param name="tableName"></param>
-        ///// <param name="uniqueID"></param>
-        ///// <param name="files"></param>
-        ///// <param name="alianClipConnectionName"></param>
-        ///// <returns></returns>
-        //public static DualResult GetAllClipFiles(string tableName, string uniqueID, out string[] files, string alianClipConnectionName = "")
-        //{
-        //    files = null;
-        //    var result = Result.True;
-        //    string clipRootDir = null;
+        private static int RetryAddClips = 0;
 
-        //    Sci.Win.SYS.CLIPDataTable datas = null;
-        //    if (!(result = PrivUtils.GetClips(tableName, uniqueID, out datas, alianClipConnectionName))) { return result; }
+        //
+        // 摘要:
+        //     Get Pk string array.
+        //
+        // 參數:
+        //   count:
+        //     Length of string.
+        //
+        // 傳回:
+        //     string array.
+        private static string[] GetPKeys(int count)
+        {
+            string[] array = new string[count];
+            string pKeyPre = GetPKeyPre();
+            for (int i = 0; i < count; i++)
+            {
+                array[i] = pKeyPre + i.ToString("00");
+            }
 
-        //    clipRootDir = PrivUtils.GetClipRootPath(tableName, alianClipConnectionName);
+            return array;
+        }
 
-        //    var allClips = new List<string>();
-        //    var missClips = new List<string>();
-        //    try
-        //    {
-        //        var mappingClipDic = FillMappingClipDic(alianClipConnectionName);
-        //        foreach (var data in datas)
-        //        {
-        //            string fileFullPath;
-        //            if (GetClipFile(data, clipRootDir, mappingClipDic, out fileFullPath))
-        //            {
-        //                allClips.Add(fileFullPath);
-        //            }
-        //            else
-        //            {
-        //                missClips.Add(data.SOURCEFILE);
-        //            }
-        //        }
+        //
+        // 摘要:
+        //     New add some Clip information and clip files.
+        //
+        // 參數:
+        //   datas:
+        //     DataRow information of clip
+        //
+        //   dir:
+        //     Path dir of Clip.
+        //
+        // 傳回:
+        //     result of the method is executed.
+        public static DualResult AddClips(IList<CLIPGASARow> datas, string dir, string alianClipConnectionName = "")
+        {
+            RetryAddClips++;
+            if (datas == null || datas.Count == 0)
+            {
+                return Ict.Result.True;
+            }
 
-        //        files = allClips.ToArray();
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return Result.F(ex);
-        //    }
+            if (dir == null || dir.Length == 0)
+            {
+                return Ict.Result.F_ArgNull("dir");
+            }
 
-        //    if (missClips.Count != 0)
-        //    {
-        //        string miss = Environment.NewLine + string.Join(Environment.NewLine, missClips);
-        //        result = Result.F("These files are not found..." + miss);
-        //    }
+            DualResult result;
+            if (!(result = Utils.ChkDir(dir)))
+            {
+                return result;
+            }
 
-        //    return result;
-        //}
+            HashSet<string> hashSet = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            try
+            {
+                if (!(result = DBProxy.Current.OpenConnection(alianClipConnectionName, out var connection)))
+                {
+                    return result;
+                }
+
+                int num = 0;
+                string[] pKeys = GetPKeys(datas.Count);
+                foreach (CLIPGASARow data in datas)
+                {
+                    data.PKEY = pKeys[num];
+                    string lOCALFILE = data.LOCALFILE;
+                    string clipFileName = GetClipFileName(data);
+                    string text = Path.Combine(dir, clipFileName);
+                    File.Copy(lOCALFILE, text, overwrite: true);
+                    hashSet.Add(text);
+                    try
+                    {
+                        FileInfo fileInfo = new FileInfo(text);
+                        fileInfo.IsReadOnly = true;
+                    }
+                    catch (Exception ex)
+                    {
+                        Logs.UI.LogErrorByCaller("將 CLIP 上傳檔案設定為唯讀時發生錯誤。", ex);
+                    }
+
+                    num++;
+                }
+
+                using (connection)
+                {
+                    SqlTransaction sqlTransaction = connection.BeginTransaction();
+                    CLIPGASATableAdapter cLIPTableAdapter = new CLIPGASATableAdapter();
+                    cLIPTableAdapter.Connection = connection;
+                    cLIPTableAdapter.Transaction = sqlTransaction;
+                    foreach (CLIPGASARow data2 in datas)
+                    {
+                        DBProxy.Current.Select(alianClipConnectionName, "SELECT 1 FROM sys.columns \r\n                                  WHERE Name = N'Type'\r\n                                  AND Object_ID = Object_ID(N'Clip')", out DataTable datas2);
+                        if (datas2 != null && datas2.Rows.Count > 0)
+                        {
+                            cLIPTableAdapter.InsertContainType(data2.TABLENAME, data2.UNIQUEKEY, data2.SOURCEFILE, data2.IsDESCRIPTIONNull() ? null : data2.DESCRIPTION, data2.PKEY, data2.IsADDNAMENull() ? null : data2.ADDNAME, data2.ADDDATE, data2.IsTYPENull() ? null : data2.TYPE);
+                        }
+                        else
+                        {
+                            cLIPTableAdapter.Insert(data2.TABLENAME, data2.UNIQUEKEY, data2.SOURCEFILE, data2.IsDESCRIPTIONNull() ? null : data2.DESCRIPTION, data2.PKEY, data2.IsADDNAMENull() ? null : data2.ADDNAME, data2.ADDDATE);
+                        }
+                    }
+
+                    sqlTransaction.Commit();
+                }
+
+                return Ict.Result.True;
+            }
+            catch (Exception exception)
+            {
+                result = new DualResult(result: false, description: "新增 CLIP 檔案上傳資料時發生錯誤。",exception: exception);
+                foreach (string item in hashSet)
+                {
+                    try
+                    {
+                        if (File.Exists(item))
+                        {
+                            File.SetAttributes(item, FileAttributes.Normal);
+                            File.Delete(item);
+                        }
+                    }
+                    catch (Exception)
+                    {
+                    }
+                }
+
+                if (RetryAddClips < 5)
+                {
+                    Thread.Sleep(1500);
+                    result = AddClips(datas, dir);
+                }
+            }
+
+            return result;
+        }
+
+        public static DualResult GetClips(string tablename, string uniquekey, string limitedClip, out CLIPGASADataTable datas, string alianClipConnectionName = "")
+        {
+            datas = null;
+            if (tablename == null || tablename.Length == 0)
+            {
+                return Ict.Result.F_ArgNull("tablename");
+            }
+
+            if (uniquekey == null)
+            {
+                return Ict.Result.F_ArgNull("uid");
+            }
+
+            CLIPGASADataTable cLIPDataTable = null;
+            try
+            {
+                DualResult result;
+                if (!(result = DBProxy.Current.OpenConnection(alianClipConnectionName, out var connection)))
+                {
+                    return result;
+                }
+
+                using (connection)
+                {
+                    CLIPGASATableAdapter cLIPTableAdapter = new CLIPGASATableAdapter();
+                    cLIPTableAdapter.Connection = connection;
+                    DBProxy.Current.Select(alianClipConnectionName, "SELECT 1 FROM sys.columns \r\n                                  WHERE Name = N'Type'\r\n                                  AND Object_ID = Object_ID(N'GASAClip')", out DataTable datas2);
+                    if (datas2 != null && datas2.Rows.Count > 0)
+                    {
+                        datas = cLIPTableAdapter.GetContainType(tablename, uniquekey);
+                        cLIPDataTable = cLIPTableAdapter.GetContainType(tablename + "#" + limitedClip, uniquekey);
+                        foreach (CLIPGASARow row in cLIPDataTable.Rows)
+                        {
+                            CLIPGASARow cLIPRow2 = datas.NewCLIPRow();
+                            cLIPRow2.ItemArray = row.ItemArray;
+                            cLIPRow2.TABLENAME = tablename;
+                            datas.AddCLIPRow(cLIPRow2);
+                        }
+                    }
+                    else
+                    {
+                        datas = cLIPTableAdapter.Gets(tablename, uniquekey);
+                        cLIPDataTable = cLIPTableAdapter.Gets(tablename + "#" + limitedClip, uniquekey);
+                        foreach (CLIPGASARow row2 in cLIPDataTable.Rows)
+                        {
+                            CLIPGASARow cLIPRow4 = datas.NewCLIPRow();
+                            cLIPRow4.ItemArray = row2.ItemArray;
+                            cLIPRow4.TABLENAME = tablename;
+                            datas.AddCLIPRow(cLIPRow4);
+                        }
+                    }
+                }
+            }
+            catch (Exception exception)
+            {
+                return new DualResult(result: false,description: "進行 IForm 開啟記錄時發生錯誤。",exception: exception);
+            }
+
+            return Ict.Result.True;
+        }
 
         /// <summary>
         /// 列出所有的附檔
@@ -1247,8 +1677,8 @@ namespace Sci.Production.PublicForm
             var result = Result.True;
             string clipRootDir = null;
 
-            Sci.Win.SYS.CLIPDataTable datas = null;
-            if (!(result = PrivUtils.GetClips(tableName, uniqueID, limitedClip, out datas, alianClipConnectionName))) { return result; }
+            CLIPGASADataTable datas = null;
+            if (!(result = GetClips(tableName, uniqueID, limitedClip, out datas, alianClipConnectionName))) { return result; }
 
             clipRootDir = PrivUtils.GetClipRootPath(tableName, alianClipConnectionName);
 
@@ -1631,10 +2061,25 @@ namespace Sci.Production.PublicForm
 
         [DebuggerNonUserCode]
         [GeneratedCode("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+        protected override DataRow NewRowFromBuilder(DataRowBuilder builder)
+        {
+            return new CLIPGASARow(builder);
+        }
+
+        [DebuggerNonUserCode]
+        [GeneratedCode("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+        protected override Type GetRowType()
+        {
+            return typeof(CLIPGASARow);
+        }
+
+        [DebuggerNonUserCode]
+        [GeneratedCode("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
         public void RemoveCLIPRow(CLIPGASARow row)
         {
             base.Rows.Remove(row);
         }
+
     }
 
     //
@@ -1980,6 +2425,480 @@ namespace Sci.Production.PublicForm
         {
             base[tableCLIP.TYPEColumn] = Convert.DBNull;
         }
+    }
+
+    public class CLIPGASATableAdapter : Component
+    {
+        private SqlDataAdapter _adapter;
+
+        private SqlConnection _connection;
+
+        private SqlTransaction _transaction;
+
+        private SqlCommand[] _commandCollection;
+
+        [DebuggerNonUserCode]
+        [GeneratedCode("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+        protected internal SqlDataAdapter Adapter
+        {
+            get
+            {
+                if (_adapter == null)
+                {
+                    InitAdapter();
+                }
+
+                return _adapter;
+            }
+        }
+
+        [DebuggerNonUserCode]
+        [GeneratedCode("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+        private void InitConnection()
+        {
+            _connection = new SqlConnection();
+            _connection.ConnectionString = "Data Source=testing\\mis;Initial Catalog=trade;Persist Security Info=True;User ID=scimis;Password=27128299";
+        }
+
+
+        [DebuggerNonUserCode]
+        [GeneratedCode("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+        internal SqlConnection Connection
+        {
+            get
+            {
+                if (_connection == null)
+                {
+                    InitConnection();
+                }
+
+                return _connection;
+            }
+            set
+            {
+                _connection = value;
+                if (Adapter.InsertCommand != null)
+                {
+                    Adapter.InsertCommand.Connection = value;
+                }
+
+                if (Adapter.DeleteCommand != null)
+                {
+                    Adapter.DeleteCommand.Connection = value;
+                }
+
+                if (Adapter.UpdateCommand != null)
+                {
+                    Adapter.UpdateCommand.Connection = value;
+                }
+
+                for (int i = 0; i < CommandCollection.Length; i++)
+                {
+                    if (CommandCollection[i] != null)
+                    {
+                        CommandCollection[i].Connection = value;
+                    }
+                }
+            }
+        }
+
+        [DebuggerNonUserCode]
+        [GeneratedCode("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+        [HelpKeyword("vs.data.TableAdapter")]
+        [DataObjectMethod(DataObjectMethodType.Select, false)]
+        public virtual CLIPGASADataTable GetContainType(string tablename, string uniquekey)
+        {
+            Adapter.SelectCommand = CommandCollection[1];
+            if (tablename == null)
+            {
+                Adapter.SelectCommand.Parameters[0].Value = DBNull.Value;
+            }
+            else
+            {
+                Adapter.SelectCommand.Parameters[0].Value = tablename;
+            }
+
+            if (uniquekey == null)
+            {
+                Adapter.SelectCommand.Parameters[1].Value = DBNull.Value;
+            }
+            else
+            {
+                Adapter.SelectCommand.Parameters[1].Value = uniquekey;
+            }
+
+            CLIPGASADataTable cLIPDataTable = new CLIPGASADataTable();
+            Adapter.Fill(cLIPDataTable);
+            return cLIPDataTable;
+        }
+
+
+        [DebuggerNonUserCode]
+        [GeneratedCode("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+        private void InitAdapter()
+        {
+            _adapter = new SqlDataAdapter();
+            DataTableMapping dataTableMapping = new DataTableMapping();
+            dataTableMapping.SourceTable = "Table";
+            dataTableMapping.DataSetTable = "GASACLIP";
+            dataTableMapping.ColumnMappings.Add("TABLENAME", "TABLENAME");
+            dataTableMapping.ColumnMappings.Add("UNIQUEKEY", "UNIQUEKEY");
+            dataTableMapping.ColumnMappings.Add("SOURCEFILE", "SOURCEFILE");
+            dataTableMapping.ColumnMappings.Add("DESCRIPTION", "DESCRIPTION");
+            dataTableMapping.ColumnMappings.Add("PKEY", "PKEY");
+            dataTableMapping.ColumnMappings.Add("ADDNAME", "ADDNAME");
+            dataTableMapping.ColumnMappings.Add("ADDDATE", "ADDDATE");
+            _adapter.TableMappings.Add(dataTableMapping);
+            _adapter.DeleteCommand = new SqlCommand();
+            _adapter.DeleteCommand.Connection = Connection;
+            _adapter.DeleteCommand.CommandText = "DELETE FROM [GASACLIP] WHERE (([PKEY] = @Original_PKEY))";
+            _adapter.DeleteCommand.CommandType = CommandType.Text;
+            _adapter.DeleteCommand.Parameters.Add(new SqlParameter("@Original_PKEY", SqlDbType.VarChar, 0, ParameterDirection.Input, 0, 0, "PKEY", DataRowVersion.Original, sourceColumnNullMapping: false, value: null, xmlSchemaCollectionDatabase: "", xmlSchemaCollectionOwningSchema: "", xmlSchemaCollectionName: ""));
+            _adapter.InsertCommand = new SqlCommand();
+            _adapter.InsertCommand.Connection = Connection;
+            _adapter.InsertCommand.CommandText = "INSERT INTO GASAClip\r\n                            (TableName, UniqueKey, SourceFile, Description, PKey, AddName, AddDate)\r\nVALUES          (@TABLENAME,@UNIQUEKEY,@SOURCEFILE,@DESCRIPTION,@PKEY,@ADDNAME,@ADDDATE)";
+            _adapter.InsertCommand.CommandType = CommandType.Text;
+            _adapter.InsertCommand.Parameters.Add(new SqlParameter("@TABLENAME", SqlDbType.VarChar, 50, ParameterDirection.Input, 0, 0, "TableName", DataRowVersion.Current, sourceColumnNullMapping: false, value: null, xmlSchemaCollectionDatabase: "", xmlSchemaCollectionOwningSchema: "", xmlSchemaCollectionName: ""));
+            _adapter.InsertCommand.Parameters.Add(new SqlParameter("@UNIQUEKEY", SqlDbType.VarChar, 80, ParameterDirection.Input, 0, 0, "UniqueKey", DataRowVersion.Current, sourceColumnNullMapping: false, value: null, xmlSchemaCollectionDatabase: "", xmlSchemaCollectionOwningSchema: "", xmlSchemaCollectionName: ""));
+            _adapter.InsertCommand.Parameters.Add(new SqlParameter("@SOURCEFILE", SqlDbType.NVarChar, 0, ParameterDirection.Input, 0, 0, "SourceFile", DataRowVersion.Current, sourceColumnNullMapping: false, value: null, xmlSchemaCollectionDatabase: "", xmlSchemaCollectionOwningSchema: "", xmlSchemaCollectionName: ""));
+            _adapter.InsertCommand.Parameters.Add(new SqlParameter("@DESCRIPTION", SqlDbType.NVarChar, 60, ParameterDirection.Input, 0, 0, "Description", DataRowVersion.Current, sourceColumnNullMapping: false, value: null, xmlSchemaCollectionDatabase: "", xmlSchemaCollectionOwningSchema: "", xmlSchemaCollectionName: ""));
+            _adapter.InsertCommand.Parameters.Add(new SqlParameter("@PKEY", SqlDbType.VarChar, 12, ParameterDirection.Input, 0, 0, "PKey", DataRowVersion.Current, sourceColumnNullMapping: false, value: null, xmlSchemaCollectionDatabase: "", xmlSchemaCollectionOwningSchema: "", xmlSchemaCollectionName: ""));
+            _adapter.InsertCommand.Parameters.Add(new SqlParameter("@ADDNAME", SqlDbType.VarChar, 10, ParameterDirection.Input, 0, 0, "AddName", DataRowVersion.Current, sourceColumnNullMapping: false, value: null, xmlSchemaCollectionDatabase: "", xmlSchemaCollectionOwningSchema: "", xmlSchemaCollectionName: ""));
+            _adapter.InsertCommand.Parameters.Add(new SqlParameter("@ADDDATE", SqlDbType.DateTime, 8, ParameterDirection.Input, 0, 0, "AddDate", DataRowVersion.Current, sourceColumnNullMapping: false, value: null, xmlSchemaCollectionDatabase: "", xmlSchemaCollectionOwningSchema: "", xmlSchemaCollectionName: ""));
+            _adapter.UpdateCommand = new SqlCommand();
+            _adapter.UpdateCommand.Connection = Connection;
+            _adapter.UpdateCommand.CommandText = "UPDATE [GASACLIP] SET [TABLENAME] = @TABLENAME, [UNIQUEKEY] = @UNIQUEKEY, [SOURCEFILE] = @SOURCEFILE, [DESCRIPTION] = @DESCRIPTION, [PKEY] = @PKEY, [ADDNAME] = @ADDNAME, [ADDDATE] = @ADDDATE WHERE (([PKEY] = @Original_PKEY))";
+            _adapter.UpdateCommand.CommandType = CommandType.Text;
+            _adapter.UpdateCommand.Parameters.Add(new SqlParameter("@TABLENAME", SqlDbType.VarChar, 0, ParameterDirection.Input, 0, 0, "TABLENAME", DataRowVersion.Current, sourceColumnNullMapping: false, value: null, xmlSchemaCollectionDatabase: "", xmlSchemaCollectionOwningSchema: "", xmlSchemaCollectionName: ""));
+            _adapter.UpdateCommand.Parameters.Add(new SqlParameter("@UNIQUEKEY", SqlDbType.VarChar, 0, ParameterDirection.Input, 0, 0, "UNIQUEKEY", DataRowVersion.Current, sourceColumnNullMapping: false, value: null, xmlSchemaCollectionDatabase: "", xmlSchemaCollectionOwningSchema: "", xmlSchemaCollectionName: ""));
+            _adapter.UpdateCommand.Parameters.Add(new SqlParameter("@SOURCEFILE", SqlDbType.NVarChar, 0, ParameterDirection.Input, 0, 0, "SOURCEFILE", DataRowVersion.Current, sourceColumnNullMapping: false, value: null, xmlSchemaCollectionDatabase: "", xmlSchemaCollectionOwningSchema: "", xmlSchemaCollectionName: ""));
+            _adapter.UpdateCommand.Parameters.Add(new SqlParameter("@DESCRIPTION", SqlDbType.NVarChar, 0, ParameterDirection.Input, 0, 0, "DESCRIPTION", DataRowVersion.Current, sourceColumnNullMapping: false, value: null, xmlSchemaCollectionDatabase: "", xmlSchemaCollectionOwningSchema: "", xmlSchemaCollectionName: ""));
+            _adapter.UpdateCommand.Parameters.Add(new SqlParameter("@PKEY", SqlDbType.VarChar, 0, ParameterDirection.Input, 0, 0, "PKEY", DataRowVersion.Current, sourceColumnNullMapping: false, value: null, xmlSchemaCollectionDatabase: "", xmlSchemaCollectionOwningSchema: "", xmlSchemaCollectionName: ""));
+            _adapter.UpdateCommand.Parameters.Add(new SqlParameter("@ADDNAME", SqlDbType.VarChar, 0, ParameterDirection.Input, 0, 0, "ADDNAME", DataRowVersion.Current, sourceColumnNullMapping: false, value: null, xmlSchemaCollectionDatabase: "", xmlSchemaCollectionOwningSchema: "", xmlSchemaCollectionName: ""));
+            _adapter.UpdateCommand.Parameters.Add(new SqlParameter("@ADDDATE", SqlDbType.DateTime, 0, ParameterDirection.Input, 0, 0, "ADDDATE", DataRowVersion.Current, sourceColumnNullMapping: false, value: null, xmlSchemaCollectionDatabase: "", xmlSchemaCollectionOwningSchema: "", xmlSchemaCollectionName: ""));
+            _adapter.UpdateCommand.Parameters.Add(new SqlParameter("@Original_PKEY", SqlDbType.VarChar, 0, ParameterDirection.Input, 0, 0, "PKEY", DataRowVersion.Original, sourceColumnNullMapping: false, value: null, xmlSchemaCollectionDatabase: "", xmlSchemaCollectionOwningSchema: "", xmlSchemaCollectionName: ""));
+        }
+
+        [DebuggerNonUserCode]
+        [GeneratedCode("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+        private void InitCommandCollection()
+        {
+            _commandCollection = new SqlCommand[3];
+            _commandCollection[0] = new SqlCommand();
+            _commandCollection[0].Connection = Connection;
+            _commandCollection[0].CommandText = "SELECT          TABLENAME, UNIQUEKEY, SOURCEFILE, DESCRIPTION, PKEY, ADDNAME, ADDDATE\r\nFROM              GASAClip\r\nWHERE          (TABLENAME LIKE @tablename) AND (UNIQUEKEY = @uniquekey)";
+            _commandCollection[0].CommandType = CommandType.Text;
+            _commandCollection[0].Parameters.Add(new SqlParameter("@tablename", SqlDbType.VarChar, 50, ParameterDirection.Input, 0, 0, "TABLENAME", DataRowVersion.Current, sourceColumnNullMapping: false, value: null, xmlSchemaCollectionDatabase: "", xmlSchemaCollectionOwningSchema: "", xmlSchemaCollectionName: ""));
+            _commandCollection[0].Parameters.Add(new SqlParameter("@uniquekey", SqlDbType.VarChar, 80, ParameterDirection.Input, 0, 0, "UNIQUEKEY", DataRowVersion.Current, sourceColumnNullMapping: false, value: null, xmlSchemaCollectionDatabase: "", xmlSchemaCollectionOwningSchema: "", xmlSchemaCollectionName: ""));
+            _commandCollection[1] = new SqlCommand();
+            _commandCollection[1].Connection = Connection;
+            _commandCollection[1].CommandText = "SELECT          TABLENAME, UNIQUEKEY, SOURCEFILE, DESCRIPTION, PKEY, ADDNAME, ADDDATE,TYPE\r\nFROM              GASAClip\r\nWHERE          (TABLENAME LIKE @tablename) AND (UNIQUEKEY = @uniquekey)";
+            _commandCollection[1].CommandType = CommandType.Text;
+            _commandCollection[1].Parameters.Add(new SqlParameter("@tablename", SqlDbType.VarChar, 50, ParameterDirection.Input, 0, 0, "TableName", DataRowVersion.Current, sourceColumnNullMapping: false, value: null, xmlSchemaCollectionDatabase: "", xmlSchemaCollectionOwningSchema: "", xmlSchemaCollectionName: ""));
+            _commandCollection[1].Parameters.Add(new SqlParameter("@uniquekey", SqlDbType.VarChar, 80, ParameterDirection.Input, 0, 0, "UniqueKey", DataRowVersion.Current, sourceColumnNullMapping: false, value: null, xmlSchemaCollectionDatabase: "", xmlSchemaCollectionOwningSchema: "", xmlSchemaCollectionName: ""));
+            _commandCollection[2] = new SqlCommand();
+            _commandCollection[2].Connection = Connection;
+            _commandCollection[2].CommandText = "INSERT INTO Clip\r\n                            (TableName, UniqueKey, SourceFile, Description, PKey, AddName, AddDate, Type)\r\nVALUES          (@TABLENAME,@UNIQUEKEY,@SOURCEFILE,@DESCRIPTION,@PKEY,@ADDNAME,@ADDDATE,@Type)";
+            _commandCollection[2].CommandType = CommandType.Text;
+            _commandCollection[2].Parameters.Add(new SqlParameter("@TABLENAME", SqlDbType.VarChar, 50, ParameterDirection.Input, 0, 0, "TableName", DataRowVersion.Current, sourceColumnNullMapping: false, value: null, xmlSchemaCollectionDatabase: "", xmlSchemaCollectionOwningSchema: "", xmlSchemaCollectionName: ""));
+            _commandCollection[2].Parameters.Add(new SqlParameter("@UNIQUEKEY", SqlDbType.VarChar, 80, ParameterDirection.Input, 0, 0, "UniqueKey", DataRowVersion.Current, sourceColumnNullMapping: false, value: null, xmlSchemaCollectionDatabase: "", xmlSchemaCollectionOwningSchema: "", xmlSchemaCollectionName: ""));
+            _commandCollection[2].Parameters.Add(new SqlParameter("@SOURCEFILE", SqlDbType.NVarChar, 0, ParameterDirection.Input, 0, 0, "SourceFile", DataRowVersion.Current, sourceColumnNullMapping: false, value: null, xmlSchemaCollectionDatabase: "", xmlSchemaCollectionOwningSchema: "", xmlSchemaCollectionName: ""));
+            _commandCollection[2].Parameters.Add(new SqlParameter("@DESCRIPTION", SqlDbType.NVarChar, 60, ParameterDirection.Input, 0, 0, "Description", DataRowVersion.Current, sourceColumnNullMapping: false, value: null, xmlSchemaCollectionDatabase: "", xmlSchemaCollectionOwningSchema: "", xmlSchemaCollectionName: ""));
+            _commandCollection[2].Parameters.Add(new SqlParameter("@PKEY", SqlDbType.VarChar, 12, ParameterDirection.Input, 0, 0, "PKey", DataRowVersion.Current, sourceColumnNullMapping: false, value: null, xmlSchemaCollectionDatabase: "", xmlSchemaCollectionOwningSchema: "", xmlSchemaCollectionName: ""));
+            _commandCollection[2].Parameters.Add(new SqlParameter("@ADDNAME", SqlDbType.VarChar, 10, ParameterDirection.Input, 0, 0, "AddName", DataRowVersion.Current, sourceColumnNullMapping: false, value: null, xmlSchemaCollectionDatabase: "", xmlSchemaCollectionOwningSchema: "", xmlSchemaCollectionName: ""));
+            _commandCollection[2].Parameters.Add(new SqlParameter("@ADDDATE", SqlDbType.DateTime, 8, ParameterDirection.Input, 0, 0, "AddDate", DataRowVersion.Current, sourceColumnNullMapping: false, value: null, xmlSchemaCollectionDatabase: "", xmlSchemaCollectionOwningSchema: "", xmlSchemaCollectionName: ""));
+            _commandCollection[2].Parameters.Add(new SqlParameter("@Type", SqlDbType.VarChar, 3, ParameterDirection.Input, 0, 0, "Type", DataRowVersion.Current, sourceColumnNullMapping: false, value: null, xmlSchemaCollectionDatabase: "", xmlSchemaCollectionOwningSchema: "", xmlSchemaCollectionName: ""));
+        }
+
+
+        [DebuggerNonUserCode]
+        [GeneratedCode("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+        protected SqlCommand[] CommandCollection
+        {
+            get
+            {
+                if (_commandCollection == null)
+                {
+                    InitCommandCollection();
+                }
+
+                return _commandCollection;
+            }
+        }
+
+        [GeneratedCode("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+        [HelpKeyword("vs.data.TableAdapter")]
+        [DataObjectMethod(DataObjectMethodType.Select, true)]
+        public virtual CLIPGASADataTable Gets(string tablename, string uniquekey)
+        {
+            Adapter.SelectCommand = CommandCollection[0];
+            if (tablename == null)
+            {
+                Adapter.SelectCommand.Parameters[0].Value = DBNull.Value;
+            }
+            else
+            {
+                Adapter.SelectCommand.Parameters[0].Value = tablename;
+            }
+
+            if (uniquekey == null)
+            {
+                Adapter.SelectCommand.Parameters[1].Value = DBNull.Value;
+            }
+            else
+            {
+                Adapter.SelectCommand.Parameters[1].Value = uniquekey;
+            }
+
+            CLIPGASADataTable cLIPDataTable = new CLIPGASADataTable();
+            Adapter.Fill(cLIPDataTable);
+            return cLIPDataTable;
+        }
+
+        [DebuggerNonUserCode]
+        [GeneratedCode("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+        [HelpKeyword("vs.data.TableAdapter")]
+        [DataObjectMethod(DataObjectMethodType.Delete, true)]
+        public virtual int Delete(string Original_PKEY)
+        {
+            if (Original_PKEY == null)
+            {
+                throw new ArgumentNullException("Original_PKEY");
+            }
+
+            Adapter.DeleteCommand.Parameters[0].Value = Original_PKEY;
+            ConnectionState state = Adapter.DeleteCommand.Connection.State;
+            if ((Adapter.DeleteCommand.Connection.State & ConnectionState.Open) != ConnectionState.Open)
+            {
+                Adapter.DeleteCommand.Connection.Open();
+            }
+
+            try
+            {
+                return Adapter.DeleteCommand.ExecuteNonQuery();
+            }
+            finally
+            {
+                if (state == ConnectionState.Closed)
+                {
+                    Adapter.DeleteCommand.Connection.Close();
+                }
+            }
+        }
+
+        [DebuggerNonUserCode]
+        [GeneratedCode("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+        internal SqlTransaction Transaction
+        {
+            get
+            {
+                return _transaction;
+            }
+            set
+            {
+                _transaction = value;
+                for (int i = 0; i < CommandCollection.Length; i++)
+                {
+                    CommandCollection[i].Transaction = _transaction;
+                }
+
+                if (Adapter != null && Adapter.DeleteCommand != null)
+                {
+                    Adapter.DeleteCommand.Transaction = _transaction;
+                }
+
+                if (Adapter != null && Adapter.InsertCommand != null)
+                {
+                    Adapter.InsertCommand.Transaction = _transaction;
+                }
+
+                if (Adapter != null && Adapter.UpdateCommand != null)
+                {
+                    Adapter.UpdateCommand.Transaction = _transaction;
+                }
+            }
+        }
+
+        [DebuggerNonUserCode]
+        [GeneratedCode("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+        [HelpKeyword("vs.data.TableAdapter")]
+        [DataObjectMethod(DataObjectMethodType.Insert, false)]
+        public virtual int InsertContainType(string TABLENAME, string UNIQUEKEY, string SOURCEFILE, string DESCRIPTION, string PKEY, string ADDNAME, DateTime? ADDDATE, string Type)
+        {
+            SqlCommand sqlCommand = CommandCollection[2];
+            if (TABLENAME == null)
+            {
+                sqlCommand.Parameters[0].Value = DBNull.Value;
+            }
+            else
+            {
+                sqlCommand.Parameters[0].Value = TABLENAME;
+            }
+
+            if (UNIQUEKEY == null)
+            {
+                sqlCommand.Parameters[1].Value = DBNull.Value;
+            }
+            else
+            {
+                sqlCommand.Parameters[1].Value = UNIQUEKEY;
+            }
+
+            if (SOURCEFILE == null)
+            {
+                sqlCommand.Parameters[2].Value = DBNull.Value;
+            }
+            else
+            {
+                sqlCommand.Parameters[2].Value = SOURCEFILE;
+            }
+
+            if (DESCRIPTION == null)
+            {
+                sqlCommand.Parameters[3].Value = DBNull.Value;
+            }
+            else
+            {
+                sqlCommand.Parameters[3].Value = DESCRIPTION;
+            }
+
+            if (PKEY == null)
+            {
+                throw new ArgumentNullException("PKEY");
+            }
+
+            sqlCommand.Parameters[4].Value = PKEY;
+            if (ADDNAME == null)
+            {
+                sqlCommand.Parameters[5].Value = DBNull.Value;
+            }
+            else
+            {
+                sqlCommand.Parameters[5].Value = ADDNAME;
+            }
+
+            if (ADDDATE.HasValue)
+            {
+                sqlCommand.Parameters[6].Value = ADDDATE.Value;
+            }
+            else
+            {
+                sqlCommand.Parameters[6].Value = DBNull.Value;
+            }
+
+            if (Type == null)
+            {
+                sqlCommand.Parameters[7].Value = DBNull.Value;
+            }
+            else
+            {
+                sqlCommand.Parameters[7].Value = Type;
+            }
+
+            ConnectionState state = sqlCommand.Connection.State;
+            if ((sqlCommand.Connection.State & ConnectionState.Open) != ConnectionState.Open)
+            {
+                sqlCommand.Connection.Open();
+            }
+
+            try
+            {
+                return sqlCommand.ExecuteNonQuery();
+            }
+            finally
+            {
+                if (state == ConnectionState.Closed)
+                {
+                    sqlCommand.Connection.Close();
+                }
+            }
+        }
+
+        [DebuggerNonUserCode]
+        [GeneratedCode("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+        [HelpKeyword("vs.data.TableAdapter")]
+        [DataObjectMethod(DataObjectMethodType.Insert, true)]
+        public virtual int Insert(string TABLENAME, string UNIQUEKEY, string SOURCEFILE, string DESCRIPTION, string PKEY, string ADDNAME, DateTime? ADDDATE)
+        {
+            if (TABLENAME == null)
+            {
+                Adapter.InsertCommand.Parameters[0].Value = DBNull.Value;
+            }
+            else
+            {
+                Adapter.InsertCommand.Parameters[0].Value = TABLENAME;
+            }
+
+            if (UNIQUEKEY == null)
+            {
+                Adapter.InsertCommand.Parameters[1].Value = DBNull.Value;
+            }
+            else
+            {
+                Adapter.InsertCommand.Parameters[1].Value = UNIQUEKEY;
+            }
+
+            if (SOURCEFILE == null)
+            {
+                Adapter.InsertCommand.Parameters[2].Value = DBNull.Value;
+            }
+            else
+            {
+                Adapter.InsertCommand.Parameters[2].Value = SOURCEFILE;
+            }
+
+            if (DESCRIPTION == null)
+            {
+                Adapter.InsertCommand.Parameters[3].Value = DBNull.Value;
+            }
+            else
+            {
+                Adapter.InsertCommand.Parameters[3].Value = DESCRIPTION;
+            }
+
+            if (PKEY == null)
+            {
+                throw new ArgumentNullException("PKEY");
+            }
+
+            Adapter.InsertCommand.Parameters[4].Value = PKEY;
+            if (ADDNAME == null)
+            {
+                Adapter.InsertCommand.Parameters[5].Value = DBNull.Value;
+            }
+            else
+            {
+                Adapter.InsertCommand.Parameters[5].Value = ADDNAME;
+            }
+
+            if (ADDDATE.HasValue)
+            {
+                Adapter.InsertCommand.Parameters[6].Value = ADDDATE.Value;
+            }
+            else
+            {
+                Adapter.InsertCommand.Parameters[6].Value = DBNull.Value;
+            }
+
+            ConnectionState state = Adapter.InsertCommand.Connection.State;
+            if ((Adapter.InsertCommand.Connection.State & ConnectionState.Open) != ConnectionState.Open)
+            {
+                Adapter.InsertCommand.Connection.Open();
+            }
+
+            try
+            {
+                return Adapter.InsertCommand.ExecuteNonQuery();
+            }
+            finally
+            {
+                if (state == ConnectionState.Closed)
+                {
+                    Adapter.InsertCommand.Connection.Close();
+                }
+            }
+        }
+
     }
 
 }
