@@ -128,7 +128,7 @@ namespace Sci.Production.Shipping
             if (this.chkOutStanding.Checked)
             {
                 sqlGetA2BGMT = $@"
-select	ID = '',
+select	distinct ID = '',
 		[GMTBooking] = gb.ID,
 		[InvDate] = cast(null as date),
         gbd.PLFromRgCode,
@@ -151,7 +151,7 @@ where	1=1
             else
             {
                 sqlGetA2BGMT = $@"
-select	bi.ID,
+select distinct	bi.ID,
 		[GMTBooking] = gb.ID,
 		[InvDate] = bi.InvDate,
         gbd.PLFromRgCode,
