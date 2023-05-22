@@ -334,6 +334,8 @@
             this.btn_ArtworkTestDox = new Sci.Win.UI.Button();
             this.txtOrderType = new Sci.Win.UI.TextBox();
             this.chbStyleCarryover = new Sci.Win.UI.CheckBox();
+            this.label5 = new Sci.Win.UI.Label();
+            this.dateBox2 = new Sci.Win.UI.DateBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -342,11 +344,6 @@
             this.tabs.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.SuspendLayout();
-            // 
-            // detail
-            // 
-            this.detail.Location = new System.Drawing.Point(4, 24);
-            this.detail.Size = new System.Drawing.Size(1000, 691);
             // 
             // detailcont
             // 
@@ -506,13 +503,13 @@
             this.detailcont.Controls.Add(this.txtuser1);
             this.detailcont.Controls.Add(this.txttpeuser2);
             this.detailcont.Controls.Add(this.txttpeuser1);
-            this.detailcont.Size = new System.Drawing.Size(1000, 691);
+            this.detailcont.Size = new System.Drawing.Size(897, 395);
             this.detailcont.Title = "Gender";
             // 
             // detailbtm
             // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 691);
-            this.detailbtm.Size = new System.Drawing.Size(1000, 0);
+            this.detailbtm.Location = new System.Drawing.Point(0, 395);
+            this.detailbtm.Size = new System.Drawing.Size(897, 0);
             // 
             // browse
             // 
@@ -549,6 +546,8 @@
             // 
             this.tabPage1.AutoScroll = true;
             this.tabPage1.BackColor = System.Drawing.Color.Transparent;
+            this.tabPage1.Controls.Add(this.dateBox2);
+            this.tabPage1.Controls.Add(this.label5);
             this.tabPage1.Controls.Add(this.dateBox1);
             this.tabPage1.Controls.Add(this.label4);
             this.tabPage1.Controls.Add(this.btnComboType);
@@ -682,10 +681,10 @@
             this.tabPage1.Controls.Add(this.txttpeuser5);
             this.tabPage1.Controls.Add(this.PcHandleText);
             this.tabPage1.Controls.Add(this.txttpeuser4);
-            this.tabPage1.Location = new System.Drawing.Point(4, 25);
+            this.tabPage1.Location = new System.Drawing.Point(4, 24);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(897, 395);
+            this.tabPage1.Size = new System.Drawing.Size(1000, 691);
             this.tabPage1.TabIndex = 2;
             this.tabPage1.Text = "Detail(s)";
             // 
@@ -693,7 +692,7 @@
             // 
             this.dateBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ScheETANoReplace", true));
             this.dateBox1.IsSupportEditMode = false;
-            this.dateBox1.Location = new System.Drawing.Point(179, 140);
+            this.dateBox1.Location = new System.Drawing.Point(179, 154);
             this.dateBox1.Name = "dateBox1";
             this.dateBox1.ReadOnly = true;
             this.dateBox1.Size = new System.Drawing.Size(100, 21);
@@ -701,7 +700,7 @@
             // 
             // label4
             // 
-            this.label4.Location = new System.Drawing.Point(5, 140);
+            this.label4.Location = new System.Drawing.Point(5, 154);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(170, 21);
             this.label4.TabIndex = 240;
@@ -721,7 +720,7 @@
             // 
             this.datePFETA.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "PFETA", true));
             this.datePFETA.IsSupportEditMode = false;
-            this.datePFETA.Location = new System.Drawing.Point(163, 89);
+            this.datePFETA.Location = new System.Drawing.Point(163, 85);
             this.datePFETA.Name = "datePFETA";
             this.datePFETA.ReadOnly = true;
             this.datePFETA.Size = new System.Drawing.Size(100, 21);
@@ -729,7 +728,7 @@
             // 
             // label3
             // 
-            this.label3.Location = new System.Drawing.Point(5, 89);
+            this.label3.Location = new System.Drawing.Point(5, 85);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(149, 21);
             this.label3.TabIndex = 16;
@@ -749,7 +748,7 @@
             // 
             this.dateKpiMNotice.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "KpiMNotice", true));
             this.dateKpiMNotice.IsSupportEditMode = false;
-            this.dateKpiMNotice.Location = new System.Drawing.Point(672, 219);
+            this.dateKpiMNotice.Location = new System.Drawing.Point(672, 200);
             this.dateKpiMNotice.Name = "dateKpiMNotice";
             this.dateKpiMNotice.ReadOnly = true;
             this.dateKpiMNotice.Size = new System.Drawing.Size(97, 21);
@@ -757,7 +756,7 @@
             // 
             // labelKpiMNotice
             // 
-            this.labelKpiMNotice.Location = new System.Drawing.Point(527, 219);
+            this.labelKpiMNotice.Location = new System.Drawing.Point(527, 200);
             this.labelKpiMNotice.Name = "labelKpiMNotice";
             this.labelKpiMNotice.Size = new System.Drawing.Size(142, 21);
             this.labelKpiMNotice.TabIndex = 200;
@@ -767,7 +766,7 @@
             // 
             this.dateKpiEachConsCheck.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "KpiEachConsCheck", true));
             this.dateKpiEachConsCheck.IsSupportEditMode = false;
-            this.dateKpiEachConsCheck.Location = new System.Drawing.Point(424, 221);
+            this.dateKpiEachConsCheck.Location = new System.Drawing.Point(424, 200);
             this.dateKpiEachConsCheck.Name = "dateKpiEachConsCheck";
             this.dateKpiEachConsCheck.ReadOnly = true;
             this.dateKpiEachConsCheck.Size = new System.Drawing.Size(100, 21);
@@ -775,7 +774,7 @@
             // 
             // labelKpiEachConsCheck
             // 
-            this.labelKpiEachConsCheck.Location = new System.Drawing.Point(304, 221);
+            this.labelKpiEachConsCheck.Location = new System.Drawing.Point(304, 200);
             this.labelKpiEachConsCheck.Name = "labelKpiEachConsCheck";
             this.labelKpiEachConsCheck.Size = new System.Drawing.Size(117, 21);
             this.labelKpiEachConsCheck.TabIndex = 198;
@@ -785,7 +784,7 @@
             // 
             this.dateBoxChangeMemo.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ChangeMemoDate", true));
             this.dateBoxChangeMemo.IsSupportEditMode = false;
-            this.dateBoxChangeMemo.Location = new System.Drawing.Point(671, 170);
+            this.dateBoxChangeMemo.Location = new System.Drawing.Point(671, 154);
             this.dateBoxChangeMemo.Name = "dateBoxChangeMemo";
             this.dateBoxChangeMemo.ReadOnly = true;
             this.dateBoxChangeMemo.Size = new System.Drawing.Size(98, 21);
@@ -793,7 +792,7 @@
             // 
             // labChangeMemoDate
             // 
-            this.labChangeMemoDate.Location = new System.Drawing.Point(527, 170);
+            this.labChangeMemoDate.Location = new System.Drawing.Point(527, 154);
             this.labChangeMemoDate.Name = "labChangeMemoDate";
             this.labChangeMemoDate.Size = new System.Drawing.Size(142, 21);
             this.labChangeMemoDate.TabIndex = 196;
@@ -803,7 +802,7 @@
             // 
             this.dateLastProductionDate.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "LastProductionDate", true));
             this.dateLastProductionDate.IsSupportEditMode = false;
-            this.dateLastProductionDate.Location = new System.Drawing.Point(896, 219);
+            this.dateLastProductionDate.Location = new System.Drawing.Point(896, 200);
             this.dateLastProductionDate.Name = "dateLastProductionDate";
             this.dateLastProductionDate.ReadOnly = true;
             this.dateLastProductionDate.Size = new System.Drawing.Size(100, 21);
@@ -811,7 +810,7 @@
             // 
             // labLastProductionDate
             // 
-            this.labLastProductionDate.Location = new System.Drawing.Point(772, 219);
+            this.labLastProductionDate.Location = new System.Drawing.Point(772, 200);
             this.labLastProductionDate.Name = "labLastProductionDate";
             this.labLastProductionDate.Size = new System.Drawing.Size(122, 21);
             this.labLastProductionDate.TabIndex = 194;
@@ -819,7 +818,7 @@
             // 
             // btnPFHistory
             // 
-            this.btnPFHistory.Location = new System.Drawing.Point(266, 89);
+            this.btnPFHistory.Location = new System.Drawing.Point(266, 85);
             this.btnPFHistory.Name = "btnPFHistory";
             this.btnPFHistory.Size = new System.Drawing.Size(30, 23);
             this.btnPFHistory.TabIndex = 193;
@@ -1452,7 +1451,7 @@
             // 
             this.dateCFMShipmentdate.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "CFMShipment", true));
             this.dateCFMShipmentdate.IsSupportEditMode = false;
-            this.dateCFMShipmentdate.Location = new System.Drawing.Point(896, 194);
+            this.dateCFMShipmentdate.Location = new System.Drawing.Point(896, 177);
             this.dateCFMShipmentdate.Name = "dateCFMShipmentdate";
             this.dateCFMShipmentdate.ReadOnly = true;
             this.dateCFMShipmentdate.Size = new System.Drawing.Size(100, 21);
@@ -1462,7 +1461,7 @@
             // 
             this.dateFirstProductionDate.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "FirstProduction", true));
             this.dateFirstProductionDate.IsSupportEditMode = false;
-            this.dateFirstProductionDate.Location = new System.Drawing.Point(671, 194);
+            this.dateFirstProductionDate.Location = new System.Drawing.Point(671, 177);
             this.dateFirstProductionDate.Name = "dateFirstProductionDate";
             this.dateFirstProductionDate.ReadOnly = true;
             this.dateFirstProductionDate.Size = new System.Drawing.Size(98, 21);
@@ -1472,7 +1471,7 @@
             // 
             this.dateOrigBuyerDel.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "OrigBuyerDelivery", true));
             this.dateOrigBuyerDel.IsSupportEditMode = false;
-            this.dateOrigBuyerDel.Location = new System.Drawing.Point(896, 143);
+            this.dateOrigBuyerDel.Location = new System.Drawing.Point(896, 131);
             this.dateOrigBuyerDel.Name = "dateOrigBuyerDel";
             this.dateOrigBuyerDel.ReadOnly = true;
             this.dateOrigBuyerDel.Size = new System.Drawing.Size(100, 21);
@@ -1482,7 +1481,7 @@
             // 
             this.dateDetailsCRDdate.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "CRDDate", true));
             this.dateDetailsCRDdate.IsSupportEditMode = false;
-            this.dateDetailsCRDdate.Location = new System.Drawing.Point(896, 116);
+            this.dateDetailsCRDdate.Location = new System.Drawing.Point(896, 108);
             this.dateDetailsCRDdate.Name = "dateDetailsCRDdate";
             this.dateDetailsCRDdate.ReadOnly = true;
             this.dateDetailsCRDdate.Size = new System.Drawing.Size(100, 21);
@@ -1492,7 +1491,7 @@
             // 
             this.dateDetailsSCIDel.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "SciDelivery", true));
             this.dateDetailsSCIDel.IsSupportEditMode = false;
-            this.dateDetailsSCIDel.Location = new System.Drawing.Point(896, 89);
+            this.dateDetailsSCIDel.Location = new System.Drawing.Point(896, 85);
             this.dateDetailsSCIDel.Name = "dateDetailsSCIDel";
             this.dateDetailsSCIDel.ReadOnly = true;
             this.dateDetailsSCIDel.Size = new System.Drawing.Size(100, 21);
@@ -1510,7 +1509,7 @@
             // 
             // labelCFMShipmentdate
             // 
-            this.labelCFMShipmentdate.Location = new System.Drawing.Point(772, 194);
+            this.labelCFMShipmentdate.Location = new System.Drawing.Point(772, 177);
             this.labelCFMShipmentdate.Name = "labelCFMShipmentdate";
             this.labelCFMShipmentdate.Size = new System.Drawing.Size(122, 21);
             this.labelCFMShipmentdate.TabIndex = 48;
@@ -1518,7 +1517,7 @@
             // 
             // labFirstProductionDate
             // 
-            this.labFirstProductionDate.Location = new System.Drawing.Point(527, 194);
+            this.labFirstProductionDate.Location = new System.Drawing.Point(527, 177);
             this.labFirstProductionDate.Name = "labFirstProductionDate";
             this.labFirstProductionDate.Size = new System.Drawing.Size(142, 21);
             this.labFirstProductionDate.TabIndex = 48;
@@ -1526,7 +1525,7 @@
             // 
             // labelOrigBuyerDel
             // 
-            this.labelOrigBuyerDel.Location = new System.Drawing.Point(772, 143);
+            this.labelOrigBuyerDel.Location = new System.Drawing.Point(772, 131);
             this.labelOrigBuyerDel.Name = "labelOrigBuyerDel";
             this.labelOrigBuyerDel.Size = new System.Drawing.Size(122, 21);
             this.labelOrigBuyerDel.TabIndex = 47;
@@ -1534,7 +1533,7 @@
             // 
             // labelDetailsCRDdate
             // 
-            this.labelDetailsCRDdate.Location = new System.Drawing.Point(772, 116);
+            this.labelDetailsCRDdate.Location = new System.Drawing.Point(772, 108);
             this.labelDetailsCRDdate.Name = "labelDetailsCRDdate";
             this.labelDetailsCRDdate.Size = new System.Drawing.Size(122, 21);
             this.labelDetailsCRDdate.TabIndex = 46;
@@ -1542,7 +1541,7 @@
             // 
             // labelDetailsSCIDel
             // 
-            this.labelDetailsSCIDel.Location = new System.Drawing.Point(772, 89);
+            this.labelDetailsSCIDel.Location = new System.Drawing.Point(772, 85);
             this.labelDetailsSCIDel.Name = "labelDetailsSCIDel";
             this.labelDetailsSCIDel.Size = new System.Drawing.Size(122, 21);
             this.labelDetailsSCIDel.TabIndex = 45;
@@ -1560,7 +1559,7 @@
             // 
             this.displayActPullout.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayActPullout.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayActPullout.Location = new System.Drawing.Point(705, 146);
+            this.displayActPullout.Location = new System.Drawing.Point(705, 131);
             this.displayActPullout.Name = "displayActPullout";
             this.displayActPullout.Size = new System.Drawing.Size(27, 21);
             this.displayActPullout.TabIndex = 43;
@@ -1569,7 +1568,7 @@
             // 
             this.dateActPullout.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ActPulloutDate", true));
             this.dateActPullout.IsSupportEditMode = false;
-            this.dateActPullout.Location = new System.Drawing.Point(604, 146);
+            this.dateActPullout.Location = new System.Drawing.Point(604, 131);
             this.dateActPullout.Name = "dateActPullout";
             this.dateActPullout.ReadOnly = true;
             this.dateActPullout.Size = new System.Drawing.Size(100, 21);
@@ -1579,7 +1578,7 @@
             // 
             this.dateDetailsCutOffDate.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "SDPDate", true));
             this.dateDetailsCutOffDate.IsSupportEditMode = false;
-            this.dateDetailsCutOffDate.Location = new System.Drawing.Point(604, 119);
+            this.dateDetailsCutOffDate.Location = new System.Drawing.Point(604, 108);
             this.dateDetailsCutOffDate.Name = "dateDetailsCutOffDate";
             this.dateDetailsCutOffDate.ReadOnly = true;
             this.dateDetailsCutOffDate.Size = new System.Drawing.Size(100, 21);
@@ -1589,7 +1588,7 @@
             // 
             this.dateReadyDate.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ReadyDate", true));
             this.dateReadyDate.IsSupportEditMode = false;
-            this.dateReadyDate.Location = new System.Drawing.Point(604, 92);
+            this.dateReadyDate.Location = new System.Drawing.Point(604, 85);
             this.dateReadyDate.Name = "dateReadyDate";
             this.dateReadyDate.ReadOnly = true;
             this.dateReadyDate.Size = new System.Drawing.Size(100, 21);
@@ -1599,7 +1598,7 @@
             // 
             this.dateEstPullout.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "PulloutDate", true));
             this.dateEstPullout.IsSupportEditMode = false;
-            this.dateEstPullout.Location = new System.Drawing.Point(604, 65);
+            this.dateEstPullout.Location = new System.Drawing.Point(604, 62);
             this.dateEstPullout.Name = "dateEstPullout";
             this.dateEstPullout.ReadOnly = true;
             this.dateEstPullout.Size = new System.Drawing.Size(100, 21);
@@ -1607,7 +1606,7 @@
             // 
             // labelActPullout
             // 
-            this.labelActPullout.Location = new System.Drawing.Point(527, 146);
+            this.labelActPullout.Location = new System.Drawing.Point(527, 131);
             this.labelActPullout.Name = "labelActPullout";
             this.labelActPullout.Size = new System.Drawing.Size(73, 21);
             this.labelActPullout.TabIndex = 38;
@@ -1615,7 +1614,7 @@
             // 
             // labelDetailsCutOffDate
             // 
-            this.labelDetailsCutOffDate.Location = new System.Drawing.Point(527, 119);
+            this.labelDetailsCutOffDate.Location = new System.Drawing.Point(527, 108);
             this.labelDetailsCutOffDate.Name = "labelDetailsCutOffDate";
             this.labelDetailsCutOffDate.Size = new System.Drawing.Size(73, 21);
             this.labelDetailsCutOffDate.TabIndex = 37;
@@ -1623,7 +1622,7 @@
             // 
             // labelReadyDate
             // 
-            this.labelReadyDate.Location = new System.Drawing.Point(527, 92);
+            this.labelReadyDate.Location = new System.Drawing.Point(527, 85);
             this.labelReadyDate.Name = "labelReadyDate";
             this.labelReadyDate.Size = new System.Drawing.Size(73, 21);
             this.labelReadyDate.TabIndex = 36;
@@ -1631,7 +1630,7 @@
             // 
             // labelEstPullout
             // 
-            this.labelEstPullout.Location = new System.Drawing.Point(527, 65);
+            this.labelEstPullout.Location = new System.Drawing.Point(527, 62);
             this.labelEstPullout.Name = "labelEstPullout";
             this.labelEstPullout.Size = new System.Drawing.Size(73, 21);
             this.labelEstPullout.TabIndex = 35;
@@ -1641,7 +1640,7 @@
             // 
             this.btnH.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
             this.btnH.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold);
-            this.btnH.Location = new System.Drawing.Point(492, 114);
+            this.btnH.Location = new System.Drawing.Point(492, 106);
             this.btnH.Name = "btnH";
             this.btnH.Size = new System.Drawing.Size(20, 27);
             this.btnH.TabIndex = 34;
@@ -1654,7 +1653,7 @@
             this.displaySewingLine.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displaySewingLine.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "SewLine", true));
             this.displaySewingLine.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displaySewingLine.Location = new System.Drawing.Point(391, 170);
+            this.displaySewingLine.Location = new System.Drawing.Point(391, 154);
             this.displaySewingLine.Name = "displaySewingLine";
             this.displaySewingLine.Size = new System.Drawing.Size(121, 21);
             this.displaySewingLine.TabIndex = 33;
@@ -1663,7 +1662,7 @@
             // 
             this.datePlanDate.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "PlanDate", true));
             this.datePlanDate.IsSupportEditMode = false;
-            this.datePlanDate.Location = new System.Drawing.Point(896, 170);
+            this.datePlanDate.Location = new System.Drawing.Point(896, 154);
             this.datePlanDate.Name = "datePlanDate";
             this.datePlanDate.ReadOnly = true;
             this.datePlanDate.Size = new System.Drawing.Size(100, 21);
@@ -1673,7 +1672,7 @@
             // 
             this.dateSewingOffline.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "SewOffLine", true));
             this.dateSewingOffline.IsSupportEditMode = false;
-            this.dateSewingOffline.Location = new System.Drawing.Point(391, 143);
+            this.dateSewingOffline.Location = new System.Drawing.Point(391, 131);
             this.dateSewingOffline.Name = "dateSewingOffline";
             this.dateSewingOffline.ReadOnly = true;
             this.dateSewingOffline.Size = new System.Drawing.Size(100, 21);
@@ -1683,7 +1682,7 @@
             // 
             this.dateSewingInline.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "SewInLine", true));
             this.dateSewingInline.IsSupportEditMode = false;
-            this.dateSewingInline.Location = new System.Drawing.Point(391, 116);
+            this.dateSewingInline.Location = new System.Drawing.Point(391, 108);
             this.dateSewingInline.Name = "dateSewingInline";
             this.dateSewingInline.ReadOnly = true;
             this.dateSewingInline.Size = new System.Drawing.Size(100, 21);
@@ -1693,7 +1692,7 @@
             // 
             this.dateCuttingOffline.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "CutOffLine", true));
             this.dateCuttingOffline.IsSupportEditMode = false;
-            this.dateCuttingOffline.Location = new System.Drawing.Point(391, 89);
+            this.dateCuttingOffline.Location = new System.Drawing.Point(391, 85);
             this.dateCuttingOffline.Name = "dateCuttingOffline";
             this.dateCuttingOffline.ReadOnly = true;
             this.dateCuttingOffline.Size = new System.Drawing.Size(100, 21);
@@ -1711,7 +1710,7 @@
             // 
             // labelPlanDate
             // 
-            this.labelPlanDate.Location = new System.Drawing.Point(772, 170);
+            this.labelPlanDate.Location = new System.Drawing.Point(772, 154);
             this.labelPlanDate.Name = "labelPlanDate";
             this.labelPlanDate.Size = new System.Drawing.Size(122, 21);
             this.labelPlanDate.TabIndex = 27;
@@ -1719,7 +1718,7 @@
             // 
             // labelSewingLine
             // 
-            this.labelSewingLine.Location = new System.Drawing.Point(304, 170);
+            this.labelSewingLine.Location = new System.Drawing.Point(304, 154);
             this.labelSewingLine.Name = "labelSewingLine";
             this.labelSewingLine.Size = new System.Drawing.Size(83, 21);
             this.labelSewingLine.TabIndex = 26;
@@ -1727,7 +1726,7 @@
             // 
             // labelSewingOffline
             // 
-            this.labelSewingOffline.Location = new System.Drawing.Point(304, 143);
+            this.labelSewingOffline.Location = new System.Drawing.Point(304, 131);
             this.labelSewingOffline.Name = "labelSewingOffline";
             this.labelSewingOffline.Size = new System.Drawing.Size(83, 21);
             this.labelSewingOffline.TabIndex = 25;
@@ -1735,7 +1734,7 @@
             // 
             // labelSewingInline
             // 
-            this.labelSewingInline.Location = new System.Drawing.Point(304, 116);
+            this.labelSewingInline.Location = new System.Drawing.Point(304, 108);
             this.labelSewingInline.Name = "labelSewingInline";
             this.labelSewingInline.Size = new System.Drawing.Size(83, 21);
             this.labelSewingInline.TabIndex = 24;
@@ -1743,7 +1742,7 @@
             // 
             // label6CuttingOffline
             // 
-            this.label6CuttingOffline.Location = new System.Drawing.Point(304, 89);
+            this.label6CuttingOffline.Location = new System.Drawing.Point(304, 85);
             this.label6CuttingOffline.Name = "label6CuttingOffline";
             this.label6CuttingOffline.Size = new System.Drawing.Size(83, 21);
             this.label6CuttingOffline.TabIndex = 23;
@@ -1761,7 +1760,7 @@
             // 
             this.displayRMTLETAMasterSP.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayRMTLETAMasterSP.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayRMTLETAMasterSP.Location = new System.Drawing.Point(266, 219);
+            this.displayRMTLETAMasterSP.Location = new System.Drawing.Point(266, 223);
             this.displayRMTLETAMasterSP.Name = "displayRMTLETAMasterSP";
             this.displayRMTLETAMasterSP.Size = new System.Drawing.Size(27, 21);
             this.displayRMTLETAMasterSP.TabIndex = 21;
@@ -1770,7 +1769,7 @@
             // 
             this.displayMTLCmpltSP.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayMTLCmpltSP.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayMTLCmpltSP.Location = new System.Drawing.Point(449, 197);
+            this.displayMTLCmpltSP.Location = new System.Drawing.Point(449, 177);
             this.displayMTLCmpltSP.Name = "displayMTLCmpltSP";
             this.displayMTLCmpltSP.Size = new System.Drawing.Size(27, 21);
             this.displayMTLCmpltSP.TabIndex = 20;
@@ -1779,7 +1778,7 @@
             // 
             this.dateRMTLETAMasterSP.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "MTLETA", true));
             this.dateRMTLETAMasterSP.IsSupportEditMode = false;
-            this.dateRMTLETAMasterSP.Location = new System.Drawing.Point(163, 219);
+            this.dateRMTLETAMasterSP.Location = new System.Drawing.Point(163, 223);
             this.dateRMTLETAMasterSP.Name = "dateRMTLETAMasterSP";
             this.dateRMTLETAMasterSP.ReadOnly = true;
             this.dateRMTLETAMasterSP.Size = new System.Drawing.Size(100, 21);
@@ -1789,7 +1788,7 @@
             // 
             this.datePkgMTLETASP.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "PackETA", true));
             this.datePkgMTLETASP.IsSupportEditMode = false;
-            this.datePkgMTLETASP.Location = new System.Drawing.Point(163, 192);
+            this.datePkgMTLETASP.Location = new System.Drawing.Point(163, 200);
             this.datePkgMTLETASP.Name = "datePkgMTLETASP";
             this.datePkgMTLETASP.ReadOnly = true;
             this.datePkgMTLETASP.Size = new System.Drawing.Size(100, 21);
@@ -1799,7 +1798,7 @@
             // 
             this.dateSewMTLETASP.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "SewETA", true));
             this.dateSewMTLETASP.IsSupportEditMode = false;
-            this.dateSewMTLETASP.Location = new System.Drawing.Point(163, 165);
+            this.dateSewMTLETASP.Location = new System.Drawing.Point(163, 177);
             this.dateSewMTLETASP.Name = "dateSewMTLETASP";
             this.dateSewMTLETASP.ReadOnly = true;
             this.dateSewMTLETASP.Size = new System.Drawing.Size(100, 21);
@@ -1809,7 +1808,7 @@
             // 
             this.dateSCHDLETAMasterSP.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "SCHDLETA", true));
             this.dateSCHDLETAMasterSP.IsSupportEditMode = false;
-            this.dateSCHDLETAMasterSP.Location = new System.Drawing.Point(163, 116);
+            this.dateSCHDLETAMasterSP.Location = new System.Drawing.Point(163, 131);
             this.dateSCHDLETAMasterSP.Name = "dateSCHDLETAMasterSP";
             this.dateSCHDLETAMasterSP.ReadOnly = true;
             this.dateSCHDLETAMasterSP.Size = new System.Drawing.Size(100, 21);
@@ -1827,7 +1826,7 @@
             // 
             // labelMTLCmpltSP
             // 
-            this.labelMTLCmpltSP.Location = new System.Drawing.Point(304, 197);
+            this.labelMTLCmpltSP.Location = new System.Drawing.Point(304, 177);
             this.labelMTLCmpltSP.Name = "labelMTLCmpltSP";
             this.labelMTLCmpltSP.Size = new System.Drawing.Size(142, 21);
             this.labelMTLCmpltSP.TabIndex = 14;
@@ -1835,7 +1834,7 @@
             // 
             // labelRMTLETAMasterSP
             // 
-            this.labelRMTLETAMasterSP.Location = new System.Drawing.Point(5, 219);
+            this.labelRMTLETAMasterSP.Location = new System.Drawing.Point(5, 223);
             this.labelRMTLETAMasterSP.Name = "labelRMTLETAMasterSP";
             this.labelRMTLETAMasterSP.Size = new System.Drawing.Size(149, 21);
             this.labelRMTLETAMasterSP.TabIndex = 13;
@@ -1843,7 +1842,7 @@
             // 
             // labelPkgMTLETASP
             // 
-            this.labelPkgMTLETASP.Location = new System.Drawing.Point(5, 192);
+            this.labelPkgMTLETASP.Location = new System.Drawing.Point(5, 200);
             this.labelPkgMTLETASP.Name = "labelPkgMTLETASP";
             this.labelPkgMTLETASP.Size = new System.Drawing.Size(149, 21);
             this.labelPkgMTLETASP.TabIndex = 12;
@@ -1851,7 +1850,7 @@
             // 
             // labelSewMTLETASP
             // 
-            this.labelSewMTLETASP.Location = new System.Drawing.Point(5, 165);
+            this.labelSewMTLETASP.Location = new System.Drawing.Point(5, 177);
             this.labelSewMTLETASP.Name = "labelSewMTLETASP";
             this.labelSewMTLETASP.Size = new System.Drawing.Size(149, 21);
             this.labelSewMTLETASP.TabIndex = 11;
@@ -1859,7 +1858,7 @@
             // 
             // labelSCHDLETAMasterSP
             // 
-            this.labelSCHDLETAMasterSP.Location = new System.Drawing.Point(5, 116);
+            this.labelSCHDLETAMasterSP.Location = new System.Drawing.Point(5, 131);
             this.labelSCHDLETAMasterSP.Name = "labelSCHDLETAMasterSP";
             this.labelSCHDLETAMasterSP.Size = new System.Drawing.Size(149, 21);
             this.labelSCHDLETAMasterSP.TabIndex = 10;
@@ -1935,7 +1934,7 @@
             this.lineShape7,
             this.lineShape6,
             this.lineShape5});
-            this.shapeContainer2.Size = new System.Drawing.Size(990, 679);
+            this.shapeContainer2.Size = new System.Drawing.Size(994, 685);
             this.shapeContainer2.TabIndex = 8;
             this.shapeContainer2.TabStop = false;
             // 
@@ -2385,7 +2384,7 @@
             this.shapeContainer1.Name = "shapeContainer1";
             this.shapeContainer1.Shapes.AddRange(new Microsoft.VisualBasic.PowerPacks.Shape[] {
             this.lineShape3});
-            this.shapeContainer1.Size = new System.Drawing.Size(1000, 691);
+            this.shapeContainer1.Size = new System.Drawing.Size(993, 678);
             this.shapeContainer1.TabIndex = 0;
             this.shapeContainer1.TabStop = false;
             // 
@@ -3747,6 +3746,24 @@
             this.chbStyleCarryover.TabIndex = 257;
             this.chbStyleCarryover.Text = "Carryover";
             // 
+            // label5
+            // 
+            this.label5.Location = new System.Drawing.Point(5, 108);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(149, 21);
+            this.label5.TabIndex = 241;
+            this.label5.Text = "Pack L/ETA";
+            // 
+            // dateBox2
+            // 
+            this.dateBox2.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "PackLETA", true));
+            this.dateBox2.IsSupportEditMode = false;
+            this.dateBox2.Location = new System.Drawing.Point(163, 108);
+            this.dateBox2.Name = "dateBox2";
+            this.dateBox2.ReadOnly = true;
+            this.dateBox2.Size = new System.Drawing.Size(100, 21);
+            this.dateBox2.TabIndex = 18;
+            // 
             // P01
             // 
             this.ClientSize = new System.Drawing.Size(1008, 752);
@@ -4084,5 +4101,7 @@
         private Win.UI.Label label4;
         private Win.UI.TextBox txtOrderType;
         private Win.UI.CheckBox chbStyleCarryover;
+        private Win.UI.DateBox dateBox2;
+        private Win.UI.Label label5;
     }
 }
