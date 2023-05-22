@@ -356,6 +356,7 @@ with tmpOrders as (
 	        , [PackingMtlComplt] = isnull(CompltSP.PackingMtlComplt, '')
             , o.OrganicCotton
             , o.DirectShip
+            ,[StyleCarryover] = iif(s.NewCO = '2','V','')
     from Orders o WITH (NOLOCK) 
     left join style s WITH (NOLOCK) on o.styleukey = s.ukey
 	left join DropDownList d ON o.CtnType=d.ID AND d.Type='PackingMethod'
@@ -750,6 +751,7 @@ tmpFilterZone as (
             , [PackingMtlComplt] = isnull(CompltSP.PackingMtlComplt, '')
             , o.OrganicCotton
             ,o.DirectShip
+            ,[StyleCarryover] = iif(s.NewCO = '2','V','')
 " +
     @"      
     from Orders o  WITH (NOLOCK) 
@@ -948,6 +950,7 @@ group by pd.OrderID, pd.OrderShipmodeSeq
             , t.PackingMtlComplt
             , t.OrganicCotton
             , t.DirectShip
+            , t.[StyleCarryover]
     into #tmpFilterSeperate
     from #tmpListPoCombo t
     inner join Order_QtyShip oq WITH(NOLOCK) on t.ID = oq.Id and t.Seq = oq.Seq
@@ -1238,6 +1241,7 @@ select  t.ID
         , t.PackingMtlComplt
         , [OrganicCotton] = iif(t.OrganicCotton = 1, 'Y', 'N')
         , [DirectShip] = iif(t.DirectShip = 1, 'V','')
+        ,[StyleCarryover] = iif(s.NewCO = '2','V','')
 from #tmpFilterSeperate t
 left join Cutting ct WITH (NOLOCK) on ct.ID = t.CuttingSP
 left join Style s WITH (NOLOCK) on s.Ukey = t.StyleUkey
@@ -1563,6 +1567,7 @@ select distinct
         , t.PackingMtlComplt
         , [OrganicCotton] = iif(t.OrganicCotton = 1, 'Y', 'N')
         , [DirectShip] = iif(t.DirectShip = 1, 'V','')
+        ,[StyleCarryover] = iif(s.NewCO = '2','V','')
 from #tmpListPoCombo t
 left join Cutting ct WITH (NOLOCK) on ct.ID = t.CuttingSP
 left join Style s WITH (NOLOCK) on s.Ukey = t.StyleUkey
@@ -2348,6 +2353,7 @@ drop table #tmp,#tmp2,#tmp3
                 objArray[intRowsStart, 150] = dr["MdRoomScanDate"];
                 objArray[intRowsStart, 151] = dr["OrganicCotton"];
                 objArray[intRowsStart, 152] = dr["DirectShip"];
+                objArray[intRowsStart, 153] = dr["StyleCarryover"];
                 #endregion
 
                 if (this.artwork || this.pap)

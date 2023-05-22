@@ -333,6 +333,7 @@
             this.checkBoxDirectShip = new Sci.Win.UI.CheckBox();
             this.btn_ArtworkTestDox = new Sci.Win.UI.Button();
             this.txtOrderType = new Sci.Win.UI.TextBox();
+            this.chbStyleCarryover = new Sci.Win.UI.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -350,6 +351,7 @@
             // detailcont
             // 
             this.detailcont.Controls.Add(this.txtOrderType);
+            this.detailcont.Controls.Add(this.chbStyleCarryover);
             this.detailcont.Controls.Add(this.checkBoxDirectShip);
             this.detailcont.Controls.Add(this.btn_ArtworkTestDox);
             this.detailcont.Controls.Add(this.checkOrganicCotton);
@@ -680,10 +682,10 @@
             this.tabPage1.Controls.Add(this.txttpeuser5);
             this.tabPage1.Controls.Add(this.PcHandleText);
             this.tabPage1.Controls.Add(this.txttpeuser4);
-            this.tabPage1.Location = new System.Drawing.Point(4, 24);
+            this.tabPage1.Location = new System.Drawing.Point(4, 25);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(1000, 691);
+            this.tabPage1.Size = new System.Drawing.Size(897, 395);
             this.tabPage1.TabIndex = 2;
             this.tabPage1.Text = "Detail(s)";
             // 
@@ -1933,7 +1935,7 @@
             this.lineShape7,
             this.lineShape6,
             this.lineShape5});
-            this.shapeContainer2.Size = new System.Drawing.Size(994, 685);
+            this.shapeContainer2.Size = new System.Drawing.Size(990, 679);
             this.shapeContainer2.TabIndex = 8;
             this.shapeContainer2.TabStop = false;
             // 
@@ -3595,6 +3597,7 @@
             // 
             // txtuser2
             // 
+            this.txtuser2.AllowSelectResign = false;
             this.txtuser2.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "LocalMR", true));
             this.txtuser2.DisplayBox1Binding = "";
             this.txtuser2.Location = new System.Drawing.Point(644, 85);
@@ -3605,6 +3608,7 @@
             // 
             // txtuser1
             // 
+            this.txtuser1.AllowSelectResign = false;
             this.txtuser1.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "MCHandle", true));
             this.txtuser1.DisplayBox1Binding = "";
             this.txtuser1.Location = new System.Drawing.Point(644, 58);
@@ -3706,7 +3710,7 @@
             this.checkBoxDirectShip.AutoSize = true;
             this.checkBoxDirectShip.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "DirectShip", true));
             this.checkBoxDirectShip.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkBoxDirectShip.Location = new System.Drawing.Point(709, 275);
+            this.checkBoxDirectShip.Location = new System.Drawing.Point(707, 286);
             this.checkBoxDirectShip.Name = "checkBoxDirectShip";
             this.checkBoxDirectShip.Size = new System.Drawing.Size(86, 19);
             this.checkBoxDirectShip.TabIndex = 255;
@@ -3733,6 +3737,14 @@
             this.txtOrderType.Name = "txtOrderType";
             this.txtOrderType.Size = new System.Drawing.Size(216, 21);
             this.txtOrderType.TabIndex = 256;
+            // 
+            // chbStyleCarryover
+            // 
+            this.chbStyleCarryover.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chbStyleCarryover.Location = new System.Drawing.Point(0, 0);
+            this.chbStyleCarryover.Name = "chbStyleCarryover";
+            this.chbStyleCarryover.Size = new System.Drawing.Size(104, 24);
+            this.chbStyleCarryover.TabIndex = 257;
             // 
             // P01
             // 
@@ -4070,5 +4082,6 @@
         private Win.UI.DateBox dateBox1;
         private Win.UI.Label label4;
         private Win.UI.TextBox txtOrderType;
+        private Win.UI.CheckBox chbStyleCarryover;
     }
 }
