@@ -161,7 +161,7 @@ namespace Sci.Production.Quality
     a.CustInspNumber,
     Complete = IIF(d.Complete=1,'Y','N'),
     b.InspectionGroup,
-    [Inspection] = convert(varchar(20),convert(decimal(20,2),TotalInspYds/ArriveQty*100)) + '%'
+    [Inspection] = CONCAT(convert(decimal(20,2),ROUND(isnull(fp.ttlActualYds, 0) / ArriveQty * 100.0, 2)), '%')
 From FIR a WITH (NOLOCK) 
 Left join Receiving c WITH (NOLOCK) on c.id = a.receivingid
 Left join TransferIn ti WITH (NOLOCK) on ti.id = a.receivingid
@@ -169,6 +169,7 @@ inner join PO_Supp_Detail d WITH (NOLOCK) on d.id = a.poid and d.seq1 = a.seq1 a
 left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = d.id and psdsC.seq1 = d.seq1 and psdsC.seq2 = d.seq2 and psdsC.SpecColumnID = 'Color'
 outer apply(select name from color WITH (NOLOCK) where color.id = isnull(psdsC.SpecValue ,'') and color.BrandId = d.BrandId)cn
 left join Fabric b WITH (NOLOCK) on b.SCIRefno =d.SCIrefno
+outer apply(select ttlActualYds = sum(ActualYds) from FIR_Physical fp where fp.id = a.ID ) fp
 Where a.poid='{0}' order by a.seq1,a.seq2", masterID);
             this.DetailSelectCommand = cmd;
             return base.OnDetailSelectCommandPrepare(e);
