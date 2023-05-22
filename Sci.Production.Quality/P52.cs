@@ -28,7 +28,7 @@ namespace Sci.Production.Quality
         {
             this.InitializeComponent();
             this.EditMode = true;
-            //MyUtility.Tool.SetupCombox(this.comboMaterialType, 2, 1, @"F,Fabric,A,Accessory");
+            MyUtility.Tool.SetupCombox(this.comboMaterialType, 2, 1, @"F,Fabric,A,Accessory");
         }
 
         private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
@@ -42,7 +42,7 @@ namespace Sci.Production.Quality
             this.SetupGrid_Material();
             this.SetupGrid_Document();
             this.SetupGrid_Report(string.Empty);
-            MyUtility.Tool.SetupCombox(this.comboMaterialType, 2, 1, @"F,Fabric,A,Accessory");
+            //MyUtility.Tool.SetupCombox(this.comboMaterialType, 2, 1, @"F,Fabric,A,Accessory");
         }
 
         private void SetupGrid_Material()
@@ -895,7 +895,7 @@ drop table #probablySeasonList,#tmpBasc,#tmpFTYReceivedReport,#tmpReportDate
 
         private void comboMaterialType_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (!MyUtility.Check.Empty(this.comboMaterialType.SelectedValue))
+            if (this.isFormLoaded)
             {
                 this.Find();
             }
