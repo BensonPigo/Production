@@ -69,7 +69,6 @@ a.StyleUkey	= b.StyleUkey
 ,a.ReasonID = b.ReasonID
 --,a.SendToQA = b.SendToQA
 --,a.QAReceived = b.QAReceived
-,a.StyleCUkey1_Old = b.StyleCUkey1_Old
 ,a.[AddName]=b.[AddName]
 ,a.[AddDate]=b.[AddDate]
 ,a.[EditName]=b.[EditName]
@@ -112,7 +111,6 @@ Ukey
 ,ReasonID
 --,SendToQA
 --,QAReceived
-,StyleCUkey1_Old
 ,[AddName]
 ,[AddDate]
 ,[EditName]
@@ -151,7 +149,6 @@ b.Ukey
 ,b.ReasonID
 --,SendToQA
 --,QAReceived
-,b.StyleCUkey1_Old
 ,b.[AddName]
 ,b.[AddDate]
 ,b.[EditName]
