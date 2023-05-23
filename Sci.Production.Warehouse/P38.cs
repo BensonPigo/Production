@@ -353,11 +353,7 @@ select 0 as [selected]
         , fi.AdjustQty
         , fi.ReturnQty
         , fi.InQty - fi.OutQty + fi.AdjustQty - fi.ReturnQty as balanceqty
-        , stocktype =  case fi.stocktype 
-                        when 'B' then'Bulk' 
-                        when 'I' then 'Inventory' 
-                        else fi.StockType 
-                       end 
+        , fi.stocktype 
         , fi.LockDate
         , LockName = (select id+'-'+name from dbo.pass1 WITH (NOLOCK) where id=fi.LockName) 
         , fi.ukey
@@ -718,6 +714,11 @@ OUTER APPLY(
 
 
 select distinct fi.*
+     ,[StockType]  = case fi.stocktype 
+                        when 'B' then'Bulk' 
+                        when 'I' then 'Inventory' 
+                        else fi.StockType 
+                       end 
 	 ,[FIR] = case when fi.sFabricType='A' then iif(Air.Result ='','Blank',Air.Result)
 				   else FIR_Result1.Result end
 		,[PointRate]=IIF(fi.FabricType='Accessory','',PointRate.PointRate)
@@ -738,19 +739,11 @@ left join #tmp_Air_Lab Air_Lab on Air_Lab.POID= fi.POID	and Air_Lab.SEQ1 =fi.Seq
 left join #tmp_PointRate PointRate on PointRate.POID=fi.POID	and PointRate.SEQ1 = fi.Seq1 and PointRate.SEQ2 = fi.Seq2 and PointRate.Roll=fi.Roll and PointRate.Dyelot=fi.Dyelot   
 outer apply
 (	select top 1 [ForInspection] = isnull(ForInspection,'') from
-	Receiving_Detail rd where rd.POID=fi.POID and rd.SEQ1 = fi.Seq1 and rd.SEQ2 = fi.Seq2 and rd.Roll=fi.Roll and rd.Dyelot=fi.Dyelot and rd.StockType =  case fi.stocktype 
-																																						  when 'Bulk' then'B' 
-																																						  when 'Inventory' then 'I' 
-																																						  else fi.StockType 
-																																						  end
+	Receiving_Detail rd where rd.POID=fi.POID and rd.SEQ1 = fi.Seq1 and rd.SEQ2 = fi.Seq2 and rd.Roll=fi.Roll and rd.Dyelot=fi.Dyelot and rd.StockType = fi.stocktype 																 
 )rdValue
 outer apply
 (	select top 1 [ForInspection] = isnull(ForInspection, '') from
-	TransferIn_Detail td  where td.POID=fi.POID and td.SEQ1 = fi.Seq1 and td.SEQ2 = fi.Seq2 and td.Roll=fi.Roll and td.Dyelot=fi.Dyelot and td.StockType = case fi.stocktype 
-																																						   when 'Bulk' then'B' 
-																																						   when 'Inventory' then 'I' 
-																																						   else fi.StockType 
-																																						   end 
+	TransferIn_Detail td  where td.POID=fi.POID and td.SEQ1 = fi.Seq1 and td.SEQ2 = fi.Seq2 and td.Roll=fi.Roll and td.Dyelot=fi.Dyelot and td.StockType = fi.stocktype 																																				  
 )tdValue
 drop table #tmp_FtyInventory,#tmp_FIR_Result1,#tmp_WashLab,#tmp_Air,#tmp_Air_Lab,#tmp_PointRate,#tmpFirDetail
 ");
