@@ -60,6 +60,7 @@
             this.grid_Report = new Sci.Win.UI.Grid();
             this.bs_Report = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.btn_ToExcel = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.grid_Material)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.bs_Material)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.grid_Document)).BeginInit();
@@ -361,6 +362,7 @@
             this.comboMaterialType.Name = "comboMaterialType";
             this.comboMaterialType.Size = new System.Drawing.Size(121, 24);
             this.comboMaterialType.TabIndex = 10;
+            this.comboMaterialType.SelectedIndexChanged += new System.EventHandler(this.comboMaterialType_SelectedIndexChanged);
             // 
             // grid_Report
             // 
@@ -406,11 +408,23 @@
             this.splitContainer1.SplitterDistance = 669;
             this.splitContainer1.TabIndex = 1180;
             // 
+            // btn_ToExcel
+            // 
+            this.btn_ToExcel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btn_ToExcel.Location = new System.Drawing.Point(681, 565);
+            this.btn_ToExcel.Name = "btn_ToExcel";
+            this.btn_ToExcel.Size = new System.Drawing.Size(80, 30);
+            this.btn_ToExcel.TabIndex = 1181;
+            this.btn_ToExcel.Text = "To Excel";
+            this.btn_ToExcel.UseVisualStyleBackColor = true;
+            this.btn_ToExcel.Click += new System.EventHandler(this.btn_ToExcel_Click);
+            // 
             // P52
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(952, 603);
+            this.Controls.Add(this.btn_ToExcel);
             this.Controls.Add(this.splitContainer1);
             this.Controls.Add(this.grid_Report);
             this.Controls.Add(this.comboMaterialType);
@@ -468,6 +482,7 @@
             this.Controls.SetChildIndex(this.comboMaterialType, 0);
             this.Controls.SetChildIndex(this.grid_Report, 0);
             this.Controls.SetChildIndex(this.splitContainer1, 0);
+            this.Controls.SetChildIndex(this.btn_ToExcel, 0);
             ((System.ComponentModel.ISupportInitialize)(this.grid_Material)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.bs_Material)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.grid_Document)).EndInit();
@@ -515,5 +530,6 @@
         private Win.UI.ListControlBindingSource bs_Document;
         private Win.UI.ListControlBindingSource bs_Report;
         private System.Windows.Forms.SplitContainer splitContainer1;
+        private Win.UI.Button btn_ToExcel;
     }
 }

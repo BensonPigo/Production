@@ -788,7 +788,7 @@ namespace Sci.Production.Quality
             row["updateCol_Where"] = updateCol;
             #endregion
 
-            using (var dlg = new PublicForm.Clip("UASentReport", id, true, row, apiUrlFile: "http://pmsap.sportscity.com.tw:16888/api/FileDelete/RemoveFile"))
+            using (var dlg = new PublicForm.ClipGASA("UASentReport", id, true, row, apiUrlFile: "http://pmsap.sportscity.com.tw:16888/api/FileDelete/RemoveFile"))
             {
                 dlg.ShowDialog();
 
