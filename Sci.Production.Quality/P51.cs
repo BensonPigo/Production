@@ -438,7 +438,7 @@ Update ExportRefnoSentReport SET  AWBNO = @updateData, EditName = @UserID ,EditD
             row["BasicDocumentName"] = this.drBasic["DocumentName"];
             #endregion
 
-            using (var dlg = new PublicForm.Clip(tableName, id, true, row, apiUrlFile: "http://pmsap.sportscity.com.tw:16888/api/FileDelete/RemoveFile"))
+            using (var dlg = new PublicForm.ClipGASA(tableName, id, true, row, apiUrlFile: "http://pmsap.sportscity.com.tw:16888/api/FileDelete/RemoveFile"))
             {
                 dlg.ShowDialog();
 

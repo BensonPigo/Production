@@ -22,7 +22,7 @@ namespace Sci.Production.PublicForm
     /// <summary>
     /// Clip01 subpage Class.
     /// </summary>
-    public partial class Clip01 : Sci.Win.Tools.BaseGrid
+    public partial class ClipGASA01 : Sci.Win.Tools.BaseGrid
     {
         static string CHARs = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
@@ -49,12 +49,12 @@ namespace Sci.Production.PublicForm
         /// <summary>
         /// DataTable of data source.
         /// </summary>
-        private Sci.Win.SYS.CLIPDataTable _datas;
+        private CLIPGASADataTable _datas;
 
         /// <summary>
         /// new add data.
         /// </summary>
-        private IList<Sci.Win.SYS.CLIPRow> _inserteds;
+        private IList<CLIPGASARow> _inserteds;
 
         /// <summary>
         /// File path of user.
@@ -102,13 +102,13 @@ namespace Sci.Production.PublicForm
         }
 
         /// <inheritdoc />
-        internal IList<Sci.Win.SYS.CLIPRow> Inserteds
+        internal IList<CLIPGASARow> Inserteds
         {
             get { return this._inserteds; }
         }
 
         /// <inheritdoc />
-        protected Clip01()
+        protected ClipGASA01()
         {
             this.InitializeComponent();
             this.Text = "Add Clip File";
@@ -134,7 +134,7 @@ namespace Sci.Production.PublicForm
         private DataRow _dr;
 
         /// <inheritdoc />
-        public Clip01(string tablename, string uid, string yyyymm, string path, string limitedClip, string alianClipConnectionName, DataRow dr)
+        public ClipGASA01(string tablename, string uid, string yyyymm, string path, string limitedClip, string alianClipConnectionName, DataRow dr)
             : this()
         {
             this._tablename = tablename;
@@ -162,7 +162,7 @@ namespace Sci.Production.PublicForm
                     return;
                 }
 
-                this._datas = new Sci.Win.SYS.CLIPDataTable();
+                this._datas = new CLIPGASADataTable();
                 for (int i = 0; i < 10; ++i)
                 {
                     var data = this._datas.NewCLIPRow();
@@ -214,7 +214,7 @@ namespace Sci.Production.PublicForm
                     return;
                 }
 
-                var data = (Sci.Win.SYS.CLIPRow)view.Row;
+                var data = (CLIPGASARow)view.Row;
 
                 try
                 {
@@ -262,7 +262,7 @@ namespace Sci.Production.PublicForm
                     return;
                 }
 
-                var data = (Sci.Win.SYS.CLIPRow)view.Row;
+                var data = (CLIPGASARow)view.Row;
 
                 try
                 {
@@ -300,7 +300,7 @@ namespace Sci.Production.PublicForm
             DualResult result;
             this.grid.EndEdit();
 
-            var datas = new List<Sci.Win.SYS.CLIPRow>();
+            var datas = new List<CLIPGASARow>();
 
             foreach (var it in this._datas)
             {
@@ -330,7 +330,7 @@ namespace Sci.Production.PublicForm
             Sci.Data.DBProxy.Current.Select(this._alianClipConnectionName, @"
             SELECT CHARACTER_MAXIMUM_LENGTH 
             FROM INFORMATION_SCHEMA.Columns 
-            Where Table_Name = 'Clip' and COLUMN_Name='SourceFile'", out dtSourceFileMaxLen);
+            Where Table_Name = 'GASAClip' and COLUMN_Name='SourceFile'", out dtSourceFileMaxLen);
 
             int sourceFileLen = 100;
 
@@ -420,7 +420,7 @@ namespace Sci.Production.PublicForm
                         )
                      End
 
-                    INSERT INTO Clip 
+                    INSERT INTO GASAClip 
                     SELECT @ClipPkey, 'UASentReport', ID, @sourceFileName, 'File Upload', @UserID, getdate()
                      FROM @OutputTbl
 
@@ -499,7 +499,7 @@ begin
         )
      End
     
-    INSERT INTO Clip 
+    INSERT INTO GASAClip 
     SELECT @ClipPkey, @tableName, ID, @sourceFileName, 'File Upload', @UserID, getdate()
     FROM @OutputTbl
 END
@@ -537,7 +537,7 @@ BEGIN
         )
      End
     
-    INSERT INTO Clip 
+    INSERT INTO GASAClip 
     SELECT @ClipPkey, @tableName, ID, @sourceFileName, 'File Upload', @UserID, getdate()
     FROM @OutputTbl
 END
@@ -595,7 +595,7 @@ SELECT TOP 1 ID FROM @OutputTbl
             return Result.True;
         }
 
-        private string GetClipFileName(Sci.Win.SYS.CLIPRow data)
+        private string GetClipFileName(CLIPGASARow data)
         {
             if (data.IsTABLENAMENull() || data.IsSOURCEFILENull())
             {
