@@ -3,6 +3,7 @@ Create PROCEDURE imp_Po
 AS
 BEGIN
 	SET NOCOUNT ON;
+	SET XACT_ABORT ON;
 
    SELECT b.*
 INTO #Trade_To_Pms_PO --先下條件把PO成為工廠別
