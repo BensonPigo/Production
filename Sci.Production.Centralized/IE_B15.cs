@@ -1,5 +1,6 @@
 ﻿using Ict;
 using Sci.Data;
+using Sci.Production.Class.Command;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -35,7 +36,7 @@ namespace Sci.Production.Centralized
             this.txtCentralizedmulitM.ReadOnly = true;
             this.txtCentralizedmulitFactory.ReadOnly = true;
             this.comboFunction.ReadOnly = true;
-            this.comboVertify.ReadOnly = true;
+            this.comboVerify.ReadOnly = true;
         }
 
         /// <inheritdoc/>
@@ -43,6 +44,13 @@ namespace Sci.Production.Centralized
         {
             base.OnDetailEntered();
             this.CheckHistoryExists();
+        }
+
+        /// <inheritdoc/>
+        protected override DualResult OnRenewDataPre(DataRow data)
+        {
+            this.comboVerify.SetSource();
+            return base.OnRenewDataPre(data);
         }
 
         /// <inheritdoc/>
@@ -60,7 +68,7 @@ namespace Sci.Production.Centralized
                 return false;
             }
 
-            if (MyUtility.Check.Empty(this.CurrentMaintain["FunctionIE"]))
+            if (MyUtility.Check.Empty(this.CurrentMaintain["Functions"]))
             {
                 MyUtility.Msg.WarningBox("[Function] cannot be empty.");
                 return false;
@@ -69,20 +77,6 @@ namespace Sci.Production.Centralized
             if (MyUtility.Check.Empty(this.CurrentMaintain["Verify"]))
             {
                 MyUtility.Msg.WarningBox("[Verify] cannot be empty.");
-                return false;
-            }
-
-            string sqlCheckExists = $@"
-select 1 from AutomatedLineMappingConditionSetting with (nolock)
-where   MDivisionID = '{this.CurrentMaintain["MDivisionID"]}' and
-        FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
-        FunctionIE = '{this.CurrentMaintain["FunctionIE"]}' and
-        Verify = '{this.CurrentMaintain["Verify"]}' 
-";
-
-            if (MyUtility.Check.Seek(sqlCheckExists, "ProductionTPE"))
-            {
-                MyUtility.Msg.WarningBox($"<M>, <Factory>, <Function>, <Verify> already exists");
                 return false;
             }
 
@@ -141,7 +135,7 @@ insert into AutomatedLineMappingConditionSetting_History(
 
         private void ConditionChange()
         {
-            string conditionType = $"{this.comboFunction.SelectedValue}_{this.comboVertify.SelectedValue}";
+            string conditionType = $"{this.comboFunction.SelectedValue}_{this.comboVerify.SelectedValue}";
             this.flowLayoutCondition1.Visible = false;
             this.flowLayoutCondition2.Visible = false;
             this.flowLayoutCondition3.Visible = false;
@@ -188,12 +182,20 @@ insert into AutomatedLineMappingConditionSetting_History(
                 return;
             }
 
+            if (this.EditMode && this.CurrentMaintain.RowState == DataRowState.Added)
+            {
+                this.CurrentMaintain["Functions"] = this.comboFunction.SelectedValue;
+                this.comboVerify.SetSource(this.comboFunction.SelectedValue.ToString());
+                this.comboVerify.SelectedIndex = 0;
+                this.CurrentMaintain["Verify"] = this.comboVerify.SelectedValue;
+            }
+
             this.ConditionChange();
         }
 
         private void ComboVertify_SelectedValueChanged(object sender, EventArgs e)
         {
-            if (this.comboVertify.SelectedIndex < 0)
+            if (this.comboVerify.SelectedIndex < 0)
             {
                 return;
             }

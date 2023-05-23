@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.Data;
 using Ict;
+using System.Windows.Forms;
 
 namespace Sci.Production.Class
 {
@@ -12,7 +13,6 @@ namespace Sci.Production.Class
     {
         private string type;
         private bool addAllItem = false;
-
         /// <summary>
         /// 是否有All的選項
         /// </summary>
@@ -48,10 +48,11 @@ namespace Sci.Production.Class
             }
         }
 
-        private void SetSource()
+        public void SetSource(string conditions = "")
         {
             if (!Env.DesignTime)
             {
+                string whereCondition = MyUtility.Check.Empty(conditions) ? string.Empty : $" and (Conditions = '' or Conditions = '{conditions}')";
                 string unionAllItem = this.addAllItem ? "select [ID] = 'ALL', [Name] = 'ALL' , [Seq] = 0 union all" : string.Empty;
                 string selectCommand = $@"
 IF OBJECT_ID('View_DropDownList', 'V') IS NOT NULL
@@ -64,7 +65,7 @@ BEGIN
                 , Name = rtrim(Name)
                 , Seq
         from View_DropDownList WITH (NOLOCK) 
-        where Type = '{this.Type}' 
+        where Type = '{this.Type}' {whereCondition}
     ) a
 END
 ELSE
@@ -76,7 +77,7 @@ BEGIN
                 , Name = rtrim(Name)
                 , Seq
         from DropDownList WITH (NOLOCK) 
-        where Type = '{this.Type}' 
+        where Type = '{this.Type}' {whereCondition}
     ) a
 order by Seq
 END

@@ -50,7 +50,7 @@
             this.chkJunk = new Sci.Win.UI.CheckBox();
             this.txtCentralizedmulitFactory = new Sci.Production.Class.TxtCentralizedmulitFactory();
             this.txtCentralizedmulitM = new Sci.Production.Class.TxtCentralizedmulitM();
-            this.comboVertify = new Sci.Production.Class.ComboDropDownList(this.components);
+            this.comboVerify = new Sci.Production.Class.ComboDropDownList(this.components);
             this.comboFunction = new Sci.Production.Class.ComboDropDownList(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
@@ -76,7 +76,7 @@
             this.detailcont.Controls.Add(this.flowLayoutCondition3);
             this.detailcont.Controls.Add(this.flowLayoutCondition2);
             this.detailcont.Controls.Add(this.flowLayoutCondition1);
-            this.detailcont.Controls.Add(this.comboVertify);
+            this.detailcont.Controls.Add(this.comboVerify);
             this.detailcont.Controls.Add(this.comboFunction);
             this.detailcont.Controls.Add(this.label5);
             this.detailcont.Controls.Add(this.label4);
@@ -360,27 +360,27 @@
             this.txtCentralizedmulitM.Size = new System.Drawing.Size(65, 23);
             this.txtCentralizedmulitM.TabIndex = 15;
             // 
-            // comboVertify
+            // comboVerify
             // 
-            this.comboVertify.AddAllItem = false;
-            this.comboVertify.BackColor = System.Drawing.Color.White;
-            this.comboVertify.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "Verify", true));
-            this.comboVertify.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboVertify.FormattingEnabled = true;
-            this.comboVertify.IsSupportUnselect = true;
-            this.comboVertify.Location = new System.Drawing.Point(97, 96);
-            this.comboVertify.Name = "comboVertify";
-            this.comboVertify.OldText = "";
-            this.comboVertify.Size = new System.Drawing.Size(311, 24);
-            this.comboVertify.TabIndex = 8;
-            this.comboVertify.Type = "Pms_ALMVerify";
-            this.comboVertify.SelectedValueChanged += new System.EventHandler(this.ComboVertify_SelectedValueChanged);
+            this.comboVerify.AddAllItem = false;
+            this.comboVerify.BackColor = System.Drawing.Color.White;
+            this.comboVerify.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "Verify", true));
+            this.comboVerify.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboVerify.FormattingEnabled = true;
+            this.comboVerify.IsSupportUnselect = true;
+            this.comboVerify.Location = new System.Drawing.Point(97, 96);
+            this.comboVerify.Name = "comboVerify";
+            this.comboVerify.OldText = "";
+            this.comboVerify.Size = new System.Drawing.Size(311, 24);
+            this.comboVerify.TabIndex = 8;
+            this.comboVerify.Type = "Pms_ALMVerify";
+            this.comboVerify.SelectedValueChanged += new System.EventHandler(this.ComboVertify_SelectedValueChanged);
             // 
             // comboFunction
             // 
             this.comboFunction.AddAllItem = false;
             this.comboFunction.BackColor = System.Drawing.Color.White;
-            this.comboFunction.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "FunctionIE", true));
+            this.comboFunction.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "Functions", true));
             this.comboFunction.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboFunction.FormattingEnabled = true;
             this.comboFunction.IsSupportUnselect = true;
@@ -431,7 +431,7 @@
         private Win.UI.Label label3;
         private Win.UI.Label label2;
         private Win.UI.Label label1;
-        private Class.ComboDropDownList comboVertify;
+        private Class.ComboDropDownList comboVerify;
         private Class.ComboDropDownList comboFunction;
         private System.Windows.Forms.FlowLayoutPanel flowLayoutCondition1;
         private Win.UI.Label labelCondition1Desc;

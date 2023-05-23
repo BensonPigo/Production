@@ -3,7 +3,7 @@
 	[Ukey] tinyint NOT NULL IDENTITY, 
     [MDivisionID] VARCHAR(8) CONSTRAINT [DF_AutomatedLineMappingConditionSetting_MDivisionID] DEFAULT ('') NOT NULL, 
     [FactoryID] VARCHAR(8) CONSTRAINT [DF_AutomatedLineMappingConditionSetting_FactoryID] DEFAULT ('') NOT NULL, 
-    [FunctionIE] VARCHAR(50) CONSTRAINT [DF_AutomatedLineMappingConditionSetting_FunctionIE] DEFAULT ('') NOT NULL, 
+    [Functions] VARCHAR(50) CONSTRAINT [DF_AutomatedLineMappingConditionSetting_FunctionIE] DEFAULT ('') NOT NULL, 
     [Verify] VARCHAR(50) CONSTRAINT [DF_AutomatedLineMappingConditionSetting_Verify] DEFAULT ('') NOT NULL, 
     [Condition1] NUMERIC(3) CONSTRAINT [DF_AutomatedLineMappingConditionSetting_Condition1] DEFAULT (0) NOT NULL, 
     [Condition2] NUMERIC(3) CONSTRAINT [DF_AutomatedLineMappingConditionSetting_Condition2] DEFAULT (0) NOT NULL, 
@@ -13,7 +13,7 @@
     [AddDate] DATETIME NOT NULL, 
     [EditName] VARCHAR(10) CONSTRAINT [DF_AutomatedLineMappingConditionSetting_EditName] DEFAULT ('') NOT NULL, 
     [EditDate] DATETIME NULL,
-    CONSTRAINT [PK_AutomatedLineMappingConditionSetting] PRIMARY KEY CLUSTERED ([Ukey] ASC)
+    CONSTRAINT [PK_AutomatedLineMappingConditionSetting] PRIMARY KEY CLUSTERED ([FactoryID], [Functions], [Verify] ASC)
 )
 
 GO
