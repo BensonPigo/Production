@@ -186,7 +186,7 @@ namespace Sci.Production.Warehouse
                   .Numeric("adjustqty", header: "Adjust Qty", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2, iseditingreadonly: true)
                   .Numeric("ReturnQty", header: "Return Qty", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2, iseditingreadonly: true)
                   .Numeric("balanceqty", header: "Balance Qty", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2, iseditingreadonly: true)
-                 .Text("stocktype", header: "Stocktype", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                 .Text("StockType1", header: "Stocktype", width: Widths.AnsiChars(10), iseditingreadonly: true)
                  .Text("location", header: "location", width: Widths.AnsiChars(10), iseditingreadonly: true)
                  .Text("description", header: "description", width: Widths.AnsiChars(20), iseditingreadonly: true)
                  .Text("styleid", header: "Style", width: Widths.AnsiChars(13), iseditingreadonly: true)
@@ -714,7 +714,7 @@ OUTER APPLY(
 
 
 select distinct fi.*
-     ,[StockType]  = case fi.stocktype 
+     ,[StockType1]  = case fi.stocktype 
                         when 'B' then'Bulk' 
                         when 'I' then 'Inventory' 
                         else fi.StockType 
