@@ -247,10 +247,10 @@ select	LocationID = isnull (bio.LocationID, '')
 		, bd.IsPair
         , bd.BundleGroup
 into #BasBundleInfo
-from Bundle b
-inner join Bundle_Detail bd on bd.ID = b.ID
-INNER JOIN Bundle_Detail_Order BDO on BDO.BundleNo = BD.BundleNo
-inner join Orders o on b.Orderid = o.ID  and o.MDivisionID  = b.MDivisionID 
+from Bundle b with(nolock)
+inner join Bundle_Detail bd with(nolock) on bd.ID = b.ID
+INNER JOIN Bundle_Detail_Order BDO with(nolock) on BDO.BundleNo = BD.BundleNo
+inner join Orders o with(nolock) on b.Orderid = o.ID  and o.MDivisionID  = b.MDivisionID 
 inner join factory f WITH (NOLOCK) on o.FactoryID= f.id and f.IsProduceFty=1
 outer apply (
 	select v = stuff ((	select distinct CONCAT ('+', bda.SubprocessId)
@@ -259,7 +259,7 @@ outer apply (
 						for xml path(''))
 						, 1, 1, '')
 ) bda
-left join BundleInOut bio on bio.BundleNo = bd.BundleNo							 
+left join BundleInOut bio with(nolock) on bio.BundleNo = bd.BundleNo							 
 							 and bio.SubProcessId = 'Loading'
 							 and bio.InComing is not null
                              and isnull(bio.RFIDProcessLocationID,'') = ''
@@ -332,7 +332,7 @@ where	1=1
 		group by bbi.OrderID, bbi.FComb, bbi.Colorid, bbi.Pattern
 				, bbi.PtnDes, bbi.Size, bbi.Artwork
 	) DisBundleInfo
-	left join Orders o on DisBundleInfo.Orderid = o.ID 
+	left join Orders o with(nolock) on DisBundleInfo.Orderid = o.ID 
 	outer apply (
 		select Qty = sum (oq.Qty)
 		from Order_Qty oq
@@ -401,10 +401,10 @@ where	1=1
 		group by bbi.OrderID, bbi.LocationID, bbi.FComb, bbi.Colorid, bbi.Pattern
 				, bbi.PtnDes, bbi.Size, bbi.Artwork
 	) DisBundleInfo
-	left join Orders o on DisBundleInfo.Orderid = o.ID
+	left join Orders o with(nolock) on DisBundleInfo.Orderid = o.ID
 	outer apply (
 		select Qty = sum (oq.Qty)
-		from Order_Qty oq
+		from Order_Qty oq with(nolock)
 		where DisBundleInfo.Orderid = oq.ID
 			  and DisBundleInfo.Size = oq.SizeCode
 	) oq
