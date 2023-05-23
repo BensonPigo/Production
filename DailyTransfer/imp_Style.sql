@@ -1448,7 +1448,7 @@ Delete Production.dbo.Style_MiAdidasColorCombo
 from Production.dbo.Style_MiAdidasColorCombo as a 
 INNER JOIN Trade_To_Pms.dbo.Style as t on a.StyleUkey=t.Ukey
 left join Trade_To_Pms.dbo.Style_MiAdidasColorCombo as b
-on a.StyleUkey	= b.StyleUkey AND a.FabricPanelCode	= b.FabricPanelCode AND a.Ukey_old	= b.Ukey_old
+on a.StyleUkey	= b.StyleUkey AND a.FabricPanelCode	= b.FabricPanelCode 
 where b.StyleUkey is null
 ---------------------------UPDATE 主TABLE跟來源TABLE 為一樣(主TABLE多的話 記起來 ~來源TABLE多的話不理會)
 RAISERROR('imp_Style - Starts',0,0)
@@ -1461,10 +1461,9 @@ a.SetupID	= b.SetupID
 ,a.AddDate	= b.AddDate
 ,a.EditName	= b.EditName
 ,a.EditDate	= b.EditDate
---,a.Ukey_old	= b.Ukey_old
 
 from Production.dbo.Style_MiAdidasColorCombo as a 
-inner join Trade_To_Pms.dbo.Style_MiAdidasColorCombo as b ON a.StyleUkey	= b.StyleUkey AND a.FabricPanelCode	= b.FabricPanelCode AND a.Ukey_old	= b.Ukey_old
+inner join Trade_To_Pms.dbo.Style_MiAdidasColorCombo as b ON a.StyleUkey	= b.StyleUkey AND a.FabricPanelCode	= b.FabricPanelCode 
 -------------------------- INSERT INTO 抓
 RAISERROR('imp_Style - Starts',0,0)
 INSERT INTO Production.dbo.Style_MiAdidasColorCombo(
@@ -1475,7 +1474,6 @@ StyleUkey
 ,AddDate
 ,EditName
 ,EditDate
-,Ukey_old
 )
 select 
  b.StyleUkey
@@ -1485,10 +1483,9 @@ select
 ,b.AddDate
 ,b.EditName
 ,b.EditDate
-,b.Ukey_old
 
 from Trade_To_Pms.dbo.Style_MiAdidasColorCombo as b WITH (NOLOCK)
-where not exists(select 1 from Production.dbo.Style_MiAdidasColorCombo as a WITH (NOLOCK) where a.StyleUkey	= b.StyleUkey AND a.FabricPanelCode	= b.FabricPanelCode AND a.Ukey_old	= b.Ukey_old)
+where not exists(select 1 from Production.dbo.Style_MiAdidasColorCombo as a WITH (NOLOCK) where a.StyleUkey	= b.StyleUkey AND a.FabricPanelCode	= b.FabricPanelCode)
 --STYLELT
 --Style_GMTLTFty
 ----------------------刪除主TABLE多的資料
@@ -1587,7 +1584,6 @@ on t.Ukey=s.Ukey
 when matched then 
 	update set 
 		t.StyleUkey= s.StyleUkey,
-		t.StyleUkey_Old= s.StyleUkey_Old,
 		t.SizeItem= s.SizeItem,
 		t.SizeUnit= s.SizeUnit,
 		t.Description= s.Description,
@@ -1595,9 +1591,9 @@ when matched then
 		t.TolPlus= s.TolPlus
 when not matched by target then
 	insert (
-		StyleUkey,StyleUkey_Old,SizeItem,SizeUnit,Description,Ukey,TolMinus,TolPlus	) 
+		StyleUkey,SizeItem,SizeUnit,Description,Ukey,TolMinus,TolPlus	) 
 		values (
-		s.StyleUkey,s.StyleUkey_Old,s.SizeItem,s.SizeUnit,s.Description,s.Ukey,s.TolMinus,s.TolPlus	)
+		s.StyleUkey,s.SizeItem,s.SizeUnit,s.Description,s.Ukey,s.TolMinus,s.TolPlus	)
 when not matched by source  AND T.Styleukey IN (SELECT Ukey FROM Trade_To_Pms.dbo.Style) then 
 	delete;
 
@@ -2506,7 +2502,6 @@ UPDATE a
       ,[AddDate] = b.[AddDate]
       ,[EditName] = ISNULL(b.[EditName],'')
       ,[EditDate] = b.[EditDate]
-      ,[StyleUkey_Old] = ISNULL(b.[StyleUkey_Old],'')
       ,[COO] = ISNULL(b.[COO],'')
       ,[FactoryID] = ISNULL(b.[FactoryID],'')
 from Production.dbo.Style_UnitPrice a
@@ -2527,7 +2522,6 @@ INSERT INTO [dbo].[Style_UnitPrice]
       ,[AddDate]
       ,[EditName]
       ,[EditDate]
-      ,[StyleUkey_Old]
       ,[COO]
       ,[FactoryID]
 )
@@ -2545,7 +2539,6 @@ select
       ,a.[AddDate]
       ,isnull(a.[EditName],'')
       ,a.[EditDate]
-      ,isnull(a.[StyleUkey_Old],'')
       ,isnull(a.[COO],'')
       ,isnull(a.[FactoryID],'')
 from #tmp_Style_UnitPrice a
@@ -2702,7 +2695,6 @@ UPDATE a
       ,[H_Repeat] = ISNULL(b.[H_Repeat],0)
       ,[MatchFabric] = ISNULL(b.[MatchFabric],'')
       ,[HorizontalCutting] = ISNULL(b.[HorizontalCutting],0)
-      ,[UKey_Old] = ISNULL(b.[UKey_Old],'')
       ,[Mtl_Key] = ISNULL(b.[Mtl_Key],'')
       ,[Mtl_Ver] = ISNULL(b.[Mtl_Ver],'')
 	from Production.dbo.Marker_ML a
@@ -2736,7 +2728,6 @@ INSERT INTO [dbo].[Marker_ML]
       ,[H_Repeat]
       ,[MatchFabric]
       ,[HorizontalCutting]
-      ,[UKey_Old]
       ,[Mtl_Key]
       ,[Mtl_Ver]
 )
@@ -2766,7 +2757,6 @@ select
       ,ISNULL(a.[H_Repeat],0) 
       ,ISNULL(a.[MatchFabric],'')
       ,ISNULL(a.[HorizontalCutting],0)
-      ,ISNULL(a.[UKey_Old],'')
       ,ISNULL(a.[Mtl_Key],'')
       ,ISNULL(a.[Mtl_Ver],'')
 from Trade_To_Pms.dbo.Marker_ML a
@@ -2793,7 +2783,6 @@ UPDATE a
       ,[MarkerName] = ISNULL(b.[MarkerName],'')
       ,[SizeCode] = ISNULL(b.[SizeCode],'')
       ,[Qty] = ISNULL(b.[Qty],0)
-      ,[UKey_Old] = ISNULL(b.[UKey_Old],'')
 	from Production.dbo.Marker_ML_SizeQty a
 inner join Trade_To_Pms.dbo.Marker_ML_SizeQty b 
 on a.ID = b.ID and a.Version = b.Version and a.MarkerName = b.MarkerName
@@ -2807,7 +2796,6 @@ INSERT INTO [dbo].[Marker_ML_SizeQty]
       ,[MarkerName]
       ,[SizeCode]
       ,[Qty]
-      ,[UKey_Old]
 )
 select
 	   ISNULL(a.[ID],'')    ,ISNULL(a.[Version],'')
@@ -2815,7 +2803,6 @@ select
       ,ISNULL(a.[MarkerName],'')
       ,ISNULL(a.[SizeCode],'')
       ,ISNULL(a.[Qty],0)
-      ,ISNULL(a.[UKey_Old],'')
 from Trade_To_Pms.dbo.Marker_ML_SizeQty a
 left join Production.dbo.Marker_ML_SizeQty b 
 on a.ID = b.ID and a.Version = b.Version and a.MarkerName = b.MarkerName
