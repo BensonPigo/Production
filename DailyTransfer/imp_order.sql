@@ -1994,8 +1994,7 @@ else
 				t.EditName				= s.EditName,
 				t.EditDate				= s.EditDate,
 				t.isQT					= s.isQT,
-				t.MarkerDownloadID		= s.MarkerDownloadID,
-				t.OrderCUkey_Old		= s.OrderCUkey_Old
+				t.MarkerDownloadID		= s.MarkerDownloadID
 		when not matched by target then 
 			insert (
 				Id					, Ukey				, Seq				, MarkerName			, FabricCombo
@@ -2004,7 +2003,7 @@ else
 				, Remark			, MixedSizeMarker	, MarkerNo			, MarkerUpdate			, MarkerUpdateName
 				, AllSize			, PhaseID			, SMNoticeID		, MarkerVersion			, Direction
 				, CuttingWidth		, Width				, TYPE				, AddName				, AddDate
-				, EditName			, EditDate			, isQT				, MarkerDownloadID		, OrderCUkey_Old
+				, EditName			, EditDate			, isQT				, MarkerDownloadID		
 			) values (
 				s.Id				, s.Ukey			, s.Seq				, s.MarkerName			, s.FabricCombo
 				, s.MarkerLength	, s.FabricPanelCode	, s.ConsPC			, s.CuttingPiece		, s.ActCuttingPerimeter
@@ -2012,7 +2011,7 @@ else
 				, s.Remark			, s.MixedSizeMarker	, s.MarkerNo		, s.MarkerUpdate		, s.MarkerUpdateName
 				, s.AllSize			, s.PhaseID			, s.SMNoticeID		, s.MarkerVersion		, s.Direction
 				, s.CuttingWidth	, s.Width			, s.TYPE			, s.AddName				, s.AddDate
-				, s.EditName		, s.EditDate		, s.isQT			, s.MarkerDownloadID	, s.OrderCUkey_Old
+				, s.EditName		, s.EditDate		, s.isQT			, s.MarkerDownloadID	
 			)
 		when not matched by source AND T.ID IN (SELECT ID FROM #Torder) then  
 			delete;
