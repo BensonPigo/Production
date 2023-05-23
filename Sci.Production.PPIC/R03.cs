@@ -360,7 +360,7 @@ with tmpOrders as (
             , o.PackLETA
     from Orders o WITH (NOLOCK) 
     left join style s WITH (NOLOCK) on o.styleukey = s.ukey
-	left join DropDownList d ON o.CtnType=d.ID AND d.Type='PackingMethod'
+	left join DropDownList d with (nolock) ON o.CtnType=d.ID AND d.Type='PackingMethod'
 	left join DropDownList d1 WITH(NOLOCK) on d1.type= 'StyleConstruction' and d1.ID = s.Construction
 	left join Reason r1 WITH(NOLOCK) on r1.ReasonTypeID= 'Fabric_Kind' and r1.ID = s.FabricType
 	left join Reason r2 WITH(NOLOCK) on r2.ReasonTypeID= 'Style_Apparel_Type' and r2.ID = s.ApparelType
@@ -936,7 +936,7 @@ group by pd.OrderID, pd.OrderShipmodeSeq
             , t.CFACTN
 			, t.isForecast
 			, t.AirFreightByBrand
-            , [BuyBack] = iif(exists (select 1 from Order_BuyBack where ID = t.ID), 'Y', '')
+            , [BuyBack] = iif(exists (select 1 from Order_BuyBack with (nolock) where ID = t.ID), 'Y', '')
             , t.Cancelled
             , t.Customize2
             , t.KpiMNotice
@@ -1999,7 +1999,7 @@ outer apply(
 			select distinct concat( ',', l.Abb)   
 			from ArtworkPO ap WITH (NOLOCK)
 			inner join ArtworkPO_Detail apd WITH (NOLOCK) on ap.ID = apd.ID
-			left join LocalSupp l on ap.LocalSuppID = l.ID
+			left join LocalSupp l with (nolock) on ap.LocalSuppID = l.ID
 			where ap.ArtworkTypeID = 'PRINTING'
 			and apd.OrderID = ot.ID
 		FOR XML PATH('')),1,1,'') 

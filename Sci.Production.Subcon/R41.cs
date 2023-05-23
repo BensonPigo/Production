@@ -237,7 +237,7 @@ into #tmp_Workorder
 from Bundle b WITH (NOLOCK)
 {joinWorkOrder}
 inner join Bundle_Detail bd WITH (NOLOCK) on bd.Id = b.Id 
-INNER JOIN Bundle_Detail_Order BDO on BDO.BundleNo = BD.BundleNo
+INNER JOIN Bundle_Detail_Order BDO with(nolock) on BDO.BundleNo = BD.BundleNo
 inner join orders o WITH (NOLOCK) on o.Id = b.OrderId and o.MDivisionID  = b.MDivisionID 
 inner join factory f WITH (NOLOCK) on o.FactoryID= f.id and f.IsProduceFty=1
 left join BundleInOut bio WITH (NOLOCK) on bio.Bundleno=bd.Bundleno --and bio.SubProcessId = s.Id
