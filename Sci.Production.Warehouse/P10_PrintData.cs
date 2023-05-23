@@ -29,5 +29,6 @@
         public string Qty { get; set; }
 
         public string Total { get; set; }
+        public string ToneGrp { get; set; }
     }
 }
