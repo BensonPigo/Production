@@ -574,7 +574,7 @@ left join pass1 p3 with (nolock) on p3.id = i.Inspector
                     this.txtSP1.Text.Empty() && this.txtSP2.Text.Empty() &&
                     this.txtWK1.Text.Empty() && this.txtWK2.Text.Empty() && this.txtbrand.Text.Empty())
                 {
-                    MyUtility.Msg.WarningBox("Arrive W/H Date, SP#, WK# , Brand can't all empty!");
+                    MyUtility.Msg.WarningBox("Arrive W/H Date, SP#, Transfer ID , Brand can't all empty!");
                     return false;
                 }
             }
