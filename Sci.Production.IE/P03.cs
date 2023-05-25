@@ -1459,6 +1459,16 @@ and Name = @PPA
             //    return false;
             //}
 
+            var queryIsPPACentralized = this.DetailDatas
+                .Where(x => x.Field<bool?>("IsShow") == true && x.Field<bool?>("IsHide") == false
+                               && ((x.Field<string>("PPA") == "C" && (x.Field<string>("No").Empty() || !x.Field<string>("No").Substring(0, 1).Equals("P")))
+                                || (x.Field<string>("PPA") != "C" && !x.Field<string>("No").Empty() && x.Field<string>("No").Substring(0, 1).Equals("P"))));
+            if (queryIsPPACentralized.Any())
+            {
+                MyUtility.Msg.WarningBox("The [No.] first word must be P if the [PPA] is [Centralized].");
+                return false;
+            }
+
             this.ComputeTaktTime();
 
             // Vision為空的話就要填值 or ID是空值(新增)也要重新計算Version
