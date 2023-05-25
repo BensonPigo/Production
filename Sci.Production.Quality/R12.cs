@@ -27,6 +27,7 @@ select  [Category] = ddl.[Name],
 		[Seq] = CONCAT(f.SEQ1, ' ', f.SEQ2),
         o.FactoryID,
 		a.ExportId,
+        [Invno] = iif( isnull(a.id, '')  = '','' ,a. Invno) ,
 		f.ReceivingID,
 		o.StyleID,
 		o.BrandID,
@@ -76,6 +77,7 @@ select	[Category] = ddl.[Name],
 		[Seq] = CONCAT(f.SEQ1, ' ', f.SEQ2),
         o.FactoryID,
 		[ExportId] = '',
+        [Invno] = iif( isnull(a.id, '')  = '','' ,a. Invno) ,
 		f.ReceivingID,
 		o.StyleID,
 		o.BrandID,
@@ -139,6 +141,7 @@ select
 	fa.WeaveTypeID,	
 	fa.Width,
 	WK = {4},
+    [Invno] = iif( isnull(a.id, '')  = '','' ,a. Invno) ,
 	f.ReceivingID,
 	f.Suppid,
 	Approve = Concat (f.Approve, '-', p2.Name),
@@ -251,6 +254,7 @@ select
 	f.FromPOID,
 	f.FromSeq,
 	f.WK,
+    f.[Invno],
 	f.ReceivingID,
 	f.StyleID,
 	f.BrandID,
@@ -288,7 +292,7 @@ where 1=1
 {8}
 group by f.ToPOID,f.ToSeq,f.FromFty,f.ToFty,f.TransferID,f.FromPOID,f.FromSeq,f.WK,f.ReceivingID,f.StyleID,f.BrandID,f.Suppid,
 	f.Refno,f.ColorID,f.IssueDate,f.WeaveTypeID,f.ctRoll,f.ctDyelot,f.Approve,f.ApproveDate,p1.Name,f.Category,f.ArriveWHData,f.CuttingData,
-    f.OrderTypeID,
+    f.OrderTypeID,f.[Invno],
 	f.Non{1},f.{1},f.{1}Inspector,f.{1}Date
 	{7}
 
@@ -570,7 +574,7 @@ left join pass1 p3 with (nolock) on p3.id = i.Inspector
                     this.txtSP1.Text.Empty() && this.txtSP2.Text.Empty() &&
                     this.txtWK1.Text.Empty() && this.txtWK2.Text.Empty() && this.txtbrand.Text.Empty())
                 {
-                    MyUtility.Msg.WarningBox("Arrive W/H Date, SP#, WK# , Brand can't all empty!");
+                    MyUtility.Msg.WarningBox("Arrive W/H Date, SP#, Transfer ID , Brand can't all empty!");
                     return false;
                 }
             }
