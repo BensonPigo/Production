@@ -24,15 +24,17 @@ namespace Sci.Production.Warehouse
         private DualResult result;
         private DataTable dtExcel;
         private DataRow DataRow;
+        private string editBy;
 
         /// <inheritdoc/>
-        public P10_Print(DataRow dr, string cutNo, DataRow dataRow)
+        public P10_Print(DataRow dr, string cutNo, DataRow dataRow, string editBy)
         {
             this.InitializeComponent();
             this.Text = "P10 " + dr["ID"].ToString();
             this.drPrint = dr;
             this.strCutNo = cutNo;
             this.DataRow = dataRow;
+            this.editBy = editBy;
 
             this.ButtonEnable();
 
@@ -323,6 +325,7 @@ where id = @MDivision";
                 report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("confirmTime", confirmTime));
                 report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("cutno", cutno));
                 report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Factory", "Factory: " + factoryID));
+                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("EditBy", this.editBy));
                 pars = new List<SqlParameter>
                 {
                     new SqlParameter("@ID", id),
