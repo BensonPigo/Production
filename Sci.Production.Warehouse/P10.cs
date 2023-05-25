@@ -1220,7 +1220,7 @@ where (isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f
         protected override bool ClickPrint()
         {
             P10_Print callForm;
-            callForm = new P10_Print(this.CurrentMaintain, this.editCutNo.Text, this.CurrentMaintain);
+            callForm = new P10_Print(this.CurrentMaintain, this.editCutNo.Text, this.CurrentMaintain, this.editby.Text);
             callForm.ShowDialog(this);
 
             return true;
