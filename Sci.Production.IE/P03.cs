@@ -551,7 +551,7 @@ and BrandID = '{this.CurrentMaintain["BrandID"]}'
                         && MyUtility.Convert.GetString(o["OperationID"]) == MyUtility.Convert.GetString(this.CurrentDetailData["OperationID"])
                         && MyUtility.Convert.GetString(o["Attachment"]) == MyUtility.Convert.GetString(this.CurrentDetailData["Attachment"])).Any())
                     {
-                        MyUtility.Msg.InfoBox("Data from GSD can not be wmpty.");
+                        MyUtility.Msg.InfoBox("Data from GSD can not be modify.");
                         return;
                     }
 
@@ -594,7 +594,7 @@ and IsAttachment = 1";
                         && MyUtility.Convert.GetString(o["OperationID"]) == MyUtility.Convert.GetString(this.CurrentDetailData["OperationID"])
                         && MyUtility.Convert.GetString(o["Attachment"]) == MyUtility.Convert.GetString(this.CurrentDetailData["Attachment"])).Any())
                     {
-                        MyUtility.Msg.InfoBox("Data from GSD can not be wmpty.");
+                        MyUtility.Msg.InfoBox("Data from GSD can not be modify.");
                         e.FormattedValue = MyUtility.Convert.GetString(this.CurrentDetailData["Attachment"]);
                         this.CurrentDetailData["Attachment"] = e.FormattedValue;
                         return;
@@ -1000,6 +1000,10 @@ and Name = @PPA
                         DataRow dr = dt.Rows[0];
                         this.CurrentDetailData["PPA"] = dr["PPAID"];
                         this.CurrentDetailData["PPAText"] = dr["PPA"];
+                        if (!MyUtility.Check.Empty(this.CurrentDetailData["PPA"]))
+                        {
+                            this.CurrentDetailData["IsHide"] = false;
+                        }
                     }
                 }
             };
@@ -1015,6 +1019,11 @@ and Name = @PPA
 
                 if (this.EditMode)
                 {
+                    if (!MyUtility.Check.Empty(dr["PPA"]))
+                    {
+                        dr["IsHide"] = 0;
+                        return;
+                    }
 
                     if (MyUtility.Convert.GetBool(e.FormattedValue))
                     {

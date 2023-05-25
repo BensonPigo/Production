@@ -1118,11 +1118,11 @@ order by NO
             List<AttachmentData> tmp = new List<AttachmentData>();
             if (sheetName == "Line Mapping")
             {
-                tmp = this.AttachmentDataList.Where(o => !o.IsHide).ToList();
+                tmp = this.AttachmentDataList.Where(o => string.IsNullOrEmpty(o.PPA) && !o.IsHide).ToList();
             }
             if (sheetName == "PPA & non-sewing")
             {
-                tmp = this.AttachmentDataList.Where(o=>!string.IsNullOrEmpty(o.PPA) && !o.IsHide).ToList();
+                tmp = this.AttachmentDataList.Where(o => !string.IsNullOrEmpty(o.PPA) && !o.IsHide).ToList();
             }
 
             var attachCount = tmp.Where(o => !string.IsNullOrEmpty(o.Attachment)).Select(o => new { o.No, o.STMC_Type, o.MachineGroup, o.Attachment, o.AttachmentPartID });
