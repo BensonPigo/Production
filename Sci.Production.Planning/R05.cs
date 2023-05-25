@@ -123,6 +123,11 @@ namespace Sci.Production.Planning
                 return failResult;
             }
 
+            // 移除PowerBi 資訊欄位
+            this.printData[0].Columns.Remove("BuyBackReason");
+            this.printData[0].Columns.Remove("LastProductionDate");
+            this.printData[0].Columns.Remove("CRDDate");
+
             if (this.printData != null && this.printData[0].Rows.Count > 0)
             {
                 if (this.dtAllData == null)
