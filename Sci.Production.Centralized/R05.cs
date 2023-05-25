@@ -157,6 +157,11 @@ namespace Sci.Production.Centralized
                         return failResult;
                     }
 
+                    // 移除PowerBi 資訊欄位
+                    printData[0].Columns.Remove("BuyBackReason");
+                    printData[0].Columns.Remove("LastProductionDate");
+                    printData[0].Columns.Remove("CRDDate");
+
                     lock (this.dtAllData)
                     {
                         if (printData != null && printData[0].Rows.Count > 0)
