@@ -213,7 +213,10 @@ inner join #Final s
 		AND t.orderid=s.id 
 		AND t.seq = s.seq 
 
-insert into P_OustandingPO
+insert into P_OustandingPO ([FactoryID], [OrderID], [CustPONo], [StyleID], [BrandID], [BuyerDelivery], [Seq], [ShipModeID], [Category]
+, [PartialShipment], [Junk], [OrderQty], [PackingCtn], [PackingQty], [ClogRcvCtn], [ClogRcvQty], [LastCMPOutputDate], [CMPQty]
+, [LastDQSOutputDate], [DQSQty], [OSTPackingQty], [OSTCMPQty], [OSTDQSQty], [OSTClogQty], [OSTClogCtn], [PulloutComplete], [Dest]
+, [KPIGroup], [CancelledButStillNeedProduction], [CFAInspectionResult], [3rdPartyInspection], [3rdPartyInspectionResult], [BookingSP])
 select  s.FactoryID,
 		s.id,
 		s.CustPONo,
@@ -224,7 +227,6 @@ select  s.FactoryID,
 		s.ShipModeID,
 		s.Category,
 		s.PartialShipment,
-		s.BookingSP,
 		s.Cancelled,
 		s.OrderQty,
 		s.PackingCarton,
@@ -246,7 +248,8 @@ select  s.FactoryID,
 		s.CancelledButStillNeedProduction,
 		s.CFAInspectionResult,
 		s.[3rdPartyInspection],
-		s.[3rdPartyInspectionResult]
+		s.[3rdPartyInspectionResult],
+		s.BookingSP
 from #Final s
 where not exists(
 	select 1 from P_OustandingPO t 
