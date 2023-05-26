@@ -12,6 +12,7 @@ using Sci.Production.PublicForm;
 using System.Data.SqlClient;
 using System.Linq;
 using Sci.Production.Class;
+using Sci.Win.Tems;
 
 namespace Sci.Production.IE
 {
@@ -67,6 +68,27 @@ namespace Sci.Production.IE
             this.detailgrid.AllowUserToOrderColumns = true;
             this.InsertDetailGridOnDoubleClick = false;
             this.detailgrid.Font = new System.Drawing.Font("Calibri", 12F, System.Drawing.FontStyle.Bold);
+            this.InitialGridRowDragEvent();
+        }
+
+        /// <inheritdoc/>
+        protected override DualResult OnRenewDataPost(Input1.RenewDataPostEventArgs e)
+        {
+            var sumDetailItems = this.DetailDatas
+                .Where(s => !MyUtility.Convert.GetBool(s["IsSubprocess"]) &&
+                            !MyUtility.Convert.GetBool(s["IsNonSewingLine"]) &&
+                            MyUtility.Convert.GetString(s["PPA"]) != "C");
+
+            this.numericStdSMV.Value = 0;
+            this.numericFtySMV.Value = 0;
+
+            if (sumDetailItems.Any())
+            {
+                this.numericStdSMV.Value = this.DetailDatas.Sum(s => MyUtility.Convert.GetDecimal(s["StdSMV"]));
+                this.numericFtySMV.Value = this.DetailDatas.Sum(s => MyUtility.Convert.GetDecimal(s["SMV"]));
+            }
+
+            return base.OnRenewDataPost(e);
         }
 
         /// <summary>
@@ -2267,6 +2289,12 @@ and s.BrandID = @brandid";
             }
 
             base.OnDetailGridRemoveClick();
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            this.detailgrid.ClearSelection();
+            this.detailgrid.Rows[1].Selected = true;
         }
     }
 }

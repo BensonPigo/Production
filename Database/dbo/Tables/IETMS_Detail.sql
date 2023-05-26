@@ -11,6 +11,8 @@
     [UKey] BIGINT NOT NULL DEFAULT ((0)), 
     [MtlFactorID] VARCHAR(3) NULL, 
     [MtlFactorRate] NUMERIC(8, 2) NULL, 
+    [ProOperationID] VARCHAR(20) CONSTRAINT [DF_IETMS_Detail_ProOperationID] DEFAULT ('') not NULL,
+    [CodeFrom] VARCHAR(20) CONSTRAINT [DF_IETMS_Detail_CodeFrom] DEFAULT ('') not NULL,
     CONSTRAINT [PK_IETMS_Detail] PRIMARY KEY CLUSTERED ([UKey])
 );
 
