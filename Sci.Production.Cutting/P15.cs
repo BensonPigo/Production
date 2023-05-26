@@ -1050,7 +1050,7 @@ select bdo.qty,wd.id,bdo.BundleNo,bd.PatternCode,bd.BundleGroup,wd.CutRef,wd.Art
 into #tmpx
 from Bundle wd with(nolock)
 inner join Bundle_Detail bd with(nolock) on bd.Id = wd.ID
-inner join Bundle_Detail_Order bdo on bdo.BundleNo = bd.BundleNo
+inner join Bundle_Detail_Order bdo with(nolock) on bdo.BundleNo = bd.BundleNo
 where exists(select 1 from #tmp t where wd.cutref = t.CutRef and wd.Article = t.article and bd.Sizecode = t.sizecode and bdo.OrderID = t.orderid)
 
 select CutRef,Article,Sizecode,OrderID,qty=SUM(Qty)
@@ -1097,14 +1097,14 @@ inner join FtyStyleInnovation f with(NOLOCK)
 outer apply(
 	select art = STUFF((
 		select CONCAT('+', fa.SubprocessId)
-		from FtyStyleInnovation_Artwork fa where FtyStyleInnovationUkey = f.Ukey
+		from FtyStyleInnovation_Artwork fa with(nolock) where FtyStyleInnovationUkey = f.Ukey
 		for xml path('')
 	),1,1,'')
 )art
 outer apply(
 	select ns = STUFF((
 		select CONCAT('+', fa.SubprocessId)
-		from FtyStyleInnovation_Artwork fa where FtyStyleInnovationUkey = f.Ukey
+		from FtyStyleInnovation_Artwork fa with(nolock) where FtyStyleInnovationUkey = f.Ukey
 		and fa.NoBundleCardAfterSubprocess = 1
 		for xml path('')
 	),1,1,'')
@@ -1112,7 +1112,7 @@ outer apply(
 outer apply(
 	select ps = STUFF((
 		select CONCAT('+', fa.SubprocessId)
-		from FtyStyleInnovation_Artwork fa where FtyStyleInnovationUkey = f.Ukey
+		from FtyStyleInnovation_Artwork fa with(nolock) where FtyStyleInnovationUkey = f.Ukey
 		and fa.PostSewingSubProcess = 1
 		for xml path('')
 	),1,1,'')
