@@ -1030,7 +1030,7 @@ SELECT  BDO.QTY
 INTO #Bundle
 FROM Bundle_Detail bd WITH (NOLOCK) 
 INNER JOIN Bundle bdl WITH (NOLOCK)  ON bdl.id=bd.id
-INNER JOIN Bundle_Detail_Order BDO on BDO.BundleNo = BD.BundleNo
+INNER JOIN Bundle_Detail_Order BDO with(nolock) on BDO.BundleNo = BD.BundleNo
 INNER JOIN BundleInOut bio WITH (NOLOCK)  ON bio.BundleNo = bd.BundleNo
 INNER JOIN SubProcess s WITH (NOLOCK)  ON s.id= bio.SubProcessId
 WHERE bio.RFIDProcessLocationID=''
