@@ -757,7 +757,7 @@ where pd.CustCTN = '{dr["CustCTN"]}' and pd.CTNQty > 0 and pd.DisposeFromClog= 0
             foreach (DataRow dr in selectedData)
             {
                 string checkPackSql = $@"
-select CFAReturnClogDate, ReceiveDate, TransferCFADate, Remark, Reason, ClogReasonRemark, ReturnDate 
+select CFAReturnClogDate, ReceiveDate, TransferCFADate, Remark, ReturnDate 
 from PackingList_Detail WITH (NOLOCK)
 where ID = '{dr["PackingListID"].ToString().Trim()}' 
 and OrderID = '{dr["OrderID"].ToString().Trim()}'
