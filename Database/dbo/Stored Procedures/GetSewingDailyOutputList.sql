@@ -322,11 +322,13 @@ left join (
 			from #tmp1stFilter_First t2
 			where t.MasterStyleID = t2.MasterStyleID
 			and t.MasterBrandID = t2.MasterBrandID
+			and t.FactoryID = t2.FactoryID
 			and OutputDate in (
 				select MIN(OutputDate)
 				from #tmp1stFilter_First a
 				where a.MasterStyleID = t2.MasterStyleID
 				and a.MasterBrandID = t2.MasterBrandID	
+				and a.FactoryID = t2.FactoryID
 			)
 			group by MasterStyleID, MasterBrandID, FactoryID, OutputDate
 		) t2
