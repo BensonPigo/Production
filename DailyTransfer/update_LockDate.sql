@@ -40,15 +40,32 @@ update SewingMonthlyLock
 	, EditDate = getdate() 
 
 --PullOut
-update PullOut
-set LockDate=CONVERT(date, GETDATE()), Status='Locked'
-where PulloutDate <= @PullOutLock and LockDate is null and Status='Confirmed'  
+select * 
+into #tmpPullout
+from PullOut
+where PulloutDate <= @PullOutLock 
+and LockDate is null 
+and Status='Confirmed'  
 
-update PackingList
+-- Pullout
+update t
+set LockDate=CONVERT(date, GETDATE()), Status='Locked'
+from PullOut t
+where exists(
+	select 1 from #tmpPullout s
+	where t.ID = s.ID
+)
+
+-- PackingList
+update t
 set PulloutStatus = 'Locked'
-where PulloutDate <= @PulloutLock 
-and PulloutStatus = 'Confirmed'
-                                      
+from PackingList t
+where exists(
+	select 1 from #tmpPullout s
+	where t.PulloutID = s.ID
+)
+
+drop table #tmpPullout                                      
 
 update System set PullLock=@PullOutLock
 
