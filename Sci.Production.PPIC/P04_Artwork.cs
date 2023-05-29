@@ -13,7 +13,6 @@ namespace Sci.Production.PPIC
     /// </summary>
     public partial class P04_Artwork : Win.Subs.Input4
     {
-        private string styleukey ;
         /// <summary>
         /// P04_Artwork
         /// </summary>
@@ -26,7 +25,6 @@ namespace Sci.Production.PPIC
         public P04_Artwork(bool canedit, string keyvalue1, string keyvalue2, string keyvalue3, string styleid, string seasonid)
             : base(canedit, keyvalue1, keyvalue2, keyvalue3)
         {
-            this.styleukey = keyvalue1;
             this.InitializeComponent();
             this.Text = "Artwork <" + styleid + "-" + seasonid + ">";
         }
@@ -106,6 +104,7 @@ namespace Sci.Production.PPIC
                             dr["ArtworkTypeID"] = e.FormattedValue.ToString();
                             dr["UnitID"] = artworkType.Rows[0]["ArtworkUnit"];
                             dr["Article"] = "----";
+                            dr["PrintType"] = e.FormattedValue.ToString() == "PRINTING" ? "C" : string.Empty;
                             dr.EndEdit();
                         }
                     }
@@ -439,14 +438,6 @@ select * from StyleTMSCost", this.KeyValue1);
                 }
             }
             #endregion
-
-            string sqlUpdate = $@"
-            update Style_Artwork
-            set PrintType = iif(ArtworkTypeID = 'PRINTING' , 'C', '')
-            where StyleUkey = {this.styleukey}
-            and StyleUkey <=0";
-            DBProxy.Current.Execute(null, sqlUpdate);
-
             return Ict.Result.True;
         }
     }
