@@ -18,6 +18,7 @@ namespace Sci.Production.PPIC
         private bool IsOutstanding;
         private bool IsExcludeSister;
         private bool IsExcludeCancelShortage;
+        private bool IsBookingOrder;
         private DateTime? BuyerDev_S;
         private DateTime? BuyerDev_E;
 
@@ -68,6 +69,7 @@ namespace Sci.Production.PPIC
             this.IsOutstanding = this.chkOutstanding.Checked;
             this.IsExcludeSister = this.chkExcludeSis.Checked;
             this.IsExcludeCancelShortage = this.chkExcludeCancelShortage.Checked;
+            this.IsBookingOrder = this.chkBookingOrder.Checked;
 
             return base.ValidateInput();
         }
@@ -118,6 +120,11 @@ namespace Sci.Production.PPIC
             {
                 sqlWhere.Append($"AND o.Junk = 0 and o.GMTComplete <> 'S'" + Environment.NewLine);
             }
+
+            if (this.IsBookingOrder)
+            {
+                sqlWhere.Append($"and isnull(ot.IsGMTMaster,0) = 0" + Environment.NewLine);
+            }
             #endregion
 
             #region 組SQL
@@ -145,6 +152,10 @@ SELECT
     ,o.Qty
 	,f.KPICode 
     ,[cbsnp] = IIF(o.NeedProduction = 0, 'N','Y')
+    ,[BookingSP] = CASE WHEN o.Category='G' THEN OrderQtyGarment.value
+                        WHEN ot.IsGMTMaster=1 THEN 'Y' 
+                   ELSE ''
+                   END
 into #tmpOrderMain
 FROM Orders o WITH(NOLOCK)
 INNER JOIN Factory f WITH(NOLOCK) ON f.ID=o.FactoryID
@@ -156,23 +167,33 @@ OUTER APPLY(
 )PartialShipment
 outer apply(
     select ShipQty = sum(pd.ShipQty)
-    from PackingList_Detail pd
-    inner join Order_Qty oq on oq.ID = pd.OrderID and oq.Article = pd.Article and oq.SizeCode = pd.SizeCode
-    inner join PackingList p on p.ID = pd.ID
+    from PackingList_Detail pd WITH(NOLOCK)
+    inner join Order_Qty oq WITH(NOLOCK) on oq.ID = pd.OrderID and oq.Article = pd.Article and oq.SizeCode = pd.SizeCode
+    inner join PackingList p WITH(NOLOCK) on p.ID = pd.ID
     where p.PulloutID <> ''
     and pd.OrderID = o.ID
 )s
+outer apply(
+    select value = STUFF((
+        select CONCAT(',',OrderIDFrom)
+        from(
+            select distinct OrderIDFrom
+            from Order_Qty_Garment WITH(NOLOCK)
+            where ID = o.ID
+        )s
+        for xml path('')
+        ),1,1,'')
+) OrderQtyGarment 
 where o.Category IN ('B','G') 
-      and isnull(ot.IsGMTMaster,0) = 0
       {sqlWhere}
 
 select 
-pd.OrderID,
-pd.OrderShipmodeSeq,
-[PackingQty] = sum(isnull(pd.ShipQty,0)),
-[PackingCarton] = sum(iif(pd.CTNQty = 1,1,0)),
-[ClogReceivedCarton] = sum(iif(pd.CTNQty = 1 AND ( pd.CFAReceiveDate IS NOT NULL OR pd.ReceiveDate IS NOT NULL),1,0)),
-[ClogReceivedQty] = sum(iif( pd.CFAReceiveDate IS NOT NULL OR pd.ReceiveDate IS NOT NULL,pd.ShipQty,0))
+    pd.OrderID,
+    pd.OrderShipmodeSeq,
+    [PackingQty] = sum(isnull(pd.ShipQty,0)),
+    [PackingCarton] = sum(iif(pd.CTNQty = 1,1,0)),
+    [ClogReceivedCarton] = sum(iif(pd.CTNQty = 1 AND ( pd.CFAReceiveDate IS NOT NULL OR pd.ReceiveDate IS NOT NULL),1,0)),
+    [ClogReceivedQty] = sum(iif( pd.CFAReceiveDate IS NOT NULL OR pd.ReceiveDate IS NOT NULL,pd.ShipQty,0))
 into #tmpPackingList_Detail
 from PackingList_Detail pd with (nolock)
 where exists(select 1 from #tmpOrderMain main where pd.OrderID = main.ID and 
@@ -189,10 +210,10 @@ from openquery([ExtendServer],'select   ins.OrderId,
                                         [LastDQSOutputDate] = MAX(iif(ins.Status in (''Pass'',''Fixed''), ins.AddDate, null))
                                 from [ManufacturingExecution].[dbo].[Inspection] ins WITH(NOLOCK)
                                 where exists( select 1 
-                                                from 
-                                                [Production].[dbo].Orders o WITH(NOLOCK)
+                                                from [Production].[dbo].Orders o WITH(NOLOCK)
                                                 INNER JOIN [Production].[dbo].Factory f WITH(NOLOCK) ON f.ID=o.FactoryID
                                                 LEFT JOIN  [Production].[dbo].Order_QtyShip oq WITH(NOLOCK) ON o.ID=oq.ID
+                                                LEFT JOIN [Production].[dbo].OrderType ot WITH(NOLOCK) ON o.OrderTypeID=ot.ID AND o.BrandID = ot.BrandID
                                                 where o.ID = ins.OrderID 
                                                       {sqlWhere.ToString().Replace("'", "''")}
                                                 )
@@ -219,7 +240,8 @@ select main.KPICode
 	,main.ShipmodeID
     ,main.dest
 	,main.Category
-	,main.PartialShipment
+	,main.PartialShipment   
+    ,main.BookingSP
 	,main.Cancelled
     ,[Cancelled but still need production] = main.cbsnp
     ,PulloutComplete = case when main.PulloutComplete=1 and main.Qty > isnull(main.ShipQty,0) then 'S'
@@ -282,13 +304,13 @@ DROP TABLE #tmpOrderMain,#tmpPackingList_Detail,#tmpInspection,#tmpInspection_St
 
             Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
             objSheets.get_Range("J:J").ColumnWidth = 8;
-            objSheets.get_Range("M:M").ColumnWidth = 8;
-            objSheets.get_Range("N:N").ColumnWidth = 9;
-            objSheets.get_Range("O:S").ColumnWidth = 8;
-            objSheets.get_Range("T:AB").ColumnWidth = 8;
+            objSheets.get_Range("N:N").ColumnWidth = 8;
+            objSheets.get_Range("O:O").ColumnWidth = 9;
+            objSheets.get_Range("P:T").ColumnWidth = 8;
+            objSheets.get_Range("V:AC").ColumnWidth = 8;
             objSheets.get_Range("G:G").ColumnWidth = 10;
-            objSheets.get_Range("V:V").ColumnWidth = 10;
-            objSheets.get_Range("T:T").ColumnWidth = 10;
+            objSheets.get_Range("W:W").ColumnWidth = 10;
+            objSheets.get_Range("U:U").ColumnWidth = 10;
 
             #region Save & Show Excel
             string strExcelName = Class.MicrosoftFile.GetName("PPIC_R16");
