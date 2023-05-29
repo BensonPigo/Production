@@ -34,15 +34,7 @@ SET @SqlCmd1 = '
 	[Supp Name] = Supp.AbbEN,
 	[Ref#] = psd.Refno,
 	[Color] = c.ColorName,
-	Qty = isnull(ed.Qty,0) + isnull(ed.Foc,0),
-	[Inspection Report_Fty Received Date] = sr.InspectionReport,
-	[Inspection Report_Supp Sent Date] = sr.TPEInspectionReport,
-	[Test Report_Fty Received Date] = sr.TestReport,
-	[Test Report_ Check Clima] = isnull(sr.TestReportCheckClima,0),
-	[Test Report_Supp Sent Date] = sr.TPETestReport,
-	[Continuity Card_Fty Received Date] = sr.ContinuityCard,
-	[Continuity Card_Supp Sent Date] = sr.TPEContinuityCard,
-	[Continuity Card_AWB#] = sr.AWBNo,
+	Qty = isnull(ed.Qty,0) + isnull(ed.Foc,0),	
 	[1st Bulk Dyelot_Fty Received Date] = FirstDyelot.FirstDyelot,
 	[1st Bulk Dyelot_Supp Sent Date]  = IIF(FirstDyelot.FirstDyelot is null and f.RibItem = 1
                         ,''RIB no need first dye lot''
@@ -51,9 +43,6 @@ SET @SqlCmd1 = '
                                 ,format(FirstDyelot.FirstDyelot,''yyyy/MM/dd'')
                             )
                     ),
-	[T2 Inspected Yards] = isnull(sr.T2InspYds,0),
-	[T2 Defect Points] = isnull(sr.T2DefectPoint,0),
-	[Grade] = sr.T2Grade,
 	[T1 Inspected Yards] = isnull(a.T1InspectedYards,0),
 	[T1 Defect Points] = isnull(b.T1DefectPoints,0),
 	[Fabric with clima] = isnull(f.Clima,0),
@@ -64,14 +53,13 @@ SET @SqlCmd1 = '
     [bitRefnoColor] = case when f.Clima = 1 then ROW_NUMBER() over(partition by f.Clima, ps.SuppID, psd.Refno, pc.SpecValue, Format(Export.CloseDate,''yyyyMM'') order by Export.CloseDate) else 0 end,
 	[FactoryID] = o.FactoryID,
 	Export.Consignee
-into #tmpFinal
+into #tmpBasic
 from ['+@current_PMS_ServerName+'].Production.dbo.Export_Detail ed with(nolock)
  ';
  
 SET @SqlCmd2 = '
 inner join ['+@current_PMS_ServerName+'].Production.dbo.Export with(nolock) on Export.id = ed.id and Export.Confirm = 1
 inner join ['+@current_PMS_ServerName+'].Production.dbo.orders o with(nolock) on o.id = ed.PoID
-left join ['+@current_PMS_ServerName+'].Production.dbo.SentReport sr with(nolock) on sr.Export_DetailUkey = ed.Ukey
 left join ['+@current_PMS_ServerName+'].Production.dbo.Po_Supp_Detail psd with(nolock) on psd.id = ed.poid and psd.seq1 = ed.seq1 and psd.seq2 = ed.seq2
 left join ['+@current_PMS_ServerName+'].Production.dbo.PO_Supp ps with(nolock) on ps.id = psd.id and ps.SEQ1 = psd. SEQ1
 left join ['+@current_PMS_ServerName+'].Production.dbo.Supp with(nolock) on Supp.ID = ps.SuppID
@@ -111,12 +99,106 @@ outer apply(
 where  Export.ETA between '''+@ETA_s_varchar+''' and '''+@ETA_e_varchar+'''
 and psd.FabricType = ''F''
 and (ed.qty + ed.Foc)>0
-and o.Category in(''B'',''M'')
+and o.Category in(''B'',''M'')';
 
+ 
+SET @SqlCmd3 = '
+
+select t.*
+	,sr.documentName
+	,sr.ReportDate
+	,sr.T2InspYds
+	,sr.T2DefectPoint
+	,sr.T2Grade
+	,sr2.AWBno
+into #tmpReportDate
+from #tmpBasic t
+left join ['+@current_PMS_ServerName+'].Production.dbo.NewSentReport sr with (nolock) on sr.exportID = t.WK# and sr.poid = t.SP# and sr.Seq1 =t.Seq1 and sr.Seq2 = t.Seq2
+outer apply (
+	select sr2.AWBno
+	from ['+@current_PMS_ServerName+'].Production.dbo.NewSentReport sr2 with (nolock) 
+	where sr2.exportID = t.WK# and sr2.poid = t.SP# and sr2.Seq1 =t.Seq1 and sr2.Seq2 = t.Seq2
+	and sr2.documentName = ''Continuity card''
+)sr2
+
+select t.*
+	,sr.documentName
+	,sr.FTYReceivedReport
+	,sr.T2InspYds
+	,sr.T2DefectPoint
+	,sr.T2Grade
+	,sr2.AWBno
+into #tmpFTYReceivedReport
+from #tmpBasic t
+left join ['+@current_PMS_ServerName+'].Production.dbo.NewSentReport sr with (nolock) on sr.exportID = t.WK# and sr.poid = t.SP# and sr.Seq1 =t.Seq1 and sr.Seq2 = t.Seq2
+outer apply (
+	select sr2.AWBno
+	from ['+@current_PMS_ServerName+'].Production.dbo.NewSentReport sr2 with (nolock) 
+	where sr2.exportID = t.WK# and sr2.poid = t.SP# and sr2.Seq1 =t.Seq1 and sr2.Seq2 = t.Seq2
+	and sr2.documentName = ''Continuity card''
+)sr2
 ';
 
-SET @SqlCmd3 = '
-	drop table #probablySeasonList
+
+SET @SqlCmd4 = '
+select distinct
+	a.[WK#],
+    a.[Invoice#],
+	a.[ATA],
+	a.[ETA],
+    a.[Season],
+	a.[SP#],
+	a.[Seq#],	
+    a.[Brand],
+	a.[Supp],
+	a.[Supp Name],
+	a.[Ref#],
+	a.[Color],
+	a.Qty,
+	[Inspection Report_Fty Received Date] = c.[Inspection Report],
+	[Inspection Report_Supp Sent Date] = b.[Inspection Report],
+	[Test Report_Fty Received Date] = c.[Test report],
+	[Test Report_ Check Clima] = 0, -- NewSentReport 沒有該欄位[TestReportCheckClima]
+	[Test Report_Supp Sent Date] = b.[Test report],
+	[Continuity Card_Fty Received Date] = c.[Continuity card],
+	[Continuity Card_Supp Sent Date] = b.[Continuity card],
+	[Continuity Card_AWB#] = b.AWBno,
+	a.[1st Bulk Dyelot_Fty Received Date],
+	a.[1st Bulk Dyelot_Supp Sent Date]  ,
+	[T2 Inspected Yards] = b.T2InspYds,
+	[T2 Defect Points] = b.T2DefectPoint,
+	[Grade] =  b.T2Grade,
+	a.[T1 Inspected Yards],
+	a.[T1 Defect Points] ,
+	a.[Fabric with clima],
+	a.ColorID,
+    a.seq1,
+    a.seq2,
+    a.[bitRefnoColor],
+	a.[FactoryID],
+	a.Consignee
+	into #tmpFinal
+	from #tmpBasic a
+	inner join (
+		select *
+		from #tmpReportDate t
+		pivot(
+			max(ReportDate)
+			for documentname in([Continuity card],[Inspection Report],[Test report])
+		) aa
+	)b on a.WK# = b.WK# and a.SP# = b.SP# and a.Seq1=b.Seq1 and a.Seq2=b.Seq2
+	inner join (
+		select *
+		from #tmpFTYReceivedReport t
+		pivot(
+			max(FTYReceivedReport)
+			for documentname in([Continuity card],[Inspection Report],[Test report])
+		) aa
+	)c on a.WK# = c.WK# and a.SP# = c.SP# and a.Seq1 = c.Seq1 and a.Seq2 = c.Seq2
+';
+
+SET @SqlCmd5 = '
+	drop table #probablySeasonList,#tmpBasic,#tmpFTYReceivedReport,#tmpReportDate
 
 	-----開始Merge 
 	MERGE INTO dbo.P_QA_P09 t
@@ -184,12 +266,16 @@ update b
 from BITableInfo b
 where b.id = ''P_QA_P09''
 ';
+
 /*
 print @SqlCmd1
 print @SqlCmd2
 print @SqlCmd3
+print @SqlCmd4
+print @SqlCmd5
 */
 
-SET @SqlCmd_Combin = @SqlCmd1 + @SqlCmd2 + @SqlCmd3
-	EXEC sp_executesql @SqlCmd_Combin
+
+SET @SqlCmd_Combin = @SqlCmd1 + @SqlCmd2 + @SqlCmd3+@SqlCmd4+@SqlCmd5
+EXEC sp_executesql @SqlCmd_Combin
 END
