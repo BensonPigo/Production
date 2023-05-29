@@ -261,7 +261,8 @@ select
     ,C.Description
     ,[ColorID] = ps.SpecValue
     ,[ColorName] = color.Name
-    ,[Supplier] = (SP.SuppID+'-'+s.AbbEN)
+    ,[SupplierCode] = SP.SuppID
+    ,[SupplierName] = s.AbbEN
 	,C.WeaveTypeID
 	,[N/A Physical] = IIF(F.Nonphysical = 1,'Y',' ')
 	,F.Result
@@ -509,7 +510,8 @@ select
     ,tf.Description
     ,tf.ColorID
     ,tf.ColorName
-    ,tf.Supplier
+    ,tf.SupplierCode
+    ,tf.SupplierName
 	,tf.WeaveTypeID
 	,tf.[N/A Physical]
 	,tf.Result

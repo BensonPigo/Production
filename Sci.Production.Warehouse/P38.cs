@@ -186,7 +186,7 @@ namespace Sci.Production.Warehouse
                   .Numeric("adjustqty", header: "Adjust Qty", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2, iseditingreadonly: true)
                   .Numeric("ReturnQty", header: "Return Qty", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2, iseditingreadonly: true)
                   .Numeric("balanceqty", header: "Balance Qty", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2, iseditingreadonly: true)
-                 .Text("stocktype", header: "Stocktype", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                 .Text("StockType1", header: "Stocktype", width: Widths.AnsiChars(10), iseditingreadonly: true)
                  .Text("location", header: "location", width: Widths.AnsiChars(10), iseditingreadonly: true)
                  .Text("description", header: "description", width: Widths.AnsiChars(20), iseditingreadonly: true)
                  .Text("styleid", header: "Style", width: Widths.AnsiChars(13), iseditingreadonly: true)
@@ -195,6 +195,7 @@ namespace Sci.Production.Warehouse
                   .Date("earliest_SciDelivery", header: "Earliest" + Environment.NewLine + "SciDelivery", width: Widths.AnsiChars(10), iseditingreadonly: true)
                   .Text("brandid", header: "Brand", width: Widths.AnsiChars(12), iseditingreadonly: true)
                   .Text("factoryid", header: "Factory", width: Widths.AnsiChars(8), iseditingreadonly: true)
+                  .Text("ForInspection", header: "For\r\nInspection", width: Widths.AnsiChars(8), iseditingreadonly: true)
                   ;
             columnStatus.DefaultCellStyle.ForeColor = Color.Blue;
             this.gridMaterialLock.Columns["dyelot"].HeaderCell.Style.BackColor = Color.Orange;
@@ -352,11 +353,7 @@ select 0 as [selected]
         , fi.AdjustQty
         , fi.ReturnQty
         , fi.InQty - fi.OutQty + fi.AdjustQty - fi.ReturnQty as balanceqty
-        , stocktype =  case fi.stocktype 
-                        when 'B' then'Bulk' 
-                        when 'I' then 'Inventory' 
-                        else fi.StockType 
-                       end 
+        , fi.stocktype 
         , fi.LockDate
         , LockName = (select id+'-'+name from dbo.pass1 WITH (NOLOCK) where id=fi.LockName) 
         , fi.ukey
@@ -717,6 +714,11 @@ OUTER APPLY(
 
 
 select distinct fi.*
+     ,[StockType1]  = case fi.stocktype 
+                        when 'B' then'Bulk' 
+                        when 'I' then 'Inventory' 
+                        else fi.StockType 
+                       end 
 	 ,[FIR] = case when fi.sFabricType='A' then iif(Air.Result ='','Blank',Air.Result)
 				   else FIR_Result1.Result end
 		,[PointRate]=IIF(fi.FabricType='Accessory','',PointRate.PointRate)
@@ -727,6 +729,7 @@ select distinct fi.*
 								then 'Blank'
 							else 'Pass' end 
         ,f3.Scale, f3.Tone
+        ,[ForInspection] = IIf(rdValue.ForInspection = '1', 'Y', IIf(tdValue.ForInspection = '1', 'Y', ''))
 from #tmp_FtyInventory fi
 left join #tmp_FIR_Result1 FIR_Result1 on FIR_Result1.POID=fi.POID	and FIR_Result1.SEQ1 = fi.Seq1 and FIR_Result1.SEQ2 = fi.Seq2 and FIR_Result1.Dyelot=fi.Dyelot AND FIR_Result1.Roll=fi.Roll 
 left join #tmp_FIR_3 f3 on f3.POID=fi.POID	and f3.SEQ1 = fi.Seq1 and f3.SEQ2 = fi.Seq2 and f3.Dyelot=fi.Dyelot AND f3.Roll=fi.Roll
@@ -734,7 +737,14 @@ left join #tmp_WashLab WashLab on WashLab.POID= fi.POID	and WashLab.SEQ1 =fi.Seq
 left join #tmp_Air Air on Air.POID= fi.POID	and Air.SEQ1 =fi.Seq1 and Air.SEQ2 = fi.Seq2  
 left join #tmp_Air_Lab Air_Lab on Air_Lab.POID= fi.POID	and Air_Lab.SEQ1 =fi.Seq1 and Air_Lab.SEQ2 = fi.Seq2  
 left join #tmp_PointRate PointRate on PointRate.POID=fi.POID	and PointRate.SEQ1 = fi.Seq1 and PointRate.SEQ2 = fi.Seq2 and PointRate.Roll=fi.Roll and PointRate.Dyelot=fi.Dyelot   
-
+outer apply
+(	select top 1 [ForInspection] = isnull(ForInspection,'') from
+	Receiving_Detail rd where rd.POID=fi.POID and rd.SEQ1 = fi.Seq1 and rd.SEQ2 = fi.Seq2 and rd.Roll=fi.Roll and rd.Dyelot=fi.Dyelot and rd.StockType = fi.stocktype 																 
+)rdValue
+outer apply
+(	select top 1 [ForInspection] = isnull(ForInspection, '') from
+	TransferIn_Detail td  where td.POID=fi.POID and td.SEQ1 = fi.Seq1 and td.SEQ2 = fi.Seq2 and td.Roll=fi.Roll and td.Dyelot=fi.Dyelot and td.StockType = fi.stocktype 																																				  
+)tdValue
 drop table #tmp_FtyInventory,#tmp_FIR_Result1,#tmp_WashLab,#tmp_Air,#tmp_Air_Lab,#tmp_PointRate,#tmpFirDetail
 ");
 

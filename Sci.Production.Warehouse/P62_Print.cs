@@ -127,6 +127,7 @@ select[Poid] = IIF((t.poid = lag(t.poid, 1, '') over(order by t.poid, t.seq1, t.
         , [location]=dbo.Getlocation(b.ukey)  
         , b.ContainerCode
         , [Total]=sum(t.Qty) OVER(PARTITION BY t.POID , t.Seq1, t.Seq2 )
+        , [ToneGrp] =b .Tone
 from dbo.Issue_Detail t WITH (NOLOCK)
 inner join Issue_Summary iss WITH (NOLOCK) on t.Issue_SummaryUkey = iss.Ukey
 left join dbo.PO_Supp_Detail p  WITH (NOLOCK) on    p.id= t.poid
@@ -177,6 +178,7 @@ where t.id= @ID";
                         Dyelot = row1["Dyelot"].ToString().Trim(),
                         Qty = row1["Qty"].ToString().Trim(),
                         Total = row1["Total"].ToString().Trim(),
+                        ToneGrp = row1["ToneGrp"].ToString().Trim(),
                     }).OrderBy(s => s.GroupPoid).ThenBy(s => s.GroupSeq).ThenBy(s => s.Dyelot).ThenBy(s => s.Roll).ToList();
 
                 report.ReportDataSource = data;
