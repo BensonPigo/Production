@@ -1,7 +1,7 @@
 ﻿CREATE TABLE [dbo].[P_LoadingvsCapacity]
 (
 	[MDivisionID]        VARCHAR(8)         CONSTRAINT [DF_P_LoadingvsCapacity_MDivisionID]     NOT NULL DEFAULT (('')), 
-    [KpiCode]            VARCHAR(8)         CONSTRAINT [DF_P_LoadingvsCapacity_KpiCode]         NOT NULL DEFAULT (('')), 
+    [FactoryID]            VARCHAR(8)         CONSTRAINT [DF_P_LoadingvsCapacity_FactoryID]         NOT NULL DEFAULT (('')), 
     [Key]                VARCHAR(6)         CONSTRAINT [DF_P_LoadingvsCapacity_Key]             NOT NULL DEFAULT (('')), 
     [Halfkey]            VARCHAR(8)         CONSTRAINT [DF_P_LoadingvsCapacity_Halfkey]         NOT NULL DEFAULT (('')), 
     [ArtworkTypeID]      VARCHAR(20)        CONSTRAINT [DF_P_LoadingvsCapacity_ArtworkTypeID]   NOT NULL DEFAULT (('')), 
@@ -9,7 +9,7 @@
     [Loading (CPU)]      NUMERIC(38, 6)     CONSTRAINT [DF_P_LoadingvsCapacity_Loading (CPU)]   NOT NULL DEFAULT ((0)), 
     [TransferBIDate]     DATETIME NULL, 
     [Ukey]               BIGINT NOT NULL    IDENTITY(1,1), 
-    CONSTRAINT [PK_P_LoadingvsCapacity] PRIMARY KEY ([MDivisionID], [Key], [KpiCode], [Halfkey], [ArtworkTypeID])
+    CONSTRAINT [PK_P_LoadingvsCapacity] PRIMARY KEY ([MDivisionID], [Key], [FactoryID], [Halfkey], [ArtworkTypeID])
 )
 
 GO
@@ -29,7 +29,7 @@ EXEC sp_addextendedproperty @name = N'MS_Description',
     @level1type = N'TABLE',
     @level1name = N'P_LoadingvsCapacity',
     @level2type = N'COLUMN',
-    @level2name = N'KpiCode'
+    @level2name = N'FactoryID'
 GO
 EXEC sp_addextendedproperty @name = N'MS_Description',
     @value = N'月代碼',
