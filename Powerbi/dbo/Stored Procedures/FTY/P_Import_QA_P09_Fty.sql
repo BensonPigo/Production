@@ -107,9 +107,9 @@ SET @SqlCmd3 = '
 select t.*
 	,sr.documentName
 	,sr.ReportDate
-	,sr.T2InspYds
-	,sr.T2DefectPoint
-	,sr.T2Grade
+	,sr3.T2InspYds
+	,sr3.T2DefectPoint
+	,sr3.T2Grade
 	,sr2.AWBno
 into #tmpReportDate
 from #tmpBasic t
@@ -120,13 +120,20 @@ outer apply (
 	where sr2.exportID = t.WK# and sr2.poid = t.SP# and sr2.Seq1 =t.Seq1 and sr2.Seq2 = t.Seq2
 	and sr2.documentName = ''Continuity card''
 )sr2
+outer apply (
+	select sr3.T2InspYds,sr3.T2DefectPoint,sr3.T2Grade
+	from ['+@current_PMS_ServerName+'].Production.dbo.NewSentReport sr3 with (nolock) 
+	where sr3.exportID = t.WK# and sr3.poid = t.SP# and sr3.Seq1 = t.Seq1 and sr3.Seq2 = t.Seq2
+	and sr3.T2InspYds is not null 
+	group by sr3.T2InspYds,sr3.T2DefectPoint,sr3.T2Grade
+)sr3
 
 select t.*
 	,sr.documentName
 	,sr.FTYReceivedReport
-	,sr.T2InspYds
-	,sr.T2DefectPoint
-	,sr.T2Grade
+	,sr3.T2InspYds
+	,sr3.T2DefectPoint
+	,sr3.T2Grade
 	,sr2.AWBno
 into #tmpFTYReceivedReport
 from #tmpBasic t
@@ -137,6 +144,13 @@ outer apply (
 	where sr2.exportID = t.WK# and sr2.poid = t.SP# and sr2.Seq1 =t.Seq1 and sr2.Seq2 = t.Seq2
 	and sr2.documentName = ''Continuity card''
 )sr2
+outer apply (
+	select sr3.T2InspYds,sr3.T2DefectPoint,sr3.T2Grade
+	from ['+@current_PMS_ServerName+'].Production.dbo.NewSentReport sr3 with (nolock) 
+	where sr3.exportID = t.WK# and sr3.poid = t.SP# and sr3.Seq1 =t.Seq1 and sr3.Seq2 = t.Seq2
+	and sr3.T2InspYds is not null 
+	group by sr3.T2InspYds,sr3.T2DefectPoint,sr3.T2Grade
+)sr3
 ';
 
 
