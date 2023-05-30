@@ -130,7 +130,7 @@ select
 	,main.Dest
 	,main.Category
 	,main.PartialShipment
-	,main.BookingSP
+	,[BookingSP] = ISNULL(main.BookingSP, '')
 	,main.Cancelled
     ,PulloutComplete = case when main.PulloutComplete=1 and main.Qty > isnull(main.ShipQty,0) then 'S'
 							when main.PulloutComplete=1 and main.Qty <= isnull(main.ShipQty,0) then 'Y'
