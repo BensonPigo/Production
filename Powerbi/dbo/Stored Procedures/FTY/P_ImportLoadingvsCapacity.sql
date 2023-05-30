@@ -7,7 +7,7 @@ AS
 	/************* 撈取 Production 資料 *************/
 	SELECT 
 	[MDivisionID],
-	[FactoryID],
+	[KpiCode],
 	[Key],
 	[Halfkey],
 	[ArtworkTypeID],
@@ -24,7 +24,7 @@ AS
 	update p
 	set 
 	p.[MDivisionID]		= t.[MDivisionID],
-	p.[FactoryID]		= t.[FactoryID],
+	p.[FactoryID]		= t.[KpiCode],
 	p.[Key]				= t.[Key],
 	p.[Halfkey]			= t.[Halfkey],
 	p.[ArtworkTypeID]	= t.[ArtworkTypeID],
@@ -33,7 +33,7 @@ AS
 	p.[TransferBIDate]	= t.[TransferBIDate]
 	from P_LoadingvsCapacity p with(nolock)
 	inner join #tmp t with(nolock) on p.[MDivisionID]		= t.[MDivisionID]	and 
-										   p.[FactoryID]		= t.[FactoryID]		and
+										   p.[FactoryID]			= t.[KpiCode]		and
 										   p.[Key]				= t.[Key]			and
 										   p.[Halfkey]			= t.[Halfkey]		and
 										   p.[ArtworkTypeID]	= t.[ArtworkTypeID] 
@@ -43,7 +43,7 @@ AS
 	insert into P_LoadingvsCapacity
 	select 
 	t.[MDivisionID],
-	t.[FactoryID],
+	t.[KpiCode],
 	t.[Key],
 	t.[Halfkey],
 	t.[ArtworkTypeID],
@@ -56,12 +56,12 @@ AS
 		select 1 from P_LoadingvsCapacity p 
 		where 
 		p.[MDivisionID]		= t.[MDivisionID]	and 
-		p.[FactoryID]			= t.[FactoryID]		and
+		p.[FactoryID]			= t.[KpiCode]		and
 		p.[Key]				= t.[Key]			and
 		p.[Halfkey]			= t.[Halfkey]		and
 		p.[ArtworkTypeID]	= t.[ArtworkTypeID] 
 	)
-	order by [MDivisionID],[FactoryID],[Halfkey] asc,[ArtworkTypeID]
+	order by [MDivisionID],[KpiCode],[Halfkey] asc,[ArtworkTypeID]
 
 	update b
     set b.TransferDate = getdate()
