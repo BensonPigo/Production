@@ -203,6 +203,7 @@ namespace Sci.Production.Quality
                         {
                             P01_ShadeBond_Data r = new P01_ShadeBond_Data
                             {
+                                Dyelot = MyUtility.Convert.GetString(sameData["Dyelot"]),
                                 Tone = MyUtility.Convert.GetString(sameData["Tone"]),
                                 Roll = MyUtility.Convert.GetString(sameData["Roll"]),
                                 TicketYds = MyUtility.Convert.GetString(sameData["TicketYds"]),
