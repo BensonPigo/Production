@@ -65,7 +65,7 @@ namespace Sci.Production.Quality
         private void SetupGrid_Document()
         {
             this.Helper.Controls.Grid.Generator(this.grid_Document)
-                .Text("DocumentName", header: "Document Name", width: Widths.AnsiChars(18), iseditingreadonly: true)
+                .Text("DocumentName", header: "Document Name", width: Widths.AnsiChars(24), iseditingreadonly: true)
                 ;
 
             this.SetGrid_HeaderBorderStyle(this.grid_Document, false);
@@ -489,7 +489,11 @@ inner join #tmp s on s.Ukey = t.Ukey
 update t
 set FTYReceivedReport = s.FTYReceivedReport
 from FirstDyelot t
-inner join #tmp s on s.Ukey = t.Ukey
+inner join #tmp s on s.SuppID = t.SuppID
+and s.TestDocFactoryGroup = t.TestDocFactoryGroup
+and s.BrandRefno = t.BrandRefno
+and s.ColorID = t.ColorID
+and s.SeasonID = t.SeasonID
 ";
                         break;
                     case "4":
@@ -520,7 +524,17 @@ inner join #tmp s on s.Ukey = t.Ukey
                 }
             }
 
+            // 記住當前Grid位置
+            int a = this.bs_Material.Position;
+            int b = this.bs_Document.Position;
+            int c = this.bs_Report.Position;
+
             this.Find();
+
+            // 給與上次的位置紀錄
+            this.bs_Material.Position = a;
+            this.bs_Document.Position = b;
+            this.bs_Report.Position = c;
         }
 
         private void BtnClose_Click(object sender, EventArgs e)
@@ -552,9 +566,13 @@ inner join #tmp s on s.Ukey = t.Ukey
             var row = this.grid_Document.GetDataRow(this.bs_Document.Position);
             if (row == null)
             {
-                this.DocumentName = string.Empty;
-                this.bs_Report.DataSource = null;
-                return;
+                row = ((System.Data.DataRowView)this.bs_Document.Current).Row;
+                if (row == null)
+                {
+                    this.DocumentName = string.Empty;
+                    this.bs_Report.DataSource = null;
+                    return;
+                }
             }
 
             var mainrow = this.grid_Material.GetDataRow(this.bs_Material.Position);
@@ -633,6 +651,11 @@ Select DocSeason = SeasonID
        ,EditName
        ,EditDate
        ,FileRule = '3'
+       ,SuppID
+       ,TestDocFactoryGroup
+       ,BrandRefno
+       ,ColorID
+       ,SeasonID
 FROM dbo.FirstDyelot 
 WHERE SuppID in (select top 1 SuppGroup FROM BrandRelation where SuppID = @SuppID) 
 and (BrandRefno = @BrandRefno  or BrandRefno = @Refno)
@@ -744,7 +767,6 @@ b.T1DefectPoints,
 ed.seq1,
 ed.seq2,
 f.Clima,
-sr.AWBNo,
 Export.CloseDate,
 --o.SeasonID,
 f.RibItem
@@ -752,7 +774,6 @@ into #tmpBasc
 from Export_Detail ed with(nolock)
 inner join Export with(nolock) on Export.id = ed.id and Export.Confirm = 1
 inner join orders o with(nolock) on o.id = ed.PoID
-left join NewSentReport sr with (nolock) on sr.exportID = ed.ID and sr.poid = ed.PoID and sr.Seq1 =ed.Seq1 and sr.Seq2 = ed.Seq2
 left join Po_Supp_Detail psd with(nolock) on psd.id = ed.poid and psd.seq1 = ed.seq1 and psd.seq2 = ed.seq2
 left join PO_Supp ps with(nolock) on ps.id = psd.id and ps.SEQ1 = psd. SEQ1
 left join Supp with(nolock) on Supp.ID = ps.SuppID
@@ -799,25 +820,53 @@ and exists(
 )
 
 select t.*
-,sr.documentName
-,sr.ReportDate
-,sr.T2InspYds
-,sr.T2DefectPoint
-,sr.T2Grade
+	,sr.documentName
+	,sr.ReportDate
+    ,sr3.T2InspYds
+    ,sr3.T2DefectPoint
+    ,sr3.T2Grade
+	,sr2.AWBno
 into #tmpReportDate
 from #tmpBasc t
 left join NewSentReport sr with (nolock) on sr.exportID = t.ID and sr.poid = t.PoID and sr.Seq1 =t.Seq1 and sr.Seq2 = t.Seq2
+outer apply (
+	select sr2.AWBno
+	from NewSentReport sr2 with (nolock) 
+	where sr2.exportID = t.ID and sr2.poid = t.PoID and sr2.Seq1 =t.Seq1 and sr2.Seq2 = t.Seq2
+	and sr2.documentName = 'Continuity card'
+)sr2
+outer apply (
+    select sr3.T2InspYds,sr3.T2DefectPoint,sr3.T2Grade
+    from NewSentReport sr3 with (nolock) 
+    where sr3.exportID = t.ID and sr3.poid = t.PoID and sr3.Seq1 = t.Seq1 and sr3.Seq2 = t.Seq2
+    and sr3.T2InspYds is not null 
+    group by sr3.T2InspYds,sr3.T2DefectPoint,sr3.T2Grade
+)sr3
 
 
 select t.*
-,sr.documentName
-,sr.FTYReceivedReport
-,sr.T2InspYds
-,sr.T2DefectPoint
-,sr.T2Grade
+	,sr.documentName
+    ,sr.FTYReceivedReport
+    ,sr3.T2InspYds
+    ,sr3.T2DefectPoint
+    ,sr3.T2Grade
+	,sr2.AWBno
 into #tmpFTYReceivedReport
 from #tmpBasc t
 left join NewSentReport sr with (nolock) on sr.exportID = t.ID and sr.poid = t.PoID and sr.Seq1 =t.Seq1 and sr.Seq2 = t.Seq2
+outer apply (
+	select sr2.AWBno
+	from NewSentReport sr2 with (nolock) 
+	where sr2.exportID = t.ID and sr2.poid = t.PoID and sr2.Seq1 =t.Seq1 and sr2.Seq2 = t.Seq2
+	and sr2.documentName = 'Continuity card'
+)sr2
+outer apply (
+    select sr3.T2InspYds,sr3.T2DefectPoint,sr3.T2Grade
+    from NewSentReport sr3 with (nolock) 
+    where sr3.exportID = t.ID and sr3.poid = t.PoID and sr3.Seq1 = t.Seq1 and sr3.Seq2 = t.Seq2
+    and sr3.T2InspYds is not null 
+    group by sr3.T2InspYds,sr3.T2DefectPoint,sr3.T2Grade
+)sr3
 
 
 select 
@@ -841,7 +890,7 @@ select
 ,[Test Report Supp Sent Date] = b.[Test report]
 ,[Continuity Card Fty Received Date] = c.[Continuity card]
 ,[Continuity Card Supp Sent Date] = b.[Continuity card]
-,[Continuity Card AWB#]=a.AWBno
+,[Continuity Card AWB#] = b.AWBno
 ,[1st Bulk Dyelot Fty Received Date] = a.FirstDyelot_FTYReceivedReport
 ,[1st Bulk Dyelot Supp Sent Date] = a.FirstDyelot
 ,[T2 Inspected Yards] = b.T2InspYds
