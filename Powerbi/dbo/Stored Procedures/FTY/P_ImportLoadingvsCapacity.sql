@@ -24,7 +24,7 @@ AS
 	update p
 	set 
 	p.[MDivisionID]		= t.[MDivisionID],
-	p.[KpiCode]			= t.[KpiCode],
+	p.[FactoryID]		= t.[KpiCode],
 	p.[Key]				= t.[Key],
 	p.[Halfkey]			= t.[Halfkey],
 	p.[ArtworkTypeID]	= t.[ArtworkTypeID],
@@ -33,7 +33,7 @@ AS
 	p.[TransferBIDate]	= t.[TransferBIDate]
 	from P_LoadingvsCapacity p with(nolock)
 	inner join #tmp t with(nolock) on p.[MDivisionID]		= t.[MDivisionID]	and 
-										   p.[KpiCode]			= t.[KpiCode]		and
+										   p.[FactoryID]			= t.[KpiCode]		and
 										   p.[Key]				= t.[Key]			and
 										   p.[Halfkey]			= t.[Halfkey]		and
 										   p.[ArtworkTypeID]	= t.[ArtworkTypeID] 
@@ -56,7 +56,7 @@ AS
 		select 1 from P_LoadingvsCapacity p 
 		where 
 		p.[MDivisionID]		= t.[MDivisionID]	and 
-		p.[KpiCode]			= t.[KpiCode]		and
+		p.[FactoryID]			= t.[KpiCode]		and
 		p.[Key]				= t.[Key]			and
 		p.[Halfkey]			= t.[Halfkey]		and
 		p.[ArtworkTypeID]	= t.[ArtworkTypeID] 
