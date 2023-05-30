@@ -587,7 +587,7 @@
             <TablixMember>
               <Group Name="Dyelot">
                 <GroupExpressions>
-                  <GroupExpression>=Fields!Dyelot.Value</GroupExpression>
+                  <GroupExpression>=Fields!Tone.Value</GroupExpression>
                 </GroupExpressions>
                 <PageBreak>
                   <BreakLocation>Between</BreakLocation>
@@ -1701,10 +1701,6 @@
         <CommandText>/* Local Query */</CommandText>
       </Query>
       <Fields>
-        <Field Name="Key">
-          <DataField>Key</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
         <Field Name="Dyelot">
           <DataField>Dyelot</DataField>
           <rd:TypeName>System.String</rd:TypeName>
@@ -1715,6 +1711,10 @@
         </Field>
         <Field Name="TicketYds">
           <DataField>TicketYds</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Tone">
+          <DataField>Tone</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
       </Fields>

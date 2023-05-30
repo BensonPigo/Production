@@ -159,10 +159,10 @@ namespace Sci.Production.Quality
                     dtFIR_Shadebone.Rows.Add(dtFIR_Shadebone.NewRow());
                 }
 
-                List<string> dyelotCTn = dtFIR_Shadebone.AsEnumerable().Select(o => o["Dyelot"].ToString()).Distinct().ToList();
+                List<string> dyelotCTn = dtFIR_Shadebone.AsEnumerable().Select(o => o["Tone"].ToString()).Distinct().ToList();
                 foreach (var dyelot in dyelotCTn)
                 {
-                    List<DataRow> sameDyelot = dtFIR_Shadebone.AsEnumerable().Where(o => o["Dyelot"].ToString() == dyelot).ToList();
+                    List<DataRow> sameDyelot = dtFIR_Shadebone.AsEnumerable().Where(o => o["Tone"].ToString() == dyelot).ToList();
 
                     foreach (var sameData in sameDyelot)
                     {
@@ -194,16 +194,16 @@ namespace Sci.Production.Quality
                         dtFIR_Shadebone = drs.CopyToDataTable();
                     }
 
-                    List<string> dyelotCTn = dtFIR_Shadebone.AsEnumerable().Select(o => o["Dyelot"].ToString()).Distinct().ToList();
+                    List<string> dyelotCTn = dtFIR_Shadebone.AsEnumerable().Select(o => o["Tone"].ToString()).Distinct().ToList();
                     foreach (var dyelot in dyelotCTn)
                     {
-                        List<DataRow> sameDyelot = dtFIR_Shadebone.AsEnumerable().Where(o => o["Dyelot"].ToString() == dyelot).ToList();
+                        List<DataRow> sameDyelot = dtFIR_Shadebone.AsEnumerable().Where(o => o["Tone"].ToString() == dyelot).ToList();
 
                         foreach (var sameData in sameDyelot)
                         {
                             P01_ShadeBond_Data r = new P01_ShadeBond_Data
                             {
-                                Dyelot = MyUtility.Convert.GetString(sameData["Dyelot"]),
+                                Tone = MyUtility.Convert.GetString(sameData["Tone"]),
                                 Roll = MyUtility.Convert.GetString(sameData["Roll"]),
                                 TicketYds = MyUtility.Convert.GetString(sameData["TicketYds"]),
                             };
