@@ -226,13 +226,13 @@ outer apply (
 	OUTER APPLY (
 		SELECT [gQty] = SUM(g4.Qty) 
 		FROM Orders g4 WITH (NOLOCK) 
-		WHERE tmp.gPOID = g4.POID 
+		WHERE TMP1.gPOID = g4.POID 
 		and g4.Category = 'G'
 	) g4
 	OUTER APPLY (
 		SELECT [bQty] = SUM(b4.Qty) 
 		FROM Orders b4 WITH (NOLOCK) 
-		WHERE tmp.bPOID = b4.POID 
+		WHERE TMP1.bPOID = b4.POID 
 		and b4.Category = 'B'
 	) b4 
 	GROUP BY g4.gQty, b4.bQty
@@ -406,6 +406,7 @@ drop table #tmp
             if (!result)
             {
                 DualResult failResult = new DualResult(false, "Query data fail\r\n" + result.ToString());
+                MyUtility.Msg.WarningBox(failResult.Description);
                 return failResult;
             }
 
