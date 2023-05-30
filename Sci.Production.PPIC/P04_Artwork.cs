@@ -104,6 +104,7 @@ namespace Sci.Production.PPIC
                             dr["ArtworkTypeID"] = e.FormattedValue.ToString();
                             dr["UnitID"] = artworkType.Rows[0]["ArtworkUnit"];
                             dr["Article"] = "----";
+                            dr["PrintType"] = e.FormattedValue.ToString() == "PRINTING" ? "C" : string.Empty;
                             dr.EndEdit();
                         }
                     }
@@ -178,6 +179,13 @@ where StyleUkey = {0}", this.KeyValue1);
             {
                 MyUtility.Msg.WarningBox("< Artwork Type > and < Cut Part > and < Pattern# > can't empty!!");
                 return false;
+            }
+
+            var dt = (DataTable)this.gridbs.DataSource;
+            foreach (DataRow gridData in dt.Rows)
+            {
+                gridData["PrintType"] = gridData["ArtworkTypeID"].ToString() == "PRINTING" ? "C" : string.Empty;
+                gridData.EndEdit();
             }
 
             return true;
@@ -437,7 +445,6 @@ select * from StyleTMSCost", this.KeyValue1);
                 }
             }
             #endregion
-
             return Ict.Result.True;
         }
     }
