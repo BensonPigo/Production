@@ -355,7 +355,7 @@ BEGIN
 	)
 
 	insert into #tmp_P_PPICMASTERLIST
-	exec [PMS\testing\PH1].[Production].[dbo].[PPIC_R03_FORBI] @SCIDeliveryS, @SCIDeliveryE 
+	exec [MainServer].[Production].[dbo].[PPIC_R03_FORBI] @SCIDeliveryS, @SCIDeliveryE 
 
 	insert into P_PPICMASTERLIST([M], [FactoryID], [Delivery], [Delivery(YYYYMM)], [Earliest SCIDlv], [SCIDlv], [KEY], [IDD]
 		, [CRD], [CRD(YYYYMM)], [Check CRD], [OrdCFM], [CRD-OrdCFM], [SPNO], [Category], [Est. download date], [Buy Back]
