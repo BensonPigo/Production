@@ -181,6 +181,13 @@ where StyleUkey = {0}", this.KeyValue1);
                 return false;
             }
 
+            var dt = (DataTable)this.gridbs.DataSource;
+            foreach (DataRow gridData in dt.Rows)
+            {
+                gridData["PrintType"] = gridData["ArtworkTypeID"].ToString() == "PRINTING" ? "C" : string.Empty;
+                gridData.EndEdit();
+            }
+
             return true;
         }
 
