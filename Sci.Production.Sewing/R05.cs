@@ -402,6 +402,7 @@ drop table #tmp
         /// <inheritdoc/>
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
+            DBProxy.Current.DefaultTimeout = 1200;
             DualResult result = DBProxy.Current.Select(null, this.sqlCmd, out this.printData);
             if (!result)
             {
@@ -409,6 +410,7 @@ drop table #tmp
                 MyUtility.Msg.WarningBox(failResult.Description);
                 return failResult;
             }
+            DBProxy.Current.DefaultTimeout = 300;
 
             // 顯示筆數於PrintForm上Count欄位
             this.SetCount(this.printData.Rows.Count);
