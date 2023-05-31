@@ -1,14 +1,14 @@
-﻿using System;
+﻿using Ict;
+using Ict.Win;
+using Sci.Data;
+using Sci.Production.CallPmsAPI;
+using Sci.Win.Tools;
+using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Windows.Forms;
-using Ict.Win;
-using Ict;
-using Sci.Data;
 using System.Data.SqlClient;
 using System.Linq;
-using Sci.Win.Tools;
-using Sci.Production.CallPmsAPI;
+using System.Windows.Forms;
 
 namespace Sci.Production.Shipping
 {
@@ -371,24 +371,37 @@ and ExchangeCurrency = 'PHP' order by BeginDate desc
 select  p.INVNo,
         pd.ShipQty,
         p.GW,
-        pd.OrderID
+        pd.OrderID,
+		[UnitPriceUSD] = ((isnull(o.CPU, 0) + isnull(SubProcessCPU.val, 0)) * isnull(CpuCost.val, 0)) + isnull(SubProcessAMT.val, 0) + isnull(LocalPurchase.val, 0)
 from PackingList p with (nolock)
 inner join PackingList_Detail pd with (nolock) on p.ID = pd.ID
+inner join Orders o with (nolock) on o.id = pd.OrderID
+left join Factory f with (nolock) on f.ID = o.FactoryID
+outer apply (select [val] = sum(Isnull(Price,0)) from GetSubProcessDetailByOrderID(o.ID,'CPU')) SubProcessCPU
+outer apply (select [val] = sum(Isnull(Price,0)) from GetSubProcessDetailByOrderID(o.ID,'AMT')) SubProcessAMT
+outer apply (select top 1 [val] = fd.CpuCost
+             from FtyShipper_Detail fsd WITH (NOLOCK) , FSRCpuCost_Detail fd WITH (NOLOCK) 
+             where fsd.BrandID = o.BrandID
+             and fsd.FactoryID = o.FactoryID
+             and o.OrigBuyerDelivery between fsd.BeginDate and fsd.EndDate
+             and fsd.ShipperID = fd.ShipperID
+             and o.OrigBuyerDelivery between fd.BeginDate and fd.EndDate
+			 and (fsd.SeasonID = o.SeasonID or fsd.SeasonID = '')
+			 order by SeasonID desc) CpuCost
+outer apply (select [val] = iif(f.LocalCMT = 1, dbo.GetLocalPurchaseStdCost(o.ID), 0)) LocalPurchase
 where   p.INVNo in ({whereInvNo})
 ";
-            DataTable dtPackingA2B = new DataTable();
-            result = DBProxy.Current.Select(
-                null,
-                @"
+
+            string sqlcmd = @"
 select  p.INVNo,
         pd.ShipQty,
         p.GW,
-        pd.OrderID
+        pd.OrderID,
+        UnitPriceUSD = cast(0 as float)
 from PackingList p with (nolock)
 inner join PackingList_Detail pd with (nolock) on p.ID = pd.ID
-where 1 = 0",
-                out dtPackingA2B);
-
+where 1 = 0";
+            result = DBProxy.Current.Select(null, sqlcmd, out DataTable dtPackingA2B);
             if (!result)
             {
                 this.ShowErr(result);
@@ -474,11 +487,11 @@ select	[No] = 0,
 		P.INVNo,
 		o.StyleID,
 		s.Description,
-		tup.UnitPriceUSD,
+		p.UnitPriceUSD,
 		[ShipQty] = sum(p.ShipQty),
-		[AmountUSD] = sum(p.ShipQty) * tup.UnitPriceUSD,
-        [UnitPricePHP] = tup.UnitPriceUSD * @ExchangeRate,
-		[AmountPHP] = Round(sum(p.ShipQty) * tup.UnitPriceUSD * @ExchangeRate, 0),
+		[AmountUSD] = sum(p.ShipQty) * p.UnitPriceUSD,
+        [UnitPricePHP] = p.UnitPriceUSD * @ExchangeRate,
+		[AmountPHP] = Round(sum(p.ShipQty) * p.UnitPriceUSD * @ExchangeRate, 0),
 		bd.ID,
         bd.InvNo,
         g.Dest,
@@ -488,14 +501,13 @@ left join BIRInvoice_Detail bd with (nolock) on p.INVNo = bd.InvNo
 inner join GMTBooking g with (nolock) on g.ID = P.invno
 inner join Orders o with (nolock) on p.OrderID = o.ID
 inner join Style s with (nolock) on s.Ukey = o.StyleUkey
-left join #tmpUnitPriceUSD tup on tup.ID = o.ID
 where p.INVNo in ({whereInvNo})
 group by      o.CustPONo,
 		    o.ID,
 		    o.StyleID,
             P.INVNo,
 		    s.Description,
-		    tup.UnitPriceUSD,
+		    p.UnitPriceUSD,
 			bd.id,
 			bd.invno,
             g.Dest,p.GW
