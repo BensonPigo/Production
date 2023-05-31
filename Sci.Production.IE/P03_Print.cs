@@ -1447,7 +1447,7 @@ order by NO
                         worksheet.Cells[norow, nocolumn + 1] = MyUtility.Convert.GetString(nodr["ActCycle"]);
                         //DataRow[] nodrs = this.operationCode.Select(string.Format("no = '{0}' and IsHide = 0 and IsPPa = {1}", MyUtility.Convert.GetString(nodr["No"]), isSheet3 ? "1" : "0"))
                         //            .OrderBy(x => x.Field<string>("OtherBy")).ThenBy(x => x.Field<int>("GroupKey")).ToArray();
-                        DataRow[] nodrs = this.operationCode.Select($@"no = '{MyUtility.Convert.GetString(nodr["No"])}' and IsHide = 0  {(isSheet3 ? (!this.isPPA ? " and PPA <> 'C' and PPA <> '' " : " and PPA <> '' ") : "PPA='' ")} ")
+                        DataRow[] nodrs = this.operationCode.Select($@"no = '{MyUtility.Convert.GetString(nodr["No"])}' and IsHide = 0  {(isSheet3 ? (!this.isPPA ? " and PPA <> 'C' and PPA <> '' " : " and PPA <> '' ") : "and PPA='' ")} ")
                                     .OrderBy(x => x.Field<string>("OtherBy")).ThenBy(x => x.Field<int>("GroupKey")).ToArray();
                         int ridx = 2;
                         string machinetype = string.Empty;
@@ -1477,7 +1477,7 @@ order by NO
                         worksheet.Cells[norow, nocolumn + 1] = MyUtility.Convert.GetString(nodr["ActCycle"]);
                         //DataRow[] nodrs = this.operationCode.Select(string.Format("no = '{0}' and IsHide = 0 and IsPPa = {1}", MyUtility.Convert.GetString(nodr["No"]), isSheet3 ? "1" : "0"))
                         //            .OrderBy(x => x.Field<string>("OtherBy")).ThenBy(x => x.Field<int>("GroupKey")).ToArray();
-                        DataRow[] nodrs = this.operationCode.Select($@"no = '{MyUtility.Convert.GetString(nodr["No"])}' and IsHide = 0 {(isSheet3 ? (!this.isPPA ? " and PPA <> 'C' and PPA <> '' " : " and PPA <> '' ") : "PPA='' ")} ")
+                        DataRow[] nodrs = this.operationCode.Select($@"no = '{MyUtility.Convert.GetString(nodr["No"])}' and IsHide = 0 {(isSheet3 ? (!this.isPPA ? " and PPA <> 'C' and PPA <> '' " : " and PPA <> '' ") : "and PPA='' ")} ")
                                     .OrderBy(x => x.Field<string>("OtherBy")).ThenBy(x => x.Field<int>("GroupKey")).ToArray();
                         int ridx = 2;
                         string machinetype = string.Empty;
@@ -1582,7 +1582,7 @@ order by NO
                         worksheet.Cells[norow, nocolumn + 1] = MyUtility.Convert.GetString(nodr["ActCycle"]);
                         //DataRow[] nodrs = this.operationCode.Select(string.Format("no = '{0}' and IsHide = 0 and IsPPa = {1}", MyUtility.Convert.GetString(nodr["No"]), isSheet3 ? "1" : "0"))
                         //            .OrderBy(x => x.Field<string>("OtherBy")).ThenBy(x => x.Field<int>("GroupKey")).ToArray();
-                        DataRow[] nodrs = this.operationCode.Select($@"no = '{MyUtility.Convert.GetString(nodr["No"])}' and IsHide = 0 {(isSheet3 ? (!this.isPPA ? " and PPA <> 'C' and PPA <> '' " : " and PPA <> '' ") : "PPA='' ")}")
+                        DataRow[] nodrs = this.operationCode.Select($@"no = '{MyUtility.Convert.GetString(nodr["No"])}' and IsHide = 0 {(isSheet3 ? (!this.isPPA ? " and PPA <> 'C' and PPA <> '' " : " and PPA <> '' ") : "and PPA='' ")} ")
                                     .OrderBy(x => x.Field<string>("OtherBy")).ThenBy(x => x.Field<int>("GroupKey")).ToArray();
                         int ridx = 2;
                         string machinetype = string.Empty;
@@ -1608,7 +1608,7 @@ order by NO
                         worksheet.Cells[norow, nocolumn + 1] = MyUtility.Convert.GetString(nodr["ActCycle"]);
                         //DataRow[] nodrs = this.operationCode.Select(string.Format("no = '{0}' and IsHide = 0 and IsPPa = {1}", MyUtility.Convert.GetString(nodr["No"]), isSheet3 ? "1" : "0"))
                         //            .OrderBy(x => x.Field<string>("OtherBy")).ThenBy(x => x.Field<int>("GroupKey")).ToArray();
-                        DataRow[] nodrs = this.operationCode.Select($@"no = '{MyUtility.Convert.GetString(nodr["No"])}' and IsHide = 0 {(isSheet3 ? (!this.isPPA ? " and PPA <> 'C' and PPA <> '' " : " and PPA <> '' ") : "PPA='' ")} ")
+                        DataRow[] nodrs = this.operationCode.Select($@"no = '{MyUtility.Convert.GetString(nodr["No"])}' and IsHide = 0 {(isSheet3 ? (!this.isPPA ? " and PPA <> 'C' and PPA <> '' " : " and PPA <> '' ") : "and PPA='' ")} ")
                                     .OrderBy(x => x.Field<string>("OtherBy")).ThenBy(x => x.Field<int>("GroupKey")).ToArray();
                         int ridx = 2;
                         string machinetype = string.Empty;
@@ -1716,7 +1716,7 @@ order by NO
                         worksheet.Cells[norow, nocolumn + 1] = MyUtility.Convert.GetString(nodr["ActCycle"]);
                         //DataRow[] nodrs = this.operationCode.Select(string.Format("no = '{0}' and IsHide = 0 and IsPPa = {1}", MyUtility.Convert.GetString(nodr["No"]), isSheet3 ? "1" : "0"))
                         //            .OrderBy(x => x.Field<string>("OtherBy")).ThenBy(x => x.Field<int>("GroupKey")).ToArray();
-                        DataRow[] nodrs = this.operationCode.Select($@"no = '{MyUtility.Convert.GetString(nodr["No"])}' and IsHide = 0 {(isSheet3 ? (!this.isPPA ? " and PPA <> 'C' and PPA <> '' " : " and PPA <> '' ") : "PPA='' ")} ")
+                        DataRow[] nodrs = this.operationCode.Select($@"no = '{MyUtility.Convert.GetString(nodr["No"])}' and IsHide = 0 {(isSheet3 ? (!this.isPPA ? " and PPA <> 'C' and PPA <> '' " : " and PPA <> '' ") : "and PPA='' ")} ")
                                     .OrderBy(x => x.Field<string>("OtherBy")).ThenBy(x => x.Field<int>("GroupKey")).ToArray();
                         int ridx = 2;
                         string machinetype = string.Empty;
@@ -1742,7 +1742,7 @@ order by NO
                         worksheet.Cells[norow, nocolumn + 1] = MyUtility.Convert.GetString(nodr["ActCycle"]);
                         //DataRow[] nodrs = this.operationCode.Select(string.Format("no = '{0}' and IsHide = 0 and IsPPa = {1}", MyUtility.Convert.GetString(nodr["No"]), isSheet3 ? "1" : "0"))
                         //            .OrderBy(x => x.Field<string>("OtherBy")).ThenBy(x => x.Field<int>("GroupKey")).ToArray();
-                        DataRow[] nodrs = this.operationCode.Select($@"no = '{MyUtility.Convert.GetString(nodr["No"])}' and IsHide = 0 {(isSheet3 ? (!this.isPPA ? " and PPA <> 'C' and PPA <> '' " : " and PPA <> '' ") : "PPA='' ")} ")
+                        DataRow[] nodrs = this.operationCode.Select($@"no = '{MyUtility.Convert.GetString(nodr["No"])}' and IsHide = 0 {(isSheet3 ? (!this.isPPA ? " and PPA <> 'C' and PPA <> '' " : " and PPA <> '' ") : "and PPA='' ")} ")
                                     .OrderBy(x => x.Field<string>("OtherBy")).ThenBy(x => x.Field<int>("GroupKey")).ToArray();
                         int ridx = 2;
                         string machinetype = string.Empty;
