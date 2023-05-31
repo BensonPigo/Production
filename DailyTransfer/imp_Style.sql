@@ -1536,6 +1536,7 @@ where not exists(select 1 from Production.dbo.Style_GMTLTFty as a WITH (NOLOCK) 
 RAISERROR('imp_Style - Starts',0,0)
 Delete Production.dbo.Style_SimilarStyle
 from Production.dbo.Style_SimilarStyle as a 
+INNER JOIN Trade_To_Pms.dbo.Style as t on t.Id = a.MasterStyleID
 left join Trade_To_Pms.dbo.Style_SimilarStyle as b
 on a.MasterBrandID	= b.MasterBrandID AND a.MasterStyleID	= b.MasterStyleID and a.ChildrenBrandID = b.ChildrenBrandID and a.ChildrenStyleID = b.ChildrenStyleID
 where b.MasterStyleID is null
