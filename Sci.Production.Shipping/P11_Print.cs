@@ -140,7 +140,8 @@ select	distinct ID = '',
         StyleID = '',
 		Description = '',	
         [ShipQty] = 0,
-        [Dest] = ''
+        [Dest] = '',
+        UnitPriceUSD = cast(0 as float)
 from GMTBooking gb
 left join GMTBooking_Detail gbd with (nolock) on gbd.ID = gb.ID
 where	1=1
@@ -163,7 +164,8 @@ select distinct	bi.ID,
         StyleID = '',
 		Description = '',	
         [ShipQty] = 0,
-        [Dest] = ''
+        [Dest] = '',
+        UnitPriceUSD = cast(0 as float)
 from BIRInvoice bi with (nolock)
 inner join BIRInvoice_Detail bd with (nolock) on bi.ID = bd.ID
 inner join GMTBooking gb on bi.ID = gb.CMTInvoiceNo
@@ -183,7 +185,7 @@ where	1=1
             }
 
             DataTable dtA2BResult = new DataTable();
-            dtA2BResult = dtA2BGMT.Copy();
+            dtA2BResult = dtA2BGMT.Clone();
 
             if (dtA2BGMT.Rows.Count > 0)
             {
@@ -197,26 +199,31 @@ select  t.InvDate,
 		t.GMTBooking,
 		o.StyleID,
 		s.Description,		
-		[ShipQty] = SUM(pld.ShipQty),
+		[ShipQty] = pld.ShipQty,
         [PackID] = pl.ID,
 		[GRS_WEIGHT] = pl.GW,
 		[Qty] = pl.ShipQty,
-        [Dest] = ''
+        [Dest] = '',
+		[UnitPriceUSD] = ((isnull(o.CPU, 0) + isnull(SubProcessCPU.val, 0)) * isnull(CpuCost.val, 0)) + isnull(SubProcessAMT.val, 0) + isnull(LocalPurchase.val, 0)
 from #tmp t
 inner join PackingList pl with (nolock) on pl.INVNo = t.GMTBooking
 inner join PackingList_Detail pld with (nolock) on pl.ID = pld.ID
 inner join Orders o with (nolock) on pld.OrderID = o.ID
 inner join Style s with (nolock) on s.Ukey = o.StyleUkey
-group by    t.ID,
-		    t.GMTBooking,
-		    t.InvDate,
-            pl.ID,
-		    pl.GW,
-		    pl.ShipQty,
-            pld.OrderID,
-			o.CustPONo,
-			o.StyleID,
-			s.Description
+left join Factory f with (nolock) on f.ID = o.FactoryID
+outer apply (select [val] = sum(Isnull(Price,0)) from GetSubProcessDetailByOrderID(o.ID,'CPU')) SubProcessCPU
+outer apply (select [val] = sum(Isnull(Price,0)) from GetSubProcessDetailByOrderID(o.ID,'AMT')) SubProcessAMT
+outer apply (select top 1 [val] = fd.CpuCost
+             from FtyShipper_Detail fsd WITH (NOLOCK) , FSRCpuCost_Detail fd WITH (NOLOCK) 
+             where fsd.BrandID = o.BrandID
+             and fsd.FactoryID = o.FactoryID
+             and o.OrigBuyerDelivery between fsd.BeginDate and fsd.EndDate
+             and fsd.ShipperID = fd.ShipperID
+             and o.OrigBuyerDelivery between fd.BeginDate and fd.EndDate
+			 and (fsd.SeasonID = o.SeasonID or fsd.SeasonID = '')
+			 order by SeasonID desc) CpuCost
+outer apply (select [val] = iif(f.LocalCMT = 1, dbo.GetLocalPurchaseStdCost(o.ID), 0)) LocalPurchase
+            
 ";
                 foreach (var groupA2BGMT in dtA2BGMT.AsEnumerable().GroupBy(s => s["PLFromRgCode"].ToString()))
                 {
@@ -278,20 +285,6 @@ group by bi.InvDate,
 		s.Description,		
 		pl.ID,
 		pl.GW
-union
-select  distinct
-        InvDate,
-		ID,		
-		OrderID,
-		CustPONo,
-		GMTBooking,
-		StyleID,
-		Description,		
-		[ShipQty],
-        [PackID],
-		[GRS_WEIGHT],
-        Dest
-from #tmp
 
 select	o.ID,
 		[UnitPriceUSD] = ((isnull(o.CPU, 0) + isnull(SubProcessCPU.val, 0)) * isnull(CpuCost.val, 0)) + isnull(SubProcessAMT.val, 0) + isnull(LocalPurchase.val, 0)
@@ -339,6 +332,27 @@ left join BIRInvoice bi on tbi.ID = bi.ID
 left join #tmpUnitPriceUSD tup on tbi.OrderID = tup.ID
 group by	 tup.UnitPriceUSD,Description,StyleID,GMTBooking,CustPONo,OrderID,tbi.ID,tbi.InvDate,bi.ExchangeRate,tbi.Dest,tbi.GRS_WEIGHT
 
+union all
+select
+        [InvDate] = t.InvDate,
+        [ID] = t.ID,
+        [PARTICULAR_DESCRIPTION] = 'SINTEX INTERNATIONAL LTD',
+        t.OrderID,
+        t.CustPONo,
+        t.GMTBooking,
+        t.StyleID,
+        t.Description,		
+        [Qty] = sum(t.ShipQty),
+        [Dest] = t.Dest,
+        [GW] = t.GRS_WEIGHT,
+        t.UnitPriceUSD,
+        [AmountUSD] = sum(t.ShipQty) * t.UnitPriceUSD,
+        bi.ExchangeRate,
+        [UnitPricePHP] = t.UnitPriceUSD * bi.ExchangeRate,
+        [AmountPHP] = Round(sum(t.ShipQty) * t.UnitPriceUSD * bi.ExchangeRate, 0)
+from #tmp t with (nolock)
+left join BIRInvoice bi on t.ID = bi.ID
+group by t.UnitPriceUSD,t.Description,t.StyleID,t.GMTBooking,t.CustPONo,t.OrderID,t.ID,t.InvDate,bi.ExchangeRate,t.Dest,t.GRS_WEIGHT
 
 drop table #tmpBIRInvoice
 ";
