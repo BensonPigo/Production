@@ -2034,11 +2034,11 @@ drop table #tmpNeedUpdateGroup{this.intTmpNo}, #tmpNeedUpdPackUkeys{this.intTmpN
             // 底部grid有資料就開放button btnCalibration List按鈕
             if (this.tabControlScanArea.SelectedIndex == 0 && this.gridSelectCartonDetail.RowCount == 0 && MyUtility.Check.Empty(this.txtScanCartonSP.Text))
             {
-                this.btnCalibrationList.Enabled = true;
+                this.btnCalibrationList.Enabled = false;
             }
             else
             {
-                this.btnCalibrationList.Enabled = false;
+                this.btnCalibrationList.Enabled = true;
             }
         }
     }
