@@ -261,7 +261,7 @@ select top 1 * from MDCalibrationList where MachineID = '{machineID}' and Calibr
             this.PackingListID = string.Empty;
             this.CTNStarNo = string.Empty;
 
-            // 底部grid有資料就開放button btnCalibration List按鈕
+            // 掃碼階段btnCalibrationList 不能啟用
             this.ShowCalibrationButton();
 
             if (MyUtility.Check.Empty(this.txtScanCartonSP.Text))
@@ -2031,14 +2031,14 @@ drop table #tmpNeedUpdateGroup{this.intTmpNo}, #tmpNeedUpdPackUkeys{this.intTmpN
 
         private void ShowCalibrationButton()
         {
-            // 底部grid有資料就開放button btnCalibration List按鈕
+            // 掃碼階段btnCalibrationList 不能啟用
             if (this.tabControlScanArea.SelectedIndex == 0 && this.gridSelectCartonDetail.RowCount == 0 && MyUtility.Check.Empty(this.txtScanCartonSP.Text))
             {
-                this.btnCalibrationList.Enabled = false;
+                this.btnCalibrationList.Enabled = true;
             }
             else
             {
-                this.btnCalibrationList.Enabled = true;
+                this.btnCalibrationList.Enabled = false;
             }
         }
     }
