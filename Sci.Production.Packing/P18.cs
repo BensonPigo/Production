@@ -134,8 +134,8 @@ or Point9 = 0
         private void alert_Calibration()
         {
             // 不在掃箱掃碼過程才動作!
-            bool isScan = this.tabControlScanArea.SelectedIndex == 0 && this.gridSelectCartonDetail.RowCount == 0 && MyUtility.Check.Empty(this.txtScanCartonSP.Text);
-            if (this.chkAutoCalibration.Checked && (this.Boolfirst || isScan))
+            bool canScan = this.tabControlScanArea.SelectedIndex == 0;
+            if (this.chkAutoCalibration.Checked && (this.Boolfirst || canScan))
             {
                 string machineID = P18_Calibration_List.MachineID;
                 string sqlcmd = $@"
@@ -183,9 +183,9 @@ select top 1 * from MDCalibrationList where MachineID = '{machineID}' and Calibr
                         }
                     }
                 }
-            }
 
-            this.Boolfirst = false;
+                this.Boolfirst = false;
+            }
         }
 
         private P18_Calibration_List callP18_Calibration_List = null;
@@ -261,7 +261,7 @@ select top 1 * from MDCalibrationList where MachineID = '{machineID}' and Calibr
             this.PackingListID = string.Empty;
             this.CTNStarNo = string.Empty;
 
-            // 底部grid有資料就開放button btnCalibration List按鈕
+            // 掃碼階段btnCalibrationList 不能啟用
             this.ShowCalibrationButton();
 
             if (MyUtility.Check.Empty(this.txtScanCartonSP.Text))
@@ -2031,8 +2031,8 @@ drop table #tmpNeedUpdateGroup{this.intTmpNo}, #tmpNeedUpdPackUkeys{this.intTmpN
 
         private void ShowCalibrationButton()
         {
-            // 底部grid有資料就開放button btnCalibration List按鈕
-            if (this.tabControlScanArea.SelectedIndex == 0 && this.gridSelectCartonDetail.RowCount == 0 && MyUtility.Check.Empty(this.txtScanCartonSP.Text))
+            // 掃碼階段btnCalibrationList 不能啟用
+            if (this.tabControlScanArea.SelectedIndex == 0)
             {
                 this.btnCalibrationList.Enabled = true;
             }
