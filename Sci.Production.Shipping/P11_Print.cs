@@ -141,6 +141,7 @@ select	distinct ID = '',
 		Description = '',	
         [ShipQty] = 0,
         [Dest] = '',
+        INVNo = '',
         UnitPriceUSD = cast(0 as float)
 from GMTBooking gb
 left join GMTBooking_Detail gbd with (nolock) on gbd.ID = gb.ID
@@ -165,6 +166,7 @@ select distinct	bi.ID,
 		Description = '',	
         [ShipQty] = 0,
         [Dest] = '',
+        INVNo = '',
         UnitPriceUSD = cast(0 as float)
 from BIRInvoice bi with (nolock)
 inner join BIRInvoice_Detail bd with (nolock) on bi.ID = bd.ID
@@ -203,7 +205,7 @@ select  t.InvDate,
         [PackID] = pl.ID,
 		[GRS_WEIGHT] = pl.GW,
 		[Qty] = pl.ShipQty,
-        [Dest] = '',
+        pl.INVNo,
 		[UnitPriceUSD] = ((isnull(o.CPU, 0) + isnull(SubProcessCPU.val, 0)) * isnull(CpuCost.val, 0)) + isnull(SubProcessAMT.val, 0) + isnull(LocalPurchase.val, 0)
 from #tmp t
 inner join PackingList pl with (nolock) on pl.INVNo = t.GMTBooking
@@ -343,7 +345,7 @@ select
         t.StyleID,
         t.Description,		
         [Qty] = sum(t.ShipQty),
-        [Dest] = t.Dest,
+        [Dest] = g.Dest,
         [GW] = t.GRS_WEIGHT,
         t.UnitPriceUSD,
         [AmountUSD] = sum(t.ShipQty) * t.UnitPriceUSD,
@@ -352,7 +354,8 @@ select
         [AmountPHP] = Round(sum(t.ShipQty) * t.UnitPriceUSD * bi.ExchangeRate, 0)
 from #tmp t with (nolock)
 left join BIRInvoice bi on t.ID = bi.ID
-group by t.UnitPriceUSD,t.Description,t.StyleID,t.GMTBooking,t.CustPONo,t.OrderID,t.ID,t.InvDate,bi.ExchangeRate,t.Dest,t.GRS_WEIGHT
+Left join GMTBooking g on g.ID = t.INVNo
+group by t.UnitPriceUSD,t.Description,t.StyleID,t.GMTBooking,t.CustPONo,t.OrderID,t.ID,t.InvDate,bi.ExchangeRate,g.Dest,t.GRS_WEIGHT
 
 drop table #tmpBIRInvoice
 ";
