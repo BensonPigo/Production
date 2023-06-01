@@ -414,7 +414,7 @@ SET
 ,a.ArtworkName	= b.ArtworkName
 ,a.Qty	= b.Qty
 ,a.Price	= b.Price
-,a.Cost	= b.Cost
+,a.Cost	= IIF(a.cost != b.cost and s.IsSintexSubcon = 1,s.Price,b.cost)
 ,a.Remark	= b.Remark
 ,a.AddName	= b.AddName
 ,a.AddDate	= b.AddDate
@@ -435,6 +435,12 @@ SET
 ,a.PatternCodeSize = b.PatternCodeSize
 from Production.dbo.Style_Artwork as a 
 inner join Trade_To_Pms.dbo.Style_Artwork as b ON a.TradeUkey=b.Ukey
+outer apply(
+	select distinct c.Price,l.IsSintexSubcon 
+	from Style_Artwork_Quot c
+	inner join LocalSupp l on c.LocalSuppId = l.ID
+	where c.Ukey = a.Ukey
+)s
 -------------------------- INSERT INTO 抓
 RAISERROR('imp_Style - Starts',0,0)
 INSERT INTO Production.dbo.Style_Artwork(
