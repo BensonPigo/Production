@@ -90,6 +90,10 @@ namespace Sci.Production.Warehouse
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
+            this.dgToPlace.SetDefalutIndex();
+            bool isAutomationEnable = Automation.UtilityAutomation.IsAutomationEnable;
+            this.dgToPlace.Visible = isAutomationEnable;
+            this.lblToPlace.Visible = isAutomationEnable;
         }
 
         /// <inheritdoc/>
@@ -97,7 +101,7 @@ namespace Sci.Production.Warehouse
         {
             base.OnDetailEntered();
             bool isAutomationEnable = Automation.UtilityAutomation.IsAutomationEnable;
-            this.txtToPlace.Visible = isAutomationEnable;
+            this.dgToPlace.Visible = isAutomationEnable;
             this.lblToPlace.Visible = isAutomationEnable;
 
             // this.labelConfirmed.Visible = MyUtility.Check.Empty(this.CurrentMaintain["ID"]) ? false : true;
@@ -1640,7 +1644,7 @@ GROUP BY Article
             this.CurrentMaintain["Status"] = "New";
             this.CurrentMaintain["Type"] = "E";
             this.CurrentMaintain["issuedate"] = DateTime.Now;
-            this.CurrentMaintain["ToPlace"] = this.txtToPlace.DefaultText;
+            this.CurrentMaintain["ToPlace"] = this.dgToPlace.SelectedValue;
             this.CurrentMaintain["combo"] = 0;
             this.dtIssueBreakDown = null;
             this.gridIssueBreakDown.DataSource = null;

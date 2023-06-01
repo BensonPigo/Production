@@ -63,6 +63,7 @@ namespace Sci.Production.Warehouse
             this.gridicon.Append.Visible = false;
             this.gridicon.Insert.Enabled = false;
             this.gridicon.Insert.Visible = false;
+            this.dgToPlace.SetDefalutIndex();
         }
 
         /// <inheritdoc/>
@@ -72,7 +73,7 @@ namespace Sci.Production.Warehouse
             this.CurrentMaintain["MDivisionID"] = Env.User.Keyword;
             this.CurrentMaintain["FactoryID"] = Env.User.Factory;
             this.CurrentMaintain["Status"] = "New";
-            this.CurrentMaintain["ToPlace"] = this.txtToPlace.DefaultText;
+            this.CurrentMaintain["ToPlace"] = this.dgToPlace.SelectedValue;
             this.CurrentMaintain["Type"] = "C";
             this.CurrentMaintain["IssueDate"] = DateTime.Now;
         }
@@ -164,7 +165,7 @@ namespace Sci.Production.Warehouse
         {
             base.OnDetailEntered();
             bool isAutomationEnable = Automation.UtilityAutomation.IsAutomationEnable;
-            this.txtToPlace.Visible = isAutomationEnable;
+            this.dgToPlace.Visible = isAutomationEnable;
             this.lblToPlace.Visible = isAutomationEnable;
 
             #region Status Label

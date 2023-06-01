@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.labelID = new Sci.Win.UI.Label();
             this.labelIssueDate = new Sci.Win.UI.Label();
             this.labelNotApprove = new Sci.Win.UI.Label();
@@ -44,7 +45,7 @@
             this.editRemark = new Sci.Win.UI.EditBox();
             this.btnCallP99 = new Sci.Win.UI.Button();
             this.lblToPlace = new Sci.Win.UI.Label();
-            this.txtToPlace = new Sci.Production.Class.TxtToPlace();
+            this.dgToPlace = new Sci.Production.Class.DgToPlace(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -61,8 +62,8 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.dgToPlace);
             this.masterpanel.Controls.Add(this.lblToPlace);
-            this.masterpanel.Controls.Add(this.txtToPlace);
             this.masterpanel.Controls.Add(this.editRemark);
             this.masterpanel.Controls.Add(this.labelRemark);
             this.masterpanel.Controls.Add(this.btnClearQtyIsEmpty);
@@ -91,8 +92,8 @@
             this.masterpanel.Controls.SetChildIndex(this.btnClearQtyIsEmpty, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelRemark, 0);
             this.masterpanel.Controls.SetChildIndex(this.editRemark, 0);
-            this.masterpanel.Controls.SetChildIndex(this.txtToPlace, 0);
             this.masterpanel.Controls.SetChildIndex(this.lblToPlace, 0);
+            this.masterpanel.Controls.SetChildIndex(this.dgToPlace, 0);
             // 
             // detailpanel
             // 
@@ -321,15 +322,18 @@
             this.lblToPlace.TabIndex = 61;
             this.lblToPlace.Text = "To Place";
             // 
-            // txtToPlace
+            // dgToPlace
             // 
-            this.txtToPlace.BackColor = System.Drawing.Color.White;
-            this.txtToPlace.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "ToPlace", true));
-            this.txtToPlace.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtToPlace.Location = new System.Drawing.Point(572, 13);
-            this.txtToPlace.Name = "txtToPlace";
-            this.txtToPlace.Size = new System.Drawing.Size(150, 23);
-            this.txtToPlace.TabIndex = 60;
+            this.dgToPlace.BackColor = System.Drawing.Color.White;
+            this.dgToPlace.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "ToPlace", true));
+            this.dgToPlace.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.dgToPlace.FormattingEnabled = true;
+            this.dgToPlace.IsSupportUnselect = true;
+            this.dgToPlace.Location = new System.Drawing.Point(572, 12);
+            this.dgToPlace.Name = "dgToPlace";
+            this.dgToPlace.OldText = "";
+            this.dgToPlace.Size = new System.Drawing.Size(121, 24);
+            this.dgToPlace.TabIndex = 62;
             // 
             // P12
             // 
@@ -391,6 +395,6 @@
         private Win.UI.Label labelRemark;
         private Win.UI.Button btnCallP99;
         private Win.UI.Label lblToPlace;
-        private Class.TxtToPlace txtToPlace;
+        private Class.DgToPlace dgToPlace;
     }
 }

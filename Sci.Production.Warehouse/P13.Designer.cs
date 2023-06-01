@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.labelID = new Sci.Win.UI.Label();
             this.labelIssueDate = new Sci.Win.UI.Label();
             this.labelNotApprove = new Sci.Win.UI.Label();
@@ -48,9 +49,9 @@
             this.txtwhseReason = new Sci.Production.Class.TxtwhseReason();
             this.btnCallP99 = new Sci.Win.UI.Button();
             this.lblToPlace = new Sci.Win.UI.Label();
-            this.txtToPlace = new Sci.Production.Class.TxtToPlace();
             this.label1 = new Sci.Win.UI.Label();
             this.txtCuttingPlanID = new Sci.Win.UI.TextBox();
+            this.dgToPlace = new Sci.Production.Class.DgToPlace(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -67,10 +68,10 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.dgToPlace);
             this.masterpanel.Controls.Add(this.txtCuttingPlanID);
             this.masterpanel.Controls.Add(this.label1);
             this.masterpanel.Controls.Add(this.lblToPlace);
-            this.masterpanel.Controls.Add(this.txtToPlace);
             this.masterpanel.Controls.Add(this.btnPrintFabricSticker);
             this.masterpanel.Controls.Add(this.btnAccumulatedQty);
             this.masterpanel.Controls.Add(this.labelReason);
@@ -106,11 +107,11 @@
             this.masterpanel.Controls.SetChildIndex(this.labelReason, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnAccumulatedQty, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnPrintFabricSticker, 0);
-            this.masterpanel.Controls.SetChildIndex(this.txtToPlace, 0);
             this.masterpanel.Controls.SetChildIndex(this.lblToPlace, 0);
             this.masterpanel.Controls.SetChildIndex(this.label1, 0);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtCuttingPlanID, 0);
+            this.masterpanel.Controls.SetChildIndex(this.dgToPlace, 0);
             // 
             // detailpanel
             // 
@@ -385,16 +386,6 @@
             this.lblToPlace.TabIndex = 66;
             this.lblToPlace.Text = "To Place";
             // 
-            // txtToPlace
-            // 
-            this.txtToPlace.BackColor = System.Drawing.Color.White;
-            this.txtToPlace.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "ToPlace", true));
-            this.txtToPlace.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtToPlace.Location = new System.Drawing.Point(573, 13);
-            this.txtToPlace.Name = "txtToPlace";
-            this.txtToPlace.Size = new System.Drawing.Size(150, 23);
-            this.txtToPlace.TabIndex = 65;
-            // 
             // label1
             // 
             this.label1.Location = new System.Drawing.Point(495, 45);
@@ -415,6 +406,19 @@
             this.txtCuttingPlanID.TabIndex = 68;
             this.txtCuttingPlanID.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtCuttingPlanID_PopUp);
             this.txtCuttingPlanID.Validating += new System.ComponentModel.CancelEventHandler(this.TxtCuttingPlanID_Validating);
+            // 
+            // dgToPlace
+            // 
+            this.dgToPlace.BackColor = System.Drawing.Color.White;
+            this.dgToPlace.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "ToPlace", true));
+            this.dgToPlace.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.dgToPlace.FormattingEnabled = true;
+            this.dgToPlace.IsSupportUnselect = true;
+            this.dgToPlace.Location = new System.Drawing.Point(573, 12);
+            this.dgToPlace.Name = "dgToPlace";
+            this.dgToPlace.OldText = "";
+            this.dgToPlace.Size = new System.Drawing.Size(121, 24);
+            this.dgToPlace.TabIndex = 69;
             // 
             // P13
             // 
@@ -480,8 +484,8 @@
         private Win.UI.Button btnPrintFabricSticker;
         private Win.UI.Button btnCallP99;
         private Win.UI.Label lblToPlace;
-        private Class.TxtToPlace txtToPlace;
         private Win.UI.Label label1;
         private Win.UI.TextBox txtCuttingPlanID;
+        private Class.DgToPlace dgToPlace;
     }
 }

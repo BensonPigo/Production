@@ -62,6 +62,13 @@ namespace Sci.Production.Warehouse
         }
 
         /// <inheritdoc/>
+        protected override void OnFormLoaded()
+        {
+            base.OnFormLoaded();
+            this.dgToPlace.SetDefalutIndex();
+        }
+
+        /// <inheritdoc/>
         protected override void ClickNewAfter()
         {
             base.ClickNewAfter();
@@ -69,7 +76,7 @@ namespace Sci.Production.Warehouse
             this.CurrentMaintain["FactoryID"] = Env.User.Factory;
             this.CurrentMaintain["Status"] = "New";
             this.CurrentMaintain["Type"] = "D";
-            this.CurrentMaintain["ToPlace"] = this.txtToPlace.DefaultText;
+            this.CurrentMaintain["ToPlace"] = this.dgToPlace.SelectedValue;
             this.CurrentMaintain["IssueDate"] = DateTime.Now;
         }
 
@@ -412,7 +419,7 @@ order by id.POID,p.seq1,p.seq2,fi.Tone,fi.ContainerCode,id.Dyelot,id.Roll
         {
             base.OnDetailEntered();
             bool isAutomationEnable = Automation.UtilityAutomation.IsAutomationEnable;
-            this.txtToPlace.Visible = isAutomationEnable;
+            this.dgToPlace.Visible = isAutomationEnable;
             this.lblToPlace.Visible = isAutomationEnable;
 
             this.txtwhseReason.DisplayBox1.Text = MyUtility.GetValue.Lookup("Description", this.txtwhseReason.Type.ToString() + this.txtwhseReason.TextBox1.Text.ToString(), "WhseReason", "Type+ID");

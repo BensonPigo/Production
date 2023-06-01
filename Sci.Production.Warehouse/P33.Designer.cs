@@ -52,8 +52,8 @@
             this.lblStyle = new Sci.Win.UI.Label();
             this.btnCallP99 = new Sci.Win.UI.Button();
             this.lblToPlace = new Sci.Win.UI.Label();
-            this.txtToPlace = new Sci.Production.Class.TxtToPlace();
             this.btnThreadColorComb = new Sci.Win.UI.Button();
+            this.dgToPlace = new Sci.Production.Class.DgToPlace(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -73,9 +73,9 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.dgToPlace);
             this.masterpanel.Controls.Add(this.btnThreadColorComb);
             this.masterpanel.Controls.Add(this.lblToPlace);
-            this.masterpanel.Controls.Add(this.txtToPlace);
             this.masterpanel.Controls.Add(this.displayStyle);
             this.masterpanel.Controls.Add(this.lblStyle);
             this.masterpanel.Controls.Add(this.labelConfirmed);
@@ -94,7 +94,7 @@
             this.masterpanel.Controls.Add(this.displayID);
             this.masterpanel.Controls.Add(this.labelID);
             this.masterpanel.Controls.Add(this.dateIssueDate);
-            this.masterpanel.Size = new System.Drawing.Size(892, 131);
+            this.masterpanel.Size = new System.Drawing.Size(999, 131);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateIssueDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelID, 0);
@@ -114,19 +114,19 @@
             this.masterpanel.Controls.SetChildIndex(this.labelConfirmed, 0);
             this.masterpanel.Controls.SetChildIndex(this.lblStyle, 0);
             this.masterpanel.Controls.SetChildIndex(this.displayStyle, 0);
-            this.masterpanel.Controls.SetChildIndex(this.txtToPlace, 0);
             this.masterpanel.Controls.SetChildIndex(this.lblToPlace, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnThreadColorComb, 0);
+            this.masterpanel.Controls.SetChildIndex(this.dgToPlace, 0);
             // 
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 131);
-            this.detailpanel.Size = new System.Drawing.Size(892, 82);
+            this.detailpanel.Size = new System.Drawing.Size(999, 248);
             // 
             // gridicon
             // 
             this.gridicon.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.gridicon.Location = new System.Drawing.Point(3816, 111);
+            this.gridicon.Location = new System.Drawing.Point(3923, 111);
             // 
             // refresh
             // 
@@ -137,18 +137,22 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(892, 82);
+            this.detailgridcont.Size = new System.Drawing.Size(999, 248);
+            // 
+            // detail
+            // 
+            this.detail.Size = new System.Drawing.Size(999, 553);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(892, 213);
+            this.detailcont.Size = new System.Drawing.Size(999, 379);
             // 
             // detailbtm
             // 
             this.detailbtm.Controls.Add(this.btnCallP99);
             this.detailbtm.Controls.Add(this.gridIssueBreakDown);
-            this.detailbtm.Location = new System.Drawing.Point(0, 213);
-            this.detailbtm.Size = new System.Drawing.Size(892, 174);
+            this.detailbtm.Location = new System.Drawing.Point(0, 379);
+            this.detailbtm.Size = new System.Drawing.Size(999, 174);
             this.detailbtm.Controls.SetChildIndex(this.lbleditby, 0);
             this.detailbtm.Controls.SetChildIndex(this.lblcreateby, 0);
             this.detailbtm.Controls.SetChildIndex(this.editby, 0);
@@ -256,7 +260,7 @@
             // 
             this.btnAutoPick.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnAutoPick.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
-            this.btnAutoPick.Location = new System.Drawing.Point(804, 31);
+            this.btnAutoPick.Location = new System.Drawing.Point(911, 31);
             this.btnAutoPick.Name = "btnAutoPick";
             this.btnAutoPick.Size = new System.Drawing.Size(80, 30);
             this.btnAutoPick.TabIndex = 8;
@@ -269,7 +273,7 @@
             this.btnBreakDown.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnBreakDown.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
             this.btnBreakDown.Enabled = false;
-            this.btnBreakDown.Location = new System.Drawing.Point(680, 31);
+            this.btnBreakDown.Location = new System.Drawing.Point(787, 31);
             this.btnBreakDown.Name = "btnBreakDown";
             this.btnBreakDown.Size = new System.Drawing.Size(120, 30);
             this.btnBreakDown.TabIndex = 9;
@@ -335,7 +339,7 @@
             this.gridIssueBreakDown.RowTemplate.Height = 24;
             this.gridIssueBreakDown.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridIssueBreakDown.ShowCellToolTips = false;
-            this.gridIssueBreakDown.Size = new System.Drawing.Size(889, 129);
+            this.gridIssueBreakDown.Size = new System.Drawing.Size(996, 129);
             this.gridIssueBreakDown.TabIndex = 3;
             this.gridIssueBreakDown.TabStop = false;
             // 
@@ -403,26 +407,29 @@
             this.lblToPlace.TabIndex = 79;
             this.lblToPlace.Text = "To Place";
             // 
-            // txtToPlace
-            // 
-            this.txtToPlace.BackColor = System.Drawing.Color.White;
-            this.txtToPlace.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "ToPlace", true));
-            this.txtToPlace.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtToPlace.Location = new System.Drawing.Point(529, 70);
-            this.txtToPlace.Name = "txtToPlace";
-            this.txtToPlace.Size = new System.Drawing.Size(132, 23);
-            this.txtToPlace.TabIndex = 78;
-            // 
             // btnThreadColorComb
             // 
             this.btnThreadColorComb.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnThreadColorComb.Location = new System.Drawing.Point(680, 67);
+            this.btnThreadColorComb.Location = new System.Drawing.Point(787, 67);
             this.btnThreadColorComb.Name = "btnThreadColorComb";
             this.btnThreadColorComb.Size = new System.Drawing.Size(204, 30);
             this.btnThreadColorComb.TabIndex = 80;
             this.btnThreadColorComb.Text = "Thread Color Combination";
             this.btnThreadColorComb.UseVisualStyleBackColor = true;
             this.btnThreadColorComb.Click += new System.EventHandler(this.BtnThreadColorComb_Click);
+            // 
+            // dgToPlace
+            // 
+            this.dgToPlace.BackColor = System.Drawing.Color.White;
+            this.dgToPlace.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "ToPlace", true));
+            this.dgToPlace.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.dgToPlace.FormattingEnabled = true;
+            this.dgToPlace.IsSupportUnselect = true;
+            this.dgToPlace.Location = new System.Drawing.Point(529, 70);
+            this.dgToPlace.Name = "dgToPlace";
+            this.dgToPlace.OldText = "";
+            this.dgToPlace.Size = new System.Drawing.Size(121, 24);
+            this.dgToPlace.TabIndex = 81;
             // 
             // P33
             // 
@@ -494,7 +501,7 @@
         private Win.UI.Label lblStyle;
         private Win.UI.Button btnCallP99;
         private Win.UI.Label lblToPlace;
-        private Class.TxtToPlace txtToPlace;
         private Win.UI.Button btnThreadColorComb;
+        private Class.DgToPlace dgToPlace;
     }
 }

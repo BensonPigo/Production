@@ -126,6 +126,7 @@ namespace Sci.Production.Warehouse
             this.browsetop.Controls.Add(btnUnFinish);
             btnUnFinish.Size = new Size(180, 30); // 預設是(80,30)
             btnUnFinish.Visible = true;
+            this.dgToPlace.SetDefalutIndex();
             #endregion
         }
 
@@ -149,7 +150,7 @@ namespace Sci.Production.Warehouse
             this.CurrentMaintain["FactoryID"] = Env.User.Factory;
             this.CurrentMaintain["Status"] = "New";
             this.CurrentMaintain["FabricType"] = "A";
-            this.CurrentMaintain["ToPlace"] = this.txtToPlace.DefaultText;
+            this.CurrentMaintain["ToPlace"] = this.dgToPlace.SelectedValue;
             this.CurrentMaintain["IssueDate"] = DateTime.Now;
             this.editBoxPPICRemark.Text = string.Empty;
             this.txtSewingLine.Text = string.Empty;
@@ -295,7 +296,7 @@ namespace Sci.Production.Warehouse
         {
             base.OnDetailEntered();
             bool isAutomationEnable = Automation.UtilityAutomation.IsAutomationEnable;
-            this.txtToPlace.Visible = isAutomationEnable;
+            this.dgToPlace.Visible = isAutomationEnable;
             this.lblToPlace.Visible = isAutomationEnable;
 
             #region Status Label
