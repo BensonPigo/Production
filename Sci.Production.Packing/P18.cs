@@ -2032,7 +2032,7 @@ drop table #tmpNeedUpdateGroup{this.intTmpNo}, #tmpNeedUpdPackUkeys{this.intTmpN
         private void ShowCalibrationButton()
         {
             // 掃碼階段btnCalibrationList 不能啟用
-            if (this.tabControlScanArea.SelectedIndex == 0 && this.gridSelectCartonDetail.RowCount == 0 && MyUtility.Check.Empty(this.txtScanCartonSP.Text))
+            if (this.tabControlScanArea.SelectedIndex == 0)
             {
                 this.btnCalibrationList.Enabled = true;
             }

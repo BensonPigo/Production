@@ -916,6 +916,7 @@
             this.lbCalibrationTime.TabIndex = 126;
             this.lbCalibrationTime.Text = "Next Calibration Time :";
             this.lbCalibrationTime.TextStyle.Color = System.Drawing.Color.Red;
+            this.lbCalibrationTime.Visible = false;
             // 
             // txtDest
             // 
