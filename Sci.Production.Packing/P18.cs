@@ -134,8 +134,8 @@ or Point9 = 0
         private void alert_Calibration()
         {
             // 不在掃箱掃碼過程才動作!
-            bool isScan = this.tabControlScanArea.SelectedIndex == 0 && this.gridSelectCartonDetail.RowCount == 0 && MyUtility.Check.Empty(this.txtScanCartonSP.Text);
-            if (this.chkAutoCalibration.Checked && (this.Boolfirst || isScan))
+            bool canScan = this.tabControlScanArea.SelectedIndex == 0;
+            if (this.chkAutoCalibration.Checked && (this.Boolfirst || canScan))
             {
                 string machineID = P18_Calibration_List.MachineID;
                 string sqlcmd = $@"
@@ -183,9 +183,9 @@ select top 1 * from MDCalibrationList where MachineID = '{machineID}' and Calibr
                         }
                     }
                 }
-            }
 
-            this.Boolfirst = false;
+                this.Boolfirst = false;
+            }
         }
 
         private P18_Calibration_List callP18_Calibration_List = null;

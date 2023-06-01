@@ -882,9 +882,9 @@
             // 
             // btnCalibrationList
             // 
-            this.btnCalibrationList.Location = new System.Drawing.Point(807, 239);
+            this.btnCalibrationList.Location = new System.Drawing.Point(788, 239);
             this.btnCalibrationList.Name = "btnCalibrationList";
-            this.btnCalibrationList.Size = new System.Drawing.Size(115, 30);
+            this.btnCalibrationList.Size = new System.Drawing.Size(134, 30);
             this.btnCalibrationList.TabIndex = 124;
             this.btnCalibrationList.Text = "Calibration List";
             this.btnCalibrationList.UseVisualStyleBackColor = true;
