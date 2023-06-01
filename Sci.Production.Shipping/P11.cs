@@ -185,6 +185,7 @@ select ID from BIRInvoice where ID like @IDkeyWord + '%'
             return base.ClickSaveBefore();
         }
 
+        /// <inheritdoc/>
         protected override void ClickSaveAfter()
         {
             base.ClickSaveAfter();
