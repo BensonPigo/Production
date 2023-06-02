@@ -187,6 +187,7 @@ select distinct FTYGroup from Factory WITH (NOLOCK) order by FTYGroup"),
             // 若有變更到  Total CPU Included Subcon In 的相關計算規則&篩選條件, 要一併變更 sql的table function GetCMPDetail (這是只有FMS要用的)
             StringBuilder sqlCmd = new StringBuilder();
             DualResult failResult;
+            DBProxy.Current.DefaultTimeout = 600; // 加長時間成10分鐘, 避免time out
             #region 組撈全部Sewing output data SQL
             List<SqlParameter> listPar = new List<SqlParameter>()
             {
@@ -814,6 +815,7 @@ where f.Junk = 0",
                 return failResult;
             }
 
+            DBProxy.Current.DefaultTimeout = 300;  // timeout時間改回5分鐘
             return Ict.Result.True;
         }
 
