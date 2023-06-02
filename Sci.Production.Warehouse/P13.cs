@@ -65,7 +65,11 @@ namespace Sci.Production.Warehouse
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
+
+            bool isAutomationEnable = Automation.UtilityAutomation.IsAutomationEnable;
             this.dgToPlace.SetDefalutIndex();
+            this.dgToPlace.Visible = isAutomationEnable;
+            this.lblToPlace.Visible = isAutomationEnable;
         }
 
         /// <inheritdoc/>

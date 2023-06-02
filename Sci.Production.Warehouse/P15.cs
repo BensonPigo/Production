@@ -126,7 +126,11 @@ namespace Sci.Production.Warehouse
             this.browsetop.Controls.Add(btnUnFinish);
             btnUnFinish.Size = new Size(180, 30); // 預設是(80,30)
             btnUnFinish.Visible = true;
+
+            bool isAutomationEnable = Automation.UtilityAutomation.IsAutomationEnable;
             this.dgToPlace.SetDefalutIndex();
+            this.dgToPlace.Visible = isAutomationEnable;
+            this.lblToPlace.Visible = isAutomationEnable;
             #endregion
         }
 

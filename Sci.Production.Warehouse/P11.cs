@@ -1948,7 +1948,6 @@ and Factory.mdivisionid = '{Env.User.Keyword}'
         /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
-            this.dgToPlace.SetDefalutIndex();
             string querySql = string.Format(
                 @"
 select '' FTYGroup
@@ -1960,6 +1959,12 @@ where MDivisionID = '{0}'", Env.User.Keyword);
             MyUtility.Tool.SetupCombox(this.queryfors, 1, queryDT);
             this.queryfors.SelectedIndex = 0;
             base.OnFormLoaded();
+
+            bool isAutomationEnable = Automation.UtilityAutomation.IsAutomationEnable;
+            this.dgToPlace.SetDefalutIndex();
+            this.dgToPlace.Visible = isAutomationEnable;
+            this.lblToPlace.Visible = isAutomationEnable;
+
             this.queryfors.SelectedIndexChanged += (s, e) =>
             {
                 switch (this.queryfors.SelectedIndex)

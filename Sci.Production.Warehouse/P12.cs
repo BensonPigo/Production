@@ -63,7 +63,11 @@ namespace Sci.Production.Warehouse
             this.gridicon.Append.Visible = false;
             this.gridicon.Insert.Enabled = false;
             this.gridicon.Insert.Visible = false;
+
+            bool isAutomationEnable = Automation.UtilityAutomation.IsAutomationEnable;
             this.dgToPlace.SetDefalutIndex();
+            this.dgToPlace.Visible = isAutomationEnable;
+            this.lblToPlace.Visible = isAutomationEnable;
         }
 
         /// <inheritdoc/>
