@@ -487,7 +487,7 @@ Where a.id = '{masterID}'
             this.CurrentMaintain["FactoryID"] = Env.User.Factory;
             this.CurrentMaintain["Status"] = "New";
             this.CurrentMaintain["Type"] = "B";
-            this.CurrentMaintain["ToPlace"] = this.txtToPlace.DefaultText;
+            this.CurrentMaintain["ToPlace"] = this.dgToPlace.SelectedValue; // this.txtToPlace.DefaultText;
             this.CurrentMaintain["issuedate"] = DateTime.Now;
 
             // leo等確認完工廠有此欄位後開啟
@@ -814,8 +814,9 @@ where Cutplan.id='{0}' and Cutplan.Mdivisionid = '{1}' AND o.Category != 'A'
         {
             base.OnDetailEntered();
             bool isAutomationEnable = Automation.UtilityAutomation.IsAutomationEnable;
-            this.txtToPlace.Visible = isAutomationEnable;
+            // this.txtToPlace.Visible = isAutomationEnable;
             this.lblToPlace.Visible = isAutomationEnable;
+            this.dgToPlace.Visible = isAutomationEnable;
 
             if (!(this.CurrentMaintain == null))
             {
@@ -1958,6 +1959,12 @@ where MDivisionID = '{0}'", Env.User.Keyword);
             MyUtility.Tool.SetupCombox(this.queryfors, 1, queryDT);
             this.queryfors.SelectedIndex = 0;
             base.OnFormLoaded();
+
+            bool isAutomationEnable = Automation.UtilityAutomation.IsAutomationEnable;
+            this.dgToPlace.SetDefalutIndex();
+            this.dgToPlace.Visible = isAutomationEnable;
+            this.lblToPlace.Visible = isAutomationEnable;
+
             this.queryfors.SelectedIndexChanged += (s, e) =>
             {
                 switch (this.queryfors.SelectedIndex)
