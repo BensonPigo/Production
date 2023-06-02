@@ -14,7 +14,6 @@ namespace Sci.Production.Class
     /// <inheritdoc/>
     public static class FileDownload_UpData
     {
-       
         /// <inheritdoc/>
         public static async Task DownloadFileAsync(string url, string filePath, string fileName, string saveFilePath)
         {

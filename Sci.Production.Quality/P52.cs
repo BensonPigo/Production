@@ -10,6 +10,7 @@ using System.Data;
 using System.Data.SqlClient;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using System.Windows.Forms.VisualStyles;
@@ -182,7 +183,8 @@ namespace Sci.Production.Quality
 
             string sqlcmd = $@"select 
             [FileName] = TableName + PKey,
-            SourceFile
+            SourceFile,
+            AddDate
             from GASAClip
             where TableName = '{tableName}' and 
             UniqueKey = '{id}'";
@@ -197,26 +199,24 @@ namespace Sci.Production.Quality
 
             // 組ClipPath
             string clippath = MyUtility.GetValue.Lookup($"select ClipPath from System");
-            string saveFilePath = clippath + "\\" + DateTime.Now.ToString("yyyyMM");
-
             foreach (DataRow dataRow in dt.Rows)
             {
+                string yyyyMM = ((DateTime)dataRow["AddDate"]).ToString("yyyyMM");
+                string saveFilePath = Path.Combine(clippath, yyyyMM);
                 string fileName = dataRow["FileName"].ToString() + Path.GetExtension(dataRow["SourceFile"].ToString());
-                lock (FileDownload_UpData.DownloadFileAsync("http://pmsap.sportscity.com.tw:16888/api/FileDownload/GetFile", filePath + "\\" + DateTime.Now.ToString("yyyyMM"), fileName, saveFilePath))
+                lock (FileDownload_UpData.DownloadFileAsync("http://pmsap.sportscity.com.tw:16888/api/FileDownload/GetFile", filePath + "\\" + yyyyMM, fileName, saveFilePath))
                 {
                 }
             }
 
-            //using (var dlg = new Clip(tableName, id, true))
-            //{
-            //    dlg.EditMode = false;
-            //    dlg.ShowDialog();
-            using (var dlg = new PublicForm.ClipGASA(tableName, id, true, row, apiUrlFile: "http://pmsap.sportscity.com.tw:16888/api/FileDelete/RemoveFile"))
+            using (var dlg = new PublicForm.ClipGASA(tableName, id, false, row, apiUrlFile: "http://pmsap.sportscity.com.tw:16888/api/FileDelete/RemoveFile"))
             {
                 dlg.ShowDialog();
 
                 foreach (DataRow dataRow in dt.Rows)
                 {
+                    string yyyyMM = ((DateTime)dataRow["AddDate"]).ToString("yyyyMM");
+                    string saveFilePath = Path.Combine(clippath, yyyyMM);
                     string fileName = dataRow["FileName"].ToString() + Path.GetExtension(dataRow["SourceFile"].ToString());
                     string deleteFile = Path.Combine(saveFilePath, fileName);
                     if (File.Exists(deleteFile))
