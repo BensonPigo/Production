@@ -54,6 +54,7 @@ namespace Sci.Production.PublicPrg
         /// 1.先判斷 PatternCode + PatternDesc 是否存在 GarmentTb
         /// 2.判斷選擇的 Artwork  EX:選擇 AT+HT, 在PatternCode + PatternDes找到 HT+AT01, 才算此筆為 GarmentTb 內的資料
         /// 3.判斷是否為次要裁
+        /// 4.篩選相同PatternCode + PatternDesc 才要判斷是否有Main再帶出是否要X
         /// </summary>
         /// <inheritdoc/>
         public static void CheckNotMain(DataRow dr, DataTable garmentTb)
@@ -78,7 +79,7 @@ namespace Sci.Production.PublicPrg
                 return;
             }
 
-            List<string> notMainList = Prgs.GetNotMain(dr1, garmentTb.Select()); // 帶入未去除數字的annotation資料
+            List<string> notMainList = Prgs.GetNotMain(dr1, drs); // 帶入未去除數字的annotation資料
             string noBundleCardAfterSubprocess_String = string.Join("+", notMainList);
             dr["NoBundleCardAfterSubprocess_String"] = noBundleCardAfterSubprocess_String;
             dr.EndEdit();
