@@ -52,9 +52,7 @@ namespace Sci.Production.Quality
         private void GetMaterialDocument()
         {
             DataTable dt;
-            string where = !Env.User.IsAdmin ? $" and BrandID in (SELECT BrandID FROM PASS_AuthBrand WHERE ID ='{Env.User.UserID}')" : string.Empty;
-
-            string sql = $"Select distinct DocumentName From MaterialDocument WHERE FileRule in (4,5) {where} and junk = 0";
+            string sql = $"Select distinct DocumentName From MaterialDocument WHERE FileRule in (4,5) and junk = 0";
             var result = DBProxy.Current.Select(string.Empty, sql, out dt);
             if (result && dt.Rows.Count > 0)
             {
