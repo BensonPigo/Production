@@ -213,7 +213,7 @@ namespace Sci.Production.Planning
 
                     sqlcmd = @"
 select l.id ,l.abb ,l.currencyid  ,l.IsSintexSubcon
-,[IsSintex] = iif(l.IsSintexSubcon =1,'Y','N'),
+,[IsSintex] = iif(l.IsSintexSubcon =1,'Y','N')
 from LocalSupp l WITH (NOLOCK) 
 WHERE l.Junk=0  AND l.IsFactory = 0
 order by ID
