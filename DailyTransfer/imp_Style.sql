@@ -150,7 +150,7 @@ a.Ukey	= b.Ukey
 from Production.dbo.Style as a 
 inner join Trade_To_Pms.dbo.Style as b ON a.ID	= b.ID AND a.BrandID	= b.BrandID AND a.SeasonID	= b.SeasonID
 
-
+-- Style_Artwork_Quot
 RAISERROR('imp_Style - Starts',0,0)
 UPDATE a
 SET  
@@ -160,6 +160,7 @@ inner join Trade_To_Pms.dbo.Style as b ON a. StyleUkey=b.Ukey
 inner join Production.dbo.Style as c ON c.ID=b.ID and c.BrandID=b.BrandID and c.SeasonID=b.SeasonID
 where c.LocalStyle=1
 and a.Ukey=c.Ukey
+
 ---------------------------------------------------------------------------------------------
 -------------------------- INSERT STYLE BY以上兩種比對條件都找不到的時候 INSERT
 delete Production.dbo.AutomationStyle
@@ -403,6 +404,19 @@ on a.TradeUkey = b.Ukey
 where b.Ukey is null
 ---------------------------UPDATE 主TABLE跟來源TABLE 為一樣(主TABLE多的話 記起來 ~來源TABLE多的話不理會)
 RAISERROR('imp_Style - Starts',0,0)
+
+-- 更新Style_Artwork_Quot.Price by ISP20230457
+UPDATE a
+SET  
+a.Price = c1.Cost
+from Production.dbo.Style_Artwork_Quot as a 
+inner join Trade_To_Pms.dbo.Style as b ON a.StyleUkey = b.Ukey
+inner join Production.dbo.Style_Artwork c on c.Ukey = a.Ukey
+inner join Trade_To_Pms.dbo.Style_Artwork as c1 ON c.TradeUkey = c1.Ukey
+inner join Production.dbo.LocalSupp l on a.LocalSuppId = l.ID
+where c.Cost != c1.Cost
+and l.IsSintexSubcon = 1
+
 UPDATE a
 SET  
  a.StyleUkey	= b.StyleUkey
@@ -414,7 +428,7 @@ SET
 ,a.ArtworkName	= b.ArtworkName
 ,a.Qty	= b.Qty
 ,a.Price	= b.Price
-,a.Cost	= b.Cost
+,a.Cost =  b.Cost
 ,a.Remark	= b.Remark
 ,a.AddName	= b.AddName
 ,a.AddDate	= b.AddDate
@@ -435,6 +449,7 @@ SET
 ,a.PatternCodeSize = b.PatternCodeSize
 from Production.dbo.Style_Artwork as a 
 inner join Trade_To_Pms.dbo.Style_Artwork as b ON a.TradeUkey=b.Ukey
+
 -------------------------- INSERT INTO 抓
 RAISERROR('imp_Style - Starts',0,0)
 INSERT INTO Production.dbo.Style_Artwork(
@@ -1536,6 +1551,7 @@ where not exists(select 1 from Production.dbo.Style_GMTLTFty as a WITH (NOLOCK) 
 RAISERROR('imp_Style - Starts',0,0)
 Delete Production.dbo.Style_SimilarStyle
 from Production.dbo.Style_SimilarStyle as a 
+INNER JOIN Trade_To_Pms.dbo.Style as t on t.Id = a.MasterStyleID
 left join Trade_To_Pms.dbo.Style_SimilarStyle as b
 on a.MasterBrandID	= b.MasterBrandID AND a.MasterStyleID	= b.MasterStyleID and a.ChildrenBrandID = b.ChildrenBrandID and a.ChildrenStyleID = b.ChildrenStyleID
 where b.MasterStyleID is null
