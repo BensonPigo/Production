@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.labelID = new Sci.Win.UI.Label();
             this.labelIssueDate = new Sci.Win.UI.Label();
             this.label25 = new Sci.Win.UI.Label();
@@ -55,7 +56,6 @@
             this.txtLocalSupp1 = new Sci.Production.Class.TxtLocalSupp();
             this.btnCallP99 = new Sci.Win.UI.Button();
             this.lblToPlace = new Sci.Win.UI.Label();
-            this.txtToPlace = new Sci.Production.Class.TxtToPlace();
             this.displayDept = new Sci.Win.UI.DisplayBox();
             this.lblDept = new Sci.Win.UI.Label();
             this.label1 = new Sci.Win.UI.Label();
@@ -63,6 +63,7 @@
             this.label2 = new Sci.Win.UI.Label();
             this.txtSewingLine = new Sci.Production.Class.TxtToPlace();
             this.BtnRequestList = new Sci.Win.UI.Button();
+            this.dgToPlace = new Sci.Production.Class.DgToPlace(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -79,6 +80,7 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.dgToPlace);
             this.masterpanel.Controls.Add(this.BtnRequestList);
             this.masterpanel.Controls.Add(this.txtSewingLine);
             this.masterpanel.Controls.Add(this.label2);
@@ -87,7 +89,6 @@
             this.masterpanel.Controls.Add(this.displayDept);
             this.masterpanel.Controls.Add(this.lblDept);
             this.masterpanel.Controls.Add(this.lblToPlace);
-            this.masterpanel.Controls.Add(this.txtToPlace);
             this.masterpanel.Controls.Add(this.txtLocalSupp1);
             this.masterpanel.Controls.Add(this.displayBoxShift);
             this.masterpanel.Controls.Add(this.labelSubconName);
@@ -137,7 +138,6 @@
             this.masterpanel.Controls.SetChildIndex(this.labelSubconName, 0);
             this.masterpanel.Controls.SetChildIndex(this.displayBoxShift, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtLocalSupp1, 0);
-            this.masterpanel.Controls.SetChildIndex(this.txtToPlace, 0);
             this.masterpanel.Controls.SetChildIndex(this.lblToPlace, 0);
             this.masterpanel.Controls.SetChildIndex(this.lblDept, 0);
             this.masterpanel.Controls.SetChildIndex(this.displayDept, 0);
@@ -147,6 +147,7 @@
             this.masterpanel.Controls.SetChildIndex(this.label2, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtSewingLine, 0);
             this.masterpanel.Controls.SetChildIndex(this.BtnRequestList, 0);
+            this.masterpanel.Controls.SetChildIndex(this.dgToPlace, 0);
             // 
             // detailpanel
             // 
@@ -482,16 +483,6 @@
             this.lblToPlace.TabIndex = 77;
             this.lblToPlace.Text = "To Place";
             // 
-            // txtToPlace
-            // 
-            this.txtToPlace.BackColor = System.Drawing.Color.White;
-            this.txtToPlace.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "ToPlace", true));
-            this.txtToPlace.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtToPlace.Location = new System.Drawing.Point(552, 111);
-            this.txtToPlace.Name = "txtToPlace";
-            this.txtToPlace.Size = new System.Drawing.Size(132, 23);
-            this.txtToPlace.TabIndex = 76;
-            // 
             // displayDept
             // 
             this.displayDept.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
@@ -558,6 +549,19 @@
             this.BtnRequestList.Text = "Request List";
             this.BtnRequestList.UseVisualStyleBackColor = true;
             this.BtnRequestList.Click += new System.EventHandler(this.BtnRequestList_Click);
+            // 
+            // dgToPlace
+            // 
+            this.dgToPlace.BackColor = System.Drawing.Color.White;
+            this.dgToPlace.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "ToPlace", true));
+            this.dgToPlace.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.dgToPlace.FormattingEnabled = true;
+            this.dgToPlace.IsSupportUnselect = true;
+            this.dgToPlace.Location = new System.Drawing.Point(552, 111);
+            this.dgToPlace.Name = "dgToPlace";
+            this.dgToPlace.OldText = "";
+            this.dgToPlace.Size = new System.Drawing.Size(121, 24);
+            this.dgToPlace.TabIndex = 89;
             // 
             // P15
             // 
@@ -634,7 +638,6 @@
         private Class.TxtLocalSupp txtLocalSupp1;
         private Win.UI.Button btnCallP99;
         private Win.UI.Label lblToPlace;
-        private Class.TxtToPlace txtToPlace;
         private Win.UI.DisplayBox displayDept;
         private Win.UI.Label lblDept;
         private Win.UI.Button BtnRequestList;
@@ -642,5 +645,6 @@
         private Win.UI.Label label2;
         private Win.UI.EditBox editBoxPPICRemark;
         private Win.UI.Label label1;
+        private Class.DgToPlace dgToPlace;
     }
 }

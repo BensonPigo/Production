@@ -1241,7 +1241,8 @@ and o.mDivisionid = '{this.keyWord}'
                 else
                 {
                     // 取得哪些 annotation 是次要
-                    List<string> notMainList = Prgs.GetNotMain(dr, this.GarmentTb.Select());
+                    // 判斷是否要給X 要加上ArticleGroup 來判斷
+                    List<string> notMainList = Prgs.GetNotMain(dr, garmentar);
                     string noBundleCardAfterSubprocess_String = string.Join("+", notMainList);
 
                     // Annotation
