@@ -303,7 +303,10 @@ left join (
 		, t.MasterStyleID
 		, t.OutputDate
 		, t.FactoryID
-		, [CumulateDateSimilar] = t.CumulateDate_Max + ROW_NUMBER() OVER (PARTITION BY t.MasterStyleID, t.MasterBrandID, t.FactoryID, (RID - Seq) ORDER BY t.MasterStyleID, t.MasterBrandID, t.FactoryID, RID) - 1
+		, [CumulateDateSimilar] = case when SEQ - (ROW_NUMBER() OVER (PARTITION BY t.MasterStyleID, t.MasterBrandID, t.FactoryID, (RID - Seq) ORDER BY t.OutputDate, t.MasterStyleID, t.MasterBrandID, t.FactoryID, RID) - 1) = 1 
+				then t.CumulateDate_Max + ROW_NUMBER() OVER (PARTITION BY t.MasterStyleID, t.MasterBrandID, t.FactoryID, (RID - Seq) ORDER BY t.OutputDate, t.MasterStyleID, t.MasterBrandID, t.FactoryID, RID) - 1
+			else ROW_NUMBER() OVER (PARTITION BY t.MasterStyleID, t.MasterBrandID, t.FactoryID, (RID - Seq) ORDER BY t.OutputDate, t.MasterStyleID, t.MasterBrandID, t.FactoryID, RID)
+			end
 	from 
 	(
 		select t.*
