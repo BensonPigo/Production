@@ -37,6 +37,9 @@
             this.dateSCIDelivery = new Sci.Win.UI.DateRange();
             this.labelSCIDelivery = new Sci.Win.UI.Label();
             this.chkExcludeGMTComplete = new Sci.Win.UI.CheckBox();
+            this.label1 = new Sci.Win.UI.Label();
+            this.chBulk = new Sci.Win.UI.CheckBox();
+            this.chGarment = new Sci.Win.UI.CheckBox();
             this.SuspendLayout();
             // 
             // print
@@ -74,6 +77,7 @@
             this.txtbrand.BackColor = System.Drawing.Color.White;
             this.txtbrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtbrand.Location = new System.Drawing.Point(110, 120);
+            this.txtbrand.MyDocumentdName = null;
             this.txtbrand.Name = "txtbrand";
             this.txtbrand.Size = new System.Drawing.Size(98, 23);
             this.txtbrand.TabIndex = 4;
@@ -170,16 +174,49 @@
             // 
             this.chkExcludeGMTComplete.AutoSize = true;
             this.chkExcludeGMTComplete.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.chkExcludeGMTComplete.Location = new System.Drawing.Point(9, 156);
+            this.chkExcludeGMTComplete.Location = new System.Drawing.Point(9, 183);
             this.chkExcludeGMTComplete.Name = "chkExcludeGMTComplete";
             this.chkExcludeGMTComplete.Size = new System.Drawing.Size(174, 21);
             this.chkExcludeGMTComplete.TabIndex = 5;
             this.chkExcludeGMTComplete.Text = "Exclude GMT Complete";
             this.chkExcludeGMTComplete.UseVisualStyleBackColor = true;
             // 
+            // label1
+            // 
+            this.label1.Location = new System.Drawing.Point(9, 154);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(97, 23);
+            this.label1.TabIndex = 102;
+            this.label1.Text = "Category";
+            // 
+            // chBulk
+            // 
+            this.chBulk.AutoSize = true;
+            this.chBulk.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chBulk.Location = new System.Drawing.Point(110, 156);
+            this.chBulk.Name = "chBulk";
+            this.chBulk.Size = new System.Drawing.Size(54, 21);
+            this.chBulk.TabIndex = 103;
+            this.chBulk.Text = "Bulk";
+            this.chBulk.UseVisualStyleBackColor = true;
+            // 
+            // chGarment
+            // 
+            this.chGarment.AutoSize = true;
+            this.chGarment.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chGarment.Location = new System.Drawing.Point(170, 156);
+            this.chGarment.Name = "chGarment";
+            this.chGarment.Size = new System.Drawing.Size(82, 21);
+            this.chGarment.TabIndex = 104;
+            this.chGarment.Text = "Garment";
+            this.chGarment.UseVisualStyleBackColor = true;
+            // 
             // R01
             // 
             this.ClientSize = new System.Drawing.Size(555, 317);
+            this.Controls.Add(this.chGarment);
+            this.Controls.Add(this.chBulk);
+            this.Controls.Add(this.label1);
             this.Controls.Add(this.chkExcludeGMTComplete);
             this.Controls.Add(this.dateSCIDelivery);
             this.Controls.Add(this.labelSCIDelivery);
@@ -209,6 +246,9 @@
             this.Controls.SetChildIndex(this.labelSCIDelivery, 0);
             this.Controls.SetChildIndex(this.dateSCIDelivery, 0);
             this.Controls.SetChildIndex(this.chkExcludeGMTComplete, 0);
+            this.Controls.SetChildIndex(this.label1, 0);
+            this.Controls.SetChildIndex(this.chBulk, 0);
+            this.Controls.SetChildIndex(this.chGarment, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -225,5 +265,8 @@
         private Win.UI.DateRange dateSCIDelivery;
         private Win.UI.Label labelSCIDelivery;
         private Win.UI.CheckBox chkExcludeGMTComplete;
+        private Win.UI.Label label1;
+        private Win.UI.CheckBox chBulk;
+        private Win.UI.CheckBox chGarment;
     }
 }

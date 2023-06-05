@@ -62,8 +62,8 @@ SET
       ,a.RatioBuyer	      =b.RatioBuyer
       ,a.BuyerDBCNo	      =b.BuyerDBCNo
       ,a.BuyerDBCRemark	      =b.BuyerDBCRemark
-      ,a.BuyerICRNo	      =b.BuyerICRNo
-      ,a.BuyerICRRemark	      =b.BuyerICRRemark
+      --,a.BuyerICRNo	      =b.BuyerICRNo
+      --,a.BuyerICRRemark	      =b.BuyerICRRemark
       ,a.BuyerRemark	      =b.BuyerRemark
       ,a.PPICMgr	      =b.PPICMgr
       ,a.PPICMgrApvDate	      =b.PPICMgrApvDate
@@ -87,6 +87,8 @@ SET
 	  ,a.APReceiveDoxDate				 = b.APReceiveDoxDate
 	  ,a.APAmountEditDate				 = b.APAmountEditDate
 	  ,a.ActualAmountWVAT				 = b.ActualAmountWVAT
+      ,a.SCIICRNo2                       = b.SCIICRNo2
+      ,a.SCIICRRemark2                   = b.SCIICRRemark2
 from Production.dbo.AirPP as a 
 inner join Trade_To_Pms.dbo.AirPP as b ON a.id=b.id
 where isnull(a.TPEEditDate,'') != isnull(b.EditDate,'')

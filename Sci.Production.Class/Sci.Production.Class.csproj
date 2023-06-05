@@ -184,6 +184,12 @@
     <Compile Include="Controls\CameraDisplay_ShowOnly.designer.cs">
       <DependentUpon>CameraDisplay_ShowOnly.cs</DependentUpon>
     </Compile>
+    <Compile Include="dgToPlace.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="dgToPlace.Designer.cs">
+      <DependentUpon>dgToPlace.cs</DependentUpon>
+    </Compile>
     <Compile Include="DualResultGeneric.cs" />
     <Compile Include="ExcelFileNameExtension.cs" />
     <Compile Include="ExtendedMethods\DBWarpperExtension.cs" />

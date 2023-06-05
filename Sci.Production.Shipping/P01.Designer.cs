@@ -134,9 +134,6 @@
             this.labelDebitMemoCustomer = new Sci.Win.UI.Label();
             this.displayDebitMemoCustomer2 = new Sci.Win.UI.DisplayBox();
             this.displayDebitMemoCustomer = new Sci.Win.UI.DisplayBox();
-            this.labelBuyerICRNo = new Sci.Win.UI.Label();
-            this.displayBuyerICRNo2 = new Sci.Win.UI.DisplayBox();
-            this.displayBuyerICRNo = new Sci.Win.UI.DisplayBox();
             this.txtBuyer = new Sci.Win.UI.TextBox();
             this.labelPreparedBy = new Sci.Win.UI.Label();
             this.labelPPICmgr = new Sci.Win.UI.Label();
@@ -181,6 +178,11 @@
             this.dateAPAmountEditDate = new Sci.Win.UI.DateBox();
             this.label3 = new Sci.Win.UI.Label();
             this.numericBox1 = new Sci.Win.UI.NumericBox();
+            this.lblBuyerRemark = new Sci.Win.UI.Label();
+            this.displayBox1 = new Sci.Win.UI.DisplayBox();
+            this.displayBox2 = new Sci.Win.UI.DisplayBox();
+            this.lblICRinfo = new Sci.Win.UI.Label();
+            this.label6 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -195,6 +197,11 @@
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.label6);
+            this.detailcont.Controls.Add(this.displayBox1);
+            this.detailcont.Controls.Add(this.displayBox2);
+            this.detailcont.Controls.Add(this.lblICRinfo);
+            this.detailcont.Controls.Add(this.lblBuyerRemark);
             this.detailcont.Controls.Add(this.numericBox1);
             this.detailcont.Controls.Add(this.label3);
             this.detailcont.Controls.Add(this.dateAPAmountEditDate);
@@ -221,9 +228,6 @@
             this.detailcont.Controls.Add(this.labelPPICmgr);
             this.detailcont.Controls.Add(this.labelPreparedBy);
             this.detailcont.Controls.Add(this.txtBuyer);
-            this.detailcont.Controls.Add(this.displayBuyerICRNo2);
-            this.detailcont.Controls.Add(this.displayBuyerICRNo);
-            this.detailcont.Controls.Add(this.labelBuyerICRNo);
             this.detailcont.Controls.Add(this.displayDebitMemoCustomer2);
             this.detailcont.Controls.Add(this.displayDebitMemoCustomer);
             this.detailcont.Controls.Add(this.labelDebitMemoCustomer);
@@ -1261,9 +1265,9 @@
             this.checkSCI.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.checkSCI.Location = new System.Drawing.Point(84, 411);
             this.checkSCI.Name = "checkSCI";
-            this.checkSCI.Size = new System.Drawing.Size(45, 19);
+            this.checkSCI.Size = new System.Drawing.Size(81, 19);
             this.checkSCI.TabIndex = 21;
-            this.checkSCI.Text = "SCI";
+            this.checkSCI.Text = "Marketing";
             this.checkSCI.UseVisualStyleBackColor = true;
             this.checkSCI.CheckedChanged += new System.EventHandler(this.CheckSCI_CheckedChanged);
             // 
@@ -1272,7 +1276,7 @@
             this.checkSupplier.AutoSize = true;
             this.checkSupplier.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ResponsibleSupp", true));
             this.checkSupplier.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkSupplier.Location = new System.Drawing.Point(84, 438);
+            this.checkSupplier.Location = new System.Drawing.Point(84, 460);
             this.checkSupplier.Name = "checkSupplier";
             this.checkSupplier.Size = new System.Drawing.Size(72, 19);
             this.checkSupplier.TabIndex = 22;
@@ -1285,7 +1289,7 @@
             this.checkBuyer.AutoSize = true;
             this.checkBuyer.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ResponsibleBuyer", true));
             this.checkBuyer.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkBuyer.Location = new System.Drawing.Point(84, 463);
+            this.checkBuyer.Location = new System.Drawing.Point(84, 484);
             this.checkBuyer.Name = "checkBuyer";
             this.checkBuyer.Size = new System.Drawing.Size(57, 19);
             this.checkBuyer.TabIndex = 23;
@@ -1319,7 +1323,7 @@
             // 
             // labelSupplierRatio
             // 
-            this.labelSupplierRatio.Location = new System.Drawing.Point(161, 438);
+            this.labelSupplierRatio.Location = new System.Drawing.Point(161, 460);
             this.labelSupplierRatio.Name = "labelSupplierRatio";
             this.labelSupplierRatio.Size = new System.Drawing.Size(45, 18);
             this.labelSupplierRatio.TabIndex = 82;
@@ -1327,7 +1331,7 @@
             // 
             // labelBuyerRatio
             // 
-            this.labelBuyerRatio.Location = new System.Drawing.Point(161, 463);
+            this.labelBuyerRatio.Location = new System.Drawing.Point(161, 484);
             this.labelBuyerRatio.Name = "labelBuyerRatio";
             this.labelBuyerRatio.Size = new System.Drawing.Size(45, 18);
             this.labelBuyerRatio.TabIndex = 83;
@@ -1450,7 +1454,7 @@
             this.numSCIRatio.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "RatioSCI", true));
             this.numSCIRatio.DecimalPlaces = 2;
             this.numSCIRatio.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numSCIRatio.Location = new System.Drawing.Point(208, 410);
+            this.numSCIRatio.Location = new System.Drawing.Point(208, 409);
             this.numSCIRatio.Maximum = new decimal(new int[] {
             100,
             0,
@@ -1507,8 +1511,8 @@
             this.lineShape6.Name = "lineShape6";
             this.lineShape6.X1 = 82;
             this.lineShape6.X2 = 865;
-            this.lineShape6.Y1 = 460;
-            this.lineShape6.Y2 = 460;
+            this.lineShape6.Y1 = 480;
+            this.lineShape6.Y2 = 480;
             // 
             // lineShape5
             // 
@@ -1516,8 +1520,8 @@
             this.lineShape5.Name = "lineShape5";
             this.lineShape5.X1 = 82;
             this.lineShape5.X2 = 865;
-            this.lineShape5.Y1 = 435;
-            this.lineShape5.Y2 = 435;
+            this.lineShape5.Y1 = 457;
+            this.lineShape5.Y2 = 457;
             // 
             // lineShape4
             // 
@@ -1561,7 +1565,7 @@
             this.labelSCIICRNo.Name = "labelSCIICRNo";
             this.labelSCIICRNo.Size = new System.Drawing.Size(132, 18);
             this.labelSCIICRNo.TabIndex = 94;
-            this.labelSCIICRNo.Text = "ICR No.";
+            this.labelSCIICRNo.Text = "ICR Info.";
             // 
             // displaySCIICRNo
             // 
@@ -1589,7 +1593,7 @@
             this.numSupplierRatio.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "RatioSupp", true));
             this.numSupplierRatio.DecimalPlaces = 2;
             this.numSupplierRatio.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numSupplierRatio.Location = new System.Drawing.Point(208, 437);
+            this.numSupplierRatio.Location = new System.Drawing.Point(208, 459);
             this.numSupplierRatio.Maximum = new decimal(new int[] {
             100,
             0,
@@ -1616,7 +1620,7 @@
             // 
             // labelDebitNote
             // 
-            this.labelDebitNote.Location = new System.Drawing.Point(268, 438);
+            this.labelDebitNote.Location = new System.Drawing.Point(268, 460);
             this.labelDebitNote.Name = "labelDebitNote";
             this.labelDebitNote.Size = new System.Drawing.Size(132, 18);
             this.labelDebitNote.TabIndex = 98;
@@ -1627,7 +1631,7 @@
             this.displayDebitNote2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayDebitNote2.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "SuppDBCRemark", true));
             this.displayDebitNote2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayDebitNote2.Location = new System.Drawing.Point(508, 437);
+            this.displayDebitNote2.Location = new System.Drawing.Point(508, 459);
             this.displayDebitNote2.Name = "displayDebitNote2";
             this.displayDebitNote2.Size = new System.Drawing.Size(355, 21);
             this.displayDebitNote2.TabIndex = 100;
@@ -1637,7 +1641,7 @@
             this.displayDebitNote.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayDebitNote.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "SuppDBCNo", true));
             this.displayDebitNote.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayDebitNote.Location = new System.Drawing.Point(401, 437);
+            this.displayDebitNote.Location = new System.Drawing.Point(401, 459);
             this.displayDebitNote.Name = "displayDebitNote";
             this.displayDebitNote.Size = new System.Drawing.Size(105, 21);
             this.displayDebitNote.TabIndex = 33;
@@ -1648,7 +1652,7 @@
             this.numBuyerRatio.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "RatioBuyer", true));
             this.numBuyerRatio.DecimalPlaces = 2;
             this.numBuyerRatio.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numBuyerRatio.Location = new System.Drawing.Point(208, 462);
+            this.numBuyerRatio.Location = new System.Drawing.Point(208, 483);
             this.numBuyerRatio.Maximum = new decimal(new int[] {
             100,
             0,
@@ -1675,7 +1679,7 @@
             // 
             // labelDebitMemoCustomer
             // 
-            this.labelDebitMemoCustomer.Location = new System.Drawing.Point(268, 463);
+            this.labelDebitMemoCustomer.Location = new System.Drawing.Point(268, 484);
             this.labelDebitMemoCustomer.Name = "labelDebitMemoCustomer";
             this.labelDebitMemoCustomer.Size = new System.Drawing.Size(132, 18);
             this.labelDebitMemoCustomer.TabIndex = 102;
@@ -1686,7 +1690,7 @@
             this.displayDebitMemoCustomer2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayDebitMemoCustomer2.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "BuyerDBCRemark", true));
             this.displayDebitMemoCustomer2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayDebitMemoCustomer2.Location = new System.Drawing.Point(508, 462);
+            this.displayDebitMemoCustomer2.Location = new System.Drawing.Point(508, 483);
             this.displayDebitMemoCustomer2.Name = "displayDebitMemoCustomer2";
             this.displayDebitMemoCustomer2.Size = new System.Drawing.Size(355, 21);
             this.displayDebitMemoCustomer2.TabIndex = 104;
@@ -1696,38 +1700,10 @@
             this.displayDebitMemoCustomer.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayDebitMemoCustomer.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "BuyerDBCNo", true));
             this.displayDebitMemoCustomer.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayDebitMemoCustomer.Location = new System.Drawing.Point(401, 462);
+            this.displayDebitMemoCustomer.Location = new System.Drawing.Point(401, 483);
             this.displayDebitMemoCustomer.Name = "displayDebitMemoCustomer";
             this.displayDebitMemoCustomer.Size = new System.Drawing.Size(105, 21);
             this.displayDebitMemoCustomer.TabIndex = 34;
-            // 
-            // labelBuyerICRNo
-            // 
-            this.labelBuyerICRNo.Location = new System.Drawing.Point(268, 485);
-            this.labelBuyerICRNo.Name = "labelBuyerICRNo";
-            this.labelBuyerICRNo.Size = new System.Drawing.Size(132, 18);
-            this.labelBuyerICRNo.TabIndex = 105;
-            this.labelBuyerICRNo.Text = "ICR No.";
-            // 
-            // displayBuyerICRNo2
-            // 
-            this.displayBuyerICRNo2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBuyerICRNo2.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "BuyerICRRemark", true));
-            this.displayBuyerICRNo2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBuyerICRNo2.Location = new System.Drawing.Point(507, 484);
-            this.displayBuyerICRNo2.Name = "displayBuyerICRNo2";
-            this.displayBuyerICRNo2.Size = new System.Drawing.Size(355, 21);
-            this.displayBuyerICRNo2.TabIndex = 107;
-            // 
-            // displayBuyerICRNo
-            // 
-            this.displayBuyerICRNo.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBuyerICRNo.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "BuyerICRNo", true));
-            this.displayBuyerICRNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBuyerICRNo.Location = new System.Drawing.Point(401, 484);
-            this.displayBuyerICRNo.Name = "displayBuyerICRNo";
-            this.displayBuyerICRNo.Size = new System.Drawing.Size(105, 21);
-            this.displayBuyerICRNo.TabIndex = 35;
             // 
             // txtBuyer
             // 
@@ -1735,7 +1711,7 @@
             this.txtBuyer.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
             this.txtBuyer.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "BuyerRemark", true));
             this.txtBuyer.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtBuyer.Location = new System.Drawing.Point(267, 506);
+            this.txtBuyer.Location = new System.Drawing.Point(402, 505);
             this.txtBuyer.Name = "txtBuyer";
             this.txtBuyer.Size = new System.Drawing.Size(314, 21);
             this.txtBuyer.TabIndex = 31;
@@ -2010,6 +1986,7 @@
             // 
             // txtUserPPICmgr
             // 
+            this.txtUserPPICmgr.AllowSelectResign = false;
             this.txtUserPPICmgr.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "PPICMgr", true));
             this.txtUserPPICmgr.DisplayBox1Binding = "";
             this.txtUserPPICmgr.Location = new System.Drawing.Point(101, 552);
@@ -2020,6 +1997,7 @@
             // 
             // txtUserPreparedBy
             // 
+            this.txtUserPreparedBy.AllowSelectResign = false;
             this.txtUserPreparedBy.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "AddName", true));
             this.txtUserPreparedBy.DisplayBox1Binding = "";
             this.txtUserPreparedBy.Location = new System.Drawing.Point(101, 530);
@@ -2030,6 +2008,7 @@
             // 
             // txtUserFactorymgr
             // 
+            this.txtUserFactorymgr.AllowSelectResign = false;
             this.txtUserFactorymgr.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "FtyMgr", true));
             this.txtUserFactorymgr.DisplayBox1Binding = "";
             this.txtUserFactorymgr.Location = new System.Drawing.Point(101, 574);
@@ -2072,6 +2051,7 @@
             // 
             // txtuserShipLeader
             // 
+            this.txtuserShipLeader.AllowSelectResign = false;
             this.txtuserShipLeader.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "ShipLeader", true));
             this.txtuserShipLeader.DisplayBox1Binding = "";
             this.txtuserShipLeader.Location = new System.Drawing.Point(101, 596);
@@ -2239,6 +2219,52 @@
             0,
             0});
             // 
+            // lblBuyerRemark
+            // 
+            this.lblBuyerRemark.Location = new System.Drawing.Point(268, 507);
+            this.lblBuyerRemark.Name = "lblBuyerRemark";
+            this.lblBuyerRemark.Size = new System.Drawing.Size(132, 18);
+            this.lblBuyerRemark.TabIndex = 1000;
+            this.lblBuyerRemark.Text = "Buyer Remark";
+            // 
+            // displayBox1
+            // 
+            this.displayBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "SCIICRRemark2", true));
+            this.displayBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayBox1.Location = new System.Drawing.Point(508, 435);
+            this.displayBox1.Name = "displayBox1";
+            this.displayBox1.Size = new System.Drawing.Size(355, 21);
+            this.displayBox1.TabIndex = 1003;
+            // 
+            // displayBox2
+            // 
+            this.displayBox2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayBox2.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "SCIICRNo2", true));
+            this.displayBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayBox2.Location = new System.Drawing.Point(401, 435);
+            this.displayBox2.Name = "displayBox2";
+            this.displayBox2.Size = new System.Drawing.Size(105, 21);
+            this.displayBox2.TabIndex = 1001;
+            // 
+            // lblICRinfo
+            // 
+            this.lblICRinfo.Location = new System.Drawing.Point(268, 436);
+            this.lblICRinfo.Name = "lblICRinfo";
+            this.lblICRinfo.Size = new System.Drawing.Size(132, 18);
+            this.lblICRinfo.TabIndex = 1002;
+            this.lblICRinfo.Text = "ICR Info.";
+            // 
+            // label6
+            // 
+            this.label6.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.5F);
+            this.label6.ForeColor = System.Drawing.Color.Red;
+            this.label6.Location = new System.Drawing.Point(100, 430);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(165, 25);
+            this.label6.TabIndex = 1004;
+            this.label6.Text = "Marketing -include MR,Sample dep.,PTN,IE,GM,IT,Finance,W/house.";
+            // 
             // P01
             // 
             this.ApvChkValue = "Checked";
@@ -2401,9 +2427,6 @@
         private Win.UI.Label labelPPICmgr;
         private Win.UI.Label labelPreparedBy;
         private Win.UI.TextBox txtBuyer;
-        private Win.UI.DisplayBox displayBuyerICRNo2;
-        private Win.UI.DisplayBox displayBuyerICRNo;
-        private Win.UI.Label labelBuyerICRNo;
         private Win.UI.DisplayBox displayDebitMemoCustomer2;
         private Win.UI.DisplayBox displayDebitMemoCustomer;
         private Win.UI.Label labelDebitMemoCustomer;
@@ -2429,5 +2452,10 @@
         private Win.UI.Label label2;
         private Win.UI.NumericBox numericBox1;
         private Win.UI.Label label3;
+        private Win.UI.Label lblBuyerRemark;
+        private System.Windows.Forms.Label label6;
+        private Win.UI.DisplayBox displayBox1;
+        private Win.UI.DisplayBox displayBox2;
+        private Win.UI.Label lblICRinfo;
     }
 }
