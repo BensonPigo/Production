@@ -1240,5 +1240,12 @@ where (isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f
         {
             new P10_AssignReleaser(this.CurrentMaintain["ID"].ToString()).ShowDialog();
         }
+
+        private void BtnIssueSummary_Click(object sender, EventArgs e)
+        {
+            P10_IssueSummary callNextFrom;
+            callNextFrom = new P10_IssueSummary(this.CurrentMaintain["ID"].ToString());
+            DialogResult result = callNextFrom.ShowDialog(this);
+        }
     }
 }
