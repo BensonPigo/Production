@@ -45,32 +45,52 @@ namespace Sci.Production.Warehouse
                 return false;
             }
 
-            if (!MyUtility.Check.Empty(this.unrollStartTime.Value1) && !MyUtility.Check.Empty(this.unrollStartTime.Value2))
+            if (!MyUtility.Check.Empty(this.unrollStartTime.Value1))
             {
                 this.listSqlPara.Add(new SqlParameter("@UnrollStartTime_Value1", ((DateTime)this.unrollStartTime.Value1).ToString("yyyy/MM/dd")));
-                this.listSqlPara.Add(new SqlParameter("@UnrollStartTime_Value2", ((DateTime)this.unrollStartTime.Value2).ToString("yyyy/MM/dd")));
-                this.sqlWhere += " and UnrollStartTime  >= CAST(@UnrollStartTime_Value1 AS DATE) AND UnrollStartTime < DATEADD(DAY, 1, CAST(@UnrollStartTime_Value2 AS DATE))";
+                this.sqlWhere += " and UnrollStartTime  >= CAST(@UnrollStartTime_Value1 AS DATE)";
             }
 
-            if (!MyUtility.Check.Empty(this.unrollEndTime.Value1) && !MyUtility.Check.Empty(this.unrollEndTime.Value2))
+            if (!MyUtility.Check.Empty(this.unrollStartTime.Value2))
+            {
+                this.listSqlPara.Add(new SqlParameter("@UnrollStartTime_Value2", ((DateTime)this.unrollStartTime.Value2).ToString("yyyy/MM/dd")));
+                this.sqlWhere += " and UnrollStartTime < DATEADD(DAY, 1, CAST(@UnrollStartTime_Value2 AS DATE))";
+            }
+
+            if (!MyUtility.Check.Empty(this.unrollEndTime.Value1))
             {
                 this.listSqlPara.Add(new SqlParameter("@UnrollEndTime_Value1", ((DateTime)this.unrollEndTime.Value1).ToString("yyyy/MM/dd")));
-                this.listSqlPara.Add(new SqlParameter("@UnrollEndTime_Value2", ((DateTime)this.unrollEndTime.Value2).ToString("yyyy/MM/dd")));
-                this.sqlWhere += " and UnrollEndTime  >= CAST(@UnrollEndTime_Value1 AS DATE) AND UnrollEndTime < DATEADD(DAY, 1, CAST(@UnrollEndTime_Value2 AS DATE))";
+                this.sqlWhere += " and UnrollEndTime  >= CAST(@UnrollEndTime_Value1 AS DATE) ";
             }
 
-            if (!MyUtility.Check.Empty(this.RelaxationStartTime.Value1) && !MyUtility.Check.Empty(this.RelaxationStartTime.Value2))
+            if (!MyUtility.Check.Empty(this.unrollEndTime.Value2))
+            {
+                this.listSqlPara.Add(new SqlParameter("@UnrollEndTime_Value2", ((DateTime)this.unrollEndTime.Value2).ToString("yyyy/MM/dd")));
+                this.sqlWhere += " and UnrollEndTime < DATEADD(DAY, 1, CAST(@UnrollEndTime_Value2 AS DATE))";
+            }
+
+            if (!MyUtility.Check.Empty(this.RelaxationStartTime.Value1))
             {
                 this.listSqlPara.Add(new SqlParameter("@RelaxationStartTime_Value1", ((DateTime)this.RelaxationStartTime.Value1).ToString("yyyy/MM/dd")));
-                this.listSqlPara.Add(new SqlParameter("@RelaxationStartTime_Value2", ((DateTime)this.RelaxationStartTime.Value2).ToString("yyyy/MM/dd")));
-                this.sqlWhere += " and RelaxationStartTime  >= CAST(@RelaxationStartTime_Value1 AS DATE) AND RelaxationStartTime < DATEADD(DAY, 1, CAST(@RelaxationStartTime_Value2 AS DATE))";
+                this.sqlWhere += " and RelaxationStartTime  >= CAST(@RelaxationStartTime_Value1 AS DATE)";
             }
 
-            if (!MyUtility.Check.Empty(this.RelaxationEndTime.Value1) && !MyUtility.Check.Empty(this.RelaxationEndTime.Value2))
+            if (!MyUtility.Check.Empty(this.RelaxationStartTime.Value2))
+            {
+                this.listSqlPara.Add(new SqlParameter("@RelaxationStartTime_Value2", ((DateTime)this.RelaxationStartTime.Value2).ToString("yyyy/MM/dd")));
+                this.sqlWhere += " and RelaxationStartTime < DATEADD(DAY, 1, CAST(@RelaxationStartTime_Value2 AS DATE))";
+            }
+
+            if (!MyUtility.Check.Empty(this.RelaxationEndTime.Value1))
             {
                 this.listSqlPara.Add(new SqlParameter("@RelaxationEndTime_Value1", ((DateTime)this.RelaxationEndTime.Value1).ToString("yyyy/MM/dd")));
+                this.sqlWhere += " and RelaxationEndTime  >= CAST(@RelaxationEndTime_Value1 AS DATE)";
+            }
+
+            if (!MyUtility.Check.Empty(this.RelaxationEndTime.Value2))
+            {
                 this.listSqlPara.Add(new SqlParameter("@RelaxationEndTime_Value2", ((DateTime)this.RelaxationEndTime.Value2).ToString("yyyy/MM/dd")));
-                this.sqlWhere += " and RelaxationEndTime  >= CAST(@RelaxationEndTime_Value1 AS DATE) AND RelaxationEndTime < DATEADD(DAY, 1, CAST(@RelaxationEndTime_Value2 AS DATE))";
+                this.sqlWhere += " and RelaxationEndTime < DATEADD(DAY, 1, CAST(@RelaxationEndTime_Value2 AS DATE))";
             }
 
             return base.ValidateInput();
