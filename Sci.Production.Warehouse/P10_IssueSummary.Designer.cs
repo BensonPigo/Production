@@ -29,55 +29,25 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
-            this.panel4 = new Sci.Win.UI.Panel();
-            this.btnClose = new Sci.Win.UI.Button();
-            this.panel3 = new Sci.Win.UI.Panel();
             this.panel2 = new Sci.Win.UI.Panel();
             this.panel1 = new Sci.Win.UI.Panel();
-            this.panel5 = new Sci.Win.UI.Panel();
+            this.panel3 = new Sci.Win.UI.Panel();
+            this.btnClose = new Sci.Win.UI.Button();
+            this.panel4 = new Sci.Win.UI.Panel();
             this.gridArtworkSummary = new Sci.Win.UI.Grid();
-            ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
+            this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.panel4.SuspendLayout();
-            this.panel5.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gridArtworkSummary)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
             this.SuspendLayout();
-            // 
-            // panel4
-            // 
-            this.panel4.Controls.Add(this.btnClose);
-            this.panel4.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panel4.Location = new System.Drawing.Point(10, 286);
-            this.panel4.Name = "panel4";
-            this.panel4.Size = new System.Drawing.Size(346, 42);
-            this.panel4.TabIndex = 8;
-            // 
-            // btnClose
-            // 
-            this.btnClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnClose.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.btnClose.Location = new System.Drawing.Point(260, 3);
-            this.btnClose.Name = "btnClose";
-            this.btnClose.Size = new System.Drawing.Size(80, 30);
-            this.btnClose.TabIndex = 0;
-            this.btnClose.Text = "Close";
-            this.btnClose.UseVisualStyleBackColor = true;
-            // 
-            // panel3
-            // 
-            this.panel3.Dock = System.Windows.Forms.DockStyle.Top;
-            this.panel3.Location = new System.Drawing.Point(10, 0);
-            this.panel3.Name = "panel3";
-            this.panel3.Size = new System.Drawing.Size(346, 10);
-            this.panel3.TabIndex = 7;
             // 
             // panel2
             // 
             this.panel2.Dock = System.Windows.Forms.DockStyle.Right;
-            this.panel2.Location = new System.Drawing.Point(356, 0);
+            this.panel2.Location = new System.Drawing.Point(366, 0);
             this.panel2.Name = "panel2";
             this.panel2.Size = new System.Drawing.Size(10, 328);
-            this.panel2.TabIndex = 6;
+            this.panel2.TabIndex = 3;
             // 
             // panel1
             // 
@@ -85,16 +55,34 @@
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(10, 328);
-            this.panel1.TabIndex = 5;
+            this.panel1.TabIndex = 2;
             // 
-            // panel5
+            // panel3
             // 
-            this.panel5.Controls.Add(this.gridArtworkSummary);
-            this.panel5.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel5.Location = new System.Drawing.Point(0, 0);
-            this.panel5.Name = "panel5";
-            this.panel5.Size = new System.Drawing.Size(366, 328);
-            this.panel5.TabIndex = 9;
+            this.panel3.Dock = System.Windows.Forms.DockStyle.Top;
+            this.panel3.Location = new System.Drawing.Point(10, 0);
+            this.panel3.Name = "panel3";
+            this.panel3.Size = new System.Drawing.Size(356, 10);
+            this.panel3.TabIndex = 4;
+            // 
+            // btnClose
+            // 
+            this.btnClose.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.btnClose.Location = new System.Drawing.Point(267, 6);
+            this.btnClose.Name = "btnClose";
+            this.btnClose.Size = new System.Drawing.Size(80, 30);
+            this.btnClose.TabIndex = 0;
+            this.btnClose.Text = "Close";
+            this.btnClose.UseVisualStyleBackColor = true;
+            // 
+            // panel4
+            // 
+            this.panel4.Controls.Add(this.btnClose);
+            this.panel4.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.panel4.Location = new System.Drawing.Point(10, 286);
+            this.panel4.Name = "panel4";
+            this.panel4.Size = new System.Drawing.Size(356, 42);
+            this.panel4.TabIndex = 5;
             // 
             // gridArtworkSummary
             // 
@@ -104,53 +92,50 @@
             this.gridArtworkSummary.BackgroundColor = System.Drawing.SystemColors.Control;
             this.gridArtworkSummary.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
             this.gridArtworkSummary.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.gridArtworkSummary.DataSource = this.listControlBindingSource1;
             this.gridArtworkSummary.Dock = System.Windows.Forms.DockStyle.Fill;
             this.gridArtworkSummary.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
             this.gridArtworkSummary.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
             this.gridArtworkSummary.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.gridArtworkSummary.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.gridArtworkSummary.Location = new System.Drawing.Point(0, 0);
+            this.gridArtworkSummary.Location = new System.Drawing.Point(10, 10);
             this.gridArtworkSummary.Name = "gridArtworkSummary";
             this.gridArtworkSummary.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridArtworkSummary.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridArtworkSummary.RowTemplate.Height = 24;
             this.gridArtworkSummary.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridArtworkSummary.ShowCellToolTips = false;
-            this.gridArtworkSummary.Size = new System.Drawing.Size(366, 328);
-            this.gridArtworkSummary.TabIndex = 0;
+            this.gridArtworkSummary.Size = new System.Drawing.Size(356, 276);
+            this.gridArtworkSummary.TabIndex = 6;
             this.gridArtworkSummary.TabStop = false;
             // 
             // P10_IssueSummary
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(366, 328);
+            this.ClientSize = new System.Drawing.Size(376, 328);
+            this.Controls.Add(this.gridArtworkSummary);
             this.Controls.Add(this.panel4);
             this.Controls.Add(this.panel3);
             this.Controls.Add(this.panel2);
             this.Controls.Add(this.panel1);
-            this.Controls.Add(this.panel5);
             this.Name = "P10_IssueSummary";
             this.OnLineHelpID = "Sci.Win.Subs.Base";
             this.Text = "Issue Summary";
-            ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).EndInit();
             this.panel4.ResumeLayout(false);
-            this.panel5.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.gridArtworkSummary)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).EndInit();
             this.ResumeLayout(false);
 
         }
 
         #endregion
 
-        private Win.UI.ListControlBindingSource listControlBindingSource1;
-        private Win.UI.Panel panel4;
-        private Win.UI.Button btnClose;
-        private Win.UI.Panel panel3;
         private Win.UI.Panel panel2;
         private Win.UI.Panel panel1;
-        private Win.UI.Panel panel5;
+        private Win.UI.Panel panel3;
+        private Win.UI.Button btnClose;
+        private Win.UI.Panel panel4;
         private Win.UI.Grid gridArtworkSummary;
+        private Win.UI.ListControlBindingSource listControlBindingSource1;
     }
 }
