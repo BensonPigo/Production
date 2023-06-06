@@ -650,8 +650,9 @@ and IsAttachment = 1
                         string AttachmentID = MyUtility.Convert.GetString(this.CurrentDetailData["Mold"]);
                         if (GsdTable.AsEnumerable().Where(o => o["SEQ"].ToString() == seqNo && o["OperationID"].ToString() == OperationID && o["Mold"].ToString() == AttachmentID).Any())
                         {
-                            e.Cancel = true;
                             MyUtility.Msg.WarningBox("Data from Std. GSD can not be modify.");
+                            e.FormattedValue = MyUtility.Convert.GetString(this.CurrentDetailData["Mold"]);
+                            this.CurrentDetailData["Mold"] = e.FormattedValue;
                             return;
                         }
                     }
