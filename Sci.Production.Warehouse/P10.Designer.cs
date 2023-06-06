@@ -351,7 +351,7 @@
             // btnIssueSummary
             // 
             this.btnIssueSummary.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnIssueSummary.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
+            this.btnIssueSummary.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
             this.btnIssueSummary.Location = new System.Drawing.Point(839, 106);
             this.btnIssueSummary.Name = "btnIssueSummary";
             this.btnIssueSummary.Size = new System.Drawing.Size(162, 30);
