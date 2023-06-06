@@ -114,22 +114,32 @@ namespace Sci.Production.IE
             if (this.chkpage.Checked && ttlnocount > this.changp)
             {
                 sqlp1 = $@"
-select no = count(distinct no)
+select no 
+into #tmp
 from LineMapping_Detail ld WITH (NOLOCK)
 where ld.ID = '{MyUtility.Convert.GetString(this.masterData["ID"])}'
-and (ld.IsPPa = 0 or ld.IsPPa is null) 
+and ld.PPA != 'C'
 and (ld.IsHide = 0 or ld.IsHide is null)
-and no<={this.changp}
-{(!this.isPPA ? " and ld.PPA != 'C' " : string.Empty)}
+
+select count(distinct no)
+FROM #tmp
+where  no <= {this.changp}
+
+drop table #tmp
 ";
                 sqlp2 = $@"
-select no = count(distinct no)
+select no 
+into #tmp
 from LineMapping_Detail ld WITH (NOLOCK)
 where ld.ID = '{MyUtility.Convert.GetString(this.masterData["ID"])} '
-and (ld.IsPPa = 0 or ld.IsPPa is null) 
+and ld.PPA != 'C'
 and (ld.IsHide = 0 or ld.IsHide is null)
-and no>{this.changp}
-{(!this.isPPA ? " and ld.PPA != 'C'  " : string.Empty)}
+
+select count(distinct no)
+FROM #tmp
+where  no > {this.changp}
+
+drop table #tmp
 ";
                 this.count1 = MyUtility.Convert.GetDecimal(MyUtility.GetValue.Lookup(sqlp1));
                 this.count2 = MyUtility.Convert.GetDecimal(MyUtility.GetValue.Lookup(sqlp2));
@@ -151,7 +161,7 @@ where ld.ID = '{MyUtility.Convert.GetString(this.masterData["ID"])}'
 --and IsPPa = 1 
 and IsHide = 0 
 and no <= '{this.changpPPA}'
-{(!this.isPPA ? " and ld.PPA != 'C' and ld.PPA != '' " : " and ld.PPA != '' " )}
+{(!this.isPPA ? " and ld.PPA != 'C' " : " and ld.PPA = 'C' ")}
 ";
                 sqlp2 = $@"
 select no = count(distinct no)
@@ -160,7 +170,7 @@ where ld.ID = '{MyUtility.Convert.GetString(this.masterData["ID"])}'
 --and IsPPa = 1 
 and IsHide = 0 
 and no > '{this.changpPPA}'
-{(!this.isPPA ? " and ld.PPA != 'C' and ld.PPA != '' " : " and ld.PPA != '' " )}
+{(!this.isPPA ? " and ld.PPA != 'C' " : string.Empty)}
 ";
                 this.count1PPA = MyUtility.Convert.GetDecimal(MyUtility.GetValue.Lookup(sqlp1));
                 this.count2PPA = MyUtility.Convert.GetDecimal(MyUtility.GetValue.Lookup(sqlp2));
@@ -174,7 +184,7 @@ from LineMapping_Detail ld WITH (NOLOCK)
 where ld.ID = '{MyUtility.Convert.GetString(this.masterData["ID"])}' 
 --and IsPPa = 1 
 and IsHide = 0
-{(!this.isPPA ? " and ld.PPA != 'C' and ld.PPA != '' " : " and ld.PPA != '' ")}
+{(!this.isPPA ? " and ld.PPA != 'C' " : string.Empty)}
 ";
                 this.count1PPA = MyUtility.Convert.GetDecimal(MyUtility.GetValue.Lookup(sqlp1));
                 this.changePPA = false;
@@ -439,7 +449,7 @@ left join MachineType m WITH (NOLOCK) on m.id =  MachineTypeID
 left join Operation o WITH (NOLOCK) on o.ID = ld.OperationID
 where ld.ID = {MyUtility.Convert.GetString(this.masterData["ID"])} and (ld.IsHide = 1 or ld.IsPPa  = 1)
 and left(ld.OperationID, 2) != '--'
-and (ld.IsHide = 1 or {(!this.isPPA ? "( ld.PPA != 'C' and ld.PPA != '' ) " : " ld.PPA != '' ")})
+and (ld.IsHide = 1  {(!this.isPPA ? "or ld.PPA != 'C' " : string.Empty)})
 order by ld.No,ld.GroupKey
 
 
@@ -483,10 +493,9 @@ OUTER APPLY(
 	)b
 )ActCycle
 where ld.ID = {MyUtility.Convert.GetString(this.masterData["ID"])} 
-and (ld.IsPPa = 0 or ld.IsPPa is null) 
 and (ld.IsHide = 0 or ld.IsHide is null)
 and no <> ''
-and ld.PPA <> 'C'
+and ld.PPA != 'C' 
 GROUP BY NO ,ActCycle.Value
 order by no
 ";
@@ -504,14 +513,20 @@ order by no
                 #region
 
                 sqlCmd = $@"
+select distinct ld.ID ,no
+into #tmpBase
+from LineMapping_Detail ld WITH (NOLOCK)
+where ld.ID = '{MyUtility.Convert.GetString(this.masterData["ID"])}'
+and ld.PPA != 'C'
+and (ld.IsHide = 0 or ld.IsHide is null)
+
+
 select id, minno = min(no), maxno = max(no)
 into #tmp
 from(
-	select distinct ld.ID,no
-	from LineMapping_Detail ld WITH (NOLOCK)
-	where ld.ID = {MyUtility.Convert.GetString(this.masterData["ID"])} and (IsPPa = 0 or IsPPa is null)
-	and no <= {this.changp} and ld.PPA = ''
-    --{(!this.isPPA ? " and ld.PPA != 'C'  " : string.Empty)}
+	select  ID ,no
+	from #tmpBase
+	where no <= {this.changp} 
 )x
 group by ID
 
@@ -547,10 +562,10 @@ and (ld.IsHide = 0 or ld.IsHide is null)
 and no between t.minno and t.maxno
 and no <> ''
 and ld.PPA != 'C'
---{(!this.isPPA ? " and ld.PPA != 'C'  " : string.Empty)}
 GROUP BY NO ,ActCycle.Value
 order by no
 
+drop table #tmpBase,#tmp
 ";
 
                 result = DBProxy.Current.Select(null, sqlCmd, out this.nodist);
@@ -561,14 +576,20 @@ order by no
                 }
 
                 sqlCmd = $@"
+select distinct ld.ID ,no
+into #tmpBase
+from LineMapping_Detail ld WITH (NOLOCK)
+where ld.ID = '{MyUtility.Convert.GetString(this.masterData["ID"])}'
+and ld.PPA != 'C'
+and (ld.IsHide = 0 or ld.IsHide is null)
+
+
 select id, minno = min(no), maxno = max(no)
 into #tmp
 from(
-	select distinct ld.ID,no
-	from LineMapping_Detail ld WITH (NOLOCK)
-	where ld.ID = {MyUtility.Convert.GetString(this.masterData["ID"])} and (IsPPa = 0 or IsPPa is null) 
-    {(!this.isPPA ? " and ld.PPA != 'C'  " : string.Empty)}
-	and no > {this.changp}
+	select  ID ,no
+	from #tmpBase
+	where no > {this.changp} 
 )x
 group by ID
 
@@ -601,7 +622,7 @@ OUTER APPLY(
 where  (ld.IsPPa = 0 or ld.IsPPa is null) 
 and (ld.IsHide = 0 or ld.IsHide is null) 
 and no between t.minno and t.maxno
-{(!this.isPPA ? " and ld.PPA != 'C' " : string.Empty)}
+and ld.PPA != 'C'
 GROUP BY NO ,ActCycle.Value
 order by no
 
@@ -626,6 +647,7 @@ select No
     ,[ActCycle] = Max(ld.ActCycle)
     ,[ActCycleTime(average)]=ActCycle.Value
 from LineMapping_Detail ld WITH (NOLOCK) 
+left join MachineType m WITH (NOLOCK) on m.id =  ld.MachineTypeID
 OUTER APPLY(
 	SELECT [Value]=SUM(ActCycle)/COUNT(NO) FROM 
 	(
@@ -643,13 +665,17 @@ OUTER APPLY(
 			from LineMapping_Detail ldd WITH (NOLOCK) 
 			left join Employee e WITH (NOLOCK) on ldd.EmployeeID = e.ID
 			left join Operation o WITH (NOLOCK) on ldd.OperationID = o.ID
-			where ldd.ID = {MyUtility.Convert.GetString(this.masterData["ID"])} /*and IsPPa = 1*/ and IsHide = 0
-                    {(!this.isPPA ? " and ldd.PPA = 'C' and ldd.PPA != '' " : " and ldd.PPA = 'C' ")}
+			where ldd.ID = {MyUtility.Convert.GetString(this.masterData["ID"])} and IsHide = 0 and ldd.PPA = 'C' 
 		)a
 	)b
 )ActCycle
-where ld.ID = {MyUtility.Convert.GetString(this.masterData["ID"])} /*and IsPPa = 1*/ and IsHide = 0
-    {(!this.isPPA ? " and ld.PPA = 'C' and ld.PPA != '' " : " and ld.PPA = 'C' " )}
+where ld.ID = {MyUtility.Convert.GetString(this.masterData["ID"])} and IsHide = 0
+
+{(!this.nonSewing ? $@" and not exists(
+    select 1 from MachineType_Detail md where md.ID = m.ID and md.IsNonSewingLine = 1
+)" : string.Empty)}
+
+{(!this.isPPA ? " and ld.PPA = 'C' and ld.PPA != '' " : " and ld.PPA = 'C' " )}
 GROUP BY NO, ActCycle.Value
 order by NO
 
@@ -673,8 +699,7 @@ into #tmp
 from(
 	select distinct ld.ID,no
 	from LineMapping_Detail ld WITH (NOLOCK)
-	where ld.ID = {MyUtility.Convert.GetString(this.masterData["ID"])} /*and IsPPa = 1 */and IsHide = 0 
-    {(!this.isPPA ? " and ld.PPA  = 'C' and ld.PPA != ''  " : " and ld.PPA = 'C' ")}
+	where ld.ID = {MyUtility.Convert.GetString(this.masterData["ID"])} and IsHide = 0 and ld.PPA = 'C' 
 	and no <= '{this.changpPPA}'
 )x
 group by ID
@@ -685,6 +710,7 @@ select No
     ,[ActCycleTime(average)]=ActCycle.Value
 from LineMapping_Detail ld WITH (NOLOCK) 
 inner join #tmp t on ld.ID = t.ID
+left join MachineType m WITH (NOLOCK) on m.id =  ld.MachineTypeID
 OUTER APPLY(
 	SELECT [Value]=SUM(ActCycle)/COUNT(NO) FROM 
 	(
@@ -702,14 +728,16 @@ OUTER APPLY(
 			from LineMapping_Detail ldd WITH (NOLOCK) 
 			left join Employee e WITH (NOLOCK) on ldd.EmployeeID = e.ID
 			left join Operation o WITH (NOLOCK) on ldd.OperationID = o.ID
-			where ldd.ID = {MyUtility.Convert.GetString(this.masterData["ID"])} AND No <> '' /*and IsPPa = 1*/ and IsHide = 0
-                    {(!this.isPPA ? " and ldd.PPA = 'C' and ldd.PPA != '' " : " and ldd.PPA = 'C' ")}
+			where ldd.ID = {MyUtility.Convert.GetString(this.masterData["ID"])} AND No <> '' and IsHide = 0 and ldd.PPA = 'C' 
 		)a
 	)b
 )ActCycle
 where /*IsPPa = 1 and*/  IsHide = 0 
 and no between t.minno and t.maxno
-    {(!this.isPPA ? " and ld.PPA = 'C' and ld.PPA != '' " : " and ld.PPA = 'C' ")}
+and ld.PPA = 'C' 
+{(!this.nonSewing ? $@" and not exists(
+    select 1 from MachineType_Detail md where md.ID = m.ID and md.IsNonSewingLine = 1
+)" : string.Empty)}
 GROUP BY NO, ActCycle.Value
 order by NO
 ";
@@ -726,7 +754,7 @@ into #tmp
 from(
 	select distinct ld.ID,no
 	from LineMapping_Detail ld WITH (NOLOCK)
-	where ld.ID = {MyUtility.Convert.GetString(this.masterData["ID"])} /*and IsPPa = 1*/ and IsHide = 0 
+	where ld.ID = {MyUtility.Convert.GetString(this.masterData["ID"])} and IsHide = 0 
     {(!this.isPPA ? " and ld.PPA != 'C' " : " and ld.PPA != '' ")}
 	and no > '{this.changpPPA}'
 )x
@@ -738,6 +766,7 @@ select No
     ,[ActCycleTime(average)]=ActCycle.Value
 from LineMapping_Detail ld WITH (NOLOCK) 
 inner join #tmp t on ld.ID = t.ID
+left join MachineType m WITH (NOLOCK) on m.id =  ld.MachineTypeID
 OUTER APPLY(
 	SELECT [Value]=SUM(ActCycle)/COUNT(NO) FROM 
 	(
@@ -755,14 +784,17 @@ OUTER APPLY(
 			from LineMapping_Detail ldd WITH (NOLOCK) 
 			left join Employee e WITH (NOLOCK) on ldd.EmployeeID = e.ID
 			left join Operation o WITH (NOLOCK) on ldd.OperationID = o.ID
-			where ldd.ID = {MyUtility.Convert.GetString(this.masterData["ID"])} /*AND IsPPa = 1*/ and IsHide = 0 
-                    {(!this.isPPA ? " and ldd.PPA = 'C' and ldd.PPA != '' " : " and ldd.PPA = 'C' ")}
+			where ldd.ID = {MyUtility.Convert.GetString(this.masterData["ID"])} and IsHide = 0 and ldd.PPA = 'C'
 		)a
 	)b
 )ActCycle
-where /*IsPPa = 1 and*/ IsHide = 0 
+where IsHide = 0 
 and no between t.minno and t.maxno
-    {(!this.isPPA ? " and ld.PPA = 'C' and ld.PPA != '' " : " and ld.PPA = 'C' ")}
+and ld.PPA = 'C'
+{(!this.nonSewing ? $@" and not exists(
+    select 1 from MachineType_Detail md where md.ID = m.ID and md.IsNonSewingLine = 1
+)" : string.Empty)}
+
 GROUP BY NO, ActCycle.Value
 order by NO
 
