@@ -2,13 +2,13 @@
 using Newtonsoft.Json;
 using Sci.Data;
 using Sci.Production.CallPmsAPI;
+using Sci.Production.Class.Command;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text.RegularExpressions;
 using Excel = Microsoft.Office.Interop.Excel;
 
 namespace Sci.Production.Shipping
@@ -237,7 +237,7 @@ outer apply (select [val] = iif(f.LocalCMT = 1, dbo.GetLocalPurchaseStdCost(o.ID
                     PackingA2BWebAPI_Model.DataBySql dataBySql = new PackingA2BWebAPI_Model.DataBySql()
                     {
                         SqlString = sqlGetPackingA2B,
-                        TmpTable = JsonConvert.SerializeObject(dtA2BGMT),
+                        TmpTable = JsonConvert.SerializeObject(dtA2BGMT.Select($"PLFromRgCode = '{groupA2BGMT.Key}'").CopyToDataTable()),
                     };
 
                     DataTable dtA2BPAcking;
