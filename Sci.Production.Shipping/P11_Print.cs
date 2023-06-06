@@ -133,16 +133,16 @@ select	distinct ID = '',
 		[InvDate] = cast(null as date),
         gbd.PLFromRgCode,
         [PackID] = '',
-        [GRS_WEIGHT] = 0,
-        [Qty] = 0,
+        [GRS_WEIGHT] = cast(0 as numeric(11,3)),
+        [Qty] = cast(0 as numeric(25,4)),
         [OrderID] = '',
         CustPONo = '',
         StyleID = '',
 		Description = '',	
-        [ShipQty] = 0,
+        [ShipQty] = cast(0 as numeric(25,4)),
         [Dest] = '',
         INVNo = '',
-        UnitPriceUSD = cast(0 as float)
+        UnitPriceUSD = cast(0 as numeric(25,4))
 from GMTBooking gb
 left join GMTBooking_Detail gbd with (nolock) on gbd.ID = gb.ID
 where	1=1
@@ -158,16 +158,16 @@ select distinct	bi.ID,
 		[InvDate] = bi.InvDate,
         gbd.PLFromRgCode,
         [PackID] = '',
-        [GRS_WEIGHT] = 0,
-        [Qty] = 0,
+        [GRS_WEIGHT] = cast(0 as numeric(11,3)),
+        [Qty] = cast(0 as numeric(25,4)),
         [OrderID] = '',
         CustPONo = '',
         StyleID = '',
 		Description = '',	
-        [ShipQty] = 0,
+        [ShipQty] = cast(0 as numeric(25,4)),
         [Dest] = '',
         INVNo = '',
-        UnitPriceUSD = cast(0 as float)
+        UnitPriceUSD = cast(0 as numeric(25,4))
 from BIRInvoice bi with (nolock)
 inner join BIRInvoice_Detail bd with (nolock) on bi.ID = bd.ID
 inner join GMTBooking gb on bi.ID = gb.CMTInvoiceNo
