@@ -285,7 +285,16 @@ DROP TABLE #tmpOrderMain,#tmpPackingList_Detail,#tmpInspection,#tmpInspection_St
 ");
             #endregion
 
-            return DBProxy.Current.Select(string.Empty, sqlcmd.ToString(), out this.printData);
+            DBProxy.Current.DefaultTimeout = 600;
+            DualResult result = DBProxy.Current.Select(string.Empty, sqlcmd.ToString(), out this.printData);
+            DBProxy.Current.DefaultTimeout = 300;
+            if (!result)
+            {
+                DualResult failResult = new DualResult(false, "Query data fail\r\n" + result.ToString());
+                return failResult;
+            }
+
+            return result;
         }
 
         /// <inheritdoc/>
