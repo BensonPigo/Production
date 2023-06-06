@@ -185,7 +185,7 @@ select tmp.Roll
 	, Remark
 	, location
 	, ContainerCode
-	, [balance] = sum(TMP.inqty - TMP.outqty + tmp.adjust - tmp.ReturnQty) over (partition by tmp.stocktype,tmp.roll,tmp.dyelot order by tmp.IssueDate,tmp.stocktype,tmp.inqty desc,tmp.iD )
+	, [balance] = sum(TMP.inqty - TMP.outqty + tmp.adjust - tmp.ReturnQty) over (partition by tmp.stocktype,tmp.roll,tmp.dyelot order by tmp.IssueDate,tmp.stocktype,tmp.inqty desc,tmp.iD,tmp.ToPOID,tmp.ToSeq )
     , GW
     , ActW
     , ToPOID
@@ -664,6 +664,7 @@ union all
 ) tmp
 where stocktype <> 'O'
 group by IssueDate,inqty,outqty,adjust,ReturnQty,id,Remark,location,tmp.name,tmp.roll,tmp.stocktype,tmp.dyelot,tmp.ContainerCode, tmp.GW, tmp.ActW,ToPOID,ToSeq
+order by tmp.IssueDate,tmp.stocktype,tmp.inqty desc,tmp.iD
 
 ",
                     this.dr["id"].ToString(),
