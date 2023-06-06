@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             this.radioPanel1 = new Sci.Win.UI.RadioPanel();
+            this.rdbtnShippingMarkLLL = new Sci.Win.UI.RadioButton();
             this.radioBarcodePrintOther = new Sci.Win.UI.RadioButton();
             this.radioCustCTN = new Sci.Win.UI.RadioButton();
             this.radioQRcodePrint = new Sci.Win.UI.RadioButton();
@@ -49,7 +50,8 @@
             this.labelCTN = new Sci.Win.UI.Label();
             this.label1 = new Sci.Win.UI.Label();
             this.checkBoxCountry = new Sci.Win.UI.CheckBox();
-            this.rdbtnShippingMarkLLL = new Sci.Win.UI.RadioButton();
+            this.comboType = new Sci.Win.UI.ComboBox();
+            this.label3 = new Sci.Win.UI.Label();
             this.radioPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -67,6 +69,8 @@
             // 
             // radioPanel1
             // 
+            this.radioPanel1.Controls.Add(this.comboType);
+            this.radioPanel1.Controls.Add(this.label3);
             this.radioPanel1.Controls.Add(this.rdbtnShippingMarkLLL);
             this.radioPanel1.Controls.Add(this.radioBarcodePrintOther);
             this.radioPanel1.Controls.Add(this.radioCustCTN);
@@ -86,6 +90,19 @@
             this.radioPanel1.Name = "radioPanel1";
             this.radioPanel1.Size = new System.Drawing.Size(427, 367);
             this.radioPanel1.TabIndex = 94;
+            // 
+            // rdbtnShippingMarkLLL
+            // 
+            this.rdbtnShippingMarkLLL.AutoSize = true;
+            this.rdbtnShippingMarkLLL.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.rdbtnShippingMarkLLL.Location = new System.Drawing.Point(3, 84);
+            this.rdbtnShippingMarkLLL.Name = "rdbtnShippingMarkLLL";
+            this.rdbtnShippingMarkLLL.Size = new System.Drawing.Size(229, 21);
+            this.rdbtnShippingMarkLLL.TabIndex = 14;
+            this.rdbtnShippingMarkLLL.TabStop = true;
+            this.rdbtnShippingMarkLLL.Text = "Packing Shipping Mark (for LLL)";
+            this.rdbtnShippingMarkLLL.UseVisualStyleBackColor = true;
+            this.rdbtnShippingMarkLLL.CheckedChanged += new System.EventHandler(this.RdbtnShippingMarkLLL_CheckedChanged);
             // 
             // radioBarcodePrintOther
             // 
@@ -322,18 +339,27 @@
             this.checkBoxCountry.TabIndex = 100;
             this.checkBoxCountry.UseVisualStyleBackColor = true;
             // 
-            // rdbtnShippingMarkLLL
+            // comboType
             // 
-            this.rdbtnShippingMarkLLL.AutoSize = true;
-            this.rdbtnShippingMarkLLL.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.rdbtnShippingMarkLLL.Location = new System.Drawing.Point(3, 84);
-            this.rdbtnShippingMarkLLL.Name = "rdbtnShippingMarkLLL";
-            this.rdbtnShippingMarkLLL.Size = new System.Drawing.Size(229, 21);
-            this.rdbtnShippingMarkLLL.TabIndex = 14;
-            this.rdbtnShippingMarkLLL.TabStop = true;
-            this.rdbtnShippingMarkLLL.Text = "Packing Shipping Mark (for LLL)";
-            this.rdbtnShippingMarkLLL.UseVisualStyleBackColor = true;
-            this.rdbtnShippingMarkLLL.CheckedChanged += new System.EventHandler(this.RdbtnShippingMarkLLL_CheckedChanged);
+            this.comboType.BackColor = System.Drawing.Color.White;
+            this.comboType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboType.FormattingEnabled = true;
+            this.comboType.IsSupportUnselect = true;
+            this.comboType.Location = new System.Drawing.Point(160, 283);
+            this.comboType.Name = "comboType";
+            this.comboType.OldText = "";
+            this.comboType.Size = new System.Drawing.Size(94, 24);
+            this.comboType.TabIndex = 16;
+            // 
+            // label3
+            // 
+            this.label3.BackColor = System.Drawing.Color.Transparent;
+            this.label3.Location = new System.Drawing.Point(118, 283);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(39, 23);
+            this.label3.TabIndex = 15;
+            this.label3.Text = "Type:";
+            this.label3.TextStyle.Color = System.Drawing.Color.Black;
             // 
             // P03_Print
             // 
@@ -392,5 +418,7 @@
         private Win.UI.RadioButton radioCustCTN;
         private Win.UI.RadioButton radioBarcodePrintOther;
         private Win.UI.RadioButton rdbtnShippingMarkLLL;
+        private Win.UI.ComboBox comboType;
+        private Win.UI.Label label3;
     }
 }
