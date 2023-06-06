@@ -212,6 +212,12 @@
       <DependentUpon>P07_PrintAccessorySticker.cs</DependentUpon>
     </Compile>
     <Compile Include="P07_PrintAccessorySticker_Data.cs" />
+    <Compile Include="P10_IssueSummary.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P10_IssueSummary.Designer.cs">
+      <DependentUpon>P10_IssueSummary.cs</DependentUpon>
+    </Compile>
     <Compile Include="P23_Print.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -1688,6 +1694,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="P07_PrintAccessorySticker.resx">
       <DependentUpon>P07_PrintAccessorySticker.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P10_IssueSummary.resx">
+      <DependentUpon>P10_IssueSummary.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P23_Print.resx">
       <DependentUpon>P23_Print.cs</DependentUpon>
