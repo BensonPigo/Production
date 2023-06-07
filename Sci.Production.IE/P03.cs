@@ -545,17 +545,7 @@ and BrandID = '{this.CurrentMaintain["BrandID"]}'
                 DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
                 if (this.EditMode && e.Button == MouseButtons.Right)
                 {
-                    DataTable GSD = this.GetDataFromP01();
-
-                    if (GSD != null && !MyUtility.Check.Empty(this.CurrentDetailData["Attachment"]) && GSD.AsEnumerable().Where(o => MyUtility.Convert.GetString(o["OriNo"]) == MyUtility.Convert.GetString(this.CurrentDetailData["OriNo"])
-                        && MyUtility.Convert.GetString(o["OperationID"]) == MyUtility.Convert.GetString(this.CurrentDetailData["OperationID"])
-                        && MyUtility.Convert.GetString(o["Attachment"]) == MyUtility.Convert.GetString(this.CurrentDetailData["Attachment"])).Any())
-                    {
-                        MyUtility.Msg.InfoBox("Data from GSD can not be modify.");
-                        return;
-                    }
-
-                        string sqlcmd = @"
+                    string sqlcmd = @"
 select ID,DescEN 
 from Mold WITH (NOLOCK) 
 where Junk = 0
@@ -586,19 +576,6 @@ and IsAttachment = 1";
                 if (this.EditMode)
                 {
                     DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
-
-                    DataTable GSD = this.GetDataFromP01();
-
-                    if (GSD != null && !MyUtility.Check.Empty(this.CurrentDetailData["Attachment"]) && MyUtility.Convert.GetString(this.CurrentDetailData["Attachment"]) != e.FormattedValue.ToString()
-                    && GSD.AsEnumerable().Where(o => MyUtility.Convert.GetString(o["OriNo"]) == MyUtility.Convert.GetString(this.CurrentDetailData["OriNo"])
-                        && MyUtility.Convert.GetString(o["OperationID"]) == MyUtility.Convert.GetString(this.CurrentDetailData["OperationID"])
-                        && MyUtility.Convert.GetString(o["Attachment"]) == MyUtility.Convert.GetString(this.CurrentDetailData["Attachment"])).Any())
-                    {
-                        MyUtility.Msg.InfoBox("Data from GSD can not be modify.");
-                        e.FormattedValue = MyUtility.Convert.GetString(this.CurrentDetailData["Attachment"]);
-                        this.CurrentDetailData["Attachment"] = e.FormattedValue;
-                        return;
-                    }
 
                     List<SqlParameter> cmds = new List<SqlParameter>() { new SqlParameter { ParameterName = "@OperationID", Value = MyUtility.Convert.GetString(this.CurrentDetailData["OperationID"]) } };
                     string sqlcmd = @"
@@ -667,22 +644,23 @@ where Junk = 0";
 
                     // 不存在 Mold
                     var existsMold = getMold.Except(dtMold.AsEnumerable().Select(x => x.Field<string>("ID")).ToList());
+                    getMold.AddRange(operationList);
                     if (existsMold.Any())
                     {
                         e.Cancel = true;
-                        this.CurrentDetailData["Attachment"] = string.Join(",", getMold.Where(x => existsMold.Where(y => !y.EqualString(x)).Any()).ToList());
-                        this.CurrentDetailData["MoldID"] = string.Join(",", getMold.Where(x => existsMold.Where(y => !y.EqualString(x)).Any()).ToList());
+                        this.CurrentDetailData["Attachment"] = string.Join(",", getMold.Where(x => existsMold.Where(y => !y.EqualString(x)).Any()).Distinct().ToList());
+                        this.CurrentDetailData["MoldID"] = string.Join(",", getMold.Where(x => existsMold.Where(y => !y.EqualString(x)).Any()).Distinct().ToList());
                         MyUtility.Msg.WarningBox("Attachment : " + string.Join(",", existsMold.ToList()) + "  need include in Mold setting !!", "Data need include in setting");
                         return;
                     }
 
-                    if (MyUtility.Convert.GetString(this.CurrentDetailData["Attachment"]) != string.Join(",", getMold.ToList()))
+                    if (MyUtility.Convert.GetString(this.CurrentDetailData["Attachment"]) != string.Join(",", getMold.Distinct().ToList()))
                     {
                         this.CurrentDetailData["SewingMachineAttachmentID"] = string.Empty;
                     }
 
-                    this.CurrentDetailData["Attachment"] = string.Join(",", getMold.ToList());
-                    this.CurrentDetailData["MoldID"] = string.Join(",", getMold.ToList());
+                    this.CurrentDetailData["Attachment"] = string.Join(",", getMold.Distinct().ToList());
+                    this.CurrentDetailData["MoldID"] = string.Join(",", getMold.Distinct().ToList());
                 }
             };
             #endregion
@@ -691,24 +669,18 @@ where Junk = 0";
             {
                 if (this.EditMode && e.Button == MouseButtons.Right)
                 {
-                    DataTable GSD = this.GetDataFromP01();
-
-                    if (GSD != null && !MyUtility.Check.Empty(this.CurrentDetailData["Template"]) && GSD.AsEnumerable().Where(o => MyUtility.Convert.GetString(o["OriNo"]) == MyUtility.Convert.GetString(this.CurrentDetailData["OriNo"])
-                        && MyUtility.Convert.GetString(o["OperationID"]) == MyUtility.Convert.GetString(this.CurrentDetailData["OperationID"])
-                        && MyUtility.Convert.GetString(o["Template"]) == MyUtility.Convert.GetString(this.CurrentDetailData["Template"])).Any())
-                    {
-                        MyUtility.Msg.InfoBox("Data from GSD can not be wmpty.");
-                        return;
-                    }
-
                     string sqlcmd = @"
 select PartID = smt.ID , m.DescEN ,MoldID = m.ID
 from Mold m WITH (NOLOCK)
 right join SewingMachineTemplate smt on m.ID = smt.MoldID
 where m.Junk = 0 and m.IsTemplate = 1 and smt.Junk = 0
+UNION
+SELECT PartID=ID , DescEN ,MoldID = ID
+from Mold
+where Junk=0 and IsTemplate=1
 ";
 
-                    SelectItem2 item = new SelectItem2(sqlcmd, "PartID,DescEN,MoldID", "13,60,20", this.CurrentDetailData["Template"].ToString(), null, null, null)
+                    SelectItem2 item = new SelectItem2(sqlcmd, "MoldID,DescEN,PartID", "13,60,20", this.CurrentDetailData["Template"].ToString(), null, null, null)
                     {
                         Width = 1000,
                     };
@@ -736,24 +708,6 @@ where m.Junk = 0 and m.IsTemplate = 1 and smt.Junk = 0
             {
                 if (this.EditMode)
                 {
-                    DataTable GSD = this.GetDataFromP01();
-
-                    if (GSD != null && !MyUtility.Check.Empty(this.CurrentDetailData["Template"]) && MyUtility.Convert.GetString(this.CurrentDetailData["Template"]) != e.FormattedValue.ToString()
-                    && GSD.AsEnumerable().Where(o => MyUtility.Convert.GetString(o["OriNo"]) == MyUtility.Convert.GetString(this.CurrentDetailData["OriNo"])
-                        && MyUtility.Convert.GetString(o["OperationID"]) == MyUtility.Convert.GetString(this.CurrentDetailData["OperationID"])
-                        && MyUtility.Convert.GetString(o["Template"]) == MyUtility.Convert.GetString(this.CurrentDetailData["Template"])).Any())
-                    {
-                        MyUtility.Msg.InfoBox("Data from GSD can not be wmpty.");
-                        e.FormattedValue = MyUtility.Convert.GetString(this.CurrentDetailData["Template"]);
-                        this.CurrentDetailData["Template"] = e.FormattedValue;
-                        return;
-                    }
-
-                    if (MyUtility.Convert.GetString(this.CurrentDetailData["Template"]) == e.FormattedValue.ToString())
-                    {
-                        return;
-                    }
-
                     List<SqlParameter> cmds = new List<SqlParameter>() { new SqlParameter { ParameterName = "@OperationID", Value = MyUtility.Convert.GetString(this.CurrentDetailData["OperationID"]) } };
                     string sqlcmd = @"
 select [Mold] = STUFF((
@@ -800,8 +754,11 @@ select PartID = smt.ID , m.DescEN ,MoldID = m.ID
 from Mold m WITH (NOLOCK)
 right join SewingMachineTemplate smt on m.ID = smt.MoldID
 where m.Junk = 0 and m.IsTemplate = 1 and smt.Junk = 0
+UNION
+SELECT PartID=ID , DescEN ,MoldID = ID
+from Mold
+where Junk=0 and IsTemplate=1
 ";
-
                     DataTable dt;
                     DBProxy.Current.Select(null, sqlcmd, out dt);
                     string[] getLocation = this.CurrentDetailData["Template"].ToString().Split(',').Distinct().ToArray();
@@ -2108,85 +2065,91 @@ order by case when ld.No = '' then 1
 
         private DataTable GetDataFromP01()
         {
-            DataRow timeStudy;
-            DataTable timeStudy_Detail;
-            string sqlCmd = string.Format(
-                @"
-select t.* 
-from TimeStudy t WITH (NOLOCK) 
-	 , Style s WITH (NOLOCK) 
-where t.StyleID = s.ID 
-	  and t.BrandID = s.BrandID 
-	  and t.SeasonID = s.SeasonID 
-	  and s.Ukey = {0}
-	  and t.ComboType = '{1}'",
-                this.CurrentMaintain["StyleUkey"].ToString(),
-                this.CurrentMaintain["ComboType"].ToString());
+            //            DataRow timeStudy;
+            //            DataTable timeStudy_Detail;
+            //            string sqlCmd = string.Format(
+            //                @"
+            //select t.* 
+            //from TimeStudy t WITH (NOLOCK) 
+            //	 , Style s WITH (NOLOCK) 
+            //where t.StyleID = s.ID 
+            //	  and t.BrandID = s.BrandID 
+            //	  and t.SeasonID = s.SeasonID 
+            //	  and s.Ukey = {0}
+            //	  and t.ComboType = '{1}'",
+            //                this.CurrentMaintain["StyleUkey"].ToString(),
+            //                this.CurrentMaintain["ComboType"].ToString());
 
-            if (!MyUtility.Check.Seek(sqlCmd, out timeStudy))
-            {
-                MyUtility.Msg.WarningBox("Fty GSD data not found!!");
-                return  null;
-            }
+            //            if (!MyUtility.Check.Seek(sqlCmd, out timeStudy))
+            //            {
+            //                MyUtility.Msg.WarningBox("Fty GSD data not found!!");
+            //                return  null;
+            //            }
 
-            sqlCmd = $@"
-select ID = null
-	   , No = ''
-	   , OriNo = td.Seq
-	   , td.Annotation
-	   , GSD = td.SMV
-	   , TotalGSD = td.SMV
-	   , Cycle = td.SMV
-	   , TotalCycle = td.SMV
-	   , td.MachineTypeID
-	   , [Attachment] = STUFF((
-					select concat(',' ,s.Data)
-					from SplitString(td.Mold, ',') s
-					where not exists (select 1 from Mold m WITH (NOLOCK) where s.Data = m.ID and (m.Junk = 1 or m.IsTemplate = 1)) 
-					for xml path ('')) 
-				,1,1,'')
-	    , [Template] = STUFF((
-					select concat(',' ,s.Data)
-					from SplitString(td.Template, ',') s
-					where not exists (select 1 from Mold m WITH (NOLOCK) where s.Data = m.ID and (m.Junk = 1 or m.IsAttachment = 1)) 
-					for xml path ('')) 
-				,1,1,'')
-	   , td.OperationID
-	   , MoldID = td.Mold
-       , td.SewingMachineAttachmentID
-	   , GroupKey = 0
-	   , New = 0
-	   , EmployeeID = ''
-	   , Description = IIF(td.MachineTypeID IS NULL OR td.MachineTypeID = '' ,td.OperationID ,o.DescEN )
-	   , EmployeeName = ''
-	   , EmployeeSkill = ''
-	   , Efficiency = 100
-       , IsPPA = iif(CHARINDEX('--', td.OperationID) > 0, 0, iif(td.SMV > 0, 0, 1))
-       ,o.MasterPlusGroup
-	   ,[IsHide] = cast(
-			   case when SUBSTRING(td.OperationID, 1, 2) = '--' then 1
-			   when show.IsDesignatedArea = 1 then 1
-			   when isnull(td.IsSubprocess,0) = 1 then 1
-			   else 0 
-			   end			
-		as bit)
-	   ,[IsGroupHeader] = cast(iif(SUBSTRING(td.OperationID, 1, 2) = '--', 1, 0) as bit)
-       ,[IsShow] = cast(iif( td.OperationID like '--%' , 1, isnull(show.IsShowinIEP03, 1)) as bit)
-from TimeStudy_Detail td WITH (NOLOCK)
-left join Operation o WITH (NOLOCK) on td.OperationID = o.ID
-outer apply (
-	select IsShowinIEP03 = IIF(isnull(md.IsNotShownInP03, 0) = 0, 1, 0)
-		, IsDesignatedArea = ISNULL(md.IsNonSewingLine,0)
-	from MachineType m WITH (NOLOCK)
-    inner join MachineType_Detail md WITH (NOLOCK) on md.ID = m.ID and md.FactoryID = 'MWI'	
-	where o.MachineTypeID = m.ID and m.junk = 0
-)show
-where td.ID = '{timeStudy["ID"]}'
-";
+            //            sqlCmd = $@"
+            //select ID = null
+            //	   , No = ''
+            //	   , OriNo = td.Seq
+            //	   , td.Annotation
+            //	   , GSD = td.SMV
+            //	   , TotalGSD = td.SMV
+            //	   , Cycle = td.SMV
+            //	   , TotalCycle = td.SMV
+            //	   , td.MachineTypeID
+            //	   , [Attachment] = STUFF((
+            //					select concat(',' ,s.Data)
+            //					from SplitString(td.Mold, ',') s
+            //					where not exists (select 1 from Mold m WITH (NOLOCK) where s.Data = m.ID and (m.Junk = 1 or m.IsTemplate = 1)) 
+            //					for xml path ('')) 
+            //				,1,1,'')
+            //	    , [Template] = STUFF((
+            //					select concat(',' ,s.Data)
+            //					from SplitString(td.Template, ',') s
+            //					where not exists (select 1 from Mold m WITH (NOLOCK) where s.Data = m.ID and (m.Junk = 1 or m.IsAttachment = 1)) 
+            //					for xml path ('')) 
+            //				,1,1,'')
+            //	   , td.OperationID
+            //	   , MoldID = td.Mold
+            //       , td.SewingMachineAttachmentID
+            //	   , GroupKey = 0
+            //	   , New = 0
+            //	   , EmployeeID = ''
+            //	   , Description = IIF(td.MachineTypeID IS NULL OR td.MachineTypeID = '' ,td.OperationID ,o.DescEN )
+            //	   , EmployeeName = ''
+            //	   , EmployeeSkill = ''
+            //	   , Efficiency = 100
+            //       , IsPPA = iif(CHARINDEX('--', td.OperationID) > 0, 0, iif(td.SMV > 0, 0, 1))
+            //       ,o.MasterPlusGroup
+            //	   ,[IsHide] = cast(
+            //			   case when SUBSTRING(td.OperationID, 1, 2) = '--' then 1
+            //			   when show.IsDesignatedArea = 1 then 1
+            //			   when isnull(td.IsSubprocess,0) = 1 then 1
+            //			   else 0 
+            //			   end			
+            //		as bit)
+            //	   ,[IsGroupHeader] = cast(iif(SUBSTRING(td.OperationID, 1, 2) = '--', 1, 0) as bit)
+            //       ,[IsShow] = cast(iif( td.OperationID like '--%' , 1, isnull(show.IsShowinIEP03, 1)) as bit)
+            //from TimeStudy_Detail td WITH (NOLOCK)
+            //left join Operation o WITH (NOLOCK) on td.OperationID = o.ID
+            //outer apply (
+            //	select IsShowinIEP03 = IIF(isnull(md.IsNotShownInP03, 0) = 0, 1, 0)
+            //		, IsDesignatedArea = ISNULL(md.IsNonSewingLine,0)
+            //	from MachineType m WITH (NOLOCK)
+            //    inner join MachineType_Detail md WITH (NOLOCK) on md.ID = m.ID and md.FactoryID = 'MWI'	
+            //	where o.MachineTypeID = m.ID and m.junk = 0
+            //)show
+            //where td.ID = '{timeStudy["ID"]}'
+            //";
 
-            DualResult result = DBProxy.Current.Select(null, sqlCmd, out timeStudy_Detail);
+            //            DualResult result = DBProxy.Current.Select(null, sqlCmd, out timeStudy_Detail);
 
-            return timeStudy_Detail;
+            DataTable dt;
+
+            string cmd = $@"select OperationID=ID ,MoldID  from Operation where Junk=0";
+
+            DBProxy.Current.Select(null, cmd, out dt);
+
+            return dt;
         }
 
         // Copy from GSD
@@ -2263,6 +2226,7 @@ select distinct
 	,Efficiency = 100
 	,IsPPA = 0
     ,[MasterPlusGroup]=''
+	,MachineCount = CAST( 0 as bit)
 	,[IsHide] = cast(iif(ISNULL(md.IsNonSewingLine,0) = 1, 1, 0) as bit)
 	,[IsGroupHeader] = 0
     ,[IsShow] = cast(IIF(isnull(md.IsNotShownInP03, 0) = 0, 1, 0) as bit)
@@ -2306,6 +2270,7 @@ select ID = null
 	   , Efficiency = 100
        , IsPPA = iif(CHARINDEX('--', td.OperationID) > 0, 0, iif(td.SMV > 0, 0, 1))
        ,o.MasterPlusGroup
+	   ,MachineCount = CAST(  IIF(o.MasterPlusGroup <> '' and (o.MasterPlusGroup is not null and td.MachineTypeID not like 'MM%'),1,0) as bit)
 	   ,[IsHide] = cast(
 			   case when SUBSTRING(td.OperationID, 1, 2) = '--' then 1
 			   when show.IsDesignatedArea = 1 then 1
@@ -2354,6 +2319,7 @@ select distinct
 	,Efficiency = 100
 	,IsPPA = 0
     ,[MasterPlusGroup]=''
+	,MachineCount = CAST( 0 as bit)
 	,[IsHide] = cast(iif(ISNULL(md.IsNonSewingLine,0) = 1, 1, 0) as bit)
 	,[IsGroupHeader] = 0
     ,[IsShow] = cast(IIF(isnull(md.IsNotShownInP03, 0) = 0, 1, 0) as bit)
@@ -2388,6 +2354,7 @@ select distinct
 	,Efficiency = 100
 	,IsPPA = 0
     ,[MasterPlusGroup]=''
+	,MachineCount = CAST( 0 as bit)
 	,[IsHide] = cast(iif(ISNULL(md.IsNonSewingLine,0) = 1, 1, 0) as bit)
 	,[IsGroupHeader] = 0
     ,[IsShow] = cast(IIF(isnull(md.IsNotShownInP03, 0) = 0, 1, 0) as bit)
@@ -2422,6 +2389,7 @@ select distinct
 	,Efficiency = 100
 	,IsPPA = 0
     ,[MasterPlusGroup]=''
+	,MachineCount = CAST( 0 as bit)
 	,[IsHide] = cast(iif(ISNULL(md.IsNonSewingLine,0) = 1, 1, 0) as bit)
 	,[IsGroupHeader] = 0
     ,[IsShow] = cast(IIF(isnull(md.IsNotShownInP03, 0) = 0, 1, 0) as bit)

@@ -274,6 +274,13 @@ where a.ID = {MyUtility.Convert.GetString(this.masterData["ID"])}
 
             foreach (DataRow dr in this.machineTypeDT.Rows)
             {
+
+                if (MyUtility.Check.Empty(dr["No"]))
+                {
+                    // 沒有No的Attachment和Template都不要被計算
+                    continue;
+                }
+
                 AttachmentData rawData = new AttachmentData();
                 rawData.No = MyUtility.Convert.GetString(dr["No"]);
                 rawData.STMC_Type = MyUtility.Convert.GetString(dr["MachineTypeID"]);
@@ -309,6 +316,9 @@ where a.ID = {MyUtility.Convert.GetString(this.masterData["ID"])}
 
                     foreach (var att in attList)
                     {
+                        // 紀錄該Attachment底下是否有任何PartID
+                        bool hasAnyPartID = false;
+
                         if (partList.Any())
                         {
                             foreach (var part in partList)
@@ -335,6 +345,7 @@ where a.ID = {MyUtility.Convert.GetString(this.masterData["ID"])}
 
                                 if (isPartMatch)
                                 {
+                                    hasAnyPartID = true;
                                     // 覆蓋PartID
                                     newData.AttachmentPartID = part;
                                     newData.Template = string.Empty;
@@ -346,13 +357,50 @@ where a.ID = {MyUtility.Convert.GetString(this.masterData["ID"])}
                                 }
                                 else
                                 {
-                                    newData.AttachmentPartID = string.Empty;
-                                    newData.Template = string.Empty;
-                                    bool exists = this.AttachmentDataList.Where(o => o.No == newData.No && o.STMC_Type == newData.STMC_Type && o.MachineGroup == newData.MachineGroup && o.Attachment == newData.Attachment && o.AttachmentPartID == newData.AttachmentPartID).Any();
-                                    if (!exists)
+                                    var otherAtt = attList.Where(o => o != att).ToList();
+                                    List<string> otherAttStr = new List<string>();
+                                    //string otherAttStr = string.Join("','", otherAtt);
+                                    int count = 0;
+                                    foreach (var item in otherAtt)
                                     {
-                                        this.AttachmentDataList.Add(newData);
+                                        otherAttStr.Add($"@Attachment{count}");
+                                        paras.Add(new SqlParameter($"@Attachment{count}", item));
                                     }
+
+                                    sql = $@" select 1 from SewingMachineAttachment  where MoldID != @Attachment and ID = @PartID and MoldID IN ({string.Join(",", otherAttStr)})";
+                                    isPartMatch = MyUtility.Check.Seek(sql, paras);
+
+                                    if (!isPartMatch)
+                                    {
+                                        newData.AttachmentPartID = string.Empty;
+                                        newData.Template = string.Empty;
+                                        bool exists = this.AttachmentDataList.Where(o => o.No == newData.No && o.STMC_Type == newData.STMC_Type && o.MachineGroup == newData.MachineGroup && o.Attachment == newData.Attachment && o.AttachmentPartID == newData.AttachmentPartID).Any();
+                                        if (!exists)
+                                        {
+                                            this.AttachmentDataList.Add(newData);
+                                        }
+                                    }
+                                }
+                            }
+
+                            // 如果Attachment底下沒有任何PartID，則塞一筆Part ID空白的資料
+                            if (hasAnyPartID == false)
+                            {
+                                AttachmentData newData = new AttachmentData()
+                                {
+                                    No = rawData.No,
+                                    STMC_Type = rawData.STMC_Type,
+                                    MachineGroup = rawData.MachineGroup,
+                                    PPA = rawData.PPA,
+                                    IsHide = rawData.IsHide,
+                                    Attachment = att,
+                                };
+                                newData.AttachmentPartID = string.Empty;
+                                newData.Template = string.Empty;
+                                bool exists = this.AttachmentDataList.Where(o => o.No == newData.No && o.STMC_Type == newData.STMC_Type && o.MachineGroup == newData.MachineGroup && o.Attachment == newData.Attachment && o.AttachmentPartID == newData.AttachmentPartID).Any();
+                                if (!exists)
+                                {
+                                    this.AttachmentDataList.Add(newData);
                                 }
                             }
                         }

@@ -599,19 +599,6 @@ and o.ID = @id";
             {
                 if (this.EditMode && e.Button == MouseButtons.Right)
                 {
-                    DataTable GsdTable = this.GetStdGSD();
-                    if (!MyUtility.Check.Empty(this.CurrentDetailData["Mold"]))
-                    {
-                        string seqNo = MyUtility.Convert.GetString(this.CurrentDetailData["Seq"]);
-                        string OperationID = MyUtility.Convert.GetString(this.CurrentDetailData["OperationID"]);
-                        string AttachmentID = MyUtility.Convert.GetString(this.CurrentDetailData["Mold"]);
-                        if (GsdTable.AsEnumerable().Where(o => o["SEQ"].ToString() == seqNo && o["OperationID"].ToString() == OperationID && o["Mold"].ToString() == AttachmentID).Any())
-                        {
-                            MyUtility.Msg.WarningBox("Data from Std. GSD can not be modify.");
-                            return;
-                        }
-                    }
-
                     string sqlcmd = @"
 select ID,DescEN 
 from Mold WITH (NOLOCK) 
@@ -639,24 +626,8 @@ and IsAttachment = 1
 
             this.mold.CellValidating += (s, e) =>
             {
-
                 if (this.EditMode)
                 {
-                    DataTable GsdTable = this.GetStdGSD();
-                    if (!MyUtility.Check.Empty(this.CurrentDetailData["Mold"]) && MyUtility.Convert.GetString(this.CurrentDetailData["Mold"]) != MyUtility.Convert.GetString(e.FormattedValue))
-                    {
-                        string seqNo = MyUtility.Convert.GetString(this.CurrentDetailData["Seq"]);
-                        string OperationID = MyUtility.Convert.GetString(this.CurrentDetailData["OperationID"]);
-                        string AttachmentID = MyUtility.Convert.GetString(this.CurrentDetailData["Mold"]);
-                        if (GsdTable.AsEnumerable().Where(o => o["SEQ"].ToString() == seqNo && o["OperationID"].ToString() == OperationID && o["Mold"].ToString() == AttachmentID).Any())
-                        {
-                            MyUtility.Msg.WarningBox("Data from Std. GSD can not be modify.");
-                            e.FormattedValue = MyUtility.Convert.GetString(this.CurrentDetailData["Mold"]);
-                            this.CurrentDetailData["Mold"] = e.FormattedValue;
-                            return;
-                        }
-                    }
-
                     List<SqlParameter> cmds = new List<SqlParameter>() { new SqlParameter { ParameterName = "@OperationID", Value = MyUtility.Convert.GetString(this.CurrentDetailData["OperationID"]) } };
                     string sqlcmd = @"
 select [Mold] = STUFF((
@@ -689,9 +660,9 @@ where o.ID = @OperationID";
                     if (dtOperation.Rows.Count > 0)
                     {
                         operationList = dtOperation.Rows[0]["Mold"].ToString().Replace(";", ",").Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries).Distinct().ToList();
-                        if (e.FormattedValue.Empty())
+                        if (MyUtility.Check.Empty(e.FormattedValue))
                         {
-                            this.CurrentDetailData["Mold"] = string.Empty;
+                            this.CurrentDetailData["Mold"] = dtOperation.Rows[0]["Mold"].ToString();
                             return;
                         }
                     }
@@ -718,20 +689,21 @@ where Junk = 0";
 
                     // 不存在 Mold
                     var existsMold = getMold.Except(dtMold.AsEnumerable().Select(x => x.Field<string>("ID")).ToList());
+                    getMold.AddRange(operationList);
                     if (existsMold.Any())
                     {
                         e.Cancel = true;
-                        this.CurrentDetailData["Mold"] = string.Join(",", getMold.Where(x => existsMold.Where(y => !y.EqualString(x)).Any()).ToList());
+                        this.CurrentDetailData["Mold"] = string.Join(",", getMold.Where(x => existsMold.Where(y => !y.EqualString(x)).Any()).Distinct().ToList());
                         MyUtility.Msg.WarningBox("Attachment : " + string.Join(",", existsMold.ToList()) + "  need include in Mold setting !!", "Data need include in setting");
                         return;
                     }
 
-                    if (MyUtility.Convert.GetString(this.CurrentDetailData["Mold"]) != string.Join(",", getMold.ToList()))
+                    if (MyUtility.Convert.GetString(this.CurrentDetailData["Mold"]) != string.Join(",", getMold.Distinct().ToList()))
                     {
                         this.CurrentDetailData["SewingMachineAttachmentID"] = string.Empty;
                     }
 
-                    this.CurrentDetailData["Mold"] = string.Join(",", getMold.ToList());
+                    this.CurrentDetailData["Mold"] = string.Join(",", getMold.Distinct().ToList());
                 }
             };
             #endregion
@@ -745,6 +717,10 @@ select PartID = smt.ID , m.DescEN ,MoldID = m.ID
 from Mold m WITH (NOLOCK)
 right join SewingMachineTemplate smt on m.ID = smt.MoldID
 where m.Junk = 0 and m.IsTemplate = 1 and smt.Junk = 0
+UNION
+SELECT PartID=ID , DescEN ,MoldID = ID
+from Mold
+where Junk=0 and IsTemplate=1
 ";
 
                     SelectItem2 item = new SelectItem2(sqlcmd, "MoldID,DescEN,PartID", "13,60,20", this.CurrentDetailData["Template"].ToString(), null, null, null)
@@ -821,6 +797,10 @@ select PartID = smt.ID , m.DescEN ,MoldID = m.ID
 from Mold m WITH (NOLOCK)
 right join SewingMachineTemplate smt on m.ID = smt.MoldID
 where m.Junk = 0 and m.IsTemplate = 1 and smt.Junk = 0
+UNION
+SELECT PartID=ID , DescEN ,MoldID = ID
+from Mold
+where Junk=0 and IsTemplate=1
 ";
                     DataTable dt;
                     DBProxy.Current.Select(null, sqlcmd, out dt);
@@ -2119,39 +2099,45 @@ and s.BrandID = @brandid ", Env.User.Factory);
         }
 
         // GetStdGSD
-        public DataTable GetStdGSD()
+        public DataTable GetStdGSD(string operationID)
         {
 
-            // sql參數
-            SqlParameter sp1 = new SqlParameter();
-            SqlParameter sp2 = new SqlParameter();
-            SqlParameter sp3 = new SqlParameter();
-            sp1.ParameterName = "@id";
-            sp1.Value = this.CurrentMaintain["StyleID"].ToString();
-            sp2.ParameterName = "@seasonid";
-            sp2.Value = this.CurrentMaintain["SeasonID"].ToString();
-            sp3.ParameterName = "@brandid";
-            sp3.Value = this.CurrentMaintain["BrandID"].ToString();
+            //// sql參數
+            //SqlParameter sp1 = new SqlParameter();
+            //SqlParameter sp2 = new SqlParameter();
+            //SqlParameter sp3 = new SqlParameter();
+            //sp1.ParameterName = "@id";
+            //sp1.Value = this.CurrentMaintain["StyleID"].ToString();
+            //sp2.ParameterName = "@seasonid";
+            //sp2.Value = this.CurrentMaintain["SeasonID"].ToString();
+            //sp3.ParameterName = "@brandid";
+            //sp3.Value = this.CurrentMaintain["BrandID"].ToString();
 
-            IList<SqlParameter> cmds = new List<SqlParameter>
-            {
-                sp1,
-                sp2,
-                sp3,
-            };
+            //IList<SqlParameter> cmds = new List<SqlParameter>
+            //{
+            //    sp1,
+            //    sp2,
+            //    sp3,
+            //};
 
-            string sqlCmd = "select Ukey from Style WITH (NOLOCK) where ID = @id and SeasonID = @seasonid and BrandID = @brandid";
-            DataTable styleUkey;
-            DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out styleUkey);
-            if (!result)
-            {
-                MyUtility.Msg.WarningBox("SQL Connection fail!!\r\n" + result.ToString());
-                return null;
-            }
+            //string sqlCmd = "select Ukey from Style WITH (NOLOCK) where ID = @id and SeasonID = @seasonid and BrandID = @brandid";
+            //DataTable styleUkey;
+            //DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out styleUkey);
+            //if (!result)
+            //{
+            //    MyUtility.Msg.WarningBox("SQL Connection fail!!\r\n" + result.ToString());
+            //    return null;
+            //}
 
-            StdGSDList callNextForm = new StdGSDList(MyUtility.Convert.GetLong(styleUkey.Rows[0]["UKey"]));
+            //StdGSDList callNextForm = new StdGSDList(MyUtility.Convert.GetLong(styleUkey.Rows[0]["UKey"]));
 
-            return callNextForm.gridData1;
+            DataTable dt;
+
+            string cmd = $@"select OperationID=ID ,MoldID  from Operation where Junk=0 and ID = '{operationID}'";
+
+            DBProxy.Current.Select(null, cmd,out dt);
+
+            return dt;
         }
 
         /// <summary>
