@@ -234,11 +234,11 @@ left join #tmpOutputDate t on t.SewingLineID = w.SewingLineID and t.FactoryID = 
 where w.Holiday=0 and isnull(w.Hours,0) != 0 and w.Date >= (select dateadd(day,-240, min(MinOutputDate)) from #tmpOutputDate) and  w.Date <= (select max(MaxOutputDate) from #tmpOutputDate)
 order by  FactoryID, t.SewingLineID ,t.OrderStyle, t.MockupStyle, w.Date
 
-select w.FactoryID , w.Date
-	, [RID] = ROW_NUMBER() over(partition by w.FactoryID order by w.Date)
+select w.FactoryID , w.Date, w.SewingLineID
+	, [RID] = ROW_NUMBER() over(partition by w.FactoryID, w.SewingLineID order by w.Date)
 into #tmpWorkHour_Factory
 from #tmpWorkHour w
-group by w.FactoryID, w.Date
+group by w.FactoryID, w.Date, w.SewingLineID
 
 select t.*
     ,[LastShift] = IIF(t.Shift <> 'O' and t.Category <> 'M' and t.LocalOrder = 1, 'I',t.Shift) 
@@ -309,41 +309,45 @@ left join (
 		, t.MasterStyleID
 		, t.OutputDate
 		, t.FactoryID
-		, [CumulateDateSimilar] = case when SEQ - (ROW_NUMBER() OVER (PARTITION BY t.MasterStyleID, t.MasterBrandID, t.FactoryID, (RID - Seq) ORDER BY t.OutputDate, t.MasterStyleID, t.MasterBrandID, t.FactoryID, RID) - 1) = 1 
-				then t.CumulateDate_Max + ROW_NUMBER() OVER (PARTITION BY t.MasterStyleID, t.MasterBrandID, t.FactoryID, (RID - Seq) ORDER BY t.OutputDate, t.MasterStyleID, t.MasterBrandID, t.FactoryID, RID) - 1
-			else ROW_NUMBER() OVER (PARTITION BY t.MasterStyleID, t.MasterBrandID, t.FactoryID, (RID - Seq) ORDER BY t.OutputDate, t.MasterStyleID, t.MasterBrandID, t.FactoryID, RID)
+		, t.SewingLineID
+		, [CumulateDateSimilar] = case when SEQ - (ROW_NUMBER() OVER (PARTITION BY t.MasterStyleID, t.MasterBrandID, t.FactoryID, t.SewingLineID, (RID - Seq) ORDER BY t.OutputDate, t.MasterStyleID, t.MasterBrandID, t.FactoryID, t.SewingLineID, RID) - 1) = 1 
+				then t.CumulateDate_Max + ROW_NUMBER() OVER (PARTITION BY t.MasterStyleID, t.MasterBrandID, t.FactoryID, t.SewingLineID, (RID - Seq) ORDER BY t.OutputDate, t.MasterStyleID, t.MasterBrandID, t.FactoryID, t.SewingLineID, RID) - 1
+			else ROW_NUMBER() OVER (PARTITION BY t.MasterStyleID, t.MasterBrandID, t.FactoryID, t.SewingLineID, (RID - Seq) ORDER BY t.OutputDate, t.MasterStyleID, t.MasterBrandID, t.FactoryID, t.SewingLineID, RID)
 			end
 	from 
 	(
 		select t.*
 			, t2.CumulateDate_Max
-			, [SEQ] = ROW_NUMBER() over(partition by t.MasterStyleID, t.MasterBrandID, t.FactoryID order by t.OutputDate)
+			, [SEQ] = ROW_NUMBER() over(partition by t.MasterStyleID, t.MasterBrandID, t.FactoryID, t.SewingLineID order by t.OutputDate)
 		from 
 		(
-			select distinct t.MasterStyleID, t.MasterBrandID, t.OutputDate, t.FactoryID, w.RID
+			select distinct t.MasterStyleID, t.MasterBrandID, t.OutputDate, t.FactoryID, t.SewingLineID, w.RID
 			from #tmp1stFilter_First t
-			left join #tmpWorkHour_Factory w on w.FactoryID = t.FactoryID and w.Date = t.OutputDate
+			left join #tmpWorkHour_Factory w on w.FactoryID = t.FactoryID and w.Date = t.OutputDate and w.SewingLineID = t.SewingLineID
 			where MasterStyleID <> ''
 		)t
 		outer apply (
-			select MasterStyleID, MasterBrandID, FactoryID, OutputDate
+			select MasterStyleID, MasterBrandID, FactoryID, OutputDate, SewingLineID
 				, [CumulateDate_Max] = MAX(CumulateDate_Before)
 			from #tmp1stFilter_First t2
 			where t.MasterStyleID = t2.MasterStyleID
 			and t.MasterBrandID = t2.MasterBrandID
 			and t.FactoryID = t2.FactoryID
+			and t.SewingLineID = t2.SewingLineID
 			and OutputDate in (
 				select MIN(OutputDate)
 				from #tmp1stFilter_First a
 				where a.MasterStyleID = t2.MasterStyleID
 				and a.MasterBrandID = t2.MasterBrandID	
 				and a.FactoryID = t2.FactoryID
+				and a.SewingLineID = t2.SewingLineID
 			)
-			group by MasterStyleID, MasterBrandID, FactoryID, OutputDate
+			group by MasterStyleID, MasterBrandID, FactoryID, OutputDate, SewingLineID
 		) t2
 	)t
-)t2 on t.MasterStyleID = t2.MasterStyleID and t.MasterBrandID = t2.MasterBrandID and t.FactoryID = t2.FactoryID and t.OutputDate = t2.OutputDate
+)t2 on t.MasterStyleID = t2.MasterStyleID and t.MasterBrandID = t2.MasterBrandID and t.FactoryID = t2.FactoryID and t.OutputDate = t2.OutputDate and t.SewingLineID = t2.SewingLineID
 where t.OutputDate >= @StartDate
+
 
 if(@Include_Artwork = 1)
 begin
