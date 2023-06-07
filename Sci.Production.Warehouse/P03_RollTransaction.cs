@@ -185,9 +185,11 @@ select tmp.Roll
 	, Remark
 	, location
 	, ContainerCode
-	, [balance] = sum(TMP.inqty - TMP.outqty + tmp.adjust - tmp.ReturnQty) over (partition by tmp.stocktype,tmp.roll,tmp.dyelot order by tmp.IssueDate,tmp.stocktype,tmp.inqty desc,tmp.iD )
+	, [balance] = sum(TMP.inqty - TMP.outqty + tmp.adjust - tmp.ReturnQty) over (partition by tmp.stocktype,tmp.roll,tmp.dyelot order by tmp.IssueDate,tmp.stocktype,tmp.inqty desc,tmp.iD,tmp.ToPOID,tmp.ToSeq )
     , GW
     , ActW
+    , ToPOID
+    , ToSeq
 from (
 	select b.roll
 		, b.stocktype
@@ -205,6 +207,8 @@ from (
 		, ContainerCode = ''
         , GW = ''
         , ActW = ''
+        , ToPOID = ''
+        , ToSeq = ''
 	from Adjust a WITH (NOLOCK) , Adjust_Detail b WITH (NOLOCK) 
 	left join FtyInventory fi on fi.POID = b.POID
 		and fi.Seq1 = b.Seq1 and fi.Seq2 = b.Seq2
@@ -235,6 +239,8 @@ union all
 		, ContainerCode = ''
         , GW = ''
         , ActW = ''
+        , ToPOID = ''
+        , ToSeq = ''
 	from BorrowBack a WITH (NOLOCK) , BorrowBack_Detail b WITH (NOLOCK) 
 	left join FtyInventory fi on fi.POID = b.FromPOID
 		and fi.Seq1 = b.FromSeq1 and fi.Seq2 = b.FromSeq2
@@ -265,6 +271,8 @@ union all
         , GW = ''
         , ActW = ''
 		, [ContainerCode] = b.ToContainerCode
+        , ToPOID = ''
+        , ToSeq = ''
 	from BorrowBack a WITH (NOLOCK) , BorrowBack_Detail b WITH (NOLOCK) 
 	left join FtyInventory fi on fi.POID = b.ToPOID
 		and fi.Seq1 = b.ToSeq1 and fi.Seq2 = b.ToSeq2
@@ -301,6 +309,8 @@ union all
 		, ContainerCode = ''
         , GW = ''
         , ActW = ''
+        , ToPOID = ''
+        , ToSeq = ''
 	from Issue a WITH (NOLOCK) , Issue_Detail b WITH (NOLOCK) 
 	left join FtyInventory fi on fi.POID = b.POID
 		and fi.Seq1 = b.Seq1 and fi.Seq2 = b.Seq2
@@ -332,6 +342,8 @@ union all
 		, ContainerCode = ''
         , GW = ''
         , ActW = ''
+        , ToPOID = ''
+        , ToSeq = ''
 	from IssueLack a WITH (NOLOCK) , IssueLack_Detail b WITH (NOLOCK) 
 	left join FtyInventory fi on fi.POID = b.POID
 		and fi.Seq1 = b.Seq1 and fi.Seq2 = b.Seq2
@@ -364,6 +376,8 @@ union all
 		, ContainerCode = ''
         , GW = ''
         , ActW = ''
+        , ToPOID = ''
+        , ToSeq = ''
 	from IssueLack a WITH (NOLOCK) , IssueLack_Detail b WITH (NOLOCK) 
 	left join FtyInventory fi on fi.POID = b.POID
 		and fi.Seq1 = b.Seq1 and fi.Seq2 = b.Seq2
@@ -394,6 +408,8 @@ union all
 		, b.ContainerCode
         , GW = ''
         , ActW = ''
+        , ToPOID = ''
+        , ToSeq = ''
 	from IssueReturn a WITH (NOLOCK) , IssueReturn_Detail b WITH (NOLOCK) 
 	where status = 'Confirmed'
 	and b.poid = '{0}'
@@ -421,6 +437,8 @@ union all
 		, b.ContainerCode
         , GW = CONVERT(varchar, b.Weight)
         , ActW = CONVERT(varchar, b.ActualWeight)
+        , ToPOID = ''
+        , ToSeq = ''
     from Receiving a WITH (NOLOCK) , Receiving_Detail b WITH (NOLOCK) 
     where Status = 'Confirmed' 
 	and poid = '{0}' 
@@ -446,6 +464,8 @@ union all
 		, [ContainerCode] = ''
         , GW = ''
         , ActW = ''
+        , ToPOID = ''
+        , ToSeq = ''
 	from ReturnReceipt a WITH (NOLOCK) , ReturnReceipt_Detail b WITH (NOLOCK) 
 	left join FtyInventory fi on fi.POID = b.POID
 		and fi.Seq1 = b.Seq1 and fi.Seq2 = b.Seq2
@@ -480,6 +500,8 @@ union all
 		, [ContainerCode] = ''
         , GW = ''
         , ActW = ''
+        , ToPOID = case type when 'B' then b.ToPOID else '' end
+        , ToSeq = case type when 'B' then Concat (b.ToSeq1, ' ', b.ToSeq2) else '' end
 	from SubTransfer a WITH (NOLOCK) , SubTransfer_Detail b WITH (NOLOCK) 
 	left join FtyInventory fi on fi.POID = b.FromPOID
 		and fi.Seq1 = b.FromSeq1 and fi.Seq2 = b.FromSeq2
@@ -491,7 +513,7 @@ union all
 	and FromSeq2 = '{2}'
 	and a.id = b.id    
     and a.type <> 'C'  --排除C to B 的轉出紀錄，因目前不需要C倉交易紀錄，避免下面DataRelation出錯
-	group by a.id, frompoid, FromSeq1,FromSeq2,a.IssueDate,a.Type,b.FromRoll,b.FromStockType,b.FromDyelot,a.Type,a.remark, fi.ContainerCode
+	group by a.id, frompoid, FromSeq1,FromSeq2,a.IssueDate,a.Type,b.FromRoll,b.FromStockType,b.FromDyelot,a.Type,a.remark, fi.ContainerCode,b.ToPOID,b.ToSeq1, b.ToSeq2
                                                                              
 union all
 	
@@ -525,6 +547,8 @@ union all
 		,[ContainerCode] = b.ToContainerCode
         , GW = ''
         , ActW = ''
+        , ToPOID = ''
+        , ToSeq = ''
 	from SubTransfer a WITH (NOLOCK) , SubTransfer_Detail b WITH (NOLOCK) 
 	where Status = 'Confirmed'
 	and ToPoid = '{0}'
@@ -563,6 +587,8 @@ union all
 		, b.ContainerCode
         , GW = CONVERT(varchar, b.Weight)
         , ActW = CONVERT(varchar, b.ActualWeight)
+        , ToPOID = ''
+        , ToSeq = ''
 	from TransferIn a WITH (NOLOCK) , TransferIn_Detail b WITH (NOLOCK) 
 	where Status = 'Confirmed'
 	and poid = '{0}'
@@ -588,6 +614,8 @@ union all
 		, ContainerCode =''
         , GW = ''
         , ActW = ''
+        , ToPOID = ''
+        , ToSeq = ''
 	from TransferOut a WITH (NOLOCK) , TransferOut_Detail b WITH (NOLOCK) 
 	left join FtyInventory fi on fi.POID = b.POID
 		and fi.Seq1 = b.Seq1 and fi.Seq2 = b.Seq2
@@ -619,6 +647,8 @@ union all
 		, ContainerCode = ''
         , GW = ''
         , ActW = ''
+        , ToPOID = ''
+        , ToSeq = ''
 	from RequestCrossM a WITH (NOLOCK) , RequestCrossM_Receive b WITH (NOLOCK) 
 	left join FtyInventory fi on fi.POID = b.POID
 		and fi.Seq1 = b.Seq1 and fi.Seq2 = b.Seq2
@@ -633,7 +663,8 @@ union all
 
 ) tmp
 where stocktype <> 'O'
-group by IssueDate,inqty,outqty,adjust,ReturnQty,id,Remark,location,tmp.name,tmp.roll,tmp.stocktype,tmp.dyelot,tmp.ContainerCode, tmp.GW, tmp.ActW
+group by IssueDate,inqty,outqty,adjust,ReturnQty,id,Remark,location,tmp.name,tmp.roll,tmp.stocktype,tmp.dyelot,tmp.ContainerCode, tmp.GW, tmp.ActW,ToPOID,ToSeq
+order by tmp.IssueDate,tmp.stocktype,tmp.inqty desc,tmp.iD
 
 ",
                     this.dr["id"].ToString(),
@@ -713,6 +744,8 @@ group by IssueDate,inqty,outqty,adjust,ReturnQty,id,Remark,location,tmp.name,tmp
                      .Text("ActW", header: "Act.(kg)", width: Widths.AnsiChars(7))
                      .Text("Location", header: "Location", width: Widths.AnsiChars(5))
                      .Text("ContainerCode", header: "Container Code", iseditingreadonly: true).Get(out col_ContainerCode2)
+                     .Text("ToPOID", header: "To SP#", width: Widths.AnsiChars(12), iseditingreadonly: true)
+                     .Text("ToSeq", header: "To Seq", width: Widths.AnsiChars(5), iseditingreadonly: true)
                      ;
 
                 // 僅有自動化工廠 ( System.Automation = 1 )才需要顯示該欄位 by ISP20220035
