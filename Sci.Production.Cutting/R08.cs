@@ -63,7 +63,7 @@ namespace Sci.Production.Cutting
             string where = string.Empty;
             if (!MyUtility.Check.Empty(this.Mdivision))
             {
-                where += $" and w.MDivisionId = '{this.Mdivision}' ";
+                where += $" and co.MDivisionId = '{this.Mdivision}' ";
             }
 
             if (!MyUtility.Check.Empty(this.Factory))
@@ -117,7 +117,7 @@ namespace Sci.Production.Cutting
             }
             #endregion
             sqlcmd = $@"
-select w.ID,w.CutRef,w.MDivisionId,ActCutDate=max(co.cDate)
+select w.ID,w.CutRef,co.MDivisionId,ActCutDate=max(co.cDate)
 into #tmp1
 from WorkOrder w with(nolock) 
 left join CuttingOutput_Detail cod with(nolock) on cod.WorkOrderUkey = w.Ukey
@@ -125,7 +125,7 @@ left join CuttingOutput co with(nolock) on co.id = cod.id
 where 1=1
 and isnull(w.CutRef,'') <> ''
 {where}
-group by w.CutRef,w.MDivisionID,w.ID
+group by w.CutRef,co.MDivisionID,w.ID
 
 select w.*,ActCutDate=co.cDate
 into #tmpCutRefNull
@@ -142,7 +142,7 @@ select t.CutRef,t.MDivisionId,t.ActCutDate ,t.ID,
 	Cons=sum(w.Cons)
 into #tmp2a
 from #tmp1 t
-inner join WorkOrder w with(nolock) on w.CutRef = t.CutRef and w.MDivisionId = t.MDivisionId
+inner join WorkOrder w with(nolock) on w.CutRef = t.CutRef
 group by t.CutRef,t.MDivisionId,t.ActCutDate ,t.ID
 
 select t.CutRef,t.MDivisionId,t.ActCutDate,t.Layer,t.Cons,t.ID,
@@ -150,7 +150,7 @@ select t.CutRef,t.MDivisionId,t.ActCutDate,t.Layer,t.Cons,t.ID,
 	EXCESSqty = sum(iif(wd.OrderID =  'EXCESS',wd.Qty,0))
 into #tmp2
 from #tmp2a t
-inner join WorkOrder w with(nolock) on w.CutRef = t.CutRef and w.MDivisionId = t.MDivisionId
+inner join WorkOrder w with(nolock) on w.CutRef = t.CutRef
 inner join WorkOrder_Distribute wd with(nolock) on wd.WorkOrderUkey = w.Ukey
 group by t.CutRef,t.MDivisionId,t.ActCutDate,t.Layer,t.Cons,t.ID
 
@@ -194,7 +194,7 @@ select distinct
 	WindowLength=isnull(ct.WindowLength,0)
 into #tmp3
 from #tmp2 t
-inner join WorkOrder w with(nolock) on w.CutRef = t.CutRef and w.MDivisionId = t.MDivisionId
+inner join WorkOrder w with(nolock) on w.CutRef = t.CutRef
 inner join orders o with(nolock) on o.id = w.ID
 left join Fabric f with(nolock) on f.SCIRefno = w.SCIRefno
 left join SpreadingTime st with(nolock) on st.WeaveTypeID = f.WeaveTypeID
@@ -206,7 +206,7 @@ outer apply(
 		select distinct concat(',',wd.OrderID)
 		from WorkOrder w2 with(nolock)
 		inner join WorkOrder_Distribute wd with(nolock) on wd.WorkOrderUkey = w2.Ukey
-		where w2.CutRef = t.CutRef and w2.MDivisionId = t.MDivisionId and t.ID=w2.ID
+		where w2.CutRef = t.CutRef and t.ID=w2.ID
 		For XML path('')
 	),1,1,'')
 )subSp
@@ -215,7 +215,7 @@ outer apply(
 		select distinct concat(',',wd.SizeCode)
 		from WorkOrder w2 with(nolock)
 		inner join WorkOrder_Distribute wd with(nolock) on wd.WorkOrderUkey = w2.Ukey
-		where w2.CutRef = t.CutRef and w2.MDivisionId = t.MDivisionId
+		where w2.CutRef = t.CutRef
 		For XML path('')
 	),1,1,'')
 )size
@@ -226,7 +226,7 @@ outer apply
 		Select concat(', ' , wd.sizecode, '/ ', wd.qty)
 		From WorkOrder w2 with(nolock)
 		inner join WorkOrder_SizeRatio wd WITH (NOLOCK) on wd.WorkOrderUkey = w2.Ukey
-		Where w2.CutRef = t.CutRef and w2.MDivisionId = t.MDivisionId
+		Where w2.CutRef = t.CutRef
 		For XML path('')
 	),1,1,'')
 )SizeCode
@@ -235,16 +235,16 @@ outer apply(
 	from(
 		select distinct cr.Seq1,cr.seq2,cr.Roll,cr.Dyelot
 		from CuttingOutputFabricRecord cr WITH (NOLOCK) 
-		where cr.CutRef = w.CutRef and cr.MDivisionId = w.MDivisionId
-	)disC
+        where cr.CutRef = w.CutRef and cr.MDivisionId = w.MDivisionId
+    )disC
 )NoofRoll
 outer apply(
 	select DyeLot = count(1)
 	from(
 		select distinct cr.Seq1,cr.seq2,cr.Dyelot
 		from CuttingOutputFabricRecord cr WITH (NOLOCK) 
-		where cr.CutRef = w.CutRef and cr.MDivisionId = w.MDivisionId
-	)disC
+        where cr.CutRef = w.CutRef and cr.MDivisionId = w.MDivisionId
+    )disC
 )DyeLot
 outer apply(	
 	select  ActualSpeed

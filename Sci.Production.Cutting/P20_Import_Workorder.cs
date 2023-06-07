@@ -130,8 +130,7 @@ namespace Sci.Production.Cutting
                 condition = @"''";
             }
 
-            strSQLCmd.Append(string.Format(
-                @"
+            strSQLCmd.Append($@"
 Select sel = 0,
 	a.*,
 	Cuttingid = a.id,
@@ -178,12 +177,10 @@ outer apply(select CuttingLayer = case when cl.CuttingLayer > a.Layer - isnull(a
                     when cl.CuttingLayer < 0 then 0
                     else cl.CuttingLayer
                     end) final
-where a.mDivisionid = '{0}'
+where 1=1
 and a.Layer > isnull(acc.AccuCuttingLayer,0)
 and CutRef != ''
-and a.ukey not in ( {1} ) ",
-                this.keyWord,
-                condition));
+and a.ukey not in ( {condition} ) ");
             if (estcutdate.HasValue)
             {
                 strSQLCmd.Append(string.Format(

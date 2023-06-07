@@ -166,14 +166,14 @@ outer apply(
 	),1,1,'')
 )TicketYDS
 {formatJoin}
-outer apply(select Top 1 * from WorkOrder W WITH(NOLOCK) where CR.CutRef=W.CutRef and CR.MDivisionID=W.MDivisionID)W
+outer apply(select Top 1 * from WorkOrder W WITH(NOLOCK) where CR.CutRef=W.CutRef )W
 Left join Orders O on W.ID=O.ID
 Left join Order_EachCons OE on W.ID=OE.ID and W.MarkerName=OE.MarkerName
 outer apply(
 	select ColorID = STUFF((
 		select distinct CONCAT(',', ColorID)
 		from WorkOrder W WITH(NOLOCK)
-		where CR.CutRef=W.CutRef and CR.MDivisionID=W.MDivisionID
+		where CR.CutRef=W.CutRef
 		for XML path('')
 	),1,1,'')
 )ColorID
@@ -181,7 +181,7 @@ outer apply(
 	select Refno = STUFF((
 		select distinct CONCAT(',', Refno)
 		from WorkOrder W WITH(NOLOCK)
-		where CR.CutRef=W.CutRef and CR.MDivisionID=W.MDivisionID
+		where CR.CutRef=W.CutRef
 		for XML path('')
 	),1,1,'')
 )Refno
@@ -202,7 +202,7 @@ outer apply(
 	),1,1,'')
 )SizeCode
 outer apply(select Ratio = SUM(Qty) from WorkOrder_SizeRatio WS WITH(NOLOCK) where WS.WorkOrderUkey = W.Ukey)WS
-outer apply(select Layer = SUM(Layer) from WorkOrder W WITH(NOLOCK) where CR.CutRef=W.CutRef and CR.MDivisionID=W.MDivisionID)Layer
+outer apply(select Layer = SUM(Layer) from WorkOrder W WITH(NOLOCK) where CR.CutRef=W.CutRef )Layer
 outer apply(select ttlMINUTE = DATEDIFF(MINUTE, CR.AddDate, CR.RepairedDatetime))ttlMINUTE
 outer apply(select ttlMINUTE_D = IIF(ttlMINUTE > 1440, ttlMINUTE - (ttlMINUTE / 1440) * 1440, ttlMINUTE))ttlMINUTE_D
 outer apply(select ttlMINUTE_D_HR = IIF(ttlMINUTE_D > 60, ttlMINUTE_D - (ttlMINUTE_D / 60) * 60, ttlMINUTE_D))ttlMINUTE_D_HR
