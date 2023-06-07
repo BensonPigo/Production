@@ -301,7 +301,7 @@ where	(
 
 select t.*
 	, [CumulateDate] = coalesce(t.CumulateDate_Before, 0)
-	, [CumulateDateSimilar] = coalesce(t2.CumulateDateSimilar, 0)
+	, [CumulateDateSimilar] = iif(t.MasterStyleID <> '', coalesce(t2.CumulateDateSimilar, 0), coalesce(t.CumulateDate_Before, 0))
 into #tmp1stFilter
 from #tmp1stFilter_First t 
 left join (
@@ -323,7 +323,7 @@ left join (
 		(
 			select distinct t.MasterStyleID, t.MasterBrandID, t.OutputDate, t.FactoryID, t.SewingLineID, w.RID
 			from #tmp1stFilter_First t
-			left join #tmpWorkHour_Factory w on w.FactoryID = t.FactoryID and w.Date = t.OutputDate and w.SewingLineID = t.SewingLineID
+			inner join #tmpWorkHour_Factory w on w.FactoryID = t.FactoryID and w.Date = t.OutputDate and w.SewingLineID = t.SewingLineID
 			where MasterStyleID <> ''
 		)t
 		outer apply (
