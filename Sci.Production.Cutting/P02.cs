@@ -499,7 +499,7 @@ where WorkOrderUkey={0}", masterID);
 
             this.txtStyle.Text = orderdr == null ? string.Empty : orderdr["Styleid"].ToString();
             this.txtLine.Text = orderdr == null ? string.Empty : orderdr["SewLine"].ToString();
-            string maxcutrefCmd = string.Format("Select Max(Cutref) from workorder WITH (NOLOCK)", this.KeyWord);
+            string maxcutrefCmd = "Select Max(Cutref) from workorder WITH (NOLOCK)";
             this.textbox_LastCutRef.Text = MyUtility.GetValue.Lookup(maxcutrefCmd);
             this.comboBox1.Enabled = !this.EditMode;  // Sorting於編輯模式時不可選取
             this.BtnImportMarker.Enabled = this.EditMode;

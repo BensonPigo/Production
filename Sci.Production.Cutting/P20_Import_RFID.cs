@@ -203,8 +203,7 @@ namespace Sci.Production.Cutting
                 woUkeyCondition.Append(string.Format(@" and WO.factoryid='{0}'", factory));
             }
 
-            sqlcmd.Append(string.Format(
-                @"
+            sqlcmd.Append($@"
 
 SELECT distinct WO.ukey
     into #QueryTarUkey
@@ -213,7 +212,7 @@ SELECT distinct WO.ukey
     inner join Bundle B WITH (NOLOCK)  on BD.Id = B.ID and B.cutref <> ''
     inner join workorder WO WITH (NOLOCK)  on WO.cutref=B.cutref and WO.ID=B.POID
     where BIO.subprocessid='SORTING' 
-    and isnull(bio.RFIDProcessLocationID,'') = '' {2}
+    and isnull(bio.RFIDProcessLocationID,'') = '' {woUkeyCondition.ToString()}
 
 select b.WorkOrderUkey,AccuCuttingLayer = sum(b.Layer) 
 	into #AccuCuttingLayer
@@ -273,14 +272,11 @@ outer apply(select CuttingLayer = case when cl.CuttingLayer > WO.Layer - isnull(
 where 1=1
 and wo.Layer >  isnull(acc.AccuCuttingLayer,0)
 and WO.CutRef != ''
-and WO.ukey not in ( {1} )   
+and WO.ukey not in ( {condition} )   
 and exists (select 1 from #QueryTarUkey where Ukey = WO.Ukey)
 
 Drop table #QueryTarUkey,#AccuCuttingLayer
- ",
-                this.keyWord,
-                condition,
-                woUkeyCondition.ToString()));
+ ");
 
             DualResult dResult = DBProxy.Current.Select(null, sqlcmd.ToString(), out this.detailTable);
             if (dResult)
