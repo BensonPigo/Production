@@ -960,7 +960,7 @@ Select a.*
     Where a.ukey =g.workorderukey and g.OrderID=(Select Top(1) OrderID From Workorder_Distribute WD WITH (NOLOCK) Where a.ukey =WD.workorderukey)
 ) as Qty
 From workorder a WITH (NOLOCK) ,orders b WITH (NOLOCK) 
-Where a.cutref='{this.txtCutRef.Text}' and a.orderid = b.id";
+Where a.cutref = '{this.txtCutRef.Text}' and a.mDivisionid = '{this.keyword}' and a.orderid = b.id";
             if (!MyUtility.Check.Seek(cmd, out DataRow cutdr, null))
             {
                 this.Clear();
