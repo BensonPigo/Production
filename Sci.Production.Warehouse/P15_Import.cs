@@ -82,11 +82,13 @@ select  selected = 0
         ,[LackReason] = iif(b.PPICReasonID is null, '', CONCAT(b.PPICReasonID, '-', p.Description))
         , psd.Refno
         , [Color] = dbo.GetColorMultipleID_MtlType(psd.BrandID, isnull(psdsC.SpecValue ,''), Fabric.MtlTypeID, psd.SuppColor)
+        , [SizeCode] = isnull(psdsS.SpecValue,'')
 from dbo.lack a WITH (NOLOCK) 
 inner join dbo.Lack_Detail b WITH (NOLOCK) on a.ID = b.ID
 INNER JOIN Po_Supp_Detail psd WITH (NOLOCK) on psd.ID = a.POID and psd.Seq1 = b.Seq1 and psd.Seq2 = b.Seq2
 INNER JOIN Fabric with(nolock) on Fabric.SCIRefno = psd.SCIRefno
 LEFT JOIN PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
+LEFT JOIN PO_Supp_Detail_Spec psdsS WITH (NOLOCK) ON psdsS.ID = psd.id AND psdsS.seq1 = psd.seq1 AND psdsS.seq2 = psd.seq2 AND psdsS.SpecColumnID = 'Size'
 LEFT join dbo.ftyinventory c WITH (NOLOCK) on c.poid = a.POID 
 											   and c.seq1 = b.seq1 
 											   and c.seq2  = b.seq2 
