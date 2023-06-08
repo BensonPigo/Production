@@ -252,19 +252,19 @@ order by td.Seq";
             this.btnArtSum.Enabled = this.CurrentMaintain != null;
             this.btnSketch.Enabled = this.CurrentMaintain != null;
 
-            this.detailgrid.AutoResizeColumn(0);
-            this.detailgrid.AutoResizeColumn(1);
-            this.detailgrid.AutoResizeColumn(2);
-            this.detailgrid.AutoResizeColumn(4);
-            this.detailgrid.AutoResizeColumn(5);
-            this.detailgrid.AutoResizeColumn(6);
-            this.detailgrid.AutoResizeColumn(7);
-            this.detailgrid.AutoResizeColumn(8);
-            this.detailgrid.AutoResizeColumn(9);
-            this.detailgrid.AutoResizeColumn(11);
-            this.detailgrid.AutoResizeColumn(12);
-            this.detailgrid.AutoResizeColumn(13);
-            this.detailgrid.AutoResizeColumn(14);
+            //this.detailgrid.AutoResizeColumn(0);
+            //this.detailgrid.AutoResizeColumn(1);
+            //this.detailgrid.AutoResizeColumn(2);
+            //this.detailgrid.AutoResizeColumn(4);
+            //this.detailgrid.AutoResizeColumn(5);
+            //this.detailgrid.AutoResizeColumn(6);
+            //this.detailgrid.AutoResizeColumn(7);
+            //this.detailgrid.AutoResizeColumn(8);
+            //this.detailgrid.AutoResizeColumn(9);
+            //this.detailgrid.AutoResizeColumn(11);
+            //this.detailgrid.AutoResizeColumn(12);
+            //this.detailgrid.AutoResizeColumn(13);
+            //this.detailgrid.AutoResizeColumn(14);
 
             string styleVersion = MyUtility.GetValue.Lookup($@"
 select IETMSVersion from Style 
