@@ -346,6 +346,7 @@ where a.ID = {MyUtility.Convert.GetString(this.masterData["ID"])}
                                 if (isPartMatch)
                                 {
                                     hasAnyPartID = true;
+
                                     // 覆蓋PartID
                                     newData.AttachmentPartID = part;
                                     newData.Template = string.Empty;
@@ -357,9 +358,10 @@ where a.ID = {MyUtility.Convert.GetString(this.masterData["ID"])}
                                 }
                                 else
                                 {
+                                    // 判斷這個Part 是否隸屬其他 Attachment
                                     var otherAtt = attList.Where(o => o != att).ToList();
                                     List<string> otherAttStr = new List<string>();
-                                    //string otherAttStr = string.Join("','", otherAtt);
+
                                     int count = 0;
                                     foreach (var item in otherAtt)
                                     {
