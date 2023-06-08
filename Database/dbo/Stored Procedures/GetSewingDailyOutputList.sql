@@ -234,12 +234,6 @@ left join #tmpOutputDate t on t.SewingLineID = w.SewingLineID and t.FactoryID = 
 where w.Holiday=0 and isnull(w.Hours,0) != 0 and w.Date >= (select dateadd(day,-240, min(MinOutputDate)) from #tmpOutputDate) and  w.Date <= (select max(MaxOutputDate) from #tmpOutputDate)
 order by  FactoryID, t.SewingLineID ,t.OrderStyle, t.MockupStyle, w.Date
 
-select w.FactoryID , w.Date, w.SewingLineID
-	, [RID] = ROW_NUMBER() over(partition by w.FactoryID, w.SewingLineID order by w.Date)
-into #tmpWorkHour_Factory
-from #tmpWorkHour w
-group by w.FactoryID, w.Date, w.SewingLineID
-
 select t.*
     ,[LastShift] = IIF(t.Shift <> 'O' and t.Category <> 'M' and t.LocalOrder = 1, 'I',t.Shift) 
     ,[FtyType] = f.Type
@@ -298,6 +292,21 @@ where	(
 		) and
 		(@Brand = '' or t.OrderBrandID = @Brand or t.MockupBrandID = @Brand) and
 		(@CDCode = '' or t.OrderCdCodeID = @CDCode or t.MockupCDCodeID = @CDCode)
+
+select w.SewingLineID, w.FactoryID, w.Date
+	, [RID] = ROW_NUMBER() over(partition by w.FactoryID, w.SewingLineID order by w.Date)
+into #tmpWorkHour_Factory
+from WorkHour w 
+outer apply (
+	select val = 1
+	from #tmp1stFilter_First t 
+	where w.FactoryID = t.FactoryID 
+	and w.Date = t.OutputDate 
+	and w.SewingLineID = t.SewingLineID 
+	and t.MasterStyleID <> ''
+) t
+where (w.Holiday = 0 or t.val is not null) --假日但有產出也要計算
+group by w.SewingLineID, w.FactoryID, w.Date, t.val
 
 select t.*
 	, [CumulateDate] = coalesce(t.CumulateDate_Before, 0)
