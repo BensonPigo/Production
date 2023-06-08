@@ -23,6 +23,8 @@ namespace Sci.Production.Quality
         private readonly string loginID = Env.User.UserID;
         private readonly string ID;
         private string excelFile;
+        private SelectItem2 selectItem2 = null;
+        private DataTable dtSelectItem2 = null;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="P01_ShadeBond"/> class.
@@ -144,14 +146,26 @@ namespace Sci.Production.Quality
                 dr["SEQ2"] = this.maindr["SEQ2"];
             }
 
-            List<string> listDyelot = new List<string>() { "ALL" };
-
             if (datas.Rows.Count > 0)
             {
-                listDyelot.AddRange(datas.AsEnumerable().Select(s => s["Dyelot"].ToString()).Distinct().ToList());
-            }
+                this.dtSelectItem2 = datas;
+                if (this.dtSelectItem2 == null)
+                {
+                    return;
+                }
 
-            this.comboDyelot.DataSource = listDyelot;
+                DataTable distinctTable = this.dtSelectItem2.DefaultView.ToTable(true, "Dyelot");
+                string str = string.Empty;
+                foreach (DataRow item in distinctTable.Rows)
+                {
+                    str += item["Dyelot"].ToString() + ",";
+                }
+
+                str = str.Substring(0, str.Length - 1);
+                this.txtDyelot.Text = str;
+                this.selectItem2 = new SelectItem2(distinctTable, "Dyelot", "Dyelot", "10", defaults: str);
+                this.gridbs.Filter = string.Empty;
+            }
 
             this.CalRollandDyelot(datas);
         }
@@ -1032,32 +1046,29 @@ where a.ID='{0}'", this.ID);
             }
         }
 
-        private void ComboDyelot_TextChanged(object sender, EventArgs e)
+        private void TxtDyelot_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
-            if (this.gridbs.DataSource == null)
+            if (this.selectItem2 == null)
             {
                 return;
             }
 
-            if (this.comboDyelot.Text == "ALL")
-            {
-                this.gridbs.Filter = string.Empty;
-            }
-            else
-            {
-                this.gridbs.Filter = $" Dyelot = '{this.comboDyelot.Text}'";
-            }
-
-            DataTable dtGrid = (DataTable)this.gridbs.DataSource;
-            if (dtGrid.Rows.Count == 0)
+            DialogResult result = this.selectItem2.ShowDialog();
+            if (result == DialogResult.Cancel)
             {
                 return;
             }
 
-            foreach (DataRow item in dtGrid.Rows)
+            string strWhere = string.Empty;
+            foreach (string item in this.selectItem2.GetSelectedList())
             {
-                item["Selected"] = 0;
+                strWhere += $"'{item}',";
             }
+
+            strWhere = strWhere.Length > 0 ? strWhere.Substring(0, strWhere.Length - 1) : "''";
+            this.gridbs.Filter = $" Dyelot in({strWhere})";
+
+            this.txtDyelot.Text = this.selectItem2.GetSelectedString();
         }
     }
 }
