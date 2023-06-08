@@ -30,7 +30,7 @@ CREATE TABLE [dbo].[MockupWash](
 	[HTPellOff] [varchar](5) NULL,
 	[HT2ndPressnoreverse] [int] NULL,
 	[HT2ndPressreversed] [int] NULL,
-	[HTCoolingTime] varchar(10) NULL,
+	[HTCoolingTime] varchar(50) NULL,
 	[TestBeforePicture] [varbinary](max) NULL,
 	[TestAfterPicture] [varbinary](max) NULL,
 	[Type] [varchar](1) NOT NULL,
