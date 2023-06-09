@@ -34,7 +34,6 @@
             this.bs_Report = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.tabControl1 = new Sci.Win.UI.TabControl();
             this.MaterialDocumentRecord = new System.Windows.Forms.TabPage();
-            this.btn_ToExcel = new Sci.Win.UI.Button();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.grid_Material = new Sci.Win.UI.Grid();
             this.grid_Document = new Sci.Win.UI.Grid();
@@ -80,6 +79,7 @@
             this.label3 = new Sci.Win.UI.Label();
             this.label2 = new Sci.Win.UI.Label();
             this.label1 = new Sci.Win.UI.Label();
+            this.btn_ToExcel = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.bs_Material)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.bs_Document)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.bs_Report)).BeginInit();
@@ -99,11 +99,11 @@
             // 
             // bs_Material
             // 
-            this.bs_Material.PositionChanged += new System.EventHandler(this.bs_Material_PositionChanged);
+            this.bs_Material.PositionChanged += new System.EventHandler(this.Bs_Material_PositionChanged);
             // 
             // bs_Document
             // 
-            this.bs_Document.PositionChanged += new System.EventHandler(this.bs_Document_PositionChanged);
+            this.bs_Document.PositionChanged += new System.EventHandler(this.Bs_Document_PositionChanged);
             // 
             // tabControl1
             // 
@@ -151,17 +151,6 @@
             this.MaterialDocumentRecord.Size = new System.Drawing.Size(1183, 574);
             this.MaterialDocumentRecord.TabIndex = 2;
             this.MaterialDocumentRecord.Text = "Material Document Record";
-            // 
-            // btn_ToExcel
-            // 
-            this.btn_ToExcel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btn_ToExcel.Location = new System.Drawing.Point(994, 535);
-            this.btn_ToExcel.Name = "btn_ToExcel";
-            this.btn_ToExcel.Size = new System.Drawing.Size(80, 30);
-            this.btn_ToExcel.TabIndex = 1208;
-            this.btn_ToExcel.Text = "To Excel";
-            this.btn_ToExcel.UseVisualStyleBackColor = true;
-            this.btn_ToExcel.Click += new System.EventHandler(this.btn_ToExcel_Click);
             // 
             // splitContainer1
             // 
@@ -262,7 +251,7 @@
             this.comboMaterialType.Name = "comboMaterialType";
             this.comboMaterialType.Size = new System.Drawing.Size(121, 24);
             this.comboMaterialType.TabIndex = 1192;
-            this.comboMaterialType.SelectedIndexChanged += new System.EventHandler(this.comboMaterialType_SelectedIndexChanged);
+            this.comboMaterialType.SelectedIndexChanged += new System.EventHandler(this.ComboMaterialType_SelectedIndexChanged);
             // 
             // txtColor
             // 
@@ -589,7 +578,7 @@
             this.btnSave2.TabIndex = 8;
             this.btnSave2.Text = "Save";
             this.btnSave2.UseVisualStyleBackColor = true;
-            this.btnSave2.Click += new System.EventHandler(this.btnSave2_Click);
+            this.btnSave2.Click += new System.EventHandler(this.BtnSave2_Click);
             // 
             // grid1
             // 
@@ -626,7 +615,7 @@
             this.btnQuery2.TabIndex = 6;
             this.btnQuery2.Text = "Query";
             this.btnQuery2.UseVisualStyleBackColor = true;
-            this.btnQuery2.Click += new System.EventHandler(this.btnQuery2_Click);
+            this.btnQuery2.Click += new System.EventHandler(this.BtnQuery2_Click);
             // 
             // txtpo
             // 
@@ -701,6 +690,17 @@
             this.label1.TabIndex = 0;
             this.label1.Text = "ETA";
             // 
+            // btn_ToExcel
+            // 
+            this.btn_ToExcel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btn_ToExcel.Location = new System.Drawing.Point(994, 535);
+            this.btn_ToExcel.Name = "btn_ToExcel";
+            this.btn_ToExcel.Size = new System.Drawing.Size(80, 30);
+            this.btn_ToExcel.TabIndex = 1210;
+            this.btn_ToExcel.Text = "To Excel";
+            this.btn_ToExcel.UseVisualStyleBackColor = true;
+            this.btn_ToExcel.Click += new System.EventHandler(this.Btn_ToExcel_Click);
+            // 
             // P52
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -740,7 +740,6 @@
         private Win.UI.ListControlBindingSource bs_Report;
         private Win.UI.TabControl tabControl1;
         private System.Windows.Forms.TabPage MaterialDocumentRecord;
-        private Win.UI.Button btn_ToExcel;
         private System.Windows.Forms.SplitContainer splitContainer1;
         private Win.UI.Grid grid_Material;
         private Win.UI.Grid grid_Document;
@@ -786,5 +785,6 @@
         private Win.UI.Label label2;
         private Win.UI.Label label1;
         private Win.UI.ListControlBindingSource listControlBindingSource1;
+        private Win.UI.Button btn_ToExcel;
     }
 }

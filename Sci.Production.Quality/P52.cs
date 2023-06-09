@@ -40,6 +40,7 @@ namespace Sci.Production.Quality
         private Ict.Win.UI.DataGridViewDateBoxColumn col_Inspection_Report_FtyReceivedDate;
         private Ict.Win.UI.DataGridViewDateBoxColumn col_TestReport_FtyReceivedDate;
         private Ict.Win.UI.DataGridViewDateBoxColumn col_ContinuityCard_FtyReceivedDate;
+        private Ict.Win.UI.DataGridViewDateBoxColumn col_FirstDyelot_FtyReceivedDate;
         private Ict.Win.UI.DataGridViewNumericBoxColumn col_T2InspYds;
         private Ict.Win.UI.DataGridViewNumericBoxColumn col_T2DefectPoint;
 
@@ -186,12 +187,12 @@ namespace Sci.Production.Quality
             .Date("WhseArrival", header: "ATA", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Date("ETA", header: "ETA", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Text("SeasonID", header: "Season", width: Widths.AnsiChars(6), iseditingreadonly: true)
-            .Text("PoID", header: "SP#", width: Widths.AnsiChars(16), iseditingreadonly: true)
+            .Text("PoID", header: "SP#", width: Widths.AnsiChars(14), iseditingreadonly: true)
             .Text("Seq", header: "Seq#", width: Widths.AnsiChars(6), iseditingreadonly: true)
-            .Text("BrandID", header: "Brand", width: Widths.AnsiChars(8), iseditingreadonly: true)
+            .Text("BrandID", header: "Brand", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Text("SuppID", header: "Supp", width: Widths.AnsiChars(8), iseditingreadonly: true)
-            .Text("SuppName", header: "Supp Name", width: Widths.AnsiChars(8), iseditingreadonly: true)
-            .Text("RefNo", header: "Ref#", width: Widths.AnsiChars(12), iseditingreadonly: true, settings: refno)
+            .Text("SuppName", header: "Supp Name", width: Widths.AnsiChars(10), iseditingreadonly: true)
+            .Text("RefNo", header: "Ref#", width: Widths.AnsiChars(14), iseditingreadonly: true, settings: refno)
             .Text("WeaveTypeID", header: "Weave Type", width: Widths.AnsiChars(8), iseditingreadonly: true)
 
             .Text("Color", header: "Color", width: Widths.AnsiChars(8), iseditingreadonly: true)
@@ -204,8 +205,8 @@ namespace Sci.Production.Quality
             .Date("ContinuityCard_FtyReceivedDate", header: "Continuity Card\r\nFty Received Date", width: Widths.AnsiChars(10), iseditingreadonly: false).Get(out this.col_ContinuityCard_FtyReceivedDate) // W (Pink)
             .Date("ContinuityCard_TPESentDate", header: "Continuity Card\r\nSupp Sent Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Text("ContinuityCard_AWB", header: "Continuity Card\r\nAWB#", width: Widths.AnsiChars(16), iseditingreadonly: true)
-            .Date("1stBulkDyelot_FtyReceivedDate", header: "1st Bulk Dyelot\r\nFty Received Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
-            .Text("1stBulkDyelot TPESentDate", header: "1st Bulk Dyelot\r\nSupp Sent Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
+            .Date("1stBulkDyelot_FtyReceivedDate", header: "1st Bulk Dyelot\r\nFty Received Date", width: Widths.AnsiChars(10), iseditingreadonly: false).Get(out this.col_FirstDyelot_FtyReceivedDate) // W
+            .Text("1stBulkDyelot_TPESentDate", header: "1st Bulk Dyelot\r\nSupp Sent Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Numeric("T2Inspected_Yards", header: "T2 Inspected Yards", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 8, settings: t2IY, iseditingreadonly: false).Get(out this.col_T2InspYds) // W
             .Numeric("T2Defect_Points", header: "T2 Defect Points", width: Widths.AnsiChars(8), integer_places: 5, settings: t2DP, iseditingreadonly: false).Get(out this.col_T2DefectPoint) // W
             .Text("Grade", header: "Grade", width: Widths.AnsiChars(8), iseditingreadonly: true) // W
@@ -217,9 +218,9 @@ namespace Sci.Production.Quality
             this.grid1.Columns["Inspection_Report_FtyReceivedDate"].DefaultCellStyle.BackColor = Color.Pink;
             this.grid1.Columns["TestReport_FtyReceivedDate"].DefaultCellStyle.BackColor = Color.Pink;
             this.grid1.Columns["ContinuityCard_FtyReceivedDate"].DefaultCellStyle.BackColor = Color.Pink;
+            this.grid1.Columns["1stBulkDyelot_FtyReceivedDate"].DefaultCellStyle.BackColor = Color.Pink;
             this.grid1.Columns["T2Inspected_Yards"].DefaultCellStyle.BackColor = Color.Pink;
             this.grid1.Columns["T2Defect_Points"].DefaultCellStyle.BackColor = Color.Pink;
-            //this.grid1.Columns["Grade"].DefaultCellStyle.BackColor = Color.Pink;
             this.Change_Color_Edit();
             #endregion Color
             #endregion tabPage2_grid2
@@ -402,6 +403,52 @@ namespace Sci.Production.Quality
                 }
 
                 if (MyUtility.Check.Empty(dr["ContinuityCard_TPESentDate"]))
+                {
+                    e.IsEditable = false;
+                }
+                else
+                {
+                    e.IsEditable = true;
+                }
+            };
+
+            this.col_FirstDyelot_FtyReceivedDate.CellFormatting += (s, e) =>
+            {
+                if (e.RowIndex == -1)
+                {
+                    return;
+                }
+
+                DataRow dr = this.grid1.GetDataRow(e.RowIndex);
+                if (dr == null)
+                {
+                    return;
+                }
+
+                if (MyUtility.Check.Empty(dr["1stBulkDyelot_TPESentDate"]))
+                {
+                    e.CellStyle.BackColor = Color.White;
+                }
+                else
+                {
+                    e.CellStyle.BackColor = Color.Pink;
+                }
+            };
+
+            this.col_FirstDyelot_FtyReceivedDate.CellEditable += (s, e) =>
+            {
+                if (e.RowIndex == -1)
+                {
+                    return;
+                }
+
+                var dr = this.grid1.GetDataRow<DataRow>(e.RowIndex);
+                if (dr == null)
+                {
+                    return;
+                }
+
+                if (MyUtility.Check.Empty(dr["1stBulkDyelot_TPESentDate"]))
                 {
                     e.IsEditable = false;
                 }
@@ -1031,15 +1078,15 @@ DROP TABLE #POList
                 this.bs_Material.DataSource = dataLoaded;
                 this.bs_Document.DataMember = dataLoaded.RelationDocument.RelationName;
                 this.bs_Document.DataSource = this.bs_Material;
-                this.bs_Document_PositionChanged(null, null);
+                this.Bs_Document_PositionChanged(null, null);
             }
         }
 
         /// <summary>
         /// ISP20230564 移除 TabPage 1 存檔編輯功能
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
+        /// <param name="sender">sender</param>
+        /// <param name="e">EventArgs</param>
         private void BtnSave_Click(object sender, EventArgs e)
         {
             if (this.bs_Report.DataSource == null)
@@ -1118,7 +1165,7 @@ inner join #tmp s on s.Ukey = t.Ukey
             this.bs_Report.Position = c;
         }
 
-        private void btnSave2_Click(object sender, EventArgs e)
+        private void BtnSave2_Click(object sender, EventArgs e)
         {
             this.grid1.ValidateControl();
             if (this.dt1 == null || this.dt1.Rows.Count == 0)
@@ -1194,8 +1241,7 @@ inner join #tmp s on t.SuppID = s.SuppID
 and t.TestDocFactoryGroup = s.TestDocFactoryGroup
 and t.BrandRefno = s.FirstDyelot_BrandRefno
 and t.ColorID = s.Color
-and t.SeasonID = s.SeasonID
-
+and t.SeasonID = s.FirstDyelot_SeasonID
 ;
 ";
             DataTable odt;
@@ -1222,7 +1268,7 @@ and t.SeasonID = s.SeasonID
 
         private string DocumentName;
 
-        private void bs_Document_PositionChanged(object sender, EventArgs e)
+        private void Bs_Document_PositionChanged(object sender, EventArgs e)
         {
             this.ChangeBsReport();
         }
@@ -1404,7 +1450,7 @@ and exists(select 1 FROM Export_Detail ed WITH (NOLOCK) inner join Fabric f2 WIT
             this.bs_Report.DataSource = dt;
         }
 
-        private void btn_ToExcel_Click(object sender, EventArgs e)
+        private void Btn_ToExcel_Click(object sender, EventArgs e)
         {
             if ((MaterialtableDataSet)((BindingSource)this.grid_Material.DataSource).DataSource == null)
             {
@@ -1628,7 +1674,7 @@ drop table #probablySeasonList,#tmpBasc,#tmpFTYReceivedReport,#tmpReportDate
             excelFile.OpenFile();
         }
 
-        private void comboMaterialType_SelectedIndexChanged(object sender, EventArgs e)
+        private void ComboMaterialType_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (this.isFormLoaded)
             {
@@ -1636,14 +1682,14 @@ drop table #probablySeasonList,#tmpBasc,#tmpFTYReceivedReport,#tmpReportDate
             }
         }
 
-        private void bs_Material_PositionChanged(object sender, EventArgs e)
+        private void Bs_Material_PositionChanged(object sender, EventArgs e)
         {
             this.ChangeBsReport();
         }
 
-        private void btnQuery2_Click(object sender, EventArgs e)
+        private void BtnQuery2_Click(object sender, EventArgs e)
         {
-            Page2_Query();
+            this.Page2_Query();
         }
 
         private void Page2_Query()
@@ -1735,6 +1781,7 @@ FirstDyelot.FirstDyelot,
 FirstDyelot_FTYReceivedReport = FirstDyelot.FTYReceivedReport,
 FirstDyelot_BrandRefno = FirstDyelot.BrandRefno,
 FirstDyelot.TestDocFactoryGroup,
+FirstDyelot_SeasonID = FirstDyelot.SeasonID,
 a.T1InspectedYards,
 b.T1DefectPoints,
 ed.seq1,
@@ -1846,7 +1893,7 @@ a.selected
 ,[InvoiceNo] = a.InvoiceNo
 ,[WhseArrival] = a.WhseArrival
 ,[ETA] = a.Eta
-,[SeasonID] = a.seasonID -- FirstDyelot PKey
+,[SeasonID] = a.seasonID
 ,[POID] = a.PoID
 ,[Seq] = a.seq
 ,a.Seq1,a.Seq2
@@ -1856,6 +1903,7 @@ a.selected
 ,[RefNo] = a.Refno
 ,a.TestDocFactoryGroup -- FirstDyelot PKey
 ,a.FirstDyelot_BrandRefno-- FirstDyelot PKey
+,a.FirstDyelot_SeasonID -- FirstDyelot PKey
 ,a.Clima
 ,[WeaveTypeID] = a.WeaveTypeID
 ,[Color] = a.ColorID -- FirstDyelot PKey
@@ -1869,7 +1917,7 @@ a.selected
 ,[ContinuityCard_TPESentDate] = b.[Continuity card]
 ,[ContinuityCard_AWB] = b.AWBno
 ,[1stBulkDyelot_FtyReceivedDate] = a.FirstDyelot_FTYReceivedReport
-,[1stBulkDyelot TPESentDate] = a.FirstDyelot
+,[1stBulkDyelot_TPESentDate] = a.FirstDyelot
 ,[T2Inspected_Yards] = b.T2InspYds
 ,[T2Defect_Points] = b.T2DefectPoint
 ,[Grade] = b.T2Grade
