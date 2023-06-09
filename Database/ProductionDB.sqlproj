@@ -2841,6 +2841,12 @@
     <Build Include="dbo\Tables\Style_UnitPrice.sql" />
     <Build Include="dbo\Tables\AutomatedLineMappingConditionSetting.sql" />
     <Build Include="dbo\Tables\AutomatedLineMappingConditionSetting_History.sql" />
+    <Build Include="dbo\Tables\AutomatedLineMapping.sql" />
+    <Build Include="dbo\Tables\AutomatedLineMapping_Detail.sql" />
+    <Build Include="dbo\Tables\AutomatedLineMapping_DetailTemp.sql" />
+    <Build Include="dbo\Tables\AutomatedLineMapping_DetailAuto.sql" />
+    <Build Include="dbo\Tables\AutomatedLineMapping_NotHitTargetReason.sql" />
+    <Build Include="dbo\Tables\SewerGroupRange.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />
