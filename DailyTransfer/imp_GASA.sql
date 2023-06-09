@@ -10,6 +10,8 @@ SET NOCOUNT ON;
 	and t.SuppID =s. SuppID 
 	and t.ColorID =s.ColorID 
 	and t.SeasonID = s.SeasonID
+	and t.DocumentName = s.DocumentName
+	and t.BrandID = s.BrandID
 	when matched then update set 
 		t.FirstDyelot =s.FirstDyelot,
 		t.Period  =s.Period ,
@@ -18,9 +20,7 @@ SET NOCOUNT ON;
 		t.AddName = s.AddName,
 		t.AddDate = s.AddDate,
 		t.ReceivedDate = s.ReceivedDate,
-		t.ReceivedRemark = s.ReceivedRemark,
-		t.DocumentName = s.DocumentName,
-		t.BrandID = s.BrandID
+		t.ReceivedRemark = s.ReceivedRemark
 	when not matched by target then 	
 		insert(TestDocFactoryGroup,  [SuppID],  [ColorID],[FirstDyelot],  SeasonID,   Period,BrandRefno,AWBno,AddName,AddDate,ReceivedDate,ReceivedRemark,DocumentName,BrandID)
 		values(s.TestDocFactoryGroup,s.[SuppID],s.[ColorID],s.[FirstDyelot],s.SeasonID,s.Period ,s.BrandRefno,s.AWBno,s.AddName,s.AddDate,s.ReceivedDate,s.ReceivedRemark,s.DocumentName,s.BrandID);
