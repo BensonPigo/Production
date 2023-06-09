@@ -452,7 +452,7 @@ namespace Sci.Production.Packing
                         tables.Cell(((p % pageItemCount) * 3) + 1, 2).Range.Paste();
                         Word.Shape qrCodeImg = tables.Cell(((p % pageItemCount) * 3) + 1, 2).Range.InlineShapes[1].ConvertToShape();
 
-                        int qrcodeSize = selectType == 0 ? 34 : 45;
+                        int qrcodeSize = selectType == 0 ? 34 : 84;
 
                         qrCodeImg.Width = qrcodeSize;
                         qrCodeImg.Height = qrcodeSize;
