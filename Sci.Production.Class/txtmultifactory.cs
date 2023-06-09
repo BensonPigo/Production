@@ -36,9 +36,19 @@ namespace Sci.Production.Class
         public bool IsDataFromA2B { get; set; } = false;
 
         /// <summary>
+        /// IsMDivisionID
+        /// </summary>
+        public bool IsMDivisionID { get; set; } = false;
+
+        /// <summary>
         /// SystemName
         /// </summary>
         public string SystemName { get; set; } = string.Empty;
+
+        /// <summary>
+        /// MDivision
+        /// </summary>
+        public string MDivisionID { get; set; } = string.Empty;
 
         /// <inheritdoc/>
         protected override void OnPopUp(Win.UI.TextBoxPopUpEventArgs e)
@@ -69,6 +79,11 @@ namespace Sci.Production.Class
                 if (this.CheckFtyGroup)
                 {
                     sqlWhere = "select distinct FtyGroup from Factory WITH (NOLOCK) order by FtyGroup";
+                }
+
+                if (this.IsMDivisionID)
+                {
+                    sqlWhere = $"select ID from Factory WITH (NOLOCK) where Junk = 0 AND MDivisionID = '{this.MDivisionID}' order by ID ";
                 }
 
                 Win.Tools.SelectItem2 item = new Win.Tools.SelectItem2(sqlWhere, "Factory", "10", this.Text, null, null, null);
