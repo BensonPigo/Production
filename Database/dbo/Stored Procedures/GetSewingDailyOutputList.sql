@@ -305,7 +305,7 @@ outer apply (
 	and w.SewingLineID = t.SewingLineID 
 	and t.MasterStyleID <> ''
 ) t
-where (w.Holiday = 0 or t.val is not null) --假日但有產出也要計算
+where ((w.Holiday = 0 and w.Hours != 0) or t.val is not null) --假日但有產出也要計算
 group by w.SewingLineID, w.FactoryID, w.Date, t.val
 
 select t.*
