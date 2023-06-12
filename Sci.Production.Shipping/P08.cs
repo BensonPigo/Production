@@ -671,7 +671,7 @@ select  1
 from FtyExport with (nolock) where BLno = '{0}' and Type <> 3 
 union all
 select 1
-from TransferExport with (nolock) where BLno = 'AGX22CSGN021'",
+from TransferExport with (nolock) where BLno = '{0}'",
                             this.CurrentMaintain["BLNo"]);
 
                         if (!MyUtility.Check.Seek(strSQLcmd))
