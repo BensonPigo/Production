@@ -67,6 +67,8 @@ namespace Sci.Production.Packing
             this.radioPackingListReportFormA.Checked = true;
             this.ControlPrintFunction(false);
             this.chkCartonNo.ForeColor = System.Drawing.Color.Blue;
+            MyUtility.Tool.SetupCombox(this.comboType, 2, 1, $"0,2\" * 1\",1,9cm*3 cm");
+            this.comboType.SelectedIndex = 0;
         }
 
         private void RadioBarcodePrint_CheckedChanged(object sender, EventArgs e)
@@ -171,7 +173,7 @@ namespace Sci.Production.Packing
             }
             else if (this.radioQRcodePrint.Checked)
             {
-                result = new PackingPrintBarcode().PrintQRcode(this.masterData["ID"].ToString(), this.ctn1, this.ctn2);
+                result = new PackingPrintBarcode().PrintQRcode(this.masterData["ID"].ToString(), this.ctn1, this.ctn2, selectType: this.comboType.SelectedIndex);
             }
             else if (this.rdbtnShippingMarkToChina.Checked)
             {
