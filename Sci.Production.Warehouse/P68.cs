@@ -68,12 +68,12 @@ namespace Sci.Production.Warehouse
             .Text("Roll", header: "Roll", width: Widths.AnsiChars(7), iseditingreadonly: true)
             .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(8), iseditingreadonly: true)
             .Numeric("IssueQty", header: "Issue Qty", width: Widths.AnsiChars(9), decimal_places: 2, iseditingreadonly: true)
-            .DateTime("UnrollStartTime", header: "Unroll\r\nStart Time", width: Widths.AnsiChars(20), iseditingreadonly: true)
-            .DateTime("UnrollEndTime", header: "Unroll\r\nEnd Time", width: Widths.AnsiChars(20), iseditingreadonly: true)
-            .DateTime("RelaxationStartTime", header: "Relax\r\nStart Time", width: Widths.AnsiChars(20), iseditingreadonly: true)
-            .DateTime("RelaxationEndTime", header: "Relax\r\nEnd Time", width: Widths.AnsiChars(20), iseditingreadonly: true)
-            .DateTime("DispatchTime", header: "Dispatch Time", width: Widths.AnsiChars(20), iseditingreadonly: true)
-            .DateTime("FactoryReceivedTime", header: "Factory\r\nReceive Time", width: Widths.AnsiChars(20), iseditingreadonly: true)
+            .DateTime("UnrollStartTime", header: "Unroll\r\nStart Time", width: Widths.AnsiChars(18), iseditingreadonly: true)
+            .DateTime("UnrollEndTime", header: "Unroll\r\nEnd Time", width: Widths.AnsiChars(18), iseditingreadonly: true)
+            .DateTime("RelaxationStartTime", header: "Relax\r\nStart Time", width: Widths.AnsiChars(18), iseditingreadonly: true)
+            .DateTime("RelaxationEndTime", header: "Relax\r\nEnd Time", width: Widths.AnsiChars(18), iseditingreadonly: true)
+            .DateTime("DispatchTime", header: "Dispatch Time", width: Widths.AnsiChars(18), iseditingreadonly: true)
+            .DateTime("FactoryReceivedTime", header: "Factory\r\nReceive Time", width: Widths.AnsiChars(18), iseditingreadonly: true)
             ;
             #endregion
         }
@@ -290,7 +290,7 @@ namespace Sci.Production.Warehouse
             this.dt_Detail = dt[1];
             if (this.dt_Head.Rows.Count == 0)
             {
-                return;
+                MyUtility.Msg.InfoBox("Data not found.");
             }
 
             this.grid1.DataSource = this.cbStatus.Text == "All" ? this.dt_Head : this.dt_Head.Select($"Status = '{this.cbStatus.Text}'").TryCopyToDataTable(this.dt_Head);
