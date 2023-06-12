@@ -32,6 +32,9 @@ namespace Sci.Production.Warehouse
             this.txtmultifactory1.MDivisionID = Sci.Env.User.Keyword;
             MyUtility.Tool.SetupCombox(this.cbStatus, 1, 1, "All,Preparing,Unroll,Relaxation,Dispatched,Received");
             this.grid2.DataSource = this.bindingDetail;
+            this.cutingDate.Value1 = DateTime.Now;
+            this.cutingDate.Value2 = DateTime.Now;
+            this.txtmultifactory1.Text = Sci.Env.User.Factory;
         }
 
         /// <inheritdoc/>
@@ -87,13 +90,14 @@ namespace Sci.Production.Warehouse
             if (MyUtility.Check.Empty (this.cutingDate.Value1) && MyUtility.Check.Empty(this.txtCutplanID.Text))
             {
                 MyUtility.Msg.WarningBox("<Cutting Date> and <Cutplan ID> cannot all be empty.");
+                return;
             }
 
             if (!MyUtility.Check.Empty(this.cutingDate.Value1))
             {
                 this.listsqlParameter.Add(new SqlParameter("@CuttingDateStart", this.cutingDate.Value1));
                 this.listsqlParameter.Add(new SqlParameter("@CuttingDateEnd", this.cutingDate.Value2));
-                this.strSQLWher += " and cp.EstCutdate between @CuttingDateStart and @CuttingDateEnd";
+                this.strSQLWher += " and cp.EstCutdate  >= CAST(@CuttingDateStart AS DATE) AND cp.EstCutdate < DATEADD(DAY, 1, CAST(@CuttingDateEnd AS DATE))";
             }
 
             if (!MyUtility.Check.Empty(this.txtCutplanID.Text))
@@ -308,15 +312,15 @@ namespace Sci.Production.Warehouse
 
             DataRow dr_Value = this.grid1.GetDataRow(this.grid1.GetSelectedRowIndex());
 
-			if (dr_Value != null)
-			{
+            if (dr_Value != null)
+            {
                 string strID = string.IsNullOrEmpty(dr_Value["ID"].ToString()) ? string.Empty : dr_Value["ID"].ToString();
                 string strRefno = string.IsNullOrEmpty(dr_Value["Refno"].ToString()) ? string.Empty : dr_Value["Refno"].ToString();
                 string strColor = string.IsNullOrEmpty(dr_Value["Color"].ToString()) ? string.Empty : dr_Value["Color"].ToString();
                 this.bindingDetail.Filter = $"ID = '{strID}' and Refno = '{strRefno}' and Color = '{strColor}'";
             }
-			else
-			{
+            else
+            {
                 this.bindingDetail.Filter = $"ID = '' and Refno = '' and Color = ''";
             }
         }
