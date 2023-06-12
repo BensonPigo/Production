@@ -43,37 +43,37 @@ namespace Sci.Production.Warehouse
             #region 上面的Grid
             this.Helper.Controls.Grid.Generator(this.grid1)
             .Text("ID", header: "Cutplan ID", width: Widths.AnsiChars(15), iseditingreadonly: true)
-            .Text("Factory", header: "Factory", width: Widths.AnsiChars(14), iseditingreadonly: true)
-            .Text("POID", header: "POID", width: Widths.AnsiChars(15), iseditingreadonly: true)
-            .Text("CutCell", header: "Cut Cell", width: Widths.AnsiChars(11), iseditingreadonly: true)
+            .Text("Factory", header: "Factory", width: Widths.AnsiChars(6), iseditingreadonly: true)
+            .Text("POID", header: "POID", width: Widths.AnsiChars(13), iseditingreadonly: true)
+            .Text("CutCell", header: "Cut\r\nCell", width: Widths.AnsiChars(5), iseditingreadonly: true)
             .Date("EstCutdate", header: "Cutting Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
-            .Text("Refno", header: "Refno", width: Widths.AnsiChars(11), iseditingreadonly: true)
-            .Text("Color", header: "Color", width: Widths.AnsiChars(11), iseditingreadonly: true)
-            .Text("FabricRelaxationID", header: "Relaxation", width: Widths.AnsiChars(11), iseditingreadonly: true)
-            .Text("NeedUnroll", header: "Need Unroll", width: Widths.AnsiChars(11), iseditingreadonly: true)
-            .Text("Relaxtime", header: "Relaxtime\r\n(Hours)", width: Widths.AnsiChars(11), iseditingreadonly: true)
-            .Text("Status", header: "Status", width: Widths.AnsiChars(11), iseditingreadonly: true)
-            .Numeric("RequestCons", header: "Request\r\nCons", width: Widths.AnsiChars(11), decimal_places: 2, iseditingreadonly: true)
-            .Numeric("PreparingCons", header: "Preparing\r\nCons", width: Widths.AnsiChars(11), decimal_places: 2, iseditingreadonly: true)
-            .Numeric("UnrollCons", header: "Unroll\r\nCons", width: Widths.AnsiChars(11), decimal_places: 2, iseditingreadonly: true)
-            .Numeric("RelaxationCons", header: "Relaxation\r\nCons", width: Widths.AnsiChars(11), decimal_places: 2, iseditingreadonly: true)
-            .Numeric("DispatchedCons", header: "Dispatched\r\nCons", width: Widths.AnsiChars(11), decimal_places: 2, iseditingreadonly: true)
-            .Numeric("ReceivedCons", header: "Received\r\nCons", width: Widths.AnsiChars(11), decimal_places: 2, iseditingreadonly: true)
+            .Text("Refno", header: "Refno", width: Widths.AnsiChars(15), iseditingreadonly: true)
+            .Text("Color", header: "Color", width: Widths.AnsiChars(7), iseditingreadonly: true)
+            .Text("FabricRelaxationID", header: "Relaxation", width: Widths.AnsiChars(12), iseditingreadonly: true)
+            .Text("NeedUnroll", header: "Need\r\nUnroll", width: Widths.AnsiChars(5), iseditingreadonly: true)
+            .Text("Relaxtime", header: "Relaxtime\r\n(Hours)", width: Widths.AnsiChars(8), iseditingreadonly: true)
+            .Text("Status", header: "Status", width: Widths.AnsiChars(9), iseditingreadonly: true)
+            .Numeric("RequestCons", header: "Request\r\nCons", width: Widths.AnsiChars(10), decimal_places: 2, iseditingreadonly: true)
+            .Numeric("PreparingCons", header: "Preparing\r\nCons", width: Widths.AnsiChars(10), decimal_places: 2, iseditingreadonly: true)
+            .Numeric("UnrollCons", header: "Unroll\r\nCons", width: Widths.AnsiChars(10), decimal_places: 2, iseditingreadonly: true)
+            .Numeric("RelaxationCons", header: "Relaxation\r\nCons", width: Widths.AnsiChars(10), decimal_places: 2, iseditingreadonly: true)
+            .Numeric("DispatchedCons", header: "Dispatched\r\nCons", width: Widths.AnsiChars(10), decimal_places: 2, iseditingreadonly: true)
+            .Numeric("ReceivedCons", header: "Received\r\nCons", width: Widths.AnsiChars(10), decimal_places: 2, iseditingreadonly: true)
             ;
             #endregion
 
             #region 下面的Grid
             this.Helper.Controls.Grid.Generator(this.grid2)
-            .Text("Seq", header: "Seq", width: Widths.AnsiChars(15), iseditingreadonly: true)
-            .Text("Roll", header: "Roll", width: Widths.AnsiChars(14), iseditingreadonly: true)
-            .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(15), iseditingreadonly: true)
-            .Numeric("IssueQty", header: "Issue Qty", width: Widths.AnsiChars(11), decimal_places: 2, iseditingreadonly: true)
-            .DateTime("UnrollStartTime", header: "Unroll\r\nStart Time", width: Widths.AnsiChars(11), iseditingreadonly: true)
-            .DateTime("UnrollEndTime", header: "Unroll\r\nEnd Time", width: Widths.AnsiChars(11), iseditingreadonly: true)
-            .DateTime("RelaxationStartTime", header: "Relax\r\nStart Time", width: Widths.AnsiChars(11), iseditingreadonly: true)
-            .DateTime("RelaxationEndTime", header: "Relax\r\nEnd Time", width: Widths.AnsiChars(11), iseditingreadonly: true)
-            .DateTime("DispatchTime", header: "Dispatch Time", width: Widths.AnsiChars(11), iseditingreadonly: true)
-            .DateTime("FactoryReceivedTime", header: "Factory\r\nReceive Time", width: Widths.AnsiChars(11), iseditingreadonly: true)
+            .Text("Seq", header: "Seq", width: Widths.AnsiChars(6), iseditingreadonly: true)
+            .Text("Roll", header: "Roll", width: Widths.AnsiChars(7), iseditingreadonly: true)
+            .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(8), iseditingreadonly: true)
+            .Numeric("IssueQty", header: "Issue Qty", width: Widths.AnsiChars(9), decimal_places: 2, iseditingreadonly: true)
+            .DateTime("UnrollStartTime", header: "Unroll\r\nStart Time", width: Widths.AnsiChars(20), iseditingreadonly: true)
+            .DateTime("UnrollEndTime", header: "Unroll\r\nEnd Time", width: Widths.AnsiChars(20), iseditingreadonly: true)
+            .DateTime("RelaxationStartTime", header: "Relax\r\nStart Time", width: Widths.AnsiChars(20), iseditingreadonly: true)
+            .DateTime("RelaxationEndTime", header: "Relax\r\nEnd Time", width: Widths.AnsiChars(20), iseditingreadonly: true)
+            .DateTime("DispatchTime", header: "Dispatch Time", width: Widths.AnsiChars(20), iseditingreadonly: true)
+            .DateTime("FactoryReceivedTime", header: "Factory\r\nReceive Time", width: Widths.AnsiChars(20), iseditingreadonly: true)
             ;
             #endregion
         }
@@ -288,8 +288,12 @@ namespace Sci.Production.Warehouse
 
             this.dt_Head = dt[0];
             this.dt_Detail = dt[1];
+            if (this.dt_Head.Rows.Count == 0)
+            {
+                return;
+            }
 
-            this.grid1.DataSource = this.dt_Head;
+            this.grid1.DataSource = this.cbStatus.Text == "All" ? this.dt_Head : this.dt_Head.Select($"Status = '{this.cbStatus.Text}'").TryCopyToDataTable(this.dt_Head);
             this.bindingDetail.DataSource = this.dt_Detail;
         }
 
@@ -327,6 +331,11 @@ namespace Sci.Production.Warehouse
 
         private void CbStatus_SelectedIndexChanged(object sender, EventArgs e)
         {
+            if (this.dt_Head.Rows.Count == 0)
+            {
+                return;
+            }
+
             if (this.cbStatus.Text != "All")
             {
                 this.grid1.DataSource = this.dt_Head.Select($"Status = '{this.cbStatus.Text}'").TryCopyToDataTable(this.dt_Head); 
