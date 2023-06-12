@@ -370,8 +370,9 @@ namespace Sci.Production.Packing
         /// <param name="ctn2">ctn2</param>
         /// <param name="print_type">print_type</param>
         /// <param name="country">country</param>
+        /// <param name="selectType">selectType</param>
         /// <returns>DualResult</returns>
-        public DualResult PrintQRcode(string packingID, string ctn1, string ctn2, string print_type = "", bool country = false)
+        public DualResult PrintQRcode(string packingID, string ctn1, string ctn2, string print_type = "", bool country = false, int selectType = 0)
         {
             DataTable printData;
             int pageItemCount = 1;
@@ -394,7 +395,8 @@ namespace Sci.Production.Packing
             Word._Document document;
             Word.Table tables = null;
 
-            printFile = Env.Cfg.XltPathDir + "\\Packing_P03_QRcode.dotx";
+            string strPrintFile = selectType == 0 ? "\\Packing_P03_QRcode.dotx" : "\\Packing_P03_QrCode_9X3.dotx";
+            printFile = Env.Cfg.XltPathDir + strPrintFile;
             document = winword.Documents.Add(ref printFile);
 
             try
@@ -449,8 +451,11 @@ namespace Sci.Production.Packing
                         Clipboard.SetImage(oriBitmap);
                         tables.Cell(((p % pageItemCount) * 3) + 1, 2).Range.Paste();
                         Word.Shape qrCodeImg = tables.Cell(((p % pageItemCount) * 3) + 1, 2).Range.InlineShapes[1].ConvertToShape();
-                        qrCodeImg.Width = 34;
-                        qrCodeImg.Height = 34;
+
+                        int qrcodeSize = selectType == 0 ? 34 : 82;
+
+                        qrCodeImg.Width = qrcodeSize;
+                        qrCodeImg.Height = qrcodeSize;
 
                         qrCodeImg.WrapFormat.Type = Word.WdWrapType.wdWrapBehind;
                         qrCodeImg.RelativeHorizontalPosition = Word.WdRelativeHorizontalPosition.wdRelativeHorizontalPositionColumn;

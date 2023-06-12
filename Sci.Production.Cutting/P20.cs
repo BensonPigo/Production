@@ -224,7 +224,6 @@ outer apply(select CuttingLayer = isnull(x3.Qty,0)-isnull(acc.AccuCuttingLayer,0
 where a.CutRef = '{e.FormattedValue}'
 and a.CutRef != ''
 --and a.Layer > isnull(acc.AccuCuttingLayer,0)
-and a.MDivisionId = '{Env.User.Keyword}'
 ";
                 DualResult result = DBProxy.Current.Select(null, cutrefsql, out DataTable dt);
                 if (!result)
@@ -287,8 +286,7 @@ and a.MDivisionId = '{Env.User.Keyword}'
                                     from WorkOrder a WITH (NOLOCK)
                                     inner join cuttingoutput_Detail b WITH (NOLOCK) on b.WorkOrderUkey = a.Ukey
                                     where a.CutRef =  '{e.FormattedValue}'
-                                    and a.CutRef != ''
-                                    and a.MDivisionId = '{Env.User.Keyword}'";
+                                    and a.CutRef != ''";
                         result = DBProxy.Current.Select(null, cutrefsql, out dt);
                         if (!result)
                         {

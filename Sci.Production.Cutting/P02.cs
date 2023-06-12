@@ -499,7 +499,7 @@ where WorkOrderUkey={0}", masterID);
 
             this.txtStyle.Text = orderdr == null ? string.Empty : orderdr["Styleid"].ToString();
             this.txtLine.Text = orderdr == null ? string.Empty : orderdr["SewLine"].ToString();
-            string maxcutrefCmd = string.Format("Select Max(Cutref) from workorder WITH (NOLOCK) where mDivisionid = '{0}'", this.KeyWord);
+            string maxcutrefCmd = "Select Max(Cutref) from workorder WITH (NOLOCK)";
             this.textbox_LastCutRef.Text = MyUtility.GetValue.Lookup(maxcutrefCmd);
             this.comboBox1.Enabled = !this.EditMode;  // Sorting於編輯模式時不可選取
             this.BtnImportMarker.Enabled = this.EditMode;
@@ -2562,7 +2562,7 @@ Begin Transaction [Trans_Name] -- Trans_Name
                 }
 
                 updatecutref += string.Format($@"
-    if (select COUNT(1) from Workorder WITH (NOLOCK) where cutref = '{newcutref}' and mDivisionid = '{this.KeyWord}' and id != '{this.CurrentMaintain["id"]}')>0
+    if (select COUNT(1) from Workorder WITH (NOLOCK) where cutref = '{newcutref}' and id != '{this.CurrentMaintain["id"]}')>0
 	begin
 		RAISERROR ('Duplicate Cutref. Please redo Auto Ref#',12, 1) 
 		Rollback Transaction [Trans_Name] -- 復原所有操作所造成的變更
