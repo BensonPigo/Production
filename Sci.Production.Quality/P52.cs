@@ -664,7 +664,7 @@ namespace Sci.Production.Quality
                 return;
             }
 
-            var id = row["Ukey"].ToString();
+            var id = row["UniqueKey"].ToString();
             if (id.IsNullOrWhiteSpace())
             {
                 return;
@@ -740,9 +740,10 @@ namespace Sci.Production.Quality
                 MyUtility.Check.Empty(this.txtseq2.Text) &&
                 MyUtility.Check.Empty(this.txtSeason.Text) &&
                 MyUtility.Check.Empty(this.txtBrand.Text) &&
-                MyUtility.Check.Empty(this.txtSupplier.Text) &&
+                MyUtility.Check.Empty(this.txtMultiSupplier1.Text) &&
                 MyUtility.Check.Empty(this.txtRefno.Text) &&
                 MyUtility.Check.Empty(this.txtColor.Text) &&
+                MyUtility.Check.Empty(this.txtfactory.Text) &&
                 MyUtility.Check.Empty(this.dateETA.Value1) &&
                 MyUtility.Check.Empty(this.dateATA1.Value1))
             {
@@ -778,9 +779,9 @@ namespace Sci.Production.Quality
                 where += $@" and o.BrandID = '{this.txtBrand.Text}' ";
             }
 
-            if (!MyUtility.Check.Empty(this.txtSupplier.Text))
+            if (!MyUtility.Check.Empty(this.txtMultiSupplier1.Text))
             {
-                where += $@" and su.ID = '{this.txtSupplier.Text}' ";
+                where += $@" and su.ID in (select data from splitstring('{this.txtMultiSupplier1.Text}' , ','))";
             }
 
             if (!MyUtility.Check.Empty(this.txtRefno.Text))
@@ -791,6 +792,11 @@ namespace Sci.Production.Quality
             if (!MyUtility.Check.Empty(this.txtColor.Text))
             {
                 where += $@" and psds.SpecValue = '{this.txtColor.Text}' ";
+            }
+
+            if (!MyUtility.Check.Empty(this.txtfactory.Text))
+            {
+                where += $@" and o.FactoryID = '{this.txtfactory.Text}' ";
             }
 
             if (!MyUtility.Check.Empty(this.dateETA.Value1) || !MyUtility.Check.Empty(this.dateETA.Value2))
@@ -1314,6 +1320,7 @@ and t.SeasonID = s.FirstDyelot_SeasonID
                 case "1":
                     sql = @"
 Select sr.Ukey  
+       ,sr.UniqueKey
        ,TestReportTestDate = CONVERT(VARCHAR(10), sr.TestReportTestDate, 23)
 	   ,TestReport = CONVERT(VARCHAR(10), sr.TestReport, 23) 
        ,TestSeasonID
@@ -1338,7 +1345,8 @@ and sr.BrandID = @BrandID and sr.DocumentName = @DocumentName
                     break;
                 case "2":
                     sql = @"
-Select sr.Ukey  
+Select sr.Ukey
+       ,sr.UniqueKey
        ,TestReportTestDate = CONVERT(VARCHAR(10), sr.TestReportTestDate, 23)
 	   ,TestReport = CONVERT(VARCHAR(10), sr.TestReport, 23) 
        ,TestSeasonID
@@ -1395,6 +1403,7 @@ Order by SeasonID desc";
                 case "4":
                     sql = @"
 Select Ukey
+       ,UniqueKey
        ,ReportDate = CONVERT(VARCHAR(10), ReportDate, 23)
        ,AWBNO 
        ,ExportID
@@ -1416,6 +1425,7 @@ WHERE PoID = @PoID and Seq1 = @Seq1 and Seq2 = @Seq2 and BrandID = @BrandID and 
                 case "5":
                     sql = @"
 Select  sr.Ukey
+       ,sr.UniqueKey
        ,ReportDate = CONVERT(VARCHAR(10), sr.ReportDate, 23)
        ,sr.AWBNO 
        ,FTYReceivedReport

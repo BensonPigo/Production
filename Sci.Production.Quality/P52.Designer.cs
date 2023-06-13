@@ -34,6 +34,10 @@
             this.bs_Report = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.tabControl1 = new Sci.Win.UI.TabControl();
             this.MaterialDocumentRecord = new System.Windows.Forms.TabPage();
+            this.txtfactory = new Sci.Production.Class.Txtfactory();
+            this.labelFactory = new Sci.Win.UI.Label();
+            this.txtMultiSupplier1 = new Sci.Production.Class.TxtMultiBrandSupplierGroup();
+            this.btn_ToExcel = new Sci.Win.UI.Button();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.grid_Material = new Sci.Win.UI.Grid();
             this.grid_Document = new Sci.Win.UI.Grid();
@@ -46,7 +50,6 @@
             this.label13 = new Sci.Win.UI.Label();
             this.dateATA1 = new Sci.Win.UI.DateRange();
             this.label14 = new Sci.Win.UI.Label();
-            this.txtSupplier = new Sci.Win.UI.TextBox();
             this.label15 = new Sci.Win.UI.Label();
             this.txtBrand = new Sci.Production.Class.Txtbrand();
             this.label16 = new Sci.Win.UI.Label();
@@ -79,7 +82,6 @@
             this.label3 = new Sci.Win.UI.Label();
             this.label2 = new Sci.Win.UI.Label();
             this.label1 = new Sci.Win.UI.Label();
-            this.btn_ToExcel = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.bs_Material)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.bs_Document)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.bs_Report)).BeginInit();
@@ -118,6 +120,9 @@
             // 
             // MaterialDocumentRecord
             // 
+            this.MaterialDocumentRecord.Controls.Add(this.txtfactory);
+            this.MaterialDocumentRecord.Controls.Add(this.labelFactory);
+            this.MaterialDocumentRecord.Controls.Add(this.txtMultiSupplier1);
             this.MaterialDocumentRecord.Controls.Add(this.btn_ToExcel);
             this.MaterialDocumentRecord.Controls.Add(this.splitContainer1);
             this.MaterialDocumentRecord.Controls.Add(this.grid_Report);
@@ -129,7 +134,6 @@
             this.MaterialDocumentRecord.Controls.Add(this.label13);
             this.MaterialDocumentRecord.Controls.Add(this.dateATA1);
             this.MaterialDocumentRecord.Controls.Add(this.label14);
-            this.MaterialDocumentRecord.Controls.Add(this.txtSupplier);
             this.MaterialDocumentRecord.Controls.Add(this.label15);
             this.MaterialDocumentRecord.Controls.Add(this.txtBrand);
             this.MaterialDocumentRecord.Controls.Add(this.label16);
@@ -151,6 +155,52 @@
             this.MaterialDocumentRecord.Size = new System.Drawing.Size(1183, 574);
             this.MaterialDocumentRecord.TabIndex = 2;
             this.MaterialDocumentRecord.Text = "Material Document Record";
+            // 
+            // txtfactory
+            // 
+            this.txtfactory.BackColor = System.Drawing.Color.White;
+            this.txtfactory.BoolFtyGroupList = false;
+            this.txtfactory.FilteMDivision = false;
+            this.txtfactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtfactory.IsProduceFty = false;
+            this.txtfactory.IssupportJunk = false;
+            this.txtfactory.Location = new System.Drawing.Point(513, 89);
+            this.txtfactory.MDivision = null;
+            this.txtfactory.Name = "txtfactory";
+            this.txtfactory.Size = new System.Drawing.Size(90, 23);
+            this.txtfactory.TabIndex = 1213;
+            // 
+            // labelFactory
+            // 
+            this.labelFactory.Location = new System.Drawing.Point(442, 87);
+            this.labelFactory.Name = "labelFactory";
+            this.labelFactory.Size = new System.Drawing.Size(65, 23);
+            this.labelFactory.TabIndex = 1212;
+            this.labelFactory.Text = "Factory";
+            // 
+            // txtMultiSupplier1
+            // 
+            this.txtMultiSupplier1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.txtMultiSupplier1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.txtMultiSupplier1.IsSupportEditMode = false;
+            this.txtMultiSupplier1.Location = new System.Drawing.Point(104, 32);
+            this.txtMultiSupplier1.myBrandName = null;
+            this.txtMultiSupplier1.Name = "txtMultiSupplier1";
+            this.txtMultiSupplier1.PopUpMode = Sci.Win.UI.TextBoxPopUpMode.EditModeAndReadOnly;
+            this.txtMultiSupplier1.ReadOnly = true;
+            this.txtMultiSupplier1.Size = new System.Drawing.Size(329, 23);
+            this.txtMultiSupplier1.TabIndex = 1211;
+            // 
+            // btn_ToExcel
+            // 
+            this.btn_ToExcel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btn_ToExcel.Location = new System.Drawing.Point(994, 535);
+            this.btn_ToExcel.Name = "btn_ToExcel";
+            this.btn_ToExcel.Size = new System.Drawing.Size(80, 30);
+            this.btn_ToExcel.TabIndex = 1210;
+            this.btn_ToExcel.Text = "To Excel";
+            this.btn_ToExcel.UseVisualStyleBackColor = true;
+            this.btn_ToExcel.Click += new System.EventHandler(this.Btn_ToExcel_Click);
             // 
             // splitContainer1
             // 
@@ -257,14 +307,14 @@
             // 
             this.txtColor.BackColor = System.Drawing.Color.White;
             this.txtColor.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtColor.Location = new System.Drawing.Point(606, 31);
+            this.txtColor.Location = new System.Drawing.Point(812, 31);
             this.txtColor.Name = "txtColor";
             this.txtColor.Size = new System.Drawing.Size(132, 23);
             this.txtColor.TabIndex = 1189;
             // 
             // label11
             // 
-            this.label11.Location = new System.Drawing.Point(513, 31);
+            this.label11.Location = new System.Drawing.Point(719, 31);
             this.label11.Name = "label11";
             this.label11.Size = new System.Drawing.Size(90, 23);
             this.label11.TabIndex = 1200;
@@ -274,16 +324,16 @@
             // 
             this.txtRefno.BackColor = System.Drawing.Color.White;
             this.txtRefno.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtRefno.Location = new System.Drawing.Point(307, 31);
+            this.txtRefno.Location = new System.Drawing.Point(513, 31);
             this.txtRefno.Name = "txtRefno";
             this.txtRefno.Size = new System.Drawing.Size(200, 23);
             this.txtRefno.TabIndex = 1188;
             // 
             // label12
             // 
-            this.label12.Location = new System.Drawing.Point(243, 31);
+            this.label12.Location = new System.Drawing.Point(442, 31);
             this.label12.Name = "label12";
-            this.label12.Size = new System.Drawing.Size(59, 23);
+            this.label12.Size = new System.Drawing.Size(65, 23);
             this.label12.TabIndex = 1199;
             this.label12.Text = "Refno";
             // 
@@ -323,15 +373,6 @@
             this.label14.Size = new System.Drawing.Size(65, 23);
             this.label14.TabIndex = 1202;
             this.label14.Text = "ATA";
-            // 
-            // txtSupplier
-            // 
-            this.txtSupplier.BackColor = System.Drawing.Color.White;
-            this.txtSupplier.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtSupplier.Location = new System.Drawing.Point(104, 31);
-            this.txtSupplier.Name = "txtSupplier";
-            this.txtSupplier.Size = new System.Drawing.Size(130, 23);
-            this.txtSupplier.TabIndex = 1187;
             // 
             // label15
             // 
@@ -429,7 +470,7 @@
             // 
             // btnQuery1
             // 
-            this.btnQuery1.Location = new System.Drawing.Point(831, 6);
+            this.btnQuery1.Location = new System.Drawing.Point(979, 6);
             this.btnQuery1.Name = "btnQuery1";
             this.btnQuery1.Size = new System.Drawing.Size(95, 30);
             this.btnQuery1.TabIndex = 1193;
@@ -690,17 +731,6 @@
             this.label1.TabIndex = 0;
             this.label1.Text = "ETA";
             // 
-            // btn_ToExcel
-            // 
-            this.btn_ToExcel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btn_ToExcel.Location = new System.Drawing.Point(994, 535);
-            this.btn_ToExcel.Name = "btn_ToExcel";
-            this.btn_ToExcel.Size = new System.Drawing.Size(80, 30);
-            this.btn_ToExcel.TabIndex = 1210;
-            this.btn_ToExcel.Text = "To Excel";
-            this.btn_ToExcel.UseVisualStyleBackColor = true;
-            this.btn_ToExcel.Click += new System.EventHandler(this.Btn_ToExcel_Click);
-            // 
             // P52
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -752,7 +782,6 @@
         private Win.UI.Label label13;
         private Win.UI.DateRange dateATA1;
         private Win.UI.Label label14;
-        private Win.UI.TextBox txtSupplier;
         private Win.UI.Label label15;
         private Class.Txtbrand txtBrand;
         private Win.UI.Label label16;
@@ -786,5 +815,8 @@
         private Win.UI.Label label1;
         private Win.UI.ListControlBindingSource listControlBindingSource1;
         private Win.UI.Button btn_ToExcel;
+        private Class.TxtMultiBrandSupplierGroup txtMultiSupplier1;
+        private Class.Txtfactory txtfactory;
+        private Win.UI.Label labelFactory;
     }
 }

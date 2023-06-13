@@ -26,9 +26,15 @@ SET NOCOUNT ON;
 		values(s.TestDocFactoryGroup,s.[SuppID],s.[ColorID],s.[FirstDyelot],s.SeasonID,s.Period ,s.BrandRefno,s.AWBno,s.AddName,s.AddDate,s.ReceivedDate,s.ReceivedRemark,s.DocumentName,s.BrandID);
 
 	----GASAClip
+
+	--Delete Production.dbo.GASAClip
+	--from Production.dbo.GASAClip as t 
+	--left join Trade_To_Pms.dbo.GASAClip s on t.Pkey = a.Pkey	 and  t.UniqueKey = s.UniqueKey 
+	--where s.UniqueKey is null
+	
+
 	update t
 	 set	 t.[TableName]	=s.[TableName]
-			,t.[UniqueKey]	=s.[UniqueKey]
 			,t.[SourceFile]	=s.[SourceFile]
 			,t.[Description]=s.[Description]
 			,t.[AddName]	=s.[AddName]
@@ -36,6 +42,7 @@ SET NOCOUNT ON;
 	from Production.dbo.GASAClip t
 	inner join Trade_To_Pms.dbo.GASAClip s ON t.Pkey = s.Pkey AND  t.UniqueKey = s.UniqueKey 
 	;
+
 	INSERT INTO Production.dbo.GASAClip ([PKey],[TableName],[UniqueKey],[SourceFile],[Description],[AddName],[AddDate]	)
 	SELECT [PKey],[TableName],[UniqueKey],[SourceFile],[Description],[AddName],[AddDate]	
 	FROM Trade_To_Pms.dbo.GASAClip s

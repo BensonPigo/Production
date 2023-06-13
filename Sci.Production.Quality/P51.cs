@@ -592,6 +592,12 @@ Update ExportRefnoSentReport SET  AWBNO = @updateData, EditName = @UserID ,EditD
                 parmes.Add(new SqlParameter() { ParameterName = "@SearchColor", SqlDbType = SqlDbType.VarChar, Size = 6, Value = this.txtColor.Text });
             }
 
+            if (!MyUtility.Check.Empty(this.txtfactory.Text))
+            {
+                conditions.AppendLine(" And  o.FactoryID = @FactoryID");
+                parmes.Add(new SqlParameter() { ParameterName = "@FactoryID", SqlDbType = SqlDbType.VarChar, Size = 6, Value = this.txtfactory.Text });
+            }
+
             if (this.txtStyle1.Text != string.Empty)
             {
                 conditions.AppendLine(" And s.ID = @SearchStyle");
@@ -1078,7 +1084,7 @@ BEGIN
     )files
 END
 
-select UniqueKey from @tableName
+select UniqueKey from {tableName}
 where ukey in (SELECT TOP 1 ID FROM @OutputTbl)
 
 ";
