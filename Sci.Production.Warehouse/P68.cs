@@ -151,8 +151,8 @@ namespace Sci.Production.Warehouse
 													and psd.SEQ1 = psdsC.Seq1
 													and psd.SEQ2 = psdsC.Seq2
 													and psdsC.SpecColumnID = 'Color'
-			left join ManufacturingExecution.dbo.RefnoRelaxtime rfrt on psd.Refno = rfrt.Refno
-			left join ManufacturingExecution.dbo.FabricRelaxation frlx on rfrt.FabricRelaxationID = frlx.ID
+			left join SciMES_RefnoRelaxtime rfrt on psd.Refno = rfrt.Refno
+			left join SciMES_FabricRelaxation frlx on rfrt.FabricRelaxationID = frlx.ID
 			left join Orders o on cp.POID = o.ID
 			where cp.Status = 'Confirmed'
 			{this.strSQLWher}
