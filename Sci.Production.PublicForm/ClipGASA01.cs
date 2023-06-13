@@ -426,7 +426,7 @@ namespace Sci.Production.PublicForm
                     SELECT @ClipPkey, 'UASentReport', '{this._dr["BrandRefno"]}'+'_'+'{this._dr["ColorID"]}'+'_'+'{this._dr["SuppID"]}'+'_'+ '{this._dr["BasicDocumentName"]}'+'_'+'{this._dr["BasicBrandID"]}', @sourceFileName, 'File Upload', @UserID, getdate()
                      FROM @OutputTbl
 
-                    select UniqueKey from UASentReport
+                    select UniqueKey from {it.TABLENAME}
                     where ukey in (SELECT TOP 1 ID FROM @OutputTbl)";
                     List<SqlParameter> plis = new List<SqlParameter>()
                     {
@@ -551,7 +551,7 @@ BEGIN
     FROM @OutputTbl
 END
 
-select UniqueKey from @tableName
+select UniqueKey from {it.TABLENAME}
 where ukey in (SELECT TOP 1 ID FROM @OutputTbl)
 
 ";

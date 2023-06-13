@@ -184,7 +184,7 @@
             this.txtMultiSupplier1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.txtMultiSupplier1.IsSupportEditMode = false;
             this.txtMultiSupplier1.Location = new System.Drawing.Point(104, 32);
-            this.txtMultiSupplier1.myBrandName = null;
+            this.txtMultiSupplier1.myBrandName = this.txtBrand;
             this.txtMultiSupplier1.Name = "txtMultiSupplier1";
             this.txtMultiSupplier1.PopUpMode = Sci.Win.UI.TextBoxPopUpMode.EditModeAndReadOnly;
             this.txtMultiSupplier1.ReadOnly = true;
