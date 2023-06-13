@@ -40,3 +40,16 @@ INTO FirstDyelot
 FROM Production.dbo.FirstDyelot
 WHERE EditDate >= @DateStart
 ;
+
+-- [GASAClip] transfer 7 days data
+SELECT [PKey]
+      ,[TableName]
+      ,[UniqueKey]
+      ,[SourceFile]
+      ,[Description]
+      ,[AddName]
+      ,[AddDate]
+INTO [GASAClip]
+FROM [Production].[dbo].[GASAClip]
+WHERE AddDate >= CONVERT(DATE,DATEADD(day,-7,GETDATE()))
+

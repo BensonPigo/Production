@@ -402,6 +402,7 @@ namespace Sci.Production.PublicForm
                           ,[TestSeasonID]
                           ,[DueSeason]
                           ,[DueDate]
+                          ,[UniqueKey]
                         )
                         output inserted.Ukey into @OutputTbl
                         Values(
@@ -417,14 +418,16 @@ namespace Sci.Production.PublicForm
                          ,'{this._dr["TestSeasonID"]}'
                          ,'{this._dr["DueSeason"]}'
                          ,{(MyUtility.Check.Empty(this._dr["DueDate"]) ? "null" : $"'{this._dr["DueDate"]}'")}
+                         ,'{this._dr["BrandRefno"]}'+'_'+'{this._dr["ColorID"]}'+'_'+'{this._dr["SuppID"]}'+'_'+ '{this._dr["BasicDocumentName"]}'+'_'+'{this._dr["BasicBrandID"]}'
                         )
                      End
 
                     INSERT INTO GASAClip 
-                    SELECT @ClipPkey, 'UASentReport', ID, @sourceFileName, 'File Upload', @UserID, getdate()
+                    SELECT @ClipPkey, 'UASentReport', '{this._dr["BrandRefno"]}'+'_'+'{this._dr["ColorID"]}'+'_'+'{this._dr["SuppID"]}'+'_'+ '{this._dr["BasicDocumentName"]}'+'_'+'{this._dr["BasicBrandID"]}', @sourceFileName, 'File Upload', @UserID, getdate()
                      FROM @OutputTbl
 
-                    SELECT TOP 1 ID FROM @OutputTbl";
+                    select UniqueKey from {it.TABLENAME}
+                    where ukey in (SELECT TOP 1 ID FROM @OutputTbl)";
                     List<SqlParameter> plis = new List<SqlParameter>()
                     {
                         new SqlParameter("UserID", Env.User.UserID),
@@ -439,6 +442,8 @@ namespace Sci.Production.PublicForm
                         this.ShowErr(result2);
                         return;
                     }
+
+                    this._dr["UniqueKey"] = dtUkey.Rows[0][0];
                 }
             }
             else
@@ -447,7 +452,7 @@ namespace Sci.Production.PublicForm
                 {
                     string addUpdate = string.Empty;
 
-                    if (this._dr["Ukey"].Empty())
+                    if (this._dr["UniqueKey"].Empty())
                     {
                         this._dr["AddName"] = Env.User.UserID;
                         this._dr["AddDate"] = dtm_sys;
@@ -484,6 +489,7 @@ begin
           ,[AddName]
           ,[DocumentName]
           ,[BrandID]
+          ,[UniqueKey]
         )
         output inserted.Ukey into @OutputTbl
         Values(
@@ -496,11 +502,12 @@ begin
          ,'{Env.User.UserID}'
          ,'{this._dr["BasicDocumentName"]}'
          ,'{this._dr["BasicBrandID"]}'
+         ,'{this._dr["ExportID"]}'+'_'+'{this._dr["PoID"]}'+'_'+'{this._dr["Seq1"]}'+'_'+'{this._dr["Seq2"]}'+'_'+'{this._dr["BasicDocumentName"]}'+'_'+'{this._dr["BasicBrandID"]}'
         )
      End
     
     INSERT INTO GASAClip 
-    SELECT @ClipPkey, @tableName, ID, @sourceFileName, 'File Upload', @UserID, getdate()
+    SELECT @ClipPkey, @tableName, '{this._dr["ExportID"]}'+'_'+'{this._dr["PoID"]}'+'_'+'{this._dr["Seq1"]}'+'_'+'{this._dr["Seq2"]}'+'_'+'{this._dr["BasicDocumentName"]}'+'_'+'{this._dr["BasicBrandID"]}', @sourceFileName, 'File Upload', @UserID, getdate()
     FROM @OutputTbl
 END
 ELSE
@@ -523,6 +530,7 @@ BEGIN
           ,[AddName]
           ,[DocumentName]
           ,[BrandID]
+          ,[UniqueKey]
         )
         output inserted.Ukey into @OutputTbl
         Values(
@@ -534,31 +542,35 @@ BEGIN
          ,'{Env.User.UserID}'
          ,'{this._dr["BasicDocumentName"]}'
          ,'{this._dr["BasicBrandID"]}'
+         ,'{this._dr["ExportID"]}'+'_'+'{this._dr["BrandRefno"]}'+'_'+'{this._dr["ColorID"]}'+'_'+'{this._dr["BasicDocumentName"]}'+'_'+'{this._dr["BasicBrandID"]}'
         )
      End
     
     INSERT INTO GASAClip 
-    SELECT @ClipPkey, @tableName, ID, @sourceFileName, 'File Upload', @UserID, getdate()
+    SELECT @ClipPkey, @tableName, '{this._dr["ExportID"]}'+'_'+'{this._dr["BrandRefno"]}'+'_'+'{this._dr["ColorID"]}'+'_'+'{this._dr["BasicDocumentName"]}'+'_'+'{this._dr["BasicBrandID"]}', @sourceFileName, 'File Upload', @UserID, getdate()
     FROM @OutputTbl
 END
-SELECT TOP 1 ID FROM @OutputTbl
+
+select UniqueKey from {it.TABLENAME}
+where ukey in (SELECT TOP 1 ID FROM @OutputTbl)
+
 ";
                     List<SqlParameter> plis = new List<SqlParameter>()
                     {
                         new SqlParameter("UserID", Env.User.UserID),
                         new SqlParameter("ClipPkey", it.PKEY),
                         new SqlParameter("tableName", it.TABLENAME),
-                        new SqlParameter("sourceFileName", it.SOURCEFILE), 
+                        new SqlParameter("sourceFileName", it.SOURCEFILE),
                     };
                     DataTable dtUkey = new DataTable();
-                    var result1 = DBProxy.Current.Select("", sql, plis, out dtUkey);
+                    var result1 = DBProxy.Current.Select(string.Empty, sql, plis, out dtUkey);
                     if (!result1)
                     {
                         this.ShowErr(result1);
                         return;
                     }
 
-                    this._dr["Ukey"] = dtUkey.Rows[0][0];
+                    this._dr["UniqueKey"] = dtUkey.Rows[0][0];
                 }
             }
 

@@ -44,6 +44,7 @@ BEGIN
 		,EditDate
 		,Editname
 		,Ukey
+		,UniqueKey
 	)
 	SELECT
 		BrandRefno
@@ -62,6 +63,7 @@ BEGIN
 		,EditDate
 		,Editname
 		,Ukey
+		,UniqueKey
 	from [Trade_To_Pms].[dbo].UASentReport as b WITH (NOLOCK)
 	where not exists(select 1 from [Production].[dbo].UASentReport as a WITH (NOLOCK) where a.BrandRefno = b.BrandRefno and a.ColorID = b.ColorID and a.SuppID = b.SuppID and a.DocumentName = b.DocumentName and a.BrandID = b.BrandID)
 	set IDENTITY_INSERT UASentReport off
@@ -121,6 +123,7 @@ BEGIN
       ,[TestReportTestDate]
       ,[UKEY]
       ,[FTYReceivedReport]
+	  ,UniqueKey
 	)
 	SELECT
 	   [ExportID]
@@ -141,6 +144,7 @@ BEGIN
       ,[TestReportTestDate]
       ,isnull([UKEY],0)
       ,[FTYReceivedReport]
+	  ,UniqueKey
 	from [Trade_To_Pms].[dbo].NewSentReport as b WITH (NOLOCK)
 	where not exists(
 		select 1 
@@ -201,6 +205,7 @@ BEGIN
       ,[AWBno]
       ,[UKEY]
       ,[FTYReceivedReport]
+	  ,UniqueKey
 	)
 	SELECT
 	   [ExportID]
@@ -216,6 +221,7 @@ BEGIN
       ,[AWBno]
       ,[UKEY]
       ,[FTYReceivedReport]
+	  ,UniqueKey
 	from [Trade_To_Pms].[dbo].ExportRefnoSentReport as b WITH (NOLOCK)
 	where not exists(
 		select 1 
