@@ -17,7 +17,8 @@
 		AddName					varchar (10)		CONSTRAINT[DF_UASentReport_AddName]			DEFAULT('')     NULL ,
 		EditDate				datetime																		NULL ,
 		Editname				varchar (10)		CONSTRAINT[DF_UASentReport_Editname]		DEFAULT('')     NULL ,
-		CONSTRAINT [PK_UASentReport] PRIMARY KEY CLUSTERED ([BrandRefno],[ColorID],[SuppID],[DocumentName],[BrandID] ASC)
+		[UniqueKey] NVARCHAR(200) NOT NULL DEFAULT (''), 
+    CONSTRAINT [PK_UASentReport] PRIMARY KEY CLUSTERED ([BrandRefno],[ColorID],[SuppID],[DocumentName],[BrandID] ASC)
 	);
 	go
 	EXECUTE sp_addextendedproperty
