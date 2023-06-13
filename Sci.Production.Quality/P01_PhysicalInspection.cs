@@ -1365,7 +1365,7 @@ Delete From FIR_Physical_Defect_Realtime Where FIR_PhysicalDetailUKey = {0} ;",
                     add_cmd = string.Format(
                     @"Insert into Fir_Physical
 (ID,Roll,Dyelot,TicketYds,ActualYds,FullWidth,ActualWidth,TotalPoint,PointRate,Grade,Result,Remark,InspDate,Inspector,Moisture,AddName,AddDate,IsGrandCCanUse,GrandCCanUseReason,ColorToneCheck) 
-Values({0},'{1}','{2}',{3},{4},{5},{6},{7},{8},'{9}','{10}','{11}','{12}','{13}',{14},'{15}',GetDate(),{16},'{17}'),'{18}' ;",
+Values({0},'{1}','{2}',{3},{4},{5},{6},{7},{8},'{9}','{10}','{11}','{12}','{13}',{14},'{15}',GetDate(),{16},'{17}','{18}') ;",
                     dr["ID"], dr["roll"].ToString().Replace("'", "''"), dr["Dyelot"], dr["TicketYds"], dr["ActualYds"], dr["FullWidth"], dr["ActualWidth"], dr["TotalPoint"], dr["PointRate"], dr["ReGrade"], dr["Result"], dr["Remark"].ToString().Replace("'", "''"), inspdate, dr["Inspector"], bolMoisture, this.loginID, isGrandCCanUse, dr["GrandCCanUseReason"], dr["ColorToneCheck"]);
                     add_cmd = add_cmd + "select @@IDENTITY as ii";
                     #region 先存入Table 撈取Idenitiy
