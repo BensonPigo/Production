@@ -364,6 +364,8 @@ select
     ,ForInspection = iif(rd.ForInspection = 1, 'Y', '')
     ,rd.ForInspectionTime
     ,OneYardForWashing = iif(rd.OneYardForWashing = 1, 'Y', '')
+    ,Hold = iif(rd.Hold = 1, 'Y', '')
+    ,rd.Remark
 into #tmpMind
 from  Receiving r with (nolock)
 inner join Receiving_Detail rd with (nolock) on r.ID = rd.ID
@@ -426,6 +428,8 @@ select
     ,ForInspection = iif(rd.ForInspection = 1, 'Y', '')
     ,rd.ForInspectionTime
     ,OneYardForWashing = iif(rd.OneYardForWashing = 1, 'Y', '')
+    ,Hold = iif(rd.Hold = 1, 'Y', '')
+    ,rd.Remark
 from  TransferIn r with (nolock)
 inner join TransferIn_Detail rd with (nolock) on r.ID = rd.ID
 inner join Orders o with (nolock) on o.ID = rd.POID 
@@ -475,6 +479,8 @@ select  ReceivingID
         ,ForInspection
         ,ForInspectionTime
         ,OneYardForWashing
+        ,Hold
+        ,Remark
 from #tmpMind rd
 OUTER APPLY(
     select top 1 LastP26RemarkData =  lt.Remark
