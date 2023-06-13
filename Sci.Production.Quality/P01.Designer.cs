@@ -80,6 +80,7 @@
             this.displayMoisture = new Sci.Win.UI.DisplayBox();
             this.labelMoisture = new Sci.Win.UI.Label();
             this.btnShadeBandStock = new Sci.Win.UI.Button();
+            this.btnUpdateToneGrp = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -96,6 +97,7 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.btnUpdateToneGrp);
             this.masterpanel.Controls.Add(this.btnShadeBandStock);
             this.masterpanel.Controls.Add(this.txtLocateforWK);
             this.masterpanel.Controls.Add(this.labelLocateforWK);
@@ -158,6 +160,7 @@
             this.masterpanel.Controls.SetChildIndex(this.labelLocateforWK, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtLocateforWK, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnShadeBandStock, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnUpdateToneGrp, 0);
             // 
             // detailpanel
             // 
@@ -767,6 +770,16 @@
             this.btnShadeBandStock.UseVisualStyleBackColor = true;
             this.btnShadeBandStock.Click += new System.EventHandler(this.BtnShadeBandStock_Click);
             // 
+            // btnUpdateToneGrp
+            // 
+            this.btnUpdateToneGrp.Location = new System.Drawing.Point(811, 51);
+            this.btnUpdateToneGrp.Name = "btnUpdateToneGrp";
+            this.btnUpdateToneGrp.Size = new System.Drawing.Size(181, 30);
+            this.btnUpdateToneGrp.TabIndex = 161;
+            this.btnUpdateToneGrp.Text = "Batch Update Tone/Grp";
+            this.btnUpdateToneGrp.UseVisualStyleBackColor = true;
+            this.btnUpdateToneGrp.Click += new System.EventHandler(this.BtnUpdateToneGrp_Click);
+            // 
             // P01
             // 
             this.ClientSize = new System.Drawing.Size(1012, 730);
@@ -864,5 +877,6 @@
         private Win.UI.DisplayBox displayMoisture;
         private Win.UI.Label labelMoisture;
         private Win.UI.Button btnShadeBandStock;
+        private Win.UI.Button btnUpdateToneGrp;
     }
 }
