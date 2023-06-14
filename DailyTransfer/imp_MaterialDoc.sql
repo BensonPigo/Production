@@ -25,7 +25,7 @@ BEGIN
 	inner join [Trade_To_Pms].[dbo].UASentReport  as b with(nolock) on a.BrandRefno = b.BrandRefno and a.ColorID = b.ColorID and a.SuppID = b.SuppID and a.DocumentName = b.DocumentName and a.BrandID = b.BrandID
 	where isnull(a.EditDate,a.AddDate) < isnull(b.EditDate,b.AddDate)
 	-------------------------- INSERT INTO 
-	set IDENTITY_INSERT UASentReport on
+	
 	INSERT INTO [Production].[dbo].UASentReport
 	 (
 		BrandRefno
@@ -43,7 +43,6 @@ BEGIN
 		,AddName
 		,EditDate
 		,Editname
-		,Ukey
 		,UniqueKey
 	)
 	SELECT
@@ -62,11 +61,10 @@ BEGIN
 		,AddName
 		,EditDate
 		,Editname
-		,Ukey
 		,UniqueKey
 	from [Trade_To_Pms].[dbo].UASentReport as b WITH (NOLOCK)
 	where not exists(select 1 from [Production].[dbo].UASentReport as a WITH (NOLOCK) where a.BrandRefno = b.BrandRefno and a.ColorID = b.ColorID and a.SuppID = b.SuppID and a.DocumentName = b.DocumentName and a.BrandID = b.BrandID)
-	set IDENTITY_INSERT UASentReport off
+	
 
 	/*NewSentReport */
 	-------UPDATE
@@ -102,7 +100,6 @@ BEGIN
 		)
 	)
 	-------------------------- INSERT INTO 
-	set IDENTITY_INSERT NewSentReport on
 	INSERT INTO [Production].[dbo].NewSentReport
 	 (
 	   [ExportID]
@@ -121,7 +118,6 @@ BEGIN
       ,[T2DefectPoint]
       ,[T2Grade]
       ,[TestReportTestDate]
-      ,[UKEY]
       ,[FTYReceivedReport]
 	  ,UniqueKey
 	)
@@ -142,7 +138,6 @@ BEGIN
       ,[T2DefectPoint]
       ,[T2Grade]
       ,[TestReportTestDate]
-      ,isnull([UKEY],0)
       ,[FTYReceivedReport]
 	  ,UniqueKey
 	from [Trade_To_Pms].[dbo].NewSentReport as b WITH (NOLOCK)
@@ -154,7 +149,6 @@ BEGIN
 		and a.DocumentName = b.DocumentName 
 		and a.BrandID = b.BrandID
 	)
-	set IDENTITY_INSERT NewSentReport off
 
 	/* ExportRefnoSentReport */
 	-------UPDATE
@@ -189,7 +183,6 @@ BEGIN
 		)
 	)
 	-------------------------- INSERT INTO 
-	set IDENTITY_INSERT ExportRefnoSentReport on
 	INSERT INTO [Production].[dbo].ExportRefnoSentReport
 	 (
 	   [ExportID]
@@ -203,7 +196,6 @@ BEGIN
       ,[EditName]
       ,[EditDate]
       ,[AWBno]
-      ,[UKEY]
       ,[FTYReceivedReport]
 	  ,UniqueKey
 	)
@@ -219,7 +211,6 @@ BEGIN
       ,[EditName]
       ,[EditDate]
       ,[AWBno]
-      ,[UKEY]
       ,[FTYReceivedReport]
 	  ,UniqueKey
 	from [Trade_To_Pms].[dbo].ExportRefnoSentReport as b WITH (NOLOCK)
@@ -232,6 +223,5 @@ BEGIN
 		and a.DocumentName = b.DocumentName 
 		and a.BrandID = b.BrandID
 	)
-	set IDENTITY_INSERT ExportRefnoSentReport off
 
 end
