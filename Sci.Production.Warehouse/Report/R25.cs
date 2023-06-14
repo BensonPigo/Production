@@ -253,8 +253,8 @@ OUTER apply(
 outer apply
 (
 	select PFETA = Min (PFETA)
-	from Orders
-	where ID = o.poID 
+	from Orders 
+	where PoID = o.poID 
 )a
 where exists (select 1 from Factory where o.FactoryId = id and IsProduceFty = 1)
 and ed.PoType = 'G' 
