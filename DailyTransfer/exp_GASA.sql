@@ -27,15 +27,22 @@ else
 ------------------------------------------------------------------------------------------------------
 
 SELECT [SuppID]
-	  ,[TestDocFactoryGroup]
-      ,[BrandRefno]      
+      ,[TestDocFactoryGroup]
+      ,[BrandRefno]
       ,[ColorID]
       ,[SeasonID]
       ,[Period]
       ,[FirstDyelot]
+      ,[AWBno]
+      ,[AddName]
+      ,[AddDate]
       ,[EditName]
       ,[EditDate]
-	  ,[FTYReceivedReport]
+      ,[FTYReceivedReport]
+      ,[ReceivedDate]
+      ,[ReceivedRemark]
+      ,[DocumentName]
+      ,[BrandID]
 INTO FirstDyelot
 FROM Production.dbo.FirstDyelot
 WHERE EditDate >= @DateStart
