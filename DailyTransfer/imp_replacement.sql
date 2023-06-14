@@ -74,22 +74,6 @@ BEGIN
 	FROM Trade_To_Pms.dbo.Clip s
 	WHERE NOT EXISTS ( select 1 from Production.dbo.Clip t WHERE t.Pkey = s.Pkey AND  t.UniqueKey = s.UniqueKey )
 
-	----GASAClip
-	update t
-	 set	 t.[TableName]	=s.[TableName]
-			,t.[UniqueKey]	=s.[UniqueKey]
-			,t.[SourceFile]	=s.[SourceFile]
-			,t.[Description]=s.[Description]
-			,t.[AddName]	=s.[AddName]
-			,t.[AddDate]	=s.[AddDate]
-	from Production.dbo.GASAClip t
-	inner join Trade_To_Pms.dbo.GASAClip s ON t.Pkey = s.Pkey AND  t.UniqueKey = s.UniqueKey 
-	;
-	INSERT INTO Production.dbo.GASAClip ([PKey],[TableName],[UniqueKey],[SourceFile],[Description],[AddName],[AddDate]	)
-	SELECT [PKey],[TableName],[UniqueKey],[SourceFile],[Description],[AddName],[AddDate]	
-	FROM Trade_To_Pms.dbo.GASAClip s
-	WHERE NOT EXISTS ( select 1 from Production.dbo.GASAClip t WHERE t.Pkey = s.Pkey AND  t.UniqueKey = s.UniqueKey )
-
 END
 
 

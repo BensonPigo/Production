@@ -62,7 +62,7 @@ from orders o with(nolock)
 inner join PackingList_Detail pd with(nolock) on pd.OrderID = o.id
 inner join PackingList p with(nolock) on p.id = pd.id
 inner join GMTBooking g with(nolock) on p.INVNo =g.id
-inner join BIRInvoice b with(nolock)on g.BIRID = b.id
+inner join BIRInvoice b with(nolock)on g.CMTInvoiceNo = b.id
 left join Style s with(nolock) on s.Ukey = o.StyleUkey
 left join country c with(nolock) on c.id = o.Dest
 left join CustCD ccd with(nolock) on ccd.BrandID = o.BrandID and ccd.id = o.CustCDID
@@ -109,7 +109,7 @@ group by b.id,p.INVNo,p.gw,c.NameEN,o.CPU,s1.Price,s2.Price,s3.price,isnull(isnu
 
 select selected = 0,b.id,b.InvSerial,KGS=round(sum(t.KGS),2),qty=round(sum(t.F),2),t.NameEN,BIRShipTo,fob=round(sum(t.I),2),material=round(sum(t.I),2)-round(sum(t.M),2),cmp=round(sum(t.M),2),b.brandid
 from BIRInvoice b with(nolock)
-inner join GMTBooking g with(nolock)on g.BIRID = b.id
+inner join GMTBooking g with(nolock)on g.CMTInvoiceNo = b.id
 inner join #tmp t on t.id = b.id
 where b.Status = 'New'
 group by b.id,b.InvSerial,t.NameEN,b.brandid,BIRShipTo
