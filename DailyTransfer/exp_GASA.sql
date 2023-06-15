@@ -7,6 +7,11 @@ BEGIN
   DROP TABLE FirstDyelot
 END
 
+IF OBJECT_ID(N'dbo.GASAClip') IS NOT NULL
+BEGIN
+  DROP TABLE GASAClip
+END
+
 ------------------------------------------------------------------------------------------------------
 --***資料交換的條件限制***
 --1. 優先取得Production.dbo.DateInfo
@@ -26,7 +31,7 @@ else
 	values (@DateInfoName,@DateStart,@DateStart,@Remark);
 ------------------------------------------------------------------------------------------------------
 
-SELECT [SuppID]
+SELECT[SuppID]
       ,[TestDocFactoryGroup]
       ,[BrandRefno]
       ,[ColorID]
@@ -48,15 +53,17 @@ FROM Production.dbo.FirstDyelot
 WHERE EditDate >= @DateStart
 ;
 
--- [GASAClip] transfer 7 days data
+-- [GASAClip] only export 7 days Factory create GasaClip data
 SELECT [PKey]
       ,[TableName]
       ,[UniqueKey]
       ,[SourceFile]
       ,[Description]
-      ,[AddName]
-      ,[AddDate]
+      ,g.[AddName]
+      ,g.[AddDate]
 INTO [GASAClip]
-FROM [Production].[dbo].[GASAClip]
+FROM [Production].[dbo].[GASAClip] g
+inner join [Production].[dbo].[Pass1] p on g.AddName = p.ID
 WHERE AddDate >= CONVERT(DATE,DATEADD(day,-7,GETDATE()))
+
 
