@@ -176,6 +176,7 @@ begin
           ,[AddName]
           ,[DocumentName]
           ,[BrandID]
+          ,[UniqueKey]
         )
         Values(
           '{r["ExportID"]}'
@@ -187,6 +188,7 @@ begin
          ,'{Env.User.UserID}'
          ,'{this.drBasic["DocumentName"]}'
          ,'{this.drBasic["BrandID"]}'
+         ,'{r["ExportID"]}'+'_'+'{r["PoID"]}'+'_'+'{r["Seq1"]}'+'_'+'{r["Seq2"]}'+'_'+'{this.drBasic["DocumentName"]}'+'_'+'{this.drBasic["BrandID"]}'
         )
      End
 END
@@ -209,6 +211,7 @@ BEGIN
           ,[AddName]
           ,[DocumentName]
           ,[BrandID]
+          ,[UniqueKey]
         )
         Values(
           '{r["ExportID"]}'
@@ -219,6 +222,7 @@ BEGIN
          ,'{Env.User.UserID}'
          ,'{this.drBasic["DocumentName"]}'
          ,'{this.drBasic["BrandID"]}'
+         ,'{r["ExportID"]}'+'_'+'{r["BrandRefno"]}'+'_'+'{r["ColorID"]}'+'_'+'{this.drBasic["DocumentName"]}'+'_'+'{this.drBasic["BrandID"]}'
         )
      End  
 END
