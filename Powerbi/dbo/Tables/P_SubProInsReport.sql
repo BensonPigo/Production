@@ -10,7 +10,7 @@
     [RFT] NUMERIC(5, 2) NOT NULL CONSTRAINT [PK_P_SubProInsReport_RFT] default (0), 
     [SubProcessID] VARCHAR(15) NOT NULL CONSTRAINT [PK_P_SubProInsReport_SubProcessID] default (''), 
     [BundleNo] VARCHAR(10) NOT NULL CONSTRAINT [PK_P_SubProInsReport_BundleNo] default (''), 
-    [Artwork] VARCHAR(20) NOT NULL CONSTRAINT [PK_P_SubProInsReport_Artwork] default (''), 
+    [Artwork] VARCHAR(30) NOT NULL CONSTRAINT [PK_P_SubProInsReport_Artwork] default (''), 
     [OrderID] VARCHAR(13) NOT NULL CONSTRAINT [PK_P_SubProInsReport_OrderID] default (''), 
     [Alias] VARCHAR(30) NOT NULL CONSTRAINT [PK_P_SubProInsReport_Alias] default (''), 
     [BuyerDelivery] DATE NULL, 
