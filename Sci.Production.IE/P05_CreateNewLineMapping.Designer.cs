@@ -57,7 +57,7 @@
             this.numHours = new Sci.Win.UI.NumericBox();
             this.numVersion = new Sci.Win.UI.NumericBox();
             this.BtnCreateAutoLineMapping = new Sci.Win.UI.Button();
-            this.button1 = new Sci.Win.UI.Button();
+            this.btnCopyOtherLineMapping = new Sci.Win.UI.Button();
             this.SuspendLayout();
             // 
             // label1
@@ -390,21 +390,22 @@
             this.BtnCreateAutoLineMapping.UseVisualStyleBackColor = true;
             this.BtnCreateAutoLineMapping.Click += new System.EventHandler(this.BtnCreateAutoLineMapping_Click);
             // 
-            // button1
+            // btnCopyOtherLineMapping
             // 
-            this.button1.Location = new System.Drawing.Point(285, 279);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(208, 30);
-            this.button1.TabIndex = 30;
-            this.button1.Text = "Copy Other Line Mapping";
-            this.button1.UseVisualStyleBackColor = true;
+            this.btnCopyOtherLineMapping.Location = new System.Drawing.Point(285, 279);
+            this.btnCopyOtherLineMapping.Name = "btnCopyOtherLineMapping";
+            this.btnCopyOtherLineMapping.Size = new System.Drawing.Size(208, 30);
+            this.btnCopyOtherLineMapping.TabIndex = 30;
+            this.btnCopyOtherLineMapping.Text = "Copy Other Line Mapping";
+            this.btnCopyOtherLineMapping.UseVisualStyleBackColor = true;
+            this.btnCopyOtherLineMapping.Click += new System.EventHandler(this.BtnCopyOtherLineMapping_Click);
             // 
             // P05_CreateNewLineMapping
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(547, 335);
-            this.Controls.Add(this.button1);
+            this.Controls.Add(this.btnCopyOtherLineMapping);
             this.Controls.Add(this.BtnCreateAutoLineMapping);
             this.Controls.Add(this.numVersion);
             this.Controls.Add(this.numHours);
@@ -466,7 +467,7 @@
             this.Controls.SetChildIndex(this.numHours, 0);
             this.Controls.SetChildIndex(this.numVersion, 0);
             this.Controls.SetChildIndex(this.BtnCreateAutoLineMapping, 0);
-            this.Controls.SetChildIndex(this.button1, 0);
+            this.Controls.SetChildIndex(this.btnCopyOtherLineMapping, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -503,6 +504,6 @@
         private Win.UI.NumericBox numHours;
         private Win.UI.NumericBox numVersion;
         private Win.UI.Button BtnCreateAutoLineMapping;
-        private Win.UI.Button button1;
+        private Win.UI.Button btnCopyOtherLineMapping;
     }
 }

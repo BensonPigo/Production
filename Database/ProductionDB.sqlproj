@@ -2847,6 +2847,7 @@
     <Build Include="dbo\Tables\AutomatedLineMapping_DetailAuto.sql" />
     <Build Include="dbo\Tables\AutomatedLineMapping_NotHitTargetReason.sql" />
     <Build Include="dbo\Tables\SewerGroupRange.sql" />
+    <Build Include="dbo\Stored Procedures\GetAutomatedLineMapping.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />

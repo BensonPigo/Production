@@ -22,9 +22,9 @@
     [WorkHour] NUMERIC(3, 1) CONSTRAINT [DF_AutomatedLineMapping_WorkHour] DEFAULT (0) NOT NULL,  
     [Status] VARCHAR(9) CONSTRAINT [DF_AutomatedLineMapping_Status] DEFAULT ('') NOT NULL,  
     [CFMName] VARCHAR(10) CONSTRAINT [DF_AutomatedLineMapping_CFMName] DEFAULT ('') NOT NULL,  
-    [CFMDate] DATETIME NOT NULL,  
+    [CFMDate] DATETIME  NULL,  
     [AddName] VARCHAR(10) CONSTRAINT [DF_AutomatedLineMapping_AddName] DEFAULT ('') NOT NULL,  
-    [AddDate] DATETIME NOT NULL,  
+    [AddDate] DATETIME  NULL,  
     [EditName] VARCHAR(10) CONSTRAINT [DF_AutomatedLineMapping_EditName] DEFAULT ('') NOT NULL,  
     [EditDate] DATETIME NULL, 
     CONSTRAINT [PK_AutomatedLineMapping] PRIMARY KEY CLUSTERED ([ID] ASC)

@@ -1,4 +1,7 @@
-﻿using Sci.Win.Tools;
+﻿using Ict;
+using Sci.Data;
+using Sci.Production.CallPmsAPI;
+using Sci.Win.Tools;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -18,17 +21,24 @@ namespace Sci.Production.IE
     {
         private DataRow mainRow;
         private DataTable dtDetail;
+        private DataTable dtAutomatedLineMapping_DetailTemp;
+        private DataTable dtAutomatedLineMapping_DetailAuto;
 
         /// <summary>
         /// P05_CreateNewLineMapping
         /// </summary>
         /// <param name="mainRow">mainRow</param>
         /// <param name="dtDetail">dtDetail</param>
-        public P05_CreateNewLineMapping(DataRow mainRow, DataTable dtDetail)
+        /// <param name="dtAutomatedLineMapping_DetailTemp">dtAutomatedLineMapping_DetailTemp</param>
+        /// <param name="dtAutomatedLineMapping_DetailAuto">dtAutomatedLineMapping_DetailAuto</param>
+        public P05_CreateNewLineMapping(DataRow mainRow, DataTable dtDetail, DataTable dtAutomatedLineMapping_DetailTemp, DataTable dtAutomatedLineMapping_DetailAuto)
         {
             this.InitializeComponent();
+            this.EditMode = true;
             this.mainRow = mainRow;
             this.dtDetail = dtDetail;
+            this.dtAutomatedLineMapping_DetailTemp = dtAutomatedLineMapping_DetailTemp;
+            this.dtAutomatedLineMapping_DetailAuto = dtAutomatedLineMapping_DetailAuto;
 
             MyUtility.Tool.SetupCombox(this.comboPhase, 2, 1, ",,Initial,Initial,Prelim,Prelim");
 
@@ -36,13 +46,23 @@ namespace Sci.Production.IE
             this.txtStyleCreate.BrandObjectName = this.txtBrandCreate;
 
             this.txtStyleCreate.TarSeason = this.txtSeasonCreate;
-            this.txtStyleCreate.SeasonObjectName= this.txtSeasonCreate;
+            this.txtStyleCreate.SeasonObjectName = this.txtSeasonCreate;
 
             this.txtStyleCopy.TarBrand = this.txtBrandCopy;
             this.txtStyleCopy.BrandObjectName = this.txtBrandCopy;
 
             this.txtStyleCopy.TarSeason = this.txtSeasonCopy;
             this.txtStyleCopy.SeasonObjectName = this.txtSeasonCopy;
+
+#if DEBUG
+            this.txtFactoryCreate.Text = "GMM";
+            this.txtBrandCreate.Text = "U.ARMOUR";
+            this.txtSeasonCreate.Text = "23SS";
+            this.txtStyleLocationCreate.Text = "B";
+            this.txtStyleCreate.Text = "1375845";
+            this.numSewer.Text = "26";
+            this.numHours.Text = "8";
+#endif
         }
 
         private void TxtStyleLocationCreate_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
@@ -79,7 +99,7 @@ namespace Sci.Production.IE
         {
             return MyUtility.Check.Seek($@"
 select 1
-from Style_Location WITH (NOLOCK) sl
+from Style_Location sl WITH (NOLOCK)
 where   Location = '{location}' and
         exists( select 1 from Style s with (nolock)
                 where   s.ID = '{styleID}' and
@@ -198,6 +218,149 @@ AND ALM.OriSewerManpower = '{this.numSewer.Text}'
                 MyUtility.Msg.WarningBox($"This [*Create Auto Line Mapping][No. of Sewer] is {this.numSewer.Text} already exists, cannot create a new line mapping.");
                 return;
             }
+
+            DataTable[] dtResults;
+            string sqlGetAutomatedLineMapping = $@"
+exec dbo.GetAutomatedLineMapping    '{this.txtFactoryCreate.Text}',
+                                    '{this.txtStyleCreate.Text}',
+                                    '{this.txtSeasonCreate.Text}',
+                                    '{this.txtBrandCreate.Text}',
+                                    '{this.txtStyleLocationCreate.Text}',
+                                    {this.numSewer.Text},
+                                    {this.numHours.Text},
+                                    '{Env.User.UserID}',
+                                    '{this.comboPhase.Text}',
+                                    2";
+            DualResult result = DBProxy.Current.Select(null, sqlGetAutomatedLineMapping, out dtResults);
+
+            if (!result)
+            {
+                this.ShowErr(result);
+                return;
+            }
+
+            result = this.MergeMainDataTable(dtResults[0], dtResults[1], dtResults[2], dtResults[3]);
+
+            if (!result)
+            {
+                this.ShowErr(result);
+                return;
+            }
+
+            MyUtility.Msg.InfoBox("Create Auto Line Mapping success");
+            this.Close();
+        }
+
+        private void BtnCopyOtherLineMapping_Click(object sender, EventArgs e)
+        {
+            if (MyUtility.Check.Empty(this.txtFactoryCopy.Text))
+            {
+                MyUtility.Msg.WarningBox("[*Copy Other Line Mapping][Factory] cannot be empty.");
+                return;
+            }
+
+            if (MyUtility.Check.Empty(this.txtStyleCopy.Text))
+            {
+                MyUtility.Msg.WarningBox("[*Copy Other Line Mapping][Style] cannot be empty.");
+                return;
+            }
+
+            if (MyUtility.Check.Empty(this.txtStyleLocationCopy.Text))
+            {
+                MyUtility.Msg.WarningBox("[*Copy Other Line Mapping][Combo Type] cannot be empty.");
+                return;
+            }
+
+            if (MyUtility.Check.Empty(this.txtSeasonCopy.Text))
+            {
+                MyUtility.Msg.WarningBox("[*Copy Other Line Mapping][Season] cannot be empty.");
+                return;
+            }
+
+            if (MyUtility.Check.Empty(this.numVersion.Text))
+            {
+                MyUtility.Msg.WarningBox("[*Copy Other Line Mapping][Version] cannot be empty.");
+                return;
+            }
+
+            string checkAutomatedLineMapping = $@"
+select ID
+from AutomatedLineMapping with (nolock)
+where   FactoryID = '{this.txtFactoryCopy.Text}' and
+        StyleID = '{this.txtStyleCopy.Text}' and
+        SeasonID = '{this.txtSeasonCopy.Text}' and
+        BrandID = '{this.txtBrandCopy.Text}' and
+        ComboType = '{this.txtStyleLocationCopy.Text}' and
+        Version = '{this.numVersion.Text}'
+";
+            string automatedLineMappingID = MyUtility.GetValue.Lookup(checkAutomatedLineMapping);
+
+            if (!MyUtility.Check.Empty(automatedLineMappingID))
+            {
+                MyUtility.Msg.WarningBox("Unable to find Line Mapping in IE_P05 according to [*Copy Other Line Mapping] information.");
+                return;
+            }
+
+            string sqlGetAutomatedLineMapping = $@"
+select * from AutomatedLineMapping with (nolock) where ID = '{automatedLineMappingID}'
+select * from AutomatedLineMapping_Detail with (nolock) where ID = '{automatedLineMappingID}'
+select * from AutomatedLineMapping_DetailTemp with (nolock) where ID = '{automatedLineMappingID}'
+select * from AutomatedLineMapping_DetailAuto with (nolock) where ID = '{automatedLineMappingID}'
+";
+            DataTable[] dtResults;
+            DualResult result = DBProxy.Current.Select(null, sqlGetAutomatedLineMapping, out dtResults);
+
+            if (!result)
+            {
+                this.ShowErr(result);
+                return;
+            }
+
+            result = this.MergeMainDataTable(dtResults[0], dtResults[1], dtResults[2], dtResults[3]);
+
+            if (!result)
+            {
+                this.ShowErr(result);
+                return;
+            }
+
+            MyUtility.Msg.InfoBox("Copy Other Line Mapping success");
+            this.Close();
+        }
+
+        private DualResult MergeMainDataTable(
+            DataTable dtAutomatedLineMapping,
+            DataTable dtAutomatedLineMapping_Detail,
+            DataTable dtAutomatedLineMapping_DetailTempNew,
+            DataTable dtAutomatedLineMapping_DetailAutoNew)
+        {
+            try
+            {
+                foreach (DataColumn col in this.mainRow.Table.Columns)
+                {
+                    if (dtAutomatedLineMapping.Columns.IndexOf(col.ColumnName) < 0)
+                    {
+                        continue;
+                    }
+
+                    this.mainRow[col.ColumnName] = dtAutomatedLineMapping.Rows[0][col.ColumnName];
+                }
+
+                this.dtDetail.Clear();
+                this.dtDetail.MergeBySyncColType(dtAutomatedLineMapping_Detail);
+
+                this.dtAutomatedLineMapping_DetailTemp.Clear();
+                this.dtAutomatedLineMapping_DetailTemp.MergeBySyncColType(dtAutomatedLineMapping_DetailTempNew);
+
+                this.dtAutomatedLineMapping_DetailTemp.Clear();
+                this.dtAutomatedLineMapping_DetailAuto.MergeBySyncColType(dtAutomatedLineMapping_DetailAutoNew);
+            }
+            catch (Exception ex)
+            {
+                return new DualResult(false, ex);
+            }
+
+            return new DualResult(true);
         }
     }
 }

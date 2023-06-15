@@ -1,4 +1,4 @@
-﻿CREATE PROCEDURE [dbo].[CreateAutomatedLineMapping]
+﻿CREATE PROCEDURE [dbo].[GetAutomatedLineMapping]
 	@FactoryID varchar(8),
 	@StyleID varchar(15),
 	@SeasonID varchar(10),
@@ -8,8 +8,7 @@
 	@WorkHour numeric(3, 1),
 	@UserID varchar(10),
 	@Phase varchar(7),
-	@PlusMinusRange int,
-	@NeedSaveData bit = 0
+	@PlusMinusRange int
 AS
 begin
 
@@ -30,7 +29,7 @@ select	td.ID,
 		ts.TotalSewer,
 		[Sewer] = Round(ts.TotalSewer * (td.SMV / t.TotalSewingTime), 4),
 		td.PPA,
-		td.IsSubprocess,
+		td.IsNonSewingLine,
 		--Template,SewingMachineAttachmentID,Mold 因為這三個內容中會再用","作分割項目，因為可能會有項目相同但順序不同的情況發生，所以要先拆解排序後再組起來
 		--先檢查有沒有含","
 		[GroupType] =	case	when td.Template not like '%,%' and td.SewingMachineAttachmentID not like '%,%' and td.Mold not like '%,%'
@@ -49,7 +48,8 @@ cross join #tmpTotalSewerRange ts
 where	t.StyleID = @StyleID and
 		t.BrandID = @BrandID and
 		t.SeasonID = @SeasonID and
-		t.ComboType = @ComboType
+		t.ComboType = @ComboType and
+		td.OperationID not like '-%'
 order by td.Seq
 
 
@@ -60,7 +60,7 @@ DECLARE tmpTimeStudy_Detail_cursor CURSOR FOR
 			Ukey,
 			TotalSewer
 	from #tmpTimeStudy_Detail
-	where PPA <> 'C' and Sewer > 0 and IsSubprocess = 0
+	where PPA <> 'C' and Sewer > 0 and IsNonSewingLine = 0
 	order by TotalSewer, Seq;
 
 Declare @Seq varchar(4)
@@ -227,7 +227,7 @@ outer apply (select [val] = cast(Name as float) from DropDownList with (nolock) 
 
 Create table #tmpReaultBase(
 	TotalSewer int,
-	StationNo varchar(2),
+	StationNo int,
 	TimeStudyDetailUkey bigint,
 	DivSewer numeric(5, 4),
 	OriSewer numeric(5, 4),
@@ -316,7 +316,7 @@ where	td.ID = @TimeStudyID and
 		td.SMV = 0
 order by td.Seq
 
-select	[No] = isnull(tb.StationNo, ''),
+select	[No] = isnull(RIGHT(REPLICATE('0', 2) + cast(tb.StationNo as varchar(3)), 2), ''),
 		td.Seq,
 		[Location] = tl.OperationID,
 		td.PPA,
@@ -347,15 +347,18 @@ select	[No] = isnull(tb.StationNo, ''),
 		td.IsNonSewingLine,
 		[TotalSewer] = isnull(tb.TotalSewer, 0)
 into #tmpAutomatedLineMapping_Detail
-from  TimeStudy_Detail td 
+from  TimeStudy_Detail td
 left join #tmpReaultBase tb with (nolock) on tb.TimeStudyDetailUkey = td.Ukey
 left join Operation o with (nolock) on td.OperationID = o.ID
-left join #tmpLocation tl on td.Seq >= tl.Seq and td.Seq < tl.NextSeq
+left join #tmpLocation tl on td.Seq >= tl.Seq and (td.Seq < tl.NextSeq or tl.NextSeq = 0)
+where	td.ID = @TimeStudyID and
+		td.OperationID not like '-%' and
+		td.IsNonSewingLine = 0
 
 --AutomatedLineMapping
 select	[StyleUkey] = s.Ukey,
 		[Phase] = @Phase,
-		[Version] = '',
+		[Version] = 0,
 		[FactoryID] = @FactoryID,
 		[StyleID] = s.ID,
 		s.SeasonID,
@@ -385,7 +388,7 @@ select	[StyleUkey] = s.Ukey,
 from TimeStudy t with (nolock)
 inner join Style s with (nolock) on s.ID = t.StyleID and
 									s.BrandID = t.BrandID and
-									s.SeasonID = s.SeasonID
+									s.SeasonID = t.SeasonID
 outer apply (select [PressingProTMS] = iesPressing.ProTMS, [PackingProTMS] = iesPacking.ProTMS
 				from timestudy t with (nolock)
 				inner join IETMS i with (nolock) on i.ID = t.IETMSID and i.Version = t.IETMSVersion
@@ -410,6 +413,37 @@ outer apply(select	[TotalGSDTime] = Sum(Round(tmd.GSD * tmd.SewerDiffPercentage,
 					tmd.IsNonSewingLine = 0
 			) detailSummary
 where	t.ID = @TimeStudyID
+
+--AutomatedLineMapping_Detail
+select * 
+from #tmpAutomatedLineMapping_Detail
+where TotalSewer in (@ManualSewer, 0)
+order by TotalSewer, No, Seq
+
+--AutomatedLineMapping_DetailAuto, AutomatedLineMapping_DetailTemp
+select	[SewerManpower] = TotalSewer,
+		*
+from #tmpAutomatedLineMapping_Detail
+where TotalSewer <> 0
+union all
+select	[SewerManpower] = SewerGroup.TotalSewer,
+		tmd.*
+from (select distinct TotalSewer from #tmpAutomatedLineMapping_Detail where TotalSewer <> 0) SewerGroup
+cross join #tmpAutomatedLineMapping_Detail tmd
+where tmd.TotalSewer = 0
+order by [SewerManpower], No, Seq
+
+select	[SewerManpower] = TotalSewer,
+		*
+from #tmpAutomatedLineMapping_Detail
+where TotalSewer <> 0
+union all
+select	[SewerManpower] = SewerGroup.TotalSewer,
+		tmd.*
+from (select distinct TotalSewer from #tmpAutomatedLineMapping_Detail where TotalSewer <> 0) SewerGroup
+cross join #tmpAutomatedLineMapping_Detail tmd
+where tmd.TotalSewer = 0
+order by [SewerManpower], No, Seq
 
 drop table #tmpTotalSewerRange, #tmpTimeStudy_Detail, #tmpGroupSewer, #tmpReaultBase, #tmpLocation, #tmpAutomatedLineMapping_Detail
 

@@ -28,15 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle7 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle8 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle9 = new System.Windows.Forms.DataGridViewCellStyle();
+            this.components = new System.ComponentModel.Container();
             this.label1 = new Sci.Win.UI.Label();
             this.label2 = new Sci.Win.UI.Label();
             this.label3 = new Sci.Win.UI.Label();
@@ -48,17 +40,6 @@
             this.label9 = new Sci.Win.UI.Label();
             this.label10 = new Sci.Win.UI.Label();
             this.label11 = new Sci.Win.UI.Label();
-            this.label12 = new Sci.Win.UI.Label();
-            this.label13 = new Sci.Win.UI.Label();
-            this.label14 = new Sci.Win.UI.Label();
-            this.label15 = new Sci.Win.UI.Label();
-            this.label16 = new Sci.Win.UI.Label();
-            this.label17 = new Sci.Win.UI.Label();
-            this.label18 = new Sci.Win.UI.Label();
-            this.label19 = new Sci.Win.UI.Label();
-            this.label20 = new Sci.Win.UI.Label();
-            this.label21 = new Sci.Win.UI.Label();
-            this.label23 = new Sci.Win.UI.Label();
             this.displayVersion = new Sci.Win.UI.DisplayBox();
             this.comboPhase = new Sci.Win.UI.ComboBox();
             this.displayStyleID = new Sci.Win.UI.DisplayBox();
@@ -72,27 +53,41 @@
             this.numericAvgGSDTime = new Sci.Win.UI.NumericBox();
             this.numericHighestGSDTime = new Sci.Win.UI.NumericBox();
             this.numericLBRByGSDTime = new Sci.Win.UI.NumericBox();
+            this.labelStatus = new Sci.Win.UI.Label();
+            this.tabDetail = new Sci.Win.UI.TabControl();
+            this.tabPageLineMapping = new System.Windows.Forms.TabPage();
+            this.splitLineMapping = new System.Windows.Forms.SplitContainer();
+            this.gridLineMappingRight = new Sci.Win.UI.Grid();
+            this.tabPageCentralizedPPA = new System.Windows.Forms.TabPage();
+            this.splitCentralizedPPA = new System.Windows.Forms.SplitContainer();
+            this.gridCentralizedPPALeft = new Sci.Win.UI.Grid();
+            this.gridCentralizedPPARight = new Sci.Win.UI.Grid();
+            this.gridLineMappingRightBS = new Sci.Win.UI.ListControlBindingSource(this.components);
+            this.gridCentralizedPPALeftBS = new Sci.Win.UI.ListControlBindingSource(this.components);
+            this.gridCentralizedPPARightBS = new Sci.Win.UI.ListControlBindingSource(this.components);
+            this.label12 = new Sci.Win.UI.Label();
+            this.label13 = new Sci.Win.UI.Label();
+            this.label14 = new Sci.Win.UI.Label();
+            this.label15 = new Sci.Win.UI.Label();
+            this.label16 = new Sci.Win.UI.Label();
             this.numericSewerManpower = new Sci.Win.UI.NumericBox();
             this.numericPresserManpower = new Sci.Win.UI.NumericBox();
             this.numericPackerManpower = new Sci.Win.UI.NumericBox();
-            this.numericTotalSewingLineOptrs = new Sci.Win.UI.NumericBox();
-            this.numericTargetHr = new Sci.Win.UI.NumericBox();
-            this.numericDailyDemand = new Sci.Win.UI.NumericBox();
+            this.label17 = new Sci.Win.UI.Label();
+            this.label18 = new Sci.Win.UI.Label();
+            this.label19 = new Sci.Win.UI.Label();
+            this.label20 = new Sci.Win.UI.Label();
+            this.label21 = new Sci.Win.UI.Label();
+            this.label23 = new Sci.Win.UI.Label();
             this.numericTaktTime = new Sci.Win.UI.NumericBox();
             this.numericEOLR = new Sci.Win.UI.NumericBox();
             this.numericPPH = new Sci.Win.UI.NumericBox();
             this.numericWorkHour = new Sci.Win.UI.NumericBox();
             this.displayTimeStudyStatus = new Sci.Win.UI.DisplayBox();
             this.displayTimeStudyVersion = new Sci.Win.UI.DisplayBox();
-            this.labelStatus = new Sci.Win.UI.Label();
-            this.tabDetail = new Sci.Win.UI.TabControl();
-            this.tabPageLineMapping = new System.Windows.Forms.TabPage();
-            this.tabPageCentralizedPPA = new System.Windows.Forms.TabPage();
-            this.splitLineMapping = new System.Windows.Forms.SplitContainer();
-            this.gridLineMappingRight = new Sci.Win.UI.Grid();
-            this.splitCentralizedPPA = new System.Windows.Forms.SplitContainer();
-            this.gridCentralizedPPALeft = new Sci.Win.UI.Grid();
-            this.gridCentralizedPPARight = new Sci.Win.UI.Grid();
+            this.numericDailyDemand = new Sci.Win.UI.NumericBox();
+            this.numericTargetHr = new Sci.Win.UI.NumericBox();
+            this.numericTotalSewingLineOptrs = new Sci.Win.UI.NumericBox();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -108,17 +103,20 @@
             this.tabs.SuspendLayout();
             this.tabDetail.SuspendLayout();
             this.tabPageLineMapping.SuspendLayout();
-            this.tabPageCentralizedPPA.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitLineMapping)).BeginInit();
             this.splitLineMapping.Panel2.SuspendLayout();
             this.splitLineMapping.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gridLineMappingRight)).BeginInit();
+            this.tabPageCentralizedPPA.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitCentralizedPPA)).BeginInit();
             this.splitCentralizedPPA.Panel1.SuspendLayout();
             this.splitCentralizedPPA.Panel2.SuspendLayout();
             this.splitCentralizedPPA.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gridCentralizedPPALeft)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.gridCentralizedPPARight)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridLineMappingRightBS)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridCentralizedPPALeftBS)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridCentralizedPPARightBS)).BeginInit();
             this.SuspendLayout();
             // 
             // masterpanel
@@ -172,7 +170,6 @@
             this.masterpanel.Controls.Add(this.label2);
             this.masterpanel.Controls.Add(this.label1);
             this.masterpanel.Size = new System.Drawing.Size(1000, 187);
-            this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.label1, 0);
             this.masterpanel.Controls.SetChildIndex(this.label2, 0);
             this.masterpanel.Controls.SetChildIndex(this.label3, 0);
@@ -221,6 +218,7 @@
             this.masterpanel.Controls.SetChildIndex(this.displayTimeStudyStatus, 0);
             this.masterpanel.Controls.SetChildIndex(this.displayTimeStudyVersion, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelStatus, 0);
+            this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             // 
             // detailpanel
             // 
@@ -264,7 +262,7 @@
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(961, 511);
+            this.browse.Size = new System.Drawing.Size(1000, 667);
             // 
             // tabs
             // 
@@ -358,94 +356,6 @@
             this.label11.TabIndex = 11;
             this.label11.Text = "LBR By GSD Time(%)";
             // 
-            // label12
-            // 
-            this.label12.Location = new System.Drawing.Point(435, 9);
-            this.label12.Name = "label12";
-            this.label12.Size = new System.Drawing.Size(153, 23);
-            this.label12.TabIndex = 12;
-            this.label12.Text = "No. of Sewer";
-            // 
-            // label13
-            // 
-            this.label13.Location = new System.Drawing.Point(435, 38);
-            this.label13.Name = "label13";
-            this.label13.Size = new System.Drawing.Size(153, 23);
-            this.label13.TabIndex = 13;
-            this.label13.Text = "No. of Presser / Packer";
-            // 
-            // label14
-            // 
-            this.label14.Location = new System.Drawing.Point(435, 67);
-            this.label14.Name = "label14";
-            this.label14.Size = new System.Drawing.Size(153, 23);
-            this.label14.TabIndex = 14;
-            this.label14.Text = "Total Sewing Line Optrs";
-            // 
-            // label15
-            // 
-            this.label15.Location = new System.Drawing.Point(435, 96);
-            this.label15.Name = "label15";
-            this.label15.Size = new System.Drawing.Size(153, 23);
-            this.label15.TabIndex = 15;
-            this.label15.Text = "Target / Hr. (100%)";
-            // 
-            // label16
-            // 
-            this.label16.Location = new System.Drawing.Point(435, 125);
-            this.label16.Name = "label16";
-            this.label16.Size = new System.Drawing.Size(153, 23);
-            this.label16.TabIndex = 16;
-            this.label16.Text = "Daily Demand/Shift";
-            // 
-            // label17
-            // 
-            this.label17.Location = new System.Drawing.Point(648, 9);
-            this.label17.Name = "label17";
-            this.label17.Size = new System.Drawing.Size(88, 23);
-            this.label17.TabIndex = 17;
-            this.label17.Text = "Takt Time";
-            // 
-            // label18
-            // 
-            this.label18.Location = new System.Drawing.Point(648, 38);
-            this.label18.Name = "label18";
-            this.label18.Size = new System.Drawing.Size(88, 23);
-            this.label18.TabIndex = 18;
-            this.label18.Text = "EOLR";
-            // 
-            // label19
-            // 
-            this.label19.Location = new System.Drawing.Point(648, 67);
-            this.label19.Name = "label19";
-            this.label19.Size = new System.Drawing.Size(88, 23);
-            this.label19.TabIndex = 19;
-            this.label19.Text = "PPH";
-            // 
-            // label20
-            // 
-            this.label20.Location = new System.Drawing.Point(648, 96);
-            this.label20.Name = "label20";
-            this.label20.Size = new System.Drawing.Size(88, 23);
-            this.label20.TabIndex = 20;
-            this.label20.Text = "GSD Status";
-            // 
-            // label21
-            // 
-            this.label21.Location = new System.Drawing.Point(648, 125);
-            this.label21.Name = "label21";
-            this.label21.Size = new System.Drawing.Size(88, 23);
-            this.label21.TabIndex = 21;
-            this.label21.Text = "GSD Version";
-            // 
-            // label23
-            // 
-            this.label23.Location = new System.Drawing.Point(648, 154);
-            this.label23.Name = "label23";
-            this.label23.Size = new System.Drawing.Size(88, 23);
-            this.label23.TabIndex = 23;
-            this.label23.Text = "No. of Hours";
-            // 
             // displayVersion
             // 
             this.displayVersion.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
@@ -512,7 +422,6 @@
             // displayDescription
             // 
             this.displayDescription.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayDescription.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Description", true));
             this.displayDescription.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.displayDescription.Location = new System.Drawing.Point(95, 154);
             this.displayDescription.Name = "displayDescription";
@@ -639,6 +548,192 @@
             0,
             0});
             // 
+            // labelStatus
+            // 
+            this.labelStatus.AutoSize = true;
+            this.labelStatus.BackColor = System.Drawing.Color.Transparent;
+            this.labelStatus.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Status", true));
+            this.labelStatus.Font = new System.Drawing.Font("Microsoft Sans Serif", 18F, System.Drawing.FontStyle.Bold);
+            this.labelStatus.Location = new System.Drawing.Point(936, 8);
+            this.labelStatus.MaximumSize = new System.Drawing.Size(59, 31);
+            this.labelStatus.MinimumSize = new System.Drawing.Size(59, 31);
+            this.labelStatus.Name = "labelStatus";
+            this.labelStatus.Size = new System.Drawing.Size(59, 31);
+            this.labelStatus.TabIndex = 50;
+            this.labelStatus.Text = "New";
+            this.labelStatus.TextStyle.Color = System.Drawing.Color.Red;
+            // 
+            // tabDetail
+            // 
+            this.tabDetail.Controls.Add(this.tabPageLineMapping);
+            this.tabDetail.Controls.Add(this.tabPageCentralizedPPA);
+            this.tabDetail.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tabDetail.Location = new System.Drawing.Point(0, 0);
+            this.tabDetail.Name = "tabDetail";
+            this.tabDetail.SelectedIndex = 0;
+            this.tabDetail.Size = new System.Drawing.Size(1000, 442);
+            this.tabDetail.TabIndex = 1;
+            this.tabDetail.SelectedIndexChanged += new System.EventHandler(this.TabDetail_SelectedIndexChanged);
+            // 
+            // tabPageLineMapping
+            // 
+            this.tabPageLineMapping.Controls.Add(this.splitLineMapping);
+            this.tabPageLineMapping.Location = new System.Drawing.Point(4, 25);
+            this.tabPageLineMapping.Name = "tabPageLineMapping";
+            this.tabPageLineMapping.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPageLineMapping.Size = new System.Drawing.Size(992, 413);
+            this.tabPageLineMapping.TabIndex = 0;
+            this.tabPageLineMapping.Text = "Line Mapping";
+            // 
+            // splitLineMapping
+            // 
+            this.splitLineMapping.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitLineMapping.Location = new System.Drawing.Point(3, 3);
+            this.splitLineMapping.Name = "splitLineMapping";
+            // 
+            // splitLineMapping.Panel2
+            // 
+            this.splitLineMapping.Panel2.Controls.Add(this.gridLineMappingRight);
+            this.splitLineMapping.Size = new System.Drawing.Size(986, 407);
+            this.splitLineMapping.SplitterDistance = 633;
+            this.splitLineMapping.TabIndex = 0;
+            // 
+            // gridLineMappingRight
+            // 
+            this.gridLineMappingRight.AllowUserToAddRows = false;
+            this.gridLineMappingRight.AllowUserToDeleteRows = false;
+            this.gridLineMappingRight.AllowUserToResizeRows = false;
+            this.gridLineMappingRight.BackgroundColor = System.Drawing.SystemColors.Control;
+            this.gridLineMappingRight.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
+            this.gridLineMappingRight.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.gridLineMappingRight.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.gridLineMappingRight.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
+            this.gridLineMappingRight.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
+            this.gridLineMappingRight.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.gridLineMappingRight.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
+            this.gridLineMappingRight.Location = new System.Drawing.Point(0, 0);
+            this.gridLineMappingRight.Name = "gridLineMappingRight";
+            this.gridLineMappingRight.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
+            this.gridLineMappingRight.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
+            this.gridLineMappingRight.RowTemplate.Height = 24;
+            this.gridLineMappingRight.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridLineMappingRight.ShowCellToolTips = false;
+            this.gridLineMappingRight.Size = new System.Drawing.Size(349, 407);
+            this.gridLineMappingRight.TabIndex = 0;
+            // 
+            // tabPageCentralizedPPA
+            // 
+            this.tabPageCentralizedPPA.Controls.Add(this.splitCentralizedPPA);
+            this.tabPageCentralizedPPA.Location = new System.Drawing.Point(4, 25);
+            this.tabPageCentralizedPPA.Name = "tabPageCentralizedPPA";
+            this.tabPageCentralizedPPA.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPageCentralizedPPA.Size = new System.Drawing.Size(884, 133);
+            this.tabPageCentralizedPPA.TabIndex = 1;
+            this.tabPageCentralizedPPA.Text = "Centralized PPA";
+            // 
+            // splitCentralizedPPA
+            // 
+            this.splitCentralizedPPA.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitCentralizedPPA.Location = new System.Drawing.Point(3, 3);
+            this.splitCentralizedPPA.Name = "splitCentralizedPPA";
+            // 
+            // splitCentralizedPPA.Panel1
+            // 
+            this.splitCentralizedPPA.Panel1.Controls.Add(this.gridCentralizedPPALeft);
+            // 
+            // splitCentralizedPPA.Panel2
+            // 
+            this.splitCentralizedPPA.Panel2.Controls.Add(this.gridCentralizedPPARight);
+            this.splitCentralizedPPA.Size = new System.Drawing.Size(878, 127);
+            this.splitCentralizedPPA.SplitterDistance = 612;
+            this.splitCentralizedPPA.TabIndex = 0;
+            // 
+            // gridCentralizedPPALeft
+            // 
+            this.gridCentralizedPPALeft.AllowUserToAddRows = false;
+            this.gridCentralizedPPALeft.AllowUserToDeleteRows = false;
+            this.gridCentralizedPPALeft.AllowUserToResizeRows = false;
+            this.gridCentralizedPPALeft.BackgroundColor = System.Drawing.SystemColors.Control;
+            this.gridCentralizedPPALeft.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
+            this.gridCentralizedPPALeft.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.gridCentralizedPPALeft.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.gridCentralizedPPALeft.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
+            this.gridCentralizedPPALeft.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
+            this.gridCentralizedPPALeft.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.gridCentralizedPPALeft.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
+            this.gridCentralizedPPALeft.Location = new System.Drawing.Point(0, 0);
+            this.gridCentralizedPPALeft.Name = "gridCentralizedPPALeft";
+            this.gridCentralizedPPALeft.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
+            this.gridCentralizedPPALeft.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
+            this.gridCentralizedPPALeft.RowTemplate.Height = 24;
+            this.gridCentralizedPPALeft.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridCentralizedPPALeft.ShowCellToolTips = false;
+            this.gridCentralizedPPALeft.Size = new System.Drawing.Size(612, 127);
+            this.gridCentralizedPPALeft.TabIndex = 0;
+            // 
+            // gridCentralizedPPARight
+            // 
+            this.gridCentralizedPPARight.AllowUserToAddRows = false;
+            this.gridCentralizedPPARight.AllowUserToDeleteRows = false;
+            this.gridCentralizedPPARight.AllowUserToResizeRows = false;
+            this.gridCentralizedPPARight.BackgroundColor = System.Drawing.SystemColors.Control;
+            this.gridCentralizedPPARight.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
+            this.gridCentralizedPPARight.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.gridCentralizedPPARight.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.gridCentralizedPPARight.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
+            this.gridCentralizedPPARight.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
+            this.gridCentralizedPPARight.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.gridCentralizedPPARight.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
+            this.gridCentralizedPPARight.Location = new System.Drawing.Point(0, 0);
+            this.gridCentralizedPPARight.Name = "gridCentralizedPPARight";
+            this.gridCentralizedPPARight.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
+            this.gridCentralizedPPARight.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
+            this.gridCentralizedPPARight.RowTemplate.Height = 24;
+            this.gridCentralizedPPARight.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridCentralizedPPARight.ShowCellToolTips = false;
+            this.gridCentralizedPPARight.Size = new System.Drawing.Size(262, 127);
+            this.gridCentralizedPPARight.TabIndex = 0;
+            // 
+            // label12
+            // 
+            this.label12.Location = new System.Drawing.Point(435, 9);
+            this.label12.Name = "label12";
+            this.label12.Size = new System.Drawing.Size(153, 23);
+            this.label12.TabIndex = 12;
+            this.label12.Text = "No. of Sewer";
+            // 
+            // label13
+            // 
+            this.label13.Location = new System.Drawing.Point(435, 38);
+            this.label13.Name = "label13";
+            this.label13.Size = new System.Drawing.Size(153, 23);
+            this.label13.TabIndex = 13;
+            this.label13.Text = "No. of Presser / Packer";
+            // 
+            // label14
+            // 
+            this.label14.Location = new System.Drawing.Point(435, 67);
+            this.label14.Name = "label14";
+            this.label14.Size = new System.Drawing.Size(153, 23);
+            this.label14.TabIndex = 14;
+            this.label14.Text = "Total Sewing Line Optrs";
+            // 
+            // label15
+            // 
+            this.label15.Location = new System.Drawing.Point(435, 96);
+            this.label15.Name = "label15";
+            this.label15.Size = new System.Drawing.Size(153, 23);
+            this.label15.TabIndex = 15;
+            this.label15.Text = "Target / Hr. (100%)";
+            // 
+            // label16
+            // 
+            this.label16.Location = new System.Drawing.Point(435, 125);
+            this.label16.Name = "label16";
+            this.label16.Size = new System.Drawing.Size(153, 23);
+            this.label16.TabIndex = 16;
+            this.label16.Text = "Daily Demand/Shift";
+            // 
             // numericSewerManpower
             // 
             this.numericSewerManpower.BackColor = System.Drawing.Color.White;
@@ -702,68 +797,53 @@
             0,
             0});
             // 
-            // numericTotalSewingLineOptrs
+            // label17
             // 
-            this.numericTotalSewingLineOptrs.BackColor = System.Drawing.Color.White;
-            this.numericTotalSewingLineOptrs.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "TotalSewingLineOptrs", true));
-            this.numericTotalSewingLineOptrs.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numericTotalSewingLineOptrs.IsSupportEditMode = false;
-            this.numericTotalSewingLineOptrs.Location = new System.Drawing.Point(591, 67);
-            this.numericTotalSewingLineOptrs.Name = "numericTotalSewingLineOptrs";
-            this.numericTotalSewingLineOptrs.NullValue = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.numericTotalSewingLineOptrs.Size = new System.Drawing.Size(54, 23);
-            this.numericTotalSewingLineOptrs.TabIndex = 41;
-            this.numericTotalSewingLineOptrs.Value = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
+            this.label17.Location = new System.Drawing.Point(648, 9);
+            this.label17.Name = "label17";
+            this.label17.Size = new System.Drawing.Size(88, 23);
+            this.label17.TabIndex = 17;
+            this.label17.Text = "Takt Time";
             // 
-            // numericTargetHr
+            // label18
             // 
-            this.numericTargetHr.BackColor = System.Drawing.Color.White;
-            this.numericTargetHr.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "TargetHr", true));
-            this.numericTargetHr.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numericTargetHr.IsSupportEditMode = false;
-            this.numericTargetHr.Location = new System.Drawing.Point(591, 96);
-            this.numericTargetHr.Name = "numericTargetHr";
-            this.numericTargetHr.NullValue = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.numericTargetHr.Size = new System.Drawing.Size(54, 23);
-            this.numericTargetHr.TabIndex = 42;
-            this.numericTargetHr.Value = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
+            this.label18.Location = new System.Drawing.Point(648, 38);
+            this.label18.Name = "label18";
+            this.label18.Size = new System.Drawing.Size(88, 23);
+            this.label18.TabIndex = 18;
+            this.label18.Text = "EOLR";
             // 
-            // numericDailyDemand
+            // label19
             // 
-            this.numericDailyDemand.BackColor = System.Drawing.Color.White;
-            this.numericDailyDemand.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "DailyDemand", true));
-            this.numericDailyDemand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numericDailyDemand.IsSupportEditMode = false;
-            this.numericDailyDemand.Location = new System.Drawing.Point(591, 125);
-            this.numericDailyDemand.Name = "numericDailyDemand";
-            this.numericDailyDemand.NullValue = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.numericDailyDemand.Size = new System.Drawing.Size(54, 23);
-            this.numericDailyDemand.TabIndex = 43;
-            this.numericDailyDemand.Value = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
+            this.label19.Location = new System.Drawing.Point(648, 67);
+            this.label19.Name = "label19";
+            this.label19.Size = new System.Drawing.Size(88, 23);
+            this.label19.TabIndex = 19;
+            this.label19.Text = "PPH";
+            // 
+            // label20
+            // 
+            this.label20.Location = new System.Drawing.Point(648, 96);
+            this.label20.Name = "label20";
+            this.label20.Size = new System.Drawing.Size(88, 23);
+            this.label20.TabIndex = 20;
+            this.label20.Text = "GSD Status";
+            // 
+            // label21
+            // 
+            this.label21.Location = new System.Drawing.Point(648, 125);
+            this.label21.Name = "label21";
+            this.label21.Size = new System.Drawing.Size(88, 23);
+            this.label21.TabIndex = 21;
+            this.label21.Text = "GSD Version";
+            // 
+            // label23
+            // 
+            this.label23.Location = new System.Drawing.Point(648, 154);
+            this.label23.Name = "label23";
+            this.label23.Size = new System.Drawing.Size(88, 23);
+            this.label23.TabIndex = 23;
+            this.label23.Text = "No. of Hours";
             // 
             // numericTaktTime
             // 
@@ -869,230 +949,79 @@
             this.displayTimeStudyVersion.Size = new System.Drawing.Size(49, 23);
             this.displayTimeStudyVersion.TabIndex = 49;
             // 
-            // labelStatus
+            // numericDailyDemand
             // 
-            this.labelStatus.AutoSize = true;
-            this.labelStatus.BackColor = System.Drawing.Color.Transparent;
-            this.labelStatus.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Status", true));
-            this.labelStatus.Font = new System.Drawing.Font("Microsoft Sans Serif", 18F, System.Drawing.FontStyle.Bold);
-            this.labelStatus.Location = new System.Drawing.Point(936, 8);
-            this.labelStatus.MaximumSize = new System.Drawing.Size(59, 31);
-            this.labelStatus.MinimumSize = new System.Drawing.Size(59, 31);
-            this.labelStatus.Name = "labelStatus";
-            this.labelStatus.Size = new System.Drawing.Size(59, 31);
-            this.labelStatus.TabIndex = 50;
-            this.labelStatus.Text = "New";
-            this.labelStatus.TextStyle.Color = System.Drawing.Color.Red;
+            this.numericDailyDemand.BackColor = System.Drawing.Color.White;
+            this.numericDailyDemand.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "DailyDemand", true));
+            this.numericDailyDemand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.numericDailyDemand.IsSupportEditMode = false;
+            this.numericDailyDemand.Location = new System.Drawing.Point(591, 125);
+            this.numericDailyDemand.Name = "numericDailyDemand";
+            this.numericDailyDemand.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numericDailyDemand.Size = new System.Drawing.Size(54, 23);
+            this.numericDailyDemand.TabIndex = 43;
+            this.numericDailyDemand.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             // 
-            // tabDetail
+            // numericTargetHr
             // 
-            this.tabDetail.Controls.Add(this.tabPageLineMapping);
-            this.tabDetail.Controls.Add(this.tabPageCentralizedPPA);
-            this.tabDetail.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tabDetail.Location = new System.Drawing.Point(0, 0);
-            this.tabDetail.Name = "tabDetail";
-            this.tabDetail.SelectedIndex = 0;
-            this.tabDetail.Size = new System.Drawing.Size(1000, 442);
-            this.tabDetail.TabIndex = 1;
+            this.numericTargetHr.BackColor = System.Drawing.Color.White;
+            this.numericTargetHr.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "TargetHr", true));
+            this.numericTargetHr.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.numericTargetHr.IsSupportEditMode = false;
+            this.numericTargetHr.Location = new System.Drawing.Point(591, 96);
+            this.numericTargetHr.Name = "numericTargetHr";
+            this.numericTargetHr.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numericTargetHr.Size = new System.Drawing.Size(54, 23);
+            this.numericTargetHr.TabIndex = 42;
+            this.numericTargetHr.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             // 
-            // tabPageLineMapping
+            // numericTotalSewingLineOptrs
             // 
-            this.tabPageLineMapping.Controls.Add(this.splitLineMapping);
-            this.tabPageLineMapping.Location = new System.Drawing.Point(4, 25);
-            this.tabPageLineMapping.Name = "tabPageLineMapping";
-            this.tabPageLineMapping.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageLineMapping.Size = new System.Drawing.Size(992, 413);
-            this.tabPageLineMapping.TabIndex = 0;
-            this.tabPageLineMapping.Text = "Line Mapping";
-            // 
-            // tabPageCentralizedPPA
-            // 
-            this.tabPageCentralizedPPA.Controls.Add(this.splitCentralizedPPA);
-            this.tabPageCentralizedPPA.Location = new System.Drawing.Point(4, 25);
-            this.tabPageCentralizedPPA.Name = "tabPageCentralizedPPA";
-            this.tabPageCentralizedPPA.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageCentralizedPPA.Size = new System.Drawing.Size(992, 413);
-            this.tabPageCentralizedPPA.TabIndex = 1;
-            this.tabPageCentralizedPPA.Text = "Centralized PPA";
-            // 
-            // splitLineMapping
-            // 
-            this.splitLineMapping.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.splitLineMapping.Location = new System.Drawing.Point(3, 3);
-            this.splitLineMapping.Name = "splitLineMapping";
-            // 
-            // splitLineMapping.Panel2
-            // 
-            this.splitLineMapping.Panel2.Controls.Add(this.gridLineMappingRight);
-            this.splitLineMapping.Size = new System.Drawing.Size(986, 407);
-            this.splitLineMapping.SplitterDistance = 633;
-            this.splitLineMapping.TabIndex = 0;
-            // 
-            // gridLineMappingRight
-            // 
-            this.gridLineMappingRight.AllowUserToAddRows = false;
-            this.gridLineMappingRight.AllowUserToDeleteRows = false;
-            this.gridLineMappingRight.AllowUserToResizeRows = false;
-            this.gridLineMappingRight.BackgroundColor = System.Drawing.SystemColors.Control;
-            this.gridLineMappingRight.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridLineMappingRight.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
-            this.gridLineMappingRight.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.gridLineMappingRight.DefaultCellStyle = dataGridViewCellStyle2;
-            this.gridLineMappingRight.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.gridLineMappingRight.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
-            this.gridLineMappingRight.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
-            this.gridLineMappingRight.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.gridLineMappingRight.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.gridLineMappingRight.Location = new System.Drawing.Point(0, 0);
-            this.gridLineMappingRight.Name = "gridLineMappingRight";
-            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridLineMappingRight.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
-            this.gridLineMappingRight.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
-            this.gridLineMappingRight.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
-            this.gridLineMappingRight.RowTemplate.Height = 24;
-            this.gridLineMappingRight.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.gridLineMappingRight.ShowCellToolTips = false;
-            this.gridLineMappingRight.Size = new System.Drawing.Size(349, 407);
-            this.gridLineMappingRight.TabIndex = 0;
-            // 
-            // splitCentralizedPPA
-            // 
-            this.splitCentralizedPPA.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.splitCentralizedPPA.Location = new System.Drawing.Point(3, 3);
-            this.splitCentralizedPPA.Name = "splitCentralizedPPA";
-            // 
-            // splitCentralizedPPA.Panel1
-            // 
-            this.splitCentralizedPPA.Panel1.Controls.Add(this.gridCentralizedPPALeft);
-            // 
-            // splitCentralizedPPA.Panel2
-            // 
-            this.splitCentralizedPPA.Panel2.Controls.Add(this.gridCentralizedPPARight);
-            this.splitCentralizedPPA.Size = new System.Drawing.Size(986, 407);
-            this.splitCentralizedPPA.SplitterDistance = 688;
-            this.splitCentralizedPPA.TabIndex = 0;
-            // 
-            // gridCentralizedPPALeft
-            // 
-            this.gridCentralizedPPALeft.AllowUserToAddRows = false;
-            this.gridCentralizedPPALeft.AllowUserToDeleteRows = false;
-            this.gridCentralizedPPALeft.AllowUserToResizeRows = false;
-            this.gridCentralizedPPALeft.BackgroundColor = System.Drawing.SystemColors.Control;
-            this.gridCentralizedPPALeft.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
-            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle4.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle4.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle4.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridCentralizedPPALeft.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle4;
-            this.gridCentralizedPPALeft.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle5.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle5.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle5.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle5.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle5.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle5.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.gridCentralizedPPALeft.DefaultCellStyle = dataGridViewCellStyle5;
-            this.gridCentralizedPPALeft.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.gridCentralizedPPALeft.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
-            this.gridCentralizedPPALeft.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
-            this.gridCentralizedPPALeft.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.gridCentralizedPPALeft.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.gridCentralizedPPALeft.Location = new System.Drawing.Point(0, 0);
-            this.gridCentralizedPPALeft.Name = "gridCentralizedPPALeft";
-            dataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle6.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle6.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle6.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle6.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle6.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle6.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridCentralizedPPALeft.RowHeadersDefaultCellStyle = dataGridViewCellStyle6;
-            this.gridCentralizedPPALeft.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
-            this.gridCentralizedPPALeft.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
-            this.gridCentralizedPPALeft.RowTemplate.Height = 24;
-            this.gridCentralizedPPALeft.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.gridCentralizedPPALeft.ShowCellToolTips = false;
-            this.gridCentralizedPPALeft.Size = new System.Drawing.Size(688, 407);
-            this.gridCentralizedPPALeft.TabIndex = 0;
-            // 
-            // gridCentralizedPPARight
-            // 
-            this.gridCentralizedPPARight.AllowUserToAddRows = false;
-            this.gridCentralizedPPARight.AllowUserToDeleteRows = false;
-            this.gridCentralizedPPARight.AllowUserToResizeRows = false;
-            this.gridCentralizedPPARight.BackgroundColor = System.Drawing.SystemColors.Control;
-            this.gridCentralizedPPARight.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
-            dataGridViewCellStyle7.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle7.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle7.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle7.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle7.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle7.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle7.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridCentralizedPPARight.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle7;
-            this.gridCentralizedPPARight.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridViewCellStyle8.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle8.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle8.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle8.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle8.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle8.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle8.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.gridCentralizedPPARight.DefaultCellStyle = dataGridViewCellStyle8;
-            this.gridCentralizedPPARight.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.gridCentralizedPPARight.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
-            this.gridCentralizedPPARight.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
-            this.gridCentralizedPPARight.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.gridCentralizedPPARight.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.gridCentralizedPPARight.Location = new System.Drawing.Point(0, 0);
-            this.gridCentralizedPPARight.Name = "gridCentralizedPPARight";
-            dataGridViewCellStyle9.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle9.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle9.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle9.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle9.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle9.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle9.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridCentralizedPPARight.RowHeadersDefaultCellStyle = dataGridViewCellStyle9;
-            this.gridCentralizedPPARight.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
-            this.gridCentralizedPPARight.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
-            this.gridCentralizedPPARight.RowTemplate.Height = 24;
-            this.gridCentralizedPPARight.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.gridCentralizedPPARight.ShowCellToolTips = false;
-            this.gridCentralizedPPARight.Size = new System.Drawing.Size(294, 407);
-            this.gridCentralizedPPARight.TabIndex = 0;
+            this.numericTotalSewingLineOptrs.BackColor = System.Drawing.Color.White;
+            this.numericTotalSewingLineOptrs.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "TotalSewingLineOptrs", true));
+            this.numericTotalSewingLineOptrs.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.numericTotalSewingLineOptrs.IsSupportEditMode = false;
+            this.numericTotalSewingLineOptrs.Location = new System.Drawing.Point(591, 67);
+            this.numericTotalSewingLineOptrs.Name = "numericTotalSewingLineOptrs";
+            this.numericTotalSewingLineOptrs.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numericTotalSewingLineOptrs.Size = new System.Drawing.Size(54, 23);
+            this.numericTotalSewingLineOptrs.TabIndex = 41;
+            this.numericTotalSewingLineOptrs.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             // 
             // P05
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1008, 729);
+            this.GridAlias = "AutomatedLineMapping_Detail";
             this.IsSupportClip = false;
             this.IsSupportUnconfirm = true;
+            this.KeyField1 = "ID";
+            this.KeyField2 = "ID";
             this.Name = "P05";
             this.OnLineHelpID = "Sci.Win.Tems.Input6";
             this.Text = "P05. Automated Line Mapping";
@@ -1115,35 +1044,26 @@
             this.tabs.ResumeLayout(false);
             this.tabDetail.ResumeLayout(false);
             this.tabPageLineMapping.ResumeLayout(false);
-            this.tabPageCentralizedPPA.ResumeLayout(false);
             this.splitLineMapping.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitLineMapping)).EndInit();
             this.splitLineMapping.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.gridLineMappingRight)).EndInit();
+            this.tabPageCentralizedPPA.ResumeLayout(false);
             this.splitCentralizedPPA.Panel1.ResumeLayout(false);
             this.splitCentralizedPPA.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitCentralizedPPA)).EndInit();
             this.splitCentralizedPPA.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.gridCentralizedPPALeft)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.gridCentralizedPPARight)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridLineMappingRightBS)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridCentralizedPPALeftBS)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridCentralizedPPARightBS)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
         }
 
         #endregion
-
-        private Win.UI.Label label23;
-        private Win.UI.Label label21;
-        private Win.UI.Label label20;
-        private Win.UI.Label label19;
-        private Win.UI.Label label18;
-        private Win.UI.Label label17;
-        private Win.UI.Label label16;
-        private Win.UI.Label label15;
-        private Win.UI.Label label14;
-        private Win.UI.Label label13;
-        private Win.UI.Label label12;
         private Win.UI.Label label11;
         private Win.UI.Label label10;
         private Win.UI.Label label9;
@@ -1168,18 +1088,6 @@
         private Win.UI.NumericBox numericTotalGSDTime;
         private Win.UI.NumericBox numericStyleCPU;
         private Class.Txtfactory txtfactory;
-        private Win.UI.NumericBox numericPackerManpower;
-        private Win.UI.NumericBox numericPresserManpower;
-        private Win.UI.NumericBox numericSewerManpower;
-        private Win.UI.NumericBox numericDailyDemand;
-        private Win.UI.NumericBox numericTargetHr;
-        private Win.UI.NumericBox numericTotalSewingLineOptrs;
-        private Win.UI.DisplayBox displayTimeStudyVersion;
-        private Win.UI.DisplayBox displayTimeStudyStatus;
-        private Win.UI.NumericBox numericWorkHour;
-        private Win.UI.NumericBox numericPPH;
-        private Win.UI.NumericBox numericEOLR;
-        private Win.UI.NumericBox numericTaktTime;
         private Win.UI.Label labelStatus;
         private Win.UI.TabControl tabDetail;
         private System.Windows.Forms.TabPage tabPageLineMapping;
@@ -1189,5 +1097,31 @@
         private System.Windows.Forms.SplitContainer splitCentralizedPPA;
         private Win.UI.Grid gridCentralizedPPALeft;
         private Win.UI.Grid gridCentralizedPPARight;
+        private Win.UI.ListControlBindingSource gridLineMappingRightBS;
+        private Win.UI.ListControlBindingSource gridCentralizedPPALeftBS;
+        private Win.UI.ListControlBindingSource gridCentralizedPPARightBS;
+        private Win.UI.NumericBox numericPackerManpower;
+        private Win.UI.NumericBox numericPresserManpower;
+        private Win.UI.NumericBox numericSewerManpower;
+        private Win.UI.Label label16;
+        private Win.UI.Label label15;
+        private Win.UI.Label label14;
+        private Win.UI.Label label13;
+        private Win.UI.Label label12;
+        private Win.UI.DisplayBox displayTimeStudyVersion;
+        private Win.UI.DisplayBox displayTimeStudyStatus;
+        private Win.UI.NumericBox numericWorkHour;
+        private Win.UI.NumericBox numericPPH;
+        private Win.UI.NumericBox numericEOLR;
+        private Win.UI.NumericBox numericTaktTime;
+        private Win.UI.Label label23;
+        private Win.UI.Label label21;
+        private Win.UI.Label label20;
+        private Win.UI.Label label19;
+        private Win.UI.Label label18;
+        private Win.UI.Label label17;
+        private Win.UI.NumericBox numericDailyDemand;
+        private Win.UI.NumericBox numericTargetHr;
+        private Win.UI.NumericBox numericTotalSewingLineOptrs;
     }
 }
