@@ -520,7 +520,7 @@
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>Comment</Value>
+                              <Value>Tone/Grp</Value>
                               <Style>
                                 <FontSize>9pt</FontSize>
                               </Style>
@@ -544,21 +544,21 @@
                 </TablixCell>
                 <TablixCell>
                   <CellContents>
-                    <Textbox Name="Textbox41">
+                    <Textbox Name="Tone">
                       <CanGrow>true</CanGrow>
                       <KeepTogether>true</KeepTogether>
                       <Paragraphs>
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value />
+                              <Value>=Fields!Tone.Value</Value>
                               <Style />
                             </TextRun>
                           </TextRuns>
                           <Style />
                         </Paragraph>
                       </Paragraphs>
-                      <rd:DefaultName>Textbox41</rd:DefaultName>
+                      <rd:DefaultName>Tone</rd:DefaultName>
                       <Style>
                         <Border>
                           <Style>Solid</Style>
