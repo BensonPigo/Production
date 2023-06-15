@@ -13,6 +13,7 @@
     [AddName] VARCHAR(10) NULL DEFAULT (''), 
     [EditDate] DATETIME NULL, 
     [Editname] VARCHAR(10) NULL DEFAULT (''),     
+    [UniqueKey] NVARCHAR(200) NOT NULL DEFAULT (''), 
     CONSTRAINT [PK_ExportRefnoSentReport] PRIMARY KEY ([ExportID], [BrandRefno], [ColorID], [DocumentName], [BrandID])
 )
 
