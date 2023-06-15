@@ -100,6 +100,7 @@ namespace Sci.Production.Quality
             string title = MyUtility.GetValue.Lookup($"select NameEN from Factory WITH (NOLOCK) where id='{Env.User.Factory}'");
             string invno = dt_Exp.Rows.Count == 0 ? string.Empty : dt_Exp.Rows[0]["ID"].ToString();
             string brandID = MyUtility.GetValue.Lookup($"SELECT BrandID FROM View_WH_Orders WHERE ID = '{this.maindr["POID"]}'");
+            string seasonID = MyUtility.GetValue.Lookup($"SELECT SeasonID FROM View_WH_Orders WHERE ID = '{this.maindr["POID"]}'");
 
             int packages = MyUtility.Convert.GetInt(MyUtility.GetValue.Lookup($@"
  select top 1 Packages
@@ -141,7 +142,7 @@ namespace Sci.Production.Quality
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Packages", packages.ToString()));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Seq", $"{this.maindr["Seq1"]} - {this.maindr["Seq2"]}"));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Dyelot", " "));
-
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("SeasonID", seasonID));
             #region 表身資料
             var dt = ((DataTable)this.listControlBindingSource1.DataSource).Select($"Selected = 1");
             var duplicates = dt.AsEnumerable()
