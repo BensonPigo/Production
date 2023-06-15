@@ -29,22 +29,23 @@ end
 ------------------------------------------------------------------------------------------------------
 
 SELECT
-	BrandRefno
-	,ColorID
-	,SuppID
-	,DocumentName
-	,BrandID
-	,TestSeasonID
-	,DueSeason
-	,DueDate
-	,Ukey
-	,TestReport
-	,FTYReceivedReport
-	,TestReportTestDate
-	,AddDate
-	,AddName
-	,EditDate
-	,Editname
+	[BrandRefno]
+      ,[ColorID]
+      ,[SuppID]
+      ,[DocumentName]
+      ,[BrandID]
+      ,[TestSeasonID]
+      ,[DueSeason]
+      ,[DueDate]
+      ,[Ukey]
+      ,[TestReport]
+      ,[FTYReceivedReport]
+      ,[TestReportTestDate]
+      ,[AddDate]
+      ,[AddName]
+      ,[EditDate]
+      ,[Editname]
+      ,[UniqueKey]
 into UASentReport
 FROM Production.dbo.UASentReport with (nolock)
 where isnull(EditDate,AddDate) BETWEEN @DateStart and GETDATE()
@@ -69,6 +70,8 @@ select
       ,[AddName]
       ,[EditDate]
       ,[Editname]
+      ,[TestReportCheckClima]
+      ,[UniqueKey]
 into [NewSentReport]
 FROM [Production].[dbo].[NewSentReport]
 where isnull(EditDate,AddDate) BETWEEN  @DateStart and GETDATE()
@@ -83,11 +86,12 @@ SELECT [ExportID]
       ,[ReportDate]
       ,[FTYReceivedReport]
       ,[AWBno]
-      ,[UKEY]
+      ,[Ukey]
       ,[AddDate]
       ,[AddName]
       ,[EditDate]
       ,[Editname]
+      ,[UniqueKey]
 into [ExportRefnoSentReport]
 FROM [Production].[dbo].[ExportRefnoSentReport]
 where isnull(EditDate,AddDate) BETWEEN  @DateStart  and GETDATE()

@@ -1,22 +1,22 @@
-﻿using System;
+﻿using Ict;
+using Ict.Win;
+using Newtonsoft.Json;
+using Sci.Data;
+using Sci.Production.Automation;
+using Sci.Production.CallPmsAPI;
+using Sci.Production.PublicPrg;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Drawing;
-using System.Text;
-using System.Windows.Forms;
-using Ict.Win;
-using Ict;
-using Sci.Data;
-using System.Runtime.InteropServices;
 using System.Linq;
-using Sci.Production.PublicPrg;
+using System.Runtime.InteropServices;
+using System.Text;
 using System.Threading.Tasks;
-using Sci.Production.Automation;
-using static Sci.Production.PublicPrg.Prgs;
-using Sci.Production.CallPmsAPI;
-using static Sci.Production.CallPmsAPI.PackingA2BWebAPI_Model;
-using Newtonsoft.Json;
 using System.Transactions;
+using System.Windows.Forms;
+using static Sci.Production.CallPmsAPI.PackingA2BWebAPI_Model;
+using static Sci.Production.PublicPrg.Prgs;
 
 namespace Sci.Production.Shipping
 {
@@ -1074,18 +1074,19 @@ where   pd.ID = '{this.CurrentMaintain["ID"]}'
 ");
             using (TransactionScope scope = new TransactionScope())
             {
-                DataTable dtNeedUpdateA2BOrders;
-                DualResult result = DBProxy.Current.Select(null, updateCmds.JoinToString(" "), out dtNeedUpdateA2BOrders);
-                if (!result)
+                try
                 {
-                    scope.Dispose();
-                    MyUtility.Msg.WarningBox("Confirmed fail!!\r\n" + result.ToString());
-                    return;
-                }
+                    DualResult result = DBProxy.Current.Select(null, updateCmds.JoinToString(" "), out DataTable dtNeedUpdateA2BOrders);
+                    if (!result)
+                    {
+                        scope.Dispose();
+                        MyUtility.Msg.WarningBox("Confirmed fail!!\r\n" + result.ToString());
+                        return;
+                    }
 
-                if (dtNeedUpdateA2BOrders.Rows.Count > 0)
-                {
-                    string sqlUpdOrdersA2B = @"
+                    if (dtNeedUpdateA2BOrders.Rows.Count > 0)
+                    {
+                        string sqlUpdOrdersA2B = @"
 alter table #tmp alter column OrderID varchar(13)
 
 update o set o.ActPulloutDate = t.ActPulloutDate,
@@ -1095,31 +1096,43 @@ from    Orders o
 inner join  #tmp t on t.OrderID = o.ID
 ";
 
-                    var groupNeedUpdateA2BOrders = dtNeedUpdateA2BOrders.AsEnumerable().GroupBy(s => s["PLFromRgCode"].ToString());
-                    foreach (var groupA2BItem in groupNeedUpdateA2BOrders)
-                    {
-                        DataTable dtUpdTmp = groupA2BItem.CopyToDataTable();
-                        DataBySql dataBySql = new DataBySql()
+                        var groupNeedUpdateA2BOrders = dtNeedUpdateA2BOrders.AsEnumerable().GroupBy(s => s["PLFromRgCode"].ToString());
+                        foreach (var groupA2BItem in groupNeedUpdateA2BOrders)
                         {
-                            SqlString = sqlUpdOrdersA2B,
-                            TmpTable = JsonConvert.SerializeObject(dtUpdTmp),
-                        };
+                            DataTable dtUpdTmp = groupA2BItem.CopyToDataTable();
+                            DataBySql dataBySql = new DataBySql()
+                            {
+                                SqlString = sqlUpdOrdersA2B,
+                                TmpTable = JsonConvert.SerializeObject(dtUpdTmp),
+                            };
 
-                        result = PackingA2BWebAPI.ExecuteBySql(groupA2BItem.Key, dataBySql);
-                        if (!result)
-                        {
-                            scope.Dispose();
-                            MyUtility.Msg.WarningBox("Confirmed fail!!\r\n" + result.ToString());
-                            return;
+                            result = PackingA2BWebAPI.ExecuteBySql(groupA2BItem.Key, dataBySql);
+                            if (!result)
+                            {
+                                scope.Dispose();
+                                MyUtility.Msg.WarningBox("Confirmed fail!!\r\n" + result.ToString());
+                                return;
+                            }
                         }
                     }
+
+                    // 更新PackingList.PulloutStatus
+                    if (!(result = this.UpdatePacking_PulloutStatus()))
+                    {
+                        scope.Dispose();
+                        this.ShowErr(result);
+                        return;
+                    }
+
+                    scope.Complete();
                 }
-
-                scope.Complete();
+                catch (Exception ex)
+                {
+                    scope.Dispose();
+                    this.ShowErr(ex);
+                    return;
+                }
             }
-
-            // 更新PackingList.PulloutStatus
-            this.UpdatePacking_PulloutStatus();
 
             #region ISP20200757 資料交換 - Sunrise
             if (PMSUtilityAutomation.IsSunrise_FinishingProcessesEnable)
@@ -1245,17 +1258,18 @@ where   pd.ID = '{this.CurrentMaintain["ID"]}'
 
             using (TransactionScope scope = new TransactionScope())
             {
-                DataTable dtNeedUpdateA2BOrders;
-                result = DBProxy.Current.Select(null, sqlCmds.JoinToString(Environment.NewLine), out dtNeedUpdateA2BOrders);
-                if (!result)
+                try
                 {
-                    MyUtility.Msg.WarningBox("Amend fail!!\r\n" + result.ToString());
-                    return;
-                }
+                    result = DBProxy.Current.Select(null, sqlCmds.JoinToString(Environment.NewLine), out DataTable dtNeedUpdateA2BOrders);
+                    if (!result)
+                    {
+                        MyUtility.Msg.WarningBox("Amend fail!!\r\n" + result.ToString());
+                        return;
+                    }
 
-                if (dtNeedUpdateA2BOrders.Rows.Count > 0)
-                {
-                    string sqlUpdOrdersA2B = @"
+                    if (dtNeedUpdateA2BOrders.Rows.Count > 0)
+                    {
+                        string sqlUpdOrdersA2B = @"
 alter table #tmp alter column OrderID varchar(13)
 
 update o set o.ActPulloutDate = t.ActPulloutDate,
@@ -1264,32 +1278,43 @@ update o set o.ActPulloutDate = t.ActPulloutDate,
 from    Orders o 
 inner join  #tmp t on t.OrderID = o.ID
 ";
-
-                    var groupNeedUpdateA2BOrders = dtNeedUpdateA2BOrders.AsEnumerable().GroupBy(s => s["PLFromRgCode"].ToString());
-                    foreach (var groupA2BItem in groupNeedUpdateA2BOrders)
-                    {
-                        DataTable dtUpdTmp = groupA2BItem.CopyToDataTable();
-                        DataBySql dataBySql = new DataBySql()
+                        var groupNeedUpdateA2BOrders = dtNeedUpdateA2BOrders.AsEnumerable().GroupBy(s => s["PLFromRgCode"].ToString());
+                        foreach (var groupA2BItem in groupNeedUpdateA2BOrders)
                         {
-                            SqlString = sqlUpdOrdersA2B,
-                            TmpTable = JsonConvert.SerializeObject(dtUpdTmp),
-                        };
+                            DataTable dtUpdTmp = groupA2BItem.CopyToDataTable();
+                            DataBySql dataBySql = new DataBySql()
+                            {
+                                SqlString = sqlUpdOrdersA2B,
+                                TmpTable = JsonConvert.SerializeObject(dtUpdTmp),
+                            };
 
-                        result = PackingA2BWebAPI.ExecuteBySql(groupA2BItem.Key, dataBySql);
-                        if (!result)
-                        {
-                            scope.Dispose();
-                            MyUtility.Msg.WarningBox("Confirmed fail!!\r\n" + result.ToString());
-                            return;
+                            result = PackingA2BWebAPI.ExecuteBySql(groupA2BItem.Key, dataBySql);
+                            if (!result)
+                            {
+                                scope.Dispose();
+                                MyUtility.Msg.WarningBox("Confirmed fail!!\r\n" + result.ToString());
+                                return;
+                            }
                         }
                     }
+
+                    // 更新PackingList.PulloutStatus
+                    if (!(result = this.UpdatePacking_PulloutStatus()))
+                    {
+                        scope.Dispose();
+                        this.ShowErr(result);
+                        return;
+                    }
+
+                    scope.Complete();
                 }
-
-                scope.Complete();
+                catch (Exception ex)
+                {
+                    scope.Dispose();
+                    this.ShowErr(ex);
+                    return;
+                }
             }
-
-            // 更新PackingList.PulloutStatus
-            this.UpdatePacking_PulloutStatus();
 
             #region ISP20200757 資料交換 - Sunrise
             if (PMSUtilityAutomation.IsSunrise_FinishingProcessesEnable)
@@ -1308,6 +1333,57 @@ inner join  #tmp t on t.OrderID = o.ID
                            .ContinueWith(UtilityAutomation.AutomationExceptionHandler, System.Threading.CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.FromCurrentSynchronizationContext());
             }
             #endregion
+        }
+
+        private DualResult UpdatePacking_PulloutStatus()
+        {
+            #region 準備更新字串
+            string sqlUpdate = string.Empty;
+            string curDBStatus = MyUtility.GetValue.Lookup($"select Status from Pullout with(nolock) where ID='{this.CurrentMaintain["ID"]}' ");
+            this.dicUpdatePackinglistA2B = new Dictionary<string, List<string>>();
+
+            foreach (DataRow dr in ((DataTable)this.detailgridbs.DataSource).Rows)
+            {
+                string plFromRgCode = dr["PLFromRgCode"].ToString();
+                string updatePackinglistCmd = $@"
+Update PackingList
+set PulloutStatus = '{curDBStatus}'
+where id = '{dr["PackingListID"]}' and pulloutID = '{this.CurrentMaintain["id"].ToString()}';
+";
+                if (MyUtility.Check.Empty(plFromRgCode))
+                {
+                    sqlUpdate += updatePackinglistCmd;
+                }
+                else
+                {
+                    this.dicUpdatePackinglistA2B.AddSqlCmdByPLFromRgCode(plFromRgCode, updatePackinglistCmd);
+                }
+            }
+            #endregion
+
+            #region 開始更新
+            DualResult result;
+            if (sqlUpdate.Trim() != string.Empty)
+            {
+                result = DBProxy.Current.Execute(null, sqlUpdate);
+                if (!result)
+                {
+                    return result;
+                }
+            }
+
+            // update A2B Packing Pullout Info
+            foreach (KeyValuePair<string, List<string>> itemUpdateA2B in this.dicUpdatePackinglistA2B)
+            {
+                result = PackingA2BWebAPI.ExecuteBySql(itemUpdateA2B.Key, itemUpdateA2B.Value.JoinToString(" "));
+                if (!result)
+                {
+                    return result;
+                }
+            }
+            #endregion
+
+            return new DualResult(true);
         }
 
         // History
@@ -2370,60 +2446,6 @@ where id='{dr["PackingListID"]}'; ";
 
             // this.status_Change();
             return true;
-        }
-
-        private void UpdatePacking_PulloutStatus()
-        {
-            string sqlUpdate = string.Empty;
-            string curDBStatus = MyUtility.GetValue.Lookup($"select Status from Pullout where ID='{this.CurrentMaintain["ID"]}' ");
-            this.dicUpdatePackinglistA2B = new Dictionary<string, List<string>>();
-            DualResult result;
-
-            foreach (DataRow dr in ((DataTable)this.detailgridbs.DataSource).Rows)
-            {
-                string plFromRgCode = dr["PLFromRgCode"].ToString();
-                string updatePackinglistCmd = $@"
-Update PackingList
-set PulloutStatus = '{curDBStatus}'
-where id = '{dr["PackingListID"]}' and pulloutID = '{this.CurrentMaintain["id"].ToString()}';
-";
-
-                if (MyUtility.Check.Empty(plFromRgCode))
-                {
-                    sqlUpdate += updatePackinglistCmd;
-                }
-                else
-                {
-                    this.dicUpdatePackinglistA2B.AddSqlCmdByPLFromRgCode(plFromRgCode, updatePackinglistCmd);
-                }
-            }
-
-            using (TransactionScope scope = new TransactionScope())
-            {
-                if (sqlUpdate.Trim() != string.Empty)
-                {
-                    result = DBProxy.Current.Execute(null, sqlUpdate);
-                    if (!result)
-                    {
-                        scope.Dispose();
-                        DualResult failResult = new DualResult(false, "Update Packinglist fail!!\r\n" + result.ToString());
-                        return;
-                    }
-                }
-
-                // update A2B Packing Pullout Info
-                foreach (KeyValuePair<string, List<string>> itemUpdateA2B in this.dicUpdatePackinglistA2B)
-                {
-                    result = PackingA2BWebAPI.ExecuteBySql(itemUpdateA2B.Key, itemUpdateA2B.Value.JoinToString(" "));
-                    if (!result)
-                    {
-                        scope.Dispose();
-                        return;
-                    }
-                }
-
-                scope.Complete();
-            }
         }
 
         // Revise from ship plan and FOC/LO packing list

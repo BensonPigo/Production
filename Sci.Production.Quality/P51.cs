@@ -176,6 +176,7 @@ begin
           ,[AddName]
           ,[DocumentName]
           ,[BrandID]
+          ,[UniqueKey]
         )
         Values(
           '{r["ExportID"]}'
@@ -187,6 +188,7 @@ begin
          ,'{Env.User.UserID}'
          ,'{this.drBasic["DocumentName"]}'
          ,'{this.drBasic["BrandID"]}'
+         ,'{r["ExportID"]}'+'_'+'{r["PoID"]}'+'_'+'{r["Seq1"]}'+'_'+'{r["Seq2"]}'+'_'+'{this.drBasic["DocumentName"]}'+'_'+'{this.drBasic["BrandID"]}'
         )
      End
 END
@@ -209,6 +211,7 @@ BEGIN
           ,[AddName]
           ,[DocumentName]
           ,[BrandID]
+          ,[UniqueKey]
         )
         Values(
           '{r["ExportID"]}'
@@ -219,6 +222,7 @@ BEGIN
          ,'{Env.User.UserID}'
          ,'{this.drBasic["DocumentName"]}'
          ,'{this.drBasic["BrandID"]}'
+         ,'{r["ExportID"]}'+'_'+'{r["BrandRefno"]}'+'_'+'{r["ColorID"]}'+'_'+'{this.drBasic["DocumentName"]}'+'_'+'{this.drBasic["BrandID"]}'
         )
      End  
 END
@@ -229,7 +233,7 @@ END
                         new SqlParameter("UserID", Env.User.UserID),
                         new SqlParameter("tableName", tableName),
                     };
-                    var result = DBProxy.Current.Execute("", sql, plis);
+                    var result = DBProxy.Current.Execute(string.Empty, sql, plis);
                     if (!result)
                     {
                         this.ShowErr(result);
@@ -309,7 +313,7 @@ Update NewSentReport SET  AWBNO = @updateData, EditName = @UserID ,EditDate = ge
                          new SqlParameter("BrandID", this.drBasic["BrandID"]),
                     };
 
-                        var result = DBProxy.Current.Execute("", sql, plis);
+                        var result = DBProxy.Current.Execute(string.Empty, sql, plis);
                         if (!result)
                         {
                             this.ShowErr(result);
@@ -336,7 +340,7 @@ Update ExportRefnoSentReport SET  AWBNO = @updateData, EditName = @UserID ,EditD
                         new SqlParameter("BrandID", this.drBasic["BrandID"]),
                     };
 
-                        var result = DBProxy.Current.Execute("", sql, plis);
+                        var result = DBProxy.Current.Execute(string.Empty, sql, plis);
                         if (!result)
                         {
                             this.ShowErr(result);
@@ -364,7 +368,7 @@ Update ExportRefnoSentReport SET  AWBNO = @updateData, EditName = @UserID ,EditD
                 return;
             }
 
-            var id = row["Ukey"].ToString();
+            var id = row["UniqueKey"].ToString();
             if (id.IsNullOrWhiteSpace())
             {
                 return;
@@ -421,7 +425,7 @@ Update ExportRefnoSentReport SET  AWBNO = @updateData, EditName = @UserID ,EditD
 
             var now = DateTime.Now;
 
-            if (row["Ukey"].Empty())
+            if (row["UniqueKey"].Empty())
             {
                 row["AddName"] = Env.User.UserID;
                 row["AddDate"] = now;
@@ -592,6 +596,12 @@ Update ExportRefnoSentReport SET  AWBNO = @updateData, EditName = @UserID ,EditD
                 parmes.Add(new SqlParameter() { ParameterName = "@SearchColor", SqlDbType = SqlDbType.VarChar, Size = 6, Value = this.txtColor.Text });
             }
 
+            if (!MyUtility.Check.Empty(this.txtfactory.Text))
+            {
+                conditions.AppendLine(" And  o.FactoryID = @FactoryID");
+                parmes.Add(new SqlParameter() { ParameterName = "@FactoryID", SqlDbType = SqlDbType.VarChar, Size = 6, Value = this.txtfactory.Text });
+            }
+
             if (this.txtStyle1.Text != string.Empty)
             {
                 conditions.AppendLine(" And s.ID = @SearchStyle");
@@ -697,6 +707,7 @@ Update ExportRefnoSentReport SET  AWBNO = @updateData, EditName = @UserID ,EditD
            ,sr.EditName
            ,sr.EditDate
            ,sr.Ukey
+           ,sr.UniqueKey
            ,main.canModify
          FROM (
                     Select
@@ -854,7 +865,7 @@ Update NewSentReport SET  {(isUpdateAwbNo ? "AWBNO" : "ReportDate")} = @updateDa
                          new SqlParameter("BrandID", this.drBasic["BrandID"]),
                     };
 
-                        DBProxy.Current.Execute("", sql, plis);
+                        DBProxy.Current.Execute(string.Empty, sql, plis);
                     }
                     else
                     {
@@ -874,7 +885,7 @@ Update ExportRefnoSentReport SET  {(isUpdateAwbNo ? "AWBNO" : "ReportDate")} = @
                         new SqlParameter("BrandID", this.drBasic["BrandID"]),
                     };
 
-                        DBProxy.Current.Execute("", sql, plis);
+                        DBProxy.Current.Execute(string.Empty, sql, plis);
                     }
 
                     if (isUpdateAwbNo)
@@ -972,7 +983,7 @@ Update ExportRefnoSentReport SET  {(isUpdateAwbNo ? "AWBNO" : "ReportDate")} = @
                 {
                     string addUpdate = string.Empty;
 
-                    if (r["Ukey"].Empty())
+                    if (r["UniqueKey"].Empty())
                     {
                         r["AddName"] = Env.User.UserID;
                         r["AddDate"] = now;
@@ -1009,6 +1020,7 @@ begin
           ,[AddName]
           ,[DocumentName]
           ,[BrandID]
+          ,[UniqueKey]
         )
         output inserted.Ukey into @OutputTbl
         Values(
@@ -1021,11 +1033,12 @@ begin
          ,'{Env.User.UserID}'
          ,'{this.drBasic["DocumentName"]}'
          ,'{this.drBasic["BrandID"]}'
+         ,'{r["ExportID"]}'+'_'+'{r["PoID"]}'+'_'+'{r["Seq1"]}'+'_'+'{r["Seq2"]}'+'_'+'{this.drBasic["DocumentName"]}'+'_'+'{this.drBasic["BrandID"]}'
         )
      End
     
     INSERT INTO GASAClip 
-    SELECT files.Pkey, @tableName, ID, files.FileName, 'File Upload', @UserID, getdate()
+    SELECT files.Pkey, @tableName, '{r["ExportID"]}'+'_'+'{r["PoID"]}'+'_'+'{r["Seq1"]}'+'_'+'{r["Seq2"]}'+'_'+'{this.drBasic["DocumentName"]}'+'_'+'{this.drBasic["BrandID"]}', files.FileName, 'File Upload', @UserID, getdate()
     FROM @OutputTbl
     Outer Apply(
         select [Pkey] = SUBSTRING(Data,0,11),FileName = SUBSTRING(Data,12,len(Data)-11) from splitstring(@ClipPkey,'?')
@@ -1051,6 +1064,7 @@ BEGIN
           ,[AddName]
           ,[DocumentName]
           ,[BrandID]
+          ,[UniqueKey]
         )
         output inserted.Ukey into @OutputTbl
         Values(
@@ -1062,17 +1076,21 @@ BEGIN
          ,'{Env.User.UserID}'
          ,'{this.drBasic["DocumentName"]}'
          ,'{this.drBasic["BrandID"]}'
+         ,'{r["ExportID"]}'+'_'+'{r["BrandRefno"]}'+'_'+'{r["ColorID"]}'+'_'+'{this.drBasic["DocumentName"]}'+'_'+'{this.drBasic["BrandID"]}'
         )
      End
     
     INSERT INTO GASAClip 
-    SELECT files.Pkey, @tableName, ID, files.FileName, 'File Upload', @UserID, getdate()
+    SELECT files.Pkey, @tableName, '{r["ExportID"]}'+'_'+'{r["BrandRefno"]}'+'_'+'{r["ColorID"]}'+'_'+'{this.drBasic["DocumentName"]}'+'_'+'{this.drBasic["BrandID"]}', files.FileName, 'File Upload', @UserID, getdate()
     FROM @OutputTbl
     Outer Apply(
         select [Pkey] = SUBSTRING(Data,0,11),FileName = SUBSTRING(Data,12,len(Data)-11) from splitstring(@ClipPkey,'?')
     )files
 END
-SELECT TOP 1 ID FROM @OutputTbl
+
+select UniqueKey from {tableName}
+where ukey in (SELECT TOP 1 ID FROM @OutputTbl)
+
 ";
                     List<SqlParameter> plis = new List<SqlParameter>()
                     {
@@ -1081,14 +1099,14 @@ SELECT TOP 1 ID FROM @OutputTbl
                         new SqlParameter("tableName", tableName),
                     };
                     DataTable dtUkey = new DataTable();
-                    var result = DBProxy.Current.Select("", sql, plis, out dtUkey);
+                    var result = DBProxy.Current.Select(string.Empty, sql, plis, out dtUkey);
                     if (!result)
                     {
                         this.ShowErr(result);
                         return;
                     }
 
-                    r["Ukey"] = dtUkey.Rows[0][0];
+                    r["UniqueKey"] = dtUkey.Rows[0][0];
                 }
             });
 
