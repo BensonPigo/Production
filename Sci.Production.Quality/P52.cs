@@ -321,6 +321,29 @@ namespace Sci.Production.Quality
                 }
             };
 
+            this.col_Inspection_Report_FtyReceivedDate.CellValidating += (s, e) =>
+            {
+                DataGridView grid = ((DataGridViewColumn)s).DataGridView;
+                if (!((Sci.Win.Forms.Base)grid.FindForm()).EditMode)
+                {
+                    return;
+                }
+
+                DataRow r = grid.GetDataRow<DataRow>(e.RowIndex);
+                var newValue = e.FormattedValue;
+                var oldValue = MyUtility.Convert.GetDate(r["Inspection_Report_FtyReceivedDate"]);
+                DateTime? reportDate = MyUtility.Convert.GetDate(newValue);
+                if (this.CheckDate(reportDate))
+                {
+                    r["Inspection_Report_FtyReceivedDate"] = MyUtility.Convert.GetDate(newValue).ToYYYYMMDD();
+                    r.EndEdit();
+                }
+                else
+                {
+                    e.Cancel = true;
+                }
+            };
+
             this.col_TestReport_FtyReceivedDate.CellFormatting += (s, e) =>
             {
                 if (e.RowIndex == -1)
@@ -364,6 +387,29 @@ namespace Sci.Production.Quality
                 else
                 {
                     e.IsEditable = true;
+                }
+            };
+
+            this.col_TestReport_FtyReceivedDate.CellValidating += (s, e) =>
+            {
+                DataGridView grid = ((DataGridViewColumn)s).DataGridView;
+                if (!((Sci.Win.Forms.Base)grid.FindForm()).EditMode)
+                {
+                    return;
+                }
+
+                DataRow r = grid.GetDataRow<DataRow>(e.RowIndex);
+                var newValue = e.FormattedValue;
+                var oldValue = MyUtility.Convert.GetDate(r["TestReport_FtyReceivedDate"]);
+                DateTime? reportDate = MyUtility.Convert.GetDate(newValue);
+                if (this.CheckDate(reportDate))
+                {
+                    r["TestReport_FtyReceivedDate"] = MyUtility.Convert.GetDate(newValue).ToYYYYMMDD();
+                    r.EndEdit();
+                }
+                else
+                {
+                    e.Cancel = true;
                 }
             };
 
@@ -413,6 +459,29 @@ namespace Sci.Production.Quality
                 }
             };
 
+            this.col_ContinuityCard_FtyReceivedDate.CellValidating += (s, e) =>
+            {
+                DataGridView grid = ((DataGridViewColumn)s).DataGridView;
+                if (!((Sci.Win.Forms.Base)grid.FindForm()).EditMode)
+                {
+                    return;
+                }
+
+                DataRow r = grid.GetDataRow<DataRow>(e.RowIndex);
+                var newValue = e.FormattedValue;
+                var oldValue = MyUtility.Convert.GetDate(r["ContinuityCard_FtyReceivedDate"]);
+                DateTime? reportDate = MyUtility.Convert.GetDate(newValue);
+                if (this.CheckDate(reportDate))
+                {
+                    r["ContinuityCard_FtyReceivedDate"] = MyUtility.Convert.GetDate(newValue).ToYYYYMMDD();
+                    r.EndEdit();
+                }
+                else
+                {
+                    e.Cancel = true;
+                }
+            };
+
             this.col_FirstDyelot_FtyReceivedDate.CellFormatting += (s, e) =>
             {
                 if (e.RowIndex == -1)
@@ -456,6 +525,29 @@ namespace Sci.Production.Quality
                 else
                 {
                     e.IsEditable = true;
+                }
+            };
+
+            this.col_FirstDyelot_FtyReceivedDate.CellValidating += (s, e) =>
+            {
+                DataGridView grid = ((DataGridViewColumn)s).DataGridView;
+                if (!((Sci.Win.Forms.Base)grid.FindForm()).EditMode)
+                {
+                    return;
+                }
+
+                DataRow r = grid.GetDataRow<DataRow>(e.RowIndex);
+                var newValue = e.FormattedValue;
+                var oldValue = MyUtility.Convert.GetDate(r["1stBulkDyelot_FtyReceivedDate"]);
+                DateTime? reportDate = MyUtility.Convert.GetDate(newValue);
+                if (this.CheckDate(reportDate))
+                {
+                    r["1stBulkDyelot_FtyReceivedDate"] = MyUtility.Convert.GetDate(newValue).ToYYYYMMDD();
+                    r.EndEdit();
+                }
+                else
+                {
+                    e.Cancel = true;
                 }
             };
 
@@ -1983,6 +2075,19 @@ drop table #probablySeasonList,#tmpBasc,#tmpFTYReceivedReport,#tmpReportDate
 
             this.dt1.AcceptChanges();
             this.listControlBindingSource1.DataSource = this.dt1;
+        }
+
+        private bool CheckDate(DateTime? dateValue)
+        {
+            bool isBetween2000And2099 = dateValue.Value.Year >= 2000 && dateValue.Value.Year <= 2099;
+
+            if (isBetween2000And2099 == false)
+            {
+                MyUtility.Msg.WarningBox("Date shoule be between 2000 ~ 2099");
+                return false;
+            }
+
+            return true;
         }
     }
 
