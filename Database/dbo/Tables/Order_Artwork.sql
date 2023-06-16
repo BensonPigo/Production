@@ -1,6 +1,6 @@
 ﻿CREATE TABLE [dbo].[Order_Artwork] (
     [ID]            VARCHAR (13)    CONSTRAINT [DF_Order_Artwork_ID] DEFAULT ('') NOT NULL,
-    [ArtworkTypeID] VARCHAR (20)    CONSTRAINT [DF_Order_Artwork_ArtworkTypeID] DEFAULT ('') NOT NULL,
+    [ArtworkTypeID] VARCHAR (36)    CONSTRAINT [DF_Order_Artwork_ArtworkTypeID] DEFAULT ('') NOT NULL,
     [Article]       VARCHAR (8)     CONSTRAINT [DF_Order_Artwork_Article] DEFAULT ('') NOT NULL,
     [PatternCode]   VARCHAR (20)    CONSTRAINT [DF_Order_Artwork_PatternCode] DEFAULT ('') NULL,
     [PatternDesc]   NVARCHAR (100)  CONSTRAINT [DF_Order_Artwork_PatternDesc] DEFAULT ('') NULL,

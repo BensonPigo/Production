@@ -292,12 +292,18 @@ select *, BundleNoCT = COUNT(1) over(partition by t.BundleNo)
 into #tmp2
 from #tmp t
 
-select *
+select *,RowNo = ROW_NUMBER() over(partition by BundleNo,SubProcessID order by Adddate2 desc)
+into #tmp3
 from #tmp2 t
 where BundleNoCT = 1--綁包/補料都沒有,在第一段union會合併成一筆
 or (BundleNoCT > 1 and isnull(t.Orderid, '') <> '')--綁包/補料其中一個有
 
-drop table #tmp,#tmp2
+-- SubProInsRecord可能會有多筆相同BundleNo 和 SubProcessID, 所以只取AddDate最後一筆資料
+-- by ISP20230577
+select * from #tmp3 where RowNo =1
+
+drop table #tmp,#tmp2,#tmp3
+
 ");
 
             return true;
@@ -313,7 +319,7 @@ drop table #tmp,#tmp2
                 {
                     return result;
                 }
-            }
+            } 
 
             return DBProxy.Current.Select(null, this.Sqlcmd.ToString(), this.Parameters, out this.PrintData);
         }

@@ -121,17 +121,17 @@
     <Compile Include="CIPF.Designer.cs">
       <DependentUpon>CIPF.cs</DependentUpon>
     </Compile>
-    <Compile Include="Clip.cs">
+    <Compile Include="ClipGASA.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Clip.designer.cs">
-      <DependentUpon>Clip.cs</DependentUpon>
+    <Compile Include="ClipGASA.designer.cs">
+      <DependentUpon>ClipGASA.cs</DependentUpon>
     </Compile>
-    <Compile Include="Clip01.cs">
+    <Compile Include="ClipGASA01.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Clip01.designer.cs">
-      <DependentUpon>Clip01.cs</DependentUpon>
+    <Compile Include="ClipGASA01.designer.cs">
+      <DependentUpon>ClipGASA01.cs</DependentUpon>
     </Compile>
     <Compile Include="IntendedDeliveryDate.cs">
       <SubType>Form</SubType>
@@ -252,11 +252,11 @@
     <EmbeddedResource Include="CIPF.resx">
       <DependentUpon>CIPF.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Clip.resx">
-      <DependentUpon>Clip.cs</DependentUpon>
+    <EmbeddedResource Include="ClipGASA.resx">
+      <DependentUpon>ClipGASA.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Clip01.resx">
-      <DependentUpon>Clip01.cs</DependentUpon>
+    <EmbeddedResource Include="ClipGASA01.resx">
+      <DependentUpon>ClipGASA01.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="IntendedDeliveryDate.resx">
       <DependentUpon>IntendedDeliveryDate.cs</DependentUpon>

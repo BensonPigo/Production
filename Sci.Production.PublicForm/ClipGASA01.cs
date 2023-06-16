@@ -22,7 +22,7 @@ namespace Sci.Production.PublicForm
     /// <summary>
     /// Clip01 subpage Class.
     /// </summary>
-    public partial class Clip01 : Sci.Win.Tools.BaseGrid
+    public partial class ClipGASA01 : Sci.Win.Tools.BaseGrid
     {
         static string CHARs = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
@@ -49,12 +49,12 @@ namespace Sci.Production.PublicForm
         /// <summary>
         /// DataTable of data source.
         /// </summary>
-        private Sci.Win.SYS.CLIPDataTable _datas;
+        private CLIPGASADataTable _datas;
 
         /// <summary>
         /// new add data.
         /// </summary>
-        private IList<Sci.Win.SYS.CLIPRow> _inserteds;
+        private IList<CLIPGASARow> _inserteds;
 
         /// <summary>
         /// File path of user.
@@ -102,13 +102,13 @@ namespace Sci.Production.PublicForm
         }
 
         /// <inheritdoc />
-        internal IList<Sci.Win.SYS.CLIPRow> Inserteds
+        internal IList<CLIPGASARow> Inserteds
         {
             get { return this._inserteds; }
         }
 
         /// <inheritdoc />
-        protected Clip01()
+        protected ClipGASA01()
         {
             this.InitializeComponent();
             this.Text = "Add Clip File";
@@ -134,7 +134,7 @@ namespace Sci.Production.PublicForm
         private DataRow _dr;
 
         /// <inheritdoc />
-        public Clip01(string tablename, string uid, string yyyymm, string path, string limitedClip, string alianClipConnectionName, DataRow dr)
+        public ClipGASA01(string tablename, string uid, string yyyymm, string path, string limitedClip, string alianClipConnectionName, DataRow dr)
             : this()
         {
             this._tablename = tablename;
@@ -162,7 +162,7 @@ namespace Sci.Production.PublicForm
                     return;
                 }
 
-                this._datas = new Sci.Win.SYS.CLIPDataTable();
+                this._datas = new CLIPGASADataTable();
                 for (int i = 0; i < 10; ++i)
                 {
                     var data = this._datas.NewCLIPRow();
@@ -214,7 +214,7 @@ namespace Sci.Production.PublicForm
                     return;
                 }
 
-                var data = (Sci.Win.SYS.CLIPRow)view.Row;
+                var data = (CLIPGASARow)view.Row;
 
                 try
                 {
@@ -262,7 +262,7 @@ namespace Sci.Production.PublicForm
                     return;
                 }
 
-                var data = (Sci.Win.SYS.CLIPRow)view.Row;
+                var data = (CLIPGASARow)view.Row;
 
                 try
                 {
@@ -300,7 +300,7 @@ namespace Sci.Production.PublicForm
             DualResult result;
             this.grid.EndEdit();
 
-            var datas = new List<Sci.Win.SYS.CLIPRow>();
+            var datas = new List<CLIPGASARow>();
 
             foreach (var it in this._datas)
             {
@@ -330,7 +330,7 @@ namespace Sci.Production.PublicForm
             Sci.Data.DBProxy.Current.Select(this._alianClipConnectionName, @"
             SELECT CHARACTER_MAXIMUM_LENGTH 
             FROM INFORMATION_SCHEMA.Columns 
-            Where Table_Name = 'Clip' and COLUMN_Name='SourceFile'", out dtSourceFileMaxLen);
+            Where Table_Name = 'GASAClip' and COLUMN_Name='SourceFile'", out dtSourceFileMaxLen);
 
             int sourceFileLen = 100;
 
@@ -402,6 +402,7 @@ namespace Sci.Production.PublicForm
                           ,[TestSeasonID]
                           ,[DueSeason]
                           ,[DueDate]
+                          ,[UniqueKey]
                         )
                         output inserted.Ukey into @OutputTbl
                         Values(
@@ -417,14 +418,16 @@ namespace Sci.Production.PublicForm
                          ,'{this._dr["TestSeasonID"]}'
                          ,'{this._dr["DueSeason"]}'
                          ,{(MyUtility.Check.Empty(this._dr["DueDate"]) ? "null" : $"'{this._dr["DueDate"]}'")}
+                         ,'{this._dr["BrandRefno"]}'+'_'+'{this._dr["ColorID"]}'+'_'+'{this._dr["SuppID"]}'+'_'+ '{this._dr["BasicDocumentName"]}'+'_'+'{this._dr["BasicBrandID"]}'
                         )
                      End
 
-                    INSERT INTO Clip 
-                    SELECT @ClipPkey, 'UASentReport', ID, @sourceFileName, 'File Upload', @UserID, getdate()
+                    INSERT INTO GASAClip 
+                    SELECT @ClipPkey, 'UASentReport', '{this._dr["BrandRefno"]}'+'_'+'{this._dr["ColorID"]}'+'_'+'{this._dr["SuppID"]}'+'_'+ '{this._dr["BasicDocumentName"]}'+'_'+'{this._dr["BasicBrandID"]}', @sourceFileName, 'File Upload', @UserID, getdate()
                      FROM @OutputTbl
 
-                    SELECT TOP 1 ID FROM @OutputTbl";
+                    select UniqueKey from {it.TABLENAME}
+                    where ukey in (SELECT TOP 1 ID FROM @OutputTbl)";
                     List<SqlParameter> plis = new List<SqlParameter>()
                     {
                         new SqlParameter("UserID", Env.User.UserID),
@@ -439,6 +442,8 @@ namespace Sci.Production.PublicForm
                         this.ShowErr(result2);
                         return;
                     }
+
+                    this._dr["UniqueKey"] = dtUkey.Rows[0][0];
                 }
             }
             else
@@ -447,7 +452,7 @@ namespace Sci.Production.PublicForm
                 {
                     string addUpdate = string.Empty;
 
-                    if (this._dr["Ukey"].Empty())
+                    if (this._dr["UniqueKey"].Empty())
                     {
                         this._dr["AddName"] = Env.User.UserID;
                         this._dr["AddDate"] = dtm_sys;
@@ -484,6 +489,7 @@ begin
           ,[AddName]
           ,[DocumentName]
           ,[BrandID]
+          ,[UniqueKey]
         )
         output inserted.Ukey into @OutputTbl
         Values(
@@ -496,11 +502,12 @@ begin
          ,'{Env.User.UserID}'
          ,'{this._dr["BasicDocumentName"]}'
          ,'{this._dr["BasicBrandID"]}'
+         ,'{this._dr["ExportID"]}'+'_'+'{this._dr["PoID"]}'+'_'+'{this._dr["Seq1"]}'+'_'+'{this._dr["Seq2"]}'+'_'+'{this._dr["BasicDocumentName"]}'+'_'+'{this._dr["BasicBrandID"]}'
         )
      End
     
-    INSERT INTO Clip 
-    SELECT @ClipPkey, @tableName, ID, @sourceFileName, 'File Upload', @UserID, getdate()
+    INSERT INTO GASAClip 
+    SELECT @ClipPkey, @tableName, '{this._dr["ExportID"]}'+'_'+'{this._dr["PoID"]}'+'_'+'{this._dr["Seq1"]}'+'_'+'{this._dr["Seq2"]}'+'_'+'{this._dr["BasicDocumentName"]}'+'_'+'{this._dr["BasicBrandID"]}', @sourceFileName, 'File Upload', @UserID, getdate()
     FROM @OutputTbl
 END
 ELSE
@@ -523,6 +530,7 @@ BEGIN
           ,[AddName]
           ,[DocumentName]
           ,[BrandID]
+          ,[UniqueKey]
         )
         output inserted.Ukey into @OutputTbl
         Values(
@@ -534,31 +542,35 @@ BEGIN
          ,'{Env.User.UserID}'
          ,'{this._dr["BasicDocumentName"]}'
          ,'{this._dr["BasicBrandID"]}'
+         ,'{this._dr["ExportID"]}'+'_'+'{this._dr["BrandRefno"]}'+'_'+'{this._dr["ColorID"]}'+'_'+'{this._dr["BasicDocumentName"]}'+'_'+'{this._dr["BasicBrandID"]}'
         )
      End
     
-    INSERT INTO Clip 
-    SELECT @ClipPkey, @tableName, ID, @sourceFileName, 'File Upload', @UserID, getdate()
+    INSERT INTO GASAClip 
+    SELECT @ClipPkey, @tableName, '{this._dr["ExportID"]}'+'_'+'{this._dr["BrandRefno"]}'+'_'+'{this._dr["ColorID"]}'+'_'+'{this._dr["BasicDocumentName"]}'+'_'+'{this._dr["BasicBrandID"]}', @sourceFileName, 'File Upload', @UserID, getdate()
     FROM @OutputTbl
 END
-SELECT TOP 1 ID FROM @OutputTbl
+
+select UniqueKey from {it.TABLENAME}
+where ukey in (SELECT TOP 1 ID FROM @OutputTbl)
+
 ";
                     List<SqlParameter> plis = new List<SqlParameter>()
                     {
                         new SqlParameter("UserID", Env.User.UserID),
                         new SqlParameter("ClipPkey", it.PKEY),
                         new SqlParameter("tableName", it.TABLENAME),
-                        new SqlParameter("sourceFileName", it.SOURCEFILE), 
+                        new SqlParameter("sourceFileName", it.SOURCEFILE),
                     };
                     DataTable dtUkey = new DataTable();
-                    var result1 = DBProxy.Current.Select("", sql, plis, out dtUkey);
+                    var result1 = DBProxy.Current.Select(string.Empty, sql, plis, out dtUkey);
                     if (!result1)
                     {
                         this.ShowErr(result1);
                         return;
                     }
 
-                    this._dr["Ukey"] = dtUkey.Rows[0][0];
+                    this._dr["UniqueKey"] = dtUkey.Rows[0][0];
                 }
             }
 
@@ -595,7 +607,7 @@ SELECT TOP 1 ID FROM @OutputTbl
             return Result.True;
         }
 
-        private string GetClipFileName(Sci.Win.SYS.CLIPRow data)
+        private string GetClipFileName(CLIPGASARow data)
         {
             if (data.IsTABLENAMENull() || data.IsSOURCEFILENull())
             {

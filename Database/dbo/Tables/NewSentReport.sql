@@ -18,6 +18,7 @@
 	AddName				    varchar(10)		CONSTRAINT [DF_NewSentReport_AddName]					DEFAULT ('')	NULL,
 	EditDate			    DateTime		CONSTRAINT [DF_NewSentReport_EditDate]									NULL,
 	Editname			    varchar(10)		CONSTRAINT [DF_NewSentReport_Editname]					DEFAULT ('')	NULL,
+    [UniqueKey] NVARCHAR(200) NOT NULL DEFAULT (''), 
     CONSTRAINT [PK_NewSentReport] PRIMARY KEY CLUSTERED ([BrandID], [ExportID], [PoID], [Seq1], [Seq2], [DocumentName])
 )
 

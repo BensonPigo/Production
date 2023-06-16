@@ -245,7 +245,7 @@ and SunriseNid != 0
                 @"
 SET ARITHABORT ON
 select  sd.*
-        , [RFT] = CONVERT(VARCHAR, convert(Decimal(18,2), iif(sd.InlineQty = 0, 0, ROUND(sd.QAQty* 1.0 / sd.InlineQty * 1.0 * 100 ,2)))) +'%'
+        , [RFT] = concat(convert(decimal(18,2), iif(isnull(rft.InspectQty, 0) = 0, 0.0, round((rft.InspectQty - rft.RejectQty) / rft.InspectQty * 100.0, 2))), '%')
         , [Tips] = iif( (SELECT MAX(ID) FROM SewingSchedule ss WITH (NOLOCK) WHERE ss.OrderID = sd.OrderId and ss.FactoryID = s.FactoryID and ss.SewingLineID = s.SewingLineID)  is null,'Data Migration (not belong to this line#)','') 
         , [QAOutput] = (select t.TEMP+',' from (select sdd.SizeCode+'*'+CONVERT(varchar,sdd.QAQty) AS TEMP from SewingOutput_Detail_Detail SDD WITH (NOLOCK) where SDD.SewingOutput_DetailUKey = sd.UKey) t for xml path(''))
 		, [SewingReasonID]=sr.id
@@ -1141,16 +1141,42 @@ and SunriseNid = 0
         // Sewing P01 表身計算公式：SewingOutput_Detail.QAQty / SewingOutput_Detail.InlineQty
         private void GetRFT(DataRow dr)
         {
-            if (MyUtility.Check.Empty(dr["QAQty"]) || MyUtility.Check.Empty(dr["InlineQty"]))
+            // sql參數
+            SqlParameter sp1 = new SqlParameter("@orderid", MyUtility.Convert.GetString(dr["OrderID"]));
+            SqlParameter sp2 = new SqlParameter("@cdate", MyUtility.Convert.GetDate(this.CurrentMaintain["OutputDate"]));
+            SqlParameter sp3 = new SqlParameter("@sewinglineid", MyUtility.Convert.GetString(this.CurrentMaintain["SewingLineID"]));
+            SqlParameter sp4 = new SqlParameter("@shift", MyUtility.Convert.GetString(this.CurrentMaintain["Shift"]));
+            SqlParameter sp5 = new SqlParameter("@team", MyUtility.Convert.GetString(this.CurrentMaintain["Team"]));
+
+            IList<SqlParameter> cmds = new List<SqlParameter>();
+            cmds.Add(sp1);
+            cmds.Add(sp2);
+            cmds.Add(sp3);
+            cmds.Add(sp4);
+            cmds.Add(sp5);
+
+            string sqlCmd = @"
+select iif(rft.InspectQty is null or rft.InspectQty = 0,'0.00%', CONVERT(VARCHAR, convert(Decimal(5,2), round((rft.InspectQty-rft.RejectQty)/rft.InspectQty*100,2) )) + '%') as RFT
+from RFT WITH (NOLOCK) 
+where OrderID = @orderid
+and CDate = @cdate
+and SewinglineID = @sewinglineid
+and Shift = @shift
+and Team = @team
+";
+            DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out DataTable rFTData);
+            if (!result)
             {
-                dr["RFT"] = "0.00%";
+                this.ShowErr(result);
+            }
+
+            if (result && rFTData.Rows.Count > 0)
+            {
+                dr["RFT"] = rFTData.Rows[0]["RFT"];
             }
             else
             {
-                double qAqty = MyUtility.Convert.GetDouble(dr["QAQty"]);
-                double inLineQty = MyUtility.Convert.GetDouble(dr["InlineQty"]);
-                string rFT = MyUtility.Convert.GetString(Math.Round(qAqty / inLineQty * 100, 2)) + "%";
-                dr["RFT"] = rFT;
+                dr["RFT"] = "0.00%";
             }
 
             dr.EndEdit();

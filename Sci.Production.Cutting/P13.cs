@@ -105,7 +105,7 @@ select Sel = 0
 	   , EstCutDate = (Select Max(estcutdate)
 					   from workorder WITH (NOLOCK) 
 					   where workorder.id = b.POID 
-							 and workorder.cutref = b.CutRef and workorder.MDivisionID  = b.MDivisionID)
+							 and workorder.cutref = b.CutRef)
 	   , LineID = b.Sewinglineid
 	   , b.Item
 	   , b.SewingCell

@@ -325,6 +325,7 @@ and ID = '{Sci.Env.User.UserID}'"))
             .ComboBox("Stocktype", header: "Stock Type", width: Widths.AnsiChars(8), iseditable: false).Get(out cbb_stocktype) // 7
             .Text("Location", header: "Location", iseditingreadonly: true) // 8
             .Numeric("RecvKG", header: "Recv (kg)", width: Widths.AnsiChars(10), decimal_places: 2, integer_places: 10, iseditingreadonly: true)
+            .Numeric("ActualWeight", header: "Act. (kg)", width: Widths.AnsiChars(10), decimal_places: 2, integer_places: 10, iseditable: true)
             .Text("StyleID", header: "Style", iseditingreadonly: true)
             .Text("ContainerCode", header: "Container Code", iseditingreadonly: true).Get(out cbb_ContainerCode)
             .Text("ToPOID", header: "To POID", width: Widths.AnsiChars(13), iseditingreadonly: true)
@@ -978,6 +979,7 @@ select a.id,a.PoId,a.Seq1,a.Seq2,concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2) as se
 ,a.TransferExport_DetailUkey
 ,fi.Tone
 ,[StyleID] = o.StyleID
+,a.ActualWeight
 ,[RecvKG] = case when rd.ActualQty is not null 
 			then case when rd.ActualQty <> a.Qty
 					then ''

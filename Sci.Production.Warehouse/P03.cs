@@ -663,9 +663,9 @@ Select distinct [ID] = PO.POID
 into #ArticleForThread_Detail
 From #tmpOrder PO
 Inner Join View_WH_Orders as o On o.ID = po.POID 
-Inner Join dbo.Style as s On s.Ukey = o.StyleUkey
-Inner Join dbo.Style_ThreadColorCombo as tc On tc.StyleUkey = s.Ukey
-Inner Join dbo.Style_ThreadColorCombo_Detail as tcd On tcd.Style_ThreadColorComboUkey = tc.Ukey
+Inner Join dbo.Style as s with(nolock) On s.Ukey = o.StyleUkey
+Inner Join dbo.Style_ThreadColorCombo as tc with(nolock) On tc.StyleUkey = s.Ukey
+Inner Join dbo.Style_ThreadColorCombo_Detail as tcd with(nolock) On tcd.Style_ThreadColorComboUkey = tc.Ukey
 
 select distinct
 ID,SuppId,SCIRefNo,ColorID,
@@ -722,8 +722,8 @@ from #ArticleForThread_Detail a
 						     when  sum(iif(od.Result = 'Pass' ,1,0)) > 0 then 'Pass'
 				             else '' end) as Result,
 					    MIN( ov.InspDate) as InspDate 
-				    from Oven ov
-				    inner join dbo.Oven_Detail od on od.ID = ov.ID
+				    from Oven ov with(nolock)
+				    inner join dbo.Oven_Detail od with(nolock) on od.ID = ov.ID
 				    where ov.POID=a.POID and od.SEQ1=a.Seq1 
 				    and seq2=a.Seq2 and ov.Status='Confirmed') as Oven
     outer apply(select (case when  sum(iif(cd.Result = 'Fail' ,1,0)) > 0 then 'Fail'
@@ -899,9 +899,9 @@ from(
                         (
                             select 1
                             from Export_Detail ed with(nolock)
-                            inner join fir f on f.POID=ed.PoID and f.SEQ1 =ed.Seq1 and f.SEQ2 =ed.Seq2
-                            inner join FIR_Physical fp on fp.id=f.id
-                            inner join Receiving r on r.id= f.ReceivingID and r.InvNo=ed.ID 
+                            inner join fir f with(nolock) on f.POID=ed.PoID and f.SEQ1 =ed.Seq1 and f.SEQ2 =ed.Seq2
+                            inner join FIR_Physical fp with(nolock) on fp.id=f.id
+                            inner join Receiving r with(nolock) on r.id= f.ReceivingID and r.InvNo=ed.ID 
 							where ed.poid = a.id and ed.seq1 = a.seq1 and ed.seq2 = a.seq2
                         ), 1, 0)
                     , iif(fs.Preshrink=1,'V','') Preshrink
@@ -919,7 +919,8 @@ from(
                      ) as  Remark
                     , [OrderIdList] = stuff((select concat('/',tmp.OrderID) 
 		                                    from (
-			                                    select orderID from po_supp_Detail_orderList e
+			                                    select orderID 
+                                                from po_supp_Detail_orderList e with(nolock)
 			                                    where e.ID = a.ID and e.SEQ1 =a.SEQ1 and e.SEQ2 = a.SEQ2
 		                                    ) tmp for xml path(''))
                                     ,1,1,'')
@@ -941,8 +942,8 @@ from(
             left join fabric WITH (NOLOCK) on fabric.SCIRefno = a.scirefno
 	        left join po_supp b WITH (NOLOCK) on a.id = b.id and a.SEQ1 = b.SEQ1
             left join supp s WITH (NOLOCK) on s.id = b.suppid
-            LEFT JOIN dbo.Factory f on orders.FtyGroup=f.ID
-            LEFT JOIN dbo.Style_RRLR_Report  on Style_RRLR_Report.StyleUkey = orders.StyleUkey AND Style_RRLR_Report.SuppID =  b.suppid AND Style_RRLR_Report.Refno = a.RefNo
+            LEFT JOIN dbo.Factory f with(nolock) on orders.FtyGroup=f.ID
+            LEFT JOIN dbo.Style_RRLR_Report with(nolock) on Style_RRLR_Report.StyleUkey = orders.StyleUkey AND Style_RRLR_Report.SuppID =  b.suppid AND Style_RRLR_Report.Refno = a.RefNo
             left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = a.id and psdsC.seq1 = a.seq1 and psdsC.seq2 = a.seq2 and psdsC.SpecColumnID = 'Color'
             left join PO_Supp_Detail_Spec psdsS WITH (NOLOCK) on psdsS.ID = a.id and psdsS.seq1 = a.seq1 and psdsS.seq2 = a.seq2 and psdsS.SpecColumnID = 'Size'
             left join #ArticleForThread aft on	aft.ID = m.POID		and
@@ -951,7 +952,7 @@ from(
 												aft.ColorID	   = isnull(psdsC.SpecValue, '')	and
 												a.SEQ1 like 'T%' 
 
-			LEFT JOIN Order_BOF ob ON  a.RefNo=ob.RefNo AND a.ID=ob.Id
+			LEFT JOIN Order_BOF ob with(nolock) ON  a.RefNo=ob.RefNo AND a.ID=ob.Id
 			LEFT JOIN Fabric_Supp fs WITH (NOLOCK) ON fs.SCIRefno = a.SCIRefno AND fs.SuppID = iif(left(a.SEQ1, 1) = '7', a.StockSuppID, b.SuppID)
             outer apply(select fabrictype2 = iif(a.FabricType='F','Fabric',iif(a.FabricType='A','Accessory',iif(a.FabricType='O','Orher',a.FabricType))))mt
 			OUTER APPLY(
@@ -959,7 +960,7 @@ from(
 				SELECT 
 				(
 					SELECT DISTINCT ','+oe.FabricCombo
-					FROM Order_EachCons oe
+					FROM Order_EachCons oe with(nolock)
 					WHERE oe.FabricCode=ob.FabricCode  AND oe.Id=orders.CuttingSP
 					FOR XML PATH('')
 				))
@@ -1063,9 +1064,9 @@ from(
                         (
                             select 1
                             from Export_Detail ed with(nolock)
-                            inner join fir f on f.POID=ed.PoID and f.SEQ1 =ed.Seq1 and f.SEQ2 =ed.Seq2
-                            inner join FIR_Physical fp on fp.id=f.id
-                            inner join Receiving r on r.id= f.ReceivingID and r.InvNo=ed.ID 
+                            inner join fir f with(nolock) on f.POID=ed.PoID and f.SEQ1 =ed.Seq1 and f.SEQ2 =ed.Seq2
+                            inner join FIR_Physical fp with(nolock) on fp.id=f.id
+                            inner join Receiving r with(nolock) on r.id= f.ReceivingID and r.InvNo=ed.ID 
 							where ed.poid = a.id and ed.seq1 = a.seq1 and ed.seq2 = a.seq2
                         ), 1, 0)
                     , iif(fs.Preshrink=1,'V','') Preshrink
@@ -1083,7 +1084,8 @@ from(
                      ) as  Remark
                     , [OrderIdList] = stuff((select concat('/',tmp.OrderID)
 		                                     from (
-			                                    select orderID from po_supp_Detail_orderList e
+			                                    select orderID 
+                                                from po_supp_Detail_orderList e with(nolock)
 			                                    where e.ID = a.ID and e.SEQ1 =a.SEQ1 and e.SEQ2 = a.SEQ2
 		                                     ) tmp for xml path(''))
                                             ,1,1,'')
@@ -1105,7 +1107,7 @@ from(
         left join fabric WITH (NOLOCK) on fabric.SCIRefno = a.scirefno
         left join po_supp b WITH (NOLOCK) on a.id = b.id and a.SEQ1 = b.SEQ1
         left join supp s WITH (NOLOCK) on s.id = b.suppid
-        LEFT JOIN dbo.Factory f on o.FtyGroup=f.ID
+        LEFT JOIN dbo.Factory f with(nolock) on o.FtyGroup=f.ID
         left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = a.id and psdsC.seq1 = a.seq1 and psdsC.seq2 = a.seq2 and psdsC.SpecColumnID = 'Color'
         left join PO_Supp_Detail_Spec psdsS WITH (NOLOCK) on psdsS.ID = a.id and psdsS.seq1 = a.seq1 and psdsS.seq2 = a.seq2 and psdsS.SpecColumnID = 'Size'
 		left join #ArticleForThread aft on	aft.ID = m.POID		and
@@ -1113,16 +1115,16 @@ from(
 									aft.SCIRefNo   = a.SCIRefNo	and
 									aft.ColorID	   = isnull(psdsC.SpecValue, '')	and
 									a.SEQ1 like 'T%' 
-		LEFT JOIN Order_BOF ob ON  a.RefNo=ob.RefNo AND a.ID=ob.Id
+		LEFT JOIN Order_BOF ob with(nolock) ON  a.RefNo=ob.RefNo AND a.ID=ob.Id
 		LEFT JOIN Fabric_Supp fs WITH (NOLOCK) ON fs.SCIRefno = a.SCIRefno AND fs.SuppID = iif(left(a.SEQ1, 1) = '7', a.StockSuppID, b.SuppID) 
-        LEFT JOIN dbo.Style_RRLR_Report  on Style_RRLR_Report.StyleUkey = o.StyleUkey AND Style_RRLR_Report.SuppID =  b.suppid AND Style_RRLR_Report.Refno = a.RefNo
+        LEFT JOIN dbo.Style_RRLR_Report with(nolock) on Style_RRLR_Report.StyleUkey = o.StyleUkey AND Style_RRLR_Report.SuppID =  b.suppid AND Style_RRLR_Report.Refno = a.RefNo
         outer apply(select fabrictype2 = iif(a.FabricType='F','Fabric',iif(a.FabricType='A','Accessory',iif(a.FabricType='O','Orher',a.FabricType))))mt
 		OUTER APPLY(
 		SELECT [FabricCombo]=STUFF((
 			SELECT 
 			(
 				SELECT DISTINCT ','+oe.FabricCombo
-				FROM Order_EachCons oe
+				FROM Order_EachCons oe with(nolock)
 				WHERE oe.FabricCode=ob.FabricCode  AND oe.Id=o.CuttingSP
 				FOR XML PATH('')
 			))
@@ -1211,9 +1213,9 @@ select ROW_NUMBER_D = 1
 	   , IsHighRisk=0
        ,[StockOrdersFactory] = ''
 from #tmpLocalPO_Detail a
-left join LocalInventory l on a.OrderId = l.OrderID and a.Refno = l.Refno and a.ThreadColorID = l.ThreadColorID
-left join LocalItem b on a.Refno=b.RefNo
-left join LocalSupp c on b.LocalSuppid=c.ID
+left join LocalInventory l with(nolock) on a.OrderId = l.OrderID and a.Refno = l.Refno and a.ThreadColorID = l.ThreadColorID
+left join LocalItem b with(nolock) on a.Refno=b.RefNo
+left join LocalSupp c with(nolock) on b.LocalSuppid=c.ID
 
 drop table #tmpOrder,#tmpLocalPO_Detail,#ArticleForThread_Detail,#ArticleForThread
             ";

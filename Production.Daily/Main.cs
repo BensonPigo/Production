@@ -19,6 +19,7 @@ using System.Diagnostics;
 using System.Configuration;
 using PostJobLog;
 using System.Threading;
+using Microsoft.SqlServer.Server;
 
 namespace Production.Daily
 {
@@ -930,6 +931,26 @@ Where TransRegion.Is_Export = 0";
                 {
                     region.Logs.Add(item.Value);
                 }
+            }
+
+            #endregion
+
+            #region Region檢核
+
+            string chkSqlcmd = @"
+select 1 from Production.dbo.System s
+where exists(
+	select 1 from Trade_To_PMS.dbo.TransRegion t
+	where RTRIM(s.ImportDataFileName) = RTRIM(t.[FileName])
+)
+;";
+            if (!MyUtility.Check.Seek(chkSqlcmd))
+            {
+                String subject = "PMS Trans Region Error";
+                String desc = "Wrong Trans Region!!,Pls Check File(" + region.RarName + ") is correct";
+                SendMail(subject, desc);
+                this.CallJobLogApi("Daily transfer Region error", desc, DateTime.Now.ToString("yyyyMMdd HH:mm"), DateTime.Now.ToString("yyyyMMdd HH:mm"), isTestJobLog, false);
+                return Ict.Result.F("Wrong TransRegion!!,Pls Check File(" + region.RarName + ") is correct");
             }
 
             #endregion

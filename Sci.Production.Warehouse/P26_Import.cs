@@ -560,10 +560,11 @@ stocktype = '{e.FormattedValue}'
                 .Text("Refno", header: "Refno", width: Widths.AnsiChars(8), iseditingreadonly: true) // 4
                 .EditText("Description", header: "Description", width: Widths.AnsiChars(20), iseditingreadonly: true) // 5
                 .Text("colorid", header: "Color", width: Widths.AnsiChars(5), iseditingreadonly: true) // 6
-                .Numeric("qty", header: "Qty", width: Widths.AnsiChars(10), decimal_places: 2, integer_places: 10, iseditingreadonly: true) // 7
-                .ComboBox("stocktype", header: "Stock" + Environment.NewLine + "Type", width: Widths.AnsiChars(8), iseditable: true, settings: stocktypeSet).Get(out cbb_stocktype) // 8
-                .Text("FromLocation", header: "FromLocation", iseditingreadonly: true) // 9
-                .Text("ToLocation", header: "ToLocation", settings: ts2, iseditingreadonly: false) // 10
+                .Text("SizeSpec", header: "Size", width: Widths.AnsiChars(8), iseditingreadonly: true) // 7
+                .Numeric("qty", header: "Qty", width: Widths.AnsiChars(10), decimal_places: 2, integer_places: 10, iseditingreadonly: true) // 8
+                .ComboBox("stocktype", header: "Stock" + Environment.NewLine + "Type", width: Widths.AnsiChars(8), iseditable: true, settings: stocktypeSet).Get(out cbb_stocktype) // 9
+                .Text("FromLocation", header: "FromLocation", iseditingreadonly: true) // 10
+                .Text("ToLocation", header: "ToLocation", settings: ts2, iseditingreadonly: false) // 11
                 .DateTime("LastEditDate", header: "Last Edit Date", iseditingreadonly: true)
             ;
 

@@ -1,6 +1,6 @@
 ﻿namespace Sci.Production.PublicForm
 {
-    partial class Clip01
+    partial class ClipGASA01
     {
         /// <summary>
         /// 設計工具所需的變數。

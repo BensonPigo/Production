@@ -261,7 +261,8 @@ select
     ,C.Description
     ,[ColorID] = ps.SpecValue
     ,[ColorName] = color.Name
-    ,[Supplier] = (SP.SuppID+'-'+s.AbbEN)
+    ,[SupplierCode] = SP.SuppID
+    ,[SupplierName] = s.AbbEN
 	,C.WeaveTypeID
 	,[N/A Physical] = IIF(F.Nonphysical = 1,'Y',' ')
 	,F.Result
@@ -310,6 +311,7 @@ select
 	,ps1.LocalMR
     ,[Category] = ddl.Name
 	,[Cutting Date] = o.CutInLine
+    ,[OrderType] = O.OrderTypeID
 into #tmpFinal
 from dbo.FIR F WITH (NOLOCK) 
 cross apply(
@@ -324,7 +326,7 @@ cross apply(
     group by rd.WhseArrival,rd.InvNo,rd.ExportId,rd.Id,rd.PoId,RD.seq1,RD.seq2,rd.StockType
 ) t
 inner join (
-    select distinct poid,O.factoryid,O.BrandID,O.StyleID,O.SeasonID,O.Category,id ,CutInLine
+    select distinct poid,O.factoryid,O.BrandID,O.StyleID,O.SeasonID,O.Category,id ,CutInLine, o.OrderTypeID
     from dbo.Orders o WITH (NOLOCK)  
     {oWhere}
 ) O on O.id = F.POID
@@ -508,7 +510,8 @@ select
     ,tf.Description
     ,tf.ColorID
     ,tf.ColorName
-    ,tf.Supplier
+    ,tf.SupplierCode
+    ,tf.SupplierName
 	,tf.WeaveTypeID
 	,tf.[N/A Physical]
 	,tf.Result
@@ -555,6 +558,7 @@ select
 	,tf.RESULT4
 	,tf.CFInspector
     ,tf.LocalMR
+    ,tf.[OrderType]
 from #tmpFinal tf
 ORDER BY POID,SEQ
 

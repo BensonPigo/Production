@@ -61,8 +61,8 @@
             this.lbCustCD = new Sci.Win.UI.Label();
             this.displayCustCD = new Sci.Win.UI.DisplayBox();
             this.btnCallP99 = new Sci.Win.UI.Button();
-            this.txtToPlace = new Sci.Production.Class.TxtToPlace();
             this.lblToPlace = new Sci.Win.UI.Label();
+            this.dgToPlace = new Sci.Production.Class.DgToPlace(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -82,8 +82,8 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.dgToPlace);
             this.masterpanel.Controls.Add(this.lblToPlace);
-            this.masterpanel.Controls.Add(this.txtToPlace);
             this.masterpanel.Controls.Add(this.displayCustCD);
             this.masterpanel.Controls.Add(this.lbCustCD);
             this.masterpanel.Controls.Add(this.checkByCombo);
@@ -142,8 +142,8 @@
             this.masterpanel.Controls.SetChildIndex(this.checkByCombo, 0);
             this.masterpanel.Controls.SetChildIndex(this.lbCustCD, 0);
             this.masterpanel.Controls.SetChildIndex(this.displayCustCD, 0);
-            this.masterpanel.Controls.SetChildIndex(this.txtToPlace, 0);
             this.masterpanel.Controls.SetChildIndex(this.lblToPlace, 0);
+            this.masterpanel.Controls.SetChildIndex(this.dgToPlace, 0);
             // 
             // detailpanel
             // 
@@ -153,7 +153,7 @@
             // gridicon
             // 
             this.gridicon.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.gridicon.Location = new System.Drawing.Point(1811, 128);
+            this.gridicon.Location = new System.Drawing.Point(2240, 128);
             // 
             // refresh
             // 
@@ -528,16 +528,6 @@
             this.btnCallP99.UseVisualStyleBackColor = true;
             this.btnCallP99.Click += new System.EventHandler(this.BtnCallP99_Click);
             // 
-            // txtToPlace
-            // 
-            this.txtToPlace.BackColor = System.Drawing.Color.White;
-            this.txtToPlace.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "ToPlace", true));
-            this.txtToPlace.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtToPlace.Location = new System.Drawing.Point(87, 154);
-            this.txtToPlace.Name = "txtToPlace";
-            this.txtToPlace.Size = new System.Drawing.Size(150, 23);
-            this.txtToPlace.TabIndex = 55;
-            // 
             // lblToPlace
             // 
             this.lblToPlace.Location = new System.Drawing.Point(9, 154);
@@ -545,6 +535,19 @@
             this.lblToPlace.Size = new System.Drawing.Size(75, 23);
             this.lblToPlace.TabIndex = 56;
             this.lblToPlace.Text = "To Place";
+            // 
+            // dgToPlace
+            // 
+            this.dgToPlace.BackColor = System.Drawing.Color.White;
+            this.dgToPlace.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "ToPlace", true));
+            this.dgToPlace.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.dgToPlace.FormattingEnabled = true;
+            this.dgToPlace.IsSupportUnselect = true;
+            this.dgToPlace.Location = new System.Drawing.Point(87, 153);
+            this.dgToPlace.Name = "dgToPlace";
+            this.dgToPlace.OldText = "";
+            this.dgToPlace.Size = new System.Drawing.Size(121, 24);
+            this.dgToPlace.TabIndex = 57;
             // 
             // P11
             // 
@@ -625,7 +628,7 @@
         private Win.UI.DisplayBox displayCustCD;
         private Win.UI.Label lbCustCD;
         private Win.UI.Button btnCallP99;
-        private Class.TxtToPlace txtToPlace;
         private Win.UI.Label lblToPlace;
+        private Class.DgToPlace dgToPlace;
     }
 }

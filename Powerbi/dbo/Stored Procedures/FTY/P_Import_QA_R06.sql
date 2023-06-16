@@ -56,12 +56,11 @@ BEGIN
 
 	SELECT * INTO #Export FROM [MainServer].Production.dbo.Export WHERE (AddDate >= '2020/01/01' OR EditDate >= '2020/01/01');
 
-	SELECT * INTO #SentReport FROM [MainServer].Production.dbo.SentReport WHERE (InspectionReport >= '2020/01/01' OR 
-		TPEInspectionReport >= '2020/01/01' OR
-		TestReport >= '2020/01/01' OR
-		TPETestReport >= '2020/01/01' OR
-		ContinuityCard >= '2020/01/01' OR
-		TPEContinuityCard >= '2020/01/01' OR
+	SELECT * INTO #NewSentReport 
+	FROM [MainServer].Production.dbo.NewSentReport 
+	WHERE (
+		ReportDate >= '2020/01/01' OR 
+		FTYReceivedReport >= '2020/01/01' OR	
 		EditDate >= '2020/01/01'
 	);
 
@@ -506,7 +505,7 @@ select
 	, iif(ccnt=0, 0, round(ccnt/bcnt,4)) [cnt] 
 into #tmpTestReport
 from(
-	select tmp.SuppID,tmp.Refno,tmp.WhseArrival,tmp.FactoryID,tmp.PoId, count(b.PoId)*1.0 bcnt, count(c.TPETestReport)*1.0 ccnt 
+	select tmp.SuppID,tmp.Refno,tmp.WhseArrival,tmp.FactoryID,tmp.PoId, count(b.PoId)*1.0 bcnt, count(c.FTYReceivedReport)*1.0 ccnt 
 	from (
 	select distinct SuppID,Refno,WhseArrival,FactoryID
 		   , poid
@@ -515,10 +514,11 @@ from(
 	from #tmpAllData
 	) tmp
 	left join #Export_Detail b on tmp.PoId =b.PoID and tmp.Seq1 =b.Seq1 and tmp.Seq2 = b.Seq2 and tmp.SuppID = b.SuppID and tmp.Refno = b.Refno
-	left join #SentReport c on b.Ukey = c.Export_DetailUkey
+	left join #NewSentReport c on b.ID = c.ExportID
+		and b.PoID = c.PoID and b.Seq1 = c.Seq1 and b.Seq2 = c.Seq2
+	where c.DocumentName = 'Test report'
 	group by tmp.SuppID,tmp.Refno ,tmp.WhseArrival ,tmp.FactoryID ,tmp.PoId
 )a
-
 ------#FabricInspDoc Inspection Report
 select 
 	a.SuppID
@@ -526,7 +526,7 @@ select
 	, iif(ccnt=0, 0, round(ccnt/bcnt,4)) [cnt] 
 into #InspReport
 from(
-	select tmp.SuppID, tmp.Refno, tmp.WhseArrival, tmp.FactoryID, tmp.POID, count(b.PoId)*1.0 bcnt, count(c.TPEInspectionReport)*1.0 ccnt 
+	select tmp.SuppID, tmp.Refno, tmp.WhseArrival, tmp.FactoryID, tmp.POID, count(b.PoId)*1.0 bcnt, count(c.FTYReceivedReport)*1.0 ccnt 
 	from (
 	select distinct SuppID,Refno,WhseArrival,FactoryID
 		   , poid
@@ -535,7 +535,9 @@ from(
 	from #tmpAllData
 	) tmp
 	left join #Export_Detail b on tmp.PoId =b.PoID and tmp.Seq1 =b.Seq1 and tmp.Seq2 = b.Seq2 and tmp.SuppID = b.SuppID and tmp.Refno = b.Refno
-	left join #SentReport c on b.Ukey = c.Export_DetailUkey
+	left join #NewSentReport c on b.ID = c.ExportID
+		and b.PoID = c.PoID and b.Seq1 = c.Seq1 and b.Seq2 = c.Seq2
+	where c.DocumentName = 'Inspection report'
 	group by tmp.SuppID, tmp.Refno, tmp.WhseArrival, tmp.FactoryID, tmp.POID
 )a
 
@@ -545,7 +547,7 @@ select a.SuppID
 	, iif(ccnt=0, 0, round(ccnt/bcnt,4)) [cnt] 
 into #tmpContinuityCard
 from(
-	select tmp.SuppID, tmp.Refno, tmp.WhseArrival, tmp.FactoryID, tmp.PoId, count(b.PoId)*1.0 bcnt, count(c.ContinuityCard)*1.0 ccnt 
+	select tmp.SuppID, tmp.Refno, tmp.WhseArrival, tmp.FactoryID, tmp.PoId, count(b.PoId)*1.0 bcnt, count(c.FTYReceivedReport)*1.0 ccnt 
 	from (
 	select distinct SuppID,Refno,WhseArrival,FactoryID
 		   , poid
@@ -554,12 +556,14 @@ from(
 	from #tmpAllData
 	) tmp
 	left join #Export_Detail b on tmp.PoId =b.PoID and tmp.Seq1 =b.Seq1 and tmp.Seq2 = b.Seq2 and tmp.SuppID = b.SuppID  and tmp.Refno = b.Refno
-	left join #SentReport c on b.Ukey = c.Export_DetailUkey
+	left join #NewSentReport c on b.ID = c.ExportID
+		and b.PoID = c.PoID and b.Seq1 = c.Seq1 and b.Seq2 = c.Seq2
+	where c.DocumentName = 'Continuity card'
 	group by tmp.SuppID, tmp.Refno, tmp.WhseArrival, tmp.FactoryID, tmp.PoId
 )a
 
 ------#FabricInspDoc Approved 1st Bulk Dyelot Provided %
-select DISTINCT b.Refno, b.ColorID, b.SuppID,tmp.WhseArrival,tmp.FactoryID,tmp.PoId, d.Consignee, c.SeasonSCIID DyelotSeasion
+select DISTINCT b.Refno, b.ColorID, b.SuppID,tmp.WhseArrival,tmp.FactoryID,tmp.PoId, d.Consignee, c.SeasonID DyelotSeasion
 , c.FirstDyelot, e.SeasonSCIID, c.Period, f.RibItem 
 into #tmp_DyelotMain 
 from (
@@ -586,7 +590,7 @@ outer apply (
 LEFT join #Export_Detail ED ON ED.PoID = TMP.POID AND ED.Seq1 = TMP.SEQ1 AND ED.Seq2 = TMP.SEQ2
 left join #Export d on ED.ID = D.ID AND D.Confirm = 1
 left JOIN #Factory fty with (nolock) on fty.ID = d.Consignee
-left JOIN #FIRSTDYELOT c on b.Refno = c.Refno and b.ColorID = c.ColorID and b.SuppID = c.SuppID  AND c.TestDocFactoryGroup = fty.TestDocFactoryGroup 
+left JOIN #FIRSTDYELOT c on b.Refno = c.BrandRefno and b.ColorID = c.ColorID and b.SuppID = c.SuppID  AND c.TestDocFactoryGroup = fty.TestDocFactoryGroup 
 left join #Orders o on ed.PoID = o.id and o.Category in ('B','M')
 left JOIN #Season e on o.SeasonID  = e.ID and o.BrandID = e.BrandID --and e.SeasonSCIID = c.SeasonSCIID
 left join #Fabric f on f.SCIRefno = b.SCIRefno 

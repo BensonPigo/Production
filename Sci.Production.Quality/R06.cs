@@ -515,7 +515,7 @@ select
 	, iif(ccnt=0, 0, round(ccnt/bcnt,4)) [cnt] 
 into #tmpTestReport
 from(
-	select tmp.SuppID,tmp.Refno, count(b.PoId)*1.0 bcnt, count(c.TPETestReport)*1.0 ccnt 
+	select tmp.SuppID,tmp.Refno, count(b.PoId)*1.0 bcnt, count(sp.FTYReceivedReport)*1.0 ccnt 
 	from (
 	select distinct SuppID,Refno
 		   , poid
@@ -524,7 +524,7 @@ from(
 	from #tmpAllData
 	) tmp
 	left join Export_Detail b on tmp.PoId =b.PoID and tmp.Seq1 =b.Seq1 and tmp.Seq2 = b.Seq2 and tmp.SuppID = b.SuppID and tmp.Refno = b.Refno
-	left join SentReport c on b.Ukey = c.Export_DetailUkey
+	left join NewSentReport sp on b.ID = sp.ExportID and b.PoID = sp.PoID and b.Seq1 = sp.Seq1 and b.Seq2 = sp.Seq2 and sp.DocumentName = 'Test report'
 	group by tmp.SuppID,tmp.Refno
 )a
 
@@ -535,7 +535,7 @@ select
 	, iif(ccnt=0, 0, round(ccnt/bcnt,4)) [cnt] 
 into #InspReport
 from(
-	select tmp.SuppID,tmp.Refno, count(b.PoId)*1.0 bcnt, count(c.TPEInspectionReport)*1.0 ccnt 
+	select tmp.SuppID,tmp.Refno, count(b.PoId)*1.0 bcnt, count(sp.FTYReceivedReport)*1.0 ccnt 
 	from (
 	select distinct SuppID,Refno
 		   , poid
@@ -544,7 +544,7 @@ from(
 	from #tmpAllData
 	) tmp
 	left join Export_Detail b on tmp.PoId =b.PoID and tmp.Seq1 =b.Seq1 and tmp.Seq2 = b.Seq2 and tmp.SuppID = b.SuppID and tmp.Refno = b.Refno
-	left join SentReport c on b.Ukey = c.Export_DetailUkey
+	left join NewSentReport sp on b.ID = sp.ExportID and b.PoID = sp.PoID and b.Seq1 = sp.Seq1 and b.Seq2 = sp.Seq2 and sp.DocumentName = 'Inspection report'
 	group by tmp.SuppID, tmp.Refno
 )a
 
@@ -554,7 +554,7 @@ select a.SuppID
 	, iif(ccnt=0, 0, round(ccnt/bcnt,4)) [cnt] 
 into #tmpContinuityCard
 from(
-	select tmp.SuppID, tmp.Refno, count(b.PoId)*1.0 bcnt, count(c.ContinuityCard)*1.0 ccnt 
+	select tmp.SuppID, tmp.Refno, count(b.PoId)*1.0 bcnt, count(sp.FTYReceivedReport)*1.0 ccnt 
 	from (
 	select distinct SuppID,Refno
 		   , poid
@@ -563,7 +563,7 @@ from(
 	from #tmpAllData
 	) tmp
 	left join Export_Detail b on tmp.PoId =b.PoID and tmp.Seq1 =b.Seq1 and tmp.Seq2 = b.Seq2 and tmp.SuppID = b.SuppID  and tmp.Refno = b.Refno
-	left join SentReport c on b.Ukey = c.Export_DetailUkey
+	left join NewSentReport sp on b.ID = sp.ExportID and b.PoID = sp.PoID and b.Seq1 = sp.Seq1 and b.Seq2 = sp.Seq2 and sp.DocumentName = 'Continuity card'
 	group by tmp.SuppID, tmp.Refno
 )a
 
@@ -836,39 +836,9 @@ drop table #tmp1,#tmp,#tmp2,#tmpAllData,#GroupBySupp,#tmpsuppdefect,#tmp2groupby
             string key_column = this.allDatas[1].Columns[0].ColumnName;
 
             var combineCheckDt = this.allDatas[0].AsEnumerable();
-            Microsoft.Office.Interop.Excel.Range rang;
             for (int i = 0; i < this.allDatas[0].Rows.Count; i++)
             {
                 int cnt = (int)this.allDatas[0].Rows[i]["KeyCnt"];
-                if (cnt > 1)
-                {
-                    // 合併儲存格,尾端要-1不然會重疊
-                    // 只合併最後一欄，其餘用複製格式方式合併
-                    rang = objSheets.Range[objSheets.Cells[this.allDatas[0].Columns.Count][line], objSheets.Cells[this.allDatas[0].Columns.Count][line + cnt - 1]];
-                    rang.Merge();
-                    rang.Copy(Type.Missing);
-
-                    for (int ii = 1; ii <= this.allDatas[0].Columns.Count; ii++)
-                    {
-                        Microsoft.Office.Interop.Excel.Range rang2;
-
-                        // Columns=2,4,5 是不需要合併的
-                        if (ii == 2 || ii == 4 || ii == 5 || (ii == 3 && this.reportType.Equals("Refno")))
-                        {
-                            continue;
-                        }
-
-                        // 複製格式
-                        // objSheets.Range[objSheets.Cells[ii][line], objSheets.Cells[ii][line + cnt - 1]].Style = rang.Style;
-                        rang2 = objSheets.Range[objSheets.Cells[ii][line], objSheets.Cells[ii][line + cnt - 1]];
-                        rang2.Copy();
-                        //rang2.PasteSpecial(
-                        //    Microsoft.Office.Interop.Excel.XlPasteType.xlPasteFormats,
-                        //    Microsoft.Office.Interop.Excel.XlPasteSpecialOperation.xlPasteSpecialOperationNone, false, false);
-                        rang2.PasteSpecial(Microsoft.Office.Interop.Excel.XlPasteType.xlPasteAll);
-                    }
-                }
-
                 bool clima = (bool)this.allDatas[0].Rows[i]["Clima"];
                 if (clima)
                 {

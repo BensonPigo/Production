@@ -18,6 +18,15 @@ namespace Sci.Production.Planning
     /// </summary>
     public partial class B03 : Win.Tems.Input6
     {
+        private Ict.Win.UI.DataGridViewTextBoxColumn col_Supplier;
+        private Ict.Win.UI.DataGridViewTextBoxColumn col_Size;
+        private Ict.Win.UI.DataGridViewDateBoxColumn col_OvenTest;
+        private Ict.Win.UI.DataGridViewDateBoxColumn col_WashTest;
+        private Ict.Win.UI.DataGridViewDateBoxColumn col_MockupTest;
+        private Ict.Win.UI.DataGridViewNumericBoxColumn col_Price;
+        private Ict.Win.UI.DataGridViewTextBoxColumn col_Remark;
+        private Ict.Win.UI.DataGridViewComboBoxColumn col_PriceApv;
+
         private DataTable style_artwork;
 
         /// <summary>
@@ -204,6 +213,7 @@ namespace Sci.Production.Planning
 
                     sqlcmd = @"
 select l.id ,l.abb ,l.currencyid  ,l.IsSintexSubcon
+,[IsSintex] = iif(l.IsSintexSubcon =1,'Y','N')
 from LocalSupp l WITH (NOLOCK) 
 WHERE l.Junk=0  AND l.IsFactory = 0
 order by ID
@@ -223,6 +233,7 @@ order by ID
                     this.CurrentDetailData["localsuppid"] = x[0]["id"].ToString();
                     this.CurrentDetailData["suppname"] = x[0]["abb"].ToString();
                     this.CurrentDetailData["currencyid"] = x[0]["currencyid"].ToString();
+                    this.CurrentDetailData["IsSintex"] = x[0]["IsSintex"].ToString();
                     if (MyUtility.Convert.GetBool(x[0]["IsSintexSubcon"]) && 
                     MyUtility.Convert.GetString(this.gridArtworkType.CurrentDataRow["ArtworkTypeID"]).ToUpper() == "PRINTING")
                     {
@@ -239,11 +250,12 @@ order by ID
                 if (this.EditMode && !MyUtility.Check.Empty(e.FormattedValue))
                 {
                     DataRow find;
-                    if (MyUtility.Check.Seek(string.Format("Select * from localsupp WITH (NOLOCK) where isfactory=0 and junk=0 and id='{0}'", e.FormattedValue), out find))
+                    if (MyUtility.Check.Seek(string.Format("Select [IsSintex] = iif(IsSintexSubcon =1,'Y','N'),* from localsupp WITH (NOLOCK) where isfactory=0 and junk=0 and id='{0}'", e.FormattedValue), out find))
                     {
                         this.CurrentDetailData["localsuppid"] = find["id"].ToString();
                         this.CurrentDetailData["suppname"] = find["abb"].ToString();
                         this.CurrentDetailData["currencyid"] = find["currencyid"].ToString();
+                        this.CurrentDetailData["IsSintex"] = find["IsSintex"].ToString();
                         if (MyUtility.Convert.GetBool(find["IsSintexSubcon"]) &&
                     MyUtility.Convert.GetString(this.gridArtworkType.CurrentDataRow["ArtworkTypeID"]).ToUpper() == "PRINTING")
                         {
@@ -258,6 +270,7 @@ order by ID
                         this.CurrentDetailData["localsuppid"] = string.Empty;
                         this.CurrentDetailData["suppname"] = string.Empty;
                         this.CurrentDetailData["currencyid"] = string.Empty;
+                        this.CurrentDetailData["IsSintex"] = "N";
                         this.CurrentDetailData["price"] = 0;
                         e.Cancel = true;
                         MyUtility.Msg.WarningBox("Supplier is not found!", "Warning");
@@ -270,6 +283,7 @@ order by ID
                     this.CurrentDetailData["localsuppid"] = string.Empty;
                     this.CurrentDetailData["suppname"] = string.Empty;
                     this.CurrentDetailData["currencyid"] = string.Empty;
+                    this.CurrentDetailData["IsSintex"] = "N";
                     this.CurrentDetailData["price"] = 0;
                 }
             };
@@ -318,7 +332,7 @@ order by Seq ASC
             };
             #endregion
 
-            Ict.Win.UI.DataGridViewComboBoxColumn col_PriceApv;
+            
             Dictionary<string, string> comboBox1_RowSource = new Dictionary<string, string>();
             comboBox1_RowSource.Add("Y", "Y");
             comboBox1_RowSource.Add("N", "N");
@@ -326,24 +340,25 @@ order by Seq ASC
 
             #region 欄位設定
             this.Helper.Controls.Grid.Generator(this.detailgrid)
-            .Text("localsuppid", header: "Supplier", width: Widths.AnsiChars(6), settings: ts4)
+            .Text("localsuppid", header: "Supplier", width: Widths.AnsiChars(6), settings: ts4).Get(out this.col_Supplier)
             .Text("suppname", header: "Name", width: Widths.AnsiChars(10), iseditingreadonly: true)
+            .Text("IsSintex", header: "IsSintex", width: Widths.AnsiChars(8), iseditingreadonly: true)
             .Text("currencyid", header: "Currency", width: Widths.AnsiChars(10), iseditingreadonly: true)
-            .Text("SizeCode", header: "Size", width: Widths.AnsiChars(10), settings: colSize)
-            .Numeric("price", header: "Price", width: Widths.AnsiChars(8), decimal_places: 4, integer_places: 10)
-            .Date("oven", header: "Oven Test", width: Widths.AnsiChars(10))
-            .Date("wash", header: "Wash Test", width: Widths.AnsiChars(10))
-            .Date("mockup", header: "Mockup Test", width: Widths.AnsiChars(10))
-            .ComboBox("priceApv", header: "Price Approve").Get(out col_PriceApv)
-            .Text("Remark", header: "Remark", width: Widths.AnsiChars(10))
+            .Text("SizeCode", header: "Size", width: Widths.AnsiChars(10), settings: colSize).Get(out this.col_Size)
+            .Numeric("price", header: "Price", width: Widths.AnsiChars(8), decimal_places: 4, integer_places: 10).Get(out this.col_Price)
+            .Date("oven", header: "Oven Test", width: Widths.AnsiChars(10)).Get(out this.col_OvenTest)
+            .Date("wash", header: "Wash Test", width: Widths.AnsiChars(10)).Get(out this.col_WashTest)
+            .Date("mockup", header: "Mockup Test", width: Widths.AnsiChars(10)).Get(out this.col_MockupTest)
+            .ComboBox("priceApv", header: "Price Approve").Get(out this.col_PriceApv)
+            .Text("Remark", header: "Remark", width: Widths.AnsiChars(10)).Get(out this.col_Remark)
             ;
             this.detailgrid.Columns["Remark"].DefaultCellStyle.BackColor = Color.Pink;
             this.detailgrid.Columns["Remark"].DefaultCellStyle.ForeColor = Color.Red;
             #endregion 欄位設定
 
-            col_PriceApv.DataSource = new BindingSource(comboBox1_RowSource, null);
-            col_PriceApv.ValueMember = "Key";
-            col_PriceApv.DisplayMember = "Value";
+            this.col_PriceApv.DataSource = new BindingSource(comboBox1_RowSource, null);
+            this.col_PriceApv.ValueMember = "Key";
+            this.col_PriceApv.DisplayMember = "Value";
 
             #region 欄位設定
             this.Helper.Controls.Grid.Generator(this.gridArtworkType)
@@ -364,6 +379,45 @@ order by Seq ASC
             #endregion 欄位設定
 
             this.gridArtworkType.DataSource = this.listControlBindingSource1;
+            this.detailgrid.RowEnter += this.Detailgrid_RowEnter;
+        }
+
+        private void Detailgrid_RowEnter(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex < 0 || this.EditMode == false)
+            {
+                return;
+            }
+
+            var data = ((DataRowView)this.detailgrid.Rows[e.RowIndex].DataBoundItem).Row;
+            if (data == null)
+            {
+                return;
+            }
+
+            // AutoCrate為1表示資料來源為(P01計算出來的就不能再讓使用者修改線種,顏色,總長度)
+            if (data["IsSintex"].ToString() == "Y")
+            {
+                this.col_Supplier.IsEditingReadOnly = true;
+                this.col_Size.IsEditingReadOnly = true;
+                this.col_Price.IsEditingReadOnly = true;
+                this.col_OvenTest.IsEditingReadOnly = true;
+                this.col_WashTest.IsEditingReadOnly = true;
+                this.col_MockupTest.IsEditingReadOnly = true;
+                this.col_PriceApv.IsEditingReadOnly= true;
+                this.col_Remark.IsEditingReadOnly = true;
+            }
+            else
+            {
+                this.col_Supplier.IsEditingReadOnly = false;
+                this.col_Size.IsEditingReadOnly = false;
+                this.col_Price.IsEditingReadOnly = false;
+                this.col_OvenTest.IsEditingReadOnly = false;
+                this.col_WashTest.IsEditingReadOnly = false;
+                this.col_MockupTest.IsEditingReadOnly = false;
+                this.col_PriceApv.IsEditingReadOnly = false;
+                this.col_Remark.IsEditingReadOnly = false;
+            }
         }
 
         /// <summary>
@@ -375,7 +429,10 @@ order by Seq ASC
         {
             string masterID = (e.Master == null) ? string.Empty : e.Master["ukey"].ToString();
             this.DetailSelectCommand = string.Format(
-                @"select A.*,S.ABB SuppName from style_artwork_quot a WITH (NOLOCK)
+                @"
+select A.*,S.ABB SuppName 
+,[IsSintex] = iif(s.IsSintexSubcon =1,'Y','N')
+from style_artwork_quot a WITH (NOLOCK)
 INNER JOIN LocalSupp S WITH (NOLOCK) ON S.ID = A.LocalSuppId Where a.styleUkey = {0}
 ORDER BY UKEY
 ", masterID);

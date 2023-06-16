@@ -29,7 +29,6 @@ namespace Sci.Production.Quality
         protected override void ClickEditAfter()
         {
             base.ClickEditAfter();
-            this.txtfactory.ReadOnly = true;
             this.txtEmployeeID.ReadOnly = true;
             this.txtsubprocess.ReadOnly = true;
         }

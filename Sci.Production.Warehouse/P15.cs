@@ -126,6 +126,11 @@ namespace Sci.Production.Warehouse
             this.browsetop.Controls.Add(btnUnFinish);
             btnUnFinish.Size = new Size(180, 30); // 預設是(80,30)
             btnUnFinish.Visible = true;
+
+            bool isAutomationEnable = Automation.UtilityAutomation.IsAutomationEnable;
+            this.dgToPlace.SetDefalutIndex();
+            this.dgToPlace.Visible = isAutomationEnable;
+            this.lblToPlace.Visible = isAutomationEnable;
             #endregion
         }
 
@@ -149,7 +154,7 @@ namespace Sci.Production.Warehouse
             this.CurrentMaintain["FactoryID"] = Env.User.Factory;
             this.CurrentMaintain["Status"] = "New";
             this.CurrentMaintain["FabricType"] = "A";
-            this.CurrentMaintain["ToPlace"] = this.txtToPlace.DefaultText;
+            this.CurrentMaintain["ToPlace"] = this.dgToPlace.SelectedValue;
             this.CurrentMaintain["IssueDate"] = DateTime.Now;
             this.editBoxPPICRemark.Text = string.Empty;
             this.txtSewingLine.Text = string.Empty;
@@ -295,7 +300,7 @@ namespace Sci.Production.Warehouse
         {
             base.OnDetailEntered();
             bool isAutomationEnable = Automation.UtilityAutomation.IsAutomationEnable;
-            this.txtToPlace.Visible = isAutomationEnable;
+            this.dgToPlace.Visible = isAutomationEnable;
             this.lblToPlace.Visible = isAutomationEnable;
 
             #region Status Label
@@ -355,8 +360,10 @@ and ID = '{Sci.Env.User.UserID}'"))
                 .Text("stockunit", header: "Unit", iseditingreadonly: true)
                 .Numeric("qty", header: "Issue Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10)
                 .Text("Location", header: "Bulk Location", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                .Numeric("RemainingQty", header: "Remaining Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 11, iseditingreadonly: true)
                 .Text("Refno", header: "Ref#", width: Widths.AnsiChars(20), iseditingreadonly: true)
                 .Text("Color", header: "Color", width: Widths.AnsiChars(20), iseditingreadonly: true)
+                .Text("SizeCode", header: "Size", width: Widths.AnsiChars(8), iseditingreadonly: true)
             ;
         }
 
@@ -517,6 +524,24 @@ where dbo.Lack_Detail.id = '{1}' and dbo.Lack_Detail.seq1 = t.Seq1 and dbo.Lack_
                     }
 
                     if (!(result = DBProxy.Current.Execute(null, sqlupd4.ToString())))
+                    {
+                        throw result.GetException();
+                    }
+
+                    // 更新完庫存後 RemainingQty
+                    string sqlUpdateRemainingQty = $@"
+Update sd set
+    RemainingQty = f.InQty - f.OutQty + f.AdjustQty - f.ReturnQty
+from IssueLack_Detail sd with(nolock)
+inner join Production.dbo.FtyInventory f with(nolock) on f.POID = isnull(sd.PoId, '')
+    and f.Seq1 = isnull(sd.Seq1, '')
+    and f.Seq2 = isnull(sd.Seq2, '')
+    and f.Roll = isnull(sd.Roll, '')
+	and f.Dyelot = isnull(sd.Dyelot, '')
+    and f.StockType = isnull(sd.StockType, '')
+    and sd.id = '{this.CurrentMaintain["ID"]}'
+";
+                    if (!(result = DBProxy.Current.Execute(null, sqlUpdateRemainingQty)))
                     {
                         throw result.GetException();
                     }
@@ -722,6 +747,18 @@ where (isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f
                         throw result.GetException();
                     }
 
+                    // 更新完庫存後 RemainingQty
+                    string sqlUpdateRemainingQty = $@"
+Update sd set
+    RemainingQty = 0
+from IssueLack_Detail sd with(nolock)
+where sd.id = '{this.CurrentMaintain["ID"]}'
+";
+                    if (!(result = DBProxy.Current.Execute(null, sqlUpdateRemainingQty)))
+                    {
+                        throw result.GetException();
+                    }
+
                     // transactionscope 內, 準備 WMS 資料 & 將資料寫入 AutomationCreateRecord (Delete, Unconfirm)
                     Prgs_WMS.WMSprocess(false, (DataTable)this.detailgridbs.DataSource, this.Name, EnumStatus.Delete, EnumStatus.Unconfirm, dtOriFtyInventory, typeCreateRecord: 1, autoRecord: autoRecordList);
                     transactionscope.Complete();
@@ -799,6 +836,7 @@ SELECT sd.*
        , psd.Refno
        , location = dbo.Getlocation(f.Ukey)
        , [Color] = dbo.GetColorMultipleID_MtlType(psd.BrandID, ISNULL(psdsC.SpecValue ,''), Fabric.MtlTypeID, psd.SuppColor)
+       , [SizeCode] = isnull(psdsS.SpecValue,'')
 FROM dbo.IssueLack_Detail sd WITH (NOLOCK) 
 INNER JOIN IssueLack s WITH (NOLOCK) ON sd.ID = s.ID
 INNER JOIN PO_Supp_Detail psd WITH (NOLOCK) ON psd.ID = sd.PoId AND psd.seq1 = sd.SEQ1 AND psd.SEQ2 = sd.seq2
@@ -810,6 +848,7 @@ INNER JOIN FtyInventory f WITH (NOLOCK) ON sd.POID = f.POID
                                       AND sd.Dyelot = f.Dyelot
                                       AND sd.StockType = f.StockType
 LEFT JOIN PO_Supp_Detail_Spec psdsC WITH (NOLOCK) ON psdsC.ID = psd.id AND psdsC.seq1 = psd.seq1 AND psdsC.seq2 = psd.seq2 AND psdsC.SpecColumnID = 'Color'
+LEFT JOIN PO_Supp_Detail_Spec psdsS WITH (NOLOCK) ON psdsS.ID = psd.id AND psdsS.seq1 = psd.seq1 AND psdsS.seq2 = psd.seq2 AND psdsS.SpecColumnID = 'Size'
 LEFT JOIN Lack l WITH (NOLOCK) ON l.POID = sd.POID AND l.ID = s.RequestID
 WHERE sd.id = '{masterID}'
 ";

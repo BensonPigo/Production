@@ -175,6 +175,12 @@
     <Compile Include="B09.Designer.cs">
       <DependentUpon>B09.cs</DependentUpon>
     </Compile>
+    <Compile Include="B10.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="B10.Designer.cs">
+      <DependentUpon>B10.cs</DependentUpon>
+    </Compile>
     <Compile Include="P01_MaterialCompare.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -206,6 +212,12 @@
       <DependentUpon>P07_PrintAccessorySticker.cs</DependentUpon>
     </Compile>
     <Compile Include="P07_PrintAccessorySticker_Data.cs" />
+    <Compile Include="P10_IssueSummary.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P10_IssueSummary.Designer.cs">
+      <DependentUpon>P10_IssueSummary.cs</DependentUpon>
+    </Compile>
     <Compile Include="P23_Print.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -414,6 +426,12 @@
     </Compile>
     <Compile Include="P65_Import.Designer.cs">
       <DependentUpon>P65_Import.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P68.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P68.Designer.cs">
+      <DependentUpon>P68.cs</DependentUpon>
     </Compile>
     <Compile Include="P99_CallForm.cs" />
     <Compile Include="P01.cs">
@@ -1597,6 +1615,12 @@
     <Compile Include="Report\R46.Designer.cs">
       <DependentUpon>R46.cs</DependentUpon>
     </Compile>
+    <Compile Include="Report\R47.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Report\R47.Designer.cs">
+      <DependentUpon>R47.cs</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="B01.resx">
@@ -1629,6 +1653,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="B09.resx">
       <DependentUpon>B09.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="B10.resx">
+      <DependentUpon>B10.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P01.resx">
       <DependentUpon>P01.cs</DependentUpon>
@@ -1673,6 +1700,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="P07_PrintAccessorySticker.resx">
       <DependentUpon>P07_PrintAccessorySticker.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P10_IssueSummary.resx">
+      <DependentUpon>P10_IssueSummary.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P23_Print.resx">
       <DependentUpon>P23_Print.cs</DependentUpon>
@@ -2026,6 +2056,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="P65_Import.resx">
       <DependentUpon>P65_Import.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P68.resx">
+      <DependentUpon>P68.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P99.resx">
       <DependentUpon>P99.cs</DependentUpon>
@@ -2444,6 +2477,9 @@
     <EmbeddedResource Include="Report\R46.resx">
       <DependentUpon>R46.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Report\R47.resx">
+      <DependentUpon>R47.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Sci.Production.Automation\Sci.Production.Automation.csproj">
@@ -2535,6 +2571,7 @@
     <None Include="Properties\DataSources\P07_PrintAccessorySticker_Data.datasource" />
     <None Include="Properties\DataSources\P08_PrintFabircSticker_PrintData.datasource" />
     <None Include="Properties\DataSources\P10_PrintBarcodeData.datasource" />
+    <None Include="Properties\DataSources\P10_PrintData.datasource" />
     <None Include="Properties\DataSources\P10_RelaxationSticker_Data.datasource" />
     <None Include="Properties\DataSources\P11_PrintData.datasource" />
     <None Include="Properties\DataSources\P11_PrintKarbanCard_PrintData.datasource" />

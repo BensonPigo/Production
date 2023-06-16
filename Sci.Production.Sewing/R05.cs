@@ -199,34 +199,40 @@ outer apply (
 		 	 ELSE 'O' -- 不是A就是O
 		  END
 	FROM (
-		  SELECT DISTINCT [gPOID] = g3.POID,
-			   [bPOID] = b3.POID
-		  FROM Order_Qty_Garment og3 WITH (NOLOCK)
-		  INNER JOIN Orders g3 WITH (NOLOCK) ON og3.ID = g3.ID AND g3.Category = 'G'
-		  INNER JOIN Orders b3 WITH (NOLOCK) ON og3.OrderIDFrom = b3.ID AND b3.Category = 'B'
-		  INNER JOIN (
-			    SELECT DISTINCT [gPOID] = g2.POID, 
-				     [bPOID] = b2.POID
-			    FROM Order_Qty_Garment og2 WITH (NOLOCK)
-			    INNER JOIN Orders g2 WITH (NOLOCK) ON og2.ID = g2.ID AND g2.Category = 'G'
-			    INNER JOIN Orders b2 WITH (NOLOCK) ON og2.OrderIDFrom = b2.ID  AND b2.Category = 'B'
-			    INNER JOIN Order_Qty_Garment og1 WITH (NOLOCK) ON og1.ID = t.[Sp#] AND og1.Junk = 0
-			    INNER JOIN Orders g1 WITH (NOLOCK) ON og1.ID = g1.ID AND g1.Category = 'G'
-			    INNER JOIN Orders b1 WITH (NOLOCK) ON og1.OrderIDFrom = b1.ID AND b1.Category = 'B'
-			    WHERE (g1.POID = g2.POID OR b1.POID = b2.POID)
-				and og2.Junk = 0
-		  ) tmp ON (g3.POID = tmp.gPOID OR b3.POID = tmp.bPOID) AND og3.Junk = 0
-	) tmp 
+		SELECT DISTINCT [gPOID] = g3.POID, [bPOID] = b3.POID
+		FROM Order_Qty_Garment og3 WITH (NOLOCK)
+		INNER JOIN Orders g3 WITH (NOLOCK) ON og3.ID = g3.ID 
+		INNER JOIN Orders b3 WITH (NOLOCK) ON og3.OrderIDFrom = b3.ID 
+		INNER JOIN (
+				SELECT DISTINCT [gPOID] = g2.POID, [bPOID] = b2.POID 
+				FROM Order_Qty_Garment og2 WITH (NOLOCK)
+				INNER JOIN Orders g2 WITH (NOLOCK) ON og2.ID = g2.ID 
+				INNER JOIN Orders b2 WITH (NOLOCK) ON og2.OrderIDFrom = b2.ID 
+				CROSS JOIN Order_Qty_Garment og1 WITH (NOLOCK)
+				INNER JOIN Orders g1 WITH (NOLOCK) ON og1.ID = g1.ID 
+				INNER JOIN Orders b1 WITH (NOLOCK) ON (g1.POID = g2.POID OR b1.POID = b2.POID) AND og1.OrderIDFrom = b1.ID
+				WHERE og2.Junk = 0 
+				AND b1.Category = 'B' 
+				AND g1.Category = 'G' 
+				AND og1.ID = t.[Sp#]
+				AND og1.Junk = 0 
+				AND b2.Category = 'B' 
+				AND g2.Category = 'G'
+			) TMP2 ON g3.POID = TMP2.gPOID OR b3.POID = TMP2.bPOID 
+	    WHERE og3.Junk = 0 
+	    AND b3.Category = 'B' 
+	    AND g3.Category = 'G'
+	) TMP1  
 	OUTER APPLY (
 		SELECT [gQty] = SUM(g4.Qty) 
 		FROM Orders g4 WITH (NOLOCK) 
-		WHERE tmp.gPOID = g4.POID 
+		WHERE TMP1.gPOID = g4.POID 
 		and g4.Category = 'G'
 	) g4
 	OUTER APPLY (
 		SELECT [bQty] = SUM(b4.Qty) 
 		FROM Orders b4 WITH (NOLOCK) 
-		WHERE tmp.bPOID = b4.POID 
+		WHERE TMP1.bPOID = b4.POID 
 		and b4.Category = 'B'
 	) b4 
 	GROUP BY g4.gQty, b4.bQty
@@ -396,12 +402,15 @@ drop table #tmp
         /// <inheritdoc/>
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
+            DBProxy.Current.DefaultTimeout = 1200;
             DualResult result = DBProxy.Current.Select(null, this.sqlCmd, out this.printData);
             if (!result)
             {
                 DualResult failResult = new DualResult(false, "Query data fail\r\n" + result.ToString());
+                MyUtility.Msg.WarningBox(failResult.Description);
                 return failResult;
             }
+            DBProxy.Current.DefaultTimeout = 300;
 
             // 顯示筆數於PrintForm上Count欄位
             this.SetCount(this.printData.Rows.Count);

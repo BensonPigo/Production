@@ -32,5 +32,6 @@
         public string Roll { get; set; }
 
         public string TicketYds { get; set; }
+        public string Tone { get; set; }
     }
 }

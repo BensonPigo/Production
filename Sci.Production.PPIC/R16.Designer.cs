@@ -40,6 +40,7 @@
             this.txtMdivision = new Sci.Production.Class.TxtMdivision();
             this.chkExcludeSis = new Sci.Win.UI.CheckBox();
             this.chkExcludeCancelShortage = new Sci.Win.UI.CheckBox();
+            this.chkBookingOrder = new Sci.Win.UI.CheckBox();
             this.SuspendLayout();
             // 
             // print
@@ -151,6 +152,7 @@
             this.txtbrand.BackColor = System.Drawing.Color.White;
             this.txtbrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtbrand.Location = new System.Drawing.Point(147, 136);
+            this.txtbrand.MyDocumentdName = null;
             this.txtbrand.Name = "txtbrand";
             this.txtbrand.Size = new System.Drawing.Size(66, 23);
             this.txtbrand.TabIndex = 4;
@@ -202,11 +204,25 @@
             this.chkExcludeCancelShortage.Text = "Exclude Cancel/Shortage";
             this.chkExcludeCancelShortage.UseVisualStyleBackColor = true;
             // 
+            // chkBookingOrder
+            // 
+            this.chkBookingOrder.AutoSize = true;
+            this.chkBookingOrder.Checked = true;
+            this.chkBookingOrder.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkBookingOrder.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkBookingOrder.Location = new System.Drawing.Point(257, 138);
+            this.chkBookingOrder.Name = "chkBookingOrder";
+            this.chkBookingOrder.Size = new System.Drawing.Size(172, 21);
+            this.chkBookingOrder.TabIndex = 557;
+            this.chkBookingOrder.Text = "Exclude Booking Order";
+            this.chkBookingOrder.UseVisualStyleBackColor = true;
+            // 
             // R16
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(552, 254);
+            this.Controls.Add(this.chkBookingOrder);
             this.Controls.Add(this.chkExcludeCancelShortage);
             this.Controls.Add(this.chkExcludeSis);
             this.Controls.Add(this.chkOutstanding);
@@ -241,6 +257,7 @@
             this.Controls.SetChildIndex(this.chkOutstanding, 0);
             this.Controls.SetChildIndex(this.chkExcludeSis, 0);
             this.Controls.SetChildIndex(this.chkExcludeCancelShortage, 0);
+            this.Controls.SetChildIndex(this.chkBookingOrder, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -260,5 +277,6 @@
         private Win.UI.CheckBox chkOutstanding;
         private Win.UI.CheckBox chkExcludeSis;
         private Win.UI.CheckBox chkExcludeCancelShortage;
+        private Win.UI.CheckBox chkBookingOrder;
     }
 }

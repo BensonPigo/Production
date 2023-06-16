@@ -79,7 +79,7 @@
             this.comboResult = new Sci.Win.UI.ComboBox();
             this.btnInspected = new Sci.Win.UI.Button();
             this.label6 = new Sci.Win.UI.Label();
-            this.comboDyelot = new Sci.Win.UI.ComboBox();
+            this.txtDyelot = new Sci.Win.UI.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.btmcont.SuspendLayout();
@@ -147,14 +147,14 @@
             // 
             this.undo.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.undo.Dock = System.Windows.Forms.DockStyle.None;
-            this.undo.Location = new System.Drawing.Point(1801, 41);
+            this.undo.Location = new System.Drawing.Point(2509, 41);
             this.undo.Size = new System.Drawing.Size(75, 30);
             // 
             // save
             // 
             this.save.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.save.Dock = System.Windows.Forms.DockStyle.None;
-            this.save.Location = new System.Drawing.Point(1801, 8);
+            this.save.Location = new System.Drawing.Point(2509, 8);
             this.save.Size = new System.Drawing.Size(75, 30);
             // 
             // displayBrand
@@ -465,6 +465,7 @@
             // 
             // txtuserApprover
             // 
+            this.txtuserApprover.AllowSelectResign = false;
             this.txtuserApprover.DisplayBox1Binding = "";
             this.txtuserApprover.Location = new System.Drawing.Point(82, 120);
             this.txtuserApprover.Name = "txtuserApprover";
@@ -662,23 +663,20 @@
             this.label6.TabIndex = 235;
             this.label6.Text = "Dyelot Filter";
             // 
-            // comboDyelot
+            // txtDyelot
             // 
-            this.comboDyelot.BackColor = System.Drawing.Color.White;
-            this.comboDyelot.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboDyelot.FormattingEnabled = true;
-            this.comboDyelot.IsSupportUnselect = true;
-            this.comboDyelot.Location = new System.Drawing.Point(100, 176);
-            this.comboDyelot.Name = "comboDyelot";
-            this.comboDyelot.OldText = "";
-            this.comboDyelot.Size = new System.Drawing.Size(121, 24);
-            this.comboDyelot.TabIndex = 236;
-            this.comboDyelot.TextChanged += new System.EventHandler(this.ComboDyelot_TextChanged);
+            this.txtDyelot.BackColor = System.Drawing.Color.White;
+            this.txtDyelot.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtDyelot.Location = new System.Drawing.Point(100, 177);
+            this.txtDyelot.Name = "txtDyelot";
+            this.txtDyelot.Size = new System.Drawing.Size(272, 23);
+            this.txtDyelot.TabIndex = 237;
+            this.txtDyelot.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtDyelot_PopUp);
             // 
             // P01_ShadeBond
             // 
             this.ClientSize = new System.Drawing.Size(1008, 739);
-            this.Controls.Add(this.comboDyelot);
+            this.Controls.Add(this.txtDyelot);
             this.Controls.Add(this.label6);
             this.Controls.Add(this.displNoofDyelot);
             this.Controls.Add(this.displNoofRoll);
@@ -769,7 +767,7 @@
             this.Controls.SetChildIndex(this.displNoofRoll, 0);
             this.Controls.SetChildIndex(this.displNoofDyelot, 0);
             this.Controls.SetChildIndex(this.label6, 0);
-            this.Controls.SetChildIndex(this.comboDyelot, 0);
+            this.Controls.SetChildIndex(this.txtDyelot, 0);
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).EndInit();
             this.btmcont.ResumeLayout(false);
@@ -832,6 +830,6 @@
         private Win.UI.Label label5;
         private Win.UI.Label label4;
         private Win.UI.Label label6;
-        private Win.UI.ComboBox comboDyelot;
+        private Win.UI.TextBox txtDyelot;
     }
 }

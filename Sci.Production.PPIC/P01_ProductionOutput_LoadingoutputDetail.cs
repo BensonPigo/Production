@@ -53,10 +53,10 @@ namespace Sci.Production.PPIC
             {
                 sqlCmd = $@"
 select BIO.InComing, BIO.OutGoing, BIO.BundleNo, B.FabricPanelCode, BD.Patterncode, BDO.Qty
-from Bundle B
-inner join Bundle_Detail BD on BD.Id=B.ID
-inner join Bundle_Detail_Order BDO on BDO.BundleNo = BD.BundleNo
-inner join BundleInOut BIO on BIO.BundleNo=BD.BundleNo 
+from Bundle B with(nolock)
+inner join Bundle_Detail BD with(nolock) on BD.Id=B.ID
+inner join Bundle_Detail_Order BDO with(nolock) on BDO.BundleNo = BD.BundleNo
+inner join BundleInOut BIO with(nolock) on BIO.BundleNo=BD.BundleNo 
 where BDO.Orderid='{this.orderID}'
 and BIO.SubProcessId='LOADING'
 and isnull(BIO.RFIDProcessLocationID,'') = ''
@@ -66,10 +66,10 @@ order by BIO.InComing";
             {
                 sqlCmd = $@"
 select BIO.InComing, BIO.OutGoing, BIO.BundleNo, B.FabricPanelCode, BD.Patterncode, BDO.Qty
-from Bundle B
-inner join Bundle_Detail BD on BD.Id=B.ID
-inner join Bundle_Detail_Order BDO on BDO.BundleNo = BD.BundleNo
-inner join BundleInOut BIO on BIO.BundleNo=BD.BundleNo 
+from Bundle B with(nolock)
+inner join Bundle_Detail BD with(nolock) on BD.Id=B.ID
+inner join Bundle_Detail_Order BDO with(nolock) on BDO.BundleNo = BD.BundleNo
+inner join BundleInOut BIO with(nolock) on BIO.BundleNo=BD.BundleNo 
 where BDO.Orderid='{this.orderID}'
 and BIO.SubProcessId='LOADING'
 and isnull(BIO.RFIDProcessLocationID,'') = ''

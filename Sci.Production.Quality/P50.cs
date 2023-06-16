@@ -119,7 +119,7 @@ namespace Sci.Production.Quality
                     DataGridView grid = ((DataGridViewColumn)s).DataGridView;
 
                     DataRow row = grid.GetDataRow<DataRow>(e.RowIndex);
-                    if (row["Ukey"] == DBNull.Value)
+                    if (row["UniqueKey"] == DBNull.Value)
                     {
                         MyUtility.Msg.ErrorBox("Please upload file first!", "Error");
                         row["SeasonRow"] = DBNull.Value;
@@ -216,7 +216,7 @@ namespace Sci.Production.Quality
 
                 if (!MyUtility.Check.Empty(newValue) && !newValue.EqualString(oldValue))
                 {
-                    if (row["Ukey"] == DBNull.Value)
+                    if (row["UniqueKey"] == DBNull.Value)
                     {
                         MyUtility.Msg.ErrorBox("Please upload file first!", "Error");
                         row["DueSeason"] = DBNull.Value;
@@ -315,7 +315,7 @@ namespace Sci.Production.Quality
                     DataGridView grid = ((DataGridViewColumn)s).DataGridView;
 
                     DataRow row = grid.GetDataRow<DataRow>(e.RowIndex);
-                    if (row["Ukey"] == DBNull.Value)
+                    if (row["UniqueKey"] == DBNull.Value)
                     {
                         MyUtility.Msg.ErrorBox("Please upload file first!", "Error");
                         row["SeasonRow"] = DBNull.Value;
@@ -409,7 +409,7 @@ namespace Sci.Production.Quality
 
                 if (!MyUtility.Check.Empty(newValue) && !newValue.EqualString(oldValue))
                 {
-                    if (row["Ukey"] == DBNull.Value)
+                    if (row["UniqueKey"] == DBNull.Value)
                     {
                         MyUtility.Msg.ErrorBox("Please upload file first!", "Error");
                         e.Cancel = true;
@@ -520,7 +520,7 @@ namespace Sci.Production.Quality
 
                 if (!MyUtility.Check.Empty(newValue) && !newValue.EqualString(oldValue))
                 {
-                    if (row["Ukey"] == DBNull.Value)
+                    if (row["UniqueKey"] == DBNull.Value)
                     {
                         MyUtility.Msg.ErrorBox("Please upload file first!", "Error");
                         row["TestReportTestDate"] = DBNull.Value;
@@ -597,7 +597,7 @@ namespace Sci.Production.Quality
 
                 if (!MyUtility.Check.Empty(newValue) && !newValue.EqualString(oldValue))
                 {
-                    if (row["Ukey"] == DBNull.Value)
+                    if (row["UniqueKey"] == DBNull.Value)
                     {
                         MyUtility.Msg.ErrorBox("Please upload file first!", "Error");
                         e.Cancel = true;
@@ -681,7 +681,7 @@ namespace Sci.Production.Quality
                 return;
             }
 
-            var id = row["Ukey"].ToString();
+            var id = row["UniqueKey"].ToString();
             if (id.IsNullOrWhiteSpace())
             {
                 return;
@@ -746,7 +746,7 @@ namespace Sci.Production.Quality
 
             var now = DateTime.Now;
 
-            if (row["Ukey"].Empty())
+            if (row["UniqueKey"].Empty())
             {
                 row["AddName"] = Env.User.UserID;
                 row["AddDate"] = now;
@@ -788,7 +788,7 @@ namespace Sci.Production.Quality
             row["updateCol_Where"] = updateCol;
             #endregion
 
-            using (var dlg = new PublicForm.Clip("UASentReport", id, true, row, apiUrlFile: "http://pmsap.sportscity.com.tw:16888/api/FileDelete/RemoveFile"))
+            using (var dlg = new PublicForm.ClipGASA("UASentReport", id, true, row, apiUrlFile: "http://pmsap.sportscity.com.tw:16888/api/FileDelete/RemoveFile"))
             {
                 dlg.ShowDialog();
 
@@ -1005,6 +1005,7 @@ namespace Sci.Production.Quality
                ,sr.EditName
                ,sr.EditDate
                ,sr.Ukey
+               ,sr.UniqueKey
                ,[SeasonRow] = seasonList.RowNo
                ,canModify = CAST(iif((chkNoRes.value is null and '{this.drBasic["Responsibility"]}' = 'F') or chkNoRes.value = 'F', 1, 0) AS BIT)
              INTO #tmp
@@ -1057,6 +1058,7 @@ namespace Sci.Production.Quality
                    ,EditName
                    ,EditDate
                    ,Ukey
+                   ,UniqueKey
                    ,[SeasonRow]	
                    , canModify
 	         FROM #tmp
@@ -1075,6 +1077,7 @@ namespace Sci.Production.Quality
                    ,EditName
                    ,EditDate
                    ,Ukey
+                   ,UniqueKey
                    ,[SeasonRow]	
                    , canModify
 	         Order By BrandRefNo,ColorID";
@@ -1127,7 +1130,7 @@ namespace Sci.Production.Quality
                 return;
             }
 
-            if (dt.ExtNotDeletedRows().AsEnumerable().Where(w => w.Field<bool>("sel") && w["Ukey"].Empty()).Any())
+            if (dt.ExtNotDeletedRows().AsEnumerable().Where(w => w.Field<bool>("sel") && w["UniqueKey"].Empty()).Any())
             {
                 MyUtility.Msg.ErrorBox("Please upload files first!");
                 return;
@@ -1427,7 +1430,7 @@ namespace Sci.Production.Quality
                         }
                     }
 
-                    if (r["Ukey"].Empty())
+                    if (r["UniqueKey"].Empty())
                     {
                         r["AddName"] = Env.User.UserID;
                         r["AddDate"] = now;
@@ -1468,6 +1471,7 @@ namespace Sci.Production.Quality
                           ,[TestSeasonID]
                           ,[DueSeason]
                           ,[DueDate]
+                          ,[UniqueKey]
                         )
                         output inserted.Ukey into @OutputTbl
                         Values(
@@ -1483,17 +1487,20 @@ namespace Sci.Production.Quality
                          ,'{this.txtTestSeason.Text}'
                          ,'{this.txtDueSeason.Text}'
                          ,{(!this.DueDate.Value.HasValue ? "null" : $"'{this.DueDate.Text}'")}
+                         ,'{r["BrandRefno"]}'+'_'+'{r["ColorID"]}'+'_'+'{r["SuppID"]}'+'_'+ '{this.drBasic["DocumentName"]}'+'_'+'{this.drBasic["BrandID"]}'
                         )
                      End
 
                     INSERT INTO GASAClip 
-                    SELECT files.Pkey, 'UASentReport', ID, files.FileName, 'File Upload', @UserID, getdate()
+                    SELECT files.Pkey, 'UASentReport', '{r["BrandRefno"]}'+'_'+'{r["ColorID"]}'+'_'+'{r["SuppID"]}'+'_'+ '{this.drBasic["DocumentName"]}'+'_'+'{this.drBasic["BrandID"]}', files.FileName, 'File Upload', @UserID, getdate()
                      FROM @OutputTbl
                     Outer Apply(
                         select [Pkey] = SUBSTRING(Data,0,11),FileName = SUBSTRING(Data,12,len(Data)-11) from splitstring(@ClipPkey,'?')
                     )files
 
-                    SELECT TOP 1 ID FROM @OutputTbl";
+                    select UniqueKey from UASentReport
+                    where ukey in (SELECT TOP 1 ID FROM @OutputTbl)
+                    ";
                     List<SqlParameter> plis = new List<SqlParameter>()
                     {
                         new SqlParameter("UserID", Env.User.UserID),
@@ -1508,7 +1515,7 @@ namespace Sci.Production.Quality
                         return;
                     }
 
-                    r["Ukey"] = dtUkey.Rows[0][0];
+                    r["UniqueKey"] = dtUkey.Rows[0][0];
                 }
             });
 

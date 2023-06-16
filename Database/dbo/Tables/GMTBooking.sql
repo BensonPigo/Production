@@ -36,7 +36,6 @@
     [EditName]                 VARCHAR (10)    CONSTRAINT [DF_GMTBooking_EditName] DEFAULT ('') NULL,
     [EditDate]                 DATETIME        NULL,
     [NoExportCharges]          BIT             DEFAULT ((0)) NULL,
-    [BIRID]                    INT             NULL,
     [BL2No]                    VARCHAR (20)    DEFAULT ('') NULL,
     [BLNo]                     VARCHAR (20)    DEFAULT ('') NULL,
 	[ActFCRDate] [date] NULL,

@@ -113,6 +113,8 @@ SELECT [ID] = a.ID
 	  , [VoucherID] = va.VoucherID
 	  ,[APPExchageRate] = A.ExchangeRate
 	  ,[APPAmtUSD] = A.ActAmt
+      ,[SCIICRNo2]
+      ,[SCIICRRemark2]
 INTO AirPP
 FROM Production.dbo.AirPP AS A
 left join Production.dbo.View_AirPP va on va.ID = A.id

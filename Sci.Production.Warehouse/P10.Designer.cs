@@ -47,6 +47,7 @@
             this.btnCutRef = new Sci.Win.UI.Button();
             this.btnCallP99 = new Sci.Win.UI.Button();
             this.btnMINDReleaser = new Sci.Win.UI.Button();
+            this.btnIssueSummary = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -63,6 +64,7 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.btnIssueSummary);
             this.masterpanel.Controls.Add(this.btnMINDReleaser);
             this.masterpanel.Controls.Add(this.btnCutRef);
             this.masterpanel.Controls.Add(this.labelNotApprove);
@@ -81,7 +83,7 @@
             this.masterpanel.Controls.Add(this.displayID);
             this.masterpanel.Controls.Add(this.labelID);
             this.masterpanel.Controls.Add(this.dateIssueDate);
-            this.masterpanel.Size = new System.Drawing.Size(1009, 109);
+            this.masterpanel.Size = new System.Drawing.Size(1009, 143);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateIssueDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelID, 0);
@@ -101,16 +103,17 @@
             this.masterpanel.Controls.SetChildIndex(this.labelNotApprove, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnCutRef, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnMINDReleaser, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnIssueSummary, 0);
             // 
             // detailpanel
             // 
-            this.detailpanel.Location = new System.Drawing.Point(0, 109);
-            this.detailpanel.Size = new System.Drawing.Size(1009, 334);
+            this.detailpanel.Location = new System.Drawing.Point(0, 143);
+            this.detailpanel.Size = new System.Drawing.Size(1009, 300);
             // 
             // gridicon
             // 
             this.gridicon.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.gridicon.Location = new System.Drawing.Point(4763, 74);
+            this.gridicon.Location = new System.Drawing.Point(5231, 108);
             // 
             // refresh
             // 
@@ -118,7 +121,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(1009, 334);
+            this.detailgridcont.Size = new System.Drawing.Size(1009, 300);
             // 
             // detail
             // 
@@ -283,7 +286,7 @@
             this.editCutNo.Multiline = true;
             this.editCutNo.Name = "editCutNo";
             this.editCutNo.ReadOnly = true;
-            this.editCutNo.Size = new System.Drawing.Size(314, 94);
+            this.editCutNo.Size = new System.Drawing.Size(314, 128);
             this.editCutNo.TabIndex = 14;
             // 
             // btnAutoPick
@@ -344,6 +347,18 @@
             this.btnMINDReleaser.Text = "MIND Releaser";
             this.btnMINDReleaser.UseVisualStyleBackColor = true;
             this.btnMINDReleaser.Click += new System.EventHandler(this.BtnMINDReleaser_Click);
+            // 
+            // btnIssueSummary
+            // 
+            this.btnIssueSummary.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnIssueSummary.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
+            this.btnIssueSummary.Location = new System.Drawing.Point(839, 106);
+            this.btnIssueSummary.Name = "btnIssueSummary";
+            this.btnIssueSummary.Size = new System.Drawing.Size(162, 30);
+            this.btnIssueSummary.TabIndex = 47;
+            this.btnIssueSummary.Text = "Issue Summary";
+            this.btnIssueSummary.UseVisualStyleBackColor = true;
+            this.btnIssueSummary.Click += new System.EventHandler(this.BtnIssueSummary_Click);
             // 
             // P10
             // 
@@ -409,5 +424,6 @@
         private Win.UI.Button btnCutRef;
         private Win.UI.Button btnCallP99;
         private Win.UI.Button btnMINDReleaser;
+        private Win.UI.Button btnIssueSummary;
     }
 }

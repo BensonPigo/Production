@@ -1,8 +1,7 @@
 
 Create PROCEDURE [dbo].[P_Import_QA_P09]	
 	@ETA_s Date,
-	@ETA_e Date,
-	@LinkServerName varchar(50)
+	@ETA_e Date
 AS
 BEGIN
 	DECLARE @SqlCmd_Combin nvarchar(max) =''

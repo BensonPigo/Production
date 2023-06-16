@@ -334,6 +334,7 @@ and ID = '{Sci.Env.User.UserID}'"))
                 .Text("stockunit", header: "Unit", iseditingreadonly: true)
                 .Numeric("qty", header: "Issue Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10)
                 .Text("Location", header: "Bulk Location", iseditingreadonly: true)
+                .Numeric("RemainingQty", header: "Remaining Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 11, iseditingreadonly: true)
                 .Text("ContainerCode", header: "Container Code", iseditingreadonly: true).Get(out Ict.Win.UI.DataGridViewTextBoxColumn cbb_ContainerCode)
                 .Text("Remark", header: "Remark", width: Widths.AnsiChars(20), iseditingreadonly: true)
                 .Text("Refno", header: "Ref#", width: Widths.AnsiChars(20), iseditingreadonly: true)
@@ -521,6 +522,24 @@ where dbo.Lack_Detail.id = '{this.CurrentMaintain["requestid"]}'
                     }
 
                     if (!(result = DBProxy.Current.Execute(null, sqlupd4.ToString())))
+                    {
+                        throw result.GetException();
+                    }
+
+                    // 更新完庫存後 RemainingQty
+                    string sqlUpdateRemainingQty = $@"
+Update sd set
+    RemainingQty = f.InQty - f.OutQty + f.AdjustQty - f.ReturnQty
+from IssueLack_Detail sd with(nolock)
+inner join Production.dbo.FtyInventory f with(nolock) on f.POID = isnull(sd.PoId, '')
+    and f.Seq1 = isnull(sd.Seq1, '')
+    and f.Seq2 = isnull(sd.Seq2, '')
+    and f.Roll = isnull(sd.Roll, '')
+	and f.Dyelot = isnull(sd.Dyelot, '')
+    and f.StockType = isnull(sd.StockType, '')
+    and sd.id = '{this.CurrentMaintain["ID"]}'
+";
+                    if (!(result = DBProxy.Current.Execute(null, sqlUpdateRemainingQty)))
                     {
                         throw result.GetException();
                     }
@@ -722,6 +741,18 @@ where (isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f
                     }
 
                     if (!(result = DBProxy.Current.Execute(null, sqlupd4.ToString())))
+                    {
+                        throw result.GetException();
+                    }
+
+                    // 更新完庫存後 RemainingQty
+                    string sqlUpdateRemainingQty = $@"
+Update sd set
+    RemainingQty = 0
+from IssueLack_Detail sd with(nolock)
+where sd.id = '{this.CurrentMaintain["ID"]}'
+";
+                    if (!(result = DBProxy.Current.Execute(null, sqlUpdateRemainingQty)))
                     {
                         throw result.GetException();
                     }

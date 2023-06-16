@@ -66,6 +66,8 @@
             this.txtPINO = new Sci.Win.UI.TextBox();
             this.label11 = new Sci.Win.UI.Label();
             this.txtMultiSupplier1 = new Sci.Production.Class.TxtMultiBrandSupplierGroup();
+            this.txtfactory = new Sci.Production.Class.Txtfactory();
+            this.labelFactory = new Sci.Win.UI.Label();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.UI_grid)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.gridBS)).BeginInit();
@@ -279,7 +281,7 @@
             // label10
             // 
             this.label10.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.label10.Location = new System.Drawing.Point(3, 202);
+            this.label10.Location = new System.Drawing.Point(3, 203);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(962, 2);
             this.label10.TabIndex = 1153;
@@ -375,7 +377,7 @@
             this.txtStyle1.BackColor = System.Drawing.Color.White;
             this.txtStyle1.BrandObjectName = this.txtBrand1;
             this.txtStyle1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtStyle1.Location = new System.Drawing.Point(128, 176);
+            this.txtStyle1.Location = new System.Drawing.Point(128, 175);
             this.txtStyle1.Name = "txtStyle1";
             this.txtStyle1.SeasonObjectName = this.txtSeason1;
             this.txtStyle1.Size = new System.Drawing.Size(162, 23);
@@ -385,7 +387,7 @@
             // 
             // label9
             // 
-            this.label9.Location = new System.Drawing.Point(13, 176);
+            this.label9.Location = new System.Drawing.Point(13, 175);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(112, 23);
             this.label9.TabIndex = 1170;
@@ -438,9 +440,33 @@
             this.txtMultiSupplier1.Size = new System.Drawing.Size(200, 23);
             this.txtMultiSupplier1.TabIndex = 2;
             // 
+            // txtfactory
+            // 
+            this.txtfactory.BackColor = System.Drawing.Color.White;
+            this.txtfactory.BoolFtyGroupList = false;
+            this.txtfactory.FilteMDivision = false;
+            this.txtfactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtfactory.IsProduceFty = false;
+            this.txtfactory.IssupportJunk = false;
+            this.txtfactory.Location = new System.Drawing.Point(544, 177);
+            this.txtfactory.MDivision = null;
+            this.txtfactory.Name = "txtfactory";
+            this.txtfactory.Size = new System.Drawing.Size(90, 23);
+            this.txtfactory.TabIndex = 1215;
+            // 
+            // labelFactory
+            // 
+            this.labelFactory.Location = new System.Drawing.Point(426, 175);
+            this.labelFactory.Name = "labelFactory";
+            this.labelFactory.Size = new System.Drawing.Size(112, 23);
+            this.labelFactory.TabIndex = 1214;
+            this.labelFactory.Text = "Factory";
+            // 
             // P51
             // 
             this.ClientSize = new System.Drawing.Size(972, 612);
+            this.Controls.Add(this.txtfactory);
+            this.Controls.Add(this.labelFactory);
             this.Controls.Add(this.txtMultiSupplier1);
             this.Controls.Add(this.txtPINO);
             this.Controls.Add(this.label11);
@@ -513,6 +539,8 @@
             this.Controls.SetChildIndex(this.label11, 0);
             this.Controls.SetChildIndex(this.txtPINO, 0);
             this.Controls.SetChildIndex(this.txtMultiSupplier1, 0);
+            this.Controls.SetChildIndex(this.labelFactory, 0);
+            this.Controls.SetChildIndex(this.txtfactory, 0);
             this.panel1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.UI_grid)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.gridBS)).EndInit();
@@ -561,5 +589,7 @@
         private Win.UI.TextBox txtPINO;
         private Win.UI.Label label11;
         private Production.Class.TxtMultiBrandSupplierGroup txtMultiSupplier1;
+        private Class.Txtfactory txtfactory;
+        private Win.UI.Label labelFactory;
     }
 }

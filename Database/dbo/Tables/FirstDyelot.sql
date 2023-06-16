@@ -16,7 +16,7 @@
     [ReceivedRemark] VARCHAR(MAX) NOT NULL DEFAULT (''), 
     [DocumentName] VARCHAR(100) NOT NULL DEFAULT (''), 
     [BrandID] VARCHAR(8) NOT NULL DEFAULT (''), 
-    CONSTRAINT [PK_FirstDyelot] PRIMARY KEY ([SuppID], [SeasonID], [TestDocFactoryGroup], [BrandRefno], [ColorID]) 
+    CONSTRAINT [PK_FirstDyelot] PRIMARY KEY ([SuppID], [SeasonID], [TestDocFactoryGroup], [BrandRefno], [ColorID], [DocumentName],[BrandID]) 
 );
 
 
