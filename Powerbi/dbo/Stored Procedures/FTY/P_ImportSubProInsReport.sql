@@ -231,7 +231,7 @@ declare @powebiCnt bigint = (select count(1) from P_SubProInsReport where Inspec
 
 print @cnt
 print @powebiCnt
-if (@Cnt > 0) and (@powebiCnt > 0)
+if ((@Cnt > 0 and @powebiCnt > 0) or (@Cnt = @powebiCnt))
 begin
 	update b
 		set b.TransferDate = getdate()
