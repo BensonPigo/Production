@@ -1,6 +1,6 @@
 ﻿namespace Sci.Production.IE
 {
-    partial class B11
+    partial class B13
     {
         /// <summary>
         /// 設計工具所需的變數。
@@ -31,10 +31,8 @@
             this.checkJunk = new Sci.Win.UI.CheckBox();
             this.labelDescription = new Sci.Win.UI.Label();
             this.labelID = new Sci.Win.UI.Label();
-            this.editDescription = new Sci.Win.UI.EditBox();
-            this.txtID = new Sci.Win.UI.TextBox();
-            this.label1 = new Sci.Win.UI.Label();
-            this.txtMoldID = new Sci.Win.UI.TextBox();
+            this.editType = new Sci.Win.UI.EditBox();
+            this.displayID = new Sci.Win.UI.DisplayBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -49,10 +47,8 @@
             // 
             // detailcont
             // 
-            this.detailcont.Controls.Add(this.txtMoldID);
-            this.detailcont.Controls.Add(this.label1);
-            this.detailcont.Controls.Add(this.txtID);
-            this.detailcont.Controls.Add(this.editDescription);
+            this.detailcont.Controls.Add(this.displayID);
+            this.detailcont.Controls.Add(this.editType);
             this.detailcont.Controls.Add(this.checkJunk);
             this.detailcont.Controls.Add(this.labelDescription);
             this.detailcont.Controls.Add(this.labelID);
@@ -98,64 +94,42 @@
             // 
             // labelDescription
             // 
-            this.labelDescription.Location = new System.Drawing.Point(70, 142);
+            this.labelDescription.Location = new System.Drawing.Point(37, 96);
             this.labelDescription.Name = "labelDescription";
-            this.labelDescription.Size = new System.Drawing.Size(119, 23);
+            this.labelDescription.Size = new System.Drawing.Size(112, 23);
             this.labelDescription.TabIndex = 14;
-            this.labelDescription.Text = "Description";
+            this.labelDescription.Text = "Attachment Type";
             // 
             // labelID
             // 
-            this.labelID.Location = new System.Drawing.Point(70, 90);
+            this.labelID.Location = new System.Drawing.Point(37, 44);
             this.labelID.Name = "labelID";
-            this.labelID.Size = new System.Drawing.Size(119, 23);
+            this.labelID.Size = new System.Drawing.Size(112, 23);
             this.labelID.TabIndex = 13;
             this.labelID.Text = "ID";
             // 
-            // editDescription
+            // editType
             // 
-            this.editDescription.BackColor = System.Drawing.Color.White;
-            this.editDescription.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Description", true));
-            this.editDescription.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.editDescription.Location = new System.Drawing.Point(192, 142);
-            this.editDescription.Multiline = true;
-            this.editDescription.Name = "editDescription";
-            this.editDescription.Size = new System.Drawing.Size(405, 50);
-            this.editDescription.TabIndex = 1;
+            this.editType.BackColor = System.Drawing.Color.White;
+            this.editType.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Type", true));
+            this.editType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.editType.Location = new System.Drawing.Point(152, 96);
+            this.editType.Multiline = true;
+            this.editType.Name = "editType";
+            this.editType.Size = new System.Drawing.Size(405, 50);
+            this.editType.TabIndex = 1;
             // 
-            // txtID
+            // displayID
             // 
-            this.txtID.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.txtID.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "ID", true));
-            this.txtID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.txtID.Location = new System.Drawing.Point(192, 90);
-            this.txtID.Name = "txtID";
-            this.txtID.ReadOnly = true;
-            this.txtID.Size = new System.Drawing.Size(166, 23);
-            this.txtID.TabIndex = 0;
-            this.txtID.Validating += new System.ComponentModel.CancelEventHandler(this.TxtID_Validating);
+            this.displayID.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayID.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ID", true));
+            this.displayID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayID.Location = new System.Drawing.Point(152, 44);
+            this.displayID.Name = "displayID";
+            this.displayID.Size = new System.Drawing.Size(100, 23);
+            this.displayID.TabIndex = 15;
             // 
-            // label1
-            // 
-            this.label1.Location = new System.Drawing.Point(70, 42);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(119, 23);
-            this.label1.TabIndex = 15;
-            this.label1.Text = "Attachment Group";
-            // 
-            // txtMoldID
-            // 
-            this.txtMoldID.BackColor = System.Drawing.Color.White;
-            this.txtMoldID.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "MoldID", true));
-            this.txtMoldID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtMoldID.Location = new System.Drawing.Point(192, 42);
-            this.txtMoldID.Name = "txtMoldID";
-            this.txtMoldID.Size = new System.Drawing.Size(166, 23);
-            this.txtMoldID.TabIndex = 27;
-            this.txtMoldID.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtMoldID_PopUp);
-            this.txtMoldID.Validating += new System.ComponentModel.CancelEventHandler(this.TxtMoldID_Validating);
-            // 
-            // B11
+            // B13
             // 
             this.ClientSize = new System.Drawing.Size(837, 457);
             this.DefaultOrder = "ID";
@@ -163,10 +137,10 @@
             this.IsSupportCopy = false;
             this.IsSupportDelete = false;
             this.IsSupportPrint = false;
-            this.Name = "B11";
+            this.Name = "B13";
             this.OnLineHelpID = "Sci.Win.Tems.Input1";
-            this.Text = "B11. Sewing Machine Template";
-            this.WorkAlias = "SewingMachineTemplate";
+            this.Text = "B13. AttachmentType";
+            this.WorkAlias = "AttachmentType";
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).EndInit();
             this.detail.ResumeLayout(false);
@@ -185,9 +159,7 @@
         private Win.UI.CheckBox checkJunk;
         private Win.UI.Label labelDescription;
         private Win.UI.Label labelID;
-        private Win.UI.EditBox editDescription;
-        private Win.UI.TextBox txtID;
-        private Win.UI.Label label1;
-        private Win.UI.TextBox txtMoldID;
+        private Win.UI.EditBox editType;
+        private Win.UI.DisplayBox displayID;
     }
 }
