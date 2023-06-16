@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.Data.SqlTypes;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -913,8 +914,8 @@ IF OBJECT_ID('tempdb..#POList') IS NOT NULL
 DROP TABLE #POList
 
 ";
-            DataSet ds;
-            if (!SQL.Selects(SQL.queryConn, sqlcmd, out ds))
+
+            if (!PublicPrg.Prgs.SelectSet(string.Empty, sqlcmd, out DataSet ds))
             {
                 return null;
             }
@@ -1442,7 +1443,14 @@ INNER JOIN Export e on sr.ExportID = e.ID
 WHERE sr.ColorID = @ColorID 
 and (sr.BrandRefno = @BrandRefno  or sr.BrandRefno = @Refno)
 and sr.BrandID = @BrandID and sr.DocumentName = @DocumentName
-and exists(select 1 FROM Export_Detail ed WITH (NOLOCK) inner join Fabric f2 WITH (NOLOCK) on f2.SCIRefno = ed.SCIRefNo where ed.ID = e.ID and ed.POID = @POID and f2.BrandRefno = sr.BrandRefno)
+and exists(
+    select 1 FROM Export_Detail ed WITH (NOLOCK) 
+	inner join PO_Supp_Detail psd WITH (NOLOCK)  on psd.ID = ed.PoID
+	and psd.SEQ1 = ed.Seq1 and psd.SEQ2 = ed.Seq2
+    inner join Fabric f2 WITH (NOLOCK) on f2.SCIRefno = psd.SCIRefNo 
+    where ed.ID = e.ID 
+    and ed.POID = @POID and f2.BrandRefno = sr.BrandRefno
+)
                     ";
                     parmes.Add(new SqlParameter("@BrandRefno", mainrow["BrandRefno"]));
                     parmes.Add(new SqlParameter("@Refno", mainrow["Refno"]));
@@ -1453,9 +1461,10 @@ and exists(select 1 FROM Export_Detail ed WITH (NOLOCK) inner join Fabric f2 WIT
                     break;
             }
 
-            DataTable dt;
-            if (!SQL.Select(string.Empty, sql, out dt, parmes))
+            DualResult result = DBProxy.Current.Select(string.Empty, sql, parmes, out DataTable dt);
+            if (!result)
             {
+                this.ShowErr(result);
                 return;
             }
 
