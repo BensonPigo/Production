@@ -680,8 +680,16 @@ namespace Sci.Production.IE
 
                             // update picture1 path
                             DualResult result = Data.DBProxy.Current.Execute(null, "update SewingMachineAttachment set Picture1 ='" + destination_fileName.Trim() + "' where Ukey=@Ukey", paras);
-                            this.CurrentMaintain["Picture1"] = this.destination_path.Trim() + destination_fileName.Trim();
-                            this.picture1.ImageLocation = this.CurrentMaintain["Picture1"].ToString();
+
+                            this.picture1.ImageLocation = this.destination_path.Trim() + destination_fileName.Trim();
+                            if (this.EditMode)
+                            {
+                                this.CurrentMaintain["Picture1"] = destination_fileName.Trim();
+                            }
+                            else
+                            {
+                                this.CurrentMaintain["Picture1"] = this.destination_path.Trim() + destination_fileName.Trim();
+                            }
                         }
                     }
                 }
@@ -760,8 +768,16 @@ namespace Sci.Production.IE
 
                             // update picture2 path
                             DualResult result = Data.DBProxy.Current.Execute(null, "update SewingMachineAttachment set Picture2 ='" + destination_fileName.Trim() + "' where Ukey=@Ukey", paras);
-                            this.CurrentMaintain["Picture2"] = this.destination_path.Trim() + destination_fileName.Trim();
-                            this.picture2.ImageLocation = this.CurrentMaintain["Picture2"].ToString();
+
+                            this.picture2.ImageLocation = this.destination_path.Trim() + destination_fileName.Trim();
+                            if (this.EditMode)
+                            {
+                                this.CurrentMaintain["Picture2"] = destination_fileName.Trim();
+                            }
+                            else
+                            {
+                                this.CurrentMaintain["Picture2"] = this.destination_path.Trim() + destination_fileName.Trim();
+                            }
                         }
                     }
                 }
