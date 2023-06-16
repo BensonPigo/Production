@@ -339,11 +339,46 @@ from
 )l
 group by [POCode],[Process],[Facility],[PDate],[Color],[XSize]
 '
+
+-------------------------------------------------第五部分-------------------------------------------------
+/*
+ * 強制更新 PO# 各訂單的物料相關日期
+ * 
+ * 1. 找出今天有更新 510 的訂單資訊 ( 相同訂單物料相關日期皆相同，因此用 Max 即可 )
+ * 2. 根據 510 取出的訂單資料強制更新 PO 相對應的欄位
+ */
+Declare @PO varchar(66)
+Set @PO = concat('[',@ServerName,'].[',@DatabaseName,N'].[dbo].[PO]')
+Declare @cmd5 varchar(max)
+
+set @cmd5 =N'
+select sono
+		, MASTERMATERIALDATE = max (MASTERMATERIALDATE)
+		, MASTERMATERIALRECEIVEDDATE = max (MASTERMATERIALRECEIVEDDATE)
+		, MATERIALDATE = max (MATERIALDATE)
+		, MATERIALRECEIVEDDATE = max (MATERIALRECEIVEDDATE)
+into #o510
+from '+@SerDbDboTb+'
+where UPDT = format(GETDATE(),''yyyy-MM-dd'')
+group by sono
+
+update po
+set MASTERMATERIALDATE = o510.MASTERMATERIALDATE
+	, MASTERMATERIALRECEIVEDDATE = o510.MASTERMATERIALRECEIVEDDATE
+	, MATERIALDATE = o510.MATERIALDATE
+	, MATERIALRECEIVEDDATE = o510.MATERIALRECEIVEDDATE
+from '+@PO+' po
+inner join #o510 o510 on po.SALESORDERNO = o510.sono
+
+
+drop table #o510
+'
 	END
 	EXEC(@Cmd)
 	EXEC(@Cmd2)
 	EXEC(@Cmd3)
 	EXEC(@Cmd4)
+	EXEC(@Cmd5)
 
 	--Begin Try
 	--	EXEC(@Cmd)		
