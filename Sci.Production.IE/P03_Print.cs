@@ -7,6 +7,7 @@ using Sci.Data;
 using System.Runtime.InteropServices;
 using System.IO;
 using System.Linq;
+using System.Data.SqlClient;
 
 namespace Sci.Production.IE
 {
@@ -26,6 +27,7 @@ namespace Sci.Production.IE
         private DataTable nodistPPA;
         private DataTable nodist2PPA;
         private DataTable noppa;
+        private List<AttachmentData> AttachmentDataList;
         private decimal styleCPU;
         private decimal changp;
         private string changpPPA;
@@ -35,6 +37,8 @@ namespace Sci.Production.IE
         private decimal count2PPA;
         private bool change = false;
         private bool changePPA = false;
+        private bool nonSewing;
+        private bool isPPA;
 
         /// <summary>
         /// P03_Print
@@ -58,6 +62,12 @@ namespace Sci.Production.IE
         /// <returns>bool</returns>
         protected override bool ValidateInput()
         {
+            if (this.chkpagePPA.Checked && MyUtility.Check.Empty(this.txtPagePPA.Text))
+            {
+                MyUtility.Msg.ErrorBox("PPA can't be empty.");
+                return false;
+            }
+
             if (this.chkpagePPA.Checked && !this.txtPagePPA.Text.ToString().Substring(0, 1).ToUpper().EqualString("P"))
             {
                 MyUtility.Msg.ErrorBox("The first word must be P if the [Change page 2 at No(For PPA)] is checked.");
@@ -85,6 +95,8 @@ namespace Sci.Production.IE
             this.changp = MyUtility.Convert.GetDecimal(this.numpage.Value);
             this.changpPPA = this.txtPagePPA.Text.ToString();
             this.strLanguage = this.comboLanguage.SelectedValue.ToString();
+            this.nonSewing = this.chkNonSewing.Checked;
+            this.isPPA = this.chkPPA.Checked;
             return base.ValidateInput();
         }
 
@@ -101,28 +113,34 @@ namespace Sci.Production.IE
             decimal ttlnocount = MyUtility.Convert.GetInt(this.masterData["CurrentOperators"]);
             if (this.chkpage.Checked && ttlnocount > this.changp)
             {
-                sqlp1 = string.Format(
-                    @"
-select no = count(distinct no)
+                sqlp1 = $@"
+select no 
+into #tmp
 from LineMapping_Detail ld WITH (NOLOCK)
-where ld.ID = {0} 
-and (ld.IsPPa = 0 or ld.IsPPa is null) 
+where ld.ID = '{MyUtility.Convert.GetString(this.masterData["ID"])}'
+and ld.PPA != 'C'
 and (ld.IsHide = 0 or ld.IsHide is null)
-and no<={1}
-",
-                    MyUtility.Convert.GetString(this.masterData["ID"]),
-                    this.changp);
-                sqlp2 = string.Format(
-                    @"
-select no = count(distinct no)
+
+select count(distinct no)
+FROM #tmp
+where  no <= {this.changp}
+
+drop table #tmp
+";
+                sqlp2 = $@"
+select no 
+into #tmp
 from LineMapping_Detail ld WITH (NOLOCK)
-where ld.ID = {0} 
-and (ld.IsPPa = 0 or ld.IsPPa is null) 
+where ld.ID = '{MyUtility.Convert.GetString(this.masterData["ID"])} '
+and ld.PPA != 'C'
 and (ld.IsHide = 0 or ld.IsHide is null)
-and no>{1}
-",
-                    MyUtility.Convert.GetString(this.masterData["ID"]),
-                    this.changp);
+
+select count(distinct no)
+FROM #tmp
+where  no > {this.changp}
+
+drop table #tmp
+";
                 this.count1 = MyUtility.Convert.GetDecimal(MyUtility.GetValue.Lookup(sqlp1));
                 this.count2 = MyUtility.Convert.GetDecimal(MyUtility.GetValue.Lookup(sqlp2));
                 this.change = true;
@@ -136,35 +154,38 @@ and no>{1}
             #region 切分頁計算 takt Page3 PPA
             if (this.chkpagePPA.Checked)
             {
-                sqlp1 = string.Format(
-                    @"
+                sqlp1 = $@"
 select no = count(distinct no)
 from LineMapping_Detail ld WITH (NOLOCK)
-where ld.ID = {0} and IsPPa = 1 and IsHide = 0 and no <= '{1}'
-",
-                    MyUtility.Convert.GetString(this.masterData["ID"]),
-                    this.changpPPA);
-                sqlp2 = string.Format(
-                    @"
+where ld.ID = '{MyUtility.Convert.GetString(this.masterData["ID"])}' 
+--and IsPPa = 1 
+and IsHide = 0 
+and no <= '{this.changpPPA}'
+{(!this.isPPA ? " and ld.PPA != 'C' " : " and ld.PPA = 'C' ")}
+";
+                sqlp2 = $@"
 select no = count(distinct no)
 from LineMapping_Detail ld WITH (NOLOCK)
-where ld.ID = {0} and IsPPa = 1 and IsHide = 0 and no > '{1}'
-",
-                    MyUtility.Convert.GetString(this.masterData["ID"]),
-                    this.changpPPA);
+where ld.ID = '{MyUtility.Convert.GetString(this.masterData["ID"])}' 
+--and IsPPa = 1 
+and IsHide = 0 
+and no > '{this.changpPPA}'
+{(!this.isPPA ? " and ld.PPA != 'C' " : string.Empty)}
+";
                 this.count1PPA = MyUtility.Convert.GetDecimal(MyUtility.GetValue.Lookup(sqlp1));
                 this.count2PPA = MyUtility.Convert.GetDecimal(MyUtility.GetValue.Lookup(sqlp2));
                 this.changePPA = true;
             }
             else
             {
-                sqlp1 = string.Format(
-       @"
+                sqlp1 = $@"
 select no = count(distinct no)
 from LineMapping_Detail ld WITH (NOLOCK)
-where ld.ID = {0} and IsPPa = 1 and IsHide = 0
-",
-       MyUtility.Convert.GetString(this.masterData["ID"]));
+where ld.ID = '{MyUtility.Convert.GetString(this.masterData["ID"])}' 
+--and IsPPa = 1 
+and IsHide = 0
+{(!this.isPPA ? " and ld.PPA != 'C' " : string.Empty)}
+";
                 this.count1PPA = MyUtility.Convert.GetDecimal(MyUtility.GetValue.Lookup(sqlp1));
                 this.changePPA = false;
             }
@@ -173,8 +194,8 @@ where ld.ID = {0} and IsPPa = 1 and IsHide = 0
             string sqlCmd;
 
             #region 第一頁
-            sqlCmd = string.Format(
-                @"
+
+            sqlCmd = $@"
 select   a.GroupKey
         ,a.OperationID
         ,a.Annotation
@@ -184,20 +205,23 @@ select   a.GroupKey
         ,a.Attachment
         ,a.Template
         ,a.ThreadColor
-        ,DescEN = case when '{1}' = 'cn' then isnull(o.DescCH,o.DescEN)
-                       when '{1}' = 'vn' then isnull(o.DescVN,o.DescEN)
-                       when '{1}' = 'kh' then isnull(o.DescKH,o.DescEN)
+        ,DescEN = case when '{this.strLanguage}' = 'cn' then isnull(o.DescCH,o.DescEN)
+                       when '{this.strLanguage}' = 'vn' then isnull(o.DescVN,o.DescEN)
+                       when '{this.strLanguage}' = 'kh' then isnull(o.DescKH,o.DescEN)
             else o.DescEN end
         ,rn = ROW_NUMBER() over(order by case when left(a.No, 1) = 'P' then 1 when a.No <> '' then 2 else 3 end
 										,a.GroupKey ,iif(IsPPa=1,1,0) ,a.NO, a.MachineTypeID, a.Attachment, a.Template, a.ThreadColor)
         ,a.Cycle
         ,a.ActCycle
         ,a.IsPPa
+        ,a.PPA
         ,a.No
         ,[IsHide] = isnull(a.IsHide, 0)
         ,[GroupHeader] = iif(left(a.OperationID, 2) = '--', '', ld.OperationID)
         ,[IsShowinIEP03] = cast(iif( a.OperationID like '--%' , 1, isnull(show.IsShowinIEP03, 1)) as bit)
         ,[OtherBy] = concat(a.MachineTypeID,a.Attachment,a.Template,a.ThreadColor)
+		,a.SewingMachineAttachmentID
+        ,a.MachineCount
 from LineMapping_Detail a 
 left join Operation o WITH (NOLOCK) on o.ID = a.OperationID
 left join MachineType m WITH (NOLOCK) on m.id =  a.MachineTypeID
@@ -217,17 +241,22 @@ outer apply
 	)
 )ld
 outer apply (
-	select IsShowinIEP03 = IIF(isnull(md.IsNotShownInP03, 0) = 0, 1, 0)
-		, IsDesignatedArea = ISNULL(md.IsNonSewingLine,0)
-	from MachineType m WITH (NOLOCK)
-    inner join MachineType_Detail md WITH (NOLOCK) on md.ID = m.ID and md.FactoryID = '{2}'	
-	where o.MachineTypeID = m.ID and m.junk = 0
+	select IsShowinIEP03 = IIF(isnull(md2.IsNotShownInP03, 0) = 0, 1, 0)
+		, IsDesignatedArea = ISNULL(md2.IsNonSewingLine,0)
+	from MachineType m2 WITH (NOLOCK)
+    inner join MachineType_Detail md2 WITH (NOLOCK) on md2.ID = m2.ID and md2.FactoryID = '{MyUtility.Convert.GetString(this.masterData["FactoryID"])}'	
+	where o.MachineTypeID = m2.ID and m2.junk = 0
 )show
-where a.ID = {0}
-",
-                MyUtility.Convert.GetString(this.masterData["ID"]),
-                this.strLanguage,
-                MyUtility.Convert.GetString(this.masterData["FactoryID"]));
+where a.ID = {MyUtility.Convert.GetString(this.masterData["ID"])}
+{(!this.nonSewing ? $@" and not exists(
+    select 1 from MachineType_Detail md where md.ID = m.ID and md.IsNonSewingLine = 1
+)" : string.Empty)}
+{(!this.isPPA ? " and a.PPA != 'C' " : string.Empty)}
+
+";
+
+            List<AttachmentData> tmpAttachmentDataList = new List<AttachmentData>();
+            this.AttachmentDataList = new List<AttachmentData>();
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out this.machineTypeDT);
             if (!result)
             {
@@ -243,26 +272,238 @@ where a.ID = {0}
                 return failResult;
             }
 
+            foreach (DataRow dr in this.machineTypeDT.Rows)
+            {
+
+                if (MyUtility.Check.Empty(dr["No"]))
+                {
+                    // 沒有No的Attachment和Template都不要被計算
+                    continue;
+                }
+
+                AttachmentData rawData = new AttachmentData();
+                rawData.No = MyUtility.Convert.GetString(dr["No"]);
+                rawData.STMC_Type = MyUtility.Convert.GetString(dr["MachineTypeID"]);
+                rawData.MachineGroup = MyUtility.Convert.GetString(dr["MasterPlusGroup"]);
+                rawData.Template = MyUtility.Convert.GetString(dr["Template"]);
+                rawData.Attachment = MyUtility.Convert.GetString(dr["Attachment"]);
+                rawData.AttachmentPartID = MyUtility.Convert.GetString(dr["SewingMachineAttachmentID"]);
+                rawData.PPA = MyUtility.Convert.GetString(dr["PPA"]);
+                rawData.IsHide = MyUtility.Convert.GetBool(dr["IsHide"]);
+
+                tmpAttachmentDataList.Add(rawData);
+            }
+
+            /*  資料分成以下兩種，然後Attachment和Template都會有多筆(用逗號隔開)
+                ST/MC Type + Machine Group + No. + Attachment + PartID
+                ST/MC Type + Machine Group + No. + Template + PartID
+                其中，上面Template的PartID沒有有紀錄在表身，要動態查
+             */
+            foreach (var rawData in tmpAttachmentDataList)
+            {
+                string tt = string.Empty;
+                if (MyUtility.Check.Empty(rawData.Attachment) && MyUtility.Check.Empty(rawData.Template))
+                {
+                    continue;
+                }
+
+                // Attachment不為空
+                if (!MyUtility.Check.Empty(rawData.Attachment) && rawData.Attachment.Split(',').Where(o => !string.IsNullOrEmpty(o)).Any())
+                {
+                    var attList = rawData.Attachment.Split(',').Where(o => !string.IsNullOrEmpty(o));
+                    var partList = !MyUtility.Check.Empty(rawData.AttachmentPartID) && rawData.AttachmentPartID.Split(',').Where(o => !string.IsNullOrEmpty(o)).Any() ?
+                        rawData.AttachmentPartID.Split(',').Where(o => !string.IsNullOrEmpty(o)).ToList() : new List<string>();
+
+                    foreach (var att in attList)
+                    {
+                        // 紀錄該Attachment底下是否有任何PartID
+                        bool hasAnyPartID = false;
+
+                        if (partList.Any())
+                        {
+                            foreach (var part in partList)
+                            {
+                                // 覆蓋Attachment
+                                AttachmentData newData = new AttachmentData()
+                                {
+                                    No = rawData.No,
+                                    STMC_Type = rawData.STMC_Type,
+                                    MachineGroup = rawData.MachineGroup,
+                                    PPA = rawData.PPA,
+                                    IsHide = rawData.IsHide,
+                                    Attachment = att,
+                                };
+
+                                // 判斷Part 隸屬於這個Attachment
+                                string sql = $@" select 1 from SewingMachineAttachment  where MoldID = @Attachment and ID = @PartID ";
+                                List<SqlParameter> paras = new List<SqlParameter>()
+                                {
+                                    new SqlParameter("@Attachment", att),
+                                    new SqlParameter("@PartID", part),
+                                };
+                                bool isPartMatch = MyUtility.Check.Seek(sql, paras);
+
+                                if (isPartMatch)
+                                {
+                                    hasAnyPartID = true;
+
+                                    // 覆蓋PartID
+                                    newData.AttachmentPartID = part;
+                                    newData.Template = string.Empty;
+                                    bool exists = this.AttachmentDataList.Where(o => o.No == newData.No && o.STMC_Type == newData.STMC_Type && o.MachineGroup == newData.MachineGroup && o.Attachment == newData.Attachment && o.AttachmentPartID == newData.AttachmentPartID).Any();
+                                    if (!exists)
+                                    {
+                                        this.AttachmentDataList.Add(newData);
+                                    }
+                                }
+                                else
+                                {
+                                    // 判斷這個Part 是否隸屬其他 Attachment
+                                    var otherAtt = attList.Where(o => o != att).ToList();
+                                    List<string> otherAttStr = new List<string>();
+
+                                    int count = 0;
+                                    foreach (var item in otherAtt)
+                                    {
+                                        otherAttStr.Add($"@Attachment{count}");
+                                        paras.Add(new SqlParameter($"@Attachment{count}", item));
+                                    }
+
+                                    sql = $@" select 1 from SewingMachineAttachment  where MoldID != @Attachment and ID = @PartID and MoldID IN ({string.Join(",", otherAttStr)})";
+                                    isPartMatch = MyUtility.Check.Seek(sql, paras);
+
+                                    if (!isPartMatch)
+                                    {
+                                        newData.AttachmentPartID = string.Empty;
+                                        newData.Template = string.Empty;
+                                        bool exists = this.AttachmentDataList.Where(o => o.No == newData.No && o.STMC_Type == newData.STMC_Type && o.MachineGroup == newData.MachineGroup && o.Attachment == newData.Attachment && o.AttachmentPartID == newData.AttachmentPartID).Any();
+                                        if (!exists)
+                                        {
+                                            this.AttachmentDataList.Add(newData);
+                                        }
+                                    }
+                                }
+                            }
+
+                            // 如果Attachment底下沒有任何PartID，則塞一筆Part ID空白的資料
+                            if (hasAnyPartID == false)
+                            {
+                                AttachmentData newData = new AttachmentData()
+                                {
+                                    No = rawData.No,
+                                    STMC_Type = rawData.STMC_Type,
+                                    MachineGroup = rawData.MachineGroup,
+                                    PPA = rawData.PPA,
+                                    IsHide = rawData.IsHide,
+                                    Attachment = att,
+                                };
+                                newData.AttachmentPartID = string.Empty;
+                                newData.Template = string.Empty;
+                                bool exists = this.AttachmentDataList.Where(o => o.No == newData.No && o.STMC_Type == newData.STMC_Type && o.MachineGroup == newData.MachineGroup && o.Attachment == newData.Attachment && o.AttachmentPartID == newData.AttachmentPartID).Any();
+                                if (!exists)
+                                {
+                                    this.AttachmentDataList.Add(newData);
+                                }
+                            }
+                        }
+                        else
+                        {
+                            // 覆蓋Attachment
+                            AttachmentData newData = new AttachmentData()
+                            {
+                                No = rawData.No,
+                                STMC_Type = rawData.STMC_Type,
+                                MachineGroup = rawData.MachineGroup,
+                                PPA = rawData.PPA,
+                                IsHide = rawData.IsHide,
+                                Attachment = att,
+                                Template = string.Empty,
+                            };
+
+                            this.AttachmentDataList.Add(newData);
+                        }
+                    }
+                }
+
+                // Template不為空，要動態查Template的PartID
+                if (!MyUtility.Check.Empty(rawData.Template) && rawData.Template.Split(',').Where(o => !string.IsNullOrEmpty(o)).Any())
+                {
+                    var templateList = rawData.Template.Split(',').Where(o => !string.IsNullOrEmpty(o));
+
+                    foreach (var template in templateList)
+                    {
+                        // 覆蓋Template
+                        AttachmentData newData = new AttachmentData()
+                        {
+                            No = rawData.No,
+                            STMC_Type = rawData.STMC_Type,
+                            MachineGroup = rawData.MachineGroup,
+                            PPA = rawData.PPA,
+                            IsHide = rawData.IsHide,
+                            Template = template,
+                        };
+
+                        // 覆蓋Attachment
+                        newData.Template = template;
+
+                        string sql = $@"
+select PartID = smt.ID , m.DescEN ,MoldID = m.ID
+from Mold m WITH (NOLOCK)
+right join SewingMachineTemplate smt on m.ID = smt.MoldID
+where m.Junk = 0 and m.IsTemplate = 1 and smt.Junk = 0 AND smt.ID = @Template
+";
+                        List<SqlParameter> paras = new List<SqlParameter>()
+                        {
+                            new SqlParameter("@Template", template),
+                        };
+
+                        DataTable dt;
+                        DualResult r = DBProxy.Current.Select(null, sql, paras, out dt);
+
+                        if (!r)
+                        {
+                            this.ShowErr(r);
+                        }
+
+                        string moldID = string.Empty;
+                        if (dt.Rows != null && dt.Rows.Count > 0)
+                        {
+                            moldID = MyUtility.Convert.GetString(dt.Rows[0]["MoldID"]);
+                        }
+
+                        newData.TemplateMoldID = moldID;
+                        bool exists = this.AttachmentDataList.Where(o => o.No == newData.No && o.STMC_Type == newData.STMC_Type && o.MachineGroup == newData.MachineGroup && o.Template == newData.Template && o.TemplateMoldID == newData.TemplateMoldID).Any();
+                        if (!exists)
+                        {
+                            newData.Attachment = string.Empty;
+                            this.AttachmentDataList.Add(newData);
+                        }
+                    }
+                }
+            }
+
             this.operationCode = this.machineTypeDT.AsEnumerable().Where(x => x.Field<bool>("IsShowinIEP03")).CopyToDataTable();
             #endregion
             #region Machine Type IsPPa
-            sqlCmd = string.Format(
-                @"
+
+            sqlCmd = $@"
 select   ld.OperationID
         ,ld.MachineTypeID--MachineTypeID = iif(m.MachineGroupID = '','',ld.MachineTypeID)
         ,ld.Annotation
-        ,DescEN = case when '{1}' = 'cn' then isnull(o.DescCH,o.DescEN)
-                       when '{1}' = 'vn' then isnull(o.DescVN,o.DescEN)
-                       when '{1}' = 'kh' then isnull(o.DescKH,o.DescEN)
+        ,DescEN = case when '{this.strLanguage}' = 'cn' then isnull(o.DescCH,o.DescEN)
+                       when '{this.strLanguage}' = 'vn' then isnull(o.DescVN,o.DescEN)
+                       when '{this.strLanguage}' = 'kh' then isnull(o.DescKH,o.DescEN)
             else o.DescEN end
 from LineMapping_Detail ld WITH (NOLOCK)
 left join MachineType m WITH (NOLOCK) on m.id =  MachineTypeID
 left join Operation o WITH (NOLOCK) on o.ID = ld.OperationID
-where ld.ID = {0} and (ld.IsHide = 1 or ld.IsPPa  = 1)
+where ld.ID = {MyUtility.Convert.GetString(this.masterData["ID"])} and (ld.IsHide = 1 or ld.IsPPa  = 1)
 and left(ld.OperationID, 2) != '--'
-order by ld.No,ld.GroupKey",
-                MyUtility.Convert.GetString(this.masterData["ID"]),
-                this.strLanguage);
+and (ld.IsHide = 1  {(!this.isPPA ? "or ld.PPA != 'C' " : string.Empty)})
+order by ld.No,ld.GroupKey
+
+
+";
             result = DBProxy.Current.Select(null, sqlCmd, out this.noppa);
             if (!result)
             {
@@ -274,8 +515,7 @@ order by ld.No,ld.GroupKey",
             #region 第二頁
             if (!this.change)
             {
-                sqlCmd = string.Format(
-                    @"
+                sqlCmd = $@"
 select No 
     ,CT = COUNT(1)
     ,[ActCycle] = Max(ld.ActCycle)
@@ -288,9 +528,9 @@ OUTER APPLY(
 		FROM 
 		(
 			select  ld.*
-					, Description = case when '{1}' = 'cn' then isnull(o.DescCH,o.DescEN)
-                                         when '{1}' = 'vn' then isnull(o.DescVN,o.DescEN)
-                                         when '{1}' = 'kh' then isnull(o.DescKH,o.DescEN)
+					, Description = case when '{this.strLanguage}' = 'cn' then isnull(o.DescCH,o.DescEN)
+                                         when '{this.strLanguage}' = 'vn' then isnull(o.DescVN,o.DescEN)
+                                         when '{this.strLanguage}' = 'kh' then isnull(o.DescKH,o.DescEN)
                                          else o.DescEN end
 					, e.Name as EmployeeName
 					, e.Skill as EmployeeSkill
@@ -298,18 +538,17 @@ OUTER APPLY(
 			from LineMapping_Detail ld WITH (NOLOCK) 
 			left join Employee e WITH (NOLOCK) on ld.EmployeeID = e.ID
 			left join Operation o WITH (NOLOCK) on ld.OperationID = o.ID
-			where ld.ID = {0} AND No <> ''
+			where ld.ID = {MyUtility.Convert.GetString(this.masterData["ID"])} AND No <> ''
 		)a
 	)b
 )ActCycle
-where ld.ID = {0} 
-and (ld.IsPPa = 0 or ld.IsPPa is null) 
+where ld.ID = {MyUtility.Convert.GetString(this.masterData["ID"])} 
 and (ld.IsHide = 0 or ld.IsHide is null)
 and no <> ''
+and ld.PPA != 'C' 
 GROUP BY NO ,ActCycle.Value
-order by no",
-                    MyUtility.Convert.GetString(this.masterData["ID"]),
-                    this.strLanguage);
+order by no
+";
                 result = DBProxy.Current.Select(null, sqlCmd, out this.nodist);
                 if (!result)
                 {
@@ -322,15 +561,22 @@ order by no",
             else
             {
                 #region
-                sqlCmd = string.Format(
-                    @"
+
+                sqlCmd = $@"
+select distinct ld.ID ,no
+into #tmpBase
+from LineMapping_Detail ld WITH (NOLOCK)
+where ld.ID = '{MyUtility.Convert.GetString(this.masterData["ID"])}'
+and ld.PPA != 'C'
+and (ld.IsHide = 0 or ld.IsHide is null)
+
+
 select id, minno = min(no), maxno = max(no)
 into #tmp
 from(
-	select distinct ld.ID,no
-	from LineMapping_Detail ld WITH (NOLOCK)
-	where ld.ID = {0} and (IsPPa = 0 or IsPPa is null)
-	and no <= {1}
+	select  ID ,no
+	from #tmpBase
+	where no <= {this.changp} 
 )x
 group by ID
 
@@ -347,9 +593,9 @@ OUTER APPLY(
 		FROM 
 		(
 			select  ld.*
-					, Description = case when '{2}' = 'cn' then isnull(o.DescCH,o.DescEN)
-                                         when '{2}' = 'vn' then isnull(o.DescVN,o.DescEN)
-                                         when '{2}' = 'kh' then isnull(o.DescKH,o.DescEN)
+					, Description = case when '{this.strLanguage}' = 'cn' then isnull(o.DescCH,o.DescEN)
+                                         when '{this.strLanguage}' = 'vn' then isnull(o.DescVN,o.DescEN)
+                                         when '{this.strLanguage}' = 'kh' then isnull(o.DescKH,o.DescEN)
                                          else o.DescEN end
 					, e.Name as EmployeeName
 					, e.Skill as EmployeeSkill
@@ -357,7 +603,7 @@ OUTER APPLY(
 			from LineMapping_Detail ld WITH (NOLOCK) 
 			left join Employee e WITH (NOLOCK) on ld.EmployeeID = e.ID
 			left join Operation o WITH (NOLOCK) on ld.OperationID = o.ID
-			where ld.ID = {0} AND No <> ''
+			where ld.ID = {MyUtility.Convert.GetString(this.masterData["ID"])} AND No <> ''
 		)a
 	)b
 )ActCycle
@@ -365,12 +611,13 @@ where  (ld.IsPPa = 0 or ld.IsPPa is null)
 and (ld.IsHide = 0 or ld.IsHide is null) 
 and no between t.minno and t.maxno
 and no <> ''
+and ld.PPA != 'C'
 GROUP BY NO ,ActCycle.Value
 order by no
-",
-                    MyUtility.Convert.GetString(this.masterData["ID"]),
-                    this.changp,
-                    this.strLanguage);
+
+drop table #tmpBase,#tmp
+";
+
                 result = DBProxy.Current.Select(null, sqlCmd, out this.nodist);
                 if (!result)
                 {
@@ -378,15 +625,21 @@ order by no
                     return failResult;
                 }
 
-                sqlCmd = string.Format(
-                    @"
+                sqlCmd = $@"
+select distinct ld.ID ,no
+into #tmpBase
+from LineMapping_Detail ld WITH (NOLOCK)
+where ld.ID = '{MyUtility.Convert.GetString(this.masterData["ID"])}'
+and ld.PPA != 'C'
+and (ld.IsHide = 0 or ld.IsHide is null)
+
+
 select id, minno = min(no), maxno = max(no)
 into #tmp
 from(
-	select distinct ld.ID,no
-	from LineMapping_Detail ld WITH (NOLOCK)
-	where ld.ID = {0} and (IsPPa = 0 or IsPPa is null) 
-	and no > {1}
+	select  ID ,no
+	from #tmpBase
+	where no > {this.changp} 
 )x
 group by ID
 
@@ -402,9 +655,9 @@ OUTER APPLY(
 		FROM 
 		(
 			select  ld.*
-					, Description = case when '{2}' = 'cn' then isnull(o.DescCH,o.DescEN)
-                                         when '{2}' = 'vn' then isnull(o.DescVN,o.DescEN)
-                                         when '{2}' = 'kh' then isnull(o.DescKH,o.DescEN)
+					, Description = case when '{this.strLanguage}' = 'cn' then isnull(o.DescCH,o.DescEN)
+                                         when '{this.strLanguage}' = 'vn' then isnull(o.DescVN,o.DescEN)
+                                         when '{this.strLanguage}' = 'kh' then isnull(o.DescKH,o.DescEN)
                                          else o.DescEN end
 					, e.Name as EmployeeName
 					, e.Skill as EmployeeSkill
@@ -412,21 +665,18 @@ OUTER APPLY(
 			from LineMapping_Detail ld WITH (NOLOCK) 
 			left join Employee e WITH (NOLOCK) on ld.EmployeeID = e.ID
 			left join Operation o WITH (NOLOCK) on ld.OperationID = o.ID
-			where ld.ID = {0} AND No <> ''
+			where ld.ID = {MyUtility.Convert.GetString(this.masterData["ID"])} AND No <> ''
 		)a
 	)b
 )ActCycle
 where  (ld.IsPPa = 0 or ld.IsPPa is null) 
 and (ld.IsHide = 0 or ld.IsHide is null) 
 and no between t.minno and t.maxno
-and not <> ''
+and ld.PPA != 'C'
 GROUP BY NO ,ActCycle.Value
 order by no
 
-",
-                    MyUtility.Convert.GetString(this.masterData["ID"]),
-                    this.changp,
-                    this.strLanguage);
+";
                 result = DBProxy.Current.Select(null, sqlCmd, out this.nodist2);
                 if (!result)
                 {
@@ -440,39 +690,46 @@ order by no
             #region 第三頁 PPA
             if (!this.changePPA)
             {
-                sqlCmd = string.Format(
-                    @"
+
+                sqlCmd = $@"
 select No 
     ,CT = COUNT(1)
     ,[ActCycle] = Max(ld.ActCycle)
     ,[ActCycleTime(average)]=ActCycle.Value
 from LineMapping_Detail ld WITH (NOLOCK) 
+left join MachineType m WITH (NOLOCK) on m.id =  ld.MachineTypeID
 OUTER APPLY(
 	SELECT [Value]=SUM(ActCycle)/COUNT(NO) FROM 
 	(
 		SELECT DISTINCT No, ActCycle, TotalGSD, TotalCycle
 		FROM 
 		(
-			select  ld.*
-					, Description = case when '{1}' = 'cn' then isnull(o.DescCH,o.DescEN)
-                                         when '{1}' = 'vn' then isnull(o.DescVN,o.DescEN)
-                                         when '{1}' = 'kh' then isnull(o.DescKH,o.DescEN)
+			select  ldd.*
+					, Description = case when '{this.strLanguage}' = 'cn' then isnull(o.DescCH,o.DescEN)
+                                         when '{this.strLanguage}' = 'vn' then isnull(o.DescVN,o.DescEN)
+                                         when '{this.strLanguage}' = 'kh' then isnull(o.DescKH,o.DescEN)
                                          else o.DescEN end
 					, e.Name as EmployeeName
 					, e.Skill as EmployeeSkill
-					, iif(ld.Cycle = 0,0,ROUND(ld.GSD/ld.Cycle,2)*100) as Efficiency
-			from LineMapping_Detail ld WITH (NOLOCK) 
-			left join Employee e WITH (NOLOCK) on ld.EmployeeID = e.ID
-			left join Operation o WITH (NOLOCK) on ld.OperationID = o.ID
-			where ld.ID = {0} and IsPPa = 1 and IsHide = 0
+					, iif(ldd.Cycle = 0,0,ROUND(ldd.GSD/ldd.Cycle,2)*100) as Efficiency
+			from LineMapping_Detail ldd WITH (NOLOCK) 
+			left join Employee e WITH (NOLOCK) on ldd.EmployeeID = e.ID
+			left join Operation o WITH (NOLOCK) on ldd.OperationID = o.ID
+			where ldd.ID = {MyUtility.Convert.GetString(this.masterData["ID"])} and IsHide = 0 and ldd.PPA = 'C' 
 		)a
 	)b
 )ActCycle
-where ld.ID = {0} and IsPPa = 1 and IsHide = 0
+where ld.ID = {MyUtility.Convert.GetString(this.masterData["ID"])} and IsHide = 0
+
+{(!this.nonSewing ? $@" and not exists(
+    select 1 from MachineType_Detail md where md.ID = m.ID and md.IsNonSewingLine = 1
+)" : string.Empty)}
+
+{(!this.isPPA ? " and ld.PPA = 'C' and ld.PPA != '' " : " and ld.PPA = 'C' " )}
 GROUP BY NO, ActCycle.Value
-order by NO",
-                    MyUtility.Convert.GetString(this.masterData["ID"]),
-                    this.strLanguage);
+order by NO
+
+";
                 result = DBProxy.Current.Select(null, sqlCmd, out this.nodistPPA);
                 if (!result)
                 {
@@ -485,15 +742,15 @@ order by NO",
             else
             {
                 #region
-                sqlCmd = string.Format(
-                    @"
+
+                sqlCmd = $@"
 select id, minno = min(no), maxno = max(no)
 into #tmp
 from(
 	select distinct ld.ID,no
 	from LineMapping_Detail ld WITH (NOLOCK)
-	where ld.ID = {0} and IsPPa = 1 and IsHide = 0 
-	and no <= '{1}'
+	where ld.ID = {MyUtility.Convert.GetString(this.masterData["ID"])} and IsHide = 0 and ld.PPA = 'C' 
+	and no <= '{this.changpPPA}'
 )x
 group by ID
 
@@ -503,36 +760,37 @@ select No
     ,[ActCycleTime(average)]=ActCycle.Value
 from LineMapping_Detail ld WITH (NOLOCK) 
 inner join #tmp t on ld.ID = t.ID
+left join MachineType m WITH (NOLOCK) on m.id =  ld.MachineTypeID
 OUTER APPLY(
 	SELECT [Value]=SUM(ActCycle)/COUNT(NO) FROM 
 	(
 		SELECT DISTINCT No, ActCycle, TotalGSD, TotalCycle
 		FROM 
 		(
-			select  ld.*
-					, Description = case when '{2}' = 'cn' then isnull(o.DescCH,o.DescEN)
-                                         when '{2}' = 'vn' then isnull(o.DescVN,o.DescEN)
-                                         when '{2}' = 'kh' then isnull(o.DescKH,o.DescEN)
+			select  ldd.*
+					, Description = case when '{this.strLanguage}' = 'cn' then isnull(o.DescCH,o.DescEN)
+                                         when '{this.strLanguage}' = 'vn' then isnull(o.DescVN,o.DescEN)
+                                         when '{this.strLanguage}' = 'kh' then isnull(o.DescKH,o.DescEN)
                                          else o.DescEN end
 					, e.Name as EmployeeName
 					, e.Skill as EmployeeSkill
-					, iif(ld.Cycle = 0,0,ROUND(ld.GSD/ld.Cycle,2)*100) as Efficiency
-			from LineMapping_Detail ld WITH (NOLOCK) 
-			left join Employee e WITH (NOLOCK) on ld.EmployeeID = e.ID
-			left join Operation o WITH (NOLOCK) on ld.OperationID = o.ID
-			where ld.ID = {0} AND No <> '' and IsPPa = 1 and IsHide = 0
+					, iif(ldd.Cycle = 0,0,ROUND(ldd.GSD/ldd.Cycle,2)*100) as Efficiency
+			from LineMapping_Detail ldd WITH (NOLOCK) 
+			left join Employee e WITH (NOLOCK) on ldd.EmployeeID = e.ID
+			left join Operation o WITH (NOLOCK) on ldd.OperationID = o.ID
+			where ldd.ID = {MyUtility.Convert.GetString(this.masterData["ID"])} AND No <> '' and IsHide = 0 and ldd.PPA = 'C' 
 		)a
 	)b
 )ActCycle
-where IsPPa = 1 and IsHide = 0 
+where /*IsPPa = 1 and*/  IsHide = 0 
 and no between t.minno and t.maxno
+and ld.PPA = 'C' 
+{(!this.nonSewing ? $@" and not exists(
+    select 1 from MachineType_Detail md where md.ID = m.ID and md.IsNonSewingLine = 1
+)" : string.Empty)}
 GROUP BY NO, ActCycle.Value
 order by NO
-
-",
-                    MyUtility.Convert.GetString(this.masterData["ID"]),
-                    this.changpPPA,
-                    this.strLanguage);
+";
                 result = DBProxy.Current.Select(null, sqlCmd, out this.nodistPPA);
                 if (!result)
                 {
@@ -540,15 +798,15 @@ order by NO
                     return failResult;
                 }
 
-                sqlCmd = string.Format(
-                    @"
+                sqlCmd = $@"
 select id, minno = min(no), maxno = max(no)
 into #tmp
 from(
 	select distinct ld.ID,no
 	from LineMapping_Detail ld WITH (NOLOCK)
-	where ld.ID = {0} and IsPPa = 1 and IsHide = 0 
-	and no > '{1}'
+	where ld.ID = {MyUtility.Convert.GetString(this.masterData["ID"])} and IsHide = 0 
+    {(!this.isPPA ? " and ld.PPA != 'C' " : " and ld.PPA != '' ")}
+	and no > '{this.changpPPA}'
 )x
 group by ID
 
@@ -558,36 +816,39 @@ select No
     ,[ActCycleTime(average)]=ActCycle.Value
 from LineMapping_Detail ld WITH (NOLOCK) 
 inner join #tmp t on ld.ID = t.ID
+left join MachineType m WITH (NOLOCK) on m.id =  ld.MachineTypeID
 OUTER APPLY(
 	SELECT [Value]=SUM(ActCycle)/COUNT(NO) FROM 
 	(
 		SELECT DISTINCT No, ActCycle, TotalGSD, TotalCycle
 		FROM 
 		(
-			select  ld.*
-					, Description = case when '{2}' = 'cn' then isnull(o.DescCH,o.DescEN)
-                                         when '{2}' = 'vn' then isnull(o.DescVN,o.DescEN)
-                                         when '{2}' = 'kh' then isnull(o.DescKH,o.DescEN)
+			select  ldd.*
+					, Description = case when '{this.strLanguage}' = 'cn' then isnull(o.DescCH,o.DescEN)
+                                         when '{this.strLanguage}' = 'vn' then isnull(o.DescVN,o.DescEN)
+                                         when '{this.strLanguage}' = 'kh' then isnull(o.DescKH,o.DescEN)
                                          else o.DescEN end
 					, e.Name as EmployeeName
 					, e.Skill as EmployeeSkill
-					, iif(ld.Cycle = 0,0,ROUND(ld.GSD/ld.Cycle,2)*100) as Efficiency
-			from LineMapping_Detail ld WITH (NOLOCK) 
-			left join Employee e WITH (NOLOCK) on ld.EmployeeID = e.ID
-			left join Operation o WITH (NOLOCK) on ld.OperationID = o.ID
-			where ld.ID = {0} AND IsPPa = 1 and IsHide = 0 
+					, iif(ldd.Cycle = 0,0,ROUND(ldd.GSD/ldd.Cycle,2)*100) as Efficiency
+			from LineMapping_Detail ldd WITH (NOLOCK) 
+			left join Employee e WITH (NOLOCK) on ldd.EmployeeID = e.ID
+			left join Operation o WITH (NOLOCK) on ldd.OperationID = o.ID
+			where ldd.ID = {MyUtility.Convert.GetString(this.masterData["ID"])} and IsHide = 0 and ldd.PPA = 'C'
 		)a
 	)b
 )ActCycle
-where IsPPa = 1 and IsHide = 0 
+where IsHide = 0 
 and no between t.minno and t.maxno
+and ld.PPA = 'C'
+{(!this.nonSewing ? $@" and not exists(
+    select 1 from MachineType_Detail md where md.ID = m.ID and md.IsNonSewingLine = 1
+)" : string.Empty)}
+
 GROUP BY NO, ActCycle.Value
 order by NO
 
-",
-                    MyUtility.Convert.GetString(this.masterData["ID"]),
-                    this.changpPPA,
-                    this.strLanguage);
+";
                 result = DBProxy.Current.Select(null, sqlCmd, out this.nodist2PPA);
                 if (!result)
                 {
@@ -632,11 +893,11 @@ order by NO
             worksheet.Cells[2, 2] = style + " " + season + " " + brand + " " + combotype;
 
             // excel 範圍別名宣告 公式使用
-            excel.ActiveWorkbook.Names.Add("Operation", worksheet.Range["A6", "L" + this.operationCode.Rows.Count + 5]);
+            excel.ActiveWorkbook.Names.Add("Operation", worksheet.Range["A6", "N" + this.operationCode.Rows.Count + 5]);
 
             // 填Operation
             int intRowsStart = 6;
-            object[,] objArray = new object[1, 12];
+            object[,] objArray = new object[1, 13];
             foreach (DataRow dr in this.operationCode.Rows)
             {
                 objArray[0, 0] = dr["rn"];
@@ -645,26 +906,27 @@ order by NO
                 objArray[0, 3] = dr["MachineTypeID"];
                 objArray[0, 4] = dr["MasterPlusGroup"];
                 objArray[0, 5] = dr["Attachment"];
-                objArray[0, 6] = dr["Template"];
-                objArray[0, 7] = dr["GSD"];
-                objArray[0, 8] = dr["Cycle"];
-                objArray[0, 9] = dr["ThreadColor"];
-                objArray[0, 10] = dr["OperationID"];
-                objArray[0, 11] = $"=CONCATENATE(D{intRowsStart},\" \",F{intRowsStart},\" \",G{intRowsStart},\" \",J{intRowsStart})";
-                worksheet.Range[string.Format("A{0}:L{0}", intRowsStart)].Value2 = objArray;
+                objArray[0, 6] = dr["SewingMachineAttachmentID"];
+                objArray[0, 7] = dr["Template"];
+                objArray[0, 8] = dr["GSD"];
+                objArray[0, 9] = dr["Cycle"];
+                objArray[0, 10] = dr["ThreadColor"];
+                objArray[0, 11] = dr["OperationID"];
+                objArray[0, 12] = $"=CONCATENATE(D{intRowsStart},\" \",F{intRowsStart},\" \",H{intRowsStart},\" \",K{intRowsStart})";
+                worksheet.Range[string.Format("A{0}:M{0}", intRowsStart)].Value2 = objArray;
                 intRowsStart++;
             }
 
             worksheet.Cells[intRowsStart, 1] = string.Format("=MAX($A$2:A{0})+1", intRowsStart - 1);
 
             // time
-            worksheet.Cells[intRowsStart, 7] = string.Format("=SUM(H6:H{0})", intRowsStart - 1);
-            worksheet.Range[string.Format("A5:K{0}", intRowsStart)].Borders.Weight = 1; // 1: 虛線, 2:實線, 3:粗體線
-            worksheet.Range[string.Format("A5:K{0}", intRowsStart)].Borders.LineStyle = 1;
+            worksheet.Cells[intRowsStart, 8] = string.Format("=SUM(I6:I{0})", intRowsStart - 1);
+            worksheet.Range[string.Format("A5:L{0}", intRowsStart)].Borders.Weight = 1; // 1: 虛線, 2:實線, 3:粗體線
+            worksheet.Range[string.Format("A5:L{0}", intRowsStart)].Borders.LineStyle = 1;
 
             intRowsStart++;
-            worksheet.Cells[intRowsStart, 7] = string.Format("=G{0}/{1}", intRowsStart - 1, MyUtility.Convert.GetInt(this.masterData["CurrentOperators"]));
-            worksheet.get_Range("G" + intRowsStart, "G" + intRowsStart).Font.Bold = true;
+            worksheet.Cells[intRowsStart, 8] = string.Format("=H{0}/{1}", intRowsStart - 1, MyUtility.Convert.GetInt(this.masterData["CurrentOperators"]));
+            worksheet.get_Range("H" + intRowsStart, "H" + intRowsStart).Font.Bold = true;
 
             intRowsStart++;
             worksheet.Cells[intRowsStart, 2] = "Picture";
@@ -710,13 +972,13 @@ order by NO
             #region 第二頁
             if (this.change)
             {
-                this.ExcelMainData(excel.ActiveWorkbook.Worksheets[2], excel.ActiveWorkbook.Worksheets[3], excel.ActiveWorkbook.Worksheets[4], factory, style, this.nodist, this.count1);
-                this.ExcelMainData(excel.ActiveWorkbook.Worksheets[5], excel.ActiveWorkbook.Worksheets[6], excel.ActiveWorkbook.Worksheets[7], factory, style, this.nodist2, this.count2);
+                this.ExcelMainData(excel.ActiveWorkbook.Worksheets[2], excel.ActiveWorkbook.Worksheets[3], excel.ActiveWorkbook.Worksheets[4], factory, style, this.nodist, this.count1, "Line Mapping");
+                this.ExcelMainData(excel.ActiveWorkbook.Worksheets[5], excel.ActiveWorkbook.Worksheets[6], excel.ActiveWorkbook.Worksheets[7], factory, style, this.nodist2, this.count2, "Line Mapping");
             }
             else
             {
                 decimal currentOperators = this.masterData["CurrentOperators"] == null ? 0 : Convert.ToDecimal(this.masterData["CurrentOperators"]);
-                this.ExcelMainData(excel.ActiveWorkbook.Worksheets[2], excel.ActiveWorkbook.Worksheets[3], excel.ActiveWorkbook.Worksheets[4], factory, style, this.nodist, currentOperators);
+                this.ExcelMainData(excel.ActiveWorkbook.Worksheets[2], excel.ActiveWorkbook.Worksheets[3], excel.ActiveWorkbook.Worksheets[4], factory, style, this.nodist, currentOperators, "Line Mapping");
                 excel.ActiveWorkbook.Worksheets[5].Visible = Microsoft.Office.Interop.Excel.XlSheetVisibility.xlSheetHidden;
                 excel.ActiveWorkbook.Worksheets[6].Visible = Microsoft.Office.Interop.Excel.XlSheetVisibility.xlSheetHidden;
                 excel.ActiveWorkbook.Worksheets[7].Visible = Microsoft.Office.Interop.Excel.XlSheetVisibility.xlSheetHidden;
@@ -726,12 +988,12 @@ order by NO
             #region 第三頁
             if (this.changePPA)
             {
-                this.ExcelMainData(excel.ActiveWorkbook.Worksheets[8], excel.ActiveWorkbook.Worksheets[9], excel.ActiveWorkbook.Worksheets[10], factory, style, this.nodistPPA, this.count1PPA, true);
-                this.ExcelMainData(excel.ActiveWorkbook.Worksheets[11], excel.ActiveWorkbook.Worksheets[12], excel.ActiveWorkbook.Worksheets[13], factory, style, this.nodist2PPA, this.count2PPA, true);
+                this.ExcelMainData(excel.ActiveWorkbook.Worksheets[8], excel.ActiveWorkbook.Worksheets[9], excel.ActiveWorkbook.Worksheets[10], factory, style, this.nodistPPA, this.count1PPA, "PPA & non-sewing", true);
+                this.ExcelMainData(excel.ActiveWorkbook.Worksheets[11], excel.ActiveWorkbook.Worksheets[12], excel.ActiveWorkbook.Worksheets[13], factory, style, this.nodist2PPA, this.count2PPA, "PPA & non-sewing", true);
             }
             else
             {
-                this.ExcelMainData(excel.ActiveWorkbook.Worksheets[8], excel.ActiveWorkbook.Worksheets[9], excel.ActiveWorkbook.Worksheets[10], factory, style, this.nodistPPA, this.count1PPA, true);
+                this.ExcelMainData(excel.ActiveWorkbook.Worksheets[8], excel.ActiveWorkbook.Worksheets[9], excel.ActiveWorkbook.Worksheets[10], factory, style, this.nodistPPA, this.count1PPA, "PPA & non-sewing", true);
                 excel.ActiveWorkbook.Worksheets[11].Visible = Microsoft.Office.Interop.Excel.XlSheetVisibility.xlSheetHidden;
                 excel.ActiveWorkbook.Worksheets[12].Visible = Microsoft.Office.Interop.Excel.XlSheetVisibility.xlSheetHidden;
                 excel.ActiveWorkbook.Worksheets[13].Visible = Microsoft.Office.Interop.Excel.XlSheetVisibility.xlSheetHidden;
@@ -764,16 +1026,16 @@ order by NO
             worksheet.Cells[rownum, 20] = $"=IF(ISNA(VLOOKUP(S{rownum},Operation,3,0)),\"\",VLOOKUP(S{rownum},Operation,3,0))";
 
             // GSD
-            worksheet.Cells[rownum, 3] = $"=IF(ISNA(VLOOKUP(D{rownum},Operation,8,0)),\"\",VLOOKUP(D{rownum},Operation,8,0))";
-            worksheet.Cells[rownum, 23] = $"=IF(ISNA(VLOOKUP(S{rownum},Operation,8,0)),\"\",VLOOKUP(S{rownum},Operation,8,0))";
+            worksheet.Cells[rownum, 3] = $"=IF(ISNA(VLOOKUP(D{rownum},Operation,9,0)),\"\",VLOOKUP(D{rownum},Operation,9,0))";
+            worksheet.Cells[rownum, 23] = $"=IF(ISNA(VLOOKUP(S{rownum},Operation,9,0)),\"\",VLOOKUP(S{rownum},Operation,9,0))";
 
             // TMS
-            worksheet.Cells[rownum, 2] = $"=IF(ISNA(VLOOKUP(D{rownum},Operation,9,0)),\"\",VLOOKUP(D{rownum},Operation,9,0))";
-            worksheet.Cells[rownum, 24] = $"=IF(ISNA(VLOOKUP(S{rownum},Operation,9,0)),\"\",VLOOKUP(S{rownum},Operation,9,0))";
+            worksheet.Cells[rownum, 2] = $"=IF(ISNA(VLOOKUP(D{rownum},Operation,10,0)),\"\",VLOOKUP(D{rownum},Operation,10,0))";
+            worksheet.Cells[rownum, 24] = $"=IF(ISNA(VLOOKUP(S{rownum},Operation,10,0)),\"\",VLOOKUP(S{rownum},Operation,10,0))";
 
             // ST/MC type
-            worksheet.Cells[rownum, 10] = $"=IF(ISNA(VLOOKUP(D{rownum},Operation,12,0)),\"\",IF(VLOOKUP(D{rownum},Operation,12,0)=IF(ISNA(VLOOKUP(D{rownum - 1},Operation,12,0)),\"\",VLOOKUP(D{rownum - 1},Operation,12,0)),\"\",VLOOKUP(D{rownum},Operation,12,0)))";
-            worksheet.Cells[rownum, 17] = $"=IF(ISNA(VLOOKUP(S{rownum},Operation,12,0)),\"\",IF(VLOOKUP(S{rownum},Operation,12,0)=IF(ISNA(VLOOKUP(S{rownum - 1},Operation,12,0)),\"\",VLOOKUP(S{rownum - 1},Operation,12,0)),\"\",VLOOKUP(S{rownum},Operation,12,0)))";
+            worksheet.Cells[rownum, 10] = $"=IF(ISNA(VLOOKUP(D{rownum},Operation,13,0)),\"\",IF(VLOOKUP(D{rownum},Operation,13,0)=IF(ISNA(VLOOKUP(D{rownum - 1},Operation,13,0)),\"\",VLOOKUP(D{rownum - 1},Operation,13,0)),\"\",VLOOKUP(D{rownum},Operation,13,0)))";
+            worksheet.Cells[rownum, 17] = $"=IF(ISNA(VLOOKUP(S{rownum},Operation,13,0)),\"\",IF(VLOOKUP(S{rownum},Operation,13,0)=IF(ISNA(VLOOKUP(S{rownum - 1},Operation,13,0)),\"\",VLOOKUP(S{rownum - 1},Operation,13,0)),\"\",VLOOKUP(S{rownum},Operation,13,0)))";
 
             // Machine Group
             worksheet.Cells[rownum, 12] = $"=IF(ISNA(VLOOKUP(D{rownum},Operation,5,0)),\"\",IF(VLOOKUP(D{rownum},Operation,5,0)=IF(ISNA(VLOOKUP(D{rownum - 1},Operation,5,0)),\"\",VLOOKUP(D{rownum - 1},Operation,5,0)),\"\",VLOOKUP(D{rownum},Operation,5,0)))";
@@ -784,17 +1046,17 @@ order by NO
             worksheet.Cells[rownum, 21] = $"=IF(OR(ISNA(VLOOKUP(S{rownum},Operation,6,0)),Q{rownum}=\"\"),\"\",IF(VLOOKUP(S{rownum},Operation,6,0)=\"\",\"\",\"Attachment\"))";
 
             // Template
-            worksheet.Cells[rownum, 31] = $"=IF(OR(ISNA(VLOOKUP(D{rownum},Operation,7,0)),J{rownum}=\"\"),\"\",IF(VLOOKUP(D{rownum},Operation,7,0)=\"\",\"\",\"Template\"))";
-            worksheet.Cells[rownum, 22] = $"=IF(OR(ISNA(VLOOKUP(S{rownum},Operation,7,0)),Q{rownum}=\"\"),\"\",IF(VLOOKUP(S{rownum},Operation,7,0)=\"\",\"\",\"Template\"))";
+            worksheet.Cells[rownum, 31] = $"=IF(OR(ISNA(VLOOKUP(D{rownum},Operation,8,0)),J{rownum}=\"\"),\"\",IF(VLOOKUP(D{rownum},Operation,8,0)=\"\",\"\",\"Template\"))";
+            worksheet.Cells[rownum, 22] = $"=IF(OR(ISNA(VLOOKUP(S{rownum},Operation,8,0)),Q{rownum}=\"\"),\"\",IF(VLOOKUP(S{rownum},Operation,8,0)=\"\",\"\",\"Template\"))";
 
             // only Machine Type
-            worksheet.Cells[rownum, 27] = $"=IF(ISNA(VLOOKUP(D{rownum},Operation,12,0)),\"\",IF(VLOOKUP(D{rownum},Operation,12,0)=IF(ISNA(VLOOKUP(D{rownum - 1},Operation,12,0)),\"\",VLOOKUP(D{rownum - 1},Operation,12,0)),\"\",VLOOKUP(D{rownum},Operation,4,0)))";
-            worksheet.Cells[rownum, 28] = $"=IF(ISNA(VLOOKUP(S{rownum},Operation,12,0)),\"\",IF(VLOOKUP(S{rownum},Operation,12,0)=IF(ISNA(VLOOKUP(S{rownum - 1},Operation,12,0)),\"\",VLOOKUP(S{rownum - 1},Operation,12,0)),\"\",VLOOKUP(S{rownum},Operation,4,0)))";
+            worksheet.Cells[rownum, 27] = $"=IF(ISNA(VLOOKUP(D{rownum},Operation,13,0)),\"\",IF(VLOOKUP(D{rownum},Operation,13,0)=IF(ISNA(VLOOKUP(D{rownum - 1},Operation,13,0)),\"\",VLOOKUP(D{rownum - 1},Operation,13,0)),\"\",VLOOKUP(D{rownum},Operation,4,0)))";
+            worksheet.Cells[rownum, 28] = $"=IF(ISNA(VLOOKUP(S{rownum},Operation,13,0)),\"\",IF(VLOOKUP(S{rownum},Operation,13,0)=IF(ISNA(VLOOKUP(S{rownum - 1},Operation,13,0)),\"\",VLOOKUP(S{rownum - 1},Operation,13,0)),\"\",VLOOKUP(S{rownum},Operation,4,0)))";
         }
 
-        private void ExcelMainData(Microsoft.Office.Interop.Excel.Worksheet worksheet, Microsoft.Office.Interop.Excel.Worksheet cycleTimeSheet, Microsoft.Office.Interop.Excel.Worksheet gcTimeSheet, string factory, string style, DataTable nodist, decimal currentOperators, bool showMachineType = false)
+        private void ExcelMainData(Microsoft.Office.Interop.Excel.Worksheet worksheet, Microsoft.Office.Interop.Excel.Worksheet cycleTimeSheet, Microsoft.Office.Interop.Excel.Worksheet gcTimeSheet, string factory, string style, DataTable nodist, decimal currentOperators, string sheetName, bool showMachineType = false)
         {
-            #region 第二頁
+            #region 第二或三頁
 
             #region 固定資料
 
@@ -805,8 +1067,8 @@ order by NO
             worksheet.Cells[9, 6] = this.styleCPU;
 
             // 右下簽名位置
-            worksheet.Cells[29, 20] = DateTime.Now.ToString("yyyy/MM/dd");
-            worksheet.Cells[32, 20] = Env.User.UserName;
+            worksheet.Cells[28, 4] = DateTime.Now.ToString("yyyy/MM/dd");
+            worksheet.Cells[30, 4] = Env.User.UserName;
 
             // 左下表頭資料
             worksheet.Cells[36, 4] = this.masterData["Version"];
@@ -814,6 +1076,17 @@ order by NO
             worksheet.Cells[40, 4] = currentOperators;
             #endregion
             string[] allMachine = this.operationCode.AsEnumerable().Where(s => !MyUtility.Check.Empty(s["MachineTypeID"])).Select(s => s["MachineTypeID"].ToString()).Distinct().ToArray();
+            var allMachineData = this.operationCode.AsEnumerable().Where(s => !MyUtility.Check.Empty(s["MachineTypeID"]))
+                .Select(s => new
+                {
+                    No = MyUtility.Convert.GetString(s["No"]),
+                    MachineCount = MyUtility.Convert.GetBool(s["MachineCount"]),
+                    MachineTypeID = s["MachineTypeID"].ToString(),
+                    MasterPlusGroup = s["MasterPlusGroup"].ToString(),
+                    Template = MyUtility.Convert.GetString(s["Template"]),
+                    SewingMachineAttachmentID = MyUtility.Convert.GetString(s["SewingMachineAttachmentID"]),
+                });
+
             decimal chartDataEndRow = currentOperators + 1;
             #region 新增長條圖 2 GCtime chart
 
@@ -897,7 +1170,7 @@ order by NO
             if (showMachineType)
             {
                 var noPPA = this.machineTypeDT.AsEnumerable()
-                            .Where(s => (s["IsShowinIEP03"].Equals(false) || s["IsHide"].Equals(true)) && s["OperationID"].ToString().Length >=2 && !s["OperationID"].ToString().Substring(0, 2).EqualString("--"))
+                            .Where(s => (s["IsShowinIEP03"].Equals(false) || s["IsHide"].Equals(true)) && s["OperationID"].ToString().Length >= 2 && !s["OperationID"].ToString().Substring(0, 2).EqualString("--"))
                             .Select(s => new
                             {
                                 rn = s["rn"].ToString(),
@@ -930,25 +1203,74 @@ order by NO
 
             #region MACHINE
             decimal allct = Math.Ceiling((decimal)allMachine.Length / 3);
-            rngToCopy = worksheet.get_Range("A31:A31").EntireRow; // 選取要被複製的資料
-            for (int i = 0; i < allct - 5; i++)
+            // Machine table 只計算MachineCount有勾選的
+            int machineCount = allMachineData.Where(o => o.MachineCount && !MyUtility.Check.Empty(o.MachineTypeID) && !MyUtility.Check.Empty(o.MasterPlusGroup)).Select(o => new { o.MachineTypeID, o.MasterPlusGroup }).Distinct().Count();
+
+            List<AttachmentData> tmp = new List<AttachmentData>();
+            if (sheetName == "Line Mapping")
             {
-                Microsoft.Office.Interop.Excel.Range rngToInsert = worksheet.get_Range("A31", Type.Missing).EntireRow; // 選擇要被貼上的位置
-                rngToInsert.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown, rngToCopy.Copy(Type.Missing)); // 貼上
+                tmp = this.AttachmentDataList.Where(o => MyUtility.Convert.GetString(o.PPA) != "C" && !o.IsHide).ToList();
             }
+            if (sheetName == "PPA & non-sewing")
+            {
+                tmp = this.AttachmentDataList.Where(o => MyUtility.Convert.GetString(o.PPA) == "C" && !o.IsHide).ToList();
+            }
+
+            var attachCount = tmp.Where(o => !string.IsNullOrEmpty(o.Attachment)).Select(o => new { o.No, o.STMC_Type, o.MachineGroup, o.Attachment, o.AttachmentPartID });
+            var templateCount = tmp.Where(o => !string.IsNullOrEmpty(o.Template)).Select(o => new { o.No, o.STMC_Type, o.MachineGroup, o.Template, o.TemplateMoldID });
+            int attachTemplateCount = attachCount.Count() + templateCount.Count();
+
+            int copyCount = machineCount >= attachTemplateCount ? machineCount : attachTemplateCount;
+            rngToCopy = worksheet.get_Range("A27:A27").EntireRow; // 選取要被複製的資料
+            int maxhineEndRow = 27;
+            for (int i = 0; i < copyCount - 1; i++)
+            {
+                Microsoft.Office.Interop.Excel.Range rngToInsert = worksheet.get_Range("A27", Type.Missing).EntireRow; // 選擇要被貼上的位置
+                rngToInsert.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown, rngToCopy.Copy(Type.Missing)); // 貼上
+                maxhineEndRow++;
+            }
+
+            var mmData = allMachineData.Where(o => o.MachineCount && !MyUtility.Check.Empty(o.MachineTypeID) && !MyUtility.Check.Empty(o.MasterPlusGroup))
+                .GroupBy(o => new { o.MachineTypeID, o.MasterPlusGroup })
+                .Select(o => new { o.Key.MachineTypeID, o.Key.MasterPlusGroup, Count = o.Count() });
+
+            var aaData = allMachineData.Where(o => !MyUtility.Check.Empty(o.No) && !MyUtility.Check.Empty(o.Template)).Select(o => new { o.Template, o.No, o.SewingMachineAttachmentID });
+
+            //worksheet.Cells[24, 13] = mmData.Sum(o => o.Count);
+            worksheet.Cells[24, 13] = $@"=SUM(M27:M{maxhineEndRow})";
 
             int surow = 0;
             int sucol = 0;
-            foreach (string item in allMachine)
+            foreach (var item in mmData)
             {
-                worksheet.Cells[27 + surow, 5 + sucol] = item;
+                worksheet.Cells[27 + surow, 10] = item.MachineTypeID;
+                worksheet.Cells[27 + surow, 11] = item.MasterPlusGroup;
                 surow++;
-                if (allct == surow)
-                {
-                    surow = 0;
-                    sucol += 2;
-                }
             }
+
+            worksheet.Cells[24, 17] = attachCount.Count();
+            worksheet.Cells[25, 17] = templateCount.Count();
+
+            surow = 0;
+
+            foreach (var item in attachCount)
+            {
+                worksheet.Cells[27 + surow, 16] = item.Attachment;
+                worksheet.Cells[27 + surow, 17] = item.No;
+                worksheet.Cells[27 + surow, 19] = item.AttachmentPartID;
+
+                surow++;
+            }
+
+            foreach (var item in templateCount)
+            {
+                worksheet.Cells[27 + surow, 16] = item.Template;
+                worksheet.Cells[27 + surow, 17] = item.No;
+                worksheet.Cells[27 + surow, 19] = item.TemplateMoldID;
+
+                surow++;
+            }
+
             #endregion
 
             #region 預設站數為2站，當超過2站就要新增
@@ -1068,7 +1390,8 @@ order by NO
                         nocolumn = 10;
                         worksheet.Cells[norow, nocolumn] = MyUtility.Convert.GetString(nodr["No"]);
                         worksheet.Cells[norow, nocolumn + 1] = MyUtility.Convert.GetString(nodr["ActCycle"]);
-                        DataRow[] nodrs = this.operationCode.Select(string.Format("no = '{0}' and IsHide = 0 and IsPPa = {1}", MyUtility.Convert.GetString(nodr["No"]), isSheet3 ? "1" : "0"))
+
+                        DataRow[] nodrs = this.operationCode.Select($@"no = '{MyUtility.Convert.GetString(nodr["No"])}' and IsHide = 0 and {(isSheet3 ? (this.isPPA ? "PPA = 'C' " : "PPA <> 'C' ") : "PPA <> 'C' ")}")
                                 .OrderBy(x => x.Field<string>("OtherBy")).ThenBy(x => x.Field<int>("GroupKey")).ToArray();
                         int ridx = 2;
                         string machinetype = string.Empty;
@@ -1096,7 +1419,7 @@ order by NO
                         nocolumn = 17;
                         worksheet.Cells[norow, nocolumn] = MyUtility.Convert.GetString(nodr["No"]);
                         worksheet.Cells[norow, nocolumn + 1] = MyUtility.Convert.GetString(nodr["ActCycle"]);
-                        DataRow[] nodrs = this.operationCode.Select(string.Format("no = '{0}' and IsHide = 0 and IsPPa = {1}", MyUtility.Convert.GetString(nodr["No"]), isSheet3 ? "1" : "0"))
+                        DataRow[] nodrs = this.operationCode.Select($@"no = '{MyUtility.Convert.GetString(nodr["No"])}' and IsHide = 0 and {(isSheet3 ? (this.isPPA ? "PPA = 'C' " : "PPA <> 'C' ") : "PPA <> 'C' ")}")
                                 .OrderBy(x => x.Field<string>("OtherBy")).ThenBy(x => x.Field<int>("GroupKey")).ToArray();
                         int ridx = 2;
                         string machinetype = string.Empty;
@@ -1208,7 +1531,7 @@ order by NO
                         nocolumn = 17;
                         worksheet.Cells[norow, nocolumn] = MyUtility.Convert.GetString(nodr["No"]);
                         worksheet.Cells[norow, nocolumn + 1] = MyUtility.Convert.GetString(nodr["ActCycle"]);
-                        DataRow[] nodrs = this.operationCode.Select(string.Format("no = '{0}' and IsHide = 0 and IsPPa = {1}", MyUtility.Convert.GetString(nodr["No"]), isSheet3 ? "1" : "0"))
+                        DataRow[] nodrs = this.operationCode.Select($@"no = '{MyUtility.Convert.GetString(nodr["No"])}' and IsHide = 0 and {(isSheet3 ? (this.isPPA ? "PPA = 'C' " : "PPA <> 'C' ") : "PPA <> 'C' ")}")
                                     .OrderBy(x => x.Field<string>("OtherBy")).ThenBy(x => x.Field<int>("GroupKey")).ToArray();
                         int ridx = 2;
                         string machinetype = string.Empty;
@@ -1236,7 +1559,7 @@ order by NO
                         nocolumn = 10;
                         worksheet.Cells[norow, nocolumn] = MyUtility.Convert.GetString(nodr["No"]);
                         worksheet.Cells[norow, nocolumn + 1] = MyUtility.Convert.GetString(nodr["ActCycle"]);
-                        DataRow[] nodrs = this.operationCode.Select(string.Format("no = '{0}' and IsHide = 0 and IsPPa = {1}", MyUtility.Convert.GetString(nodr["No"]), isSheet3 ? "1" : "0"))
+                        DataRow[] nodrs = this.operationCode.Select($@"no = '{MyUtility.Convert.GetString(nodr["No"])}' and IsHide = 0 and {(isSheet3 ? (this.isPPA ? "PPA = 'C' " : "PPA <> 'C' ") : "PPA <> 'C' ")}")
                                     .OrderBy(x => x.Field<string>("OtherBy")).ThenBy(x => x.Field<int>("GroupKey")).ToArray();
                         int ridx = 2;
                         string machinetype = string.Empty;
@@ -1339,7 +1662,7 @@ order by NO
                         nocolumn = 10;
                         worksheet.Cells[norow, nocolumn] = MyUtility.Convert.GetString(nodr["No"]);
                         worksheet.Cells[norow, nocolumn + 1] = MyUtility.Convert.GetString(nodr["ActCycle"]);
-                        DataRow[] nodrs = this.operationCode.Select(string.Format("no = '{0}' and IsHide = 0 and IsPPa = {1}", MyUtility.Convert.GetString(nodr["No"]), isSheet3 ? "1" : "0"))
+                        DataRow[] nodrs = this.operationCode.Select($@"no = '{MyUtility.Convert.GetString(nodr["No"])}' and IsHide = 0 and {(isSheet3 ? (this.isPPA ? "PPA = 'C' " : "PPA <> 'C' ") : "PPA <> 'C' ")}")
                                     .OrderBy(x => x.Field<string>("OtherBy")).ThenBy(x => x.Field<int>("GroupKey")).ToArray();
                         int ridx = 2;
                         string machinetype = string.Empty;
@@ -1363,7 +1686,7 @@ order by NO
                         nocolumn = 17;
                         worksheet.Cells[norow, nocolumn] = MyUtility.Convert.GetString(nodr["No"]);
                         worksheet.Cells[norow, nocolumn + 1] = MyUtility.Convert.GetString(nodr["ActCycle"]);
-                        DataRow[] nodrs = this.operationCode.Select(string.Format("no = '{0}' and IsHide = 0 and IsPPa = {1}", MyUtility.Convert.GetString(nodr["No"]), isSheet3 ? "1" : "0"))
+                        DataRow[] nodrs = this.operationCode.Select($@"no = '{MyUtility.Convert.GetString(nodr["No"])}' and IsHide = 0 and {(isSheet3 ? (this.isPPA ? "PPA = 'C' " : "PPA <> 'C' ") : "PPA <> 'C' ")}")
                                     .OrderBy(x => x.Field<string>("OtherBy")).ThenBy(x => x.Field<int>("GroupKey")).ToArray();
                         int ridx = 2;
                         string machinetype = string.Empty;
@@ -1469,7 +1792,7 @@ order by NO
                         nocolumn = 10;
                         worksheet.Cells[norow, nocolumn] = MyUtility.Convert.GetString(nodr["No"]);
                         worksheet.Cells[norow, nocolumn + 1] = MyUtility.Convert.GetString(nodr["ActCycle"]);
-                        DataRow[] nodrs = this.operationCode.Select(string.Format("no = '{0}' and IsHide = 0 and IsPPa = {1}", MyUtility.Convert.GetString(nodr["No"]), isSheet3 ? "1" : "0"))
+                        DataRow[] nodrs = this.operationCode.Select($@"no = '{MyUtility.Convert.GetString(nodr["No"])}' and IsHide = 0 and {(isSheet3 ? (this.isPPA ? "PPA = 'C' " : "PPA <> 'C' ") : "PPA <> 'C' ")}")
                                     .OrderBy(x => x.Field<string>("OtherBy")).ThenBy(x => x.Field<int>("GroupKey")).ToArray();
                         int ridx = 2;
                         string machinetype = string.Empty;
@@ -1493,7 +1816,7 @@ order by NO
                         nocolumn = 17;
                         worksheet.Cells[norow, nocolumn] = MyUtility.Convert.GetString(nodr["No"]);
                         worksheet.Cells[norow, nocolumn + 1] = MyUtility.Convert.GetString(nodr["ActCycle"]);
-                        DataRow[] nodrs = this.operationCode.Select(string.Format("no = '{0}' and IsHide = 0 and IsPPa = {1}", MyUtility.Convert.GetString(nodr["No"]), isSheet3 ? "1" : "0"))
+                        DataRow[] nodrs = this.operationCode.Select($@"no = '{MyUtility.Convert.GetString(nodr["No"])}' and IsHide = 0 and {(isSheet3 ? (this.isPPA ? "PPA = 'C' " : "PPA <> 'C' ") : "PPA <> 'C' ")}")
                                     .OrderBy(x => x.Field<string>("OtherBy")).ThenBy(x => x.Field<int>("GroupKey")).ToArray();
                         int ridx = 2;
                         string machinetype = string.Empty;
@@ -1548,6 +1871,25 @@ order by NO
             #endregion
 
             #endregion
+        }
+
+        private class AttachmentData
+        {
+            public string No { get; set; }
+
+            public string STMC_Type { get; set; }
+
+            public string MachineGroup { get; set; }
+            public string AttachmentCount { get; set; }
+
+            public string Attachment { get; set; }
+            public string AttachmentPartID { get; set; }
+
+            public string Template { get; set; }
+            public string TemplateMoldID { get; set; }
+
+            public string PPA { get; set; }
+            public bool IsHide { get; set; }
         }
 
         private class GCTimeChartData
