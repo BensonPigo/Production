@@ -1452,6 +1452,26 @@ and Name = @PPA
                 }
             }
 
+            var depulicateData = this.DetailDatas.GroupBy(o => new { OriNo = o.Field<string>("OriNo"), No = o.Field<string>("No") })
+                .Select(o => new
+                {
+                    OriNo = o.Key.OriNo,
+                    No = o.Key.No,
+                    Count = o.Count(),
+                }).Where(o => o.Count > 1);
+
+            if (depulicateData.Any())
+            {
+                string msg = "<OriNo.>+<No.> can not be exactly the same.";
+                foreach (var item in depulicateData)
+                {
+                    msg += $@"{Environment.NewLine}{item.OriNo}-{item.No}";
+                }
+
+                MyUtility.Msg.WarningBox(msg);
+                return false;
+            }
+
             this.txtStyleComboType.BackColor = this.txtStyleID.BackColor;
 
             return true;
@@ -1942,7 +1962,7 @@ order by EffectiveDate desc
             // 不使用MyUtility.Msg.InfoBox的原因為MyUtility.Msg.InfoBox都有MessageBoxIcon
             if (!MyUtility.Check.Empty(this.CurrentMaintain["IEReasonID"]))
             {
-                MessageBox.Show(MyUtility.GetValue.Lookup(string.Format("select Description from IEReason WITH (NOLOCK) where Type = 'LM' and ID = '{0}'", this.CurrentMaintain["IEReasonID"].ToString())).PadRight(60), caption: "Not hit target reason"); 
+                MessageBox.Show(MyUtility.GetValue.Lookup(string.Format("select Description from IEReason WITH (NOLOCK) where Type = 'LM' and ID = '{0}'", this.CurrentMaintain["IEReasonID"].ToString())).PadRight(60), caption: "Not hit target reason");
             }
             else
             {
