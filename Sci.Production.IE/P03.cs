@@ -2293,8 +2293,8 @@ select ID = null
 	   ,MachineCount = CAST(  IIF(o.MasterPlusGroup <> '' and (o.MasterPlusGroup is not null and td.MachineTypeID not like 'MM%'),1,0) as bit)
 	   ,[IsHide] = cast(
 			   case when SUBSTRING(td.OperationID, 1, 2) = '--' then 1
-			   when show.IsDesignatedArea = 1 then 1
-			   when isnull(td.IsSubprocess,0) = 1 then 1
+			        when show.IsDesignatedArea = 1 then 1
+			        when isnull(td.IsNonSewingLine,0) = 1 then 1
 			   else 0 
 			   end			
 		as bit)

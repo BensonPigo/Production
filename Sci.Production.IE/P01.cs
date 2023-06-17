@@ -23,6 +23,7 @@ namespace Sci.Production.IE
     {
         private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
         private Ict.Win.UI.DataGridViewCheckBoxColumn col_IsSubprocess;
+        private Ict.Win.UI.DataGridViewCheckBoxColumn col_IsNonSewingLine;
         private DataGridViewGeneratorTextColumnSettings operation = new DataGridViewGeneratorTextColumnSettings();
         private DataGridViewGeneratorTextColumnSettings machine = new DataGridViewGeneratorTextColumnSettings();
         private DataGridViewGeneratorTextColumnSettings mold = new DataGridViewGeneratorTextColumnSettings();
@@ -155,7 +156,7 @@ select 0 as Selected, isnull(o.SeamLength,0) SeamLength
       ,[MachineType_IsSubprocess] = isnull(md.IsSubprocess,0)
       ,td.PPA
       ,PPAText = ISNULL(d.Name,'')
-      ,IsNonSewingLine =  ISNULL(md.IsNonSewingLine ,0)
+      ,td.IsNonSewingLine
       ,td.SewingMachineAttachmentID
 from TimeStudy_Detail td WITH (NOLOCK) 
 left join Operation o WITH (NOLOCK) on td.OperationID = o.ID
@@ -1025,8 +1026,8 @@ and Name = @PPA
                 .Numeric("Frequency", header: "Frequency", integer_places: 2, decimal_places: 2, maximum: 99.99M, minimum: 0, settings: this.frequency)
                 .Text("MtlFactorID", header: "Factor", width: Widths.AnsiChars(3), iseditingreadonly: true)
                 .Numeric("SMV", header: "SMV (sec)", integer_places: 4, decimal_places: 4, maximum: 9999.9999M, minimum: 0, settings: this.smvsec)
-                .CheckBox("IsSubprocess", header: "Subprocess", width: Widths.AnsiChars(7), iseditable: true, trueValue: 1, falseValue: 0).Get(out this.col_IsSubprocess)
-                .CheckBox("IsNonSewingLine", header: "Non-Sewing line", width: Widths.AnsiChars(7), iseditable: false, trueValue: 1, falseValue: 0)
+                .CheckBox("IsSubprocess", header: "Subprocess", width: Widths.AnsiChars(7), iseditable: false, trueValue: 1, falseValue: 0).Get(out this.col_IsSubprocess)
+                .CheckBox("IsNonSewingLine", header: "Non-Sewing line", width: Widths.AnsiChars(7), iseditable: false, trueValue: 1, falseValue: 0).Get(out this.col_IsNonSewingLine)
                 .Text("PPAText", header: "PPA", width: Widths.AnsiChars(10), settings: ppa)
                 .Text("MachineTypeID", header: "ST/MC Type", width: Widths.AnsiChars(8), settings: this.machine)
                 .Text("MasterPlusGroup", header: "Machine Group", width: Widths.AnsiChars(8), settings: txtSubReason)
@@ -1113,10 +1114,19 @@ and Name = @PPA
                 {
                     this.col_IsSubprocess.IsEditable = false;
                 }
+                if (data.RowState != DataRowState.Deleted && MyUtility.Convert.GetBool(data["IsSubprocess"]) == true)
+                {
+                    this.col_IsNonSewingLine.IsEditable = true;
+                }
+                else
+                {
+                    this.col_IsNonSewingLine.IsEditable = false;
+                }
             }
             else
             {
                 this.col_IsSubprocess.IsEditable = false;
+                this.col_IsNonSewingLine.IsEditable = false;
             }
         }
 
