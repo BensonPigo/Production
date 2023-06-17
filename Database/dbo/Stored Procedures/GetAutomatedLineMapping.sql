@@ -345,7 +345,8 @@ select	[No] = isnull(RIGHT(REPLICATE('0', 2) + cast(tb.StationNo as varchar(3)),
 		[TimeStudyDetailUkey] = td.Ukey,
 		td.Thread_ComboID,
 		td.IsNonSewingLine,
-		[TotalSewer] = isnull(tb.TotalSewer, 0)
+		[TotalSewer] = isnull(tb.TotalSewer, 0),
+		[OperationDesc] = iif(isnull(o.DescEN, '') = '', td.OperationID, o.DescEN)
 into #tmpAutomatedLineMapping_Detail
 from  TimeStudy_Detail td
 left join #tmpReaultBase tb with (nolock) on tb.TimeStudyDetailUkey = td.Ukey

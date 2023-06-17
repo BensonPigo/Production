@@ -290,7 +290,6 @@ and BrandID = '{this.CurrentMaintain["BrandID"]}'
             DataGridViewGeneratorNumericColumnSettings cycle = new DataGridViewGeneratorNumericColumnSettings();
             DataGridViewGeneratorTextColumnSettings machine = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorTextColumnSettings operatorid = new DataGridViewGeneratorTextColumnSettings();
-            DataGridViewGeneratorTextColumnSettings attachment = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorTextColumnSettings template = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorTextColumnSettings threadColor = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorTextColumnSettings notice = new DataGridViewGeneratorTextColumnSettings();
@@ -395,75 +394,6 @@ and BrandID = '{this.CurrentMaintain["BrandID"]}'
                 }
             };
             #endregion
-            #region ST/MC type的按右鍵與Validating
-            machine.EditingMouseDown += (s, e) =>
-            {
-                if (this.EditMode)
-                {
-                    if (e.Button == MouseButtons.Right)
-                    {
-                        if (e.RowIndex != -1)
-                        {
-                            DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
-                            string sqlCmd = "select ID,Description from MachineType WITH (NOLOCK) where Junk = 0";
-                            Win.Tools.SelectItem item = new Win.Tools.SelectItem(sqlCmd, "8,43", dr["MachineTypeID"].ToString())
-                            {
-                                Width = 590,
-                            };
-                            DialogResult returnResult = item.ShowDialog();
-                            if (returnResult == DialogResult.Cancel)
-                            {
-                                return;
-                            }
-
-                            e.EditingControl.Text = item.GetSelectedString();
-                        }
-                    }
-                }
-            };
-
-            machine.CellValidating += (s, e) =>
-            {
-                if (this.EditMode)
-                {
-                    DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
-                    if (!MyUtility.Check.Empty(e.FormattedValue) && e.FormattedValue.ToString() != dr["MachineTypeID"].ToString())
-                    {
-                        // sql參數
-                        System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter
-                        {
-                            ParameterName = "@id",
-                            Value = e.FormattedValue.ToString(),
-                        };
-
-                        IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>
-                        {
-                            sp1,
-                        };
-                        string sqlCmd = "select ID from MachineType WITH (NOLOCK) where Junk = 0 and ID = @id";
-                        DataTable machineData;
-                        DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out machineData);
-                        if (!result)
-                        {
-                            dr["MachineTypeID"] = string.Empty;
-                            e.Cancel = true;
-                            MyUtility.Msg.WarningBox("Sql connection fail!!\r\n" + result.ToString());
-                            return;
-                        }
-                        else
-                        {
-                            if (machineData.Rows.Count <= 0)
-                            {
-                                dr["MachineTypeID"] = string.Empty;
-                                e.Cancel = true;
-                                MyUtility.Msg.WarningBox(string.Format("< ST/MC type: {0} > not found!!!", e.FormattedValue.ToString()));
-                                return;
-                            }
-                        }
-                    }
-                }
-            };
-            #endregion
             #region Operator ID No.的按右鍵與Validating
             operatorid.EditingMouseDown += (s, e) =>
             {
@@ -525,113 +455,6 @@ and BrandID = '{this.CurrentMaintain["BrandID"]}'
                             dr.EndEdit();
                         }
                     }
-                }
-            };
-            #endregion
-            #region Attachment
-            attachment.EditingMouseDown += (s, e) =>
-            {
-                if (this.EditMode && e.Button == MouseButtons.Right)
-                {
-                    string sqlcmd = @"
-select ID,DescEN 
-from Mold WITH (NOLOCK) 
-where Junk = 0
-and IsAttachment = 1
-union all
-select ID, Description
-from SewingMachineAttachment WITH (NOLOCK) 
-where Junk = 0";
-
-                    Win.Tools.SelectItem2 item = new Win.Tools.SelectItem2(sqlcmd, "ID,DescEN", "13,60,10", this.CurrentDetailData["Attachment"].ToString(), null, null, null)
-                    {
-                        Width = 666,
-                    };
-                    DialogResult result = item.ShowDialog();
-                    if (result == DialogResult.Cancel)
-                    {
-                        return;
-                    }
-
-                    this.CurrentDetailData["Attachment"] = item.GetSelectedString();
-                }
-            };
-
-            attachment.CellValidating += (s, e) =>
-            {
-                if (this.EditMode)
-                {
-                    List<SqlParameter> cmds = new List<SqlParameter>() { new SqlParameter { ParameterName = "@OperationID", Value = MyUtility.Convert.GetString(this.CurrentDetailData["OperationID"]) } };
-                    string sqlcmd = @"
-select [Attachment] = STUFF((
-		        select concat(',' ,s.Data)
-		        from SplitString(o.MoldID, ';') s
-		        inner join Mold m WITH (NOLOCK) on s.Data = m.ID
-		        where m.IsAttachment = 1
-                and m.Junk = 0
-		        for xml path ('')) 
-	        ,1,1,'')
-	,[Template] = STUFF((
-		            select concat(',' ,s.Data)
-		            from SplitString(o.MoldID, ';') s
-		            inner join Mold m WITH (NOLOCK) on s.Data = m.ID
-		            where m.IsTemplate = 1
-                    and m.Junk = 0
-		            for xml path ('')) 
-	            ,1,1,'')
-from Operation o WITH (NOLOCK) 
-where o.ID = @OperationID";
-                    DataTable dtOperation;
-                    DualResult result = DBProxy.Current.Select(null, sqlcmd, cmds, out dtOperation);
-                    List<string> operationList = new List<string>();
-                    if (!result)
-                    {
-                        this.CurrentDetailData["Attachment"] = string.Empty;
-                        MyUtility.Msg.WarningBox("SQL Connection failt!!\r\n" + result.ToString());
-                    }
-
-                    if (dtOperation.Rows.Count > 0)
-                    {
-                        operationList = dtOperation.Rows[0]["Attachment"].ToString().Replace(";", ",").Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries).Distinct().ToList();
-                        if (e.FormattedValue.Empty())
-                        {
-                            this.CurrentDetailData["Attachment"] = dtOperation.Rows[0]["Attachment"].ToString();
-
-                            return;
-                        }
-                    }
-
-                    sqlcmd = @"
-select ID 
-from Mold WITH (NOLOCK) 
-where Junk = 0
-and IsAttachment = 1
-union all
-select ID
-from SewingMachineAttachment WITH (NOLOCK) 
-where Junk = 0";
-                    DataTable dtMold;
-                    result = DBProxy.Current.Select(null, sqlcmd, out dtMold);
-                    if (!result)
-                    {
-                        this.CurrentDetailData["Attachment"] = string.Empty;
-                        MyUtility.Msg.WarningBox("SQL Connection failt!!\r\n" + result.ToString());
-                    }
-
-                    // 前端轉進來的資料是用[;]區隔，統一用[,]區隔
-                    List<string> getMold = e.FormattedValue.ToString().Replace(";", ",").Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries).Distinct().ToList();
-
-                    // 不存在 Mold
-                    var existsMold = getMold.Except(dtMold.AsEnumerable().Select(x => x.Field<string>("ID")).ToList());
-                    if (existsMold.Any())
-                    {
-                        e.Cancel = true;
-                        this.CurrentDetailData["Attachment"] = string.Join(",", getMold.Where(x => existsMold.Where(y => !y.EqualString(x)).Any()).ToList());
-                        MyUtility.Msg.WarningBox("Attachment : " + string.Join(",", existsMold.ToList()) + "  need include in Mold setting !!", "Data need include in setting");
-                        return;
-                    }
-
-                    this.CurrentDetailData["Attachment"] = string.Join(",", getMold.ToList());
                 }
             };
             #endregion
@@ -843,13 +666,13 @@ where Junk = 0
             .Text("No", header: "No.", width: Widths.AnsiChars(4), settings: no)
             .CheckBox("IsPPA", header: "PPA", width: Widths.AnsiChars(1), iseditable: true, trueValue: true, falseValue: false, settings: ppa)
             .CheckBox("IsHide", header: "Hide", width: Widths.AnsiChars(1), iseditable: true, trueValue: true, falseValue: false, settings: hide)
-            .Text("MachineTypeID", header: "ST/MC type", width: Widths.AnsiChars(10), settings: machine)
+            .CellMachineType("MachineTypeID", "ST/MC type", this, width: Widths.AnsiChars(10))
             .Text("MasterPlusGroup", header: "Machine Group", width: Widths.AnsiChars(10), settings: txtSubReason)
             .EditText("Description", header: "Operation", width: Widths.AnsiChars(30), iseditingreadonly: true)
             .EditText("Annotation", header: "Annotation", width: Widths.AnsiChars(30), iseditingreadonly: true)
             .Numeric("GSD", header: "GSD Time", width: Widths.AnsiChars(5), decimal_places: 2, iseditingreadonly: true)
             .Numeric("Cycle", header: "Cycle Time", width: Widths.AnsiChars(5), integer_places: 4, decimal_places: 2, minimum: 0, settings: cycle)
-            .Text("Attachment", header: "Attachment", width: Widths.AnsiChars(10), settings: attachment)
+            .CellAttachment("Attachment", "Attachment", this, width: Widths.AnsiChars(10))
             .Text("Template", header: "Template", width: Widths.AnsiChars(10), settings: template)
             .Text("ThreadColor", header: "ThreadColor", width: Widths.AnsiChars(1), settings: threadColor)
             .Text("Notice", header: "Notice", width: Widths.AnsiChars(60), settings: notice)

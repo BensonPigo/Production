@@ -11,6 +11,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using static Ict.Win.WinAPI;
 
 namespace Sci.Production.IE
 {
@@ -49,11 +50,9 @@ namespace Sci.Production.IE
             this.gridCentralizedPPARight.DataSource = this.dtGridDetailRightSummary;
             this.detailgrid.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.EnableResizing;
             this.gridCentralizedPPALeft.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.EnableResizing;
-        }
 
-        private void Detailgridbs_DataSourceChanged(object sender, EventArgs e)
-        {
-            this.gridCentralizedPPALeftBS.DataSource = this.detailgridbs.DataSource;
+            this.detailgrid.Scroll += this.Detailgrid_Scroll;
+            this.gridLineMappingRight.Scroll += this.GridLineMappingRight_Scroll;
         }
 
         /// <inheritdoc/>
@@ -72,6 +71,8 @@ namespace Sci.Production.IE
             base.ClickNewAfter();
             P05_CreateNewLineMapping p05_CreateNewLineMapping = new P05_CreateNewLineMapping(this.CurrentMaintain, (DataTable)this.detailgridbs.DataSource, this.dtAutomatedLineMapping_DetailTemp, this.dtAutomatedLineMapping_DetailAuto);
             p05_CreateNewLineMapping.ShowDialog();
+            this.RefreshAutomatedLineMappingSummary();
+            this.FilterGrid();
         }
 
         /// <inheritdoc/>
@@ -82,16 +83,41 @@ namespace Sci.Production.IE
             return base.ClickSaveBefore();
         }
 
+        protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
+        {
+            string masterID = (e.Master == null) ? string.Empty : e.Master["ID"].ToString();
+            this.DetailSelectCommand =
+                $@"
+select  cast(0 as bit) as Selected,
+        ad.*,
+        [PPADesc] = isnull(d.Name, ''),
+        [OperationDesc] = iif(isnull(op.DescEN, '') = '', ad.OperationID, op.DescEN)
+from AutomatedLineMapping_Detail ad WITH (NOLOCK) 
+left join DropDownList d with (nolock) on d.ID = ad.PPA
+left join Operation op with (nolock) on op.ID = ad.OperationID
+where ad.ID = '{masterID}'
+order by td.Seq";
+
+            return base.OnDetailSelectCommandPrepare(e);
+        }
+
         /// <inheritdoc/>
         protected override void OnDetailGridSetup()
         {
             base.OnDetailGridSetup();
 
+            TxtMachineGroup.CelltxtMachineGroup colMachineTypeID = TxtMachineGroup.CelltxtMachineGroup.GetGridCell();
+
             this.Helper.Controls.Grid.Generator(this.detailgrid)
                .Text("No", header: "No", width: Widths.AnsiChars(4))
-               .CheckBox("select", string.Empty)
-               .Text("Location", header: "Location", width: Widths.AnsiChars(13))
-               .Text("Annotation", header: "Annotation", width: Widths.AnsiChars(23));
+               .CheckBox("Selected", string.Empty, trueValue: true, falseValue: false, iseditable: true)
+               .Text("Location", header: "Location", width: Widths.AnsiChars(13), iseditingreadonly: true)
+               .Text("PPADesc", header: "PPA", width: Widths.AnsiChars(13), iseditingreadonly: true)
+               .CellMachineType("MachineTypeID", "ST/MC type", this, width: Widths.AnsiChars(10))
+               .Text("MasterPlusGroup", header: "MC Group", width: Widths.AnsiChars(10), settings: colMachineTypeID)
+               .Text("OperationDesc", header: "Operation", width: Widths.AnsiChars(13), iseditingreadonly: true)
+               .Text("Annotation", header: "Annotation", width: Widths.AnsiChars(23), iseditingreadonly: true)
+               .CellAttachment("Attachment", "Attachment", this, width: Widths.AnsiChars(10));
 
             this.Helper.Controls.Grid.Generator(this.gridCentralizedPPALeft)
                .Text("No", header: "No", width: Widths.AnsiChars(4))
@@ -119,6 +145,16 @@ namespace Sci.Production.IE
             if (this.tabDetail.SelectedIndex == 0)
             {
                 this.detailgridbs.Filter = "PPA <> 'C' and IsNonSewingLine = 0";
+
+                foreach (DataGridViewRow rowDetail in this.detailgrid.Rows)
+                {
+                    if (rowDetail.Cells["OperationID"].Value.ToString() == "PROCIPF00003" ||
+                        rowDetail.Cells["OperationID"].Value.ToString() == "PROCIPF00004")
+                    {
+                        rowDetail.Cells["MachineTypeID"].ReadOnly = true;
+                        rowDetail.Cells["MasterPlusGroup"].ReadOnly = true;
+                    }
+                }
             }
             else
             {
@@ -174,6 +210,48 @@ namespace Sci.Production.IE
                     e.AdvancedBorderStyle.Bottom = DataGridViewAdvancedCellBorderStyle.None;
                 }
             }
+        }
+
+        private void GridLineMappingRight_Scroll(object sender, ScrollEventArgs e)
+        {
+            if (e.ScrollOrientation != ScrollOrientation.VerticalScroll)
+            {
+                return;
+            }
+
+            string scrollNo = this.gridLineMappingRight.Rows[this.gridLineMappingRight.FirstDisplayedScrollingRowIndex].Cells["No"].Value.ToString();
+            this.ScrollLineMapping(scrollNo);
+        }
+
+        private void Detailgrid_Scroll(object sender, ScrollEventArgs e)
+        {
+            if (e.ScrollOrientation != ScrollOrientation.VerticalScroll)
+            {
+                return;
+            }
+
+            bool isScrollDown = e.NewValue > e.OldValue;
+
+            string scrollNo = this.detailgrid.Rows[this.detailgrid.FirstDisplayedScrollingRowIndex].Cells["No"].Value.ToString();
+            string oldScrollNo = this.detailgrid.Rows[e.OldValue].Cells["No"].Value.ToString();
+
+            if (isScrollDown && scrollNo == oldScrollNo)
+            {
+                scrollNo = (MyUtility.Convert.GetInt(scrollNo) + 1).ToString().PadLeft(2, '0');
+            }
+
+            this.ScrollLineMapping(scrollNo);
+        }
+
+        private void ScrollLineMapping(string scrollToNo)
+        {
+            this.detailgrid.FirstDisplayedScrollingRowIndex = this.detailgrid.GetRowIndexByDataRow(this.DetailDatas.Where(s => s["No"].ToString() == scrollToNo).First());
+            this.gridLineMappingRight.FirstDisplayedScrollingRowIndex = this.gridLineMappingRight.GetRowIndexByDataRow(this.dtGridDetailRightSummary.AsEnumerable().Where(s => s["No"].ToString() == scrollToNo).First());
+        }
+
+        private void Detailgridbs_DataSourceChanged(object sender, EventArgs e)
+        {
+            this.gridCentralizedPPALeftBS.DataSource = this.detailgridbs.DataSource;
         }
 
         private void RefreshRightSummaryGrid()
@@ -240,6 +318,33 @@ namespace Sci.Production.IE
 
                 gridRow.Height = gridRow.Height * MyUtility.Convert.GetInt(dr["NoCnt"]);
             }
+        }
+
+        private void RefreshAutomatedLineMappingSummary()
+        {
+            // LBRByGSDTime
+            this.CurrentMaintain["LBRByGSDTime"] = MyUtility.Math.Round(MyUtility.Convert.GetDecimal(this.CurrentMaintain["TotalGSDTime"]) / MyUtility.Convert.GetDecimal(this.CurrentMaintain["HighestGSDTime"]) / MyUtility.Convert.GetDecimal(this.CurrentMaintain["SewerManpower"]) * 100, 0);
+
+            // AvgGSDTime
+            this.CurrentMaintain["AvgGSDTime"] = MyUtility.Math.Round(MyUtility.Convert.GetDecimal(this.CurrentMaintain["TotalGSDTime"]) / MyUtility.Convert.GetDecimal(this.CurrentMaintain["SewerManpower"]), 2);
+
+            // TotalSewingLineOptrs
+            this.CurrentMaintain["TotalSewingLineOptrs"] = MyUtility.Convert.GetInt(this.CurrentMaintain["SewerManpower"]) + MyUtility.Convert.GetInt(this.CurrentMaintain["PresserManpower"]) + MyUtility.Convert.GetInt(this.CurrentMaintain["PackerManpower"]);
+
+            // TargetHr
+            this.CurrentMaintain["TargetHr"] = MyUtility.Math.Round(3600 * MyUtility.Convert.GetDecimal(this.CurrentMaintain["SewerManpower"]) / MyUtility.Convert.GetDecimal(this.CurrentMaintain["TotalGSDTime"]), 0);
+
+            // DailyDemand
+            this.CurrentMaintain["DailyDemand"] = MyUtility.Math.Round(MyUtility.Convert.GetDecimal(this.CurrentMaintain["TargetHr"]) * MyUtility.Convert.GetDecimal(this.CurrentMaintain["WorkHour"]), 0);
+
+            // TaktTime
+            this.CurrentMaintain["TaktTime"] = MyUtility.Math.Round(3600 * MyUtility.Convert.GetDecimal(this.CurrentMaintain["WorkHour"]) / MyUtility.Convert.GetDecimal(this.CurrentMaintain["DailyDemand"]), 2);
+
+            // EOLR
+            this.CurrentMaintain["EOLR"] = MyUtility.Math.Round(3600 / MyUtility.Convert.GetDecimal(this.CurrentMaintain["HighestGSDTime"]), 2);
+
+            // PPH
+            this.CurrentMaintain["PPH"] = MyUtility.Math.Round(MyUtility.Convert.GetDecimal(this.CurrentMaintain["EOLR"]) * MyUtility.Convert.GetDecimal(this.CurrentMaintain["StyleCPU"]) / MyUtility.Convert.GetDecimal(this.CurrentMaintain["SewerManpower"]), 2);
         }
     }
 }

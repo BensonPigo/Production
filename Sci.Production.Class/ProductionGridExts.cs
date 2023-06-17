@@ -5,6 +5,10 @@ using System.Windows.Forms;
 using Ict.Win;
 using Ict;
 using System.Data.SqlClient;
+using Sci.Win.Tems;
+using Sci.Data;
+using System.Net.Mail;
+using System.Linq;
 
 namespace Sci
 {
@@ -350,6 +354,218 @@ namespace Sci
                     }
                 }
             };
+            return gen.Text(propertyname, header: header, width: width, settings: settings, iseditable: iseditable, iseditingreadonly: iseditingreadonly, alignment: alignment);
+        }
+
+        /// <summary>
+        /// CellMachineType
+        /// </summary>
+        /// <param name="gen">DataGridView Generator</param>
+        /// <param name="propertyname">Property name</param>
+        /// <param name="header">Header</param>
+        /// <param name="mainForm">call from</param>
+        /// <param name="width">Width</param>
+        /// <param name="iseditable">is editable</param>
+        /// <param name="iseditingreadonly">is editing readonly</param>
+        /// <param name="alignment">DataGridView Content Alignment</param>
+        /// <returns>gen</returns>
+        public static IDataGridViewGenerator CellMachineType(this IDataGridViewGenerator gen, string propertyname, string header, InputMasterDetail mainForm, IWidth width = null, bool? iseditable = null, bool? iseditingreadonly = null, DataGridViewContentAlignment? alignment = null)
+        {
+            DataGridViewGeneratorTextColumnSettings settings = new DataGridViewGeneratorTextColumnSettings();
+
+            settings.EditingMouseDown += (s, e) =>
+            {
+                if (mainForm.EditMode)
+                {
+                    if (e.Button == MouseButtons.Right)
+                    {
+                        if (e.RowIndex != -1)
+                        {
+                            DataRow dr = mainForm.detailgrid.GetDataRow<DataRow>(e.RowIndex);
+                            string sqlCmd = "select ID,Description from MachineType WITH (NOLOCK) where Junk = 0";
+                            Win.Tools.SelectItem item = new Win.Tools.SelectItem(sqlCmd, "8,43", dr["MachineTypeID"].ToString())
+                            {
+                                Width = 590,
+                            };
+                            DialogResult returnResult = item.ShowDialog();
+                            if (returnResult == DialogResult.Cancel)
+                            {
+                                return;
+                            }
+
+                            e.EditingControl.Text = item.GetSelectedString();
+                        }
+                    }
+                }
+            };
+
+            settings.CellValidating += (s, e) =>
+            {
+                if (mainForm.EditMode)
+                {
+                    DataRow dr = mainForm.detailgrid.GetDataRow<DataRow>(e.RowIndex);
+                    if (!MyUtility.Check.Empty(e.FormattedValue) && e.FormattedValue.ToString() != dr["MachineTypeID"].ToString())
+                    {
+                        // sql參數
+                        System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter
+                        {
+                            ParameterName = "@id",
+                            Value = e.FormattedValue.ToString(),
+                        };
+
+                        IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>
+                        {
+                            sp1,
+                        };
+                        string sqlCmd = "select ID from MachineType WITH (NOLOCK) where Junk = 0 and ID = @id";
+                        DataTable machineData;
+                        DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out machineData);
+                        if (!result)
+                        {
+                            dr["MachineTypeID"] = string.Empty;
+                            e.Cancel = true;
+                            MyUtility.Msg.WarningBox("Sql connection fail!!\r\n" + result.ToString());
+                            return;
+                        }
+                        else
+                        {
+                            if (machineData.Rows.Count <= 0)
+                            {
+                                dr["MachineTypeID"] = string.Empty;
+                                e.Cancel = true;
+                                MyUtility.Msg.WarningBox(string.Format("< ST/MC type: {0} > not found!!!", e.FormattedValue.ToString()));
+                                return;
+                            }
+                        }
+                    }
+                }
+            };
+
+            return gen.Text(propertyname, header: header, width: width, settings: settings, iseditable: iseditable, iseditingreadonly: iseditingreadonly, alignment: alignment);
+        }
+
+        /// <summary>
+        /// CellAttachment
+        /// </summary>
+        /// <param name="gen">DataGridView Generator</param>
+        /// <param name="propertyname">Property name</param>
+        /// <param name="header">Header</param>
+        /// <param name="mainForm">call from</param>
+        /// <param name="width">Width</param>
+        /// <param name="iseditable">is editable</param>
+        /// <param name="iseditingreadonly">is editing readonly</param>
+        /// <param name="alignment">DataGridView Content Alignment</param>
+        /// <returns>gen</returns>
+        public static IDataGridViewGenerator CellAttachment(this IDataGridViewGenerator gen, string propertyname, string header, InputMasterDetail mainForm, IWidth width = null, bool? iseditable = null, bool? iseditingreadonly = null, DataGridViewContentAlignment? alignment = null)
+        {
+            DataGridViewGeneratorTextColumnSettings settings = new DataGridViewGeneratorTextColumnSettings();
+
+            settings.EditingMouseDown += (s, e) =>
+            {
+                if (mainForm.EditMode && e.Button == MouseButtons.Right)
+                {
+                    string sqlcmd = @"
+select ID,DescEN 
+from Mold WITH (NOLOCK) 
+where Junk = 0
+and IsAttachment = 1
+union all
+select ID, Description
+from SewingMachineAttachment WITH (NOLOCK) 
+where Junk = 0";
+
+                    Win.Tools.SelectItem2 item = new Win.Tools.SelectItem2(sqlcmd, "ID,DescEN", "13,60,10", mainForm.CurrentDetailData["Attachment"].ToString(), null, null, null)
+                    {
+                        Width = 666,
+                    };
+                    DialogResult result = item.ShowDialog();
+                    if (result == DialogResult.Cancel)
+                    {
+                        return;
+                    }
+
+                    mainForm.CurrentDetailData["Attachment"] = item.GetSelectedString();
+                }
+            };
+
+            settings.CellValidating += (s, e) =>
+            {
+                if (mainForm.EditMode)
+                {
+                    List<SqlParameter> cmds = new List<SqlParameter>() { new SqlParameter { ParameterName = "@OperationID", Value = MyUtility.Convert.GetString(mainForm.CurrentDetailData["OperationID"]) } };
+                    string sqlcmd = @"
+select [Attachment] = STUFF((
+		        select concat(',' ,s.Data)
+		        from SplitString(o.MoldID, ';') s
+		        inner join Mold m WITH (NOLOCK) on s.Data = m.ID
+		        where m.IsAttachment = 1
+                and m.Junk = 0
+		        for xml path ('')) 
+	        ,1,1,'')
+	,[Template] = STUFF((
+		            select concat(',' ,s.Data)
+		            from SplitString(o.MoldID, ';') s
+		            inner join Mold m WITH (NOLOCK) on s.Data = m.ID
+		            where m.IsTemplate = 1
+                    and m.Junk = 0
+		            for xml path ('')) 
+	            ,1,1,'')
+from Operation o WITH (NOLOCK) 
+where o.ID = @OperationID";
+                    DataTable dtOperation;
+                    DualResult result = DBProxy.Current.Select(null, sqlcmd, cmds, out dtOperation);
+                    List<string> operationList = new List<string>();
+                    if (!result)
+                    {
+                        mainForm.CurrentDetailData["Attachment"] = string.Empty;
+                        MyUtility.Msg.WarningBox("SQL Connection failt!!\r\n" + result.ToString());
+                    }
+
+                    if (dtOperation.Rows.Count > 0)
+                    {
+                        operationList = dtOperation.Rows[0]["Attachment"].ToString().Replace(";", ",").Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries).Distinct().ToList();
+                        if (e.FormattedValue.Empty())
+                        {
+                            mainForm.CurrentDetailData["Attachment"] = dtOperation.Rows[0]["Attachment"].ToString();
+
+                            return;
+                        }
+                    }
+
+                    sqlcmd = @"
+select ID 
+from Mold WITH (NOLOCK) 
+where Junk = 0
+and IsAttachment = 1
+union all
+select ID
+from SewingMachineAttachment WITH (NOLOCK) 
+where Junk = 0";
+                    DataTable dtMold;
+                    result = DBProxy.Current.Select(null, sqlcmd, out dtMold);
+                    if (!result)
+                    {
+                        mainForm.CurrentDetailData["Attachment"] = string.Empty;
+                        MyUtility.Msg.WarningBox("SQL Connection failt!!\r\n" + result.ToString());
+                    }
+
+                    // 前端轉進來的資料是用[;]區隔，統一用[,]區隔
+                    List<string> getMold = e.FormattedValue.ToString().Replace(";", ",").Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries).Distinct().ToList();
+
+                    // 不存在 Mold
+                    var existsMold = getMold.Except(dtMold.AsEnumerable().Select(x => x.Field<string>("ID")).ToList());
+                    if (existsMold.Any())
+                    {
+                        e.Cancel = true;
+                        mainForm.CurrentDetailData["Attachment"] = string.Join(",", getMold.Where(x => existsMold.Where(y => !y.EqualString(x)).Any()).ToList());
+                        MyUtility.Msg.WarningBox("Attachment : " + string.Join(",", existsMold.ToList()) + "  need include in Mold setting !!", "Data need include in setting");
+                        return;
+                    }
+
+                    mainForm.CurrentDetailData["Attachment"] = string.Join(",", getMold.ToList());
+                }
+            };
+
             return gen.Text(propertyname, header: header, width: width, settings: settings, iseditable: iseditable, iseditingreadonly: iseditingreadonly, alignment: alignment);
         }
 
