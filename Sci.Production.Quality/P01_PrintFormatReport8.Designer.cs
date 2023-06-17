@@ -34,6 +34,9 @@
             this.btnPrint = new Sci.Win.UI.Button();
             this.comboToneGrp = new Sci.Win.UI.ComboBox();
             this.label6 = new Sci.Win.UI.Label();
+            this.comboBoxDyelot = new Sci.Win.UI.ComboBox();
+            this.labDyelot = new Sci.Win.UI.Label();
+            this.btnFind = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.grid1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
             this.SuspendLayout();
@@ -97,11 +100,46 @@
             this.label6.TabIndex = 237;
             this.label6.Text = "Tone/Grp";
             // 
+            // comboBoxDyelot
+            // 
+            this.comboBoxDyelot.BackColor = System.Drawing.Color.White;
+            this.comboBoxDyelot.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboBoxDyelot.FormattingEnabled = true;
+            this.comboBoxDyelot.IsSupportUnselect = true;
+            this.comboBoxDyelot.Location = new System.Drawing.Point(283, 7);
+            this.comboBoxDyelot.Name = "comboBoxDyelot";
+            this.comboBoxDyelot.OldText = "";
+            this.comboBoxDyelot.Size = new System.Drawing.Size(121, 24);
+            this.comboBoxDyelot.TabIndex = 240;
+            // 
+            // labDyelot
+            // 
+            this.labDyelot.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.labDyelot.Location = new System.Drawing.Point(214, 8);
+            this.labDyelot.Name = "labDyelot";
+            this.labDyelot.Size = new System.Drawing.Size(66, 23);
+            this.labDyelot.TabIndex = 239;
+            this.labDyelot.Text = "Dyelot";
+            // 
+            // btnFind
+            // 
+            this.btnFind.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnFind.Location = new System.Drawing.Point(429, 4);
+            this.btnFind.Name = "btnFind";
+            this.btnFind.Size = new System.Drawing.Size(80, 30);
+            this.btnFind.TabIndex = 241;
+            this.btnFind.Text = "Find";
+            this.btnFind.UseVisualStyleBackColor = true;
+            this.btnFind.Click += new System.EventHandler(this.btnFind_Click);
+            // 
             // P01_PrintFormatReport8
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(521, 435);
+            this.Controls.Add(this.btnFind);
+            this.Controls.Add(this.comboBoxDyelot);
+            this.Controls.Add(this.labDyelot);
             this.Controls.Add(this.comboToneGrp);
             this.Controls.Add(this.label6);
             this.Controls.Add(this.btnPrint);
@@ -113,6 +151,9 @@
             this.Controls.SetChildIndex(this.btnPrint, 0);
             this.Controls.SetChildIndex(this.label6, 0);
             this.Controls.SetChildIndex(this.comboToneGrp, 0);
+            this.Controls.SetChildIndex(this.labDyelot, 0);
+            this.Controls.SetChildIndex(this.comboBoxDyelot, 0);
+            this.Controls.SetChildIndex(this.btnFind, 0);
             ((System.ComponentModel.ISupportInitialize)(this.grid1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).EndInit();
             this.ResumeLayout(false);
@@ -126,5 +167,8 @@
         private Win.UI.ListControlBindingSource listControlBindingSource1;
         private Win.UI.ComboBox comboToneGrp;
         private Win.UI.Label label6;
+        private Win.UI.ComboBox comboBoxDyelot;
+        private Win.UI.Label labDyelot;
+        private Win.UI.Button btnFind;
     }
 }
