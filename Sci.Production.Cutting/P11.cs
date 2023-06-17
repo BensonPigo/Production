@@ -423,7 +423,7 @@ FROM ftyinventory  f
 inner join PO_Supp_Detail psd on f.POID=psd.ID  and f.Seq1 =psd.SEQ1 and f.Seq2 =psd.SEQ2 and f.StockType ='B'
 where 1=1
 and POID = '{this.gridCutRef.CurrentDataRow["POID"]}'
-and psd.Refno = (select top 1 wo.Refno from WorkOrder wo where wo.CutRef='{this.gridCutRef.CurrentDataRow["Cutref"]}' and wo.MDivisionId = '{this.keyWord}')
+and psd.Refno = (select top 1 wo.Refno from WorkOrder wo where wo.CutRef='{this.gridCutRef.CurrentDataRow["Cutref"]}')
 ";
                 SelectItem sele = new SelectItem(sqlcmd, "50", dr["Dyelot"].ToString()) { Width = 333 };
                 DialogResult result = sele.ShowDialog();
@@ -1241,7 +1241,8 @@ and o.mDivisionid = '{this.keyWord}'
                 else
                 {
                     // 取得哪些 annotation 是次要
-                    List<string> notMainList = Prgs.GetNotMain(dr, this.GarmentTb.Select());
+                    // 判斷是否要給X 要加上ArticleGroup 來判斷
+                    List<string> notMainList = Prgs.GetNotMain(dr, garmentar);
                     string noBundleCardAfterSubprocess_String = string.Join("+", notMainList);
 
                     // Annotation

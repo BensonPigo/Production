@@ -88,7 +88,7 @@ namespace Sci.Production.Cutting
                                     from WorkOrder W 
                                     Left JOIN CuttingOutput_Detail CD on W.Ukey=CD.WorkOrderUkey
                                     Left JOIN CuttingOutput C on CD.ID=C.ID
-                                    where w.CutRef = '{newValue}' AND w.MDivisionId='{Env.User.Keyword}'
+                                    where w.CutRef = '{newValue}'
                                     GROUP BY w.ID,CutCellid,w.FactoryID";
                     DualResult resultCheck = DBProxy.Current.Select(null, sqlCmd, out dt_CutRef);
                     if (!resultCheck)

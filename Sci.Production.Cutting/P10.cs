@@ -175,7 +175,7 @@ FROM ftyinventory  f
 inner join PO_Supp_Detail psd on f.POID=psd.ID  and f.Seq1 =psd.SEQ1 and f.Seq2 =psd.SEQ2 and f.StockType ='B'
 where 1=1
 and POID = '{this.CurrentMaintain["POID"]}'
-and psd.Refno = (select top 1 wo.Refno from WorkOrder wo where wo.CutRef='{this.CurrentMaintain["Cutref"]}' and wo.MDivisionId = '{this.CurrentMaintain["mDivisionid"]}')
+and psd.Refno = (select top 1 wo.Refno from WorkOrder wo where wo.CutRef='{this.CurrentMaintain["Cutref"]}')
 ";
                  SelectItem sele = new SelectItem(sqlcmd, "50", dr["Dyelot"].ToString()) { Width = 333 };
                  DialogResult result = sele.ShowDialog();
@@ -960,7 +960,7 @@ Select a.*
     Where a.ukey =g.workorderukey and g.OrderID=(Select Top(1) OrderID From Workorder_Distribute WD WITH (NOLOCK) Where a.ukey =WD.workorderukey)
 ) as Qty
 From workorder a WITH (NOLOCK) ,orders b WITH (NOLOCK) 
-Where a.cutref='{this.txtCutRef.Text}' and a.mDivisionid = '{this.keyword}' and a.orderid = b.id";
+Where a.cutref = '{this.txtCutRef.Text}' and a.mDivisionid = '{this.keyword}' and a.orderid = b.id";
             if (!MyUtility.Check.Seek(cmd, out DataRow cutdr, null))
             {
                 this.Clear();
@@ -1056,7 +1056,7 @@ and o.id = '{this.CurrentMaintain["POID"]}'
             string cuttingsp = MyUtility.GetValue.Lookup("Cuttingsp", newvalue, "Orders", "ID");
             if (!MyUtility.Check.Empty(this.CurrentMaintain["Cutref"]))
             {
-                string findcuttingid = $@"select id from workorder where cutref = '{this.CurrentMaintain["Cutref"]}' and MDivisionId = '{Env.User.Keyword}' ";
+                string findcuttingid = $@"select id from workorder where cutref = '{this.CurrentMaintain["Cutref"]}' ";
                 string cuttingid = MyUtility.GetValue.Lookup(findcuttingid);
                 if (cuttingsp.Trim() != cuttingid.Trim())
                 {
@@ -1066,7 +1066,7 @@ and o.id = '{this.CurrentMaintain["POID"]}'
                     return;
                 }
 
-                string work_cmd = $"Select * from workorder a WITH (NOLOCK) ,workorder_Distribute b WITH (NOLOCK) Where a.ukey = b.workorderukey and a.cutref = '{this.CurrentMaintain["Cutref"]}' and b.orderid ='{newvalue}' and a.MDivisionId = '{Env.User.Keyword}' and b.orderid <> 'EXCESS'";
+                string work_cmd = $"Select * from workorder a WITH (NOLOCK) ,workorder_Distribute b WITH (NOLOCK) Where a.ukey = b.workorderukey and a.cutref = '{this.CurrentMaintain["Cutref"]}' and b.orderid ='{newvalue}' and b.orderid <> 'EXCESS'";
                 if (DBProxy.Current.Select(null, work_cmd, out DataTable articleTb))
                 {
                     if (articleTb.Rows.Count == 0)
@@ -1236,7 +1236,7 @@ where b.poid = '{poid}'
 select distinct Article ,w.Colorid
 from workorder w WITH (NOLOCK) 
 inner join Workorder_Distribute wd WITH (NOLOCK) on w.Ukey = wd.WorkorderUkey
-where Article!='' and w.cutref='{this.CurrentMaintain["cutref"]}' and w.mDivisionid = '{this.keyword}' {sqlwhere}";
+where Article!='' and w.cutref='{this.CurrentMaintain["cutref"]}' {sqlwhere}";
                 item = new Win.Tools.SelectItem(selectCommand, "20", this.Text);
                 DialogResult returnResult = item.ShowDialog();
                 if (returnResult == DialogResult.Cancel)

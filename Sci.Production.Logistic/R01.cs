@@ -43,6 +43,8 @@ namespace Sci.Production.Logistic
             DBProxy.Current.Select(null, "select '' as ID union all select ID from MDivision WITH (NOLOCK) ", out DataTable mDivision);
             MyUtility.Tool.SetupCombox(this.comboM, 1, mDivision);
             this.comboM.Text = Env.User.Keyword;
+            this.chBulk.Checked = true;
+            this.chGarment.Checked = true;
         }
 
         /// <summary>
@@ -54,6 +56,12 @@ namespace Sci.Production.Logistic
             if (MyUtility.Check.Empty(this.dateBuyerDelivery.Value1) && MyUtility.Check.Empty(this.dateSCIDelivery.Value1))
             {
                 MyUtility.Msg.WarningBox("Buyer Delivery or SCI Delivery can't be empty!!");
+                return false;
+            }
+
+            if (!this.chBulk.Checked && !this.chGarment.Checked)
+            {
+                MyUtility.Msg.WarningBox("<Category> Cannot be empty!!");
                 return false;
             }
 
@@ -76,8 +84,9 @@ namespace Sci.Production.Logistic
         {
             StringBuilder sqlCmd = new StringBuilder();
             string chkWhere = string.Empty;
+            string checkCategory = this.chBulk.Checked && this.chGarment.Checked ? "'B','G'" : this.chBulk.Checked ? "'B'" : "'G'";
 
-            sqlCmd.Append(@"
+            sqlCmd.Append($@"
 select  o.FactoryID
         , o.MCHandle
         , o.SewLine
@@ -106,7 +115,7 @@ from Orders o WITH (NOLOCK)
 inner join Order_QtyShip oq WITH (NOLOCK) on o.ID = oq.Id
 inner join Style s  WITH (NOLOCK) on o.StyleUkey = s.Ukey
 inner join Factory f WITH (NOLOCK) on f.id = o.FactoryID and f.IsProduceFty = 1
-where o.Category = 'B'");
+where o.Category in({checkCategory})");
 
             if (!MyUtility.Check.Empty(this.buyerDelivery1))
             {

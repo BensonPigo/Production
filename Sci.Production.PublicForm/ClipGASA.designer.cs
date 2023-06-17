@@ -1,6 +1,6 @@
 ﻿namespace Sci.Production.PublicForm
 {
-    partial class Clip
+    partial class ClipGASA
     {
         /// <summary>
         /// 設計工具所需的變數。
@@ -143,10 +143,10 @@
             this.loc.TabIndex = 1;
             this.loc.Text = "loc";
             // 
-            // Clip
+            // ClipGASA
             // 
             this.ClientSize = new System.Drawing.Size(1026, 412);
-            this.Name = "Clip";
+            this.Name = "ClipGASA";
             this.OnLineHelpID = "Sci.Win.Tools.BaseGrid";
             this.btm.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).EndInit();

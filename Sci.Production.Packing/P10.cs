@@ -688,6 +688,29 @@ where   a.ID = '{0}'",
                 return;
             }
 
+            StringBuilder warningmsg = new StringBuilder();
+            foreach (DataRow dr in selectedData)
+            {
+                if (MyUtility.Check.Seek(
+                    $@"
+select TransferDate 
+from PackingList_Detail WITH (NOLOCK)
+where ID = '{dr["id"].ToString().Trim()}' 
+and OrderID = '{dr["OrderID"].ToString().Trim()}'
+and CTNStartNo = '{dr["CTNStartNo"].ToString().Trim()}'
+and DisposeFromClog = 0", out DataRow drSelect))
+                {
+                    warningmsg.Append($@"<CNT#: {dr["id"]}{dr["CTNStartNo"]}> This CTN# has been transfer." + Environment.NewLine);
+                    continue;
+                }
+            }
+
+            if (warningmsg.ToString().Length > 0)
+            {
+                MyUtility.Msg.WarningBox(warningmsg.ToString());
+                return;
+            }
+
             IList<string> insertCmds = new List<string>();
             IList<string> updateCmds = new List<string>();
 

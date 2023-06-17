@@ -40,6 +40,8 @@
             this.comboLanguage = new Sci.Win.UI.ComboBox();
             this.labLanguage = new Sci.Win.UI.Label();
             this.textArtworkType = new Sci.Win.UI.TextBox();
+            this.chkNonSewing = new Sci.Win.UI.CheckBox();
+            this.chkPPA = new Sci.Win.UI.CheckBox();
             this.SuspendLayout();
             // 
             // print
@@ -196,9 +198,33 @@
             this.textArtworkType.Text = "SEWING,PRESSING,PACKING,SEAMSEAL,ULTRASONIC";
             this.textArtworkType.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TextArtworkType_PopUp);
             // 
+            // chkNonSewing
+            // 
+            this.chkNonSewing.AutoSize = true;
+            this.chkNonSewing.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkNonSewing.Location = new System.Drawing.Point(13, 180);
+            this.chkNonSewing.Name = "chkNonSewing";
+            this.chkNonSewing.Size = new System.Drawing.Size(238, 21);
+            this.chkNonSewing.TabIndex = 102;
+            this.chkNonSewing.Text = "Include non-sewing line operation";
+            this.chkNonSewing.UseVisualStyleBackColor = true;
+            // 
+            // chkPPA
+            // 
+            this.chkPPA.AutoSize = true;
+            this.chkPPA.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkPPA.Location = new System.Drawing.Point(12, 207);
+            this.chkPPA.Name = "chkPPA";
+            this.chkPPA.Size = new System.Drawing.Size(240, 21);
+            this.chkPPA.TabIndex = 103;
+            this.chkPPA.Text = "Include PPA centralized operation";
+            this.chkPPA.UseVisualStyleBackColor = true;
+            // 
             // P01_Print
             // 
-            this.ClientSize = new System.Drawing.Size(645, 202);
+            this.ClientSize = new System.Drawing.Size(645, 258);
+            this.Controls.Add(this.chkPPA);
+            this.Controls.Add(this.chkNonSewing);
             this.Controls.Add(this.textArtworkType);
             this.Controls.Add(this.labLanguage);
             this.Controls.Add(this.comboLanguage);
@@ -235,6 +261,8 @@
             this.Controls.SetChildIndex(this.comboLanguage, 0);
             this.Controls.SetChildIndex(this.labLanguage, 0);
             this.Controls.SetChildIndex(this.textArtworkType, 0);
+            this.Controls.SetChildIndex(this.chkNonSewing, 0);
+            this.Controls.SetChildIndex(this.chkPPA, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -254,5 +282,7 @@
         private Win.UI.ComboBox comboLanguage;
         private Win.UI.Label labLanguage;
         private Win.UI.TextBox textArtworkType;
+        private Win.UI.CheckBox chkNonSewing;
+        private Win.UI.CheckBox chkPPA;
     }
 }

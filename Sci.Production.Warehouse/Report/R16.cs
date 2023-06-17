@@ -123,16 +123,16 @@ select
 	,[Scan Time] = format(id.MINDReleaseDate,'yyyy/MM/dd HH:mm')
 	,[Picking Completion %] = CompletionNum.value
     ,[Need Unroll] = iif (id.NeedUnroll = 1, 'Y', '')
-	,[MIND Unroll & Relax Scan By] = concat(id.UnrollScanner,'-',(select Name from Pass1 where Pass1.id =id.UnrollScanner ))
-	,[Start Time Unroll] = format(id.UnrollStartTime,'yyyy/MM/dd HH:mm')
-	,[End Time Unroll] = format(id.UnrollEndTime,'yyyy/MM/dd HH:mm')
-	,[Start Time Relax] = format(id.RelaxationStartTime,'yyyy/MM/dd HH:mm')
-	,[End Time Relax] = format(id.RelaxationEndTime,'yyyy/MM/dd HH:mm')
-	,[Actual Qty] = id.UnrollActualQty
-	,[Yardage Remarks] = id.UnrollRemark
+	,[MIND Unroll & Relax Scan By] = concat(fu.UnrollScanner,'-',(select Name from Pass1 where Pass1.id =fu.UnrollScanner ))
+	,[Start Time Unroll] = format(fu.UnrollStartTime,'yyyy/MM/dd HH:mm')
+	,[End Time Unroll] = format(fu.UnrollEndTime,'yyyy/MM/dd HH:mm')
+	,[Start Time Relax] = format(fu.RelaxationStartTime,'yyyy/MM/dd HH:mm')
+	,[End Time Relax] = format(fu.RelaxationEndTime,'yyyy/MM/dd HH:mm')
+	,[Actual Qty] = fu.UnrollActualQty
+	,[Yardage Remarks] = fu.UnrollRemark
 	,[Unrolling & Relaxation Completion %] = case 
-					when (id.NeedUnroll = 1 and id.UnrollStatus = 'Done' and id.RelaxationStartTime is null) then 100
-					when (id.NeedUnroll = 1 and id.UnrollStatus = 'Done' and id.RelaxationStartTime is not null and id.RelaxationEndTime <= GETDATE()) then 100
+					when (id.NeedUnroll = 1 and fu.UnrollStatus = 'Done' and fu.RelaxationStartTime is null) then 100
+					when (id.NeedUnroll = 1 and fu.UnrollStatus = 'Done' and fu.RelaxationStartTime is not null and fu.RelaxationEndTime <= GETDATE()) then 100
 					else 0 end
 	,[MIND Dispatch Scan By] = CONCAT(id.DispatchScanner,'-',(select Name from Pass1 where Pass1.id =id.DispatchScanner ))
 	,[Scan Time] = id.DispatchScanTime
@@ -154,6 +154,10 @@ left join (
 	left join [ExtendServer].ManufacturingExecution.dbo.RefnoRelaxtime rr on fr.ID = rr.FabricRelaxationID
 )r on r.Refno = psd.Refno
 left join M360MINDDispatch m360 on m360.Ukey = id.M360MINDDispatchUkey
+left join WHBarcodeTransaction w with (nolock) on w.TransactionID = id.ID
+                                                and w.TransactionUkey = id.Ukey
+                                                and w.Action = 'Confirm'
+left join Fabric_UnrollandRelax fu with (nolock) on fu.Barcode = w.To_NewBarcode
 outer apply(
 	select cutref = stuff((
 		Select concat(' / ', w.FabricCombo,'-',x1.CutNo)

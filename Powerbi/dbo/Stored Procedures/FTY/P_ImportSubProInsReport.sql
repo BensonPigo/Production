@@ -70,7 +70,7 @@ outer apply(
 	),1,1,'''')
 )SubProResponseTeamID
 outer apply(select ttlSecond = DATEDIFF(Second, SR.AddDate, RepairedDatetime)) ttlSecond
-outer apply(select MDivisionID from Factory f where f.ID = SR.FactoryID ) Fac
+outer apply(select MDivisionID from Production.dbo.Factory f where f.ID = SR.FactoryID ) Fac
 Where SR.InspectionDate between @StartDate and @EndDate
 UNION
 select
@@ -133,7 +133,7 @@ outer apply(
 	),1,1,'''')
 )SubProResponseTeamID
 outer apply(select ttlSecond = DATEDIFF(Second, SR.AddDate, RepairedDatetime)) ttlSecond
-outer apply(select MDivisionID from Factory f where f.ID = SR.FactoryID ) Fac
+outer apply(select MDivisionID from Production.dbo.Factory f where f.ID = SR.FactoryID ) Fac
 Where SR.InspectionDate between @StartDate and @EndDate
 ')
  
@@ -226,11 +226,19 @@ select	isnull(FactoryID, '')
 		,isnull(MDivisionID, '')
 from #tmp2
 
-update b
-	set b.TransferDate = getdate()
-		, b.IS_Trans = 1
-from BITableInfo b
-where b.Id = 'P_SubProInsReport'
+declare @Cnt bigint = (select count(1) from #tmp2)
+declare @powebiCnt bigint = (select count(1) from P_SubProInsReport where InspectionDate between @StartDate and @EndDate);
+
+print @cnt
+print @powebiCnt
+if ((@Cnt > 0 and @powebiCnt > 0) or (@Cnt = @powebiCnt))
+begin
+	update b
+		set b.TransferDate = getdate()
+			, b.IS_Trans = 1
+	from BITableInfo b
+	where b.Id = 'P_SubProInsReport'
+end
 
 end
 GO

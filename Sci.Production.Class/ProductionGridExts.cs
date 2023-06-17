@@ -462,17 +462,14 @@ namespace Sci
 
             settings.EditingMouseDown += (s, e) =>
             {
+                DataRow dr = mainForm.detailgrid.GetDataRow<DataRow>(e.RowIndex);
                 if (mainForm.EditMode && e.Button == MouseButtons.Right)
                 {
                     string sqlcmd = @"
 select ID,DescEN 
 from Mold WITH (NOLOCK) 
 where Junk = 0
-and IsAttachment = 1
-union all
-select ID, Description
-from SewingMachineAttachment WITH (NOLOCK) 
-where Junk = 0";
+and IsAttachment = 1";
 
                     Win.Tools.SelectItem2 item = new Win.Tools.SelectItem2(sqlcmd, "ID,DescEN", "13,60,10", mainForm.CurrentDetailData["Attachment"].ToString(), null, null, null)
                     {
@@ -484,7 +481,13 @@ where Junk = 0";
                         return;
                     }
 
+                    if (MyUtility.Convert.GetString(mainForm.CurrentDetailData["Attachment"]) != item.GetSelectedString())
+                    {
+                        mainForm.CurrentDetailData["SewingMachineAttachmentID"] = string.Empty;
+                    }
+
                     mainForm.CurrentDetailData["Attachment"] = item.GetSelectedString();
+                    mainForm.CurrentDetailData["MoldID"] = item.GetSelectedString();
                 }
             };
 
@@ -492,6 +495,8 @@ where Junk = 0";
             {
                 if (mainForm.EditMode)
                 {
+                    DataRow dr = mainForm.detailgrid.GetDataRow<DataRow>(e.RowIndex);
+
                     List<SqlParameter> cmds = new List<SqlParameter>() { new SqlParameter { ParameterName = "@OperationID", Value = MyUtility.Convert.GetString(mainForm.CurrentDetailData["OperationID"]) } };
                     string sqlcmd = @"
 select [Attachment] = STUFF((
@@ -518,6 +523,7 @@ where o.ID = @OperationID";
                     if (!result)
                     {
                         mainForm.CurrentDetailData["Attachment"] = string.Empty;
+                        mainForm.CurrentDetailData["MoldID"] = string.Empty;
                         MyUtility.Msg.WarningBox("SQL Connection failt!!\r\n" + result.ToString());
                     }
 
@@ -527,6 +533,8 @@ where o.ID = @OperationID";
                         if (e.FormattedValue.Empty())
                         {
                             mainForm.CurrentDetailData["Attachment"] = dtOperation.Rows[0]["Attachment"].ToString();
+                            mainForm.CurrentDetailData["MoldID"] = dtOperation.Rows[0]["Attachment"].ToString();
+                            mainForm.CurrentDetailData["SewingMachineAttachmentID"] = string.Empty;
 
                             return;
                         }
@@ -546,6 +554,8 @@ where Junk = 0";
                     if (!result)
                     {
                         mainForm.CurrentDetailData["Attachment"] = string.Empty;
+                        mainForm.CurrentDetailData["MoldID"] = string.Empty;
+                        mainForm.CurrentDetailData["SewingMachineAttachmentID"] = string.Empty;
                         MyUtility.Msg.WarningBox("SQL Connection failt!!\r\n" + result.ToString());
                     }
 
@@ -554,15 +564,23 @@ where Junk = 0";
 
                     // 不存在 Mold
                     var existsMold = getMold.Except(dtMold.AsEnumerable().Select(x => x.Field<string>("ID")).ToList());
+                    getMold.AddRange(operationList);
                     if (existsMold.Any())
                     {
                         e.Cancel = true;
-                        mainForm.CurrentDetailData["Attachment"] = string.Join(",", getMold.Where(x => existsMold.Where(y => !y.EqualString(x)).Any()).ToList());
+                        mainForm.CurrentDetailData["Attachment"] = string.Join(",", getMold.Where(x => existsMold.Where(y => !y.EqualString(x)).Any()).Distinct().ToList());
+                        mainForm.CurrentDetailData["MoldID"] = string.Join(",", getMold.Where(x => existsMold.Where(y => !y.EqualString(x)).Any()).Distinct().ToList());
                         MyUtility.Msg.WarningBox("Attachment : " + string.Join(",", existsMold.ToList()) + "  need include in Mold setting !!", "Data need include in setting");
                         return;
                     }
 
-                    mainForm.CurrentDetailData["Attachment"] = string.Join(",", getMold.ToList());
+                    if (MyUtility.Convert.GetString(mainForm.CurrentDetailData["Attachment"]) != string.Join(",", getMold.Distinct().ToList()))
+                    {
+                        mainForm.CurrentDetailData["SewingMachineAttachmentID"] = string.Empty;
+                    }
+
+                    mainForm.CurrentDetailData["Attachment"] = string.Join(",", getMold.Distinct().ToList());
+                    mainForm.CurrentDetailData["MoldID"] = string.Join(",", getMold.Distinct().ToList());
                 }
             };
 

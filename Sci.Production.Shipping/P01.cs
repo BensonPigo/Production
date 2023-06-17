@@ -526,28 +526,30 @@ values ('{0}','Status','','New','{1}',GETDATE())",
             worksheet.Cells[14, 7] = MyUtility.Convert.GetString(this.CurrentMaintain["SubconDBCNo"]);
             worksheet.Cells[14, 9] = MyUtility.Convert.GetString(this.CurrentMaintain["SubConName"]);
             worksheet.Cells[15, 3] = MyUtility.Convert.GetString(this.CurrentMaintain["ResponsibleSCI"]).ToUpper() == "TRUE" ? "Y" : string.Empty;
-            worksheet.Range["C15:I15"].Interior.Color = MyUtility.Convert.GetString(this.CurrentMaintain["ResponsibleSCI"]).ToUpper() == "TRUE" ? colorY_Mark : Color.White;
-            worksheet.Range["C15:I15"].Font.Bold = MyUtility.Convert.GetString(this.CurrentMaintain["ResponsibleSCI"]).ToUpper() == "TRUE";
+            worksheet.Range["C15:I16"].Interior.Color = MyUtility.Convert.GetString(this.CurrentMaintain["ResponsibleSCI"]).ToUpper() == "TRUE" ? colorY_Mark : Color.White;
+            worksheet.Range["C15:I16"].Font.Bold = MyUtility.Convert.GetString(this.CurrentMaintain["ResponsibleSCI"]).ToUpper() == "TRUE";
             worksheet.Cells[15, 5] = MyUtility.Convert.GetString(this.CurrentMaintain["RatioSCI"]) + "%";
             worksheet.Cells[15, 7] = MyUtility.Convert.GetString(this.CurrentMaintain["SCIICRNo"]);
             worksheet.Cells[15, 9] = MyUtility.Convert.GetString(this.CurrentMaintain["SCIICRRemark"]);
-            worksheet.Cells[16, 3] = MyUtility.Convert.GetString(this.CurrentMaintain["ResponsibleSupp"]).ToUpper() == "TRUE" ? "Y" : string.Empty;
-            worksheet.Range["C16:I16"].Interior.Color = MyUtility.Convert.GetString(this.CurrentMaintain["ResponsibleSupp"]).ToUpper() == "TRUE" ? colorY_Mark : Color.White;
-            worksheet.Range["C16:I16"].Font.Bold = MyUtility.Convert.GetString(this.CurrentMaintain["ResponsibleSupp"]).ToUpper() == "TRUE";
-            worksheet.Cells[16, 5] = MyUtility.Convert.GetString(this.CurrentMaintain["RatioSupp"]) + "%";
-            worksheet.Cells[16, 7] = MyUtility.Convert.GetString(this.CurrentMaintain["SuppDBCNo"]);
-            worksheet.Cells[16, 9] = MyUtility.Convert.GetString(this.CurrentMaintain["SuppDBCRemark"]);
-            worksheet.Cells[17, 3] = MyUtility.Convert.GetString(this.CurrentMaintain["ResponsibleBuyer"]).ToUpper() == "TRUE" ? "Y" : string.Empty;
-            worksheet.Range["C17:I17"].Interior.Color = MyUtility.Convert.GetString(this.CurrentMaintain["ResponsibleBuyer"]).ToUpper() == "TRUE" ? colorY_Mark : Color.White;
-            worksheet.Range["C17:I17"].Font.Bold = MyUtility.Convert.GetString(this.CurrentMaintain["ResponsibleBuyer"]).ToUpper() == "TRUE";
-            worksheet.Cells[17, 5] = MyUtility.Convert.GetString(this.CurrentMaintain["RatioBuyer"]) + "%";
-            worksheet.Cells[17, 7] = MyUtility.Convert.GetString(this.CurrentMaintain["BuyerDBCNo"]);
-            worksheet.Cells[17, 9] = MyUtility.Convert.GetString(this.CurrentMaintain["BuyerDBCRemark"]);
-            worksheet.Cells[18, 7] = MyUtility.Convert.GetString(this.CurrentMaintain["BuyerRemark"]);
-            worksheet.Cells[19, 3] = MyUtility.Convert.GetString(this.CurrentMaintain["FtyDesc"]);
-            worksheet.Cells[20, 3] = MyUtility.Convert.GetString(this.CurrentMaintain["MRComment"]);
+            worksheet.Cells[16, 7] = MyUtility.Convert.GetString(this.CurrentMaintain["SCIICRNo2"]);
+            worksheet.Cells[16, 9] = MyUtility.Convert.GetString(this.CurrentMaintain["SCIICRRemark2"]);
+            worksheet.Cells[17, 3] = MyUtility.Convert.GetString(this.CurrentMaintain["ResponsibleSupp"]).ToUpper() == "TRUE" ? "Y" : string.Empty;
+            worksheet.Range["C17:I17"].Interior.Color = MyUtility.Convert.GetString(this.CurrentMaintain["ResponsibleSupp"]).ToUpper() == "TRUE" ? colorY_Mark : Color.White;
+            worksheet.Range["C17:I17"].Font.Bold = MyUtility.Convert.GetString(this.CurrentMaintain["ResponsibleSupp"]).ToUpper() == "TRUE";
+            worksheet.Cells[17, 5] = MyUtility.Convert.GetString(this.CurrentMaintain["RatioSupp"]) + "%";
+            worksheet.Cells[17, 7] = MyUtility.Convert.GetString(this.CurrentMaintain["SuppDBCNo"]);
+            worksheet.Cells[17, 9] = MyUtility.Convert.GetString(this.CurrentMaintain["SuppDBCRemark"]);
+            worksheet.Cells[18, 3] = MyUtility.Convert.GetString(this.CurrentMaintain["ResponsibleBuyer"]).ToUpper() == "TRUE" ? "Y" : string.Empty;
+            worksheet.Range["C18:I19"].Interior.Color = MyUtility.Convert.GetString(this.CurrentMaintain["ResponsibleBuyer"]).ToUpper() == "TRUE" ? colorY_Mark : Color.White;
+            worksheet.Range["C18:I19"].Font.Bold = MyUtility.Convert.GetString(this.CurrentMaintain["ResponsibleBuyer"]).ToUpper() == "TRUE";
+            worksheet.Cells[18, 5] = MyUtility.Convert.GetString(this.CurrentMaintain["RatioBuyer"]) + "%";
+            worksheet.Cells[18, 7] = MyUtility.Convert.GetString(this.CurrentMaintain["BuyerDBCNo"]);
+            worksheet.Cells[18, 9] = MyUtility.Convert.GetString(this.CurrentMaintain["BuyerDBCRemark"]);
+            worksheet.Cells[19, 7] = MyUtility.Convert.GetString(this.CurrentMaintain["BuyerRemark"]);
+            worksheet.Cells[20, 3] = MyUtility.Convert.GetString(this.CurrentMaintain["FtyDesc"]);
+            worksheet.Cells[21, 3] = MyUtility.Convert.GetString(this.CurrentMaintain["MRComment"]);
 
-            Microsoft.Office.Interop.Excel.Range screenshotRange = worksheet.Range["A1:J33"];
+            Microsoft.Office.Interop.Excel.Range screenshotRange = worksheet.Range["A1:J34"];
             screenshotRange.CopyPicture(Microsoft.Office.Interop.Excel.XlPictureAppearance.xlScreen, Microsoft.Office.Interop.Excel.XlCopyPictureFormat.xlBitmap);
             Image clipboardImage = Clipboard.GetImage();
 
@@ -1428,6 +1430,12 @@ where a.ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
                     Convert.ToDateTime(this.CurrentMaintain["CDate"]).ToString("yyyyMMdd"),
                     MyUtility.Convert.GetString(this.CurrentMaintain["Status"]) == "Junked" ? "cancel" : "request");
 
+                bool isSciIcrNo = MyUtility.Check.Empty(this.CurrentMaintain["SCIICRNo"]);
+                bool isSciIcrNo2 = MyUtility.Check.Empty(this.CurrentMaintain["SCIICRNo2"]);
+                string strSCIICRNO = "ICR # (1):" + MyUtility.Convert.GetString(this.CurrentMaintain["SCIICRNo"]) ;
+                string strSCIICRNO2 = "ICR # (2):" + MyUtility.Convert.GetString(this.CurrentMaintain["SCIICRNo2"]);
+                string strMarketing = !isSciIcrNo && !isSciIcrNo2 ? "Marketing:" + strSCIICRNO + " , " + strSCIICRNO2 + "\r\n" : isSciIcrNo && isSciIcrNo2 ? string.Empty : !isSciIcrNo ? "Marketing:" + strSCIICRNO + "\r\n" : "Marketing:" + strSCIICRNO2 + "\r\n";
+
                 StringBuilder content = new StringBuilder();
                 #region 組Content
                 content.Append(string.Format(
@@ -1449,9 +1457,9 @@ Responsibility: {9}{10}{11}{12}{13}</b>",
                     MyUtility.Convert.GetString(this.CurrentMaintain["ShipQty"]),
                     MyUtility.Convert.GetString(this.CurrentMaintain["ResponsibleFty"]) == "True" ? "Factory:" + MyUtility.Convert.GetString(this.CurrentMaintain["ResponsibleFtyNo"]) + "\r\n" : string.Empty,
                     MyUtility.Convert.GetString(this.CurrentMaintain["ResponsibleSubcon"]) == "True" ? "Subcon:DBC #:" + MyUtility.Convert.GetString(this.CurrentMaintain["SubconDBCNo"]) + "\r\n" : string.Empty,
-                    MyUtility.Convert.GetString(this.CurrentMaintain["ResponsibleSCI"]) == "True" ? "SCI:ICR #:" + MyUtility.Convert.GetString(this.CurrentMaintain["SCIICRNo"]) + "\r\n" : string.Empty,
+                    MyUtility.Convert.GetString(this.CurrentMaintain["ResponsibleSCI"]) == "True" ? strMarketing : string.Empty,
                     MyUtility.Convert.GetString(this.CurrentMaintain["ResponsibleSupp"]) == "True" ? "Supplier:DBC #:" + MyUtility.Convert.GetString(this.CurrentMaintain["SuppDBCNo"]) + "\r\n" : string.Empty,
-                    MyUtility.Convert.GetString(this.CurrentMaintain["ResponsibleBuyer"]) == "True" ? "Buyer:Debit Memo:" + MyUtility.Convert.GetString(this.CurrentMaintain["BuyerDBCNo"]) + ", ICR #" + MyUtility.Convert.GetString(this.CurrentMaintain["BuyerICRNo"]) + "\r\n" : string.Empty));
+                    MyUtility.Convert.GetString(this.CurrentMaintain["ResponsibleBuyer"]) == "True" ? "Buyer:Debit Memo:" + MyUtility.Convert.GetString(this.CurrentMaintain["BuyerDBCNo"]) + "\r\n" : string.Empty));
                 #endregion
 
                 // 產生Excel

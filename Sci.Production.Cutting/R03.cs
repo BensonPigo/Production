@@ -119,7 +119,7 @@ select
 	[Ref#] = wo.CutRef,
 	[Seq]=Concat (wo.Seq1, ' ', wo.Seq2),
 	[Cut#] = wo.Cutno,
-    [SpreadingNoID]=wo.SpreadingNoID,
+    [SpreadingNoID] = wo.SpreadingNoID,    
 	[Cut Cell] = wo.CutCellID,
 	[Sewing Line] = stuff(SewingLineID.SewingLineID,1,1,''),
 	[Sewing Cell] = stuff(SewingCell.SewingCell,1,1,''),
@@ -172,7 +172,8 @@ select
     wo.Remark,
     wo.cutplanID,
     wo.MarkerVersion,
-    wo.Ukey
+    wo.Ukey,
+    [QtyBreakdownBySP] = QtyBreakdownBySP.val
 into #tmp
 from WorkOrder wo WITH (NOLOCK) 
 inner join Orders o WITH (NOLOCK) on o.id = wo.OrderID
@@ -277,6 +278,14 @@ outer apply(
 		where wd.WorkOrderUkey = wo.Ukey
 	)
 ) as ss
+outer apply(
+	select val = stuff((
+		select distinct concat(',', OrderID, '/', Convert(varchar, Qty))
+		from WorkOrder_Distribute WITH (NOLOCK) 
+		where WorkOrderUkey = wo.UKey
+		for xml path('')
+	),1,1,'')
+)as QtyBreakdownBySP
 outer apply(select p.PatternUkey from dbo.GetPatternUkey(o.POID,'',wo.MarkerNo,o.StyleUkey,ss.SizeGroup)p)p
 outer apply(select dbo.MarkerLengthToYDS(wo.MarkerLength) YDSMarkerLength) ML
 where 1=1
@@ -462,6 +471,7 @@ select
     [To be combined]=cl.v,
     t.UnfinishedCuttingReasonDesc,
     t.Remark,
+    t.QtyBreakdownBySP,
     cutplanID
 from #tmp t
 left join #tmpMatchFabric tmf on t.Ukey = tmf.Ukey
@@ -499,7 +509,7 @@ outer apply(
 )cl
 outer apply(
 	SELECT top 1 OBE.Width
-	FROM Order_BOF OB 
+	FROM Order_BOF OB WITH (NOLOCK)
 	INNER JOIN Order_BOF_Expend OBE WITH (NOLOCK) ON OBE.Order_BOFUkey = OB.Ukey
 	INNER JOIN PO_Supp PS WITH (NOLOCK) ON PS.ID = OB.Id --AND PS.SuppID = OB.SuppID
 	INNER JOIN PO_Supp_Detail PSD WITH (NOLOCK) ON PSD.ID= OB.Id AND PSD.RefNo = OB.Refno
@@ -588,7 +598,7 @@ drop table #tmp, #tmpL, #tmpMatchFabric");
             MyUtility.Excel.CopyToXls(this.printData[0], string.Empty, "Cutting_R03_CuttingScheduleListReport.xltx", 2, false, null, excelapp);
 
             // Perimeter(Decimal)
-            int perimeterCol = this.printData[0].Columns.Count - 6;
+            int perimeterCol = this.printData[0].Columns.Count - 7;
             excelapp.Cells[3, perimeterCol] = $"=IFERROR(LEFT(AS3,SEARCH(\"yd\",AS3,1)-1)+0+(IFERROR(RIGHT(LEFT(AS3,SEARCH(\"\"\"\",AS3,1)-1),2)+0,0)+IFERROR(VLOOKUP(RIGHT(AS3,2)+0,data!$A$1:$B$8,2,TRUE),0))/36,\"\")";
             int rowct = this.printData[0].Rows.Count + 2;
 

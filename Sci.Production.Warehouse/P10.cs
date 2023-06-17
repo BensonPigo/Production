@@ -869,8 +869,46 @@ where (isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f
                         throw result.GetException();
                     }
 
+                    // 更新完庫存後 RemainingQty
+                    string sqlUpdateRemainingQty = $@"
+Update sd set
+    RemainingQty = f.InQty - f.OutQty + f.AdjustQty - f.ReturnQty
+from Issue_Detail sd with(nolock)
+inner join Production.dbo.FtyInventory f with(nolock) on f.POID = isnull(sd.PoId, '')
+    and f.Seq1 = isnull(sd.Seq1, '')
+    and f.Seq2 = isnull(sd.Seq2, '')
+    and f.Roll = isnull(sd.Roll, '')
+	and f.Dyelot = isnull(sd.Dyelot, '')
+    and f.StockType = isnull(sd.StockType, '')
+    and sd.id = '{this.CurrentMaintain["ID"]}'
+";
+                    if (!(result = DBProxy.Current.Execute(null, sqlUpdateRemainingQty)))
+                    {
+                        throw result.GetException();
+                    }
+
                     string sqUnrollActualQty = $@"
-update Issue_Detail set UnrollActualQty = Qty where id = '{this.CurrentMaintain["ID"]}'
+SELECT DISTINCT w.To_NewBarcode, sd.POID, sd.Seq1, sd.Seq2, sd.Roll, sd.Dyelot, sd.StockType, sd.Qty
+into #tmp
+FROM Issue_Detail sd WITH (NOLOCK)
+LEFT JOIN WHBarcodeTransaction w WITH (NOLOCK) 
+    ON w.TransactionID = sd.ID
+    AND w.TransactionUkey = sd.Ukey
+    AND w.Action = 'Confirm'
+LEFT JOIN Fabric_UnrollandRelax fu ON fu.Barcode = w.To_NewBarcode
+left join FtyInventory on FtyInventory.Ukey = sd.FtyInventoryUkey
+WHERE sd.id = '{this.CurrentMaintain["ID"]}' 
+    AND fu.Barcode IS NULL
+
+INSERT INTO dbo.Fabric_UnrollandRelax (Barcode, POID, Seq1, Seq2, Roll, Dyelot, StockType,UnrollActualQty)
+select a.To_NewBarcode, b.POID, b.Seq1, b.Seq2, b.Roll, b.Dyelot, b.StockType, b.Qty
+from(select distinct To_NewBarcode from #tmp) a
+outer apply(
+    select top 1 *
+    from #tmp b
+    where b.To_NewBarcode = a.To_NewBarcode
+)b
+
 ";
                     if (!(result = DBProxy.Current.Execute(null, sqUnrollActualQty)))
                     {
@@ -882,9 +920,9 @@ update Issue_Detail set UnrollActualQty = Qty where id = '{this.CurrentMaintain[
                         string dtUkey = dtNeedUnroll.AsEnumerable().Select(s => MyUtility.Convert.GetString(s["Ukey"])).ToList().JoinToString(",");
                         string sqlUnroll = $@"
 -- 先全部清空，除了已經完成的
-update Issue_Detail set NeedUnroll = 0, UnrollStatus = '' where id = '{this.CurrentMaintain["ID"]}' and UnrollStatus not in ('Done')
+update Issue_Detail set NeedUnroll = 0 where id = '{this.CurrentMaintain["ID"]}'
 --再重新更新需要的
-update Issue_Detail set NeedUnroll = 1, UnrollStatus = 'Ongoing' where Ukey in ({dtUkey}) and UnrollStatus = ''
+update Issue_Detail set NeedUnroll = 1 where Ukey in ({dtUkey})
 
 update Issue set IncludeUnrollRelaxationRoll = 1 where id = '{this.CurrentMaintain["ID"]}'
 ";
@@ -896,7 +934,7 @@ update Issue set IncludeUnrollRelaxationRoll = 1 where id = '{this.CurrentMainta
                     else
                     {
                         string sqlUnroll = $@"
-update Issue_Detail set NeedUnroll = 0, UnrollActualQty = Qty where id = '{this.CurrentMaintain["ID"]}'
+update Issue_Detail set NeedUnroll = 0 where id = '{this.CurrentMaintain["ID"]}'
 update Issue set IncludeUnrollRelaxationRoll = 0 where id = '{this.CurrentMaintain["id"]}'
 ";
                         if (!(result = DBProxy.Current.Execute(null, sqlUnroll)))
@@ -1182,7 +1220,7 @@ where (isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f
         protected override bool ClickPrint()
         {
             P10_Print callForm;
-            callForm = new P10_Print(this.CurrentMaintain, this.editCutNo.Text, this.CurrentMaintain);
+            callForm = new P10_Print(this.CurrentMaintain, this.editCutNo.Text, this.CurrentMaintain, this.editby.Text);
             callForm.ShowDialog(this);
 
             return true;
@@ -1201,6 +1239,13 @@ where (isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f
         private void BtnMINDReleaser_Click(object sender, EventArgs e)
         {
             new P10_AssignReleaser(this.CurrentMaintain["ID"].ToString()).ShowDialog();
+        }
+
+        private void BtnIssueSummary_Click(object sender, EventArgs e)
+        {
+            P10_IssueSummary callNextFrom;
+            callNextFrom = new P10_IssueSummary(this.CurrentMaintain["ID"].ToString());
+            DialogResult result = callNextFrom.ShowDialog(this);
         }
     }
 }

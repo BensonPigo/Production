@@ -1,9 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data;
+using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using Ict;
 using Sci.Data;
+using Sci.Production.CallPmsAPI;
 
 namespace Sci.Production.Shipping
 {
@@ -125,8 +128,10 @@ outer apply
 outer apply (select CpuCost = isnull(cpucost1.CpuCost, cpucost2.CpuCost)) CpuCost
 outer apply (select [Value] = sum(Isnull(Price,0)) from GetSubProcessDetailByOrderID(pd.OrderID,'AMT')   ) sub_Process_AMT
 outer apply (select [Value] = sum(Isnull(Price,0)) from GetSubProcessDetailByOrderID(pd.OrderID,'CPU')   ) sub_Process_CPU
-Where 1=1 ");
+Where 1=1
+");
 
+            #region 篩選
             if (!MyUtility.Check.Empty(this.FCR_date1))
             {
                 sqlCmd.Append(string.Format(" and g.FCRDate >= '{0}'", Convert.ToDateTime(this.FCR_date1).ToString("yyyy/MM/dd")));
@@ -188,6 +193,7 @@ Where 1=1 ");
             }
 
             sqlCmd.Append($" and o.Category in ({this.category})");
+            #endregion
 
             sqlCmd.Append(@" ) 
                             select *
@@ -201,6 +207,148 @@ Where 1=1 ");
                 DualResult failResult = new DualResult(false, "Query data fail\r\n" + result.ToString());
                 return failResult;
             }
+
+            #region get A2B data
+            string whereInvNo = this.printData.AsEnumerable().Where(s => !MyUtility.Check.Empty(s["ID"])).Select(s => $"'{s["ID"].ToString()}'").JoinToString(",");
+            List<string> listA2B = PackingA2BWebAPI.GetPLFromRgCodeByMutiInvNo(this.printData.AsEnumerable().Select(s => s["ID"].ToString()).ToList());
+
+            string sqlGetA2bPacking = $@"
+select  p.INVNo,
+        pd.ShipQty,
+        p.GW,
+        pd.OrderID,
+		[UnitPriceUSD] = ((isnull(o.CPU, 0) + isnull(SubProcessCPU.val, 0)) * isnull(CpuCost.val, 0)) + isnull(SubProcessAMT.val, 0) + isnull(LocalPurchase.val, 0),
+        SubProcessCPU = SubProcessCPU.val,
+        SubProcessAMT = SubProcessAMT.val
+from PackingList p with (nolock)
+inner join PackingList_Detail pd with (nolock) on p.ID = pd.ID
+inner join Orders o with (nolock) on o.id = pd.OrderID
+left join Factory f with (nolock) on f.ID = o.FactoryID
+outer apply (select [val] = sum(Isnull(Price,0)) from GetSubProcessDetailByOrderID(o.ID,'CPU')) SubProcessCPU
+outer apply (select [val] = sum(Isnull(Price,0)) from GetSubProcessDetailByOrderID(o.ID,'AMT')) SubProcessAMT
+outer apply (select top 1 [val] = fd.CpuCost
+             from FtyShipper_Detail fsd WITH (NOLOCK) , FSRCpuCost_Detail fd WITH (NOLOCK) 
+             where fsd.BrandID = o.BrandID
+             and fsd.FactoryID = o.FactoryID
+             and o.OrigBuyerDelivery between fsd.BeginDate and fsd.EndDate
+             and fsd.ShipperID = fd.ShipperID
+             and o.OrigBuyerDelivery between fd.BeginDate and fd.EndDate
+			 and (fsd.SeasonID = o.SeasonID or fsd.SeasonID = '')
+			 order by SeasonID desc) CpuCost
+outer apply (select [val] = iif(f.LocalCMT = 1, dbo.GetLocalPurchaseStdCost(o.ID), 0)) LocalPurchase
+where   p.INVNo in ({whereInvNo})
+";
+
+            string sqlcmd = @"
+select  p.INVNo,
+        pd.ShipQty,
+        p.GW,
+        pd.OrderID,
+        UnitPriceUSD = cast(0 as float)
+from PackingList p with (nolock)
+inner join PackingList_Detail pd with (nolock) on p.ID = pd.ID
+where 1 = 0";
+            result = DBProxy.Current.Select(null, sqlcmd, out DataTable dtPackingA2B);
+            if (!result)
+            {
+                return result;
+            }
+
+            foreach (string tarA2B in listA2B)
+            {
+                result = PackingA2BWebAPI.GetDataBySql(tarA2B, sqlGetA2bPacking, out DataTable dtA2BResult);
+                if (!result)
+                {
+                    return result;
+                }
+
+                dtA2BResult.MergeTo(ref dtPackingA2B);
+            }
+
+            #endregion
+
+            string sqlcmd2 = @"
+select t.INVNo, OrderID, ShipQty = sum(ShipQty)
+into #tmp2
+from #tmp t
+group by t.INVNo, OrderID
+
+;with cte as (
+Select DISTINCT
+o.FactoryID
+,g.BrandID
+,o.OrigBuyerDelivery
+,o.BuyerDelivery
+,g.ID
+,g.InvSerial
+,g.InvDate
+,t.OrderID
+,o.CustPONo
+,o.StyleID
+,o.SeasonID
+,Category=IIF(o.Category = 'B', 'Bulk','Sample')
+,o.Qty
+,ShipQty = t.ShipQty
+,o.PoPrice
+,g.CustCDID
+,g.Shipper 
+,g.Dest
+,g.FCRDate
+,[CPU]= ROUND(o.CPU,3)
+,[CPUCost]= isnull(cpucost.cpucost,0)
+,[StdSewingCost]= ROUND(o.CPU,3)  *   isnull(cpucost.cpucost,0)  --Std. Sewing Cost = CPU * CPU Cost
+,[SubProcessCPU]= ROUND(Isnull(sub_Process_CPU.Value,0),3)
+,[SubProcessCost]= ROUND(isnull(cpucost.cpucost,0),3)
+,[SubProcessAMT]= ROUND(Isnull(sub_Process_AMT.Value,0),3)
+,SubPSCost=   ROUND(Isnull(sub_Process_CPU.Value,0) * isnull(cpucost.cpucost,0) + Isnull(sub_Process_AMT.Value,0),3) 
+,LocalPSCost= ROUND(IIF ((select LocalCMT from dbo.Factory where Factory.ID = o.FactoryID) = 1, dbo.GetLocalPurchaseStdCost(t.OrderID) ,0),3)
+From #tmp2 t
+Left join GMTBooking g on g.ID = t.INVNo
+Left join PackingList p on g.ID = p.InvNo
+Left join PackingList_Detail pd on p.ID = pd.ID and pd.OrderID = t.OrderID
+Inner join Orders o on t.OrderID = o.ID
+left join OrderType ot WITH (NOLOCK) on ot.BrandID = o.BrandID and ot.id = o.OrderTypeID and isnull(ot.IsGMTMaster,0) != 1
+Left join Brand b on b.ID = o.BrandID
+outer apply
+(	
+    select top 1 CpuCost = ROUND(fcd.CpuCost, 3)
+    from dbo.FtyShipper_Detail fd  
+    inner join FSRCpuCost_Detail fcd on fd.ShipperID = fcd.ShipperID 
+    where fd.BrandID=g.BrandID
+    and fd.FactoryID=o.FactoryID
+    and o.OrigBuyerDelivery between fd.BeginDate and fd.EndDate
+    and o.OrigBuyerDelivery between fcd.BeginDate and fcd.EndDate
+    and fd.seasonID=o.seasonID
+) cpucost1
+outer apply
+(	
+    select top 1 CpuCost = ROUND(fcd.CpuCost, 3)
+    from dbo.FtyShipper_Detail fd  
+    inner join FSRCpuCost_Detail fcd on fd.ShipperID = fcd.ShipperID 
+    where fd.BrandID=g.BrandID
+    and fd.FactoryID=o.FactoryID
+    and o.OrigBuyerDelivery between fd.BeginDate and fd.EndDate
+    and o.OrigBuyerDelivery between fcd.BeginDate and fcd.EndDate
+    and fd.seasonID=''
+) cpucost2
+outer apply (select CpuCost = isnull(cpucost1.CpuCost, cpucost2.CpuCost)) CpuCost
+outer apply (select [Value] = sum(Isnull(Price,0)) from GetSubProcessDetailByOrderID(t.OrderID,'AMT')   ) sub_Process_AMT
+outer apply (select [Value] = sum(Isnull(Price,0)) from GetSubProcessDetailByOrderID(t.OrderID,'CPU')   ) sub_Process_CPU
+
+) 
+select *
+,FtyCMPCostUnit=ROUND(cte.CPU * cte.CPUCost + cte.SubPSCost + cte.LocalPSCost, 2)
+,TotalCMPDeclaredtoCustomer=ROUND(cte.Qty*ROUND(cte.CPU * cte.CPUCost + cte.SubPSCost + cte.LocalPSCost, 2),5)
+from cte
+";
+            result = MyUtility.Tool.ProcessWithDatatable(dtPackingA2B, null, sqlcmd2, out DataTable dtPOList);
+
+            if (!result)
+            {
+                return result;
+            }
+
+            this.printData.Merge(dtPOList);
 
             return Ict.Result.True;
         }

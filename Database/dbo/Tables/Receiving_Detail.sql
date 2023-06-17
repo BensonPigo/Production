@@ -42,6 +42,8 @@
 	[ForInspectionTime] [datetime] NULL,
 	[QRCode_PrintDate] [datetime] NULL,
  [OneYardForWashing_AdjustID] VARCHAR(13) NOT NULL DEFAULT (''), 
+    [Hold] BIT NOT NULL DEFAULT 0, 
+    [PredeterminedInspection] BIT NOT NULL DEFAULT 0, 
     CONSTRAINT [PK_Receiving_Detail] PRIMARY KEY CLUSTERED 
 (
 	[Ukey] ASC
@@ -248,3 +250,21 @@ EXEC sp_addextendedproperty @name = N'MS_Description',
     @level1name = N'Receiving_Detail',
     @level2type = N'COLUMN',
     @level2name = N'OneYardForWashing_AdjustID'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'當倉庫收料時，若發現缺少重量或數量則會先將布捲放在特定的位置 Hold Rack Location',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'Receiving_Detail',
+    @level2type = N'COLUMN',
+    @level2name = N'Hold'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'預先指定挑選要檢驗的布',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'Receiving_Detail',
+    @level2type = N'COLUMN',
+    @level2name = N'PredeterminedInspection'

@@ -520,7 +520,7 @@
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>Comment</Value>
+                              <Value>Tone/Grp</Value>
                               <Style>
                                 <FontSize>9pt</FontSize>
                               </Style>
@@ -544,21 +544,21 @@
                 </TablixCell>
                 <TablixCell>
                   <CellContents>
-                    <Textbox Name="Textbox41">
+                    <Textbox Name="Tone">
                       <CanGrow>true</CanGrow>
                       <KeepTogether>true</KeepTogether>
                       <Paragraphs>
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value />
+                              <Value>=Fields!Tone.Value</Value>
                               <Style />
                             </TextRun>
                           </TextRuns>
                           <Style />
                         </Paragraph>
                       </Paragraphs>
-                      <rd:DefaultName>Textbox41</rd:DefaultName>
+                      <rd:DefaultName>Tone</rd:DefaultName>
                       <Style>
                         <Border>
                           <Style>Solid</Style>
@@ -587,7 +587,7 @@
             <TablixMember>
               <Group Name="Dyelot">
                 <GroupExpressions>
-                  <GroupExpression>=Fields!Dyelot.Value</GroupExpression>
+                  <GroupExpression>=Fields!Tone.Value</GroupExpression>
                 </GroupExpressions>
                 <PageBreak>
                   <BreakLocation>Between</BreakLocation>
@@ -648,38 +648,11 @@
                   </Style>
                 </TextRun>
                 <TextRun>
-                  <Value xml:space="preserve"> </Value>
+                  <Value xml:space="preserve"> 　</Value>
                   <Style>
                     <FontSize>16pt</FontSize>
                   </Style>
                 </TextRun>
-              </TextRuns>
-              <Style>
-                <TextAlign>Center</TextAlign>
-              </Style>
-            </Paragraph>
-          </Paragraphs>
-          <rd:DefaultName>Textbox1</rd:DefaultName>
-          <Top>0.09525cm</Top>
-          <Left>0.14679cm</Left>
-          <Height>0.73229cm</Height>
-          <Width>19.7cm</Width>
-          <Style>
-            <Border>
-              <Style>None</Style>
-            </Border>
-            <PaddingLeft>2pt</PaddingLeft>
-            <PaddingRight>2pt</PaddingRight>
-            <PaddingTop>2pt</PaddingTop>
-            <PaddingBottom>2pt</PaddingBottom>
-          </Style>
-        </Textbox>
-        <Textbox Name="Textbox2">
-          <CanGrow>true</CanGrow>
-          <KeepTogether>true</KeepTogether>
-          <Paragraphs>
-            <Paragraph>
-              <TextRuns>
                 <TextRun>
                   <Value>SHADE BAND</Value>
                   <Style>
@@ -694,12 +667,11 @@
               </Style>
             </Paragraph>
           </Paragraphs>
-          <rd:DefaultName>Textbox2</rd:DefaultName>
-          <Top>0.87164cm</Top>
-          <Left>0.1468cm</Left>
-          <Height>0.71092cm</Height>
+          <rd:DefaultName>Textbox1</rd:DefaultName>
+          <Top>0.09525cm</Top>
+          <Left>0.14679cm</Left>
+          <Height>0.73229cm</Height>
           <Width>19.7cm</Width>
-          <ZIndex>1</ZIndex>
           <Style>
             <Border>
               <Style>None</Style>
@@ -729,7 +701,7 @@
           <Left>0.1468cm</Left>
           <Height>0.6cm</Height>
           <Width>2.55022cm</Width>
-          <ZIndex>2</ZIndex>
+          <ZIndex>1</ZIndex>
           <Style>
             <Border>
               <Style>Solid</Style>
@@ -759,7 +731,7 @@
           <Left>0.1468cm</Left>
           <Height>0.6cm</Height>
           <Width>2.55022cm</Width>
-          <ZIndex>3</ZIndex>
+          <ZIndex>2</ZIndex>
           <Style>
             <Border>
               <Style>Solid</Style>
@@ -789,7 +761,7 @@
           <Left>0.1468cm</Left>
           <Height>0.6cm</Height>
           <Width>2.55022cm</Width>
-          <ZIndex>4</ZIndex>
+          <ZIndex>3</ZIndex>
           <Style>
             <Border>
               <Style>Solid</Style>
@@ -819,7 +791,7 @@
           <Left>0.1468cm</Left>
           <Height>0.6cm</Height>
           <Width>2.55022cm</Width>
-          <ZIndex>5</ZIndex>
+          <ZIndex>4</ZIndex>
           <Style>
             <Border>
               <Style>Solid</Style>
@@ -849,7 +821,7 @@
           <Left>0.1468cm</Left>
           <Height>0.6cm</Height>
           <Width>2.55022cm</Width>
-          <ZIndex>6</ZIndex>
+          <ZIndex>5</ZIndex>
           <Style>
             <Border>
               <Style>Solid</Style>
@@ -879,7 +851,7 @@
           <Left>0.1468cm</Left>
           <Height>0.6cm</Height>
           <Width>2.55022cm</Width>
-          <ZIndex>7</ZIndex>
+          <ZIndex>6</ZIndex>
           <Style>
             <Border>
               <Style>Solid</Style>
@@ -909,7 +881,7 @@
           <Left>2.69702cm</Left>
           <Height>0.6cm</Height>
           <Width>7.0518cm</Width>
-          <ZIndex>8</ZIndex>
+          <ZIndex>7</ZIndex>
           <Style>
             <Border>
               <Style>Solid</Style>
@@ -939,7 +911,7 @@
           <Left>2.69702cm</Left>
           <Height>0.6cm</Height>
           <Width>7.0518cm</Width>
-          <ZIndex>9</ZIndex>
+          <ZIndex>8</ZIndex>
           <Style>
             <Border>
               <Style>Solid</Style>
@@ -969,7 +941,7 @@
           <Left>2.69702cm</Left>
           <Height>0.6cm</Height>
           <Width>7.0518cm</Width>
-          <ZIndex>10</ZIndex>
+          <ZIndex>9</ZIndex>
           <Style>
             <Border>
               <Style>Solid</Style>
@@ -998,7 +970,7 @@
           <Left>2.69702cm</Left>
           <Height>0.6cm</Height>
           <Width>7.0518cm</Width>
-          <ZIndex>11</ZIndex>
+          <ZIndex>10</ZIndex>
           <Style>
             <Border>
               <Style>Solid</Style>
@@ -1028,7 +1000,7 @@
           <Left>2.69702cm</Left>
           <Height>0.6cm</Height>
           <Width>7.0518cm</Width>
-          <ZIndex>12</ZIndex>
+          <ZIndex>11</ZIndex>
           <Style>
             <Border>
               <Style>Solid</Style>
@@ -1058,7 +1030,7 @@
           <Left>2.69702cm</Left>
           <Height>0.6cm</Height>
           <Width>7.0518cm</Width>
-          <ZIndex>13</ZIndex>
+          <ZIndex>12</ZIndex>
           <Style>
             <Border>
               <Style>Solid</Style>
@@ -1088,7 +1060,7 @@
           <Left>9.7594cm</Left>
           <Height>0.6cm</Height>
           <Width>2.74213cm</Width>
-          <ZIndex>14</ZIndex>
+          <ZIndex>13</ZIndex>
           <Style>
             <Border>
               <Style>Solid</Style>
@@ -1118,7 +1090,7 @@
           <Left>9.7594cm</Left>
           <Height>0.6cm</Height>
           <Width>2.74213cm</Width>
-          <ZIndex>15</ZIndex>
+          <ZIndex>14</ZIndex>
           <Style>
             <Border>
               <Style>Solid</Style>
@@ -1148,7 +1120,7 @@
           <Left>9.7594cm</Left>
           <Height>0.6cm</Height>
           <Width>2.74213cm</Width>
-          <ZIndex>16</ZIndex>
+          <ZIndex>15</ZIndex>
           <Style>
             <Border>
               <Style>Solid</Style>
@@ -1178,7 +1150,7 @@
           <Left>9.7594cm</Left>
           <Height>0.6cm</Height>
           <Width>2.74213cm</Width>
-          <ZIndex>17</ZIndex>
+          <ZIndex>16</ZIndex>
           <Style>
             <Border>
               <Style>Solid</Style>
@@ -1208,7 +1180,7 @@
           <Left>9.7594cm</Left>
           <Height>0.6cm</Height>
           <Width>2.74213cm</Width>
-          <ZIndex>18</ZIndex>
+          <ZIndex>17</ZIndex>
           <Style>
             <Border>
               <Style>Solid</Style>
@@ -1237,7 +1209,7 @@
           <Left>9.7594cm</Left>
           <Height>0.59269cm</Height>
           <Width>2.74213cm</Width>
-          <ZIndex>19</ZIndex>
+          <ZIndex>18</ZIndex>
           <Style>
             <Border>
               <Style>Solid</Style>
@@ -1267,7 +1239,7 @@
           <Left>12.51917cm</Left>
           <Height>0.6cm</Height>
           <Width>7.30717cm</Width>
-          <ZIndex>20</ZIndex>
+          <ZIndex>19</ZIndex>
           <Style>
             <Border>
               <Style>Solid</Style>
@@ -1297,7 +1269,7 @@
           <Left>12.51917cm</Left>
           <Height>0.6cm</Height>
           <Width>7.30717cm</Width>
-          <ZIndex>21</ZIndex>
+          <ZIndex>20</ZIndex>
           <Style>
             <Border>
               <Style>Solid</Style>
@@ -1327,7 +1299,7 @@
           <Left>12.51917cm</Left>
           <Height>0.6cm</Height>
           <Width>7.30717cm</Width>
-          <ZIndex>22</ZIndex>
+          <ZIndex>21</ZIndex>
           <Style>
             <Border>
               <Style>Solid</Style>
@@ -1357,7 +1329,7 @@
           <Left>12.51917cm</Left>
           <Height>0.6cm</Height>
           <Width>7.30717cm</Width>
-          <ZIndex>23</ZIndex>
+          <ZIndex>22</ZIndex>
           <Style>
             <Border>
               <Style>Solid</Style>
@@ -1387,7 +1359,7 @@
           <Left>12.51917cm</Left>
           <Height>0.6cm</Height>
           <Width>7.30717cm</Width>
-          <ZIndex>24</ZIndex>
+          <ZIndex>23</ZIndex>
           <Style>
             <Border>
               <Style>Solid</Style>
@@ -1417,7 +1389,127 @@
           <Left>12.51917cm</Left>
           <Height>0.6cm</Height>
           <Width>7.30717cm</Width>
+          <ZIndex>24</ZIndex>
+          <Style>
+            <Border>
+              <Style>Solid</Style>
+            </Border>
+            <PaddingLeft>2pt</PaddingLeft>
+            <PaddingRight>2pt</PaddingRight>
+            <PaddingTop>2pt</PaddingTop>
+            <PaddingBottom>2pt</PaddingBottom>
+          </Style>
+        </Textbox>
+        <Textbox Name="Textbox44">
+          <CanGrow>true</CanGrow>
+          <KeepTogether>true</KeepTogether>
+          <Paragraphs>
+            <Paragraph>
+              <TextRuns>
+                <TextRun>
+                  <Value>Season</Value>
+                  <Style />
+                </TextRun>
+              </TextRuns>
+              <Style />
+            </Paragraph>
+          </Paragraphs>
+          <rd:DefaultName>Textbox11</rd:DefaultName>
+          <Top>1.1272cm</Top>
+          <Left>0.1468cm</Left>
+          <Height>0.6cm</Height>
+          <Width>2.55022cm</Width>
           <ZIndex>25</ZIndex>
+          <Style>
+            <Border>
+              <Style>Solid</Style>
+            </Border>
+            <PaddingLeft>2pt</PaddingLeft>
+            <PaddingRight>2pt</PaddingRight>
+            <PaddingTop>2pt</PaddingTop>
+            <PaddingBottom>2pt</PaddingBottom>
+          </Style>
+        </Textbox>
+        <Textbox Name="Textbox45">
+          <CanGrow>true</CanGrow>
+          <KeepTogether>true</KeepTogether>
+          <Paragraphs>
+            <Paragraph>
+              <TextRuns>
+                <TextRun>
+                  <Value>=Parameters!SeasonID.Value</Value>
+                  <Style />
+                </TextRun>
+              </TextRuns>
+              <Style />
+            </Paragraph>
+          </Paragraphs>
+          <rd:DefaultName>Textbox11</rd:DefaultName>
+          <Top>1.1272cm</Top>
+          <Left>2.69702cm</Left>
+          <Height>0.6cm</Height>
+          <Width>7.0518cm</Width>
+          <ZIndex>26</ZIndex>
+          <Style>
+            <Border>
+              <Style>Solid</Style>
+            </Border>
+            <PaddingLeft>2pt</PaddingLeft>
+            <PaddingRight>2pt</PaddingRight>
+            <PaddingTop>2pt</PaddingTop>
+            <PaddingBottom>2pt</PaddingBottom>
+          </Style>
+        </Textbox>
+        <Textbox Name="Textbox46">
+          <CanGrow>true</CanGrow>
+          <KeepTogether>true</KeepTogether>
+          <Paragraphs>
+            <Paragraph>
+              <TextRuns>
+                <TextRun>
+                  <Value>Comment</Value>
+                  <Style />
+                </TextRun>
+              </TextRuns>
+              <Style />
+            </Paragraph>
+          </Paragraphs>
+          <rd:DefaultName>Textbox11</rd:DefaultName>
+          <Top>1.1272cm</Top>
+          <Left>9.74882cm</Left>
+          <Height>0.6cm</Height>
+          <Width>2.75271cm</Width>
+          <ZIndex>27</ZIndex>
+          <Style>
+            <Border>
+              <Style>Solid</Style>
+            </Border>
+            <PaddingLeft>2pt</PaddingLeft>
+            <PaddingRight>2pt</PaddingRight>
+            <PaddingTop>2pt</PaddingTop>
+            <PaddingBottom>2pt</PaddingBottom>
+          </Style>
+        </Textbox>
+        <Textbox Name="Textbox47">
+          <CanGrow>true</CanGrow>
+          <KeepTogether>true</KeepTogether>
+          <Paragraphs>
+            <Paragraph>
+              <TextRuns>
+                <TextRun>
+                  <Value />
+                  <Style />
+                </TextRun>
+              </TextRuns>
+              <Style />
+            </Paragraph>
+          </Paragraphs>
+          <rd:DefaultName>Textbox11</rd:DefaultName>
+          <Top>1.1272cm</Top>
+          <Left>12.50153cm</Left>
+          <Height>0.6cm</Height>
+          <Width>7.32481cm</Width>
+          <ZIndex>28</ZIndex>
           <Style>
             <Border>
               <Style>Solid</Style>
@@ -1701,10 +1793,6 @@
         <CommandText>/* Local Query */</CommandText>
       </Query>
       <Fields>
-        <Field Name="Key">
-          <DataField>Key</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
         <Field Name="Dyelot">
           <DataField>Dyelot</DataField>
           <rd:TypeName>System.String</rd:TypeName>
@@ -1715,6 +1803,10 @@
         </Field>
         <Field Name="TicketYds">
           <DataField>TicketYds</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Tone">
+          <DataField>Tone</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
       </Fields>
@@ -1799,6 +1891,12 @@
       <Prompt>ReportParameter1</Prompt>
     </ReportParameter>
     <ReportParameter Name="Dyelot">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>ReportParameter1</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="SeasonID">
       <DataType>String</DataType>
       <Nullable>true</Nullable>
       <AllowBlank>true</AllowBlank>

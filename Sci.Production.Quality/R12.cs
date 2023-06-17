@@ -23,10 +23,12 @@ namespace Sci.Production.Quality
 
         private string baseReceivingSql = @"
 select  [Category] = ddl.[Name],
+        who.SeasonID,
         f.POID,
 		[Seq] = CONCAT(f.SEQ1, ' ', f.SEQ2),
         o.FactoryID,
 		a.ExportId,
+        [Invno] = iif( isnull(a.id, '')  = '','' ,a. Invno) ,
 		f.ReceivingID,
 		o.StyleID,
 		o.BrandID,
@@ -40,9 +42,11 @@ select  [Category] = ddl.[Name],
         ct.Roll,
         ct2.Dyelot,
         {0}
+        ,o.OrderTypeID 
 from Fir f with (nolock)
 inner join Receiving a with (nolock) on a.Id = f.ReceivingID
 left join Orders o with (nolock) on o.ID = f.POID
+left join View_WH_Orders who with(nolock) on o.id = who.id
 left join DropDownList ddl with(nolock) on o.Category = ddl.id and ddl.[Type] = 'Category'
 left join PO_Supp_Detail psd with (nolock) on psd.ID = f.POID and psd.SEQ1 = f.SEQ1 and psd.SEQ2 = f.SEQ2
 left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
@@ -71,10 +75,12 @@ where 1 = 1
 
         private string baseTransferInSql = @"
 select	[Category] = ddl.[Name],
+        who.SeasonID,
         f.POID,
 		[Seq] = CONCAT(f.SEQ1, ' ', f.SEQ2),
         o.FactoryID,
 		[ExportId] = '',
+        [Invno] = iif( isnull(a.id, '')  = '','' ,a. Invno) ,
 		f.ReceivingID,
 		o.StyleID,
 		o.BrandID,
@@ -88,9 +94,11 @@ select	[Category] = ddl.[Name],
         ct.Roll,
         ct2.Dyelot,
         {0}
+        ,o.OrderTypeID 
 from Fir f with (nolock)
 inner join TransferIn a with (nolock) on a.Id = f.ReceivingID
 left join Orders o with (nolock) on o.ID = f.POID
+left join View_WH_Orders who with(nolock) on o.id = who.id
 left join DropDownList ddl with(nolock) on o.Category = ddl.id and ddl.[Type] = 'Category'
 left join PO_Supp_Detail psd with (nolock) on psd.ID = f.POID and psd.SEQ1 = f.SEQ1 and psd.SEQ2 = f.SEQ2
 left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
@@ -120,6 +128,7 @@ where 1 = 1
         private string B2A_sqlcmd = @"
 select
 	TransferID = st.Id,
+who.SeasonID,
 	st.IssueDate,
 	std.FromPOID,
 	FromSeq = CONCAT(std.FromSeq1, '-' + std.FromSeq2),
@@ -137,6 +146,7 @@ select
 	fa.WeaveTypeID,	
 	fa.Width,
 	WK = {4},
+    [Invno] = iif( isnull(a.id, '')  = '','' ,a. Invno) ,
 	f.ReceivingID,
 	f.Suppid,
 	Approve = Concat (f.Approve, '-', p2.Name),
@@ -179,10 +189,12 @@ select
 	,[Category] = ddl.Name
 	,[CuttingData] = o.CutInLine
 	,[ArriveWHData] = a.{6}
+    ,o.OrderTypeID 
 into #tmp{2}
 from SubTransfer st
 inner join SubTransfer_Detail std on std.id = st.id
 inner join Orders O on O.ID = std.FromPOID
+left join View_WH_Orders who with(nolock) on o.id = who.id
 left join DropDownList ddl with(nolock) on o.Category = ddl.id and ddl.[Type] = 'Category'
 left  join Orders ToOrder on ToOrder.id = std.ToPOID
 inner join PO_Supp_Detail PSD on PSD.ID = std.FromPOID and PSD.SEQ1 = std.FromSeq1 and PSD.SEQ2 = std.FromSeq2
@@ -240,6 +252,7 @@ Where st.type = 'B' and st.Status = 'Confirmed' and PSD.FabricType = 'F'
 
         private string B2A_select = @"
 select
+    f.SeasonID,
 	f.ToPOID,
     f.Category,
 	f.ToSeq,
@@ -248,6 +261,7 @@ select
 	f.FromPOID,
 	f.FromSeq,
 	f.WK,
+    f.[Invno],
 	f.ReceivingID,
 	f.StyleID,
 	f.BrandID,
@@ -277,6 +291,7 @@ select
 	f.ApproveDate
 
     {6}
+    ,OrderTypeID 
 from #tmp{0} f
 left join pass1 p1 with (nolock) on p1.id = f.{1}Inspector
 {2}
@@ -284,8 +299,10 @@ where 1=1
 {8}
 group by f.ToPOID,f.ToSeq,f.FromFty,f.ToFty,f.TransferID,f.FromPOID,f.FromSeq,f.WK,f.ReceivingID,f.StyleID,f.BrandID,f.Suppid,
 	f.Refno,f.ColorID,f.IssueDate,f.WeaveTypeID,f.ctRoll,f.ctDyelot,f.Approve,f.ApproveDate,p1.Name,f.Category,f.ArriveWHData,f.CuttingData,
+    f.OrderTypeID,f.[Invno],f.SeasonID,
 	f.Non{1},f.{1},f.{1}Inspector,f.{1}Date
 	{7}
+
 ";
 
         /// <inheritdoc/>
@@ -564,7 +581,7 @@ left join pass1 p3 with (nolock) on p3.id = i.Inspector
                     this.txtSP1.Text.Empty() && this.txtSP2.Text.Empty() &&
                     this.txtWK1.Text.Empty() && this.txtWK2.Text.Empty() && this.txtbrand.Text.Empty())
                 {
-                    MyUtility.Msg.WarningBox("Arrive W/H Date, SP#, WK# , Brand can't all empty!");
+                    MyUtility.Msg.WarningBox("Arrive W/H Date, SP#, Transfer ID , Brand can't all empty!");
                     return false;
                 }
             }

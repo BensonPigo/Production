@@ -1,14 +1,17 @@
 ﻿CREATE TABLE [dbo].[Order_PFHis] (
-    [Id]             VARCHAR (13)   CONSTRAINT [DF_Order_PFHis_Id] DEFAULT ('') NULL,
-    [NewSciDelivery] DATE           NULL,
-    [OldSciDelivery] DATE           NULL,
-    [LETA]           DATE           NULL,
-    [Remark]         NVARCHAR (200) CONSTRAINT [DF_Order_PFHis_Reamrk] DEFAULT ('') NULL,
-    [AddName]        VARCHAR (10)   CONSTRAINT [DF_Order_PFHis_AddName] DEFAULT ('') NULL,
-    [AddDate]        DATETIME       NULL,
-    [Ukey]           BIGINT         CONSTRAINT [DF_Order_PFHis_Ukey] DEFAULT ((0)) NOT NULL,
+    [Id]             VARCHAR (13)  CONSTRAINT [DF_Order_PFHis_Id] DEFAULT ('') NULL,
+    [NewSciDelivery] DATE          NULL,
+    [OldSciDelivery] DATE          NULL,
+    [LETA]           DATE          NULL,
+    [Remark]         VARCHAR (MAX) CONSTRAINT [DF_Order_PFHis_Reamrk] DEFAULT ('') NULL,
+    [AddName]        VARCHAR (10)  CONSTRAINT [DF_Order_PFHis_AddName] DEFAULT ('') NULL,
+    [AddDate]        DATETIME      NULL,
+    [Ukey]           BIGINT        CONSTRAINT [DF_Order_PFHis_Ukey] DEFAULT ((0)) NOT NULL,
+    [PackLETA]       DATE          NULL,
     CONSTRAINT [PK_Order_PFHis] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
+
+
 
 
 
@@ -51,4 +54,8 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'唯一值',
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Remark', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Order_PFHis', @level2type = N'COLUMN', @level2name = N'Remark';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'包材的預計到貨日', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Order_PFHis', @level2type = N'COLUMN', @level2name = N'PackLETA';
 

@@ -29,7 +29,7 @@
 	[SubconOut1000StichesMins] [numeric](10, 3) NULL,
 	[SubconOutPcs] [numeric](10, 3) NULL,
 	[ShiftDayandNight] [int] NULL,
-	[MachineCapacity] [numeric](10, 3) NULL,
+	[MachineCapacity] [numeric](13, 3) NULL,
 	[Unit] [varchar](8) NULL,
 	[ApprovedDate] [varchar](10) NULL,
 	[AverageEfficiency] [numeric](5, 2) NOT NULL,

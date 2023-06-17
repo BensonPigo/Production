@@ -756,6 +756,28 @@ where pd.CustCTN = '{dr["CustCTN"]}' and pd.CTNQty > 0 and pd.DisposeFromClog= 0
 
             foreach (DataRow dr in selectedData)
             {
+                string checkPackSql = $@"
+select CFAReturnClogDate, ReceiveDate, TransferCFADate, Remark, ReturnDate 
+from PackingList_Detail WITH (NOLOCK)
+where ID = '{dr["PackingListID"].ToString().Trim()}' 
+and OrderID = '{dr["OrderID"].ToString().Trim()}'
+and CTNStartNo = '{dr["CTNStartNo"].ToString().Trim()}'
+and DisposeFromClog = 0";
+
+                bool result = MyUtility.Check.Seek(checkPackSql, null, out DataRow drPackResult);
+
+                if (!result)
+                {
+                    MyUtility.Msg.WarningBox($"<CTN#:{dr["PackingListID"]}{dr["CTNStartNo"]}> does not exist!");
+                    return;
+                }
+
+                if (!MyUtility.Check.Empty(drPackResult["ReturnDate"]))
+                {
+                    MyUtility.Msg.WarningBox($@"<CNT#: {dr["PackingListID"]}{dr["CTNStartNo"]}> This CTN# has been return." + Environment.NewLine);
+                    return;
+                }
+
                 if (MyUtility.Convert.GetString(dr["Reason"]).ToUpper() == "OTHER" && MyUtility.Check.Empty(dr["ClogReasonRemark"]))
                 {
                     MyUtility.Msg.WarningBox($"Please fill in [Remark] since [Reason] is equal to \"Other\" for PackId：{dr["PackingListID"]}, SP#：{dr["OrderID"]}, CTN#：{dr["CTNStartNo"]}.");
@@ -768,13 +790,13 @@ where pd.CustCTN = '{dr["CustCTN"]}' and pd.CTNQty > 0 and pd.DisposeFromClog= 0
                     return;
                 }
 
-                if (!(MyUtility.Check.Empty(dr["TransferCFADate"]) && !MyUtility.Check.Empty(dr["ReceiveDate"]) && MyUtility.Check.Empty(dr["CFAReturnClogDate"])))
+                if (!(MyUtility.Check.Empty(drPackResult["TransferCFADate"]) && !MyUtility.Check.Empty(drPackResult["ReceiveDate"]) && MyUtility.Check.Empty(drPackResult["CFAReturnClogDate"])))
                 {
                     MyUtility.Msg.WarningBox($@"<CTN#:{dr["PackingListID"]}{dr["CTNStartNo"]}> does not exist Clog!");
                     return;
                 }
 
-                if (!MyUtility.Check.Empty(dr["CFAReturnClogDate"]))
+                if (!MyUtility.Check.Empty(drPackResult["CFAReturnClogDate"]))
                 {
                     MyUtility.Msg.WarningBox($@"<CTN#:{dr["PackingListID"]}> has CFA Return Clog Date!");
                     return;

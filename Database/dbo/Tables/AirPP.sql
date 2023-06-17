@@ -77,6 +77,8 @@
     [ActAmt] NUMERIC(18, 2) CONSTRAINT [DF_AirPP_ActAmt] DEFAULT ((0)) NOT NULL,
     [ExchangeRate] NUMERIC(11, 6) CONSTRAINT [DF_AirPP_ExchangeRate] DEFAULT ((0)) NOT NULL,
     [ShareExpenseEditDate] DATETIME NULL,
+    [SCIICRNo2] VARCHAR(13) CONSTRAINT [DF_AirPP_SCIICRNo2] NOT NULL DEFAULT (''), 
+    [SCIICRRemark2] NVARCHAR(MAX) CONSTRAINT [DF_AirPP_SCIICRRemark2] NOT NULL DEFAULT (''), 
     CONSTRAINT [PK_AirPP] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 
@@ -409,3 +411,21 @@ EXEC sp_addextendedproperty @name = N'MS_Description',
     @level1name = N'AirPP',
     @level2type = N'COLUMN',
     @level2name = N'ShareExpenseEditDate'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'SCI-ICR單號',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'AirPP',
+    @level2type = N'COLUMN',
+    @level2name = N'SCIICRNo2'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N' SCI-ICR備註',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'AirPP',
+    @level2type = N'COLUMN',
+    @level2name = N'SCIICRRemark2'

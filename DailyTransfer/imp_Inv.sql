@@ -155,7 +155,6 @@ SET
 		, a.Width			= b.Width
 		, a.Special_Old	    = b.Special_Old
 		, a.Spec_Old	    = b.Spec_Old
-		, a.ProdID_Old	    = b.ProdID_Old
 		, a.AddName			= b.AddName
 		, a.AddDate			= b.AddDate
 from Production.dbo.InventoryRefno as a 
@@ -167,7 +166,6 @@ INSERT INTO Production.dbo.InventoryRefno(
 	, Width
 	, Special_Old
 	, Spec_Old
-	, ProdID_Old
 	, AddName
 	, AddDate
 )
@@ -177,7 +175,6 @@ select
 	, Width
 	, Special_Old
 	, Spec_Old
-	, ProdID_Old
 	, AddName
 	, AddDate
 from Trade_To_Pms.dbo.InventoryRefno as b WITH (NOLOCK)

@@ -75,8 +75,8 @@ BEGIN
 		select a.OrderID, a.SizeCode, a.Article, a.PatternPanel, a.MDivisionid,[cutqty] = c.cutQty,pre_cutqty=b.cutqty, WIP_Qty = a.cutqty
 		into #tmp2
 		from #tmp2_WIP_Qty a
-		left join #tmp2_B b on a.Article=b.Article and a.MDivisionid=b.MDivisionid and a.OrderID = b.OrderID and a.PatternPanel = b.PatternPanel and a.SizeCode = b.SizeCode
-		left join #tmp2_A c on a.Article=c.Article and a.MDivisionid=c.MDivisionid and a.OrderID = c.OrderID and a.PatternPanel = c.PatternPanel and a.SizeCode = c.SizeCode
+		left join #tmp2_B b on a.Article=b.Article and a.OrderID = b.OrderID and a.PatternPanel = b.PatternPanel and a.SizeCode = b.SizeCode
+		left join #tmp2_A c on a.Article=c.Article and a.OrderID = c.OrderID and a.PatternPanel = c.PatternPanel and a.SizeCode = c.SizeCode
 
         Select o.poid,a.orderid,a.article,a.sizecode,
 			order_cpu = isnull(ot.Price, 0),

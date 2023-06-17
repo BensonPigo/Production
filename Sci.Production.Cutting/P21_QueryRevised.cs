@@ -404,7 +404,7 @@ namespace Sci.Production.Cutting
                                     [EditDate]= cofr.EditDate,
                                     [Ukey]=cofr.Ukey
                             FROM CuttingOutputFabricRecord cofr
-                            INNER JOIN WorkOrder W on cofr.CutRef=W.CutRef and cofr.MDivisionId = w.MDivisionId
+                            INNER JOIN WorkOrder W on cofr.CutRef=W.CutRef
                             LEFT JOIN CuttingOutput_Detail CD on W.Ukey=CD.WorkOrderUkey
                             LEFT JOIN CuttingOutput C on CD.ID=C.ID
                             OUTER APPLY(
@@ -414,7 +414,7 @@ namespace Sci.Production.Cutting
                                 SELECT IdAndName FROM GetName WHERE ID=cofr.EditName
                             )editInfo
 							OUTER APPLY(
-								SELECT TOP 1 ID,FactoryID,CutCellid FROM WorkOrder WHERE CutRef=cofr.CutRef AND MDivisionId = cofr.MDivisionId
+								SELECT TOP 1 ID,FactoryID,CutCellid FROM WorkOrder WHERE CutRef=cofr.CutRef
                                                                                          {outerApplyWhere}
 							)WorkOrder
                             WHERE cofr.MDivisionId='{Env.User.Keyword}'
