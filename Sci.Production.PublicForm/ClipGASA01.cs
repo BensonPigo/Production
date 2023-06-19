@@ -421,9 +421,17 @@ namespace Sci.Production.PublicForm
                          ,'{this._dr["BrandRefno"]}'+'_'+'{this._dr["ColorID"]}'+'_'+'{this._dr["SuppID"]}'+'_'+ '{this._dr["BasicDocumentName"]}'+'_'+'{this._dr["BasicBrandID"]}'
                         )
                      End
-
-                    INSERT INTO GASAClip 
-                    SELECT @ClipPkey, 'UASentReport', '{this._dr["BrandRefno"]}'+'_'+'{this._dr["ColorID"]}'+'_'+'{this._dr["SuppID"]}'+'_'+ '{this._dr["BasicDocumentName"]}'+'_'+'{this._dr["BasicBrandID"]}', @sourceFileName, 'File Upload', @UserID, getdate()
+                    
+                    INSERT INTO GASAClip (
+                       [PKey]
+                      ,[TableName]
+                      ,[UniqueKey]
+                      ,[SourceFile]
+                      ,[Description]
+                      ,[AddName]
+                      ,[AddDate]
+                      ,[FactoryID])
+                    SELECT @ClipPkey, 'UASentReport', '{this._dr["BrandRefno"]}'+'_'+'{this._dr["ColorID"]}'+'_'+'{this._dr["SuppID"]}'+'_'+ '{this._dr["BasicDocumentName"]}'+'_'+'{this._dr["BasicBrandID"]}', @sourceFileName, 'File Upload', @UserID, getdate(),'{this._dr["FactoryID"]}'
                      FROM @OutputTbl
 
                     select UniqueKey from {it.TABLENAME}
@@ -506,8 +514,16 @@ begin
         )
      End
     
-    INSERT INTO GASAClip 
-    SELECT @ClipPkey, @tableName, '{this._dr["ExportID"]}'+'_'+'{this._dr["PoID"]}'+'_'+'{this._dr["Seq1"]}'+'_'+'{this._dr["Seq2"]}'+'_'+'{this._dr["BasicDocumentName"]}'+'_'+'{this._dr["BasicBrandID"]}', @sourceFileName, 'File Upload', @UserID, getdate()
+      INSERT INTO GASAClip (
+                       [PKey]
+                      ,[TableName]
+                      ,[UniqueKey]
+                      ,[SourceFile]
+                      ,[Description]
+                      ,[AddName]
+                      ,[AddDate]
+                      ,[FactoryID])
+    SELECT @ClipPkey, @tableName, '{this._dr["ExportID"]}'+'_'+'{this._dr["PoID"]}'+'_'+'{this._dr["Seq1"]}'+'_'+'{this._dr["Seq2"]}'+'_'+'{this._dr["BasicDocumentName"]}'+'_'+'{this._dr["BasicBrandID"]}', @sourceFileName, 'File Upload', @UserID, getdate(),'{this._dr["FactoryID"]}'
     FROM @OutputTbl
 END
 ELSE
@@ -546,8 +562,16 @@ BEGIN
         )
      End
     
-    INSERT INTO GASAClip 
-    SELECT @ClipPkey, @tableName, '{this._dr["ExportID"]}'+'_'+'{this._dr["BrandRefno"]}'+'_'+'{this._dr["ColorID"]}'+'_'+'{this._dr["BasicDocumentName"]}'+'_'+'{this._dr["BasicBrandID"]}', @sourceFileName, 'File Upload', @UserID, getdate()
+     INSERT INTO GASAClip (
+                       [PKey]
+                      ,[TableName]
+                      ,[UniqueKey]
+                      ,[SourceFile]
+                      ,[Description]
+                      ,[AddName]
+                      ,[AddDate]
+                      ,[FactoryID])
+    SELECT @ClipPkey, @tableName, '{this._dr["ExportID"]}'+'_'+'{this._dr["BrandRefno"]}'+'_'+'{this._dr["ColorID"]}'+'_'+'{this._dr["BasicDocumentName"]}'+'_'+'{this._dr["BasicBrandID"]}', @sourceFileName, 'File Upload', @UserID, getdate(),'{this._dr["FactoryID"]}'
     FROM @OutputTbl
 END
 
