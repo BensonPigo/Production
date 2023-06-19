@@ -1,12 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
+﻿using System.Windows.Forms;
 
 namespace Sci.Production.Quality
 {
@@ -30,7 +22,6 @@ namespace Sci.Production.Quality
         {
             base.ClickEditAfter();
             this.txtEmployeeID.ReadOnly = true;
-            this.txtsubprocess.ReadOnly = true;
         }
 
         /// <inheritdoc/>
@@ -42,6 +33,7 @@ namespace Sci.Production.Quality
                 MyUtility.Msg.WarningBox("< Employee ID > and < Subprocess >cannot be empty.");
                 return false;
             }
+
             return base.ClickSaveBefore();
         }
     }
