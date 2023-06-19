@@ -30,19 +30,13 @@ SET @SqlCmd1 = '
 	[SP#] = ed.PoID,
 	[Seq#] = ed.seq1+''-''+ed.seq2,	
     [Brand] = o.BrandID,
-	[Supp] = ps.SuppID,
-	[Supp Name] = Supp.AbbEN,
+	[Supp] = s2.ID,
+	[Supp Name] = s2.AbbEN,
 	[Ref#] = psd.Refno,
 	[Color] = c.ColorName,
 	Qty = isnull(ed.Qty,0) + isnull(ed.Foc,0),	
-	[1st Bulk Dyelot_Fty Received Date] = FirstDyelot.FirstDyelot,
-	[1st Bulk Dyelot_Supp Sent Date]  = IIF(FirstDyelot.FirstDyelot is null and f.RibItem = 1
-                        ,''RIB no need first dye lot''
-                        ,IIF(FirstDyelot.SeasonID is null
-                                ,''Still not received and under pushing T2. Please contact with PR if you need L/G first.''
-                                ,format(FirstDyelot.FirstDyelot,''yyyy/MM/dd'')
-                            )
-                    ),
+	[1st Bulk Dyelot_Fty Received Date] = FirstDyelot.FTYReceivedReport,
+	[1st Bulk Dyelot_Supp Sent Date]  = FirstDyelot.FirstDyelot,
 	[T1 Inspected Yards] = isnull(a.T1InspectedYards,0),
 	[T1 Defect Points] = isnull(b.T1DefectPoints,0),
 	[Fabric with clima] = isnull(f.Clima,0),
@@ -50,7 +44,7 @@ SET @SqlCmd1 = '
     ed.seq1,
     ed.seq2,
 	ed.Ukey,
-    [bitRefnoColor] = case when f.Clima = 1 then ROW_NUMBER() over(partition by f.Clima, ps.SuppID, psd.Refno, pc.SpecValue, Format(Export.CloseDate,''yyyyMM'') order by Export.CloseDate) else 0 end,
+    [bitRefnoColor] = case when f.Clima = 1 then ROW_NUMBER() over(partition by f.Clima, s2.ID, psd.Refno, pc.SpecValue, Format(Export.CloseDate,''yyyyMM'') order by Export.CloseDate) else 0 end,
 	[FactoryID] = o.FactoryID,
 	Export.Consignee
 into #tmpBasic
@@ -62,18 +56,24 @@ inner join ['+@current_PMS_ServerName+'].Production.dbo.Export with(nolock) on E
 inner join ['+@current_PMS_ServerName+'].Production.dbo.orders o with(nolock) on o.id = ed.PoID
 left join ['+@current_PMS_ServerName+'].Production.dbo.Po_Supp_Detail psd with(nolock) on psd.id = ed.poid and psd.seq1 = ed.seq1 and psd.seq2 = ed.seq2
 left join ['+@current_PMS_ServerName+'].Production.dbo.PO_Supp ps with(nolock) on ps.id = psd.id and ps.SEQ1 = psd. SEQ1
-left join ['+@current_PMS_ServerName+'].Production.dbo.Supp with(nolock) on Supp.ID = ps.SuppID
+left join ['+@current_PMS_ServerName+'].Production.dbo.Supp su with(nolock) on su.ID = ps.SuppID
+left join ['+@current_PMS_ServerName+'].Production.dbo.BrandRelation as bs WITH (NOLOCK) ON bs.BrandID = o.BrandID and bs.SuppID = su.ID
+left Join ['+@current_PMS_ServerName+'].Production.dbo.Supp s2 WITH (NOLOCK) on bs.SuppGroup = s2.ID
 left join ['+@current_PMS_ServerName+'].Production.dbo.Season s with(nolock) on s.ID=o.SeasonID and s.BrandID = o.BrandID
 left join ['+@current_PMS_ServerName+'].Production.dbo.Factory fty with (nolock) on fty.ID = Export.Consignee
 left join ['+@current_PMS_ServerName+'].Production.dbo.Fabric f with(nolock) on f.SCIRefno =psd.SCIRefno
 left join ['+@current_PMS_ServerName+'].Production.dbo.PO_Supp_Detail_Spec pc with(nolock) on psd.ID = pc.ID and psd.SEQ1 = pc.SEQ1 and psd.SEQ1 = pc.SEQ2 and pc.SpecColumnID = ''Color''
 Left join #probablySeasonList seasonSCI on seasonSCI.ID = s.SeasonSCIID
 OUTER APPLY(
-	Select Top 1 FirstDyelot,SeasonID
+	Select Top 1 FirstDyelot,FTYReceivedReport,SeasonID
 	From ['+@current_PMS_ServerName+'].Production.dbo.FirstDyelot fd
 	Inner join #probablySeasonList season on fd.SeasonID = season.ID
-	WHERE fd.BrandRefno = psd.Refno and fd.ColorID = pc.SpecValue and fd.SuppID = ps.SuppID and fd.TestDocFactoryGroup = fty.TestDocFactoryGroup
-		And seasonSCI.RowNo >= season.RowNo
+	WHERE fd.BrandRefno = f.BrandRefno 
+	and fd.ColorID = pc.SpecValue 
+	and fd.SuppID = s2.id
+	and fd.TestDocFactoryGroup = fty.TestDocFactoryGroup
+	and seasonSCI.RowNo >= season.RowNo
+	and fd.deleteColumn = 0
 	Order by season.RowNo Desc
 )FirstDyelot
 outer apply(
