@@ -172,6 +172,8 @@
     <Build Include="dbo\Tables\P_ArtWorkType.sql" />
     <Build Include="dbo\Tables\P_LoadingvsCapacity.sql" />
     <Build Include="dbo\Stored Procedures\FTY\P_ImportLoadingvsCapacity.sql" />
+    <Build Include="dbo\Tables\P_SDP.sql" />
+    <Build Include="dbo\Stored Procedures\P_ImportSDP.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Utility.dll" />
