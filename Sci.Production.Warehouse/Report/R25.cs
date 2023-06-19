@@ -160,7 +160,6 @@ select
     e.ShipModeID,
     e.CYCFS,
     e.Blno,
-    e2.Packages,
     e.Vessel,
     [ProdFactory]=o.FactoryID,
     o.OrderTypeID,
@@ -206,7 +205,8 @@ select
 	[MR_Mail]=TEPPOHandle.Email,
     [SMR_Mail]=TEPPOSMR.Email,
     [EditName]=dbo.getTPEPass1(e.EditName),
-	t.TotalRollsCalculated
+	t.TotalRollsCalculated,
+    a.PFETA
 INTO #tmp
 from Export e
 Inner join Export_Detail ed on e.ID = ed.ID
@@ -220,11 +220,6 @@ left join po on po.id = ed.PoID
 left join TPEPass1 TEPPOHandle on TEPPOHandle.id = po.POHandle
 left join TPEPass1 TEPPOSMR on TEPPOSMR.id = po.POSMR
 left join Fabric f with(nolock)on f.SCIRefno = psd.SCIRefno
-outer apply (
-    select [Packages] = sum(e2.Packages)
-    from Export e2 with (nolock) 
-    where e2.Blno = e.Blno
-)e2
 OUTER APPLY(
 		SELECT [Val] = STUFF((
 		SELECT DISTINCT ','+esc.ContainerType
@@ -249,6 +244,12 @@ OUTER apply(
 	where rd.PoId = ed.POID and rd.Seq1 = ed.SEQ1 and rd.Seq2 = ed.SEQ2 AND ed.FabricType='F'
 	group by rd.WhseArrival,rd.InvNo,rd.ExportId,rd.Id,rd.PoId,RD.seq1,RD.seq2,rd.StockType
 ) t
+outer apply
+(
+	select PFETA = Min (PFETA)
+	from Orders 
+	where PoID = o.poID 
+)a
 where exists (select 1 from Factory where o.FactoryId = id and IsProduceFty = 1)
 and ed.PoType = 'G' 
 
@@ -313,7 +314,9 @@ and ed.PoType = 'G'
             strSql += $@"
 
  select 
-	WK, t.eta, t.FactoryID, Consignee, ShipModeID, CYCFS, Blno, Packages, Vessel, [ProdFactory], OrderTypeID, ProjectID, Category ,
+	WK, t.eta, t.FactoryID, Consignee, ShipModeID, CYCFS, Blno,
+    Packages =  (select [Packages] = sum(e2.Packages)from Export e2 with (nolock) where e2.Blno = t.Blno),
+    Vessel, [ProdFactory], OrderTypeID, ProjectID, Category ,
 	BrandID, seasonid, styleid, t.StyleName, t.PoID, seq, Refno,[Color],[Color Name],[Description], [MtlType],MtlTypeID ,WeaveTypeID, suppid, [SuppName] 
 	, UnitId
 	, SizeSpec,
@@ -326,9 +329,12 @@ and ed.PoType = 'G'
 	Receiving_Detail.ReceiveQty,
     t.TotalRollsCalculated,
 	StockUnit,
-    [ContainerType] ,[ContainerNo] ,PortArrival,t.WhseArrival,KPILETA,
+    [ContainerType] ,[ContainerNo] ,PortArrival,t.WhseArrival,
+    KPILETA,
+    t.PFETA,
 	[Earliest SCI Delivery],
 	EarlyDays,
+    [Earliest PF ETA] = DATEDIFF (day,WhseArrival,t.PFETA),
 	[MR_Mail],
     [SMR_Mail],
     t.EditName
@@ -340,9 +346,9 @@ OUTER APPLY(
 	WHERE t.WK = r.ExportId AND r.Status = 'Confirmed'
 )Receiving_Detail
  GROUP BY 
-	WK,t.eta,t.FactoryID,Consignee,ShipModeID,CYCFS,Blno,Packages,Vessel,[ProdFactory],OrderTypeID,ProjectID,Category ,BrandID, seasonid,styleid,t.PoID,seq,
+	WK,t.eta,t.FactoryID,Consignee,ShipModeID,CYCFS,Blno,Vessel,[ProdFactory],OrderTypeID,ProjectID,Category ,BrandID, seasonid,styleid,t.PoID,seq,
 	Refno,[Color] ,[Description],[MtlType],WeaveTypeID,suppid,[SuppName] ,UnitId,SizeSpec,[ContainerType] ,[ContainerNo] ,PortArrival,[Color Name],
-    t.WhseArrival,KPILETA,[Earliest SCI Delivery],EarlyDays,[MR_Mail],[SMR_Mail],t.EditName,ReceiveQty,StockUnit, t.StyleName, t.TotalRollsCalculated, MtlTypeID
+    t.WhseArrival,KPILETA,[Earliest SCI Delivery],EarlyDays,[MR_Mail],[SMR_Mail],t.EditName,ReceiveQty,StockUnit, t.StyleName, t.TotalRollsCalculated, MtlTypeID,t.PFETA
 HAVING 1=1
 ";
             if (this.RecLessArv)
