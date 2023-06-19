@@ -1597,8 +1597,8 @@ seasonID = s.ID,
 ed.PoID,
 seq=ed.seq1+'-'+ed.seq2,
 o.BrandId,
-ps.SuppID,
-Supp.AbbEN,
+SuppID = s2.ID,
+s2.AbbEN,
 psd.Refno,
 f.BrandRefNo,
 f.WeaveTypeID,
@@ -1621,21 +1621,23 @@ inner join Export with(nolock) on Export.id = ed.id and Export.Confirm = 1
 inner join orders o with(nolock) on o.id = ed.PoID
 left join Po_Supp_Detail psd with(nolock) on psd.id = ed.poid and psd.seq1 = ed.seq1 and psd.seq2 = ed.seq2
 left join PO_Supp ps with(nolock) on ps.id = psd.id and ps.SEQ1 = psd. SEQ1
-left join Supp with(nolock) on Supp.ID = ps.SuppID
+left join Supp su with(nolock) on su.ID = ps.SuppID
+left join BrandRelation as bs WITH (NOLOCK) ON bs.BrandID = o.BrandID and bs.SuppID = su.ID
+left Join Supp s2 WITH (NOLOCK) on bs.SuppGroup = s2.ID
 left join Season s with(nolock) on s.ID=o.SeasonID and s.BrandID = o.BrandID
 left join Factory fty with (nolock) on fty.ID = o.FactoryID
 left join Fabric f with(nolock) on f.SCIRefno =psd.SCIRefno
 Left join #probablySeasonList seasonSCI on seasonSCI.ID = s.SeasonSCIID
 left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
 OUTER APPLY(
-	Select Top 1 FirstDyelot,FTYReceivedReport,SeasonID
+	Select Top 1 FirstDyelot,FTYReceivedReport,SeasonID,TestDocFactoryGroup,BrandRefno
 	From dbo.FirstDyelot fd
 	Inner join #probablySeasonList season on fd.SeasonID = season.ID
-	WHERE fd.BrandRefno = psd.Refno 
+	WHERE fd.BrandRefno = f.BrandRefNo
     and fd.ColorID = isnull(psdsC.SpecValue ,'') 
-    and fd.SuppID = ps.SuppID 
+    and fd.SuppID = s2.ID
     and fd.TestDocFactoryGroup = fty.TestDocFactoryGroup
-	and seasonSCI.RowNo >= season.RowNo
+    and seasonSCI.RowNo >= season.RowNo
     and fd.deleteColumn = 0
 	Order by season.RowNo Desc
 )FirstDyelot
@@ -1889,8 +1891,8 @@ seasonID = s.ID,
 ed.PoID,
 seq=ed.seq1+'-'+ed.seq2,
 o.BrandId,
-ps.SuppID,
-Supp.AbbEN,
+SuppID = s2.ID,
+s2.AbbEN,
 psd.Refno,
 f.BrandRefNo,
 f.WeaveTypeID,
@@ -1907,7 +1909,7 @@ b.T1DefectPoints,
 ed.seq1,
 ed.seq2,
 f.Clima,
-[bitRefnoColor] = case when f.Clima = 1 then ROW_NUMBER() over(partition by f.Clima, ps.SuppID, psd.Refno, isnull(psdsC.SpecValue ,''), Format(Export.CloseDate,'yyyyMM') order by Export.CloseDate) else 0 end,
+[bitRefnoColor] = case when f.Clima = 1 then ROW_NUMBER() over(partition by f.Clima, s2.ID, psd.Refno, isnull(psdsC.SpecValue ,''), Format(Export.CloseDate,'yyyyMM') order by Export.CloseDate) else 0 end,
 Export.CloseDate,
 f.RibItem
 into #tmpBasc
@@ -1916,7 +1918,9 @@ inner join Export with(nolock) on Export.id = ed.id and Export.Confirm = 1
 inner join orders o with(nolock) on o.id = ed.PoID
 left join Po_Supp_Detail psd with(nolock) on psd.id = ed.poid and psd.seq1 = ed.seq1 and psd.seq2 = ed.seq2
 left join PO_Supp ps with(nolock) on ps.id = psd.id and ps.SEQ1 = psd. SEQ1
-left join Supp with(nolock) on Supp.ID = ps.SuppID
+left join Supp su with(nolock) on su.ID = ps.SuppID
+left join BrandRelation as bs WITH (NOLOCK) ON bs.BrandID = o.BrandID and bs.SuppID = su.ID
+left Join Supp s2 WITH (NOLOCK) on bs.SuppGroup = s2.ID
 left join Season s with(nolock) on s.ID=o.SeasonID and s.BrandID = o.BrandID
 left join Factory fty with (nolock) on fty.ID = o.FactoryID
 left join Fabric f with(nolock) on f.SCIRefno =psd.SCIRefno
@@ -1926,9 +1930,9 @@ OUTER APPLY(
 	Select Top 1 FirstDyelot,FTYReceivedReport,SeasonID,TestDocFactoryGroup,BrandRefno
 	From dbo.FirstDyelot fd
 	Inner join #probablySeasonList season on fd.SeasonID = season.ID
-	WHERE fd.BrandRefno = psd.Refno 
+	WHERE fd.BrandRefno = f.BrandRefNo
     and fd.ColorID = isnull(psdsC.SpecValue ,'') 
-    and fd.SuppID = ps.SuppID 
+    and fd.SuppID = s2.ID
     and fd.TestDocFactoryGroup = fty.TestDocFactoryGroup
     and seasonSCI.RowNo >= season.RowNo
     and fd.deleteColumn = 0
