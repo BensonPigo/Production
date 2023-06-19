@@ -1223,6 +1223,7 @@ and s.TestDocFactoryGroup = t.TestDocFactoryGroup
 and s.BrandRefno = t.BrandRefno
 and s.ColorID = t.ColorID
 and s.SeasonID = t.SeasonID
+and t.deleteColumn = 0
 ";
                         break;
                     case "4":
@@ -1343,6 +1344,7 @@ and t.TestDocFactoryGroup = s.TestDocFactoryGroup
 and t.BrandRefno = s.FirstDyelot_BrandRefno
 and t.ColorID = s.Color
 and t.SeasonID = s.FirstDyelot_SeasonID
+and t.deleteColumn = 0
 ;
 ";
             DataTable odt;
@@ -1487,6 +1489,7 @@ FROM dbo.FirstDyelot
 WHERE SuppID in (select top 1 SuppGroup FROM BrandRelation where SuppID = @SuppID) 
 and (BrandRefno = @BrandRefno  or BrandRefno = @Refno)
 and ColorID = @ColorID and BrandID = @BrandID and DocumentName = @DocumentName
+and deleteColumn = 0
 Order by SeasonID desc";
                     parmes.Add(new SqlParameter("@SuppID", mainrow["SuppID"]));
                     parmes.Add(new SqlParameter("@BrandRefno", mainrow["BrandRefno"]));
@@ -1628,8 +1631,12 @@ OUTER APPLY(
 	Select Top 1 FirstDyelot,FTYReceivedReport,SeasonID
 	From dbo.FirstDyelot fd
 	Inner join #probablySeasonList season on fd.SeasonID = season.ID
-	WHERE fd.BrandRefno = psd.Refno and fd.ColorID = isnull(psdsC.SpecValue ,'') and fd.SuppID = ps.SuppID and fd.TestDocFactoryGroup = fty.TestDocFactoryGroup
-		And seasonSCI.RowNo >= season.RowNo
+	WHERE fd.BrandRefno = psd.Refno 
+    and fd.ColorID = isnull(psdsC.SpecValue ,'') 
+    and fd.SuppID = ps.SuppID 
+    and fd.TestDocFactoryGroup = fty.TestDocFactoryGroup
+	and seasonSCI.RowNo >= season.RowNo
+    and fd.deleteColumn = 0
 	Order by season.RowNo Desc
 )FirstDyelot
 outer apply(
@@ -1919,8 +1926,12 @@ OUTER APPLY(
 	Select Top 1 FirstDyelot,FTYReceivedReport,SeasonID,TestDocFactoryGroup,BrandRefno
 	From dbo.FirstDyelot fd
 	Inner join #probablySeasonList season on fd.SeasonID = season.ID
-	WHERE fd.BrandRefno = psd.Refno and fd.ColorID = isnull(psdsC.SpecValue ,'') and fd.SuppID = ps.SuppID and fd.TestDocFactoryGroup = fty.TestDocFactoryGroup
-		And seasonSCI.RowNo >= season.RowNo
+	WHERE fd.BrandRefno = psd.Refno 
+    and fd.ColorID = isnull(psdsC.SpecValue ,'') 
+    and fd.SuppID = ps.SuppID 
+    and fd.TestDocFactoryGroup = fty.TestDocFactoryGroup
+    and seasonSCI.RowNo >= season.RowNo
+    and fd.deleteColumn = 0
 	Order by season.RowNo Desc
 )FirstDyelot
 outer apply(

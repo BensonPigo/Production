@@ -617,8 +617,12 @@ OUTER APPLY(
 	Select Top 1 FirstDyelot,FTYReceivedReport,SeasonID
 	From dbo.FirstDyelot fd
 	Inner join #probablySeasonList season on fd.SeasonID = season.ID
-	WHERE fd.BrandRefno = psd.Refno and fd.ColorID = isnull(psdsC.SpecValue ,'') and fd.SuppID = ps.SuppID and fd.TestDocFactoryGroup = fty.TestDocFactoryGroup
-		And seasonSCI.RowNo >= season.RowNo
+	WHERE fd.BrandRefno = psd.Refno 
+    and fd.ColorID = isnull(psdsC.SpecValue ,'') 
+    and fd.SuppID = ps.SuppID 
+    and fd.TestDocFactoryGroup = fty.TestDocFactoryGroup
+	And seasonSCI.RowNo >= season.RowNo
+    and fd.deleteColumn = 0
 	Order by season.RowNo Desc
 )FirstDyelot
 outer apply(
@@ -938,6 +942,7 @@ left outer join FirstDyelot fd with(nolock) on fd.BrandRefno = psd.Refno
     and fd.ColorID = isnull(psdsC.SpecValue ,'') 
     and fd.SuppID = ps.SuppID 
     and fd.TestDocFactoryGroup = oFty.TestDocFactoryGroup 
+    and fd.deleteColumn = 0
 left join Fabric f with(nolock) on f.SCIRefno =psd.SCIRefno
 where ps.seq1 not like '7%' 
 and psd.FabricType = 'F'
@@ -968,6 +973,7 @@ from #tmp a
 --inner join Factory fty with (nolock) on fty.ID = a.Consignee
 full join FirstDyelot b on a.TestDocFactoryGroup = b.TestDocFactoryGroup 
 and a.Refno=b.BrandRefno and a.suppid=b.suppid and a.ColorID=b.ColorID 
+and b.deleteColumn = 0
 where 1=1 and 
 (
     {sqlwhere}
@@ -1034,6 +1040,7 @@ inner join
 	group by  TestDocFactoryGroup,Suppid,Refno,ColorID,SeasonSCIID
 ) s
 on t.BrandRefno = s.Refno and t.SuppID = s.SuppID and t.ColorID = s.ColorID and t.TestDocFactoryGroup = s.TestDocFactoryGroup and t.SeasonID = s.SeasonSCIID
+where t.deleteColumn= 0
 ;
 ";
             DataTable odt;
