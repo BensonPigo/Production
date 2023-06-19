@@ -1105,15 +1105,16 @@ and Name = @PPA
             var data = ((DataRowView)this.detailgrid.Rows[e.RowIndex].DataBoundItem).Row;
             if (data.RowState != DataRowState.Deleted && !MyUtility.Check.Empty(data["OperationID"]))
             {
+                this.col_IsSubprocess.IsEditable = false;
                 // MachineType_IsSubprocess 是true,代表可以勾選SubProcess 反之亦然
-                if (data.RowState != DataRowState.Deleted && MyUtility.Convert.GetBool(data["MachineType_IsSubprocess"]) == true)
-                {
-                    this.col_IsSubprocess.IsEditable = true;
-                }
-                else
-                {
-                    this.col_IsSubprocess.IsEditable = false;
-                }
+                //if (data.RowState != DataRowState.Deleted && MyUtility.Convert.GetBool(data["MachineType_IsSubprocess"]) == true)
+                //{
+                //    this.col_IsSubprocess.IsEditable = true;
+                //}
+                //else
+                //{
+                //    this.col_IsSubprocess.IsEditable = false;
+                //}
                 if (data.RowState != DataRowState.Deleted && MyUtility.Convert.GetBool(data["IsSubprocess"]) == true)
                 {
                     this.col_IsNonSewingLine.IsEditable = true;
