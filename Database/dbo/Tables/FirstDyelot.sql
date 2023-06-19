@@ -16,6 +16,7 @@
     [ReceivedRemark] VARCHAR(MAX) NOT NULL DEFAULT (''), 
     [DocumentName] VARCHAR(100) NOT NULL DEFAULT (''), 
     [BrandID] VARCHAR(8) NOT NULL DEFAULT (''), 
+    [deleteColumn] BIT NOT NULL DEFAULT ((0)), 
     CONSTRAINT [PK_FirstDyelot] PRIMARY KEY ([SuppID], [SeasonID], [TestDocFactoryGroup], [BrandRefno], [ColorID], [DocumentName],[BrandID]) 
 );
 
@@ -23,3 +24,13 @@
 
 
 
+
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'刪除資料用備份',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'FirstDyelot',
+    @level2type = N'COLUMN',
+    @level2name = N'deleteColumn'

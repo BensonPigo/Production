@@ -64,6 +64,6 @@ SELECT [PKey]
 INTO [GASAClip]
 FROM [Production].[dbo].[GASAClip] g
 inner join [Production].[dbo].[Pass1] p on g.AddName = p.ID
-WHERE AddDate >= CONVERT(DATE,DATEADD(day,-7,GETDATE()))
+WHERE g.AddDate >= CONVERT(DATE,DATEADD(day,-7,GETDATE()))
 
 

@@ -2548,6 +2548,7 @@ namespace Sci.Production.PublicForm
             dataTableMapping.ColumnMappings.Add("PKEY", "PKEY");
             dataTableMapping.ColumnMappings.Add("ADDNAME", "ADDNAME");
             dataTableMapping.ColumnMappings.Add("ADDDATE", "ADDDATE");
+            dataTableMapping.ColumnMappings.Add("FactoryID", "FactoryID");
             _adapter.TableMappings.Add(dataTableMapping);
             _adapter.DeleteCommand = new SqlCommand();
             _adapter.DeleteCommand.Connection = Connection;
@@ -2556,7 +2557,7 @@ namespace Sci.Production.PublicForm
             _adapter.DeleteCommand.Parameters.Add(new SqlParameter("@Original_PKEY", SqlDbType.VarChar, 0, ParameterDirection.Input, 0, 0, "PKEY", DataRowVersion.Original, sourceColumnNullMapping: false, value: null, xmlSchemaCollectionDatabase: "", xmlSchemaCollectionOwningSchema: "", xmlSchemaCollectionName: ""));
             _adapter.InsertCommand = new SqlCommand();
             _adapter.InsertCommand.Connection = Connection;
-            _adapter.InsertCommand.CommandText = "INSERT INTO GASAClip\r\n                            (TableName, UniqueKey, SourceFile, Description, PKey, AddName, AddDate)\r\nVALUES          (@TABLENAME,@UNIQUEKEY,@SOURCEFILE,@DESCRIPTION,@PKEY,@ADDNAME,@ADDDATE)";
+            _adapter.InsertCommand.CommandText = "INSERT INTO GASAClip\r\n                            (TableName, UniqueKey, SourceFile, Description, PKey, AddName, AddDate, FactoryID)\r\nVALUES          (@TABLENAME,@UNIQUEKEY,@SOURCEFILE,@DESCRIPTION,@PKEY,@ADDNAME,@ADDDATE,@FactoryID)";
             _adapter.InsertCommand.CommandType = CommandType.Text;
             _adapter.InsertCommand.Parameters.Add(new SqlParameter("@TABLENAME", SqlDbType.VarChar, 50, ParameterDirection.Input, 0, 0, "TableName", DataRowVersion.Current, sourceColumnNullMapping: false, value: null, xmlSchemaCollectionDatabase: "", xmlSchemaCollectionOwningSchema: "", xmlSchemaCollectionName: ""));
             _adapter.InsertCommand.Parameters.Add(new SqlParameter("@UNIQUEKEY", SqlDbType.VarChar, 80, ParameterDirection.Input, 0, 0, "UniqueKey", DataRowVersion.Current, sourceColumnNullMapping: false, value: null, xmlSchemaCollectionDatabase: "", xmlSchemaCollectionOwningSchema: "", xmlSchemaCollectionName: ""));
@@ -2565,9 +2566,11 @@ namespace Sci.Production.PublicForm
             _adapter.InsertCommand.Parameters.Add(new SqlParameter("@PKEY", SqlDbType.VarChar, 12, ParameterDirection.Input, 0, 0, "PKey", DataRowVersion.Current, sourceColumnNullMapping: false, value: null, xmlSchemaCollectionDatabase: "", xmlSchemaCollectionOwningSchema: "", xmlSchemaCollectionName: ""));
             _adapter.InsertCommand.Parameters.Add(new SqlParameter("@ADDNAME", SqlDbType.VarChar, 10, ParameterDirection.Input, 0, 0, "AddName", DataRowVersion.Current, sourceColumnNullMapping: false, value: null, xmlSchemaCollectionDatabase: "", xmlSchemaCollectionOwningSchema: "", xmlSchemaCollectionName: ""));
             _adapter.InsertCommand.Parameters.Add(new SqlParameter("@ADDDATE", SqlDbType.DateTime, 8, ParameterDirection.Input, 0, 0, "AddDate", DataRowVersion.Current, sourceColumnNullMapping: false, value: null, xmlSchemaCollectionDatabase: "", xmlSchemaCollectionOwningSchema: "", xmlSchemaCollectionName: ""));
+            _adapter.InsertCommand.Parameters.Add(new SqlParameter("@FactoryID", SqlDbType.DateTime, 8, ParameterDirection.Input, 0, 0, "FactoryID", DataRowVersion.Current, sourceColumnNullMapping: false, value: null, xmlSchemaCollectionDatabase: "", xmlSchemaCollectionOwningSchema: "", xmlSchemaCollectionName: ""));
             _adapter.UpdateCommand = new SqlCommand();
             _adapter.UpdateCommand.Connection = Connection;
-            _adapter.UpdateCommand.CommandText = "UPDATE [GASACLIP] SET [TABLENAME] = @TABLENAME, [UNIQUEKEY] = @UNIQUEKEY, [SOURCEFILE] = @SOURCEFILE, [DESCRIPTION] = @DESCRIPTION, [PKEY] = @PKEY, [ADDNAME] = @ADDNAME, [ADDDATE] = @ADDDATE WHERE (([PKEY] = @Original_PKEY))";
+            _adapter.UpdateCommand.CommandText = @"UPDATE [GASACLIP] SET [TABLENAME] = @TABLENAME, [UNIQUEKEY] = @UNIQUEKEY, [SOURCEFILE] = @SOURCEFILE, [DESCRIPTION] = @DESCRIPTION, [PKEY] = @PKEY, [ADDNAME] = @ADDNAME, [ADDDATE] = @ADDDATE ,[FactoryID] = @FactoryID" +
+                "WHERE (([PKEY] = @Original_PKEY))";
             _adapter.UpdateCommand.CommandType = CommandType.Text;
             _adapter.UpdateCommand.Parameters.Add(new SqlParameter("@TABLENAME", SqlDbType.VarChar, 0, ParameterDirection.Input, 0, 0, "TABLENAME", DataRowVersion.Current, sourceColumnNullMapping: false, value: null, xmlSchemaCollectionDatabase: "", xmlSchemaCollectionOwningSchema: "", xmlSchemaCollectionName: ""));
             _adapter.UpdateCommand.Parameters.Add(new SqlParameter("@UNIQUEKEY", SqlDbType.VarChar, 0, ParameterDirection.Input, 0, 0, "UNIQUEKEY", DataRowVersion.Current, sourceColumnNullMapping: false, value: null, xmlSchemaCollectionDatabase: "", xmlSchemaCollectionOwningSchema: "", xmlSchemaCollectionName: ""));
@@ -2576,6 +2579,7 @@ namespace Sci.Production.PublicForm
             _adapter.UpdateCommand.Parameters.Add(new SqlParameter("@PKEY", SqlDbType.VarChar, 0, ParameterDirection.Input, 0, 0, "PKEY", DataRowVersion.Current, sourceColumnNullMapping: false, value: null, xmlSchemaCollectionDatabase: "", xmlSchemaCollectionOwningSchema: "", xmlSchemaCollectionName: ""));
             _adapter.UpdateCommand.Parameters.Add(new SqlParameter("@ADDNAME", SqlDbType.VarChar, 0, ParameterDirection.Input, 0, 0, "ADDNAME", DataRowVersion.Current, sourceColumnNullMapping: false, value: null, xmlSchemaCollectionDatabase: "", xmlSchemaCollectionOwningSchema: "", xmlSchemaCollectionName: ""));
             _adapter.UpdateCommand.Parameters.Add(new SqlParameter("@ADDDATE", SqlDbType.DateTime, 0, ParameterDirection.Input, 0, 0, "ADDDATE", DataRowVersion.Current, sourceColumnNullMapping: false, value: null, xmlSchemaCollectionDatabase: "", xmlSchemaCollectionOwningSchema: "", xmlSchemaCollectionName: ""));
+            _adapter.UpdateCommand.Parameters.Add(new SqlParameter("@FactoryID", SqlDbType.DateTime, 0, ParameterDirection.Input, 0, 0, "FactoryID", DataRowVersion.Current, sourceColumnNullMapping: false, value: null, xmlSchemaCollectionDatabase: "", xmlSchemaCollectionOwningSchema: "", xmlSchemaCollectionName: ""));
             _adapter.UpdateCommand.Parameters.Add(new SqlParameter("@Original_PKEY", SqlDbType.VarChar, 0, ParameterDirection.Input, 0, 0, "PKEY", DataRowVersion.Original, sourceColumnNullMapping: false, value: null, xmlSchemaCollectionDatabase: "", xmlSchemaCollectionOwningSchema: "", xmlSchemaCollectionName: ""));
         }
 
