@@ -155,7 +155,7 @@ namespace Sci.Production.Quality
 				[WK] = t.WK# ,
 				[SEQ] = Seq ,
 				[StockFromSP] = t.StockFromSP# ,
-				[StockFromSEQ] = t.StockFromSEQ ,
+				[StockFromSEQ] = iif(t.StockFromSEQ = '-' ,'',t.StockFromSEQ) ,
 				[Ref] = t.Ref# ,
 				[Color] = t.Color# ,
 				[Roll] = fs.Roll ,
@@ -184,7 +184,7 @@ namespace Sci.Production.Quality
 				[WK] = t.WK# ,
 				[SEQ] = Seq ,
 				[StockFromSP] = t.StockFromSP# ,
-				[StockFromSEQ] = t.StockFromSEQ ,
+				[StockFromSEQ] = iif(t.StockFromSEQ = '-' ,'',t.StockFromSEQ)  ,
 				[Ref] = t.Ref# ,
 				[Color] = t.Color# ,
 				[Roll] = fs.Roll ,
@@ -209,7 +209,7 @@ namespace Sci.Production.Quality
 				inner join TransferIn_Detail rd on rd.PoId = iif(t.IsStock = 'V' ,t.StockFromSP#,t.ID) and rd.Seq1 = iif(t.IsStock = 'V',t.StockSeq1,t.Seq1) and rd.Seq2 = iif(t.IsStock = 'V' , t.StockSeq2 , t.Seq2) and rd.Roll = fs.Roll and rd.Dyelot = fs.Dyelot
 				inner join FtyInventory fi with(nolock) on fi.POID = rd.PoId and fi.Seq1 = rd.Seq1 and fi.Seq2 = rd.Seq2 and fi.Roll = rd.Roll and fi.Dyelot = rd.Dyelot and fi.StockType = rd.StockType
 			)tmp1
-			order by Roll,Dyelot
+			order by WK,seq
             drop table #tmpShadebondMain";
 
             DualResult dualResult = DBProxy.Current.Select(null, sqlcmd, out DataTable[] dt);
