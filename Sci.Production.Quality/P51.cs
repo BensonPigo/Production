@@ -398,7 +398,8 @@ Update ExportRefnoSentReport SET  AWBNO = @updateData, EditName = @UserID ,EditD
 
             string sqlcmd = $@"select 
             [FileName] = TableName + PKey,
-            SourceFile
+            SourceFile,
+            AddDate
             from GASAClip
             where TableName = '{tableName}' and 
             UniqueKey = '{id}'";
@@ -413,12 +414,13 @@ Update ExportRefnoSentReport SET  AWBNO = @updateData, EditName = @UserID ,EditD
 
             // 組ClipPath
             string clippath = MyUtility.GetValue.Lookup($"select ClipPath from System");
-            string saveFilePath = clippath + "\\" + DateTime.Now.ToString("yyyyMM");
 
             foreach (DataRow dataRow in dt.Rows)
             {
+                string yyyyMM = ((DateTime)dataRow["AddDate"]).ToString("yyyyMM");
+                string saveFilePath = Path.Combine(clippath, yyyyMM);
                 string fileName = dataRow["FileName"].ToString() + Path.GetExtension(dataRow["SourceFile"].ToString());
-                lock (FileDownload_UpData.DownloadFileAsync("http://pmsap.sportscity.com.tw:16888/api/FileDownload/GetFile", filePath + "\\" + DateTime.Now.ToString("yyyyMM"), fileName, saveFilePath))
+                lock (FileDownload_UpData.DownloadFileAsync("http://pmsap.sportscity.com.tw:16888/api/FileDownload/GetFile", filePath + "\\" + yyyyMM, fileName, saveFilePath))
                 {
                 }
             }
@@ -457,6 +459,8 @@ Update ExportRefnoSentReport SET  AWBNO = @updateData, EditName = @UserID ,EditD
 
                 foreach (DataRow dataRow in dt.Rows)
                 {
+                    string yyyyMM = ((DateTime)dataRow["AddDate"]).ToString("yyyyMM");
+                    string saveFilePath = Path.Combine(clippath, yyyyMM);
                     string fileName = dataRow["FileName"].ToString() + Path.GetExtension(dataRow["SourceFile"].ToString());
                     string deleteFile = Path.Combine(saveFilePath, fileName);
                     if (File.Exists(deleteFile))
