@@ -86,62 +86,6 @@ BEGIN
 		and o.Junk = 0
 		and o.LocalOrder = 0
 	union all
-		-- Style_TmsCost
-		Select
-			o.ID,
-			o.FactoryID,
-			ArtworkType = at.ID,
-			at.SEQ,
-			at.Unit,
-			[Value] =  case at.Unit When 'TMS' Then t.TMS
-						When 'STITCH' Then t.Qty * 1.0
-						When 'PCS' Then t.Qty * 1.0
-						Else t.Price
-						End,
-			TTL_Value = case at.Unit When 'TMS' Then o.Qty * t.TMS
-						When 'STITCH' Then o.Qty * t.Qty * 1.0 / 1000
-						When 'PCS' Then o.Qty * t.Qty * 1.0
-						Else o.Qty * t.Price
-						End,
-			SubconInType = 0,
-			[ArtworkTypeKey] = CONCAT(at.ID, '-', at.Unit),
-			[OrderDataKey] = CONCAT(o.ID, o.SubconInType)
-		from [MainServer].[Production].[dbo].Orders o WITH(NOLOCK)
-		inner join [MainServer].[Production].[dbo].Style_TmsCost t WITH(NOLOCK)	on t.StyleUkey = o.StyleUkey
-		inner join #UseArtworkType at on at.ID = t.ArtworkTypeID
-		where not exists (select 1 from [MainServer].[Production].[dbo].Order_TmsCost t WITH(NOLOCK) where t.ID = o.ID)
-		and (o.ScIDelivery between @Date_S and @Date_E or o.BuyerDelivery BETWEEN @YearMonth_S and @YearMonth_E)
-		and o.Category in ('B','S')
-		and o.Junk = 0
-		and o.LocalOrder = 0
-	union all
-		--Forecast Order_TmsCost
-		Select 
-			o.ID,
-			o.FactoryID,
-			ArtworkTypeID = at.ID,
-			at.SEQ,
-			at.Unit,
-			Value = case at.Unit When 'TMS' Then t.TMS
-					When 'STITCH' Then t.Qty
-					When 'PCS' Then t.Qty
-					Else t.Price
-					End,
-			TTL_Value = case at.Unit When 'TMS' Then o.Qty * t.TMS
-					When 'STITCH' Then o.Qty * t.Qty / 1000
-					When 'PCS' Then o.Qty * t.Qty
-					Else o.Qty * t.Price
-					End,
-			SubconInType = 0,
-			[ArtworkTypeKey] = CONCAT(at.ID, '-', at.Unit),
-			[OrderDataKey] = CONCAT(o.ID, o.SubconInType)
-		From [MainServer].[Production].[dbo].Orders o WITH(NOLOCK)
-		inner join [MainServer].[Production].[dbo].Order_TmsCost t WITH(NOLOCK) on t.ID = o.ID
-		inner join #UseArtworkType at on at.ID = t.ArtworkTypeID
-		WHERE (o.ScIDelivery between @Date_S and @Date_E or o.BuyerDelivery BETWEEN @YearMonth_S and @YearMonth_E)
-		and o.Junk = 0
-		and o.IsForecast = 1
-	union all
 		--Forecast Style_TmsCost
 		Select 
 			o.ID,
@@ -200,37 +144,6 @@ BEGIN
 		and o.LocalOrder = 1
 		and f.Foundry = 1
 	union  all
-		--loacl訂單 Style_TmsCost 轉入
-		Select　
-			o.ID,
-			o.FactoryID,
-			ArtworkType = at.ID,
-			at.SEQ,
-			at.Unit,
-			[Value] =  case at.Unit When 'TMS' Then t.TMS
-						When 'STITCH' Then t.Qty
-						When 'PCS' Then t.Qty
-						Else t.Price
-						End,
-			TTL_Value = case at.Unit When 'TMS' Then o.Qty * t.TMS
-						When 'STITCH' Then o.Qty * t.Qty / 1000
-						When 'PCS' Then o.Qty * t.Qty
-						Else o.Qty * t.Price
-						End,
-			SubconInType = o.SubconInType,
-			[ArtworkTypeKey] = CONCAT(at.ID, '-', at.Unit),
-			[OrderDataKey] = CONCAT(o.ID, '-', o.SubconInType)
-		from [MainServer].[Production].[dbo].Orders o WITH(NOLOCK)
-		inner join [MainServer].[Production].[dbo].Style_TmsCost t WITH(NOLOCK) on t.StyleUkey = o.StyleUkey
-		inner join #UseArtworkType at on at.ID = t.ArtworkTypeID
-		inner join [MainServer].[Production].[dbo].Factory f WITH(NOLOCK) on o.FactoryID = f.ID
-		WHERE not exists (select 1 from [MainServer].[Production].[dbo].Order_TmsCost t WITH(NOLOCK) where t.ID = o.ID)
-		and (o.ScIDelivery between @Date_S and @Date_E or o.BuyerDelivery BETWEEN @YearMonth_S and @YearMonth_E)
-		and SubconInType in ('1', '2')
-		and o.Junk = 0
-		and o.LocalOrder = 1
-		and f.Foundry = 1
-	union all
 		-- Local訂單 Order_TmsCost 轉出
 		Select
 			o.ID,
@@ -256,38 +169,6 @@ BEGIN
 		inner join #UseArtworkType at on at.ID = t.ArtworkTypeID
 		inner join [MainServer].[Production].[dbo].Factory f WITH(NOLOCK) on o.FactoryID = f.ID
 		where (o.ScIDelivery between @Date_S and @Date_E or o.BuyerDelivery BETWEEN @YearMonth_S and @YearMonth_E)
-		and SubconInType in ('1','2')
-		and o.Junk = 0
-		and o.LocalOrder = 1
-		and f.Foundry = 1
-		and f.IsProduceFty = 0
-	union all
-		-- Local訂單 Style_TmsCost 轉出
-		Select
-			o.ID,
-			o.FactoryID,
-			ArtworkType = at.ID,
-			at.SEQ,
-			at.Unit,
-			[Value] =  case at.Unit When 'TMS' Then t.TMS
-						When 'STITCH' Then t.Qty * 1.0
-						When 'PCS' Then t.Qty * 1.0
-						Else t.Price
-						End * -1,
-			TTL_Value = case at.Unit When 'TMS' Then o.Qty * t.TMS
-						When 'STITCH' Then o.Qty * t.Qty * 1.0 / 1000
-						When 'PCS' Then o.Qty * t.Qty * 1.0
-						Else o.Qty * t.Price
-						End * -1,
-			SubconInType = '-' + o.SubconInType,
-			[ArtworkTypeKey] = CONCAT(at.ID, '-', at.Unit),
-			[OrderDataKey] = CONCAT(o.ID, '--', o.SubconInType)
-		from [MainServer].[Production].[dbo].Orders o WITH(NOLOCK)
-		inner join [MainServer].[Production].[dbo].Style_TmsCost t WITH(NOLOCK) on t.StyleUkey = o.StyleUkey
-		inner join #UseArtworkType at on at.ID = t.ArtworkTypeID
-		inner join [MainServer].[Production].[dbo].Factory f WITH(NOLOCK) on o.FactoryID = f.ID
-		where not exists (select 1 from [MainServer].[Production].[dbo].Order_TmsCost t WITH(NOLOCK) where t.ID = o.ID)
-		and (o.ScIDelivery between @Date_S and @Date_E or o.BuyerDelivery BETWEEN @YearMonth_S and @YearMonth_E)
 		and SubconInType in ('1','2')
 		and o.Junk = 0
 		and o.LocalOrder = 1
