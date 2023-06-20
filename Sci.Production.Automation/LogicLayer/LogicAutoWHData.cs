@@ -85,18 +85,14 @@ namespace Sci.Production.Automation.LogicLayer
             if (statusAPI == EnumStatus.New)
             {
                 string whereIsWMSTo = string.Empty;
-
-                if (fabricType == "A")
+                if (detailTableName == WHTableName.SubTransfer_Detail || detailTableName == WHTableName.BorrowBack_Detail)
                 {
-                    if (detailTableName == WHTableName.SubTransfer_Detail || detailTableName == WHTableName.BorrowBack_Detail)
-                    {
-                        whereIsWMSTo = $@"
+                    whereIsWMSTo = $@"
     and ml.StockType = sd.FromStockType
 	union all
 	select 1 from MtlLocation ml 
 	inner join dbo.SplitString(sd.ToLocation,',') sp on sp.Data = ml.ID and ml.StockType = sd.ToStockType
 	where ml.IsWMS = 1";
-                    }
                 }
 
                 switch (detailTableName)
@@ -110,9 +106,7 @@ namespace Sci.Production.Automation.LogicLayer
                     case WHTableName.Adjust_Detail:
                     case WHTableName.RemoveC_Detail:
                     case WHTableName.Stocktaking_Detail:
-                        if (fabricType == "A")
-                        {
-                            whereWMS = $@"
+                        whereWMS = $@"
 and exists(
 	select 1
 	from FtyInventory_Detail fd 
@@ -121,7 +115,6 @@ and exists(
 	and ml.IsWMS = 1
 {whereIsWMSTo}
 )";
-                        }
 
                         break;
                     case WHTableName.LocationTrans_Detail:
