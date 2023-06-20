@@ -68,6 +68,40 @@ namespace Sci.Production.Warehouse
                 this.listPar.Add(new SqlParameter("@ID2", this.txtTK2.Text));
             }
 
+            if (!MyUtility.Check.Empty(this.txtFromSP_Value1.Text) && !MyUtility.Check.Empty(this.txtFromSP_Value2.Text))
+            {
+                sqlWhere += $"\r\nand ted.InventoryPOID between @FromSP_Value1 and @FromSP_Value2";
+                this.listPar.Add(new SqlParameter("@FromSP_Value1", this.txtFromSP_Value1.Text));
+                this.listPar.Add(new SqlParameter("@FromSP_Value2", this.txtFromSP_Value2.Text));
+            }
+            else if (!MyUtility.Check.Empty(this.txtFromSP_Value1.Text))
+            {
+                sqlWhere += $"\r\nand ted.InventoryPOID = @FromSP_Value1";
+                this.listPar.Add(new SqlParameter("@FromSP_Value1", this.txtFromSP_Value1.Text));
+            }
+            else if (!MyUtility.Check.Empty(this.txtFromSP_Value2.Text))
+            {
+                sqlWhere += $"\r\nand ted.InventoryPOID = @FromSP_Value1";
+                this.listPar.Add(new SqlParameter("@FromSP_Value2", this.txtFromSP_Value2.Text));
+            }
+
+            if (!MyUtility.Check.Empty(this.txtToSP_Value1.Text) && !MyUtility.Check.Empty(this.txtToSP_Value2.Text))
+            {
+                sqlWhere += $"\r\nand ted.POID between @ToSP_Value1 and @To_Value2";
+                this.listPar.Add(new SqlParameter("@ToSP_Value1", this.txtToSP_Value1.Text));
+                this.listPar.Add(new SqlParameter("@To_Value2", this.txtToSP_Value2.Text));
+            }
+            else if (!MyUtility.Check.Empty(this.txtToSP_Value1.Text))
+            {
+                sqlWhere += $"\r\nand ted.POID = @ToSP_Value1";
+                this.listPar.Add(new SqlParameter("@ToSP_Value1", this.txtToSP_Value1.Text));
+            }
+            else if (!MyUtility.Check.Empty(this.txtToSP_Value2.Text))
+            {
+                sqlWhere += $"\r\nand ted.POID = @To_Value2";
+                this.listPar.Add(new SqlParameter("@To_Value2", this.txtToSP_Value2.Text));
+            }
+
             if (!MyUtility.Check.Empty(this.comboDropDownList1.SelectedValue))
             {
                 sqlWhere += $"\r\nand ted.FabricType in ({this.comboDropDownList1.SelectedValue})";
@@ -507,7 +541,7 @@ order by ted.id,ted.Ukey
         /// <inheritdoc/>
         protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
-            return DBProxy.Current.Select(null, this.sqlcmd, this.listPar, out this.dts);
+              return DBProxy.Current.Select(null, this.sqlcmd, this.listPar, out this.dts);
         }
 
         /// <inheritdoc/>

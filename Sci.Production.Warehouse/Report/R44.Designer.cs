@@ -51,6 +51,14 @@
             this.comboBoxFTYStatus = new Sci.Win.UI.ComboBox();
             this.label8 = new Sci.Win.UI.Label();
             this.comboDropDownList1 = new Sci.Production.Class.ComboDropDownList(this.components);
+            this.label9 = new Sci.Win.UI.Label();
+            this.label11 = new Sci.Win.UI.Label();
+            this.txtFromSP_Value2 = new Sci.Win.UI.TextBox();
+            this.txtFromSP_Value1 = new Sci.Win.UI.TextBox();
+            this.label12 = new Sci.Win.UI.Label();
+            this.label13 = new Sci.Win.UI.Label();
+            this.txtToSP_Value2 = new Sci.Win.UI.TextBox();
+            this.txtToSP_Value1 = new Sci.Win.UI.TextBox();
             this.SuspendLayout();
             // 
             // print
@@ -83,7 +91,7 @@
             // 
             // label2
             // 
-            this.label2.Location = new System.Drawing.Point(12, 99);
+            this.label2.Location = new System.Drawing.Point(12, 166);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(108, 23);
             this.label2.TabIndex = 144;
@@ -91,7 +99,7 @@
             // 
             // lbFactory
             // 
-            this.lbFactory.Location = new System.Drawing.Point(12, 128);
+            this.lbFactory.Location = new System.Drawing.Point(12, 195);
             this.lbFactory.Name = "lbFactory";
             this.lbFactory.Size = new System.Drawing.Size(108, 23);
             this.lbFactory.TabIndex = 142;
@@ -199,7 +207,7 @@
             // 
             // label10
             // 
-            this.label10.Location = new System.Drawing.Point(12, 214);
+            this.label10.Location = new System.Drawing.Point(12, 281);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(108, 23);
             this.label10.TabIndex = 164;
@@ -208,20 +216,21 @@
             // chkExcludeJunk
             // 
             this.chkExcludeJunk.AutoSize = true;
+            this.chkExcludeJunk.Checked = true;
+            this.chkExcludeJunk.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkExcludeJunk.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.chkExcludeJunk.Location = new System.Drawing.Point(12, 270);
+            this.chkExcludeJunk.Location = new System.Drawing.Point(12, 337);
             this.chkExcludeJunk.Name = "chkExcludeJunk";
             this.chkExcludeJunk.Size = new System.Drawing.Size(110, 21);
             this.chkExcludeJunk.TabIndex = 11;
             this.chkExcludeJunk.Text = "Exclude Junk";
             this.chkExcludeJunk.UseVisualStyleBackColor = true;
-            this.chkExcludeJunk.Checked = true;
             // 
             // txtMdivision1
             // 
             this.txtMdivision1.BackColor = System.Drawing.Color.White;
             this.txtMdivision1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtMdivision1.Location = new System.Drawing.Point(123, 99);
+            this.txtMdivision1.Location = new System.Drawing.Point(123, 166);
             this.txtMdivision1.Name = "txtMdivision1";
             this.txtMdivision1.Size = new System.Drawing.Size(66, 23);
             this.txtMdivision1.TabIndex = 4;
@@ -234,7 +243,7 @@
             this.txtfactory1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtfactory1.IsProduceFty = false;
             this.txtfactory1.IssupportJunk = true;
-            this.txtfactory1.Location = new System.Drawing.Point(123, 128);
+            this.txtfactory1.Location = new System.Drawing.Point(123, 195);
             this.txtfactory1.MDivision = null;
             this.txtfactory1.Name = "txtfactory1";
             this.txtfactory1.Size = new System.Drawing.Size(66, 23);
@@ -244,7 +253,7 @@
             // 
             this.radioSummary.AutoSize = true;
             this.radioSummary.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.radioSummary.Location = new System.Drawing.Point(192, 157);
+            this.radioSummary.Location = new System.Drawing.Point(192, 224);
             this.radioSummary.Name = "radioSummary";
             this.radioSummary.Size = new System.Drawing.Size(85, 21);
             this.radioSummary.TabIndex = 7;
@@ -256,7 +265,7 @@
             this.radioDetail.AutoSize = true;
             this.radioDetail.Checked = true;
             this.radioDetail.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.radioDetail.Location = new System.Drawing.Point(123, 157);
+            this.radioDetail.Location = new System.Drawing.Point(123, 224);
             this.radioDetail.Name = "radioDetail";
             this.radioDetail.Size = new System.Drawing.Size(62, 21);
             this.radioDetail.TabIndex = 6;
@@ -266,7 +275,7 @@
             // 
             // label3
             // 
-            this.label3.Location = new System.Drawing.Point(12, 156);
+            this.label3.Location = new System.Drawing.Point(12, 223);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(108, 23);
             this.label3.TabIndex = 168;
@@ -274,7 +283,7 @@
             // 
             // label7
             // 
-            this.label7.Location = new System.Drawing.Point(12, 184);
+            this.label7.Location = new System.Drawing.Point(12, 251);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(108, 23);
             this.label7.TabIndex = 171;
@@ -286,7 +295,7 @@
             this.comboBoxTransferType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboBoxTransferType.FormattingEnabled = true;
             this.comboBoxTransferType.IsSupportUnselect = true;
-            this.comboBoxTransferType.Location = new System.Drawing.Point(123, 184);
+            this.comboBoxTransferType.Location = new System.Drawing.Point(123, 251);
             this.comboBoxTransferType.Name = "comboBoxTransferType";
             this.comboBoxTransferType.OldText = "";
             this.comboBoxTransferType.Size = new System.Drawing.Size(121, 24);
@@ -303,7 +312,7 @@
             "New",
             "Send",
             "Confirmed"});
-            this.comboBoxFTYStatus.Location = new System.Drawing.Point(123, 244);
+            this.comboBoxFTYStatus.Location = new System.Drawing.Point(123, 311);
             this.comboBoxFTYStatus.Name = "comboBoxFTYStatus";
             this.comboBoxFTYStatus.OldText = "";
             this.comboBoxFTYStatus.Size = new System.Drawing.Size(121, 24);
@@ -311,7 +320,7 @@
             // 
             // label8
             // 
-            this.label8.Location = new System.Drawing.Point(12, 244);
+            this.label8.Location = new System.Drawing.Point(12, 311);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(108, 23);
             this.label8.TabIndex = 173;
@@ -324,16 +333,100 @@
             this.comboDropDownList1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboDropDownList1.FormattingEnabled = true;
             this.comboDropDownList1.IsSupportUnselect = true;
-            this.comboDropDownList1.Location = new System.Drawing.Point(123, 214);
+            this.comboDropDownList1.Location = new System.Drawing.Point(123, 281);
             this.comboDropDownList1.Name = "comboDropDownList1";
             this.comboDropDownList1.OldText = "";
             this.comboDropDownList1.Size = new System.Drawing.Size(121, 24);
             this.comboDropDownList1.TabIndex = 9;
             this.comboDropDownList1.Type = "Pms_FabricType";
             // 
+            // label9
+            // 
+            this.label9.Location = new System.Drawing.Point(12, 103);
+            this.label9.Name = "label9";
+            this.label9.RectStyle.Color = System.Drawing.Color.SkyBlue;
+            this.label9.Size = new System.Drawing.Size(108, 23);
+            this.label9.TabIndex = 177;
+            this.label9.Text = "From SP#";
+            this.label9.TextStyle.Color = System.Drawing.Color.Black;
+            // 
+            // label11
+            // 
+            this.label11.BackColor = System.Drawing.SystemColors.Control;
+            this.label11.Location = new System.Drawing.Point(256, 103);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(11, 25);
+            this.label11.TabIndex = 176;
+            this.label11.Text = "~";
+            this.label11.TextStyle.Color = System.Drawing.Color.Black;
+            // 
+            // txtFromSP_Value2
+            // 
+            this.txtFromSP_Value2.BackColor = System.Drawing.Color.White;
+            this.txtFromSP_Value2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtFromSP_Value2.Location = new System.Drawing.Point(270, 103);
+            this.txtFromSP_Value2.Name = "txtFromSP_Value2";
+            this.txtFromSP_Value2.Size = new System.Drawing.Size(130, 23);
+            this.txtFromSP_Value2.TabIndex = 175;
+            // 
+            // txtFromSP_Value1
+            // 
+            this.txtFromSP_Value1.BackColor = System.Drawing.Color.White;
+            this.txtFromSP_Value1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtFromSP_Value1.Location = new System.Drawing.Point(123, 103);
+            this.txtFromSP_Value1.Name = "txtFromSP_Value1";
+            this.txtFromSP_Value1.Size = new System.Drawing.Size(130, 23);
+            this.txtFromSP_Value1.TabIndex = 174;
+            // 
+            // label12
+            // 
+            this.label12.Location = new System.Drawing.Point(12, 133);
+            this.label12.Name = "label12";
+            this.label12.RectStyle.Color = System.Drawing.Color.SkyBlue;
+            this.label12.Size = new System.Drawing.Size(108, 23);
+            this.label12.TabIndex = 181;
+            this.label12.Text = "To SP#";
+            this.label12.TextStyle.Color = System.Drawing.Color.Black;
+            // 
+            // label13
+            // 
+            this.label13.BackColor = System.Drawing.SystemColors.Control;
+            this.label13.Location = new System.Drawing.Point(256, 133);
+            this.label13.Name = "label13";
+            this.label13.Size = new System.Drawing.Size(11, 25);
+            this.label13.TabIndex = 180;
+            this.label13.Text = "~";
+            this.label13.TextStyle.Color = System.Drawing.Color.Black;
+            // 
+            // txtToSP_Value2
+            // 
+            this.txtToSP_Value2.BackColor = System.Drawing.Color.White;
+            this.txtToSP_Value2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtToSP_Value2.Location = new System.Drawing.Point(270, 133);
+            this.txtToSP_Value2.Name = "txtToSP_Value2";
+            this.txtToSP_Value2.Size = new System.Drawing.Size(130, 23);
+            this.txtToSP_Value2.TabIndex = 179;
+            // 
+            // txtToSP_Value1
+            // 
+            this.txtToSP_Value1.BackColor = System.Drawing.Color.White;
+            this.txtToSP_Value1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtToSP_Value1.Location = new System.Drawing.Point(123, 133);
+            this.txtToSP_Value1.Name = "txtToSP_Value1";
+            this.txtToSP_Value1.Size = new System.Drawing.Size(130, 23);
+            this.txtToSP_Value1.TabIndex = 178;
+            // 
             // R44
             // 
-            this.ClientSize = new System.Drawing.Size(530, 320);
+            this.ClientSize = new System.Drawing.Size(530, 389);
+            this.Controls.Add(this.label12);
+            this.Controls.Add(this.label13);
+            this.Controls.Add(this.txtToSP_Value2);
+            this.Controls.Add(this.txtToSP_Value1);
+            this.Controls.Add(this.label9);
+            this.Controls.Add(this.label11);
+            this.Controls.Add(this.txtFromSP_Value2);
+            this.Controls.Add(this.txtFromSP_Value1);
             this.Controls.Add(this.comboBoxFTYStatus);
             this.Controls.Add(this.label8);
             this.Controls.Add(this.comboBoxTransferType);
@@ -387,6 +480,14 @@
             this.Controls.SetChildIndex(this.print, 0);
             this.Controls.SetChildIndex(this.toexcel, 0);
             this.Controls.SetChildIndex(this.close, 0);
+            this.Controls.SetChildIndex(this.txtFromSP_Value1, 0);
+            this.Controls.SetChildIndex(this.txtFromSP_Value2, 0);
+            this.Controls.SetChildIndex(this.label11, 0);
+            this.Controls.SetChildIndex(this.label9, 0);
+            this.Controls.SetChildIndex(this.txtToSP_Value1, 0);
+            this.Controls.SetChildIndex(this.txtToSP_Value2, 0);
+            this.Controls.SetChildIndex(this.label13, 0);
+            this.Controls.SetChildIndex(this.label12, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -415,5 +516,13 @@
         private Win.UI.ComboBox comboBoxFTYStatus;
         private Win.UI.Label label8;
         private Class.ComboDropDownList comboDropDownList1;
+        private Win.UI.Label label9;
+        private Win.UI.Label label11;
+        private Win.UI.TextBox txtFromSP_Value2;
+        private Win.UI.TextBox txtFromSP_Value1;
+        private Win.UI.Label label12;
+        private Win.UI.Label label13;
+        private Win.UI.TextBox txtToSP_Value2;
+        private Win.UI.TextBox txtToSP_Value1;
     }
 }
