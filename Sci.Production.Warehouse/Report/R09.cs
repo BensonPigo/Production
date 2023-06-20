@@ -391,6 +391,46 @@ full outer join #FtyCurrentStock fcs on tcs.M = fcs.M
 										and tcs.POID = fcs.POID
 										and tcs.Seq1 = fcs.Seq1
 										and tcs.Seq2 = fcs.Seq2
+
+------------------------------------------------------------------
+/*
+	Taipei Transaction Detail
+*/
+
+select [Type] = a.Type
+,a.POID
+,a.Seq1
+,a.Seq2
+,Qty = sum(a.Qty)
+into #tmpInvDtail
+from (
+	select   [Type] = inv.Type
+			, POID = inv.InventoryPOID
+			, Seq1 = inv.InventorySeq1
+			, Seq2 = inv.InventorySeq2
+			, Qty =  IIF(inv.Type = 3, -sum(inv.Qty),sum(inv.Qty))
+	from @stock s
+	inner join Invtrans inv on s.POID = inv.InventoryPOID
+	inner join Factory f on inv.FactoryID = f.ID
+	where	f.IsProduceFty = 1
+	group by inv.Type,inv.InventoryPOID,  inv.InventorySeq1, inv.InventorySeq2
+
+	union all
+
+	select   [Type] = inv.Type
+			, POID = inv.InventoryPOID
+			, Seq1 = inv.InventorySeq1
+			, Seq2 = inv.InventorySeq2
+			, Qty = sum(inv.Qty)
+	from @stock s
+	inner join Invtrans inv on s.POID = inv.InventoryPOID
+	inner join Factory f on inv.TransferFactory  = f.ID
+	where	f.IsProduceFty = 1 and inv.Type= 3	
+	group by inv.Type,inv.InventoryPOID,  inv.InventorySeq1, inv.InventorySeq2
+) a
+group by a.Type,a.POID,a.Seq1,a.Seq2
+
+
 ------------------------------------------------------------------
 /*
 	Final
@@ -412,6 +452,12 @@ select	   M = sl.M
 		, ReleaseQty = isnull (mpd.OutQty, 0)
 		, AdjustQty = isnull (mpd.AdjustQty, 0)
 		, ReturnQty = isnull (mpd.ReturnQty, 0)
+	    , [Input] = ISNULL(invDetail.[1],0)
+		, [OutPut] = ISNULL(invDetail.[2],0)
+		, [Transfer] = ISNULL(invDetail.[3],0)
+		, [Adjust] = ISNULL(invDetail.[4],0)
+		, [Obsolesence] = ISNULL(invDetail.[5],0)
+		, [Return] = - ISNULL(invDetail.[6],0)
 		, StockInQty = sl.TPEInQty 
 		, StockAllocatedQty = sl.TPEAllocatedQty 
 		, StockBalance = sl.TPEBalance 
@@ -433,6 +479,17 @@ left join MDivisionPoDetail mpd on sl.POID = mpd.POID
 outer apply (
 	select RateValue = dbo.GetUnitRate(psd.POUnit, psd.StockUnit)
 ) v
+outer apply(
+	select * 
+	from #tmpInvDtail t
+		pivot(
+			sum(t.qty)
+			for t.Type in ([1],[2],[3],[4],[5],[6])
+		)aa
+	where aa.POID = sl.POID
+	and aa.Seq1 = sl.Seq1
+	and aa.Seq2 = sl.Seq2
+)invDetail
 where   (sl.TPEBalance <> 0 or sl.TPEInQty <> 0 or sl.FtyBalance <> 0) 
         {whereFinal}
 order by sl.POID, sl.Seq1, sl.Seq2
