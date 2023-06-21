@@ -135,7 +135,7 @@ SET NOCOUNT ON
 	,t.FailQty
 	,t.ClogRec_OnTimeQty
 	,t.ClogRec_FailQty
-	,isnull(t.PullOutDate,'''')
+	,t.PullOutDate
 	,t.ShipMode
 	,t.Pullouttimes
 	,t.GarmentComplete
@@ -149,7 +149,7 @@ SET NOCOUNT ON
 	,t.DevSample
 	,isnull(t.SewingQty,'''')
 	,t.FOCQty
-	,isnull(t.LastSewingOutputDate,'''')
+	,t.LastSewingOutputDate
 	,t.LastCartonReceivedDate
 	,isnull(t.IDDReason,'''')
 	,t.PartialShipment
