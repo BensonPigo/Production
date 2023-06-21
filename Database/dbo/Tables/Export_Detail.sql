@@ -49,6 +49,11 @@
     [BalanceFOC]     NUMERIC (12, 2)  CONSTRAINT [DF_Export_Detail_BalanceFOC] DEFAULT ((0)) NULL,
     [CurrencyId]     VARCHAR (3)     CONSTRAINT [DF_Export_Detail_CurrencyId] DEFAULT ('') NULL,
     [InvoiceNo] VARCHAR(max) CONSTRAINT [DF_Export_Detail_InvoiceNo] DEFAULT ('') NULL,
+    [SCIRefno]      VARCHAR(30)     CONSTRAINT [DF_Export_Detail_SCIRefno]  DEFAULT (('')) NOT NULL , 
+    [Duty]          VARCHAR(1)      CONSTRAINT [DF_Export_Detail_Duty]      DEFAULT (('')) NOT NULL, 
+    [DutyID]        VARCHAR(13)     CONSTRAINT [DF_Export_Detail_DutyID]      DEFAULT (('')) NOT NULL, 
+    [EarlyShipReason] NCHAR(10)     CONSTRAINT [DF_Export_Detail_EarlyShipReason]      DEFAULT (('')) NOT NULL,  
+    [Export_ShareAmount_Ukey] BIGINT CONSTRAINT [DF_Export_Detail_Export_ShareAmount_Ukey]  NOT NULL DEFAULT ((0)) , 
     CONSTRAINT [PK_Export_Detail] PRIMARY KEY CLUSTERED ([Ukey] ASC, [ShipPlanHandle] ASC)
 );
 
@@ -270,3 +275,48 @@ EXEC sp_addextendedproperty @name = N'MS_Description',
     @level1name = N'Export_Detail',
     @level2type = N'COLUMN',
     @level2name = N'InvoiceNo'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'SCIRefno',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'Export_Detail',
+    @level2type = N'COLUMN',
+    @level2name = N'SCIRefno'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'Export_ShareAmount_Ukey',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'Export_Detail',
+    @level2type = N'COLUMN',
+    @level2name = N'Export_ShareAmount_Ukey'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'EarlyShipReasonID',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'Export_Detail',
+    @level2type = N'COLUMN',
+    @level2name = N'EarlyShipReason'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'Duty',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'Export_Detail',
+    @level2type = N'COLUMN',
+    @level2name = N'Duty'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'DutyID',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'Export_Detail',
+    @level2type = N'COLUMN',
+    @level2name = N'DutyID'
