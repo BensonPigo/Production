@@ -153,6 +153,7 @@ who.SeasonID,
 	f.ApproveDate,
 	f.TotalInspYds,
 	FirID = f.ID,
+    f.ArriveQty,
 
 	F.NonPhysical,
 	f.Physical,
@@ -283,6 +284,7 @@ select
 
 	{4}
 
+    [Inspection_Percent] = CONCAT(convert(decimal(20,2),ROUND(isnull(fp.ttlActualYds, 0) / f.ArriveQty * 100.0, 2)), '%'),
 	{1}Inspector = Concat (f.{1}Inspector, '-', p1.Name),
 
 	{5}f.{1}Date,
@@ -301,7 +303,7 @@ group by f.ToPOID,f.ToSeq,f.FromFty,f.ToFty,f.TransferID,f.FromPOID,f.FromSeq,f.
 	f.Refno,f.ColorID,f.IssueDate,f.WeaveTypeID,f.ctRoll,f.ctDyelot,f.Approve,f.ApproveDate,p1.Name,f.Category,f.ArriveWHData,f.CuttingData,
     f.OrderTypeID,f.[Invno],f.SeasonID,
 	f.Non{1},f.{1},f.{1}Inspector,f.{1}Date
-	{7}
+	{7},f.ArriveQty,fp.ttlActualYds
 
 ";
 
@@ -449,6 +451,8 @@ outer apply(
 		and std.FromPOID = f.FromPOID and std.FromSeq1 = f.FromSeq1 and std.FromSeq2 = f.FromSeq2 
     )x
 )ct3
+outer apply(select ttlActualYds = sum(ActualYds) from FIR_Physical fp where fp.id = f.FirID ) fp
+
 ";
                 column1 = "ct3.Dyelot,[NotInspectedDyelot]= f.ctDyelot - ct3.Dyelot,";
                 groupColumn = ",ct3.Dyelot,f.ctDyelot";
@@ -639,6 +643,7 @@ left join pass1 p3 with (nolock) on p3.id = i.Inspector
                     string joinPhysical = @"
 left join pass1 p1 with (nolock) on p1.id = f.PhysicalInspector
 left join pass1 p2 with (nolock) on p2.id = f.Approve
+outer apply(select ttlActualYds = sum(ActualYds) from FIR_Physical fp where fp.id = f.ID ) fp
 
 ";
 
@@ -651,6 +656,7 @@ Dyelot2=ct3.Dyelot,
 [NonPhysical] = iif(f.NonPhysical = 1, 'Y', ''),
 f.Physical,
 {colPhysicalWKSeqOnly}
+[Inspection_Percent] = CONCAT(convert(decimal(20,2),ROUND(isnull(fp.ttlActualYds, 0) / f.ArriveQty * 100.0, 2)), '%'),
 [PhysicalInspector] = Concat(p1.ID, '-', p1.Name),
 {colPhysicalDateWKSeqOnly}
 [Approver] = Concat(p2.ID, '-', p2.Name),
