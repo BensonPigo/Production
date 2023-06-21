@@ -352,7 +352,7 @@ select * from AutomatedLineMapping_DetailAuto with (nolock) where ID = '{automat
                 this.dtAutomatedLineMapping_DetailTemp.Clear();
                 this.dtAutomatedLineMapping_DetailTemp.MergeBySyncColType(dtAutomatedLineMapping_DetailTempNew);
 
-                this.dtAutomatedLineMapping_DetailTemp.Clear();
+                this.dtAutomatedLineMapping_DetailAuto.Clear();
                 this.dtAutomatedLineMapping_DetailAuto.MergeBySyncColType(dtAutomatedLineMapping_DetailAutoNew);
             }
             catch (Exception ex)

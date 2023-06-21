@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
             this.label1 = new Sci.Win.UI.Label();
             this.label2 = new Sci.Win.UI.Label();
             this.label3 = new Sci.Win.UI.Label();
@@ -88,6 +89,7 @@
             this.numericDailyDemand = new Sci.Win.UI.NumericBox();
             this.numericTargetHr = new Sci.Win.UI.NumericBox();
             this.numericTotalSewingLineOptrs = new Sci.Win.UI.NumericBox();
+            this.chartLBR = new System.Windows.Forms.DataVisualization.Charting.Chart();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -117,10 +119,12 @@
             ((System.ComponentModel.ISupportInitialize)(this.gridLineMappingRightBS)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.gridCentralizedPPALeftBS)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.gridCentralizedPPARightBS)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.chartLBR)).BeginInit();
             this.SuspendLayout();
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.chartLBR);
             this.masterpanel.Controls.Add(this.labelStatus);
             this.masterpanel.Controls.Add(this.displayTimeStudyVersion);
             this.masterpanel.Controls.Add(this.displayTimeStudyStatus);
@@ -169,7 +173,7 @@
             this.masterpanel.Controls.Add(this.label3);
             this.masterpanel.Controls.Add(this.label2);
             this.masterpanel.Controls.Add(this.label1);
-            this.masterpanel.Size = new System.Drawing.Size(1000, 187);
+            this.masterpanel.Size = new System.Drawing.Size(1299, 187);
             this.masterpanel.Controls.SetChildIndex(this.label1, 0);
             this.masterpanel.Controls.SetChildIndex(this.label2, 0);
             this.masterpanel.Controls.SetChildIndex(this.label3, 0);
@@ -219,20 +223,22 @@
             this.masterpanel.Controls.SetChildIndex(this.displayTimeStudyVersion, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelStatus, 0);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
+            this.masterpanel.Controls.SetChildIndex(this.chartLBR, 0);
             // 
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 187);
-            this.detailpanel.Size = new System.Drawing.Size(1000, 442);
+            this.detailpanel.Size = new System.Drawing.Size(1299, 442);
             // 
             // gridicon
             // 
-            this.gridicon.Location = new System.Drawing.Point(881, 139);
+            this.gridicon.Location = new System.Drawing.Point(1192, 174);
+            this.gridicon.Visible = false;
             // 
             // detailgridcont
             // 
             this.detailgridcont.Controls.Add(this.tabDetail);
-            this.detailgridcont.Size = new System.Drawing.Size(1000, 442);
+            this.detailgridcont.Size = new System.Drawing.Size(1299, 442);
             this.detailgridcont.Controls.SetChildIndex(this.tabDetail, 0);
             // 
             // detail2
@@ -249,24 +255,24 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(1000, 667);
+            this.detail.Size = new System.Drawing.Size(1299, 667);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(1000, 629);
+            this.detailcont.Size = new System.Drawing.Size(1299, 629);
             // 
             // detailbtm
             // 
             this.detailbtm.Location = new System.Drawing.Point(0, 629);
-            this.detailbtm.Size = new System.Drawing.Size(1000, 38);
+            this.detailbtm.Size = new System.Drawing.Size(1299, 38);
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(1000, 667);
+            this.browse.Size = new System.Drawing.Size(1299, 667);
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(1008, 696);
+            this.tabs.Size = new System.Drawing.Size(1307, 696);
             // 
             // label1
             // 
@@ -554,7 +560,7 @@
             this.labelStatus.BackColor = System.Drawing.Color.Transparent;
             this.labelStatus.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Status", true));
             this.labelStatus.Font = new System.Drawing.Font("Microsoft Sans Serif", 18F, System.Drawing.FontStyle.Bold);
-            this.labelStatus.Location = new System.Drawing.Point(936, 8);
+            this.labelStatus.Location = new System.Drawing.Point(1176, 9);
             this.labelStatus.MaximumSize = new System.Drawing.Size(59, 31);
             this.labelStatus.MinimumSize = new System.Drawing.Size(59, 31);
             this.labelStatus.Name = "labelStatus";
@@ -571,7 +577,7 @@
             this.tabDetail.Location = new System.Drawing.Point(0, 0);
             this.tabDetail.Name = "tabDetail";
             this.tabDetail.SelectedIndex = 0;
-            this.tabDetail.Size = new System.Drawing.Size(1000, 442);
+            this.tabDetail.Size = new System.Drawing.Size(1299, 442);
             this.tabDetail.TabIndex = 1;
             this.tabDetail.SelectedIndexChanged += new System.EventHandler(this.TabDetail_SelectedIndexChanged);
             // 
@@ -581,7 +587,7 @@
             this.tabPageLineMapping.Location = new System.Drawing.Point(4, 25);
             this.tabPageLineMapping.Name = "tabPageLineMapping";
             this.tabPageLineMapping.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageLineMapping.Size = new System.Drawing.Size(992, 413);
+            this.tabPageLineMapping.Size = new System.Drawing.Size(1291, 413);
             this.tabPageLineMapping.TabIndex = 0;
             this.tabPageLineMapping.Text = "Line Mapping";
             // 
@@ -594,8 +600,8 @@
             // splitLineMapping.Panel2
             // 
             this.splitLineMapping.Panel2.Controls.Add(this.gridLineMappingRight);
-            this.splitLineMapping.Size = new System.Drawing.Size(986, 407);
-            this.splitLineMapping.SplitterDistance = 633;
+            this.splitLineMapping.Size = new System.Drawing.Size(1285, 407);
+            this.splitLineMapping.SplitterDistance = 824;
             this.splitLineMapping.TabIndex = 0;
             // 
             // gridLineMappingRight
@@ -618,7 +624,7 @@
             this.gridLineMappingRight.RowTemplate.Height = 24;
             this.gridLineMappingRight.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridLineMappingRight.ShowCellToolTips = false;
-            this.gridLineMappingRight.Size = new System.Drawing.Size(349, 407);
+            this.gridLineMappingRight.Size = new System.Drawing.Size(457, 407);
             this.gridLineMappingRight.TabIndex = 0;
             // 
             // tabPageCentralizedPPA
@@ -1012,11 +1018,20 @@
             0,
             0});
             // 
+            // chartLBR
+            // 
+            this.chartLBR.Location = new System.Drawing.Point(794, 8);
+            this.chartLBR.Name = "chartLBR";
+            series1.Name = "Series1";
+            this.chartLBR.Series.Add(series1);
+            this.chartLBR.Size = new System.Drawing.Size(266, 173);
+            this.chartLBR.TabIndex = 51;
+            // 
             // P05
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1008, 729);
+            this.ClientSize = new System.Drawing.Size(1307, 729);
             this.GridAlias = "AutomatedLineMapping_Detail";
             this.IsSupportClip = false;
             this.IsSupportUnconfirm = true;
@@ -1058,6 +1073,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.gridLineMappingRightBS)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.gridCentralizedPPALeftBS)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.gridCentralizedPPARightBS)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.chartLBR)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -1123,5 +1139,6 @@
         private Win.UI.NumericBox numericDailyDemand;
         private Win.UI.NumericBox numericTargetHr;
         private Win.UI.NumericBox numericTotalSewingLineOptrs;
+        private System.Windows.Forms.DataVisualization.Charting.Chart chartLBR;
     }
 }
