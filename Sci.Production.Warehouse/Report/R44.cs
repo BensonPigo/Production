@@ -32,15 +32,20 @@ namespace Sci.Production.Warehouse
             if (!this.dateTWSendDate.HasValue &&
                 !this.dateETA.HasValue &&
                 this.txtTK1.Text.Empty() &&
-                this.txtTK2.Text.Empty())
+                this.txtTK2.Text.Empty() &&
+                this.txtFromSP_Value1.Empty() &&
+                this.txtFromSP_Value2.Empty() &&
+                this.txtToSP_Value1.Empty() &&
+                this.txtToSP_Value2.Empty())
             {
-                MyUtility.Msg.WarningBox("TW Send Date, ETA, TK cannot all be empty.");
+                MyUtility.Msg.WarningBox("TW Send Date, ETA, TK, From SP#, To SP# cannot all be empty.");
                 return false;
             }
 
             this.listPar.Clear();
             this.sqlcmd = string.Empty;
             string sqlWhere = string.Empty;
+            string sqlWhereDetail = string.Empty;
             if (this.dateTWSendDate.HasValue1)
             {
                 sqlWhere += $"\r\nand cast(te.SendDate as Date) between '{(DateTime)this.dateTWSendDate.Value1:yyyy/MM/dd}' and '{(DateTime)this.dateTWSendDate.Value2:yyyy/MM/dd}'";
@@ -70,34 +75,40 @@ namespace Sci.Production.Warehouse
 
             if (!MyUtility.Check.Empty(this.txtFromSP_Value1.Text) && !MyUtility.Check.Empty(this.txtFromSP_Value2.Text))
             {
+                sqlWhereDetail += $"\r\nand ted.InventoryPOID between @FromSP_Value1 and @FromSP_Value2";
                 sqlWhere += $"\r\nand ted.InventoryPOID between @FromSP_Value1 and @FromSP_Value2";
                 this.listPar.Add(new SqlParameter("@FromSP_Value1", this.txtFromSP_Value1.Text));
                 this.listPar.Add(new SqlParameter("@FromSP_Value2", this.txtFromSP_Value2.Text));
             }
             else if (!MyUtility.Check.Empty(this.txtFromSP_Value1.Text))
             {
+                sqlWhereDetail += $"\r\nand ted.InventoryPOID = @FromSP_Value1";
                 sqlWhere += $"\r\nand ted.InventoryPOID = @FromSP_Value1";
                 this.listPar.Add(new SqlParameter("@FromSP_Value1", this.txtFromSP_Value1.Text));
             }
             else if (!MyUtility.Check.Empty(this.txtFromSP_Value2.Text))
             {
-                sqlWhere += $"\r\nand ted.InventoryPOID = @FromSP_Value1";
+                sqlWhereDetail += $"\r\nand ted.InventoryPOID = @FromSP_Value2";
+                sqlWhere += $"\r\nand ted.InventoryPOID = @FromSP_Value2";
                 this.listPar.Add(new SqlParameter("@FromSP_Value2", this.txtFromSP_Value2.Text));
             }
 
             if (!MyUtility.Check.Empty(this.txtToSP_Value1.Text) && !MyUtility.Check.Empty(this.txtToSP_Value2.Text))
             {
+                sqlWhereDetail += $"\r\nand ted.POID between @ToSP_Value1 and @To_Value2";
                 sqlWhere += $"\r\nand ted.POID between @ToSP_Value1 and @To_Value2";
                 this.listPar.Add(new SqlParameter("@ToSP_Value1", this.txtToSP_Value1.Text));
                 this.listPar.Add(new SqlParameter("@To_Value2", this.txtToSP_Value2.Text));
             }
             else if (!MyUtility.Check.Empty(this.txtToSP_Value1.Text))
             {
+                sqlWhereDetail += $"\r\nand ted.POID = @ToSP_Value1";
                 sqlWhere += $"\r\nand ted.POID = @ToSP_Value1";
                 this.listPar.Add(new SqlParameter("@ToSP_Value1", this.txtToSP_Value1.Text));
             }
             else if (!MyUtility.Check.Empty(this.txtToSP_Value2.Text))
             {
+                sqlWhereDetail += $"\r\nand ted.POID = @To_Value2";
                 sqlWhere += $"\r\nand ted.POID = @To_Value2";
                 this.listPar.Add(new SqlParameter("@To_Value2", this.txtToSP_Value2.Text));
             }
@@ -381,7 +392,8 @@ outer apply (
 	and tid.Dyelot = tedc.LotNo
 	and ti.Status = 'Confirmed'
 ) tid
-
+where 1=1
+{sqlWhereDetail}
 union all
     
 select [TK No.] = te.ID
@@ -442,6 +454,7 @@ outer apply(
 )ted
 where ti.Status = 'Confirmed'
 and ted.ID is null
+{sqlWhereDetail}
 order by te.id
 
 drop table #tmp
