@@ -64,15 +64,18 @@
             // print
             // 
             this.print.Location = new System.Drawing.Point(440, 12);
+            this.print.TabIndex = 16;
             this.print.Visible = false;
             // 
             // toexcel
             // 
             this.toexcel.Location = new System.Drawing.Point(440, 48);
+            this.toexcel.TabIndex = 18;
             // 
             // close
             // 
             this.close.Location = new System.Drawing.Point(440, 84);
+            this.close.TabIndex = 19;
             // 
             // buttonCustomized
             // 
@@ -222,7 +225,7 @@
             this.chkExcludeJunk.Location = new System.Drawing.Point(12, 337);
             this.chkExcludeJunk.Name = "chkExcludeJunk";
             this.chkExcludeJunk.Size = new System.Drawing.Size(110, 21);
-            this.chkExcludeJunk.TabIndex = 11;
+            this.chkExcludeJunk.TabIndex = 15;
             this.chkExcludeJunk.Text = "Exclude Junk";
             this.chkExcludeJunk.UseVisualStyleBackColor = true;
             // 
@@ -233,7 +236,7 @@
             this.txtMdivision1.Location = new System.Drawing.Point(123, 166);
             this.txtMdivision1.Name = "txtMdivision1";
             this.txtMdivision1.Size = new System.Drawing.Size(66, 23);
-            this.txtMdivision1.TabIndex = 4;
+            this.txtMdivision1.TabIndex = 8;
             // 
             // txtfactory1
             // 
@@ -247,7 +250,7 @@
             this.txtfactory1.MDivision = null;
             this.txtfactory1.Name = "txtfactory1";
             this.txtfactory1.Size = new System.Drawing.Size(66, 23);
-            this.txtfactory1.TabIndex = 5;
+            this.txtfactory1.TabIndex = 9;
             // 
             // radioSummary
             // 
@@ -256,7 +259,7 @@
             this.radioSummary.Location = new System.Drawing.Point(192, 224);
             this.radioSummary.Name = "radioSummary";
             this.radioSummary.Size = new System.Drawing.Size(85, 21);
-            this.radioSummary.TabIndex = 7;
+            this.radioSummary.TabIndex = 11;
             this.radioSummary.Text = "Summary";
             this.radioSummary.UseVisualStyleBackColor = true;
             // 
@@ -268,7 +271,7 @@
             this.radioDetail.Location = new System.Drawing.Point(123, 224);
             this.radioDetail.Name = "radioDetail";
             this.radioDetail.Size = new System.Drawing.Size(62, 21);
-            this.radioDetail.TabIndex = 6;
+            this.radioDetail.TabIndex = 10;
             this.radioDetail.TabStop = true;
             this.radioDetail.Text = "Detail";
             this.radioDetail.UseVisualStyleBackColor = true;
@@ -299,7 +302,7 @@
             this.comboBoxTransferType.Name = "comboBoxTransferType";
             this.comboBoxTransferType.OldText = "";
             this.comboBoxTransferType.Size = new System.Drawing.Size(121, 24);
-            this.comboBoxTransferType.TabIndex = 8;
+            this.comboBoxTransferType.TabIndex = 12;
             // 
             // comboBoxFTYStatus
             // 
@@ -316,7 +319,7 @@
             this.comboBoxFTYStatus.Name = "comboBoxFTYStatus";
             this.comboBoxFTYStatus.OldText = "";
             this.comboBoxFTYStatus.Size = new System.Drawing.Size(121, 24);
-            this.comboBoxFTYStatus.TabIndex = 10;
+            this.comboBoxFTYStatus.TabIndex = 14;
             // 
             // label8
             // 
@@ -337,7 +340,7 @@
             this.comboDropDownList1.Name = "comboDropDownList1";
             this.comboDropDownList1.OldText = "";
             this.comboDropDownList1.Size = new System.Drawing.Size(121, 24);
-            this.comboDropDownList1.TabIndex = 9;
+            this.comboDropDownList1.TabIndex = 13;
             this.comboDropDownList1.Type = "Pms_FabricType";
             // 
             // label9
@@ -367,7 +370,7 @@
             this.txtFromSP_Value2.Location = new System.Drawing.Point(270, 103);
             this.txtFromSP_Value2.Name = "txtFromSP_Value2";
             this.txtFromSP_Value2.Size = new System.Drawing.Size(130, 23);
-            this.txtFromSP_Value2.TabIndex = 175;
+            this.txtFromSP_Value2.TabIndex = 5;
             // 
             // txtFromSP_Value1
             // 
@@ -376,7 +379,7 @@
             this.txtFromSP_Value1.Location = new System.Drawing.Point(123, 103);
             this.txtFromSP_Value1.Name = "txtFromSP_Value1";
             this.txtFromSP_Value1.Size = new System.Drawing.Size(130, 23);
-            this.txtFromSP_Value1.TabIndex = 174;
+            this.txtFromSP_Value1.TabIndex = 4;
             // 
             // label12
             // 
@@ -405,7 +408,7 @@
             this.txtToSP_Value2.Location = new System.Drawing.Point(270, 133);
             this.txtToSP_Value2.Name = "txtToSP_Value2";
             this.txtToSP_Value2.Size = new System.Drawing.Size(130, 23);
-            this.txtToSP_Value2.TabIndex = 179;
+            this.txtToSP_Value2.TabIndex = 7;
             // 
             // txtToSP_Value1
             // 
@@ -414,7 +417,7 @@
             this.txtToSP_Value1.Location = new System.Drawing.Point(123, 133);
             this.txtToSP_Value1.Name = "txtToSP_Value1";
             this.txtToSP_Value1.Size = new System.Drawing.Size(130, 23);
-            this.txtToSP_Value1.TabIndex = 178;
+            this.txtToSP_Value1.TabIndex = 6;
             // 
             // R44
             // 

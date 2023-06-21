@@ -33,10 +33,10 @@ namespace Sci.Production.Warehouse
                 !this.dateETA.HasValue &&
                 this.txtTK1.Text.Empty() &&
                 this.txtTK2.Text.Empty() &&
-                this.txtFromSP_Value1.Empty() &&
-                this.txtFromSP_Value2.Empty() &&
-                this.txtToSP_Value1.Empty() &&
-                this.txtToSP_Value2.Empty())
+                this.txtFromSP_Value1.Text.Empty() &&
+                this.txtFromSP_Value2.Text.Empty() &&
+                this.txtToSP_Value1.Text.Empty() &&
+                this.txtToSP_Value2.Text.Empty())
             {
                 MyUtility.Msg.WarningBox("TW Send Date, ETA, TK, From SP#, To SP# cannot all be empty.");
                 return false;
