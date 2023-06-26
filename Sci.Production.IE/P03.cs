@@ -2085,84 +2085,6 @@ order by case when ld.No = '' then 1
 
         private DataTable GetDataFromP01()
         {
-            //            DataRow timeStudy;
-            //            DataTable timeStudy_Detail;
-            //            string sqlCmd = string.Format(
-            //                @"
-            //select t.* 
-            //from TimeStudy t WITH (NOLOCK) 
-            //	 , Style s WITH (NOLOCK) 
-            //where t.StyleID = s.ID 
-            //	  and t.BrandID = s.BrandID 
-            //	  and t.SeasonID = s.SeasonID 
-            //	  and s.Ukey = {0}
-            //	  and t.ComboType = '{1}'",
-            //                this.CurrentMaintain["StyleUkey"].ToString(),
-            //                this.CurrentMaintain["ComboType"].ToString());
-
-            //            if (!MyUtility.Check.Seek(sqlCmd, out timeStudy))
-            //            {
-            //                MyUtility.Msg.WarningBox("Fty GSD data not found!!");
-            //                return  null;
-            //            }
-
-            //            sqlCmd = $@"
-            //select ID = null
-            //	   , No = ''
-            //	   , OriNo = td.Seq
-            //	   , td.Annotation
-            //	   , GSD = td.SMV
-            //	   , TotalGSD = td.SMV
-            //	   , Cycle = td.SMV
-            //	   , TotalCycle = td.SMV
-            //	   , td.MachineTypeID
-            //	   , [Attachment] = STUFF((
-            //					select concat(',' ,s.Data)
-            //					from SplitString(td.Mold, ',') s
-            //					where not exists (select 1 from Mold m WITH (NOLOCK) where s.Data = m.ID and (m.Junk = 1 or m.IsTemplate = 1)) 
-            //					for xml path ('')) 
-            //				,1,1,'')
-            //	    , [Template] = STUFF((
-            //					select concat(',' ,s.Data)
-            //					from SplitString(td.Template, ',') s
-            //					where not exists (select 1 from Mold m WITH (NOLOCK) where s.Data = m.ID and (m.Junk = 1 or m.IsAttachment = 1)) 
-            //					for xml path ('')) 
-            //				,1,1,'')
-            //	   , td.OperationID
-            //	   , MoldID = td.Mold
-            //       , td.SewingMachineAttachmentID
-            //	   , GroupKey = 0
-            //	   , New = 0
-            //	   , EmployeeID = ''
-            //	   , Description = IIF(td.MachineTypeID IS NULL OR td.MachineTypeID = '' ,td.OperationID ,o.DescEN )
-            //	   , EmployeeName = ''
-            //	   , EmployeeSkill = ''
-            //	   , Efficiency = 100
-            //       , IsPPA = iif(CHARINDEX('--', td.OperationID) > 0, 0, iif(td.SMV > 0, 0, 1))
-            //       ,o.MasterPlusGroup
-            //	   ,[IsHide] = cast(
-            //			   case when SUBSTRING(td.OperationID, 1, 2) = '--' then 1
-            //			   when show.IsDesignatedArea = 1 then 1
-            //			   when isnull(td.IsSubprocess,0) = 1 then 1
-            //			   else 0 
-            //			   end			
-            //		as bit)
-            //	   ,[IsGroupHeader] = cast(iif(SUBSTRING(td.OperationID, 1, 2) = '--', 1, 0) as bit)
-            //       ,[IsShow] = cast(iif( td.OperationID like '--%' , 1, isnull(show.IsShowinIEP03, 1)) as bit)
-            //from TimeStudy_Detail td WITH (NOLOCK)
-            //left join Operation o WITH (NOLOCK) on td.OperationID = o.ID
-            //outer apply (
-            //	select IsShowinIEP03 = IIF(isnull(md.IsNotShownInP03, 0) = 0, 1, 0)
-            //		, IsDesignatedArea = ISNULL(md.IsNonSewingLine,0)
-            //	from MachineType m WITH (NOLOCK)
-            //    inner join MachineType_Detail md WITH (NOLOCK) on md.ID = m.ID and md.FactoryID = 'MWI'	
-            //	where o.MachineTypeID = m.ID and m.junk = 0
-            //)show
-            //where td.ID = '{timeStudy["ID"]}'
-            //";
-
-            //            DualResult result = DBProxy.Current.Select(null, sqlCmd, out timeStudy_Detail);
-
             DataTable dt;
 
             string cmd = $@"select OperationID=ID ,MoldID  from Operation where Junk=0";
@@ -2293,8 +2215,8 @@ select ID = null
 	   ,MachineCount = CAST(  IIF(o.MasterPlusGroup <> '' and (o.MasterPlusGroup is not null and td.MachineTypeID not like 'MM%'),1,0) as bit)
 	   ,[IsHide] = cast(
 			   case when SUBSTRING(td.OperationID, 1, 2) = '--' then 1
-			   when show.IsDesignatedArea = 1 then 1
-			   when isnull(td.IsSubprocess,0) = 1 then 1
+			        when show.IsDesignatedArea = 1 then 1
+			        when isnull(td.IsNonSewingLine,0) = 1 then 1
 			   else 0 
 			   end			
 		as bit)
