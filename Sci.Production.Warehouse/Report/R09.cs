@@ -402,18 +402,26 @@ select [Type] = a.Type
 ,a.Seq1
 ,a.Seq2
 ,Qty = sum(a.Qty)
+,M = a.M
 into #tmpInvDtail
 from (
 	select   [Type] = inv.Type
 			, POID = inv.InventoryPOID
 			, Seq1 = inv.InventorySeq1
 			, Seq2 = inv.InventorySeq2
-			, Qty =  IIF(inv.Type = 3, -sum(inv.Qty),sum(inv.Qty))
+			, Qty =  IIF(inv.Type = 3, -sum(round(inv.Qty * v.RateValue,2)),sum(round(inv.Qty * v.RateValue,2)))
+			, M = f.MDivisionID
 	from @stock s
 	inner join Invtrans inv on s.POID = inv.InventoryPOID
+	left join PO_Supp_Detail psd on inv.InventoryPOID = psd.ID
+								and inv.InventorySeq1 = psd.SEQ1
+								and inv.InventorySeq2 = psd.SEQ2
 	inner join Factory f on inv.FactoryID = f.ID
+	outer apply (
+		select RateValue = dbo.GetUnitRate(psd.POUnit, psd.StockUnit)
+	) v
 	where	f.IsProduceFty = 1
-	group by inv.Type,inv.InventoryPOID,  inv.InventorySeq1, inv.InventorySeq2
+	group by inv.Type,inv.InventoryPOID,  inv.InventorySeq1, inv.InventorySeq2, f.MDivisionID
 
 	union all
 
@@ -421,14 +429,21 @@ from (
 			, POID = inv.InventoryPOID
 			, Seq1 = inv.InventorySeq1
 			, Seq2 = inv.InventorySeq2
-			, Qty = sum(inv.Qty)
+			, Qty = sum(round(inv.Qty * v.RateValue,2))
+			, M = f.MDivisionID
 	from @stock s
 	inner join Invtrans inv on s.POID = inv.InventoryPOID
+	left join PO_Supp_Detail psd on inv.InventoryPOID = psd.ID
+							and inv.InventorySeq1 = psd.SEQ1
+							and inv.InventorySeq2 = psd.SEQ2
 	inner join Factory f on inv.TransferFactory  = f.ID
+	outer apply (
+		select RateValue = dbo.GetUnitRate(psd.POUnit, psd.StockUnit)
+	) v
 	where	f.IsProduceFty = 1 and inv.Type= 3	
-	group by inv.Type,inv.InventoryPOID,  inv.InventorySeq1, inv.InventorySeq2
+	group by inv.Type,inv.InventoryPOID,  inv.InventorySeq1, inv.InventorySeq2, f.MDivisionID
 ) a
-group by a.Type,a.POID,a.Seq1,a.Seq2
+group by a.Type,a.POID,a.Seq1,a.Seq2,a.M
 
 
 ------------------------------------------------------------------
@@ -489,6 +504,7 @@ outer apply(
 	where aa.POID = sl.POID
 	and aa.Seq1 = sl.Seq1
 	and aa.Seq2 = sl.Seq2
+	and aa.M = sl.M
 )invDetail
 where   (sl.TPEBalance <> 0 or sl.TPEInQty <> 0 or sl.FtyBalance <> 0) 
         {whereFinal}
