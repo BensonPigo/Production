@@ -24,46 +24,44 @@ where b.id is null
 ---------------------------UPDATE �DTABLE��ӷ�TABLE ���@��(�DTABLE�h���� �O�_�� ~�ӷ�TABLE�h���ܤ��z�|)
 UPDATE a
 SET  
---a.ID	= b.ID
-a.FromGSD	= b.FromGSD
-,a.CalibratedCode	= b.CalibratedCode
-,a.DescEN	= b.DescEN
-,a.DescCH	= b.DescCH
-,a.MachineTypeID	= b.MachineTypeID
-,a.MtlFactorID	= b.MtlFactorID
-,a.ISO	= b.ISO
-,a.RPM	= b.RPM
-,a.MoldID	= b.MoldID
-,a.OperationType	= b.OperationType
-,a.CostCenter	= b.CostCenter
-,a.Section	= b.Section
-,a.SMV	= b.SMV
-,a.MachineTMU	= b.MachineTMU
-,a.ManualTMU	= b.ManualTMU
-,a.TotalTMU	= b.TotalTMU
-,a.MachineAllowanceSMV	= b.MachineAllowanceSMV
-,a.ManualAllowanceSMV	= b.ManualAllowanceSMV
-,a.StitchCM	= b.StitchCM
-,a.SeamLength	= b.SeamLength
---,a.Picture1	= b.Picture1
---,a.Picture2	= b.Picture2
-,a.NeedleThread	= b.NeedleThread
-,a.BottomThread	= b.BottomThread
-,a.CoverThread	= b.CoverThread
-,a.NeedleLength	= b.NeedleLength
-,a.BottomLength	= b.BottomLength
-,a.CoverLength	= b.CoverLength
-,a.Junk	= b.Junk
-,a.AddName	= b.AddName
-,a.AddDate	= b.AddDate
-,a.EditName	= b.EditName
-,a.EditDate	= b.EditDate
-,a.MasterPlusGroup	= b.MasterPlusGroup
-,a.Hem = b.Hem
-,a.Segment = b.Segment
-,a.Tubular = b.Tubular
-,a.DescVN = b.DescVN
-,a.DescKH = b.DescKH
+
+a.FromGSD	= isnull( b.FromGSD                        , 0)
+,a.CalibratedCode	= isnull( b.CalibratedCode         , 0)
+,a.DescEN	= isnull( b.DescEN                         , '')
+,a.DescCH	= isnull( b.DescCH                         , '')
+,a.MachineTypeID	= isnull( b.MachineTypeID          , '')
+,a.MtlFactorID	= isnull( b.MtlFactorID                , '')
+,a.ISO	= isnull( b.ISO                                , '')
+,a.RPM	= isnull( b.RPM                                , 0)
+,a.MoldID	= isnull( b.MoldID                         , '')
+,a.OperationType	= isnull( b.OperationType          , '')
+,a.CostCenter	= isnull( b.CostCenter                 , '')
+,a.Section	= isnull( b.Section                        , '')
+,a.SMV	= isnull( b.SMV                                , 0)
+,a.MachineTMU	= isnull( b.MachineTMU                 , 0)
+,a.ManualTMU	= isnull( b.ManualTMU                  , 0)
+,a.TotalTMU	= isnull( b.TotalTMU                       , 0)
+,a.MachineAllowanceSMV	= isnull( b.MachineAllowanceSMV, 0)
+,a.ManualAllowanceSMV	= isnull( b.ManualAllowanceSMV , 0)
+,a.StitchCM	= isnull( b.StitchCM                       , 0)
+,a.SeamLength	= isnull( b.SeamLength                 , 0)
+,a.NeedleThread	= isnull( b.NeedleThread               , '')
+,a.BottomThread	= isnull( b.BottomThread               , '')
+,a.CoverThread	= isnull( b.CoverThread                , '')
+,a.NeedleLength	= isnull( b.NeedleLength               , 0)
+,a.BottomLength	= isnull( b.BottomLength               , 0)
+,a.CoverLength	= isnull( b.CoverLength                , 0)
+,a.Junk	= isnull( b.Junk                               , 0)
+,a.AddName	= isnull( b.AddName                        , '')
+,a.AddDate	=  b.AddDate
+,a.EditName	= isnull( b.EditName                       , '')
+,a.EditDate	=  b.EditDate
+,a.MasterPlusGroup	= isnull( b.MasterPlusGroup        , '')
+,a.Hem = isnull( b.Hem                                 , 0)
+,a.Segment = isnull( b.Segment                         , 0)
+,a.Tubular = isnull( b.Tubular                         , 0)
+,a.DescVN = isnull( b.DescVN                           , '')
+,a.DescKH = isnull( b.DescKH                           , '')
 
 from Production.dbo.Operation as a inner join Trade_To_Pms.dbo.Operation as b ON a.id=b.id
 -------------------------- INSERT INTO ��
@@ -89,8 +87,6 @@ ID
 ,ManualAllowanceSMV
 ,StitchCM
 ,SeamLength
---,Picture1
---,Picture2
 ,NeedleThread
 ,BottomThread
 ,CoverThread
@@ -110,46 +106,44 @@ ID
 ,DescKH
 )
 select 
-ID
-,FromGSD
-,CalibratedCode
-,DescEN
-,DescCH
-,MachineTypeID
-,MtlFactorID
-,ISO
-,RPM
-,MoldID
-,OperationType
-,CostCenter
-,Section
-,SMV
-,MachineTMU
-,ManualTMU
-,TotalTMU
-,MachineAllowanceSMV
-,ManualAllowanceSMV
-,StitchCM
-,SeamLength
---,Picture1
---,Picture2
-,NeedleThread
-,BottomThread
-,CoverThread
-,NeedleLength
-,BottomLength
-,CoverLength
-,Junk
-,AddName
-,AddDate
-,EditName
-,EditDate
-,MasterPlusGroup
-,Hem
-,Segment
-,Tubular
-,DescVN
-,DescKH
+     isnull(ID                 , '')
+    ,isnull(FromGSD            , 0)
+    ,isnull(CalibratedCode     , 0)
+    ,isnull(DescEN             , '')
+    ,isnull(DescCH             , '')
+    ,isnull(MachineTypeID      , '')
+    ,isnull(MtlFactorID        , '')
+    ,isnull(ISO                , '')
+    ,isnull(RPM                , 0)
+    ,isnull(MoldID             , '')
+    ,isnull(OperationType      , '')
+    ,isnull(CostCenter         , '')
+    ,isnull(Section            , '')
+    ,isnull(SMV                , 0)
+    ,isnull(MachineTMU         , 0)
+    ,isnull(ManualTMU          , 0)
+    ,isnull(TotalTMU           , 0)
+    ,isnull(MachineAllowanceSMV, 0)
+    ,isnull(ManualAllowanceSMV , 0)
+    ,isnull(StitchCM           , 0)
+    ,isnull(SeamLength         , 0)
+    ,isnull(NeedleThread       , '')
+    ,isnull(BottomThread       , '')
+    ,isnull(CoverThread        , '')
+    ,isnull(NeedleLength       , 0)
+    ,isnull(BottomLength       , 0)
+    ,isnull(CoverLength        , 0)
+    ,isnull(Junk               , 0)
+    ,isnull(AddName            , '')
+    ,AddDate
+    ,isnull(EditName           , '')
+    ,EditDate
+    ,isnull(MasterPlusGroup    , '')
+    ,isnull(Hem                , 0)
+    ,isnull(Segment            , 0)
+    ,isnull(Tubular            , 0)
+    ,isnull(DescVN             , '')
+    ,isnull(DescKH             , '')
 from Trade_To_Pms.dbo.Operation as b WITH (NOLOCK)
 where not exists(select id from Production.dbo.Operation as a WITH (NOLOCK) where a.id = b.id)
 
@@ -168,13 +162,13 @@ where b.id is null
 UPDATE a
 SET  
 --a.ID	= b.ID
-a.Type	= b.Type
-,a.DescCH	= b.DescCH
-,a.DescEN	= b.DescEN
-,a.Junk	= b.Junk
-,a.AddName	= b.AddName
-,a.AddDate	= b.AddDate
-,a.EditName	= b.EditName
+a.Type	= isnull( b.Type         , '')
+,a.DescCH	= isnull( b.DescCH   , '')
+,a.DescEN	= isnull( b.DescEN   , '')
+,a.Junk	= isnull( b.Junk         , 0)
+,a.AddName	= isnull( b.AddName  , '')
+,a.AddDate	=  b.AddDate
+,a.EditName	= isnull( b.EditName , '')
 ,a.EditDate	= b.EditDate
 
 from Production.dbo.Mold as a inner join Trade_To_Pms.dbo.Mold as b ON a.id=b.id
@@ -192,30 +186,27 @@ ID
 
 )
 select 
-ID
-,Type
-,DescCH
-,DescEN
-,Junk
-,AddName
+ isnull(ID      , '')
+,isnull(Type    , '')
+,isnull(DescCH  , '')
+,isnull(DescEN  , '')
+,isnull(Junk    , 0)
+,isnull(AddName , '')
 ,AddDate
-,EditName
+,isnull(EditName, '')
 ,EditDate
 
 from Trade_To_Pms.dbo.Mold as b WITH (NOLOCK)
 where not exists(select id from Production.dbo.Mold as a WITH (NOLOCK) where a.id = b.id)
 ---------------------------
 update m
-	set m.IsAttachment = mt.IsAttachment,
-		m.IsTemplate = mt.IsTemplate
+	set m.IsAttachment = isnull(mt.IsAttachment, 0),
+		m.IsTemplate = isnull(mt.IsTemplate, 0)
 from Production.dbo.Mold m
 inner join Trade_To_Pms.dbo.MoldTPE mt on m.ID = mt.ID
 where (m.IsAttachment <> mt.IsAttachment 
 or m.IsTemplate <> mt.IsTemplate)
 ---------------------------
---aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
---SMNotice
---SMNotice
 
 --Table:IESelectCode--
 merge IESelectCode t
@@ -223,10 +214,10 @@ using (select * from trade_to_pms.dbo.IESelectCode WITH (NOLOCK)) s
 on t.id = s.id and t.type = s.type
 when matched then
 	update set 
-		 t.name		= s.name		
-		,t.AddName	= s.AddName	
-		,t.AddDate	= s.AddDate	
-		,t.EditName	= s.EditName
+		 t.name		= isnull( s.name	, '')
+		,t.AddName	= isnull( s.AddName	, '')
+		,t.AddDate	=  s.AddDate
+		,t.EditName	= isnull( s.EditName, '')
 		,t.EditDate = s.EditDate
 when not matched by target then
 insert (type,id,name,AddName,AddDate,EditName,EditDate)
@@ -238,14 +229,14 @@ Merge Production.dbo.Operation_His as t
 Using (select a.* from Trade_To_Pms.dbo.Operation_His a ) as s
 on t.Ukey=s.Ukey 
 when matched then 
-   update SET t.Type = s.Type
-      ,t.TypeName = s.TypeName
-      ,t.OperationID = s.OperationID
-      ,t.OldValue = s.OldValue
-      ,t.NewValue = s.NewValue
-      ,t.Remark = s.Remark
-      ,t.EditDate = s.EditDate
-      ,t.EditName = s.EditName
+   update SET t.Type = isnull( s.Type       , '')
+      ,t.TypeName = isnull( s.TypeName      , '')
+      ,t.OperationID = isnull( s.OperationID, '')
+      ,t.OldValue = isnull( s.OldValue      , '')
+      ,t.NewValue = isnull( s.NewValue      , '')
+      ,t.Remark = isnull( s.Remark          , '')
+      ,t.EditDate =  s.EditDate
+      ,t.EditName = isnull( s.EditName      , '')
 when not matched by target then
 	INSERT (Type
            ,TypeName
@@ -256,15 +247,17 @@ when not matched by target then
            ,EditDate
            ,EditName
 		   ,Ukey)
-		VALUES  (s.Type
-           ,s.TypeName
-           ,s.OperationID
-           ,s.OldValue
-           ,s.NewValue
-           ,s.Remark
+		VALUES  (
+            isnull(s.Type       , '')
+           ,isnull(s.TypeName   , '')
+           ,isnull(s.OperationID, '')
+           ,isnull(s.OldValue   , '')
+           ,isnull(s.NewValue   , '')
+           ,isnull(s.Remark     , '')
            ,s.EditDate
-           ,s.EditName
-		   ,s.Ukey)
+           ,isnull(s.EditName   , '')
+		   ,isnull(s.Ukey       , 0)
+           )
 when not matched by source then 
 	delete;
 	
@@ -273,12 +266,12 @@ Merge Production.dbo.Thread_Quilting as t
 Using (select a.* from Trade_To_Pms.dbo.Thread_Quilting a ) as s
 on t.Shape=s.Shape 
 when matched then 
-   update SET  t.Picture1 = s.Picture1
-			  ,t.Picture2 = s.Picture2
-			  ,t.Junk = s.Junk
-			  ,t.AddName = s.AddName
-			  ,t.AddDate = s.AddDate
-			  ,t.EditName = s.EditName
+   update SET  t.Picture1 = isnull( s.Picture1, '')
+			  ,t.Picture2 = isnull( s.Picture2, '')
+			  ,t.Junk = isnull( s.Junk        , 0)
+			  ,t.AddName = isnull( s.AddName  , '')
+			  ,t.AddDate =  s.AddDate
+			  ,t.EditName = isnull( s.EditName, '')
 			  ,t.EditDate = s.EditDate
 when not matched by target then
 	INSERT (Shape
@@ -289,13 +282,14 @@ when not matched by target then
            ,AddDate
            ,EditName
            ,EditDate)
-		VALUES  (s.Shape
-           ,s.Picture1
-           ,s.Picture2
-           ,s.Junk
-           ,s.AddName
+		VALUES  (
+            isnull(s.Shape   , '')
+           ,isnull(s.Picture1, '')
+           ,isnull(s.Picture2, '')
+           ,isnull(s.Junk    , 0)
+           ,isnull(s.AddName , '')
            ,s.AddDate
-           ,s.EditName
+           ,isnull(s.EditName, '')
            ,s.EditDate)
 when not matched by source then 
 	delete;
@@ -305,11 +299,11 @@ Merge Production.dbo.Thread_Quilting_Size as t
 Using (select a.* from Trade_To_Pms.dbo.Thread_Quilting_Size a ) as s
 on t.Ukey=s.Ukey 
 when matched then 
-   update SET  t.Shape = s.Shape
-			  ,t.HSize = s.HSize
-			  ,t.VSize = s.VSize
-			  ,t.ASize = s.ASize
-			  ,t.NeedleDistance = s.NeedleDistance
+   update SET  t.Shape = isnull( s.Shape                  , '')
+			  ,t.HSize = isnull( s.HSize                  , 0)
+			  ,t.VSize = isnull( s.VSize                  , 0)
+			  ,t.ASize = isnull( s.ASize                  , 0)
+			  ,t.NeedleDistance = isnull( s.NeedleDistance, 0)
 when not matched by target then
 	INSERT (Shape
            ,HSize
@@ -317,12 +311,14 @@ when not matched by target then
            ,ASize
            ,NeedleDistance
 		   ,Ukey)
-		VALUES  (s.Shape
-           ,s.HSize
-           ,s.VSize
-           ,s.ASize
-           ,s.NeedleDistance
-		   ,s.Ukey)
+		VALUES  (
+            isnull(s.Shape         , '')
+           ,isnull(s.HSize         , 0)
+           ,isnull(s.VSize         , 0)
+           ,isnull(s.ASize         , 0)
+           ,isnull(s.NeedleDistance, 0)
+		   ,isnull(s.Ukey          , 0)
+           )
 when not matched by source then 
 	delete;
 
@@ -331,20 +327,22 @@ Merge Production.dbo.Thread_Quilting_Size_Location as t
 Using (select a.* from Trade_To_Pms.dbo.Thread_Quilting_Size_Location a ) as s
 on t.Thread_Quilting_SizeUkey=s.Thread_Quilting_SizeUkey AND t.Seq=s.Seq 
 when matched then 
-   update SET  t.Shape = s.Shape
-			  ,t.Location = s.Location
-			  ,t.Ratio = s.Ratio
+   update SET  t.Shape = isnull( s.Shape      , '')
+			  ,t.Location = isnull( s.Location, '')
+			  ,t.Ratio = isnull( s.Ratio      , 0)
 when not matched by target then
 	INSERT (Shape
            ,Thread_Quilting_SizeUkey
            ,Seq
            ,Location
            ,Ratio)
-		VALUES  (s.Shape
-           ,s.Thread_Quilting_SizeUkey
-           ,s.Seq
-           ,s.Location
-           ,s.Ratio)
+		VALUES  (
+            isnull(s.Shape                   , '')
+           ,isnull(s.Thread_Quilting_SizeUkey, 0)
+           ,isnull(s.Seq                     , '')
+           ,isnull(s.Location                , '')
+           ,isnull(s.Ratio                   , 0)
+           )
 when not matched by source then 
 	delete;
 
