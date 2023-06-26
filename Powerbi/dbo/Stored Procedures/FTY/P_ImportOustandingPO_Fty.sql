@@ -166,7 +166,7 @@ OUTER APPLY(
 	WHERE sd.OrderId=main.ID AND sd.QAQty > 0
 )LastCMPOutputDate
 OUTER APPLY(
-	 SELECT [Value]=[dbo].[getMinCompleteSewQty](main.ID,NULL,NULL) 
+	 SELECT [Value] = [Production].[dbo].[getMinCompleteSewQty](main.ID,NULL,NULL) 
 )CMPQty
 DROP TABLE #tmpOrderMain,#tmpPackingList_Detail,#tmpInspection,#tmpInspection_Step1
 
