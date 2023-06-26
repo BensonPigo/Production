@@ -409,7 +409,7 @@ from (
 			, POID = inv.InventoryPOID
 			, Seq1 = inv.InventorySeq1
 			, Seq2 = inv.InventorySeq2
-			, Qty =  IIF(inv.Type = 3, -sum(round(inv.Qty * v.RateValue,2)),sum(round(inv.Qty * v.RateValue,2)))
+			, Qty =  IIF(inv.Type = 3 or inv.Type = 6, -sum(round(inv.Qty * v.RateValue,2)),sum(round(inv.Qty * v.RateValue,2)))
 			, M = f.MDivisionID
 	from @stock s
 	inner join Invtrans inv on s.POID = inv.InventoryPOID
