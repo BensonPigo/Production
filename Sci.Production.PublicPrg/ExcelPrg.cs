@@ -1,13 +1,11 @@
-﻿using System;
+﻿using Ict;
+using Sci.Production.PublicPrg;
+using Sci.Utility.Report;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
-using Ict;
-using Sci.Production.PublicPrg;
-using Sci.Utility.Report;
 using MsExcel = Microsoft.Office.Interop.Excel;
 
 namespace Sci.Production.Prg
@@ -315,6 +313,25 @@ namespace Sci.Production.Prg
             public System.Data.DataTable Load()
             {
                 return SelectExcelEx(this);
+            }
+        }
+
+        /// <summary>
+        /// 輸入欄位名稱,刪除指定的 Excel 欄位
+        /// </summary>
+        /// <param name="worksheet">Microsoft.Office.Interop.Excel.Worksheet</param>
+        /// <param name="headerRow">範本檔案設定欄位在第幾Row</param>
+        /// <param name="columnName">欄位名稱</param>
+        public static void ExcelDeleteColumn(MsExcel.Worksheet worksheet, int headerRow, string columnName)
+        {
+            MsExcel.Range headerRange = worksheet.Rows[headerRow];
+            MsExcel.Range searchRange = headerRange.Find(columnName, Type.Missing, MsExcel.XlFindLookIn.xlValues, MsExcel.XlLookAt.xlWhole, MsExcel.XlSearchOrder.xlByRows, MsExcel.XlSearchDirection.xlNext, false, false, Type.Missing);
+            if (searchRange != null)
+            {
+                // 刪除欄位
+                int columnIndex = searchRange.Column;
+                MsExcel.Range deleteRange = (MsExcel.Range)worksheet.Columns[columnIndex];
+                deleteRange.Delete(MsExcel.XlDeleteShiftDirection.xlShiftToLeft);
             }
         }
     }

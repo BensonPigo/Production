@@ -1073,5 +1073,11 @@ and ActualYds > 0
                 p01_ShadeBandStock.ShowDialog();
             }
         }
+
+        private void BtnUpdateToneGrp_Click(object sender, EventArgs e)
+        {
+            P01_BatchUpdateToneGrp p01_BatchUpdateToneGrp = new P01_BatchUpdateToneGrp(this.CurrentMaintain);
+            p01_BatchUpdateToneGrp.ShowDialog(this);
+        }
     }
 }
