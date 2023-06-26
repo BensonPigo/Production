@@ -30,13 +30,19 @@ SET @SqlCmd1 = '
 	[SP#] = ed.PoID,
 	[Seq#] = ed.seq1+''-''+ed.seq2,	
     [Brand] = o.BrandID,
-	[Supp] = s2.ID,
-	[Supp Name] = s2.AbbEN,
+	[Supp] = ps.SuppID,
+	[Supp Name] = Supp.AbbEN,
 	[Ref#] = psd.Refno,
 	[Color] = c.ColorName,
 	Qty = isnull(ed.Qty,0) + isnull(ed.Foc,0),	
-	[1st Bulk Dyelot_Fty Received Date] = FirstDyelot.FTYReceivedReport,
-	[1st Bulk Dyelot_Supp Sent Date]  = FirstDyelot.FirstDyelot,
+	[1st Bulk Dyelot_Fty Received Date] = FirstDyelot.FirstDyelot,
+	[1st Bulk Dyelot_Supp Sent Date]  = IIF(FirstDyelot.FirstDyelot is null and f.RibItem = 1
+                        ,''RIB no need first dye lot''
+                        ,IIF(FirstDyelot.SeasonID is null
+                                ,''Still not received and under pushing T2. Please contact with PR if you need L/G first.''
+                                ,format(FirstDyelot.FirstDyelot,''yyyy/MM/dd'')
+                            )
+                    ),
 	[T1 Inspected Yards] = isnull(a.T1InspectedYards,0),
 	[T1 Defect Points] = isnull(b.T1DefectPoints,0),
 	[Fabric with clima] = isnull(f.Clima,0),
@@ -44,7 +50,7 @@ SET @SqlCmd1 = '
     ed.seq1,
     ed.seq2,
 	ed.Ukey,
-    [bitRefnoColor] = case when f.Clima = 1 then ROW_NUMBER() over(partition by f.Clima, s2.ID, psd.Refno, pc.SpecValue, Format(Export.CloseDate,''yyyyMM'') order by Export.CloseDate) else 0 end,
+    [bitRefnoColor] = case when f.Clima = 1 then ROW_NUMBER() over(partition by f.Clima, ps.SuppID, psd.Refno, pc.SpecValue, Format(Export.CloseDate,''yyyyMM'') order by Export.CloseDate) else 0 end,
 	[FactoryID] = o.FactoryID,
 	Export.Consignee
 into #tmpBasic
@@ -56,24 +62,18 @@ inner join ['+@current_PMS_ServerName+'].Production.dbo.Export with(nolock) on E
 inner join ['+@current_PMS_ServerName+'].Production.dbo.orders o with(nolock) on o.id = ed.PoID
 left join ['+@current_PMS_ServerName+'].Production.dbo.Po_Supp_Detail psd with(nolock) on psd.id = ed.poid and psd.seq1 = ed.seq1 and psd.seq2 = ed.seq2
 left join ['+@current_PMS_ServerName+'].Production.dbo.PO_Supp ps with(nolock) on ps.id = psd.id and ps.SEQ1 = psd. SEQ1
-left join ['+@current_PMS_ServerName+'].Production.dbo.Supp su with(nolock) on su.ID = ps.SuppID
-left join ['+@current_PMS_ServerName+'].Production.dbo.BrandRelation as bs WITH (NOLOCK) ON bs.BrandID = o.BrandID and bs.SuppID = su.ID
-left Join ['+@current_PMS_ServerName+'].Production.dbo.Supp s2 WITH (NOLOCK) on bs.SuppGroup = s2.ID
+left join ['+@current_PMS_ServerName+'].Production.dbo.Supp with(nolock) on Supp.ID = ps.SuppID
 left join ['+@current_PMS_ServerName+'].Production.dbo.Season s with(nolock) on s.ID=o.SeasonID and s.BrandID = o.BrandID
 left join ['+@current_PMS_ServerName+'].Production.dbo.Factory fty with (nolock) on fty.ID = Export.Consignee
 left join ['+@current_PMS_ServerName+'].Production.dbo.Fabric f with(nolock) on f.SCIRefno =psd.SCIRefno
 left join ['+@current_PMS_ServerName+'].Production.dbo.PO_Supp_Detail_Spec pc with(nolock) on psd.ID = pc.ID and psd.SEQ1 = pc.SEQ1 and psd.SEQ1 = pc.SEQ2 and pc.SpecColumnID = ''Color''
 Left join #probablySeasonList seasonSCI on seasonSCI.ID = s.SeasonSCIID
 OUTER APPLY(
-	Select Top 1 FirstDyelot,FTYReceivedReport,SeasonID
+	Select Top 1 FirstDyelot,SeasonID
 	From ['+@current_PMS_ServerName+'].Production.dbo.FirstDyelot fd
 	Inner join #probablySeasonList season on fd.SeasonID = season.ID
-	WHERE fd.BrandRefno = f.BrandRefno 
-	and fd.ColorID = pc.SpecValue 
-	and fd.SuppID = s2.id
-	and fd.TestDocFactoryGroup = fty.TestDocFactoryGroup
-	and seasonSCI.RowNo >= season.RowNo
-	and fd.deleteColumn = 0
+	WHERE fd.BrandRefno = psd.Refno and fd.ColorID = pc.SpecValue and fd.SuppID = ps.SuppID and fd.TestDocFactoryGroup = fty.TestDocFactoryGroup
+		And seasonSCI.RowNo >= season.RowNo
 	Order by season.RowNo Desc
 )FirstDyelot
 outer apply(
@@ -107,108 +107,97 @@ SET @SqlCmd3 = '
 select t.*
 	,sr.documentName
 	,sr.ReportDate
-	,sr3.T2InspYds
-	,sr3.T2DefectPoint
-	,sr3.T2Grade
+    ,sr2.T2InspYds
+    ,sr2.T2DefectPoint
+    ,sr2.T2Grade
 	,sr2.AWBno
+	,sr2.TestReportCheckClima
 into #tmpReportDate
 from #tmpBasic t
 left join ['+@current_PMS_ServerName+'].Production.dbo.NewSentReport sr with (nolock) on sr.exportID = t.WK# and sr.poid = t.SP# and sr.Seq1 =t.Seq1 and sr.Seq2 = t.Seq2
 outer apply (
-	select sr2.AWBno
+	select sr2.AWBno,sr2.TestReportCheckClima,sr2.T2DefectPoint, sr2.T2Grade,sr2.T2InspYds
 	from ['+@current_PMS_ServerName+'].Production.dbo.NewSentReport sr2 with (nolock) 
 	where sr2.exportID = t.WK# and sr2.poid = t.SP# and sr2.Seq1 =t.Seq1 and sr2.Seq2 = t.Seq2
 	and sr2.documentName = ''Continuity card''
 )sr2
-outer apply (
-	select sr3.T2InspYds,sr3.T2DefectPoint,sr3.T2Grade
-	from ['+@current_PMS_ServerName+'].Production.dbo.NewSentReport sr3 with (nolock) 
-	where sr3.exportID = t.WK# and sr3.poid = t.SP# and sr3.Seq1 = t.Seq1 and sr3.Seq2 = t.Seq2
-	and sr3.T2InspYds is not null 
-	group by sr3.T2InspYds,sr3.T2DefectPoint,sr3.T2Grade
-)sr3
+
 
 select t.*
 	,sr.documentName
-	,sr.FTYReceivedReport
-	,sr3.T2InspYds
-	,sr3.T2DefectPoint
-	,sr3.T2Grade
-	,sr2.AWBno
+    ,sr.FTYReceivedReport
+    ,sr.T2InspYds
+    ,sr.T2DefectPoint
+    ,sr.T2Grade
+	,sr.AWBno
 into #tmpFTYReceivedReport
 from #tmpBasic t
-left join ['+@current_PMS_ServerName+'].Production.dbo.NewSentReport sr with (nolock) on sr.exportID = t.WK# and sr.poid = t.SP# and sr.Seq1 =t.Seq1 and sr.Seq2 = t.Seq2
-outer apply (
-	select sr2.AWBno
-	from ['+@current_PMS_ServerName+'].Production.dbo.NewSentReport sr2 with (nolock) 
-	where sr2.exportID = t.WK# and sr2.poid = t.SP# and sr2.Seq1 =t.Seq1 and sr2.Seq2 = t.Seq2
-	and sr2.documentName = ''Continuity card''
-)sr2
-outer apply (
-	select sr3.T2InspYds,sr3.T2DefectPoint,sr3.T2Grade
-	from ['+@current_PMS_ServerName+'].Production.dbo.NewSentReport sr3 with (nolock) 
-	where sr3.exportID = t.WK# and sr3.poid = t.SP# and sr3.Seq1 =t.Seq1 and sr3.Seq2 = t.Seq2
-	and sr3.T2InspYds is not null 
-	group by sr3.T2InspYds,sr3.T2DefectPoint,sr3.T2Grade
-)sr3
-';
+left join ['+@current_PMS_ServerName+'].Production.dbo.NewSentReport sr with (nolock) on sr.exportID = t.WK# and sr.poid = t.SP# and sr.Seq1 =t.Seq1 and sr.Seq2 = t.Seq2';
 
 
 SET @SqlCmd4 = '
-select distinct
-	a.[WK#],
-    a.[Invoice#],
-	a.[ATA],
-	a.[ETA],
-    a.[Season],
-	a.[SP#],
-	a.[Seq#],	
-    a.[Brand],
-	a.[Supp],
-	a.[Supp Name],
-	a.[Ref#],
-	a.[Color],
-	a.Qty,
-	[Inspection Report_Fty Received Date] = c.[Inspection Report],
-	[Inspection Report_Supp Sent Date] = b.[Inspection Report],
-	[Test Report_Fty Received Date] = c.[Test report],
-	[Test Report_ Check Clima] = 0, -- NewSentReport 沒有該欄位[TestReportCheckClima]
-	[Test Report_Supp Sent Date] = b.[Test report],
-	[Continuity Card_Fty Received Date] = c.[Continuity card],
-	[Continuity Card_Supp Sent Date] = b.[Continuity card],
-	[Continuity Card_AWB#] = b.AWBno,
-	a.[1st Bulk Dyelot_Fty Received Date],
-	a.[1st Bulk Dyelot_Supp Sent Date]  ,
-	[T2 Inspected Yards] = b.T2InspYds,
-	[T2 Defect Points] = b.T2DefectPoint,
-	[Grade] =  b.T2Grade,
-	a.[T1 Inspected Yards],
-	a.[T1 Defect Points] ,
-	a.[Fabric with clima],
-	a.ColorID,
-    a.seq1,
-    a.seq2,
-    a.[bitRefnoColor],
-	a.[FactoryID],
-	a.Consignee
-	into #tmpFinal
+	select distinct  
+	a.[WK#],     
+	a.[Invoice#],   
+	a.[ATA],   
+	a.[ETA],      
+	a.[Season],
+	a.[SP#],   
+	a.[Seq#],      
+	a.[Brand],   
+	a.[Supp],   
+	a.[Supp Name],  
+	a.[Ref#],   
+	a.[Color],   
+	a.Qty,   
+	[Inspection Report_Fty Received Date] = c.[Inspection Report], 
+	[Inspection Report_Supp Sent Date] = b.[Inspection Report],   
+	[Test Report_Fty Received Date] = c.[Test report],   
+	[Test Report_ Check Clima] = 0, -- NewSentReport 沒有該欄位[TestReportCheckClima]   
+	[Test Report_Supp Sent Date] = b.[Test report], 
+	[Continuity Card_Fty Received Date] = c.[Continuity card],  
+	[Continuity Card_Supp Sent Date] = b.[Continuity card], 
+	[Continuity Card_AWB#] = b.AWBno,   
+	a.[1st Bulk Dyelot_Fty Received Date], 
+	a.[1st Bulk Dyelot_Supp Sent Date]  ,  
+	[T2 Inspected Yards] = b.T2InspYds,  
+	[T2 Defect Points] = b.T2DefectPoint,  
+	[Grade] =  b.T2Grade,  
+	a.[T1 Inspected Yards], 
+	a.[T1 Defect Points] , 
+	a.[Fabric with clima], 
+	a.ColorID,  
+	a.seq1,   
+	a.seq2,   
+	a.[bitRefnoColor], 
+	a.[FactoryID], 
+	a.Consignee  
+	into #tmpFinal 
 	from #tmpBasic a
-	inner join (
+	inner join 
+	(    
 		select *
-		from #tmpReportDate t
+		from(
+			select WK#,SP#,Seq1,Seq2,ReportDate ,documentname,AWBno,T2InspYds,T2DefectPoint,T2Grade,[T1 Inspected Yards],[T1 Defect Points],TestReportCheckClima
+			from #tmpReportDate
+		) s	
 		pivot(
 			max(ReportDate)
 			for documentname in([Continuity card],[Inspection Report],[Test report])
 		) aa
-	)b on a.WK# = b.WK# and a.SP# = b.SP# and a.Seq1=b.Seq1 and a.Seq2=b.Seq2
-	inner join (
+	)b on a.WK# = b.WK# and a.SP# = b.SP# and a.Seq1=b.Seq1 and a.Seq2=b.Seq2   
+	inner join 
+	(   
 		select *
-		from #tmpFTYReceivedReport t
+		from(
+			select WK#,SP#,Seq1,Seq2,FTYReceivedReport ,documentname
+			from #tmpFTYReceivedReport 
+		)s	
 		pivot(
 			max(FTYReceivedReport)
 			for documentname in([Continuity card],[Inspection Report],[Test report])
 		) aa
-	)c on a.WK# = c.WK# and a.SP# = c.SP# and a.Seq1 = c.Seq1 and a.Seq2 = c.Seq2
+	)c on a.WK# = c.WK# and a.SP# = c.SP# and a.Seq1 = c.Seq1 and a.Seq2 = c.Seq2  
 ';
 
 SET @SqlCmd5 = '
