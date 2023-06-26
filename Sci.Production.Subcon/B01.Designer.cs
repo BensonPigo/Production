@@ -595,10 +595,11 @@
             // 
             // numCBM
             // 
-            this.numCBM.BackColor = System.Drawing.Color.White;
+            this.numCBM.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.numCBM.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "cbm", true));
             this.numCBM.DecimalPlaces = 7;
-            this.numCBM.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.numCBM.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numCBM.IsSupportEditMode = false;
             this.numCBM.Location = new System.Drawing.Point(90, 51);
             this.numCBM.Maximum = new decimal(new int[] {
             1316134911,
@@ -617,6 +618,7 @@
             0,
             0,
             0});
+            this.numCBM.ReadOnly = true;
             this.numCBM.Size = new System.Drawing.Size(135, 23);
             this.numCBM.TabIndex = 4;
             this.numCBM.Value = new decimal(new int[] {

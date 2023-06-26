@@ -29,7 +29,6 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
             this.editSQL = new Sci.Win.UI.EditBox();
@@ -39,6 +38,7 @@
             this.btnSqlUpdate = new System.Windows.Forms.Button();
             this.checkBox1 = new System.Windows.Forms.CheckBox();
             this.panel1 = new Sci.Win.UI.Panel();
+            this.btn_updateCBM = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -128,18 +128,11 @@
             this.gridSQLQuery.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.gridSQLQuery.Location = new System.Drawing.Point(0, 0);
             this.gridSQLQuery.Name = "gridSQLQuery";
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridSQLQuery.RowHeadersDefaultCellStyle = dataGridViewCellStyle1;
             this.gridSQLQuery.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridSQLQuery.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridSQLQuery.RowTemplate.Height = 24;
             this.gridSQLQuery.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridSQLQuery.ShowCellToolTips = false;
             this.gridSQLQuery.Size = new System.Drawing.Size(801, 399);
             this.gridSQLQuery.TabIndex = 1;
             this.gridSQLQuery.TabStop = false;
@@ -167,6 +160,7 @@
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.btn_updateCBM);
             this.panel1.Controls.Add(this.checkBox1);
             this.panel1.Controls.Add(this.btnSqlUpdate);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Bottom;
@@ -175,6 +169,17 @@
             this.panel1.Size = new System.Drawing.Size(801, 37);
             this.panel1.TabIndex = 2;
             // 
+            // btn_updateCBM
+            // 
+            this.btn_updateCBM.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.btn_updateCBM.Location = new System.Drawing.Point(198, 6);
+            this.btn_updateCBM.Name = "btn_updateCBM";
+            this.btn_updateCBM.Size = new System.Drawing.Size(281, 28);
+            this.btn_updateCBM.TabIndex = 103;
+            this.btn_updateCBM.Text = "Update GMTBooking CBM MIS Only";
+            this.btn_updateCBM.UseVisualStyleBackColor = true;
+            this.btn_updateCBM.Click += new System.EventHandler(this.btn_updateCBM_Click);
+            // 
             // SQL_Query
             // 
             this.ClientSize = new System.Drawing.Size(801, 547);
@@ -182,6 +187,7 @@
             this.Controls.Add(this.splitContainer1);
             this.IsSupportEdit = false;
             this.Name = "SQL_Query";
+            this.OnLineHelpID = "Sci.Win.Tems.QueryForm";
             this.Text = "SQL_Query";
             this.Controls.SetChildIndex(this.splitContainer1, 0);
             this.Controls.SetChildIndex(this.panel1, 0);
@@ -213,6 +219,6 @@
         private System.Windows.Forms.Button btnSqlUpdate;
         private System.Windows.Forms.CheckBox checkBox1;
         private Win.UI.Panel panel1;
-
+        private Win.UI.Button btn_updateCBM;
     }
 }
