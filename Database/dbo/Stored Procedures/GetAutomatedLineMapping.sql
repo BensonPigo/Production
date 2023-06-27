@@ -23,11 +23,24 @@ SELECT TotalSewer
 into #tmpTotalSewerRange
 FROM TotalSewerRange
 
+Declare @TotalSMV numeric(16,4)
+select @TotalSMV = sum(td.SMV)
+from TimeStudy t with (nolock)
+inner join TimeStudy_Detail td with (nolock) on t.ID = td.ID
+where	t.StyleID = @StyleID and
+		t.BrandID = @BrandID and
+		t.SeasonID = @SeasonID and
+		t.ComboType = @ComboType and
+		td.OperationID not like '-%' and
+		td.PPA <> 'C' and
+		td.Sewer > 0 and 
+		td.IsNonSewingLine = 0
+
 select	td.ID,
 		td.Ukey,
 		td.Seq,
 		ts.TotalSewer,
-		[Sewer] = Round(ts.TotalSewer * (td.SMV / t.TotalSewingTime), 4),
+		[Sewer] = Round(ts.TotalSewer * (td.SMV / @TotalSMV), 4),
 		td.PPA,
 		td.IsNonSewingLine,
 		--Template,SewingMachineAttachmentID,Mold 因為這三個內容中會再用","作分割項目，因為可能會有項目相同但順序不同的情況發生，所以要先拆解排序後再組起來
@@ -51,7 +64,6 @@ where	t.StyleID = @StyleID and
 		t.ComboType = @ComboType and
 		td.OperationID not like '-%'
 order by td.Seq
-
 
 DECLARE tmpTimeStudy_Detail_cursor CURSOR FOR 
 	select	Seq,
@@ -235,7 +247,9 @@ Create table #tmpReaultBase(
 )
 
 DECLARE Create_StationNo_cursor CURSOR FOR 
-	select td.Ukey, tgs.GroupSeq, td.Sewer, tgs.SewerLimitLow, tgs.SewerLimitMiddle, tgs.SewerLimitHigh, tgs.TotalSewer
+	select	td.Ukey, tgs.GroupSeq, td.Sewer, tgs.SewerLimitLow, tgs.SewerLimitMiddle, tgs.SewerLimitHigh, tgs.TotalSewer,
+			[NextGroupSeq] = LEAD(tgs.GroupSeq,1,0) OVER (PARTITION BY tgs.TotalSewer ORDER BY tgs.TotalSewer, tgs.GroupSeq, td.Seq),
+			[GoupSumSewer] = Sum(td.Sewer) OVER (PARTITION BY tgs.TotalSewer, tgs.GroupSeq)
 	from #tmpGroupSewer tgs
 	inner join #tmpTimeStudy_Detail td on tgs.GroupSeq = td.GroupSeq and tgs.TotalSewer = td.TotalSewer
 	order by tgs.TotalSewer, tgs.GroupSeq, td.Seq
@@ -248,55 +262,70 @@ Declare @StationNo int = 0
 Declare @LastGroupAssignSewer numeric(5, 4)
 Declare @AssignSewer numeric(5, 4)
 Declare @UnAssignSewer numeric(5, 4)
+Declare @GroupSumSewer numeric(6, 4)
 Declare @GroupSeqCreateStation int
+Declare @NextGroupSeqCreateStation int
 Declare @SewerCreateStation numeric(7, 4)
 Declare @TotalSewerForCreate int
 Declare @LastTotalSewerForCreate int
 
 OPEN Create_StationNo_cursor  
-FETCH NEXT FROM Create_StationNo_cursor INTO @TimeStudyDetailUkey,  @GroupSeqCreateStation, @SewerCreateStation, @SewerLimitLow, @SewerLimitMiddle, @SewerLimitHigh, @TotalSewerForCreate
+FETCH NEXT FROM Create_StationNo_cursor INTO @TimeStudyDetailUkey,  @GroupSeqCreateStation, @SewerCreateStation, @SewerLimitLow, @SewerLimitMiddle, @SewerLimitHigh, @TotalSewerForCreate, @NextGroupSeqCreateStation, @GroupSumSewer
 WHILE @@FETCH_STATUS = 0 
 BEGIN
 	if @TotalSewerForCreate <> @LastTotalSewerForCreate
 		set @StationNo = 0
 
-	set @UnAssignSewer = @SewerCreateStation
-
 	select @LastGroupAssignSewer = isnull(sum(DivSewer), 0)
-	from #tmpReaultBase
-	where GroupSeq = @GroupSeqCreateStation and
-		  StationNo = @StationNo and
-		  TotalSewer = @TotalSewerForCreate
+		from #tmpReaultBase
+		where GroupSeq = @GroupSeqCreateStation and
+			  StationNo = @StationNo and
+			  TotalSewer = @TotalSewerForCreate
 
-	--如果同group 上一個站位有小於RangeLow的sewer，就必須在這站先補到Middle
-	if(@LastGroupAssignSewer > 0 and @LastGroupAssignSewer < @SewerLimitLow)
+	--如果整個Group都在安全範圍內直接insert同一個No就好
+	if(@GroupSumSewer >= @SewerLimitLow and @GroupSumSewer <= @SewerLimitHigh)
 	begin
-		set @AssignSewer = iif(@SewerCreateStation >= @SewerLimitMiddle - @LastGroupAssignSewer, @SewerLimitMiddle - @LastGroupAssignSewer, @SewerCreateStation)
-
-		insert into #tmpReaultBase(StationNo, TimeStudyDetailUkey, DivSewer, OriSewer, GroupSeq, TotalSewer)
-			values(@StationNo, @TimeStudyDetailUkey, @AssignSewer, @SewerCreateStation, @GroupSeqCreateStation, @TotalSewerForCreate)
-
-		set @UnAssignSewer = @UnAssignSewer - @AssignSewer
-	end
-	
-	if(@LastGroupAssignSewer = 0 or @UnAssignSewer > 0)
-	begin
-		set @StationNo = @StationNo + 1
-
-		while @UnAssignSewer > @SewerLimitHigh
-		begin
-			insert into #tmpReaultBase(StationNo, TimeStudyDetailUkey, DivSewer, OriSewer, GroupSeq, TotalSewer)
-			values(@StationNo, @TimeStudyDetailUkey, @SewerLimitMiddle, @SewerCreateStation, @GroupSeqCreateStation, @TotalSewerForCreate)
+		if @LastGroupAssignSewer = 0
 			set @StationNo = @StationNo + 1
-			set @UnAssignSewer = @UnAssignSewer - @SewerLimitMiddle
-		end
-
 		insert into #tmpReaultBase(StationNo, TimeStudyDetailUkey, DivSewer, OriSewer, GroupSeq, TotalSewer)
-			values(@StationNo, @TimeStudyDetailUkey, @UnAssignSewer, @SewerCreateStation, @GroupSeqCreateStation, @TotalSewerForCreate)
+				values(@StationNo, @TimeStudyDetailUkey, @SewerCreateStation, @SewerCreateStation, @GroupSeqCreateStation, @TotalSewerForCreate)
+	end
+	else
+	begin
+		set @UnAssignSewer = @SewerCreateStation
+
+		--如果同group 上一個站位有小於RangeLow的sewer，就必須在這站先補到Middle
+		if(@LastGroupAssignSewer > 0 and @LastGroupAssignSewer < @SewerLimitLow)
+		begin
+			set @AssignSewer = case when @GroupSeqCreateStation <> @NextGroupSeqCreateStation and (@SewerCreateStation + @LastGroupAssignSewer) <= @SewerLimitHigh then @SewerCreateStation
+									when @SewerCreateStation >= @SewerLimitMiddle - @LastGroupAssignSewer then @SewerLimitMiddle - @LastGroupAssignSewer
+									else @SewerCreateStation end
+			
+			insert into #tmpReaultBase(StationNo, TimeStudyDetailUkey, DivSewer, OriSewer, GroupSeq, TotalSewer)
+				values(@StationNo, @TimeStudyDetailUkey, @AssignSewer, @SewerCreateStation, @GroupSeqCreateStation, @TotalSewerForCreate)
+
+			set @UnAssignSewer = @UnAssignSewer - @AssignSewer
+		end
+		
+		if(@LastGroupAssignSewer = 0 or @UnAssignSewer > 0)
+		begin
+			set @StationNo = @StationNo + 1
+
+			while @UnAssignSewer > @SewerLimitHigh
+			begin
+				insert into #tmpReaultBase(StationNo, TimeStudyDetailUkey, DivSewer, OriSewer, GroupSeq, TotalSewer)
+				values(@StationNo, @TimeStudyDetailUkey, @SewerLimitMiddle, @SewerCreateStation, @GroupSeqCreateStation, @TotalSewerForCreate)
+				set @StationNo = @StationNo + 1
+				set @UnAssignSewer = @UnAssignSewer - @SewerLimitMiddle
+			end
+
+			insert into #tmpReaultBase(StationNo, TimeStudyDetailUkey, DivSewer, OriSewer, GroupSeq, TotalSewer)
+				values(@StationNo, @TimeStudyDetailUkey, @UnAssignSewer, @SewerCreateStation, @GroupSeqCreateStation, @TotalSewerForCreate)
+		end
 	end
 
 	set @LastTotalSewerForCreate = @TotalSewerForCreate
-FETCH NEXT FROM Create_StationNo_cursor INTO @TimeStudyDetailUkey,  @GroupSeqCreateStation, @SewerCreateStation, @SewerLimitLow, @SewerLimitMiddle, @SewerLimitHigh, @TotalSewerForCreate
+FETCH NEXT FROM Create_StationNo_cursor INTO @TimeStudyDetailUkey,  @GroupSeqCreateStation, @SewerCreateStation, @SewerLimitLow, @SewerLimitMiddle, @SewerLimitHigh, @TotalSewerForCreate, @NextGroupSeqCreateStation, @GroupSumSewer
 END
 CLOSE Create_StationNo_cursor
 DEALLOCATE Create_StationNo_cursor
@@ -375,7 +404,7 @@ select	[StyleUkey] = s.Ukey,
 		detailSummary.TotalGSDTime,
 		[HighestGSDTime] = (select Max(GSD)
 							from (
-									select [GSD] = sum(GSD)
+									select [GSD] = sum(GSD * SewerDiffPercentage)
 									from #tmpAutomatedLineMapping_Detail
 									where	TotalSewer = @ManualSewer and
 											OperationID not in ('PROCIPF00004', 'PROCIPF00003') and

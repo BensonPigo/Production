@@ -173,7 +173,7 @@
             this.masterpanel.Controls.Add(this.label3);
             this.masterpanel.Controls.Add(this.label2);
             this.masterpanel.Controls.Add(this.label1);
-            this.masterpanel.Size = new System.Drawing.Size(1299, 187);
+            this.masterpanel.Size = new System.Drawing.Size(1226, 187);
             this.masterpanel.Controls.SetChildIndex(this.label1, 0);
             this.masterpanel.Controls.SetChildIndex(this.label2, 0);
             this.masterpanel.Controls.SetChildIndex(this.label3, 0);
@@ -228,17 +228,17 @@
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 187);
-            this.detailpanel.Size = new System.Drawing.Size(1299, 442);
+            this.detailpanel.Size = new System.Drawing.Size(1226, 442);
             // 
             // gridicon
             // 
-            this.gridicon.Location = new System.Drawing.Point(1192, 174);
+            this.gridicon.Location = new System.Drawing.Point(8, 174);
             this.gridicon.Visible = false;
             // 
             // detailgridcont
             // 
             this.detailgridcont.Controls.Add(this.tabDetail);
-            this.detailgridcont.Size = new System.Drawing.Size(1299, 442);
+            this.detailgridcont.Size = new System.Drawing.Size(1226, 442);
             this.detailgridcont.Controls.SetChildIndex(this.tabDetail, 0);
             // 
             // detail2
@@ -255,16 +255,16 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(1299, 667);
+            this.detail.Size = new System.Drawing.Size(1226, 667);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(1299, 629);
+            this.detailcont.Size = new System.Drawing.Size(1226, 629);
             // 
             // detailbtm
             // 
             this.detailbtm.Location = new System.Drawing.Point(0, 629);
-            this.detailbtm.Size = new System.Drawing.Size(1299, 38);
+            this.detailbtm.Size = new System.Drawing.Size(1226, 38);
             // 
             // browse
             // 
@@ -272,7 +272,7 @@
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(1307, 696);
+            this.tabs.Size = new System.Drawing.Size(1234, 696);
             // 
             // label1
             // 
@@ -454,7 +454,6 @@
             this.numericStyleCPU.BackColor = System.Drawing.Color.White;
             this.numericStyleCPU.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "StyleCPU", true));
             this.numericStyleCPU.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numericStyleCPU.IsSupportEditMode = false;
             this.numericStyleCPU.Location = new System.Drawing.Point(95, 125);
             this.numericStyleCPU.Name = "numericStyleCPU";
             this.numericStyleCPU.NullValue = new decimal(new int[] {
@@ -475,7 +474,6 @@
             this.numericTotalGSDTime.BackColor = System.Drawing.Color.White;
             this.numericTotalGSDTime.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "TotalGSDTime", true));
             this.numericTotalGSDTime.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numericTotalGSDTime.IsSupportEditMode = false;
             this.numericTotalGSDTime.Location = new System.Drawing.Point(383, 38);
             this.numericTotalGSDTime.Name = "numericTotalGSDTime";
             this.numericTotalGSDTime.NullValue = new decimal(new int[] {
@@ -496,7 +494,6 @@
             this.numericAvgGSDTime.BackColor = System.Drawing.Color.White;
             this.numericAvgGSDTime.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "AvgGSDTime", true));
             this.numericAvgGSDTime.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numericAvgGSDTime.IsSupportEditMode = false;
             this.numericAvgGSDTime.Location = new System.Drawing.Point(383, 67);
             this.numericAvgGSDTime.Name = "numericAvgGSDTime";
             this.numericAvgGSDTime.NullValue = new decimal(new int[] {
@@ -517,7 +514,6 @@
             this.numericHighestGSDTime.BackColor = System.Drawing.Color.White;
             this.numericHighestGSDTime.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "HighestGSDTime", true));
             this.numericHighestGSDTime.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numericHighestGSDTime.IsSupportEditMode = false;
             this.numericHighestGSDTime.Location = new System.Drawing.Point(383, 96);
             this.numericHighestGSDTime.Name = "numericHighestGSDTime";
             this.numericHighestGSDTime.NullValue = new decimal(new int[] {
@@ -538,7 +534,6 @@
             this.numericLBRByGSDTime.BackColor = System.Drawing.Color.White;
             this.numericLBRByGSDTime.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "LBRByGSDTime", true));
             this.numericLBRByGSDTime.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numericLBRByGSDTime.IsSupportEditMode = false;
             this.numericLBRByGSDTime.Location = new System.Drawing.Point(383, 125);
             this.numericLBRByGSDTime.Name = "numericLBRByGSDTime";
             this.numericLBRByGSDTime.NullValue = new decimal(new int[] {
@@ -560,7 +555,7 @@
             this.labelStatus.BackColor = System.Drawing.Color.Transparent;
             this.labelStatus.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Status", true));
             this.labelStatus.Font = new System.Drawing.Font("Microsoft Sans Serif", 18F, System.Drawing.FontStyle.Bold);
-            this.labelStatus.Location = new System.Drawing.Point(1176, 9);
+            this.labelStatus.Location = new System.Drawing.Point(1095, 8);
             this.labelStatus.MaximumSize = new System.Drawing.Size(59, 31);
             this.labelStatus.MinimumSize = new System.Drawing.Size(59, 31);
             this.labelStatus.Name = "labelStatus";
@@ -577,7 +572,7 @@
             this.tabDetail.Location = new System.Drawing.Point(0, 0);
             this.tabDetail.Name = "tabDetail";
             this.tabDetail.SelectedIndex = 0;
-            this.tabDetail.Size = new System.Drawing.Size(1299, 442);
+            this.tabDetail.Size = new System.Drawing.Size(1226, 442);
             this.tabDetail.TabIndex = 1;
             this.tabDetail.SelectedIndexChanged += new System.EventHandler(this.TabDetail_SelectedIndexChanged);
             // 
@@ -587,7 +582,7 @@
             this.tabPageLineMapping.Location = new System.Drawing.Point(4, 25);
             this.tabPageLineMapping.Name = "tabPageLineMapping";
             this.tabPageLineMapping.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageLineMapping.Size = new System.Drawing.Size(1291, 413);
+            this.tabPageLineMapping.Size = new System.Drawing.Size(1218, 413);
             this.tabPageLineMapping.TabIndex = 0;
             this.tabPageLineMapping.Text = "Line Mapping";
             // 
@@ -600,8 +595,8 @@
             // splitLineMapping.Panel2
             // 
             this.splitLineMapping.Panel2.Controls.Add(this.gridLineMappingRight);
-            this.splitLineMapping.Size = new System.Drawing.Size(1285, 407);
-            this.splitLineMapping.SplitterDistance = 824;
+            this.splitLineMapping.Size = new System.Drawing.Size(1212, 407);
+            this.splitLineMapping.SplitterDistance = 777;
             this.splitLineMapping.TabIndex = 0;
             // 
             // gridLineMappingRight
@@ -624,7 +619,7 @@
             this.gridLineMappingRight.RowTemplate.Height = 24;
             this.gridLineMappingRight.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridLineMappingRight.ShowCellToolTips = false;
-            this.gridLineMappingRight.Size = new System.Drawing.Size(457, 407);
+            this.gridLineMappingRight.Size = new System.Drawing.Size(431, 407);
             this.gridLineMappingRight.TabIndex = 0;
             // 
             // tabPageCentralizedPPA
@@ -633,7 +628,7 @@
             this.tabPageCentralizedPPA.Location = new System.Drawing.Point(4, 25);
             this.tabPageCentralizedPPA.Name = "tabPageCentralizedPPA";
             this.tabPageCentralizedPPA.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageCentralizedPPA.Size = new System.Drawing.Size(884, 133);
+            this.tabPageCentralizedPPA.Size = new System.Drawing.Size(1291, 413);
             this.tabPageCentralizedPPA.TabIndex = 1;
             this.tabPageCentralizedPPA.Text = "Centralized PPA";
             // 
@@ -650,8 +645,8 @@
             // splitCentralizedPPA.Panel2
             // 
             this.splitCentralizedPPA.Panel2.Controls.Add(this.gridCentralizedPPARight);
-            this.splitCentralizedPPA.Size = new System.Drawing.Size(878, 127);
-            this.splitCentralizedPPA.SplitterDistance = 612;
+            this.splitCentralizedPPA.Size = new System.Drawing.Size(1285, 407);
+            this.splitCentralizedPPA.SplitterDistance = 895;
             this.splitCentralizedPPA.TabIndex = 0;
             // 
             // gridCentralizedPPALeft
@@ -674,7 +669,7 @@
             this.gridCentralizedPPALeft.RowTemplate.Height = 24;
             this.gridCentralizedPPALeft.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridCentralizedPPALeft.ShowCellToolTips = false;
-            this.gridCentralizedPPALeft.Size = new System.Drawing.Size(612, 127);
+            this.gridCentralizedPPALeft.Size = new System.Drawing.Size(895, 407);
             this.gridCentralizedPPALeft.TabIndex = 0;
             // 
             // gridCentralizedPPARight
@@ -697,7 +692,7 @@
             this.gridCentralizedPPARight.RowTemplate.Height = 24;
             this.gridCentralizedPPARight.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridCentralizedPPARight.ShowCellToolTips = false;
-            this.gridCentralizedPPARight.Size = new System.Drawing.Size(262, 127);
+            this.gridCentralizedPPARight.Size = new System.Drawing.Size(386, 407);
             this.gridCentralizedPPARight.TabIndex = 0;
             // 
             // label12
@@ -745,7 +740,6 @@
             this.numericSewerManpower.BackColor = System.Drawing.Color.White;
             this.numericSewerManpower.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "SewerManpower", true));
             this.numericSewerManpower.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numericSewerManpower.IsSupportEditMode = false;
             this.numericSewerManpower.Location = new System.Drawing.Point(591, 9);
             this.numericSewerManpower.Name = "numericSewerManpower";
             this.numericSewerManpower.NullValue = new decimal(new int[] {
@@ -766,7 +760,6 @@
             this.numericPresserManpower.BackColor = System.Drawing.Color.White;
             this.numericPresserManpower.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "PresserManpower", true));
             this.numericPresserManpower.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numericPresserManpower.IsSupportEditMode = false;
             this.numericPresserManpower.Location = new System.Drawing.Point(591, 38);
             this.numericPresserManpower.Name = "numericPresserManpower";
             this.numericPresserManpower.NullValue = new decimal(new int[] {
@@ -787,7 +780,6 @@
             this.numericPackerManpower.BackColor = System.Drawing.Color.White;
             this.numericPackerManpower.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "PackerManpower", true));
             this.numericPackerManpower.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numericPackerManpower.IsSupportEditMode = false;
             this.numericPackerManpower.Location = new System.Drawing.Point(619, 38);
             this.numericPackerManpower.Name = "numericPackerManpower";
             this.numericPackerManpower.NullValue = new decimal(new int[] {
@@ -856,7 +848,6 @@
             this.numericTaktTime.BackColor = System.Drawing.Color.White;
             this.numericTaktTime.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "TaktTime", true));
             this.numericTaktTime.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numericTaktTime.IsSupportEditMode = false;
             this.numericTaktTime.Location = new System.Drawing.Point(739, 9);
             this.numericTaktTime.Name = "numericTaktTime";
             this.numericTaktTime.NullValue = new decimal(new int[] {
@@ -864,7 +855,7 @@
             0,
             0,
             0});
-            this.numericTaktTime.Size = new System.Drawing.Size(49, 23);
+            this.numericTaktTime.Size = new System.Drawing.Size(68, 23);
             this.numericTaktTime.TabIndex = 44;
             this.numericTaktTime.Value = new decimal(new int[] {
             0,
@@ -877,7 +868,6 @@
             this.numericEOLR.BackColor = System.Drawing.Color.White;
             this.numericEOLR.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "EOLR", true));
             this.numericEOLR.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numericEOLR.IsSupportEditMode = false;
             this.numericEOLR.Location = new System.Drawing.Point(739, 38);
             this.numericEOLR.Name = "numericEOLR";
             this.numericEOLR.NullValue = new decimal(new int[] {
@@ -885,7 +875,7 @@
             0,
             0,
             0});
-            this.numericEOLR.Size = new System.Drawing.Size(49, 23);
+            this.numericEOLR.Size = new System.Drawing.Size(68, 23);
             this.numericEOLR.TabIndex = 45;
             this.numericEOLR.Value = new decimal(new int[] {
             0,
@@ -898,7 +888,6 @@
             this.numericPPH.BackColor = System.Drawing.Color.White;
             this.numericPPH.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "PPH", true));
             this.numericPPH.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numericPPH.IsSupportEditMode = false;
             this.numericPPH.Location = new System.Drawing.Point(739, 67);
             this.numericPPH.Name = "numericPPH";
             this.numericPPH.NullValue = new decimal(new int[] {
@@ -906,7 +895,7 @@
             0,
             0,
             0});
-            this.numericPPH.Size = new System.Drawing.Size(49, 23);
+            this.numericPPH.Size = new System.Drawing.Size(68, 23);
             this.numericPPH.TabIndex = 46;
             this.numericPPH.Value = new decimal(new int[] {
             0,
@@ -919,7 +908,6 @@
             this.numericWorkHour.BackColor = System.Drawing.Color.White;
             this.numericWorkHour.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "WorkHour", true));
             this.numericWorkHour.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numericWorkHour.IsSupportEditMode = false;
             this.numericWorkHour.Location = new System.Drawing.Point(739, 154);
             this.numericWorkHour.Name = "numericWorkHour";
             this.numericWorkHour.NullValue = new decimal(new int[] {
@@ -927,7 +915,7 @@
             0,
             0,
             0});
-            this.numericWorkHour.Size = new System.Drawing.Size(49, 23);
+            this.numericWorkHour.Size = new System.Drawing.Size(68, 23);
             this.numericWorkHour.TabIndex = 47;
             this.numericWorkHour.Value = new decimal(new int[] {
             0,
@@ -942,7 +930,7 @@
             this.displayTimeStudyStatus.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.displayTimeStudyStatus.Location = new System.Drawing.Point(739, 96);
             this.displayTimeStudyStatus.Name = "displayTimeStudyStatus";
-            this.displayTimeStudyStatus.Size = new System.Drawing.Size(49, 23);
+            this.displayTimeStudyStatus.Size = new System.Drawing.Size(68, 23);
             this.displayTimeStudyStatus.TabIndex = 48;
             // 
             // displayTimeStudyVersion
@@ -952,7 +940,7 @@
             this.displayTimeStudyVersion.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.displayTimeStudyVersion.Location = new System.Drawing.Point(739, 125);
             this.displayTimeStudyVersion.Name = "displayTimeStudyVersion";
-            this.displayTimeStudyVersion.Size = new System.Drawing.Size(49, 23);
+            this.displayTimeStudyVersion.Size = new System.Drawing.Size(68, 23);
             this.displayTimeStudyVersion.TabIndex = 49;
             // 
             // numericDailyDemand
@@ -960,7 +948,6 @@
             this.numericDailyDemand.BackColor = System.Drawing.Color.White;
             this.numericDailyDemand.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "DailyDemand", true));
             this.numericDailyDemand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numericDailyDemand.IsSupportEditMode = false;
             this.numericDailyDemand.Location = new System.Drawing.Point(591, 125);
             this.numericDailyDemand.Name = "numericDailyDemand";
             this.numericDailyDemand.NullValue = new decimal(new int[] {
@@ -981,7 +968,6 @@
             this.numericTargetHr.BackColor = System.Drawing.Color.White;
             this.numericTargetHr.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "TargetHr", true));
             this.numericTargetHr.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numericTargetHr.IsSupportEditMode = false;
             this.numericTargetHr.Location = new System.Drawing.Point(591, 96);
             this.numericTargetHr.Name = "numericTargetHr";
             this.numericTargetHr.NullValue = new decimal(new int[] {
@@ -1002,7 +988,6 @@
             this.numericTotalSewingLineOptrs.BackColor = System.Drawing.Color.White;
             this.numericTotalSewingLineOptrs.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "TotalSewingLineOptrs", true));
             this.numericTotalSewingLineOptrs.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numericTotalSewingLineOptrs.IsSupportEditMode = false;
             this.numericTotalSewingLineOptrs.Location = new System.Drawing.Point(591, 67);
             this.numericTotalSewingLineOptrs.Name = "numericTotalSewingLineOptrs";
             this.numericTotalSewingLineOptrs.NullValue = new decimal(new int[] {
@@ -1020,7 +1005,7 @@
             // 
             // chartLBR
             // 
-            this.chartLBR.Location = new System.Drawing.Point(794, 8);
+            this.chartLBR.Location = new System.Drawing.Point(813, 8);
             this.chartLBR.Name = "chartLBR";
             series1.Name = "Series1";
             this.chartLBR.Series.Add(series1);
@@ -1031,7 +1016,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1307, 729);
+            this.ClientSize = new System.Drawing.Size(1234, 729);
             this.GridAlias = "AutomatedLineMapping_Detail";
             this.IsSupportClip = false;
             this.IsSupportUnconfirm = true;

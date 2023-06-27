@@ -195,7 +195,11 @@ where o.ID = @OperationID";
                         if (e.FormattedValue.Empty())
                         {
                             mainForm.CurrentDetailData["Attachment"] = dtOperation.Rows[0]["Attachment"].ToString();
-                            mainForm.CurrentDetailData["MoldID"] = dtOperation.Rows[0]["Attachment"].ToString();
+                            if (mainForm.CurrentDetailData.Table.Columns.Contains("MoldID"))
+                            {
+                                mainForm.CurrentDetailData["MoldID"] = dtOperation.Rows[0]["Attachment"].ToString();
+                            }
+
                             mainForm.CurrentDetailData["SewingMachineAttachmentID"] = string.Empty;
 
                             return;

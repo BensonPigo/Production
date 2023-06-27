@@ -90,40 +90,8 @@ namespace Sci.Production.IE
             {
                 this.ShowErr(result);
             }
-        }
 
-        /// <inheritdoc/>
-        protected override void OnDetailEntered()
-        {
-            base.OnDetailEntered();
-            this.FilterGrid();
-
-            this.detailgrid.ColumnHeadersHeight = this.gridLineMappingRight.ColumnHeadersHeight;
-            this.gridCentralizedPPALeft.ColumnHeadersHeight = this.gridCentralizedPPARight.ColumnHeadersHeight;
-        }
-
-        /// <inheritdoc/>
-        protected override void ClickNewAfter()
-        {
-            P05_CreateNewLineMapping p05_CreateNewLineMapping = new P05_CreateNewLineMapping(this.CurrentMaintain, (DataTable)this.detailgridbs.DataSource, this.dtAutomatedLineMapping_DetailTemp, this.dtAutomatedLineMapping_DetailAuto);
-            p05_CreateNewLineMapping.ShowDialog();
-            if (this.DetailDatas.Count == 0)
-            {
-                return;
-            }
-
-            this.RefreshAutomatedLineMappingSummary();
-            this.FilterGrid();
-            this.ShowLBRChart(this.CurrentMaintain);
-            base.ClickNewAfter();
-        }
-
-        /// <inheritdoc/>
-        protected override bool ClickSaveBefore()
-        {
-            this.detailgridbs.RemoveFilter();
-            this.gridCentralizedPPALeftBS.RemoveFilter();
-            return base.ClickSaveBefore();
+            this.chartLBR.Paint += this.ChartLBR_Paint;
         }
 
         /// <inheritdoc/>
@@ -206,15 +174,99 @@ order by ad.Seq";
                 this.ShowErr(result);
             }
 
-            try
-            {
-                this.ShowLBRChart(e.Master);
-            }
-            catch (Exception ex)
-            {
-            }
-            
+            this.ShowLBRChart(e.Master);
+
             return base.OnRenewDataDetailPost(e);
+        }
+
+
+        /// <inheritdoc/>
+        protected override void OnDetailEntered()
+        {
+            base.OnDetailEntered();
+            this.FilterGrid();
+
+            this.detailgrid.ColumnHeadersHeight = this.gridLineMappingRight.ColumnHeadersHeight;
+            this.gridCentralizedPPALeft.ColumnHeadersHeight = this.gridCentralizedPPARight.ColumnHeadersHeight;
+        }
+
+        /// <inheritdoc/>
+        protected override void ClickNewAfter()
+        {
+            P05_CreateNewLineMapping p05_CreateNewLineMapping = new P05_CreateNewLineMapping(this.CurrentMaintain, (DataTable)this.detailgridbs.DataSource, this.dtAutomatedLineMapping_DetailTemp, this.dtAutomatedLineMapping_DetailAuto);
+            p05_CreateNewLineMapping.ShowDialog();
+            if (this.DetailDatas.Count == 0)
+            {
+                return;
+            }
+
+            this.RefreshAutomatedLineMappingSummary();
+            this.FilterGrid();
+            this.ShowLBRChart(this.CurrentMaintain);
+            base.ClickNewAfter();
+        }
+
+        /// <inheritdoc/>
+        protected override bool ClickDeleteBefore()
+        {
+            if (this.CurrentMaintain["AddName"].ToString() != Env.User.UserID)
+            {
+                MyUtility.Msg.WarningBox("This line mapping not created by yourself, can't delete this line mapping.");
+                return false;
+            }
+
+            if (this.CurrentMaintain["Status"].ToString() == "Confirmed")
+            {
+                MyUtility.Msg.WarningBox("This line mapping already confirmed, can't delete this line mapping.");
+                return false;
+            }
+
+            return base.ClickDeleteBefore();
+        }
+
+        /// <inheritdoc/>
+        protected override DualResult ClickDeletePost()
+        {
+            string sqlDelete = $@"
+delete AutomatedLineMapping_DetailTemp where ID = '{this.CurrentMaintain["ID"]}'
+delete AutomatedLineMapping_DetailAuto where ID = '{this.CurrentMaintain["ID"]}'
+delete AutomatedLineMapping_NotHitTargetReason where ID = '{this.CurrentMaintain["ID"]}'
+";
+            DualResult result = DBProxy.Current.Execute(null, sqlDelete);
+
+            if (!result)
+            {
+                return result;
+            }
+
+            return base.ClickDeletePost();
+        }
+
+        /// <inheritdoc/>
+        protected override bool ClickCopyBefore()
+        {
+            if (this.CurrentMaintain["Status"].ToString() != "Confirmed")
+            {
+                MyUtility.Msg.WarningBox("This line mapping has not been confirmed and cannot be copied.");
+                return false;
+            }
+
+            return base.ClickCopyBefore();
+        }
+
+        /// <inheritdoc/>
+        protected override void ClickCopyAfter()
+        {
+            base.ClickCopyAfter();
+        }
+
+        /// <inheritdoc/>
+        protected override bool ClickSaveBefore()
+        {
+            this.detailgridbs.RemoveFilter();
+            this.gridCentralizedPPALeftBS.RemoveFilter();
+
+            return base.ClickSaveBefore();
         }
 
         /// <inheritdoc/>
@@ -321,8 +373,8 @@ where	st.StyleUkey = '{this.CurrentMaintain["StyleUkey"]}' and
                .CellTemplate("Template", "Template", this, width: Widths.AnsiChars(10))
                .Numeric("GSD", header: "GSD Time", width: Widths.AnsiChars(5), iseditingreadonly: true)
                .Numeric("SewerDiffPercentageDesc", header: "%", width: Widths.AnsiChars(5), iseditingreadonly: true)
-               .Numeric("DivSewer", header: "Div. Sewer", width: Widths.AnsiChars(5), iseditingreadonly: true)
-               .Numeric("OriSewer", header: "Ori. Sewer", width: Widths.AnsiChars(5), iseditingreadonly: true)
+               .Numeric("DivSewer", header: "Div. Sewer", decimal_places: 4, width: Widths.AnsiChars(5), iseditingreadonly: true)
+               .Numeric("OriSewer", header: "Ori. Sewer", decimal_places: 4, width: Widths.AnsiChars(5), iseditingreadonly: true)
                .Text("ThreadComboID", header: "Thread" + Environment.NewLine + "Color", width: Widths.AnsiChars(10), settings: colThreadComboID)
                .Text("Notice", header: "Notice", width: Widths.AnsiChars(10));
 
@@ -753,10 +805,16 @@ from #tmp
                                             s["PPA"].ToString() != "C" &&
                                             MyUtility.Convert.GetBool(s["IsNonSewingLine"]) == false)
                                 .GroupBy(s => new { SewerManpower = MyUtility.Convert.GetInt(s["SewerManpower"]) })
-                                .Select(groupItem => new
+                                .Select(groupItem =>
                                 {
-                                    groupItem.Key.SewerManpower,
-                                    LBR = MyUtility.Math.Round(MyUtility.Math.Round(groupItem.Sum(s => (decimal)s["GSD"] * (decimal)s["SewerDiffPercentage"]), 2) / MyUtility.Convert.GetDecimal(groupItem.Max(s => s["GSD"])) / groupItem.Key.SewerManpower * 100, 0),
+                                    decimal highestGSDTime = groupItem.GroupBy(s => s["No"].ToString()).Max(groupSubItem => groupSubItem.Sum(s => (decimal)s["GSD"] * (decimal)s["SewerDiffPercentage"]));
+                                    return new
+                                    {
+                                        highestGSDTime,
+                                        TotalGSD = MyUtility.Math.Round(groupItem.Sum(s => (decimal)s["GSD"] * (decimal)s["SewerDiffPercentage"]), 2),
+                                        groupItem.Key.SewerManpower,
+                                        LBR = MyUtility.Math.Round(MyUtility.Math.Round(groupItem.Sum(s => (decimal)s["GSD"] * (decimal)s["SewerDiffPercentage"]), 2) / highestGSDTime / groupItem.Key.SewerManpower * 100, 0),
+                                    };
                                 }).OrderBy(s => s.SewerManpower);
 
             foreach (var itemLBR in groupLBR)
@@ -791,10 +849,18 @@ from #tmp
                     point.Color = Color.FromArgb(191, 191, 191);
                 }
             }
+        }
 
-            this.chartLBR.Update();
+        private void ChartLBR_Paint(object sender, PaintEventArgs e)
+        {
+            if (this.chartLBR.ChartAreas.Count == 0 || this.CurrentMaintain == null)
+            {
+                return;
+            }
+
             int i = 0;
             int btnLocationY = MyUtility.Convert.GetInt(this.chartLBR.ChartAreas[0].AxisY.ValueToPixelPosition(50) + 5);
+
             foreach (var point in this.chartLBR.Series[0].Points)
             {
                 // 取得 Bar 的數值
@@ -812,29 +878,24 @@ from #tmp
                 // 建立自訂標籤文字
                 string label = value.ToString("0'%'");
 
-                // 繪製自訂標籤
-                using (Graphics g = this.chartLBR.CreateGraphics())
+                // 取得 Bar 的座標
+                PointF position = PointF.Empty;
+                position.X = (float)this.chartLBR.ChartAreas[0].AxisX.ValueToPixelPosition(point.XValue - 0.5); // 調整 X 座標位置
+                position.Y = (float)this.chartLBR.ChartAreas[0].AxisY.ValueToPixelPosition(limitValueY) - 15; // 調整 Y 座標位置
+
+                this.chartLBRButtons[i].Text = point.XValue.ToString();
+                this.chartLBRButtons[i].Location = new Point(MyUtility.Convert.GetInt(position.X) + 5, btnLocationY);
+
+                if (point.XValue.ToString() == this.CurrentMaintain["SewerManpower"].ToString())
                 {
-                    // 取得 Bar 的座標
-                    PointF position = PointF.Empty;
-                    position.X = (float)this.chartLBR.ChartAreas[0].AxisX.ValueToPixelPosition(point.XValue - 0.5); // 調整 X 座標位置
-                    position.Y = (float)this.chartLBR.ChartAreas[0].AxisY.ValueToPixelPosition(limitValueY) - 15; // 調整 Y 座標位置
-
-                    this.chartLBRButtons[i].Text = point.XValue.ToString();
-                    this.chartLBRButtons[i].Location = new Point(MyUtility.Convert.GetInt(position.X) + 5, btnLocationY);
-
-                    if (point.XValue.ToString() == drMain["SewerManpower"].ToString())
-                    {
-                        this.chartLBRButtons[i].FlatAppearance.BorderColor = this.BackColor;
-                    }
-                    else
-                    {
-                        this.chartLBRButtons[i].FlatAppearance.BorderColor = Color.Black;
-                    }
-
-                    // 繪製文字標籤
-                    g.DrawString(label, this.chartLBR.Font, Brushes.Black, position);
+                    this.chartLBRButtons[i].FlatAppearance.BorderColor = this.BackColor;
                 }
+                else
+                {
+                    this.chartLBRButtons[i].FlatAppearance.BorderColor = Color.Black;
+                }
+
+                e.Graphics.DrawString(label, this.chartLBR.Font, Brushes.Black, position);
 
                 i++;
             }
