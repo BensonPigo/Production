@@ -689,7 +689,8 @@ namespace Sci.Production.Quality
 
             string sqlcmd = $@"select 
             [FileName] = TableName + PKey,
-            SourceFile
+             SourceFile,
+            AddDate
             from GASAClip
             where TableName = 'UASentReport' and 
             UniqueKey = '{id}'";
@@ -704,11 +705,12 @@ namespace Sci.Production.Quality
 
             // 組ClipPath
             string clippath = MyUtility.GetValue.Lookup($"select ClipPath from System");
-            string saveFilePath = clippath + "\\" + DateTime.Now.ToString("yyyyMM");
             foreach (DataRow dataRow in dt.Rows)
             {
+                string yyyyMM = ((DateTime)dataRow["AddDate"]).ToString("yyyyMM");
+                string saveFilePath = Path.Combine(clippath, yyyyMM);
                 string fileName = dataRow["FileName"].ToString() + Path.GetExtension(dataRow["SourceFile"].ToString());
-                lock (FileDownload_UpData.DownloadFileAsync("http://pmsap.sportscity.com.tw:16888/api/FileDownload/GetFile", filePath + "\\" + DateTime.Now.ToString("yyyyMM"), fileName, saveFilePath))
+                lock (FileDownload_UpData.DownloadFileAsync("http://pmsap.sportscity.com.tw:16888/api/FileDownload/GetFile", filePath + "\\" + yyyyMM, fileName, saveFilePath))
                 {
                 }
             }
@@ -794,6 +796,8 @@ namespace Sci.Production.Quality
 
                 foreach (DataRow dataRow in dt.Rows)
                 {
+                    string yyyyMM = ((DateTime)dataRow["AddDate"]).ToString("yyyyMM");
+                    string saveFilePath = Path.Combine(clippath, yyyyMM);
                     string fileName = dataRow["FileName"].ToString() + Path.GetExtension(dataRow["SourceFile"].ToString());
                     string deleteFile = Path.Combine(saveFilePath, fileName);
                     if (File.Exists(deleteFile))
@@ -1008,6 +1012,7 @@ namespace Sci.Production.Quality
                ,sr.UniqueKey
                ,[SeasonRow] = seasonList.RowNo
                ,canModify = CAST(iif((chkNoRes.value is null and '{this.drBasic["Responsibility"]}' = 'F') or chkNoRes.value = 'F', 1, 0) AS BIT)
+               ,FactoryID = o.FtyGroup
              INTO #tmp
              from PO_Supp_Detail po3 WITH (NOLOCK)
             LEFT JOIN PO_Supp_Detail stockPO3 with (nolock) on iif(po3.StockPOID >'', 1, 0) = 0 AND stockPO3.ID =  po3.StockPOID
@@ -1060,7 +1065,8 @@ namespace Sci.Production.Quality
                    ,Ukey
                    ,UniqueKey
                    ,[SeasonRow]	
-                   , canModify
+                   ,canModify
+                   ,FactoryID
 	         FROM #tmp
              GROUP BY TestReportTestDate
 	               ,TestReport 
@@ -1079,7 +1085,8 @@ namespace Sci.Production.Quality
                    ,Ukey
                    ,UniqueKey
                    ,[SeasonRow]	
-                   , canModify
+                   ,canModify
+                   ,FactoryID
 	         Order By BrandRefNo,ColorID";
 
             DataTable dt = new DataTable();
@@ -1491,8 +1498,16 @@ namespace Sci.Production.Quality
                         )
                      End
 
-                    INSERT INTO GASAClip 
-                    SELECT files.Pkey, 'UASentReport', '{r["BrandRefno"]}'+'_'+'{r["ColorID"]}'+'_'+'{r["SuppID"]}'+'_'+ '{this.drBasic["DocumentName"]}'+'_'+'{this.drBasic["BrandID"]}', files.FileName, 'File Upload', @UserID, getdate()
+                    INSERT INTO GASAClip (
+                       [PKey]
+                      ,[TableName]
+                      ,[UniqueKey]
+                      ,[SourceFile]
+                      ,[Description]
+                      ,[AddName]
+                      ,[AddDate]
+                      ,[FactoryID])
+                    SELECT files.Pkey, 'UASentReport', '{r["BrandRefno"]}'+'_'+'{r["ColorID"]}'+'_'+'{r["SuppID"]}'+'_'+ '{this.drBasic["DocumentName"]}'+'_'+'{this.drBasic["BrandID"]}', files.FileName, 'File Upload', @UserID, getdate(), '{r["FactoryID"]}'
                      FROM @OutputTbl
                     Outer Apply(
                         select [Pkey] = SUBSTRING(Data,0,11),FileName = SUBSTRING(Data,12,len(Data)-11) from splitstring(@ClipPkey,'?')

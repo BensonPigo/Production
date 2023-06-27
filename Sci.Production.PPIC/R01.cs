@@ -9,6 +9,7 @@ using Sci.Data;
 using Excel = Microsoft.Office.Interop.Excel;
 using System.Runtime.InteropServices;
 using System.Data.SqlTypes;
+using Sci.Production.Prg;
 
 namespace Sci.Production.PPIC
 {
@@ -587,6 +588,17 @@ namespace Sci.Production.PPIC
                     }
 
                     objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\PPIC_R01_PrintOut.xltx"); // 預先開啟excel app
+                    worksheet = objApp.Sheets[2];
+
+                    // 貼資料前先刪欄位
+                    if (this.type == "SP#")
+                    {
+                    }
+                    else
+                    {
+                        ExcelPrg.ExcelDeleteColumn(worksheet, 4, "Sewing CPU");
+                    }
+
                     result = MyUtility.Excel.CopyToXls(this.printData, string.Empty, xltfile: "PPIC_R01_PrintOut.xltx", headerRow: 4, showExcel: false, excelApp: objApp, wSheet: objApp.Sheets[2]);
                     if (!result)
                     {
@@ -594,18 +606,16 @@ namespace Sci.Production.PPIC
                         return false;
                     }
 
-                    this.ShowWaitMessage("Excel Processing...");
-                    worksheet = objApp.Sheets[2];
-
                     // Summary By = SP# 則刪除欄位Size
+                    ExcelPrg.ExcelDeleteColumn(worksheet, 4, "CD");
                     if (this.type == "SP#")
                     {
-                        worksheet.get_Range("I:J").EntireColumn.Delete();
+                        ExcelPrg.ExcelDeleteColumn(worksheet, 4, "Size");
                     }
                     else
                     {
-                        worksheet.get_Range("J:J").EntireColumn.Delete();
                     }
+
                     #region Set Excel Title
                     string factoryName = MyUtility.GetValue.Lookup(
                         string.Format(
@@ -627,11 +637,10 @@ where id = '{0}'", Env.User.Factory), null);
                         {
                             // [2] = header 所佔的行數 + Excel 從 1 開始編號 = 1 + 1
                             Excel.Range excelRange = worksheet.get_Range("A" + (i + 5) + ":AB" + (i + 5));
-                            excelRange.Borders.get_Item(Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeTop).LineStyle = Excel.XlLineStyle.xlDash;
+                            excelRange.Borders.get_Item(Excel.XlBordersIndex.xlEdgeTop).LineStyle = Excel.XlLineStyle.xlDash;
                         }
                     }
 
-                    worksheet.Columns[28].ColumnWidth = 31;
                     worksheet.Activate();
 
                     #region Save & Show Excel
@@ -646,13 +655,24 @@ where id = '{0}'", Env.User.Factory), null);
 
                     strExcelName.OpenFile();
                     #endregion
-                    this.HideWaitMessage();
                     #endregion
                 }
                 else
                 {
                     #region PPIC_R01_SewingLineScheduleReport
                     objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\PPIC_R01_SewingLineScheduleReport.xltx"); // 預先開啟excel app
+                    worksheet = objApp.Sheets[2];
+                    worksheet.Activate();
+
+                    // 貼資料前先刪欄位
+                    if (this.type == "SP#")
+                    {
+                    }
+                    else
+                    {
+                        ExcelPrg.ExcelDeleteColumn(worksheet, 1, "Sewing CPU");
+                    }
+
                     result = MyUtility.Excel.CopyToXls(this.printData, string.Empty, xltfile: "PPIC_R01_SewingLineScheduleReport.xltx", headerRow: 1, showExcel: false, excelApp: objApp, wSheet: objApp.Sheets[2]);
 
                     if (!result)
@@ -661,18 +681,15 @@ where id = '{0}'", Env.User.Factory), null);
                         return false;
                     }
 
-                    worksheet = objApp.Sheets[2];
-                    worksheet.Activate();
-
                     // Summary By = SP# 則刪除欄位Size
-                    worksheet.get_Range("L:L").EntireColumn.Delete();
+                    ExcelPrg.ExcelDeleteColumn(worksheet, 1, "CD");
                     if (this.type == "SP#")
                     {
-                        worksheet.get_Range("K:K").EntireColumn.Delete();
+                        ExcelPrg.ExcelDeleteColumn(worksheet, 1, "Size");
                     }
                     else
                     {
-                        worksheet.get_Range("AW:AX").EntireColumn.Delete();
+                        ExcelPrg.ExcelDeleteColumn(worksheet, 1, "SubCon");
                     }
 
                     #region Save & Show Excel
@@ -890,6 +907,7 @@ select  s.SewingLineID
             , o.BuyerDelivery
 			, o.CRDDate
             , o.CPU * o.CPUFactor * ( isnull(isnull(ol_rate.value,sl_rate.value), 100) / 100) as CPU
+            , SewingCPU = convert(numeric(12,5), iif(isnull((SELECT StdTMS * 1.0 From System),0) = 0, 0, s.TotalSewingTime / (SELECT StdTMS * 1.0 From System)))
             , IIF(o.VasShas=1, 'Y', '') as VasShas
             , o.ShipModeList,isnull(c.Alias, '') as Alias 
             , isnull((  select CONCAT(Remark, ', ') 
@@ -1149,6 +1167,7 @@ select  SewingLineID
         , BuyerDelivery
 		, CRDDate
         , CPU
+        , SewingCPU
         , VasShas
         , ShipModeList
         , Alias

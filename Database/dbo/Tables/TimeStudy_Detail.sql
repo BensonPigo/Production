@@ -18,6 +18,7 @@
     [IsSubprocess] BIT NOT NULL DEFAULT ((0)), 
     [StdSMV] NUMERIC(12, 4) CONSTRAINT [DF_TimeStudy_Detail_StdSMV] DEFAULT (0) not NULL,
     [Thread_ComboID] VARCHAR(10) CONSTRAINT [DF_TimeStudy_Detail_Thread_ComboID] DEFAULT ('') not NULL,
+    IsNonSewingLine BIT NOT NULL CONSTRAINT [DF_TimeStudy_Detail_IsNonSewingLine] DEFAULT ((0)), 
     CONSTRAINT [PK_TimeStudy_Detail] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
 

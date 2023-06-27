@@ -160,7 +160,6 @@ select
     e.ShipModeID,
     e.CYCFS,
     e.Blno,
-    e2.Packages,
     e.Vessel,
     [ProdFactory]=o.FactoryID,
     o.OrderTypeID,
@@ -221,11 +220,6 @@ left join po on po.id = ed.PoID
 left join TPEPass1 TEPPOHandle on TEPPOHandle.id = po.POHandle
 left join TPEPass1 TEPPOSMR on TEPPOSMR.id = po.POSMR
 left join Fabric f with(nolock)on f.SCIRefno = psd.SCIRefno
-outer apply (
-    select [Packages] = sum(e2.Packages)
-    from Export e2 with (nolock) 
-    where e2.Blno = e.Blno
-)e2
 OUTER APPLY(
 		SELECT [Val] = STUFF((
 		SELECT DISTINCT ','+esc.ContainerType
@@ -320,7 +314,9 @@ and ed.PoType = 'G'
             strSql += $@"
 
  select 
-	WK, t.eta, t.FactoryID, Consignee, ShipModeID, CYCFS, Blno, Packages, Vessel, [ProdFactory], OrderTypeID, ProjectID, Category ,
+	WK, t.eta, t.FactoryID, Consignee, ShipModeID, CYCFS, Blno,
+    Packages =  (select [Packages] = sum(e2.Packages)from Export e2 with (nolock) where e2.Blno = t.Blno),
+    Vessel, [ProdFactory], OrderTypeID, ProjectID, Category ,
 	BrandID, seasonid, styleid, t.StyleName, t.PoID, seq, Refno,[Color],[Color Name],[Description], [MtlType],MtlTypeID ,WeaveTypeID, suppid, [SuppName] 
 	, UnitId
 	, SizeSpec,
@@ -350,7 +346,7 @@ OUTER APPLY(
 	WHERE t.WK = r.ExportId AND r.Status = 'Confirmed'
 )Receiving_Detail
  GROUP BY 
-	WK,t.eta,t.FactoryID,Consignee,ShipModeID,CYCFS,Blno,Packages,Vessel,[ProdFactory],OrderTypeID,ProjectID,Category ,BrandID, seasonid,styleid,t.PoID,seq,
+	WK,t.eta,t.FactoryID,Consignee,ShipModeID,CYCFS,Blno,Vessel,[ProdFactory],OrderTypeID,ProjectID,Category ,BrandID, seasonid,styleid,t.PoID,seq,
 	Refno,[Color] ,[Description],[MtlType],WeaveTypeID,suppid,[SuppName] ,UnitId,SizeSpec,[ContainerType] ,[ContainerNo] ,PortArrival,[Color Name],
     t.WhseArrival,KPILETA,[Earliest SCI Delivery],EarlyDays,[MR_Mail],[SMR_Mail],t.EditName,ReceiveQty,StockUnit, t.StyleName, t.TotalRollsCalculated, MtlTypeID,t.PFETA
 HAVING 1=1

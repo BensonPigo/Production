@@ -143,6 +143,17 @@ namespace Sci.Production.Quality
                         tableName = "ExportRefnoSentReport";
                     }
 
+                    DateTime? reportDate = MyUtility.Convert.GetDate(newValue);
+
+                    bool isBetween2000And2099 = reportDate.Value.Year >= 2000 && reportDate.Value.Year <= 2099;
+
+                    if (isBetween2000And2099 == false)
+                    {
+                        MyUtility.Msg.WarningBox("Date shoule be between 2000 ~ 2099");
+                        e.Cancel = true;
+                        return;
+                    }
+
                     r["ReportDate"] = MyUtility.Convert.GetDate(newValue).ToYYYYMMDD();
                     if (r["AddDate"].Empty())
                     {
@@ -387,7 +398,8 @@ Update ExportRefnoSentReport SET  AWBNO = @updateData, EditName = @UserID ,EditD
 
             string sqlcmd = $@"select 
             [FileName] = TableName + PKey,
-            SourceFile
+            SourceFile,
+            AddDate
             from GASAClip
             where TableName = '{tableName}' and 
             UniqueKey = '{id}'";
@@ -402,12 +414,13 @@ Update ExportRefnoSentReport SET  AWBNO = @updateData, EditName = @UserID ,EditD
 
             // 組ClipPath
             string clippath = MyUtility.GetValue.Lookup($"select ClipPath from System");
-            string saveFilePath = clippath + "\\" + DateTime.Now.ToString("yyyyMM");
 
             foreach (DataRow dataRow in dt.Rows)
             {
+                string yyyyMM = ((DateTime)dataRow["AddDate"]).ToString("yyyyMM");
+                string saveFilePath = Path.Combine(clippath, yyyyMM);
                 string fileName = dataRow["FileName"].ToString() + Path.GetExtension(dataRow["SourceFile"].ToString());
-                lock (FileDownload_UpData.DownloadFileAsync("http://pmsap.sportscity.com.tw:16888/api/FileDownload/GetFile", filePath + "\\" + DateTime.Now.ToString("yyyyMM"), fileName, saveFilePath))
+                lock (FileDownload_UpData.DownloadFileAsync("http://pmsap.sportscity.com.tw:16888/api/FileDownload/GetFile", filePath + "\\" + yyyyMM, fileName, saveFilePath))
                 {
                 }
             }
@@ -446,6 +459,8 @@ Update ExportRefnoSentReport SET  AWBNO = @updateData, EditName = @UserID ,EditD
 
                 foreach (DataRow dataRow in dt.Rows)
                 {
+                    string yyyyMM = ((DateTime)dataRow["AddDate"]).ToString("yyyyMM");
+                    string saveFilePath = Path.Combine(clippath, yyyyMM);
                     string fileName = dataRow["FileName"].ToString() + Path.GetExtension(dataRow["SourceFile"].ToString());
                     string deleteFile = Path.Combine(saveFilePath, fileName);
                     if (File.Exists(deleteFile))
@@ -709,6 +724,7 @@ Update ExportRefnoSentReport SET  AWBNO = @updateData, EditName = @UserID ,EditD
            ,sr.Ukey
            ,sr.UniqueKey
            ,main.canModify
+           ,FactoryID = main.FtyGroup
          FROM (
                     Select
                    ed.ID as ExportID
@@ -731,6 +747,7 @@ Update ExportRefnoSentReport SET  AWBNO = @updateData, EditName = @UserID ,EditD
 		           ,ExportIDOld = iif({this.drBasic["FileRule"]} = 5, '', ed.ExportIDOld)
 				   ,o.FactoryID
                    ,canModify = CAST(iif((chkNoRes.value is null and '{this.drBasic["Responsibility"]}' = 'F') or chkNoRes.value = 'F', 1, 0) AS BIT)
+                   ,o.FtyGroup
                  from  PO_Supp_Detail po3 WITH (NOLOCK)
                  LEFT JOIN PO_Supp_Detail stockPO3 with (nolock) on iif(po3.StockPOID >'', 1, 0) = 0 AND stockPO3.ID =  po3.StockPOID
 			     and stockPO3.Seq1 = po3.StockSeq1
@@ -761,7 +778,7 @@ Update ExportRefnoSentReport SET  AWBNO = @updateData, EditName = @UserID ,EditD
                     and o.BrandID = @brandID
 	                and s.DevOption = 0
                     and {conditions}
-                GROUP BY ed.ID,e.Eta,iif({this.drBasic["FileRule"]} = 5, s2.ID, Supp.ID),iif({this.drBasic["FileRule"]} = 5, s2.AbbEN, Supp.AbbEN),f.BrandRefNo,Color.ID,Color.Name,o.BrandID,iif({this.drBasic["FileRule"]} = 5, '', ed.ExportIDOld),iif({this.drBasic["FileRule"]} = 5, '', e.InvNo),iif({this.drBasic["FileRule"]} = 5, '', ed.Pino),iif({this.drBasic["FileRule"]} = 5, '', ed.POID),iif({this.drBasic["FileRule"]} = 5, '', ed.Seq1),iif({this.drBasic["FileRule"]} = 5, '', ed.Seq2),o.FactoryID,chkNoRes.value
+                GROUP BY ed.ID,e.Eta,iif({this.drBasic["FileRule"]} = 5, s2.ID, Supp.ID),iif({this.drBasic["FileRule"]} = 5, s2.AbbEN, Supp.AbbEN),f.BrandRefNo,Color.ID,Color.Name,o.BrandID,iif({this.drBasic["FileRule"]} = 5, '', ed.ExportIDOld),iif({this.drBasic["FileRule"]} = 5, '', e.InvNo),iif({this.drBasic["FileRule"]} = 5, '', ed.Pino),iif({this.drBasic["FileRule"]} = 5, '', ed.POID),iif({this.drBasic["FileRule"]} = 5, '', ed.Seq1),iif({this.drBasic["FileRule"]} = 5, '', ed.Seq2),o.FactoryID,chkNoRes.value,o.FtyGroup
         )main
         {join}
         Where 1 = 1
@@ -1037,8 +1054,16 @@ begin
         )
      End
     
-    INSERT INTO GASAClip 
-    SELECT files.Pkey, @tableName, '{r["ExportID"]}'+'_'+'{r["PoID"]}'+'_'+'{r["Seq1"]}'+'_'+'{r["Seq2"]}'+'_'+'{this.drBasic["DocumentName"]}'+'_'+'{this.drBasic["BrandID"]}', files.FileName, 'File Upload', @UserID, getdate()
+    INSERT INTO GASAClip (
+        [PKey]
+        ,[TableName]
+        ,[UniqueKey]
+        ,[SourceFile]
+        ,[Description]
+        ,[AddName]
+        ,[AddDate]
+        ,[FactoryID])
+    SELECT files.Pkey, @tableName, '{r["ExportID"]}'+'_'+'{r["PoID"]}'+'_'+'{r["Seq1"]}'+'_'+'{r["Seq2"]}'+'_'+'{this.drBasic["DocumentName"]}'+'_'+'{this.drBasic["BrandID"]}', files.FileName, 'File Upload', @UserID, getdate(), '{r["FactoryID"]}'
     FROM @OutputTbl
     Outer Apply(
         select [Pkey] = SUBSTRING(Data,0,11),FileName = SUBSTRING(Data,12,len(Data)-11) from splitstring(@ClipPkey,'?')
@@ -1080,8 +1105,16 @@ BEGIN
         )
      End
     
-    INSERT INTO GASAClip 
-    SELECT files.Pkey, @tableName, '{r["ExportID"]}'+'_'+'{r["BrandRefno"]}'+'_'+'{r["ColorID"]}'+'_'+'{this.drBasic["DocumentName"]}'+'_'+'{this.drBasic["BrandID"]}', files.FileName, 'File Upload', @UserID, getdate()
+     INSERT INTO GASAClip (
+        [PKey]
+        ,[TableName]
+        ,[UniqueKey]
+        ,[SourceFile]
+        ,[Description]
+        ,[AddName]
+        ,[AddDate]
+        ,[FactoryID])
+    SELECT files.Pkey, @tableName, '{r["ExportID"]}'+'_'+'{r["BrandRefno"]}'+'_'+'{r["ColorID"]}'+'_'+'{this.drBasic["DocumentName"]}'+'_'+'{this.drBasic["BrandID"]}', files.FileName, 'File Upload', @UserID, getdate(), '{r["FactoryID"]}'
     FROM @OutputTbl
     Outer Apply(
         select [Pkey] = SUBSTRING(Data,0,11),FileName = SUBSTRING(Data,12,len(Data)-11) from splitstring(@ClipPkey,'?')

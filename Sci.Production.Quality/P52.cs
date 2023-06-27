@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.Data.SqlTypes;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -320,6 +321,29 @@ namespace Sci.Production.Quality
                 }
             };
 
+            this.col_Inspection_Report_FtyReceivedDate.CellValidating += (s, e) =>
+            {
+                DataGridView grid = ((DataGridViewColumn)s).DataGridView;
+                if (!((Sci.Win.Forms.Base)grid.FindForm()).EditMode)
+                {
+                    return;
+                }
+
+                DataRow r = grid.GetDataRow<DataRow>(e.RowIndex);
+                var newValue = e.FormattedValue;
+                var oldValue = MyUtility.Convert.GetDate(r["Inspection_Report_FtyReceivedDate"]);
+                DateTime? reportDate = MyUtility.Convert.GetDate(newValue);
+                if (this.CheckDate(reportDate))
+                {
+                    r["Inspection_Report_FtyReceivedDate"] = MyUtility.Convert.GetDate(newValue).ToYYYYMMDD();
+                    r.EndEdit();
+                }
+                else
+                {
+                    e.Cancel = true;
+                }
+            };
+
             this.col_TestReport_FtyReceivedDate.CellFormatting += (s, e) =>
             {
                 if (e.RowIndex == -1)
@@ -363,6 +387,29 @@ namespace Sci.Production.Quality
                 else
                 {
                     e.IsEditable = true;
+                }
+            };
+
+            this.col_TestReport_FtyReceivedDate.CellValidating += (s, e) =>
+            {
+                DataGridView grid = ((DataGridViewColumn)s).DataGridView;
+                if (!((Sci.Win.Forms.Base)grid.FindForm()).EditMode)
+                {
+                    return;
+                }
+
+                DataRow r = grid.GetDataRow<DataRow>(e.RowIndex);
+                var newValue = e.FormattedValue;
+                var oldValue = MyUtility.Convert.GetDate(r["TestReport_FtyReceivedDate"]);
+                DateTime? reportDate = MyUtility.Convert.GetDate(newValue);
+                if (this.CheckDate(reportDate))
+                {
+                    r["TestReport_FtyReceivedDate"] = MyUtility.Convert.GetDate(newValue).ToYYYYMMDD();
+                    r.EndEdit();
+                }
+                else
+                {
+                    e.Cancel = true;
                 }
             };
 
@@ -412,6 +459,29 @@ namespace Sci.Production.Quality
                 }
             };
 
+            this.col_ContinuityCard_FtyReceivedDate.CellValidating += (s, e) =>
+            {
+                DataGridView grid = ((DataGridViewColumn)s).DataGridView;
+                if (!((Sci.Win.Forms.Base)grid.FindForm()).EditMode)
+                {
+                    return;
+                }
+
+                DataRow r = grid.GetDataRow<DataRow>(e.RowIndex);
+                var newValue = e.FormattedValue;
+                var oldValue = MyUtility.Convert.GetDate(r["ContinuityCard_FtyReceivedDate"]);
+                DateTime? reportDate = MyUtility.Convert.GetDate(newValue);
+                if (this.CheckDate(reportDate))
+                {
+                    r["ContinuityCard_FtyReceivedDate"] = MyUtility.Convert.GetDate(newValue).ToYYYYMMDD();
+                    r.EndEdit();
+                }
+                else
+                {
+                    e.Cancel = true;
+                }
+            };
+
             this.col_FirstDyelot_FtyReceivedDate.CellFormatting += (s, e) =>
             {
                 if (e.RowIndex == -1)
@@ -455,6 +525,29 @@ namespace Sci.Production.Quality
                 else
                 {
                     e.IsEditable = true;
+                }
+            };
+
+            this.col_FirstDyelot_FtyReceivedDate.CellValidating += (s, e) =>
+            {
+                DataGridView grid = ((DataGridViewColumn)s).DataGridView;
+                if (!((Sci.Win.Forms.Base)grid.FindForm()).EditMode)
+                {
+                    return;
+                }
+
+                DataRow r = grid.GetDataRow<DataRow>(e.RowIndex);
+                var newValue = e.FormattedValue;
+                var oldValue = MyUtility.Convert.GetDate(r["1stBulkDyelot_FtyReceivedDate"]);
+                DateTime? reportDate = MyUtility.Convert.GetDate(newValue);
+                if (this.CheckDate(reportDate))
+                {
+                    r["1stBulkDyelot_FtyReceivedDate"] = MyUtility.Convert.GetDate(newValue).ToYYYYMMDD();
+                    r.EndEdit();
+                }
+                else
+                {
+                    e.Cancel = true;
                 }
             };
 
@@ -913,8 +1006,8 @@ IF OBJECT_ID('tempdb..#POList') IS NOT NULL
 DROP TABLE #POList
 
 ";
-            DataSet ds;
-            if (!SQL.Selects(SQL.queryConn, sqlcmd, out ds))
+
+            if (!PublicPrg.Prgs.SelectSet(string.Empty, sqlcmd, out DataSet ds))
             {
                 return null;
             }
@@ -1130,6 +1223,7 @@ and s.TestDocFactoryGroup = t.TestDocFactoryGroup
 and s.BrandRefno = t.BrandRefno
 and s.ColorID = t.ColorID
 and s.SeasonID = t.SeasonID
+and t.deleteColumn = 0
 ";
                         break;
                     case "4":
@@ -1250,6 +1344,7 @@ and t.TestDocFactoryGroup = s.TestDocFactoryGroup
 and t.BrandRefno = s.FirstDyelot_BrandRefno
 and t.ColorID = s.Color
 and t.SeasonID = s.FirstDyelot_SeasonID
+and t.deleteColumn = 0
 ;
 ";
             DataTable odt;
@@ -1394,6 +1489,7 @@ FROM dbo.FirstDyelot
 WHERE SuppID in (select top 1 SuppGroup FROM BrandRelation where SuppID = @SuppID) 
 and (BrandRefno = @BrandRefno  or BrandRefno = @Refno)
 and ColorID = @ColorID and BrandID = @BrandID and DocumentName = @DocumentName
+and deleteColumn = 0
 Order by SeasonID desc";
                     parmes.Add(new SqlParameter("@SuppID", mainrow["SuppID"]));
                     parmes.Add(new SqlParameter("@BrandRefno", mainrow["BrandRefno"]));
@@ -1442,7 +1538,14 @@ INNER JOIN Export e on sr.ExportID = e.ID
 WHERE sr.ColorID = @ColorID 
 and (sr.BrandRefno = @BrandRefno  or sr.BrandRefno = @Refno)
 and sr.BrandID = @BrandID and sr.DocumentName = @DocumentName
-and exists(select 1 FROM Export_Detail ed WITH (NOLOCK) inner join Fabric f2 WITH (NOLOCK) on f2.SCIRefno = ed.SCIRefNo where ed.ID = e.ID and ed.POID = @POID and f2.BrandRefno = sr.BrandRefno)
+and exists(
+    select 1 FROM Export_Detail ed WITH (NOLOCK) 
+	inner join PO_Supp_Detail psd WITH (NOLOCK)  on psd.ID = ed.PoID
+	and psd.SEQ1 = ed.Seq1 and psd.SEQ2 = ed.Seq2
+    inner join Fabric f2 WITH (NOLOCK) on f2.SCIRefno = psd.SCIRefNo 
+    where ed.ID = e.ID 
+    and ed.POID = @POID and f2.BrandRefno = sr.BrandRefno
+)
                     ";
                     parmes.Add(new SqlParameter("@BrandRefno", mainrow["BrandRefno"]));
                     parmes.Add(new SqlParameter("@Refno", mainrow["Refno"]));
@@ -1453,9 +1556,10 @@ and exists(select 1 FROM Export_Detail ed WITH (NOLOCK) inner join Fabric f2 WIT
                     break;
             }
 
-            DataTable dt;
-            if (!SQL.Select(string.Empty, sql, out dt, parmes))
+            DualResult result = DBProxy.Current.Select(string.Empty, sql, parmes, out DataTable dt);
+            if (!result)
             {
+                this.ShowErr(result);
                 return;
             }
 
@@ -1493,8 +1597,8 @@ seasonID = s.ID,
 ed.PoID,
 seq=ed.seq1+'-'+ed.seq2,
 o.BrandId,
-ps.SuppID,
-Supp.AbbEN,
+SuppID = s2.ID,
+s2.AbbEN,
 psd.Refno,
 f.BrandRefNo,
 f.WeaveTypeID,
@@ -1517,18 +1621,24 @@ inner join Export with(nolock) on Export.id = ed.id and Export.Confirm = 1
 inner join orders o with(nolock) on o.id = ed.PoID
 left join Po_Supp_Detail psd with(nolock) on psd.id = ed.poid and psd.seq1 = ed.seq1 and psd.seq2 = ed.seq2
 left join PO_Supp ps with(nolock) on ps.id = psd.id and ps.SEQ1 = psd. SEQ1
-left join Supp with(nolock) on Supp.ID = ps.SuppID
+left join Supp su with(nolock) on su.ID = ps.SuppID
+left join BrandRelation as bs WITH (NOLOCK) ON bs.BrandID = o.BrandID and bs.SuppID = su.ID
+left Join Supp s2 WITH (NOLOCK) on bs.SuppGroup = s2.ID
 left join Season s with(nolock) on s.ID=o.SeasonID and s.BrandID = o.BrandID
 left join Factory fty with (nolock) on fty.ID = o.FactoryID
 left join Fabric f with(nolock) on f.SCIRefno =psd.SCIRefno
 Left join #probablySeasonList seasonSCI on seasonSCI.ID = s.SeasonSCIID
 left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
 OUTER APPLY(
-	Select Top 1 FirstDyelot,FTYReceivedReport,SeasonID
+	Select Top 1 FirstDyelot,FTYReceivedReport,SeasonID,TestDocFactoryGroup,BrandRefno
 	From dbo.FirstDyelot fd
 	Inner join #probablySeasonList season on fd.SeasonID = season.ID
-	WHERE fd.BrandRefno = psd.Refno and fd.ColorID = isnull(psdsC.SpecValue ,'') and fd.SuppID = ps.SuppID and fd.TestDocFactoryGroup = fty.TestDocFactoryGroup
-		And seasonSCI.RowNo >= season.RowNo
+	WHERE fd.BrandRefno = f.BrandRefNo
+    and fd.ColorID = isnull(psdsC.SpecValue ,'') 
+    and fd.SuppID = s2.ID
+    and fd.TestDocFactoryGroup = fty.TestDocFactoryGroup
+    and seasonSCI.RowNo >= season.RowNo
+    and fd.deleteColumn = 0
 	Order by season.RowNo Desc
 )FirstDyelot
 outer apply(
@@ -1781,8 +1891,8 @@ seasonID = s.ID,
 ed.PoID,
 seq=ed.seq1+'-'+ed.seq2,
 o.BrandId,
-ps.SuppID,
-Supp.AbbEN,
+SuppID = s2.ID,
+s2.AbbEN,
 psd.Refno,
 f.BrandRefNo,
 f.WeaveTypeID,
@@ -1799,7 +1909,7 @@ b.T1DefectPoints,
 ed.seq1,
 ed.seq2,
 f.Clima,
-[bitRefnoColor] = case when f.Clima = 1 then ROW_NUMBER() over(partition by f.Clima, ps.SuppID, psd.Refno, isnull(psdsC.SpecValue ,''), Format(Export.CloseDate,'yyyyMM') order by Export.CloseDate) else 0 end,
+[bitRefnoColor] = case when f.Clima = 1 then ROW_NUMBER() over(partition by f.Clima, s2.ID, psd.Refno, isnull(psdsC.SpecValue ,''), Format(Export.CloseDate,'yyyyMM') order by Export.CloseDate) else 0 end,
 Export.CloseDate,
 f.RibItem
 into #tmpBasc
@@ -1808,7 +1918,9 @@ inner join Export with(nolock) on Export.id = ed.id and Export.Confirm = 1
 inner join orders o with(nolock) on o.id = ed.PoID
 left join Po_Supp_Detail psd with(nolock) on psd.id = ed.poid and psd.seq1 = ed.seq1 and psd.seq2 = ed.seq2
 left join PO_Supp ps with(nolock) on ps.id = psd.id and ps.SEQ1 = psd. SEQ1
-left join Supp with(nolock) on Supp.ID = ps.SuppID
+left join Supp su with(nolock) on su.ID = ps.SuppID
+left join BrandRelation as bs WITH (NOLOCK) ON bs.BrandID = o.BrandID and bs.SuppID = su.ID
+left Join Supp s2 WITH (NOLOCK) on bs.SuppGroup = s2.ID
 left join Season s with(nolock) on s.ID=o.SeasonID and s.BrandID = o.BrandID
 left join Factory fty with (nolock) on fty.ID = o.FactoryID
 left join Fabric f with(nolock) on f.SCIRefno =psd.SCIRefno
@@ -1818,8 +1930,12 @@ OUTER APPLY(
 	Select Top 1 FirstDyelot,FTYReceivedReport,SeasonID,TestDocFactoryGroup,BrandRefno
 	From dbo.FirstDyelot fd
 	Inner join #probablySeasonList season on fd.SeasonID = season.ID
-	WHERE fd.BrandRefno = psd.Refno and fd.ColorID = isnull(psdsC.SpecValue ,'') and fd.SuppID = ps.SuppID and fd.TestDocFactoryGroup = fty.TestDocFactoryGroup
-		And seasonSCI.RowNo >= season.RowNo
+	WHERE fd.BrandRefno = f.BrandRefNo
+    and fd.ColorID = isnull(psdsC.SpecValue ,'') 
+    and fd.SuppID = s2.ID
+    and fd.TestDocFactoryGroup = fty.TestDocFactoryGroup
+    and seasonSCI.RowNo >= season.RowNo
+    and fd.deleteColumn = 0
 	Order by season.RowNo Desc
 )FirstDyelot
 outer apply(
@@ -1974,6 +2090,19 @@ drop table #probablySeasonList,#tmpBasc,#tmpFTYReceivedReport,#tmpReportDate
 
             this.dt1.AcceptChanges();
             this.listControlBindingSource1.DataSource = this.dt1;
+        }
+
+        private bool CheckDate(DateTime? dateValue)
+        {
+            bool isBetween2000And2099 = dateValue.Value.Year >= 2000 && dateValue.Value.Year <= 2099;
+
+            if (isBetween2000And2099 == false)
+            {
+                MyUtility.Msg.WarningBox("Date shoule be between 2000 ~ 2099");
+                return false;
+            }
+
+            return true;
         }
     }
 

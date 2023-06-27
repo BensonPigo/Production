@@ -169,6 +169,19 @@ outer apply(select ttlSecond_RD = DATEDIFF(Second, StartResolveDate, EndResolveD
             #endregion
             this.Sqlcmd.Append(declare);
             this.Sqlcmd.Append($@"
+
+select 
+*
+into #SubProInsRecord
+from(
+	select  
+	* 
+	,RowNo = ROW_NUMBER() over(partition by BundleNo,SubProcessID order by Adddate desc)
+	from SubProInsRecord 
+)aa
+where RowNo = 1
+
+
 select
     SR.FactoryID,
     Fac.MDivisionID,
@@ -207,7 +220,7 @@ select
 	SubProResponseTeamID
     ,CustomColumn1
 into #tmp
-from SubProInsRecord SR WITH (NOLOCK)
+from #SubProInsRecord SR WITH (NOLOCK)
 Left join Bundle_Detail BD WITH (NOLOCK) on SR.BundleNo=BD.BundleNo
 Left join Bundle B WITH (NOLOCK) on BD.ID=B.ID
 Left join Orders O WITH (NOLOCK) on B.OrderID=O.ID
@@ -266,7 +279,7 @@ select
 	iif(isnull(ttlSecond_RD, 0) = 0, null, ttlSecond_RD),
 	SubProResponseTeamID
     ,CustomColumn1--自定義欄位, 在最後一個若有變動,則輸出Excel部分也要一起改
-from SubProInsRecord SR WITH (NOLOCK)
+from #SubProInsRecord SR WITH (NOLOCK)
 Left join BundleReplacement_Detail BRD WITH (NOLOCK) on SR.BundleNo=BRD.BundleNo
 Left join BundleReplacement BR WITH (NOLOCK) on BRD.ID=BR.ID
 Left join Orders O WITH (NOLOCK) on BR.OrderID=O.ID
@@ -292,7 +305,7 @@ select *, BundleNoCT = COUNT(1) over(partition by t.BundleNo)
 into #tmp2
 from #tmp t
 
-select *,RowNo = ROW_NUMBER() over(partition by BundleNo,SubProcessID order by Adddate2 desc)
+select *
 into #tmp3
 from #tmp2 t
 where BundleNoCT = 1--綁包/補料都沒有,在第一段union會合併成一筆
@@ -300,7 +313,7 @@ or (BundleNoCT > 1 and isnull(t.Orderid, '') <> '')--綁包/補料其中一個�
 
 -- SubProInsRecord可能會有多筆相同BundleNo 和 SubProcessID, 所以只取AddDate最後一筆資料
 -- by ISP20230577
-select * from #tmp3 where RowNo =1
+select * from #tmp3
 
 drop table #tmp,#tmp2,#tmp3
 
