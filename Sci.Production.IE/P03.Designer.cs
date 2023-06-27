@@ -279,8 +279,8 @@
             // 
             // detailpanel
             // 
-            this.detailpanel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-            | System.Windows.Forms.AnchorStyles.Left)
+            this.detailpanel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.detailpanel.Dock = System.Windows.Forms.DockStyle.None;
             this.detailpanel.Location = new System.Drawing.Point(225, 247);
@@ -1345,7 +1345,7 @@
             this.grid1.RowTemplate.Height = 24;
             this.grid1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.grid1.ShowCellToolTips = false;
-            this.grid1.Size = new System.Drawing.Size(281, 417);
+            this.grid1.Size = new System.Drawing.Size(283, 417);
             this.grid1.TabIndex = 2;
             // 
             // splitContainer1
@@ -1358,7 +1358,7 @@
             // 
             this.splitContainer1.Panel2.Controls.Add(this.grid1);
             this.splitContainer1.Size = new System.Drawing.Size(1153, 417);
-            this.splitContainer1.SplitterDistance = 868;
+            this.splitContainer1.SplitterDistance = 866;
             this.splitContainer1.TabIndex = 3;
             // 
             // txtFactory
@@ -1439,7 +1439,7 @@
             this.labVersionWarning.ForeColor = System.Drawing.Color.Red;
             this.labVersionWarning.Location = new System.Drawing.Point(836, 141);
             this.labVersionWarning.Name = "labVersionWarning";
-            this.labVersionWarning.Size = new System.Drawing.Size(275, 16);
+            this.labVersionWarning.Size = new System.Drawing.Size(274, 16);
             this.labVersionWarning.TabIndex = 82;
             this.labVersionWarning.Text = "GSD version or GSD Statusis not latest";
             // 

@@ -41,7 +41,14 @@
             this.radioPanel1 = new Sci.Win.UI.RadioPanel();
             this.radioIsHide = new Sci.Win.UI.RadioButton();
             this.radioISPPA = new Sci.Win.UI.RadioButton();
+            this.label1 = new Sci.Win.UI.Label();
+            this.label2 = new Sci.Win.UI.Label();
+            this.radioPanelReportType = new Sci.Win.UI.RadioPanel();
+            this.rdoLineMapping = new Sci.Win.UI.RadioButton();
+            this.rdoFtyGSD = new Sci.Win.UI.RadioButton();
+            this.chkIncludeSeparted = new Sci.Win.UI.CheckBox();
             this.radioPanel1.SuspendLayout();
+            this.radioPanelReportType.SuspendLayout();
             this.SuspendLayout();
             // 
             // print
@@ -70,7 +77,7 @@
             // 
             // labelFactory
             // 
-            this.labelFactory.Location = new System.Drawing.Point(9, 155);
+            this.labelFactory.Location = new System.Drawing.Point(9, 191);
             this.labelFactory.Name = "labelFactory";
             this.labelFactory.Size = new System.Drawing.Size(116, 23);
             this.labelFactory.TabIndex = 94;
@@ -78,7 +85,7 @@
             // 
             // lbBrand
             // 
-            this.lbBrand.Location = new System.Drawing.Point(9, 84);
+            this.lbBrand.Location = new System.Drawing.Point(9, 120);
             this.lbBrand.Name = "lbBrand";
             this.lbBrand.Size = new System.Drawing.Size(116, 23);
             this.lbBrand.TabIndex = 95;
@@ -86,7 +93,7 @@
             // 
             // labelSeason
             // 
-            this.labelSeason.Location = new System.Drawing.Point(9, 119);
+            this.labelSeason.Location = new System.Drawing.Point(9, 155);
             this.labelSeason.Name = "labelSeason";
             this.labelSeason.Size = new System.Drawing.Size(116, 23);
             this.labelSeason.TabIndex = 96;
@@ -109,14 +116,14 @@
             this.dateDate.DateBox2.Size = new System.Drawing.Size(129, 23);
             this.dateDate.DateBox2.TabIndex = 1;
             this.dateDate.IsRequired = false;
-            this.dateDate.Location = new System.Drawing.Point(128, 48);
+            this.dateDate.Location = new System.Drawing.Point(128, 84);
             this.dateDate.Name = "dateDate";
             this.dateDate.Size = new System.Drawing.Size(280, 23);
             this.dateDate.TabIndex = 1;
             // 
             // lbVersion
             // 
-            this.lbVersion.Location = new System.Drawing.Point(9, 192);
+            this.lbVersion.Location = new System.Drawing.Point(9, 228);
             this.lbVersion.Name = "lbVersion";
             this.lbVersion.Size = new System.Drawing.Size(116, 23);
             this.lbVersion.TabIndex = 104;
@@ -124,7 +131,7 @@
             // 
             // lbDate
             // 
-            this.lbDate.Location = new System.Drawing.Point(9, 48);
+            this.lbDate.Location = new System.Drawing.Point(9, 84);
             this.lbDate.Name = "lbDate";
             this.lbDate.RectStyle.BorderColor = System.Drawing.Color.Black;
             this.lbDate.RectStyle.BorderWidth = 1F;
@@ -140,7 +147,7 @@
             // 
             this.chkLatestVersion.AutoSize = true;
             this.chkLatestVersion.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.chkLatestVersion.Location = new System.Drawing.Point(128, 192);
+            this.chkLatestVersion.Location = new System.Drawing.Point(128, 228);
             this.chkLatestVersion.Name = "chkLatestVersion";
             this.chkLatestVersion.Size = new System.Drawing.Size(118, 21);
             this.chkLatestVersion.TabIndex = 5;
@@ -153,7 +160,7 @@
             this.txtmultiSeason1.BrandObjectName = this.txtbrand1;
             this.txtmultiSeason1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.txtmultiSeason1.IsSupportEditMode = false;
-            this.txtmultiSeason1.Location = new System.Drawing.Point(128, 119);
+            this.txtmultiSeason1.Location = new System.Drawing.Point(128, 155);
             this.txtmultiSeason1.Name = "txtmultiSeason1";
             this.txtmultiSeason1.PopUpMode = Sci.Win.UI.TextBoxPopUpMode.EditModeAndReadOnly;
             this.txtmultiSeason1.ReadOnly = true;
@@ -164,32 +171,33 @@
             // 
             this.txtbrand1.BackColor = System.Drawing.Color.White;
             this.txtbrand1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtbrand1.Location = new System.Drawing.Point(128, 84);
+            this.txtbrand1.Location = new System.Drawing.Point(128, 120);
             this.txtbrand1.Name = "txtbrand1";
             this.txtbrand1.Size = new System.Drawing.Size(91, 23);
             this.txtbrand1.TabIndex = 2;
             // 
             // txtfactory1
             // 
-            this.txtfactory1.BackColor = System.Drawing.Color.White;
+            this.txtfactory1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.txtfactory1.BoolFtyGroupList = true;
             this.txtfactory1.FilteMDivision = false;
-            this.txtfactory1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtfactory1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.txtfactory1.IsProduceFty = false;
             this.txtfactory1.IssupportJunk = false;
-            this.txtfactory1.Location = new System.Drawing.Point(128, 152);
+            this.txtfactory1.Location = new System.Drawing.Point(128, 188);
             this.txtfactory1.MDivision = null;
             this.txtfactory1.Name = "txtfactory1";
             this.txtfactory1.Size = new System.Drawing.Size(91, 23);
             this.txtfactory1.TabIndex = 4;
+            this.txtfactory1.ReadOnly = true;
             // 
             // radioPanel1
             // 
             this.radioPanel1.Controls.Add(this.radioIsHide);
             this.radioPanel1.Controls.Add(this.radioISPPA);
-            this.radioPanel1.Location = new System.Drawing.Point(12, 12);
+            this.radioPanel1.Location = new System.Drawing.Point(128, 48);
             this.radioPanel1.Name = "radioPanel1";
-            this.radioPanel1.Size = new System.Drawing.Size(192, 25);
+            this.radioPanel1.Size = new System.Drawing.Size(192, 30);
             this.radioPanel1.TabIndex = 228;
             // 
             // radioIsHide
@@ -198,9 +206,9 @@
             this.radioIsHide.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.radioIsHide.Location = new System.Drawing.Point(94, 3);
             this.radioIsHide.Name = "radioIsHide";
-            this.radioIsHide.Size = new System.Drawing.Size(69, 21);
+            this.radioIsHide.Size = new System.Drawing.Size(55, 21);
             this.radioIsHide.TabIndex = 7;
-            this.radioIsHide.Text = "Is Hide";
+            this.radioIsHide.Text = "Hide";
             this.radioIsHide.UseVisualStyleBackColor = true;
             // 
             // radioISPPA
@@ -210,15 +218,80 @@
             this.radioISPPA.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.radioISPPA.Location = new System.Drawing.Point(3, 3);
             this.radioISPPA.Name = "radioISPPA";
-            this.radioISPPA.Size = new System.Drawing.Size(67, 21);
+            this.radioISPPA.Size = new System.Drawing.Size(53, 21);
             this.radioISPPA.TabIndex = 6;
             this.radioISPPA.TabStop = true;
-            this.radioISPPA.Text = "Is PPA";
+            this.radioISPPA.Text = "PPA";
             this.radioISPPA.UseVisualStyleBackColor = true;
+            // 
+            // label1
+            // 
+            this.label1.Location = new System.Drawing.Point(9, 49);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(116, 23);
+            this.label1.TabIndex = 229;
+            this.label1.Text = "Category";
+            // 
+            // label2
+            // 
+            this.label2.Location = new System.Drawing.Point(9, 12);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(116, 23);
+            this.label2.TabIndex = 230;
+            this.label2.Text = "Report Type";
+            // 
+            // radioPanelReportType
+            // 
+            this.radioPanelReportType.Controls.Add(this.rdoLineMapping);
+            this.radioPanelReportType.Controls.Add(this.rdoFtyGSD);
+            this.radioPanelReportType.Location = new System.Drawing.Point(131, 12);
+            this.radioPanelReportType.Name = "radioPanelReportType";
+            this.radioPanelReportType.Size = new System.Drawing.Size(258, 25);
+            this.radioPanelReportType.TabIndex = 229;
+            // 
+            // rdoLineMapping
+            // 
+            this.rdoLineMapping.AutoSize = true;
+            this.rdoLineMapping.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.rdoLineMapping.Location = new System.Drawing.Point(91, 2);
+            this.rdoLineMapping.Name = "rdoLineMapping";
+            this.rdoLineMapping.Size = new System.Drawing.Size(111, 21);
+            this.rdoLineMapping.TabIndex = 7;
+            this.rdoLineMapping.Text = "Line Mapping";
+            this.rdoLineMapping.UseVisualStyleBackColor = true;
+            // 
+            // rdoFtyGSD
+            // 
+            this.rdoFtyGSD.AutoSize = true;
+            this.rdoFtyGSD.Checked = true;
+            this.rdoFtyGSD.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.rdoFtyGSD.Location = new System.Drawing.Point(3, 3);
+            this.rdoFtyGSD.Name = "rdoFtyGSD";
+            this.rdoFtyGSD.Size = new System.Drawing.Size(79, 21);
+            this.rdoFtyGSD.TabIndex = 6;
+            this.rdoFtyGSD.TabStop = true;
+            this.rdoFtyGSD.Text = "Fty GSD";
+            this.rdoFtyGSD.UseVisualStyleBackColor = true;
+            this.rdoFtyGSD.CheckedChanged += new System.EventHandler(this.RdoFtyGSD_CheckedChanged);
+            // 
+            // chkIncludeSeparted
+            // 
+            this.chkIncludeSeparted.AutoSize = true;
+            this.chkIncludeSeparted.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkIncludeSeparted.Location = new System.Drawing.Point(9, 264);
+            this.chkIncludeSeparted.Name = "chkIncludeSeparted";
+            this.chkIncludeSeparted.Size = new System.Drawing.Size(256, 21);
+            this.chkIncludeSeparted.TabIndex = 231;
+            this.chkIncludeSeparted.Text = "Include separated detail by category";
+            this.chkIncludeSeparted.UseVisualStyleBackColor = true;
             // 
             // R05
             // 
-            this.ClientSize = new System.Drawing.Size(578, 250);
+            this.ClientSize = new System.Drawing.Size(578, 321);
+            this.Controls.Add(this.chkIncludeSeparted);
+            this.Controls.Add(this.radioPanelReportType);
+            this.Controls.Add(this.label2);
+            this.Controls.Add(this.label1);
             this.Controls.Add(this.radioPanel1);
             this.Controls.Add(this.chkLatestVersion);
             this.Controls.Add(this.txtmultiSeason1);
@@ -236,12 +309,6 @@
             this.Name = "R05";
             this.OnLineHelpID = "Sci.Win.Tems.PrintForm";
             this.Text = "R05. Non-sewing Line Operation Report";
-            this.Controls.SetChildIndex(this.buttonCustomized, 0);
-            this.Controls.SetChildIndex(this.checkUseCustomized, 0);
-            this.Controls.SetChildIndex(this.txtVersion, 0);
-            this.Controls.SetChildIndex(this.print, 0);
-            this.Controls.SetChildIndex(this.toexcel, 0);
-            this.Controls.SetChildIndex(this.close, 0);
             this.Controls.SetChildIndex(this.labelFactory, 0);
             this.Controls.SetChildIndex(this.lbBrand, 0);
             this.Controls.SetChildIndex(this.labelSeason, 0);
@@ -253,8 +320,20 @@
             this.Controls.SetChildIndex(this.txtmultiSeason1, 0);
             this.Controls.SetChildIndex(this.chkLatestVersion, 0);
             this.Controls.SetChildIndex(this.radioPanel1, 0);
+            this.Controls.SetChildIndex(this.buttonCustomized, 0);
+            this.Controls.SetChildIndex(this.checkUseCustomized, 0);
+            this.Controls.SetChildIndex(this.txtVersion, 0);
+            this.Controls.SetChildIndex(this.print, 0);
+            this.Controls.SetChildIndex(this.toexcel, 0);
+            this.Controls.SetChildIndex(this.close, 0);
+            this.Controls.SetChildIndex(this.label1, 0);
+            this.Controls.SetChildIndex(this.label2, 0);
+            this.Controls.SetChildIndex(this.radioPanelReportType, 0);
+            this.Controls.SetChildIndex(this.chkIncludeSeparted, 0);
             this.radioPanel1.ResumeLayout(false);
             this.radioPanel1.PerformLayout();
+            this.radioPanelReportType.ResumeLayout(false);
+            this.radioPanelReportType.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -275,5 +354,11 @@
         private Win.UI.RadioPanel radioPanel1;
         private Win.UI.RadioButton radioIsHide;
         private Win.UI.RadioButton radioISPPA;
+        private Win.UI.Label label1;
+        private Win.UI.Label label2;
+        private Win.UI.RadioPanel radioPanelReportType;
+        private Win.UI.RadioButton rdoLineMapping;
+        private Win.UI.RadioButton rdoFtyGSD;
+        private Win.UI.CheckBox chkIncludeSeparted;
     }
 }

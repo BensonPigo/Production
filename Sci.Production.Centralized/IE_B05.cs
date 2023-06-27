@@ -175,11 +175,21 @@ where ID = '{this.CurrentMaintain["ID"]}'
 
             #endregion
 
+            DataGridViewGeneratorCheckBoxColumnSettings isSubprocessSetting = new DataGridViewGeneratorCheckBoxColumnSettings();
+            isSubprocessSetting.CellValidating += (s, e) =>
+            {
+                DataRow dr = this.gridDetail.GetDataRow(e.RowIndex);
+                int newvalue = Convert.ToInt16(e.FormattedValue);
+                dr["IsSubprocess"] = newvalue;
+                dr["IsNonSewingLine"] = newvalue;
+                dr.EndEdit();
+            };
+
             // Set Grid
             this.gridDetail.IsEditingReadOnly = false;
             this.Helper.Controls.Grid.Generator(this.gridDetail)
              .Text("FactoryID", header: "Factory", width: Widths.AnsiChars(13), settings: ts, iseditingreadonly: false)
-                .CheckBox("IsSubprocess", header: "Subprocess", width: Widths.AnsiChars(15), iseditable: true, trueValue: true, falseValue: false)
+                .CheckBox("IsSubprocess", header: "Subprocess", width: Widths.AnsiChars(15), iseditable: true, trueValue: true, falseValue: false, settings: isSubprocessSetting)
                 .CheckBox("IsNonSewingLine", header: "Non-Sewing Line", width: Widths.AnsiChars(17), iseditable: true, trueValue: true, falseValue: false)
                 .CheckBox("IsNotShownInP01", header: "Not shown in P01", width: Widths.AnsiChars(17), iseditable: true, trueValue: true, falseValue: false)
                 .CheckBox("IsNotShownInP03", header: "Not shown in P03", width: Widths.AnsiChars(17), iseditable: true, trueValue: true, falseValue: false)
@@ -212,6 +222,11 @@ where ID = '{this.CurrentMaintain["ID"]}'
                 return false;
             }
 
+            if (dt.AsEnumerable().Where(o => MyUtility.Convert.GetBool(o["IsSubprocess"]) && !MyUtility.Convert.GetBool(o["IsNonSewingLine"])).Any())
+            {
+                MyUtility.Msg.InfoBox("Non-Sewing Line has to be checked since Subprocess is checked.");
+                return false;
+            }
             #endregion
             return base.ClickSaveBefore();
         }
