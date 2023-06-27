@@ -624,8 +624,8 @@ where b.StyleUkey is null
 RAISERROR('imp_Style - Starts',0,0)
 UPDATE a
 SET  
-a.Lower	= b.Lower
-,a.Upper	= b.Upper
+a.Lower	= isnull(b.Lower, '')
+,a.Upper	= isnull(b.Upper, '')
 from Production.dbo.Style_SizeTol as a 
 inner join Trade_To_Pms.dbo.Style_SizeTol as b ON a.StyleUkey = b.StyleUkey and a.SizeGroup = b.SizeGroup and a.SizeItem = b.SizeItem
 -------------------------- INSERT INTO 抓
