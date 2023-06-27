@@ -34,9 +34,12 @@
             this.bs_Report = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.tabControl1 = new Sci.Win.UI.TabControl();
             this.MaterialDocumentRecord = new System.Windows.Forms.TabPage();
+            this.txtBrandRefno = new Sci.Win.UI.TextBox();
+            this.label4 = new Sci.Win.UI.Label();
             this.txtfactory = new Sci.Production.Class.Txtfactory();
             this.labelFactory = new Sci.Win.UI.Label();
             this.txtMultiSupplier1 = new Sci.Production.Class.TxtMultiBrandSupplierGroup();
+            this.txtBrand = new Sci.Production.Class.Txtbrand();
             this.btn_ToExcel = new Sci.Win.UI.Button();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.grid_Material = new Sci.Win.UI.Grid();
@@ -51,7 +54,6 @@
             this.dateATA1 = new Sci.Win.UI.DateRange();
             this.label14 = new Sci.Win.UI.Label();
             this.label15 = new Sci.Win.UI.Label();
-            this.txtBrand = new Sci.Production.Class.Txtbrand();
             this.label16 = new Sci.Win.UI.Label();
             this.label17 = new Sci.Win.UI.Label();
             this.txtSeason = new Sci.Production.Class.Txtseason();
@@ -120,6 +122,8 @@
             // 
             // MaterialDocumentRecord
             // 
+            this.MaterialDocumentRecord.Controls.Add(this.txtBrandRefno);
+            this.MaterialDocumentRecord.Controls.Add(this.label4);
             this.MaterialDocumentRecord.Controls.Add(this.txtfactory);
             this.MaterialDocumentRecord.Controls.Add(this.labelFactory);
             this.MaterialDocumentRecord.Controls.Add(this.txtMultiSupplier1);
@@ -156,6 +160,23 @@
             this.MaterialDocumentRecord.TabIndex = 2;
             this.MaterialDocumentRecord.Text = "Material Document Record";
             // 
+            // txtBrandRefno
+            // 
+            this.txtBrandRefno.BackColor = System.Drawing.Color.White;
+            this.txtBrandRefno.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtBrandRefno.Location = new System.Drawing.Point(702, 89);
+            this.txtBrandRefno.Name = "txtBrandRefno";
+            this.txtBrandRefno.Size = new System.Drawing.Size(162, 23);
+            this.txtBrandRefno.TabIndex = 1214;
+            // 
+            // label4
+            // 
+            this.label4.Location = new System.Drawing.Point(606, 89);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(93, 23);
+            this.label4.TabIndex = 1215;
+            this.label4.Text = "Brand Refno";
+            // 
             // txtfactory
             // 
             this.txtfactory.BackColor = System.Drawing.Color.White;
@@ -190,6 +211,16 @@
             this.txtMultiSupplier1.ReadOnly = true;
             this.txtMultiSupplier1.Size = new System.Drawing.Size(329, 23);
             this.txtMultiSupplier1.TabIndex = 1211;
+            // 
+            // txtBrand
+            // 
+            this.txtBrand.BackColor = System.Drawing.Color.White;
+            this.txtBrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtBrand.Location = new System.Drawing.Point(684, 3);
+            this.txtBrand.MyDocumentdName = null;
+            this.txtBrand.Name = "txtBrand";
+            this.txtBrand.Size = new System.Drawing.Size(95, 23);
+            this.txtBrand.TabIndex = 1186;
             // 
             // btn_ToExcel
             // 
@@ -381,16 +412,6 @@
             this.label15.Size = new System.Drawing.Size(96, 23);
             this.label15.TabIndex = 1198;
             this.label15.Text = "Supplier";
-            // 
-            // txtBrand
-            // 
-            this.txtBrand.BackColor = System.Drawing.Color.White;
-            this.txtBrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtBrand.Location = new System.Drawing.Point(684, 3);
-            this.txtBrand.MyDocumentdName = null;
-            this.txtBrand.Name = "txtBrand";
-            this.txtBrand.Size = new System.Drawing.Size(95, 23);
-            this.txtBrand.TabIndex = 1186;
             // 
             // label16
             // 
@@ -818,5 +839,7 @@
         private Class.TxtMultiBrandSupplierGroup txtMultiSupplier1;
         private Class.Txtfactory txtfactory;
         private Win.UI.Label labelFactory;
+        private Win.UI.TextBox txtBrandRefno;
+        private Win.UI.Label label4;
     }
 }
