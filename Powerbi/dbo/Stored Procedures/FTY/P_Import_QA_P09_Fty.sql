@@ -107,16 +107,16 @@ SET @SqlCmd3 = '
 select t.*
 	,sr.documentName
 	,sr.ReportDate
-    ,sr2.T2InspYds
-    ,sr2.T2DefectPoint
-    ,sr2.T2Grade
+    ,sr.T2InspYds
+    ,sr.T2DefectPoint
+    ,sr.T2Grade
 	,sr2.AWBno
 	,sr2.TestReportCheckClima
 into #tmpReportDate
 from #tmpBasic t
 left join ['+@current_PMS_ServerName+'].Production.dbo.NewSentReport sr with (nolock) on sr.exportID = t.WK# and sr.poid = t.SP# and sr.Seq1 =t.Seq1 and sr.Seq2 = t.Seq2
 outer apply (
-	select sr2.AWBno,sr2.TestReportCheckClima,sr2.T2DefectPoint, sr2.T2Grade,sr2.T2InspYds
+	select sr2.AWBno,sr2.TestReportCheckClima
 	from ['+@current_PMS_ServerName+'].Production.dbo.NewSentReport sr2 with (nolock) 
 	where sr2.exportID = t.WK# and sr2.poid = t.SP# and sr2.Seq1 =t.Seq1 and sr2.Seq2 = t.Seq2
 	and sr2.documentName = ''Continuity card''
@@ -126,10 +126,6 @@ outer apply (
 select t.*
 	,sr.documentName
     ,sr.FTYReceivedReport
-    ,sr.T2InspYds
-    ,sr.T2DefectPoint
-    ,sr.T2Grade
-	,sr.AWBno
 into #tmpFTYReceivedReport
 from #tmpBasic t
 left join ['+@current_PMS_ServerName+'].Production.dbo.NewSentReport sr with (nolock) on sr.exportID = t.WK# and sr.poid = t.SP# and sr.Seq1 =t.Seq1 and sr.Seq2 = t.Seq2';

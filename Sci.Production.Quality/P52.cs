@@ -1682,6 +1682,7 @@ select t.*
     ,sr.T2DefectPoint
     ,sr.T2Grade
 	,sr2.AWBno
+    ,sr2.TestReportCheckClima
 into #tmpReportDate
 from #tmpBasc t
 left join NewSentReport sr with (nolock) on sr.exportID = t.ID and sr.poid = t.PoID and sr.Seq1 =t.Seq1 and sr.Seq2 = t.Seq2
