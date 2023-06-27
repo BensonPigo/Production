@@ -1,19 +1,21 @@
 ﻿CREATE TABLE [dbo].[MtlFactor] (
     [Type]        VARCHAR (1)    CONSTRAINT [DF_MtlFactor_Type] DEFAULT ('') NOT NULL,
     [ID]          VARCHAR (3)    CONSTRAINT [DF_MtlFactor_ID] DEFAULT ('') NOT NULL,
-    [Pattern]     VARCHAR (30)   CONSTRAINT [DF_MtlFactor_Pattern] DEFAULT ('') NULL,
-    [PatternCode] VARCHAR (1)    CONSTRAINT [DF_MtlFactor_PatternCode] DEFAULT ('') NULL,
-    [Drape]       VARCHAR (30)   CONSTRAINT [DF_MtlFactor_Drape] DEFAULT ('') NULL,
-    [DrapeCode]   VARCHAR (1)    CONSTRAINT [DF_MtlFactor_DrapeCode] DEFAULT ('') NULL,
-    [Color]       VARCHAR (30)   CONSTRAINT [DF_MtlFactor_Color] DEFAULT ('') NULL,
-    [ColorCode]   VARCHAR (1)    CONSTRAINT [DF_MtlFactor_ColorCode] DEFAULT ('') NULL,
-    [Rate]        NUMERIC (5, 2) CONSTRAINT [DF_MtlFactor_Rate] DEFAULT ((0)) NULL,
-    [AddName]     VARCHAR (10)   CONSTRAINT [DF_MtlFactor_AddName] DEFAULT ('') NULL,
+    [Pattern]     VARCHAR (30)   CONSTRAINT [DF_MtlFactor_Pattern] DEFAULT ('') NOT NULL,
+    [PatternCode] VARCHAR (1)    CONSTRAINT [DF_MtlFactor_PatternCode] DEFAULT ('') NOT NULL,
+    [Drape]       VARCHAR (30)   CONSTRAINT [DF_MtlFactor_Drape] DEFAULT ('') NOT NULL,
+    [DrapeCode]   VARCHAR (1)    CONSTRAINT [DF_MtlFactor_DrapeCode] DEFAULT ('') NOT NULL,
+    [Color]       VARCHAR (30)   CONSTRAINT [DF_MtlFactor_Color] DEFAULT ('') NOT NULL,
+    [ColorCode]   VARCHAR (1)    CONSTRAINT [DF_MtlFactor_ColorCode] DEFAULT ('') NOT NULL,
+    [Rate]        DECIMAL (5, 2) CONSTRAINT [DF_MtlFactor_Rate] DEFAULT ((0)) NOT NULL,
+    [AddName]     VARCHAR (10)   CONSTRAINT [DF_MtlFactor_AddName] DEFAULT ('') NOT NULL,
     [AddDate]     DATETIME       NULL,
-    [EditName]    VARCHAR (10)   CONSTRAINT [DF_MtlFactor_EditName] DEFAULT ('') NULL,
+    [EditName]    VARCHAR (10)   CONSTRAINT [DF_MtlFactor_EditName] DEFAULT ('') NOT NULL,
     [EditDate]    DATETIME       NULL,
     CONSTRAINT [PK_MtlFactor] PRIMARY KEY CLUSTERED ([Type] ASC, [ID] ASC)
 );
+
+
 
 
 GO

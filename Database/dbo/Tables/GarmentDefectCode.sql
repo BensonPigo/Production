@@ -7,15 +7,18 @@
     [EditName]            VARCHAR (10)   CONSTRAINT [DF_GarmentDefectCode_EditName] DEFAULT ('') NOT NULL,
     [EditDate]            DATETIME       NULL,
     [Junk]                BIT            CONSTRAINT [df_Junk_Zero] DEFAULT ((0)) NOT NULL,
-    [LocalDescription]    NVARCHAR (100) NOT NULL,
-    [ReworkTotalFailCode] NVARCHAR(10) NULL CONSTRAINT [DF_GarmentDefectCode_ReworkTotalFailCode] DEFAULT (''), 
-    [IsCFA] BIT NOT NULL CONSTRAINT [DF_GarmentDefectCode_IsCFA] DEFAULT ((0)), 
-    [IsCriticalDefect] BIT NULL CONSTRAINT [DF_GarmentDefectCode_IsCriticalDefect] DEFAULT ((0)), 
-    [Pivot88DefectCodeID] VARCHAR(50) NOT NULL CONSTRAINT [DF_GarmentDefectCode_Pivot88DefectCodeID] DEFAULT (''), 
-    [NikeDefectCodeID] VARCHAR(5) NOT NULL DEFAULT (''), 
-    [NikeDefectCodeDesc] NVARCHAR(200) NOT NULL DEFAULT (''), 
+    [LocalDescription]    NVARCHAR (100) CONSTRAINT [dfc_empty] DEFAULT ('') NOT NULL,
+    [Seq]                 TINYINT        CONSTRAINT [DF_GarmentDefectCode_Seq] DEFAULT ((0)) NOT NULL,
+    [ReworkTotalFailCode] NVARCHAR (10)  CONSTRAINT [DF_GarmentDefectCode_ReworkTotalFailCode] DEFAULT ('') NOT NULL,
+    [IsCFA]               BIT            CONSTRAINT [DF_GarmentDefectCode_IsCFA] DEFAULT ((0)) NOT NULL,
+    [IsCriticalDefect]    BIT            CONSTRAINT [DF_GarmentDefectCode_IsCriticalDefect] DEFAULT ((0)) NOT NULL,
+    [Pivot88DefectCodeID] VARCHAR (50)   CONSTRAINT [DF_GarmentDefectCode_Pivot88DefectCodeID] DEFAULT ('') NOT NULL,
+    [NikeDefectCodeID]    VARCHAR (5)    DEFAULT ('') NOT NULL,
+    [NikeDefectCodeDesc]  NVARCHAR (200) DEFAULT ('') NOT NULL,
     CONSTRAINT [PK_GarmentDefectCode] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
+
+
 
 
 

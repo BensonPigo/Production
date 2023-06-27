@@ -1,15 +1,17 @@
 ﻿CREATE TABLE [dbo].[Order_PFHis] (
-    [Id]             VARCHAR (13)  CONSTRAINT [DF_Order_PFHis_Id] DEFAULT ('') NULL,
+    [Id]             VARCHAR (13)  CONSTRAINT [DF_Order_PFHis_Id] DEFAULT ('') NOT NULL,
     [NewSciDelivery] DATE          NULL,
     [OldSciDelivery] DATE          NULL,
     [LETA]           DATE          NULL,
-    [Remark]         VARCHAR (MAX) CONSTRAINT [DF_Order_PFHis_Reamrk] DEFAULT ('') NULL,
-    [AddName]        VARCHAR (10)  CONSTRAINT [DF_Order_PFHis_AddName] DEFAULT ('') NULL,
+    [Remark]         VARCHAR (MAX) CONSTRAINT [DF_Order_PFHis_Remark] DEFAULT ('') NOT NULL,
+    [AddName]        VARCHAR (10)  CONSTRAINT [DF_Order_PFHis_AddName] DEFAULT ('') NOT NULL,
     [AddDate]        DATETIME      NULL,
     [Ukey]           BIGINT        CONSTRAINT [DF_Order_PFHis_Ukey] DEFAULT ((0)) NOT NULL,
     [PackLETA]       DATE          NULL,
     CONSTRAINT [PK_Order_PFHis] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
+
+
 
 
 

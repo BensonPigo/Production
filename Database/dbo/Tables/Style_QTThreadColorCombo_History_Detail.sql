@@ -1,25 +1,22 @@
 ﻿
-CREATE TABLE [dbo].[Style_QTThreadColorCombo_History_Detail](
-	[Style_QTThreadColorCombo_HistoryUkey] [bigint] NOT NULL,
-	[Seq] [varchar](2) NOT NULL,
-	[SCIRefNo] [varchar](30) NULL,
-	[SuppId] [varchar](6) NULL,
-	[Article] [varchar](8) NOT NULL,
-	[ColorID] [varchar](6) NULL,
-	[SuppColor] [varchar](30) NULL,
-	[AddName] [varchar](10) NULL,
-	[AddDate] [datetime] NULL,
-	[EditName] [varchar](10) NULL,
-	[EditDate] [datetime] NULL,
-	[Ukey] [bigint] IDENTITY(1,1) NOT NULL,
-	[Ratio] [numeric](5, 2) NOT NULL,
- CONSTRAINT [PK_Style_QTThreadColorCombo_History_Detail] PRIMARY KEY CLUSTERED 
-(
-	[Style_QTThreadColorCombo_HistoryUkey] ASC,
-	[Seq] ASC,
-	[Article] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-) ON [PRIMARY]
+CREATE TABLE [dbo].[Style_QTThreadColorCombo_History_Detail] (
+    [Style_QTThreadColorCombo_HistoryUkey] BIGINT         NOT NULL,
+    [Seq]                                  VARCHAR (2)    NOT NULL,
+    [SCIRefNo]                             VARCHAR (30)   CONSTRAINT [DF_Style_QTThreadColorCombo_History_Detail_SCIRefNo] DEFAULT ('') NOT NULL,
+    [SuppId]                               VARCHAR (6)    CONSTRAINT [DF_Style_QTThreadColorCombo_History_Detail_SuppId] DEFAULT ('') NOT NULL,
+    [Article]                              VARCHAR (8)    NOT NULL,
+    [ColorID]                              VARCHAR (6)    CONSTRAINT [DF_Style_QTThreadColorCombo_History_Detail_ColorID] DEFAULT ('') NOT NULL,
+    [SuppColor]                            VARCHAR (30)   CONSTRAINT [DF_Style_QTThreadColorCombo_History_Detail_SuppColor] DEFAULT ('') NOT NULL,
+    [AddName]                              VARCHAR (10)   CONSTRAINT [DF_Style_QTThreadColorCombo_History_Detail_AddName] DEFAULT ('') NOT NULL,
+    [AddDate]                              DATETIME       NULL,
+    [EditName]                             VARCHAR (10)   CONSTRAINT [DF_Style_QTThreadColorCombo_History_Detail_EditName] DEFAULT ('') NOT NULL,
+    [EditDate]                             DATETIME       NULL,
+    [Ukey]                                 BIGINT         NOT NULL,
+    [Ratio]                                NUMERIC (5, 2) NOT NULL,
+    CONSTRAINT [PK_Style_QTThreadColorCombo_History_Detail] PRIMARY KEY CLUSTERED ([Style_QTThreadColorCombo_HistoryUkey] ASC, [Seq] ASC, [Article] ASC)
+);
+
+
 GO
 
 

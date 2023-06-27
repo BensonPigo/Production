@@ -1,13 +1,15 @@
 ﻿CREATE TABLE [dbo].[WeaveType] (
     [ID]           VARCHAR (20) CONSTRAINT [DF_WeaveType_ID] DEFAULT ('') NOT NULL,
-    [isFabricLoss] BIT          CONSTRAINT [DF_WeaveType_isFabricLoss] DEFAULT ((0)) NULL,
-    [Junk]         BIT          CONSTRAINT [DF_WeaveType_Junk] DEFAULT ((0)) NULL,
-    [AddName]      VARCHAR (10) CONSTRAINT [DF_WeaveType_AddName] DEFAULT ('') NULL,
+    [isFabricLoss] BIT          CONSTRAINT [DF_WeaveType_isFabricLoss] DEFAULT ((0)) NOT NULL,
+    [Junk]         BIT          CONSTRAINT [DF_WeaveType_Junk] DEFAULT ((0)) NOT NULL,
+    [AddName]      VARCHAR (10) CONSTRAINT [DF_WeaveType_AddName] DEFAULT ('') NOT NULL,
     [AddDate]      DATETIME     NULL,
-    [EditName]     VARCHAR (10) CONSTRAINT [DF_WeaveType_EditName] DEFAULT ('') NULL,
+    [EditName]     VARCHAR (10) CONSTRAINT [DF_WeaveType_EditName] DEFAULT ('') NOT NULL,
     [EditDate]     DATETIME     NULL,
     CONSTRAINT [PK_WeaveType] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
+
+
 
 
 GO

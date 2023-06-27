@@ -1,18 +1,20 @@
 ﻿CREATE TABLE [dbo].[IETMS] (
     [ID]            VARCHAR (10)  CONSTRAINT [DF_IETMS_ID] DEFAULT ('') NOT NULL,
     [Version]       VARCHAR (3)   CONSTRAINT [DF_IETMS_Version] DEFAULT ('') NOT NULL,
-    [Ukey]          BIGINT        CONSTRAINT [DF_IETMS_IETMSUkey] DEFAULT ((0)) NULL,
-    [IEName]        VARCHAR (10)  CONSTRAINT [DF_IETMS_IEName] DEFAULT ('') NULL,
+    [Ukey]          BIGINT        CONSTRAINT [DF_IETMS_Ukey] DEFAULT ((0)) NOT NULL,
+    [IEName]        VARCHAR (10)  CONSTRAINT [DF_IETMS_IEName] DEFAULT ('') NOT NULL,
     [ActFinDate]    DATETIME      NULL,
-    [GSDStyleCode]  VARCHAR (15)  CONSTRAINT [DF_IETMS_GSDStyleCode] DEFAULT ('') NULL,
-    [GSDStyleTitle] NVARCHAR (50) CONSTRAINT [DF_IETMS_GSDStyleTitle] DEFAULT ('') NULL,
-    [AddName]       VARCHAR (10)  CONSTRAINT [DF_IETMS_AddName] DEFAULT ('') NULL,
+    [GSDStyleCode]  VARCHAR (15)  CONSTRAINT [DF_IETMS_GSDStyleCode] DEFAULT ('') NOT NULL,
+    [GSDStyleTitle] NVARCHAR (50) CONSTRAINT [DF_IETMS_GSDStyleTitle] DEFAULT ('') NOT NULL,
+    [AddName]       VARCHAR (10)  CONSTRAINT [DF_IETMS_AddName] DEFAULT ('') NOT NULL,
     [AddDate]       DATETIME      NULL,
-    [EditName]      VARCHAR (10)  CONSTRAINT [DF_IETMS_EditName] DEFAULT ('') NULL,
+    [EditName]      VARCHAR (10)  CONSTRAINT [DF_IETMS_EditName] DEFAULT ('') NOT NULL,
     [EditDate]      DATETIME      NULL,
     [GSDType]       VARCHAR (1)   CONSTRAINT [DF_IETMS_GSDType] DEFAULT ('') NOT NULL,
     CONSTRAINT [PK_IETMS] PRIMARY KEY CLUSTERED ([ID] ASC, [Version] ASC)
 );
+
+
 
 
 

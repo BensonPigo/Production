@@ -2,15 +2,17 @@
     [Type]        VARCHAR (2)    CONSTRAINT [DF_PPICReason_Type] DEFAULT ('') NOT NULL,
     [ID]          VARCHAR (5)    CONSTRAINT [DF_PPICReason_ID] DEFAULT ('') NOT NULL,
     [Description] NVARCHAR (60)  CONSTRAINT [DF_PPICReason_Description] DEFAULT ('') NOT NULL,
-    [Remark]      NVARCHAR (100) CONSTRAINT [DF_PPICReason_Remark] DEFAULT ('') NULL,
-    [Junk]        BIT            CONSTRAINT [DF_PPICReason_Junk] DEFAULT ((0)) NULL,
+    [Remark]      NVARCHAR (100) CONSTRAINT [DF_PPICReason_Remark] DEFAULT ('') NOT NULL,
+    [Junk]        BIT            CONSTRAINT [DF_PPICReason_Junk] DEFAULT ((0)) NOT NULL,
     [TypeForUse]  VARCHAR (1)    CONSTRAINT [DF_PPICReason_TypeForUse] DEFAULT ('') NOT NULL,
-    [AddName]     VARCHAR (10)   CONSTRAINT [DF_PPICReason_AddName] DEFAULT ('') NULL,
+    [AddName]     VARCHAR (10)   CONSTRAINT [DF_PPICReason_AddName] DEFAULT ('') NOT NULL,
     [AddDate]     DATETIME       NULL,
-    [EditName]    VARCHAR (10)   CONSTRAINT [DF_PPICReason_EditName] DEFAULT ('') NULL,
+    [EditName]    VARCHAR (10)   CONSTRAINT [DF_PPICReason_EditName] DEFAULT ('') NOT NULL,
     [EditDate]    DATETIME       NULL,
     CONSTRAINT [PK_PPICReason] PRIMARY KEY CLUSTERED ([Type] ASC, [ID] ASC)
 );
+
+
 
 
 GO

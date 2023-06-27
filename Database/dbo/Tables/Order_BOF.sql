@@ -1,28 +1,30 @@
 ﻿CREATE TABLE [dbo].[Order_BOF] (
     [Id]                 VARCHAR (13)    CONSTRAINT [DF_Order_BOF_Id] DEFAULT ('') NOT NULL,
     [FabricCode]         VARCHAR (3)     CONSTRAINT [DF_Order_BOF_FabricCode] DEFAULT ('') NOT NULL,
-    [Refno]              VARCHAR (36)    CONSTRAINT [DF_Order_BOF_Refno] DEFAULT ('') NOT NULL,
+    [Refno]              VARCHAR (36)    CONSTRAINT [DF_Order_BOF_Refno] DEFAULT ('') NULL,
     [SCIRefno]           VARCHAR (30)    CONSTRAINT [DF_Order_BOF_SCIRefno] DEFAULT ('') NOT NULL,
     [SuppID]             VARCHAR (6)     CONSTRAINT [DF_Order_BOF_SuppID] DEFAULT ('') NOT NULL,
-    [ConsPC]             NUMERIC (11, 4) CONSTRAINT [DF_Order_BOF_ConsPC] DEFAULT ((0)) NULL,
+    [ConsPC]             DECIMAL (11, 4) CONSTRAINT [DF_Order_BOF_ConsPC] DEFAULT ((0)) NOT NULL,
     [Seq1]               VARCHAR (3)     CONSTRAINT [DF_Order_BOF_Seq1] DEFAULT ('') NOT NULL,
-    [Kind]               VARCHAR (1)     CONSTRAINT [DF_Order_BOF_Kind] DEFAULT ('') NULL,
+    [Kind]               VARCHAR (1)     CONSTRAINT [DF_Order_BOF_Kind] DEFAULT ('') NOT NULL,
     [Ukey]               BIGINT          CONSTRAINT [DF_Order_BOF_Ukey] DEFAULT ((0)) NOT NULL,
-    [Remark]             NVARCHAR (MAX)  CONSTRAINT [DF_Order_BOF_Remark] DEFAULT ('') NULL,
+    [Remark]             NVARCHAR (MAX)  CONSTRAINT [DF_Order_BOF_Remark] DEFAULT ('') NOT NULL,
     [LossType]           NUMERIC (1)     CONSTRAINT [DF_Order_BOF_LossType] DEFAULT ((0)) NOT NULL,
-    [LossPercent]        NUMERIC (5, 1)  CONSTRAINT [DF_Order_BOF_LossPercent] DEFAULT ((0)) NULL,
-    [RainwearTestPassed] BIT             CONSTRAINT [DF_Order_BOF_RainwearTestPassed] DEFAULT ((0)) NULL,
-    [HorizontalCutting]  BIT             CONSTRAINT [DF_Order_BOF_HorizontalCutting] DEFAULT ((0)) NULL,
-    [ColorDetail]        NVARCHAR (100)  CONSTRAINT [DF_Order_BOF_ColorDetail] DEFAULT ('') NULL,
-    [AddName]            VARCHAR (10)    CONSTRAINT [DF_Order_BOF_AddName] DEFAULT ('') NULL,
+    [LossPercent]        DECIMAL (5, 1)  CONSTRAINT [DF_Order_BOF_LossPercent] DEFAULT ((0)) NOT NULL,
+    [RainwearTestPassed] BIT             CONSTRAINT [DF_Order_BOF_RainwearTestPassed] DEFAULT ((0)) NOT NULL,
+    [HorizontalCutting]  BIT             CONSTRAINT [DF_Order_BOF_HorizontalCutting] DEFAULT ((0)) NOT NULL,
+    [ColorDetail]        NVARCHAR (100)  CONSTRAINT [DF_Order_BOF_ColorDetail] DEFAULT ('') NOT NULL,
+    [AddName]            VARCHAR (10)    CONSTRAINT [DF_Order_BOF_AddName] DEFAULT ('') NOT NULL,
     [AddDate]            DATETIME        NULL,
-    [EditName]           VARCHAR (10)    CONSTRAINT [DF_Order_BOF_EditName] DEFAULT ('') NULL,
+    [EditName]           VARCHAR (10)    CONSTRAINT [DF_Order_BOF_EditName] DEFAULT ('') NOT NULL,
     [EditDate]           DATETIME        NULL,
-    [SpecialWidth]       NUMERIC (5, 2)  NULL,
-    [LimitUp]            DECIMAL (7, 2)  NULL,
-    [LimitDown]          DECIMAL (7, 2)  NULL,
+    [SpecialWidth]       DECIMAL (5, 2)  CONSTRAINT [DF_Order_BOF_SpecialWidth] DEFAULT ((0)) NOT NULL,
+    [LimitUp]            DECIMAL (7, 2)  CONSTRAINT [DF_Order_BOF_LimitUp] DEFAULT ((0)) NOT NULL,
+    [LimitDown]          DECIMAL (7, 2)  CONSTRAINT [DF_Order_BOF_LimitDown] DEFAULT ((0)) NOT NULL,
     CONSTRAINT [PK_Order_BOF] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
+
+
 
 
 

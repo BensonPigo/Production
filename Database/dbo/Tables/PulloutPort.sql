@@ -5,14 +5,16 @@
     [CountryID]         VARCHAR (2)    CONSTRAINT [DF_PulloutPort_CountryID] DEFAULT ('') NOT NULL,
     [AirPort]           BIT            CONSTRAINT [DF_PulloutPort_AirPort] DEFAULT ((0)) NOT NULL,
     [SeaPort]           BIT            CONSTRAINT [DF_PulloutPort_SeaPort] DEFAULT ((0)) NOT NULL,
-    [Remark]            NVARCHAR (MAX) CONSTRAINT [DF_PulloutPort_Remark] DEFAULT ('') NULL,
-    [AddName]           VARCHAR (10)   CONSTRAINT [DF_PulloutPort_AddName] DEFAULT ('') NULL,
+    [Remark]            NVARCHAR (MAX) CONSTRAINT [DF_PulloutPort_Remark] DEFAULT ('') NOT NULL,
+    [AddName]           VARCHAR (10)   CONSTRAINT [DF_PulloutPort_AddName] DEFAULT ('') NOT NULL,
     [AddDate]           DATETIME       NULL,
-    [EditName]          VARCHAR (10)   CONSTRAINT [DF_PulloutPort_EditName] DEFAULT ('') NULL,
+    [EditName]          VARCHAR (10)   CONSTRAINT [DF_PulloutPort_EditName] DEFAULT ('') NOT NULL,
     [EditDate]          DATETIME       NULL,
-    [Junk]              BIT            CONSTRAINT [DF_PulloutPort_Junk] DEFAULT ((0)) NULL,
+    [Junk]              BIT            CONSTRAINT [DF_PulloutPort_Junk] DEFAULT ((0)) NOT NULL,
     CONSTRAINT [PK_PulloutPort] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
+
+
 
 
 GO

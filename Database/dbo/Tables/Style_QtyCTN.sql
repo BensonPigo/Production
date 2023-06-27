@@ -1,16 +1,18 @@
 ﻿CREATE TABLE [dbo].[Style_QtyCTN] (
-    [StyleUkey] BIGINT       CONSTRAINT [DF_Style_QtyCTN_StyleUkey] DEFAULT ((0)) NULL,
-    [CustCDID]  VARCHAR (16) CONSTRAINT [DF_Style_QtyCTN_CustCDID] DEFAULT ('') NULL,
-    [Qty]       SMALLINT     CONSTRAINT [DF_Style_QtyCTN_Qty] DEFAULT ((0)) NULL,
-    [CountryID] VARCHAR (2)  CONSTRAINT [DF_Style_QtyCTN_CountryID] DEFAULT ('') NULL,
-    [Continent] VARCHAR (2)  CONSTRAINT [DF_Style_QtyCTN_Continent] DEFAULT ('') NULL,
-    [AddName]   VARCHAR (10) CONSTRAINT [DF_Style_QtyCTN_AddName] DEFAULT ('') NULL,
+    [StyleUkey] BIGINT       CONSTRAINT [DF_Style_QtyCTN_StyleUkey] DEFAULT ((0)) NOT NULL,
+    [CustCDID]  VARCHAR (16) CONSTRAINT [DF_Style_QtyCTN_CustCDID] DEFAULT ('') NOT NULL,
+    [Qty]       SMALLINT     CONSTRAINT [DF_Style_QtyCTN_Qty] DEFAULT ((0)) NOT NULL,
+    [CountryID] VARCHAR (2)  CONSTRAINT [DF_Style_QtyCTN_CountryID] DEFAULT ('') NOT NULL,
+    [Continent] VARCHAR (2)  CONSTRAINT [DF_Style_QtyCTN_Continent] DEFAULT ('') NOT NULL,
+    [AddName]   VARCHAR (10) CONSTRAINT [DF_Style_QtyCTN_AddName] DEFAULT ('') NOT NULL,
     [AddDate]   DATETIME     NULL,
-    [EditName]  VARCHAR (10) CONSTRAINT [DF_Style_QtyCTN_EditName] DEFAULT ('') NULL,
+    [EditName]  VARCHAR (10) CONSTRAINT [DF_Style_QtyCTN_EditName] DEFAULT ('') NOT NULL,
     [EditDate]  DATETIME     NULL,
     [UKey]      BIGINT       CONSTRAINT [DF_Style_QtyCTN_UKey] DEFAULT ((0)) NOT NULL,
     CONSTRAINT [PK_Style_QtyCTN] PRIMARY KEY CLUSTERED ([UKey] ASC)
 );
+
+
 
 
 GO

@@ -1,18 +1,20 @@
 ﻿CREATE TABLE [dbo].[Color] (
-    [BrandId]     VARCHAR (8)   CONSTRAINT [DF_Color_BrandId] DEFAULT ('') NOT NULL,
-    [ID]          VARCHAR (6)   CONSTRAINT [DF_Color_ID] DEFAULT ('') NOT NULL,
-    [Ukey]        BIGINT        CONSTRAINT [DF_Color_Ukey] DEFAULT ((0)) NULL,
-    [Name]        NVARCHAR (150) CONSTRAINT [DF_Color_Name] DEFAULT ('') NULL,
-    [Varicolored] TINYINT       CONSTRAINT [DF_Color_Varicolored] DEFAULT ((0)) NULL,
-    [JUNK]        BIT           CONSTRAINT [DF_Color_JUNK] DEFAULT ((0)) NULL,
-    [VIVID]       BIT           CONSTRAINT [DF_Color_VIVID] DEFAULT ((0)) NULL,
-    [AddName]     VARCHAR (10)  CONSTRAINT [DF_Color_AddName] DEFAULT ('') NULL,
-    [AddDate]     DATETIME      NULL,
-    [EditName]    VARCHAR (10)  CONSTRAINT [DF_Color_EditName] DEFAULT ('') NULL,
-    [EditDate]    DATETIME      NULL,
-    [Picture] NVARCHAR(100) NOT NULL DEFAULT (''), 
+    [BrandId]     VARCHAR (8)    CONSTRAINT [DF_Color_BrandId] DEFAULT ('') NOT NULL,
+    [ID]          VARCHAR (6)    CONSTRAINT [DF_Color_ID] DEFAULT ('') NOT NULL,
+    [Ukey]        BIGINT         CONSTRAINT [DF_Color_Ukey] DEFAULT ((0)) NOT NULL,
+    [Name]        NVARCHAR (150) CONSTRAINT [DF_Color_Name] DEFAULT ('') NOT NULL,
+    [Varicolored] TINYINT        CONSTRAINT [DF_Color_Varicolored] DEFAULT ((0)) NOT NULL,
+    [JUNK]        BIT            CONSTRAINT [DF_Color_JUNK] DEFAULT ((0)) NOT NULL,
+    [VIVID]       BIT            CONSTRAINT [DF_Color_VIVID] DEFAULT ((0)) NOT NULL,
+    [AddName]     VARCHAR (10)   CONSTRAINT [DF_Color_AddName] DEFAULT ('') NOT NULL,
+    [AddDate]     DATETIME       NULL,
+    [EditName]    VARCHAR (10)   CONSTRAINT [DF_Color_EditName] DEFAULT ('') NOT NULL,
+    [EditDate]    DATETIME       NULL,
+    [Picture]     NVARCHAR (100) DEFAULT ('') NOT NULL,
     CONSTRAINT [PK_Color] PRIMARY KEY CLUSTERED ([BrandId] ASC, [ID] ASC)
 );
+
+
 
 
 GO

@@ -2,24 +2,26 @@
     [ID]             VARCHAR (13)    CONSTRAINT [DF_Order_TmsCost_ID] DEFAULT ('') NOT NULL,
     [ArtworkTypeID]  VARCHAR (20)    CONSTRAINT [DF_Order_TmsCost_ArtworkTypeID] DEFAULT ('') NOT NULL,
     [Seq]            VARCHAR (4)     CONSTRAINT [DF_Order_TmsCost_Seq] DEFAULT ('') NOT NULL,
-    [Qty]            NUMERIC (6)     CONSTRAINT [DF_Order_TmsCost_Qty] DEFAULT ((0)) NULL,
-    [ArtworkUnit]    VARCHAR (10)    CONSTRAINT [DF_Order_TmsCost_ArtworkUnit] DEFAULT ('') NULL,
-    [TMS]            NUMERIC (5)     CONSTRAINT [DF_Order_TmsCost_TMS] DEFAULT ((0)) NULL,
-    [Price]          NUMERIC (16, 4) CONSTRAINT [DF_Order_TmsCost_Price] DEFAULT ((0)) NOT NULL,
-    [InhouseOSP]     VARCHAR (1)     CONSTRAINT [DF_Order_TmsCost_InhouseOSP] DEFAULT ('') NULL,
-    [LocalSuppID]    VARCHAR (8)     CONSTRAINT [DF_Order_TmsCost_LocalSuppID] DEFAULT ('') NULL,
+    [Qty]            DECIMAL (6)     CONSTRAINT [DF_Order_TmsCost_Qty] DEFAULT ((0)) NOT NULL,
+    [ArtworkUnit]    VARCHAR (10)    CONSTRAINT [DF_Order_TmsCost_ArtworkUnit] DEFAULT ('') NOT NULL,
+    [TMS]            DECIMAL (5)     CONSTRAINT [DF_Order_TmsCost_TMS] DEFAULT ((0)) NOT NULL,
+    [Price]          DECIMAL (16, 4) CONSTRAINT [DF_Order_TmsCost_Price] DEFAULT ((0)) NOT NULL,
+    [InhouseOSP]     VARCHAR (1)     CONSTRAINT [DF_Order_TmsCost_InhouseOSP] DEFAULT ('') NOT NULL,
+    [LocalSuppID]    VARCHAR (8)     CONSTRAINT [DF_Order_TmsCost_LocalSuppID] DEFAULT ('') NOT NULL,
     [ArtworkInLine]  DATE            NULL,
     [ArtworkOffLine] DATE            NULL,
     [ApvDate]        DATE            NULL,
-    [ApvName]        VARCHAR (10)    CONSTRAINT [DF_Order_TmsCost_ApvName] DEFAULT ('') NULL,
-    [AddName]        VARCHAR (10)    CONSTRAINT [DF_Order_TmsCost_AddName] DEFAULT ('') NULL,
+    [ApvName]        VARCHAR (10)    CONSTRAINT [DF_Order_TmsCost_ApvName] DEFAULT ('') NOT NULL,
+    [AddName]        VARCHAR (10)    CONSTRAINT [DF_Order_TmsCost_AddName] DEFAULT ('') NOT NULL,
     [AddDate]        DATETIME        NULL,
-    [EditName]       VARCHAR (10)    CONSTRAINT [DF_Order_TmsCost_EditName] DEFAULT ('') NULL,
+    [EditName]       VARCHAR (10)    CONSTRAINT [DF_Order_TmsCost_EditName] DEFAULT ('') NOT NULL,
     [EditDate]       DATETIME        NULL,
-    [TPEEditName] VARCHAR(10) NULL DEFAULT (''), 
-    [TPEEditDate] DATETIME NULL, 
+    [TPEEditName]    VARCHAR (10)    CONSTRAINT [DF_Order_TmsCost_TPEEditName] DEFAULT ('') NOT NULL,
+    [TPEEditDate]    DATETIME        NULL,
     CONSTRAINT [PK_Order_TmsCost] PRIMARY KEY CLUSTERED ([ID] ASC, [ArtworkTypeID] ASC)
 );
+
+
 
 
 
@@ -122,20 +124,5 @@ CREATE NONCLUSTERED INDEX [Index_Seq] ON [dbo].[Order_TmsCost]
 )
 
 GO
-EXEC sp_addextendedproperty @name = N'MS_Description',
-    @value = N'台北最後修改人員',
-    @level0type = N'SCHEMA',
-    @level0name = N'dbo',
-    @level1type = N'TABLE',
-    @level1name = N'Order_TmsCost',
-    @level2type = N'COLUMN',
-    @level2name = N'TPEEditName'
+
 GO
-EXEC sp_addextendedproperty @name = N'MS_Description',
-    @value = N'台北最後修改時間',
-    @level0type = N'SCHEMA',
-    @level0name = N'dbo',
-    @level1type = N'TABLE',
-    @level1name = N'Order_TmsCost',
-    @level2type = N'COLUMN',
-    @level2name = N'TPEEditDate'

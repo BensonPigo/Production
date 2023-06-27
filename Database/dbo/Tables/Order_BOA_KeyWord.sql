@@ -2,17 +2,19 @@
     [ID]            VARCHAR (13)  CONSTRAINT [DF_Order_BOA_KeyWord_ID] DEFAULT ('') NOT NULL,
     [Ukey]          BIGINT        CONSTRAINT [DF_Order_BOA_KeyWord_Ukey] DEFAULT ((0)) NOT NULL,
     [Order_BOAUkey] BIGINT        CONSTRAINT [DF_Order_BOA_KeyWord_Order_BOAUkey] DEFAULT ((0)) NOT NULL,
-    [Prefix]        NVARCHAR (60) CONSTRAINT [DF_Order_BOA_KeyWord_Prefix] DEFAULT ('') NULL,
-    [KeyWordID]     VARCHAR (30)  CONSTRAINT [DF_Order_BOA_KeyWord_KeyWordID] DEFAULT ('') NULL,
-    [Postfix]       NVARCHAR (60) CONSTRAINT [DF_Order_BOA_KeyWord_Postfix] DEFAULT ('') NULL,
-    [Code]          VARCHAR (3)   CONSTRAINT [DF_Order_BOA_KeyWord_Code] DEFAULT ('') NULL,
-    [AddName]       VARCHAR (10)  CONSTRAINT [DF_Order_BOA_KeyWord_AddName] DEFAULT ('') NULL,
+    [Prefix]        NVARCHAR (60) CONSTRAINT [DF_Order_BOA_KeyWord_Prefix] DEFAULT ('') NOT NULL,
+    [KeyWordID]     VARCHAR (30)  CONSTRAINT [DF_Order_BOA_KeyWord_KeyWordID] DEFAULT ('') NOT NULL,
+    [Postfix]       NVARCHAR (60) CONSTRAINT [DF_Order_BOA_KeyWord_Postfix] DEFAULT ('') NOT NULL,
+    [Code]          VARCHAR (3)   CONSTRAINT [DF_Order_BOA_KeyWord_Code] DEFAULT ('') NOT NULL,
+    [AddName]       VARCHAR (10)  CONSTRAINT [DF_Order_BOA_KeyWord_AddName] DEFAULT ('') NOT NULL,
     [AddDate]       DATETIME      NULL,
-    [EditName]      VARCHAR (10)  CONSTRAINT [DF_Order_BOA_KeyWord_EditName] DEFAULT ('') NULL,
+    [EditName]      VARCHAR (10)  CONSTRAINT [DF_Order_BOA_KeyWord_EditName] DEFAULT ('') NOT NULL,
     [EditDate]      DATETIME      NULL,
-    [Relation]      NVARCHAR (10) NULL,
+    [Relation]      NVARCHAR (10) CONSTRAINT [DF_Order_BOA_KeyWord_Relation] DEFAULT ('') NOT NULL,
     CONSTRAINT [PK_Order_BOA_KeyWord] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
+
+
 
 
 

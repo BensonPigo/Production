@@ -1,11 +1,13 @@
 ﻿CREATE TABLE [dbo].[Style_BOA_KeyWord] (
-    [StyleUkey]     BIGINT        CONSTRAINT [DF_Style_BOA_KeyWord_StyleUkey] DEFAULT ((0)) NULL,
+    [StyleUkey]     BIGINT        CONSTRAINT [DF_Style_BOA_KeyWord_StyleUkey] DEFAULT ((0)) NOT NULL,
     [Style_BOAUkey] BIGINT        CONSTRAINT [DF_Style_BOA_KeyWord_Style_BOAUkey] DEFAULT ((0)) NOT NULL,
     [KeyWordID]     VARCHAR (30)  CONSTRAINT [DF_Style_BOA_KeyWord_KeyWordID] DEFAULT ('') NOT NULL,
     [Ukey]          BIGINT        CONSTRAINT [DF_Style_BOA_KeyWord_Ukey] DEFAULT ((0)) NOT NULL,
     [Repation]      NVARCHAR (10) CONSTRAINT [DF_Style_BOA_KeyWord_Repation] DEFAULT ('') NOT NULL,
     CONSTRAINT [PK_Style_BOA_KeyWord_1] PRIMARY KEY CLUSTERED ([Style_BOAUkey] ASC, [KeyWordID] ASC)
 );
+
+
 
 
 

@@ -2,16 +2,18 @@
     [Ukey]        BIGINT          CONSTRAINT [DF_Style_Artwork_Quot_Ukey] DEFAULT ((0)) NOT NULL,
     [LocalSuppId] VARCHAR (6)     CONSTRAINT [DF_Style_Artwork_Quot_LocalSuppId] DEFAULT ('') NOT NULL,
     [CurrencyId]  VARCHAR (3)     CONSTRAINT [DF_Style_Artwork_Quot_CurrencyId] DEFAULT ('') NOT NULL,
-    [Price]       NUMERIC (12, 4) CONSTRAINT [DF_Style_Artwork_Quot_Price] DEFAULT ((0)) NULL,
+    [Price]       DECIMAL (12, 4) CONSTRAINT [DF_Style_Artwork_Quot_Price] DEFAULT ((0)) NOT NULL,
     [Oven]        DATE            NULL,
     [Wash]        DATE            NULL,
     [Mockup]      DATE            NULL,
-    [PriceApv]    VARCHAR (1)     CONSTRAINT [DF_Style_Artwork_Quot_PriceApv] DEFAULT ('') NULL,
-    [StyleUkey]   BIGINT          NULL,
-    [SizeCode] VARCHAR(8) NOT NULL CONSTRAINT [DF_Style_Artwork_Quot_SizeCode] DEFAULT (''), 
-    [Remark]    nvarchar(200)   CONSTRAINT [DF_Style_Artwork_Quot_Remark] DEFAULT(('')) NOT NULL,
+    [PriceApv]    VARCHAR (1)     CONSTRAINT [DF_Style_Artwork_Quot_PriceApv] DEFAULT ('') NOT NULL,
+    [StyleUkey]   BIGINT          CONSTRAINT [DF_Style_Artwork_Quot_StyleUkey] DEFAULT ((0)) NOT NULL,
+    [SizeCode]    VARCHAR (8)     CONSTRAINT [DF_Style_Artwork_Quot_SizeCode] DEFAULT ('') NOT NULL,
+    [Remark]      NVARCHAR (200)  CONSTRAINT [DF_Style_Artwork_Quot_Remark] DEFAULT ('') NOT NULL,
     CONSTRAINT [PK_Style_Artwork_Quot] PRIMARY KEY CLUSTERED ([Ukey] ASC, [LocalSuppId] ASC, [SizeCode] ASC)
 );
+
+
 
 
 

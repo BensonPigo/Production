@@ -1,19 +1,21 @@
 ﻿CREATE TABLE [dbo].[Style_Article] (
     [StyleUkey]         BIGINT         CONSTRAINT [DF_Style_Article_StyleUkey] DEFAULT ((0)) NOT NULL,
-    [Seq]               SMALLINT       CONSTRAINT [DF_Style_Article_Seq] DEFAULT ((0)) NULL,
+    [Seq]               SMALLINT       CONSTRAINT [DF_Style_Article_Seq] DEFAULT ((0)) NOT NULL,
     [Article]           VARCHAR (8)    CONSTRAINT [DF_Style_Article_Article] DEFAULT ('') NOT NULL,
-    [TissuePaper]       BIT            CONSTRAINT [DF_Style_Article_TissuePaper] DEFAULT ((0)) NULL,
-    [ArticleName]       NVARCHAR (100) CONSTRAINT [DF_Style_Article_ArticleName] DEFAULT ('') NULL,
-    [Contents]          NVARCHAR (MAX) CONSTRAINT [DF_Style_Article_Content] DEFAULT ('') NULL,
-    [GarmentLT]         NUMERIC (3)    DEFAULT ((0)) NULL,
+    [TissuePaper]       BIT            CONSTRAINT [DF_Style_Article_TissuePaper] DEFAULT ((0)) NOT NULL,
+    [ArticleName]       NVARCHAR (100) CONSTRAINT [DF_Style_Article_ArticleName] DEFAULT ('') NOT NULL,
+    [Contents]          NVARCHAR (MAX) CONSTRAINT [DF_Style_Article_Contents] DEFAULT ('') NOT NULL,
+    [GarmentLT]         DECIMAL (3)    CONSTRAINT [DF_Style_Article_GarmentLT] DEFAULT ((0)) NOT NULL,
     [SourceFile]        NVARCHAR (266) DEFAULT ('') NOT NULL,
     [Description]       NVARCHAR (60)  DEFAULT ('') NOT NULL,
     [FDUploadDate]      DATETIME       NULL,
     [BuyReadyDate]      DATE           NULL,
-    [CertificateNumber] VARCHAR (100)   CONSTRAINT [DF_Style_Article_CertificateNumber] DEFAULT ('') NOT NULL,
-    [SecurityCode]      VARCHAR (100)   CONSTRAINT [DF_Style_Article_SecurityCode] DEFAULT ('') NOT NULL,
+    [CertificateNumber] VARCHAR (100)  CONSTRAINT [DF_Style_Article_CertificateNumber] DEFAULT ('') NOT NULL,
+    [SecurityCode]      VARCHAR (100)  CONSTRAINT [DF_Style_Article_SecurityCode] DEFAULT ('') NOT NULL,
     CONSTRAINT [PK_Style_Article] PRIMARY KEY CLUSTERED ([StyleUkey] ASC, [Article] ASC)
 );
+
+
 
 
 

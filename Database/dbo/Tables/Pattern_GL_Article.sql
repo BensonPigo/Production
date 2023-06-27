@@ -5,15 +5,17 @@
     [PatternUKEY]  BIGINT         CONSTRAINT [DF_Pattern_GL_Article_PatternUKEY] DEFAULT ((0)) NOT NULL,
     [ArticleGroup] VARCHAR (6)    CONSTRAINT [DF_Pattern_GL_Article_ArticleGroup] DEFAULT ('') NOT NULL,
     [Article]      NVARCHAR (100) CONSTRAINT [DF_Pattern_GL_Article_Article] DEFAULT ('') NOT NULL,
-    [SizeRange]    NVARCHAR (MAX) CONSTRAINT [DF_Pattern_GL_Article_SizeRange] DEFAULT ('') NULL,
-    [Remark]       VARCHAR (20)   CONSTRAINT [DF_Pattern_GL_Article_Remark] DEFAULT ('') NULL,
-    [AddName]      VARCHAR (10)   CONSTRAINT [DF_Pattern_GL_Article_AddName] DEFAULT ('') NULL,
+    [SizeRange]    NVARCHAR (MAX) CONSTRAINT [DF_Pattern_GL_Article_SizeRange] DEFAULT ('') NOT NULL,
+    [Remark]       VARCHAR (20)   CONSTRAINT [DF_Pattern_GL_Article_Remark] DEFAULT ('') NOT NULL,
+    [AddName]      VARCHAR (10)   CONSTRAINT [DF_Pattern_GL_Article_AddName] DEFAULT ('') NOT NULL,
     [AddDate]      DATETIME       NULL,
-    [EditName]     VARCHAR (10)   CONSTRAINT [DF_Pattern_GL_Article_EditName] DEFAULT ('') NULL,
+    [EditName]     VARCHAR (10)   CONSTRAINT [DF_Pattern_GL_Article_EditName] DEFAULT ('') NOT NULL,
     [EditDate]     DATETIME       NULL,
-    [App]          VARCHAR (2)    CONSTRAINT [DF_Pattern_GL_Article_App] DEFAULT ('') NULL,
+    [App]          VARCHAR (2)    CONSTRAINT [DF_Pattern_GL_Article_App] DEFAULT ('') NOT NULL,
     CONSTRAINT [PK_Pattern_GL_Article] PRIMARY KEY CLUSTERED ([ID] ASC, [Seq] ASC, [Version] ASC, [Article] ASC, [ArticleGroup] ASC)
 );
+
+
 
 
 
@@ -80,8 +82,7 @@ EXEC sp_addextendedproperty @name = N'MS_Description',
     @level2type = N'COLUMN',
     @level2name = N'Seq'
 GO
-CREATE NONCLUSTERED INDEX [article]
-    ON [dbo].[Pattern_GL_Article]([Article] ASC);
+
 
 
 GO

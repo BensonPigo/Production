@@ -2,7 +2,7 @@
     [POShippingList_Ukey] BIGINT          NOT NULL,
     [QRCode]              VARCHAR (500)   NOT NULL,
     [Line]                VARCHAR (2)     NOT NULL,
-    [RefNo]               VARCHAR (100)   NULL,
+    [RefNo]               VARCHAR (100)   CONSTRAINT [DF_POShippingList_Line_RefNo] DEFAULT ('') NOT NULL,
     [Description]         NVARCHAR (MAX)  NOT NULL,
     [MaterialColor]       VARCHAR (MAX)   NOT NULL,
     [Weight]              VARCHAR (20)    NOT NULL,
@@ -36,6 +36,8 @@
     [AddDate]             DATETIME        NULL,
     CONSTRAINT [PK_POShippingList_Line] PRIMARY KEY CLUSTERED ([POShippingList_Ukey] ASC, [QRCode] ASC, [Line] ASC)
 );
+
+
 
 
 

@@ -1,17 +1,19 @@
 ﻿CREATE TABLE [dbo].[Currency] (
     [ID]       VARCHAR (3)    CONSTRAINT [DF_Currency_ID] DEFAULT ('') NOT NULL,
     [StdRate]  NUMERIC (9, 4) CONSTRAINT [DF_Currency_StdRate] DEFAULT ((0)) NOT NULL,
-    [NameCH]   NVARCHAR (8)   CONSTRAINT [DF_Currency_NameCH] DEFAULT ('') NULL,
-    [NameEN]   NVARCHAR (30)  CONSTRAINT [DF_Currency_NameEN] DEFAULT ('') NULL,
-    [Junk]     BIT            CONSTRAINT [DF_Currency_Junk] DEFAULT ((0)) NULL,
-    [Exact]    TINYINT        CONSTRAINT [DF_Currency_Exact] DEFAULT ((0)) NULL,
-    [Symbol]   VARCHAR (3)    CONSTRAINT [DF_Currency_Symbol] DEFAULT ('') NULL,
-    [AddName]  VARCHAR (10)   CONSTRAINT [DF_Currency_AddName] DEFAULT ('') NULL,
+    [NameCH]   NVARCHAR (8)   CONSTRAINT [DF_Currency_NameCH] DEFAULT ('') NOT NULL,
+    [NameEN]   NVARCHAR (30)  CONSTRAINT [DF_Currency_NameEN] DEFAULT ('') NOT NULL,
+    [Junk]     BIT            CONSTRAINT [DF_Currency_Junk] DEFAULT ((0)) NOT NULL,
+    [Exact]    TINYINT        CONSTRAINT [DF_Currency_Exact] DEFAULT ((0)) NOT NULL,
+    [Symbol]   VARCHAR (3)    CONSTRAINT [DF_Currency_Symbol] DEFAULT ('') NOT NULL,
+    [AddName]  VARCHAR (10)   CONSTRAINT [DF_Currency_AddName] DEFAULT ('') NOT NULL,
     [AddDate]  DATETIME       NULL,
-    [EditName] VARCHAR (10)   CONSTRAINT [DF_Currency_EditName] DEFAULT ('') NULL,
+    [EditName] VARCHAR (10)   CONSTRAINT [DF_Currency_EditName] DEFAULT ('') NOT NULL,
     [EditDate] DATETIME       NULL,
     CONSTRAINT [PK_Currency] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
+
+
 
 
 GO

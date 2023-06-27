@@ -1,14 +1,16 @@
 ﻿CREATE TABLE [dbo].[Style_MarkerList_PatternPanel] (
     [StyleUkey]            BIGINT       CONSTRAINT [DF_Style_MarkerList_PatternPanel_StyleUkey] DEFAULT ((0)) NOT NULL,
     [Style_MarkerListUkey] BIGINT       CONSTRAINT [DF_Style_MarkerList_PatternPanel_Style_MarkerListUkey] DEFAULT ((0)) NOT NULL,
-    [PatternPanel]          VARCHAR (2)  CONSTRAINT [DF_Style_MarkerList_PatternPanel_PatternPanel] DEFAULT ('') NOT NULL,
-    [FabricPanelCode]           VARCHAR (2)  CONSTRAINT [DF_Style_MarkerList_PatternPanel_FabricPanelCode] DEFAULT ('') NOT NULL,
-    [AddName]              VARCHAR (10) CONSTRAINT [DF_Style_MarkerList_PatternPanel_AddName] DEFAULT ('') NULL,
+    [PatternPanel]         VARCHAR (2)  CONSTRAINT [DF_Style_MarkerList_PatternPanel_PatternPanel] DEFAULT ('') NOT NULL,
+    [FabricPanelCode]      VARCHAR (2)  CONSTRAINT [DF_Style_MarkerList_PatternPanel_FabricPanelCode] DEFAULT ('') NOT NULL,
+    [AddName]              VARCHAR (10) CONSTRAINT [DF_Style_MarkerList_PatternPanel_AddName] DEFAULT ('') NOT NULL,
     [AddDate]              DATETIME     NULL,
-    [EditName]             VARCHAR (10) CONSTRAINT [DF_Style_MarkerList_PatternPanel_EditName] DEFAULT ('') NULL,
+    [EditName]             VARCHAR (10) CONSTRAINT [DF_Style_MarkerList_PatternPanel_EditName] DEFAULT ('') NOT NULL,
     [EditDate]             DATETIME     NULL,
     CONSTRAINT [PK_Style_MarkerList_PatternPanel] PRIMARY KEY CLUSTERED ([Style_MarkerListUkey] ASC, [FabricPanelCode] ASC)
 );
+
+
 
 
 GO

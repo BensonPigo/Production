@@ -1,14 +1,16 @@
 ﻿CREATE TABLE [dbo].[Mockup] (
     [ID]          VARCHAR (15)   CONSTRAINT [DF_Mockup_ID] DEFAULT ('') NOT NULL,
-    [Description] NVARCHAR (50)  CONSTRAINT [DF_Mockup_Description] DEFAULT ('') NULL,
-    [SMV]         NUMERIC (7, 4) CONSTRAINT [DF_Mockup_SMV] DEFAULT ((0)) NULL,
-    [CPU]         NUMERIC (5, 3) CONSTRAINT [DF_Mockup_CPU] DEFAULT ((0)) NULL,
-    [AddName]     VARCHAR (10)   CONSTRAINT [DF_Mockup_AddName] DEFAULT ('') NULL,
+    [Description] NVARCHAR (50)  CONSTRAINT [DF_Mockup_Description] DEFAULT ('') NOT NULL,
+    [SMV]         DECIMAL (7, 4) CONSTRAINT [DF_Mockup_SMV] DEFAULT ((0)) NOT NULL,
+    [CPU]         DECIMAL (5, 3) CONSTRAINT [DF_Mockup_CPU] DEFAULT ((0)) NOT NULL,
+    [AddName]     VARCHAR (10)   CONSTRAINT [DF_Mockup_AddName] DEFAULT ('') NOT NULL,
     [AddDate]     DATETIME       NULL,
-    [EditName]    VARCHAR (10)   CONSTRAINT [DF_Mockup_EditName] DEFAULT ('') NULL,
+    [EditName]    VARCHAR (10)   CONSTRAINT [DF_Mockup_EditName] DEFAULT ('') NOT NULL,
     [EditDate]    DATETIME       NULL,
     CONSTRAINT [PK_Mockup] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
+
+
 
 
 GO

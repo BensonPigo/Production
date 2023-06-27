@@ -5,33 +5,35 @@
     [MDivisionID]      VARCHAR (8)     CONSTRAINT [DF_LocalDebit_MDivisionID] DEFAULT ('') NOT NULL,
     [FactoryID]        VARCHAR (8)     CONSTRAINT [DF_LocalDebit_FactoryID] DEFAULT ('') NOT NULL,
     [LocalSuppID]      VARCHAR (8)     CONSTRAINT [DF_LocalDebit_LocalSuppID] DEFAULT ('') NOT NULL,
-    [Description]      NVARCHAR (MAX)  CONSTRAINT [DF_LocalDebit_Description] DEFAULT ('') NULL,
-    [Exchange]         NUMERIC (8, 3)  CONSTRAINT [DF_LocalDebit_Exchange] DEFAULT ((0)) NULL,
-    [Currencyid]       VARCHAR (3)     CONSTRAINT [DF_LocalDebit_Currencyid] DEFAULT ('') NULL,
-    [Amount]           NUMERIC (13, 2) CONSTRAINT [DF_LocalDebit_Amount] DEFAULT ((0)) NULL,
-    [Tax]              NUMERIC (11, 2) CONSTRAINT [DF_LocalDebit_Tax] DEFAULT ((0)) NULL,
-    [TaxRate]          NUMERIC (5, 2)  CONSTRAINT [DF_LocalDebit_TaxRate] DEFAULT ((0)) NULL,
+    [Description]      NVARCHAR (MAX)  CONSTRAINT [DF_LocalDebit_Description] DEFAULT ('') NOT NULL,
+    [Exchange]         DECIMAL (8, 3)  CONSTRAINT [DF_LocalDebit_Exchange] DEFAULT ((0)) NOT NULL,
+    [Currencyid]       VARCHAR (3)     CONSTRAINT [DF_LocalDebit_Currencyid] DEFAULT ('') NOT NULL,
+    [Amount]           DECIMAL (13, 2) CONSTRAINT [DF_LocalDebit_Amount] DEFAULT ((0)) NOT NULL,
+    [Tax]              DECIMAL (11, 2) CONSTRAINT [DF_LocalDebit_Tax] DEFAULT ((0)) NOT NULL,
+    [TaxRate]          DECIMAL (5, 2)  CONSTRAINT [DF_LocalDebit_TaxRate] DEFAULT ((0)) NOT NULL,
     [AmtReviseDate]    DATETIME        NULL,
-    [AmtReviseName]    VARCHAR (10)    CONSTRAINT [DF_LocalDebit_AmtReviseName] DEFAULT ('') NULL,
+    [AmtReviseName]    VARCHAR (10)    CONSTRAINT [DF_LocalDebit_AmtReviseName] DEFAULT ('') NOT NULL,
     [ReceiveDate]      DATE            NULL,
-    [ReceiveName]      VARCHAR (10)    CONSTRAINT [DF_LocalDebit_ReceiveName] DEFAULT ('') NULL,
+    [ReceiveName]      VARCHAR (10)    CONSTRAINT [DF_LocalDebit_ReceiveName] DEFAULT ('') NOT NULL,
     [CfmDate]          DATE            NULL,
-    [CfmName]          VARCHAR (10)    CONSTRAINT [DF_LocalDebit_CfmName] DEFAULT ('') NULL,
+    [CfmName]          VARCHAR (10)    CONSTRAINT [DF_LocalDebit_CfmName] DEFAULT ('') NOT NULL,
     [PrintDate]        DATETIME        NULL,
-    [Status]           VARCHAR (15)    CONSTRAINT [DF_LocalDebit_Status] DEFAULT ('') NULL,
+    [Status]           VARCHAR (15)    CONSTRAINT [DF_LocalDebit_Status] DEFAULT ('') NOT NULL,
     [StatusEditDate]   DATETIME        NULL,
-    [TaipeiDBC]        BIT             CONSTRAINT [DF_LocalDebit_TaipeiDBC] DEFAULT ((0)) NULL,
-    [TaipeiAMT]        NUMERIC (12, 2) CONSTRAINT [DF_LocalDebit_TaipeiAMT] DEFAULT ((0)) NULL,
-    [TaipeiCurrencyID] VARCHAR (3)     CONSTRAINT [DF_LocalDebit_TaipeiCurrencyID] DEFAULT ('') NULL,
-    [AccountID]        VARCHAR (8)     CONSTRAINT [DF_LocalDebit_AccID] DEFAULT ('') NULL,
+    [TaipeiDBC]        BIT             CONSTRAINT [DF_LocalDebit_TaipeiDBC] DEFAULT ((0)) NOT NULL,
+    [TaipeiAMT]        DECIMAL (12, 2) CONSTRAINT [DF_LocalDebit_TaipeiAMT] DEFAULT ((0)) NOT NULL,
+    [TaipeiCurrencyID] VARCHAR (3)     CONSTRAINT [DF_LocalDebit_TaipeiCurrencyID] DEFAULT ('') NOT NULL,
+    [AccountID]        VARCHAR (8)     CONSTRAINT [DF_LocalDebit_AccountID] DEFAULT ('') NOT NULL,
     [Issuedate]        DATE            NULL,
-    [AddName]          VARCHAR (10)    CONSTRAINT [DF_LocalDebit_AddName] DEFAULT ('') NULL,
+    [AddName]          VARCHAR (10)    CONSTRAINT [DF_LocalDebit_AddName] DEFAULT ('') NOT NULL,
     [AddDate]          DATETIME        NULL,
-    [EditName]         VARCHAR (10)    CONSTRAINT [DF_LocalDebit_EditName] DEFAULT ('') NULL,
+    [EditName]         VARCHAR (10)    CONSTRAINT [DF_LocalDebit_EditName] DEFAULT ('') NOT NULL,
     [EditDate]         DATETIME        NULL,
-    [ResponFTY] VARCHAR(8) NOT NULL DEFAULT (''), 
+    [ResponFTY]        VARCHAR (8)     DEFAULT ('') NOT NULL,
     CONSTRAINT [PK_LocalDebit] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
+
+
 
 
 
@@ -166,21 +168,6 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'組織代�
 
 GO
 
-CREATE TRIGGER UT_LocalDebit_Update ON DBO.LocalDebit 
-	FOR update 
-AS 
-BEGIN
-	DECLARE @ID AS VARCHAR(13);
-	DECLARE @EDITNAME AS VARCHAR(10);
-	DECLARE @UPDATE_AMOUNT AS NUMERIC(12,2);
-	DECLARE @ORI_AMOUNT AS NUMERIC(12,2);
-	select @UPDATE_AMOUNT=AMOUNT,@ID=ID,@EDITNAME = EditName from inserted
-	select @ORI_AMOUNT= AMOUNT from deleted 
-	IF @ORI_AMOUNT != @UPDATE_AMOUNT
-	BEGIN
-	   UPDATE DBO.LocalDebit SET AmtReviseDate=GETDATE(), AmtReviseName = @EDITNAME WHERE ID = @ID;
-	END
-END
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'會計科目', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'LocalDebit', @level2type = N'COLUMN', @level2name = N'AccountID';
 

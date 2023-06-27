@@ -1,23 +1,25 @@
 ﻿CREATE TABLE [dbo].[PayTermAP] (
     [ID]              VARCHAR (5)   CONSTRAINT [DF_PayTermAP_ID] DEFAULT ('') NOT NULL,
-    [Description]     NVARCHAR (40) CONSTRAINT [DF_PayTermAP_Description] DEFAULT ('') NULL,
-    [Term]            VARCHAR (5)   CONSTRAINT [DF_PayTermAP_Term] DEFAULT ('') NULL,
-    [BeforeAfter]     VARCHAR (1)   CONSTRAINT [DF_PayTermAP_BeforeAfter] DEFAULT ('') NULL,
-    [BaseDate]        VARCHAR (1)   CONSTRAINT [DF_PayTermAP_BaseDate] DEFAULT ('') NULL,
-    [AccountDay]      TINYINT       CONSTRAINT [DF_PayTermAP_AccountDay] DEFAULT ((0)) NULL,
-    [CloseAccountDay] VARCHAR (1)   CONSTRAINT [DF_PayTermAP_CloseAccountDay] DEFAULT ('') NULL,
-    [CloseMonth]      TINYINT       CONSTRAINT [DF_PayTermAP_CloseMonth] DEFAULT ((0)) NULL,
-    [CloseDay]        TINYINT       CONSTRAINT [DF_PayTermAP_CloseDay] DEFAULT ((0)) NULL,
-    [DueAccountday]   VARCHAR (1)   CONSTRAINT [DF_PayTermAP_DueAccountday] DEFAULT ('') NULL,
-    [DueMonth]        TINYINT       CONSTRAINT [DF_PayTermAP_DueMonth] DEFAULT ((0)) NULL,
-    [DueDay]          TINYINT       CONSTRAINT [DF_PayTermAP_DueDay] DEFAULT ((0)) NULL,
-    [JUNK]            BIT           CONSTRAINT [DF_PayTermAP_JUNK] DEFAULT ((0)) NULL,
-    [AddName]         VARCHAR (10)  CONSTRAINT [DF_PayTermAP_AddName] DEFAULT ('') NULL,
+    [Description]     NVARCHAR (40) CONSTRAINT [DF_PayTermAP_Description] DEFAULT ('') NOT NULL,
+    [Term]            VARCHAR (5)   CONSTRAINT [DF_PayTermAP_Term] DEFAULT ('') NOT NULL,
+    [BeforeAfter]     VARCHAR (1)   CONSTRAINT [DF_PayTermAP_BeforeAfter] DEFAULT ('') NOT NULL,
+    [BaseDate]        VARCHAR (1)   CONSTRAINT [DF_PayTermAP_BaseDate] DEFAULT ('') NOT NULL,
+    [AccountDay]      TINYINT       CONSTRAINT [DF_PayTermAP_AccountDay] DEFAULT ((0)) NOT NULL,
+    [CloseAccountDay] VARCHAR (1)   CONSTRAINT [DF_PayTermAP_CloseAccountDay] DEFAULT ('') NOT NULL,
+    [CloseMonth]      TINYINT       CONSTRAINT [DF_PayTermAP_CloseMonth] DEFAULT ((0)) NOT NULL,
+    [CloseDay]        TINYINT       CONSTRAINT [DF_PayTermAP_CloseDay] DEFAULT ((0)) NOT NULL,
+    [DueAccountday]   VARCHAR (1)   CONSTRAINT [DF_PayTermAP_DueAccountday] DEFAULT ('') NOT NULL,
+    [DueMonth]        TINYINT       CONSTRAINT [DF_PayTermAP_DueMonth] DEFAULT ((0)) NOT NULL,
+    [DueDay]          TINYINT       CONSTRAINT [DF_PayTermAP_DueDay] DEFAULT ((0)) NOT NULL,
+    [JUNK]            BIT           CONSTRAINT [DF_PayTermAP_JUNK] DEFAULT ((0)) NOT NULL,
+    [AddName]         VARCHAR (10)  CONSTRAINT [DF_PayTermAP_AddName] DEFAULT ('') NOT NULL,
     [AddDate]         DATETIME      NULL,
-    [EditName]        VARCHAR (10)  CONSTRAINT [DF_PayTermAP_EditName] DEFAULT ('') NULL,
+    [EditName]        VARCHAR (10)  CONSTRAINT [DF_PayTermAP_EditName] DEFAULT ('') NOT NULL,
     [EditDate]        DATETIME      NULL,
     CONSTRAINT [PK_PayTermAP] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
+
+
 
 
 GO

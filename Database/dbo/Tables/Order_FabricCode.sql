@@ -3,13 +3,15 @@
     [PatternPanel]    VARCHAR (2)     CONSTRAINT [DF_Order_FabricCode_PatternPanel] DEFAULT ('') NOT NULL,
     [FabricCode]      VARCHAR (3)     CONSTRAINT [DF_Order_FabricCode_FabricCode] DEFAULT ('') NOT NULL,
     [FabricPanelCode] VARCHAR (2)     CONSTRAINT [DF_Order_FabricCode_FabricPanelCode] DEFAULT ('') NOT NULL,
-    [AddName]         VARCHAR (10)    CONSTRAINT [DF_Order_FabricCode_AddName] DEFAULT ('') NULL,
+    [AddName]         VARCHAR (10)    CONSTRAINT [DF_Order_FabricCode_AddName] DEFAULT ('') NOT NULL,
     [AddDate]         DATETIME        NULL,
-    [EditName]        VARCHAR (10)    CONSTRAINT [DF_Order_FabricCode_EditName] DEFAULT ('') NULL,
+    [EditName]        VARCHAR (10)    CONSTRAINT [DF_Order_FabricCode_EditName] DEFAULT ('') NOT NULL,
     [EditDate]        DATETIME        NULL,
-    [ConsPC]          NUMERIC (12, 4) NULL,
+    [ConsPC]          DECIMAL (12, 4) CONSTRAINT [DF_Order_FabricCode_ConsPC] DEFAULT ((0)) NOT NULL,
     CONSTRAINT [PK_Order_FabricCode] PRIMARY KEY CLUSTERED ([Id] ASC, [FabricPanelCode] ASC)
 );
+
+
 
 
 
