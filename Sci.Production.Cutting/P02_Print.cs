@@ -725,19 +725,36 @@ select {byType},estCutDate{byType2} {sqlFabricKindinto} from #tmp2 group by {byT
                 worksheet.Select();
                 worksheet.Name = cutrefdr["Cutref"].ToString();
                 worksheet.Cells[3, 18] = cutrefdr["Cutref"].ToString();
-                worksheet.Cells[9, 13] = ((DateTime)MyUtility.Convert.GetDate(cutrefdr["Estcutdate"])).ToShortDateString();
+                worksheet.Cells[9, 13] = MyUtility.Check.Empty(cutrefdr["Estcutdate"]) == false ? ((DateTime)MyUtility.Convert.GetDate(cutrefdr["Estcutdate"])).ToShortDateString():String.Empty;
                 worksheet.Cells[14, 14] = MyUtility.Convert.GetString(cutrefdr["FabricKind"]);
                 nSheet++;
             }
 
             nSheet = 1;
+
             foreach (DataRow cutrefdr1 in this.CutrefTb.Rows)
             {
-                Bitmap cutRefQRCode = this.NewQRcode(MyUtility.Convert.GetString(cutrefdr1["Cutref"]));
-                Clipboard.SetDataObject(cutRefQRCode, false);
+                Bitmap cutRefQRCode = this.NewQRcode(MyUtility.Convert.GetString(cutrefdr1["Cutref"].ToString()));
                 worksheet = excel.ActiveWorkbook.Worksheets[nSheet];
-                Excel.Range rng = worksheet.get_Range("T2:U3");
-                worksheet.Paste(rng, cutRefQRCode);
+                Excel.Range rng = worksheet.Range["T2:U3"];
+
+                // 將圖片存儲為暫時檔案
+                string tempFilePath = System.IO.Path.GetTempFileName();
+                cutRefQRCode.Save(tempFilePath);
+
+                // 將圖片插入到工作表中的指定位置
+                Excel.Shape pictureShape = worksheet.Shapes.AddPicture(
+                    tempFilePath,
+                    Microsoft.Office.Core.MsoTriState.msoFalse,
+                    Microsoft.Office.Core.MsoTriState.msoCTrue,
+                    (float)rng.Left,
+                    (float)rng.Top,
+                    (float)rng.Height,
+                    (float)rng.Height);
+
+                // 刪除暫時檔案
+                System.IO.File.Delete(tempFilePath);
+
                 nSheet++;
             }
 
