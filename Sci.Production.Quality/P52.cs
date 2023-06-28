@@ -329,9 +329,13 @@ namespace Sci.Production.Quality
                     return;
                 }
 
+                if (MyUtility.Check.Empty(e.FormattedValue))
+                {
+                    return;
+                }
+
                 DataRow r = grid.GetDataRow<DataRow>(e.RowIndex);
                 var newValue = e.FormattedValue;
-                var oldValue = MyUtility.Convert.GetDate(r["Inspection_Report_FtyReceivedDate"]);
                 DateTime? reportDate = MyUtility.Convert.GetDate(newValue);
                 if (this.CheckDate(reportDate))
                 {
@@ -398,9 +402,13 @@ namespace Sci.Production.Quality
                     return;
                 }
 
+                if (MyUtility.Check.Empty(e.FormattedValue))
+                {
+                    return;
+                }
+
                 DataRow r = grid.GetDataRow<DataRow>(e.RowIndex);
                 var newValue = e.FormattedValue;
-                var oldValue = MyUtility.Convert.GetDate(r["TestReport_FtyReceivedDate"]);
                 DateTime? reportDate = MyUtility.Convert.GetDate(newValue);
                 if (this.CheckDate(reportDate))
                 {
@@ -467,9 +475,13 @@ namespace Sci.Production.Quality
                     return;
                 }
 
+                if (MyUtility.Check.Empty(e.FormattedValue))
+                {
+                    return;
+                }
+
                 DataRow r = grid.GetDataRow<DataRow>(e.RowIndex);
                 var newValue = e.FormattedValue;
-                var oldValue = MyUtility.Convert.GetDate(r["ContinuityCard_FtyReceivedDate"]);
                 DateTime? reportDate = MyUtility.Convert.GetDate(newValue);
                 if (this.CheckDate(reportDate))
                 {
@@ -536,9 +548,13 @@ namespace Sci.Production.Quality
                     return;
                 }
 
+                if (MyUtility.Check.Empty(e.FormattedValue))
+                {
+                    return;
+                }
+
                 DataRow r = grid.GetDataRow<DataRow>(e.RowIndex);
                 var newValue = e.FormattedValue;
-                var oldValue = MyUtility.Convert.GetDate(r["1stBulkDyelot_FtyReceivedDate"]);
                 DateTime? reportDate = MyUtility.Convert.GetDate(newValue);
                 if (this.CheckDate(reportDate))
                 {
@@ -838,7 +854,8 @@ namespace Sci.Production.Quality
                 MyUtility.Check.Empty(this.txtColor.Text) &&
                 MyUtility.Check.Empty(this.txtfactory.Text) &&
                 MyUtility.Check.Empty(this.dateETA.Value1) &&
-                MyUtility.Check.Empty(this.dateATA1.Value1))
+                MyUtility.Check.Empty(this.dateATA1.Value1) &&
+                MyUtility.Check.Empty(this.txtBrandRefno.Text))
             {
                 MyUtility.Msg.WarningBox("Please input any one filter before query!");
                 this.txtSP.Select();
@@ -890,6 +907,11 @@ namespace Sci.Production.Quality
             if (!MyUtility.Check.Empty(this.txtfactory.Text))
             {
                 where += $@" and o.FactoryID = '{this.txtfactory.Text}' ";
+            }
+
+            if (!MyUtility.Check.Empty(this.txtBrandRefno.Text))
+            {
+                where += $@" and f.BrandRefno = '{this.txtBrandRefno.Text}' ";
             }
 
             if (!MyUtility.Check.Empty(this.dateETA.Value1) || !MyUtility.Check.Empty(this.dateETA.Value2))
@@ -1286,7 +1308,7 @@ inner join #tmp s on s.Ukey = t.Ukey
             string sqlupdate = $@"
 update t
 set t.FTYReceivedReport = s.ContinuityCard_FtyReceivedDate
-,t.TestReportCheckClima = s.TestReportCheckClima
+,t.TestReportCheckClima = isnull(s.TestReportCheckClima,0)
 ,t.AWBno = s.ContinuityCard_AWB
 ,t.T2InspYds = s.T2Inspected_Yards
 ,t.T2DefectPoint = s.T2Defect_Points
@@ -1303,7 +1325,7 @@ and t.BrandID = s.BrandID
 
 update t
 set t.FTYReceivedReport = s.Inspection_Report_FtyReceivedDate
-,t.TestReportCheckClima = s.TestReportCheckClima
+,t.TestReportCheckClima = isnull(s.TestReportCheckClima,0)
 ,t.T2InspYds = s.T2Inspected_Yards
 ,t.T2DefectPoint = s.T2Defect_Points
 ,t.T2Grade = s.Grade
@@ -1320,7 +1342,7 @@ and t.BrandID = s.BrandID
 
 update t
 set t.FTYReceivedReport = s.TestReport_FtyReceivedDate
-,t.TestReportCheckClima = s.TestReportCheckClima
+,t.TestReportCheckClima = isnull(s.TestReportCheckClima,0)
 ,t.T2InspYds = s.T2Inspected_Yards
 ,t.T2DefectPoint = s.T2Defect_Points
 ,t.T2Grade = s.Grade
@@ -1673,51 +1695,29 @@ and exists(
 select t.*
 	,sr.documentName
 	,sr.ReportDate
-    ,sr3.T2InspYds
-    ,sr3.T2DefectPoint
-    ,sr3.T2Grade
+    ,sr.T2InspYds
+    ,sr.T2DefectPoint
+    ,sr.T2Grade
 	,sr2.AWBno
+    ,sr2.TestReportCheckClima
 into #tmpReportDate
 from #tmpBasc t
 left join NewSentReport sr with (nolock) on sr.exportID = t.ID and sr.poid = t.PoID and sr.Seq1 =t.Seq1 and sr.Seq2 = t.Seq2
 outer apply (
-	select sr2.AWBno
+	select sr2.AWBno,sr2.TestReportCheckClima
 	from NewSentReport sr2 with (nolock) 
 	where sr2.exportID = t.ID and sr2.poid = t.PoID and sr2.Seq1 =t.Seq1 and sr2.Seq2 = t.Seq2
 	and sr2.documentName = 'Continuity card'
 )sr2
-outer apply (
-    select sr3.T2InspYds,sr3.T2DefectPoint,sr3.T2Grade
-    from NewSentReport sr3 with (nolock) 
-    where sr3.exportID = t.ID and sr3.poid = t.PoID and sr3.Seq1 = t.Seq1 and sr3.Seq2 = t.Seq2
-    and sr3.T2InspYds is not null 
-    group by sr3.T2InspYds,sr3.T2DefectPoint,sr3.T2Grade
-)sr3
+
 
 
 select t.*
 	,sr.documentName
     ,sr.FTYReceivedReport
-    ,sr3.T2InspYds
-    ,sr3.T2DefectPoint
-    ,sr3.T2Grade
-	,sr2.AWBno
 into #tmpFTYReceivedReport
 from #tmpBasc t
 left join NewSentReport sr with (nolock) on sr.exportID = t.ID and sr.poid = t.PoID and sr.Seq1 =t.Seq1 and sr.Seq2 = t.Seq2
-outer apply (
-	select sr2.AWBno
-	from NewSentReport sr2 with (nolock) 
-	where sr2.exportID = t.ID and sr2.poid = t.PoID and sr2.Seq1 =t.Seq1 and sr2.Seq2 = t.Seq2
-	and sr2.documentName = 'Continuity card'
-)sr2
-outer apply (
-    select sr3.T2InspYds,sr3.T2DefectPoint,sr3.T2Grade
-    from NewSentReport sr3 with (nolock) 
-    where sr3.exportID = t.ID and sr3.poid = t.PoID and sr3.Seq1 = t.Seq1 and sr3.Seq2 = t.Seq2
-    and sr3.T2InspYds is not null 
-    group by sr3.T2InspYds,sr3.T2DefectPoint,sr3.T2Grade
-)sr3
 
 
 select 
@@ -1752,7 +1752,10 @@ select
 from #tmpBasc a
 inner join (
 	select *
-	from #tmpReportDate t
+	from(
+		select ID,PoID,Seq1,Seq2,ReportDate ,documentname,AWBno,T2InspYds,T2DefectPoint,T2Grade,T1InspectedYards,T1DefectPoints,TestReportCheckClima
+		from #tmpReportDate
+	) s	
 	pivot(
 		max(ReportDate)
 		for documentname in([Continuity card],[Inspection Report],[Test report])
@@ -1760,7 +1763,10 @@ inner join (
 )b on a.ID = b.ID and a.PoID = b.PoID and a.Seq1=b.Seq1 and a.Seq2=b.Seq2
 inner join (
 	select *
-	from #tmpFTYReceivedReport t
+	from(
+		select ID,PoID,Seq1,Seq2,FTYReceivedReport ,documentname
+		from #tmpFTYReceivedReport 
+	)s	
 	pivot(
 		max(FTYReceivedReport)
 		for documentname in([Continuity card],[Inspection Report],[Test report])
@@ -1967,52 +1973,28 @@ and o.Category in('B','M')
 select t.*
 	,sr.documentName
 	,sr.ReportDate
-    ,sr3.T2InspYds
-    ,sr3.T2DefectPoint
-    ,sr3.T2Grade
+    ,sr.T2InspYds
+    ,sr.T2DefectPoint
+    ,sr.T2Grade
 	,sr2.AWBno
-	,sr.TestReportCheckClima
+	,sr2.TestReportCheckClima
 into #tmpReportDate
 from #tmpBasc t
 left join NewSentReport sr with (nolock) on sr.exportID = t.ID and sr.poid = t.PoID and sr.Seq1 =t.Seq1 and sr.Seq2 = t.Seq2
 outer apply (
-	select sr2.AWBno
+	select sr2.AWBno,sr2.TestReportCheckClima
 	from NewSentReport sr2 with (nolock) 
 	where sr2.exportID = t.ID and sr2.poid = t.PoID and sr2.Seq1 =t.Seq1 and sr2.Seq2 = t.Seq2
 	and sr2.documentName = 'Continuity card'
 )sr2
-outer apply (
-    select sr3.T2InspYds,sr3.T2DefectPoint,sr3.T2Grade
-    from NewSentReport sr3 with (nolock) 
-    where sr3.exportID = t.ID and sr3.poid = t.PoID and sr3.Seq1 = t.Seq1 and sr3.Seq2 = t.Seq2
-    and sr3.T2InspYds is not null 
-    group by sr3.T2InspYds,sr3.T2DefectPoint,sr3.T2Grade
-)sr3
 
 
 select t.*
 	,sr.documentName
     ,sr.FTYReceivedReport
-    ,sr3.T2InspYds
-    ,sr3.T2DefectPoint
-    ,sr3.T2Grade
-	,sr2.AWBno
 into #tmpFTYReceivedReport
 from #tmpBasc t
 left join NewSentReport sr with (nolock) on sr.exportID = t.ID and sr.poid = t.PoID and sr.Seq1 =t.Seq1 and sr.Seq2 = t.Seq2
-outer apply (
-	select sr2.AWBno
-	from NewSentReport sr2 with (nolock) 
-	where sr2.exportID = t.ID and sr2.poid = t.PoID and sr2.Seq1 =t.Seq1 and sr2.Seq2 = t.Seq2
-	and sr2.documentName = 'Continuity card'
-)sr2
-outer apply (
-    select sr3.T2InspYds,sr3.T2DefectPoint,sr3.T2Grade
-    from NewSentReport sr3 with (nolock) 
-    where sr3.exportID = t.ID and sr3.poid = t.PoID and sr3.Seq1 = t.Seq1 and sr3.Seq2 = t.Seq2
-    and sr3.T2InspYds is not null 
-    group by sr3.T2InspYds,sr3.T2DefectPoint,sr3.T2Grade
-)sr3
 
 -- 將上面2 個temp table 用樞紐轉成一筆資料
 select distinct
