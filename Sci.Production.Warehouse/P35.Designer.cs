@@ -204,7 +204,6 @@
             // dateIssueDate
             // 
             this.dateIssueDate.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "IssueDate", true));
-            this.dateIssueDate.IsSupportEditMode = false;
             this.dateIssueDate.Location = new System.Drawing.Point(352, 13);
             this.dateIssueDate.Name = "dateIssueDate";
             this.dateIssueDate.ReadOnly = true;
