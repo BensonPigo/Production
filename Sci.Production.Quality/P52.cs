@@ -329,9 +329,13 @@ namespace Sci.Production.Quality
                     return;
                 }
 
+                if (MyUtility.Check.Empty(e.FormattedValue))
+                {
+                    return;
+                }
+
                 DataRow r = grid.GetDataRow<DataRow>(e.RowIndex);
                 var newValue = e.FormattedValue;
-                var oldValue = MyUtility.Convert.GetDate(r["Inspection_Report_FtyReceivedDate"]);
                 DateTime? reportDate = MyUtility.Convert.GetDate(newValue);
                 if (this.CheckDate(reportDate))
                 {
@@ -398,9 +402,13 @@ namespace Sci.Production.Quality
                     return;
                 }
 
+                if (MyUtility.Check.Empty(e.FormattedValue))
+                {
+                    return;
+                }
+
                 DataRow r = grid.GetDataRow<DataRow>(e.RowIndex);
                 var newValue = e.FormattedValue;
-                var oldValue = MyUtility.Convert.GetDate(r["TestReport_FtyReceivedDate"]);
                 DateTime? reportDate = MyUtility.Convert.GetDate(newValue);
                 if (this.CheckDate(reportDate))
                 {
@@ -467,9 +475,13 @@ namespace Sci.Production.Quality
                     return;
                 }
 
+                if (MyUtility.Check.Empty(e.FormattedValue))
+                {
+                    return;
+                }
+
                 DataRow r = grid.GetDataRow<DataRow>(e.RowIndex);
                 var newValue = e.FormattedValue;
-                var oldValue = MyUtility.Convert.GetDate(r["ContinuityCard_FtyReceivedDate"]);
                 DateTime? reportDate = MyUtility.Convert.GetDate(newValue);
                 if (this.CheckDate(reportDate))
                 {
@@ -536,9 +548,13 @@ namespace Sci.Production.Quality
                     return;
                 }
 
+                if (MyUtility.Check.Empty(e.FormattedValue))
+                {
+                    return;
+                }
+
                 DataRow r = grid.GetDataRow<DataRow>(e.RowIndex);
                 var newValue = e.FormattedValue;
-                var oldValue = MyUtility.Convert.GetDate(r["1stBulkDyelot_FtyReceivedDate"]);
                 DateTime? reportDate = MyUtility.Convert.GetDate(newValue);
                 if (this.CheckDate(reportDate))
                 {
@@ -838,7 +854,8 @@ namespace Sci.Production.Quality
                 MyUtility.Check.Empty(this.txtColor.Text) &&
                 MyUtility.Check.Empty(this.txtfactory.Text) &&
                 MyUtility.Check.Empty(this.dateETA.Value1) &&
-                MyUtility.Check.Empty(this.dateATA1.Value1))
+                MyUtility.Check.Empty(this.dateATA1.Value1) &&
+                MyUtility.Check.Empty(this.txtBrandRefno.Text))
             {
                 MyUtility.Msg.WarningBox("Please input any one filter before query!");
                 this.txtSP.Select();
@@ -1291,7 +1308,7 @@ inner join #tmp s on s.Ukey = t.Ukey
             string sqlupdate = $@"
 update t
 set t.FTYReceivedReport = s.ContinuityCard_FtyReceivedDate
-,t.TestReportCheckClima = s.TestReportCheckClima
+,t.TestReportCheckClima = isnull(s.TestReportCheckClima,0)
 ,t.AWBno = s.ContinuityCard_AWB
 ,t.T2InspYds = s.T2Inspected_Yards
 ,t.T2DefectPoint = s.T2Defect_Points
@@ -1308,7 +1325,7 @@ and t.BrandID = s.BrandID
 
 update t
 set t.FTYReceivedReport = s.Inspection_Report_FtyReceivedDate
-,t.TestReportCheckClima = s.TestReportCheckClima
+,t.TestReportCheckClima = isnull(s.TestReportCheckClima,0)
 ,t.T2InspYds = s.T2Inspected_Yards
 ,t.T2DefectPoint = s.T2Defect_Points
 ,t.T2Grade = s.Grade
@@ -1325,7 +1342,7 @@ and t.BrandID = s.BrandID
 
 update t
 set t.FTYReceivedReport = s.TestReport_FtyReceivedDate
-,t.TestReportCheckClima = s.TestReportCheckClima
+,t.TestReportCheckClima = isnull(s.TestReportCheckClima,0)
 ,t.T2InspYds = s.T2Inspected_Yards
 ,t.T2DefectPoint = s.T2Defect_Points
 ,t.T2Grade = s.Grade
