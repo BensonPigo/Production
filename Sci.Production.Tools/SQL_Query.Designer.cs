@@ -38,7 +38,6 @@
             this.btnSqlUpdate = new System.Windows.Forms.Button();
             this.checkBox1 = new System.Windows.Forms.CheckBox();
             this.panel1 = new Sci.Win.UI.Panel();
-            this.btn_updateCBM = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -160,7 +159,6 @@
             // 
             // panel1
             // 
-            this.panel1.Controls.Add(this.btn_updateCBM);
             this.panel1.Controls.Add(this.checkBox1);
             this.panel1.Controls.Add(this.btnSqlUpdate);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Bottom;
@@ -168,17 +166,6 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(801, 37);
             this.panel1.TabIndex = 2;
-            // 
-            // btn_updateCBM
-            // 
-            this.btn_updateCBM.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.btn_updateCBM.Location = new System.Drawing.Point(198, 6);
-            this.btn_updateCBM.Name = "btn_updateCBM";
-            this.btn_updateCBM.Size = new System.Drawing.Size(281, 28);
-            this.btn_updateCBM.TabIndex = 103;
-            this.btn_updateCBM.Text = "Update GMTBooking CBM MIS Only";
-            this.btn_updateCBM.UseVisualStyleBackColor = true;
-            this.btn_updateCBM.Click += new System.EventHandler(this.btn_updateCBM_Click);
             // 
             // SQL_Query
             // 
@@ -219,6 +206,5 @@
         private System.Windows.Forms.Button btnSqlUpdate;
         private System.Windows.Forms.CheckBox checkBox1;
         private Win.UI.Panel panel1;
-        private Win.UI.Button btn_updateCBM;
     }
 }
