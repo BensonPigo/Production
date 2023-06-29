@@ -294,7 +294,7 @@ select	distinct psd.id as [poid]
         , psd.Special
         , psd.Remark
         , IIF ( psd.UsedQty = 0.0000, 0, psd.UsedQty ) as UsedQty  
-        , psd.NetQty
+        , NetQty = Round(dbo.GetUnitQty(psd.PoUnit, psd.StockUnit, psd.NetQty), 2)
         , RATE = case 
                     when f.BomTypeCalculate = 1 then dbo.GetUnitRate(o.SizeUnit, psd.StockUnit) 
                     else dbo.GetUnitRate(psd.POUnit, psd.StockUnit)

@@ -191,7 +191,7 @@ select  poid = psd.ID
         , SizeSpec= isnull(psdsS.SpecValue, '')
         , [Garment Size] = dbo.GetGarmentSizeByOrderIDSeq(psd.ID,psd.Seq1,psd.Seq2)
         , psd.UsedQty
-        , psd.NetQty
+        , NetQty = Round(dbo.GetUnitQty(psd.PoUnit, psd.StockUnit, psd.NetQty), 2)
         , OrderListShow.OrderList
         , SizeUnit = isnull(psdsSU.SpecValue, '')
         , psd.StockUnit
@@ -317,7 +317,7 @@ select  poid = psd.ID
         , SizeSpec= isnull(psdsS.SpecValue, '')
         , [Garment Size] = dbo.GetGarmentSizeByOrderIDSeq(a.POID,a.Seq1,a.Seq2)
         , psd.UsedQty
-        , psd.NetQty
+        , NetQty = Round(dbo.GetUnitQty(psd.PoUnit, psd.StockUnit, psd.NetQty), 2)
         , OrderListShow.OrderList
         , SizeUnit = isnull(psdsSU.SpecValue, '')
         , psd.StockUnit
@@ -442,7 +442,7 @@ select  a.Id
         , SizeSpec= isnull(psdsS.SpecValue, '')
         , [Garment Size] = dbo.GetGarmentSizeByOrderIDSeq(a.POID,a.Seq1,a.Seq2)
         , psd.UsedQty
-        , psd.NetQty
+        , NetQty = Round(dbo.GetUnitQty(psd.PoUnit, psd.StockUnit, psd.NetQty), 2)
         , OrderListShow.OrderList
         , SizeUnit = isnull(psdsSU.SpecValue, '')
         , psd.StockUnit
@@ -2017,7 +2017,7 @@ select  poid = psd.ID
         , SizeSpec= isnull(psdsS.SpecValue, '')
         , [Garment Size] = dbo.GetGarmentSizeByOrderIDSeq(psd.ID,psd.Seq1,psd.Seq2)
         , psd.UsedQty
-        , psd.NetQty
+        , NetQty = Round(dbo.GetUnitQty(psd.PoUnit, psd.StockUnit, psd.NetQty), 2)
         , OrderListShow.OrderList
         , SizeUnit = isnull(psdsSU.SpecValue, '')
         , psd.StockUnit
