@@ -29,7 +29,6 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
             this.editSQL = new Sci.Win.UI.EditBox();
@@ -128,18 +127,11 @@
             this.gridSQLQuery.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.gridSQLQuery.Location = new System.Drawing.Point(0, 0);
             this.gridSQLQuery.Name = "gridSQLQuery";
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridSQLQuery.RowHeadersDefaultCellStyle = dataGridViewCellStyle1;
             this.gridSQLQuery.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridSQLQuery.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridSQLQuery.RowTemplate.Height = 24;
             this.gridSQLQuery.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridSQLQuery.ShowCellToolTips = false;
             this.gridSQLQuery.Size = new System.Drawing.Size(801, 399);
             this.gridSQLQuery.TabIndex = 1;
             this.gridSQLQuery.TabStop = false;
@@ -182,6 +174,7 @@
             this.Controls.Add(this.splitContainer1);
             this.IsSupportEdit = false;
             this.Name = "SQL_Query";
+            this.OnLineHelpID = "Sci.Win.Tems.QueryForm";
             this.Text = "SQL_Query";
             this.Controls.SetChildIndex(this.splitContainer1, 0);
             this.Controls.SetChildIndex(this.panel1, 0);
@@ -213,6 +206,5 @@
         private System.Windows.Forms.Button btnSqlUpdate;
         private System.Windows.Forms.CheckBox checkBox1;
         private Win.UI.Panel panel1;
-
     }
 }
