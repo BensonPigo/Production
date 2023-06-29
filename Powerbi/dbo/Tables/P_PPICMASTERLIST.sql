@@ -6,7 +6,7 @@
 	[Earliest SCIDlv] DATE NULL,
 	[SCIDlv] DATE NULL,
 	[KEY] VARCHAR(6) NOT NULL,
-	[IDD] DATE NULL,
+	[IDD] VARCHAR(500) NOT NULL,
 	[CRD] DATE NULL,
 	[CRD(YYYYMM)] VARCHAR(6) NOT NULL,
 	[Check CRD] VARCHAR(1) NOT NULL,
@@ -48,7 +48,7 @@
 	[Cust CD] VARCHAR(16) NOT NULL,
 	[KIT] VARCHAR(10) NOT NULL,
 	[Fty Code] VARCHAR(10) NOT NULL,
-	[Program ] NVARCHAR(12) NOT NULL,
+	[Program] NVARCHAR(12) NOT NULL,
 	[Non Revenue] VARCHAR(1) NOT NULL,
 	[New CD Code] VARCHAR(5) NOT NULL,
 	[ProductType] NVARCHAR(500) NOT NULL,
@@ -73,9 +73,12 @@
 	[Booking Qty] INT NOT NULL,
 	[FOC Adj Qty] INT NOT NULL,
 	[Not FOC Adj Qty] INT NOT NULL,
+	[FOB] numeric(16,4) NOT NULL,
+	[Total] numeric(38,6) NOT NULL,
 	[KPI L/ETA] DATE NULL,
 	[PF ETA (SP)] DATE NULL,
 	[Pull Forward Remark] VARCHAR(MAX) NOT NULL,
+	[Pack L/ETA] DATE NULL,
 	[SCHD L/ETA] DATE NULL,
 	[Actual Mtl. ETA] DATE NULL,
 	[Fab ETA] DATE NULL,
@@ -98,6 +101,8 @@
 	[Est Each Con Apv.] DATE NULL,
 	[Cutting InLine] DATE NULL,
 	[Cutting OffLine] DATE NULL,
+	[Cutting InLine(SP)] DATE NULL,
+	[Cutting OffLine(SP)] DATE NULL,
 	[1st Cut Date] DATE NULL,
 	[Last Cut Date] DATE NULL,
 	[Est. Pullout] DATE NULL,
@@ -130,8 +135,8 @@
 	[CFA CTN] INT NOT NULL,
 	[cLog Rec. Date] DATE NULL,
 	[Final Insp. Date] DATE NULL,
-	[Insp. Result] VARCHAR(16) NOT NULL,
-	[CFA Name] VARCHAR(10) NOT NULL,
+	[Insp. Result] VARCHAR(500) NOT NULL,
+	[CFA Name] VARCHAR(500) NOT NULL,
 	[Sewing Line#] VARCHAR(60) NOT NULL,
 	[ShipMode] VARCHAR(30) NOT NULL,
 	[SI#] VARCHAR(30) NOT NULL,
@@ -150,6 +155,7 @@
 	[Last ctn recvd date] DATETIME NULL,
 	[OrganicCotton] VARCHAR(1) NOT NULL,
 	[Direct Ship] VARCHAR(1) NOT NULL,
+	[StyleCarryover] VARCHAR(1) NOT NULL,
 	[3FLATLOCK (TMS)] NUMERIC(38, 6) NOT NULL,
 	[4FLATLOCK-H (TMS)] NUMERIC(38, 6) NOT NULL,
 	[4FLATLOCK-S (TMS)] NUMERIC(38, 6) NOT NULL,
@@ -345,7 +351,7 @@
 	[TTL_WELTED M/C (TMS)] NUMERIC(38, 6) NOT NULL,
 	[TTL_ZIG ZAG (TMS)] NUMERIC(38, 6) NOT NULL,
 	[TTL_ZIPPER HOT PRESS (TMS)] NUMERIC(38, 6) NOT NULL,
-	[Ukey] [bigint] NOT NULL,
+	[Ukey] [bigint] NOT NULL IDENTITY,
  CONSTRAINT [PK_P_PPICMASTERLIST] PRIMARY KEY CLUSTERED 
 (
 	[Ukey] DESC
@@ -467,7 +473,7 @@ GO
 ALTER TABLE [dbo].[P_PPICMASTERLIST] ADD  CONSTRAINT [DF_P_PPICMASTERLIST_FTY CODE]  DEFAULT ('') FOR [Fty Code]
 GO
 
-ALTER TABLE [dbo].[P_PPICMASTERLIST] ADD  CONSTRAINT [DF_P_PPICMASTERLIST_PROGRAM ]  DEFAULT ('') FOR [Program ]
+ALTER TABLE [dbo].[P_PPICMASTERLIST] ADD  CONSTRAINT [DF_P_PPICMASTERLIST_PROGRAM]  DEFAULT ('') FOR [Program]
 GO
 
 ALTER TABLE [dbo].[P_PPICMASTERLIST] ADD  CONSTRAINT [DF_P_PPICMASTERLIST_NON REVENUE]  DEFAULT ('') FOR [Non Revenue]
@@ -1406,7 +1412,7 @@ GO
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Fty Code' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_PPICMASTERLIST', @level2type=N'COLUMN',@level2name=N'Fty Code'
 GO
 
-EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'客戶品牌' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_PPICMASTERLIST', @level2type=N'COLUMN',@level2name=N'Program '
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'客戶品牌' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_PPICMASTERLIST', @level2type=N'COLUMN',@level2name=N'Program'
 GO
 
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'排除此訂單生產成本' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_PPICMASTERLIST', @level2type=N'COLUMN',@level2name=N'Non Revenue'

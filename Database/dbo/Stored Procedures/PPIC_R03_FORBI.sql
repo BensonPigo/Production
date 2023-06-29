@@ -17,123 +17,6 @@ BEGIN
 	
 	declare @StdTMS as int = (select StdTMS from System WITH (NOLOCK))
 
-	declare @tmp_tmpOrders TABLE(
-		 ID varchar(13) INDEX index_tmpOrders_ID,
-		 MDivisionID varchar(8) null,
-		 FtyGroup varchar(8) null,
-		 FactoryID varchar(8) null,
-		 BuyerDelivery date null,
-		 SciDelivery date null,
-		 POID varchar(13) null,
-		 CRDDate date null,
-		 CFMDate date null,
-		 Dest varchar(2) null,
-		 StyleID varchar(15) null,
-		 StyleName nvarchar(50) null,
-		 SeasonID varchar(10) null, 
-		 BrandID varchar(8) null,
-		 ProjectID varchar(5) null,
-		 Kit varchar(10) null,
-		 PackingMethod varchar(100) null,
-		 HangerPack bit null,
-		 Customize1 varchar(30) null,
-		 BuyMonth varchar(16) null,
-		 CustPONo varchar(30) null,
-		 CustCDID varchar(16) null,
-		 ProgramID nvarchar(12) null,
-		 NonRevenue varchar(1) null,
-		 CdCodeID varchar(6) null,
-		 CDCodeNew varchar(5) null,
-		 ProductType nvarchar(500) null,
-		 FabricType nvarchar(500) null,
-		 Lining varchar(20) null,
-		 Gender varchar(10) null,
-		 Construction varchar(100) null,
-		 CPU numeric(5, 3),
-		 Qty int null,
-		 FOCQty int null,
-		 LocalOrder bit null,
-		 PoPrice numeric(16, 4) null,
-		 CMPPrice numeric(6, 2) null,
-		 KPILETA date null,
-		 PFETA date null,
-		 LETA date null,
-		 MTLETA date null,
-		 SewETA date null,
-		 PackETA date null,
-		 MTLComplete bit null,
-		 SewInLine date null,
-		 SewOffLine date null,
-		 CutInLine date null,
-		 CutOffLine date null,
-		 CutInLine_SP date null,
-		 CutOffLine_SP date null,
-		 Category varchar(20) null,
-		 PulloutDate date null,
-		 ActPulloutDate date null,
-		 SMR varchar(10) null,
-		 MRHandle varchar(10) null,
-		 MCHandle varchar(10) null,
-		 OrigBuyerDelivery date null,
-		 DoxType varchar(8) null,
-		 TotalCTN int null,
-		 PackErrCTN int null,
-		 FtyCTN int null,
-		 ClogCTN int null,
-		 CFACTN int null,
-		 VasShas bit null,
-		 TissuePaper bit null,
-		 MTLExport varchar(2) null,
-		 SewLine varchar(60) null,
-		 ShipModeList varchar(30) null,
-		 PlanDate date null,
-		 FirstProduction date null,
-		 LastProductionDate date null,
-		 OrderTypeID varchar(20) null,
-		 SpecialMark varchar(5) null,
-		 SampleReason varchar(5) null,
-		 InspDate varchar(500) null,
-		 InspResult varchar(500) null,
-		 InspHandle varchar(500) null,
-		 MnorderApv2 datetime null,
-		 MnorderApv datetime null,
-		 PulloutComplete bit null,
-		 FtyKPI datetime null,
-		 KPIChangeReason varchar(5) null,
-		 EachConsApv datetime null,
-		 Junk bit null,
-		 StyleUkey bigint null,
-		 CuttingSP varchar(13) null,
-		 RainwearTestPassed bit null,
-		 BrandFTYCode varchar(10) null,
-		 CPUFactor numeric(3, 1)  null,
-		 ClogLastReceiveDate date null,
-		 IsMixMarker varchar(20) null,
-		 GFR bit null,
-		 isForecast varchar(1) null,
-		 AirFreightByBrand varchar(1) null,
-		 BuyBack varchar(1) null,
-		 Cancelled varchar(1) null,
-		 Customize2 varchar(30) null,
-		 KpiMNotice date null,
-		 KpiEachConsCheck date null,
-		 LastCTNTransDate datetime null, 
-		 LastCTNRecdDate datetime null, 
-		 DryRoomRecdDate datetime null, 
-		 DryRoomTransDate datetime null, 
-		 MdRoomScanDate datetime null, 
-		 VasShasCutOffDate date null,
-		 StyleSpecialMark varchar(5) null,
-		 IDD varchar(500) null,
-		 SewingMtlComplt VARCHAR(1) null,
-		 PackingMtlComplt VARCHAR(1) null,
-		 OrganicCotton varchar(1) null,
-		 DirectShip varchar(1) null,
-		 StyleCarryover varchar(1) null,
-		 PackLETA date null
-	)
-
-	insert into @tmp_tmpOrders
     select DISTINCT o.ID
             , o.MDivisionID
             , o.FtyGroup
@@ -201,7 +84,7 @@ BEGIN
             , o.OrigBuyerDelivery
             , o.DoxType
             , o.TotalCTN
-            , PackErrorCtn = isnull(o.PackErrCTN,0)
+            , PackErrCTN = isnull(o.PackErrCTN,0)
             , o.FtyCTN
             , o.ClogCTN
             , CFACTN=isnull(o.CFACTN,0)
@@ -264,6 +147,7 @@ BEGIN
             , o.DirectShip
             ,[StyleCarryover] = iif(s.NewCO = '2','V','')
             , o.PackLETA
+	into #tmp_tmpOrders
 	from Orders o WITH (NOLOCK) 
 	left join style s WITH (NOLOCK) on o.styleukey = s.ukey
 	left join DropDownList d WITH(NOLOCK) ON o.CtnType=d.ID AND d.Type='PackingMethod'
@@ -353,15 +237,15 @@ BEGIN
 		and (o.Category = 'B' or o.Category = 'S' or o.Category = 'G' or o.Category = '' )
 	)
 
-	declare @tmp_PFRemark TABLE(ID varchar(13) INDEX index_PFRemark_ID, Remark varchar(max))
+	CREATE NONCLUSTERED INDEX index_tmpOrders_ID ON #tmp_tmpOrders(	ID ASC);
 
-	insert into @tmp_PFRemark
 	select ID, Remark
+	into #tmp_PFRemark
 	from (
 		select ROW_NUMBER() OVER (PARTITION BY o.ID ORDER BY o.addDate, o.Ukey) r_id
 			,o.ID, o.Remark
 		from Order_PFHis o WITH (NOLOCK) 
-		inner join @tmp_tmpOrders t on o.ID = t.ID 
+		inner join #tmp_tmpOrders t on o.ID = t.ID 
 		where AddDate = (
 				select Max(o.AddDate) 
 				from Order_PFHis o WITH (NOLOCK) 
@@ -371,219 +255,55 @@ BEGIN
 	)a
 	where r_id = '1'
 
-	declare @tmp_StyleUkey TABLE(StyleUkey bigint INDEX index_tmp_StyleUkey, GetStyleUkey nvarchar(max))
-	insert into @tmp_StyleUkey
+
 	select StyleUkey, [GetStyleUkey] = dbo.GetSimilarStyleList(StyleUkey) 
-	from @tmp_tmpOrders
+	into #tmp_StyleUkey
+	from #tmp_tmpOrders
 	group by StyleUkey 
 
-	declare @tmp_MTLDelay TABLE(POID varchar(13) INDEX index_tmp_MTLDelay, MTLDelay bit)
-	insert into @tmp_MTLDelay
 	select POID, [MTLDelay] = dbo.GetHaveDelaySupp(POID)
-	from @tmp_tmpOrders
+	into #tmp_MTLDelay
+	from #tmp_tmpOrders
 	group by POID 
 
-	declare @tmp_PackingQty TABLE(OrderID varchar(13) INDEX index_tmp_PackingQty, PackingQty int)
-	insert into @tmp_PackingQty
 	select pld.OrderID, [PackingQty] = SUM(pld.ShipQty)
+	into #tmp_PackingQty
 	from PackingList pl WITH (NOLOCK) 
 	inner join PackingList_Detail pld WITH (NOLOCK) on pl.ID = pld.ID
-	inner join @tmp_tmpOrders t on pld.OrderID = t.ID
+	inner join #tmp_tmpOrders t on pld.OrderID = t.ID
 	where  pl.Type <> 'F'  
 	group by pld.OrderID  
 
-	declare @tmp_PackingFOCQty TABLE(OrderID varchar(13) INDEX index_tmp_PackingFOCQty, PackingFOCQty int)
-	insert into @tmp_PackingFOCQty
 	select pld.OrderID, [PackingFOCQty] = SUM(pld.ShipQty) 
+	into #tmp_PackingFOCQty
 	from PackingList pl WITH (NOLOCK) 
 	inner join PackingList_Detail pld WITH (NOLOCK) on pl.ID = pld.ID
-	inner join @tmp_tmpOrders t on pld.OrderID = t.ID
+	inner join #tmp_tmpOrders t on pld.OrderID = t.ID
 	where pl.Type = 'F' 
 	group by pld.OrderID 
 
-	declare @tmp_BookingQty TABLE(OrderID varchar(13) INDEX index_tmp_BookingQty, BookingQty int)
-	insert into @tmp_BookingQty
 	select pld.OrderID, [BookingQty] = SUM(pld.ShipQty)
+	into #tmp_BookingQty
 	from PackingList pl WITH (NOLOCK) 
 	inner join PackingList_Detail pld WITH (NOLOCK) on pl.ID = pld.ID
-	inner join @tmp_tmpOrders t on pld.OrderID = t.ID
+	inner join #tmp_tmpOrders t on pld.OrderID = t.ID
 	where   (pl.Type = 'B' or pl.Type = 'S') 
 			and pl.INVNo <> ''  
 	group by pld.OrderID 
  
-	declare @tmp_Article TABLE(ID varchar(13), Article varchar(8))
-	insert into @tmp_Article
 	select o.ID, o.Article 
+	into #tmp_Article
 	from Order_Qty o WITH (NOLOCK) 
-	inner join @tmp_tmpOrders t on o.ID = t.ID
+	inner join #tmp_tmpOrders t on o.ID = t.ID
 	group by o.ID,o.Article 
 
-	declare @tmp_LastBase TABLE(
-		 ID varchar(13),
-		 MDivisionID varchar(8) null,
-		 FtyGroup varchar(8) null,
-		 FactoryID varchar(8) null,
-		 BuyerDelivery date null,
-		 SciDelivery date null,
-		 POID varchar(13) null,
-		 CRDDate date null,
-		 CFMDate date null,
-		 Dest varchar(2) null,
-		 StyleID varchar(15) null,
-		 StyleName nvarchar(50) null,
-		 SeasonID varchar(10) null, 
-		 BrandID varchar(8) null,
-		 ProjectID varchar(5) null,
-		 Kit varchar(10) null,
-		 PackingMethod varchar(100) null,
-		 HangerPack bit null,
-		 Customize1 varchar(30) null,
-		 BuyMonth varchar(16) null,
-		 CustPONo varchar(30) null,
-		 CustCDID varchar(16) null,
-		 ProgramID nvarchar(12) null,
-		 NonRevenue varchar(1) null,
-		 CdCodeID varchar(6) null,
-		 CDCodeNew varchar(5) null,
-		 ProductType nvarchar(500) null,
-		 FabricType nvarchar(500) null,
-		 Lining varchar(20) null,
-		 Gender varchar(10) null,
-		 Construction varchar(100) null,
-		 CPU numeric(5, 3),
-		 Qty int null,
-		 FOCQty int null,
-		 LocalOrder bit null,
-		 PoPrice numeric(16, 4) null,
-		 CMPPrice numeric(6, 2) null,
-		 KPILETA date null,
-		 PFETA date null,
-		 LETA date null,
-		 MTLETA date null,
-		 SewETA date null,
-		 PackETA date null,
-		 MTLComplete bit null,
-		 SewInLine date null,
-		 SewOffLine date null,
-		 CutInLine date null,
-		 CutOffLine date null,
-		 CutInLine_SP date null,
-		 CutOffLine_SP date null,
-		 Category varchar(20) null,
-		 PulloutDate date null,
-		 ActPulloutDate date null,
-		 SMR varchar(10) null,
-		 MRHandle varchar(10) null,
-		 MCHandle varchar(10) null,
-		 OrigBuyerDelivery date null,
-		 DoxType varchar(8) null,
-		 TotalCTN int null,
-		 PackErrCTN int null,
-		 CFACTN int null,
-		 VasShas bit null,
-		 TissuePaper bit null,
-		 MTLExport varchar(2) null,
-		 SewLine varchar(60) null,
-		 ShipModeList varchar(30) null,
-		 PlanDate date null,
-		 FirstProduction date null,
-		 LastProductionDate date null,
-		 OrderTypeID varchar(20) null,
-		 SpecialMark varchar(5) null,
-		 SampleReason varchar(5) null,
-		 InspDate varchar(500) null,
-		 InspResult varchar(500) null,
-		 InspHandle varchar(500) null,
-		 MnorderApv2 datetime null,
-		 MnorderApv datetime null,
-		 PulloutComplete bit null,
-		 FtyKPI datetime null,
-		 KPIChangeReason varchar(5) null,
-		 EachConsApv datetime null,
-		 Junk bit null,
-		 StyleUkey bigint null,
-		 CuttingSP varchar(13) null,
-		 RainwearTestPassed bit null,
-		 BrandFTYCode varchar(10) null,
-		 CPUFactor numeric(3, 1)  null,
-		 ClogLastReceiveDate date null,
-		 IsMixMarker varchar(20) null,
-		 GFR bit null,
-		 isForecast varchar(1) null,
-		 AirFreightByBrand varchar(1) null,
-		 BuyBack varchar(1) null,
-		 Cancelled varchar(1) null,
-		 Customize2 varchar(30) null,
-		 KpiMNotice date null,
-		 KpiEachConsCheck date null,
-		 IDD varchar(500) null,
-		 ModularParent varchar(20) null,
-		 CPUAdjusted numeric(38, 6) null,
-		 DestAlias varchar(30) null,
-		 FactoryDisclaimer varchar(100) null,
-		 FactoryDisclaimerRemark nvarchar(max) null,
-		 ApprovedRejectedDate date null,
-		 WorkType varchar(1) null,
-		 FirstCutDate date null,
-		 POSMR varchar(10) null,
-		 POHandle varchar(10) null,
-		 PCHandle varchar(10) null,
-		 FTYRemark nvarchar(max) null,
-		 SewQtyTop int null,
-		 SewQtyBottom int null,
-		 SewQtyInner int null,
-		 SewQtyOuter int null,
-		 TtlSewQty int null,
-		 CutQty int null,
-		 PFRemark varchar(max),
-		 EarliestSCIDlv date null,
-		 KPIChangeReasonName nvarchar(500) null,
-		 SMRName varchar(50) null,
-		 MRHandleName varchar(50) null,
-		 POSMRName varchar(50) null,
-		 POHandleName varchar(50) null,
-		 PCHandleName varchar(50) null,
-		 MCHandleName varchar(50) null,
-		 SampleReasonName nvarchar(500) null,
-		 SpecialMarkName varchar(50) null,
-		 MTLExportTimes varchar(3) null,
-		 GMTLT numeric(3, 0) null,
-		 SimilarStyle nvarchar(max) null,
-		 MTLDelay bit null,
-		 PackingQty int null,
-		 PackingFOCQty int null,
-		 BookingQty int null,
-		 InvoiceAdjQty int null,
-		 FOCAdjQty int null,
-		 NotFOCAdjQty int null,
-		 LastCutDate date null,
-		 ArriveWHDate date null,
-		 FirstOutDate date null,
-		 LastOutDate date null,
-		 PulloutQty int null,
-		 ActPulloutTime int null,
-		 PackingCTN int null,
-		 FtyCtn int null,
-		 ClogCTN int null,
-		 ClogRcvDate date null,
-		 Article varchar(500) null,
-		 Fab_ETA date null,
-		 Acc_ETA date null,
-		 LastCTNTransDate datetime null, 
-		 LastCTNRecdDate datetime null, 
-		 DryRoomRecdDate datetime null, 
-		 DryRoomTransDate datetime null, 
-		 MdRoomScanDate datetime null, 
-		 VasShasCutOffDate date null,
-		 SewingMtlComplt int null,
-		 PackingMtlComplt int null,
-		 OrganicCotton varchar(1) null,
-		 DirectShip varchar(1) null,
-		 StyleCarryover varchar(1) null,
-		 PackLETA date null
-	)
+	CREATE NONCLUSTERED INDEX index_tmp_PFRemark ON #tmp_PFRemark(	ID ASC);
+	CREATE NONCLUSTERED INDEX index_tmp_StyleUkey ON #tmp_StyleUkey(	StyleUkey ASC);
+	CREATE NONCLUSTERED INDEX index_tmp_MTLDelay ON #tmp_MTLDelay(	POID ASC);
+	CREATE NONCLUSTERED INDEX index_tmp_PackingQty ON #tmp_PackingQty(	OrderID ASC);
+	CREATE NONCLUSTERED INDEX index_tmp_PackingFOCQty ON #tmp_PackingFOCQty(	OrderID ASC);
+	CREATE NONCLUSTERED INDEX index_tmp_BookingQty ON #tmp_BookingQty(	OrderID ASC);
 
-	insert into @tmp_LastBase
 	select distinct 
 				  t.ID
 				, t.MDivisionID
@@ -805,7 +525,7 @@ BEGIN
 			, ClogCTN = isnull(t.ClogCTN,0)
 			, ClogRcvDate = t.ClogLastReceiveDate
 			, Article = isnull ((select CONCAT(a.Article, ',') 
-								 from @tmp_Article a 
+								 from #tmp_Article a 
 								 where a.ID = t.ID
 								 for xml path(''))
 							   , '') 
@@ -823,18 +543,19 @@ BEGIN
 			, [DirectShip] = iif(t.DirectShip = 1, 'V','')
 			, [StyleCarryover] = iif(s.NewCO = '2','V','')
 			, t.PackLETA
-	from @tmp_tmpOrders t
+	into #tmp_LastBase
+	from #tmp_tmpOrders t
 	left join Cutting ct WITH (NOLOCK) on ct.ID = t.CuttingSP
 	left join Style s WITH (NOLOCK) on s.Ukey = t.StyleUkey
 	left join DropDownList dd WITH (NOLOCK) on dd.Type = 'FactoryDisclaimer' and dd.id = s.ExpectionFormStatus
 	left join PO p WITH (NOLOCK) on p.ID = t.POID
 	left join Country c WITH (NOLOCK) on c.ID = t.Dest
-	left join @tmp_PFRemark pf on pf.ID = t.ID
-	left join @tmp_StyleUkey su on su.StyleUkey = t.StyleUkey 
-	left join @tmp_MTLDelay mt on mt.POID = t.POID
-	left join @tmp_PackingQty pa on pa.OrderID = t.ID
-	left join @tmp_PackingFOCQty paf on paf.OrderID = t.ID
-	left join @tmp_BookingQty bo on bo.OrderID = t.ID
+	left join #tmp_PFRemark pf on pf.ID = t.ID
+	left join #tmp_StyleUkey su on su.StyleUkey = t.StyleUkey 
+	left join #tmp_MTLDelay mt on mt.POID = t.POID
+	left join #tmp_PackingQty pa on pa.OrderID = t.ID
+	left join #tmp_PackingFOCQty paf on paf.OrderID = t.ID
+	left join #tmp_BookingQty bo on bo.OrderID = t.ID
 	outer apply(
 		select value = sum(iq.DiffQty) 
 		from InvAdjust i WITH (NOLOCK) 
@@ -851,20 +572,9 @@ BEGIN
 	order by t.ID;
 
 
-	declare @tmp_SubProcess TABLE(
-		ID varchar(30) null, 
-		Seq varchar(4) null,
-		ArtworkUnit varchar(30) null,
-		ProductionUnit varchar(30) null,
-		SystemType varchar(1) null,
-		FakeID varchar(10) null,
-		ColumnN varchar(50) null,
-		ColumnSeq varchar(5) null,
-		rno bigint null
-	)
-	insert into @tmp_SubProcess
 	select  *
 			, rno = (ROW_NUMBER() OVER (ORDER BY a.ID, a.ColumnSeq))
+	into #tmp_SubProcess
 	from (
         SELECT  ID
                 , Seq
@@ -928,18 +638,6 @@ BEGIN
         
     ) a
 
-	declare @tmp_TTL_Subprocess TABLE(
-		ID varchar(30) null, 
-		Seq varchar(4) null,
-		ArtworkUnit varchar(30) null,
-		ProductionUnit varchar(30) null,
-		SystemType varchar(1) null,
-		FakeID varchar(10) null,
-		ColumnN varchar(50) null,
-		ColumnSeq varchar(5) null,
-		rno bigint null
-	)
-	insert into @tmp_TTL_Subprocess
     select  ID = 'TTL' + ID 
             , Seq
             , ArtworkUnit
@@ -949,21 +647,10 @@ BEGIN
             , ColumnN = 'TTL_' + ColumnN
             , ColumnSeq
             , rno = (ROW_NUMBER() OVER (ORDER BY ID, ColumnSeq)) + 1000
-    from @tmp_SubProcess
+	into #tmp_TTL_Subprocess
+    from #tmp_SubProcess
     where ID <> 'PrintSubCon' and ColumnN <> 'Printing LT' and ColumnN <> 'InkType/color/size'
 
-	declare @tmp_ArtworkData TABLE(
-		ID varchar(30) null, 
-		Seq varchar(4) null,
-		ArtworkUnit varchar(30) null,
-		ProductionUnit varchar(30) null,
-		SystemType varchar(1) null,
-		FakeID varchar(10) null,
-		ColumnN varchar(50) null,
-		ColumnSeq varchar(5) null,
-		rno bigint null
-	)
-	insert into @tmp_ArtworkData
 	select  ID
 			, Seq
 			, ArtworkUnit
@@ -973,9 +660,10 @@ BEGIN
 			, ColumnN
 			, ColumnSeq
 			, rno = (ROW_NUMBER() OVER (ORDER BY a.rno)) + 153
+	into #tmp_ArtworkData
 	from (
 		select * 
-		from @tmp_SubProcess
+		from #tmp_SubProcess
 
 		union all
 		SELECT  ID = 'TTLTMS'
@@ -989,28 +677,9 @@ BEGIN
 				, rno = '999'
 		union
 		select * 
-		from @tmp_TTL_Subprocess
+		from #tmp_TTL_Subprocess
 	) a
 
-
-	declare @tmp_LastArtworkType TABLE(
-		ID varchar(13) null,
-		ArtworkTypeID varchar(20) null,
-		ArtworkUnit varchar(10) null,
-		ProductionUnit varchar(30) null,
-		Qty numeric(6, 0) null,
-		TMS numeric(5, 0) null,
-		Price numeric(16, 4) null,
-		Supp nvarchar(12) null,
-		PoSupp varchar(500) null,
-		AUnitRno bigint null,
-		PUnitRno bigint null,
-		NRno bigint null,
-		TAUnitRno bigint null,
-		TPUnitRno bigint null,
-		TNRno bigint null
-	)
-	insert into @tmp_LastArtworkType
 	select  ot.ID
 			, ot.ArtworkTypeID
 			, ot.ArtworkUnit
@@ -1030,14 +699,15 @@ BEGIN
 			, TAUnitRno = a3.rno
 			, TPUnitRno = iif(ot.ArtworkTypeID='PRINTING PPU', a3.rno, a4.rno )
 			, TNRno = a5.rno 
+	into #tmp_LastArtworkType
 	from Order_TmsCost ot WITH (NOLOCK) 
 	left join ArtworkType at WITH (NOLOCK) on at.ID = ot.ArtworkTypeID
-	left join @tmp_ArtworkData a on a.FakeID = ot.Seq+'U1' 
-	left join @tmp_ArtworkData a1 on a1.FakeID = ot.Seq+'U2'
-	left join @tmp_ArtworkData a2 on a2.FakeID = ot.Seq
-	left join @tmp_ArtworkData a3 on a3.FakeID = 'T'+ot.Seq+'U1' 
-	left join @tmp_ArtworkData a4 on a4.FakeID = 'T'+ot.Seq+'U2'
-	left join @tmp_ArtworkData a5 on a5.FakeID = 'T'+ot.Seq 
+	left join #tmp_ArtworkData a on a.FakeID = ot.Seq+'U1' 
+	left join #tmp_ArtworkData a1 on a1.FakeID = ot.Seq+'U2'
+	left join #tmp_ArtworkData a2 on a2.FakeID = ot.Seq
+	left join #tmp_ArtworkData a3 on a3.FakeID = 'T'+ot.Seq+'U1' 
+	left join #tmp_ArtworkData a4 on a4.FakeID = 'T'+ot.Seq+'U2'
+	left join #tmp_ArtworkData a5 on a5.FakeID = 'T'+ot.Seq 
 	outer apply(select  PUnit=iif('False'='true' and at.ProductionUnit = 'TMS','CPU',at.ProductionUnit))p
 	outer apply(
 		select Abb = Stuff((
@@ -1049,23 +719,18 @@ BEGIN
 				and apd.OrderID = ot.ID
 			FOR XML PATH('')),1,1,'') 
 	)ap
-	where exists (select id from @tmp_tmpOrders t where ot.ID = t.ID )
+	where exists (select id from #tmp_tmpOrders t where ot.ID = t.ID )
 
-	declare @tmp_ArtworkTypeValue TABLE(
-		ID varchar(13) null,
-		ColumnN varchar(50) null,
-		Val varchar(100) null
-	)
-	insert into @tmp_ArtworkTypeValue
 	select *
+	into #tmp_ArtworkTypeValue
 	from 
 	(
 		select a.ID
 			, [ColumnN] = AUnitRno.ColumnN
 			, [Val] = cast(case when a.AUnitRno is not null then a.Qty
 						   else null end as varchar(100))
-		from @tmp_LastArtworkType a
-		inner join @tmp_ArtworkData AUnitRno on a.AUnitRno = AUnitRno.rno
+		from #tmp_LastArtworkType a
+		inner join #tmp_ArtworkData AUnitRno on a.AUnitRno = AUnitRno.rno
 		union all
 		select a.ID
 			, [ColumnN] = PUnitRno.ColumnN
@@ -1073,23 +738,23 @@ BEGIN
 									case when a.ProductionUnit = 'TMS' then a.TMS  
 									else a.Price end 
 							else null end as varchar(100))
-		from @tmp_LastArtworkType a
-		inner join @tmp_ArtworkData PUnitRno on a.PUnitRno = PUnitRno.rno
+		from #tmp_LastArtworkType a
+		inner join #tmp_ArtworkData PUnitRno on a.PUnitRno = PUnitRno.rno
 		union all
 		select a.ID
 			, [ColumnN] = NRno.ColumnN
 			, [Val] = cast(case when a.NRno is not null then a.Qty
 					   else null end as varchar(100))
-		from @tmp_LastArtworkType a
-		inner join @tmp_ArtworkData NRno on a.NRno = NRno.rno
+		from #tmp_LastArtworkType a
+		inner join #tmp_ArtworkData NRno on a.NRno = NRno.rno
 		union all
 		select a.ID
 			, [ColumnN] = TAUnitRno.ColumnN
 			, [Val] = cast(case when a.TAUnitRno is not null then b.Qty * a.Qty
 							else null end as varchar(100))
-		from @tmp_LastArtworkType a
-		inner join @tmp_ArtworkData TAUnitRno on a.TAUnitRno = TAUnitRno.rno
-		left join @tmp_LastBase b on a.ID = b.ID
+		from #tmp_LastArtworkType a
+		inner join #tmp_ArtworkData TAUnitRno on a.TAUnitRno = TAUnitRno.rno
+		left join #tmp_LastBase b on a.ID = b.ID
 		union all
 		select a.ID
 			, [ColumnN] = TPUnitRno.ColumnN
@@ -1097,198 +762,40 @@ BEGIN
 								case when a.ProductionUnit = 'TMS' then b.Qty * a.TMS  
 								else b.Qty * a.Price end 
 							else null end as varchar(100))
-		from @tmp_LastArtworkType a
-		inner join @tmp_ArtworkData TPUnitRno on a.TPUnitRno = TPUnitRno.rno
-		left join @tmp_LastBase b on a.ID = b.ID
+		from #tmp_LastArtworkType a
+		inner join #tmp_ArtworkData TPUnitRno on a.TPUnitRno = TPUnitRno.rno
+		left join #tmp_LastBase b on a.ID = b.ID
 		union all
 		select a.ID
 			, [ColumnN] = TNRno.ColumnN
 			, [Val] = cast(case when a.TNRno is not null then b.Qty * a.Qty
 						 else null end as varchar(100))
-		from @tmp_LastArtworkType a
-		inner join @tmp_ArtworkData TNRno on a.TNRno = TNRno.rno
-		left join @tmp_LastBase b on a.ID = b.ID
+		from #tmp_LastArtworkType a
+		inner join #tmp_ArtworkData TNRno on a.TNRno = TNRno.rno
+		left join #tmp_LastBase b on a.ID = b.ID
 		union all
 		select a.ID
 			, [ColumnN] = 'POSubCon'
 			, [Val] = a.PoSupp
-		from @tmp_LastArtworkType a
+		from #tmp_LastArtworkType a
 		where ISNULL(a.PoSupp, '') <> ''
 		union all
 		select a.ID
 			, [ColumnN] = 'SubCon'
 			, [Val] = a.Supp
-		from @tmp_LastArtworkType a
+		from #tmp_LastArtworkType a
 		where ISNULL(a.Supp, '') <> ''
 		union all
 		select b.ID
 			, [ColumnN] = 'TTL_TMS'
 			, [Val] = cast(b.Qty * b.CPU * @StdTMS as varchar(100))
-		from @tmp_LastBase b
+		from #tmp_LastBase b
 	) a
 
-	declare @tmp_final TABLE (
-			[M] VARCHAR(8) NULL ,
-			[FactoryID] VARCHAR(8) NULL ,
-			[Delivery] DATE NULL ,
-			[Delivery(YYYYMM)] VARCHAR(6) NULL ,
-			[Earliest SCIDlv] DATE NULL ,
-			[SCIDlv] DATE NULL ,
-			[KEY] VARCHAR(6) NULL ,
-			[IDD] varchar(500) null,
-			[CRD] DATE NULL ,
-			[CRD(YYYYMM)] VARCHAR(6) NULL ,
-			[Check CRD] VARCHAR(1) NULL ,
-			[OrdCFM] DATE NULL ,
-			[CRD-OrdCFM] INT NULL ,
-			[SPNO] VARCHAR(13) NULL ,
-			[Category] VARCHAR(20) NULL ,
-			[Est. download date] VARCHAR(16) NULL ,
-			[Buy Back] VARCHAR(1) NULL ,
-			[Cancelled] VARCHAR(1) NULL ,
-			[NeedProduction] VARCHAR(1) NULL ,
-			[Dest] VARCHAR(30) NULL ,
-			[Style] VARCHAR(15) NULL ,
-			[Style Name] NVARCHAR(50) NULL ,
-			[Modular Parent] VARCHAR(20) NULL ,
-			[CPUAdjusted] NUMERIC(38, 6) NULL ,
-			[Similar Style] VARCHAR(MAX) NULL ,
-			[Season] VARCHAR(10) NULL ,
-			[Garment L/T] NUMERIC(3,0) NULL ,
-			[Order Type] VARCHAR(20) NULL ,
-			[Project] VARCHAR(5) NULL ,
-			[PackingMethod] NVARCHAR(50) NULL ,
-			[Hanger pack] BIT NULL ,
-			[Order#] VARCHAR(30) NULL ,
-			[Buy Month] VARCHAR(16) NULL ,
-			[PONO] VARCHAR(30) NULL ,
-			[VAS/SHAS] VARCHAR(1) NULL ,
-			[VAS/SHAS Apv.] DATETIME NULL ,
-			[VAS/SHAS Cut Off Date] DATETIME NULL ,
-			[M/Notice Date] DATETIME NULL ,
-			[Est M/Notice Apv.] DATE NULL ,
-			[Tissue] VARCHAR(1) NULL ,
-			[AF by adidas] VARCHAR(1) NULL ,
-			[Factory Disclaimer] NVARCHAR(50) NULL ,
-			[Factory Disclaimer Remark] NVARCHAR(500) NULL ,
-			[Approved/Rejected Date] DATE NULL ,
-			[Global Foundation Range] VARCHAR(1) NULL ,
-			[Brand] VARCHAR(8) NULL ,
-			[Cust CD] VARCHAR(16) NULL ,
-			[KIT] VARCHAR(10) NULL ,
-			[Fty Code] VARCHAR(10) NULL ,
-			[Program] NVARCHAR(12) NULL ,
-			[Non Revenue] VARCHAR(1) NULL ,
-			[New CD Code] VARCHAR(5) NULL ,
-			[ProductType] NVARCHAR(500) NULL ,
-			[FabricType] NVARCHAR(500) NULL ,
-			[Lining] VARCHAR(20) NULL ,
-			[Gender] VARCHAR(10) NULL ,
-			[Construction] NVARCHAR(50) NULL ,
-			[Cpu] NUMERIC(38, 6) NULL ,
-			[Qty] INT NULL ,
-			[FOC Qty] INT NULL ,
-			[Total CPU] NUMERIC(38, 6) NULL ,
-			[SewQtyTop] INT NULL ,
-			[SewQtyBottom] INT NULL ,
-			[SewQtyInner] INT NULL ,
-			[SewQtyOuter] INT NULL ,
-			[Total Sewing Output] INT NULL ,
-			[Cut Qty] NUMERIC(38, 6) NULL ,
-			[By Comb] VARCHAR(1) NULL ,
-			[Cutting Status] VARCHAR(1) NULL ,
-			[Packing Qty] INT NULL ,
-			[Packing FOC Qty] INT NULL ,
-			[Booking Qty] INT NULL ,
-			[FOC Adj Qty] INT NULL ,
-			[Not FOC Adj Qty] INT NULL ,
-			[FOB]　numeric(16,4)　NULL,
-			[Total]　numeric(38,6) NULL,
-			[KPI L/ETA] DATE NULL ,
-			[PF ETA (SP)] DATE NULL ,
-			[Pull Forward Remark] VARCHAR(MAX) NULL ,
-			[Pack L/ETA] DATE NULL ,
-			[SCHD L/ETA] DATE NULL ,
-			[Actual Mtl. ETA] DATE NULL ,
-			[Fab ETA] DATE NULL ,
-			[Acc ETA] DATE NULL ,
-			[Sewing Mtl Complt(SP)] VARCHAR(1) NULL ,
-			[Packing Mtl Complt(SP)] VARCHAR(1) NULL ,
-			[Sew. MTL ETA (SP)] DATE NULL ,
-			[Pkg. MTL ETA (SP)] DATE NULL ,
-			[MTL Delay] VARCHAR(1) NULL ,
-			[MTL Cmplt] VARCHAR(2) NULL ,
-			[MTL Cmplt (SP)] VARCHAR(1) NULL ,
-			[Arrive W/H Date] DATE NULL ,
-			[Sewing InLine] DATE NULL ,
-			[Sewing OffLine] DATE NULL ,
-			[1st Sewn Date] DATE NULL ,
-			[Last Sewn Date] DATE NULL ,
-			[First Production Date] DATE NULL ,
-			[Last Production Date] DATE NULL ,
-			[Each Cons Apv Date] DATETIME NULL ,
-			[Est Each Con Apv.] DATE NULL ,
-			[Cutting InLine] DATE NULL ,
-			[Cutting OffLine] DATE NULL ,
-			[Cutting InLine(SP)] INT NULL,
-			[Cutting OffLine(SP)] INT NULL,
-			[1st Cut Date] DATE NULL ,
-			[Last Cut Date] DATE NULL ,
-			[Est. Pullout] DATE NULL ,
-			[Act. Pullout Date] DATE NULL ,
-			[Pullout Qty] INT NULL ,
-			[Act. Pullout Times] INT NULL ,
-			[Act. Pullout Cmplt] VARCHAR(2) NULL ,
-			[KPI Delivery Date] DATE NULL ,
-			[Update Delivery Reason] NVARCHAR(500) NULL ,
-			[Plan Date] DATE NULL ,
-			[Original Buyer Delivery Date] DATE NULL ,
-			[SMR] VARCHAR(10) NULL ,
-			[SMR Name] VARCHAR(50) NULL ,
-			[Handle] VARCHAR(10) NULL ,
-			[Handle Name] VARCHAR(50) NULL ,
-			[Posmr] VARCHAR(10) NULL ,
-			[Posmr Name] VARCHAR(50) NULL ,
-			[PoHandle] VARCHAR(10) NULL ,
-			[PoHandle Name] VARCHAR(50) NULL ,
-			[PCHandle] VARCHAR(10) NULL ,
-			[PCHandle Name] VARCHAR(50) NULL ,
-			[MCHandle] VARCHAR(10) NULL ,
-			[MCHandle Name] VARCHAR(50) NULL ,
-			[DoxType] VARCHAR(8) NULL ,
-			[Packing CTN] INT NULL ,
-			[TTLCTN] INT NULL ,
-			[Pack Error CTN] INT NULL ,
-			[FtyCTN] INT NULL ,
-			[cLog CTN] INT NULL ,
-			[CFA CTN] INT NULL ,
-			[cLog Rec. Date] DATE NULL ,
-			[Final Insp. Date] DATE NULL ,
-			[Insp. Result] VARCHAR(16) NULL ,
-			[CFA Name] VARCHAR(10) NULL ,
-			[Sewing Line#] VARCHAR(60) NULL ,
-			[ShipMode] VARCHAR(30) NULL ,
-			[SI#] VARCHAR(30) NULL ,
-			[ColorWay] NVARCHAR(MAX) NULL ,
-			[Special Mark] VARCHAR(50) NULL ,
-			[Fty Remark] NVARCHAR(MAX) NULL ,
-			[Sample Reason] NVARCHAR(500) NULL ,
-			[IS MixMarker] VARCHAR(25) NULL ,
-			[Cutting SP] VARCHAR(13) NULL ,
-			[Rainwear test] VARCHAR(1) NULL ,
-			[TMS] NUMERIC(38, 6) NULL ,
-			[MD room scan date] DATETIME NULL ,
-			[Dry Room received date] DATETIME NULL ,
-			[Dry room trans date] DATETIME NULL ,
-			[Last ctn trans date] DATETIME NULL ,
-			[Last ctn recvd date] DATETIME NULL ,
-			[OrganicCotton] VARCHAR(1) NULL ,
-			[Direct Ship] VARCHAR(1) NULL ,
-			[StyleCarryover] VARCHAR(1) NULL,
-			[ColumnN] varchar(50) null,
-			[Val] varchar(100) null
-	)
-	insert into @tmp_final
+	drop table #tmp_Article, #tmp_BookingQty, #tmp_LastArtworkType, #tmp_MTLDelay, 
+		#tmp_PackingFOCQty, #tmp_PackingQty, #tmp_PFRemark, #tmp_StyleUkey, 
+		#tmp_SubProcess, #tmp_tmpOrders, #tmp_TTL_Subprocess
+
 	select [M] = b.MDivisionID
 		, [FactoryID] = b.FactoryID
 		, [Delivery] = b.BuyerDelivery
@@ -1450,14 +957,16 @@ BEGIN
 		, [StyleCarryover] = b.StyleCarryover
 		, t.ColumnN
 		, t.Val
-	from @tmp_LastBase b
-	left join @tmp_ArtworkTypeValue t on b.ID = t.ID
+	into #tmp_final
+	from #tmp_LastBase b
+	left join #tmp_ArtworkTypeValue t on b.ID = t.ID
 
-	declare @cols nvarchar(max) = stuff((select concat(',[',ColumnN,']') from @tmp_ArtworkData group by ColumnN, rno order by rno for xml path('')),1,1,'')
+	declare @cols nvarchar(max) = stuff((select concat(',[',ColumnN,']') from #tmp_ArtworkData group by ColumnN, rno order by rno for xml path('')),1,1,'')
 		, @query AS NVARCHAR(MAX)	
 
-	SET @query = 'SELECT * FROM ( SELECT * FROM @tmp_final t ) src
+	SET @query = 'SELECT * FROM ( SELECT * FROM #tmp_final t ) src
 				  PIVOT ( MAX(Val) FOR ColumnN IN (' + @cols + ') ) piv'
 	EXECUTE(@query)
 
+	drop table #tmp_ArtworkData, #tmp_ArtworkTypeValue, #tmp_final, #tmp_LastBase
 end
