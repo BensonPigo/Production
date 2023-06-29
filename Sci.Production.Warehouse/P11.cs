@@ -191,6 +191,8 @@ select  poid = psd.ID
         , SizeSpec= isnull(psdsS.SpecValue, '')
         , [Garment Size] = dbo.GetGarmentSizeByOrderIDSeq(psd.ID,psd.Seq1,psd.Seq2)
         , psd.UsedQty
+        , psd.NetQty
+        , OrderListShow.OrderList
         , SizeUnit = isnull(psdsSU.SpecValue, '')
         , psd.StockUnit
         , dbo.Getlocation(a.ukey)[location]
@@ -214,6 +216,7 @@ inner join[Production].[dbo].MtlType m WITH(NOLOCK) on m.ID = f.MtlTypeID
 left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
 left join PO_Supp_Detail_Spec psdsS WITH (NOLOCK) on psdsS.ID = psd.id and psdsS.seq1 = psd.seq1 and psdsS.seq2 = psd.seq2 and psdsS.SpecColumnID = 'Size'
 left join PO_Supp_Detail_Spec psdsSU WITH (NOLOCK) on psdsSU.ID = psd.id and psdsSU.seq1 = psd.seq1 and psdsSU.seq2 = psd.seq2 and psdsSU.SpecColumnID = 'SizeUnit'
+left join PO_Supp_Detail_OrderList_Show OrderListShow On OrderListShow.ID = psd.ID and OrderListShow.Seq1 = psd.Seq1 and OrderListShow.Seq2 = psd.Seq2
 left join[Production].[dbo].ftyinventory a WITH(NOLOCK) on psd.id = a.POID
                                                              and psd.seq1 = a.seq1
                                                              and psd.seq2 = a.Seq2
@@ -259,6 +262,8 @@ order by psd.ID, psd.seq1, psd.seq2
                     this.CurrentDetailData["SizeSpec"] = x[0]["SizeSpec"];
                     this.CurrentDetailData["Garment Size"] = x[0]["Garment Size"];
                     this.CurrentDetailData["UsedQty"] = x[0]["UsedQty"];
+                    this.CurrentDetailData["NetQty"] = x[0]["NetQty"];
+                    this.CurrentDetailData["OrderList"] = x[0]["OrderList"];
                     this.CurrentDetailData["SizeUnit"] = x[0]["SizeUnit"];
                     this.CurrentDetailData["location"] = x[0]["location"];
                     this.CurrentDetailData["description"] = x[0]["description"];
@@ -312,6 +317,8 @@ select  poid = psd.ID
         , SizeSpec= isnull(psdsS.SpecValue, '')
         , [Garment Size] = dbo.GetGarmentSizeByOrderIDSeq(a.POID,a.Seq1,a.Seq2)
         , psd.UsedQty
+        , psd.NetQty
+        , OrderListShow.OrderList
         , SizeUnit = isnull(psdsSU.SpecValue, '')
         , psd.StockUnit
         , dbo.Getlocation(a.ukey)[location]
@@ -335,6 +342,7 @@ inner join[Production].[dbo].MtlType m WITH(NOLOCK) on m.ID = f.MtlTypeID
 left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
 left join PO_Supp_Detail_Spec psdsS WITH (NOLOCK) on psdsS.ID = psd.id and psdsS.seq1 = psd.seq1 and psdsS.seq2 = psd.seq2 and psdsS.SpecColumnID = 'Size'
 left join PO_Supp_Detail_Spec psdsSU WITH (NOLOCK) on psdsSU.ID = psd.id and psdsSU.seq1 = psd.seq1 and psdsSU.seq2 = psd.seq2 and psdsSU.SpecColumnID = 'SizeUnit'
+left join PO_Supp_Detail_OrderList_Show OrderListShow On OrderListShow.ID = psd.ID and OrderListShow.Seq1 = psd.Seq1 and OrderListShow.Seq2 = psd.Seq2
 left join[Production].[dbo].ftyinventory a WITH(NOLOCK) on psd.id = a.POID
                                                              and psd.seq1 = a.seq1
                                                              and psd.seq2 = a.Seq2
@@ -368,6 +376,8 @@ order by psd.ID, psd.seq1, psd.seq2
                             this.CurrentDetailData["Colorid"] = this.dr["Colorid"];
                             this.CurrentDetailData["SizeSpec"] = this.dr["SizeSpec"];
                             this.CurrentDetailData["UsedQty"] = this.dr["UsedQty"];
+                            this.CurrentDetailData["NetQty"] = this.dr["NetQty"];
+                            this.CurrentDetailData["OrderList"] = this.dr["OrderList"];
                             this.CurrentDetailData["SizeUnit"] = this.dr["SizeUnit"];
                             this.CurrentDetailData["location"] = this.dr["location"];
                             this.CurrentDetailData["description"] = this.dr["description"];
@@ -393,6 +403,8 @@ order by psd.ID, psd.seq1, psd.seq2
             .Text("SizeSpec", header: "Size", width: Widths.AnsiChars(8), iseditingreadonly: true)
             .Text("Garment Size", header: "Garment Size", width: Widths.AnsiChars(8), iseditingreadonly: true)
             .Numeric("usedqty", header: "@Qty", width: Widths.AnsiChars(6), decimal_places: 4, integer_places: 10, iseditingreadonly: true)
+            .Numeric("NetQty", header: "Net Qty", width: Widths.AnsiChars(6), decimal_places: 4, integer_places: 10, iseditingreadonly: true)
+            .EditText("OrderList", header: "Order List", width: Widths.AnsiChars(20), iseditingreadonly: true)
             .Text("SizeUnit", header: "SizeUnit", width: Widths.AnsiChars(6), iseditingreadonly: true)
             .Text("location", header: "Location", width: Widths.AnsiChars(6), iseditingreadonly: true)
             .Numeric("accu_issue", header: "Accu. Issued", width: Widths.AnsiChars(6), decimal_places: 2, integer_places: 10, iseditingreadonly: true)
@@ -430,6 +442,8 @@ select  a.Id
         , SizeSpec= isnull(psdsS.SpecValue, '')
         , [Garment Size] = dbo.GetGarmentSizeByOrderIDSeq(a.POID,a.Seq1,a.Seq2)
         , psd.UsedQty
+        , psd.NetQty
+        , OrderListShow.OrderList
         , SizeUnit = isnull(psdsSU.SpecValue, '')
         , psd.StockUnit
         , dbo.Getlocation(fi.ukey) [location]
@@ -467,6 +481,7 @@ left join dbo.po_supp_detail psd WITH (NOLOCK) on psd.id  = a.poid
 left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
 left join PO_Supp_Detail_Spec psdsS WITH (NOLOCK) on psdsS.ID = psd.id and psdsS.seq1 = psd.seq1 and psdsS.seq2 = psd.seq2 and psdsS.SpecColumnID = 'Size'
 left join PO_Supp_Detail_Spec psdsSU WITH (NOLOCK) on psdsSU.ID = psd.id and psdsSU.seq1 = psd.seq1 and psdsSU.seq2 = psd.seq2 and psdsSU.SpecColumnID = 'SizeUnit'
+left join PO_Supp_Detail_OrderList_Show OrderListShow On OrderListShow.ID = psd.ID and OrderListShow.Seq1 = psd.Seq1 and OrderListShow.Seq2 = psd.Seq2
 left join Fabric f on f.SciRefno = psd.SciRefno
 left join dbo.FtyInventory FI on    a.Poid = Fi.Poid 
                                     and a.Seq1 = fi.seq1 
@@ -2002,6 +2017,8 @@ select  poid = psd.ID
         , SizeSpec= isnull(psdsS.SpecValue, '')
         , [Garment Size] = dbo.GetGarmentSizeByOrderIDSeq(psd.ID,psd.Seq1,psd.Seq2)
         , psd.UsedQty
+        , psd.NetQty
+        , OrderListShow.OrderList
         , SizeUnit = isnull(psdsSU.SpecValue, '')
         , psd.StockUnit
         , dbo.Getlocation (a.ukey) [location]
@@ -2015,6 +2032,7 @@ inner join [Production].[dbo].MtlType m WITH (NOLOCK) on m.ID = f.MtlTypeID
 left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
 left join PO_Supp_Detail_Spec psdsS WITH (NOLOCK) on psdsS.ID = psd.id and psdsS.seq1 = psd.seq1 and psdsS.seq2 = psd.seq2 and psdsS.SpecColumnID = 'Size'
 left join PO_Supp_Detail_Spec psdsSU WITH (NOLOCK) on psdsSU.ID = psd.id and psdsSU.seq1 = psd.seq1 and psdsSU.seq2 = psd.seq2 and psdsSU.SpecColumnID = 'SizeUnit'
+left join PO_Supp_Detail_OrderList_Show OrderListShow On OrderListShow.ID = psd.ID and OrderListShow.Seq1 = psd.Seq1 and OrderListShow.Seq2 = psd.Seq2
 left join [Production].[dbo].ftyinventory a WITH (NOLOCK) on psd.id = a.POID 
                                                              and psd.seq1 = a.seq1 
                                                              and psd.seq2 = a.Seq2
@@ -2044,6 +2062,8 @@ order by psd.ID, psd.seq1, psd.seq2
                 ndr["Colorid"] = dr["Colorid"];
                 ndr["SizeSpec"] = dr["SizeSpec"];
                 ndr["usedqty"] = dr["usedqty"];
+                ndr["NetQty"] = dr["NetQty"];
+                ndr["OrderList"] = dr["OrderList"];
                 ndr["SizeUnit"] = dr["SizeUnit"];
                 ndr["location"] = dr["location"];
                 ndr["balanceqty"] = dr["balanceqty"];

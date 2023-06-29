@@ -294,6 +294,7 @@ select	distinct psd.id as [poid]
         , psd.Special
         , psd.Remark
         , IIF ( psd.UsedQty = 0.0000, 0, psd.UsedQty ) as UsedQty  
+        , psd.NetQty
         , RATE = case 
                     when f.BomTypeCalculate = 1 then dbo.GetUnitRate(o.SizeUnit, psd.StockUnit) 
                     else dbo.GetUnitRate(psd.POUnit, psd.StockUnit)
@@ -361,6 +362,8 @@ from (
             , b.Special
             , b.Remark
             , b.UsedQty
+            , b.NetQty
+            , OrderListShow.OrderList
             , b.RATE
             , b.StockUnit
             , Qty = 0.00
@@ -400,7 +403,10 @@ from (
     left join dbo.po_supp_detail_orderlist psdo with (NOLOCK) on psdo.ID = b.poid 
                                                                  and psdo.seq1 = b.seq1
                                                                  and psdo.seq2 = b.seq2
-                                                                 and psdo.orderid = '{2}'
+                                                                 and psdo.orderid = '{2}'    
+    left join PO_Supp_Detail_OrderList_Show OrderListShow On OrderListShow.ID = b.poid
+                                                            and OrderListShow.Seq1 = b.Seq1
+                                                            and OrderListShow.Seq2 = b.Seq2
 ) x
 left join dbo.FtyInventory Fty with(NoLock) on Fty.poid = x.poid
                                                 and Fty.seq1 = x.seq1 
