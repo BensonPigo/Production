@@ -4,6 +4,7 @@ using Microsoft.SqlServer.Management.Smo;
 using Microsoft.SqlServer.Management.Smo.Agent;
 using Sci.Data;
 using Sci.Production.Class;
+using Sci.Production.Prg;
 using Sci.Win.Tools;
 using Sci.Win.UI;
 using System;
@@ -28,6 +29,8 @@ namespace Sci.Production.IE
         private DataTable dtAutomatedLineMapping_DetailTemp = new DataTable();
         private DataTable dtAutomatedLineMapping_DetailAuto = new DataTable();
         private DataTable dtGridDetailRightSummary = new DataTable();
+        private P05_NotHitTargetReason p05_NotHitTargetReason;
+
         private Win.UI.Button[] chartLBRButtons = new Win.UI.Button[]
         {
                 new Win.UI.Button(),
@@ -63,9 +66,9 @@ namespace Sci.Production.IE
             this.gridCentralizedPPARight.DataSource = this.dtGridDetailRightSummary;
             this.detailgrid.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.EnableResizing;
             this.gridCentralizedPPALeft.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.EnableResizing;
+            this.detailgrid.CellFormatting += this.Detailgrid_CellFormatting;
 
-            this.detailgrid.Scroll += this.Detailgrid_Scroll;
-            this.gridLineMappingRight.Scroll += this.GridLineMappingRight_Scroll;
+            new AutoLineMappingGridSyncScroll(this.detailgrid, this.gridLineMappingRight, "No");
 
             this.chartLBR.Controls.AddRange(this.chartLBRButtons);
 
@@ -92,6 +95,22 @@ namespace Sci.Production.IE
             }
 
             this.chartLBR.Paint += this.ChartLBR_Paint;
+        }
+
+        private void Detailgrid_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
+        {
+            DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
+            if (dr["OperationID"].ToString() == "PROCIPF00003" ||
+                dr["OperationID"].ToString() == "PROCIPF00004")
+            {
+                this.detailgrid.Rows[e.RowIndex].Cells["MachineTypeID"].ReadOnly = true;
+                this.detailgrid.Rows[e.RowIndex].Cells["MasterPlusGroup"].ReadOnly = true;
+            }
+
+            if (e.ColumnIndex > 1)
+            {
+                e.CellStyle.BackColor = MyUtility.Convert.GetInt(dr["TimeStudyDetailUkeyCnt"]) > 1 ? Color.FromArgb(255, 255, 153) : this.detailgrid.DefaultCellStyle.BackColor;
+            }
         }
 
         /// <inheritdoc/>
@@ -175,17 +194,26 @@ order by ad.Seq";
             }
 
             this.ShowLBRChart(e.Master);
+            this.p05_NotHitTargetReason = new P05_NotHitTargetReason(e.Master["ID"].ToString(), e.Master["FactoryID"].ToString(), e.Master["Status"].ToString());
+            if (this.p05_NotHitTargetReason.HasNotHitTargetReason)
+            {
+                this.btnNotHitTargetReason.Font = new Font(FontFamily.GenericSansSerif, 10, FontStyle.Bold);
+                this.btnNotHitTargetReason.ForeColor = Color.Blue;
+            }
+            else
+            {
+                this.btnNotHitTargetReason.Font = new Font(FontFamily.GenericSansSerif, 10, FontStyle.Regular);
+                this.btnNotHitTargetReason.ForeColor = Color.Black;
+            }
 
             return base.OnRenewDataDetailPost(e);
         }
-
 
         /// <inheritdoc/>
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
             this.FilterGrid();
-
             this.detailgrid.ColumnHeadersHeight = this.gridLineMappingRight.ColumnHeadersHeight;
             this.gridCentralizedPPALeft.ColumnHeadersHeight = this.gridCentralizedPPARight.ColumnHeadersHeight;
         }
@@ -255,16 +283,121 @@ delete AutomatedLineMapping_NotHitTargetReason where ID = '{this.CurrentMaintain
         }
 
         /// <inheritdoc/>
-        protected override void ClickCopyAfter()
+        protected override bool ClickCopy()
         {
-            base.ClickCopyAfter();
+            if (!base.ClickCopy())
+            {
+                return false;
+            }
+
+            this.CurrentMaintain["Status"] = "New";
+            this.CurrentMaintain["Version"] = DBNull.Value;
+            this.CurrentMaintain["Phase"] = string.Empty;
+            this.CurrentMaintain["AddName"] = Env.User.UserID;
+            this.CurrentMaintain["EditName"] = string.Empty;
+            this.CurrentMaintain["EditDate"] = DBNull.Value;
+
+            DualResult result;
+
+            result = DBProxy.Current.Select(null, $"select * from AutomatedLineMapping_DetailAuto with (nolock) where ID = '{this.CurrentMaintain["ID"]}'", out this.dtAutomatedLineMapping_DetailAuto);
+            if (!result)
+            {
+                this.ShowErr(result);
+                return false;
+            }
+
+            result = DBProxy.Current.Select(null, $"select * from AutomatedLineMapping_DetailTemp with (nolock) where ID = '{this.CurrentMaintain["ID"]}'", out this.dtAutomatedLineMapping_DetailTemp);
+            if (!result)
+            {
+                this.ShowErr(result);
+                return false;
+            }
+
+            return true;
+        }
+
+        /// <inheritdoc/>
+        protected override void ClickConfirm()
+        {
+            string sqlGetLBRCondition = $@"
+SELECT ALMCS.Condition1 
+FROM AutomatedLineMappingConditionSetting ALMCS
+WHERE ALMCS.[FactoryID] = '{this.CurrentMaintain["FactoryID"]}'
+AND ALMCS.[Function] = 'IE_P05'
+AND ALMCS.Verify = 'LBRByGSD'
+AND ALMCS.Junk = 0
+";
+            decimal checkLBRCondition = MyUtility.Convert.GetDecimal(MyUtility.GetValue.Lookup(sqlGetLBRCondition));
+
+            if (checkLBRCondition > 0 &&
+                MyUtility.Convert.GetDecimal(this.CurrentMaintain["LBRByGSDTime"]) < checkLBRCondition)
+            {
+                MyUtility.Msg.WarningBox($"[LBR By GSD Time(%)] should not be lower than {checkLBRCondition}%, if you have any concern, please contact TPE-MPC Team directly.");
+                return;
+            }
+
+            var listEmptyReason = this.p05_NotHitTargetReason.DataNotHitTargetReason.AsEnumerable().Where(s => MyUtility.Check.Empty(s["IEReasonID"]));
+
+            if (listEmptyReason.Any())
+            {
+                MyUtility.Msg.WarningBox($"Not Hit Target Reason {listEmptyReason.Select(s => s["No"].ToString()).JoinToString(",")} has not yet input the reason, cannot be confirm.");
+                this.p05_NotHitTargetReason.ShowDialog();
+                return;
+            }
+
+            string sqlUpdate = $@"
+update  AutomatedLineMapping
+set Status = 'Confirmed',
+    EditName = '{Env.User.UserID}',
+    EditDate = getdate(),
+    CFMName = '{Env.User.UserID}',
+    CFMDate = getdate()
+where   ID = '{this.CurrentMaintain["ID"]}'
+";
+            DualResult result = DBProxy.Current.Execute(null, sqlUpdate);
+            if (!result)
+            {
+                this.ShowErr(result);
+                return;
+            }
+
+            base.ClickConfirm();
         }
 
         /// <inheritdoc/>
         protected override bool ClickSaveBefore()
         {
+            if (MyUtility.Check.Empty(this.CurrentMaintain["FactoryID"]))
+            {
+                MyUtility.Msg.WarningBox("[Factory] cannot be empty.");
+                return false;
+            }
+
+            if (MyUtility.Check.Empty(this.CurrentMaintain["Phase"]))
+            {
+                MyUtility.Msg.WarningBox("[Phase] cannot be empty.");
+                return false;
+            }
+
             this.detailgridbs.RemoveFilter();
             this.gridCentralizedPPALeftBS.RemoveFilter();
+
+            int seqLineMapping = 1;
+            int seqCentralizedPPA = 1;
+
+            foreach (var dr in this.DetailDatas)
+            {
+                if (dr["PPA"].ToString() != "C" && MyUtility.Convert.GetBool(dr["IsNonSewingLine"]) == false)
+                {
+                    dr["Seq"] = seqLineMapping;
+                    seqLineMapping++;
+                }
+                else if (dr["PPA"].ToString() == "C" && MyUtility.Convert.GetBool(dr["IsNonSewingLine"]) == false)
+                {
+                    dr["Seq"] = seqCentralizedPPA;
+                    seqCentralizedPPA++;
+                }
+            }
 
             return base.ClickSaveBefore();
         }
@@ -388,7 +521,7 @@ where	st.StyleUkey = '{this.CurrentMaintain["StyleUkey"]}' and
                .CellAttachment("Attachment", "Attachment", this, width: Widths.AnsiChars(10))
                .CellPartID("SewingMachineAttachmentID", "Part ID", this, width: Widths.AnsiChars(25))
                .CellTemplate("Template", "Template", this, width: Widths.AnsiChars(10))
-               .CellTemplate("Template", "Template", this, width: Widths.AnsiChars(10))
+               .Numeric("GSD", header: "GSD Time", width: Widths.AnsiChars(5), iseditingreadonly: true)
                .Text("Notice", header: "Notice", width: Widths.AnsiChars(10));
 
             this.Helper.Controls.Grid.Generator(this.gridLineMappingRight)
@@ -533,32 +666,6 @@ from #tmp
             if (this.tabDetail.SelectedIndex == 0)
             {
                 this.detailgridbs.Filter = "PPA <> 'C' and IsNonSewingLine = 0";
-
-                foreach (DataGridViewRow rowDetail in this.detailgrid.Rows)
-                {
-                    DataRow dr = this.detailgrid.GetDataRow(rowDetail.Index);
-                    if (dr["OperationID"].ToString() == "PROCIPF00003" ||
-                        dr["OperationID"].ToString() == "PROCIPF00004")
-                    {
-                        rowDetail.Cells["MachineTypeID"].ReadOnly = true;
-                        rowDetail.Cells["MasterPlusGroup"].ReadOnly = true;
-                    }
-
-                    if (MyUtility.Convert.GetInt(dr["TimeStudyDetailUkeyCnt"]) > 1)
-                    {
-                        for (int i = 2; i < this.detailgrid.Columns.Count; i++)
-                        {
-                            rowDetail.Cells[i].Style.BackColor = Color.FromArgb(255, 255, 153);
-                        }
-                    }
-                    else
-                    {
-                        for (int i = 2; i < this.detailgrid.Columns.Count; i++)
-                        {
-                            rowDetail.Cells[i].Style.BackColor = rowDetail.DefaultCellStyle.BackColor;
-                        }
-                    }
-                }
             }
             else
             {
@@ -618,6 +725,8 @@ from #tmp
 
         private void GridLineMappingRight_Scroll(object sender, ScrollEventArgs e)
         {
+            Win.UI.Grid sourceGrid = (Win.UI.Grid)sender;
+
             if (e.ScrollOrientation != ScrollOrientation.VerticalScroll)
             {
                 return;
@@ -628,12 +737,14 @@ from #tmp
                 return;
             }
 
-            string scrollNo = this.gridLineMappingRight.Rows[this.gridLineMappingRight.FirstDisplayedScrollingRowIndex].Cells["No"].Value.ToString();
+            string scrollNo = sourceGrid.Rows[sourceGrid.FirstDisplayedScrollingRowIndex].Cells["No"].Value.ToString();
             this.ScrollLineMapping(scrollNo);
         }
 
         private void Detailgrid_Scroll(object sender, ScrollEventArgs e)
         {
+            Win.UI.Grid sourceGrid = (Win.UI.Grid)sender;
+
             if (e.ScrollOrientation != ScrollOrientation.VerticalScroll)
             {
                 return;
@@ -646,8 +757,8 @@ from #tmp
 
             bool isScrollDown = e.NewValue > e.OldValue;
 
-            string scrollNo = this.detailgrid.Rows[this.detailgrid.FirstDisplayedScrollingRowIndex].Cells["No"].Value.ToString();
-            string oldScrollNo = this.detailgrid.Rows[e.OldValue].Cells["No"].Value.ToString();
+            string scrollNo = sourceGrid.Rows[sourceGrid.FirstDisplayedScrollingRowIndex].Cells["No"].Value.ToString();
+            string oldScrollNo = sourceGrid.Rows[e.OldValue].Cells["No"].Value.ToString();
 
             if (isScrollDown && scrollNo == oldScrollNo)
             {
@@ -899,6 +1010,16 @@ from #tmp
 
                 i++;
             }
+        }
+
+        private void BtnNotHitTargetReason_Click(object sender, EventArgs e)
+        {
+            this.p05_NotHitTargetReason.ShowDialog();
+        }
+
+        private void BtnEditOperation_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

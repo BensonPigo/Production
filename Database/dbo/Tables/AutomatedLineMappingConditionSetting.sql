@@ -10,7 +10,7 @@
     [Condition3] NUMERIC(3) CONSTRAINT [DF_AutomatedLineMappingConditionSetting_Condition3] DEFAULT (0) NOT NULL, 
     [Junk] BIT CONSTRAINT [DF_AutomatedLineMappingConditionSetting_Junk] DEFAULT (0) NOT NULL, 
     [AddName] VARCHAR(10) CONSTRAINT [DF_AutomatedLineMappingConditionSetting_AddName] DEFAULT ('') NOT NULL, 
-    [AddDate] DATETIME NOT NULL, 
+    [AddDate] DATETIME NULL, 
     [EditName] VARCHAR(10) CONSTRAINT [DF_AutomatedLineMappingConditionSetting_EditName] DEFAULT ('') NOT NULL, 
     [EditDate] DATETIME NULL,
     CONSTRAINT [PK_AutomatedLineMappingConditionSetting] PRIMARY KEY CLUSTERED ([FactoryID], [Functions], [Verify] ASC)

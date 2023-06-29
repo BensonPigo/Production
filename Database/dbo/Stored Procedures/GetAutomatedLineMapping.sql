@@ -346,7 +346,7 @@ where	td.ID = @TimeStudyID and
 order by td.Seq
 
 select	[No] = isnull(RIGHT(REPLICATE('0', 2) + cast(tb.StationNo as varchar(3)), 2), ''),
-		td.Seq,
+		[Seq] = ROW_NUMBER() OVER (PARTITION BY tb.TotalSewer ORDER BY td.Seq),
 		[Location] = tl.OperationID,
 		td.PPA,
 		td.MachineTypeID,

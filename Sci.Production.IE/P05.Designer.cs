@@ -90,6 +90,9 @@
             this.numericTargetHr = new Sci.Win.UI.NumericBox();
             this.numericTotalSewingLineOptrs = new Sci.Win.UI.NumericBox();
             this.chartLBR = new System.Windows.Forms.DataVisualization.Charting.Chart();
+            this.btnNotHitTargetReason = new Sci.Win.UI.Button();
+            this.btnTransferToP06 = new Sci.Win.UI.Button();
+            this.btnEditOperation = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -124,6 +127,8 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.btnTransferToP06);
+            this.masterpanel.Controls.Add(this.btnNotHitTargetReason);
             this.masterpanel.Controls.Add(this.chartLBR);
             this.masterpanel.Controls.Add(this.labelStatus);
             this.masterpanel.Controls.Add(this.displayTimeStudyVersion);
@@ -222,8 +227,10 @@
             this.masterpanel.Controls.SetChildIndex(this.displayTimeStudyStatus, 0);
             this.masterpanel.Controls.SetChildIndex(this.displayTimeStudyVersion, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelStatus, 0);
-            this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.chartLBR, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnNotHitTargetReason, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnTransferToP06, 0);
+            this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             // 
             // detailpanel
             // 
@@ -237,9 +244,11 @@
             // 
             // detailgridcont
             // 
+            this.detailgridcont.Controls.Add(this.btnEditOperation);
             this.detailgridcont.Controls.Add(this.tabDetail);
             this.detailgridcont.Size = new System.Drawing.Size(1226, 442);
             this.detailgridcont.Controls.SetChildIndex(this.tabDetail, 0);
+            this.detailgridcont.Controls.SetChildIndex(this.btnEditOperation, 0);
             // 
             // detail2
             // 
@@ -268,7 +277,7 @@
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(1299, 667);
+            this.browse.Size = new System.Drawing.Size(1226, 667);
             // 
             // tabs
             // 
@@ -596,7 +605,7 @@
             // 
             this.splitLineMapping.Panel2.Controls.Add(this.gridLineMappingRight);
             this.splitLineMapping.Size = new System.Drawing.Size(1212, 407);
-            this.splitLineMapping.SplitterDistance = 777;
+            this.splitLineMapping.SplitterDistance = 775;
             this.splitLineMapping.TabIndex = 0;
             // 
             // gridLineMappingRight
@@ -619,7 +628,7 @@
             this.gridLineMappingRight.RowTemplate.Height = 24;
             this.gridLineMappingRight.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridLineMappingRight.ShowCellToolTips = false;
-            this.gridLineMappingRight.Size = new System.Drawing.Size(431, 407);
+            this.gridLineMappingRight.Size = new System.Drawing.Size(433, 407);
             this.gridLineMappingRight.TabIndex = 0;
             // 
             // tabPageCentralizedPPA
@@ -628,7 +637,7 @@
             this.tabPageCentralizedPPA.Location = new System.Drawing.Point(4, 25);
             this.tabPageCentralizedPPA.Name = "tabPageCentralizedPPA";
             this.tabPageCentralizedPPA.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageCentralizedPPA.Size = new System.Drawing.Size(1291, 413);
+            this.tabPageCentralizedPPA.Size = new System.Drawing.Size(1218, 413);
             this.tabPageCentralizedPPA.TabIndex = 1;
             this.tabPageCentralizedPPA.Text = "Centralized PPA";
             // 
@@ -645,8 +654,8 @@
             // splitCentralizedPPA.Panel2
             // 
             this.splitCentralizedPPA.Panel2.Controls.Add(this.gridCentralizedPPARight);
-            this.splitCentralizedPPA.Size = new System.Drawing.Size(1285, 407);
-            this.splitCentralizedPPA.SplitterDistance = 895;
+            this.splitCentralizedPPA.Size = new System.Drawing.Size(1212, 407);
+            this.splitCentralizedPPA.SplitterDistance = 842;
             this.splitCentralizedPPA.TabIndex = 0;
             // 
             // gridCentralizedPPALeft
@@ -669,7 +678,7 @@
             this.gridCentralizedPPALeft.RowTemplate.Height = 24;
             this.gridCentralizedPPALeft.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridCentralizedPPALeft.ShowCellToolTips = false;
-            this.gridCentralizedPPALeft.Size = new System.Drawing.Size(895, 407);
+            this.gridCentralizedPPALeft.Size = new System.Drawing.Size(842, 407);
             this.gridCentralizedPPALeft.TabIndex = 0;
             // 
             // gridCentralizedPPARight
@@ -692,7 +701,7 @@
             this.gridCentralizedPPARight.RowTemplate.Height = 24;
             this.gridCentralizedPPARight.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridCentralizedPPARight.ShowCellToolTips = false;
-            this.gridCentralizedPPARight.Size = new System.Drawing.Size(386, 407);
+            this.gridCentralizedPPARight.Size = new System.Drawing.Size(366, 407);
             this.gridCentralizedPPARight.TabIndex = 0;
             // 
             // label12
@@ -1012,11 +1021,46 @@
             this.chartLBR.Size = new System.Drawing.Size(266, 173);
             this.chartLBR.TabIndex = 51;
             // 
+            // btnNotHitTargetReason
+            // 
+            this.btnNotHitTargetReason.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
+            this.btnNotHitTargetReason.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F);
+            this.btnNotHitTargetReason.Location = new System.Drawing.Point(1085, 60);
+            this.btnNotHitTargetReason.Name = "btnNotHitTargetReason";
+            this.btnNotHitTargetReason.Size = new System.Drawing.Size(134, 47);
+            this.btnNotHitTargetReason.TabIndex = 52;
+            this.btnNotHitTargetReason.Text = "Not Hit\r\nTarget Reason";
+            this.btnNotHitTargetReason.UseVisualStyleBackColor = true;
+            this.btnNotHitTargetReason.Click += new System.EventHandler(this.BtnNotHitTargetReason_Click);
+            // 
+            // btnTransferToP06
+            // 
+            this.btnTransferToP06.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F);
+            this.btnTransferToP06.Location = new System.Drawing.Point(1085, 113);
+            this.btnTransferToP06.Name = "btnTransferToP06";
+            this.btnTransferToP06.Size = new System.Drawing.Size(134, 47);
+            this.btnTransferToP06.TabIndex = 53;
+            this.btnTransferToP06.Text = "Transfer to\r\nSewing Line Mapping";
+            this.btnTransferToP06.UseVisualStyleBackColor = true;
+            // 
+            // btnEditOperation
+            // 
+            this.btnEditOperation.BackgroundImage = global::Sci.Production.IE.Properties.Resources.EditOperation;
+            this.btnEditOperation.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.btnEditOperation.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnEditOperation.Location = new System.Drawing.Point(208, 2);
+            this.btnEditOperation.Name = "btnEditOperation";
+            this.btnEditOperation.Size = new System.Drawing.Size(25, 24);
+            this.btnEditOperation.TabIndex = 54;
+            this.btnEditOperation.UseVisualStyleBackColor = true;
+            this.btnEditOperation.Click += new System.EventHandler(this.BtnEditOperation_Click);
+            // 
             // P05
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1234, 729);
+            this.ExpressQuery = true;
             this.GridAlias = "AutomatedLineMapping_Detail";
             this.IsSupportClip = false;
             this.IsSupportUnconfirm = true;
@@ -1125,5 +1169,8 @@
         private Win.UI.NumericBox numericTargetHr;
         private Win.UI.NumericBox numericTotalSewingLineOptrs;
         private System.Windows.Forms.DataVisualization.Charting.Chart chartLBR;
+        private Win.UI.Button btnTransferToP06;
+        private Win.UI.Button btnNotHitTargetReason;
+        private Win.UI.Button btnEditOperation;
     }
 }

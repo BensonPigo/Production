@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -100,6 +101,112 @@ namespace Sci.Production.IE
                             }
                         }
                     }
+                }
+            };
+
+            return gen.Text(propertyname, header: header, width: width, settings: settings, iseditable: iseditable, iseditingreadonly: iseditingreadonly, alignment: alignment);
+        }
+
+        /// <summary>
+        /// CellIEReason
+        /// </summary>
+        /// <param name="gen">DataGridView Generator</param>
+        /// <param name="propertyname">Property name</param>
+        /// <param name="header">Header</param>
+        /// <param name="mainForm">call from</param>
+        /// <param name="type">type</param>
+        /// <param name="width">Width</param>
+        /// <param name="iseditable">is editable</param>
+        /// <param name="iseditingreadonly">is editing readonly</param>
+        /// <param name="alignment">DataGridView Content Alignment</param>
+        /// <returns>gen</returns>
+        public static IDataGridViewGenerator CellIEReason(this IDataGridViewGenerator gen, string propertyname, string header, Sci.Win.Tems.Base mainForm, string type, IWidth width = null, bool? iseditable = null, bool? iseditingreadonly = null, DataGridViewContentAlignment? alignment = null)
+        {
+            DataGridViewGeneratorTextColumnSettings settings = new DataGridViewGeneratorTextColumnSettings();
+
+            settings.EditingMouseDown += (s, e) =>
+            {
+                if (!mainForm.EditMode)
+                {
+                    return;
+                }
+
+                if (e.Button != MouseButtons.Right)
+                {
+                    return;
+                }
+
+                if (e.RowIndex == -1)
+                {
+                    return;
+                }
+
+                DataRow dr = gen.Control.GetDataRow<DataRow>(e.RowIndex);
+                string sqlCmd = $"select ID, Description from IEReason WITH (NOLOCK) where Junk = 0 and type = '{type}'";
+                Win.Tools.SelectItem item = new Win.Tools.SelectItem(sqlCmd, "8,43", dr["IEReasonID"].ToString())
+                {
+                    Width = 590,
+                };
+                DialogResult returnResult = item.ShowDialog();
+                if (returnResult == DialogResult.Cancel)
+                {
+                    return;
+                }
+
+                dr["IEReasonID"] = item.GetSelecteds()[0]["ID"];
+                dr["Description"] = item.GetSelecteds()[0]["Description"];
+            };
+
+            settings.CellValidating += (s, e) =>
+            {
+                if (!mainForm.EditMode)
+                {
+                    return;
+                }
+
+                DataRow dr = gen.Control.GetDataRow<DataRow>(e.RowIndex);
+                if (!MyUtility.Check.Empty(e.FormattedValue) && e.FormattedValue.ToString() != dr["IEReasonID"].ToString())
+                {
+                    // sql參數
+                    System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter
+                    {
+                        ParameterName = "@id",
+                        Value = e.FormattedValue.ToString(),
+                    };
+
+                    IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>
+                        {
+                            sp1,
+                        };
+                    string sqlCmd = $"select ID, Description from IEReason WITH (NOLOCK) where Junk = 0 and ID = @id and type = '{type}'";
+                    DataTable reasonData;
+                    DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out reasonData);
+                    if (!result)
+                    {
+                        dr["IEReasonID"] = string.Empty;
+                        dr["Description"] = string.Empty;
+                        e.Cancel = true;
+                        MyUtility.Msg.WarningBox("Sql connection fail!!\r\n" + result.ToString());
+                        return;
+                    }
+
+                    if (reasonData.Rows.Count <= 0)
+                    {
+                        dr["IEReasonID"] = string.Empty;
+                        dr["Description"] = string.Empty;
+                        e.Cancel = true;
+                        MyUtility.Msg.WarningBox(string.Format("< Reason ID: {0} > not found!!!", e.FormattedValue.ToString()));
+                        return;
+                    }
+
+                    dr["IEReasonID"] = e.FormattedValue.ToString();
+                    dr["Description"] = reasonData.Rows[0]["Description"].ToString();
+                }
+
+                if (MyUtility.Check.Empty(e.FormattedValue))
+                {
+                    dr["IEReasonID"] = string.Empty;
+                    dr["Description"] = string.Empty;
                 }
             };
 
