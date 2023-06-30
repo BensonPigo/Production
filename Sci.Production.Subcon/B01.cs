@@ -151,7 +151,7 @@ WHERE Type='Pms_LocalItem_UnPack'
                     return false;
                 }
 
-                if (this.CurrentMaintain["CBM"] == DBNull.Value || (decimal)this.CurrentMaintain["CBM"] == 0)
+                if ((this.CurrentMaintain["CBM"] == DBNull.Value || (decimal)this.CurrentMaintain["CBM"] == 0) && this.chkIsCarton.Checked == true)
                 {
                     MyUtility.Msg.WarningBox("< CBM > can not be empty!");
                     this.numCBM.Focus();
