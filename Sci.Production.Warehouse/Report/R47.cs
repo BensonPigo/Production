@@ -102,27 +102,27 @@ namespace Sci.Production.Warehouse
             string sqlCmd = string.Empty;
             sqlCmd = $@"
             select 
-            [SP#] = fur.POID, 
-            Seq = concat (fur.seq1, ' ', fur.seq2),
-            fur.Roll,
-            fur.Dyelot,
-            fur.Barcode,
-            rr.FabricRelaxationID,
-            NeedUnroll = iif (fr.NeedUnroll = 1, 'Y', ''),
-            fr.Relaxtime, 
-            fur.UnrollStartTime,
-            fur.UnrollEndTime, 
-            fur.RelaxationStartTime, 
-            fur.RelaxationEndTime, 
-            UnrollScanner = dbo.getPass1 (fur.UnrollScanner), 
-            fur.UnrollActualQty, 
-            fur.UnrollRemark
+                [SP#] = fur.POID, 
+                Seq = concat (fur.seq1, ' ', fur.seq2),
+                fur.Roll,
+                fur.Dyelot,
+                fur.Barcode,
+                rr.FabricRelaxationID,
+                NeedUnroll = iif (fr.NeedUnroll = 1, 'Y', ''),
+                fr.Relaxtime, 
+                fur.UnrollStartTime,
+                fur.UnrollEndTime, 
+                fur.RelaxationStartTime, 
+                fur.RelaxationEndTime, 
+                UnrollScanner = dbo.getPass1 (fur.UnrollScanner), 
+                fur.UnrollActualQty, 
+                fur.UnrollRemark
             from Fabric_UnrollandRelax fur
             left join PO_Supp_Detail psd on fur.POID = psd.ID
-            and fur.Seq1 = psd.SEQ1
-            and fur.Seq2 = psd.SEQ2
-            left join ManufacturingExecution.dbo.RefnoRelaxtime rr on psd.Refno = rr.Refno
-            left join ManufacturingExecution.dbo.FabricRelaxation fr on rr.FabricRelaxationID = fr.ID
+                                        and fur.Seq1 = psd.SEQ1
+                                        and fur.Seq2 = psd.SEQ2
+            left join [ExtendServer].ManufacturingExecution.dbo.RefnoRelaxtime rr on psd.Refno = rr.Refno
+            left join [ExtendServer].ManufacturingExecution.dbo.FabricRelaxation fr on rr.FabricRelaxationID = fr.ID
             where 
             1=1
             {this.sqlWhere}
