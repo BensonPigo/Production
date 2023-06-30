@@ -248,7 +248,7 @@ select	TPEInQty.M
 		, TPEInQty.POID
 		, TPEInQty.Seq1
 		, TPEInQty.Seq2 
-		, Qty = Sum(round(TPEInQty.Qty * v.RateValue, 2))
+		, Qty = cast(Sum(round(TPEInQty.Qty * v.RateValue, 2)) as decimal(18, 2))
 into #TPEIn
 from (
 	-- Type 1, 4 --
@@ -293,7 +293,7 @@ select	TPEAllocatedQty.M
 		, TPEAllocatedQty.POID
 		, TPEAllocatedQty.Seq1
 		, TPEAllocatedQty.Seq2 
-		, Qty = Sum (round(TPEAllocatedQty.Qty * v.RateValue, 2))
+		, Qty = cast(Sum(round(TPEAllocatedQty.Qty * v.RateValue, 2)) as decimal(18, 2))
 into #TPEAllocated
 from (
 	-- Type 2, 3, 5 --
