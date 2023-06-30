@@ -2,13 +2,15 @@
     [Id]                 VARCHAR (13) CONSTRAINT [DF_Order_EachCons_PatternPanel_Id] DEFAULT ('') NOT NULL,
     [PatternPanel]       VARCHAR (2)  CONSTRAINT [DF_Order_EachCons_PatternPanel_PatternPanel] DEFAULT ('') NOT NULL,
     [Order_EachConsUkey] BIGINT       CONSTRAINT [DF_Order_EachCons_PatternPanel_Order_EachConsUkey] DEFAULT ((0)) NOT NULL,
-    [FabricPanelCode]         VARCHAR (2)  CONSTRAINT [DF_Order_EachCons_PatternPanel_FabricPanelCode] DEFAULT ('') NOT NULL,
-    [AddName]            VARCHAR (10) CONSTRAINT [DF_Order_EachCons_PatternPanel_AddName] DEFAULT ('') NULL,
+    [FabricPanelCode]    VARCHAR (2)  CONSTRAINT [DF_Order_EachCons_PatternPanel_FabricPanelCode] DEFAULT ('') NOT NULL,
+    [AddName]            VARCHAR (10) CONSTRAINT [DF_Order_EachCons_PatternPanel_AddName] DEFAULT ('') NOT NULL,
     [AddDate]            DATETIME     NULL,
-    [EditName]           VARCHAR (10) CONSTRAINT [DF_Order_EachCons_PatternPanel_EditName] DEFAULT ('') NULL,
+    [EditName]           VARCHAR (10) CONSTRAINT [DF_Order_EachCons_PatternPanel_EditName] DEFAULT ('') NOT NULL,
     [EditDate]           DATETIME     NULL,
     CONSTRAINT [PK_Order_EachCons_PatternPanel] PRIMARY KEY CLUSTERED ([PatternPanel] ASC, [Order_EachConsUkey] ASC, [FabricPanelCode] ASC)
 );
+
+
 
 
 
@@ -52,6 +54,5 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'最後修�
 
 
 GO
-CREATE NONCLUSTERED INDEX [Order_EachConsUkey]
-    ON [dbo].[Order_EachCons_PatternPanel]([Order_EachConsUkey] ASC);
+
 

@@ -1,27 +1,29 @@
 ﻿CREATE TABLE [dbo].[OrderType] (
     [ID]                  VARCHAR (20)    CONSTRAINT [DF_OrderType_ID] DEFAULT ('') NOT NULL,
     [BrandID]             VARCHAR (8)     CONSTRAINT [DF_OrderType_BrandID] DEFAULT ('') NOT NULL,
-    [PhaseID]             VARCHAR (20)    CONSTRAINT [DF_OrderType_PhaseID] DEFAULT ('') NULL,
-    [ProjectID]           VARCHAR (5)     CONSTRAINT [DF_OrderType_ProjectID] DEFAULT ('') NULL,
-    [Junk]                BIT             CONSTRAINT [DF_OrderType_Junk] DEFAULT ((0)) NULL,
-    [CpuRate]             NUMERIC (3, 1)  CONSTRAINT [DF_OrderType_CpuRate] DEFAULT ((0)) NULL,
-    [Category]            VARCHAR (1)     CONSTRAINT [DF_OrderType_Category] DEFAULT ('') NULL,
-    [PriceDays]           NUMERIC (16, 4) CONSTRAINT [DF_OrderType_PriceDays] DEFAULT ((0)) NULL,
-    [MtlLetaDays]         NUMERIC (2)     CONSTRAINT [DF_OrderType_MtlLetaDays] DEFAULT ((0)) NULL,
-    [EachConsDays]        NUMERIC (2)     CONSTRAINT [DF_OrderType_EachConsDays] DEFAULT ((0)) NULL,
-    [KPI]                 BIT             CONSTRAINT [DF_OrderType_KPI] DEFAULT ((0)) NULL,
-    [Remark]              NVARCHAR (60)   CONSTRAINT [DF_OrderType_Remark] DEFAULT ('') NULL,
-    [AddName]             VARCHAR (10)    CONSTRAINT [DF_OrderType_AddName] DEFAULT ('') NULL,
+    [PhaseID]             VARCHAR (20)    CONSTRAINT [DF_OrderType_PhaseID] DEFAULT ('') NOT NULL,
+    [ProjectID]           VARCHAR (5)     CONSTRAINT [DF_OrderType_ProjectID] DEFAULT ('') NOT NULL,
+    [Junk]                BIT             CONSTRAINT [DF_OrderType_Junk] DEFAULT ((0)) NOT NULL,
+    [CpuRate]             DECIMAL (3, 1)  CONSTRAINT [DF_OrderType_CpuRate] DEFAULT ((0)) NOT NULL,
+    [Category]            VARCHAR (1)     CONSTRAINT [DF_OrderType_Category] DEFAULT ('') NOT NULL,
+    [PriceDays]           DECIMAL (16, 4) CONSTRAINT [DF_OrderType_PriceDays] DEFAULT ((0)) NOT NULL,
+    [MtlLetaDays]         DECIMAL (2)     CONSTRAINT [DF_OrderType_MtlLetaDays] DEFAULT ((0)) NOT NULL,
+    [EachConsDays]        DECIMAL (2)     CONSTRAINT [DF_OrderType_EachConsDays] DEFAULT ((0)) NOT NULL,
+    [KPI]                 BIT             CONSTRAINT [DF_OrderType_KPI] DEFAULT ((0)) NOT NULL,
+    [Remark]              NVARCHAR (60)   CONSTRAINT [DF_OrderType_Remark] DEFAULT ('') NOT NULL,
+    [AddName]             VARCHAR (10)    CONSTRAINT [DF_OrderType_AddName] DEFAULT ('') NOT NULL,
     [AddDate]             DATETIME        NULL,
-    [EditName]            VARCHAR (10)    CONSTRAINT [DF_OrderType_EditName] DEFAULT ('') NULL,
+    [EditName]            VARCHAR (10)    CONSTRAINT [DF_OrderType_EditName] DEFAULT ('') NOT NULL,
     [EditDate]            DATETIME        NULL,
-    [IsGMTMaster]         BIT             DEFAULT ('0') NULL,
-    [IsGMTDetail]         BIT             DEFAULT ('0') NULL,
-    [IsDevSample]         BIT             NULL,
-    [KPIProjectID]        VARCHAR (5)     NULL,
-    [CalByBOFConsumption] BIT             NULL,
+    [IsGMTMaster]         BIT             CONSTRAINT [DF_OrderType_IsGMTMaster] DEFAULT ((0)) NOT NULL,
+    [IsGMTDetail]         BIT             CONSTRAINT [DF_OrderType_IsGMTDetail] DEFAULT ((0)) NOT NULL,
+    [IsDevSample]         BIT             CONSTRAINT [DF_OrderType_IsDevSample] DEFAULT ((0)) NOT NULL,
+    [KPIProjectID]        VARCHAR (5)     CONSTRAINT [DF_OrderType_KPIProjectID] DEFAULT ('') NOT NULL,
+    [CalByBOFConsumption] BIT             CONSTRAINT [DF_OrderType_CalByBOFConsumption] DEFAULT ((0)) NOT NULL,
     CONSTRAINT [PK_OrderType] PRIMARY KEY CLUSTERED ([ID] ASC, [BrandID] ASC)
 );
+
+
 
 
 

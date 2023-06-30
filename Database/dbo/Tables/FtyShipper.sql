@@ -2,11 +2,13 @@
     [BrandID]   VARCHAR (8)  CONSTRAINT [DF_FtyShipper_BrandID] DEFAULT ('') NOT NULL,
     [FactoryID] VARCHAR (8)  CONSTRAINT [DF_FtyShipper_FactoryID] DEFAULT ('') NOT NULL,
     [AddDate]   DATETIME     NULL,
-    [AddName]   VARCHAR (10) CONSTRAINT [DF_FtyShipper_AddName] DEFAULT ('') NULL,
+    [AddName]   VARCHAR (10) CONSTRAINT [DF_FtyShipper_AddName] DEFAULT ('') NOT NULL,
     [EditDate]  DATETIME     NULL,
-    [EditName]  VARCHAR (10) CONSTRAINT [DF_FtyShipper_EditName] DEFAULT ('') NULL,
+    [EditName]  VARCHAR (10) CONSTRAINT [DF_FtyShipper_EditName] DEFAULT ('') NOT NULL,
     CONSTRAINT [PK_FtyShipper] PRIMARY KEY CLUSTERED ([BrandID] ASC, [FactoryID] ASC)
 );
+
+
 
 
 GO

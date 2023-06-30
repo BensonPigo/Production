@@ -9,13 +9,15 @@
     [AddDate]     DATETIME      NULL,
     [EditName]    VARCHAR (10)  CONSTRAINT [DF_ADIDASComplain_EditName] DEFAULT ('') NOT NULL,
     [EditDate]    DATETIME      NULL,
-    [TPEApvName] VARCHAR(10) CONSTRAINT [DF_ADIDASComplain_TPEApvName] DEFAULT ('') NOT NULL, 
-    [TPEApvDate] DATETIME NOT NULL, 
-    [FtyApvName] VARCHAR(10) CONSTRAINT [DF_ADIDASComplain_FtyApvName] DEFAULT ('') NOT NULL, 
-    [FtyApvDate] DATETIME NULL, 
-    [Junk]  bit DEFAULT 0 NULL, 
+    [TPEApvName]  VARCHAR (10)  CONSTRAINT [DF_ADIDASComplain_TPEApvName] DEFAULT ('') NOT NULL,
+    [TPEApvDate]  DATETIME      NOT NULL,
+    [FtyApvName]  VARCHAR (10)  CONSTRAINT [DF_ADIDASComplain_FtyApvName] DEFAULT ('') NOT NULL,
+    [FtyApvDate]  DATETIME      NULL,
+    [Junk]        BIT           CONSTRAINT [DF_ADIDASComplain_Junk] DEFAULT ((0)) NOT NULL,
     CONSTRAINT [PK_ADIDASComplain] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
+
+
 
 
 GO

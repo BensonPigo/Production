@@ -3,14 +3,16 @@
     [Order_EachCons_ColorUkey] BIGINT       CONSTRAINT [DF_Order_EachCons_Color_Article_Order_EachCons_ColorUkey] DEFAULT ((0)) NOT NULL,
     [Article]                  VARCHAR (8)  CONSTRAINT [DF_Order_EachCons_Color_Article_Article] DEFAULT ('') NOT NULL,
     [ColorID]                  VARCHAR (6)  CONSTRAINT [DF_Order_EachCons_Color_Article_ColorID] DEFAULT ('') NOT NULL,
-    [SizeCode]                 VARCHAR (8)  CONSTRAINT [DF_Order_EachCons_Color_Article_SizeCode] DEFAULT ('') NULL,
-    [Orderqty]                 NUMERIC (6)  CONSTRAINT [DF_Order_EachCons_Color_Article_Orderqty] DEFAULT ((0)) NULL,
-    [Layer]                    NUMERIC (5)  CONSTRAINT [DF_Order_EachCons_Color_Article_Layer] DEFAULT ((0)) NULL,
-    [CutQty]                   NUMERIC (6)  CONSTRAINT [DF_Order_EachCons_Color_Article_CutQty] DEFAULT ((0)) NULL,
-    [Variance]                 NUMERIC (6)  CONSTRAINT [DF_Order_EachCons_Color_Article_Variance] DEFAULT ((0)) NULL,
+    [SizeCode]                 VARCHAR (8)  CONSTRAINT [DF_Order_EachCons_Color_Article_SizeCode] DEFAULT ('') NOT NULL,
+    [Orderqty]                 DECIMAL (6)  CONSTRAINT [DF_Order_EachCons_Color_Article_Orderqty] DEFAULT ((0)) NOT NULL,
+    [Layer]                    DECIMAL (5)  CONSTRAINT [DF_Order_EachCons_Color_Article_Layer] DEFAULT ((0)) NOT NULL,
+    [CutQty]                   DECIMAL (6)  CONSTRAINT [DF_Order_EachCons_Color_Article_CutQty] DEFAULT ((0)) NOT NULL,
+    [Variance]                 DECIMAL (6)  CONSTRAINT [DF_Order_EachCons_Color_Article_Variance] DEFAULT ((0)) NOT NULL,
     [Ukey]                     BIGINT       CONSTRAINT [DF_Order_EachCons_Color_Article_Ukey] DEFAULT ((0)) NOT NULL,
     CONSTRAINT [PK_Order_EachCons_Color_Article] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
+
+
 
 
 

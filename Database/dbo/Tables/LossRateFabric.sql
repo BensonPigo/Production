@@ -9,17 +9,19 @@
     [TWLimitUp]      NUMERIC (4, 1) CONSTRAINT [DF_LossRateFabric_TWLimitUp] DEFAULT ((0)) NOT NULL,
     [NonTWLimitUP]   NUMERIC (4, 1) CONSTRAINT [DF_LossRateFabric_NonTWLimitUP] DEFAULT ((0)) NOT NULL,
     [Allowance]      SMALLINT       CONSTRAINT [DF_LossRateFabric_Allowance] DEFAULT ((0)) NOT NULL,
-    [AddName]        VARCHAR (10)   CONSTRAINT [DF_LossRateFabric_AddName] DEFAULT ('') NULL,
+    [AddName]        VARCHAR (10)   CONSTRAINT [DF_LossRateFabric_AddName] DEFAULT ('') NOT NULL,
     [AddDate]        DATETIME       NULL,
-    [EditName]       VARCHAR (10)   CONSTRAINT [DF_LossRateFabric_EditName] DEFAULT ('') NULL,
+    [EditName]       VARCHAR (10)   CONSTRAINT [DF_LossRateFabric_EditName] DEFAULT ('') NOT NULL,
     [EditDate]       DATETIME       NULL,
-    [MaxLossQty]     NUMERIC (6)    DEFAULT ((0)) NULL,
-    [MinGmtQty]      NUMERIC (6)    NULL,
-    [MinLossQty]     NUMERIC (6)    NULL,
-    [PerGmtQty]      NUMERIC (6)    NULL,
-    [PlsLossQty]     NUMERIC (6)    NULL,
+    [MaxLossQty]     DECIMAL (6)    CONSTRAINT [DF_LossRateFabric_MaxLossQty] DEFAULT ((0)) NOT NULL,
+    [MinGmtQty]      DECIMAL (6)    CONSTRAINT [DF_LossRateFabric_MinGmtQty] DEFAULT ((0)) NOT NULL,
+    [MinLossQty]     DECIMAL (6)    CONSTRAINT [DF_LossRateFabric_MinLossQty] DEFAULT ((0)) NOT NULL,
+    [PerGmtQty]      DECIMAL (6)    CONSTRAINT [DF_LossRateFabric_PerGmtQty] DEFAULT ((0)) NOT NULL,
+    [PlsLossQty]     DECIMAL (6)    CONSTRAINT [DF_LossRateFabric_PlsLossQty] DEFAULT ((0)) NOT NULL,
     CONSTRAINT [PK_LossRateFabric] PRIMARY KEY CLUSTERED ([WeaveTypeID] ASC)
 );
+
+
 
 
 

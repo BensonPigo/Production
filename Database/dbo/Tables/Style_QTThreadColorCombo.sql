@@ -1,24 +1,23 @@
 ﻿
-CREATE TABLE [dbo].[Style_QTThreadColorCombo](
-	[Ukey] [bigint] IDENTITY(1,1) NOT NULL,
-	[StyleUkey] [bigint] NOT NULL,
-	[Thread_Quilting_SizeUkey] [bigint] NOT NULL,
-	[FabricPanelCode] [varchar](2) NOT NULL,
-	[AddName] [varchar](10) NULL,
-	[AddDate] [datetime] NULL,
-	[EditName] [varchar](10) NULL,
-	[EditDate] [datetime] NULL,
- CONSTRAINT [PK_Style_QTThreadColorCombo] PRIMARY KEY CLUSTERED 
-(
-	[Ukey] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-) ON [PRIMARY]
+CREATE TABLE [dbo].[Style_QTThreadColorCombo] (
+    [Ukey]                     BIGINT       NOT NULL,
+    [StyleUkey]                BIGINT       NOT NULL,
+    [Thread_Quilting_SizeUkey] BIGINT       NOT NULL,
+    [FabricPanelCode]          VARCHAR (2)  NOT NULL,
+    [AddName]                  VARCHAR (10) CONSTRAINT [DF_Style_QTThreadColorCombo_AddName] DEFAULT ('') NOT NULL,
+    [AddDate]                  DATETIME     NULL,
+    [EditName]                 VARCHAR (10) CONSTRAINT [DF_Style_QTThreadColorCombo_EditName] DEFAULT ('') NOT NULL,
+    [EditDate]                 DATETIME     NULL,
+    CONSTRAINT [PK_Style_QTThreadColorCombo] PRIMARY KEY CLUSTERED ([Ukey] ASC)
+);
+
+
 GO
 
-ALTER TABLE [dbo].[Style_QTThreadColorCombo] ADD  CONSTRAINT [DF_Style_QTThreadColorCombo_AddName]  DEFAULT ('') FOR [AddName]
+
 GO
 
-ALTER TABLE [dbo].[Style_QTThreadColorCombo] ADD  CONSTRAINT [DF_Style_QTThreadColorCombo_EditName]  DEFAULT ('') FOR [EditName]
+
 GO
 
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Add Name' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Style_QTThreadColorCombo', @level2type=N'COLUMN',@level2name=N'AddName'

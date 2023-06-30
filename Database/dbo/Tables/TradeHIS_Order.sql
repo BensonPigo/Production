@@ -1,14 +1,14 @@
 ﻿CREATE TABLE [dbo].[TradeHIS_Order] (
     [UKEY]         BIGINT         NOT NULL,
-    [TableName]    VARCHAR (60)   NULL,
-    [HisType]      NVARCHAR (60)  NULL,
-    [SourceID]     VARCHAR (16)   NULL,
-    [ReasonTypeID] VARCHAR (50)   NULL,
-    [ReasonID]     VARCHAR (5)    NULL,
-    [OldValue]     NVARCHAR (50)  NULL,
-    [NewValue]     NVARCHAR (50)  NULL,
-    [Remark]       NVARCHAR (MAX) NULL,
-    [AddName]      VARCHAR (10)   NULL,
+    [TableName]    VARCHAR (60)   CONSTRAINT [DF_TradeHIS_Order_TableName] DEFAULT ('') NOT NULL,
+    [HisType]      NVARCHAR (60)  CONSTRAINT [DF_TradeHIS_Order_HisType] DEFAULT ('') NOT NULL,
+    [SourceID]     VARCHAR (16)   CONSTRAINT [DF_TradeHIS_Order_SourceID] DEFAULT ('') NOT NULL,
+    [ReasonTypeID] VARCHAR (50)   CONSTRAINT [DF_TradeHIS_Order_ReasonTypeID] DEFAULT ('') NOT NULL,
+    [ReasonID]     VARCHAR (5)    CONSTRAINT [DF_TradeHIS_Order_ReasonID] DEFAULT ('') NOT NULL,
+    [OldValue]     NVARCHAR (50)  CONSTRAINT [DF_TradeHIS_Order_OldValue] DEFAULT ('') NOT NULL,
+    [NewValue]     NVARCHAR (50)  CONSTRAINT [DF_TradeHIS_Order_NewValue] DEFAULT ('') NOT NULL,
+    [Remark]       NVARCHAR (MAX) CONSTRAINT [DF_TradeHIS_Order_Remark] DEFAULT ('') NOT NULL,
+    [AddName]      VARCHAR (10)   CONSTRAINT [DF_TradeHIS_Order_AddName] DEFAULT ('') NOT NULL,
     [AddDate]      DATETIME       NULL,
     CONSTRAINT [PK_TradeHIS_Order] PRIMARY KEY CLUSTERED ([UKEY] ASC)
 );

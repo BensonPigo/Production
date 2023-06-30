@@ -1,25 +1,27 @@
-﻿CREATE TABLE [dbo].[ChangeKPILETARequest]
-(
-	[ID] VARCHAR(13) NOT NULL PRIMARY KEY DEFAULT (''), 
-    [MdivisionID] VARCHAR(8) NOT NULL DEFAULT (''), 
-    [OrderID] VARCHAR(13) NOT NULL DEFAULT (''), 
-    [OldKPILETA] DATE NOT NULL, 
-    [NewKPILETA] DATE NOT NULL, 
-    [Status] VARCHAR(15) NULL DEFAULT (''), 
-    [FactoryRemark] NVARCHAR(500) NULL, 
-    [AddName] VARCHAR(10) NULL DEFAULT (''), 
-    [AddDate] DATETIME NULL, 
-    [EditName] VARCHAR(10) NULL DEFAULT (''), 
-    [EditDate] DATETIME NULL, 
-    [ConfirmedNewKPILETA] DATE NULL, 
-    [ApproveName] VARCHAR(10) NULL DEFAULT (''), 
-    [ApproveDate] DATETIME NULL, 
-    [ConfirmName] VARCHAR(10) NULL DEFAULT (''), 
-    [ConfirmDate] DATETIME NULL, 
-    [TPERemark] NVARCHAR(500) NULL DEFAULT (''), 
-    [TPEEditName] VARCHAR(10) NULL DEFAULT (''), 
-    [TPEEditDate] DATETIME NULL
-)
+﻿CREATE TABLE [dbo].[ChangeKPILETARequest] (
+    [ID]                  VARCHAR (13)   DEFAULT ('') NOT NULL,
+    [MdivisionID]         VARCHAR (8)    DEFAULT ('') NOT NULL,
+    [OrderID]             VARCHAR (13)   DEFAULT ('') NOT NULL,
+    [OldKPILETA]          DATE           NOT NULL,
+    [NewKPILETA]          DATE           NOT NULL,
+    [Status]              VARCHAR (15)   CONSTRAINT [DF_ChangeKPILETARequest_Status] DEFAULT ('') NOT NULL,
+    [FactoryRemark]       NVARCHAR (500) CONSTRAINT [DF_ChangeKPILETARequest_FactoryRemark] DEFAULT ('') NOT NULL,
+    [AddName]             VARCHAR (10)   CONSTRAINT [DF_ChangeKPILETARequest_AddName] DEFAULT ('') NOT NULL,
+    [AddDate]             DATETIME       NULL,
+    [EditName]            VARCHAR (10)   CONSTRAINT [DF_ChangeKPILETARequest_EditName] DEFAULT ('') NOT NULL,
+    [EditDate]            DATETIME       NULL,
+    [ConfirmedNewKPILETA] DATE           NULL,
+    [ApproveName]         VARCHAR (10)   CONSTRAINT [DF_ChangeKPILETARequest_ApproveName] DEFAULT ('') NOT NULL,
+    [ApproveDate]         DATETIME       NULL,
+    [ConfirmName]         VARCHAR (10)   CONSTRAINT [DF_ChangeKPILETARequest_ConfirmName] DEFAULT ('') NOT NULL,
+    [ConfirmDate]         DATETIME       NULL,
+    [TPERemark]           NVARCHAR (500) CONSTRAINT [DF_ChangeKPILETARequest_TPERemark] DEFAULT ('') NOT NULL,
+    [TPEEditName]         VARCHAR (10)   CONSTRAINT [DF_ChangeKPILETARequest_TPEEditName] DEFAULT ('') NOT NULL,
+    [TPEEditDate]         DATETIME       NULL,
+    PRIMARY KEY CLUSTERED ([ID] ASC)
+);
+
+
 
 GO
 EXEC sp_addextendedproperty @name = N'MS_Description',

@@ -1,24 +1,26 @@
 ﻿CREATE TABLE [dbo].[MtlType] (
-    [ID]                   VARCHAR (20)   CONSTRAINT [DF_MtlType_ID] DEFAULT ('') NOT NULL,
-    [FullName]             NVARCHAR (100) CONSTRAINT [DF_MtlType_FullName] DEFAULT ('') NULL,
-    [Type]                 VARCHAR (1)    CONSTRAINT [DF_MtlType_Type] DEFAULT ('') NULL,
-    [Junk]                 BIT            CONSTRAINT [DF_MtlType_Junk] DEFAULT ((0)) NULL,
-    [IrregularCost]        BIT            CONSTRAINT [DF_MtlType_IrregularCost] DEFAULT ((0)) NULL,
-    [CheckZipper]          BIT            CONSTRAINT [DF_MtlType_CheckZipper] DEFAULT ((0)) NULL,
-    [ProductionType]       VARCHAR (20)   CONSTRAINT [DF_MtlType_ProductionType] DEFAULT ('') NULL,
-    [OutputUnit]           VARCHAR (1)    CONSTRAINT [DF_MtlType_OutputUnit] DEFAULT ('') NULL,
-    [IsExtensionUnit]      BIT            CONSTRAINT [DF_MtlType_IsExtensionUnit] DEFAULT ((0)) NOT NULL,
-    [IssueType]            VARCHAR (20)   CONSTRAINT [DF_MtlType_IssueType] DEFAULT ('') NULL,
-    [IsTrimCardOther]      BIT            NULL,
-    [AddName]              VARCHAR (10)   CONSTRAINT [DF_MtlType_AddName] DEFAULT ('') NULL,
-    [AddDate]              DATETIME       NULL,
-    [EditName]             VARCHAR (10)   CONSTRAINT [DF_MtlType_EditName] DEFAULT ('') NULL,
-    [EditDate]             DATETIME       NULL,
-    [IsThread]             BIT            NULL,
-    [LossQtyCalculateType] VARCHAR (1)    NULL,
-    [AllowTransPoForGarmentSP] BIT   CONSTRAINT [DF_MtlType_AllowTransPoForGarmentSP] DEFAULT ((0)) NOT NULL,
+    [ID]                       VARCHAR (20)   CONSTRAINT [DF_MtlType_ID] DEFAULT ('') NOT NULL,
+    [FullName]                 NVARCHAR (100) CONSTRAINT [DF_MtlType_FullName] DEFAULT ('') NOT NULL,
+    [Type]                     VARCHAR (1)    CONSTRAINT [DF_MtlType_Type] DEFAULT ('') NOT NULL,
+    [Junk]                     BIT            CONSTRAINT [DF_MtlType_Junk] DEFAULT ((0)) NOT NULL,
+    [IrregularCost]            BIT            CONSTRAINT [DF_MtlType_IrregularCost] DEFAULT ((0)) NOT NULL,
+    [CheckZipper]              BIT            CONSTRAINT [DF_MtlType_CheckZipper] DEFAULT ((0)) NOT NULL,
+    [ProductionType]           VARCHAR (20)   CONSTRAINT [DF_MtlType_ProductionType] DEFAULT ('') NOT NULL,
+    [OutputUnit]               VARCHAR (1)    CONSTRAINT [DF_MtlType_OutputUnit] DEFAULT ('') NOT NULL,
+    [IsExtensionUnit]          BIT            CONSTRAINT [DF_MtlType_IsExtensionUnit] DEFAULT ((0)) NOT NULL,
+    [IssueType]                VARCHAR (20)   CONSTRAINT [DF_MtlType_IssueType] DEFAULT ('') NOT NULL,
+    [IsTrimCardOther]          BIT            CONSTRAINT [DF_MtlType_IsTrimCardOther] DEFAULT ((0)) NOT NULL,
+    [AddName]                  VARCHAR (10)   CONSTRAINT [DF_MtlType_AddName] DEFAULT ('') NOT NULL,
+    [AddDate]                  DATETIME       NULL,
+    [EditName]                 VARCHAR (10)   CONSTRAINT [DF_MtlType_EditName] DEFAULT ('') NOT NULL,
+    [EditDate]                 DATETIME       NULL,
+    [IsThread]                 BIT            CONSTRAINT [DF_MtlType_IsThread] DEFAULT ((0)) NOT NULL,
+    [LossQtyCalculateType]     VARCHAR (1)    CONSTRAINT [DF_MtlType_LossQtyCalculateType] DEFAULT ('') NOT NULL,
+    [AllowTransPoForGarmentSP] BIT            CONSTRAINT [DF_MtlType_AllowTransPoForGarmentSP] DEFAULT ((0)) NOT NULL,
     CONSTRAINT [PK_MtlType] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
+
+
 
 
 

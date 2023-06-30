@@ -2,10 +2,12 @@
     [StyleUkey] BIGINT       CONSTRAINT [DF_Style_SizeSpec_StyleUkey] DEFAULT ((0)) NOT NULL,
     [SizeItem]  VARCHAR (3)  CONSTRAINT [DF_Style_SizeSpec_SizeItem] DEFAULT ('') NOT NULL,
     [SizeCode]  VARCHAR (8)  CONSTRAINT [DF_Style_SizeSpec_SizeCode] DEFAULT ('') NOT NULL,
-    [SizeSpec]  VARCHAR (15) CONSTRAINT [DF_Style_SizeSpec_SizeSpec] DEFAULT ('') NULL,
-    [UKey] BIGINT NOT NULL DEFAULT ((0)), 
-    CONSTRAINT [PK_Style_SizeSpec] PRIMARY KEY CLUSTERED ([UKey])
+    [SizeSpec]  VARCHAR (15) CONSTRAINT [DF_Style_SizeSpec_SizeSpec] DEFAULT ('') NOT NULL,
+    [UKey]      BIGINT       DEFAULT ((0)) NOT NULL,
+    CONSTRAINT [PK_Style_SizeSpec] PRIMARY KEY CLUSTERED ([UKey] ASC)
 );
+
+
 
 
 GO

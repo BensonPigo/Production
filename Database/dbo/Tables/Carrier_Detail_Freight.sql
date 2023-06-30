@@ -1,20 +1,22 @@
 ﻿CREATE TABLE [dbo].[Carrier_Detail_Freight] (
     [ID]          VARCHAR (4)    CONSTRAINT [DF_Carrier_Detail_Freight_ID] DEFAULT ('') NOT NULL,
     [Ukey]        BIGINT         IDENTITY (1, 1) NOT NULL,
-    [Payer]       VARCHAR (1)    CONSTRAINT [DF_Carrier_Detail_Freight_Payer] DEFAULT ('') NULL,
-    [FromTag]     VARCHAR (1)    CONSTRAINT [DF_Carrier_Detail_Freight_FromTag] DEFAULT ('') NULL,
-    [FromInclude] NVARCHAR (254) CONSTRAINT [DF_Carrier_Detail_Freight_FromInclude] DEFAULT ('') NULL,
-    [FromExclude] NVARCHAR (254) CONSTRAINT [DF_Carrier_Detail_Freight_FromExclude] DEFAULT ('') NULL,
-    [ToTag]       VARCHAR (1)    CONSTRAINT [DF_Carrier_Detail_Freight_ToTag] DEFAULT ('') NULL,
-    [ToInclude]   NVARCHAR (254) CONSTRAINT [DF_Carrier_Detail_Freight_ToInclude] DEFAULT ('') NULL,
-    [ToExclude]   NVARCHAR (254) CONSTRAINT [DF_Carrier_Detail_Freight_ToExclude] DEFAULT ('') NULL,
-    [ToFty]       VARCHAR (8)    CONSTRAINT [DF_Carrier_Detail_Freight_ToFty] DEFAULT ('') NULL,
-    [AddName]     VARCHAR (10)   CONSTRAINT [DF_Carrier_Detail_Freight_AddName] DEFAULT ('') NULL,
+    [Payer]       VARCHAR (1)    CONSTRAINT [DF_Carrier_Detail_Freight_Payer] DEFAULT ('') NOT NULL,
+    [FromTag]     VARCHAR (1)    CONSTRAINT [DF_Carrier_Detail_Freight_FromTag] DEFAULT ('') NOT NULL,
+    [FromInclude] NVARCHAR (254) CONSTRAINT [DF_Carrier_Detail_Freight_FromInclude] DEFAULT ('') NOT NULL,
+    [FromExclude] NVARCHAR (254) CONSTRAINT [DF_Carrier_Detail_Freight_FromExclude] DEFAULT ('') NOT NULL,
+    [ToTag]       VARCHAR (1)    CONSTRAINT [DF_Carrier_Detail_Freight_ToTag] DEFAULT ('') NOT NULL,
+    [ToInclude]   NVARCHAR (254) CONSTRAINT [DF_Carrier_Detail_Freight_ToInclude] DEFAULT ('') NOT NULL,
+    [ToExclude]   NVARCHAR (254) CONSTRAINT [DF_Carrier_Detail_Freight_ToExclude] DEFAULT ('') NOT NULL,
+    [ToFty]       VARCHAR (8)    CONSTRAINT [DF_Carrier_Detail_Freight_ToFty] DEFAULT ('') NOT NULL,
+    [AddName]     VARCHAR (10)   CONSTRAINT [DF_Carrier_Detail_Freight_AddName] DEFAULT ('') NOT NULL,
     [AddDate]     DATETIME       NULL,
-    [EditName]    VARCHAR (10)   CONSTRAINT [DF_Carrier_Detail_Freight_EditName] DEFAULT ('') NULL,
+    [EditName]    VARCHAR (10)   CONSTRAINT [DF_Carrier_Detail_Freight_EditName] DEFAULT ('') NOT NULL,
     [EditDate]    DATETIME       NULL,
     CONSTRAINT [PK_Carrier_Detail_Freight] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
+
+
 
 
 GO

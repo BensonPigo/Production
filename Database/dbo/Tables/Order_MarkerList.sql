@@ -3,36 +3,38 @@
     [Ukey]                BIGINT         CONSTRAINT [DF_Order_MarkerList_Ukey] DEFAULT ((0)) NOT NULL,
     [Seq]                 NUMERIC (4)    CONSTRAINT [DF_Order_MarkerList_Seq] DEFAULT ((0)) NOT NULL,
     [MarkerName]          NVARCHAR (20)  CONSTRAINT [DF_Order_MarkerList_MarkerName] DEFAULT ('') NOT NULL,
-    [FabricCode]          VARCHAR (3)    CONSTRAINT [DF_Order_MarkerList_FabricCode] DEFAULT ('') NULL,
-    [FabricCombo]         VARCHAR (2)    CONSTRAINT [DF_Order_MarkerList_FabricCombo] DEFAULT ('') NULL,
+    [FabricCode]          VARCHAR (3)    CONSTRAINT [DF_Order_MarkerList_FabricCode] DEFAULT ('') NOT NULL,
+    [FabricCombo]         VARCHAR (2)    CONSTRAINT [DF_Order_MarkerList_FabricCombo] DEFAULT ('') NOT NULL,
     [FabricPanelCode]     VARCHAR (2)    CONSTRAINT [DF_Order_MarkerList_FabricPanelCode] DEFAULT ('') NOT NULL,
-    [isQT]                BIT            CONSTRAINT [DF_Order_MarkerList_isQT] DEFAULT ((0)) NULL,
-    [MarkerLength]        VARCHAR (15)   CONSTRAINT [DF_Order_MarkerList_MarkerLength] DEFAULT ('') NULL,
+    [isQT]                BIT            CONSTRAINT [DF_Order_MarkerList_isQT] DEFAULT ((0)) NOT NULL,
+    [MarkerLength]        VARCHAR (15)   CONSTRAINT [DF_Order_MarkerList_MarkerLength] DEFAULT ('') NOT NULL,
     [ConsPC]              NUMERIC (8, 4) CONSTRAINT [DF_Order_MarkerList_ConsPC] DEFAULT ((0)) NOT NULL,
-    [Cuttingpiece]        BIT            CONSTRAINT [DF_Order_MarkerList_Cuttingpiece] DEFAULT ((0)) NULL,
-    [ActCuttingPerimeter] NVARCHAR (15)  CONSTRAINT [DF_Order_MarkerList_ActCuttingPerimeter] DEFAULT ('') NULL,
-    [StraightLength]      VARCHAR (15)   CONSTRAINT [DF_Order_MarkerList_StraightLength] DEFAULT ('') NULL,
-    [CurvedLength]        VARCHAR (15)   CONSTRAINT [DF_Order_MarkerList_CurvedLength] DEFAULT ('') NULL,
-    [Efficiency]          VARCHAR (9)    CONSTRAINT [DF_Order_MarkerList_Efficiency] DEFAULT ('') NULL,
-    [Remark]              NVARCHAR (250) CONSTRAINT [DF_Order_MarkerList_Remark] DEFAULT ('') NULL,
+    [Cuttingpiece]        BIT            CONSTRAINT [DF_Order_MarkerList_Cuttingpiece] DEFAULT ((0)) NOT NULL,
+    [ActCuttingPerimeter] NVARCHAR (15)  CONSTRAINT [DF_Order_MarkerList_ActCuttingPerimeter] DEFAULT ('') NOT NULL,
+    [StraightLength]      VARCHAR (15)   CONSTRAINT [DF_Order_MarkerList_StraightLength] DEFAULT ('') NOT NULL,
+    [CurvedLength]        VARCHAR (15)   CONSTRAINT [DF_Order_MarkerList_CurvedLength] DEFAULT ('') NOT NULL,
+    [Efficiency]          VARCHAR (9)    CONSTRAINT [DF_Order_MarkerList_Efficiency] DEFAULT ('') NOT NULL,
+    [Remark]              NVARCHAR (250) CONSTRAINT [DF_Order_MarkerList_Remark] DEFAULT ('') NOT NULL,
     [MixedSizeMarker]     VARCHAR (1)    CONSTRAINT [DF_Order_MarkerList_MultitudeSize] DEFAULT ('') NOT NULL,
-    [MarkerNo]            VARCHAR (10)   CONSTRAINT [DF_Order_MarkerList_MarkerNo] DEFAULT ('') NULL,
+    [MarkerNo]            VARCHAR (10)   CONSTRAINT [DF_Order_MarkerList_MarkerNo] DEFAULT ('') NOT NULL,
     [MarkerUpdate]        DATETIME       NULL,
-    [MarkerUpdateName]    VARCHAR (10)   CONSTRAINT [DF_Order_MarkerList_MarkerUpdateName] DEFAULT ('') NULL,
-    [AllSize]             BIT            CONSTRAINT [DF_Order_MarkerList_AllSize] DEFAULT ((0)) NULL,
-    [PhaseID]             VARCHAR (10)   CONSTRAINT [DF_Order_MarkerList_PhaseID] DEFAULT ('') NULL,
-    [SMNoticeID]          VARCHAR (10)   CONSTRAINT [DF_Order_MarkerList_SMNoticeID] DEFAULT ('') NULL,
-    [MarkerVersion]       VARCHAR (3)    CONSTRAINT [DF_Order_MarkerList_MarkerVersion] DEFAULT ('') NULL,
-    [Direction]           NVARCHAR (40)  CONSTRAINT [DF_Order_MarkerList_Direction] DEFAULT ('') NULL,
-    [CuttingWidth]        VARCHAR (8)    CONSTRAINT [DF_Order_MarkerList_CuttingWidth] DEFAULT ('') NULL,
-    [Width]               VARCHAR (6)    CONSTRAINT [DF_Order_MarkerList_Width] DEFAULT ('') NULL,
-    [Type]                VARCHAR (1)    CONSTRAINT [DF_Order_MarkerList_Type] DEFAULT ('') NULL,
-    [AddName]             VARCHAR (10)   CONSTRAINT [DF_Order_MarkerList_AddName] DEFAULT ('') NULL,
+    [MarkerUpdateName]    VARCHAR (10)   CONSTRAINT [DF_Order_MarkerList_MarkerUpdateName] DEFAULT ('') NOT NULL,
+    [AllSize]             BIT            CONSTRAINT [DF_Order_MarkerList_AllSize] DEFAULT ((0)) NOT NULL,
+    [PhaseID]             VARCHAR (10)   CONSTRAINT [DF_Order_MarkerList_PhaseID] DEFAULT ('') NOT NULL,
+    [SMNoticeID]          VARCHAR (10)   CONSTRAINT [DF_Order_MarkerList_SMNoticeID] DEFAULT ('') NOT NULL,
+    [MarkerVersion]       VARCHAR (3)    CONSTRAINT [DF_Order_MarkerList_MarkerVersion] DEFAULT ('') NOT NULL,
+    [Direction]           NVARCHAR (40)  CONSTRAINT [DF_Order_MarkerList_Direction] DEFAULT ('') NOT NULL,
+    [CuttingWidth]        VARCHAR (8)    CONSTRAINT [DF_Order_MarkerList_CuttingWidth] DEFAULT ('') NOT NULL,
+    [Width]               VARCHAR (6)    CONSTRAINT [DF_Order_MarkerList_Width] DEFAULT ('') NOT NULL,
+    [Type]                VARCHAR (1)    CONSTRAINT [DF_Order_MarkerList_Type] DEFAULT ('') NOT NULL,
+    [AddName]             VARCHAR (10)   CONSTRAINT [DF_Order_MarkerList_AddName] DEFAULT ('') NOT NULL,
     [AddDate]             DATETIME       NULL,
-    [EditName]            VARCHAR (10)   CONSTRAINT [DF_Order_MarkerList_EditName] DEFAULT ('') NULL,
+    [EditName]            VARCHAR (10)   CONSTRAINT [DF_Order_MarkerList_EditName] DEFAULT ('') NOT NULL,
     [EditDate]            DATETIME       NULL,
     CONSTRAINT [PK_Order_MarkerList] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
+
+
 
 
 
@@ -178,6 +180,5 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'最後修�
 
 
 GO
-CREATE NONCLUSTERED INDEX [<Name of Missing Index, sysname,>]
-    ON [dbo].[Order_MarkerList]([Id] ASC);
+
 

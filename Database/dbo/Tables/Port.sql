@@ -1,17 +1,19 @@
 ﻿CREATE TABLE [dbo].[Port] (
     [ID]        VARCHAR (20)   CONSTRAINT [DF_Port_ID] DEFAULT ('') NOT NULL,
-    [CountryID] VARCHAR (2)    CONSTRAINT [DF_Port_CountryID] DEFAULT ('') NULL,
-    [Remark]    NVARCHAR (MAX) CONSTRAINT [DF_Port_Remark] DEFAULT ('') NULL,
-    [AddName]   VARCHAR (10)   CONSTRAINT [DF_Port_AddName] DEFAULT ('') NULL,
+    [CountryID] VARCHAR (2)    CONSTRAINT [DF_Port_CountryID] DEFAULT ('') NOT NULL,
+    [Remark]    NVARCHAR (MAX) CONSTRAINT [DF_Port_Remark] DEFAULT ('') NOT NULL,
+    [AddName]   VARCHAR (10)   CONSTRAINT [DF_Port_AddName] DEFAULT ('') NOT NULL,
     [AddDate]   DATETIME       NULL,
-    [EditName]  VARCHAR (10)   CONSTRAINT [DF_Port_EditName] DEFAULT ('') NULL,
+    [EditName]  VARCHAR (10)   CONSTRAINT [DF_Port_EditName] DEFAULT ('') NOT NULL,
     [EditDate]  DATETIME       NULL,
-    [Junk]      BIT            CONSTRAINT [DF_Port_Junk] DEFAULT ((0)) NULL,
-    [Name]  [varchar](50) NOT NULL CONSTRAINT [DF_Port_Name] DEFAULT (''),
-    [AirPort]      BIT            CONSTRAINT [DF_Port_AirPort] DEFAULT ((0)) NOT NULL,
-    [SeaPort]      BIT            CONSTRAINT [DF_Port_SeaPort] DEFAULT ((0)) NOT NULL,
+    [Junk]      BIT            CONSTRAINT [DF_Port_Junk] DEFAULT ((0)) NOT NULL,
+    [Name]      VARCHAR (50)   CONSTRAINT [DF_Port_Name] DEFAULT ('') NOT NULL,
+    [AirPort]   BIT            CONSTRAINT [DF_Port_AirPort] DEFAULT ('') NOT NULL,
+    [SeaPort]   BIT            CONSTRAINT [DF_Port_SeaPort] DEFAULT ('') NOT NULL,
     CONSTRAINT [PK_Port] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
+
+
 
 
 GO

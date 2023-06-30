@@ -1,12 +1,14 @@
 ﻿CREATE TABLE [dbo].[ShipTerm] (
     [ID]          VARCHAR (5)   CONSTRAINT [DF_ShipTerm_ID] DEFAULT ('') NOT NULL,
     [Description] NVARCHAR (40) CONSTRAINT [DF_ShipTerm_Description] DEFAULT ('') NOT NULL,
-    [AddName]     VARCHAR (10)  CONSTRAINT [DF_ShipTerm_AddName] DEFAULT ('') NULL,
+    [AddName]     VARCHAR (10)  CONSTRAINT [DF_ShipTerm_AddName] DEFAULT ('') NOT NULL,
     [AddDate]     DATETIME      NULL,
-    [EditName]    VARCHAR (10)  CONSTRAINT [DF_ShipTerm_EditName] DEFAULT ('') NULL,
+    [EditName]    VARCHAR (10)  CONSTRAINT [DF_ShipTerm_EditName] DEFAULT ('') NOT NULL,
     [EditDate]    DATETIME      NULL,
     CONSTRAINT [PK_ShipTerm] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
+
+
 
 
 GO

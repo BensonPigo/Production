@@ -4,13 +4,15 @@
     [MarkerVersion]  VARCHAR (3)    CONSTRAINT [DF_Marker_Send_MarkerVersion] DEFAULT ('') NOT NULL,
     [MarkerNo]       VARCHAR (10)   CONSTRAINT [DF_Marker_Send_MarkerNo] DEFAULT ('') NOT NULL,
     [PatternSMID]    VARCHAR (10)   CONSTRAINT [DF_Marker_Send_PatternSMID] DEFAULT ('') NOT NULL,
-    [PatternVersion] VARCHAR (3)    CONSTRAINT [DF_Marker_Send_PatternVersion] DEFAULT ('') NULL,
+    [PatternVersion] VARCHAR (3)    CONSTRAINT [DF_Marker_Send_PatternVersion] DEFAULT ('') NOT NULL,
     [ToFactory]      NVARCHAR (100) CONSTRAINT [DF_Marker_Send_ToFactory] DEFAULT ('') NOT NULL,
-    [TransLate]      BIT            CONSTRAINT [DF_Marker_Send_TransLate] DEFAULT ((0)) NULL,
-    [AddName]        VARCHAR (10)   CONSTRAINT [DF_Marker_Send_AddName] DEFAULT ('') NULL,
+    [TransLate]      BIT            CONSTRAINT [DF_Marker_Send_TransLate] DEFAULT ((0)) NOT NULL,
+    [AddName]        VARCHAR (10)   CONSTRAINT [DF_Marker_Send_AddName] DEFAULT ('') NOT NULL,
     [AddDate]        DATETIME       NULL,
     CONSTRAINT [PK_Marker_Send] PRIMARY KEY CLUSTERED ([ID] ASC, [SEQ] ASC, [MarkerVersion] ASC)
 );
+
+
 
 
 GO

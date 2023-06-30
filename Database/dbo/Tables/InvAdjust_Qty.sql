@@ -1,17 +1,19 @@
 ﻿CREATE TABLE [dbo].[InvAdjust_Qty] (
-    [ID]           VARCHAR (13)   CONSTRAINT [DF_InvAdjust_Qty_ID] DEFAULT ('') NOT NULL,
-    [Article]      VARCHAR (8)    CONSTRAINT [DF_InvAdjust_Qty_Article] DEFAULT ('') NOT NULL,
-    [SizeCode]     VARCHAR (8)    CONSTRAINT [DF_InvAdjust_Qty_SizeCode] DEFAULT ('') NOT NULL,
-    [OrderQty]     INT            CONSTRAINT [DF_InvAdjust_Qty_OrderQty] DEFAULT ((0)) NULL,
-    [OrigQty]      INT            CONSTRAINT [DF_InvAdjust_Qty_OrigQty] DEFAULT ((0)) NULL,
-    [AdjustQty]    INT            CONSTRAINT [DF_InvAdjust_Qty_AdjustQty] DEFAULT ((0)) NULL,
-    [Price]        NUMERIC (16, 4) CONSTRAINT [DF_InvAdjust_Qty_Price] DEFAULT ((0)) NULL,
-    [NewItem]      BIT            CONSTRAINT [DF_InvAdjust_Qty_NewItem] DEFAULT ((0)) NULL,
-    [DiffQty]      INT            CONSTRAINT [DF_InvAdjust_Qty_DiffQty] DEFAULT ((0)) NULL,
-    [Pullout3Qty]  INT            CONSTRAINT [DF_InvAdjust_Qty_Pullout3Qty] DEFAULT ((0)) NULL,
-    [Ukey_Pullout] BIGINT NOT NULL DEFAULT ((0)), 
-    CONSTRAINT [PK_InvAdjust_Qty] PRIMARY KEY CLUSTERED ([ID], [Article], [SizeCode], [Ukey_Pullout])
+    [ID]           VARCHAR (13)    CONSTRAINT [DF_InvAdjust_Qty_ID] DEFAULT ('') NOT NULL,
+    [Article]      VARCHAR (8)     CONSTRAINT [DF_InvAdjust_Qty_Article] DEFAULT ('') NOT NULL,
+    [SizeCode]     VARCHAR (8)     CONSTRAINT [DF_InvAdjust_Qty_SizeCode] DEFAULT ('') NOT NULL,
+    [OrderQty]     INT             CONSTRAINT [DF_InvAdjust_Qty_OrderQty] DEFAULT ((0)) NOT NULL,
+    [OrigQty]      INT             CONSTRAINT [DF_InvAdjust_Qty_OrigQty] DEFAULT ((0)) NOT NULL,
+    [AdjustQty]    INT             CONSTRAINT [DF_InvAdjust_Qty_AdjustQty] DEFAULT ((0)) NOT NULL,
+    [Price]        DECIMAL (16, 4) CONSTRAINT [DF_InvAdjust_Qty_Price] DEFAULT ((0)) NOT NULL,
+    [NewItem]      BIT             CONSTRAINT [DF_InvAdjust_Qty_NewItem] DEFAULT ((0)) NOT NULL,
+    [DiffQty]      INT             CONSTRAINT [DF_InvAdjust_Qty_DiffQty] DEFAULT ((0)) NOT NULL,
+    [Pullout3Qty]  INT             CONSTRAINT [DF_InvAdjust_Qty_Pullout3Qty] DEFAULT ((0)) NOT NULL,
+    [Ukey_Pullout] BIGINT          DEFAULT ((0)) NOT NULL,
+    CONSTRAINT [PK_InvAdjust_Qty] PRIMARY KEY CLUSTERED ([ID] ASC, [Article] ASC, [SizeCode] ASC, [Ukey_Pullout] ASC)
 );
+
+
 
 
 GO

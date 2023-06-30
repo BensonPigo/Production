@@ -1,14 +1,16 @@
 ﻿CREATE TABLE [dbo].[Carrier] (
     [ID]       VARCHAR (4)  CONSTRAINT [DF_Carrier_ID] DEFAULT ('') NOT NULL,
-    [SuppID]   VARCHAR (6)  CONSTRAINT [DF_Carrier_SuppID] DEFAULT ('') NULL,
-    [Account]  VARCHAR (20) CONSTRAINT [DF_Carrier_Account] DEFAULT ('') NULL,
-    [Junk]     BIT          CONSTRAINT [DF_Carrier_Junk] DEFAULT ((0)) NULL,
-    [AddName]  VARCHAR (10) CONSTRAINT [DF_Carrier_AddName] DEFAULT ('') NULL,
+    [SuppID]   VARCHAR (6)  CONSTRAINT [DF_Carrier_SuppID] DEFAULT ('') NOT NULL,
+    [Account]  VARCHAR (20) CONSTRAINT [DF_Carrier_Account] DEFAULT ('') NOT NULL,
+    [Junk]     BIT          CONSTRAINT [DF_Carrier_Junk] DEFAULT ((0)) NOT NULL,
+    [AddName]  VARCHAR (10) CONSTRAINT [DF_Carrier_AddName] DEFAULT ('') NOT NULL,
     [AddDate]  DATETIME     NULL,
-    [EditName] VARCHAR (10) CONSTRAINT [DF_Carrier_EditName] DEFAULT ('') NULL,
+    [EditName] VARCHAR (10) CONSTRAINT [DF_Carrier_EditName] DEFAULT ('') NOT NULL,
     [EditDate] DATETIME     NULL,
     CONSTRAINT [PK_Carrier] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
+
+
 
 
 GO

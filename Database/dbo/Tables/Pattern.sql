@@ -1,30 +1,32 @@
-CREATE TABLE [dbo].[Pattern] (
+﻿CREATE TABLE [dbo].[Pattern] (
     [ID]            VARCHAR (10)   CONSTRAINT [DF_Pattern_ID] DEFAULT ('') NOT NULL,
     [Version]       VARCHAR (3)    CONSTRAINT [DF_Pattern_Version] DEFAULT ('') NOT NULL,
-    [BrandID]       VARCHAR (8)    CONSTRAINT [DF_Pattern_Brand] DEFAULT ('') NULL,
-    [ActFtyPattern] VARCHAR (8)    CONSTRAINT [DF_Pattern_ActFtyPattern] DEFAULT ('') NULL,
-    [PatternNO]     VARCHAR (10)   CONSTRAINT [DF_Pattern_PatternNO] DEFAULT ('') NULL,
-    [RevisedReason] VARCHAR (4)    CONSTRAINT [DF_Pattern_RevisedReason] DEFAULT ('') NULL,
-    [PatternName]   VARCHAR (10)   CONSTRAINT [DF_Pattern_PatternName] DEFAULT ('') NULL,
+    [BrandID]       VARCHAR (8)    CONSTRAINT [DF_Pattern_BrandID] DEFAULT ('') NOT NULL,
+    [ActFtyPattern] VARCHAR (8)    CONSTRAINT [DF_Pattern_ActFtyPattern] DEFAULT ('') NOT NULL,
+    [PatternNO]     VARCHAR (10)   CONSTRAINT [DF_Pattern_PatternNO] DEFAULT ('') NOT NULL,
+    [RevisedReason] VARCHAR (4)    CONSTRAINT [DF_Pattern_RevisedReason] DEFAULT ('') NOT NULL,
+    [PatternName]   VARCHAR (10)   CONSTRAINT [DF_Pattern_PatternName] DEFAULT ('') NOT NULL,
     [EstFinDate]    DATE           NULL,
     [ActFinDate]    DATETIME       NULL,
-    [CheckerName]   VARCHAR (10)   CONSTRAINT [DF_Pattern_CheckerName] DEFAULT ('') NULL,
+    [CheckerName]   VARCHAR (10)   CONSTRAINT [DF_Pattern_CheckerName] DEFAULT ('') NOT NULL,
     [CheckerDate]   DATETIME       NULL,
-    [Status]        VARCHAR (15)   CONSTRAINT [DF_Pattern_Status] DEFAULT ('') NULL,
-    [CFMName]       VARCHAR (10)   CONSTRAINT [DF_Pattern_CFMName] DEFAULT ('') NULL,
+    [Status]        VARCHAR (15)   CONSTRAINT [DF_Pattern_Status] DEFAULT ('') NOT NULL,
+    [CFMName]       VARCHAR (10)   CONSTRAINT [DF_Pattern_CFMName] DEFAULT ('') NOT NULL,
     [UKey]          BIGINT         CONSTRAINT [DF_Pattern_UKey] DEFAULT ((0)) NOT NULL,
-    [StyleRemark]   NVARCHAR (MAX) CONSTRAINT [DF_Pattern_StyleRemark] DEFAULT ('') NULL,
-    [HisRemark]     NVARCHAR (MAX) CONSTRAINT [DF_Pattern_HisRemark] DEFAULT ('') NULL,
-    [PendingRemark] NVARCHAR (MAX) CONSTRAINT [DF_Pattern_PendingRemark] DEFAULT ('') NULL,
-    [SizeRound]     BIT            CONSTRAINT [DF_Pattern_SizeRound] DEFAULT ((0)) NULL,
-    [SizeRange]     NVARCHAR (MAX) CONSTRAINT [DF_Pattern_SizeRange] DEFAULT ('') NULL,
-    [StyleUkey]     BIGINT         CONSTRAINT [DF_Pattern_StyleUkey] DEFAULT ('') NULL,
-    [AddName]       VARCHAR (10)   CONSTRAINT [DF_Pattern_AddName] DEFAULT ('') NULL,
+    [StyleRemark]   NVARCHAR (MAX) CONSTRAINT [DF_Pattern_StyleRemark] DEFAULT ('') NOT NULL,
+    [HisRemark]     NVARCHAR (MAX) CONSTRAINT [DF_Pattern_HisRemark] DEFAULT ('') NOT NULL,
+    [PendingRemark] NVARCHAR (MAX) CONSTRAINT [DF_Pattern_PendingRemark] DEFAULT ('') NOT NULL,
+    [SizeRound]     BIT            CONSTRAINT [DF_Pattern_SizeRound] DEFAULT ((0)) NOT NULL,
+    [SizeRange]     NVARCHAR (MAX) CONSTRAINT [DF_Pattern_SizeRange] DEFAULT ('') NOT NULL,
+    [StyleUkey]     BIGINT         CONSTRAINT [DF_Pattern_StyleUkey] DEFAULT ((0)) NOT NULL,
+    [AddName]       VARCHAR (10)   CONSTRAINT [DF_Pattern_AddName] DEFAULT ('') NOT NULL,
     [AddDate]       DATETIME       NULL,
-    [EditName]      VARCHAR (10)   CONSTRAINT [DF_Pattern_EditName] DEFAULT ('') NULL,
+    [EditName]      VARCHAR (10)   CONSTRAINT [DF_Pattern_EditName] DEFAULT ('') NOT NULL,
     [EditDate]      DATETIME       NULL,
     CONSTRAINT [PK_Pattern] PRIMARY KEY CLUSTERED ([ID] ASC, [Version] ASC)
 );
+
+
 
 
 
@@ -142,4 +144,9 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'實際完�
 GO
 CREATE NONCLUSTERED INDEX [NonClusteredIndex-20170519-110832]
     ON [dbo].[Pattern]([StyleUkey] ASC);
+
+
+GO
+CREATE NONCLUSTERED INDEX [IDX_Pattern_PatternNO]
+    ON [dbo].[Pattern]([PatternNO] ASC);
 

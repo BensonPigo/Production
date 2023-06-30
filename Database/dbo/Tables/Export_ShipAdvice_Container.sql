@@ -1,29 +1,28 @@
-﻿CREATE TABLE [dbo].[Export_ShipAdvice_Container](
-	[Ukey] [bigint] NOT NULL,
-	[Export_DetailUkey] [bigint] NULL,
-	[ContainerType] [varchar](2) NOT NULL,
-	[ContainerNo] [varchar](20) NOT NULL,
-	[AddName] [varchar](10) NOT NULL,
-	[AddDate] [datetime] NULL,
-	[EditName] [varchar](10) NULL,
-	[EditDate] [datetime] NULL,
-	CONSTRAINT [PK_Export_ShipAdvice_Container] PRIMARY KEY CLUSTERED 
-(
-	[Ukey] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-) ON [PRIMARY]
+﻿CREATE TABLE [dbo].[Export_ShipAdvice_Container] (
+    [Ukey]              BIGINT       NOT NULL,
+    [ContainerType]     VARCHAR (2)  CONSTRAINT [DF_Export_ShipAdvice_ContainerType] DEFAULT ('') NOT NULL,
+    [ContainerNo]       VARCHAR (20) CONSTRAINT [DF_Export_ShipAdvice_Container_ContainerNo] DEFAULT ('') NOT NULL,
+    [AddName]           VARCHAR (10) CONSTRAINT [DF_Export_ShipAdvice_Container_AddName] DEFAULT ('') NOT NULL,
+    [AddDate]           DATETIME     NULL,
+    [EditName]          VARCHAR (10) CONSTRAINT [DF_Export_ShipAdvice_Container_EditName] DEFAULT ('') NOT NULL,
+    [EditDate]          DATETIME     NULL,
+    [Export_DetailUkey] BIGINT       CONSTRAINT [DF_Export_ShipAdvice_Container_Export_DetailUkey] DEFAULT ((0)) NOT NULL,
+    CONSTRAINT [PK_Export_ShipAdvice_Container] PRIMARY KEY CLUSTERED ([Ukey] ASC)
+);
+
+
 GO
 
-	ALTER TABLE [dbo].[Export_ShipAdvice_Container] ADD  CONSTRAINT [DF_Export_ShipAdvice_ContainerType]  DEFAULT ('') FOR [ContainerType]
+	
 GO
 	
-	ALTER TABLE [dbo].[Export_ShipAdvice_Container] ADD  CONSTRAINT [DF_Export_ShipAdvice_Container_ContainerNo]  DEFAULT ('') FOR [ContainerNo]
+	
 GO
 	
-	ALTER TABLE [dbo].[Export_ShipAdvice_Container] ADD  CONSTRAINT [DF_Export_ShipAdvice_Container_AddName]  DEFAULT ('') FOR [AddName]
+	
 GO
 	
-	ALTER TABLE [dbo].[Export_ShipAdvice_Container] ADD  CONSTRAINT [DF_Export_ShipAdvice_Container_EditName]  DEFAULT ('') FOR [EditName]
+	
 GO
 CREATE NONCLUSTERED INDEX [IDX_Export_ShipAdvice_Container_Export_DetailUkey] ON [dbo].[Export_ShipAdvice_Container]
 (

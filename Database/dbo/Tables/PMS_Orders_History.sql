@@ -1,544 +1,543 @@
-﻿CREATE TABLE [dbo].[PMS_Orders_History](
-	[ID] [varchar](13) NOT NULL,
-	[BrandID] [varchar](8) NULL,
-	[ProgramID] [varchar](12) NULL,
-	[StyleID] [varchar](15) NULL,
-	[SeasonID] [varchar](10) NULL,
-	[ProjectID] [varchar](5) NULL,
-	[Category] [varchar](1) NULL,
-	[OrderTypeID] [varchar](20) NULL,
-	[BuyMonth] [varchar](16) NULL,
-	[Dest] [varchar](2) NULL,
-	[Model] [varchar](25) NULL,
-	[HsCode1] [varchar](14) NULL,
-	[HsCode2] [varchar](14) NULL,
-	[PayTermARID] [varchar](10) NULL,
-	[ShipTermID] [varchar](5) NULL,
-	[ShipModeList] [varchar](30) NULL,
-	[CdCodeID] [varchar](6) NULL,
-	[CPU] [numeric](8, 3) NULL,
-	[Qty] [int] NULL,
-	[StyleUnit] [varchar](8) NULL,
-	[PoPrice] [numeric](16, 3) NULL,
-	[CFMPrice] [numeric](16, 3) NULL,
-	[CurrencyID] [varchar](3) NULL,
-	[Commission] [numeric](3, 2) NULL,
-	[FactoryID] [varchar](8) NULL,
-	[BrandAreaCode] [varchar](10) NULL,
-	[BrandFTYCode] [varchar](10) NULL,
-	[CTNQty] [smallint] NULL,
-	[CustCDID] [varchar](16) NULL,
-	[CustPONo] [varchar](30) NULL,
-	[Customize1] [varchar](30) NULL,
-	[Customize2] [varchar](30) NULL,
-	[Customize3] [varchar](30) NULL,
-	[CFMDate] [date] NULL,
-	[BuyerDelivery] [date] NULL,
-	[SciDelivery] [date] NULL,
-	[SewInLine] [date] NULL,
-	[SewOffLine] [date] NULL,
-	[CutInLine] [date] NULL,
-	[CutOffLine] [date] NULL,
-	[PulloutDate] [date] NULL,
-	[CMPUnit] [varchar](8) NULL,
-	[CMPPrice] [numeric](16, 4) NULL,
-	[CMPQDate] [date] NULL,
-	[CMPQRemark] [nvarchar](max) NULL,
-	[EachConsApv] [datetime] NULL,
-	[MnorderApv] [datetime] NULL,
-	[CRDDate] [date] NULL,
-	[InitialPlanDate] [date] NULL,
-	[PlanDate] [date] NULL,
-	[FirstProduction] [date] NULL,
-	[FirstProductionLock] [date] NULL,
-	[OrigBuyerDelivery] [date] NULL,
-	[ExCountry] [date] NULL,
-	[InDCDate] [date] NULL,
-	[CFMShipment] [date] NULL,
-	[PFETA] [date] NULL,
-	[PackLETA] [date] NULL,
-	[LETA] [date] NULL,
-	[MRHandle] [varchar](10) NULL,
-	[SMR] [varchar](10) NULL,
-	[ScanAndPack] [bit] NULL,
-	[VasShas] [bit] NULL,
-	[SpecialCust] [bit] NULL,
-	[TissuePaper] [bit] NULL,
-	[Junk] [bit] NULL,
-	[Packing] [nvarchar](max) NULL,
-	[MarkFront] [nvarchar](max) NULL,
-	[MarkBack] [nvarchar](max) NULL,
-	[MarkLeft] [nvarchar](max) NULL,
-	[MarkRight] [nvarchar](max) NULL,
-	[Label] [nvarchar](max) NULL,
-	[OrderRemark] [nvarchar](max) NULL,
-	[ArtWorkCost] [varchar](1) NULL,
-	[StdCost] [numeric](7, 2) NULL,
-	[CtnType] [varchar](1) NULL,
-	[FOCQty] [int] NULL,
-	[SMnorderApv] [date] NULL,
-	[FOC] [bit] NULL,
-	[MnorderApv2] [datetime] NULL,
-	[Packing2] [nvarchar](max) NULL,
-	[SampleReason] [varchar](5) NULL,
-	[RainwearTestPassed] [bit] NULL,
-	[SizeRange] [nvarchar](max) NULL,
-	[MTLComplete] [bit] NULL,
-	[SpecialMark] [varchar](5) NULL,
-	[OutstandingRemark] [nvarchar](max) NULL,
-	[OutstandingInCharge] [varchar](10) NULL,
-	[OutstandingDate] [datetime] NULL,
-	[OutstandingReason] [varchar](5) NULL,
-	[StyleUkey] [bigint] NULL,
-	[POID] [varchar](13) NULL,
-	[OrderComboID] [varchar](13) NULL,
-	[IsNotRepeatOrMapping] [bit] NULL,
-	[SplitOrderId] [varchar](13) NULL,
-	[FtyKPI] [datetime] NULL,
-	[AddName] [varchar](10) NULL,
-	[AddDate] [datetime] NULL,
-	[EditName] [varchar](10) NULL,
-	[EditDate] [datetime] NULL,
-	[SewLine] [varchar](60) NULL,
-	[ActPulloutDate] [date] NULL,
-	[ProdSchdRemark] [nvarchar](100) NULL,
-	[IsForecast] [bit] NULL,
-	[LocalOrder] [bit] NULL,
-	[GMTClose] [date] NULL,
-	[TotalCTN] [int] NULL,
-	[ClogCTN] [int] NULL,
-	[FtyCTN] [int] NULL,
-	[PulloutComplete] [bit] NULL,
-	[ReadyDate] [date] NULL,
-	[PulloutCTNQty] [int] NULL,
-	[Finished] [bit] NULL,
-	[PFOrder] [bit] NULL,
-	[SDPDate] [date] NULL,
-	[InspDate] [date] NULL,
-	[InspResult] [varchar](1) NULL,
-	[InspHandle] [varchar](10) NULL,
-	[KPILETA] [date] NULL,
-	[MTLETA] [date] NULL,
-	[SewETA] [date] NULL,
-	[PackETA] [date] NULL,
-	[MTLExport] [varchar](2) NULL,
-	[DoxType] [varchar](8) NULL,
-	[FtyGroup] [varchar](8) NULL,
-	[MDivisionID] [varchar](8) NULL,
-	[CutReadyDate] [date] NULL,
-	[SewRemark] [nvarchar](60) NULL,
-	[WhseClose] [date] NULL,
-	[SubconInSisterFty] [bit] NULL,
-	[MCHandle] [varchar](10) NULL,
-	[LocalMR] [varchar](10) NULL,
-	[KPIChangeReason] [varchar](5) NULL,
-	[MDClose] [date] NULL,
-	[MDEditName] [varchar](10) NULL,
-	[MDEditDate] [datetime] NULL,
-	[ClogLastReceiveDate] [date] NULL,
-	[CPUFactor] [numeric](3, 1) NULL,
-	[SizeUnit] [varchar](8) NULL,
-	[CuttingSP] [varchar](13) NULL,
-	[IsMixMarker] [int] NULL,
-	[EachConsSource] [varchar](1) NULL,
-	[KPIEachConsApprove] [date] NULL,
-	[KPICmpq] [date] NULL,
-	[KPIMNotice] [date] NULL,
-	[GMTComplete] [varchar](1) NULL,
-	[GFR] [bit] NULL,
-	[CfaCTN] [int] NULL,
-	[DRYCTN] [int] NOT NULL,
-	[PackErrCTN] [int] NULL,
-	[ForecastSampleGroup] [varchar](1) NULL,
-	[DyeingLoss] [numeric](3, 0) NULL,
-	[SubconInType] [varchar](1) NULL,
-	[LastProductionDate] [date] NULL,
-	[EstPODD] [date] NULL,
-	[AirFreightByBrand] [bit] NULL,
-	[AllowanceComboID] [varchar](13) NULL,
-	[ChangeMemoDate] [date] NULL,
-	[BuyBack] [varchar](20) NULL,
-	[BuyBackOrderID] [varchar](13) NULL,
-	[ForecastCategory] [varchar](1) NULL,
-	[OnSiteSample] [bit] NULL,
-	[PulloutCmplDate] [date] NULL,
-	[NeedProduction] [bit] NULL,
-	[IsBuyBack] [bit] NOT NULL,
-	[KeepPanels] [bit] NULL,
-	[BuyBackReason] [varchar](20) NOT NULL,
-	[IsBuyBackCrossArticle] [bit] NOT NULL,
-	[IsBuyBackCrossSizeCode] [bit] NOT NULL,
-	[KpiEachConsCheck] [date] NULL,
-	[NonRevenue] [bit] NOT NULL,
-	[CAB] [varchar](10) NOT NULL,
-	[FinalDest] [varchar](50) NOT NULL,
-	[Customer_PO] [varchar](50) NOT NULL,
-	[AFS_STOCK_CATEGORY] [varchar](50) NOT NULL,
-	[CMPLTDATE] [date] NULL,
-	[DelayCode] [varchar](4) NULL,
-	[DelayDesc] [varchar](100) NULL,
-	[HangerPack] [bit] NULL,
-	[CDCodeNew] [varchar](5) NULL,
-	[SizeUnitWeight] [varchar](8) NULL,
- CONSTRAINT [PK_PMS_Orders_History] PRIMARY KEY CLUSTERED 
-(
-	[ID] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+﻿CREATE TABLE [dbo].[PMS_Orders_History] (
+    [ID]                     VARCHAR (13)    CONSTRAINT [DF_PMS_Orders_History_ID] DEFAULT ('') NOT NULL,
+    [BrandID]                VARCHAR (8)     CONSTRAINT [DF_PMS_Orders_History_BrandID] DEFAULT ('') NOT NULL,
+    [ProgramID]              VARCHAR (12)    CONSTRAINT [DF_PMS_Orders_History_ProgramID] DEFAULT ('') NOT NULL,
+    [StyleID]                VARCHAR (15)    CONSTRAINT [DF_PMS_Orders_History_StyleID] DEFAULT ('') NOT NULL,
+    [SeasonID]               VARCHAR (10)    CONSTRAINT [DF_PMS_Orders_History_SeasonID] DEFAULT ('') NOT NULL,
+    [ProjectID]              VARCHAR (5)     CONSTRAINT [DF_PMS_Orders_History_ProjectID] DEFAULT ('') NOT NULL,
+    [Category]               VARCHAR (1)     CONSTRAINT [DF_PMS_Orders_History_Category] DEFAULT ('') NOT NULL,
+    [OrderTypeID]            VARCHAR (20)    CONSTRAINT [DF_PMS_Orders_History_OrderTypeID] DEFAULT ('') NOT NULL,
+    [BuyMonth]               VARCHAR (16)    CONSTRAINT [DF_PMS_Orders_History_BuyMonth] DEFAULT ('') NOT NULL,
+    [Dest]                   VARCHAR (2)     CONSTRAINT [DF_PMS_Orders_History_Dest] DEFAULT ('') NOT NULL,
+    [Model]                  VARCHAR (25)    CONSTRAINT [DF_PMS_Orders_History_Model] DEFAULT ('') NOT NULL,
+    [HsCode1]                VARCHAR (14)    CONSTRAINT [DF_PMS_Orders_History_HsCode1] DEFAULT ('') NOT NULL,
+    [HsCode2]                VARCHAR (14)    CONSTRAINT [DF_PMS_Orders_History_HsCode2] DEFAULT ('') NOT NULL,
+    [PayTermARID]            VARCHAR (10)    CONSTRAINT [DF_PMS_Orders_History_PayTermARID] DEFAULT ('') NOT NULL,
+    [ShipTermID]             VARCHAR (5)     CONSTRAINT [DF_PMS_Orders_History_ShipTermID] DEFAULT ('') NOT NULL,
+    [ShipModeList]           VARCHAR (30)    CONSTRAINT [DF_PMS_Orders_History_ShipModeList] DEFAULT ('') NOT NULL,
+    [CdCodeID]               VARCHAR (6)     CONSTRAINT [DF_PMS_Orders_History_CdCodeID] DEFAULT ('') NOT NULL,
+    [CPU]                    DECIMAL (8, 3)  CONSTRAINT [DF_PMS_Orders_History_CPU] DEFAULT ((0)) NOT NULL,
+    [Qty]                    INT             CONSTRAINT [DF_PMS_Orders_History_Qty] DEFAULT ((0)) NOT NULL,
+    [StyleUnit]              VARCHAR (8)     CONSTRAINT [DF_PMS_Orders_History_StyleUnit] DEFAULT ('') NOT NULL,
+    [PoPrice]                DECIMAL (16, 3) CONSTRAINT [DF_PMS_Orders_History_PoPrice] DEFAULT ((0)) NOT NULL,
+    [CFMPrice]               DECIMAL (16, 3) CONSTRAINT [DF_PMS_Orders_History_CFMPrice] DEFAULT ((0)) NOT NULL,
+    [CurrencyID]             VARCHAR (3)     CONSTRAINT [DF_PMS_Orders_History_CurrencyID] DEFAULT ('') NOT NULL,
+    [Commission]             DECIMAL (3, 2)  CONSTRAINT [DF_PMS_Orders_History_Commission] DEFAULT ((0)) NOT NULL,
+    [FactoryID]              VARCHAR (8)     CONSTRAINT [DF_PMS_Orders_History_FactoryID] DEFAULT ('') NOT NULL,
+    [BrandAreaCode]          VARCHAR (10)    CONSTRAINT [DF_PMS_Orders_History_BrandAreaCode] DEFAULT ('') NOT NULL,
+    [BrandFTYCode]           VARCHAR (10)    CONSTRAINT [DF_PMS_Orders_History_BrandFTYCode] DEFAULT ('') NOT NULL,
+    [CTNQty]                 SMALLINT        CONSTRAINT [DF_PMS_Orders_History_CTNQty] DEFAULT ((0)) NOT NULL,
+    [CustCDID]               VARCHAR (16)    CONSTRAINT [DF_PMS_Orders_History_CustCDID] DEFAULT ('') NOT NULL,
+    [CustPONo]               VARCHAR (30)    CONSTRAINT [DF_PMS_Orders_History_CustPONo] DEFAULT ('') NOT NULL,
+    [Customize1]             VARCHAR (30)    CONSTRAINT [DF_PMS_Orders_History_Customize1] DEFAULT ('') NOT NULL,
+    [Customize2]             VARCHAR (30)    CONSTRAINT [DF_PMS_Orders_History_Customize2] DEFAULT ('') NOT NULL,
+    [Customize3]             VARCHAR (30)    CONSTRAINT [DF_PMS_Orders_History_Customize3] DEFAULT ('') NOT NULL,
+    [CFMDate]                DATE            NULL,
+    [BuyerDelivery]          DATE            NULL,
+    [SciDelivery]            DATE            NULL,
+    [SewInLine]              DATE            NULL,
+    [SewOffLine]             DATE            NULL,
+    [CutInLine]              DATE            NULL,
+    [CutOffLine]             DATE            NULL,
+    [PulloutDate]            DATE            NULL,
+    [CMPUnit]                VARCHAR (8)     CONSTRAINT [DF_PMS_Orders_History_CMPUnit] DEFAULT ('') NOT NULL,
+    [CMPPrice]               DECIMAL (16, 4) CONSTRAINT [DF_PMS_Orders_History_CMPPrice] DEFAULT ((0)) NOT NULL,
+    [CMPQDate]               DATE            NULL,
+    [CMPQRemark]             NVARCHAR (MAX)  CONSTRAINT [DF_PMS_Orders_History_CMPQRemark] DEFAULT ('') NOT NULL,
+    [EachConsApv]            DATETIME        NULL,
+    [MnorderApv]             DATETIME        NULL,
+    [CRDDate]                DATE            NULL,
+    [InitialPlanDate]        DATE            NULL,
+    [PlanDate]               DATE            NULL,
+    [FirstProduction]        DATE            NULL,
+    [FirstProductionLock]    DATE            NULL,
+    [OrigBuyerDelivery]      DATE            NULL,
+    [ExCountry]              DATE            NULL,
+    [InDCDate]               DATE            NULL,
+    [CFMShipment]            DATE            NULL,
+    [PFETA]                  DATE            NULL,
+    [PackLETA]               DATE            NULL,
+    [LETA]                   DATE            NULL,
+    [MRHandle]               VARCHAR (10)    CONSTRAINT [DF_PMS_Orders_History_MRHandle] DEFAULT ('') NOT NULL,
+    [SMR]                    VARCHAR (10)    CONSTRAINT [DF_PMS_Orders_History_SMR] DEFAULT ('') NOT NULL,
+    [ScanAndPack]            BIT             CONSTRAINT [DF_PMS_Orders_History_ScanAndPack] DEFAULT ((0)) NOT NULL,
+    [VasShas]                BIT             CONSTRAINT [DF_PMS_Orders_History_VasShas] DEFAULT ((0)) NOT NULL,
+    [SpecialCust]            BIT             CONSTRAINT [DF_PMS_Orders_History_SpecialCust] DEFAULT ((0)) NOT NULL,
+    [TissuePaper]            BIT             CONSTRAINT [DF_PMS_Orders_History_TissuePaper] DEFAULT ((0)) NOT NULL,
+    [Junk]                   BIT             CONSTRAINT [DF_PMS_Orders_History_Junk] DEFAULT ((0)) NOT NULL,
+    [Packing]                NVARCHAR (MAX)  CONSTRAINT [DF_PMS_Orders_History_Packing] DEFAULT ('') NOT NULL,
+    [MarkFront]              NVARCHAR (MAX)  CONSTRAINT [DF_PMS_Orders_History_MarkFront] DEFAULT ('') NOT NULL,
+    [MarkBack]               NVARCHAR (MAX)  CONSTRAINT [DF_PMS_Orders_History_MarkBack] DEFAULT ('') NOT NULL,
+    [MarkLeft]               NVARCHAR (MAX)  CONSTRAINT [DF_PMS_Orders_History_MarkLeft] DEFAULT ('') NOT NULL,
+    [MarkRight]              NVARCHAR (MAX)  CONSTRAINT [DF_PMS_Orders_History_MarkRight] DEFAULT ('') NOT NULL,
+    [Label]                  NVARCHAR (MAX)  CONSTRAINT [DF_PMS_Orders_History_Label] DEFAULT ('') NOT NULL,
+    [OrderRemark]            NVARCHAR (MAX)  CONSTRAINT [DF_PMS_Orders_History_OrderRemark] DEFAULT ('') NOT NULL,
+    [ArtWorkCost]            VARCHAR (1)     CONSTRAINT [DF_PMS_Orders_History_ArtWorkCost] DEFAULT ('') NOT NULL,
+    [StdCost]                DECIMAL (7, 2)  CONSTRAINT [DF_PMS_Orders_History_StdCost] DEFAULT ((0)) NOT NULL,
+    [CtnType]                VARCHAR (1)     CONSTRAINT [DF_PMS_Orders_History_CtnType] DEFAULT ('') NOT NULL,
+    [FOCQty]                 INT             CONSTRAINT [DF_PMS_Orders_History_FOCQty] DEFAULT ((0)) NOT NULL,
+    [SMnorderApv]            DATE            NULL,
+    [FOC]                    BIT             CONSTRAINT [DF_PMS_Orders_History_FOC] DEFAULT ((0)) NOT NULL,
+    [MnorderApv2]            DATETIME        NULL,
+    [Packing2]               NVARCHAR (MAX)  CONSTRAINT [DF_PMS_Orders_History_Packing2] DEFAULT ('') NOT NULL,
+    [SampleReason]           VARCHAR (5)     CONSTRAINT [DF_PMS_Orders_History_SampleReason] DEFAULT ('') NOT NULL,
+    [RainwearTestPassed]     BIT             CONSTRAINT [DF_PMS_Orders_History_RainwearTestPassed] DEFAULT ((0)) NOT NULL,
+    [SizeRange]              NVARCHAR (MAX)  CONSTRAINT [DF_PMS_Orders_History_SizeRange] DEFAULT ('') NOT NULL,
+    [MTLComplete]            BIT             CONSTRAINT [DF_PMS_Orders_History_MTLComplete] DEFAULT ((0)) NOT NULL,
+    [SpecialMark]            VARCHAR (5)     CONSTRAINT [DF_PMS_Orders_History_SpecialMark] DEFAULT ('') NOT NULL,
+    [OutstandingRemark]      NVARCHAR (MAX)  CONSTRAINT [DF_PMS_Orders_History_OutstandingRemark] DEFAULT ('') NOT NULL,
+    [OutstandingInCharge]    VARCHAR (10)    CONSTRAINT [DF_PMS_Orders_History_OutstandingInCharge] DEFAULT ('') NOT NULL,
+    [OutstandingDate]        DATETIME        NULL,
+    [OutstandingReason]      VARCHAR (5)     CONSTRAINT [DF_PMS_Orders_History_OutstandingReason] DEFAULT ('') NOT NULL,
+    [StyleUkey]              BIGINT          CONSTRAINT [DF_PMS_Orders_History_StyleUkey] DEFAULT ((0)) NOT NULL,
+    [POID]                   VARCHAR (13)    CONSTRAINT [DF_PMS_Orders_History_POID] DEFAULT ('') NOT NULL,
+    [OrderComboID]           VARCHAR (13)    CONSTRAINT [DF_PMS_Orders_History_OrderComboID] DEFAULT ('') NOT NULL,
+    [IsNotRepeatOrMapping]   BIT             CONSTRAINT [DF_PMS_Orders_History_IsNotRepeatOrMapping] DEFAULT ((0)) NOT NULL,
+    [SplitOrderId]           VARCHAR (13)    CONSTRAINT [DF_PMS_Orders_History_SplitOrderId] DEFAULT ('') NOT NULL,
+    [FtyKPI]                 DATETIME        NULL,
+    [AddName]                VARCHAR (10)    CONSTRAINT [DF_PMS_Orders_History_AddName] DEFAULT ('') NOT NULL,
+    [AddDate]                DATETIME        NULL,
+    [EditName]               VARCHAR (10)    CONSTRAINT [DF_PMS_Orders_History_EditName] DEFAULT ('') NOT NULL,
+    [EditDate]               DATETIME        NULL,
+    [SewLine]                VARCHAR (60)    CONSTRAINT [DF_PMS_Orders_History_SewLine] DEFAULT ('') NOT NULL,
+    [ActPulloutDate]         DATE            NULL,
+    [ProdSchdRemark]         NVARCHAR (100)  CONSTRAINT [DF_PMS_Orders_History_ProdSchdRemark] DEFAULT ('') NOT NULL,
+    [IsForecast]             BIT             CONSTRAINT [DF_PMS_Orders_History_IsForecast] DEFAULT ((0)) NOT NULL,
+    [LocalOrder]             BIT             CONSTRAINT [DF_PMS_Orders_History_LocalOrder] DEFAULT ((0)) NOT NULL,
+    [GMTClose]               DATE            NULL,
+    [TotalCTN]               INT             CONSTRAINT [DF_PMS_Orders_History_TotalCTN] DEFAULT ((0)) NOT NULL,
+    [ClogCTN]                INT             CONSTRAINT [DF_PMS_Orders_History_ClogCTN] DEFAULT ((0)) NOT NULL,
+    [FtyCTN]                 INT             CONSTRAINT [DF_PMS_Orders_History_FtyCTN] DEFAULT ((0)) NOT NULL,
+    [PulloutComplete]        BIT             CONSTRAINT [DF_PMS_Orders_History_PulloutComplete] DEFAULT ((0)) NOT NULL,
+    [ReadyDate]              DATE            NULL,
+    [PulloutCTNQty]          INT             CONSTRAINT [DF_PMS_Orders_History_PulloutCTNQty] DEFAULT ((0)) NOT NULL,
+    [Finished]               BIT             CONSTRAINT [DF_PMS_Orders_History_Finished] DEFAULT ((0)) NOT NULL,
+    [PFOrder]                BIT             CONSTRAINT [DF_PMS_Orders_History_PFOrder] DEFAULT ((0)) NOT NULL,
+    [SDPDate]                DATE            NULL,
+    [InspDate]               DATE            NULL,
+    [InspResult]             VARCHAR (1)     CONSTRAINT [DF_PMS_Orders_History_InspResult] DEFAULT ('') NOT NULL,
+    [InspHandle]             VARCHAR (10)    CONSTRAINT [DF_PMS_Orders_History_InspHandle] DEFAULT ('') NOT NULL,
+    [KPILETA]                DATE            NULL,
+    [MTLETA]                 DATE            NULL,
+    [SewETA]                 DATE            NULL,
+    [PackETA]                DATE            NULL,
+    [MTLExport]              VARCHAR (2)     CONSTRAINT [DF_PMS_Orders_History_MTLExport] DEFAULT ('') NOT NULL,
+    [DoxType]                VARCHAR (8)     CONSTRAINT [DF_PMS_Orders_History_DoxType] DEFAULT ('') NOT NULL,
+    [FtyGroup]               VARCHAR (8)     CONSTRAINT [DF_PMS_Orders_History_FtyGroup] DEFAULT ('') NOT NULL,
+    [MDivisionID]            VARCHAR (8)     CONSTRAINT [DF_PMS_Orders_History_MDivisionID] DEFAULT ('') NOT NULL,
+    [CutReadyDate]           DATE            NULL,
+    [SewRemark]              NVARCHAR (60)   CONSTRAINT [DF_PMS_Orders_History_SewRemark] DEFAULT ('') NOT NULL,
+    [WhseClose]              DATE            NULL,
+    [SubconInSisterFty]      BIT             CONSTRAINT [DF_PMS_Orders_History_SubconInSisterFty] DEFAULT ((0)) NOT NULL,
+    [MCHandle]               VARCHAR (10)    CONSTRAINT [DF_PMS_Orders_History_MCHandle] DEFAULT ('') NOT NULL,
+    [LocalMR]                VARCHAR (10)    CONSTRAINT [DF_PMS_Orders_History_LocalMR] DEFAULT ('') NOT NULL,
+    [KPIChangeReason]        VARCHAR (5)     CONSTRAINT [DF_PMS_Orders_History_KPIChangeReason] DEFAULT ('') NOT NULL,
+    [MDClose]                DATE            NULL,
+    [MDEditName]             VARCHAR (10)    CONSTRAINT [DF_PMS_Orders_History_MDEditName] DEFAULT ('') NOT NULL,
+    [MDEditDate]             DATETIME        NULL,
+    [ClogLastReceiveDate]    DATE            NULL,
+    [CPUFactor]              DECIMAL (3, 1)  CONSTRAINT [DF_PMS_Orders_History_CPUFactor] DEFAULT ((0)) NOT NULL,
+    [SizeUnit]               VARCHAR (8)     CONSTRAINT [DF_PMS_Orders_History_SizeUnit] DEFAULT ('') NOT NULL,
+    [CuttingSP]              VARCHAR (13)    CONSTRAINT [DF_PMS_Orders_History_CuttingSP] DEFAULT ('') NOT NULL,
+    [IsMixMarker]            INT             CONSTRAINT [DF_PMS_Orders_History_IsMixMarker] DEFAULT ((0)) NOT NULL,
+    [EachConsSource]         VARCHAR (1)     CONSTRAINT [DF_PMS_Orders_History_EachConsSource] DEFAULT ('') NOT NULL,
+    [KPIEachConsApprove]     DATE            NULL,
+    [KPICmpq]                DATE            NULL,
+    [KPIMNotice]             DATE            NULL,
+    [GMTComplete]            VARCHAR (1)     CONSTRAINT [DF_PMS_Orders_History_GMTComplete] DEFAULT ('') NOT NULL,
+    [GFR]                    BIT             CONSTRAINT [DF_PMS_Orders_History_GFR] DEFAULT ((0)) NOT NULL,
+    [CfaCTN]                 INT             CONSTRAINT [DF_PMS_Orders_History_CfaCTN] DEFAULT ((0)) NOT NULL,
+    [DRYCTN]                 INT             CONSTRAINT [DF_PMS_Orders_History_DRYCTN] DEFAULT ((0)) NOT NULL,
+    [PackErrCTN]             INT             CONSTRAINT [DF_PMS_Orders_History_PackErrCTN] DEFAULT ((0)) NOT NULL,
+    [ForecastSampleGroup]    VARCHAR (1)     CONSTRAINT [DF_PMS_Orders_History_ForecastSampleGroup] DEFAULT ('') NOT NULL,
+    [DyeingLoss]             DECIMAL (3)     CONSTRAINT [DF_PMS_Orders_History_DyeingLoss] DEFAULT ((0)) NOT NULL,
+    [SubconInType]           VARCHAR (1)     CONSTRAINT [DF_PMS_Orders_History_SubconInType] DEFAULT ('') NOT NULL,
+    [LastProductionDate]     DATE            NULL,
+    [EstPODD]                DATE            NULL,
+    [AirFreightByBrand]      BIT             CONSTRAINT [DF_PMS_Orders_History_AirFreightByBrand] DEFAULT ((0)) NOT NULL,
+    [AllowanceComboID]       VARCHAR (13)    CONSTRAINT [DF_PMS_Orders_History_AllowanceComboID] DEFAULT ('') NOT NULL,
+    [ChangeMemoDate]         DATE            NULL,
+    [BuyBack]                VARCHAR (20)    CONSTRAINT [DF_PMS_Orders_History_BuyBack] DEFAULT ('') NOT NULL,
+    [BuyBackOrderID]         VARCHAR (13)    CONSTRAINT [DF_PMS_Orders_History_BuyBackOrderID] DEFAULT ('') NOT NULL,
+    [ForecastCategory]       VARCHAR (1)     CONSTRAINT [DF_PMS_Orders_History_ForecastCategory] DEFAULT ('') NOT NULL,
+    [OnSiteSample]           BIT             CONSTRAINT [DF_PMS_Orders_History_OnSiteSample] DEFAULT ((0)) NOT NULL,
+    [PulloutCmplDate]        DATE            NULL,
+    [NeedProduction]         BIT             CONSTRAINT [DF_PMS_Orders_History_NeedProduction] DEFAULT ((0)) NOT NULL,
+    [IsBuyBack]              BIT             DEFAULT ((0)) NOT NULL,
+    [KeepPanels]             BIT             CONSTRAINT [DF_PMS_Orders_History_KeepPanels] DEFAULT ((0)) NOT NULL,
+    [BuyBackReason]          VARCHAR (20)    CONSTRAINT [DF_PMS_Orders_History_BuyBackReason] DEFAULT ('') NOT NULL,
+    [IsBuyBackCrossArticle]  BIT             CONSTRAINT [DF_PMS_Orders_History_IsBuyBackCrossArticle] DEFAULT ((0)) NOT NULL,
+    [IsBuyBackCrossSizeCode] BIT             CONSTRAINT [DF_PMS_Orders_History_IsBuyBackCrossSizeCode] DEFAULT ((0)) NOT NULL,
+    [KpiEachConsCheck]       DATE            NULL,
+    [NonRevenue]             BIT             CONSTRAINT [DF_PMS_Orders_History_NonRevenue] DEFAULT ((0)) NOT NULL,
+    [CAB]                    VARCHAR (10)    CONSTRAINT [DF_PMS_Orders_History_CAB] DEFAULT ('') NOT NULL,
+    [FinalDest]              VARCHAR (50)    CONSTRAINT [DF_PMS_Orders_History_FinalDest] DEFAULT ('') NOT NULL,
+    [Customer_PO]            VARCHAR (50)    CONSTRAINT [DF_PMS_Orders_History_Customer_PO] DEFAULT ('') NOT NULL,
+    [AFS_STOCK_CATEGORY]     VARCHAR (50)    CONSTRAINT [DF_PMS_Orders_History_AFS_STOCK_CATEGORY] DEFAULT ('') NOT NULL,
+    [CMPLTDATE]              DATE            NULL,
+    [DelayCode]              VARCHAR (4)     CONSTRAINT [DF_PMS_Orders_History_DelayCode] DEFAULT ('') NOT NULL,
+    [DelayDesc]              VARCHAR (100)   CONSTRAINT [DF_PMS_Orders_History_DelayDesc] DEFAULT ('') NOT NULL,
+    [HangerPack]             BIT             CONSTRAINT [DF_PMS_Orders_History_HangerPack] DEFAULT ((0)) NOT NULL,
+    [CDCodeNew]              VARCHAR (5)     CONSTRAINT [DF_PMS_Orders_History_CDCodeNew] DEFAULT ('') NOT NULL,
+    [SizeUnitWeight]         VARCHAR (8)     CONSTRAINT [DF_PMS_Orders_History_SizeUnitWeight] DEFAULT ('') NOT NULL,
+    CONSTRAINT [PK_PMS_Orders_History] PRIMARY KEY CLUSTERED ([ID] ASC)
+);
+
+
 GO
+
 
-ALTER TABLE [dbo].[PMS_Orders_History] ADD  CONSTRAINT [DF_PMS_Orders_History_ID]  DEFAULT ('') FOR [ID]
 GO
 
-ALTER TABLE [dbo].[PMS_Orders_History] ADD  CONSTRAINT [DF_PMS_Orders_History_BrandID]  DEFAULT ('') FOR [BrandID]
+
 GO
+
 
-ALTER TABLE [dbo].[PMS_Orders_History] ADD  CONSTRAINT [DF_PMS_Orders_History_ProgramID]  DEFAULT ('') FOR [ProgramID]
 GO
 
-ALTER TABLE [dbo].[PMS_Orders_History] ADD  CONSTRAINT [DF_PMS_Orders_History_StyleID]  DEFAULT ('') FOR [StyleID]
+
 GO
+
 
-ALTER TABLE [dbo].[PMS_Orders_History] ADD  CONSTRAINT [DF_PMS_Orders_History_SeasonID]  DEFAULT ('') FOR [SeasonID]
 GO
 
-ALTER TABLE [dbo].[PMS_Orders_History] ADD  CONSTRAINT [DF_PMS_Orders_History_ProjectID]  DEFAULT ('') FOR [ProjectID]
+
 GO
+
 
-ALTER TABLE [dbo].[PMS_Orders_History] ADD  CONSTRAINT [DF_PMS_Orders_History_Category]  DEFAULT ('') FOR [Category]
 GO
 
-ALTER TABLE [dbo].[PMS_Orders_History] ADD  CONSTRAINT [DF_PMS_Orders_History_OrderTypeID]  DEFAULT ('') FOR [OrderTypeID]
+
 GO
+
 
-ALTER TABLE [dbo].[PMS_Orders_History] ADD  CONSTRAINT [DF_PMS_Orders_History_BuyMonth]  DEFAULT ('') FOR [BuyMonth]
 GO
 
-ALTER TABLE [dbo].[PMS_Orders_History] ADD  CONSTRAINT [DF_PMS_Orders_History_Dest]  DEFAULT ('') FOR [Dest]
+
 GO
+
 
-ALTER TABLE [dbo].[PMS_Orders_History] ADD  CONSTRAINT [DF_PMS_Orders_History_Model]  DEFAULT ('') FOR [Model]
 GO
 
-ALTER TABLE [dbo].[PMS_Orders_History] ADD  CONSTRAINT [DF_PMS_Orders_History_HsCode1]  DEFAULT ('') FOR [HsCode1]
+
 GO
+
 
-ALTER TABLE [dbo].[PMS_Orders_History] ADD  CONSTRAINT [DF_PMS_Orders_History_HsCode2]  DEFAULT ('') FOR [HsCode2]
 GO
 
-ALTER TABLE [dbo].[PMS_Orders_History] ADD  CONSTRAINT [DF_PMS_Orders_History_PayTermARID]  DEFAULT ('') FOR [PayTermARID]
+
 GO
 
-ALTER TABLE [dbo].[PMS_Orders_History] ADD  CONSTRAINT [DF_PMS_Orders_History_ShipTermID]  DEFAULT ('') FOR [ShipTermID]
+
 GO
+
 
-ALTER TABLE [dbo].[PMS_Orders_History] ADD  CONSTRAINT [DF_PMS_Orders_History_ShipModeList]  DEFAULT ('') FOR [ShipModeList]
 GO
 
-ALTER TABLE [dbo].[PMS_Orders_History] ADD  CONSTRAINT [DF_PMS_Orders_History_CdCodeID]  DEFAULT ('') FOR [CdCodeID]
+
 GO
+
 
-ALTER TABLE [dbo].[PMS_Orders_History] ADD  CONSTRAINT [DF_PMS_Orders_History_CPU]  DEFAULT ((0)) FOR [CPU]
 GO
 
-ALTER TABLE [dbo].[PMS_Orders_History] ADD  CONSTRAINT [DF_PMS_Orders_History_Qty]  DEFAULT ((0)) FOR [Qty]
+
 GO
+
 
-ALTER TABLE [dbo].[PMS_Orders_History] ADD  CONSTRAINT [DF_PMS_Orders_History_StyleUnit]  DEFAULT ('') FOR [StyleUnit]
 GO
 
-ALTER TABLE [dbo].[PMS_Orders_History] ADD  CONSTRAINT [DF_PMS_Orders_History_PoPrice]  DEFAULT ((0)) FOR [PoPrice]
+
 GO
+
 
-ALTER TABLE [dbo].[PMS_Orders_History] ADD  CONSTRAINT [DF_PMS_Orders_History_CFMPrice]  DEFAULT ((0)) FOR [CFMPrice]
 GO
 
-ALTER TABLE [dbo].[PMS_Orders_History] ADD  CONSTRAINT [DF_PMS_Orders_History_CurrecnyID]  DEFAULT ('') FOR [CurrencyID]
+
 GO
+
 
-ALTER TABLE [dbo].[PMS_Orders_History] ADD  CONSTRAINT [DF_PMS_Orders_History_Commission]  DEFAULT ((0)) FOR [Commission]
 GO
 
-ALTER TABLE [dbo].[PMS_Orders_History] ADD  CONSTRAINT [DF_PMS_Orders_History_FactoryID]  DEFAULT ('') FOR [FactoryID]
+
 GO
+
 
-ALTER TABLE [dbo].[PMS_Orders_History] ADD  CONSTRAINT [DF_PMS_Orders_History_BrandAreaCode]  DEFAULT ('') FOR [BrandAreaCode]
 GO
 
-ALTER TABLE [dbo].[PMS_Orders_History] ADD  CONSTRAINT [DF_PMS_Orders_History_BrandFTYCode]  DEFAULT ('') FOR [BrandFTYCode]
+
 GO
+
 
-ALTER TABLE [dbo].[PMS_Orders_History] ADD  CONSTRAINT [DF_PMS_Orders_History_CTNQty]  DEFAULT ((0)) FOR [CTNQty]
 GO
 
-ALTER TABLE [dbo].[PMS_Orders_History] ADD  CONSTRAINT [DF_PMS_Orders_History_CustCDID]  DEFAULT ('') FOR [CustCDID]
+
 GO
 
-ALTER TABLE [dbo].[PMS_Orders_History] ADD  CONSTRAINT [DF_PMS_Orders_History_CustPONo]  DEFAULT ('') FOR [CustPONo]
+
 GO
+
 
-ALTER TABLE [dbo].[PMS_Orders_History] ADD  CONSTRAINT [DF_PMS_Orders_History_Customize1]  DEFAULT ('') FOR [Customize1]
 GO
 
-ALTER TABLE [dbo].[PMS_Orders_History] ADD  CONSTRAINT [DF_PMS_Orders_History_Customize2]  DEFAULT ('') FOR [Customize2]
+
 GO
+
 
-ALTER TABLE [dbo].[PMS_Orders_History] ADD  CONSTRAINT [DF_PMS_Orders_History_Customize3]  DEFAULT ('') FOR [Customize3]
 GO
 
-ALTER TABLE [dbo].[PMS_Orders_History] ADD  CONSTRAINT [DF_PMS_Orders_History_CMPUnit]  DEFAULT ('') FOR [CMPUnit]
+
 GO
+
 
-ALTER TABLE [dbo].[PMS_Orders_History] ADD  CONSTRAINT [DF_PMS_Orders_History_CMPPrice]  DEFAULT ((0)) FOR [CMPPrice]
 GO
 
-ALTER TABLE [dbo].[PMS_Orders_History] ADD  CONSTRAINT [DF_PMS_Orders_History_CMPQRemark]  DEFAULT ('') FOR [CMPQRemark]
+
 GO
+
 
-ALTER TABLE [dbo].[PMS_Orders_History] ADD  CONSTRAINT [DF_PMS_Orders_History_MRHandle]  DEFAULT ('') FOR [MRHandle]
 GO
 
-ALTER TABLE [dbo].[PMS_Orders_History] ADD  CONSTRAINT [DF_PMS_Orders_History_SMR]  DEFAULT ('') FOR [SMR]
+
 GO
+
 
-ALTER TABLE [dbo].[PMS_Orders_History] ADD  CONSTRAINT [DF_PMS_Orders_History_ScanAndPack]  DEFAULT ((0)) FOR [ScanAndPack]
 GO
 
-ALTER TABLE [dbo].[PMS_Orders_History] ADD  CONSTRAINT [DF_PMS_Orders_History_VasShas]  DEFAULT ((0)) FOR [VasShas]
+
 GO
+
 
-ALTER TABLE [dbo].[PMS_Orders_History] ADD  CONSTRAINT [DF_PMS_Orders_History_SpecialCust]  DEFAULT ((0)) FOR [SpecialCust]
 GO
 
-ALTER TABLE [dbo].[PMS_Orders_History] ADD  CONSTRAINT [DF_PMS_Orders_History_TissuePaper]  DEFAULT ((0)) FOR [TissuePaper]
+
 GO
+
 
-ALTER TABLE [dbo].[PMS_Orders_History] ADD  CONSTRAINT [DF_PMS_Orders_History_Junk]  DEFAULT ((0)) FOR [Junk]
 GO
 
-ALTER TABLE [dbo].[PMS_Orders_History] ADD  CONSTRAINT [DF_PMS_Orders_History_Packing]  DEFAULT ('') FOR [Packing]
+
 GO
 
-ALTER TABLE [dbo].[PMS_Orders_History] ADD  CONSTRAINT [DF_PMS_Orders_History_MarkFront]  DEFAULT ('') FOR [MarkFront]
+
 GO
+
 
-ALTER TABLE [dbo].[PMS_Orders_History] ADD  CONSTRAINT [DF_PMS_Orders_History_MarkBack]  DEFAULT ('') FOR [MarkBack]
 GO
 
-ALTER TABLE [dbo].[PMS_Orders_History] ADD  CONSTRAINT [DF_PMS_Orders_History_MarkLeft]  DEFAULT ('') FOR [MarkLeft]
+
 GO
+
 
-ALTER TABLE [dbo].[PMS_Orders_History] ADD  CONSTRAINT [DF_PMS_Orders_History_MarkRight]  DEFAULT ('') FOR [MarkRight]
 GO
 
-ALTER TABLE [dbo].[PMS_Orders_History] ADD  CONSTRAINT [DF_PMS_Orders_History_Label]  DEFAULT ('') FOR [Label]
+
 GO
+
 
-ALTER TABLE [dbo].[PMS_Orders_History] ADD  CONSTRAINT [DF_PMS_Orders_History_OrderRemark]  DEFAULT ('') FOR [OrderRemark]
 GO
 
-ALTER TABLE [dbo].[PMS_Orders_History] ADD  CONSTRAINT [DF_PMS_Orders_History_ArtWorkCost]  DEFAULT ('') FOR [ArtWorkCost]
+
 GO
+
 
-ALTER TABLE [dbo].[PMS_Orders_History] ADD  CONSTRAINT [DF_PMS_Orders_History_StdCost]  DEFAULT ((0)) FOR [StdCost]
 GO
 
-ALTER TABLE [dbo].[PMS_Orders_History] ADD  CONSTRAINT [DF_PMS_Orders_History_CtnType]  DEFAULT ('') FOR [CtnType]
+
 GO
+
 
-ALTER TABLE [dbo].[PMS_Orders_History] ADD  CONSTRAINT [DF_PMS_Orders_History_FOCQty]  DEFAULT ((0)) FOR [FOCQty]
 GO
 
-ALTER TABLE [dbo].[PMS_Orders_History] ADD  CONSTRAINT [DF_PMS_Orders_History_FOC]  DEFAULT ((0)) FOR [FOC]
+
 GO
+
 
-ALTER TABLE [dbo].[PMS_Orders_History] ADD  CONSTRAINT [DF_PMS_Orders_History_Packing2]  DEFAULT ('') FOR [Packing2]
 GO
 
-ALTER TABLE [dbo].[PMS_Orders_History] ADD  CONSTRAINT [DF_PMS_Orders_History_SampleReason]  DEFAULT ('') FOR [SampleReason]
+
 GO
+
 
-ALTER TABLE [dbo].[PMS_Orders_History] ADD  CONSTRAINT [DF_PMS_Orders_History_RainwearTestPassed]  DEFAULT ((0)) FOR [RainwearTestPassed]
 GO
 
-ALTER TABLE [dbo].[PMS_Orders_History] ADD  CONSTRAINT [DF_PMS_Orders_History_SizeRange]  DEFAULT ('') FOR [SizeRange]
+
 GO
 
-ALTER TABLE [dbo].[PMS_Orders_History] ADD  CONSTRAINT [DF_PMS_Orders_History_MTLComplete]  DEFAULT ((0)) FOR [MTLComplete]
+
 GO
+
 
-ALTER TABLE [dbo].[PMS_Orders_History] ADD  CONSTRAINT [DF_PMS_Orders_History_SpecialMark]  DEFAULT ('') FOR [SpecialMark]
 GO
 
-ALTER TABLE [dbo].[PMS_Orders_History] ADD  CONSTRAINT [DF_PMS_Orders_History_OutstandingRemark]  DEFAULT ('') FOR [OutstandingRemark]
+
 GO
+
 
-ALTER TABLE [dbo].[PMS_Orders_History] ADD  CONSTRAINT [DF_PMS_Orders_History_OutstandingInCharge]  DEFAULT ('') FOR [OutstandingInCharge]
 GO
 
-ALTER TABLE [dbo].[PMS_Orders_History] ADD  CONSTRAINT [DF_PMS_Orders_History_OutstandingReason]  DEFAULT ('') FOR [OutstandingReason]
+
 GO
+
 
-ALTER TABLE [dbo].[PMS_Orders_History] ADD  CONSTRAINT [DF_PMS_Orders_History_StyleUkey]  DEFAULT ((0)) FOR [StyleUkey]
 GO
 
-ALTER TABLE [dbo].[PMS_Orders_History] ADD  CONSTRAINT [DF_PMS_Orders_History_POID]  DEFAULT ('') FOR [POID]
+
 GO
+
 
-ALTER TABLE [dbo].[PMS_Orders_History] ADD  CONSTRAINT [DF_PMS_Orders_History_IsProPhet]  DEFAULT ((0)) FOR [IsNotRepeatOrMapping]
 GO
 
-ALTER TABLE [dbo].[PMS_Orders_History] ADD  CONSTRAINT [DF_PMS_Orders_History_SplitOrderId]  DEFAULT ('') FOR [SplitOrderId]
+
 GO
+
 
-ALTER TABLE [dbo].[PMS_Orders_History] ADD  CONSTRAINT [DF_PMS_Orders_History_AddName]  DEFAULT ('') FOR [AddName]
 GO
 
-ALTER TABLE [dbo].[PMS_Orders_History] ADD  CONSTRAINT [DF_PMS_Orders_History_EditName]  DEFAULT ('') FOR [EditName]
+
 GO
+
 
-ALTER TABLE [dbo].[PMS_Orders_History] ADD  CONSTRAINT [DF_PMS_Orders_History_SewLine]  DEFAULT ('') FOR [SewLine]
 GO
 
-ALTER TABLE [dbo].[PMS_Orders_History] ADD  CONSTRAINT [DF_PMS_Orders_History_ProdSchdRemark]  DEFAULT ('') FOR [ProdSchdRemark]
+
 GO
+
 
-ALTER TABLE [dbo].[PMS_Orders_History] ADD  CONSTRAINT [DF_PMS_Orders_History_IsForecast]  DEFAULT ((0)) FOR [IsForecast]
 GO
 
-ALTER TABLE [dbo].[PMS_Orders_History] ADD  CONSTRAINT [DF_PMS_Orders_History_LocalOrder]  DEFAULT ((0)) FOR [LocalOrder]
+
 GO
 
-ALTER TABLE [dbo].[PMS_Orders_History] ADD  CONSTRAINT [DF_PMS_Orders_History_TotalCTN]  DEFAULT ((0)) FOR [TotalCTN]
+
 GO
+
 
-ALTER TABLE [dbo].[PMS_Orders_History] ADD  CONSTRAINT [DF_PMS_Orders_History_ClogCTN]  DEFAULT ((0)) FOR [ClogCTN]
 GO
 
-ALTER TABLE [dbo].[PMS_Orders_History] ADD  CONSTRAINT [DF_PMS_Orders_History_FtyCTN]  DEFAULT ((0)) FOR [FtyCTN]
+
 GO
+
 
-ALTER TABLE [dbo].[PMS_Orders_History] ADD  CONSTRAINT [DF_PMS_Orders_History_PulloutComplete]  DEFAULT ((0)) FOR [PulloutComplete]
 GO
 
-ALTER TABLE [dbo].[PMS_Orders_History] ADD  CONSTRAINT [DF_PMS_Orders_History_PulloutCTNQty]  DEFAULT ((0)) FOR [PulloutCTNQty]
+
 GO
+
 
-ALTER TABLE [dbo].[PMS_Orders_History] ADD  CONSTRAINT [DF_PMS_Orders_History_Finished]  DEFAULT ((0)) FOR [Finished]
 GO
 
-ALTER TABLE [dbo].[PMS_Orders_History] ADD  CONSTRAINT [DF_PMS_Orders_History_PFOrder]  DEFAULT ((0)) FOR [PFOrder]
+
 GO
+
 
-ALTER TABLE [dbo].[PMS_Orders_History] ADD  CONSTRAINT [DF_PMS_Orders_History_InspResult]  DEFAULT ('') FOR [InspResult]
 GO
 
-ALTER TABLE [dbo].[PMS_Orders_History] ADD  CONSTRAINT [DF_PMS_Orders_History_InspHandle]  DEFAULT ('') FOR [InspHandle]
+
 GO
+
 
-ALTER TABLE [dbo].[PMS_Orders_History] ADD  CONSTRAINT [DF_PMS_Orders_History_MTLExport]  DEFAULT ('') FOR [MTLExport]
 GO
 
-ALTER TABLE [dbo].[PMS_Orders_History] ADD  CONSTRAINT [DF_PMS_Orders_History_DoxType]  DEFAULT ('') FOR [DoxType]
+
 GO
+
 
-ALTER TABLE [dbo].[PMS_Orders_History] ADD  CONSTRAINT [DF_PMS_Orders_History_FtyGroup]  DEFAULT ('') FOR [FtyGroup]
 GO
 
-ALTER TABLE [dbo].[PMS_Orders_History] ADD  CONSTRAINT [DF_PMS_Orders_History_MDivisionID]  DEFAULT ('') FOR [MDivisionID]
+
 GO
+
 
-ALTER TABLE [dbo].[PMS_Orders_History] ADD  CONSTRAINT [DF_PMS_Orders_History_SewRemark]  DEFAULT ('') FOR [SewRemark]
 GO
 
-ALTER TABLE [dbo].[PMS_Orders_History] ADD  CONSTRAINT [DF_PMS_Orders_History_SubconInSisterFty]  DEFAULT ((0)) FOR [SubconInSisterFty]
+
 GO
 
-ALTER TABLE [dbo].[PMS_Orders_History] ADD  CONSTRAINT [DF_PMS_Orders_History_MCHandle]  DEFAULT ('') FOR [MCHandle]
+
 GO
+
 
-ALTER TABLE [dbo].[PMS_Orders_History] ADD  CONSTRAINT [DF_PMS_Orders_History_LocalMR]  DEFAULT ('') FOR [LocalMR]
 GO
 
-ALTER TABLE [dbo].[PMS_Orders_History] ADD  CONSTRAINT [DF_PMS_Orders_History_KPIChangeReason]  DEFAULT ('') FOR [KPIChangeReason]
+
 GO
+
 
-ALTER TABLE [dbo].[PMS_Orders_History] ADD  CONSTRAINT [DF_PMS_Orders_History_MDEditName]  DEFAULT ('') FOR [MDEditName]
 GO
 
-ALTER TABLE [dbo].[PMS_Orders_History] ADD  CONSTRAINT [DF_PMS_Orders_History_SizeUnit]  DEFAULT ('') FOR [SizeUnit]
+
 GO
+
 
-ALTER TABLE [dbo].[PMS_Orders_History] ADD  CONSTRAINT [DF_PMS_Orders_History_CuttingSP]  DEFAULT ('') FOR [CuttingSP]
 GO
 
-ALTER TABLE [dbo].[PMS_Orders_History] ADD  CONSTRAINT [DF_PMS_Orders_History_IsMixMarker]  DEFAULT ((0)) FOR [IsMixMarker]
+
 GO
+
 
-ALTER TABLE [dbo].[PMS_Orders_History] ADD  CONSTRAINT [DF_PMS_Orders_History_GMTCompl]  DEFAULT ('') FOR [GMTComplete]
 GO
 
-ALTER TABLE [dbo].[PMS_Orders_History] ADD  CONSTRAINT [DF_PMS_Orders_History_GFR]  DEFAULT ((0)) FOR [GFR]
+
 GO
+
 
-ALTER TABLE [dbo].[PMS_Orders_History] ADD  CONSTRAINT [DF_PMS_Orders_History_CfaCTN]  DEFAULT ((0)) FOR [CfaCTN]
 GO
 
-ALTER TABLE [dbo].[PMS_Orders_History] ADD  CONSTRAINT [DF_PMS_Orders_History_DRYCTN]  DEFAULT ((0)) FOR [DRYCTN]
+
 GO
+
 
-ALTER TABLE [dbo].[PMS_Orders_History] ADD  CONSTRAINT [DF_PMS_Orders_History_PackErrCTN]  DEFAULT ((0)) FOR [PackErrCTN]
 GO
 
-ALTER TABLE [dbo].[PMS_Orders_History] ADD  CONSTRAINT [DF_PMS_Orders_History_ForecastSampleGroup]  DEFAULT ('') FOR [ForecastSampleGroup]
+
 GO
+
 
-ALTER TABLE [dbo].[PMS_Orders_History] ADD  DEFAULT ((0)) FOR [DyeingLoss]
 GO
 
-ALTER TABLE [dbo].[PMS_Orders_History] ADD  DEFAULT ((0)) FOR [AirFreightByBrand]
+
 GO
 
-ALTER TABLE [dbo].[PMS_Orders_History] ADD  DEFAULT ('') FOR [ForecastCategory]
+
 GO
+
 
-ALTER TABLE [dbo].[PMS_Orders_History] ADD  DEFAULT ((0)) FOR [OnSiteSample]
 GO
 
-ALTER TABLE [dbo].[PMS_Orders_History] ADD  DEFAULT ((0)) FOR [NeedProduction]
+
 GO
+
 
-ALTER TABLE [dbo].[PMS_Orders_History] ADD  DEFAULT ((0)) FOR [IsBuyBack]
 GO
 
-ALTER TABLE [dbo].[PMS_Orders_History] ADD  DEFAULT ((0)) FOR [KeepPanels]
+
 GO
+
 
-ALTER TABLE [dbo].[PMS_Orders_History] ADD  CONSTRAINT [DF_PMS_Orders_History_BuyBackReason]  DEFAULT ('') FOR [BuyBackReason]
 GO
 
-ALTER TABLE [dbo].[PMS_Orders_History] ADD  CONSTRAINT [DF_PMS_Orders_History_IsBuyBackCrossArticle]  DEFAULT ((0)) FOR [IsBuyBackCrossArticle]
+
 GO
+
 
-ALTER TABLE [dbo].[PMS_Orders_History] ADD  CONSTRAINT [DF_PMS_Orders_History_IsBuyBackCrossSizeCode]  DEFAULT ((0)) FOR [IsBuyBackCrossSizeCode]
 GO
 
-ALTER TABLE [dbo].[PMS_Orders_History] ADD  CONSTRAINT [DF_PMS_Orders_History_NonRevenue]  DEFAULT ((0)) FOR [NonRevenue]
+
 GO
+
 
-ALTER TABLE [dbo].[PMS_Orders_History] ADD  CONSTRAINT [DF_PMS_Orders_History_CAB]  DEFAULT ('') FOR [CAB]
 GO
 
-ALTER TABLE [dbo].[PMS_Orders_History] ADD  CONSTRAINT [DF_PMS_Orders_History_FinalDest]  DEFAULT ('') FOR [FinalDest]
+
 GO
+
 
-ALTER TABLE [dbo].[PMS_Orders_History] ADD  CONSTRAINT [DF_PMS_Orders_History_Customer_PO]  DEFAULT ('') FOR [Customer_PO]
 GO
 
-ALTER TABLE [dbo].[PMS_Orders_History] ADD  CONSTRAINT [DF_PMS_Orders_History_AFS_STOCK_CATEGORY]  DEFAULT ('') FOR [AFS_STOCK_CATEGORY]
+
 GO
+
 
-ALTER TABLE [dbo].[PMS_Orders_History] ADD  DEFAULT ((0)) FOR [HangerPack]
 GO
 
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'訂單單號' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'PMS_Orders_History', @level2type=N'COLUMN',@level2name=N'ID'
@@ -655,7 +654,9 @@ GO
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'工廠下線日' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'PMS_Orders_History', @level2type=N'COLUMN',@level2name=N'SewOffLine'
 GO
 
-EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'裁剪上線日　' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'PMS_Orders_History', @level2type=N'COLUMN',@level2name=N'CutInLine'
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'裁剪上線日', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'PMS_Orders_History', @level2type = N'COLUMN', @level2name = N'CutInLine';
+
+
 GO
 
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'裁剪下線日' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'PMS_Orders_History', @level2type=N'COLUMN',@level2name=N'CutOffLine'

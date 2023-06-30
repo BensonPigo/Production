@@ -1,25 +1,27 @@
 ﻿CREATE TABLE [dbo].[SMNotice_Detail] (
-	[ID] [varchar](10) NOT NULL CONSTRAINT [DF_SMNotice_Detail_ID]  DEFAULT (''),
-	[Type] [varchar](1) NOT NULL CONSTRAINT [DF_SMNotice_Detail_Type]  DEFAULT (''),
-	[UseFor] [varchar](1) NOT NULL CONSTRAINT [DF_SMNotice_Detail_UseFor]  DEFAULT (''),
-	[PhaseID] [varchar](10) NOT NULL CONSTRAINT [DF_SMNotice_Detail_PhaseID]  DEFAULT (''),
-	[RequireDate] [date] NULL,
-	[Apv2SampleTime] [datetime] NULL,
-	[Apv2SampleHandle] [varchar](10) NULL CONSTRAINT [DF_SMNotice_Detail_Apv2SampleHandle]  DEFAULT (''),
-	[ApvName] [varchar](10) NULL CONSTRAINT [DF_SMNotice_Detail_ApvName]  DEFAULT (''),
-	[ApvDate] [datetime] NULL,
-	[Factory] [varchar](8) NULL CONSTRAINT [DF_SMNotice_Detail_Factory]  DEFAULT (''),
-	[IEConfirmMR] [varchar](10) NULL CONSTRAINT [DF_SMNotice_Detail_IEConfirmMR]  DEFAULT (''),
-	[PendingStatus] [bit] NULL CONSTRAINT [DF_SMNotice_Detail_PendingStatus]  DEFAULT ((0)),
-	[BasicPattern] [nvarchar](100) NULL CONSTRAINT [DF_SMNotice_Detail_BasicPattern]  DEFAULT (''),
-	[Remark1] [nvarchar](200) NULL CONSTRAINT [DF_SMNotice_Detail_Remark1]  DEFAULT (''),
-	[Remark2] [nvarchar](200) NULL CONSTRAINT [DF_SMNotice_Detail_Remark2]  DEFAULT (''),
-	[AddName] [varchar](10) NULL CONSTRAINT [DF_SMNotice_Detail_AddName]  DEFAULT (''),
-	[AddDate] [datetime] NULL,
-	[EditName] [varchar](10) NULL CONSTRAINT [DF_SMNotice_Detail_EditName]  DEFAULT (''),
-	[EditDate] [datetime] NULL,
-    CONSTRAINT [PK_SMNotice_Detail] PRIMARY KEY CLUSTERED ([ID] ASC,[Type] ASC)
+    [ID]               VARCHAR (10)   CONSTRAINT [DF_SMNotice_Detail_ID] DEFAULT ('') NOT NULL,
+    [Type]             VARCHAR (1)    CONSTRAINT [DF_SMNotice_Detail_Type] DEFAULT ('') NOT NULL,
+    [UseFor]           VARCHAR (1)    CONSTRAINT [DF_SMNotice_Detail_UseFor] DEFAULT ('') NOT NULL,
+    [PhaseID]          VARCHAR (10)   CONSTRAINT [DF_SMNotice_Detail_PhaseID] DEFAULT ('') NOT NULL,
+    [RequireDate]      DATE           NULL,
+    [Apv2SampleTime]   DATETIME       NULL,
+    [Apv2SampleHandle] VARCHAR (10)   CONSTRAINT [DF_SMNotice_Detail_Apv2SampleHandle] DEFAULT ('') NOT NULL,
+    [ApvName]          VARCHAR (10)   CONSTRAINT [DF_SMNotice_Detail_ApvName] DEFAULT ('') NOT NULL,
+    [ApvDate]          DATETIME       NULL,
+    [Factory]          VARCHAR (8)    CONSTRAINT [DF_SMNotice_Detail_Factory] DEFAULT ('') NOT NULL,
+    [IEConfirmMR]      VARCHAR (10)   CONSTRAINT [DF_SMNotice_Detail_IEConfirmMR] DEFAULT ('') NOT NULL,
+    [PendingStatus]    BIT            CONSTRAINT [DF_SMNotice_Detail_PendingStatus] DEFAULT ((0)) NOT NULL,
+    [BasicPattern]     NVARCHAR (100) CONSTRAINT [DF_SMNotice_Detail_BasicPattern] DEFAULT ('') NOT NULL,
+    [Remark1]          NVARCHAR (200) CONSTRAINT [DF_SMNotice_Detail_Remark1] DEFAULT ('') NOT NULL,
+    [Remark2]          NVARCHAR (200) CONSTRAINT [DF_SMNotice_Detail_Remark2] DEFAULT ('') NOT NULL,
+    [AddName]          VARCHAR (10)   CONSTRAINT [DF_SMNotice_Detail_AddName] DEFAULT ('') NOT NULL,
+    [AddDate]          DATETIME       NULL,
+    [EditName]         VARCHAR (10)   CONSTRAINT [DF_SMNotice_Detail_EditName] DEFAULT ('') NOT NULL,
+    [EditDate]         DATETIME       NULL,
+    CONSTRAINT [PK_SMNotice_Detail] PRIMARY KEY CLUSTERED ([ID] ASC, [Type] ASC)
 );
+
+
 
 
 

@@ -1,12 +1,14 @@
 ﻿CREATE TABLE [dbo].[GarmentTestShrinkage] (
-    [BrandID]      VARCHAR (8)   CONSTRAINT [DF_GarmentTestShrinkage_BrandID] DEFAULT ('') NULL,
-    [LocationGroup] VARCHAR (4)   CONSTRAINT [DF_GarmentTestShrinkage_LocationGoup] DEFAULT ('') NULL,
-    [Location]     VARCHAR (1)   CONSTRAINT [DF_GarmentTestShrinkage_Location] DEFAULT ('') NULL,
-    [Seq]          INT           CONSTRAINT [DF_GarmentTestShrinkage_Seq] DEFAULT ((0)) NULL,
-    [Type]         VARCHAR (150) CONSTRAINT [DF_GarmentTestShrinkage_Type] DEFAULT ('') NULL,
-    [Ukey]         BIGINT        IDENTITY (1, 1) NOT NULL,
+    [BrandID]       VARCHAR (8)   CONSTRAINT [DF_GarmentTestShrinkage_BrandID] DEFAULT ('') NOT NULL,
+    [LocationGroup] VARCHAR (4)   CONSTRAINT [DF_GarmentTestShrinkage_LocationGroup] DEFAULT ('') NOT NULL,
+    [Location]      VARCHAR (1)   CONSTRAINT [DF_GarmentTestShrinkage_Location] DEFAULT ('') NOT NULL,
+    [Seq]           INT           CONSTRAINT [DF_GarmentTestShrinkage_Seq] DEFAULT ((0)) NOT NULL,
+    [Type]          VARCHAR (150) CONSTRAINT [DF_GarmentTestShrinkage_Type] DEFAULT ('') NOT NULL,
+    [Ukey]          BIGINT        IDENTITY (1, 1) NOT NULL,
     CONSTRAINT [PK_GarmentTestShrinkage] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
+
+
 
 
 GO

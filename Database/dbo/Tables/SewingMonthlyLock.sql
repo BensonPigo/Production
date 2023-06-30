@@ -1,10 +1,12 @@
-﻿CREATE TABLE [dbo].[SewingMonthlyLock]
-(
-	[FactoryID] VARCHAR(8) NOT NULL PRIMARY KEY DEFAULT (''), 
-    [LockDate] DATE NULL, 
-    [EditName] VARCHAR(10) NULL, 
-    [EditDate] DATETIME NULL DEFAULT ('')
-)
+﻿CREATE TABLE [dbo].[SewingMonthlyLock] (
+    [FactoryID] VARCHAR (8)  DEFAULT ('') NOT NULL,
+    [LockDate]  DATE         NULL,
+    [EditName]  VARCHAR (10) CONSTRAINT [DF_SewingMonthlyLock_EditName] DEFAULT ('') NOT NULL,
+    [EditDate]  DATETIME     NULL,
+    CONSTRAINT [PK_SewingMonthlyLock] PRIMARY KEY CLUSTERED ([FactoryID] ASC)
+);
+
+
 
 GO
 EXEC sp_addextendedproperty @name = N'MS_Description',

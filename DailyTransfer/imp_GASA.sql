@@ -13,17 +13,32 @@ SET NOCOUNT ON;
 	and t.DocumentName = s.DocumentName
 	and t.BrandID = s.BrandID
 	when matched then update set 
-		t.FirstDyelot =s.FirstDyelot,
-		t.Period  =s.Period ,
-		t.BrandRefno =s.BrandRefno,
-		t.AWBno = s.AWBno,
-		t.AddName = s.AddName,
-		t.AddDate = s.AddDate,
-		t.ReceivedDate = s.ReceivedDate,
-		t.ReceivedRemark = s.ReceivedRemark
+        t.FirstDyelot = s.FirstDyelot,
+        t.Period = ISNULL(s.Period, 0),
+        t.BrandRefno = ISNULL(s.BrandRefno, ''),
+        t.AWBno = ISNULL(s.AWBno, ''),
+        t.AddName = ISNULL(s.AddName, ''),
+        t.AddDate = s.AddDate,
+        t.ReceivedDate = s.ReceivedDate,
+        t.ReceivedRemark = ISNULL(s.ReceivedRemark, '')
 	when not matched by target then 	
 		insert(TestDocFactoryGroup,  [SuppID],  [ColorID],[FirstDyelot],  SeasonID,   Period,BrandRefno,AWBno,AddName,AddDate,ReceivedDate,ReceivedRemark,DocumentName,BrandID)
-		values(s.TestDocFactoryGroup,s.[SuppID],s.[ColorID],s.[FirstDyelot],s.SeasonID,s.Period ,s.BrandRefno,s.AWBno,s.AddName,s.AddDate,s.ReceivedDate,s.ReceivedRemark,s.DocumentName,s.BrandID);
+        VALUES (
+            ISNULL(s.TestDocFactoryGroup, ''),
+            ISNULL(s.[SuppID], ''),
+            ISNULL(s.[ColorID], ''),
+            s.[FirstDyelot],
+            ISNULL(s.SeasonID, ''),
+            ISNULL(s.Period, 0),
+            ISNULL(s.BrandRefno, ''),
+            ISNULL(s.AWBno, ''),
+            ISNULL(s.AddName, ''),
+            s.AddDate,
+            s.ReceivedDate,
+            ISNULL(s.ReceivedRemark, ''),
+            ISNULL(s.DocumentName, ''),
+            ISNULL(s.BrandID, '')
+        );
 
 	--GASAClip import update to exclude the data created by pms
 	Delete t
