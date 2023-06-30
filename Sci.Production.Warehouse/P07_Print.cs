@@ -354,7 +354,7 @@ order by R.EncodeSeq, SortCmbPOID, SortCmbSeq1, SortCmbSeq2, SortCmbRoll, SortCm
                 objSheets.Cells[3, 1] = this.Date2;
                 objSheets.Cells[4, 1] = "ETA:" + this.ETA;
                 objSheets.Cells[5, 1] = "Invoice#:" + this.Invoice + "   From FTY ID:" + this.FTYID;
-                objSheets.Cells[5, 11] = "WK#:" + this.Wk;
+                objSheets.Cells[5, 14] = "WK#:" + this.Wk;
                 foreach (DataRow dr in this.dt.Rows)
                 {
                     objSheets.Cells[nRow, 1] = dr["Roll"].ToString();
