@@ -263,7 +263,9 @@ WHERE   StockType='{0}'
             .Text("fromdyelot", header: "Dyelot", width: Widths.AnsiChars(8), iseditingreadonly: true) // 3
             .Text("Tone", header: "Tone/Grp", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .EditText("Description", header: "Description", width: Widths.AnsiChars(20), iseditingreadonly: true) // 4
+            .Text("Refno", header: "Ref#", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Text("Color", header: "Color", width: Widths.AnsiChars(6), iseditingreadonly: true)
+            .Text("Size", header: "Size", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Text("stockunit", header: "Stock" + Environment.NewLine + "Unit", iseditingreadonly: true) // 5
             .Text("Location", header: "From" + Environment.NewLine + "Location", iseditingreadonly: true) // 6
             .Text("FromContainerCode", header: "From" + Environment.NewLine + "Container Code", iseditingreadonly: true).Get(out from_ContainerCode)
@@ -574,31 +576,34 @@ where (isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f
             this.DetailSelectCommand = string.Format(
                 @"
 select [Selected] = 0 
-    ,a.id,a.FromPoId,a.FromSeq1,a.FromSeq2
-    ,concat(Ltrim(Rtrim(a.FromSeq1)), ' ', a.FromSeq2) as Fromseq
-    ,p1.FabricType
-    ,p1.stockunit
-    ,dbo.getmtldesc(a.FromPoId,a.FromSeq1,a.FromSeq2,2,0) as [description]
-    ,a.FromRoll
-    ,a.FromDyelot
-    ,FI.Tone
-    ,a.FromStocktype
-    ,a.Qty
-    ,a.ToPoid,a.ToSeq1,a.ToSeq2,concat(Ltrim(Rtrim(a.ToSeq1)), ' ', a.ToSeq2) as toseq
-    ,a.ToRoll
-    ,a.ToDyelot
-    ,a.ToStocktype
-    ,a.ToLocation
-    ,a.ToContainerCode
-    ,Fromlocation = Fromlocation.listValue
-    ,[FromContainerCode] = fi.ContainerCode
-    ,a.fromftyinventoryukey
-    ,a.ukey
-    ,dbo.Getlocation(fi.ukey) location
-    ,[Color] = Color.Value
+    , a.id,a.FromPoId,a.FromSeq1,a.FromSeq2
+    , concat(Ltrim(Rtrim(a.FromSeq1)), ' ', a.FromSeq2) as Fromseq
+    , p1.FabricType
+    , p1.stockunit
+    , dbo.getmtldesc(a.FromPoId,a.FromSeq1,a.FromSeq2,2,0) as [description]
+    , p1.Refno
+    , [Size] = psdsS.SpecValue
+    , a.FromRoll
+    , a.FromDyelot
+    , FI.Tone
+    , a.FromStocktype
+    , a.Qty
+    , a.ToPoid,a.ToSeq1,a.ToSeq2,concat(Ltrim(Rtrim(a.ToSeq1)), ' ', a.ToSeq2) as toseq
+    , a.ToRoll
+    , a.ToDyelot
+    , a.ToStocktype
+    , a.ToLocation
+    , a.ToContainerCode
+    , Fromlocation = Fromlocation.listValue
+    , [FromContainerCode] = fi.ContainerCode
+    , a.fromftyinventoryukey
+    , a.ukey
+    , dbo.Getlocation(fi.ukey) location
+    , [Color] = Color.Value
 from dbo.SubTransfer_detail a WITH (NOLOCK) 
 left join PO_Supp_Detail p1 WITH (NOLOCK) on p1.ID = a.FromPoId and p1.seq1 = a.FromSeq1 and p1.SEQ2 = a.FromSeq2
 left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = p1.id and psdsC.seq1 = p1.seq1 and psdsC.seq2 = p1.seq2 and psdsC.SpecColumnID = 'Color'
+left join PO_Supp_Detail_Spec psdsS WITH (NOLOCK) on psdsS.ID = p1.id and psdsS.seq1 = p1.seq1 and psdsS.seq2 = p1.seq2 and psdsS.SpecColumnID = 'Size'
 left join orders o on o.id = p1.id
 left join Fabric f WITH (NOLOCK) on f.SCIRefno = p1.SCIRefno
 left join FtyInventory FI on a.fromPoid = fi.poid and a.fromSeq1 = fi.seq1 and a.fromSeq2 = fi.seq2 and a.fromDyelot = fi.Dyelot
