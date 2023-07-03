@@ -239,10 +239,14 @@ select
         end
     ,o.StyleID
     ,Receiving.WhseArrival
+    ,[Article] = isnull(psdsA.SpecValue, '')
+    ,[Size] = isnull(psdsS.SpecValue, '')
 from dbo.Receiving_Detail R WITH (NOLOCK) 
 left join Receiving WITH (NOLOCK) on Receiving.id = R.id
 LEFT join dbo.PO_Supp_Detail psd WITH (NOLOCK) on psd.ID = R.POID and  psd.SEQ1 = R.Seq1 and psd.seq2 = R.Seq2 
 left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
+left join PO_Supp_Detail_Spec psdsA WITH (NOLOCK) on psdsA.ID = psd.id and psdsA.seq1 = psd.seq1 and psdsA.seq2 = psd.seq2 and psdsA.SpecColumnID = 'Article'
+left join PO_Supp_Detail_Spec psdsS WITH (NOLOCK) on psdsS.ID = psd.id and psdsS.seq1 = psd.seq1 and psdsS.seq2 = psd.seq2 and psdsS.SpecColumnID = 'Size'
 left join Ftyinventory  fi with (nolock) on    R.POID = fi.POID and
                                                R.Seq1 = fi.Seq1 and
                                                R.Seq2 = fi.Seq2 and
@@ -350,7 +354,7 @@ order by R.EncodeSeq, SortCmbPOID, SortCmbSeq1, SortCmbSeq2, SortCmbRoll, SortCm
                 objSheets.Cells[3, 1] = this.Date2;
                 objSheets.Cells[4, 1] = "ETA:" + this.ETA;
                 objSheets.Cells[5, 1] = "Invoice#:" + this.Invoice + "   From FTY ID:" + this.FTYID;
-                objSheets.Cells[5, 11] = "WK#:" + this.Wk;
+                objSheets.Cells[5, 14] = "WK#:" + this.Wk;
                 foreach (DataRow dr in this.dt.Rows)
                 {
                     objSheets.Cells[nRow, 1] = dr["Roll"].ToString();
@@ -358,19 +362,21 @@ order by R.EncodeSeq, SortCmbPOID, SortCmbSeq1, SortCmbSeq2, SortCmbRoll, SortCm
                     objSheets.Cells[nRow, 3] = dr["PoId"].ToString();
                     objSheets.Cells[nRow, 4] = dr["SEQ"].ToString();
                     objSheets.Cells[nRow, 5] = dr["Refno"].ToString();
-                    objSheets.Cells[nRow, 6] = dr["ColorID"].ToString();
-                    objSheets.Cells[nRow, 7] = dr["ColorName"].ToString();
-                    objSheets.Cells[nRow, 8] = dr["WeaveTypeID"].ToString();
-                    objSheets.Cells[nRow, 9] = dr["BrandID"].ToString();
-                    objSheets.Cells[nRow, 10] = dr["Desc"].ToString();
-                    objSheets.Cells[nRow, 11] = dr["Weight"].ToString();
-                    objSheets.Cells[nRow, 12] = dr["ShipQty"].ToString() + " " + dr["POUnit"].ToString();
-                    objSheets.Cells[nRow, 13] = dr["ActualQty"].ToString() + " " + dr["POUnit"].ToString();
-                    objSheets.Cells[nRow, 14] = dr["StockQty"].ToString() + " " + dr["StockUnit"].ToString();
-                    objSheets.Cells[nRow, 15] = MyUtility.Check.Empty(dr["TotalReceivingQty"]) ?
+                    objSheets.Cells[nRow, 6] = dr["Article"].ToString();
+                    objSheets.Cells[nRow, 7] = dr["ColorID"].ToString();
+                    objSheets.Cells[nRow, 8] = dr["ColorName"].ToString();
+                    objSheets.Cells[nRow, 9] = dr["Size"].ToString();
+                    objSheets.Cells[nRow, 10] = dr["WeaveTypeID"].ToString();
+                    objSheets.Cells[nRow, 11] = dr["BrandID"].ToString();
+                    objSheets.Cells[nRow, 12] = dr["Desc"].ToString();
+                    objSheets.Cells[nRow, 13] = dr["Weight"].ToString();
+                    objSheets.Cells[nRow, 14] = dr["ShipQty"].ToString() + " " + dr["POUnit"].ToString();
+                    objSheets.Cells[nRow, 15] = dr["ActualQty"].ToString() + " " + dr["POUnit"].ToString();
+                    objSheets.Cells[nRow, 16] = dr["StockQty"].ToString() + " " + dr["StockUnit"].ToString();
+                    objSheets.Cells[nRow, 17] = MyUtility.Check.Empty(dr["TotalReceivingQty"]) ?
                         string.Empty : dr["TotalReceivingQty"].ToString() + " " + dr["POUnit"].ToString();
-                    objSheets.Cells[nRow, 16] = dr["QtyVaniance"].ToString();
-                    objSheets.Cells[nRow, 17] = dr["Remark"].ToString();
+                    objSheets.Cells[nRow, 18] = dr["QtyVaniance"].ToString();
+                    objSheets.Cells[nRow, 19] = dr["Remark"].ToString();
                     nRow++;
                 }
 
