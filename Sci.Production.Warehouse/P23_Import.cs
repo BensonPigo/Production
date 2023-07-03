@@ -76,9 +76,11 @@ namespace Sci.Production.Warehouse
             , x.lastest
             , Round(dbo.GetUnitQty(POUnit, StockUnit.value, x.taipei_qty), 2) taipei_qty
             , pd.Refno
-            ,[Color] = Color.Value
+            , [Color] = Color.Value
+            , [Size] = psdsS.SpecValue
     from dbo.PO_Supp_Detail pd WITH (NOLOCK) 
 	left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = pd.id and psdsC.seq1 = pd.seq1 and psdsC.seq2 = pd.seq2 and psdsC.SpecColumnID = 'Color'
+    left join PO_Supp_Detail_Spec psdsS WITH (NOLOCK) on psdsS.ID = pd.id and psdsS.seq1 = pd.seq1 and psdsS.seq2 = pd.seq2 and psdsS.SpecColumnID = 'Size'
 	left join orders ord on ord.id = pd.id
 	left join Fabric fa WITH (NOLOCK) on fa.SCIRefno = pd.SCIRefno
     outer apply (
@@ -185,7 +187,9 @@ select  0 AS selected
         , Fromlocation = Fromlocation.listValue
         , GroupQty = Sum(fi.InQty - fi.OutQty + fi.AdjustQty - fi.ReturnQty) over (partition by #tmp.ToFactoryID, #tmp.poid, #tmp.seq1, #tmp.seq2, fi.dyelot)
         , fi.Tone
-        ,Color
+        , Color
+        , Refno
+        , Size
 from #tmp  
 inner join dbo.FtyInventory fi WITH (NOLOCK) on fi.POID = InventoryPOID 
                                                 and fi.seq1 = Inventoryseq1 

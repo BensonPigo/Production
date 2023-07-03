@@ -267,7 +267,9 @@ WHERE   StockType='{0}'
             .Text("fromdyelot", header: "Dyelot", width: Widths.AnsiChars(8), iseditingreadonly: true) // 3
             .Text("Tone", header: "Tone/Grp", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .EditText("Description", header: "Description", width: Widths.AnsiChars(20), iseditingreadonly: true) // 4
-            .Text("Color", header: "Color", width: Widths.AnsiChars(6), iseditingreadonly: true) 
+            .Text("Refno", header: "Ref#", width: Widths.AnsiChars(10), iseditingreadonly: true)            
+            .Text("Color", header: "Color", width: Widths.AnsiChars(6), iseditingreadonly: true)
+            .Text("Size", header: "Size", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Text("stockunit", header: "Stock" + Environment.NewLine + "Unit", iseditingreadonly: true, width: Widths.AnsiChars(5)) // 5
             .Text("Location", header: "From" + Environment.NewLine + "Location", iseditingreadonly: true) // 6
             .Text("FromContainerCode", header: "From" + Environment.NewLine + "Container Code", iseditingreadonly: true).Get(out from_ContainerCode)
@@ -735,6 +737,8 @@ select  [Selected] = 0
         , p1.FabricType
         , stockunit = dbo.GetStockUnitBySPSeq (p1.ID, p1.seq1, p1.seq2)
         , [description] = dbo.getmtldesc (a.FromPoId, a.FromSeq1, a.FromSeq2, 2, 0)
+        , p1.Refno
+        , [Size] = psdsS.SpecValue
         , a.FromRoll
         , a.FromDyelot
         , fi.Tone
@@ -766,6 +770,7 @@ left join FtyInventory fi on a.FromPoid = fi.poid
                              and a.fromStocktype = fi.stocktype
                              and a.fromDyelot = fi.Dyelot
 left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = p1.id and psdsC.seq1 = p1.seq1 and psdsC.seq2 = p1.seq2 and psdsC.SpecColumnID = 'Color'
+left join PO_Supp_Detail_Spec psdsS WITH (NOLOCK) on psdsS.ID = p1.id and psdsS.seq1 = p1.seq1 and psdsS.seq2 = p1.seq2 and psdsS.SpecColumnID = 'Size'
 left join orders o on o.id = p1.id
 left join Fabric f WITH (NOLOCK) on f.SCIRefno = p1.SCIRefno
 
