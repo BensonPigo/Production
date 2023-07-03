@@ -915,6 +915,16 @@ where Fir.ID = '{this.FirID}'"));
                     return;
                 }
 
+                if (!this.EditMode)
+                {
+                    return; // 非編輯模式
+                }
+
+                if (e.RowIndex == -1)
+                {
+                    return; // 沒東西 return
+                }
+
                 // 判斷Actualyds調整範圍後Fir_physical_Defect會被清掉的話需要提示
                 double double_ActualYds = Convert.ToDouble(newvalue);
                 double def_loc = 0d;
