@@ -63,24 +63,26 @@ namespace Sci.Production.Warehouse
 with cte as 
 (
     select rtrim(pd.id) as poid
-    , rtrim(pd.seq1) seq1
-    ,pd.seq2
-    ,pd.Qty
-    ,pd.ShipQty
-    ,pd.StockQty
-    ,pd.InputQty
-    ,pd.OutputQty
-    ,o.FactoryID ToFactoryID
-    ,x.taipei_issue_date
-    ,x.taipei_qty
-    ,pd.POUnit
-    ,pd.StockUnit  
-    ,pd.Refno
-    ,[Color] = Color.Value
+        , rtrim(pd.seq1) seq1
+        ,pd.seq2
+        ,pd.Qty
+        ,pd.ShipQty
+        ,pd.StockQty
+        ,pd.InputQty
+        ,pd.OutputQty
+        ,o.FactoryID ToFactoryID
+        ,x.taipei_issue_date
+        ,x.taipei_qty
+        ,pd.POUnit
+        ,pd.StockUnit  
+        ,pd.Refno
+        ,[Color] = Color.Value
+        ,[Size] = psdsS.SpecValue
 	from dbo.PO_Supp_Detail pd WITH (NOLOCK) 
 	inner join View_WH_Orders o WITH (NOLOCK) on o.id = pd.id
     inner join dbo.Factory f WITH (NOLOCK) on f.id = o.FtyGroup
 	left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = pd.id and psdsC.seq1 = pd.seq1 and psdsC.seq2 = pd.seq2 and psdsC.SpecColumnID = 'Color'
+    left join PO_Supp_Detail_Spec psdsS WITH (NOLOCK) on psdsS.ID = pd.id and psdsS.seq1 = pd.seq1 and psdsS.seq2 = pd.seq2 and psdsS.SpecColumnID = 'Size'
 	left join orders ord on ord.id = pd.id
 	left join Fabric fa WITH (NOLOCK) on fa.SCIRefno = pd.SCIRefno
 	cross apply
@@ -109,7 +111,8 @@ select  m.ToFactoryID
         , dbo.GetUnitQty(POUnit, StockUnit, m.taipei_qty) as taipei_qty 
         , m.POUnit
         , accu_qty 
-        ,Color
+        , m.Color
+        , m.Size
 into #tmp
 from cte m 
 outer apply
@@ -162,7 +165,9 @@ select 0 AS selected,'' as id,o.FactoryID FromFactoryID
     ,dbo.getMtlDesc(fi.poid, fi.seq1, fi.seq2, 2, 0) as [description]
     , Fromlocation = Fromlocation.listValue
     ,fi.Tone
-    ,Color
+    ,cte.Color
+    ,cte.Refno
+    ,cte.Size
 from #tmp cte 
 inner join dbo.FtyInventory fi WITH (NOLOCK) on 
                                                 fi.POID = cte.poid 
