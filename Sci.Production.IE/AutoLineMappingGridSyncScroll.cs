@@ -1,8 +1,10 @@
 ﻿using Ict;
 using Sci.Win.UI;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Data;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,11 +15,141 @@ namespace Sci.Production.IE
     /// <summary>
     /// AutoLineMappingGridSyncScroll
     /// </summary>
-    internal class AutoLineMappingGridSyncScroll
+    public class AutoLineMappingGridSyncScroll
     {
+        /// <summary>
+        /// SubGridType
+        /// </summary>
+        public enum SubGridType
+        {
+            /// <summary>
+            /// LineMapping
+            /// </summary>
+            LineMapping,
+
+            /// <summary>
+            /// CentrailizedPPA
+            /// </summary>
+            CentrailizedPPA,
+        }
+
         private Grid gridMain;
         private Grid gridSub;
         private string syncColName;
+        private int _sewerManpower;
+        private DataTable dtGridDetailRightSummary = new DataTable();
+
+        /// <summary>
+        /// SewerManpower
+        /// </summary>
+        public int SewerManpower
+        {
+            get
+            {
+                this._sewerManpower = MyUtility.Convert.GetInt(MyUtility.Math.Round(
+                        this.MainData
+                            .Where(s => s["PPA"].ToString() != "C" && !MyUtility.Convert.GetBool(s["IsNonSewingLine"]))
+                            .Sum(s => MyUtility.Convert.GetDecimal(s["DivSewer"])),
+                        0));
+
+                return this._sewerManpower;
+            }
+        }
+
+        private IEnumerable<DataRow> MainData
+        {
+            get
+            {
+                DataTable dtResult = this.gridMain.DataSource.GetType() == typeof(ListControlBindingSource) ? (DataTable)((ListControlBindingSource)this.gridMain.DataSource).DataSource : (DataTable)this.gridMain.DataSource;
+                return dtResult.AsEnumerable().Where(s => s.RowState != DataRowState.Deleted);
+            }
+        }
+
+        private DataTable SubData
+        {
+            get
+            {
+                return this.gridSub.DataSource.GetType() == typeof(ListControlBindingSource) ? (DataTable)((ListControlBindingSource)this.gridSub.DataSource).DataSource : (DataTable)this.gridSub.DataSource;
+            }
+        }
+
+        /// <summary>
+        /// TotalGSD
+        /// </summary>
+        public decimal TotalGSD
+        {
+            get {
+                return this.MainData
+                    .Where(s => s["PPA"].ToString() != "C" &&
+                                !MyUtility.Convert.GetBool(s["IsNonSewingLine"]) &&
+                                s["OperationID"].ToString() != "PROCIPF00004" &&
+                                s["OperationID"].ToString() != "PROCIPF00003")
+                    .Sum(s => MyUtility.Math.Round(MyUtility.Convert.GetDecimal(s["GSD"]) * MyUtility.Convert.GetDecimal(s["SewerDiffPercentage"]), 2));
+            }
+        }
+
+        /// <summary>
+        /// TotalGSD
+        /// </summary>
+        public decimal HighestGSD
+        {
+            get
+            {
+                if (this.SubData.Rows.Count == 0)
+                {
+                    return 0;
+                }
+
+                return this.SubData.AsEnumerable().Select(s => MyUtility.Convert.GetDecimal(s["TotalGSDTime"])).Max();
+            }
+        }
+
+        /// <summary>
+        /// AvgGSDTime
+        /// </summary>
+        public decimal AvgGSDTime
+        {
+            get
+            {
+                if (MyUtility.Check.Empty(this.SewerManpower))
+                {
+                    return 0;
+                }
+
+                return MyUtility.Math.Round(this.TotalGSD / this.SewerManpower, 2);
+            }
+        }
+
+        /// <summary>
+        /// HighestLoading
+        /// </summary>
+        public decimal HighestLoading
+        {
+            get
+            {
+                if (this.SubData.Rows.Count == 0)
+                {
+                    return 0;
+                }
+
+                return this.SubData.AsEnumerable().Select(s => MyUtility.Convert.GetDecimal(s["OperatorLoading"])).Max();
+            }
+        }
+
+        /// <summary>
+        /// LBR
+        /// </summary>
+        public int LBR
+        {
+            get
+            {
+                if (this.SubData.Rows.Count == 0)
+                {
+                    return 0;
+                }
+                return MyUtility.Convert.GetInt(MyUtility.Math.Round((this.TotalGSD / this.HighestGSD) / this.SewerManpower * 100, 0));
+            }
+        }
 
         /// <summary>
         /// GridSyncScroll
@@ -31,8 +163,15 @@ namespace Sci.Production.IE
             this.gridSub = gridSub;
             this.syncColName = syncColName;
 
+            this.gridMain.CellPainting += this.GridMain_CellPainting;
             this.gridMain.Scroll += this.GridMain_Scroll;
             this.gridSub.Scroll += this.GridSub_Scroll;
+            this.gridSub.RowPrePaint += this.GridSub_RowPrePaint;
+            this.dtGridDetailRightSummary.Columns.Add(new DataColumn("No", typeof(string)));
+            this.dtGridDetailRightSummary.Columns.Add(new DataColumn("NoCnt", typeof(int)));
+            this.dtGridDetailRightSummary.Columns.Add(new DataColumn("TotalGSDTime", typeof(decimal)));
+            this.dtGridDetailRightSummary.Columns.Add(new DataColumn("OperatorLoading", typeof(decimal)));
+            gridSub.DataSource = this.dtGridDetailRightSummary;
         }
 
         private void GridSub_Scroll(object sender, ScrollEventArgs e)
@@ -82,13 +221,160 @@ namespace Sci.Production.IE
 
         private void ScrollLineMapping(string scrollToNo)
         {
+            DataTable dtSub = this.SubData;
 
-            DataTable dtMain = this.gridMain.DataSource.GetType() == typeof(ListControlBindingSource) ? (DataTable)((ListControlBindingSource)this.gridMain.DataSource).DataSource : (DataTable)this.gridMain.DataSource;
-            DataTable dtSub = this.gridSub.DataSource.GetType() == typeof(ListControlBindingSource) ? (DataTable)((ListControlBindingSource)this.gridSub.DataSource).DataSource : (DataTable)this.gridSub.DataSource;
+            if (dtSub.Rows.Count == 0)
+            {
+                return;
+            }
 
-            this.gridMain.FirstDisplayedScrollingRowIndex = this.gridMain.GetRowIndexByDataRow(dtMain.AsEnumerable().Where(s => s[this.syncColName].ToString() == scrollToNo).First());
+            this.gridMain.FirstDisplayedScrollingRowIndex = this.gridMain.GetRowIndexByDataRow(this.MainData.Where(s => s[this.syncColName].ToString() == scrollToNo).First());
             this.gridSub.FirstDisplayedScrollingRowIndex = this.gridSub.GetRowIndexByDataRow(dtSub.AsEnumerable().Where(s => s[this.syncColName].ToString() == scrollToNo).First());
         }
 
+        private void GridMain_CellPainting(object sender, DataGridViewCellPaintingEventArgs e)
+        {
+            if (e.ColumnIndex == -1)
+            {
+                return;
+            }
+
+            DataGridView grid = (DataGridView)sender;
+
+            if (e.RowIndex >= 0 && (grid.Columns[e.ColumnIndex].DataPropertyName == "No" || grid.Columns[e.ColumnIndex].DataPropertyName == "Selected"))
+            {
+                string curNo = grid[0, e.RowIndex].Value.ToString();
+                string nextNo = e.RowIndex == grid.Rows.Count - 1 ? string.Empty : grid[0, e.RowIndex + 1].Value.ToString();
+                string preNo = e.RowIndex == 0 ? null : grid[0, e.RowIndex - 1].Value.ToString();
+
+                if (curNo == preNo)
+                {
+                    // 在儲存格內繪製空白矩形
+                    using (SolidBrush brush = new SolidBrush(e.CellStyle.BackColor))
+                    {
+                        e.Graphics.FillRectangle(brush, e.CellBounds);
+                    }
+
+                    // 繪製儲存格的右邊框線
+                    using (Pen pen = new Pen(grid.GridColor))
+                    {
+                        e.Graphics.DrawLine(pen, e.CellBounds.Right - 1, e.CellBounds.Top, e.CellBounds.Right - 1, e.CellBounds.Bottom);
+                        if (curNo != nextNo)
+                        {
+                            e.Graphics.DrawLine(pen, e.CellBounds.Left + 1, e.CellBounds.Bottom - 1, e.CellBounds.Right - 1, e.CellBounds.Bottom - 1);
+                        }
+                    }
+
+                    e.Handled = true;
+                }
+                else if (curNo == nextNo)
+                {
+                    // 在儲存格內繪製空白矩形
+                    using (SolidBrush brush = new SolidBrush(e.CellStyle.BackColor))
+                    {
+                        e.Graphics.FillRectangle(brush, e.CellBounds);
+                    }
+
+                    using (Pen pen = new Pen(grid.GridColor))
+                    {
+                        e.Graphics.DrawLine(pen, e.CellBounds.Left + 1, e.CellBounds.Top - 1, e.CellBounds.Right - 1, e.CellBounds.Top - 1);
+                        e.Graphics.DrawLine(pen, e.CellBounds.Right - 1, e.CellBounds.Top, e.CellBounds.Right - 1, e.CellBounds.Bottom);
+                    }
+
+                    e.AdvancedBorderStyle.Bottom = DataGridViewAdvancedCellBorderStyle.None;
+                }
+            }
+        }
+
+        private void GridSub_RowPrePaint(object sender, DataGridViewRowPrePaintEventArgs e)
+        {
+            DataGridView grid = (DataGridView)sender;
+            DataGridViewRow gridRow = grid.Rows[e.RowIndex];
+            DataRow dr = (gridRow.DataBoundItem as DataRowView).Row;
+
+            if (MyUtility.Convert.GetInt(dr["NoCnt"]) == 1 || gridRow.Height > 24)
+            {
+                return;
+            }
+
+            gridRow.Height = gridRow.Height * MyUtility.Convert.GetInt(dr["NoCnt"]);
+
+            int operatorLoading = MyUtility.Convert.GetInt(dr["OperatorLoading"]);
+            if (operatorLoading > 115)
+            {
+                gridRow.Cells["OperatorLoading"].Style.BackColor = Color.LightPink;
+                gridRow.Cells["OperatorLoading"].Style.Font = new Font(FontFamily.GenericSansSerif, 10, FontStyle.Bold);
+            }
+            else if (operatorLoading < 85)
+            {
+                gridRow.Cells["OperatorLoading"].Style.BackColor = Color.LightSkyBlue;
+                gridRow.Cells["OperatorLoading"].Style.Font = new Font(FontFamily.GenericSansSerif, 10, FontStyle.Bold);
+            }
+            else
+            {
+                gridRow.Cells["OperatorLoading"].Style = gridRow.DefaultCellStyle;
+            }
+        }
+
+        /// <summary>
+        /// RefreshSubData
+        /// </summary>
+        /// <param name="subGridType">subGridType</param>
+        public void RefreshSubData(SubGridType subGridType)
+        {
+            DataTable dtSub = this.SubData;
+            dtSub.Clear();
+
+            List<DataRow> resultRows;
+            if (subGridType == SubGridType.LineMapping)
+            {
+                decimal avgGSD = this.AvgGSDTime;
+                resultRows = this.MainData.Where(s => s["PPA"].ToString() != "C" &&
+                                                              !MyUtility.Convert.GetBool(s["IsNonSewingLine"]) &&
+                                                              s["OperationID"].ToString() != "PROCIPF00004" &&
+                                                              s["OperationID"].ToString() != "PROCIPF00003")
+                                .GroupBy(s => new
+                                {
+                                    No = s["No"].ToString(),
+                                })
+                                .Select(groupItem =>
+                                {
+                                    DataRow newRow = dtSub.NewRow();
+                                    newRow["No"] = groupItem.Key.No;
+                                    newRow["NoCnt"] = groupItem.Count();
+                                    newRow["TotalGSDTime"] = MyUtility.Math.Round(groupItem.Sum(s => MyUtility.Convert.GetDecimal(s["GSD"]) * MyUtility.Convert.GetDecimal(s["SewerDiffPercentage"])), 2);
+                                    newRow["OperatorLoading"] = MyUtility.Check.Empty(avgGSD) ? 0 : MyUtility.Math.Round(groupItem.Sum(s => MyUtility.Convert.GetDecimal(s["GSD"]) * MyUtility.Convert.GetDecimal(s["SewerDiffPercentage"])) / avgGSD * 100, 0);
+                                    return newRow;
+                                }).ToList();
+            }
+            else
+            {
+                var dataPPA = this.MainData.Where(s => s["PPA"].ToString() == "C" && !MyUtility.Convert.GetBool(s["IsNonSewingLine"]) && !MyUtility.Check.Empty(s["No"]));
+                if (!dataPPA.Any())
+                {
+                    return;
+                }
+
+                decimal avgGSDTimePPA = dataPPA.Sum(s => MyUtility.Convert.GetDecimal(s["GSD"])) / dataPPA.Select(s => s["No"].ToString()).Distinct().Count();
+
+                resultRows = dataPPA.GroupBy(s => new
+                {
+                    No = s["No"].ToString(),
+                }).Select(groupItem =>
+                {
+                    DataRow newRow = dtSub.NewRow();
+                    newRow["No"] = groupItem.Key.No;
+                    newRow["NoCnt"] = groupItem.Count();
+                    newRow["TotalGSDTime"] = MyUtility.Math.Round(groupItem.Sum(s => MyUtility.Convert.GetDecimal(s["GSD"])), 2);
+                    newRow["OperatorLoading"] = avgGSDTimePPA == 0 ? 0 : MyUtility.Math.Round(groupItem.Sum(s => MyUtility.Convert.GetDecimal(s["GSD"])) / avgGSDTimePPA * 100, 0);
+                    return newRow;
+                }).ToList();
+            }
+
+            foreach (DataRow dr in resultRows)
+            {
+                dtSub.Rows.Add(dr);
+            }
+        }
     }
 }

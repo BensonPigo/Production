@@ -589,6 +589,9 @@
     <EmbeddedResource Include="P05_CreateNewLineMapping.resx">
       <DependentUpon>P05_CreateNewLineMapping.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="P05_LBR.resx">
+      <DependentUpon>P05_LBR.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="P05_NotHitTargetReason.resx">
       <DependentUpon>P05_NotHitTargetReason.cs</DependentUpon>
     </EmbeddedResource>

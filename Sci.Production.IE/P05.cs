@@ -28,8 +28,10 @@ namespace Sci.Production.IE
     {
         private DataTable dtAutomatedLineMapping_DetailTemp = new DataTable();
         private DataTable dtAutomatedLineMapping_DetailAuto = new DataTable();
-        private DataTable dtGridDetailRightSummary = new DataTable();
         private P05_NotHitTargetReason p05_NotHitTargetReason;
+
+        private AutoLineMappingGridSyncScroll lineMappingGrids;
+        private AutoLineMappingGridSyncScroll centralizedPPAGrids;
 
         private Win.UI.Button[] chartLBRButtons = new Win.UI.Button[]
         {
@@ -39,6 +41,32 @@ namespace Sci.Production.IE
                 new Win.UI.Button(),
                 new Win.UI.Button(),
         };
+
+        private string sqlGetAutomatedLineMapping_DetailAuto = @"
+select  ad.*,
+        [PPADesc] = isnull(d.Name, ''),
+        [OperationDesc] = iif(isnull(op.DescEN, '') = '', ad.OperationID, op.DescEN),
+        [SewerDiffPercentageDesc] = round(ad.SewerDiffPercentage * 100, 0),
+        [TimeStudyDetailUkeyCnt] = Count(ad.TimeStudyDetailUkey) over (partition by ad.TimeStudyDetailUkey, ad.SewerManpower)
+from    AutomatedLineMapping_DetailAuto ad with (nolock) 
+left join DropDownList d with (nolock) on d.ID = ad.PPA  and d.Type = 'PMS_IEPPA'
+left join Operation op with (nolock) on op.ID = ad.OperationID
+where {0}
+order by ad.SewerManpower, ad.No, ad.Seq
+";
+
+        private string sqlGetAutomatedLineMapping_DetailTemp = @"
+select  ad.*,
+        [PPADesc] = isnull(d.Name, ''),
+        [OperationDesc] = iif(isnull(op.DescEN, '') = '', ad.OperationID, op.DescEN),
+        [SewerDiffPercentageDesc] = round(ad.SewerDiffPercentage * 100, 0),
+        [TimeStudyDetailUkeyCnt] = Count(ad.TimeStudyDetailUkey) over (partition by ad.TimeStudyDetailUkey, ad.SewerManpower)
+from    AutomatedLineMapping_DetailTemp ad with (nolock) 
+left join DropDownList d with (nolock) on d.ID = ad.PPA  and d.Type = 'PMS_IEPPA'
+left join Operation op with (nolock) on op.ID = ad.OperationID
+where {0}
+order by ad.SewerManpower, ad.No, ad.Seq
+";
 
         /// <summary>
         /// P05
@@ -55,20 +83,12 @@ namespace Sci.Production.IE
             this.detailgridbs.DataSourceChanged += this.Detailgridbs_DataSourceChanged;
             this.gridCentralizedPPALeft.DataSource = this.gridCentralizedPPALeftBS;
 
-            this.detailgrid.CellPainting += this.Detailgrid_CellPainting;
-
-            this.dtGridDetailRightSummary.Columns.Add(new DataColumn("No", typeof(string)));
-            this.dtGridDetailRightSummary.Columns.Add(new DataColumn("NoCnt", typeof(int)));
-            this.dtGridDetailRightSummary.Columns.Add(new DataColumn("TotalGSDTime", typeof(decimal)));
-            this.dtGridDetailRightSummary.Columns.Add(new DataColumn("OperatorLoading", typeof(decimal)));
-
-            this.gridLineMappingRight.DataSource = this.dtGridDetailRightSummary;
-            this.gridCentralizedPPARight.DataSource = this.dtGridDetailRightSummary;
             this.detailgrid.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.EnableResizing;
             this.gridCentralizedPPALeft.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.EnableResizing;
             this.detailgrid.CellFormatting += this.Detailgrid_CellFormatting;
 
-            new AutoLineMappingGridSyncScroll(this.detailgrid, this.gridLineMappingRight, "No");
+            this.lineMappingGrids = new AutoLineMappingGridSyncScroll(this.detailgrid, this.gridLineMappingRight, "No");
+            this.centralizedPPAGrids = new AutoLineMappingGridSyncScroll(this.gridCentralizedPPALeft, this.gridCentralizedPPARight, "No");
 
             this.chartLBR.Controls.AddRange(this.chartLBRButtons);
 
@@ -79,16 +99,17 @@ namespace Sci.Production.IE
                 chartBtn.Font = new Font(FontFamily.GenericSerif, 7);
                 chartBtn.Padding = new Padding(0, 0, 0, 0);
                 chartBtn.BackColor = this.BackColor;
+                chartBtn.Click += this.ChartBtn_Click;
             }
 
             // dtAutomatedLineMapping_DetailTemp, dtAutomatedLineMapping_DetailAuto給結構
-            DualResult result = DBProxy.Current.Select(null, "select * from AutomatedLineMapping_DetailAuto with (nolock) where 1 = 0", out this.dtAutomatedLineMapping_DetailAuto);
+            DualResult result = DBProxy.Current.Select(null, string.Format(this.sqlGetAutomatedLineMapping_DetailAuto, "1 = 0"), out this.dtAutomatedLineMapping_DetailAuto);
             if (!result)
             {
                 this.ShowErr(result);
             }
 
-            result = DBProxy.Current.Select(null, "select * from AutomatedLineMapping_DetailTemp with (nolock) where 1 = 0", out this.dtAutomatedLineMapping_DetailTemp);
+            result = DBProxy.Current.Select(null, string.Format(this.sqlGetAutomatedLineMapping_DetailTemp, "1 = 0"), out this.dtAutomatedLineMapping_DetailTemp);
             if (!result)
             {
                 this.ShowErr(result);
@@ -155,6 +176,14 @@ namespace Sci.Production.IE
         }
 
         /// <inheritdoc/>
+        protected override void ClickUndo()
+        {
+            base.ClickUndo();
+            this.RefreshAutomatedLineMappingSummary();
+            this.ShowLBRChart(this.CurrentMaintain);
+        }
+
+        /// <inheritdoc/>
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
             this.dtAutomatedLineMapping_DetailTemp.Clear();
@@ -168,7 +197,7 @@ select  cast(0 as bit) as Selected,
         [OperationDesc] = iif(isnull(op.DescEN, '') = '', ad.OperationID, op.DescEN),
         [SewerDiffPercentageDesc] = round(ad.SewerDiffPercentage * 100, 0),
         [TimeStudyDetailUkeyCnt] = Count(TimeStudyDetailUkey) over (partition by TimeStudyDetailUkey)
-from AutomatedLineMapping_Detail ad WITH (NOLOCK) 
+from AutomatedLineMapping_Detail ad WITH (NOLOCK)
 left join DropDownList d with (nolock) on d.ID = ad.PPA  and d.Type = 'PMS_IEPPA'
 left join Operation op with (nolock) on op.ID = ad.OperationID
 where ad.ID = '{masterID}'
@@ -181,13 +210,13 @@ order by ad.Seq";
         protected override DualResult OnRenewDataDetailPost(RenewDataPostEventArgs e)
         {
             // dtAutomatedLineMapping_DetailTemp, dtAutomatedLineMapping_DetailAuto取資料
-            DualResult result = DBProxy.Current.Select(null, $"select * from AutomatedLineMapping_DetailAuto with (nolock) where ID = '{e.Master["ID"]}'", out this.dtAutomatedLineMapping_DetailAuto);
+            DualResult result = DBProxy.Current.Select(null, string.Format(this.sqlGetAutomatedLineMapping_DetailAuto, $" ad.ID = '{e.Master["ID"]}'"), out this.dtAutomatedLineMapping_DetailAuto);
             if (!result)
             {
                 this.ShowErr(result);
             }
 
-            result = DBProxy.Current.Select(null, $"select * from AutomatedLineMapping_DetailTemp with (nolock) where ID = '{e.Master["ID"]}'", out this.dtAutomatedLineMapping_DetailTemp);
+            result = DBProxy.Current.Select(null, string.Format(this.sqlGetAutomatedLineMapping_DetailTemp, $" ad.ID = '{e.Master["ID"]}'"), out this.dtAutomatedLineMapping_DetailTemp);
             if (!result)
             {
                 this.ShowErr(result);
@@ -299,14 +328,26 @@ delete AutomatedLineMapping_NotHitTargetReason where ID = '{this.CurrentMaintain
 
             DualResult result;
 
-            result = DBProxy.Current.Select(null, $"select * from AutomatedLineMapping_DetailAuto with (nolock) where ID = '{this.CurrentMaintain["ID"]}'", out this.dtAutomatedLineMapping_DetailAuto);
+            result = DBProxy.Current.Select(null, string.Format(this.sqlGetAutomatedLineMapping_DetailAuto, $" ad.ID = '{this.CurrentMaintain["ID"]}'"), out this.dtAutomatedLineMapping_DetailAuto);
             if (!result)
             {
                 this.ShowErr(result);
                 return false;
             }
 
-            result = DBProxy.Current.Select(null, $"select * from AutomatedLineMapping_DetailTemp with (nolock) where ID = '{this.CurrentMaintain["ID"]}'", out this.dtAutomatedLineMapping_DetailTemp);
+            string sqlGetAutomatedLineMapping_DetailTemp = $@"
+select  ad.*,
+        [PPADesc] = isnull(d.Name, ''),
+        [OperationDesc] = iif(isnull(op.DescEN, '') = '', ad.OperationID, op.DescEN),
+        [SewerDiffPercentageDesc] = round(ad.SewerDiffPercentage * 100, 0),
+        [TimeStudyDetailUkeyCnt] = Count(TimeStudyDetailUkey) over (partition by TimeStudyDetailUkey)
+from    AutomatedLineMapping_DetailTemp ad with (nolock) 
+left join DropDownList d with (nolock) on d.ID = ad.PPA  and d.Type = 'PMS_IEPPA'
+left join Operation op with (nolock) on op.ID = ad.OperationID
+where ad.ID = '{this.CurrentMaintain["ID"]}'
+order by ad.SewerManpower, ad.Seq
+";
+            result = DBProxy.Current.Select(null, string.Format(this.sqlGetAutomatedLineMapping_DetailTemp, $" ad,ID = '{this.CurrentMaintain["ID"]}'"), out this.dtAutomatedLineMapping_DetailTemp);
             if (!result)
             {
                 this.ShowErr(result);
@@ -493,7 +534,7 @@ where	st.StyleUkey = '{this.CurrentMaintain["StyleUkey"]}' and
             #endregion
 
             this.Helper.Controls.Grid.Generator(this.detailgrid)
-               .Text("No", header: "No", width: Widths.AnsiChars(4))
+               .Text("No", header: "No", width: Widths.AnsiChars(4), iseditingreadonly: true)
                .CheckBox("Selected", string.Empty, trueValue: true, falseValue: false, iseditable: true)
                .Text("Location", header: "Location", width: Widths.AnsiChars(13), iseditingreadonly: true)
                .Text("PPADesc", header: "PPA", width: Widths.AnsiChars(13), iseditingreadonly: true)
@@ -666,197 +707,18 @@ from #tmp
             if (this.tabDetail.SelectedIndex == 0)
             {
                 this.detailgridbs.Filter = "PPA <> 'C' and IsNonSewingLine = 0";
+                this.lineMappingGrids.RefreshSubData(AutoLineMappingGridSyncScroll.SubGridType.LineMapping);
             }
             else
             {
                 this.gridCentralizedPPALeftBS.Filter = "PPA = 'C' and IsNonSewingLine = 0";
+                this.centralizedPPAGrids.RefreshSubData(AutoLineMappingGridSyncScroll.SubGridType.CentrailizedPPA);
             }
-
-            this.RefreshRightSummaryGrid();
-        }
-
-        private void Detailgrid_CellPainting(object sender, DataGridViewCellPaintingEventArgs e)
-        {
-            if (e.RowIndex >= 0 && (e.ColumnIndex == 0 || e.ColumnIndex == 1))
-            {
-                DataGridView grid = (DataGridView)sender;
-                string curNo = grid[0, e.RowIndex].Value.ToString();
-                string nextNo = e.RowIndex == this.DetailDatas.Count - 1 ? string.Empty : grid[0, e.RowIndex + 1].Value.ToString();
-                string preNo = e.RowIndex == 0 ? null : grid[0, e.RowIndex - 1].Value.ToString();
-
-                if (curNo == preNo)
-                {
-                    // 在儲存格內繪製空白矩形
-                    using (SolidBrush brush = new SolidBrush(e.CellStyle.BackColor))
-                    {
-                        e.Graphics.FillRectangle(brush, e.CellBounds);
-                    }
-
-                    // 繪製儲存格的右邊框線
-                    using (Pen pen = new Pen(grid.GridColor))
-                    {
-                        e.Graphics.DrawLine(pen, e.CellBounds.Right - 1, e.CellBounds.Top, e.CellBounds.Right - 1, e.CellBounds.Bottom);
-                        if (curNo != nextNo)
-                        {
-                            e.Graphics.DrawLine(pen, e.CellBounds.Left + 1, e.CellBounds.Bottom - 1, e.CellBounds.Right - 1, e.CellBounds.Bottom - 1);
-                        }
-                    }
-
-                    e.Handled = true;
-                }
-                else if (curNo == nextNo)
-                {
-                    // 在儲存格內繪製空白矩形
-                    using (SolidBrush brush = new SolidBrush(e.CellStyle.BackColor))
-                    {
-                        e.Graphics.FillRectangle(brush, e.CellBounds);
-                    }
-
-                    using (Pen pen = new Pen(grid.GridColor))
-                    {
-                        e.Graphics.DrawLine(pen, e.CellBounds.Left + 1, e.CellBounds.Top - 1, e.CellBounds.Right - 1, e.CellBounds.Top - 1);
-                        e.Graphics.DrawLine(pen, e.CellBounds.Right - 1, e.CellBounds.Top, e.CellBounds.Right - 1, e.CellBounds.Bottom);
-                    }
-
-                    e.AdvancedBorderStyle.Bottom = DataGridViewAdvancedCellBorderStyle.None;
-                }
-            }
-        }
-
-        private void GridLineMappingRight_Scroll(object sender, ScrollEventArgs e)
-        {
-            Win.UI.Grid sourceGrid = (Win.UI.Grid)sender;
-
-            if (e.ScrollOrientation != ScrollOrientation.VerticalScroll)
-            {
-                return;
-            }
-
-            if (this.tabDetail.SelectedIndex != 0)
-            {
-                return;
-            }
-
-            string scrollNo = sourceGrid.Rows[sourceGrid.FirstDisplayedScrollingRowIndex].Cells["No"].Value.ToString();
-            this.ScrollLineMapping(scrollNo);
-        }
-
-        private void Detailgrid_Scroll(object sender, ScrollEventArgs e)
-        {
-            Win.UI.Grid sourceGrid = (Win.UI.Grid)sender;
-
-            if (e.ScrollOrientation != ScrollOrientation.VerticalScroll)
-            {
-                return;
-            }
-
-            if (this.tabDetail.SelectedIndex != 0)
-            {
-                return;
-            }
-
-            bool isScrollDown = e.NewValue > e.OldValue;
-
-            string scrollNo = sourceGrid.Rows[sourceGrid.FirstDisplayedScrollingRowIndex].Cells["No"].Value.ToString();
-            string oldScrollNo = sourceGrid.Rows[e.OldValue].Cells["No"].Value.ToString();
-
-            if (isScrollDown && scrollNo == oldScrollNo)
-            {
-                scrollNo = (MyUtility.Convert.GetInt(scrollNo) + 1).ToString().PadLeft(2, '0');
-            }
-
-            this.ScrollLineMapping(scrollNo);
-        }
-
-        private void ScrollLineMapping(string scrollToNo)
-        {
-            this.detailgrid.FirstDisplayedScrollingRowIndex = this.detailgrid.GetRowIndexByDataRow(this.DetailDatas.Where(s => s["No"].ToString() == scrollToNo).First());
-            this.gridLineMappingRight.FirstDisplayedScrollingRowIndex = this.gridLineMappingRight.GetRowIndexByDataRow(this.dtGridDetailRightSummary.AsEnumerable().Where(s => s["No"].ToString() == scrollToNo).First());
         }
 
         private void Detailgridbs_DataSourceChanged(object sender, EventArgs e)
         {
             this.gridCentralizedPPALeftBS.DataSource = this.detailgridbs.DataSource;
-        }
-
-        private void RefreshRightSummaryGrid()
-        {
-            this.dtGridDetailRightSummary.Clear();
-            List<DataRow> resultRows;
-            if (this.tabDetail.SelectedIndex == 0)
-            {
-                resultRows = this.DetailDatas.Where(s => s["PPA"].ToString() != "C" && !MyUtility.Convert.GetBool(s["IsNonSewingLine"]))
-                                .GroupBy(s => new
-                                {
-                                    No = s["No"].ToString(),
-                                })
-                                .Select(groupItem =>
-                                {
-                                    DataRow newRow = this.dtGridDetailRightSummary.NewRow();
-                                    newRow["No"] = groupItem.Key.No;
-                                    newRow["NoCnt"] = groupItem.Count();
-                                    newRow["TotalGSDTime"] = MyUtility.Math.Round(groupItem.Sum(s => MyUtility.Convert.GetDecimal(s["GSD"]) * MyUtility.Convert.GetDecimal(s["SewerDiffPercentage"])), 2);
-                                    newRow["OperatorLoading"] = MyUtility.Check.Empty(this.CurrentMaintain["AvgGSDTime"]) ? 0 : MyUtility.Math.Round(groupItem.Sum(s => MyUtility.Convert.GetDecimal(s["GSD"]) * MyUtility.Convert.GetDecimal(s["SewerDiffPercentage"])) / MyUtility.Convert.GetDecimal(this.CurrentMaintain["AvgGSDTime"]) * 100, 0);
-                                    return newRow;
-                                }).ToList();
-            }
-            else
-            {
-                var dataPPA = this.DetailDatas.Where(s => s["PPA"].ToString() == "C" && !MyUtility.Convert.GetBool(s["IsNonSewingLine"]) && !MyUtility.Check.Empty(s["No"]));
-                if (!dataPPA.Any())
-                {
-                    return;
-                }
-
-                decimal avgGSDTimePPA = dataPPA.Sum(s => MyUtility.Convert.GetDecimal(s["GSD"])) / dataPPA.Select(s => s["No"].ToString()).Distinct().Count();
-
-                resultRows = dataPPA.GroupBy(s => new
-                {
-                    No = s["No"].ToString(),
-                }).Select(groupItem =>
-                {
-                    DataRow newRow = this.dtGridDetailRightSummary.NewRow();
-                    newRow["No"] = groupItem.Key.No;
-                    newRow["NoCnt"] = groupItem.Count();
-                    newRow["TotalGSDTime"] = MyUtility.Math.Round(groupItem.Sum(s => MyUtility.Convert.GetDecimal(s["GSD"])), 2);
-                    newRow["OperatorLoading"] = avgGSDTimePPA == 0 ? 0 : MyUtility.Math.Round(groupItem.Sum(s => MyUtility.Convert.GetDecimal(s["GSD"])) / avgGSDTimePPA * 100, 0);
-                    return newRow;
-                }).ToList();
-            }
-
-            foreach (DataRow dr in resultRows)
-            {
-                this.dtGridDetailRightSummary.Rows.Add(dr);
-            }
-
-            this.RightGridStyleChange(this.gridLineMappingRight);
-            this.RightGridStyleChange(this.gridCentralizedPPARight);
-        }
-
-        private void RightGridStyleChange(Sci.Win.UI.Grid tarGrid)
-        {
-            foreach (DataGridViewRow gridRow in tarGrid.Rows)
-            {
-                DataRow dr = tarGrid.GetDataRow(gridRow.Index);
-
-                gridRow.Height = gridRow.Height * MyUtility.Convert.GetInt(dr["NoCnt"]);
-
-                int operatorLoading = MyUtility.Convert.GetInt(dr["OperatorLoading"]);
-                if (operatorLoading > 115)
-                {
-                    gridRow.Cells["OperatorLoading"].Style.BackColor = Color.LightPink;
-                    gridRow.Cells["OperatorLoading"].Style.Font = new Font(FontFamily.GenericSansSerif, 10, FontStyle.Bold);
-                }
-                else if (operatorLoading < 85)
-                {
-                    gridRow.Cells["OperatorLoading"].Style.BackColor = Color.LightSkyBlue;
-                    gridRow.Cells["OperatorLoading"].Style.Font = new Font(FontFamily.GenericSansSerif, 10, FontStyle.Bold);
-                }
-                else
-                {
-                    gridRow.Cells["OperatorLoading"].Style = gridRow.DefaultCellStyle;
-                }
-            }
         }
 
         private void RefreshAutomatedLineMappingSummary()
@@ -912,7 +774,7 @@ from #tmp
             // 添加數據點
             var groupLBR = this.dtAutomatedLineMapping_DetailTemp.AsEnumerable()
                                 .Where(s => s["OperationID"].ToString() != "PROCIPF00004" &&
-                                            s["OperationID"].ToString() != "PROCIPF00004" &&
+                                            s["OperationID"].ToString() != "PROCIPF00003" &&
                                             s["PPA"].ToString() != "C" &&
                                             MyUtility.Convert.GetBool(s["IsNonSewingLine"]) == false)
                                 .GroupBy(s => new { SewerManpower = MyUtility.Convert.GetInt(s["SewerManpower"]) })
@@ -1020,6 +882,19 @@ from #tmp
         private void BtnEditOperation_Click(object sender, EventArgs e)
         {
 
+        }
+
+        private void ChartBtn_Click(object sender, EventArgs e)
+        {
+            if (this.EditMode)
+            {
+                int firstDisplaySewermanpower = MyUtility.Convert.GetInt(((Win.UI.Button)sender).Text);
+                P05_LBR p05_LBR = new P05_LBR(firstDisplaySewermanpower, this.CurrentMaintain, (DataTable)this.detailgridbs.DataSource, this.dtAutomatedLineMapping_DetailTemp, this.dtAutomatedLineMapping_DetailAuto);
+                p05_LBR.ShowDialog();
+                this.RefreshAutomatedLineMappingSummary();
+                this.FilterGrid();
+                this.ShowLBRChart(this.CurrentMaintain);
+            }
         }
     }
 }

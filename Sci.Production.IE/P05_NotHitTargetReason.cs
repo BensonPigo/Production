@@ -32,7 +32,7 @@ namespace Sci.Production.IE
             get
             {
                 this.QueryNotHitTarget();
-                return this.dtAutomatedLineMapping_NotHitTargetReason.Rows.Count > 0;
+                return this.dtAutomatedLineMapping_NotHitTargetReason == null ? false : this.dtAutomatedLineMapping_NotHitTargetReason.Rows.Count > 0;
             }
         }
 
@@ -165,6 +165,7 @@ where   FactoryID = '{this.factoryID}' and
 
             if (!MyUtility.Check.Seek(sqlGetHitCondition, out drHitCondition))
             {
+                this.ShowErr("AutomatedLineMappingConditionSetting not exists");
                 return;
             }
 
