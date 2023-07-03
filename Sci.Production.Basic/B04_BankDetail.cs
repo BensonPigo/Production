@@ -346,14 +346,14 @@ WHERE lb.ID='{id}' AND lb.PKey='{pKey}'
 
             countryID.MaxLength = 2;
             accountNo.MaxLength = 30;
-            sWIFTCode.MaxLength = 11;
+            sWIFTCode.MaxLength = 20;
             accountName.MaxLength = 60;
             bankName.MaxLength = 70;
             branchCode.MaxLength = 30;
             branchName.MaxLength = 60;
             countryID.MaxLength = 2;
             city.MaxLength = 20;
-            midSWIFTCode.MaxLength = 11;
+            midSWIFTCode.MaxLength = 20;
             midBankName.MaxLength = 70;
 
             countryID.MaxLength = 2;
