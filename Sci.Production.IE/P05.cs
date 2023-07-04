@@ -886,14 +886,19 @@ from #tmp
 
         private void ChartBtn_Click(object sender, EventArgs e)
         {
+            int firstDisplaySewermanpower = MyUtility.Convert.GetInt(((Win.UI.Button)sender).Text);
             if (this.EditMode)
             {
-                int firstDisplaySewermanpower = MyUtility.Convert.GetInt(((Win.UI.Button)sender).Text);
                 P05_LBR p05_LBR = new P05_LBR(firstDisplaySewermanpower, this.CurrentMaintain, (DataTable)this.detailgridbs.DataSource, this.dtAutomatedLineMapping_DetailTemp, this.dtAutomatedLineMapping_DetailAuto);
                 p05_LBR.ShowDialog();
                 this.RefreshAutomatedLineMappingSummary();
                 this.FilterGrid();
                 this.ShowLBRChart(this.CurrentMaintain);
+            }
+            else
+            {
+                P05_Compare p05_Compare = new P05_Compare(firstDisplaySewermanpower, this.CurrentMaintain, (DataTable)this.detailgridbs.DataSource, this.dtAutomatedLineMapping_DetailTemp, this.dtAutomatedLineMapping_DetailAuto);
+                p05_Compare.ShowDialog();
             }
         }
     }

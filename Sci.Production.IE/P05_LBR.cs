@@ -57,6 +57,17 @@ namespace Sci.Production.IE
             this.autoLineMappingGridSyncScroll = new AutoLineMappingGridSyncScroll(this.gridMain, this.gridSub, "No");
 
             this.tabNoOfOperator.SelectedIndexChanged += this.TabNoOfOperator_SelectedIndexChanged;
+            this.gridMain.CellFormatting += this.GridMain_CellFormatting;
+        }
+
+        private void GridMain_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
+        {
+            Win.UI.Grid sourceGrid = (Win.UI.Grid)sender;
+            DataRow dr = sourceGrid.GetDataRow(e.RowIndex);
+            if (e.ColumnIndex > 1)
+            {
+                e.CellStyle.BackColor = MyUtility.Convert.GetInt(dr["TimeStudyDetailUkeyCnt"]) > 1 ? Color.FromArgb(255, 255, 153) : sourceGrid.DefaultCellStyle.BackColor;
+            }
         }
 
         private void TabNoOfOperator_SelectedIndexChanged(object sender, EventArgs e)
@@ -95,11 +106,7 @@ namespace Sci.Production.IE
             int displayTabIndex = this.firstDiaplaySewerManpower - this.minSewermanpower;
             if (displayTabIndex == this.tabNoOfOperator.SelectedIndex)
             {
-                this.gridMainBs.DataSource = this.dtAutomatedLineMapping_DetailCopys[displayTabIndex];
-                this.autoLineMappingGridSyncScroll.RefreshSubData(SubGridType.LineMapping);
-                this.numSewerManpower.Value = this.autoLineMappingGridSyncScroll.SewerManpower;
-                this.numOPLoading.Value = this.autoLineMappingGridSyncScroll.HighestLoading;
-                this.numLBR.Value = this.autoLineMappingGridSyncScroll.LBR;
+                this.LoadAutomatedLineMapping(this.firstDiaplaySewerManpower);
             }
             else
             {

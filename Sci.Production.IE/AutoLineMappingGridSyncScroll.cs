@@ -147,6 +147,7 @@ namespace Sci.Production.IE
                 {
                     return 0;
                 }
+
                 return MyUtility.Convert.GetInt(MyUtility.Math.Round((this.TotalGSD / this.HighestGSD) / this.SewerManpower * 100, 0));
             }
         }
@@ -183,11 +184,6 @@ namespace Sci.Production.IE
                 return;
             }
 
-            //if (this.tabDetail.SelectedIndex != 0)
-            //{
-            //    return;
-            //}
-
             string scrollNo = sourceGrid.Rows[sourceGrid.FirstDisplayedScrollingRowIndex].Cells[this.syncColName].Value.ToString();
             this.ScrollLineMapping(scrollNo);
         }
@@ -200,11 +196,6 @@ namespace Sci.Production.IE
             {
                 return;
             }
-
-            //if (this.tabDetail.SelectedIndex != 0)
-            //{
-            //    return;
-            //}
 
             bool isScrollDown = e.NewValue > e.OldValue;
 
@@ -330,9 +321,9 @@ namespace Sci.Production.IE
             {
                 decimal avgGSD = this.AvgGSDTime;
                 resultRows = this.MainData.Where(s => s["PPA"].ToString() != "C" &&
-                                                              !MyUtility.Convert.GetBool(s["IsNonSewingLine"]) &&
-                                                              s["OperationID"].ToString() != "PROCIPF00004" &&
-                                                              s["OperationID"].ToString() != "PROCIPF00003")
+                                                      !MyUtility.Convert.GetBool(s["IsNonSewingLine"]) &&
+                                                      s["OperationID"].ToString() != "PROCIPF00004" &&
+                                                      s["OperationID"].ToString() != "PROCIPF00003")
                                 .GroupBy(s => new
                                 {
                                     No = s["No"].ToString(),

@@ -164,7 +164,7 @@
             this.tabSewerMinus2.Padding = new System.Windows.Forms.Padding(3);
             this.tabSewerMinus2.Size = new System.Drawing.Size(900, 478);
             this.tabSewerMinus2.TabIndex = 0;
-            this.tabSewerMinus2.Text = "-2 Operator";
+            this.tabSewerMinus2.Text = "-2 Sewer";
             // 
             // splitViewOperator
             // 
@@ -236,7 +236,7 @@
             this.tabSewerMinus1.Padding = new System.Windows.Forms.Padding(3);
             this.tabSewerMinus1.Size = new System.Drawing.Size(900, 478);
             this.tabSewerMinus1.TabIndex = 1;
-            this.tabSewerMinus1.Text = "-1 Operator";
+            this.tabSewerMinus1.Text = "-1 Sewer";
             // 
             // tabSewerManualInput
             // 
@@ -252,7 +252,7 @@
             this.tabSewerPlus1.Name = "tabSewerPlus1";
             this.tabSewerPlus1.Size = new System.Drawing.Size(900, 478);
             this.tabSewerPlus1.TabIndex = 3;
-            this.tabSewerPlus1.Text = "+1 Operator";
+            this.tabSewerPlus1.Text = "+1 Sewer";
             // 
             // tabSewerPlus2
             // 
@@ -260,7 +260,7 @@
             this.tabSewerPlus2.Name = "tabSewerPlus2";
             this.tabSewerPlus2.Size = new System.Drawing.Size(900, 478);
             this.tabSewerPlus2.TabIndex = 4;
-            this.tabSewerPlus2.Text = "+2 Operator";
+            this.tabSewerPlus2.Text = "+2 Sewer";
             // 
             // btnReset
             // 
