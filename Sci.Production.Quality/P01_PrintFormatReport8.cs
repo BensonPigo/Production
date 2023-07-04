@@ -41,13 +41,19 @@ namespace Sci.Production.Quality
             base.OnFormLoaded();
             this.GridSetup();
             this.Query();
+            string sqlcmd = string.Empty;
 
-            string sqlcmd = $@"
+            #region combox Tone
+            sqlcmd = $@"
             select [Tone] = ''
             union
-            select distinct tone from fir f
-            inner join  FIR_Shadebone fs on fs.id=f.id
-            where POID = '{this.maindr["Poid"]}' and f.SEQ1='{this.maindr["seq1"]}' and seq2='{this.maindr["seq2"]}' and ReceivingID='{this.maindr["ReceivingID"]}'";
+            select distinct fs.tone 
+            from fir f with(nolock)
+            inner join  FIR_Shadebone fs with(nolock) on fs.id=f.id
+            where f.POID = '{this.maindr["Poid"]}' 
+            and f.SEQ1='{this.maindr["seq1"]}' 
+            and f.seq2='{this.maindr["seq2"]}' 
+            and f.ReceivingID='{this.maindr["ReceivingID"]}'";
 
             DualResult dualResult = DBProxy.Current.Select("Production", sqlcmd, out DataTable dt);
             if (!dualResult)
@@ -57,6 +63,29 @@ namespace Sci.Production.Quality
             }
 
             MyUtility.Tool.SetupCombox(this.comboToneGrp, 1, dt);
+            #endregion
+
+            #region combox Dyelot
+            sqlcmd = $@"
+            select [Dyelot] = ''
+            union
+            select distinct fs.Dyelot 
+            from fir f with(nolock)
+            inner join  FIR_Shadebone fs with(nolock) on fs.id=f.id
+            where f.POID = '{this.maindr["Poid"]}' 
+            and f.SEQ1='{this.maindr["seq1"]}' 
+            and f.seq2='{this.maindr["seq2"]}' 
+            and f.ReceivingID='{this.maindr["ReceivingID"]}'";
+
+            dualResult = DBProxy.Current.Select("Production", sqlcmd, out DataTable dtDyelot);
+            if (!dualResult)
+            {
+                MyUtility.Msg.ErrorBox(dualResult.ToString());
+                return;
+            }
+
+            MyUtility.Tool.SetupCombox(this.comboBoxDyelot, 1, dtDyelot);
+            #endregion
         }
 
         private void GridSetup()
@@ -239,6 +268,33 @@ namespace Sci.Production.Quality
 
         private void ComboToneGrp_SelectedValueChanged(object sender, EventArgs e)
         {
+            //var dt = (DataTable)this.listControlBindingSource1.DataSource;
+            //dt.AsEnumerable().ToList().ForEach(row =>
+            //{
+            //    row.SetField("Selected", false); // 設定選取狀態為 false
+            //});
+
+            //// 進行整個 DataTable 的 EndEdit()
+            //dt.AcceptChanges();
+
+            //if ((string)this.comboToneGrp.SelectedValue != string.Empty)
+            //{
+            //    var selectedTone = (string)this.comboToneGrp.SelectedValue;
+            //    var filteredRows = dt.AsEnumerable().Where(row => (string)row["Tone"] == selectedTone).ToList();
+
+            //    // 使用 LINQ 批次更新選取狀態
+            //    filteredRows.ForEach(row =>
+            //    {
+            //        row.SetField("Selected", true); // 設定選取狀態為 "true"
+            //    });
+
+            //    // 進行整個 DataTable 的 EndEdit()
+            //    dt.AcceptChanges();
+            //}
+        }
+
+        private void btnFind_Click(object sender, EventArgs e)
+        {
             var dt = (DataTable)this.listControlBindingSource1.DataSource;
             dt.AsEnumerable().ToList().ForEach(row =>
             {
@@ -247,21 +303,35 @@ namespace Sci.Production.Quality
 
             // 進行整個 DataTable 的 EndEdit()
             dt.AcceptChanges();
+            var filteredRows = new List<DataRow>();
 
-            if ((string)this.comboToneGrp.SelectedValue != string.Empty)
+            // 依照上方條件篩選資料
+            if (MyUtility.Check.Empty(this.comboToneGrp.SelectedValue) == false &&
+                MyUtility.Check.Empty(this.comboBoxDyelot.SelectedValue) == false)
             {
-                var selectedTone = (string)this.comboToneGrp.SelectedValue;
-                var filteredRows = dt.AsEnumerable().Where(row => (string)row["Tone"] == selectedTone).ToList();
-
-                // 使用 LINQ 批次更新選取狀態
-                filteredRows.ForEach(row =>
-                {
-                    row.SetField("Selected", true); // 設定選取狀態為 "true"
-                });
-
-                // 進行整個 DataTable 的 EndEdit()
-                dt.AcceptChanges();
+                filteredRows = dt.AsEnumerable().Where(row => (string)row["Tone"] == this.comboToneGrp.SelectedValue.ToString() && (string)row["Dyelot"] == this.comboBoxDyelot.SelectedValue.ToString()).ToList();
             }
+            else if (MyUtility.Check.Empty(this.comboToneGrp.SelectedValue) == false)
+            {
+                filteredRows = dt.AsEnumerable().Where(row => (string)row["Tone"] == this.comboToneGrp.SelectedValue.ToString()).ToList();
+            }
+            else if (MyUtility.Check.Empty(this.comboBoxDyelot.SelectedValue) == false)
+            {
+                filteredRows = dt.AsEnumerable().Where(row => (string)row["Dyelot"] == this.comboBoxDyelot.SelectedValue.ToString()).ToList();
+            }
+            else
+            {
+                filteredRows = dt.AsEnumerable().Where(row => 1 == 0).ToList();
+            }
+
+            // 使用 LINQ 批次更新選取狀態
+            filteredRows.ForEach(row =>
+            {
+                row.SetField("Selected", true); // 設定選取狀態為 "true"
+            });
+
+            // 進行整個 DataTable 的 EndEdit()
+            dt.AcceptChanges();
         }
     }
 }
