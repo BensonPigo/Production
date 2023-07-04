@@ -10,7 +10,7 @@ FROM (SELECT   SCIRefno, Refno, DescDetail AS Description, (CASE Type WHEN 'F' T
         SELECT     ID AS SCIRefno, ID AS Refno, Description, 'Machine' AS CustomsType, 'SET' AS Unit, Junk
         FROM       dbo.SciMachine_MachineMasterGroup
 		UNION ALL 
-		select     ID AS SCIRefno, ID AS Refno, description, 'Machine' AS CustomsType,'SET' AS Unit,Junk 
+		select     MasterGroupID AS SCIRefno, ID AS Refno, description, 'Machine' AS CustomsType,'SET' AS Unit,Junk 
 		from       dbo.SciMachine_TPEMachine
         UNION ALL
         SELECT     m.MaterialCode AS SCIRefno, m.MaterialCode AS Refno, m.Description, 'Chemical' AS CustomsType, 
