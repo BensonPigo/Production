@@ -33,7 +33,9 @@
 	[VasShas] [varchar](1) NULL,
 	[1st_Inspection] [varchar](1) NULL,
 	[Ukey] [bigint] IDENTITY(1,1) NOT NULL,
- CONSTRAINT [PK_P_CFAInspectionRecord_Detail] PRIMARY KEY CLUSTERED 
+	[InspectedSP] VARCHAR(13) NULL, 
+    [InspectedSeq] VARCHAR(2) NULL, 
+    CONSTRAINT [PK_P_CFAInspectionRecord_Detail] PRIMARY KEY CLUSTERED 
 (
 	[Ukey] ASC,
 	[FactoryID] ASC
@@ -41,3 +43,20 @@
 ) ON [PRIMARY]
 
 GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'TOP 1 OrderID',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'P_CFAInspectionRecord_Detail',
+    @level2type = N'COLUMN',
+    @level2name = N'InspectedSP'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'TOP 1 Seq',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'P_CFAInspectionRecord_Detail',
+    @level2type = N'COLUMN',
+    @level2name = N'InspectedSeq'
