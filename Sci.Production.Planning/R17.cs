@@ -89,6 +89,7 @@ namespace Sci.Production.Planning
         /// <returns>DualResult</returns>
         protected override DualResult OnAsyncDataLoad(ReportEventArgs e)
         {
+            DBProxy.Current.DefaultTimeout = 900;
             DualResult result = new DualResult(true);
             try
             {
@@ -514,9 +515,8 @@ FROM #tmp t
 INNER JOIN Factory f ON t.KPICode=f.id
 ORDER BY  t.OrderID, t.seq, t.KpiCode
 
-drop table #tmp_Pullout_Detail_p,#tmp_Pullout_Detail_pd,#tmp_Pullout_Detail,#tmp_SewingOutput,#tmp_ClogReceive,#tmp,#tmp_main,#getQtyBySeq,#maxReceiveDate,#tmpReceiveDate1,#tmpReceiveDate2
+drop table #tmp_Pullout_Detail_p,#tmp_Pullout_Detail_pd,#tmp_Pullout_Detail,#tmp_SewingOutput,#tmp_ClogReceive,#tmp,#tmp_main,#getQtyBySeq
 ";
-
                 result = DBProxy.Current.Select(null, strSQL, null, out this.gdtOrderDetail);
                 if (!result)
                 {
@@ -842,7 +842,7 @@ AND r.ID = TH_Order.ReasonID and (ot.IsGMTMaster = 0 or o.OrderTypeID = '')  and
             {
                 return new DualResult(false, "data loading error.", ex.ToString());
             }
-
+            DBProxy.Current.DefaultTimeout = 300;
             return result;
         }
 
