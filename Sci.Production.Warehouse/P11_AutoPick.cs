@@ -417,54 +417,71 @@ order by x.poid, x.seq1, x.seq2, x.scirefno, x.ColorID, x.SizeSpec, x.Special;
 
 --因為 #tmpPo_Supp_Detail 有用 Order_BoA 展開
 --計算數量時，必須根據 Poid, Seq, SizeCode 群組
-with cte as(
-   select poid,seq1,seq2,sizecode
-	, qty = Round (sum (isnull (1.0 * OrderQty * value, 0.00) * UsedQty * RATE), 2) 
-	from
-		(
-    select distinct b.poid
-            , b.seq1
-            , b.seq2
-            , iif(b.BomTypeColor=1,tbColor.SizeCode,tbNonColor.SizeCode) SizeCode
-			, b.UsedQty
-			,b.RATE
-			, iif(b.BomTypeColor=1,tbColor.OrderQty,tbNonColor.OrderQty) OrderQty
-			, SizeSpec.value           
-	from #tmpPO_supp_detail b
-	outer apply(
-		   select --tmpB.*
-        distinct tmpB.id,tmpB.SCIRefNo,tmpB.SizeCode,tmpB.SizeSpec,tmpB.orderqty ,tmpB.ColorID
-               , ob.Seq1
-        from #Tmp_BoaExpend tmpB
-        left join order_boa ob on tmpB.Order_BOAUkey = ob.Ukey		
-		where b.SCIRefno = tmpB.SciRefno 
-			  and b.poid = tmpB.ID 
-              and b.SizeSpec = tmpB.SizeSpec
-			  and b.ColorID = tmpB.ColorID       
-              and b.CompareBoAExpandSeq1 = ob.Seq1
-	) tbColor
-	outer apply(
-		select distinct tmpB.id
-               , tmpB.SCIRefNo
-               , tmpB.SizeCode
-               , tmpB.SizeSpec
-               , tmpB.orderqty
-               , ob.Seq1
-        from #Tmp_BoaExpend tmpB
-        left join order_boa ob on tmpB.Order_BOAUkey = ob.Ukey		
-		where b.SCIRefno = tmpB.SciRefno 
-			  and b.poid = tmpB.ID 
-              and b.SizeSpec = tmpB.SizeSpec           
-              and b.CompareBoAExpandSeq1 = ob.Seq1
-	) tbNonColor    
-    outer apply (
-        select value = case
-                            when b.BomTypeCalculate != 1 then 1
-                            else iif(b.BomTypeColor=1,dbo.GetDigitalValue(tbColor.SizeSpec),dbo.GetDigitalValue(tbNonColor.SizeSpec))
-                       end
-    ) SizeSpec	
-  ) a
-  group by poid, seq1, seq2, SizeCode
+WITH cte AS (
+    SELECT
+        POID
+       ,seq1
+       ,seq2
+       ,SizeCode
+       ,qty = ROUND(SUM(ISNULL(1.0 * OrderQty * value, 0.00) * Rate), 2) -- ISP20230663 不能乘 PO_Supp_Detail.UsedQty 這只是參考用，改用 Order_BOA.ConsPC
+    FROM (
+        SELECT DISTINCT
+            b.POID
+           ,b.seq1
+           ,b.seq2
+           ,SizeCode = IIF(b.BomTypeColor = 1, tbColor.SizeCode, tbNonColor.SizeCode)
+           ,b.Rate
+           ,OrderQty = IIF(b.BomTypeColor = 1, tbColor.OrderQty, tbNonColor.OrderQty)
+           ,SizeSpec.value
+           ,BoaConsPC = IIF(b.BomTypeColor = 1, tbColor.BoaConsPC, tbNonColor.BoaConsPC)
+        FROM #tmpPO_supp_detail b
+        OUTER APPLY (
+            SELECT DISTINCT
+                tmpB.id
+               ,tmpB.SCIRefNo
+               ,tmpB.SizeCode
+               ,tmpB.SizeSpec
+               ,tmpB.OrderQty
+               ,tmpB.ColorID
+               ,oba.Seq1
+               ,BoaConsPC = iif(BomTypeCalculatePCS = 1, 1, ConsPC)
+            FROM #Tmp_BoaExpend tmpB
+            LEFT JOIN Order_BOA oba ON tmpB.Order_BOAUkey = oba.Ukey
+            WHERE b.SCIRefno = tmpB.SciRefno
+            AND b.POID = tmpB.ID
+            AND b.SizeSpec = tmpB.SizeSpec
+            AND b.CompareBoAExpandSeq1 = oba.Seq1
+            AND b.ColorID = tmpB.ColorID
+        ) tbColor
+        OUTER APPLY (
+            SELECT DISTINCT
+                tmpB.id
+               ,tmpB.SCIRefNo
+               ,tmpB.SizeCode
+               ,tmpB.SizeSpec
+               ,tmpB.OrderQty
+               ,oba.Seq1
+               ,BoaConsPC = iif(BomTypeCalculatePCS = 1, 1, oba.ConsPC)
+            FROM #Tmp_BoaExpend tmpB
+            LEFT JOIN Order_BOA oba ON tmpB.Order_BOAUkey = oba.Ukey
+            WHERE b.SCIRefno = tmpB.SciRefno
+            AND b.POID = tmpB.ID
+            AND b.SizeSpec = tmpB.SizeSpec
+            AND b.CompareBoAExpandSeq1 = oba.Seq1
+        ) tbNonColor
+        OUTER APPLY (
+            SELECT value =
+                CASE
+                    WHEN b.BomTypeCalculate != 1 THEN 1
+                    -- ISP20230663 不能乘 PO_Supp_Detail.UsedQty 這只是參考用，改用 Order_BOA.ConsPC
+                    ELSE IIF(b.BomTypeColor = 1, dbo.GetDigitalValue(tbColor.SizeSpec * tbColor.BoaConsPC), dbo.GetDigitalValue(tbNonColor.SizeSpec * tbNonColor.BoaConsPC)) 
+                END
+        ) SizeSpec
+    ) a
+    GROUP BY POID
+            ,seq1
+            ,seq2
+            ,SizeCode
 )
 select  z.*
         , Autopickqty = isnull (cte.qty, 0)
