@@ -34,6 +34,10 @@ IF OBJECT_ID(N'ShipPlan_DeleteGBHistory') IS NOT NULL
 BEGIN
   DROP TABLE ShipPlan_DeleteGBHistory
 END
+IF OBJECT_ID(N'PackingList') IS NOT NULL
+BEGIN
+  DROP TABLE PackingList
+END
 
 ------------------------------------------------------------------------------------------------------
 --***資料交換的條件限制***
@@ -101,7 +105,7 @@ ORDER BY B.ID
 SELECT distinct b.* 
 	   , DataFrom = 'G'
 	   , HCID = '             '
-	   , c.Abb
+	   , Abb = ISNULL(c.Abb,'')
 	   , [IsShippingAPApprove] = isnull(IsShippingAPApprove.Value,0)
 INTO  #tmpFtyBooking1
 FROM Pullout_Detail  a, Production.dbo.GMTBooking b 
@@ -123,15 +127,15 @@ select ID = a.PackingListID
 	   , InvDate = po1.PulloutDate 
 	   , ETD = po1.PulloutDate 
 	   , FCRDate = po1.PulloutDate
-	   , p1.BrandID
+	   , BrandID = ISNULL(p1.BrandID,'')
 	   , Dest = 'ZZ'
-	   , Shupper = p1.FactoryID 
-	   , TotalShipQty = p1.ShipQty
+	   , Shupper = isnull(p1.FactoryID,'') 
+	   , TotalShipQty = ISNULL(p1.ShipQty,0)
 	   , Status = IIF(po1.LockDate is null, 'N', 'F')
-	   , DataFrom = (select top(1) PackingListType 
+	   , DataFrom = ISNULL((select top(1) PackingListType 
 					 from Production.dbo.Pullout_Detail 
-					 where PackingListID = a.PackingListID) 
-	   , HCID = p1. ExpressID
+					 where PackingListID = a.PackingListID),'') 
+	   , HCID = ISNULL(p1. ExpressID,'')
 	   , p1.AddDate
 	   , p1.EditDate
 	   , [IsShippingAPApprove] = 0
@@ -244,7 +248,7 @@ from (
 ) a 
 
  
-select g.ID, c.CTNRNo
+select g.ID, CTNRNo = ISNULL(c.CTNRNo,'')
 into GMTBooking_CTNR 
 from 
 (
@@ -273,7 +277,7 @@ WHERE a.SendToTPE IS NULL OR A.SendToTPE < A.EditDate
 select sdh.ID
 	, sdh.GMTBookingID
 	, sdh.ReasonID
-	, [ReasonDesc] = sr.Description
+	, [ReasonDesc] = ISNULL(sr.Description,'')
 	, sdh.BackDate
 	, sdh.NewShipModeID
 	, sdh.NewPulloutDate

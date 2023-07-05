@@ -172,8 +172,14 @@ AND PurchaseFrom = 'T'
 ------------------------------------------------
 
 SELECT pod.ID,pod.seq1,pod.SEQ2,pod.PartID, pod.UnitID, pod.PRICE, pod.QTY, pod.PartBrandID, pod.suppid ,pod.PartReqID,pod.InQty
-	,prd.MinQty,pod.StockQty,pod.RoadQty
-	,pr.FactoryApprove, pr.FactoryApproveDate, pr.CmdApprove, pr.CmdApproveDate, pr.MgApprove, pr.MgApproveDate,prd.Consumable,prd.AvgQty
+	,MinQty = ISNULL(prd.MinQty,0),pod.StockQty,pod.RoadQty
+	,FactoryApprove = ISNULL(pr.FactoryApprove,'')
+	,pr.FactoryApproveDate
+	,CmdApprove = ISNULL(pr.CmdApprove,'')
+	,pr.CmdApproveDate
+	,MgApprove = ISNULL(pr.MgApprove,'')
+	,pr.MgApproveDate
+	,Consumable = ISNULL(prd.Consumable,0),AvgQty = ISNULL(prd.AvgQty,0)
 INTO  PartPO_Detail
 FROM Pms_To_Trade.dbo.PartPO, Production.dbo.SciMachine_PartPO_Detail  pod
 left join Production.dbo.SciMachine_PartReq_Detail prd on prd.ID= pod.PartReqID and prd.PartID=pod.PartID
@@ -190,7 +196,7 @@ WHERE RepairPO.id= rpod.id
 ORDER BY RepairPO.id 
 
 SELECT pod.ID,pod.seq1, pod.SEQ2 , pod.PRICE, pod.QTY, pod.MachineBrandID, pod.suppid 
-	,[InspectionQty]=InspectionQty.Qty
+	,[InspectionQty] = ISNULL(InspectionQty.Qty,0)
 INTO  MachinePO_Detail
 FROM Pms_To_Trade.dbo.MachinePO, Production.dbo.SciMachine_MachinePO_Detail  pod
 OUTER APPLY(
@@ -338,13 +344,13 @@ select
   ,SciMachine_MachinePending_Detail.OldStatus
   ,SciMachine_MachinePending_Detail.Results
   ,SciMachine_MachinePending_Detail.Remark
-  ,MasterGroupID=SciMachine_Machine.MasterGroupID+SciMachine_Machine.MachineGroupID
-  ,SciMachine_Machine.MachineBrandID
-  ,SciMachine_Machine.Model
-  ,SciMachine_Machine.SerialNo
-  ,SciMachine_Machine.LocationM
+  ,MasterGroupID= ISNULL(SciMachine_Machine.MasterGroupID,'') + ISNULL(SciMachine_Machine.MachineGroupID,'')
+  ,MachineBrandID = ISNULL(SciMachine_Machine.MachineBrandID,'')
+  ,Model = ISNULL(SciMachine_Machine.Model,'')
+  ,SerialNo = ISNULL(SciMachine_Machine.SerialNo,'')
+  ,LocationM = ISNULL(SciMachine_Machine.LocationM,'')
   ,SciMachine_Machine.ArriveDate
-  ,UsageTime = concat(ym.UsageTime/360,'Y',(ym.UsageTime%360)/30,'M')
+  ,UsageTime = concat(ISNULL(ym.UsageTime,0)/360,'Y',(ISNULL(ym.UsageTime,0)%360)/30,'M')
   ,SciMachine_MachinePending_Detail.MachineDisposeID
 into MachinePending_Detail
 from Production.dbo.SciMachine_MachinePending_Detail
