@@ -150,7 +150,14 @@ namespace Sci.Production.Automation
             if (!webApiBaseResult.isSuccess)
             {
                 string errMsg = MyUtility.Check.Empty(webApiBaseResult.responseContent) ? webApiBaseResult.exception.ToString() : webApiBaseResult.responseContent;
-                return new DualResult(false, new Ict.BaseResult.MessageInfo(errMsg));
+                if (errMsg.Contains("there is no SpreadingSchedule"))
+                {
+                    return new DualResult(true);
+                }
+                else
+                {
+                    return new DualResult(false, new Ict.BaseResult.MessageInfo(errMsg));
+                }
             }
 
             return new DualResult(true);
