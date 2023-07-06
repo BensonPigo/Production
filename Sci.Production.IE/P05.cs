@@ -245,6 +245,7 @@ order by ad.Seq";
             this.FilterGrid();
             this.detailgrid.ColumnHeadersHeight = this.gridLineMappingRight.ColumnHeadersHeight;
             this.gridCentralizedPPALeft.ColumnHeadersHeight = this.gridCentralizedPPARight.ColumnHeadersHeight;
+            this.btnEditOperation.Enabled = this.tabDetail.SelectedIndex == 0 && this.EditMode;
         }
 
         /// <inheritdoc/>
@@ -700,6 +701,7 @@ from #tmp
         private void TabDetail_SelectedIndexChanged(object sender, EventArgs e)
         {
             this.FilterGrid();
+            this.btnEditOperation.Enabled = this.tabDetail.SelectedIndex == 0 && this.EditMode;
         }
 
         private void FilterGrid()
@@ -881,7 +883,18 @@ from #tmp
 
         private void BtnEditOperation_Click(object sender, EventArgs e)
         {
+            if (!this.DetailDatas.Any(s => MyUtility.Convert.GetBool(s["Selected"])))
+            {
+                MyUtility.Msg.WarningBox("Please tick at least one Operation.");
+                return;
+            }
 
+            P05_EditOperation p05_EditOperation = new P05_EditOperation((DataTable)this.detailgridbs.DataSource);
+            DialogResult dialogResult = p05_EditOperation.ShowDialog();
+            if (dialogResult == DialogResult.OK)
+            {
+                this.detailgridbs.DataSource = p05_EditOperation.dtAutomatedLineMapping_Detail;
+            }
         }
 
         private void ChartBtn_Click(object sender, EventArgs e)

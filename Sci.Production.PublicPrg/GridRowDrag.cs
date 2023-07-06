@@ -1,4 +1,5 @@
-﻿using Ict.Win.UI;
+﻿using Ict;
+using Sci.Win.UI;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -8,50 +9,68 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace Sci.Production.IE
+namespace Sci.Production.Prg
 {
     /// <summary>
-    /// P01
+    /// GridRowDrag
     /// </summary>
-    public partial class P01
+    public class GridRowDrag
     {
         private Image dragImage; // 截取的圖片
         private Point mouseLocation;
         private int finalDragIndex = -1;
+        private Grid mainGrid;
+        private Action<DataRow> afterRowDragDo;
 
-        private void InitialGridRowDragEvent()
+        private DataTable DataMain
         {
-            this.detailgrid.AllowDrop = true;
+            get
+            {
+                return this.mainGrid.DataSource.GetType() == typeof(ListControlBindingSource) ? (DataTable)((ListControlBindingSource)this.mainGrid.DataSource).DataSource : (DataTable)this.mainGrid.DataSource;
+            }
+        }
+
+        /// <summary>
+        /// GridRowDrag
+        /// </summary>
+        /// <param name="tarGrid">tarGrid</param>
+        /// <param name="afterRowDragDo">afterRowDragDo</param>
+        public GridRowDrag(Grid tarGrid, Action<DataRow> afterRowDragDo = null)
+        {
+            this.mainGrid = tarGrid;
+            this.mainGrid.AllowDrop = true;
 
             // 處理拖曳開始事件
-            this.detailgrid.MouseDown += this.DataGridView_MouseDown;
+            this.mainGrid.MouseDown += this.DataGridView_MouseDown;
 
             // 處理拖曳放下事件
-            this.detailgrid.DragDrop += this.DataGridView_DragDrop;
+            this.mainGrid.DragDrop += this.DataGridView_DragDrop;
 
             // 處理拖曳進入事件
-            this.detailgrid.DragEnter += this.DataGridView_DragEnter;
+            this.mainGrid.DragEnter += this.DataGridView_DragEnter;
 
             // 設定拖曳樣式
-            this.detailgrid.DragOver += this.DataGridView_DragOver;
+            this.mainGrid.DragOver += this.DataGridView_DragOver;
 
-            this.detailgrid.DragLeave += this.DataGridView_DragLeave;
+            this.mainGrid.DragLeave += this.DataGridView_DragLeave;
 
-            this.detailgrid.Paint += this.DataGridView_Paint;
+            this.mainGrid.Paint += this.DataGridView_Paint;
+
+            this.afterRowDragDo = afterRowDragDo;
         }
 
         private void DataGridView_MouseDown(object sender, MouseEventArgs e)
         {
-            if (e.Button == MouseButtons.Left && this.detailgrid.HitTest(e.X, e.Y).Type == DataGridViewHitTestType.Cell)
+            if (e.Button == MouseButtons.Left && this.mainGrid.HitTest(e.X, e.Y).Type == DataGridViewHitTestType.Cell)
             {
                 // 取得被拖曳的資料列的索引
-                int rowIndex = this.detailgrid.HitTest(e.X, e.Y).RowIndex;
+                int rowIndex = this.mainGrid.HitTest(e.X, e.Y).RowIndex;
 
                 // 截取拖移資料列的圖片
-                using (Bitmap bitmap = new Bitmap(this.detailgrid.Width, this.detailgrid.Height))
+                using (Bitmap bitmap = new Bitmap(this.mainGrid.Width, this.mainGrid.Height))
                 {
-                    this.detailgrid.DrawToBitmap(bitmap, this.detailgrid.ClientRectangle);
-                    Rectangle rowBounds = this.detailgrid.GetRowDisplayRectangle(rowIndex, true);
+                    this.mainGrid.DrawToBitmap(bitmap, this.mainGrid.ClientRectangle);
+                    Rectangle rowBounds = this.mainGrid.GetRowDisplayRectangle(rowIndex, true);
                     this.dragImage = bitmap.Clone(rowBounds, bitmap.PixelFormat);
 
                     this.mouseLocation = e.Location;
@@ -60,7 +79,7 @@ namespace Sci.Production.IE
                 if (rowIndex >= 0)
                 {
                     // 開始拖曳操作
-                    this.detailgrid.DoDragDrop(this.detailgrid.Rows[rowIndex], DragDropEffects.Move);
+                    this.mainGrid.DoDragDrop(this.mainGrid.Rows[rowIndex], DragDropEffects.Move);
                 }
             }
         }
@@ -80,18 +99,19 @@ namespace Sci.Production.IE
 
         private void DataGridView_DragOver(object sender, DragEventArgs e)
         {
+
             // 取得滑鼠的位置
-            Point clientPoint = this.detailgrid.PointToClient(new Point(e.X, e.Y));
+            Point clientPoint = this.mainGrid.PointToClient(new Point(e.X, e.Y));
 
             // 取得目標行的索引
-            int targetRowIndex = this.detailgrid.HitTest(clientPoint.X, clientPoint.Y).RowIndex;
+            int targetRowIndex = this.mainGrid.HitTest(clientPoint.X, clientPoint.Y).RowIndex;
 
             // 設定拖曳效果
             if (e.Data.GetDataPresent("Ict.Win.UI.DataGridView+Row") && targetRowIndex != -1)
             {
                 e.Effect = DragDropEffects.Move;
                 this.mouseLocation = clientPoint;
-                this.detailgrid.Invalidate();
+                this.mainGrid.Invalidate();
             }
             else
             {
@@ -105,45 +125,65 @@ namespace Sci.Production.IE
             if (e.Data.GetDataPresent("Ict.Win.UI.DataGridView+Row"))
             {
                 // 取得目標行的索引
-                Point clientPoint = this.detailgrid.PointToClient(new Point(e.X, e.Y));
-                int targetRowIndex = this.detailgrid.HitTest(clientPoint.X, clientPoint.Y).RowIndex;
+                Point clientPoint = this.mainGrid.PointToClient(new Point(e.X, e.Y));
+                int targetGridRowIndex = this.mainGrid.HitTest(clientPoint.X, clientPoint.Y).RowIndex;
 
-                if (targetRowIndex >= 0)
+                if (targetGridRowIndex >= 0)
                 {
+                    int tarDataRowIndex = this.DataMain.Rows.IndexOf(this.mainGrid.GetDataRow(targetGridRowIndex));
+
                     // 取得被拖曳的資料列
                     DataGridViewRow draggedRow = (DataGridViewRow)e.Data.GetData("Ict.Win.UI.DataGridView+Row");
+                    int draggedRowIndex = this.DataMain.Rows.IndexOf(this.mainGrid.GetDataRow(draggedRow.Index));
 
                     // 判斷被拖曳的資料列是否與目標行相同，若相同則不進行任何操作
-                    if (draggedRow.Index != targetRowIndex)
+                    if (draggedRowIndex != tarDataRowIndex)
                     {
                         // 更新資料綁定的資料
-                        DataTable dtSource = (DataTable)this.detailgridbs.DataSource;
-                        this.MoveDataRow(dtSource, draggedRow.Index, targetRowIndex);
-                        this.finalDragIndex = targetRowIndex;
+                        DataRow newRow = this.MoveDataRow(this.DataMain, draggedRowIndex, tarDataRowIndex);
+                        this.finalDragIndex = targetGridRowIndex;
+                        if (this.afterRowDragDo != null)
+                        {
+                            this.afterRowDragDo(newRow);
+                        }
                     }
                 }
 
                 // 重設拖移相關變數
                 this.dragImage = null;
+                this.mainGrid.Refresh();
             }
         }
 
-        private void MoveDataRow(DataTable dataTable, int sourceIndex, int targetIndex)
+        private DataRow MoveDataRow(DataTable dataTable, int sourceIndex, int targetIndex)
         {
             if (dataTable.Rows.Count < 2)
             {
-                return;
+                return null;
             }
 
             DataRow dataRow = dataTable.Rows[sourceIndex];
             DataRow newRow = dataTable.NewRow();
             newRow.ItemArray = dataRow.ItemArray;
 
+            DataRowState oriRowState = dataRow.RowState;
+
             // 從 DataTable 中移除資料列
             dataTable.Rows.Remove(dataRow);
 
             // 插入資料列至目標位置
             dataTable.Rows.InsertAt(newRow, targetIndex);
+            if (oriRowState == DataRowState.Unchanged)
+            {
+                newRow.AcceptChanges();
+            }
+            else if (oriRowState == DataRowState.Modified)
+            {
+                newRow.AcceptChanges();
+                newRow[0] = newRow[0];
+            }
+
+            return newRow;
         }
 
         private void DataGridView_DragLeave(object sender, EventArgs e)
@@ -163,10 +203,11 @@ namespace Sci.Production.IE
 
             if (this.finalDragIndex >= 0)
             {
-                this.detailgrid.ClearSelection();
-                this.detailgrid.Rows[this.finalDragIndex].Selected = true;
+                this.mainGrid.ClearSelection();
+                this.mainGrid.Rows[this.finalDragIndex].Selected = true;
                 this.finalDragIndex = -1;
             }
         }
+
     }
 }

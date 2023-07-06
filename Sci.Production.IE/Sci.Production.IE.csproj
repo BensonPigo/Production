@@ -268,9 +268,6 @@
     <Compile Include="P01_Copy.Designer.cs">
       <DependentUpon>P01_Copy.cs</DependentUpon>
     </Compile>
-    <Compile Include="P01_GridRowDrag.cs">
-      <SubType>Form</SubType>
-    </Compile>
     <Compile Include="P01_History.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -374,6 +371,12 @@
     </Compile>
     <Compile Include="P05_CreateNewLineMapping.Designer.cs">
       <DependentUpon>P05_CreateNewLineMapping.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P05_EditOperation.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P05_EditOperation.Designer.cs">
+      <DependentUpon>P05_EditOperation.cs</DependentUpon>
     </Compile>
     <Compile Include="P05_LBR.cs">
       <SubType>Form</SubType>
@@ -597,6 +600,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="P05_CreateNewLineMapping.resx">
       <DependentUpon>P05_CreateNewLineMapping.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P05_EditOperation.resx">
+      <DependentUpon>P05_EditOperation.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P05_LBR.resx">
       <DependentUpon>P05_LBR.cs</DependentUpon>

@@ -14,6 +14,7 @@ using System.Linq;
 using Sci.Production.Class;
 using Sci.Win.Tems;
 using System.Net.Mail;
+using Sci.Production.Prg;
 
 namespace Sci.Production.IE
 {
@@ -70,7 +71,7 @@ namespace Sci.Production.IE
             this.detailgrid.AllowUserToOrderColumns = true;
             this.InsertDetailGridOnDoubleClick = false;
             this.detailgrid.Font = new System.Drawing.Font("Calibri", 12F, System.Drawing.FontStyle.Bold);
-            this.InitialGridRowDragEvent();
+            new GridRowDrag(this.detailgrid);
         }
 
         /// <inheritdoc/>
