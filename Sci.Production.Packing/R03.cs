@@ -179,7 +179,7 @@ select pl.MDivisionID
 	, TtlQty = PackingListDetail_Sum.TtlQty
 	, TtlNw = PackingListDetail_Sum.TtlNw
 	, TtlGW = PackingListDetail_Sum.TtlGW
-	, TtlCBM = (pl.CBM * PackingListDetail_Sum.TtlCTNS)
+	, TtlCBM = PackingListDetail_Sum.TtlCBM
     , VM = PackingListDetail_Sum.VM
 	, PurchaseCTN = iif(exists(select 1 from LocalPO_Detail ld with(nolock) inner join LocalPO l with(nolock) on l.id = ld.Id where ld.RequestID=pl.ID and l.status = 'Approved') ,'Y','N')
 	, ClogCFMStatus = iif(PackingListDetail_Sum.CtnID = PackingListDetail_Sum.CtnRecDate, 'Y','N')
@@ -193,6 +193,7 @@ outer apply(
 	    ,[TtlNw]=sum(pd.NW)
 	    ,[TtlGW]=sum(pd.GW)
         ,[VM]=sum(pd.APPEstAmtVW)
+        ,TtlCBM = SUM(li.CBM * pd.CTNQty)
 	    ,[CtnID]=count(pd.ID)
 	    ,[CtnRecDate]=count(pd.ReceiveDate)
 	    ,o.SciDelivery,o.BuyerDelivery,o.CustPONo,o.ID
@@ -203,6 +204,7 @@ outer apply(
         ,o.poid
 	from PackingList_Detail pd with(nolock) 
 	inner join Orders o on o.ID = pd.OrderID
+    LEFT JOIN LocalItem li ON pd.RefNo = li.RefNo
 	where pd.ID = pl.ID
 	and pd.DisposeFromClog = 0 
 	group by o.SciDelivery, o.BuyerDelivery, o.CustPONo, o.ID
@@ -244,7 +246,7 @@ select pl.MDivisionID
 	, TtlQty = PackingListDetail_Sum.TtlQty
 	, TtlNw = PackingListDetail_Sum.TtlNw
 	, TtlGW = PackingListDetail_Sum.TtlGW
-	, TtlCBM = (pl.CBM * PackingListDetail_Sum.TtlCTNS)
+	, TtlCBM = PackingListDetail_Sum.TtlCBM
     , VM = PackingListDetail_Sum.VM
 	, PurchaseCTN = iif(exists(select 1 from LocalPO_Detail ld with(nolock) inner join LocalPO l with(nolock) on l.id = ld.Id where ld.RequestID=pl.ID and l.status = 'Approved') ,'Y','N')
 	, ClogCFMStatus = iif(PackingListDetail_Sum.CtnID = PackingListDetail_Sum.CtnRecDate, 'Y','N')
@@ -259,6 +261,7 @@ outer apply(
 	    ,[TtlNw]=sum(pd.NW)
 	    ,[TtlGW]=sum(pd.GW)
         ,[VM]=sum(pd.APPEstAmtVW)
+        ,TtlCBM = SUM(li.CBM * pd.CTNQty)
 	    ,[CtnID]=count(pd.ID)
 	    ,[CtnRecDate]=count(pd.ReceiveDate)
 	    ,o.SciDelivery,o.BuyerDelivery,o.CustPONo,o.ID
@@ -270,6 +273,7 @@ outer apply(
         ,o.poid
 	from PackingList_Detail pd with(nolock) 
 	inner join Orders o on o.ID = pd.OrderID
+    LEFT JOIN LocalItem li ON pd.RefNo = li.RefNo
 	outer apply(
 		select Description =
 		REPLACE(
