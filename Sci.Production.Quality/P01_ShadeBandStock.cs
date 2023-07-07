@@ -154,10 +154,11 @@ d.Tone,
 d.Inspdate,
 d.Inspector,
 d.Name,
-d.Remark
+d.Remark,
+rd.StockType
 from #tmpShadebondMain m
 inner join #tmpShadeDetail d on m.id= d.ID
-inner join Receiving_Detail rd on rd.Id = ReceivingID and rd.PoId = m.StockPOID and m.StockSeq1 = rd.Seq1 and rd.Seq2 = m.StockSeq2 and rd.Roll = d.Roll and rd.Dyelot = d.Dyelot
+inner join FtyInventory rd on  rd.PoId = m.POID and m.Seq1 = rd.Seq1 and rd.Seq2 = m.seq2 and rd.Roll = d.Roll and rd.Dyelot = d.Dyelot
 where
 EXISTS (
     SELECT *
@@ -165,9 +166,10 @@ EXISTS (
     WHERE fi.POID = m.POID
         AND fi.Seq1 = m.seq1
         AND fi.Seq2 = m.Seq2
-        and fi.StockType = rd.StockType
+        and fi.StockType = 'B'
         AND fi.Roll = d.Roll
         AND fi.Dyelot = d.Dyelot
+        AND not (inqty = 0 and outqty = 0 and adjustqty = 0 and returnQty = 0)
 ) 
 
 drop table #tmpShadebondMain,#tmpShadeDetail
@@ -202,6 +204,9 @@ drop table #tmpShadebondMain,#tmpShadeDetail
             {
                 return;
             }
+
+            this.ckStock.Checked = false;
+            this.Stock();
 
             this.bindShadeboneMain.Filter = $"Seq = '{this.comboSeqFilter.Text}'";
             this.bindShadeboneDetail.Filter = $" ID = '{((DataRowView)this.bindShadeboneMain.Current)["ID"]}'";
@@ -250,7 +255,7 @@ drop table #tmpShadebondMain,#tmpShadeDetail
             this.Close();
         }
 
-        private void CkStock_Click(object sender, EventArgs e)
+        private void Stock()
         {
             if (this.ckStock.Checked)
             {
@@ -260,6 +265,11 @@ drop table #tmpShadebondMain,#tmpShadeDetail
             {
                 this.bindShadeboneDetail.DataSource = this.dtShadebondDetail;
             }
+        }
+
+        private void CkStock_Click(object sender, EventArgs e)
+        {
+            this.Stock();
         }
     }
 }
