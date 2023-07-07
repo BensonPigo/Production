@@ -166,7 +166,7 @@ EXISTS (
     WHERE fi.POID = m.POID
         AND fi.Seq1 = m.seq1
         AND fi.Seq2 = m.Seq2
-        and fi.StockType = 'B'
+        and fi.StockType <> 'O'
         AND fi.Roll = d.Roll
         AND fi.Dyelot = d.Dyelot
         AND not (inqty = 0 and outqty = 0 and adjustqty = 0 and returnQty = 0)
