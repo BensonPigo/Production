@@ -249,6 +249,12 @@
     <Compile Include="Txtartworktype_fty.Designer.cs">
       <DependentUpon>Txtartworktype_fty.cs</DependentUpon>
     </Compile>
+    <Compile Include="TxtMtlType.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="TxtMtlType.Designer.cs">
+      <DependentUpon>TxtMtlType.cs</DependentUpon>
+    </Compile>
     <Compile Include="TxtMultiBrandSupplierGroup.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -638,6 +644,12 @@
     </Compile>
     <Compile Include="Txtuser.Designer.cs">
       <DependentUpon>Txtuser.cs</DependentUpon>
+    </Compile>
+    <Compile Include="TxtWeaveType.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="TxtWeaveType.Designer.cs">
+      <DependentUpon>TxtWeaveType.cs</DependentUpon>
     </Compile>
     <Compile Include="TxtwhseReason.cs">
       <SubType>UserControl</SubType>

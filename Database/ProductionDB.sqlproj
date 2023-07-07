@@ -2852,6 +2852,17 @@
     <Build Include="dbo\Stored Procedures\GetLoadingvsCapacity.sql" />
     <Build Include="dbo\Tables\WHIssueToPlace.sql" />
     <Build Include="dbo\Stored Procedures\GetSDP.sql" />
+    <Build Include="dbo\Tables\LocalOrderMaterial.sql" />
+    <Build Include="dbo\Tables\LocalOrderInventory.sql" />
+    <Build Include="dbo\Tables\LocalOrderInventory_Location.sql" />
+    <Build Include="dbo\Tables\LocalOrderReceiving.sql" />
+    <Build Include="dbo\Tables\LocalOrderReceiving_Detail.sql" />
+    <Build Include="dbo\Tables\LocalOrderIssue.sql" />
+    <Build Include="dbo\Tables\LocalOrderIssue_Detail.sql" />
+    <Build Include="dbo\Tables\LocalOrderAdjust.sql" />
+    <Build Include="dbo\Tables\LocalOrderAdjust_Detail.sql" />
+    <Build Include="dbo\Tables\LocalOrderLocationTrans.sql" />
+    <Build Include="dbo\Tables\LocalOrderLocationTrans_Detail.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />
