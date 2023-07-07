@@ -223,6 +223,7 @@ select   a.GroupKey
 		,a.SewingMachineAttachmentID
         ,a.MachineCount
 from LineMapping_Detail a 
+inner join LineMapping b WITH (NOLOCK) on a.ID = b.ID
 left join Operation o WITH (NOLOCK) on o.ID = a.OperationID
 left join MachineType m WITH (NOLOCK) on m.id =  a.MachineTypeID
 outer apply
@@ -244,12 +245,12 @@ outer apply (
 	select IsShowinIEP03 = IIF(isnull(md2.IsNotShownInP03, 0) = 0, 1, 0)
 		, IsDesignatedArea = ISNULL(md2.IsNonSewingLine,0)
 	from MachineType m2 WITH (NOLOCK)
-    inner join MachineType_Detail md2 WITH (NOLOCK) on md2.ID = m2.ID and md2.FactoryID = '{MyUtility.Convert.GetString(this.masterData["FactoryID"])}'	
+    inner join MachineType_Detail md2 WITH (NOLOCK) on md2.ID = m2.ID and md2.FactoryID = b.FactoryID
 	where o.MachineTypeID = m2.ID and m2.junk = 0
 )show
 where a.ID = {MyUtility.Convert.GetString(this.masterData["ID"])}
 {(!this.nonSewing ? $@" and not exists(
-    select 1 from MachineType_Detail md where md.ID = m.ID and md.IsNonSewingLine = 1
+    select 1 from MachineType_Detail md where md.ID = m.ID and md.IsNonSewingLine = 1 and md.FactoryID=b.FactoryID
 )" : string.Empty)}
 {(!this.isPPA ? " and a.PPA != 'C' " : string.Empty)}
 
@@ -697,6 +698,7 @@ select No
     ,[ActCycle] = Max(ld.ActCycle)
     ,[ActCycleTime(average)]=ActCycle.Value
 from LineMapping_Detail ld WITH (NOLOCK) 
+inner join LineMapping l WITH (NOLOCK) on l.ID = ld.ID
 left join MachineType m WITH (NOLOCK) on m.id =  ld.MachineTypeID
 OUTER APPLY(
 	SELECT [Value]=SUM(ActCycle)/COUNT(NO) FROM 
@@ -722,7 +724,7 @@ OUTER APPLY(
 where ld.ID = {MyUtility.Convert.GetString(this.masterData["ID"])} and IsHide = 0
 
 {(!this.nonSewing ? $@" and not exists(
-    select 1 from MachineType_Detail md where md.ID = m.ID and md.IsNonSewingLine = 1
+    select 1 from MachineType_Detail md where md.ID = m.ID and md.IsNonSewingLine = 1 and md.FactoryID = l.FactoryID
 )" : string.Empty)}
 
 {(!this.isPPA ? " and ld.PPA = 'C' and ld.PPA != '' " : " and ld.PPA = 'C' " )}
@@ -759,6 +761,7 @@ select No
     ,[ActCycle] = Max(ld.ActCycle)
     ,[ActCycleTime(average)]=ActCycle.Value
 from LineMapping_Detail ld WITH (NOLOCK) 
+inner join LineMapping l WITH (NOLOCK) on l.ID = ld.ID 
 inner join #tmp t on ld.ID = t.ID
 left join MachineType m WITH (NOLOCK) on m.id =  ld.MachineTypeID
 OUTER APPLY(
@@ -786,7 +789,7 @@ where /*IsPPa = 1 and*/  IsHide = 0
 and no between t.minno and t.maxno
 and ld.PPA = 'C' 
 {(!this.nonSewing ? $@" and not exists(
-    select 1 from MachineType_Detail md where md.ID = m.ID and md.IsNonSewingLine = 1
+    select 1 from MachineType_Detail md where md.ID = m.ID and md.IsNonSewingLine = 1 and md.FactoryID = l.FactoryID
 )" : string.Empty)}
 GROUP BY NO, ActCycle.Value
 order by NO
@@ -815,6 +818,7 @@ select No
     ,[ActCycle] = Max(ld.ActCycle)
     ,[ActCycleTime(average)]=ActCycle.Value
 from LineMapping_Detail ld WITH (NOLOCK) 
+inner join LineMapping l WITH (NOLOCK) on l.ID = ld.ID 
 inner join #tmp t on ld.ID = t.ID
 left join MachineType m WITH (NOLOCK) on m.id =  ld.MachineTypeID
 OUTER APPLY(
@@ -842,7 +846,7 @@ where IsHide = 0
 and no between t.minno and t.maxno
 and ld.PPA = 'C'
 {(!this.nonSewing ? $@" and not exists(
-    select 1 from MachineType_Detail md where md.ID = m.ID and md.IsNonSewingLine = 1
+    select 1 from MachineType_Detail md where md.ID = m.ID and md.IsNonSewingLine = 1 and md.FactoryID = l.FactoryID
 )" : string.Empty)}
 
 GROUP BY NO, ActCycle.Value

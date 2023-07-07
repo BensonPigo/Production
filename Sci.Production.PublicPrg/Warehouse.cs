@@ -10,6 +10,7 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Transactions;
 
 namespace Sci.Production.PublicPrg
@@ -1094,6 +1095,176 @@ drop Table #TmpSource;
         }
 
         #endregion
+        #region  -- Update LocalOrderInventory --
+        public static string UpdateLocalOrderInventory_IO(string type, IList<DataRow> datas, bool encoded)
+        {
+            string sqlcmd = string.Empty;
+            switch (type)
+            {
+                case "In":
+                    #region 更新 inqty
+                    sqlcmd = $@"
+alter table #TmpSource alter column poid varchar(20)
+alter table #TmpSource alter column seq1 varchar(3)
+alter table #TmpSource alter column seq2 varchar(3)
+alter table #TmpSource alter column stocktype varchar(1)
+alter table #TmpSource alter column roll varchar(15)
+alter table #TmpSource alter column dyelot varchar(8)
+
+select poid, seq1, seq2, stocktype, roll = RTRIM(LTRIM(isnull(roll, ''))) ,[qty] = sum(qty), dyelot = isnull(dyelot, '')
+into #tmpS1
+from #TmpSource
+group by poid, seq1, seq2, stocktype, RTRIM(LTRIM(isnull(roll, ''))) ,isnull(dyelot, '')
+
+
+merge dbo.LocalOrderInventory as target
+using #tmpS1 as s
+    on target.poid = s.poid and target.seq1 = s.seq1 
+	and target.seq2 = s.seq2 and target.stocktype = s.stocktype and target.roll = s.roll and target.dyelot = s.dyelot
+when matched then
+    update
+    set inqty = isnull(inqty,0.00) + s.qty    
+when not matched then
+    insert ( [Poid],[Seq1],[Seq2],[Roll],[Dyelot],[StockType],[InQty])
+    values ( s.poid,s.seq1,s.seq2,s.roll,s.dyelot,s.stocktype,s.qty);
+";
+                    if (encoded)
+                    {
+                        sqlcmd += @"
+select distinct [location] = location.[Data] ,[ukey] = f.ukey
+into #tmp_L_K 
+from #TmpSource s
+left join LocalOrderInventory f WITH (NOLOCK) on f.poid = s.poid 
+						 and f.seq1 = s.seq1 and f.seq2 = s.seq2 and f.roll = s.roll and f.stocktype = s.stocktype and f.dyelot = s.dyelot
+cross apply (select [Data] from [dbo].[SplitString](s.Location,',')) location
+
+merge dbo.LocalOrderInventory_Location as t 
+using #tmp_L_K as s on t.LocalOrderInventoryUkey = s.ukey and isnull(t.mtllocationid,'') = isnull(s.location,'')
+when not matched then
+    insert ([LocalOrderInventoryUkey],[mtllocationid]) 
+	values (s.ukey,isnull(s.location,''));
+
+drop table #tmp_L_K
+";
+                    }
+
+                    sqlcmd += @"drop table #tmpS1, #tmpS1; 
+                                drop table #TmpSource;";
+                    #endregion
+                    break;
+                case "Out":
+                    #region 更新OutQty
+                    sqlcmd = @"
+alter table #TmpSource alter column poid varchar(20)
+alter table #TmpSource alter column seq1 varchar(3)
+alter table #TmpSource alter column seq2 varchar(3)
+alter table #TmpSource alter column stocktype varchar(1)
+alter table #TmpSource alter column roll varchar(15)
+
+select poid, seq1, seq2, stocktype, roll = RTRIM(LTRIM(isnull(roll, ''))) ,[qty] = sum(qty), dyelot = isnull(dyelot, '')
+into #tmpS1
+from #TmpSource
+group by poid, seq1, seq2, stocktype, RTRIM(LTRIM(isnull(roll, ''))) ,isnull(dyelot, '')
+
+merge dbo.LocalOrderInventory as target
+using #tmpS1 as s
+    on target.poid = s.poid and target.seq1 = s.seq1 
+	and target.seq2 = s.seq2 and target.stocktype = s.stocktype and target.roll = s.roll and target.dyelot = s.dyelot
+when matched then
+    update
+    set outqty = isnull(outqty,0.00) + s.qty
+when not matched then
+    insert ( [Poid],[Seq1],[Seq2],[Roll],[Dyelot],[StockType],[outqty])
+    values ( s.poid,s.seq1,s.seq2,s.roll,s.dyelot,s.stocktype,s.qty);
+
+drop table #tmpS1;
+drop table #TmpSource;";
+                    #endregion
+                    break;
+                case "Location":
+                    #region 更新OutQty with Location
+                    sqlcmd = @"
+alter table #TmpSource alter column poid varchar(20)
+alter table #TmpSource alter column seq1 varchar(3)
+alter table #TmpSource alter column seq2 varchar(3)
+alter table #TmpSource alter column stocktype varchar(1)
+alter table #TmpSource alter column roll varchar(15)
+
+select poid, seq1, seq2, stocktype, roll = RTRIM(LTRIM(isnull(roll, ''))) ,[qty] = sum(qty), dyelot = isnull(dyelot, '')
+into #tmpS1
+from #TmpSource
+group by poid, seq1, seq2, stocktype, RTRIM(LTRIM(isnull(roll, ''))) ,isnull(dyelot, '')
+
+merge dbo.LocalOrderInventory as target
+using #tmpS1 as s
+    on target.poid = s.poid and target.seq1 = s.seq1 
+    and target.seq2 = s.seq2 and target.stocktype = s.stocktype and target.roll = s.roll and target.dyelot = s.dyelot
+when matched then
+    update
+    set outqty = isnull(outqty,0.00) + s.qty
+when not matched then
+    insert ( [Poid],[Seq1],[Seq2],[Roll],[Dyelot],[StockType],[outqty])
+    values ( s.poid,s.seq1,s.seq2,s.roll,s.dyelot,s.stocktype,s.qty);";
+                    if (encoded)
+                    {
+                        sqlcmd += @"
+select distinct [location] = location.[Data] ,[ukey] = f.ukey
+into #tmp_L_K 
+from #TmpSource s
+left join LocalOrderInventory f WITH (NOLOCK) on f.poid = s.poid 
+						 and f.seq1 = s.seq1 and f.seq2 = s.seq2 and f.roll = s.roll and f.stocktype = s.stocktype and f.dyelot = s.dyelot
+cross apply (select [Data] from [dbo].[SplitString](s.Location,',')) location
+
+merge dbo.LocalOrderInventory_Location as t
+using #tmp_L_K as s on t.LocalOrderInventoryUkey = s.ukey and t.mtllocationid = s.location
+when not matched then
+    insert ([LocalOrderInventoryUkey],[mtllocationid]) 
+    values (s.ukey,isnull(s.location,''));
+
+drop table #tmp_L_K
+"; // ↑最後一段delete寫法千萬不能用merge作,即使只有一筆資料也要跑超久
+                    }
+
+                    sqlcmd += @"drop table #tmpS1;
+                                drop table #TmpSource;";
+                    #endregion
+                    break;
+                case "Adjust":
+                    #region 更新AdjustQty
+                    sqlcmd = @"
+alter table #TmpSource alter column poid varchar(20)
+alter table #TmpSource alter column seq1 varchar(3)
+alter table #TmpSource alter column seq2 varchar(3)
+alter table #TmpSource alter column stocktype varchar(1)
+alter table #TmpSource alter column roll varchar(15)
+
+select poid, seq1, seq2, stocktype, roll = RTRIM(LTRIM(isnull(roll, ''))) ,[qty] = sum(qty), dyelot = isnull(dyelot, '')
+into #tmpS1
+from #TmpSource
+group by poid, seq1, seq2, stocktype, RTRIM(LTRIM(isnull(roll, ''))) ,isnull(dyelot, '')
+
+merge dbo.LocalOrderInventory as target
+using #tmpS1 as s
+    on target.poid = s.poid and target.seq1 = s.seq1 
+    and target.seq2 = s.seq2 and target.stocktype = s.stocktype and target.roll = s.roll and target.dyelot = s.dyelot
+when matched then
+    update
+    set adjustqty = isnull(adjustqty,0.00) + s.qty
+when not matched then
+    insert ([Poid],[Seq1],[Seq2],[Roll],[Dyelot],[StockType],[adjustqty])
+    values (s.poid,s.seq1,s.seq2,s.roll,s.dyelot,s.stocktype,s.qty);
+
+drop table #tmpS1 
+drop table #TmpSource;";
+                    #endregion
+                    break;
+            }
+
+            return sqlcmd;
+        }
+
+        #endregion
+
         #region -- SelePoItem --
 
         /// <summary>
@@ -3455,6 +3626,9 @@ WHERE POID='{pOID}' AND Seq1='{seq11}' AND Seq2='{seq21}'
                 case "Other":
                     msg = @"Location cannot be empty, please update location.";
                     break;
+                case "LocalOrder":
+                    msg = @"Location cannot be empty, please update material current location as below list in WH P73 first.";
+                    break;
                 default:
                     msg = @"Location cannot be empty, please update material current location as below list in WH P26 first.";
                     break;
@@ -3728,7 +3902,7 @@ order by Barcode desc
         /// Confirm 時檢查
         /// </summary>
         /// <inheritdoc/>
-        public static bool CheckBarCode(DataTable dtDetail, string function)
+        public static bool CheckBarCode(DataTable dtDetail, string function, bool isLocalOrderInventory = false)
         {
             if (dtDetail == null)
             {
@@ -3741,7 +3915,9 @@ order by Barcode desc
             }
 
             WHTableName detailTableName = GetWHDetailTableName(function);
-
+            string showMsg = isLocalOrderInventory ? "Barcode cannot be empty." : "FtyInventory barcode can't empty.";
+            string strTableName = isLocalOrderInventory ? "LocalOrderInventory" : "FtyInventory";
+            string strBalanceQty = isLocalOrderInventory ? "f.InQty-f.OutQty+f.AdjustQty" : "f.InQty-f.OutQty+f.AdjustQty-f.ReturnQty";
             if (detailTableName == WHTableName.SubTransfer_Detail || detailTableName == WHTableName.BorrowBack_Detail)
             {
                 DataTable emptyBarcodedt = new DataTable();
@@ -3763,8 +3939,29 @@ order by Barcode desc
 
                 if (emptyBarcodedt.Rows.Count > 0)
                 {
-                    Class.WH_BarcodeEmpty wH_Barcode = new Class.WH_BarcodeEmpty(emptyBarcodedt, "FtyInventory barcode can't empty", true);
-                    wH_Barcode.ShowDialog();
+                    string sqlcmd = $@"
+select f.POID,Seq = f.Seq1 + ' ' + f.Seq2,f.Roll,f.Dyelot
+,StockType = case f.StockType 
+			when 'I' then 'Inventory'
+			when 'B' then 'Bulk'
+			when 'O' then 'Scrap'
+			else f.StockType end 
+, BalanceQty = t.Qty
+from {strTableName} f
+inner join #tmp t on t.ukey = f.Ukey
+";
+
+                    DualResult result = MyUtility.Tool.ProcessWithDatatable(emptyBarcodedt, string.Empty, sqlcmd, out DataTable dtS);
+                    if (!result)
+                    {
+                        MyUtility.Msg.ErrorBox(result.ToString());
+                    }
+
+                    Class.MsgGrid form = new Class.MsgGrid(dtS, showMsg);
+                    form.ShowDialog();
+
+                    //Class.WH_BarcodeEmpty wH_Barcode = new Class.WH_BarcodeEmpty(emptyBarcodedt, showMsg, isSubTransferOrBorrowBack: true, isLocalOrderInventory: isLocalOrderInventory);
+                    //wH_Barcode.ShowDialog();
                     return false;
                 }
             }
@@ -3778,8 +3975,29 @@ order by Barcode desc
 
                 if (dtDetail.Select(checkFilter).Length > 0)
                 {
-                    Class.WH_BarcodeEmpty wH_Barcode = new Class.WH_BarcodeEmpty(dtDetail.Select(checkFilter).CopyToDataTable(), "FtyInventory barcode can't empty");
-                    wH_Barcode.ShowDialog();
+                    string sqlcmd = $@"
+select f.POID,Seq = f.Seq1 + ' ' + f.Seq2,f.Roll,f.Dyelot
+,StockType = case f.StockType 
+			when 'I' then 'Inventory'
+			when 'B' then 'Bulk'
+			when 'O' then 'Scrap'
+			else f.StockType end 
+, BalanceQty = {strBalanceQty}
+from {strTableName} f
+inner join #tmp t on t.ukey = f.Ukey
+";
+
+                    DualResult result = MyUtility.Tool.ProcessWithDatatable(dtDetail.Select(checkFilter).CopyToDataTable(), string.Empty, sqlcmd, out DataTable dtS);
+                    if (!result)
+                    {
+                        MyUtility.Msg.ErrorBox(result.ToString());
+                    }
+
+                    Class.MsgGrid form = new Class.MsgGrid(dtS, showMsg);
+                    form.ShowDialog();
+
+                    //Class.WH_BarcodeEmpty wH_Barcode = new Class.WH_BarcodeEmpty(dtDetail.Select(checkFilter).CopyToDataTable(), showMsg, isLocalOrderInventory: isLocalOrderInventory);
+                    //wH_Barcode.ShowDialog();
                     return false;
                 }
             }
@@ -3867,6 +4085,35 @@ where sd.Ukey in ({ukeys})
         }
 
         /// <inheritdoc/>
+        public static DualResult GetLocalOrderInventoryData(DataTable dtDetail, string function, out DataTable dt, AbstractDBProxyPMS proxyPMS = null)
+        {
+            WHTableName detailTableName = GetWHDetailTableName(function);
+            string ukeys = "0";
+
+            if (dtDetail.Columns.Contains("Ukey") && dtDetail.Rows.Count > 0)
+            {
+                ukeys = dtDetail.AsEnumerable().Select(row => MyUtility.Convert.GetString(row["Ukey"])).ToList().JoinToString(",");
+            }
+
+            string sqlcmd = $@"
+select loi.*
+    ,balanceQty = isnull(loi.InQty,0) - isnull(loi.OutQty,0) + isnull(loi.AdjustQty,0)
+    ,FabricType = lom.FabricType
+    ,DetailUkey = sd.Ukey
+FROM {detailTableName} sd with(nolock)
+LEFT JOIN Production.dbo.LocalOrderInventory loi with(nolock) on loi.POID = isnull(sd.PoId, '')
+    and loi.Seq1 = isnull(sd.Seq1, '')
+    and loi.Seq2 = isnull(sd.Seq2, '')
+    and loi.Roll = isnull(sd.Roll, '')
+	and loi.Dyelot = isnull(sd.Dyelot, '')
+    and loi.StockType = isnull(sd.StockType, '')
+LEFT JOIN LocalOrderMaterial lom ON lom.POID = loi.POID AND loi.Seq1 = lom.Seq1 AND loi.Seq2 = lom.Seq2
+where sd.Ukey in ({ukeys})
+";
+            return proxyPMS == null ? DBProxy.Current.Select("Production", sqlcmd, out dt) : proxyPMS.Select("Production", sqlcmd, out dt);
+        }
+
+        /// <inheritdoc/>
         public static string GetWHjoinPSD_Fty(WHTableName detailTable)
         {
             // 轉料單&非轉料單 join 條件不同
@@ -3917,7 +4164,7 @@ left join Production.dbo.FtyInventory f with(nolock) on f.POID = isnull(sd.PoId,
         /// <param name="isRevise">P99 的 Revise 功能</param>
         /// <param name="isDelete">P99 的 Delete 功能</param>
         /// <inheritdoc/>
-        public static DualResult UpdateWH_Barcode(bool isConfirmed, DataTable dtDetailSource, string function, out bool fromNewBarcode, DataTable oriFtyInventory = null, bool isRevise = false, bool isDelete = false, bool getOriFtyInventory = false, AbstractDBProxyPMS proxyPMS = null)
+        public static DualResult UpdateWH_Barcode(bool isConfirmed, DataTable dtDetailSource, string function, out bool fromNewBarcode, DataTable oriFtyInventory = null, bool isRevise = false, bool isDelete = false, bool getOriFtyInventory = false, AbstractDBProxyPMS proxyPMS = null, bool isLocalOrder = false)
         {
             // 庫存0 = 沒or清空 Barcode
             // ↓在不覆蓋移動目標 Barcode 原則下↓
@@ -3931,6 +4178,8 @@ left join Production.dbo.FtyInventory f with(nolock) on f.POID = isnull(sd.PoId,
             {
                 return Result.True;
             }
+
+            string strInvTableName = GetInventoryTableName(isLocalOrder);
 
             // Issue 部分程式第 2 層是 Issue_Summary,第3層才是 Issue_Detail
             DataTable dtDetail = dtDetailSource.Copy();
@@ -3972,9 +4221,19 @@ left join Production.dbo.FtyInventory f with(nolock) on f.POID = isnull(sd.PoId,
             #region (QMS)有建立直接 Confirm,需要回推原本庫存
             if (getOriFtyInventory && oriFtyInventory == null && isConfirmed)
             {
-                if (!(result = GetFtyInventoryData(dtDetailSource, function, out oriFtyInventory)))
+                if (isLocalOrder)
                 {
-                    return result;
+                    if (!(result = GetLocalOrderInventoryData(dtDetailSource, function, out oriFtyInventory)))
+                    {
+                        return result;
+                    }
+                }
+                else
+                {
+                    if (!(result = GetFtyInventoryData(dtDetailSource, function, out oriFtyInventory)))
+                    {
+                        return result;
+                    }
                 }
 
                 string qty = (isRevise || isDelete) ? "DiffQty" : "Qty";
@@ -3987,6 +4246,7 @@ left join Production.dbo.FtyInventory f with(nolock) on f.POID = isnull(sd.PoId,
                         // InQty
                         case WHTableName.Receiving_Detail:
                         case WHTableName.TransferIn_Detail:
+                        case WHTableName.LocalOrderReceiving_Detail:
                             ftydr["balanceQty"] = balanceQty - (isConfirmed ? MyUtility.Convert.GetDecimal(deraildr[qty]) : -MyUtility.Convert.GetDecimal(deraildr[qty]));
                             break;
 
@@ -4000,6 +4260,7 @@ left join Production.dbo.FtyInventory f with(nolock) on f.POID = isnull(sd.PoId,
                         case WHTableName.Issue_Detail:
                         case WHTableName.IssueLack_Detail:
                         case WHTableName.TransferOut_Detail:
+                        case WHTableName.LocalOrderIssue_Detail:
                             ftydr["balanceQty"] = balanceQty - (isConfirmed ? -MyUtility.Convert.GetDecimal(deraildr[qty]) : MyUtility.Convert.GetDecimal(deraildr[qty]));
                             break;
 
@@ -4014,6 +4275,7 @@ left join Production.dbo.FtyInventory f with(nolock) on f.POID = isnull(sd.PoId,
 
                         // AdjustQty
                         case WHTableName.Adjust_Detail:
+                        case WHTableName.LocalOrderAdjust_Detail:
                             decimal adjustQty;
                             if (isRevise || isDelete)
                             {
@@ -4039,8 +4301,8 @@ left join Production.dbo.FtyInventory f with(nolock) on f.POID = isnull(sd.PoId,
 	,sd.Roll
 	,sd.Dyelot
 	,sd.StockType";
-            string ftytable = @"
-inner join Production.dbo.FtyInventory f with(nolock) on f.POID = sd.PoId
+            string ftytable = $@"
+inner join Production.dbo.{strInvTableName} f with(nolock) on f.POID = sd.PoId
     and f.Seq1 = sd.Seq1
     and f.Seq2 = sd.Seq2
     and f.Roll = sd.Roll
@@ -4131,6 +4393,7 @@ outer apply(
 
             DataTable dt;
             string sqlcmd;
+            string strReturnQty = isLocalOrder ? string.Empty : "- isnull(f.ReturnQty, 0)";
             if (isDelete)
             {
                 sqlcmd = $@"
@@ -4140,7 +4403,7 @@ select
 	,rn = ROW_NUMBER()over(order by sd.Ukey)
 
     ,Fabric_FtyInventoryUkey = f.Ukey
-    ,[balanceQty] = isnull(f.InQty,0) -isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f.ReturnQty,0)
+    ,[balanceQty] = isnull(f.InQty,0) -isnull(f.OutQty,0) + isnull(f.AdjustQty,0)  {strReturnQty}
     ,f.Barcode
     ,f.BarcodeSeq
     ,RankFtyInventory = RANK() over(order by f.Ukey)
@@ -4176,8 +4439,23 @@ and sd.FabricType = 'F'
             }
             else
             {
+                string strFabric = isLocalOrder == false ? @"
+and exists(
+	select 1 from Production.dbo.PO_Supp_Detail psd
+	where psd.id = f.Poid and psd.seq1 = f.seq1 and psd.seq2 = f.seq2 
+	and psd.FabricType = 'F'
+)" :
+@"
+and exists(
+	select 1 from Production.dbo.LocalOrderMaterial lom
+	where lom.Poid = f.Poid and lom.seq1 = f.seq1 and lom.seq2 = f.seq2 
+	and lom.FabricType = 'F'
+)
+";
+
                 if (detailTableName == WHTableName.Receiving_Detail ||
-                    detailTableName == WHTableName.TransferIn_Detail)
+                    detailTableName == WHTableName.TransferIn_Detail||
+                    detailTableName == WHTableName.LocalOrderReceiving_Detail)
                 {
                     sqlcmd = $@"
 select
@@ -4186,7 +4464,7 @@ select
 	,rn = ROW_NUMBER()over(order by sd.Ukey)
 
     ,Fabric_FtyInventoryUkey = f.Ukey
-    ,[balanceQty] = isnull(f.InQty,0) -isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f.ReturnQty,0)
+    ,[balanceQty] = isnull(f.InQty,0) -isnull(f.OutQty,0) + isnull(f.AdjustQty,0) {strReturnQty}
     ,[Barcode] = iif(isnull(sd.MINDQRCode, '') = '', f.Barcode, sd.MINDQRCode)
     ,f.BarcodeSeq
     ,RankFtyInventory = RANK() over(order by f.Ukey)
@@ -4196,11 +4474,7 @@ from {detailTableName} sd with (nolock)
 {ftytable}
 {othertables}
 where 1=1
-and exists(
-	select 1 from Production.dbo.PO_Supp_Detail psd
-	where psd.id = f.Poid and psd.seq1 = f.seq1 and psd.seq2 = f.seq2 
-	and psd.FabricType = 'F'
-)
+{strFabric}
 and sd.Ukey in ({ukeys})
 ";
                 }
@@ -4213,7 +4487,7 @@ select
 	,rn = ROW_NUMBER()over(order by sd.Ukey)
 
     ,Fabric_FtyInventoryUkey = f.Ukey
-    ,[balanceQty] = isnull(f.InQty,0) -isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f.ReturnQty,0)
+    ,[balanceQty] = isnull(f.InQty,0) -isnull(f.OutQty,0) + isnull(f.AdjustQty,0) {strReturnQty}
     ,f.Barcode
     ,f.BarcodeSeq
     ,RankFtyInventory = RANK() over(order by f.Ukey)
@@ -4223,11 +4497,7 @@ from {detailTableName} sd
 {ftytable}
 {othertables}
 where 1=1
-and exists(
-	select 1 from Production.dbo.PO_Supp_Detail psd
-	where psd.id = f.Poid and psd.seq1 = f.seq1 and psd.seq2 = f.seq2 
-	and psd.FabricType = 'F'
-)
+{strFabric}
 and sd.Ukey in ({ukeys})
 ";
                 }
@@ -4256,6 +4526,7 @@ and sd.Ukey in ({ukeys})
                     case WHTableName.Receiving_Detail:
                     case WHTableName.TransferIn_Detail:
                     case WHTableName.IssueReturn_Detail:
+                    case WHTableName.LocalOrderReceiving_Detail:
                         filter = "FabricType = 'F' and isnull(Barcode, '') = ''";
                         break;
                     case WHTableName.Adjust_Detail:
@@ -4299,6 +4570,7 @@ and sd.Ukey in ({ukeys})
                         case WHTableName.Receiving_Detail:
                         case WHTableName.TransferIn_Detail:
                         case WHTableName.IssueReturn_Detail: // OutQty 的減項計算同 InQty
+                        case WHTableName.LocalOrderReceiving_Detail:
                             dr["balanceQty"] = ftydr["balanceQty"] = oriBalanceQty + (isConfirmed ? MyUtility.Convert.GetDecimal(deraildr[qty]) : -MyUtility.Convert.GetDecimal(deraildr[qty]));
                             break;
 
@@ -4311,6 +4583,7 @@ and sd.Ukey in ({ukeys})
                         case WHTableName.Issue_Detail:
                         case WHTableName.IssueLack_Detail:
                         case WHTableName.TransferOut_Detail:
+                        case WHTableName.LocalOrderIssue_Detail:
                             dr["balanceQty"] = ftydr["balanceQty"] = oriBalanceQty + (isConfirmed ? -MyUtility.Convert.GetDecimal(deraildr[qty]) : MyUtility.Convert.GetDecimal(deraildr[qty]));
                             break;
 
@@ -4330,6 +4603,7 @@ and sd.Ukey in ({ukeys})
 
                         // AdjustQty
                         case WHTableName.Adjust_Detail:
+                        case WHTableName.LocalOrderAdjust_Detail:
                             decimal adjustQty;
                             if (isRevise)
                             {
@@ -4379,10 +4653,19 @@ and sd.Ukey in ({ukeys})
                     case WHTableName.Receiving_Detail:
                     case WHTableName.TransferIn_Detail:
                     case WHTableName.IssueReturn_Detail:
+                    case WHTableName.LocalOrderReceiving_Detail:
                         foreach (var item in wHBarcodeTransaction)
                         {
                             DataRow dr = dt.Select($"rn = {item.Rn}")[0];
-                            item.ToFabric_FtyInventoryUkey = MyUtility.Convert.GetString(dr["Fabric_FtyInventoryUkey"]);
+                            if (isLocalOrder == true)
+                            {
+                                item.ToFabric_LocalOrderInventoryUkey = MyUtility.Convert.GetString(dr["Fabric_FtyInventoryUkey"]);
+                            }
+                            else
+                            {
+                                item.ToFabric_FtyInventoryUkey = MyUtility.Convert.GetString(dr["Fabric_FtyInventoryUkey"]);
+                            }
+
                             string barcode = MyUtility.Convert.GetString(dr["Barcode"]);
                             string barcodeSeq = MyUtility.Convert.GetString(dr["barcodeSeq"]);
                             if (isConfirmed)
@@ -4419,11 +4702,21 @@ and sd.Ukey in ({ukeys})
                     case WHTableName.Issue_Detail:
                     case WHTableName.IssueLack_Detail:
                     case WHTableName.TransferOut_Detail:
+                    case WHTableName.LocalOrderIssue_Detail:
                         foreach (var item in wHBarcodeTransaction)
                         {
                             DataRow dr = dt.Select($"rn = {item.Rn}")[0];
-                            item.FromFabric_FtyInventoryUkey = MyUtility.Convert.GetString(dr["Fabric_FtyInventoryUkey"]);
-                            item.ToFabric_FtyInventoryUkey = MyUtility.Convert.GetString(dr["Fabric_FtyInventoryUkey"]);
+                            if (isLocalOrder == true)
+                            {
+                                item.FromFabric_LocalOrderInvnetoryUkey = MyUtility.Convert.GetString(dr["Fabric_FtyInventoryUkey"]);
+                                item.ToFabric_LocalOrderInventoryUkey = MyUtility.Convert.GetString(dr["Fabric_FtyInventoryUkey"]);
+                            }
+                            else
+                            {
+                                item.FromFabric_FtyInventoryUkey = MyUtility.Convert.GetString(dr["Fabric_FtyInventoryUkey"]);
+                                item.ToFabric_FtyInventoryUkey = MyUtility.Convert.GetString(dr["Fabric_FtyInventoryUkey"]);
+                            }
+
                             string barcode = MyUtility.Convert.GetString(dr["Barcode"]);
                             string barcodeSeq = MyUtility.Convert.GetString(dr["barcodeSeq"]);
                             item.From_OldBarcode = barcode;
@@ -4620,6 +4913,7 @@ and sd.Ukey in ({ukeys})
 
                         break;
                     case WHTableName.Adjust_Detail:
+                    case WHTableName.LocalOrderAdjust_Detail:
                         foreach (var item in wHBarcodeTransaction)
                         {
                             DataRow dr = dt.Select($"rn = {item.Rn}")[0];
@@ -4842,26 +5136,28 @@ and w.Action = '{item.Action}'";
                 }
             }
             #endregion
+           
 
-            #region 更新 FtyInventory BarCode
+            #region 更新 Inventory BarCode
             var data_FtyBarcode = dt.AsEnumerable().
-                Select(s => new FtyInventory
-                {
-                    Ukey = wHBarcodeTransaction.Where(w => w.Rn == MyUtility.Convert.GetLong(s["rn"])).Select(s1 => s1.FromFabric_FtyInventoryUkey).First(),
-                    ToUkey = wHBarcodeTransaction.Where(w => w.Rn == MyUtility.Convert.GetLong(s["rn"])).Select(s1 => s1.ToFabric_FtyInventoryUkey).First(),
-                    Rn = MyUtility.Convert.GetLong(s["rn"]),
-                    Poid = s.Field<string>("poid"),
-                    Seq1 = s.Field<string>("seq1"),
-                    Seq2 = s.Field<string>("seq2"),
-                    Stocktype = s.Field<string>("stocktype"),
-                    Roll = s.Field<string>("roll"),
-                    Dyelot = s.Field<string>("dyelot"),
-                }).ToList();
+                 Select(s => new FtyInventory
+                 {
+                     Ukey = wHBarcodeTransaction.Where(w => w.Rn == MyUtility.Convert.GetLong(s["rn"])).Select(s1 => s1.FromFabric_FtyInventoryUkey).First(),
+                     ToUkey = wHBarcodeTransaction.Where(w => w.Rn == MyUtility.Convert.GetLong(s["rn"])).Select(s1 => s1.ToFabric_FtyInventoryUkey).First(),
+                     Rn = MyUtility.Convert.GetLong(s["rn"]),
+                     Poid = s.Field<string>("poid"),
+                     Seq1 = s.Field<string>("seq1"),
+                     Seq2 = s.Field<string>("seq2"),
+                     Stocktype = s.Field<string>("stocktype"),
+                     Roll = s.Field<string>("roll"),
+                     Dyelot = s.Field<string>("dyelot"),
+                 }).ToList();
             switch (detailTableName)
             {
                 case WHTableName.Receiving_Detail:
                 case WHTableName.TransferIn_Detail:
                 case WHTableName.IssueReturn_Detail:
+                case WHTableName.LocalOrderReceiving_Detail:
                     foreach (var item in data_FtyBarcode)
                     {
                         var toBarcode = wHBarcodeTransaction.Where(w => w.ToFabric_FtyInventoryUkey == item.ToUkey).OrderByDescending(o => o.TransactionUkey).First();
@@ -4887,7 +5183,7 @@ and w.Action = '{item.Action}'";
                 DBProxy._OpenConnection("Production", out sqlConnection); // for MES
                 using (sqlConnection)
                 {
-                    if (!(result = MyUtility.Tool.ProcessWithObject(data_FtyBarcode, string.Empty, UpdateFtyInventoryBarCode(), out odt, conn: sqlConnection)))
+                    if (!(result = MyUtility.Tool.ProcessWithObject(data_FtyBarcode, string.Empty, UpdateFtyInventoryBarCode(isLocalOrder), out odt, conn: sqlConnection)))
                     {
                         return result;
                     }
@@ -4895,7 +5191,7 @@ and w.Action = '{item.Action}'";
             }
             else
             {
-                if (!(result = proxyPMS.ProcessWithDatatable("Production", data_FtyBarcode.ToList().ToDataTable(), string.Empty, UpdateFtyInventoryBarCode(), out odt)))
+                if (!(result = proxyPMS.ProcessWithDatatable("Production", data_FtyBarcode.ToList().ToDataTable(), string.Empty, UpdateFtyInventoryBarCode(isLocalOrder), out odt)))
                 {
                     return result;
                 }
@@ -4931,7 +5227,7 @@ and w.Action = '{item.Action}'";
                         DBProxy._OpenConnection("Production", out sqlConnection);
                         using (sqlConnection)
                         {
-                            if (!(result = MyUtility.Tool.ProcessWithObject(data_To_FtyBarcode, string.Empty, UpdateFtyInventoryBarCode(), out odt, conn: sqlConnection)))
+                            if (!(result = MyUtility.Tool.ProcessWithObject(data_To_FtyBarcode, string.Empty, UpdateFtyInventoryBarCode(isLocalOrder), out odt, conn: sqlConnection)))
                             {
                                 return result;
                             }
@@ -4939,14 +5235,16 @@ and w.Action = '{item.Action}'";
                     }
                     else
                     {
-                        if (!(result = proxyPMS.ProcessWithDatatable("Production", data_To_FtyBarcode.ToDataTable(), string.Empty, UpdateFtyInventoryBarCode(), out odt)))
+                        if (!(result = proxyPMS.ProcessWithDatatable("Production", data_To_FtyBarcode.ToDataTable(), string.Empty, UpdateFtyInventoryBarCode(isLocalOrder), out odt)))
                         {
                             return result;
                         }
                     }
                 }
             }
+
             #endregion
+
             return Result.True;
         }
 
@@ -5062,9 +5360,10 @@ when not matched then
         }
 
         /// <inheritdoc/>
-        public static string UpdateFtyInventoryBarCode()
+        public static string UpdateFtyInventoryBarCode(bool isLocal)
         {
-            return @"
+            string strTableName = isLocal ? "LocalOrderInventory" : "FtyInventory";
+            return $@"
 alter table #tmp alter column poid varchar(20)
 alter table #tmp alter column seq1 varchar(3)
 alter table #tmp alter column seq2 varchar(3)
@@ -5076,7 +5375,7 @@ alter table #tmp alter column Barcode varchar(255)
 update t set
     t.Barcode = s.Barcode,
     t.BarcodeSeq = s.BarcodeSeq
-from FtyInventory t
+from {strTableName} t
 inner join #tmp s on t.POID = s.poid
     and t.Seq1 = s.seq1  and t.Seq2 = s.seq2
     and t.StockType = s.stocktype 
@@ -5134,6 +5433,12 @@ inner join #tmp s on t.POID = s.poid
                 case "P21":
                 case "P26":
                     return WHTableName.LocationTrans_Detail;
+                case "P70":
+                    return WHTableName.LocalOrderReceiving_Detail;
+                case "P71":
+                    return WHTableName.LocalOrderIssue_Detail;
+                case "P72":
+                    return WHTableName.LocalOrderAdjust_Detail;
                 default:
                     return WHTableName.DefaultError;
             }
@@ -5516,6 +5821,39 @@ and exists(
 	where s.ukey = d.ukey
 )";
                     break;
+                case "LocalOrderReceiving_Detail":
+                    sqlcmd = $@"
+Select d.poid,d.seq1,d.seq2,d.Roll,d.Dyelot
+from dbo.LocalOrderReceiving_Detail d  WITH (NOLOCK) 
+where d.CompleteTime is not null
+and exists(
+	select 1 
+    from #tmp s
+	where s.ukey = d.ukey
+)";
+                    break;
+                case "LocalOrderIssue_Detail":
+                    sqlcmd = $@"
+Select d.poid,d.seq1,d.seq2,d.Roll,d.Dyelot
+from dbo.LocalOrderIssue_Detail d  WITH (NOLOCK) 
+where d.CompleteTime is not null
+and exists(
+	select 1 
+    from #tmp s
+	where s.ukey = d.ukey
+)";
+                    break;
+                case "LocalOrderAdjust_Detail":
+                    sqlcmd = $@"
+Select d.poid,d.seq1,d.seq2,d.Roll,d.Dyelot
+from dbo.LocalOrderAdjust_Detail d  WITH (NOLOCK) 
+where d.CompleteTime is not null
+and exists(
+	select 1 
+    from #tmp s
+	where s.ukey = d.ukey
+)";
+                    break;
             }
 
             if (!(result = MyUtility.Tool.ProcessWithDatatable(dtDetail, string.Empty, sqlcmd, out dt)))
@@ -5527,12 +5865,15 @@ and exists(
             {
                 if (dt.Rows.Count > 0)
                 {
-                    foreach (DataRow tmp in dt.Rows)
-                    {
-                        errmsg += $@"SP#: {tmp["poid"]} Seq#: {tmp["seq1"]}-{tmp["seq2"]} Roll#: {tmp["roll"]} Dyelot: {tmp["Dyelot"]}." + Environment.NewLine;
-                    }
+                    Class.MsgGrid form = new Class.MsgGrid(dt, "WMS system have finished it already, you cannot unconfirm it.");
+                    form.ShowDialog();
 
-                    MyUtility.Msg.WarningBox("WMS system have finished it already, you cannot unconfirm it." + Environment.NewLine + errmsg, "Warning");
+                    //foreach (DataRow tmp in dt.Rows)
+                    //{
+                    //    errmsg += $@"SP#: {tmp["poid"]} Seq#: {tmp["seq1"]}-{tmp["seq2"]} Roll#: {tmp["roll"]} Dyelot: {tmp["Dyelot"]}." + Environment.NewLine;
+                    //}
+
+                    //MyUtility.Msg.WarningBox("WMS system have finished it already, you cannot unconfirm it." + Environment.NewLine + errmsg, "Warning");
                     return false;
                 }
             }
@@ -6095,6 +6436,123 @@ where rowCnt =2
                     }
 
                     break;
+
+                case "P70":
+                case "P71":
+                case "P72":
+                    sqlcmd = $@"
+
+declare @ID varchar(15) = '{id}'
+
+select * from(
+
+	-- P70 LocalOrderReceiving_Detail
+	select * 
+	, rowCnt = ROW_NUMBER() over(Partition by POID,Seq1,Seq2,Roll,Dyelot,Location order by IsWMS)
+	from (
+		select distinct loi.POID,loi.Seq1,loi.Seq2,loi.Roll,loi.Dyelot,IsWMS = isnull( ml.IsWMS,0),s.Location
+		from LocalOrderReceiving_Detail t
+		inner join LocalOrderInventory loi on t.POID = loi.POID
+			and t.Seq1= loi. Seq1 and t.Seq2 = loi.Seq2 and t.Roll = loi.Roll
+			and t.Dyelot = loi.Dyelot and t.StockType = loi.StockType
+		left join LocalOrderInventory_Location loil on loil.LocalOrderInventoryUkey = loi.Ukey
+		left join MtlLocation ml on ml.ID = loil.MtlLocationID
+		outer apply(
+			select Location = Stuff((
+				select concat(',',MtlLocationID)
+				from (
+						select 	distinct
+							MtlLocationID
+						from dbo.LocalOrderInventory_Location d
+						where d.LocalOrderInventoryUkey = loi.Ukey
+					) s
+				for xml path ('')
+			) , 1, 1, '')
+		) s
+		where t.id=@ID
+	) a
+
+	union ALL
+
+	-- P71 LocalOrderIssue_Detail
+	select * 
+	, rowCnt = ROW_NUMBER() over(Partition by POID,Seq1,Seq2,Roll,Dyelot,Location order by IsWMS)
+	from (
+		select distinct loi.POID,loi.Seq1,loi.Seq2,loi.Roll,loi.Dyelot,IsWMS = isnull( ml.IsWMS,0),s.Location
+		from LocalOrderIssue_Detail t
+		inner join LocalOrderInventory loi on t.POID = loi.POID
+			and t.Seq1= loi. Seq1 and t.Seq2 = loi.Seq2 and t.Roll = loi.Roll
+			and t.Dyelot = loi.Dyelot and t.StockType = loi.StockType
+		left join LocalOrderInventory_Location loil on loil.LocalOrderInventoryUkey = loi.Ukey
+		left join MtlLocation ml on ml.ID = loil.MtlLocationID
+		outer apply(
+			select Location = Stuff((
+				select concat(',',MtlLocationID)
+				from (
+						select 	distinct
+							MtlLocationID
+						from dbo.LocalOrderInventory_Location d
+						where d.LocalOrderInventoryUkey = loi.Ukey
+					) s
+				for xml path ('')
+			) , 1, 1, '')
+		) s
+		where t.id=@ID
+	) a
+
+	union ALL
+
+	-- P72 LocalOrderAdjust_Detail
+	select * 
+	, rowCnt = ROW_NUMBER() over(Partition by POID,Seq1,Seq2,Roll,Dyelot,Location order by IsWMS)
+	from (
+		select distinct loi.POID,loi.Seq1,loi.Seq2,loi.Roll,loi.Dyelot,IsWMS = isnull( ml.IsWMS,0),s.Location
+		from LocalOrderAdjust_Detail t
+		inner join LocalOrderInventory loi on t.POID = loi.POID
+			and t.Seq1= loi. Seq1 and t.Seq2 = loi.Seq2 and t.Roll = loi.Roll
+			and t.Dyelot = loi.Dyelot and t.StockType = loi.StockType
+		left join LocalOrderInventory_Location loil on loil.LocalOrderInventoryUkey = loi.Ukey
+		left join MtlLocation ml on ml.ID = loil.MtlLocationID
+		outer apply(
+			select Location = Stuff((
+				select concat(',',MtlLocationID)
+				from (
+						select 	distinct
+							MtlLocationID
+						from dbo.LocalOrderInventory_Location d
+						where d.LocalOrderInventoryUkey = loi.Ukey
+					) s
+				for xml path ('')
+			) , 1, 1, '')
+		) s
+		where t.id=@ID
+	) a
+
+) final
+where rowCnt =2
+";
+
+                    if (!(result = DBProxy.Current.Select(string.Empty, sqlcmd, out dt)))
+                    {
+                        MyUtility.Msg.WarningBox(result.Messages.ToString());
+                        return false;
+                    }
+                    else
+                    {
+                        if (dt != null && dt.Rows.Count > 0)
+                        {
+                            foreach (DataRow tmp in dt.Rows)
+                            {
+                                errmsg += $@"SP#: {tmp["poid"]} Seq#: {tmp["seq1"]}-{tmp["seq2"]} Roll#: {tmp["roll"]} Dyelot: {tmp["Dyelot"]} Location: {tmp["Location"]}" + Environment.NewLine;
+                            }
+
+                            MyUtility.Msg.WarningBox("These material exists in WMS Location and non-WMS location in same time , please use W/H P73 to correct these material location." + Environment.NewLine + errmsg, "Warning");
+                            return false;
+                        }
+                    }
+
+                    break;
+
                 default:
                     sqlcmd = $@"
 
@@ -6373,6 +6831,18 @@ and ml.IsWMS = 1
         public static bool IsAutomation()
         {
             return MyUtility.Check.Seek("select 1 from dbo.System where Automation = 1", "Production");
+        }
+
+        public static string GetInventoryTableName(bool isLocal)
+        {
+            if (isLocal)
+            {
+                return "LocalOrderInventory";
+            }
+            else
+            {
+                return "FtyInventory";
+            }
         }
 
         /// <summary>

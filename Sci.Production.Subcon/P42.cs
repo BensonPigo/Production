@@ -962,38 +962,7 @@ from #tmp t
             if (summaryType == 0)
             {
                 sqlcmd = $@"
-select 
-	o.MDivisionID,
-	o.FactoryID,
-	o.ID,
-	o.POID,
-	o.CustPONo,
-	o.ProgramID,
-	o.StyleID,
-	o.BrandID,
-	o.SeasonID,
-	w.CutCellid,
-	o.SewLine,
-	InLineDate=o.SewInLine,
-	OffLineDate=o.SewOffLine
-into #tmpOrders
-from orders o with(nolock)
-inner join factory f WITH (NOLOCK) on o.FactoryID= f.id and f.IsProduceFty=1
-outer apply(
-	select CutCellid=STUFF((
-		select concat(',',w1.CutCellid)
-		from(
-			select distinct wo.CutCellid
-	        from WorkOrder_Distribute wd with(nolock) 
-	        inner join WorkOrder wo with(nolock) on wo.Ukey = wd.WorkOrderUkey
-			where wd.OrderID = o.ID and isnull(wo.CutCellid,'')<>''
-		)w1
-		for xml path(''))
-	,1,1,'')
-)w
-where o.ID ='{drSelected["OrderID"]}'
-
-select   OrderID = o.id
+select   OrderID = bdo.OrderID
         ,bd.BundleNo
         ,s.SubProcessID
         ,s.ShowSeq
@@ -1009,18 +978,18 @@ select   OrderID = o.id
 		,[FabricKind] = FabricKind.val
 		,s.IsSelection
 into #tmpBundleNo
-from #tmpOrders o 
-inner join Bundle_Detail_Order bdo WITH (NOLOCK) on bdo.Orderid = o.ID
+from Bundle_Detail_Order bdo WITH (NOLOCK)
 inner join Bundle_Detail bd WITH (NOLOCK) on bdo.BundleNo = bd.BundleNo
-inner join Bundle b with(nolock) on b.id = bd.Id and b.MDivisionID = o.MDivisionID
+inner join Bundle b with(nolock) on b.id = bd.Id 
+left join Cutting_WIPExcludePatternPanel cw with(nolock) on cw.ID = b.POID and cw.PatternPanel = b.PatternPanel
 cross join(
 	select SubProcessID=id,s.ShowSeq,s.InOutRule,s.IsRFIDDefault,s.IsSelection
-	from SubProcess s
+	from SubProcess s with(nolock)
 	where s.IsRFIDProcess=1 and s.IsRFIDDefault=1 AND s.IsSelection=0
 )s
 outer apply(
 	SELECT top 1 [val] = DD.id + '-' + DD.NAME 
-	FROM dropdownlist DD 
+	FROM DropDownList DD  WITH (NOLOCK)
 	OUTER apply(
 			SELECT OB.kind, 
 				OCC.id, 
@@ -1038,14 +1007,17 @@ outer apply(
 )FabricKind
 outer apply(
 	select SubProcess = stuff((
-		Select concat('+',Subprocessid)
+		Select concat('+',SubProcessID)
 		From Bundle_Detail_art c WITH (NOLOCK) 
 		Where c.bundleno = bd.BundleNo
-		Order by Subprocessid
+		group by SubProcessID
+		Order by SubProcessID
 		For XML path('')
 	),1,1,'')
 )SubProcess
-where not exists(select 1 from Cutting_WIPExcludePatternPanel cw where cw.PatternPanel = b.PatternPanel and cw.ID = b.POID)
+where bdo.OrderID ='{drSelected["OrderID"]}'
+and exists (select 1 from Orders o with(nolock) inner join Factory f WITH (NOLOCK) on o.FactoryID = f.id and f.IsProduceFty = 1 where o.ID = bdo.OrderID and o.MDivisionID = b.MDivisionID)
+and cw.ID is null
 
 select   Orderid
         ,BundleNo
@@ -1127,27 +1099,30 @@ left join BundleInOut bio with (nolock) on bio.BundleNo = b.BundleNo and bio.Sub
 		select 1
 		from Bundle_Detail bd with (nolock) 
 		inner join Bundle b with (nolock) on b.id = bd.Id
+		left join Cutting_WIPExcludePatternPanel cw with (nolock) on cw.ID = b.POID and cw.PatternPanel = b.PatternPanel
 		where bd.BundleNo = bio.BundleNo
 		and bio.SubProcessid =  bio.SubProcessId 
-		and not exists(select 1 from Cutting_WIPExcludePatternPanel cw where cw.PatternPanel = b.PatternPanel and cw.ID = b.POID)
+		and cw.ID is null
 	)
 left join BundleInOut bunIOS with (nolock) on bunIOS.BundleNo = b.BundleNo and bunIOS.SubProcessId = 'SORTING' and isnull(bunIOS.RFIDProcessLocationID,'') = ''
 	and exists(
 		select 1
 		from Bundle_Detail bd with (nolock) 
 		inner join Bundle b with (nolock) on b.id = bd.Id
+		left join Cutting_WIPExcludePatternPanel cw with (nolock) on cw.ID = b.POID and cw.PatternPanel = b.PatternPanel
 		where bd.BundleNo = bunIOS.BundleNo
 		and bunIOS.SubProcessid =  bunIOS.SubProcessId 
-		and not exists(select 1 from Cutting_WIPExcludePatternPanel cw where cw.PatternPanel = b.PatternPanel and cw.ID = b.POID)
+		and cw.ID is null
 	)
 left join BundleInOut bunIOL with (nolock) on bunIOL.BundleNo = b.BundleNo and bunIOL.SubProcessId = 'LOADING' and isnull(bunIOL.RFIDProcessLocationID,'') = ''
 	and exists(
 		select 1
 		from Bundle_Detail bd with (nolock)
 		inner join Bundle b with (nolock) on b.id = bd.Id
+		left join Cutting_WIPExcludePatternPanel cw with (nolock) on cw.ID = b.POID and cw.PatternPanel = b.PatternPanel
 		where bd.BundleNo = bunIOL.BundleNo
 		and bunIOL.SubProcessid =  bunIOL.SubProcessId 
-		and not exists(select 1 from Cutting_WIPExcludePatternPanel cw where cw.PatternPanel = b.PatternPanel and cw.ID = b.POID)
+		and cw.ID is null
 	)
 outer apply(select PostSewingSubProcess_SL =iif(isnull(PostSewingSubProcess,0) = 1 and bunIOS.OutGoing is not null and bunIOL.InComing is not null, 1, 0))p
 where b.subProcessid='{subProcess}' and((IsSelection = 0) or (b.subProcessid= '{subProcess}' and IsSelection = 1))
@@ -1178,13 +1153,13 @@ select
     ,t.NoBundleCardAfterSubprocess
 from #tmpBundleNo_Complete t
 outer apply(
-	select qty=sum(bd.Qty)
+	select qty = sum(bd.Qty)
 	from Bundle_Detail bd with(nolock)
 	where bd.BundleNo = t.BundleNo
 )b
 outer apply(
     select top 1 PostSewingSubProcess
-    from Bundle_Detail_Art bda
+    from Bundle_Detail_Art bda with(nolock)
     where bda.BundleNo = t.BundleNo
     and bda.subProcessid='{subProcess}'
     and bda.PostSewingSubProcess = 1
@@ -1192,55 +1167,14 @@ outer apply(
 
 order by t.BundleNo
 
-drop table #tmpOrders,#tmpBundleNo,#tmpBundleNo_SubProcess,#tmpBundleNo_Complete
+drop table #tmpBundleNo,#tmpBundleNo_SubProcess,#tmpBundleNo_Complete
 ";
                 caption = $"SubProcess:{subProcess}";
             }
             else
             {
                 sqlcmd = $@"
-select 
-	o.MDivisionID,
-	o.FactoryID,
-	o.ID,
-	o.POID,
-	o.CustPONo,
-	o.ProgramID,
-	o.StyleID,
-	o.BrandID,
-	o.SeasonID,
-	oq.Article,
-	oq.SizeCode,
-	w.CutCellid,
-	o.SewLine,
-	InLineDate=s.Inline,
-	OffLineDate=s.Offline
-into #tmpOrders
-from orders o with(nolock)
-inner join factory f WITH (NOLOCK) on o.FactoryID= f.id and f.IsProduceFty=1
-inner join Order_Qty oq with(nolock) on oq.ID = o.ID
-outer apply(
-	select CutCellid=STUFF((
-		select concat(',',w1.CutCellid)
-		from(
-			select distinct wo.CutCellid
-	        from WorkOrder_Distribute wd with(nolock) 
-	        inner join WorkOrder wo with(nolock) on wo.Ukey = wd.WorkOrderUkey
-			where wd.OrderID = o.ID and isnull(wo.CutCellid,'')<>''
-		)w1
-		for xml path(''))
-	,1,1,'')
-)w
-outer apply(
-	select Inline=Min(ss.Inline),Offline=Max(ss.Offline)
-	from SewingSchedule_Detail ssd with(nolock)
-	inner join SewingSchedule ss with(nolock) on ss.ID = ssd.ID
-	where ssd.OrderID = o.ID and ssd.Article = oq.Article and ssd.SizeCode = oq.SizeCode
-)s
-where o.ID ='{drSelected["OrderID"]}' and oq.Article='{drSelected["Article"]}' and oq.SizeCode='{drSelected["SizeCode"]}'
-
-
-select   OrderID = o.id
+select   OrderID = bdo.OrderID
 		,SubProcess.SubProcess
         ,b.Article
         ,bd.Sizecode
@@ -1257,18 +1191,18 @@ select   OrderID = o.id
 		,[FabricKind] = FabricKind.val
 		,s.IsSelection
 into #tmpBundleNo
-from #tmpOrders o 
-inner join Bundle_Detail_Order bdo WITH (NOLOCK) on bdo.Orderid = o.ID
-inner join Bundle_Detail bd WITH (NOLOCK) on bdo.BundleNo = bd.BundleNo and bd.sizecode = o.sizecode
-inner join Bundle b with(nolock) on b.id = bd.Id and b.MDivisionID = o.MDivisionID and b.Article = o.Article
+from Bundle_Detail_Order bdo WITH (NOLOCK)
+inner join Bundle_Detail bd WITH (NOLOCK) on bdo.BundleNo = bd.BundleNo
+inner join Bundle b with(nolock) on b.id = bd.Id
+left join Cutting_WIPExcludePatternPanel cw with(nolock) on cw.ID = b.POID and cw.PatternPanel = b.PatternPanel
 cross join(
 	select SubProcessID=id,s.ShowSeq,s.InOutRule,s.IsRFIDDefault,s.IsSelection
-	from SubProcess s
+	from SubProcess s WITH (NOLOCK)
 	where s.IsRFIDProcess=1 and s.IsRFIDDefault=1 AND s.IsSelection=0
 )s
 outer apply(
 	SELECT top 1 [val] = DD.id + '-' + DD.NAME 
-	FROM dropdownlist DD 
+	FROM dropdownlist DD WITH (NOLOCK)
 	OUTER apply(
 			SELECT OB.kind, 
 				OCC.id, 
@@ -1286,14 +1220,17 @@ outer apply(
 )FabricKind
 outer apply(
 	select SubProcess = stuff((
-		Select concat('+',Subprocessid)
+		Select concat('+',SubProcessID)
 		From Bundle_Detail_art c WITH (NOLOCK) 
 		Where c.bundleno = bd.BundleNo
-		Order by Subprocessid
+		group by SubProcessID
+		Order by SubProcessID
 		For XML path('')
 	),1,1,'')
 )SubProcess
-where not exists(select 1 from Cutting_WIPExcludePatternPanel cw where cw.PatternPanel = b.PatternPanel and cw.ID = b.POID)
+where bdo.OrderID = '{drSelected["OrderID"]}' and b.Article = '{drSelected["Article"]}' and bd.SizeCode = '{drSelected["SizeCode"]}'
+and exists (select 1 from Orders o with(nolock) inner join Factory f WITH (NOLOCK) on o.FactoryID = f.id and f.IsProduceFty = 1 where o.ID = bdo.OrderID and o.MDivisionID = b.MDivisionID)
+and cw.ID is null
 
 select Orderid,SubProcess,Article,Sizecode,BundleNo,SubProcessID,ShowSeq,InOutRule,IsRFIDDefault,IsEXCESS
 	,NoBundleCardAfterSubprocess= isnull(x.NoBundleCardAfterSubprocess,0) 
@@ -1357,27 +1294,30 @@ left join BundleInOut bio with (nolock) on bio.BundleNo = b.BundleNo and bio.Sub
 		select 1
 		from Bundle_Detail bd with (nolock)
 		inner join Bundle b with (nolock) on b.id = bd.Id
+		left join Cutting_WIPExcludePatternPanel cw with (nolock) on cw.ID = b.POID and cw.PatternPanel = b.PatternPanel
 		where bd.BundleNo = bio.BundleNo
 		and bio.SubProcessid =  bio.SubProcessId 
-		and not exists(select 1 from Cutting_WIPExcludePatternPanel cw where cw.PatternPanel = b.PatternPanel and cw.ID = b.POID)
+		and cw.ID is null
 	)
 left join BundleInOut bunIOS with (nolock) on bunIOS.BundleNo = b.BundleNo and bunIOS.SubProcessId = 'SORTING' and isnull(bunIOS.RFIDProcessLocationID,'') = ''
 	and exists(
 		select 1
 		from Bundle_Detail bd with (nolock)
 		inner join Bundle b with (nolock) on b.id = bd.Id
+		left join Cutting_WIPExcludePatternPanel cw with (nolock) on cw.ID = b.POID and cw.PatternPanel = b.PatternPanel
 		where bd.BundleNo = bunIOS.BundleNo
 		and bunIOS.SubProcessid =  bunIOS.SubProcessId 
-		and not exists(select 1 from Cutting_WIPExcludePatternPanel cw where cw.PatternPanel = b.PatternPanel and cw.ID = b.POID)
+		and cw.ID is null
 	)
 left join BundleInOut bunIOL with (nolock) on bunIOL.BundleNo = b.BundleNo and bunIOL.SubProcessId = 'LOADING' and isnull(bunIOL.RFIDProcessLocationID,'') = ''
 	and exists(
 		select 1
 		from Bundle_Detail bd with (nolock)
 		inner join Bundle b with (nolock) on b.id = bd.Id
+		left join Cutting_WIPExcludePatternPanel cw with (nolock) on cw.ID = b.POID and cw.PatternPanel = b.PatternPanel
 		where bd.BundleNo = bunIOL.BundleNo
 		and bunIOL.SubProcessid =  bunIOL.SubProcessId 
-		and not exists(select 1 from Cutting_WIPExcludePatternPanel cw where cw.PatternPanel = b.PatternPanel and cw.ID = b.POID)
+		and cw.ID is null
 	)
 outer apply(select PostSewingSubProcess_SL =iif(isnull(PostSewingSubProcess,0) = 1 and bunIOS.OutGoing is not null and bunIOL.InComing is not null, 1, 0))p
 where b.subProcessid='{subProcess}'  and((IsSelection = 0) or (b.subProcessid= '{subProcess}' and IsSelection = 1))
@@ -1411,18 +1351,19 @@ outer apply(
 	select qty=sum(bd.Qty)
 	from Bundle_Detail bd with(nolock)
 	inner join Bundle b WITH (NOLOCK) on b.id = bd.Id
+	left join Cutting_WIPExcludePatternPanel cw with (nolock) on cw.ID = b.POID and cw.PatternPanel = b.PatternPanel
 	where bd.BundleNo = t.BundleNo and b.Article = t.Article and b.Sizecode = t.Sizecode
-	and not exists(select 1 from Cutting_WIPExcludePatternPanel cw where cw.PatternPanel = b.PatternPanel and cw.ID = b.POID)
+	and cw.ID is null
 )b
 outer apply(
     select top 1 PostSewingSubProcess
-    from Bundle_Detail_Art bda
+    from Bundle_Detail_Art bda with (nolock)
     where bda.BundleNo = t.BundleNo
     and bda.subProcessid='{subProcess}'
     and bda.PostSewingSubProcess = 1
 )ps
 
-drop table #tmpOrders,#tmpBundleNo,#tmpBundleNo_SubProcess,#tmpBundleNo_Complete
+drop table #tmpBundleNo,#tmpBundleNo_SubProcess,#tmpBundleNo_Complete
 ";
                 caption = $"SubProcess:{subProcess} - Article:{drSelected["Article"]} - Size:{drSelected["SizeCode"]}";
             }
