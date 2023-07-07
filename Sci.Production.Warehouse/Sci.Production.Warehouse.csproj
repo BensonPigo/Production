@@ -433,6 +433,19 @@
     <Compile Include="P68.Designer.cs">
       <DependentUpon>P68.cs</DependentUpon>
     </Compile>
+    <Compile Include="P71.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P71.Designer.cs">
+      <DependentUpon>P71.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P71_Import.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P71_Import.designer.cs">
+      <DependentUpon>P71_Import.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P71_PrintData.cs" />
     <Compile Include="P99_CallForm.cs" />
     <Compile Include="P01.cs">
       <SubType>Form</SubType>
@@ -2059,6 +2072,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="P68.resx">
       <DependentUpon>P68.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P71.resx">
+      <DependentUpon>P71.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P71_Import.resx">
+      <DependentUpon>P71_Import.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P99.resx">
       <DependentUpon>P99.cs</DependentUpon>

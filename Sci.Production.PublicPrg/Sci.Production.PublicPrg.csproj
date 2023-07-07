@@ -163,6 +163,7 @@
     <Compile Include="Entity\BaseTableEntity.cs" />
     <Compile Include="Entity\CallFrom.cs" />
     <Compile Include="Entity\ComparePO3Item.cs" />
+    <Compile Include="Entity\LocalOrderInventory.cs" />
     <Compile Include="Entity\TK_TPEStatus.cs" />
     <Compile Include="Entity\TK_FtyStatus.cs" />
     <Compile Include="Entity\FtyInventory.cs" />

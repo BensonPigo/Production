@@ -17,6 +17,9 @@
         RemoveC_Detail, // 只有 Vstrong_AutoWHAccessory 轉出使用
         Stocktaking_Detail,
         LocationTrans_Detail,
+        LocalOrderAdjust_Detail,
+        LocalOrderIssue_Detail,
+        LocalOrderReceiving_Detail,
         DefaultError,
     }
 #pragma warning restore SA1602

@@ -214,6 +214,12 @@
     <Compile Include="Holiday.Designer.cs">
       <DependentUpon>Holiday.cs</DependentUpon>
     </Compile>
+    <Compile Include="MsgGrid.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MsgGrid.designer.cs">
+      <DependentUpon>MsgGrid.cs</DependentUpon>
+    </Compile>
     <Compile Include="numericUpDownRate.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -861,6 +867,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Holiday.resx">
       <DependentUpon>Holiday.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MsgGrid.resx">
+      <DependentUpon>MsgGrid.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="PictureSubPage.resx">
       <DependentUpon>PictureSubPage.cs</DependentUpon>
