@@ -897,7 +897,7 @@ order by NO
 
             // 填Operation
             int intRowsStart = 6;
-            object[,] objArray = new object[1, 13];
+            object[,] objArray = new object[1, 14];
             foreach (DataRow dr in this.operationCode.Rows)
             {
                 objArray[0, 0] = dr["rn"];
@@ -913,7 +913,8 @@ order by NO
                 objArray[0, 10] = dr["ThreadColor"];
                 objArray[0, 11] = dr["OperationID"];
                 objArray[0, 12] = $"=CONCATENATE(D{intRowsStart},\" \",F{intRowsStart},\" \",H{intRowsStart},\" \",K{intRowsStart})";
-                worksheet.Range[string.Format("A{0}:M{0}", intRowsStart)].Value2 = objArray;
+                objArray[0, 13] = dr["MasterPlusGroup"];
+                worksheet.Range[string.Format("A{0}:N{0}", intRowsStart)].Value2 = objArray;
                 intRowsStart++;
             }
 
@@ -1042,16 +1043,20 @@ order by NO
             worksheet.Cells[rownum, 16] = $"=IF(ISNA(VLOOKUP(S{rownum},Operation,5,0)),\"\",IF(VLOOKUP(S{rownum},Operation,5,0)=IF(ISNA(VLOOKUP(S{rownum - 1},Operation,5,0)),\"\",VLOOKUP(S{rownum - 1},Operation,5,0)),\"\",VLOOKUP(S{rownum},Operation,5,0)))";
 
             // Attachment
-            worksheet.Cells[rownum, 30] = $"=IF(OR(ISNA(VLOOKUP(D{rownum},Operation,6,0)),J{rownum}=\"\"),\"\",IF(VLOOKUP(D{rownum},Operation,6,0)=\"\",\"\",\"Attachment\"))";
+            worksheet.Cells[rownum, 31] = $"=IF(OR(ISNA(VLOOKUP(D{rownum},Operation,6,0)),J{rownum}=\"\"),\"\",IF(VLOOKUP(D{rownum},Operation,6,0)=\"\",\"\",\"Attachment\"))";
             worksheet.Cells[rownum, 21] = $"=IF(OR(ISNA(VLOOKUP(S{rownum},Operation,6,0)),Q{rownum}=\"\"),\"\",IF(VLOOKUP(S{rownum},Operation,6,0)=\"\",\"\",\"Attachment\"))";
 
             // Template
-            worksheet.Cells[rownum, 31] = $"=IF(OR(ISNA(VLOOKUP(D{rownum},Operation,8,0)),J{rownum}=\"\"),\"\",IF(VLOOKUP(D{rownum},Operation,8,0)=\"\",\"\",\"Template\"))";
+            worksheet.Cells[rownum, 32] = $"=IF(OR(ISNA(VLOOKUP(D{rownum},Operation,8,0)),J{rownum}=\"\"),\"\",IF(VLOOKUP(D{rownum},Operation,8,0)=\"\",\"\",\"Template\"))";
             worksheet.Cells[rownum, 22] = $"=IF(OR(ISNA(VLOOKUP(S{rownum},Operation,8,0)),Q{rownum}=\"\"),\"\",IF(VLOOKUP(S{rownum},Operation,8,0)=\"\",\"\",\"Template\"))";
 
             // only Machine Type
             worksheet.Cells[rownum, 27] = $"=IF(ISNA(VLOOKUP(D{rownum},Operation,13,0)),\"\",IF(VLOOKUP(D{rownum},Operation,13,0)=IF(ISNA(VLOOKUP(D{rownum - 1},Operation,13,0)),\"\",VLOOKUP(D{rownum - 1},Operation,13,0)),\"\",VLOOKUP(D{rownum},Operation,4,0)))";
             worksheet.Cells[rownum, 28] = $"=IF(ISNA(VLOOKUP(S{rownum},Operation,13,0)),\"\",IF(VLOOKUP(S{rownum},Operation,13,0)=IF(ISNA(VLOOKUP(S{rownum - 1},Operation,13,0)),\"\",VLOOKUP(S{rownum - 1},Operation,13,0)),\"\",VLOOKUP(S{rownum},Operation,4,0)))";
+
+            // Machine Group
+            worksheet.Cells[rownum, 29] = $"=IF(ISNA(VLOOKUP(D{rownum},Operation,14,0)),\"\",IF(VLOOKUP(D{rownum},Operation,14,0)=IF(ISNA(VLOOKUP(D{rownum - 1},Operation,14,0)),\"\",VLOOKUP(D{rownum - 1},Operation,14,0)),\"\",VLOOKUP(D{rownum},Operation,5,0)))";
+            worksheet.Cells[rownum, 30] = $"=IF(ISNA(VLOOKUP(S{rownum},Operation,14,0)),\"\",IF(VLOOKUP(S{rownum},Operation,14,0)=IF(ISNA(VLOOKUP(S{rownum - 1},Operation,14,0)),\"\",VLOOKUP(S{rownum - 1},Operation,14,0)),\"\",VLOOKUP(S{rownum},Operation,5,0)))";
         }
 
         private void ExcelMainData(Microsoft.Office.Interop.Excel.Worksheet worksheet, Microsoft.Office.Interop.Excel.Worksheet cycleTimeSheet, Microsoft.Office.Interop.Excel.Worksheet gcTimeSheet, string factory, string style, DataTable nodist, decimal currentOperators, string sheetName, bool showMachineType = false)
@@ -1355,6 +1360,8 @@ order by NO
                 string endRow = (16 + (ttlLineRowCnt * 5) + addct).ToString();
                 worksheet.Names.Add("MachineINV1", worksheet.Range["AA17", "AA" + endRow], Type.Missing);
                 worksheet.Names.Add("MachineINV2", worksheet.Range["AB17", "AB" + endRow], Type.Missing);
+                worksheet.Names.Add("MachineINV3", worksheet.Range["AC17", "AC" + endRow], Type.Missing);
+                worksheet.Names.Add("MachineINV4", worksheet.Range["AD17", "AD" + endRow], Type.Missing);
                 worksheet.Names.Add("MachineAttachmentTemplateL", worksheet.Range["AC19", "AE" + endRow], Type.Missing);
                 worksheet.Names.Add("MachineAttachmentTemplateR", worksheet.Range["U19", "V" + endRow], Type.Missing);
                 worksheet.Names.Add("TtlTMS", $"=ROUND((SUM('{worksheet.Name}'!$B$17:$B${endRow})+SUM('{worksheet.Name}'!$X$17:$X${endRow}))/2,0)", Type.Missing);
@@ -1496,6 +1503,8 @@ order by NO
                 string endRow = (16 + (ttlLineRowCnt * 5) + addct).ToString();
                 worksheet.Names.Add("MachineINV1", worksheet.Range["AA17", "AA" + endRow], Type.Missing);
                 worksheet.Names.Add("MachineINV2", worksheet.Range["AB17", "AB" + endRow], Type.Missing);
+                worksheet.Names.Add("MachineINV3", worksheet.Range["AC17", "AC" + endRow], Type.Missing);
+                worksheet.Names.Add("MachineINV4", worksheet.Range["AD17", "AD" + endRow], Type.Missing);
                 worksheet.Names.Add("MachineAttachmentTemplateL", worksheet.Range["AC19", "AE" + endRow], Type.Missing);
                 worksheet.Names.Add("MachineAttachmentTemplateR", worksheet.Range["U19", "V" + endRow], Type.Missing);
                 worksheet.Names.Add("TtlTMS", $"=ROUND((SUM('{worksheet.Name}'!$B$17:$B${endRow})+SUM('{worksheet.Name}'!$X$17:$X${endRow}))/2,0)", Type.Missing);
@@ -1624,6 +1633,8 @@ order by NO
                 string endRow = (16 + (ttlLineRowCnt * 5) + addct).ToString();
                 worksheet.Names.Add("MachineINV1", worksheet.Range["AA17", "AA" + endRow], Type.Missing);
                 worksheet.Names.Add("MachineINV2", worksheet.Range["AB17", "AB" + endRow], Type.Missing);
+                worksheet.Names.Add("MachineINV3", worksheet.Range["AC17", "AC" + endRow], Type.Missing);
+                worksheet.Names.Add("MachineINV4", worksheet.Range["AD17", "AD" + endRow], Type.Missing);
                 worksheet.Names.Add("MachineAttachmentTemplateL", worksheet.Range["AC19", "AE" + endRow], Type.Missing);
                 worksheet.Names.Add("MachineAttachmentTemplateR", worksheet.Range["U19", "V" + endRow], Type.Missing);
                 worksheet.Names.Add("TtlTMS", $"=ROUND((SUM('{worksheet.Name}'!$B$17:$B${endRow})+SUM('{worksheet.Name}'!$X$17:$X${endRow}))/2,0)", Type.Missing);
@@ -1754,6 +1765,8 @@ order by NO
                 string endRow = (16 + (ttlLineRowCnt * 5) + addct).ToString();
                 worksheet.Names.Add("MachineINV1", worksheet.Range["AA17", "AA" + endRow], Type.Missing);
                 worksheet.Names.Add("MachineINV2", worksheet.Range["AB17", "AB" + endRow], Type.Missing);
+                worksheet.Names.Add("MachineINV3", worksheet.Range["AC17", "AC" + endRow], Type.Missing);
+                worksheet.Names.Add("MachineINV4", worksheet.Range["AD17", "AD" + endRow], Type.Missing);
                 worksheet.Names.Add("MachineAttachmentTemplateL", worksheet.Range["AC19", "AE" + endRow], Type.Missing);
                 worksheet.Names.Add("MachineAttachmentTemplateR", worksheet.Range["U19", "V" + endRow], Type.Missing);
                 worksheet.Names.Add("TtlTMS", $"=ROUND((SUM('{worksheet.Name}'!$B$17:$B${endRow})+SUM('{worksheet.Name}'!$X$17:$X${endRow}))/2,0)", Type.Missing);
