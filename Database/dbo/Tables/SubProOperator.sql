@@ -3,14 +3,14 @@
 	[EmployeeID] nvarchar(8) NOT NULL, 
     [FirstName] NVARCHAR(30) CONSTRAINT [DF_SubProOperator_FirstName] DEFAULT ('') NOT NULL, 
     [LastName] NVARCHAR(30) CONSTRAINT [DF_SubProOperator_LastName] DEFAULT ('') NOT NULL, 
-    [SubprocessID] VARCHAR(15) CONSTRAINT [DF_SubProOperator_SubprocessID] DEFAULT ('') NOT NULL, 
-    [FactoryID] VARCHAR(8) CONSTRAINT [DF_SubProOperator_FactoryID] DEFAULT ('') NOT NULL, 
+    [SubprocessID] VARCHAR(50) CONSTRAINT [DF_SubProOperator_SubprocessID] DEFAULT ('') NOT NULL, 
+    [FactoryID] VARCHAR(35) CONSTRAINT [DF_SubProOperator_FactoryID] DEFAULT ('') NOT NULL, 
     [Junk] BIT CONSTRAINT [DF_SubProOperator_Junk] DEFAULT (0) NOT NULL, 
     [AddName] VARCHAR(10) CONSTRAINT [DF_SubProOperator_AddName] DEFAULT ('') NOT NULL, 
     [AddDate] DATETIME NULL, 
     [EditName] VARCHAR(10) CONSTRAINT [DF_SubProOperator_EditName] DEFAULT ('') NOT NULL, 
     [EditDate] DATETIME NULL, 
-    CONSTRAINT [PK_SubProOperator] PRIMARY KEY CLUSTERED ([EmployeeID], [SubprocessID] ASC)
+    CONSTRAINT [PK_SubProOperator] PRIMARY KEY ([EmployeeID]) 
 )
 
 GO

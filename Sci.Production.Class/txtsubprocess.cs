@@ -1,6 +1,9 @@
-﻿using System.ComponentModel;
+﻿using Sci.Win.UI;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data.SqlClient;
+using System.Data.SqlTypes;
 using System.Windows.Forms;
-using Sci.Win.UI;
 
 namespace Sci.Production.Class
 {
@@ -59,15 +62,44 @@ namespace Sci.Production.Class
         /// <inheritdoc/>
         protected override void OnValidating(CancelEventArgs e)
         {
-            string sqlCheck = $"select 1 from Subprocess WITH (NOLOCK) where junk=0 and ID = '{this.Text}'";
-            if (this.IsRFIDProcess)
+            if (this.MultiSelect)
             {
-                sqlCheck += " and IsRFIDProcess= 1";
-            }
+                string[] ids = this.Text.Split(',');
+                List<string> listnotexist = new List<string>();
+                foreach (string id in ids)
+                {
+                    if (!MyUtility.Check.Empty(id))
+                    {
+                        string sqlCheck = $"select 1 from Subprocess WITH (NOLOCK) where junk=0 and ID = '{id}'";
+                        if (this.IsRFIDProcess)
+                        {
+                            sqlCheck += " and IsRFIDProcess= 1";
+                        }
 
-            if (!this.MultiSelect && !MyUtility.Check.Empty(this.Text))
+                        if (!MyUtility.Check.Seek(sqlCheck))
+                        {
+                            listnotexist.Add(id);
+                        }
+                    }
+                }
+
+                if (listnotexist.Count > 0)
+                {
+                    this.Text = this.OldValue;
+                    e.Cancel = true;
+                    MyUtility.Msg.WarningBox($"<Subprocess> : {listnotexist.JoinToString(",")}  not found!!!");
+                    return;
+                }
+            }
+            else
             {
-                if (!MyUtility.Check.Seek(sqlCheck))
+                string sqlCheck = $"select 1 from Subprocess WITH (NOLOCK) where junk=0 and ID = '{this.Text}'";
+                if (this.IsRFIDProcess)
+                {
+                    sqlCheck += " and IsRFIDProcess= 1";
+                }
+
+                if (!MyUtility.Check.Empty(this.Text) && !MyUtility.Check.Seek(sqlCheck))
                 {
                     MyUtility.Msg.WarningBox($"<Subprocess> {this.Text} not found");
                     e.Cancel = true;
