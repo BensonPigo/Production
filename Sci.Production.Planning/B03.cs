@@ -94,7 +94,8 @@ namespace Sci.Production.Planning
                 {
                     foreach (DataRow dataRow in list)
                     {
-                        if (MyUtility.Convert.GetDecimal(dataRow["Price"]) > MyUtility.Convert.GetDecimal(gridArtworkTypedataRow["Cost"])
+                        var localPrice = MyUtility.GetValue.Lookup($@"SELECT [LoaclPrice] = {dataRow["Price"]} * (select [dbo].[GetFinanceRate]('KP',GETDATE(),'{dataRow["currencyid"]}','USD'))");
+                        if (MyUtility.Convert.GetDecimal(localPrice) > MyUtility.Convert.GetDecimal(gridArtworkTypedataRow["Cost"])
                         && MyUtility.Convert.GetString(dataRow["UKEY"]) == MyUtility.Convert.GetString(gridArtworkTypedataRow["UKEY"])
                         && MyUtility.Check.Empty(dataRow["Remark"]))
                         {
