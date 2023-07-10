@@ -2852,6 +2852,7 @@
     <Build Include="dbo\Stored Procedures\GetLoadingvsCapacity.sql" />
     <Build Include="dbo\Tables\WHIssueToPlace.sql" />
     <Build Include="dbo\Stored Procedures\GetSDP.sql" />
+    <Build Include="dbo\Stored Procedures\PPIC_R03_FORBI.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />

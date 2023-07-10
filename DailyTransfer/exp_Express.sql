@@ -55,7 +55,7 @@ WHERE (e.AddDate >=@DateStart  or e.EditDate >=@DateStart)
 		)
 ORDER BY Id
 
-SELECT B.* ,AirPPID=iif(isnull(b.PackingListID,'') = '',b.DutyNo , airpp.AirPPno), pl.PulloutID
+SELECT B.* ,AirPPID=iif(isnull(b.PackingListID,'') = '',b.DutyNo , ISNULL(airpp.AirPPno,'')), PulloutID = ISNULL(pl.PulloutID,'') 
 INTO Express_Detail
 FROM  Pms_To_Trade.dbo.Express  A
 inner join [Production].dbo.Express_Detail  B on A.ID = B.ID

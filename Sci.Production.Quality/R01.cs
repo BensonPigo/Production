@@ -312,6 +312,9 @@ select
     ,[Category] = ddl.Name
 	,[Cutting Date] = o.CutInLine
     ,[OrderType] = O.OrderTypeID
+    ,[TotalYardsBC] = isnull(fptbc.TicketYds, 0)
+    ,[TotalPointBC] = isnull(fptbc.TotalPoint, 0)
+    ,[TotalPointA] = isnull(fpta.TotalPoint, 0)
 into #tmpFinal
 from dbo.FIR F WITH (NOLOCK) 
 cross apply(
@@ -421,8 +424,10 @@ Outer apply(
     inner join pass1 a on a.id=od.LocalMR 
     where od.id=o.POID
 ) ps1
-outer apply(select TotalPoint = Sum(fp.TotalPoint) from FIR_Physical fp where fp.id=f.id)ftp
-outer apply(select ActualYds = Sum(fp.ActualYds) from FIR_Physical fp where fp.id=f.id)fta
+outer apply(select TotalPoint = Sum(fp.TotalPoint) from FIR_Physical fp where fp.id=f.id) ftp
+outer apply(select ActualYds = Sum(fp.ActualYds) from FIR_Physical fp where fp.id=f.id) fta
+outer apply(select TicketYds = Sum(fp.TicketYds), TotalPoint = Sum(fp.TotalPoint) from FIR_Physical fp where fp.id = f.id and (fp.Grade = 'B' or fp.Grade = 'C')) fptbc
+outer apply(select TotalPoint = Sum(fp.TotalPoint) from FIR_Physical fp where fp.id = f.id and fp.Grade = 'A') fpta
 outer apply(select  CrockingInspector = (select name from Pass1 where id = CrockingInspector)
 	,HeatInspector = (select name from Pass1 where id = HeatInspector)
 	,WashInspector = (select name from Pass1 where id = WashInspector)
@@ -516,6 +521,9 @@ select
 	,tf.[N/A Physical]
 	,tf.Result
 	,tf.Physical
+    ,tf.TotalYardsBC
+    ,tf.TotalPointBC
+    ,tf.TotalPointA
 	,tf.[PhysicalInspector]
 	,tf.PhysicalDate
 	,tf.ActualYds

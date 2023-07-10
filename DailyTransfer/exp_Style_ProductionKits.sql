@@ -29,8 +29,8 @@ else
 ------------------------------------------------------------------------------------------------------
 
 SELECT Ukey, ReceiveDate, FtyHandle,
-(SELECT Email FROM [Production].dbo.Pass1 where Pass1.id= [Production].dbo.Style_ProductionKits.FtyHandle) as MCEMAIL,
-(SELECT ExtNo FROM [Production].dbo.Pass1 where Pass1.id= [Production].dbo.Style_ProductionKits.FtyHandle) as MCEXT,
+(SELECT ISNULL(Email,'') FROM [Production].dbo.Pass1 where Pass1.id= [Production].dbo.Style_ProductionKits.FtyHandle) as MCEMAIL,
+(SELECT ISNULL(ExtNo,'') FROM [Production].dbo.Pass1 where Pass1.id= [Production].dbo.Style_ProductionKits.FtyHandle) as MCEXT,
 FtyLastDate, FtyRemark 
 INTO  Style_ProductionKits
 FROM [Production].dbo.Style_ProductionKits

@@ -3,6 +3,10 @@ using System.ComponentModel;
 using System.Windows.Forms;
 using Sci.Win.UI;
 using System.Data.SqlClient;
+using Ict;
+using System.Linq;
+using Sci.Data;
+using System.Data;
 
 namespace Sci.Production.Class
 {
@@ -42,6 +46,11 @@ namespace Sci.Production.Class
         /// False：替換單字 ID
         /// </summary>
         public bool BoolFtyGroupList { get; set; } = true;
+
+        /// <summary>
+        /// 多選
+        /// </summary>
+        public bool IsMultiselect { get; set; } = false;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Txtfactory"/> class.
@@ -100,15 +109,38 @@ namespace Sci.Production.Class
                 (listFilte.Count > 0) ? "where " + listFilte.JoinToString("\n\rand ") : string.Empty,
                 strShowColumn);
             #endregion
-            Win.Tools.SelectItem item = new Win.Tools.SelectItem(sqlcmd, listSqlPar, "8", this.Text, false, ",");
-            DialogResult result = item.ShowDialog();
-            if (result == DialogResult.Cancel)
+            if (this.IsMultiselect)
             {
-                return;
-            }
+                DualResult dualResult = DBProxy.Current.Select(null, sqlcmd, listSqlPar, out DataTable dt);
+                if (!dualResult)
+                {
+                    MyUtility.Msg.ErrorBox(dualResult.ToString());
+                    return;
+                }
 
-            this.Text = item.GetSelectedString();
-            this.ValidateText();
+                Win.Tools.SelectItem2 item = new Win.Tools.SelectItem2(dt, "Factory", "Factory", "8", this.Text);
+                DialogResult result = item.ShowDialog();
+                if (result == DialogResult.Cancel)
+                {
+                    return;
+                }
+
+                this.Text = item.GetSelectedString();
+                this.ValidateText();
+
+            }
+            else
+            {
+                Win.Tools.SelectItem item = new Win.Tools.SelectItem(sqlcmd, listSqlPar, "8", this.Text, false, ",");
+                DialogResult result = item.ShowDialog();
+                if (result == DialogResult.Cancel)
+                {
+                    return;
+                }
+
+                this.Text = item.GetSelectedString();
+                this.ValidateText();
+            }
         }
 
         /// <inheritdoc/>
@@ -139,7 +171,6 @@ namespace Sci.Production.Class
                 listFilte.Add("MDivisionID = @MDivision");
             }
             #endregion
-            #region SQL CMD
 
             // 依boolFtyGroupList=true 顯示FtyGroup 反之顯示ID
             string strShowColumn = string.Empty;
@@ -154,19 +185,45 @@ namespace Sci.Production.Class
                 listFilte.Add("id = @str");
             }
 
-            string sqlcmd = string.Format(
-                "Select {1} from Production.dbo.Factory WITH (NOLOCK) {0}",
-                (listFilte.Count > 0) ? "where " + listFilte.JoinToString("\n\rand ") : string.Empty,
-                strShowColumn);
-            #endregion
-            if (!string.IsNullOrWhiteSpace(str) && str != this.OldValue)
+            string where = (listFilte.Count > 0) ? "where " + listFilte.JoinToString("\n\rand ") : string.Empty;
+            string sqlcmd = $"Select {strShowColumn} from Production.dbo.Factory WITH (NOLOCK) {where}";
+            if (this.IsMultiselect)
             {
-                if (MyUtility.Check.Seek(sqlcmd, listSqlPar) == false)
+                string[] factorys = this.Text.Split(',');
+                List<string> listnotexist = new List<string>();
+                foreach (string factory in factorys)
                 {
-                    this.Text = string.Empty;
+                    if (!MyUtility.Check.Empty(factory))
+                    {
+                        listSqlPar.Clear();
+                        listSqlPar.Add(new SqlParameter("@MDivision", Env.User.Keyword));
+                        listSqlPar.Add(new SqlParameter("@str", factory));
+                        if (!MyUtility.Check.Seek(sqlcmd, listSqlPar))
+                        {
+                            listnotexist.Add(factory);
+                        }
+                    }
+                }
+
+                if (listnotexist.Count > 0)
+                {
+                    this.Text = this.OldValue;
                     e.Cancel = true;
-                    MyUtility.Msg.WarningBox(string.Format("< Factory : {0} > not found!!!", str));
+                    MyUtility.Msg.WarningBox($"< Factory : {listnotexist.JoinToString(",")} > not found!!!");
                     return;
+                }
+            }
+            else
+            {
+                if (!string.IsNullOrWhiteSpace(str) && str != this.OldValue)
+                {
+                    if (!MyUtility.Check.Seek(sqlcmd, listSqlPar))
+                    {
+                        this.Text = string.Empty;
+                        e.Cancel = true;
+                        MyUtility.Msg.WarningBox(string.Format("< Factory : {0} > not found!!!", str));
+                        return;
+                    }
                 }
             }
         }

@@ -110,7 +110,7 @@ SELECT [ID] = a.ID
   	  ,iif((SELECT S.Abb FROM Production.dbo.LocalSupp S  WHERE S.ID = A.ForWarder1) is null,'',LEFT((SELECT S.Abb FROM Production.dbo.LocalSupp S  WHERE S.ID = A.ForWarder1),12) ) AS ForWard1N
 	  ,iif((SELECT S.Abb FROM Production.dbo.LocalSupp S  WHERE S.ID = A.ForWarder2) is null,'',LEFT((SELECT S.Abb FROM Production.dbo.LocalSupp S  WHERE S.ID = A.ForWarder2),12) ) AS ForWard2N
 	  , [VoucherDate] = va.VoucherDate
-	  , [VoucherID] = va.VoucherID
+	  , [VoucherID] = ISNULL(va.VoucherID,'')
 	  ,[APPExchageRate] = A.ExchangeRate
 	  ,[APPAmtUSD] = A.ActAmt
       ,[SCIICRNo2]

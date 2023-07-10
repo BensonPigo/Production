@@ -12,6 +12,7 @@ declare @SqlCmd2 nvarchar(max) ='';
 declare @SqlCmd3 nvarchar(max) ='';
 declare @SqlCmd4 nvarchar(max) ='';
 declare @SqlCmd5 nvarchar(max) ='';
+declare @SqlCmd6 nvarchar(max) ='';
 
 declare @SqlFinal1 nvarchar(max) = ''
 declare @SqlFinal2 nvarchar(max) = ''
@@ -222,6 +223,7 @@ outer apply(select Description from ['+@current_PMS_ServerName+'].Production.dbo
 outer apply(select description from ['+@current_PMS_ServerName+'].Production.dbo.cfaarea a WITH(NOLOCK) where a.id=b.CFAAreaID) as ar
 where a.Status = ''Confirmed'' and a.cDate >= '''+@sDate+'''
 '
+
 set @SqlCmd4 = '
 --PMS/QA/R32
 
@@ -278,11 +280,23 @@ SELECT c.[ID]
       ,c.[EditDate]
       ,c.[IsCombinePO]
 	  ,c.[FirstInspection]
-,co.OrderID,co.SEQ
+	  ,co.OrderID
+	  ,co.SEQ
+	  ,[InspectedSP] = cfos.OrderID
+	  ,[InspectedSeq] = cfos.Seq
 INTO #MainData
 From ['+@current_PMS_ServerName+'].Production.dbo.CFAInspectionRecord  c
 INNER JOIN ['+@current_PMS_ServerName+'].Production.dbo.CFAInspectionRecord_OrderSEQ co ON c.ID = co.ID
+outer apply (
+	select top 1 OrderID, Seq
+	from  ['+@current_PMS_ServerName+'].Production.dbo.CFAInspectionRecord_OrderSEQ cfos 
+	where c.ID = cfos.ID
+	ORDER BY Ukey
+) cfos
 WHERE c.ID IN (SELECT ID FROM #MainData1)
+'
+
+set @SqlCmd5 = '
 
 SELECT 
 	 c.AuditDate
@@ -330,6 +344,8 @@ SELECT
 	,[Action]= cd.Action
 	,[CFAInspectionRecord_Detail_Key]= concat(c.ID,iif(isnull(cd.GarmentDefectCodeID, '''') = '''', concat(row_Number()over(order by c.ID),''''), cd.GarmentDefectCodeID))
 	,c.FirstInspection
+	,c.[InspectedSP]
+	,c.[InspectedSeq] 
 INTO #tmp
 FROm #MainData  c
 LEFT JOIN ['+@current_PMS_ServerName+'].Production.dbo.CFAInspectionRecord_Detail cd ON c.ID = cd.ID
@@ -337,7 +353,7 @@ LEFT JOIN ['+@current_PMS_ServerName+'].Production.dbo.GarmentDefectCode g ON g.
 LEFT JOIN ['+@current_PMS_ServerName+'].Production.dbo.CfaArea ON CfaArea.ID = cd.CFAAreaID
 '
 
-set @SqlCmd5 = '
+set @SqlCmd6 = '
 
 SELECT pd.*
 INTO #PackingList_Detail
@@ -345,39 +361,41 @@ FROM ['+@current_PMS_ServerName+'].Production.dbo.PackingList_Detail pd
 WHERE EXISTS (SELECT 1 FROM #tmp t WHERE pd.OrderID = t.OrderID AND pd.OrderShipmodeSeq = t.SEQ) 
 
 SELECT  
-Action
-,AreaCodeDesc
-,AuditDate
-,BrandID
-,BuyerDelivery
-,CFA
-,ClogReceivedPercentage
-,DefectDescription
-,DefectQty
-,Dest
-,FactoryID
-,Carton
-,[Inspected Ctn] = InspectedCtn.Val
-,[Inspected PoQty]=InspectedPoQty.Val
-,Stage
-,SewingLineID
-,MDivisionid
-,NoOfDefect
-,Qty
-,CustPoNo
-,Remark
-,Result
-,InspectQty
-,Seq
-,Shift
-,OrderID
-,SQR
-,Status
-,StyleID
-,Team
-,[TTL CTN] = TtlCtn.Val
-,VasShas
-,FirstInspection  = IIF(FirstInspection = 1, ''Y'','''')
+	Action
+	,AreaCodeDesc
+	,AuditDate
+	,BrandID
+	,BuyerDelivery
+	,CFA
+	,ClogReceivedPercentage
+	,DefectDescription
+	,DefectQty
+	,Dest
+	,FactoryID
+	,Carton
+	,[Inspected Ctn] = InspectedCtn.Val
+	,[Inspected PoQty]=InspectedPoQty.Val
+	,Stage
+	,SewingLineID
+	,MDivisionid
+	,NoOfDefect
+	,Qty
+	,CustPoNo
+	,Remark
+	,Result
+	,InspectQty
+	,Seq
+	,Shift
+	,OrderID
+	,SQR
+	,Status
+	,StyleID
+	,Team
+	,[TTL CTN] = TtlCtn.Val
+	,VasShas
+	,FirstInspection  = IIF(FirstInspection = 1, ''Y'','''')
+	,t.[InspectedSP]
+	,t.[InspectedSeq] 
 into #Final_P_CFAInspectionRecord_Detail
 FROM  #tmp t
 OUTER APPLY(
@@ -541,6 +559,8 @@ INSERT INTO [dbo].[P_CFAInspectionRecord_Detail]
            ,[TtlCTN]
            ,[VasShas]
 		   ,[1st_Inspection]
+		   ,[InspectedSP]
+		   ,[InspectedSeq] 
 		   )
 select * from #Final_P_CFAInspectionRecord_Detail
 '
@@ -576,7 +596,7 @@ from BITableInfo b
 where b.id = ''P_CFAInspectionRecord_Detail'' 
 '
 
-SET @SqlCmd_Combin = @SqlCmd1 + @SqlCmd2 + @SqlCmd3 + @SqlCmd4 + @SqlCmd5 + @SqlFinal1 + @SqlFinal2 + @SqlFinal
+SET @SqlCmd_Combin = @SqlCmd1 + @SqlCmd2 + @SqlCmd3 + @SqlCmd4 + @SqlCmd5 + @SqlCmd6 + @SqlFinal1 + @SqlFinal2 + @SqlFinal
 /*
 print @SqlCmd1
 print @SqlCmd2

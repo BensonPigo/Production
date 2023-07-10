@@ -23,6 +23,9 @@ namespace Sci.Production.Quality
         private ListControlBindingSource bindShadeboneMain = new ListControlBindingSource();
         private ListControlBindingSource bindShadeboneDetail = new ListControlBindingSource();
         public bool existsData = true;
+        private DataTable dtShadebondDetail;
+        private DataTable dtShadebondMain;
+        private DataTable dtShadebondStock;
 
         /// <summary>
         /// P01_ShadeBandStock
@@ -104,7 +107,12 @@ select  [Seq] = CONCAT(psd.Seq1, '-', psd.Seq2),
         f.Approve,
         f.nonShadebond,
         f.ID,
-        Fabric.Description
+        Fabric.Description,
+		[ReceivingID] = r.Id,
+		[Seq1] = psd.SEQ1,
+		[Seq2] = psd.SEQ2,
+		psd.StockSeq1,
+        psd.StockSeq2
 into #tmpShadebondMain
 from PO_Supp_Detail psd with (nolock)
 inner join FIR f with (nolock) on f.POID = psd.StockPOID and f.SEQ1 = psd.StockSeq1 and f.SEQ2 = psd.StockSeq2 
@@ -127,12 +135,44 @@ select  fs.ID,
         fs.Inspector,
         p.Name,
         fs.Remark
+into #tmpShadeDetail
 from    FIR_Shadebone fs with (nolock)
 left join Pass1 p with (nolock) on p.ID =  fs.Inspector
 where   fs.ID  in (select ID from #tmpShadebondMain)
 order by fs.Roll, fs.Dyelot
 
-drop table #tmpShadebondMain
+select * from #tmpShadeDetail
+
+select distinct 
+m.id,
+d.Roll,
+d.Dyelot,
+d.TicketYds,
+d.Scale,
+d.Result,
+d.Tone,
+d.Inspdate,
+d.Inspector,
+d.Name,
+d.Remark,
+rd.StockType
+from #tmpShadebondMain m
+inner join #tmpShadeDetail d on m.id= d.ID
+inner join FtyInventory rd on  rd.PoId = m.POID and m.Seq1 = rd.Seq1 and rd.Seq2 = m.seq2 and rd.Roll = d.Roll and rd.Dyelot = d.Dyelot
+where
+EXISTS (
+    SELECT *
+    FROM FtyInventory fi
+    WHERE fi.POID = m.POID
+        AND fi.Seq1 = m.seq1
+        AND fi.Seq2 = m.Seq2
+        and fi.StockType <> 'O'
+        AND fi.Roll = d.Roll
+        AND fi.Dyelot = d.Dyelot
+        AND not (inqty = 0 and outqty = 0 and adjustqty = 0 and returnQty = 0)
+) 
+
+drop table #tmpShadebondMain,#tmpShadeDetail
 ";
 
             DataTable[] dtResults;
@@ -149,11 +189,12 @@ drop table #tmpShadebondMain
                 return false;
             }
 
-            DataTable dtShadebondMain = dtResults[0];
-            DataTable dtShadebondDetail = dtResults[1];
+            this.dtShadebondMain = dtResults[0];
+            this.dtShadebondDetail = dtResults[1];
+            this.dtShadebondStock = dtResults[2];
 
-            this.bindShadeboneMain.DataSource = dtShadebondMain;
-            this.bindShadeboneDetail.DataSource = dtShadebondDetail;
+            this.bindShadeboneMain.DataSource = this.dtShadebondMain;
+            this.bindShadeboneDetail.DataSource = this.dtShadebondDetail;
             return true;
         }
 
@@ -164,8 +205,12 @@ drop table #tmpShadebondMain
                 return;
             }
 
+            this.ckStock.Checked = false;
+            this.Stock();
+
             this.bindShadeboneMain.Filter = $"Seq = '{this.comboSeqFilter.Text}'";
             this.bindShadeboneDetail.Filter = $" ID = '{((DataRowView)this.bindShadeboneMain.Current)["ID"]}'";
+
             var filterResult = this.bindShadeboneDetail.List.Cast<DataRowView>();
 
             this.comboDyelotFilter.Items.Clear();
@@ -208,6 +253,23 @@ drop table #tmpShadebondMain
         private void BtnClose_Click(object sender, EventArgs e)
         {
             this.Close();
+        }
+
+        private void Stock()
+        {
+            if (this.ckStock.Checked)
+            {
+                this.bindShadeboneDetail.DataSource = this.dtShadebondStock;
+            }
+            else
+            {
+                this.bindShadeboneDetail.DataSource = this.dtShadebondDetail;
+            }
+        }
+
+        private void CkStock_Click(object sender, EventArgs e)
+        {
+            this.Stock();
         }
     }
 }
