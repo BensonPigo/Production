@@ -300,7 +300,6 @@ order by QU.localsuppid ",
             .Text("POID", header: "Mother SP", width: Widths.AnsiChars(13), settings: ts1, iseditingreadonly: true)
             .Text("id", header: "SP#", width: Widths.AnsiChars(13), settings: ts1, iseditingreadonly: true)
             .Text("article", header: "Article", width: Widths.AnsiChars(8), iseditingreadonly: true)
-            .Numeric("totalqty", header: "M Qty", width: Widths.AnsiChars(8), integer_places: 8, decimal_places: 3, iseditingreadonly: true)
             .Numeric("balance", header: "Bal. M", width: Widths.AnsiChars(8), integer_places: 8, decimal_places: 3, iseditingreadonly: true)
             .ComboBox("inhouseosp", header: "OSP/Inhouse").Get(out col_inhouseosp)
             .Text("localSuppid", header: "Supp Id", width: Widths.AnsiChars(6), settings: ts)
@@ -311,12 +310,9 @@ order by QU.localsuppid ",
             .Date("sewoffline", header: "Sew Offline" + Environment.NewLine + "Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Date("ArtworkInLine", header: "Inline", width: Widths.AnsiChars(10))
             .Date("ArtworkOffLine", header: "Offline", width: Widths.AnsiChars(10))
-            .Numeric("Stdq", header: "Std. Qty", width: Widths.AnsiChars(8), integer_places: 8, iseditingreadonly: true)
             .Numeric("batchno", header: "Bat.", width: Widths.AnsiChars(3), integer_places: 3, decimal_places: 1, iseditingreadonly: true)
             .Numeric("qty", header: "Stitches", width: Widths.AnsiChars(3), integer_places: 8, iseditingreadonly: true)
-            .Numeric("alloqty", header: "AlloQty", width: Widths.AnsiChars(8), integer_places: 8, iseditingreadonly: true)
             .Numeric("ttlStitch", header: "TTL. Stitches", width: Widths.AnsiChars(8), integer_places: 8, iseditingreadonly: true)
-            .Numeric("target", header: "Target Qty", width: Widths.AnsiChars(8), integer_places: 8, decimal_places: 1, iseditingreadonly: true)
             .Numeric("OrderQty", header: "Order Qty", width: Widths.AnsiChars(8), integer_places: 8, iseditingreadonly: true)
             .Text("msg", header: "Error Message", width: Widths.AnsiChars(20), settings: ts1, iseditingreadonly: true)
             ;
@@ -331,7 +327,6 @@ order by QU.localsuppid ",
 
             this.Helper.Controls.Grid.Generator(this.gridSupplier)
             .Text("Supplier", header: "Supplier", width: Widths.AnsiChars(6))
-            .Numeric("totalqty", header: "M Qty", width: Widths.AnsiChars(8), integer_places: 8, decimal_places: 3, iseditingreadonly: true)
             .Numeric("balance", header: "Balance M", width: Widths.AnsiChars(8), integer_places: 8, decimal_places: 3, iseditingreadonly: true)
             .Numeric("Totaltms", header: "Total Tms", width: Widths.AnsiChars(8), integer_places: 8, iseditingreadonly: true);
         }
@@ -465,8 +460,8 @@ SELECT  0 as selected
                     where id = b.LocalSuppID) 
         , b.ArtworkInLine
         , b.ArtworkOffLine
-        , sewinline = convert (date, c.Inline)
-        , SewOffLine = convert (date, c.offline)
+        , sewinline = convert (date, a.SewInLine)
+        , SewOffLine = convert (date, a.SewOffLine)
         , a.StyleUkey
         , qaqty = isnull ((select sum(tmp3.qaqty)  
                            from (
@@ -487,20 +482,10 @@ SELECT  0 as selected
         , stdq = 0
         , err = 0
         , msg = ''
-        , C.alloqty
         , batchno = (select batchno 
                      from embbatch WITH (NOLOCK) 
                      where  b.qty >= BeginStitch 
                             and b.qty <= EndStitch) 
-        , totalqty = round (alloqty 
-                            / ( {0} 
-                                * {1} 
-                                * (select batchno 
-                                   from embbatch WITH (NOLOCK) 
-                                   where    b.qty >= BeginStitch 
-                                            and b.qty <= EndStitch)
-                               )
-                            * 100 / {2}, 3)
         , balance = round (IIF (b.tms = 0, 0
                                          , ( a.qty 
                                              - (isnull ((select sum(tmp3.qaqty)  
@@ -523,9 +508,8 @@ SELECT  0 as selected
                            , 3)
         , b.artworktypeid 
         , totaltms = a.qty * b.tms
-FROM (Orders a WITH (NOLOCK) 
-inner join  Order_tmscost b WITH (NOLOCK) on a.ID = b.ID) 
-inner join SewingSchedule c WITH (NOLOCK) on a.id = c.OrderID
+FROM Orders a WITH (NOLOCK) 
+inner join Order_tmscost b WITH (NOLOCK) on a.ID = b.ID
 inner join dbo.Factory WITH (NOLOCK) on factory.id = a.factoryid
 where   a.Finished = 0 
         and a.Category !='M' and a.Category !='T' and a.Category != 'A' and factory.IsProduceFty = 1
@@ -571,12 +555,12 @@ where   a.Finished = 0
 
             if (!string.IsNullOrWhiteSpace(sewinline_b))
             {
-                sqlcmd += string.Format(@" and c.OffLine >= '{0}'", Convert.ToDateTime(sewinline_b).ToString("yyyy/MM/dd"));
+                sqlcmd += string.Format(@" and a.SewOffLine >= '{0}'", Convert.ToDateTime(sewinline_b).ToString("yyyy/MM/dd"));
             }
 
             if (!string.IsNullOrWhiteSpace(sewinline_e))
             {
-                sqlcmd += string.Format(@" and c.InLine <= '{0}'", Convert.ToDateTime(sewinline_e).ToString("yyyy/MM/dd"));
+                sqlcmd += string.Format(@" and a.SewInLine <= '{0}'", Convert.ToDateTime(sewinline_e).ToString("yyyy/MM/dd"));
             }
 
             if (!string.IsNullOrWhiteSpace(inline_b))
@@ -591,8 +575,6 @@ where   a.Finished = 0
 
             sqlcmd += string.Format(@" ORDER BY a.FactoryID, a.StyleID, a.SeasonID,a.ID ");
             this.ShowWaitMessage("Querying....Please wait....");
-            int wkdays = 0;
-            DateTime inline;
             DualResult result;
             if (result = DBProxy.Current.Select(null, sqlcmd, out this.dtData))
             {
@@ -604,25 +586,11 @@ where   a.Finished = 0
 
                 this.listControlBindingSource1.DataSource = this.dtData;
                 this.dtData.Columns.Add("ttlStitch", typeof(decimal));
-                this.dtData.Columns["ttlStitch"].Expression = "alloqty * qty";
-                this.dtData.Columns.Add("target", typeof(decimal));
-                this.dtData.Columns["target"].Expression = this.numHeads.Text + " * " + this.numWorkHours.Text + " * batchno";
+                this.dtData.Columns["ttlStitch"].Expression = "OrderQty * Qty";
                 this.Grid2_generate();
             }
 
-            foreach (DataRow item in this.dtData.Rows)
-            {
-                if (!MyUtility.Check.Empty(item["sewinline"]))
-                {
-                    inline = PublicPrg.Prgs.GetWorkDate(item["factoryid"].ToString(), -5, (DateTime)item["sewinline"]);
-                    decimal stdq = PublicPrg.Prgs.GetStdQ(item["id"].ToString());
-                    item["stdq"] = stdq;
-                    wkdays = (stdq != '0') ? ' ' : int.Parse(Math.Ceiling((decimal.Parse(item["OrderQty"].ToString()) - decimal.Parse(item["qaqty"].ToString())) / stdq).ToString());
-                }
-
-                this.HideWaitMessage();
-            }
-
+            this.HideWaitMessage();
             this.gridFactoryID.AutoResizeColumns();
             this.gridSupplier.AutoResizeColumns();
         }
@@ -795,7 +763,6 @@ where   a.Finished = 0
                        select new
                        {
                            Supplier = grouprows.Key.localsuppid + "-" + grouprows.Key.suppnm,
-                           TotalQty = grouprows.Sum(r => r.Field<decimal?>("totalqty").GetValueOrDefault(0)),
                            Balance = grouprows.Sum(r => r.Field<decimal?>("balance").GetValueOrDefault(0)),
                            Totaltms = grouprows.Sum(r => r.Field<decimal?>("totaltms").GetValueOrDefault(0)),
                        }).ToList();
@@ -805,7 +772,6 @@ where   a.Finished = 0
                        select new
                        {
                            Supplier = grouprows.Key.localsuppid,
-                           TotalQty = grouprows.Sum(r => r.Field<decimal?>("totalqty").GetValueOrDefault(0)),
                            Balance = grouprows.Sum(r => r.Field<decimal?>("balance").GetValueOrDefault(0)),
                            Totaltms = grouprows.Sum(r => r.Field<decimal?>("totaltms").GetValueOrDefault(0)),
                        }).ToList();
