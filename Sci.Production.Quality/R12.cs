@@ -284,7 +284,7 @@ select
 
 	{4}
 
-    [Inspection_Percent] = CONCAT(convert(decimal(20,2),ROUND(isnull(fp.ttlActualYds, 0) / f.ArriveQty * 100.0, 2)), '%'),
+    {9}
 	{1}Inspector = Concat (f.{1}Inspector, '-', p1.Name),
 
 	{5}f.{1}Date,
@@ -303,7 +303,7 @@ group by f.ToPOID,f.ToSeq,f.FromFty,f.ToFty,f.TransferID,f.FromPOID,f.FromSeq,f.
 	f.Refno,f.ColorID,f.IssueDate,f.WeaveTypeID,f.ctRoll,f.ctDyelot,f.Approve,f.ApproveDate,p1.Name,f.Category,f.ArriveWHData,f.CuttingData,
     f.OrderTypeID,f.[Invno],f.SeasonID,
 	f.Non{1},f.{1},f.{1}Inspector,f.{1}Date
-	{7},f.ArriveQty,fp.ttlActualYds
+	{7},f.ArriveQty {10}
 
 ";
 
@@ -435,7 +435,9 @@ left join {inspectionTypeTable} i with (nolock) on i.ID = f.ID and i.Roll = b.Ro
             string column2 = string.Empty;
             string column3 = string.Empty;
             string column4 = string.Empty;
+            string column5 = string.Empty;
             string groupColumn = string.Empty;
+            string groupColumn2 = string.Empty;
             string where = this.AddInspectionWhere(string.Empty, inspectionType);
             if (inspectionType == "Physical")
             {
@@ -455,7 +457,9 @@ outer apply(select ttlActualYds = sum(ActualYds) from FIR_Physical fp where fp.i
 
 ";
                 column1 = "ct3.Dyelot,[NotInspectedDyelot]= f.ctDyelot - ct3.Dyelot,";
+                column5 = "[Inspection_Percent] = CONCAT(convert(decimal(20,2),ROUND(isnull(fp.ttlActualYds, 0) / f.ArriveQty * 100.0, 2)), '%'),";
                 groupColumn = ",ct3.Dyelot,f.ctDyelot";
+                groupColumn2 = ",fp.ttlActualYds";
             }
 
             if (this.radioWKSeq.Checked)
@@ -560,9 +564,9 @@ left join pass1 p3 with (nolock) on p3.id = i.Inspector
                 }
             }
 
-            return string.Format(this.B2A_select, "R", inspectionType, string.Format(columnSource, "Receiving"), column1, column2, column3, column4, groupColumn, where) +
+            return string.Format(this.B2A_select, "R", inspectionType, string.Format(columnSource, "Receiving"), column1, column2, column3, column4, groupColumn, where, column5, groupColumn2) +
                 "\r\nunion all\r\n" +
-                string.Format(this.B2A_select, "T", inspectionType, string.Format(columnSource, "TransferIn"), column1, column2, column3, column4, groupColumn, where);
+                string.Format(this.B2A_select, "T", inspectionType, string.Format(columnSource, "TransferIn"), column1, column2, column3, column4, groupColumn, where, column5, groupColumn2);
         }
 
         /// <inheritdoc/>
