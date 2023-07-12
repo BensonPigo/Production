@@ -438,7 +438,7 @@ OUTER APPLY (
     AND dbo.ConditionIncludeNull(b.StyleLocation   , t.BomTypeStyleLocation   ) = 1
     AND dbo.ConditionIncludeNull(b.ZipperInsert    , t.BomTypeZipperInsert    ) = 1
 ) boa
-order by z.seq1,z.seq2,z.Seq
+order by b.POID, b.SEQ1, b.SEQ2
 ", this.sbSizecode.ToString().Substring(0, this.sbSizecode.ToString().Length - 1),
                 this.issueid,
                 this.orderid,
