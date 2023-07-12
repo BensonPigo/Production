@@ -486,6 +486,15 @@ SELECT  0 as selected
                      from embbatch WITH (NOLOCK) 
                      where  b.qty >= BeginStitch 
                             and b.qty <= EndStitch) 
+        , totalqty = round (a.Qty 
+                            / ( {0} 
+                                * {1} 
+                                * (select batchno 
+                                   from embbatch WITH (NOLOCK) 
+                                   where    b.qty >= BeginStitch 
+                                            and b.qty <= EndStitch)
+                               )
+                            * 100 / {2}, 3)
         , balance = round (IIF (b.tms = 0, 0
                                          , ( a.qty 
                                              - (isnull ((select sum(tmp3.qaqty)  
