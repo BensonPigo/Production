@@ -8,6 +8,7 @@ using System.Drawing;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Web;
 using System.Windows.Forms;
 using Excel = Microsoft.Office.Interop.Excel;
 
@@ -438,10 +439,18 @@ left join {inspectionTypeTable} i with (nolock) on i.ID = f.ID and i.Roll = b.Ro
             string column5 = string.Empty;
             string groupColumn = string.Empty;
             string groupColumn2 = string.Empty;
+            string joinStr1 = string.Empty;
             string where = this.AddInspectionWhere(string.Empty, inspectionType);
             if (inspectionType == "Physical")
             {
-                columnSource = @"
+                if (this.radioWKSeq.Checked)
+                {
+                    column5 = "[Inspection_Percent] = CONCAT(convert(decimal(20,2),ROUND(isnull(fp.ttlActualYds, 0) / f.ArriveQty * 100.0, 2)), '%'),";
+                    groupColumn2 = ",fp.ttlActualYds";
+                    joinStr1 = "outer apply(select ttlActualYds = sum(ActualYds) from FIR_Physical fp where fp.id = f.FirID ) fp";
+                }
+
+                columnSource = $@"
 outer apply(
     select Dyelot = count(1)
     from(
@@ -453,13 +462,11 @@ outer apply(
 		and std.FromPOID = f.FromPOID and std.FromSeq1 = f.FromSeq1 and std.FromSeq2 = f.FromSeq2 
     )x
 )ct3
-outer apply(select ttlActualYds = sum(ActualYds) from FIR_Physical fp where fp.id = f.FirID ) fp
+{joinStr1}
 
 ";
                 column1 = "ct3.Dyelot,[NotInspectedDyelot]= f.ctDyelot - ct3.Dyelot,";
-                column5 = "[Inspection_Percent] = CONCAT(convert(decimal(20,2),ROUND(isnull(fp.ttlActualYds, 0) / f.ArriveQty * 100.0, 2)), '%'),";
                 groupColumn = ",ct3.Dyelot,f.ctDyelot";
-                groupColumn2 = ",fp.ttlActualYds";
             }
 
             if (this.radioWKSeq.Checked)
@@ -653,6 +660,7 @@ outer apply(select ttlActualYds = sum(ActualYds) from FIR_Physical fp where fp.i
 
                     string colPhysicalWKSeqOnly = this.radioWKSeq.Checked ? "f.TotalInspYds," : string.Empty;
                     string colPhysicalDateWKSeqOnly = this.radioWKSeq.Checked ? "f.PhysicalDate," : string.Empty;
+                    string colPhysicalDateWKSeqOnly2 = this.radioWKSeq.Checked ? "[Inspection_Percent] = CONCAT(convert(decimal(20,2),ROUND(isnull(fp.ttlActualYds, 0) / f.ArriveQty * 100.0, 2)), '%')," : string.Empty;
 
                     string colPhysical = $@"
 Dyelot2=ct3.Dyelot,
@@ -660,7 +668,7 @@ Dyelot2=ct3.Dyelot,
 [NonPhysical] = iif(f.NonPhysical = 1, 'Y', ''),
 f.Physical,
 {colPhysicalWKSeqOnly}
-[Inspection_Percent] = CONCAT(convert(decimal(20,2),ROUND(isnull(fp.ttlActualYds, 0) / f.ArriveQty * 100.0, 2)), '%'),
+{colPhysicalDateWKSeqOnly2}
 [PhysicalInspector] = Concat(p1.ID, '-', p1.Name),
 {colPhysicalDateWKSeqOnly}
 [Approver] = Concat(p2.ID, '-', p2.Name),
