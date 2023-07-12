@@ -1055,7 +1055,115 @@ from #tmp
 
         private void BtnTransferToP06_Click(object sender, EventArgs e)
         {
+            string sqlInsertLineMappingBalancing = $@"
+INSERT INTO LineMappingBalancing (
+		AutomatedLineMappingID
+	   ,StyleUKey
+	   ,Phase
+	   ,Version
+	   ,FactoryID
+	   ,StyleID
+	   ,SeasonID
+	   ,BrandID
+	   ,ComboType
+	   ,StyleCPU
+	   ,SewerManpower
+	   ,PackerManpower
+	   ,PresserManpower
+	   ,TotalGSDTime
+	   ,HighestGSDTime
+	   ,TimeStudyID
+	   ,TimeStudyStatus
+	   ,TimeStudyVersion
+	   ,WorkHour
+	   ,Status
+	   ,AddName
+	   ,AddDate)
+SELECT
+		alm.ID
+	   ,alm.StyleUKey
+	   ,'Final'
+	   ,0
+	   ,alm.FactoryID
+	   ,alm.StyleID
+	   ,alm.SeasonID
+	   ,alm.BrandID
+	   ,alm.ComboType
+	   ,alm.StyleCPU
+	   ,alm.SewerManpower
+	   ,alm.PackerManpower
+	   ,alm.PresserManpower
+	   ,alm.TotalGSDTime
+	   ,alm.HighestGSDTime
+	   ,alm.TimeStudyID
+	   ,alm.TimeStudyStatus
+	   ,alm.TimeStudyVersion
+	   ,alm.WorkHour
+	   ,'New'
+	   ,'{Env.User.UserID}'
+	   ,GETDATE()
+FROM AutomatedLineMapping alm
+WHERE alm.ID = '{this.CurrentMaintain["ID"]}';
 
+DECLARE @ID INT = @@identity
+
+INSERT INTO LineMappingBalancing_Detail (
+	 ID
+	,No
+	,Seq
+	,Location
+	,PPA
+	,MachineTypeID
+	,MasterPlusGroup
+	,OperationID
+	,Annotation
+	,Attachment
+	,SewingMachineAttachmentID
+	,Template
+	,GSD
+	,SewerDiffPercentage
+	,DivSewer
+	,OriSewer
+	,TimeStudyDetailUkey
+	,ThreadComboID
+	,Notice
+	,IsNonSewingLine
+)
+SELECT
+   @ID
+   ,almd.No
+   ,almd.Seq
+   ,almd.Location
+   ,almd.PPA
+   ,almd.MachineTypeID
+   ,almd.MasterPlusGroup
+   ,almd.OperationID
+   ,almd.Annotation
+   ,almd.Attachment
+   ,almd.SewingMachineAttachmentID
+   ,almd.Template
+   ,almd.GSD
+   ,almd.SewerDiffPercentage
+   ,almd.DivSewer
+   ,almd.OriSewer
+   ,almd.TimeStudyDetailUkey
+   ,almd.ThreadComboID
+   ,''
+   ,almd.IsNonSewingLine
+FROM AutomatedLineMapping_Detail almd
+WHERE almd.ID = '{this.CurrentMaintain["ID"]}'
+
+";
+
+            DualResult result = DBProxy.Current.Execute(null, sqlInsertLineMappingBalancing);
+
+            if (!result)
+            {
+                this.ShowErr(result);
+                return;
+            }
+
+            //DialogResult dialogResult = MyUtility.Msg.QuestionBox("Line Mapping transfer is successful, do you want to open IE_P06 directly?");
         }
     }
 }
