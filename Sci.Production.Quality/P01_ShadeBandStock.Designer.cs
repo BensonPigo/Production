@@ -72,6 +72,7 @@
             this.gridShadeboneDetail = new Sci.Win.UI.Grid();
             this.btnClose = new Sci.Win.UI.Button();
             this.checkNonShadebond = new Sci.Win.UI.CheckBox();
+            this.ckStock = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridShadeboneDetail)).BeginInit();
             this.SuspendLayout();
             // 
@@ -413,6 +414,7 @@
             // 
             // txtApprover
             // 
+            this.txtApprover.AllowSelectResign = false;
             this.txtApprover.DisplayBox1Binding = "";
             this.txtApprover.Location = new System.Drawing.Point(97, 154);
             this.txtApprover.Name = "txtApprover";
@@ -483,11 +485,22 @@
             this.checkNonShadebond.Text = "Non Shade Band";
             this.checkNonShadebond.UseVisualStyleBackColor = true;
             // 
+            // ckStock
+            // 
+            this.ckStock.AutoSize = true;
+            this.ckStock.Location = new System.Drawing.Point(224, 14);
+            this.ckStock.Name = "ckStock";
+            this.ckStock.Size = new System.Drawing.Size(15, 14);
+            this.ckStock.TabIndex = 47;
+            this.ckStock.UseVisualStyleBackColor = true;
+            this.ckStock.Click += new System.EventHandler(this.CkStock_Click);
+            // 
             // P01_ShadeBandStock
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1008, 729);
+            this.Controls.Add(this.ckStock);
             this.Controls.Add(this.checkNonShadebond);
             this.Controls.Add(this.btnClose);
             this.Controls.Add(this.gridShadeboneDetail);
@@ -579,6 +592,7 @@
             this.Controls.SetChildIndex(this.gridShadeboneDetail, 0);
             this.Controls.SetChildIndex(this.btnClose, 0);
             this.Controls.SetChildIndex(this.checkNonShadebond, 0);
+            this.Controls.SetChildIndex(this.ckStock, 0);
             ((System.ComponentModel.ISupportInitialize)(this.gridShadeboneDetail)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -631,5 +645,6 @@
         private Win.UI.Grid gridShadeboneDetail;
         private Win.UI.Button btnClose;
         private Win.UI.CheckBox checkNonShadebond;
+        private System.Windows.Forms.CheckBox ckStock;
     }
 }

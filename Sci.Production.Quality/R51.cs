@@ -92,7 +92,7 @@ SRD.DefectQty,";
             {
                 formatJoin = @" left join SubProInsRecord_Defect SRD on SR.Ukey = SRD.SubProInsRecordUkey
                                 left join SubProInsRecord_Operator sro with (nolock) on sro.SubProInsRecordUkey = SR.Ukey
-                                left join SubProOperator spo with (nolock) on spo.EmployeeID = sro.SubProOperatorEmployeeID and spo.SubprocessID = SR.SubProcessID
+                                left join SubProOperator spo with (nolock) on spo.EmployeeID = sro.SubProOperatorEmployeeID
                             " + s_d;
                 formatCol = @"  SRD.DefectCode,
                                 SRD.DefectQty,
