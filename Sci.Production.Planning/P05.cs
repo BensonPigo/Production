@@ -300,6 +300,7 @@ order by QU.localsuppid ",
             .Text("POID", header: "Mother SP", width: Widths.AnsiChars(13), settings: ts1, iseditingreadonly: true)
             .Text("id", header: "SP#", width: Widths.AnsiChars(13), settings: ts1, iseditingreadonly: true)
             .Text("article", header: "Article", width: Widths.AnsiChars(8), iseditingreadonly: true)
+            .Numeric("totalqty", header: "M Qty", width: Widths.AnsiChars(8), integer_places: 8, decimal_places: 3, iseditingreadonly: true)
             .Numeric("balance", header: "Bal. M", width: Widths.AnsiChars(8), integer_places: 8, decimal_places: 3, iseditingreadonly: true)
             .ComboBox("inhouseosp", header: "OSP/Inhouse").Get(out col_inhouseosp)
             .Text("localSuppid", header: "Supp Id", width: Widths.AnsiChars(6), settings: ts)
