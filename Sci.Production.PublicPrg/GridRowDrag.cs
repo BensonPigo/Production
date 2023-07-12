@@ -26,7 +26,16 @@ namespace Sci.Production.Prg
         {
             get
             {
-                return this.mainGrid.DataSource.GetType() == typeof(ListControlBindingSource) ? (DataTable)((ListControlBindingSource)this.mainGrid.DataSource).DataSource : (DataTable)this.mainGrid.DataSource;
+                if (this.mainGrid.DataSource.GetType() == typeof(ListControlBindingSource))
+                {
+                    object bsDataSource = ((ListControlBindingSource)this.mainGrid.DataSource).DataSource;
+
+                    return (DataTable)bsDataSource;
+                }
+                else
+                {
+                    return (DataTable)this.mainGrid.DataSource;
+                }
             }
         }
 

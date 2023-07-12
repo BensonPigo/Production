@@ -4,6 +4,7 @@ using Microsoft.SqlServer.Management.Smo;
 using Microsoft.SqlServer.Management.Smo.Agent;
 using Sci.Data;
 using Sci.Production.Class;
+using Sci.Production.Class.Command;
 using Sci.Production.Prg;
 using Sci.Win.Tools;
 using Sci.Win.UI;
@@ -132,6 +133,11 @@ order by ad.SewerManpower, ad.No, ad.Seq
             {
                 e.CellStyle.BackColor = MyUtility.Convert.GetInt(dr["TimeStudyDetailUkeyCnt"]) > 1 ? Color.FromArgb(255, 255, 153) : this.detailgrid.DefaultCellStyle.BackColor;
             }
+
+            if (this.detailgrid.Columns[e.ColumnIndex].DataPropertyName == "Selected")
+            {
+                e.CellStyle.BackColor = this.detailgrid.Rows[e.RowIndex].Cells[e.ColumnIndex].ReadOnly ? Color.LightGray : this.detailgrid.DefaultCellStyle.BackColor;
+            }
         }
 
         /// <inheritdoc/>
@@ -246,6 +252,7 @@ order by ad.Seq";
             this.detailgrid.ColumnHeadersHeight = this.gridLineMappingRight.ColumnHeadersHeight;
             this.gridCentralizedPPALeft.ColumnHeadersHeight = this.gridCentralizedPPARight.ColumnHeadersHeight;
             this.btnEditOperation.Enabled = this.tabDetail.SelectedIndex == 0 && this.EditMode;
+            this.btnTransferToP06.Enabled = this.CurrentMaintain["Status"].ToString() == "Confirmed";
         }
 
         /// <inheritdoc/>
@@ -262,6 +269,29 @@ order by ad.Seq";
             this.FilterGrid();
             this.ShowLBRChart(this.CurrentMaintain);
             base.ClickNewAfter();
+            this.txtfactory.ReadOnly = true;
+            this.comboPhase.ReadOnly = true;
+
+        }
+
+        /// <inheritdoc/>
+        protected override bool ClickEditBefore()
+        {
+            if (this.CurrentMaintain["Status"].ToString() == "Confirmed")
+            {
+                MyUtility.Msg.WarningBox("Confirmed can not edit");
+                return false;
+            }
+
+            return base.ClickEditBefore();
+        }
+
+        /// <inheritdoc/>
+        protected override void ClickEditAfter()
+        {
+            base.ClickEditAfter();
+            this.txtfactory.ReadOnly = true;
+            this.comboPhase.ReadOnly = true;
         }
 
         /// <inheritdoc/>
@@ -348,7 +378,7 @@ left join Operation op with (nolock) on op.ID = ad.OperationID
 where ad.ID = '{this.CurrentMaintain["ID"]}'
 order by ad.SewerManpower, ad.Seq
 ";
-            result = DBProxy.Current.Select(null, string.Format(this.sqlGetAutomatedLineMapping_DetailTemp, $" ad,ID = '{this.CurrentMaintain["ID"]}'"), out this.dtAutomatedLineMapping_DetailTemp);
+            result = DBProxy.Current.Select(null, string.Format(this.sqlGetAutomatedLineMapping_DetailTemp, $" ad.ID = '{this.CurrentMaintain["ID"]}'"), out this.dtAutomatedLineMapping_DetailTemp);
             if (!result)
             {
                 this.ShowErr(result);
@@ -365,7 +395,7 @@ order by ad.SewerManpower, ad.Seq
 SELECT ALMCS.Condition1 
 FROM AutomatedLineMappingConditionSetting ALMCS
 WHERE ALMCS.[FactoryID] = '{this.CurrentMaintain["FactoryID"]}'
-AND ALMCS.[Function] = 'IE_P05'
+AND ALMCS.Functions = 'IE_P05'
 AND ALMCS.Verify = 'LBRByGSD'
 AND ALMCS.Junk = 0
 ";
@@ -427,7 +457,7 @@ where   ID = '{this.CurrentMaintain["ID"]}'
             int seqLineMapping = 1;
             int seqCentralizedPPA = 1;
 
-            foreach (var dr in this.DetailDatas)
+            foreach (var dr in this.DetailDatas.OrderBy(s => s["No"]))
             {
                 if (dr["PPA"].ToString() != "C" && MyUtility.Convert.GetBool(dr["IsNonSewingLine"]) == false)
                 {
@@ -444,6 +474,37 @@ where   ID = '{this.CurrentMaintain["ID"]}'
             return base.ClickSaveBefore();
         }
 
+        /// <summary>
+        /// 把同No下其他項目也勾起來，並將其他有相同TimeStudyDetailUkey的No也勾起來
+        /// </summary>
+        /// <param name="no">no</param>
+        /// <param name="isChecked">isChecked</param>
+        private void SelectedSameTimeStudyDetailUkey(string no, bool isChecked)
+        {
+            var needChecked = this.DetailDatas.Where(row => row["No"].ToString() == no);
+            List<string> listNoSyncSelected = new List<string>();
+
+            foreach (var checkItem in needChecked)
+            {
+                checkItem["Selected"] = isChecked;
+
+                var listNoForSameTimeStudyDetailUkey = this.DetailDatas
+                                .Where(row => row["TimeStudyDetailUkey"].ToString() == checkItem["TimeStudyDetailUkey"].ToString() &&
+                                              row["No"].ToString() != checkItem["No"].ToString() &&
+                                              (bool)row["Selected"] != isChecked)
+                                .Select(s => s["No"].ToString())
+                                .ToList()
+                                .Distinct();
+
+                listNoSyncSelected.AddRange(listNoForSameTimeStudyDetailUkey);
+            }
+
+            foreach (string syncSelectedNo in listNoSyncSelected.Distinct())
+            {
+                this.SelectedSameTimeStudyDetailUkey(syncSelectedNo, isChecked);
+            }
+        }
+
         /// <inheritdoc/>
         protected override void OnDetailGridSetup()
         {
@@ -451,6 +512,52 @@ where   ID = '{this.CurrentMaintain["ID"]}'
 
             TxtMachineGroup.CelltxtMachineGroup colMachineTypeID = TxtMachineGroup.CelltxtMachineGroup.GetGridCell();
             DataGridViewGeneratorTextColumnSettings colThreadComboID = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorCheckBoxColumnSettings colSelected = new DataGridViewGeneratorCheckBoxColumnSettings();
+
+            colSelected.CellValidating += (s, e) =>
+            {
+                if (!this.EditMode)
+                {
+                    return;
+                }
+
+                DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
+                bool isChecked = MyUtility.Convert.GetBool(e.FormattedValue);
+
+                // 第一筆勾選時，將上下各五筆No保留Enable，其餘disable不能勾選
+                if (isChecked && !this.DetailDatas.Any(row => (bool)row["Selected"]))
+                {
+                    var listNo = this.DetailDatas.OrderBy(row => row["No"]).Select(row => row["No"].ToString()).Distinct().ToList();
+                    int targetIndex = listNo.IndexOf(dr["No"].ToString());
+                    int skipCount = Math.Max(targetIndex - 5, 0); // 計算要跳過的元素個數
+                    int takeCount = (targetIndex < 6) ? targetIndex + 6 : 11; // 計算要取出的元素個數
+
+                    var listEnableNo = listNo.Skip(skipCount).Take(takeCount).Where(row => row != dr["No"].ToString());
+
+                    foreach (DataGridViewRow gridRow in this.detailgrid.Rows)
+                    {
+                        if (gridRow.Cells["No"].Value.ToString() == dr["No"].ToString())
+                        {
+                            continue;
+                        }
+
+                        gridRow.Cells["Selected"].ReadOnly = !listEnableNo.Contains(gridRow.Cells["No"].Value.ToString());
+                    }
+                }
+
+                this.SelectedSameTimeStudyDetailUkey(dr["No"].ToString(), isChecked);
+
+                // 如果取消勾選之後，資料中沒有一筆勾選的情況，將每筆資料的Selected read only回復
+                if (!isChecked && !this.DetailDatas.Any(row => (bool)row["Selected"]))
+                {
+                    foreach (DataGridViewRow gridRow in this.detailgrid.Rows)
+                    {
+                        gridRow.Cells["Selected"].ReadOnly = false;
+                    }
+                }
+
+                this.detailgrid.Refresh();
+            };
 
             #region colThreadComboID
             colThreadComboID.EditingMouseDown += (s, e) =>
@@ -536,7 +643,7 @@ where	st.StyleUkey = '{this.CurrentMaintain["StyleUkey"]}' and
 
             this.Helper.Controls.Grid.Generator(this.detailgrid)
                .Text("No", header: "No", width: Widths.AnsiChars(4), iseditingreadonly: true)
-               .CheckBox("Selected", string.Empty, trueValue: true, falseValue: false, iseditable: true)
+               .CheckBox("Selected", string.Empty, trueValue: true, falseValue: false, iseditable: true, settings: colSelected)
                .Text("Location", header: "Location", width: Widths.AnsiChars(13), iseditingreadonly: true)
                .Text("PPADesc", header: "PPA", width: Widths.AnsiChars(13), iseditingreadonly: true)
                .CellMachineType("MachineTypeID", "ST/MC type", this, width: Widths.AnsiChars(10))
@@ -575,6 +682,27 @@ where	st.StyleUkey = '{this.CurrentMaintain["StyleUkey"]}' and
                .Text("No", header: "PPA" + Environment.NewLine + "No.", width: Widths.AnsiChars(10))
                .Text("TotalGSDTime", header: "Total" + Environment.NewLine + "GSD Time", width: Widths.AnsiChars(10))
                .Text("OperatorLoading", header: "Operator" + Environment.NewLine + "Loading (%)", width: Widths.AnsiChars(10));
+        }
+
+        /// <inheritdoc/>
+        protected override DualResult ClickSavePre()
+        {
+            // 因為這支程式在做某些操作時，Rowstate會亂掉，很難控制，所以直接在存檔前將資料庫的舊資料刪掉，再將detail rowstate都設定成Added來更新detail資料
+            // 這樣確保最後存進資料庫的是畫面上的資料
+            foreach (DataRow dr in this.DetailDatas)
+            {
+                dr.AcceptChanges();
+                dr.SetAdded();
+            }
+
+            DualResult result = DBProxy.Current.Execute(null, $"delete AutomatedLineMapping_Detail where id = '{this.CurrentMaintain["ID"]}'");
+
+            if (!result)
+            {
+                return result;
+            }
+
+            return base.ClickSavePre();
         }
 
         /// <inheritdoc/>
@@ -894,6 +1022,7 @@ from #tmp
             if (dialogResult == DialogResult.OK)
             {
                 this.detailgridbs.DataSource = p05_EditOperation.dtAutomatedLineMapping_Detail;
+                this.lineMappingGrids.RefreshSubData(AutoLineMappingGridSyncScroll.SubGridType.LineMapping);
             }
         }
 
@@ -913,6 +1042,20 @@ from #tmp
                 P05_Compare p05_Compare = new P05_Compare(firstDisplaySewermanpower, this.CurrentMaintain, (DataTable)this.detailgridbs.DataSource, this.dtAutomatedLineMapping_DetailTemp, this.dtAutomatedLineMapping_DetailAuto);
                 p05_Compare.ShowDialog();
             }
+        }
+
+        private void BtnH_Click(object sender, EventArgs e)
+        {
+            DataTable dtAutomatedLineMapping_DetailAutoDefault = this.dtAutomatedLineMapping_DetailAuto.AsEnumerable()
+                .Where(s => MyUtility.Convert.GetInt(s["SewerManpower"]) == MyUtility.Convert.GetInt(this.CurrentMaintain["SewerManpower"]))
+                .CopyToDataTable();
+
+            new P05_Default(dtAutomatedLineMapping_DetailAutoDefault).ShowDialog();
+        }
+
+        private void BtnTransferToP06_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

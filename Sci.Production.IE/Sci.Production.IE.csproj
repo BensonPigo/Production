@@ -372,6 +372,12 @@
     <Compile Include="P05_CreateNewLineMapping.Designer.cs">
       <DependentUpon>P05_CreateNewLineMapping.cs</DependentUpon>
     </Compile>
+    <Compile Include="P05_Default.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P05_Default.Designer.cs">
+      <DependentUpon>P05_Default.cs</DependentUpon>
+    </Compile>
     <Compile Include="P05_EditOperation.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -600,6 +606,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="P05_CreateNewLineMapping.resx">
       <DependentUpon>P05_CreateNewLineMapping.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P05_Default.resx">
+      <DependentUpon>P05_Default.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P05_EditOperation.resx">
       <DependentUpon>P05_EditOperation.cs</DependentUpon>

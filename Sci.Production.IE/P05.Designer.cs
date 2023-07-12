@@ -93,6 +93,7 @@
             this.btnNotHitTargetReason = new Sci.Win.UI.Button();
             this.btnTransferToP06 = new Sci.Win.UI.Button();
             this.btnEditOperation = new Sci.Win.UI.Button();
+            this.btnH = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -127,6 +128,7 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.btnH);
             this.masterpanel.Controls.Add(this.btnTransferToP06);
             this.masterpanel.Controls.Add(this.btnNotHitTargetReason);
             this.masterpanel.Controls.Add(this.chartLBR);
@@ -231,6 +233,7 @@
             this.masterpanel.Controls.SetChildIndex(this.btnNotHitTargetReason, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnTransferToP06, 0);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnH, 0);
             // 
             // detailpanel
             // 
@@ -437,10 +440,11 @@
             // displayDescription
             // 
             this.displayDescription.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayDescription.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Description", true));
             this.displayDescription.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.displayDescription.Location = new System.Drawing.Point(95, 154);
             this.displayDescription.Name = "displayDescription";
-            this.displayDescription.Size = new System.Drawing.Size(550, 23);
+            this.displayDescription.Size = new System.Drawing.Size(585, 23);
             this.displayDescription.TabIndex = 31;
             // 
             // txtfactory
@@ -460,9 +464,10 @@
             // 
             // numericStyleCPU
             // 
-            this.numericStyleCPU.BackColor = System.Drawing.Color.White;
+            this.numericStyleCPU.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.numericStyleCPU.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "StyleCPU", true));
-            this.numericStyleCPU.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.numericStyleCPU.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numericStyleCPU.IsSupportEditMode = false;
             this.numericStyleCPU.Location = new System.Drawing.Point(95, 125);
             this.numericStyleCPU.Name = "numericStyleCPU";
             this.numericStyleCPU.NullValue = new decimal(new int[] {
@@ -470,6 +475,7 @@
             0,
             0,
             0});
+            this.numericStyleCPU.ReadOnly = true;
             this.numericStyleCPU.Size = new System.Drawing.Size(140, 23);
             this.numericStyleCPU.TabIndex = 33;
             this.numericStyleCPU.Value = new decimal(new int[] {
@@ -480,9 +486,10 @@
             // 
             // numericTotalGSDTime
             // 
-            this.numericTotalGSDTime.BackColor = System.Drawing.Color.White;
+            this.numericTotalGSDTime.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.numericTotalGSDTime.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "TotalGSDTime", true));
-            this.numericTotalGSDTime.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.numericTotalGSDTime.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numericTotalGSDTime.IsSupportEditMode = false;
             this.numericTotalGSDTime.Location = new System.Drawing.Point(383, 38);
             this.numericTotalGSDTime.Name = "numericTotalGSDTime";
             this.numericTotalGSDTime.NullValue = new decimal(new int[] {
@@ -490,6 +497,7 @@
             0,
             0,
             0});
+            this.numericTotalGSDTime.ReadOnly = true;
             this.numericTotalGSDTime.Size = new System.Drawing.Size(49, 23);
             this.numericTotalGSDTime.TabIndex = 34;
             this.numericTotalGSDTime.Value = new decimal(new int[] {
@@ -500,9 +508,10 @@
             // 
             // numericAvgGSDTime
             // 
-            this.numericAvgGSDTime.BackColor = System.Drawing.Color.White;
+            this.numericAvgGSDTime.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.numericAvgGSDTime.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "AvgGSDTime", true));
-            this.numericAvgGSDTime.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.numericAvgGSDTime.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numericAvgGSDTime.IsSupportEditMode = false;
             this.numericAvgGSDTime.Location = new System.Drawing.Point(383, 67);
             this.numericAvgGSDTime.Name = "numericAvgGSDTime";
             this.numericAvgGSDTime.NullValue = new decimal(new int[] {
@@ -510,6 +519,7 @@
             0,
             0,
             0});
+            this.numericAvgGSDTime.ReadOnly = true;
             this.numericAvgGSDTime.Size = new System.Drawing.Size(49, 23);
             this.numericAvgGSDTime.TabIndex = 35;
             this.numericAvgGSDTime.Value = new decimal(new int[] {
@@ -520,9 +530,10 @@
             // 
             // numericHighestGSDTime
             // 
-            this.numericHighestGSDTime.BackColor = System.Drawing.Color.White;
+            this.numericHighestGSDTime.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.numericHighestGSDTime.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "HighestGSDTime", true));
-            this.numericHighestGSDTime.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.numericHighestGSDTime.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numericHighestGSDTime.IsSupportEditMode = false;
             this.numericHighestGSDTime.Location = new System.Drawing.Point(383, 96);
             this.numericHighestGSDTime.Name = "numericHighestGSDTime";
             this.numericHighestGSDTime.NullValue = new decimal(new int[] {
@@ -530,6 +541,7 @@
             0,
             0,
             0});
+            this.numericHighestGSDTime.ReadOnly = true;
             this.numericHighestGSDTime.Size = new System.Drawing.Size(49, 23);
             this.numericHighestGSDTime.TabIndex = 36;
             this.numericHighestGSDTime.Value = new decimal(new int[] {
@@ -540,9 +552,10 @@
             // 
             // numericLBRByGSDTime
             // 
-            this.numericLBRByGSDTime.BackColor = System.Drawing.Color.White;
+            this.numericLBRByGSDTime.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.numericLBRByGSDTime.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "LBRByGSDTime", true));
-            this.numericLBRByGSDTime.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.numericLBRByGSDTime.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numericLBRByGSDTime.IsSupportEditMode = false;
             this.numericLBRByGSDTime.Location = new System.Drawing.Point(383, 125);
             this.numericLBRByGSDTime.Name = "numericLBRByGSDTime";
             this.numericLBRByGSDTime.NullValue = new decimal(new int[] {
@@ -550,6 +563,7 @@
             0,
             0,
             0});
+            this.numericLBRByGSDTime.ReadOnly = true;
             this.numericLBRByGSDTime.Size = new System.Drawing.Size(49, 23);
             this.numericLBRByGSDTime.TabIndex = 37;
             this.numericLBRByGSDTime.Value = new decimal(new int[] {
@@ -564,7 +578,7 @@
             this.labelStatus.BackColor = System.Drawing.Color.Transparent;
             this.labelStatus.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Status", true));
             this.labelStatus.Font = new System.Drawing.Font("Microsoft Sans Serif", 18F, System.Drawing.FontStyle.Bold);
-            this.labelStatus.Location = new System.Drawing.Point(1095, 8);
+            this.labelStatus.Location = new System.Drawing.Point(1100, 8);
             this.labelStatus.MaximumSize = new System.Drawing.Size(59, 31);
             this.labelStatus.MinimumSize = new System.Drawing.Size(59, 31);
             this.labelStatus.Name = "labelStatus";
@@ -706,7 +720,7 @@
             // 
             // label12
             // 
-            this.label12.Location = new System.Drawing.Point(435, 9);
+            this.label12.Location = new System.Drawing.Point(470, 9);
             this.label12.Name = "label12";
             this.label12.Size = new System.Drawing.Size(153, 23);
             this.label12.TabIndex = 12;
@@ -714,7 +728,7 @@
             // 
             // label13
             // 
-            this.label13.Location = new System.Drawing.Point(435, 38);
+            this.label13.Location = new System.Drawing.Point(470, 38);
             this.label13.Name = "label13";
             this.label13.Size = new System.Drawing.Size(153, 23);
             this.label13.TabIndex = 13;
@@ -722,7 +736,7 @@
             // 
             // label14
             // 
-            this.label14.Location = new System.Drawing.Point(435, 67);
+            this.label14.Location = new System.Drawing.Point(470, 67);
             this.label14.Name = "label14";
             this.label14.Size = new System.Drawing.Size(153, 23);
             this.label14.TabIndex = 14;
@@ -730,7 +744,7 @@
             // 
             // label15
             // 
-            this.label15.Location = new System.Drawing.Point(435, 96);
+            this.label15.Location = new System.Drawing.Point(470, 96);
             this.label15.Name = "label15";
             this.label15.Size = new System.Drawing.Size(153, 23);
             this.label15.TabIndex = 15;
@@ -738,7 +752,7 @@
             // 
             // label16
             // 
-            this.label16.Location = new System.Drawing.Point(435, 125);
+            this.label16.Location = new System.Drawing.Point(470, 125);
             this.label16.Name = "label16";
             this.label16.Size = new System.Drawing.Size(153, 23);
             this.label16.TabIndex = 16;
@@ -746,16 +760,18 @@
             // 
             // numericSewerManpower
             // 
-            this.numericSewerManpower.BackColor = System.Drawing.Color.White;
+            this.numericSewerManpower.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.numericSewerManpower.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "SewerManpower", true));
-            this.numericSewerManpower.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numericSewerManpower.Location = new System.Drawing.Point(591, 9);
+            this.numericSewerManpower.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numericSewerManpower.IsSupportEditMode = false;
+            this.numericSewerManpower.Location = new System.Drawing.Point(626, 9);
             this.numericSewerManpower.Name = "numericSewerManpower";
             this.numericSewerManpower.NullValue = new decimal(new int[] {
             0,
             0,
             0,
             0});
+            this.numericSewerManpower.ReadOnly = true;
             this.numericSewerManpower.Size = new System.Drawing.Size(54, 23);
             this.numericSewerManpower.TabIndex = 38;
             this.numericSewerManpower.Value = new decimal(new int[] {
@@ -766,16 +782,18 @@
             // 
             // numericPresserManpower
             // 
-            this.numericPresserManpower.BackColor = System.Drawing.Color.White;
+            this.numericPresserManpower.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.numericPresserManpower.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "PresserManpower", true));
-            this.numericPresserManpower.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numericPresserManpower.Location = new System.Drawing.Point(591, 38);
+            this.numericPresserManpower.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numericPresserManpower.IsSupportEditMode = false;
+            this.numericPresserManpower.Location = new System.Drawing.Point(626, 38);
             this.numericPresserManpower.Name = "numericPresserManpower";
             this.numericPresserManpower.NullValue = new decimal(new int[] {
             0,
             0,
             0,
             0});
+            this.numericPresserManpower.ReadOnly = true;
             this.numericPresserManpower.Size = new System.Drawing.Size(26, 23);
             this.numericPresserManpower.TabIndex = 39;
             this.numericPresserManpower.Value = new decimal(new int[] {
@@ -786,16 +804,18 @@
             // 
             // numericPackerManpower
             // 
-            this.numericPackerManpower.BackColor = System.Drawing.Color.White;
+            this.numericPackerManpower.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.numericPackerManpower.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "PackerManpower", true));
-            this.numericPackerManpower.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numericPackerManpower.Location = new System.Drawing.Point(619, 38);
+            this.numericPackerManpower.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numericPackerManpower.IsSupportEditMode = false;
+            this.numericPackerManpower.Location = new System.Drawing.Point(654, 38);
             this.numericPackerManpower.Name = "numericPackerManpower";
             this.numericPackerManpower.NullValue = new decimal(new int[] {
             0,
             0,
             0,
             0});
+            this.numericPackerManpower.ReadOnly = true;
             this.numericPackerManpower.Size = new System.Drawing.Size(26, 23);
             this.numericPackerManpower.TabIndex = 40;
             this.numericPackerManpower.Value = new decimal(new int[] {
@@ -806,7 +826,7 @@
             // 
             // label17
             // 
-            this.label17.Location = new System.Drawing.Point(648, 9);
+            this.label17.Location = new System.Drawing.Point(683, 9);
             this.label17.Name = "label17";
             this.label17.Size = new System.Drawing.Size(88, 23);
             this.label17.TabIndex = 17;
@@ -814,7 +834,7 @@
             // 
             // label18
             // 
-            this.label18.Location = new System.Drawing.Point(648, 38);
+            this.label18.Location = new System.Drawing.Point(683, 38);
             this.label18.Name = "label18";
             this.label18.Size = new System.Drawing.Size(88, 23);
             this.label18.TabIndex = 18;
@@ -822,7 +842,7 @@
             // 
             // label19
             // 
-            this.label19.Location = new System.Drawing.Point(648, 67);
+            this.label19.Location = new System.Drawing.Point(683, 67);
             this.label19.Name = "label19";
             this.label19.Size = new System.Drawing.Size(88, 23);
             this.label19.TabIndex = 19;
@@ -830,7 +850,7 @@
             // 
             // label20
             // 
-            this.label20.Location = new System.Drawing.Point(648, 96);
+            this.label20.Location = new System.Drawing.Point(683, 96);
             this.label20.Name = "label20";
             this.label20.Size = new System.Drawing.Size(88, 23);
             this.label20.TabIndex = 20;
@@ -838,7 +858,7 @@
             // 
             // label21
             // 
-            this.label21.Location = new System.Drawing.Point(648, 125);
+            this.label21.Location = new System.Drawing.Point(683, 125);
             this.label21.Name = "label21";
             this.label21.Size = new System.Drawing.Size(88, 23);
             this.label21.TabIndex = 21;
@@ -846,7 +866,7 @@
             // 
             // label23
             // 
-            this.label23.Location = new System.Drawing.Point(648, 154);
+            this.label23.Location = new System.Drawing.Point(683, 154);
             this.label23.Name = "label23";
             this.label23.Size = new System.Drawing.Size(88, 23);
             this.label23.TabIndex = 23;
@@ -854,16 +874,18 @@
             // 
             // numericTaktTime
             // 
-            this.numericTaktTime.BackColor = System.Drawing.Color.White;
+            this.numericTaktTime.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.numericTaktTime.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "TaktTime", true));
-            this.numericTaktTime.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numericTaktTime.Location = new System.Drawing.Point(739, 9);
+            this.numericTaktTime.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numericTaktTime.IsSupportEditMode = false;
+            this.numericTaktTime.Location = new System.Drawing.Point(774, 9);
             this.numericTaktTime.Name = "numericTaktTime";
             this.numericTaktTime.NullValue = new decimal(new int[] {
             0,
             0,
             0,
             0});
+            this.numericTaktTime.ReadOnly = true;
             this.numericTaktTime.Size = new System.Drawing.Size(68, 23);
             this.numericTaktTime.TabIndex = 44;
             this.numericTaktTime.Value = new decimal(new int[] {
@@ -874,16 +896,18 @@
             // 
             // numericEOLR
             // 
-            this.numericEOLR.BackColor = System.Drawing.Color.White;
+            this.numericEOLR.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.numericEOLR.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "EOLR", true));
-            this.numericEOLR.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numericEOLR.Location = new System.Drawing.Point(739, 38);
+            this.numericEOLR.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numericEOLR.IsSupportEditMode = false;
+            this.numericEOLR.Location = new System.Drawing.Point(774, 38);
             this.numericEOLR.Name = "numericEOLR";
             this.numericEOLR.NullValue = new decimal(new int[] {
             0,
             0,
             0,
             0});
+            this.numericEOLR.ReadOnly = true;
             this.numericEOLR.Size = new System.Drawing.Size(68, 23);
             this.numericEOLR.TabIndex = 45;
             this.numericEOLR.Value = new decimal(new int[] {
@@ -894,16 +918,18 @@
             // 
             // numericPPH
             // 
-            this.numericPPH.BackColor = System.Drawing.Color.White;
+            this.numericPPH.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.numericPPH.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "PPH", true));
-            this.numericPPH.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numericPPH.Location = new System.Drawing.Point(739, 67);
+            this.numericPPH.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numericPPH.IsSupportEditMode = false;
+            this.numericPPH.Location = new System.Drawing.Point(774, 67);
             this.numericPPH.Name = "numericPPH";
             this.numericPPH.NullValue = new decimal(new int[] {
             0,
             0,
             0,
             0});
+            this.numericPPH.ReadOnly = true;
             this.numericPPH.Size = new System.Drawing.Size(68, 23);
             this.numericPPH.TabIndex = 46;
             this.numericPPH.Value = new decimal(new int[] {
@@ -914,16 +940,18 @@
             // 
             // numericWorkHour
             // 
-            this.numericWorkHour.BackColor = System.Drawing.Color.White;
+            this.numericWorkHour.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.numericWorkHour.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "WorkHour", true));
-            this.numericWorkHour.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numericWorkHour.Location = new System.Drawing.Point(739, 154);
+            this.numericWorkHour.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numericWorkHour.IsSupportEditMode = false;
+            this.numericWorkHour.Location = new System.Drawing.Point(774, 154);
             this.numericWorkHour.Name = "numericWorkHour";
             this.numericWorkHour.NullValue = new decimal(new int[] {
             0,
             0,
             0,
             0});
+            this.numericWorkHour.ReadOnly = true;
             this.numericWorkHour.Size = new System.Drawing.Size(68, 23);
             this.numericWorkHour.TabIndex = 47;
             this.numericWorkHour.Value = new decimal(new int[] {
@@ -937,7 +965,7 @@
             this.displayTimeStudyStatus.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayTimeStudyStatus.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "TimeStudyStatus", true));
             this.displayTimeStudyStatus.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayTimeStudyStatus.Location = new System.Drawing.Point(739, 96);
+            this.displayTimeStudyStatus.Location = new System.Drawing.Point(774, 96);
             this.displayTimeStudyStatus.Name = "displayTimeStudyStatus";
             this.displayTimeStudyStatus.Size = new System.Drawing.Size(68, 23);
             this.displayTimeStudyStatus.TabIndex = 48;
@@ -947,23 +975,25 @@
             this.displayTimeStudyVersion.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayTimeStudyVersion.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "TimeStudyVersion", true));
             this.displayTimeStudyVersion.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayTimeStudyVersion.Location = new System.Drawing.Point(739, 125);
+            this.displayTimeStudyVersion.Location = new System.Drawing.Point(774, 125);
             this.displayTimeStudyVersion.Name = "displayTimeStudyVersion";
             this.displayTimeStudyVersion.Size = new System.Drawing.Size(68, 23);
             this.displayTimeStudyVersion.TabIndex = 49;
             // 
             // numericDailyDemand
             // 
-            this.numericDailyDemand.BackColor = System.Drawing.Color.White;
+            this.numericDailyDemand.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.numericDailyDemand.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "DailyDemand", true));
-            this.numericDailyDemand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numericDailyDemand.Location = new System.Drawing.Point(591, 125);
+            this.numericDailyDemand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numericDailyDemand.IsSupportEditMode = false;
+            this.numericDailyDemand.Location = new System.Drawing.Point(626, 125);
             this.numericDailyDemand.Name = "numericDailyDemand";
             this.numericDailyDemand.NullValue = new decimal(new int[] {
             0,
             0,
             0,
             0});
+            this.numericDailyDemand.ReadOnly = true;
             this.numericDailyDemand.Size = new System.Drawing.Size(54, 23);
             this.numericDailyDemand.TabIndex = 43;
             this.numericDailyDemand.Value = new decimal(new int[] {
@@ -974,16 +1004,18 @@
             // 
             // numericTargetHr
             // 
-            this.numericTargetHr.BackColor = System.Drawing.Color.White;
+            this.numericTargetHr.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.numericTargetHr.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "TargetHr", true));
-            this.numericTargetHr.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numericTargetHr.Location = new System.Drawing.Point(591, 96);
+            this.numericTargetHr.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numericTargetHr.IsSupportEditMode = false;
+            this.numericTargetHr.Location = new System.Drawing.Point(626, 96);
             this.numericTargetHr.Name = "numericTargetHr";
             this.numericTargetHr.NullValue = new decimal(new int[] {
             0,
             0,
             0,
             0});
+            this.numericTargetHr.ReadOnly = true;
             this.numericTargetHr.Size = new System.Drawing.Size(54, 23);
             this.numericTargetHr.TabIndex = 42;
             this.numericTargetHr.Value = new decimal(new int[] {
@@ -994,16 +1026,18 @@
             // 
             // numericTotalSewingLineOptrs
             // 
-            this.numericTotalSewingLineOptrs.BackColor = System.Drawing.Color.White;
+            this.numericTotalSewingLineOptrs.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.numericTotalSewingLineOptrs.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "TotalSewingLineOptrs", true));
-            this.numericTotalSewingLineOptrs.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numericTotalSewingLineOptrs.Location = new System.Drawing.Point(591, 67);
+            this.numericTotalSewingLineOptrs.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numericTotalSewingLineOptrs.IsSupportEditMode = false;
+            this.numericTotalSewingLineOptrs.Location = new System.Drawing.Point(626, 67);
             this.numericTotalSewingLineOptrs.Name = "numericTotalSewingLineOptrs";
             this.numericTotalSewingLineOptrs.NullValue = new decimal(new int[] {
             0,
             0,
             0,
             0});
+            this.numericTotalSewingLineOptrs.ReadOnly = true;
             this.numericTotalSewingLineOptrs.Size = new System.Drawing.Size(54, 23);
             this.numericTotalSewingLineOptrs.TabIndex = 41;
             this.numericTotalSewingLineOptrs.Value = new decimal(new int[] {
@@ -1014,20 +1048,20 @@
             // 
             // chartLBR
             // 
-            this.chartLBR.Location = new System.Drawing.Point(813, 8);
+            this.chartLBR.Location = new System.Drawing.Point(845, 8);
             this.chartLBR.Name = "chartLBR";
             series1.Name = "Series1";
             this.chartLBR.Series.Add(series1);
-            this.chartLBR.Size = new System.Drawing.Size(266, 173);
+            this.chartLBR.Size = new System.Drawing.Size(248, 173);
             this.chartLBR.TabIndex = 51;
             // 
             // btnNotHitTargetReason
             // 
             this.btnNotHitTargetReason.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
             this.btnNotHitTargetReason.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F);
-            this.btnNotHitTargetReason.Location = new System.Drawing.Point(1085, 60);
+            this.btnNotHitTargetReason.Location = new System.Drawing.Point(1095, 60);
             this.btnNotHitTargetReason.Name = "btnNotHitTargetReason";
-            this.btnNotHitTargetReason.Size = new System.Drawing.Size(134, 47);
+            this.btnNotHitTargetReason.Size = new System.Drawing.Size(124, 47);
             this.btnNotHitTargetReason.TabIndex = 52;
             this.btnNotHitTargetReason.Text = "Not Hit\r\nTarget Reason";
             this.btnNotHitTargetReason.UseVisualStyleBackColor = true;
@@ -1035,13 +1069,15 @@
             // 
             // btnTransferToP06
             // 
+            this.btnTransferToP06.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
             this.btnTransferToP06.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F);
-            this.btnTransferToP06.Location = new System.Drawing.Point(1085, 113);
+            this.btnTransferToP06.Location = new System.Drawing.Point(1095, 113);
             this.btnTransferToP06.Name = "btnTransferToP06";
-            this.btnTransferToP06.Size = new System.Drawing.Size(134, 47);
+            this.btnTransferToP06.Size = new System.Drawing.Size(124, 47);
             this.btnTransferToP06.TabIndex = 53;
             this.btnTransferToP06.Text = "Transfer to\r\nSewing Line Mapping";
             this.btnTransferToP06.UseVisualStyleBackColor = true;
+            this.btnTransferToP06.Click += new System.EventHandler(this.BtnTransferToP06_Click);
             // 
             // btnEditOperation
             // 
@@ -1055,20 +1091,32 @@
             this.btnEditOperation.UseVisualStyleBackColor = true;
             this.btnEditOperation.Click += new System.EventHandler(this.BtnEditOperation_Click);
             // 
+            // btnH
+            // 
+            this.btnH.Location = new System.Drawing.Point(433, 125);
+            this.btnH.Name = "btnH";
+            this.btnH.Size = new System.Drawing.Size(29, 24);
+            this.btnH.TabIndex = 54;
+            this.btnH.Text = "H";
+            this.btnH.UseVisualStyleBackColor = true;
+            this.btnH.Click += new System.EventHandler(this.BtnH_Click);
+            // 
             // P05
             // 
+            this.ApvChkValue = "New";
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1234, 729);
             this.ExpressQuery = true;
             this.GridAlias = "AutomatedLineMapping_Detail";
             this.IsSupportClip = false;
-            this.IsSupportUnconfirm = true;
+            this.IsSupportConfirm = true;
             this.KeyField1 = "ID";
             this.KeyField2 = "ID";
             this.Name = "P05";
             this.OnLineHelpID = "Sci.Win.Tems.Input6";
             this.Text = "P05. Automated Line Mapping";
+            this.UnApvChkValue = "Confirmed";
             this.WorkAlias = "AutomatedLineMapping";
             this.Controls.SetChildIndex(this.tabs, 0);
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).EndInit();
@@ -1172,5 +1220,6 @@
         private Win.UI.Button btnTransferToP06;
         private Win.UI.Button btnNotHitTargetReason;
         private Win.UI.Button btnEditOperation;
+        private Win.UI.Button btnH;
     }
 }

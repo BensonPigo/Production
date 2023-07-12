@@ -192,6 +192,37 @@ namespace Sci.Production.Prg
             }
         }
 
+        /// <summary>
+        /// 複製datatable並保留來源datatable狀態
+        /// </summary>
+        /// <param name="source">source</param>
+        /// <returns>DataTable</returns>
+        public static DataTable ToTableKeepRowState(this DataView source)
+        {
+            DataTable copiedDataTable = source.Table.Clone();
+
+            foreach (DataRowView originalRowView in source)
+            {
+                DataRow originalRow = originalRowView.Row;
+                DataRow copiedRow = copiedDataTable.NewRow();
+                copiedRow.ItemArray = originalRow.ItemArray; // 复制原始行的数据到新的行
+                copiedDataTable.Rows.Add(copiedRow);
+
+                // 设置新行的状态为原始行的状态
+                copiedRow.AcceptChanges(); // 先将行状态重置为 Unchanged
+                if (originalRow.RowState == DataRowState.Modified)
+                {
+                    copiedRow.SetModified();
+                }
+                else if (originalRow.RowState == DataRowState.Deleted)
+                {
+                    copiedRow.Delete();
+                }
+            }
+
+            return copiedDataTable;
+        }
+
         /// <inheritdoc/>
         public static void ImportRowAdded(this DataTable dt, DataRow row)
         {

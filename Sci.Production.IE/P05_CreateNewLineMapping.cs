@@ -346,8 +346,15 @@ select * from AutomatedLineMapping_DetailAuto with (nolock) where ID = '{automat
                     this.mainRow[col.ColumnName] = dtAutomatedLineMapping.Rows[0][col.ColumnName];
                 }
 
+                this.mainRow["Status"] = "New";
+
                 this.dtDetail.Clear();
                 this.dtDetail.MergeBySyncColType(dtAutomatedLineMapping_Detail);
+
+                foreach (DataRow dr in this.dtDetail.Rows)
+                {
+                    dr["Selected"] = false;
+                }
 
                 this.dtAutomatedLineMapping_DetailTemp.Clear();
                 this.dtAutomatedLineMapping_DetailTemp.MergeBySyncColType(dtAutomatedLineMapping_DetailTempNew);

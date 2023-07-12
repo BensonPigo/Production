@@ -194,6 +194,7 @@ namespace Sci.Production.IE
                 if (dr.RowState == DataRowState.Unchanged)
                 {
                     dr.SetAdded();
+                    dr["Selected"] = false;
                 }
             }
 

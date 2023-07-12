@@ -66,6 +66,7 @@ namespace Sci.Production.IE
         private void P05_NotHitTargetReason_Shown(object sender, EventArgs e)
         {
             this.gridNotHitTargetReason.Columns["IEReasonID"].DefaultCellStyle.BackColor = this.status != "Confirmed" ? Color.Pink : Color.White;
+            this.btnSave.Enabled = this.status != "Confirmed";
         }
 
         /// <inheritdoc/>
@@ -146,6 +147,7 @@ where   isnull(t.IEReasonID, '') <> '' and
                 return;
             }
 
+            this.QueryNotHitTarget();
             MyUtility.Msg.InfoBox("Save successful");
         }
 

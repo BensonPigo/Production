@@ -20,6 +20,10 @@ namespace Sci.Production.IE
     public partial class P05_EditOperation : Sci.Win.Tems.QueryForm
     {
         private DataTable dtAutomatedLineMapping_DetailCopy;
+
+        /// <summary>
+        /// dtAutomatedLineMapping_Detail
+        /// </summary>
         public DataTable dtAutomatedLineMapping_Detail;
         private DataTable dtSelectItemSource;
         private DataTable dtNoSelectItem = new DataTable();
@@ -31,8 +35,10 @@ namespace Sci.Production.IE
         public P05_EditOperation(DataTable dtAutomatedLineMapping_Detail)
         {
             this.DialogResult = DialogResult.No;
-            this.dtAutomatedLineMapping_DetailCopy = dtAutomatedLineMapping_Detail.Copy();
-            this.dtAutomatedLineMapping_Detail = dtAutomatedLineMapping_Detail;
+            var sortDataView = dtAutomatedLineMapping_Detail.AsDataView();
+            sortDataView.Sort = "No ASC";
+            this.dtAutomatedLineMapping_DetailCopy = sortDataView.ToTableKeepRowState();
+
             if (!this.dtAutomatedLineMapping_DetailCopy.Columns.Contains("UpdSewerDiffPercentage"))
             {
                 this.dtAutomatedLineMapping_DetailCopy.Columns.Add("UpdSewerDiffPercentage", typeof(int));
@@ -117,6 +123,40 @@ namespace Sci.Production.IE
             DataGridViewGeneratorTextColumnSettings colGroupOperation = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorNumericColumnSettings colUpdSewer = new DataGridViewGeneratorNumericColumnSettings();
 
+            colNo.CellMouseClick += (s, e) =>
+            {
+                if (e.Button != MouseButtons.Right)
+                {
+                    return;
+                }
+
+                if (e.RowIndex == -1)
+                {
+                    return;
+                }
+
+                if (this.gridEditOperation.Rows[e.RowIndex].Cells[e.ColumnIndex].Style.BackColor != Color.Pink)
+                {
+                    return;
+                }
+
+                DataRow curRow = this.gridEditOperation.GetDataRow(e.RowIndex);
+
+                Win.Tools.SelectItem item = new Win.Tools.SelectItem(this.dtNoSelectItem, "No", null, null, false, null)
+                {
+                    Width = 250,
+                };
+
+                DialogResult returnResult = item.ShowDialog();
+                if (returnResult == DialogResult.Cancel)
+                {
+                    return;
+                }
+
+                curRow["No"] = item.GetSelectedString();
+                curRow.EndEdit();
+            };
+
             colNo.EditingMouseDown += (s, e) =>
             {
                 if (e.Button != MouseButtons.Right)
@@ -148,7 +188,7 @@ namespace Sci.Production.IE
                 }
 
                 curRow["No"] = item.GetSelectedString();
-                e.EditingControl.Text = item.GetSelectedString();
+                curRow.EndEdit();
             };
 
             colGroupOperation.EditingMouseDown += (s, e) =>
@@ -315,6 +355,7 @@ namespace Sci.Production.IE
 
         private void BtnSave_Click(object sender, EventArgs e)
         {
+            this.gridEditOperationBs.EndEdit();
             var checkedNo = this.dtNoSelectItem.AsEnumerable().Select(s => s["No"].ToString()).ToList();
             var curEditRows = this.dtAutomatedLineMapping_DetailCopy.AsEnumerable().Where(s => checkedNo.Contains(s["No"].ToString()));
             #region 檢查DivSewer與UpdSewerDiffPercentage總和是否超過或不足
@@ -385,7 +426,8 @@ namespace Sci.Production.IE
                 needCancelCheck["Selected"] = false;
             }
 
-            this.dtAutomatedLineMapping_Detail = this.dtAutomatedLineMapping_DetailCopy;
+            this.dtAutomatedLineMapping_Detail = this.dtAutomatedLineMapping_DetailCopy.Copy();
+
             this.DialogResult = DialogResult.OK;
         }
     }

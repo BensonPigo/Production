@@ -1,4 +1,5 @@
 ﻿using Ict;
+using Sci.Production.Class.Command;
 using Sci.Win.UI;
 using System;
 using System.Collections;
@@ -6,6 +7,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Drawing;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -78,7 +80,8 @@ namespace Sci.Production.IE
         /// </summary>
         public decimal TotalGSD
         {
-            get {
+            get
+            {
                 return this.MainData
                     .Where(s => s["PPA"].ToString() != "C" &&
                                 !MyUtility.Convert.GetBool(s["IsNonSewingLine"]) &&
@@ -172,7 +175,8 @@ namespace Sci.Production.IE
             this.dtGridDetailRightSummary.Columns.Add(new DataColumn("NoCnt", typeof(int)));
             this.dtGridDetailRightSummary.Columns.Add(new DataColumn("TotalGSDTime", typeof(decimal)));
             this.dtGridDetailRightSummary.Columns.Add(new DataColumn("OperatorLoading", typeof(decimal)));
-            gridSub.DataSource = this.dtGridDetailRightSummary;
+
+            this.gridSub.DataSource = this.dtGridDetailRightSummary;
         }
 
         private void GridSub_Scroll(object sender, ScrollEventArgs e)
@@ -210,6 +214,18 @@ namespace Sci.Production.IE
             this.ScrollLineMapping(scrollNo);
         }
 
+        private void ScrollRowByNo(Grid sourceGrid, string no)
+        {
+            foreach (DataGridViewRow gridRow in sourceGrid.Rows)
+            {
+                if (gridRow.Cells["No"].Value.ToString() == no)
+                {
+                    sourceGrid.FirstDisplayedScrollingRowIndex = gridRow.Index;
+                    break;
+                }
+            }
+        }
+
         private void ScrollLineMapping(string scrollToNo)
         {
             DataTable dtSub = this.SubData;
@@ -219,8 +235,8 @@ namespace Sci.Production.IE
                 return;
             }
 
-            this.gridMain.FirstDisplayedScrollingRowIndex = this.gridMain.GetRowIndexByDataRow(this.MainData.Where(s => s[this.syncColName].ToString() == scrollToNo).First());
-            this.gridSub.FirstDisplayedScrollingRowIndex = this.gridSub.GetRowIndexByDataRow(dtSub.AsEnumerable().Where(s => s[this.syncColName].ToString() == scrollToNo).First());
+            this.ScrollRowByNo(this.gridMain, scrollToNo);
+            this.ScrollRowByNo(this.gridSub, scrollToNo);
         }
 
         private void GridMain_CellPainting(object sender, DataGridViewCellPaintingEventArgs e)
@@ -313,6 +329,11 @@ namespace Sci.Production.IE
         /// <param name="subGridType">subGridType</param>
         public void RefreshSubData(SubGridType subGridType)
         {
+            this.gridMain.Sort(this.gridMain.Columns["No"], System.ComponentModel.ListSortDirection.Ascending);
+            this.gridMain.Columns.DisableSortable();
+            this.gridSub.Sort(this.gridSub.Columns["No"], System.ComponentModel.ListSortDirection.Ascending);
+            this.gridSub.Columns.DisableSortable();
+
             DataTable dtSub = this.SubData;
             dtSub.Clear();
 
