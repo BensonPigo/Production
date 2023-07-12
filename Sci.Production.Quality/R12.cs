@@ -8,6 +8,7 @@ using System.Drawing;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Web;
 using System.Windows.Forms;
 using Excel = Microsoft.Office.Interop.Excel;
 
@@ -284,7 +285,7 @@ select
 
 	{4}
 
-    [Inspection_Percent] = CONCAT(convert(decimal(20,2),ROUND(isnull(fp.ttlActualYds, 0) / f.ArriveQty * 100.0, 2)), '%'),
+    {9}
 	{1}Inspector = Concat (f.{1}Inspector, '-', p1.Name),
 
 	{5}f.{1}Date,
@@ -303,7 +304,7 @@ group by f.ToPOID,f.ToSeq,f.FromFty,f.ToFty,f.TransferID,f.FromPOID,f.FromSeq,f.
 	f.Refno,f.ColorID,f.IssueDate,f.WeaveTypeID,f.ctRoll,f.ctDyelot,f.Approve,f.ApproveDate,p1.Name,f.Category,f.ArriveWHData,f.CuttingData,
     f.OrderTypeID,f.[Invno],f.SeasonID,
 	f.Non{1},f.{1},f.{1}Inspector,f.{1}Date
-	{7},f.ArriveQty,fp.ttlActualYds
+	{7},f.ArriveQty {10}
 
 ";
 
@@ -435,11 +436,21 @@ left join {inspectionTypeTable} i with (nolock) on i.ID = f.ID and i.Roll = b.Ro
             string column2 = string.Empty;
             string column3 = string.Empty;
             string column4 = string.Empty;
+            string column5 = string.Empty;
             string groupColumn = string.Empty;
+            string groupColumn2 = string.Empty;
+            string joinStr1 = string.Empty;
             string where = this.AddInspectionWhere(string.Empty, inspectionType);
             if (inspectionType == "Physical")
             {
-                columnSource = @"
+                if (this.radioWKSeq.Checked)
+                {
+                    column5 = "[Inspection_Percent] = CONCAT(convert(decimal(20,2),ROUND(isnull(fp.ttlActualYds, 0) / f.ArriveQty * 100.0, 2)), '%'),";
+                    groupColumn2 = ",fp.ttlActualYds";
+                    joinStr1 = "outer apply(select ttlActualYds = sum(ActualYds) from FIR_Physical fp where fp.id = f.FirID ) fp";
+                }
+
+                columnSource = $@"
 outer apply(
     select Dyelot = count(1)
     from(
@@ -451,7 +462,7 @@ outer apply(
 		and std.FromPOID = f.FromPOID and std.FromSeq1 = f.FromSeq1 and std.FromSeq2 = f.FromSeq2 
     )x
 )ct3
-outer apply(select ttlActualYds = sum(ActualYds) from FIR_Physical fp where fp.id = f.FirID ) fp
+{joinStr1}
 
 ";
                 column1 = "ct3.Dyelot,[NotInspectedDyelot]= f.ctDyelot - ct3.Dyelot,";
@@ -560,9 +571,9 @@ left join pass1 p3 with (nolock) on p3.id = i.Inspector
                 }
             }
 
-            return string.Format(this.B2A_select, "R", inspectionType, string.Format(columnSource, "Receiving"), column1, column2, column3, column4, groupColumn, where) +
+            return string.Format(this.B2A_select, "R", inspectionType, string.Format(columnSource, "Receiving"), column1, column2, column3, column4, groupColumn, where, column5, groupColumn2) +
                 "\r\nunion all\r\n" +
-                string.Format(this.B2A_select, "T", inspectionType, string.Format(columnSource, "TransferIn"), column1, column2, column3, column4, groupColumn, where);
+                string.Format(this.B2A_select, "T", inspectionType, string.Format(columnSource, "TransferIn"), column1, column2, column3, column4, groupColumn, where, column5, groupColumn2);
         }
 
         /// <inheritdoc/>
@@ -649,6 +660,7 @@ outer apply(select ttlActualYds = sum(ActualYds) from FIR_Physical fp where fp.i
 
                     string colPhysicalWKSeqOnly = this.radioWKSeq.Checked ? "f.TotalInspYds," : string.Empty;
                     string colPhysicalDateWKSeqOnly = this.radioWKSeq.Checked ? "f.PhysicalDate," : string.Empty;
+                    string colPhysicalDateWKSeqOnly2 = this.radioWKSeq.Checked ? "[Inspection_Percent] = CONCAT(convert(decimal(20,2),ROUND(isnull(fp.ttlActualYds, 0) / f.ArriveQty * 100.0, 2)), '%')," : string.Empty;
 
                     string colPhysical = $@"
 Dyelot2=ct3.Dyelot,
@@ -656,7 +668,7 @@ Dyelot2=ct3.Dyelot,
 [NonPhysical] = iif(f.NonPhysical = 1, 'Y', ''),
 f.Physical,
 {colPhysicalWKSeqOnly}
-[Inspection_Percent] = CONCAT(convert(decimal(20,2),ROUND(isnull(fp.ttlActualYds, 0) / f.ArriveQty * 100.0, 2)), '%'),
+{colPhysicalDateWKSeqOnly2}
 [PhysicalInspector] = Concat(p1.ID, '-', p1.Name),
 {colPhysicalDateWKSeqOnly}
 [Approver] = Concat(p2.ID, '-', p2.Name),
