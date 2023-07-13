@@ -1773,6 +1773,26 @@ With SubProcess  as (
         WHERE   ArtworkUnit = '' 
                 and ProductionUnit = '' 
                 and Classify in ({0}) 
+        UNION ALL 
+	    SELECT 
+	    ID = 'EMBROIDERY',
+	    seq = '3010',
+	    ArtworkUnit = 'STITCH'  , 
+	    ProductionUnit = 'QTY'  ,
+	    SystemType = 'T' , 
+	    FakeID = '3010U1', 
+	    ColumnN = 'EMBROIDERY(POSubcon)',
+	    ColumnSeq = '1'
+	    UNION ALL
+	    SELECT 
+	    ID = 'EMBROIDERY',
+	    seq = '3010',
+	    ArtworkUnit = 'STITCH'  , 
+	    ProductionUnit = 'QTY'  ,
+	    SystemType = 'T' , 
+	    FakeID = '3010U1', 
+	    ColumnN = 'EMBROIDERY(SubCon)',
+	    ColumnSeq = '1'
         {1}
         {4}
     ) a
@@ -2009,6 +2029,8 @@ select  ot.ID
         , TAUnitRno = a3.rno
         , TPUnitRno = iif(ot.ArtworkTypeID='PRINTING PPU', a3.rno, a4.rno )
         , TNRno = a5.rno  
+        ,es = IIF(ot.ArtworkTypeID = 'EMBROIDERY',IIF(ot.InhouseOSP = 'O',(select Abb from LocalSupp WITH (NOLOCK) where ID = ot.LocalSuppID),ot.LocalSuppID),'')
+		,eps = IIF(ot.ArtworkTypeID = 'EMBROIDERY', IIF(ot.InhouseOSP = 'O', EMPApp.Abb, ot.LocalSuppID), '')
 from Order_TmsCost ot WITH (NOLOCK) 
 left join ArtworkType at WITH (NOLOCK) on at.ID = ot.ArtworkTypeID
 left join ArtworkData a on a.FakeID = ot.Seq+'U1' 
@@ -2028,6 +2050,18 @@ outer apply(
 			and apd.OrderID = ot.ID
 		FOR XML PATH('')),1,1,'') 
 )ap
+OUTER APPLY
+(
+	select Abb=Stuff((
+               select distinct concat(',',l.Abb)
+               from ArtworkPO ap WITH (NOLOCK)
+               inner join ArtworkPO_Detail apd WITH (NOLOCK) on ap.ID = apd.ID
+               left join LocalSupp l WITH (NOLOCK) on ap.LocalSuppID = l.ID
+               where ap.ArtworkTypeID = 'EMBROIDERY'
+               and apd.OrderID = ot.ID
+               FOR XML PATH('')),1,1,'')
+)EMPApp
+
 where exists (select id from OrderID WITH (NOLOCK) where ot.ID = OrderID.ID )");
                         MyUtility.Tool.ProcessWithDatatable(
                             this.subprocessColumnName,
@@ -2141,6 +2175,7 @@ drop table #tmp,#tmp2,#tmp3
 
             // 填Subprocess欄位名稱
             int poSubConCol = 9999, subConCol = 9999, ttlTMS = lastCol + 1; // 紀錄SubCon與TTL_TMS的欄位
+            int eMBROIDERYPOSubcon = 9999 , eMBROIDERYSubcon = 9999;
             int printingDetailCol = 9999;
             string excelColEng = string.Empty;
             if (this.artwork || this.pap)
@@ -2169,6 +2204,16 @@ drop table #tmp,#tmp2,#tmp3
                     if (MyUtility.Convert.GetString(dr["ColumnN"]).ToUpper() == "TTL_TMS")
                     {
                         ttlTMS = MyUtility.Convert.GetInt(dr["rno"]);
+                    }
+
+                    if (MyUtility.Convert.GetString(dr["ColumnN"]) == "EMBROIDERY(POSubcon)")
+                    {
+                        eMBROIDERYPOSubcon = MyUtility.Convert.GetInt(dr["rno"]);
+                    }
+
+                    if (MyUtility.Convert.GetString(dr["ColumnN"]) == "EMBROIDERY(SubCon)")
+                    {
+                        eMBROIDERYSubcon = MyUtility.Convert.GetInt(dr["rno"]);
                     }
                 }
 
@@ -2438,6 +2483,16 @@ drop table #tmp,#tmp2,#tmp3
                             if (!MyUtility.Check.Empty(sdr["TNRno"]))
                             {
                                 objArray[intRowsStart, MyUtility.Convert.GetInt(sdr["TNRno"]) - 1] = MyUtility.Convert.GetDecimal(dr["Qty"]) * MyUtility.Convert.GetDecimal(sdr["Qty"]);
+                            }
+
+                            if (eMBROIDERYPOSubcon != 9999)
+                            {
+                                objArray[intRowsStart, 192 - 1] = sdr["eps"];
+                            }
+
+                            if (eMBROIDERYSubcon != 9999)
+                            {
+                                objArray[intRowsStart, 193 - 1] = sdr["es"];
                             }
 
                             if (poSubConCol != 9999)
