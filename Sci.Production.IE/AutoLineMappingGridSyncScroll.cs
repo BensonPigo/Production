@@ -40,6 +40,7 @@ namespace Sci.Production.IE
         private string syncColName;
         private int _sewerManpower;
         private DataTable dtGridDetailRightSummary = new DataTable();
+        private SubGridType subGridType;
 
         /// <summary>
         /// SewerManpower
@@ -156,27 +157,59 @@ namespace Sci.Production.IE
         }
 
         /// <summary>
-        /// GridSyncScroll
+        /// IE AutoLineMapping grid同步滑動
         /// </summary>
         /// <param name="gridMain">gridMain</param>
         /// <param name="gridSub">gridSub</param>
         /// <param name="syncColName">syncColName</param>
-        public AutoLineMappingGridSyncScroll(Grid gridMain, Grid gridSub, string syncColName)
+        /// <param name="subGridType">subGridType</param>
+        public AutoLineMappingGridSyncScroll(Grid gridMain, Grid gridSub, string syncColName, SubGridType subGridType)
         {
             this.gridMain = gridMain;
             this.gridSub = gridSub;
             this.syncColName = syncColName;
+            this.subGridType = subGridType;
 
             this.gridMain.CellPainting += this.GridMain_CellPainting;
             this.gridMain.Scroll += this.GridMain_Scroll;
             this.gridSub.Scroll += this.GridSub_Scroll;
             this.gridSub.RowPrePaint += this.GridSub_RowPrePaint;
+            if (subGridType == SubGridType.CentrailizedPPA)
+            {
+                this.gridMain.SortCompare += new DataGridViewSortCompareEventHandler(this.GridPPA_SortCompare);
+            }
+
             this.dtGridDetailRightSummary.Columns.Add(new DataColumn("No", typeof(string)));
             this.dtGridDetailRightSummary.Columns.Add(new DataColumn("NoCnt", typeof(int)));
             this.dtGridDetailRightSummary.Columns.Add(new DataColumn("TotalGSDTime", typeof(decimal)));
             this.dtGridDetailRightSummary.Columns.Add(new DataColumn("OperatorLoading", typeof(decimal)));
 
             this.gridSub.DataSource = this.dtGridDetailRightSummary;
+        }
+
+        private void GridPPA_SortCompare(object sender, DataGridViewSortCompareEventArgs e)
+        {
+            if (e.Column.Name == "No")
+            {
+                string value1 = e.CellValue1.ToString();
+                string value2 = e.CellValue2.ToString();
+
+                // 將空白值移至最後
+                if (string.IsNullOrEmpty(value1))
+                {
+                    e.SortResult = 1;
+                }
+                else if (string.IsNullOrEmpty(value2))
+                {
+                    e.SortResult = -1;
+                }
+                else
+                {
+                    e.SortResult = string.Compare(value1, value2);
+                }
+
+                e.Handled = true;
+            }
         }
 
         private void GridSub_Scroll(object sender, ScrollEventArgs e)
@@ -254,6 +287,11 @@ namespace Sci.Production.IE
                 string nextNo = e.RowIndex == grid.Rows.Count - 1 ? string.Empty : grid[0, e.RowIndex + 1].Value.ToString();
                 string preNo = e.RowIndex == 0 ? null : grid[0, e.RowIndex - 1].Value.ToString();
 
+                if (MyUtility.Check.Empty(curNo))
+                {
+                    return;
+                }
+
                 if (curNo == preNo)
                 {
                     // 在儲存格內繪製空白矩形
@@ -326,61 +364,70 @@ namespace Sci.Production.IE
         /// <summary>
         /// RefreshSubData
         /// </summary>
-        /// <param name="subGridType">subGridType</param>
-        public void RefreshSubData(SubGridType subGridType)
+        public void RefreshSubData()
         {
-            this.gridMain.Sort(this.gridMain.Columns["No"], System.ComponentModel.ListSortDirection.Ascending);
-            this.gridMain.Columns.DisableSortable();
-            this.gridSub.Sort(this.gridSub.Columns["No"], System.ComponentModel.ListSortDirection.Ascending);
-            this.gridSub.Columns.DisableSortable();
-
             DataTable dtSub = this.SubData;
             dtSub.Clear();
 
-            List<DataRow> resultRows;
-            if (subGridType == SubGridType.LineMapping)
-            {
-                decimal avgGSD = this.AvgGSDTime;
-                resultRows = this.MainData.Where(s => s["PPA"].ToString() != "C" &&
-                                                      !MyUtility.Convert.GetBool(s["IsNonSewingLine"]) &&
-                                                      s["OperationID"].ToString() != "PROCIPF00004" &&
-                                                      s["OperationID"].ToString() != "PROCIPF00003")
-                                .GroupBy(s => new
-                                {
-                                    No = s["No"].ToString(),
-                                })
-                                .Select(groupItem =>
-                                {
-                                    DataRow newRow = dtSub.NewRow();
-                                    newRow["No"] = groupItem.Key.No;
-                                    newRow["NoCnt"] = groupItem.Count();
-                                    newRow["TotalGSDTime"] = MyUtility.Math.Round(groupItem.Sum(s => MyUtility.Convert.GetDecimal(s["GSD"]) * MyUtility.Convert.GetDecimal(s["SewerDiffPercentage"])), 2);
-                                    newRow["OperatorLoading"] = MyUtility.Check.Empty(avgGSD) ? 0 : MyUtility.Math.Round(groupItem.Sum(s => MyUtility.Convert.GetDecimal(s["GSD"]) * MyUtility.Convert.GetDecimal(s["SewerDiffPercentage"])) / avgGSD * 100, 0);
-                                    return newRow;
-                                }).ToList();
-            }
-            else
-            {
-                var dataPPA = this.MainData.Where(s => s["PPA"].ToString() == "C" && !MyUtility.Convert.GetBool(s["IsNonSewingLine"]) && !MyUtility.Check.Empty(s["No"]));
-                if (!dataPPA.Any())
-                {
-                    return;
-                }
+            List<DataRow> resultRows = new List<DataRow>();
 
-                decimal avgGSDTimePPA = dataPPA.Sum(s => MyUtility.Convert.GetDecimal(s["GSD"])) / dataPPA.Select(s => s["No"].ToString()).Distinct().Count();
+            switch (this.subGridType)
+            {
+                case SubGridType.LineMapping:
+                    this.gridMain.Sort(this.gridMain.Columns["No"], System.ComponentModel.ListSortDirection.Ascending);
+                    this.gridMain.Columns.DisableSortable();
+                    this.gridSub.Sort(this.gridSub.Columns["No"], System.ComponentModel.ListSortDirection.Ascending);
+                    this.gridSub.Columns.DisableSortable();
+                    decimal avgGSD = this.AvgGSDTime;
+                    resultRows = this.MainData.Where(s => s["PPA"].ToString() != "C" &&
+                                                          !MyUtility.Convert.GetBool(s["IsNonSewingLine"]) &&
+                                                          s["OperationID"].ToString() != "PROCIPF00004" &&
+                                                          s["OperationID"].ToString() != "PROCIPF00003")
+                                    .GroupBy(s => new
+                                    {
+                                        No = s["No"].ToString(),
+                                    })
+                                    .Select(groupItem =>
+                                    {
+                                        DataRow newRow = dtSub.NewRow();
+                                        newRow["No"] = groupItem.Key.No;
+                                        newRow["NoCnt"] = groupItem.Count();
+                                        newRow["TotalGSDTime"] = MyUtility.Math.Round(groupItem.Sum(s => MyUtility.Convert.GetDecimal(s["GSD"]) * MyUtility.Convert.GetDecimal(s["SewerDiffPercentage"])), 2);
+                                        newRow["OperatorLoading"] = MyUtility.Check.Empty(avgGSD) ? 0 : MyUtility.Math.Round(groupItem.Sum(s => MyUtility.Convert.GetDecimal(s["GSD"]) * MyUtility.Convert.GetDecimal(s["SewerDiffPercentage"])) / avgGSD * 100, 0);
+                                        return newRow;
+                                    }).ToList();
+                    break;
+                case SubGridType.CentrailizedPPA:
+                    this.gridMain.Columns.DisableSortable();
+                    this.gridMain.Columns["No"].SortMode = DataGridViewColumnSortMode.Programmatic;
+                    this.gridMain.Sort(this.gridMain.Columns["No"], System.ComponentModel.ListSortDirection.Ascending);
 
-                resultRows = dataPPA.GroupBy(s => new
-                {
-                    No = s["No"].ToString(),
-                }).Select(groupItem =>
-                {
-                    DataRow newRow = dtSub.NewRow();
-                    newRow["No"] = groupItem.Key.No;
-                    newRow["NoCnt"] = groupItem.Count();
-                    newRow["TotalGSDTime"] = MyUtility.Math.Round(groupItem.Sum(s => MyUtility.Convert.GetDecimal(s["GSD"])), 2);
-                    newRow["OperatorLoading"] = avgGSDTimePPA == 0 ? 0 : MyUtility.Math.Round(groupItem.Sum(s => MyUtility.Convert.GetDecimal(s["GSD"])) / avgGSDTimePPA * 100, 0);
-                    return newRow;
-                }).ToList();
+                    this.gridSub.Sort(this.gridSub.Columns["No"], System.ComponentModel.ListSortDirection.Ascending);
+                    this.gridSub.Columns.DisableSortable();
+
+                    var dataPPA = this.MainData.Where(s => s["PPA"].ToString() == "C" && !MyUtility.Convert.GetBool(s["IsNonSewingLine"]) && !MyUtility.Check.Empty(s["No"]));
+                    if (!dataPPA.Any())
+                    {
+                        return;
+                    }
+
+                    decimal avgGSDTimePPA = dataPPA.Sum(s => MyUtility.Convert.GetDecimal(s["GSD"])) / dataPPA.Select(s => s["No"].ToString()).Distinct().Count();
+
+                    resultRows = dataPPA.GroupBy(s => new
+                    {
+                        No = s["No"].ToString(),
+                    }).Select(groupItem =>
+                    {
+                        DataRow newRow = dtSub.NewRow();
+                        newRow["No"] = groupItem.Key.No;
+                        newRow["NoCnt"] = groupItem.Count();
+                        newRow["TotalGSDTime"] = MyUtility.Math.Round(groupItem.Sum(s => MyUtility.Convert.GetDecimal(s["GSD"])), 2);
+                        newRow["OperatorLoading"] = avgGSDTimePPA == 0 ? 0 : MyUtility.Math.Round(groupItem.Sum(s => MyUtility.Convert.GetDecimal(s["GSD"])) / avgGSDTimePPA * 100, 0);
+                        return newRow;
+                    }).ToList();
+                    break;
+                default:
+                    break;
             }
 
             foreach (DataRow dr in resultRows)

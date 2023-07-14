@@ -9,6 +9,7 @@ using Sci.Production.Prg;
 using Sci.Win.Tools;
 using Sci.Win.UI;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -19,6 +20,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Windows.Forms.DataVisualization.Charting;
 using static Ict.Win.WinAPI;
+using static Sci.Production.IE.AutoLineMappingGridSyncScroll;
 
 namespace Sci.Production.IE
 {
@@ -88,8 +90,8 @@ order by ad.SewerManpower, ad.No, ad.Seq
             this.gridCentralizedPPALeft.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.EnableResizing;
             this.detailgrid.CellFormatting += this.Detailgrid_CellFormatting;
 
-            this.lineMappingGrids = new AutoLineMappingGridSyncScroll(this.detailgrid, this.gridLineMappingRight, "No");
-            this.centralizedPPAGrids = new AutoLineMappingGridSyncScroll(this.gridCentralizedPPALeft, this.gridCentralizedPPARight, "No");
+            this.lineMappingGrids = new AutoLineMappingGridSyncScroll(this.detailgrid, this.gridLineMappingRight, "No", SubGridType.LineMapping);
+            this.centralizedPPAGrids = new AutoLineMappingGridSyncScroll(this.gridCentralizedPPALeft, this.gridCentralizedPPARight, "No", SubGridType.CentrailizedPPA);
 
             this.chartLBR.Controls.AddRange(this.chartLBRButtons);
 
@@ -179,6 +181,13 @@ order by ad.SewerManpower, ad.No, ad.Seq
 
                 System.GC.Collect();
             };
+        }
+
+        /// <inheritdoc/>
+        protected override bool ClickPrint()
+        {
+            new P05_Print(this.CurrentMaintain["ID"].ToString()).ShowDialog();
+            return base.ClickPrint();
         }
 
         /// <inheritdoc/>
@@ -457,7 +466,7 @@ where   ID = '{this.CurrentMaintain["ID"]}'
             int seqLineMapping = 1;
             int seqCentralizedPPA = 1;
 
-            foreach (var dr in this.DetailDatas.OrderBy(s => s["No"]))
+            foreach (var dr in this.DetailDatas.OrderBy(s => s["No"].ToString()))
             {
                 if (dr["PPA"].ToString() != "C" && MyUtility.Convert.GetBool(dr["IsNonSewingLine"]) == false)
                 {
@@ -511,8 +520,28 @@ where   ID = '{this.CurrentMaintain["ID"]}'
             base.OnDetailGridSetup();
 
             TxtMachineGroup.CelltxtMachineGroup colMachineTypeID = TxtMachineGroup.CelltxtMachineGroup.GetGridCell();
-            DataGridViewGeneratorTextColumnSettings colThreadComboID = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorCheckBoxColumnSettings colSelected = new DataGridViewGeneratorCheckBoxColumnSettings();
+            DataGridViewGeneratorMaskedTextColumnSettings colPPANo = new DataGridViewGeneratorMaskedTextColumnSettings();
+
+            colPPANo.CellValidating += (s, e) =>
+            {
+                if (!this.EditMode)
+                {
+                    return;
+                }
+
+                DataRow dr = this.gridCentralizedPPALeft.GetDataRow<DataRow>(e.RowIndex);
+                string ppaNo = e.FormattedValue.ToString();
+
+                if (!MyUtility.Check.Empty(ppaNo))
+                {
+                    dr["No"] = ppaNo.PadLeft(2, '0');
+                }
+                else
+                {
+                    dr["No"] = string.Empty;
+                }
+            };
 
             colSelected.CellValidating += (s, e) =>
             {
@@ -559,88 +588,6 @@ where   ID = '{this.CurrentMaintain["ID"]}'
                 this.detailgrid.Refresh();
             };
 
-            #region colThreadComboID
-            colThreadComboID.EditingMouseDown += (s, e) =>
-            {
-                if (!this.EditMode)
-                {
-                    return;
-                }
-
-                if (e.Button == MouseButtons.Right)
-                {
-                    return;
-                }
-
-                if (e.RowIndex == -1)
-                {
-                    return;
-                }
-
-                DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
-                string sqlCmd = $@"
-select　Thread_ComboID
-from Style_ThreadColorCombo st with (nolock)
-where	st.StyleUkey = '{this.CurrentMaintain["StyleUkey"]}' and
-		st.MachineTypeID = '{dr["MachineTypeID"]}' and
-		exists(select 1 from Style_ThreadColorCombo_Operation sto with (nolock) 
-                        where   sto.Style_ThreadColorComboUkey = st.Ukey and 
-                                sto.OperationID = '{dr["MachineTypeID"]}')
-";
-                SelectItem item = new Win.Tools.SelectItem(sqlCmd, "12", dr["ThreadComboID"].ToString());
-                DialogResult returnResult = item.ShowDialog();
-                if (returnResult == DialogResult.Cancel)
-                {
-                    return;
-                }
-
-                e.EditingControl.Text = item.GetSelectedString();
-
-            };
-
-            colThreadComboID.CellValidating += (s, e) =>
-            {
-                if (!this.EditMode)
-                {
-                    return;
-                }
-
-                DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
-                if (MyUtility.Check.Empty(e.FormattedValue) || e.FormattedValue.ToString() == dr["ThreadComboID"].ToString())
-                {
-                    return;
-                }
-
-                string sqlCmd = $@"
-select　1
-from Style_ThreadColorCombo st with (nolock)
-where	st.StyleUkey = '{this.CurrentMaintain["StyleUkey"]}' and
-		st.MachineTypeID = '{dr["MachineTypeID"]}' and
-        st.Thread_ComboID = '{e.FormattedValue.ToString()}'
-		exists(select 1 from Style_ThreadColorCombo_Operation sto with (nolock) 
-                        where   sto.Style_ThreadColorComboUkey = st.Ukey and 
-                                sto.OperationID = '{dr["MachineTypeID"]}')
-";
-                DataTable machineData;
-                DualResult result = DBProxy.Current.Select(null, sqlCmd, out machineData);
-                if (!result)
-                {
-                    dr["ThreadComboID"] = string.Empty;
-                    e.Cancel = true;
-                    MyUtility.Msg.WarningBox("Sql connection fail!!\r\n" + result.ToString());
-                    return;
-                }
-
-                if (machineData.Rows.Count <= 0)
-                {
-                    dr["ThreadComboID"] = string.Empty;
-                    e.Cancel = true;
-                    MyUtility.Msg.WarningBox(string.Format("< ST/MC type: {0} > not found!!!", e.FormattedValue.ToString()));
-                    return;
-                }
-            };
-            #endregion
-
             this.Helper.Controls.Grid.Generator(this.detailgrid)
                .Text("No", header: "No", width: Widths.AnsiChars(4), iseditingreadonly: true)
                .CheckBox("Selected", string.Empty, trueValue: true, falseValue: false, iseditable: true, settings: colSelected)
@@ -657,11 +604,11 @@ where	st.StyleUkey = '{this.CurrentMaintain["StyleUkey"]}' and
                .Numeric("SewerDiffPercentageDesc", header: "%", width: Widths.AnsiChars(5), iseditingreadonly: true)
                .Numeric("DivSewer", header: "Div. Sewer", decimal_places: 4, width: Widths.AnsiChars(5), iseditingreadonly: true)
                .Numeric("OriSewer", header: "Ori. Sewer", decimal_places: 4, width: Widths.AnsiChars(5), iseditingreadonly: true)
-               .Text("ThreadComboID", header: "Thread" + Environment.NewLine + "Color", width: Widths.AnsiChars(10), settings: colThreadComboID)
+               .CellThreadComboID("ThreadComboID", "Thread" + Environment.NewLine + "Color", this, width: Widths.AnsiChars(10))
                .Text("Notice", header: "Notice", width: Widths.AnsiChars(10));
 
             this.Helper.Controls.Grid.Generator(this.gridCentralizedPPALeft)
-               .Text("No", header: "PPA No.", width: Widths.AnsiChars(4))
+               .MaskedText("No", "##", header: "PPA No.", width: Widths.AnsiChars(4), settings: colPPANo)
                .Text("Location", header: "Location", width: Widths.AnsiChars(13), iseditingreadonly: true)
                .CellMachineType("MachineTypeID", "ST/MC type", this, width: Widths.AnsiChars(10))
                .Text("MasterPlusGroup", header: "MC Group", width: Widths.AnsiChars(10), settings: colMachineTypeID)
@@ -837,12 +784,12 @@ from #tmp
             if (this.tabDetail.SelectedIndex == 0)
             {
                 this.detailgridbs.Filter = "PPA <> 'C' and IsNonSewingLine = 0";
-                this.lineMappingGrids.RefreshSubData(AutoLineMappingGridSyncScroll.SubGridType.LineMapping);
+                this.lineMappingGrids.RefreshSubData();
             }
             else
             {
                 this.gridCentralizedPPALeftBS.Filter = "PPA = 'C' and IsNonSewingLine = 0";
-                this.centralizedPPAGrids.RefreshSubData(AutoLineMappingGridSyncScroll.SubGridType.CentrailizedPPA);
+                this.centralizedPPAGrids.RefreshSubData();
             }
         }
 
@@ -1022,7 +969,7 @@ from #tmp
             if (dialogResult == DialogResult.OK)
             {
                 this.detailgridbs.DataSource = p05_EditOperation.dtAutomatedLineMapping_Detail;
-                this.lineMappingGrids.RefreshSubData(AutoLineMappingGridSyncScroll.SubGridType.LineMapping);
+                this.lineMappingGrids.RefreshSubData();
             }
         }
 

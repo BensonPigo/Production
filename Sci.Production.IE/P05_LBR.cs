@@ -54,7 +54,7 @@ namespace Sci.Production.IE
             this.gridMainBs.Filter = " PPA <> 'C' and IsNonSewingLine = 0";
             this.minSewermanpower = dtAutomatedLineMapping_DetailTemp.AsEnumerable().Select(s => MyUtility.Convert.GetInt(s["SewerManpower"])).Min();
 
-            this.autoLineMappingGridSyncScroll = new AutoLineMappingGridSyncScroll(this.gridMain, this.gridSub, "No");
+            this.autoLineMappingGridSyncScroll = new AutoLineMappingGridSyncScroll(this.gridMain, this.gridSub, "No", SubGridType.LineMapping);
 
             this.tabNoOfOperator.SelectedIndexChanged += this.TabNoOfOperator_SelectedIndexChanged;
             this.gridMain.CellFormatting += this.GridMain_CellFormatting;
@@ -117,7 +117,7 @@ namespace Sci.Production.IE
         private void LoadAutomatedLineMapping(int sewerManpower)
         {
             this.gridMainBs.DataSource = this.dtAutomatedLineMapping_DetailCopys[sewerManpower - this.minSewermanpower];
-            this.autoLineMappingGridSyncScroll.RefreshSubData(SubGridType.LineMapping);
+            this.autoLineMappingGridSyncScroll.RefreshSubData();
             this.numSewerManpower.Value = this.autoLineMappingGridSyncScroll.SewerManpower;
             this.numOPLoading.Value = this.autoLineMappingGridSyncScroll.HighestLoading;
             this.numLBR.Value = this.autoLineMappingGridSyncScroll.LBR;

@@ -34,8 +34,7 @@ namespace Sci.Production.IE
             this.gridMain.DataSource = this.gridMainBs;
             this.gridMainBs.Filter = " PPA <> 'C' and IsNonSewingLine = 0";
 
-            this.autoLineMappingGridSyncScroll = new AutoLineMappingGridSyncScroll(this.gridMain, this.gridSub, "No");
-            this.autoLineMappingGridSyncScroll.RefreshSubData(SubGridType.LineMapping);
+            this.autoLineMappingGridSyncScroll = new AutoLineMappingGridSyncScroll(this.gridMain, this.gridSub, "No", SubGridType.LineMapping);
 
             this.numLBR.Value = this.autoLineMappingGridSyncScroll.LBR;
             this.numHighestGSD.Value = this.autoLineMappingGridSyncScroll.HighestGSD;

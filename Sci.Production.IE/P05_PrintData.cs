@@ -51,32 +51,34 @@ namespace Sci.Production.IE
         /// <param name="display">導出方式</param>
         /// <param name="content">工段資訊要導出[Operation] or [Annotation]的模式</param>
         /// <param name="language">工段顯示語系</param>
-        public P05_PrintData(string almID, string display, string content, string language)
+        public P05_PrintData(string almID = "", string display = "", string content = "", string language = "")
         {
             this.almID = almID;
             this.display = display;
             this.content = content;
             this.language = language;
-
-#if DEBUG
-            this.almID = "1";
-            this.display = "UL";
-            this.content = "O";
-            this.language = "en";
-#endif
-
-            if (!this.LoadData())
-            {
-                return;
-            }
-
-            if (!this.ToExcel())
-            {
-                return;
-            }
         }
 
-        private bool LoadData()
+        /// <summary>
+        /// SetCondition
+        /// </summary>
+        /// <param name="almID">AutomatedLineMapping.ID</param>
+        /// <param name="display">導出方式</param>
+        /// <param name="content">工段資訊要導出[Operation] or [Annotation]的模式</param>
+        /// <param name="language">工段顯示語系</param>
+        public void SetCondition(string almID, string display, string content, string language)
+        {
+            this.almID = almID;
+            this.display = display;
+            this.content = content;
+            this.language = language;
+        }
+
+        /// <summary>
+        /// LoadData
+        /// </summary>
+        /// <returns>bool</returns>
+        public bool LoadData()
         {
             var testVar = $@"
 DECLARE @ALMID bigint = {this.almID}
@@ -401,7 +403,11 @@ group by almd.No
             return true;
         }
 
-        private bool ToExcel()
+        /// <summary>
+        /// ToExcel
+        /// </summary>
+        /// <returns>bool</returns>
+        public bool ToExcel()
         {
             string strXltName = Env.Cfg.XltPathDir + "\\IE_P05_Print.xltx";
             Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);

@@ -15,6 +15,7 @@ using Sci.Production.Class;
 using Sci.Win.Tems;
 using System.Net.Mail;
 using Sci.Production.Prg;
+using Sci.Production.Class.Command;
 
 namespace Sci.Production.IE
 {
@@ -68,10 +69,11 @@ namespace Sci.Production.IE
             : base(menuitem)
         {
             this.InitializeComponent();
+            this.detailgrid.Columns.DisableSortable();
             this.detailgrid.AllowUserToOrderColumns = true;
             this.InsertDetailGridOnDoubleClick = false;
             this.detailgrid.Font = new System.Drawing.Font("Calibri", 12F, System.Drawing.FontStyle.Bold);
-            new GridRowDrag(this.detailgrid);
+            new GridRowDrag(this.detailgrid, this.DetailGridAfterRowDragDo, this.DetailGridBeforeRowDragDo);
         }
 
         /// <inheritdoc/>
@@ -87,8 +89,8 @@ namespace Sci.Production.IE
 
             if (sumDetailItems.Any())
             {
-                this.numericStdSMV.Value = this.DetailDatas.Sum(s => MyUtility.Convert.GetDecimal(s["StdSMV"]));
-                this.numericFtySMV.Value = this.DetailDatas.Sum(s => MyUtility.Convert.GetDecimal(s["SMV"]));
+                this.numericStdSMV.Value = sumDetailItems.Sum(s => MyUtility.Convert.GetDecimal(s["StdSMV"]));
+                this.numericFtySMV.Value = sumDetailItems.Sum(s => MyUtility.Convert.GetDecimal(s["SMV"]));
             }
 
             return base.OnRenewDataPost(e);
@@ -101,9 +103,11 @@ namespace Sci.Production.IE
         /// <param name="brandID">BrandID</param>
         /// <param name="seasonID">SeasonID</param>
         /// <param name="comboType">ComboType</param>
+        /// <param name="isReadOnly">isReadOnly</param>
         public P01(string styleID, string brandID, string seasonID, string comboType, bool isReadOnly = false)
         {
             this.InitializeComponent();
+            this.detailgrid.Columns.DisableSortable();
             StringBuilder df = new StringBuilder();
             df.Append(string.Format("StyleID = '{0}' ", styleID));
             if (!MyUtility.Check.Empty(brandID))
@@ -143,6 +147,7 @@ namespace Sci.Production.IE
             this.DefaultFilter = df.ToString();
             this.detailgrid.AllowUserToOrderColumns = true;
             this.InsertDetailGridOnDoubleClick = false;
+            new GridRowDrag(this.detailgrid, this.DetailGridAfterRowDragDo, this.DetailGridBeforeRowDragDo);
         }
 
         /// <summary>
@@ -181,6 +186,8 @@ select 0 as Selected, isnull(o.SeamLength,0) SeamLength
       ,PPAText = ISNULL(d.Name,'')
       ,td.IsNonSewingLine
       ,td.SewingMachineAttachmentID
+      ,td.Thread_ComboID
+      ,td.StdSMV
 from TimeStudy_Detail td WITH (NOLOCK) 
 left join Operation o WITH (NOLOCK) on td.OperationID = o.ID
 left join MachineType_Detail md WITH (NOLOCK) on md.ID = o.MachineTypeID and md.FactoryID = '{Env.User.Factory}'
@@ -266,6 +273,7 @@ order by td.Seq";
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
+            this.detailgrid.AllowDrop = this.EditMode;
             this.GenCD(null, null);  // 撈CD Code
             bool isConfirmed = this.CurrentMaintain["Status"].ToString().ToLower().EqualString("confirmed");
             bool canEdit = PublicPrg.Prgs.GetAuthority(Env.User.UserID, "P01. Factory GSD", "CanEdit");
@@ -275,20 +283,6 @@ order by td.Seq";
             this.btnStdGSDList.Enabled = !this.EditMode && this.CurrentMaintain != null;
             this.btnArtSum.Enabled = this.CurrentMaintain != null;
             this.btnSketch.Enabled = this.CurrentMaintain != null;
-
-            //this.detailgrid.AutoResizeColumn(0);
-            //this.detailgrid.AutoResizeColumn(1);
-            //this.detailgrid.AutoResizeColumn(2);
-            //this.detailgrid.AutoResizeColumn(4);
-            //this.detailgrid.AutoResizeColumn(5);
-            //this.detailgrid.AutoResizeColumn(6);
-            //this.detailgrid.AutoResizeColumn(7);
-            //this.detailgrid.AutoResizeColumn(8);
-            //this.detailgrid.AutoResizeColumn(9);
-            //this.detailgrid.AutoResizeColumn(11);
-            //this.detailgrid.AutoResizeColumn(12);
-            //this.detailgrid.AutoResizeColumn(13);
-            //this.detailgrid.AutoResizeColumn(14);
 
             string styleVersion = MyUtility.GetValue.Lookup($@"
 select IETMSVersion from Style 
@@ -389,6 +383,7 @@ and IETMSID = '{this.CurrentMaintain["IETMSID"]}'
                                     dr["MtlFactorID"] = callNextForm.P01SelectOperationCode["MtlFactorID"].ToString();
                                     dr["SeamLength"] = callNextForm.P01SelectOperationCode["SeamLength"].ToString();
                                     dr["SMV"] = MyUtility.Convert.GetDecimal(callNextForm.P01SelectOperationCode["SMV"]) * 60;
+                                    dr["StdSMV"] = MyUtility.Convert.GetDecimal(callNextForm.P01SelectOperationCode["SMV"]) * 60;
                                     dr["IETMSSMV"] = MyUtility.Convert.GetDecimal(callNextForm.P01SelectOperationCode["SMV"]);
                                     dr["Frequency"] = 1;
                                     dr["ttlSeamLength"] = MyUtility.Convert.GetDecimal(dr["Frequency"]) * MyUtility.Convert.GetDecimal(dr["SeamLength"]);
@@ -409,6 +404,7 @@ and IETMSID = '{this.CurrentMaintain["IETMSID"]}'
                                 dr["MtlFactorID"] = callNextForm.P01SelectOperationCode["MtlFactorID"].ToString();
                                 dr["SeamLength"] = callNextForm.P01SelectOperationCode["SeamLength"].ToString();
                                 dr["SMV"] = MyUtility.Convert.GetDecimal(callNextForm.P01SelectOperationCode["SMV"]) * 60;
+                                dr["StdSMV"] = MyUtility.Convert.GetDecimal(callNextForm.P01SelectOperationCode["SMV"]) * 60;
                                 dr["IETMSSMV"] = MyUtility.Convert.GetDecimal(callNextForm.P01SelectOperationCode["SMV"]);
                                 dr["Frequency"] = 1;
                                 dr["ttlSeamLength"] = MyUtility.Convert.GetDecimal(dr["Frequency"]) * MyUtility.Convert.GetDecimal(dr["SeamLength"]);
@@ -445,6 +441,7 @@ and IETMSID = '{this.CurrentMaintain["IETMSID"]}'
                             dr["Frequency"] = 0;
                             dr["SeamLength"] = 0;
                             dr["SMV"] = 0;
+                            dr["StdSMV"] = 0;
                             dr["IETMSSMV"] = 0;
                             dr["Annotation"] = string.Empty;
                         }
@@ -488,6 +485,7 @@ and o.ID = @id";
                                     dr["Frequency"] = 1;
                                     dr["SeamLength"] = MyUtility.Convert.GetDecimal(opData.Rows[0]["SeamLength"]);
                                     dr["SMV"] = MyUtility.Convert.GetDecimal(opData.Rows[0]["SMV"]) * 60;
+                                    dr["StdSMV"] = MyUtility.Convert.GetDecimal(opData.Rows[0]["SMV"]) * 60;
                                     dr["IETMSSMV"] = MyUtility.Convert.GetDecimal(opData.Rows[0]["SMV"]);
                                     dr["ttlSeamLength"] = MyUtility.Convert.GetDecimal(dr["Frequency"]) * MyUtility.Convert.GetDecimal(dr["SeamLength"]);
                                     dr["Annotation"] = opData.Rows[0]["Annotation"].ToString();
@@ -1048,7 +1046,8 @@ and Name = @PPA
                 .Text("Annotation", header: "Annotation", width: Widths.AnsiChars(30))
                 .Numeric("Frequency", header: "Frequency", integer_places: 2, decimal_places: 2, maximum: 99.99M, minimum: 0, settings: this.frequency)
                 .Text("MtlFactorID", header: "Factor", width: Widths.AnsiChars(3), iseditingreadonly: true)
-                .Numeric("SMV", header: "SMV (sec)", integer_places: 4, decimal_places: 4, maximum: 9999.9999M, minimum: 0, settings: this.smvsec)
+                .Numeric("StdSMV", header: "Std. SMV (sec)", integer_places: 4, decimal_places: 4, maximum: 9999.9999M, minimum: 0, iseditingreadonly: true)
+                .Numeric("SMV", header: "Fty. SMV (sec)", integer_places: 4, decimal_places: 4, maximum: 9999.9999M, minimum: 0, settings: this.smvsec)
                 .CheckBox("IsSubprocess", header: "Subprocess", width: Widths.AnsiChars(7), iseditable: false, trueValue: 1, falseValue: 0).Get(out this.col_IsSubprocess)
                 .CheckBox("IsNonSewingLine", header: "Non-Sewing line", width: Widths.AnsiChars(7), iseditable: false, trueValue: 1, falseValue: 0).Get(out this.col_IsNonSewingLine)
                 .Text("PPAText", header: "PPA", width: Widths.AnsiChars(10), settings: ppa)
@@ -1057,6 +1056,7 @@ and Name = @PPA
                 .Text("Mold", header: "Attachment", width: Widths.AnsiChars(8), settings: this.mold)
                 .Text("SewingMachineAttachmentID", header: "Part ID", width: Widths.AnsiChars(50), settings: pardID)
                 .Text("Template", header: "Template", width: Widths.AnsiChars(8), settings: template)
+                .CellThreadComboID("Thread_ComboID", "Thread Combination", this, width: Widths.AnsiChars(10))
                 .Numeric("PcsPerHour", header: "Pcs/hr", integer_places: 5, decimal_places: 1, iseditingreadonly: true)
                 .Numeric("Sewer", header: "Sewer", integer_places: 2, decimal_places: 1, iseditingreadonly: true)
                 .Numeric("IETMSSMV", header: "Std. SMV", integer_places: 3, decimal_places: 4, iseditingreadonly: true);
@@ -1165,6 +1165,7 @@ and Name = @PPA
             dr["Frequency"] = 0;
             dr["SeamLength"] = 0;
             dr["SMV"] = 0;
+            dr["StdSMV"] = 0;
             dr["IETMSSMV"] = 0;
         }
 
@@ -1384,7 +1385,13 @@ and s.StyleUnit='PCS'
             #region 寫表頭的Total Sewing Time與表身的Sewer，只把ArtworkTypeID = 'SEWING'的秒數抓進來加總
             bool isLocalStyle = MyUtility.Convert.GetBool(MyUtility.GetValue.Lookup($"SELECT LocalStyle FROM Style WHERE ID='{this.CurrentMaintain["StyleID"]}' AND SeasonID='{this.CurrentMaintain["SeasonID"]}' AND BrandID='{this.CurrentMaintain["BrandID"]}'"));
 
-            var machineSMV_List = ((DataTable)this.detailgridbs.DataSource).AsEnumerable().Where(o => o.RowState != DataRowState.Deleted).Select(o => new { MachineTypeID = o["MachineTypeID"].ToString(), SMV = MyUtility.Convert.GetDecimal(o["SMV"]) }).ToList();
+            var machineSMV_List = ((DataTable)this.detailgridbs.DataSource).AsEnumerable()
+                .Where(o => o.RowState != DataRowState.Deleted &&
+                            !MyUtility.Convert.GetBool(o["IsSubprocess"]) &&
+                            !MyUtility.Convert.GetBool(o["IsNonSewingLine"]) &&
+                            MyUtility.Convert.GetString(o["PPA"]) != "C")
+                .Select(o => new { MachineTypeID = o["MachineTypeID"].ToString(), SMV = MyUtility.Convert.GetDecimal(o["SMV"]) })
+                .ToList();
             decimal ttlSewingTime = 0;
             if (!isLocalStyle)
             {
@@ -1487,11 +1494,17 @@ group by id.Location,M.ArtworkTypeID";
             #endregion
 
             decimal allSewer = MyUtility.Check.Empty(this.CurrentMaintain["NumberSewer"]) ? 0.0m : MyUtility.Convert.GetDecimal(this.CurrentMaintain["NumberSewer"]);
-            foreach (DataRow dr in ((DataTable)this.detailgridbs.DataSource).Rows)
+            foreach (DataRow dr in this.DetailDatas)
             {
-                if (dr.RowState != DataRowState.Deleted)
+                if (!MyUtility.Convert.GetBool(dr["IsSubprocess"]) &&
+                   !MyUtility.Convert.GetBool(dr["IsNonSewingLine"]) &&
+                   MyUtility.Convert.GetString(dr["PPA"]) != "C")
                 {
                     dr["Sewer"] = ttlSewingTime == 0 ? 0 : MyUtility.Math.Round(allSewer * (MyUtility.Convert.GetDecimal(dr["SMV"]) / ttlSewingTime), 1);
+                }
+                else
+                {
+                    dr["Sewer"] = 0;
                 }
             }
 
@@ -2030,11 +2043,21 @@ select id.SEQ,
     ,PPA = IIF(id.isPPA = 1 ,'C' , '')
     ,PPAText = IIF(id.isPPA = 1 ,'Centralized' , '')
     ,IsNonSewingLine =  ISNULL(md.IsNonSewingLine ,0)
+    ,[Thread_ComboID] = Thread_ComboID.val
 from Style s WITH (NOLOCK) 
 inner join IETMS i WITH (NOLOCK) on s.IETMSID = i.ID and s.IETMSVersion = i.Version
 inner join IETMS_Detail id WITH (NOLOCK) on i.Ukey = id.IETMSUkey
 left join Operation o WITH (NOLOCK) on id.OperationID = o.ID
 left join MachineType_Detail md WITH (NOLOCK) on md.ID = o.MachineTypeID and md.FactoryID = '{0}'
+outer apply (
+    select　top 1 [val] = Thread_ComboID
+    from Style_ThreadColorCombo st with (nolock)
+    where	st.StyleUkey = s.Ukey and
+    		st.MachineTypeID = o.MachineTypeID and
+    		exists(select 1 from Style_ThreadColorCombo_Operation sto with (nolock) 
+                            where   sto.Style_ThreadColorComboUkey = st.Ukey and 
+                                    sto.OperationID = id.OperationID)
+) Thread_ComboID
 outer apply (
 	 select [val] = IIF(isnull(mt.IsNotShownInP01 , 1) = 0, 1, 0)
     from Operation o2
@@ -2132,39 +2155,13 @@ and s.BrandID = @brandid ", Env.User.Factory);
             }
         }
 
-        // GetStdGSD
+        /// <summary>
+        /// GetStdGSD
+        /// </summary>
+        /// <param name="operationID">operationID</param>
+        /// <returns>DataTable</returns>
         public DataTable GetStdGSD(string operationID)
         {
-
-            //// sql參數
-            //SqlParameter sp1 = new SqlParameter();
-            //SqlParameter sp2 = new SqlParameter();
-            //SqlParameter sp3 = new SqlParameter();
-            //sp1.ParameterName = "@id";
-            //sp1.Value = this.CurrentMaintain["StyleID"].ToString();
-            //sp2.ParameterName = "@seasonid";
-            //sp2.Value = this.CurrentMaintain["SeasonID"].ToString();
-            //sp3.ParameterName = "@brandid";
-            //sp3.Value = this.CurrentMaintain["BrandID"].ToString();
-
-            //IList<SqlParameter> cmds = new List<SqlParameter>
-            //{
-            //    sp1,
-            //    sp2,
-            //    sp3,
-            //};
-
-            //string sqlCmd = "select Ukey from Style WITH (NOLOCK) where ID = @id and SeasonID = @seasonid and BrandID = @brandid";
-            //DataTable styleUkey;
-            //DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out styleUkey);
-            //if (!result)
-            //{
-            //    MyUtility.Msg.WarningBox("SQL Connection fail!!\r\n" + result.ToString());
-            //    return null;
-            //}
-
-            //StdGSDList callNextForm = new StdGSDList(MyUtility.Convert.GetLong(styleUkey.Rows[0]["UKey"]));
-
             DataTable dt;
 
             string cmd = $@"select OperationID=ID ,MoldID  from Operation where Junk=0 and ID = '{operationID}'";
@@ -2533,22 +2530,6 @@ and s.BrandID = @brandid";
 
             this.detailgrid.ValidateControl();
 
-            //var chk_list = this.DetailDatas.AsEnumerable().Where(x => x["IsSubprocess"].EqualDecimal(1) && x["Selected"].EqualDecimal(1)).ToList();
-            //if (chk_list.Count > 0)
-            //{
-            //    MyUtility.Msg.WarningBox("Subprocess checked! This operation cannot delete!");
-            //    return;
-            //}
-
-            //foreach (DataRow dr in this.DetailDatas)
-            //{
-            //    if (MyUtility.Convert.GetBool(dr["IsSubprocess"]) == true)
-            //    {
-            //        MyUtility.Msg.WarningBox("Subprocess checked! This operation cannot delete!");
-            //        return;
-            //    }
-            //}
-
             DataRow drSelect = this.detailgrid.GetDataRow(this.detailgridbs.Position);
             if (MyUtility.Check.Empty(drSelect["MachineType_IsSubprocess"]) == false)
             {
@@ -2559,10 +2540,25 @@ and s.BrandID = @brandid";
             base.OnDetailGridRemoveClick();
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private DataTable dtDetailBeforeDrag;
+
+        private void DetailGridBeforeRowDragDo(DataRow dr)
         {
-            this.detailgrid.ClearSelection();
-            this.detailgrid.Rows[1].Selected = true;
+            this.dtDetailBeforeDrag = dr.Table.Copy();
+        }
+
+        private void DetailGridAfterRowDragDo(DataRow dr)
+        {
+            List<DataRow> listBeforeGrag = this.dtDetailBeforeDrag.AsEnumerable().Where(s => s.RowState != DataRowState.Deleted).ToList();
+
+            int rowIndex = 0;
+
+            // 拖移後Seq不變，所以使用拖移前keep的detail還原
+            foreach (DataRow curRow in dr.Table.AsEnumerable().Where(s => s.RowState != DataRowState.Deleted))
+            {
+                curRow["Seq"] = listBeforeGrag[rowIndex]["Seq"];
+                rowIndex++;
+            }
         }
     }
 }

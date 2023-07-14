@@ -21,6 +21,7 @@ namespace Sci.Production.Prg
         private int finalDragIndex = -1;
         private Grid mainGrid;
         private Action<DataRow> afterRowDragDo;
+        private Action<DataRow> beforeRowDragDo;
 
         private DataTable DataMain
         {
@@ -44,7 +45,8 @@ namespace Sci.Production.Prg
         /// </summary>
         /// <param name="tarGrid">tarGrid</param>
         /// <param name="afterRowDragDo">afterRowDragDo</param>
-        public GridRowDrag(Grid tarGrid, Action<DataRow> afterRowDragDo = null)
+        /// <param name="beforeRowDragDo">beforeRowDragDo</param>
+        public GridRowDrag(Grid tarGrid, Action<DataRow> afterRowDragDo = null, Action<DataRow> beforeRowDragDo = null)
         {
             this.mainGrid = tarGrid;
             this.mainGrid.AllowDrop = true;
@@ -66,11 +68,12 @@ namespace Sci.Production.Prg
             this.mainGrid.Paint += this.DataGridView_Paint;
 
             this.afterRowDragDo = afterRowDragDo;
+            this.beforeRowDragDo = beforeRowDragDo;
         }
 
         private void DataGridView_MouseDown(object sender, MouseEventArgs e)
         {
-            if (e.Button == MouseButtons.Left && this.mainGrid.HitTest(e.X, e.Y).Type == DataGridViewHitTestType.Cell)
+            if (e.Button == MouseButtons.Left && this.mainGrid.HitTest(e.X, e.Y).Type == DataGridViewHitTestType.Cell && this.mainGrid.AllowDrop)
             {
                 // 取得被拖曳的資料列的索引
                 int rowIndex = this.mainGrid.HitTest(e.X, e.Y).RowIndex;
@@ -108,7 +111,6 @@ namespace Sci.Production.Prg
 
         private void DataGridView_DragOver(object sender, DragEventArgs e)
         {
-
             // 取得滑鼠的位置
             Point clientPoint = this.mainGrid.PointToClient(new Point(e.X, e.Y));
 
@@ -148,6 +150,11 @@ namespace Sci.Production.Prg
                     // 判斷被拖曳的資料列是否與目標行相同，若相同則不進行任何操作
                     if (draggedRowIndex != tarDataRowIndex)
                     {
+                        if (this.beforeRowDragDo != null)
+                        {
+                            this.beforeRowDragDo(this.mainGrid.GetDataRow(draggedRow.Index));
+                        }
+
                         // 更新資料綁定的資料
                         DataRow newRow = this.MoveDataRow(this.DataMain, draggedRowIndex, tarDataRowIndex);
                         this.finalDragIndex = targetGridRowIndex;

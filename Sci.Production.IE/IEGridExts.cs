@@ -360,7 +360,6 @@ where Junk = 0";
             return gen.Text(propertyname, header: header, width: width, settings: settings, iseditable: iseditable, iseditingreadonly: iseditingreadonly, alignment: alignment);
         }
 
-
         /// <summary>
         /// CellPartID
         /// </summary>
@@ -468,6 +467,125 @@ where a.MoldID IN ('{string.Join("','", moldID.Split(','))}') ";
                         e.Cancel = true;
                         MyUtility.Msg.WarningBox("Data not found");
                     }
+                }
+            };
+
+            return gen.Text(propertyname, header: header, width: width, settings: settings, iseditable: iseditable, iseditingreadonly: iseditingreadonly, alignment: alignment);
+        }
+
+
+        /// <summary>
+        /// CellThreadComboID
+        /// </summary>
+        /// <param name="gen">DataGridView Generator</param>
+        /// <param name="propertyname">Property name</param>
+        /// <param name="header">Header</param>
+        /// <param name="mainForm">call from</param>
+        /// <param name="width">Width</param>
+        /// <param name="iseditable">is editable</param>
+        /// <param name="iseditingreadonly">is editing readonly</param>
+        /// <param name="alignment">DataGridView Content Alignment</param>
+        /// <returns>gen</returns>
+        public static IDataGridViewGenerator CellThreadComboID(this IDataGridViewGenerator gen, string propertyname, string header, InputMasterDetail mainForm, IWidth width = null, bool? iseditable = null, bool? iseditingreadonly = null, DataGridViewContentAlignment? alignment = null)
+        {
+            DataGridViewGeneratorTextColumnSettings settings = new DataGridViewGeneratorTextColumnSettings();
+
+            settings.EditingMouseDown += (s, e) =>
+            {
+                if (!mainForm.EditMode)
+                {
+                    return;
+                }
+
+                if (e.Button == MouseButtons.Right)
+                {
+                    return;
+                }
+
+                if (e.RowIndex == -1)
+                {
+                    return;
+                }
+
+                string styleUkey;
+                if (mainForm.CurrentMaintain.Table.Columns.Contains("StyleUkey"))
+                {
+                    styleUkey = mainForm.CurrentMaintain["StyleUkey"].ToString();
+                }
+                else
+                {
+                    styleUkey = MyUtility.GetValue.Lookup($"select ukey from Style with (nolock) where ID = '{mainForm.CurrentMaintain["StyleID"]}' and SeasonID = '{mainForm.CurrentMaintain["SeasonID"]}' and BrandID = '{mainForm.CurrentMaintain["BrandID"]}'");
+                }
+
+                DataRow dr = mainForm.detailgrid.GetDataRow<DataRow>(e.RowIndex);
+                string sqlCmd = $@"
+select　Thread_ComboID
+from Style_ThreadColorCombo st with (nolock)
+where	st.StyleUkey = '{styleUkey}' and
+		st.MachineTypeID = '{dr["MachineTypeID"]}' and
+		exists(select 1 from Style_ThreadColorCombo_Operation sto with (nolock) 
+                        where   sto.Style_ThreadColorComboUkey = st.Ukey and 
+                                sto.OperationID = '{dr["OperationID"]}')
+";
+                SelectItem item = new Win.Tools.SelectItem(sqlCmd, "12", dr[propertyname].ToString());
+                DialogResult returnResult = item.ShowDialog();
+                if (returnResult == DialogResult.Cancel)
+                {
+                    return;
+                }
+
+                e.EditingControl.Text = item.GetSelectedString();
+            };
+
+            settings.CellValidating += (s, e) =>
+            {
+                if (!mainForm.EditMode)
+                {
+                    return;
+                }
+
+                DataRow dr = mainForm.detailgrid.GetDataRow<DataRow>(e.RowIndex);
+                if (MyUtility.Check.Empty(e.FormattedValue) || e.FormattedValue.ToString() == dr[propertyname].ToString())
+                {
+                    return;
+                }
+
+                string styleUkey;
+                if (mainForm.CurrentMaintain.Table.Columns.Contains("StyleUkey"))
+                {
+                    styleUkey = mainForm.CurrentMaintain["StyleUkey"].ToString();
+                }
+                else
+                {
+                    styleUkey = MyUtility.GetValue.Lookup($"select ukey from Style with (nolock) where ID = '{mainForm.CurrentMaintain["StyleID"]}' and SeasonID = '{mainForm.CurrentMaintain["SeasonID"]}' and BrandID = '{mainForm.CurrentMaintain["BrandID"]}'");
+                }
+
+                string sqlCmd = $@"
+select　1
+from Style_ThreadColorCombo st with (nolock)
+where	st.StyleUkey = '{styleUkey}' and
+		st.MachineTypeID = '{dr["MachineTypeID"]}' and
+        st.Thread_ComboID = '{e.FormattedValue.ToString()}' and
+		exists(select 1 from Style_ThreadColorCombo_Operation sto with (nolock) 
+                        where   sto.Style_ThreadColorComboUkey = st.Ukey and 
+                                sto.OperationID = '{dr["OperationID"]}')
+";
+                DataTable machineData;
+                DualResult result = DBProxy.Current.Select(null, sqlCmd, out machineData);
+                if (!result)
+                {
+                    dr[propertyname] = string.Empty;
+                    e.Cancel = true;
+                    MyUtility.Msg.WarningBox("Sql connection fail!!\r\n" + result.ToString());
+                    return;
+                }
+
+                if (machineData.Rows.Count <= 0)
+                {
+                    dr[propertyname] = string.Empty;
+                    e.Cancel = true;
+                    MyUtility.Msg.WarningBox(string.Format("< ST/MC type: {0} > not found!!!", e.FormattedValue.ToString()));
+                    return;
                 }
             };
 
