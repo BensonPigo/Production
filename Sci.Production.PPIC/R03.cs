@@ -1684,24 +1684,44 @@ drop table #tmpListPoCombo,#tmp_PFRemark,#tmp_StyleUkey,#tmp_MTLDelay,#tmp_Packi
                     sqlCmd.Clear();
 
                     string strUnion = @"
-    union all
-    SELECT  ID = 'PrintSubCon'
-            , Seq = ''
-            , ArtworkUnit = '' 
-            , ProductionUnit = '' 
-            , SystemType = ''
-            , FakeID = '9999ZZ'
-            , ColumnN = 'POSubCon'
-            , ColumnSeq = '998'
-	union all
-    SELECT  ID = 'PrintSubCon'
+        union all
+        SELECT  ID = 'PrintSubCon'
+        , Seq = ''
+        , ArtworkUnit = '' 
+        , ProductionUnit = '' 
+        , SystemType = ''
+        , FakeID = '9999ZZ'
+        , ColumnN = 'POSubCon'
+        , ColumnSeq = '998'
+	    union all
+        SELECT  ID = 'PrintSubCon'
             , Seq = ''
             , ArtworkUnit = '' 
             , ProductionUnit = '' 
             , SystemType = ''
             , FakeID = '9999ZZ'
             , ColumnN = 'SubCon'
-            , ColumnSeq = '999'";
+            , ColumnSeq = '999'
+        UNION ALL 
+	    SELECT 
+	    ID = 'EMBROIDERY',
+	    seq = '',
+	    ArtworkUnit = ''  , 
+	    ProductionUnit = ''  ,
+	    SystemType = '' , 
+	    FakeID = '9999ZZ', 
+	    ColumnN = 'EMBROIDERY(POSubcon)',
+	    ColumnSeq = '997'
+	    UNION ALL
+	    SELECT 
+	    ID = 'EMBROIDERY',
+	    seq = '',
+	    ArtworkUnit = ''  , 
+	    ProductionUnit = ''  ,
+	    SystemType = '' , 
+	    FakeID = '9999ZZ', 
+	    ColumnN = 'EMBROIDERY(SubCon)',
+	    ColumnSeq = '996'";
                     string printingDetailcol = string.Empty;
                     if (this.printingDetail)
                     {
@@ -2009,6 +2029,8 @@ select  ot.ID
         , TAUnitRno = a3.rno
         , TPUnitRno = iif(ot.ArtworkTypeID='PRINTING PPU', a3.rno, a4.rno )
         , TNRno = a5.rno  
+        ,EMBROIDERYSubcon = IIF(ot.ArtworkTypeID = 'EMBROIDERY',IIF(ot.InhouseOSP = 'O',(select Abb from LocalSupp WITH (NOLOCK) where ID = ot.LocalSuppID),ot.LocalSuppID),'')
+		,EMBROIDERYPOSubcon = IIF(ot.ArtworkTypeID = 'EMBROIDERY', IIF(ot.InhouseOSP = 'O', EMPApp.Abb, ot.LocalSuppID), '')
 from Order_TmsCost ot WITH (NOLOCK) 
 left join ArtworkType at WITH (NOLOCK) on at.ID = ot.ArtworkTypeID
 left join ArtworkData a on a.FakeID = ot.Seq+'U1' 
@@ -2028,6 +2050,18 @@ outer apply(
 			and apd.OrderID = ot.ID
 		FOR XML PATH('')),1,1,'') 
 )ap
+OUTER APPLY
+(
+	select Abb=Stuff((
+               select distinct concat(',',l.Abb)
+               from ArtworkPO ap WITH (NOLOCK)
+               inner join ArtworkPO_Detail apd WITH (NOLOCK) on ap.ID = apd.ID
+               left join LocalSupp l WITH (NOLOCK) on ap.LocalSuppID = l.ID
+               where ap.ArtworkTypeID = 'EMBROIDERY'
+               and apd.OrderID = ot.ID
+               FOR XML PATH('')),1,1,'')
+)EMPApp
+
 where exists (select id from OrderID WITH (NOLOCK) where ot.ID = OrderID.ID )");
                         MyUtility.Tool.ProcessWithDatatable(
                             this.subprocessColumnName,
@@ -2141,6 +2175,7 @@ drop table #tmp,#tmp2,#tmp3
 
             // 填Subprocess欄位名稱
             int poSubConCol = 9999, subConCol = 9999, ttlTMS = lastCol + 1; // 紀錄SubCon與TTL_TMS的欄位
+            int eMBROIDERYPOSubcon = 9999 , eMBROIDERYSubcon = 9999;
             int printingDetailCol = 9999;
             string excelColEng = string.Empty;
             if (this.artwork || this.pap)
@@ -2169,6 +2204,16 @@ drop table #tmp,#tmp2,#tmp3
                     if (MyUtility.Convert.GetString(dr["ColumnN"]).ToUpper() == "TTL_TMS")
                     {
                         ttlTMS = MyUtility.Convert.GetInt(dr["rno"]);
+                    }
+
+                    if (MyUtility.Convert.GetString(dr["ColumnN"]) == "EMBROIDERY(POSubcon)")
+                    {
+                        eMBROIDERYPOSubcon = MyUtility.Convert.GetInt(dr["rno"]);
+                    }
+
+                    if (MyUtility.Convert.GetString(dr["ColumnN"]) == "EMBROIDERY(SubCon)")
+                    {
+                        eMBROIDERYSubcon = MyUtility.Convert.GetInt(dr["rno"]);
                     }
                 }
 
@@ -2465,6 +2510,32 @@ drop table #tmp,#tmp2,#tmp3
                                     objArray[intRowsStart, subConCol - 1] = string.Empty;
                                 }
                             }
+
+                            if (eMBROIDERYPOSubcon != 9999)
+                            {
+                                if (!MyUtility.Check.Empty(sdr["EMBROIDERYPOSubcon"]))
+                                {
+                                    objArray[intRowsStart, eMBROIDERYPOSubcon - 1] = sdr["EMBROIDERYPOSubcon"];
+                                }
+
+                                if (MyUtility.Check.Empty(objArray[intRowsStart, eMBROIDERYPOSubcon - 1]))
+                                {
+                                    objArray[intRowsStart, eMBROIDERYPOSubcon - 1] = string.Empty;
+                                }
+                            }
+
+                            if (eMBROIDERYSubcon != 9999)
+                            {
+                                if (!MyUtility.Check.Empty(sdr["EMBROIDERYSubcon"]))
+                                {
+                                    objArray[intRowsStart, eMBROIDERYSubcon - 1] = sdr["EMBROIDERYSubcon"];
+                                }
+
+                                if (MyUtility.Check.Empty(objArray[intRowsStart, eMBROIDERYSubcon - 1]))
+                                {
+                                    objArray[intRowsStart, eMBROIDERYSubcon - 1] = string.Empty;
+                                }
+                            }
                         }
                     }
 
@@ -2505,7 +2576,7 @@ drop table #tmp,#tmp2,#tmp3
                                     if (objArray[j, i] == null)
                                     {
                                         objArray[j, i] = 0;
-                                        if (i == poSubConCol - 1 || i == subConCol - 1)
+                                        if (i == poSubConCol - 1 || i == subConCol - 1 || i == eMBROIDERYPOSubcon - 1 || i == eMBROIDERYSubcon - 1)
                                         {
                                             objArray[j, i] = string.Empty;
                                         }
@@ -2549,7 +2620,7 @@ drop table #tmp,#tmp2,#tmp3
                         if (objArray[j, i] == null)
                         {
                             objArray[j, i] = 0;
-                            if (i == poSubConCol - 1 || i == subConCol - 1)
+                            if (i == poSubConCol - 1 || i == subConCol - 1 || i == eMBROIDERYPOSubcon - 1 || i == eMBROIDERYSubcon - 1)
                             {
                                 objArray[j, i] = string.Empty;
                             }
