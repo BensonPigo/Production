@@ -20,6 +20,7 @@
         LocalOrderAdjust_Detail,
         LocalOrderIssue_Detail,
         LocalOrderReceiving_Detail,
+        LocalOrderLocationTrans_Detail,
         DefaultError,
     }
 #pragma warning restore SA1602

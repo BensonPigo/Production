@@ -390,6 +390,91 @@ namespace Sci.Production.Automation
                        CmdTime = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"),
                    });
                     break;
+                case WHTableName.LocalOrderReceiving_Detail:
+                    bodyObject = dtDetail.AsEnumerable()
+                   .Select(s => new
+                   {
+                       ID = s["ID"].ToString(),
+                       InvNo = s["InvNo"].ToString(),
+                       POID = s["POID"].ToString(),
+                       Seq1 = s["Seq1"].ToString(),
+                       Seq2 = s["Seq2"].ToString(),
+                       Refno = s["Refno"].ToString(),
+                       StockUnit = s["StockUnit"].ToString(),
+                       StockQty = s["StockQty"].ToString(),
+                       PoUnit = s["PoUnit"].ToString(),
+                       ShipQty = s["ShipQty"].ToString(),
+                       Color = s["Color"].ToString(),
+                       SizeCode = MyUtility.Check.Empty(s["SizeCode"]) ? null : s["SizeCode"].ToString(),
+                       Weight = s["Weight"].ToString(),
+                       StockType = "B",
+                       MtlType = MyUtility.Check.Empty(s["MtlType"]) ? null : s["MtlType"].ToString(),
+                       Ukey = (long)s["Ukey"],
+                       ETA = string.Empty,
+                       WhseArrival = s["WhseArrival"],
+                       Status = statusAPI.ToString(),
+                       CmdTime = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"),
+                   });
+                    break;
+                case WHTableName.LocalOrderIssue_Detail:
+                    bodyObject = dtDetail.AsEnumerable()
+                    .Select(s => new
+                    {
+                        ID = s["ID"].ToString(),
+                        Type = "P71",
+                        POID = s["POID"].ToString(),
+                        Seq1 = s["Seq1"].ToString(),
+                        Seq2 = s["Seq2"].ToString(),
+                        StockType = s["StockType"].ToString(),
+                        Color = s["Color"].ToString(),
+                        SizeCode = s["SizeCode"].ToString(),
+                        Qty = s["Qty"].ToString(),
+                        StockPOID = string.Empty,
+                        StockSeq1 = string.Empty,
+                        StockSeq2 = string.Empty,
+                        Ukey = (long)s["Ukey"],
+                        Status = statusAPI.ToString(),
+                        CmdTime = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"),
+                    });
+                    break;
+                case WHTableName.LocalOrderAdjust_Detail:
+                    bodyObject = dtDetail.AsEnumerable()
+                    .Select(s => new
+                    {
+                        ID = s["ID"].ToString(),
+                        POID = s["POID"].ToString(),
+                        Seq1 = s["Seq1"].ToString(),
+                        Seq2 = s["Seq2"].ToString(),
+                        Ukey = (long)s["Ukey"],
+                        StockType = s["StockType"].ToString(),
+                        QtyBefore = s["QtyBefore"].ToString(),
+                        QtyAfter = s["QtyAfter"].ToString(),
+                        Status = statusAPI.ToString(),
+                        CmdTime = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"),
+                    });
+                    break;
+                case WHTableName.LocalOrderLocationTrans_Detail:
+                    bodyObject = dtDetail.AsEnumerable()
+                    .Select(s => new
+                    {
+                        ID = s["ID"].ToString(),
+                        POID = s["POID"].ToString(),
+                        Seq1 = s["Seq1"].ToString(),
+                        Seq2 = s["Seq2"].ToString(),
+                        FromLocation = s["FromLocation"].ToString(),
+                        ToLocation = s["ToLocation"].ToString(),
+                        Refno = s["Refno"].ToString(),
+                        StockUnit = s["StockUnit"].ToString(),
+                        Color = s["Color"].ToString(),
+                        SizeCode = s["SizeCode"].ToString(),
+                        MtlType = s["MtlType"].ToString(),
+                        Qty = s["Qty"].ToString(),
+                        Ukey = (long)s["Ukey"],
+                        StockType = s["StockType"].ToString(),
+                        Status = statusAPI.ToString(),
+                        CmdTime = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"),
+                    });
+                    break;
             }
 
             return jsonBody = JsonConvert.SerializeObject(LogicAutoWHData.CreateStructure(detailName.ToString(), bodyObject));
