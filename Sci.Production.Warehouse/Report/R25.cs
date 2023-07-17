@@ -240,9 +240,15 @@ OUTER APPLY(
 )ContainerNo
 OUTER apply(
 	select [TotalRollsCalculated] = count(1)
-	from dbo.View_AllReceivingDetail rd WITH (NOLOCK) 
-	where rd.PoId = ed.POID and rd.Seq1 = ed.SEQ1 and rd.Seq2 = ed.SEQ2 AND ed.FabricType='F'
-	group by rd.WhseArrival,rd.InvNo,rd.ExportId,rd.Id,rd.PoId,RD.seq1,RD.seq2,rd.StockType
+	from Receiving r WITH (NOLOCK) 
+    inner join Receiving_Detail rd WITH (NOLOCK) on r.id = rd.id
+	where ed.FabricType='F'
+            and e.ID = r.ExportID
+			and r.status = 'Confirmed'
+			and rd.PoId = ed.POID 
+			and rd.Seq1 = ed.SEQ1 
+			and rd.Seq2 = ed.SEQ2 
+			AND ed.FabricType='F'
 ) t
 outer apply
 (
