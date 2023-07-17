@@ -35,9 +35,6 @@ namespace Sci.Production.IE
             this.gridMainBs.Filter = " PPA <> 'C' and IsNonSewingLine = 0";
 
             this.autoLineMappingGridSyncScroll = new AutoLineMappingGridSyncScroll(this.gridMain, this.gridSub, "No", SubGridType.LineMapping);
-
-            this.numLBR.Value = this.autoLineMappingGridSyncScroll.LBR;
-            this.numHighestGSD.Value = this.autoLineMappingGridSyncScroll.HighestGSD;
         }
 
         private void GridMain_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
@@ -76,6 +73,10 @@ namespace Sci.Production.IE
                .Text("No", header: "No. Of" + Environment.NewLine + "Station", width: Widths.AnsiChars(10))
                .Text("TotalGSDTime", header: "Total" + Environment.NewLine + "GSD Time", width: Widths.AnsiChars(10))
                .Text("OperatorLoading", header: "Operator" + Environment.NewLine + "Loading (%)", width: Widths.AnsiChars(10));
+
+            this.autoLineMappingGridSyncScroll.RefreshSubData();
+            this.numLBR.Value = this.autoLineMappingGridSyncScroll.LBR;
+            this.numHighestGSD.Value = this.autoLineMappingGridSyncScroll.HighestGSD;
         }
     }
 }

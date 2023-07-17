@@ -67,6 +67,25 @@ namespace Sci.Production.IE
         {
             this.gridNotHitTargetReason.Columns["IEReasonID"].DefaultCellStyle.BackColor = this.status != "Confirmed" ? Color.Pink : Color.White;
             this.btnSave.Enabled = this.status != "Confirmed";
+            this.QueryNotHitTarget();
+
+            string sqlUpdate = $@"
+alter table #tmp alter column No varchar(2)
+
+delete  an
+from AutomatedLineMapping_NotHitTargetReason an
+where   ID = '{this.id}' and
+        No not in (select No from #tmp where isnull(IEReasonID, '') <> '')
+
+";
+
+            DualResult result = MyUtility.Tool.ProcessWithDatatable(this.dtAutomatedLineMapping_NotHitTargetReason, null, sqlUpdate, out DataTable dtEmpty);
+
+            if (!result)
+            {
+                this.ShowErr(result);
+                return;
+            }
         }
 
         /// <inheritdoc/>

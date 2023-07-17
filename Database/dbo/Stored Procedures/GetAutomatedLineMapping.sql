@@ -330,6 +330,7 @@ END
 CLOSE Create_StationNo_cursor
 DEALLOCATE Create_StationNo_cursor
 
+
 --AutomatedLineMapping_Detail
 Declare @TimeStudyID bigint
 
@@ -387,10 +388,190 @@ where	td.ID = @TimeStudyID and
 		td.OperationID not like '-%' and
 		td.IsNonSewingLine = 0
 
+
+--取得**Pressing與**Packing資料
+Declare @PressingProTMS numeric(7, 2)
+Declare @PackingProTMS numeric(7, 2)
+Declare @PressingMachineTypeID varchar(10)
+Declare @PackingMachineTypeID varchar(10)
+
+select	@PressingProTMS = isnull(iesPressing.ProTMS, 0),
+		@PressingMachineTypeID = iesPressing.MachineTypeID, 
+		@PackingProTMS = isnull(iesPacking.ProTMS, 0),
+		@PackingMachineTypeID = iesPacking.MachineTypeID
+from timestudy t with (nolock)
+inner join IETMS i with (nolock) on i.ID = t.IETMSID and i.Version = t.IETMSVersion
+left join IETMS_Summary iesPressing with (nolock) on	iesPressing.IETMSUkey = i.Ukey and 
+														iesPressing.Location = '' and 
+														iesPressing.ArtworkTypeID = 'Pressing' and 
+														iesPressing.MachineTypeID = (select MachineTypeID from Operation with (nolock) where ID = 'PROCIPF00004')
+left join IETMS_Summary iesPacking with (nolock) on iesPacking.IETMSUkey = i.Ukey and 
+													iesPacking.Location = '' and 
+													iesPacking.ArtworkTypeID = 'Packing' and 
+													iesPacking.MachineTypeID = (select MachineTypeID from Operation with (nolock) where ID = 'PROCIPF00003')
+where   t.StyleID = @StyleID and
+		t.BrandID = @BrandID and
+		t.SeasonID = @SeasonID and
+		t.ComboType = @ComboType
+
+select	tmd.TotalSewer,
+		[TotalGSDTime] = Sum(Round(tmd.GSD * tmd.SewerDiffPercentage, 2)),
+		[AvgGSDTime] = Round(Sum(Round(tmd.GSD * tmd.SewerDiffPercentage, 2)) / @ManualSewer, 2),
+		[PackerManpower] = iif(Floor(@PackingProTMS / Round(Sum(Round(tmd.GSD * tmd.SewerDiffPercentage, 2)) / @ManualSewer, 2)) = 0, 1, Floor(@PackingProTMS / Round(Sum(Round(tmd.GSD * tmd.SewerDiffPercentage, 2)) / @ManualSewer, 2))),
+		[PresserManpower] = iif(Floor(@PressingProTMS / Round(Sum(Round(tmd.GSD * tmd.SewerDiffPercentage, 2)) / @ManualSewer, 2)) = 0, 1, Floor(@PressingProTMS / Round(Sum(Round(tmd.GSD * tmd.SewerDiffPercentage, 2)) / @ManualSewer, 2)))
+into #detailSummary
+from #tmpAutomatedLineMapping_Detail tmd
+where	tmd.OperationID not in ('PROCIPF00004', 'PROCIPF00003') and
+		tmd.PPA <> 'C' and
+		tmd.IsNonSewingLine = 0
+group by tmd.TotalSewer
+
+-- insert **Pressing與**Packing資料
+DECLARE Create_detailPackerPresser CURSOR FOR 
+	select	TotalSewer, PackerManpower, PresserManpower
+	from #detailSummary
+
+Declare @TotalSewerAdditional int
+Declare @PackerManpower int
+Declare @PresserManpower int
+Declare @MaxNo int
+Declare @WhileCnt int
+Declare @SewerDiffPercentageRemaining numeric(3, 2)
+Declare @SewerDiffPercentage numeric(3, 2)
+
+OPEN Create_detailPackerPresser  
+FETCH NEXT FROM Create_detailPackerPresser INTO @TotalSewerAdditional,  @PresserManpower, @PackerManpower
+WHILE @@FETCH_STATUS = 0 
+BEGIN
+	select @MaxNo = max(cast(No as int)) from #tmpAutomatedLineMapping_Detail where TotalSewer = @TotalSewerAdditional
+	
+	--Pressing
+	set @WhileCnt = 1
+	set @SewerDiffPercentageRemaining = 1
+	set @SewerDiffPercentage = 1 / @PresserManpower
+	while @WhileCnt <= @PresserManpower
+	begin
+		set @MaxNo = @MaxNo + 1
+		if @WhileCnt = @PresserManpower
+			set @SewerDiffPercentage = @SewerDiffPercentageRemaining
+
+		insert into #tmpAutomatedLineMapping_Detail(No,
+													Seq,
+													Location,
+													PPA,
+													MachineTypeID,
+													MasterPlusGroup,
+													OperationID,
+													Annotation,
+													Attachment,
+													SewingMachineAttachmentID,
+													Template,
+													GSD,
+													SewerDiffPercentage,
+													DivSewer,
+													OriSewer,
+													TimeStudyDetailUkey,
+													Thread_ComboID,
+													IsNonSewingLine,
+													TotalSewer,
+													OperationDesc,
+													SewerDiffPercentageDesc,
+													TimeStudyDetailUkeyCnt)
+			values(RIGHT(REPLICATE('0', 2) + cast(@MaxNo as varchar(3)), 2),
+				   0,
+				   '',
+				   '',
+				   @PressingMachineTypeID,
+				   '',
+				   'PROCIPF00004',
+				   '**Pressing',
+				   '',
+				   '',
+				   '',
+				   @PressingProTMS,
+				   @SewerDiffPercentage, 
+				   0,
+				   0,
+				   0,
+				   '',
+				   0,
+				   @TotalSewerAdditional,
+				   '**Pressing',
+				   @SewerDiffPercentage * 100,
+				   0)
+	
+		set @SewerDiffPercentageRemaining = @SewerDiffPercentageRemaining - @SewerDiffPercentage
+		set @WhileCnt = @WhileCnt + 1
+	end
+
+	--Packing
+	set @WhileCnt = 1
+	set @SewerDiffPercentageRemaining = 1
+	set @SewerDiffPercentage = 1 / @PackerManpower
+	while @WhileCnt <= @PackerManpower
+	begin
+		set @MaxNo = @MaxNo + 1
+		if @WhileCnt = @PackerManpower
+			set @SewerDiffPercentage = @SewerDiffPercentageRemaining
+
+		insert into #tmpAutomatedLineMapping_Detail(No,
+													Seq,
+													Location,
+													PPA,
+													MachineTypeID,
+													MasterPlusGroup,
+													OperationID,
+													Annotation,
+													Attachment,
+													SewingMachineAttachmentID,
+													Template,
+													GSD,
+													SewerDiffPercentage,
+													DivSewer,
+													OriSewer,
+													TimeStudyDetailUkey,
+													Thread_ComboID,
+													IsNonSewingLine,
+													TotalSewer,
+													OperationDesc,
+													SewerDiffPercentageDesc,
+													TimeStudyDetailUkeyCnt)
+			values(RIGHT(REPLICATE('0', 2) + cast(@MaxNo as varchar(3)), 2),
+				   0,
+				   '',
+				   '',
+				   @PressingMachineTypeID,
+				   '',
+				   'PROCIPF00003',
+				   '**Packing',
+				   '',
+				   '',
+				   '',
+				   @PressingProTMS,
+				   @SewerDiffPercentage, 
+				   0,
+				   0,
+				   0,
+				   '',
+				   0,
+				   @TotalSewerAdditional,
+				   '**Packing',
+				   @SewerDiffPercentage * 100,
+				   0)
+	
+		set @SewerDiffPercentageRemaining = @SewerDiffPercentageRemaining - @SewerDiffPercentage
+		set @WhileCnt = @WhileCnt + 1
+	end
+
+FETCH NEXT FROM Create_detailPackerPresser INTO @TotalSewerAdditional,  @PresserManpower, @PackerManpower
+END
+CLOSE Create_detailPackerPresser
+DEALLOCATE Create_detailPackerPresser
+
 --AutomatedLineMapping
 select	[StyleUkey] = s.Ukey,
 		[Phase] = @Phase,
-		[Version] = 0,
+		[Version] = cast(null as int),
 		[FactoryID] = @FactoryID,
 		[StyleID] = s.ID,
 		s.SeasonID,
@@ -399,9 +580,9 @@ select	[StyleUkey] = s.Ukey,
 		[StyleCPU] = s.CPU,
 		[SewerManpower] = @ManualSewer,
 		[OriSewerManpower] = @ManualSewer,
-		[PackerManpower] = Floor(iet.PackingProTMS / detailSummary.AvgGSDTime),
-		[PresserManpower] = Floor(iet.PressingProTMS / detailSummary.AvgGSDTime),
-		detailSummary.TotalGSDTime,
+		[PackerManpower] = ds.PackerManpower,
+		[PresserManpower] = ds.PresserManpower,
+		ds.TotalGSDTime,
 		[HighestGSDTime] = (select Max(GSD)
 							from (
 									select [GSD] = sum(GSD * SewerDiffPercentage)
@@ -421,29 +602,7 @@ from TimeStudy t with (nolock)
 inner join Style s with (nolock) on s.ID = t.StyleID and
 									s.BrandID = t.BrandID and
 									s.SeasonID = t.SeasonID
-outer apply (select [PressingProTMS] = iesPressing.ProTMS, [PackingProTMS] = iesPacking.ProTMS
-				from timestudy t with (nolock)
-				inner join IETMS i with (nolock) on i.ID = t.IETMSID and i.Version = t.IETMSVersion
-				left join IETMS_Summary iesPressing with (nolock) on	iesPressing.IETMSUkey = i.Ukey and 
-																		iesPressing.Location = '' and 
-																		iesPressing.ArtworkTypeID = 'Pressing' and 
-																		iesPressing.MachineTypeID = (select MachineTypeID from Operation with (nolock) where ID = 'PROCIPF00004')
-				left join IETMS_Summary iesPacking with (nolock) on iesPacking.IETMSUkey = i.Ukey and 
-																	iesPacking.Location = '' and 
-																	iesPacking.ArtworkTypeID = 'Packing' and 
-																	iesPacking.MachineTypeID = (select MachineTypeID from Operation with (nolock) where ID = 'PROCIPF00003')
-				where   t.StyleID = s.ID and
-						t.BrandID = s.BrandID and
-						t.SeasonID = s.SeasonID and
-						t.ComboType = @ComboType) iet
-outer apply(select	[TotalGSDTime] = Sum(Round(tmd.GSD * tmd.SewerDiffPercentage, 2)),
-					[AvgGSDTime] = Round(Sum(Round(tmd.GSD * tmd.SewerDiffPercentage, 2)) / @ManualSewer, 2)
-			from #tmpAutomatedLineMapping_Detail tmd
-			where	tmd.TotalSewer = @ManualSewer and
-					tmd.OperationID not in ('PROCIPF00004', 'PROCIPF00003') and
-					tmd.PPA <> 'C' and
-					tmd.IsNonSewingLine = 0
-			) detailSummary
+left join #detailSummary ds on ds.TotalSewer = @ManualSewer
 where	t.ID = @TimeStudyID
 
 --AutomatedLineMapping_Detail
@@ -477,6 +636,6 @@ cross join #tmpAutomatedLineMapping_Detail tmd
 where tmd.TotalSewer = 0
 order by [SewerManpower], No, Seq
 
-drop table #tmpTotalSewerRange, #tmpTimeStudy_Detail, #tmpGroupSewer, #tmpReaultBase, #tmpLocation, #tmpAutomatedLineMapping_Detail
+drop table #tmpTotalSewerRange, #tmpTimeStudy_Detail, #tmpGroupSewer, #tmpReaultBase, #tmpLocation, #tmpAutomatedLineMapping_Detail, #detailSummary
 
 end

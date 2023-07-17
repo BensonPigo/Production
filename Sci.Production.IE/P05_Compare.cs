@@ -130,7 +130,7 @@ namespace Sci.Production.IE
                .Text("PPADesc", header: "PPA", width: Widths.AnsiChars(13), iseditingreadonly: true)
                .Text("MachineTypeID", header: "ST/MC type", width: Widths.AnsiChars(10), iseditingreadonly: true)
                .Text("MasterPlusGroup", header: "MC Group", width: Widths.AnsiChars(10), iseditingreadonly: true)
-               .Text("OperationDesc", header: "Operation", width: Widths.AnsiChars(13), iseditingreadonly: true);
+               .Text("OperationDesc", header: "Operation", width: Widths.AnsiChars(50), iseditingreadonly: true);
 
             this.Helper.Controls.Grid.Generator(this.gridManualNoDetail)
                .Text("No", header: "No. Of" + Environment.NewLine + "Station", width: Widths.AnsiChars(10), iseditingreadonly: true)
@@ -138,7 +138,7 @@ namespace Sci.Production.IE
                .Text("PPADesc", header: "PPA", width: Widths.AnsiChars(13), iseditingreadonly: true)
                .Text("MachineTypeID", header: "ST/MC type", width: Widths.AnsiChars(10), iseditingreadonly: true)
                .Text("MasterPlusGroup", header: "MC Group", width: Widths.AnsiChars(10), iseditingreadonly: true)
-               .Text("OperationDesc", header: "Operation", width: Widths.AnsiChars(13), iseditingreadonly: true);
+               .Text("OperationDesc", header: "Operation", width: Widths.AnsiChars(50), iseditingreadonly: true);
 
             int displayTabIndex = this.firstDiaplaySewerManpower - this.minSewermanpower;
             if (displayTabIndex == this.tabCompare.SelectedIndex)
@@ -376,6 +376,11 @@ namespace Sci.Production.IE
 
             foreach (DataRow dr in dtAutomatedLineMapping.Rows)
             {
+                if (MyUtility.Check.Empty(dr["No"]))
+                {
+                    continue;
+                }
+
                 DataRow newRowResult = dtResult.NewRow();
 
                 var summaryResult = resultRows.Where(s => s.No == dr["No"].ToString()).First();

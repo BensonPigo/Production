@@ -51,7 +51,10 @@ namespace Sci.Production.IE
             {
                 this._sewerManpower = MyUtility.Convert.GetInt(MyUtility.Math.Round(
                         this.MainData
-                            .Where(s => s["PPA"].ToString() != "C" && !MyUtility.Convert.GetBool(s["IsNonSewingLine"]))
+                            .Where(s => s["PPA"].ToString() != "C" &&
+                                !MyUtility.Convert.GetBool(s["IsNonSewingLine"]) &&
+                                s["OperationID"].ToString() != "PROCIPF00004" &&
+                                s["OperationID"].ToString() != "PROCIPF00003")
                             .Sum(s => MyUtility.Convert.GetDecimal(s["DivSewer"])),
                         0));
 
@@ -183,6 +186,7 @@ namespace Sci.Production.IE
             this.dtGridDetailRightSummary.Columns.Add(new DataColumn("NoCnt", typeof(int)));
             this.dtGridDetailRightSummary.Columns.Add(new DataColumn("TotalGSDTime", typeof(decimal)));
             this.dtGridDetailRightSummary.Columns.Add(new DataColumn("OperatorLoading", typeof(decimal)));
+            this.dtGridDetailRightSummary.Columns.Add(new DataColumn("NeedExclude", typeof(bool)));
 
             this.gridSub.DataSource = this.dtGridDetailRightSummary;
         }
@@ -380,9 +384,7 @@ namespace Sci.Production.IE
                     this.gridSub.Columns.DisableSortable();
                     decimal avgGSD = this.AvgGSDTime;
                     resultRows = this.MainData.Where(s => s["PPA"].ToString() != "C" &&
-                                                          !MyUtility.Convert.GetBool(s["IsNonSewingLine"]) &&
-                                                          s["OperationID"].ToString() != "PROCIPF00004" &&
-                                                          s["OperationID"].ToString() != "PROCIPF00003")
+                                                          !MyUtility.Convert.GetBool(s["IsNonSewingLine"]))
                                     .GroupBy(s => new
                                     {
                                         No = s["No"].ToString(),
@@ -393,14 +395,16 @@ namespace Sci.Production.IE
                                         newRow["No"] = groupItem.Key.No;
                                         newRow["NoCnt"] = groupItem.Count();
                                         newRow["TotalGSDTime"] = MyUtility.Math.Round(groupItem.Sum(s => MyUtility.Convert.GetDecimal(s["GSD"]) * MyUtility.Convert.GetDecimal(s["SewerDiffPercentage"])), 2);
-                                        newRow["OperatorLoading"] = MyUtility.Check.Empty(avgGSD) ? 0 : MyUtility.Math.Round(groupItem.Sum(s => MyUtility.Convert.GetDecimal(s["GSD"]) * MyUtility.Convert.GetDecimal(s["SewerDiffPercentage"])) / avgGSD * 100, 0);
+                                        newRow["NeedExclude"] = groupItem.Any(s => s["OperationID"].ToString() == "PROCIPF00004" ||
+                                                                                   s["OperationID"].ToString() == "PROCIPF00003");
+                                        newRow["OperatorLoading"] = MyUtility.Check.Empty(avgGSD) || (bool)newRow["NeedExclude"] ? 0 : MyUtility.Math.Round(groupItem.Sum(s => MyUtility.Convert.GetDecimal(s["GSD"]) * MyUtility.Convert.GetDecimal(s["SewerDiffPercentage"])) / avgGSD * 100, 0);
                                         return newRow;
                                     }).ToList();
                     break;
                 case SubGridType.CentrailizedPPA:
                     this.gridMain.Columns.DisableSortable();
                     this.gridMain.Columns["No"].SortMode = DataGridViewColumnSortMode.Programmatic;
-                    this.gridMain.Sort(this.gridMain.Columns["No"], System.ComponentModel.ListSortDirection.Ascending);
+                    //this.gridMain.Sort(this.gridMain.Columns["No"], System.ComponentModel.ListSortDirection.Ascending);
 
                     this.gridSub.Sort(this.gridSub.Columns["No"], System.ComponentModel.ListSortDirection.Ascending);
                     this.gridSub.Columns.DisableSortable();
@@ -423,6 +427,7 @@ namespace Sci.Production.IE
                         newRow["NoCnt"] = groupItem.Count();
                         newRow["TotalGSDTime"] = MyUtility.Math.Round(groupItem.Sum(s => MyUtility.Convert.GetDecimal(s["GSD"])), 2);
                         newRow["OperatorLoading"] = avgGSDTimePPA == 0 ? 0 : MyUtility.Math.Round(groupItem.Sum(s => MyUtility.Convert.GetDecimal(s["GSD"])) / avgGSDTimePPA * 100, 0);
+                        newRow["NeedExclude"] = true;
                         return newRow;
                     }).ToList();
                     break;

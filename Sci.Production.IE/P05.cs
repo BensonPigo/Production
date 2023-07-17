@@ -1,25 +1,17 @@
 ﻿using Ict;
 using Ict.Win;
-using Microsoft.SqlServer.Management.Smo;
-using Microsoft.SqlServer.Management.Smo.Agent;
 using Sci.Data;
 using Sci.Production.Class;
 using Sci.Production.Class.Command;
-using Sci.Production.Prg;
-using Sci.Win.Tools;
 using Sci.Win.UI;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Windows.Forms.DataVisualization.Charting;
-using static Ict.Win.WinAPI;
 using static Sci.Production.IE.AutoLineMappingGridSyncScroll;
 
 namespace Sci.Production.IE
@@ -83,7 +75,6 @@ order by ad.SewerManpower, ad.No, ad.Seq
 
             this.splitLineMapping.Panel1.Controls.Add(this.detailgrid);
             this.gridCentralizedPPALeft.SupportEditMode = Win.UI.AdvEditModesReadOnly.True;
-            this.detailgridbs.DataSourceChanged += this.Detailgridbs_DataSourceChanged;
             this.gridCentralizedPPALeft.DataSource = this.gridCentralizedPPALeftBS;
 
             this.detailgrid.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.EnableResizing;
@@ -127,8 +118,8 @@ order by ad.SewerManpower, ad.No, ad.Seq
             if (dr["OperationID"].ToString() == "PROCIPF00003" ||
                 dr["OperationID"].ToString() == "PROCIPF00004")
             {
-                this.detailgrid.Rows[e.RowIndex].Cells["MachineTypeID"].ReadOnly = true;
-                this.detailgrid.Rows[e.RowIndex].Cells["MasterPlusGroup"].ReadOnly = true;
+                this.detailgrid.Rows[e.RowIndex].ReadOnly = true;
+                return;
             }
 
             if (e.ColumnIndex > 1)
@@ -216,7 +207,7 @@ from AutomatedLineMapping_Detail ad WITH (NOLOCK)
 left join DropDownList d with (nolock) on d.ID = ad.PPA  and d.Type = 'PMS_IEPPA'
 left join Operation op with (nolock) on op.ID = ad.OperationID
 where ad.ID = '{masterID}'
-order by ad.Seq";
+order by iif(ad.No = '', 'ZZ', ad.No), ad.Seq";
 
             return base.OnDetailSelectCommandPrepare(e);
         }
@@ -359,12 +350,11 @@ delete AutomatedLineMapping_NotHitTargetReason where ID = '{this.CurrentMaintain
                 return false;
             }
 
-            this.CurrentMaintain["Status"] = "New";
-            this.CurrentMaintain["Version"] = DBNull.Value;
-            this.CurrentMaintain["Phase"] = string.Empty;
-            this.CurrentMaintain["AddName"] = Env.User.UserID;
-            this.CurrentMaintain["EditName"] = string.Empty;
-            this.CurrentMaintain["EditDate"] = DBNull.Value;
+            foreach (DataRow dr in ((DataTable)this.detailgridbs.DataSource).Rows)
+            {
+                dr["ID"] = DBNull.Value;
+                dr["Ukey"] = DBNull.Value;
+            }
 
             DualResult result;
 
@@ -385,7 +375,7 @@ from    AutomatedLineMapping_DetailTemp ad with (nolock)
 left join DropDownList d with (nolock) on d.ID = ad.PPA  and d.Type = 'PMS_IEPPA'
 left join Operation op with (nolock) on op.ID = ad.OperationID
 where ad.ID = '{this.CurrentMaintain["ID"]}'
-order by ad.SewerManpower, ad.Seq
+order by ad.SewerManpower, ad.No, ad.Seq
 ";
             result = DBProxy.Current.Select(null, string.Format(this.sqlGetAutomatedLineMapping_DetailTemp, $" ad.ID = '{this.CurrentMaintain["ID"]}'"), out this.dtAutomatedLineMapping_DetailTemp);
             if (!result)
@@ -393,6 +383,13 @@ order by ad.SewerManpower, ad.Seq
                 this.ShowErr(result);
                 return false;
             }
+
+            this.CurrentMaintain["Status"] = "New";
+            this.CurrentMaintain["Version"] = DBNull.Value;
+            this.CurrentMaintain["Phase"] = string.Empty;
+            this.CurrentMaintain["AddName"] = Env.User.UserID;
+            this.CurrentMaintain["EditName"] = string.Empty;
+            this.CurrentMaintain["ID"] = DBNull.Value;
 
             return true;
         }
@@ -443,6 +440,8 @@ where   ID = '{this.CurrentMaintain["ID"]}'
             }
 
             base.ClickConfirm();
+
+            MyUtility.Msg.InfoBox("Confirm complete");
         }
 
         /// <inheritdoc/>
@@ -478,6 +477,21 @@ where   ID = '{this.CurrentMaintain["ID"]}'
                     dr["Seq"] = seqCentralizedPPA;
                     seqCentralizedPPA++;
                 }
+            }
+
+            // 取version
+            if (MyUtility.Check.Empty(this.CurrentMaintain["Version"]))
+            {
+                string sqlGetVersion = $@"
+select [NewVersion] = isnull(max(Version), 0) + 1
+from AutomatedLineMapping with (nolock)
+where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
+        StyleID = '{this.CurrentMaintain["StyleID"]}' and
+        SeasonID = '{this.CurrentMaintain["SeasonID"]}' and
+        BrandID = '{this.CurrentMaintain["BrandID"]}' and
+        ComboType = '{this.CurrentMaintain["ComboType"]}'
+";
+                this.CurrentMaintain["Version"] = MyUtility.Convert.GetInt(MyUtility.GetValue.Lookup(sqlGetVersion));
             }
 
             return base.ClickSaveBefore();
@@ -532,7 +546,6 @@ where   ID = '{this.CurrentMaintain["ID"]}'
 
                 DataRow dr = this.gridCentralizedPPALeft.GetDataRow<DataRow>(e.RowIndex);
                 string ppaNo = e.FormattedValue.ToString();
-
                 if (!MyUtility.Check.Empty(ppaNo))
                 {
                     dr["No"] = ppaNo.PadLeft(2, '0');
@@ -600,7 +613,7 @@ where   ID = '{this.CurrentMaintain["ID"]}'
                .CellAttachment("Attachment", "Attachment", this, width: Widths.AnsiChars(10))
                .CellPartID("SewingMachineAttachmentID", "Part ID", this, width: Widths.AnsiChars(25))
                .CellTemplate("Template", "Template", this, width: Widths.AnsiChars(10))
-               .Numeric("GSD", header: "GSD Time", width: Widths.AnsiChars(5), iseditingreadonly: true)
+               .Numeric("GSD", header: "GSD Time", width: Widths.AnsiChars(5), decimal_places: 2, iseditingreadonly: true)
                .Numeric("SewerDiffPercentageDesc", header: "%", width: Widths.AnsiChars(5), iseditingreadonly: true)
                .Numeric("DivSewer", header: "Div. Sewer", decimal_places: 4, width: Widths.AnsiChars(5), iseditingreadonly: true)
                .Numeric("OriSewer", header: "Ori. Sewer", decimal_places: 4, width: Widths.AnsiChars(5), iseditingreadonly: true)
@@ -617,7 +630,7 @@ where   ID = '{this.CurrentMaintain["ID"]}'
                .CellAttachment("Attachment", "Attachment", this, width: Widths.AnsiChars(10))
                .CellPartID("SewingMachineAttachmentID", "Part ID", this, width: Widths.AnsiChars(25))
                .CellTemplate("Template", "Template", this, width: Widths.AnsiChars(10))
-               .Numeric("GSD", header: "GSD Time", width: Widths.AnsiChars(5), iseditingreadonly: true)
+               .Numeric("GSD", header: "GSD Time", decimal_places: 2, width: Widths.AnsiChars(5), iseditingreadonly: true)
                .Text("Notice", header: "Notice", width: Widths.AnsiChars(10));
 
             this.Helper.Controls.Grid.Generator(this.gridLineMappingRight)
@@ -783,19 +796,16 @@ from #tmp
         {
             if (this.tabDetail.SelectedIndex == 0)
             {
+                this.gridCentralizedPPALeftBS.DataSource = null;
                 this.detailgridbs.Filter = "PPA <> 'C' and IsNonSewingLine = 0";
                 this.lineMappingGrids.RefreshSubData();
             }
             else
             {
+                this.gridCentralizedPPALeftBS.DataSource = this.detailgridbs.DataSource;
                 this.gridCentralizedPPALeftBS.Filter = "PPA = 'C' and IsNonSewingLine = 0";
                 this.centralizedPPAGrids.RefreshSubData();
             }
-        }
-
-        private void Detailgridbs_DataSourceChanged(object sender, EventArgs e)
-        {
-            this.gridCentralizedPPALeftBS.DataSource = this.detailgridbs.DataSource;
         }
 
         private void RefreshAutomatedLineMappingSummary()
