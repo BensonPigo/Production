@@ -202,6 +202,9 @@ select A.POID
 	,t.InvNo
 	,t.WhseArrival
 	,t.StockQty
+    ,total_t.StockQty
+    ,total_t.InvStock
+    ,total_t.BulkStock
 	,(Select MinSciDelivery from DBO.GetSCI(A.poid,x.Category))[MinSciDelivery]
 	,(Select MinBuyerDelivery from DBO.GetSCI(A.poid,x.Category))[MinBuyerDelivery]
 	,A.refno
@@ -236,6 +239,13 @@ inner join (
         from dbo.View_AllReceivingDetail r WITH (NOLOCK)   
 		{0}
 ) t on t.PoId = A.POID and t.Seq1 = A.SEQ1 and t.Seq2 = A.SEQ2 AND T.ID=a.ReceivingID
+cross apply(
+	select [StockQty] = sum(RD.StockQty)
+	,[InvStock] =  sum(iif(rd.StockType = 'I',RD.StockQty, 0))
+	,[BulkStock] = sum(iif(rd.StockType = 'B',RD.StockQty, 0))
+	from dbo.View_AllReceivingDetail rd WITH (NOLOCK) 
+	where rd.PoId = A.POID and rd.Seq1 = A.SEQ1 and rd.Seq2 = A.SEQ2 AND rd.Id=A.ReceivingID
+) total_t
 left join Export et with (nolock) on et.ID = t.ExportId
 inner join (
 		select distinct id,O.factoryid,O.BrandID,O.StyleID,O.SeasonID,O.Category,O.StyleUkey
