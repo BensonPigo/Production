@@ -1,7 +1,7 @@
 ﻿CREATE TABLE [dbo].[MD] (
     [ID]       VARCHAR (13) CONSTRAINT [DF_MD_ID] DEFAULT ('') NOT NULL,
     [Type]     VARCHAR (20) CONSTRAINT [DF_MD_Type] DEFAULT ('') NOT NULL,
-    [Item]     VARCHAR (20) CONSTRAINT [DF_MD_Item] DEFAULT ('') NOT NULL,
+    [Item]     VARCHAR (40) CONSTRAINT [DF_MD_Item] DEFAULT ('') NOT NULL,
     [Colorid]  VARCHAR (70) CONSTRAINT [DF_MD_Colorid] DEFAULT ('') NOT NULL,
     [InspDate] DATE         NULL,
     [Result]   VARCHAR (60) CONSTRAINT [DF_MD_Result] DEFAULT ('') NULL,
