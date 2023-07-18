@@ -19,34 +19,34 @@ namespace Sci.Production.IE
     /// </summary>
     public partial class P06_EditOperation : Sci.Win.Tems.QueryForm
     {
-        private DataTable dtAutomatedLineMapping_DetailCopy;
+        private DataTable dtLineMappingBalancing_DetailCopy;
 
         /// <summary>
-        /// dtAutomatedLineMapping_Detail
+        /// dtLineMappingBalancing_Detail
         /// </summary>
-        public DataTable dtAutomatedLineMapping_Detail;
+        public DataTable dtLineMappingBalancing_Detail;
         private DataTable dtSelectItemSource;
         private DataTable dtNoSelectItem = new DataTable();
 
         /// <summary>
         /// P06_EditOperation
         /// </summary>
-        /// <param name="dtAutomatedLineMapping_Detail">dtAutomatedLineMapping_Detail</param>
-        public P06_EditOperation(DataTable dtAutomatedLineMapping_Detail)
+        /// <param name="dtLineMappingBalancing_Detail">dtLineMappingBalancing_Detail</param>
+        public P06_EditOperation(DataTable dtLineMappingBalancing_Detail)
         {
             this.DialogResult = DialogResult.No;
-            var sortDataView = dtAutomatedLineMapping_Detail.AsDataView();
+            var sortDataView = dtLineMappingBalancing_Detail.AsDataView();
             sortDataView.Sort = "No ASC";
-            this.dtAutomatedLineMapping_DetailCopy = sortDataView.ToTableKeepRowState();
+            this.dtLineMappingBalancing_DetailCopy = sortDataView.ToTableKeepRowState();
 
-            if (!this.dtAutomatedLineMapping_DetailCopy.Columns.Contains("UpdSewerDiffPercentage"))
+            if (!this.dtLineMappingBalancing_DetailCopy.Columns.Contains("UpdSewerDiffPercentage"))
             {
-                this.dtAutomatedLineMapping_DetailCopy.Columns.Add("UpdSewerDiffPercentage", typeof(int));
+                this.dtLineMappingBalancing_DetailCopy.Columns.Add("UpdSewerDiffPercentage", typeof(int));
             }
 
-            if (!this.dtAutomatedLineMapping_DetailCopy.Columns.Contains("UpdDivSewer"))
+            if (!this.dtLineMappingBalancing_DetailCopy.Columns.Contains("UpdDivSewer"))
             {
-                this.dtAutomatedLineMapping_DetailCopy.Columns.Add("UpdDivSewer", typeof(decimal));
+                this.dtLineMappingBalancing_DetailCopy.Columns.Add("UpdDivSewer", typeof(decimal));
             }
 
             this.InitializeComponent();
@@ -56,7 +56,7 @@ namespace Sci.Production.IE
             this.gridEditOperation.CellFormatting += this.GridEditOperation_CellFormatting;
 
             this.dtNoSelectItem.Columns.Add(new DataColumn("No", typeof(string)));
-            this.dtNoSelectItem = this.dtAutomatedLineMapping_DetailCopy.AsEnumerable()
+            this.dtNoSelectItem = this.dtLineMappingBalancing_DetailCopy.AsEnumerable()
                 .Where(s => MyUtility.Convert.GetBool(s["Selected"]))
                 .Select(s => s["No"].ToString())
                 .Distinct()
@@ -68,14 +68,14 @@ namespace Sci.Production.IE
                 }).CopyToDataTable();
 
             var checkedNo = this.dtNoSelectItem.AsEnumerable().Select(s => s["No"].ToString()).ToList();
-            this.dtSelectItemSource = this.dtAutomatedLineMapping_DetailCopy.AsEnumerable()
+            this.dtSelectItemSource = this.dtLineMappingBalancing_DetailCopy.AsEnumerable()
                 .Where(s => checkedNo.Contains(s["No"].ToString()))
                 .GroupBy(s => s["TimeStudyDetailUkey"])
                 .Select(s => s.First())
-                .TryCopyToDataTable(this.dtAutomatedLineMapping_DetailCopy);
+                .TryCopyToDataTable(this.dtLineMappingBalancing_DetailCopy);
 
             this.gridEditOperation.DataSource = this.gridEditOperationBs;
-            this.gridEditOperationBs.DataSource = this.dtAutomatedLineMapping_DetailCopy;
+            this.gridEditOperationBs.DataSource = this.dtLineMappingBalancing_DetailCopy;
 
             this.gridEditOperationBs.Filter = $" No in ({checkedNo.Select(s => $"'{s}'").JoinToString(",")}) or Selected = 1";
 
@@ -284,7 +284,7 @@ namespace Sci.Production.IE
             }
 
             // 如果有同TimeStudyDetailUkey剩餘一筆未維護，自動計算填入
-            var sameTimeStudyDetailUkeyData = this.dtAutomatedLineMapping_DetailCopy.AsEnumerable()
+            var sameTimeStudyDetailUkeyData = this.dtLineMappingBalancing_DetailCopy.AsEnumerable()
                           .Where(s => MyUtility.Convert.GetLong(s["TimeStudyDetailUkey"]) == MyUtility.Convert.GetLong(caculateRow["TimeStudyDetailUkey"]));
 
             var stillNotUpdDivSewer = sameTimeStudyDetailUkeyData.Where(s => MyUtility.Check.Empty(s["UpdDivSewer"]));
@@ -307,11 +307,11 @@ namespace Sci.Production.IE
             }
 
             DataRow selectedRow = this.gridEditOperation.GetDataRow(this.gridEditOperation.SelectedRows[0].Index);
-            DataRow newRow = this.dtAutomatedLineMapping_DetailCopy.NewRow();
+            DataRow newRow = this.dtLineMappingBalancing_DetailCopy.NewRow();
             newRow["Selected"] = true;
 
-            int insertIndex = this.dtAutomatedLineMapping_DetailCopy.Rows.IndexOf(selectedRow);
-            this.dtAutomatedLineMapping_DetailCopy.Rows.InsertAt(newRow, insertIndex);
+            int insertIndex = this.dtLineMappingBalancing_DetailCopy.Rows.IndexOf(selectedRow);
+            this.dtLineMappingBalancing_DetailCopy.Rows.InsertAt(newRow, insertIndex);
         }
 
         private void BtnCancel_Click(object sender, EventArgs e)
@@ -335,6 +335,7 @@ namespace Sci.Production.IE
                     if (curIndex == 0)
                     {
                         dragRow["No"] = ((DataRowView)this.gridEditOperationBs[1]).Row["No"];
+                        //dragRow[""]
                     }
                     else if (curIndex == this.gridEditOperationBs.Count - 1)
                     {
@@ -357,7 +358,7 @@ namespace Sci.Production.IE
         {
             this.gridEditOperationBs.EndEdit();
             var checkedNo = this.dtNoSelectItem.AsEnumerable().Select(s => s["No"].ToString()).ToList();
-            var curEditRows = this.dtAutomatedLineMapping_DetailCopy.AsEnumerable().Where(s => checkedNo.Contains(s["No"].ToString()));
+            var curEditRows = this.dtLineMappingBalancing_DetailCopy.AsEnumerable().Where(s => checkedNo.Contains(s["No"].ToString()));
             #region 檢查DivSewer與UpdSewerDiffPercentage總和是否超過或不足
             var checkDivSewerBalance = curEditRows
                 .GroupBy(s => s["TimeStudyDetailUkey"])
@@ -417,7 +418,7 @@ namespace Sci.Production.IE
             // 將No空白資料清除
             foreach (var needRemoveRow in curEditRows.Where(s => MyUtility.Check.Empty(s["No"])).ToList())
             {
-                this.dtAutomatedLineMapping_DetailCopy.Rows.Remove(needRemoveRow);
+                this.dtLineMappingBalancing_DetailCopy.Rows.Remove(needRemoveRow);
             }
 
             // 將selected都改成false
@@ -426,7 +427,7 @@ namespace Sci.Production.IE
                 needCancelCheck["Selected"] = false;
             }
 
-            this.dtAutomatedLineMapping_Detail = this.dtAutomatedLineMapping_DetailCopy.Copy();
+            this.dtLineMappingBalancing_Detail = this.dtLineMappingBalancing_DetailCopy.Copy();
 
             this.DialogResult = DialogResult.OK;
         }

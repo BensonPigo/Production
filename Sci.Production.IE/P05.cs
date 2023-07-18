@@ -1115,7 +1115,11 @@ WHERE almd.ID = '{this.CurrentMaintain["ID"]}'
                 return;
             }
 
-            //DialogResult dialogResult = MyUtility.Msg.QuestionBox("Line Mapping transfer is successful, do you want to open IE_P06 directly?");
+            DialogResult dialogResult = MyUtility.Msg.QuestionBox("Line Mapping transfer is successful, do you want to open IE_P06 directly?");
+            if (dialogResult == DialogResult.Yes)
+            {
+                
+            }
         }
     }
 }

@@ -115,7 +115,7 @@
             this.Controls.Add(this.gridEditOperation);
             this.Name = "P06_EditOperation";
             this.OnLineHelpID = "Sci.Win.Tems.QueryForm";
-            this.Text = "P05. Edit No. Operation";
+            this.Text = "P06. Edit No. Operation";
             this.Controls.SetChildIndex(this.gridEditOperation, 0);
             this.Controls.SetChildIndex(this.panel1, 0);
             this.Controls.SetChildIndex(this.btnSave, 0);

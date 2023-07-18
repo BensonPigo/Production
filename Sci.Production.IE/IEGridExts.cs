@@ -256,7 +256,11 @@ and IsAttachment = 1";
                     }
 
                     mainForm.CurrentDetailData["Attachment"] = item.GetSelectedString();
-                    mainForm.CurrentDetailData["MoldID"] = item.GetSelectedString();
+
+                    if (mainForm.CurrentDetailData.Table.Columns.Contains("MoldID"))
+                    {
+                        mainForm.CurrentDetailData["MoldID"] = item.GetSelectedString();
+                    }
                 }
             };
 
@@ -327,7 +331,10 @@ where Junk = 0";
                     if (!result)
                     {
                         mainForm.CurrentDetailData["Attachment"] = string.Empty;
-                        mainForm.CurrentDetailData["MoldID"] = string.Empty;
+                        if (mainForm.CurrentDetailData.Table.Columns.Contains("MoldID"))
+                        {
+                            mainForm.CurrentDetailData["MoldID"] = string.Empty;
+                        }
                         mainForm.CurrentDetailData["SewingMachineAttachmentID"] = string.Empty;
                         MyUtility.Msg.WarningBox("SQL Connection failt!!\r\n" + result.ToString());
                     }
@@ -342,7 +349,10 @@ where Junk = 0";
                     {
                         e.Cancel = true;
                         mainForm.CurrentDetailData["Attachment"] = string.Join(",", getMold.Where(x => existsMold.Where(y => !y.EqualString(x)).Any()).Distinct().ToList());
-                        mainForm.CurrentDetailData["MoldID"] = string.Join(",", getMold.Where(x => existsMold.Where(y => !y.EqualString(x)).Any()).Distinct().ToList());
+                        if (mainForm.CurrentDetailData.Table.Columns.Contains("MoldID"))
+                        {
+                            mainForm.CurrentDetailData["MoldID"] = string.Join(",", getMold.Where(x => existsMold.Where(y => !y.EqualString(x)).Any()).Distinct().ToList());
+                        }
                         MyUtility.Msg.WarningBox("Attachment : " + string.Join(",", existsMold.ToList()) + "  need include in Mold setting !!", "Data need include in setting");
                         return;
                     }
@@ -353,7 +363,11 @@ where Junk = 0";
                     }
 
                     mainForm.CurrentDetailData["Attachment"] = string.Join(",", getMold.Distinct().ToList());
-                    mainForm.CurrentDetailData["MoldID"] = string.Join(",", getMold.Distinct().ToList());
+
+                    if (mainForm.CurrentDetailData.Table.Columns.Contains("MoldID"))
+                    {
+                        mainForm.CurrentDetailData["MoldID"] = string.Join(",", getMold.Distinct().ToList());
+                    }
                 }
             };
 
@@ -384,12 +398,12 @@ where Junk = 0";
                     {
                         DataRow dr = mainForm.detailgrid.GetDataRow<DataRow>(e.RowIndex);
 
-                        if (MyUtility.Check.Empty(dr["MoldID"]))
+                        if (MyUtility.Check.Empty(dr["Attachment"]))
                         {
                             return;
                         }
 
-                        P01_PartID callNextForm = new P01_PartID(MyUtility.Convert.GetString(dr["MoldID"]), MyUtility.Convert.GetString(dr["SewingMachineAttachmentID"]));
+                        P01_PartID callNextForm = new P01_PartID(MyUtility.Convert.GetString(dr["Attachment"]), MyUtility.Convert.GetString(dr["SewingMachineAttachmentID"]));
                         DialogResult result = callNextForm.ShowDialog(mainForm);
 
                         if (result == DialogResult.Cancel)
@@ -423,7 +437,7 @@ where Junk = 0";
                     }
 
                     string newSewingMachineAttachmentID = MyUtility.Convert.GetString(e.FormattedValue);
-                    string moldID = mainForm.CurrentDetailData["MoldID"].ToString();
+                    string moldID = mainForm.CurrentDetailData["Attachment"].ToString();
 
                     string sqlcmd = $@"
 select a.ID
@@ -472,7 +486,6 @@ where a.MoldID IN ('{string.Join("','", moldID.Split(','))}') ";
 
             return gen.Text(propertyname, header: header, width: width, settings: settings, iseditable: iseditable, iseditingreadonly: iseditingreadonly, alignment: alignment);
         }
-
 
         /// <summary>
         /// CellThreadComboID

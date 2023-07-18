@@ -155,7 +155,7 @@
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(158, 23);
             this.label3.TabIndex = 8;
-            this.label3.Text = "Highest GSD time (Auto)";
+            this.label3.Text = "Highest Cycle time (Auto)";
             // 
             // label2
             // 
@@ -177,7 +177,7 @@
             this.Controls.Add(this.splitViewOperator);
             this.Name = "P06_Default";
             this.OnLineHelpID = "Sci.Win.Tems.QueryForm";
-            this.Text = "P05. Auto Line Mapping (Default)";
+            this.Text = "P06. Line Mapping & Balancing (Default)";
             this.Controls.SetChildIndex(this.splitViewOperator, 0);
             this.Controls.SetChildIndex(this.label2, 0);
             this.Controls.SetChildIndex(this.label3, 0);

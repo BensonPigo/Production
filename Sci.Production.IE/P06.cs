@@ -774,18 +774,14 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
             DialogResult dialogResult = p06_EditOperation.ShowDialog();
             if (dialogResult == DialogResult.OK)
             {
-                //this.detailgridbs.DataSource = P06_EditOperation.dtLineMappingBalancing_Detail;
+                this.detailgridbs.DataSource = p06_EditOperation.dtLineMappingBalancing_Detail;
                 this.lineMappingGrids.RefreshSubData();
             }
         }
 
         private void BtnH_Click(object sender, EventArgs e)
         {
-            //DataTable dtLineMappingBalancing_DetailAutoDefault = this.dtLineMappingBalancing_Detail.AsEnumerable()
-            //    .Where(s => MyUtility.Convert.GetInt(s["SewerManpower"]) == MyUtility.Convert.GetInt(this.CurrentMaintain["SewerManpower"]))
-            //    .CopyToDataTable();
-
-            //new P06_Default(dtLineMappingBalancing_DetailAutoDefault).ShowDialog();
+            new P06_Default(this.CurrentMaintain["AutomatedLineMappingID"].ToString()).ShowDialog();
         }
 
         // 撈出Employee資料

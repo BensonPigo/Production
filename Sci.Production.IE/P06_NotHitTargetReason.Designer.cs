@@ -92,7 +92,7 @@
             this.Controls.Add(this.gridNotHitTargetReason);
             this.Name = "P06_NotHitTargetReason";
             this.OnLineHelpID = "Sci.Win.Tems.QueryForm";
-            this.Text = "P05. Not Hit Target Reason";
+            this.Text = "P06. Not Hit Target Reason";
             this.Controls.SetChildIndex(this.gridNotHitTargetReason, 0);
             this.Controls.SetChildIndex(this.btnSave, 0);
             this.Controls.SetChildIndex(this.btnCancel, 0);
