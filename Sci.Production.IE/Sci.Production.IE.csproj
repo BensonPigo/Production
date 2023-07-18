@@ -402,6 +402,7 @@
     <Compile Include="P05_Print.Designer.cs">
       <DependentUpon>P05_Print.cs</DependentUpon>
     </Compile>
+    <Compile Include="P06_PrintData.cs" />
     <Compile Include="P05_PrintData.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="P02_RepeatCheckList.cs">

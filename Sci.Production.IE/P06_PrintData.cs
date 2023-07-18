@@ -16,9 +16,9 @@ using Excel = Microsoft.Office.Interop.Excel;
 namespace Sci.Production.IE
 {
     /// <summary>
-    /// P05_Report
+    /// P06_Report
     /// </summary>
-    public class P05_PrintData
+    public class P06_PrintData
     {
         private enum OperationType
         {
@@ -39,46 +39,38 @@ namespace Sci.Production.IE
         private DataTable[] dtLineMapping_MachineArea;
         private DataTable[] dtPPA_MachineArea;
         private DataTable dtChart;
+        private DataTable dtChart2;
         private DataTable dtPPASort;
 
-        private int SewingRowTotalGSDTime = 0;
-        private int PPARowTotalGSDTime = 0;
+        private int SewingRowTotalCycle = 0;
+        private int PPARowTotalCycle = 0;
 
         /// <summary>
         /// P05_Report
         /// </summary>
-        /// <param name="almID">AutomatedLineMapping.ID</param>
+        /// <param name="almID">LineMappingBalancing.ID</param>
         /// <param name="display">導出方式</param>
         /// <param name="content">工段資訊要導出[Operation] or [Annotation]的模式</param>
         /// <param name="language">工段顯示語系</param>
-        public P05_PrintData(string almID = "", string display = "", string content = "", string language = "")
+        public P06_PrintData(string almID, string display, string content, string language)
         {
             this.almID = almID;
             this.display = display;
             this.content = content;
             this.language = language;
+
+            if (!this.LoadData())
+            {
+                return;
+            }
+
+            if (!this.ToExcel())
+            {
+                return;
+            }
         }
 
-        /// <summary>
-        /// SetCondition
-        /// </summary>
-        /// <param name="almID">AutomatedLineMapping.ID</param>
-        /// <param name="display">導出方式</param>
-        /// <param name="content">工段資訊要導出[Operation] or [Annotation]的模式</param>
-        /// <param name="language">工段顯示語系</param>
-        public void SetCondition(string almID, string display, string content, string language)
-        {
-            this.almID = almID;
-            this.display = display;
-            this.content = content;
-            this.language = language;
-        }
-
-        /// <summary>
-        /// LoadData
-        /// </summary>
-        /// <returns>bool</returns>
-        public bool LoadData()
+        private bool LoadData()
         {
             var testVar = $@"
 DECLARE @ALMID bigint = {this.almID}
@@ -92,7 +84,7 @@ DECLARE @Language varchar(2) = '{this.language}'";
 -- [Sewing Operation], [Centralized PPA Operation], [Non Sewing Line Operation] 表頭
 ;with PPA as (
 	SELECT almd.GSD, almd.No
-	FROM AutomatedLineMapping_Detail almd
+	FROM LineMappingBalancing_Detail almd
 	WHERE almd.ID = @ALMID
 	and almd.PPA = 'C'
 	and almd.IsNonSewingLine = 0
@@ -102,12 +94,13 @@ SELECT alm.StyleUKey
 , Season = alm.SeasonID
 , Brand = alm.BrandID
 , Content = ddl.Name
+, alm.SewingLineID
 , alm.FactoryID
 , alm.StyleCPU
 , alm.Version
 , alm.WorkHour
-, EOLR = ROUND(3600 / alm.HighestGSDTime, 2)
-, LBRByGSDTime = ROUND(alm.TotalGSDTime / alm.HighestGSDTime / alm.SewerManpower, 4)
+, EOLR = IIF(alm.HighestCycleTime = 0, 0, ROUND(3600 / alm.HighestCycleTime, 2))
+, LBRByCycleTime = IIF(alm.HighestCycleTime = 0, 0, ROUND(alm.TotalCycleTime / alm.HighestCycleTime / alm.SewerManpower, 4))
 , alm.SewerManpower
 , alm.TotalGSDTime
 , AvgGSDTime = ROUND(alm.TotalGSDTime / alm.SewerManpower, 2)
@@ -116,7 +109,7 @@ SELECT alm.StyleUKey
 , AvgGSDTime_PPA = ISNULL(ROUND(getPPA.TotalGSDTime / getPPA.Sewer, 2), 0)
 , ConfirmedBy = CONCAT(alm.CFMName, '-', cfm.Name)
 , PrintBy = CONCAT(printBy.ID, '-', printBy.Name)
-FROM AutomatedLineMapping alm
+FROM LineMappingBalancing alm
 LEFT JOIN DropDownList ddl on ddl.Type = 'Pms_LMContent' and ddl.ID = @Content
 LEFT JOIN Pass1 cfm on cfm.ID = alm.CFMName
 LEFT JOIN Pass1 printBy on printBy.ID = @UserID
@@ -144,10 +137,11 @@ SELECT almd.No
 , almd.SewingMachineAttachmentID
 , almd.Template
 , almd.GSD
+, almd.Cycle
 , almd.SewerDiffPercentage
 , almd.ThreadComboID
 , almd.OperationID
-FROM AutomatedLineMapping_Detail almd
+FROM LineMappingBalancing_Detail almd
 LEFT JOIN Operation o on almd.OperationID = o.ID
 WHERE almd.ID = @ALMID
 AND almd.PPA != 'C'
@@ -172,10 +166,11 @@ SELECT almd.No
 , almd.SewingMachineAttachmentID
 , almd.Template
 , almd.GSD
+, almd.Cycle
 , almd.SewerDiffPercentage
 , almd.ThreadComboID
 , almd.OperationID
-FROM AutomatedLineMapping_Detail almd
+FROM LineMappingBalancing_Detail almd
 LEFT JOIN Operation o on almd.OperationID = o.ID
 WHERE almd.ID = @ALMID
 AND almd.PPA = 'C'
@@ -199,19 +194,20 @@ SELECT almd.Seq
 , almd.SewingMachineAttachmentID
 , almd.Template
 , almd.GSD
+, almd.Cycle
 , almd.SewerDiffPercentage
 , almd.ThreadComboID
 , almd.OperationID
-FROM AutomatedLineMapping_Detail almd
+FROM LineMappingBalancing_Detail almd
 LEFT JOIN Operation o on almd.OperationID = o.ID
 WHERE almd.ID = @ALMID
 AND almd.IsNonSewingLine = 1
 ORDER BY almd.Seq ASC
 
--- Excel [Line Mapping] Machine 區塊共用資料
+-- Excel [Line Mapping] Machine區塊資料
 select MachineTypeID, MasterPlusGroup, No, Attachment, SewingMachineAttachmentID, Template, concatString.Value
 into #main
-from AutomatedLineMapping_Detail
+from LineMappingBalancing_Detail
 -- 將Attachment, SewingMachineAttachmentID, Template用逗號拆分後，重新組成字串
 outer apply (
 	select Value = isnull((
@@ -278,21 +274,31 @@ drop table #main
 
 -- Excel [Line Mapping] Line Balancing Graph圖表資料
 select No
-, ActGSDTime = Round(Sum(almd.GSD * almd.SewerDiffPercentage), 2)
-, TaktTime = Round(3600 * alm.WorkHour / Round(Round(3600 * alm.SewerManpower / alm.TotalGSDTime, 0) * alm.WorkHour, 0), 2)
-, ActGSDTime_Avg = Round(alm.TotalGSDTime / alm.SewerManpower, 2)
+, ActGSDTime = Round(Sum(almd.Cycle * almd.SewerDiffPercentage), 2)
+, TaktTime = IIF(alm.TotalCycleTime = 0, 0, Round(3600 * alm.WorkHour / Round(Round(3600 * alm.SewerManpower / alm.TotalCycleTime, 0) * alm.WorkHour, 0), 2))
+, ActGSDTime_Avg = Round(alm.TotalCycleTime / alm.SewerManpower, 2)
 , ct = count(1)
-from AutomatedLineMapping alm
-left join AutomatedLineMapping_Detail almd on alm.ID = almd.ID
+from LineMappingBalancing alm
+left join LineMappingBalancing_Detail almd on alm.ID = almd.ID
 where alm.ID  = @ALMID
 and almd.IsNonSewingLine = 0
 and almd.PPA != 'C'
-group by almd.No, alm.WorkHour, alm.SewerManpower, alm.TotalGSDTime
+group by almd.No, alm.WorkHour, alm.SewerManpower, alm.TotalCycleTime
+
+-- Excel [Line Mapping] Total GSD Time / Total Cycle Time Graph圖表資料
+select No
+, TotalGSDTime = Round(Sum(almd.GSD * almd.SewerDiffPercentage),2)
+, TotalCycleTime = Round(Sum(almd.Cycle * almd.SewerDiffPercentage),2)
+from LineMappingBalancing_Detail almd
+where almd.ID = @ALMID
+and almd.IsNonSewingLine = 0
+and almd.PPA != 'C'
+group by almd.No
 
 -- Excel [Centralized PPA] Machine區塊資料
 select MachineTypeID, MasterPlusGroup, No, Attachment, SewingMachineAttachmentID, Template, concatString.Value
 into #main_PPA
-from AutomatedLineMapping_Detail
+from LineMappingBalancing_Detail
 -- 將Attachment, SewingMachineAttachmentID, Template用逗號拆分後，重新組成字串
 outer apply (
 	select Value = isnull((
@@ -360,8 +366,8 @@ drop table #main_PPA
 -- Excel [Centralized PPA] 排序資料
 select No
 , ct = count(1)
-from AutomatedLineMapping alm
-left join AutomatedLineMapping_Detail almd on alm.ID = almd.ID
+from LineMappingBalancing alm
+left join LineMappingBalancing_Detail almd on alm.ID = almd.ID
 where alm.ID  = @ALMID
 and almd.IsNonSewingLine = 0
 and almd.PPA = 'C'
@@ -397,19 +403,16 @@ group by almd.No
             this.dtNonSewing = dtResults[3];
             this.dtLineMapping_MachineArea = new DataTable[] { dtResults[4], dtResults[5], dtResults[6] };
             this.dtChart = dtResults[7];
-            this.dtPPA_MachineArea = new DataTable[] { dtResults[8], dtResults[9], dtResults[10] };
-            this.dtPPASort = dtResults[11];
+            this.dtChart2 = dtResults[8];
+            this.dtPPA_MachineArea = new DataTable[] { dtResults[9], dtResults[10], dtResults[11] };
+            this.dtPPASort = dtResults[12];
 
             return true;
         }
 
-        /// <summary>
-        /// ToExcel
-        /// </summary>
-        /// <returns>bool</returns>
-        public bool ToExcel()
+        private bool ToExcel()
         {
-            string strXltName = Env.Cfg.XltPathDir + "\\IE_P05_Print.xltx";
+            string strXltName = Env.Cfg.XltPathDir + "\\IE_P06_Print.xltx";
             Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
             if (excel == null)
             {
@@ -421,28 +424,28 @@ group by almd.No
 #endif
 
             // Sheet - Sewing Operation
-            this.SetOperationSheet(excel.ActiveWorkbook.Worksheets[4], this.dtSewing, OperationType.Sewing);
+            this.SetOperationSheet(excel.ActiveWorkbook.Worksheets[5], this.dtSewing, OperationType.Sewing);
 
             // excel 範圍別名宣告 公式使用
-            excel.ActiveWorkbook.Names.Add("Operation", excel.ActiveWorkbook.Worksheets[4].Range["A6", "L" + this.dtSewing.Rows.Count + 5]);
+            excel.ActiveWorkbook.Names.Add("Operation", excel.ActiveWorkbook.Worksheets[5].Range["A6", "L" + this.dtSewing.Rows.Count + 5]);
 
             // Sheet - Centralized PPA Operation
-            this.SetOperationSheet(excel.ActiveWorkbook.Worksheets[5], this.dtPPA, OperationType.PPA);
+            this.SetOperationSheet(excel.ActiveWorkbook.Worksheets[6], this.dtPPA, OperationType.PPA);
 
             // excel 範圍別名宣告 公式使用
-            excel.ActiveWorkbook.Names.Add("OperationPPA", excel.ActiveWorkbook.Worksheets[5].Range["A6", "L" + this.dtPPA.Rows.Count + 5]);
+            excel.ActiveWorkbook.Names.Add("OperationPPA", excel.ActiveWorkbook.Worksheets[6].Range["A6", "L" + this.dtPPA.Rows.Count + 5]);
 
             // Sheet - Non Sewing Line Operation
-            this.SetOperationSheet(excel.ActiveWorkbook.Worksheets[6], this.dtNonSewing, OperationType.NonSewing);
+            this.SetOperationSheet(excel.ActiveWorkbook.Worksheets[7], this.dtNonSewing, OperationType.NonSewing);
 
             // Sheet - Line Mapping
-            this.SetLineMappingSheet(excel.ActiveWorkbook.Worksheets[1], this.dtLineMapping_MachineArea, OperationType.Sewing, excel.ActiveWorkbook.Worksheets[2]);
+            this.SetLineMappingSheet(excel.ActiveWorkbook.Worksheets[1], this.dtLineMapping_MachineArea, OperationType.Sewing, excel.ActiveWorkbook.Worksheets[2], excel.ActiveWorkbook.Worksheets[3]);
 
             // Sheet - Centralized PPA
-            this.SetLineMappingSheet(excel.ActiveWorkbook.Worksheets[3], this.dtPPA_MachineArea, OperationType.PPA);
+            this.SetLineMappingSheet(excel.ActiveWorkbook.Worksheets[4], this.dtPPA_MachineArea, OperationType.PPA);
 
             #region Save & Show Excel
-            string strExcelName = Class.MicrosoftFile.GetName("IE_P05_Print");
+            string strExcelName = Class.MicrosoftFile.GetName("IE_P06_Print");
             Excel.Workbook workbook = excel.ActiveWorkbook;
             workbook.SaveAs(strExcelName);
             workbook.Close();
@@ -465,7 +468,7 @@ group by almd.No
 
             // 填Operation資料
             int intRowsStart = 6;
-            int intRowTotalGSDTime = 0;
+            int intRowTotalCycle = 0;
             object[,] objArray = new object[1, 13];
             foreach (DataRow dr in dtOperation.Rows)
             {
@@ -478,18 +481,19 @@ group by almd.No
                 objArray[0, 6] = dr["SewingMachineAttachmentID"];
                 objArray[0, 7] = dr["Template"];
                 objArray[0, 8] = dr["GSD"];
-                objArray[0, 9] = dr["SewerDiffPercentage"];
-                objArray[0, 10] = dr["ThreadComboID"];
-                objArray[0, 11] = dr["OperationID"];
+                objArray[0, 9] = dr["Cycle"];
+                objArray[0, 10] = dr["SewerDiffPercentage"];
+                objArray[0, 11] = dr["ThreadComboID"];
+                objArray[0, 12] = dr["OperationID"];
                 sheet.Range[string.Format("A{0}:M{0}", intRowsStart)].Value2 = objArray;
 
                 if (operationType == OperationType.Sewing)
                 {
                     // 遇到特定OperationID時，前一筆設定下框線
-                    if (intRowTotalGSDTime == 0 && dr["OperationID"].ToString().IsOneOfThe("PROCIPF00003", "PROCIPF00004"))
+                    if (intRowTotalCycle == 0 && dr["OperationID"].ToString().IsOneOfThe("PROCIPF00003", "PROCIPF00004"))
                     {
-                        intRowTotalGSDTime = intRowsStart - 1;
-                        Excel.Borders borders = sheet.Range[string.Format("A{0}:N{0}", intRowTotalGSDTime)].Borders;
+                        intRowTotalCycle = intRowsStart - 1;
+                        Excel.Borders borders = sheet.Range[string.Format("A{0}:O{0}", intRowTotalCycle)].Borders;
                         borders[Excel.XlBordersIndex.xlEdgeBottom].LineStyle = Excel.XlLineStyle.xlDouble;
                     }
                 }
@@ -497,51 +501,51 @@ group by almd.No
                 intRowsStart++;
             }
 
-            // [Total GSD Time] & [Avg. GSD Time]
+            // [Total Cycle] & [Avg. Cycle]
             if (operationType.IsOneOfThe(OperationType.Sewing, OperationType.PPA)
                 && dtOperation.Rows.Count > 0)
             {
                 // 沒有特定OperationID時，就在最後一筆設定下框線
-                if (intRowTotalGSDTime == 0)
+                if (intRowTotalCycle == 0)
                 {
-                    intRowTotalGSDTime = intRowsStart - 1;
-                    Excel.Borders borders = sheet.Range[string.Format("M{0}:N{0}", intRowTotalGSDTime)].Borders;
+                    intRowTotalCycle = intRowsStart - 1;
+                    Excel.Borders borders = sheet.Range[string.Format("N{0}:O{0}", intRowTotalCycle)].Borders;
                     borders[Excel.XlBordersIndex.xlEdgeBottom].LineStyle = Excel.XlLineStyle.xlDouble;
                 }
 
                 if (operationType == OperationType.Sewing)
                 {
-                    this.SewingRowTotalGSDTime = intRowTotalGSDTime;
+                    this.SewingRowTotalCycle = intRowTotalCycle;
                 }
                 else
                 {
-                    this.PPARowTotalGSDTime = intRowTotalGSDTime;
+                    this.PPARowTotalCycle = intRowTotalCycle;
                 }
 
                 if (dtOperation.Rows.Count > 2)
                 {
-                    int idx = intRowTotalGSDTime - 2;
-                    sheet.get_Range($"M{idx}:M{intRowTotalGSDTime - 1}").Merge();
-                    sheet.Cells[idx, 13] = "Total" + Environment.NewLine + "GSD time";
-                    sheet.Cells[idx, 13].HorizontalAlignment = Excel.Constants.xlRight; // 設定靠右對齊
-                    sheet.Cells[idx, 13].Font.Bold = true; // 設定粗體字
-
-                    sheet.get_Range($"N{idx}:N{intRowTotalGSDTime - 1}").Merge();
-                    sheet.Cells[idx, 14] = "Avg." + Environment.NewLine + "GSD time";
+                    int idx = intRowTotalCycle - 2;
+                    sheet.get_Range($"N{idx}:N{intRowTotalCycle - 1}").Merge();
+                    sheet.Cells[idx, 14] = "Total" + Environment.NewLine + "Cycle";
                     sheet.Cells[idx, 14].HorizontalAlignment = Excel.Constants.xlRight; // 設定靠右對齊
                     sheet.Cells[idx, 14].Font.Bold = true; // 設定粗體字
+
+                    sheet.get_Range($"O{idx}:O{intRowTotalCycle - 1}").Merge();
+                    sheet.Cells[idx, 15] = "Avg." + Environment.NewLine + "Cycle";
+                    sheet.Cells[idx, 15].HorizontalAlignment = Excel.Constants.xlRight; // 設定靠右對齊
+                    sheet.Cells[idx, 15].Font.Bold = true; // 設定粗體字
                 }
                 else
                 {
-                    sheet.Cells[5, 13] = "Total" + Environment.NewLine + "GSD time";
-                    sheet.Cells[5, 14] = "Avg." + Environment.NewLine + "GSD time";
+                    sheet.Cells[5, 14] = "Total" + Environment.NewLine + "Cycle";
+                    sheet.Cells[5, 15] = "Avg." + Environment.NewLine + "Cycle";
 
-                    sheet.get_Range($"M5:N5").HorizontalAlignment = Excel.Constants.xlRight; // 設定靠右對齊
-                    sheet.get_Range($"M5:N5").Font.Bold = true; // 設定粗體字
+                    sheet.get_Range($"N5:O5").HorizontalAlignment = Excel.Constants.xlRight; // 設定靠右對齊
+                    sheet.get_Range($"N5:O5").Font.Bold = true; // 設定粗體字
                 }
 
-                // Total GSD Time
-                sheet.Cells[intRowTotalGSDTime, 13] = $"=ROUND(SUMPRODUCT($I$6:$I${intRowTotalGSDTime},$J$6:$J${intRowTotalGSDTime}),2)";
+                // Total Cycle
+                sheet.Cells[intRowTotalCycle, 14] = $"=ROUND(SUMPRODUCT($J$6:$J${intRowTotalCycle},$K$6:$K${intRowTotalCycle}),2)";
 
                 int sewer = MyUtility.Convert.GetInt(this.dtHeadInfo.Rows[0]["SewerManpower"]);
                 if (operationType == OperationType.PPA)
@@ -549,12 +553,12 @@ group by almd.No
                     sewer = MyUtility.Convert.GetInt(this.dtHeadInfo.Rows[0]["PPASewer"]);
                 }
 
-                // Avg. GSD Time
-                sheet.Cells[intRowTotalGSDTime, 14] = $"=ROUND($M${intRowTotalGSDTime}/{sewer},2)";
+                // Avg. Cycle
+                sheet.Cells[intRowTotalCycle, 15] = $"=ROUND($N${intRowTotalCycle}/{sewer},2)";
             }
 
-            sheet.Range[string.Format("A5:L{0}", intRowsStart - 1)].Borders.Weight = 1; // 1: 虛線, 2:實線, 3:粗體線
-            sheet.Range[string.Format("A5:L{0}", intRowsStart - 1)].Borders.LineStyle = 1;
+            sheet.Range[string.Format("A5:M{0}", intRowsStart - 1)].Borders.Weight = 1; // 1: 虛線, 2:實線, 3:粗體線
+            sheet.Range[string.Format("A5:M{0}", intRowsStart - 1)].Borders.LineStyle = 1;
 
             intRowsStart++;
             sheet.Cells[intRowsStart, 2] = "Picture";
@@ -643,35 +647,42 @@ group by almd.No
             sheet.Shapes.AddPicture(filepath, Microsoft.Office.Core.MsoTriState.msoFalse, Microsoft.Office.Core.MsoTriState.msoCTrue, left + leftDiff, top + topDiff, imageWidth, imageHeight);
         }
 
-        private void SetLineMappingSheet(Excel.Worksheet sheet, DataTable[] dtMachineArea, OperationType operationType, Excel.Worksheet chartData = null)
+        private void SetLineMappingSheet(Excel.Worksheet sheet, DataTable[] dtMachineArea, OperationType operationType, Excel.Worksheet chartData = null, Excel.Worksheet chart2Data = null)
         {
+            string sheetName = operationType == OperationType.Sewing ? "Sewing Operation" : "Centralized PPA Operation";
+
             #region 固定資料
 
             // 左上表頭資料
-            sheet.Cells[1, 4] = MyUtility.Convert.GetString(this.dtHeadInfo.Rows[0]["FactoryID"]); // Factory
-            sheet.Cells[7, 4] = MyUtility.Convert.GetString(this.dtHeadInfo.Rows[0]["Style"]);     // Style
-            sheet.Cells[9, 4] = MyUtility.Convert.GetString(this.dtHeadInfo.Rows[0]["StyleCPU"]);  // CPU/pc
-            sheet.Cells[12, 6] = MyUtility.Convert.GetString(this.dtHeadInfo.Rows[0]["Content"]);  // #Content
-            sheet.Cells[12, 23] = MyUtility.Convert.GetString(this.dtHeadInfo.Rows[0]["Content"]);  // #Content
+            sheet.Cells[1, 5] = MyUtility.Convert.GetString(this.dtHeadInfo.Rows[0]["FactoryID"]);      // Factory
+            sheet.Cells[5, 5] = MyUtility.Convert.GetString(this.dtHeadInfo.Rows[0]["SewingLineID"]);   // SewingLineID
+            sheet.Cells[7, 5] = MyUtility.Convert.GetString(this.dtHeadInfo.Rows[0]["Style"]);          // Style
+            sheet.Cells[9, 5] = MyUtility.Convert.GetString(this.dtHeadInfo.Rows[0]["StyleCPU"]);       // CPU/pc
+            sheet.Cells[12, 7] = MyUtility.Convert.GetString(this.dtHeadInfo.Rows[0]["Content"]);       // #Content
+            sheet.Cells[12, 24] = MyUtility.Convert.GetString(this.dtHeadInfo.Rows[0]["Content"]);      // #Content
 
             if (operationType == OperationType.Sewing)
             {
                 // 右下簽名位置
-                sheet.Cells[30, 4] = DateTime.Now.ToString("yyyy/MM/dd");                                  // Print Date
-                sheet.Cells[33, 4] = MyUtility.Convert.GetString(this.dtHeadInfo.Rows[0]["PrintBy"]);      // Print By
-                sheet.Cells[36, 4] = MyUtility.Convert.GetString(this.dtHeadInfo.Rows[0]["ConfirmedBy"]);  // Confirm By
+                sheet.Cells[30, 5] = DateTime.Now.ToString("yyyy/MM/dd");                                  // Print Date
+                sheet.Cells[33, 5] = MyUtility.Convert.GetString(this.dtHeadInfo.Rows[0]["PrintBy"]);      // Print By
+                sheet.Cells[36, 5] = MyUtility.Convert.GetString(this.dtHeadInfo.Rows[0]["ConfirmedBy"]);  // Confirm By
 
                 // 左下欄位資料
-                sheet.Cells[48, 3] = MyUtility.Convert.GetString(this.dtHeadInfo.Rows[0]["Version"]);          // Version
-                sheet.Cells[50, 3] = MyUtility.Convert.GetString(this.dtHeadInfo.Rows[0]["WorkHour"]);         // No. of Hours
-                sheet.Cells[52, 3] = MyUtility.Convert.GetString(this.dtHeadInfo.Rows[0]["SewerManpower"]);    // No. of Sewer
-                sheet.Cells[54, 3] = "=ROUND(3600*C52/C64,0)";                                                 // Target / Hr. (100%)
-                sheet.Cells[56, 3] = "=ROUND(C54*C50,0)";                                                      // Daily Demand / Shift
-                sheet.Cells[58, 3] = "=ROUND(3600*C50/C56,2)";                                                 // Takt Time
-                sheet.Cells[60, 3] = MyUtility.Convert.GetString(this.dtHeadInfo.Rows[0]["EOLR"]);             // EOLR
-                sheet.Cells[62, 3] = "=ROUND(C60*D9/C52,2)";                                                   // PPH
-                sheet.Cells[64, 3] = $"='Sewing Operation'!M{this.SewingRowTotalGSDTime}";                     // Total GSD Time
-                sheet.Cells[66, 3] = MyUtility.Convert.GetString(this.dtHeadInfo.Rows[0]["LBRByGSDTime"]);     // LBR by GSD Time
+                sheet.Cells[48, 4] = MyUtility.Convert.GetString(this.dtHeadInfo.Rows[0]["Version"]);       // Version
+                sheet.Cells[50, 4] = MyUtility.Convert.GetString(this.dtHeadInfo.Rows[0]["WorkHour"]);      // No. of Hours
+                sheet.Cells[52, 4] = MyUtility.Convert.GetString(this.dtHeadInfo.Rows[0]["SewerManpower"]); // No. of Sewer
+                sheet.Cells[54, 4] = "=ROUND(3600*D52/D66,0)";                                              // Target / Hr. (100%)
+                sheet.Cells[56, 4] = "=ROUND(D54*D50,0)";                                                   // Daily Demand / Shift
+                sheet.Cells[58, 4] = "=ROUND(3600*D50/D56,2)";                                              // Takt Time
+                sheet.Cells[60, 4] = MyUtility.Convert.GetString(this.dtHeadInfo.Rows[0]["EOLR"]);          // EOLR
+                sheet.Cells[62, 4] = "=ROUND(D60*E9/D52,2)";                                                // PPH
+
+                int i = this.SewingRowTotalCycle;
+                sheet.Cells[64, 4] = $"='{sheetName}'!N{i}";                                                // Total Cycle Time
+                sheet.Cells[66, 4] = $"=ROUND(SUMPRODUCT('{sheetName}'!I6:I{i},'{sheetName}'!K6:K{i}),2)";  // Total GSD Time
+                sheet.Cells[68, 4] = "=(D66-D64)/D66";                                                      // Total % Time Diff
+                sheet.Cells[70, 4] = MyUtility.Convert.GetString(this.dtHeadInfo.Rows[0]["LBRByCycleTime"]); // LBR by Cycle Time
             }
 
             #endregion
@@ -684,10 +695,10 @@ group by almd.No
                 foreach (DataRow dr in dtMachineArea[0].Rows)
                 {
                     // 合併儲存格
-                    Excel.Range rangeToMerge = sheet.Range[$"L{machineRowIndex}:M{machineRowIndex}"];
+                    Excel.Range rangeToMerge = sheet.Range[$"M{machineRowIndex}:N{machineRowIndex}"];
                     rangeToMerge.Merge();
 
-                    rangeToMerge = sheet.Range[$"N{machineRowIndex}:P{machineRowIndex}"];
+                    rangeToMerge = sheet.Range[$"O{machineRowIndex}:Q{machineRowIndex}"];
                     rangeToMerge.Merge();
 
                     // 填資料
@@ -695,21 +706,21 @@ group by almd.No
                     objArray[0, 1] = dr["MasterPlusGroup"];
                     objArray[0, 2] = null;
                     objArray[0, 3] = dr["Count"];
-                    sheet.Range[$"K{machineRowIndex}:N{machineRowIndex}"].Value2 = objArray;
+                    sheet.Range[$"L{machineRowIndex}:O{machineRowIndex}"].Value2 = objArray;
                     machineRowIndex++;
                 }
 
-                sheet.Range["N28"].Value2 = $"=SUM(N31:N{machineRowIndex - 1})";
-                sheet.Range[$"K31:P{machineRowIndex - 1}"].HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter; // 水平置中
-                sheet.Range[$"K31:P{machineRowIndex - 1}"].Borders.Weight = 2; // 1: 虛線, 2:實線, 3:粗體線
-                sheet.Range[$"K31:P{machineRowIndex - 1}"].Borders.LineStyle = 1;
+                sheet.Range["O28"].Value2 = $"=SUM(O31:O{machineRowIndex - 1})";
+                sheet.Range[$"L31:Q{machineRowIndex - 1}"].HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter; // 水平置中
+                sheet.Range[$"L31:Q{machineRowIndex - 1}"].Borders.Weight = 2; // 1: 虛線, 2:實線, 3:粗體線
+                sheet.Range[$"L31:Q{machineRowIndex - 1}"].Borders.LineStyle = 1;
             }
 
             #endregion
 
             #region Attachment / Tempate 區塊
-            sheet.Range["T28"].Value2 = dtMachineArea[1].Rows[0]["AttachmentCount"];
-            sheet.Range["T29"].Value2 = dtMachineArea[1].Rows[0]["TemplateCount"];
+            sheet.Range["U28"].Value2 = dtMachineArea[1].Rows[0]["AttachmentCount"];
+            sheet.Range["U29"].Value2 = dtMachineArea[1].Rows[0]["TemplateCount"];
 
             int attachmentRowIndex = 31;
             if (dtMachineArea[2].Rows.Count > 0)
@@ -718,13 +729,13 @@ group by almd.No
                 foreach (DataRow dr in dtMachineArea[2].Rows)
                 {
                     // 合併儲存格
-                    Excel.Range rangeToMerge = sheet.Range[$"R{attachmentRowIndex}:S{attachmentRowIndex}"];
+                    Excel.Range rangeToMerge = sheet.Range[$"S{attachmentRowIndex}:T{attachmentRowIndex}"];
                     rangeToMerge.Merge();
 
-                    rangeToMerge = sheet.Range[$"T{attachmentRowIndex}:U{attachmentRowIndex}"];
+                    rangeToMerge = sheet.Range[$"U{attachmentRowIndex}:V{attachmentRowIndex}"];
                     rangeToMerge.Merge();
 
-                    rangeToMerge = sheet.Range[$"V{attachmentRowIndex}:X{attachmentRowIndex}"];
+                    rangeToMerge = sheet.Range[$"W{attachmentRowIndex}:Y{attachmentRowIndex}"];
                     rangeToMerge.Merge();
 
                     // 填資料
@@ -733,20 +744,19 @@ group by almd.No
                     objArray[0, 2] = dr["No"];
                     objArray[0, 3] = null;
                     objArray[0, 4] = dr["Detail"];
-                    sheet.Range[$"R{attachmentRowIndex}:V{attachmentRowIndex}"].Value2 = objArray;
+                    sheet.Range[$"S{attachmentRowIndex}:W{attachmentRowIndex}"].Value2 = objArray;
                     attachmentRowIndex++;
                 }
 
-                sheet.Range[$"R31:X{attachmentRowIndex - 1}"].HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter; // 水平置中
-                sheet.Range[$"R31:X{attachmentRowIndex - 1}"].Borders.Weight = 2; // 1: 虛線, 2:實線, 3:粗體線
-                sheet.Range[$"R31:X{attachmentRowIndex - 1}"].Borders.LineStyle = 1;
+                sheet.Range[$"S31:Y{attachmentRowIndex - 1}"].HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter; // 水平置中
+                sheet.Range[$"S31:Y{attachmentRowIndex - 1}"].Borders.Weight = 2; // 1: 虛線, 2:實線, 3:粗體線
+                sheet.Range[$"S31:Y{attachmentRowIndex - 1}"].Borders.LineStyle = 1;
             }
 
             #endregion
-
             if (operationType == OperationType.Sewing)
             {
-                #region Line Balancing Graph 圖表
+                #region Line Balancing Graph
 
                 // 填資料
                 int intRowsStart = 2;
@@ -768,7 +778,7 @@ group by almd.No
                 object misValue = System.Reflection.Missing.Value;
                 Excel.ChartObjects xlsCharts = (Excel.ChartObjects)sheet.ChartObjects(Type.Missing);
                 var rowIndex = (machineRowIndex > attachmentRowIndex ? machineRowIndex : attachmentRowIndex) + 3;
-                Excel.Range chartPositionCell = sheet.Range[$"K{rowIndex}"]; // 定位
+                Excel.Range chartPositionCell = sheet.Range[$"L{rowIndex}"]; // 定位
                 Excel.ChartObject myChart = xlsCharts.Add(chartPositionCell.Left, chartPositionCell.Top, 28.06 * 28.35, 8.41 * 28.35); // 寬 & 高 (point = cm * 28.35)
                 Excel.Chart chartPage = myChart.Chart;
                 chartRange = chartData.get_Range("B1", $"B{chartDataEndRow}");
@@ -788,7 +798,7 @@ group by almd.No
                 Excel.Series series1_actTime = seriesCollection_actTime.NewSeries();
                 series1_actTime.Values = chartData.get_Range("D2", $"D{chartDataEndRow}");
                 series1_actTime.XValues = chartData.get_Range("A2", $"A{chartDataEndRow}");
-                series1_actTime.Name = "Act GSD Time(average)";
+                series1_actTime.Name = "Act Cycle Time(average)";
                 series1_actTime.ChartType = Excel.XlChartType.xlLine;
 
                 // 更改圖表版面配置 && 填入圖表標題 & 座標軸標題
@@ -796,7 +806,7 @@ group by almd.No
                 chartPage.ChartTitle.Select();
                 chartPage.ChartTitle.Text = "Line Balancing Graph";
                 Excel.Axis z = (Excel.Axis)chartPage.Axes(Excel.XlAxisType.xlValue, Excel.XlAxisGroup.xlPrimary);
-                z.AxisTitle.Text = "Act GSD Time (in secs)";
+                z.AxisTitle.Text = "Act Cycle Time (in secs)";
                 z = (Excel.Axis)chartPage.Axes(Excel.XlAxisType.xlCategory, Excel.XlAxisGroup.xlPrimary);
                 z.AxisTitle.Text = "Operator No.";
 
@@ -805,6 +815,53 @@ group by almd.No
 
                 // 隱藏Sheet
                 chartData.Visible = Excel.XlSheetVisibility.xlSheetHidden;
+                #endregion
+
+                #region Total GSD Time / Total Cycle Time Graph
+
+                // 填資料
+                intRowsStart = 2;
+                objArray = new object[1, 3];
+                foreach (DataRow dr in this.dtChart2.Rows)
+                {
+                    objArray[0, 0] = dr["No"];
+                    objArray[0, 1] = dr["TotalGSDTime"];
+                    objArray[0, 2] = dr["TotalCycleTime"];
+                    chart2Data.Range[$"A{intRowsStart}:C{intRowsStart}"].Value2 = objArray;
+                    intRowsStart++;
+                }
+
+                chartDataEndRow = this.dtChart2.Rows.Count + 1;
+
+                // 新增長條圖
+                misValue = System.Reflection.Missing.Value;
+                xlsCharts = (Excel.ChartObjects)sheet.ChartObjects(Type.Missing);
+
+                // 取得圖表1的位置和高度
+                double top = myChart.Top;
+                double height = myChart.Height;
+
+                // 設定圖表2的位置
+                double newTop = top + height + 20; // 在下方距離 20 point 的位置
+                double newLeft = myChart.Left; // 與圖表 A 左邊對齊
+                Excel.ChartObject myChart2 = xlsCharts.Add(newLeft, newTop, 28.06 * 28.35, 8.41 * 28.35); // 寬 & 高 (point = cm * 28.35)
+                chartPage = myChart2.Chart;
+                chartRange = chart2Data.get_Range("B1", $"B{chartDataEndRow}");
+                chartPage.SetSourceData(chartRange, misValue);
+                chartPage.ChartType = Excel.XlChartType.xlColumnClustered;
+
+                // 新增折線圖
+                Excel.SeriesCollection seriesCollection2 = chartPage.SeriesCollection();
+                Excel.Series series2 = seriesCollection2.NewSeries();
+                series2.Values = chart2Data.get_Range("C2", string.Format("C{0}", MyUtility.Convert.GetString(chartDataEndRow)));
+                series2.XValues = chart2Data.get_Range("A2", string.Format("A{0}", MyUtility.Convert.GetString(chartDataEndRow)));
+                series2.Name = "Total Cycle Time";
+
+                // 折線圖的資料標籤不顯示
+                series2.ApplyDataLabels(Excel.XlDataLabelsType.xlDataLabelsShowNone, false, false);
+
+                // 隱藏Sheet
+                chart2Data.Visible = Excel.XlSheetVisibility.xlSheetHidden;
                 #endregion
             }
 
@@ -828,8 +885,7 @@ group by almd.No
 
             int norow = 17 + (ttlLineRowCnt * 5) - 5; // No格子上的位置Excel Y軸
 
-            string sheetName = operationType == OperationType.Sewing ? "Sewing Operation" : "Centralized PPA Operation";
-            int rowTotalGSDTime = operationType == OperationType.Sewing ? this.SewingRowTotalGSDTime : this.PPARowTotalGSDTime;
+            int rowTotalGSDTime = operationType == OperationType.Sewing ? this.SewingRowTotalCycle : this.PPARowTotalCycle;
 
             bool leftDirection = this.display.EndsWith("L");
 
@@ -869,7 +925,7 @@ group by almd.No
                     for (int k = 3; k < maxct; k++)
                     {
                         rngToInsert.Insert(Excel.XlInsertShiftDirection.xlShiftDown);
-                        sheet.get_Range(string.Format("F{0}:J{0}", MyUtility.Convert.GetString(norow + k))).Merge(false); // 合併儲存格
+                        sheet.get_Range(string.Format("G{0}:K{0}", MyUtility.Convert.GetString(norow + k))).Merge(false); // 合併儲存格
 
                         addct++;
                     }
@@ -898,21 +954,23 @@ group by almd.No
 
                 foreach (DataRow nodr in dtSort.Rows)
                 {
-                    int loadingPctcolumn = leftDirection ? 1 : 28;
-                    int loadingTimecolumn = leftDirection ? 4 : 25;
-                    int seqcolumn = leftDirection ? 5 : 22;
-                    int nocolumn = leftDirection ? 14 : 18;
+                    int loadingPctcolumn = leftDirection ? 1 : 30;
+                    int cycleTimecolumn = leftDirection ? 2 : 28;
+                    int loadingTimecolumn = leftDirection ? 5 : 26;
+                    int seqcolumn = leftDirection ? 6 : 23;
+                    int nocolumn = leftDirection ? 15 : 19;
 
                     if (reverse)
                     {
-                        loadingPctcolumn = leftDirection ? 28 : 1;
-                        loadingTimecolumn = leftDirection ? 25 : 4;
-                        seqcolumn = leftDirection ? 22 : 5;
-                        nocolumn = leftDirection ? 18 : 14;
+                        loadingPctcolumn = leftDirection ? 30 : 1;
+                        cycleTimecolumn = leftDirection ? 28 : 2;
+                        loadingTimecolumn = leftDirection ? 26 : 5;
+                        seqcolumn = leftDirection ? 23 : 6;
+                        nocolumn = leftDirection ? 19 : 15;
                     }
 
                     // Operator loading (%)
-                    sheet.Cells[norow, loadingPctcolumn] = $"={MyExcelPrg.GetExcelColumnName(loadingTimecolumn)}{norow}/'{sheetName}'!N{rowTotalGSDTime}";
+                    sheet.Cells[norow, loadingPctcolumn] = $"={MyExcelPrg.GetExcelColumnName(loadingTimecolumn)}{norow}/'{sheetName}'!O{rowTotalGSDTime}";
 
                     // Station No.
                     sheet.Cells[norow, nocolumn] = MyUtility.Convert.GetString(nodr["No"]);
@@ -927,8 +985,24 @@ group by almd.No
                         ridx++;
                     }
 
+                    int idx_s = norow + 2;
+                    int idx_e = norow + ridx - 1;
+
+                    // Cycle Time GSD Time (第一行)
+                    string cycleTimeFormula;
+                    if (leftDirection)
+                    {
+                        cycleTimeFormula = "=(SUMPRODUCT(C{0}:C{1},D{0}:D{1})-SUMPRODUCT(B{0}:B{1},D{0}:D{1}))/SUMPRODUCT(C{0}:C{1},D{0}:D{1})";
+                    }
+                    else
+                    {
+                        cycleTimeFormula = "=(SUMPRODUCT(AB{0}:AB{1},AA{0}:AA{1})-SUMPRODUCT(AC{0}:AC{1},AA{0}:AA{1}))/SUMPRODUCT(AB{0}:AB{1},AA{0}:AA{1})";
+                    }
+
+                    sheet.Cells[norow, cycleTimecolumn] = string.Format(cycleTimeFormula, idx_s, idx_e);
+
                     // Loading Time (第一行)
-                    sheet.Cells[norow, loadingTimecolumn] = string.Format("=SUM({0}{1}:{0}{2})", MyExcelPrg.GetExcelColumnName(loadingTimecolumn), norow + 2, norow + ridx - 1);
+                    sheet.Cells[norow, loadingTimecolumn] = string.Format("=SUM({0}{1}:{0}{2})", MyExcelPrg.GetExcelColumnName(loadingTimecolumn), idx_s, idx_e);
 
                     if (!reverse)
                     {
@@ -974,7 +1048,7 @@ group by almd.No
                         for (int i = 3; i < maxct; i++)
                         {
                             rngToInsert.Insert(Excel.XlInsertShiftDirection.xlShiftDown);
-                            sheet.get_Range(string.Format("F{0}:J{0}", MyUtility.Convert.GetString(norow + i))).Merge(false); // 合併儲存格
+                            sheet.get_Range(string.Format("G{0}:K{0}", MyUtility.Convert.GetString(norow + i))).Merge(false); // 合併儲存格
 
                             addct++;
                         }
@@ -1007,10 +1081,10 @@ group by almd.No
                     if (leftDirection)
                     {
                         // Operator loading (%)
-                        sheet.Cells[norow, 1] = $"=D{norow}/'{sheetName}'!N{rowTotalGSDTime}";
+                        sheet.Cells[norow, 1] = $"=E{norow}/'{sheetName}'!O{rowTotalGSDTime}";
 
                         // Station No.
-                        sheet.Cells[norow, 14] = MyUtility.Convert.GetString(nodr["No"]);
+                        sheet.Cells[norow, 15] = MyUtility.Convert.GetString(nodr["No"]);
 
                         DataRow[] nodrs = dtSewingData.Select($@"No = '{MyUtility.Convert.GetString(nodr["No"])}'").OrderBy(x => MyUtility.Convert.GetInt(x["Seq"])).ToArray();
                         int ridx = 2;
@@ -1019,13 +1093,19 @@ group by almd.No
                         foreach (DataRow item in nodrs)
                         {
                             // Seq.
-                            sheet.Cells[norow + ridx, 5] = item["Seq"].ToString();
+                            sheet.Cells[norow + ridx, 6] = item["Seq"].ToString();
 
                             ridx++;
                         }
 
+                        int idx_s = norow + 2;
+                        int idx_e = norow + ridx - 1;
+
+                        // Cycle Time GSD Time (第一行)
+                        sheet.Cells[norow, 2] = string.Format("=(SUMPRODUCT(C{0}:C{1},D{0}:D{1})-SUMPRODUCT(B{0}:B{1},D{0}:D{1}))/SUMPRODUCT(C{0}:C{1},D{0}:D{1})", idx_s, idx_e);
+
                         // Loading Time (第一行)
-                        sheet.Cells[norow, 4] = string.Format("=SUM(D{0}:D{1})", norow + 2, norow + ridx - 1);
+                        sheet.Cells[norow, 5] = string.Format("=SUM(E{0}:E{1})", idx_s, idx_e);
 
                         // S字型單測累計兩次要換邊 (LRRLLRRLLR)
                         if (this.display.StartsWith("S"))
@@ -1047,10 +1127,10 @@ group by almd.No
                     else
                     {
                         // Operator loading (%)
-                        sheet.Cells[norow, 28] = $"=Y{norow}/'{sheetName}'!N{rowTotalGSDTime}";
+                        sheet.Cells[norow, 30] = $"=Z{norow}/'{sheetName}'!O{rowTotalGSDTime}";
 
                         // Station No.
-                        sheet.Cells[norow, 18] = MyUtility.Convert.GetString(nodr["No"]);
+                        sheet.Cells[norow, 19] = MyUtility.Convert.GetString(nodr["No"]);
 
                         DataRow[] nodrs = dtSewingData.Select($@"No = '{MyUtility.Convert.GetString(nodr["No"])}'").OrderBy(x => MyUtility.Convert.GetInt(x["Seq"])).ToArray();
                         int ridx = 2;
@@ -1059,13 +1139,19 @@ group by almd.No
                         foreach (DataRow item in nodrs)
                         {
                             // Seq.
-                            sheet.Cells[norow + ridx, 22] = item["Seq"].ToString();
+                            sheet.Cells[norow + ridx, 23] = item["Seq"].ToString();
 
                             ridx++;
                         }
 
+                        int idx_s = norow + 2;
+                        int idx_e = norow + ridx - 1;
+
+                        // Cycle Time GSD Time (第一行)
+                        sheet.Cells[norow, 28] = string.Format("=(SUMPRODUCT(AB{0}:AB{1},AA{0}:AA{1})-SUMPRODUCT(AC{0}:AC{1},AA{0}:AA{1}))/SUMPRODUCT(AB{0}:AB{1},AA{0}:AA{1})", idx_s, idx_e);
+
                         // Loading Time (第一行)
-                        sheet.Cells[norow, 25] = string.Format("=SUM(Y{0}:Y{1})", norow + 2, norow + ridx - 1);
+                        sheet.Cells[norow, 26] = string.Format("=SUM(Z{0}:Z{1})", idx_s, idx_e);
 
                         // S字型單測累計兩次要換邊 (LRRLLRRLLR)
                         if (this.display.StartsWith("S"))
@@ -1091,33 +1177,37 @@ group by almd.No
 
         private void AddLineMappingFormula(Excel.Worksheet worksheet, int rownum, string alias)
         {
+            // Cycle Time
+            worksheet.Cells[rownum, 2] = $"=IF(ISNA(VLOOKUP(F{rownum},{alias},10,0)),\"\",VLOOKUP(F{rownum},{alias},10,0))";
+            worksheet.Cells[rownum, 29] = $"=IF(ISNA(VLOOKUP(W{rownum},{alias},10,0)),\"\",VLOOKUP(W{rownum},{alias},10,0))";
+
             // GSD Time
-            worksheet.Cells[rownum, 2] = $"=IF(ISNA(VLOOKUP(E{rownum},{alias},9,0)),\"\",VLOOKUP(E{rownum},{alias},9,0))";
-            worksheet.Cells[rownum, 27] = $"=IF(ISNA(VLOOKUP(V{rownum},{alias},9,0)),\"\",VLOOKUP(V{rownum},{alias},9,0))";
+            worksheet.Cells[rownum, 3] = $"=IF(ISNA(VLOOKUP(F{rownum},{alias},9,0)),\"\",VLOOKUP(F{rownum},{alias},9,0))";
+            worksheet.Cells[rownum, 28] = $"=IF(ISNA(VLOOKUP(W{rownum},{alias},9,0)),\"\",VLOOKUP(W{rownum},{alias},9,0))";
 
             // Loading (%)
-            worksheet.Cells[rownum, 3] = $"=IF(ISNA(VLOOKUP(E{rownum},{alias},10,0)),\"\",VLOOKUP(E{rownum},{alias},10,0))";
-            worksheet.Cells[rownum, 26] = $"=IF(ISNA(VLOOKUP(V{rownum},{alias},10,0)),\"\",VLOOKUP(V{rownum},{alias},10,0))";
+            worksheet.Cells[rownum, 4] = $"=IF(ISNA(VLOOKUP(F{rownum},{alias},11,0)),\"\",VLOOKUP(F{rownum},{alias},11,0))";
+            worksheet.Cells[rownum, 27] = $"=IF(ISNA(VLOOKUP(W{rownum},{alias},11,0)),\"\",VLOOKUP(W{rownum},{alias},11,0))";
 
             // Loading Time
-            worksheet.Cells[rownum, 4] = $"=IF(ISNA(VLOOKUP(E{rownum},{alias},9,0)*VLOOKUP(E{rownum},{alias},10,0)),\"\",VLOOKUP(E{rownum},{alias},9,0)*VLOOKUP(E{rownum},{alias},10,0))";
-            worksheet.Cells[rownum, 25] = $"=IF(ISNA(VLOOKUP(V{rownum},{alias},9,0)*VLOOKUP(V{rownum},{alias},10,0)),\"\",VLOOKUP(V{rownum},{alias},9,0)*VLOOKUP(V{rownum},{alias},10,0))";
+            worksheet.Cells[rownum, 5] = $"=IF(ISNA(VLOOKUP(F{rownum},{alias},10,0)*VLOOKUP(F{rownum},{alias},11,0)),\"\",VLOOKUP(F{rownum},{alias},10,0)*VLOOKUP(F{rownum},{alias},11,0))";
+            worksheet.Cells[rownum, 26] = $"=IF(ISNA(VLOOKUP(W{rownum},{alias},10,0)*VLOOKUP(W{rownum},{alias},11,0)),\"\",VLOOKUP(W{rownum},{alias},10,0)*VLOOKUP(W{rownum},{alias},11,0))";
 
             // Operation
-            worksheet.Cells[rownum, 6] = $"=IF(ISNA(VLOOKUP(E{rownum},{alias},3,0)),\"\",VLOOKUP(E{rownum},{alias},3,0))";
-            worksheet.Cells[rownum, 23] = $"=IF(ISNA(VLOOKUP(V{rownum},{alias},3,0)),\"\",VLOOKUP(V{rownum},{alias},3,0))";
+            worksheet.Cells[rownum, 7] = $"=IF(ISNA(VLOOKUP(F{rownum},{alias},3,0)),\"\",VLOOKUP(F{rownum},{alias},3,0))";
+            worksheet.Cells[rownum, 24] = $"=IF(ISNA(VLOOKUP(W{rownum},{alias},3,0)),\"\",VLOOKUP(W{rownum},{alias},3,0))";
 
             // Attachment / Template
-            worksheet.Cells[rownum, 11] = $"=IF(ISNA(VLOOKUP(E{rownum},{alias},6,0) & VLOOKUP(E{rownum},{alias},8,0)),\"\",VLOOKUP(E{rownum},{alias},6,0) & VLOOKUP(E{rownum},{alias},8,0))";
-            worksheet.Cells[rownum, 21] = $"=IF(ISNA(VLOOKUP(V{rownum},{alias},6,0) & VLOOKUP(V{rownum},{alias},8,0)),\"\",VLOOKUP(V{rownum},{alias},6,0) & VLOOKUP(V{rownum},{alias},8,0))";
+            worksheet.Cells[rownum, 12] = $"=IF(ISNA(VLOOKUP(F{rownum},{alias},6,0) & VLOOKUP(F{rownum},{alias},8,0)),\"\",VLOOKUP(F{rownum},{alias},6,0) & VLOOKUP(F{rownum},{alias},8,0))";
+            worksheet.Cells[rownum, 22] = $"=IF(ISNA(VLOOKUP(W{rownum},{alias},6,0) & VLOOKUP(W{rownum},{alias},8,0)),\"\",VLOOKUP(W{rownum},{alias},6,0) & VLOOKUP(W{rownum},{alias},8,0))";
 
             // MC Group
-            worksheet.Cells[rownum, 12] = $"=IF(ISNA(VLOOKUP(E{rownum},{alias},5,0)),\"\",VLOOKUP(E{rownum},{alias},5,0))";
-            worksheet.Cells[rownum, 20] = $"=IF(ISNA(VLOOKUP(V{rownum},{alias},5,0)),\"\",VLOOKUP(V{rownum},{alias},5,0))";
+            worksheet.Cells[rownum, 13] = $"=IF(ISNA(VLOOKUP(F{rownum},{alias},5,0)),\"\",VLOOKUP(F{rownum},{alias},5,0))";
+            worksheet.Cells[rownum, 21] = $"=IF(ISNA(VLOOKUP(W{rownum},{alias},5,0)),\"\",VLOOKUP(W{rownum},{alias},5,0))";
 
             // ST/MC
-            worksheet.Cells[rownum, 13] = $"=IF(ISNA(VLOOKUP(E{rownum},{alias},4,0)),\"\",VLOOKUP(E{rownum},{alias},4,0))";
-            worksheet.Cells[rownum, 19] = $"=IF(ISNA(VLOOKUP(V{rownum},{alias},4,0)),\"\",VLOOKUP(V{rownum},{alias},4,0))";
+            worksheet.Cells[rownum, 14] = $"=IF(ISNA(VLOOKUP(F{rownum},{alias},4,0)),\"\",VLOOKUP(F{rownum},{alias},4,0))";
+            worksheet.Cells[rownum, 20] = $"=IF(ISNA(VLOOKUP(W{rownum},{alias},4,0)),\"\",VLOOKUP(W{rownum},{alias},4,0))";
         }
     }
 }
