@@ -436,6 +436,12 @@ namespace Sci.Production.Planning
                            , sty.Gender
                            , sty.Construction
                            , [StyleSpecialMark] = s.SpecialMark
+                           , o.IsBuyBack
+						   , [Cancelled but Sill] =	case when o.Junk = 1 then 
+												case when o.NeedProduction = 1 then 'Y'
+												when o.KeepPanels = 1 then 'K'
+												else 'N' end
+											else '' end
                     into #cte 
                     from dbo.Orders o WITH (NOLOCK) 
                     inner join factory f WITH (NOLOCK) on o.FactoryID= f.id and f.IsProduceFty=1
@@ -919,7 +925,9 @@ select t.MDivisionID
        , t.BrandID
        , t.OrderID
        , t.POID
+	   , [Buy Back] = IIF(T.IsBuyBack = 1 , 'Y' , '')
 	   , [Cancelled] = IIF(t.Junk=1 ,'Y' ,'')  ------------------
+	   , T.[Cancelled but Sill]
        , Dest = Country.Alias
        , t.StyleID
        , t.OrderTypeID
@@ -1191,6 +1199,12 @@ select o.MDivisionID       , o.FactoryID  , o.SciDelivery     , O.CRDDate       
        , sty.Gender
        , sty.Construction
        , [StyleSpecialMark] = s.SpecialMark
+       , [Buy Back] = IIF(o.IsBuyBack = 1 , 'Y' , '')
+	   , [Cancelled but Sill] =	case when o.Junk = 1 then 
+									case when o.NeedProduction = 1 then 'Y'
+									when o.KeepPanels = 1 then 'K'
+									else 'N' end
+								else '' end
 into #cte 
 from dbo.Orders o WITH (NOLOCK) 
 inner join factory f WITH (NOLOCK) on o.FactoryID= f.id and f.IsProduceFty=1
@@ -1660,7 +1674,9 @@ select t.MDivisionID
        , t.BrandID
        , t.OrderID
        , t.POID
+	   , T.[Buy Back]
 	   , [Cancelled] = IIF(t.Junk=1 ,'Y' ,'')  ------------------
+	   , T.[Cancelled but Sill]
        , Dest = Country.Alias
        , t.StyleID
        , t.OrderTypeID
