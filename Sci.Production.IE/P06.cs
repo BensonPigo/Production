@@ -117,7 +117,7 @@ namespace Sci.Production.IE
         /// <inheritdoc/>
         protected override bool ClickPrint()
         {
-            //new P06_Print(this.CurrentMaintain["ID"].ToString()).ShowDialog();
+            new P06_Print(this.CurrentMaintain["ID"].ToString()).ShowDialog();
             return base.ClickPrint();
         }
 
