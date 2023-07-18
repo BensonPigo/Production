@@ -847,6 +847,7 @@ as (
 		   , g.CustCDID
 		   , g.Dest
 		   , g.ShipModeID
+		   , g.ShipTermID
 		   , PulloutDate = (select MAX(pack.PulloutDate) 
                             from (
                                 select PulloutDate from  #tmpPackingA2B_final WITH (NOLOCK) where INVNo = g.ID
@@ -1052,6 +1053,7 @@ select  IE = 'Export'
 			, p.CustCDID
 			, Dest = ''  
 			, p.ShipModeID
+			, ShipTermID =''
 			, p.PulloutDate
 			, p.ShipQty
 			, p.CTNQty
@@ -1091,6 +1093,7 @@ with ExportData as (
 		   , e.ID
 		   , e.ImportCountry
 		   , e.ShipModeID
+		   , e.ShipmentTerm
 		   , e.PortArrival
 		   , e.WeightKg
 		   , e.Cbm
@@ -1162,6 +1165,7 @@ FtyExportData as (
 		   , f.ID
 		   , f.ImportCountry
 		   , f.ShipModeID
+		   , ShipmentTerm = ''
 		   , f.PortArrival
 		   , f.WeightKg
 		   , f.Cbm
@@ -1217,6 +1221,7 @@ TransferExportData as (
 		   , e.ID
 		   , e.ImportCountry
 		   , e.ShipModeID
+		   , e.ShipmentTerm
            , PortArrival = case e.TransferType
                 when 'Transfer Out' then e.CloseDate              
                 when 'Transfer In'  then e.PortArrival
@@ -1305,6 +1310,7 @@ select	e.IE
 		, e.LoadingOrigin
 		, e.ImportCountry
 		, e.ShipModeID
+		, e.ShipmentTerm
 		, e.PortArrival
 		, 0 as ShipQty
 		, 0 as CTNQty
@@ -1337,6 +1343,7 @@ select	f.IE
 		, f.LoadingOrigin
 		, f.ImportCountry
 		, f.ShipModeID
+		, f.ShipmentTerm
 		, f.PortArrival
 		, ShipQty = 0
 		, CTNQty = 0
@@ -1367,6 +1374,7 @@ select	t.IE
 		, t.LoadingOrigin
 		, t.ImportCountry
 		, t.ShipModeID
+		, t.ShipmentTerm
 		, t.PortArrival
 		, ShipQty = 0
 		, CTNQty = t.Packages
