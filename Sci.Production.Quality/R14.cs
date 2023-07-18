@@ -290,7 +290,7 @@ namespace Sci.Production.Quality
                 )size
                 outer apply
                 (
-	                select val = stuff((select concat('/',tmp.Roll)
+	                select val = stuff((select concat(';',tmp.Roll)
 	                from
 	                (
 		                select  Roll from SpreadingInspection_InsCutRef_Fabric where SpreadingInspectionInsCutRefUkey = si.Ukey
@@ -435,7 +435,7 @@ namespace Sci.Production.Quality
                 )size
                 outer apply
                 (
-                select val = stuff((select concat('/',tmp.Roll)
+                select val = stuff((select concat(';',tmp.Roll)
                 from
                 (
 	                select  Roll from SpreadingInspection_InsCutRef_Fabric where SpreadingInspectionInsCutRefUkey = si.Ukey
