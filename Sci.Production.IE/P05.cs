@@ -365,18 +365,6 @@ delete AutomatedLineMapping_NotHitTargetReason where ID = '{this.CurrentMaintain
                 return false;
             }
 
-            string sqlGetAutomatedLineMapping_DetailTemp = $@"
-select  ad.*,
-        [PPADesc] = isnull(d.Name, ''),
-        [OperationDesc] = iif(isnull(op.DescEN, '') = '', ad.OperationID, op.DescEN),
-        [SewerDiffPercentageDesc] = round(ad.SewerDiffPercentage * 100, 0),
-        [TimeStudyDetailUkeyCnt] = Count(TimeStudyDetailUkey) over (partition by TimeStudyDetailUkey)
-from    AutomatedLineMapping_DetailTemp ad with (nolock) 
-left join DropDownList d with (nolock) on d.ID = ad.PPA  and d.Type = 'PMS_IEPPA'
-left join Operation op with (nolock) on op.ID = ad.OperationID
-where ad.ID = '{this.CurrentMaintain["ID"]}'
-order by ad.SewerManpower, ad.No, ad.Seq
-";
             result = DBProxy.Current.Select(null, string.Format(this.sqlGetAutomatedLineMapping_DetailTemp, $" ad.ID = '{this.CurrentMaintain["ID"]}'"), out this.dtAutomatedLineMapping_DetailTemp);
             if (!result)
             {
@@ -389,6 +377,7 @@ order by ad.SewerManpower, ad.No, ad.Seq
             this.CurrentMaintain["Phase"] = string.Empty;
             this.CurrentMaintain["AddName"] = Env.User.UserID;
             this.CurrentMaintain["EditName"] = string.Empty;
+            this.CurrentMaintain["EditDate"] = DBNull.Value;
             this.CurrentMaintain["ID"] = DBNull.Value;
 
             return true;
@@ -1028,7 +1017,9 @@ INSERT INTO LineMappingBalancing (
 	   ,PackerManpower
 	   ,PresserManpower
 	   ,TotalGSDTime
+       ,TotalCycleTime
 	   ,HighestGSDTime
+       ,HighestCycleTime
 	   ,TimeStudyID
 	   ,TimeStudyStatus
 	   ,TimeStudyVersion
@@ -1051,7 +1042,9 @@ SELECT
 	   ,alm.PackerManpower
 	   ,alm.PresserManpower
 	   ,alm.TotalGSDTime
+       ,alm.TotalGSDTime
 	   ,alm.HighestGSDTime
+       ,alm.HighestGSDTime
 	   ,alm.TimeStudyID
 	   ,alm.TimeStudyStatus
 	   ,alm.TimeStudyVersion
@@ -1078,6 +1071,7 @@ INSERT INTO LineMappingBalancing_Detail (
 	,SewingMachineAttachmentID
 	,Template
 	,GSD
+    ,Cycle
 	,SewerDiffPercentage
 	,DivSewer
 	,OriSewer
@@ -1099,6 +1093,7 @@ SELECT
    ,almd.Attachment
    ,almd.SewingMachineAttachmentID
    ,almd.Template
+   ,almd.GSD
    ,almd.GSD
    ,almd.SewerDiffPercentage
    ,almd.DivSewer
