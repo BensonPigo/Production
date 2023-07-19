@@ -248,7 +248,7 @@ WHERE ID = @ID AND Seq = @Seq
                 {
                     string stage = MyUtility.Convert.GetString(this.MasterCFAInspectionRecord["stage"]);
 
-                    if (stage.ToUpper() != "3RD PARTY")
+                    if (!stage.ToUpper().IsOneOfThe("3RD PARTY", "FINAL"))
                     {
                         selectedRow["Carton"] = string.Empty;
                         selectedRow.EndEdit();
@@ -378,7 +378,7 @@ AND CTNStartNo = @CTNStartNo
             string currentCarton = MyUtility.Convert.GetString(currentRow["Carton"]);
             string stage = MyUtility.Convert.GetString(this.MasterCFAInspectionRecord["stage"]);
 
-            if (stage.ToUpper() != "3RD PARTY")
+            if (!stage.ToUpper().IsOneOfThe("3RD PARTY", "FINAL"))
             {
                 return;
             }
@@ -688,7 +688,7 @@ EXISTS
                         // 只有3RD PARTY 可以存入Carton
                         string stage = MyUtility.Convert.GetString(this.MasterCFAInspectionRecord["stage"]);
 
-                        if (stage.ToUpper() != "3RD PARTY")
+                        if (!stage.ToUpper().IsOneOfThe("3RD PARTY", "FINAL"))
                         {
                             dr["Carton"] = string.Empty;
                         }
