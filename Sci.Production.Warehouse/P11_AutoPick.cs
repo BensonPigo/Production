@@ -277,34 +277,7 @@ begin
 end
 else
 BEGIN   
-	declare @Tmp_Order_Qty dbo.QtyBreakdown
-	insert into @Tmp_Order_Qty
-	select ID ,Article ,SizeCode ,Qty
-        ,OriQty
-    from #Tmp_Order_Qty
-
-	--#Tmp_BoaExpend
-	Insert Into #Tmp_BoaExpend(ID, Order_BOAUkey, RefNo, SCIRefNo, Article, ColorID, SuppColor, SizeCode
-		, SizeSpec, SizeUnit, Remark, OrderQty
-        --, Price
-        , UsageQty, UsageUnit, SysUsageQty, BomZipperInsert
-		, BomCustPONo, Keyword, Keyword_Original, Keyword_xml, OrderList, ColorDesc, Special
-		, BomTypeColorID, BomTypeSize, BomTypeSizeUnit, BomTypeZipperInsert, BomTypeArticle, BomTypeCOO, BomTypeGender, BomTypeCustomerSize
-		, BomTypeDecLabelSize, BomTypeBrandFactoryCode, BomTypeStyle, BomTypeStyleLocation, BomTypeSeason, BomTypeCareCode, BomTypeCustomerPO)
-	select ID, Order_BOAUkey, RefNo, SCIRefNo, Article, ColorID, SuppColor, SizeCode
-		, SizeSpec, SizeUnit, Remark, OrderQty
-        --, Price
-        , UsageQty, UsageUnit, SysUsageQty , BomZipperInsert
-		, BomCustPONo, Keyword, Keyword_Original, Keyword_xml, OrderList, ColorDesc, Special
-		, BomTypeColorID, BomTypeSize, BomTypeSizeUnit, BomTypeZipperInsert, BomTypeArticle, BomTypeCOO, BomTypeGender, BomTypeCustomerSize
-		, BomTypeDecLabelSize, BomTypeBrandFactoryCode, BomTypeStyle, BomTypeStyleLocation, BomTypeSeason, BomTypeCareCode, BomTypeCustomerPO
-	from dbo.GetBOAExpend_NEW('{3}', 0, 0, 0, @Tmp_Order_Qty, 0, 0, 1) g
-	order by RefNo, SCIRefNo, ColorID, Article, SizeSeq, SizeSpec, BomZipperInsert, Keyword, Special
-
-	Select * From #Tmp_BoaExpend;
-	Select ID, ExpendUkey, tmp.Data
-	From #Tmp_BoaExpend
-	Cross Apply (Select * From dbo.SplitString(#Tmp_BoaExpend.OrderList, ',') where Data <> '') as tmp
+    Exec dbo.BoaExpend_New '{3}', {4}, {5}, '{6}',0,1;
 END
 
 --BoAExpend SizeSpec 與 Po_Supp_Detail SizeSpec 意義不同，因此比對時 Po_Supp_Detail 也需要展開
@@ -412,9 +385,8 @@ order by x.poid, x.seq1, x.seq2, x.scirefno, x.ColorID, x.SizeSpec, x.Special;
 --因為 #tmpPo_Supp_Detail 有用 Order_BoA 展開
 --計算數量時，必須根據 Poid, Seq, SizeCode 群組
 SELECT b.POID, b.SEQ1, b.SEQ2, boa.SizeCode
-    , Autopickqty = ISNULL (boa.UsageQty, 0)
-    , qty = ISNULL(boa.UsageQty, 0)
-    , Diffqty = 0.0--之後用庫存總數去分配時再計算
+    , qty = Round(SUM(boa.UsageQty * b.Rate) , 2)
+INTO #tmpLast
 FROM #tmpPO_supp_detail b
 OUTER APPLY (
     SELECT t.SizeCode, t.UsageQty
@@ -438,7 +410,24 @@ OUTER APPLY (
     AND dbo.ConditionIncludeNull(b.StyleLocation   , t.BomTypeStyleLocation   ) = 1
     AND dbo.ConditionIncludeNull(b.ZipperInsert    , t.BomTypeZipperInsert    ) = 1
 ) boa
-order by b.POID, b.SEQ1, b.SEQ2
+GROUP BY b.POID, b.SEQ1, b.SEQ2, boa.SizeCode
+
+SELECT
+    z.*
+    , Autopickqty = isnull (t.qty, 0)
+    , qty = ISNULL(t.qty, 0)
+    , Diffqty = 0.0--之後用庫存總數去分配時再計算
+FROM(
+    SELECT x.*, os.SizeCode, os.Seq
+    FROM(SELECT DISTINCT POID, SEQ1, SEQ2 FROM #tmpPO_supp_detail)x
+    CROSS JOIN Order_SizeCode os WITH(NOLOCK)
+    WHERE os.Id = '{3}'
+)z
+LEFT JOIN #tmpLast t ON t.SizeCode = z.SizeCode
+                    AND t.POID = z.POID
+                    AND t.SEQ1 = z.SEQ1
+                    AND t.SEQ2 = z.SEQ2
+order by z.SEQ1,z.SEQ2,z.Seq
 ", this.sbSizecode.ToString().Substring(0, this.sbSizecode.ToString().Length - 1),
                 this.issueid,
                 this.orderid,

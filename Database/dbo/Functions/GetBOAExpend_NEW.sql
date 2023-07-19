@@ -424,10 +424,10 @@ begin
 		set @CalSizeItem = IIF(@BomTypeCalculatePCS = 1, @BoaSizeItem_PCS, @SizeItem);
 
 		--因有可能取不到資料,需先清除
-		SET @tmpSizeUnit = ''
+        SET @tmpSizeUnit = null
 		--取得SizeUnit
 		SELECT
-			@tmpSizeUnit = IIF(@BoaBomTypeSize = 1 and @NoSizeUnit = 0, Order_SizeItem.SizeUnit, '')
+			@tmpSizeUnit = IIF(@BoaBomTypeSize = 1 and @NoSizeUnit = 0, Order_SizeItem.SizeUnit, null)
 		FROM dbo.Order_SizeItem
 		WHERE Order_SizeItem.ID = @ID
 		AND Order_SizeItem.SizeItem = @CalSizeItem;
@@ -455,7 +455,7 @@ begin
 		   , SizeSpec = IIF(@BoaBomTypeSize = 1 OR @IsExpendDetail = 1,
 							IIF(ISNULL(tmpExist_SizeSpec_OrderCombo.IsExist, 0) = 1, ISNULL(tmpOrder_SizeSpec_OrderCombo.SizeSpec, ''), ISNULL(tmpOrder_SizeSpec.SizeSpec, ''))
 							, '')
-		   , SizeUnit = @tmpSizeUnit
+           , SizeUnit = isnull(@tmpSizeUnit, '')
 		   , OrderQty = tmpQtyBreakDown.Qty
 		   , UsageQty = (Qty * IIF(ISNULL(@CalSizeItem, '') = '', 1,
 									ISNULL(IIF(ISNULL(tmpExist_SizeSpec_OrderCombo.IsExist, 0) = 1, tmpOrder_SizeSpec_OrderCombo.SizeSpec_Cal, tmpOrder_SizeSpec.SizeSpec_Cal),
@@ -468,27 +468,27 @@ begin
            
 		   /* BomTypeValue Start */
 		   --與ColorID相同
-		   , BomTypeColorID = IIF(@BoaBomTypeColor = 1 OR @IsExpendDetail = 1, ISNULL(Order_ColorCombo.ColorID, ''), null)
+           , BomTypeColorID = IIF(@BoaBomTypeColor = 1, Order_ColorCombo.ColorID, null)
 		   --與SizeSpec相同
-		   , BomTypeSize = IIF(@BoaBomTypeSize = 1 OR @IsExpendDetail = 1,
-							IIF(ISNULL(tmpExist_SizeSpec_OrderCombo.IsExist, 0) = 1, ISNULL(tmpOrder_SizeSpec_OrderCombo.SizeSpec, ''), ISNULL(tmpOrder_SizeSpec.SizeSpec, ''))
+           , BomTypeSize = IIF(@BoaBomTypeSize = 1,
+                            IIF(ISNULL(tmpExist_SizeSpec_OrderCombo.IsExist, 0) = 1, tmpOrder_SizeSpec_OrderCombo.SizeSpec, tmpOrder_SizeSpec.SizeSpec)
 							, null)
-		   , BomTypeSizeUnit = IIF((@BoaBomTypeSize = 1 OR @IsExpendDetail = 1) and @NoSizeUnit = 0, @tmpSizeUnit, null)
+           , BomTypeSizeUnit = IIF(@BoaBomTypeSize = 1 and @NoSizeUnit = 0, @tmpSizeUnit, null)
 		   --與BomZipperInsert相同
-		   , BomTypeZipperInsert = IIF(@BoaBomTypeZipper = 1 OR @IsExpendDetail = 1, tmpQtyBreakDown.ZipperInsert, null)
+           , BomTypeZipperInsert = IIF(@BoaBomTypeZipper = 1, tmpQtyBreakDown.ZipperInsert, null)
 		    --與Article相同
-		   , BomTypeArticle = IIF(@BoaBomTypeArticle = 1 OR @IsExpendDetail = 1, tmpQtyBreakDown.Article, null)
-		   , BomTypeCOO = IIF(@BoaBomTypeCOO = 1 OR @IsExpendDetail = 1, dbo.GetBomTypeValue(@BoaUkey, 'COO', ky.Location, tmpQtyBreakDown.SizeCode), null)
-		   , BomTypeGender = IIF(@BoaBomTypeGender = 1 OR @IsExpendDetail = 1, dbo.GetBomTypeValue(@BoaUkey, 'Gender', ky.Location, tmpQtyBreakDown.SizeCode), null)
-		   , BomTypeCustomerSize = IIF(@BoaBomTypeCustomerSize = 1 OR @IsExpendDetail = 1, dbo.GetBomTypeValue(@BoaUkey, 'CustomerSize', ky.Location, tmpQtyBreakDown.SizeCode), null)
-		   , BomTypeDecLabelSize = IIF(@BoaBomTypeDecLabelSize = 1 OR @IsExpendDetail = 1, dbo.GetBomTypeValue(@BoaUkey, 'DecLabelSize', ky.Location, tmpQtyBreakDown.SizeCode), null)
-		   , BomTypeBrandFactoryCode = IIF(@BoaBomTypeBrandFactoryCode = 1 OR @IsExpendDetail = 1, dbo.GetBomTypeValue(@BoaUkey, 'BrandFactoryCode', ky.Location, tmpQtyBreakDown.SizeCode), null)
-		   , BomTypeStyle = IIF(@BoaBomTypeStyle = 1 OR @IsExpendDetail = 1, dbo.GetBomTypeValue(@BoaUkey, 'Style', ky.Location, tmpQtyBreakDown.SizeCode), null)
-		   , BomTypeStyleLocation = IIF(@BoaBomTypeStyleLocation = 1 OR @IsExpendDetail = 1, dbo.GetBomTypeValue(@BoaUkey, 'StyleLocation', ky.Location, tmpQtyBreakDown.SizeCode), null)
-		   , BomTypeSeason = IIF(@BoaBomTypeSeason = 1 OR @IsExpendDetail = 1, dbo.GetBomTypeValue(@BoaUkey, 'Season', ky.Location, tmpQtyBreakDown.SizeCode), null)
-		   , BomTypeCareCode = IIF(@BoaBomTypeCareCode = 1 OR @IsExpendDetail = 1, dbo.GetBomTypeValue(@BoaUkey, 'CareCode', ky.Location, tmpQtyBreakDown.SizeCode), null)
+           , BomTypeArticle = IIF(@BoaBomTypeArticle = 1, tmpQtyBreakDown.Article, null)
+           , BomTypeCOO = IIF(@BoaBomTypeCOO = 1, dbo.GetBomTypeValue(@BoaUkey, 'COO', ky.Location, tmpQtyBreakDown.SizeCode), null)
+           , BomTypeGender = IIF(@BoaBomTypeGender = 1, dbo.GetBomTypeValue(@BoaUkey, 'Gender', ky.Location, tmpQtyBreakDown.SizeCode), null)
+           , BomTypeCustomerSize = IIF(@BoaBomTypeCustomerSize = 1, dbo.GetBomTypeValue(@BoaUkey, 'CustomerSize', ky.Location, tmpQtyBreakDown.SizeCode), null)
+           , BomTypeDecLabelSize = IIF(@BoaBomTypeDecLabelSize = 1, dbo.GetBomTypeValue(@BoaUkey, 'DecLabelSize', ky.Location, tmpQtyBreakDown.SizeCode), null)
+           , BomTypeBrandFactoryCode = IIF(@BoaBomTypeBrandFactoryCode = 1, dbo.GetBomTypeValue(@BoaUkey, 'BrandFactoryCode', ky.Location, tmpQtyBreakDown.SizeCode), null)
+           , BomTypeStyle = IIF(@BoaBomTypeStyle = 1, dbo.GetBomTypeValue(@BoaUkey, 'Style', ky.Location, tmpQtyBreakDown.SizeCode), null)
+           , BomTypeStyleLocation = IIF(@BoaBomTypeStyleLocation = 1, dbo.GetBomTypeValue(@BoaUkey, 'StyleLocation', ky.Location, tmpQtyBreakDown.SizeCode), null)
+           , BomTypeSeason = IIF(@BoaBomTypeSeason = 1, dbo.GetBomTypeValue(@BoaUkey, 'Season', ky.Location, tmpQtyBreakDown.SizeCode), null)
+           , BomTypeCareCode = IIF(@BoaBomTypeCareCode = 1, dbo.GetBomTypeValue(@BoaUkey, 'CareCode', ky.Location, tmpQtyBreakDown.SizeCode), null)
 		   --與BomCustPONo相同
-		   , BomTypeCustomerPO = IIF(@BoaBomTypePo = 1 OR @IsExpendDetail = 1, tmpQtyBreakDown.CustPONo, null)
+           , BomTypeCustomerPO = IIF(@BoaBomTypePo = 1, tmpQtyBreakDown.CustPONo, null)
 		   /* BomTypeValue End */
            
 		FROM @tmpOrder_Qty AS tmpQtyBreakDown

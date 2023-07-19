@@ -90,8 +90,8 @@ Begin
 		-- BomType為Style時統一帶出StyleID
 		when @BomType = 'Style'
 			then (select StyleID from dbo.Orders with (nolock) where ID = @OrderID)
-		else '' end;
+		else null end;
 	End
 
-	Return isnull(@BomTypeValue, '')
+	Return @BomTypeValue
 End
