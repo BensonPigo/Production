@@ -657,7 +657,6 @@ left join pass1 p3 with (nolock) on p3.id = i.Inspector
             string where1 = string.Empty;
             string where2 = string.Empty;
 
-            string ttlColorTone = string.Empty;
             if (this.radioPanelTransaction.Value == "1")
             {
                 if (!this.dateArriveWHDate.Value1.Empty())
@@ -751,9 +750,9 @@ Inspector = Concat(p3.ID, '-', p3.Name)
                     }
 
                     this.Sqlcmd += $@"
-{string.Format(this.baseReceivingSql, colPhysical, this.AddJoinByReportType("Receiving", "FIR_Physical", "Physical"), this.AddInspectionWhere(where1, "Physical"), joinPhysical, ttlColorTone)}
+{string.Format(this.baseReceivingSql, colPhysical, this.AddJoinByReportType("Receiving", "FIR_Physical", "Physical"), this.AddInspectionWhere(where1, "Physical"), joinPhysical, string.Empty)}
 union all
-{string.Format(this.baseTransferInSql, colPhysical, this.AddJoinByReportType("TransferIn", "FIR_Physical", "Physical"), this.AddInspectionWhere(where2, "Physical"), joinPhysical, ttlColorTone)}
+{string.Format(this.baseTransferInSql, colPhysical, this.AddJoinByReportType("TransferIn", "FIR_Physical", "Physical"), this.AddInspectionWhere(where2, "Physical"), joinPhysical, string.Empty)}
 order by POID, Seq, ExportId, ReceivingID
 ";
                 }
@@ -795,9 +794,9 @@ i.Remark
                     }
 
                     this.Sqlcmd += $@"
-{string.Format(this.baseReceivingSql, colWeight, this.AddJoinByReportType("Receiving", "FIR_Weight"), this.AddInspectionWhere(where1, "Weight"), joinWeight, ttlColorTone)}
+{string.Format(this.baseReceivingSql, colWeight, this.AddJoinByReportType("Receiving", "FIR_Weight"), this.AddInspectionWhere(where1, "Weight"), joinWeight, string.Empty)}
 union all
-{string.Format(this.baseTransferInSql, colWeight, this.AddJoinByReportType("TransferIn", "FIR_Weight"), this.AddInspectionWhere(where2, "Weight"), joinWeight, ttlColorTone)}
+{string.Format(this.baseTransferInSql, colWeight, this.AddJoinByReportType("TransferIn", "FIR_Weight"), this.AddInspectionWhere(where2, "Weight"), joinWeight, string.Empty)}
 order by POID, Seq, ExportId, ReceivingID
 ";
                 }
@@ -820,6 +819,7 @@ f.Shadebond,
 [Approver] = Concat(p2.ID, '-', p2.Name),
 f.ApproveDate
 ";
+                    string ttlColorTone = string.Empty;
                     if (this.radioRollDyelot.Checked)
                     {
                         joinShadeBond += @"
@@ -886,9 +886,9 @@ i.Remark
                     }
 
                     this.Sqlcmd += $@"
-{string.Format(this.baseReceivingSql, colContinuity, this.AddJoinByReportType("Receiving", "FIR_Continuity"), this.AddInspectionWhere(where1, "Continuity"), joinContinuity, ttlColorTone)}
+{string.Format(this.baseReceivingSql, colContinuity, this.AddJoinByReportType("Receiving", "FIR_Continuity"), this.AddInspectionWhere(where1, "Continuity"), joinContinuity, string.Empty)}
 union all
-{string.Format(this.baseTransferInSql, colContinuity, this.AddJoinByReportType("TransferIn", "FIR_Continuity"), this.AddInspectionWhere(where2, "Continuity"), joinContinuity, ttlColorTone)}
+{string.Format(this.baseTransferInSql, colContinuity, this.AddJoinByReportType("TransferIn", "FIR_Continuity"), this.AddInspectionWhere(where2, "Continuity"), joinContinuity, string.Empty)}
 order by POID, Seq, ExportId, ReceivingID
 ";
                 }
@@ -927,9 +927,9 @@ i.Remark
                     }
 
                     this.Sqlcmd += $@"
-{string.Format(this.baseReceivingSql, colOdor, this.AddJoinByReportType("Receiving", "FIR_Odor"), this.AddInspectionWhere(where1, "Odor"), joinOdor, ttlColorTone)}
+{string.Format(this.baseReceivingSql, colOdor, this.AddJoinByReportType("Receiving", "FIR_Odor"), this.AddInspectionWhere(where1, "Odor"), joinOdor, string.Empty)}
 union all
-{string.Format(this.baseTransferInSql, colOdor, this.AddJoinByReportType("TransferIn", "FIR_Odor"), this.AddInspectionWhere(where2, "Odor"), joinOdor, ttlColorTone)}
+{string.Format(this.baseTransferInSql, colOdor, this.AddJoinByReportType("TransferIn", "FIR_Odor"), this.AddInspectionWhere(where2, "Odor"), joinOdor, string.Empty)}
 order by POID, Seq, ExportId, ReceivingID
 ";
                 }
