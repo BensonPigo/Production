@@ -420,7 +420,7 @@ SELECT
 FROM(
     SELECT x.*, os.SizeCode, os.Seq
     FROM(SELECT DISTINCT POID, SEQ1, SEQ2 FROM #tmpPO_supp_detail)x
-    CROSS JOIN Order_SizeCode os WITH(NOLOCK)
+    CROSS JOIN Order_SizeCode os WITH(NOLOCK)--要去展開所有 SizeCode, 提供手動填寫需求
     WHERE os.Id = '{3}'
 )z
 LEFT JOIN #tmpLast t ON t.SizeCode = z.SizeCode
