@@ -202,9 +202,9 @@ select A.POID
 	,t.InvNo
 	,t.WhseArrival
 	,t.StockQty
-    ,total_t.StockQty
     ,total_t.InvStock
     ,total_t.BulkStock
+    ,total_t.BalanceQty
 	,(Select MinSciDelivery from DBO.GetSCI(A.poid,x.Category))[MinSciDelivery]
 	,(Select MinBuyerDelivery from DBO.GetSCI(A.poid,x.Category))[MinBuyerDelivery]
 	,A.refno
@@ -240,10 +240,11 @@ inner join (
 		{0}
 ) t on t.PoId = A.POID and t.Seq1 = A.SEQ1 and t.Seq2 = A.SEQ2 AND T.ID=a.ReceivingID
 cross apply(
-	select [StockQty] = sum(RD.StockQty)
+	select [BalanceQty] = sum(fit.inqty - fit.outqty + fit.adjustqty - fit.ReturnQty)
 	,[InvStock] =  sum(iif(rd.StockType = 'I',RD.StockQty, 0))
 	,[BulkStock] = sum(iif(rd.StockType = 'B',RD.StockQty, 0))
 	from dbo.View_AllReceivingDetail rd WITH (NOLOCK) 
+    left join FtyInventory fit WITH (NOLOCK)  on fit.poid = rd.PoId and fit.seq1 = rd.seq1 and fit.seq2 = rd.Seq2 AND fit.StockType=rd.StockType and fit.Roll=rd.Roll and fit.Dyelot=rd.Dyelot
 	where rd.PoId = A.POID and rd.Seq1 = A.SEQ1 and rd.Seq2 = A.SEQ2 AND rd.Id=A.ReceivingID
 ) total_t
 left join Export et with (nolock) on et.ID = t.ExportId
