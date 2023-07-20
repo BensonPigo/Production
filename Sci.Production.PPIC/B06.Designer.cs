@@ -41,6 +41,8 @@
             this.lblGroup = new Sci.Win.UI.Label();
             this.txtGroup = new Sci.Win.UI.TextBox();
             this.txtCellNo = new Sci.Production.Class.TxtCell();
+            this.textBox1 = new Sci.Win.UI.TextBox();
+            this.label1 = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -55,6 +57,8 @@
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.textBox1);
+            this.detailcont.Controls.Add(this.label1);
             this.detailcont.Controls.Add(this.txtGroup);
             this.detailcont.Controls.Add(this.lblGroup);
             this.detailcont.Controls.Add(this.txtCellNo);
@@ -102,7 +106,7 @@
             // 
             this.labelFactory.Location = new System.Drawing.Point(27, 23);
             this.labelFactory.Name = "labelFactory";
-            this.labelFactory.Size = new System.Drawing.Size(80, 23);
+            this.labelFactory.Size = new System.Drawing.Size(117, 23);
             this.labelFactory.TabIndex = 0;
             this.labelFactory.Text = "Factory";
             // 
@@ -110,31 +114,31 @@
             // 
             this.labelLine.Location = new System.Drawing.Point(27, 61);
             this.labelLine.Name = "labelLine";
-            this.labelLine.Size = new System.Drawing.Size(80, 23);
+            this.labelLine.Size = new System.Drawing.Size(117, 23);
             this.labelLine.TabIndex = 1;
             this.labelLine.Text = "Line#";
             // 
             // labelDescription
             // 
-            this.labelDescription.Location = new System.Drawing.Point(27, 99);
+            this.labelDescription.Location = new System.Drawing.Point(27, 134);
             this.labelDescription.Name = "labelDescription";
-            this.labelDescription.Size = new System.Drawing.Size(80, 23);
+            this.labelDescription.Size = new System.Drawing.Size(117, 23);
             this.labelDescription.TabIndex = 2;
             this.labelDescription.Text = "Description";
             // 
             // labelCellNo
             // 
-            this.labelCellNo.Location = new System.Drawing.Point(27, 137);
+            this.labelCellNo.Location = new System.Drawing.Point(27, 172);
             this.labelCellNo.Name = "labelCellNo";
-            this.labelCellNo.Size = new System.Drawing.Size(80, 23);
+            this.labelCellNo.Size = new System.Drawing.Size(117, 23);
             this.labelCellNo.TabIndex = 3;
             this.labelCellNo.Text = "Cell No.";
             // 
             // labelNoOfSewers
             // 
-            this.labelNoOfSewers.Location = new System.Drawing.Point(27, 175);
+            this.labelNoOfSewers.Location = new System.Drawing.Point(27, 210);
             this.labelNoOfSewers.Name = "labelNoOfSewers";
-            this.labelNoOfSewers.Size = new System.Drawing.Size(80, 23);
+            this.labelNoOfSewers.Size = new System.Drawing.Size(117, 23);
             this.labelNoOfSewers.TabIndex = 4;
             this.labelNoOfSewers.Text = "# of Sewers";
             // 
@@ -143,7 +147,7 @@
             this.displayFactory.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayFactory.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "FactoryID", true));
             this.displayFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayFactory.Location = new System.Drawing.Point(112, 23);
+            this.displayFactory.Location = new System.Drawing.Point(147, 23);
             this.displayFactory.Name = "displayFactory";
             this.displayFactory.Size = new System.Drawing.Size(69, 23);
             this.displayFactory.TabIndex = 0;
@@ -153,7 +157,7 @@
             this.txtLine.BackColor = System.Drawing.Color.White;
             this.txtLine.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "ID", true));
             this.txtLine.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtLine.Location = new System.Drawing.Point(112, 61);
+            this.txtLine.Location = new System.Drawing.Point(147, 61);
             this.txtLine.Name = "txtLine";
             this.txtLine.Size = new System.Drawing.Size(69, 23);
             this.txtLine.TabIndex = 1;
@@ -164,7 +168,7 @@
             this.txtDescription.BackColor = System.Drawing.Color.White;
             this.txtDescription.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Description", true));
             this.txtDescription.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtDescription.Location = new System.Drawing.Point(112, 99);
+            this.txtDescription.Location = new System.Drawing.Point(147, 134);
             this.txtDescription.Name = "txtDescription";
             this.txtDescription.Size = new System.Drawing.Size(474, 23);
             this.txtDescription.TabIndex = 2;
@@ -174,7 +178,7 @@
             this.numNoOfSewers.BackColor = System.Drawing.Color.White;
             this.numNoOfSewers.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Sewer", true));
             this.numNoOfSewers.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numNoOfSewers.Location = new System.Drawing.Point(112, 175);
+            this.numNoOfSewers.Location = new System.Drawing.Point(147, 210);
             this.numNoOfSewers.Name = "numNoOfSewers";
             this.numNoOfSewers.NullValue = new decimal(new int[] {
             0,
@@ -203,9 +207,9 @@
             // 
             // lblGroup
             // 
-            this.lblGroup.Location = new System.Drawing.Point(27, 210);
+            this.lblGroup.Location = new System.Drawing.Point(27, 245);
             this.lblGroup.Name = "lblGroup";
-            this.lblGroup.Size = new System.Drawing.Size(80, 23);
+            this.lblGroup.Size = new System.Drawing.Size(117, 23);
             this.lblGroup.TabIndex = 6;
             this.lblGroup.Text = "Group";
             // 
@@ -214,7 +218,7 @@
             this.txtGroup.BackColor = System.Drawing.Color.White;
             this.txtGroup.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "LineGroup", true));
             this.txtGroup.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtGroup.Location = new System.Drawing.Point(112, 210);
+            this.txtGroup.Location = new System.Drawing.Point(147, 245);
             this.txtGroup.Name = "txtGroup";
             this.txtGroup.Size = new System.Drawing.Size(243, 23);
             this.txtGroup.TabIndex = 7;
@@ -224,11 +228,29 @@
             this.txtCellNo.BackColor = System.Drawing.Color.White;
             this.txtCellNo.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "SewingCell", true));
             this.txtCellNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtCellNo.Location = new System.Drawing.Point(112, 137);
+            this.txtCellNo.Location = new System.Drawing.Point(147, 172);
             this.txtCellNo.MDivisionID = "displayBox1";
             this.txtCellNo.Name = "txtCellNo";
             this.txtCellNo.Size = new System.Drawing.Size(30, 23);
             this.txtCellNo.TabIndex = 3;
+            // 
+            // textBox1
+            // 
+            this.textBox1.BackColor = System.Drawing.Color.White;
+            this.textBox1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "LineNmforReport", true));
+            this.textBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.textBox1.Location = new System.Drawing.Point(147, 97);
+            this.textBox1.Name = "textBox1";
+            this.textBox1.Size = new System.Drawing.Size(69, 23);
+            this.textBox1.TabIndex = 8;
+            // 
+            // label1
+            // 
+            this.label1.Location = new System.Drawing.Point(27, 97);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(117, 23);
+            this.label1.TabIndex = 9;
+            this.label1.Text = "LineNmforReport";
             // 
             // B06
             // 
@@ -270,5 +292,7 @@
         private Class.TxtCell txtCellNo;
         private Win.UI.TextBox txtGroup;
         private Win.UI.Label lblGroup;
+        private Win.UI.TextBox textBox1;
+        private Win.UI.Label label1;
     }
 }
