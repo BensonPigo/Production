@@ -70,10 +70,13 @@ namespace Sci.Production.IE
         {
             this.InitializeComponent();
             this.detailgrid.Columns.DisableSortable();
+            this.detailgrid.CellMouseMove += this.Detailgrid_CellMouseMove;
+            this.detailgrid.CellMouseLeave += this.Detailgrid_CellMouseLeave;
+            this.detailgrid.Columns.DisableSortable();
             this.detailgrid.AllowUserToOrderColumns = true;
             this.InsertDetailGridOnDoubleClick = false;
             this.detailgrid.Font = new System.Drawing.Font("Calibri", 12F, System.Drawing.FontStyle.Bold);
-            new GridRowDrag(this.detailgrid, this.DetailGridAfterRowDragDo, this.DetailGridBeforeRowDragDo);
+            new GridRowDrag(this.detailgrid, this.DetailGridAfterRowDragDo, this.DetailGridBeforeRowDragDo, false);
         }
 
         /// <inheritdoc/>
@@ -108,6 +111,9 @@ namespace Sci.Production.IE
         {
             this.InitializeComponent();
             this.detailgrid.Columns.DisableSortable();
+            this.detailgrid.CellMouseMove += this.Detailgrid_CellMouseMove;
+            this.detailgrid.CellMouseLeave += this.Detailgrid_CellMouseLeave;
+
             StringBuilder df = new StringBuilder();
             df.Append(string.Format("StyleID = '{0}' ", styleID));
             if (!MyUtility.Check.Empty(brandID))
@@ -147,7 +153,24 @@ namespace Sci.Production.IE
             this.DefaultFilter = df.ToString();
             this.detailgrid.AllowUserToOrderColumns = true;
             this.InsertDetailGridOnDoubleClick = false;
-            new GridRowDrag(this.detailgrid, this.DetailGridAfterRowDragDo, this.DetailGridBeforeRowDragDo);
+            new GridRowDrag(this.detailgrid, this.DetailGridAfterRowDragDo, this.DetailGridBeforeRowDragDo, false);
+        }
+
+        private void Detailgrid_CellMouseLeave(object sender, DataGridViewCellEventArgs e)
+        {
+            this.detailgrid.Cursor = Cursors.Default;
+        }
+
+        private void Detailgrid_CellMouseMove(object sender, DataGridViewCellMouseEventArgs e)
+        {
+            if (e.ColumnIndex == -1)
+            {
+                this.detailgrid.Cursor = Cursors.Hand;
+            }
+            else
+            {
+                this.detailgrid.Cursor = Cursors.Default;
+            }
         }
 
         /// <summary>
@@ -1068,7 +1091,6 @@ and Name = @PPA
                 this.HideRows();
             };
             this.detailgrid.ColumnHeaderMouseClick += this.Detailgrid_ColumnHeaderMouseClick;
-            this.detailgrid.RowHeadersVisible = false;
         }
 
         private void Detailgrid_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
@@ -1081,17 +1103,6 @@ and Name = @PPA
             if (this.detailgrid.CurrentCell == null)
             {
                 return;
-            }
-
-            // Subprocess 取消全選
-            string columnName = this.detailgrid.CurrentCell.OwningColumn.Name;
-            if (columnName == "IsSubprocess")
-            {
-                this.detailgrid.RowHeadersVisible = false;
-            }
-            else
-            {
-                this.detailgrid.RowHeadersVisible = true;
             }
 
             foreach (DataRow dr in ((DataTable)this.detailgridbs.DataSource).Rows)
@@ -2166,7 +2177,7 @@ and s.BrandID = @brandid ", Env.User.Factory);
 
             string cmd = $@"select OperationID=ID ,MoldID  from Operation where Junk=0 and ID = '{operationID}'";
 
-            DBProxy.Current.Select(null, cmd,out dt);
+            DBProxy.Current.Select(null, cmd, out dt);
 
             return dt;
         }

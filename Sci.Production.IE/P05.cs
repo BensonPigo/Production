@@ -63,6 +63,27 @@ where {0}
 order by ad.SewerManpower, ad.No, ad.Seq
 ";
 
+        private decimal StandardLBR
+        {
+            get
+            {
+                if (this.CurrentMaintain == null)
+                {
+                    return 0;
+                }
+
+                string sqlGetLBRCondition = $@"
+SELECT ALMCS.Condition1 
+FROM AutomatedLineMappingConditionSetting ALMCS
+WHERE ALMCS.[FactoryID] = '{this.CurrentMaintain["FactoryID"]}'
+AND ALMCS.Functions = 'IE_P05'
+AND ALMCS.Verify = 'LBRByGSD'
+AND ALMCS.Junk = 0
+";
+                return MyUtility.Convert.GetDecimal(MyUtility.GetValue.Lookup(sqlGetLBRCondition));
+            }
+        }
+
         /// <summary>
         /// P05
         /// </summary>
@@ -110,6 +131,25 @@ order by ad.SewerManpower, ad.No, ad.Seq
             }
 
             this.chartLBR.Paint += this.ChartLBR_Paint;
+
+            this.numericLBRByGSDTime.ValueChanged += this.NumericLBRByGSDTime_ValueChanged;
+        }
+
+        private void NumericLBRByGSDTime_ValueChanged(object sender, EventArgs e)
+        {
+            if (this.numericLBRByGSDTime.Value == null)
+            {
+                return;
+            }
+
+            if (this.numericLBRByGSDTime.Value < this.StandardLBR)
+            {
+                this.numericLBRByGSDTime.BackColor = Color.PaleVioletRed;
+            }
+            else
+            {
+                this.numericLBRByGSDTime.BackColor = this.numericHighestGSDTime.BackColor;
+            }
         }
 
         private void Detailgrid_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
@@ -262,6 +302,8 @@ order by iif(ad.No = '', 'ZZ', ad.No), ad.Seq";
             p05_CreateNewLineMapping.ShowDialog();
             if (this.DetailDatas.Count == 0)
             {
+                base.ClickNewAfter();
+                this.DoDetailUndo(false);
                 return;
             }
 
@@ -386,15 +428,8 @@ delete AutomatedLineMapping_NotHitTargetReason where ID = '{this.CurrentMaintain
         /// <inheritdoc/>
         protected override void ClickConfirm()
         {
-            string sqlGetLBRCondition = $@"
-SELECT ALMCS.Condition1 
-FROM AutomatedLineMappingConditionSetting ALMCS
-WHERE ALMCS.[FactoryID] = '{this.CurrentMaintain["FactoryID"]}'
-AND ALMCS.Functions = 'IE_P05'
-AND ALMCS.Verify = 'LBRByGSD'
-AND ALMCS.Junk = 0
-";
-            decimal checkLBRCondition = MyUtility.Convert.GetDecimal(MyUtility.GetValue.Lookup(sqlGetLBRCondition));
+            
+            decimal checkLBRCondition = this.StandardLBR;
 
             if (checkLBRCondition > 0 &&
                 MyUtility.Convert.GetDecimal(this.CurrentMaintain["LBRByGSDTime"]) < checkLBRCondition)
@@ -453,6 +488,7 @@ where   ID = '{this.CurrentMaintain["ID"]}'
 
             int seqLineMapping = 1;
             int seqCentralizedPPA = 1;
+            int seqIsNonSewingLine = 1;
 
             foreach (var dr in this.DetailDatas.OrderBy(s => s["No"].ToString()))
             {
@@ -465,6 +501,11 @@ where   ID = '{this.CurrentMaintain["ID"]}'
                 {
                     dr["Seq"] = seqCentralizedPPA;
                     seqCentralizedPPA++;
+                }
+                else
+                {
+                    dr["Seq"] = seqIsNonSewingLine;
+                    seqIsNonSewingLine++;
                 }
             }
 
@@ -1105,9 +1146,10 @@ SELECT
 FROM AutomatedLineMapping_Detail almd
 WHERE almd.ID = '{this.CurrentMaintain["ID"]}'
 
+select [ID] = @ID
 ";
-
-            DualResult result = DBProxy.Current.Execute(null, sqlInsertLineMappingBalancing);
+            DataTable dtOutID;
+            DualResult result = DBProxy.Current.Select(null, sqlInsertLineMappingBalancing, out dtOutID);
 
             if (!result)
             {
@@ -1115,10 +1157,50 @@ WHERE almd.ID = '{this.CurrentMaintain["ID"]}'
                 return;
             }
 
+            string id = dtOutID.Rows[0][0].ToString();
+
             DialogResult dialogResult = MyUtility.Msg.QuestionBox("Line Mapping transfer is successful, do you want to open IE_P06 directly?");
             if (dialogResult == DialogResult.Yes)
             {
-                
+                foreach (Form form in Application.OpenForms)
+                {
+                    if (form is P06)
+                    {
+                        form.Activate();
+                        P06 activateForm = (P06)form;
+                        activateForm.ShowDirectQueryID(id);
+                        return;
+                    }
+                }
+
+                ToolStripMenuItem p06MenuItem = null;
+                foreach (ToolStripMenuItem toolMenuItem in Env.App.MainMenuStrip.Items)
+                {
+                    if (toolMenuItem.Text.EqualString("IE"))
+                    {
+                        foreach (var subMenuItem in toolMenuItem.DropDown.Items)
+                        {
+                            if (subMenuItem.GetType().Equals(typeof(ToolStripMenuItem)))
+                            {
+                                if (((ToolStripMenuItem)subMenuItem).Text.EqualString("P06. Line Mapping & Balancing"))
+                                {
+                                    p06MenuItem = (ToolStripMenuItem)subMenuItem;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+
+                if (p06MenuItem == null)
+                {
+                    MyUtility.Msg.WarningBox("P06. Line Mapping & Balancing menu setting not found");
+                    return;
+                }
+
+                P06 callP06 = new P06(p06MenuItem);
+                callP06.MdiParent = this.MdiParent;
+                callP06.ShowDirectQueryID(id);
             }
         }
     }

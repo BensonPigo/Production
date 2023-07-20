@@ -33,7 +33,6 @@ where	t.StyleID = @StyleID and
 		t.ComboType = @ComboType and
 		td.OperationID not like '-%' and
 		td.PPA <> 'C' and
-		td.Sewer > 0 and 
 		td.IsNonSewingLine = 0
 
 select	td.ID,
@@ -212,9 +211,10 @@ BEGIN
 			update #tmpGroupSewer set ManualGroupSewer = ManualGroupSewer - 1,
 									  AvgManualSewerGroup = OriSumSewer / (ManualGroupSewer - 1)
 			where	GroupSeq = (	select top 1 GroupSeq
-									from #tmpGroupSewer
+									from #tmpGroupSewer tgs
+									inner join SewerGroupRange sg with (nolock) on sg.Sewer = (tgs.ManualGroupSewer - 1)
 									where ManualGroupSewer > 1 and TotalSewer = @TotalSewerForCal
-									order by AvgManualSewerGroup Asc) and
+									order by (tgs.OriSumSewer - sg.Range2)/ tgs.ManualGroupSewer asc) and
 					TotalSewer = @TotalSewerForCal
 			
 	
@@ -226,10 +226,13 @@ END
 CLOSE DiffSewer_Caculate_cursor
 DEALLOCATE DiffSewer_Caculate_cursor
 
-
-update tgs set	tgs.SewerLimitLow = iif(tgs.AvgManualSewerGroup * SewerLowRatio.val > SewerLimit.val, SewerLimit.val, round(tgs.AvgManualSewerGroup * SewerLowRatio.val, 3)),
-				tgs.SewerLimitMiddle = iif(tgs.AvgManualSewerGroup * SewerMiddleRatio.val > SewerLimit.val, SewerLimit.val, round(tgs.AvgManualSewerGroup * SewerMiddleRatio.val, 3)),
-				tgs.SewerLimitHigh = iif(tgs.AvgManualSewerGroup * SewerHighRatio.val > SewerLimit.val, SewerLimit.val, round(tgs.AvgManualSewerGroup * SewerHighRatio.val, 3))
+--如果平衡調整人數時ManualGroupSewer有減少的話，就不限制Limit
+update tgs set	tgs.SewerLimitLow = case	when tgs.AvgManualSewerGroup * SewerLowRatio.val > SewerLimit.val and tgs.GroupSewer <= tgs.ManualGroupSewer then SewerLimit.val
+											else round(tgs.AvgManualSewerGroup * SewerLowRatio.val, 4) end,
+				tgs.SewerLimitMiddle = case	when tgs.AvgManualSewerGroup * SewerMiddleRatio.val > SewerLimit.val and tgs.GroupSewer <= tgs.ManualGroupSewer then SewerLimit.val
+											else round(tgs.AvgManualSewerGroup * SewerMiddleRatio.val, 4) end,
+				tgs.SewerLimitHigh = case	when tgs.AvgManualSewerGroup * SewerHighRatio.val > SewerLimit.val and tgs.GroupSewer <= tgs.ManualGroupSewer then SewerLimit.val
+											else round(tgs.AvgManualSewerGroup * SewerHighRatio.val, 4) end
 from #tmpGroupSewer tgs
 outer apply (select [val] = cast(Name as float) from DropDownList with (nolock) where type = 'Pms_SewerLimit' and ID = 'Low') SewerLowRatio
 outer apply (select [val] = cast(Name as float) from DropDownList with (nolock) where type = 'Pms_SewerLimit' and ID = 'Middle') SewerMiddleRatio
@@ -385,8 +388,7 @@ left join #tmpReaultBase tb with (nolock) on tb.TimeStudyDetailUkey = td.Ukey
 left join Operation o with (nolock) on td.OperationID = o.ID
 left join #tmpLocation tl on td.Seq >= tl.Seq and (td.Seq < tl.NextSeq or tl.NextSeq = 0)
 where	td.ID = @TimeStudyID and
-		td.OperationID not like '-%' and
-		td.IsNonSewingLine = 0
+		td.OperationID not like '-%'
 
 
 --取得**Pressing與**Packing資料

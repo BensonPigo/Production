@@ -380,6 +380,18 @@ namespace Sci.Production.IE
 
                     e.AdvancedBorderStyle.Bottom = DataGridViewAdvancedCellBorderStyle.None;
                 }
+
+                if (grid.Columns[e.ColumnIndex].DataPropertyName == "Selected" &&
+                    grid.Rows[e.RowIndex].Cells["Selected"].ReadOnly &&
+                    MyUtility.Convert.GetBool(grid.Rows[e.RowIndex].Cells["Selected"].Value) == false)
+                {
+                    using (SolidBrush brush = new SolidBrush(Color.LightGray))
+                    {
+                        e.Graphics.FillRectangle(brush, e.CellBounds);
+                    }
+
+                    e.Handled = true;
+                }
             }
         }
 
@@ -389,12 +401,10 @@ namespace Sci.Production.IE
             DataGridViewRow gridRow = grid.Rows[e.RowIndex];
             DataRow dr = (gridRow.DataBoundItem as DataRowView).Row;
 
-            if (MyUtility.Convert.GetInt(dr["NoCnt"]) == 1 || gridRow.Height > 24)
+            if (MyUtility.Convert.GetInt(dr["NoCnt"]) > 1 && gridRow.Height <= 24)
             {
-                return;
+                gridRow.Height = gridRow.Height * MyUtility.Convert.GetInt(dr["NoCnt"]);
             }
-
-            gridRow.Height = gridRow.Height * MyUtility.Convert.GetInt(dr["NoCnt"]);
 
             int operatorLoading = MyUtility.Convert.GetInt(dr["OperatorLoading"]);
             if (operatorLoading > 115)

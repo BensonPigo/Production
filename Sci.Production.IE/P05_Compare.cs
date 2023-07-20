@@ -349,18 +349,14 @@ namespace Sci.Production.IE
 
             decimal totalGSD = dtAutomatedLineMapping.AsEnumerable()
                                 .Where(s => s["PPA"].ToString() != "C" &&
-                                            !MyUtility.Convert.GetBool(s["IsNonSewingLine"]) &&
-                                            s["OperationID"].ToString() != "PROCIPF00004" &&
-                                            s["OperationID"].ToString() != "PROCIPF00003")
+                                            !MyUtility.Convert.GetBool(s["IsNonSewingLine"]))
                                 .Sum(s => MyUtility.Math.Round(MyUtility.Convert.GetDecimal(s["GSD"]) * MyUtility.Convert.GetDecimal(s["SewerDiffPercentage"]), 2));
 
             decimal avgGSD = sewermanpower == 0 ? 0 : MyUtility.Math.Round(totalGSD / sewermanpower, 2);
 
             var resultRows = dtAutomatedLineMapping.AsEnumerable()
                             .Where(s => s["PPA"].ToString() != "C" &&
-                                        !MyUtility.Convert.GetBool(s["IsNonSewingLine"]) &&
-                                        s["OperationID"].ToString() != "PROCIPF00004" &&
-                                        s["OperationID"].ToString() != "PROCIPF00003")
+                                        !MyUtility.Convert.GetBool(s["IsNonSewingLine"]))
                             .GroupBy(s => new
                             {
                                 No = s["No"].ToString(),
@@ -371,6 +367,7 @@ namespace Sci.Production.IE
                                     groupItem.Key.No,
                                     TotalGSDTime = MyUtility.Math.Round(groupItem.Sum(s => MyUtility.Convert.GetDecimal(s["GSD"]) * MyUtility.Convert.GetDecimal(s["SewerDiffPercentage"])), 2),
                                     OperatorLoading = MyUtility.Check.Empty(avgGSD) ? 0 : MyUtility.Math.Round(groupItem.Sum(s => MyUtility.Convert.GetDecimal(s["GSD"]) * MyUtility.Convert.GetDecimal(s["SewerDiffPercentage"])) / avgGSD * 100, 0),
+                                    ExcludeCalSummary = groupItem.Any(s => s["OperationID"].ToString() == "PROCIPF00003" || s["OperationID"].ToString() == "PROCIPF00004"),
                                 })
                             .ToList();
 
@@ -397,7 +394,7 @@ namespace Sci.Production.IE
                 dtResult.Rows.Add(newRowResult);
             }
 
-            decimal highestGSD = resultRows.Max(s => s.TotalGSDTime);
+            decimal highestGSD = resultRows.Where(s => !s.ExcludeCalSummary).Max(s => s.TotalGSDTime);
             summaryInfo.LBR = MyUtility.Convert.GetInt(MyUtility.Math.Round((totalGSD / highestGSD) / sewermanpower * 100, 0));
             summaryInfo.HighestOPLoading = MyUtility.Convert.GetInt(MyUtility.Math.Round(resultRows.Max(s => s.OperatorLoading), 0));
             listSummaryInfo.Add(summaryInfo);

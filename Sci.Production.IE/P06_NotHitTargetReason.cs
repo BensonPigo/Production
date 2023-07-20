@@ -68,24 +68,6 @@ namespace Sci.Production.IE
             this.gridNotHitTargetReason.Columns["IEReasonID"].DefaultCellStyle.BackColor = this.status != "Confirmed" ? Color.Pink : Color.White;
             this.btnSave.Enabled = this.status != "Confirmed";
             this.QueryNotHitTarget();
-
-            string sqlUpdate = $@"
-alter table #tmp alter column No varchar(2)
-
-delete  an
-from LineMappingBalancing_NotHitTargetReason an
-where   ID = '{this.id}' and
-        No not in (select No from #tmp where isnull(IEReasonID, '') <> '')
-
-";
-
-            DualResult result = MyUtility.Tool.ProcessWithDatatable(this.dtLineMappingBalancing_NotHitTargetReason, null, sqlUpdate, out DataTable dtEmpty);
-
-            if (!result)
-            {
-                this.ShowErr(result);
-                return;
-            }
         }
 
         /// <inheritdoc/>
@@ -195,6 +177,7 @@ where   FactoryID = '{this.factoryID}' and
                 new SqlParameter("@Condition1", drHitCondition["Condition1"]),
                 new SqlParameter("@Condition2", drHitCondition["Condition2"]),
                 new SqlParameter("@Condition3", drHitCondition["Condition3"]),
+                new SqlParameter("@Status", this.status),
             };
 
             string sqlCheck = $@"
@@ -221,6 +204,7 @@ select  tf.No,
         [Description] = isnull(i.Description, ''),
         anh.EditName,
         anh.EditDate
+into    #tmpCheckHitResult
 from    #tmpCheckHit tf
 left    join    LineMappingBalancing_NotHitTargetReason anh with (nolock) on anh.ID = '{this.id}' and anh.No = tf.No
 left    join    IEReason i with (nolock) on i.ID = anh.IEReasonID and i.Type = 'AS'
@@ -228,6 +212,45 @@ where   tf.OperatorLoadingCycle > @Condition1 or
         tf.OperatorLoadingGSD > @Condition2 or
         (tf.OperatorLoadingCycle > tf.OperatorLoadingGSD and tf.OperatorLoadingCycle > @Condition3)
 order by tf.No
+
+--在單子confirm前如果因AutomatedLineMappingConditionSetting條件有變更，就將不符合的資料刪除
+if(@Status <> 'Confirmed')
+begin
+    delete  an
+    from LineMappingBalancing_NotHitTargetReason an
+    where   ID = '{this.id}' and
+            No not in (select No from #tmpCheckHitResult where isnull(IEReasonID, '') <> '')
+
+    select  No,
+            TotalCycleTimeAuto,
+            TotalCycleTimeFinal,
+            SewerLoadingAuto,
+            SewerLoadingFinal,
+            IEReasonID,
+            Description,
+            EditName,
+            EditDate  
+    from #tmpCheckHitResult
+    order by No
+end
+else
+begin
+    select  anh.No,
+            anh.TotalCycleTimeAuto,
+            anh.TotalCycleTimeFinal,
+            anh.SewerLoadingAuto,
+            anh.SewerLoadingFinal,
+            anh.IEReasonID,
+            i.Description,
+            anh.EditName,
+            anh.EditDate
+    from LineMappingBalancing_NotHitTargetReason anh with (nolock)
+    left    join    IEReason i with (nolock) on i.ID = anh.IEReasonID and i.Type = 'AS'
+    where   anh.ID = '{this.id}'
+    order by anh.No
+end
+
+drop table #tmpCheckHit, #tmpCheckHitResult
 ";
 
             DualResult result = DBProxy.Current.Select(null, sqlCheck, listPar, out this.dtLineMappingBalancing_NotHitTargetReason);

@@ -287,7 +287,7 @@
             this.txtBrandCreate.Location = new System.Drawing.Point(99, 141);
             this.txtBrandCreate.MyDocumentdName = null;
             this.txtBrandCreate.Name = "txtBrandCreate";
-            this.txtBrandCreate.Size = new System.Drawing.Size(66, 23);
+            this.txtBrandCreate.Size = new System.Drawing.Size(80, 23);
             this.txtBrandCreate.TabIndex = 23;
             // 
             // txtBrandCopy
@@ -297,7 +297,7 @@
             this.txtBrandCopy.Location = new System.Drawing.Point(362, 141);
             this.txtBrandCopy.MyDocumentdName = null;
             this.txtBrandCopy.Name = "txtBrandCopy";
-            this.txtBrandCopy.Size = new System.Drawing.Size(66, 23);
+            this.txtBrandCopy.Size = new System.Drawing.Size(80, 23);
             this.txtBrandCopy.TabIndex = 24;
             // 
             // comboPhase

@@ -28,6 +28,27 @@ namespace Sci.Production.IE
         private AutoLineMappingGridSyncScroll lineMappingGrids;
         private AutoLineMappingGridSyncScroll centralizedPPAGrids;
 
+        private decimal StandardLBR
+        {
+            get
+            {
+                if (this.CurrentMaintain == null)
+                {
+                    return 0;
+                }
+
+                string sqlGetLBRCondition = $@"
+SELECT ALMCS.Condition1 
+FROM AutomatedLineMappingConditionSetting ALMCS
+WHERE ALMCS.[FactoryID] = '{this.CurrentMaintain["FactoryID"]}'
+AND ALMCS.Functions = 'IE_P06'
+AND ALMCS.Verify = 'LBRByCycle'
+AND ALMCS.Junk = 0
+";
+                return MyUtility.Convert.GetDecimal(MyUtility.GetValue.Lookup(sqlGetLBRCondition));
+            }
+        }
+
         /// <summary>
         /// P06
         /// </summary>
@@ -50,6 +71,46 @@ namespace Sci.Production.IE
             this.centralizedPPAGrids = new AutoLineMappingGridSyncScroll(this.gridCentralizedPPALeft, this.gridCentralizedPPARight, "No", SubGridType.BalancingCentrailizedPPA);
 
             this.txtSewingline.FactoryobjectName = this.txtfactory;
+
+            this.numericLBRByCycleTime.ValueChanged += this.NumericLBRByCycleTime_ValueChanged;
+        }
+
+        /// <summary>
+        /// ShowDirectQueryID
+        /// </summary>
+        /// <param name="id">id</param>
+        public void ShowDirectQueryID(string id)
+        {
+            this.Show();
+            this.tabs.SelectedIndex = 0;
+
+            foreach (DataRow dr in this.DataRows)
+            {
+                if (dr["ID"].ToString() == id)
+                {
+                    int targetIndex = this.grid.GetRowIndexByDataRow(dr);
+                    this.grid.SelectRowTo(targetIndex);
+                    this.tabs.SelectedIndex = 1;
+                    return;
+                }
+            }
+        }
+
+        private void NumericLBRByCycleTime_ValueChanged(object sender, EventArgs e)
+        {
+            if (this.numericLBRByCycleTime.Value == null)
+            {
+                return;
+            }
+
+            if (this.numericLBRByCycleTime.Value < this.StandardLBR)
+            {
+                this.numericLBRByCycleTime.BackColor = Color.PaleVioletRed;
+            }
+            else
+            {
+                this.numericLBRByCycleTime.BackColor = this.numericHighestGSDTime.BackColor;
+            }
         }
 
         private void Detailgrid_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
@@ -283,15 +344,7 @@ delete LineMappingBalancing_NotHitTargetReason where ID = '{this.CurrentMaintain
                 return;
             }
 
-            string sqlGetLBRCondition = $@"
-SELECT ALMCS.Condition1 
-FROM AutomatedLineMappingConditionSetting ALMCS
-WHERE ALMCS.[FactoryID] = '{this.CurrentMaintain["FactoryID"]}'
-AND ALMCS.Functions = 'IE_P06'
-AND ALMCS.Verify = 'LBRByCycle'
-AND ALMCS.Junk = 0
-";
-            decimal checkLBRCondition = MyUtility.Convert.GetDecimal(MyUtility.GetValue.Lookup(sqlGetLBRCondition));
+            decimal checkLBRCondition = this.StandardLBR;
 
             if (checkLBRCondition > 0 &&
                 MyUtility.Convert.GetDecimal(this.CurrentMaintain["LBRByGSDTime"]) < checkLBRCondition)

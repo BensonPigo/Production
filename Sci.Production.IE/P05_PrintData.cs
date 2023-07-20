@@ -416,10 +416,6 @@ group by almd.No
                 return false;
             }
 
-#if DEBUG
-            excel.Visible = true;
-#endif
-
             // Sheet - Sewing Operation
             this.SetOperationSheet(excel.ActiveWorkbook.Worksheets[4], this.dtSewing, OperationType.Sewing);
 

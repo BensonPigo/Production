@@ -22,6 +22,7 @@ namespace Sci.Production.Prg
         private Grid mainGrid;
         private Action<DataRow> afterRowDragDo;
         private Action<DataRow> beforeRowDragDo;
+        private bool enableDragCell;
 
         private DataTable DataMain
         {
@@ -46,7 +47,8 @@ namespace Sci.Production.Prg
         /// <param name="tarGrid">tarGrid</param>
         /// <param name="afterRowDragDo">afterRowDragDo</param>
         /// <param name="beforeRowDragDo">beforeRowDragDo</param>
-        public GridRowDrag(Grid tarGrid, Action<DataRow> afterRowDragDo = null, Action<DataRow> beforeRowDragDo = null)
+        /// <param name="enableDragCell">enableDragCell</param>
+        public GridRowDrag(Grid tarGrid, Action<DataRow> afterRowDragDo = null, Action<DataRow> beforeRowDragDo = null, bool enableDragCell = true)
         {
             this.mainGrid = tarGrid;
             this.mainGrid.AllowDrop = true;
@@ -69,11 +71,16 @@ namespace Sci.Production.Prg
 
             this.afterRowDragDo = afterRowDragDo;
             this.beforeRowDragDo = beforeRowDragDo;
+
+            this.enableDragCell = enableDragCell;
         }
 
         private void DataGridView_MouseDown(object sender, MouseEventArgs e)
         {
-            if (e.Button == MouseButtons.Left && this.mainGrid.HitTest(e.X, e.Y).Type == DataGridViewHitTestType.Cell && this.mainGrid.AllowDrop)
+            if (e.Button == MouseButtons.Left &&
+                ((this.mainGrid.HitTest(e.X, e.Y).Type == DataGridViewHitTestType.Cell && this.enableDragCell) ||
+                 this.mainGrid.HitTest(e.X, e.Y).Type == DataGridViewHitTestType.RowHeader) &&
+                this.mainGrid.AllowDrop)
             {
                 // 取得被拖曳的資料列的索引
                 int rowIndex = this.mainGrid.HitTest(e.X, e.Y).RowIndex;

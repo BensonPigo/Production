@@ -200,7 +200,7 @@
             this.masterpanel.Controls.Add(this.label3);
             this.masterpanel.Controls.Add(this.label2);
             this.masterpanel.Controls.Add(this.label1);
-            this.masterpanel.Size = new System.Drawing.Size(1226, 187);
+            this.masterpanel.Size = new System.Drawing.Size(1259, 187);
             this.masterpanel.Controls.SetChildIndex(this.label1, 0);
             this.masterpanel.Controls.SetChildIndex(this.label2, 0);
             this.masterpanel.Controls.SetChildIndex(this.label3, 0);
@@ -269,7 +269,7 @@
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 187);
-            this.detailpanel.Size = new System.Drawing.Size(1226, 442);
+            this.detailpanel.Size = new System.Drawing.Size(1259, 442);
             // 
             // gridicon
             // 
@@ -280,7 +280,7 @@
             // 
             this.detailgridcont.Controls.Add(this.btnEditOperation);
             this.detailgridcont.Controls.Add(this.tabDetail);
-            this.detailgridcont.Size = new System.Drawing.Size(1226, 442);
+            this.detailgridcont.Size = new System.Drawing.Size(1259, 442);
             this.detailgridcont.Controls.SetChildIndex(this.tabDetail, 0);
             this.detailgridcont.Controls.SetChildIndex(this.btnEditOperation, 0);
             // 
@@ -298,16 +298,16 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(1226, 667);
+            this.detail.Size = new System.Drawing.Size(1259, 667);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(1226, 629);
+            this.detailcont.Size = new System.Drawing.Size(1259, 629);
             // 
             // detailbtm
             // 
             this.detailbtm.Location = new System.Drawing.Point(0, 629);
-            this.detailbtm.Size = new System.Drawing.Size(1226, 38);
+            this.detailbtm.Size = new System.Drawing.Size(1259, 38);
             // 
             // browse
             // 
@@ -315,7 +315,7 @@
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(1234, 696);
+            this.tabs.Size = new System.Drawing.Size(1267, 696);
             // 
             // label1
             // 
@@ -628,7 +628,7 @@
             this.tabDetail.Location = new System.Drawing.Point(0, 0);
             this.tabDetail.Name = "tabDetail";
             this.tabDetail.SelectedIndex = 0;
-            this.tabDetail.Size = new System.Drawing.Size(1226, 442);
+            this.tabDetail.Size = new System.Drawing.Size(1259, 442);
             this.tabDetail.TabIndex = 1;
             this.tabDetail.SelectedIndexChanged += new System.EventHandler(this.TabDetail_SelectedIndexChanged);
             // 
@@ -638,7 +638,7 @@
             this.tabPageLineMapping.Location = new System.Drawing.Point(4, 25);
             this.tabPageLineMapping.Name = "tabPageLineMapping";
             this.tabPageLineMapping.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageLineMapping.Size = new System.Drawing.Size(1218, 413);
+            this.tabPageLineMapping.Size = new System.Drawing.Size(1251, 413);
             this.tabPageLineMapping.TabIndex = 0;
             this.tabPageLineMapping.Text = "Line Mapping";
             // 
@@ -651,8 +651,8 @@
             // splitLineMapping.Panel2
             // 
             this.splitLineMapping.Panel2.Controls.Add(this.gridLineMappingRight);
-            this.splitLineMapping.Size = new System.Drawing.Size(1212, 407);
-            this.splitLineMapping.SplitterDistance = 868;
+            this.splitLineMapping.Size = new System.Drawing.Size(1245, 407);
+            this.splitLineMapping.SplitterDistance = 891;
             this.splitLineMapping.TabIndex = 0;
             // 
             // gridLineMappingRight
@@ -675,7 +675,7 @@
             this.gridLineMappingRight.RowTemplate.Height = 24;
             this.gridLineMappingRight.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridLineMappingRight.ShowCellToolTips = false;
-            this.gridLineMappingRight.Size = new System.Drawing.Size(340, 407);
+            this.gridLineMappingRight.Size = new System.Drawing.Size(350, 407);
             this.gridLineMappingRight.SupportEditMode = Sci.Win.UI.AdvEditModesReadOnly.True;
             this.gridLineMappingRight.TabIndex = 0;
             // 
@@ -1087,7 +1087,7 @@
             this.btnNotHitTargetReason.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F);
             this.btnNotHitTargetReason.Location = new System.Drawing.Point(1100, 96);
             this.btnNotHitTargetReason.Name = "btnNotHitTargetReason";
-            this.btnNotHitTargetReason.Size = new System.Drawing.Size(123, 47);
+            this.btnNotHitTargetReason.Size = new System.Drawing.Size(151, 47);
             this.btnNotHitTargetReason.TabIndex = 52;
             this.btnNotHitTargetReason.Text = "Not Hit\r\nTarget Reason";
             this.btnNotHitTargetReason.UseVisualStyleBackColor = true;
@@ -1302,7 +1302,7 @@
             this.ApvChkValue = "New";
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1234, 729);
+            this.ClientSize = new System.Drawing.Size(1267, 729);
             this.ExpressQuery = true;
             this.GridAlias = "LineMappingBalancing_Detail";
             this.IsSupportClip = false;

@@ -72,7 +72,7 @@ namespace Sci.Production.IE
 
         private void TxtStyleLocationCopy_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
-            this.PopuStyleLocation(this.txtStyleCreate.Text, this.txtBrandCreate.Text, this.txtSeasonCreate.Text, this.txtStyleLocationCreate);
+            this.PopuStyleLocation(this.txtStyleCopy.Text, this.txtBrandCopy.Text, this.txtSeasonCopy.Text, this.txtStyleLocationCopy);
         }
 
         private void PopuStyleLocation(string styleID, string brand, string season, Win.UI.TextBox tarLocation)
@@ -82,6 +82,7 @@ namespace Sci.Production.IE
             {
                 MyUtility.Msg.WarningBox("Style not exists");
                 tarLocation.Text = string.Empty;
+                return;
             }
 
             SelectItem selectItem = new SelectItem($"select Location from Style_Location WITH (NOLOCK) where StyleUkey = {styleUkey}", null, null);
@@ -253,6 +254,48 @@ exec dbo.GetAutomatedLineMapping    '{this.txtFactoryCreate.Text}',
 
         private void BtnCopyOtherLineMapping_Click(object sender, EventArgs e)
         {
+            if (MyUtility.Check.Empty(this.txtFactoryCreate.Text))
+            {
+                MyUtility.Msg.WarningBox("[*Create Auto Line Mapping][Factory] cannot be empty.");
+                return;
+            }
+
+            if (MyUtility.Check.Empty(this.txtStyleCreate.Text))
+            {
+                MyUtility.Msg.WarningBox("[*Create Auto Line Mapping][Style] cannot be empty.");
+                return;
+            }
+
+            if (MyUtility.Check.Empty(this.txtStyleLocationCreate.Text))
+            {
+                MyUtility.Msg.WarningBox("[*Create Auto Line Mapping][Combo Type] cannot be empty.");
+                return;
+            }
+
+            if (MyUtility.Check.Empty(this.txtSeasonCreate.Text))
+            {
+                MyUtility.Msg.WarningBox("[*Create Auto Line Mapping][Season] cannot be empty.");
+                return;
+            }
+
+            if (MyUtility.Check.Empty(this.txtBrandCreate.Text))
+            {
+                MyUtility.Msg.WarningBox("[*Create Auto Line Mapping][Brand] cannot be empty.");
+                return;
+            }
+
+            if (MyUtility.Check.Empty(this.comboPhase.Text))
+            {
+                MyUtility.Msg.WarningBox("[*Create Auto Line Mapping][Phase] cannot be empty.");
+                return;
+            }
+
+            if (MyUtility.Check.Empty(this.numHours.Text))
+            {
+                MyUtility.Msg.WarningBox("[*Create Auto Line Mapping][No. of Hours] cannot be empty.");
+                return;
+            }
+
             if (MyUtility.Check.Empty(this.txtFactoryCopy.Text))
             {
                 MyUtility.Msg.WarningBox("[*Copy Other Line Mapping][Factory] cannot be empty.");
@@ -295,7 +338,7 @@ where   FactoryID = '{this.txtFactoryCopy.Text}' and
 ";
             string automatedLineMappingID = MyUtility.GetValue.Lookup(checkAutomatedLineMapping);
 
-            if (!MyUtility.Check.Empty(automatedLineMappingID))
+            if (MyUtility.Check.Empty(automatedLineMappingID))
             {
                 MyUtility.Msg.WarningBox("Unable to find Line Mapping in IE_P05 according to [*Copy Other Line Mapping] information.");
                 return;
@@ -347,6 +390,8 @@ select * from AutomatedLineMapping_DetailAuto with (nolock) where ID = '{automat
                 }
 
                 this.mainRow["Status"] = "New";
+                this.mainRow["ID"] = DBNull.Value;
+                this.mainRow["Version"] = DBNull.Value;
 
                 this.dtDetail.Clear();
                 this.dtDetail.MergeBySyncColType(dtAutomatedLineMapping_Detail);

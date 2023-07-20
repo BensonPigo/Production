@@ -25,6 +25,7 @@ namespace Sci.Production.IE
         /// dtLineMappingBalancing_Detail
         /// </summary>
         public DataTable dtLineMappingBalancing_Detail;
+
         private DataTable dtSelectItemSource;
         private DataTable dtNoSelectItem = new DataTable();
 
@@ -56,14 +57,16 @@ namespace Sci.Production.IE
             this.gridEditOperation.CellFormatting += this.GridEditOperation_CellFormatting;
 
             this.dtNoSelectItem.Columns.Add(new DataColumn("No", typeof(string)));
+            this.dtNoSelectItem.Columns.Add(new DataColumn("EmployeeID", typeof(string)));
+
             this.dtNoSelectItem = this.dtLineMappingBalancing_DetailCopy.AsEnumerable()
                 .Where(s => MyUtility.Convert.GetBool(s["Selected"]))
-                .Select(s => s["No"].ToString())
-                .Distinct()
-                .Select(s =>
+                .GroupBy(s => s["No"].ToString())
+                .Select(groupItem =>
                 {
                     DataRow dr = this.dtNoSelectItem.NewRow();
-                    dr["No"] = s;
+                    dr["No"] = groupItem.Key;
+                    dr["EmployeeID"] = groupItem.First()["EmployeeID"].ToString();
                     return dr;
                 }).CopyToDataTable();
 
@@ -153,7 +156,8 @@ namespace Sci.Production.IE
                     return;
                 }
 
-                curRow["No"] = item.GetSelectedString();
+                curRow["No"] = item.GetSelecteds()[0]["No"];
+                curRow["EmployeeID"] = item.GetSelecteds()[0]["EmployeeID"];
                 curRow.EndEdit();
             };
 
@@ -187,7 +191,8 @@ namespace Sci.Production.IE
                     return;
                 }
 
-                curRow["No"] = item.GetSelectedString();
+                curRow["No"] = item.GetSelecteds()[0]["No"];
+                curRow["EmployeeID"] = item.GetSelecteds()[0]["EmployeeID"];
                 curRow.EndEdit();
             };
 
@@ -335,17 +340,20 @@ namespace Sci.Production.IE
                     if (curIndex == 0)
                     {
                         dragRow["No"] = ((DataRowView)this.gridEditOperationBs[1]).Row["No"];
-                        //dragRow[""]
+                        dragRow["EmployeeID"] = ((DataRowView)this.gridEditOperationBs[1]).Row["EmployeeID"];
                     }
                     else if (curIndex == this.gridEditOperationBs.Count - 1)
                     {
                         dragRow["No"] = ((DataRowView)this.gridEditOperationBs[curIndex - 1]).Row["No"];
+                        dragRow["EmployeeID"] = ((DataRowView)this.gridEditOperationBs[curIndex - 1]).Row["EmployeeID"];
                     }
                     else
                     {
                         string nextNo = ((DataRowView)this.gridEditOperationBs[curIndex + 1]).Row["No"].ToString();
+                        string nextEmployeeID = ((DataRowView)this.gridEditOperationBs[curIndex + 1]).Row["EmployeeID"].ToString();
                         string preNo = ((DataRowView)this.gridEditOperationBs[curIndex - 1]).Row["No"].ToString();
                         dragRow["No"] = nextNo == preNo ? nextNo : string.Empty;
+                        dragRow["EmployeeID"] = nextNo == preNo ? nextEmployeeID : string.Empty;
                         dragRow["Selected"] = true;
                     }
 
