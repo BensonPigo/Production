@@ -1,21 +1,22 @@
-﻿CREATE TABLE [dbo].[ExportRefnoSentReport]
-(
-    [ExportID] VARCHAR(13) NOT NULL DEFAULT (''), 
-    [BrandRefno] VARCHAR(50) NOT NULL DEFAULT (''), 
-    [ColorID] VARCHAR(3) NOT NULL DEFAULT (''), 
-    [DocumentName] VARCHAR(100) NOT NULL DEFAULT (''), 
-    [BrandID] VARCHAR(8) NOT NULL DEFAULT (''), 
-    [ReportDate] DATE NULL, 
-    [FTYReceivedReport] DATE NULL, 
-    [AWBno] VARCHAR(30) NULL DEFAULT (''), 
-    [UKEY] BIGINT NOT NULL IDENTITY, 
-    [AddDate] DATETIME NULL, 
-    [AddName] VARCHAR(10) NULL DEFAULT (''), 
-    [EditDate] DATETIME NULL, 
-    [Editname] VARCHAR(10) NULL DEFAULT (''),     
-    [UniqueKey] NVARCHAR(200) NOT NULL DEFAULT (''), 
-    CONSTRAINT [PK_ExportRefnoSentReport] PRIMARY KEY ([ExportID], [BrandRefno], [ColorID], [DocumentName], [BrandID])
-)
+﻿CREATE TABLE [dbo].[ExportRefnoSentReport] (
+    [ExportID]          VARCHAR (13)   CONSTRAINT [DF_ExportRefnoSentReport_ExportID] DEFAULT ('') NOT NULL,
+    [BrandRefno]        VARCHAR (50)   CONSTRAINT [DF_ExportRefnoSentReport_BrandRefno] DEFAULT ('') NOT NULL,
+    [ColorID]           VARCHAR (13)   CONSTRAINT [DF_ExportRefnoSentReport_ColorID] DEFAULT ('') NOT NULL,
+    [DocumentName]      VARCHAR (100)  CONSTRAINT [DF_ExportRefnoSentReport_DocumentName] DEFAULT ('') NOT NULL,
+    [BrandID]           VARCHAR (8)    CONSTRAINT [DF_ExportRefnoSentReport_BrandID] DEFAULT ('') NOT NULL,
+    [ReportDate]        DATE           NULL,
+    [FTYReceivedReport] DATE           NULL,
+    [AWBno]             VARCHAR (30)   CONSTRAINT [DF_ExportRefnoSentReport_AWBno] DEFAULT ('') NOT NULL,
+    [Ukey]              BIGINT         IDENTITY (1, 1) NOT NULL,
+    [AddDate]           DATETIME       NULL,
+    [AddName]           VARCHAR (10)   CONSTRAINT [DF_ExportRefnoSentReport_AddName] DEFAULT ('') NOT NULL,
+    [EditDate]          DATETIME       NULL,
+    [Editname]          VARCHAR (10)   CONSTRAINT [DF_ExportRefnoSentReport_Editname] DEFAULT ('') NOT NULL,
+    [UniqueKey]         NVARCHAR (200) DEFAULT ('') NOT NULL,
+    CONSTRAINT [PK_ExportRefnoSentReport] PRIMARY KEY CLUSTERED ([ExportID] ASC, [BrandRefno] ASC, [ColorID] ASC, [DocumentName] ASC, [BrandID] ASC)
+);
+
+
 
 GO
 
@@ -136,3 +137,6 @@ EXEC sp_addextendedproperty @name = N'MS_Description',
     @level1name = N'ExportRefnoSentReport',
     @level2type = N'COLUMN',
     @level2name = N'ExportID'
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'將Pkey分別依序用_組成文字串寫入當作檔案識別唯一值,用來跟GASAClip串接條件避免跟Trade key重複 ', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'ExportRefnoSentReport', @level2type = N'COLUMN', @level2name = N'UniqueKey';
+
