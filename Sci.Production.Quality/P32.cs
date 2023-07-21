@@ -1274,24 +1274,8 @@ DELETE FROM CFAInspectionRecord_OrderSEQ WHERE ID = '{this.CurrentMaintain["ID"]
                 this.CalInsepectionCtn(this.IsDetailInserting, false);
             }
 
-            bool isSample = MyUtility.Convert.GetBool(MyUtility.GetValue.Lookup($@"SELECT  IIF(Category='S','True','False') FROM Orders WHERE ID = '{this.topOrderID}' "));
-            this.IsSapmle = isSample;
-            if (isSample && this.comboStage.Items.Contains("Stagger"))
-            {
-                this.comboStage.Items.RemoveAt(2);
-            }
-            else if (!isSample)
-            {
-                this.comboStage.Items.Clear();
-                this.comboStage.Items.AddRange(new object[]
-                {
-            string.Empty,
-            "Inline",
-            "Stagger",
-            "Final",
-            "3rd party",
-                });
-            }
+            var isCombinePO = this.CurrentMaintain != null ? MyUtility.Convert.GetBool(this.CurrentMaintain["IsCombinePO"]) : false;
+            this.Reset_comboStage(newOrderID, isCombinePO);
         }
 
         private void NumInspectQty_Validating(object sender, System.ComponentModel.CancelEventArgs e)
@@ -1870,15 +1854,15 @@ SELECT STUFF(
                 "Final",
                 "3rd party",
             });
-            if (isSample)
-            {
-                this.comboStage.Items.RemoveAt(2);
-            }
-            else if (isCombinePO)
+            if (isCombinePO)
             {
                 // 刪除，後面的Index了會往前推，所以同一個Index就好
                 this.comboStage.Items.RemoveAt(1);
                 this.comboStage.Items.RemoveAt(1);
+            }
+            else if (isSample)
+            {
+                this.comboStage.Items.RemoveAt(2);
             }
 
             this.comboStage.SelectedItem = this.CurrentMaintain["Stage"].ToString();
