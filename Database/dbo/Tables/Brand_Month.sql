@@ -3,12 +3,14 @@
     [Year]       VARCHAR (4)  CONSTRAINT [DF_Brand_Month_Year] DEFAULT ('') NOT NULL,
     [Month]      VARCHAR (2)  CONSTRAINT [DF_Brand_Month_Month] DEFAULT ('') NOT NULL,
     [MonthLabel] VARCHAR (10) CONSTRAINT [DF_Brand_Month_MonthLabel] DEFAULT ('') NOT NULL,
-    [AddName]    VARCHAR (10) CONSTRAINT [DF_Brand_Month_AddName] DEFAULT ('') NULL,
+    [AddName]    VARCHAR (10) CONSTRAINT [DF_Brand_Month_AddName] DEFAULT ('') NOT NULL,
     [AddDate]    DATETIME     NULL,
-    [EditName]   VARCHAR (10) CONSTRAINT [DF_Brand_Month_EditName] DEFAULT ('') NULL,
+    [EditName]   VARCHAR (10) CONSTRAINT [DF_Brand_Month_EditName] DEFAULT ('') NOT NULL,
     [EditDate]   DATETIME     NULL,
     CONSTRAINT [PK_Brand_Month] PRIMARY KEY CLUSTERED ([ID] ASC, [Year] ASC, [Month] ASC)
 );
+
+
 
 
 GO

@@ -1,17 +1,19 @@
 ﻿CREATE TABLE [dbo].[Style_TmsCost] (
-    [StyleUkey]     BIGINT         CONSTRAINT [DF_Style_TmsCost_StyleUkey] DEFAULT ((0)) NOT NULL,
-    [ArtworkTypeID] VARCHAR (20)   CONSTRAINT [DF_Style_TmsCost_ArtworkTypeID] DEFAULT ('') NOT NULL,
-    [Seq]           VARCHAR (4)    CONSTRAINT [DF_Style_TmsCost_Seq] DEFAULT ('') NOT NULL,
-    [Qty]           INT            CONSTRAINT [DF_Style_TmsCost_Qty] DEFAULT ((0)) NULL,
-    [ArtworkUnit]   VARCHAR (10)   CONSTRAINT [DF_Style_TmsCost_ArtworkUnit] DEFAULT ('') NULL,
-    [TMS]           NUMERIC(5)            CONSTRAINT [DF_Style_TmsCost_TMS] DEFAULT ((0)) NULL,
-    [Price]         NUMERIC (16, 4) CONSTRAINT [DF_Style_TmsCost_Price] DEFAULT ((0)) NOT NULL,
-    [AddName]       VARCHAR (10)   CONSTRAINT [DF_Style_TmsCost_AddName] DEFAULT ('') NULL,
-    [AddDate]       DATETIME       NULL,
-    [EditName]      VARCHAR (10)   CONSTRAINT [DF_Style_TmsCost_EditName] DEFAULT ('') NULL,
-    [EditDate]      DATETIME       NULL,
+    [StyleUkey]     BIGINT          CONSTRAINT [DF_Style_TmsCost_StyleUkey] DEFAULT ((0)) NOT NULL,
+    [ArtworkTypeID] VARCHAR (20)    CONSTRAINT [DF_Style_TmsCost_ArtworkTypeID] DEFAULT ('') NOT NULL,
+    [Seq]           VARCHAR (4)     CONSTRAINT [DF_Style_TmsCost_Seq] DEFAULT ('') NOT NULL,
+    [Qty]           INT             CONSTRAINT [DF_Style_TmsCost_Qty] DEFAULT ((0)) NOT NULL,
+    [ArtworkUnit]   VARCHAR (10)    CONSTRAINT [DF_Style_TmsCost_ArtworkUnit] DEFAULT ('') NOT NULL,
+    [TMS]           DECIMAL (5)     CONSTRAINT [DF_Style_TmsCost_TMS] DEFAULT ((0)) NOT NULL,
+    [Price]         DECIMAL (16, 4) CONSTRAINT [DF_Style_TmsCost_Price] DEFAULT ((0)) NOT NULL,
+    [AddName]       VARCHAR (10)    CONSTRAINT [DF_Style_TmsCost_AddName] DEFAULT ('') NOT NULL,
+    [AddDate]       DATETIME        NULL,
+    [EditName]      VARCHAR (10)    CONSTRAINT [DF_Style_TmsCost_EditName] DEFAULT ('') NOT NULL,
+    [EditDate]      DATETIME        NULL,
     CONSTRAINT [PK_Style_TmsCost] PRIMARY KEY CLUSTERED ([StyleUkey] ASC, [ArtworkTypeID] ASC)
 );
+
+
 
 
 GO

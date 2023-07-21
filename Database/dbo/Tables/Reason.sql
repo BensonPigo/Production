@@ -1,21 +1,23 @@
 ﻿CREATE TABLE [dbo].[Reason] (
     [ReasonTypeID] VARCHAR (50)   CONSTRAINT [DF_Reason_ReasonTypeID] DEFAULT ('') NOT NULL,
     [ID]           VARCHAR (5)    CONSTRAINT [DF_Reason_ID] DEFAULT ('') NOT NULL,
-    [Name]         NVARCHAR (500) CONSTRAINT [DF_Reason_Name] DEFAULT ('') NULL,
-    [Remark]       NVARCHAR (500) CONSTRAINT [DF_Reason_Remark] DEFAULT ('') NULL,
-    [No]           SMALLINT       CONSTRAINT [DF_Reason_No] DEFAULT ((0)) NULL,
-    [ReasonGroup]  VARCHAR (5)    CONSTRAINT [DF_Reason_ReasonGroup] DEFAULT ('') NULL,
-    [Junk]         BIT            CONSTRAINT [DF_Reason_Junk] DEFAULT ((0)) NULL,
-    [Kpi]          BIT            CONSTRAINT [DF_Reason_Kpi] DEFAULT ((0)) NULL,
-    [AccountID]    VARCHAR (8)    CONSTRAINT [DF_Reason_AccountNo] DEFAULT ('') NULL,
-    [AddName]      VARCHAR (10)   CONSTRAINT [DF_Reason_AddName] DEFAULT ('') NULL,
+    [Name]         NVARCHAR (500) CONSTRAINT [DF_Reason_Name] DEFAULT ('') NOT NULL,
+    [Remark]       NVARCHAR (500) CONSTRAINT [DF_Reason_Remark] DEFAULT ('') NOT NULL,
+    [No]           SMALLINT       CONSTRAINT [DF_Reason_No] DEFAULT ((0)) NOT NULL,
+    [ReasonGroup]  VARCHAR (5)    CONSTRAINT [DF_Reason_ReasonGroup] DEFAULT ('') NOT NULL,
+    [Junk]         BIT            CONSTRAINT [DF_Reason_Junk] DEFAULT ((0)) NOT NULL,
+    [Kpi]          BIT            CONSTRAINT [DF_Reason_Kpi] DEFAULT ((0)) NOT NULL,
+    [AccountID]    VARCHAR (8)    CONSTRAINT [DF_Reason_AccountID] DEFAULT ('') NOT NULL,
+    [AddName]      VARCHAR (10)   CONSTRAINT [DF_Reason_AddName] DEFAULT ('') NOT NULL,
     [AddDate]      DATETIME       NULL,
-    [EditName]     VARCHAR (10)   CONSTRAINT [DF_Reason_EditName] DEFAULT ('') NULL,
+    [EditName]     VARCHAR (10)   CONSTRAINT [DF_Reason_EditName] DEFAULT ('') NOT NULL,
     [EditDate]     DATETIME       NULL,
-    [FactoryKpi]   BIT            CONSTRAINT [DF_Reason_FactoryKpi] DEFAULT ((0)) NULL,
-    [TransferOut] BIT NOT NULL DEFAULT ((0)), 
+    [FactoryKpi]   BIT            CONSTRAINT [DF_Reason_FactoryKpi] DEFAULT ((0)) NOT NULL,
+    [TransferOut]  BIT            CONSTRAINT [DF_Reason_TransferOut] DEFAULT ((0)) NOT NULL,
     CONSTRAINT [PK_Reason] PRIMARY KEY CLUSTERED ([ReasonTypeID] ASC, [ID] ASC)
 );
+
+
 
 
 

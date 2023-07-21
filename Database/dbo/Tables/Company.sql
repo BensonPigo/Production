@@ -1,25 +1,27 @@
 ﻿CREATE TABLE [dbo].[Company] (
     [ID]        TINYINT        CONSTRAINT [DF_Company_ID] DEFAULT ((0)) NOT NULL,
-    [Title]     NVARCHAR (40)  CONSTRAINT [DF_Company_Title] DEFAULT ('') NULL,
-    [Abbr]      VARCHAR (2)    CONSTRAINT [DF_Company_Abbr] DEFAULT ('') NULL,
-    [Country]   VARCHAR (2)    CONSTRAINT [DF_Company_Country] DEFAULT ('') NULL,
-    [Junk]      BIT            CONSTRAINT [DF_Company_Junk] DEFAULT ((0)) NULL,
-    [Currency]  VARCHAR (3)    CONSTRAINT [DF_Company_Currency] DEFAULT ('') NULL,
-    [NameCH]    NVARCHAR (40)  CONSTRAINT [DF_Company_NameCH] DEFAULT ('') NULL,
-    [NameEN]    NVARCHAR (40)  CONSTRAINT [DF_Company_NameEN] DEFAULT ('') NULL,
-    [hasTax]    BIT            CONSTRAINT [DF_Company_hasTax] DEFAULT ((0)) NULL,
-    [IsDefault] BIT            CONSTRAINT [DF_Company_IsDefault] DEFAULT ((0)) NULL,
-    [VatNO]     VARCHAR (25)    CONSTRAINT [DF_Company_VatNO] DEFAULT ('') NULL,
-    [AddressCH] NVARCHAR (MAX) CONSTRAINT [DF_Company_AddressCH] DEFAULT ('') NULL,
-    [AddressEN] NVARCHAR (MAX) CONSTRAINT [DF_Company_AddressEN] DEFAULT ('') NULL,
-    [Tel]       VARCHAR (30)   CONSTRAINT [DF_Company_Tel] DEFAULT ('') NULL,
-    [Fax]       VARCHAR (30)   CONSTRAINT [DF_Company_Fax] DEFAULT ('') NULL,
-    [AddName]   VARCHAR (10)   CONSTRAINT [DF_Company_AddName] DEFAULT ('') NULL,
+    [Title]     NVARCHAR (40)  CONSTRAINT [DF_Company_Title] DEFAULT ('') NOT NULL,
+    [Abbr]      VARCHAR (2)    CONSTRAINT [DF_Company_Abbr] DEFAULT ('') NOT NULL,
+    [Country]   VARCHAR (2)    CONSTRAINT [DF_Company_Country] DEFAULT ('') NOT NULL,
+    [Junk]      BIT            CONSTRAINT [DF_Company_Junk] DEFAULT ((0)) NOT NULL,
+    [Currency]  VARCHAR (3)    CONSTRAINT [DF_Company_Currency] DEFAULT ('') NOT NULL,
+    [NameCH]    NVARCHAR (40)  CONSTRAINT [DF_Company_NameCH] DEFAULT ('') NOT NULL,
+    [NameEN]    NVARCHAR (40)  CONSTRAINT [DF_Company_NameEN] DEFAULT ('') NOT NULL,
+    [hasTax]    BIT            CONSTRAINT [DF_Company_hasTax] DEFAULT ((0)) NOT NULL,
+    [IsDefault] BIT            CONSTRAINT [DF_Company_IsDefault] DEFAULT ((0)) NOT NULL,
+    [VatNO]     VARCHAR (25)   CONSTRAINT [DF_Company_VatNO] DEFAULT ('') NOT NULL,
+    [AddressCH] NVARCHAR (MAX) CONSTRAINT [DF_Company_AddressCH] DEFAULT ('') NOT NULL,
+    [AddressEN] NVARCHAR (MAX) CONSTRAINT [DF_Company_AddressEN] DEFAULT ('') NOT NULL,
+    [Tel]       VARCHAR (30)   CONSTRAINT [DF_Company_Tel] DEFAULT ('') NOT NULL,
+    [Fax]       VARCHAR (30)   CONSTRAINT [DF_Company_Fax] DEFAULT ('') NOT NULL,
+    [AddName]   VARCHAR (10)   CONSTRAINT [DF_Company_AddName] DEFAULT ('') NOT NULL,
     [AddDate]   DATETIME       NULL,
-    [EditName]  VARCHAR (10)   CONSTRAINT [DF_Company_EditName] DEFAULT ('') NULL,
+    [EditName]  VARCHAR (10)   CONSTRAINT [DF_Company_EditName] DEFAULT ('') NOT NULL,
     [EditDate]  DATETIME       NULL,
     CONSTRAINT [PK_Company] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
+
+
 
 
 GO

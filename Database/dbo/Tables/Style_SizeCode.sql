@@ -1,11 +1,13 @@
 ﻿CREATE TABLE [dbo].[Style_SizeCode] (
     [StyleUkey] BIGINT      CONSTRAINT [DF_Style_SizeCode_StyleUkey] DEFAULT ((0)) NOT NULL,
     [Seq]       VARCHAR (2) CONSTRAINT [DF_Style_SizeCode_Seq] DEFAULT ('') NOT NULL,
-    [SizeGroup] VARCHAR (1) CONSTRAINT [DF_Style_SizeCode_SizeGroup] DEFAULT ('') NULL,
+    [SizeGroup] VARCHAR (1) CONSTRAINT [DF_Style_SizeCode_SizeGroup] DEFAULT ('') NOT NULL,
     [SizeCode]  VARCHAR (8) CONSTRAINT [DF_Style_SizeCode_SizeCode] DEFAULT ('') NOT NULL,
-    [UKey] BIGINT NOT NULL DEFAULT ((0)), 
-    CONSTRAINT [PK_Style_SizeCode] PRIMARY KEY CLUSTERED ([UKey])
+    [UKey]      BIGINT      DEFAULT ((0)) NOT NULL,
+    CONSTRAINT [PK_Style_SizeCode] PRIMARY KEY CLUSTERED ([UKey] ASC)
 );
+
+
 
 
 GO

@@ -3,13 +3,15 @@
     [EffectiveDate] DATE           NOT NULL,
     [MDivisionID]   VARCHAR (8)    CONSTRAINT [DF_ChgOverTarget_MDivisionID] DEFAULT ('') NOT NULL,
     [Type]          VARCHAR (5)    CONSTRAINT [DF_ChgOverTarget_Type] DEFAULT ('') NOT NULL,
-    [Target]        NUMERIC (6, 2) CONSTRAINT [DF_ChgOverTarget_Target] DEFAULT ((0)) NULL,
-    [AddName]       VARCHAR (10)   CONSTRAINT [DF_ChgOverTarget_AddName] DEFAULT ('') NULL,
+    [Target]        DECIMAL (6, 2) CONSTRAINT [DF_ChgOverTarget_Target] DEFAULT ((0)) NOT NULL,
+    [AddName]       VARCHAR (10)   CONSTRAINT [DF_ChgOverTarget_AddName] DEFAULT ('') NOT NULL,
     [AddDate]       DATETIME       NULL,
-    [EditName]      VARCHAR (10)   CONSTRAINT [DF_ChgOverTarget_EditName] DEFAULT ('') NULL,
+    [EditName]      VARCHAR (10)   CONSTRAINT [DF_ChgOverTarget_EditName] DEFAULT ('') NOT NULL,
     [EditDate]      DATETIME       NULL,
     CONSTRAINT [PK_ChgOverTarget] PRIMARY KEY CLUSTERED ([EffectiveDate] ASC, [MDivisionID] ASC, [Type] ASC)
 );
+
+
 
 
 

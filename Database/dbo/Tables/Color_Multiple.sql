@@ -1,15 +1,17 @@
 ﻿CREATE TABLE [dbo].[Color_Multiple] (
-    [ID]        VARCHAR (6)  CONSTRAINT [DF_Color_Multiple_ID] DEFAULT ('') NULL,
+    [ID]        VARCHAR (6)  CONSTRAINT [DF_Color_Multiple_ID] DEFAULT ('') NOT NULL,
     [ColorUkey] BIGINT       CONSTRAINT [DF_Color_Multiple_ColorUkey] DEFAULT ((0)) NOT NULL,
-    [BrandID]   VARCHAR (8)  CONSTRAINT [DF_Color_Multiple_BrandID] DEFAULT ('') NULL,
+    [BrandID]   VARCHAR (8)  CONSTRAINT [DF_Color_Multiple_BrandID] DEFAULT ('') NOT NULL,
     [Seqno]     VARCHAR (2)  CONSTRAINT [DF_Color_Multiple_Seqno] DEFAULT ('') NOT NULL,
-    [ColorID]   VARCHAR (6)  CONSTRAINT [DF_Color_Multiple_ColorID] DEFAULT ('') NULL,
-    [AddName]   VARCHAR (10) CONSTRAINT [DF_Color_Multiple_AddName] DEFAULT ('') NULL,
+    [ColorID]   VARCHAR (6)  CONSTRAINT [DF_Color_Multiple_ColorID] DEFAULT ('') NOT NULL,
+    [AddName]   VARCHAR (10) CONSTRAINT [DF_Color_Multiple_AddName] DEFAULT ('') NOT NULL,
     [AddDate]   DATETIME     NULL,
-    [EditName]  VARCHAR (10) CONSTRAINT [DF_Color_Multiple_EditName] DEFAULT ('') NULL,
+    [EditName]  VARCHAR (10) CONSTRAINT [DF_Color_Multiple_EditName] DEFAULT ('') NOT NULL,
     [EditDate]  DATETIME     NULL,
     CONSTRAINT [PK_Color_Multiple] PRIMARY KEY CLUSTERED ([ColorUkey] ASC, [Seqno] ASC)
 );
+
+
 
 
 GO

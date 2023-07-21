@@ -1,11 +1,13 @@
 ﻿CREATE TABLE [dbo].[GarmentInvoice_Foundry] (
     [InvoiceNo]    VARCHAR (25)    NOT NULL,
     [FactoryGroup] VARCHAR (4)     NOT NULL,
-    [GW]           NUMERIC (9, 3)  NULL,
-    [CBM]          NUMERIC (11, 4) NULL,
-    [Ratio]        INT             NULL,
+    [GW]           DECIMAL (9, 3)  CONSTRAINT [DF_GarmentInvoice_Foundry_GW] DEFAULT ((0)) NOT NULL,
+    [CBM]          DECIMAL (11, 4) CONSTRAINT [DF_GarmentInvoice_Foundry_CBM] DEFAULT ((0)) NOT NULL,
+    [Ratio]        INT             CONSTRAINT [DF_GarmentInvoice_Foundry_Ratio] DEFAULT ((0)) NOT NULL,
     CONSTRAINT [PK_GarmentInvoice_Foundry] PRIMARY KEY CLUSTERED ([InvoiceNo] ASC, [FactoryGroup] ASC)
 );
+
+
 
 
 GO

@@ -1,28 +1,30 @@
 ﻿CREATE TABLE [dbo].[SMNotice] (
     [ID]            VARCHAR (10) CONSTRAINT [DF_SMNotice_ID] DEFAULT ('') NOT NULL,
-    [MainID]        VARCHAR (10) CONSTRAINT [DF_SMNotice_MainID] DEFAULT ('') NULL,
+    [MainID]        VARCHAR (10) CONSTRAINT [DF_SMNotice_MainID] DEFAULT ('') NOT NULL,
     [Mr]            VARCHAR (10) CONSTRAINT [DF_SMNotice_Mr] DEFAULT ('') NOT NULL,
     [SMR]           VARCHAR (10) CONSTRAINT [DF_SMNotice_SMR] DEFAULT ('') NOT NULL,
     [BrandID]       VARCHAR (8)  CONSTRAINT [DF_SMNotice_BrandID] DEFAULT ('') NOT NULL,
     [StyleID]       VARCHAR (15) CONSTRAINT [DF_SMNotice_StyleID] DEFAULT ('') NOT NULL,
     [SeasonID]      VARCHAR (10) CONSTRAINT [DF_SMNotice_SeasonID] DEFAULT ('') NOT NULL,
-    [StyleUkey]     BIGINT CONSTRAINT [DF_SMNotice_StyleUkey] DEFAULT ('') NULL,
+    [StyleUkey]     BIGINT       CONSTRAINT [DF_SMNotice_StyleUkey] DEFAULT ((0)) NOT NULL,
     [CountryID]     VARCHAR (2)  CONSTRAINT [DF_SMNotice_CountryID] DEFAULT ('') NOT NULL,
-    [PatternNo]     VARCHAR (10) CONSTRAINT [DF_SMNotice_PatternNo] DEFAULT ('') NULL,
-    [OldStyleID]    VARCHAR (15) CONSTRAINT [DF_SMNotice_OldStyleID] DEFAULT ('') NULL,
-    [OldSeasonID]   VARCHAR (10) CONSTRAINT [DF_SMNotice_OldSeasonID] DEFAULT ('') NULL,
+    [PatternNo]     VARCHAR (10) CONSTRAINT [DF_SMNotice_PatternNo] DEFAULT ('') NOT NULL,
+    [OldStyleID]    VARCHAR (15) CONSTRAINT [DF_SMNotice_OldStyleID] DEFAULT ('') NOT NULL,
+    [OldSeasonID]   VARCHAR (10) CONSTRAINT [DF_SMNotice_OldSeasonID] DEFAULT ('') NOT NULL,
     [SizeGroup]     VARCHAR (1)  CONSTRAINT [DF_SMNotice_SizeGroup] DEFAULT ('') NOT NULL,
     [SizeCode]      VARCHAR (8)  CONSTRAINT [DF_SMNotice_SizeCode] DEFAULT ('') NOT NULL,
     [BuyReady]      DATE         NULL,
-    [Status]        VARCHAR (15)  CONSTRAINT [DF_SMNotice_Status] DEFAULT ('') NULL,
-    [StatusPattern] VARCHAR (15)  CONSTRAINT [DF_SMNotice_StatusPattern] DEFAULT ('') NULL,
-    [StatusIE]      VARCHAR (15)  CONSTRAINT [DF_SMNotice_StatusIE] DEFAULT ('') NULL,
-    [AddName]       VARCHAR (10) CONSTRAINT [DF_SMNotice_AddName] DEFAULT ('') NULL,
+    [Status]        VARCHAR (15) CONSTRAINT [DF_SMNotice_Status] DEFAULT ('') NOT NULL,
+    [StatusPattern] VARCHAR (15) CONSTRAINT [DF_SMNotice_StatusPattern] DEFAULT ('') NOT NULL,
+    [StatusIE]      VARCHAR (15) CONSTRAINT [DF_SMNotice_StatusIE] DEFAULT ('') NOT NULL,
+    [AddName]       VARCHAR (10) CONSTRAINT [DF_SMNotice_AddName] DEFAULT ('') NOT NULL,
     [AddDate]       DATETIME     NULL,
-    [EditName]      VARCHAR (10) CONSTRAINT [DF_SMNotice_EditName] DEFAULT ('') NULL,
+    [EditName]      VARCHAR (10) CONSTRAINT [DF_SMNotice_EditName] DEFAULT ('') NOT NULL,
     [EditDate]      DATETIME     NULL,
     CONSTRAINT [PK_SMNotice] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
+
+
 
 
 GO
@@ -115,4 +117,9 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'最後修�
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'最後修改時間', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'SMNotice', @level2type = N'COLUMN', @level2name = N'EditDate';
+
+
+GO
+CREATE NONCLUSTERED INDEX [SMNotice_StyleUkey]
+    ON [dbo].[SMNotice]([StyleUkey] ASC);
 

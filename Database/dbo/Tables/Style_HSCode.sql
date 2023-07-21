@@ -1,19 +1,21 @@
 ﻿CREATE TABLE [dbo].[Style_HSCode] (
-    [StyleUkey] BIGINT       CONSTRAINT [DF_Style_HSCode_StyleUkey] DEFAULT ((0)) NULL,
+    [StyleUkey] BIGINT       CONSTRAINT [DF_Style_HSCode_StyleUkey] DEFAULT ((0)) NOT NULL,
     [UKEY]      BIGINT       CONSTRAINT [DF_Style_HSCode_UKEY] DEFAULT ((0)) NOT NULL,
-    [Article]   VARCHAR (8)  CONSTRAINT [DF_Style_HSCode_Article] DEFAULT ('') NULL,
-    [CountryID] VARCHAR (2)  CONSTRAINT [DF_Style_HSCode_CountryID] DEFAULT ('') NULL,
-    [Continent] VARCHAR (2)  CONSTRAINT [DF_Style_HSCode_Continent] DEFAULT ('') NULL,
-    [HSCode1]   VARCHAR (14) CONSTRAINT [DF_Style_HSCode_HSCode1] DEFAULT ('') NULL,
-    [HSCode2]   VARCHAR (14) CONSTRAINT [DF_Style_HSCode_HSCode2] DEFAULT ('') NULL,
-    [CATNo1]    VARCHAR (3)  CONSTRAINT [DF_Style_HSCode_CATNo1] DEFAULT ('') NULL,
-    [CATNo2]    VARCHAR (3)  CONSTRAINT [DF_Style_HSCode_CATNo2] DEFAULT ('') NULL,
-    [AddName]   VARCHAR (10) CONSTRAINT [DF_Style_HSCode_AddName] DEFAULT ('') NULL,
+    [Article]   VARCHAR (8)  CONSTRAINT [DF_Style_HSCode_Article] DEFAULT ('') NOT NULL,
+    [CountryID] VARCHAR (2)  CONSTRAINT [DF_Style_HSCode_CountryID] DEFAULT ('') NOT NULL,
+    [Continent] VARCHAR (2)  CONSTRAINT [DF_Style_HSCode_Continent] DEFAULT ('') NOT NULL,
+    [HSCode1]   VARCHAR (14) CONSTRAINT [DF_Style_HSCode_HSCode1] DEFAULT ('') NOT NULL,
+    [HSCode2]   VARCHAR (14) CONSTRAINT [DF_Style_HSCode_HSCode2] DEFAULT ('') NOT NULL,
+    [CATNo1]    VARCHAR (3)  CONSTRAINT [DF_Style_HSCode_CATNo1] DEFAULT ('') NOT NULL,
+    [CATNo2]    VARCHAR (3)  CONSTRAINT [DF_Style_HSCode_CATNo2] DEFAULT ('') NOT NULL,
+    [AddName]   VARCHAR (10) CONSTRAINT [DF_Style_HSCode_AddName] DEFAULT ('') NOT NULL,
     [AddDate]   DATETIME     NULL,
-    [EditName]  VARCHAR (10) CONSTRAINT [DF_Style_HSCode_EditName] DEFAULT ('') NULL,
+    [EditName]  VARCHAR (10) CONSTRAINT [DF_Style_HSCode_EditName] DEFAULT ('') NOT NULL,
     [EditDate]  DATETIME     NULL,
     CONSTRAINT [PK_Style_HSCode] PRIMARY KEY CLUSTERED ([UKEY] ASC)
 );
+
+
 
 
 GO

@@ -1,18 +1,20 @@
 ﻿CREATE TABLE [dbo].[Country] (
-    [ID]        VARCHAR (2)   CONSTRAINT [DF_Country_ID] DEFAULT ('') NOT NULL,
-    [NameCH]    NVARCHAR (40) CONSTRAINT [DF_Country_NameCH] DEFAULT ('') NULL,
-    [NameEN]    NVARCHAR (30) CONSTRAINT [DF_Country_NameEN] DEFAULT ('') NULL,
-    [Alias]     VARCHAR (30)  CONSTRAINT [DF_Country_Alias] DEFAULT ('') NULL,
-    [Junk]      BIT           CONSTRAINT [DF_Country_Junk] DEFAULT ((0)) NULL,
-    [MtlFormA]  BIT           CONSTRAINT [DF_Country_MtlFormA] DEFAULT ((0)) NULL,
-    [Continent] VARCHAR (2)   CONSTRAINT [DF_Country_Continent] DEFAULT ('') NULL,
-    [AddName]   VARCHAR (10)  CONSTRAINT [DF_Country_AddName] DEFAULT ('') NULL,
-    [AddDate]   DATETIME      NULL,
-    [EditName]  VARCHAR (10)  CONSTRAINT [DF_Country_EditName] DEFAULT ('') NULL,
-    [EditDate]  DATETIME      NULL,
-    [SpecificDestination] BIT CONSTRAINT [DF_Country_SpecificDestination] DEFAULT ((0)) NOT NULL, 
+    [ID]                  VARCHAR (2)   CONSTRAINT [DF_Country_ID] DEFAULT ('') NOT NULL,
+    [NameCH]              NVARCHAR (40) CONSTRAINT [DF_Country_NameCH] DEFAULT ('') NOT NULL,
+    [NameEN]              NVARCHAR (30) CONSTRAINT [DF_Country_NameEN] DEFAULT ('') NOT NULL,
+    [Alias]               VARCHAR (30)  CONSTRAINT [DF_Country_Alias] DEFAULT ('') NOT NULL,
+    [Junk]                BIT           CONSTRAINT [DF_Country_Junk] DEFAULT ((0)) NOT NULL,
+    [MtlFormA]            BIT           CONSTRAINT [DF_Country_MtlFormA] DEFAULT ((0)) NOT NULL,
+    [Continent]           VARCHAR (2)   CONSTRAINT [DF_Country_Continent] DEFAULT ('') NOT NULL,
+    [AddName]             VARCHAR (10)  CONSTRAINT [DF_Country_AddName] DEFAULT ('') NOT NULL,
+    [AddDate]             DATETIME      NULL,
+    [EditName]            VARCHAR (10)  CONSTRAINT [DF_Country_EditName] DEFAULT ('') NOT NULL,
+    [EditDate]            DATETIME      NULL,
+    [SpecificDestination] BIT           CONSTRAINT [DF_Country_SpecificDestination] DEFAULT ((0)) NOT NULL,
     CONSTRAINT [PK_Country] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
+
+
 
 
 GO

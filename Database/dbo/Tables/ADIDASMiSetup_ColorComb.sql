@@ -1,14 +1,16 @@
 ﻿CREATE TABLE [dbo].[ADIDASMiSetup_ColorComb] (
     [ID]          VARCHAR (3)   CONSTRAINT [DF_ADIDASMiSetup_ColorComb_ID] DEFAULT ('') NOT NULL,
-    [ExcelName]   NVARCHAR (50) CONSTRAINT [DF_ADIDASMiSetup_ColorComb_ExcelName] DEFAULT ('') NULL,
-    [ExcelColumn] VARCHAR (2)   CONSTRAINT [DF_ADIDASMiSetup_ColorComb_ExcelColumn] DEFAULT ('') NULL,
-    [isArtwork]   BIT           CONSTRAINT [DF_ADIDASMiSetup_ColorComb_isArtwork] DEFAULT ((0)) NULL,
-    [AddName]     VARCHAR (10)  CONSTRAINT [DF_ADIDASMiSetup_ColorComb_AddName] DEFAULT ('') NULL,
+    [ExcelName]   NVARCHAR (50) CONSTRAINT [DF_ADIDASMiSetup_ColorComb_ExcelName] DEFAULT ('') NOT NULL,
+    [ExcelColumn] VARCHAR (2)   CONSTRAINT [DF_ADIDASMiSetup_ColorComb_ExcelColumn] DEFAULT ('') NOT NULL,
+    [isArtwork]   BIT           CONSTRAINT [DF_ADIDASMiSetup_ColorComb_isArtwork] DEFAULT ((0)) NOT NULL,
+    [AddName]     VARCHAR (10)  CONSTRAINT [DF_ADIDASMiSetup_ColorComb_AddName] DEFAULT ('') NOT NULL,
     [AddDate]     DATETIME      NULL,
-    [EditName]    VARCHAR (10)  CONSTRAINT [DF_ADIDASMiSetup_ColorComb_EditName] DEFAULT ('') NULL,
+    [EditName]    VARCHAR (10)  CONSTRAINT [DF_ADIDASMiSetup_ColorComb_EditName] DEFAULT ('') NOT NULL,
     [EditDate]    DATETIME      NULL,
     CONSTRAINT [PK_ADIDASMiSetup_ColorComb] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
+
+
 
 
 GO

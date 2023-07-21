@@ -1,14 +1,16 @@
 ﻿CREATE TABLE [dbo].[Construction] (
-    [Id]           VARCHAR (10)  CONSTRAINT [DF_Construction_Id] DEFAULT ('') NOT NULL,
+    [Id]           VARCHAR (20)  CONSTRAINT [DF_Construction_Id] DEFAULT ('') NOT NULL,
     [Name]         NVARCHAR (50) CONSTRAINT [DF_Construction_Name] DEFAULT ('') NOT NULL,
-    [CuttingLayer] SMALLINT      CONSTRAINT [DF_Construction_CuttingLayer] DEFAULT ((0)) NULL,
-    [Junk]         BIT           CONSTRAINT [DF_Construction_Junk] DEFAULT ((0)) NULL,
-    [AddName]      VARCHAR (10)  CONSTRAINT [DF_Construction_AddName] DEFAULT ('') NULL,
+    [CuttingLayer] SMALLINT      CONSTRAINT [DF_Construction_CuttingLayer] DEFAULT ((0)) NOT NULL,
+    [Junk]         BIT           CONSTRAINT [DF_Construction_Junk] DEFAULT ((0)) NOT NULL,
+    [AddName]      VARCHAR (10)  CONSTRAINT [DF_Construction_AddName] DEFAULT ('') NOT NULL,
     [AddDate]      DATETIME      NULL,
-    [EditName]     VARCHAR (10)  CONSTRAINT [DF_Construction_EditName] DEFAULT ('') NULL,
+    [EditName]     VARCHAR (10)  CONSTRAINT [DF_Construction_EditName] DEFAULT ('') NOT NULL,
     [EditDate]     DATETIME      NULL,
     CONSTRAINT [PK_Construction] PRIMARY KEY CLUSTERED ([Id] ASC)
 );
+
+
 
 
 GO

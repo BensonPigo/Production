@@ -2,14 +2,16 @@
     [ID]          VARCHAR (13)   CONSTRAINT [DF_PO_Supp_ID] DEFAULT ('') NOT NULL,
     [SEQ1]        VARCHAR (3)    CONSTRAINT [DF_PO_Supp_SEQ1] DEFAULT ('') NOT NULL,
     [SuppID]      VARCHAR (6)    CONSTRAINT [DF_PO_Supp_SuppID] DEFAULT ('') NOT NULL,
-    [Remark]      NVARCHAR (MAX) CONSTRAINT [DF_PO_Supp_Remark] DEFAULT ('') NULL,
-    [Description] NVARCHAR (MAX) CONSTRAINT [DF_PO_Supp_Description] DEFAULT ('') NULL,
-    [AddName]     VARCHAR (10)   CONSTRAINT [DF_PO_Supp_AddName] DEFAULT ('') NULL,
+    [Remark]      NVARCHAR (MAX) CONSTRAINT [DF_PO_Supp_Remark] DEFAULT ('') NOT NULL,
+    [Description] NVARCHAR (MAX) CONSTRAINT [DF_PO_Supp_Description] DEFAULT ('') NOT NULL,
+    [AddName]     VARCHAR (10)   CONSTRAINT [DF_PO_Supp_AddName] DEFAULT ('') NOT NULL,
     [AddDate]     DATETIME       NULL,
-    [EditName]    VARCHAR (10)   CONSTRAINT [DF_PO_Supp_EditName] DEFAULT ('') NULL,
+    [EditName]    VARCHAR (10)   CONSTRAINT [DF_PO_Supp_EditName] DEFAULT ('') NOT NULL,
     [EditDate]    DATETIME       NULL,
     CONSTRAINT [PK_PO_Supp] PRIMARY KEY CLUSTERED ([ID] ASC, [SEQ1] ASC)
 );
+
+
 
 
 

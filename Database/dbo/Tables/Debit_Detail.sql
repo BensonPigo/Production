@@ -1,18 +1,20 @@
 ﻿CREATE TABLE [dbo].[Debit_Detail] (
     [ID]          VARCHAR (13)    CONSTRAINT [DF_Debit_Detail_ID] DEFAULT ('') NOT NULL,
-    [OrderID]     VARCHAR (13)    CONSTRAINT [DF_Debit_Detail_OrderID] DEFAULT ('') NULL,
-    [ReasonID]    VARCHAR (5)     CONSTRAINT [DF_Debit_Detail_ReasonID] DEFAULT ('') NULL,
-    [Description] NVARCHAR (MAX)  CONSTRAINT [DF_Debit_Detail_Description] DEFAULT ('') NULL,
-    [Price]       NUMERIC (16, 4)  CONSTRAINT [DF_Debit_Detail_Price] DEFAULT ((0)) NULL,
-    [Amount]      NUMERIC (13, 2) CONSTRAINT [DF_Debit_Detail_Amount] DEFAULT ((0)) NULL,
-    [UnitID]      VARCHAR (8)     CONSTRAINT [DF_Debit_Detail_UnitID] DEFAULT ('') NULL,
-    [SourceID]    VARCHAR (13)    CONSTRAINT [DF_Debit_Detail_SourceID] DEFAULT ('') NULL,
-    [Qty]         NUMERIC (11, 2) CONSTRAINT [DF_Debit_Detail_Qty] DEFAULT ((0)) NULL,
-    [ReasonNM]    VARCHAR (60)    CONSTRAINT [DF_Debit_Detail_ReasonNM] DEFAULT ('') NULL,
+    [OrderID]     VARCHAR (13)    CONSTRAINT [DF_Debit_Detail_OrderID] DEFAULT ('') NOT NULL,
+    [ReasonID]    VARCHAR (5)     CONSTRAINT [DF_Debit_Detail_ReasonID] DEFAULT ('') NOT NULL,
+    [Description] NVARCHAR (MAX)  CONSTRAINT [DF_Debit_Detail_Description] DEFAULT ('') NOT NULL,
+    [Price]       DECIMAL (16, 4) CONSTRAINT [DF_Debit_Detail_Price] DEFAULT ((0)) NOT NULL,
+    [Amount]      DECIMAL (13, 2) CONSTRAINT [DF_Debit_Detail_Amount] DEFAULT ((0)) NOT NULL,
+    [UnitID]      VARCHAR (8)     CONSTRAINT [DF_Debit_Detail_UnitID] DEFAULT ('') NOT NULL,
+    [SourceID]    VARCHAR (13)    CONSTRAINT [DF_Debit_Detail_SourceID] DEFAULT ('') NOT NULL,
+    [Qty]         DECIMAL (11, 2) CONSTRAINT [DF_Debit_Detail_Qty] DEFAULT ((0)) NOT NULL,
+    [ReasonNM]    VARCHAR (60)    CONSTRAINT [DF_Debit_Detail_ReasonNM] DEFAULT ('') NOT NULL,
     [TaipeiUkey]  BIGINT          CONSTRAINT [DF_Debit_Detail_TaipeiUkey] DEFAULT ((0)) NOT NULL,
     [Ukey]        BIGINT          IDENTITY (1, 1) NOT NULL,
     CONSTRAINT [PK_Debit_Detail] PRIMARY KEY CLUSTERED ([ID] ASC, [TaipeiUkey] ASC, [Ukey] ASC)
 );
+
+
 
 
 GO

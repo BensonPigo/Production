@@ -3,14 +3,16 @@
     [FactoryID]      VARCHAR (8)    CONSTRAINT [DF_HealthLabelSupp_FtyExpiration_FactoryID] DEFAULT ('') NOT NULL,
     [Registry]       VARCHAR (30)   CONSTRAINT [DF_HealthLabelSupp_FtyExpiration_Registry] DEFAULT ('') NOT NULL,
     [Expiration]     DATE           NOT NULL,
-    [AddName]        VARCHAR (10)   CONSTRAINT [DF_HealthLabelSupp_FtyExpiration_AddName] DEFAULT ('') NULL,
+    [AddName]        VARCHAR (10)   CONSTRAINT [DF_HealthLabelSupp_FtyExpiration_AddName] DEFAULT ('') NOT NULL,
     [AddDate]        DATETIME       NULL,
-    [EditName]       VARCHAR (10)   CONSTRAINT [DF_HealthLabelSupp_FtyExpiration_EditName] DEFAULT ('') NULL,
+    [EditName]       VARCHAR (10)   CONSTRAINT [DF_HealthLabelSupp_FtyExpiration_EditName] DEFAULT ('') NOT NULL,
     [EditDate]       DATETIME       NULL,
     [ApplyExtension] DATE           NULL,
-    [Remark]         NVARCHAR (MAX) NULL,
+    [Remark]         NVARCHAR (MAX) CONSTRAINT [DF_HealthLabelSupp_FtyExpiration_Remark] DEFAULT ('') NOT NULL,
     CONSTRAINT [PK_HealthLabelSupp_FtyExpiration] PRIMARY KEY CLUSTERED ([ID] ASC, [FactoryID] ASC)
 );
+
+
 
 
 GO

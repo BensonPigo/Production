@@ -1,12 +1,14 @@
 ﻿CREATE TABLE [dbo].[FtyShipper_Detail] (
-    [BrandID]   VARCHAR (8) CONSTRAINT [DF_FtyShipper_Detail_BrandID] DEFAULT ('') NOT NULL,
-    [FactoryID] VARCHAR (8) CONSTRAINT [DF_FtyShipper_Detail_FactoryID] DEFAULT ('') NOT NULL,
-    [BeginDate] DATE        NOT NULL,
-    [EndDate]   DATE        NULL,
-    [ShipperID]   VARCHAR (8) CONSTRAINT [DF_FtyShipper_Detail_Shipper] DEFAULT ('') NULL,
-    [SeasonID] VARCHAR(10) NOT NULL DEFAULT (''), 
-    CONSTRAINT [PK_FtyShipper_Detail] PRIMARY KEY CLUSTERED ([SeasonID], [BeginDate], [FactoryID], [BrandID])
+    [BrandID]   VARCHAR (8)  CONSTRAINT [DF_FtyShipper_Detail_BrandID] DEFAULT ('') NOT NULL,
+    [FactoryID] VARCHAR (8)  CONSTRAINT [DF_FtyShipper_Detail_FactoryID] DEFAULT ('') NOT NULL,
+    [BeginDate] DATE         NOT NULL,
+    [EndDate]   DATE         NULL,
+    [ShipperID] VARCHAR (8)  CONSTRAINT [DF_FtyShipper_Detail_ShipperID] DEFAULT ('') NOT NULL,
+    [SeasonID]  VARCHAR (10) CONSTRAINT [DF_FtyShipper_Detail_SeasonID] DEFAULT ('') NOT NULL,
+    CONSTRAINT [PK_FtyShipper_Detail] PRIMARY KEY CLUSTERED ([BrandID] ASC, [FactoryID] ASC, [BeginDate] ASC, [SeasonID] ASC)
 );
+
+
 
 
 GO

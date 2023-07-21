@@ -5,9 +5,9 @@
     [ArtworkID]                   VARCHAR (36)   CONSTRAINT [DF_Style_ArtworkTestDox_ArtworkID] DEFAULT ('') NOT NULL,
     [Article]                     VARCHAR (8)    CONSTRAINT [DF_Style_ArtworkTestDox_Article] DEFAULT ('') NOT NULL,
     [F_FabricPanelCode]           VARCHAR (2)    CONSTRAINT [DF_Style_ArtworkTestDox_F_FabricPanelCode] DEFAULT ('') NOT NULL,
-    [F_Refno]                     VARCHAR (36)   CONSTRAINT [DF_Style_ArtworkTestDox_F_Refno] DEFAULT ('') NOT NULL,
+    [F_Refno]                     VARCHAR (36)   CONSTRAINT [DF_Style_ArtworkTestDox_F_Refno] DEFAULT ('') NULL,
     [A_FabricPanelCode]           VARCHAR (2)    CONSTRAINT [DF_Style_ArtworkTestDox_A_FabricPanelCode] DEFAULT ('') NOT NULL,
-    [A_Refno]                     VARCHAR (36)   CONSTRAINT [DF_Style_ArtworkTestDox_A_Refno] DEFAULT ('') NOT NULL,
+    [A_Refno]                     VARCHAR (36)   CONSTRAINT [DF_Style_ArtworkTestDox_A_Refno] DEFAULT ('') NULL,
     [FabricFaceSide]              VARCHAR (1)    CONSTRAINT [DF_Style_ArtworkTestDox_FabricFaceSide] DEFAULT ('') NOT NULL,
     [PrintType]                   VARCHAR (10)   CONSTRAINT [DF_Style_ArtworkTestDox_PrintType] DEFAULT ('') NOT NULL,
     [TestNo]                      VARCHAR (20)   CONSTRAINT [DF_Style_ArtworkTestDox_TestNo] DEFAULT ('(''0') NOT NULL,
@@ -19,10 +19,12 @@
     [EditDate]                    DATETIME       NULL,
     [SubstrateFormSendDate]       DATE           NULL,
     [FactoryID]                   VARCHAR (8)    CONSTRAINT [DF_Style_ArtworkTestDox_FactoryID] DEFAULT ('') NOT NULL,
-    [OrderID]                     VARCHAR (13)   CONSTRAINT [DF_Style_ArtworkTestDox_OrderID] DEFAULT ('') NULL,
+    [OrderID]                     VARCHAR (13)   CONSTRAINT [DF_Style_ArtworkTestDox_OrderID] DEFAULT ('') NOT NULL,
     [IsA_FabricPanelCodeCanEmpty] BIT            CONSTRAINT [DF_Style_ArtworkTestDox_IsA_FabricPanelCodeCanEmpty] DEFAULT ((0)) NOT NULL,
     CONSTRAINT [PK_Style_ArtworkTestDox] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
+
+
 
 
 GO

@@ -1,17 +1,19 @@
 ﻿CREATE TABLE [dbo].[Season] (
-    [ID]          VARCHAR (10) CONSTRAINT [DF_Season_ID] DEFAULT ('') NOT NULL,
-    [BrandID]     VARCHAR (8)  CONSTRAINT [DF_Season_BrandID] DEFAULT ('') NOT NULL,
-    [CostRatio]   TINYINT      CONSTRAINT [DF_Season_CostRatio] DEFAULT ((0)) NULL,
-    [SeasonSCIID] VARCHAR (10) CONSTRAINT [DF_Season_SeasonSCIID] DEFAULT ('') NULL,
-    [Month]       VARCHAR (7)  CONSTRAINT [DF_Season_Month] DEFAULT ('') NULL,
-    [Junk]        BIT          CONSTRAINT [DF_Season_Junk] DEFAULT ((0)) NULL,
-    [AddName]     VARCHAR (10) CONSTRAINT [DF_Season_AddName] DEFAULT ('') NULL,
-    [AddDate]     DATETIME     NULL,
-    [EditName]    VARCHAR (10) CONSTRAINT [DF_Season_EditName] DEFAULT ('') NULL,
-    [EditDate]    DATETIME     NULL,
-    [SeasonForDisplay] VARCHAR(20) NULL, 
+    [ID]               VARCHAR (10) CONSTRAINT [DF_Season_ID] DEFAULT ('') NOT NULL,
+    [BrandID]          VARCHAR (8)  CONSTRAINT [DF_Season_BrandID] DEFAULT ('') NOT NULL,
+    [CostRatio]        TINYINT      CONSTRAINT [DF_Season_CostRatio] DEFAULT ((0)) NOT NULL,
+    [SeasonSCIID]      VARCHAR (10) CONSTRAINT [DF_Season_SeasonSCIID] DEFAULT ('') NOT NULL,
+    [Month]            VARCHAR (7)  CONSTRAINT [DF_Season_Month] DEFAULT ('') NOT NULL,
+    [Junk]             BIT          CONSTRAINT [DF_Season_Junk] DEFAULT ((0)) NOT NULL,
+    [AddName]          VARCHAR (10) CONSTRAINT [DF_Season_AddName] DEFAULT ('') NOT NULL,
+    [AddDate]          DATETIME     NULL,
+    [EditName]         VARCHAR (10) CONSTRAINT [DF_Season_EditName] DEFAULT ('') NOT NULL,
+    [EditDate]         DATETIME     NULL,
+    [SeasonForDisplay] VARCHAR (20) NULL,
     CONSTRAINT [PK_Season] PRIMARY KEY CLUSTERED ([ID] ASC, [BrandID] ASC)
 );
+
+
 
 
 GO

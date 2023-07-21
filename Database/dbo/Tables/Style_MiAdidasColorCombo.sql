@@ -1,14 +1,16 @@
 ﻿CREATE TABLE [dbo].[Style_MiAdidasColorCombo] (
-    [StyleUkey]  BIGINT       CONSTRAINT [DF_Style_MiAdidasColorCombo_StyleUkey] DEFAULT ((0)) NOT NULL,
+    [StyleUkey]       BIGINT       CONSTRAINT [DF_Style_MiAdidasColorCombo_StyleUkey] DEFAULT ((0)) NOT NULL,
     [FabricPanelCode] VARCHAR (2)  CONSTRAINT [DF_Style_MiAdidasColorCombo_FabricPanelCode] DEFAULT ('') NOT NULL,
-    [SetupID]    VARCHAR (3)  CONSTRAINT [DF_Style_MiAdidasColorCombo_SetupID] DEFAULT ('') NOT NULL,
-    [AddName]    VARCHAR (10) CONSTRAINT [DF_Style_MiAdidasColorCombo_AddName] DEFAULT ('') NULL,
-    [AddDate]    DATETIME     NULL,
-    [EditName]   VARCHAR (10) CONSTRAINT [DF_Style_MiAdidasColorCombo_EditName] DEFAULT ('') NULL,
-    [EditDate]   DATETIME     NULL,
-    [Ukey_old] VARCHAR(10) NOT NULL DEFAULT (''), 
-    CONSTRAINT [PK_Style_MiAdidasColorCombo] PRIMARY KEY CLUSTERED ([StyleUkey], [FabricPanelCode], [Ukey_old])
+    [SetupID]         VARCHAR (3)  CONSTRAINT [DF_Style_MiAdidasColorCombo_SetupID] DEFAULT ('') NOT NULL,
+    [AddName]         VARCHAR (10) CONSTRAINT [DF_Style_MiAdidasColorCombo_AddName] DEFAULT ('') NOT NULL,
+    [AddDate]         DATETIME     NULL,
+    [EditName]        VARCHAR (10) CONSTRAINT [DF_Style_MiAdidasColorCombo_EditName] DEFAULT ('') NOT NULL,
+    [EditDate]        DATETIME     NULL,
+    [Ukey_old]        VARCHAR (10) DEFAULT ('') NOT NULL,
+    CONSTRAINT [PK_Style_MiAdidasColorCombo] PRIMARY KEY CLUSTERED ([StyleUkey] ASC, [FabricPanelCode] ASC, [Ukey_old] ASC)
 );
+
+
 
 
 GO

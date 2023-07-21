@@ -1,16 +1,18 @@
 ﻿CREATE TABLE [dbo].[FIR_Grade] (
-    [WeaveTypeID]  VARCHAR (20) CONSTRAINT [DF_FIR_Grade_WeaveType] DEFAULT ('') NOT NULL,
-    [Percentage] NUMERIC (3)  CONSTRAINT [DF_FIR_Grade_Percentage] DEFAULT ((0)) NOT NULL,
-    [Grade]      VARCHAR (1)  CONSTRAINT [DF_FIR_Grade_Grade] DEFAULT ('') NULL,
-    [Result]     VARCHAR (1)  CONSTRAINT [DF_FIR_Grade_Result] DEFAULT ('') NULL,
-	[BrandID]	Varchar(8) NOT NULL  DEFAULT(''),
-    [InspectionGroup] VARCHAR NOT NULL DEFAULT (''), 
-    [isFormatInP01] BIT NOT NULL DEFAULT ((0)), 
-    [isResultNotInP01] BIT NOT NULL DEFAULT ((0)), 
-    [Description] VARCHAR(300) NOT NULL DEFAULT (''), 
-    [ShowGrade] VARCHAR NOT NULL DEFAULT (''), 
-    CONSTRAINT [PK_FIR_Grade] PRIMARY KEY CLUSTERED ([WeaveTypeID] ASC, [Percentage] ASC, [BrandID] ASC , [InspectionGroup] asc)
+    [WeaveTypeID]      VARCHAR (20)  CONSTRAINT [DF_FIR_Grade_WeaveType] DEFAULT ('') NOT NULL,
+    [Percentage]       NUMERIC (3)   CONSTRAINT [DF_FIR_Grade_Percentage] DEFAULT ((0)) NOT NULL,
+    [Grade]            VARCHAR (10)  CONSTRAINT [DF_FIR_Grade_Grade] DEFAULT ('') NOT NULL,
+    [Result]           VARCHAR (1)   CONSTRAINT [DF_FIR_Grade_Result] DEFAULT ('') NOT NULL,
+    [BrandID]          VARCHAR (8)   DEFAULT ('') NOT NULL,
+    [InspectionGroup]  VARCHAR (1)   CONSTRAINT [DF_FIR_Grade_InspectionGroup] DEFAULT ('') NOT NULL,
+    [isFormatInP01]    BIT           CONSTRAINT [DF_FIR_Grade_isFormatInP01] DEFAULT ((0)) NOT NULL,
+    [isResultNotInP01] BIT           CONSTRAINT [DF_FIR_Grade_isResultNotInP01] DEFAULT ((0)) NOT NULL,
+    [Description]      VARCHAR (300) CONSTRAINT [DF_FIR_Grade_Description] DEFAULT ('') NOT NULL,
+    [ShowGrade]        VARCHAR (10)  CONSTRAINT [DF_FIR_Grade_ShowGrade] DEFAULT ('') NOT NULL,
+    CONSTRAINT [PK_FIR_Grade] PRIMARY KEY CLUSTERED ([InspectionGroup] ASC, [Percentage] ASC, [BrandID] ASC, [WeaveTypeID] ASC)
 );
+
+
 
 
 GO

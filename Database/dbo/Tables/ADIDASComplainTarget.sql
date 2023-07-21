@@ -1,12 +1,14 @@
 ﻿CREATE TABLE [dbo].[ADIDASComplainTarget] (
     [Year]     VARCHAR (4)    CONSTRAINT [DF_ADIDASComplainTarget_Year] DEFAULT ('') NOT NULL,
     [Target]   NUMERIC (5, 4) CONSTRAINT [DF_ADIDASComplainTarget_Target] DEFAULT ((0)) NOT NULL,
-    [AddName]  VARCHAR (10)   CONSTRAINT [DF_ADIDASComplainTarget_AddName] DEFAULT ('') NULL,
+    [AddName]  VARCHAR (10)   CONSTRAINT [DF_ADIDASComplainTarget_AddName] DEFAULT ('') NOT NULL,
     [AddDate]  DATETIME       NULL,
-    [EditName] VARCHAR (10)   CONSTRAINT [DF_ADIDASComplainTarget_EditName] DEFAULT ('') NULL,
+    [EditName] VARCHAR (10)   CONSTRAINT [DF_ADIDASComplainTarget_EditName] DEFAULT ('') NOT NULL,
     [EditDate] DATETIME       NULL,
     CONSTRAINT [PK_ADIDASComplainTarget] PRIMARY KEY CLUSTERED ([Year] ASC)
 );
+
+
 
 
 GO

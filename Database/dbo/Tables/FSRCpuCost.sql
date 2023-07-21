@@ -1,11 +1,13 @@
 ﻿CREATE TABLE [dbo].[FSRCpuCost] (
     [ShipperID] VARCHAR (8)  CONSTRAINT [DF_FSRCpuCost_ShipperID] DEFAULT ('') NOT NULL,
     [AddDate]   DATETIME     NULL,
-    [AddName]   VARCHAR (10) CONSTRAINT [DF_FSRCpuCost_AddName] DEFAULT ('') NULL,
+    [AddName]   VARCHAR (10) CONSTRAINT [DF_FSRCpuCost_AddName] DEFAULT ('') NOT NULL,
     [EditDate]  DATETIME     NULL,
-    [EditName]  VARCHAR (10) CONSTRAINT [DF_FSRCpuCost_EditName] DEFAULT ('') NULL, 
-    CONSTRAINT [PK_FSRCpuCost] PRIMARY KEY ([ShipperID])
+    [EditName]  VARCHAR (10) CONSTRAINT [DF_FSRCpuCost_EditName] DEFAULT ('') NOT NULL,
+    CONSTRAINT [PK_FSRCpuCost] PRIMARY KEY CLUSTERED ([ShipperID] ASC)
 );
+
+
 
 
 GO

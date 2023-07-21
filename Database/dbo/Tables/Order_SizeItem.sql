@@ -1,11 +1,17 @@
 ﻿CREATE TABLE [dbo].[Order_SizeItem] (
-    [Id]       VARCHAR (13)   CONSTRAINT [DF_Order_SizeItem_Id] DEFAULT ('') NOT NULL,
-    [SizeItem] VARCHAR (3)    CONSTRAINT [DF_Order_SizeItem_SizeItem] DEFAULT ('') NOT NULL,
-    [SizeUnit] VARCHAR (8)    CONSTRAINT [DF_Order_SizeItem_SizeUnit] DEFAULT ('') NULL,
-    [SizeDesc] NVARCHAR (100) CONSTRAINT [DF_Order_SizeItem_SizeDesc] DEFAULT ('') NULL,
-    [Ukey]     BIGINT         NOT NULL, 
-    CONSTRAINT [PK_Order_SizeItem] PRIMARY KEY ([Ukey])  
+    [Id]       VARCHAR (13)  CONSTRAINT [DF_Order_SizeItem_Id] DEFAULT ('') NOT NULL,
+    [SizeItem] VARCHAR (3)   CONSTRAINT [DF_Order_SizeItem_SizeItem] DEFAULT ('') NOT NULL,
+    [SizeUnit] VARCHAR (8)   CONSTRAINT [DF_Order_SizeItem_SizeUnit] DEFAULT ('') NOT NULL,
+    [SizeDesc] VARCHAR (200) CONSTRAINT [DF_Order_SizeItem_SizeDesc] DEFAULT ('') NOT NULL,
+    [Ukey]     BIGINT        NOT NULL,
+    [TolMinus] VARCHAR (15)  CONSTRAINT [DF_Order_SizeItem_TolMinus] DEFAULT ('') NOT NULL,
+    [TolPlus]  VARCHAR (15)  CONSTRAINT [DF_Order_SizeItem_TolPlus] DEFAULT ('') NOT NULL,
+    CONSTRAINT [PK_Order_SizeItem] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
+
+
+
+
 
 
 

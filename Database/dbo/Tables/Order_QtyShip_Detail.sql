@@ -1,17 +1,19 @@
 ﻿CREATE TABLE [dbo].[Order_QtyShip_Detail] (
-    [Id]       VARCHAR (13) CONSTRAINT [DF_Order_QtyShip_Detail_Id] DEFAULT ('') NULL,
-    [Seq]      VARCHAR (2)  CONSTRAINT [DF_Order_QtyShip_Detail_Seq] DEFAULT ('') NULL,
-    [Article]  VARCHAR (8)  CONSTRAINT [DF_Order_QtyShip_Detail_Article] DEFAULT ('') NULL,
-    [SizeCode] VARCHAR (8)  CONSTRAINT [DF_Order_QtyShip_Detail_SizeCode] DEFAULT ('') NULL,
-    [Qty]      INT          CONSTRAINT [DF_Order_QtyShip_Detail_Qty] DEFAULT ((0)) NULL,
-	[OriQty]   INT			CONSTRAINT [DF_Order_QtyShip_Detail_OriQty] DEFAULT ((0)) NULL, 
-    [AddName]  VARCHAR (10) CONSTRAINT [DF_Order_QtyShip_Detail_AddName] DEFAULT ('') NULL,
+    [Id]       VARCHAR (13) CONSTRAINT [DF_Order_QtyShip_Detail_Id] DEFAULT ('') NOT NULL,
+    [Seq]      VARCHAR (2)  CONSTRAINT [DF_Order_QtyShip_Detail_Seq] DEFAULT ('') NOT NULL,
+    [Article]  VARCHAR (8)  CONSTRAINT [DF_Order_QtyShip_Detail_Article] DEFAULT ('') NOT NULL,
+    [SizeCode] VARCHAR (8)  CONSTRAINT [DF_Order_QtyShip_Detail_SizeCode] DEFAULT ('') NOT NULL,
+    [Qty]      INT          CONSTRAINT [DF_Order_QtyShip_Detail_Qty] DEFAULT ((0)) NOT NULL,
+    [OriQty]   INT          CONSTRAINT [DF_Order_QtyShip_Detail_OriQty] DEFAULT ((0)) NOT NULL,
+    [AddName]  VARCHAR (10) CONSTRAINT [DF_Order_QtyShip_Detail_AddName] DEFAULT ('') NOT NULL,
     [AddDate]  DATETIME     NULL,
-    [EditName] VARCHAR (10) CONSTRAINT [DF_Order_QtyShip_Detail_EditName] DEFAULT ('') NULL,
+    [EditName] VARCHAR (10) CONSTRAINT [DF_Order_QtyShip_Detail_EditName] DEFAULT ('') NOT NULL,
     [EditDate] DATETIME     NULL,
     [Ukey]     BIGINT       CONSTRAINT [DF_Order_QtyShip_Detail_Ukey] DEFAULT ((0)) NOT NULL,
     CONSTRAINT [PK_Order_QtyShip_Detail] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
+
+
 GO
 
 CREATE NONCLUSTERED INDEX [Index_BuyerDelivery]

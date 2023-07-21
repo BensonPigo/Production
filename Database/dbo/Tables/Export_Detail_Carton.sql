@@ -1,20 +1,22 @@
 ﻿CREATE TABLE [dbo].[Export_Detail_Carton] (
     [Ukey]              BIGINT         IDENTITY (1, 1) NOT NULL,
-    [Export_DetailUkey] BIGINT         NULL,
-    [Id]                VARCHAR (13)   NOT NULL,
-    [PoID]              VARCHAR (13)   NOT NULL,
-    [Seq1]              VARCHAR (3)    NOT NULL,
-    [Seq2]              VARCHAR (2)    NOT NULL,
-    [Carton]            NVARCHAR (30)  NOT NULL,
-    [LotNo]             NVARCHAR(50)   NULL,
-    [Qty]               NUMERIC (8, 2) NULL,
-    [Foc]               NUMERIC (8, 2) NULL,
-    [NetKg]             NUMERIC (7, 2) NULL,
-    [WeightKg]          NUMERIC (7, 2) NULL,
-    [EditName]          VARCHAR (10)   NULL,
+    [Export_DetailUkey] BIGINT         CONSTRAINT [DF_Export_Detail_Carton_Export_DetailUkey] DEFAULT ((0)) NOT NULL,
+    [Id]                VARCHAR (13)   CONSTRAINT [DF_Export_Detail_Carton_Id] DEFAULT ('') NOT NULL,
+    [PoID]              VARCHAR (13)   CONSTRAINT [DF_Export_Detail_Carton_PoID] DEFAULT ('') NOT NULL,
+    [Seq1]              VARCHAR (3)    CONSTRAINT [DF_Export_Detail_Carton_Seq1] DEFAULT ('') NOT NULL,
+    [Seq2]              VARCHAR (2)    CONSTRAINT [DF_Export_Detail_Carton_Seq2] DEFAULT ('') NOT NULL,
+    [Carton]            NVARCHAR (50)  CONSTRAINT [DF_Export_Detail_Carton_Carton] DEFAULT ('') NOT NULL,
+    [LotNo]             NVARCHAR (50)  CONSTRAINT [DF_Export_Detail_Carton_LotNo] DEFAULT ('') NOT NULL,
+    [Qty]               DECIMAL (8, 2) CONSTRAINT [DF_Export_Detail_Carton_Qty] DEFAULT ((0)) NOT NULL,
+    [Foc]               DECIMAL (8, 2) CONSTRAINT [DF_Export_Detail_Carton_Foc] DEFAULT ((0)) NOT NULL,
+    [NetKg]             DECIMAL (7, 2) CONSTRAINT [DF_Export_Detail_Carton_NetKg] DEFAULT ((0)) NOT NULL,
+    [WeightKg]          DECIMAL (7, 2) CONSTRAINT [DF_Export_Detail_Carton_WeightKg] DEFAULT ((0)) NOT NULL,
+    [EditName]          VARCHAR (10)   CONSTRAINT [DF_Export_Detail_Carton_EditName] DEFAULT ('') NOT NULL,
     [EditDate]          DATETIME       NULL,
     CONSTRAINT [PK_Export_Detail_Carton] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
+
+
 
 
 GO

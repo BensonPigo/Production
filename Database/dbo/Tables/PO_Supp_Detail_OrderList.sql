@@ -3,12 +3,14 @@
     [SEQ1]     VARCHAR (3)  CONSTRAINT [DF_PO_Supp_Detail_OrderList_SEQ1] DEFAULT ('') NOT NULL,
     [SEQ2]     VARCHAR (2)  CONSTRAINT [DF_PO_Supp_Detail_OrderList_SEQ2] DEFAULT ('') NOT NULL,
     [OrderID]  VARCHAR (13) CONSTRAINT [DF_PO_Supp_Detail_OrderList_OrderID] DEFAULT ('') NOT NULL,
-    [AddName]  VARCHAR (10) CONSTRAINT [DF_PO_Supp_Detail_OrderList_AddName] DEFAULT ('') NULL,
+    [AddName]  VARCHAR (10) CONSTRAINT [DF_PO_Supp_Detail_OrderList_AddName] DEFAULT ('') NOT NULL,
     [AddDate]  DATETIME     NULL,
-    [EditName] VARCHAR (10) CONSTRAINT [DF_PO_Supp_Detail_OrderList_EditName] DEFAULT ('') NULL,
+    [EditName] VARCHAR (10) CONSTRAINT [DF_PO_Supp_Detail_OrderList_EditName] DEFAULT ('') NOT NULL,
     [EditDate] DATETIME     NULL,
     CONSTRAINT [PK_PO_Supp_Detail_OrderList] PRIMARY KEY CLUSTERED ([ID] ASC, [SEQ1] ASC, [SEQ2] ASC, [OrderID] ASC)
 );
+
+
 
 
 GO
