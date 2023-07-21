@@ -30,6 +30,7 @@ namespace Sci.Production.Warehouse
         private string brand;
         private string IncludeJunk;
         private string ExcludeMaterial;
+        private string dwr;
         private DateTime? sciDelivery1;
         private DateTime? sciDelivery2;
         private DateTime? suppDelivery1;
@@ -50,6 +51,8 @@ namespace Sci.Production.Warehouse
             this.comboFabricType.SelectedIndex = 0;
             MyUtility.Tool.SetupCombox(this.comboOrderBy, 1, 1, "Supplier,SP#");
             this.comboOrderBy.SelectedIndex = 0;
+            MyUtility.Tool.SetupCombox(this.comboDurable, 1, 1, "Include,Exclude,Only");
+            this.comboDurable.SelectedIndex = 0;
         }
 
         /// <inheritdoc/>
@@ -91,6 +94,7 @@ namespace Sci.Production.Warehouse
             this.factory = this.txtfactory.Text;
             this.fabrictype = this.comboFabricType.SelectedValue.ToString();
             this.orderby = this.comboOrderBy.Text;
+            this.dwr = this.comboDurable.Text;
             this.brand = this.txtbrand.Text;
 
             if (this.chkIncludeJunk.Checked)
@@ -506,9 +510,14 @@ where 1=1
                 cmds.Add(sp_wkno2);
             }
 
-            int dwr = this.chkDWR.Checked ? 1 : 0;
-
-            sqlCmd.Append($@" and fabric.DWR = {dwr}");
+            if (this.dwr == "Exclude")
+            {
+                sqlCmd.Append($@" and fabric.DWR = 0");
+            }
+            else if (this.dwr == "Only")
+            {
+                sqlCmd.Append($@" and fabric.DWR = 1");
+            }
 
             if (this.chkWhseClose.Checked)
             {
