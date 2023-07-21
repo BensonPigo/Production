@@ -187,6 +187,10 @@ AND ALMCS.Junk = 0
         {
             base.ClickUndo();
             this.RefreshLineMappingBalancingSummary();
+            foreach (DataRow dr in this.DetailDatas)
+            {
+                dr["Selected"] = false;
+            }
         }
 
         /// <inheritdoc/>
@@ -430,6 +434,9 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
                 this.CurrentMaintain["Version"] = MyUtility.Convert.GetInt(MyUtility.GetValue.Lookup(sqlGetVersion));
             }
 
+            // 有可能因為調整佔位順序造成HighestGSDTime不同，所以這邊要更新
+            this.RefreshLineMappingBalancingSummary();
+
             return base.ClickSaveBefore();
         }
 
@@ -513,6 +520,8 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
                     dr["No"] = string.Empty;
                 }
             };
+
+            colSelected.HeaderAction = DataGridViewGeneratorCheckBoxHeaderAction.None;
 
             colSelected.CellValidating += (s, e) =>
             {
@@ -776,6 +785,14 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
 
         private void RefreshLineMappingBalancingSummary()
         {
+            if (this.lineMappingGrids.HighestGSD > 0)
+            {
+                this.CurrentMaintain["HighestGSDTime"] = this.lineMappingGrids.HighestGSD;
+                this.CurrentMaintain["TotalGSDTime"] = this.lineMappingGrids.TotalGSD;
+                this.CurrentMaintain["HighestCycleTime"] = this.lineMappingGrids.HighestCycle;
+                this.CurrentMaintain["TotalCycleTime"] = this.lineMappingGrids.TotalCycle;
+            }
+
             // LBRByGSDTime
             this.CurrentMaintain["LBRByGSDTime"] = MyUtility.Math.Round(MyUtility.Convert.GetDecimal(this.CurrentMaintain["TotalGSDTime"]) / MyUtility.Convert.GetDecimal(this.CurrentMaintain["HighestGSDTime"]) / MyUtility.Convert.GetDecimal(this.CurrentMaintain["SewerManpower"]) * 100, 0);
 

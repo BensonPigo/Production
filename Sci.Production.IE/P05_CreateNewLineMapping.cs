@@ -187,14 +187,14 @@ from TimeStudy ts with (nolock)
 where   ts.StyleID = '{this.txtStyleCreate.Text}' and
         ts.BrandID = '{this.txtBrandCreate.Text}' and
         ts.SeasonID = '{this.txtSeasonCreate.Text}' and
-        ts.ComboType = '{this.txtStyleLocationCreate.Text}'
-order by ts.Version desc
+        ts.ComboType = '{this.txtStyleLocationCreate.Text}' and
+        ts.Phase = '{this.comboPhase.Text}'
 ";
             DataRow drInfoGSD;
 
             if (!MyUtility.Check.Seek(checkGSD, out drInfoGSD))
             {
-                MyUtility.Msg.WarningBox("Factory GSD data not found.");
+                MyUtility.Msg.WarningBox("[*Create Auto Line Mapping]Factory GSD data not found.");
                 return;
             }
 
@@ -327,7 +327,7 @@ exec dbo.GetAutomatedLineMapping    '{this.txtFactoryCreate.Text}',
             }
 
             string checkAutomatedLineMapping = $@"
-select ID
+select ID, SewerManpower
 from AutomatedLineMapping with (nolock)
 where   FactoryID = '{this.txtFactoryCopy.Text}' and
         StyleID = '{this.txtStyleCopy.Text}' and
@@ -336,13 +336,131 @@ where   FactoryID = '{this.txtFactoryCopy.Text}' and
         ComboType = '{this.txtStyleLocationCopy.Text}' and
         Version = '{this.numVersion.Text}'
 ";
-            string automatedLineMappingID = MyUtility.GetValue.Lookup(checkAutomatedLineMapping);
+            DataRow drAutomatedLineMappingCopySource;
 
-            if (MyUtility.Check.Empty(automatedLineMappingID))
+            if (!MyUtility.Check.Seek(checkAutomatedLineMapping, out drAutomatedLineMappingCopySource))
             {
                 MyUtility.Msg.WarningBox("Unable to find Line Mapping in IE_P05 according to [*Copy Other Line Mapping] information.");
                 return;
             }
+
+            if (MyUtility.Convert.GetInt(drAutomatedLineMappingCopySource["SewerManpower"]) != MyUtility.Convert.GetInt(this.numSewer.Value))
+            {
+                MyUtility.Msg.WarningBox($"[*Create Auto Line Mapping][No. of Sewer] is {this.numSewer.Value}, but version [No. of Sewer] is {drAutomatedLineMappingCopySource["SewerManpower"]}, Cannot be created because Sewer is different.");
+                return;
+            }
+
+            string automatedLineMappingID = drAutomatedLineMappingCopySource["ID"].ToString();
+
+            #region 比對copy來源與copy目標的timestudy_detail operation資料是否一致
+
+            string checkGSD = $@"
+select  ts.Status,
+        ts.ID,
+        [StyleUkey] = s.Ukey,
+        [StyleCPU] = s.CPU,
+        [TimeStudyID] = ts.ID,
+        [TimeStudyVersion] = ts.Version
+from TimeStudy ts with (nolock)
+inner join Style s with (nolock) on s.ID = ts.StyleID and s.BrandID = ts.BrandID and s.SeasonID = ts.SeasonID
+where   ts.StyleID = '{this.txtStyleCreate.Text}' and
+        ts.BrandID = '{this.txtBrandCreate.Text}' and
+        ts.SeasonID = '{this.txtSeasonCreate.Text}' and
+        ts.ComboType = '{this.txtStyleLocationCreate.Text}' and
+        ts.Phase = '{this.comboPhase.Text}'
+";
+            DataRow drInfoGSD;
+
+            if (!MyUtility.Check.Seek(checkGSD, out drInfoGSD))
+            {
+                MyUtility.Msg.WarningBox("[*Create Auto Line Mapping]Factory GSD data not found.");
+                return;
+            }
+
+            if (drInfoGSD["Status"].ToString() != "Confirmed")
+            {
+                MyUtility.Msg.WarningBox("Factory GSD need to confirm first before create auto line mapping.");
+                return;
+            }
+
+            string sqlCheckTimestudy_DetailDiff = $@"
+--抓出要Create的TimeStudy_Detail
+select  [RowNum] = ROW_NUMBER() OVER (ORDER BY Seq),
+        Seq,
+        OperationID
+into #tmpCreateTimeStudy_Detail
+from TimeStudy_Detail td with (nolock)
+where   td.ID = '{drInfoGSD["ID"]}' and
+        td.PPA != 'C' and
+        td.IsNonSewingline = 0 and
+        td.OperationID not like '-%'
+order by Seq
+
+--抓出Copy來源的TimeStudy_Detail
+select  [RowNum] = ROW_NUMBER() OVER (ORDER BY td.Seq),
+        td.Seq,
+        td.OperationID
+into    #tmpCopyTimeStudy_Detail
+from TimeStudy t with (nolock)
+inner join TimeStudy_Detail td with (nolock) on t.ID = td.ID
+where   exists( select 1 from AutomatedLineMapping am   with (nolock)
+                where   am.ID = '{automatedLineMappingID}'  and
+                        am.TimeStudyID = t.ID and
+                        am.TimeStudyVersion = t.Version
+                ) and
+        td.PPA != 'C' and
+        td.IsNonSewingline = 0 and
+        td.OperationID not like '-%'
+order by Seq
+--沒資料去history找
+if not exists (select 1 from #tmpCopyTimeStudy_Detail)
+begin
+    insert into #tmpCopyTimeStudy_Detail(RowNum, Seq, OperationID)
+    select  [RowNum] = ROW_NUMBER() OVER (ORDER BY td.Seq),
+            td.Seq,
+            td.OperationID
+    from TimeStudyHistory t with (nolock)
+    inner join TimeStudyHistory_Detail td with (nolock) on t.ID = td.ID
+    where   exists( select 1 from AutomatedLineMapping am   with (nolock)
+                    where   am.ID = '{automatedLineMappingID}'  and
+                            am.StyleID = t.StyleID and
+                            am.SeasonID = t.SeasonID and
+                            am.ComboType = t.ComboType and
+                            am.BrandID = t.BrandID and
+                            am.TimeStudyVersion = t.Version and
+                            am.Phase = t.Phase
+                ) and
+            td.PPA != 'C' and
+            td.IsNonSewingline = 0 and
+            td.OperationID not like '-%'
+end
+
+
+--比對兩邊是否一致
+Declare @IsSame bit = 1
+
+if (select count(*) from #tmpCreateTimeStudy_Detail) <> (select count(*) from #tmpCopyTimeStudy_Detail)
+    set @IsSame = 0
+
+if exists(  select  1
+            from #tmpCreateTimeStudy_Detail a
+            inner join #tmpCopyTimeStudy_Detail b on a.RowNum = b.RowNum and  a.OperationID <> b.OperationID)
+    set @IsSame = 0
+
+
+select [IsSame] = @IsSame
+
+drop table #tmpCreateTimeStudy_Detail, #tmpCopyTimeStudy_Detail
+";
+            DataRow drCheckTimestudy_DetailDiff;
+            MyUtility.Check.Seek(sqlCheckTimestudy_DetailDiff, out drCheckTimestudy_DetailDiff);
+
+            if (!MyUtility.Convert.GetBool(drCheckTimestudy_DetailDiff["IsSame"]))
+            {
+                MyUtility.Msg.WarningBox($"{this.txtStyleCreate.Text} cannot be copied, because the order of Fty GSD operation and seq is inconsistent.");
+                return;
+            }
+            #endregion
 
             string sqlGetAutomatedLineMapping = $@"
 select * from AutomatedLineMapping with (nolock) where ID = '{automatedLineMappingID}'
@@ -358,6 +476,17 @@ select * from AutomatedLineMapping_DetailAuto with (nolock) where ID = '{automat
                 this.ShowErr(result);
                 return;
             }
+
+            dtResults[0].Rows[0]["Phase"] = this.comboPhase.Text;
+            dtResults[0].Rows[0]["FactoryID"] = this.txtFactoryCreate.Text;
+            dtResults[0].Rows[0]["StyleID"] = this.txtStyleCreate.Text;
+            dtResults[0].Rows[0]["SeasonID"] = this.txtSeasonCreate.Text;
+            dtResults[0].Rows[0]["BrandID"] = this.txtBrandCreate.Text;
+            dtResults[0].Rows[0]["ComboType"] = this.txtStyleLocationCreate.Text;
+            dtResults[0].Rows[0]["StyleUKey"] = drInfoGSD["StyleUKey"];
+            dtResults[0].Rows[0]["StyleCPU"] = drInfoGSD["StyleCPU"];
+            dtResults[0].Rows[0]["TimeStudyID"] = drInfoGSD["TimeStudyID"];
+            dtResults[0].Rows[0]["TimeStudyVersion"] = drInfoGSD["TimeStudyVersion"];
 
             result = this.MergeMainDataTable(dtResults[0], dtResults[1], dtResults[2], dtResults[3]);
 

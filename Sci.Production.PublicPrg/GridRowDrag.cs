@@ -23,6 +23,7 @@ namespace Sci.Production.Prg
         private Action<DataRow> afterRowDragDo;
         private Action<DataRow> beforeRowDragDo;
         private bool enableDragCell;
+        private List<string> excludeDragCols = new List<string>();
 
         private DataTable DataMain
         {
@@ -48,7 +49,8 @@ namespace Sci.Production.Prg
         /// <param name="afterRowDragDo">afterRowDragDo</param>
         /// <param name="beforeRowDragDo">beforeRowDragDo</param>
         /// <param name="enableDragCell">enableDragCell</param>
-        public GridRowDrag(Grid tarGrid, Action<DataRow> afterRowDragDo = null, Action<DataRow> beforeRowDragDo = null, bool enableDragCell = true)
+        /// <param name="excludeDragCols">excludeDragCols</param>
+        public GridRowDrag(Grid tarGrid, Action<DataRow> afterRowDragDo = null, Action<DataRow> beforeRowDragDo = null, bool enableDragCell = true, List<string> excludeDragCols = null)
         {
             this.mainGrid = tarGrid;
             this.mainGrid.AllowDrop = true;
@@ -73,6 +75,11 @@ namespace Sci.Production.Prg
             this.beforeRowDragDo = beforeRowDragDo;
 
             this.enableDragCell = enableDragCell;
+
+            if (excludeDragCols != null)
+            {
+                this.excludeDragCols = excludeDragCols;
+            }
         }
 
         private void DataGridView_MouseDown(object sender, MouseEventArgs e)
@@ -82,6 +89,13 @@ namespace Sci.Production.Prg
                  this.mainGrid.HitTest(e.X, e.Y).Type == DataGridViewHitTestType.RowHeader) &&
                 this.mainGrid.AllowDrop)
             {
+                int colIdex = this.mainGrid.HitTest(e.X, e.Y).ColumnIndex;
+                if (colIdex >= 0 &&
+                    this.excludeDragCols.Contains(this.mainGrid.Columns[colIdex].DataPropertyName))
+                {
+                    return;
+                }
+
                 // 取得被拖曳的資料列的索引
                 int rowIndex = this.mainGrid.HitTest(e.X, e.Y).RowIndex;
 

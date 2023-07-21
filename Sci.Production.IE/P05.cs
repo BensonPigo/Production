@@ -227,6 +227,10 @@ AND ALMCS.Junk = 0
             base.ClickUndo();
             this.RefreshAutomatedLineMappingSummary();
             this.ShowLBRChart(this.CurrentMaintain);
+            foreach (DataRow dr in this.DetailDatas)
+            {
+                dr["Selected"] = false;
+            }
         }
 
         /// <inheritdoc/>
@@ -524,6 +528,9 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
                 this.CurrentMaintain["Version"] = MyUtility.Convert.GetInt(MyUtility.GetValue.Lookup(sqlGetVersion));
             }
 
+            // 有可能因為調整佔位順序造成HighestGSDTime不同，所以這邊要更新
+            this.RefreshAutomatedLineMappingSummary();
+
             return base.ClickSaveBefore();
         }
 
@@ -585,6 +592,8 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
                     dr["No"] = string.Empty;
                 }
             };
+
+            colSelected.HeaderAction = DataGridViewGeneratorCheckBoxHeaderAction.None;
 
             colSelected.CellValidating += (s, e) =>
             {
@@ -840,6 +849,12 @@ from #tmp
 
         private void RefreshAutomatedLineMappingSummary()
         {
+            if (this.lineMappingGrids.HighestGSD > 0)
+            {
+                this.CurrentMaintain["HighestGSDTime"] = this.lineMappingGrids.HighestGSD;
+                this.CurrentMaintain["TotalGSDTime"] = this.lineMappingGrids.TotalGSD;
+            }
+
             // LBRByGSDTime
             this.CurrentMaintain["LBRByGSDTime"] = MyUtility.Math.Round(MyUtility.Convert.GetDecimal(this.CurrentMaintain["TotalGSDTime"]) / MyUtility.Convert.GetDecimal(this.CurrentMaintain["HighestGSDTime"]) / MyUtility.Convert.GetDecimal(this.CurrentMaintain["SewerManpower"]) * 100, 0);
 
@@ -1010,6 +1025,7 @@ from #tmp
             {
                 this.detailgridbs.DataSource = p05_EditOperation.dtAutomatedLineMapping_Detail;
                 this.lineMappingGrids.RefreshSubData();
+                this.RefreshAutomatedLineMappingSummary();
             }
         }
 
@@ -1020,8 +1036,8 @@ from #tmp
             {
                 P05_LBR p05_LBR = new P05_LBR(firstDisplaySewermanpower, this.CurrentMaintain, (DataTable)this.detailgridbs.DataSource, this.dtAutomatedLineMapping_DetailTemp, this.dtAutomatedLineMapping_DetailAuto);
                 p05_LBR.ShowDialog();
-                this.RefreshAutomatedLineMappingSummary();
                 this.FilterGrid();
+                this.RefreshAutomatedLineMappingSummary();
                 this.ShowLBRChart(this.CurrentMaintain);
             }
             else

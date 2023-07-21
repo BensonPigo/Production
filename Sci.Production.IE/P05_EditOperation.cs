@@ -82,7 +82,7 @@ namespace Sci.Production.IE
             this.gridIconEditOperation.Append.Visible = false;
             this.gridIconEditOperation.Remove.Visible = false;
 
-            new GridRowDrag(this.gridEditOperation, this.AfterRowDragDo);
+            new GridRowDrag(this.gridEditOperation, this.AfterRowDragDo, excludeDragCols: new List<string>() { "UpdSewerDiffPercentage", "UpdDivSewer" });
         }
 
         private void GridEditOperation_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
@@ -210,7 +210,7 @@ namespace Sci.Production.IE
 
                 DataRow curRow = this.gridEditOperation.GetDataRow(e.RowIndex);
 
-                Win.Tools.SelectItem item = new Win.Tools.SelectItem(this.dtSelectItemSource, "Location,MachineTypeID,MasterPlusGroup,OperationDesc,OriSewer", null, null, false, null)
+                Win.Tools.SelectItem item = new Win.Tools.SelectItem(this.dtSelectItemSource, "Location,MachineTypeID,MasterPlusGroup,OperationDesc,OriSewer", null, null, false, null, "Location,ST/MC,MC Group,Operation,Original Sewer", columndecimals: ",,,,4")
                 {
                     Width = 780,
                 };
@@ -269,7 +269,9 @@ namespace Sci.Production.IE
                .Numeric("UpdDivSewer", header: "Update" + Environment.NewLine + "Div. Sewer", decimal_places: 4, width: Widths.AnsiChars(5), iseditingreadonly: false, settings: colUpdSewer);
 
             this.gridEditOperation.Columns["UpdSewerDiffPercentage"].DefaultCellStyle.BackColor = Color.Pink;
+            this.gridEditOperation.Columns["UpdSewerDiffPercentage"].DefaultCellStyle.ForeColor = Color.Red;
             this.gridEditOperation.Columns["UpdDivSewer"].DefaultCellStyle.BackColor = Color.Pink;
+            this.gridEditOperation.Columns["UpdDivSewer"].DefaultCellStyle.ForeColor = Color.Red;
         }
 
         private void CaculateUpdSewerColumn(string colName, DataRow caculateRow)
@@ -427,6 +429,9 @@ namespace Sci.Production.IE
             }
 
             this.dtAutomatedLineMapping_Detail = this.dtAutomatedLineMapping_DetailCopy.Copy();
+
+            this.dtAutomatedLineMapping_Detail.Columns.Remove("UpdDivSewer");
+            this.dtAutomatedLineMapping_Detail.Columns.Remove("UpdSewerDiffPercentage");
 
             this.DialogResult = DialogResult.OK;
         }

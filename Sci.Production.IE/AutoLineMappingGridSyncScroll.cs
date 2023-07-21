@@ -139,6 +139,23 @@ namespace Sci.Production.IE
         }
 
         /// <summary>
+        /// TotalGSD
+        /// </summary>
+        public decimal HighestCycle
+        {
+            get
+            {
+                if (this.SubData.Rows.Count == 0)
+                {
+                    return 0;
+                }
+
+                return this.SubData.AsEnumerable().Where(s => !MyUtility.Convert.GetBool(s["NeedExclude"]))
+                    .Select(s => MyUtility.Convert.GetDecimal(s["TotalCycleTime"])).Max();
+            }
+        }
+
+        /// <summary>
         /// AvgGSDTime
         /// </summary>
         public decimal AvgGSDTime
@@ -218,6 +235,8 @@ namespace Sci.Production.IE
 
             this.gridMain.CellPainting += this.GridMain_CellPainting;
             this.gridMain.Scroll += this.GridMain_Scroll;
+            this.gridMain.ColumnHeaderMouseClick += this.GridMain_ColumnHeaderMouseClick;
+
             this.gridSub.Scroll += this.GridSub_Scroll;
             this.gridSub.RowPrePaint += this.GridSub_RowPrePaint;
             if (subGridType == SubGridType.CentrailizedPPA)
@@ -237,6 +256,11 @@ namespace Sci.Production.IE
             this.dtGridDetailRightSummary.Columns.Add(new DataColumn("OperatorEffi", typeof(decimal)));
 
             this.gridSub.DataSource = this.dtGridDetailRightSummary;
+        }
+
+        private void GridMain_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
+        {
+            
         }
 
         private void GridPPA_SortCompare(object sender, DataGridViewSortCompareEventArgs e)

@@ -56,7 +56,11 @@ namespace Sci.Production.IE
                                 return;
                             }
 
-                            e.EditingControl.Text = item.GetSelectedString();
+                            dr["MachineTypeID"] = item.GetSelectedString();
+                            if (dr.Table.Columns.Contains("MasterPlusGroup"))
+                            {
+                                dr["MasterPlusGroup"] = string.Empty;
+                            }
                         }
                     }
                 }
@@ -100,6 +104,18 @@ namespace Sci.Production.IE
                                 return;
                             }
                         }
+
+                        dr["MachineTypeID"] = e.FormattedValue.ToString();
+                        if (dr.Table.Columns.Contains("MasterPlusGroup"))
+                        {
+                            dr["MasterPlusGroup"] = string.Empty;
+                        }
+                    }
+
+                    if (dr.Table.Columns.Contains("MasterPlusGroup") && MyUtility.Check.Empty(e.FormattedValue))
+                    {
+                        dr["MachineTypeID"] = e.FormattedValue.ToString();
+                        dr["MasterPlusGroup"] = string.Empty;
                     }
                 }
             };
@@ -353,6 +369,7 @@ where Junk = 0";
                         {
                             mainForm.CurrentDetailData["MoldID"] = string.Join(",", getMold.Where(x => existsMold.Where(y => !y.EqualString(x)).Any()).Distinct().ToList());
                         }
+
                         MyUtility.Msg.WarningBox("Attachment : " + string.Join(",", existsMold.ToList()) + "  need include in Mold setting !!", "Data need include in setting");
                         return;
                     }

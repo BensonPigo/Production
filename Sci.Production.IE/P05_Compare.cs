@@ -9,6 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Windows.Forms.DataVisualization.Charting;
 using static Sci.Production.IE.AutoLineMappingGridSyncScroll;
 
 namespace Sci.Production.IE
@@ -130,7 +131,16 @@ namespace Sci.Production.IE
                .Text("PPADesc", header: "PPA", width: Widths.AnsiChars(13), iseditingreadonly: true)
                .Text("MachineTypeID", header: "ST/MC type", width: Widths.AnsiChars(10), iseditingreadonly: true)
                .Text("MasterPlusGroup", header: "MC Group", width: Widths.AnsiChars(10), iseditingreadonly: true)
-               .Text("OperationDesc", header: "Operation", width: Widths.AnsiChars(50), iseditingreadonly: true);
+               .Text("OperationDesc", header: "Operation", width: Widths.AnsiChars(50), iseditingreadonly: true)
+               .Text("Annotation", header: "Annotation", width: Widths.AnsiChars(23), iseditingreadonly: true)
+               .Text("Attachment", header: "Attachment", width: Widths.AnsiChars(10))
+               .Text("SewingMachineAttachmentID", header: "Part ID", width: Widths.AnsiChars(25))
+               .Text("Template", header: "Template", width: Widths.AnsiChars(10))
+               .Numeric("GSD", header: "GSD Time", width: Widths.AnsiChars(5), decimal_places: 2, iseditingreadonly: true)
+               .Numeric("SewerDiffPercentageDesc", header: "%", width: Widths.AnsiChars(5), iseditingreadonly: true)
+               .Numeric("DivSewer", header: "Div. Sewer", decimal_places: 4, width: Widths.AnsiChars(5), iseditingreadonly: true)
+               .Numeric("OriSewer", header: "Ori. Sewer", decimal_places: 4, width: Widths.AnsiChars(5), iseditingreadonly: true)
+               .Text("ThreadComboID", header: "Thread" + Environment.NewLine + "Color", width: Widths.AnsiChars(10));
 
             this.Helper.Controls.Grid.Generator(this.gridManualNoDetail)
                .Text("No", header: "No. Of" + Environment.NewLine + "Station", width: Widths.AnsiChars(10), iseditingreadonly: true)
@@ -138,7 +148,16 @@ namespace Sci.Production.IE
                .Text("PPADesc", header: "PPA", width: Widths.AnsiChars(13), iseditingreadonly: true)
                .Text("MachineTypeID", header: "ST/MC type", width: Widths.AnsiChars(10), iseditingreadonly: true)
                .Text("MasterPlusGroup", header: "MC Group", width: Widths.AnsiChars(10), iseditingreadonly: true)
-               .Text("OperationDesc", header: "Operation", width: Widths.AnsiChars(50), iseditingreadonly: true);
+               .Text("OperationDesc", header: "Operation", width: Widths.AnsiChars(50), iseditingreadonly: true)
+               .Text("Annotation", header: "Annotation", width: Widths.AnsiChars(23), iseditingreadonly: true)
+               .Text("Attachment", header: "Attachment", width: Widths.AnsiChars(10))
+               .Text("SewingMachineAttachmentID", header: "Part ID", width: Widths.AnsiChars(25))
+               .Text("Template", header: "Template", width: Widths.AnsiChars(10))
+               .Numeric("GSD", header: "GSD Time", width: Widths.AnsiChars(5), decimal_places: 2, iseditingreadonly: true)
+               .Numeric("SewerDiffPercentageDesc", header: "%", width: Widths.AnsiChars(5), iseditingreadonly: true)
+               .Numeric("DivSewer", header: "Div. Sewer", decimal_places: 4, width: Widths.AnsiChars(5), iseditingreadonly: true)
+               .Numeric("OriSewer", header: "Ori. Sewer", decimal_places: 4, width: Widths.AnsiChars(5), iseditingreadonly: true)
+               .Text("ThreadComboID", header: "Thread" + Environment.NewLine + "Color", width: Widths.AnsiChars(10));
 
             int displayTabIndex = this.firstDiaplaySewerManpower - this.minSewermanpower;
             if (displayTabIndex == this.tabCompare.SelectedIndex)
@@ -345,11 +364,22 @@ namespace Sci.Production.IE
             dtResult.Columns.Add(new DataColumn("MachineTypeID", typeof(string)));
             dtResult.Columns.Add(new DataColumn("MasterPlusGroup", typeof(string)));
             dtResult.Columns.Add(new DataColumn("OperationDesc", typeof(string)));
+            dtResult.Columns.Add(new DataColumn("Annotation", typeof(string)));
+            dtResult.Columns.Add(new DataColumn("Attachment", typeof(string)));
+            dtResult.Columns.Add(new DataColumn("SewingMachineAttachmentID", typeof(string)));
+            dtResult.Columns.Add(new DataColumn("Template", typeof(string)));
+            dtResult.Columns.Add(new DataColumn("GSD", typeof(decimal)));
+            dtResult.Columns.Add(new DataColumn("SewerDiffPercentageDesc", typeof(string)));
+            dtResult.Columns.Add(new DataColumn("DivSewer", typeof(decimal)));
+            dtResult.Columns.Add(new DataColumn("OriSewer", typeof(decimal)));
+            dtResult.Columns.Add(new DataColumn("ThreadComboID", typeof(string)));
             dtResult.Columns.Add(new DataColumn("TimeStudyDetailUkeyCnt", typeof(int)));
 
             decimal totalGSD = dtAutomatedLineMapping.AsEnumerable()
                                 .Where(s => s["PPA"].ToString() != "C" &&
-                                            !MyUtility.Convert.GetBool(s["IsNonSewingLine"]))
+                                            !MyUtility.Convert.GetBool(s["IsNonSewingLine"]) &&
+                                            s["OperationID"].ToString() != "PROCIPF00003" &&
+                                            s["OperationID"].ToString() != "PROCIPF00004")
                                 .Sum(s => MyUtility.Math.Round(MyUtility.Convert.GetDecimal(s["GSD"]) * MyUtility.Convert.GetDecimal(s["SewerDiffPercentage"]), 2));
 
             decimal avgGSD = sewermanpower == 0 ? 0 : MyUtility.Math.Round(totalGSD / sewermanpower, 2);
@@ -389,6 +419,15 @@ namespace Sci.Production.IE
                 newRowResult["MachineTypeID"] = dr["MachineTypeID"];
                 newRowResult["MasterPlusGroup"] = dr["MasterPlusGroup"];
                 newRowResult["OperationDesc"] = dr["OperationDesc"];
+                newRowResult["Annotation"] = dr["Annotation"];
+                newRowResult["Attachment"] = dr["Attachment"];
+                newRowResult["SewingMachineAttachmentID"] = dr["SewingMachineAttachmentID"];
+                newRowResult["Template"] = dr["Template"];
+                newRowResult["GSD"] = dr["GSD"];
+                newRowResult["SewerDiffPercentageDesc"] = dr["SewerDiffPercentageDesc"];
+                newRowResult["DivSewer"] = dr["DivSewer"];
+                newRowResult["OriSewer"] = dr["OriSewer"];
+                newRowResult["ThreadComboID"] = dr["ThreadComboID"];
                 newRowResult["TimeStudyDetailUkeyCnt"] = dr["TimeStudyDetailUkeyCnt"];
 
                 dtResult.Rows.Add(newRowResult);
