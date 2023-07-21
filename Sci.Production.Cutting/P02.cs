@@ -16,6 +16,8 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Transactions;
 using System.Windows.Forms;
+using sxrc = Sci.Utility.Excel.SaveXltReportCls;
+using Excel = Microsoft.Office.Interop.Excel;
 
 namespace Sci.Production.Cutting
 {
@@ -4100,6 +4102,91 @@ DEALLOCATE CURSOR_
                     return;
                 }
             }
+        }
+
+        private void Btn_Excel_Click(object sender, EventArgs e)
+        {
+            // keepApp=true 產生excel後才可修改編輯
+            sxrc sxr = new sxrc();
+            Excel.Application app = sxr.ExcelApp;
+            Excel.Worksheet wks = app.ActiveWorkbook.Sheets[1];
+            app.DisplayAlerts = false;
+            wks.Cells[1, 1] = "##tbl";
+            DataTable dt = (DataTable)this.detailgridbs.DataSource;
+            DataTable dt2 = new DataTable();
+            string sqlCmd = @"
+Select 
+[CutRef#] = Cutref,
+[Cut#] = Cutno,
+[Marker Name] = MarkerName,
+[Fabric Combo]=Fabriccombo,
+[Fab_Panel Code]=FabricPanelCode,
+[Article]=Article,
+[Color]=Colorid,
+[Size]=SizeCode,
+[Layers]=Layer,
+[Total CutQty]=CutQty,
+[SP#]=getsp.value,
+[SEQ1]=SEQ1,
+[SEQ2]=SEQ2,
+[Fabric Arr Date]=Fabeta,
+[WK ETA]=WKETA,
+[Est. Cut Date]=estcutdate,
+[Sewing inline]=sewinline,
+[Spreading No]=SpreadingNoID,
+[Cut Cell]=Cutcellid,
+[Shift]=Shift,
+[Cutplan#]=Cutplanid,
+[Act. Cut Date]=actcutdate,
+[Edit Name]=Edituser,
+[Edit Date]=EditDate,
+[Add Name]=Adduser,
+[Add Date]=AddDate,
+[Key]=UKey,
+[Apply #]=MarkerNo,
+[Apply ver]=MarkerVersion,
+[Download ID]=MarkerDownloadID,
+[EachCons Apply #]=EachconsMarkerNo,
+[EachCons Apply ver]=EachconsMarkerVersion,
+[EachCons Download ID]=EachconsMarkerDownloadID,
+[ActCutting Perimeter]=ActCuttingPerimeterNew,
+[StraightLength]=StraightLengthNew,
+[CurvedLength]=CurvedLengthNew
+FROM #tmp tmp
+Outer Apply(
+ SELECT value = STUFF(
+	(Select DISTINCT ', ' + Rtrim(o.ID)
+		From Workorder_distribute wd WITH (NOLOCK)
+		inner join Orders o  with (nolock) on o.ID = wd.OrderID
+		Where wd.id = tmp.ID
+		For XML PATH ('')
+	), 1, 1, '')
+)getsp
+Order by SORT_NUM,PatternPanel,multisize DESC,Article,Order_SizeCode_Seq DESC,MarkerName,Ukey
+";
+            var result = MyUtility.Tool.ProcessWithDatatable(dt, null, sqlCmd, out dt2);
+			if (!result)
+			{
+                this.ShowErr(result);
+                return;
+            }
+
+            sxrc.XltRptTable xrt = new sxrc.XltRptTable(dt2);
+            xrt.ShowHeader = true;
+            xrt.BoAutoFitColumn = true;
+            xrt.BoFreezePanes = true;
+            xrt.BoAddFilter = true;
+            sxr.DicDatas.Add("##tbl", xrt);
+            Excel.Range range;
+            range = wks.Range[wks.Cells[1, 14], wks.Cells[1 + dt2.Rows.Count, 17]];
+            range.NumberFormatLocal = "yyyy/MM/dd";
+            range = wks.Range[wks.Cells[1, 22], wks.Cells[1 + dt2.Rows.Count, 22]];
+            range.NumberFormatLocal = "yyyy/MM/dd";
+            range = wks.Range[wks.Cells[1, 24], wks.Cells[1 + dt2.Rows.Count, 24]];
+            range.NumberFormatLocal = "yyyy/MM/dd hh:mm:ss";
+            range = wks.Range[wks.Cells[1, 26], wks.Cells[1 + dt2.Rows.Count, 26]];
+            range.NumberFormatLocal = "yyyy/MM/dd hh:mm:ss";
+            sxr.Save();
         }
     }
 }
