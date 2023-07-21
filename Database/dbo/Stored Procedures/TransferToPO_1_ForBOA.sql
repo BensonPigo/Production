@@ -224,7 +224,7 @@ Begin
 	Declare @Keyword_Original VarChar(Max);
 	Declare @Special VarChar(Max);
 	Declare @SeasonID varchar(10);
-
+    
 	-- 判斷是否要忽略Remark條件
 	--Declare @IsIgnoreRemark bit = (Select Production.dbo.CheckIgnore(@POID, 'TransferIgnoreRemark', 'SCISeason'));
 
@@ -299,7 +299,7 @@ Begin
 	  From Production.dbo.Program
 	 Where BrandID = @BrandID
 	   And ID = @ProgramID;
-
+       
 	--訂單是否走FormA
 	--Set @HaveFormA = Production.dbo.GetFormA(@PoID);
 	--訂單是否走ECFA
@@ -490,7 +490,7 @@ Begin
 				for xml path('')),1,1,'')) uks
 			 outer apply (
 				select value = stuff((
-					select Distinct Concat('$', dobe.Remark)
+					select Distinct Concat('$', (SELECT dobe.Remark AS [*] FOR XML Path('')))
 					from dbo.Order_BOA_Expend dobe
 					outer apply (
 						select *
@@ -584,53 +584,12 @@ Begin
 				Continue;
 			End;
 			--------------------------------------
-			--取得Remark
-			--Set @Remark = Replace(IsNull(@ExpendRemark, ''), '$', ' ' + Char(13) + Char(10));
-			--set @Remark_Shell = '';
-			--If @HaveShell = 1
-			--Begin
-			--	Set @Remark_Shell = IsNull(dbo.GetShellColor(@PoID, @FabricType, @BoaUkey, @ColorID), '');
-			--	Set @Remark += IIF(@Remark = '', '',Char(13) + Char(10)) + @Remark_Shell;
-			--End;
-			
-			--------------------------------------
-			--單件用量
-			--Set @UsedQty = @ConsPC;
-			--------------------------------------
-			--取得無條件進位的小數位數
-			/*
-			Set @UnitRound = 0;
-			Set @UsageRound = 0;
-			Set @RoundStep = 0;
-			Select @UnitRound = UnitRound
-				 , @UsageRound = UsageRound
-				 , @RoundStep = RoundStep
-			  From Production.dbo.GetUnitRound(@BrandID, @ProgramID, @Category, @UsageUnit);
-			*/
-			--------------------------------------
-			--採購數量(單位換算)
-			--Set @NetQty = Production.dbo.GetUnitQty(@UsageUnit, @POUnit, @UsageQty);
-			--Set @SystemNetQty = Production.dbo.GetUnitQty(@UsageUnit, @POUnit, @SysUsageQty);
 			Set @NetQty = @UsageQty;
 			Set @SystemNetQty = @SysUsageQty;
 			--------------------------------------
 			--損耗數(Loss Qty)
 			Set @LossQty = 0;
 			Set @LossFOC = 0;
-			--損耗數(單位換算)
-			/*
-			Set @LossQty = Production.dbo.GetUnitQty(@UsageUnit, @POUnit, @LossQty);
-			Set @LossFOC = Production.dbo.GetUnitQty(@UsageUnit, @POUnit, @LossFOC);
-			*/
-			--------------------------------------
-			--無條件進位
-			--NetQty & LossQty 均無條件進位至小數一位
-			/*
-			Set @NetQty = Production.dbo.GetCeiling(@NetQty, @UsageRound, 0);
-			Set @SystemNetQty = Production.dbo.GetCeiling(@SystemNetQty, @UnitRound, 0);
-			Set @LossQty = Production.dbo.GetCeiling(@LossQty, @UsageRound, 0);
-			Set @LossFOC = Production.dbo.GetCeiling(@LossFOC, @UsageRound, 0);
-			*/
 			--------------------------------------
 			--採購Qty
 			--Set @PurchaseQty = Production.dbo.GetCeiling((@NetQty + @LossQty), @UnitRound, @RoundStep);
@@ -656,35 +615,24 @@ Begin
 				   And Keyword = IsNull(@Keyword, '')
 				   And Special = IsNull(@Special, '');
 				*/
-                
+
 				Select @Seq2_Count = Max(po3.Seq2_Count)
 				From #tmpPO_Supp_Detail po3
 				Outer Apply (
-					select count(*) c from (
-						(
-							select SpecColumnID, SpecValue
-							from #tmpPO_Supp_Detail_Spec po3s
-							where po3.ID = po3s.ID
-							and  po3.Seq1 = po3s.Seq1
-							and  po3.Seq2 = po3s.Seq2
-							and  po3.Seq2_Count = po3s.Seq2_Count
-							except
-							select SpecColumnID, SpecValue
-							from @tmpOrder_BOA_Expend_Spec
-						)
-						union
-						(
-							select SpecColumnID, SpecValue
-							from @tmpOrder_BOA_Expend_Spec
-							except
-							select SpecColumnID, SpecValue
-							from #tmpPO_Supp_Detail_Spec po3s
-							where po3.ID = po3s.ID
-							and  po3.Seq1 = po3s.Seq1
-							and  po3.Seq2 = po3s.Seq2
-							and  po3.Seq2_Count = po3s.Seq2_Count
-						)
+					select count(*) c
+					from (
+						select SpecColumnID, SpecValue
+						from #tmpPO_Supp_Detail_Spec po3s
+						where po3.ID = po3s.ID
+						and  po3.Seq1 = po3s.Seq1
+						and  po3.Seq2 = po3s.Seq2
+						and  po3.Seq2_Count = po3s.Seq2_Count
+                        union all
+						select SpecColumnID, SpecValue
+						from @tmpOrder_BOA_Expend_Spec
 					) tmp
+                    group by SpecColumnID, SpecValue
+                    having count(*) = 1
 				) getCount
 				Where po3.ID = @PoID
 					And po3.Seq1 = @Seq1_New
@@ -705,37 +653,6 @@ Begin
 					   And Seq1 = @Seq1_New
 					   And Seq2 = @Seq2
 					   And Seq2_Count = @Seq2_Count;
-					
-					--寫入Temp Table - PO_Supp_Detail_OrderList
-					--當不存在Order_BOA_Expend_OrderList時，將全數OrderList寫入#tmpPO_Supp_Detail_OrderList，最後會判斷刪除
-					--If not exists (select 1 from dbo.Order_BOA_Expend_OrderList Where Order_BOA_ExpendUkey in (select data from Production.dbo.SplitString(@Boa_ExpendUkeys, ',')))
-					--Begin
-					--	Insert Into #tmpPO_Supp_Detail_OrderList (ID, Seq1, Seq2, OrderID, Seq2_Count)
-					--	Select DISTINCT @PoID, @Seq1_New, @Seq2, ID, @Seq2_Count
-					--	From dbo.Orders
-					--	Where PoID = @PoID 
-					--	And Not Exists (Select 1 From #tmpPO_Supp_Detail_OrderList
-					--					Where ID = @PoID
-					--						And Seq1 = @Seq1_New
-					--						And Seq2 = @Seq2
-					--						And Seq2_Count = @Seq2_Count
-					--						And OrderID = Orders.ID
-					--					);
-					--End
-					--Else
-					--Begin
-					--	Insert Into #tmpPO_Supp_Detail_OrderList (ID, Seq1, Seq2, OrderID, Seq2_Count)
-					--	Select DISTINCT @PoID, @Seq1_New, @Seq2, OrderID, @Seq2_Count
-					--	From dbo.Order_BOA_Expend_OrderList
-					--	Where Order_BOA_ExpendUkey in (select data from Production.dbo.SplitString(@Boa_ExpendUkeys, ','))
-					--	And Not Exists (Select 1 From #tmpPO_Supp_Detail_OrderList
-					--					Where ID = @PoID
-					--						And Seq1 = @Seq1_New
-					--						And Seq2 = @Seq2
-					--						And Seq2_Count = @Seq2_Count
-					--						And OrderID = Order_BOA_Expend_OrderList.OrderID
-					--					);
-					--End
 				End;
 				Else
 				Begin
@@ -770,19 +687,6 @@ Begin
 					   --And (@IsIgnoreRemark = 1 Or (@IsIgnoreRemark = 0 And Remark = @ExpendRemark))
 					   And Keyword = @Keyword
 					   And Special = @Special;
-					/* -- 2017.09.28 mark by Ben
-					If @BomZipperInsert != ''
-					Begin
-						If @BomZipperInsert = 'Right'
-						Begin
-							Set @Spec = 'Right Insert(右插左拉)' + @Keyword
-						End;
-						If @BomZipperInsert = 'Left'
-						Begin
-							Set @Spec = 'Left Insert(左插右拉)' + @Keyword
-						End;
-					End;
-					*/
 					--------------------------------------
 					--先寫入Temp Table - PO_Supp,避免最大碼+1後跳號
 					--------------------------------------
@@ -820,42 +724,18 @@ Begin
 						 , @Seq2_Count
 						);
 					--------------------------------------
-					--寫入Temp Table - PO_Supp_Detail_OrderList
-					--If not exists (select 1 from dbo.Order_BOA_Expend_OrderList Where Order_BOA_ExpendUkey in (select data from Production.dbo.SplitString(@Boa_ExpendUkeys, ',')))
-					--Begin						
-					--	--當不存在Order_BOA_Expend_OrderList時，將全數OrderList寫入#tmpPO_Supp_Detail_OrderList，最後會判斷刪除
-					--	Insert Into #tmpPO_Supp_Detail_OrderList (ID, Seq1, Seq2, OrderID, Seq2_Count)
-					--	Select DISTINCT @PoID, @Seq1_New, @Seq2, ID, @Seq2_Count
-					--	From dbo.Orders
-					--	Where PoID = @PoID
-					--End
-					--Else
-					--Begin
-					--	Insert Into #tmpPO_Supp_Detail_OrderList
-					--	(ID, Seq1, Seq2, OrderID, Seq2_Count)
-					--	Select DISTINCT @PoID, @Seq1_New, @Seq2, OrderID, @Seq2_Count
-					--	From dbo.Order_BOA_Expend_OrderList
-					--	Where Order_BOA_ExpendUkey in (select data from Production.dbo.SplitString(@Boa_ExpendUkeys, ','));
-					--End
-					--------------------------------------
 					--寫入Temp Table - PO_Supp_Detail_Spec
 					Insert Into #tmpPO_Supp_Detail_Spec(ID, Seq1, Seq2, SpecColumnID, SpecValue, Seq2_Count)
 					Select @PoID, @Seq1_New, @Seq2, SpecColumnID, SpecValue, @Seq2_Count
 					From dbo.Order_BOA_Expend_Spec
 					Where Order_BOA_ExpendUkey in (select data from Production.dbo.SplitString(@Boa_ExpendUkeys, ','));
 					--------------------------------------
-					--寫入Temp Table - PO_Supp_Detail_Keyword
-					--Insert Into #tmpPO_Supp_Detail_Keyword(ID, Seq1, Seq2, KeywordField, KeywordValue, Seq2_Count)
-					--Select @PoID, @Seq1_New, @Seq2, KeywordField, KeywordValue, @Seq2_Count
-					--From dbo.Order_BOA_Expend_Keyword
-					--Where Order_BOA_ExpendUkey in (select data from Production.dbo.SplitString(@Boa_ExpendUkeys, ','));
-					--------------------------------------
 				End;
 			End;
 			Set @tmpOrder_BOA_ExpendRowID += 1;
 		End;
 		--------------------Loop End @tmpOrder_BOA_Expend------------- -------
-		--寫入Temp Table - PO_Supp
+		--�g�JTemp Table - PO_Supp
 		If @HavePo_Supp = 1
 		Begin
 			--------------------------------------
@@ -919,21 +799,7 @@ Begin
 		 Outer Apply (Select * From Production.dbo.GetUnitRound(@BrandID, @ProgramID, @Category, #tmpPO_Supp_Detail.POUnit)) as tmpUnitRound
 		 Where Exists (Select 1 From @Used_FabricType Where FabricType = #tmpPO_Supp_Detail.FabricType);
 	End;
-	--------------------------------------
-	--當OrderList數等於#tmpPO_Supp_Detail_OrderList數時刪除#tmpPO_Supp_Detail_OrderList
-	--delete tmpPo4
-	--from #tmpPO_Supp_Detail_OrderList tmpPo4
-	--outer apply (select count(*) c From dbo.Orders Where PoID = @PoID) orderlist
-	--outer apply (
-	--	select count(*) c
-	--	From #tmpPO_Supp_Detail_OrderList tmp
-	--	where tmp.ID = tmpPo4.ID
-	--	and tmp.Seq1 = tmpPo4.Seq1
-	--	and tmp.Seq2 = tmpPo4.Seq2
-	--	and tmp.Seq2_Count = tmpPo4.Seq2_Count
-	--) po4
-	--where po4.c = orderlist.c
-	--------------------------------------
+	--------------------------------------	--------------------------------------
 
 	--Select * From #tmpPO_Supp;
 	--Select * From #tmpPO_Supp_Detail;

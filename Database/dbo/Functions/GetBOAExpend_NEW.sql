@@ -366,52 +366,6 @@ begin
 	   ,IDX BIGINT
 	);
 
-
-	DECLARE @Order_SizeSpec TABLE (
-	ID varchar(13),
-	SizeItem varchar(3),
-	SizeCode varchar(8),
-	SizeUnit varchar(8),
-	SizeSpec varchar(15), 
-	Index IX_tmp_Order_SizeSpec NONCLUSTERED(ID, SizeItem, SizeCode)
-	)
-
-
-	DECLARE @Order_SizeSpec_OrderCombo TABLE (
-	ID varchar(13),
-	OrderComboID varchar(13),
-	SizeItem varchar(3),
-	SizeCode varchar(8),
-	SizeUnit varchar(8),
-	SizeSpec varchar(15), 
-	Index IX_tmp_Order_SizeSpec_OrderCombo NONCLUSTERED(ID, OrderComboID, SizeItem, SizeCode)
-	)
-
-	insert into @Order_SizeSpec
-	SELECT	Order_SizeSpec.ID,
-			Order_SizeSpec.SizeItem,
-			Order_SizeSpec.SizeCode,
-			Order_SizeItem.SizeUnit,
-			Order_SizeSpec.SizeSpec
-	FROM dbo.Order_SizeSpec
-	INNER JOIN dbo.Order_SizeItem	ON	Order_SizeSpec.ID = Order_SizeItem.ID and
-										Order_SizeSpec.SizeItem = Order_SizeItem.SizeItem
-	WHERE Order_SizeSpec.ID = @ID
-
-
-	insert into @Order_SizeSpec_OrderCombo
-	SELECT	Order_SizeSpec_OrderCombo.Id,
-			Order_SizeSpec_OrderCombo.OrderComboID,
-			Order_SizeSpec_OrderCombo.SizeItem,
-			Order_SizeSpec_OrderCombo.SizeCode,
-			Order_SizeItem.SizeUnit,
-			Order_SizeSpec_OrderCombo.SizeSpec
-	FROM dbo.Order_SizeSpec_OrderCombo
-	INNER JOIN dbo.Order_SizeItem ON Order_SizeSpec_OrderCombo.ID = Order_SizeItem.ID AND
-									 Order_SizeSpec_OrderCombo.SizeItem = Order_SizeItem.SizeItem
-	WHERE Order_SizeSpec_OrderCombo.ID = @ID
-
-
 	SET @BoaRowID = 1;
 	SELECT
 		@BoaRowID = MIN(RowID)
@@ -470,10 +424,10 @@ begin
 		set @CalSizeItem = IIF(@BomTypeCalculatePCS = 1, @BoaSizeItem_PCS, @SizeItem);
 
 		--因有可能取不到資料,需先清除
-		SET @tmpSizeUnit = ''
+        SET @tmpSizeUnit = null
 		--取得SizeUnit
 		SELECT
-			@tmpSizeUnit = IIF(@BoaBomTypeSize = 1 and @NoSizeUnit = 0, Order_SizeItem.SizeUnit, '')
+			@tmpSizeUnit = IIF(@BoaBomTypeSize = 1 and @NoSizeUnit = 0, Order_SizeItem.SizeUnit, null)
 		FROM dbo.Order_SizeItem
 		WHERE Order_SizeItem.ID = @ID
 		AND Order_SizeItem.SizeItem = @CalSizeItem;
@@ -493,7 +447,7 @@ begin
 		SELECT
 			tmpQtyBreakDown.ID
 		   , ColorID = IIF(@BoaBomTypeColor = 1 OR @IsExpendDetail = 1, ISNULL(Order_ColorCombo.ColorID, ''), '')
-		   , Article = IIF(@BoaBomTypeColor = 1 OR @IsExpendDetail = 1, tmpQtyBreakDown.Article, '')
+		   , Article = IIF(@BoaBomTypeColor = 1 OR @IsExpendDetail = 1 OR (@IsExpendArticle = 1 and ExpendArticle = 1), tmpQtyBreakDown.Article, '')
 		   , BomZipperInsert = IIF(@BoaBomTypeZipper = 1 OR @IsExpendDetail = 1, tmpQtyBreakDown.ZipperInsert, '')
 		   , BomCustPONo = IIF(@BoaBomTypePo = 1 OR @IsExpendDetail = 1, tmpQtyBreakDown.CustPONo, '')
 		   , SizeSeq = IIF(@BoaBomTypeSize = 1 OR @IsExpendDetail = 1, tmpQtyBreakDown.SizeSeq, '')
@@ -501,7 +455,7 @@ begin
 		   , SizeSpec = IIF(@BoaBomTypeSize = 1 OR @IsExpendDetail = 1,
 							IIF(ISNULL(tmpExist_SizeSpec_OrderCombo.IsExist, 0) = 1, ISNULL(tmpOrder_SizeSpec_OrderCombo.SizeSpec, ''), ISNULL(tmpOrder_SizeSpec.SizeSpec, ''))
 							, '')
-		   , SizeUnit = @tmpSizeUnit
+           , SizeUnit = isnull(@tmpSizeUnit, '')
 		   , OrderQty = tmpQtyBreakDown.Qty
 		   , UsageQty = (Qty * IIF(ISNULL(@CalSizeItem, '') = '', 1,
 									ISNULL(IIF(ISNULL(tmpExist_SizeSpec_OrderCombo.IsExist, 0) = 1, tmpOrder_SizeSpec_OrderCombo.SizeSpec_Cal, tmpOrder_SizeSpec.SizeSpec_Cal),
@@ -510,54 +464,72 @@ begin
 		   , Keyword = isnull(ky.Keyword, '')
 		   , Keyword_Original = @Keyword
 		   , Keyword_xml = isnull(ky.Keyword_xml, '')
-		   , Special = IIF(@IsExpendArticle = 1 and ExpendArticle = 1, dbo.GetKeyword_New(tmpQtyBreakDown.ID, @BoaUkey, '{Article}', tmpQtyBreakDown.Article, '', '', 1), '')
-
+		   , Special = ''
+           
 		   /* BomTypeValue Start */
 		   --與ColorID相同
-		   , BomTypeColorID = IIF(@BoaBomTypeColor = 1 OR @IsExpendDetail = 1, ISNULL(Order_ColorCombo.ColorID, ''), '')
+           , BomTypeColorID = IIF(@BoaBomTypeColor = 1, Order_ColorCombo.ColorID, null)
 		   --與SizeSpec相同
-		   , BomTypeSize = IIF(@BoaBomTypeSize = 1 OR @IsExpendDetail = 1,
-							IIF(ISNULL(tmpExist_SizeSpec_OrderCombo.IsExist, 0) = 1, ISNULL(tmpOrder_SizeSpec_OrderCombo.SizeSpec, ''), ISNULL(tmpOrder_SizeSpec.SizeSpec, ''))
-							, '')
-		   , BomTypeSizeUnit = IIF(@BoaBomTypeSize = 1 OR @IsExpendDetail = 1, @tmpSizeUnit, '')
+           , BomTypeSize = IIF(@BoaBomTypeSize = 1,
+                            IIF(ISNULL(tmpExist_SizeSpec_OrderCombo.IsExist, 0) = 1, tmpOrder_SizeSpec_OrderCombo.SizeSpec, tmpOrder_SizeSpec.SizeSpec)
+							, null)
+           , BomTypeSizeUnit = IIF(@BoaBomTypeSize = 1 and @NoSizeUnit = 0, @tmpSizeUnit, null)
 		   --與BomZipperInsert相同
-		   , BomTypeZipperInsert = IIF(@BoaBomTypeZipper = 1 OR @IsExpendDetail = 1, tmpQtyBreakDown.ZipperInsert, '')
+           , BomTypeZipperInsert = IIF(@BoaBomTypeZipper = 1, tmpQtyBreakDown.ZipperInsert, null)
 		    --與Article相同
-		   , BomTypeArticle = IIF(@BoaBomTypeArticle = 1 OR @IsExpendDetail = 1, tmpQtyBreakDown.Article, '')
-		   , BomTypeCOO = IIF((@BoaBomTypeCOO = 1 OR @IsExpendDetail = 1) and @IsForPMS = 0, dbo.GetBomTypeValue(@BoaUkey, 'COO', ky.Location, tmpQtyBreakDown.SizeCode), '')
-		   , BomTypeGender = IIF((@BoaBomTypeGender = 1 OR @IsExpendDetail = 1) and @IsForPMS = 0, dbo.GetBomTypeValue(@BoaUkey, 'Gender', ky.Location, tmpQtyBreakDown.SizeCode), '')
-		   , BomTypeCustomerSize = IIF((@BoaBomTypeCustomerSize = 1 OR @IsExpendDetail = 1) and @IsForPMS = 0, dbo.GetBomTypeValue(@BoaUkey, 'CustomerSize', ky.Location, tmpQtyBreakDown.SizeCode), '')
-		   , BomTypeDecLabelSize = IIF((@BoaBomTypeDecLabelSize = 1 OR @IsExpendDetail = 1) and @IsForPMS = 0, dbo.GetBomTypeValue(@BoaUkey, 'DecLabelSize', ky.Location, tmpQtyBreakDown.SizeCode), '')
-		   , BomTypeBrandFactoryCode = IIF((@BoaBomTypeBrandFactoryCode = 1 OR @IsExpendDetail = 1) and @IsForPMS = 0, dbo.GetBomTypeValue(@BoaUkey, 'BrandFactoryCode', ky.Location, tmpQtyBreakDown.SizeCode), '')
-		   , BomTypeStyle = IIF((@BoaBomTypeStyle = 1 OR @IsExpendDetail = 1) and @IsForPMS = 0, dbo.GetBomTypeValue(@BoaUkey, 'Style', ky.Location, tmpQtyBreakDown.SizeCode), '')
-		   , BomTypeStyleLocation = IIF((@BoaBomTypeStyleLocation = 1 OR @IsExpendDetail = 1) and @IsForPMS = 0, dbo.GetBomTypeValue(@BoaUkey, 'StyleLocation', ky.Location, tmpQtyBreakDown.SizeCode), '')
-		   , BomTypeSeason = IIF((@BoaBomTypeSeason = 1 OR @IsExpendDetail = 1) and @IsForPMS = 0, dbo.GetBomTypeValue(@BoaUkey, 'Season', ky.Location, tmpQtyBreakDown.SizeCode), '')
-		   , BomTypeCareCode = IIF((@BoaBomTypeCareCode = 1 OR @IsExpendDetail = 1) and @IsForPMS = 0, dbo.GetBomTypeValue(@BoaUkey, 'CareCode', ky.Location, tmpQtyBreakDown.SizeCode), '')
+           , BomTypeArticle = IIF(@BoaBomTypeArticle = 1, tmpQtyBreakDown.Article, null)
+           , BomTypeCOO = IIF(@BoaBomTypeCOO = 1, dbo.GetBomTypeValue(@BoaUkey, 'COO', ky.Location, tmpQtyBreakDown.SizeCode), null)
+           , BomTypeGender = IIF(@BoaBomTypeGender = 1, dbo.GetBomTypeValue(@BoaUkey, 'Gender', ky.Location, tmpQtyBreakDown.SizeCode), null)
+           , BomTypeCustomerSize = IIF(@BoaBomTypeCustomerSize = 1, dbo.GetBomTypeValue(@BoaUkey, 'CustomerSize', ky.Location, tmpQtyBreakDown.SizeCode), null)
+           , BomTypeDecLabelSize = IIF(@BoaBomTypeDecLabelSize = 1, dbo.GetBomTypeValue(@BoaUkey, 'DecLabelSize', ky.Location, tmpQtyBreakDown.SizeCode), null)
+           , BomTypeBrandFactoryCode = IIF(@BoaBomTypeBrandFactoryCode = 1, dbo.GetBomTypeValue(@BoaUkey, 'BrandFactoryCode', ky.Location, tmpQtyBreakDown.SizeCode), null)
+           , BomTypeStyle = IIF(@BoaBomTypeStyle = 1, dbo.GetBomTypeValue(@BoaUkey, 'Style', ky.Location, tmpQtyBreakDown.SizeCode), null)
+           , BomTypeStyleLocation = IIF(@BoaBomTypeStyleLocation = 1, dbo.GetBomTypeValue(@BoaUkey, 'StyleLocation', ky.Location, tmpQtyBreakDown.SizeCode), null)
+           , BomTypeSeason = IIF(@BoaBomTypeSeason = 1, dbo.GetBomTypeValue(@BoaUkey, 'Season', ky.Location, tmpQtyBreakDown.SizeCode), null)
+           , BomTypeCareCode = IIF(@BoaBomTypeCareCode = 1, dbo.GetBomTypeValue(@BoaUkey, 'CareCode', ky.Location, tmpQtyBreakDown.SizeCode), null)
 		   --與BomCustPONo相同
-		   , BomTypeCustomerPO = IIF((@BoaBomTypePo = 1 OR @IsExpendDetail = 1) and @IsForPMS = 0, tmpQtyBreakDown.CustPONo, '')
+           , BomTypeCustomerPO = IIF(@BoaBomTypePo = 1, tmpQtyBreakDown.CustPONo, null)
 		   /* BomTypeValue End */
-
+           
 		FROM @tmpOrder_Qty AS tmpQtyBreakDown
-		left join @Order_SizeSpec os on	os.ID = tmpQtyBreakDown.POID
-										AND os.SizeItem = @CalSizeItem
-										AND os.SizeCode = tmpQtyBreakDown.SizeCode
-		left join @Order_SizeSpec_OrderCombo osc on	osc.ID = tmpQtyBreakDown.POID
-													AND osc.OrderComboID = tmpQtyBreakDown.OrderComboID
-													AND osc.SizeItem = @CalSizeItem
-													AND osc.SizeCode = tmpQtyBreakDown.SizeCode
 		LEFT JOIN dbo.Order_ColorCombo
 			ON Order_ColorCombo.ID = @ID
 				AND Order_ColorCombo.Article = tmpQtyBreakDown.Article
 				AND Order_ColorCombo.FabricPanelCode = @BoaFabricPanelCode
 		outer apply (SELECT ExpendArticle = iif((@MtlTypeID = 'STICKER' AND @Category = 'B') OR @Category = 'M', 1, 0)) expArt
+		/*
+		Left Join (Select ID, SizeItem, SizeCode, SizeSpec
+					  , IIF(@BomTypeCalculate = 1, IIF(@UsageUnit = 'CM' Or @UsageUnit = 'INCH', Production.dbo.GetDigitalValue(SizeSpec), 0), 1) as SizeSpec_Cal
+				   From dbo.Order_SizeSpec ) tmpOrder_SizeSpec
+		On tmpOrder_SizeSpec.ID = tmpQtyBreakDown.OrderComboID
+		   And tmpOrder_SizeSpec.SizeItem = @SizeItem
+		   And tmpOrder_SizeSpec.SizeCode = tmpQtyBreakDown.SizeCode
+		*/
 		OUTER APPLY (
-			SELECT os.SizeSpec
-			   , [SizeSpec_Cal] = IIF(@BomTypeCalculate = 1, IIF(@UsageUnit = 'CM' OR @UsageUnit = 'INCH',
-								Production.dbo.GetUnitQty(os.SizeUnit, @UsageUnit, Production.dbo.GetDigitalValue_New(os.SizeSpec)), 0),
-								IIF(@BomTypeCalculateWeight = 1 AND @UsageUnit = 'G',
-								Production.dbo.GetUnitQty(os.SizeUnit, @UsageUnit, Production.dbo.GetDigitalValue_New(os.SizeSpec)),
-								IIF(@BomTypeCalculatePCS = 1,
-								Production.dbo.GetUnitQty(@UsageUnit, @UsageUnit, Production.dbo.GetDigitalValue_New(os.SizeSpec)), 1))) 
+			SELECT ID
+			   , SizeItem
+			   , SizeCode
+			   , SizeSpec
+			   , getCal.SizeSpec_Cal
+			FROM dbo.Order_SizeSpec
+			OUTER APPLY (
+				SELECT IIF(@BomTypeCalculate = 1, IIF(@UsageUnit = 'CM' OR @UsageUnit = 'INCH',
+				Production.dbo.GetUnitQty(Order_SizeItem.SizeUnit, @UsageUnit, Production.dbo.GetDigitalValue(tmpSS.SizeSpec)), 0),
+				IIF(@BomTypeCalculateWeight = 1 AND @UsageUnit = 'G',
+				Production.dbo.GetUnitQty(Order_SizeItem.SizeUnit, @UsageUnit, Production.dbo.GetDigitalValue(tmpSS.SizeSpec)),
+				IIF(@BomTypeCalculatePCS = 1,
+				Production.dbo.GetUnitQty(@UsageUnit, @UsageUnit, Production.dbo.GetDigitalValue(tmpSS.SizeSpec)), 1))) AS SizeSpec_Cal
+				FROM dbo.Order_SizeSpec tmpSS			
+				INNER JOIN dbo.Order_SizeItem
+					ON tmpSS.ID = Order_SizeItem.ID
+					AND tmpSS.SizeItem = Order_SizeItem.SizeItem
+				WHERE tmpSS.ID = tmpQtyBreakDown.POID
+				AND tmpSS.SizeItem = @CalSizeItem
+				AND tmpSS.SizeCode = tmpQtyBreakDown.SizeCode
+			) getCal
+			WHERE Order_SizeSpec.ID = tmpQtyBreakDown.POID
+			AND Order_SizeSpec.SizeItem = @CalSizeItem
+			AND Order_SizeSpec.SizeCode = tmpQtyBreakDown.SizeCode
 		) AS tmpOrder_SizeSpec
 		-----------------------------------------------------------------------------------------------------
 		--2017/09/14 add by Ben, 當by OrderCombo設定SizeSpec時，一律抓取該OrderCombo的設定進行Expand
@@ -571,27 +543,45 @@ begin
 				, 1, 0) AS IsExist) AS tmpExist_SizeSpec_OrderCombo
 		-----------------------------------------------------------------------------------------------------
 		OUTER APPLY (
-			SELECT osc.SizeSpec
-			   , [SizeSpec_Cal] = IIF(@BomTypeCalculate = 1, IIF(@UsageUnit = 'CM' OR @UsageUnit = 'INCH',
-							Production.dbo.GetUnitQty(osc.SizeUnit, @UsageUnit, Production.dbo.GetDigitalValue_New(osc.SizeSpec)), 0),
-							IIF(@BomTypeCalculateWeight = 1 AND @UsageUnit = 'G',
-							Production.dbo.GetUnitQty(osc.SizeUnit, @UsageUnit, Production.dbo.GetDigitalValue_New(osc.SizeSpec)),
-							IIF(@BomTypeCalculatePCS = 1,
-							Production.dbo.GetUnitQty(@UsageUnit, @UsageUnit, Production.dbo.GetDigitalValue_New(osc.SizeSpec)), 1)))
-							) AS tmpOrder_SizeSpec_OrderCombo
+			SELECT ID
+			   , SizeItem
+			   , SizeCode
+			   , SizeSpec
+			   , getCal.SizeSpec_Cal
+			FROM dbo.Order_SizeSpec_OrderCombo
+			OUTER APPLY (
+				SELECT IIF(@BomTypeCalculate = 1, IIF(@UsageUnit = 'CM' OR @UsageUnit = 'INCH',
+				Production.dbo.GetUnitQty(Order_SizeItem.SizeUnit, @UsageUnit, Production.dbo.GetDigitalValue(tmpSS.SizeSpec)), 0),
+				IIF(@BomTypeCalculateWeight = 1 AND @UsageUnit = 'G',
+				Production.dbo.GetUnitQty(Order_SizeItem.SizeUnit, @UsageUnit, Production.dbo.GetDigitalValue(tmpSS.SizeSpec)),
+				IIF(@BomTypeCalculatePCS = 1,
+				Production.dbo.GetUnitQty(@UsageUnit, @UsageUnit, Production.dbo.GetDigitalValue(tmpSS.SizeSpec)), 1))) AS SizeSpec_Cal
+				FROM dbo.Order_SizeSpec_OrderCombo tmpSS
+				INNER JOIN dbo.Order_SizeItem
+					ON tmpSS.ID = Order_SizeItem.ID
+					AND tmpSS.SizeItem = Order_SizeItem.SizeItem
+				WHERE tmpSS.ID = tmpQtyBreakDown.POID
+				AND tmpSS.OrderComboID = tmpQtyBreakDown.OrderComboID
+				AND tmpSS.SizeItem = @CalSizeItem
+				AND tmpSS.SizeCode = tmpQtyBreakDown.SizeCode
+			) getCal
+			WHERE Order_SizeSpec_OrderCombo.ID = tmpQtyBreakDown.POID
+			AND Order_SizeSpec_OrderCombo.OrderComboID = tmpQtyBreakDown.OrderComboID
+			AND Order_SizeSpec_OrderCombo.SizeItem = @CalSizeItem
+			AND Order_SizeSpec_OrderCombo.SizeCode = tmpQtyBreakDown.SizeCode) AS tmpOrder_SizeSpec_OrderCombo
 		OUTER APPLY (SELECT TOP 1
 				SCIRefNo
 			FROM dbo.Order_BOA_CustCD
 			WHERE Order_BOA_CustCD.Order_BOAUkey = @BoaUkey
 			AND CustCDID = tmpQtyBreakDown.CustCDID) AS tmpReplaceSciRefNo
 		OUTER APPLY (
-			SELECT 
-			Keyword = iif(@IsForPMS = 1, '', dbo.GetKeyword_New(tmpQtyBreakDown.ID, @BoaUkey, @Keyword, tmpQtyBreakDown.Article, tmpQtyBreakDown.SizeCode, isnull(ol.Location, sl.Location), 1))
-			, Keyword_xml = iif(@IsForPMS = 1, '', dbo.GetKeyword_New(tmpQtyBreakDown.ID, @BoaUkey, @Keyword, tmpQtyBreakDown.Article, tmpQtyBreakDown.SizeCode, isnull(ol.Location, sl.Location), 2))
-			, Location = iif(@Keyword like '%{Location}%', isnull(ol.Location, sl.Location), '')
+			SELECT DISTINCT Keyword = dbo.GetKeyword_New(tmpQtyBreakDown.ID, @BoaUkey, @Keyword, tmpQtyBreakDown.Article, tmpQtyBreakDown.SizeCode, sl.Location, 1)
+			, Keyword_xml = dbo.GetKeyword_New(tmpQtyBreakDown.ID, @BoaUkey, @Keyword, tmpQtyBreakDown.Article, tmpQtyBreakDown.SizeCode, sl.Location, 2)
+			, Location = iif(@Keyword like '%{Location}%', sl.Location, '')
 			FROM Production.dbo.Style_Location sl
-			left join dbo.Order_BOA_Location ol on ol.Order_BOAUkey = @BoaUkey and sl.Location = ol.Location
 			WHERE sl.StyleUkey = @StyleUkey
+			and (not exists(select 1 from dbo.Order_BOA_Location ol with (nolock) where ol.Order_BOAUkey = @BoaUkey)
+				or exists(select 1 from dbo.Order_BOA_Location ol with (nolock) where ol.Order_BOAUkey = @BoaUkey and ol.Location = sl.Location))
 		) ky
 		WHERE
 		--排除For Article
@@ -668,9 +658,8 @@ begin
 				AND ISNULL(Order_ColorCombo.ColorID, '') <> ''))
 		AND ((@BoaBomTypeSize = 0)
 			OR ((@BoaBomTypeSize = 1 OR @IsExpendDetail = 1)
-				AND IIF(tmpExist_SizeSpec_OrderCombo.IsExist = 1, osc.SizeSpec, os.SizeSpec) != ''))
-		option (recompile)
-
+				AND IIF(ISNULL(tmpExist_SizeSpec_OrderCombo.IsExist, 0) = 1, ISNULL(tmpOrder_SizeSpec_OrderCombo.SizeSpec, ''), ISNULL(tmpOrder_SizeSpec.SizeSpec, '')) != ''))
+                
 		IF @BomTypeMatching = 1
 		BEGIN
 			DELETE FROM @tmpA
@@ -710,9 +699,9 @@ begin
 			FROM @tmpTbl tmpTbl
 			OUTER APPLY (SELECT * FROM @tmpA tmpA WHERE tmpTbl.RowID = tmpA.RowID) tmp
 		END
-
+        
 		UPDATE @tmpTbl SET SizeCode = IIF(@BoaBomTypeSize = 1 OR @IsExpendDetail = 1, SizeCode, '')
-
+        
 		INSERT INTO @Sum_Qty (ColorID, Article, BomZipperInsert, BomCustPONo
 		, SizeSeq, SizeCode, SizeSpec, SizeUnit, Keyword, Keyword_Original, Keyword_xml, Special
 		, OrderQty, UsageQty, OrderList		
@@ -762,7 +751,7 @@ begin
 
 		ORDER BY BomZipperInsert, BomCustPONo
 		, Article, ColorID, SizeSeq, SizeCode, SizeSpec;
-
+        
 		INSERT INTO @Tmp_BoaExpend (ID, Order_BOAUkey, RefNo, SCIRefNo, Article, ColorID, SuppColor
 		, SizeSeq, SizeCode, SizeSpec, SizeUnit, Remark, OrderQty
         --, Price
@@ -789,7 +778,7 @@ begin
 		OUTER APPLY (
 			SELECT Value = Replace(
 				STUFF((
-					select ',' + CustPONo
+					select distinct ',' + CustPONo
 					from Orders
 					where ID in (select Data from dbo.SplitString(Sum_Qty.OrderList, ',') where Data != '')
 					FOR XML PATH ('')), 1, 1, '')
