@@ -13,10 +13,12 @@
     [FRI]        BIT          CONSTRAINT [DF_FactoryExpress_SendingSchedule_FRI] DEFAULT ((0)) NOT NULL,
     [SAT]        BIT          CONSTRAINT [DF_FactoryExpress_SendingSchedule_SAT] DEFAULT ((0)) NOT NULL,
     [Junk]       BIT          CONSTRAINT [DF_FactoryExpress_SendingSchedule_Junk] DEFAULT ((0)) NOT NULL,
-    [AddName]    VARCHAR (10) CONSTRAINT [DF_FactoryExpress_SendingSchedule_AddName] DEFAULT ('') NULL,
+    [AddName]    VARCHAR (10) CONSTRAINT [DF_FactoryExpress_SendingSchedule_AddName] DEFAULT ('') NOT NULL,
     [AddDate]    DATETIME     NULL,
-    [EditName]   VARCHAR (10) CONSTRAINT [DF_FactoryExpress_SendingSchedule_EditName] DEFAULT ('') NULL,
+    [EditName]   VARCHAR (10) CONSTRAINT [DF_FactoryExpress_SendingSchedule_EditName] DEFAULT ('') NOT NULL,
     [EditDate]   DATETIME     NULL,
     CONSTRAINT [PK_FactoryExpress_SendingSchedule] PRIMARY KEY CLUSTERED ([RegionCode] ASC, [ToID] ASC)
 );
+
+
 

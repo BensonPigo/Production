@@ -72,41 +72,41 @@ and (a.EditDate between @DateStart and @DateEnd
 ---------------------------UPDATE 主TABLE跟來源TABLE 為一樣(主TABLE多的話 記起來 ~來源TABLE多的話不理會)
 UPDATE a
 SET 
-	a.Responsible= b.Responsible,
-	a.Department= b.Department,
-	a.OrderID= b.OrderID,
-	a.Status= b.Status,
-	a.StatusUpdate= b.StatusUpdate,
-	a.Handle= b.Handle,
-	a.SMR= b.SMR,
-	a.ReceiveHandle= b.ReceiveHandle,
-	a.ReceiveDate= b.ReceiveDate,
-	a.CFMDate= b.CFMDate,
-	a.CFMHandle= b.CFMHandle,
-	a.DutyHandle= b.DutyHandle,
-	a.DutySMR= b.DutySMR,
-	a.DutyManager= b.DutyManager,
-	a.unpayable= b.unpayable,
-	a.Deadline= b.Deadline,
-	a.DutyStatus= b.DutyStatus,
-	a.DutyStatusUpdate= b.DutyStatusUpdate,
-	a.RMtlAmt= b.RMtlAmt,
-	a.EstFreight= b.EstFreight,
-	a.ActFreight= b.EstFreight,
-	a.OtherAmt= b.OtherAmt,
-	a.RMtlAmtUSD= ROUND(b.RMtlAmt * dbo.getRate('FX','TWD','USD',GetDate()),2),
-	a.EstFreightUSD= ROUND(b.EstFreight * dbo.getRate('FX','TWD','USD',GetDate()),2),
-	a.ActFreightUSD= ROUND(b.EstFreight * dbo.getRate('FX','TWD','USD',GetDate()),2),
-	a.OtherAmtUSD= ROUND(b.OtherAmt * dbo.getRate('FX','TWD','USD',GetDate()),2),
-	a.Exchange= b.Exchange,
-	a.IrregularPOCostID= b.IrregularPOCostID,
-	a.Description= b.Description,
-	a.Suggestion= b.Suggestion,
-	a.Remark= b.Remark,
-	a.AddName= b.AddName,
-	a.AddDate= b.AddDate,
-	a.EditName= b.EditName,
-	a.EditDate= b.EditDate,
+	a.Responsible= isnull( b.Responsible,           ''),
+	a.Department= isnull( b.Department,             ''),
+	a.OrderID= isnull( b.OrderID,                   ''),
+	a.Status= isnull( b.Status,                     ''),
+	a.StatusUpdate=  b.StatusUpdate,
+	a.Handle= isnull( b.Handle,                     ''),
+	a.SMR= isnull( b.SMR,                           ''),
+	a.ReceiveHandle= isnull( b.ReceiveHandle,       ''),
+	a.ReceiveDate=  b.ReceiveDate,
+	a.CFMDate=  b.CFMDate,
+	a.CFMHandle= isnull( b.CFMHandle,               ''),
+	a.DutyHandle= isnull( b.DutyHandle,             ''),
+	a.DutySMR= isnull( b.DutySMR,                   ''),
+	a.DutyManager= isnull( b.DutyManager,           ''),
+	a.unpayable= isnull( b.unpayable,               0),
+	a.Deadline=  b.Deadline,
+	a.DutyStatus= isnull( b.DutyStatus,             ''),
+	a.DutyStatusUpdate=  b.DutyStatusUpdate, 
+	a.RMtlAmt= isnull( b.RMtlAmt,                   0),
+	a.EstFreight= isnull( b.EstFreight,             0),
+	a.ActFreight= isnull( b.EstFreight,             0),
+	a.OtherAmt= isnull( b.OtherAmt,                 0),
+	a.RMtlAmtUSD= isnull( ROUND(b.RMtlAmt * dbo.getRate('FX','TWD','USD',GetDate()),2),       0),
+	a.EstFreightUSD= isnull( ROUND(b.EstFreight * dbo.getRate('FX','TWD','USD',GetDate()),2), 0),
+	a.ActFreightUSD= isnull( ROUND(b.EstFreight * dbo.getRate('FX','TWD','USD',GetDate()),2), 0),
+	a.OtherAmtUSD= isnull( ROUND(b.OtherAmt * dbo.getRate('FX','TWD','USD',GetDate()),2),     0),
+	a.Exchange= isnull( b.Exchange,                   0),
+	a.IrregularPOCostID= isnull( b.IrregularPOCostID, ''),
+	a.Description= isnull( b.Description,             ''),
+	a.Suggestion= isnull( b.Suggestion,               ''),
+	a.Remark= isnull( b.Remark,                       ''),
+	a.AddName= isnull( b.AddName,                     ''),
+	a.AddDate=  b.AddDate,
+	a.EditName= isnull( b.EditName,                   ''),
+	a.EditDate=  b.EditDate,
 	a.BulkFTY = isnull(b.BulkFTY, '')
 from Production.dbo.ICR as a 
 inner join #Trade_ICR as b ON a.id=b.id
@@ -154,41 +154,41 @@ INSERT INTO Production.dbo.ICR
 	  ,[BulkFTY]
 )
 SELECT 
-	  [Id]
-      ,[Responsible]
-      ,[Department]
-      ,[OrderID]
-      ,[Status]
+	   isnull([Id]                                                          ,'')
+      ,isnull([Responsible]                                                 ,'')
+      ,isnull([Department]                                                  ,'')
+      ,isnull([OrderID]                                                     ,'')
+      ,isnull([Status]                                                      ,'')
       ,[StatusUpdate]
-      ,[Handle]
-      ,[SMR]
-      ,[ReceiveHandle]
+      ,isnull([Handle]                                                      ,'')
+      ,isnull([SMR]                                                         ,'')
+      ,isnull([ReceiveHandle]                                               ,'')
       ,[ReceiveDate]
       ,[CFMDate]
-      ,[CFMHandle]
-      ,[DutyHandle]
-      ,[DutySMR]
-      ,[DutyManager]
-      ,[unpayable]
+      ,isnull([CFMHandle]                                                   ,'')
+      ,isnull([DutyHandle]                                                  ,'')
+      ,isnull([DutySMR]                                                     ,'')
+      ,isnull([DutyManager]                                                 ,'')
+      ,isnull([unpayable]                                                   ,0)
       ,[Deadline]
-      ,[DutyStatus]
+      ,isnull([DutyStatus]                                                  ,'')
       ,[DutyStatusUpdate]
-      ,[RMtlAmt]
-      ,[EstFreight]
-      ,[EstFreight]
-      ,[OtherAmt]
-      ,ROUND(RMtlAmt * dbo.getRate('FX','TWD','USD',GetDate()),2)
-	  ,ROUND(EstFreight * dbo.getRate('FX','TWD','USD',GetDate()),2)
-	  ,ROUND(EstFreight * dbo.getRate('FX','TWD','USD',GetDate()),2)
-	  ,ROUND(OtherAmt * dbo.getRate('FX','TWD','USD',GetDate()),2)
+      ,isnull([RMtlAmt]                                                     ,0)
+      ,isnull([EstFreight]                                                  ,0)
+      ,isnull([EstFreight]                                                  ,0)
+      ,isnull([OtherAmt]                                                    ,0)
+      ,isnull(ROUND(RMtlAmt * dbo.getRate('FX','TWD','USD',GetDate()),2)    ,0)
+	  ,isnull(ROUND(EstFreight * dbo.getRate('FX','TWD','USD',GetDate()),2) ,0)
+	  ,isnull(ROUND(EstFreight * dbo.getRate('FX','TWD','USD',GetDate()),2) ,0)
+	  ,isnull(ROUND(OtherAmt * dbo.getRate('FX','TWD','USD',GetDate()),2)   ,0)
       ,[Exchange]
-      ,[IrregularPOCostID]
-      ,[Description]
-      ,[Suggestion]
-      ,[Remark]
-      ,[AddName]
+      ,isnull([IrregularPOCostID]                                           ,'')
+      ,isnull([Description]                                                 ,'')
+      ,isnull([Suggestion]                                                  ,'')
+      ,isnull([Remark]                                                      ,'')
+      ,isnull([AddName]                                                     ,'')
       ,[AddDate]
-      ,[EditName]
+      ,isnull([EditName]                                                    ,'')
       ,[EditDate]
 	  ,isnull([BulkFTY], '')
 from #Trade_ICR as b WITH (NOLOCK)
@@ -211,17 +211,17 @@ and exists(
 ---------------------------UPDATE 主TABLE跟來源TABLE 為一樣
 UPDATE a
 SET 
-	a.ID= b.ID,
-	a.MtltypeID= b.MtltypeID,
-	a.Seq1= b.Seq1,
-	a.Seq2= b.Seq2,
-	a.ICRQty= b.ICRQty,
-	a.ICRFoc= b.ICRFoc,
-	a.Price= b.Price,
-	a.PriceUSD= ROUND(b.Price * dbo.getRate('FX','TWD','USD',GetDate()),2),
-	a.AddName= b.AddName,
-	a.AddDate= b.AddDate,
-	a.EditName= b.EditName,
+	a.ID= isnull( b.ID,                                                             ''),
+	a.MtltypeID= isnull( b.MtltypeID,                                               ''),
+	a.Seq1= isnull( b.Seq1,                                                         ''),
+	a.Seq2= isnull( b.Seq2,                                                         ''),
+	a.ICRQty= isnull( b.ICRQty,                                                     0),
+	a.ICRFoc= isnull( b.ICRFoc,                                                     0),
+	a.Price= isnull( b.Price,                                                       0),
+	a.PriceUSD= isnull( ROUND(b.Price * dbo.getRate('FX','TWD','USD',GetDate()),2), 0),
+	a.AddName= isnull( b.AddName,                                                   ''),
+	a.AddDate=  b.AddDate,
+	a.EditName= isnull( b.EditName,                                                 ''),
 	a.EditDate= b.EditDate
 from Production.dbo.ICR_Detail as a 
 inner join #Trade_ICR_Detail as b ON a.id=b.id
@@ -244,17 +244,17 @@ INSERT INTO Production.dbo.ICR_Detail
 	,EditDate
 )
 SELECT 
-	 ID
-	,MtltypeID
-	,Seq1
-	,Seq2
-	,ICRQty
-	,ICRFoc
-	,Price
-	,ROUND(Price * dbo.getRate('FX','TWD','USD',GetDate()),2)
-	,AddName
+	 isnull(ID                                                      , '')
+	,isnull(MtltypeID                                               , '')
+	,isnull(Seq1                                                    , '')
+	,isnull(Seq2                                                    , '')
+	,isnull(ICRQty                                                  , 0)
+	,isnull(ICRFoc                                                  , 0)
+	,isnull(Price                                                   , 0)
+	,isnull(ROUND(Price * dbo.getRate('FX','TWD','USD',GetDate()),2), 0)
+	,isnull(AddName                                                 , '')
 	,AddDate
-	,EditName
+	,isnull(EditName                                                , '')
 	,EditDate
 from #Trade_ICR_Detail as b WITH (NOLOCK)
 where not exists(select id from Production.dbo.ICR_Detail as a WITH (NOLOCK) where a.id = b.id 
@@ -281,8 +281,8 @@ INSERT INTO Production.dbo.ICR_ReplacementReport
 	,ReplacementNo
 )
 SELECT 
-	 ID
-	,ReplacementNo
+	 isnull(ID           , '')
+	,isnull(ReplacementNo, '')
 from #Trade_ICR_ReplacementReport as b WITH (NOLOCK)
 where not exists(
 	select id 

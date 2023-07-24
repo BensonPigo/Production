@@ -1,21 +1,20 @@
-﻿		CREATE TABLE [dbo].[Style_ThreadColorCombo_History_Version](
-			[Ukey] [bigint] IDENTITY(1,1) NOT NULL,
-			[StyleUkey] [bigint] NULL,
-			[Version] [varchar](5) NULL,
-			[UseRatioRule] [varchar](1) NULL,
-			[ThickFabricBulk] [bit] NULL,
-			[FarmOutQuilting] [bit] NULL,
-			[LockHandle] [varchar](10) NULL,
-			[LockDate] [datetime] NULL,
-			[Category] [varchar](1) NULL,
-			[TPDate] [date] NULL,
-			[IETMSID_Thread] [varchar](10) NULL,
-			[IETMSVersion_Thread] [varchar](3) NULL,
-			[AddName] [varchar](10) NULL,
-			[AddDate] [datetime] NULL,
-            [VersionCOO] VARCHAR (2) CONSTRAINT [DF_Style_ThreadColorCombo_History_Version_VersionCOO] DEFAULT ('') NOT NULL,
-		 CONSTRAINT [PK_Style_ThreadColorCombo_History_Version] PRIMARY KEY CLUSTERED 
-		(
-			[Ukey] ASC
-		)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-		) ON [PRIMARY]
+﻿		CREATE TABLE [dbo].[Style_ThreadColorCombo_History_Version] (
+    [Ukey]                BIGINT       IDENTITY (1, 1) NOT NULL,
+    [StyleUkey]           BIGINT       CONSTRAINT [DF_Style_ThreadColorCombo_History_Version_StyleUkey] DEFAULT ((0)) NOT NULL,
+    [Version]             VARCHAR (5)  CONSTRAINT [DF_Style_ThreadColorCombo_History_Version_Version] DEFAULT ('') NOT NULL,
+    [UseRatioRule]        VARCHAR (1)  CONSTRAINT [DF_Style_ThreadColorCombo_History_Version_UseRatioRule] DEFAULT ('') NOT NULL,
+    [ThickFabricBulk]     BIT          CONSTRAINT [DF_Style_ThreadColorCombo_History_Version_ThickFabricBulk] DEFAULT ((0)) NOT NULL,
+    [FarmOutQuilting]     BIT          CONSTRAINT [DF_Style_ThreadColorCombo_History_Version_FarmOutQuilting] DEFAULT ((0)) NOT NULL,
+    [LockHandle]          VARCHAR (10) CONSTRAINT [DF_Style_ThreadColorCombo_History_Version_LockHandle] DEFAULT ('') NOT NULL,
+    [LockDate]            DATETIME     NULL,
+    [Category]            VARCHAR (1)  CONSTRAINT [DF_Style_ThreadColorCombo_History_Version_Category] DEFAULT ('') NOT NULL,
+    [TPDate]              DATE         NULL,
+    [IETMSID_Thread]      VARCHAR (10) CONSTRAINT [DF_Style_ThreadColorCombo_History_Version_IETMSID_Thread] DEFAULT ('') NOT NULL,
+    [IETMSVersion_Thread] VARCHAR (3)  CONSTRAINT [DF_Style_ThreadColorCombo_History_Version_IETMSVersion_Thread] DEFAULT ('') NOT NULL,
+    [AddName]             VARCHAR (10) CONSTRAINT [DF_Style_ThreadColorCombo_History_Version_AddName] DEFAULT ('') NOT NULL,
+    [AddDate]             DATETIME     NULL,
+    [VersionCOO]          VARCHAR (2)  CONSTRAINT [DF_Style_ThreadColorCombo_History_Version_VersionCOO] DEFAULT ('') NOT NULL,
+    CONSTRAINT [PK_Style_ThreadColorCombo_History_Version] PRIMARY KEY CLUSTERED ([Ukey] ASC)
+);
+
+

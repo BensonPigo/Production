@@ -1,13 +1,10 @@
-﻿CREATE TABLE [dbo].[Brand_ThreadCalculateRules](
-	[ID] [varchar](8) NOT NULL,
-	[FabricType] [varchar](5) NOT NULL,
-	[UseRatioRule] [varchar](1) NULL,
-	[UseRatioRule_Thick] [varchar](1) NULL,
-	[ProgramID] [varchar](12) NOT NULL CONSTRAINT [DF_Brand_ThreadCalculateRules_ProgramID]  DEFAULT (''),
-PRIMARY KEY CLUSTERED 
-(
-	[ID] ASC,
-	[FabricType] ASC,
-	[ProgramID] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-) ON [PRIMARY]
+﻿CREATE TABLE [dbo].[Brand_ThreadCalculateRules] (
+    [ID]                 VARCHAR (8)  NOT NULL,
+    [FabricType]         VARCHAR (5)  NOT NULL,
+    [UseRatioRule]       VARCHAR (1)  CONSTRAINT [DF_Brand_ThreadCalculateRules_UseRatioRule] DEFAULT ('') NOT NULL,
+    [UseRatioRule_Thick] VARCHAR (1)  CONSTRAINT [DF_Brand_ThreadCalculateRules_UseRatioRule_Thick] DEFAULT ('') NOT NULL,
+    [ProgramID]          VARCHAR (12) CONSTRAINT [DF_Brand_ThreadCalculateRules_ProgramID] DEFAULT ('') NOT NULL,
+    CONSTRAINT [PK__Brand_Th__E4FE7DA41330067D] PRIMARY KEY CLUSTERED ([ID] ASC, [FabricType] ASC, [ProgramID] ASC)
+);
+
+

@@ -1,21 +1,23 @@
 ﻿CREATE TABLE [dbo].[LocalDebit_Detail] (
     [ID]           VARCHAR (13)    CONSTRAINT [DF_LocalDebit_Detail_ID] DEFAULT ('') NOT NULL,
-    [Orderid]      VARCHAR (13)    CONSTRAINT [DF_LocalDebit_Detail_Orderid] DEFAULT ('') NULL,
-    [UnitID]       VARCHAR (8)     CONSTRAINT [DF_LocalDebit_Detail_UnitID] DEFAULT ('') NULL,
-    [Qty]          NUMERIC (11, 2) CONSTRAINT [DF_LocalDebit_Detail_Qty] DEFAULT ((0)) NULL,
-    [Amount]       NUMERIC (12, 2) CONSTRAINT [DF_LocalDebit_Detail_Amount] DEFAULT ((0)) NULL,
-    [Addition]     NUMERIC (12, 2) CONSTRAINT [DF_LocalDebit_Detail_Addition] DEFAULT ((0)) NULL,
-    [Reasonid]     VARCHAR (5)     CONSTRAINT [DF_LocalDebit_Detail_Reasonid] DEFAULT ('') NULL,
-    [Description]  NVARCHAR (MAX)  CONSTRAINT [DF_LocalDebit_Detail_Description] DEFAULT ('') NULL,
-    [TaipeiReason] VARCHAR (100)   CONSTRAINT [DF_LocalDebit_Detail_TaipeiReason] DEFAULT ('') NULL,
+    [Orderid]      VARCHAR (13)    CONSTRAINT [DF_LocalDebit_Detail_Orderid] DEFAULT ('') NOT NULL,
+    [UnitID]       VARCHAR (8)     CONSTRAINT [DF_LocalDebit_Detail_UnitID] DEFAULT ('') NOT NULL,
+    [Qty]          DECIMAL (11, 2) CONSTRAINT [DF_LocalDebit_Detail_Qty] DEFAULT ((0)) NOT NULL,
+    [Amount]       DECIMAL (12, 2) CONSTRAINT [DF_LocalDebit_Detail_Amount] DEFAULT ((0)) NOT NULL,
+    [Addition]     DECIMAL (12, 2) CONSTRAINT [DF_LocalDebit_Detail_Addition] DEFAULT ((0)) NOT NULL,
+    [Reasonid]     VARCHAR (5)     CONSTRAINT [DF_LocalDebit_Detail_Reasonid] DEFAULT ('') NOT NULL,
+    [Description]  NVARCHAR (MAX)  CONSTRAINT [DF_LocalDebit_Detail_Description] DEFAULT ('') NOT NULL,
+    [TaipeiReason] VARCHAR (100)   CONSTRAINT [DF_LocalDebit_Detail_TaipeiReason] DEFAULT ('') NOT NULL,
     [Ukey]         BIGINT          IDENTITY (1, 1) NOT NULL,
     [TaipeiUkey]   BIGINT          CONSTRAINT [DF_LocalDebit_Detail_TaipeiUkey] DEFAULT ((0)) NOT NULL,
-    [AddName]      VARCHAR (10)    CONSTRAINT [DF_LocalDebit_Detail_AddName] DEFAULT ('') NULL,
+    [AddName]      VARCHAR (10)    CONSTRAINT [DF_LocalDebit_Detail_AddName] DEFAULT ('') NOT NULL,
     [AddDate]      DATETIME        NULL,
-    [EditName]     VARCHAR (10)    CONSTRAINT [DF_LocalDebit_Detail_EditName] DEFAULT ('') NULL,
+    [EditName]     VARCHAR (10)    CONSTRAINT [DF_LocalDebit_Detail_EditName] DEFAULT ('') NOT NULL,
     [EditDate]     DATETIME        NULL,
     CONSTRAINT [PK_LocalDebit_Detail] PRIMARY KEY CLUSTERED ([ID] ASC, [Ukey] ASC, [TaipeiUkey] ASC)
 );
+
+
 
 
 

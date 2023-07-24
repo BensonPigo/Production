@@ -1,17 +1,19 @@
 ﻿CREATE TABLE [dbo].[Order_ColorCombo] (
     [Id]              VARCHAR (13) CONSTRAINT [DF_Order_ColorCombo_Id] DEFAULT ('') NOT NULL,
     [Article]         VARCHAR (8)  CONSTRAINT [DF_Order_ColorCombo_Article] DEFAULT ('') NOT NULL,
-    [ColorID]         VARCHAR (6)  CONSTRAINT [DF_Order_ColorCombo_ColorID] DEFAULT ('') NULL,
-    [FabricCode]      VARCHAR (3)  CONSTRAINT [DF_Order_ColorCombo_FabricCode] DEFAULT ('') NULL,
+    [ColorID]         VARCHAR (6)  CONSTRAINT [DF_Order_ColorCombo_ColorID] DEFAULT ('') NOT NULL,
+    [FabricCode]      VARCHAR (3)  CONSTRAINT [DF_Order_ColorCombo_FabricCode] DEFAULT ('') NOT NULL,
     [FabricPanelCode] VARCHAR (2)  CONSTRAINT [DF_Order_ColorCombo_FabricPanelCode] DEFAULT ('') NOT NULL,
-    [PatternPanel]    VARCHAR (2)  CONSTRAINT [DF_Order_ColorCombo_PatternPanel] DEFAULT ('') NULL,
-    [AddName]         VARCHAR (10) CONSTRAINT [DF_Order_ColorCombo_AddName] DEFAULT ('') NULL,
+    [PatternPanel]    VARCHAR (2)  CONSTRAINT [DF_Order_ColorCombo_PatternPanel] DEFAULT ('') NOT NULL,
+    [AddName]         VARCHAR (10) CONSTRAINT [DF_Order_ColorCombo_AddName] DEFAULT ('') NOT NULL,
     [AddDate]         DATETIME     NULL,
-    [EditName]        VARCHAR (10) CONSTRAINT [DF_Order_ColorCombo_EditName] DEFAULT ('') NULL,
+    [EditName]        VARCHAR (10) CONSTRAINT [DF_Order_ColorCombo_EditName] DEFAULT ('') NOT NULL,
     [EditDate]        DATETIME     NULL,
     [FabricType]      VARCHAR (1)  DEFAULT ('') NOT NULL,
     CONSTRAINT [PK_Order_ColorCombo] PRIMARY KEY CLUSTERED ([Id] ASC, [Article] ASC, [FabricPanelCode] ASC)
 );
+
+
 
 
 

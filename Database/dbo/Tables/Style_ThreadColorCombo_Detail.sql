@@ -1,20 +1,16 @@
-﻿CREATE TABLE [dbo].[Style_ThreadColorCombo_Detail](
-	[Style_ThreadColorComboUkey] [bigint] NOT NULL,
-	[Seq] [varchar](2) NOT NULL,
-	[SCIRefNo] [varchar](30) NULL,
-	[SuppId] [varchar](6) NULL,
-	[Article] [varchar](8) NOT NULL,
-	[ColorID] [varchar](6) NULL,
-	[SuppColor] [varchar](30) NULL,
-	[AddName] [varchar](10) NULL,
-	[AddDate] [datetime] NULL,
-	[EditName] [varchar](10) NULL,
-	[EditDate] [datetime] NULL,
-	[Ukey] [bigint] NOT NULL,
-PRIMARY KEY CLUSTERED 
-(
-	[Style_ThreadColorComboUkey] ASC,
-	[Seq] ASC,
-	[Article] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-) ON [PRIMARY]
+﻿CREATE TABLE [dbo].[Style_ThreadColorCombo_Detail] (
+    [Style_ThreadColorComboUkey] BIGINT       NOT NULL,
+    [Seq]                        VARCHAR (2)  NOT NULL,
+    [SCIRefNo]                   VARCHAR (30) CONSTRAINT [DF_Style_ThreadColorCombo_Detail_SCIRefNo] DEFAULT ('') NOT NULL,
+    [SuppId]                     VARCHAR (6)  CONSTRAINT [DF_Style_ThreadColorCombo_Detail_SuppId] DEFAULT ('') NOT NULL,
+    [Article]                    VARCHAR (8)  NOT NULL,
+    [ColorID]                    VARCHAR (6)  CONSTRAINT [DF_Style_ThreadColorCombo_Detail_ColorID] DEFAULT ('') NOT NULL,
+    [SuppColor]                  VARCHAR (30) CONSTRAINT [DF_Style_ThreadColorCombo_Detail_SuppColor] DEFAULT ('') NOT NULL,
+    [AddName]                    VARCHAR (10) CONSTRAINT [DF_Style_ThreadColorCombo_Detail_AddName] DEFAULT ('') NOT NULL,
+    [AddDate]                    DATETIME     NULL,
+    [EditName]                   VARCHAR (10) CONSTRAINT [DF_Style_ThreadColorCombo_Detail_EditName] DEFAULT ('') NOT NULL,
+    [EditDate]                   DATETIME     NULL,
+    [Ukey]                       BIGINT       NOT NULL,
+    PRIMARY KEY CLUSTERED ([Style_ThreadColorComboUkey] ASC, [Seq] ASC, [Article] ASC)
+);
+

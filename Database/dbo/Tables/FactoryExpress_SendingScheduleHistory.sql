@@ -13,10 +13,12 @@
     [THU]        BIT          CONSTRAINT [DF_FactoryExpress_SendingScheduleHistory_THU] DEFAULT ((0)) NOT NULL,
     [FRI]        BIT          CONSTRAINT [DF_FactoryExpress_SendingScheduleHistory_FRI] DEFAULT ((0)) NOT NULL,
     [SAT]        BIT          CONSTRAINT [DF_FactoryExpress_SendingScheduleHistory_SAT] DEFAULT ((0)) NOT NULL,
-    [AddName]    VARCHAR (10) CONSTRAINT [DF_FactoryExpress_SendingScheduleHistory_AddName] DEFAULT ('') NULL,
+    [AddName]    VARCHAR (10) CONSTRAINT [DF_FactoryExpress_SendingScheduleHistory_AddName] DEFAULT ('') NOT NULL,
     [AddDate]    DATETIME     NULL,
-    [EditName]   VARCHAR (10) CONSTRAINT [DF_FactoryExpress_SendingScheduleHistory_EditName] DEFAULT ('') NULL,
+    [EditName]   VARCHAR (10) CONSTRAINT [DF_FactoryExpress_SendingScheduleHistory_EditName] DEFAULT ('') NOT NULL,
     [EditDate]   DATETIME     NULL,
     CONSTRAINT [PK_FactoryExpress_SendingScheduleHistory_1] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
+
+
 

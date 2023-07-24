@@ -1,18 +1,22 @@
 ﻿CREATE TABLE [dbo].[IETMS_Detail] (
-    [IETMSUkey]   BIGINT         CONSTRAINT [DF_IETMS_Detail_IETMSUkey] DEFAULT ((0)) NOT NULL,
-    [SEQ]         VARCHAR (4)    CONSTRAINT [DF_IETMS_Detail_SEQ] DEFAULT ('') NOT NULL,
-    [Location]    VARCHAR (1)    CONSTRAINT [DF_IETMS_Detail_Location] DEFAULT ('') NULL,
-    [OperationID] VARCHAR (20)   CONSTRAINT [DF_IETMS_Detail_OperationID] DEFAULT ('') NULL,
-    [Mold]        NVARCHAR (65)  CONSTRAINT [DF_IETMS_Detail_Mold] DEFAULT ('') NULL,
-    [Annotation]  NVARCHAR (MAX) CONSTRAINT [DF_IETMS_Detail_Annotation] DEFAULT ('') NULL,
-    [Frequency]   NUMERIC (7, 2) CONSTRAINT [DF_IETMS_Detail_Frequency] DEFAULT ((0)) NULL,
-    [SMV]         NUMERIC (12, 4) CONSTRAINT [DF_IETMS_Detail_SMV] DEFAULT ((0)) NULL,
-    [SeamLength]  NUMERIC (12, 2) NULL DEFAULT ((0)),
-    [UKey] BIGINT NOT NULL DEFAULT ((0)), 
-    [MtlFactorID] VARCHAR(3) NULL, 
-    [MtlFactorRate] NUMERIC(8, 2) NULL, 
-    CONSTRAINT [PK_IETMS_Detail] PRIMARY KEY CLUSTERED ([UKey])
+    [IETMSUkey]     BIGINT          CONSTRAINT [DF_IETMS_Detail_IETMSUkey] DEFAULT ((0)) NOT NULL,
+    [SEQ]           VARCHAR (4)     CONSTRAINT [DF_IETMS_Detail_SEQ] DEFAULT ('') NOT NULL,
+    [Location]      VARCHAR (1)     CONSTRAINT [DF_IETMS_Detail_Location] DEFAULT ('') NOT NULL,
+    [OperationID]   VARCHAR (20)    CONSTRAINT [DF_IETMS_Detail_OperationID] DEFAULT ('') NOT NULL,
+    [Mold]          NVARCHAR (65)   CONSTRAINT [DF_IETMS_Detail_Mold] DEFAULT ('') NOT NULL,
+    [Annotation]    NVARCHAR (MAX)  CONSTRAINT [DF_IETMS_Detail_Annotation] DEFAULT ('') NOT NULL,
+    [Frequency]     DECIMAL (7, 2)  CONSTRAINT [DF_IETMS_Detail_Frequency] DEFAULT ((0)) NOT NULL,
+    [SMV]           DECIMAL (12, 4) CONSTRAINT [DF_IETMS_Detail_SMV] DEFAULT ((0)) NOT NULL,
+    [SeamLength]    DECIMAL (12, 2) CONSTRAINT [DF_IETMS_Detail_SeamLength] DEFAULT ((0)) NOT NULL,
+    [UKey]          BIGINT          DEFAULT ((0)) NOT NULL,
+    [MtlFactorID]   VARCHAR (3)     CONSTRAINT [DF_IETMS_Detail_MtlFactorID] DEFAULT ('') NOT NULL,
+    [MtlFactorRate] DECIMAL (8, 2)  CONSTRAINT [DF_IETMS_Detail_MtlFactorRate] DEFAULT ((0)) NOT NULL,
+    [IsPPA]         BIT             CONSTRAINT [DF_IETMS_Detail_IsPPA] DEFAULT ((0)) NOT NULL,
+    [PPA]           VARCHAR (2)     CONSTRAINT [DF_IETMS_Detail_PPA] DEFAULT ('') NOT NULL,
+    CONSTRAINT [PK_IETMS_Detail] PRIMARY KEY CLUSTERED ([UKey] ASC)
 );
+
+
 
 
 GO

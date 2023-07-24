@@ -1,22 +1,18 @@
-﻿CREATE TABLE [dbo].[FirstSaleCostSetting](
-	[CountryID] [varchar](2) NOT NULL CONSTRAINT [DF_FirstSaleCostSetting_CountryID]  DEFAULT (''),
-	[ArtWorkID] [varchar](20) NOT NULL CONSTRAINT [DF_FirstSaleCostSetting_ArtWorkID]  DEFAULT (''),
-	[CostTypeID] [varchar](13) NOT NULL CONSTRAINT [DF_FirstSaleCostSetting_CostTypeID]  DEFAULT (''),
-	[BeginDate] [date] NOT NULL,
-	[EndDate] [date] NOT NULL,
-	[IsJunk] [bit] NULL CONSTRAINT [DF_FirstSaleCostSetting_IsJunk]  DEFAULT ((0)),
-	[AddDate] [datetime] NULL,
-	[AddName] [varchar](10) NULL CONSTRAINT [DF_FirstSaleCostSetting_AddName]  DEFAULT (''),
-	[EditDate] [datetime] NULL,
-	[EditName] [varchar](10) NULL CONSTRAINT [DF_FirstSaleCostSetting_EditName]  DEFAULT (''),
- CONSTRAINT [PK_FirstSaleCostSetting] PRIMARY KEY CLUSTERED 
-(
-	[CountryID] ASC,
-	[ArtWorkID] ASC,
-	[CostTypeID] ASC,
-	[BeginDate] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-) ON [PRIMARY]
+﻿CREATE TABLE [dbo].[FirstSaleCostSetting] (
+    [CountryID]  VARCHAR (2)  CONSTRAINT [DF_FirstSaleCostSetting_CountryID] DEFAULT ('') NOT NULL,
+    [ArtWorkID]  VARCHAR (20) CONSTRAINT [DF_FirstSaleCostSetting_ArtWorkID] DEFAULT ('') NOT NULL,
+    [CostTypeID] VARCHAR (13) CONSTRAINT [DF_FirstSaleCostSetting_CostTypeID] DEFAULT ('') NOT NULL,
+    [BeginDate]  DATE         NOT NULL,
+    [EndDate]    DATE         NOT NULL,
+    [IsJunk]     BIT          CONSTRAINT [DF_FirstSaleCostSetting_IsJunk] DEFAULT ((0)) NOT NULL,
+    [AddDate]    DATETIME     NULL,
+    [AddName]    VARCHAR (10) CONSTRAINT [DF_FirstSaleCostSetting_AddName] DEFAULT ('') NOT NULL,
+    [EditDate]   DATETIME     NULL,
+    [EditName]   VARCHAR (10) CONSTRAINT [DF_FirstSaleCostSetting_EditName] DEFAULT ('') NOT NULL,
+    CONSTRAINT [PK_FirstSaleCostSetting] PRIMARY KEY CLUSTERED ([CountryID] ASC, [ArtWorkID] ASC, [CostTypeID] ASC, [BeginDate] ASC)
+);
+
+
 
 GO
 

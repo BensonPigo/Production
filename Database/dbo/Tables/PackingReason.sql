@@ -1,15 +1,17 @@
 ﻿CREATE TABLE [dbo].[PackingReason] (
-    [Type]        VARCHAR (2)   CONSTRAINT [DF_PackingReason_Type] DEFAULT ('') NOT NULL,
-    [ID]          VARCHAR (5)   CONSTRAINT [DF_PackingReason_ID] DEFAULT ('') NOT NULL,
-    [Description] NVARCHAR (60) CONSTRAINT [DF_PackingReason_Description] DEFAULT ('') NOT NULL,
-    [Junk]        BIT           CONSTRAINT [DF_PackingReason_Junk] DEFAULT ((0)) NULL,
-    [AddName]     VARCHAR (10)  CONSTRAINT [DF_PackingReason_AddName] DEFAULT ('') NULL,
-    [AddDate]     DATETIME      NULL,
-    [EditName]    VARCHAR (10)  CONSTRAINT [DF_PackingReason_EditName] DEFAULT ('') NULL,
-    [EditDate]    DATETIME      NULL,
-    [LocalDescription] nvarchar(100) CONSTRAINT [DF_PackingReason_LocalDescription] DEFAULT ('') not NULL,
+    [Type]             VARCHAR (2)    CONSTRAINT [DF_PackingReason_Type] DEFAULT ('') NOT NULL,
+    [ID]               VARCHAR (5)    CONSTRAINT [DF_PackingReason_ID] DEFAULT ('') NOT NULL,
+    [Description]      NVARCHAR (60)  CONSTRAINT [DF_PackingReason_Description] DEFAULT ('') NOT NULL,
+    [Junk]             BIT            CONSTRAINT [DF_PackingReason_Junk] DEFAULT ((0)) NOT NULL,
+    [AddName]          VARCHAR (10)   CONSTRAINT [DF_PackingReason_AddName] DEFAULT ('') NOT NULL,
+    [AddDate]          DATETIME       NULL,
+    [EditName]         VARCHAR (10)   CONSTRAINT [DF_PackingReason_EditName] DEFAULT ('') NOT NULL,
+    [EditDate]         DATETIME       NULL,
+    [LocalDescription] NVARCHAR (100) CONSTRAINT [DF_PackingReason_LocalDescription] DEFAULT ('') NOT NULL,
     CONSTRAINT [PK_PackingReason] PRIMARY KEY CLUSTERED ([Type] ASC, [ID] ASC)
 );
+
+
 
 
 GO

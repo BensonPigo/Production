@@ -1,22 +1,24 @@
 ﻿CREATE TABLE [dbo].[LossRateAccessory] (
     [MtltypeId]          VARCHAR (20)   CONSTRAINT [DF_LossRateAccessory_MtltypeId] DEFAULT ('') NOT NULL,
-    [LossUnit]           TINYINT        CONSTRAINT [DF_LossRateAccessory_LossUnit] DEFAULT ((0)) NULL,
-    [LossTW]             NUMERIC (3, 1) CONSTRAINT [DF_LossRateAccessory_LossTW] DEFAULT ((0)) NULL,
-    [LossNonTW]          NUMERIC (3, 1) CONSTRAINT [DF_LossRateAccessory_LossNonTW] DEFAULT ((0)) NULL,
-    [PerQtyTW]           INT            CONSTRAINT [DF_LossRateAccessory_PerQtyTW] DEFAULT ((0)) NULL,
-    [PlsQtyTW]           SMALLINT       CONSTRAINT [DF_LossRateAccessory_PlsQtyTW] DEFAULT ((0)) NULL,
-    [PerQtyNonTW]        INT            CONSTRAINT [DF_LossRateAccessory_PerQtyNonTW] DEFAULT ((0)) NULL,
-    [PlsQtyNonTW]        SMALLINT       CONSTRAINT [DF_LossRateAccessory_PlsQtyNonTW] DEFAULT ((0)) NULL,
-    [FOCTW]              NUMERIC (3, 1) CONSTRAINT [DF_LossRateAccessory_FOCTW] DEFAULT ((0)) NULL,
-    [FOCNonTW]           NUMERIC (3, 1) CONSTRAINT [DF_LossRateAccessory_FOCNonTW] DEFAULT ((0)) NULL,
-    [AddName]            VARCHAR (10)   CONSTRAINT [DF_LossRateAccessory_AddName] DEFAULT ('') NULL,
+    [LossUnit]           TINYINT        CONSTRAINT [DF_LossRateAccessory_LossUnit] DEFAULT ((0)) NOT NULL,
+    [LossTW]             DECIMAL (3, 1) CONSTRAINT [DF_LossRateAccessory_LossTW] DEFAULT ((0)) NOT NULL,
+    [LossNonTW]          DECIMAL (3, 1) CONSTRAINT [DF_LossRateAccessory_LossNonTW] DEFAULT ((0)) NOT NULL,
+    [PerQtyTW]           INT            CONSTRAINT [DF_LossRateAccessory_PerQtyTW] DEFAULT ((0)) NOT NULL,
+    [PlsQtyTW]           SMALLINT       CONSTRAINT [DF_LossRateAccessory_PlsQtyTW] DEFAULT ((0)) NOT NULL,
+    [PerQtyNonTW]        INT            CONSTRAINT [DF_LossRateAccessory_PerQtyNonTW] DEFAULT ((0)) NOT NULL,
+    [PlsQtyNonTW]        SMALLINT       CONSTRAINT [DF_LossRateAccessory_PlsQtyNonTW] DEFAULT ((0)) NOT NULL,
+    [FOCTW]              DECIMAL (3, 1) CONSTRAINT [DF_LossRateAccessory_FOCTW] DEFAULT ((0)) NOT NULL,
+    [FOCNonTW]           DECIMAL (3, 1) CONSTRAINT [DF_LossRateAccessory_FOCNonTW] DEFAULT ((0)) NOT NULL,
+    [AddName]            VARCHAR (10)   CONSTRAINT [DF_LossRateAccessory_AddName] DEFAULT ('') NOT NULL,
     [AddDate]            DATETIME       NULL,
-    [EditName]           VARCHAR (10)   CONSTRAINT [DF_LossRateAccessory_EditName] DEFAULT ('') NULL,
+    [EditName]           VARCHAR (10)   CONSTRAINT [DF_LossRateAccessory_EditName] DEFAULT ('') NOT NULL,
     [EditDate]           DATETIME       NULL,
-    [Waste]              NUMERIC (5, 3) CONSTRAINT [DF_LossRateAccessory_Waste] DEFAULT ((0)) NULL,
-    [IgnoreLimitUpBrand] NVARCHAR (200) NULL,
+    [Waste]              DECIMAL (5, 3) CONSTRAINT [DF_LossRateAccessory_Waste] DEFAULT ((0)) NOT NULL,
+    [IgnoreLimitUpBrand] NVARCHAR (200) CONSTRAINT [DF_LossRateAccessory_IgnoreLimitUpBrand] DEFAULT ('') NOT NULL,
     CONSTRAINT [PK_LossRateAccessory] PRIMARY KEY CLUSTERED ([MtltypeId] ASC)
 );
+
+
 
 
 

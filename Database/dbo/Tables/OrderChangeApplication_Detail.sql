@@ -1,35 +1,19 @@
-﻿CREATE TABLE [dbo].[OrderChangeApplication_Detail](
-	[Ukey] [bigint] NOT NULL,
-	[ID] [varchar](13) NULL,
-	[Seq] [varchar](2) NULL,
-	[Article] [varchar](8) NULL,
-	[SizeCode] [varchar](8) NULL,
-	[Qty] [numeric](6, 0) NULL,
-	[OriQty] [numeric](6, 0) NULL,
-	[NowQty] [numeric](6, 0) NULL,
- CONSTRAINT [PK_OrderChangeApplication_Detail] PRIMARY KEY CLUSTERED 
-(
-	[Ukey] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-) ON [PRIMARY]
+﻿CREATE TABLE [dbo].[OrderChangeApplication_Detail] (
+    [Ukey]     BIGINT       NOT NULL,
+    [ID]       VARCHAR (13) CONSTRAINT [DF_OrderChangeApplication_Detail_ID] DEFAULT ('') NOT NULL,
+    [Seq]      VARCHAR (2)  CONSTRAINT [DF_OrderChangeApplication_Detail_Seq] DEFAULT ('') NOT NULL,
+    [Article]  VARCHAR (8)  CONSTRAINT [DF_OrderChangeApplication_Detail_Article] DEFAULT ('') NOT NULL,
+    [SizeCode] VARCHAR (8)  CONSTRAINT [DF_OrderChangeApplication_Detail_SizeCode] DEFAULT ('') NOT NULL,
+    [Qty]      DECIMAL (6)  CONSTRAINT [DF_OrderChangeApplication_Detail_Qty] DEFAULT ((0)) NOT NULL,
+    [OriQty]   DECIMAL (6)  CONSTRAINT [DF_OrderChangeApplication_Detail_OriQty] DEFAULT ((0)) NOT NULL,
+    [NowQty]   DECIMAL (6)  CONSTRAINT [DF_OrderChangeApplication_Detail_NowQty] DEFAULT ((0)) NOT NULL,
+    CONSTRAINT [PK_OrderChangeApplication_Detail] PRIMARY KEY CLUSTERED ([Ukey] ASC)
+);
+
+
 GO
 
-ALTER TABLE [dbo].[OrderChangeApplication_Detail] ADD  CONSTRAINT [DF_OrderChangeApplication_Detail_NowQty]  DEFAULT ((0)) FOR [NowQty]
+
 GO
-EXEC sp_addextendedproperty @name = N'MS_Description',
-    @value = N'調整後的數量',
-    @level0type = N'SCHEMA',
-    @level0name = N'dbo',
-    @level1type = N'TABLE',
-    @level1name = N'OrderChangeApplication_Detail',
-    @level2type = N'COLUMN',
-    @level2name = N'Qty'
+
 GO
-EXEC sp_addextendedproperty @name = N'MS_Description',
-    @value = N'調整前的數量',
-    @level0type = N'SCHEMA',
-    @level0name = N'dbo',
-    @level1type = N'TABLE',
-    @level1name = N'OrderChangeApplication_Detail',
-    @level2type = N'COLUMN',
-    @level2name = N'NowQty'

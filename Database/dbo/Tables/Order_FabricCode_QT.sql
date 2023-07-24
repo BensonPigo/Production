@@ -1,14 +1,16 @@
 ﻿CREATE TABLE [dbo].[Order_FabricCode_QT] (
-    [Id]             VARCHAR (13)   CONSTRAINT [DF_Order_FabricCode_QT_Id] DEFAULT ('') NOT NULL,
-    [FabricPanelCode]     VARCHAR (2)    CONSTRAINT [DF_Order_FabricCode_QT_FabricPanelCode] DEFAULT ('') NOT NULL,
-    [SeqNO]          VARCHAR (2)    CONSTRAINT [DF_Order_FabricCode_QT_SeqNO] DEFAULT ('') NOT NULL,
-    [QTFabricPanelCode]   VARCHAR (2)    CONSTRAINT [DF_Order_FabricCode_QT_QTFabricPanelCode] DEFAULT ('') NULL,
-    [AddName]        VARCHAR (10)   CONSTRAINT [DF_Order_FabricCode_QT_AddName] DEFAULT ('') NULL,
-    [AddDate]        DATETIME       NULL,
-    [EditName]       VARCHAR (10)   CONSTRAINT [DF_Order_FabricCode_QT_EditName] DEFAULT ('') NULL,
-    [EditDate]       DATETIME       NULL,
+    [Id]                VARCHAR (13) CONSTRAINT [DF_Order_FabricCode_QT_Id] DEFAULT ('') NOT NULL,
+    [FabricPanelCode]   VARCHAR (2)  CONSTRAINT [DF_Order_FabricCode_QT_FabricPanelCode] DEFAULT ('') NOT NULL,
+    [SeqNO]             VARCHAR (2)  CONSTRAINT [DF_Order_FabricCode_QT_SeqNO] DEFAULT ('') NOT NULL,
+    [QTFabricPanelCode] VARCHAR (2)  CONSTRAINT [DF_Order_FabricCode_QT_QTFabricPanelCode] DEFAULT ('') NOT NULL,
+    [AddName]           VARCHAR (10) CONSTRAINT [DF_Order_FabricCode_QT_AddName] DEFAULT ('') NOT NULL,
+    [AddDate]           DATETIME     NULL,
+    [EditName]          VARCHAR (10) CONSTRAINT [DF_Order_FabricCode_QT_EditName] DEFAULT ('') NOT NULL,
+    [EditDate]          DATETIME     NULL,
     CONSTRAINT [PK_Order_FabricCode_QT] PRIMARY KEY CLUSTERED ([Id] ASC, [FabricPanelCode] ASC, [SeqNO] ASC)
 );
+
+
 
 
 

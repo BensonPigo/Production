@@ -2,10 +2,12 @@
     [ID]         VARCHAR (8) CONSTRAINT [DF_Factory_WorkHour_ID] DEFAULT ('') NOT NULL,
     [Year]       VARCHAR (4) CONSTRAINT [DF_Factory_WorkHour_Year] DEFAULT ('') NOT NULL,
     [Month]      VARCHAR (2) CONSTRAINT [DF_Factory_WorkHour_Month] DEFAULT ('') NOT NULL,
-    [HalfMonth1] TINYINT     CONSTRAINT [DF_Factory_WorkHour_HalfMonth1] DEFAULT ((0)) NULL,
-    [HalfMonth2] TINYINT     CONSTRAINT [DF_Factory_WorkHour_HalfMonth2] DEFAULT ((0)) NULL,
+    [HalfMonth1] TINYINT     CONSTRAINT [DF_Factory_WorkHour_HalfMonth1] DEFAULT ((0)) NOT NULL,
+    [HalfMonth2] TINYINT     CONSTRAINT [DF_Factory_WorkHour_HalfMonth2] DEFAULT ((0)) NOT NULL,
     CONSTRAINT [PK_Factory_WorkHour] PRIMARY KEY CLUSTERED ([ID] ASC, [Year] ASC, [Month] ASC)
 );
+
+
 
 
 GO

@@ -1,23 +1,25 @@
 ﻿CREATE TABLE [dbo].[CuttingOutput] (
-    [ID]          VARCHAR (13)    CONSTRAINT [DF_CuttingOutput_ID] DEFAULT ('') NOT NULL,
-    [cDate]       DATE            NULL,
-    [MDivisionid] VARCHAR (8)     CONSTRAINT [DF_CuttingOutput_Factoryid] DEFAULT ('') NULL,
-    [Manpower]    INT     CONSTRAINT [DF_CuttingOutput_Manpower] DEFAULT ((0)) NULL,
-    [Manhours]    NUMERIC (5, 1)  CONSTRAINT [DF_CuttingOutput_Manhours] DEFAULT ((0)) NULL,
-    [Actoutput]   NUMERIC (7)     CONSTRAINT [DF_CuttingOutput_Actoutput] DEFAULT ((0)) NULL,
-    [ActGarment]  INT     CONSTRAINT [DF_CuttingOutput_ActGarment] DEFAULT ((0)) NULL,
-    [Lock]        DATE            NULL,
-    [Status]      VARCHAR (15)    CONSTRAINT [DF_CuttingOutput_Status] DEFAULT ('') NULL,
-    [AddName]     VARCHAR (10)    CONSTRAINT [DF_CuttingOutput_AddName] DEFAULT ('') NULL,
-    [AddDate]     DATETIME        NULL,
-    [EditName]    VARCHAR (10)    CONSTRAINT [DF_CuttingOutput_EditName] DEFAULT ('') NULL,
-    [EditDate]    DATETIME        NULL,
-    [PPH]         NUMERIC (8, 2)  CONSTRAINT [DF_CuttingOutput_PPH] DEFAULT ((0)) NULL,
-    [FactoryID]   VARCHAR (8)     NULL,
-    [ActTTCPU]    NUMERIC (10, 3) CONSTRAINT [DF_CuttingOutput_ActTTCPU] DEFAULT ((0)) NULL,
-    [ActCutRefQty] SMALLINT NOT NULL DEFAULT ((0)), 
+    [ID]           VARCHAR (13)    CONSTRAINT [DF_CuttingOutput_ID] DEFAULT ('') NOT NULL,
+    [cDate]        DATE            NULL,
+    [MDivisionid]  VARCHAR (8)     CONSTRAINT [DF_CuttingOutput_MDivisionid] DEFAULT ('') NOT NULL,
+    [Manpower]     INT             CONSTRAINT [DF_CuttingOutput_Manpower] DEFAULT ((0)) NOT NULL,
+    [Manhours]     DECIMAL (5, 1)  CONSTRAINT [DF_CuttingOutput_Manhours] DEFAULT ((0)) NOT NULL,
+    [Actoutput]    DECIMAL (7)     CONSTRAINT [DF_CuttingOutput_Actoutput] DEFAULT ((0)) NOT NULL,
+    [ActGarment]   INT             CONSTRAINT [DF_CuttingOutput_ActGarment] DEFAULT ((0)) NOT NULL,
+    [Lock]         DATE            NULL,
+    [Status]       VARCHAR (15)    CONSTRAINT [DF_CuttingOutput_Status] DEFAULT ('') NOT NULL,
+    [AddName]      VARCHAR (10)    CONSTRAINT [DF_CuttingOutput_AddName] DEFAULT ('') NOT NULL,
+    [AddDate]      DATETIME        NULL,
+    [EditName]     VARCHAR (10)    CONSTRAINT [DF_CuttingOutput_EditName] DEFAULT ('') NOT NULL,
+    [EditDate]     DATETIME        NULL,
+    [PPH]          DECIMAL (8, 2)  CONSTRAINT [DF_CuttingOutput_PPH] DEFAULT ((0)) NOT NULL,
+    [FactoryID]    VARCHAR (8)     CONSTRAINT [DF_CuttingOutput_FactoryID] DEFAULT ('') NOT NULL,
+    [ActTTCPU]     DECIMAL (10, 3) CONSTRAINT [DF_CuttingOutput_ActTTCPU] DEFAULT ((0)) NOT NULL,
+    [ActCutRefQty] SMALLINT        DEFAULT ((0)) NOT NULL,
     CONSTRAINT [PK_CuttingOutput] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
+
+
 
 
 

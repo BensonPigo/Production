@@ -1,24 +1,20 @@
 ﻿
-	CREATE TABLE [dbo].[Style_ThreadColorCombo_History_Operation](
-		[Style_ThreadColorCombo_HistoryUkey] [bigint] NOT NULL,
-		[Seq] [varchar](4) NOT NULL,
-		[OperationID] [varchar](20) NOT NULL,
-		[ComboType] [varchar](1) NULL,
-		[Frequency] [numeric](7, 2) NULL,
-		[AddName] [varchar](10) NULL,
-		[AddDate] [datetime] NULL,
-		[EditName] [varchar](10) NULL,
-		[EditDate] [datetime] NULL,
-		[Ukey] [bigint]  NOT NULL,
-	[MachineTypeHem] BIT NULL, 
-    [OperationHem] BIT NULL, 
-    [Tubular] BIT NULL, 
-    [Segment] INT NULL, 
-    [SeamLength] NUMERIC(9, 2) NULL, 
-    PRIMARY KEY CLUSTERED 
-	(
-		[Style_ThreadColorCombo_HistoryUkey] ASC,
-		[Seq] ASC,
-		[OperationID] ASC
-	)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-	) ON [PRIMARY]
+	CREATE TABLE [dbo].[Style_ThreadColorCombo_History_Operation] (
+    [Style_ThreadColorCombo_HistoryUkey] BIGINT         NOT NULL,
+    [Seq]                                VARCHAR (4)    NOT NULL,
+    [OperationID]                        VARCHAR (20)   NOT NULL,
+    [ComboType]                          VARCHAR (1)    CONSTRAINT [DF_Style_ThreadColorCombo_History_Operation_ComboType] DEFAULT ('') NOT NULL,
+    [Frequency]                          DECIMAL (7, 2) CONSTRAINT [DF_Style_ThreadColorCombo_History_Operation_Frequency] DEFAULT ((0)) NOT NULL,
+    [AddName]                            VARCHAR (10)   CONSTRAINT [DF_Style_ThreadColorCombo_History_Operation_AddName] DEFAULT ('') NOT NULL,
+    [AddDate]                            DATETIME       NULL,
+    [EditName]                           VARCHAR (10)   CONSTRAINT [DF_Style_ThreadColorCombo_History_Operation_EditName] DEFAULT ('') NOT NULL,
+    [EditDate]                           DATETIME       NULL,
+    [Ukey]                               BIGINT         NOT NULL,
+    [MachineTypeHem]                     BIT            CONSTRAINT [DF_Style_ThreadColorCombo_History_Operation_MachineTypeHem] DEFAULT ((0)) NOT NULL,
+    [OperationHem]                       BIT            CONSTRAINT [DF_Style_ThreadColorCombo_History_Operation_OperationHem] DEFAULT ((0)) NOT NULL,
+    [Tubular]                            BIT            CONSTRAINT [DF_Style_ThreadColorCombo_History_Operation_Tubular] DEFAULT ((0)) NOT NULL,
+    [Segment]                            INT            CONSTRAINT [DF_Style_ThreadColorCombo_History_Operation_Segment] DEFAULT ((0)) NOT NULL,
+    [SeamLength]                         DECIMAL (9, 2) CONSTRAINT [DF_Style_ThreadColorCombo_History_Operation_SeamLength] DEFAULT ((0)) NOT NULL,
+    PRIMARY KEY CLUSTERED ([Style_ThreadColorCombo_HistoryUkey] ASC, [Seq] ASC, [OperationID] ASC)
+);
+

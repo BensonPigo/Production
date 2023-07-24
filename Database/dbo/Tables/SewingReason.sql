@@ -1,16 +1,17 @@
-﻿CREATE TABLE [dbo].[SewingReason]
-(
-	
-	[ID]            VARCHAR(5)      CONSTRAINT [DF_SewingReason_ID]             DEFAULT ('')    NOT NULL, 
-    [Type]          VARCHAR(2)      CONSTRAINT [DF_SewingReason_Type]           DEFAULT ('')    NOT NULL, 
-    [Description]   NVARCHAR(60)    CONSTRAINT [DF_SewingReason_Description]    DEFAULT ('')    NOT NULL, 
-    [Junk]          BIT             CONSTRAINT [DF_SewingReason_Junk]           NULL, 
-    [AddName]       VARCHAR(10)     CONSTRAINT [DF_SewingReason_AddName]        DEFAULT ('')    NULL, 
-    [AddDate]       DATETIME        CONSTRAINT [DF_SewingReason_AddDate]        NULL, 
-    [EditName]      VARCHAR(10)     CONSTRAINT [DF_SewingReason_EditName]       DEFAULT ('')    Null, 
-    [EditDate]  DATETIME        CONSTRAINT [DF_SewingReason_EditDate]           NULL, 
-    [ForDQSCheck]   BIT             CONSTRAINT [DF_SewingReason_ForDQSCheck]    DEFAULT ((0))  NOT NULL
-)
+﻿CREATE TABLE [dbo].[SewingReason] (
+    [Type]        VARCHAR (2)   DEFAULT ('') NOT NULL,
+    [ID]          VARCHAR (5)   DEFAULT ('') NOT NULL,
+    [Description] NVARCHAR (60) DEFAULT ('') NOT NULL,
+    [Junk]        BIT           CONSTRAINT [DF_SewingReason_Junk] DEFAULT ((0)) NOT NULL,
+    [AddName]     VARCHAR (10)  CONSTRAINT [DF_SewingReason_AddName] DEFAULT ('') NOT NULL,
+    [AddDate]     DATETIME      NULL,
+    [EditName]    VARCHAR (10)  CONSTRAINT [DF_SewingReason_EditName] DEFAULT ('') NOT NULL,
+    [EditDate]    DATETIME      NULL,
+    [ForDQSCheck] BIT           DEFAULT ((0)) NOT NULL,
+    CONSTRAINT [PK_SewingReason] PRIMARY KEY CLUSTERED ([Type] ASC, [ID] ASC)
+);
+
+
 
 GO
 EXEC sp_addextendedproperty @name = N'MS_Description',

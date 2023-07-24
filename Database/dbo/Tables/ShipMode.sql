@@ -1,12 +1,12 @@
 ﻿CREATE TABLE [dbo].[ShipMode] (
     [ID]                   VARCHAR (10)   CONSTRAINT [DF_ShipMode_ID] DEFAULT ('') NOT NULL,
-    [Description]          NVARCHAR (50)  CONSTRAINT [DF_ShipMode_Description] DEFAULT ('') NULL,
-    [UseFunction]          NVARCHAR (100) CONSTRAINT [DF_ShipMode_UseFunction] DEFAULT ('') NULL,
-    [Junk]                 BIT            CONSTRAINT [DF_ShipMode_Junk] DEFAULT ((0)) NULL,
-    [ShareBase]            VARCHAR (1)    CONSTRAINT [DF_ShipMode_ShareBase] DEFAULT ('') NULL,
-    [AddName]              VARCHAR (10)   CONSTRAINT [DF_ShipMode_AddName] DEFAULT ('') NULL,
+    [Description]          NVARCHAR (50)  CONSTRAINT [DF_ShipMode_Description] DEFAULT ('') NOT NULL,
+    [UseFunction]          NVARCHAR (100) CONSTRAINT [DF_ShipMode_UseFunction] DEFAULT ('') NOT NULL,
+    [Junk]                 BIT            CONSTRAINT [DF_ShipMode_Junk] DEFAULT ((0)) NOT NULL,
+    [ShareBase]            VARCHAR (1)    CONSTRAINT [DF_ShipMode_ShareBase] DEFAULT ('') NOT NULL,
+    [AddName]              VARCHAR (10)   CONSTRAINT [DF_ShipMode_AddName] DEFAULT ('') NOT NULL,
     [AddDate]              DATETIME       NULL,
-    [EditName]             VARCHAR (10)   CONSTRAINT [DF_ShipMode_EditName] DEFAULT ('') NULL,
+    [EditName]             VARCHAR (10)   CONSTRAINT [DF_ShipMode_EditName] DEFAULT ('') NOT NULL,
     [EditDate]             DATETIME       NULL,
     [IncludeSeaShipping]   BIT            DEFAULT ((0)) NOT NULL,
     [NeedCreateAPP]        BIT            CONSTRAINT [DF_ShipMode_NeedCreateAPP] DEFAULT ((0)) NOT NULL,
@@ -15,6 +15,8 @@
     [LoadingType]          VARCHAR (20)   DEFAULT ('') NOT NULL,
     CONSTRAINT [PK_ShipMode] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
+
+
 
 
 

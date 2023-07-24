@@ -2,17 +2,19 @@
     [ID]              VARCHAR (8)  CONSTRAINT [DF_Factory_BrandDefinition_ID] DEFAULT ('') NOT NULL,
     [BrandID]         VARCHAR (8)  CONSTRAINT [DF_Factory_BrandDefinition_BrandID] DEFAULT ('') NOT NULL,
     [CDCodeID]        VARCHAR (6)  CONSTRAINT [DF_Factory_BrandDefinition_CDCodeID] DEFAULT ('') NOT NULL,
-    [BrandAreaCode]   VARCHAR (30) CONSTRAINT [DF_Factory_BrandDefinition_BrandAreaCode] DEFAULT ('') NULL,
-    [BrandFTYCode]    VARCHAR (30) CONSTRAINT [DF_Factory_BrandDefinition_BrandFTYCode] DEFAULT ('') NULL,
-    [BrandVendorCode] VARCHAR (50) CONSTRAINT [DF_Factory_BrandDefinition_BrandVendorCode] DEFAULT ('') NULL,
-    [BrandReportCode] VARCHAR (30) CONSTRAINT [DF_Factory_BrandDefinition_BrandReportCode] DEFAULT ('') NULL,
-    [AddName]         VARCHAR (10) CONSTRAINT [DF_Factory_BrandDefinition_AddName] DEFAULT ('') NULL,
+    [BrandAreaCode]   VARCHAR (30) CONSTRAINT [DF_Factory_BrandDefinition_BrandAreaCode] DEFAULT ('') NOT NULL,
+    [BrandFTYCode]    VARCHAR (30) CONSTRAINT [DF_Factory_BrandDefinition_BrandFTYCode] DEFAULT ('') NOT NULL,
+    [BrandVendorCode] VARCHAR (50) CONSTRAINT [DF_Factory_BrandDefinition_BrandVendorCode] DEFAULT ('') NOT NULL,
+    [BrandReportCode] VARCHAR (30) CONSTRAINT [DF_Factory_BrandDefinition_BrandReportCode] DEFAULT ('') NOT NULL,
+    [AddName]         VARCHAR (10) CONSTRAINT [DF_Factory_BrandDefinition_AddName] DEFAULT ('') NOT NULL,
     [AddDate]         DATETIME     NULL,
-    [EditName]        VARCHAR (10) CONSTRAINT [DF_Factory_BrandDefinition_EditName] DEFAULT ('') NULL,
+    [EditName]        VARCHAR (10) CONSTRAINT [DF_Factory_BrandDefinition_EditName] DEFAULT ('') NOT NULL,
     [EditDate]        DATETIME     NULL,
-    [V_Code] VARCHAR(30) NULL, 
+    [V_Code]          VARCHAR (30) NULL,
     CONSTRAINT [PK_Factory_BrandDefinition] PRIMARY KEY CLUSTERED ([ID] ASC, [BrandID] ASC, [CDCodeID] ASC)
 );
+
+
 
 
 GO

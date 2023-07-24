@@ -10,7 +10,7 @@
     [ReceiveHandle]       VARCHAR (10)    DEFAULT ('') NOT NULL,
     [ReceiveDate]         DATETIME        NULL,
     [CFMDate]             DATE            NULL,
-    [CFMHandle]           VARCHAR (10)    DEFAULT ('') NULL,
+    [CFMHandle]           VARCHAR (10)    CONSTRAINT [DF_ICR_CFMHandle] DEFAULT ('') NOT NULL,
     [DutyHandle]          VARCHAR (10)    DEFAULT ('') NOT NULL,
     [DutySMR]             VARCHAR (10)    DEFAULT ('') NOT NULL,
     [DutyManager]         VARCHAR (10)    DEFAULT ('') NOT NULL,
@@ -42,6 +42,8 @@
     [BulkFTY]             VARCHAR (8)     CONSTRAINT [DF_ICR_BulkFTY] DEFAULT ('') NOT NULL,
     PRIMARY KEY CLUSTERED ([Id] ASC)
 );
+
+
 
 
 GO

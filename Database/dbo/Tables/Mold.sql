@@ -1,17 +1,19 @@
 ﻿CREATE TABLE [dbo].[Mold] (
-    [ID]       VARCHAR (20)   CONSTRAINT [DF_Mold_ID] DEFAULT ('') NOT NULL,
-    [Type]     VARCHAR (1)    CONSTRAINT [DF_Mold_Type] DEFAULT ('') NULL,
-    [DescCH]   NVARCHAR (100) CONSTRAINT [DF_Mold_DescCH] DEFAULT ('') NULL,
-    [DescEN]   NVARCHAR (100) CONSTRAINT [DF_Mold_DescEN] DEFAULT ('') NULL,
-    [Junk]     BIT            CONSTRAINT [DF_Mold_Junk] DEFAULT ((0)) NULL,
-    [AddName]  VARCHAR (10)   CONSTRAINT [DF_Mold_AddName] DEFAULT ('') NULL,
-    [AddDate]  DATETIME       NULL,
-    [EditName] VARCHAR (10)   CONSTRAINT [DF_Mold_EditName] DEFAULT ('') NULL,
-    [EditDate] DATETIME       NULL,
-    [IsAttachment] BIT CONSTRAINT [DF_Mold_IsAttachment] NOT NULL DEFAULT ((0)), 
-    [IsTemplate] BIT CONSTRAINT [DF_Mold_IsTemplate] NOT NULL DEFAULT ((0)), 
+    [ID]           VARCHAR (20)   CONSTRAINT [DF_Mold_ID] DEFAULT ('') NOT NULL,
+    [Type]         VARCHAR (1)    CONSTRAINT [DF_Mold_Type] DEFAULT ('') NOT NULL,
+    [DescCH]       NVARCHAR (100) CONSTRAINT [DF_Mold_DescCH] DEFAULT ('') NOT NULL,
+    [DescEN]       NVARCHAR (100) CONSTRAINT [DF_Mold_DescEN] DEFAULT ('') NOT NULL,
+    [Junk]         BIT            CONSTRAINT [DF_Mold_Junk] DEFAULT ((0)) NOT NULL,
+    [AddName]      VARCHAR (10)   CONSTRAINT [DF_Mold_AddName] DEFAULT ('') NOT NULL,
+    [AddDate]      DATETIME       NULL,
+    [EditName]     VARCHAR (10)   CONSTRAINT [DF_Mold_EditName] DEFAULT ('') NOT NULL,
+    [EditDate]     DATETIME       NULL,
+    [IsAttachment] BIT            CONSTRAINT [DF_Mold_IsAttachment] DEFAULT ((0)) NOT NULL,
+    [IsTemplate]   BIT            CONSTRAINT [DF_Mold_IsTemplate] DEFAULT ((0)) NOT NULL,
     CONSTRAINT [PK_Mold] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
+
+
 
 
 GO

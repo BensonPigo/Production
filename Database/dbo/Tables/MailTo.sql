@@ -1,17 +1,19 @@
 ﻿CREATE TABLE [dbo].[MailTo] (
     [ID]          VARCHAR (3)    CONSTRAINT [DF_MailTo_ID] DEFAULT ('') NOT NULL,
     [Description] NVARCHAR (60)  CONSTRAINT [DF_MailTo_Description] DEFAULT ('') NOT NULL,
-    [ToAddress]   NVARCHAR (MAX) CONSTRAINT [DF_MailTo_ToAddress] DEFAULT ('') NULL,
-    [CcAddress]   NVARCHAR (MAX) CONSTRAINT [DF_MailTo_CcAddress] DEFAULT ('') NULL,
+    [ToAddress]   NVARCHAR (MAX) CONSTRAINT [DF_MailTo_ToAddress] DEFAULT ('') NOT NULL,
+    [CcAddress]   NVARCHAR (MAX) CONSTRAINT [DF_MailTo_CcAddress] DEFAULT ('') NOT NULL,
     [Subject]     NVARCHAR (100) CONSTRAINT [DF_MailTo_Subject] DEFAULT ('') NOT NULL,
-    [Content]     NVARCHAR (MAX) CONSTRAINT [DF_MailTo_Content] DEFAULT ('') NULL,
-    [AddName]     VARCHAR (10)   CONSTRAINT [DF_MailTo_AddName] DEFAULT ('') NULL,
+    [Content]     NVARCHAR (MAX) CONSTRAINT [DF_MailTo_Content] DEFAULT ('') NOT NULL,
+    [AddName]     VARCHAR (10)   CONSTRAINT [DF_MailTo_AddName] DEFAULT ('') NOT NULL,
     [AddDate]     DATETIME       NULL,
-    [EditName]    VARCHAR (10)   CONSTRAINT [DF_MailTo_EditName] DEFAULT ('') NULL,
+    [EditName]    VARCHAR (10)   CONSTRAINT [DF_MailTo_EditName] DEFAULT ('') NOT NULL,
     [EditDate]    DATETIME       NULL,
-    [BccAddress] NVARCHAR(MAX) NOT NULL CONSTRAINT [DF_MailTo_BccAddress] DEFAULT (''), 
+    [BccAddress]  NVARCHAR (MAX) CONSTRAINT [DF_MailTo_BccAddress] DEFAULT ('') NOT NULL,
     CONSTRAINT [PK_MailTo] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
+
+
 
 
 GO

@@ -1,15 +1,17 @@
 ﻿CREATE TABLE [dbo].[Pattern_GL_LectraCode] (
-    [ID]           VARCHAR (10) CONSTRAINT [DF_Pattern_GL_LectraCode_ID] DEFAULT ('') NOT NULL,
-    [Version]      VARCHAR (3)  CONSTRAINT [DF_Pattern_GL_LectraCode_Version] DEFAULT ('') NOT NULL,
-    [PatternUKEY]  BIGINT       CONSTRAINT [DF_Pattern_GL_LectraCode_PatternUKEY] DEFAULT ((0)) NOT NULL,
-    [SEQ]          VARCHAR (4)  CONSTRAINT [DF_Pattern_GL_LectraCode_SEQ] DEFAULT ('') NOT NULL,
-    [PatternCode]  VARCHAR (20) CONSTRAINT [DF_Pattern_GL_LectraCode_PatternCode] DEFAULT ('') NOT NULL,
-    [ArticleGroup] VARCHAR (6)  CONSTRAINT [DF_Pattern_GL_LectraCode_ArticleGroup] DEFAULT ('') NOT NULL,
-    [FabricPanelCode]   VARCHAR (2)  CONSTRAINT [DF_Pattern_GL_LectraCode_FabricPanelCode] DEFAULT ('') NOT NULL,
-    [PatternPanel] VARCHAR (2)  CONSTRAINT [DF_Pattern_GL_LectraCode_PatternPanel] DEFAULT ('') NOT NULL,
-    [FabricCode]   VARCHAR (3)  CONSTRAINT [DF_Pattern_GL_LectraCode_FabricCode] DEFAULT ('') NULL,
-    CONSTRAINT [PK_Pattern_GL_LectraCode] PRIMARY KEY CLUSTERED ([ID], [ArticleGroup], [Version], [SEQ])
+    [ID]              VARCHAR (10) CONSTRAINT [DF_Pattern_GL_LectraCode_ID] DEFAULT ('') NOT NULL,
+    [Version]         VARCHAR (3)  CONSTRAINT [DF_Pattern_GL_LectraCode_Version] DEFAULT ('') NOT NULL,
+    [PatternUKEY]     BIGINT       CONSTRAINT [DF_Pattern_GL_LectraCode_PatternUKEY] DEFAULT ((0)) NOT NULL,
+    [SEQ]             VARCHAR (4)  CONSTRAINT [DF_Pattern_GL_LectraCode_SEQ] DEFAULT ('') NOT NULL,
+    [PatternCode]     VARCHAR (20) CONSTRAINT [DF_Pattern_GL_LectraCode_PatternCode] DEFAULT ('') NOT NULL,
+    [ArticleGroup]    VARCHAR (6)  CONSTRAINT [DF_Pattern_GL_LectraCode_ArticleGroup] DEFAULT ('') NOT NULL,
+    [FabricPanelCode] VARCHAR (2)  CONSTRAINT [DF_Pattern_GL_LectraCode_FabricPanelCode] DEFAULT ('') NOT NULL,
+    [PatternPanel]    VARCHAR (2)  CONSTRAINT [DF_Pattern_GL_LectraCode_PatternPanel] DEFAULT ('') NOT NULL,
+    [FabricCode]      VARCHAR (3)  CONSTRAINT [DF_Pattern_GL_LectraCode_FabricCode] DEFAULT ('') NOT NULL,
+    CONSTRAINT [PK_Pattern_GL_LectraCode] PRIMARY KEY CLUSTERED ([ID] ASC, [ArticleGroup] ASC, [Version] ASC, [SEQ] ASC)
 );
+
+
 
 
 
@@ -52,4 +54,9 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'部位別',
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'布種別', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Pattern_GL_LectraCode', @level2type = N'COLUMN', @level2name = N'FabricCode';
+
+
+GO
+CREATE NONCLUSTERED INDEX [Pattern_GL_LectraCode_CuttingR02R03]
+    ON [dbo].[Pattern_GL_LectraCode]([PatternUKEY] ASC, [SEQ] ASC, [FabricPanelCode] ASC);
 

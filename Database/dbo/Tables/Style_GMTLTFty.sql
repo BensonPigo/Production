@@ -1,13 +1,15 @@
 ﻿CREATE TABLE [dbo].[Style_GMTLTFty] (
     [StyleUkey] BIGINT       CONSTRAINT [DF_Style_GMTLTFty_StyleUkey] DEFAULT ((0)) NOT NULL,
     [FactoryID] VARCHAR (8)  CONSTRAINT [DF_Style_GMTLTFty_FactoryID] DEFAULT ('') NOT NULL,
-    [GMTLT]     SMALLINT     CONSTRAINT [DF_Style_GMTLTFty_GMTLT] DEFAULT ((0)) NULL,
-    [AddName]   VARCHAR (10) CONSTRAINT [DF_Style_GMTLTFty_AddName] DEFAULT ('') NULL,
+    [GMTLT]     SMALLINT     CONSTRAINT [DF_Style_GMTLTFty_GMTLT] DEFAULT ((0)) NOT NULL,
+    [AddName]   VARCHAR (10) CONSTRAINT [DF_Style_GMTLTFty_AddName] DEFAULT ('') NOT NULL,
     [AddDate]   DATETIME     NULL,
-    [EditName]  VARCHAR (10) CONSTRAINT [DF_Style_GMTLTFty_EditName] DEFAULT ('') NULL,
+    [EditName]  VARCHAR (10) CONSTRAINT [DF_Style_GMTLTFty_EditName] DEFAULT ('') NOT NULL,
     [EditDate]  DATETIME     NULL,
     CONSTRAINT [PK_Style_GMTLTFty] PRIMARY KEY CLUSTERED ([StyleUkey] ASC, [FactoryID] ASC)
 );
+
+
 
 
 GO

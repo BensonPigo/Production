@@ -2,12 +2,14 @@
     [Id]                   VARCHAR (13) CONSTRAINT [DF_Order_MarkerList_Article_Id] DEFAULT ('') NOT NULL,
     [Order_MarkerlistUkey] BIGINT       CONSTRAINT [DF_Order_MarkerList_Article_Order_MarkerlistUkey] DEFAULT ((0)) NOT NULL,
     [Article]              VARCHAR (8)  CONSTRAINT [DF_Order_MarkerList_Article_Article] DEFAULT ('') NOT NULL,
-    [AddName]              VARCHAR (10) CONSTRAINT [DF_Order_MarkerList_Article_AddName] DEFAULT ('') NULL,
+    [AddName]              VARCHAR (10) CONSTRAINT [DF_Order_MarkerList_Article_AddName] DEFAULT ('') NOT NULL,
     [AddDate]              DATETIME     NULL,
-    [EditName]             VARCHAR (10) CONSTRAINT [DF_Order_MarkerList_Article_EditName] DEFAULT ('') NULL,
+    [EditName]             VARCHAR (10) CONSTRAINT [DF_Order_MarkerList_Article_EditName] DEFAULT ('') NOT NULL,
     [EditDate]             DATETIME     NULL,
     CONSTRAINT [PK_Order_MarkerList_Article] PRIMARY KEY CLUSTERED ([Order_MarkerlistUkey] ASC, [Article] ASC)
 );
+
+
 
 
 GO

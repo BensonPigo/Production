@@ -1,10 +1,12 @@
 ﻿CREATE TABLE [dbo].[Style_MarkerList_SizeQty] (
     [Style_MarkerListUkey] BIGINT      CONSTRAINT [DF_Style_MarkerList_SizeQty_Style_MarkerListUkey] DEFAULT ((0)) NOT NULL,
-    [StyleUkey]            BIGINT      CONSTRAINT [DF_Style_MarkerList_SizeQty_StyleUkey] DEFAULT ((0)) NULL,
+    [StyleUkey]            BIGINT      CONSTRAINT [DF_Style_MarkerList_SizeQty_StyleUkey] DEFAULT ((0)) NOT NULL,
     [SizeCode]             VARCHAR (8) CONSTRAINT [DF_Style_MarkerList_SizeQty_SizeCode] DEFAULT ('') NOT NULL,
-    [Qty]                  SMALLINT    CONSTRAINT [DF_Style_MarkerList_SizeQty_Qty] DEFAULT ((0)) NULL,
+    [Qty]                  SMALLINT    CONSTRAINT [DF_Style_MarkerList_SizeQty_Qty] DEFAULT ((0)) NOT NULL,
     CONSTRAINT [PK_Style_MarkerList_SizeQty] PRIMARY KEY CLUSTERED ([Style_MarkerListUkey] ASC, [SizeCode] ASC)
 );
+
+
 
 
 GO

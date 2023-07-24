@@ -4,11 +4,13 @@
     [EndDate]   DATE           NOT NULL,
     [CpuCost]   NUMERIC (5, 3) CONSTRAINT [DF_FSRCpuCost_Detail_CpuCost] DEFAULT ((0)) NOT NULL,
     [AddDate]   DATETIME       NULL,
-    [AddName]   VARCHAR (10)   CONSTRAINT [DF_FSRCpuCost_Detail_AddName] DEFAULT ('') NULL,
+    [AddName]   VARCHAR (10)   CONSTRAINT [DF_FSRCpuCost_Detail_AddName] DEFAULT ('') NOT NULL,
     [EditDate]  DATETIME       NULL,
-    [EditName]  VARCHAR (10)   CONSTRAINT [DF_FSRCpuCost_Detail_EditName] DEFAULT ('') NULL, 
-    CONSTRAINT [PK_FSRCpuCost_Detail] PRIMARY KEY ([ShipperID], [BeginDate]) 
+    [EditName]  VARCHAR (10)   CONSTRAINT [DF_FSRCpuCost_Detail_EditName] DEFAULT ('') NOT NULL,
+    CONSTRAINT [PK_FSRCpuCost_Detail] PRIMARY KEY CLUSTERED ([ShipperID] ASC, [BeginDate] ASC)
 );
+
+
 
 
 GO
