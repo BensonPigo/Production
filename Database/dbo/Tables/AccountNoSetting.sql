@@ -1,30 +1,25 @@
 ﻿
-CREATE TABLE [dbo].[AccountNoSetting](
-	ID [varchar](8) NOT NULL,
-	UnselectableShipB03 bit NULL,
-	AddDate DATETIME NULL,
-	AddName Varchar(10) NOT NULL,
-	EditDate DATETIME NULL,
-	EditName Varchar(10) NOT NULL,
-	CONSTRAINT [PK_AccountNoSetting] PRIMARY KEY CLUSTERED 
-(
-	[ID] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-) ON [PRIMARY]
-;
+CREATE TABLE [dbo].[AccountNoSetting] (
+    [ID]                  VARCHAR (8)  NOT NULL,
+    [UnselectableShipB03] BIT          CONSTRAINT [DF_AccountNoSetting_UnselectableShipB03] DEFAULT ((0)) NOT NULL,
+    [AddDate]             DATETIME     NULL,
+    [AddName]             VARCHAR (10) CONSTRAINT [DF_AccountNoSetting_AddName] DEFAULT ('') NOT NULL,
+    [EditDate]            DATETIME     NULL,
+    [EditName]            VARCHAR (10) CONSTRAINT [DF_AccountNoSetting_EditName] DEFAULT ('') NOT NULL,
+    CONSTRAINT [PK_AccountNoSetting] PRIMARY KEY CLUSTERED ([ID] ASC)
+);
+
+
 
 GO
 
-ALTER TABLE [dbo].[AccountNoSetting] 
-ADD  CONSTRAINT [DF_AccountNoSetting_UnselectableShipB03]  DEFAULT (0) FOR UnselectableShipB03
+
 
 GO
-ALTER TABLE [dbo].[AccountNoSetting] 
-ADD  CONSTRAINT [DF_AccountNoSetting_AddName]  DEFAULT ('') FOR AddName
+
 
 GO
-ALTER TABLE [dbo].[AccountNoSetting] 
-ADD  CONSTRAINT [DF_AccountNoSetting_EditName]  DEFAULT ('') FOR EditName
+
 
 GO
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'會計科目'

@@ -1,15 +1,17 @@
 ﻿CREATE TABLE [dbo].[Style_Location] (
-    [StyleUkey] BIGINT         CONSTRAINT [DF_Style_Location_StyleUkey] DEFAULT ((0)) NOT NULL,
-    [Location]  VARCHAR (1)    CONSTRAINT [DF_Style_Location_Location] DEFAULT ('') NOT NULL,
-    [Rate]      NUMERIC (5, 2) CONSTRAINT [DF_Style_Location_Rate] DEFAULT ((0)) NULL,
-    [AddName]   VARCHAR (10)   CONSTRAINT [DF_Style_Location_AddName] DEFAULT ('') NULL,
-    [AddDate]   DATETIME       NULL,
-    [EditName]  VARCHAR (10)   CONSTRAINT [DF_Style_Location_EditName] DEFAULT ('') NULL,
-    [EditDate]  DATETIME       NULL,
-    [ApparelType] VARCHAR(5) NOT NULL CONSTRAINT [DF_Style_Location_ApparelType] DEFAULT (''), 
-    [FabricType] VARCHAR(5) NOT NULL CONSTRAINT [DF_Style_Location_FabricType] DEFAULT (''), 
+    [StyleUkey]   BIGINT         CONSTRAINT [DF_Style_Location_StyleUkey] DEFAULT ((0)) NOT NULL,
+    [Location]    VARCHAR (1)    CONSTRAINT [DF_Style_Location_Location] DEFAULT ('') NOT NULL,
+    [Rate]        DECIMAL (5, 2) CONSTRAINT [DF_Style_Location_Rate] DEFAULT ((0)) NOT NULL,
+    [AddName]     VARCHAR (10)   CONSTRAINT [DF_Style_Location_AddName] DEFAULT ('') NOT NULL,
+    [AddDate]     DATETIME       NULL,
+    [EditName]    VARCHAR (10)   CONSTRAINT [DF_Style_Location_EditName] DEFAULT ('') NOT NULL,
+    [EditDate]    DATETIME       NULL,
+    [ApparelType] VARCHAR (5)    CONSTRAINT [DF_Style_Location_ApparelType] DEFAULT ('') NOT NULL,
+    [FabricType]  VARCHAR (5)    CONSTRAINT [DF_Style_Location_FabricType] DEFAULT ('') NOT NULL,
     CONSTRAINT [PK_Style_Location] PRIMARY KEY CLUSTERED ([StyleUkey] ASC, [Location] ASC)
 );
+
+
 
 
 GO

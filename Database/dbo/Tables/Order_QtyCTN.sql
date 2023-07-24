@@ -3,12 +3,14 @@
     [Article]  VARCHAR (8)  CONSTRAINT [DF_Order_QtyCTN_Article] DEFAULT ('') NOT NULL,
     [SizeCode] VARCHAR (8)  CONSTRAINT [DF_Order_QtyCTN_SizeCode] DEFAULT ('') NOT NULL,
     [Qty]      INT          CONSTRAINT [DF_Order_QtyCTN_Qty] DEFAULT ((0)) NOT NULL,
-    [AddName]  VARCHAR (10) CONSTRAINT [DF_Order_QtyCTN_AddName] DEFAULT ('') NULL,
+    [AddName]  VARCHAR (10) CONSTRAINT [DF_Order_QtyCTN_AddName] DEFAULT ('') NOT NULL,
     [AddDate]  DATETIME     NULL,
-    [EditName] VARCHAR (10) CONSTRAINT [DF_Order_QtyCTN_EditName] DEFAULT ('') NULL,
+    [EditName] VARCHAR (10) CONSTRAINT [DF_Order_QtyCTN_EditName] DEFAULT ('') NOT NULL,
     [EditDate] DATETIME     NULL,
     CONSTRAINT [PK_Order_QtyCTN] PRIMARY KEY CLUSTERED ([Id] ASC, [Article] ASC, [SizeCode] ASC)
 );
+
+
 
 
 GO

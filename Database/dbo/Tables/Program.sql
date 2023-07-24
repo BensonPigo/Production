@@ -1,14 +1,16 @@
 ﻿CREATE TABLE [dbo].[Program] (
     [ID]       VARCHAR (12)   CONSTRAINT [DF_Program_ID] DEFAULT ('') NOT NULL,
     [BrandID]  VARCHAR (8)    CONSTRAINT [DF_Program_BrandID] DEFAULT ('') NOT NULL,
-    [RateCost] NUMERIC (3, 1) CONSTRAINT [DF_Program_RateCost] DEFAULT ((0)) NULL,
-    [AddName]  VARCHAR (10)   CONSTRAINT [DF_Program_AddName] DEFAULT ('') NULL,
+    [RateCost] DECIMAL (3, 1) CONSTRAINT [DF_Program_RateCost] DEFAULT ((0)) NOT NULL,
+    [AddName]  VARCHAR (10)   CONSTRAINT [DF_Program_AddName] DEFAULT ('') NOT NULL,
     [AddDate]  DATETIME       NULL,
-    [EditName] VARCHAR (10)   CONSTRAINT [DF_Program_EditName] DEFAULT ('') NULL,
+    [EditName] VARCHAR (10)   CONSTRAINT [DF_Program_EditName] DEFAULT ('') NOT NULL,
     [EditDate] DATETIME       NULL,
-    [MiAdidas] BIT            NULL,
+    [MiAdidas] BIT            CONSTRAINT [DF_Program_MiAdidas] DEFAULT ((0)) NOT NULL,
     CONSTRAINT [PK_Program] PRIMARY KEY CLUSTERED ([ID] ASC, [BrandID] ASC)
 );
+
+
 
 
 

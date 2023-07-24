@@ -1,26 +1,28 @@
-﻿CREATE TABLE [dbo].[NewSentReport]
-(
-	[ExportID]              VARCHAR(13)     CONSTRAINT [DF_NewSentReport_ExportID]                  DEFAULT ('')    NOT NULL , 
-    [PoID]                  VARCHAR(13)     CONSTRAINT [DF_NewSentReport_PoID]                      DEFAULT ('')    NOT NULL, 
-    [Seq1]                  VARCHAR(3)      CONSTRAINT [DF_NewSentReport_Seq1]                      DEFAULT ('')    NOT NULL, 
-    [Seq2]                  VARCHAR(2)      CONSTRAINT [DF_NewSentReport_Seq2]                      DEFAULT ('')    NOT NULL, 
-    [DocumentName]          VARCHAR(100)    CONSTRAINT [DF_NewSentReport_DocumentName]              DEFAULT ('')    NOT NULL, 
-    [BrandID]               VARCHAR(8)      CONSTRAINT [DF_NewSentReport_BrandID]                   DEFAULT ('')    NOT NULL, 
-    [ReportDate]            DATE                                                                                    NULL, 
-    [FTYReceivedReport]     DATE                                                                                    NULL, 
-    [AWBno]                 VARCHAR(30)     CONSTRAINT [DF_NewSentReport_AWBno]                     DEFAULT ('')    NULL, 
-    [T2InspYds]             NUMERIC(10, 2)  CONSTRAINT [DF_NewSentReport_T2InspYds]                 DEFAULT ((0))   NULL , 
-    [T2DefectPoint]         NUMERIC(5)      CONSTRAINT [DF_NewSentReport_T2DefectPoint]             DEFAULT ((0))   NULL , 
-    [T2Grade]               VARCHAR(1)      CONSTRAINT [DF_NewSentReport_T2Grade]                   DEFAULT ('')    NULL , 
-    [TestReportTestDate]    DATE                                                                                    NULL, 
-    Ukey				    bigint																	IDENTITY(1,1)	NOT NULL,
-    AddDate				    DateTime		CONSTRAINT [DF_NewSentReport_AddDate]									NULL,
-	AddName				    varchar(10)		CONSTRAINT [DF_NewSentReport_AddName]					DEFAULT ('')	NULL,
-	EditDate			    DateTime		CONSTRAINT [DF_NewSentReport_EditDate]									NULL,
-	Editname			    varchar(10)		CONSTRAINT [DF_NewSentReport_Editname]					DEFAULT ('')	NULL,
-    [UniqueKey] NVARCHAR(200) NOT NULL DEFAULT (''), 
-    CONSTRAINT [PK_NewSentReport] PRIMARY KEY CLUSTERED ([BrandID], [ExportID], [PoID], [Seq1], [Seq2], [DocumentName])
-)
+﻿CREATE TABLE [dbo].[NewSentReport] (
+    [ExportID]             VARCHAR (13)    CONSTRAINT [DF_NewSentReport_ExportID] DEFAULT ('') NOT NULL,
+    [PoID]                 VARCHAR (13)    CONSTRAINT [DF_NewSentReport_PoID] DEFAULT ('') NOT NULL,
+    [Seq1]                 VARCHAR (3)     CONSTRAINT [DF_NewSentReport_Seq1] DEFAULT ('') NOT NULL,
+    [Seq2]                 VARCHAR (2)     CONSTRAINT [DF_NewSentReport_Seq2] DEFAULT ('') NOT NULL,
+    [DocumentName]         VARCHAR (100)   CONSTRAINT [DF_NewSentReport_DocumentName] DEFAULT ('') NOT NULL,
+    [BrandID]              VARCHAR (8)     CONSTRAINT [DF_NewSentReport_BrandID] DEFAULT ('') NOT NULL,
+    [ReportDate]           DATE            NULL,
+    [FTYReceivedReport]    DATE            NULL,
+    [AWBno]                VARCHAR (30)    CONSTRAINT [DF_NewSentReport_AWBno] DEFAULT ('') NOT NULL,
+    [T2InspYds]            DECIMAL (10, 2) CONSTRAINT [DF_NewSentReport_T2InspYds] DEFAULT ((0)) NOT NULL,
+    [T2DefectPoint]        DECIMAL (5)     CONSTRAINT [DF_NewSentReport_T2DefectPoint] DEFAULT ((0)) NOT NULL,
+    [T2Grade]              VARCHAR (1)     CONSTRAINT [DF_NewSentReport_T2Grade] DEFAULT ('') NOT NULL,
+    [TestReportTestDate]   DATE            NULL,
+    [Ukey]                 BIGINT          IDENTITY (1, 1) NOT NULL,
+    [AddDate]              DATETIME        NULL,
+    [AddName]              VARCHAR (10)    CONSTRAINT [DF_NewSentReport_AddName] DEFAULT ('') NOT NULL,
+    [EditDate]             DATETIME        NULL,
+    [Editname]             VARCHAR (10)    CONSTRAINT [DF_NewSentReport_Editname] DEFAULT ('') NOT NULL,
+    [TestReportCheckClima] BIT             DEFAULT ((0)) NOT NULL,
+    [UniqueKey]            VARCHAR (200)   DEFAULT ('') NOT NULL,
+    CONSTRAINT [PK_NewSentReport] PRIMARY KEY CLUSTERED ([DocumentName] ASC, [ExportID] ASC, [PoID] ASC, [Seq1] ASC, [Seq2] ASC, [BrandID] ASC)
+);
+
+
 
 GO
 EXEC sp_addextendedproperty @name = N'MS_Description',
@@ -175,3 +177,6 @@ EXEC sp_addextendedproperty @name = N'MS_Description',
     @level1name = N'NewSentReport',
     @level2type = N'COLUMN',
     @level2name = N'Editname'
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'將Pkey分別依序用_組成文字串寫入當作檔案識別唯一值,用來跟GASAClip串接條件避免跟Trade key重複 ', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'NewSentReport', @level2type = N'COLUMN', @level2name = N'UniqueKey';
+

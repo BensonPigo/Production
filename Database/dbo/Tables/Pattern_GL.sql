@@ -4,15 +4,18 @@
     [PatternUKEY] BIGINT         CONSTRAINT [DF_Pattern_GL_PatternUKEY] DEFAULT ((0)) NOT NULL,
     [SEQ]         VARCHAR (4)    CONSTRAINT [DF_Pattern_GL_SEQ] DEFAULT ('') NOT NULL,
     [PatternCode] VARCHAR (20)   CONSTRAINT [DF_Pattern_GL_PatternCode] DEFAULT ('') NOT NULL,
-    [PatternDesc] NVARCHAR (100) CONSTRAINT [DF_Pattern_GL_PatternDesc] DEFAULT ('') NULL,
-    [Annotation]  NVARCHAR (50)  CONSTRAINT [DF_Pattern_GL_Annotation] DEFAULT ('') NULL,
-    [Alone]       VARCHAR (2)    CONSTRAINT [DF_Pattern_GL_Alone] DEFAULT ('') NULL,
-    [PAIR]        VARCHAR (2)    CONSTRAINT [DF_Pattern_GL_PAIR] DEFAULT ('') NULL,
-    [DV]          VARCHAR (2)    CONSTRAINT [DF_Pattern_GL_DV] DEFAULT ('') NULL,
-    [Remarks]     NVARCHAR (30)  CONSTRAINT [DF_Pattern_GL_Remarks] DEFAULT ('') NULL,
-    [Location] VARCHAR NULL DEFAULT (''), 
-    CONSTRAINT [PK_Pattern_GL] PRIMARY KEY CLUSTERED ([ID], [Version], [SEQ])
+    [PatternDesc] NVARCHAR (100) CONSTRAINT [DF_Pattern_GL_PatternDesc] DEFAULT ('') NOT NULL,
+    [Annotation]  NVARCHAR (50)  CONSTRAINT [DF_Pattern_GL_Annotation] DEFAULT ('') NOT NULL,
+    [Alone]       VARCHAR (2)    CONSTRAINT [DF_Pattern_GL_Alone] DEFAULT ('') NOT NULL,
+    [PAIR]        VARCHAR (2)    CONSTRAINT [DF_Pattern_GL_PAIR] DEFAULT ('') NOT NULL,
+    [DV]          VARCHAR (2)    CONSTRAINT [DF_Pattern_GL_DV] DEFAULT ('') NOT NULL,
+    [Remarks]     NVARCHAR (30)  CONSTRAINT [DF_Pattern_GL_Remarks] DEFAULT ('') NOT NULL,
+    [Location]    VARCHAR (1)    CONSTRAINT [DF_Pattern_GL_Location] DEFAULT ('') NOT NULL,
+    [Main]        BIT            DEFAULT ((0)) NOT NULL,
+    CONSTRAINT [PK_Pattern_GL] PRIMARY KEY CLUSTERED ([ID] ASC, [Version] ASC, [SEQ] ASC)
 );
+
+
 
 
 
@@ -72,4 +75,10 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'備註', @l
 GO
 CREATE NONCLUSTERED INDEX [<Name of Missing Index, sysname,>]
     ON [dbo].[Pattern_GL]([PatternUKEY] ASC);
+
+
+GO
+CREATE NONCLUSTERED INDEX [Pattern_GL_CuttingR02R03]
+    ON [dbo].[Pattern_GL]([PatternUKEY] ASC, [Annotation] ASC)
+    INCLUDE([SEQ]);
 

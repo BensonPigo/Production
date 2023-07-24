@@ -1,21 +1,25 @@
 ﻿CREATE TABLE [dbo].[FabricDefect] (
     [ID]            VARCHAR (2)   CONSTRAINT [DF_FabricDefect_ID] DEFAULT ('') NOT NULL,
-    [Type]          VARCHAR (20)  CONSTRAINT [DF_FabricDefect_Type] DEFAULT ('') NULL,
-    [DescriptionEN] VARCHAR (60)  CONSTRAINT [DF_FabricDefect_DescriptionEN] DEFAULT ('') NULL,
-    [Junk]          BIT           CONSTRAINT [DF_FabricDefect_Junk] DEFAULT ((0)) NULL,
-    [AddName]       VARCHAR (10)  CONSTRAINT [DF_FabricDefect_AddName] DEFAULT ('') NULL,
+    [Type]          VARCHAR (20)  CONSTRAINT [DF_FabricDefect_Type] DEFAULT ('') NOT NULL,
+    [DescriptionEN] VARCHAR (60)  CONSTRAINT [DF_FabricDefect_DescriptionEN] DEFAULT ('') NOT NULL,
+    [Junk]          BIT           CONSTRAINT [DF_FabricDefect_Junk] DEFAULT ((0)) NOT NULL,
+    [AddName]       VARCHAR (10)  CONSTRAINT [DF_FabricDefect_AddName] DEFAULT ('') NOT NULL,
     [AddDate]       DATETIME      NULL,
-    [EditName]      VARCHAR (10)  CONSTRAINT [DF_FabricDefect_EditName] DEFAULT ('') NULL,
+    [EditName]      VARCHAR (10)  CONSTRAINT [DF_FabricDefect_EditName] DEFAULT ('') NOT NULL,
     [EditDate]      DATETIME      NULL,
-    [LocalDesc]     NVARCHAR (60) CONSTRAINT [DF_FabricDefect_LocalDesc] DEFAULT ('') NULL,
+    [LocalDesc]     NVARCHAR (60) CONSTRAINT [DF_FabricDefect_LocalDesc] DEFAULT ('') NOT NULL,
     CONSTRAINT [PK_FabricDefect] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 
 
 
 
+
+
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Fabric Defect 基本檔', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'FabricDefect';
+
+
 
 
 GO

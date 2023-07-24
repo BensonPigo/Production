@@ -1,13 +1,15 @@
 ﻿CREATE TABLE [dbo].[Order_SizeCode] (
     [Id]        VARCHAR (13) CONSTRAINT [DF_Order_SizeCode_Id] DEFAULT ('') NOT NULL,
-    [Seq]       VARCHAR (2)  CONSTRAINT [DF_Order_SizeCode_Seq] DEFAULT ('') NULL,
-    [SizeGroup] VARCHAR (1)  CONSTRAINT [DF_Order_SizeCode_SizeGroup] DEFAULT ('') NULL,
+    [Seq]       VARCHAR (2)  CONSTRAINT [DF_Order_SizeCode_Seq] DEFAULT ('') NOT NULL,
+    [SizeGroup] VARCHAR (1)  CONSTRAINT [DF_Order_SizeCode_SizeGroup] DEFAULT ('') NOT NULL,
     [SizeCode]  VARCHAR (8)  CONSTRAINT [DF_Order_SizeCode_SizeCode] DEFAULT ('') NOT NULL,
-    [Ukey]      BIGINT       NOT NULL DEFAULT ((0)), 
-    [AddDate] DATETIME NULL, 
-    [EditDate] DATETIME NULL, 
-    CONSTRAINT [PK_Order_SizeCode] PRIMARY KEY ([Id], [Ukey], [SizeCode]) 
+    [Ukey]      BIGINT       DEFAULT ((0)) NOT NULL,
+    [AddDate]   DATETIME     NULL,
+    [EditDate]  DATETIME     NULL,
+    CONSTRAINT [PK_Order_SizeCode] PRIMARY KEY CLUSTERED ([Id] ASC, [Ukey] ASC, [SizeCode] ASC)
 );
+
+
 
 
 

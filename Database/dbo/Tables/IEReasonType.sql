@@ -1,16 +1,15 @@
-﻿CREATE TABLE [dbo].[IEReasonType](
-	[Type] [varchar](50) NOT NULL,
-	[Junk] [bit] NOT NULL,
-	[AddDate] [datetime] NULL,
-	[AddName] [varchar](10) NULL,
-	[EditDate] [datetime] NULL,
-	[EditName] [varchar](10) NULL,
- CONSTRAINT [PK_IEReasonType] PRIMARY KEY CLUSTERED 
-(
-	[Type] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-) ON [PRIMARY]
+﻿CREATE TABLE [dbo].[IEReasonType] (
+    [Type]     VARCHAR (50) NOT NULL,
+    [Junk]     BIT          CONSTRAINT [DF_IEReasonType_Junk] DEFAULT ((0)) NOT NULL,
+    [AddDate]  DATETIME     NULL,
+    [AddName]  VARCHAR (10) CONSTRAINT [DF_IEReasonType_AddName] DEFAULT ('') NOT NULL,
+    [EditDate] DATETIME     NULL,
+    [EditName] VARCHAR (10) CONSTRAINT [DF_IEReasonType_EditName] DEFAULT ('') NOT NULL,
+    CONSTRAINT [PK_IEReasonType] PRIMARY KEY CLUSTERED ([Type] ASC)
+);
+
+
 GO
 
-ALTER TABLE [dbo].[IEReasonType] ADD  CONSTRAINT [DF_IEReasonType_Junk]  DEFAULT ((0)) FOR [Junk]
+
 GO

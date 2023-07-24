@@ -2,12 +2,14 @@
     [Id]                 VARCHAR (13) CONSTRAINT [DF_Order_EachCons_Article_Id] DEFAULT ('') NOT NULL,
     [Order_EachConsUkey] BIGINT       CONSTRAINT [DF_Order_EachCons_Article_Order_EachConsUkey] DEFAULT ((0)) NOT NULL,
     [Article]            VARCHAR (8)  CONSTRAINT [DF_Order_EachCons_Article_Article] DEFAULT ('') NOT NULL,
-    [AddName]            VARCHAR (10) CONSTRAINT [DF_Order_EachCons_Article_AddName] DEFAULT ('') NULL,
+    [AddName]            VARCHAR (10) CONSTRAINT [DF_Order_EachCons_Article_AddName] DEFAULT ('') NOT NULL,
     [AddDate]            DATETIME     NULL,
-    [EditName]           VARCHAR (10) CONSTRAINT [DF_Order_EachCons_Article_EditName] DEFAULT ('') NULL,
+    [EditName]           VARCHAR (10) CONSTRAINT [DF_Order_EachCons_Article_EditName] DEFAULT ('') NOT NULL,
     [EditDate]           DATETIME     NULL,
     CONSTRAINT [PK_Order_EachCons_Article] PRIMARY KEY CLUSTERED ([Order_EachConsUkey] ASC, [Article] ASC)
 );
+
+
 
 
 GO
@@ -40,4 +42,9 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'最後修�
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'最後修改時間', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Order_EachCons_Article', @level2type = N'COLUMN', @level2name = N'EditDate';
+
+
+GO
+CREATE NONCLUSTERED INDEX [ID]
+    ON [dbo].[Order_EachCons_Article]([Id] ASC);
 

@@ -1,14 +1,16 @@
 ﻿CREATE TABLE [dbo].[AccessoryDefect] (
     [ID]          VARCHAR (10)  CONSTRAINT [DF_AccessoryDefect_ID] DEFAULT ('') NOT NULL,
-    [Description] NVARCHAR (60) CONSTRAINT [DF_AccessoryDefect_Description] DEFAULT ('') NULL,
-    [Junk]        BIT           CONSTRAINT [DF_AccessoryDefect_Junk] DEFAULT ((0)) NULL,
-    [AddName]     VARCHAR (10)  CONSTRAINT [DF_AccessoryDefect_AddName] DEFAULT ('') NULL,
+    [Description] NVARCHAR (60) CONSTRAINT [DF_AccessoryDefect_Description] DEFAULT ('') NOT NULL,
+    [Junk]        BIT           CONSTRAINT [DF_AccessoryDefect_Junk] DEFAULT ((0)) NOT NULL,
+    [AddName]     VARCHAR (10)  CONSTRAINT [DF_AccessoryDefect_AddName] DEFAULT ('') NOT NULL,
     [AddDate]     DATETIME      NULL,
-    [EditName]    VARCHAR (10)  CONSTRAINT [DF_AccessoryDefect_EditName] DEFAULT ('') NULL,
+    [EditName]    VARCHAR (10)  CONSTRAINT [DF_AccessoryDefect_EditName] DEFAULT ('') NOT NULL,
     [EditDate]    DATETIME      NULL,
-    [LocalDesc]   NVARCHAR (60) DEFAULT ('') NULL,
+    [LocalDesc]   NVARCHAR (60) CONSTRAINT [DF_AccessoryDefect_LocalDesc] DEFAULT ('') NOT NULL,
     CONSTRAINT [PK_AccessoryDefect] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
+
+
 
 
 

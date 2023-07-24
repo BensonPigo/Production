@@ -11,16 +11,16 @@ BEGIN
 	--SuppID
 	--DocumentName
 	--BrandID
-	a.TestSeasonID = b.TestSeasonID
-	,a.DueSeason = b.DueSeason
+	a.TestSeasonID = ISNULL(b.TestSeasonID, '')
+	,a.DueSeason = ISNULL(b.DueSeason, '')
 	,a.DueDate = b.DueDate
 	,a.TestReport = b.TestReport
 	,a.FTYReceivedReport = b.FTYReceivedReport
 	,a.TestReportTestDate = b.TestReportTestDate
 	,a.AddDate = b.AddDate
-	,a.AddName = b.AddName
+	,a.AddName = ISNULL(b.AddName, '')
 	,a.EditDate = b.EditDate
-	,a.Editname = b.Editname
+	,a.Editname = ISNULL(b.Editname, '')
 	from [Production].[dbo].UASentReport as a with(nolock)
 	inner join [Trade_To_Pms].[dbo].UASentReport  as b with(nolock) on a.BrandRefno = b.BrandRefno and a.ColorID = b.ColorID and a.SuppID = b.SuppID and a.DocumentName = b.DocumentName and a.BrandID = b.BrandID
 	where isnull(a.EditDate,a.AddDate) < isnull(b.EditDate,b.AddDate)
@@ -51,16 +51,16 @@ BEGIN
 		,SuppID
 		,DocumentName
 		,BrandID
-		,TestSeasonID
-		,DueSeason
+		,ISNULL(TestSeasonID, '')
+		,ISNULL(DueSeason, '')
 		,DueDate
 		,TestReport
 		,FTYReceivedReport
 		,TestReportTestDate
 		,AddDate
-		,AddName
+		,ISNULL(AddName, '')
 		,EditDate
-		,Editname
+		,ISNULL(Editname, '')
 		,UniqueKey
 	from [Trade_To_Pms].[dbo].UASentReport as b WITH (NOLOCK)
 	where not exists(select 1 from [Production].[dbo].UASentReport as a WITH (NOLOCK) where a.BrandRefno = b.BrandRefno and a.ColorID = b.ColorID and a.SuppID = b.SuppID and a.DocumentName = b.DocumentName and a.BrandID = b.BrandID)
@@ -71,9 +71,9 @@ BEGIN
 	UPDATE a
 	SET 	
 	 a.ReportDate = b.ReportDate
-	,a.AWBno = b.AWBno
+	,a.AWBno = ISNULL(b.AWBno, '')
 	,a.EditDate = b.EditDate
-	,a.Editname = b.Editname
+	,a.Editname = ISNULL(b.Editname, '')
 	from [Production].[dbo].NewSentReport as a with(nolock)
 	inner join [Trade_To_Pms].[dbo].NewSentReport  as b with(nolock) on a.ExportID = b.ExportID 
 		and a.PoID = b.PoID 
@@ -129,17 +129,17 @@ BEGIN
       ,[DocumentName]
       ,[BrandID]
       ,[ReportDate]
-      ,[AddName]
+      ,ISNULL([AddName], '')
       ,[AddDate]
-      ,[EditName]
+      ,ISNULL([EditName], '')
       ,[EditDate]
-      ,[AWBno]
-      ,[T2InspYds]
-      ,[T2DefectPoint]
-      ,[T2Grade]
+      ,ISNULL([AWBno], '')
+      ,ISNULL([T2InspYds], 0)
+      ,ISNULL([T2DefectPoint], 0)
+      ,ISNULL([T2Grade], 0)
       ,[TestReportTestDate]
       ,[FTYReceivedReport]
-	  ,UniqueKey
+	  ,ISNULL(UniqueKey, '')
 	from [Trade_To_Pms].[dbo].NewSentReport as b WITH (NOLOCK)
 	where not exists(
 		select 1 
@@ -155,9 +155,9 @@ BEGIN
 	UPDATE a
 	SET 	
 	 a.ReportDate = b.ReportDate
-	,a.AWBno = b.AWBno
+	,a.AWBno = ISNULL(b.AWBno, '')
 	,a.EditDate = b.EditDate
-	,a.Editname = b.Editname
+	,a.Editname = ISNULL(b.Editname, '')
 	from [Production].[dbo].ExportRefnoSentReport as a with(nolock)
 	inner join [Trade_To_Pms].[dbo].ExportRefnoSentReport  as b with(nolock) on a.ExportID = b.ExportID 
 		and a.BrandRefno = b.BrandRefno 
@@ -206,13 +206,13 @@ BEGIN
       ,[DocumentName]
       ,[BrandID]
       ,[ReportDate]
-      ,[AddName]
+      ,ISNULL([AddName], '')
       ,[AddDate]
-      ,[EditName]
+      ,ISNULL([EditName], '')
       ,[EditDate]
-      ,[AWBno]
+      ,ISNULL([AWBno], '')
       ,[FTYReceivedReport]
-	  ,UniqueKey
+	  ,ISNULL(UniqueKey, '')
 	from [Trade_To_Pms].[dbo].ExportRefnoSentReport as b WITH (NOLOCK)
 	where not exists(
 		select 1 

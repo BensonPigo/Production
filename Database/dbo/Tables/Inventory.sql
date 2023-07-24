@@ -7,42 +7,44 @@
     [FactoryID]        VARCHAR (8)     CONSTRAINT [DF_Inventory_FactoryID] DEFAULT ('') NOT NULL,
     [UnitID]           VARCHAR (8)     CONSTRAINT [DF_Inventory_UnitID] DEFAULT ('') NOT NULL,
     [ProjectID]        VARCHAR (5)     CONSTRAINT [DF_Inventory_ProjectID] DEFAULT ('') NOT NULL,
-    [BrandGroup]       VARCHAR (8)     CONSTRAINT [DF_Inventory_BrandGroup] DEFAULT ('') NULL,
+    [BrandGroup]       VARCHAR (8)     CONSTRAINT [DF_Inventory_BrandGroup] DEFAULT ('') NOT NULL,
     [InventoryRefnoID] BIGINT          CONSTRAINT [DF_Inventory_InventoryRefnoID] DEFAULT ((0)) NOT NULL,
-    [LimitHandle]      VARCHAR (10)    CONSTRAINT [DF_Inventory_LimitHandle] DEFAULT ('') NULL,
-    [LimitSmr]         VARCHAR (10)    CONSTRAINT [DF_Inventory_LimitSmr] DEFAULT ('') NULL,
-    [AuthMr]           VARCHAR (10)    CONSTRAINT [DF_Inventory_AuthMr] DEFAULT ('') NULL,
+    [LimitHandle]      VARCHAR (10)    CONSTRAINT [DF_Inventory_LimitHandle] DEFAULT ('') NOT NULL,
+    [LimitSmr]         VARCHAR (10)    CONSTRAINT [DF_Inventory_LimitSmr] DEFAULT ('') NOT NULL,
+    [AuthMr]           VARCHAR (10)    CONSTRAINT [DF_Inventory_AuthMr] DEFAULT ('') NOT NULL,
     [Refno]            VARCHAR (36)    CONSTRAINT [DF_Inventory_Refno] DEFAULT ('') NULL,
-    [BrandID]          VARCHAR (8)     CONSTRAINT [DF_Inventory_BrandID] DEFAULT ('') NULL,
-    [Payable]          VARCHAR (1)     CONSTRAINT [DF_Inventory_Payable] DEFAULT ('') NULL,
+    [BrandID]          VARCHAR (8)     CONSTRAINT [DF_Inventory_BrandID] DEFAULT ('') NOT NULL,
+    [Payable]          VARCHAR (1)     CONSTRAINT [DF_Inventory_Payable] DEFAULT ('') NOT NULL,
     [CurrencyID]       VARCHAR (3)     CONSTRAINT [DF_Inventory_CurrencyID] DEFAULT ('') NOT NULL,
-    [Qty]              NUMERIC (10, 2) CONSTRAINT [DF_Inventory_Qty] DEFAULT ((0)) NULL,
-    [InputQty]         NUMERIC (10, 2) CONSTRAINT [DF_Inventory_InputQty] DEFAULT ((0)) NULL,
-    [OutputQty]        NUMERIC (10, 2) CONSTRAINT [DF_Inventory_OutputQty] DEFAULT ((0)) NULL,
+    [Qty]              DECIMAL (10, 2) CONSTRAINT [DF_Inventory_Qty] DEFAULT ((0)) NOT NULL,
+    [InputQty]         DECIMAL (10, 2) CONSTRAINT [DF_Inventory_InputQty] DEFAULT ((0)) NOT NULL,
+    [OutputQty]        DECIMAL (10, 2) CONSTRAINT [DF_Inventory_OutputQty] DEFAULT ((0)) NOT NULL,
     [Deadline]         DATE            NULL,
-    [PoFactory]        VARCHAR (8)     CONSTRAINT [DF_Inventory_PoFactory] DEFAULT ('') NULL,
-    [OrderHandle]      VARCHAR (10)    CONSTRAINT [DF_Inventory_OrderHandle] DEFAULT ('') NULL,
-    [OrderSmr]         VARCHAR (10)    CONSTRAINT [DF_Inventory_OrderSmr] DEFAULT ('') NULL,
-    [PoHandle]         VARCHAR (10)    CONSTRAINT [DF_Inventory_PoHandle] DEFAULT ('') NULL,
-    [PoSmr]            VARCHAR (10)    CONSTRAINT [DF_Inventory_PoSmr] DEFAULT ('') NULL,
-    [StyleID]          VARCHAR (15)    CONSTRAINT [DF_Inventory_StyleID] DEFAULT ('') NULL,
-    [SeasonID]         VARCHAR (10)    CONSTRAINT [DF_Inventory_SeasonID] DEFAULT ('') NULL,
+    [PoFactory]        VARCHAR (8)     CONSTRAINT [DF_Inventory_PoFactory] DEFAULT ('') NOT NULL,
+    [OrderHandle]      VARCHAR (10)    CONSTRAINT [DF_Inventory_OrderHandle] DEFAULT ('') NOT NULL,
+    [OrderSmr]         VARCHAR (10)    CONSTRAINT [DF_Inventory_OrderSmr] DEFAULT ('') NOT NULL,
+    [PoHandle]         VARCHAR (10)    CONSTRAINT [DF_Inventory_PoHandle] DEFAULT ('') NOT NULL,
+    [PoSmr]            VARCHAR (10)    CONSTRAINT [DF_Inventory_PoSmr] DEFAULT ('') NOT NULL,
+    [StyleID]          VARCHAR (15)    CONSTRAINT [DF_Inventory_StyleID] DEFAULT ('') NOT NULL,
+    [SeasonID]         VARCHAR (10)    CONSTRAINT [DF_Inventory_SeasonID] DEFAULT ('') NOT NULL,
     [FabricType]       VARCHAR (1)     CONSTRAINT [DF_Inventory_FabricType] DEFAULT ('') NOT NULL,
-    [MtlTypeID]        VARCHAR (20)    CONSTRAINT [DF_Inventory_MtlTypeID] DEFAULT ('') NULL,
-    [ReasonID]         VARCHAR (5)     CONSTRAINT [DF_Inventory_ReasonID] DEFAULT ('') NULL,
-    [Remark]           NVARCHAR (MAX)   CONSTRAINT [DF_Inventory_Remark] DEFAULT ('') NULL,
-    [IcrNo]            VARCHAR (13)    CONSTRAINT [DF_Inventory_IcrNo] DEFAULT ('') NULL,
-    [DebitID]          VARCHAR (13)    CONSTRAINT [DF_Inventory_DebitID] DEFAULT ('') NULL,
-    [Lock]             BIT     CONSTRAINT [DF_Inventory_Lock] DEFAULT ((0)) NULL,
+    [MtlTypeID]        VARCHAR (20)    CONSTRAINT [DF_Inventory_MtlTypeID] DEFAULT ('') NOT NULL,
+    [ReasonID]         VARCHAR (5)     CONSTRAINT [DF_Inventory_ReasonID] DEFAULT ('') NOT NULL,
+    [Remark]           NVARCHAR (MAX)  CONSTRAINT [DF_Inventory_Remark] DEFAULT ('') NOT NULL,
+    [IcrNo]            VARCHAR (13)    CONSTRAINT [DF_Inventory_IcrNo] DEFAULT ('') NOT NULL,
+    [DebitID]          VARCHAR (13)    CONSTRAINT [DF_Inventory_DebitID] DEFAULT ('') NOT NULL,
+    [Lock]             BIT             CONSTRAINT [DF_Inventory_Lock] DEFAULT ((0)) NOT NULL,
     [ETA]              DATE            NULL,
-    [AddName]          VARCHAR (10)    CONSTRAINT [DF_Inventory_AddName] DEFAULT ('') NULL,
+    [AddName]          VARCHAR (10)    CONSTRAINT [DF_Inventory_AddName] DEFAULT ('') NOT NULL,
     [AddDate]          DATETIME        NULL,
-    [EditName]         VARCHAR (10)    CONSTRAINT [DF_Inventory_EditName] DEFAULT ('') NULL,
+    [EditName]         VARCHAR (10)    CONSTRAINT [DF_Inventory_EditName] DEFAULT ('') NOT NULL,
     [EditDate]         DATETIME        NULL,
-    [SCIRefno]         VARCHAR (30)    NULL DEFAULT (''),
-    [SuppID]           VARCHAR (6)     NULL DEFAULT (''),
-    CONSTRAINT [PK_Inventory] PRIMARY KEY CLUSTERED ([Ukey])
+    [SCIRefno]         VARCHAR (30)    CONSTRAINT [DF_Inventory_SCIRefno] DEFAULT ('') NOT NULL,
+    [SuppID]           VARCHAR (6)     CONSTRAINT [DF_Inventory_SuppID] DEFAULT ('') NOT NULL,
+    CONSTRAINT [PK_Inventory] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
+
+
 
 
 
@@ -216,6 +218,5 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'組織代�
 
 
 GO
-CREATE NONCLUSTERED INDEX [<Name of Missing Index, sysname,>]
-    ON [dbo].[Inventory]([POID] ASC, [Seq1] ASC, [Seq2] ASC, [FactoryID] ASC);
+
 
