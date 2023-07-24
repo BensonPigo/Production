@@ -127,8 +127,7 @@ select  ted.InventoryPOID,
         te.ID,
         ted.Ukey,
         [Description] = dbo.getMtlDesc(ted.InventoryPOID, ted.InventorySeq1, ted.InventorySeq2, 2, 0),
-		MDivisionID = '{this.M}',
-        ID = ''
+		MDivisionID = '{this.M}'
 into #tmpTransferExport
 from    TransferExport te with (nolock)
 inner   join TransferExport_Detail ted with (nolock) on te.ID = ted.ID
