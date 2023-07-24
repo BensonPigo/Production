@@ -443,7 +443,7 @@ outer apply(select EMBROIDERY, PRINTING from
 				from Order_Artwork oa with (nolock)
 				where oa.id = o.ID and
 					  oa.ArtworkTypeID in ('EMBROIDERY', 'PRINTING') and
-					  (oa.Article = ssd.Article or oa.Article = '') and
+					  (oa.Article = ssd.Article or oa.Article = '----') and
 					  exists(select 1 from Pattern_GL pg with (nolock) 
 							 where	pg.PatternUKEY = (select top 1 PatternUkey from dbo.GetPatternUkey(o.POID, '', '', o.StyleUkey, '')) and
 									iif(pg.SEQ = '0001', substring(pg.PatternCode, 11, 10), pg.PatternCode) = oa.PatternCode and
