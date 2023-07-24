@@ -1,6 +1,6 @@
 ﻿namespace Sci.Production.Warehouse
 {
-    partial class P71_Import
+    partial class P72_Import
     {
         /// <summary>
         /// Required designer variable.
@@ -28,53 +28,25 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.label1 = new Sci.Win.UI.Label();
-            this.txtSP = new Sci.Win.UI.TextBox();
-            this.txtLocation = new Sci.Win.UI.TextBox();
-            this.label3 = new Sci.Win.UI.Label();
+            this.components = new System.ComponentModel.Container();
             this.btnFind = new Sci.Win.UI.Button();
             this.gridImport = new Sci.Win.UI.Grid();
             this.btnImport = new Sci.Win.UI.Button();
             this.btnCancel = new Sci.Win.UI.Button();
+            this.label2 = new System.Windows.Forms.Label();
             this.txtseq2 = new Sci.Win.UI.TextBox();
             this.txtSeq1 = new Sci.Win.UI.TextBox();
-            this.label2 = new System.Windows.Forms.Label();
+            this.txtLocation = new Sci.Win.UI.TextBox();
+            this.label3 = new Sci.Win.UI.Label();
+            this.txtSP = new Sci.Win.UI.TextBox();
+            this.label1 = new Sci.Win.UI.Label();
+            this.btnUpdateAll = new Sci.Win.UI.Button();
+            this.labelReason = new Sci.Win.UI.Label();
+            this.comboReason = new Sci.Win.UI.ComboBox();
+            this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.gridImport)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
             this.SuspendLayout();
-            // 
-            // label1
-            // 
-            this.label1.Location = new System.Drawing.Point(9, 9);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(75, 23);
-            this.label1.TabIndex = 8;
-            this.label1.Text = "SP#";
-            // 
-            // txtSP
-            // 
-            this.txtSP.BackColor = System.Drawing.Color.White;
-            this.txtSP.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtSP.Location = new System.Drawing.Point(87, 8);
-            this.txtSP.Name = "txtSP";
-            this.txtSP.Size = new System.Drawing.Size(110, 23);
-            this.txtSP.TabIndex = 0;
-            // 
-            // txtLocation
-            // 
-            this.txtLocation.BackColor = System.Drawing.Color.White;
-            this.txtLocation.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtLocation.Location = new System.Drawing.Point(402, 8);
-            this.txtLocation.Name = "txtLocation";
-            this.txtLocation.Size = new System.Drawing.Size(110, 23);
-            this.txtLocation.TabIndex = 3;
-            // 
-            // label3
-            // 
-            this.label3.Location = new System.Drawing.Point(324, 9);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(75, 23);
-            this.label3.TabIndex = 7;
-            this.label3.Text = "Location";
             // 
             // btnFind
             // 
@@ -135,6 +107,15 @@
             this.btnCancel.UseVisualStyleBackColor = true;
             this.btnCancel.Click += new System.EventHandler(this.BtnCancel_Click);
             // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(252, 10);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(13, 17);
+            this.label2.TabIndex = 7;
+            this.label2.Text = "-";
+            // 
             // txtseq2
             // 
             this.txtseq2.BackColor = System.Drawing.Color.White;
@@ -155,63 +136,138 @@
             this.txtSeq1.Size = new System.Drawing.Size(49, 23);
             this.txtSeq1.TabIndex = 1;
             // 
-            // label2
+            // txtLocation
             // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(252, 10);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(13, 17);
-            this.label2.TabIndex = 1187;
-            this.label2.Text = "-";
+            this.txtLocation.BackColor = System.Drawing.Color.White;
+            this.txtLocation.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtLocation.Location = new System.Drawing.Point(402, 8);
+            this.txtLocation.Name = "txtLocation";
+            this.txtLocation.Size = new System.Drawing.Size(110, 23);
+            this.txtLocation.TabIndex = 3;
             // 
-            // P71_Import
+            // label3
+            // 
+            this.label3.Location = new System.Drawing.Point(324, 9);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(75, 23);
+            this.label3.TabIndex = 1190;
+            this.label3.Text = "Location";
+            // 
+            // txtSP
+            // 
+            this.txtSP.BackColor = System.Drawing.Color.White;
+            this.txtSP.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtSP.Location = new System.Drawing.Point(87, 8);
+            this.txtSP.Name = "txtSP";
+            this.txtSP.Size = new System.Drawing.Size(110, 23);
+            this.txtSP.TabIndex = 0;
+            // 
+            // label1
+            // 
+            this.label1.Location = new System.Drawing.Point(9, 9);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(75, 23);
+            this.label1.TabIndex = 1188;
+            this.label1.Text = "SP#";
+            // 
+            // btnUpdateAll
+            // 
+            this.btnUpdateAll.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnUpdateAll.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.btnUpdateAll.Location = new System.Drawing.Point(583, 411);
+            this.btnUpdateAll.Name = "btnUpdateAll";
+            this.btnUpdateAll.Size = new System.Drawing.Size(90, 30);
+            this.btnUpdateAll.TabIndex = 1192;
+            this.btnUpdateAll.Text = "Update All";
+            this.btnUpdateAll.UseVisualStyleBackColor = true;
+            this.btnUpdateAll.Click += new System.EventHandler(this.btnUpdateAll_Click);
+            // 
+            // labelReason
+            // 
+            this.labelReason.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.labelReason.Location = new System.Drawing.Point(68, 414);
+            this.labelReason.Name = "labelReason";
+            this.labelReason.Size = new System.Drawing.Size(69, 23);
+            this.labelReason.TabIndex = 1193;
+            this.labelReason.Text = "Reason";
+            // 
+            // comboReason
+            // 
+            this.comboReason.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.comboReason.BackColor = System.Drawing.Color.White;
+            this.comboReason.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboReason.FormattingEnabled = true;
+            this.comboReason.IsSupportUnselect = true;
+            this.comboReason.Items.AddRange(new object[] {
+            "ALL",
+            "Bulk",
+            "Inventory"});
+            this.comboReason.Location = new System.Drawing.Point(140, 414);
+            this.comboReason.Name = "comboReason";
+            this.comboReason.OldText = "";
+            this.comboReason.Size = new System.Drawing.Size(437, 24);
+            this.comboReason.TabIndex = 1191;
+            // 
+            // P72_Import
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(865, 450);
+            this.Controls.Add(this.btnUpdateAll);
+            this.Controls.Add(this.labelReason);
+            this.Controls.Add(this.comboReason);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.txtseq2);
             this.Controls.Add(this.txtSeq1);
-            this.Controls.Add(this.btnCancel);
-            this.Controls.Add(this.btnImport);
-            this.Controls.Add(this.gridImport);
-            this.Controls.Add(this.btnFind);
             this.Controls.Add(this.txtLocation);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.txtSP);
             this.Controls.Add(this.label1);
-            this.Name = "P71_Import";
+            this.Controls.Add(this.btnCancel);
+            this.Controls.Add(this.btnImport);
+            this.Controls.Add(this.gridImport);
+            this.Controls.Add(this.btnFind);
+            this.Name = "P72_Import";
             this.OnLineHelpID = "Sci.Win.Tems.QueryForm";
-            this.Text = "P71 Import Detail";
-            this.Controls.SetChildIndex(this.label1, 0);
-            this.Controls.SetChildIndex(this.txtSP, 0);
-            this.Controls.SetChildIndex(this.label3, 0);
-            this.Controls.SetChildIndex(this.txtLocation, 0);
+            this.Text = "P72 Import";
             this.Controls.SetChildIndex(this.btnFind, 0);
             this.Controls.SetChildIndex(this.gridImport, 0);
             this.Controls.SetChildIndex(this.btnImport, 0);
             this.Controls.SetChildIndex(this.btnCancel, 0);
+            this.Controls.SetChildIndex(this.label1, 0);
+            this.Controls.SetChildIndex(this.txtSP, 0);
+            this.Controls.SetChildIndex(this.label3, 0);
+            this.Controls.SetChildIndex(this.txtLocation, 0);
             this.Controls.SetChildIndex(this.txtSeq1, 0);
             this.Controls.SetChildIndex(this.txtseq2, 0);
             this.Controls.SetChildIndex(this.label2, 0);
+            this.Controls.SetChildIndex(this.comboReason, 0);
+            this.Controls.SetChildIndex(this.labelReason, 0);
+            this.Controls.SetChildIndex(this.btnUpdateAll, 0);
             ((System.ComponentModel.ISupportInitialize)(this.gridImport)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
         }
 
         #endregion
-
-        private Win.UI.Label label1;
-        private Win.UI.TextBox txtSP;
-        private Win.UI.TextBox txtLocation;
-        private Win.UI.Label label3;
         private Win.UI.Button btnFind;
         private Win.UI.Grid gridImport;
         private Win.UI.Button btnImport;
         private Win.UI.Button btnCancel;
+        private System.Windows.Forms.Label label2;
         private Win.UI.TextBox txtseq2;
         private Win.UI.TextBox txtSeq1;
-        private System.Windows.Forms.Label label2;
+        private Win.UI.TextBox txtLocation;
+        private Win.UI.Label label3;
+        private Win.UI.TextBox txtSP;
+        private Win.UI.Label label1;
+        private Win.UI.Button btnUpdateAll;
+        private Win.UI.Label labelReason;
+        private Win.UI.ComboBox comboReason;
+        private Win.UI.ListControlBindingSource listControlBindingSource1;
     }
 }

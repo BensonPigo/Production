@@ -4,7 +4,6 @@ using Microsoft.Reporting.WinForms;
 using Sci.Data;
 using Sci.Production.Automation.LogicLayer;
 using Sci.Production.Prg.Entity;
-using Sci.Production.PublicForm;
 using Sci.Production.PublicPrg;
 using Sci.Win;
 using Sci.Win.Tems;
@@ -25,15 +24,15 @@ using System.Windows.Forms;
 namespace Sci.Production.Warehouse
 {
     /// <summary>
-    /// P71
+    /// P72
     /// </summary>
-    public partial class P71 : Win.Tems.Input6
+    public partial class P72 : Win.Tems.Input6
     {
         /// <summary>
-        /// P71
+        /// P72
         /// </summary>
         /// <param name="menuitem">menuitem</param>
-        public P71(ToolStripMenuItem menuitem)
+        public P72(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
             this.InitializeComponent();
@@ -43,7 +42,7 @@ namespace Sci.Production.Warehouse
         }
 
         /// <inheritdoc/>
-        public P71(ToolStripMenuItem menuitem, string transID)
+        public P72(ToolStripMenuItem menuitem, string transID)
         {
             this.InitializeComponent();
             this.DefaultFilter = $" id='{transID}' AND MDivisionID  = '{Sci.Env.User.Keyword}'";
@@ -71,10 +70,13 @@ SELECT loid.*
 , [Tone] = ISNULL(loi.Tone,'')
 , [Unit] = ISNULL(lom.Unit,'')
 , [Location] = ISNULL(LOCATION.val,'')
-FROM LocalOrderIssue_Detail loid
+, [ReasonName] = r.Name
+, [AdjustQty] = loid.QtyAfter - loid.QtyBefore
+FROM LocalOrderAdjust_Detail loid
 LEFT JOIN LocalOrderMaterial lom ON lom.POID = loid.POID AND loid.Seq1 = lom.Seq1 AND loid.Seq2 = lom.Seq2
 LEFT JOIN LocalOrderInventory loi ON loid.POID = loi.POID
 	AND loid.Seq1 = loi.Seq1 AND loid.Seq2 = loi.Seq2 AND loid.Roll = loi.Roll AND loid.Dyelot = loi.Dyelot AND loid.StockType = loi.StockType
+LEFT JOIN Reason r ON r.ID = loid.ReasonID	and r.ReasonTypeID='Stock_Adjust'
 outer apply (
 	SELECT val =  Stuff((select distinct concat( ',',MtlLocationID)   
 	FROM LocalOrderInventory_Location loil with (nolock)
@@ -90,21 +92,31 @@ where   loid.ID = '{masterID}'
         protected override void OnDetailGridSetup()
         {
             base.OnDetailGridSetup();
-
+            DataGridViewGeneratorNumericColumnSettings colQtyAfter = new DataGridViewGeneratorNumericColumnSettings();
+            colQtyAfter.CellValidating += (s, e) =>
+            {
+                this.detailgrid.EndEdit();
+                decimal qtyAfter = (decimal)this.detailgrid.Rows[e.RowIndex].Cells["QtyAfter"].Value;
+                decimal qtyBefore = (decimal)this.detailgrid.Rows[e.RowIndex].Cells["QtyBefore"].Value;
+                this.detailgrid.Rows[e.RowIndex].Cells["AdjustQty"].Value = qtyAfter - qtyBefore;
+                this.detailgrid.RefreshEdit();
+            };
             this.Helper.Controls.Grid.Generator(this.detailgrid)
             .Text("POID", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
             .Text("Seq", header: "Seq", width: Widths.AnsiChars(6), iseditingreadonly: true)
             .EditText("Desc", header: "Description", width: Widths.AnsiChars(25), iseditingreadonly: true)
-            .Text("Color", header: "Color", width: Widths.AnsiChars(10), iseditingreadonly: true)
+            .Text("Color", header: "Color", width: Widths.AnsiChars(8), iseditingreadonly: true)
             .Text("Roll", header: "Roll", width: Widths.AnsiChars(8), iseditingreadonly: true)
             .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(8), iseditingreadonly: true)
-            .Text("Tone", header: "Tone/Grp", width: Widths.AnsiChars(15), iseditingreadonly: true)
-            .Numeric("Qty", header: "Issue Qty", decimal_places: 2, width: Widths.AnsiChars(8))
+            .Text("Tone", header: "Tone/Grp", width: Widths.AnsiChars(8), iseditingreadonly: true)
+            .Numeric("QtyBefore", header: "Original Qty", decimal_places: 2, width: Widths.AnsiChars(8), iseditingreadonly: true)
+            .Numeric("QtyAfter", header: "Current Qty", decimal_places: 2, width: Widths.AnsiChars(8), settings: colQtyAfter)
+            .Numeric("AdjustQty", header: "Adjust Qty", decimal_places: 2, width: Widths.AnsiChars(8), iseditingreadonly: true)
             .Text("Unit", header: "Unit", width: Widths.AnsiChars(8), iseditingreadonly: true)
             .Text("Location", header: "Location", width: Widths.AnsiChars(15), iseditingreadonly: true)
             ;
 
-            this.detailgrid.Columns["Qty"].DefaultCellStyle.BackColor = Color.Pink;
+            this.detailgrid.Columns["QtyAfter"].DefaultCellStyle.BackColor = Color.Pink;
         }
 
         /// <inheritdoc/>
@@ -151,17 +163,20 @@ where   loid.ID = '{masterID}'
 
             this.RenewData(); // 先重載資料, 避免雙開程式狀況
             base.ClickConfirm();
-
-            // 取得 LocalOrderInventory資料
-            DualResult result = Prgs.GetLocalOrderInventoryData((DataTable)this.detailgridbs.DataSource, this.Name, out DataTable dtLocalOrderInventory);
-            string ids = string.Empty;
-            string sqlcmd = string.Empty;
-
-            // 檢查單據有主料則 Barcode不可為空
-            if (!Prgs.CheckBarCode(dtLocalOrderInventory, this.Name,isLocalOrderInventory: true))
+            if (this.CurrentMaintain == null)
             {
                 return;
             }
+
+            // 取得 LocalOrderInventory資料
+            DualResult result = Prgs.GetLocalOrderInventoryData((DataTable)this.detailgridbs.DataSource, this.Name, out DataTable dtLocalOrderInventory);
+            StringBuilder upd_MD_8T = new StringBuilder();
+            StringBuilder upd_MD_32T = new StringBuilder();
+            StringBuilder upd_Fty_8T = new StringBuilder();
+            string sqlcmd = string.Empty;
+            string ids = string.Empty;
+            DualResult result2;
+            DataTable datacheck;
 
             #region 檢查物料Location 是否存在WMS
             if (!PublicPrg.Prgs.Chk_WMS_Location(this.CurrentMaintain["ID"].ToString(), this.Name))
@@ -170,57 +185,40 @@ where   loid.ID = '{masterID}'
             }
             #endregion
 
-            #region 檢查負數庫存
-
-            sqlcmd = string.Format(
-                @"
-Select   [SP#] = d.poid
-        ,[Seq] = Concat (d.Seq1, ' ', d.Seq2)
-        ,d.Roll
-        ,d.Dyelot
-        ,[Balance Qty] = isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0)
-from dbo.LocalOrderIssue_Detail d WITH (NOLOCK) 
-left join LocalOrderInventory f WITH (NOLOCK) on d.poid = f.poid and d.seq1 = f.seq1 and d.seq2 = f.seq2 and d.Dyelot = f.Dyelot
-    and d.roll = f.roll and d.stocktype = f.stocktype
-where (isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - d.Qty < 0) and d.Id = '{0}'", this.CurrentMaintain["id"]);
-            if (!(result = DBProxy.Current.Select(null, sqlcmd, out DataTable datacheck)))
+            #region 檢查物料不能有WMS Location && IsFromWMS = 0
+            if (!PublicPrg.Prgs.Chk_WMS_Location_Adj((DataTable)this.detailgridbs.DataSource, isLocal: true) && MyUtility.Check.Empty(this.CurrentMaintain["IsFromWMS"]))
             {
-                this.ShowErr(sqlcmd, result);
+                MyUtility.Msg.WarningBox("Material Location or Adjust is from WMS system cannot save or confirmed. ", "Warning");
                 return;
             }
-            else
-            {
-                if (datacheck.Rows.Count > 0)
-                {
-                    Class.MsgGrid form = new Class.MsgGrid(datacheck, "Balacne Qty is not enough!!");
-                    form.ShowDialog(this);
-                    return;
-                }
-            }
+            #endregion
 
-            #endregion 檢查負數庫存
-
-            #region 檢查Location是否為空值
-            if (Prgs.ChkLocation(this.CurrentMaintain["ID"].ToString(), "LocalOrderIssue_Detail") == false)
+            #region 檢查負庫存
+            if (!Prgs.CheckAdjustBalance(MyUtility.Convert.GetString(this.CurrentMaintain["id"]), isConfirm: true, isLocalOrder: true))
             {
                 return;
             }
+            #endregion
 
+            #region 檢查 Barcode不可為空
+            if (!Prgs.CheckBarCode(dtLocalOrderInventory, this.Name,isLocalOrderInventory: true))
+            {
+                return;
+            }
             #endregion
 
             #region 更新庫存數量  LocalOrderInventory
-            var bsfio = (from m in ((DataTable)this.detailgridbs.DataSource).AsEnumerable()
-                         select new
-                         {
-                             poid = m.Field<string>("poid"),
-                             seq1 = m.Field<string>("seq1"),
-                             seq2 = m.Field<string>("seq2"),
-                             stocktype = m.Field<string>("stocktype"),
-                             qty = m.Field<decimal>("qty"),
-                             roll = m.Field<string>("roll"),
-                             dyelot = m.Field<string>("dyelot"),
-                         }).ToList();
-            string sqlupd2_FIO = Prgs.UpdateLocalOrderInventory_IO("Out", null, true);
+            DataTable data_Fty_8T = (DataTable)this.detailgridbs.DataSource;
+            data_Fty_8T.ColumnsDecimalAdd("qty", expression: "QtyAfter- QtyBefore");
+
+            upd_Fty_8T.Append(Prgs.UpdateLocalOrderInventory_IO("Adjust", null, true));
+            #endregion 更新庫存數量  ftyinventory
+
+            #region 檢查Location是否為空值
+            if (Prgs.ChkLocation(this.CurrentMaintain["ID"].ToString(), "LocalOrderAdjust_Detail", isLocalOrder: true) == false)
+            {
+                return;
+            }
             #endregion
 
             Exception errMsg = null;
@@ -229,18 +227,19 @@ where (isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - d.Qty < 
                 try
                 {
                     DataTable resulttb;
-                    if (!(result = MyUtility.Tool.ProcessWithObject(bsfio, string.Empty, sqlupd2_FIO, out resulttb, "#TmpSource")))
+                    if (!(result = MyUtility.Tool.ProcessWithDatatable(
+                        data_Fty_8T, string.Empty, upd_Fty_8T.ToString(), out resulttb, "#TmpSource")))
                     {
                         throw result.GetException();
                     }
 
-                    // Barcode 需要判斷新的庫存, 在更新 LocalOrderInventory 之後
-                    if (!(result = Prgs.UpdateWH_Barcode(true, (DataTable)this.detailgridbs.DataSource, this.Name, out bool fromNewBarcode, dtLocalOrderInventory)))
+                    if (!(result = DBProxy.Current.Execute(null, $"update LocalOrderAdjust set status='Confirmed', editname = '{Env.User.UserID}', editdate = GETDATE() where id = '{this.CurrentMaintain["id"]}'")))
                     {
                         throw result.GetException();
                     }
 
-                    if (!(result = DBProxy.Current.Execute(null, $"update LocalOrderIssue set status = 'Confirmed', editname = '{Env.User.UserID}', editdate = GETDATE() where id = '{this.CurrentMaintain["id"]}'")))
+                    // Barcode 需要判斷新的庫存, 在更新 FtyInventory 之後
+                    if (!(result = Prgs.UpdateWH_Barcode(true, (DataTable)this.detailgridbs.DataSource, this.Name, out bool fromNewBarcode, dtLocalOrderInventory, isLocalOrder: true)))
                     {
                         throw result.GetException();
                     }
@@ -269,83 +268,62 @@ where (isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - d.Qty < 
         {
             this.RenewData(); // 先重載資料, 避免雙開程式狀況
             base.ClickUnconfirm();
-            if (this.CurrentMaintain == null ||
-                MyUtility.Msg.QuestionBox("Do you want to unconfirme it?") == DialogResult.No)
+            if (this.CurrentMaintain == null)
+            {
+                return;
+            }
+
+            if (MyUtility.Msg.QuestionBox("Do you want to unconfirme it?") == DialogResult.No)
             {
                 return;
             }
 
             // 取得 LocalOrderInventory資料
             DualResult result = Prgs.GetLocalOrderInventoryData((DataTable)this.detailgridbs.DataSource, this.Name, out DataTable dtLocalOrderInventory);
-            string ids = string.Empty;
+            DataTable datacheck;
+            DataTable dt = (DataTable)this.detailgridbs.DataSource;
+            StringBuilder upd_Fty_8F = new StringBuilder();
             string sqlcmd = string.Empty;
+            string ids = string.Empty;
+            DualResult result2;
+            #region 檢查物料Location 是否存在WMS
+            if (!PublicPrg.Prgs.Chk_WMS_Location(this.CurrentMaintain["ID"].ToString(), "P72"))
+            {
+                return;
+            }
+            #endregion
 
             #region 檢查資料有任一筆WMS已完成, 就不能unConfirmed
-            if (!Prgs.ChkWMSCompleteTime((DataTable)this.detailgridbs.DataSource, "LocalOrderIssue_Detail"))
+            if (!Prgs.ChkWMSCompleteTime(dt, "LocalOrderAdjust_Detail"))
             {
                 return;
             }
             #endregion
 
-            #region 檢查物料Location 是否存在WMS
-            if (!PublicPrg.Prgs.Chk_WMS_Location(this.CurrentMaintain["ID"].ToString(), this.Name))
+            // 檢查負數庫存
+            if (!Prgs.CheckAdjustBalance(MyUtility.Convert.GetString(this.CurrentMaintain["id"]), isConfirm: false, isLocalOrder: true))
             {
-                MyUtility.Msg.WarningBox("Material Location is from WMS system cannot confirmed or unconfirmed. ", "Warning");
                 return;
             }
-            #endregion
 
-            #region 檢查負數庫存
+            #region -- 更新庫存數量  LocalOrderInventory --
 
-            sqlcmd = string.Format(
-                @"
-Select  d.poid
-        ,d.seq1
-        ,d.seq2
-        ,d.Roll
-        ,d.Qty
-        ,isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) as balanceQty
-        ,d.Dyelot   
-from dbo.LocalOrderIssue_Detail d WITH (NOLOCK) 
-left join LocalOrderInventory f WITH (NOLOCK) on d.poid = f.poid and d.seq1 = f.seq1 and d.seq2 = f.seq2 and d.Dyelot = f.Dyelot
-    and d.roll = f.roll and d.stocktype = f.stocktype
-where (isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) + d.Qty < 0) and d.Id = '{0}'", this.CurrentMaintain["id"]);
-            if (!(result = DBProxy.Current.Select(null, sqlcmd, out DataTable datacheck)))
+            DataTable data_Fty_8F = (DataTable)this.detailgridbs.DataSource;
+
+            // dtio.ColumnsDecimalAdd("qty", expression: "QtyAfter- QtyBefore");
+            data_Fty_8F.Columns.Add("qty", typeof(decimal));
+            foreach (DataRow dx in data_Fty_8F.Rows)
             {
-                this.ShowErr(sqlcmd, result);
-                return;
-            }
-            else
-            {
-                if (datacheck.Rows.Count > 0)
-                {
-                    Class.MsgGrid form = new Class.MsgGrid(datacheck, "Balacne Qty is not enough!!");
-                    form.ShowDialog(this);
-                    return;
-                }
+                dx["qty"] = -((decimal)dx["QtyAfter"] - (decimal)dx["QtyBefore"]);
             }
 
-            #endregion 檢查負數庫存
+            upd_Fty_8F.Append(Prgs.UpdateLocalOrderInventory_IO("Adjust", null, false));
 
-            #region 更新庫存數量  LocalOrderInventory
-            var bsfio = (from m in ((DataTable)this.detailgridbs.DataSource).AsEnumerable()
-                         select new
-                         {
-                             poid = m.Field<string>("poid"),
-                             seq1 = m.Field<string>("seq1"),
-                             seq2 = m.Field<string>("seq2"),
-                             stocktype = m.Field<string>("stocktype"),
-                             qty = -m.Field<decimal>("qty"),
-                             location = m.Field<string>("location"),
-                             roll = m.Field<string>("roll"),
-                             dyelot = m.Field<string>("dyelot"),
-                         }).ToList();
-            string sqlupd2_FIO = Prgs.UpdateLocalOrderInventory_IO("Out", null, false);
-            #endregion
+            #endregion 更新庫存數量  ftyinventory
 
             #region UnConfirmed 廠商能上鎖→PMS更新→廠商更新
 
-            // 先確認 WMS 能否上鎖, 不能直接 return
+            //// 先確認 WMS 能否上鎖, 不能直接 return
             //if (!Prgs_WMS.WMSLock((DataTable)this.detailgridbs.DataSource, dtLocalOrderInventory, this.Name, EnumStatus.Unconfirm))
             //{
             //    return;
@@ -359,21 +337,19 @@ where (isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) + d.Qty < 
                 try
                 {
                     DataTable resulttb;
-
-                    // 更新LocalOrderInventory
-                    if (!(result = MyUtility.Tool.ProcessWithObject(bsfio, string.Empty, sqlupd2_FIO, out resulttb, "#TmpSource")))
+                    if (!(result = MyUtility.Tool.ProcessWithDatatable(
+                        data_Fty_8F, string.Empty, upd_Fty_8F.ToString(), out resulttb, "#TmpSource")))
                     {
                         throw result.GetException();
                     }
 
-                    // 更新 Barcode
-                    if (!(result = Prgs.UpdateWH_Barcode(false, (DataTable)this.detailgridbs.DataSource, this.Name, out bool fromNewBarcode, dtLocalOrderInventory)))
+                    if (!(result = DBProxy.Current.Execute(null, $"update LocalOrderAdjust set status='New', editname = '{Env.User.UserID}' , editdate = GETDATE() where id = '{this.CurrentMaintain["id"]}'")))
                     {
                         throw result.GetException();
                     }
 
-                    // 更新Status
-                    if (!(result = DBProxy.Current.Execute(null, $@"update LocalOrderIssue set status = 'New', editname = '{Env.User.UserID}', editdate = GETDATE() where id = '{this.CurrentMaintain["id"]}'")))
+                    // Barcode 需要判斷新的庫存, 在更新 FtyInventory 之後
+                    if (!(result = Prgs.UpdateWH_Barcode(false, (DataTable)this.detailgridbs.DataSource, this.Name, out bool fromNewBarcode, dtLocalOrderInventory, isLocalOrder: true)))
                     {
                         throw result.GetException();
                     }
@@ -388,12 +364,12 @@ where (isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) + d.Qty < 
                 }
             }
 
-            //if (!MyUtility.Check.Empty(errMsg))
-            //{
-            //    Prgs_WMS.WMSUnLock(false, (DataTable)this.detailgridbs.DataSource, this.Name, EnumStatus.UnLock, EnumStatus.Unconfirm, dtLocalOrderInventory);
-            //    this.ShowErr(errMsg);
-            //    return;
-            //}
+            if (!MyUtility.Check.Empty(errMsg))
+            {
+                //Prgs_WMS.WMSUnLock(false, (DataTable)this.detailgridbs.DataSource, this.Name, EnumStatus.UnLock, EnumStatus.Unconfirm, dtLocalOrderInventory);
+                this.ShowErr(errMsg);
+                return;
+            }
 
             // PMS 更新之後,才執行WMS
             //Prgs_WMS.WMSprocess(false, (DataTable)this.detailgridbs.DataSource, this.Name, EnumStatus.Delete, EnumStatus.Unconfirm, dtLocalOrderInventory, typeCreateRecord: 2, autoRecord: autoRecordList);
@@ -412,12 +388,12 @@ where (isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) + d.Qty < 
             }
 
             bool isDetailKeyColEmpty = this.DetailDatas
-                                        .Where(s => MyUtility.Check.Empty(s["POID"]) || MyUtility.Check.Empty(s["Seq"]) || MyUtility.Check.Empty(s["Qty"]))
+                                        .Where(s => MyUtility.Check.Empty(s["POID"]) || MyUtility.Check.Empty(s["Seq"]) || (decimal)s["QtyAfter"] < 0)
                                         .Any();
 
             if (isDetailKeyColEmpty)
             {
-                MyUtility.Msg.WarningBox("<SP#>, <Seq>, <Qty> cannot be empty.");
+                MyUtility.Msg.WarningBox("<SP#>, <Seq> cannot be empty, <Current Qty> cannot be less than 0.");
                 return false;
             }
 
@@ -425,7 +401,7 @@ where (isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) + d.Qty < 
             {
                 if (row["fabrictype"].ToString().ToUpper() == "F" && (MyUtility.Check.Empty(row["roll"]) || MyUtility.Check.Empty(row["dyelot"])))
                 {
-                    warningmsg.Append(string.Format(@"Roll and Dyelot can't be empty"));
+                    warningmsg.Append(string.Format(@"[Fabric] Roll and Dyelot cannot be empty"));
                 }
 
                 if (row["fabrictype"].ToString().ToUpper() != "F")
@@ -441,9 +417,16 @@ where (isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) + d.Qty < 
                 return false;
             }
 
+            // 檢查物料不能有WMS Location && IsFromWMS = 0
+            if (!PublicPrg.Prgs.Chk_WMS_Location_Adj((DataTable)this.detailgridbs.DataSource, true) && MyUtility.Check.Empty(this.CurrentMaintain["IsFromWMS"]))
+            {
+                MyUtility.Msg.WarningBox("Material Location or Adjust is from WMS system cannot save or confirmed. ", "Warning");
+                return false;
+            }
+
             if (MyUtility.Check.Empty(this.CurrentMaintain["ID"]))
             {
-                this.CurrentMaintain["ID"] = MyUtility.GetValue.GetID(Env.User.Keyword + "OI", "LocalOrderIssue", DateTime.Now);
+                this.CurrentMaintain["ID"] = MyUtility.GetValue.GetID(Env.User.Keyword + "OA", "LocalOrderAdjust", DateTime.Now);
             }
 
             return base.ClickSaveBefore();
@@ -452,7 +435,7 @@ where (isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) + d.Qty < 
         private void BtnImport_Click(object sender, EventArgs e)
         {
             this.detailgrid.EndEdit();
-            new P71_Import((DataTable)this.detailgridbs.DataSource).ShowDialog();
+            new P72_Import((DataTable)this.detailgridbs.DataSource).ShowDialog();
             this.RenewData();
         }
 
@@ -479,7 +462,6 @@ where (isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) + d.Qty < 
             report.ReportParameters.Add(new ReportParameter("ID", row["ID"].ToString()));
             report.ReportParameters.Add(new ReportParameter("Remark", row["Remark"].ToString()));
             report.ReportParameters.Add(new ReportParameter("IssueDate", ((DateTime)MyUtility.Convert.GetDate(row["IssueDate"])).ToString("yyyy/MM/dd")));
-            report.ReportParameters.Add(new ReportParameter("preparedBy", preparedBy));
             #endregion
             #region -- 撈表身資料 --
             string sqlcmd = $@"
@@ -489,18 +471,20 @@ select  loid.*,
         lom.Unit,
         lom.Color,
         [Location] = Location.val,
-	    [Total]=sum(loid.Qty) OVER (PARTITION BY loid.POID ,loid.seq1,loid.Seq2)
-from    LocalOrderIssue_Detail loid
+		[Tone] = loi.Tone,
+	    [Qty] = loid.QtyAfter - loid.QtyBefore,
+		[TotalQty] = sum(loid.QtyAfter - loid.QtyBefore) OVER (PARTITION BY loid.POID ,loid.seq1,loid.Seq2)
+from    LocalOrderAdjust_Detail loid
 LEFT JOIN LocalOrderMaterial lom ON loid.POID = lom.POID AND loid.Seq1 = lom.Seq1 AND loid.Seq2 = lom.Seq2
-outer apply (SELECT val =  Stuff((select distinct concat( ',',loil.MtlLocationID)   
-                                from LocalOrderInventory loi with (nolock)
-								LEFT JOIN LocalOrderInventory_Location loil with (nolock) ON loi.Ukey = loil.LocalOrderInventoryUkey
-                                where loi.POID         = loid.POID        and
+LEFT JOIN LocalOrderInventory loi with (nolock) on loi.POID         = loid.POID        and
                                       loi.Seq1         = loid.Seq1        AND
 									  loi.Seq2         = loid.Seq2        and
                                       loi.Roll         = loid.Roll        and
                                       loi.Dyelot       = loid.Dyelot      and
                                       loi.StockType    = loid.StockType
+outer apply (SELECT val =  Stuff((select distinct concat( ',',loil.MtlLocationID)   
+                                from LocalOrderInventory_Location loil with (nolock) 
+								where loi.Ukey = loil.LocalOrderInventoryUkey                                
                                 FOR XML PATH('')),1,1,'')  ) Location
 where   loid.ID = '{row["ID"]}'
 ";
@@ -512,8 +496,8 @@ where   loid.ID = '{row["ID"]}'
             }
 
             // 傳 list 資料
-            List<P71_PrintData> data = dtDetail.AsEnumerable()
-                .Select(row1 => new P71_PrintData()
+            List<P65_PrintData> data = dtDetail.AsEnumerable()
+                .Select(row1 => new P65_PrintData()
                 {
                     POID = row1["POID"].ToString().Trim(),
                     SEQ = row1["SEQ"].ToString().Trim(),
@@ -524,16 +508,16 @@ where   loid.ID = '{row["ID"]}'
                     DYELOT = row1["Dyelot"].ToString().Trim(),
                     ToneGrp = row1["Tone"].ToString().Trim(),
                     QTY = row1["Qty"].ToString().Trim(),
-                    TotalQTY = row1["Total"].ToString().Trim(),
+                    TotalQTY = row1["TotalQty"].ToString().Trim(),
                 }).ToList();
 
             report.ReportDataSource = data;
             #endregion
 
             // 指定是哪個 RDLC
-            Type reportResourceNamespace = typeof(P71_PrintData);
+            Type reportResourceNamespace = typeof(P65_PrintData);
             Assembly reportResourceAssembly = reportResourceNamespace.Assembly;
-            string reportResourceName = "P71_Print.rdlc";
+            string reportResourceName = "P72_Print.rdlc";
             if (!(result = ReportResources.ByEmbeddedResource(reportResourceAssembly, reportResourceNamespace, reportResourceName, out IReportResource reportresource)))
             {
                 return false;

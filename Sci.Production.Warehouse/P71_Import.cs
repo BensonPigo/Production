@@ -93,7 +93,8 @@ select  [selected] = 0,
         lom.Unit,
         [BalanceQty] = loi.InQty - loi.OutQty + loi.AdjustQty,
         [Qty] = 0,
-        [Location] = Location.val
+        [Location] = Location.val,
+        loi.StockType
 from    LocalOrderInventory loi with (nolock)
 left join  LocalOrderMaterial lom with (nolock) on loi.Poid = lom.Poid and loi.Seq1 = lom.Seq1 and loi.Seq2 = lom.Seq2
 outer apply (

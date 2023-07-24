@@ -470,6 +470,31 @@
       <DependentUpon>P71_Import.cs</DependentUpon>
     </Compile>
     <Compile Include="P71_PrintData.cs" />
+    <Compile Include="P72.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P72.Designer.cs">
+      <DependentUpon>P72.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P72_Import.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P72_Import.Designer.cs">
+      <DependentUpon>P72_Import.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P73.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P73.designer.cs">
+      <DependentUpon>P73.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P73_Import.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P73_Import.designer.cs">
+      <DependentUpon>P73_Import.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P73_PrintData.cs" />
     <Compile Include="P99_CallForm.cs" />
     <Compile Include="P01.cs">
       <SubType>Form</SubType>
@@ -1658,6 +1683,12 @@
     <Compile Include="Report\R47.Designer.cs">
       <DependentUpon>R47.cs</DependentUpon>
     </Compile>
+    <Compile Include="Report\R48.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Report\R48.designer.cs">
+      <DependentUpon>R48.cs</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="B01.resx">
@@ -2115,6 +2146,20 @@
     <EmbeddedResource Include="P71_Import.resx">
       <DependentUpon>P71_Import.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="P71_Print.rdlc" />
+    <EmbeddedResource Include="P72.resx">
+      <DependentUpon>P72.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P72Print.rdlc" />
+    <EmbeddedResource Include="P72_Import.resx">
+      <DependentUpon>P72_Import.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P73.resx">
+      <DependentUpon>P73.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P73_Import.resx">
+      <DependentUpon>P73_Import.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="P99.resx">
       <DependentUpon>P99.cs</DependentUpon>
     </EmbeddedResource>
@@ -2534,6 +2579,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Report\R47.resx">
       <DependentUpon>R47.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Report\R48.resx">
+      <DependentUpon>R48.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

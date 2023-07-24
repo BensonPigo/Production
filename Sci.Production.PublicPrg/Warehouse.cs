@@ -659,145 +659,6 @@ where sd.FabricType = 'F'
 drop table #TmpSource;
 ";
                     break;
-                case 70:
-                    #region 更新Ftyinventor.Barcode 第一層
-                    sqlcmd = @"
-alter table #TmpSource alter column TransactionID varchar(15)
-alter table #TmpSource alter column poid varchar(20)
-alter table #TmpSource alter column seq1 varchar(3)
-alter table #TmpSource alter column seq2 varchar(3)
-alter table #TmpSource alter column stocktype varchar(1)
-alter table #TmpSource alter column roll varchar(15)
-alter table #TmpSource alter column Dyelot varchar(15)
-alter table #TmpSource alter column Barcode varchar(16)
-
-select t.Ukey
-    , s.Barcode
-    ,[Balance] = sum(t.InQty - t.OutQty + t.AdjustQty - t.ReturnQty)
-into #tmpS1
-from FtyInventory t
-inner join #TmpSource s on t.POID = s.poid
-and t.Seq1 = s.seq1  and t.Seq2 = s.seq2
-and t.StockType = s.stocktype 
-and t.Roll = s.roll and t.Dyelot = s.Dyelot
-group by t.Ukey, s.Barcode
-";
-                    if (encoded)
-                    {
-                        sqlcmd += @"
-merge dbo.FtyInventory as t
-using #tmpS1 as s 
-	on t.ukey = s.ukey
-when matched then
-    update
-    set t.Barcode = isnull(s.Barcode,'');
-
-drop table #tmpS1; 
-drop table #TmpSource;
-";
-                    }
-                    else
-                    {
-                        sqlcmd += @"
-merge dbo.FtyInventory as t
-using #tmpS1 as s 
-	on t.ukey = s.ukey
-when matched and s.Balance = 0 then
-    update
-    set t.Barcode = '';
-
-drop table #tmpS1; 
-drop table #TmpSource;
-";
-                    }
-
-                    #endregion
-                    break;
-                case 71:
-                    #region 更新Ftyinventory_Barcode 第二層
-                    sqlcmd = @"
-alter table #TmpSource alter column TransactionID varchar(15)
-alter table #TmpSource alter column poid varchar(20)
-alter table #TmpSource alter column seq1 varchar(3)
-alter table #TmpSource alter column seq2 varchar(3)
-alter table #TmpSource alter column stocktype varchar(1)
-alter table #TmpSource alter column roll varchar(15)
-alter table #TmpSource alter column Dyelot varchar(15)
-alter table #TmpSource alter column Barcode varchar(16)
-
---ISP20211236 因為轉廠可能會有兩筆一樣物料的情況(因為當初收料分兩筆)，所以先加distinct，後續會調整整段barcode流程
-select 
-distinct
-t.Ukey
-, s.TransactionID
-, s.Barcode
-into #tmpS1
-from FtyInventory t
-inner join #TmpSource s on t.POID = s.poid
-and t.Seq1 = s.seq1  and t.Seq2 = s.seq2
-and t.StockType = s.stocktype 
-and t.Roll = s.roll and t.Dyelot = s.Dyelot
-";
-                    if (encoded)
-                    {
-                        sqlcmd += @"
-merge dbo.FtyInventory_Barcode as t
-using #tmpS1 as s 
-	on t.ukey = s.ukey  and s.TransactionID = t.TransactionID
-when matched then
-    update
-    set t.Barcode = isnull(s.Barcode,'')
-when not matched and s.Ukey is not null then
-	insert(ukey,TransactionID,Barcode)
-	values(s.ukey,s.TransactionID,s.Barcode);
-
-drop table #tmpS1; 
-drop table #TmpSource;
-";
-                    }
-                    else
-                    {
-                        sqlcmd += @"
-delete t
-from FtyInventory_Barcode t
-where exists(
-	select 1 from #tmpS1 s where t.ukey = s.ukey
-	and s.TransactionID = t.TransactionID
-)
-
-drop table #tmpS1; 
-drop table #TmpSource;
-";
-                    }
-
-                    #endregion
-                    break;
-                case 72:
-                    #region 更新Ftyinventory_Barcode 第二層補回到第一層
-                    sqlcmd = @"
-alter table #TmpSource alter column TransactionID varchar(15)
-alter table #TmpSource alter column poid varchar(20)
-alter table #TmpSource alter column seq1 varchar(3)
-alter table #TmpSource alter column seq2 varchar(3)
-alter table #TmpSource alter column stocktype varchar(1)
-alter table #TmpSource alter column roll varchar(15)
-alter table #TmpSource alter column Dyelot varchar(15)
-alter table #TmpSource alter column Barcode varchar(16)
-
-update t
-set t.Barcode = s.Barcode
-from FtyInventory t
-inner join #TmpSource s on t.POID = s.poid
-    and t.Seq1 = s.seq1  and t.Seq2 = s.seq2
-    and t.StockType = s.stocktype 
-    and t.Roll = s.roll 
-    and t.Dyelot = s.Dyelot
-and t.Barcode = ''
-
-";
-
-                    #endregion
-                    break;
                 case 99:
                     #region 物料解鎖/上鎖
                     int lockStatus = encoded ? 1 : 0;
@@ -3642,15 +3503,29 @@ WHERE POID='{pOID}' AND Seq1='{seq11}' AND Seq2='{seq21}'
         }
 
         /// <inheritdoc/>
-        public static bool ChkLocation(string transcationID, string gridAlias, string msgType = "")
+        public static bool ChkLocation(string transcationID, string gridAlias, string msgType = "", bool isLocalOrder = false)
         {
             // 檢查Location是否為空值
             DualResult result;
             string sqlLocation = string.Empty;
+            string strTable = isLocalOrder ? "LocalOrderInventory" : "FtyInventory";
+            string strGetLocation = isLocalOrder ? @"(	
+select Location = Stuff((
+				select concat(',',MtlLocationID)
+				from (
+						select 	distinct
+							MtlLocationID
+						from dbo.LocalOrderInventory_Location d
+						where d.LocalOrderInventoryUkey = f.Ukey
+					) s
+				for xml path ('')
+			) , 1, 1, ''))" : "dbo.Getlocation(f.ukey) "
+            ;
             switch (gridAlias)
             {
                 case "Receiving_Detail":
                 case "IssueReturn_Detail":
+                case "LocalOrderReceiving_Detail":
                     sqlLocation = $@"
  select td.POID,seq = concat(Ltrim(Rtrim(td.seq1)), ' ', td.Seq2),td.Roll,td.Dyelot
  , StockType = case td.StockType 
@@ -3661,7 +3536,7 @@ WHERE POID='{pOID}' AND Seq1='{seq11}' AND Seq2='{seq21}'
 		end
  , [Location] = td.Location
  from {gridAlias} td
- left join Production.dbo.FtyInventory f on f.POID = td.POID 
+ left join Production.dbo.{strTable} f on f.POID = td.POID 
 	and f.Seq1=td.Seq1 and f.Seq2=td.Seq2 
 	and f.Roll=td.Roll and f.Dyelot=td.Dyelot
     and f.StockType = td.StockType
@@ -3674,6 +3549,8 @@ where td.ID = '{transcationID}'
                 case "TransferOut_Detail":
                 case "Adjust_Detail":
                 case "StockTaking_detail":
+                case "LocalOrderIssue_Detail":
+                case "LocalOrderAdjust_Detail":
                     sqlLocation = $@"
  select td.POID,seq = concat(Ltrim(Rtrim(td.seq1)), ' ', td.Seq2),td.Roll,td.Dyelot
  , StockType = case td.StockType 
@@ -3682,9 +3559,9 @@ where td.ID = '{transcationID}'
 		when 'O' then 'Scrap' 
 		else td.StockType 
 		end
- , [Location] = dbo.Getlocation(f.ukey)
+ , [Location] = {strGetLocation}
  from {gridAlias} td
- left join Production.dbo.FtyInventory f on f.POID = td.POID 
+ left join Production.dbo.{strTable} f on f.POID = td.POID 
 	and f.Seq1=td.Seq1 and f.Seq2=td.Seq2 
 	and f.Roll=td.Roll and f.Dyelot=td.Dyelot
     and f.StockType = td.StockType
@@ -5439,6 +5316,8 @@ inner join #tmp s on t.POID = s.poid
                     return WHTableName.LocalOrderIssue_Detail;
                 case "P72":
                     return WHTableName.LocalOrderAdjust_Detail;
+                case "P73":
+                    return WHTableName.LocalOrderLocationTrans_Detail;
                 default:
                     return WHTableName.DefaultError;
             }
@@ -6789,20 +6668,23 @@ where rowCnt =2
         /// </summary>
         /// <param name="dtDetail">dtDetail</param>
         /// <returns>bool</returns>
-        public static bool Chk_WMS_Location_Adj(DataTable dtDetail)
+        public static bool Chk_WMS_Location_Adj(DataTable dtDetail, bool isLocal = false)
         {
             if (!IsAutomation() || MyUtility.Check.Empty(dtDetail) || dtDetail.Rows.Count <= 0)
             {
                 return true;
             }
 
+            string srtTable = isLocal ? "LocalOrderInventory" : "FtyInventory";
+            string srtTable2 = isLocal ? "left join LocalOrderInventory_Location fd on fd.LocalOrderInventoryUkey = f.Ukey" : "left join FtyInventory_Detail fd on fd.Ukey = f.Ukey";
+
             string sqlcmd = $@"
 select f.* 
 from #tmp t
-inner join FtyInventory f on t.POID = f.POID
+inner join {srtTable} f on t.POID = f.POID
 	and t.Seq1= f. Seq1 and t.Seq2 = f.Seq2 and t.Roll = f.Roll
 	and t.Dyelot = f.Dyelot and t.StockType = f.StockType
-left join FtyInventory_Detail fd on fd.Ukey = f.Ukey
+{srtTable2}
 left join MtlLocation ml on ml.ID = fd.MtlLocationID
 where 1=1
 and ml.IsWMS = 1
@@ -6823,6 +6705,8 @@ and ml.IsWMS = 1
 
             return true;
         }
+
+
 
         /// <summary>
         /// 自動倉儲
@@ -6983,9 +6867,31 @@ and fs.Result <>''
         /// 負數庫存檢查 因為(舊)資料會改,同一張單有重複物料狀況,所以要加總 Adjustqty 計算
         /// </summary>
         /// <inheritdoc/>
-        public static DualResult GetAdjustSumBalance(string id, bool isConfirm, out DataTable datacheck)
+        public static DualResult GetAdjustSumBalance(string id, bool isConfirm, out DataTable datacheck, bool isLocalOrder = false)
         {
-            string chksql = $@"
+            string chksql = string.Empty;
+            if (isLocalOrder)
+            {
+                chksql = $@"
+select x.*
+from(
+    Select
+        a.POID,
+        SEQ = concat(a.Seq1, '-',  a.Seq2),
+        a.Roll,
+        a.Dyelot,
+	    BalanceQty = isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0),
+	    Adjustqty  = Sum(isnull(a.QtyAfter,0) - isnull(a.QtyBefore,0))
+    from dbo.LocalOrderAdjust_Detail a WITH (NOLOCK) 
+    inner join LocalOrderInventory f WITH (NOLOCK) on a.POID = f.POID and a.Roll = f.Roll and a.Seq1 =f.Seq1 and a.Seq2 = f.Seq2 and a.Dyelot = f.Dyelot and a.stocktype = f.stocktype 
+    where a.Id = '{id}'
+    group by a.POID, a.Seq1, a.Seq2, a.Roll, a.Dyelot, a.StockType ,f.InQty, f.OutQty, f.AdjustQty
+)x
+where x.BalanceQty {(isConfirm ? "+" : "-")} x.Adjustqty < 0";
+            }
+            else
+            {
+                chksql = $@"
 select x.*
 from(
     Select
@@ -7002,6 +6908,8 @@ from(
 )x
 where x.BalanceQty {(isConfirm ? "+" : "-")} x.Adjustqty < 0
 ";
+            }
+
             return DBProxy.Current.Select(null, chksql, out datacheck);
         }
 
@@ -7009,9 +6917,9 @@ where x.BalanceQty {(isConfirm ? "+" : "-")} x.Adjustqty < 0
         /// 負數庫存檢查 因為(舊)資料會改,同一張單有重複物料狀況,所以要加總 Adjustqty 計算
         /// </summary>
         /// <inheritdoc/>
-        public static bool CheckAdjustBalance(string id, bool isConfirm)
+        public static bool CheckAdjustBalance(string id, bool isConfirm, bool isLocalOrder = false)
         {
-            DualResult result = GetAdjustSumBalance(id, isConfirm, out DataTable datacheck);
+            DualResult result = GetAdjustSumBalance(id, isConfirm, out DataTable datacheck, isLocalOrder);
             if (!result)
             {
                 MyUtility.Msg.ErrorBox(result.ToString());
@@ -7020,7 +6928,9 @@ where x.BalanceQty {(isConfirm ? "+" : "-")} x.Adjustqty < 0
 
             if (datacheck.Rows.Count > 0)
             {
-                MyUtility.Msg.ShowMsgGrid_LockScreen(datacheck, "Balacne Qty is not enough!!");
+                //MyUtility.Msg.ShowMsgGrid_LockScreen(datacheck, "Balacne Qty is not enough!!");
+                Class.MsgGrid form = new Class.MsgGrid(datacheck, "Balacne Qty is not enough!!");
+                form.ShowDialog();
                 return false;
             }
 
