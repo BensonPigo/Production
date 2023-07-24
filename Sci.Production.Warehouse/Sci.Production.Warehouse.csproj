@@ -457,6 +457,18 @@
     <Compile Include="P70.Designer.cs">
       <DependentUpon>P70.cs</DependentUpon>
     </Compile>
+    <Compile Include="P70_AccumulatedQty.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P70_AccumulatedQty.Designer.cs">
+      <DependentUpon>P70_AccumulatedQty.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P70_ExcelImport.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P70_ExcelImport.Designer.cs">
+      <DependentUpon>P70_ExcelImport.cs</DependentUpon>
+    </Compile>
     <Compile Include="P71.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -2139,6 +2151,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="P70.resx">
       <DependentUpon>P70.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P70_AccumulatedQty.resx">
+      <DependentUpon>P70_AccumulatedQty.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P70_ExcelImport.resx">
+      <DependentUpon>P70_ExcelImport.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P71.resx">
       <DependentUpon>P71.cs</DependentUpon>

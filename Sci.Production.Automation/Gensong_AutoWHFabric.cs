@@ -417,6 +417,103 @@ namespace Sci.Production.Automation
                        CmdTime = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"),
                    });
                     break;
+                case WHTableName.LocalOrderReceiving_Detail:
+                    bodyObject = dtDetail.AsEnumerable()
+                   .Select(s => new
+                   {
+                       ID = s["ID"].ToString(),
+                       InvNo = s["InvNo"].ToString(),
+                       POID = s["POID"].ToString(),
+                       Seq1 = s["Seq1"].ToString(),
+                       Seq2 = s["Seq2"].ToString(),
+                       WeaveType = MyUtility.Check.Empty(s["WeaveType"]) ? null : s["WeaveType"].ToString(),
+                       Refno = s["Refno"].ToString(),
+                       Color = s["Color"].ToString(),
+                       Roll = MyUtility.Check.Empty(s["Roll"]) ? null : s["Roll"].ToString(),
+                       Dyelot = MyUtility.Check.Empty(s["Dyelot"]) ? null : s["Dyelot"].ToString(),
+                       StockUnit = s["StockUnit"].ToString(),
+                       StockQty = s["StockQty"].ToString(),
+                       PoUnit = s["PoUnit"].ToString(),
+                       ShipQty = s["ShipQty"].ToString(),
+                       Weight = s["Weight"].ToString(),
+                       StockType = "B",
+                       Barcode = MyUtility.Check.Empty(s["Barcode"]) ? null : s["Barcode"].ToString(),
+                       Ukey = (long)s["Ukey"],
+                       IsInspection = 0,
+                       ETA = string.Empty,
+                       WhseArrival = s["WhseArrival"],
+                       Status = statusAPI.ToString(),
+                       CmdTime = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"),
+                   });
+                    break;
+                case WHTableName.LocalOrderIssue_Detail:
+                    bodyObject = dtDetail.AsEnumerable()
+                    .Select(s => new
+                    {
+                        ID = s["ID"].ToString(),
+                        Type = "P71",
+                        CutplanID = string.Empty,
+                        EstCutDate = s["EstCutdate"],
+                        SpreadingNoID = string.Empty,
+                        POID = s["POID"].ToString(),
+                        Seq1 = s["Seq1"].ToString(),
+                        Seq2 = s["Seq2"].ToString(),
+                        WeaveType = s["WeaveType"].ToString(),
+                        Roll = s["Roll"].ToString(),
+                        Dyelot = s["Dyelot"].ToString(),
+                        Barcode = s["Barcode"].ToString(),
+                        NewBarcode = s["NewBarcode"].ToString(),
+                        Description = s["Description"].ToString(),
+                        Qty = s["Qty"].ToString(),
+                        Ukey = (long)s["Ukey"],
+                        Status = statusAPI.ToString(),
+                        CmdTime = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"),
+                    });
+                    break;
+                case WHTableName.LocalOrderAdjust_Detail:
+                    bodyObject = dtDetail.AsEnumerable()
+                    .Select(s => new
+                    {
+                        ID = s["ID"].ToString(),
+                        POID = s["POID"].ToString(),
+                        Seq1 = s["Seq1"].ToString(),
+                        Seq2 = s["Seq2"].ToString(),
+                        WeaveType = s["WeaveType"].ToString(),
+                        Roll = s["Roll"].ToString(),
+                        Dyelot = s["Dyelot"].ToString(),
+                        StockType = s["StockType"].ToString(),
+                        QtyBefore = s["QtyBefore"].ToString(),
+                        QtyAfter = s["QtyAfter"].ToString(),
+                        Barcode = s["Barcode"].ToString(),
+                        Ukey = (long)s["Ukey"],
+                        Status = statusAPI.ToString(),
+                        CmdTime = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"),
+                    });
+                    break;
+                case WHTableName.LocalOrderLocationTrans_Detail:
+                    bodyObject = dtDetail.AsEnumerable()
+                    .Select(s => new
+                    {
+                        ID = s["ID"].ToString(),
+                        POID = s["POID"].ToString(),
+                        Seq1 = s["Seq1"].ToString(),
+                        Seq2 = s["Seq2"].ToString(),
+                        WeaveType = s["WeaveType"].ToString(),
+                        Roll = s["Roll"].ToString(),
+                        Dyelot = s["Dyelot"].ToString(),
+                        Refno = s["Refno"].ToString(),
+                        Color = s["Color"].ToString(),
+                        FromLocation = s["FromLocation"].ToString(),
+                        ToLocation = s["ToLocation"].ToString(),
+                        Barcode = s["Barcode"].ToString(),
+                        Description = s["Description"].ToString(),
+                        Qty = s["Qty"].ToString(),
+                        Ukey = (long)s["Ukey"],
+                        StockType = s["StockType"].ToString(),
+                        Status = statusAPI.ToString(),
+                        CmdTime = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"),
+                    });
+                    break;
             }
 
             return jsonBody = JsonConvert.SerializeObject(LogicAutoWHData.CreateStructure(detailName.ToString(), bodyObject));

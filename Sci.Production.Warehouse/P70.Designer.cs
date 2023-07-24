@@ -91,7 +91,7 @@
             // gridicon
             // 
             this.gridicon.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.gridicon.Location = new System.Drawing.Point(591, 114);
+            this.gridicon.Location = new System.Drawing.Point(617, 114);
             // 
             // detailgridcont
             // 
@@ -205,6 +205,7 @@
             this.btnImportFromExcel.TabIndex = 55;
             this.btnImportFromExcel.Text = "Import From Excel";
             this.btnImportFromExcel.UseVisualStyleBackColor = true;
+            this.btnImportFromExcel.Click += new System.EventHandler(this.BtnImportFromExcel_Click);
             // 
             // btnDownloadSampleFile
             // 
@@ -215,6 +216,7 @@
             this.btnDownloadSampleFile.TabIndex = 54;
             this.btnDownloadSampleFile.Text = "Download Sample File";
             this.btnDownloadSampleFile.UseVisualStyleBackColor = true;
+            this.btnDownloadSampleFile.Click += new System.EventHandler(this.BtnDownloadSampleFile_Click);
             // 
             // btnAccumulatedQty
             // 
@@ -226,6 +228,7 @@
             this.btnAccumulatedQty.TabIndex = 53;
             this.btnAccumulatedQty.Text = "Accumulated Qty";
             this.btnAccumulatedQty.UseVisualStyleBackColor = true;
+            this.btnAccumulatedQty.Click += new System.EventHandler(this.BtnAccumulatedQty_Click);
             // 
             // labelStatus
             // 
@@ -261,6 +264,8 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(918, 564);
             this.GridAlias = "LocalOrderReceiving_Detail";
+            this.IsSupportConfirm = true;
+            this.IsSupportUnconfirm = true;
             this.KeyField1 = "ID";
             this.Name = "P70";
             this.OnLineHelpID = "Sci.Win.Tems.Input6";

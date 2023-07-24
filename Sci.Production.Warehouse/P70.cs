@@ -1,7 +1,9 @@
 ﻿using Ict;
 using Ict.Win;
+using Microsoft.Reporting.WinForms;
 using Sci.Data;
 using Sci.Production.PublicPrg;
+using Sci.Win;
 using Sci.Win.Tools;
 using System;
 using System.Collections.Generic;
@@ -9,16 +11,20 @@ using System.ComponentModel;
 using System.Data;
 using System.Data.SqlClient;
 using System.Drawing;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using static Sci.MyUtility;
 
 namespace Sci.Production.Warehouse
 {
     /// <inheritdoc/>
     public partial class P70 : Win.Tems.Input6
     {
+        private DualResult result;
         /// <inheritdoc/>
         public P70(ToolStripMenuItem menuitem)
             : base(menuitem)
@@ -68,16 +74,49 @@ namespace Sci.Production.Warehouse
             bool isDetailKeyColEmpty = this.DetailDatas
                                         .Where(s => MyUtility.Check.Empty(s["POID"]) || MyUtility.Check.Empty(s["Seq"]) || MyUtility.Check.Empty(s["Qty"]))
                                         .Any();
-
             if (isDetailKeyColEmpty)
             {
                 MyUtility.Msg.WarningBox("<SP#>, <Seq>, <Qty> cannot be empty.");
                 return false;
             }
 
+            bool isFabricRollDyelotEmpty = this.DetailDatas
+                            .Where(s => s["FabricType"].ToString() == "F" && (MyUtility.Check.Empty(s["Roll"]) || MyUtility.Check.Empty(s["Dyelot"])))
+                            .Any();
+            if (isFabricRollDyelotEmpty)
+            {
+                MyUtility.Msg.WarningBox("[Fabric] Roll and Dyelot cannot be empty.");
+                return false;
+            }
+
+            string sqlcmd = $@"
+            Select 
+            [SP#] = lord.Poid,
+            [Seq] = Concat (lord.Seq1, ' ', lord.Seq2),
+            [Roll] = lord.Roll,
+            [Dyelot] = lord.Dyelot,
+            [Receiving ID] = lord.ID
+            from #tmp t 
+            inner join LocalOrderReceiving_Detail lord on t.Poid = lord.Poid and
+                                                          t.Seq1 = lord.Seq1 and
+                                                          t.Seq2 = lord.Seq2 and
+                                                          t.Roll = lord.Roll and
+                                                          t.Dyelot = lord.Dyelot and
+                                                          lord.ID <> '{this.CurrentMaintain["ID"]}'
+            ";
+            DataTable dtInvShort;
+            DualResult result = MyUtility.Tool.ProcessWithDatatable(this.DetailDatas.CopyToDataTable(), null, sqlcmd, out dtInvShort);
+
+            if (dtInvShort.Rows.Count > 0)
+            {
+                Class.MsgGrid form = new Class.MsgGrid(dtInvShort, "Balacne Qty is not enough!!");
+                form.ShowDialog(this);
+                return false;
+            }
+
             if (MyUtility.Check.Empty(this.CurrentMaintain["ID"]))
             {
-                this.CurrentMaintain["ID"] = MyUtility.GetValue.GetID(Env.User.Keyword + "SR", "SemiFinishedReceiving", (DateTime)this.CurrentMaintain["AddDate"]);
+                this.CurrentMaintain["ID"] = MyUtility.GetValue.GetID(Env.User.Keyword + "OR", "LocalOrderReceiving", (DateTime)this.CurrentMaintain["AddDate"]);
             }
 
             return base.ClickSaveBefore();
@@ -91,9 +130,69 @@ namespace Sci.Production.Warehouse
                 MyUtility.Msg.WarningBox("Data is not confirmed, cannot print.");
                 return false;
             }
+
+            ReportDefinition rd = new ReportDefinition();
+            if (!(this.result = ReportResources.ByEmbeddedResource(Assembly.GetAssembly(this.GetType()), this.GetType(), "P64_Print.rdlc", out IReportResource reportresource)))
+            {
+                MyUtility.Msg.ErrorBox(this.result.ToString());
+            }
             else
             {
-                // RDLC收料報表列印，
+                #region -- 整理表頭資料 --
+                // 抓M的EN NAME
+                string rptTitle = MyUtility.GetValue.Lookup($@"select NameEN from MDivision where ID='{Env.User.Keyword}'");
+                DataRow row = this.CurrentMaintain;
+                rd.ReportParameters.Add(new ReportParameter("RptTitle", rptTitle));
+                rd.ReportParameters.Add(new ReportParameter("ID", row["ID"].ToString()));
+                rd.ReportParameters.Add(new ReportParameter("Remark", row["Remark"].ToString()));
+                rd.ReportParameters.Add(new ReportParameter("IssueDate", ((DateTime)MyUtility.Convert.GetDate(row["WhseArrival"])).ToString("yyyy/MM/dd")));
+                #endregion
+
+                string sqlcmd = $@"
+                SELECT 
+                lord.*,
+                [Seq] = Concat (lord.Seq1, ' ', lord.Seq2),
+                [Desc] = IIF((lord.ID = lag(lord.ID,1,'') over (order by lord.ID,lord.seq1,lord.Seq2) 
+		                 AND (lord.seq1 = lag(lord.seq1,1,'')over (order by lord.ID,lord.seq1,lord.Seq2)
+		                 AND (lord.seq2 = lag(lord.seq2,1,'')over (order by lord.ID,lord.seq1,lord.Seq2))))
+			                , ''
+                            , concat(lom.[Desc],char(10),'Color : ', lom.Color)),
+                    lom.Unit,
+                    lom.Color,
+	                lom.[Desc]
+                FROM LocalOrderReceiving_Detail lord
+                LEFT JOIN LocalOrderMaterial lom  ON lord.POID = lom.POID AND lord.Seq1 = lom.Seq1 AND lord.Seq2 = lom.Seq2
+                WHERE lord.ID = '{row["ID"]}'
+                ";
+                DualResult result = DBProxy.Current.Select(null, sqlcmd, out DataTable dataTable);
+                if (!result)
+                {
+                    this.ShowErr(result);
+                    return false;
+                }
+
+                List<P64_PrintData> data = dataTable.AsEnumerable()
+                    .Select(row1 => new P64_PrintData()
+                    {
+                        POID = row1["POID"].ToString().Trim(),
+                        SEQ = row1["Seq"].ToString().Trim(),
+                        Roll = row1["Roll"].ToString().Trim(),
+                        DYELOT = row1["Dyelot"].ToString().Trim(),
+                        DESC = row1["Desc"].ToString().Trim(),
+                        Unit = row1["Unit"].ToString().Trim(),
+                        QTY = row1["QTY"].ToString().Trim(),
+                        ToneGrp = row1["Tone"].ToString().Trim(),
+                        Location = row1["Location"].ToString().Trim(),
+                    }).ToList();
+
+                rd.ReportDataSource = data;
+                rd.ReportResource = reportresource;
+                var frm1 = new Win.Subs.ReportView(rd)
+                {
+                    MdiParent = this.MdiParent,
+                    TopMost = true,
+                };
+                frm1.Show();
             }
 
             return base.ClickPrint();
@@ -134,18 +233,20 @@ namespace Sci.Production.Warehouse
             [Seq] = Concat (lord.Seq1, ' ', lord.Seq2),
             [Seq1] = lord.Seq1,
             [Seq2] = lord.Seq2,
+            [FabricType] = lom.FabricType,
             [MaterialType] = IIF(lom.FabricType = 'F' ,Concat ('Fabric-', lom.MtlType),Concat ('Accessory-', lom.MtlType)),
             [Roll] = lord.Roll,
-            [Dyelt] = lord.Dyelot,
+            [Dyelot] = lord.Dyelot,
             [Weight] = lord.Weight,
-            [ToneGrp] = lord.Tone,
+            [Tone] = lord.Tone,
             [Qty] = lord.Qty,
             [Unit] = lom.Unit,
             [Location] = lord.Location,
             [Refno] = lom.Refno,
             [Color] = lom.Color,
             [QrCode] = lord.Barcode,
-            [ContainerCode] = lord.ContainerCode
+            [ContainerCode] = lord.ContainerCode,
+            [Ukey] = lord.ukey
             FROM LocalOrderReceiving_Detail lord
             LEFT JOIN LocalOrderMaterial lom WITH(NOLOCK) ON lom.POID = lord.POID AND lord.Seq1 = lom.Seq1 AND lord.Seq2 = lom.Seq2
             WHERE lord.ID = '{masterID}'
@@ -267,7 +368,14 @@ namespace Sci.Production.Warehouse
                     return;
                 }
 
+                string materialType = drSeq["Material Type"].ToString();
+                int fabricTypeIndex = materialType.IndexOf('-');
+                string fabricType = materialType.Substring(0, fabricTypeIndex) == "Fabric" ? "F" : "A";
+
+                this.CurrentDetailData["FabricType"] = fabricType;
                 this.CurrentDetailData["Seq"] = newvalue;
+                this.CurrentDetailData["Seq1"] = seq1;
+                this.CurrentDetailData["Seq2"] = seq2;
                 this.CurrentDetailData["MaterialType"] = drSeq["Material Type"].ToString();
                 this.CurrentDetailData["Unit"] = drSeq["Unit"].ToString();
                 this.CurrentDetailData["Refno"] = drSeq["Ref#"].ToString();
@@ -307,7 +415,20 @@ namespace Sci.Production.Warehouse
                         return;
                     }
 
+                    string seq = item.GetSelecteds()[0]["Seq"].ToString();
+                    int seqIndex = seq.IndexOf(' ');
+
+                    string seq1 = seq.Substring(0, seqIndex);
+                    string seq2 = seq.Substring(seqIndex + 1);
+
+                    string materialType = item.GetSelecteds()[0]["Material Type"].ToString();
+                    int spaceIndex = materialType.IndexOf('-');
+                    string fabricType = materialType.Substring(0, spaceIndex) == "Fabric" ? "F" : "A";
+
+                    this.CurrentDetailData["FabricType"] = fabricType;
                     this.CurrentDetailData["Seq"] = item.GetSelecteds()[0]["Seq"];
+                    this.CurrentDetailData["Seq1"] = seq1;
+                    this.CurrentDetailData["Seq2"] = seq2;
                     this.CurrentDetailData["MaterialType"] = item.GetSelecteds()[0]["Material Type"];
                     this.CurrentDetailData["Unit"] = item.GetSelecteds()[0]["Unit"];
                     this.CurrentDetailData["Refno"] = item.GetSelecteds()[0]["Ref#"];
@@ -404,12 +525,43 @@ namespace Sci.Production.Warehouse
             .Numeric("Qty", header: "Qty", decimal_places: 2, width: Widths.AnsiChars(8))
             .Text("Unit", header: "Unit", width: Widths.AnsiChars(8), iseditingreadonly: true)
             .Text("Location", header: "Location", width: Widths.AnsiChars(15), settings: colLocation)
-            .Text("Refno", header: "Ref#", width: Widths.AnsiChars(25), settings: colLocation)
+            .Text("Refno", header: "Ref#", width: Widths.AnsiChars(25), iseditingreadonly: true)
             .Text("Color", header: "Color", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Text("QrCode", header: "QR Code", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Text("ContainerCode", header: "ContainerCode", width: Widths.AnsiChars(20), iseditingreadonly: true).Get(out cbb_ContainerCode)
             ;
             cbb_ContainerCode.Visible = Automation.UtilityAutomation.IsAutomationEnable;
+        }
+
+        private void BtnDownloadSampleFile_Click(object sender, EventArgs e)
+        {
+            // 呼叫執行檔絕對路徑
+            DirectoryInfo dir = new DirectoryInfo(Application.StartupPath);
+            string strXltName = Env.Cfg.XltPathDir + "\\Warehouse_P70_DownloadSampleFile.xltx";
+            Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
+            if (excel == null)
+            {
+                return;
+            }
+
+            excel.Visible = true;
+        }
+
+        private void BtnAccumulatedQty_Click(object sender, EventArgs e)
+        {
+            if (this.DetailDatas.Count == 0)
+            {
+                return;
+            }
+
+            var frm = new P70_AccumulatedQty((DataTable)this.detailgridbs.DataSource);
+            frm.ShowDialog();
+        }
+
+        private void BtnImportFromExcel_Click(object sender, EventArgs e)
+        {
+            P70_ExcelImport callNextForm = new P70_ExcelImport((DataTable)this.detailgridbs.DataSource);
+            callNextForm.ShowDialog(this);
         }
     }
 }
