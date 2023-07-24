@@ -4155,18 +4155,18 @@ Select
 FROM #tmp tmp
 Outer Apply(
  SELECT value = STUFF(
-	(Select DISTINCT ', ' + Rtrim(o.ID)
+	(Select DISTINCT ', ' + Rtrim(w.OrderID)
 		From Workorder_distribute wd WITH (NOLOCK)
-		inner join Orders o  with (nolock) on o.ID = wd.OrderID
-		Where wd.id = tmp.ID
+		Inner join Workorder w  with (nolock) on w.ukey = wd.WorkOrderUkey
+		Where wd.id = tmp.ID and wd.Article <>'' 
 		For XML PATH ('')
 	), 1, 1, '')
 )getsp
 Order by SORT_NUM,PatternPanel,multisize DESC,Article,Order_SizeCode_Seq DESC,MarkerName,Ukey
 ";
             var result = MyUtility.Tool.ProcessWithDatatable(dt, null, sqlCmd, out dt2);
-			if (!result)
-			{
+            if (!result)
+            {
                 this.ShowErr(result);
                 return;
             }
