@@ -276,9 +276,9 @@ begin
     Exec dbo.BoaExpend '{3}', {4}, {5}, '{6}',0,1;
 end
 else
-begin
-	Exec BoaExpend_New '{3}', {4}, {5}, '{6}',0,1;
-end
+BEGIN   
+    Exec dbo.BoaExpend_New '{3}', {4}, {5}, '{6}',0,1;
+END
 
 --BoAExpend SizeSpec 與 Po_Supp_Detail SizeSpec 意義不同，因此比對時 Po_Supp_Detail 也需要展開
 select	distinct psd.id as [poid]
@@ -286,10 +286,7 @@ select	distinct psd.id as [poid]
         , psd.seq2
         , psd.Refno
         , psd.SCIRefno
-        , dbo.getMtlDesc(psd.id, psd.seq1, psd.seq2,2,0) [description] 
-	    , ColorID = isnull(psdsC.SpecValue, '')
-		, SizeSpec = dbo.getSizeSpecTrans(ISNULL (iif (f.BomTypeCalculate = 1, os.SizeSpec, isnull(psdsS.SpecValue, '')), ''), isnull(psdsSU.SpecValue, ''))
-        , PoSizeSpec = isnull(psdsS.SpecValue, '')
+        , dbo.getMtlDesc(psd.id, psd.seq1, psd.seq2,2,0) [description]
         , psd.Spec
         , psd.Special
         , psd.Remark
@@ -301,35 +298,20 @@ select	distinct psd.id as [poid]
                  end
         , psd.StockUnit
         , f.BomTypeCalculate
-        , ColorMultipleID = isnull(dbo.GetColorMultipleID(psd.BrandId, isnull(psdsC.SpecValue, '')), '')
+        , ColorMultipleID = isnull(dbo.GetColorMultipleID(psd.BrandId, isnull(bomType.Color, '')), '')
         , f.MTLTYPEID
-        , ob.BomTypeColor
         , CompareBoAExpandSeq1 = case 
                                     when psd.Seq1 like '7_' then psd.OutputSeq1
                                     else psd.Seq1
                                  end
 		, [Garment Size]=dbo.GetGarmentSizeByOrderIDSeq(psd.id ,psd.SEQ1 ,psd.SEQ2)
-        ,SizeUnit = psdsSU.SpecValue
+        ,bomType.*
 into #tmpPO_supp_detail
 from dbo.PO_Supp_Detail as psd WITH (NOLOCK) 
 inner join dbo.Fabric f WITH (NOLOCK) on f.SCIRefno = psd.SCIRefno
 inner join dbo.MtlType m WITH (NOLOCK) on m.id = f.MtlTypeID
 inner join orders o With(NoLock) on psd.id = o.id
-left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
-left join PO_Supp_Detail_Spec psdsS WITH (NOLOCK) on psdsS.ID = psd.id and psdsS.seq1 = psd.seq1 and psdsS.seq2 = psd.seq2 and psdsS.SpecColumnID = 'Size'
-left join PO_Supp_Detail_Spec psdsSU WITH (NOLOCK) on psdsSU.ID = psd.id and psdsSU.seq1 = psd.seq1 and psdsSU.seq2 = psd.seq2 and psdsSU.SpecColumnID = 'SizeUnit'
-left join order_boa ob With(NoLock) on psd.id = ob.id
-                                       and psd.SciRefno = ob.SciRefno      
-                                       --and f.BomTypeCalculate = 1
-outer apply (
-    select value = case 
-                        when ob.SizeItem_Elastic != '' and ob.SizeItem is not null then ob.SizeItem_Elastic
-                        when ob.SizeItem != '' and ob.SizeItem is not null then ob.SizeItem
-                        else ''
-                   end
-) SizeItem
-left join Order_SizeSpec os on	os.Id = psd.ID
-								and os.SizeItem = SizeItem.value
+OUTER APPLY(SELECT * FROM dbo.GetPo3Spec_Null(psd.id,psd.seq1,psd.seq2))bomType
 where   psd.id = '{3}' 
         and psd.FabricType = 'A' 
         and m.IssueType = '{7}'
@@ -355,8 +337,8 @@ from (
             , b.seq1
             , b.seq2
             , b.[description]
-            , b.ColorID
-            , SizeSpec = isnull(b.PoSizeSpec, '')
+            , ColorID = b.Color
+            , SizeSpec = size
             , b.SCIRefno
             , b.Spec
             , b.Special
@@ -375,21 +357,6 @@ from (
 			, b.[Garment Size]
             , b.SizeUnit
     from #tmpPO_supp_detail b
-    left join (
-         select distinct tmpB.id
-                , tmpB.SCIRefNo
-                , tmpB.SizeCode
-                , tmpB.SizeSpec
-                , tmpB.orderqty
-                , tmpB.ColorID
-                , ob.Seq1
-        from #Tmp_BoaExpend tmpB
-        left join order_boa ob on tmpB.Order_BOAUkey = ob.Ukey
-    ) tb on b.SCIRefno = tb.SciRefno 
-            and b.poid = tb.ID 
-            and (b.SizeSpec = isnull(tb.SizeSpec, '')) 
-            and (b.ColorID = tb.ColorID)
-            and b.CompareBoAExpandSeq1 = tb.Seq1
     outer apply (
         select value = case count (1)
                             when 0 then 'Y'
@@ -417,81 +384,50 @@ order by x.poid, x.seq1, x.seq2, x.scirefno, x.ColorID, x.SizeSpec, x.Special;
 
 --因為 #tmpPo_Supp_Detail 有用 Order_BoA 展開
 --計算數量時，必須根據 Poid, Seq, SizeCode 群組
-with cte as(
-   select poid,seq1,seq2,sizecode
-	, qty = Round (sum (isnull (1.0 * OrderQty * value, 0.00) * UsedQty * RATE), 2) 
-	from
-		(
-    select distinct b.poid
-            , b.seq1
-            , b.seq2
-            , iif(b.BomTypeColor=1,tbColor.SizeCode,tbNonColor.SizeCode) SizeCode
-			, b.UsedQty
-			,b.RATE
-			, iif(b.BomTypeColor=1,tbColor.OrderQty,tbNonColor.OrderQty) OrderQty
-			, SizeSpec.value           
-	from #tmpPO_supp_detail b
-	outer apply(
-		   select --tmpB.*
-        distinct tmpB.id,tmpB.SCIRefNo,tmpB.SizeCode,tmpB.SizeSpec,tmpB.orderqty ,tmpB.ColorID
-               , ob.Seq1
-        from #Tmp_BoaExpend tmpB
-        left join order_boa ob on tmpB.Order_BOAUkey = ob.Ukey		
-		where b.SCIRefno = tmpB.SciRefno 
-			  and b.poid = tmpB.ID 
-              and b.SizeSpec = tmpB.SizeSpec
-			  and b.ColorID = tmpB.ColorID       
-              and b.CompareBoAExpandSeq1 = ob.Seq1
-	) tbColor
-	outer apply(
-		select distinct tmpB.id
-               , tmpB.SCIRefNo
-               , tmpB.SizeCode
-               , tmpB.SizeSpec
-               , tmpB.orderqty
-               , ob.Seq1
-        from #Tmp_BoaExpend tmpB
-        left join order_boa ob on tmpB.Order_BOAUkey = ob.Ukey		
-		where b.SCIRefno = tmpB.SciRefno 
-			  and b.poid = tmpB.ID 
-              and b.SizeSpec = tmpB.SizeSpec           
-              and b.CompareBoAExpandSeq1 = ob.Seq1
-	) tbNonColor    
-    outer apply (
-        select value = case
-                            when b.BomTypeCalculate != 1 then 1
-                            else iif(b.BomTypeColor=1,dbo.GetDigitalValue(tbColor.SizeSpec),dbo.GetDigitalValue(tbNonColor.SizeSpec))
-                       end
-    ) SizeSpec	
-  ) a
-  group by poid, seq1, seq2, SizeCode
-)
-select  z.*
-        , Autopickqty = isnull (cte.qty, 0)
-        , qty = ISNULL(cte.qty, 0)
-        , ori_qty = isnull (cte.qty, 0) -- 不確定用在哪先保留
-        , Diffqty = 0.0--之後用庫存總數去分配時再計算
-from (
-    select  x.poid
-            , x.seq1
-            , x.seq2
-            , order_sizecode.SizeCode
-            , Order_SizeCode.Seq 
-	from dbo.order_sizecode WITH (NOLOCK) 
-		 , (
-                select  distinct poid
-                        , seq1
-                        , seq2 
-                from cte
-         ) as x
-	where Order_SizeCode.id = '{3}'
-) z 
-left join cte on cte.SizeCode = z.SizeCode
-                 and cte.poid = z.poid
-                 and cte.seq1 = z.seq1
-                 and cte.seq2 = z.seq2
+SELECT b.POID, b.SEQ1, b.SEQ2, boa.SizeCode
+    , qty = Round(SUM(boa.UsageQty * b.Rate) , 2)
+INTO #tmpLast
+FROM #tmpPO_supp_detail b
+OUTER APPLY (
+    SELECT t.SizeCode, t.UsageQty
+    FROM #Tmp_BoaExpend t
+    INNER JOIN Order_BOA ob ON t.Order_BOAUkey = ob.Ukey
+    WHERE b.SCIRefno = t.SciRefno 
+    AND b.POID = t.ID 
+    AND b.CompareBoAExpandSeq1 = ob.Seq1
+    AND dbo.ConditionIncludeNull(b.Article         , t.BomTypeArticle         ) = 1
+    AND dbo.ConditionIncludeNull(b.BrandFactoryCode, t.BomTypeBrandFactoryCode) = 1
+    AND dbo.ConditionIncludeNull(b.CareCode        , t.BomTypeCareCode        ) = 1
+    AND dbo.ConditionIncludeNull(b.Color           , t.BomTypeColorID         ) = 1
+    AND dbo.ConditionIncludeNull(b.COO             , t.BomTypeCOO             ) = 1
+    AND dbo.ConditionIncludeNull(b.CustomerPO      , t.BomTypeCustomerPO      ) = 1
+    AND dbo.ConditionIncludeNull(b.CustomerSize    , t.BomTypeCustomerSize    ) = 1
+    AND dbo.ConditionIncludeNull(b.DecLabelSize    , t.BomTypeDecLabelSize    ) = 1
+    AND dbo.ConditionIncludeNull(b.Gender          , t.BomTypeGender          ) = 1
+    AND dbo.ConditionIncludeNull(b.Season          , t.BomTypeSeason          ) = 1
+    AND dbo.ConditionIncludeNull(b.Size            , t.BomTypeSize            ) = 1
+    AND dbo.ConditionIncludeNull(b.Style           , t.BomTypeStyle           ) = 1
+    AND dbo.ConditionIncludeNull(b.StyleLocation   , t.BomTypeStyleLocation   ) = 1
+    AND dbo.ConditionIncludeNull(b.ZipperInsert    , t.BomTypeZipperInsert    ) = 1
+) boa
+GROUP BY b.POID, b.SEQ1, b.SEQ2, boa.SizeCode
 
-order by z.seq1,z.seq2,z.Seq
+SELECT
+    z.*
+    , Autopickqty = isnull (t.qty, 0)
+    , qty = ISNULL(t.qty, 0)
+    , Diffqty = 0.0--之後用庫存總數去分配時再計算
+FROM(
+    SELECT x.*, os.SizeCode, os.Seq
+    FROM(SELECT DISTINCT POID, SEQ1, SEQ2 FROM #tmpPO_supp_detail)x
+    CROSS JOIN Order_SizeCode os WITH(NOLOCK)--要去展開所有 SizeCode, 提供手動填寫需求
+    WHERE os.Id = '{3}'
+)z
+LEFT JOIN #tmpLast t ON t.SizeCode = z.SizeCode
+                    AND t.POID = z.POID
+                    AND t.SEQ1 = z.SEQ1
+                    AND t.SEQ2 = z.SEQ2
+order by z.SEQ1,z.SEQ2,z.Seq
 ", this.sbSizecode.ToString().Substring(0, this.sbSizecode.ToString().Length - 1),
                 this.issueid,
                 this.orderid,
@@ -508,7 +444,6 @@ order by z.seq1,z.seq2,z.Seq
                 DBProxy.Current.DefaultTimeout = 3600;
                 string sizecodes = this.sbSizecode.ToString().Substring(0, this.sbSizecode.ToString().Length - 1).Replace("[", string.Empty).Replace("]", string.Empty);
                 var rESULT = MyUtility.Tool.ProcessWithDatatable(this.dtIssueBreakDown, "OrderID,Article," + sizecodes, sqlcmd, out result, "#tmp");
-
                 if (!rESULT)
                 {
                     this.ShowErr(rESULT);
@@ -543,7 +478,6 @@ order by z.seq1,z.seq2,z.Seq
                         tmp.ColumnsStringAdd("Garment Size");
                         tmp.ColumnsDecimalAdd("Autopickqty");
                         tmp.ColumnsDecimalAdd("qty");
-                        tmp.ColumnsDecimalAdd("ori_qty");
                         tmp.ColumnsDecimalAdd("Diffqty");
                         decimal balqty = MyUtility.Convert.GetDecimal(dr["balanceqty"]); // 庫存總數
                         var drs = dr.GetChildRows(relation);

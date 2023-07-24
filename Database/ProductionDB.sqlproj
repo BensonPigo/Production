@@ -2854,6 +2854,8 @@
     <Build Include="dbo\Stored Procedures\GetSDP.sql" />
     <Build Include="dbo\Stored Procedures\PPIC_R03_FORBI.sql" />
     <Build Include="dbo\Tables\Export_Container.sql" />
+    <Build Include="dbo\Functions\ConditionIncludeNull.sql" />
+    <Build Include="dbo\Functions\GetPo3Spec_Null.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />
