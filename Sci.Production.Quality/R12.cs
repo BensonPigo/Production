@@ -44,6 +44,7 @@ select  [Category] = ddl.[Name],
         ct2.Dyelot,
         {0}
         ,o.OrderTypeID 
+        {4}
 from Fir f with (nolock)
 inner join Receiving a with (nolock) on a.Id = f.ReceivingID
 left join Orders o with (nolock) on o.ID = f.POID
@@ -68,6 +69,15 @@ outer apply(
         where b.id = a.id and b.POID = f.POID and b.SEQ1 = f.SEQ1 and b.SEQ2 = f.SEQ2
     )x
 )ct2
+outer apply(
+    select Tone = count(1)
+    from(
+        select distinct s.Tone
+        from Receiving_Detail b with (nolock)
+		left join FIR_Shadebone s with (nolock) on s.ID = f.ID and s.Roll = b.Roll and s.Dyelot = b.Dyelot
+        where b.id = a.id and b.POID = f.POID and b.SEQ1 = f.SEQ1 and b.SEQ2 = f.SEQ2
+    )x
+)ctTone
 {1}
 {3}
 where 1 = 1
@@ -96,6 +106,7 @@ select	[Category] = ddl.[Name],
         ct2.Dyelot,
         {0}
         ,o.OrderTypeID 
+        {4}
 from Fir f with (nolock)
 inner join TransferIn a with (nolock) on a.Id = f.ReceivingID
 left join Orders o with (nolock) on o.ID = f.POID
@@ -120,6 +131,15 @@ outer apply(
         where b.id = a.id and b.POID = f.POID and b.SEQ1 = f.SEQ1 and b.SEQ2 = f.SEQ2
     )x
 )ct2
+outer apply(
+    select Tone = count(1)
+    from(
+        select distinct s.Tone
+        from TransferIn_Detail b with (nolock)
+		left join FIR_Shadebone s with (nolock) on s.ID = f.ID and s.Roll = b.Roll and s.Dyelot = b.Dyelot
+        where b.id = a.id and b.POID = f.POID and b.SEQ1 = f.SEQ1 and b.SEQ2 = f.SEQ2
+    )x
+)ctTone
 {1}
 {3}
 where 1 = 1
@@ -192,6 +212,7 @@ who.SeasonID,
 	,[CuttingData] = o.CutInLine
 	,[ArriveWHData] = a.{6}
     ,o.OrderTypeID 
+	,ctTone = ctTone.Tone
 into #tmp{2}
 from SubTransfer st
 inner join SubTransfer_Detail std on std.id = st.id
@@ -248,6 +269,27 @@ outer apply(
                 and b2.id = a.id
     )x
 )ct2
+outer apply(
+    select Tone = count(1)
+    from(
+        select distinct Fir_s.Tone
+        from SubTransfer_Detail std2 with (nolock)
+		inner join {0} b2 on b2.PoId = std2.FromPOID 
+                             and b2.Seq1 = std2.FromSeq1 
+                             and b2.Seq2 = std2.FromSeq2
+                             and b2.Roll = std2.FromRoll 
+                             and b2.Dyelot = std2. FromDyelot
+		left join FIR_Shadebone Fir_s with (nolock) on Fir_s.ID = f.ID and Fir_s.Roll = b2.Roll and Fir_s.Dyelot = b2.Dyelot
+        where std2.id = st.id 
+                and std.ToPOID = std2.ToPOID 
+                and std.ToSeq1 = std2.ToSeq1 
+                and std.ToSeq2 = std2.ToSeq2
+                and std.FromPOID = std2.FromPOID 
+                and std.FromSeq1 = std2.FromSeq1 
+                and std.FromSeq2 = std2.FromSeq2 
+                and b2.id = a.id
+    )x
+)ctTone
 Where st.type = 'B' and st.Status = 'Confirmed' and PSD.FabricType = 'F'
 {3}
 ";
@@ -295,6 +337,7 @@ select
 
     {6}
     ,OrderTypeID 
+    {11}
 from #tmp{0} f
 left join pass1 p1 with (nolock) on p1.id = f.{1}Inspector
 {2}
@@ -437,6 +480,7 @@ left join {inspectionTypeTable} i with (nolock) on i.ID = f.ID and i.Roll = b.Ro
             string column3 = string.Empty;
             string column4 = string.Empty;
             string column5 = string.Empty;
+            string column6 = string.Empty;
             string groupColumn = string.Empty;
             string groupColumn2 = string.Empty;
             string joinStr1 = string.Empty;
@@ -475,6 +519,12 @@ outer apply(
                 {
                     column2 = "f.TotalInspYds,";
                     groupColumn += ",f.TotalInspYds";
+                }
+
+                if (inspectionType == "ShadeBond")
+                {
+                    column6 = ",f.ctTone";
+                    groupColumn += ",f.ctTone";
                 }
             }
             else
@@ -571,9 +621,9 @@ left join pass1 p3 with (nolock) on p3.id = i.Inspector
                 }
             }
 
-            return string.Format(this.B2A_select, "R", inspectionType, string.Format(columnSource, "Receiving"), column1, column2, column3, column4, groupColumn, where, column5, groupColumn2) +
+            return string.Format(this.B2A_select, "R", inspectionType, string.Format(columnSource, "Receiving"), column1, column2, column3, column4, groupColumn, where, column5, groupColumn2, column6) +
                 "\r\nunion all\r\n" +
-                string.Format(this.B2A_select, "T", inspectionType, string.Format(columnSource, "TransferIn"), column1, column2, column3, column4, groupColumn, where, column5, groupColumn2);
+                string.Format(this.B2A_select, "T", inspectionType, string.Format(columnSource, "TransferIn"), column1, column2, column3, column4, groupColumn, where, column5, groupColumn2, column6);
         }
 
         /// <inheritdoc/>
@@ -700,9 +750,9 @@ Inspector = Concat(p3.ID, '-', p3.Name)
                     }
 
                     this.Sqlcmd += $@"
-{string.Format(this.baseReceivingSql, colPhysical, this.AddJoinByReportType("Receiving", "FIR_Physical", "Physical"), this.AddInspectionWhere(where1, "Physical"), joinPhysical)}
+{string.Format(this.baseReceivingSql, colPhysical, this.AddJoinByReportType("Receiving", "FIR_Physical", "Physical"), this.AddInspectionWhere(where1, "Physical"), joinPhysical, string.Empty)}
 union all
-{string.Format(this.baseTransferInSql, colPhysical, this.AddJoinByReportType("TransferIn", "FIR_Physical", "Physical"), this.AddInspectionWhere(where2, "Physical"), joinPhysical)}
+{string.Format(this.baseTransferInSql, colPhysical, this.AddJoinByReportType("TransferIn", "FIR_Physical", "Physical"), this.AddInspectionWhere(where2, "Physical"), joinPhysical, string.Empty)}
 order by POID, Seq, ExportId, ReceivingID
 ";
                 }
@@ -744,9 +794,9 @@ i.Remark
                     }
 
                     this.Sqlcmd += $@"
-{string.Format(this.baseReceivingSql, colWeight, this.AddJoinByReportType("Receiving", "FIR_Weight"), this.AddInspectionWhere(where1, "Weight"), joinWeight)}
+{string.Format(this.baseReceivingSql, colWeight, this.AddJoinByReportType("Receiving", "FIR_Weight"), this.AddInspectionWhere(where1, "Weight"), joinWeight, string.Empty)}
 union all
-{string.Format(this.baseTransferInSql, colWeight, this.AddJoinByReportType("TransferIn", "FIR_Weight"), this.AddInspectionWhere(where2, "Weight"), joinWeight)}
+{string.Format(this.baseTransferInSql, colWeight, this.AddJoinByReportType("TransferIn", "FIR_Weight"), this.AddInspectionWhere(where2, "Weight"), joinWeight, string.Empty)}
 order by POID, Seq, ExportId, ReceivingID
 ";
                 }
@@ -769,6 +819,7 @@ f.Shadebond,
 [Approver] = Concat(p2.ID, '-', p2.Name),
 f.ApproveDate
 ";
+                    string ttlColorTone = string.Empty;
                     if (this.radioRollDyelot.Checked)
                     {
                         joinShadeBond += @"
@@ -785,12 +836,16 @@ i.InspDate,
 Inspector = Concat(p3.ID, '-', p3.Name),
 i.Remark
 ";
+					}
+					else
+					{
+                        ttlColorTone = ",ctTone.Tone";
                     }
 
                     this.Sqlcmd += $@"
-{string.Format(this.baseReceivingSql, colShadeBond, this.AddJoinByReportType("Receiving", "FIR_Shadebone"), this.AddInspectionWhere(where1, "ShadeBond"), joinShadeBond)}
+{string.Format(this.baseReceivingSql, colShadeBond, this.AddJoinByReportType("Receiving", "FIR_Shadebone"), this.AddInspectionWhere(where1, "ShadeBond"), joinShadeBond, ttlColorTone)}
 union all
-{string.Format(this.baseTransferInSql, colShadeBond, this.AddJoinByReportType("TransferIn", "FIR_Shadebone"), this.AddInspectionWhere(where2, "ShadeBond"), joinShadeBond)}
+{string.Format(this.baseTransferInSql, colShadeBond, this.AddJoinByReportType("TransferIn", "FIR_Shadebone"), this.AddInspectionWhere(where2, "ShadeBond"), joinShadeBond, ttlColorTone)}
 order by POID, Seq, ExportId, ReceivingID
 ";
                 }
@@ -831,9 +886,9 @@ i.Remark
                     }
 
                     this.Sqlcmd += $@"
-{string.Format(this.baseReceivingSql, colContinuity, this.AddJoinByReportType("Receiving", "FIR_Continuity"), this.AddInspectionWhere(where1, "Continuity"), joinContinuity)}
+{string.Format(this.baseReceivingSql, colContinuity, this.AddJoinByReportType("Receiving", "FIR_Continuity"), this.AddInspectionWhere(where1, "Continuity"), joinContinuity, string.Empty)}
 union all
-{string.Format(this.baseTransferInSql, colContinuity, this.AddJoinByReportType("TransferIn", "FIR_Continuity"), this.AddInspectionWhere(where2, "Continuity"), joinContinuity)}
+{string.Format(this.baseTransferInSql, colContinuity, this.AddJoinByReportType("TransferIn", "FIR_Continuity"), this.AddInspectionWhere(where2, "Continuity"), joinContinuity, string.Empty)}
 order by POID, Seq, ExportId, ReceivingID
 ";
                 }
@@ -872,9 +927,9 @@ i.Remark
                     }
 
                     this.Sqlcmd += $@"
-{string.Format(this.baseReceivingSql, colOdor, this.AddJoinByReportType("Receiving", "FIR_Odor"), this.AddInspectionWhere(where1, "Odor"), joinOdor)}
+{string.Format(this.baseReceivingSql, colOdor, this.AddJoinByReportType("Receiving", "FIR_Odor"), this.AddInspectionWhere(where1, "Odor"), joinOdor, string.Empty)}
 union all
-{string.Format(this.baseTransferInSql, colOdor, this.AddJoinByReportType("TransferIn", "FIR_Odor"), this.AddInspectionWhere(where2, "Odor"), joinOdor)}
+{string.Format(this.baseTransferInSql, colOdor, this.AddJoinByReportType("TransferIn", "FIR_Odor"), this.AddInspectionWhere(where2, "Odor"), joinOdor, string.Empty)}
 order by POID, Seq, ExportId, ReceivingID
 ";
                 }

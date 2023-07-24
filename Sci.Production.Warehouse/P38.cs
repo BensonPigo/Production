@@ -165,38 +165,40 @@ namespace Sci.Production.Warehouse
             this.gridMaterialLock.DataSource = this.listControlBindingSource1;
             this.Helper.Controls.Grid.Generator(this.gridMaterialLock)
                 .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0, settings: col_chk)
-                 .Text("POID", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
-                 .Text("seq1", header: "Seq1", width: Widths.AnsiChars(3), iseditingreadonly: true)
-                  .Text("seq2", header: "Seq2", width: Widths.AnsiChars(2), iseditingreadonly: true)
-                  .Text("FabricType", header: "Material Type", width: Widths.AnsiChars(8), iseditingreadonly: true)
-                  .Text("roll", header: "Roll#", width: Widths.AnsiChars(8), iseditingreadonly: true)
-                  .Text("dyelot", header: "Dyelot", width: Widths.AnsiChars(8), iseditingreadonly: true, settings: ns)
-                  .Text("status", header: "Status", width: Widths.AnsiChars(10), iseditingreadonly: true).Get(out columnStatus)
-                  .Date("WhseArrival", header: "Material ATA ", width: Widths.AnsiChars(10), iseditingreadonly: true)
-                  .DateTime("lockdate", header: "Lock/Unlock" + Environment.NewLine + "Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
-                  .Text("lockname", header: "Lock/Unlock" + Environment.NewLine + "Name", width: Widths.AnsiChars(8), iseditingreadonly: true)
-                  .EditText("Remark", header: "Remark", width: Widths.AnsiChars(12), iseditingreadonly: false, settings: remark)
-                  .Text("FIR", header: "FIR", width: Widths.AnsiChars(5), iseditingreadonly: true)
-                  .Text("Scale", header: "Shade Band\r\nScale", width: Widths.AnsiChars(5), iseditingreadonly: true)
-                  .Text("Tone", header: "Shade Band\r\nTone/Grp", width: Widths.AnsiChars(8), iseditingreadonly: true)
-                  .Text("PointRate", header: "Point rate\n\rper 100yds", width: Widths.AnsiChars(2), iseditingreadonly: true)
-                  .Text("WashLab Report", header: "WashLab Report", width: Widths.AnsiChars(8), iseditingreadonly: true)
-                  .Numeric("inqty", header: "In Qty", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2, iseditingreadonly: true)
-                  .Numeric("outqty", header: "Out Qty", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2, iseditingreadonly: true)
-                  .Numeric("adjustqty", header: "Adjust Qty", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2, iseditingreadonly: true)
-                  .Numeric("ReturnQty", header: "Return Qty", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2, iseditingreadonly: true)
-                  .Numeric("balanceqty", header: "Balance Qty", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2, iseditingreadonly: true)
-                 .Text("StockType1", header: "Stocktype", width: Widths.AnsiChars(10), iseditingreadonly: true)
-                 .Text("location", header: "location", width: Widths.AnsiChars(10), iseditingreadonly: true)
-                 .Text("description", header: "description", width: Widths.AnsiChars(20), iseditingreadonly: true)
-                 .Text("styleid", header: "Style", width: Widths.AnsiChars(13), iseditingreadonly: true)
-                 .Text("colorid", header: "Color", width: Widths.AnsiChars(10), iseditingreadonly: true)
-                  .Date("earliest_BuyerDelivery", header: "Earliest" + Environment.NewLine + "BuyerDelivery", width: Widths.AnsiChars(10), iseditingreadonly: true)
-                  .Date("earliest_SciDelivery", header: "Earliest" + Environment.NewLine + "SciDelivery", width: Widths.AnsiChars(10), iseditingreadonly: true)
-                  .Text("brandid", header: "Brand", width: Widths.AnsiChars(12), iseditingreadonly: true)
-                  .Text("factoryid", header: "Factory", width: Widths.AnsiChars(8), iseditingreadonly: true)
-                  .Text("ForInspection", header: "For\r\nInspection", width: Widths.AnsiChars(8), iseditingreadonly: true)
-                  ;
+                .Text("POID", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
+                .Text("seq1", header: "Seq1", width: Widths.AnsiChars(3), iseditingreadonly: true)
+                .Text("seq2", header: "Seq2", width: Widths.AnsiChars(2), iseditingreadonly: true)
+                .Text("Refno", header: "Ref#", width: Widths.AnsiChars(2), iseditingreadonly: true)
+                .Text("colorid", header: "Color", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                .Text("SizeID", header: "Size", width: Widths.AnsiChars(2), iseditingreadonly: true)
+                .Text("FabricType", header: "Material Type", width: Widths.AnsiChars(8), iseditingreadonly: true)
+                .Text("roll", header: "Roll#", width: Widths.AnsiChars(8), iseditingreadonly: true)
+                .Text("dyelot", header: "Dyelot", width: Widths.AnsiChars(8), iseditingreadonly: true, settings: ns)
+                .Text("status", header: "Status", width: Widths.AnsiChars(10), iseditingreadonly: true).Get(out columnStatus)
+                .Date("WhseArrival", header: "Material ATA ", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                .DateTime("lockdate", header: "Lock/Unlock" + Environment.NewLine + "Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                .Text("lockname", header: "Lock/Unlock" + Environment.NewLine + "Name", width: Widths.AnsiChars(8), iseditingreadonly: true)
+                .EditText("Remark", header: "Remark", width: Widths.AnsiChars(12), iseditingreadonly: false, settings: remark)
+                .Text("FIR", header: "FIR", width: Widths.AnsiChars(5), iseditingreadonly: true)
+                .Text("Scale", header: "Shade Band\r\nScale", width: Widths.AnsiChars(5), iseditingreadonly: true)
+                .Text("Tone", header: "Shade Band\r\nTone/Grp", width: Widths.AnsiChars(8), iseditingreadonly: true)
+                .Text("PointRate", header: "Point rate\n\rper 100yds", width: Widths.AnsiChars(2), iseditingreadonly: true)
+                .Text("WashLab Report", header: "WashLab Report", width: Widths.AnsiChars(8), iseditingreadonly: true)
+                .Numeric("inqty", header: "In Qty", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2, iseditingreadonly: true)
+                .Numeric("outqty", header: "Out Qty", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2, iseditingreadonly: true)
+                .Numeric("adjustqty", header: "Adjust Qty", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2, iseditingreadonly: true)
+                .Numeric("ReturnQty", header: "Return Qty", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2, iseditingreadonly: true)
+                .Numeric("balanceqty", header: "Balance Qty", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2, iseditingreadonly: true)
+                .Text("StockType1", header: "Stocktype", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                .Text("location", header: "location", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                .Text("description", header: "description", width: Widths.AnsiChars(20), iseditingreadonly: true)
+                .Text("styleid", header: "Style", width: Widths.AnsiChars(13), iseditingreadonly: true)
+                .Date("earliest_BuyerDelivery", header: "Earliest" + Environment.NewLine + "BuyerDelivery", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                .Date("earliest_SciDelivery", header: "Earliest" + Environment.NewLine + "SciDelivery", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                .Text("brandid", header: "Brand", width: Widths.AnsiChars(12), iseditingreadonly: true)
+                .Text("factoryid", header: "Factory", width: Widths.AnsiChars(8), iseditingreadonly: true)
+                .Text("ForInspection", header: "For\r\nInspection", width: Widths.AnsiChars(8), iseditingreadonly: true)
+                ;
             columnStatus.DefaultCellStyle.ForeColor = Color.Blue;
             this.gridMaterialLock.Columns["dyelot"].HeaderCell.Style.BackColor = Color.Orange;
             this.gridMaterialLock.Columns["Remark"].DefaultCellStyle.BackColor = Color.Pink;
@@ -343,6 +345,9 @@ select 0 as [selected]
         , fi.POID
         , fi.seq1
         , fi.seq2
+        , psd.Refno
+        , ColorID = isnull(psdsC.SpecValue, '')
+        , SizeID = isnull(psdsS.SpecValue, '')
         , FabricType = case when psd.FabricType = 'F' then 'Fabric' when  psd.FabricType = 'A' then 'Accessory' end
         , fi.Roll
         , fi.Dyelot
@@ -359,7 +364,6 @@ select 0 as [selected]
         , fi.ukey
         , [location] = dbo.Getlocation(fi.ukey)
         , [Description] = dbo.getMtlDesc(fi.poid,fi.seq1,fi.seq2,2,0)
-        , ColorID = isnull(psdsC.SpecValue, '')
         , o.styleid
         , o.BrandID
         , o.FactoryID
@@ -371,6 +375,7 @@ into #tmp_FtyInventory
 from dbo.FtyInventory fi WITH (NOLOCK) 
 left join dbo.PO_Supp_Detail psd WITH (NOLOCK) on psd.id = fi.POID and psd.seq1 = fi.seq1 and psd.seq2  = fi.Seq2
 left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
+left join PO_Supp_Detail_Spec psdsS WITH (NOLOCK) on psdsS.ID = psd.id and psdsS.seq1 = psd.seq1 and psdsS.seq2 = psd.seq2 and psdsS.SpecColumnID = 'Size'
 left join View_WH_Orders o WITH (NOLOCK) on o.id = fi.POID
 left join dbo.factory f WITH (NOLOCK) on o.FtyGroup=f.id
 left join Receiving_Detail rd WITH (NOLOCK) on rd.PoId = fi.POID and rd.Seq1 = fi.seq1 and rd.seq2 = fi.seq2 and rd.Roll = fi.Roll and rd.Dyelot = fi.Dyelot

@@ -60,7 +60,6 @@
             this.labelOrderBy = new Sci.Win.UI.Label();
             this.labelFactory = new Sci.Win.UI.Label();
             this.txtfactory = new Sci.Production.Class.Txtfactory();
-            this.chkDWR = new Sci.Win.UI.CheckBox();
             this.label1 = new Sci.Win.UI.Label();
             this.txtWKNo2 = new Sci.Win.UI.TextBox();
             this.txtWKNo1 = new Sci.Win.UI.TextBox();
@@ -71,22 +70,24 @@
             this.chkIncludeJunk = new Sci.Win.UI.CheckBox();
             this.chkExcludeMaterial = new Sci.Win.UI.CheckBox();
             this.chkSeparateByWK = new Sci.Win.UI.CheckBox();
+            this.comboDurable = new Sci.Win.UI.ComboBox();
+            this.labelDurable = new Sci.Win.UI.Label();
             this.SuspendLayout();
             // 
             // print
             // 
             this.print.Location = new System.Drawing.Point(436, 12);
-            this.print.TabIndex = 23;
+            this.print.TabIndex = 24;
             // 
             // toexcel
             // 
             this.toexcel.Location = new System.Drawing.Point(436, 48);
-            this.toexcel.TabIndex = 24;
+            this.toexcel.TabIndex = 25;
             // 
             // close
             // 
             this.close.Location = new System.Drawing.Point(436, 84);
-            this.close.TabIndex = 25;
+            this.close.TabIndex = 26;
             // 
             // labelSCIDelivery
             // 
@@ -319,7 +320,7 @@
             this.txtMdivision.Location = new System.Drawing.Point(115, 387);
             this.txtMdivision.Name = "txtMdivision";
             this.txtMdivision.Size = new System.Drawing.Size(66, 23);
-            this.txtMdivision.TabIndex = 16;
+            this.txtMdivision.TabIndex = 15;
             // 
             // labelM
             // 
@@ -345,7 +346,7 @@
             this.comboFabricType.Location = new System.Drawing.Point(114, 444);
             this.comboFabricType.Name = "comboFabricType";
             this.comboFabricType.Size = new System.Drawing.Size(121, 24);
-            this.comboFabricType.TabIndex = 18;
+            this.comboFabricType.TabIndex = 17;
             // 
             // labelCountry
             // 
@@ -391,6 +392,7 @@
             this.txtstyle.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtstyle.Location = new System.Drawing.Point(114, 226);
             this.txtstyle.Name = "txtstyle";
+            this.txtstyle.SeasonObjectName = null;
             this.txtstyle.Size = new System.Drawing.Size(130, 23);
             this.txtstyle.TabIndex = 10;
             this.txtstyle.TarBrand = null;
@@ -426,7 +428,7 @@
             this.comboOrderBy.Name = "comboOrderBy";
             this.comboOrderBy.OldText = "";
             this.comboOrderBy.Size = new System.Drawing.Size(121, 24);
-            this.comboOrderBy.TabIndex = 19;
+            this.comboOrderBy.TabIndex = 18;
             // 
             // labelOrderBy
             // 
@@ -450,24 +452,14 @@
             this.txtfactory.BoolFtyGroupList = true;
             this.txtfactory.FilteMDivision = false;
             this.txtfactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtfactory.IsMultiselect = false;
             this.txtfactory.IsProduceFty = false;
             this.txtfactory.IssupportJunk = true;
             this.txtfactory.Location = new System.Drawing.Point(115, 415);
             this.txtfactory.MDivision = null;
             this.txtfactory.Name = "txtfactory";
             this.txtfactory.Size = new System.Drawing.Size(66, 23);
-            this.txtfactory.TabIndex = 17;
-            // 
-            // chkDWR
-            // 
-            this.chkDWR.AutoSize = true;
-            this.chkDWR.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.chkDWR.Location = new System.Drawing.Point(12, 505);
-            this.chkDWR.Name = "chkDWR";
-            this.chkDWR.Size = new System.Drawing.Size(183, 21);
-            this.chkDWR.TabIndex = 20;
-            this.chkDWR.Text = "Durable Water Repellent";
-            this.chkDWR.UseVisualStyleBackColor = true;
+            this.txtfactory.TabIndex = 16;
             // 
             // label1
             // 
@@ -514,7 +506,7 @@
             this.chkWhseClose.Location = new System.Drawing.Point(13, 532);
             this.chkWhseClose.Name = "chkWhseClose";
             this.chkWhseClose.Size = new System.Drawing.Size(142, 21);
-            this.chkWhseClose.TabIndex = 21;
+            this.chkWhseClose.TabIndex = 20;
             this.chkWhseClose.Text = "exclude closed SP";
             this.chkWhseClose.UseVisualStyleBackColor = true;
             // 
@@ -523,6 +515,7 @@
             this.txtbrand.BackColor = System.Drawing.Color.White;
             this.txtbrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtbrand.Location = new System.Drawing.Point(114, 289);
+            this.txtbrand.MyDocumentdName = null;
             this.txtbrand.Name = "txtbrand";
             this.txtbrand.Size = new System.Drawing.Size(98, 23);
             this.txtbrand.TabIndex = 12;
@@ -542,7 +535,7 @@
             this.chkIncludeJunk.Location = new System.Drawing.Point(13, 559);
             this.chkIncludeJunk.Name = "chkIncludeJunk";
             this.chkIncludeJunk.Size = new System.Drawing.Size(160, 21);
-            this.chkIncludeJunk.TabIndex = 22;
+            this.chkIncludeJunk.TabIndex = 21;
             this.chkIncludeJunk.Text = "Include Junk Material";
             this.chkIncludeJunk.UseVisualStyleBackColor = true;
             // 
@@ -553,7 +546,7 @@
             this.chkExcludeMaterial.Location = new System.Drawing.Point(13, 586);
             this.chkExcludeMaterial.Name = "chkExcludeMaterial";
             this.chkExcludeMaterial.Size = new System.Drawing.Size(130, 21);
-            this.chkExcludeMaterial.TabIndex = 23;
+            this.chkExcludeMaterial.TabIndex = 22;
             this.chkExcludeMaterial.Text = "Exclude Material";
             this.chkExcludeMaterial.UseVisualStyleBackColor = true;
             // 
@@ -564,13 +557,38 @@
             this.chkSeparateByWK.Location = new System.Drawing.Point(12, 613);
             this.chkSeparateByWK.Name = "chkSeparateByWK";
             this.chkSeparateByWK.Size = new System.Drawing.Size(138, 21);
-            this.chkSeparateByWK.TabIndex = 24;
+            this.chkSeparateByWK.TabIndex = 23;
             this.chkSeparateByWK.Text = "Separate by WK#";
             this.chkSeparateByWK.UseVisualStyleBackColor = true;
+            // 
+            // comboDurable
+            // 
+            this.comboDurable.BackColor = System.Drawing.Color.White;
+            this.comboDurable.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboDurable.FormattingEnabled = true;
+            this.comboDurable.IsSupportUnselect = true;
+            this.comboDurable.Items.AddRange(new object[] {
+            "Issue Date",
+            "Supplier"});
+            this.comboDurable.Location = new System.Drawing.Point(178, 504);
+            this.comboDurable.Name = "comboDurable";
+            this.comboDurable.OldText = "";
+            this.comboDurable.Size = new System.Drawing.Size(100, 24);
+            this.comboDurable.TabIndex = 19;
+            // 
+            // labelDurable
+            // 
+            this.labelDurable.Location = new System.Drawing.Point(13, 504);
+            this.labelDurable.Name = "labelDurable";
+            this.labelDurable.Size = new System.Drawing.Size(160, 23);
+            this.labelDurable.TabIndex = 149;
+            this.labelDurable.Text = "Durable Water Repellent";
             // 
             // R03
             // 
             this.ClientSize = new System.Drawing.Size(528, 674);
+            this.Controls.Add(this.comboDurable);
+            this.Controls.Add(this.labelDurable);
             this.Controls.Add(this.chkSeparateByWK);
             this.Controls.Add(this.chkExcludeMaterial);
             this.Controls.Add(this.chkIncludeJunk);
@@ -581,7 +599,6 @@
             this.Controls.Add(this.txtWKNo2);
             this.Controls.Add(this.txtWKNo1);
             this.Controls.Add(this.label2);
-            this.Controls.Add(this.chkDWR);
             this.Controls.Add(this.txtfactory);
             this.Controls.Add(this.labelFactory);
             this.Controls.Add(this.comboOrderBy);
@@ -656,7 +673,6 @@
             this.Controls.SetChildIndex(this.comboOrderBy, 0);
             this.Controls.SetChildIndex(this.labelFactory, 0);
             this.Controls.SetChildIndex(this.txtfactory, 0);
-            this.Controls.SetChildIndex(this.chkDWR, 0);
             this.Controls.SetChildIndex(this.label2, 0);
             this.Controls.SetChildIndex(this.txtWKNo1, 0);
             this.Controls.SetChildIndex(this.txtWKNo2, 0);
@@ -667,6 +683,8 @@
             this.Controls.SetChildIndex(this.chkIncludeJunk, 0);
             this.Controls.SetChildIndex(this.chkExcludeMaterial, 0);
             this.Controls.SetChildIndex(this.chkSeparateByWK, 0);
+            this.Controls.SetChildIndex(this.labelDurable, 0);
+            this.Controls.SetChildIndex(this.comboDurable, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -706,7 +724,6 @@
         private Win.UI.Label labelOrderBy;
         private Win.UI.Label labelFactory;
         private Class.Txtfactory txtfactory;
-        private Win.UI.CheckBox chkDWR;
         private Win.UI.Label label1;
         private Win.UI.TextBox txtWKNo2;
         private Win.UI.TextBox txtWKNo1;
@@ -717,5 +734,7 @@
         private Win.UI.CheckBox chkIncludeJunk;
         private Win.UI.CheckBox chkExcludeMaterial;
         private Win.UI.CheckBox chkSeparateByWK;
-    }
+		private Win.UI.ComboBox comboDurable;
+		private Win.UI.Label labelDurable;
+	}
 }
