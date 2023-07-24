@@ -938,21 +938,13 @@ where   exists(select 1 from #tmp t where
         {
             string masterID = (e.Master == null) ? string.Empty : e.Master["ID"].ToString();
             this.DetailSelectCommand = $@"
-select a.id,a.PoId,a.Seq1,a.Seq2,concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2) as seq
-,a.Roll
-,a.Dyelot
-,dbo.getMtlDesc(a.poid,a.seq1,a.seq2,2,0) as [Description]
+select a.*
+,[SEQ] = concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2)
+,[Description] = dbo.getMtlDesc(a.poid,a.seq1,a.seq2,2,0)
+,[ToSeq] = a.ToSeq1 +' ' + a.ToSeq2
 ,psd.StockUnit
-,a.Qty
-,a.StockType
-,a.ukey
 ,dbo.Getlocation(fi.ukey) location
 ,[ContainerCode] = FI.ContainerCode
-,a.ftyinventoryukey
-,a.ToPOID
-,a.ToSeq1
-,a.ToSeq2
-,[ToSeq] = a.ToSeq1 +' ' + a.ToSeq2
 ,wk.ExportId
 , psd.Refno
 , Color = IIF(Fabric.MtlTypeID = 'EMB THREAD' OR Fabric.MtlTypeID = 'SP THREAD' OR Fabric.MtlTypeID = 'THREAD' 
@@ -960,11 +952,8 @@ select a.id,a.PoId,a.Seq1,a.Seq2,concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2) as se
 										,dbo.GetColorMultipleID(o.BrandID, isnull(psdsC.SpecValue, ''))
 									)
 ,SizeSpec= isnull(psdsS.SpecValue, '')
-,a.TransferExportID
-,a.TransferExport_DetailUkey
 ,fi.Tone
 ,[StyleID] = o.StyleID
-,a.ActualWeight
 ,[RecvKG] = case when rd.ActualQty is not null 
 			then case when rd.ActualQty <> a.Qty
 					then ''
