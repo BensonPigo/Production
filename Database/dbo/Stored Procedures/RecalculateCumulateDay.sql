@@ -3,7 +3,7 @@
 	, @FactoryID as varchar(8) 
 	, @OutputDate as date 
 AS
-BEGIN
+Begin
 	SET NOCOUNT ON;
 
 	if isnull(@Line, '') = '' or isnull(@FactoryID, '') = '' or @OutputDate is null
@@ -22,9 +22,9 @@ BEGIN
 		, m.MasterStyleID
 		, m.MasterBrandID
 	into #tmpSewingOutput_Base
-	from SewingOutput s
-	inner join SewingOutput_Detail sd on s.ID = sd.ID
-	inner join Orders o on sd.OrderId = o.ID
+	from SewingOutput s WITH (NOLOCK)
+	inner join SewingOutput_Detail sd WITH (NOLOCK) on s.ID = sd.ID
+	inner join Orders o WITH (NOLOCK) on sd.OrderId = o.ID
 	left join MockupOrder mo WITH (NOLOCK) on mo.ID = sd.OrderId
 	Outer apply (
 		select distinct MasterBrandID, MasterStyleID 
@@ -82,9 +82,7 @@ BEGIN
 		and t.MasterBrandID = m.MasterBrandID and t.MasterStyleID = m.MasterStyleID and s.OutputDate >= t.OutputDate
 
 	)
-	order by s.OutputDate
-
-
+	
 	select [MaxOutputDate] = Max(OutputDate), [MinOutputDate] = MIN(OutputDate), MockupStyle, OrderStyle, SewingLineID, FactoryID, MasterStyleID, MasterBrandID 
 	into #tmpOutputDate
 	from(
@@ -118,7 +116,6 @@ BEGIN
 			)m
 			where s.ID = sd.ID and t.MasterStyleID = m.MasterStyleID and t.MasterBrandID = m.MasterBrandID
 	)
-	order by  FactoryID, t.SewingLineID ,t.OrderStyle, t.MockupStyle, s.OutputDate
 
 	select w.FactoryID, w.SewingLineID ,t.OrderStyle, t.MockupStyle, w.Date
 	into #tmpWorkHour
@@ -128,7 +125,6 @@ BEGIN
 	and exists (select 1 from #tmpOutputDate where w.Date between dateadd(day,-240, MinOutputDate) and MaxOutputDate)
 	and w.FactoryID = @FactoryID
 	and w.SewingLineID = @Line
-	order by  FactoryID, t.SewingLineID ,t.OrderStyle, t.MockupStyle, w.Date
 
 	select t.*
 		, [CumulateDate_Before] = CumulateDate.val
@@ -159,7 +155,6 @@ BEGIN
 													w.Date <= t.OutputDate
 										)
 	) CumulateDate
-	order by t.OutputDate, t.UKey
 
 	select w.SewingLineID, w.FactoryID, w.Date
 		, [RID] = ROW_NUMBER() over(partition by w.FactoryID, w.SewingLineID order by w.Date)
@@ -235,5 +230,4 @@ BEGIN
 
 
 	drop table #tmpOutputDate, #tmpSewingGroup, #tmpSewingOutput, #tmpSewingOutput_Base, #tmpWorkHour, #tmp1stFilter_First, #tmpWorkHour_Factory
-
 END
