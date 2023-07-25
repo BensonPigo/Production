@@ -372,6 +372,8 @@ and IETMSID = '{this.CurrentMaintain["IETMSID"]}'
                                     dr["Annotation"] = callNextForm.P01SelectOperationCode["Annotation"].ToString();
                                     dr["MasterPlusGroup"] = callNextForm.P01SelectOperationCode["MasterPlusGroup"].ToString();
                                     dr["MachineType_IsSubprocess"] = callNextForm.P01SelectOperationCode["MachineType_IsSubprocess"];
+                                    dr["IsSubprocess"] = callNextForm.P01SelectOperationCode["IsSubprocess"];
+                                    dr["IsNonSewingLine"] = callNextForm.P01SelectOperationCode["IsNonSewingLine"];
                                     dr.EndEdit();
                                 }
                             }
@@ -392,6 +394,8 @@ and IETMSID = '{this.CurrentMaintain["IETMSID"]}'
                                 dr["Annotation"] = callNextForm.P01SelectOperationCode["Annotation"].ToString();
                                 dr["MasterPlusGroup"] = callNextForm.P01SelectOperationCode["MasterPlusGroup"].ToString();
                                 dr["MachineType_IsSubprocess"] = callNextForm.P01SelectOperationCode["MachineType_IsSubprocess"];
+                                dr["IsSubprocess"] = callNextForm.P01SelectOperationCode["IsSubprocess"];
+                                dr["IsNonSewingLine"] = callNextForm.P01SelectOperationCode["IsNonSewingLine"];
                                 dr.EndEdit();
                             }
                             else
@@ -441,7 +445,7 @@ and IETMSID = '{this.CurrentMaintain["IETMSID"]}'
 
                             string sqlCmd = $@"
 select o.ID,o.DescEN,o.SMV,o.MachineTypeID,o.SeamLength,o.MoldID,o.MtlFactorID,o.Annotation,o.MasterPlusGroup
-,[MachineType_IsSubprocess] = isnull(md.IsSubprocess,0) 
+,[MachineType_IsSubprocess] = isnull(md.IsSubprocess,0) ,md.IsSubprocess ,md.IsNonSewingLine
 from Operation o WITH (NOLOCK)
 left join MachineType_Detail md WITH (NOLOCK) on md.ID = o.MachineTypeID and md.FactoryID = '{Sci.Env.User.Factory}'
 where CalibratedCode = 1
@@ -469,6 +473,8 @@ and o.ID = @id";
                                     dr["ttlSeamLength"] = MyUtility.Convert.GetDecimal(dr["Frequency"]) * MyUtility.Convert.GetDecimal(dr["SeamLength"]);
                                     dr["Annotation"] = opData.Rows[0]["Annotation"].ToString();
                                     dr["MachineType_IsSubprocess"] = opData.Rows[0]["MachineType_IsSubprocess"];
+                                    dr["IsSubprocess"] = opData.Rows[0]["IsSubprocess"];
+                                    dr["IsNonSewingLine"] = opData.Rows[0]["IsNonSewingLine"];
                                 }
                             }
                             else
