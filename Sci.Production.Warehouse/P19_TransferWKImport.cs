@@ -305,15 +305,15 @@ drop table #tmpTransferExport
                 var existsRows = this.mainDetail.AsEnumerable()
                     .Where(w => w.RowState != DataRowState.Deleted
                         && w["mdivisionid"].EqualString(dr["mdivisionid"].ToString())
-                        && w["poid"].EqualString(dr["poid"].ToString())
-                        && w["seq1"].EqualString(dr["seq1"])
-                        && w["seq2"].EqualString(dr["seq2"].ToString())
+                        && w["poid"].EqualString(dr["Inventorypoid"].ToString())
+                        && w["seq1"].EqualString(dr["Inventoryseq1"])
+                        && w["seq2"].EqualString(dr["Inventoryseq2"].ToString())
                         && w["roll"].EqualString(dr["roll"])
                         && w["dyelot"].EqualString(dr["dyelot"])
                         && w["stockType"].EqualString(dr["stockType"])
-                        && w["ToPOID"].EqualString(dr["ToPOID"].ToString())
-                        && w["Toseq1"].EqualString(dr["Toseq1"])
-                        && w["Toseq2"].EqualString(dr["Toseq2"].ToString())
+                        && w["ToPOID"].EqualString(dr["PoID"].ToString())
+                        && w["Toseq1"].EqualString(dr["seq1"])
+                        && w["Toseq2"].EqualString(dr["seq2"].ToString())
                         && (long)w["TransferExport_DetailUkey"] == (long)dr["TransferExport_DetailUkey"]);
 
                 if (existsRows.Any())
