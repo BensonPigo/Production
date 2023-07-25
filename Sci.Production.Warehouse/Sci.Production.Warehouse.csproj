@@ -506,7 +506,6 @@
     <Compile Include="P73_Import.designer.cs">
       <DependentUpon>P73_Import.cs</DependentUpon>
     </Compile>
-    <Compile Include="P73_PrintData.cs" />
     <Compile Include="P99_CallForm.cs" />
     <Compile Include="P01.cs">
       <SubType>Form</SubType>
@@ -2168,16 +2167,17 @@
     <EmbeddedResource Include="P72.resx">
       <DependentUpon>P72.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="P72Print.rdlc" />
     <EmbeddedResource Include="P72_Import.resx">
       <DependentUpon>P72_Import.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="P72_Print.rdlc" />
     <EmbeddedResource Include="P73.resx">
       <DependentUpon>P73.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P73_Import.resx">
       <DependentUpon>P73_Import.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="P73_Print.rdlc" />
     <EmbeddedResource Include="P99.resx">
       <DependentUpon>P99.cs</DependentUpon>
     </EmbeddedResource>

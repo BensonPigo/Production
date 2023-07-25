@@ -217,8 +217,8 @@
             // 
             this.ApvChkValue = "New";
             this.ClientSize = new System.Drawing.Size(999, 577);
-            this.DefaultControl = "comboStockType";
-            this.DefaultControlForEdit = "comboStockType";
+            this.DefaultControl = "dateIssueDate";
+            this.DefaultControlForEdit = "dateIssueDate";
             this.DefaultDetailOrder = "poid,seq1,seq2,roll";
             this.DefaultOrder = "issuedate,ID";
             this.Grid2New = 0;

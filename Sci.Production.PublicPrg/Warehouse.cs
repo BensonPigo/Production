@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -1009,7 +1010,7 @@ drop table #tmp_L_K
 ";
                     }
 
-                    sqlcmd += @"drop table #tmpS1, #tmpS1; 
+                    sqlcmd += @"drop table #tmpS1; 
                                 drop table #TmpSource;";
                     #endregion
                     break;
@@ -3775,7 +3776,7 @@ order by Barcode desc
         }
 
         /// <summary>
-        /// 檢查 FtyInventory.BarCode 是否為空
+        /// 檢查 FtyInventory or LocalOrderInventory BarCode 是否為空
         /// Confirm 時檢查
         /// </summary>
         /// <inheritdoc/>
@@ -4229,11 +4230,27 @@ left join FtyInventory fto with(nolock) on fto.POID = sd.ToPOID
                 case WHTableName.Issue_Detail:
                 case WHTableName.IssueLack_Detail:
                 case WHTableName.TransferOut_Detail:
-                    columns += @"
-    ,lastBarcode = iif (isnull(lastBarcode.To_NewBarcode, '') = '', fbOri.Barcode, lastBarcode.To_NewBarcode)
-    ,lastBarcodeSeq = iif (isnull(lastBarcode.To_NewBarcodeSeq, '') = '', fbOri.BarcodeSeq, lastBarcode.To_NewBarcodeSeq)
+                case WHTableName.LocalOrderIssue_Detail:
+                    string strLastBarcode = isLocalOrder ? "lastBarcode.To_NewBarcode" : @" iif (isnull(lastBarcode.To_NewBarcode, '') = '', fbOri.Barcode, lastBarcode.To_NewBarcode)";
+                    string strLastBarcodeSeq = isLocalOrder ? "lastBarcode.To_NewBarcodeSeq" : @"iif (isnull(lastBarcode.To_NewBarcodeSeq, '') = '', fbOri.BarcodeSeq, lastBarcode.To_NewBarcodeSeq)";
+                    columns += $@"
+    ,lastBarcode =   {strLastBarcode}
+    ,lastBarcodeSeq = {strLastBarcodeSeq}
 ";
-                    othertables = @"
+                    if (isLocalOrder)
+                    {
+                        othertables = @"
+outer apply(
+	select w.To_NewBarcode, w.To_NewBarcodeSeq
+	from WHBarcodeTransaction w
+	where w.TransactionID = sd.id
+	and w.Action = 'Confirm'
+	and w.TransactionUkey = sd.ukey
+)lastBarcode";
+                    }
+                    else
+                    {
+                        othertables = @"
 outer apply(
 	select w.To_NewBarcode, w.To_NewBarcodeSeq
 	from WHBarcodeTransaction w
@@ -4249,6 +4266,8 @@ outer apply(
 	where t.Ukey = f.Ukey
 	and t.TransactionID = sd.Id
 )fbOri";
+                    }
+                    
                     break;
             }
 
@@ -4334,6 +4353,7 @@ and exists(
                     detailTableName == WHTableName.TransferIn_Detail||
                     detailTableName == WHTableName.LocalOrderReceiving_Detail)
                 {
+                    string strBarocde = isLocalOrder == false ? @" iif(isnull(sd.MINDQRCode, '') = '', f.Barcode, sd.MINDQRCode)" : "f.Barcode";
                     sqlcmd = $@"
 select
 	sd.ID
@@ -4342,7 +4362,7 @@ select
 
     ,Fabric_FtyInventoryUkey = f.Ukey
     ,[balanceQty] = isnull(f.InQty,0) -isnull(f.OutQty,0) + isnull(f.AdjustQty,0) {strReturnQty}
-    ,[Barcode] = iif(isnull(sd.MINDQRCode, '') = '', f.Barcode, sd.MINDQRCode)
+    ,[Barcode] = {strBarocde}
     ,f.BarcodeSeq
     ,RankFtyInventory = RANK() over(order by f.Ukey)
     ,countFtyInventory = count(1) over(order by f.Ukey)
@@ -4559,7 +4579,7 @@ and sd.Ukey in ({ukeys})
                                     item.To_NewBarcode = newBarcodeList[indexNewBarcode];
                                     indexNewBarcode++;
 
-                                    UpdateSameFtyBarcode(dt, item, "Receiving", "Barcode");
+                                    UpdateSameFtyBarcode(dt, item, "Receiving", "Barcode", isLocalOrder: isLocalOrder) ;
                                 }
                             }
                             else
@@ -4596,10 +4616,10 @@ and sd.Ukey in ({ukeys})
 
                             string barcode = MyUtility.Convert.GetString(dr["Barcode"]);
                             string barcodeSeq = MyUtility.Convert.GetString(dr["barcodeSeq"]);
-                            item.From_OldBarcode = barcode;
-                            item.From_OldBarcodeSeq = barcodeSeq;
                             string lastBarcode = MyUtility.Convert.GetString(dr["lastBarcode"]);
                             string lastBarcodeSeq = MyUtility.Convert.GetString(dr["lastBarcodeSeq"]);
+                            item.From_OldBarcode = barcode;
+                            item.From_OldBarcodeSeq = barcodeSeq;
                             if (isConfirmed)
                             {
                                 item.To_NewBarcode = barcode;
@@ -4616,6 +4636,7 @@ and sd.Ukey in ({ukeys})
                             }
                             else
                             {
+
                                 item.To_OldBarcode = lastBarcode;
                                 item.To_OldBarcodeSeq = lastBarcodeSeq;
                                 if (!MyUtility.Check.Empty(barcode))
@@ -4628,7 +4649,7 @@ and sd.Ukey in ({ukeys})
                                     item.From_NewBarcode = lastBarcode;
                                     item.From_NewBarcodeSeq = lastBarcodeSeq;
 
-                                    UpdateSameFtyBarcode(dt, item, "From", "Barcode");
+                                    UpdateSameFtyBarcode(dt, item, "From", "Barcode", isLocalOrder);
                                 }
                             }
                         }
@@ -4679,7 +4700,7 @@ and sd.Ukey in ({ukeys})
                                             item.To_NewBarcodeSeq = barcodeSeq;
                                         }
 
-                                        UpdateSameFtyBarcode(dt, item, "To", "ToBarcode");
+                                        UpdateSameFtyBarcode(dt, item, "To", "ToBarcode", isLocalOrder);
                                     }
                                 }
 
@@ -4712,7 +4733,7 @@ and sd.Ukey in ({ukeys})
                                             item.From_NewBarcodeSeq = tobarcodeSeq;
                                         }
 
-                                        UpdateSameFtyBarcode(dt, item, "From", "Barcode");
+                                        UpdateSameFtyBarcode(dt, item, "From", "Barcode", isLocalOrder);
                                     }
                                 }
                             }
@@ -4747,7 +4768,7 @@ and sd.Ukey in ({ukeys})
                                             item.From_NewBarcodeSeq = tobarcodeSeq;
                                         }
 
-                                        UpdateSameFtyBarcode(dt, item, "From", "Barcode");
+                                        UpdateSameFtyBarcode(dt, item, "From", "Barcode", isLocalOrder);
                                     }
                                 }
 
@@ -4782,7 +4803,7 @@ and sd.Ukey in ({ukeys})
                                             item.To_NewBarcodeSeq = barcodeSeq;
                                         }
 
-                                        UpdateSameFtyBarcode(dt, item, "To", "ToBarcode");
+                                        UpdateSameFtyBarcode(dt, item, "To", "ToBarcode", isLocalOrder);
                                     }
                                 }
                             }
@@ -4889,7 +4910,7 @@ and w.Action = '{item.Action}'";
                                 item.To_NewBarcode = newBarcodeList[indexNewBarcode];
                                 indexNewBarcode++;
 
-                                UpdateSameFtyBarcode(dt, item, "Receiving", "Barcode");
+                                UpdateSameFtyBarcode(dt, item, "Receiving", "Barcode", isLocalOrder);
                             }
                             else
                             {
@@ -4952,7 +4973,7 @@ and w.Action = '{item.Action}'";
                                     }
                                 }
 
-                                UpdateSameFtyBarcode(dt, item, "From", "Barcode");
+                                UpdateSameFtyBarcode(dt, item, "From", "Barcode", isLocalOrder);
                             }
                             else
                             {
@@ -5129,12 +5150,14 @@ and w.Action = '{item.Action}'";
         /// 同物料狀況:需先更新Barcode用於下筆同物料判斷
         /// </summary>
         /// <inheritdoc/>
-        public static void UpdateSameFtyBarcode(DataTable dt, WHBarcodeTransaction item, string ft, string barcode)
+        public static void UpdateSameFtyBarcode(DataTable dt, WHBarcodeTransaction item, string ft, string barcode, bool isLocalOrder = false)
         {
+            string ukey = string.Empty;
             switch (ft)
             {
                 case "From":
-                    foreach (DataRow dupFtydr in dt.Select($"Fabric_FtyInventoryUkey = '{item.FromFabric_FtyInventoryUkey}'"))
+                    ukey = isLocalOrder ? item.FromFabric_LocalOrderInvnetoryUkey : item.FromFabric_FtyInventoryUkey;
+                    foreach (DataRow dupFtydr in dt.Select($"Fabric_FtyInventoryUkey = '{ukey}'"))
                     {
                         dupFtydr[barcode] = item.From_NewBarcode;
                         dupFtydr[barcode + "Seq"] = item.From_NewBarcodeSeq;
@@ -5142,7 +5165,8 @@ and w.Action = '{item.Action}'";
 
                     break;
                 case "To":
-                    foreach (DataRow dupFtydr in dt.Select($"ToFabric_FtyInventoryUkey = '{item.ToFabric_FtyInventoryUkey}'"))
+                    ukey = isLocalOrder ? item.ToFabric_LocalOrderInventoryUkey : item.ToFabric_FtyInventoryUkey;
+                    foreach (DataRow dupFtydr in dt.Select($"ToFabric_FtyInventoryUkey = '{ukey}'"))
                     {
                         dupFtydr[barcode] = item.To_NewBarcode;
                         dupFtydr[barcode + "Seq"] = item.To_NewBarcodeSeq;
@@ -5150,7 +5174,8 @@ and w.Action = '{item.Action}'";
 
                     break;
                 case "Receiving":
-                    foreach (DataRow dupFtydr in dt.Select($"Fabric_FtyInventoryUkey = '{item.ToFabric_FtyInventoryUkey}'"))
+                    ukey = isLocalOrder ? item.ToFabric_LocalOrderInventoryUkey : item.ToFabric_FtyInventoryUkey;
+                    foreach (DataRow dupFtydr in dt.Select($"Fabric_FtyInventoryUkey = '{ukey}'"))
                     {
                         dupFtydr["Barcode"] = item.To_NewBarcode;
                         dupFtydr["BarcodeSeq"] = item.To_NewBarcodeSeq;
@@ -5745,6 +5770,7 @@ and exists(
                 if (dt.Rows.Count > 0)
                 {
                     Class.MsgGrid form = new Class.MsgGrid(dt, "WMS system have finished it already, you cannot unconfirm it.");
+                    form.Width = 650;
                     form.ShowDialog();
 
                     //foreach (DataRow tmp in dt.Rows)

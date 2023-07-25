@@ -22,6 +22,6 @@
 
         public string ToLocation { get; set; }
 
-        public string Total { get; set; }
+        public string TotalQTY { get; set; }
     }
 }

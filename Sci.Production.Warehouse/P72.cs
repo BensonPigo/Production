@@ -101,9 +101,85 @@ where   loid.ID = '{masterID}'
                 this.detailgrid.Rows[e.RowIndex].Cells["AdjustQty"].Value = qtyAfter - qtyBefore;
                 this.detailgrid.RefreshEdit();
             };
+
+            #region -- Reason ID 右鍵開窗 --
+            DataGridViewGeneratorTextColumnSettings ts = new DataGridViewGeneratorTextColumnSettings();
+            ts.EditingMouseDown += (s, e) =>
+            {
+                if (this.EditMode && e.Button == MouseButtons.Right)
+                {
+                    DataTable poitems;
+                    string sqlcmd = string.Empty;
+                    IList<DataRow> x;
+
+                    sqlcmd = @"select id, Name from Reason WITH (NOLOCK) where ReasonTypeID='Stock_Adjust' AND junk = 0";
+                    DualResult result2 = DBProxy.Current.Select(null, sqlcmd, out poitems);
+                    if (!result2)
+                    {
+                        this.ShowErr(sqlcmd, result2);
+                        return;
+                    }
+
+                    Win.Tools.SelectItem item = new Win.Tools.SelectItem(
+                        poitems,
+                        "ID,Name",
+                        "5,150",
+                        this.CurrentDetailData["reasonid"].ToString(),
+                        "ID,Name");
+                    item.Width = 600;
+                    DialogResult result = item.ShowDialog();
+                    if (result == DialogResult.Cancel)
+                    {
+                        return;
+                    }
+
+                    x = item.GetSelecteds();
+
+                    this.CurrentDetailData["reasonid"] = x[0]["id"];
+                    this.CurrentDetailData["ReasonName"] = x[0]["name"];
+                }
+            };
+            ts.CellValidating += (s, e) =>
+            {
+                DataRow dr;
+                if (!this.EditMode)
+                {
+                    return;
+                }
+
+                if (string.Compare(e.FormattedValue.ToString(), this.CurrentDetailData["reasonid"].ToString()) != 0)
+                {
+                    if (MyUtility.Check.Empty(e.FormattedValue))
+                    {
+                        this.CurrentDetailData["reasonid"] = string.Empty;
+                        this.CurrentDetailData["ReasonName"] = string.Empty;
+                    }
+                    else
+                    {
+                        if (!MyUtility.Check.Seek(
+                            string.Format(
+                            @"select id, Name from Reason WITH (NOLOCK) where id = '{0}' 
+and ReasonTypeID='Stock_Adjust' AND junk = 0", e.FormattedValue), out dr))
+                        {
+                            e.Cancel = true;
+                            MyUtility.Msg.WarningBox("Data not found!", "Reason ID");
+                            return;
+                        }
+                        else
+                        {
+                            this.CurrentDetailData["reasonid"] = e.FormattedValue;
+                            this.CurrentDetailData["ReasonName"] = dr["name"];
+                        }
+                    }
+                }
+            };
+
+            #endregion Seq 右鍵開窗
+
             this.Helper.Controls.Grid.Generator(this.detailgrid)
             .Text("POID", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
             .Text("Seq", header: "Seq", width: Widths.AnsiChars(6), iseditingreadonly: true)
+            .Text("MaterialType", header: "Material Type", width: Widths.AnsiChars(12), iseditingreadonly: true)
             .EditText("Desc", header: "Description", width: Widths.AnsiChars(25), iseditingreadonly: true)
             .Text("Color", header: "Color", width: Widths.AnsiChars(8), iseditingreadonly: true)
             .Text("Roll", header: "Roll", width: Widths.AnsiChars(8), iseditingreadonly: true)
@@ -114,6 +190,8 @@ where   loid.ID = '{masterID}'
             .Numeric("AdjustQty", header: "Adjust Qty", decimal_places: 2, width: Widths.AnsiChars(8), iseditingreadonly: true)
             .Text("Unit", header: "Unit", width: Widths.AnsiChars(8), iseditingreadonly: true)
             .Text("Location", header: "Location", width: Widths.AnsiChars(15), iseditingreadonly: true)
+            .Text("reasonid", header: "Reason ID", settings: ts)
+            .Text("ReasonName", header: "Reason Name", iseditingreadonly: true, width: Widths.AnsiChars(20))
             ;
 
             this.detailgrid.Columns["QtyAfter"].DefaultCellStyle.BackColor = Color.Pink;
@@ -175,8 +253,6 @@ where   loid.ID = '{masterID}'
             StringBuilder upd_Fty_8T = new StringBuilder();
             string sqlcmd = string.Empty;
             string ids = string.Empty;
-            DualResult result2;
-            DataTable datacheck;
 
             #region 檢查物料Location 是否存在WMS
             if (!PublicPrg.Prgs.Chk_WMS_Location(this.CurrentMaintain["ID"].ToString(), this.Name))
@@ -201,7 +277,7 @@ where   loid.ID = '{masterID}'
             #endregion
 
             #region 檢查 Barcode不可為空
-            if (!Prgs.CheckBarCode(dtLocalOrderInventory, this.Name,isLocalOrderInventory: true))
+            if (!Prgs.CheckBarCode(dtLocalOrderInventory, this.Name, isLocalOrderInventory: true))
             {
                 return;
             }
@@ -259,7 +335,7 @@ where   loid.ID = '{masterID}'
             }
 
             // AutoWHFabric WebAPI
-            //Prgs_WMS.WMSprocess(false, (DataTable)this.detailgridbs.DataSource, this.Name, EnumStatus.New, EnumStatus.Confirm, dtLocalOrderInventory);
+            Prgs_WMS.WMSprocess(false, (DataTable)this.detailgridbs.DataSource, this.Name, EnumStatus.New, EnumStatus.Confirm, dtLocalOrderInventory);
             MyUtility.Msg.InfoBox("Confirmed successful");
         }
 
@@ -280,12 +356,10 @@ where   loid.ID = '{masterID}'
 
             // 取得 LocalOrderInventory資料
             DualResult result = Prgs.GetLocalOrderInventoryData((DataTable)this.detailgridbs.DataSource, this.Name, out DataTable dtLocalOrderInventory);
-            DataTable datacheck;
             DataTable dt = (DataTable)this.detailgridbs.DataSource;
             StringBuilder upd_Fty_8F = new StringBuilder();
             string sqlcmd = string.Empty;
             string ids = string.Empty;
-            DualResult result2;
             #region 檢查物料Location 是否存在WMS
             if (!PublicPrg.Prgs.Chk_WMS_Location(this.CurrentMaintain["ID"].ToString(), "P72"))
             {
@@ -324,10 +398,10 @@ where   loid.ID = '{masterID}'
             #region UnConfirmed 廠商能上鎖→PMS更新→廠商更新
 
             //// 先確認 WMS 能否上鎖, 不能直接 return
-            //if (!Prgs_WMS.WMSLock((DataTable)this.detailgridbs.DataSource, dtLocalOrderInventory, this.Name, EnumStatus.Unconfirm))
-            //{
-            //    return;
-            //}
+            if (!Prgs_WMS.WMSLock((DataTable)this.detailgridbs.DataSource, dtLocalOrderInventory, this.Name, EnumStatus.Unconfirm))
+            {
+                return;
+            }
 
             // PMS 的資料更新
             Exception errMsg = null;
@@ -355,7 +429,7 @@ where   loid.ID = '{masterID}'
                     }
 
                     // transactionscope 內, 準備 WMS 資料 & 將資料寫入 AutomationCreateRecord (Delete, Unconfirm)
-                    //Prgs_WMS.WMSprocess(false, (DataTable)this.detailgridbs.DataSource, this.Name, EnumStatus.Delete, EnumStatus.Unconfirm, dtLocalOrderInventory, typeCreateRecord: 1, autoRecord: autoRecordList);
+                    Prgs_WMS.WMSprocess(false, (DataTable)this.detailgridbs.DataSource, this.Name, EnumStatus.Delete, EnumStatus.Unconfirm, dtLocalOrderInventory, typeCreateRecord: 1, autoRecord: autoRecordList);
                     transactionscope.Complete();
                 }
                 catch (Exception ex)
@@ -366,13 +440,13 @@ where   loid.ID = '{masterID}'
 
             if (!MyUtility.Check.Empty(errMsg))
             {
-                //Prgs_WMS.WMSUnLock(false, (DataTable)this.detailgridbs.DataSource, this.Name, EnumStatus.UnLock, EnumStatus.Unconfirm, dtLocalOrderInventory);
+                Prgs_WMS.WMSUnLock(false, (DataTable)this.detailgridbs.DataSource, this.Name, EnumStatus.UnLock, EnumStatus.Unconfirm, dtLocalOrderInventory);
                 this.ShowErr(errMsg);
                 return;
             }
 
             // PMS 更新之後,才執行WMS
-            //Prgs_WMS.WMSprocess(false, (DataTable)this.detailgridbs.DataSource, this.Name, EnumStatus.Delete, EnumStatus.Unconfirm, dtLocalOrderInventory, typeCreateRecord: 2, autoRecord: autoRecordList);
+            Prgs_WMS.WMSprocess(false, (DataTable)this.detailgridbs.DataSource, this.Name, EnumStatus.Delete, EnumStatus.Unconfirm, dtLocalOrderInventory, typeCreateRecord: 2, autoRecord: autoRecordList);
             MyUtility.Msg.InfoBox("UnConfirmed successful");
             #endregion
         }
@@ -496,8 +570,8 @@ where   loid.ID = '{row["ID"]}'
             }
 
             // 傳 list 資料
-            List<P65_PrintData> data = dtDetail.AsEnumerable()
-                .Select(row1 => new P65_PrintData()
+            List<P71_PrintData> data = dtDetail.AsEnumerable()
+                .Select(row1 => new P71_PrintData()
                 {
                     POID = row1["POID"].ToString().Trim(),
                     SEQ = row1["SEQ"].ToString().Trim(),
@@ -515,7 +589,7 @@ where   loid.ID = '{row["ID"]}'
             #endregion
 
             // 指定是哪個 RDLC
-            Type reportResourceNamespace = typeof(P65_PrintData);
+            Type reportResourceNamespace = typeof(P71_PrintData);
             Assembly reportResourceAssembly = reportResourceNamespace.Assembly;
             string reportResourceName = "P72_Print.rdlc";
             if (!(result = ReportResources.ByEmbeddedResource(reportResourceAssembly, reportResourceNamespace, reportResourceName, out IReportResource reportresource)))

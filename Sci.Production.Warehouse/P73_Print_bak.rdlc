@@ -21,12 +21,12 @@
           <DataField>DESC</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="DYELOT">
-          <DataField>DYELOT</DataField>
+        <Field Name="Dyelot">
+          <DataField>Dyelot</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="Location">
-          <DataField>Location</DataField>
+        <Field Name="From_Location">
+          <DataField>From_Location</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="POID">
@@ -45,12 +45,16 @@
           <DataField>SEQ</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="ToneGrp">
-          <DataField>ToneGrp</DataField>
+        <Field Name="StockType">
+          <DataField>StockType</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="TotalQTY">
-          <DataField>TotalQTY</DataField>
+        <Field Name="ToLocation">
+          <DataField>ToLocation</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Total">
+          <DataField>Total</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="Unit">
@@ -60,8 +64,8 @@
       </Fields>
       <rd:DataSetInfo>
         <rd:DataSetName>Sci.Production.Warehouse</rd:DataSetName>
-        <rd:TableName>P65_PrintData</rd:TableName>
-        <rd:ObjectDataSourceType>Sci.Production.Warehouse.P65_PrintData, Sci.Production.Warehouse, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</rd:ObjectDataSourceType>
+        <rd:TableName>P26_PrintData</rd:TableName>
+        <rd:ObjectDataSourceType>Sci.Production.Warehouse.P26_PrintData, Sci.Production.Warehouse, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</rd:ObjectDataSourceType>
       </rd:DataSetInfo>
     </DataSet>
   </DataSets>
@@ -78,7 +82,7 @@
               </TablixColumns>
               <TablixRows>
                 <TablixRow>
-                  <Height>1.23528cm</Height>
+                  <Height>0.81195cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -163,7 +167,7 @@
                                                   <Paragraph>
                                                     <TextRuns>
                                                       <TextRun>
-                                                        <Value>=Fields!Location.Value</Value>
+                                                        <Value>=Fields!Roll.Value</Value>
                                                         <Style />
                                                       </TextRun>
                                                     </TextRuns>
@@ -173,7 +177,7 @@
                                                 <rd:DefaultName>Textbox19</rd:DefaultName>
                                                 <Left>10.48314cm</Left>
                                                 <Height>0.6cm</Height>
-                                                <Width>2.05964cm</Width>
+                                                <Width>1.41993cm</Width>
                                                 <ZIndex>2</ZIndex>
                                                 <Style>
                                                   <Border>
@@ -192,7 +196,7 @@
                                                   <Paragraph>
                                                     <TextRuns>
                                                       <TextRun>
-                                                        <Value>=Fields!Roll.Value</Value>
+                                                        <Value>=Fields!Unit.Value</Value>
                                                         <Style />
                                                       </TextRun>
                                                     </TextRuns>
@@ -202,9 +206,9 @@
                                                   </Paragraph>
                                                 </Paragraphs>
                                                 <rd:DefaultName>Textbox19</rd:DefaultName>
-                                                <Left>13.66695cm</Left>
+                                                <Left>13.43764cm</Left>
                                                 <Height>0.6cm</Height>
-                                                <Width>1.74155cm</Width>
+                                                <Width>1.61808cm</Width>
                                                 <ZIndex>3</ZIndex>
                                                 <Style>
                                                   <Border>
@@ -223,7 +227,7 @@
                                                   <Paragraph>
                                                     <TextRuns>
                                                       <TextRun>
-                                                        <Value>=Fields!DYELOT.Value</Value>
+                                                        <Value>=Fields!QTY.Value</Value>
                                                         <Style />
                                                       </TextRun>
                                                     </TextRuns>
@@ -233,9 +237,9 @@
                                                   </Paragraph>
                                                 </Paragraphs>
                                                 <rd:DefaultName>Textbox19</rd:DefaultName>
-                                                <Left>15.44378cm</Left>
+                                                <Left>15.10511cm</Left>
                                                 <Height>0.6cm</Height>
-                                                <Width>1.81616cm</Width>
+                                                <Width>1.49931cm</Width>
                                                 <ZIndex>4</ZIndex>
                                                 <Style>
                                                   <Border>
@@ -254,7 +258,7 @@
                                                   <Paragraph>
                                                     <TextRuns>
                                                       <TextRun>
-                                                        <Value>=Fields!ToneGrp.Value</Value>
+                                                        <Value>=Fields!From_Location.Value</Value>
                                                         <Style />
                                                       </TextRun>
                                                     </TextRuns>
@@ -264,9 +268,9 @@
                                                   </Paragraph>
                                                 </Paragraphs>
                                                 <rd:DefaultName>Textbox19</rd:DefaultName>
-                                                <Left>17.25994cm</Left>
+                                                <Left>16.74257cm</Left>
                                                 <Height>0.6cm</Height>
-                                                <Width>1.87508cm</Width>
+                                                <Width>1.90971cm</Width>
                                                 <ZIndex>5</ZIndex>
                                                 <Style>
                                                   <Border>
@@ -314,7 +318,7 @@
                                                   <Paragraph>
                                                     <TextRuns>
                                                       <TextRun>
-                                                        <Value>=Fields!Unit.Value</Value>
+                                                        <Value>=Fields!Dyelot.Value</Value>
                                                         <Style />
                                                       </TextRun>
                                                     </TextRuns>
@@ -324,9 +328,9 @@
                                                   </Paragraph>
                                                 </Paragraphs>
                                                 <rd:DefaultName>Textbox19</rd:DefaultName>
-                                                <Left>12.54278cm</Left>
+                                                <Left>11.90307cm</Left>
                                                 <Height>0.6cm</Height>
-                                                <Width>1.12417cm</Width>
+                                                <Width>1.39346cm</Width>
                                                 <ZIndex>7</ZIndex>
                                                 <Style>
                                                   <Border>
@@ -345,7 +349,7 @@
                                                   <Paragraph>
                                                     <TextRuns>
                                                       <TextRun>
-                                                        <Value>=Fields!QTY.Value</Value>
+                                                        <Value>=Fields!ToLocation.Value</Value>
                                                         <Style />
                                                       </TextRun>
                                                     </TextRuns>
@@ -355,100 +359,10 @@
                                                   </Paragraph>
                                                 </Paragraphs>
                                                 <rd:DefaultName>Textbox19</rd:DefaultName>
-                                                <Left>19.13502cm</Left>
+                                                <Left>18.72284cm</Left>
                                                 <Height>0.6cm</Height>
-                                                <Width>1.49931cm</Width>
+                                                <Width>1.87443cm</Width>
                                                 <ZIndex>8</ZIndex>
-                                                <Style>
-                                                  <Border>
-                                                    <Style>None</Style>
-                                                  </Border>
-                                                  <PaddingLeft>2pt</PaddingLeft>
-                                                  <PaddingRight>2pt</PaddingRight>
-                                                  <PaddingTop>2pt</PaddingTop>
-                                                  <PaddingBottom>2pt</PaddingBottom>
-                                                </Style>
-                                              </Textbox>
-                                            </ReportItems>
-                                            <KeepTogether>true</KeepTogether>
-                                            <Style>
-                                              <Border>
-                                                <Style>None</Style>
-                                              </Border>
-                                            </Style>
-                                          </Rectangle>
-                                        </CellContents>
-                                      </TablixCell>
-                                    </TablixCells>
-                                  </TablixRow>
-                                  <TablixRow>
-                                    <Height>0.63528cm</Height>
-                                    <TablixCells>
-                                      <TablixCell>
-                                        <CellContents>
-                                          <Rectangle Name="Rectangle2">
-                                            <ReportItems>
-                                              <Line Name="Line2">
-                                                <Top>0.33528cm</Top>
-                                                <Left>0.13229cm</Left>
-                                                <Height>0cm</Height>
-                                                <Width>15.59371cm</Width>
-                                                <Style>
-                                                  <Border>
-                                                    <Style>Dashed</Style>
-                                                  </Border>
-                                                </Style>
-                                              </Line>
-                                              <Textbox Name="Textbox72">
-                                                <CanGrow>true</CanGrow>
-                                                <KeepTogether>true</KeepTogether>
-                                                <Paragraphs>
-                                                  <Paragraph>
-                                                    <TextRuns>
-                                                      <TextRun>
-                                                        <Value>Total:</Value>
-                                                        <Style />
-                                                      </TextRun>
-                                                    </TextRuns>
-                                                    <Style />
-                                                  </Paragraph>
-                                                </Paragraphs>
-                                                <rd:DefaultName>Textbox72</rd:DefaultName>
-                                                <Left>15.76128cm</Left>
-                                                <Height>0.6cm</Height>
-                                                <Width>1.04479cm</Width>
-                                                <ZIndex>1</ZIndex>
-                                                <Style>
-                                                  <Border>
-                                                    <Style>None</Style>
-                                                  </Border>
-                                                  <PaddingLeft>2pt</PaddingLeft>
-                                                  <PaddingRight>2pt</PaddingRight>
-                                                  <PaddingTop>2pt</PaddingTop>
-                                                  <PaddingBottom>2pt</PaddingBottom>
-                                                </Style>
-                                              </Textbox>
-                                              <Textbox Name="Textbox73">
-                                                <CanGrow>true</CanGrow>
-                                                <KeepTogether>true</KeepTogether>
-                                                <Paragraphs>
-                                                  <Paragraph>
-                                                    <TextRuns>
-                                                      <TextRun>
-                                                        <Value>=First(Fields!TotalQTY.Value)</Value>
-                                                        <Style />
-                                                      </TextRun>
-                                                    </TextRuns>
-                                                    <Style>
-                                                      <TextAlign>Right</TextAlign>
-                                                    </Style>
-                                                  </Paragraph>
-                                                </Paragraphs>
-                                                <rd:DefaultName>Textbox72</rd:DefaultName>
-                                                <Left>16.80607cm</Left>
-                                                <Height>0.6cm</Height>
-                                                <Width>2.32895cm</Width>
-                                                <ZIndex>2</ZIndex>
                                                 <Style>
                                                   <Border>
                                                     <Style>None</Style>
@@ -481,29 +395,12 @@
                               <TablixRowHierarchy>
                                 <TablixMembers>
                                   <TablixMember>
-                                    <Group Name="Group1">
-                                      <GroupExpressions>
-                                        <GroupExpression>=Fields!POID.Value &amp; " " &amp; Fields!SEQ.Value</GroupExpression>
-                                      </GroupExpressions>
-                                    </Group>
-                                    <SortExpressions>
-                                      <SortExpression>
-                                        <Value>=Fields!POID.Value &amp; " " &amp; Fields!SEQ.Value</Value>
-                                      </SortExpression>
-                                    </SortExpressions>
-                                    <TablixMembers>
-                                      <TablixMember>
-                                        <Group Name="詳細資料" />
-                                      </TablixMember>
-                                      <TablixMember>
-                                        <KeepWithGroup>Before</KeepWithGroup>
-                                      </TablixMember>
-                                    </TablixMembers>
+                                    <Group Name="詳細資料" />
                                   </TablixMember>
                                 </TablixMembers>
                               </TablixRowHierarchy>
                               <DataSetName>DataSet1</DataSetName>
-                              <Height>1.23528cm</Height>
+                              <Height>0.6cm</Height>
                               <Width>20.63433cm</Width>
                               <Style>
                                 <Border>
@@ -536,7 +433,7 @@
               </TablixMembers>
             </TablixRowHierarchy>
             <DataSetName>DataSet1</DataSetName>
-            <Height>1.23528cm</Height>
+            <Height>0.81195cm</Height>
             <Width>20.63433cm</Width>
             <Style>
               <Border>
@@ -544,132 +441,8 @@
               </Border>
             </Style>
           </Tablix>
-          <Textbox Name="Textbox29">
-            <CanGrow>true</CanGrow>
-            <KeepTogether>true</KeepTogether>
-            <Paragraphs>
-              <Paragraph>
-                <TextRuns>
-                  <TextRun>
-                    <Value>Prepared by:</Value>
-                    <Style />
-                  </TextRun>
-                  <TextRun>
-                    <Value>=Parameters!preparedBy.Value</Value>
-                    <Style />
-                  </TextRun>
-                </TextRuns>
-                <Style />
-              </Paragraph>
-            </Paragraphs>
-            <rd:DefaultName>Textbox19</rd:DefaultName>
-            <Top>1.46593cm</Top>
-            <Left>0.30692cm</Left>
-            <Height>0.6cm</Height>
-            <Width>4.13984cm</Width>
-            <ZIndex>1</ZIndex>
-            <Style>
-              <Border>
-                <Style>None</Style>
-              </Border>
-              <PaddingLeft>2pt</PaddingLeft>
-              <PaddingRight>2pt</PaddingRight>
-              <PaddingTop>2pt</PaddingTop>
-              <PaddingBottom>2pt</PaddingBottom>
-            </Style>
-          </Textbox>
-          <Textbox Name="Textbox30">
-            <CanGrow>true</CanGrow>
-            <KeepTogether>true</KeepTogether>
-            <Paragraphs>
-              <Paragraph>
-                <TextRuns>
-                  <TextRun>
-                    <Value>Checked by:</Value>
-                    <Style />
-                  </TextRun>
-                </TextRuns>
-                <Style />
-              </Paragraph>
-            </Paragraphs>
-            <rd:DefaultName>Textbox19</rd:DefaultName>
-            <Top>1.46593cm</Top>
-            <Left>4.48204cm</Left>
-            <Height>0.6cm</Height>
-            <Width>5.30172cm</Width>
-            <ZIndex>2</ZIndex>
-            <Style>
-              <Border>
-                <Style>None</Style>
-              </Border>
-              <PaddingLeft>2pt</PaddingLeft>
-              <PaddingRight>2pt</PaddingRight>
-              <PaddingTop>2pt</PaddingTop>
-              <PaddingBottom>2pt</PaddingBottom>
-            </Style>
-          </Textbox>
-          <Textbox Name="Textbox31">
-            <CanGrow>true</CanGrow>
-            <KeepTogether>true</KeepTogether>
-            <Paragraphs>
-              <Paragraph>
-                <TextRuns>
-                  <TextRun>
-                    <Value>Approved by:</Value>
-                    <Style />
-                  </TextRun>
-                </TextRuns>
-                <Style />
-              </Paragraph>
-            </Paragraphs>
-            <rd:DefaultName>Textbox19</rd:DefaultName>
-            <Top>1.46593cm</Top>
-            <Left>9.78376cm</Left>
-            <Height>0.6cm</Height>
-            <Width>5.52538cm</Width>
-            <ZIndex>3</ZIndex>
-            <Style>
-              <Border>
-                <Style>None</Style>
-              </Border>
-              <PaddingLeft>2pt</PaddingLeft>
-              <PaddingRight>2pt</PaddingRight>
-              <PaddingTop>2pt</PaddingTop>
-              <PaddingBottom>2pt</PaddingBottom>
-            </Style>
-          </Textbox>
-          <Textbox Name="Textbox32">
-            <CanGrow>true</CanGrow>
-            <KeepTogether>true</KeepTogether>
-            <Paragraphs>
-              <Paragraph>
-                <TextRuns>
-                  <TextRun>
-                    <Value>Received by:</Value>
-                    <Style />
-                  </TextRun>
-                </TextRuns>
-                <Style />
-              </Paragraph>
-            </Paragraphs>
-            <rd:DefaultName>Textbox19</rd:DefaultName>
-            <Top>1.46593cm</Top>
-            <Left>15.30914cm</Left>
-            <Height>0.6cm</Height>
-            <Width>5.15057cm</Width>
-            <ZIndex>4</ZIndex>
-            <Style>
-              <Border>
-                <Style>None</Style>
-              </Border>
-              <PaddingLeft>2pt</PaddingLeft>
-              <PaddingRight>2pt</PaddingRight>
-              <PaddingTop>2pt</PaddingTop>
-              <PaddingBottom>2pt</PaddingBottom>
-            </Style>
-          </Textbox>
         </ReportItems>
-        <Height>1.01758in</Height>
+        <Height>0.48633in</Height>
         <Style />
       </Body>
       <Width>8.17584in</Width>
@@ -995,7 +768,7 @@
                 <Paragraph>
                   <TextRuns>
                     <TextRun>
-                      <Value>Location</Value>
+                      <Value>Roll#</Value>
                       <Style />
                     </TextRun>
                   </TextRuns>
@@ -1006,7 +779,7 @@
               <Top>3.35703cm</Top>
               <Left>10.48314cm</Left>
               <Height>0.60028cm</Height>
-              <Width>2.05964cm</Width>
+              <Width>1.41993cm</Width>
               <ZIndex>10</ZIndex>
               <Style>
                 <Border>
@@ -1025,7 +798,7 @@
                 <Paragraph>
                   <TextRuns>
                     <TextRun>
-                      <Value>Unit</Value>
+                      <Value>Dyelot</Value>
                       <Style />
                     </TextRun>
                   </TextRuns>
@@ -1036,9 +809,9 @@
               </Paragraphs>
               <rd:DefaultName>Textbox15</rd:DefaultName>
               <Top>3.35731cm</Top>
-              <Left>12.54278cm</Left>
+              <Left>11.93835cm</Left>
               <Height>0.6cm</Height>
-              <Width>1.12417cm</Width>
+              <Width>1.35819cm</Width>
               <ZIndex>11</ZIndex>
               <Style>
                 <Border>
@@ -1057,7 +830,7 @@
                 <Paragraph>
                   <TextRuns>
                     <TextRun>
-                      <Value>Roll#</Value>
+                      <Value>Unit</Value>
                       <Style />
                     </TextRun>
                   </TextRuns>
@@ -1068,42 +841,10 @@
               </Paragraphs>
               <rd:DefaultName>Textbox15</rd:DefaultName>
               <Top>3.35703cm</Top>
-              <Left>13.66695cm</Left>
+              <Left>13.34945cm</Left>
               <Height>0.6cm</Height>
-              <Width>1.74155cm</Width>
+              <Width>1.70627cm</Width>
               <ZIndex>12</ZIndex>
-              <Style>
-                <Border>
-                  <Style>None</Style>
-                </Border>
-                <PaddingLeft>2pt</PaddingLeft>
-                <PaddingRight>2pt</PaddingRight>
-                <PaddingTop>2pt</PaddingTop>
-                <PaddingBottom>2pt</PaddingBottom>
-              </Style>
-            </Textbox>
-            <Textbox Name="Textbox17">
-              <CanGrow>true</CanGrow>
-              <KeepTogether>true</KeepTogether>
-              <Paragraphs>
-                <Paragraph>
-                  <TextRuns>
-                    <TextRun>
-                      <Value>Dyelot</Value>
-                      <Style />
-                    </TextRun>
-                  </TextRuns>
-                  <Style>
-                    <TextAlign>Center</TextAlign>
-                  </Style>
-                </Paragraph>
-              </Paragraphs>
-              <rd:DefaultName>Textbox15</rd:DefaultName>
-              <Top>3.35703cm</Top>
-              <Left>15.4085cm</Left>
-              <Height>0.6cm</Height>
-              <Width>1.81616cm</Width>
-              <ZIndex>13</ZIndex>
               <Style>
                 <Border>
                   <Style>None</Style>
@@ -1121,8 +862,33 @@
                 <Paragraph>
                   <TextRuns>
                     <TextRun>
-                      <Value>Tone/Grp</Value>
-                      <Style />
+                      <Value>From</Value>
+                      <Style>
+                        <FontStyle>Normal</FontStyle>
+                        <FontFamily>Calibri</FontFamily>
+                        <FontSize>8pt</FontSize>
+                        <FontWeight>Normal</FontWeight>
+                        <TextDecoration>None</TextDecoration>
+                        <Color>#000000</Color>
+                      </Style>
+                    </TextRun>
+                  </TextRuns>
+                  <Style>
+                    <TextAlign>Center</TextAlign>
+                  </Style>
+                </Paragraph>
+                <Paragraph>
+                  <TextRuns>
+                    <TextRun>
+                      <Value>Location</Value>
+                      <Style>
+                        <FontStyle>Normal</FontStyle>
+                        <FontFamily>Calibri</FontFamily>
+                        <FontSize>8pt</FontSize>
+                        <FontWeight>Normal</FontWeight>
+                        <TextDecoration>None</TextDecoration>
+                        <Color>#000000</Color>
+                      </Style>
                     </TextRun>
                   </TextRuns>
                   <Style>
@@ -1131,11 +897,11 @@
                 </Paragraph>
               </Paragraphs>
               <rd:DefaultName>Textbox18</rd:DefaultName>
-              <Top>3.35703cm</Top>
-              <Left>17.25994cm</Left>
-              <Height>0.6cm</Height>
-              <Width>1.87508cm</Width>
-              <ZIndex>14</ZIndex>
+              <Top>3.31145cm</Top>
+              <Left>16.74257cm</Left>
+              <Height>0.8023cm</Height>
+              <Width>1.90971cm</Width>
+              <ZIndex>13</ZIndex>
               <Style>
                 <Border>
                   <Style>None</Style>
@@ -1151,7 +917,7 @@
               <Left>0.10583cm</Left>
               <Height>0cm</Height>
               <Width>20.5285cm</Width>
-              <ZIndex>15</ZIndex>
+              <ZIndex>14</ZIndex>
               <Style>
                 <Border>
                   <Style>Solid</Style>
@@ -1174,10 +940,10 @@
               </Paragraphs>
               <rd:DefaultName>Textbox11</rd:DefaultName>
               <Top>3.35703cm</Top>
-              <Left>0.13229cm</Left>
+              <Left>0.10583cm</Left>
               <Height>0.6cm</Height>
-              <Width>2.56646cm</Width>
-              <ZIndex>16</ZIndex>
+              <Width>2.59292cm</Width>
+              <ZIndex>15</ZIndex>
               <Style>
                 <Border>
                   <Style>None</Style>
@@ -1207,7 +973,7 @@
               <Left>2.73403cm</Left>
               <Height>0.6cm</Height>
               <Width>1.11125cm</Width>
-              <ZIndex>17</ZIndex>
+              <ZIndex>16</ZIndex>
               <Style>
                 <Border>
                   <Style>None</Style>
@@ -1237,7 +1003,7 @@
               <Left>3.84527cm</Left>
               <Height>0.60028cm</Height>
               <Width>6.63787cm</Width>
-              <ZIndex>18</ZIndex>
+              <ZIndex>17</ZIndex>
               <Style>
                 <Border>
                   <Style>None</Style>
@@ -1260,16 +1026,16 @@
                     </TextRun>
                   </TextRuns>
                   <Style>
-                    <TextAlign>Right</TextAlign>
+                    <TextAlign>Center</TextAlign>
                   </Style>
                 </Paragraph>
               </Paragraphs>
               <rd:DefaultName>Textbox18</rd:DefaultName>
-              <Top>3.35759cm</Top>
-              <Left>19.13502cm</Left>
+              <Top>3.38934cm</Top>
+              <Left>15.13686cm</Left>
               <Height>0.6cm</Height>
               <Width>1.49931cm</Width>
-              <ZIndex>19</ZIndex>
+              <ZIndex>18</ZIndex>
               <Style>
                 <Border>
                   <Style>None</Style>
@@ -1303,10 +1069,67 @@
               <Left>14.25376cm</Left>
               <Height>1.45383cm</Height>
               <Width>6.38057cm</Width>
-              <ZIndex>20</ZIndex>
+              <ZIndex>19</ZIndex>
               <Style>
                 <Border />
                 <VerticalAlign>Middle</VerticalAlign>
+                <PaddingLeft>2pt</PaddingLeft>
+                <PaddingRight>2pt</PaddingRight>
+                <PaddingTop>2pt</PaddingTop>
+                <PaddingBottom>2pt</PaddingBottom>
+              </Style>
+            </Textbox>
+            <Textbox Name="Textbox19">
+              <CanGrow>true</CanGrow>
+              <KeepTogether>true</KeepTogether>
+              <Paragraphs>
+                <Paragraph>
+                  <TextRuns>
+                    <TextRun>
+                      <Value>To</Value>
+                      <Style>
+                        <FontStyle>Normal</FontStyle>
+                        <FontFamily>Calibri</FontFamily>
+                        <FontSize>8pt</FontSize>
+                        <FontWeight>Normal</FontWeight>
+                        <TextDecoration>None</TextDecoration>
+                        <Color>#000000</Color>
+                      </Style>
+                    </TextRun>
+                  </TextRuns>
+                  <Style>
+                    <TextAlign>Center</TextAlign>
+                  </Style>
+                </Paragraph>
+                <Paragraph>
+                  <TextRuns>
+                    <TextRun>
+                      <Value>Location</Value>
+                      <Style>
+                        <FontStyle>Normal</FontStyle>
+                        <FontFamily>Calibri</FontFamily>
+                        <FontSize>8pt</FontSize>
+                        <FontWeight>Normal</FontWeight>
+                        <TextDecoration>None</TextDecoration>
+                        <Color>#000000</Color>
+                      </Style>
+                    </TextRun>
+                  </TextRuns>
+                  <Style>
+                    <TextAlign>Center</TextAlign>
+                  </Style>
+                </Paragraph>
+              </Paragraphs>
+              <rd:DefaultName>Textbox18</rd:DefaultName>
+              <Top>3.28675cm</Top>
+              <Left>18.72284cm</Left>
+              <Height>0.8023cm</Height>
+              <Width>1.87443cm</Width>
+              <ZIndex>20</ZIndex>
+              <Style>
+                <Border>
+                  <Style>None</Style>
+                </Border>
                 <PaddingLeft>2pt</PaddingLeft>
                 <PaddingRight>2pt</PaddingRight>
                 <PaddingTop>2pt</PaddingTop>
@@ -1321,9 +1144,134 @@
           </Style>
         </PageHeader>
         <PageFooter>
-          <Height>0.02646cm</Height>
+          <Height>2.54cm</Height>
           <PrintOnFirstPage>true</PrintOnFirstPage>
           <PrintOnLastPage>true</PrintOnLastPage>
+          <ReportItems>
+            <Textbox Name="Textbox29">
+              <CanGrow>true</CanGrow>
+              <KeepTogether>true</KeepTogether>
+              <Paragraphs>
+                <Paragraph>
+                  <TextRuns>
+                    <TextRun>
+                      <Value>Prepared by:</Value>
+                      <Style />
+                    </TextRun>
+                    <TextRun>
+                      <Value>=Parameters!preparedBy.Value</Value>
+                      <Style />
+                    </TextRun>
+                  </TextRuns>
+                  <Style />
+                </Paragraph>
+              </Paragraphs>
+              <rd:DefaultName>Textbox19</rd:DefaultName>
+              <Top>0.10583cm</Top>
+              <Left>0.48154cm</Left>
+              <Height>0.6cm</Height>
+              <Width>4.13984cm</Width>
+              <Style>
+                <Border>
+                  <Style>None</Style>
+                </Border>
+                <PaddingLeft>2pt</PaddingLeft>
+                <PaddingRight>2pt</PaddingRight>
+                <PaddingTop>2pt</PaddingTop>
+                <PaddingBottom>2pt</PaddingBottom>
+              </Style>
+            </Textbox>
+            <Textbox Name="Textbox30">
+              <CanGrow>true</CanGrow>
+              <KeepTogether>true</KeepTogether>
+              <Paragraphs>
+                <Paragraph>
+                  <TextRuns>
+                    <TextRun>
+                      <Value>Checked by:</Value>
+                      <Style />
+                    </TextRun>
+                  </TextRuns>
+                  <Style />
+                </Paragraph>
+              </Paragraphs>
+              <rd:DefaultName>Textbox19</rd:DefaultName>
+              <Top>0.10583cm</Top>
+              <Left>4.65666cm</Left>
+              <Height>0.6cm</Height>
+              <Width>5.30172cm</Width>
+              <ZIndex>1</ZIndex>
+              <Style>
+                <Border>
+                  <Style>None</Style>
+                </Border>
+                <PaddingLeft>2pt</PaddingLeft>
+                <PaddingRight>2pt</PaddingRight>
+                <PaddingTop>2pt</PaddingTop>
+                <PaddingBottom>2pt</PaddingBottom>
+              </Style>
+            </Textbox>
+            <Textbox Name="Textbox31">
+              <CanGrow>true</CanGrow>
+              <KeepTogether>true</KeepTogether>
+              <Paragraphs>
+                <Paragraph>
+                  <TextRuns>
+                    <TextRun>
+                      <Value>Approved by:</Value>
+                      <Style />
+                    </TextRun>
+                  </TextRuns>
+                  <Style />
+                </Paragraph>
+              </Paragraphs>
+              <rd:DefaultName>Textbox19</rd:DefaultName>
+              <Top>0.10583cm</Top>
+              <Left>9.95838cm</Left>
+              <Height>0.6cm</Height>
+              <Width>5.52538cm</Width>
+              <ZIndex>2</ZIndex>
+              <Style>
+                <Border>
+                  <Style>None</Style>
+                </Border>
+                <PaddingLeft>2pt</PaddingLeft>
+                <PaddingRight>2pt</PaddingRight>
+                <PaddingTop>2pt</PaddingTop>
+                <PaddingBottom>2pt</PaddingBottom>
+              </Style>
+            </Textbox>
+            <Textbox Name="Textbox32">
+              <CanGrow>true</CanGrow>
+              <KeepTogether>true</KeepTogether>
+              <Paragraphs>
+                <Paragraph>
+                  <TextRuns>
+                    <TextRun>
+                      <Value>Received by:</Value>
+                      <Style />
+                    </TextRun>
+                  </TextRuns>
+                  <Style />
+                </Paragraph>
+              </Paragraphs>
+              <rd:DefaultName>Textbox19</rd:DefaultName>
+              <Top>0.10583cm</Top>
+              <Left>15.48376cm</Left>
+              <Height>0.6cm</Height>
+              <Width>5.15057cm</Width>
+              <ZIndex>3</ZIndex>
+              <Style>
+                <Border>
+                  <Style>None</Style>
+                </Border>
+                <PaddingLeft>2pt</PaddingLeft>
+                <PaddingRight>2pt</PaddingRight>
+                <PaddingTop>2pt</PaddingTop>
+                <PaddingBottom>2pt</PaddingBottom>
+              </Style>
+            </Textbox>
+          </ReportItems>
           <Style>
             <Border>
               <Style>None</Style>

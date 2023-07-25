@@ -37,7 +37,6 @@ namespace Sci.Production.Warehouse
             string locationid = this.txtLocation.Text.TrimEnd();
 
             // SP#不可為空
-            bool sql1 = false;
             if (MyUtility.Check.Empty(sp))
             {
                 MyUtility.Msg.WarningBox("SP# cannt be empty.");

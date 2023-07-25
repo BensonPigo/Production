@@ -2,6 +2,8 @@
 using Ict.Win;
 using Microsoft.Reporting.WinForms;
 using Sci.Data;
+using Sci.Production.Automation.LogicLayer;
+using Sci.Production.Prg.Entity;
 using Sci.Production.PublicPrg;
 using Sci.Win;
 using Sci.Win.Tools;
@@ -16,8 +18,10 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using System.Transactions;
 using System.Windows.Forms;
 using static Sci.MyUtility;
+using static Sci.Production.Class.MailTools;
 
 namespace Sci.Production.Warehouse
 {
@@ -120,6 +124,272 @@ namespace Sci.Production.Warehouse
             }
 
             return base.ClickSaveBefore();
+        }
+
+        /// <inheritdoc/>
+        protected override void ClickConfirm()
+        {
+            this.RenewData(); // 先重載資料, 避免雙開程式狀況
+            base.ClickConfirm();
+            if (this.CurrentMaintain == null)
+            {
+                return;
+            }
+
+            #region 檢查必輸欄位
+            if (MyUtility.Check.Empty(this.CurrentMaintain["WhseArrival"]))
+            {
+                MyUtility.Msg.WarningBox("Arrive WH Date cannot be empty.", "Warning");
+                this.dateArriveWHDate.Focus();
+                return;
+            }
+            #endregion
+
+            // 取得 FtyInventory 資料 (包含PO_Supp_Detail.FabricType)
+            DualResult result = Prgs.GetLocalOrderInventoryData((DataTable)this.detailgridbs.DataSource, this.Name, out DataTable dtLocalOrderInventory);
+            string sq = string.Empty;
+
+            #region 檢查物料Location 是否存在WMS
+            if (!PublicPrg.Prgs.Chk_WMS_Location(this.CurrentMaintain["ID"].ToString(), this.Name))
+            {
+                return;
+            }
+            #endregion
+
+            #region 檢查負數庫存
+
+            string sqlcmd = string.Format(
+                @"
+Select  d.poid
+        , d.seq1
+        , d.seq2
+        , d.Roll
+        , d.Qty
+        , balanceQty = isnull(f.InQty, 0) - isnull(f.OutQty, 0) + isnull(f.AdjustQty, 0)
+        , d.Dyelot
+from dbo.LocalOrderReceiving_Detail d WITH (NOLOCK) 
+left join LocalOrderInventory f WITH (NOLOCK) on   d.PoId = f.PoId
+                                            and d.Seq1 = f.Seq1
+                                            and d.Seq2 = f.seq2
+                                            and d.StockType = f.StockType
+                                            and d.Roll = f.Roll
+                                            and d.Dyelot = f.Dyelot
+where   (isnull(f.InQty, 0) - isnull(f.OutQty, 0) + isnull(f.AdjustQty, 0) + d.Qty < 0) 
+        and d.Id = '{0}'", this.CurrentMaintain["id"]);
+            if (!(result = DBProxy.Current.Select(null, sqlcmd, out DataTable datacheck)))
+            {
+                this.ShowErr(sqlcmd, result);
+                return;
+            }
+            else
+            {
+                if (datacheck.Rows.Count > 0)
+                {
+                    Class.MsgGrid form = new Class.MsgGrid(datacheck, "Balacne Qty is not enough!!");
+                    form.ShowDialog(this);
+                    return;
+                }
+            }
+            #endregion 檢查負數庫存
+
+            #region -- 更新庫存數量  LocalOrderInventory --
+            var data_Fty_2T = (from m in this.DetailDatas
+                               select new
+                               {
+                                   poid = m.Field<string>("poid"),
+                                   seq1 = m.Field<string>("seq1"),
+                                   seq2 = m.Field<string>("seq2"),
+                                   stocktype = m.Field<string>("stocktype"),
+                                   qty = m.Field<decimal>("Qty"),
+                                   location = m.Field<string>("location"),
+                                   roll = m.Field<string>("roll"),
+                                   dyelot = m.Field<string>("dyelot"),
+                               }).ToList();
+            #endregion 更新庫存數量  ftyinventory
+
+            DBProxy.Current.DefaultTimeout = 900;  // 加長時間為15分鐘，避免timeout
+            Exception errMsg = null;
+            using (TransactionScope transactionscope = new TransactionScope(TransactionScopeOption.Required, new TimeSpan(0, 15, 0)))
+            {
+                DBProxy.Current.OpenConnection(null, out SqlConnection sqlConn);
+                using (sqlConn)
+                {
+                    try
+                    {
+                        // LocalOrderInventory 庫存
+                        string upd_Fty_2T = Prgs.UpdateLocalOrderInventory_IO("In", null, true);
+                        if (!(result = MyUtility.Tool.ProcessWithObject(data_Fty_2T, string.Empty, upd_Fty_2T, out DataTable resulttb, "#TmpSource", conn: sqlConn)))
+                        {
+                            throw result.GetException();
+                        }
+
+                        // Barcode 需要判斷新的庫存, 在更新 FtyInventory 之後
+                        if (!(result = Prgs.UpdateWH_Barcode(true, (DataTable)this.detailgridbs.DataSource, this.Name, out bool fromNewBarcode, dtLocalOrderInventory, isLocalOrder: true)))
+                        {
+                            throw result.GetException();
+                        }
+
+                        if (!(result = DBProxy.Current.Execute(null, $"update LocalOrderReceiving set status = 'Confirmed', editname = '{Env.User.UserID}', editdate = GETDATE() where id = '{this.CurrentMaintain["id"]}'")))
+                        {
+                            throw result.GetException();
+                        }
+
+                        transactionscope.Complete();
+                    }
+                    catch (Exception ex)
+                    {
+                        errMsg = ex;
+                    }
+                }
+            }
+
+            DBProxy.Current.DefaultTimeout = 300;  // 恢復時間為5分鐘
+            if (!MyUtility.Check.Empty(errMsg))
+            {
+                this.ShowErr(errMsg);
+                return;
+            }
+
+            // AutoWHFabric WebAPI
+            Prgs_WMS.WMSprocess(false, (DataTable)this.detailgridbs.DataSource, this.Name, EnumStatus.New, EnumStatus.Confirm, dtLocalOrderInventory);
+
+            MyUtility.Msg.InfoBox("Confirmed successful");
+        }
+
+        /// <inheritdoc/>
+        protected override void ClickUnconfirm()
+        {
+            this.RenewData(); // 先重載資料, 避免雙開程式狀況
+            base.ClickUnconfirm();
+            if (this.CurrentMaintain == null ||
+                MyUtility.Msg.QuestionBox("Do you want to unconfirme it?") == DialogResult.No)
+            {
+                return;
+            }
+
+            // 取得 LocalOrderInventory資料
+            DualResult result = Prgs.GetLocalOrderInventoryData((DataTable)this.detailgridbs.DataSource, this.Name, out DataTable dtLocalOrderInventory);
+
+            #region 檢查資料有任一筆WMS已完成, 就不能unConfirmed
+            if (!Prgs.ChkWMSCompleteTime((DataTable)this.detailgridbs.DataSource, "LocalOrderReceiving_Detail"))
+            {
+                return;
+            }
+            #endregion
+
+            #region 檢查負數庫存
+            string sqlcmd = string.Format(
+                @"
+Select  d.poid
+        , d.seq1
+        , d.seq2
+        , d.Roll
+        , d.Qty
+        , balanceQty = isnull(f.InQty, 0) - isnull(f.OutQty, 0) + isnull(f.AdjustQty, 0)
+        , d.Dyelot
+from dbo.LocalOrderReceiving_Detail d WITH (NOLOCK) 
+left join FtyInventory f WITH (NOLOCK) on   d.PoId = f.PoId
+                                            and d.Seq1 = f.Seq1
+                                            and d.Seq2 = f.seq2
+                                            and d.StockType = f.StockType
+                                            and d.Roll = f.Roll
+                                            and d.Dyelot = f.Dyelot
+where   (isnull(f.InQty, 0) - isnull(f.OutQty, 0) + isnull(f.AdjustQty, 0) - d.Qty < 0) 
+        and d.Id = '{0}'", this.CurrentMaintain["id"]);
+            if (!(result = DBProxy.Current.Select(null, sqlcmd, out DataTable datacheck)))
+            {
+                this.ShowErr(sqlcmd, result);
+                return;
+            }
+            else
+            {
+                if (datacheck.Rows.Count > 0)
+                {
+                    Class.MsgGrid form = new Class.MsgGrid(datacheck, "Balacne Qty is not enough!!");
+                    form.ShowDialog(this);
+                    return;
+                }
+            }
+            #endregion 檢查負數庫存
+
+            #region 檢查單據有主料則 Barcode不可為空
+            if (!Prgs.CheckBarCode(dtLocalOrderInventory, this.Name, isLocalOrderInventory: true))
+            {
+                return;
+            }
+            #endregion
+
+            #region 更新庫存數量 LocalOrderInventory
+            var data_Fty_2F = (from m in ((DataTable)this.detailgridbs.DataSource).AsEnumerable()
+                               select new
+                               {
+                                   poid = m.Field<string>("poid"),
+                                   seq1 = m.Field<string>("seq1"),
+                                   seq2 = m.Field<string>("seq2"),
+                                   stocktype = m.Field<string>("stocktype"),
+                                   qty = -m.Field<decimal>("Qty"),
+                                   location = m.Field<string>("location"),
+                                   roll = m.Field<string>("roll"),
+                                   dyelot = m.Field<string>("dyelot"),
+                               }).ToList();
+            #endregion
+
+            #region UnConfirmed 廠商能上鎖→PMS更新→廠商更新
+
+            // 先確認 WMS 能否上鎖, 不能直接 return
+            if (!Prgs_WMS.WMSLock((DataTable)this.detailgridbs.DataSource, dtLocalOrderInventory, this.Name, EnumStatus.Unconfirm))
+            {
+                return;
+            }
+
+            // PMS 的資料更新
+            Exception errMsg = null;
+            List<AutoRecord> autoRecordList = new List<AutoRecord>();
+            using (TransactionScope transactionscope = new TransactionScope(TransactionScopeOption.Required, new TimeSpan(0, 15, 0)))
+            {
+                try
+                {
+                    DataTable resulttb;
+
+                    // LocalOrderInventory 庫存
+                    string upd_Fty_2F = Prgs.UpdateLocalOrderInventory_IO("In", null, false);
+                    if (!(result = MyUtility.Tool.ProcessWithObject(data_Fty_2F, string.Empty, upd_Fty_2F, out resulttb, "#TmpSource")))
+                    {
+                        throw result.GetException();
+                    }
+
+                    // Barcode 需要判斷新的庫存, 在更新 LocalOrderInventory 之後
+                    if (!(result = Prgs.UpdateWH_Barcode(false, (DataTable)this.detailgridbs.DataSource, this.Name, out bool fromNewBarcode, dtLocalOrderInventory, isLocalOrder: true)))
+                    {
+                        throw result.GetException();
+                    }
+
+                    if (!(result = DBProxy.Current.Execute(null, $@"update LocalOrderReceiving set status = 'New', editname = '{Env.User.UserID}', editdate = GETDATE() where id = '{this.CurrentMaintain["id"]}'")))
+                    {
+                        throw result.GetException();
+                    }
+
+                    // transactionscope 內, 準備 WMS 資料 & 將資料寫入 AutomationCreateRecord (Delete, Unconfirm)
+                    Prgs_WMS.WMSprocess(false, (DataTable)this.detailgridbs.DataSource, this.Name, EnumStatus.Delete, EnumStatus.Unconfirm, dtLocalOrderInventory, typeCreateRecord: 1, autoRecord: autoRecordList);
+                    transactionscope.Complete();
+                }
+                catch (Exception ex)
+                {
+                    errMsg = ex;
+                }
+            }
+
+            if (!MyUtility.Check.Empty(errMsg))
+            {
+                Prgs_WMS.WMSUnLock(false, (DataTable)this.detailgridbs.DataSource, this.Name, EnumStatus.UnLock, EnumStatus.Unconfirm, dtLocalOrderInventory);
+                this.ShowErr(errMsg);
+                return;
+            }
+
+            // PMS 更新之後,才執行WMS
+            Prgs_WMS.WMSprocess(false, (DataTable)this.detailgridbs.DataSource, this.Name, EnumStatus.Delete, EnumStatus.Unconfirm, dtLocalOrderInventory, typeCreateRecord: 2, autoRecord: autoRecordList);
+            MyUtility.Msg.InfoBox("UnConfirmed successful");
+            #endregion
         }
 
         /// <inheritdoc/>

@@ -381,6 +381,7 @@ and td.id = '{this.CurrentMaintain["ID"]}'
             string upd_LocalOrder_73 = Prgs.UpdateLocalOrderInventory_IO("Location", null, true);
             #endregion
 
+            DataTable dtToWMS = ((DataTable)this.detailgridbs.DataSource).Clone();
             Exception errMsg = null;
             List<AutoRecord> autoRecordListP07 = new List<AutoRecord>();
             List<AutoRecord> autoRecordListP18 = new List<AutoRecord>();
@@ -398,7 +399,7 @@ and td.id = '{this.CurrentMaintain["ID"]}'
                         throw result.GetException();
                     }
 
-                    //Prgs_WMS.UnLockorDeleteNotWMS(dtToWMS, EnumStatus.Delete, autoRecordListP07, autoRecordListP18, 1);
+                    Prgs_WMS.UnLockorDeleteNotWMS(dtToWMS, EnumStatus.Delete, autoRecordListP07, autoRecordListP18, 1);
                     transactionscope.Complete();
                 }
                 catch (Exception ex)
@@ -407,24 +408,22 @@ and td.id = '{this.CurrentMaintain["ID"]}'
                 }
             }
 
-            DataTable dtToWMS = ((DataTable)this.detailgridbs.DataSource).Clone();
             if (!MyUtility.Check.Empty(errMsg))
             {
                 // P73 調整 Tolocation 不是自動倉, 過程有任何錯誤, 要發給 WMS 要求(UnLock)
                 autoRecordListP07.Clear();
                 autoRecordListP18.Clear();
-                //Prgs_WMS.UnLockorDeleteNotWMS(dtToWMS, EnumStatus.UnLock, autoRecordListP07, autoRecordListP18, 1);
-                //Prgs_WMS.UnLockorDeleteNotWMS(dtToWMS, EnumStatus.UnLock, autoRecordListP07, autoRecordListP18, 2);
+                Prgs_WMS.UnLockorDeleteNotWMS(dtToWMS, EnumStatus.UnLock, autoRecordListP07, autoRecordListP18, 1);
+                Prgs_WMS.UnLockorDeleteNotWMS(dtToWMS, EnumStatus.UnLock, autoRecordListP07, autoRecordListP18, 2);
                 this.ShowErr(errMsg);
                 return;
             }
 
             // 調整後 Tolocation 不是自動倉, 要發給 WMS 要求撤回(Delete) P07/P18
-            //Prgs_WMS.UnLockorDeleteNotWMS(dtToWMS, EnumStatus.Delete, autoRecordListP07, autoRecordListP18, 2);
+            Prgs_WMS.UnLockorDeleteNotWMS(dtToWMS, EnumStatus.Delete, autoRecordListP07, autoRecordListP18, 2);
 
             // AutoWHFabric WebAPI
-            
-            //Prgs_WMS.WMSprocess(false, (DataTable)this.detailgridbs.DataSource, this.Name, EnumStatus.New, EnumStatus.Confirm, dtLocationDetail);
+            Prgs_WMS.WMSprocess(false, (DataTable)this.detailgridbs.DataSource, this.Name, EnumStatus.New, EnumStatus.Confirm, dtLocationDetail);
             MyUtility.Msg.InfoBox("Confirmed successful");
         }
 
@@ -436,6 +435,7 @@ and td.id = '{this.CurrentMaintain["ID"]}'
             this.RenewData();
         }
 
+        /// <inheritdoc/>
         protected override bool ClickPrint()
         {
             if (this.CurrentMaintain["status"].ToString().ToUpper() != "CONFIRMED")
@@ -486,8 +486,14 @@ select lod.POID
 ,lod.Dyelot
 ,lm.Unit
 ,lod.Qty
+,[StockType] = case lod.StockType 
+					when 'B' then 'Bulk'
+					when 'I' then 'Inventory'
+					when 'O' then 'Scrap'
+					else lod.StockType end
 ,lod.FromLocation
 ,[ToLocation] = Location.val	
+,[Total]=sum(lod.Qty) OVER (PARTITION BY lod.POID ,lod.seq1,lod.Seq2)
 from LocalOrderLocationTrans_Detail lod
 left join LocalOrderInventory loi on loi.POID = lod.POID
 	and lod.Seq1 = loi.Seq1 and lod.Seq2 = loi.Seq2
@@ -518,8 +524,8 @@ where lod.id= @ID";
             }
 
             // 傳 list 資料
-            List<P73_PrintData> data = dd.AsEnumerable()
-                .Select(row1 => new P73_PrintData()
+            List<P26_PrintData> data = dd.AsEnumerable()
+                .Select(row1 => new P26_PrintData()
                 {
                     POID = row1["POID"].ToString().Trim(),
                     SEQ = row1["SEQ"].ToString().Trim(),
@@ -530,6 +536,8 @@ where lod.id= @ID";
                     QTY = row1["QTY"].ToString().Trim(),
                     From_Location = row1["FromLocation"].ToString().Trim(),
                     ToLocation = row1["ToLocation"].ToString().Trim(),
+                    Total = row1["Total"].ToString().Trim(),
+                    StockType = row1["StockType"].ToString().Trim(),
                 }).ToList();
 
             report.ReportDataSource = data;
@@ -539,7 +547,7 @@ where lod.id= @ID";
             #region  指定是哪個 RDLC
 
             // DualResult result;
-            Type reportResourceNamespace = typeof(P73_PrintData);
+            Type reportResourceNamespace = typeof(P26_PrintData);
             Assembly reportResourceAssembly = reportResourceNamespace.Assembly;
             string reportResourceName = "P73_Print.rdlc";
 

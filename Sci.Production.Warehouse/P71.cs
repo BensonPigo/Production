@@ -94,6 +94,7 @@ where   loid.ID = '{masterID}'
             this.Helper.Controls.Grid.Generator(this.detailgrid)
             .Text("POID", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
             .Text("Seq", header: "Seq", width: Widths.AnsiChars(6), iseditingreadonly: true)
+            .Text("MaterialType", header: "Material Type", width: Widths.AnsiChars(12), iseditingreadonly: true)
             .EditText("Desc", header: "Description", width: Widths.AnsiChars(25), iseditingreadonly: true)
             .Text("Color", header: "Color", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Text("Roll", header: "Roll", width: Widths.AnsiChars(8), iseditingreadonly: true)
@@ -158,7 +159,7 @@ where   loid.ID = '{masterID}'
             string sqlcmd = string.Empty;
 
             // 檢查單據有主料則 Barcode不可為空
-            if (!Prgs.CheckBarCode(dtLocalOrderInventory, this.Name,isLocalOrderInventory: true))
+            if (!Prgs.CheckBarCode(dtLocalOrderInventory, this.Name, isLocalOrderInventory: true))
             {
                 return;
             }
@@ -235,7 +236,7 @@ where (isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - d.Qty < 
                     }
 
                     // Barcode 需要判斷新的庫存, 在更新 LocalOrderInventory 之後
-                    if (!(result = Prgs.UpdateWH_Barcode(true, (DataTable)this.detailgridbs.DataSource, this.Name, out bool fromNewBarcode, dtLocalOrderInventory)))
+                    if (!(result = Prgs.UpdateWH_Barcode(true, (DataTable)this.detailgridbs.DataSource, this.Name, out bool fromNewBarcode, dtLocalOrderInventory, isLocalOrder: true)))
                     {
                         throw result.GetException();
                     }
@@ -260,7 +261,7 @@ where (isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - d.Qty < 
             }
 
             // AutoWHFabric WebAPI
-            //Prgs_WMS.WMSprocess(false, (DataTable)this.detailgridbs.DataSource, this.Name, EnumStatus.New, EnumStatus.Confirm, dtLocalOrderInventory);
+            Prgs_WMS.WMSprocess(false, (DataTable)this.detailgridbs.DataSource, this.Name, EnumStatus.New, EnumStatus.Confirm, dtLocalOrderInventory);
             MyUtility.Msg.InfoBox("Confirmed successful");
         }
 
@@ -346,10 +347,10 @@ where (isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) + d.Qty < 
             #region UnConfirmed 廠商能上鎖→PMS更新→廠商更新
 
             // 先確認 WMS 能否上鎖, 不能直接 return
-            //if (!Prgs_WMS.WMSLock((DataTable)this.detailgridbs.DataSource, dtLocalOrderInventory, this.Name, EnumStatus.Unconfirm))
-            //{
-            //    return;
-            //}
+            if (!Prgs_WMS.WMSLock((DataTable)this.detailgridbs.DataSource, dtLocalOrderInventory, this.Name, EnumStatus.Unconfirm))
+            {
+                return;
+            }
 
             // PMS 的資料更新
             Exception errMsg = null;
@@ -379,7 +380,7 @@ where (isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) + d.Qty < 
                     }
 
                     // transactionscope 內, 準備 WMS 資料 & 將資料寫入 AutomationCreateRecord (Delete, Unconfirm)
-                    //Prgs_WMS.WMSprocess(false, (DataTable)this.detailgridbs.DataSource, this.Name, EnumStatus.Delete, EnumStatus.Unconfirm, dtLocalOrderInventory, typeCreateRecord: 1, autoRecord: autoRecordList);
+                    Prgs_WMS.WMSprocess(false, (DataTable)this.detailgridbs.DataSource, this.Name, EnumStatus.Delete, EnumStatus.Unconfirm, dtLocalOrderInventory, typeCreateRecord: 1, autoRecord: autoRecordList);
                     transactionscope.Complete();
                 }
                 catch (Exception ex)
@@ -388,15 +389,15 @@ where (isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) + d.Qty < 
                 }
             }
 
-            //if (!MyUtility.Check.Empty(errMsg))
-            //{
-            //    Prgs_WMS.WMSUnLock(false, (DataTable)this.detailgridbs.DataSource, this.Name, EnumStatus.UnLock, EnumStatus.Unconfirm, dtLocalOrderInventory);
-            //    this.ShowErr(errMsg);
-            //    return;
-            //}
+            if (!MyUtility.Check.Empty(errMsg))
+            {
+                Prgs_WMS.WMSUnLock(false, (DataTable)this.detailgridbs.DataSource, this.Name, EnumStatus.UnLock, EnumStatus.Unconfirm, dtLocalOrderInventory);
+                this.ShowErr(errMsg);
+                return;
+            }
 
             // PMS 更新之後,才執行WMS
-            //Prgs_WMS.WMSprocess(false, (DataTable)this.detailgridbs.DataSource, this.Name, EnumStatus.Delete, EnumStatus.Unconfirm, dtLocalOrderInventory, typeCreateRecord: 2, autoRecord: autoRecordList);
+            Prgs_WMS.WMSprocess(false, (DataTable)this.detailgridbs.DataSource, this.Name, EnumStatus.Delete, EnumStatus.Unconfirm, dtLocalOrderInventory, typeCreateRecord: 2, autoRecord: autoRecordList);
             MyUtility.Msg.InfoBox("UnConfirmed successful");
             #endregion
         }
@@ -479,7 +480,6 @@ where (isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) + d.Qty < 
             report.ReportParameters.Add(new ReportParameter("ID", row["ID"].ToString()));
             report.ReportParameters.Add(new ReportParameter("Remark", row["Remark"].ToString()));
             report.ReportParameters.Add(new ReportParameter("IssueDate", ((DateTime)MyUtility.Convert.GetDate(row["IssueDate"])).ToString("yyyy/MM/dd")));
-            report.ReportParameters.Add(new ReportParameter("preparedBy", preparedBy));
             #endregion
             #region -- 撈表身資料 --
             string sqlcmd = $@"
@@ -488,19 +488,21 @@ select  loid.*,
 	    [Desc] = concat(lom.[Desc],char(10),'Color : ', lom.Color),
         lom.Unit,
         lom.Color,
+        loi.Tone,
         [Location] = Location.val,
 	    [Total]=sum(loid.Qty) OVER (PARTITION BY loid.POID ,loid.seq1,loid.Seq2)
 from    LocalOrderIssue_Detail loid
 LEFT JOIN LocalOrderMaterial lom ON loid.POID = lom.POID AND loid.Seq1 = lom.Seq1 AND loid.Seq2 = lom.Seq2
-outer apply (SELECT val =  Stuff((select distinct concat( ',',loil.MtlLocationID)   
-                                from LocalOrderInventory loi with (nolock)
-								LEFT JOIN LocalOrderInventory_Location loil with (nolock) ON loi.Ukey = loil.LocalOrderInventoryUkey
-                                where loi.POID         = loid.POID        and
+LEFT JOIN LocalOrderInventory loi with (nolock) ON 
+									  loi.POID         = loid.POID        and
                                       loi.Seq1         = loid.Seq1        AND
 									  loi.Seq2         = loid.Seq2        and
                                       loi.Roll         = loid.Roll        and
                                       loi.Dyelot       = loid.Dyelot      and
                                       loi.StockType    = loid.StockType
+outer apply (SELECT val =  Stuff((select distinct concat( ',',loil.MtlLocationID)   
+                                from LocalOrderInventory_Location loil with (nolock) 
+                                where loi.Ukey = loil.LocalOrderInventoryUkey
                                 FOR XML PATH('')),1,1,'')  ) Location
 where   loid.ID = '{row["ID"]}'
 ";

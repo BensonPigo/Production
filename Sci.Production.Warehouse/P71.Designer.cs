@@ -79,7 +79,7 @@
             // gridicon
             // 
             this.gridicon.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.gridicon.Location = new System.Drawing.Point(676, 78);
+            this.gridicon.Location = new System.Drawing.Point(675, 78);
             // 
             // detailgridcont
             // 
@@ -202,6 +202,8 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(850, 575);
+            this.DefaultControl = "dateIssueDate";
+            this.DefaultControlForEdit = "dateIssueDate";
             this.GridAlias = "LocalOrderIssue_Detail";
             this.GridNew = 0;
             this.GridUniqueKey = "poid,seq1,seq2,roll,Dyelot";

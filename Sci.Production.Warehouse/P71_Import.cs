@@ -45,7 +45,7 @@ namespace Sci.Production.Warehouse
             .Text("Roll", header: "Roll", width: Widths.AnsiChars(8), iseditingreadonly: true)
             .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(8), iseditingreadonly: true)
             .Text("Tone", header: "Tone/Grp", width: Widths.AnsiChars(8), iseditingreadonly: true)
-            .Numeric("BalanceQty", header: "Balance Qty", decimal_places: 2, width: Widths.AnsiChars(8),iseditingreadonly: true)
+            .Numeric("BalanceQty", header: "Balance Qty", decimal_places: 2, width: Widths.AnsiChars(8), iseditingreadonly: true)
             .Numeric("Qty", header: "Issue Qty", decimal_places: 2, width: Widths.AnsiChars(8))
             .Text("Unit", header: "Unit", width: Widths.AnsiChars(8), iseditingreadonly: true)
             .Text("Location", header: "Location", width: Widths.AnsiChars(15), iseditingreadonly: true)
@@ -92,7 +92,7 @@ select  [selected] = 0,
         loi.Tone,        
         lom.Unit,
         [BalanceQty] = loi.InQty - loi.OutQty + loi.AdjustQty,
-        [Qty] = 0,
+        [Qty] = 0.00,
         [Location] = Location.val,
         loi.StockType
 from    LocalOrderInventory loi with (nolock)

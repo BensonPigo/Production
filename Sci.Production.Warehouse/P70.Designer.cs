@@ -38,7 +38,7 @@
             this.btnDownloadSampleFile = new Sci.Win.UI.Button();
             this.btnAccumulatedQty = new Sci.Win.UI.Button();
             this.labelStatus = new Sci.Win.UI.Label();
-            this.dateIssueDate = new Sci.Win.UI.DateBox();
+            this.dateArriveWHDate = new Sci.Win.UI.DateBox();
             this.labelPackages = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
@@ -67,10 +67,10 @@
             this.masterpanel.Controls.Add(this.label2);
             this.masterpanel.Controls.Add(this.displayID);
             this.masterpanel.Controls.Add(this.label1);
-            this.masterpanel.Controls.Add(this.dateIssueDate);
+            this.masterpanel.Controls.Add(this.dateArriveWHDate);
             this.masterpanel.Size = new System.Drawing.Size(910, 151);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
-            this.masterpanel.Controls.SetChildIndex(this.dateIssueDate, 0);
+            this.masterpanel.Controls.SetChildIndex(this.dateArriveWHDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.label1, 0);
             this.masterpanel.Controls.SetChildIndex(this.displayID, 0);
             this.masterpanel.Controls.SetChildIndex(this.label2, 0);
@@ -91,7 +91,7 @@
             // gridicon
             // 
             this.gridicon.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.gridicon.Location = new System.Drawing.Point(617, 114);
+            this.gridicon.Location = new System.Drawing.Point(644, 113);
             // 
             // detailgridcont
             // 
@@ -153,9 +153,9 @@
             // 
             this.label2.Location = new System.Drawing.Point(227, 15);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(86, 23);
+            this.label2.Size = new System.Drawing.Size(112, 23);
             this.label2.TabIndex = 9;
-            this.label2.Text = "Issue Date";
+            this.label2.Text = "Arrive WH Date";
             // 
             // displayID
             // 
@@ -180,7 +180,7 @@
             this.numPackages.BackColor = System.Drawing.Color.White;
             this.numPackages.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Packages", true));
             this.numPackages.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numPackages.Location = new System.Drawing.Point(537, 15);
+            this.numPackages.Location = new System.Drawing.Point(565, 15);
             this.numPackages.Name = "numPackages";
             this.numPackages.NullValue = new decimal(new int[] {
             0,
@@ -242,17 +242,17 @@
             this.labelStatus.Text = "Not Approve";
             this.labelStatus.TextStyle.Color = System.Drawing.Color.Red;
             // 
-            // dateIssueDate
+            // dateArriveWHDate
             // 
-            this.dateIssueDate.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "WhseArrival", true));
-            this.dateIssueDate.Location = new System.Drawing.Point(316, 15);
-            this.dateIssueDate.Name = "dateIssueDate";
-            this.dateIssueDate.Size = new System.Drawing.Size(130, 23);
-            this.dateIssueDate.TabIndex = 51;
+            this.dateArriveWHDate.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "WhseArrival", true));
+            this.dateArriveWHDate.Location = new System.Drawing.Point(344, 15);
+            this.dateArriveWHDate.Name = "dateArriveWHDate";
+            this.dateArriveWHDate.Size = new System.Drawing.Size(130, 23);
+            this.dateArriveWHDate.TabIndex = 51;
             // 
             // labelPackages
             // 
-            this.labelPackages.Location = new System.Drawing.Point(460, 15);
+            this.labelPackages.Location = new System.Drawing.Point(488, 15);
             this.labelPackages.Name = "labelPackages";
             this.labelPackages.Size = new System.Drawing.Size(74, 23);
             this.labelPackages.TabIndex = 57;
@@ -260,9 +260,12 @@
             // 
             // P70
             // 
+            this.ApvChkValue = "New";
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(918, 564);
+            this.DefaultControl = "dateArriveWHDate";
+            this.DefaultControlForEdit = "dateArriveWHDate";
             this.GridAlias = "LocalOrderReceiving_Detail";
             this.IsSupportConfirm = true;
             this.IsSupportUnconfirm = true;
@@ -270,6 +273,7 @@
             this.Name = "P70";
             this.OnLineHelpID = "Sci.Win.Tems.Input6";
             this.Text = "P70. Material Receiving (Local Order)";
+            this.UnApvChkValue = "Confirmed";
             this.WorkAlias = "LocalOrderReceiving";
             this.Controls.SetChildIndex(this.tabs, 0);
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).EndInit();
@@ -303,7 +307,7 @@
         private Win.UI.Button btnDownloadSampleFile;
         private Win.UI.Button btnAccumulatedQty;
         private Win.UI.Label labelStatus;
-        private Win.UI.DateBox dateIssueDate;
+        private Win.UI.DateBox dateArriveWHDate;
         private Win.UI.Label labelPackages;
     }
 }
