@@ -114,6 +114,7 @@
             // numHighestGSD
             // 
             this.numHighestGSD.BackColor = System.Drawing.Color.White;
+            this.numHighestGSD.DecimalPlaces = 2;
             this.numHighestGSD.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.numHighestGSD.Location = new System.Drawing.Point(344, 9);
             this.numHighestGSD.Name = "numHighestGSD";

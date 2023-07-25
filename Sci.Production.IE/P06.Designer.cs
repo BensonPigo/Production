@@ -423,7 +423,7 @@
             this.comboPhase.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.comboPhase.FormattingEnabled = true;
             this.comboPhase.IsSupportUnselect = true;
-            this.comboPhase.Location = new System.Drawing.Point(152, 8);
+            this.comboPhase.Location = new System.Drawing.Point(152, 9);
             this.comboPhase.Name = "comboPhase";
             this.comboPhase.OldText = "";
             this.comboPhase.ReadOnly = true;
@@ -521,6 +521,7 @@
             // 
             this.numericTotalGSDTime.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.numericTotalGSDTime.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "TotalGSDTime", true));
+            this.numericTotalGSDTime.DecimalPlaces = 2;
             this.numericTotalGSDTime.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numericTotalGSDTime.IsSupportEditMode = false;
             this.numericTotalGSDTime.Location = new System.Drawing.Point(383, 9);
@@ -543,6 +544,7 @@
             // 
             this.numericAvgGSDTime.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.numericAvgGSDTime.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "AvgGSDTime", true));
+            this.numericAvgGSDTime.DecimalPlaces = 2;
             this.numericAvgGSDTime.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numericAvgGSDTime.IsSupportEditMode = false;
             this.numericAvgGSDTime.Location = new System.Drawing.Point(383, 38);
@@ -565,6 +567,7 @@
             // 
             this.numericHighestGSDTime.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.numericHighestGSDTime.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "HighestGSDTime", true));
+            this.numericHighestGSDTime.DecimalPlaces = 2;
             this.numericHighestGSDTime.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numericHighestGSDTime.IsSupportEditMode = false;
             this.numericHighestGSDTime.Location = new System.Drawing.Point(383, 67);
@@ -911,6 +914,7 @@
             // 
             this.numericTaktTime.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.numericTaktTime.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "TaktTime", true));
+            this.numericTaktTime.DecimalPlaces = 2;
             this.numericTaktTime.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numericTaktTime.IsSupportEditMode = false;
             this.numericTaktTime.Location = new System.Drawing.Point(1026, 9);
@@ -933,6 +937,7 @@
             // 
             this.numericEOLR.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.numericEOLR.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "EOLR", true));
+            this.numericEOLR.DecimalPlaces = 2;
             this.numericEOLR.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numericEOLR.IsSupportEditMode = false;
             this.numericEOLR.Location = new System.Drawing.Point(1026, 38);
@@ -955,6 +960,7 @@
             // 
             this.numericPPH.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.numericPPH.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "PPH", true));
+            this.numericPPH.DecimalPlaces = 2;
             this.numericPPH.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numericPPH.IsSupportEditMode = false;
             this.numericPPH.Location = new System.Drawing.Point(1026, 67);
@@ -1235,6 +1241,7 @@
             // 
             this.numericHighestCycleTime.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.numericHighestCycleTime.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "HighestCycleTime", true));
+            this.numericHighestCycleTime.DecimalPlaces = 2;
             this.numericHighestCycleTime.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numericHighestCycleTime.IsSupportEditMode = false;
             this.numericHighestCycleTime.Location = new System.Drawing.Point(621, 67);
@@ -1257,6 +1264,7 @@
             // 
             this.numericAvgCycleTime.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.numericAvgCycleTime.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "AvgCycleTime", true));
+            this.numericAvgCycleTime.DecimalPlaces = 2;
             this.numericAvgCycleTime.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numericAvgCycleTime.IsSupportEditMode = false;
             this.numericAvgCycleTime.Location = new System.Drawing.Point(621, 38);
@@ -1279,6 +1287,7 @@
             // 
             this.numTotalCycleTime.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.numTotalCycleTime.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "TotalCycleTime", true));
+            this.numTotalCycleTime.DecimalPlaces = 2;
             this.numTotalCycleTime.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numTotalCycleTime.IsSupportEditMode = false;
             this.numTotalCycleTime.Location = new System.Drawing.Point(621, 9);

@@ -1,5 +1,6 @@
 ﻿using Ict;
 using Ict.Win;
+using Sci.Production.CallPmsAPI;
 using Sci.Production.Prg;
 using System;
 using System.Collections.Generic;
@@ -21,10 +22,7 @@ namespace Sci.Production.IE
     {
         private DataTable dtAutomatedLineMapping_DetailCopy;
 
-        /// <summary>
-        /// dtAutomatedLineMapping_Detail
-        /// </summary>
-        public DataTable dtAutomatedLineMapping_Detail;
+        private DataTable dtAutomatedLineMapping_Detail;
         private DataTable dtSelectItemSource;
         private DataTable dtNoSelectItem = new DataTable();
 
@@ -35,9 +33,9 @@ namespace Sci.Production.IE
         public P05_EditOperation(DataTable dtAutomatedLineMapping_Detail)
         {
             this.DialogResult = DialogResult.No;
-            var sortDataView = dtAutomatedLineMapping_Detail.AsDataView();
-            sortDataView.Sort = "No ASC";
-            this.dtAutomatedLineMapping_DetailCopy = sortDataView.ToTableKeepRowState();
+
+            this.dtAutomatedLineMapping_Detail = dtAutomatedLineMapping_Detail;
+            this.dtAutomatedLineMapping_DetailCopy = dtAutomatedLineMapping_Detail.AsEnumerable().Where(s => s["PPA"].ToString() != "C").OrderBy(s => s["No"]).CopyToDataTable();
 
             if (!this.dtAutomatedLineMapping_DetailCopy.Columns.Contains("UpdSewerDiffPercentage"))
             {
@@ -428,10 +426,12 @@ namespace Sci.Production.IE
                 needCancelCheck["Selected"] = false;
             }
 
-            this.dtAutomatedLineMapping_Detail = this.dtAutomatedLineMapping_DetailCopy.Copy();
+            foreach (var item in this.dtAutomatedLineMapping_Detail.AsEnumerable().Where(s => s["PPA"].ToString() != "C").ToList())
+            {
+                this.dtAutomatedLineMapping_Detail.Rows.Remove(item);
+            }
 
-            this.dtAutomatedLineMapping_Detail.Columns.Remove("UpdDivSewer");
-            this.dtAutomatedLineMapping_Detail.Columns.Remove("UpdSewerDiffPercentage");
+            this.dtAutomatedLineMapping_DetailCopy.MergeTo(ref this.dtAutomatedLineMapping_Detail);
 
             this.DialogResult = DialogResult.OK;
         }

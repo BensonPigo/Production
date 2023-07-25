@@ -63,7 +63,7 @@ namespace Sci.Production.IE
                .Text("Attachment", header: "Attachment", width: Widths.AnsiChars(10))
                .Text("SewingMachineAttachmentID", header: "Part ID", width: Widths.AnsiChars(25))
                .Text("Template", header: "Template", width: Widths.AnsiChars(10))
-               .Numeric("GSD", header: "GSD Time", width: Widths.AnsiChars(5), iseditingreadonly: true)
+               .Numeric("GSD", header: "GSD Time", width: Widths.AnsiChars(5), decimal_places: 2, iseditingreadonly: true)
                .Numeric("SewerDiffPercentageDesc", header: "%", width: Widths.AnsiChars(5), iseditingreadonly: true)
                .Numeric("DivSewer", header: "Div. Sewer", decimal_places: 4, width: Widths.AnsiChars(5), iseditingreadonly: true)
                .Numeric("OriSewer", header: "Ori. Sewer", decimal_places: 4, width: Widths.AnsiChars(5), iseditingreadonly: true)

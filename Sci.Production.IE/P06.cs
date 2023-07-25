@@ -3,8 +3,10 @@ using Ict.Win;
 using Ict.Win.Tools;
 using Microsoft.SqlServer.Management.Smo.Agent;
 using Sci.Data;
+using Sci.Production.CallPmsAPI;
 using Sci.Production.Class;
 using Sci.Production.Class.Command;
+using Sci.Production.PublicForm;
 using Sci.Win.UI;
 using System;
 using System.Collections.Generic;
@@ -82,6 +84,7 @@ AND ALMCS.Junk = 0
         public void ShowDirectQueryID(string id)
         {
             this.Show();
+            this.ReloadDatas();
             this.tabs.SelectedIndex = 0;
 
             foreach (DataRow dr in this.DataRows)
@@ -191,12 +194,15 @@ AND ALMCS.Junk = 0
             {
                 dr["Selected"] = false;
             }
+
+            this.OnRefreshClick();
         }
 
         /// <inheritdoc/>
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
             string masterID = (e.Master == null) ? string.Empty : e.Master["ID"].ToString();
+            string factoryID = (e.Master == null) ? string.Empty : e.Master["FactoryID"].ToString();
             this.DetailSelectCommand =
                 $@"
 select  cast(0 as bit) as Selected,
@@ -210,7 +216,7 @@ select  cast(0 as bit) as Selected,
 from LineMappingBalancing_Detail ad WITH (NOLOCK)
 left join DropDownList d with (nolock) on d.ID = ad.PPA  and d.Type = 'PMS_IEPPA'
 left join Operation op with (nolock) on op.ID = ad.OperationID
-left join Employee e with (nolock) on e.FactoryID = '{e.Master["FactoryID"]}' and e.ID = ad.EmployeeID
+left join Employee e with (nolock) on e.FactoryID = '{factoryID}' and e.ID = ad.EmployeeID
 where ad.ID = '{masterID}'
 order by iif(ad.No = '', 'ZZ', ad.No), ad.Seq";
 
@@ -243,6 +249,15 @@ order by iif(ad.No = '', 'ZZ', ad.No), ad.Seq";
             this.detailgrid.ColumnHeadersHeight = this.gridLineMappingRight.ColumnHeadersHeight;
             this.gridCentralizedPPALeft.ColumnHeadersHeight = this.gridCentralizedPPARight.ColumnHeadersHeight;
             this.btnEditOperation.Enabled = this.tabDetail.SelectedIndex == 0 && this.EditMode;
+
+            if (this.EditMode)
+            {
+                this.gridCentralizedPPALeft.Columns["Cycle"].DefaultCellStyle.ForeColor = Color.Red;
+            }
+            else
+            {
+                this.gridCentralizedPPALeft.Columns["Cycle"].DefaultCellStyle.ForeColor = Color.Black;
+            }
         }
 
         /// <inheritdoc/>
@@ -327,7 +342,6 @@ delete LineMappingBalancing_NotHitTargetReason where ID = '{this.CurrentMaintain
 
             this.CurrentMaintain["Status"] = "New";
             this.CurrentMaintain["Version"] = DBNull.Value;
-            this.CurrentMaintain["Phase"] = string.Empty;
             this.CurrentMaintain["AddName"] = Env.User.UserID;
             this.CurrentMaintain["EditName"] = string.Empty;
             this.CurrentMaintain["EditDate"] = DBNull.Value;
@@ -339,6 +353,18 @@ delete LineMappingBalancing_NotHitTargetReason where ID = '{this.CurrentMaintain
         /// <inheritdoc/>
         protected override void ClickConfirm()
         {
+            if (MyUtility.Check.Empty(this.CurrentMaintain["Team"]))
+            {
+                MyUtility.Msg.WarningBox("[Team] cannot be empty.");
+                return;
+            }
+
+            if (MyUtility.Check.Empty(this.CurrentMaintain["SewingLineID"]))
+            {
+                MyUtility.Msg.WarningBox("[Sewing Line] cannot be empty.");
+                return;
+            }
+
             var listEmptyReason = this.P06_NotHitTargetReason.DataNotHitTargetReason.AsEnumerable().Where(s => MyUtility.Check.Empty(s["IEReasonID"]));
 
             if (listEmptyReason.Any())
@@ -353,9 +379,9 @@ delete LineMappingBalancing_NotHitTargetReason where ID = '{this.CurrentMaintain
             if (checkLBRCondition > 0 &&
                 MyUtility.Convert.GetDecimal(this.CurrentMaintain["LBRByGSDTime"]) < checkLBRCondition)
             {
-                DialogResult dialogResult = MyUtility.Msg.QuestionBox($"[LBR By Cycle Time(%)] should not be lower than {checkLBRCondition}%, please double check and revise it, thanks!");
+                DialogResult dialogResult = CustomQuestionBox.ShowDialog($"[LBR By Cycle Time(%)] should not be lower than {checkLBRCondition}%, please double check and revise it, thanks!", string.Empty, "Confirm", "Close");
 
-                if (dialogResult != DialogResult.Yes)
+                if (dialogResult != DialogResult.OK)
                 {
                     return;
                 }
@@ -397,6 +423,18 @@ where   ID = '{this.CurrentMaintain["ID"]}'
                 return false;
             }
 
+            if (MyUtility.Check.Empty(this.CurrentMaintain["Team"]))
+            {
+                MyUtility.Msg.WarningBox("[Team] cannot be empty.");
+                return false;
+            }
+
+            if (MyUtility.Check.Empty(this.CurrentMaintain["SewingLineID"]))
+            {
+                MyUtility.Msg.WarningBox("[Sewing Line] cannot be empty.");
+                return false;
+            }
+
             this.detailgridbs.RemoveFilter();
             this.gridCentralizedPPALeftBS.RemoveFilter();
 
@@ -418,7 +456,9 @@ where   ID = '{this.CurrentMaintain["ID"]}'
             }
 
             // 取version
-            if (MyUtility.Check.Empty(this.CurrentMaintain["Version"]))
+            if (MyUtility.Convert.GetInt(this.CurrentMaintain["Version"]) == 0 ||
+                this.CurrentMaintain["SewingLineID", DataRowVersion.Original].ToString() != this.CurrentMaintain["SewingLineID", DataRowVersion.Current].ToString() ||
+                this.CurrentMaintain["Team", DataRowVersion.Original].ToString() != this.CurrentMaintain["Team", DataRowVersion.Current].ToString())
             {
                 string sqlGetVersion = $@"
 select [NewVersion] = isnull(max(Version), 0) + 1
@@ -436,6 +476,21 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
 
             // 有可能因為調整佔位順序造成HighestGSDTime不同，所以這邊要更新
             this.RefreshLineMappingBalancingSummary();
+
+            // 要將PPA = 'C'的資料併回主Detail
+            DataTable dtCentralizedPPA = (DataTable)this.gridCentralizedPPALeftBS.DataSource;
+
+            if (dtCentralizedPPA.Rows.Count > 0)
+            {
+                foreach (DataRow drRemove in ((DataTable)this.detailgridbs.DataSource).AsEnumerable().Where(s => s["PPA"].ToString() == "C").ToList())
+                {
+                    ((DataTable)this.detailgridbs.DataSource).Rows.Remove(drRemove);
+                }
+
+                DataTable dtDetail = (DataTable)this.detailgridbs.DataSource;
+
+                dtCentralizedPPA.MergeTo(ref dtDetail);
+            }
 
             return base.ClickSaveBefore();
         }
@@ -480,6 +535,7 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
             DataGridViewGeneratorCheckBoxColumnSettings colSelected = new DataGridViewGeneratorCheckBoxColumnSettings();
             DataGridViewGeneratorMaskedTextColumnSettings colPPANo = new DataGridViewGeneratorMaskedTextColumnSettings();
             DataGridViewGeneratorNumericColumnSettings colCycleTime = new DataGridViewGeneratorNumericColumnSettings();
+            DataGridViewGeneratorNumericColumnSettings colCycleTimePPA = new DataGridViewGeneratorNumericColumnSettings();
             DataGridViewGeneratorTextColumnSettings colOperator = new DataGridViewGeneratorTextColumnSettings();
 
             colCycleTime.CellValidating += (s, e) =>
@@ -492,6 +548,11 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
                 DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
                 decimal curCycle = MyUtility.Convert.GetDecimal(e.FormattedValue);
 
+                if (MyUtility.Convert.GetDecimal(dr["Cycle"]) == curCycle)
+                {
+                    return;
+                }
+
                 // 更新同樣TimeStudyDetailUkey的Cycle
                 foreach (DataRow updateRow in this.DetailDatas)
                 {
@@ -499,6 +560,34 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
                     {
                         updateRow["Cycle"] = curCycle;
                     }
+                }
+
+                string firstDisplayNo = this.detailgrid.GetDataRow<DataRow>(this.detailgrid.FirstDisplayedScrollingRowIndex)["No"].ToString();
+                this.lineMappingGrids.RefreshSubData(false);
+                this.RefreshLineMappingBalancingSummary();
+            };
+
+            colCycleTimePPA.CellValidating += (s, e) =>
+            {
+                if (!this.EditMode)
+                {
+                    return;
+                }
+
+                DataRow dr = this.gridCentralizedPPALeft.GetDataRow<DataRow>(e.RowIndex);
+                decimal curCycle = MyUtility.Convert.GetDecimal(e.FormattedValue);
+
+                if (MyUtility.Convert.GetDecimal(dr["Cycle"]) == curCycle)
+                {
+                    return;
+                }
+
+                dr["Cycle"] = curCycle;
+
+                if (!MyUtility.Check.Empty(dr["No"]))
+                {
+                    string firstDisplayNo = this.gridCentralizedPPALeft.GetDataRow<DataRow>(this.gridCentralizedPPALeft.FirstDisplayedScrollingRowIndex)["No"].ToString();
+                    this.centralizedPPAGrids.RefreshSubData(false);
                 }
             };
 
@@ -511,6 +600,7 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
 
                 DataRow dr = this.gridCentralizedPPALeft.GetDataRow<DataRow>(e.RowIndex);
                 string ppaNo = e.FormattedValue.ToString();
+
                 if (!MyUtility.Check.Empty(ppaNo))
                 {
                     dr["No"] = ppaNo.PadLeft(2, '0');
@@ -519,6 +609,8 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
                 {
                     dr["No"] = string.Empty;
                 }
+
+                this.centralizedPPAGrids.RefreshSubData();
             };
 
             colSelected.HeaderAction = DataGridViewGeneratorCheckBoxHeaderAction.None;
@@ -715,7 +807,7 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
                .CellPartID("SewingMachineAttachmentID", "Part ID", this, width: Widths.AnsiChars(25))
                .CellTemplate("Template", "Template", this, width: Widths.AnsiChars(10))
                .Numeric("GSD", header: "GSD Time", decimal_places: 2, width: Widths.AnsiChars(5), iseditingreadonly: true)
-               .Numeric("Cycle", header: "Cycle Time", width: Widths.AnsiChars(5), decimal_places: 2)
+               .Numeric("Cycle", header: "Cycle Time", width: Widths.AnsiChars(5), decimal_places: 2, settings: colCycleTimePPA)
                .Text("Notice", header: "Notice", width: Widths.AnsiChars(10));
 
             this.Helper.Controls.Grid.Generator(this.gridLineMappingRight)
@@ -763,21 +855,25 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
 
         private void TabDetail_SelectedIndexChanged(object sender, EventArgs e)
         {
-            this.FilterGrid();
+            this.FilterGrid(false);
             this.btnEditOperation.Enabled = this.tabDetail.SelectedIndex == 0 && this.EditMode;
         }
 
-        private void FilterGrid()
+        private void FilterGrid(bool needReloadPPA = true)
         {
+            if (needReloadPPA || this.gridCentralizedPPALeftBS.DataSource == null)
+            {
+                this.gridCentralizedPPALeftBS.DataSource = ((DataTable)this.detailgridbs.DataSource).AsEnumerable()
+                .Where(s => s["PPA"].ToString() == "C").TryCopyToDataTable((DataTable)this.detailgridbs.DataSource);
+            }
+
             if (this.tabDetail.SelectedIndex == 0)
             {
-                this.gridCentralizedPPALeftBS.DataSource = null;
                 this.detailgridbs.Filter = "PPA <> 'C' and IsNonSewingLine = 0";
                 this.lineMappingGrids.RefreshSubData();
             }
             else
             {
-                this.gridCentralizedPPALeftBS.DataSource = this.detailgridbs.DataSource;
                 this.gridCentralizedPPALeftBS.Filter = "PPA = 'C' and IsNonSewingLine = 0";
                 this.centralizedPPAGrids.RefreshSubData();
             }
@@ -785,6 +881,7 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
 
         private void RefreshLineMappingBalancingSummary()
         {
+            this.lineMappingGrids.RefreshSubData();
             if (this.lineMappingGrids.HighestGSD > 0)
             {
                 this.CurrentMaintain["HighestGSDTime"] = this.lineMappingGrids.HighestGSD;
@@ -844,8 +941,8 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
             DialogResult dialogResult = p06_EditOperation.ShowDialog();
             if (dialogResult == DialogResult.OK)
             {
-                this.detailgridbs.DataSource = p06_EditOperation.dtLineMappingBalancing_Detail;
                 this.lineMappingGrids.RefreshSubData();
+                this.RefreshLineMappingBalancingSummary();
             }
         }
 

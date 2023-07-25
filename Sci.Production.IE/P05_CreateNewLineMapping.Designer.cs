@@ -196,7 +196,7 @@
             this.txtFactoryCreate.MDivision = null;
             this.txtFactoryCreate.Name = "txtFactoryCreate";
             this.txtFactoryCreate.Size = new System.Drawing.Size(66, 23);
-            this.txtFactoryCreate.TabIndex = 15;
+            this.txtFactoryCreate.TabIndex = 1;
             // 
             // txtFactoryCopy
             // 
@@ -210,7 +210,7 @@
             this.txtFactoryCopy.MDivision = null;
             this.txtFactoryCopy.Name = "txtFactoryCopy";
             this.txtFactoryCopy.Size = new System.Drawing.Size(66, 23);
-            this.txtFactoryCopy.TabIndex = 16;
+            this.txtFactoryCopy.TabIndex = 9;
             // 
             // txtStyleCreate
             // 
@@ -221,7 +221,7 @@
             this.txtStyleCreate.Name = "txtStyleCreate";
             this.txtStyleCreate.SeasonObjectName = null;
             this.txtStyleCreate.Size = new System.Drawing.Size(130, 23);
-            this.txtStyleCreate.TabIndex = 17;
+            this.txtStyleCreate.TabIndex = 2;
             this.txtStyleCreate.TarBrand = null;
             this.txtStyleCreate.TarSeason = null;
             // 
@@ -234,7 +234,7 @@
             this.txtStyleCopy.Name = "txtStyleCopy";
             this.txtStyleCopy.SeasonObjectName = null;
             this.txtStyleCopy.Size = new System.Drawing.Size(130, 23);
-            this.txtStyleCopy.TabIndex = 18;
+            this.txtStyleCopy.TabIndex = 10;
             this.txtStyleCopy.TarBrand = null;
             this.txtStyleCopy.TarSeason = null;
             // 
@@ -245,9 +245,8 @@
             this.txtStyleLocationCreate.Location = new System.Drawing.Point(231, 75);
             this.txtStyleLocationCreate.Name = "txtStyleLocationCreate";
             this.txtStyleLocationCreate.Size = new System.Drawing.Size(25, 23);
-            this.txtStyleLocationCreate.TabIndex = 19;
+            this.txtStyleLocationCreate.TabIndex = 3;
             this.txtStyleLocationCreate.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtStyleLocationCreate_PopUp);
-            this.txtStyleLocationCreate.Validating += new System.ComponentModel.CancelEventHandler(this.TxtStyleLocationCreate_Validating);
             // 
             // txtStyleLocationCopy
             // 
@@ -256,9 +255,8 @@
             this.txtStyleLocationCopy.Location = new System.Drawing.Point(494, 75);
             this.txtStyleLocationCopy.Name = "txtStyleLocationCopy";
             this.txtStyleLocationCopy.Size = new System.Drawing.Size(25, 23);
-            this.txtStyleLocationCopy.TabIndex = 20;
+            this.txtStyleLocationCopy.TabIndex = 11;
             this.txtStyleLocationCopy.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtStyleLocationCopy_PopUp);
-            this.txtStyleLocationCopy.Validating += new System.ComponentModel.CancelEventHandler(this.TxtStyleLocationCopy_Validating);
             // 
             // txtSeasonCreate
             // 
@@ -268,7 +266,7 @@
             this.txtSeasonCreate.Location = new System.Drawing.Point(99, 108);
             this.txtSeasonCreate.Name = "txtSeasonCreate";
             this.txtSeasonCreate.Size = new System.Drawing.Size(80, 23);
-            this.txtSeasonCreate.TabIndex = 21;
+            this.txtSeasonCreate.TabIndex = 4;
             // 
             // txtSeasonCopy
             // 
@@ -278,7 +276,7 @@
             this.txtSeasonCopy.Location = new System.Drawing.Point(362, 108);
             this.txtSeasonCopy.Name = "txtSeasonCopy";
             this.txtSeasonCopy.Size = new System.Drawing.Size(80, 23);
-            this.txtSeasonCopy.TabIndex = 22;
+            this.txtSeasonCopy.TabIndex = 12;
             // 
             // txtBrandCreate
             // 
@@ -288,7 +286,7 @@
             this.txtBrandCreate.MyDocumentdName = null;
             this.txtBrandCreate.Name = "txtBrandCreate";
             this.txtBrandCreate.Size = new System.Drawing.Size(80, 23);
-            this.txtBrandCreate.TabIndex = 23;
+            this.txtBrandCreate.TabIndex = 5;
             // 
             // txtBrandCopy
             // 
@@ -298,7 +296,7 @@
             this.txtBrandCopy.MyDocumentdName = null;
             this.txtBrandCopy.Name = "txtBrandCopy";
             this.txtBrandCopy.Size = new System.Drawing.Size(80, 23);
-            this.txtBrandCopy.TabIndex = 24;
+            this.txtBrandCopy.TabIndex = 13;
             // 
             // comboPhase
             // 
@@ -310,7 +308,7 @@
             this.comboPhase.Name = "comboPhase";
             this.comboPhase.OldText = "";
             this.comboPhase.Size = new System.Drawing.Size(121, 24);
-            this.comboPhase.TabIndex = 25;
+            this.comboPhase.TabIndex = 6;
             // 
             // numSewer
             // 
@@ -329,7 +327,7 @@
             0,
             0});
             this.numSewer.Size = new System.Drawing.Size(100, 23);
-            this.numSewer.TabIndex = 26;
+            this.numSewer.TabIndex = 7;
             this.numSewer.Value = new decimal(new int[] {
             0,
             0,
@@ -349,7 +347,7 @@
             0,
             0});
             this.numHours.Size = new System.Drawing.Size(100, 23);
-            this.numHours.TabIndex = 27;
+            this.numHours.TabIndex = 8;
             this.numHours.Value = new decimal(new int[] {
             0,
             0,
@@ -373,7 +371,7 @@
             0,
             0});
             this.numVersion.Size = new System.Drawing.Size(100, 23);
-            this.numVersion.TabIndex = 28;
+            this.numVersion.TabIndex = 14;
             this.numVersion.Value = new decimal(new int[] {
             0,
             0,
@@ -385,7 +383,7 @@
             this.BtnCreateAutoLineMapping.Location = new System.Drawing.Point(26, 279);
             this.BtnCreateAutoLineMapping.Name = "BtnCreateAutoLineMapping";
             this.BtnCreateAutoLineMapping.Size = new System.Drawing.Size(208, 30);
-            this.BtnCreateAutoLineMapping.TabIndex = 29;
+            this.BtnCreateAutoLineMapping.TabIndex = 99;
             this.BtnCreateAutoLineMapping.Text = "Create Auto Line Mapping";
             this.BtnCreateAutoLineMapping.UseVisualStyleBackColor = true;
             this.BtnCreateAutoLineMapping.Click += new System.EventHandler(this.BtnCreateAutoLineMapping_Click);
@@ -395,7 +393,7 @@
             this.btnCopyOtherLineMapping.Location = new System.Drawing.Point(285, 279);
             this.btnCopyOtherLineMapping.Name = "btnCopyOtherLineMapping";
             this.btnCopyOtherLineMapping.Size = new System.Drawing.Size(208, 30);
-            this.btnCopyOtherLineMapping.TabIndex = 30;
+            this.btnCopyOtherLineMapping.TabIndex = 99;
             this.btnCopyOtherLineMapping.Text = "Copy Other Line Mapping";
             this.btnCopyOtherLineMapping.UseVisualStyleBackColor = true;
             this.btnCopyOtherLineMapping.Click += new System.EventHandler(this.BtnCopyOtherLineMapping_Click);

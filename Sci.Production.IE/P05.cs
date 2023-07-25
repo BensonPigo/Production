@@ -1,6 +1,7 @@
 ﻿using Ict;
 using Ict.Win;
 using Sci.Data;
+using Sci.Production.CallPmsAPI;
 using Sci.Production.Class;
 using Sci.Production.Class.Command;
 using Sci.Win.UI;
@@ -100,6 +101,7 @@ AND ALMCS.Junk = 0
 
             this.detailgrid.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.EnableResizing;
             this.gridCentralizedPPALeft.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.EnableResizing;
+
             this.detailgrid.CellFormatting += this.Detailgrid_CellFormatting;
 
             this.lineMappingGrids = new AutoLineMappingGridSyncScroll(this.detailgrid, this.gridLineMappingRight, "No", SubGridType.LineMapping);
@@ -231,6 +233,8 @@ AND ALMCS.Junk = 0
             {
                 dr["Selected"] = false;
             }
+
+            this.OnRefreshClick();
         }
 
         /// <inheritdoc/>
@@ -311,8 +315,8 @@ order by iif(ad.No = '', 'ZZ', ad.No), ad.Seq";
                 return;
             }
 
-            this.RefreshAutomatedLineMappingSummary();
             this.FilterGrid();
+            this.RefreshAutomatedLineMappingSummary();
             this.ShowLBRChart(this.CurrentMaintain);
             base.ClickNewAfter();
             this.txtfactory.ReadOnly = true;
@@ -432,7 +436,6 @@ delete AutomatedLineMapping_NotHitTargetReason where ID = '{this.CurrentMaintain
         /// <inheritdoc/>
         protected override void ClickConfirm()
         {
-            
             decimal checkLBRCondition = this.StandardLBR;
 
             if (checkLBRCondition > 0 &&
@@ -514,7 +517,7 @@ where   ID = '{this.CurrentMaintain["ID"]}'
             }
 
             // 取version
-            if (MyUtility.Check.Empty(this.CurrentMaintain["Version"]))
+            if (MyUtility.Convert.GetInt(this.CurrentMaintain["Version"]) == 0)
             {
                 string sqlGetVersion = $@"
 select [NewVersion] = isnull(max(Version), 0) + 1
@@ -530,6 +533,21 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
 
             // 有可能因為調整佔位順序造成HighestGSDTime不同，所以這邊要更新
             this.RefreshAutomatedLineMappingSummary();
+
+            // 要將PPA = 'C'的資料併回主Detail
+            DataTable dtCentralizedPPA = (DataTable)this.gridCentralizedPPALeftBS.DataSource;
+
+            if (dtCentralizedPPA.Rows.Count > 0)
+            {
+                foreach (DataRow drRemove in ((DataTable)this.detailgridbs.DataSource).AsEnumerable().Where(s => s["PPA"].ToString() == "C").ToList())
+                {
+                    ((DataTable)this.detailgridbs.DataSource).Rows.Remove(drRemove);
+                }
+
+                DataTable dtDetail = (DataTable)this.detailgridbs.DataSource;
+
+                dtCentralizedPPA.MergeTo(ref dtDetail);
+            }
 
             return base.ClickSaveBefore();
         }
@@ -583,6 +601,7 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
 
                 DataRow dr = this.gridCentralizedPPALeft.GetDataRow<DataRow>(e.RowIndex);
                 string ppaNo = e.FormattedValue.ToString();
+
                 if (!MyUtility.Check.Empty(ppaNo))
                 {
                     dr["No"] = ppaNo.PadLeft(2, '0');
@@ -591,6 +610,8 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
                 {
                     dr["No"] = string.Empty;
                 }
+
+                this.centralizedPPAGrids.RefreshSubData();
             };
 
             colSelected.HeaderAction = DataGridViewGeneratorCheckBoxHeaderAction.None;
@@ -827,21 +848,25 @@ from #tmp
 
         private void TabDetail_SelectedIndexChanged(object sender, EventArgs e)
         {
-            this.FilterGrid();
+            this.FilterGrid(false);
             this.btnEditOperation.Enabled = this.tabDetail.SelectedIndex == 0 && this.EditMode;
         }
 
-        private void FilterGrid()
+        private void FilterGrid(bool needReloadPPA = true)
         {
+            if (needReloadPPA || this.gridCentralizedPPALeftBS.DataSource == null)
+            {
+                this.gridCentralizedPPALeftBS.DataSource = ((DataTable)this.detailgridbs.DataSource).AsEnumerable()
+                    .Where(s => s["PPA"].ToString() == "C").TryCopyToDataTable((DataTable)this.detailgridbs.DataSource);
+            }
+
             if (this.tabDetail.SelectedIndex == 0)
             {
-                this.gridCentralizedPPALeftBS.DataSource = null;
                 this.detailgridbs.Filter = "PPA <> 'C' and IsNonSewingLine = 0";
                 this.lineMappingGrids.RefreshSubData();
             }
             else
             {
-                this.gridCentralizedPPALeftBS.DataSource = this.detailgridbs.DataSource;
                 this.gridCentralizedPPALeftBS.Filter = "PPA = 'C' and IsNonSewingLine = 0";
                 this.centralizedPPAGrids.RefreshSubData();
             }
@@ -849,6 +874,7 @@ from #tmp
 
         private void RefreshAutomatedLineMappingSummary()
         {
+            this.lineMappingGrids.RefreshSubData();
             if (this.lineMappingGrids.HighestGSD > 0)
             {
                 this.CurrentMaintain["HighestGSDTime"] = this.lineMappingGrids.HighestGSD;
@@ -1023,9 +1049,9 @@ from #tmp
             DialogResult dialogResult = p05_EditOperation.ShowDialog();
             if (dialogResult == DialogResult.OK)
             {
-                this.detailgridbs.DataSource = p05_EditOperation.dtAutomatedLineMapping_Detail;
                 this.lineMappingGrids.RefreshSubData();
                 this.RefreshAutomatedLineMappingSummary();
+                this.ShowLBRChart(this.CurrentMaintain);
             }
         }
 
@@ -1035,8 +1061,8 @@ from #tmp
             if (this.EditMode)
             {
                 P05_LBR p05_LBR = new P05_LBR(firstDisplaySewermanpower, this.CurrentMaintain, (DataTable)this.detailgridbs.DataSource, this.dtAutomatedLineMapping_DetailTemp, this.dtAutomatedLineMapping_DetailAuto);
-                p05_LBR.ShowDialog();
-                this.FilterGrid();
+                DialogResult dialogResult = p05_LBR.ShowDialog();
+                this.FilterGrid(dialogResult == DialogResult.OK);
                 this.RefreshAutomatedLineMappingSummary();
                 this.ShowLBRChart(this.CurrentMaintain);
             }

@@ -39,6 +39,7 @@ namespace Sci.Production.IE
         public P05_LBR(int firstDiaplaySewerManpower, DataRow drMain, DataTable dtAutomatedLineMapping_Detail, DataTable dtAutomatedLineMapping_DetailTemp, DataTable dtAutomatedLineMapping_DetailAuto)
         {
             this.InitializeComponent();
+            this.DialogResult = DialogResult.Cancel;
             this.dtAutomatedLineMapping_Detail = dtAutomatedLineMapping_Detail;
             this.dtAutomatedLineMapping_DetailTemp = dtAutomatedLineMapping_DetailTemp;
             this.dtAutomatedLineMapping_DetailAuto = dtAutomatedLineMapping_DetailAuto;
@@ -176,14 +177,7 @@ namespace Sci.Production.IE
             // 將Detail刪除
             foreach (DataRow dr in this.dtAutomatedLineMapping_Detail.ToList())
             {
-                if (dr.RowState == DataRowState.Added)
-                {
-                    this.dtAutomatedLineMapping_Detail.Rows.Remove(dr);
-                }
-                else
-                {
-                    dr.Delete();
-                }
+                this.dtAutomatedLineMapping_Detail.Rows.Remove(dr);
             }
 
             // 將目前所選擇資料組塞入Detail
@@ -191,11 +185,7 @@ namespace Sci.Production.IE
 
             foreach (DataRow dr in this.dtAutomatedLineMapping_Detail.Rows)
             {
-                if (dr.RowState == DataRowState.Unchanged)
-                {
-                    dr.SetAdded();
-                    dr["Selected"] = false;
-                }
+                dr["Selected"] = false;
             }
 
             // 改表頭的SewerManpower
@@ -203,6 +193,7 @@ namespace Sci.Production.IE
             this.drMain["HighestGSDTime"] = this.autoLineMappingGridSyncScroll.HighestGSD;
 
             MyUtility.Msg.InfoBox("Reload complete");
+            this.DialogResult = DialogResult.OK;
             this.Close();
         }
 

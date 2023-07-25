@@ -235,7 +235,6 @@ namespace Sci.Production.IE
 
             this.gridMain.CellPainting += this.GridMain_CellPainting;
             this.gridMain.Scroll += this.GridMain_Scroll;
-            this.gridMain.ColumnHeaderMouseClick += this.GridMain_ColumnHeaderMouseClick;
 
             this.gridSub.Scroll += this.GridSub_Scroll;
             this.gridSub.RowPrePaint += this.GridSub_RowPrePaint;
@@ -254,13 +253,9 @@ namespace Sci.Production.IE
             this.dtGridDetailRightSummary.Columns.Add(new DataColumn("EmployeeName", typeof(string)));
             this.dtGridDetailRightSummary.Columns.Add(new DataColumn("EmployeeSkill", typeof(string)));
             this.dtGridDetailRightSummary.Columns.Add(new DataColumn("OperatorEffi", typeof(decimal)));
+            this.dtGridDetailRightSummary.PrimaryKey = new DataColumn[] { this.dtGridDetailRightSummary.Columns["No"] };
 
             this.gridSub.DataSource = this.dtGridDetailRightSummary;
-        }
-
-        private void GridMain_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
-        {
-            
         }
 
         private void GridPPA_SortCompare(object sender, DataGridViewSortCompareEventArgs e)
@@ -335,7 +330,11 @@ namespace Sci.Production.IE
             }
         }
 
-        private void ScrollLineMapping(string scrollToNo)
+        /// <summary>
+        /// ScrollLineMapping
+        /// </summary>
+        /// <param name="scrollToNo">scrollToNo</param>
+        public void ScrollLineMapping(string scrollToNo)
         {
             DataTable dtSub = this.SubData;
 
@@ -450,10 +449,17 @@ namespace Sci.Production.IE
         /// <summary>
         /// RefreshSubData
         /// </summary>
-        public void RefreshSubData()
+        /// <param name="doReload">doReload</param>
+        public void RefreshSubData(bool doReload = true)
         {
             DataTable dtSub = this.SubData;
-            dtSub.Clear();
+
+            if (doReload)
+            {
+                dtSub.Clear();
+            }
+
+            IEnumerable<DataRow> mainData = this.MainData;
 
             List<DataRow> resultRows = new List<DataRow>();
 
@@ -465,7 +471,7 @@ namespace Sci.Production.IE
                     this.gridSub.Sort(this.gridSub.Columns["No"], System.ComponentModel.ListSortDirection.Ascending);
                     this.gridSub.Columns.DisableSortable();
                     decimal avgGSD = this.AvgGSDTime;
-                    resultRows = this.MainData.Where(s => s["PPA"].ToString() != "C" &&
+                    resultRows = mainData.Where(s => s["PPA"].ToString() != "C" &&
                                                           !MyUtility.Convert.GetBool(s["IsNonSewingLine"]))
                                     .GroupBy(s => new
                                     {
@@ -479,7 +485,7 @@ namespace Sci.Production.IE
                                         newRow["TotalGSDTime"] = MyUtility.Math.Round(groupItem.Sum(s => MyUtility.Convert.GetDecimal(s["GSD"]) * MyUtility.Convert.GetDecimal(s["SewerDiffPercentage"])), 2);
                                         newRow["NeedExclude"] = groupItem.Any(s => s["OperationID"].ToString() == "PROCIPF00004" ||
                                                                                    s["OperationID"].ToString() == "PROCIPF00003");
-                                        newRow["OperatorLoading"] = MyUtility.Check.Empty(avgGSD) || (bool)newRow["NeedExclude"] ? 0 : MyUtility.Math.Round(groupItem.Sum(s => MyUtility.Convert.GetDecimal(s["GSD"]) * MyUtility.Convert.GetDecimal(s["SewerDiffPercentage"])) / avgGSD * 100, 0);
+                                        newRow["OperatorLoading"] = MyUtility.Check.Empty(avgGSD) || (bool)newRow["NeedExclude"] ? 0 : MyUtility.Math.Round(MyUtility.Convert.GetDecimal(newRow["TotalGSDTime"]) / avgGSD * 100, 0);
                                         return newRow;
                                     }).ToList();
                     break;
@@ -489,7 +495,7 @@ namespace Sci.Production.IE
                     this.gridSub.Sort(this.gridSub.Columns["No"], System.ComponentModel.ListSortDirection.Ascending);
                     this.gridSub.Columns.DisableSortable();
                     decimal avgCycle = this.AvgCycleTime;
-                    resultRows = this.MainData.Where(s => s["PPA"].ToString() != "C" &&
+                    resultRows = mainData.Where(s => s["PPA"].ToString() != "C" &&
                                                           !MyUtility.Convert.GetBool(s["IsNonSewingLine"]))
                                     .GroupBy(s => new
                                     {
@@ -504,7 +510,7 @@ namespace Sci.Production.IE
                                         newRow["TotalCycleTime"] = MyUtility.Math.Round(groupItem.Sum(s => MyUtility.Convert.GetDecimal(s["Cycle"]) * MyUtility.Convert.GetDecimal(s["SewerDiffPercentage"])), 2);
                                         newRow["NeedExclude"] = groupItem.Any(s => s["OperationID"].ToString() == "PROCIPF00004" ||
                                                                                    s["OperationID"].ToString() == "PROCIPF00003");
-                                        newRow["OperatorLoading"] = MyUtility.Check.Empty(avgCycle) || (bool)newRow["NeedExclude"] ? 0 : MyUtility.Math.Round(groupItem.Sum(s => MyUtility.Convert.GetDecimal(s["Cycle"]) * MyUtility.Convert.GetDecimal(s["SewerDiffPercentage"])) / avgCycle * 100, 0);
+                                        newRow["OperatorLoading"] = MyUtility.Check.Empty(avgCycle) || (bool)newRow["NeedExclude"] ? 0 : MyUtility.Math.Round(MyUtility.Convert.GetDecimal(newRow["TotalCycleTime"]) / avgCycle * 100, 0);
                                         newRow["EmployeeID"] = groupItem.Select(s => s["EmployeeID"].ToString()).First();
                                         newRow["EmployeeName"] = groupItem.Select(s => s["EmployeeName"].ToString()).First();
                                         newRow["EmployeeSkill"] = groupItem.Select(s => s["EmployeeSkill"].ToString()).First();
@@ -515,13 +521,9 @@ namespace Sci.Production.IE
 
                 case SubGridType.CentrailizedPPA:
                     this.gridMain.Columns.DisableSortable();
-                    this.gridMain.Columns["No"].SortMode = DataGridViewColumnSortMode.Programmatic;
-                    //this.gridMain.Sort(this.gridMain.Columns["No"], System.ComponentModel.ListSortDirection.Ascending);
-
-                    this.gridSub.Sort(this.gridSub.Columns["No"], System.ComponentModel.ListSortDirection.Ascending);
                     this.gridSub.Columns.DisableSortable();
 
-                    var dataPPA = this.MainData.Where(s => s["PPA"].ToString() == "C" && !MyUtility.Convert.GetBool(s["IsNonSewingLine"]) && !MyUtility.Check.Empty(s["No"]));
+                    var dataPPA = mainData.Where(s => s["PPA"].ToString() == "C" && !MyUtility.Convert.GetBool(s["IsNonSewingLine"]) && !MyUtility.Check.Empty(s["No"]));
                     if (!dataPPA.Any())
                     {
                         return;
@@ -538,20 +540,16 @@ namespace Sci.Production.IE
                         newRow["No"] = groupItem.Key.No;
                         newRow["NoCnt"] = groupItem.Count();
                         newRow["TotalGSDTime"] = MyUtility.Math.Round(groupItem.Sum(s => MyUtility.Convert.GetDecimal(s["GSD"])), 2);
-                        newRow["OperatorLoading"] = avgGSDTimePPA == 0 ? 0 : MyUtility.Math.Round(groupItem.Sum(s => MyUtility.Convert.GetDecimal(s["GSD"])) / avgGSDTimePPA * 100, 0);
+                        newRow["OperatorLoading"] = avgGSDTimePPA == 0 ? 0 : MyUtility.Math.Round(MyUtility.Convert.GetDecimal(newRow["TotalGSDTime"]) / avgGSDTimePPA * 100, 0);
                         newRow["NeedExclude"] = true;
                         return newRow;
                     }).ToList();
                     break;
                 case SubGridType.BalancingCentrailizedPPA:
                     this.gridMain.Columns.DisableSortable();
-                    this.gridMain.Columns["No"].SortMode = DataGridViewColumnSortMode.Programmatic;
-                    // this.gridMain.Sort(this.gridMain.Columns["No"], System.ComponentModel.ListSortDirection.Ascending);
-
-                    this.gridSub.Sort(this.gridSub.Columns["No"], System.ComponentModel.ListSortDirection.Ascending);
                     this.gridSub.Columns.DisableSortable();
 
-                    var dataBalancingPPA = this.MainData.Where(s => s["PPA"].ToString() == "C" && !MyUtility.Convert.GetBool(s["IsNonSewingLine"]) && !MyUtility.Check.Empty(s["No"]));
+                    var dataBalancingPPA = mainData.Where(s => s["PPA"].ToString() == "C" && !MyUtility.Convert.GetBool(s["IsNonSewingLine"]) && !MyUtility.Check.Empty(s["No"]));
                     if (!dataBalancingPPA.Any())
                     {
                         return;
@@ -568,7 +566,8 @@ namespace Sci.Production.IE
                         newRow["No"] = groupItem.Key.No;
                         newRow["NoCnt"] = groupItem.Count();
                         newRow["TotalGSDTime"] = MyUtility.Math.Round(groupItem.Sum(s => MyUtility.Convert.GetDecimal(s["GSD"])), 2);
-                        newRow["OperatorLoading"] = avgCycleTimePPA == 0 ? 0 : MyUtility.Math.Round(groupItem.Sum(s => MyUtility.Convert.GetDecimal(s["Cycle"])) / avgCycleTimePPA * 100, 0);
+                        newRow["TotalCycleTime"] = MyUtility.Math.Round(groupItem.Sum(s => MyUtility.Convert.GetDecimal(s["Cycle"])), 2);
+                        newRow["OperatorLoading"] = avgCycleTimePPA == 0 ? 0 : MyUtility.Math.Round(MyUtility.Convert.GetDecimal(newRow["TotalCycleTime"]) / avgCycleTimePPA * 100, 0);
                         newRow["NeedExclude"] = true;
                         newRow["EmployeeID"] = groupItem.Select(s => s["EmployeeID"].ToString()).First();
                         newRow["EmployeeName"] = groupItem.Select(s => s["EmployeeName"].ToString()).First();
@@ -583,7 +582,15 @@ namespace Sci.Production.IE
 
             foreach (DataRow dr in resultRows)
             {
-                dtSub.Rows.Add(dr);
+                DataRow drUpdTarget = dtSub.Rows.Find(dr["No"]);
+                if (drUpdTarget != null)
+                {
+                    drUpdTarget.ItemArray = dr.ItemArray;
+                }
+                else
+                {
+                    dtSub.Rows.Add(dr);
+                }
             }
         }
     }

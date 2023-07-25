@@ -1,5 +1,6 @@
 ﻿using Ict;
 using Ict.Win;
+using Sci.Production.CallPmsAPI;
 using Sci.Production.Prg;
 using System;
 using System.Collections.Generic;
@@ -21,10 +22,7 @@ namespace Sci.Production.IE
     {
         private DataTable dtLineMappingBalancing_DetailCopy;
 
-        /// <summary>
-        /// dtLineMappingBalancing_Detail
-        /// </summary>
-        public DataTable dtLineMappingBalancing_Detail;
+        private DataTable dtLineMappingBalancing_Detail;
 
         private DataTable dtSelectItemSource;
         private DataTable dtNoSelectItem = new DataTable();
@@ -36,9 +34,8 @@ namespace Sci.Production.IE
         public P06_EditOperation(DataTable dtLineMappingBalancing_Detail)
         {
             this.DialogResult = DialogResult.No;
-            var sortDataView = dtLineMappingBalancing_Detail.AsDataView();
-            sortDataView.Sort = "No ASC";
-            this.dtLineMappingBalancing_DetailCopy = sortDataView.ToTableKeepRowState();
+            this.dtLineMappingBalancing_Detail = dtLineMappingBalancing_Detail;
+            this.dtLineMappingBalancing_DetailCopy = dtLineMappingBalancing_Detail.AsEnumerable().Where(s => s["PPA"].ToString() != "C").OrderBy(s => s["No"]).CopyToDataTable();
 
             if (!this.dtLineMappingBalancing_DetailCopy.Columns.Contains("UpdSewerDiffPercentage"))
             {
@@ -437,10 +434,12 @@ namespace Sci.Production.IE
                 needCancelCheck["Selected"] = false;
             }
 
-            this.dtLineMappingBalancing_Detail = this.dtLineMappingBalancing_DetailCopy.Copy();
+            foreach (var item in this.dtLineMappingBalancing_Detail.AsEnumerable().Where(s => s["PPA"].ToString() != "C").ToList())
+            {
+                this.dtLineMappingBalancing_Detail.Rows.Remove(item);
+            }
 
-            this.dtLineMappingBalancing_Detail.Columns.Remove("UpdDivSewer");
-            this.dtLineMappingBalancing_Detail.Columns.Remove("UpdSewerDiffPercentage");
+            this.dtLineMappingBalancing_DetailCopy.MergeTo(ref this.dtLineMappingBalancing_Detail);
 
             this.DialogResult = DialogResult.OK;
         }

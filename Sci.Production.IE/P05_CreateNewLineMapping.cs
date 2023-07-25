@@ -54,15 +54,15 @@ namespace Sci.Production.IE
             this.txtStyleCopy.TarSeason = this.txtSeasonCopy;
             this.txtStyleCopy.SeasonObjectName = this.txtSeasonCopy;
 
-#if DEBUG
-            this.txtFactoryCreate.Text = "GMM";
-            this.txtBrandCreate.Text = "U.ARMOUR";
-            this.txtSeasonCreate.Text = "23SS";
-            this.txtStyleLocationCreate.Text = "B";
-            this.txtStyleCreate.Text = "1375845";
-            this.numSewer.Text = "26";
-            this.numHours.Text = "8";
-#endif
+//#if DEBUG
+//            this.txtFactoryCreate.Text = "GMM";
+//            this.txtBrandCreate.Text = "U.ARMOUR";
+//            this.txtSeasonCreate.Text = "23SS";
+//            this.txtStyleLocationCreate.Text = "B";
+//            this.txtStyleCreate.Text = "1375845";
+//            this.numSewer.Text = "26";
+//            this.numHours.Text = "8";
+//#endif
         }
 
         private void TxtStyleLocationCreate_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
@@ -78,14 +78,8 @@ namespace Sci.Production.IE
         private void PopuStyleLocation(string styleID, string brand, string season, Win.UI.TextBox tarLocation)
         {
             string styleUkey = MyUtility.GetValue.Lookup($"select Ukey from Style with (nolock) where ID = '{styleID}' and BrandID = '{brand}' and SeasonID = '{season}'");
-            if (MyUtility.Check.Empty(styleUkey))
-            {
-                MyUtility.Msg.WarningBox("Style not exists");
-                tarLocation.Text = string.Empty;
-                return;
-            }
 
-            SelectItem selectItem = new SelectItem($"select Location from Style_Location WITH (NOLOCK) where StyleUkey = {styleUkey}", null, null);
+            SelectItem selectItem = new SelectItem($"select Location from Style_Location WITH (NOLOCK) where StyleUkey = '{styleUkey}'", null, null);
             DialogResult dialogResult = selectItem.ShowDialog();
 
             if (dialogResult != DialogResult.OK)
@@ -94,41 +88,6 @@ namespace Sci.Production.IE
             }
 
             tarLocation.Text = selectItem.GetSelectedString();
-        }
-
-        private bool IsStyleLocationExists(string styleID, string brand, string season, string location)
-        {
-            return MyUtility.Check.Seek($@"
-select 1
-from Style_Location sl WITH (NOLOCK)
-where   Location = '{location}' and
-        exists( select 1 from Style s with (nolock)
-                where   s.ID = '{styleID}' and
-                        s.BrandID = '{brand}' and
-                        s.SeasonID = '{season}' and
-                        s.Ukey = sl.StyleUkey
-            )
-");
-        }
-
-        private void TxtStyleLocationCreate_Validating(object sender, CancelEventArgs e)
-        {
-            if (!this.IsStyleLocationExists(this.txtStyleCreate.Text, this.txtBrandCreate.Text, this.txtSeasonCreate.Text, this.txtStyleLocationCreate.Text))
-            {
-                this.txtStyleLocationCreate.Text = string.Empty;
-                MyUtility.Msg.WarningBox("[*Create Auto Line Mapping]Combo Type not exists");
-                return;
-            }
-        }
-
-        private void TxtStyleLocationCopy_Validating(object sender, CancelEventArgs e)
-        {
-            if (!this.IsStyleLocationExists(this.txtStyleCopy.Text, this.txtBrandCopy.Text, this.txtSeasonCopy.Text, this.txtStyleLocationCopy.Text))
-            {
-                this.txtStyleLocationCopy.Text = string.Empty;
-                MyUtility.Msg.WarningBox("[*Copy Other Line Mapping]Combo Type not exists");
-                return;
-            }
         }
 
         private void BtnCreateAutoLineMapping_Click(object sender, EventArgs e)
