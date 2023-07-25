@@ -1,7 +1,6 @@
 ﻿using Ict;
 using Ict.Win;
 using Sci.Data;
-using Sci.Production.Prg;
 using Sci.Production.Prg.Entity;
 using System;
 using System.Collections.Generic;
@@ -322,8 +321,29 @@ drop table #tmpTransferExport
                 }
                 else
                 {
-                    dr["ID"] = this.mainTransferOutID;
-                    this.mainDetail.ImportRowAdded(dr);
+                    DataRow newRow = this.mainDetail.NewRow();
+                    newRow["ID"] = this.mainTransferOutID;
+                    newRow["FtyInventoryUkey"] = dr["FtyInventoryUkey"];
+                    newRow["MDivisionID"] = this.M;
+                    newRow["POID"] = dr["InventoryPOID"];
+                    newRow["Seq1"] = dr["InventorySeq1"];
+                    newRow["Seq2"] = dr["InventorySeq2"];
+                    newRow["seq"] = dr["FromSEQ"];
+                    newRow["ToPOID"] = dr["PoID"];
+                    newRow["ToSeq1"] = dr["Seq1"];
+                    newRow["ToSeq2"] = dr["Seq2"];
+                    newRow["ToSeq"] = dr["ToSEQ"];
+                    newRow["Roll"] = dr["Roll"];
+                    newRow["Dyelot"] = dr["Dyelot"];
+                    newRow["StockType"] = dr["StockType"];
+                    newRow["Qty"] = dr["TransferQty"];
+                    newRow["TransferExportID"] = dr["TransferExportID"];
+                    newRow["TransferExport_DetailUkey"] = dr["TransferExport_DetailUkey"];
+                    newRow["Location"] = dr["Location"];
+                    newRow["StockUnit"] = dr["StockUnit"];
+                    newRow["Description"] = dr["Description"];
+                    newRow["Tone"] = dr["Tone"];
+                    this.mainDetail.Rows.Add(newRow);
                 }
             }
 
