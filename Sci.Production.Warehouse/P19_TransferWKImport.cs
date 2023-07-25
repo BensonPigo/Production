@@ -171,7 +171,8 @@ select  [Selected] = 0,
         [TransferExportID] = te.ID,
         [TransferExport_DetailUkey] = te.Ukey,
         fi.Tone,
-        MDivisionID
+        MDivisionID,
+        ID = ''
 from  #tmpTransferExport te with (nolock)
 inner join FtyInventory fi on te.InventoryPOID = fi.POID and
                               te.InventorySeq1 = fi.Seq1 and
@@ -201,7 +202,8 @@ select  [Selected] = 0,
         [TransferExportID] = te.ID,
         [TransferExport_DetailUkey] = te.Ukey,
         Tone = '',
-        MDivisionID
+        MDivisionID,
+        ID = ''
 from    #tmpTransferExport te with (nolock)
 
 drop table #tmpTransferExport
