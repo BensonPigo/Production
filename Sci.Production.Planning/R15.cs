@@ -233,7 +233,7 @@ namespace Sci.Production.Planning
                     {
                         for (int i = 1; i < this.subprocessInoutColumnCount; i++)
                         {
-                            Microsoft.Office.Interop.Excel.Range range = objSheets.get_Range("AW1").EntireColumn;
+                            Microsoft.Office.Interop.Excel.Range range = objSheets.get_Range("AY1").EntireColumn;
                             range.EntireColumn.Insert(
                                 Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftToRight,
                                 Microsoft.Office.Interop.Excel.XlInsertFormatOrigin.xlFormatFromLeftOrAbove);
@@ -242,7 +242,7 @@ namespace Sci.Production.Planning
 
                     for (int i = 0; i < this.subprocessInoutColumnCount; i++)
                     {
-                        objSheets.Cells[1, 48 + i] = this.printData.Columns[47 + i].ColumnName;
+                        objSheets.Cells[1, 50 + i] = this.printData.Columns[49 + i].ColumnName;
                     }
                 }
 
@@ -296,7 +296,7 @@ namespace Sci.Production.Planning
                     {
                         for (int i = 1; i < this.subprocessInoutColumnCount; i++)
                         {
-                            Microsoft.Office.Interop.Excel.Range range = objSheets.get_Range("AX1").EntireColumn;
+                            Microsoft.Office.Interop.Excel.Range range = objSheets.get_Range("AZ1").EntireColumn;
                             range.EntireColumn.Insert(
                                 Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftToRight,
                                 Microsoft.Office.Interop.Excel.XlInsertFormatOrigin.xlFormatFromLeftOrAbove);
@@ -305,7 +305,7 @@ namespace Sci.Production.Planning
 
                     for (int i = 0; i < this.subprocessInoutColumnCount; i++)
                     {
-                        objSheets.Cells[1, 49 + i] = this.printData.Columns[48 + i].ColumnName;
+                        objSheets.Cells[1, 51 + i] = this.printData.Columns[50 + i].ColumnName;
                     }
                 }
 
@@ -357,7 +357,7 @@ namespace Sci.Production.Planning
                     {
                         if (this.subprocessInoutColumnCount > 1)
                         {
-                            Microsoft.Office.Interop.Excel.Range range = objSheets.get_Range("AX1").EntireColumn;
+                            Microsoft.Office.Interop.Excel.Range range = objSheets.get_Range("AZ1").EntireColumn;
                             range.EntireColumn.Insert(
                                 Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftToRight,
                                 Microsoft.Office.Interop.Excel.XlInsertFormatOrigin.xlFormatFromLeftOrAbove);
@@ -366,7 +366,7 @@ namespace Sci.Production.Planning
 
                     for (int i = 0; i < this.subprocessInoutColumnCount; i++)
                     {
-                        objSheets.Cells[1, 49 + i] = this.printData.Columns[48 + i].ColumnName;
+                        objSheets.Cells[1, 51 + i] = this.printData.Columns[50 + i].ColumnName;
                     }
                 }
 
