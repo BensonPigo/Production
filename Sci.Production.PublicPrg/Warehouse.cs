@@ -4267,7 +4267,6 @@ outer apply(
 	and t.TransactionID = sd.Id
 )fbOri";
                     }
-                    
                     break;
             }
 
@@ -4579,7 +4578,7 @@ and sd.Ukey in ({ukeys})
                                     item.To_NewBarcode = newBarcodeList[indexNewBarcode];
                                     indexNewBarcode++;
 
-                                    UpdateSameFtyBarcode(dt, item, "Receiving", "Barcode", isLocalOrder: isLocalOrder) ;
+                                    UpdateSameFtyBarcode(dt, item, "Receiving", "Barcode", isLocalOrder: isLocalOrder);
                                 }
                             }
                             else
@@ -4815,7 +4814,15 @@ and sd.Ukey in ({ukeys})
                         foreach (var item in wHBarcodeTransaction)
                         {
                             DataRow dr = dt.Select($"rn = {item.Rn}")[0];
-                            item.FromFabric_FtyInventoryUkey = MyUtility.Convert.GetString(dr["Fabric_FtyInventoryUkey"]);
+                            if (isLocalOrder == true)
+                            {
+                                item.FromFabric_LocalOrderInvnetoryUkey = MyUtility.Convert.GetString(dr["Fabric_FtyInventoryUkey"]);
+                            }
+                            else
+                            {
+                                item.FromFabric_FtyInventoryUkey = MyUtility.Convert.GetString(dr["Fabric_FtyInventoryUkey"]);
+                            }
+
                             string barcode = MyUtility.Convert.GetString(dr["Barcode"]);
                             string barcodeSeq = MyUtility.Convert.GetString(dr["barcodeSeq"]);
 
@@ -4988,12 +4995,27 @@ and w.Action = '{item.Action}'";
 
             if (wHBarcodeTransaction.Where(w => w.UpdatethisItem).Any())
             {
-                string sqlUpdateReceiving_Detail = $@"
+                string sqlUpdateReceiving_Detail = string.Empty;
+                if (isLocalOrder == true)
+                {
+                    sqlUpdateReceiving_Detail = $@"
+    update rd 
+    set rd.Barcode = t.To_NewBarcode
+    from {detailTableName} rd 
+    inner join #tmp t on rd.Ukey = t.TransactionUkey
+    where rd.Barcode = ''
+";
+                }
+                else
+                {
+                    sqlUpdateReceiving_Detail = $@"
     update rd set rd.MINDQRCode = t.To_NewBarcode
     from {detailTableName} rd 
     inner join #tmp t on rd.Ukey = t.TransactionUkey
     where rd.MINDQRCode = ''
 ";
+                }
+
                 if (proxyPMS == null)
                 {
                     DBProxy._OpenConnection("Production", out sqlConnection); // for MES
@@ -5005,7 +5027,8 @@ and w.Action = '{item.Action}'";
                         }
 
                         if (detailTableName == WHTableName.Receiving_Detail ||
-                            detailTableName == WHTableName.TransferIn_Detail)
+                            detailTableName == WHTableName.TransferIn_Detail ||
+                            detailTableName == WHTableName.LocalOrderReceiving_Detail)
                         {
                             result = DBProxy.Current.ExecuteByConn(sqlConnection, sqlUpdateReceiving_Detail);
                             if (!result)
@@ -5034,7 +5057,6 @@ and w.Action = '{item.Action}'";
                 }
             }
             #endregion
-           
 
             #region 更新 Inventory BarCode
             var data_FtyBarcode = dt.AsEnumerable().
@@ -5203,6 +5225,8 @@ alter table #tmp alter column [To_OldBarcode] [varchar](255)
 alter table #tmp alter column [To_OldBarcodeSeq] [varchar](10)
 alter table #tmp alter column [To_NewBarcode] [varchar](255)
 alter table #tmp alter column [To_NewBarcodeSeq] [varchar](10)
+alter table #tmp alter column [FromFabric_LocalOrderInvnetoryUkey] [bigint]
+alter table #tmp alter column [ToFabric_LocalOrderInventoryUkey] [bigint]
 
 merge WHBarcodeTransaction as t
 using #tmp as s 
@@ -5214,11 +5238,13 @@ when matched then
     update set
 		[CommitTime] = getdate()
 		,[FromFabric_FtyInventoryUkey]   = s.[FromFabric_FtyInventoryUkey]
+        ,[FromFabric_LocalOrderInvnetoryUkey] = s.[FromFabric_LocalOrderInvnetoryUkey]
 		,[From_OldBarcode]			   = s.[From_OldBarcode]
 		,[From_OldBarcodeSeq]		   = s.[From_OldBarcodeSeq]
 		,[From_NewBarcode]			   = s.[From_NewBarcode]
 		,[From_NewBarcodeSeq]		   = s.[From_NewBarcodeSeq]
 		,[ToFabric_FtyInventoryUkey]   = s.[ToFabric_FtyInventoryUkey]
+        ,[ToFabric_LocalOrderInventoryUkey] = s.[ToFabric_LocalOrderInventoryUkey]
 		,[To_OldBarcode]			   = s.[To_OldBarcode]
 		,[To_OldBarcodeSeq]			   = s.[To_OldBarcodeSeq]
 		,[To_NewBarcode]			   = s.[To_NewBarcode]
@@ -5240,6 +5266,8 @@ when not matched then
 		,[To_OldBarcodeSeq]
 		,[To_NewBarcode]
 		,[To_NewBarcodeSeq]
+        ,[FromFabric_LocalOrderInvnetoryUkey]
+        ,[ToFabric_LocalOrderInventoryUkey]
     )
 	values
 		(s.[Function]
@@ -5257,6 +5285,8 @@ when not matched then
 		,s.[To_OldBarcodeSeq]
 		,s.[To_NewBarcode]
 		,s.[To_NewBarcodeSeq]
+        ,s.[FromFabric_LocalOrderInvnetoryUkey]
+        ,s.[ToFabric_LocalOrderInventoryUkey]
     );
 ";
         }
