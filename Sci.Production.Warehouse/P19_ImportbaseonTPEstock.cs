@@ -19,13 +19,15 @@ namespace Sci.Production.Warehouse
         private DataTable detail;
         private DataTable masterdt;
         private DataTable detaildt;
+        private string M;
 
         /// <inheritdoc/>
-        public P19_ImportbaseonTPEstock(DataRow master, DataTable detail)
+        public P19_ImportbaseonTPEstock(DataRow master, DataTable detail, string mdivisionid)
         {
             this.InitializeComponent();
             this.master = master;
             this.detail = detail;
+            this.M = mdivisionid;
         }
 
         /// <inheritdoc/>
@@ -248,7 +250,7 @@ select  selected = 0
                 inner join Receiving_Detail rd WITH (NOLOCK) on r.id = rd.id
                 where rd.PoId = fi.POID and rd.Seq1 = fi.SEQ1 and rd.Seq2 = fi.SEQ2 and rd.Roll = fi.Roll and rd.Dyelot = fi.Dyelot
 				FOR XML PATH('')),1,1,'') 
-		, MDivisionID = 'km1'
+		, MDivisionID = '{this.M}'
         , '' id
         , ftyinventoryukey = FI.ukey
         , fi.POID 
@@ -353,6 +355,7 @@ group by selected, ToPOID, ToSeq1, ToSeq2, ToFactory, InventoryPOID, Inventoryse
 order by ToPOID, ToSeq1, ToSeq2;
 
 select  *
+    , TransferExport_DetailUkey = cast(0 as bigint)
 from    #tmpDetail
 where Lock = 0
 and StockBalance > 0
@@ -405,38 +408,39 @@ drop table #tmp, #tmpDetailResult, #tmpDetail
                 return;
             }
 
-            DataRow[] drs = this.detaildt.Select("selected = 1");
-            if (drs.Length == 0)
+            if (this.detaildt.Select("selected = 1").Length == 0)
             {
-                MyUtility.Msg.WarningBox("Please select row(s) first!");
+                MyUtility.Msg.WarningBox("Please select data first");
                 return;
             }
 
-            drs = this.detaildt.Select("qty = 0 and Selected = 1");
-            if (drs.Length > 0)
+            if (this.detaildt.Select("qty = 0 and Selected = 1").Length > 0)
             {
-                MyUtility.Msg.WarningBox("TransferQty of selected row can't be zero!", "Warning");
+                MyUtility.Msg.WarningBox("TransferQty of selected row can't be zero!");
                 return;
             }
 
             foreach (DataRow dr in this.detaildt.Select("selected = 1"))
             {
-                DataRow[] findrow = this.detail.AsEnumerable()
+                // 以 GridUniqueKey 來確認不能有重複
+                var existsRows = this.detail.AsEnumerable()
                     .Where(w => w.RowState != DataRowState.Deleted
-                        && w["ExportID"].EqualString(dr["ExportID"].ToString())
+                        && w["mdivisionid"].EqualString(dr["mdivisionid"].ToString())
                         && w["poid"].EqualString(dr["poid"].ToString())
                         && w["seq1"].EqualString(dr["seq1"])
                         && w["seq2"].EqualString(dr["seq2"].ToString())
+                        && w["roll"].EqualString(dr["roll"])
+                        && w["dyelot"].EqualString(dr["dyelot"])
+                        && w["stockType"].EqualString(dr["stockType"])
                         && w["ToPOID"].EqualString(dr["ToPOID"].ToString())
                         && w["Toseq1"].EqualString(dr["Toseq1"])
                         && w["Toseq2"].EqualString(dr["Toseq2"].ToString())
-                        && w["roll"].EqualString(dr["roll"])
-                        && w["dyelot"].EqualString(dr["dyelot"])
-                        && w["stockType"].EqualString(dr["stockType"])).ToArray();
+                        && (long)w["TransferExport_DetailUkey"] == (long)dr["TransferExport_DetailUkey"]);
 
-                if (findrow.Length > 0)
+                if (existsRows.Any())
                 {
-                    findrow[0]["qty"] = dr["qty"];
+                    existsRows.First()["qty"] = dr["qty"];
+                    existsRows.First()["ExportID"] = dr["ExportID"];
                 }
                 else
                 {

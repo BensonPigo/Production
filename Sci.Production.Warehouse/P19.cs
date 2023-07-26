@@ -490,7 +490,7 @@ having f.balanceQty - sum(d.Qty) < 0
 
             #endregion 檢查負數庫存
 
-            #region -- 更新庫存數量 MDivisionPoDetail --
+            #region 更新庫存總表 MDivisionPoDetail ( Pkey : poid,seq1,seq2 )
             var bs1 = (from b in ((DataTable)this.detailgridbs.DataSource).AsEnumerable()
                        .Where(s => !MyUtility.Check.Empty(s["qty"]))
                        group b by new
@@ -498,7 +498,6 @@ having f.balanceQty - sum(d.Qty) < 0
                            poid = b.Field<string>("poid").Trim(),
                            seq1 = b.Field<string>("seq1").Trim(),
                            seq2 = b.Field<string>("seq2").Trim(),
-                           stocktype = b.Field<string>("stocktype").Trim(),
                        }
                         into m
                        select new
@@ -506,17 +505,15 @@ having f.balanceQty - sum(d.Qty) < 0
                            poid = m.First().Field<string>("poid"),
                            Seq1 = m.First().Field<string>("seq1"),
                            Seq2 = m.First().Field<string>("seq2"),
-                           Stocktype = m.First().Field<string>("stocktype"),
                            Qty = m.Sum(w => w.Field<decimal>("qty")),
                        }).ToList();
             var bs1I = (from b in ((DataTable)this.detailgridbs.DataSource).AsEnumerable()
-                        .Where(w => w.Field<string>("stocktype").Trim() == "I" && !MyUtility.Check.Empty(w["qty"]))
+                        .Where(w => w.Field<string>("stocktype").Trim() == "I")
                         group b by new
                         {
                             poid = b.Field<string>("poid").Trim(),
                             seq1 = b.Field<string>("seq1").Trim(),
                             seq2 = b.Field<string>("seq2").Trim(),
-                            stocktype = b.Field<string>("stocktype").Trim(),
                         }
                         into m
                         select new Prgs_POSuppDetailData
@@ -524,20 +521,18 @@ having f.balanceQty - sum(d.Qty) < 0
                             Poid = m.First().Field<string>("poid"),
                             Seq1 = m.First().Field<string>("seq1"),
                             Seq2 = m.First().Field<string>("seq2"),
-                            Stocktype = m.First().Field<string>("stocktype"),
                             Qty = -m.Sum(w => w.Field<decimal>("qty")),
                         }).ToList();
             #endregion
 
             #region 更新庫存數量  ftyinventory
             string sqlupd2_FIO = Prgs.UpdateFtyInventory_IO(4, null, true);
-            #endregion 更新庫存數量  ftyinventory
-
             DataTable dtDetailExcludeQtyZero = new DataTable();
             if (this.DetailDatas.Any(s => !MyUtility.Check.Empty(s["qty"])))
             {
                 dtDetailExcludeQtyZero = this.DetailDatas.Where(s => !MyUtility.Check.Empty(s["qty"])).CopyToDataTable();
             }
+            #endregion 更新庫存數量  ftyinventory
 
             DataTable dtTransferExportDetail = new DataTable();
             string sqlInsertTransferExport_Detail_Carton = $@"
@@ -619,12 +614,9 @@ outer apply (
 
                     if (dtDetailExcludeQtyZero.Rows.Count > 0)
                     {
-                        if (!(result = MyUtility.Tool.ProcessWithDatatable(
-                            dtDetailExcludeQtyZero, string.Empty, sqlupd2_FIO, out resulttb, "#TmpSource")))
+                        if (!(result = MyUtility.Tool.ProcessWithDatatable(dtDetailExcludeQtyZero, string.Empty, sqlupd2_FIO, out resulttb, "#TmpSource")))
                         {
-                            transactionscope.Dispose();
-                            this.ShowErr(result);
-                            return;
+                            throw result.GetException();
                         }
                     }
 
@@ -642,12 +634,9 @@ outer apply (
                     // Barcode 產生後再寫入 TransferExport_Detail_Carton
                     if (dtTransferExportDetail.Rows.Count > 0)
                     {
-                        if (!(result = MyUtility.Tool.ProcessWithDatatable(
-                            dtTransferExportDetail, string.Empty, sqlInsertTransferExport_Detail_Carton, out resulttb)))
+                        if (!(result = MyUtility.Tool.ProcessWithDatatable(dtTransferExportDetail, string.Empty, sqlInsertTransferExport_Detail_Carton, out resulttb)))
                         {
-                            transactionscope.Dispose();
-                            this.ShowErr(result);
-                            return;
+                            throw result.GetException();
                         }
                     }
 
@@ -786,7 +775,7 @@ having f.balanceQty + sum(d.Qty) < 0
             }
             #endregion
 
-            #region -- 更新庫存數量 MDivisionPoDetail --
+            #region 更新庫存總表 MDivisionPoDetail ( Pkey : poid,seq1,seq2 )
             var bs1 = (from b in ((DataTable)this.detailgridbs.DataSource).AsEnumerable()
                        .Where(s => !MyUtility.Check.Empty(s["qty"]))
                        group b by new
@@ -794,7 +783,6 @@ having f.balanceQty + sum(d.Qty) < 0
                            poid = b.Field<string>("poid").Trim(),
                            seq1 = b.Field<string>("seq1").Trim(),
                            seq2 = b.Field<string>("seq2").Trim(),
-                           stocktype = b.Field<string>("stocktype").Trim(),
                        }
                         into m
                        select new
@@ -802,17 +790,15 @@ having f.balanceQty + sum(d.Qty) < 0
                            poid = m.First().Field<string>("poid"),
                            Seq1 = m.First().Field<string>("seq1"),
                            Seq2 = m.First().Field<string>("seq2"),
-                           Stocktype = m.First().Field<string>("stocktype"),
                            Qty = -m.Sum(w => w.Field<decimal>("qty")),
                        }).ToList();
             var bs1I = (from b in ((DataTable)this.detailgridbs.DataSource).AsEnumerable()
-                        .Where(w => w.Field<string>("stocktype").Trim() == "I" && !MyUtility.Check.Empty(w["qty"]))
+                        .Where(w => w.Field<string>("stocktype").Trim() == "I")
                         group b by new
                         {
                             poid = b.Field<string>("poid").Trim(),
                             seq1 = b.Field<string>("seq1").Trim(),
                             seq2 = b.Field<string>("seq2").Trim(),
-                            stocktype = b.Field<string>("stocktype").Trim(),
                         }
                         into m
                         select new Prgs_POSuppDetailData
@@ -820,7 +806,6 @@ having f.balanceQty + sum(d.Qty) < 0
                             Poid = m.First().Field<string>("poid"),
                             Seq1 = m.First().Field<string>("seq1"),
                             Seq2 = m.First().Field<string>("seq2"),
-                            Stocktype = m.First().Field<string>("stocktype"),
                             Qty = m.Sum(w => w.Field<decimal>("qty")),
                         }).ToList();
             #endregion
@@ -953,21 +938,13 @@ where   exists(select 1 from #tmp t where
         {
             string masterID = (e.Master == null) ? string.Empty : e.Master["ID"].ToString();
             this.DetailSelectCommand = $@"
-select a.id,a.PoId,a.Seq1,a.Seq2,concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2) as seq
-,a.Roll
-,a.Dyelot
-,dbo.getMtlDesc(a.poid,a.seq1,a.seq2,2,0) as [Description]
+select a.*
+,[SEQ] = concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2)
+,[Description] = dbo.getMtlDesc(a.poid,a.seq1,a.seq2,2,0)
+,[ToSeq] = a.ToSeq1 +' ' + a.ToSeq2
 ,psd.StockUnit
-,a.Qty
-,a.StockType
-,a.ukey
 ,dbo.Getlocation(fi.ukey) location
 ,[ContainerCode] = FI.ContainerCode
-,a.ftyinventoryukey
-,a.ToPOID
-,a.ToSeq1
-,a.ToSeq2
-,[ToSeq] = a.ToSeq1 +' ' + a.ToSeq2
 ,wk.ExportId
 , psd.Refno
 , Color = IIF(Fabric.MtlTypeID = 'EMB THREAD' OR Fabric.MtlTypeID = 'SP THREAD' OR Fabric.MtlTypeID = 'THREAD' 
@@ -975,11 +952,8 @@ select a.id,a.PoId,a.Seq1,a.Seq2,concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2) as se
 										,dbo.GetColorMultipleID(o.BrandID, isnull(psdsC.SpecValue, ''))
 									)
 ,SizeSpec= isnull(psdsS.SpecValue, '')
-,a.TransferExportID
-,a.TransferExport_DetailUkey
 ,fi.Tone
 ,[StyleID] = o.StyleID
-,a.ActualWeight
 ,[RecvKG] = case when rd.ActualQty is not null 
 			then case when rd.ActualQty <> a.Qty
 					then ''
@@ -1059,8 +1033,7 @@ Where a.id = '{masterID}'
 
         private void BtnImport_Click(object sender, EventArgs e)
         {
-            var frm = new P19_Import(this.CurrentMaintain, (DataTable)this.detailgridbs.DataSource);
-            frm.ShowDialog(this);
+            new P19_Import(this.CurrentMaintain, (DataTable)this.detailgridbs.DataSource, this.CurrentMaintain["MDivisionID"].ToString()).ShowDialog();
             this.RenewData();
         }
 
@@ -1138,8 +1111,7 @@ Where a.id = '{masterID}'
 
         private void BtnImportonTPE_Click(object sender, EventArgs e)
         {
-            var frm = new P19_ImportbaseonTPEstock(this.CurrentMaintain, (DataTable)this.detailgridbs.DataSource);
-            frm.ShowDialog(this);
+            new P19_ImportbaseonTPEstock(this.CurrentMaintain, (DataTable)this.detailgridbs.DataSource, this.CurrentMaintain["MDivisionID"].ToString()).ShowDialog();
             this.RenewData();
         }
 
@@ -1151,6 +1123,7 @@ Where a.id = '{masterID}'
         private void BtnTransferWK_Click(object sender, EventArgs e)
         {
             new P19_TransferWKImport(this.CurrentMaintain["ID"].ToString(), (DataTable)this.detailgridbs.DataSource, this.CurrentMaintain["MDivisionID"].ToString()).ShowDialog();
+            this.RenewData();
         }
 
         private void BtnTKSeparateHistory_Click(object sender, EventArgs e)

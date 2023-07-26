@@ -4,13 +4,9 @@ using Sci.Data;
 using Sci.Production.Prg.Entity;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Data.SqlClient;
-using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Sci.Production.Warehouse
@@ -24,21 +20,16 @@ namespace Sci.Production.Warehouse
         private DataTable mainDetail;
         private string M;
 
-        /// <summary>
-        /// P19_TransferWKImport
-        /// </summary>
-        /// <param name="transferOutID">transferOutID</param>
-        /// <param name="mainDetail">mainDetail</param>
-        public P19_TransferWKImport(string transferOutID, DataTable mainDetail, string M)
+        /// <inheritdoc/>
+        public P19_TransferWKImport(string transferOutID, DataTable mainDetail, string mdivisionid)
         {
             this.InitializeComponent();
             this.mainTransferOutID = transferOutID;
             MyUtility.Tool.SetupCombox(this.comboFabricType, 2, 1, ",,F,Fabric,A,Accessory");
             MyUtility.Tool.SetupCombox(this.cbStockType, 2, 1, ",,B,Bulk,I,Inventory");
             this.EditMode = true;
-            this.gridStock.DataSource = this.bindingGridStock;
             this.mainDetail = mainDetail;
-            this.M = M;
+            this.M = mdivisionid;
         }
 
         /// <inheritdoc/>
@@ -56,7 +47,7 @@ namespace Sci.Production.Warehouse
                     return;
                 }
 
-                this.gridStock.GetDataRow(e.RowIndex)["select"] = e.FormattedValue;
+                this.gridStock.GetDataRow(e.RowIndex)["Selected"] = e.FormattedValue;
                 this.UpdateExportQty();
             };
 
@@ -90,7 +81,7 @@ namespace Sci.Production.Warehouse
                 .Numeric("ExportQty", header: "Export Qty", decimal_places: 2, width: Widths.AnsiChars(5), iseditingreadonly: true);
 
             this.Helper.Controls.Grid.Generator(this.gridStock)
-                .CheckBox("select", trueValue: 1, falseValue: 0, iseditable: true, settings: settingSelect)
+                .CheckBox("Selected", trueValue: 1, falseValue: 0, iseditable: true, settings: settingSelect)
                 .Text("Roll", header: "Roll", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("StockTypeDesc", header: "Stock Type", width: Widths.AnsiChars(8), iseditingreadonly: true)
@@ -134,7 +125,8 @@ select  ted.InventoryPOID,
         ted.Seq2,
         te.ID,
         ted.Ukey,
-        [Description] = dbo.getMtlDesc(ted.InventoryPOID, ted.InventorySeq1, ted.InventorySeq2, 2, 0)
+        [Description] = dbo.getMtlDesc(ted.InventoryPOID, ted.InventorySeq1, ted.InventorySeq2, 2, 0),
+		MDivisionID = '{this.M}'
 into #tmpTransferExport
 from    TransferExport te with (nolock)
 inner   join TransferExport_Detail ted with (nolock) on te.ID = ted.ID
@@ -155,7 +147,7 @@ where   te.ID = @ID and
 
 select * from #tmpTransferExport
 
-select  [select] = 0,
+select  [Selected] = 0,
         [Roll] = fi.Roll,
         [Dyelot] = fi.Dyelot,
         [StockTypeDesc] = iif(fi.StockType = 'I', 'Inventory', 'Bulk'),
@@ -177,14 +169,16 @@ select  [select] = 0,
         te.Description,
         [TransferExportID] = te.ID,
         [TransferExport_DetailUkey] = te.Ukey,
-        fi.Tone
+        fi.Tone,
+        MDivisionID,
+        ID = ''
 from  #tmpTransferExport te with (nolock)
 inner join FtyInventory fi on te.InventoryPOID = fi.POID and
                               te.InventorySeq1 = fi.Seq1 and
                               te.InventorySeq2 = fi.Seq2 and
                               (fi.InQty - fi.OutQty + fi.AdjustQty - ReturnQty) > 0
 union all
-select  [select] = 0,
+select  [Selected] = 0,
         [Roll] = '',
         [Dyelot] = '',
         [StockTypeDesc] = '',
@@ -206,7 +200,9 @@ select  [select] = 0,
         te.Description,
         [TransferExportID] = te.ID,
         [TransferExport_DetailUkey] = te.Ukey,
-        Tone = ''
+        Tone = '',
+        MDivisionID,
+        ID = ''
 from    #tmpTransferExport te with (nolock)
 
 drop table #tmpTransferExport
@@ -270,7 +266,7 @@ drop table #tmpTransferExport
             DataTable dtStock = (DataTable)this.bindingGridStock.DataSource;
 
             var checkedStock = dtStock.AsEnumerable()
-                .Where(s => MyUtility.Convert.GetLong(s["TransferExportDetailUkey"]) == transferExportDetailUkey && (int)s["select"] == 1);
+                .Where(s => MyUtility.Convert.GetLong(s["TransferExportDetailUkey"]) == transferExportDetailUkey && (int)s["Selected"] == 1);
 
             if (checkedStock.Any())
             {
@@ -287,60 +283,68 @@ drop table #tmpTransferExport
 
         private void BtnImport_Click(object sender, EventArgs e)
         {
-            var needImport = ((DataTable)this.bindingGridStock.DataSource).AsEnumerable().Where(s => (int)s["select"] == 1);
+            this.gridStock.ValidateControl();
+            if (this.bindingGridStock.DataSource == null)
+            {
+                return;
+            }
 
-            if (needImport.Count() == 0)
+            DataTable dtGridBS = (DataTable)this.bindingGridStock.DataSource;
+            DataRow[] importRows = dtGridBS.Select("selected = 1");
+            if (importRows.Length == 0)
             {
                 MyUtility.Msg.WarningBox("Please select data first");
                 return;
             }
 
-            foreach (DataRow importItem in needImport)
+            // 這支不用檢查Qty=0是因為這是台北端下的指令, 但工廠端有可能沒有
+            foreach (DataRow dr in importRows)
             {
+                // 以 GridUniqueKey 來確認不能有重複
                 var existsRows = this.mainDetail.AsEnumerable()
-                    .Where(s => s.RowState != DataRowState.Deleted &&
-                    s["TransferExport_DetailUkey"].ToString() == importItem["TransferExport_DetailUkey"].ToString() &&
-                    s["poid"].EqualString(importItem["InventoryPOID"].ToString()) &&
-                    s["seq1"].EqualString(importItem["InventorySeq1"]) &&
-                    s["seq2"].EqualString(importItem["InventorySeq2"].ToString()) &&
-                    s["ToPOID"].EqualString(importItem["PoID"].ToString()) &&
-                    s["Toseq1"].EqualString(importItem["Seq1"]) &&
-                    s["Toseq2"].EqualString(importItem["Seq2"].ToString()) &&
-                    s["roll"].EqualString(importItem["roll"]) &&
-                    s["dyelot"].EqualString(importItem["dyelot"]) &&
-                    s["stockType"].EqualString(importItem["stockType"])
-                    );
+                    .Where(w => w.RowState != DataRowState.Deleted
+                        && w["mdivisionid"].EqualString(dr["mdivisionid"].ToString())
+                        && w["poid"].EqualString(dr["Inventorypoid"].ToString())
+                        && w["seq1"].EqualString(dr["Inventoryseq1"])
+                        && w["seq2"].EqualString(dr["Inventoryseq2"].ToString())
+                        && w["roll"].EqualString(dr["roll"])
+                        && w["dyelot"].EqualString(dr["dyelot"])
+                        && w["stockType"].EqualString(dr["stockType"])
+                        && w["ToPOID"].EqualString(dr["PoID"].ToString())
+                        && w["Toseq1"].EqualString(dr["seq1"])
+                        && w["Toseq2"].EqualString(dr["seq2"].ToString())
+                        && (long)w["TransferExport_DetailUkey"] == (long)dr["TransferExport_DetailUkey"]);
 
                 if (existsRows.Any())
                 {
-                    existsRows.First()["Qty"] = importItem["TransferQty"];
-                    continue;
+                    existsRows.First()["Qty"] = dr["TransferQty"];
                 }
-
-                DataRow newRow = this.mainDetail.NewRow();
-
-                newRow["ID"] = this.mainTransferOutID;
-                newRow["FtyInventoryUkey"] = importItem["FtyInventoryUkey"];
-                newRow["MDivisionID"] = this.M;
-                newRow["POID"] = importItem["InventoryPOID"];
-                newRow["Seq1"] = importItem["InventorySeq1"];
-                newRow["Seq2"] = importItem["InventorySeq2"];
-                newRow["seq"] = importItem["FromSEQ"];
-                newRow["ToPOID"] = importItem["PoID"];
-                newRow["ToSeq1"] = importItem["Seq1"];
-                newRow["ToSeq2"] = importItem["Seq2"];
-                newRow["ToSeq"] = importItem["ToSEQ"];
-                newRow["Roll"] = importItem["Roll"];
-                newRow["Dyelot"] = importItem["Dyelot"];
-                newRow["StockType"] = importItem["StockType"];
-                newRow["Qty"] = importItem["TransferQty"];
-                newRow["TransferExportID"] = importItem["TransferExportID"];
-                newRow["TransferExport_DetailUkey"] = importItem["TransferExport_DetailUkey"];
-                newRow["Location"] = importItem["Location"];
-                newRow["StockUnit"] = importItem["StockUnit"];
-                newRow["Description"] = importItem["Description"];
-                newRow["Tone"] = importItem["Tone"];
-                this.mainDetail.Rows.Add(newRow);
+                else
+                {
+                    DataRow newRow = this.mainDetail.NewRow();
+                    newRow["ID"] = this.mainTransferOutID;
+                    newRow["FtyInventoryUkey"] = dr["FtyInventoryUkey"];
+                    newRow["MDivisionID"] = this.M;
+                    newRow["POID"] = dr["InventoryPOID"];
+                    newRow["Seq1"] = dr["InventorySeq1"];
+                    newRow["Seq2"] = dr["InventorySeq2"];
+                    newRow["seq"] = dr["FromSEQ"];
+                    newRow["ToPOID"] = dr["PoID"];
+                    newRow["ToSeq1"] = dr["Seq1"];
+                    newRow["ToSeq2"] = dr["Seq2"];
+                    newRow["ToSeq"] = dr["ToSEQ"];
+                    newRow["Roll"] = dr["Roll"];
+                    newRow["Dyelot"] = dr["Dyelot"];
+                    newRow["StockType"] = dr["StockType"];
+                    newRow["Qty"] = dr["TransferQty"];
+                    newRow["TransferExportID"] = dr["TransferExportID"];
+                    newRow["TransferExport_DetailUkey"] = dr["TransferExport_DetailUkey"];
+                    newRow["Location"] = dr["Location"];
+                    newRow["StockUnit"] = dr["StockUnit"];
+                    newRow["Description"] = dr["Description"];
+                    newRow["Tone"] = dr["Tone"];
+                    this.mainDetail.Rows.Add(newRow);
+                }
             }
 
             this.Close();

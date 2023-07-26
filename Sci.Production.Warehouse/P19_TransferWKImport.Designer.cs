@@ -142,6 +142,7 @@
             this.gridStock.BackgroundColor = System.Drawing.SystemColors.Control;
             this.gridStock.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
             this.gridStock.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.gridStock.DataSource = this.bindingGridStock;
             this.gridStock.Dock = System.Windows.Forms.DockStyle.Fill;
             this.gridStock.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
             this.gridStock.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
