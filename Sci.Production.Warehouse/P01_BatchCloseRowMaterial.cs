@@ -135,6 +135,7 @@ where fty.Lock=1  AND fty.StockType = 'B'
 select  0 Selected
         , m.poid
     ,x.FactoryID
+    ,x.SewLine
     ,Category =case when x.Category='B'then 'Bulk'
 			        when x.Category='M'then 'Material'
 			        when x.Category='O'then 'Other'
@@ -219,6 +220,7 @@ Drop table #cte_temp;", Env.User.Keyword, categorySql));
                 .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0, settings: col_chk)
                 .Text("poid", header: "SP#", iseditingreadonly: true, width: Widths.AnsiChars(13)) // 1
                 .Text("factoryid", header: "Factory", iseditingreadonly: true, width: Widths.AnsiChars(8)) // 1
+                .Text("SewLine", header: "Sewing Line", iseditingreadonly: true, width: Widths.AnsiChars(8))
                 .Text("category", header: "Category", iseditingreadonly: true, width: Widths.AnsiChars(8)) // 4
                 .Text("OrderTypeID", header: "Order Type", iseditingreadonly: true, width: Widths.AnsiChars(15)) // 4
                 .Text("styleid", header: "Style", iseditingreadonly: true, width: Widths.AnsiChars(20)) // 3
