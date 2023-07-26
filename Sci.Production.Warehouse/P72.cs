@@ -288,7 +288,7 @@ and ReasonTypeID='Stock_Adjust' AND junk = 0", e.FormattedValue), out dr))
             data_Fty_8T.ColumnsDecimalAdd("qty", expression: "QtyAfter- QtyBefore");
 
             upd_Fty_8T.Append(Prgs.UpdateLocalOrderInventory_IO("Adjust", null, true));
-            #endregion 更新庫存數量  ftyinventory
+            #endregion 更新庫存數量  LocalOrderInventory
 
             #region 檢查Location是否為空值
             if (Prgs.ChkLocation(this.CurrentMaintain["ID"].ToString(), "LocalOrderAdjust_Detail", isLocalOrder: true) == false)
@@ -314,7 +314,7 @@ and ReasonTypeID='Stock_Adjust' AND junk = 0", e.FormattedValue), out dr))
                         throw result.GetException();
                     }
 
-                    // Barcode 需要判斷新的庫存, 在更新 FtyInventory 之後
+                    // Barcode 需要判斷新的庫存, 在更新 LocalOrderInventory 之後
                     if (!(result = Prgs.UpdateWH_Barcode(true, (DataTable)this.detailgridbs.DataSource, this.Name, out bool fromNewBarcode, dtLocalOrderInventory, isLocalOrder: true)))
                     {
                         throw result.GetException();
@@ -393,7 +393,7 @@ and ReasonTypeID='Stock_Adjust' AND junk = 0", e.FormattedValue), out dr))
 
             upd_Fty_8F.Append(Prgs.UpdateLocalOrderInventory_IO("Adjust", null, false));
 
-            #endregion 更新庫存數量  ftyinventory
+            #endregion 更新庫存數量  LocalOrderInventory
 
             #region UnConfirmed 廠商能上鎖→PMS更新→廠商更新
 
@@ -422,7 +422,7 @@ and ReasonTypeID='Stock_Adjust' AND junk = 0", e.FormattedValue), out dr))
                         throw result.GetException();
                     }
 
-                    // Barcode 需要判斷新的庫存, 在更新 FtyInventory 之後
+                    // Barcode 需要判斷新的庫存, 在更新 LocalOrderInventory 之後
                     if (!(result = Prgs.UpdateWH_Barcode(false, (DataTable)this.detailgridbs.DataSource, this.Name, out bool fromNewBarcode, dtLocalOrderInventory, isLocalOrder: true)))
                     {
                         throw result.GetException();

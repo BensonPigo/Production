@@ -145,7 +145,7 @@ namespace Sci.Production.Warehouse
             }
             #endregion
 
-            // 取得 FtyInventory 資料 (包含PO_Supp_Detail.FabricType)
+            // 取得 LocalOrderInventory 資料
             DualResult result = Prgs.GetLocalOrderInventoryData((DataTable)this.detailgridbs.DataSource, this.Name, out DataTable dtLocalOrderInventory);
             string sq = string.Empty;
 
@@ -205,7 +205,7 @@ where   (isnull(f.InQty, 0) - isnull(f.OutQty, 0) + isnull(f.AdjustQty, 0) + d.Q
                                    roll = m.Field<string>("roll"),
                                    dyelot = m.Field<string>("dyelot"),
                                }).ToList();
-            #endregion 更新庫存數量  ftyinventory
+            #endregion 更新庫存數量  LocalOrderInventory
 
             DBProxy.Current.DefaultTimeout = 900;  // 加長時間為15分鐘，避免timeout
             Exception errMsg = null;
@@ -223,7 +223,7 @@ where   (isnull(f.InQty, 0) - isnull(f.OutQty, 0) + isnull(f.AdjustQty, 0) + d.Q
                             throw result.GetException();
                         }
 
-                        // Barcode 需要判斷新的庫存, 在更新 FtyInventory 之後
+                        // Barcode 需要判斷新的庫存, 在更新 LocalOrderInventory 之後
                         if (!(result = Prgs.UpdateWH_Barcode(true, (DataTable)this.detailgridbs.DataSource, this.Name, out bool fromNewBarcode, dtLocalOrderInventory, isLocalOrder: true)))
                         {
                             throw result.GetException();
@@ -288,7 +288,7 @@ Select  d.poid
         , balanceQty = isnull(f.InQty, 0) - isnull(f.OutQty, 0) + isnull(f.AdjustQty, 0)
         , d.Dyelot
 from dbo.LocalOrderReceiving_Detail d WITH (NOLOCK) 
-left join FtyInventory f WITH (NOLOCK) on   d.PoId = f.PoId
+left join LocalOrderInventory f WITH (NOLOCK) on   d.PoId = f.PoId
                                             and d.Seq1 = f.Seq1
                                             and d.Seq2 = f.seq2
                                             and d.StockType = f.StockType

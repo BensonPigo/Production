@@ -3979,13 +3979,13 @@ select loi.*
     ,FabricType = lom.FabricType
     ,DetailUkey = sd.Ukey
 FROM {detailTableName} sd with(nolock)
+LEFT JOIN LocalOrderMaterial lom ON lom.POID = sd.POID AND sd.Seq1 = lom.Seq1 AND sd.Seq2 = lom.Seq2
 LEFT JOIN Production.dbo.LocalOrderInventory loi with(nolock) on loi.POID = isnull(sd.PoId, '')
     and loi.Seq1 = isnull(sd.Seq1, '')
     and loi.Seq2 = isnull(sd.Seq2, '')
     and loi.Roll = isnull(sd.Roll, '')
 	and loi.Dyelot = isnull(sd.Dyelot, '')
     and loi.StockType = isnull(sd.StockType, '')
-LEFT JOIN LocalOrderMaterial lom ON lom.POID = loi.POID AND loi.Seq1 = lom.Seq1 AND loi.Seq2 = lom.Seq2
 where sd.Ukey in ({ukeys})
 ";
             return proxyPMS == null ? DBProxy.Current.Select("Production", sqlcmd, out dt) : proxyPMS.Select("Production", sqlcmd, out dt);
