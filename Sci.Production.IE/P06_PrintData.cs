@@ -142,9 +142,9 @@ SELECT almd.No
 				almd.Annotation)
 , almd.MachineTypeID
 , almd.MasterPlusGroup
-, almd.Attachment
-, almd.SewingMachineAttachmentID
-, almd.Template
+, Attachment = REPLACE(almd.Attachment, ',', CHAR(13) + CHAR(10))
+, SewingMachineAttachmentID = REPLACE(almd.SewingMachineAttachmentID, ',', CHAR(13) + CHAR(10))
+, Template = REPLACE(almd.Template, ',', CHAR(13) + CHAR(10))
 , almd.GSD
 , almd.Cycle
 , almd.SewerDiffPercentage
@@ -171,9 +171,9 @@ SELECT almd.No
 				almd.Annotation)
 , almd.MachineTypeID
 , almd.MasterPlusGroup
-, almd.Attachment
-, almd.SewingMachineAttachmentID
-, almd.Template
+, Attachment = REPLACE(almd.Attachment, ',', CHAR(13) + CHAR(10))
+, SewingMachineAttachmentID = REPLACE(almd.SewingMachineAttachmentID, ',', CHAR(13) + CHAR(10))
+, Template = REPLACE(almd.Template, ',', CHAR(13) + CHAR(10))
 , almd.GSD
 , almd.Cycle
 , almd.SewerDiffPercentage
@@ -199,9 +199,9 @@ SELECT almd.Seq
 				almd.Annotation)
 , almd.MachineTypeID
 , almd.MasterPlusGroup
-, almd.Attachment
-, almd.SewingMachineAttachmentID
-, almd.Template
+, Attachment = REPLACE(almd.Attachment, ',', CHAR(13) + CHAR(10))
+, SewingMachineAttachmentID = REPLACE(almd.SewingMachineAttachmentID, ',', CHAR(13) + CHAR(10))
+, Template = REPLACE(almd.Template, ',', CHAR(13) + CHAR(10))
 , almd.GSD
 , almd.Cycle
 , almd.SewerDiffPercentage
@@ -214,7 +214,7 @@ AND almd.IsNonSewingLine = 1
 ORDER BY almd.Seq ASC
 
 -- Excel [Line Mapping] Machine區塊資料
-select MachineTypeID, MasterPlusGroup, No, Attachment, SewingMachineAttachmentID, Template, concatString.Value
+select MachineTypeID, MasterPlusGroup, No, Seq, Attachment, SewingMachineAttachmentID, Template, concatString.Value
 into #main
 from LineMappingBalancing_Detail
 -- 將Attachment, SewingMachineAttachmentID, Template用逗號拆分後，重新組成字串
@@ -270,14 +270,21 @@ select AttachmentCount = (
 	) tmp)
 
 -- Excel [Line Mapping] Item 表格
-Select * from
-(
-	select Item = Attachment, No, Detail = SewingMachineAttachmentID
-	from #main where Attachment != ''
-	union all
-	select Item = Template, No, Detail = SewingMachineAttachmentID
-	from #main where Template != ''
-) ItemArea
+select Item = List.Data, main.No, Detail = REPLACE(getDetail.Value, ',', CHAR(13) + CHAR(10))
+from #main main
+outer apply (select tmpString = CONCAT(Attachment, iif(Template = '', '', ','), Template)) combine
+outer apply (select * from dbo.SplitString(combine.tmpString, ',')) List
+outer apply (
+	select Value = isnull(STUFF((
+		select ',' + ID
+		from SewingMachineAttachment
+		where ID in (select Data From dbo.SplitString(SewingMachineAttachmentID, ','))
+		and MoldID = List.Data
+		FOR XML PATH('')
+	),1,1,''), '')
+) getDetail 
+where combine.tmpString != ''
+Order by main.No, Seq, List.no
 
 drop table #main
 
@@ -305,7 +312,7 @@ and almd.PPA != 'C'
 group by almd.No
 
 -- Excel [Centralized PPA] Machine區塊資料
-select MachineTypeID, MasterPlusGroup, No, Attachment, SewingMachineAttachmentID, Template, concatString.Value
+select MachineTypeID, MasterPlusGroup, No, Seq, Attachment, SewingMachineAttachmentID, Template, concatString.Value
 into #main_PPA
 from LineMappingBalancing_Detail
 -- 將Attachment, SewingMachineAttachmentID, Template用逗號拆分後，重新組成字串
@@ -361,14 +368,21 @@ select AttachmentCount = (
 	) tmp)
 
 -- Excel [Centralized PPA] Item 表格
-Select * from
-(
-	select Item = Attachment, No, Detail = SewingMachineAttachmentID
-	from #main_PPA where Attachment != ''
-	union all
-	select Item = Template, No, Detail = SewingMachineAttachmentID
-	from #main_PPA where Template != ''
-) ItemArea
+select Item = List.Data, main.No, Detail = REPLACE(getDetail.Value, ',', CHAR(13) + CHAR(10))
+from #main_PPA main
+outer apply (select tmpString = CONCAT(Attachment, iif(Template = '', '', ','), Template)) combine
+outer apply (select * from dbo.SplitString(combine.tmpString, ',')) List
+outer apply (
+	select Value = isnull(STUFF((
+		select ',' + ID
+		from SewingMachineAttachment
+		where ID in (select Data From dbo.SplitString(SewingMachineAttachmentID, ','))
+		and MoldID = List.Data
+		FOR XML PATH('')
+	),1,1,''), '')
+) getDetail 
+where combine.tmpString != ''
+Order by main.No, Seq, List.no
 
 drop table #main_PPA
 
@@ -542,8 +556,8 @@ group by almd.No
                 }
                 else
                 {
-                    sheet.Cells[5, 14] = "Total" + Environment.NewLine + "Cycle";
-                    sheet.Cells[5, 15] = "Avg." + Environment.NewLine + "Cycle";
+                    sheet.Cells[5, 14] = "Total" + Environment.NewLine + "Cycle Time";
+                    sheet.Cells[5, 15] = "Avg." + Environment.NewLine + "Cycle Time";
 
                     sheet.get_Range($"N5:O5").HorizontalAlignment = Excel.Constants.xlRight; // 設定靠右對齊
                     sheet.get_Range($"N5:O5").Font.Bold = true; // 設定粗體字
@@ -716,7 +730,10 @@ group by almd.No
                 }
 
                 sheet.Range["O28"].Value2 = $"=SUM(O31:O{machineRowIndex - 1})";
-                sheet.Range[$"L31:Q{machineRowIndex - 1}"].HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter; // 水平置中
+                sheet.Range[$"L31:N{machineRowIndex - 1}"].HorizontalAlignment = Excel.XlHAlign.xlHAlignLeft; // 靠左對齊
+                sheet.Range[$"L31:N{machineRowIndex - 1}"].NumberFormat = "@"; // 文字格式
+                sheet.Range[$"O31:Q{machineRowIndex - 1}"].HorizontalAlignment = Excel.XlHAlign.xlHAlignRight; // Count靠右對齊
+                sheet.Range[$"O31:Q{machineRowIndex - 1}"].NumberFormat = 0; // 數字格式(正整數)
                 sheet.Range[$"L31:Q{machineRowIndex - 1}"].Borders.Weight = 2; // 1: 虛線, 2:實線, 3:粗體線
                 sheet.Range[$"L31:Q{machineRowIndex - 1}"].Borders.LineStyle = 1;
             }
@@ -728,6 +745,8 @@ group by almd.No
             sheet.Range["U29"].Value2 = dtMachineArea[1].Rows[0]["TemplateCount"];
 
             int attachmentRowIndex = 31;
+            sheet.Range[$"S31:Y{attachmentRowIndex + dtMachineArea[2].Rows.Count - 1}"].NumberFormat = "@"; // 文字格式
+
             if (dtMachineArea[2].Rows.Count > 0)
             {
                 object[,] objArray = new object[1, 5];
@@ -753,7 +772,7 @@ group by almd.No
                     attachmentRowIndex++;
                 }
 
-                sheet.Range[$"S31:Y{attachmentRowIndex - 1}"].HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter; // 水平置中
+                sheet.Range[$"S31:Y{attachmentRowIndex - 1}"].HorizontalAlignment = Excel.XlHAlign.xlHAlignLeft; // 靠左對齊
                 sheet.Range[$"S31:Y{attachmentRowIndex - 1}"].Borders.Weight = 2; // 1: 虛線, 2:實線, 3:粗體線
                 sheet.Range[$"S31:Y{attachmentRowIndex - 1}"].Borders.LineStyle = 1;
             }
@@ -1202,13 +1221,15 @@ group by almd.No
             worksheet.Cells[rownum, 7] = $"=IF(ISNA(VLOOKUP(F{rownum},{alias},3,0)),\"\",VLOOKUP(F{rownum},{alias},3,0))";
             worksheet.Cells[rownum, 24] = $"=IF(ISNA(VLOOKUP(W{rownum},{alias},3,0)),\"\",VLOOKUP(W{rownum},{alias},3,0))";
 
-            // Attachment / Template
-            worksheet.Cells[rownum, 12] = $"=IF(ISNA(VLOOKUP(F{rownum},{alias},6,0) & VLOOKUP(F{rownum},{alias},8,0)),\"\",VLOOKUP(F{rownum},{alias},6,0) & VLOOKUP(F{rownum},{alias},8,0))";
-            worksheet.Cells[rownum, 22] = $"=IF(ISNA(VLOOKUP(W{rownum},{alias},6,0) & VLOOKUP(W{rownum},{alias},8,0)),\"\",VLOOKUP(W{rownum},{alias},6,0) & VLOOKUP(W{rownum},{alias},8,0))";
+            // Attachment / Template (兩者串起後換行)
+            worksheet.Cells[rownum, 12] = $"=IF(ISNA(VLOOKUP(F{rownum},{alias},6,0) & VLOOKUP(F{rownum},{alias},8,0)),\"\",VLOOKUP(F{rownum},{alias},6,0) & IF(ISBLANK(VLOOKUP(F{rownum},{alias},8,0)), \"\", CHAR(10) & VLOOKUP(F{rownum},{alias},8,0)))";
+            worksheet.Cells[rownum, 12].WrapText = true;
+            worksheet.Cells[rownum, 22] = $"=IF(ISNA(VLOOKUP(W{rownum},{alias},6,0) & VLOOKUP(W{rownum},{alias},8,0)),\"\",VLOOKUP(W{rownum},{alias},6,0) & IF(ISBLANK(VLOOKUP(W{rownum},{alias},8,0)), \"\", CHAR(10) & VLOOKUP(W{rownum},{alias},8,0)))";
+            worksheet.Cells[rownum, 22].WrapText = true;
 
             // MC Group
-            worksheet.Cells[rownum, 13] = $"=IF(ISNA(VLOOKUP(F{rownum},{alias},5,0)),\"\",VLOOKUP(F{rownum},{alias},5,0))";
-            worksheet.Cells[rownum, 21] = $"=IF(ISNA(VLOOKUP(W{rownum},{alias},5,0)),\"\",VLOOKUP(W{rownum},{alias},5,0))";
+            worksheet.Cells[rownum, 13] = $"=IF(ISNA(VLOOKUP(F{rownum},{alias},5,0)),\"\",IF(ISBLANK(VLOOKUP(F{rownum},{alias},5,0)),\"\",VLOOKUP(F{rownum},{alias},5,0)))";
+            worksheet.Cells[rownum, 21] = $"=IF(ISNA(VLOOKUP(W{rownum},{alias},5,0)),\"\",IF(ISBLANK(VLOOKUP(W{rownum},{alias},5,0)),\"\",VLOOKUP(W{rownum},{alias},5,0)))";
 
             // ST/MC
             worksheet.Cells[rownum, 14] = $"=IF(ISNA(VLOOKUP(F{rownum},{alias},4,0)),\"\",VLOOKUP(F{rownum},{alias},4,0))";
