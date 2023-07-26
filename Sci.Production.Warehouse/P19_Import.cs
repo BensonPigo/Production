@@ -1,6 +1,7 @@
 ﻿using Ict;
 using Ict.Win;
 using Sci.Data;
+using Sci.Production.Prg;
 using Sci.Production.PublicPrg;
 using System;
 using System.Collections.Generic;
@@ -20,19 +21,20 @@ namespace Sci.Production.Warehouse
         private Dictionary<string, string> di_stocktype = new Dictionary<string, string>();
         private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
         private DataTable dtImportData;
+        private string M;
 
         /// <inheritdoc/>
-        public P19_Import(DataRow master, DataTable detail)
+        public P19_Import(DataRow master, DataTable detail, string mdivisionid)
         {
             this.InitializeComponent();
             this.di_stocktype.Add("B", "Bulk");
             this.di_stocktype.Add("I", "Inventory");
             this.dr_master = master;
             this.dt_detail = detail;
+            this.M = mdivisionid;
         }
 
         // Find Now Button
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         private void BtnFindNow_Click(object sender, EventArgs e)
         {
             if ((this.comboStockType.SelectedIndex < 0 || MyUtility.Check.Empty(this.txtSPNo.Text)) &&
@@ -99,6 +101,8 @@ select  0 as selected
 		, SizeSpec= isnull(psdsS.SpecValue, '')
         , FI.lock
         , FI.Tone
+        , TransferExport_DetailUkey = cast(0 as bigint)
+		, MDivisionID = '{this.M}'
 FROM FtyInventory FI WITH (NOLOCK)
 LEFT JOIN View_WH_Orders O WITH (NOLOCK) ON O.ID = FI.POID
 LEFT JOIN Factory F WITH (NOLOCK) ON F.ID = O.FactoryID
@@ -230,7 +234,6 @@ AND exists (select 1
                 }
             };
             this.gridImport.IsEditingReadOnly = false; // 必設定, 否則CheckBox會顯示圖示
-            this.gridImport.DataSource = this.listControlBindingSource1;
             this.Helper.Controls.Grid.Generator(this.gridImport)
                 .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out this.col_chk) // 0
                 .Text("ExportID", header: "WK#", iseditingreadonly: true, width: Widths.AnsiChars(20)) // 3
@@ -252,7 +255,7 @@ AND exists (select 1
                 .ComboBox("stocktype", header: "Stock Type", iseditable: false).Get(out cbb_stocktype)
                 .Text("ToPOID", header: "To POID", iseditingreadonly: true)
                 .Text("ToSeq", header: "To Seq", iseditingreadonly: true)
-               ;
+                ;
 
             nb_qty.DefaultCellStyle.BackColor = Color.Pink;
 
@@ -266,63 +269,53 @@ AND exists (select 1
             this.Close();
         }
 
-        // Import
         private void BtnImport_Click(object sender, EventArgs e)
         {
-            // listControlBindingSource1.EndEdit();
             this.gridImport.ValidateControl();
-            DataTable dtGridBS1 = (DataTable)this.listControlBindingSource1.DataSource;
-            if (MyUtility.Check.Empty(dtGridBS1) || dtGridBS1.Rows.Count == 0)
+            if (this.listControlBindingSource1.DataSource == null)
             {
                 return;
             }
 
-            DataRow[] dr2 = dtGridBS1.Select("Selected = 1");
-            if (dr2.Length == 0)
+            DataTable dtGridBS = (DataTable)this.listControlBindingSource1.DataSource;
+            if (dtGridBS.Select("Selected = 1").Length == 0)
             {
-                MyUtility.Msg.WarningBox("Please select row(s) first!", "Warnning");
+                MyUtility.Msg.WarningBox("Please select data first");
                 return;
             }
 
-            dr2 = dtGridBS1.Select("qty = 0 and Selected = 1");
-            if (dr2.Length > 0)
+            if (dtGridBS.Select("qty = 0 and Selected = 1").Length > 0)
             {
-                MyUtility.Msg.WarningBox("Qty of selected row can't be zero!", "Warning");
+                MyUtility.Msg.WarningBox("Out Qty of selected row can't be zero!");
                 return;
             }
 
-            dr2 = dtGridBS1.Select("qty <> 0 and Selected = 1");
-            foreach (DataRow tmp in dr2)
+            foreach (DataRow dr in dtGridBS.Select("Selected = 1"))
             {
-                DataRow[] findrow = this.dt_detail.AsEnumerable()
+                // 以 GridUniqueKey 來確認不能有重複
+                var existsRows = this.dt_detail.AsEnumerable()
                     .Where(w => w.RowState != DataRowState.Deleted
-                        && w["ExportID"].EqualString(tmp["ExportID"].ToString())
-                        && w["poid"].EqualString(tmp["poid"].ToString())
-                        && w["seq1"].EqualString(tmp["seq1"])
-                        && w["seq2"].EqualString(tmp["seq2"].ToString())
-                        && w["ToPOID"].EqualString(tmp["ToPOID"].ToString())
-                        && w["Toseq1"].EqualString(tmp["Toseq1"])
-                        && w["Toseq2"].EqualString(tmp["Toseq2"].ToString())
-                        && w["roll"].EqualString(tmp["roll"])
-                        && w["dyelot"].EqualString(tmp["dyelot"])
-                        && w["stockType"].EqualString(tmp["stockType"])).ToArray();
+                        && w["mdivisionid"].EqualString(dr["mdivisionid"].ToString())
+                        && w["poid"].EqualString(dr["poid"].ToString())
+                        && w["seq1"].EqualString(dr["seq1"])
+                        && w["seq2"].EqualString(dr["seq2"].ToString())
+                        && w["roll"].EqualString(dr["roll"])
+                        && w["dyelot"].EqualString(dr["dyelot"])
+                        && w["stockType"].EqualString(dr["stockType"])
+                        && w["ToPOID"].EqualString(dr["ToPOID"].ToString())
+                        && w["Toseq1"].EqualString(dr["Toseq1"])
+                        && w["Toseq2"].EqualString(dr["Toseq2"].ToString())
+                        && (long)w["TransferExport_DetailUkey"] == (long)dr["TransferExport_DetailUkey"]);
 
-                if (findrow.Length > 0)
+                if (existsRows.Any())
                 {
-                    findrow[0]["qty"] = tmp["qty"];
+                    existsRows.First()["qty"] = dr["qty"];
+                    existsRows.First()["ExportID"] = dr["ExportID"];
                 }
                 else
                 {
-                    tmp["id"] = this.dr_master["id"];
-
-                    // 拆解ToSeq
-                    List<string> seqList = ToSeqSplit(MyUtility.Convert.GetString(tmp["ToSeq"]));
-                    tmp["ToSeq1"] = seqList[0];
-                    tmp["ToSeq2"] = seqList.Count > 1 ? seqList[1] : string.Empty;
-
-                    tmp.AcceptChanges();
-                    tmp.SetAdded();
-                    this.dt_detail.ImportRow(tmp);
+                    dr["id"] = this.dr_master["id"];
+                    this.dt_detail.ImportRowAdded(dr);
                 }
             }
 
@@ -330,7 +323,6 @@ AND exists (select 1
         }
 
         /// <inheritdoc/>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         public static List<string> ToSeqSplit(string toSeq)
         {
             List<string> result = new List<string>();
