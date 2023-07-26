@@ -4151,7 +4151,7 @@ from #tmp sd
 {othertables}
 where 1=1
 and sd.FabricType = 'F'
-
+order by sd.Ukey
 ";
                 if (proxyPMS == null)
                 {
@@ -4202,6 +4202,7 @@ and exists(
 	and psd.FabricType = 'F'
 )
 and sd.Ukey in ({ukeys})
+order by sd.Ukey
 ";
                 }
                 else
@@ -4229,6 +4230,7 @@ and exists(
 	and psd.FabricType = 'F'
 )
 and sd.Ukey in ({ukeys})
+order by sd.Ukey
 ";
                 }
 
