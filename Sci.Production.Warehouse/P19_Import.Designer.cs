@@ -259,6 +259,7 @@
             this.gridImport.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.gridImport.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
             this.gridImport.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.gridImport.DataSource = this.listControlBindingSource1;
             this.gridImport.Dock = System.Windows.Forms.DockStyle.Fill;
             this.gridImport.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
             this.gridImport.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
