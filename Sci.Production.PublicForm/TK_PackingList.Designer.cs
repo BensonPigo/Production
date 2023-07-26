@@ -175,7 +175,7 @@
             // 
             // btnCancelAssingCarton
             // 
-            this.btnCancelAssingCarton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnCancelAssingCarton.Anchor = System.Windows.Forms.AnchorStyles.Top;
             this.btnCancelAssingCarton.BackgroundImage = global::Sci.Production.PublicForm.Properties.Resources.Up_arrow_icon;
             this.btnCancelAssingCarton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
             this.btnCancelAssingCarton.Location = new System.Drawing.Point(392, 307);
@@ -187,7 +187,7 @@
             // 
             // btnAssignCarton
             // 
-            this.btnAssignCarton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnAssignCarton.Anchor = System.Windows.Forms.AnchorStyles.Top;
             this.btnAssignCarton.BackgroundImage = global::Sci.Production.PublicForm.Properties.Resources.Down_thick_arrow_icon;
             this.btnAssignCarton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
             this.btnAssignCarton.Location = new System.Drawing.Point(478, 307);
