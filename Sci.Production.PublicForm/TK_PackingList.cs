@@ -471,6 +471,7 @@ where ted.ID = '{this.transferExportID}'
             foreach (DataRow dr in selectRow)
             {
                 string filterExpression = $@"
+TransferExport_DetailUkey = '{dr["TransferExport_DetailUkey"]}' and
 InventoryPOID = '{dr["InventoryPOID"]}' and
 FromSEQ = '{dr["FromSEQ"]}' and
 POID = '{dr["POID"]}' and
@@ -552,6 +553,7 @@ Dyelot = '{dr["Dyelot"]}'";
             foreach (DataRow dr in selectRow)
             {
                 string filterExpression = $@"
+TransferExport_DetailUkey = '{dr["TransferExport_DetailUkey"]}' and
 InventoryPOID = '{dr["InventoryPOID"]}' and
 FromSEQ = '{dr["FromSEQ"]}' and
 POID = '{dr["POID"]}' and
