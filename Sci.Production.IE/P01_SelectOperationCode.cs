@@ -74,7 +74,7 @@ namespace Sci.Production.IE
 
             string sqlCmd = $@"
 select o.ID,o.DescEN,o.SMV,o.MachineTypeID,o.SeamLength,o.MoldID,o.MtlFactorID,o.Annotation,o.MasterPlusGroup,[MachineType_IsSubprocess] = isnull(md.IsSubprocess,0) 
-,o.Junk
+,o.Junk,md.IsSubprocess ,md.IsNonSewingLine
 from Operation o WITH (NOLOCK)
 left join MachineType_Detail md WITH (NOLOCK) on md.ID = o.MachineTypeID and md.FactoryID = '{Sci.Env.User.Factory}'
 where CalibratedCode = 1
