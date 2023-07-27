@@ -291,7 +291,7 @@ and ReasonTypeID='Stock_Adjust' AND junk = 0", e.FormattedValue), out dr))
             #endregion 更新庫存數量  LocalOrderInventory
 
             #region 檢查Location是否為空值
-            if (Prgs.ChkLocation(this.CurrentMaintain["ID"].ToString(), "LocalOrderAdjust_Detail", isLocalOrder: true) == false)
+            if (Prgs.ChkLocation(this.CurrentMaintain["ID"].ToString(), "LocalOrderAdjust_Detail", msgType: "LocalOrder", isLocalOrder: true) == false)
             {
                 return;
             }

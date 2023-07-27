@@ -209,6 +209,7 @@ where   (isnull(f.InQty, 0) - isnull(f.OutQty, 0) + isnull(f.AdjustQty, 0) + d.Q
                                    location = m.Field<string>("location"),
                                    roll = m.Field<string>("roll"),
                                    dyelot = m.Field<string>("dyelot"),
+                                   tone = m.Field<string>("Tone"),
                                }).ToList();
             #endregion 更新庫存數量  LocalOrderInventory
 

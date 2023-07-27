@@ -202,7 +202,7 @@ where (isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - d.Qty < 
             #endregion 檢查負數庫存
 
             #region 檢查Location是否為空值
-            if (Prgs.ChkLocation(this.CurrentMaintain["ID"].ToString(), "LocalOrderIssue_Detail") == false)
+            if (Prgs.ChkLocation(this.CurrentMaintain["ID"].ToString(), "LocalOrderIssue_Detail", msgType: "LocalOrder", isLocalOrder: true) == false)
             {
                 return;
             }
@@ -368,7 +368,7 @@ where (isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) + d.Qty < 
                     }
 
                     // 更新 Barcode
-                    if (!(result = Prgs.UpdateWH_Barcode(false, (DataTable)this.detailgridbs.DataSource, this.Name, out bool fromNewBarcode, dtLocalOrderInventory)))
+                    if (!(result = Prgs.UpdateWH_Barcode(false, (DataTable)this.detailgridbs.DataSource, this.Name, out bool fromNewBarcode, dtLocalOrderInventory, isLocalOrder: true)))
                     {
                         throw result.GetException();
                     }

@@ -972,11 +972,12 @@ alter table #TmpSource alter column seq2 varchar(3)
 alter table #TmpSource alter column stocktype varchar(1)
 alter table #TmpSource alter column roll varchar(15)
 alter table #TmpSource alter column dyelot varchar(8)
+alter table #TmpSource alter column tone varchar(8)
 
-select poid, seq1, seq2, stocktype, roll = RTRIM(LTRIM(isnull(roll, ''))) ,[qty] = sum(qty), dyelot = isnull(dyelot, '')
+select poid, seq1, seq2, stocktype, roll = RTRIM(LTRIM(isnull(roll, ''))) ,[qty] = sum(qty), dyelot = isnull(dyelot, ''), tone = isnull(tone,'')
 into #tmpS1
 from #TmpSource
-group by poid, seq1, seq2, stocktype, RTRIM(LTRIM(isnull(roll, ''))) ,isnull(dyelot, '')
+group by poid, seq1, seq2, stocktype, RTRIM(LTRIM(isnull(roll, ''))) ,isnull(dyelot, ''),isnull(tone,'')
 
 
 merge dbo.LocalOrderInventory as target
@@ -987,8 +988,8 @@ when matched then
     update
     set inqty = isnull(inqty,0.00) + s.qty    
 when not matched then
-    insert ( [Poid],[Seq1],[Seq2],[Roll],[Dyelot],[StockType],[InQty])
-    values ( s.poid,s.seq1,s.seq2,s.roll,s.dyelot,s.stocktype,s.qty);
+    insert ( [Poid],[Seq1],[Seq2],[Roll],[Dyelot],[StockType],[InQty],[Tone])
+    values ( s.poid,s.seq1,s.seq2,s.roll,s.dyelot,s.stocktype,s.qty  ,s.tone);
 ";
                     if (encoded)
                     {
@@ -3595,7 +3596,6 @@ where td.ID = '{transcationID}'
                         dtLocation_Empty.Columns["Roll"].ColumnName = "Roll";
                         dtLocation_Empty.Columns["Dyelot"].ColumnName = "Dyelot";
                         dtLocation_Empty.Columns["StockType"].ColumnName = "Stock Type";
-
                         ChkLocationEmpty(dtLocation_Empty, msgType, @"SP#,Seq,Roll,Dyelot,Stock Type");
                         return false;
                     }
@@ -6761,8 +6761,6 @@ and ml.IsWMS = 1
 
             return true;
         }
-
-
 
         /// <summary>
         /// 自動倉儲

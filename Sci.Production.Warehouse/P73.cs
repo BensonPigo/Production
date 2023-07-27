@@ -382,9 +382,25 @@ and td.id = '{this.CurrentMaintain["ID"]}'
             #endregion
 
             DataTable dtToWMS = ((DataTable)this.detailgridbs.DataSource).Clone();
+            foreach (DataRow dr2 in this.DetailDatas)
+            {
+                string sqlchk = $@"
+select 1 from MtlLocation m
+inner join SplitString('{dr2["ToLocation"]}',',') sp on m.ID = sp.Data
+where m.IsWMS = 0";
+                if (MyUtility.Check.Seek(sqlchk))
+                {
+                    dtToWMS.ImportRow(dr2);
+                }
+            }
+
+            if (!Prgs_WMS.LockNotWMS(dtToWMS))
+            {
+                return;
+            }
+
             Exception errMsg = null;
-            List<AutoRecord> autoRecordListP07 = new List<AutoRecord>();
-            List<AutoRecord> autoRecordListP18 = new List<AutoRecord>();
+            List<AutoRecord> autoRecordListP70 = new List<AutoRecord>();
             using (TransactionScope transactionscope = new TransactionScope())
             {
                 try
@@ -399,7 +415,7 @@ and td.id = '{this.CurrentMaintain["ID"]}'
                         throw result.GetException();
                     }
 
-                    Prgs_WMS.UnLockorDeleteNotWMS(dtToWMS, EnumStatus.Delete, autoRecordListP07, autoRecordListP18, 1);
+                    Prgs_WMS.UnLockorDeleteNotWMS_LocalOrder(dtToWMS, EnumStatus.Delete, autoRecordListP70, 1);
                     transactionscope.Complete();
                 }
                 catch (Exception ex)
@@ -411,16 +427,15 @@ and td.id = '{this.CurrentMaintain["ID"]}'
             if (!MyUtility.Check.Empty(errMsg))
             {
                 // P73 調整 Tolocation 不是自動倉, 過程有任何錯誤, 要發給 WMS 要求(UnLock)
-                autoRecordListP07.Clear();
-                autoRecordListP18.Clear();
-                Prgs_WMS.UnLockorDeleteNotWMS(dtToWMS, EnumStatus.UnLock, autoRecordListP07, autoRecordListP18, 1);
-                Prgs_WMS.UnLockorDeleteNotWMS(dtToWMS, EnumStatus.UnLock, autoRecordListP07, autoRecordListP18, 2);
+                autoRecordListP70.Clear();
+                Prgs_WMS.UnLockorDeleteNotWMS_LocalOrder(dtToWMS, EnumStatus.UnLock, autoRecordListP70, 1);
+                Prgs_WMS.UnLockorDeleteNotWMS_LocalOrder(dtToWMS, EnumStatus.UnLock, autoRecordListP70, 2);
                 this.ShowErr(errMsg);
                 return;
             }
 
-            // 調整後 Tolocation 不是自動倉, 要發給 WMS 要求撤回(Delete) P07/P18
-            Prgs_WMS.UnLockorDeleteNotWMS(dtToWMS, EnumStatus.Delete, autoRecordListP07, autoRecordListP18, 2);
+            // 調整後 Tolocation 不是自動倉, 要發給 WMS 要求撤回(Delete) P70
+            Prgs_WMS.UnLockorDeleteNotWMS_LocalOrder(dtToWMS, EnumStatus.Delete, autoRecordListP70, 2);
 
             // AutoWHFabric WebAPI
             Prgs_WMS.WMSprocess(false, (DataTable)this.detailgridbs.DataSource, this.Name, EnumStatus.New, EnumStatus.Confirm, dtLocationDetail);
