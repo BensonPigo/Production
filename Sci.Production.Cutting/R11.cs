@@ -37,7 +37,7 @@ namespace Sci.Production.Cutting
 
             if (!this.dateSCIDelivery.Value1.HasValue &&
                 !this.dateBuyerDelivery.Value1.HasValue &&
-                !this.dateBuyerDelivery.Value1.HasValue &&
+                !this.dateSewInLine.Value1.HasValue &&
                 MyUtility.Check.Empty(this.txtSP1.Text) &&
                 MyUtility.Check.Empty(this.txtSP2.Text))
             {
