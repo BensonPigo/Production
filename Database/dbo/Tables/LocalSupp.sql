@@ -1,7 +1,7 @@
 ﻿CREATE TABLE [dbo].[LocalSupp] (
     [ID]              VARCHAR (8)    CONSTRAINT [DF_LocalSupp_ID] DEFAULT ('') NOT NULL,
     [Junk]            BIT            CONSTRAINT [DF_LocalSupp_Junk] DEFAULT ((0)) NULL,
-    [Abb]             NVARCHAR (12)  CONSTRAINT [DF_LocalSupp_Abb] DEFAULT ('') NOT NULL,
+    [Abb]             NVARCHAR (20)  CONSTRAINT [DF_LocalSupp_Abb] DEFAULT ('') NOT NULL,
     [Name]            NVARCHAR (60)  CONSTRAINT [DF_LocalSupp_Name] DEFAULT ('') NOT NULL,
     [CountryID]       VARCHAR (2)    CONSTRAINT [DF_LocalSupp_CountryID] DEFAULT ('') NOT NULL,
     [Tel]             VARCHAR (30)   CONSTRAINT [DF_LocalSupp_Tel] DEFAULT ('') NULL,
