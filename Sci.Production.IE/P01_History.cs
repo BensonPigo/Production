@@ -99,7 +99,9 @@ and s.BrandID = @brandid";
 thd.Annotation,thd.Frequency,thd.MtlFactorID,thd.SMV,thd.MachineTypeID,thd.Mold,
 thd.PcsPerHour,thd.Sewer,thd.IETMSSMV,
 LEFT(th.Phase+REPLICATE(' ',10),10)+' VER-'+th.Version as Status,
-IIF(Phase = 'Initial',1,iif(Phase = 'Prelim',2,iif(Phase = 'Estimate',3,4))) as sort
+IIF(Phase = 'Initial',1,iif(Phase = 'Prelim',2,iif(Phase = 'Estimate',3,4))) as sort,
+thd.StdSMV,
+thd.Thread_ComboID
 from TimeStudyHistory th WITH (NOLOCK) 
 left join TimeStudyHistory_Detail thd WITH (NOLOCK) on th.ID = thd.ID
 left join Operation o WITH (NOLOCK) on thd.OperationID = o.ID
@@ -132,9 +134,11 @@ order by IIF(Phase = 'Initial',1,iif(Phase = 'Prelim',2,iif(Phase = 'Estimate',3
                 .Text("Annotation", header: "Annotation", width: Widths.AnsiChars(30), iseditingreadonly: true)
                 .Numeric("Frequency", header: "Frequency", decimal_places: 2, iseditingreadonly: true)
                 .Text("MtlFactorID", header: "Factor", width: Widths.AnsiChars(3), iseditingreadonly: true)
+                .Numeric("StdSMV", header: "Std. SMV (sec)", integer_places: 4, decimal_places: 4, iseditingreadonly: true)
                 .Numeric("SMV", header: "SMV (sec)",  decimal_places: 4, iseditingreadonly: true)
                 .Text("MachineTypeID", header: "M/C", width: Widths.AnsiChars(8), iseditingreadonly: true)
                 .Text("Mold", header: "Attachment", width: Widths.AnsiChars(8), iseditingreadonly: true)
+                .Text("Thread_ComboID", "Thread Combination", width: Widths.AnsiChars(8), iseditingreadonly: true)
                 .Numeric("PcsPerHour", header: "Pcs/hr", decimal_places: 1, iseditingreadonly: true)
                 .Numeric("Sewer", header: "Sewer", decimal_places: 1, iseditingreadonly: true)
                 .Numeric("IETMSSMV", header: "Std. SMV", decimal_places: 4, iseditingreadonly: true);

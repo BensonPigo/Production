@@ -51,6 +51,7 @@
             this.splitViewOperator.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.splitViewOperator.FixedPanel = System.Windows.Forms.FixedPanel.Panel2;
             this.splitViewOperator.Location = new System.Drawing.Point(12, 37);
             this.splitViewOperator.Name = "splitViewOperator";
             // 
@@ -61,8 +62,8 @@
             // splitViewOperator.Panel2
             // 
             this.splitViewOperator.Panel2.Controls.Add(this.gridSub);
-            this.splitViewOperator.Size = new System.Drawing.Size(876, 455);
-            this.splitViewOperator.SplitterDistance = 619;
+            this.splitViewOperator.Size = new System.Drawing.Size(949, 487);
+            this.splitViewOperator.SplitterDistance = 615;
             this.splitViewOperator.TabIndex = 1;
             // 
             // gridMain
@@ -85,7 +86,7 @@
             this.gridMain.RowTemplate.Height = 24;
             this.gridMain.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridMain.ShowCellToolTips = false;
-            this.gridMain.Size = new System.Drawing.Size(619, 455);
+            this.gridMain.Size = new System.Drawing.Size(615, 487);
             this.gridMain.TabIndex = 0;
             // 
             // gridSub
@@ -108,7 +109,7 @@
             this.gridSub.RowTemplate.Height = 24;
             this.gridSub.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridSub.ShowCellToolTips = false;
-            this.gridSub.Size = new System.Drawing.Size(253, 455);
+            this.gridSub.Size = new System.Drawing.Size(330, 487);
             this.gridSub.TabIndex = 1;
             // 
             // numHighestGSD
@@ -170,7 +171,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(900, 504);
+            this.ClientSize = new System.Drawing.Size(973, 536);
             this.Controls.Add(this.numHighestGSD);
             this.Controls.Add(this.numLBR);
             this.Controls.Add(this.label3);

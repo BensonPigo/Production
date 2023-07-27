@@ -79,26 +79,6 @@ namespace Sci.Production.IE
             new GridRowDrag(this.detailgrid, this.DetailGridAfterRowDragDo, this.DetailGridBeforeRowDragDo, false);
         }
 
-        /// <inheritdoc/>
-        protected override DualResult OnRenewDataPost(Input1.RenewDataPostEventArgs e)
-        {
-            var sumDetailItems = this.DetailDatas
-                .Where(s => !MyUtility.Convert.GetBool(s["IsSubprocess"]) &&
-                            !MyUtility.Convert.GetBool(s["IsNonSewingLine"]) &&
-                            MyUtility.Convert.GetString(s["PPA"]) != "C");
-
-            this.numericStdSMV.Value = 0;
-            this.numericFtySMV.Value = 0;
-
-            if (sumDetailItems.Any())
-            {
-                this.numericStdSMV.Value = sumDetailItems.Sum(s => MyUtility.Convert.GetDecimal(s["StdSMV"]));
-                this.numericFtySMV.Value = sumDetailItems.Sum(s => MyUtility.Convert.GetDecimal(s["SMV"]));
-            }
-
-            return base.OnRenewDataPost(e);
-        }
-
         /// <summary>
         /// P01
         /// </summary>
@@ -166,10 +146,6 @@ namespace Sci.Production.IE
             if (e.ColumnIndex == -1)
             {
                 this.detailgrid.Cursor = Cursors.Hand;
-            }
-            else
-            {
-                this.detailgrid.Cursor = Cursors.Default;
             }
         }
 
@@ -331,6 +307,20 @@ and IETMSID = '{this.CurrentMaintain["IETMSID"]}'
             else
             {
                 this.ui_pnlBatchUpdate.Visible = false;
+            }
+
+            var sumDetailItems = this.DetailDatas
+                .Where(s => !MyUtility.Convert.GetBool(s["IsSubprocess"]) &&
+                            !MyUtility.Convert.GetBool(s["IsNonSewingLine"]) &&
+                            MyUtility.Convert.GetString(s["PPA"]) != "C");
+
+            this.numericStdSMV.Value = 0;
+            this.numericFtySMV.Value = 0;
+
+            if (sumDetailItems.Any())
+            {
+                this.numericStdSMV.Value = sumDetailItems.Sum(s => MyUtility.Convert.GetDecimal(s["StdSMV"]));
+                this.numericFtySMV.Value = sumDetailItems.Sum(s => MyUtility.Convert.GetDecimal(s["SMV"]));
             }
 
             this.numTotalSMV.Value = Convert.ToInt32(MyUtility.Convert.GetDecimal(((DataTable)this.detailgridbs.DataSource).Compute("SUM(SMV)", string.Empty)));
@@ -1080,8 +1070,8 @@ and Name = @PPA
                 .Text("SewingMachineAttachmentID", header: "Part ID", width: Widths.AnsiChars(50), settings: pardID)
                 .Text("Template", header: "Template", width: Widths.AnsiChars(8), settings: template)
                 .CellThreadComboID("Thread_ComboID", "Thread Combination", this, width: Widths.AnsiChars(10))
-                .Numeric("PcsPerHour", header: "Pcs/hr", integer_places: 5, decimal_places: 1, iseditingreadonly: true)
                 .Numeric("Sewer", header: "Sewer", integer_places: 2, decimal_places: 1, iseditingreadonly: true)
+                .Numeric("PcsPerHour", header: "Pcs/hr", integer_places: 5, decimal_places: 1, iseditingreadonly: true)
                 .Numeric("IETMSSMV", header: "Std. SMV", integer_places: 3, decimal_places: 4, iseditingreadonly: true);
 
             // 設定detailGrid Rows 是否可以編輯
@@ -1810,8 +1800,8 @@ select StyleID,SeasonID,ComboType,BrandID,Version,Phase,TotalSewingTime,NumberSe
 declare @id bigint
 select @id = @@IDENTITY
 
-insert into TimeStudyHistory_Detail(ID,Seq,OperationID,Annotation,PcsPerHour,Sewer,MachineTypeID,Frequency,IETMSSMV,Mold,SMV,SeamLength,MtlFactorID)
-select @id,Seq,OperationID,Annotation,PcsPerHour,Sewer,MachineTypeID,Frequency,IETMSSMV,Mold,SMV,SeamLength,MtlFactorID from TimeStudy_Detail where ID = {0}
+insert into TimeStudyHistory_Detail(ID,Seq,OperationID,Annotation,PcsPerHour,Sewer,MachineTypeID,Frequency,IETMSSMV,Mold,SMV,SeamLength,MtlFactorID,StdSMV,Thread_ComboID)
+select @id,Seq,OperationID,Annotation,PcsPerHour,Sewer,MachineTypeID,Frequency,IETMSSMV,Mold,SMV,SeamLength,MtlFactorID,StdSMV,Thread_ComboID from TimeStudy_Detail where ID = {0}
 
 update TimeStudy 
 set Version = (select iif(isnull(max(Version),0)+1 < 10,'0'+cast(isnull(max(Version),0)+1 as varchar),cast(max(Version)+1as varchar)) from TimeStudy where ID = {0}) ,
@@ -1903,8 +1893,8 @@ select StyleID,SeasonID,ComboType,BrandID,Version,Phase,TotalSewingTime,NumberSe
 declare @id bigint
 select @id = @@IDENTITY
 
-insert into TimeStudyHistory_Detail(ID,Seq,OperationID,Annotation,PcsPerHour,Sewer,MachineTypeID,Frequency,IETMSSMV,Mold,SMV,SeamLength,MtlFactorID)
-select @id,Seq,OperationID,Annotation,PcsPerHour,Sewer,MachineTypeID,Frequency,IETMSSMV,Mold,SMV,SeamLength,MtlFactorID from TimeStudy_Detail where ID = {0}
+insert into TimeStudyHistory_Detail(ID,Seq,OperationID,Annotation,PcsPerHour,Sewer,MachineTypeID,Frequency,IETMSSMV,Mold,SMV,SeamLength,MtlFactorID,StdSMV,Thread_ComboID)
+select @id,Seq,OperationID,Annotation,PcsPerHour,Sewer,MachineTypeID,Frequency,IETMSSMV,Mold,SMV,SeamLength,MtlFactorID,StdSMV,Thread_ComboID from TimeStudy_Detail where ID = {0}
 
 declare @phase varchar(10)
 select @phase = isnull(Phase,'') from TimeStudy where ID = {0}
@@ -2043,6 +2033,7 @@ select id.SEQ,
 	            ,1,1,''),
 	id.MtlFactorID,
 	round(id.SMV*(isnull(id.MtlFactorRate,0)/100+1)*id.Frequency*60,3) as SMV, 
+    round(id.SMV*(isnull(id.MtlFactorRate,0)/100+1)*id.Frequency*60,3) as StdSMV, 
 	o.SeamLength,
 	s.IETMSID,
 	s.IETMSVersion,

@@ -168,7 +168,6 @@ where   FactoryID = '{this.factoryID}' and
 
             if (!MyUtility.Check.Seek(sqlGetHitCondition, out drHitCondition))
             {
-                this.ShowErr("AutomatedLineMappingConditionSetting not exists");
                 return;
             }
 

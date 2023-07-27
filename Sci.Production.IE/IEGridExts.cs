@@ -527,7 +527,7 @@ where a.MoldID IN ('{string.Join("','", moldID.Split(','))}') ";
                     return;
                 }
 
-                if (e.Button == MouseButtons.Right)
+                if (e.Button != MouseButtons.Right)
                 {
                     return;
                 }

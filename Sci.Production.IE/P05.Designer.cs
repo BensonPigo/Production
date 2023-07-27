@@ -180,7 +180,7 @@
             this.masterpanel.Controls.Add(this.label3);
             this.masterpanel.Controls.Add(this.label2);
             this.masterpanel.Controls.Add(this.label1);
-            this.masterpanel.Size = new System.Drawing.Size(1226, 187);
+            this.masterpanel.Size = new System.Drawing.Size(1228, 187);
             this.masterpanel.Controls.SetChildIndex(this.label1, 0);
             this.masterpanel.Controls.SetChildIndex(this.label2, 0);
             this.masterpanel.Controls.SetChildIndex(this.label3, 0);
@@ -238,7 +238,7 @@
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 187);
-            this.detailpanel.Size = new System.Drawing.Size(1226, 442);
+            this.detailpanel.Size = new System.Drawing.Size(1228, 445);
             // 
             // gridicon
             // 
@@ -249,7 +249,7 @@
             // 
             this.detailgridcont.Controls.Add(this.btnEditOperation);
             this.detailgridcont.Controls.Add(this.tabDetail);
-            this.detailgridcont.Size = new System.Drawing.Size(1226, 442);
+            this.detailgridcont.Size = new System.Drawing.Size(1228, 445);
             this.detailgridcont.Controls.SetChildIndex(this.tabDetail, 0);
             this.detailgridcont.Controls.SetChildIndex(this.btnEditOperation, 0);
             // 
@@ -267,24 +267,24 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(1226, 667);
+            this.detail.Size = new System.Drawing.Size(1228, 670);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(1226, 629);
+            this.detailcont.Size = new System.Drawing.Size(1228, 632);
             // 
             // detailbtm
             // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 629);
-            this.detailbtm.Size = new System.Drawing.Size(1226, 38);
+            this.detailbtm.Location = new System.Drawing.Point(0, 632);
+            this.detailbtm.Size = new System.Drawing.Size(1228, 38);
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(1226, 667);
+            this.browse.Size = new System.Drawing.Size(1228, 670);
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(1234, 696);
+            this.tabs.Size = new System.Drawing.Size(1236, 699);
             // 
             // label1
             // 
@@ -598,7 +598,7 @@
             this.tabDetail.Location = new System.Drawing.Point(0, 0);
             this.tabDetail.Name = "tabDetail";
             this.tabDetail.SelectedIndex = 0;
-            this.tabDetail.Size = new System.Drawing.Size(1226, 442);
+            this.tabDetail.Size = new System.Drawing.Size(1228, 445);
             this.tabDetail.TabIndex = 1;
             this.tabDetail.SelectedIndexChanged += new System.EventHandler(this.TabDetail_SelectedIndexChanged);
             // 
@@ -608,21 +608,22 @@
             this.tabPageLineMapping.Location = new System.Drawing.Point(4, 25);
             this.tabPageLineMapping.Name = "tabPageLineMapping";
             this.tabPageLineMapping.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageLineMapping.Size = new System.Drawing.Size(1218, 413);
+            this.tabPageLineMapping.Size = new System.Drawing.Size(1220, 416);
             this.tabPageLineMapping.TabIndex = 0;
             this.tabPageLineMapping.Text = "Line Mapping";
             // 
             // splitLineMapping
             // 
             this.splitLineMapping.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitLineMapping.FixedPanel = System.Windows.Forms.FixedPanel.Panel2;
             this.splitLineMapping.Location = new System.Drawing.Point(3, 3);
             this.splitLineMapping.Name = "splitLineMapping";
             // 
             // splitLineMapping.Panel2
             // 
             this.splitLineMapping.Panel2.Controls.Add(this.gridLineMappingRight);
-            this.splitLineMapping.Size = new System.Drawing.Size(1212, 407);
-            this.splitLineMapping.SplitterDistance = 774;
+            this.splitLineMapping.Size = new System.Drawing.Size(1214, 410);
+            this.splitLineMapping.SplitterDistance = 860;
             this.splitLineMapping.TabIndex = 0;
             // 
             // gridLineMappingRight
@@ -645,7 +646,7 @@
             this.gridLineMappingRight.RowTemplate.Height = 24;
             this.gridLineMappingRight.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridLineMappingRight.ShowCellToolTips = false;
-            this.gridLineMappingRight.Size = new System.Drawing.Size(434, 407);
+            this.gridLineMappingRight.Size = new System.Drawing.Size(350, 410);
             this.gridLineMappingRight.TabIndex = 0;
             // 
             // tabPageCentralizedPPA
@@ -654,13 +655,14 @@
             this.tabPageCentralizedPPA.Location = new System.Drawing.Point(4, 25);
             this.tabPageCentralizedPPA.Name = "tabPageCentralizedPPA";
             this.tabPageCentralizedPPA.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageCentralizedPPA.Size = new System.Drawing.Size(884, 133);
+            this.tabPageCentralizedPPA.Size = new System.Drawing.Size(1220, 416);
             this.tabPageCentralizedPPA.TabIndex = 1;
             this.tabPageCentralizedPPA.Text = "Centralized PPA";
             // 
             // splitCentralizedPPA
             // 
             this.splitCentralizedPPA.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitCentralizedPPA.FixedPanel = System.Windows.Forms.FixedPanel.Panel2;
             this.splitCentralizedPPA.Location = new System.Drawing.Point(3, 3);
             this.splitCentralizedPPA.Name = "splitCentralizedPPA";
             // 
@@ -671,8 +673,8 @@
             // splitCentralizedPPA.Panel2
             // 
             this.splitCentralizedPPA.Panel2.Controls.Add(this.gridCentralizedPPARight);
-            this.splitCentralizedPPA.Size = new System.Drawing.Size(878, 127);
-            this.splitCentralizedPPA.SplitterDistance = 609;
+            this.splitCentralizedPPA.Size = new System.Drawing.Size(1214, 410);
+            this.splitCentralizedPPA.SplitterDistance = 860;
             this.splitCentralizedPPA.TabIndex = 0;
             // 
             // gridCentralizedPPALeft
@@ -695,7 +697,7 @@
             this.gridCentralizedPPALeft.RowTemplate.Height = 24;
             this.gridCentralizedPPALeft.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridCentralizedPPALeft.ShowCellToolTips = false;
-            this.gridCentralizedPPALeft.Size = new System.Drawing.Size(609, 127);
+            this.gridCentralizedPPALeft.Size = new System.Drawing.Size(860, 410);
             this.gridCentralizedPPALeft.TabIndex = 0;
             // 
             // gridCentralizedPPARight
@@ -718,7 +720,7 @@
             this.gridCentralizedPPARight.RowTemplate.Height = 24;
             this.gridCentralizedPPARight.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridCentralizedPPARight.ShowCellToolTips = false;
-            this.gridCentralizedPPARight.Size = new System.Drawing.Size(265, 127);
+            this.gridCentralizedPPARight.Size = new System.Drawing.Size(350, 410);
             this.gridCentralizedPPARight.TabIndex = 0;
             // 
             // label12
@@ -1113,7 +1115,7 @@
             this.ApvChkValue = "New";
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1234, 729);
+            this.ClientSize = new System.Drawing.Size(1236, 732);
             this.ExpressQuery = true;
             this.GridAlias = "AutomatedLineMapping_Detail";
             this.IsSupportClip = false;

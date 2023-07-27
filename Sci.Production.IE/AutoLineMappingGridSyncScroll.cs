@@ -435,7 +435,7 @@ namespace Sci.Production.IE
                 gridRow.Cells["OperatorLoading"].Style.BackColor = Color.LightPink;
                 gridRow.Cells["OperatorLoading"].Style.Font = new Font(FontFamily.GenericSansSerif, 10, FontStyle.Bold);
             }
-            else if (operatorLoading < 85)
+            else if (operatorLoading > 0 && operatorLoading < 85)
             {
                 gridRow.Cells["OperatorLoading"].Style.BackColor = Color.LightSkyBlue;
                 gridRow.Cells["OperatorLoading"].Style.Font = new Font(FontFamily.GenericSansSerif, 10, FontStyle.Bold);

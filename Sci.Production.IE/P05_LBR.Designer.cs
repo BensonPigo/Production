@@ -153,7 +153,7 @@
             this.tabNoOfOperator.Location = new System.Drawing.Point(9, 38);
             this.tabNoOfOperator.Name = "tabNoOfOperator";
             this.tabNoOfOperator.SelectedIndex = 0;
-            this.tabNoOfOperator.Size = new System.Drawing.Size(908, 507);
+            this.tabNoOfOperator.Size = new System.Drawing.Size(1035, 507);
             this.tabNoOfOperator.TabIndex = 7;
             // 
             // tabSewerMinus2
@@ -162,13 +162,14 @@
             this.tabSewerMinus2.Location = new System.Drawing.Point(4, 25);
             this.tabSewerMinus2.Name = "tabSewerMinus2";
             this.tabSewerMinus2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabSewerMinus2.Size = new System.Drawing.Size(900, 478);
+            this.tabSewerMinus2.Size = new System.Drawing.Size(1027, 478);
             this.tabSewerMinus2.TabIndex = 0;
             this.tabSewerMinus2.Text = "-2 Sewer";
             // 
             // splitViewOperator
             // 
             this.splitViewOperator.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitViewOperator.FixedPanel = System.Windows.Forms.FixedPanel.Panel2;
             this.splitViewOperator.Location = new System.Drawing.Point(3, 3);
             this.splitViewOperator.Name = "splitViewOperator";
             // 
@@ -179,8 +180,8 @@
             // splitViewOperator.Panel2
             // 
             this.splitViewOperator.Panel2.Controls.Add(this.gridSub);
-            this.splitViewOperator.Size = new System.Drawing.Size(894, 472);
-            this.splitViewOperator.SplitterDistance = 632;
+            this.splitViewOperator.Size = new System.Drawing.Size(1021, 472);
+            this.splitViewOperator.SplitterDistance = 690;
             this.splitViewOperator.TabIndex = 0;
             // 
             // gridMain
@@ -203,7 +204,7 @@
             this.gridMain.RowTemplate.Height = 24;
             this.gridMain.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridMain.ShowCellToolTips = false;
-            this.gridMain.Size = new System.Drawing.Size(632, 472);
+            this.gridMain.Size = new System.Drawing.Size(690, 472);
             this.gridMain.TabIndex = 0;
             // 
             // gridSub
@@ -226,7 +227,7 @@
             this.gridSub.RowTemplate.Height = 24;
             this.gridSub.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridSub.ShowCellToolTips = false;
-            this.gridSub.Size = new System.Drawing.Size(258, 472);
+            this.gridSub.Size = new System.Drawing.Size(327, 472);
             this.gridSub.TabIndex = 1;
             // 
             // tabSewerMinus1
@@ -234,7 +235,7 @@
             this.tabSewerMinus1.Location = new System.Drawing.Point(4, 25);
             this.tabSewerMinus1.Name = "tabSewerMinus1";
             this.tabSewerMinus1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabSewerMinus1.Size = new System.Drawing.Size(900, 478);
+            this.tabSewerMinus1.Size = new System.Drawing.Size(1027, 478);
             this.tabSewerMinus1.TabIndex = 1;
             this.tabSewerMinus1.Text = "-1 Sewer";
             // 
@@ -242,7 +243,7 @@
             // 
             this.tabSewerManualInput.Location = new System.Drawing.Point(4, 25);
             this.tabSewerManualInput.Name = "tabSewerManualInput";
-            this.tabSewerManualInput.Size = new System.Drawing.Size(900, 478);
+            this.tabSewerManualInput.Size = new System.Drawing.Size(1027, 478);
             this.tabSewerManualInput.TabIndex = 2;
             this.tabSewerManualInput.Text = "Manual Input";
             // 
@@ -250,7 +251,7 @@
             // 
             this.tabSewerPlus1.Location = new System.Drawing.Point(4, 25);
             this.tabSewerPlus1.Name = "tabSewerPlus1";
-            this.tabSewerPlus1.Size = new System.Drawing.Size(900, 478);
+            this.tabSewerPlus1.Size = new System.Drawing.Size(1027, 478);
             this.tabSewerPlus1.TabIndex = 3;
             this.tabSewerPlus1.Text = "+1 Sewer";
             // 
@@ -258,14 +259,14 @@
             // 
             this.tabSewerPlus2.Location = new System.Drawing.Point(4, 25);
             this.tabSewerPlus2.Name = "tabSewerPlus2";
-            this.tabSewerPlus2.Size = new System.Drawing.Size(900, 478);
+            this.tabSewerPlus2.Size = new System.Drawing.Size(1027, 478);
             this.tabSewerPlus2.TabIndex = 4;
             this.tabSewerPlus2.Text = "+2 Sewer";
             // 
             // btnReset
             // 
             this.btnReset.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnReset.Location = new System.Drawing.Point(652, 552);
+            this.btnReset.Location = new System.Drawing.Point(779, 552);
             this.btnReset.Name = "btnReset";
             this.btnReset.Size = new System.Drawing.Size(80, 30);
             this.btnReset.TabIndex = 8;
@@ -276,7 +277,7 @@
             // btnReload
             // 
             this.btnReload.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnReload.Location = new System.Drawing.Point(738, 552);
+            this.btnReload.Location = new System.Drawing.Point(865, 552);
             this.btnReload.Name = "btnReload";
             this.btnReload.Size = new System.Drawing.Size(80, 30);
             this.btnReload.TabIndex = 9;
@@ -287,7 +288,7 @@
             // btnClose
             // 
             this.btnClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnClose.Location = new System.Drawing.Point(824, 552);
+            this.btnClose.Location = new System.Drawing.Point(951, 552);
             this.btnClose.Name = "btnClose";
             this.btnClose.Size = new System.Drawing.Size(80, 30);
             this.btnClose.TabIndex = 10;
@@ -299,7 +300,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(919, 592);
+            this.ClientSize = new System.Drawing.Size(1046, 592);
             this.Controls.Add(this.btnClose);
             this.Controls.Add(this.btnReload);
             this.Controls.Add(this.btnReset);
