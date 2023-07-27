@@ -545,12 +545,12 @@ group by almd.No
                 {
                     int idx = intRowTotalCycle - 2;
                     sheet.get_Range($"N{idx}:N{intRowTotalCycle - 1}").Merge();
-                    sheet.Cells[idx, 14] = "Total" + Environment.NewLine + "Cycle";
+                    sheet.Cells[idx, 14] = "Total" + Environment.NewLine + "Cycle Time";
                     sheet.Cells[idx, 14].HorizontalAlignment = Excel.Constants.xlRight; // 設定靠右對齊
                     sheet.Cells[idx, 14].Font.Bold = true; // 設定粗體字
 
                     sheet.get_Range($"O{idx}:O{intRowTotalCycle - 1}").Merge();
-                    sheet.Cells[idx, 15] = "Avg." + Environment.NewLine + "Cycle";
+                    sheet.Cells[idx, 15] = "Avg." + Environment.NewLine + "Cycle Time";
                     sheet.Cells[idx, 15].HorizontalAlignment = Excel.Constants.xlRight; // 設定靠右對齊
                     sheet.Cells[idx, 15].Font.Bold = true; // 設定粗體字
                 }
@@ -639,6 +639,8 @@ group by almd.No
                     this.SetPicture(filepath, sheet, range, left, top);
                 }
             }
+
+            sheet.Rows.AutoFit();
         }
 
         private void SetPicture(string filepath, Excel.Worksheet sheet, Excel.Range range, float left, float top)
@@ -769,6 +771,14 @@ group by almd.No
                     objArray[0, 3] = null;
                     objArray[0, 4] = dr["Detail"];
                     sheet.Range[$"S{attachmentRowIndex}:W{attachmentRowIndex}"].Value2 = objArray;
+
+                    // 合併儲存格在自動調整行高時只會看第一欄，在此依據Detail換行的次數將第一欄填入對應數量的換行符號
+                    var lineCount = dr["Detail"].ToString().Split(new string[] { Environment.NewLine }, StringSplitOptions.None).Length;
+                    if (lineCount > 1)
+                    {
+                        sheet.Cells[attachmentRowIndex, 1] = string.Join(Environment.NewLine, new string[lineCount]);
+                    }
+
                     attachmentRowIndex++;
                 }
 
@@ -1197,6 +1207,8 @@ group by almd.No
                 }
             }
             #endregion
+
+            sheet.Rows.AutoFit();
         }
 
         private void AddLineMappingFormula(Excel.Worksheet worksheet, int rownum, string alias)
