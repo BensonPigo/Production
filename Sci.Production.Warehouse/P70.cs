@@ -113,7 +113,7 @@ namespace Sci.Production.Warehouse
 
             if (dtInvShort.Rows.Count > 0)
             {
-                Class.MsgGrid form = new Class.MsgGrid(dtInvShort, "Balacne Qty is not enough!!");
+                Class.MsgGrid form = new Class.MsgGrid(dtInvShort, "These fabric already exists, cannot be saved.");
                 form.ShowDialog(this);
                 return false;
             }
@@ -123,6 +123,11 @@ namespace Sci.Production.Warehouse
                 this.CurrentMaintain["ID"] = MyUtility.GetValue.GetID(Env.User.Keyword + "OR", "LocalOrderReceiving", (DateTime)this.CurrentMaintain["AddDate"]);
             }
 
+            foreach (var item in this.DetailDatas)
+            {
+                item["Roll"] = item["FabricType"].ToString() == "A" ? string.Empty : item["Roll"];
+                item["Dyelot"] = item["FabricType"].ToString() == "A" ? string.Empty : item["Dyelot"];
+            }
             return base.ClickSaveBefore();
         }
 
@@ -402,7 +407,7 @@ where   (isnull(f.InQty, 0) - isnull(f.OutQty, 0) + isnull(f.AdjustQty, 0) - d.Q
             }
 
             ReportDefinition rd = new ReportDefinition();
-            if (!(this.result = ReportResources.ByEmbeddedResource(Assembly.GetAssembly(this.GetType()), this.GetType(), "P64_Print.rdlc", out IReportResource reportresource)))
+            if (!(this.result = ReportResources.ByEmbeddedResource(Assembly.GetAssembly(this.GetType()), this.GetType(), "P70_Print.rdlc", out IReportResource reportresource)))
             {
                 MyUtility.Msg.ErrorBox(this.result.ToString());
             }
@@ -441,8 +446,8 @@ where   (isnull(f.InQty, 0) - isnull(f.OutQty, 0) + isnull(f.AdjustQty, 0) - d.Q
                     return false;
                 }
 
-                List<P64_PrintData> data = dataTable.AsEnumerable()
-                    .Select(row1 => new P64_PrintData()
+                List<P70_PrintData> data = dataTable.AsEnumerable()
+                    .Select(row1 => new P70_PrintData()
                     {
                         POID = row1["POID"].ToString().Trim(),
                         SEQ = row1["Seq"].ToString().Trim(),

@@ -275,6 +275,7 @@
             this.Text = "P70. Material Receiving (Local Order)";
             this.UnApvChkValue = "Confirmed";
             this.WorkAlias = "LocalOrderReceiving";
+            this.GridUniqueKey = "poid,seq1,seq2,roll,Dyelot";
             this.Controls.SetChildIndex(this.tabs, 0);
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).EndInit();

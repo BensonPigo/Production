@@ -55,17 +55,17 @@ namespace Sci.Production.Warehouse
 
                 switch (dr["name"].ToString().Substring(0, 3))
                 {
-                    case "P64":
-                        var p64 = new P64(null, dr["id"].ToString());
-                        p64.ShowDialog(this);
+                    case "P70":
+                        var p70 = new P70(null, dr["Transaction"].ToString());
+                        p70.ShowDialog(this);
                         break;
-                    case "P65":
-                        var p65 = new P65(null, dr["id"].ToString());
-                        p65.ShowDialog(this);
+                    case "P71":
+                        var p71 = new P71(null, dr["Transaction"].ToString());
+                        p71.ShowDialog(this);
                         break;
-                    case "P66":
-                        var p66 = new P66(null, dr["id"].ToString());
-                        p66.ShowDialog(this);
+                    case "P72":
+                        var p72 = new P72(null, dr["Transaction"].ToString());
+                        p72.ShowDialog(this);
                         break;
                 }
             };
@@ -94,36 +94,9 @@ namespace Sci.Production.Warehouse
             .Text("ContainerCode", header: "Container Code", iseditingreadonly: true, width: Widths.AnsiChars(14)).Get(out cbb_ContainerCode_Left)
             ;
 
-            #region 開窗
-            DataGridViewGeneratorTextColumnSettings openOtherWH2 = new DataGridViewGeneratorTextColumnSettings();
-            openOtherWH2.CellMouseDoubleClick += (s, e) =>
-            {
-                var dr = this.gridRight.CurrentDataRow;
-                if (dr == null)
-                {
-                    return;
-                }
-
-                switch (dr["name"].ToString().Substring(0, 3))
-                {
-                    case "P64":
-                        var p64 = new P64(null, dr["id"].ToString());
-                        p64.ShowDialog(this);
-                        break;
-                    case "P65":
-                        var p65 = new P65(null, dr["id"].ToString());
-                        p65.ShowDialog(this);
-                        break;
-                    case "P66":
-                        var p66 = new P66(null, dr["id"].ToString());
-                        p66.ShowDialog(this);
-                        break;
-                }
-            };
-            #endregion
             this.Helper.Controls.Grid.Generator(this.gridRight)
             .Text("Date", header: "Date", iseditingreadonly: true, width: Widths.AnsiChars(9))
-            .Text("Transaction", header: "Transaction ID", iseditingreadonly: true, width: Widths.AnsiChars(14), settings: openOtherWH2)
+            .Text("Transaction", header: "Transaction ID", iseditingreadonly: true, width: Widths.AnsiChars(14))
             .Text("Name", header: "Name", iseditingreadonly: true, width: Widths.AnsiChars(30))
             .Numeric("ArrivedQty", header: "In Qty", iseditingreadonly: true, decimal_places: 2, width: Widths.AnsiChars(4))
             .Numeric("ReleasedQty", header: "Out Qty", iseditingreadonly: true, decimal_places: 2, width: Widths.AnsiChars(4))
@@ -226,11 +199,21 @@ namespace Sci.Production.Warehouse
             [ArrivedQty] = sum(ArrivedQty),
             [ReleasedQty] = sum(ReleasedQty),
             [AdjustQty] = sum(AdjustQty),
-            [Location],
+            [Location] = [Location].val,
             [Remark],
             [POID]
-            from #tmpDetail
-            GROUP BY [Date],[Transaction],[Name],[Location],[Remark],[POID]
+            from #tmpDetail a
+            OUTER APPLY
+            (
+	            select val = stuff((
+	            select concat(',',tmp.[Location]) from
+	            (
+		            SELECT distinct  t.[Location]
+		            FROM #tmpDetail t
+		            WHERE  t.[DATE] = a.[DATE] and t.[Transaction] = a.[Transaction] and t.[Name] = a.[Name]
+	            ) tmp for xml path('')),1,1,'')
+            )Location
+            GROUP BY [Date],[Transaction],[Name],[Remark],[POID],Location.val
             ORDER BY [Date],[Name],[Transaction]
             ------------------------   Left 資訊   ------------------------
             SELECT 
