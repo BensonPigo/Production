@@ -130,8 +130,8 @@ Select
 	oes.SizeCode,
 	Ratio = oes.Qty,
 	ConsPC_SizeRatio =isnull(oe.ConsPC, 0) * isnull(oes.Qty, 0) / sum(oes.Qty) over(partition by oe.Ukey) * 1.0, -- ConsPC 用佔比分配
-	oe.Article, -- 此欄位內容是紀錄多個Article
-	oe.FabricPanelCode
+	oe.FabricPanelCode,
+    oe.Ukey
 into #tmp
 From (select distinct POID, StyleID, StyleUkey from #tmpOrders) o
 inner join Order_EachCons oe WITH (NOLOCK) on o.POID = oe.Id
@@ -140,19 +140,15 @@ left join Fabric WITH (NOLOCK) on Fabric.SCIRefno = bof.SCIRefno
 left join Order_EachCons_SizeQty oes WITH (NOLOCK) on oes.Order_EachConsUkey = oe.Ukey
 
 --把 Article 用逗號拆開, 展開
-select t.POID, t.SizeCode, s.Article, t.ConsPC_SizeRatio, t.FabricCombo, t.Refno, t.MarkerNo, t.MarkerName, t.FabricPanelCode
-into #byArticle
-from #tmp t
-outer apply(select Article = RTRIM(LTRIM(Data)) from [dbo].[SplitString](t.Article, ',') where data <>'')s
-
---把空白的 Article 補上所有 Article
-select t.POID, t.SizeCode, x.Article, t.ConsPC_SizeRatio, t.FabricCombo, t.Refno, t.MarkerNo, t.MarkerName, t.FabricPanelCode
+select t.POID, t.SizeCode, oeca.Article, t.ConsPC_SizeRatio, t.FabricCombo, t.Refno, t.MarkerNo, t.MarkerName, t.FabricPanelCode
 into #byArticleALL
-from #byArticle t
-outer apply(select Article from #allAS a where a.POID = t.POID and a.SizeCode = t.SizeCode)x
-where isnull(t.Article, '') = ''
-union all
-select * from #byArticle t where Article <>''
+from #tmp t
+OUTER APPLY(
+    SELECT DISTINCT Article
+    FROM Order_EachCons_Color oec
+    INNER JOIN Order_EachCons_Color_Article oeca ON oeca.Order_EachCons_ColorUkey = oec.Ukey
+    WHERE oec.Order_EachConsUkey = t.Ukey
+)oeca
 
 --sheet 1
 select
@@ -223,7 +219,7 @@ from #xmlArticle t
 {artwork}inner join #ArtworkS b on b.POID = t.POID and b.SizeCode = t.SizeCode and b.FabricPanelCode = t.FabricPanelCode and b.xml = t.xml
 order by t.POID, t.StyleID, t.FabricCombo, t.Refno, t.MarkerNo, t.MarkerName
 
-drop table #tmp,#byArticle,#tmpOrders,#allAS,#byArticleALL,#sizePatternUkey,#MarkerName_AS,#xmlArticle
+drop table #tmp,#tmpOrders,#allAS,#byArticleALL,#sizePatternUkey,#MarkerName_AS,#xmlArticle
 {artwork}drop table #ArtworkS
 ");
 
