@@ -450,7 +450,7 @@ BEGIN
 	--Pressing
 	set @WhileCnt = 1
 	set @SewerDiffPercentageRemaining = 1
-	set @SewerDiffPercentage = 1 / @PresserManpower
+	set @SewerDiffPercentage = 1.0 / @PresserManpower
 	while @WhileCnt <= @PresserManpower
 	begin
 		set @MaxNo = @MaxNo + 1
@@ -509,7 +509,7 @@ BEGIN
 	--Packing
 	set @WhileCnt = 1
 	set @SewerDiffPercentageRemaining = 1
-	set @SewerDiffPercentage = 1 / @PackerManpower
+	set @SewerDiffPercentage = 1.0 / @PackerManpower
 	while @WhileCnt <= @PackerManpower
 	begin
 		set @MaxNo = @MaxNo + 1
