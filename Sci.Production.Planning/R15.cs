@@ -2005,7 +2005,9 @@ select
     , t.BrandID
     , t.OrderID
     , t.POID
+	, T.[Buy Back]
     , t.Cancelled
+	, T.[Cancelled but Sill]
     , t.Dest
     , t.StyleID
     , t.OrderTypeID
@@ -2205,6 +2207,8 @@ t.MDivisionID
 , GFR
 , SampleReason
 , [TMS]
+,T.[Buy Back]
+, T.[Cancelled but Sill]
 ");
             return sqlCmd;
         }
