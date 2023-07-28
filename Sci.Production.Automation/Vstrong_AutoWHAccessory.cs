@@ -126,21 +126,6 @@ namespace Sci.Production.Automation
         {
             // DataTable轉化為JSON
             WHTableName dtNameforAPI = LogicAutoWHData.GetDetailNameforAPI(formName);
-            switch (dtNameforAPI)
-            {
-                case WHTableName.LocalOrderReceiving_Detail:
-                    dtNameforAPI = WHTableName.Receiving_Detail;
-                    break;
-                case WHTableName.LocalOrderLocationTrans_Detail:
-                    dtNameforAPI = WHTableName.LocationTrans_Detail;
-                    break;
-                case WHTableName.LocalOrderIssue_Detail:
-                    dtNameforAPI = WHTableName.Issue_Detail;
-                    break;
-                case WHTableName.LocalOrderAdjust_Detail:
-                    dtNameforAPI = WHTableName.Adjust_Detail;
-                    break;
-            }
 
             string jsonBody = GetJsonBody(dt, dtNameforAPI, statusAPI);
             AutomationErrMsgPMS automationErrMsg = new AutomationErrMsgPMS
@@ -490,6 +475,21 @@ namespace Sci.Production.Automation
                         Status = statusAPI.ToString(),
                         CmdTime = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"),
                     });
+                    break;
+            }
+            switch (detailName)
+            {
+                case WHTableName.LocalOrderReceiving_Detail:
+                    detailName = WHTableName.Receiving_Detail;
+                    break;
+                case WHTableName.LocalOrderLocationTrans_Detail:
+                    detailName = WHTableName.LocationTrans_Detail;
+                    break;
+                case WHTableName.LocalOrderIssue_Detail:
+                    detailName = WHTableName.Issue_Detail;
+                    break;
+                case WHTableName.LocalOrderAdjust_Detail:
+                    detailName = WHTableName.Adjust_Detail;
                     break;
             }
 
