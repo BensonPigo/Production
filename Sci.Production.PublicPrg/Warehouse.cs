@@ -1045,51 +1045,32 @@ drop table #TmpSource;";
                     #endregion
                     break;
                 case "Location":
-                    #region 更新OutQty with Location
+                    #region 更新Location
                     sqlcmd = @"
 alter table #TmpSource alter column poid varchar(20)
 alter table #TmpSource alter column seq1 varchar(3)
 alter table #TmpSource alter column seq2 varchar(3)
-alter table #TmpSource alter column stocktype varchar(1)
 alter table #TmpSource alter column roll varchar(15)
 
-select poid, seq1, seq2, stocktype, roll = RTRIM(LTRIM(isnull(roll, ''))) ,[qty] = sum(qty), dyelot = isnull(dyelot, '')
-into #tmpS1
-from #TmpSource
-group by poid, seq1, seq2, stocktype, RTRIM(LTRIM(isnull(roll, ''))) ,isnull(dyelot, '')
-
-merge dbo.LocalOrderInventory as target
-using #tmpS1 as s
-    on target.poid = s.poid and target.seq1 = s.seq1 
-    and target.seq2 = s.seq2 and target.stocktype = s.stocktype and target.roll = s.roll and target.dyelot = s.dyelot
-when matched then
-    update
-    set outqty = isnull(outqty,0.00) + s.qty
-when not matched then
-    insert ( [Poid],[Seq1],[Seq2],[Roll],[Dyelot],[StockType],[outqty])
-    values ( s.poid,s.seq1,s.seq2,s.roll,s.dyelot,s.stocktype,s.qty);";
-                    if (encoded)
-                    {
-                        sqlcmd += @"
-select distinct [location] = location.[Data] ,[ukey] = f.ukey
+select distinct [tolocation] = location.[Data] ,[ukey] = f.ukey
 into #tmp_L_K 
 from #TmpSource s
 left join LocalOrderInventory f WITH (NOLOCK) on f.poid = s.poid 
 						 and f.seq1 = s.seq1 and f.seq2 = s.seq2 and f.roll = s.roll and f.stocktype = s.stocktype and f.dyelot = s.dyelot
-cross apply (select [Data] from [dbo].[SplitString](s.Location,',')) location
+cross apply (select [Data] from [dbo].[SplitString](s.tolocation,',')) location
+
+delete t from LocalOrderInventory_Location t
+where  t.LocalOrderInventoryUkey = (select distinct ukey from #tmp_L_K where t.LocalOrderInventoryUkey = Ukey)                                          
 
 merge dbo.LocalOrderInventory_Location as t
-using #tmp_L_K as s on t.LocalOrderInventoryUkey = s.ukey and t.mtllocationid = s.location
-when not matched then
+using #tmp_L_K as s on t.LocalOrderInventoryUkey = s.ukey and isnull(t.mtllocationid,'') = isnull(s.tolocation,'')
+when not matched AND s.Ukey IS NOT NULL then
     insert ([LocalOrderInventoryUkey],[mtllocationid]) 
-    values (s.ukey,isnull(s.location,''));
+    values (s.ukey,isnull(s.tolocation,''));
 
 drop table #tmp_L_K
-"; // ↑最後一段delete寫法千萬不能用merge作,即使只有一筆資料也要跑超久
-                    }
-
-                    sqlcmd += @"drop table #tmpS1;
-                                drop table #TmpSource;";
+drop table #TmpSource
+";
                     #endregion
                     break;
                 case "Adjust":
@@ -1247,8 +1228,7 @@ WHERE   junk != '1'";
             }
             else
             {
-                sqlcmd = string.Format(
-                    @"
+                sqlcmd = $@"
 SELECT  id
         , Description
         , StockType = Case StockType
@@ -1260,8 +1240,8 @@ SELECT  id
                             'Scrap' 
                        End
 FROM DBO.MtlLocation WITH (NOLOCK) 
-WHERE   StockType='{0}'
-        and junk != '1'", stocktype);
+WHERE   StockType='{stocktype}'
+        and junk != '1'";
             }
 
             Win.Tools.SelectItem2 selectlocation = new Win.Tools.SelectItem2(sqlcmd, "Location ID,Description,Stock Type", "13,60,10", defaultseq, null, null, null)

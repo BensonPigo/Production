@@ -72,6 +72,7 @@ SELECT loid.*
 , [Location] = ISNULL(LOCATION.val,'')
 , [ReasonName] = r.Name
 , [AdjustQty] = loid.QtyAfter - loid.QtyBefore
+, [LocalOrderInventoryUkey] = loi.Ukey
 FROM LocalOrderAdjust_Detail loid
 LEFT JOIN LocalOrderMaterial lom ON lom.POID = loid.POID AND loid.Seq1 = lom.Seq1 AND loid.Seq2 = lom.Seq2
 LEFT JOIN LocalOrderInventory loi ON loid.POID = loi.POID
@@ -194,6 +195,7 @@ and ReasonTypeID='Stock_Adjust' AND junk = 0", e.FormattedValue), out dr))
             .Text("ReasonName", header: "Reason Name", iseditingreadonly: true, width: Widths.AnsiChars(20))
             ;
 
+            this.detailgrid.Columns["reasonid"].DefaultCellStyle.BackColor = Color.Pink;
             this.detailgrid.Columns["QtyAfter"].DefaultCellStyle.BackColor = Color.Pink;
         }
 

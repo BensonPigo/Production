@@ -115,11 +115,12 @@ select  loi.POID,
 		lom.[Desc],
 		lom.Color,        
         lom.Unit,
-		InQty = round(sum(loi.InQty),2),
-		OutQty = round(sum(loi.OutQty),2),
-		AdjustQty = round(sum(loi.AdjustQty),2),        
-        [BalanceQty] = round(sum(loi.InQty - loi.OutQty + loi.AdjustQty),2),        
+		InQty = loi.InQty,
+		OutQty = loi.OutQty,
+		AdjustQty = loi.AdjustQty,        
+        [BalanceQty] = loi.InQty - loi.OutQty + loi.AdjustQty,        
         [Location] = Location.val
+into #tmp
 from    LocalOrderInventory loi with (nolock)
 left join  LocalOrderMaterial lom with (nolock) on loi.Poid = lom.Poid and loi.Seq1 = lom.Seq1 and loi.Seq2 = lom.Seq2
 left join Orders o with (nolock) on o.ID=loi.POID
@@ -131,7 +132,26 @@ outer apply (
 ) Location
 where  1=1
 {this.strWhere}
-GROUP BY loi.POID,loi.Seq1,loi.Seq2,lom.FabricType,lom.MtlType,lom.Refno,lom.[Desc],lom.Color,lom.Unit,Location.val
+
+
+select 
+poid,Seq,MaterialType,Refno,[Desc],Color,Unit,
+[InQty] = round(sum(InQty),2),
+		OutQty = round(sum(OutQty),2),
+		AdjustQty = round(sum(AdjustQty),2),        
+        [BalanceQty] = round(sum(BalanceQty),2), 
+		[Location] = Location.val
+from #tmp	s
+outer apply (
+	SELECT val =  Stuff((select distinct concat( ',',[Location])   
+	from #tmp t with (nolock)
+	WHERE t.poid = s.poid
+	and t.seq=s.seq
+	FOR XML PATH('')),1,1,'')  
+) Location
+GROUP BY POID,Seq,MaterialType,Refno,[Desc],Color,Unit,Location.val
+
+drop table #tmp	
 ";
             return sqlCmd;
         }

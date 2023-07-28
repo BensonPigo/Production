@@ -154,7 +154,7 @@
             this.txtLocation2.Location = new System.Drawing.Point(220, 20);
             this.txtLocation2.Name = "txtLocation2";
             this.txtLocation2.ReadOnly = true;
-            this.txtLocation2.Size = new System.Drawing.Size(400, 23);
+            this.txtLocation2.Size = new System.Drawing.Size(482, 23);
             this.txtLocation2.TabIndex = 2;
             this.txtLocation2.MouseDown += new System.Windows.Forms.MouseEventHandler(this.TxtLocation2_MouseDown);
             // 

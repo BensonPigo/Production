@@ -365,7 +365,7 @@ and td.id = '{this.CurrentMaintain["ID"]}'
             #endregion
 
             #region 更新庫存位置  LocalOrderInventory
-            var data_LocalOrder_73 = (from b in ((DataTable)this.detailgridbs.DataSource).AsEnumerable()
+            var data_LocalOrder_73 = (from b in ((DataTable)this.detailgridbs.DataSource).AsEnumerable() 
                                       select new
                                 {
                                     poid = b.Field<string>("poid"),
@@ -373,7 +373,7 @@ and td.id = '{this.CurrentMaintain["ID"]}'
                                     seq2 = b.Field<string>("seq2"),
                                     stocktype = b.Field<string>("stocktype"),
                                     qty = b.Field<decimal>("qty"),
-                                    Location = b.Field<string>("ToLocation"),
+                                    ToLocation = b.Field<string>("ToLocation"),
                                     roll = b.Field<string>("roll"),
                                     dyelot = b.Field<string>("dyelot"),
                                 }).ToList();

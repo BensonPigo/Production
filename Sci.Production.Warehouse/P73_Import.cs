@@ -52,6 +52,7 @@ select * from (
             [Seq] = CONCAT(loi.Seq1,' ',loi.Seq2),
 		    loi.Seq1,loi.Seq2,
             StockType = 'B',
+            StockTypeName = 'Bulk', 
 		    loi.Roll,
             loi.Dyelot,
 		    lom.Refno,
@@ -320,8 +321,8 @@ WHERE   StockType='B'
             }
 
             var select_result = item.GetSelecteds()
-                .GroupBy(s => new { StockType = s["StockType"].ToString(), StockTypeCode = s["StockTypeCode"].ToString() })
-                .Select(g => new { g.Key.StockType, g.Key.StockTypeCode, ToLocation = string.Join(",", g.Select(i => i["id"])) });
+                .GroupBy(s => new { StockType = s["StockType"].ToString()})
+                .Select(g => new { g.Key.StockType, ToLocation = string.Join(",", g.Select(i => i["id"])) });
 
             if (select_result.Count() > 0)
             {
@@ -331,7 +332,7 @@ WHERE   StockType='B'
 
             foreach (var result_item in select_result)
             {
-                this.selectedLocation.Add(result_item.StockTypeCode, result_item.ToLocation);
+                this.selectedLocation.Add(result_item.StockType, result_item.ToLocation);
                 this.txtLocation2.Text += $"({result_item.StockType}:{result_item.ToLocation})";
             }
         }
@@ -349,9 +350,9 @@ WHERE   StockType='B'
 
             foreach (var item in drfound)
             {
-                if (this.selectedLocation.ContainsKey(item["stocktype"].ToString()))
+                if (this.selectedLocation.ContainsKey(item["StockTypeName"].ToString()))
                 {
-                    item["tolocation"] = this.selectedLocation[item["stocktype"].ToString()];
+                    item["tolocation"] = this.selectedLocation[item["StockTypeName"].ToString()];
                 }
             }
         }

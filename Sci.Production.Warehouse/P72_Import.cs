@@ -52,11 +52,16 @@ namespace Sci.Production.Warehouse
             DataGridViewGeneratorNumericColumnSettings colQtyAfter = new DataGridViewGeneratorNumericColumnSettings();
             colQtyAfter.CellValidating += (s, e) =>
             {
-                this.gridImport.EndEdit();
-                decimal qtyAfter = (decimal)this.gridImport.Rows[e.RowIndex].Cells["OriginalQty"].Value;
-                decimal qtyBefore = (decimal)this.gridImport.Rows[e.RowIndex].Cells["CurrentQty"].Value;
-                this.gridImport.Rows[e.RowIndex].Cells["AdjustQty"].Value = qtyBefore - qtyAfter;
-                this.gridImport.RefreshEdit();
+                if (this.EditMode && !MyUtility.Check.Empty(e.FormattedValue))
+                {
+                    this.gridImport.EndEdit();
+                    decimal qtyAfter = (decimal)this.gridImport.Rows[e.RowIndex].Cells["OriginalQty"].Value;
+                    decimal qtyBefore = (decimal)this.gridImport.Rows[e.RowIndex].Cells["CurrentQty"].Value;
+                    this.gridImport.Rows[e.RowIndex].Cells["CurrentQty"].Value = e.FormattedValue;
+                    this.gridImport.Rows[e.RowIndex].Cells["AdjustQty"].Value = qtyBefore - qtyAfter;
+                    this.gridImport.Rows[e.RowIndex].Cells["selected"].Value = true;
+                    this.gridImport.RefreshEdit();
+                }
             };
 
             #region -- Reason ID 右鍵開窗 --
@@ -195,11 +200,12 @@ select  [selected] = 0,
         lom.Unit,
         [OriginalQty] = loi.InQty - loi.OutQty + loi.AdjustQty,
         [CurrentQty] = 0.00,
-		[AdjustQty] = 0.00,
+		[AdjustQty] = 0.00 - (loi.InQty - loi.OutQty + loi.AdjustQty),
         [Location] = Location.val,
         loi.StockType,
 		[ReasonID] = '',
-		[ReasonName] = ''
+		[ReasonName] = '',
+        [LocalOrderInventoryUkey] = loi.Ukey
 from    LocalOrderInventory loi with (nolock)
 left join  LocalOrderMaterial lom with (nolock) on loi.Poid = lom.Poid and loi.Seq1 = lom.Seq1 and loi.Seq2 = lom.Seq2
 outer apply (
@@ -271,35 +277,40 @@ and loi.POID = '{this.txtSP.Text}'
             {
                 if (drImportSource.RowState != DataRowState.Deleted)
                 {
-                    if (checkMainDetail.Any(s => s["POID"].ToString() == drImportSource["POID"].ToString() &&
-                                                                 s["Seq1"].ToString() == drImportSource["Seq1"].ToString() &&
-                                                                 s["Seq2"].ToString() == drImportSource["Seq2"].ToString() &&
-                                                                 s["Roll"].ToString() == drImportSource["Roll"].ToString() &&
-                                                                 s["Dyelot"].ToString() == drImportSource["Dyelot"].ToString() &&
-                                                                 s["Tone"].ToString() == drImportSource["Tone"].ToString()))
+                    DataRow[] findrow = this.mainDetail.Select(string.Format("LocalOrderInventoryUkey = {0}", drImportSource["LocalOrderInventoryUkey"]));
+                    if (findrow.Length > 0)
                     {
+                        findrow[0]["QtyBefore"] = drImportSource["OriginalQty"];
+                        findrow[0]["QtyAfter"] = drImportSource["CurrentQty"];
+                        findrow[0]["AdjustQty"] = drImportSource["AdjustQty"];
+                        findrow[0]["ReasonID"] = drImportSource["ReasonID"];
+                        findrow[0]["ReasonName"] = drImportSource["ReasonName"];
                         continue;
                     }
-
-                    DataRow drMainDetail = this.mainDetail.NewRow();
-                    drMainDetail["POID"] = drImportSource["POID"];
-                    drMainDetail["Seq"] = drImportSource["Seq"];
-                    drMainDetail["Seq1"] = drImportSource["Seq1"];
-                    drMainDetail["Seq2"] = drImportSource["Seq2"];
-                    drMainDetail["Roll"] = drImportSource["Roll"];
-                    drMainDetail["Dyelot"] = drImportSource["Dyelot"];
-                    drMainDetail["Color"] = drImportSource["Color"];
-                    drMainDetail["Tone"] = drImportSource["Tone"];
-                    drMainDetail["FabricType"] = drImportSource["FabricType"];
-                    drMainDetail["StockType"] = "B";
-                    drMainDetail["QtyBefore"] = drImportSource["OriginalQty"];
-                    drMainDetail["QtyAfter"] = drImportSource["CurrentQty"];
-                    drMainDetail["AdjustQty"] = drImportSource["AdjustQty"];
-                    drMainDetail["Desc"] = drImportSource["Desc"];
-                    drMainDetail["Unit"] = drImportSource["Unit"];
-                    drMainDetail["Location"] = drImportSource["Location"];
-                    drMainDetail["ReasonID"] = drImportSource["ReasonID"];
-                    this.mainDetail.Rows.Add(drMainDetail);
+                    else
+                    {
+                        DataRow drMainDetail = this.mainDetail.NewRow();
+                        drMainDetail["POID"] = drImportSource["POID"];
+                        drMainDetail["Seq"] = drImportSource["Seq"];
+                        drMainDetail["Seq1"] = drImportSource["Seq1"];
+                        drMainDetail["Seq2"] = drImportSource["Seq2"];
+                        drMainDetail["Roll"] = drImportSource["Roll"];
+                        drMainDetail["Dyelot"] = drImportSource["Dyelot"];
+                        drMainDetail["Color"] = drImportSource["Color"];
+                        drMainDetail["Tone"] = drImportSource["Tone"];
+                        drMainDetail["FabricType"] = drImportSource["FabricType"];
+                        drMainDetail["StockType"] = "B";
+                        drMainDetail["QtyBefore"] = drImportSource["OriginalQty"];
+                        drMainDetail["QtyAfter"] = drImportSource["CurrentQty"];
+                        drMainDetail["AdjustQty"] = drImportSource["AdjustQty"];
+                        drMainDetail["Desc"] = drImportSource["Desc"];
+                        drMainDetail["Unit"] = drImportSource["Unit"];
+                        drMainDetail["Location"] = drImportSource["Location"];
+                        drMainDetail["ReasonID"] = drImportSource["ReasonID"];
+                        drMainDetail["ReasonName"] = drImportSource["ReasonName"];
+                        drMainDetail["LocalOrderInventoryUkey"] = drImportSource["LocalOrderInventoryUkey"];
+                        this.mainDetail.Rows.Add(drMainDetail);
+                    }
                 }
             }
 
