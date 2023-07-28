@@ -70,6 +70,8 @@
             this.txtMdivision = new Sci.Production.Class.TxtMdivision();
             this.comboRFIDProcessLocation1 = new Sci.Production.Class.ComboRFIDProcessLocation();
             this.panel1 = new Sci.Win.UI.Panel();
+            this.comboSubProcess = new Sci.Win.UI.ComboBox();
+            this.labSubProcess = new Sci.Win.UI.Label();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -320,7 +322,7 @@
             // 
             this.checkIncludeArtowkData.AutoSize = true;
             this.checkIncludeArtowkData.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkIncludeArtowkData.Location = new System.Drawing.Point(13, 576);
+            this.checkIncludeArtowkData.Location = new System.Drawing.Point(13, 606);
             this.checkIncludeArtowkData.Name = "checkIncludeArtowkData";
             this.checkIncludeArtowkData.Size = new System.Drawing.Size(157, 21);
             this.checkIncludeArtowkData.TabIndex = 16;
@@ -469,7 +471,7 @@
             // 
             this.chkIncludeCancelOrder.AutoSize = true;
             this.chkIncludeCancelOrder.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.chkIncludeCancelOrder.Location = new System.Drawing.Point(13, 595);
+            this.chkIncludeCancelOrder.Location = new System.Drawing.Point(13, 625);
             this.chkIncludeCancelOrder.Name = "chkIncludeCancelOrder";
             this.chkIncludeCancelOrder.Size = new System.Drawing.Size(157, 21);
             this.chkIncludeCancelOrder.TabIndex = 158;
@@ -516,9 +518,9 @@
             this.label4.Name = "label4";
             this.label4.RectStyle.BorderColor = System.Drawing.Color.Black;
             this.label4.RectStyle.Color = System.Drawing.Color.SkyBlue;
-            this.label4.Size = new System.Drawing.Size(109, 23);
+            this.label4.Size = new System.Drawing.Size(116, 23);
             this.label4.TabIndex = 162;
-            this.label4.Text = "Subprocess";
+            this.label4.Text = "Subprocess(Wip)";
             this.label4.TextStyle.BorderColor = System.Drawing.Color.Black;
             this.label4.TextStyle.Color = System.Drawing.Color.Black;
             // 
@@ -526,7 +528,7 @@
             // 
             this.label5.Location = new System.Drawing.Point(0, 34);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(109, 23);
+            this.label5.Size = new System.Drawing.Size(116, 23);
             this.label5.TabIndex = 163;
             this.label5.Text = "Process Location";
             // 
@@ -534,8 +536,9 @@
             // 
             this.txtsubprocess1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.txtsubprocess1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.txtsubprocess1.IsRFIDProcess = true;
             this.txtsubprocess1.IsSupportEditMode = false;
-            this.txtsubprocess1.Location = new System.Drawing.Point(112, 0);
+            this.txtsubprocess1.Location = new System.Drawing.Point(119, 0);
             this.txtsubprocess1.MultiSelect = true;
             this.txtsubprocess1.Name = "txtsubprocess1";
             this.txtsubprocess1.PopUpMode = Sci.Win.UI.TextBoxPopUpMode.Any;
@@ -550,6 +553,7 @@
             this.txtStyle.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtStyle.Location = new System.Drawing.Point(115, 292);
             this.txtStyle.Name = "txtStyle";
+            this.txtStyle.SeasonObjectName = null;
             this.txtStyle.Size = new System.Drawing.Size(186, 23);
             this.txtStyle.TabIndex = 8;
             this.txtStyle.TarBrand = null;
@@ -574,6 +578,7 @@
             this.txtbrand.BackColor = System.Drawing.Color.White;
             this.txtbrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtbrand.Location = new System.Drawing.Point(115, 327);
+            this.txtbrand.MyDocumentdName = null;
             this.txtbrand.Name = "txtbrand";
             this.txtbrand.Size = new System.Drawing.Size(122, 23);
             this.txtbrand.TabIndex = 9;
@@ -594,6 +599,7 @@
             this.txtfactory.BoolFtyGroupList = true;
             this.txtfactory.FilteMDivision = false;
             this.txtfactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtfactory.IsMultiselect = false;
             this.txtfactory.IsProduceFty = false;
             this.txtfactory.IssupportJunk = true;
             this.txtfactory.Location = new System.Drawing.Point(114, 432);
@@ -618,7 +624,7 @@
             this.comboRFIDProcessLocation1.FormattingEnabled = true;
             this.comboRFIDProcessLocation1.IncludeJunk = false;
             this.comboRFIDProcessLocation1.IsSupportUnselect = true;
-            this.comboRFIDProcessLocation1.Location = new System.Drawing.Point(112, 34);
+            this.comboRFIDProcessLocation1.Location = new System.Drawing.Point(119, 34);
             this.comboRFIDProcessLocation1.Name = "comboRFIDProcessLocation1";
             this.comboRFIDProcessLocation1.OldText = "";
             this.comboRFIDProcessLocation1.Size = new System.Drawing.Size(121, 24);
@@ -635,9 +641,31 @@
             this.panel1.Size = new System.Drawing.Size(268, 63);
             this.panel1.TabIndex = 166;
             // 
+            // comboSubProcess
+            // 
+            this.comboSubProcess.BackColor = System.Drawing.Color.White;
+            this.comboSubProcess.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboSubProcess.FormattingEnabled = true;
+            this.comboSubProcess.IsSupportUnselect = true;
+            this.comboSubProcess.Location = new System.Drawing.Point(114, 569);
+            this.comboSubProcess.Name = "comboSubProcess";
+            this.comboSubProcess.OldText = "";
+            this.comboSubProcess.Size = new System.Drawing.Size(121, 24);
+            this.comboSubProcess.TabIndex = 167;
+            // 
+            // labSubProcess
+            // 
+            this.labSubProcess.Location = new System.Drawing.Point(13, 570);
+            this.labSubProcess.Name = "labSubProcess";
+            this.labSubProcess.Size = new System.Drawing.Size(98, 23);
+            this.labSubProcess.TabIndex = 168;
+            this.labSubProcess.Text = "Sub Process";
+            // 
             // R15
             // 
-            this.ClientSize = new System.Drawing.Size(552, 651);
+            this.ClientSize = new System.Drawing.Size(552, 676);
+            this.Controls.Add(this.comboSubProcess);
+            this.Controls.Add(this.labSubProcess);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.dateLastSewDate);
@@ -725,6 +753,8 @@
             this.Controls.SetChildIndex(this.dateLastSewDate, 0);
             this.Controls.SetChildIndex(this.label3, 0);
             this.Controls.SetChildIndex(this.panel1, 0);
+            this.Controls.SetChildIndex(this.labSubProcess, 0);
+            this.Controls.SetChildIndex(this.comboSubProcess, 0);
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
             this.ResumeLayout(false);
@@ -775,5 +805,7 @@
         private Class.Txtsubprocess txtsubprocess1;
         private Class.ComboRFIDProcessLocation comboRFIDProcessLocation1;
         private Win.UI.Panel panel1;
+        private Win.UI.ComboBox comboSubProcess;
+        private Win.UI.Label labSubProcess;
     }
 }
