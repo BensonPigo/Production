@@ -180,7 +180,7 @@
             this.masterpanel.Controls.Add(this.label3);
             this.masterpanel.Controls.Add(this.label2);
             this.masterpanel.Controls.Add(this.label1);
-            this.masterpanel.Size = new System.Drawing.Size(1228, 187);
+            this.masterpanel.Size = new System.Drawing.Size(1271, 187);
             this.masterpanel.Controls.SetChildIndex(this.label1, 0);
             this.masterpanel.Controls.SetChildIndex(this.label2, 0);
             this.masterpanel.Controls.SetChildIndex(this.label3, 0);
@@ -238,7 +238,7 @@
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 187);
-            this.detailpanel.Size = new System.Drawing.Size(1228, 445);
+            this.detailpanel.Size = new System.Drawing.Size(1271, 445);
             // 
             // gridicon
             // 
@@ -249,7 +249,7 @@
             // 
             this.detailgridcont.Controls.Add(this.btnEditOperation);
             this.detailgridcont.Controls.Add(this.tabDetail);
-            this.detailgridcont.Size = new System.Drawing.Size(1228, 445);
+            this.detailgridcont.Size = new System.Drawing.Size(1271, 445);
             this.detailgridcont.Controls.SetChildIndex(this.tabDetail, 0);
             this.detailgridcont.Controls.SetChildIndex(this.btnEditOperation, 0);
             // 
@@ -267,16 +267,16 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(1228, 670);
+            this.detail.Size = new System.Drawing.Size(1271, 670);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(1228, 632);
+            this.detailcont.Size = new System.Drawing.Size(1271, 632);
             // 
             // detailbtm
             // 
             this.detailbtm.Location = new System.Drawing.Point(0, 632);
-            this.detailbtm.Size = new System.Drawing.Size(1228, 38);
+            this.detailbtm.Size = new System.Drawing.Size(1271, 38);
             // 
             // browse
             // 
@@ -284,7 +284,7 @@
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(1236, 699);
+            this.tabs.Size = new System.Drawing.Size(1279, 699);
             // 
             // label1
             // 
@@ -581,7 +581,7 @@
             this.labelStatus.BackColor = System.Drawing.Color.Transparent;
             this.labelStatus.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Status", true));
             this.labelStatus.Font = new System.Drawing.Font("Microsoft Sans Serif", 18F, System.Drawing.FontStyle.Bold);
-            this.labelStatus.Location = new System.Drawing.Point(1100, 8);
+            this.labelStatus.Location = new System.Drawing.Point(1121, 19);
             this.labelStatus.MaximumSize = new System.Drawing.Size(59, 31);
             this.labelStatus.MinimumSize = new System.Drawing.Size(59, 31);
             this.labelStatus.Name = "labelStatus";
@@ -598,7 +598,7 @@
             this.tabDetail.Location = new System.Drawing.Point(0, 0);
             this.tabDetail.Name = "tabDetail";
             this.tabDetail.SelectedIndex = 0;
-            this.tabDetail.Size = new System.Drawing.Size(1228, 445);
+            this.tabDetail.Size = new System.Drawing.Size(1271, 445);
             this.tabDetail.TabIndex = 1;
             this.tabDetail.SelectedIndexChanged += new System.EventHandler(this.TabDetail_SelectedIndexChanged);
             // 
@@ -608,7 +608,7 @@
             this.tabPageLineMapping.Location = new System.Drawing.Point(4, 25);
             this.tabPageLineMapping.Name = "tabPageLineMapping";
             this.tabPageLineMapping.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageLineMapping.Size = new System.Drawing.Size(1220, 416);
+            this.tabPageLineMapping.Size = new System.Drawing.Size(1263, 416);
             this.tabPageLineMapping.TabIndex = 0;
             this.tabPageLineMapping.Text = "Line Mapping";
             // 
@@ -622,8 +622,8 @@
             // splitLineMapping.Panel2
             // 
             this.splitLineMapping.Panel2.Controls.Add(this.gridLineMappingRight);
-            this.splitLineMapping.Size = new System.Drawing.Size(1214, 410);
-            this.splitLineMapping.SplitterDistance = 860;
+            this.splitLineMapping.Size = new System.Drawing.Size(1257, 410);
+            this.splitLineMapping.SplitterDistance = 903;
             this.splitLineMapping.TabIndex = 0;
             // 
             // gridLineMappingRight
@@ -655,7 +655,7 @@
             this.tabPageCentralizedPPA.Location = new System.Drawing.Point(4, 25);
             this.tabPageCentralizedPPA.Name = "tabPageCentralizedPPA";
             this.tabPageCentralizedPPA.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageCentralizedPPA.Size = new System.Drawing.Size(1220, 416);
+            this.tabPageCentralizedPPA.Size = new System.Drawing.Size(884, 133);
             this.tabPageCentralizedPPA.TabIndex = 1;
             this.tabPageCentralizedPPA.Text = "Centralized PPA";
             // 
@@ -673,8 +673,8 @@
             // splitCentralizedPPA.Panel2
             // 
             this.splitCentralizedPPA.Panel2.Controls.Add(this.gridCentralizedPPARight);
-            this.splitCentralizedPPA.Size = new System.Drawing.Size(1214, 410);
-            this.splitCentralizedPPA.SplitterDistance = 860;
+            this.splitCentralizedPPA.Size = new System.Drawing.Size(878, 127);
+            this.splitCentralizedPPA.SplitterDistance = 524;
             this.splitCentralizedPPA.TabIndex = 0;
             // 
             // gridCentralizedPPALeft
@@ -697,7 +697,7 @@
             this.gridCentralizedPPALeft.RowTemplate.Height = 24;
             this.gridCentralizedPPALeft.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridCentralizedPPALeft.ShowCellToolTips = false;
-            this.gridCentralizedPPALeft.Size = new System.Drawing.Size(860, 410);
+            this.gridCentralizedPPALeft.Size = new System.Drawing.Size(524, 127);
             this.gridCentralizedPPALeft.TabIndex = 0;
             // 
             // gridCentralizedPPARight
@@ -720,7 +720,7 @@
             this.gridCentralizedPPARight.RowTemplate.Height = 24;
             this.gridCentralizedPPARight.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridCentralizedPPARight.ShowCellToolTips = false;
-            this.gridCentralizedPPARight.Size = new System.Drawing.Size(350, 410);
+            this.gridCentralizedPPARight.Size = new System.Drawing.Size(350, 127);
             this.gridCentralizedPPARight.TabIndex = 0;
             // 
             // label12
@@ -1060,16 +1060,16 @@
             this.chartLBR.Name = "chartLBR";
             series1.Name = "Series1";
             this.chartLBR.Series.Add(series1);
-            this.chartLBR.Size = new System.Drawing.Size(248, 173);
+            this.chartLBR.Size = new System.Drawing.Size(270, 173);
             this.chartLBR.TabIndex = 51;
             // 
             // btnNotHitTargetReason
             // 
             this.btnNotHitTargetReason.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
             this.btnNotHitTargetReason.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F);
-            this.btnNotHitTargetReason.Location = new System.Drawing.Point(1095, 60);
+            this.btnNotHitTargetReason.Location = new System.Drawing.Point(1121, 60);
             this.btnNotHitTargetReason.Name = "btnNotHitTargetReason";
-            this.btnNotHitTargetReason.Size = new System.Drawing.Size(124, 47);
+            this.btnNotHitTargetReason.Size = new System.Drawing.Size(146, 47);
             this.btnNotHitTargetReason.TabIndex = 52;
             this.btnNotHitTargetReason.Text = "Not Hit\r\nTarget Reason";
             this.btnNotHitTargetReason.UseVisualStyleBackColor = true;
@@ -1079,11 +1079,11 @@
             // 
             this.btnTransferToP06.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
             this.btnTransferToP06.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F);
-            this.btnTransferToP06.Location = new System.Drawing.Point(1095, 113);
+            this.btnTransferToP06.Location = new System.Drawing.Point(1121, 113);
             this.btnTransferToP06.Name = "btnTransferToP06";
-            this.btnTransferToP06.Size = new System.Drawing.Size(124, 47);
+            this.btnTransferToP06.Size = new System.Drawing.Size(146, 47);
             this.btnTransferToP06.TabIndex = 53;
-            this.btnTransferToP06.Text = "Transfer to\r\nSewing Line Mapping";
+            this.btnTransferToP06.Text = "Transfer to\r\nLine Mapping && Balancing";
             this.btnTransferToP06.UseVisualStyleBackColor = true;
             this.btnTransferToP06.Click += new System.EventHandler(this.BtnTransferToP06_Click);
             // 
@@ -1115,7 +1115,7 @@
             this.ApvChkValue = "New";
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1236, 732);
+            this.ClientSize = new System.Drawing.Size(1279, 732);
             this.ExpressQuery = true;
             this.GridAlias = "AutomatedLineMapping_Detail";
             this.IsSupportClip = false;

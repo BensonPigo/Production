@@ -22,7 +22,7 @@ namespace Sci.Production.IE
         private string id;
         private string factoryID;
         private string status;
-        private DataTable dtLineMappingBalancing_NotHitTargetReason;
+        private DataTable dtLineMappingBalancing_NotHitTargetReason = new DataTable();
 
         /// <summary>
         /// HasNotHitTargetReason

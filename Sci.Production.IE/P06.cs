@@ -794,7 +794,7 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
                .Numeric("DivSewer", header: "Div. Sewer", decimal_places: 4, width: Widths.AnsiChars(5), iseditingreadonly: true)
                .Numeric("OriSewer", header: "Ori. Sewer", decimal_places: 4, width: Widths.AnsiChars(5), iseditingreadonly: true)
                .CellThreadComboID("ThreadComboID", "Thread" + Environment.NewLine + "Color", this, width: Widths.AnsiChars(10))
-               .Text("Notice", header: "Notice", width: Widths.AnsiChars(10));
+               .EditText("Notice", header: "Notice", width: Widths.AnsiChars(40));
 
             this.Helper.Controls.Grid.Generator(this.gridCentralizedPPALeft)
                .MaskedText("No", "##", header: "PPA No.", width: Widths.AnsiChars(4), settings: colPPANo)
@@ -808,7 +808,7 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
                .CellTemplate("Template", "Template", this, width: Widths.AnsiChars(10))
                .Numeric("GSD", header: "GSD Time", decimal_places: 2, width: Widths.AnsiChars(5), iseditingreadonly: true)
                .Numeric("Cycle", header: "Cycle Time", width: Widths.AnsiChars(5), decimal_places: 2, settings: colCycleTimePPA)
-               .Text("Notice", header: "Notice", width: Widths.AnsiChars(10));
+               .EditText("Notice", header: "Notice", width: Widths.AnsiChars(40));
 
             this.Helper.Controls.Grid.Generator(this.gridLineMappingRight)
                .Text("No", header: "No. Of" + Environment.NewLine + "Station", width: Widths.AnsiChars(10), iseditingreadonly: true)
