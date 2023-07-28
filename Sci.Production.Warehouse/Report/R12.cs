@@ -87,6 +87,10 @@ select
 	,il.Remark
 	,il.ApvDate
 	,il.Status
+    ,il.WHFinishedDate
+    ,il.WHFinishedBy
+    ,il.FtyReceivedDate
+    ,il.FtyReceivedBy
 	,Createby = dbo.getPass1_ExtNo(il.AddName)
 	,SP = ild.POID
 	,ild.Seq1
