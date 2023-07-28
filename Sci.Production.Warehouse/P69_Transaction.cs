@@ -78,6 +78,7 @@ namespace Sci.Production.Warehouse
             .Numeric("ArrivedQty", header: "Arrived Qty", width: Widths.AnsiChars(4), iseditingreadonly: true, decimal_places: 2)
             .Numeric("ReleasedQty", header: "Released Qty", width: Widths.AnsiChars(4), iseditingreadonly: true, decimal_places: 2)
             .Numeric("AdjustQty", header: "Adjust Qty", width: Widths.AnsiChars(4), iseditingreadonly: true, decimal_places: 2)
+            .Numeric("Balance", header: "Balance", width: Widths.AnsiChars(4), iseditingreadonly: true, decimal_places: 2)
             .Text("Location", header: "Location", width: Widths.AnsiChars(8), iseditingreadonly: true)
             .Text("Remark", header: "Remark", width: Widths.AnsiChars(30), iseditingreadonly: true)
             ;
@@ -101,7 +102,7 @@ namespace Sci.Production.Warehouse
             .Numeric("ArrivedQty", header: "In Qty", iseditingreadonly: true, decimal_places: 2, width: Widths.AnsiChars(4))
             .Numeric("ReleasedQty", header: "Out Qty", iseditingreadonly: true, decimal_places: 2, width: Widths.AnsiChars(4))
             .Numeric("AdjustQty", header: "Adjust Qty", iseditingreadonly: true, decimal_places: 2, width: Widths.AnsiChars(4))
-            .Numeric("AdjustQty", header: "Bal. Qty", iseditingreadonly: true, decimal_places: 2, width: Widths.AnsiChars(4))
+            .Numeric("Balance", header: "Bal. Qty", iseditingreadonly: true, decimal_places: 2, width: Widths.AnsiChars(4))
             .Text("Location", header: "Location", iseditingreadonly: true)
             .Text("ContainerCode", header: "Container Code", iseditingreadonly: true, width: Widths.AnsiChars(14)).Get(out cbb_ContainerCode_Right);
 
@@ -118,7 +119,7 @@ namespace Sci.Production.Warehouse
             DECLARE @Seq2 VARCHAR(2) = '{this.drMain["Seq2"]}'
 
             select  *   
-            into    #tmpDetail
+            into #tmp
             from (
                 select  [Date] =lor.WhseArrival,
                         [Transaction] = lor.ID,
@@ -190,7 +191,11 @@ namespace Sci.Production.Warehouse
                         loat.Status = 'Confirmed'
             ) a
 
-
+            SELECT
+            *,[NO] = DENSE_RANK() OVER (ORDER BY d.poid, d.seq1, d.seq2, d.Roll, d.dyelot, d.stocktype)
+            into #tmpDetail
+            from #tmp d            
+            ORDER by [Date],[Transaction]
             ------------------------  Detail 資訊  ------------------------
             SELECT 
             [DATE],
@@ -199,6 +204,7 @@ namespace Sci.Production.Warehouse
             [ArrivedQty] = sum(ArrivedQty),
             [ReleasedQty] = sum(ReleasedQty),
             [AdjustQty] = sum(AdjustQty),
+            [balance]  = sum(sum(ArrivedQty) - sum(ReleasedQty) + sum(AdjustQty)) over (order by [Date],[Name],[Transaction]) ,
             [Location] = [Location].val,
             [Remark],
             [POID]
@@ -248,8 +254,36 @@ namespace Sci.Production.Warehouse
             ORDER BY loi.Roll,loi.Dyelot
 
             ------------------------ Right 資訊 ------------------------
-            SELECT * FROM #tmpDetail d
-            ORDER BY d.Date,d.[Transaction]
+            ;WITH CumulativeQty AS 
+            (
+                SELECT 
+                d.*,
+                [CumulativeArrivedQty] = SUM(ArrivedQty) OVER (PARTITION BY d.poid, d.seq1, d.seq2, d.Roll, d.dyelot, d.stocktype ORDER BY [No], [Date], [Transaction]),
+                [CumulativeReleasedQty] = SUM(ReleasedQty) OVER (PARTITION BY d.poid, d.seq1, d.seq2, d.Roll, d.dyelot, d.stocktype ORDER BY [No], [Date], [Transaction]),
+                [CumulativeAdjustQty] = SUM(AdjustQty) OVER (PARTITION BY d.poid, d.seq1, d.seq2, d.Roll, d.dyelot, d.stocktype ORDER BY [No], [Date], [Transaction])
+                FROM #tmpDetail d
+                group by poid,seq1,seq2,d.Roll,dyelot,stocktype,tone,date,location,remark,ContainerCode,[Transaction],name,[No],ArrivedQty,ReleasedQty,AdjustQty
+            )
+            SELECT 
+                [POID] = d.poid,
+                [Seq1] = d.seq1,
+                [Seq2] = d.Seq2,
+                [Roll] = d.Roll,
+                [Dyelot] = d.Dyelot,
+                [StockType] = d.StockType,
+                [Date] = d.Date,
+                [Transaction] = d.[Transaction],
+                [Name] = d.[Name],
+                [ArrivedQty] = SUM(d.ArrivedQty),
+                [ReleasedQty] = SUM(d.ReleasedQty),
+                [AdjustQty] = SUM(d.AdjustQty),
+                [Balance] = [CumulativeArrivedQty] - [CumulativeReleasedQty] + [CumulativeAdjustQty],
+                [Location] = d.[Location],
+                [Remark] = d.[Remark],
+                [NO] = d.[No]
+            FROM CumulativeQty d
+            GROUP BY poid, seq1, seq2, d.Roll, dyelot, stocktype, tone, date, location, remark, ContainerCode, [Transaction], name, [No], [CumulativeArrivedQty], [CumulativeReleasedQty] , [CumulativeAdjustQty]
+            ORDER BY [No], [Date], [Transaction]
             
 			------------------------ 表頭資訊 ------------------------
             select 
@@ -258,7 +292,7 @@ namespace Sci.Production.Warehouse
             AdjustQty = sum(AdjustQty),
             Balance = sum(ArrivedQty) - sum(ReleasedQty) + sum(AdjustQty)
             from #tmpDetail
-            drop table #tmpDetail";
+            drop table #tmpDetail,#tmp";
             DataTable[] dtResults;
             DualResult result = DBProxy.Current.Select(null, sqlcmd, out dtResults);
             if (!result)

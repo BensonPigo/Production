@@ -128,6 +128,7 @@ namespace Sci.Production.Warehouse
                 item["Roll"] = item["FabricType"].ToString() == "A" ? string.Empty : item["Roll"];
                 item["Dyelot"] = item["FabricType"].ToString() == "A" ? string.Empty : item["Dyelot"];
             }
+
             return base.ClickSaveBefore();
         }
 
@@ -514,6 +515,7 @@ where   (isnull(f.InQty, 0) - isnull(f.OutQty, 0) + isnull(f.AdjustQty, 0) - d.Q
             [Roll] = lord.Roll,
             [Dyelot] = lord.Dyelot,
             [Weight] = lord.Weight,
+            [ActualWeight] = lord.ActualWeight,
             [Tone] = lord.Tone,
             [Qty] = lord.Qty,
             [Unit] = lom.Unit,
@@ -796,7 +798,8 @@ where   (isnull(f.InQty, 0) - isnull(f.OutQty, 0) + isnull(f.AdjustQty, 0) - d.Q
             .Text("MaterialType", header: "Material Type", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Text("Roll", header: "Roll", width: Widths.AnsiChars(8))
             .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(8))
-            .Numeric("Weight", header: "Weight", decimal_places: 2, width: Widths.AnsiChars(8))
+            .Numeric("Weight", header: "G.W(kg)", decimal_places: 2, width: Widths.AnsiChars(8))
+            .Numeric("ActualWeight", header: "Act.(kg)", decimal_places: 2, width: Widths.AnsiChars(8))
             .Text("Tone", header: "Tone/Grp", width: Widths.AnsiChars(8))
             .Numeric("Qty", header: "Qty", decimal_places: 2, width: Widths.AnsiChars(8))
             .Text("Unit", header: "Unit", width: Widths.AnsiChars(8), iseditingreadonly: true)

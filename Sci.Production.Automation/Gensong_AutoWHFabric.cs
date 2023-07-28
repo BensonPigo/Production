@@ -137,6 +137,29 @@ namespace Sci.Production.Automation
         {
             // DataTable轉化為JSON
             WHTableName dtNameforAPI = LogicAutoWHData.GetDetailNameforAPI(formName);
+            switch (dtNameforAPI)
+            {
+                case WHTableName.LocalOrderReceiving_Detail:
+                    dtNameforAPI = WHTableName.Receiving_Detail;
+                    break;
+                case WHTableName.LocalOrderLocationTrans_Detail:
+                    dtNameforAPI = WHTableName.LocationTrans_Detail;
+                    break;
+                case WHTableName.LocalOrderIssue_Detail:
+                    dtNameforAPI = WHTableName.Issue_Detail;
+                    break;
+                case WHTableName.LocalOrderAdjust_Detail:
+                    dtNameforAPI = WHTableName.Adjust_Detail;
+                    break;
+            }
+
+            switch (dtNameforAPI)
+            {
+                case WHTableName.LocalOrderReceiving_Detail:
+                    dtNameforAPI = WHTableName.Receiving_Detail;
+                    break;
+            }
+
             string jsonBody = GetJsonBody(dt, dtNameforAPI, statusAPI);
             AutomationErrMsgPMS automationErrMsg = new AutomationErrMsgPMS
             {
