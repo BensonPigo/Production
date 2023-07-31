@@ -20,6 +20,10 @@
     [PrepardFinishDate] DATETIME      NULL,
     [ScanTransferSlip]  BIT           DEFAULT ((0)) NOT NULL,
     [ToPlace]     VARCHAR (100) NULL,
+    [WHFinishedDate] DATETIME NULL, 
+    [WHFinishedBy] VARCHAR(10) CONSTRAINT [DF_IssueLack_WHFinishedBy] NOT NULL DEFAULT (''), 
+    [FtyReceivedDate] DATETIME NULL, 
+    [FtyReceivedBy] VARCHAR(10) CONSTRAINT [DF_IssueLack_FtyReceivedBy] NOT NULL DEFAULT (''), 
     CONSTRAINT [PK_IssueLack] PRIMARY KEY CLUSTERED ([Id] ASC)
 );
 
@@ -115,3 +119,39 @@ GO
 GO
 
 
+
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'倉庫準備完成時間',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'IssueLack',
+    @level2type = N'COLUMN',
+    @level2name = N'WHFinishedDate'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'倉庫負責準備的人員',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'IssueLack',
+    @level2type = N'COLUMN',
+    @level2name = N'WHFinishedBy'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'工廠收料的時間',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'IssueLack',
+    @level2type = N'COLUMN',
+    @level2name = N'FtyReceivedDate'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'工廠收料的人員',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'IssueLack',
+    @level2type = N'COLUMN',
+    @level2name = N'FtyReceivedBy'
