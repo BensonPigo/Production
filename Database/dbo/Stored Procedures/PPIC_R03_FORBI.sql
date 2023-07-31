@@ -17,6 +17,20 @@ BEGIN
 	
 	declare @StdTMS as int = (select StdTMS from System WITH (NOLOCK))
 
+	select *
+	into #tmp_Orders_base
+	from Orders o WITH (NOLOCK) 
+	where o.SCIDelivery >= @SCIDeliveryS 
+	and o.SCIDelivery <= @SCIDeliveryE
+	and (o.Category = 'B' or o.Category = 'S' or o.Category = 'G' or o.Category = '' )
+	or (
+	((select NoRestrictOrdersDelivery from System) = 0) 
+		and (o.IsForecast = 0 or (o.IsForecast = 1 and (o.SciDelivery <= dateadd(m, datediff(m,0,dateadd(m, 5, GETDATE())),6) or o.BuyerDelivery < dateadd(m, datediff(m,0,dateadd(m, 5, GETDATE())),0))))
+		and o.SCIDelivery >= @SCIDeliveryS 
+		and o.SCIDelivery <= @SCIDeliveryE
+		and (o.Category = 'B' or o.Category = 'S' or o.Category = 'G' or o.Category = '' )
+	)
+
     select DISTINCT o.ID
             , o.MDivisionID
             , o.FtyGroup
@@ -148,7 +162,7 @@ BEGIN
             ,[StyleCarryover] = iif(s.NewCO = '2','V','')
             , o.PackLETA
 	into #tmp_tmpOrders
-	from Orders o WITH (NOLOCK) 
+	from #tmp_Orders_base o
 	left join style s WITH (NOLOCK) on o.styleukey = s.ukey
 	left join DropDownList d WITH(NOLOCK) ON o.CtnType=d.ID AND d.Type='PackingMethod'
 	left join DropDownList d1 WITH(NOLOCK) on d1.type= 'StyleConstruction' and d1.ID = s.Construction
@@ -226,16 +240,6 @@ BEGIN
 		),1,1,'')
 	)QtyShip_Handle
 	outer apply(select oa.Article from Order_article oa WITH (NOLOCK) where oa.id = o.id) a
-	where o.SCIDelivery >= @SCIDeliveryS 
-	and o.SCIDelivery <= @SCIDeliveryE
-	and (o.Category = 'B' or o.Category = 'S' or o.Category = 'G' or o.Category = '' )
-	or (
-	((select NoRestrictOrdersDelivery from System) = 0) 
-		and (o.IsForecast = 0 or (o.IsForecast = 1 and (o.SciDelivery <= dateadd(m, datediff(m,0,dateadd(m, 5, GETDATE())),6) or o.BuyerDelivery < dateadd(m, datediff(m,0,dateadd(m, 5, GETDATE())),0))))
-		and o.SCIDelivery >= @SCIDeliveryS 
-		and o.SCIDelivery <= @SCIDeliveryE
-		and (o.Category = 'B' or o.Category = 'S' or o.Category = 'G' or o.Category = '' )
-	)
 
 	CREATE NONCLUSTERED INDEX index_tmpOrders_ID ON #tmp_tmpOrders(	ID ASC);
 
@@ -254,7 +258,6 @@ BEGIN
 		group by o.ID, o.Remark ,o.addDate, o.Ukey
 	)a
 	where r_id = '1'
-
 
 	select StyleUkey, [GetStyleUkey] = dbo.GetSimilarStyleList(StyleUkey) 
 	into #tmp_StyleUkey
@@ -968,5 +971,5 @@ BEGIN
 				  PIVOT ( MAX(Val) FOR ColumnN IN (' + @cols + ') ) piv'
 	EXECUTE(@query)
 
-	drop table #tmp_ArtworkData, #tmp_ArtworkTypeValue, #tmp_final, #tmp_LastBase
+	drop table #tmp_ArtworkData, #tmp_ArtworkTypeValue, #tmp_final, #tmp_LastBase, #tmp_Orders_base
 end
