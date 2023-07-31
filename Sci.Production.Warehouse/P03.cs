@@ -645,6 +645,11 @@ where Poid='{dr["id"]}' and seq1='{dr["Seq1"]}' and seq2='{dr["Seq2"]}'", out dr
             #region -- SQL Command --
             string sqlcmd
                 = @"
+SET ANSI_NULLS ON
+SET ANSI_PADDING ON
+SET ARITHABORT ON
+SET CONCAT_NULL_YIELDS_NULL ON
+
 declare @id varchar(20) = @sp1		
 
 select distinct StyleID,BrandID,POID,FtyGroup ,CuttingSP ,StyleUkey
