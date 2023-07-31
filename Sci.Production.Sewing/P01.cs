@@ -2194,6 +2194,8 @@ select id,GarmentDefectCodeID,GarmentDefectTypeID,qty from #tmp";
         protected override void ClickSaveAfter()
         {
             base.ClickSaveAfter();
+
+            // 第二層不存在,第三層也要一併刪除
             string checkNonData = string.Format(
                 @"
 delete sodd
@@ -2205,7 +2207,19 @@ where not exists (select 1
 						and sodd.OrderId = sod.OrderId
 						and sodd.ComboType = sod.ComboType
 						and sodd.Article = sod.Article)
-      and sodd.id = '{0}'",
+and sodd.id = '{0}'
+
+delete soddm
+from SewingOutput_Detail_Detail_Garment	 soddm
+where not exists (select 1 
+				  from SewingOutput_Detail sod 
+				  where soddm.ID = sod.ID
+						and soddm.SewingOutput_DetailUKey = sod.UKey
+						and soddm.OrderId = sod.OrderId
+						and soddm.ComboType = sod.ComboType
+						and soddm.Article = sod.Article)
+and soddm.id = '{0}'
+",
                 this.CurrentMaintain["ID"]);
 
             DualResult result = DBProxy.Current.Execute(null, checkNonData);
