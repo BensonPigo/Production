@@ -7,6 +7,8 @@
     [Junk]             BIT         CONSTRAINT [DF_AcceptableQualityLevels_Junk] DEFAULT ((0)) NOT NULL,
 	[AQLType]          numeric(2,1)         CONSTRAINT [DF_AcceptableQualityLevels_AQLType] DEFAULT ((0)) NOT NULL,
 	[AcceptedQty]      int         CONSTRAINT [DF_AcceptableQualityLevels_AcceptedQty] DEFAULT ((0)) NULL,
+    BrandID varchar(8) not null CONSTRAINT [DF_AcceptableQualityLevels_BrandID] default '',
+    Category varchar(15) not null CONSTRAINT [DF_AcceptableQualityLevels_Category] default ''
     CONSTRAINT [PK_AcceptableQualityLevels] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
 
