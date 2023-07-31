@@ -154,7 +154,7 @@ and ReasonTypeID='Stock_Adjust' AND junk = 0", e.FormattedValue), out dr, null))
             .Numeric("AdjustQty", header: "Adjust Qty", decimal_places: 2, width: Widths.AnsiChars(8), iseditingreadonly: true)
             .Text("Unit", header: "Unit", width: Widths.AnsiChars(8), iseditingreadonly: true)
             .Text("Location", header: "Location", width: Widths.AnsiChars(15), iseditingreadonly: true)
-            .Text("ReasonID", header: "Reason ID", width: Widths.AnsiChars(10), iseditingreadonly: true, settings: ts)
+            .Text("ReasonID", header: "Reason ID", width: Widths.AnsiChars(10), iseditingreadonly: false, settings: ts)
             .Text("ReasonName", header: "Reason Name", width: Widths.AnsiChars(15), iseditingreadonly: true)
             ;
         }

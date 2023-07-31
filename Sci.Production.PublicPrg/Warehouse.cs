@@ -4406,6 +4406,7 @@ and sd.Ukey in ({ukeys})
                         filter = "FabricType = 'F' and isnull(Barcode, '') = ''";
                         break;
                     case WHTableName.Adjust_Detail:
+                    case WHTableName.LocalOrderAdjust_Detail:
                         filter = "FabricType = 'F' and balanceQty <= 0"; // 舊資料有坑,所以判斷要用<未更新>庫存判斷
                         break;
                 }
