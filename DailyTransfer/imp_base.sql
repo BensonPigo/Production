@@ -5533,6 +5533,7 @@ a.Description = b.Description
 ,a.AddName = b.AddName
 ,a.EditDate = b.EditDate
 ,a.Editname = b.Editname
+,a.ExcludeRibItem = b.ExcludeRibItem
 from [Production].[dbo].[MaterialDocument] as a with(nolock)
 inner join [Trade_To_Pms].[dbo].[MaterialDocument]  as b with(nolock) on a.DocumentName = b.DocumentName and a.BrandID = b.BrandID
 -------------------------- INSERT INTO 
@@ -5560,6 +5561,7 @@ INSERT INTO [Production].[dbo].[MaterialDocument]
 	,AddName
 	,EditDate
 	,Editname
+    ,ExcludeRibItem
 )
 SELECT
 	DocumentName
@@ -5584,6 +5586,7 @@ SELECT
 	,AddName
 	,EditDate
 	,Editname
+    ,ExcludeRibItem
 from [Trade_To_Pms].[dbo].[MaterialDocument] as b WITH (NOLOCK)
 where not exists(select DocumentName,BrandID from [Production].[dbo].[MaterialDocument] as a WITH (NOLOCK) where a.DocumentName = b.DocumentName and a.BrandID = b.BrandID)
 
