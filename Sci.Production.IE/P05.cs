@@ -1199,6 +1199,16 @@ select [ID] = @ID
                 return;
             }
 
+            string p06Title = MyUtility.GetValue.Lookup("select BarPrompt from MenuDetail with (nolock) where Formname = 'Sci.Production.IE.P06'");
+
+            bool hasP06Authority = PublicPrg.Prgs.GetAuthority(Env.User.UserID, p06Title, "CanEdit");
+
+            if (!hasP06Authority)
+            {
+                MyUtility.Msg.InfoBox("Transfer to P06 complete");
+                return;
+            }
+
             string id = dtOutID.Rows[0][0].ToString();
 
             DialogResult dialogResult = MyUtility.Msg.QuestionBox("Line Mapping transfer is successful, do you want to open IE_P06 directly?");
@@ -1224,7 +1234,7 @@ select [ID] = @ID
                         {
                             if (subMenuItem.GetType().Equals(typeof(ToolStripMenuItem)))
                             {
-                                if (((ToolStripMenuItem)subMenuItem).Text.EqualString("P06. Line Mapping & Balancing"))
+                                if (((ToolStripMenuItem)subMenuItem).Text.EqualString(p06Title))
                                 {
                                     p06MenuItem = (ToolStripMenuItem)subMenuItem;
                                     break;

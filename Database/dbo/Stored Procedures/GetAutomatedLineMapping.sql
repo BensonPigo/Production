@@ -372,7 +372,7 @@ select	[No] = isnull(RIGHT(REPLICATE('0', 2) + cast(tb.StationNo as varchar(3)),
 						for xml path ('')) 
 						,1,1,''),
 		[GSD] = Round(td.SMV, 2),
-		[SewerDiffPercentage] = Round(tb.DivSewer / tb.OriSewer, 2),
+		[SewerDiffPercentage] = iif(td.PPA = 'C', 1, Round(tb.DivSewer / tb.OriSewer, 2)),
 		[DivSewer] = isnull(tb.DivSewer, 0),
 		[OriSewer] = isnull(tb.OriSewer, 0),
 		[TimeStudyDetailUkey] = td.Ukey,
@@ -380,7 +380,7 @@ select	[No] = isnull(RIGHT(REPLICATE('0', 2) + cast(tb.StationNo as varchar(3)),
 		td.IsNonSewingLine,
 		[TotalSewer] = isnull(tb.TotalSewer, 0),
 		[OperationDesc] = iif(isnull(o.DescEN, '') = '', td.OperationID, o.DescEN),
-        [SewerDiffPercentageDesc] = round(Round(tb.DivSewer / tb.OriSewer, 2) * 100, 0),
+        [SewerDiffPercentageDesc] = iif(td.PPA = 'C', 1, round(Round(tb.DivSewer / tb.OriSewer, 2) * 100, 0)),
         [TimeStudyDetailUkeyCnt] = Count(TimeStudyDetailUkey) over (partition by TimeStudyDetailUkey, TotalSewer)
 into #tmpAutomatedLineMapping_Detail
 from  TimeStudy_Detail td

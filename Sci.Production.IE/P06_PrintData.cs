@@ -1,8 +1,10 @@
 ﻿using Ict;
 using Sci.Data;
+using Sci.Production.Prg;
 using Sci.Utility.Excel;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Data;
 using System.Data.SqlClient;
 using System.Drawing;
@@ -22,8 +24,13 @@ namespace Sci.Production.IE
     {
         private enum OperationType
         {
+            [Description("Sewing Line Operation")]
             Sewing,
+
+            [Description("Centralized PPA Operation")]
             PPA,
+
+            [Description("Non Sewing Line Operation")]
             NonSewing,
         }
 
@@ -118,10 +125,12 @@ SELECT alm.StyleUKey
 , AvgGSDTime_PPA = ISNULL(ROUND(getPPA.TotalGSDTime / getPPA.Sewer, 2), 0)
 , ConfirmedBy = CONCAT(alm.CFMName, '-', cfm.Name)
 , PrintBy = CONCAT(printBy.ID, '-', printBy.Name)
+, [FactoryNameEN] = f.NameEN
 FROM LineMappingBalancing alm
 LEFT JOIN DropDownList ddl on ddl.Type = 'Pms_LMContent' and ddl.ID = @Content
 LEFT JOIN Pass1 cfm on cfm.ID = alm.CFMName
 LEFT JOIN Pass1 printBy on printBy.ID = @UserID
+LEFT JOIN Factory f with (nolock) on f.ID = alm.FactoryID
 OUTER APPLY (
 	SELECT TotalGSDTime = (Select SUM(GSD) from PPA)
 	, Sewer = (Select count(distinct No) from PPA)
@@ -480,6 +489,7 @@ group by almd.No
 
         private void SetOperationSheet(Excel.Worksheet sheet, DataTable dtOperation, OperationType operationType)
         {
+            sheet.Cells[1, 1] = MyUtility.Convert.GetString(this.dtHeadInfo.Rows[0]["FactoryNameEN"]) + Environment.NewLine + operationType.GetDescription(); // #FactoryNameEN
             sheet.Cells[2, 2] = MyUtility.Convert.GetString(this.dtHeadInfo.Rows[0]["Style"]); // #Style
             sheet.Cells[3, 2] = MyUtility.Convert.GetString(this.dtHeadInfo.Rows[0]["Season"]); // #Season
             sheet.Cells[4, 2] = MyUtility.Convert.GetString(this.dtHeadInfo.Rows[0]["Brand"]); // #Brand
@@ -641,6 +651,7 @@ group by almd.No
             }
 
             sheet.Rows.AutoFit();
+            ((Excel.Range)sheet.Cells[1, 1]).RowHeight = 48;
         }
 
         private void SetPicture(string filepath, Excel.Worksheet sheet, Excel.Range range, float left, float top)

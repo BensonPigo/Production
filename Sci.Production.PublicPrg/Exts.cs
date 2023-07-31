@@ -9,6 +9,7 @@ using ZXing.QrCode;
 using ZXing.QrCode.Internal;
 using MsExcel = Microsoft.Office.Interop.Excel;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel;
 
 namespace Sci.Production.Prg
 {
@@ -498,6 +499,32 @@ namespace Sci.Production.Prg
             }
 
             return self == to;
+        }
+
+        /// <summary>
+        /// GetDescription
+        /// </summary>
+        /// <param name="value">value</param>
+        /// <returns>string</returns>
+        public static string GetDescription(this Enum value)
+        {
+            Type type = value.GetType();
+            string name = Enum.GetName(type, value);
+
+            if (name != null)
+            {
+                FieldInfo field = type.GetField(name);
+                if (field != null)
+                {
+                    DescriptionAttribute attr = field.GetCustomAttribute<DescriptionAttribute>();
+                    if (attr != null)
+                    {
+                        return attr.Description;
+                    }
+                }
+            }
+
+            return value.ToString();
         }
     }
 }
