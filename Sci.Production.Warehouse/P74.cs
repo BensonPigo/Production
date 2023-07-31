@@ -103,13 +103,26 @@ namespace Sci.Production.Warehouse
                 return;
             }
 
-            if (!MyUtility.Check.Empty(this.txtFinishedBy.Text) || !MyUtility.Check.Empty(this.txtFinishedDate.Text) ||
-                !MyUtility.Check.Empty(this.txtReceivedBy.Text) || !MyUtility.Check.Empty(this.txtReceivedDate.Text))
+            string strMessage = string.Empty;
+
+            if (this.cbPreparation.SelectedIndex == 0)
             {
-                DialogResult confirmResult = MessageBoxEX.Show(
-        $@"
-[Warehouse Finished Preparation] have been scanned, please check if want to update.
-[Factory Received] have been scanned, please check if want to update.", "Save", MessageBoxButtons.YesNo, new string[] { "Continue", "Cancel" }, MessageBoxDefaultButton.Button2);
+                if (!MyUtility.Check.Empty(this.txtFinishedBy.Text) || !MyUtility.Check.Empty(this.txtFinishedDate.Text))
+                {
+                    strMessage = "[Warehouse Finished Preparation] have been scanned, please check if want to update.";
+                }
+            }
+            else
+            {
+                if (!MyUtility.Check.Empty(this.txtReceivedBy.Text) || !MyUtility.Check.Empty(this.txtReceivedDate.Text))
+                {
+                    strMessage = "[Factory Received] have been scanned, please check if want to update.";
+                }
+            }
+
+            if (strMessage != string.Empty)
+            {
+                DialogResult confirmResult = MessageBoxEX.Show($@"{strMessage}", "Save", MessageBoxButtons.YesNo, new string[] { "Continue", "Cancel" }, MessageBoxDefaultButton.Button2);
                 if (confirmResult.EqualString("No"))
                 {
                     return;
