@@ -48,7 +48,11 @@ namespace Sci.Production.Warehouse
             [FinishedBy] = ll.WHFinishedBy,
             [ReceivedBy] = ll.FtyReceivedBy,
             [Requset] = ll.RequestID,
-            [Type] = ll.Type,
+            [Type] = case ll.Type
+                        when 'L' then 'Lacking'
+                        when 'R' then 'Replacement'
+                        else ll.Type
+                    end,
             [IssueDate] = ll.IssueDate,
             [ApvDate] = l.ApvDate,
             [Status] = ll.[Status],
