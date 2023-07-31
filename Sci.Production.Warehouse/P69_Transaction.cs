@@ -137,6 +137,7 @@ namespace Sci.Production.Warehouse
 			            [StockType] = lord.StockType,
 			            [ContainerCode] = lord.ContainerCode,
 			            [Tone] = lord.Tone
+                        , lor.EditDate
                 from    LocalOrderReceiving_Detail lord with (nolock)
                 inner join  LocalOrderReceiving lor  with (nolock) on lor.ID = lord.ID
                 where   lord.POID = @POID and
@@ -160,6 +161,7 @@ namespace Sci.Production.Warehouse
 			            [StockType] = loid.StockType,
 			            [ContainerCode] = '',
 			            [Tone] = ''
+                        , loi.EditDate
                 from    LocalOrderIssue_Detail loid with (nolock)
                 inner   join  LocalOrderIssue loi with (nolock) on loid.ID = loi.ID
                 where   loid.POID = @POID and
@@ -183,6 +185,7 @@ namespace Sci.Production.Warehouse
 			            [StockType] = loatd.StockType,
 			            [ContainerCode] = '',
 			            [Tone] = ''
+                        , loat.EditDate
                 from    LocalOrderAdjust_Detail loatd with (nolock)
                 inner   join  LocalOrderAdjust loat with (nolock) on loat.ID = loatd.ID
                 where   loatd.POID = @POID and
@@ -194,8 +197,7 @@ namespace Sci.Production.Warehouse
             SELECT
             *,[NO] = DENSE_RANK() OVER (ORDER BY d.poid, d.seq1, d.seq2, d.Roll, d.dyelot, d.stocktype)
             into #tmpDetail
-            from #tmp d            
-            ORDER by [Date],[Transaction]
+            from #tmp d
             ------------------------  Detail 資訊  ------------------------
             SELECT 
             [DATE],
@@ -204,7 +206,7 @@ namespace Sci.Production.Warehouse
             [ArrivedQty] = sum(ArrivedQty),
             [ReleasedQty] = sum(ReleasedQty),
             [AdjustQty] = sum(AdjustQty),
-            [balance]  = sum(sum(ArrivedQty) - sum(ReleasedQty) + sum(AdjustQty)) over (order by [Date],[Name],[Transaction]) ,
+            [balance]  = sum(sum(ArrivedQty) - sum(ReleasedQty) + sum(AdjustQty)) over (order by [Date], [EditDate], [Transaction]) ,
             [Location] = [Location].val,
             [Remark],
             [POID]
@@ -219,8 +221,8 @@ namespace Sci.Production.Warehouse
 		            WHERE  t.[DATE] = a.[DATE] and t.[Transaction] = a.[Transaction] and t.[Name] = a.[Name]
 	            ) tmp for xml path('')),1,1,'')
             )Location
-            GROUP BY [Date],[Transaction],[Name],[Remark],[POID],Location.val
-            ORDER BY [Date],[Name],[Transaction]
+            GROUP BY [Date], [EditDate], [Transaction],[Name],[Remark],[POID],Location.val
+            ORDER BY [Date], [EditDate], [Transaction]
             ------------------------   Left 資訊   ------------------------
             SELECT 
             loi.POID,
@@ -258,11 +260,11 @@ namespace Sci.Production.Warehouse
             (
                 SELECT 
                 d.*,
-                [CumulativeArrivedQty] = SUM(ArrivedQty) OVER (PARTITION BY d.poid, d.seq1, d.seq2, d.Roll, d.dyelot, d.stocktype ORDER BY [No], [Date], [Transaction]),
-                [CumulativeReleasedQty] = SUM(ReleasedQty) OVER (PARTITION BY d.poid, d.seq1, d.seq2, d.Roll, d.dyelot, d.stocktype ORDER BY [No], [Date], [Transaction]),
-                [CumulativeAdjustQty] = SUM(AdjustQty) OVER (PARTITION BY d.poid, d.seq1, d.seq2, d.Roll, d.dyelot, d.stocktype ORDER BY [No], [Date], [Transaction])
+                [CumulativeArrivedQty] = SUM(ArrivedQty) OVER (PARTITION BY d.poid, d.seq1, d.seq2, d.Roll, d.dyelot, d.stocktype ORDER BY [No], [Date], [EditDate], [Transaction]),
+                [CumulativeReleasedQty] = SUM(ReleasedQty) OVER (PARTITION BY d.poid, d.seq1, d.seq2, d.Roll, d.dyelot, d.stocktype ORDER BY [No], [Date], [EditDate], [Transaction]),
+                [CumulativeAdjustQty] = SUM(AdjustQty) OVER (PARTITION BY d.poid, d.seq1, d.seq2, d.Roll, d.dyelot, d.stocktype ORDER BY [No], [Date], [EditDate], [Transaction])
                 FROM #tmpDetail d
-                group by poid,seq1,seq2,d.Roll,dyelot,stocktype,tone,date,location,remark,ContainerCode,[Transaction],name,[No],ArrivedQty,ReleasedQty,AdjustQty
+                group by poid,seq1,seq2,d.Roll,dyelot,stocktype,tone,date,location,remark,ContainerCode,[Transaction],name, [EditDate],[No],ArrivedQty,ReleasedQty,AdjustQty
             )
             SELECT 
                 [POID] = d.poid,
@@ -282,8 +284,8 @@ namespace Sci.Production.Warehouse
                 [Remark] = d.[Remark],
                 [NO] = d.[No]
             FROM CumulativeQty d
-            GROUP BY poid, seq1, seq2, d.Roll, dyelot, stocktype, tone, date, location, remark, ContainerCode, [Transaction], name, [No], [CumulativeArrivedQty], [CumulativeReleasedQty] , [CumulativeAdjustQty]
-            ORDER BY [No], [Date], [Transaction]
+            GROUP BY poid, seq1, seq2, d.Roll, dyelot, stocktype, tone, date, location, remark, ContainerCode, [Transaction], name, [EditDate], [No], [CumulativeArrivedQty], [CumulativeReleasedQty] , [CumulativeAdjustQty]
+            ORDER BY [No], [Date], [EditDate], [Transaction]
             
 			------------------------ 表頭資訊 ------------------------
             select 
@@ -348,9 +350,7 @@ namespace Sci.Production.Warehouse
                                                     s["Seq2"].ToString() == seq2 &&
                                                     s["Roll"].ToString() == roll &&
                                                     s["Dyelot"].ToString() == dyelot &&
-                                                    s["StockType"].ToString() == stocktype)
-                                        .OrderBy(s => s["Date"])
-                                        .ThenBy(s => s["Transaction"]);
+                                                    s["StockType"].ToString() == stocktype);
 
             if (!srcRight.Any())
             {
