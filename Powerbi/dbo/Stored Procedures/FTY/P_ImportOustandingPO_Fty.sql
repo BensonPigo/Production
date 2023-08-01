@@ -2,13 +2,10 @@
 -- Create date: 2020/03/20
 -- Description:	Data Query Logic by PMS.PPIC R16, Import Data to P_OustandingPO
 -- =============================================
-CREATE PROCEDURE [dbo].[P_ImportOustandingPO_Fty]	
-
-@StartDate Date,
-@EndDate Date
-
+CREATE PROCEDURE [dbo].[P_ImportOustandingPO_Fty]
+	@StartDate Date,
+	@EndDate Date
 AS
-
 BEGIN
 	SET NOCOUNT ON;
 
@@ -73,7 +70,8 @@ outer apply(
 ) OrderQtyGarment 
 where o.Category IN ('B','G') 
 AND ((oq.BuyerDelivery >= @SDate AND oq.BuyerDelivery <= @EDate) 
-	or (o.EditDate >= Cast(getdate()-2 as date))
+	or (o.EditDate >= Cast(getdate()-7 as date))
+	or (o.PulloutCmplDate >= Cast(getdate()-7 as date) AND o.PulloutCmplDate <= getdate())
 )
 AND f.IsProduceFty=1
 AND o.Junk = 0
