@@ -515,6 +515,7 @@ where   (isnull(f.InQty, 0) - isnull(f.OutQty, 0) + isnull(f.AdjustQty, 0) - d.Q
             [MaterialType] = IIF(lom.FabricType = 'F' ,Concat ('Fabric-', lom.MtlType),Concat ('Accessory-', lom.MtlType)),
             [Roll] = lord.Roll,
             [Dyelot] = lord.Dyelot,
+            [StockType] = lord.StockType,
             [Weight] = lord.Weight,
             [ActualWeight] = lord.ActualWeight,
             [Tone] = lord.Tone,
