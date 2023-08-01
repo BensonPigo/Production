@@ -180,6 +180,7 @@
     <Build Include="dbo\Stored Procedures\FTY\P_Import_PPIC_MASTER_LIST.sql" />
     <Build Include="dbo\Tables\P_PPICMASTERLIST.sql" />
     <Build Include="dbo\Stored Procedures\FTY\P_ImportMtlStatusAnalisis.sql" />
+    <Build Include="dbo\Tables\P_ADIDASComplain_24Month.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Utility.dll" />
