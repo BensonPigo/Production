@@ -1008,6 +1008,7 @@ when not matched then
 	values (s.ukey,isnull(s.location,''));
 
 drop table #tmp_L_K
+
 ";
                     }
 
@@ -1101,6 +1102,30 @@ when not matched then
 drop table #tmpS1 
 drop table #TmpSource;";
                     #endregion
+                    break;
+                case "Tone":
+                    sqlcmd = $@"
+alter table #TmpSource alter column poid varchar(20)
+alter table #TmpSource alter column seq1 varchar(3)
+alter table #TmpSource alter column seq2 varchar(3)
+alter table #TmpSource alter column stocktype varchar(1)
+alter table #TmpSource alter column roll varchar(15)
+alter table #TmpSource alter column dyelot varchar(8)
+alter table #TmpSource alter column FabricType varchar(1)
+
+update f
+set Tone = sd.Tone
+from #TmpSource sd
+inner join LocalOrderInventory f with(nolock) on f.POID = sd.poid
+    and f.Seq1 = sd.seq1
+    and f.Seq2 = sd.seq2
+    and f.Roll = sd.roll
+    and f.Dyelot = sd.dyelot
+    and f.StockType = sd.stocktype
+where sd.FabricType = 'F'
+
+drop table #TmpSource;
+";
                     break;
             }
 
@@ -4332,13 +4357,12 @@ and exists(
                     detailTableName == WHTableName.TransferIn_Detail||
                     detailTableName == WHTableName.LocalOrderReceiving_Detail)
                 {
-                    string strBarocde = isLocalOrder == false ? @" iif(isnull(sd.MINDQRCode, '') = '', f.Barcode, sd.MINDQRCode)" : "f.Barcode";
+                    string strBarocde = isLocalOrder == false ? @" iif(isnull(sd.MINDQRCode, '') = '', f.Barcode, sd.MINDQRCode)" : "iif(isnull(sd.Barcode, '') = '', f.Barcode, sd.Barcode)";
                     sqlcmd = $@"
 select
 	sd.ID
     ,sd.Ukey
 	,rn = ROW_NUMBER()over(order by sd.Ukey)
-
     ,Fabric_FtyInventoryUkey = f.Ukey
     ,[balanceQty] = isnull(f.InQty,0) -isnull(f.OutQty,0) + isnull(f.AdjustQty,0) {strReturnQty}
     ,[Barcode] = {strBarocde}
@@ -5041,18 +5065,36 @@ and w.Action = '{item.Action}'";
 
             #region 更新 Inventory BarCode
             var data_FtyBarcode = dt.AsEnumerable().
-                 Select(s => new FtyInventory
-                 {
-                     Ukey = wHBarcodeTransaction.Where(w => w.Rn == MyUtility.Convert.GetLong(s["rn"])).Select(s1 => s1.FromFabric_FtyInventoryUkey).First(),
-                     ToUkey = wHBarcodeTransaction.Where(w => w.Rn == MyUtility.Convert.GetLong(s["rn"])).Select(s1 => s1.ToFabric_FtyInventoryUkey).First(),
-                     Rn = MyUtility.Convert.GetLong(s["rn"]),
-                     Poid = s.Field<string>("poid"),
-                     Seq1 = s.Field<string>("seq1"),
-                     Seq2 = s.Field<string>("seq2"),
-                     Stocktype = s.Field<string>("stocktype"),
-                     Roll = s.Field<string>("roll"),
-                     Dyelot = s.Field<string>("dyelot"),
-                 }).ToList();
+             Select(s => new FtyInventory
+             {
+                 Ukey = wHBarcodeTransaction.Where(w => w.Rn == MyUtility.Convert.GetLong(s["rn"])).Select(s1 => s1.FromFabric_FtyInventoryUkey).First(),
+                 ToUkey = wHBarcodeTransaction.Where(w => w.Rn == MyUtility.Convert.GetLong(s["rn"])).Select(s1 => s1.ToFabric_FtyInventoryUkey).First(),
+                 Rn = MyUtility.Convert.GetLong(s["rn"]),
+                 Poid = s.Field<string>("poid"),
+                 Seq1 = s.Field<string>("seq1"),
+                 Seq2 = s.Field<string>("seq2"),
+                 Stocktype = s.Field<string>("stocktype"),
+                 Roll = s.Field<string>("roll"),
+                 Dyelot = s.Field<string>("dyelot"),
+             }).ToList();
+
+            if (isLocalOrder)
+            {
+                data_FtyBarcode = dt.AsEnumerable().
+              Select(s => new FtyInventory
+              {
+                  Ukey = wHBarcodeTransaction.Where(w => w.Rn == MyUtility.Convert.GetLong(s["rn"])).Select(s1 => s1.FromFabric_LocalOrderInvnetoryUkey).First(),
+                  ToUkey = wHBarcodeTransaction.Where(w => w.Rn == MyUtility.Convert.GetLong(s["rn"])).Select(s1 => s1.ToFabric_LocalOrderInventoryUkey).First(),
+                  Rn = MyUtility.Convert.GetLong(s["rn"]),
+                  Poid = s.Field<string>("poid"),
+                  Seq1 = s.Field<string>("seq1"),
+                  Seq2 = s.Field<string>("seq2"),
+                  Stocktype = s.Field<string>("stocktype"),
+                  Roll = s.Field<string>("roll"),
+                  Dyelot = s.Field<string>("dyelot"),
+              }).ToList();
+            }
+
             switch (detailTableName)
             {
                 case WHTableName.Receiving_Detail:
@@ -5061,9 +5103,18 @@ and w.Action = '{item.Action}'";
                 case WHTableName.LocalOrderReceiving_Detail:
                     foreach (var item in data_FtyBarcode)
                     {
-                        var toBarcode = wHBarcodeTransaction.Where(w => w.ToFabric_FtyInventoryUkey == item.ToUkey).OrderByDescending(o => o.TransactionUkey).First();
-                        item.Barcode = toBarcode.To_NewBarcode;
-                        item.BarcodeSeq = toBarcode.To_NewBarcodeSeq;
+                        if (isLocalOrder)
+                        {
+                            var toBarcode = wHBarcodeTransaction.Where(w => w.ToFabric_LocalOrderInventoryUkey == item.ToUkey).OrderByDescending(o => o.TransactionUkey).First();
+                            item.Barcode = toBarcode.To_NewBarcode;
+                            item.BarcodeSeq = toBarcode.To_NewBarcodeSeq;
+                        }
+                        else
+                        {
+                            var toBarcode = wHBarcodeTransaction.Where(w => w.ToFabric_FtyInventoryUkey == item.ToUkey).OrderByDescending(o => o.TransactionUkey).First();
+                            item.Barcode = toBarcode.To_NewBarcode;
+                            item.BarcodeSeq = toBarcode.To_NewBarcodeSeq;
+                        }
                     }
 
                     break;

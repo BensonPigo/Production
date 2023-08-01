@@ -208,11 +208,46 @@ where   (isnull(f.InQty, 0) - isnull(f.OutQty, 0) + isnull(f.AdjustQty, 0) + d.Q
                                    stocktype = m.Field<string>("stocktype"),
                                    qty = m.Field<decimal>("Qty"),
                                    location = m.Field<string>("location"),
+                                   FabricType = m.Field<string>("FabricType"),
                                    roll = m.Field<string>("roll"),
                                    dyelot = m.Field<string>("dyelot"),
                                    tone = m.Field<string>("Tone"),
                                }).ToList();
             #endregion 更新庫存數量  LocalOrderInventory
+
+            #region 檢查Barcode是否有在其他單子重複，有重複就update成空白, where 拆開來是因為效能(有index但有時候無效)
+            string sqlCheckBarcode = $@"
+update rd set rd.Barcode = ''
+from LocalOrderReceiving_Detail rd
+where ID = '{this.CurrentMaintain["ID"]}'
+and exists(select 1 from LocalOrderReceiving_Detail rd2 with (nolock) where rd2.ID <> rd.ID and rd2.Barcode = rd.Barcode)
+
+update rd set rd.Barcode = ''
+from LocalOrderReceiving_Detail rd
+where ID = '{this.CurrentMaintain["ID"]}'
+and exists(select 1 from WHBarcodeTransaction wht with (nolock) where wht.Action = 'Confirm' and [Function] = 'P70' and wht.TransactionID <> rd.ID and wht.To_NewBarcode = rd.Barcode)
+
+update rd set rd.Barcode = ''
+from LocalOrderReceiving_Detail rd
+where ID = '{this.CurrentMaintain["ID"]}'
+and exists(select 1 from WHBarcodeTransaction wht with (nolock) where [Function] != 'P70' and wht.From_OldBarcode = rd.Barcode)
+
+update rd set rd.Barcode = ''
+from LocalOrderReceiving_Detail rd
+where ID = '{this.CurrentMaintain["ID"]}'
+and exists(select 1 from WHBarcodeTransaction wht with (nolock) where [Function] != 'P70' and wht.From_NewBarcode = rd.Barcode)
+
+update rd set rd.Barcode = ''
+from LocalOrderReceiving_Detail rd
+where ID = '{this.CurrentMaintain["ID"]}'
+and exists(select 1 from WHBarcodeTransaction wht with (nolock) where [Function] != 'P70' and wht.To_OldBarcode = rd.Barcode)
+
+update rd set rd.Barcode = ''
+from LocalOrderReceiving_Detail rd
+where ID = '{this.CurrentMaintain["ID"]}'
+and exists(select 1 from WHBarcodeTransaction wht with (nolock) where [Function] != 'P70' and wht.To_NewBarcode = rd.Barcode)
+";
+            #endregion
 
             DBProxy.Current.DefaultTimeout = 900;  // 加長時間為15分鐘，避免timeout
             Exception errMsg = null;
@@ -223,9 +258,25 @@ where   (isnull(f.InQty, 0) - isnull(f.OutQty, 0) + isnull(f.AdjustQty, 0) + d.Q
                 {
                     try
                     {
+                        DataTable resulttb;
+
                         // LocalOrderInventory 庫存
                         string upd_Fty_2T = Prgs.UpdateLocalOrderInventory_IO("In", null, true);
-                        if (!(result = MyUtility.Tool.ProcessWithObject(data_Fty_2T, string.Empty, upd_Fty_2T, out DataTable resulttb, "#TmpSource", conn: sqlConn)))
+                        if (!(result = MyUtility.Tool.ProcessWithObject(data_Fty_2T, string.Empty, upd_Fty_2T, out resulttb, "#TmpSource", conn: sqlConn)))
+                        {
+                            throw result.GetException();
+                        }
+
+                        // LocalOrderInventory Tone一定要在更新庫存後面執行
+                        string upd_Fty_Tone = Prgs.UpdateLocalOrderInventory_IO("Tone", null, true);
+                        if (!(result = MyUtility.Tool.ProcessWithObject(data_Fty_2T, string.Empty, upd_Fty_Tone, out resulttb, "#TmpSource", conn: sqlConn)))
+                        {
+                            throw result.GetException();
+                        }
+
+                        // 檢查Barcode是否有在其他單子重複，有的畫清空，UpdateWH_Barcode會重編新的
+                        result = DBProxy.Current.ExecuteByConn(sqlConn, sqlCheckBarcode);
+                        if (!result)
                         {
                             throw result.GetException();
                         }
