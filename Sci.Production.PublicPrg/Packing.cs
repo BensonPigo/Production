@@ -2523,37 +2523,49 @@ select BuyerDelivery = stuff((
 ";
                     #endregion
                     Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[page];
-                    worksheet.Cells[1, 3] = MyUtility.Convert.GetString(dT.Rows[0]["CustPONo"]) + " of " + MyUtility.Convert.GetString(masterdata["CTNQty"]);
+                    worksheet.Cells[1, 4] = MyUtility.Convert.GetString(dT.Rows[0]["CustPONo"]) + " of " + MyUtility.Convert.GetString(masterdata["CTNQty"]);
                     worksheet.Cells[5, 2] = MyUtility.GetValue.Lookup(orderids);
                     worksheet.Cells[6, 2] = MyUtility.GetValue.Lookup(styles);
                     worksheet.Cells[7, 2] = dT.Rows[0]["CustPONo"];
                     worksheet.Cells[8, 2] = MyUtility.GetValue.Lookup(colors);
-                    worksheet.Cells[5, 6] = masterdata["CTNQty"];
-                    worksheet.Cells[6, 6] = MyUtility.Convert.GetInt(masterdata["ShipQty"]).ToString("#,#.#") + " pcs.";
-                    worksheet.Cells[8, 6] = MyUtility.GetValue.Lookup(buyerDelivery);
-                    worksheet.Cells[5, 8] = alias;
+                    worksheet.Cells[5, 7] = masterdata["CTNQty"];
+                    worksheet.Cells[6, 7] = MyUtility.Convert.GetInt(masterdata["ShipQty"]).ToString("#,#.#") + " pcs.";
+                    worksheet.Cells[8, 7] = MyUtility.GetValue.Lookup(buyerDelivery);
+                    worksheet.Cells[5, 12] = alias;
                     for (int j = i * 50, k = 10; j < dT.Rows.Count && j < (i + 1) * 50; j++, k++)
                     {
-                        worksheet.Cells[k, 2] = dT.Rows[j]["CTNStartNo"];
-                        worksheet.Cells[k, 3] = dT.Rows[j]["SizeCode"];
-                        worksheet.Cells[k, 4] = dT.Rows[j]["ShipQty"];
+                        worksheet.Cells[k, 2] = dT.Rows[j]["M360Date"];
+                        worksheet.Cells[k, 3] = dT.Rows[j]["CTNStartNo"];
+                        worksheet.Cells[k, 4] = dT.Rows[j]["SizeCode"];
+                        worksheet.Cells[k, 5] = dT.Rows[j]["ShipQty"];
+                        worksheet.Cells[k, 7] = dT.Rows[j]["M360Result"];
+                        if (dT.Rows[j]["M360Result"].ToString() == "Pass")
+                        {
+                            worksheet.Cells[k, 7].Interior.Color = System.Drawing.Color.FromArgb(0, 176, 80);
+                        }
+                        else
+                        {
+                            worksheet.Cells[k, 7].Interior.Color = System.Drawing.Color.FromArgb(192, 0, 0);
+                        }
+
+                        worksheet.Cells[k, 9] = dT.Rows[j]["M360Signature"];
 
                         if (MyUtility.Check.Empty(dT.Rows[j]["DryRoomMDScanDate"]))
                         {
                             continue;
                         }
 
-                        worksheet.Cells[k, 5] = dT.Rows[j]["Result"];
+                        worksheet.Cells[k, 6] = dT.Rows[j]["Result"];
                         if (dT.Rows[j]["Result"].ToString() == "Pass")
                         {
-                            worksheet.Cells[k, 5].Interior.Color = System.Drawing.Color.FromArgb(0, 176, 80);
+                            worksheet.Cells[k, 6].Interior.Color = System.Drawing.Color.FromArgb(0, 176, 80);
                         }
                         else
                         {
-                            worksheet.Cells[k, 5].Interior.Color = System.Drawing.Color.FromArgb(192, 0, 0);
+                            worksheet.Cells[k, 6].Interior.Color = System.Drawing.Color.FromArgb(192, 0, 0);
                         }
 
-                        worksheet.Cells[k, 6] = dT.Rows[j]["Signature"];
+                        worksheet.Cells[k, 8] = dT.Rows[j]["Signature"];
                     }
 
                     page++;
@@ -2606,9 +2618,16 @@ select  pd.CTNStartNo,
         o.CustPONo,
         [Result] = IIF(sum(isnull(pd.DryRoomMDFailQty, 0)) = 0, 'Pass', 'Fail'),
         [Signature] = Signature.Name,
-        pd.DryRoomMDScanDate
+        pd.DryRoomMDScanDate,
+        [M360Date] = m.ScanDate,
+		[M360Result] = case when sum(m.MDFailQty) = 0 then 'Pass'
+                            when sum(m.MDFailQty) > 0 then 'Hold'
+                            else 'Please check Discrepancy'
+                            end,
+		[M360Signature] = m.addName
 from PackingList_Detail pd
 left join orders o on o.id = pd.OrderID
+left join MDScan m on m.PackingListID = pd.ID and m.OrderID = pd.OrderID and pd.CTNStartNo = m.CTNStartNo and m.SCICtnNo = pd.SCICtnNo
 outer apply(
 	select SizeCode = stuff((
 	select concat('/',SizeCode)
@@ -2631,7 +2650,7 @@ outer apply(
     select Name from pass1 with (nolock) where ID = pd.DryRoomMDScanName
 ) Signature
 where pd.id = '{packingListID}' and o.CustPONo = '{custPONoDT.Rows[i]["CustPONo"]}'
-group by CTNStartNo,a.SizeCode,b.ShipQty,o.CustPONo,Signature.Name,pd.DryRoomMDScanDate
+group by pd.CTNStartNo,a.SizeCode,b.ShipQty,o.CustPONo,Signature.Name,pd.DryRoomMDScanDate,m.ScanDate,m.addName
 order by min(pd.seq)
 ");
             }
