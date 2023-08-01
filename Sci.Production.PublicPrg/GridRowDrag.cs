@@ -106,6 +106,11 @@ namespace Sci.Production.Prg
                     Rectangle rowBounds = this.mainGrid.GetRowDisplayRectangle(rowIndex, true);
                     this.dragImage = bitmap.Clone(rowBounds, bitmap.PixelFormat);
 
+                    // 縮小圖片
+                    int newWidth = MyUtility.Convert.GetInt(this.dragImage.Width / 1.2);  // 設定新的寬度
+                    int newHeight = MyUtility.Convert.GetInt(this.dragImage.Height / 1.2);  // 設定新的高度
+                    this.dragImage = new Bitmap(this.dragImage, newWidth, newHeight);
+
                     this.mouseLocation = e.Location;
                 }
 

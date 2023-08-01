@@ -253,6 +253,19 @@ namespace Sci.Production.IE
 
                 DataRow dr = this.gridEditOperation.GetDataRow<DataRow>(e.RowIndex);
 
+                if (MyUtility.Check.Empty(e.FormattedValue) &&
+                    dr[this.gridEditOperation.Columns[e.ColumnIndex].DataPropertyName] == DBNull.Value)
+                {
+                    return;
+                }
+
+                if (MyUtility.Check.Empty(e.FormattedValue))
+                {
+                    dr["UpdSewerDiffPercentage"] = e.FormattedValue;
+                    dr["UpdDivSewer"] = e.FormattedValue;
+                    return;
+                }
+
                 dr[this.gridEditOperation.Columns[e.ColumnIndex].DataPropertyName] = e.FormattedValue;
 
                 this.CaculateUpdSewerColumn(this.gridEditOperation.Columns[e.ColumnIndex].DataPropertyName, dr);
@@ -313,6 +326,8 @@ namespace Sci.Production.IE
             DataRow selectedRow = this.gridEditOperation.GetDataRow(this.gridEditOperation.SelectedRows[0].Index);
             DataRow newRow = this.dtLineMappingBalancing_DetailCopy.NewRow();
             newRow["Selected"] = true;
+            newRow["UpdDivSewer"] = 0;
+            newRow["UpdSewerDiffPercentage"] = 0;
 
             int insertIndex = this.dtLineMappingBalancing_DetailCopy.Rows.IndexOf(selectedRow);
             this.dtLineMappingBalancing_DetailCopy.Rows.InsertAt(newRow, insertIndex);
@@ -365,16 +380,21 @@ namespace Sci.Production.IE
         {
             this.gridEditOperationBs.EndEdit();
             var checkedNo = this.dtNoSelectItem.AsEnumerable().Select(s => s["No"].ToString()).ToList();
-            var curEditRows = this.dtLineMappingBalancing_DetailCopy.AsEnumerable().Where(s => checkedNo.Contains(s["No"].ToString()));
+            var needKeepRows = this.dtLineMappingBalancing_DetailCopy.AsEnumerable()
+                        .Where(s => checkedNo.Contains(s["No"].ToString()) &&
+                                    (MyUtility.Convert.GetDecimal(s["UpdDivSewer"]) > 0 || s["UpdDivSewer"] == DBNull.Value));
+
             #region 檢查DivSewer與UpdSewerDiffPercentage總和是否超過或不足
-            var checkDivSewerBalance = curEditRows
+            var checkDivSewerBalance = needKeepRows
                 .GroupBy(s => s["TimeStudyDetailUkey"])
                 .Select(groupItem => new
                 {
                     OperationDesc = groupItem.First()["OperationDesc"].ToString(),
                     OriSewer = MyUtility.Convert.GetDecimal(groupItem.First()["OriSewer"]),
-                    SumDivSewer = groupItem.Sum(s => MyUtility.Check.Empty(s["UpdDivSewer"]) ? MyUtility.Convert.GetDecimal(s["DivSewer"]) : MyUtility.Convert.GetDecimal(s["UpdDivSewer"])),
-                    SumSewerDiffPercentage = groupItem.Sum(s => MyUtility.Check.Empty(s["UpdSewerDiffPercentage"]) ? MyUtility.Convert.GetDecimal(s["SewerDiffPercentageDesc"]) : MyUtility.Convert.GetDecimal(s["UpdSewerDiffPercentage"])),
+                    SumDivSewer = groupItem.Sum(s => s["UpdDivSewer"] == DBNull.Value ? MyUtility.Convert.GetDecimal(s["DivSewer"]) : MyUtility.Convert.GetDecimal(s["UpdDivSewer"])),
+                    SumSewerDiffPercentage = groupItem.Sum(s => s["UpdSewerDiffPercentage"] == DBNull.Value ? MyUtility.Convert.GetDecimal(s["SewerDiffPercentageDesc"]) : MyUtility.Convert.GetDecimal(s["UpdSewerDiffPercentage"])),
+                    TimeStudyDetailUkeyCnt = groupItem.Count(),
+                    DetailRows = groupItem,
                 });
 
             foreach (var checkItem in checkDivSewerBalance)
@@ -394,7 +414,7 @@ namespace Sci.Production.IE
             #endregion
 
             #region 檢查是否有TimeStudyDetailUkey遺漏
-            List<long> curTimeStudyDetailUkey = curEditRows.Select(s => MyUtility.Convert.GetLong(s["TimeStudyDetailUkey"])).Distinct().ToList();
+            List<long> curTimeStudyDetailUkey = needKeepRows.Select(s => MyUtility.Convert.GetLong(s["TimeStudyDetailUkey"])).Distinct().ToList();
             var listLoseTimeStudyDetailUkey = this.dtSelectItemSource.AsEnumerable().Where(s => !curTimeStudyDetailUkey.Contains(MyUtility.Convert.GetLong(s["TimeStudyDetailUkey"]))).ToList();
             if (listLoseTimeStudyDetailUkey.Any())
             {
@@ -405,7 +425,7 @@ namespace Sci.Production.IE
             #endregion
 
             #region 檢查No是否完整
-            List<string> curNo = curEditRows.Select(s => s["No"].ToString()).Distinct().ToList();
+            List<string> curNo = needKeepRows.Select(s => s["No"].ToString()).Distinct().ToList();
             var listLoseNo = this.dtNoSelectItem.AsEnumerable().Where(s => !curNo.Contains(s["No"].ToString())).ToList();
             if (listLoseNo.Any())
             {
@@ -415,21 +435,35 @@ namespace Sci.Production.IE
             }
             #endregion
 
-            foreach (var needUpdRow in curEditRows.Where(s => !MyUtility.Check.Empty(s["UpdDivSewer"])))
+            // 更新調整過的DivSewer與SewerDiffPercentage
+            foreach (var needUpdRow in needKeepRows.Where(s => !MyUtility.Check.Empty(s["UpdDivSewer"])))
             {
                 needUpdRow["DivSewer"] = needUpdRow["UpdDivSewer"];
                 needUpdRow["SewerDiffPercentageDesc"] = needUpdRow["UpdSewerDiffPercentage"];
                 needUpdRow["SewerDiffPercentage"] = MyUtility.Math.Round(MyUtility.Convert.GetDecimal(needUpdRow["UpdSewerDiffPercentage"]) / 100, 2);
             }
 
-            // 將No空白資料清除
-            foreach (var needRemoveRow in curEditRows.Where(s => MyUtility.Check.Empty(s["No"])).ToList())
+            // 更新TimeStudyDetailUkeyCnt
+            foreach (var groupItem in checkDivSewerBalance)
+            {
+                foreach (DataRow updRow in groupItem.DetailRows)
+                {
+                    updRow["TimeStudyDetailUkeyCnt"] = groupItem.TimeStudyDetailUkeyCnt;
+                }
+            }
+
+            // 將No空白資料與UpdDivSewer = 0清除
+            var needClearDatas = this.dtLineMappingBalancing_DetailCopy.AsEnumerable()
+                                .Where(s => MyUtility.Check.Empty(s["No"]) ||
+                                            (MyUtility.Convert.GetDecimal(s["UpdDivSewer"]) == 0 && s["UpdDivSewer"] != DBNull.Value))
+                                .ToList();
+            foreach (var needRemoveRow in needClearDatas)
             {
                 this.dtLineMappingBalancing_DetailCopy.Rows.Remove(needRemoveRow);
             }
 
             // 將selected都改成false
-            foreach (var needCancelCheck in curEditRows.Where(s => MyUtility.Convert.GetBool(s["Selected"])))
+            foreach (var needCancelCheck in needKeepRows.Where(s => MyUtility.Convert.GetBool(s["Selected"])))
             {
                 needCancelCheck["Selected"] = false;
             }
