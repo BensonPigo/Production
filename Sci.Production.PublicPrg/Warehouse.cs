@@ -5122,9 +5122,18 @@ and w.Action = '{item.Action}'";
                 default:
                     foreach (var item in data_FtyBarcode)
                     {
-                        var fromBarcode = wHBarcodeTransaction.Where(w => w.FromFabric_FtyInventoryUkey == item.Ukey).OrderByDescending(o => o.TransactionUkey).First();
-                        item.Barcode = fromBarcode.From_NewBarcode;
-                        item.BarcodeSeq = fromBarcode.From_NewBarcodeSeq;
+                        if (isLocalOrder)
+                        {
+                            var fromBarcode = wHBarcodeTransaction.Where(w => w.FromFabric_LocalOrderInvnetoryUkey == item.Ukey).OrderByDescending(o => o.TransactionUkey).First();
+                            item.Barcode = fromBarcode.From_NewBarcode;
+                            item.BarcodeSeq = fromBarcode.From_NewBarcodeSeq;
+                        }
+                        else
+                        {
+                            var fromBarcode = wHBarcodeTransaction.Where(w => w.FromFabric_FtyInventoryUkey == item.Ukey).OrderByDescending(o => o.TransactionUkey).First();
+                            item.Barcode = fromBarcode.From_NewBarcode;
+                            item.BarcodeSeq = fromBarcode.From_NewBarcodeSeq;
+                        }
                     }
 
                     break;
