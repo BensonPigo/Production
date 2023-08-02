@@ -86,8 +86,7 @@ BEGIN
 	WHERE NOT EXISTS(SELECT 1 FROM ManufacturingExecution.dbo.MeasurementTranslate t WHERE t.Ukey=s.Ukey)
 	;
 	UPDATE t
-	SET   t.Ukey = isnull( s.Ukey        , 0)
-		, t.DescEN = isnull( s.DescEN    , '')
+	SET   t.DescEN = isnull( s.DescEN    , '')
 		, t.DescCHS = isnull( s.DescCHS  , '')
 		, t.DescVN = isnull( s.DescVN    , '')
 		, t.DescKH = isnull( s.DescKH    , '')
@@ -102,7 +101,8 @@ BEGIN
 	update t set MeasurementTranslateUkey = isnull(MeasurementTranslateUk.Ukey, 0)
 	from ManufacturingExecution.dbo.Measurement t with (nolock)
 	outer apply(select top 1 ukey from ManufacturingExecution.dbo.MeasurementTranslate mt with (nolock) where ManufacturingExecution.dbo.MeasurementTrim(mt.DescEN) = ManufacturingExecution.dbo.MeasurementTrim(t.Description)) MeasurementTranslateUk
-	where t.MeasurementTranslateUkey is null
+	where t.MeasurementTranslateUkey = 0
+    AND MeasurementTranslateUk.Ukey is not null
 
 	DROP TABLE #Trade_MeasurementTranslate
 END
