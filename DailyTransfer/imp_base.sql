@@ -322,6 +322,48 @@ select
 from Trade_To_Pms.dbo.Supp as b WITH (NOLOCK)
 where not exists(select id from Production.dbo.Supp as a WITH (NOLOCK) where a.id = b.id)
 
+-- Supp_BrandSuppCode
+Delete a
+from Production.dbo.Supp_BrandSuppCode as a 
+left join Trade_To_Pms.dbo.Supp_BrandSuppCode as b on a.ID = b.ID and a.BrandID = b.BrandID
+where b.id is null
+
+UPDATE a
+SET 
+      a.SuppCode		      =isnull(b.SuppCode, '')
+      ,a.T2LO		      =isnull(b.T2LO, '')
+      ,a.AddName		      =isnull(b.AddName, '')
+      ,a.AddDate		      =b.AddDate
+      ,a.EditName		      =isnull(b.EditName, '')
+      ,a.EditDate		      =b.EditDate
+	  ,a.SuppName		      =isnull(b.SuppName, '')
+from Production.dbo.Supp_BrandSuppCode as a
+inner join Trade_To_Pms.dbo.Supp_BrandSuppCode as b ON a.ID = b.ID and a.BrandID = b.BrandID
+
+INSERT INTO Production.dbo.Supp_BrandSuppCode(
+		ID
+      ,BrandID
+      ,SuppCode
+      ,T2LO
+      ,AddName
+      ,AddDate
+      ,EditName
+      ,EditDate
+      ,SuppName
+)
+select 
+	   isnull(ID, '')
+      ,isnull(BrandID, 0)
+      ,isnull(SuppCode, '')
+      ,isnull(T2LO, '')
+      ,isnull(AddName, '')
+      ,AddDate
+      ,isnull(EditName, '')
+      ,EditDate
+      ,isnull(SuppName, '')
+from Trade_To_Pms.dbo.Supp_BrandSuppCode as b WITH (NOLOCK)
+where not exists(select id from Production.dbo.Supp_BrandSuppCode as a WITH (NOLOCK) where a.ID = b.ID and a.BrandID = b.BrandID)
+
 --Supp_ReplaceSupplier
 merge Production.dbo.Supp_ReplaceSupplier t 
 using Trade_To_Pms.dbo.Supp_ReplaceSupplier s

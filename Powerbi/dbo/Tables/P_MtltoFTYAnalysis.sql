@@ -11,7 +11,7 @@
 	[OrderID] [varchar](13) NOT NULL,
 	[Seq1] [varchar](3) NOT NULL,
 	[Seq2] [varchar](2) NOT NULL,
-	[OrderCfmDate] [date] NOT NULL,
+	[OrderCfmDate] [date] NULL,
 	[SciDelivery] [date] NULL,
 	[Refno] [varchar](36) NOT NULL,
 	[SCIRefno] [varchar](30) NOT NULL,
@@ -59,7 +59,7 @@
 	[WKID] ASC,
 	[OrderID] ASC,
 	[Seq1] ASC,
-	[Seq2] ASC	
+	[Seq2] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
@@ -297,3 +297,5 @@ GO
 
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'生產分類(用於Pull forward)' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_MtltoFTYAnalysis', @level2type=N'COLUMN',@level2name=N'ProdItem'
 GO
+
+
