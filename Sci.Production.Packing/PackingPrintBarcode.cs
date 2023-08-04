@@ -332,7 +332,7 @@ namespace Sci.Production.Packing
                     tables.Cell(1, 1).Range.InlineShapes[1].LockAspectRatio = Microsoft.Office.Core.MsoTriState.msoFalse;
                     tables.Cell(1, 1).Range.InlineShapes[1].ConvertToShape().WrapFormat.Type = Word.WdWrapType.wdWrapSquare;
 
-                    tables.Cell(2, 1).Range.Text = "        " + barcodeSowText + Environment.NewLine + packingNo + Environment.NewLine + spNo + Environment.NewLine + poNo + Environment.NewLine + sizeQty + " " + cartonNo;
+                    tables.Cell(2, 1).Range.Text = "   " + barcodeSowText + Environment.NewLine + packingNo + Environment.NewLine + spNo + Environment.NewLine + poNo + Environment.NewLine + sizeQty + " " + cartonNo;
                 }
                 #endregion
                 winword.ActiveDocument.Protect(Word.WdProtectionType.wdAllowOnlyComments, Password: "ScImIs");
