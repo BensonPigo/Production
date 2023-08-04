@@ -99,7 +99,8 @@ outer apply(
 where  Export.ETA between '''+@ETA_s_varchar+''' and '''+@ETA_e_varchar+'''
 and psd.FabricType = ''F''
 and (ed.qty + ed.Foc)>0
-and o.Category in(''B'',''M'')';
+and o.Category in(''B'',''M'')
+and o.BrandID = ''ADIDAS''';
 
  
 SET @SqlCmd3 = '
