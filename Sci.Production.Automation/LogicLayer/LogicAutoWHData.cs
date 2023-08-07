@@ -201,7 +201,7 @@ and exists(
                                                                                 loi.Roll = b.Roll AND
                                                                                 loi.Dyelot = b.Dyelot AND
                                                                                 loi.StockType = b.StockType
-                            WHERE b.Ukey IN ({ukeys})";
+                            WHERE lom.FabricType = 'F' and  b.Ukey IN ({ukeys})";
 
                         // 發料
                         case WHTableName.LocalOrderIssue_Detail:
@@ -243,6 +243,7 @@ and exists(
 	                            INNER join LocalOrderInventory_Location loil ON ml.ID = loil.MtlLocationID
 	                            WHERE loil.LocalOrderInventoryUkey = loi.Ukey and ml.IsWMS = 1
                             ) AND
+                            lom.FabricType = 'F' and
                             b.Ukey IN ({ukeys})";
 
                         // 調整
@@ -284,6 +285,7 @@ and exists(
 	                            INNER join LocalOrderInventory_Location loil ON ml.ID = loil.MtlLocationID
 	                            WHERE loil.LocalOrderInventoryUkey = loi.Ukey and ml.IsWMS = 1
                             ) AND
+                            lom.FabricType = 'F' and
                             b.Ukey IN ({ukeys})";
                         case WHTableName.LocalOrderLocationTrans_Detail:
                             return sqlcmd = $@"
@@ -323,6 +325,7 @@ and exists(
 	                            INNER join LocalOrderInventory_Location loil ON ml.ID = loil.MtlLocationID
 	                            WHERE loil.LocalOrderInventoryUkey = loi.Ukey and ml.IsWMS = 1
                             ) AND
+                            lom.FabricType = 'F' and
                             b.Ukey IN ({ukeys})";
                     }
                 }
@@ -533,7 +536,7 @@ left join Production.dbo.Cutplan c on c.ID = {headerAlias}CutplanID
                                                                                 loi.Roll = b.Roll AND
                                                                                 loi.Dyelot = b.Dyelot AND
                                                                                 loi.StockType = b.StockType
-                            WHERE b.Ukey IN ({ukeys})
+                            WHERE lom.FabricType = 'A' and b.Ukey IN ({ukeys})
                             ";
 
                         // 發料
@@ -572,6 +575,7 @@ left join Production.dbo.Cutplan c on c.ID = {headerAlias}CutplanID
 	                            INNER join LocalOrderInventory_Location loil ON ml.ID = loil.MtlLocationID
 	                            WHERE loil.LocalOrderInventoryUkey = loi.Ukey and ml.IsWMS = 1
                             ) AND
+                            lom.FabricType = 'A' and
                             b.Ukey IN ({ukeys})";
 
                         // 調整
@@ -606,6 +610,7 @@ left join Production.dbo.Cutplan c on c.ID = {headerAlias}CutplanID
 	                            INNER join LocalOrderInventory_Location loil ON ml.ID = loil.MtlLocationID
 	                            WHERE loil.LocalOrderInventoryUkey = loi.Ukey and ml.IsWMS = 1
                             ) AND
+                            lom.FabricType = 'A' and
                             b.Ukey IN ({ukeys})";
                         case WHTableName.LocalOrderLocationTrans_Detail:
                             return sqlcmd = $@"
@@ -643,6 +648,7 @@ left join Production.dbo.Cutplan c on c.ID = {headerAlias}CutplanID
 	                            INNER join LocalOrderInventory_Location loil ON ml.ID = loil.MtlLocationID
 	                            WHERE loil.LocalOrderInventoryUkey = loi.Ukey and ml.IsWMS = 1
                             ) AND
+                            lom.FabricType = 'A' and
                             b.Ukey IN ({ukeys})";
                     }
                 }
