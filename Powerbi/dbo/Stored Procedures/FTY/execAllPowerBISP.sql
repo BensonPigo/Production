@@ -479,7 +479,7 @@ BEGIN CATCH
 
 SET @ErrorMessage = 
 '
-[10-P_ImportSDP]' + CHAR(13) +
+[11-P_ImportSDP]' + CHAR(13) +
 ',錯誤代碼: ' + CONVERT(VARCHAR, ERROR_NUMBER()) + CHAR(13) +
 ',錯誤行數: ' + CONVERT(VARCHAR, ERROR_LINE()) + CHAR(13) +
 ',錯誤訊息: ' + ERROR_MESSAGE()
@@ -494,7 +494,7 @@ END CATCH;
 IF (@ErrorMessage IS NULL or @ErrorMessage='')
 BEGIN 
 	set @desc += CHAR(13) + '
-[10-P_ImportSDP] is completed' + ' Time:' + FORMAT(@Stime, 'yyyy/MM/dd HH:mm:ss') + ' - ' + FORMAT(@Etime, 'yyyy/MM/dd HH:mm:ss')
+[11-P_ImportSDP] is completed' + ' Time:' + FORMAT(@Stime, 'yyyy/MM/dd HH:mm:ss') + ' - ' + FORMAT(@Etime, 'yyyy/MM/dd HH:mm:ss')
 END
 ELSE
 BEGIN
@@ -520,7 +520,7 @@ BEGIN CATCH
 
 SET @ErrorMessage = 
 '
-[10-P_ImportLoadingvsCapacity]' + CHAR(13) +
+[12-P_ImportLoadingvsCapacity]' + CHAR(13) +
 ',錯誤代碼: ' + CONVERT(VARCHAR, ERROR_NUMBER()) + CHAR(13) +
 ',錯誤行數: ' + CONVERT(VARCHAR, ERROR_LINE()) + CHAR(13) +
 ',錯誤訊息: ' + ERROR_MESSAGE()
@@ -535,7 +535,7 @@ END CATCH;
 IF (@ErrorMessage IS NULL or @ErrorMessage='')
 BEGIN 
 	set @desc += CHAR(13) + '
-[10-P_ImportLoadingvsCapacity] is completed' + ' Time:' + FORMAT(@Stime, 'yyyy/MM/dd HH:mm:ss') + ' - ' + FORMAT(@Etime, 'yyyy/MM/dd HH:mm:ss')
+[12-P_ImportLoadingvsCapacity] is completed' + ' Time:' + FORMAT(@Stime, 'yyyy/MM/dd HH:mm:ss') + ' - ' + FORMAT(@Etime, 'yyyy/MM/dd HH:mm:ss')
 END
 ELSE
 BEGIN
@@ -563,7 +563,7 @@ BEGIN CATCH
 
 SET @ErrorMessage = 
 '
-[11-P_PPICMasterList_ArtworkType]' + CHAR(13) +
+[13-P_PPICMasterList_ArtworkType]' + CHAR(13) +
 ',錯誤代碼: ' + CONVERT(VARCHAR, ERROR_NUMBER()) + CHAR(13) +
 ',錯誤行數: ' + CONVERT(VARCHAR, ERROR_LINE()) + CHAR(13) +
 ',錯誤訊息: ' + ERROR_MESSAGE()
@@ -578,7 +578,7 @@ END CATCH;
 IF (@ErrorMessage IS NULL or @ErrorMessage='')
 BEGIN 
 	set @desc += CHAR(13) + '
-[11-P_PPICMasterList_ArtworkType] is completed' + ' Time:' + FORMAT(@Stime, 'yyyy/MM/dd HH:mm:ss') + ' - ' + FORMAT(@Etime, 'yyyy/MM/dd HH:mm:ss')
+[13-P_PPICMasterList_ArtworkType] is completed' + ' Time:' + FORMAT(@Stime, 'yyyy/MM/dd HH:mm:ss') + ' - ' + FORMAT(@Etime, 'yyyy/MM/dd HH:mm:ss')
 END
 ELSE
 BEGIN
@@ -604,7 +604,7 @@ BEGIN CATCH
 
 SET @ErrorMessage = 
 '
-[12-P_Import_PPIC_MASTER_LIST]' + CHAR(13) +
+[14-P_Import_PPIC_MASTER_LIST]' + CHAR(13) +
 ',錯誤代碼: ' + CONVERT(VARCHAR, ERROR_NUMBER()) + CHAR(13) +
 ',錯誤行數: ' + CONVERT(VARCHAR, ERROR_LINE()) + CHAR(13) +
 ',錯誤訊息: ' + ERROR_MESSAGE()
@@ -619,7 +619,7 @@ END CATCH;
 IF (@ErrorMessage IS NULL or @ErrorMessage='')
 BEGIN 
 	set @desc += CHAR(13) + '
-[12-P_Import_PPIC_MASTER_LIST] is completed' + ' Time:' + FORMAT(@Stime, 'yyyy/MM/dd HH:mm:ss') + ' - ' + FORMAT(@Etime, 'yyyy/MM/dd HH:mm:ss')
+[14-P_Import_PPIC_MASTER_LIST] is completed' + ' Time:' + FORMAT(@Stime, 'yyyy/MM/dd HH:mm:ss') + ' - ' + FORMAT(@Etime, 'yyyy/MM/dd HH:mm:ss')
 END
 ELSE
 BEGIN
@@ -645,7 +645,7 @@ BEGIN CATCH
 
 SET @ErrorMessage = 
 '
-[13-P_ImportMtlStatusAnalisis]' + CHAR(13) +
+[15-P_ImportMtlStatusAnalisis]' + CHAR(13) +
 ',錯誤代碼: ' + CONVERT(VARCHAR, ERROR_NUMBER()) + CHAR(13) +
 ',錯誤行數: ' + CONVERT(VARCHAR, ERROR_LINE()) + CHAR(13) +
 ',錯誤訊息: ' + ERROR_MESSAGE()
@@ -660,7 +660,7 @@ END CATCH;
 IF (@ErrorMessage IS NULL or @ErrorMessage='')
 BEGIN 
 	set @desc += CHAR(13) + '
-[13-P_ImportMtlStatusAnalisis] is completed' + ' Time:' + FORMAT(@Stime, 'yyyy/MM/dd HH:mm:ss') + ' - ' + FORMAT(@Etime, 'yyyy/MM/dd HH:mm:ss')
+[15-P_ImportMtlStatusAnalisis] is completed' + ' Time:' + FORMAT(@Stime, 'yyyy/MM/dd HH:mm:ss') + ' - ' + FORMAT(@Etime, 'yyyy/MM/dd HH:mm:ss')
 END
 ELSE
 BEGIN
@@ -671,6 +671,47 @@ SET @ErrorMessage = ''
 -- Write in P_TransLog
 	insert into P_TransLog(functionName,Description,StartTime,EndTime,TransCode) 
 	values('P_ImportMtlStatusAnalisis',@ErrDesc,@Stime,@Etime,@TransCode)
+
+	SET @ErrDesc = ''
+
+/****************************************************************************************************************************/
+/***********************************P_ImportInlineDefec****************************************************************/
+BEGIN TRY
+	set @Stime = getdate()  
+	execute [dbo].[P_ImportInlineDefec]
+	set @Etime = getdate()
+END TRY
+
+BEGIN CATCH
+
+SET @ErrorMessage = 
+'
+[16-P_ImportInlineDefec]' + CHAR(13) +
+',錯誤代碼: ' + CONVERT(VARCHAR, ERROR_NUMBER()) + CHAR(13) +
+',錯誤行數: ' + CONVERT(VARCHAR, ERROR_LINE()) + CHAR(13) +
+',錯誤訊息: ' + ERROR_MESSAGE()
+
+SET @ErrDesc = '錯誤代碼: ' + CONVERT(VARCHAR, ERROR_NUMBER()) +
+',錯誤行數: ' + CONVERT(VARCHAR, ERROR_LINE())  +
+',錯誤訊息: ' + ERROR_MESSAGE()
+
+SET @ErrorStatus = 0
+
+END CATCH;
+IF (@ErrorMessage IS NULL or @ErrorMessage='')
+BEGIN 
+	set @desc += CHAR(13) + '
+[16-P_ImportInlineDefec] is completed' + ' Time:' + FORMAT(@Stime, 'yyyy/MM/dd HH:mm:ss') + ' - ' + FORMAT(@Etime, 'yyyy/MM/dd HH:mm:ss')
+END
+ELSE
+BEGIN
+	set @desc += CHAR(13) + @ErrorMessage
+END
+SET @ErrorMessage = ''
+
+-- Write in P_TransLog
+	insert into P_TransLog(functionName,Description,StartTime,EndTime,TransCode) 
+	values('P_ImportInlineDefec',@ErrDesc,@Stime,@Etime,@TransCode)
 
 	SET @ErrDesc = ''
 
