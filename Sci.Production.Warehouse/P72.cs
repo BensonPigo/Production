@@ -464,12 +464,12 @@ and ReasonTypeID='Stock_Adjust' AND junk = 0", e.FormattedValue), out dr))
             }
 
             bool isDetailKeyColEmpty = this.DetailDatas
-                                        .Where(s => MyUtility.Check.Empty(s["POID"]) || MyUtility.Check.Empty(s["Seq"]) || (decimal)s["QtyAfter"] < 0)
+                                        .Where(s => MyUtility.Check.Empty(s["POID"]) || MyUtility.Check.Empty(s["Seq"]) || MyUtility.Check.Empty(s["reasonid"]) || (decimal)s["QtyAfter"] < 0)
                                         .Any();
 
             if (isDetailKeyColEmpty)
             {
-                MyUtility.Msg.WarningBox("<SP#>, <Seq> cannot be empty, <Current Qty> cannot be less than 0.");
+                MyUtility.Msg.WarningBox("<SP#>, <Seq>, <Reason ID> cannot be empty, <Current Qty> cannot be less than 0.");
                 return false;
             }
 
