@@ -161,6 +161,47 @@ and exists(
                     detailTableName == WHTableName.LocalOrderIssue_Detail ||
                     detailTableName == WHTableName.LocalOrderAdjust_Detail)
                 {
+                    string strWhereWMS = string.Empty;
+
+                    if (statusAPI == EnumStatus.New)
+                    {
+                        if (detailTableName == WHTableName.LocalOrderLocationTrans_Detail)
+                        {
+                            strWhereWMS = $@"
+                            exists
+                            (
+                                select 1
+	                            from MtlLocation ml
+                                inner join dbo.SplitString(b.ToLocation, ',') sp on sp.Data = ml.ID
+	                            where ml.IsWMS =1 
+	                            union all
+                                select 1
+	                            from MtlLocation ml
+                                inner join dbo.SplitString(b.FromLocation, ',') sp on sp.Data = ml.ID
+	                            where ml.IsWMS =1 
+                            )";
+                        }
+                        else if (detailTableName == WHTableName.LocalOrderReceiving_Detail)
+                        {
+                            strWhereWMS = string.Empty;
+                        }
+                        else
+                        {
+                            strWhereWMS = $@"                            
+                            EXISTS
+                            (
+	                            SELECT 1 
+	                            FROM MtlLocation ml
+	                            INNER join LocalOrderInventory_Location loil ON ml.ID = loil.MtlLocationID
+	                            WHERE loil.LocalOrderInventoryUkey = loi.Ukey and ml.IsWMS = 1
+                            ) ";
+                        }
+                    }
+                    else
+                    {
+                        strWhereWMS = $" b.SentToWMS = 1 and b.CompleteTime is null " + Environment.NewLine + " and ";
+                    }
+
                     columns = string.Empty;
                     switch (detailTableName)
                     {
@@ -201,7 +242,7 @@ and exists(
                                                                                 loi.Roll = b.Roll AND
                                                                                 loi.Dyelot = b.Dyelot AND
                                                                                 loi.StockType = b.StockType
-                            WHERE lom.FabricType = 'F' and  b.Ukey IN ({ukeys})";
+                            WHERE {strWhereWMS} lom.FabricType = 'F' and  b.Ukey IN ({ukeys})";
 
                         // 發料
                         case WHTableName.LocalOrderIssue_Detail:
@@ -236,13 +277,8 @@ and exists(
                                                                                 loi.Dyelot = b.Dyelot AND
                                                                                 loi.StockType = b.StockType      
                             WHERE 
-                            EXISTS
-                            (
-	                            SELECT 1 
-	                            FROM MtlLocation ml
-	                            INNER join LocalOrderInventory_Location loil ON ml.ID = loil.MtlLocationID
-	                            WHERE loil.LocalOrderInventoryUkey = loi.Ukey and ml.IsWMS = 1
-                            ) AND
+                            {strWhereWMS}
+                            AND
                             lom.FabricType = 'F' and
                             b.Ukey IN ({ukeys})";
 
@@ -278,13 +314,8 @@ and exists(
                                                                                 loi.Dyelot = b.Dyelot AND
                                                                                 loi.StockType = b.StockType                        
                             WHERE 
-                            EXISTS
-                            (
-	                            SELECT 1 
-	                            FROM MtlLocation ml
-	                            INNER join LocalOrderInventory_Location loil ON ml.ID = loil.MtlLocationID
-	                            WHERE loil.LocalOrderInventoryUkey = loi.Ukey and ml.IsWMS = 1
-                            ) AND
+                            {strWhereWMS}
+                            AND
                             lom.FabricType = 'F' and
                             b.Ukey IN ({ukeys})";
                         case WHTableName.LocalOrderLocationTrans_Detail:
@@ -318,13 +349,8 @@ and exists(
                                                                                 loi.Dyelot = b.Dyelot AND
                                                                                 loi.StockType = b.StockType
                             WHERE 
-                            EXISTS
-                            (
-	                            SELECT 1 
-	                            FROM MtlLocation ml
-	                            INNER join LocalOrderInventory_Location loil ON ml.ID = loil.MtlLocationID
-	                            WHERE loil.LocalOrderInventoryUkey = loi.Ukey and ml.IsWMS = 1
-                            ) AND
+                            {strWhereWMS}
+                            AND
                             lom.FabricType = 'F' and
                             b.Ukey IN ({ukeys})";
                     }
@@ -500,6 +526,47 @@ left join Production.dbo.Cutplan c on c.ID = {headerAlias}CutplanID
                     detailTableName == WHTableName.LocalOrderReceiving_Detail ||
                     detailTableName == WHTableName.LocalOrderAdjust_Detail)
                 {
+                    string strWhereWMS = string.Empty;
+
+                    if (statusAPI == EnumStatus.New)
+                    {
+                        if (detailTableName == WHTableName.LocalOrderLocationTrans_Detail)
+                        {
+                            strWhereWMS = $@"
+                            exists
+                            (
+                                select 1
+	                            from MtlLocation ml
+                                inner join dbo.SplitString(b.ToLocation, ',') sp on sp.Data = ml.ID
+	                            where ml.IsWMS =1 
+	                            union all
+                                select 1
+	                            from MtlLocation ml
+                                inner join dbo.SplitString(b.FromLocation, ',') sp on sp.Data = ml.ID
+	                            where ml.IsWMS =1 
+                            )";
+                        }
+                        else if (detailTableName == WHTableName.LocalOrderReceiving_Detail)
+                        {
+                            strWhereWMS = string.Empty;
+                        }
+                        else
+                        {
+                            strWhereWMS = $@"                            
+                            EXISTS
+                            (
+	                            SELECT 1 
+	                            FROM MtlLocation ml
+	                            INNER join LocalOrderInventory_Location loil ON ml.ID = loil.MtlLocationID
+	                            WHERE loil.LocalOrderInventoryUkey = loi.Ukey and ml.IsWMS = 1
+                            ) ";
+                        }
+                    }
+                    else
+                    {
+                        strWhereWMS = $" b.SentToWMS = 1 and b.CompleteTime is null " + Environment.NewLine + " and ";
+                    }
+
                     columns = string.Empty;
                     switch (detailTableName)
                     {
@@ -536,7 +603,7 @@ left join Production.dbo.Cutplan c on c.ID = {headerAlias}CutplanID
                                                                                 loi.Roll = b.Roll AND
                                                                                 loi.Dyelot = b.Dyelot AND
                                                                                 loi.StockType = b.StockType
-                            WHERE lom.FabricType = 'A' and b.Ukey IN ({ukeys})
+                            WHERE {strWhereWMS} lom.FabricType = 'A' and b.Ukey IN ({ukeys}) 
                             ";
 
                         // 發料
@@ -568,13 +635,8 @@ left join Production.dbo.Cutplan c on c.ID = {headerAlias}CutplanID
                                                                                 loi.Dyelot = b.Dyelot AND
                                                                                 loi.StockType = b.StockType
                             WHERE
-                            EXISTS
-                            (
-	                            SELECT 1 
-	                            FROM MtlLocation ml
-	                            INNER join LocalOrderInventory_Location loil ON ml.ID = loil.MtlLocationID
-	                            WHERE loil.LocalOrderInventoryUkey = loi.Ukey and ml.IsWMS = 1
-                            ) AND
+                            {strWhereWMS}
+                            AND
                             lom.FabricType = 'A' and
                             b.Ukey IN ({ukeys})";
 
@@ -603,13 +665,8 @@ left join Production.dbo.Cutplan c on c.ID = {headerAlias}CutplanID
                                                                                 loi.Dyelot = b.Dyelot AND
                                                                                 loi.StockType = b.StockType
                             WHERE 
-                            EXISTS
-                            (
-	                            SELECT 1 
-	                            FROM MtlLocation ml
-	                            INNER join LocalOrderInventory_Location loil ON ml.ID = loil.MtlLocationID
-	                            WHERE loil.LocalOrderInventoryUkey = loi.Ukey and ml.IsWMS = 1
-                            ) AND
+                            {strWhereWMS}
+                            AND
                             lom.FabricType = 'A' and
                             b.Ukey IN ({ukeys})";
                         case WHTableName.LocalOrderLocationTrans_Detail:
@@ -641,13 +698,8 @@ left join Production.dbo.Cutplan c on c.ID = {headerAlias}CutplanID
                                                                                 loi.Dyelot = b.Dyelot AND
                                                                                 loi.StockType = b.StockType
                             WHERE 
-                            EXISTS
-                            (
-	                            SELECT 1 
-	                            FROM MtlLocation ml
-	                            INNER join LocalOrderInventory_Location loil ON ml.ID = loil.MtlLocationID
-	                            WHERE loil.LocalOrderInventoryUkey = loi.Ukey and ml.IsWMS = 1
-                            ) AND
+                            {strWhereWMS}
+                            AND
                             lom.FabricType = 'A' and
                             b.Ukey IN ({ukeys})";
                     }
