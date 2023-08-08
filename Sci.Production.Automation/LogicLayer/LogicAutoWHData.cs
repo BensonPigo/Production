@@ -159,7 +159,8 @@ and exists(
             {
                 if (detailTableName == WHTableName.LocalOrderReceiving_Detail ||
                     detailTableName == WHTableName.LocalOrderIssue_Detail ||
-                    detailTableName == WHTableName.LocalOrderAdjust_Detail)
+                    detailTableName == WHTableName.LocalOrderAdjust_Detail ||
+                    detailTableName == WHTableName.LocalOrderLocationTrans_Detail)
                 {
                     string strWhereWMS = string.Empty;
 
@@ -179,7 +180,7 @@ and exists(
 	                            from MtlLocation ml
                                 inner join dbo.SplitString(b.FromLocation, ',') sp on sp.Data = ml.ID
 	                            where ml.IsWMS =1 
-                            )";
+                            ) and";
                         }
                         else if (detailTableName == WHTableName.LocalOrderReceiving_Detail)
                         {
@@ -194,7 +195,7 @@ and exists(
 	                            FROM MtlLocation ml
 	                            INNER join LocalOrderInventory_Location loil ON ml.ID = loil.MtlLocationID
 	                            WHERE loil.LocalOrderInventoryUkey = loi.Ukey and ml.IsWMS = 1
-                            ) ";
+                            ) and";
                         }
                     }
                     else
@@ -278,7 +279,6 @@ and exists(
                                                                                 loi.StockType = b.StockType      
                             WHERE 
                             {strWhereWMS}
-                            AND
                             lom.FabricType = 'F' and
                             b.Ukey IN ({ukeys})";
 
@@ -315,9 +315,10 @@ and exists(
                                                                                 loi.StockType = b.StockType                        
                             WHERE 
                             {strWhereWMS}
-                            AND
                             lom.FabricType = 'F' and
                             b.Ukey IN ({ukeys})";
+
+                        // 調整庫存位置
                         case WHTableName.LocalOrderLocationTrans_Detail:
                             return sqlcmd = $@"
                             SELECT 
@@ -350,7 +351,6 @@ and exists(
                                                                                 loi.StockType = b.StockType
                             WHERE 
                             {strWhereWMS}
-                            AND
                             lom.FabricType = 'F' and
                             b.Ukey IN ({ukeys})";
                     }
@@ -524,7 +524,8 @@ left join Production.dbo.Cutplan c on c.ID = {headerAlias}CutplanID
             {
                 if (detailTableName == WHTableName.LocalOrderIssue_Detail ||
                     detailTableName == WHTableName.LocalOrderReceiving_Detail ||
-                    detailTableName == WHTableName.LocalOrderAdjust_Detail)
+                    detailTableName == WHTableName.LocalOrderAdjust_Detail ||
+                    detailTableName == WHTableName.LocalOrderLocationTrans_Detail)
                 {
                     string strWhereWMS = string.Empty;
 
@@ -544,7 +545,7 @@ left join Production.dbo.Cutplan c on c.ID = {headerAlias}CutplanID
 	                            from MtlLocation ml
                                 inner join dbo.SplitString(b.FromLocation, ',') sp on sp.Data = ml.ID
 	                            where ml.IsWMS =1 
-                            )";
+                            ) and";
                         }
                         else if (detailTableName == WHTableName.LocalOrderReceiving_Detail)
                         {
@@ -559,7 +560,7 @@ left join Production.dbo.Cutplan c on c.ID = {headerAlias}CutplanID
 	                            FROM MtlLocation ml
 	                            INNER join LocalOrderInventory_Location loil ON ml.ID = loil.MtlLocationID
 	                            WHERE loil.LocalOrderInventoryUkey = loi.Ukey and ml.IsWMS = 1
-                            ) ";
+                            ) and";
                         }
                     }
                     else
@@ -636,7 +637,6 @@ left join Production.dbo.Cutplan c on c.ID = {headerAlias}CutplanID
                                                                                 loi.StockType = b.StockType
                             WHERE
                             {strWhereWMS}
-                            AND
                             lom.FabricType = 'A' and
                             b.Ukey IN ({ukeys})";
 
@@ -666,7 +666,6 @@ left join Production.dbo.Cutplan c on c.ID = {headerAlias}CutplanID
                                                                                 loi.StockType = b.StockType
                             WHERE 
                             {strWhereWMS}
-                            AND
                             lom.FabricType = 'A' and
                             b.Ukey IN ({ukeys})";
                         case WHTableName.LocalOrderLocationTrans_Detail:
@@ -699,7 +698,6 @@ left join Production.dbo.Cutplan c on c.ID = {headerAlias}CutplanID
                                                                                 loi.StockType = b.StockType
                             WHERE 
                             {strWhereWMS}
-                            AND
                             lom.FabricType = 'A' and
                             b.Ukey IN ({ukeys})";
                     }

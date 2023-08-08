@@ -438,7 +438,7 @@ where m.IsWMS = 0";
             Prgs_WMS.UnLockorDeleteNotWMS_LocalOrder(dtToWMS, EnumStatus.Delete, autoRecordListP70, 2);
 
             // AutoWHFabric WebAPI
-            Prgs_WMS.WMSprocess(false, (DataTable)this.detailgridbs.DataSource, this.Name, EnumStatus.New, EnumStatus.Confirm, dtLocationDetail);
+            Prgs_WMS.WMSprocess(false, (DataTable)this.detailgridbs.DataSource, this.Name, EnumStatus.New, EnumStatus.Confirm, dtLocalOrderInventory);
             MyUtility.Msg.InfoBox("Confirmed successful");
         }
 
