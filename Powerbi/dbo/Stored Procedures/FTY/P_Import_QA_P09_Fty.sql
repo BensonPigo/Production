@@ -173,15 +173,25 @@ SET @SqlCmd4 = '
 	from #tmpBasic a
 	inner join 
 	(    
-		select *
-		from(
-			select WK#,SP#,Seq1,Seq2,ReportDate ,documentname,AWBno,T2InspYds,T2DefectPoint,T2Grade,[T1 Inspected Yards],[T1 Defect Points],TestReportCheckClima
-			from #tmpReportDate
-		) s	
-		pivot(
-			max(ReportDate)
-			for documentname in([Continuity card],[Inspection Report],[Test report])
-		) aa
+		SELECT * FROM 
+		(
+			SELECT *
+			FROM 
+			(
+				SELECT WK#,SP#,Seq1,Seq2,ReportDate ,documentname,AWBno,T2InspYds,T2DefectPoint,[T1 Inspected Yards],[T1 Defect Points],TestReportCheckClima
+				FROM #tmpReportDate
+			) s
+			CROSS APPLY
+			(
+				SELECT MAX(T2Grade) AS T2Grade
+				FROM #tmpReportDate
+				WHERE WK# = s.WK# AND SP# = s.SP# AND Seq1 = s.Seq1 AND Seq2 = s.Seq2
+			) p2
+		)AA
+		PIVOT
+		(
+			MAX(ReportDate) FOR documentname IN ([Continuity card], [Inspection Report], [Test report])
+		) p1
 	)b on a.WK# = b.WK# and a.SP# = b.SP# and a.Seq1=b.Seq1 and a.Seq2=b.Seq2   
 	inner join 
 	(   
