@@ -108,6 +108,8 @@ select s.id
     ,[Inline Category] = (select CONCAT(s.SewingReasonIDForTypeIC, '-' + SR.Description) from SewingReason sr where sr.ID = s.SewingReasonIDForTypeIC and sr.Type='IC')
     ,[Low output Reason] = (select CONCAT(s.SewingReasonIDForTypeLO, '-' + SR.Description) from SewingReason sr where sr.ID = s.SewingReasonIDForTypeLO and sr.Type='LO')
     ,[New Style/Repeat style] = dbo.IsRepeatStyleBySewingOutput(s.FactoryID, s.OutputDate, s.SewinglineID, s.Team, o.StyleUkey)
+	,[CumulateDate] = sd.Cumulate
+	,[CumulateDateSimilar] = sd.CumulateSimilar
 into #tmpSewingDetail
 from System WITH (NOLOCK),SewingOutput s WITH (NOLOCK) 
 inner join SewingOutput_Detail sd WITH (NOLOCK) on sd.ID = s.ID
@@ -203,6 +205,8 @@ select distinct OutputDate
     ,[Inline Category]
     ,[Low output Reason]
     ,[New Style/Repeat style]
+	,[CumulateDate]
+	,[CumulateDateSimilar]
 into #tmpSewingGroup
 from #tmpSewingDetail t
 outer apply(
@@ -210,81 +214,15 @@ outer apply(
 	where s.ID = t.ID
 )s
 
-select [MaxOutputDate] = Max(OutputDate), [MinOutputDate] = MIN(OutputDate), MockupStyle, OrderStyle, SewingLineID, FactoryID 
-into #tmpOutputDate
-from(
-select distinct OutputDate, MockupStyle, OrderStyle, SewingLineID, FactoryID 
-from #tmpSewingGroup) a
-group by MockupStyle, OrderStyle, SewingLineID, FactoryID
-
-select distinct t.FactoryID, t.SewingLineID ,t.OrderStyle, t.MockupStyle, s.OutputDate
-into #tmpSewingOutput
-from #tmpOutputDate t
-inner join SewingOutput s WITH (NOLOCK) on s.SewingLineID = t.SewingLineID and s.FactoryID = t.FactoryID and s.OutputDate between dateadd(day,-240, t.MinOutputDate) and t.MaxOutputDate
-where   exists(	select 1 from SewingOutput_Detail sd WITH (NOLOCK)
-				left join Orders o WITH (NOLOCK) on o.ID =  sd.OrderId
-				left join MockupOrder mo WITH (NOLOCK) on mo.ID = sd.OrderId
-				where s.ID = sd.ID and (o.StyleID = t.OrderStyle or mo.StyleID = t.MockupStyle))
-order by  FactoryID, t.SewingLineID ,t.OrderStyle, t.MockupStyle, s.OutputDate
-
-select w.FactoryID, w.SewingLineID ,t.OrderStyle, t.MockupStyle, w.Date
-into #tmpWorkHour
-from WorkHour w WITH (NOLOCK)
-left join #tmpOutputDate t on t.SewingLineID = w.SewingLineID and t.FactoryID = w.FactoryID and w.Date between t.MinOutputDate and t.MaxOutputDate
-where w.Holiday=0 and isnull(w.Hours,0) != 0 and w.Date >= (select dateadd(day,-240, min(MinOutputDate)) from #tmpOutputDate) and  w.Date <= (select max(MaxOutputDate) from #tmpOutputDate)
-order by  FactoryID, t.SewingLineID ,t.OrderStyle, t.MockupStyle, w.Date
-
 select t.*
     ,[LastShift] = IIF(t.Shift <> 'O' and t.Category <> 'M' and t.LocalOrder = 1, 'I',t.Shift) 
     ,[FtyType] = f.Type
     ,[FtyCountry] = f.CountryID
-    ,[CumulateDate_Before] = CumulateDate.val
     ,[SPFactory] = o.FactoryID
-	,[MasterStyleID] = m.MasterStyleID
-	,[MasterBrandID] = m.MasterBrandID
-into #tmp1stFilter_First
+into #tmp1stFilter
 from #tmpSewingGroup t
 left join Factory f on t.FactoryID = f.ID
 left join Orders o on t.OrderId = o.ID
-outer apply (	select val = IIF(Count(1)=0, 1, Count(1))
-				from #tmpSewingOutput s
-				where	s.FactoryID = t.FactoryID and
-						s.MockupStyle = t.MockupStyle and
-						s.OrderStyle = t.OrderStyle and
-						s.SewingLineID = t.SewingLineID and
-						s.OutputDate <= t.OutputDate and
-						s.OutputDate >(
-										select case when max(iif(s1.OutputDate is null, w.Date, null)) is not null then max(iif(s1.OutputDate is null, w.Date, null))
-													--區間內都連續生產，第一天也要算是生產日，所以要減一天
-													when min(w.Date) is not null then DATEADD(day, -1, min(w.Date))
-													else t.OutputDate end
-										from #tmpWorkHour w 
-										left join #tmpSewingOutput s1 on s1.OutputDate = w.Date and
-																		 s1.FactoryID = w.FactoryID and
-																		 s1.MockupStyle = t.MockupStyle and
-																		 s1.OrderStyle = t.OrderStyle and
-																		 s1.SewingLineID = w.SewingLineID
-										where	w.FactoryID = t.FactoryID and
-												isnull(w.MockupStyle, t.MockupStyle) = t.MockupStyle and
-												isnull(w.OrderStyle, t.OrderStyle) = t.OrderStyle and
-												w.SewingLineID = t.SewingLineID and
-												w.Date <= t.OutputDate
-									)
-) CumulateDate
-Outer apply (
-	select distinct MasterBrandID, MasterStyleID 
-	from (
-		select MasterBrandID,MasterStyleID 
-		from Style_SimilarStyle s2 WITH (NOLOCK) 
-		where exists( select 1 from Style s with (nolock) 
-						where s.Ukey = o.StyleUkey and s2.MasterStyleID = s.ID and s2.MasterBrandID = s.BrandID)
-		union all
-		select MasterBrandID,MasterStyleID
-		from Style_SimilarStyle s2 WITH (NOLOCK) 
-		where exists( select 1 from Style s with (nolock) 
-						where s.Ukey = o.StyleUkey and s2.ChildrenStyleID = s.ID and s2.ChildrenBrandID = s.BrandID)
-	)m
-)m
 where	(	
 			not exists(select 1 from #CategoryCondition) or
 			(exists(select 1 from #CategoryCondition where Category = 'L') and t.LocalOrder = 1) or
@@ -292,71 +230,6 @@ where	(
 		) and
 		(@Brand = '' or t.OrderBrandID = @Brand or t.MockupBrandID = @Brand) and
 		(@CDCode = '' or t.OrderCdCodeID = @CDCode or t.MockupCDCodeID = @CDCode)
-
-select w.SewingLineID, w.FactoryID, w.Date
-	, [RID] = ROW_NUMBER() over(partition by w.FactoryID, w.SewingLineID order by w.Date)
-into #tmpWorkHour_Factory
-from WorkHour w 
-outer apply (
-	select val = 1
-	from #tmp1stFilter_First t 
-	where w.FactoryID = t.FactoryID 
-	and w.Date = t.OutputDate 
-	and w.SewingLineID = t.SewingLineID 
-	and t.MasterStyleID <> ''
-) t
-where ((w.Holiday = 0 and w.Hours != 0) or t.val is not null) --假日但有產出也要計算
-group by w.SewingLineID, w.FactoryID, w.Date, t.val
-
-select t.*
-	, [CumulateDate] = coalesce(t.CumulateDate_Before, 0)
-	, [CumulateDateSimilar] = iif(t.MasterStyleID <> '', coalesce(t2.CumulateDateSimilar, 0), coalesce(t.CumulateDate_Before, 0))
-into #tmp1stFilter
-from #tmp1stFilter_First t 
-left join (
-	select t.MasterBrandID
-		, t.MasterStyleID
-		, t.OutputDate
-		, t.FactoryID
-		, t.SewingLineID
-		, [CumulateDateSimilar] = case when SEQ - (ROW_NUMBER() OVER (PARTITION BY t.MasterStyleID, t.MasterBrandID, t.FactoryID, t.SewingLineID, (RID - Seq) ORDER BY t.OutputDate, t.MasterStyleID, t.MasterBrandID, t.FactoryID, t.SewingLineID, RID) - 1) = 1 
-				then t.CumulateDate_Max + ROW_NUMBER() OVER (PARTITION BY t.MasterStyleID, t.MasterBrandID, t.FactoryID, t.SewingLineID, (RID - Seq) ORDER BY t.OutputDate, t.MasterStyleID, t.MasterBrandID, t.FactoryID, t.SewingLineID, RID) - 1
-			else ROW_NUMBER() OVER (PARTITION BY t.MasterStyleID, t.MasterBrandID, t.FactoryID, t.SewingLineID, (RID - Seq) ORDER BY t.OutputDate, t.MasterStyleID, t.MasterBrandID, t.FactoryID, t.SewingLineID, RID)
-			end
-	from 
-	(
-		select t.*
-			, t2.CumulateDate_Max
-			, [SEQ] = ROW_NUMBER() over(partition by t.MasterStyleID, t.MasterBrandID, t.FactoryID, t.SewingLineID order by t.OutputDate)
-		from 
-		(
-			select distinct t.MasterStyleID, t.MasterBrandID, t.OutputDate, t.FactoryID, t.SewingLineID, w.RID
-			from #tmp1stFilter_First t
-			inner join #tmpWorkHour_Factory w on w.FactoryID = t.FactoryID and w.Date = t.OutputDate and w.SewingLineID = t.SewingLineID
-			where MasterStyleID <> ''
-		)t
-		outer apply (
-			select MasterStyleID, MasterBrandID, FactoryID, OutputDate, SewingLineID
-				, [CumulateDate_Max] = MAX(CumulateDate_Before)
-			from #tmp1stFilter_First t2
-			where t.MasterStyleID = t2.MasterStyleID
-			and t.MasterBrandID = t2.MasterBrandID
-			and t.FactoryID = t2.FactoryID
-			and t.SewingLineID = t2.SewingLineID
-			and OutputDate in (
-				select MIN(OutputDate)
-				from #tmp1stFilter_First a
-				where a.MasterStyleID = t2.MasterStyleID
-				and a.MasterBrandID = t2.MasterBrandID	
-				and a.FactoryID = t2.FactoryID
-				and a.SewingLineID = t2.SewingLineID
-			)
-			group by MasterStyleID, MasterBrandID, FactoryID, OutputDate, SewingLineID
-		) t2
-	)t
-)t2 on t.MasterStyleID = t2.MasterStyleID and t.MasterBrandID = t2.MasterBrandID and t.FactoryID = t2.FactoryID and t.OutputDate = t2.OutputDate and t.SewingLineID = t2.SewingLineID
-where t.OutputDate >= @StartDate
-
 
 if(@Include_Artwork = 1)
 begin
@@ -568,8 +441,8 @@ from(
 		,CPUSewer = IIF(ROUND(ActManPower*WorkHour,2)>0,(IIF(t.Category=''M'',MockupCPU*MockupCPUFactor,OrderCPU*OrderCPUFactor*Rate)*t.QAQty)/ROUND(ActManPower*WorkHour,2),0)
 		,EFF = ROUND(IIF(ROUND(ActManPower*WorkHour,2)>0,((IIF(t.Category=''M'',MockupCPU*MockupCPUFactor,OrderCPU*OrderCPUFactor*Rate)*t.QAQty)/(ROUND(ActManPower*WorkHour,2)*3600/StdTMS))*100,0),1)
 		,RFT = IIF(ori_InlineQty = 0, 0, ROUND(ori_QAQty* 1.0 / ori_InlineQty * 1.0 * 100 ,2))
-		,CumulateDate = IIF(CumulateDate > 180, ''>180'', CONVERT(VARCHAR, CumulateDate))
-		,CumulateDateSimilar = IIF(CumulateDateSimilar > 180, ''>180'', CONVERT(VARCHAR, CumulateDateSimilar))
+		,CumulateDate = CONVERT(VARCHAR, CumulateDate)
+		,CumulateDateSimilar = CONVERT(VARCHAR, CumulateDateSimilar)
 		,DateRange = IIF(CumulateDate >= 10,''>=10'',CONVERT(VARCHAR,CumulateDate))
 		,InlineQty'
 
