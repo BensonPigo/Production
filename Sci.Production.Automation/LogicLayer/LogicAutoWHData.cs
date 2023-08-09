@@ -260,7 +260,7 @@ and exists(
                             [WeaveType] = lom.WeaveType,
                             [Roll] = b.Roll,
                             [Dyelot] =b.Dyelot,
-                            [Barcode] = IIF(wt.To_OldBarcodeSeq <> '',Concat (wt.From_OldBarcode, '-', wt.From_OldBarcodeSeq),wt.From_OldBarcode ),
+                            [Barcode] = IIF(wt.From_OldBarcodeSeq <> '',Concat (wt.From_OldBarcode, '-', wt.From_OldBarcodeSeq),wt.From_OldBarcode ),
                             [NewBarcode] = IIF(wt.To_NewBarcodeSeq <> '',Concat (wt.To_NewBarcode, '-', wt.To_NewBarcodeSeq),wt.To_NewBarcode ),
                             [Description] = lom.[Desc],
                             [Qty] = b.Qty,
