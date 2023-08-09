@@ -18,7 +18,7 @@
     [Construction]          NVARCHAR(30)    CONSTRAINT [DF_P_InlineDefectSummary_Construction]   NOT NULL DEFAULT (('')), 
     [ProductionFamilyID]    VARCHAR(20)     CONSTRAINT [DF_P_InlineDefectSummary_ProductionFamilyID]   NOT NULL DEFAULT (('')), 
     [Team]                 VARCHAR(10)     CONSTRAINT [DF_P_InlineDefectSummary_Team]   NOT NULL DEFAULT (('')), 
-    [QCName]                VARCHAR(20)     CONSTRAINT [DF_P_InlineDefectSummary_QCName]   NOT NULL DEFAULT (('')), 
+    [QCName]                VARCHAR(100)     CONSTRAINT [DF_P_InlineDefectSummary_QCName]   NOT NULL DEFAULT (('')), 
     [Shift]                 VARCHAR(5)      CONSTRAINT [DF_P_InlineDefectSummary_Shift]   NOT NULL DEFAULT (('')), 
     [Line]                  VARCHAR(5)      CONSTRAINT [DF_P_InlineDefectSummary_Line]   NOT NULL DEFAULT (('')), 
     [SewingCell]            VARCHAR(2)      CONSTRAINT [DF_P_InlineDefectSummary_SewingCell]   NOT NULL DEFAULT (('')), 
@@ -26,7 +26,7 @@
     [RejectWIP]             INT             CONSTRAINT [DF_P_InlineDefectSummary_RejectWIP]   NOT NULL DEFAULT ((0)), 
     [InlineWFT ]            INT             CONSTRAINT [DF_P_InlineDefectSummary_InlineWFT ]   NOT NULL DEFAULT ((0)), 
     [InlineRFT]             INT             CONSTRAINT [DF_P_InlineDefectSummary_]   NOT NULL DEFAULT ((0))
-    CONSTRAINT [PK_P_InlineDefectDetail] PRIMARY KEY ([Ukey])
+    CONSTRAINT [PK_P_InlineDefectSummary] PRIMARY KEY ([Ukey],[FactoryID])
 )
 
 GO
