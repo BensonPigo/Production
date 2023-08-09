@@ -243,6 +243,12 @@ SET NOCOUNT ON
     , t.RejectWIP
 	into #tmpDetail
 	from #tmp_src t
+	CROSS APPLY 
+	(
+		SELECT TOP (t.RejectWIP) 1 AS num
+		FROM master.dbo.spt_values
+		WHERE type = ''P''
+	) AS nums
 	where 1=1
 	and t.RejectWIP > 0
 	Order by t.Zone, t.[Brand], t.[Factory], t.Line, t.Team, t.[SP#], t.Article, t.[Product Type], t.[Defect Type ID], t.[Defect Code ID]
@@ -273,35 +279,35 @@ SET NOCOUNT ON
       ,[SewingCell]
       ,[InspectedQty]
       ,[RejectWIP]
-      ,[InlineWFT ]
+      ,[InlineWFT]
       ,[InlineRFT]
 	)
 	select
 	t.[First Inspection Date]
-	,t.Factory
-	,t.Brand
-	,t.Style
-	,t.[PO#]
-	,t.[SP#]
-	,t.Article
+	,isnull(t.Factory,'''')
+	,isnull(t.Brand	,'''')
+	,isnull(t.Style	,'''')
+	,isnull(t.[PO#]	,'''')
+	,isnull(t.[SP#]	,'''')
+	,isnull(t.Article,'''')
 	,isnull(t.[Destination],'''')
-	,t.CdCodeID
-	,t.CDCodeNew
-	,t.ProductType
-	,t.FabricType
-	,t.Lining
-	,t.Gender
-	,t.Construction
+	,isnull(t.CdCodeID,'''')
+	,isnull(t.CDCodeNew,'''')
+	,isnull(t.ProductType,'''')
+	,isnull(t.FabricType,'''')
+	,isnull(t.Lining,'''')
+	,isnull(t.Gender,'''')
+	,isnull(t.Construction,'''')
 	,isnull(t.ProductionFamilyID,'''')
-	,t.Team
-	,t.[QCName]
-	,t.Shift
-	,t.Line
-	,t.[Cell]
-	,t.[InspectedQty]
-	,t.[RejectQty]
-	,t.[InlineWFT]
-	,t.[InlineRFT]
+	,isnull(t.Team,'''')
+	,isnull(t.[QCName],'''')
+	,isnull(t.Shift,'''')
+	,isnull(t.Line,'''')
+	,isnull(t.[Cell],'''')
+	,isnull(t.[InspectedQty],0)
+	,isnull(t.[RejectQty] ,0)
+	,isnull(t.[InlineWFT] ,0)
+	,isnull(t.[InlineRFT] ,0)
 	from #tmpSummy t
 
 	IF EXISTS (select 1 from BITableInfo b where b.id = ''P_InlineDefectSummary'')
@@ -345,28 +351,28 @@ SET NOCOUNT ON
       ,[IsCriticalDefect]
 	)
 	select
-	t.Zone
-    , t.Brand
+	isnull(t.Zone,'''')
+    , isnull(t.Brand,'''')
     , t.[Buyer Delivery Date]
-    , t.[Factory]
-    , t.Line
-    , t.Team 
-    , t.Shift
-    , t.[PO#]
-    , t.[Style]
-    , t.[SP#]
-    , t.Article
+    , isnull(t.[Factory],'''')
+    , isnull(t.Line,'''')
+    , isnull(t.Team ,'''')
+    , isnull(t.Shift,'''')
+    , isnull(t.[PO#],'''')
+    , isnull(t.[Style],'''')
+    , isnull(t.[SP#],'''')
+    , isnull(t.Article,'''')
     , t.[First Inspection Date]
     , t.[First Inspected Time]     
 	, isnull(t.[Inspected QC],'''')
-    , t.[Product Type]
-    , t.Operation
-    , t.[Sewer Name]
-    , t.[Defect Type ID]
-    , t.[Defect Type Descritpion]
-    , t.[Defect Code ID]
-    , t.[Defect Code Descritpion]  
-    , t.IsCriticalDefect
+    , isnull(t.[Product Type],'''')
+    , isnull(t.Operation,'''')
+    , isnull(t.[Sewer Name],'''')
+    , isnull(t.[Defect Type ID],'''')
+    , isnull(t.[Defect Type Descritpion],'''')
+    , isnull(t.[Defect Code ID],'''')
+    , isnull(t.[Defect Code Descritpion],'''')  
+    , isnull(t.IsCriticalDefect,'''') 
 	From #tmpDetail t
 
 	IF EXISTS (select 1 from BITableInfo b where b.id = ''P_InlineDefectDetail'')
