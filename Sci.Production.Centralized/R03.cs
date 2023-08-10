@@ -350,6 +350,7 @@ group by a.ID, a.ProgramID, a.StyleID, a.SeasonID, a.BrandID , a.FactoryID, a.PO
 ";
                 #region 1.  By Factory
                 string strFactory = string.Format(@"{0} Select A=FtyZone,B=FactoryID, QARate, TotalCPUOut, TotalManHour FROM #tmpz ", strSQL);
+                DBProxy.Current.DefaultTimeout = 1800;
                 foreach (string conString in connectionString)
                 {
                     SqlConnection conn = new SqlConnection(conString);
@@ -362,10 +363,12 @@ group by a.ID, a.ProgramID, a.StyleID, a.SeasonID, a.BrandID , a.FactoryID, a.PO
                     this.gdtData1o.Merge(this.gdtData);
                     if (!result)
                     {
+                        DBProxy.Current.DefaultTimeout = 300;
                         return result;
                     }
                 }
 
+                DBProxy.Current.DefaultTimeout = 300;
                 sqlcmd = @"select A,B,C=sum(QARate),D=sum(TotalCPUOut),E=sum(TotalManHour)
 ,F=Round((Sum(TotalCPUOut) / case when Sum(TotalManHour) is null or Sum(TotalManHour) = 0 then 1 else Sum(TotalManHour) end),2)
 ,G=Round((Sum(TotalCPUOut) / (case when Sum(TotalManHour) is null or Sum(TotalManHour) = 0 then 1 else Sum(TotalManHour) end * 3600 / 1400) * 100),2)
@@ -376,6 +379,7 @@ from #tmp Group BY A,B order by A,B ";
 
                 #region 2.  By Brand
                 string strBrand = string.Format(@"{0}  Select BrandID AS A, QARate,TotalCPUOut,TotalManHour FROM #tmpz ", strSQL);
+                DBProxy.Current.DefaultTimeout = 1800;
                 foreach (string conString in connectionString)
                 {
                     SqlConnection conn = new SqlConnection(conString);
@@ -388,10 +392,11 @@ from #tmp Group BY A,B order by A,B ";
                     this.gdtData2o.Merge(this.gdtData);
                     if (!result)
                     {
+                        DBProxy.Current.DefaultTimeout = 300;
                         return result;
                     }
                 }
-
+                DBProxy.Current.DefaultTimeout = 300;
                 sqlcmd = @"select A,B=sum(QARate),C=sum(TotalCPUOut),D=sum(TotalManHour),
 E=Round((Sum(TotalCPUOut) / case when Sum(TotalManHour) is null or Sum(TotalManHour) = 0 then 1 else Sum(TotalManHour) end),2),
 F=Round((Sum(TotalCPUOut) / (case when Sum(TotalManHour) is null or Sum(TotalManHour) = 0 then 1 else Sum(TotalManHour) end * 3600 / 1400) * 100),2) from #tmp Group BY A order by A";
@@ -406,6 +411,7 @@ F=Round((Sum(TotalCPUOut) / (case when Sum(TotalManHour) is null or Sum(TotalMan
 Select A=BrandID, B=FtyZone,C=FactoryID, QARate, TotalCPUOut,TotalManHour
 FROM #tmpz ",
                     strSQL);
+                DBProxy.Current.DefaultTimeout = 1800;
                 foreach (string conString in connectionString)
                 {
                     SqlConnection conn = new SqlConnection(conString);
@@ -418,10 +424,11 @@ FROM #tmpz ",
                     this.gdtData3o.Merge(this.gdtData);
                     if (!result)
                     {
+                        DBProxy.Current.DefaultTimeout = 300;
                         return result;
                     }
                 }
-
+                DBProxy.Current.DefaultTimeout = 300;
                 sqlcmd = @"select A,B,C,D=sum(QARate),E=sum(TotalCPUOut),F=sum(TotalManHour)
 ,G=Round((Sum(TotalCPUOut) / case when Sum(TotalManHour) is null or Sum(TotalManHour) = 0 then 1 else Sum(TotalManHour) end),2)
 ,H=Round((Sum(TotalCPUOut) / (case when Sum(TotalManHour) is null or Sum(TotalManHour) = 0 then 1 else Sum(TotalManHour) end * 3600 / 1400) * 100),2)  
@@ -439,6 +446,7 @@ Select StyleID, BrandID, CDCodeID, StyleDesc, SeasonID
 , CDCodeNew, ProductType, FabricType, Lining, Gender, Construction
 FROM #tmpz ",
                     strSQL);
+                DBProxy.Current.DefaultTimeout = 1800;
                 foreach (string conString in connectionString)
                 {
                     SqlConnection conn = new SqlConnection(conString);
@@ -451,10 +459,12 @@ FROM #tmpz ",
                     this.gdtData4o.Merge(this.gdtData);
                     if (!result)
                     {
+                        DBProxy.Current.DefaultTimeout = 300;
                         return result;
                     }
                 }
 
+                DBProxy.Current.DefaultTimeout = 300;
                 sqlcmd = @"
 alter table #tmp alter column StyleID  varchar(15)
 alter table #tmp alter column BrandID  varchar(8)
@@ -513,6 +523,7 @@ order by StyleID, BrandID, CDCodeID, StyleDesc";
 
                 #region 5.  By CD
                 string strCdCodeID = string.Format(@"{0}  Select StyleDesc, CdCodeID, QARate, TotalCPUOut,TotalManHour, CDCodeNew, ProductType, FabricType, Lining, Gender, Construction FROM #tmpz ", strSQL);
+                DBProxy.Current.DefaultTimeout = 1800;
                 foreach (string conString in connectionString)
                 {
                     SqlConnection conn = new SqlConnection(conString);
@@ -525,10 +536,12 @@ order by StyleID, BrandID, CDCodeID, StyleDesc";
                     this.gdtData5o.Merge(this.gdtData);
                     if (!result)
                     {
+                        DBProxy.Current.DefaultTimeout = 300;
                         return result;
                     }
                 }
 
+                DBProxy.Current.DefaultTimeout = 300;
                 sqlcmd = @"
 select CdCodeID
     , CDCodeNew
@@ -550,6 +563,7 @@ order by CdCodeID";
 
                 #region 6.  By Factory Line
                 string strFactoryLine = string.Format(@"{0}  Select A=FtyZone,B=FactoryID,C=SewingLineID, QARate, TotalCPUOut,TotalManHour FROM #tmpz ", strSQL);
+                DBProxy.Current.DefaultTimeout = 1800;
                 foreach (string conString in connectionString)
                 {
                     SqlConnection conn = new SqlConnection(conString);
@@ -562,10 +576,12 @@ order by CdCodeID";
                     this.gdtData6o.Merge(this.gdtData);
                     if (!result)
                     {
+                        DBProxy.Current.DefaultTimeout = 300;
                         return result;
                     }
                 }
 
+                DBProxy.Current.DefaultTimeout = 300;
                 sqlcmd = @"select A,B,C, Sum(QARate) AS D, Sum(TotalCPUOut) AS E, SUM(TotalManHour) AS F
 ,G=Round((Sum(TotalCPUOut) / case when Sum(TotalManHour) is null or Sum(TotalManHour) = 0 then 1 else Sum(TotalManHour) end),2)
 ,H=Round((Sum(TotalCPUOut) / (case when Sum(TotalManHour) is null or Sum(TotalManHour) = 0 then 1 else Sum(TotalManHour) end * 3600 / 1400) * 100),2) 
@@ -581,6 +597,7 @@ Select BrandID, FtyZone, FactoryID, CdCodeID, StyleDesc, QARate, TotalCPUOut,Tot
     , CDCodeNew, ProductType, FabricType, Lining, Gender, Construction
 FROM #tmpz  ",
                     strSQL);
+                DBProxy.Current.DefaultTimeout = 1800;
                 foreach (string conString in connectionString)
                 {
                     SqlConnection conn = new SqlConnection(conString);
@@ -593,10 +610,12 @@ FROM #tmpz  ",
                     this.gdtData7o.Merge(this.gdtData);
                     if (!result)
                     {
+                        DBProxy.Current.DefaultTimeout = 300;
                         return result;
                     }
                 }
 
+                DBProxy.Current.DefaultTimeout = 300;
                 sqlcmd = @"
 select BrandID
     , FtyZone
@@ -630,6 +649,7 @@ Select FtyZone, POID, StyleID, BrandID, CdCodeID, StyleDesc, SeasonID, ProgramID
     , CDCodeNew, ProductType, FabricType, Lining, Gender, Construction
 FROM #tmpz  ",
                     strSQL);
+                DBProxy.Current.DefaultTimeout = 1800;
                 foreach (string conString in connectionString)
                 {
                     SqlConnection conn = new SqlConnection(conString);
@@ -642,10 +662,12 @@ FROM #tmpz  ",
                     this.gdtData8o.Merge(this.gdtData);
                     if (!result)
                     {
+                        DBProxy.Current.DefaultTimeout = 300;
                         return result;
                     }
                 }
 
+                DBProxy.Current.DefaultTimeout = 300;
                 sqlcmd = @"
 alter table #tmp alter column POID  varchar(13)
 
@@ -708,6 +730,7 @@ Select ProgramID, StyleID, FtyZone, FactoryID, BrandID, CdCodeID
     , StyleDesc, SeasonID, QARate,TotalCPUOut, TotalManHour, Category, OutputDate, SewingLineID 
     , CDCodeNew, ProductType, FabricType, Lining, Gender, Construction
 FROM #tmpz ", strSQL);
+                DBProxy.Current.DefaultTimeout = 1800;
                 foreach (string conString in connectionString)
                 {
                     SqlConnection conn = new SqlConnection(conString);
@@ -720,10 +743,12 @@ FROM #tmpz ", strSQL);
                     this.gdtData9o.Merge(this.gdtData);
                     if (!result)
                     {
+                        DBProxy.Current.DefaultTimeout = 300;
                         return result;
                     }
                 }
 
+                DBProxy.Current.DefaultTimeout = 300;
                 sqlcmd = @"
 select StyleID,BrandID,StyleDesc,SeasonID,FactoryID,OutputDate = max(OutputDate)
 into #tmp_MaxOutputDate
