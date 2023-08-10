@@ -18,6 +18,7 @@ BEGIN
 	declare @IsRRLR_CF as bit=0
 
 	select TOP 1 @IsRRLR = ad.IsRRLR
+	--INTO #AIComment
 	from ExtendServer.ManufacturingExecution.dbo.AIComment_Detail ad
 	where ad.AICommentUkey in (
 		select Ukey from ExtendServer.ManufacturingExecution.dbo.AIComment where FunctionName='QualityWeb'
@@ -29,6 +30,10 @@ BEGIN
 
 	if @StyleUkey > 0
 	begin
+		select @BrandID = BrandID
+		from Style s 
+		where  s.Ukey = @StyleUkey
+		;
 		select @IsRRLR_ACH = IIF(COUNT(1) > 0 , 1 ,0)
 		from Style s 
 		inner join Style_RRLR_Report srr on s.Ukey=srr.StyleUkey
@@ -43,7 +48,10 @@ BEGIN
 	end
 	else
 	begin
-
+		select @BrandID = BrandID
+		from Style s 
+		where  s.ID = @StyleID and s.BrandID= @BrandID and s.SeasonID= @SeasonID
+		;
 		select @IsRRLR_ACH = IIF(COUNT(1) > 0 , 1 ,0)
 		from Style s 
 		inner join Style_RRLR_Report srr on s.Ukey=srr.StyleUkey
@@ -75,7 +83,7 @@ BEGIN
 		select DATA
 		from dbo.SplitString(@inputType,',')
 	)
-
+	and (@BrandID = 'ADIDAS' OR @BrandID ='REEBOK')
 	return @AIComment;
 END
 GO
