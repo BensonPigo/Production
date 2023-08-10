@@ -70,8 +70,7 @@
             this.txtMdivision = new Sci.Production.Class.TxtMdivision();
             this.comboRFIDProcessLocation1 = new Sci.Production.Class.ComboRFIDProcessLocation();
             this.panel1 = new Sci.Win.UI.Panel();
-            this.comboSubProcess = new Sci.Win.UI.ComboBox();
-            this.labSubProcess = new Sci.Win.UI.Label();
+            this.chkSubProcessOrder = new Sci.Win.UI.CheckBox();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -322,7 +321,7 @@
             // 
             this.checkIncludeArtowkData.AutoSize = true;
             this.checkIncludeArtowkData.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkIncludeArtowkData.Location = new System.Drawing.Point(13, 606);
+            this.checkIncludeArtowkData.Location = new System.Drawing.Point(13, 590);
             this.checkIncludeArtowkData.Name = "checkIncludeArtowkData";
             this.checkIncludeArtowkData.Size = new System.Drawing.Size(157, 21);
             this.checkIncludeArtowkData.TabIndex = 16;
@@ -471,7 +470,7 @@
             // 
             this.chkIncludeCancelOrder.AutoSize = true;
             this.chkIncludeCancelOrder.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.chkIncludeCancelOrder.Location = new System.Drawing.Point(13, 625);
+            this.chkIncludeCancelOrder.Location = new System.Drawing.Point(13, 609);
             this.chkIncludeCancelOrder.Name = "chkIncludeCancelOrder";
             this.chkIncludeCancelOrder.Size = new System.Drawing.Size(157, 21);
             this.chkIncludeCancelOrder.TabIndex = 158;
@@ -641,31 +640,21 @@
             this.panel1.Size = new System.Drawing.Size(268, 63);
             this.panel1.TabIndex = 166;
             // 
-            // comboSubProcess
+            // chkSubProcessOrder
             // 
-            this.comboSubProcess.BackColor = System.Drawing.Color.White;
-            this.comboSubProcess.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboSubProcess.FormattingEnabled = true;
-            this.comboSubProcess.IsSupportUnselect = true;
-            this.comboSubProcess.Location = new System.Drawing.Point(114, 569);
-            this.comboSubProcess.Name = "comboSubProcess";
-            this.comboSubProcess.OldText = "";
-            this.comboSubProcess.Size = new System.Drawing.Size(121, 24);
-            this.comboSubProcess.TabIndex = 167;
-            // 
-            // labSubProcess
-            // 
-            this.labSubProcess.Location = new System.Drawing.Point(13, 570);
-            this.labSubProcess.Name = "labSubProcess";
-            this.labSubProcess.Size = new System.Drawing.Size(98, 23);
-            this.labSubProcess.TabIndex = 168;
-            this.labSubProcess.Text = "Sub Process";
+            this.chkSubProcessOrder.AutoSize = true;
+            this.chkSubProcessOrder.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkSubProcessOrder.Location = new System.Drawing.Point(13, 571);
+            this.chkSubProcessOrder.Name = "chkSubProcessOrder";
+            this.chkSubProcessOrder.Size = new System.Drawing.Size(264, 21);
+            this.chkSubProcessOrder.TabIndex = 167;
+            this.chkSubProcessOrder.Text = "Only show checked subprocess order";
+            this.chkSubProcessOrder.UseVisualStyleBackColor = true;
             // 
             // R15
             // 
-            this.ClientSize = new System.Drawing.Size(552, 676);
-            this.Controls.Add(this.comboSubProcess);
-            this.Controls.Add(this.labSubProcess);
+            this.ClientSize = new System.Drawing.Size(552, 659);
+            this.Controls.Add(this.chkSubProcessOrder);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.dateLastSewDate);
@@ -753,8 +742,7 @@
             this.Controls.SetChildIndex(this.dateLastSewDate, 0);
             this.Controls.SetChildIndex(this.label3, 0);
             this.Controls.SetChildIndex(this.panel1, 0);
-            this.Controls.SetChildIndex(this.labSubProcess, 0);
-            this.Controls.SetChildIndex(this.comboSubProcess, 0);
+            this.Controls.SetChildIndex(this.chkSubProcessOrder, 0);
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
             this.ResumeLayout(false);
@@ -805,7 +793,6 @@
         private Class.Txtsubprocess txtsubprocess1;
         private Class.ComboRFIDProcessLocation comboRFIDProcessLocation1;
         private Win.UI.Panel panel1;
-        private Win.UI.ComboBox comboSubProcess;
-        private Win.UI.Label labSubProcess;
+        private Win.UI.CheckBox chkSubProcessOrder;
     }
 }

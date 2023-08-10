@@ -30,7 +30,6 @@ namespace Sci.Production.Planning
         private int subprocessInoutColumnCount;
         private string RFIDProcessLocation;
         private string formParameter;
-        private string subProcess;
         private DateTime? sciDelivery1;
         private DateTime? sciDelivery2;
         private DateTime? CustRqsDate1;
@@ -73,14 +72,9 @@ namespace Sci.Production.Planning
             this.ReportType = "SP#";
             this.Text = formParameter == "1" ? "R15. WIP" : "R15-1. WIP By Specific Subprocess";
             this.panel1.Visible = formParameter == "2";
-            this.labSubProcess.Visible = formParameter == "2";
-            this.comboSubProcess.Visible = formParameter == "2";
+            this.chkSubProcessOrder.Visible = formParameter == "2";
             this.comboRFIDProcessLocation1.SetDataSource(false);
             this.comboRFIDProcessLocation1.SelectedIndex = 0;
-
-            DBProxy.Current.Select(null, "select '' as ID union all select ID from ArtworkType WITH (NOLOCK) where ReportDropdown = 1", out DataTable subprocess);
-            MyUtility.Tool.SetupCombox(this.comboSubProcess, 1, subprocess);
-            this.comboSubProcess.SelectedIndex = 0;
         }
 
         /// <summary>
@@ -134,7 +128,6 @@ namespace Sci.Production.Planning
             this.isArtwork = this.checkIncludeArtowkData.Checked;
             this.sbyindex = this.comboBox1.SelectedIndex;
             this.subprocessID = this.txtsubprocess1.Text;
-            this.subProcess = this.comboSubProcess.Text;
 
             this.RFIDProcessLocation = this.formParameter == "2" ? this.comboRFIDProcessLocation1.Text : string.Empty;
             if (this.isArtwork)
@@ -634,13 +627,13 @@ namespace Sci.Production.Planning
                 cmds.Add(new System.Data.SqlClient.SqlParameter("@factory", this.factory));
             }
 
-            if (!MyUtility.Check.Empty(this.subProcess))
+            if (this.chkSubProcessOrder.Checked)
             {
                 sqlCmd.Append($@"
- and exists(
-    select 1 from Style_TmsCost st with(nolock)
-    where st.StyleUkey = s.Ukey
-    and st.ArtworkTypeID = '{this.subProcess}' and (st.Qty>0 or st.TMS>0 and st.Price>0)
+and exists(
+	select * from Pattern_GL PGL WITH (NOLOCK) 
+	inner join dbo.GetPatternUkey(o.ID,'','',s.Ukey,'') t on PGL.PatternUKEY = t.PatternUkey
+	inner join dbo.SplitString('{this.subprocessID}',',') b on PGL.Annotation like '%'+ b.Data+'%'
 )
 ");
             }
@@ -1403,13 +1396,13 @@ WHERE 1=1 {whereIncludeCancelOrder} "));
                 cmds.Add(new System.Data.SqlClient.SqlParameter("@factory", this.factory));
             }
 
-            if (!MyUtility.Check.Empty(this.subProcess))
+            if (this.chkSubProcessOrder.Checked)
             {
                 sqlCmd.Append($@"
- and exists(
-    select 1 from Style_TmsCost st with(nolock)
-    where st.StyleUkey = s.Ukey
-    and st.ArtworkTypeID = '{this.subProcess}' and (st.Qty>0 or st.TMS>0 and st.Price>0)
+and exists(
+	select * from Pattern_GL PGL WITH (NOLOCK) 
+	inner join dbo.GetPatternUkey(o.ID,'','',s.Ukey,'') t on PGL.PatternUKEY = t.PatternUkey
+	inner join dbo.SplitString('{this.subprocessID}',',') b on PGL.Annotation like '%'+ b.Data+'%'
 )
 ");
             }
