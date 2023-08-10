@@ -69,7 +69,7 @@ BEGIN
 	select TOP 1  @AIComment =  ad.Type + ': ' +ad.Comment
 			+CHAR(10)+CHAR(13)+
 			+ (CASE  WHEN @IsRRLR = 0 THEN ''
-					 WHEN @IsRRLR_ACH = 1 and @IsRRLR_CF = 1 THEN 'There is RR/LR .' + 'With shade achievability issue, please ensure shading within tolerance as agreement.'+CHAR(10)+CHAR(13)+' Lower color fastness waring, please check if need to apply tissue paper.'
+					 WHEN @IsRRLR_ACH = 1 and @IsRRLR_CF = 1 THEN 'There is RR/LR .' + 'With shade achievability issue, please ensure shading within tolerance as agreement.'+' Lower color fastness waring, please check if need to apply tissue paper.'
 					 WHEN @IsRRLR_ACH = 1 THEN 'There is RR/LR .' + 'With shade achievability issue, please ensure shading within tolerance as agreement.'
 					 WHEN @IsRRLR_CF = 1 THEN 'There is RR/LR .' + 'Lower color fastness waring, please check if need to apply tissue paper.'
 					ELSE''
