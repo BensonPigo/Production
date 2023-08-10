@@ -297,9 +297,8 @@ and exists(
                             [QtyBefore] =b.QtyBefore,
                             [QtyAfter] = b.QtyAfter,
                             [Barcode] = IIF((loi.InQty - loi.OutQty + loi.AdjustQty) > 0,
-                                        IIF(wt.To_OldBarcodeSeq <> '', wt.To_OldBarcode + '-' + wt.To_OldBarcodeSeq, wt.To_OldBarcode),
-                                        IIF(wt.To_NewBarcodeSeq <> '', wt.To_NewBarcode + '-' + wt.To_NewBarcodeSeq, wt.To_NewBarcode)
-                                           ),
+                                        IIF(wt.From_OldBarcodeSeq <> '', wt.From_OldBarcode + '-' + wt.From_OldBarcodeSeq, wt.From_OldBarcode),
+                                        IIF(wt.From_NewBarcodeSeq <> '', wt.From_NewBarcode + '-' + wt.From_NewBarcodeSeq, wt.From_NewBarcode)),
                             [Ukey] = b.Ukey,
                             [Status] = 'New',
                             [CmdTime] = GETDATE()

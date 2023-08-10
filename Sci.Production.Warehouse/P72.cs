@@ -235,6 +235,12 @@ and ReasonTypeID='Stock_Adjust' AND junk = 0", e.FormattedValue), out dr))
         /// <inheritdoc/>
         protected override void ClickConfirm()
         {
+            if ((this.detailgridbs.DataSource as DataTable).Select("ReasonID = ''" ).Count() > 0)
+            {
+                MyUtility.Msg.WarningBox("Reason ID cannot be empty.");
+                return;
+            }
+
             if (MyUtility.Check.Empty(this.CurrentMaintain["IssueDate"]))
             {
                 MyUtility.Msg.WarningBox("Issue Date cannot be empty.");
