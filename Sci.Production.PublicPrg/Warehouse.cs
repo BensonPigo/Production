@@ -3851,7 +3851,7 @@ inner join #tmp t on t.ukey = f.Ukey
             else
             {
                 string checkFilter = "FabricType = 'F' and isnull(Barcode, '') = ''";
-                if (detailTableName == WHTableName.Adjust_Detail || detailTableName == WHTableName.Stocktaking_Detail || detailTableName == WHTableName.IssueReturn_Detail)
+                if (detailTableName == WHTableName.Adjust_Detail || detailTableName == WHTableName.Stocktaking_Detail || detailTableName == WHTableName.IssueReturn_Detail || detailTableName == WHTableName.LocalOrderAdjust_Detail)
                 {
                     checkFilter += " and balanceQty > 0";
                 }

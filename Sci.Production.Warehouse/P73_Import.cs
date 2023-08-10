@@ -231,7 +231,7 @@ WHERE   StockType='B'
             this.gridImport.DataSource = this.listControlBindingSource1;
             this.Helper.Controls.Grid.Generator(this.gridImport)
                 .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0) // 0
-                .Text("poid", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true) // 1
+                .Text("poid", header: "SP#", width: Widths.AnsiChars(15), iseditingreadonly: true) // 1
                 .Text("seq", header: "Seq", width: Widths.AnsiChars(6), iseditingreadonly: true) // 2
                 .Text("Roll", header: "Roll", width: Widths.AnsiChars(9), iseditingreadonly: true) // 3
                 .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(8), iseditingreadonly: true) // 4

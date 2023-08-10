@@ -37,9 +37,9 @@ namespace Sci.Production.Warehouse
             base.OnFormLoaded();
             this.Helper.Controls.Grid.Generator(this.gridImport)
             .CheckBox("selected", trueValue: 1, falseValue: 0, iseditable: true)
-            .Text("POID", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
+            .Text("POID", header: "SP#", width: Widths.AnsiChars(15), iseditingreadonly: true)
             .Text("Seq", header: "Seq", width: Widths.AnsiChars(6), iseditingreadonly: true)
-            .Text("MaterialType", header: "MaterialType", width: Widths.AnsiChars(9), iseditingreadonly: true)
+            .Text("MaterialType", header: "MaterialType", width: Widths.AnsiChars(14), iseditingreadonly: true)
             .EditText("Desc", header: "Description", width: Widths.AnsiChars(25), iseditingreadonly: true)
             .Text("Color", header: "Color", width: Widths.AnsiChars(6), iseditingreadonly: true)
             .Text("Roll", header: "Roll", width: Widths.AnsiChars(8), iseditingreadonly: true)

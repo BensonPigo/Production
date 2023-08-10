@@ -141,10 +141,10 @@ and ReasonTypeID='Stock_Adjust' AND junk = 0", e.FormattedValue), out dr, null))
             this.gridImport.DataSource = this.listControlBindingSource1;
             this.Helper.Controls.Grid.Generator(this.gridImport)
             .CheckBox("selected", trueValue: 1, falseValue: 0, iseditable: true)
-            .Text("POID", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
+            .Text("POID", header: "SP#", width: Widths.AnsiChars(15), iseditingreadonly: true)
             .Text("Seq", header: "Seq", width: Widths.AnsiChars(6), iseditingreadonly: true)
-            .Text("MaterialType", header: "MaterialType", width: Widths.AnsiChars(9), iseditingreadonly: true)
-            .EditText("Desc", header: "Description", width: Widths.AnsiChars(25), iseditingreadonly: true)
+            .Text("MaterialType", header: "MaterialType", width: Widths.AnsiChars(14), iseditingreadonly: true)
+            .EditText("Desc", header: "Description", width: Widths.AnsiChars(20), iseditingreadonly: true)
             .Text("Color", header: "Color", width: Widths.AnsiChars(8), iseditingreadonly: true)
             .Text("Roll", header: "Roll", width: Widths.AnsiChars(8), iseditingreadonly: true)
             .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(8), iseditingreadonly: true)
@@ -214,8 +214,7 @@ outer apply (
 	WHERE loil.LocalOrderInventoryUkey	 = loi.Ukey
 	FOR XML PATH('')),1,1,'')  
 ) Location
-where   (loi.InQty - loi.OutQty + loi.AdjustQty) > 0 
-and loi.StockType = 'B' 
+where loi.StockType = 'B' 
 and loi.POID = '{this.txtSP.Text}'
 {strwhere}
 ";
