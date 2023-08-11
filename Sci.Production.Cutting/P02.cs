@@ -18,6 +18,7 @@ using System.Transactions;
 using System.Windows.Forms;
 using sxrc = Sci.Utility.Excel.SaveXltReportCls;
 using Excel = Microsoft.Office.Interop.Excel;
+using System.Security.Cryptography;
 
 namespace Sci.Production.Cutting
 {
@@ -3084,6 +3085,40 @@ END";
                 MyUtility.Msg.ErrorBox(string.Format("MarkerName,Layer,SEQ1,SEQ2 can't be empty"));
                 return false;
             }
+
+            #region 檢查相同CutRef#，spreading No、Cut Cell、Est.CutDate, 更新必須都一樣
+            var distnct_List = this.DetailDatas.AsEnumerable().
+              Select(m => new
+              {
+                  CutRef = m.Field<string>("CutRef"),
+              }).Distinct();
+
+            foreach (var item in distnct_List)
+            {
+                // 檢查已撈出資料
+                DataRow[] chkdrs = ((DataTable)this.detailgridbs.DataSource).Select($@" CutRef = '{item.CutRef}'");
+
+                if (chkdrs.Length > 1)
+                {
+                    var chksame = chkdrs.Select(m => new
+                    {
+                        CutRef = m.Field<string>("CutRef"),
+                        NewSpreadingNoID = m.Field<DateTime?>("EstCutDate"),
+                        NewShift = m.Field<string>("CutCellID"),
+                        NewCutcellid = m.Field<string>("SpreadingNoID"),
+                        NewEstcutdate = m.Field<string>("Shift"),
+                    }).Distinct().ToList();
+
+                    // 更新的欄位不能合併表示不一樣
+                    if (chksame.Count > 1)
+                    {
+                        MyUtility.Msg.WarningBox($"[Est.CutDate] or [CutCell] or [Spreading No.] or [Shift] in same CutRef# <{chksame[0].CutRef.ToString()}>");
+                        return false;
+                    }
+                }
+            }
+
+            #endregion
 
             #region 刪除Qty 為0
             DataRow[] sizeratioTbrow = this.sizeratioTb.AsEnumerable().Where(
