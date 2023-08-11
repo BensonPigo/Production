@@ -99,6 +99,10 @@
             this.label2 = new Sci.Win.UI.Label();
             this.displayMasterPlusGroup = new Sci.Win.UI.DisplayBox();
             this.checkJunk = new Sci.Win.UI.CheckBox();
+            this.txtShape = new Sci.Win.UI.DisplayBox();
+            this.txtMotion = new Sci.Win.UI.DisplayBox();
+            this.label3 = new Sci.Win.UI.Label();
+            this.label4 = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -112,10 +116,14 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(900, 555);
+            this.detail.Size = new System.Drawing.Size(900, 606);
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.txtShape);
+            this.detailcont.Controls.Add(this.txtMotion);
+            this.detailcont.Controls.Add(this.label3);
+            this.detailcont.Controls.Add(this.label4);
             this.detailcont.Controls.Add(this.checkJunk);
             this.detailcont.Controls.Add(this.displayMasterPlusGroup);
             this.detailcont.Controls.Add(this.label2);
@@ -178,11 +186,11 @@
             this.detailcont.Controls.Add(this.labelOperationDescription);
             this.detailcont.Controls.Add(this.labelOperationTitle);
             this.detailcont.Controls.Add(this.labelOperationCode);
-            this.detailcont.Size = new System.Drawing.Size(900, 517);
+            this.detailcont.Size = new System.Drawing.Size(900, 568);
             // 
             // detailbtm
             // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 517);
+            this.detailbtm.Location = new System.Drawing.Point(0, 568);
             this.detailbtm.Size = new System.Drawing.Size(900, 38);
             // 
             // browse
@@ -192,7 +200,7 @@
             // tabs
             // 
             this.tabs.Controls.Add(this.tabPage1);
-            this.tabs.Size = new System.Drawing.Size(908, 584);
+            this.tabs.Size = new System.Drawing.Size(908, 635);
             this.tabs.Controls.SetChildIndex(this.tabPage1, 0);
             this.tabs.Controls.SetChildIndex(this.detail, 0);
             this.tabs.Controls.SetChildIndex(this.browse, 0);
@@ -1035,9 +1043,45 @@
             this.checkJunk.Text = "Junk";
             this.checkJunk.UseVisualStyleBackColor = true;
             // 
+            // txtShape
+            // 
+            this.txtShape.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.txtShape.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "CoverThread", true));
+            this.txtShape.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.txtShape.Location = new System.Drawing.Point(154, 538);
+            this.txtShape.Name = "txtShape";
+            this.txtShape.Size = new System.Drawing.Size(260, 23);
+            this.txtShape.TabIndex = 60;
+            // 
+            // txtMotion
+            // 
+            this.txtMotion.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.txtMotion.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "BottomThread", true));
+            this.txtMotion.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.txtMotion.Location = new System.Drawing.Point(154, 509);
+            this.txtMotion.Name = "txtMotion";
+            this.txtMotion.Size = new System.Drawing.Size(260, 23);
+            this.txtMotion.TabIndex = 61;
+            // 
+            // label3
+            // 
+            this.label3.Location = new System.Drawing.Point(14, 538);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(136, 23);
+            this.label3.TabIndex = 63;
+            this.label3.Text = "Shape";
+            // 
+            // label4
+            // 
+            this.label4.Location = new System.Drawing.Point(14, 509);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(136, 23);
+            this.label4.TabIndex = 62;
+            this.label4.Text = "Motion";
+            // 
             // B09
             // 
-            this.ClientSize = new System.Drawing.Size(908, 617);
+            this.ClientSize = new System.Drawing.Size(908, 668);
             this.DefaultOrder = "ID";
             this.EnableGridJunkColor = true;
             this.ExpressQuery = true;
@@ -1139,5 +1183,9 @@
         private Win.UI.DisplayBox displayMasterPlusGroup;
         private Win.UI.Label label2;
         private Win.UI.CheckBox checkJunk;
+        private Win.UI.DisplayBox txtShape;
+        private Win.UI.DisplayBox txtMotion;
+        private Win.UI.Label label3;
+        private Win.UI.Label label4;
     }
 }

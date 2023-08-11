@@ -298,6 +298,7 @@ and BrandID = '{this.CurrentMaintain["BrandID"]}'
             DataGridViewGeneratorNumericColumnSettings cycle = new DataGridViewGeneratorNumericColumnSettings();
             DataGridViewGeneratorTextColumnSettings machine = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorTextColumnSettings operatorid = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings operatorName = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorTextColumnSettings attachment = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorTextColumnSettings template = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorTextColumnSettings threadColor = new DataGridViewGeneratorTextColumnSettings();
@@ -488,7 +489,7 @@ and BrandID = '{this.CurrentMaintain["BrandID"]}'
 
                             this.GetEmployee(null);
 
-                            Win.Tools.SelectItem item = new Win.Tools.SelectItem(this.EmployeeData, "ID,Name,Skill,SewingLineID,FactoryID", "10,18,16,2,5", dr["EmployeeID"].ToString(), headercaptions: "ID,Name,Skill,SewingLine,Factory")
+                            Win.Tools.SelectItem item = new Win.Tools.SelectItem(this.EmployeeData, "ID,FirstName,LastName,Section,", "10,18,16,2,5", dr["EmployeeID"].ToString(), headercaptions: "ID,First Name,Last Name,Section")
                             {
                                 Width = 700,
                             };
@@ -526,6 +527,69 @@ and BrandID = '{this.CurrentMaintain["BrandID"]}'
                             this.ReviseEmployeeToEmpty(dr);
                             e.Cancel = true;
                             MyUtility.Msg.WarningBox(string.Format("< Employee ID: {0} > not found!!!", e.FormattedValue.ToString()));
+                            return;
+                        }
+                        else
+                        {
+                            dr["EmployeeID"] = this.EmployeeData.Rows[0]["ID"];
+                            dr["EmployeeName"] = this.EmployeeData.Rows[0]["Name"];
+                            dr["EmployeeSkill"] = this.EmployeeData.Rows[0]["Skill"];
+                            dr.EndEdit();
+                        }
+                    }
+                }
+            };
+
+            operatorName.EditingMouseDown += (s, e) =>
+            {
+                if (this.EditMode)
+                {
+                    if (e.Button == MouseButtons.Right)
+                    {
+                        if (e.RowIndex != -1)
+                        {
+                            DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
+
+                            this.GetEmployee(null);
+
+                            Win.Tools.SelectItem item = new Win.Tools.SelectItem(this.EmployeeData, "ID,FirstName,LastName,Section,", "10,18,16,2,5", dr["EmployeeID"].ToString(), headercaptions: "ID,First Name,Last Name,Section")
+                            {
+                                Width = 700,
+                            };
+                            DialogResult returnResult = item.ShowDialog();
+                            if (returnResult == DialogResult.Cancel)
+                            {
+                                return;
+                            }
+
+                            IList<DataRow> selectedData = item.GetSelecteds();
+                            dr["EmployeeID"] = selectedData[0]["ID"];
+                            dr["EmployeeName"] = selectedData[0]["Name"];
+                            dr["EmployeeSkill"] = selectedData[0]["Skill"];
+                            dr.EndEdit();
+                        }
+                    }
+                }
+            };
+            operatorName.CellValidating += (s, e) =>
+            {
+                if (this.EditMode)
+                {
+                    DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
+                    if (MyUtility.Check.Empty(e.FormattedValue))
+                    {
+                        this.ReviseEmployeeToEmpty(dr);
+                        return;
+                    }
+
+                    if (e.FormattedValue.ToString() != dr["EmployeeName"].ToString())
+                    {
+                        this.GetEmployee(e.FormattedValue.ToString());
+                        if (this.EmployeeData.Rows.Count <= 0)
+                        {
+                            this.ReviseEmployeeToEmpty(dr);
+                            e.Cancel = true;
+                            MyUtility.Msg.WarningBox(string.Format("< Employee Name: {0} > not found!!!", e.FormattedValue.ToString()));
                             return;
                         }
                         else
@@ -1071,7 +1135,7 @@ and Name = @PPA
             .Text("ThreadColor", header: "ThreadColor", width: Widths.AnsiChars(1), settings: threadColor)
             .Text("Notice", header: "Notice", width: Widths.AnsiChars(60), settings: notice)
             .Text("EmployeeID", header: "Operator ID No.", width: Widths.AnsiChars(10), settings: operatorid)
-            .Text("EmployeeName", header: "Operator Name", width: Widths.AnsiChars(20), iseditingreadonly: true)
+            .Text("EmployeeName", header: "Operator Name", width: Widths.AnsiChars(20), settings: operatorName)
             .Text("EmployeeSkill", header: "Skill", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Numeric("Efficiency", header: "Eff(%)", width: Widths.AnsiChars(6), decimal_places: 2, iseditingreadonly: true);
 
@@ -1183,6 +1247,7 @@ and Name = @PPA
         {
             string sqlCmd;
 
+            bool IsEmptySewingLine = MyUtility.Check.Empty(this.CurrentMaintain["SewingLineID"]);
             // sql參數
             System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter("@factoryid", this.CurrentMaintain["FactoryID"].ToString());
             System.Data.SqlClient.SqlParameter sp2 = new System.Data.SqlClient.SqlParameter
@@ -1202,15 +1267,16 @@ and Name = @PPA
             {
                 sp1,
                 sp2,
+                new SqlParameter("@SewingLine" , this.CurrentMaintain["SewingLineID"]),
             };
 
             if (MyUtility.Check.Empty(this.CurrentMaintain["FactoryID"]))
             {
-                sqlCmd = "select ID,Name,Skill,SewingLineID,FactoryID from Employee WITH (NOLOCK) where ResignationDate is null" + (iD == null ? string.Empty : " and ID = @id");
+                sqlCmd = "select ID,FirstName,LastName,Section,Skill , [Name] = iif(LastName+ ','+ FirstName <> ',' ,LastName+ ','+ FirstName,'') from Employee WITH (NOLOCK) where ResignationDate < GETDATE()" + (iD == null ? string.Empty : " and ID = @id") + (IsEmptySewingLine ? string.Empty : " and SewingLineID = @SewingLine");
             }
             else
             {
-                sqlCmd = "select ID,Name,Skill,SewingLineID,FactoryID from Employee WITH (NOLOCK) where ResignationDate is null and FactoryID = @factoryid" + (iD == null ? string.Empty : " and ID = @id");
+                sqlCmd = "select ID,FirstName,LastName,Section,Skill , [Name] = iif(LastName+ ','+ FirstName <> ',' ,LastName+ ','+ FirstName,'')  from Employee WITH (NOLOCK) where ResignationDate < GETDATE() and FactoryID = @factoryid" + (iD == null ? string.Empty : " and ID = @id") + (IsEmptySewingLine ? string.Empty : " and SewingLineID = @SewingLine");
             }
 
             DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out this.EmployeeData);

@@ -2856,6 +2856,7 @@
     <Build Include="dbo\Tables\Export_Container.sql" />
     <Build Include="dbo\Functions\ConditionIncludeNull.sql" />
     <Build Include="dbo\Functions\GetPo3Spec_Null.sql" />
+    <Build Include="dbo\Tables\OperationRef.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />

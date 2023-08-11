@@ -222,10 +222,17 @@ select   a.GroupKey
         ,[OtherBy] = concat(a.MachineTypeID,a.Attachment,a.Template,a.ThreadColor)
 		,a.SewingMachineAttachmentID
         ,a.MachineCount
+        ,e.val
 from LineMapping_Detail a 
 inner join LineMapping b WITH (NOLOCK) on a.ID = b.ID
 left join Operation o WITH (NOLOCK) on o.ID = a.OperationID
 left join MachineType m WITH (NOLOCK) on m.id =  a.MachineTypeID
+OUTER APPLY
+(
+	 select val = stuff((select distinct concat('/',c.ID + ' ' + c.LastName + ',' + c.FirstName)
+        from Employee c
+        where c.id = a.EmployeeID for xml path('') ),1,1,'')
+)e
 outer apply
 (
 	select OperationID
@@ -521,7 +528,14 @@ select No
     ,CT = COUNT(1)
     ,[ActCycle] = Max(ld.ActCycle)
     ,[ActCycleTime(average)]=ActCycle.Value
+    ,[Name] = e.val
 from LineMapping_Detail ld WITH (NOLOCK) 
+OUTER APPLY
+(
+	 select val = stuff((select distinct concat('/',c.ID + ' ' + c.LastName + ',' + c.FirstName)
+        from Employee c
+        where c.id = ld.EmployeeID for xml path('') ),1,1,'')
+)e
 OUTER APPLY(
 	SELECT [Value]=SUM(ActCycle)/COUNT(NO) FROM 
 	(
@@ -547,7 +561,7 @@ where ld.ID = {MyUtility.Convert.GetString(this.masterData["ID"])}
 and (ld.IsHide = 0 or ld.IsHide is null)
 and no <> ''
 and ld.PPA != 'C' 
-GROUP BY NO ,ActCycle.Value
+GROUP BY NO ,ActCycle.Value,e.val
 order by no
 ";
                 result = DBProxy.Current.Select(null, sqlCmd, out this.nodist);
@@ -585,8 +599,15 @@ select No
 ,CT = COUNT(1)
 ,[ActCycle] = Max(ld.ActCycle)
 ,[ActCycleTime(average)]=ActCycle.Value
+,[Name] = e.val
 from LineMapping_Detail ld WITH (NOLOCK) 
 inner join #tmp t on ld.ID = t.ID
+OUTER APPLY
+(
+	 select val = stuff((select distinct concat('/',c.ID + ' ' + c.LastName + ',' + c.FirstName)
+        from Employee c
+        where c.id = ld.EmployeeID for xml path('') ),1,1,'')
+)e
 OUTER APPLY(
 	SELECT [Value]=SUM(ActCycle)/COUNT(NO) FROM 
 	(
@@ -613,7 +634,7 @@ and (ld.IsHide = 0 or ld.IsHide is null)
 and no between t.minno and t.maxno
 and no <> ''
 and ld.PPA != 'C'
-GROUP BY NO ,ActCycle.Value
+GROUP BY NO ,ActCycle.Value,e.val
 order by no
 
 drop table #tmpBase,#tmp
@@ -646,9 +667,15 @@ group by ID
 
 select No,CT = COUNT(1),[ActCycle] = Max(ld.ActCycle)
 ,[ActCycleTime(average)]=ActCycle.Value
+,[Name] = e.val
 from LineMapping_Detail ld WITH (NOLOCK) 
 inner join #tmp t on ld.ID = t.ID
-
+OUTER APPLY
+(
+	 select val = stuff((select distinct concat('/',c.ID + ' ' + c.LastName + ',' + c.FirstName)
+        from Employee c
+        where c.id = ld.EmployeeID for xml path('') ),1,1,'')
+)e
 OUTER APPLY(
 	SELECT [Value]=SUM(ActCycle)/COUNT(NO) FROM 
 	(
@@ -674,7 +701,7 @@ where  (ld.IsPPa = 0 or ld.IsPPa is null)
 and (ld.IsHide = 0 or ld.IsHide is null) 
 and no between t.minno and t.maxno
 and ld.PPA != 'C'
-GROUP BY NO ,ActCycle.Value
+GROUP BY NO ,ActCycle.Value,e.val
 order by no
 
 ";
@@ -881,6 +908,8 @@ order by NO
             // string strXltName = Sci.Env.Cfg.XltPathDir + (this.display == "U" ? "\\IE_P03_Print_U.xltx" : "\\IE_P03_Print_Z.xltx");
             string strXltName = Env.Cfg.XltPathDir + "\\IE_P03_Print.xltx";
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
+
+            // excel.Visible = true;
             if (excel == null)
             {
                 return false;
@@ -1220,6 +1249,7 @@ order by NO
             {
                 tmp = this.AttachmentDataList.Where(o => MyUtility.Convert.GetString(o.PPA) != "C" && !o.IsHide).ToList();
             }
+
             if (sheetName == "PPA & non-sewing")
             {
                 tmp = this.AttachmentDataList.Where(o => MyUtility.Convert.GetString(o.PPA) == "C" && !o.IsHide).ToList();
@@ -1399,6 +1429,7 @@ order by NO
                     if (leftDirection)
                     {
                         nocolumn = 10;
+                        worksheet.Cells[norow, nocolumn - 1] = MyUtility.Convert.GetString(nodr["Name"]); // 名稱 : ID + LastName + FirstName
                         worksheet.Cells[norow, nocolumn] = MyUtility.Convert.GetString(nodr["No"]);
                         worksheet.Cells[norow, nocolumn + 1] = MyUtility.Convert.GetString(nodr["ActCycle"]);
 
@@ -1411,7 +1442,6 @@ order by NO
                         foreach (DataRow item in nodrs)
                         {
                             worksheet.Cells[norow + ridx, nocolumn - 6] = item["rn"].ToString();
-
                             ridx++;
                         }
 
@@ -1428,6 +1458,7 @@ order by NO
                     else
                     {
                         nocolumn = 17;
+                        worksheet.Cells[norow, nocolumn + 4] = MyUtility.Convert.GetString(nodr["Name"]); // 名稱 : ID + LastName + FirstName
                         worksheet.Cells[norow, nocolumn] = MyUtility.Convert.GetString(nodr["No"]);
                         worksheet.Cells[norow, nocolumn + 1] = MyUtility.Convert.GetString(nodr["ActCycle"]);
                         DataRow[] nodrs = this.operationCode.Select($@"no = '{MyUtility.Convert.GetString(nodr["No"])}' and IsHide = 0 and {(isSheet3 ? (this.isPPA ? "PPA = 'C' " : "PPA <> 'C' ") : "PPA <> 'C' ")}")
@@ -1439,7 +1470,6 @@ order by NO
                         foreach (DataRow item in nodrs)
                         {
                             worksheet.Cells[norow + ridx, nocolumn + 2] = item["rn"].ToString();
-
                             ridx++;
                         }
 
@@ -1542,6 +1572,7 @@ order by NO
                     if (rightDirection)
                     {
                         nocolumn = 17;
+                        worksheet.Cells[norow, nocolumn + 4] = MyUtility.Convert.GetString(nodr["Name"]); // 名稱 : ID + LastName + FirstName
                         worksheet.Cells[norow, nocolumn] = MyUtility.Convert.GetString(nodr["No"]);
                         worksheet.Cells[norow, nocolumn + 1] = MyUtility.Convert.GetString(nodr["ActCycle"]);
                         DataRow[] nodrs = this.operationCode.Select($@"no = '{MyUtility.Convert.GetString(nodr["No"])}' and IsHide = 0 and {(isSheet3 ? (this.isPPA ? "PPA = 'C' " : "PPA <> 'C' ") : "PPA <> 'C' ")}")
@@ -1570,6 +1601,7 @@ order by NO
                     else
                     {
                         nocolumn = 10;
+                        worksheet.Cells[norow, nocolumn - 1] = MyUtility.Convert.GetString(nodr["Name"]); // 名稱 : ID + LastName + FirstName
                         worksheet.Cells[norow, nocolumn] = MyUtility.Convert.GetString(nodr["No"]);
                         worksheet.Cells[norow, nocolumn + 1] = MyUtility.Convert.GetString(nodr["ActCycle"]);
                         DataRow[] nodrs = this.operationCode.Select($@"no = '{MyUtility.Convert.GetString(nodr["No"])}' and IsHide = 0 and {(isSheet3 ? (this.isPPA ? "PPA = 'C' " : "PPA <> 'C' ") : "PPA <> 'C' ")}")
@@ -1675,6 +1707,7 @@ order by NO
                     if (leftDirection)
                     {
                         nocolumn = 10;
+                        worksheet.Cells[norow, nocolumn - 1] = MyUtility.Convert.GetString(nodr["Name"]); // 名稱 : ID + LastName + FirstName
                         worksheet.Cells[norow, nocolumn] = MyUtility.Convert.GetString(nodr["No"]);
                         worksheet.Cells[norow, nocolumn + 1] = MyUtility.Convert.GetString(nodr["ActCycle"]);
                         DataRow[] nodrs = this.operationCode.Select($@"no = '{MyUtility.Convert.GetString(nodr["No"])}' and IsHide = 0 and {(isSheet3 ? (this.isPPA ? "PPA = 'C' " : "PPA <> 'C' ") : "PPA <> 'C' ")}")
@@ -1699,7 +1732,8 @@ order by NO
                     else
                     {
                         nocolumn = 17;
-                        worksheet.Cells[norow, nocolumn] = MyUtility.Convert.GetString(nodr["No"]);
+                        worksheet.Cells[norow, nocolumn + 4] = MyUtility.Convert.GetString(nodr["Name"]); // 名稱 : ID + LastName + FirstName
+                        worksheet.Cells[norow, nocolumn] = MyUtility.Convert.GetString(nodr["No"]); // Ryan
                         worksheet.Cells[norow, nocolumn + 1] = MyUtility.Convert.GetString(nodr["ActCycle"]);
                         DataRow[] nodrs = this.operationCode.Select($@"no = '{MyUtility.Convert.GetString(nodr["No"])}' and IsHide = 0 and {(isSheet3 ? (this.isPPA ? "PPA = 'C' " : "PPA <> 'C' ") : "PPA <> 'C' ")}")
                                     .OrderBy(x => x.Field<string>("OtherBy")).ThenBy(x => x.Field<int>("GroupKey")).ToArray();
@@ -1807,6 +1841,7 @@ order by NO
                     if (leftDirection)
                     {
                         nocolumn = 10;
+                        worksheet.Cells[norow, nocolumn - 1] = MyUtility.Convert.GetString(nodr["Name"]); // 名稱 : ID + LastName + FirstName
                         worksheet.Cells[norow, nocolumn] = MyUtility.Convert.GetString(nodr["No"]);
                         worksheet.Cells[norow, nocolumn + 1] = MyUtility.Convert.GetString(nodr["ActCycle"]);
                         DataRow[] nodrs = this.operationCode.Select($@"no = '{MyUtility.Convert.GetString(nodr["No"])}' and IsHide = 0 and {(isSheet3 ? (this.isPPA ? "PPA = 'C' " : "PPA <> 'C' ") : "PPA <> 'C' ")}")
@@ -1831,6 +1866,7 @@ order by NO
                     else
                     {
                         nocolumn = 17;
+                        worksheet.Cells[norow, nocolumn + 4] = MyUtility.Convert.GetString(nodr["Name"]); // 名稱 : ID + LastName + FirstName
                         worksheet.Cells[norow, nocolumn] = MyUtility.Convert.GetString(nodr["No"]);
                         worksheet.Cells[norow, nocolumn + 1] = MyUtility.Convert.GetString(nodr["ActCycle"]);
                         DataRow[] nodrs = this.operationCode.Select($@"no = '{MyUtility.Convert.GetString(nodr["No"])}' and IsHide = 0 and {(isSheet3 ? (this.isPPA ? "PPA = 'C' " : "PPA <> 'C' ") : "PPA <> 'C' ")}")
