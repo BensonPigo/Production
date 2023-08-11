@@ -1117,7 +1117,10 @@ where WorkOrderUkey={0}", masterID);
             };
             this.col_seq1.CellValidating += (s, e) =>
             {
-                P02_PublicFunction.Seq1CellValidating(s, e, this, this.detailgrid, this.Poid);
+                if (P02_PublicFunction.Seq1CellValidating(s, e, this, this.detailgrid, this.Poid) == false)
+                {
+                    e.Cancel = true;
+                }
             };
             #endregion
             #region SEQ2
@@ -1168,7 +1171,10 @@ where WorkOrderUkey={0}", masterID);
             };
             this.col_seq2.CellValidating += (s, e) =>
             {
-                P02_PublicFunction.Seq2CellValidating(s, e, this, this.detailgrid, this.Poid);
+                if (P02_PublicFunction.Seq2CellValidating(s, e, this, this.detailgrid, this.Poid) == false)
+                {
+                    e.Cancel = true;
+                }
             };
             #endregion
             #region estcutdate
@@ -3699,6 +3705,19 @@ and ofa.id = ob.id and ofa.FabricCode = ob.FabricCode)
                 this.CurrentDetailData["MtlTypeID_SCIRefno"] = dr["WeaveTypeID"].ToString() + " / " + dr["SCIRefno"].ToString();
                 this.CurrentDetailData["Description"] = dr["Description"].ToString();
                 this.CurrentDetailData["FabricPanelCode"] = new_FabricPanelCode;
+
+                // ISP20230787 如果Seq1+Seq2有資料,則Refno來源是PO_Supp_Detail
+                string sqlcmdRefno = $@"    
+select SCIRefno ,Refno 
+from PO_Supp_Detail
+where ID='{this.CurrentMaintain["ID"]}'
+and SEQ1='{this.CurrentDetailData["Seq1"]}' and SEQ2='{this.CurrentDetailData["Seq2"]}'
+";
+                if (MyUtility.Check.Seek(sqlcmdRefno, out DataRow drRefno))
+                {
+                    this.CurrentDetailData["Refno"] = drRefno["Refno"].ToString();
+                    this.CurrentDetailData["SCIRefno"] = drRefno["SCIRefno"].ToString();
+                }
             }
             else
             {
