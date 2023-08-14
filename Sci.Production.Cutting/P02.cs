@@ -3112,7 +3112,7 @@ END";
                     // 更新的欄位不能合併表示不一樣
                     if (chksame.Count > 1)
                     {
-                        MyUtility.Msg.WarningBox($"[Est.CutDate] or [CutCell] or [Spreading No.] or [Shift] in same CutRef# <{chksame[0].CutRef.ToString()}>");
+                        MyUtility.Msg.WarningBox($"You can't set different [Est.CutDate] or [CutCell] or [Spreading No.] or [Shift] in same CutRef# <{chksame[0].CutRef.ToString()}>");
                         return false;
                     }
                 }
