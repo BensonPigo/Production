@@ -102,7 +102,7 @@ namespace Sci.Production.Quality
 
         private void Query()
         {
-            DualResult result = DBProxy.Current.Select(null, $"select Selected = cast(0 as bit),Roll,Dyelot,Ticketyds,Tone from FIR_Shadebone where id={this.maindr["ID"]}", out DataTable dtFIR_Shadebone);
+            DualResult result = DBProxy.Current.Select(null, $"select Selected = cast(0 as bit),Roll,Dyelot,Ticketyds,Tone from FIR_Shadebone where id={this.maindr["ID"]}  order by Dyelot desc", out DataTable dtFIR_Shadebone);
             if (!result)
             {
                 this.ShowErr(result);
@@ -227,7 +227,10 @@ namespace Sci.Production.Quality
                     List<string> dyelotCTn = dtFIR_Shadebone.AsEnumerable().Select(o => o["Tone"].ToString()).Distinct().ToList();
                     foreach (var dyelot in dyelotCTn)
                     {
-                        List<DataRow> sameDyelot = dtFIR_Shadebone.AsEnumerable().Where(o => o["Tone"].ToString() == dyelot).ToList();
+                        List<DataRow> sameDyelot = dtFIR_Shadebone.AsEnumerable()
+                            .Where(o => o["Tone"].ToString() == dyelot)
+                            .OrderBy(o => o["Dyelot"])
+                            .ToList();
 
                         foreach (var sameData in sameDyelot)
                         {
