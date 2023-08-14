@@ -13,6 +13,12 @@
     [OldKey]        VARCHAR (13)   CONSTRAINT [DF_TimeStudyHistory_Detail_OldKey] DEFAULT ('') NULL,
     [SeamLength]    NUMERIC (12, 2) NULL,
     [MtlFactorID] VARCHAR(3) NULL, 
+    [Template] VARCHAR(100)         CONSTRAINT [DF_TimeStudyHistory_Detail_Template] DEFAULT ('')  NOT NULL, 
+    [MasterPlusGroup] VARCHAR(4)    CONSTRAINT [DF_TimeStudyHistory_Detail_MasterPlusGroup] DEFAULT ('')  NOT NULL, 
+    [IsSubprocess] BIT              CONSTRAINT [DF_TimeStudyHistory_Detail_IsSubprocess] DEFAULT ((0))  NOT NULL, 
+    [SewingMachineAttachmentID] VARCHAR(200)    CONSTRAINT [DF_TimeStudyHistory_Detail_SewingMachineAttachmentID] DEFAULT ('') NOT NULL , 
+    [PPA] VARCHAR(2)                CONSTRAINT [DF_TimeStudyHistory_Detail_PPA] DEFAULT ('') NOT NULL , 
+    [IsNonSewingLine] BIT           CONSTRAINT [DF_TimeStudyHistory_Detail_IsNonSewingLine] NOT NULL DEFAULT ((0)), 
     CONSTRAINT [PK_TimeStudyHistory_Detail] PRIMARY KEY CLUSTERED ([ID] ASC, [Seq] ASC)
 );
 
@@ -72,3 +78,58 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'SMV(秒)', 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'TimeStudyHistory_Detail', @level2type = N'COLUMN', @level2name = N'OldKey';
 
+
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'模板',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'TimeStudyHistory_Detail',
+    @level2type = N'COLUMN',
+    @level2name = N'Template'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'MC Group',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'TimeStudyHistory_Detail',
+    @level2type = N'COLUMN',
+    @level2name = N'MasterPlusGroup'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'1=是，0=否',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'TimeStudyHistory_Detail',
+    @level2type = N'COLUMN',
+    @level2name = N'IsSubprocess'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'SewingMachineAttachmen.ID',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'TimeStudyHistory_Detail',
+    @level2type = N'COLUMN',
+    @level2name = N'SewingMachineAttachmentID'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'C=Centralized，S=SewingLine',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'TimeStudyHistory_Detail',
+    @level2type = N'COLUMN',
+    @level2name = N'PPA'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'1=是，0=否',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'TimeStudyHistory_Detail',
+    @level2type = N'COLUMN',
+    @level2name = N'IsNonSewingLine'
