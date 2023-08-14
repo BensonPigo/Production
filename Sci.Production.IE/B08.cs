@@ -22,54 +22,7 @@ namespace Sci.Production.IE
             : base(menuitem)
         {
             this.InitializeComponent();
-
-            #region 篩選條件
-            string strDept = string.Empty;
-            string strPosition = string.Empty;
-            string strWhere = string.Empty;
-            switch (Env.User.Factory)
-            {
-                case "MAI":
-                case "MA2":
-                case "MA3":
-                case "MW2":
-                case "FIT":
-                case "MWI":
-                case "FAC":
-                case "FA2":
-                case "PSR":
-                case "VT1":
-                case "VT2":
-                case "GMM":
-                case "GM2":
-                case "GMI":
-                case "PS2":
-                case "ALA":
-                    strDept = $"'PRO'";
-                    strPosition = $"'PCK','PRS','SEW','FSPR','LOP','STL','LL','SLS','SSLT'";
-                    strWhere = $@" and Dept in({strDept})  and Position in({strPosition}) and FactoryID = {Env.User.Factory}";
-                    break;
-                case "ESP":
-                case "ES2":
-                case "ES3":
-                case "VSP":
-                    strDept = $"'PRO'";
-                    strPosition = $"'PAC','PRS','SEW','LL'";
-                    strWhere = $@" and Dept in({strDept})  and Position in({strPosition}) and FactoryID = {Env.User.Factory}";
-                    break;
-                case "SPT":
-                    strDept = $"'PRO'";
-                    strPosition = $"'PAC','PRS','SEW','LL','SUP','PE','PIT','TL'";
-                    strWhere = $@" and Dept in({strDept})  and Position in({strPosition}) and FactoryID = {Env.User.Factory}";
-                    break;
-                case "SNP":
-                    strDept = $"'PRO'";
-                    strPosition = $"'SEW','LL','PIT'";
-                    strWhere = $@" and Dept in({strDept})  and Position in({strPosition}) and FactoryID = {Env.User.Factory}";
-                    break;
-            }
-            #endregion
-            this.DefaultFilter = "MDivisionID = '" + Env.User.Keyword + $"' {strWhere}";
+            this.DefaultFilter = "MDivisionID = '" + Env.User.Keyword + $"' ";
         }
 
         /// <summary>
@@ -85,7 +38,7 @@ namespace Sci.Production.IE
                 switch (hasJunk)
                 {
                     case "0":
-                        this.DefaultWhere = "JUNK = 0";
+                        this.DefaultWhere = $"JUNK = 0 {this.PAMS_Where()}";
                         break;
                     default:
                         this.DefaultWhere = string.Empty;
@@ -228,13 +181,63 @@ namespace Sci.Production.IE
             }
         }
 
+        private string PAMS_Where()
+        {
+            string strDept = string.Empty;
+            string strPosition = string.Empty;
+            string strWhere = string.Empty;
+            switch (Env.User.Factory)
+            {
+                case "MAI":
+                case "MA2":
+                case "MA3":
+                case "MW2":
+                case "FIT":
+                case "MWI":
+                case "FAC":
+                case "FA2":
+                case "PSR":
+                case "VT1":
+                case "VT2":
+                case "GMM":
+                case "GM2":
+                case "GMI":
+                case "PS2":
+                case "ALA":
+                    strDept = $"'PRO'";
+                    strPosition = $"'PCK','PRS','SEW','FSPR','LOP','STL','LL','SLS','SSLT'";
+                    strWhere = $@" and Dept in({strDept})  and Position in({strPosition})";
+                    break;
+                case "ESP":
+                case "ES2":
+                case "ES3":
+                case "VSP":
+                    strDept = $"'PRO'";
+                    strPosition = $"'PAC','PRS','SEW','LL'";
+                    strWhere = $@" and Dept in({strDept})  and Position in({strPosition})";
+                    break;
+                case "SPT":
+                    strDept = $"'PRO'";
+                    strPosition = $"'PAC','PRS','SEW','LL','SUP','PE','PIT','TL'";
+                    strWhere = $@" and Dept in({strDept})  and Position in({strPosition})";
+                    break;
+                case "SNP":
+                    strDept = $"'PRO'";
+                    strPosition = $"'SEW','LL','PIT'";
+                    strWhere = $@" and Dept in({strDept})  and Position in({strPosition})";
+                    break;
+            }
+
+            return strWhere;
+        }
+
         private void B08_FormLoaded(object sender, EventArgs e)
         {
             MyUtility.Tool.SetupCombox(this.queryfors, 2, 1, "0,Exclude Junk,1,Include Junk");
 
             // 預設查詢為 Exclude Junk
             this.queryfors.SelectedIndex = 0;
-            this.DefaultWhere = "JUNK = 0";
+            this.DefaultWhere = $"JUNK = 0 {this.PAMS_Where()}";
             this.ReloadDatas();
         }
     }
