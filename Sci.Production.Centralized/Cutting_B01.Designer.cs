@@ -277,7 +277,7 @@
             // 
             this.txtartworktype_ftyArtworkType.BackColor = System.Drawing.Color.White;
             this.txtartworktype_ftyArtworkType.CClassify = "";
-            this.txtartworktype_ftyArtworkType.CSubprocess = "t";
+            this.txtartworktype_ftyArtworkType.CSubprocess = "Y";
             this.txtartworktype_ftyArtworkType.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "artworktypeid", true));
             this.txtartworktype_ftyArtworkType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtartworktype_ftyArtworkType.Location = new System.Drawing.Point(162, 112);
