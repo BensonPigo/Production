@@ -308,8 +308,8 @@ and (((lmdavg.avgTotalCycle - lmd.TotalCycle) / lmdavg.avgTotalCycle) * 100 >  (
 	where l.StyleUKey = lm.StyleUKey
 	and l.FactoryID = lm.FactoryID
 	and l.Phase = lm.Phase
-    --and l.SewingLineID = lm.SewingLineID
-	group by l.StyleUKey, l.FactoryID,l.Phase--,l.SewingLineID
+    and l.SewingLineID = lm.SewingLineID
+	group by l.StyleUKey, l.FactoryID,l.Phase,l.SewingLineID
  )
 ");
             }
