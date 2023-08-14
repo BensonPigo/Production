@@ -3029,6 +3029,7 @@ END";
         protected override bool ClickSaveBefore()
         {
             this.GridValid();
+            this.detailgrid.ValidateControl();
             this.AnyChange = ((DataTable)this.detailgridbs.DataSource).AsEnumerable().Where(w => w.RowState != DataRowState.Unchanged).Any() ||
                 this.PatternPanelTb.AsEnumerable().Where(w => w.RowState != DataRowState.Unchanged).Any() ||
                 this.sizeratioTb.AsEnumerable().Where(w => w.RowState != DataRowState.Unchanged).Any() ||
@@ -3102,11 +3103,11 @@ END";
                 {
                     var chksame = chkdrs.Select(m => new
                     {
-                        CutRef = m.Field<string>("CutRef"),
-                        NewSpreadingNoID = m.Field<DateTime?>("EstCutDate"),
-                        NewShift = m.Field<string>("CutCellID"),
-                        NewCutcellid = m.Field<string>("SpreadingNoID"),
-                        NewEstcutdate = m.Field<string>("Shift"),
+                        CutRef = MyUtility.Convert.GetString(m["CutRef"]),
+                        NewEstCutDate = m.Field<DateTime?>("EstCutDate"),
+                        NewCutCellID = MyUtility.Convert.GetString(m["CutCellID"]),
+                        NewSpreadingNoID = MyUtility.Convert.GetString(m["SpreadingNoID"]),
+                        NewShift = MyUtility.Convert.GetString(m["Shift"]),
                     }).Distinct().ToList();
 
                     // 更新的欄位不能合併表示不一樣
