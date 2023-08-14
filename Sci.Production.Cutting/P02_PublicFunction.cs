@@ -13,7 +13,7 @@ namespace Sci.Production.Cutting
     /// <inheritdoc/>
     public static class P02_PublicFunction
     {
-        private static DataTable GetPoSuppDetail(string refno, string poid, Win.Forms.Base srcForm)
+        private static DataTable GetPoSuppDetail(string SCIRefno, string poid, Win.Forms.Base srcForm)
         {
             string sqlcmd = $@"
 select psd.SEQ1, psd.SEQ2, ColorID = isnull(psdsC.SpecValue ,''),psd.SCIRefno,psd.Refno
@@ -21,7 +21,11 @@ from PO_Supp_Detail psd
 left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
 left join Fabric f on f.SCIRefno = psd.SCIRefno
 where psd.ID = '{poid}'
-and f.BrandRefNo = '{refno}'
+and exists(
+	select 1 from Fabric ff
+	where ff.SCIRefno = '{SCIRefno}'
+	and ff.BrandRefNo = f.BrandRefNo
+)
 and psd.Junk = 0
 
 ";
@@ -63,7 +67,7 @@ and psd.Junk = 0
                 return true;
             }
 
-            DataTable dtPoSuppDetail = GetPoSuppDetail(dr["Refno"].ToString(), poid, srcForm);
+            DataTable dtPoSuppDetail = GetPoSuppDetail(dr["scirefno"].ToString(), poid, srcForm);
             if (dtPoSuppDetail == null)
             {
                 return false;
@@ -135,7 +139,7 @@ Do you want to continue? ");
                 return true;
             }
 
-            DataTable dtPoSuppDetail = GetPoSuppDetail(dr["Refno"].ToString(), poid, srcForm);
+            DataTable dtPoSuppDetail = GetPoSuppDetail(dr["scirefno"].ToString(), poid, srcForm);
             if (dtPoSuppDetail == null)
             {
                 return false;
@@ -199,7 +203,7 @@ Do you want to continue? ");
                 DataRow dr = srcGrid.GetDataRow(e.RowIndex);
                 SelectItem sele;
                 DataTable poTb;
-                poTb = GetPoSuppDetail(dr["Refno"].ToString(), poid, srcForm);
+                poTb = GetPoSuppDetail(dr["scirefno"].ToString(), poid, srcForm);
                 if (poTb == null)
                 {
                     return;
@@ -225,6 +229,7 @@ Do you want to continue? ");
                 dr["SEQ2"] = sele.GetSelecteds()[0]["SEQ2"];
                 dr["Colorid"] = sele.GetSelecteds()[0]["Colorid"];
                 dr["Refno"] = sele.GetSelecteds()[0]["Refno"];
+                dr["SCIRefno"] = sele.GetSelecteds()[0]["SCIRefno"];
                 e.EditingControl.Text = sele.GetSelectedString();
             }
         }
@@ -243,7 +248,7 @@ Do you want to continue? ");
                 DataRow dr = srcGrid.GetDataRow(e.RowIndex);
                 SelectItem sele;
                 DataTable poTb;
-                poTb = GetPoSuppDetail(dr["Refno"].ToString(), poid, srcForm);
+                poTb = GetPoSuppDetail(dr["scirefno"].ToString(), poid, srcForm);
                 if (poTb == null)
                 {
                     return;
