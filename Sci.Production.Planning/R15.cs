@@ -72,6 +72,7 @@ namespace Sci.Production.Planning
             this.ReportType = "SP#";
             this.Text = formParameter == "1" ? "R15. WIP" : "R15-1. WIP By Specific Subprocess";
             this.panel1.Visible = formParameter == "2";
+            this.chkSubProcessOrder.Visible = formParameter == "2";
             this.comboRFIDProcessLocation1.SetDataSource(false);
             this.comboRFIDProcessLocation1.SelectedIndex = 0;
         }
@@ -624,6 +625,17 @@ namespace Sci.Production.Planning
             {
                 sqlCmd.Append(@" and o.FtyGroup = @factory");
                 cmds.Add(new System.Data.SqlClient.SqlParameter("@factory", this.factory));
+            }
+
+            if (this.chkSubProcessOrder.Checked)
+            {
+                sqlCmd.Append($@"
+and exists(
+	select * from Pattern_GL PGL WITH (NOLOCK) 
+	inner join dbo.GetPatternUkey(o.ID,'','',s.Ukey,'') t on PGL.PatternUKEY = t.PatternUkey
+	inner join dbo.SplitString('{this.subprocessID}',',') b on PGL.Annotation like '%'+ b.Data+'%'
+)
+");
             }
 
             sqlCmd.Append($" and o.Category in ({this.category})");
@@ -1382,6 +1394,17 @@ WHERE 1=1 {whereIncludeCancelOrder} "));
             {
                 sqlCmd.Append(@" and o.FtyGroup = @factory");
                 cmds.Add(new System.Data.SqlClient.SqlParameter("@factory", this.factory));
+            }
+
+            if (this.chkSubProcessOrder.Checked)
+            {
+                sqlCmd.Append($@"
+and exists(
+	select * from Pattern_GL PGL WITH (NOLOCK) 
+	inner join dbo.GetPatternUkey(o.ID,'','',s.Ukey,'') t on PGL.PatternUKEY = t.PatternUkey
+	inner join dbo.SplitString('{this.subprocessID}',',') b on PGL.Annotation like '%'+ b.Data+'%'
+)
+");
             }
 
             sqlCmd.Append($" and o.Category in ({this.category})");
