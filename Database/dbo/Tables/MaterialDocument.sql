@@ -22,6 +22,7 @@
 	AddName			    varchar(10)		CONSTRAINT [DF_MaterialDocument_AddName]			DEFAULT ('')	NULL,
 	EditDate		    DateTime											                                NULL,
 	Editname		    varchar(10)		CONSTRAINT [DF_MaterialDocument_Editname]			DEFAULT ('')	NULL, 
+    [ExcludeRibItem]    BIT             CONSTRAINT [DF_MaterialDocument_ExcludeRibItem]           DEFAULT ((0))   NOT NULL , 
     CONSTRAINT [PK_MaterialDocument] PRIMARY KEY ([DocumentName], [BrandID]) ,
 )
 
@@ -151,3 +152,12 @@ EXEC sp_addextendedproperty @name = N'MS_Description',
     @level1name = N'MaterialDocument',
     @level2type = N'COLUMN',
     @level2name = N'Editname'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'排除RibItem',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'MaterialDocument',
+    @level2type = N'COLUMN',
+    @level2name = N'ExcludeRibItem'
