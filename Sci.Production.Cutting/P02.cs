@@ -3097,7 +3097,7 @@ END";
             foreach (var item in distnct_List)
             {
                 // 檢查已撈出資料
-                DataRow[] chkdrs = ((DataTable)this.detailgridbs.DataSource).Select($@" CutRef = '{item.CutRef}'");
+                DataRow[] chkdrs = ((DataTable)this.detailgridbs.DataSource).Select($@" CutRef = '{item.CutRef}' and CutRef <> ''");
 
                 if (chkdrs.Length > 1)
                 {
