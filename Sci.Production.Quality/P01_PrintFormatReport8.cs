@@ -102,7 +102,7 @@ namespace Sci.Production.Quality
 
         private void Query()
         {
-            DualResult result = DBProxy.Current.Select(null, $"select Selected = cast(0 as bit),Roll,Dyelot,Ticketyds,Tone from FIR_Shadebone where id={this.maindr["ID"]}  order by Dyelot desc", out DataTable dtFIR_Shadebone);
+            DualResult result = DBProxy.Current.Select(null, $"select Selected = cast(0 as bit),Roll,Dyelot,Ticketyds,Tone from FIR_Shadebone where id={this.maindr["ID"]}  order by Dyelot", out DataTable dtFIR_Shadebone);
             if (!result)
             {
                 this.ShowErr(result);
@@ -173,77 +173,37 @@ namespace Sci.Production.Quality
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Dyelot", " "));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("SeasonID", seasonID));
             #region 表身資料
-            var dt = ((DataTable)this.listControlBindingSource1.DataSource).Select($"Selected = 1");
-            var duplicates = dt.AsEnumerable()
-            .Select(row => row.Field<string>("Tone"))
-            .Distinct()
-            .Where(value => dt.AsEnumerable().Count(row => row.Field<string>("Tone") == value) >= 1).ToList();
+            DataRow[] drs = ((DataTable)this.listControlBindingSource1.DataSource).Select($"Selected = 1");
+            DataTable dtFIR_Shadebone = ((DataTable)this.listControlBindingSource1.DataSource).Clone();
 
-            List<P01_ShadeBond_Data> data = new List<P01_ShadeBond_Data>();
-
-            if (dt.Length == 0)
+            if (drs.Length == 0)
             {
-                DataTable dtFIR_Shadebone = ((DataTable)this.listControlBindingSource1.DataSource).Clone();
                 for (int i = 0; i < 8; i++)
                 {
                     dtFIR_Shadebone.Rows.Add(dtFIR_Shadebone.NewRow());
                 }
-
-                List<string> dyelotCTn = dtFIR_Shadebone.AsEnumerable().Select(o => o["Tone"].ToString()).Distinct().ToList();
-                foreach (var dyelot in dyelotCTn)
-                {
-                    List<DataRow> sameDyelot = dtFIR_Shadebone.AsEnumerable().Where(o => o["Tone"].ToString() == dyelot).ToList();
-
-                    foreach (var sameData in sameDyelot)
-                    {
-                        P01_ShadeBond_Data r = new P01_ShadeBond_Data
-                        {
-                            Dyelot = MyUtility.Convert.GetString(sameData["Dyelot"]),
-                            Roll = MyUtility.Convert.GetString(sameData["Roll"]),
-                            TicketYds = MyUtility.Convert.GetString(sameData["TicketYds"]),
-                        };
-                        data.Add(r);
-                    }
-                }
             }
             else
             {
-                for (int x = 0; x < duplicates.Count; x++)
+                dtFIR_Shadebone = drs.CopyToDataTable();
+            }
+
+            List<string> dyelotCTn = dtFIR_Shadebone.AsEnumerable().Select(o => o["Dyelot"].ToString()).Distinct().ToList();
+            List<P01_ShadeBond_Data> data = new List<P01_ShadeBond_Data>();
+            foreach (var dyelot in dyelotCTn)
+            {
+                List<DataRow> sameDyelot = dtFIR_Shadebone.AsEnumerable().Where(o => o["Dyelot"].ToString() == dyelot).OrderBy(o => o["Dyelot"]).ToList();
+
+                foreach (var sameData in sameDyelot)
                 {
-                    DataRow[] drs = ((DataTable)this.listControlBindingSource1.DataSource).Select($"Selected = 1 and Tone = '{duplicates[x]}'");
-                    DataTable dtFIR_Shadebone = ((DataTable)this.listControlBindingSource1.DataSource).Clone();
-                    if (drs.Length == 0)
+                    P01_ShadeBond_Data r = new P01_ShadeBond_Data
                     {
-                        for (int i = 0; i < 8; i++)
-                        {
-                            dtFIR_Shadebone.Rows.Add(dtFIR_Shadebone.NewRow());
-                        }
-                    }
-                    else
-                    {
-                        dtFIR_Shadebone = drs.CopyToDataTable();
-                    }
-
-                    List<string> dyelotCTn = dtFIR_Shadebone.AsEnumerable().Select(o => o["Tone"].ToString()).Distinct().ToList();
-                    foreach (var dyelot in dyelotCTn)
-                    {
-                        List<DataRow> sameDyelot = dtFIR_Shadebone.AsEnumerable()
-                            .Where(o => o["Tone"].ToString() == dyelot)
-                            .OrderBy(o => o["Dyelot"])
-                            .ToList();
-
-                        foreach (var sameData in sameDyelot)
-                        {
-                            P01_ShadeBond_Data r = new P01_ShadeBond_Data
-                            {
-                                Dyelot = MyUtility.Convert.GetString(sameData["Dyelot"]),
-                                Tone = MyUtility.Convert.GetString(sameData["Tone"]),
-                                Roll = MyUtility.Convert.GetString(sameData["Roll"]),
-                                TicketYds = MyUtility.Convert.GetString(sameData["TicketYds"]),
-                            };
-                            data.Add(r);
-                        }
-                    }
+                        Dyelot = MyUtility.Convert.GetString(sameData["Dyelot"]),
+                        Tone = MyUtility.Convert.GetString(sameData["Tone"]),
+                        Roll = MyUtility.Convert.GetString(sameData["Roll"]),
+                        TicketYds = MyUtility.Convert.GetString(sameData["TicketYds"]),
+                    };
+                    data.Add(r);
                 }
             }
 
