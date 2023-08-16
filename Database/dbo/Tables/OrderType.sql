@@ -20,6 +20,7 @@
     [IsDevSample]         BIT             CONSTRAINT [DF_OrderType_IsDevSample] DEFAULT ((0)) NOT NULL,
     [KPIProjectID]        VARCHAR (5)     CONSTRAINT [DF_OrderType_KPIProjectID] DEFAULT ('') NOT NULL,
     [CalByBOFConsumption] BIT             CONSTRAINT [DF_OrderType_CalByBOFConsumption] DEFAULT ((0)) NOT NULL,
+    SerialKey bigint NOT NULL IDENTITY(1,1) ,
     CONSTRAINT [PK_OrderType] PRIMARY KEY CLUSTERED ([ID] ASC, [BrandID] ASC)
 );
 
