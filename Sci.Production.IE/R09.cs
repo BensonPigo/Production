@@ -99,7 +99,7 @@ namespace Sci.Production.IE
             select
             [Factory] = lm.FactoryID
             , [OperatorID] = e.ID
-            , [OperatorName] = iif(e.LastName + ',' + e.FirstName <> ',',e.LastName + ',' + e.FirstName,'') 
+            , [OperatorName] = iif(e.Junk = 1 , e.[Name], iif(e.LastName + ',' + e.FirstName <> ',',e.LastName + ',' + e.FirstName,''))
             , [Style] = lm.StyleID
             , [Season] = lm.SeasonID
             , [Brand] = lm.BrandID
