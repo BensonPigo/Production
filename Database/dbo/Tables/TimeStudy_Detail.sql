@@ -17,6 +17,7 @@
     [MasterPlusGroup] VARCHAR(4) NOT NULL DEFAULT (''), 
     [IsSubprocess] BIT NOT NULL DEFAULT ((0)), 
     IsNonSewingLine BIT NOT NULL CONSTRAINT [DF_TimeStudy_Detail_IsNonSewingLine] DEFAULT ((0)), 
+    [PPA] VARCHAR(2) NOT NULL DEFAULT (''), 
     CONSTRAINT [PK_TimeStudy_Detail] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
 
@@ -83,3 +84,5 @@ GO
 CREATE NONCLUSTERED INDEX [IDSeq]
     ON [dbo].[TimeStudy_Detail]([ID] ASC, [Seq] ASC);
 
+
+GO

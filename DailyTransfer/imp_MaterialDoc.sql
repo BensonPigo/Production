@@ -136,7 +136,7 @@ BEGIN
       ,ISNULL([AWBno], '')
       ,ISNULL([T2InspYds], 0)
       ,ISNULL([T2DefectPoint], 0)
-      ,ISNULL([T2Grade], 0)
+      ,ISNULL([T2Grade], '')
       ,[TestReportTestDate]
       ,[FTYReceivedReport]
 	  ,ISNULL(UniqueKey, '')

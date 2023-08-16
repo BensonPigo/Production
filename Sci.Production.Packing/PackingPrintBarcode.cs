@@ -83,8 +83,8 @@ namespace Sci.Production.Packing
                                 }
 
                                 #region 準備資料
-                                string barcode = printData.Rows[p]["SCICtnNo"].ToString().PadRight(23, '0');
-                                string barcodeShowText = printData.Rows[p]["SCICtnNo"].ToString();
+                                string barcode = printData.Rows[p]["SCICtnNo"].ToString().PadRight(24, '0');
+                                string barcodeShowText = barcode; // printData.Rows[p]["SCICtnNo"].ToString();
                                 string packingNo = "　　　　PackingNo.: " + printData.Rows[p]["ID"];
                                 string spNo = "　　　　SP No.: " + printData.Rows[p]["OrderID"] + "     Dest: " + printData.Rows[p]["Dest"];
                                 string cartonNo = "　　　　Carton No.: " + printData.Rows[p]["CTNStartNo"] + " OF " + printData.Rows[p]["CtnQty"];
@@ -165,8 +165,8 @@ namespace Sci.Production.Packing
                             {
                                 #region New format
                                 #region 準備資料
-                                string barcode = printData.Rows[i]["SCICtnNo"].ToString().PadRight(23, '0');
-                                string barcodeShowText = printData.Rows[i]["SCICtnNo"].ToString();
+                                string barcode = printData.Rows[i]["SCICtnNo"].ToString().PadRight(24, '0');
+                                string barcodeShowText = barcode; // printData.Rows[i]["SCICtnNo"].ToString();
                                 string packingNo = "PG#:" + printData.Rows[i]["ID"];
                                 string spNo = "SP#:" + printData.Rows[i]["OrderID"];
                                 string style = "Style#:" + printData.Rows[i]["StyleID"];
@@ -207,8 +207,8 @@ namespace Sci.Production.Packing
                             {
                                 #region old format
                                 #region 準備資料
-                                string barcode = printData.Rows[i]["SCICtnNo"].ToString().PadRight(23, '0');
-                                string barcodeShowText = printData.Rows[i]["SCICtnNo"].ToString();
+                                string barcode = printData.Rows[i]["SCICtnNo"].ToString().PadRight(24, '0');
+                                string barcodeShowText = barcode; // printData.Rows[i]["SCICtnNo"].ToString();
                                 string packingNo = "　　　　PackingNo.: " + printData.Rows[i]["ID"];
                                 string spNo = "　　　　SP No.: " + printData.Rows[i]["OrderID"];
                                 string cartonNo = "　　　　Carton No.: " + printData.Rows[i]["CTNStartNo"] + " OF " + printData.Rows[i]["CtnQty"];
@@ -314,8 +314,8 @@ namespace Sci.Production.Packing
                 {
                     tables = table[i + 1];
                     #region 準備資料
-                    string barcode = printData.Rows[i]["SCICtnNo"].ToString().PadRight(23, '0');
-                    string barcodeSowText = printData.Rows[i]["SCICtnNo"].ToString();
+                    string barcode = printData.Rows[i]["SCICtnNo"].ToString().PadRight(24, '0');
+                    string barcodeSowText = barcode; // printData.Rows[i]["SCICtnNo"].ToString();
                     string packingNo = "P/L#.: " + printData.Rows[i]["ID"];
                     string spNo = "SP#.: " + printData.Rows[i]["OrderID"];
                     string poNo = "PO#.: " + printData.Rows[i]["PONo"].ToString();
@@ -332,7 +332,7 @@ namespace Sci.Production.Packing
                     tables.Cell(1, 1).Range.InlineShapes[1].LockAspectRatio = Microsoft.Office.Core.MsoTriState.msoFalse;
                     tables.Cell(1, 1).Range.InlineShapes[1].ConvertToShape().WrapFormat.Type = Word.WdWrapType.wdWrapSquare;
 
-                    tables.Cell(2, 1).Range.Text = "        " + barcodeSowText + Environment.NewLine + packingNo + Environment.NewLine + spNo + Environment.NewLine + poNo + Environment.NewLine + sizeQty + " " + cartonNo;
+                    tables.Cell(2, 1).Range.Text = "   " + barcodeSowText + Environment.NewLine + packingNo + Environment.NewLine + spNo + Environment.NewLine + poNo + Environment.NewLine + sizeQty + " " + cartonNo;
                 }
                 #endregion
                 winword.ActiveDocument.Protect(Word.WdProtectionType.wdAllowOnlyComments, Password: "ScImIs");

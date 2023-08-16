@@ -13,15 +13,21 @@ namespace Sci.Production.Cutting
     /// <inheritdoc/>
     public static class P02_PublicFunction
     {
-        private static DataTable GetPoSuppDetail(string refno, string poid, Win.Forms.Base srcForm)
+        private static DataTable GetPoSuppDetail(string SCIRefno, string poid, Win.Forms.Base srcForm)
         {
             string sqlcmd = $@"
-select psd.SEQ1, psd.SEQ2, ColorID = isnull(psdsC.SpecValue ,'')
+select psd.SEQ1, psd.SEQ2, ColorID = isnull(psdsC.SpecValue ,''),psd.SCIRefno,psd.Refno
 from PO_Supp_Detail psd
 left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
+left join Fabric f on f.SCIRefno = psd.SCIRefno
 where psd.ID = '{poid}'
-and psd.Refno = '{refno}'
+and exists(
+	select 1 from Fabric ff
+	where ff.SCIRefno = '{SCIRefno}'
+	and ff.BrandRefNo = f.BrandRefNo
+)
 and psd.Junk = 0
+
 ";
             DualResult result = DBProxy.Current.Select(null, sqlcmd, out DataTable dtPoSuppDetail);
             if (!result)
@@ -40,17 +46,17 @@ and psd.Junk = 0
         }
 
         /// <inheritdoc/>
-        public static void Seq1CellValidating(object sender, Ict.Win.UI.DataGridViewCellValidatingEventArgs e, Win.Forms.Base srcForm, Grid srcGrid, string poid)
+        public static bool Seq1CellValidating(object sender, Ict.Win.UI.DataGridViewCellValidatingEventArgs e, Win.Forms.Base srcForm, Grid srcGrid, string poid)
         {
             if (!srcForm.EditMode)
             {
-                return;
+                return true;
             }
 
             // 右鍵彈出功能
             if (e.RowIndex == -1)
             {
-                return;
+                return true;
             }
 
             DataRow dr = srcGrid.GetDataRow(e.RowIndex);
@@ -58,13 +64,13 @@ and psd.Junk = 0
             string newvalue = e.FormattedValue.ToString();
             if (oldvalue == newvalue)
             {
-                return;
+                return true;
             }
 
-            DataTable dtPoSuppDetail = GetPoSuppDetail(dr["Refno"].ToString(), poid, srcForm);
+            DataTable dtPoSuppDetail = GetPoSuppDetail(dr["scirefno"].ToString(), poid, srcForm);
             if (dtPoSuppDetail == null)
             {
-                return;
+                return false;
             }
 
             var checkSeqSrource = dtPoSuppDetail.AsEnumerable();
@@ -77,7 +83,7 @@ and psd.Junk = 0
                 dr.EndEdit();
                 e.Cancel = true;
                 MyUtility.Msg.WarningBox(string.Format("<SEQ1> : {0} data not found!", newvalue));
-                return;
+                return false;
             }
 
             List<DataRow> resultListDr = checkSeqSrource.Where(srcDr => srcDr["Seq2"].ToString().Equals(dr["Seq2"].ToString()) &&
@@ -87,7 +93,7 @@ and psd.Junk = 0
                 MyUtility.Msg.WarningBox(string.Format("<SEQ1>:{0},<SEQ2>:{1} data not found!", newvalue, dr["SEQ2"]));
                 dr["SEQ1"] = string.Empty;
                 dr["Colorid"] = string.Empty;
-                return;
+                return false;
             }
 
             DataRow resultDr = resultListDr[0];
@@ -100,27 +106,29 @@ Do you want to continue? ");
                 {
                     dr["SEQ1"] = oldvalue;
                     dr.EndEdit();
-                    return;
+                    return true;
                 }
             }
 
             dr["Colorid"] = resultDr["Colorid"];
             dr["SEQ1"] = newvalue;
+            dr["Refno"] = resultDr["Refno"];
             dr.EndEdit();
+            return true;
         }
 
         /// <inheritdoc/>
-        public static void Seq2CellValidating(object sender, Ict.Win.UI.DataGridViewCellValidatingEventArgs e, Win.Forms.Base srcForm, Grid srcGrid, string poid)
+        public static bool Seq2CellValidating(object sender, Ict.Win.UI.DataGridViewCellValidatingEventArgs e, Win.Forms.Base srcForm, Grid srcGrid, string poid)
         {
             if (!srcForm.EditMode)
             {
-                return;
+                return true;
             }
 
             // 右鍵彈出功能
             if (e.RowIndex == -1)
             {
-                return;
+                return true;
             }
 
             DataRow dr = srcGrid.GetDataRow(e.RowIndex);
@@ -128,13 +136,13 @@ Do you want to continue? ");
             string newvalue = e.FormattedValue.ToString();
             if (oldvalue == newvalue)
             {
-                return;
+                return true;
             }
 
-            DataTable dtPoSuppDetail = GetPoSuppDetail(dr["Refno"].ToString(), poid, srcForm);
+            DataTable dtPoSuppDetail = GetPoSuppDetail(dr["scirefno"].ToString(), poid, srcForm);
             if (dtPoSuppDetail == null)
             {
-                return;
+                return false;
             }
 
             var checkSeqSrource = dtPoSuppDetail.AsEnumerable();
@@ -147,7 +155,7 @@ Do you want to continue? ");
                 dr.EndEdit();
                 e.Cancel = true;
                 MyUtility.Msg.WarningBox(string.Format("<SEQ2> : {0} data not found!", newvalue));
-                return;
+                return false;
             }
 
             List<DataRow> resultListDr = checkSeqSrource.Where(srcDr => srcDr["Seq1"].ToString().Equals(dr["Seq1"].ToString()) &&
@@ -157,7 +165,7 @@ Do you want to continue? ");
                 MyUtility.Msg.WarningBox(string.Format("<SEQ1>:{0},<SEQ2>:{1} data not found!", dr["SEQ1"], newvalue));
                 dr["SEQ2"] = string.Empty;
                 dr["Colorid"] = string.Empty;
-                return;
+                return false;
             }
 
             DataRow resultDr = resultListDr[0];
@@ -170,14 +178,15 @@ Do you want to continue? ");
                 {
                     dr["SEQ2"] = oldvalue;
                     dr.EndEdit();
-                    return;
+                    return true;
                 }
             }
 
             dr["Colorid"] = resultDr["Colorid"];
-
+            dr["Refno"] = resultDr["Refno"];
             dr["SEQ2"] = newvalue;
             dr.EndEdit();
+            return true;
         }
 
         /// <inheritdoc/>
@@ -194,13 +203,13 @@ Do you want to continue? ");
                 DataRow dr = srcGrid.GetDataRow(e.RowIndex);
                 SelectItem sele;
                 DataTable poTb;
-                poTb = GetPoSuppDetail(dr["Refno"].ToString(), poid, srcForm);
+                poTb = GetPoSuppDetail(dr["scirefno"].ToString(), poid, srcForm);
                 if (poTb == null)
                 {
                     return;
                 }
 
-                sele = new SelectItem(poTb, "SEQ1,SEQ2,Colorid", "3,2,8@350,300", dr["SEQ1"].ToString(), false, ",");
+                sele = new SelectItem(poTb, "SEQ1,SEQ2,Colorid,Refno", "3,2,8,20@500,300", dr["SEQ1"].ToString(), false, ",");
                 DialogResult result = sele.ShowDialog();
                 if (result == DialogResult.Cancel)
                 {
@@ -219,6 +228,8 @@ Do you want to continue? ");
 
                 dr["SEQ2"] = sele.GetSelecteds()[0]["SEQ2"];
                 dr["Colorid"] = sele.GetSelecteds()[0]["Colorid"];
+                dr["Refno"] = sele.GetSelecteds()[0]["Refno"];
+                dr["SCIRefno"] = sele.GetSelecteds()[0]["SCIRefno"];
                 e.EditingControl.Text = sele.GetSelectedString();
             }
         }
@@ -237,13 +248,13 @@ Do you want to continue? ");
                 DataRow dr = srcGrid.GetDataRow(e.RowIndex);
                 SelectItem sele;
                 DataTable poTb;
-                poTb = GetPoSuppDetail(dr["Refno"].ToString(), poid, srcForm);
+                poTb = GetPoSuppDetail(dr["scirefno"].ToString(), poid, srcForm);
                 if (poTb == null)
                 {
                     return;
                 }
 
-                sele = new SelectItem(poTb, "SEQ1,SEQ2,Colorid", "3,2,8@350,300", dr["SEQ2"].ToString(), false, ",");
+                sele = new SelectItem(poTb, "SEQ1,SEQ2,Colorid,Refno", "3,2,8,20@500,300", dr["SEQ2"].ToString(), false, ",");
                 DialogResult result = sele.ShowDialog();
                 if (result == DialogResult.Cancel)
                 {
@@ -262,6 +273,7 @@ Do you want to continue? ");
 
                 dr["SEQ1"] = sele.GetSelecteds()[0]["SEQ1"];
                 dr["Colorid"] = sele.GetSelecteds()[0]["Colorid"];
+                dr["refno"] = sele.GetSelecteds()[0]["refno"];
                 e.EditingControl.Text = MyUtility.Convert.GetString(sele.GetSelecteds()[0]["SEQ2"]);
             }
         }

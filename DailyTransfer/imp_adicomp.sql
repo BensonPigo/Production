@@ -311,7 +311,37 @@ BEGIN
 	  )
 	  when not matched by source then
 	  delete;
-	  
+	------------------ADIDASComplain_24Month--------------------------------
+	delete Production.dbo.ADIDASComplain_24Month
+	INSERT INTO ADIDASComplain_24Month
+	([Year]
+	,[Month]
+	,[BrandFtyCode]
+	,[FactoryName]
+	,[KPILO]
+	,[PV_RAW_24Month]
+	,[SV_RAW_24Month]
+	,[WHC]
+	,[Defective_Return]
+	,[AddName]
+	,[AddDate]
+	,[EditName]
+	,[EditDate])
+	select
+	isnull([Year],'')
+	,isnull([Month],'')
+	,isnull([BrandFtyCode],'')
+	,isnull([FactoryName],'')
+	,isnull([KPILO],'')
+	,isnull([PV_RAW_24Month],0)
+	,isnull([SV_RAW_24Month],0)
+	,isnull([WHC],0)
+	,isnull([Defective_Return],0)
+	,isnull([AddName],'')
+	,[AddDate]
+	,isnull([EditName],'')
+	,[EditDate]
+	from Trade_To_Pms.dbo.ADIDASComplain_24Month
 	 ------------------insert ADIDASKPITARGET---------------
     Merge Production.dbo.ADIDASKPITARGET as t
     using Trade_To_Pms.dbo.ADIDASKPITARGET as s

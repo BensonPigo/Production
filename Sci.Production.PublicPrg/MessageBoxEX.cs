@@ -20,10 +20,20 @@ namespace Sci.Production.Prg
 
             return result;
         }
+        public static DialogResult Show(string text, string caption, MessageBoxButtons buttons, string[] buttonTitles, MessageBoxDefaultButton defButton = MessageBoxDefaultButton.Button1)
+        {
+            MessageForm frm = new MessageForm(buttons, buttonTitles, defButton);
+            frm.Show();
+            frm.WatchForActivate = true;
+            DialogResult result = MessageBox.Show(frm, text, caption, buttons, MessageBoxIcon.Information, defButton);
+            frm.Close();
 
+            return result;
+        }
         private class MessageForm : Form
         {
             private readonly MessageBoxButtons _buttons;
+            private readonly MessageBoxDefaultButton _defButton;
             private readonly string[] _buttonTitles = null;
             private IntPtr _handle;
 
@@ -33,6 +43,19 @@ namespace Sci.Production.Prg
             {
                 this._buttons = buttons;
                 this._buttonTitles = buttonTitles;
+
+                // Hide self form, and don't show self form in task bar.
+                this.Text = string.Empty;
+                this.StartPosition = FormStartPosition.CenterScreen;
+                this.Location = new Point(-32000, -32000);
+                this.ShowInTaskbar = false;
+            }
+
+            public MessageForm(MessageBoxButtons buttons, string[] buttonTitles, MessageBoxDefaultButton defaultButton)
+            {
+                this._buttons = buttons;
+                this._buttonTitles = buttonTitles;
+                this._defButton = defaultButton;
 
                 // Hide self form, and don't show self form in task bar.
                 this.Text = string.Empty;

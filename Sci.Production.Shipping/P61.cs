@@ -82,11 +82,12 @@ from KHImportDeclaration_Detail id2
 inner join KHImportDeclaration i on i.ID = id2.ID
 left join KHCustomsItem kc on kc.RefNo=id2.Refno
 left join KHCustomsItem_Detail kcd on kc.Ukey=kcd.KHCustomsItemUkey 
-    and kcd.KHCustomsItemUkey = id2.KHCustomsItemUkey and kcd.Port = i.ImportPort
+    and kcd.KHCustomsItemUkey = id2.KHCustomsItemUkey
 left join KHCustomsDescription kd on kd.CDCName = kc.KHCustomsDescriptionCDCName
     and kd.CustomsType in ('Fabric', 'Accessory', 'Machine')
 left join KHCustomsDescription_Detail kdd on kd.CDCName=kdd.CDCName and kdd.PurchaseUnit = id2.UnitId   
 where id2.id = '{masterID}'
+and kcd.Port = i.ImportPort
 ";
             return base.OnDetailSelectCommandPrepare(e);
         }

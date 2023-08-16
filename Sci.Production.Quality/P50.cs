@@ -884,6 +884,11 @@ namespace Sci.Production.Quality
             this.colColorDesc.Visible = this.drBasic["FileRule"].ToString() != "1";
 
             #region 基本檔設定
+            if (MyUtility.Convert.GetBool(this.drBasic["ExcludeRibItem"]))
+            {
+                conditions.AppendLine($" and f.ribitem = 0");
+            }
+
             conditions.AppendLine($" and f.type='{this.drBasic["FabricType"]}'");
             conditions.AppendLine($" and f.BrandRefNo <> ''");
             conditions.AppendLine($" and Season.Month >= (select month From Season where id ='{this.drBasic["ActiveSeason"]}' and BrandID = '{this.drBasic["brandID"]}')");

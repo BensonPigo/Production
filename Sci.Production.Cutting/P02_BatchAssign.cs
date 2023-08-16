@@ -308,7 +308,10 @@ namespace Sci.Production.Cutting
             };
             col_Seq1.CellValidating += (s, e) =>
             {
-                P02_PublicFunction.Seq1CellValidating(s, e, this, this.gridBatchAssignCellEstCutDate, this.Poid);
+                if (P02_PublicFunction.Seq1CellValidating(s, e, this, this.gridBatchAssignCellEstCutDate, this.Poid) == false)
+                {
+                    e.Cancel = true;
+                }
             };
             #endregion
 
@@ -355,7 +358,10 @@ namespace Sci.Production.Cutting
             };
             col_Seq2.CellValidating += (s, e) =>
             {
-                P02_PublicFunction.Seq2CellValidating(s, e, this, this.gridBatchAssignCellEstCutDate, this.Poid);
+                if (P02_PublicFunction.Seq2CellValidating(s, e, this, this.gridBatchAssignCellEstCutDate, this.Poid) == false)
+                {
+                    e.Cancel = true;
+                }
             };
             #endregion
 

@@ -18,6 +18,7 @@ using System.Transactions;
 using System.Windows.Forms;
 using sxrc = Sci.Utility.Excel.SaveXltReportCls;
 using Excel = Microsoft.Office.Interop.Excel;
+using System.Security.Cryptography;
 
 namespace Sci.Production.Cutting
 {
@@ -1117,7 +1118,10 @@ where WorkOrderUkey={0}", masterID);
             };
             this.col_seq1.CellValidating += (s, e) =>
             {
-                P02_PublicFunction.Seq1CellValidating(s, e, this, this.detailgrid, this.Poid);
+                if (P02_PublicFunction.Seq1CellValidating(s, e, this, this.detailgrid, this.Poid) == false)
+                {
+                    e.Cancel = true;
+                }
             };
             #endregion
             #region SEQ2
@@ -1168,7 +1172,10 @@ where WorkOrderUkey={0}", masterID);
             };
             this.col_seq2.CellValidating += (s, e) =>
             {
-                P02_PublicFunction.Seq2CellValidating(s, e, this, this.detailgrid, this.Poid);
+                if (P02_PublicFunction.Seq2CellValidating(s, e, this, this.detailgrid, this.Poid) == false)
+                {
+                    e.Cancel = true;
+                }
             };
             #endregion
             #region estcutdate
@@ -3028,6 +3035,7 @@ END";
         protected override bool ClickSaveBefore()
         {
             this.GridValid();
+            this.detailgrid.ValidateControl();
             this.AnyChange = ((DataTable)this.detailgridbs.DataSource).AsEnumerable().Where(w => w.RowState != DataRowState.Unchanged).Any() ||
                 this.PatternPanelTb.AsEnumerable().Where(w => w.RowState != DataRowState.Unchanged).Any() ||
                 this.sizeratioTb.AsEnumerable().Where(w => w.RowState != DataRowState.Unchanged).Any() ||
@@ -3084,6 +3092,40 @@ END";
                 MyUtility.Msg.ErrorBox(string.Format("MarkerName,Layer,SEQ1,SEQ2 can't be empty"));
                 return false;
             }
+
+            #region 檢查相同CutRef#，spreading No、Cut Cell、Est.CutDate, 更新必須都一樣
+            var distnct_List = this.DetailDatas.AsEnumerable().
+              Select(m => new
+              {
+                  CutRef = m.Field<string>("CutRef"),
+              }).Distinct();
+
+            foreach (var item in distnct_List)
+            {
+                // 檢查已撈出資料
+                DataRow[] chkdrs = ((DataTable)this.detailgridbs.DataSource).Select($@" CutRef = '{item.CutRef}' and CutRef <> ''");
+
+                if (chkdrs.Length > 1)
+                {
+                    var chksame = chkdrs.Select(m => new
+                    {
+                        CutRef = MyUtility.Convert.GetString(m["CutRef"]),
+                        NewEstCutDate = m.Field<DateTime?>("EstCutDate"),
+                        NewCutCellID = MyUtility.Convert.GetString(m["CutCellID"]),
+                        NewSpreadingNoID = MyUtility.Convert.GetString(m["SpreadingNoID"]),
+                        NewShift = MyUtility.Convert.GetString(m["Shift"]),
+                    }).Distinct().ToList();
+
+                    // 更新的欄位不能合併表示不一樣
+                    if (chksame.Count > 1)
+                    {
+                        MyUtility.Msg.WarningBox($"You can't set different [Est.CutDate] or [CutCell] or [Spreading No.] or [Shift] in same CutRef# <{chksame[0].CutRef.ToString()}>");
+                        return false;
+                    }
+                }
+            }
+
+            #endregion
 
             #region 刪除Qty 為0
             DataRow[] sizeratioTbrow = this.sizeratioTb.AsEnumerable().Where(
@@ -3699,6 +3741,19 @@ and ofa.id = ob.id and ofa.FabricCode = ob.FabricCode)
                 this.CurrentDetailData["MtlTypeID_SCIRefno"] = dr["WeaveTypeID"].ToString() + " / " + dr["SCIRefno"].ToString();
                 this.CurrentDetailData["Description"] = dr["Description"].ToString();
                 this.CurrentDetailData["FabricPanelCode"] = new_FabricPanelCode;
+
+                // ISP20230787 如果Seq1+Seq2有資料,則Refno來源是PO_Supp_Detail
+                string sqlcmdRefno = $@"    
+select SCIRefno ,Refno 
+from PO_Supp_Detail
+where ID='{this.CurrentMaintain["ID"]}'
+and SEQ1='{this.CurrentDetailData["Seq1"]}' and SEQ2='{this.CurrentDetailData["Seq2"]}'
+";
+                if (MyUtility.Check.Seek(sqlcmdRefno, out DataRow drRefno))
+                {
+                    this.CurrentDetailData["Refno"] = drRefno["Refno"].ToString();
+                    this.CurrentDetailData["SCIRefno"] = drRefno["SCIRefno"].ToString();
+                }
             }
             else
             {
