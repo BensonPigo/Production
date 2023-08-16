@@ -379,8 +379,12 @@ namespace Sci.Production.Warehouse
                     if (this.dtDetail.Rows.Count > 1)
                     {
                         var rows = this.dtDetail.Select($"POID = '{dr["Poid"]}' and Seq1 = '{dr["Seq1"]}' and Seq2 = '{dr["Seq2"]}' and Roll = '{dr["Roll"]}' and Dyelot = '{dr["Dyelot"]}' and StockType = 'B'");
-                        index = this.dtDetail.Rows.IndexOf(rows[0]);
-                        dtCount = rows.Length;
+
+                        if (rows.Length != 0)
+                        {
+                            index = this.dtDetail.Rows.IndexOf(rows[0]);
+                            dtCount = rows.Length;
+                        }
                     }
 
                     if (dtCount == 0)
