@@ -65,25 +65,46 @@ BEGIN
 		and srr.RRRemark like '%CF%'
 	end
 
-
-	select TOP 1  @AIComment =  ad.Type + ': ' +ad.Comment
-			+CHAR(10)+CHAR(13)+
-			+ (CASE  WHEN @IsRRLR = 0 THEN ''
-					 WHEN @IsRRLR_ACH = 1 and @IsRRLR_CF = 1 THEN '(There is RR/LR .' + 'With shade achievability issue, please ensure shading within tolerance as agreement.'+' Lower color fastness waring, please check if need to apply tissue paper.' + ')'
-					 WHEN @IsRRLR_ACH = 1 THEN '(There is RR/LR .' + 'With shade achievability issue, please ensure shading within tolerance as agreement.' + ')'
-					 WHEN @IsRRLR_CF = 1 THEN '(There is RR/LR .' + 'Lower color fastness waring, please check if need to apply tissue paper.' + ')'
+	SELECT @AIComment= REPLACE( STUFF((
+				select '#' +   ad.Type + ': ' +ad.Comment
+				from ExtendServer.ManufacturingExecution.dbo.AIComment_Detail ad
+				where ad.AICommentUkey in (
+					select Ukey from ExtendServer.ManufacturingExecution.dbo.AIComment where FunctionName='QualityWeb'
+				)
+				and ad.IsRRLR = 1
+				and ad.Type IN (
+					select DATA
+					from dbo.SplitString(@inputType,',')
+				)
+				and (@BrandID = 'ADIDAS' OR @BrandID ='REEBOK')
+				FOR XML PATH('')
+			),1,1,'')
+		,'#',CHAR(10)+CHAR(13))
+	+CHAR(10)+CHAR(13)+
+	+ (CASE  WHEN @IsRRLR = 0 THEN ''
+					 WHEN @IsRRLR_ACH = 1 and @IsRRLR_CF = 1 THEN '(There is RR/LR .' + 'With shade achievability issue, please ensure shading within tolerance as agreement.'+' Lower color fastness waring, please check if need to apply tissue paper.' +')'
+					 WHEN @IsRRLR_ACH = 1 THEN '(There is RR/LR .' + 'With shade achievability issue, please ensure shading within tolerance as agreement.' +')'
+					 WHEN @IsRRLR_CF = 1 THEN '(There is RR/LR .' + 'Lower color fastness waring, please check if need to apply tissue paper.' +')'
 					ELSE''
 				END
 			)
-	from ExtendServer.ManufacturingExecution.dbo.AIComment_Detail ad
-	where ad.AICommentUkey in (
-		select Ukey from ExtendServer.ManufacturingExecution.dbo.AIComment where FunctionName='QualityWeb'
-	)
-	and ad.Type IN (
-		select DATA
-		from dbo.SplitString(@inputType,',')
-	)
-	and (@BrandID = 'ADIDAS' OR @BrandID ='REEBOK')
+	+CHAR(10)+CHAR(13)+
+	REPLACE( STUFF((
+				select '#' +   ad.Type + ': ' +ad.Comment
+				from ExtendServer.ManufacturingExecution.dbo.AIComment_Detail ad
+				where ad.AICommentUkey in (
+					select Ukey from ExtendServer.ManufacturingExecution.dbo.AIComment where FunctionName='QualityWeb'
+				)
+				and ad.IsRRLR = 0
+				and ad.Type IN (
+					select DATA
+					from dbo.SplitString(@inputType,',')
+				)
+				and (@BrandID = 'ADIDAS' OR @BrandID ='REEBOK')
+				FOR XML PATH('')
+			),1,1,'')
+		,'#',CHAR(10)+CHAR(13))
+
 	return @AIComment;
 END
 GO
