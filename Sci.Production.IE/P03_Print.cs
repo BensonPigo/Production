@@ -925,7 +925,7 @@ order by NO
             string strXltName = Env.Cfg.XltPathDir + "\\IE_P03_Print.xltx";
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
 
-            excel.Visible = true;
+            // excel.Visible = true;
             if (excel == null)
             {
                 return false;
