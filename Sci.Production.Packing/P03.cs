@@ -2177,7 +2177,18 @@ order by PD.seq
                     }
                 }
 
-                ;
+                string sqlcmd_First = $@"
+                select *
+                from PackingList_Detail PD
+                inner JOIN #TMP T  ON T.[Pack ID] = PD.ID AND T.[CTN#] = PD.CTNStartNo
+                where id = '{MyUtility.Convert.GetString(this.CurrentMaintain["ID"])}' and CTNQty = 1 AND PD.CustCTN = ''   
+                ";
+                DualResult resultFrist = MyUtility.Tool.ProcessWithDatatable(dtexcel, string.Empty, sqlcmd_First, out DataTable dtFirst);
+                if (!resultFrist)
+                {
+                    this.ShowErr(resultFrist);
+                    return;
+                }
 
                 string strExisted_value = string.Empty;
                 string sqlcmd_existed = $@"
@@ -2192,7 +2203,7 @@ order by PD.seq
                     ).value('.', 'NVARCHAR(MAX)'), 1, 1, ''
                 ) AS CombinedCustCTN 
                 ";
-                DualResult resultExisted = MyUtility.Tool.ProcessWithDatatable(dtexcel, string.Empty, sqlcmd_existed, out DataTable dt);
+                DualResult resultExisted = MyUtility.Tool.ProcessWithDatatable(dtFirst, string.Empty, sqlcmd_existed, out DataTable dt);
                 if (!resultExisted)
                 {
                     this.ShowErr(resultExisted);
