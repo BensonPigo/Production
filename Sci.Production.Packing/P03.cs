@@ -2181,23 +2181,16 @@ order by PD.seq
 
                 string strExisted_value = string.Empty;
                 string sqlcmd_existed = $@"
-                SELECT 
+                SELECT
                 STUFF
                 (
-	                (
-		                SELECT DISTINCT ',' + [Cust CTN#]
-		                FROM #tmp c
-		                WHERE c.[Cust CTN#] IN (
-			                SELECT DISTINCT [Cust CTN#]
-			                FROM #tmp
-			                WHERE EXISTS
-			                (
-				                SELECT *
-				                FROM PackingList_Detail d
-				                WHERE [Cust CTN#] = d.CustCTN AND d.CTNQty = 1
-			                )
-	                )FOR XML PATH(''), TYPE).value('.', 'NVARCHAR(MAX)'), 1, 1, ''
-                ) AS CombinedCustCTN                
+                    (
+                        SELECT DISTINCT ',' + t.[Cust CTN#]
+                        FROM #tmp t
+                        INNER JOIN PackingList_Detail d ON t.[Cust CTN#] = d.CustCTN AND d.CTNQty = 1
+                        FOR XML PATH(''), TYPE
+                    ).value('.', 'NVARCHAR(MAX)'), 1, 1, ''
+                ) AS CombinedCustCTN 
                 ";
                 DualResult resultExisted = MyUtility.Tool.ProcessWithDatatable(dtexcel, string.Empty, sqlcmd_existed, out DataTable dt);
                 if (!resultExisted)
@@ -2209,13 +2202,12 @@ order by PD.seq
                 strExisted_value = MyUtility.Convert.GetString(dt.Rows[0]["CombinedCustCTN"]);
 
                 string updateSqlCmd = $@"
-                update b set b.CustCTN = a.[Cust CTN#]
-                from #tmp a
-                inner join PackingList_Detail b on a.[Pack ID] = b.ID and a.CTN# = b.CTNStartNo
-                where not EXISTS 
-                (
-	                select * from PackingList_Detail c where a.[Cust CTN#] = c.CustCTN and c.CTNQty = 1
-                )               
+                UPDATE b
+                SET b.CustCTN = a.[Cust CTN#]
+                FROM #tmp a
+                INNER JOIN PackingList_Detail b ON a.[Pack ID] = b.ID AND a.CTN# = b.CTNStartNo
+                LEFT JOIN PackingList_Detail c ON a.[Cust CTN#] = c.CustCTN AND c.CTNQty = 1
+                WHERE c.CustCTN IS NULL;             
 
                 update PackingList set  EditName = '{Env.User.UserID}', EditDate = GETDATE() where ID = '{this.CurrentMaintain["ID"].ToString()}'
                 ";
@@ -2240,6 +2232,7 @@ The rest of the data has been updated successfully!'
                     {
                         MyUtility.Msg.InfoBox("Import Success !!");
                     }
+
                     this.RenewData();
                     this.OnDetailEntered();
                 }
