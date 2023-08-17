@@ -650,7 +650,7 @@ SET ANSI_PADDING ON
 SET ARITHABORT ON
 SET CONCAT_NULL_YIELDS_NULL ON
 
-declare @id varchar(20) = @sp1		
+declare @id varchar(20) = @sp1	
 
 select distinct StyleID,BrandID,POID,FtyGroup ,CuttingSP ,StyleUkey
 into #tmpOrder
@@ -683,6 +683,32 @@ ID,SuppId,SCIRefNo,ColorID,
 								FOR XML PATH('')),1,1,'') 
 into #ArticleForThread
 from #ArticleForThread_Detail a
+
+-- 要把換算單位和計算的額外拉出來, 不然用子查詢遇到比數太多的會太慢
+SELECT a.ID,a.SEQ1,a.seq2
+,invtQty = Round(sum(dbo.getUnitQty(inv.UnitID, a.StockUnit, isnull(inv.Qty, 0.00))), 2)
+into #InvTrans_inv
+FROM InvTrans inv WITH (NOLOCK)
+inner join PO_Supp_Detail a on   inv.InventoryPOID = a.id
+	and inv.InventorySeq1 = a.Seq1
+	and inv.InventorySeq2 = a.seq2	
+inner join #tmpOrder o on o.poid = a.id
+where  inv.Type in ('1', '4')
+group by a.ID,a.SEQ1,a.seq2
+
+SELECT a.POID,a.SEQ1,a.seq2
+,invtQty = Round(sum(dbo.getUnitQty(inv.UnitID, p.StockUnit, isnull(inv.Qty, 0.00))), 2)
+into #InvTrans_MDPo
+FROM InvTrans inv WITH (NOLOCK)
+inner join MDivisionPoDetail a on   inv.InventoryPOID = a.POID
+	and inv.InventorySeq1 = a.Seq1
+	and inv.InventorySeq2 = a.seq2	
+inner join #tmpOrder o on o.poid = a.POID
+left join PO_Supp_Detail p on p.ID = a.POID
+    and p.SEQ1= a.Seq1 and p.seq2= a.seq2
+where  inv.Type in ('1', '4')
+group by a.POID,a.SEQ1,a.seq2
+
 
 ;WITH QA AS (
 	Select  c.InvNo InvNo
@@ -741,7 +767,6 @@ from #ArticleForThread_Detail a
 				    and cd.SEQ1=a.Seq1 and cd.seq2=a.Seq2) as ColorFastness
     where a.POID like @id 
 )
-
 select *
 from(
     select  ROW_NUMBER() over (partition by id,seq1,seq2 order by id,seq1,seq2,len_D) as ROW_NUMBER_D
@@ -840,15 +865,7 @@ from(
                     , shipQty = Round(dbo.getUnitQty(a.POUnit, a.StockUnit, isnull(a.ShipQty, 0)), 2)
                     , FOC =  Round(dbo.getUnitQty(a.POUnit, a.StockUnit, isnull(a.foc, 0)), 2)
                     , ShipFOC = Round(dbo.getUnitQty(a.POUnit, a.StockUnit, isnull(a.shipfoc, 0)), 2)
-                    , InputQty = isnull((select Round(sum(invtQty), 2)
-                                         from (
-                                            SELECT  dbo.getUnitQty(inv.UnitID, a.StockUnit, isnull(Qty, 0.00))  as invtQty
-	                                        FROM InvTrans inv WITH (NOLOCK)
-	                                        WHERE   inv.InventoryPOID = a.id
-	                                                and inv.InventorySeq1 = a.Seq1
-	                                                and inv.InventorySeq2 = a.seq2
-	                                                and inv.Type in ('1', '4')
-                                         )tmp), 0.00)
+                    , InputQty = isnull((select invtQty from #InvTrans_inv s where s.id = a.id and s.seq1 = a.seq1 and s.seq2 = a.seq2), 0.00)
                     , a.POUnit
                     , iif(a.Complete='1','Y','N') as Complete
                     , a.FinalETA
@@ -1010,15 +1027,7 @@ from(
                     , ShipQty = Round(dbo.getUnitQty(a.POUnit, a.StockUnit, isnull(a.ShipQty, 0)), 2)
                     , FOC = Round(dbo.getUnitQty(a.POUnit, a.StockUnit, isnull(a.FOC, 0)), 2)
                     , ShipFOC = Round(dbo.getUnitQty(a.POUnit, a.StockUnit, isnull(a.ShipFOC, 0)), 2)
-                    , InputQty = isnull((select Round(sum(invtQty), 2)
-                                         from (
-	                                        SELECT dbo.getUnitQty(inv.UnitID, a.StockUnit, isnull(Qty, 0.0)) as invtQty
-	                                        FROM InvTrans inv WITH (NOLOCK)
-	                                        WHERE   inv.InventoryPOID = m.poid
-	                                                and inv.InventorySeq1 = m.Seq1
-	                                                and inv.InventorySeq2 = m.seq2
-	                                                and inv.Type in ('1', '4')
-                                        )tmp), 0.00)
+                    , InputQty = isnull((select invtQty from #InvTrans_MDPo s where s.poid = a.id and s.seq1 = a.seq1 and s.seq2 = a.seq2), 0.00)
                     , a.POUnit
                     , iif(a.Complete='1','Y','N') as Complete
                     , a.FinalETA
@@ -1222,7 +1231,7 @@ left join LocalInventory l with(nolock) on a.OrderId = l.OrderID and a.Refno = l
 left join LocalItem b with(nolock) on a.Refno=b.RefNo
 left join LocalSupp c with(nolock) on b.LocalSuppid=c.ID
 
-drop table #tmpOrder,#tmpLocalPO_Detail,#ArticleForThread_Detail,#ArticleForThread
+drop table #tmpOrder,#tmpLocalPO_Detail,#ArticleForThread_Detail,#ArticleForThread,#InvTrans_inv,#InvTrans_MDPo
             ";
             #endregion
             #region -- 準備sql參數資料 --
