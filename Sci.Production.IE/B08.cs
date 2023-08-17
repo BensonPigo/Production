@@ -122,11 +122,11 @@ namespace Sci.Production.IE
                 objArray[0, 0] = dr["MDivisionID"];
                 objArray[0, 1] = dr["FactoryID"];
                 objArray[0, 2] = dr["ID"];
-                objArray[0, 3] = dr["LastName"];
-                objArray[0, 4] = dr["FirstName"];
+                objArray[0, 3] = dr["LastName1"];
+                objArray[0, 4] = dr["FirstName1"];
                 objArray[0, 5] = dr["Dept"];
                 objArray[0, 6] = dr["Position"];
-                objArray[0, 7] = dr["Section"];
+                objArray[0, 7] = dr["Section1"];
                 objArray[0, 8] = dr["Skill"];
                 objArray[0, 9] = dr["OnBoardDate"];
                 objArray[0, 10] = dr["ResignationDate"];
@@ -161,7 +161,7 @@ namespace Sci.Production.IE
             if (this.EditMode)
             {
                 DataTable machineGroup;
-                DualResult returnResule = DBProxy.Current.Select("Machine", "select ID,Description from MachineGroup WITH (NOLOCK)	where Junk = 0 order by ID", out machineGroup);
+                DualResult returnResule = DBProxy.Current.Select("Machine", "select [ID] = MasterGroupID + ID ,Description from MachineGroup WITH (NOLOCK)	where Junk = 0 order by MasterGroupID,ID", out machineGroup);
                 Win.Tools.SelectItem2 item = new Win.Tools.SelectItem2(machineGroup, "ID,Description", "Group ID,Description", "2,35", this.txtSkill.Text);
 
                 DialogResult returnResult = item.ShowDialog();

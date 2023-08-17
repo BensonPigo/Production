@@ -1267,16 +1267,16 @@ and Name = @PPA
             {
                 sp1,
                 sp2,
-                new SqlParameter("@SewingLine" , this.CurrentMaintain["SewingLineID"]),
+                new SqlParameter("@SewingLine" , this.CurrentMaintain["SewingLineID"] + this.comboSewingTeam1.Text),
             };
-             
+
             if (MyUtility.Check.Empty(this.CurrentMaintain["FactoryID"]))
             {
-                sqlCmd = "select ID,FirstName,LastName,Section,Skill , [Name] = iif(LastName+ ','+ FirstName <> ',' ,LastName+ ','+ FirstName,'') from Employee WITH (NOLOCK) where ResignationDate < GETDATE() and Junk = 0 " + (iD == null ? string.Empty : " and ID = @id ") + (IsEmptySewingLine ? string.Empty : " and SewingLineID = @SewingLine");
+                sqlCmd = "select ID,FirstName,LastName,Section,Skill , [Name] = iif(LastName+ ','+ FirstName <> ',' ,LastName+ ','+ FirstName,'') from Employee WITH (NOLOCK) where (ResignationDate > GETDATE() or ResignationDate is null) and Junk = 0 " + (iD == null ? string.Empty : " and ID = @id ") + (IsEmptySewingLine ? string.Empty : " and (SewingLineID = @SewingLine or Section = @SewingLine)");
             }
             else
             {
-                sqlCmd = "select ID,FirstName,LastName,Section,Skill , [Name] = iif(LastName+ ','+ FirstName <> ',' ,LastName+ ','+ FirstName,'')  from Employee WITH (NOLOCK) where ResignationDate < GETDATE() and Junk = 0 and FactoryID = @factoryid " + (iD == null ? string.Empty : " and ID = @id ") + (IsEmptySewingLine ? string.Empty : " and SewingLineID = @SewingLine");
+                sqlCmd = "select ID,FirstName,LastName,Section,Skill , [Name] = iif(LastName+ ','+ FirstName <> ',' ,LastName+ ','+ FirstName,'')  from Employee WITH (NOLOCK) where (ResignationDate > GETDATE() or ResignationDate is null) and Junk = 0 and FactoryID = @factoryid " + (iD == null ? string.Empty : " and ID = @id ") + (IsEmptySewingLine ? string.Empty : " and (SewingLineID = @SewingLine or Section = @SewingLine)");
             }
 
             DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out this.EmployeeData);

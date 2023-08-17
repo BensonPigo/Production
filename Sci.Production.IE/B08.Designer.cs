@@ -180,7 +180,7 @@
             // 
             this.txtLastName.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.txtLastName.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
-            this.txtLastName.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "LastName", true));
+            this.txtLastName.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "LastName1", true));
             this.txtLastName.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.txtLastName.Location = new System.Drawing.Point(112, 112);
             this.txtLastName.Name = "txtLastName";
@@ -252,7 +252,7 @@
             // 
             this.txtFirstName.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.txtFirstName.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
-            this.txtFirstName.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "FirstName", true));
+            this.txtFirstName.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "FirstName1", true));
             this.txtFirstName.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.txtFirstName.Location = new System.Drawing.Point(112, 148);
             this.txtFirstName.Name = "txtFirstName";
@@ -312,7 +312,7 @@
             // 
             this.txtSection.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.txtSection.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
-            this.txtSection.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Section", true));
+            this.txtSection.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Section1", true));
             this.txtSection.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.txtSection.Location = new System.Drawing.Point(112, 260);
             this.txtSection.Name = "txtSection";
