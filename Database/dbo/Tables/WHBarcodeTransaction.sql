@@ -14,6 +14,8 @@
     [To_NewBarcode]               VARCHAR (255) NOT NULL,
     [To_NewBarcodeSeq]            VARCHAR (10)   NOT NULL,
     [CommitTime]                  DATETIME      NULL,
+    [FromFabric_LocalOrderInvnetoryUkey] BIGINT NULL, 
+    [ToFabric_LocalOrderInventoryUkey] BIGINT NULL, 
     CONSTRAINT [PK_WHBarcodeTransaction] PRIMARY KEY CLUSTERED ([Function] ASC, [TransactionID] ASC, [TransactionUkey] ASC, [Action] ASC)
 );
 GO
@@ -81,3 +83,22 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'單據號�
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'功能代號e.g. P07, P08', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'WHBarcodeTransaction', @level2type = N'COLUMN', @level2name = N'Function';
 
+
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'[轉出] 物料的 LocalOrderInvnetoryUkey',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'WHBarcodeTransaction',
+    @level2type = N'COLUMN',
+    @level2name = N'FromFabric_LocalOrderInvnetoryUkey'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'[轉入] 物料的 LocalOrderInvnetoryUkey',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'WHBarcodeTransaction',
+    @level2type = N'COLUMN',
+    @level2name = N'ToFabric_LocalOrderInventoryUkey'

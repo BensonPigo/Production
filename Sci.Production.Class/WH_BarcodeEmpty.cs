@@ -11,14 +11,16 @@ namespace Sci.Production.Class
     {
         private DataTable dtFty;
         private bool isSubTransferOrBorrowBack;
+        private bool isLocalOrderInventory;
 
         /// <inheritdoc/>
-        public WH_BarcodeEmpty(DataTable dt, string msg, bool isSubTransferOrBorrowBack = false)
+        public WH_BarcodeEmpty(DataTable dt, string msg, bool isSubTransferOrBorrowBack = false, bool isLocalOrderInventory = false)
         {
             this.InitializeComponent();
             this.dtFty = dt;
             this.labMsg.Text = msg;
             this.isSubTransferOrBorrowBack = isSubTransferOrBorrowBack;
+            this.isLocalOrderInventory = isLocalOrderInventory;
         }
 
         /// <inheritdoc/>
@@ -40,6 +42,7 @@ namespace Sci.Production.Class
 
         private void GetData()
         {
+            string strTableName = this.isLocalOrderInventory ? "LocalOrderInventory" : "FtyInventory";
             string balanceQty = this.isSubTransferOrBorrowBack ? "t.Qty" : "f.InQty-f.OutQty+f.AdjustQty-f.ReturnQty";
             string sqlcmd = $@"
 select f.POID,Seq = f.Seq1 + ' ' + f.Seq2,f.Roll,f.Dyelot
@@ -49,9 +52,10 @@ select f.POID,Seq = f.Seq1 + ' ' + f.Seq2,f.Roll,f.Dyelot
 			when 'O' then 'Scrap'
 			else f.StockType end 
 , BalanceQty = {balanceQty}
-from FtyInventory f
+from {strTableName} f
 inner join #tmp t on t.ukey = f.Ukey
 ";
+
             DualResult result = MyUtility.Tool.ProcessWithDatatable(this.dtFty, string.Empty, sqlcmd, out DataTable dtS);
             if (!result)
             {
