@@ -619,7 +619,7 @@ tmpFilterZone as (
 
             // 注意! 新增欄位也要一併新增在這!!
             // ISP20230829 Forecast訂單不會有POID, tmpListPoCombo 直接取用tmpFilterSubProcess就好
-            if (this.poCombo && this.forecast == false)
+            if (this.poCombo && p_type != "forecast")
             {
                 if (this.seperate && p_type.Equals("ALL"))
                 {
