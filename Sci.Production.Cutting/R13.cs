@@ -146,13 +146,13 @@ namespace Sci.Production.Cutting
                 select val = sum(aa.Layer) 
                 from cuttingoutput_Detail aa WITH (NOLOCK)
                 inner join CuttingOutput c WITH (NOLOCK) on aa.ID = c.ID
-                where aa.CutRef = wo.CutRef
+                where aa.CutRef = wo.CutRef and wo.CutRef <> ''
             )acc
             outer apply(
                  Select MincoDate = MIN(co.cdate)
 	            From cuttingoutput co WITH (NOLOCK) 
 	            inner join cuttingoutput_detail cod WITH (NOLOCK) on co.id = cod.id
-	            Where cod.CutRef = wo.CutRef and co.Status != 'New' and co.FactoryID = wo.FactoryID
+	            Where cod.CutRef = wo.CutRef and co.Status != 'New' and co.FactoryID = wo.FactoryID and wo.CutRef <> ''
             )MincDate
             outer apply(
 	            select val = (

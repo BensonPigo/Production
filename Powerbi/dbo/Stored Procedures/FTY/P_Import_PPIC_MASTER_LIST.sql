@@ -48,7 +48,7 @@ BEGIN
 			[Tissue] VARCHAR(1) NULL ,
 			[AF by adidas] VARCHAR(1) NULL ,
 			[Factory Disclaimer] NVARCHAR(50) NULL ,
-			[Factory Disclaimer Remark] NVARCHAR(500) NULL ,
+			[Factory Disclaimer Remark] NVARCHAR(MAX) NULL ,
 			[Approved/Rejected Date] DATE NULL ,
 			[Global Foundation Range] VARCHAR(1) NULL ,
 			[Brand] VARCHAR(8) NULL ,
@@ -207,6 +207,8 @@ BEGIN
 			[Fusible (TMS)] NUMERIC(38, 6) NULL ,
 			[Garment Dye (PCS)] NUMERIC(38, 6) NULL ,
 			[Garment Dye (Price)] NUMERIC(38, 6) NULL ,
+			[GMT DRY (PCS)] NUMERIC(38, 6) NULL ,
+			[GMT DRY (Price)] NUMERIC(38, 6) NULL ,
 			[GMT WASH (PCS)] NUMERIC(38, 6) NULL ,
 			[GMT WASH (Price)] NUMERIC(38, 6) NULL ,
 			[HEAT SET PLEAT (PCS)] NUMERIC(38, 6) NULL ,
@@ -306,6 +308,8 @@ BEGIN
 			[TTL_Fusible (TMS)] NUMERIC(38, 6) NULL ,
 			[TTL_Garment Dye (PCS)] NUMERIC(38, 6) NULL ,
 			[TTL_Garment Dye (Price)] NUMERIC(38, 6) NULL ,
+			[TTL_GMT DRY (PCS)] NUMERIC(38, 6) NULL ,
+			[TTL_GMT DRY (Price)] NUMERIC(38, 6) NULL ,
 			[TTL_GMT WASH (PCS)] NUMERIC(38, 6) NULL ,
 			[TTL_GMT WASH (Price)] NUMERIC(38, 6) NULL ,
 			[TTL_HEAT SET PLEAT (PCS)] NUMERIC(38, 6) NULL ,
@@ -390,7 +394,7 @@ BEGIN
 		, [CUTTING TAPE (Price)], [D-chain ZIG ZAG (TMS)], [DIE CUT (TMS)], [DIE-CUT (TMS)], [DOWN (TMS)], [DOWN FILLING (TMS)], [EM/DEBOSS (I/H) (TMS)]
 		, [EMBOSS/DEBOSS (PCS)], [EMBOSS/DEBOSS (Price)], [EMBROIDERY (STITCH)], [EMBROIDERY (Price)], [EMBROIDERY EYELET (TMS)], [EMBROIDERY TMS (TMS)]
 		, [FARM OUT QUILTING (PCS)], [FARM OUT QUILTING (Price)], [FEEDOFARM (TMS)], [FLATLOCK (TMS)], [Fusible (TMS)], [Garment Dye (PCS)]
-		, [Garment Dye (Price)], [GMT WASH (PCS)], [GMT WASH (Price)], [HEAT SET PLEAT (PCS)], [HEAT SET PLEAT (Price)], [HEAT TRANSFER (PANEL)]
+		, [Garment Dye (Price)], [GMT DRY (PCS)], [GMT DRY (Price)], [GMT WASH (PCS)], [GMT WASH (Price)], [HEAT SET PLEAT (PCS)], [HEAT SET PLEAT (Price)], [HEAT TRANSFER (PANEL)]
 		, [HEAT TRANSFER (TMS)], [INDIRECT MANPOWER (TMS)], [INSPECTION (TMS)], [INTENSIVE MACHINE (TMS)], [JOKERTAG (TMS)], [KEY BUTTONHOLE (TMS)]
 		, [LASER (TMS)], [LASER CUTTER (TMS)], [LASER-AXLETREE (TMS)], [LASER-GALVANOMETER (TMS)], [PACKING (TMS)], [PAD PRINTING (PCS)], [PAD PRINTING (Price)]
 		, [POCKET WELT], [PRESSING (TMS)], [PRINTING (PCS)], [PRINTING (Price)], [PRINTING PPU (PPU)], [POSubCon], [SubCon], [QUILTING (Price)]
@@ -407,7 +411,7 @@ BEGIN
 		, [TTL_D-chain ZIG ZAG (TMS)], [TTL_DIE CUT (TMS)], [TTL_DIE-CUT (TMS)], [TTL_DOWN (TMS)], [TTL_DOWN FILLING (TMS)], [TTL_EM/DEBOSS (I/H) (TMS)]
 		, [TTL_EMBOSS/DEBOSS (PCS)], [TTL_EMBOSS/DEBOSS (Price)], [TTL_EMBROIDERY (STITCH)], [TTL_EMBROIDERY (Price)], [TTL_EMBROIDERY EYELET (TMS)]
 		, [TTL_EMBROIDERY TMS (TMS)], [TTL_FARM OUT QUILTING (PCS)], [TTL_FARM OUT QUILTING (Price)], [TTL_FEEDOFARM (TMS)], [TTL_FLATLOCK (TMS)], [TTL_Fusible (TMS)]
-		, [TTL_Garment Dye (PCS)], [TTL_Garment Dye (Price)], [TTL_GMT WASH (PCS)], [TTL_GMT WASH (Price)], [TTL_HEAT SET PLEAT (PCS)], [TTL_HEAT SET PLEAT (Price)]
+		, [TTL_Garment Dye (PCS)], [TTL_Garment Dye (Price)], [TTL_GMT DRY (PCS)], [TTL_GMT DRY (Price)], [TTL_GMT WASH (PCS)], [TTL_GMT WASH (Price)], [TTL_HEAT SET PLEAT (PCS)], [TTL_HEAT SET PLEAT (Price)]
 		, [TTL_HEAT TRANSFER (PANEL)], [TTL_HEAT TRANSFER (TMS)], [TTL_INDIRECT MANPOWER (TMS)], [TTL_INSPECTION (TMS)], [TTL_INTENSIVE MACHINE (TMS)]
 		, [TTL_JOKERTAG (TMS)], [TTL_KEY BUTTONHOLE (TMS)], [TTL_LASER (TMS)], [TTL_LASER CUTTER (TMS)], [TTL_LASER-AXLETREE (TMS)], [TTL_LASER-GALVANOMETER (TMS)]
 		, [TTL_PACKING (TMS)], [TTL_PAD PRINTING (PCS)], [TTL_PAD PRINTING (Price)], [TTL_POCKET WELT], [TTL_PRESSING (TMS)], [TTL_PRINTING (PCS)], [TTL_PRINTING (Price)]
@@ -618,6 +622,8 @@ BEGIN
 		, ISNULL(t.[Fusible (TMS)], 0)
 		, ISNULL(t.[Garment Dye (PCS)], 0)
 		, ISNULL(t.[Garment Dye (Price)], 0)
+		, ISNULL(t.[GMT DRY (PCS)], 0)
+		, ISNULL(t.[GMT DRY (Price)], 0)
 		, ISNULL(t.[GMT WASH (PCS)], 0)
 		, ISNULL(t.[GMT WASH (Price)], 0)
 		, ISNULL(t.[HEAT SET PLEAT (PCS)], 0)
@@ -717,6 +723,8 @@ BEGIN
 		, ISNULL(t.[TTL_Fusible (TMS)], 0)
 		, ISNULL(t.[TTL_Garment Dye (PCS)], 0)
 		, ISNULL(t.[TTL_Garment Dye (Price)], 0)
+		, ISNULL(t.[TTL_GMT DRY (PCS)], 0)
+		, ISNULL(t.[TTL_GMT DRY (Price)], 0)
 		, ISNULL(t.[TTL_GMT WASH (PCS)], 0)
 		, ISNULL(t.[TTL_GMT WASH (Price)], 0)
 		, ISNULL(t.[TTL_HEAT SET PLEAT (PCS)], 0)
@@ -974,6 +982,8 @@ BEGIN
 			, p.[Fusible (TMS)] = ISNULL(t.[Fusible (TMS)], 0)
 			, p.[Garment Dye (PCS)] = ISNULL(t.[Garment Dye (PCS)], 0)
 			, p.[Garment Dye (Price)] = ISNULL(t.[Garment Dye (Price)], 0)
+			, p.[GMT DRY (PCS)] = ISNULL(t.[GMT DRY (PCS)], 0)
+			, p.[GMT DRY (Price)] = ISNULL(t.[GMT DRY (Price)], 0)
 			, p.[GMT WASH (PCS)] = ISNULL(t.[GMT WASH (PCS)], 0)
 			, p.[GMT WASH (Price)] = ISNULL(t.[GMT WASH (Price)], 0)
 			, p.[HEAT SET PLEAT (PCS)] = ISNULL(t.[HEAT SET PLEAT (PCS)], 0)
@@ -1073,6 +1083,8 @@ BEGIN
 			, p.[TTL_Fusible (TMS)] = ISNULL(t.[TTL_Fusible (TMS)], 0)
 			, p.[TTL_Garment Dye (PCS)] = ISNULL(t.[TTL_Garment Dye (PCS)], 0)
 			, p.[TTL_Garment Dye (Price)] = ISNULL(t.[TTL_Garment Dye (Price)], 0)
+			, p.[TTL_GMT DRY (PCS)] = ISNULL(t.[TTL_GMT DRY (PCS)], 0)
+			, p.[TTL_GMT DRY (Price)] = ISNULL(t.[TTL_GMT DRY (Price)], 0)
 			, p.[TTL_GMT WASH (PCS)] = ISNULL(t.[TTL_GMT WASH (PCS)], 0)
 			, p.[TTL_GMT WASH (Price)] = ISNULL(t.[TTL_GMT WASH (Price)], 0)
 			, p.[TTL_HEAT SET PLEAT (PCS)] = ISNULL(t.[TTL_HEAT SET PLEAT (PCS)], 0)
