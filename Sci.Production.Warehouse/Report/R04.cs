@@ -1,5 +1,6 @@
 ﻿using Ict;
 using Sci.Data;
+using Sci.Win.Tools;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -14,7 +15,8 @@ namespace Sci.Production.Warehouse
     {
         private string factory;
         private string brand;
-        private string mdivisionid;
+        private string bulkFactory;
+        private string stkFactory;
         private string operation;
         private string fabricType;
         private DateTime? cfmdate1;
@@ -27,7 +29,6 @@ namespace Sci.Production.Warehouse
             : base(menuitem)
         {
             this.InitializeComponent();
-            this.txtMdivision.Text = Env.User.Keyword;
             this.comboFabricType.Type = "Pms_FabricType";
         }
 
@@ -46,20 +47,18 @@ namespace Sci.Production.Warehouse
 
             this.cfmdate1 = this.dateCFMDate.Value1;
             this.cfmdate2 = this.dateCFMDate.Value2;
-            this.mdivisionid = this.txtMdivision.Text;
-            this.factory = this.txtfactory.Text;
+            this.factory = this.txtStkfactory.Text;
             this.brand = this.txtbrand.Text;
             this.operation = this.txtdropdownlistOperation.SelectedValue.ToString();
             this.fabricType = this.comboFabricType.SelectedValue.ToString();
+            this.bulkFactory = this.txtBulkfactory.Text;
+            this.stkFactory = this.txtStkfactory.Text;
 
             this.condition.Clear();
             this.condition.Append(string.Format(
                 @"Issue Date : {0} ~ {1}" + "   ",
                 Convert.ToDateTime(this.cfmdate1).ToString("yyyy/MM/dd"),
                 Convert.ToDateTime(this.cfmdate2).ToString("yyyy/MM/dd")));
-            this.condition.Append(string.Format(
-                @"M : {0}" + "   ",
-                this.mdivisionid));
             this.condition.Append(string.Format(
                 @"Factory : {0}" + "   ",
                 this.factory));
@@ -118,16 +117,11 @@ select  operation = case a.type
 
         ,ETA = (select eta 
                 from Inventory WITH (NOLOCK) 
-                where Inventory.Ukey = a.InventoryUkey and Inventory.POID=d.ID and Inventory.Seq1=d.SEQ1 and Inventory.Seq2=d.SEQ2 and Inventory.MDivisionID=Factory.MDivisionID and (Inventory.FactoryID=orders.FactoryID or Inventory.FactoryID=a.TransferFactory ) and Inventory.UnitID=d.POUnit and Inventory.ProjectID=orders.ProjectID and Inventory.InventoryRefnoID=a.InventoryRefnoId) 
+                where Inventory.Ukey = a.InventoryUkey) 
         ,cuttingInline = (select min(cutting.CutInLine) 
                           from Cutting WITH (NOLOCK) 
                           where id = a.InventoryPOID) 
-        ,[Bulk Fty] =
-            case when a.TransferFactory <> '' then a.TransferFactory 
-                 when exists(select 1 from orders o where o.id = a.poid) then (select FactoryID from orders o where o.id = a.poid)
-                 when exists(select 1 from orders o where o.id = a.InventoryPOID) then (select FactoryID from orders o where o.id = a.InventoryPOID)
-                 else ''
-            end
+        ,[Bulk Fty] = BulkFty.v
         ,Factory_ArrivedQty = iif((a.type='1' or a.type='4') ,e.InQty, 0.00) 
         ,productionQty = Round(dbo.GetUnitQty(d.POUnit, d.StockUnit, (isnull(d.NETQty,0.000) + isnull(d.LossQty,0.000))), 2)
         ,bulkBalance = case a.type
@@ -144,9 +138,9 @@ select  operation = case a.type
                        end 
         ,InventorySpSeq = a.InventoryPOID+'-'+a.InventorySeq1+'-'+a.InventorySeq2 
         ,[Stk Brand] = a.BrandID
-        ,InventorySpSeason = invOrders.SeasonID
+        ,InventorySpSeason = Orders.SeasonID
         ,InventoryProjectID = (select ProjectID from dbo.orders WITH (NOLOCK) where id = a.InventoryPOID) 
-        ,InventoryFactoryID = (select FactoryID from dbo.orders WITH (NOLOCK) where id = a.InventoryPOID) 
+        ,InventoryFactoryID = a.FactoryID
         ,MR_Input = Round(dbo.GetUnitQty(d.POUnit, d.StockUnit, d.InputQty), 2)
         ,InventoryInQty = (select sum(inqty) 
                            from ftyinventory WITH (NOLOCK) 
@@ -155,18 +149,23 @@ select  operation = case a.type
         ,a.Refno
         ,ColorID = irsC.SpecValue
         ,SizeSpec = irsS.SpecValue
-        ,Qty = Round(dbo.GetUnitQty(d.POUnit, d.StockUnit, a.Qty), 2)
+        ,[Qty] = iif (d.StockUnit is not null and d.StockUnit != ''
+						, Round(dbo.GetUnitQty(a.UnitID, d.StockUnit, a.Qty), 2)
+						, Round(dbo.GetUnitQty(a.UnitID, BulkPSD.StockUnit, a.Qty), 2))
 		,[InventoryQty]=IIF((a.type='2' or a.type='6'), ISNULL( Inventory70.LInvQty ,0)  ,ISNULL( InventoryInv.LInvQty ,0) )
-        ,a.UnitID
+        ,[UnitID] = iif (d.StockUnit is not null and d.StockUnit != '', d.StockUnit, BulkPSD.StockUnit)
         ,e.BLocation
         ,reason = a.ReasonID +'-'+(select ReasonEN from InvtransReason WITH (NOLOCK) where id = a.ReasonID) 
-        ,handle = dbo.getTPEPass1((select PoHandle from Inventory WITH (NOLOCK) where Inventory.Ukey = a.InventoryUkey and Inventory.POID=d.ID and Inventory.Seq1=d.SEQ1 and Inventory.Seq2=d.SEQ2 and Inventory.MDivisionID=Factory.MDivisionID and (Inventory.FactoryID=orders.FactoryID or Inventory.FactoryID=a.TransferFactory ) and Inventory.UnitID=d.POUnit and Inventory.ProjectID=orders.ProjectID and Inventory.InventoryRefnoID=a.InventoryRefnoId)) 
+        ,handle = dbo.getTPEPass1((select PoHandle 
+									from Inventory WITH (NOLOCK) 
+									where Inventory.Ukey = a.InventoryUkey))
 from dbo.invtrans a WITH (NOLOCK) 
 inner join InventoryRefno b WITH (NOLOCK) on b.id = a.InventoryRefnoId
-inner join PO_Supp_Detail d WITH (NOLOCK) on d.ID = a.InventoryPOID and d.SEQ1 = a.InventorySeq1 and d.seq2 =  a.InventorySeq2
-inner join Orders orders with (nolock) on d.id = orders.id
-left join Orders invOrders with (nolock) on invOrders.ID = a.InventoryPOID
-inner join Factory factory on orders.FactoryID = factory.id
+left join PO_Supp_Detail d WITH (NOLOCK) on d.ID = a.InventoryPOID and d.SEQ1 = a.InventorySeq1 and d.seq2 =  a.InventorySeq2
+left join Orders orders with (nolock) on d.id = orders.id
+left join PO_Supp_Detail BulkPSD WITH (NOLOCK) on BulkPSD.ID = a.seq70poid and BulkPSD.SEQ1 = a.seq70seq1 and BulkPSD.seq2 =  a.seq70seq2
+left join Orders BulkO WITH (NOLOCK) on a.seq70poid = BulkO.ID
+left join Factory factory on orders.FactoryID = factory.id
 left join MDivisionPoDetail e WITH (NOLOCK) on e.POID = A.InventoryPOID AND E.SEQ1 = A.InventorySeq1 AND E.Seq2 = A.InventorySeq2
 left join InventoryRefno_Spec irsC on irsC.InventoryRefNoID = b.id and irsC.SpecColumnID = 'Color'
 left join InventoryRefno_Spec irsS on irsS.InventoryRefNoID = b.id and irsS.SpecColumnID = 'Size'
@@ -200,8 +199,15 @@ OUTER APPLY(
 	FROM MDivisionPoDetail
 	WHERE POID=a.InventoryPOID  AND SEQ1=a.InventorySeq1 AND SEQ2=a.InventorySeq2
 )InventoryInv
-
-where 1=1 ");
+outer apply (
+    select v = 
+            case when a.TransferFactory <> '' then a.TransferFactory 
+                 when exists(select 1 from orders o where o.id = a.poid) then (select FactoryID from orders o where o.id = a.poid)
+                 when exists(select 1 from orders o where o.id = a.InventoryPOID) then (select FactoryID from orders o where o.id = a.InventoryPOID)
+                 else ''
+            end
+) BulkFty
+where (orders.FactoryID in (select id from Factory) or BulkO.FactoryID in (select id from Factory))	 ");
             string whereStr = string.Empty;
 
             if (!MyUtility.Check.Empty(this.cfmdate1))
@@ -217,19 +223,24 @@ where 1=1 ");
             sqlCmd.Append(whereStr);
             #region --- 條件組合  ---
 
-            if (!MyUtility.Check.Empty(this.mdivisionid))
+            if (!MyUtility.Check.Empty(this.bulkFactory))
             {
-                sqlCmd.Append(" AND factory.MDivisionid = @mdivision");
-                sp_mdivision.Value = this.mdivisionid;
-                cmds.Add(sp_mdivision);
+                sqlCmd.Append(" and (BulkFty.v  =  @Bulkfactory or BulkO.FtyGroup  =  @Bulkfactory)");
+                cmds.Add(new System.Data.SqlClient.SqlParameter("@Bulkfactory", this.bulkFactory));
             }
 
-            if (!MyUtility.Check.Empty(this.factory))
+            if (!MyUtility.Check.Empty(this.stkFactory))
             {
-                sqlCmd.Append(" and (orders.FactoryID  =  @factory or a.TransferFactory =  @factory)");
-                sp_factory.Value = this.factory;
-                cmds.Add(sp_factory);
+                sqlCmd.Append(" and (a.FactoryID  =  @stkfactory or orders.FtyGroup  =  @stkfactory)");
+                cmds.Add(new System.Data.SqlClient.SqlParameter("@stkfactory", this.stkFactory));
             }
+
+            //if (!MyUtility.Check.Empty(this.factory))
+            //{
+            //    sqlCmd.Append(" and (orders.FactoryID  =  @factory or a.TransferFactory =  @factory)");
+            //    sp_factory.Value = this.factory;
+            //    cmds.Add(sp_factory);
+            //}
 
             if (!MyUtility.Check.Empty(this.brand))
             {
@@ -307,12 +318,34 @@ where 1=1 ");
             return true;
         }
 
-        private void TxtMdivision_Validated(object sender, EventArgs e)
+        private void TexBulkFactorytBox_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
-            if (!this.txtMdivision.Text.EqualString(this.txtMdivision.OldValue))
+            string cmd = $@"Select DISTINCT FtyGroup as Factory from Production.dbo.Factory WITH (NOLOCK) where IsProduceFty = 1 order by FtyGroup";
+            DataTable dt;
+            DBProxy.Current.Select(null, cmd, out dt);
+            SelectItem item = new SelectItem(cmd, "Factory", "10", string.Empty, "Factory");
+            DialogResult returnResult = item.ShowDialog();
+            if (returnResult == DialogResult.Cancel)
             {
-                this.txtfactory.Text = string.Empty;
+                return;
             }
+
+            this.txtBulkfactory.Text = item.GetSelectedString();
+        }
+
+        private void TxtStkFactory_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        {
+            string cmd = $@"Select DISTINCT FtyGroup as Factory from Production.dbo.Factory WITH (NOLOCK) where IsProduceFty = 1 order by FtyGroup";
+            DataTable dt;
+            DBProxy.Current.Select(null, cmd, out dt);
+            SelectItem item = new SelectItem(cmd, "Factory", "10", string.Empty, "Factory");
+            DialogResult returnResult = item.ShowDialog();
+            if (returnResult == DialogResult.Cancel)
+            {
+                return;
+            }
+
+            this.txtStkfactory.Text = item.GetSelectedString();
         }
     }
 }
