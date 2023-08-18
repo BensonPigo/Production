@@ -553,15 +553,6 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
                     return;
                 }
 
-                // 更新同樣TimeStudyDetailUkey的Cycle
-                foreach (DataRow updateRow in this.DetailDatas)
-                {
-                    if (MyUtility.Convert.GetLong(updateRow["TimeStudyDetailUkey"]) == MyUtility.Convert.GetLong(dr["TimeStudyDetailUkey"]))
-                    {
-                        updateRow["Cycle"] = curCycle;
-                    }
-                }
-
                 string firstDisplayNo = this.detailgrid.GetDataRow<DataRow>(this.detailgrid.FirstDisplayedScrollingRowIndex)["No"].ToString();
                 this.lineMappingGrids.RefreshSubData(false);
                 this.RefreshLineMappingBalancingSummary();
@@ -793,7 +784,7 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
                .Numeric("SewerDiffPercentageDesc", header: "%", width: Widths.AnsiChars(5), iseditingreadonly: true)
                .Numeric("DivSewer", header: "Div. Sewer", decimal_places: 4, width: Widths.AnsiChars(5), iseditingreadonly: true)
                .Numeric("OriSewer", header: "Ori. Sewer", decimal_places: 4, width: Widths.AnsiChars(5), iseditingreadonly: true)
-               .CellThreadComboID("ThreadComboID", "Thread" + Environment.NewLine + "Color", this, width: Widths.AnsiChars(10))
+               .CellThreadComboID("ThreadComboID", "Thread" + Environment.NewLine + "Combination", this, width: Widths.AnsiChars(10))
                .EditText("Notice", header: "Notice", width: Widths.AnsiChars(40));
 
             this.Helper.Controls.Grid.Generator(this.gridCentralizedPPALeft)
@@ -937,12 +928,37 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
                 return;
             }
 
-            P06_EditOperation p06_EditOperation = new P06_EditOperation((DataTable)this.detailgridbs.DataSource);
-            DialogResult dialogResult = p06_EditOperation.ShowDialog();
-            if (dialogResult == DialogResult.OK)
+            // Employee欄位跟著No要keep住，這邊先保存一版修改前的資料，後面再用此資料復原Employee資訊
+            var employeeInfoByNo = this.DetailDatas
+                .Where(s => MyUtility.Convert.GetBool(s["Selected"]))
+                .GroupBy(s => s["No"].ToString())
+                .Select(s => new
+                {
+                    No = s.Key,
+                    EmployeeID = s.First()["EmployeeID"].ToString(),
+                    EmployeeName = s.First()["EmployeeName"].ToString(),
+                    EmployeeSkill = s.First()["EmployeeSkill"].ToString(),
+                })
+                .ToList();
+
+            using (P05_EditOperation p06_EditOperation = new P05_EditOperation((DataTable)this.detailgridbs.DataSource))
             {
-                this.lineMappingGrids.RefreshSubData();
-                this.RefreshLineMappingBalancingSummary();
+                DialogResult dialogResult = p06_EditOperation.ShowDialog();
+                if (dialogResult == DialogResult.OK)
+                {
+                    foreach (var itemEmployeeInfo in employeeInfoByNo)
+                    {
+                        foreach (DataRow drDetail in this.DetailDatas.Where(s => s["No"].ToString() == itemEmployeeInfo.No))
+                        {
+                            drDetail["EmployeeID"] = itemEmployeeInfo.EmployeeID;
+                            drDetail["EmployeeName"] = itemEmployeeInfo.EmployeeName;
+                            drDetail["EmployeeSkill"] = itemEmployeeInfo.EmployeeSkill;
+                        }
+                    }
+
+                    this.lineMappingGrids.RefreshSubData();
+                    this.RefreshLineMappingBalancingSummary();
+                }
             }
         }
 

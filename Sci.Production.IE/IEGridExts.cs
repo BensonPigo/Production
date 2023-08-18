@@ -3,6 +3,7 @@ using Ict.Win;
 using Sci.Data;
 using Sci.Win.Tems;
 using Sci.Win.Tools;
+using Sci.Win.UI;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -44,7 +45,8 @@ namespace Sci.Production.IE
                     {
                         if (e.RowIndex != -1)
                         {
-                            DataRow dr = mainForm.detailgrid.GetDataRow<DataRow>(e.RowIndex);
+                            Grid parentGrid = (Grid)((DataGridViewColumn)s).DataGridView;
+                            DataRow dr = parentGrid.GetDataRow<DataRow>(e.RowIndex);
                             string sqlCmd = "select ID,Description from MachineType WITH (NOLOCK) where Junk = 0";
                             Win.Tools.SelectItem item = new Win.Tools.SelectItem(sqlCmd, "8,43", dr["MachineTypeID"].ToString())
                             {
@@ -70,7 +72,8 @@ namespace Sci.Production.IE
             {
                 if (mainForm.EditMode)
                 {
-                    DataRow dr = mainForm.detailgrid.GetDataRow<DataRow>(e.RowIndex);
+                    Grid parentGrid = (Grid)((DataGridViewColumn)s).DataGridView;
+                    DataRow dr = parentGrid.GetDataRow<DataRow>(e.RowIndex);
                     if (!MyUtility.Check.Empty(e.FormattedValue) && e.FormattedValue.ToString() != dr["MachineTypeID"].ToString())
                     {
                         // sql參數
@@ -247,7 +250,8 @@ namespace Sci.Production.IE
 
             settings.EditingMouseDown += (s, e) =>
             {
-                DataRow dr = mainForm.detailgrid.GetDataRow<DataRow>(e.RowIndex);
+                Grid parentGrid = (Grid)((DataGridViewColumn)s).DataGridView;
+                DataRow dr = parentGrid.GetDataRow<DataRow>(e.RowIndex);
                 if (mainForm.EditMode && e.Button == MouseButtons.Right)
                 {
                     string sqlcmd = @"
@@ -256,7 +260,7 @@ from Mold WITH (NOLOCK)
 where Junk = 0
 and IsAttachment = 1";
 
-                    Win.Tools.SelectItem2 item = new Win.Tools.SelectItem2(sqlcmd, "ID,DescEN", "13,60,10", mainForm.CurrentDetailData["Attachment"].ToString(), null, null, null)
+                    Win.Tools.SelectItem2 item = new Win.Tools.SelectItem2(sqlcmd, "ID,DescEN", "13,60,10", dr["Attachment"].ToString(), null, null, null)
                     {
                         Width = 666,
                     };
@@ -266,16 +270,16 @@ and IsAttachment = 1";
                         return;
                     }
 
-                    if (MyUtility.Convert.GetString(mainForm.CurrentDetailData["Attachment"]) != item.GetSelectedString())
+                    if (MyUtility.Convert.GetString(dr["Attachment"]) != item.GetSelectedString())
                     {
-                        mainForm.CurrentDetailData["SewingMachineAttachmentID"] = string.Empty;
+                        dr["SewingMachineAttachmentID"] = string.Empty;
                     }
 
-                    mainForm.CurrentDetailData["Attachment"] = item.GetSelectedString();
+                    dr["Attachment"] = item.GetSelectedString();
 
-                    if (mainForm.CurrentDetailData.Table.Columns.Contains("MoldID"))
+                    if (dr.Table.Columns.Contains("MoldID"))
                     {
-                        mainForm.CurrentDetailData["MoldID"] = item.GetSelectedString();
+                        dr["MoldID"] = item.GetSelectedString();
                     }
                 }
             };
@@ -284,9 +288,10 @@ and IsAttachment = 1";
             {
                 if (mainForm.EditMode)
                 {
-                    DataRow dr = mainForm.detailgrid.GetDataRow<DataRow>(e.RowIndex);
+                    Grid parentGrid = (Grid)((DataGridViewColumn)s).DataGridView;
+                    DataRow dr = parentGrid.GetDataRow<DataRow>(e.RowIndex);
 
-                    List<SqlParameter> cmds = new List<SqlParameter>() { new SqlParameter { ParameterName = "@OperationID", Value = MyUtility.Convert.GetString(mainForm.CurrentDetailData["OperationID"]) } };
+                    List<SqlParameter> cmds = new List<SqlParameter>() { new SqlParameter { ParameterName = "@OperationID", Value = MyUtility.Convert.GetString(dr["OperationID"]) } };
                     string sqlcmd = @"
 select [Attachment] = STUFF((
 		        select concat(',' ,s.Data)
@@ -311,8 +316,8 @@ where o.ID = @OperationID";
                     List<string> operationList = new List<string>();
                     if (!result)
                     {
-                        mainForm.CurrentDetailData["Attachment"] = string.Empty;
-                        mainForm.CurrentDetailData["MoldID"] = string.Empty;
+                        dr["Attachment"] = string.Empty;
+                        dr["MoldID"] = string.Empty;
                         MyUtility.Msg.WarningBox("SQL Connection failt!!\r\n" + result.ToString());
                     }
 
@@ -321,13 +326,13 @@ where o.ID = @OperationID";
                         operationList = dtOperation.Rows[0]["Attachment"].ToString().Replace(";", ",").Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries).Distinct().ToList();
                         if (e.FormattedValue.Empty())
                         {
-                            mainForm.CurrentDetailData["Attachment"] = dtOperation.Rows[0]["Attachment"].ToString();
-                            if (mainForm.CurrentDetailData.Table.Columns.Contains("MoldID"))
+                            dr["Attachment"] = dtOperation.Rows[0]["Attachment"].ToString();
+                            if (dr.Table.Columns.Contains("MoldID"))
                             {
-                                mainForm.CurrentDetailData["MoldID"] = dtOperation.Rows[0]["Attachment"].ToString();
+                                dr["MoldID"] = dtOperation.Rows[0]["Attachment"].ToString();
                             }
 
-                            mainForm.CurrentDetailData["SewingMachineAttachmentID"] = string.Empty;
+                            dr["SewingMachineAttachmentID"] = string.Empty;
 
                             return;
                         }
@@ -346,12 +351,12 @@ where Junk = 0";
                     result = DBProxy.Current.Select(null, sqlcmd, out dtMold);
                     if (!result)
                     {
-                        mainForm.CurrentDetailData["Attachment"] = string.Empty;
-                        if (mainForm.CurrentDetailData.Table.Columns.Contains("MoldID"))
+                        dr["Attachment"] = string.Empty;
+                        if (dr.Table.Columns.Contains("MoldID"))
                         {
-                            mainForm.CurrentDetailData["MoldID"] = string.Empty;
+                            dr["MoldID"] = string.Empty;
                         }
-                        mainForm.CurrentDetailData["SewingMachineAttachmentID"] = string.Empty;
+                        dr["SewingMachineAttachmentID"] = string.Empty;
                         MyUtility.Msg.WarningBox("SQL Connection failt!!\r\n" + result.ToString());
                     }
 
@@ -364,26 +369,26 @@ where Junk = 0";
                     if (existsMold.Any())
                     {
                         e.Cancel = true;
-                        mainForm.CurrentDetailData["Attachment"] = string.Join(",", getMold.Where(x => existsMold.Where(y => !y.EqualString(x)).Any()).Distinct().ToList());
-                        if (mainForm.CurrentDetailData.Table.Columns.Contains("MoldID"))
+                        dr["Attachment"] = string.Join(",", getMold.Where(x => existsMold.Where(y => !y.EqualString(x)).Any()).Distinct().ToList());
+                        if (dr.Table.Columns.Contains("MoldID"))
                         {
-                            mainForm.CurrentDetailData["MoldID"] = string.Join(",", getMold.Where(x => existsMold.Where(y => !y.EqualString(x)).Any()).Distinct().ToList());
+                            dr["MoldID"] = string.Join(",", getMold.Where(x => existsMold.Where(y => !y.EqualString(x)).Any()).Distinct().ToList());
                         }
 
                         MyUtility.Msg.WarningBox("Attachment : " + string.Join(",", existsMold.ToList()) + "  need include in Mold setting !!", "Data need include in setting");
                         return;
                     }
 
-                    if (MyUtility.Convert.GetString(mainForm.CurrentDetailData["Attachment"]) != string.Join(",", getMold.Distinct().ToList()))
+                    if (MyUtility.Convert.GetString(dr["Attachment"]) != string.Join(",", getMold.Distinct().ToList()))
                     {
-                        mainForm.CurrentDetailData["SewingMachineAttachmentID"] = string.Empty;
+                        dr["SewingMachineAttachmentID"] = string.Empty;
                     }
 
-                    mainForm.CurrentDetailData["Attachment"] = string.Join(",", getMold.Distinct().ToList());
+                    dr["Attachment"] = string.Join(",", getMold.Distinct().ToList());
 
-                    if (mainForm.CurrentDetailData.Table.Columns.Contains("MoldID"))
+                    if (dr.Table.Columns.Contains("MoldID"))
                     {
-                        mainForm.CurrentDetailData["MoldID"] = string.Join(",", getMold.Distinct().ToList());
+                        dr["MoldID"] = string.Join(",", getMold.Distinct().ToList());
                     }
                 }
             };
@@ -413,7 +418,8 @@ where Junk = 0";
                 {
                     if (e.RowIndex != -1)
                     {
-                        DataRow dr = mainForm.detailgrid.GetDataRow<DataRow>(e.RowIndex);
+                        Grid parentGrid = (Grid)((DataGridViewColumn)s).DataGridView;
+                        DataRow dr = parentGrid.GetDataRow<DataRow>(e.RowIndex);
 
                         if (MyUtility.Check.Empty(dr["Attachment"]))
                         {
@@ -452,9 +458,11 @@ where Junk = 0";
                     {
                         return;
                     }
+                    Grid parentGrid = (Grid)((DataGridViewColumn)s).DataGridView;
+                    DataRow dr = parentGrid.GetDataRow<DataRow>(e.RowIndex);
 
                     string newSewingMachineAttachmentID = MyUtility.Convert.GetString(e.FormattedValue);
-                    string moldID = mainForm.CurrentDetailData["Attachment"].ToString();
+                    string moldID = dr["Attachment"].ToString();
 
                     string sqlcmd = $@"
 select a.ID
@@ -527,6 +535,11 @@ where a.MoldID IN ('{string.Join("','", moldID.Split(','))}') ";
                     return;
                 }
 
+                if (((DataGridViewGenerator.TextColumn)s).IsEditingReadOnly)
+                {
+                    return;
+                }
+
                 if (e.Button != MouseButtons.Right)
                 {
                     return;
@@ -547,7 +560,8 @@ where a.MoldID IN ('{string.Join("','", moldID.Split(','))}') ";
                     styleUkey = MyUtility.GetValue.Lookup($"select ukey from Style with (nolock) where ID = '{mainForm.CurrentMaintain["StyleID"]}' and SeasonID = '{mainForm.CurrentMaintain["SeasonID"]}' and BrandID = '{mainForm.CurrentMaintain["BrandID"]}'");
                 }
 
-                DataRow dr = mainForm.detailgrid.GetDataRow<DataRow>(e.RowIndex);
+                Grid parentGrid = (Grid)((DataGridViewColumn)s).DataGridView;
+                DataRow dr = parentGrid.GetDataRow<DataRow>(e.RowIndex);
                 string sqlCmd = $@"
 select　Thread_ComboID
 from Style_ThreadColorCombo st with (nolock)
@@ -574,7 +588,8 @@ where	st.StyleUkey = '{styleUkey}' and
                     return;
                 }
 
-                DataRow dr = mainForm.detailgrid.GetDataRow<DataRow>(e.RowIndex);
+                Grid parentGrid = (Grid)((DataGridViewColumn)s).DataGridView;
+                DataRow dr = parentGrid.GetDataRow<DataRow>(e.RowIndex);
                 if (MyUtility.Check.Empty(e.FormattedValue) || e.FormattedValue.ToString() == dr[propertyname].ToString())
                 {
                     return;
@@ -642,6 +657,9 @@ where	st.StyleUkey = '{styleUkey}' and
             {
                 if (mainForm.EditMode && e.Button == MouseButtons.Right)
                 {
+                    Grid parentGrid = (Grid)((DataGridViewColumn)s).DataGridView;
+                    DataRow dr = parentGrid.GetDataRow<DataRow>(e.RowIndex);
+
                     string sqlcmd = @"
 select PartID = smt.ID , m.DescEN ,MoldID = m.ID
 from Mold m WITH (NOLOCK)
@@ -653,7 +671,7 @@ from Mold
 where Junk=0 and IsTemplate=1
 ";
 
-                    SelectItem2 item = new SelectItem2(sqlcmd, "MoldID,DescEN,PartID", "13,60,20", mainForm.CurrentDetailData["Template"].ToString(), null, null, null)
+                    SelectItem2 item = new SelectItem2(sqlcmd, "MoldID,DescEN,PartID", "13,60,20", dr["Template"].ToString(), null, null, null)
                     {
                         Width = 1000,
                     };
@@ -668,11 +686,11 @@ where Junk=0 and IsTemplate=1
                     if (selectedRows.Any())
                     {
                         var t = selectedRows.ToList();
-                        mainForm.CurrentDetailData["Template"] = string.Join(",", t.Select(o => o["PartID"]).ToList());
+                        dr["Template"] = string.Join(",", t.Select(o => o["PartID"]).ToList());
                     }
                     else
                     {
-                        mainForm.CurrentDetailData["Template"] = string.Empty;
+                        dr["Template"] = string.Empty;
                     }
                 }
             };
@@ -681,7 +699,10 @@ where Junk=0 and IsTemplate=1
             {
                 if (mainForm.EditMode)
                 {
-                    List<SqlParameter> cmds = new List<SqlParameter>() { new SqlParameter { ParameterName = "@OperationID", Value = MyUtility.Convert.GetString(mainForm.CurrentDetailData["OperationID"]) } };
+                    Grid parentGrid = (Grid)((DataGridViewColumn)s).DataGridView;
+                    DataRow dr = parentGrid.GetDataRow<DataRow>(e.RowIndex);
+
+                    List<SqlParameter> cmds = new List<SqlParameter>() { new SqlParameter { ParameterName = "@OperationID", Value = MyUtility.Convert.GetString(dr["OperationID"]) } };
                     string sqlcmd = @"
 select [Mold] = STUFF((
 		        select concat(',' ,s.Data)
@@ -706,7 +727,7 @@ where o.ID = @OperationID";
                     List<string> operationList = new List<string>();
                     if (!result)
                     {
-                        mainForm.CurrentDetailData["Mold"] = string.Empty;
+                        dr["Mold"] = string.Empty;
                         MyUtility.Msg.WarningBox("SQL Connection failt!!\r\n" + result.ToString());
                     }
 
@@ -716,12 +737,12 @@ where o.ID = @OperationID";
 
                         if (MyUtility.Check.Empty(e.FormattedValue))
                         {
-                            mainForm.CurrentDetailData["Template"] = dtOperation.Rows[0]["Template"].ToString();
+                            dr["Template"] = dtOperation.Rows[0]["Template"].ToString();
                             return;
                         }
                     }
 
-                    mainForm.CurrentDetailData["Template"] = e.FormattedValue;
+                    dr["Template"] = e.FormattedValue;
                     sqlcmd = @"
 select PartID = smt.ID , m.DescEN ,MoldID = m.ID
 from Mold m WITH (NOLOCK)
@@ -734,7 +755,7 @@ where Junk=0 and IsTemplate=1
 ";
                     DataTable dt;
                     DBProxy.Current.Select(null, sqlcmd, out dt);
-                    string[] getLocation = mainForm.CurrentDetailData["Template"].ToString().Split(',').Distinct().ToArray();
+                    string[] getLocation = dr["Template"].ToString().Split(',').Distinct().ToArray();
                     bool selectId = true;
                     List<string> errTemplate = new List<string>();
                     List<string> trueTemplate = new List<string>();
@@ -758,7 +779,7 @@ where Junk=0 and IsTemplate=1
                     }
 
                     trueTemplate.Sort();
-                    mainForm.CurrentDetailData["Template"] = string.Join(",", trueTemplate.ToArray());
+                    dr["Template"] = string.Join(",", trueTemplate.ToArray());
                 }
             };
 

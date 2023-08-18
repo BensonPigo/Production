@@ -287,7 +287,7 @@ outer apply (
 		FOR XML PATH('')
 	),1,1,''), '')
 ) getDetail 
-where combine.tmpString != ''
+where combine.tmpString != '' and List.Data != ''
 Order by main.No, Seq, List.no
 
 drop table #main

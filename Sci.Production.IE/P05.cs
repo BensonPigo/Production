@@ -38,7 +38,7 @@ namespace Sci.Production.IE
                 new Win.UI.Button(),
         };
 
-        private string sqlGetAutomatedLineMapping_DetailAuto = @"
+        public string sqlGetAutomatedLineMapping_DetailAuto = @"
 select  ad.*,
         [PPADesc] = isnull(d.Name, ''),
         [OperationDesc] = iif(isnull(op.DescEN, '') = '', ad.OperationID, op.DescEN),
@@ -51,7 +51,7 @@ where {0}
 order by ad.SewerManpower, ad.No, ad.Seq
 ";
 
-        private string sqlGetAutomatedLineMapping_DetailTemp = @"
+        public string sqlGetAutomatedLineMapping_DetailTemp = @"
 select  ad.*,
         [PPADesc] = isnull(d.Name, ''),
         [OperationDesc] = iif(isnull(op.DescEN, '') = '', ad.OperationID, op.DescEN),
@@ -63,6 +63,19 @@ left join Operation op with (nolock) on op.ID = ad.OperationID
 where {0}
 order by ad.SewerManpower, ad.No, ad.Seq
 ";
+
+        public string sqlGetAutomatedLineMapping_Detail = @"
+select  cast(0 as bit) as Selected,
+        ad.*,
+        [PPADesc] = isnull(d.Name, ''),
+        [OperationDesc] = iif(isnull(op.DescEN, '') = '', ad.OperationID, op.DescEN),
+        [SewerDiffPercentageDesc] = round(ad.SewerDiffPercentage * 100, 0),
+        [TimeStudyDetailUkeyCnt] = Count(TimeStudyDetailUkey) over (partition by TimeStudyDetailUkey)
+from AutomatedLineMapping_Detail ad WITH (NOLOCK)
+left join DropDownList d with (nolock) on d.ID = ad.PPA  and d.Type = 'PMS_IEPPA'
+left join Operation op with (nolock) on op.ID = ad.OperationID
+where {0}
+order by iif(ad.No = '', 'ZZ', ad.No), ad.Seq";
 
         private decimal StandardLBR
         {
@@ -243,19 +256,7 @@ AND ALMCS.Junk = 0
             this.dtAutomatedLineMapping_DetailTemp.Clear();
             this.dtAutomatedLineMapping_DetailAuto.Clear();
             string masterID = (e.Master == null) ? string.Empty : e.Master["ID"].ToString();
-            this.DetailSelectCommand =
-                $@"
-select  cast(0 as bit) as Selected,
-        ad.*,
-        [PPADesc] = isnull(d.Name, ''),
-        [OperationDesc] = iif(isnull(op.DescEN, '') = '', ad.OperationID, op.DescEN),
-        [SewerDiffPercentageDesc] = round(ad.SewerDiffPercentage * 100, 0),
-        [TimeStudyDetailUkeyCnt] = Count(TimeStudyDetailUkey) over (partition by TimeStudyDetailUkey)
-from AutomatedLineMapping_Detail ad WITH (NOLOCK)
-left join DropDownList d with (nolock) on d.ID = ad.PPA  and d.Type = 'PMS_IEPPA'
-left join Operation op with (nolock) on op.ID = ad.OperationID
-where ad.ID = '{masterID}'
-order by iif(ad.No = '', 'ZZ', ad.No), ad.Seq";
+            this.DetailSelectCommand = string.Format(this.sqlGetAutomatedLineMapping_Detail, $" ad.ID = '{masterID}'");
 
             return base.OnDetailSelectCommandPrepare(e);
         }
@@ -306,7 +307,7 @@ order by iif(ad.No = '', 'ZZ', ad.No), ad.Seq";
         /// <inheritdoc/>
         protected override void ClickNewAfter()
         {
-            P05_CreateNewLineMapping p05_CreateNewLineMapping = new P05_CreateNewLineMapping(this.CurrentMaintain, (DataTable)this.detailgridbs.DataSource, this.dtAutomatedLineMapping_DetailTemp, this.dtAutomatedLineMapping_DetailAuto);
+            P05_CreateNewLineMapping p05_CreateNewLineMapping = new P05_CreateNewLineMapping(this, this.CurrentMaintain, (DataTable)this.detailgridbs.DataSource, this.dtAutomatedLineMapping_DetailTemp, this.dtAutomatedLineMapping_DetailAuto);
             p05_CreateNewLineMapping.ShowDialog();
             if (this.DetailDatas.Count == 0)
             {
@@ -677,7 +678,7 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
                .Numeric("SewerDiffPercentageDesc", header: "%", width: Widths.AnsiChars(5), iseditingreadonly: true)
                .Numeric("DivSewer", header: "Div. Sewer", decimal_places: 4, width: Widths.AnsiChars(5), iseditingreadonly: true)
                .Numeric("OriSewer", header: "Ori. Sewer", decimal_places: 4, width: Widths.AnsiChars(5), iseditingreadonly: true)
-               .CellThreadComboID("ThreadComboID", "Thread" + Environment.NewLine + "Color", this, width: Widths.AnsiChars(10))
+               .CellThreadComboID("ThreadComboID", "Thread" + Environment.NewLine + "Combination", this, width: Widths.AnsiChars(10))
                .EditText("Notice", header: "Notice", width: Widths.AnsiChars(40));
 
             this.Helper.Controls.Grid.Generator(this.gridCentralizedPPALeft)
@@ -1045,13 +1046,15 @@ from #tmp
                 return;
             }
 
-            P05_EditOperation p05_EditOperation = new P05_EditOperation((DataTable)this.detailgridbs.DataSource);
-            DialogResult dialogResult = p05_EditOperation.ShowDialog();
-            if (dialogResult == DialogResult.OK)
+            using (P05_EditOperation p05_EditOperation = new P05_EditOperation((DataTable)this.detailgridbs.DataSource))
             {
-                this.lineMappingGrids.RefreshSubData();
-                this.RefreshAutomatedLineMappingSummary();
-                this.ShowLBRChart(this.CurrentMaintain);
+                DialogResult dialogResult = p05_EditOperation.ShowDialog();
+                if (dialogResult == DialogResult.OK)
+                {
+                    this.lineMappingGrids.RefreshSubData();
+                    this.RefreshAutomatedLineMappingSummary();
+                    this.ShowLBRChart(this.CurrentMaintain);
+                }
             }
         }
 

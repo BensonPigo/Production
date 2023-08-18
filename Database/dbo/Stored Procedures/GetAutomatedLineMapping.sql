@@ -252,7 +252,8 @@ Create table #tmpReaultBase(
 DECLARE Create_StationNo_cursor CURSOR FOR 
 	select	td.Ukey, tgs.GroupSeq, td.Sewer, tgs.SewerLimitLow, tgs.SewerLimitMiddle, tgs.SewerLimitHigh, tgs.TotalSewer,
 			[NextGroupSeq] = LEAD(tgs.GroupSeq,1,0) OVER (PARTITION BY tgs.TotalSewer ORDER BY tgs.TotalSewer, tgs.GroupSeq, td.Seq),
-			[GoupSumSewer] = Sum(td.Sewer) OVER (PARTITION BY tgs.TotalSewer, tgs.GroupSeq)
+			[GoupSumSewer] = Sum(td.Sewer) OVER (PARTITION BY tgs.TotalSewer, tgs.GroupSeq),
+			tgs.ManualGroupSewer
 	from #tmpGroupSewer tgs
 	inner join #tmpTimeStudy_Detail td on tgs.GroupSeq = td.GroupSeq and tgs.TotalSewer = td.TotalSewer
 	order by tgs.TotalSewer, tgs.GroupSeq, td.Seq
@@ -271,9 +272,11 @@ Declare @NextGroupSeqCreateStation int
 Declare @SewerCreateStation numeric(7, 4)
 Declare @TotalSewerForCreate int
 Declare @LastTotalSewerForCreate int
+Declare @LimitGroupSewer int
+Declare @AccGroupSewer int
 
 OPEN Create_StationNo_cursor  
-FETCH NEXT FROM Create_StationNo_cursor INTO @TimeStudyDetailUkey,  @GroupSeqCreateStation, @SewerCreateStation, @SewerLimitLow, @SewerLimitMiddle, @SewerLimitHigh, @TotalSewerForCreate, @NextGroupSeqCreateStation, @GroupSumSewer
+FETCH NEXT FROM Create_StationNo_cursor INTO @TimeStudyDetailUkey,  @GroupSeqCreateStation, @SewerCreateStation, @SewerLimitLow, @SewerLimitMiddle, @SewerLimitHigh, @TotalSewerForCreate, @NextGroupSeqCreateStation, @GroupSumSewer, @LimitGroupSewer
 WHILE @@FETCH_STATUS = 0 
 BEGIN
 	if @TotalSewerForCreate <> @LastTotalSewerForCreate
@@ -284,6 +287,12 @@ BEGIN
 		where GroupSeq = @GroupSeqCreateStation and
 			  StationNo = @StationNo and
 			  TotalSewer = @TotalSewerForCreate
+
+	select @AccGroupSewer = count(*)
+	from (	select distinct StationNo
+			from #tmpReaultBase
+			where GroupSeq = @GroupSeqCreateStation and
+				  TotalSewer = @TotalSewerForCreate) a
 
 	--如果整個Group都在安全範圍內直接insert同一個No就好
 	if(@GroupSumSewer >= @SewerLimitLow and @GroupSumSewer <= @SewerLimitHigh)
@@ -298,9 +307,12 @@ BEGIN
 		set @UnAssignSewer = @SewerCreateStation
 
 		--如果同group 上一個站位有小於RangeLow的sewer，就必須在這站先補到Middle
-		if(@LastGroupAssignSewer > 0 and @LastGroupAssignSewer < @SewerLimitLow)
+		--如果同group使用人數已到達上限就只能捕在最後一站
+		if(	@LastGroupAssignSewer > 0 and 
+			(@LastGroupAssignSewer < @SewerLimitLow or @AccGroupSewer = @LimitGroupSewer))
 		begin
-			set @AssignSewer = case when @GroupSeqCreateStation <> @NextGroupSeqCreateStation and (@SewerCreateStation + @LastGroupAssignSewer) <= @SewerLimitHigh then @SewerCreateStation
+			set @AssignSewer = case when @AccGroupSewer = @LimitGroupSewer then @SewerCreateStation
+									when @GroupSeqCreateStation <> @NextGroupSeqCreateStation and (@SewerCreateStation + @LastGroupAssignSewer) <= @SewerLimitHigh then @SewerCreateStation
 									when @SewerCreateStation >= @SewerLimitMiddle - @LastGroupAssignSewer then @SewerLimitMiddle - @LastGroupAssignSewer
 									else @SewerCreateStation end
 			
@@ -328,7 +340,7 @@ BEGIN
 	end
 
 	set @LastTotalSewerForCreate = @TotalSewerForCreate
-FETCH NEXT FROM Create_StationNo_cursor INTO @TimeStudyDetailUkey,  @GroupSeqCreateStation, @SewerCreateStation, @SewerLimitLow, @SewerLimitMiddle, @SewerLimitHigh, @TotalSewerForCreate, @NextGroupSeqCreateStation, @GroupSumSewer
+FETCH NEXT FROM Create_StationNo_cursor INTO @TimeStudyDetailUkey,  @GroupSeqCreateStation, @SewerCreateStation, @SewerLimitLow, @SewerLimitMiddle, @SewerLimitHigh, @TotalSewerForCreate, @NextGroupSeqCreateStation, @GroupSumSewer, @LimitGroupSewer
 END
 CLOSE Create_StationNo_cursor
 DEALLOCATE Create_StationNo_cursor
@@ -351,7 +363,7 @@ order by td.Seq
 
 select	[No] = isnull(RIGHT(REPLICATE('0', 2) + cast(tb.StationNo as varchar(3)), 2), ''),
 		[Seq] = ROW_NUMBER() OVER (PARTITION BY tb.TotalSewer ORDER BY td.Seq),
-		[Location] = tl.OperationID,
+		[Location] = isnull(tl.OperationID, ''),
 		td.PPA,
 		td.MachineTypeID,
 		o.MasterPlusGroup,
@@ -542,14 +554,14 @@ BEGIN
 				   0,
 				   '',
 				   '',
-				   @PressingMachineTypeID,
+				   @PackingMachineTypeID,
 				   '',
 				   'PROCIPF00003',
 				   '**Packing',
 				   '',
 				   '',
 				   '',
-				   @PressingProTMS,
+				   @PackingProTMS,
 				   @SewerDiffPercentage, 
 				   0,
 				   0,

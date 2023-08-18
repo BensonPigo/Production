@@ -6,6 +6,7 @@ using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -16,6 +17,17 @@ namespace Sci.Production.Prg
     /// </summary>
     public class GridRowDrag
     {
+        /// <summary>
+        /// 自動scroll方向
+        /// </summary>
+        enum ScrollDirection
+        {
+            None,
+            Up,
+            Down,
+        }
+
+        private ScrollDirection scrollDirection = ScrollDirection.None;
         private Image dragImage; // 截取的圖片
         private Point mouseLocation;
         private int finalDragIndex = -1;
@@ -24,6 +36,7 @@ namespace Sci.Production.Prg
         private Action<DataRow> beforeRowDragDo;
         private bool enableDragCell;
         private List<string> excludeDragCols = new List<string>();
+        private BackgroundWorker backgroundScrollMainGrid = new BackgroundWorker();
 
         private DataTable DataMain
         {
@@ -54,7 +67,7 @@ namespace Sci.Production.Prg
         {
             this.mainGrid = tarGrid;
             this.mainGrid.AllowDrop = true;
-
+            this.backgroundScrollMainGrid.WorkerSupportsCancellation = true;
             // 處理拖曳開始事件
             this.mainGrid.MouseDown += this.DataGridView_MouseDown;
 
@@ -71,6 +84,8 @@ namespace Sci.Production.Prg
 
             this.mainGrid.Paint += this.DataGridView_Paint;
 
+            this.backgroundScrollMainGrid.DoWork += this.BackgroundScrollMainGrid_DoWork;
+
             this.afterRowDragDo = afterRowDragDo;
             this.beforeRowDragDo = beforeRowDragDo;
 
@@ -80,6 +95,62 @@ namespace Sci.Production.Prg
             {
                 this.excludeDragCols = excludeDragCols;
             }
+        }
+
+        private void BackgroundScrollMainGrid_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
+        {
+            BackgroundWorker worker = sender as BackgroundWorker;
+
+            while (!worker.CancellationPending)
+            {
+                if (worker.CancellationPending)
+                {
+                    return;
+                }
+
+                Thread.Sleep(80);
+
+                if (worker.CancellationPending)
+                {
+                    return;
+                }
+
+                int newIndex = 0;
+                if (this.scrollDirection == ScrollDirection.Up)
+                {
+                    newIndex = this.mainGrid.FirstDisplayedScrollingRowIndex - 1;
+                }
+                else if (this.scrollDirection == ScrollDirection.Down)
+                {
+                    newIndex = this.mainGrid.FirstDisplayedScrollingRowIndex + 1;
+                }
+                else
+                {
+                    continue;
+                }
+
+                if ((newIndex < 0 && this.scrollDirection == ScrollDirection.Up) || 
+                    (this.IsGridScrolledToBottom(this.mainGrid) && this.scrollDirection == ScrollDirection.Down))
+                {
+                    continue;
+                }
+
+                this.mainGrid.BeginInvoke(new Action(() =>
+                {
+                    this.mainGrid.FirstDisplayedScrollingRowIndex = newIndex;
+                }));
+            }
+        }
+
+        private bool IsGridScrolledToBottom(DataGridView grid)
+        {
+            if (grid.Rows.Count == 0)
+            {
+                return false;
+            }
+
+            int lastVisibleRowIndex = grid.DisplayedRowCount(false) + grid.FirstDisplayedScrollingRowIndex - 1;
+            return lastVisibleRowIndex >= grid.Rows.Count - 1;
         }
 
         private void DataGridView_MouseDown(object sender, MouseEventArgs e)
@@ -117,13 +188,33 @@ namespace Sci.Production.Prg
                 if (rowIndex >= 0)
                 {
                     // 開始拖曳操作
-                    this.mainGrid.DoDragDrop(this.mainGrid.Rows[rowIndex], DragDropEffects.Move);
+                    this.mainGrid.BeginInvoke(new Action(() =>
+                    {
+                        this.scrollDirection = ScrollDirection.None;
+                        if (!this.backgroundScrollMainGrid.IsBusy)
+                        {
+                            this.backgroundScrollMainGrid.RunWorkerAsync();
+                        }
+
+                        this.mainGrid.DoDragDrop(this.mainGrid.Rows[rowIndex], DragDropEffects.Move);
+                        this.scrollDirection = ScrollDirection.None;
+                        if (this.backgroundScrollMainGrid.IsBusy)
+                        {
+                            this.backgroundScrollMainGrid.CancelAsync();
+                        }
+
+                        this.dragImage?.Dispose();
+                        this.dragImage = null;
+                        this.mainGrid.Refresh();
+                    }));
                 }
             }
         }
 
         private void DataGridView_DragEnter(object sender, DragEventArgs e)
         {
+            this.scrollDirection = ScrollDirection.None;
+
             // 確保拖曳的是資料列
             if (e.Data.GetDataPresent("Ict.Win.UI.DataGridView+Row"))
             {
@@ -192,8 +283,12 @@ namespace Sci.Production.Prg
                 }
 
                 // 重設拖移相關變數
+                this.dragImage?.Dispose();
                 this.dragImage = null;
-                this.mainGrid.Refresh();
+                this.mainGrid.BeginInvoke(new Action(() =>
+                {
+                    this.mainGrid.Refresh();
+                }));
             }
         }
 
@@ -206,9 +301,10 @@ namespace Sci.Production.Prg
 
             DataRow dataRow = dataTable.Rows[sourceIndex];
             DataRow newRow = dataTable.NewRow();
-            newRow.ItemArray = dataRow.ItemArray;
-
             DataRowState oriRowState = dataRow.RowState;
+
+            newRow.ItemArray = oriRowState == DataRowState.Modified ? this.GetRowItemArrayByVersion(dataRow, DataRowVersion.Original) : dataRow.ItemArray;
+            object[] currentRowData = dataRow.ItemArray;
 
             // 從 DataTable 中移除資料列
             dataTable.Rows.Remove(dataRow);
@@ -222,23 +318,49 @@ namespace Sci.Production.Prg
             else if (oriRowState == DataRowState.Modified)
             {
                 newRow.AcceptChanges();
-                newRow[0] = newRow[0];
+                newRow.ItemArray = currentRowData;
             }
 
             return newRow;
         }
 
+        private object[] GetRowItemArrayByVersion(DataRow srcRow, DataRowVersion dataRowVersion)
+        {
+            object[] resultItemArray = new object[srcRow.Table.Columns.Count];
+            int colIndex = 0;
+            foreach (DataColumn col in srcRow.Table.Columns)
+            {
+                resultItemArray[colIndex] = srcRow[col.ColumnName, dataRowVersion];
+                colIndex++;
+            }
+
+            return resultItemArray;
+        }
+
         private void DataGridView_DragLeave(object sender, EventArgs e)
         {
-            // 清除截取的圖片
-            this.dragImage?.Dispose();
-            this.dragImage = null;
+            Point mousePosition = this.mainGrid.PointToClient(Cursor.Position);
+            Rectangle gridBounds = this.mainGrid.Bounds;
+
+            if (mousePosition.Y < gridBounds.Top + 50)
+            {
+                this.scrollDirection = ScrollDirection.Up;
+            }
+            else if (mousePosition.Y > gridBounds.Bottom - 50)
+            {
+                this.scrollDirection = ScrollDirection.Down;
+            }
+
+            if (!this.backgroundScrollMainGrid.IsBusy)
+            {
+                this.backgroundScrollMainGrid.RunWorkerAsync();
+            }
         }
 
         private void DataGridView_Paint(object sender, PaintEventArgs e)
         {
             // 繪製拖移的圖片
-            if (this.dragImage != null)
+            if (this.dragImage != null && this.scrollDirection == ScrollDirection.None)
             {
                 e.Graphics.DrawImage(this.dragImage, this.mouseLocation);
             }
@@ -246,10 +368,9 @@ namespace Sci.Production.Prg
             if (this.finalDragIndex >= 0)
             {
                 this.mainGrid.ClearSelection();
-                this.mainGrid.Rows[this.finalDragIndex].Selected = true;
+                this.mainGrid.SelectRowTo(this.finalDragIndex);
                 this.finalDragIndex = -1;
             }
         }
-
     }
 }

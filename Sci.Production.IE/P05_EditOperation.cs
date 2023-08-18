@@ -94,15 +94,14 @@ namespace Sci.Production.IE
             }
 
             if (drTarget.RowState == DataRowState.Added &&
-                (colDataPropertyName == "No" ||
-                colDataPropertyName == "Location" ||
+                (colDataPropertyName == "Location" ||
                 colDataPropertyName == "MachineTypeID" ||
                 colDataPropertyName == "MasterPlusGroup" ||
                 colDataPropertyName == "OperationDesc"))
             {
                 this.gridEditOperation.Rows[e.RowIndex].Cells[e.ColumnIndex].Style.BackColor = Color.Pink;
             }
-            else if (colDataPropertyName == "No" && MyUtility.Check.Empty(this.gridEditOperation.Rows[e.RowIndex].Cells["No"].Value))
+            else if (colDataPropertyName == "No")
             {
                 this.gridEditOperation.Rows[e.RowIndex].Cells[e.ColumnIndex].Style.BackColor = Color.Pink;
             }
@@ -133,11 +132,6 @@ namespace Sci.Production.IE
                     return;
                 }
 
-                if (this.gridEditOperation.Rows[e.RowIndex].Cells[e.ColumnIndex].Style.BackColor != Color.Pink)
-                {
-                    return;
-                }
-
                 DataRow curRow = this.gridEditOperation.GetDataRow(e.RowIndex);
 
                 Win.Tools.SelectItem item = new Win.Tools.SelectItem(this.dtNoSelectItem, "No", null, null, false, null)
@@ -151,8 +145,15 @@ namespace Sci.Production.IE
                     return;
                 }
 
+                if (curRow["No"].ToString() == item.GetSelectedString())
+                {
+                    return;
+                }
+
                 curRow["No"] = item.GetSelectedString();
                 curRow.EndEdit();
+
+                this.MergeSameTimeStudy_DetailUkeyByNo();
             };
 
             colNo.EditingMouseDown += (s, e) =>
@@ -167,11 +168,6 @@ namespace Sci.Production.IE
                     return;
                 }
 
-                if (this.gridEditOperation.Rows[e.RowIndex].Cells[e.ColumnIndex].Style.BackColor != Color.Pink)
-                {
-                    return;
-                }
-
                 DataRow curRow = this.gridEditOperation.GetDataRow(e.RowIndex);
 
                 Win.Tools.SelectItem item = new Win.Tools.SelectItem(this.dtNoSelectItem, "No", null, null, false, null)
@@ -185,8 +181,15 @@ namespace Sci.Production.IE
                     return;
                 }
 
+                if (curRow["No"].ToString() == item.GetSelectedString())
+                {
+                    return;
+                }
+
                 curRow["No"] = item.GetSelectedString();
                 curRow.EndEdit();
+
+                this.MergeSameTimeStudy_DetailUkeyByNo();
             };
 
             colGroupOperation.EditingMouseDown += (s, e) =>
@@ -238,6 +241,8 @@ namespace Sci.Production.IE
                 curRow["PPADesc"] = selectedResult["PPADesc"];
                 curRow["OperationDesc"] = selectedResult["OperationDesc"];
                 curRow.EndEdit();
+
+                this.MergeSameTimeStudy_DetailUkeyByNo();
             };
 
             colUpdSewer.CellValidating += (sender, e) =>
@@ -246,7 +251,6 @@ namespace Sci.Production.IE
                 {
                     return;
                 }
-
 
                 DataRow dr = this.gridEditOperation.GetDataRow<DataRow>(e.RowIndex);
 
@@ -364,6 +368,11 @@ namespace Sci.Production.IE
                         dragRow["Selected"] = true;
                     }
 
+                    if (!MyUtility.Check.Empty(dragRow["No"]))
+                    {
+                        this.MergeSameTimeStudy_DetailUkeyByNo();
+                    }
+
                     break;
                 }
             }
@@ -440,7 +449,7 @@ namespace Sci.Production.IE
             }
 
             // 更新TimeStudyDetailUkeyCnt
-            foreach (var groupItem  in checkDivSewerBalance)
+            foreach (var groupItem in checkDivSewerBalance)
             {
                 foreach (DataRow updRow in groupItem.DetailRows)
                 {
@@ -472,6 +481,51 @@ namespace Sci.Production.IE
             this.dtAutomatedLineMapping_DetailCopy.MergeTo(ref this.dtAutomatedLineMapping_Detail);
 
             this.DialogResult = DialogResult.OK;
+        }
+
+        private void MergeSameTimeStudy_DetailUkeyByNo()
+        {
+            var groupTimeStudy_DetailUkeyNo = this.dtAutomatedLineMapping_DetailCopy.AsEnumerable()
+                                                .GroupBy(s => new
+                                                {
+                                                    TimeStudy_DetailUkey = s["TimeStudyDetailUkey"].ToString(),
+                                                    No = s["No"].ToString(),
+                                                });
+
+            if (groupTimeStudy_DetailUkeyNo.Any(s => s.Count() > 1 && !MyUtility.Check.Empty(s.Key.No)))
+            {
+                DataTable newAutomatedLineMapping_DetailCopy =
+                    groupTimeStudy_DetailUkeyNo.Select(groupItem =>
+                    {
+                        DataRow newRow = this.dtAutomatedLineMapping_DetailCopy.NewRow();
+                        newRow = groupItem.First();
+
+                        // 同TimeStudy_DetailUkey, No有多筆情況要合併
+                        if (groupItem.Count() > 1)
+                        {
+                            newRow["UpdDivSewer"] = groupItem.Sum(s => MyUtility.Convert.GetDecimal(s["UpdDivSewer"]));
+                            if (MyUtility.Check.Empty(newRow["UpdDivSewer"]))
+                            {
+                                newRow["UpdDivSewer"] = DBNull.Value;
+                            }
+
+                            newRow["UpdSewerDiffPercentage"] = groupItem.Sum(s => MyUtility.Convert.GetInt(s["UpdSewerDiffPercentage"]));
+                            if (MyUtility.Check.Empty(newRow["UpdSewerDiffPercentage"]))
+                            {
+                                newRow["UpdSewerDiffPercentage"] = DBNull.Value;
+                            }
+
+                            newRow["DivSewer"] = groupItem.Sum(s => MyUtility.Convert.GetDecimal(s["DivSewer"]));
+                            newRow["SewerDiffPercentage"] = groupItem.Sum(s => MyUtility.Convert.GetDecimal(s["SewerDiffPercentage"]));
+                            newRow["SewerDiffPercentageDesc"] = MyUtility.Convert.GetInt(MyUtility.Convert.GetDecimal(newRow["SewerDiffPercentage"]) * 100);
+                        }
+
+                        return newRow;
+                    }).CopyToDataTable();
+
+                this.dtAutomatedLineMapping_DetailCopy = newAutomatedLineMapping_DetailCopy;
+                this.gridEditOperationBs.DataSource = newAutomatedLineMapping_DetailCopy;
+            }
         }
     }
 }

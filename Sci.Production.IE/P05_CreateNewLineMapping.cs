@@ -23,18 +23,21 @@ namespace Sci.Production.IE
         private DataTable dtDetail;
         private DataTable dtAutomatedLineMapping_DetailTemp;
         private DataTable dtAutomatedLineMapping_DetailAuto;
+        private P05 p05;
 
         /// <summary>
         /// P05_CreateNewLineMapping
         /// </summary>
+        /// <param name="p05">p05</param>
         /// <param name="mainRow">mainRow</param>
         /// <param name="dtDetail">dtDetail</param>
         /// <param name="dtAutomatedLineMapping_DetailTemp">dtAutomatedLineMapping_DetailTemp</param>
         /// <param name="dtAutomatedLineMapping_DetailAuto">dtAutomatedLineMapping_DetailAuto</param>
-        public P05_CreateNewLineMapping(DataRow mainRow, DataTable dtDetail, DataTable dtAutomatedLineMapping_DetailTemp, DataTable dtAutomatedLineMapping_DetailAuto)
+        public P05_CreateNewLineMapping(P05 p05,  DataRow mainRow, DataTable dtDetail, DataTable dtAutomatedLineMapping_DetailTemp, DataTable dtAutomatedLineMapping_DetailAuto)
         {
             this.InitializeComponent();
             this.EditMode = true;
+            this.p05 = p05;
             this.mainRow = mainRow;
             this.dtDetail = dtDetail;
             this.dtAutomatedLineMapping_DetailTemp = dtAutomatedLineMapping_DetailTemp;
@@ -77,9 +80,26 @@ namespace Sci.Production.IE
 
         private void PopuStyleLocation(string styleID, string brand, string season, Win.UI.TextBox tarLocation)
         {
-            string styleUkey = MyUtility.GetValue.Lookup($"select Ukey from Style with (nolock) where ID = '{styleID}' and BrandID = '{brand}' and SeasonID = '{season}'");
+            string sqlGetStyleUkey = $"select Ukey from Style with (nolock) where ID = '{styleID}'";
 
-            SelectItem selectItem = new SelectItem($"select Location from Style_Location WITH (NOLOCK) where StyleUkey = '{styleUkey}'", null, null);
+            if (!MyUtility.Check.Empty(brand))
+            {
+                sqlGetStyleUkey += $" and BrandID = '{brand}' ";
+            }
+
+            if (!MyUtility.Check.Empty(season))
+            {
+                sqlGetStyleUkey += $" and SeasonID = '{season}' ";
+            }
+
+            string styleUkey = MyUtility.GetValue.Lookup(sqlGetStyleUkey);
+
+            if (MyUtility.Check.Empty(styleUkey))
+            {
+                styleUkey = "null";
+            }
+
+            SelectItem selectItem = new SelectItem($"select Location from Style_Location WITH (NOLOCK) where StyleUkey = {styleUkey}", null, null);
             DialogResult dialogResult = selectItem.ShowDialog();
 
             if (dialogResult != DialogResult.OK)
@@ -293,7 +313,8 @@ where   FactoryID = '{this.txtFactoryCopy.Text}' and
         SeasonID = '{this.txtSeasonCopy.Text}' and
         BrandID = '{this.txtBrandCopy.Text}' and
         ComboType = '{this.txtStyleLocationCopy.Text}' and
-        Version = '{this.numVersion.Text}'
+        Version = '{this.numVersion.Text}' and
+        Status = 'Confirmed'
 ";
             DataRow drAutomatedLineMappingCopySource;
 
@@ -423,9 +444,9 @@ drop table #tmpCreateTimeStudy_Detail, #tmpCopyTimeStudy_Detail
 
             string sqlGetAutomatedLineMapping = $@"
 select * from AutomatedLineMapping with (nolock) where ID = '{automatedLineMappingID}'
-select * from AutomatedLineMapping_Detail with (nolock) where ID = '{automatedLineMappingID}'
-select * from AutomatedLineMapping_DetailTemp with (nolock) where ID = '{automatedLineMappingID}'
-select * from AutomatedLineMapping_DetailAuto with (nolock) where ID = '{automatedLineMappingID}'
+{string.Format(this.p05.sqlGetAutomatedLineMapping_Detail, $" ad.ID = '{automatedLineMappingID}'")}
+{string.Format(this.p05.sqlGetAutomatedLineMapping_DetailTemp, $" ad.ID = '{automatedLineMappingID}'")}
+{string.Format(this.p05.sqlGetAutomatedLineMapping_DetailAuto, $" ad.ID = '{automatedLineMappingID}'")}
 ";
             DataTable[] dtResults;
             DualResult result = DBProxy.Current.Select(null, sqlGetAutomatedLineMapping, out dtResults);

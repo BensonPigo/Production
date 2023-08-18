@@ -365,12 +365,6 @@
     <Compile Include="P06_Default.Designer.cs">
       <DependentUpon>P06_Default.cs</DependentUpon>
     </Compile>
-    <Compile Include="P06_EditOperation.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="P06_EditOperation.Designer.cs">
-      <DependentUpon>P06_EditOperation.cs</DependentUpon>
-    </Compile>
     <Compile Include="P06_NotHitTargetReason.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -641,9 +635,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="P06_Default.resx">
       <DependentUpon>P06_Default.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="P06_EditOperation.resx">
-      <DependentUpon>P06_EditOperation.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P06_NotHitTargetReason.resx">
       <DependentUpon>P06_NotHitTargetReason.cs</DependentUpon>

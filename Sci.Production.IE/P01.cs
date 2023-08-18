@@ -16,6 +16,7 @@ using Sci.Win.Tems;
 using System.Net.Mail;
 using Sci.Production.Prg;
 using Sci.Production.Class.Command;
+using static Ict.Win.DataGridViewGenerator;
 
 namespace Sci.Production.IE
 {
@@ -325,6 +326,24 @@ and IETMSID = '{this.CurrentMaintain["IETMSID"]}'
 
             this.numTotalSMV.Value = Convert.ToInt32(MyUtility.Convert.GetDecimal(((DataTable)this.detailgridbs.DataSource).Compute("SUM(SMV)", string.Empty)));
             this.HideRows();
+
+            string sqlCheckThreadComboCanEdit = $@"
+select 1
+from    style with (nolock)
+where   ID = '{this.CurrentMaintain["StyleID"]}' and
+        BrandID = '{this.CurrentMaintain["BrandID"]}' and
+        SeasonID = '{this.CurrentMaintain["SeasonID"]}' and
+        IETMSID_Thread = '{this.CurrentMaintain["IETMSID"]}' and
+        IETMSVersion_Thread = '{this.CurrentMaintain["IETMSVersion"]}'
+";
+            if (MyUtility.Check.Seek(sqlCheckThreadComboCanEdit))
+            {
+                ((TextColumn)this.detailgrid.Columns["Thread_ComboID"]).IsEditingReadOnly = false;
+            }
+            else
+            {
+                ((TextColumn)this.detailgrid.Columns["Thread_ComboID"]).IsEditingReadOnly = true;
+            }
         }
 
         private void HideRows()
@@ -883,7 +902,6 @@ where Junk=0 and IsTemplate=1
 
                         P01_PartID callNextForm = new P01_PartID(MyUtility.Convert.GetString(dr["Mold"]), MyUtility.Convert.GetString(dr["SewingMachineAttachmentID"]));
                         DialogResult result = callNextForm.ShowDialog(this);
-
 
                         if (result == DialogResult.Cancel)
                         {
@@ -2054,7 +2072,8 @@ left join MachineType_Detail md WITH (NOLOCK) on md.ID = o.MachineTypeID and md.
 outer apply (
     select　top 1 [val] = Thread_ComboID
     from Style_ThreadColorCombo st with (nolock)
-    where	st.StyleUkey = s.Ukey and
+    where	s.IETMSID_Thread = '{1}' and s.IETMSVersion_Thread = '{2}' and
+            st.StyleUkey = s.Ukey and
     		st.MachineTypeID = o.MachineTypeID and
     		exists(select 1 from Style_ThreadColorCombo_Operation sto with (nolock) 
                             where   sto.Style_ThreadColorComboUkey = st.Ukey and 
@@ -2069,7 +2088,9 @@ outer apply (
 --left join MtlFactor m WITH (NOLOCK) on o.MtlFactorID = m.ID and m.Type = 'F'
 where s.ID = @id 
 and s.SeasonID = @seasonid 
-and s.BrandID = @brandid ", Env.User.Factory);
+and s.BrandID = @brandid ", Env.User.Factory,
+                this.CurrentMaintain["IETMSID"],
+                this.CurrentMaintain["IETMSVersion"]);
 
             // if (isComboType) sqlCmd += " and id.Location = @location ";
             if (isComboType)
@@ -2551,14 +2572,15 @@ and s.BrandID = @brandid";
 
         private void DetailGridAfterRowDragDo(DataRow dr)
         {
-            List<DataRow> listBeforeGrag = this.dtDetailBeforeDrag.AsEnumerable().Where(s => s.RowState != DataRowState.Deleted).ToList();
+            List<DataRow> listBeforeDrag = this.dtDetailBeforeDrag.AsEnumerable().Where(s => s.RowState != DataRowState.Deleted).ToList();
 
             int rowIndex = 0;
 
             // 拖移後Seq不變，所以使用拖移前keep的detail還原
-            foreach (DataRow curRow in dr.Table.AsEnumerable().Where(s => s.RowState != DataRowState.Deleted))
+            foreach (DataRow curRow in this.DetailDatas)
             {
-                curRow["Seq"] = listBeforeGrag[rowIndex]["Seq"];
+                curRow["Seq"] = listBeforeDrag[rowIndex]["Seq"];
+                curRow.EndEdit();
                 rowIndex++;
             }
         }

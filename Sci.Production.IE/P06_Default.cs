@@ -92,7 +92,7 @@ order by iif(ad.No = '', 'ZZ', ad.No), ad.Seq";
                .Numeric("SewerDiffPercentageDesc", header: "%", width: Widths.AnsiChars(5), iseditingreadonly: true)
                .Numeric("DivSewer", header: "Div. Sewer", decimal_places: 4, width: Widths.AnsiChars(5), iseditingreadonly: true)
                .Numeric("OriSewer", header: "Ori. Sewer", decimal_places: 4, width: Widths.AnsiChars(5), iseditingreadonly: true)
-               .Text("ThreadComboID", header: "Thread" + Environment.NewLine + "Color", width: Widths.AnsiChars(10));
+               .Text("ThreadComboID", header: "Thread" + Environment.NewLine + "Combination", width: Widths.AnsiChars(10));
 
             this.Helper.Controls.Grid.Generator(this.gridSub)
                .Text("No", header: "No. Of" + Environment.NewLine + "Station", width: Widths.AnsiChars(10))

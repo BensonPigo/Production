@@ -67,6 +67,7 @@ BEGIN
         from View_DropDownList WITH (NOLOCK) 
         where Type = '{this.Type}' {whereCondition}
     ) a
+order by Seq
 END
 ELSE
 BEGIN

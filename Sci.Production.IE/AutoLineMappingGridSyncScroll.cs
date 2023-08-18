@@ -490,9 +490,15 @@ namespace Sci.Production.IE
                                     }).ToList();
                     break;
                 case SubGridType.LineMappingBalancing:
-                    this.gridMain.Sort(this.gridMain.Columns["No"], System.ComponentModel.ListSortDirection.Ascending);
+                    this.gridMain.BeginInvoke(new Action(() =>
+                    {
+                        this.gridMain.Sort(this.gridMain.Columns["No"], System.ComponentModel.ListSortDirection.Ascending);
+                    }));
                     this.gridMain.Columns.DisableSortable();
-                    this.gridSub.Sort(this.gridSub.Columns["No"], System.ComponentModel.ListSortDirection.Ascending);
+                    this.gridSub.BeginInvoke(new Action(() =>
+                    {
+                        this.gridSub.Sort(this.gridSub.Columns["No"], System.ComponentModel.ListSortDirection.Ascending);
+                    }));
                     this.gridSub.Columns.DisableSortable();
                     decimal avgCycle = this.AvgCycleTime;
                     resultRows = mainData.Where(s => s["PPA"].ToString() != "C" &&
