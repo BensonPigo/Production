@@ -281,6 +281,10 @@ where o.ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]))) ?
                     this.displayIsMixMarker.Text = this.CurrentMaintain["IsMixMarker"].ToString();
                     break;
             }
+
+            string isLocalOrder = MyUtility.GetValue.Lookup($"SELECT LocalOrder FROM Orders where ID = '{this.CurrentMaintain["ID"]}'");
+
+            this.btnMeterialStatus.Text = isLocalOrder == "True" ? "Material Status (Local Order)" : "Material Status";
         }
 
         /// <inheritdoc/>
@@ -664,14 +668,43 @@ where o.ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]))) ?
 
         private void BtnMeterialStatus_Click(object sender, EventArgs e)
         {
-            if (this.callP03 != null && this.callP03.Visible == true)
+            string isLocalOrder = MyUtility.GetValue.Lookup($"SELECT LocalOrder FROM Orders where ID = '{this.CurrentMaintain["ID"]}'");
+
+            if (isLocalOrder == "True")
             {
-                this.callP03.P03Data(this.CurrentMaintain["ID"].ToString());
-                this.callP03.Activate();
+                ToolStripMenuItem p69MenuItem = null;
+                foreach (ToolStripMenuItem toolMenuItem in Env.App.MainMenuStrip.Items)
+                {
+                    if (toolMenuItem.Text.EqualString("Warehouse"))
+                    {
+                        foreach (var subMenuItem in toolMenuItem.DropDown.Items)
+                        {
+                            if (subMenuItem.GetType().Equals(typeof(ToolStripMenuItem)))
+                            {
+                                if (((ToolStripMenuItem)subMenuItem).Text.EqualString("P69. Material Status (Local Order)"))
+                                {
+                                    p69MenuItem = (ToolStripMenuItem)subMenuItem;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+
+                var windows = new P69(this.CurrentMaintain["ID"].ToString(), p69MenuItem);
+                windows.ShowDialog(this);
             }
             else
             {
-                this.P03FormOpen();
+                if (this.callP03 != null && this.callP03.Visible == true)
+                {
+                    this.callP03.P03Data(this.CurrentMaintain["ID"].ToString());
+                    this.callP03.Activate();
+                }
+                else
+                {
+                    this.P03FormOpen();
+                }
             }
         }
 

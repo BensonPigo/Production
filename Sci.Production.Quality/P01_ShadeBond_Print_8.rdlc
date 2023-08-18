@@ -587,7 +587,7 @@
             <TablixMember>
               <Group Name="Dyelot">
                 <GroupExpressions>
-                  <GroupExpression>=Fields!Tone.Value</GroupExpression>
+                  <GroupExpression>=Fields!Dyelot.Value</GroupExpression>
                 </GroupExpressions>
                 <PageBreak>
                   <BreakLocation>Between</BreakLocation>
