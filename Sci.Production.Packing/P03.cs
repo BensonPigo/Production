@@ -2177,13 +2177,51 @@ order by PD.seq
                     }
                 }
 
-                string updateSqlCmd = $@"
-update b set b.CustCTN = a.[Cust CTN#]
-from #tmp a
-inner join PackingList_Detail b on a.[Pack ID] = b.ID and a.CTN# = b.CTNStartNo
+                string sqlcmd_First = $@"
+                select *
+                from PackingList_Detail PD
+                inner JOIN #TMP T  ON T.[Pack ID] = PD.ID AND T.[CTN#] = PD.CTNStartNo
+                where id = '{MyUtility.Convert.GetString(this.CurrentMaintain["ID"])}' and CTNQty = 1 AND PD.CustCTN = ''   
+                ";
+                DualResult resultFrist = MyUtility.Tool.ProcessWithDatatable(dtexcel, string.Empty, sqlcmd_First, out DataTable dtFirst);
+                if (!resultFrist)
+                {
+                    this.ShowErr(resultFrist);
+                    return;
+                }
 
-update PackingList set  EditName = '{Env.User.UserID}', EditDate = GETDATE() where ID = '{this.CurrentMaintain["ID"].ToString()}'
-";
+                string strExisted_value = string.Empty;
+                string sqlcmd_existed = $@"
+                SELECT
+                STUFF
+                (
+                    (
+                        SELECT DISTINCT ',' + t.[Cust CTN#]
+                        FROM #tmp t
+                        INNER JOIN PackingList_Detail d ON t.[Cust CTN#] = d.CustCTN AND d.CTNQty = 1
+                        FOR XML PATH(''), TYPE
+                    ).value('.', 'NVARCHAR(MAX)'), 1, 1, ''
+                ) AS CombinedCustCTN 
+                ";
+                DualResult resultExisted = MyUtility.Tool.ProcessWithDatatable(dtFirst, string.Empty, sqlcmd_existed, out DataTable dt);
+                if (!resultExisted)
+                {
+                    this.ShowErr(resultExisted);
+                    return;
+                }
+
+                strExisted_value = MyUtility.Convert.GetString(dt.Rows[0]["CombinedCustCTN"]);
+
+                string updateSqlCmd = $@"
+                UPDATE b
+                SET b.CustCTN = a.[Cust CTN#]
+                FROM #tmp a
+                INNER JOIN PackingList_Detail b ON a.[Pack ID] = b.ID AND a.CTN# = b.CTNStartNo
+                LEFT JOIN PackingList_Detail c ON a.[Cust CTN#] = c.CustCTN AND c.CTNQty = 1
+                WHERE c.CustCTN IS NULL;             
+
+                update PackingList set  EditName = '{Env.User.UserID}', EditDate = GETDATE() where ID = '{this.CurrentMaintain["ID"].ToString()}'
+                ";
                 DataTable udt;
                 DualResult result = MyUtility.Tool.ProcessWithDatatable(dtexcel, string.Empty, updateSqlCmd, out udt);
                 if (!result)
@@ -2192,7 +2230,20 @@ update PackingList set  EditName = '{Env.User.UserID}', EditDate = GETDATE() whe
                 }
                 else
                 {
-                    MyUtility.Msg.InfoBox("Import Success !!");
+                    if (strExisted_value != string.Empty)
+                    {
+                        string strErrorMsg = $@"
+This Cust CTN#：<{strExisted_value}> is already existed!! 
+Cust CTN#：<{strExisted_value}> will NOT be updated!
+The rest of the data has been updated successfully!'
+";
+                        MyUtility.Msg.WarningBox(strErrorMsg);
+                    }
+                    else
+                    {
+                        MyUtility.Msg.InfoBox("Import Success !!");
+                    }
+
                     this.RenewData();
                     this.OnDetailEntered();
                 }
