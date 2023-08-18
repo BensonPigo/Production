@@ -1,5 +1,6 @@
 ﻿using Ict;
 using Sci.Data;
+using Sci.Win.Tools;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -312,6 +313,36 @@ where 1=1 and (orders.FactoryID in (select id from Factory) or BulkO.FactoryID i
 
             Marshal.ReleaseComObject(objSheets);
             return true;
+        }
+
+        private void TexBulkFactorytBox_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        {
+            string cmd = $@"Select DISTINCT FtyGroup as Factory from Production.dbo.Factory WITH (NOLOCK) where IsProduceFty = 1 order by FtyGroup";
+            DataTable dt;
+            DBProxy.Current.Select(null, cmd, out dt);
+            SelectItem item = new SelectItem(cmd, "Factory", "10", string.Empty, "Factory");
+            DialogResult returnResult = item.ShowDialog();
+            if (returnResult == DialogResult.Cancel)
+            {
+                return;
+            }
+
+            this.txtBulkfactory.Text = item.GetSelectedString();
+        }
+
+        private void TxtStkFactory_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        {
+            string cmd = $@"Select DISTINCT FtyGroup as Factory from Production.dbo.Factory WITH (NOLOCK) where IsProduceFty = 1 order by FtyGroup";
+            DataTable dt;
+            DBProxy.Current.Select(null, cmd, out dt);
+            SelectItem item = new SelectItem(cmd, "Factory", "10", string.Empty, "Factory");
+            DialogResult returnResult = item.ShowDialog();
+            if (returnResult == DialogResult.Cancel)
+            {
+                return;
+            }
+
+            this.txtStkfactory.Text = item.GetSelectedString();
         }
     }
 }

@@ -36,15 +36,15 @@
             this.labelCFMDate = new Sci.Win.UI.Label();
             this.txtbrand = new Sci.Production.Class.Txtbrand();
             this.txtdropdownlistOperation = new Sci.Production.Class.Txtdropdownlist();
-            this.txtStkfactory = new Sci.Production.Class.Txtfactory();
             this.label1 = new Sci.Win.UI.Label();
             this.txtSpStart = new Sci.Win.UI.TextBox();
             this.txtSpEnd = new Sci.Win.UI.TextBox();
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new Sci.Win.UI.Label();
             this.comboFabricType = new Sci.Production.Class.ComboDropDownList(this.components);
-            this.txtBulkfactory = new Sci.Production.Class.Txtfactory();
             this.label4 = new Sci.Win.UI.Label();
+            this.txtBulkfactory = new Sci.Win.UI.TextBox();
+            this.txtStkfactory = new Sci.Win.UI.TextBox();
             this.SuspendLayout();
             // 
             // print
@@ -141,21 +141,6 @@
             this.txtdropdownlistOperation.TabIndex = 6;
             this.txtdropdownlistOperation.Type = "InvtransType";
             // 
-            // txtStkfactory
-            // 
-            this.txtStkfactory.BackColor = System.Drawing.Color.White;
-            this.txtStkfactory.BoolFtyGroupList = true;
-            this.txtStkfactory.FilteMDivision = false;
-            this.txtStkfactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtStkfactory.IsMultiselect = false;
-            this.txtStkfactory.IsProduceFty = false;
-            this.txtStkfactory.IssupportJunk = true;
-            this.txtStkfactory.Location = new System.Drawing.Point(116, 120);
-            this.txtStkfactory.MDivision = null;
-            this.txtStkfactory.Name = "txtStkfactory";
-            this.txtStkfactory.Size = new System.Drawing.Size(66, 23);
-            this.txtStkfactory.TabIndex = 4;
-            // 
             // label1
             // 
             this.label1.Location = new System.Drawing.Point(15, 48);
@@ -215,21 +200,6 @@
             this.comboFabricType.TabIndex = 7;
             this.comboFabricType.Type = null;
             // 
-            // txtBulkfactory
-            // 
-            this.txtBulkfactory.BackColor = System.Drawing.Color.White;
-            this.txtBulkfactory.BoolFtyGroupList = true;
-            this.txtBulkfactory.FilteMDivision = false;
-            this.txtBulkfactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtBulkfactory.IsMultiselect = false;
-            this.txtBulkfactory.IsProduceFty = false;
-            this.txtBulkfactory.IssupportJunk = true;
-            this.txtBulkfactory.Location = new System.Drawing.Point(116, 84);
-            this.txtBulkfactory.MDivision = null;
-            this.txtBulkfactory.Name = "txtBulkfactory";
-            this.txtBulkfactory.Size = new System.Drawing.Size(66, 23);
-            this.txtBulkfactory.TabIndex = 138;
-            // 
             // label4
             // 
             this.label4.Location = new System.Drawing.Point(15, 84);
@@ -238,9 +208,30 @@
             this.label4.TabIndex = 139;
             this.label4.Text = "Bulk Factory";
             // 
+            // txtBulkfactory
+            // 
+            this.txtBulkfactory.BackColor = System.Drawing.Color.White;
+            this.txtBulkfactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtBulkfactory.Location = new System.Drawing.Point(117, 84);
+            this.txtBulkfactory.Name = "txtBulkfactory";
+            this.txtBulkfactory.Size = new System.Drawing.Size(120, 23);
+            this.txtBulkfactory.TabIndex = 140;
+            this.txtBulkfactory.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TexBulkFactorytBox_PopUp);
+            // 
+            // txtStkfactory
+            // 
+            this.txtStkfactory.BackColor = System.Drawing.Color.White;
+            this.txtStkfactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtStkfactory.Location = new System.Drawing.Point(117, 120);
+            this.txtStkfactory.Name = "txtStkfactory";
+            this.txtStkfactory.Size = new System.Drawing.Size(120, 23);
+            this.txtStkfactory.TabIndex = 141;
+            this.txtStkfactory.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtStkFactory_PopUp);
+            // 
             // R04
             // 
             this.ClientSize = new System.Drawing.Size(546, 305);
+            this.Controls.Add(this.txtStkfactory);
             this.Controls.Add(this.txtBulkfactory);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.comboFabricType);
@@ -249,7 +240,6 @@
             this.Controls.Add(this.txtSpEnd);
             this.Controls.Add(this.txtSpStart);
             this.Controls.Add(this.label1);
-            this.Controls.Add(this.txtStkfactory);
             this.Controls.Add(this.txtbrand);
             this.Controls.Add(this.labelCFMDate);
             this.Controls.Add(this.txtdropdownlistOperation);
@@ -271,7 +261,6 @@
             this.Controls.SetChildIndex(this.txtdropdownlistOperation, 0);
             this.Controls.SetChildIndex(this.labelCFMDate, 0);
             this.Controls.SetChildIndex(this.txtbrand, 0);
-            this.Controls.SetChildIndex(this.txtStkfactory, 0);
             this.Controls.SetChildIndex(this.label1, 0);
             this.Controls.SetChildIndex(this.txtSpStart, 0);
             this.Controls.SetChildIndex(this.txtSpEnd, 0);
@@ -283,6 +272,7 @@
             this.Controls.SetChildIndex(this.comboFabricType, 0);
             this.Controls.SetChildIndex(this.label4, 0);
             this.Controls.SetChildIndex(this.txtBulkfactory, 0);
+            this.Controls.SetChildIndex(this.txtStkfactory, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -297,14 +287,14 @@
         private Class.Txtdropdownlist txtdropdownlistOperation;
         private Win.UI.Label labelCFMDate;
         private Class.Txtbrand txtbrand;
-        private Class.Txtfactory txtStkfactory;
         private Win.UI.Label label1;
         private Win.UI.TextBox txtSpStart;
         private Win.UI.TextBox txtSpEnd;
         private System.Windows.Forms.Label label2;
         private Win.UI.Label label3;
         private Class.ComboDropDownList comboFabricType;
-        private Class.Txtfactory txtBulkfactory;
         private Win.UI.Label label4;
+        private Win.UI.TextBox txtBulkfactory;
+        private Win.UI.TextBox txtStkfactory;
     }
 }
