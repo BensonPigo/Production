@@ -121,12 +121,7 @@ select  operation = case a.type
         ,cuttingInline = (select min(cutting.CutInLine) 
                           from Cutting WITH (NOLOCK) 
                           where id = a.InventoryPOID) 
-        ,[Bulk Fty] =
-            case when a.TransferFactory <> '' then a.TransferFactory 
-                 when exists(select 1 from orders o where o.id = a.poid) then (select FactoryID from orders o where o.id = a.poid)
-                 when exists(select 1 from orders o where o.id = a.InventoryPOID) then (select FactoryID from orders o where o.id = a.InventoryPOID)
-                 else ''
-            end
+        ,[Bulk Fty] = BulkFty.v
         ,Factory_ArrivedQty = iif((a.type='1' or a.type='4') ,e.InQty, 0.00) 
         ,productionQty = Round(dbo.GetUnitQty(d.POUnit, d.StockUnit, (isnull(d.NETQty,0.000) + isnull(d.LossQty,0.000))), 2)
         ,bulkBalance = case a.type
@@ -163,7 +158,8 @@ select  operation = case a.type
         ,reason = a.ReasonID +'-'+(select ReasonEN from InvtransReason WITH (NOLOCK) where id = a.ReasonID) 
         ,handle = dbo.getTPEPass1((select PoHandle 
 									from Inventory WITH (NOLOCK) 
-									where Inventory.Ukey = a.InventoryUkey))from dbo.invtrans a WITH (NOLOCK) 
+									where Inventory.Ukey = a.InventoryUkey))
+from dbo.invtrans a WITH (NOLOCK) 
 inner join InventoryRefno b WITH (NOLOCK) on b.id = a.InventoryRefnoId
 left join PO_Supp_Detail d WITH (NOLOCK) on d.ID = a.InventoryPOID and d.SEQ1 = a.InventorySeq1 and d.seq2 =  a.InventorySeq2
 left join Orders orders with (nolock) on d.id = orders.id
@@ -203,8 +199,15 @@ OUTER APPLY(
 	FROM MDivisionPoDetail
 	WHERE POID=a.InventoryPOID  AND SEQ1=a.InventorySeq1 AND SEQ2=a.InventorySeq2
 )InventoryInv
-
-where 1=1 and (orders.FactoryID in (select id from Factory) or BulkO.FactoryID in (select id from Factory))	 ");
+outer apply (
+    select v = 
+            case when a.TransferFactory <> '' then a.TransferFactory 
+                 when exists(select 1 from orders o where o.id = a.poid) then (select FactoryID from orders o where o.id = a.poid)
+                 when exists(select 1 from orders o where o.id = a.InventoryPOID) then (select FactoryID from orders o where o.id = a.InventoryPOID)
+                 else ''
+            end
+) BulkFty
+where (orders.FactoryID in (select id from Factory) or BulkO.FactoryID in (select id from Factory))	 ");
             string whereStr = string.Empty;
 
             if (!MyUtility.Check.Empty(this.cfmdate1))
@@ -222,22 +225,22 @@ where 1=1 and (orders.FactoryID in (select id from Factory) or BulkO.FactoryID i
 
             if (!MyUtility.Check.Empty(this.bulkFactory))
             {
-                sqlCmd.Append(" and (BulkO.FactoryID  =  @Bulkfactory or BulkO.FtyGroup  =  @Bulkfactory)");
+                sqlCmd.Append(" and (BulkFty.v  =  @Bulkfactory or BulkO.FtyGroup  =  @Bulkfactory)");
                 cmds.Add(new System.Data.SqlClient.SqlParameter("@Bulkfactory", this.bulkFactory));
             }
 
             if (!MyUtility.Check.Empty(this.stkFactory))
             {
-                sqlCmd.Append(" and (orders.FactoryID  =  @stkfactory or orders.FtyGroup  =  @stkfactory)");
+                sqlCmd.Append(" and (a.FactoryID  =  @stkfactory or orders.FtyGroup  =  @stkfactory)");
                 cmds.Add(new System.Data.SqlClient.SqlParameter("@stkfactory", this.stkFactory));
             }
 
-            if (!MyUtility.Check.Empty(this.factory))
-            {
-                sqlCmd.Append(" and (orders.FactoryID  =  @factory or a.TransferFactory =  @factory)");
-                sp_factory.Value = this.factory;
-                cmds.Add(sp_factory);
-            }
+            //if (!MyUtility.Check.Empty(this.factory))
+            //{
+            //    sqlCmd.Append(" and (orders.FactoryID  =  @factory or a.TransferFactory =  @factory)");
+            //    sp_factory.Value = this.factory;
+            //    cmds.Add(sp_factory);
+            //}
 
             if (!MyUtility.Check.Empty(this.brand))
             {
