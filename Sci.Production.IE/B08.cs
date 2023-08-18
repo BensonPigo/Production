@@ -14,6 +14,7 @@ namespace Sci.Production.IE
     /// </summary>
     public partial class B08 : Win.Tems.Input1
     {
+        private int itemCount;
         /// <summary>
         /// B08
         /// </summary>
@@ -55,6 +56,14 @@ namespace Sci.Production.IE
         /// <returns>bool</returns>
         protected override bool ClickSaveBefore()
         {
+            if (this.txtSkill.TextLength > 200)
+            {
+                MyUtility.Msg.WarningBox($@"
+Can only check up to 40 Skills!
+You have checked <{this.itemCount}> Skills!!");
+                return false;
+            }
+
             this.txtSkill.BackColor = this.displayM.BackColor;
             return base.ClickSaveBefore();
         }
@@ -156,6 +165,7 @@ namespace Sci.Production.IE
             this.txtSkill.BackColor = this.displayM.BackColor;
         }
 
+
         private void TxtSkill_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             if (this.EditMode)
@@ -169,7 +179,7 @@ namespace Sci.Production.IE
                 {
                     return;
                 }
-
+                this.itemCount = item.GetSelecteds().Count;
                 string returnData = string.Empty;
                 IList<DataRow> gridData = item.GetSelecteds();
                 foreach (DataRow currentRecord in gridData)

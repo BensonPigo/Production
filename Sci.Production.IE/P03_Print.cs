@@ -222,21 +222,22 @@ select   a.GroupKey
         ,[OtherBy] = concat(a.MachineTypeID,a.Attachment,a.Template,a.ThreadColor)
 		,a.SewingMachineAttachmentID
         ,a.MachineCount
-        ,e.val
+        --,e.val
 from LineMapping_Detail a 
 inner join LineMapping b WITH (NOLOCK) on a.ID = b.ID
 left join Operation o WITH (NOLOCK) on o.ID = a.OperationID
 left join MachineType m WITH (NOLOCK) on m.id =  a.MachineTypeID
-outer apply
-(
-	select val = stuff((
-	select concat('/',tmp.[Name]) from
-	(
-		select distinct [Name] = iif(c.Junk = 1 ,c.ID + ' ' + c.[Name],c.ID + ' ' + c.LastName + ',' + c.FirstName)
-		from Employee c
-		where c.id = a.EmployeeID
-	) tmp for xml path('')),1,1,'')
-)e
+--outer apply
+--(
+--	select val = stuff((
+--	select concat('/',tmp.[Name]) from
+--	(
+--		select distinct [Name] = iif(c.Junk = 1 ,c.ID + ' ' + c.[Name],c.ID + ' ' + c.LastName + ',' + c.FirstName)
+--		from Employee c
+--		inner join LineMapping_Detail e on a.EmployeeID = e.EmployeeID and e.no = a.no
+--		where c.id = a.EmployeeID 
+--	) tmp for xml path('')),1,1,'')
+--)e
 outer apply
 (
 	select OperationID
@@ -532,7 +533,7 @@ select No
     ,CT = COUNT(1)
     ,[ActCycle] = Max(ld.ActCycle)
     ,[ActCycleTime(average)]=ActCycle.Value
-    ,[Name] = e.val
+into #tmp
 from LineMapping_Detail ld WITH (NOLOCK) 
 outer apply
 (
@@ -569,8 +570,28 @@ where ld.ID = {MyUtility.Convert.GetString(this.masterData["ID"])}
 and (ld.IsHide = 0 or ld.IsHide is null)
 and no <> ''
 and ld.PPA != 'C' 
-GROUP BY NO ,ActCycle.Value,e.val
+GROUP BY NO ,ActCycle.Value
 order by no
+
+SELECT 
+    t.*,
+    [Name] = e.val
+FROM #tmp t
+OUTER APPLY (
+   SELECT val = STUFF((
+        SELECT CONCAT(' / ', tmp.[Name])
+        FROM (
+            SELECT [Name] = IIF(c.Junk = 1, c.ID + ' ' + c.[Name], c.ID + ' ' + c.LastName + ',' + c.FirstName)
+            FROM Employee c
+            INNER JOIN LineMapping_Detail e ON c.id = e.EmployeeID
+            WHERE e.no = t.no and e.id = {MyUtility.Convert.GetString(this.masterData["ID"])} 
+        ) tmp 
+        FOR XML PATH('')
+    ), 1, 1, '')
+) e;
+
+drop TABLE #tmp
+
 ";
                 result = DBProxy.Current.Select(null, sqlCmd, out this.nodist);
                 if (!result)
@@ -586,30 +607,12 @@ order by no
                 #region
 
                 sqlCmd = $@"
-select distinct ld.ID ,no
-into #tmpBase
-from LineMapping_Detail ld WITH (NOLOCK)
-where ld.ID = '{MyUtility.Convert.GetString(this.masterData["ID"])}'
-and ld.PPA != 'C'
-and (ld.IsHide = 0 or ld.IsHide is null)
-
-
-select id, minno = min(no), maxno = max(no)
+select No 
+    ,CT = COUNT(1)
+    ,[ActCycle] = Max(ld.ActCycle)
+    ,[ActCycleTime(average)]=ActCycle.Value
 into #tmp
-from(
-	select  ID ,no
-	from #tmpBase
-	where no <= {this.changp} 
-)x
-group by ID
-
-select No
-,CT = COUNT(1)
-,[ActCycle] = Max(ld.ActCycle)
-,[ActCycleTime(average)]=ActCycle.Value
-,[Name] = e.val
 from LineMapping_Detail ld WITH (NOLOCK) 
-inner join #tmp t on ld.ID = t.ID
 outer apply
 (
 	select val = stuff((
@@ -641,15 +644,31 @@ OUTER APPLY(
 		)a
 	)b
 )ActCycle
-where  (ld.IsPPa = 0 or ld.IsPPa is null) 
-and (ld.IsHide = 0 or ld.IsHide is null) 
-and no between t.minno and t.maxno
+where ld.ID = {MyUtility.Convert.GetString(this.masterData["ID"])} 
+and (ld.IsHide = 0 or ld.IsHide is null)
 and no <> ''
-and ld.PPA != 'C'
-GROUP BY NO ,ActCycle.Value,e.val
+and ld.PPA != 'C' 
+GROUP BY NO ,ActCycle.Value
 order by no
 
-drop table #tmpBase,#tmp
+SELECT 
+    t.*,
+    [Name] = e.val
+FROM #tmp t
+OUTER APPLY (
+   SELECT val = STUFF((
+        SELECT CONCAT(' / ', tmp.[Name])
+        FROM (
+            SELECT [Name] = IIF(c.Junk = 1, c.ID + ' ' + c.[Name], c.ID + ' ' + c.LastName + ',' + c.FirstName)
+            FROM Employee c
+            INNER JOIN LineMapping_Detail e ON c.id = e.EmployeeID
+            WHERE e.no = t.no and e.id = {MyUtility.Convert.GetString(this.masterData["ID"])} 
+        ) tmp 
+        FOR XML PATH('')
+    ), 1, 1, '')
+) e;
+
+drop TABLE #tmp
 ";
 
                 result = DBProxy.Current.Select(null, sqlCmd, out this.nodist);
@@ -679,19 +698,9 @@ group by ID
 
 select No,CT = COUNT(1),[ActCycle] = Max(ld.ActCycle)
 ,[ActCycleTime(average)]=ActCycle.Value
-,[Name] = e.val
+into #tmp
 from LineMapping_Detail ld WITH (NOLOCK) 
 inner join #tmp t on ld.ID = t.ID
-outer apply
-(
-	select val = stuff((
-	select concat('/',tmp.[Name]) from
-	(
-		select distinct [Name] = iif(c.Junk = 1 ,c.ID + ' ' + c.[Name],c.ID + ' ' + c.LastName + ',' + c.FirstName)
-		from Employee c
-		where c.id = ld.EmployeeID
-	) tmp for xml path('')),1,1,'')
-)e
 OUTER APPLY(
 	SELECT [Value]=SUM(ActCycle)/COUNT(NO) FROM 
 	(
@@ -717,9 +726,27 @@ where  (ld.IsPPa = 0 or ld.IsPPa is null)
 and (ld.IsHide = 0 or ld.IsHide is null) 
 and no between t.minno and t.maxno
 and ld.PPA != 'C'
-GROUP BY NO ,ActCycle.Value,e.val
+GROUP BY NO ,ActCycle.Value
 order by no
 
+SELECT 
+    t.*,
+    [Name] = e.val
+FROM #tmp t
+OUTER APPLY (
+   SELECT val = STUFF((
+        SELECT CONCAT(' / ', tmp.[Name])
+        FROM (
+            SELECT [Name] = IIF(c.Junk = 1, c.ID + ' ' + c.[Name], c.ID + ' ' + c.LastName + ',' + c.FirstName)
+            FROM Employee c
+            INNER JOIN LineMapping_Detail e ON c.id = e.EmployeeID
+            WHERE e.no = t.no and e.id = {MyUtility.Convert.GetString(this.masterData["ID"])} 
+        ) tmp 
+        FOR XML PATH('')
+    ), 1, 1, '')
+) e;
+
+drop TABLE #tmp
 ";
                 result = DBProxy.Current.Select(null, sqlCmd, out this.nodist2);
                 if (!result)
@@ -740,6 +767,7 @@ select No
     ,CT = COUNT(1)
     ,[ActCycle] = Max(ld.ActCycle)
     ,[ActCycleTime(average)]=ActCycle.Value
+into #tmp
 from LineMapping_Detail ld WITH (NOLOCK) 
 inner join LineMapping l WITH (NOLOCK) on l.ID = ld.ID
 left join MachineType m WITH (NOLOCK) on m.id =  ld.MachineTypeID
@@ -774,6 +802,25 @@ where ld.ID = {MyUtility.Convert.GetString(this.masterData["ID"])} and IsHide = 
 GROUP BY NO, ActCycle.Value
 order by NO
 
+
+SELECT 
+    t.*,
+    [Name] = e.val
+FROM #tmp t
+OUTER APPLY (
+   SELECT val = STUFF((
+        SELECT CONCAT(' / ', tmp.[Name])
+        FROM (
+            SELECT [Name] = IIF(c.Junk = 1, c.ID + ' ' + c.[Name], c.ID + ' ' + c.LastName + ',' + c.FirstName)
+            FROM Employee c
+            INNER JOIN LineMapping_Detail e ON c.id = e.EmployeeID
+            WHERE e.no = t.no and e.id = {MyUtility.Convert.GetString(this.masterData["ID"])} 
+        ) tmp 
+        FOR XML PATH('')
+    ), 1, 1, '')
+) e;
+
+drop TABLE #tmp
 ";
                 result = DBProxy.Current.Select(null, sqlCmd, out this.nodistPPA);
                 if (!result)
@@ -803,6 +850,7 @@ select No
     ,CT = COUNT(1)
     ,[ActCycle] = Max(ld.ActCycle)
     ,[ActCycleTime(average)]=ActCycle.Value
+into #tmp
 from LineMapping_Detail ld WITH (NOLOCK) 
 inner join LineMapping l WITH (NOLOCK) on l.ID = ld.ID 
 inner join #tmp t on ld.ID = t.ID
@@ -836,6 +884,26 @@ and ld.PPA = 'C'
 )" : string.Empty)}
 GROUP BY NO, ActCycle.Value
 order by NO
+
+
+SELECT 
+    t.*,
+    [Name] = e.val
+FROM #tmp t
+OUTER APPLY (
+   SELECT val = STUFF((
+        SELECT CONCAT(' / ', tmp.[Name])
+        FROM (
+            SELECT [Name] = IIF(c.Junk = 1, c.ID + ' ' + c.[Name], c.ID + ' ' + c.LastName + ',' + c.FirstName)
+            FROM Employee c
+            INNER JOIN LineMapping_Detail e ON c.id = e.EmployeeID
+            WHERE e.no = t.no and e.id = {MyUtility.Convert.GetString(this.masterData["ID"])} 
+        ) tmp 
+        FOR XML PATH('')
+    ), 1, 1, '')
+) e;
+
+drop TABLE #tmp
 ";
                 result = DBProxy.Current.Select(null, sqlCmd, out this.nodistPPA);
                 if (!result)
@@ -860,6 +928,7 @@ select No
     ,CT = COUNT(1)
     ,[ActCycle] = Max(ld.ActCycle)
     ,[ActCycleTime(average)]=ActCycle.Value
+into #tmp1
 from LineMapping_Detail ld WITH (NOLOCK) 
 inner join LineMapping l WITH (NOLOCK) on l.ID = ld.ID 
 inner join #tmp t on ld.ID = t.ID
@@ -895,6 +964,25 @@ and ld.PPA = 'C'
 GROUP BY NO, ActCycle.Value
 order by NO
 
+
+SELECT 
+    t.*,
+    [Name] = e.val
+FROM #tmp1 t
+OUTER APPLY (
+   SELECT val = STUFF((
+        SELECT CONCAT(' / ', tmp.[Name])
+        FROM (
+            SELECT [Name] = IIF(c.Junk = 1, c.ID + ' ' + c.[Name], c.ID + ' ' + c.LastName + ',' + c.FirstName)
+            FROM Employee c
+            INNER JOIN LineMapping_Detail e ON c.id = e.EmployeeID
+            WHERE e.no = t.no and e.id = {MyUtility.Convert.GetString(this.masterData["ID"])} 
+        ) tmp 
+        FOR XML PATH('')
+    ), 1, 1, '')
+) e;
+
+drop TABLE #tmp1
 ";
                 result = DBProxy.Current.Select(null, sqlCmd, out this.nodist2PPA);
                 if (!result)
