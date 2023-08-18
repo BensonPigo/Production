@@ -40,7 +40,8 @@ RETURN
 		w.SCIRefno,
 		[ReqQty] = isnull(cp.Cons, 0),
 		w.Cons,
-		w.Refno
+		w.Refno,
+		f.WeaveTypeID
 	from WorkOrder w with(nolock)
 	inner join orders o with(nolock) on o.id = w.ID
 	left join SpreadingSchedule s with(nolock) on	s.FactoryID = w.FactoryID
@@ -48,6 +49,7 @@ RETURN
 													and s.CutCellid = w.CutCellid
 	left join SpreadingSchedule_Detail sd with(nolock) on w.CutRef = sd.CutRef and s.Ukey = sd.SpreadingScheduleUkey
 	left join Cutplan_Detail cp with (nolock) on cp.ID = w.CutplanID and cp.WorkorderUkey = w.Ukey
+	left join Fabric f with (nolock) on f.SCIRefno = w.SCIRefno
 	outer apply
 	(
 		select article = stuff(

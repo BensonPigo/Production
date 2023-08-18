@@ -266,6 +266,7 @@ select * from dbo.GetSpreadingSchedule('{this.displayFactory.Text}','','',0,'{e.
                .Text("Seq1", header: "Seq1", width: Widths.AnsiChars(3), iseditingreadonly: true)
                .Text("Seq2", header: "Seq2", width: Widths.AnsiChars(3), iseditingreadonly: true)
                .Text("Refno", header: "Ref#", width: Widths.AnsiChars(12), iseditingreadonly: true)
+               .Text("WeaveTypeID", header: "WeaveType", width: Widths.AnsiChars(15), iseditingreadonly: true)
                .Numeric("Cons", header: "Cons", width: Widths.AnsiChars(10), decimal_places: 4, iseditingreadonly: true)
                .Date("EstCutDate", header: "Est. Cut Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
                .Date("actcutdate", header: "Act. Cut Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
