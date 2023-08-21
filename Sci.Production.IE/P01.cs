@@ -150,7 +150,7 @@ select 0 as Selected, isnull(o.SeamLength,0) SeamLength
       ,td.MtlFactorID
       ,td.Template
       ,(isnull(td.Frequency,0) * isnull(o.SeamLength,0)) as ttlSeamLength
-	  ,o.MasterPlusGroup
+	  ,td.MasterPlusGroup
       ,[IsShow] = cast(iif( td.OperationID like '--%' , 1, isnull(show.val, 1)) as bit)
       ,td.IsSubprocess
       ,[MachineType_IsSubprocess] = isnull(md.IsSubprocess,0)
@@ -322,7 +322,7 @@ and IETMSID = '{this.CurrentMaintain["IETMSID"]}'
             DataGridViewGeneratorTextColumnSettings template = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorTextColumnSettings pardID = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorTextColumnSettings ppa = new DataGridViewGeneratorTextColumnSettings();
-
+            DataGridViewGeneratorCheckBoxColumnSettings nonSl = new DataGridViewGeneratorCheckBoxColumnSettings();
             TxtMachineGroup.CelltxtMachineGroup txtSubReason = (TxtMachineGroup.CelltxtMachineGroup)TxtMachineGroup.CelltxtMachineGroup.GetGridCell();
 
             #region Seq & Operation Code & Frequency & SMV & ST/MC Type & Attachment按右鍵與Validating
@@ -570,6 +570,32 @@ and o.ID = @id";
                             if (returnResult == DialogResult.Cancel)
                             {
                                 return;
+                            }
+
+                            string sqlcnd_sm = $@"select IsSubprocess,IsNonSewingLine  from MachineType_Detail where FactoryID = '{Env.User.Factory}' and ID = '{item.GetSelectedString()}'";
+
+                            MyUtility.Check.Seek(sqlcnd_sm, out DataRow dataRow, "Production");
+
+                            if ( dataRow != null)
+                            {
+                                this.CurrentDetailData["IsSubprocess"] = dataRow["IsSubprocess"];
+                                this.CurrentDetailData["IsNonSewingLine"] = dataRow["IsNonSewingLine"];
+
+                                if (!MyUtility.Convert.GetBool(dataRow["IsSubprocess"]) && MyUtility.Convert.GetBool(dataRow["IsNonSewingLine"]))
+                                {
+                                    this.col_IsNonSewingLine.IsEditable = true;
+                                }
+
+                                if (MyUtility.Convert.GetBool(dataRow["IsSubprocess"]))
+                                {
+                                    this.col_IsNonSewingLine.IsEditable = true;
+                                }
+                            }
+                            else
+                            {
+                                this.CurrentDetailData["IsSubprocess"] = 0;
+                                this.CurrentDetailData["IsNonSewingLine"] = 0;
+                                this.col_IsNonSewingLine.IsEditable = false;
                             }
 
                             e.EditingControl.Text = item.GetSelectedString();
@@ -1019,6 +1045,32 @@ and Name = @PPA
                 }
             };
             #endregion
+
+            nonSl.CellValidating += (s, e) =>
+            {
+                if (e.RowIndex == -1)
+                {
+                    return; // 沒東西 return
+                }
+
+                if (this.EditMode)
+                {
+                    DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
+                    if (!MyUtility.Convert.GetBool(dr["IsSubprocess"]) && MyUtility.Convert.GetBool(dr["IsNonSewingLine"]))
+                    {
+                        this.col_IsNonSewingLine.IsEditable = false;
+                        this.CurrentDetailData["IsNonSewingLine"] = false;
+                    }
+                    else if (MyUtility.Convert.GetBool(dr["IsSubprocess"]))
+                    {
+                        this.col_IsNonSewingLine.IsEditable = true;
+                    }
+                    else
+                    {
+                        this.col_IsNonSewingLine.IsEditable = false;
+                    }
+                }
+            };
             #endregion
 
             template.MaxLength = 100;
@@ -1032,8 +1084,8 @@ and Name = @PPA
                 .Numeric("Frequency", header: "Frequency", integer_places: 2, decimal_places: 2, maximum: 99.99M, minimum: 0, settings: this.frequency)
                 .Text("MtlFactorID", header: "Factor", width: Widths.AnsiChars(3), iseditingreadonly: true)
                 .Numeric("SMV", header: "SMV (sec)", integer_places: 4, decimal_places: 4, maximum: 9999.9999M, minimum: 0, settings: this.smvsec)
-                .CheckBox("IsSubprocess", header: "Subprocess", width: Widths.AnsiChars(7), iseditable: false, trueValue: 1, falseValue: 0).Get(out this.col_IsSubprocess)
-                .CheckBox("IsNonSewingLine", header: "Non-Sewing line", width: Widths.AnsiChars(7), iseditable: false, trueValue: 1, falseValue: 0).Get(out this.col_IsNonSewingLine)
+                .CheckBox("IsSubprocess", header: "Subprocess", width: Widths.AnsiChars(7), iseditable: false, trueValue: 1, falseValue: 0)
+                .CheckBox("IsNonSewingLine", header: "Non-Sewing line", width: Widths.AnsiChars(7), iseditable: false, trueValue: 1, falseValue: 0, settings: nonSl).Get(out this.col_IsNonSewingLine)
                 .Text("PPAText", header: "PPA", width: Widths.AnsiChars(10), settings: ppa)
                 .Text("MachineTypeID", header: "ST/MC Type", width: Widths.AnsiChars(8), settings: this.machine)
                 .Text("MasterPlusGroup", header: "Machine Group", width: Widths.AnsiChars(8), settings: txtSubReason)
@@ -1109,30 +1161,16 @@ and Name = @PPA
             }
 
             var data = ((DataRowView)this.detailgrid.Rows[e.RowIndex].DataBoundItem).Row;
-            if (data.RowState != DataRowState.Deleted && !MyUtility.Check.Empty(data["OperationID"]))
+            if (!MyUtility.Convert.GetBool(data["IsSubprocess"]) && MyUtility.Convert.GetBool(data["IsNonSewingLine"]))
             {
-                this.col_IsSubprocess.IsEditable = false;
-                // MachineType_IsSubprocess 是true,代表可以勾選SubProcess 反之亦然
-                //if (data.RowState != DataRowState.Deleted && MyUtility.Convert.GetBool(data["MachineType_IsSubprocess"]) == true)
-                //{
-                //    this.col_IsSubprocess.IsEditable = true;
-                //}
-                //else
-                //{
-                //    this.col_IsSubprocess.IsEditable = false;
-                //}
-                if (data.RowState != DataRowState.Deleted && MyUtility.Convert.GetBool(data["IsSubprocess"]) == true)
-                {
-                    this.col_IsNonSewingLine.IsEditable = true;
-                }
-                else
-                {
-                    this.col_IsNonSewingLine.IsEditable = false;
-                }
+                this.col_IsNonSewingLine.IsEditable = true;
+            }
+            else if (MyUtility.Convert.GetBool(data["IsSubprocess"]))
+            {
+                this.col_IsNonSewingLine.IsEditable = true;
             }
             else
             {
-                this.col_IsSubprocess.IsEditable = false;
                 this.col_IsNonSewingLine.IsEditable = false;
             }
         }
