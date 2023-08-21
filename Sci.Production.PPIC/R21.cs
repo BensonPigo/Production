@@ -301,7 +301,7 @@ select	pld.KPICode,
 					then ' Transit to CLOG'
 			when CFAReceive.AddDate is not null and CFAReceive.AddDate > CFAReturn.AddDate 
 					then 'CFA'
-			when ClogReceive.AddDate is not null and ClogReceive.AddDate > CFAReturn.AddDate 
+			when ClogReceive.AddDate is not null and (CFAReceive.AddDate is null or ClogReceiveCFA.AddDate > CFAReturn.AddDate )
 					then 'Clog'
 		else '' end ,
 		[HaulingScanTime] = Hauling.AddDate,
