@@ -335,6 +335,7 @@ and ReasonTypeID='Stock_Adjust' AND junk = 0", e.FormattedValue), out dr, null))
             this.Close();
         }
 
+
         // SP# Valid
         private void TxtSPNo_Validating(object sender, CancelEventArgs e)
         {

@@ -10,11 +10,13 @@
         public long Rn { get; set; }
         public string Action { get; set; }
         public string FromFabric_FtyInventoryUkey { get; set; } // string 是因為 ProcessWithObject 用(long?)會掛掉, 但有寫 NULL 需求
+        public string FromFabric_LocalOrderInvnetoryUkey { get; set; } // string 是因為 ProcessWithObject 用(long?)會掛掉, 但有寫 NULL 需求
         public string From_OldBarcode { get; set; }
         public string From_OldBarcodeSeq { get; set; }
         public string From_NewBarcode { get; set; }
         public string From_NewBarcodeSeq { get; set; }
         public string ToFabric_FtyInventoryUkey { get; set; } // string 是因為 ProcessWithObject 用(long?)會掛掉, 但有寫 NULL 需求
+        public string ToFabric_LocalOrderInventoryUkey { get; set; } // string 是因為 ProcessWithObject 用(long?)會掛掉, 但有寫 NULL 需求
         public string To_OldBarcode { get; set; }
         public string To_OldBarcodeSeq { get; set; }
         public string To_NewBarcode { get; set; }

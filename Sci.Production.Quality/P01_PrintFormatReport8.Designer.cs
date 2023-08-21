@@ -123,8 +123,7 @@
             // 
             // btnFind
             // 
-            this.btnFind.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnFind.Location = new System.Drawing.Point(429, 4);
+            this.btnFind.Location = new System.Drawing.Point(429, 3);
             this.btnFind.Name = "btnFind";
             this.btnFind.Size = new System.Drawing.Size(80, 30);
             this.btnFind.TabIndex = 241;
