@@ -725,7 +725,7 @@ OPTION (RECOMPILE)"
             DataTable selects = r.CopyToDataTable();
 
             string fileName = "Cutting_P12";
-            string fieldList = "Bundle,CutRef,POID,SP,Group,Line,SpreadingNoID,Cell,Style,Item,Comb,Cut,Article,Color,Size,SizeSpec,Cutpart,Description,SubProcess,Parts,Qty";
+            string fieldList = "Bundle,CutRef,POID,SP,Group,Dyelot,Line,SpreadingNoID,Cell,Style,Item,Comb,Cut,Article,Color,Size,SizeSpec,Cutpart,Description,SubProcess,Parts,Qty";
             Excel.Application excelApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + $"\\{fileName}.xltx"); // 預先開啟excel app
             MyUtility.Excel.CopyToXls(selects, string.Empty, $"{fileName}.xltx", 1, true, fieldList, excelApp);
             Marshal.ReleaseComObject(excelApp);
