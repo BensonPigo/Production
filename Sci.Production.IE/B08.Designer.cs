@@ -198,7 +198,7 @@
             this.txtSkill.Name = "txtSkill";
             this.txtSkill.PopUpMode = Sci.Win.UI.TextBoxPopUpMode.EditModeAndReadOnly;
             this.txtSkill.ReadOnly = true;
-            this.txtSkill.Size = new System.Drawing.Size(140, 23);
+            this.txtSkill.Size = new System.Drawing.Size(201, 23);
             this.txtSkill.TabIndex = 2;
             this.txtSkill.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtSkill_PopUp);
             // 
