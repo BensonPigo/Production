@@ -623,6 +623,33 @@ and o.ID = @id";
                             dr["MachineTypeID"] = e.FormattedValue.ToString();
                         }
                     }
+
+                    string sqlcnd_sm = $@"select IsSubprocess,IsNonSewingLine  from MachineType_Detail where FactoryID = '{Env.User.Factory}' and ID = '{e.FormattedValue.ToString()}'";
+
+                    MyUtility.Check.Seek(sqlcnd_sm, out DataRow dataRow, "Production");
+
+                    if (dataRow != null)
+                    {
+                        this.CurrentDetailData["IsSubprocess"] = dataRow["IsSubprocess"];
+                        this.CurrentDetailData["IsNonSewingLine"] = dataRow["IsNonSewingLine"];
+
+                        if (!MyUtility.Convert.GetBool(dataRow["IsSubprocess"]) && MyUtility.Convert.GetBool(dataRow["IsNonSewingLine"]))
+                        {
+                            this.col_IsNonSewingLine.IsEditable = true;
+                        }
+
+                        if (MyUtility.Convert.GetBool(dataRow["IsSubprocess"]))
+                        {
+                            this.col_IsNonSewingLine.IsEditable = true;
+                        }
+                    }
+                    else
+                    {
+                        this.CurrentDetailData["IsSubprocess"] = 0;
+                        this.CurrentDetailData["IsNonSewingLine"] = 0;
+                        this.col_IsNonSewingLine.IsEditable = false;
+                    }
+
                 }
             };
 
