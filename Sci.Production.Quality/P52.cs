@@ -1310,9 +1310,9 @@ update t
 set t.FTYReceivedReport = s.ContinuityCard_FtyReceivedDate
 ,t.TestReportCheckClima = isnull(s.TestReportCheckClima,0)
 ,t.AWBno = s.ContinuityCard_AWB
-,t.T2InspYds = s.T2Inspected_Yards
-,t.T2DefectPoint = s.T2Defect_Points
-,t.T2Grade = s.Grade
+,t.T2InspYds = isnull(s.T2Inspected_Yards, 0)
+,t.T2DefectPoint = isnull(s.T2Defect_Points, 0)
+,t.T2Grade = isnull(s.Grade, '')
 ,t.EditDate = GETDATE()
 ,t.Editname = '{Env.User.UserID}'
 from NewSentReport t
@@ -1326,9 +1326,9 @@ and t.BrandID = s.BrandID
 update t
 set t.FTYReceivedReport = s.Inspection_Report_FtyReceivedDate
 ,t.TestReportCheckClima = isnull(s.TestReportCheckClima,0)
-,t.T2InspYds = s.T2Inspected_Yards
-,t.T2DefectPoint = s.T2Defect_Points
-,t.T2Grade = s.Grade
+,t.T2InspYds = isnull(s.T2Inspected_Yards, 0)
+,t.T2DefectPoint = isnull(s.T2Defect_Points, 0)
+,t.T2Grade = isnull(s.Grade, '')
 ,t.EditDate = GETDATE()
 ,t.Editname = '{Env.User.UserID}'
 from NewSentReport t
@@ -1343,9 +1343,9 @@ and t.BrandID = s.BrandID
 update t
 set t.FTYReceivedReport = s.TestReport_FtyReceivedDate
 ,t.TestReportCheckClima = isnull(s.TestReportCheckClima,0)
-,t.T2InspYds = s.T2Inspected_Yards
-,t.T2DefectPoint = s.T2Defect_Points
-,t.T2Grade = s.Grade
+,t.T2InspYds = isnull(s.T2Inspected_Yards, 0)
+,t.T2DefectPoint = isnull(s.T2Defect_Points, 0)
+,t.T2Grade = isnull(s.Grade, '')
 ,t.EditDate = GETDATE()
 ,t.Editname = '{Env.User.UserID}'
 from NewSentReport t
