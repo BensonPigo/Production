@@ -2856,7 +2856,19 @@
     <Build Include="dbo\Tables\Export_Container.sql" />
     <Build Include="dbo\Functions\ConditionIncludeNull.sql" />
     <Build Include="dbo\Functions\GetPo3Spec_Null.sql" />
+    <Build Include="dbo\Functions\GetQualityWebAIComment.sql" />
     <Build Include="dbo\Tables\ADIDASComplain_24Month.sql" />
+    <Build Include="dbo\Tables\LocalOrderMaterial.sql" />
+    <Build Include="dbo\Tables\LocalOrderInventory.sql" />
+    <Build Include="dbo\Tables\LocalOrderInventory_Location.sql" />
+    <Build Include="dbo\Tables\LocalOrderReceiving.sql" />
+    <Build Include="dbo\Tables\LocalOrderReceiving_Detail.sql" />
+    <Build Include="dbo\Tables\LocalOrderIssue.sql" />
+    <Build Include="dbo\Tables\LocalOrderIssue_Detail.sql" />
+    <Build Include="dbo\Tables\LocalOrderAdjust.sql" />
+    <Build Include="dbo\Tables\LocalOrderAdjust_Detail.sql" />
+    <Build Include="dbo\Tables\LocalOrderLocationTrans.sql" />
+    <Build Include="dbo\Tables\LocalOrderLocationTrans_Detail.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />

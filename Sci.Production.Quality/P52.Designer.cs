@@ -28,10 +28,9 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
-            this.bs_Material = new Sci.Win.UI.ListControlBindingSource(this.components);
-            this.bs_Document = new Sci.Win.UI.ListControlBindingSource(this.components);
-            this.bs_Report = new Sci.Win.UI.ListControlBindingSource(this.components);
+            this.bs_Material = new Sci.Win.UI.ListControlBindingSource();
+            this.bs_Document = new Sci.Win.UI.ListControlBindingSource();
+            this.bs_Report = new Sci.Win.UI.ListControlBindingSource();
             this.tabControl1 = new Sci.Win.UI.TabControl();
             this.MaterialDocumentRecord = new System.Windows.Forms.TabPage();
             this.txtBrandRefno = new Sci.Win.UI.TextBox();
@@ -75,7 +74,7 @@
             this.btnClose = new Sci.Win.UI.Button();
             this.btnSave2 = new Sci.Win.UI.Button();
             this.grid1 = new Sci.Win.UI.Grid();
-            this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
+            this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource();
             this.btnQuery2 = new Sci.Win.UI.Button();
             this.txtpo = new Sci.Win.UI.TextBox();
             this.txtsp2 = new Sci.Win.UI.TextBox();

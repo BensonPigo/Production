@@ -214,6 +214,12 @@
     <Compile Include="Holiday.Designer.cs">
       <DependentUpon>Holiday.cs</DependentUpon>
     </Compile>
+    <Compile Include="MsgGrid.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MsgGrid.designer.cs">
+      <DependentUpon>MsgGrid.cs</DependentUpon>
+    </Compile>
     <Compile Include="numericUpDownRate.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -248,6 +254,12 @@
     </Compile>
     <Compile Include="Txtartworktype_fty.Designer.cs">
       <DependentUpon>Txtartworktype_fty.cs</DependentUpon>
+    </Compile>
+    <Compile Include="TxtMtlType.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="TxtMtlType.Designer.cs">
+      <DependentUpon>TxtMtlType.cs</DependentUpon>
     </Compile>
     <Compile Include="TxtMultiBrandSupplierGroup.cs">
       <SubType>Component</SubType>
@@ -639,6 +651,12 @@
     <Compile Include="Txtuser.Designer.cs">
       <DependentUpon>Txtuser.cs</DependentUpon>
     </Compile>
+    <Compile Include="TxtWeaveType.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="TxtWeaveType.Designer.cs">
+      <DependentUpon>TxtWeaveType.cs</DependentUpon>
+    </Compile>
     <Compile Include="TxtwhseReason.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -861,6 +879,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Holiday.resx">
       <DependentUpon>Holiday.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MsgGrid.resx">
+      <DependentUpon>MsgGrid.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="PictureSubPage.resx">
       <DependentUpon>PictureSubPage.cs</DependentUpon>

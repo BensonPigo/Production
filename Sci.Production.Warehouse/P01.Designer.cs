@@ -1807,6 +1807,7 @@
             // 
             // txtuserMCHandle
             // 
+            this.txtuserMCHandle.AllowSelectResign = false;
             this.txtuserMCHandle.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "MCHandle", true));
             this.txtuserMCHandle.DisplayBox1Binding = "";
             this.txtuserMCHandle.Location = new System.Drawing.Point(644, 58);
@@ -1817,6 +1818,7 @@
             // 
             // txtuserLocalMR
             // 
+            this.txtuserLocalMR.AllowSelectResign = false;
             this.txtuserLocalMR.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "LocalMR", true));
             this.txtuserLocalMR.DisplayBox1Binding = "";
             this.txtuserLocalMR.Location = new System.Drawing.Point(644, 85);

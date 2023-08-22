@@ -15,7 +15,7 @@ namespace Sci.Production.Warehouse
     internal class Prgs_WMS
     {
         /// <summary>
-        /// P21/P26 調整前 Tolocation 不是自動倉, 要發給 WMS 要求撤回(Lock)
+        /// P21/P26/P73 調整前 Tolocation 不是自動倉, 要發給 WMS 要求撤回(Lock)
         /// </summary>
         /// <inheritdoc/>
         public static bool LockNotWMS(DataTable dtnotWMS)
@@ -25,6 +25,9 @@ namespace Sci.Production.Warehouse
 
             // 找出要撤回的 P18 Ukey
             DataTable dt18 = Prgs.GetWHDetailUkey(dtnotWMS, "P18");
+
+            // 找出要撤回的 P70 Ukey
+            DataTable dt70 = Prgs.GetWHDetailUkey(dtnotWMS, "P70");
 
             if (dt07.Rows.Count > 0)
             {
@@ -39,6 +42,15 @@ namespace Sci.Production.Warehouse
             {
                 Prgs.GetFtyInventoryData(dt18, "P18", out DataTable dtOriFtyInventoryP18);
                 if (!Prgs_WMS.WMSLock(dt18, dtOriFtyInventoryP18, "P18", EnumStatus.Unconfirm))
+                {
+                    return false;
+                }
+            }
+
+            if (dt70.Rows.Count > 0)
+            {
+                Prgs.GetLocalOrderInventoryData(dt70, "P70", out DataTable dtOriLocalOrderInventoryP70);
+                if (!Prgs_WMS.WMSLock(dt70, dtOriLocalOrderInventoryP70, "P70", EnumStatus.Unconfirm))
                 {
                     return false;
                 }
@@ -64,6 +76,20 @@ namespace Sci.Production.Warehouse
             Gensong_AutoWHFabric.Sent(false, dt18, "P18", statusAPI, EnumStatus.Unconfirm, typeCreateRecord: typeCreateRecord, autoRecord: autoRecordListP18);
             Vstrong_AutoWHAccessory.Sent(false, dt07, "P07", statusAPI, EnumStatus.Unconfirm, typeCreateRecord: typeCreateRecord, autoRecord: autoRecordListP07);
             Vstrong_AutoWHAccessory.Sent(false, dt18, "P18", statusAPI, EnumStatus.Unconfirm, typeCreateRecord: typeCreateRecord, autoRecord: autoRecordListP18);
+        }
+
+        /// <summary>
+        /// P73 調整 Tolocation 不是自動倉, 過程有任何錯誤, 要發給 WMS 要求(UnLock)
+        /// P73 調整後 Tolocation 不是自動倉, 要發給 WMS 要求撤回(Delete)
+        /// </summary>
+        /// <inheritdoc/>
+        public static void UnLockorDeleteNotWMS_LocalOrder(DataTable dtnotWMS, EnumStatus statusAPI, List<AutoRecord> autoRecordListP70, int typeCreateRecord)
+        {
+            // 找出要撤回的 P70 Ukey
+            DataTable dt70 = Prgs.GetWHDetailUkey(dtnotWMS, "P70");
+
+            Gensong_AutoWHFabric.Sent(false, dt70, "P70", statusAPI, EnumStatus.Unconfirm, typeCreateRecord: typeCreateRecord, autoRecord: autoRecordListP70);
+            Vstrong_AutoWHAccessory.Sent(false, dt70, "P70", statusAPI, EnumStatus.Unconfirm, typeCreateRecord: typeCreateRecord, autoRecord: autoRecordListP70);
         }
 
         /// <inheritdoc/>

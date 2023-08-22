@@ -227,7 +227,8 @@ select  [SewLine] = REVERSE(stuff(REVERSE(o.SewLine),1,1,'')) ,
 		p.PulloutDate,
 		pld.SCICtnNo,
 		o.CustPONo,
-		o.SciDelivery
+		o.SciDelivery,
+		pld.TransferDate
 into #tmp
 from  Orders o with (nolock)
 inner join Order_QtyShip oqs with (nolock) on oqs.Id = o.ID
@@ -281,7 +282,28 @@ select	pld.KPICode,
 		pld.CTNStartNo,
 		Size.val,
 		pld.ShipQty,
-		pld.Status,
+		[Status] = case 
+			when Hauling.AddDate is null 
+					and AuditScanTime.ScanTime is null 
+					and MDScan.AddDate  is null
+					and pld.ScanEditDate  is null 
+					and pld.TransferDate is null 
+					then 'Fty'
+			when pld.TransferDate is null and AuditScanTime.ScanTime > Hauling.AddDate and AuditScanTime.ScanTime > MDScan.AddDate and AuditScanTime.ScanTime > pld.ScanEditDate 
+					then 'Packing Audit'
+			when pld.TransferDate is null and Hauling.AddDate > AuditScanTime.ScanTime and Hauling.AddDate > MDScan.AddDate and Hauling.AddDate > pld.ScanEditDate 
+					then 'Hauiling'
+			when pld.TransferDate is null and MDScan.AddDate > AuditScanTime.ScanTime and MDScan.AddDate > Hauling.AddDate and MDScan.AddDate > pld.ScanEditDate 
+					then 'M360 MD'
+			when pld.TransferDate is null and pld.ScanEditDate > AuditScanTime.ScanTime and pld.ScanEditDate > Hauling.AddDate and pld.ScanEditDate > MDScan.AddDate 
+					then 'Scan & Pack'
+			when pld.TransferDate is not null and ClogReceive.AddDate is null 
+					then ' Transit to CLOG'
+			when CFAReceive.AddDate is not null and CFAReceive.AddDate > CFAReturn.AddDate 
+					then 'CFA'
+			when ClogReceive.AddDate is not null and (CFAReceive.AddDate is null or ClogReceiveCFA.AddDate > CFAReturn.AddDate )
+					then 'Clog'
+		else '' end ,
 		[HaulingScanTime] = Hauling.AddDate,
 		[QtyPerCTN] = isnull(QtyPerCTN.value,0),--ISP20221189
 		[DryRoomReceiveTime] = DRYReceive.AddDate,
