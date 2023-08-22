@@ -222,22 +222,10 @@ select   a.GroupKey
         ,[OtherBy] = concat(a.MachineTypeID,a.Attachment,a.Template,a.ThreadColor)
 		,a.SewingMachineAttachmentID
         ,a.MachineCount
-        --,e.val
 from LineMapping_Detail a 
 inner join LineMapping b WITH (NOLOCK) on a.ID = b.ID
 left join Operation o WITH (NOLOCK) on o.ID = a.OperationID
 left join MachineType m WITH (NOLOCK) on m.id =  a.MachineTypeID
---outer apply
---(
---	select val = stuff((
---	select concat('/',tmp.[Name]) from
---	(
---		select distinct [Name] = iif(c.Junk = 1 ,c.ID + ' ' + c.[Name],c.ID + ' ' + c.LastName + ',' + c.FirstName)
---		from Employee c
---		inner join LineMapping_Detail e on a.EmployeeID = e.EmployeeID and e.no = a.no
---		where c.id = a.EmployeeID 
---	) tmp for xml path('')),1,1,'')
---)e
 outer apply
 (
 	select OperationID
@@ -535,16 +523,6 @@ select No
     ,[ActCycleTime(average)]=ActCycle.Value
 into #tmp
 from LineMapping_Detail ld WITH (NOLOCK) 
-outer apply
-(
-	select val = stuff((
-	select concat('/',tmp.[Name]) from
-	(
-		select distinct [Name] = iif(c.Junk = 1 ,c.ID + ' ' + c.[Name],c.ID + ' ' + c.LastName + ',' + c.FirstName)
-		from Employee c
-		where c.id = ld.EmployeeID
-	) tmp for xml path('')),1,1,'')
-)e
 OUTER APPLY(
 	SELECT [Value]=SUM(ActCycle)/COUNT(NO) FROM 
 	(
@@ -579,12 +557,12 @@ SELECT
 FROM #tmp t
 OUTER APPLY (
    SELECT val = STUFF((
-        SELECT CONCAT(' / ', tmp.[Name])
+        SELECT distinct CONCAT(' ', tmp.[Name], ' / ')
         FROM (
             SELECT [Name] = IIF(c.Junk = 1, c.ID + ' ' + c.[Name], c.ID + ' ' + c.LastName + ',' + c.FirstName)
             FROM Employee c
             INNER JOIN LineMapping_Detail e ON c.id = e.EmployeeID
-            WHERE e.no = t.no and e.id = {MyUtility.Convert.GetString(this.masterData["ID"])} 
+            WHERE e.no = t.no and e.id = {MyUtility.Convert.GetString(this.masterData["ID"])} and c.junk = 0
         ) tmp 
         FOR XML PATH('')
     ), 1, 1, '')
@@ -613,16 +591,6 @@ select No
     ,[ActCycleTime(average)]=ActCycle.Value
 into #tmp
 from LineMapping_Detail ld WITH (NOLOCK) 
-outer apply
-(
-	select val = stuff((
-	select concat('/',tmp.[Name]) from
-	(
-		select distinct [Name] = iif(c.Junk = 1 ,c.ID + ' ' + c.[Name],c.ID + ' ' + c.LastName + ',' + c.FirstName)
-		from Employee c
-		where c.id = ld.EmployeeID
-	) tmp for xml path('')),1,1,'')
-)e
 OUTER APPLY(
 	SELECT [Value]=SUM(ActCycle)/COUNT(NO) FROM 
 	(
@@ -657,12 +625,12 @@ SELECT
 FROM #tmp t
 OUTER APPLY (
    SELECT val = STUFF((
-        SELECT CONCAT(' / ', tmp.[Name])
+        SELECT distinct CONCAT(' ', tmp.[Name], ' / ')
         FROM (
             SELECT [Name] = IIF(c.Junk = 1, c.ID + ' ' + c.[Name], c.ID + ' ' + c.LastName + ',' + c.FirstName)
             FROM Employee c
             INNER JOIN LineMapping_Detail e ON c.id = e.EmployeeID
-            WHERE e.no = t.no and e.id = {MyUtility.Convert.GetString(this.masterData["ID"])} 
+            WHERE e.no = t.no and e.id = {MyUtility.Convert.GetString(this.masterData["ID"])} and c.junk = 0
         ) tmp 
         FOR XML PATH('')
     ), 1, 1, '')
@@ -735,12 +703,12 @@ SELECT
 FROM #tmp t
 OUTER APPLY (
    SELECT val = STUFF((
-        SELECT CONCAT(' / ', tmp.[Name])
+        SELECT distinct CONCAT(' / ', tmp.[Name])
         FROM (
             SELECT [Name] = IIF(c.Junk = 1, c.ID + ' ' + c.[Name], c.ID + ' ' + c.LastName + ',' + c.FirstName)
             FROM Employee c
             INNER JOIN LineMapping_Detail e ON c.id = e.EmployeeID
-            WHERE e.no = t.no and e.id = {MyUtility.Convert.GetString(this.masterData["ID"])} 
+            WHERE e.no = t.no and e.id = {MyUtility.Convert.GetString(this.masterData["ID"])} and c.junk = 0
         ) tmp 
         FOR XML PATH('')
     ), 1, 1, '')
@@ -809,12 +777,12 @@ SELECT
 FROM #tmp t
 OUTER APPLY (
    SELECT val = STUFF((
-        SELECT CONCAT(' / ', tmp.[Name])
+        SELECT distinct CONCAT(' ', tmp.[Name], ' / ')
         FROM (
             SELECT [Name] = IIF(c.Junk = 1, c.ID + ' ' + c.[Name], c.ID + ' ' + c.LastName + ',' + c.FirstName)
             FROM Employee c
             INNER JOIN LineMapping_Detail e ON c.id = e.EmployeeID
-            WHERE e.no = t.no and e.id = {MyUtility.Convert.GetString(this.masterData["ID"])} 
+            WHERE e.no = t.no and e.id = {MyUtility.Convert.GetString(this.masterData["ID"])} and c.junk = 0
         ) tmp 
         FOR XML PATH('')
     ), 1, 1, '')
@@ -892,12 +860,12 @@ SELECT
 FROM #tmp t
 OUTER APPLY (
    SELECT val = STUFF((
-        SELECT CONCAT(' / ', tmp.[Name])
+        SELECT distinct CONCAT(' ', tmp.[Name], ' / ')
         FROM (
             SELECT [Name] = IIF(c.Junk = 1, c.ID + ' ' + c.[Name], c.ID + ' ' + c.LastName + ',' + c.FirstName)
             FROM Employee c
             INNER JOIN LineMapping_Detail e ON c.id = e.EmployeeID
-            WHERE e.no = t.no and e.id = {MyUtility.Convert.GetString(this.masterData["ID"])} 
+            WHERE e.no = t.no and e.id = {MyUtility.Convert.GetString(this.masterData["ID"])} and c.junk = 0
         ) tmp 
         FOR XML PATH('')
     ), 1, 1, '')
@@ -971,7 +939,7 @@ SELECT
 FROM #tmp1 t
 OUTER APPLY (
    SELECT val = STUFF((
-        SELECT CONCAT(' / ', tmp.[Name])
+        SELECT CONCAT(' ', tmp.[Name], ' / ')
         FROM (
             SELECT [Name] = IIF(c.Junk = 1, c.ID + ' ' + c.[Name], c.ID + ' ' + c.LastName + ',' + c.FirstName)
             FROM Employee c

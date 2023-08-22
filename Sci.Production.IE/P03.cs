@@ -199,6 +199,7 @@ from (
         , ld.MachineCount
         , IsMachineTypeID_MM = Cast( IIF( ld.MachineTypeID like 'MM%',1,0) as bit)
         , [ReasonName] = lbr.Name
+        , [EmployeeJunk] = e.junk
     from LineMapping_Detail ld WITH (NOLOCK) 
     left join Employee e WITH (NOLOCK) on ld.EmployeeID = e.ID
     left join Operation o WITH (NOLOCK) on ld.OperationID = o.ID
@@ -214,6 +215,7 @@ from (
     )show
     where ld.ID = '{0}' 
 )ld
+where ld.EmployeeJunk = 0 or ld.EmployeeJunk is null
 order by case when ld.No = '' then 1
 	    when left(ld.No, 1) = 'P' then 2
 	    else 3
