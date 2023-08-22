@@ -25,7 +25,6 @@ namespace Sci.Production.IE
     /// </summary>
     public partial class P01 : Win.Tems.Input6
     {
-        private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
         private Ict.Win.UI.DataGridViewCheckBoxColumn col_IsSubprocess;
         private Ict.Win.UI.DataGridViewCheckBoxColumn col_IsNonSewingLine;
         private DataGridViewGeneratorTextColumnSettings operation = new DataGridViewGeneratorTextColumnSettings();
@@ -1070,7 +1069,7 @@ and Name = @PPA
             template.MaxLength = 100;
 
             this.Helper.Controls.Grid.Generator(this.detailgrid)
-                .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out this.col_chk)
+                .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0)
                 .Text("Seq", header: "Seq", width: Widths.AnsiChars(4), settings: seq)
                 .Text("OperationID", header: "Operation code", width: Widths.AnsiChars(13), settings: this.operation)
                 .EditText("OperationDescEN", header: "Operation Description", width: Widths.AnsiChars(30), iseditingreadonly: true)

@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using static Ict.AsyncWorker;
 
 namespace Sci.Production.Prg
 {
@@ -86,6 +87,10 @@ namespace Sci.Production.Prg
 
             this.backgroundScrollMainGrid.DoWork += this.BackgroundScrollMainGrid_DoWork;
 
+            this.backgroundScrollMainGrid.ProgressChanged += this.BackgroundScrollMainGrid_ProgressChanged;
+
+            this.backgroundScrollMainGrid.WorkerReportsProgress = true;
+
             this.afterRowDragDo = afterRowDragDo;
             this.beforeRowDragDo = beforeRowDragDo;
 
@@ -95,6 +100,11 @@ namespace Sci.Production.Prg
             {
                 this.excludeDragCols = excludeDragCols;
             }
+        }
+
+        private void BackgroundScrollMainGrid_ProgressChanged(object sender, System.ComponentModel.ProgressChangedEventArgs e)
+        {
+            this.mainGrid.FirstDisplayedScrollingRowIndex = e.ProgressPercentage;
         }
 
         private void BackgroundScrollMainGrid_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
@@ -118,28 +128,53 @@ namespace Sci.Production.Prg
                 int newIndex = 0;
                 if (this.scrollDirection == ScrollDirection.Up)
                 {
-                    newIndex = this.mainGrid.FirstDisplayedScrollingRowIndex - 1;
+                    newIndex = this.GetScrollIndex();
                 }
                 else if (this.scrollDirection == ScrollDirection.Down)
                 {
-                    newIndex = this.mainGrid.FirstDisplayedScrollingRowIndex + 1;
+                    newIndex = this.GetScrollIndex();
                 }
                 else
                 {
                     continue;
                 }
 
-                if ((newIndex < 0 && this.scrollDirection == ScrollDirection.Up) || 
+                if ((newIndex < 0 && this.scrollDirection == ScrollDirection.Up) ||
                     (this.IsGridScrolledToBottom(this.mainGrid) && this.scrollDirection == ScrollDirection.Down))
                 {
                     continue;
                 }
 
-                this.mainGrid.BeginInvoke(new Action(() =>
-                {
-                    this.mainGrid.FirstDisplayedScrollingRowIndex = newIndex;
-                }));
+                this.backgroundScrollMainGrid.ReportProgress(newIndex);
             }
+        }
+
+        private int GetScrollIndex()
+        {
+            int newIndex = this.mainGrid.FirstDisplayedScrollingRowIndex;
+            while (newIndex >= 0 && newIndex < this.mainGrid.RowCount)
+            {
+                if (this.scrollDirection == ScrollDirection.Up)
+                {
+                    newIndex = newIndex - 1;
+                }
+                else if (this.scrollDirection == ScrollDirection.Down)
+                {
+                    newIndex = newIndex + 1;
+                }
+                else
+                {
+                    return newIndex;
+                }
+
+                if (newIndex >= 0 && newIndex < this.mainGrid.RowCount &&
+                    this.mainGrid.Rows[newIndex].Visible)
+                {
+                    return newIndex;
+                }
+            }
+
+            return newIndex;
         }
 
         private bool IsGridScrolledToBottom(DataGridView grid)

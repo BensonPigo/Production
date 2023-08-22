@@ -252,11 +252,20 @@ order by iif(ad.No = '', 'ZZ', ad.No), ad.Seq";
 
             if (this.EditMode)
             {
-                this.gridCentralizedPPALeft.Columns["Cycle"].DefaultCellStyle.ForeColor = Color.Red;
+                foreach (var col in this.gridCentralizedPPALeft.Columns)
+                {
+                    if (((Ict.Win.UI.IDataGridViewEditMode)col).IsEditingReadOnly == false)
+                    {
+                        ((DataGridViewColumn)col).DefaultCellStyle.ForeColor = Color.Red;
+                    }
+                }
             }
             else
             {
-                this.gridCentralizedPPALeft.Columns["Cycle"].DefaultCellStyle.ForeColor = Color.Black;
+                foreach (DataGridViewColumn col in this.gridCentralizedPPALeft.Columns)
+                {
+                    col.DefaultCellStyle.ForeColor = Color.Black;
+                }
             }
         }
 
@@ -846,6 +855,11 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
 
         private void TabDetail_SelectedIndexChanged(object sender, EventArgs e)
         {
+            if (this.CurrentMaintain == null)
+            {
+                return;
+            }
+
             this.FilterGrid(false);
             this.btnEditOperation.Enabled = this.tabDetail.SelectedIndex == 0 && this.EditMode;
         }
@@ -917,11 +931,21 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
 
         private void BtnNotHitTargetReason_Click(object sender, EventArgs e)
         {
+            if (this.CurrentMaintain == null)
+            {
+                return;
+            }
+
             this.P06_NotHitTargetReason.ShowDialog();
         }
 
         private void BtnEditOperation_Click(object sender, EventArgs e)
         {
+            if (this.CurrentMaintain == null)
+            {
+                return;
+            }
+
             if (!this.DetailDatas.Any(s => MyUtility.Convert.GetBool(s["Selected"])))
             {
                 MyUtility.Msg.WarningBox("Please tick at least one Operation.");
@@ -964,6 +988,11 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
 
         private void BtnH_Click(object sender, EventArgs e)
         {
+            if (this.CurrentMaintain == null)
+            {
+                return;
+            }
+
             new P06_Default(this.CurrentMaintain["AutomatedLineMappingID"].ToString()).ShowDialog();
         }
 

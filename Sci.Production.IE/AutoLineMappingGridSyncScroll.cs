@@ -77,11 +77,17 @@ namespace Sci.Production.IE
             get
             {
                 DataTable dtResult = this.gridMain.DataSource.GetType() == typeof(ListControlBindingSource) ? (DataTable)((ListControlBindingSource)this.gridMain.DataSource).DataSource : (DataTable)this.gridMain.DataSource;
+
+                if (dtResult == null)
+                {
+                    return null;
+                }
+
                 return dtResult.AsEnumerable().Where(s => s.RowState != DataRowState.Deleted);
             }
         }
 
-        private DataTable SubData
+        public DataTable SubData
         {
             get
             {
@@ -460,6 +466,11 @@ namespace Sci.Production.IE
             }
 
             IEnumerable<DataRow> mainData = this.MainData;
+
+            if (mainData == null)
+            {
+                return;
+            }
 
             List<DataRow> resultRows = new List<DataRow>();
 

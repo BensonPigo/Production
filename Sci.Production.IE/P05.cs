@@ -240,6 +240,18 @@ AND ALMCS.Junk = 0
         protected override void ClickUndo()
         {
             base.ClickUndo();
+
+            if (this.CurrentMaintain == null)
+            {
+                this.chartLBR.Series.Clear();
+                this.chartLBR.ChartAreas.Clear();
+                this.chartLBR.BackColor = this.BackColor;
+                this.lineMappingGrids.SubData.Clear();
+                this.centralizedPPAGrids.SubData.Clear();
+
+                return;
+            }
+
             this.RefreshAutomatedLineMappingSummary();
             this.ShowLBRChart(this.CurrentMaintain);
             foreach (DataRow dr in this.DetailDatas)
@@ -302,6 +314,24 @@ AND ALMCS.Junk = 0
             this.gridCentralizedPPALeft.ColumnHeadersHeight = this.gridCentralizedPPARight.ColumnHeadersHeight;
             this.btnEditOperation.Enabled = this.tabDetail.SelectedIndex == 0 && this.EditMode;
             this.btnTransferToP06.Enabled = this.CurrentMaintain["Status"].ToString() == "Confirmed";
+
+            if (this.EditMode)
+            {
+                foreach (var col in this.gridCentralizedPPALeft.Columns)
+                {
+                    if (((Ict.Win.UI.IDataGridViewEditMode)col).IsEditingReadOnly == false)
+                    {
+                        ((DataGridViewColumn)col).DefaultCellStyle.ForeColor = Color.Red;
+                    }
+                }
+            }
+            else
+            {
+                foreach (DataGridViewColumn col in this.gridCentralizedPPALeft.Columns)
+                {
+                    col.DefaultCellStyle.ForeColor = Color.Black;
+                }
+            }
         }
 
         /// <inheritdoc/>
@@ -849,6 +879,11 @@ from #tmp
 
         private void TabDetail_SelectedIndexChanged(object sender, EventArgs e)
         {
+            if (this.CurrentMaintain == null)
+            {
+                return;
+            }
+
             this.FilterGrid(false);
             this.btnEditOperation.Enabled = this.tabDetail.SelectedIndex == 0 && this.EditMode;
         }
@@ -1035,11 +1070,21 @@ from #tmp
 
         private void BtnNotHitTargetReason_Click(object sender, EventArgs e)
         {
+            if (this.CurrentMaintain == null)
+            {
+                return;
+            }
+
             this.p05_NotHitTargetReason.ShowDialog();
         }
 
         private void BtnEditOperation_Click(object sender, EventArgs e)
         {
+            if (this.CurrentMaintain == null)
+            {
+                return;
+            }
+
             if (!this.DetailDatas.Any(s => MyUtility.Convert.GetBool(s["Selected"])))
             {
                 MyUtility.Msg.WarningBox("Please tick at least one Operation.");
@@ -1060,6 +1105,11 @@ from #tmp
 
         private void ChartBtn_Click(object sender, EventArgs e)
         {
+            if (this.CurrentMaintain == null)
+            {
+                return;
+            }
+
             int firstDisplaySewermanpower = MyUtility.Convert.GetInt(((Win.UI.Button)sender).Text);
             if (this.EditMode)
             {
@@ -1078,6 +1128,11 @@ from #tmp
 
         private void BtnH_Click(object sender, EventArgs e)
         {
+            if (this.CurrentMaintain == null)
+            {
+                return;
+            }
+
             DataTable dtAutomatedLineMapping_DetailAutoDefault = this.dtAutomatedLineMapping_DetailAuto.AsEnumerable()
                 .Where(s => MyUtility.Convert.GetInt(s["SewerManpower"]) == MyUtility.Convert.GetInt(this.CurrentMaintain["SewerManpower"]))
                 .CopyToDataTable();
@@ -1087,6 +1142,11 @@ from #tmp
 
         private void BtnTransferToP06_Click(object sender, EventArgs e)
         {
+            if (this.CurrentMaintain == null)
+            {
+                return;
+            }
+
             string sqlInsertLineMappingBalancing = $@"
 INSERT INTO LineMappingBalancing (
 		AutomatedLineMappingID
