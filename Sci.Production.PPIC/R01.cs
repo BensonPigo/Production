@@ -10,6 +10,8 @@ using Excel = Microsoft.Office.Interop.Excel;
 using System.Runtime.InteropServices;
 using System.Data.SqlTypes;
 using Sci.Production.Prg;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Sci.Production.PPIC
 {
@@ -195,16 +197,19 @@ namespace Sci.Production.PPIC
 
                 if (!this.chkIncludeCompleteSchedule.Checked)
                 {
-                    if (!MyUtility.Check.Empty(this.SewingDate1))
-                    {
-                        pintDataFilter = pintDataFilter.Select($@" SewingDay >= '{Convert.ToDateTime(this.SewingDate1):yyyy/MM/dd}' ").CopyToDataTable();
+                    List<DataRow> filteredRows = pintDataFilter.AsEnumerable()
+                        .Where(x => x.Field<DateTime>("SewingDay") >= DateTime.Parse(this.SewingDate1.Value.Date.ToString("yyyy/MM/dd 00:00:00")) &&
+                                    x.Field<DateTime>("SewingDay") <= DateTime.Parse(this.SewingDate2.Value.Date.ToString("yyyy/MM/dd 00:00:00")))
+                        .ToList();
 
+                    if (filteredRows.Count > 0)
+                    {
+                        pintDataFilter = filteredRows.CopyToDataTable();
                     }
-
-                    if (!MyUtility.Check.Empty(this.SewingDate2))
+                    else
                     {
-                        pintDataFilter = pintDataFilter.Select($@" SewingDay <= '{Convert.ToDateTime(this.SewingDate2):yyyy/MM/dd}'").CopyToDataTable();
-
+                        MyUtility.Msg.WarningBox("Data not found!");
+                        return false;
                     }
                 }
 
