@@ -19,6 +19,7 @@ using System.Windows.Forms;
 using sxrc = Sci.Utility.Excel.SaveXltReportCls;
 using Excel = Microsoft.Office.Interop.Excel;
 using System.Security.Cryptography;
+//using Microsoft.Office.Interop.Excel;
 
 namespace Sci.Production.Cutting
 {
@@ -3116,9 +3117,52 @@ END";
                         MyUtility.Msg.WarningBox($"You can't set different [Est.CutDate] or [CutCell] or [Spreading No.] or [Shift] in same CutRef# <{chksame[0].CutRef.ToString()}>");
                         return false;
                     }
+
+                    // 不能有相同Marker Name
+                    var chksame2 = chkdrs.Select(m => new
+                    {
+                        MarkerName = MyUtility.Convert.GetString(m["MarkerName"]),
+                    }).Distinct().ToList();
+
+                    // 更新的欄位不能合併表示不一樣
+                    if (chksame2.Count > 1)
+                    {
+                        MyUtility.Msg.WarningBox($"Cannot have different [Marker Name], [Cut#] with same CurRef.");
+                        return false;
+                    }
                 }
             }
 
+            #endregion
+
+            #region 檢查相同MarkerName 不能有不同的MarkerLength和MarkerNo
+            var distnct_ListM = this.DetailDatas.AsEnumerable().
+              Select(m => new
+              {
+                  MarkerName = m.Field<string>("MarkerName"),
+              }).Distinct();
+
+            foreach (var item in distnct_ListM)
+            {
+                // 檢查已撈出資料
+                DataRow[] chkdrs = ((DataTable)this.detailgridbs.DataSource).Select($@" MarkerName = '{item.MarkerName}' and MarkerName <> ''");
+
+                if (chkdrs.Length > 1)
+                {
+                    var chksame = chkdrs.Select(m => new
+                    {
+                        MarkerLength = MyUtility.Convert.GetString(m["MarkerLength"]),
+                        MarkerNo = MyUtility.Convert.GetString(m["MarkerNo"]),
+                    }).Distinct().ToList();
+
+                    // 更新的欄位不能合併表示不一樣
+                    if (chksame.Count > 1)
+                    {
+                        MyUtility.Msg.WarningBox("Cannot have different [MarkerNo], [MarkerLength] with same MarkerName.");
+                        return false;
+                    }
+                }
+            }
             #endregion
 
             #region 刪除Qty 為0
