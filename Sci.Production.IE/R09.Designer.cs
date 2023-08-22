@@ -192,7 +192,7 @@
             this.Controls.Add(this.dtAddEdit);
             this.Name = "R09";
             this.OnLineHelpID = "Sci.Win.Tems.PrintForm";
-            this.Text = "R09";
+            this.Text = "R09. Line Mapping Operator Analysis Report";
             this.Controls.SetChildIndex(this.print, 0);
             this.Controls.SetChildIndex(this.toexcel, 0);
             this.Controls.SetChildIndex(this.close, 0);

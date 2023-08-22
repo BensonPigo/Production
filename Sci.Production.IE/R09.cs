@@ -138,6 +138,7 @@ namespace Sci.Production.IE
                 where a.CodeType = '00008' and a.id = o.id for xml path('') ),1,1,'')
             )Shape
             Where 1=1 and (e.ID is not null or e.id <> '')
+            and e.junk = 0
             {sqlWhere}
             ORDER by OperationCode,Style,Season,Brand,Version";
 
