@@ -685,7 +685,7 @@ where (isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f
             #endregion
 
             Exception errMsg = null;
-            using (TransactionScope transactionscope = new TransactionScope())
+            using (TransactionScope transactionscope = new TransactionScope(TransactionScopeOption.Required, new TimeSpan(0, 20, 0)))
             {
                 try
                 {
@@ -890,7 +890,7 @@ where (isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f
             // PMS 的資料更新
             Exception errMsg = null;
             List<AutoRecord> autoRecordList = new List<AutoRecord>();
-            using (TransactionScope transactionscope = new TransactionScope())
+            using (TransactionScope transactionscope = new TransactionScope(TransactionScopeOption.Required, new TimeSpan(0, 20, 0)))
             {
                 try
                 {
