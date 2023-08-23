@@ -39,6 +39,8 @@
             this.txtLocation2 = new Sci.Win.UI.TextBox();
             this.label2 = new Sci.Win.UI.Label();
             this.groupBox1 = new Sci.Win.UI.GroupBox();
+            this.comboBoxMaterialType = new Sci.Win.UI.ComboBox();
+            this.label8 = new Sci.Win.UI.Label();
             this.txtWk = new Sci.Win.UI.TextBox();
             this.label7 = new Sci.Win.UI.Label();
             this.txtRoll = new Sci.Win.UI.TextBox();
@@ -49,8 +51,8 @@
             this.label3 = new Sci.Win.UI.Label();
             this.comboStockType = new Sci.Production.Class.ComboDropDownList(this.components);
             this.label1 = new Sci.Win.UI.Label();
-            this.cmbMaterialType = new Sci.Win.UI.ComboBox();
-            this.labelMaterialType = new Sci.Win.UI.Label();
+            this.cmbFabricType = new Sci.Win.UI.ComboBox();
+            this.labelFabricType = new Sci.Win.UI.Label();
             this.txtSeq = new Sci.Production.Class.TxtSeq();
             this.txtDyelot = new Sci.Win.UI.TextBox();
             this.labelDyelot = new Sci.Win.UI.Label();
@@ -76,7 +78,7 @@
             this.btnCancel.Location = new System.Drawing.Point(999, 15);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(90, 30);
-            this.btnCancel.TabIndex = 5;
+            this.btnCancel.TabIndex = 4;
             this.btnCancel.Text = "Cancel";
             this.btnCancel.UseVisualStyleBackColor = true;
             this.btnCancel.Click += new System.EventHandler(this.BtnCancel_Click);
@@ -88,7 +90,7 @@
             this.btnImport.Location = new System.Drawing.Point(903, 16);
             this.btnImport.Name = "btnImport";
             this.btnImport.Size = new System.Drawing.Size(90, 30);
-            this.btnImport.TabIndex = 4;
+            this.btnImport.TabIndex = 3;
             this.btnImport.Text = "Import";
             this.btnImport.UseVisualStyleBackColor = true;
             this.btnImport.Click += new System.EventHandler(this.BtnImport_Click);
@@ -97,7 +99,7 @@
             // 
             this.btnQuery.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnQuery.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnQuery.Location = new System.Drawing.Point(952, 14);
+            this.btnQuery.Location = new System.Drawing.Point(1002, 17);
             this.btnQuery.Name = "btnQuery";
             this.btnQuery.Size = new System.Drawing.Size(84, 30);
             this.btnQuery.TabIndex = 12;
@@ -113,7 +115,7 @@
             this.txtSPNo.Location = new System.Drawing.Point(109, 22);
             this.txtSPNo.Name = "txtSPNo";
             this.txtSPNo.Size = new System.Drawing.Size(122, 23);
-            this.txtSPNo.TabIndex = 1;
+            this.txtSPNo.TabIndex = 0;
             // 
             // groupBox2
             // 
@@ -139,7 +141,7 @@
             this.BalanceQty.Location = new System.Drawing.Point(12, 21);
             this.BalanceQty.Name = "BalanceQty";
             this.BalanceQty.Size = new System.Drawing.Size(128, 21);
-            this.BalanceQty.TabIndex = 6;
+            this.BalanceQty.TabIndex = 0;
             this.BalanceQty.Text = "Balance Qty > 0";
             this.BalanceQty.UseVisualStyleBackColor = true;
             this.BalanceQty.CheckedChanged += new System.EventHandler(this.BalanceQty_CheckedChanged);
@@ -151,7 +153,7 @@
             this.btnUpdateAllLocation.Location = new System.Drawing.Point(722, 16);
             this.btnUpdateAllLocation.Name = "btnUpdateAllLocation";
             this.btnUpdateAllLocation.Size = new System.Drawing.Size(156, 30);
-            this.btnUpdateAllLocation.TabIndex = 3;
+            this.btnUpdateAllLocation.TabIndex = 2;
             this.btnUpdateAllLocation.Text = "Update All Location";
             this.btnUpdateAllLocation.UseVisualStyleBackColor = true;
             this.btnUpdateAllLocation.Click += new System.EventHandler(this.BtnUpdateAllLocation_Click);
@@ -165,7 +167,7 @@
             this.txtLocation2.Name = "txtLocation2";
             this.txtLocation2.ReadOnly = true;
             this.txtLocation2.Size = new System.Drawing.Size(400, 23);
-            this.txtLocation2.TabIndex = 2;
+            this.txtLocation2.TabIndex = 1;
             this.txtLocation2.MouseDown += new System.Windows.Forms.MouseEventHandler(this.TxtLocation2_MouseDown);
             // 
             // label2
@@ -178,6 +180,8 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.comboBoxMaterialType);
+            this.groupBox1.Controls.Add(this.label8);
             this.groupBox1.Controls.Add(this.txtWk);
             this.groupBox1.Controls.Add(this.label7);
             this.groupBox1.Controls.Add(this.txtRoll);
@@ -188,8 +192,8 @@
             this.groupBox1.Controls.Add(this.label3);
             this.groupBox1.Controls.Add(this.comboStockType);
             this.groupBox1.Controls.Add(this.label1);
-            this.groupBox1.Controls.Add(this.cmbMaterialType);
-            this.groupBox1.Controls.Add(this.labelMaterialType);
+            this.groupBox1.Controls.Add(this.cmbFabricType);
+            this.groupBox1.Controls.Add(this.labelFabricType);
             this.groupBox1.Controls.Add(this.txtSeq);
             this.groupBox1.Controls.Add(this.txtDyelot);
             this.groupBox1.Controls.Add(this.btnQuery);
@@ -206,6 +210,26 @@
             this.groupBox1.Size = new System.Drawing.Size(1095, 86);
             this.groupBox1.TabIndex = 17;
             this.groupBox1.TabStop = false;
+            // 
+            // comboBoxMaterialType
+            // 
+            this.comboBoxMaterialType.BackColor = System.Drawing.Color.White;
+            this.comboBoxMaterialType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboBoxMaterialType.FormattingEnabled = true;
+            this.comboBoxMaterialType.IsSupportUnselect = true;
+            this.comboBoxMaterialType.Location = new System.Drawing.Point(845, 50);
+            this.comboBoxMaterialType.Name = "comboBoxMaterialType";
+            this.comboBoxMaterialType.OldText = "";
+            this.comboBoxMaterialType.Size = new System.Drawing.Size(148, 24);
+            this.comboBoxMaterialType.TabIndex = 11;
+            // 
+            // label8
+            // 
+            this.label8.Location = new System.Drawing.Point(754, 51);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(88, 23);
+            this.label8.TabIndex = 22;
+            this.label8.Text = "Material Type";
             // 
             // txtWk
             // 
@@ -233,7 +257,7 @@
             this.txtRoll.Location = new System.Drawing.Point(637, 22);
             this.txtRoll.Name = "txtRoll";
             this.txtRoll.Size = new System.Drawing.Size(60, 23);
-            this.txtRoll.TabIndex = 5;
+            this.txtRoll.TabIndex = 4;
             // 
             // label6
             // 
@@ -251,7 +275,7 @@
             this.txtColor.Location = new System.Drawing.Point(512, 22);
             this.txtColor.Name = "txtColor";
             this.txtColor.Size = new System.Drawing.Size(68, 23);
-            this.txtColor.TabIndex = 4;
+            this.txtColor.TabIndex = 3;
             // 
             // label5
             // 
@@ -274,49 +298,50 @@
             this.label3.Location = new System.Drawing.Point(12, 22);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(94, 23);
-            this.label3.TabIndex = 14;
+            this.label3.TabIndex = 13;
             this.label3.Text = "SP#";
             // 
             // comboStockType
             // 
+            this.comboStockType.AddAllItem = false;
             this.comboStockType.BackColor = System.Drawing.Color.White;
             this.comboStockType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboStockType.FormattingEnabled = true;
             this.comboStockType.IsSupportUnselect = true;
-            this.comboStockType.Location = new System.Drawing.Point(858, 50);
+            this.comboStockType.Location = new System.Drawing.Point(899, 22);
             this.comboStockType.Name = "comboStockType";
             this.comboStockType.OldText = "";
             this.comboStockType.Size = new System.Drawing.Size(91, 24);
-            this.comboStockType.TabIndex = 11;
+            this.comboStockType.TabIndex = 6;
             this.comboStockType.Type = "Pms_StockType";
             // 
             // label1
             // 
-            this.label1.Location = new System.Drawing.Point(768, 50);
+            this.label1.Location = new System.Drawing.Point(820, 22);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(88, 23);
+            this.label1.Size = new System.Drawing.Size(76, 23);
             this.label1.TabIndex = 12;
             this.label1.Text = "Stock Type";
             // 
-            // cmbMaterialType
+            // cmbFabricType
             // 
-            this.cmbMaterialType.BackColor = System.Drawing.Color.White;
-            this.cmbMaterialType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.cmbMaterialType.FormattingEnabled = true;
-            this.cmbMaterialType.IsSupportUnselect = true;
-            this.cmbMaterialType.Location = new System.Drawing.Point(674, 50);
-            this.cmbMaterialType.Name = "cmbMaterialType";
-            this.cmbMaterialType.OldText = "";
-            this.cmbMaterialType.Size = new System.Drawing.Size(91, 24);
-            this.cmbMaterialType.TabIndex = 10;
+            this.cmbFabricType.BackColor = System.Drawing.Color.White;
+            this.cmbFabricType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.cmbFabricType.FormattingEnabled = true;
+            this.cmbFabricType.IsSupportUnselect = true;
+            this.cmbFabricType.Location = new System.Drawing.Point(674, 50);
+            this.cmbFabricType.Name = "cmbFabricType";
+            this.cmbFabricType.OldText = "";
+            this.cmbFabricType.Size = new System.Drawing.Size(77, 24);
+            this.cmbFabricType.TabIndex = 10;
             // 
-            // labelMaterialType
+            // labelFabricType
             // 
-            this.labelMaterialType.Location = new System.Drawing.Point(583, 51);
-            this.labelMaterialType.Name = "labelMaterialType";
-            this.labelMaterialType.Size = new System.Drawing.Size(88, 23);
-            this.labelMaterialType.TabIndex = 10;
-            this.labelMaterialType.Text = "Material Type";
+            this.labelFabricType.Location = new System.Drawing.Point(583, 51);
+            this.labelFabricType.Name = "labelFabricType";
+            this.labelFabricType.Size = new System.Drawing.Size(88, 23);
+            this.labelFabricType.TabIndex = 10;
+            this.labelFabricType.Text = "Fabric Type";
             // 
             // txtSeq
             // 
@@ -326,7 +351,7 @@
             this.txtSeq.Seq1 = "";
             this.txtSeq.Seq2 = "";
             this.txtSeq.Size = new System.Drawing.Size(61, 23);
-            this.txtSeq.TabIndex = 2;
+            this.txtSeq.TabIndex = 1;
             // 
             // txtDyelot
             // 
@@ -336,7 +361,7 @@
             this.txtDyelot.Location = new System.Drawing.Point(754, 22);
             this.txtDyelot.Name = "txtDyelot";
             this.txtDyelot.Size = new System.Drawing.Size(60, 23);
-            this.txtDyelot.TabIndex = 6;
+            this.txtDyelot.TabIndex = 5;
             // 
             // labelDyelot
             // 
@@ -382,7 +407,7 @@
             this.txtRef.Location = new System.Drawing.Point(344, 22);
             this.txtRef.Name = "txtRef";
             this.txtRef.Size = new System.Drawing.Size(87, 23);
-            this.txtRef.TabIndex = 3;
+            this.txtRef.TabIndex = 2;
             // 
             // labelLocation
             // 
@@ -469,8 +494,8 @@
         private Win.UI.Label labelRef;
         private Win.UI.TextBox txtTransactionID;
         private Class.TxtSeq txtSeq;
-        private Win.UI.Label labelMaterialType;
-        private Win.UI.ComboBox cmbMaterialType;
+        private Win.UI.Label labelFabricType;
+        private Win.UI.ComboBox cmbFabricType;
         private Class.ComboDropDownList comboStockType;
         private Win.UI.Label label1;
         private Win.UI.CheckBox BalanceQty;
@@ -482,5 +507,7 @@
         private Win.UI.Label label5;
         private Win.UI.Label label4;
         private Win.UI.Label label3;
+        private Win.UI.ComboBox comboBoxMaterialType;
+        private Win.UI.Label label8;
     }
 }
