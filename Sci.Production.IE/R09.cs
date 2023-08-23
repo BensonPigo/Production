@@ -42,8 +42,8 @@ namespace Sci.Production.IE
                 return false;
             }
 
-            this.date1 = this.dtAddEdit.Value1.Value.ToString("yyyyMMdd");
-            this.date2 = this.dtAddEdit.Value2.Value.ToString("yyyyMMdd");
+            this.date1 = this.dtAddEdit.Value1.Value.ToString("yyyy-MM-dd");
+            this.date2 = this.dtAddEdit.Value2.Value.ToString("yyyy-MM-dd");
             this.strOperator = this.txtOperatorID.Text;
             this.strSM = this.txtST_MC_Type.Text;
             this.strStyle = this.txtStyle.Text;
@@ -56,13 +56,27 @@ namespace Sci.Production.IE
         {
             string sqlCmd = string.Empty;
             string sqlWhere = string.Empty;
+            string sqlwhereTmp = string.Empty;
             List<SqlParameter> listParameter = new List<SqlParameter>();
 
             if (!MyUtility.Check.Empty(this.date1))
             {
                 listParameter.Add(new SqlParameter("@date1", this.date1));
                 listParameter.Add(new SqlParameter("@date2", this.date2));
-                sqlWhere += $@" and ((lm.AddDate between @date1 and @date2) or(lm.EditDate between @date1 and @date2))";
+                sqlwhereTmp += $@"
+                and
+                (
+                    (
+                        convert(varchar(10), ss.Inline, 120) >= @date1 and
+                        convert(varchar(10), ss.Offline, 120) <= @date2
+                    )
+                    or
+                    (
+                        @date1 >= convert(varchar(10), ss.Inline, 120) and
+                        @date2 <= convert(varchar(10), ss.Offline, 120)
+                    )
+                )
+                ";
             }
 
             if (!MyUtility.Check.Empty(this.strOperator))
@@ -119,6 +133,7 @@ namespace Sci.Production.IE
             , [Tmplate] = lmd.Template
             , [GSDTime] = lmd.GSD
             , [Cycle Time] = lmd.Cycle
+            into #tmp
             from LineMapping_Detail lmd
             LEFT JOIN LineMapping lm WITH(NOLOCK) on lm.ID = lmd.ID
             LEFT JOIN Employee e WITH(NOLOCK) on lmd.EmployeeID = e.ID
@@ -139,8 +154,23 @@ namespace Sci.Production.IE
             )Shape
             Where 1=1 and (e.ID is not null or e.id <> '')
             and e.junk = 0
+            and lm.Status = 'Confirmed'
             {sqlWhere}
-            ORDER by OperationCode,Style,Season,Brand,Version";
+            ORDER by OperationCode,Style,Season,Brand,Version
+            
+            SELECT
+            *
+            from #tmp t
+            where exists
+            (
+	            select *
+	            from SewingSchedule ss
+	            join Orders o on ss.OrderID = o.ID
+	            where 1=1
+	            {sqlwhereTmp}
+	            and o.StyleID = t.Style and o.SeasonID = t.Season and o.BrandID = t.Brand and o.FactoryID = t.Factory
+             )
+            ";
 
             DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), listParameter, out this.printData);
             if (!result)

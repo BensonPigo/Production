@@ -30,14 +30,14 @@
         {
             this.lblAddEditDate = new Sci.Win.UI.Label();
             this.dtAddEdit = new Sci.Win.UI.DateRange();
-            this.txtOperatorID = new Sci.Production.Class.Txtseason();
             this.lblOperatorID = new Sci.Win.UI.Label();
-            this.txtST_MC_Type = new Sci.Production.Class.Txtbrand();
             this.lblSTMC = new Sci.Win.UI.Label();
-            this.txtStyle = new Sci.Production.Class.Txtbrand();
             this.lblStyle = new Sci.Win.UI.Label();
             this.chkVersion = new Sci.Win.UI.CheckBox();
             this.lblVersion = new Sci.Win.UI.Label();
+            this.txtOperatorID = new Sci.Win.UI.TextBox();
+            this.txtST_MC_Type = new Sci.Win.UI.TextBox();
+            this.txtStyle = new Sci.Win.UI.TextBox();
             this.SuspendLayout();
             // 
             // print
@@ -75,7 +75,7 @@
             this.lblAddEditDate.RectStyle.ExtBorderWidth = 1F;
             this.lblAddEditDate.Size = new System.Drawing.Size(104, 23);
             this.lblAddEditDate.TabIndex = 98;
-            this.lblAddEditDate.Text = "Add/Edit Date";
+            this.lblAddEditDate.Text = "Sewing Date";
             this.lblAddEditDate.TextStyle.BorderColor = System.Drawing.Color.Black;
             this.lblAddEditDate.TextStyle.Color = System.Drawing.Color.Black;
             // 
@@ -101,16 +101,6 @@
             this.dtAddEdit.Size = new System.Drawing.Size(280, 23);
             this.dtAddEdit.TabIndex = 97;
             // 
-            // txtOperatorID
-            // 
-            this.txtOperatorID.BackColor = System.Drawing.Color.White;
-            this.txtOperatorID.BrandObjectName = null;
-            this.txtOperatorID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtOperatorID.Location = new System.Drawing.Point(116, 38);
-            this.txtOperatorID.Name = "txtOperatorID";
-            this.txtOperatorID.Size = new System.Drawing.Size(166, 23);
-            this.txtOperatorID.TabIndex = 153;
-            // 
             // lblOperatorID
             // 
             this.lblOperatorID.Location = new System.Drawing.Point(9, 38);
@@ -119,16 +109,6 @@
             this.lblOperatorID.TabIndex = 154;
             this.lblOperatorID.Text = "Operator ID";
             // 
-            // txtST_MC_Type
-            // 
-            this.txtST_MC_Type.BackColor = System.Drawing.Color.White;
-            this.txtST_MC_Type.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtST_MC_Type.Location = new System.Drawing.Point(116, 66);
-            this.txtST_MC_Type.MyDocumentdName = null;
-            this.txtST_MC_Type.Name = "txtST_MC_Type";
-            this.txtST_MC_Type.Size = new System.Drawing.Size(166, 23);
-            this.txtST_MC_Type.TabIndex = 151;
-            // 
             // lblSTMC
             // 
             this.lblSTMC.Location = new System.Drawing.Point(9, 66);
@@ -136,16 +116,6 @@
             this.lblSTMC.Size = new System.Drawing.Size(104, 23);
             this.lblSTMC.TabIndex = 152;
             this.lblSTMC.Text = "ST/MC Type";
-            // 
-            // txtStyle
-            // 
-            this.txtStyle.BackColor = System.Drawing.Color.White;
-            this.txtStyle.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtStyle.Location = new System.Drawing.Point(116, 96);
-            this.txtStyle.MyDocumentdName = null;
-            this.txtStyle.Name = "txtStyle";
-            this.txtStyle.Size = new System.Drawing.Size(166, 23);
-            this.txtStyle.TabIndex = 155;
             // 
             // lblStyle
             // 
@@ -175,40 +145,67 @@
             this.lblVersion.TabIndex = 158;
             this.lblVersion.Text = "Version";
             // 
+            // txtOperatorID
+            // 
+            this.txtOperatorID.BackColor = System.Drawing.Color.White;
+            this.txtOperatorID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtOperatorID.Location = new System.Drawing.Point(116, 38);
+            this.txtOperatorID.Name = "txtOperatorID";
+            this.txtOperatorID.Size = new System.Drawing.Size(166, 23);
+            this.txtOperatorID.TabIndex = 159;
+            // 
+            // txtST_MC_Type
+            // 
+            this.txtST_MC_Type.BackColor = System.Drawing.Color.White;
+            this.txtST_MC_Type.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtST_MC_Type.Location = new System.Drawing.Point(116, 66);
+            this.txtST_MC_Type.Name = "txtST_MC_Type";
+            this.txtST_MC_Type.Size = new System.Drawing.Size(166, 23);
+            this.txtST_MC_Type.TabIndex = 160;
+            // 
+            // txtStyle
+            // 
+            this.txtStyle.BackColor = System.Drawing.Color.White;
+            this.txtStyle.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtStyle.Location = new System.Drawing.Point(116, 98);
+            this.txtStyle.Name = "txtStyle";
+            this.txtStyle.Size = new System.Drawing.Size(166, 23);
+            this.txtStyle.TabIndex = 161;
+            // 
             // R09
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(505, 190);
+            this.Controls.Add(this.txtStyle);
+            this.Controls.Add(this.txtST_MC_Type);
+            this.Controls.Add(this.txtOperatorID);
             this.Controls.Add(this.lblVersion);
             this.Controls.Add(this.chkVersion);
-            this.Controls.Add(this.txtStyle);
             this.Controls.Add(this.lblStyle);
-            this.Controls.Add(this.txtOperatorID);
             this.Controls.Add(this.lblOperatorID);
-            this.Controls.Add(this.txtST_MC_Type);
             this.Controls.Add(this.lblSTMC);
             this.Controls.Add(this.lblAddEditDate);
             this.Controls.Add(this.dtAddEdit);
             this.Name = "R09";
             this.OnLineHelpID = "Sci.Win.Tems.PrintForm";
             this.Text = "R09. Line Mapping Operator Analysis Report";
+            this.Controls.SetChildIndex(this.dtAddEdit, 0);
+            this.Controls.SetChildIndex(this.lblAddEditDate, 0);
+            this.Controls.SetChildIndex(this.lblSTMC, 0);
+            this.Controls.SetChildIndex(this.lblOperatorID, 0);
+            this.Controls.SetChildIndex(this.lblStyle, 0);
+            this.Controls.SetChildIndex(this.chkVersion, 0);
+            this.Controls.SetChildIndex(this.lblVersion, 0);
             this.Controls.SetChildIndex(this.print, 0);
             this.Controls.SetChildIndex(this.toexcel, 0);
             this.Controls.SetChildIndex(this.close, 0);
             this.Controls.SetChildIndex(this.buttonCustomized, 0);
             this.Controls.SetChildIndex(this.checkUseCustomized, 0);
             this.Controls.SetChildIndex(this.txtVersion, 0);
-            this.Controls.SetChildIndex(this.dtAddEdit, 0);
-            this.Controls.SetChildIndex(this.lblAddEditDate, 0);
-            this.Controls.SetChildIndex(this.lblSTMC, 0);
-            this.Controls.SetChildIndex(this.txtST_MC_Type, 0);
-            this.Controls.SetChildIndex(this.lblOperatorID, 0);
             this.Controls.SetChildIndex(this.txtOperatorID, 0);
-            this.Controls.SetChildIndex(this.lblStyle, 0);
+            this.Controls.SetChildIndex(this.txtST_MC_Type, 0);
             this.Controls.SetChildIndex(this.txtStyle, 0);
-            this.Controls.SetChildIndex(this.chkVersion, 0);
-            this.Controls.SetChildIndex(this.lblVersion, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -218,13 +215,13 @@
 
         private Win.UI.Label lblAddEditDate;
         private Win.UI.DateRange dtAddEdit;
-        private Class.Txtseason txtOperatorID;
         private Win.UI.Label lblOperatorID;
-        private Class.Txtbrand txtST_MC_Type;
         private Win.UI.Label lblSTMC;
-        private Class.Txtbrand txtStyle;
         private Win.UI.Label lblStyle;
         private Win.UI.CheckBox chkVersion;
         private Win.UI.Label lblVersion;
+        private Win.UI.TextBox txtOperatorID;
+        private Win.UI.TextBox txtST_MC_Type;
+        private Win.UI.TextBox txtStyle;
     }
 }
