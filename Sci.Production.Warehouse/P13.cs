@@ -741,6 +741,8 @@ where (isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f
                 return;
             }
 
+            DBProxy.Current.DefaultTimeout = 1200; // Timeout 為20分鐘
+
             // 取得 FtyInventory 資料
             DualResult result = Prgs.GetFtyInventoryData((DataTable)this.detailgridbs.DataSource, this.Name, out DataTable dtOriFtyInventory);
             string ids = string.Empty;
@@ -749,6 +751,7 @@ where (isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f
             if (!PublicPrg.Prgs.Chk_WMS_Location(this.CurrentMaintain["ID"].ToString(), this.Name))
             {
                 MyUtility.Msg.WarningBox("Material Location is from WMS system cannot confirmed or unconfirmed. ", "Warning");
+                DBProxy.Current.DefaultTimeout = 300; // Timeout 為5分鐘
                 return;
             }
             #endregion
@@ -769,6 +772,7 @@ where f.lock=1 and d.Id = '{0}'", this.CurrentMaintain["id"]);
             if (!(result = DBProxy.Current.Select(null, sqlcmd, out DataTable datacheck)))
             {
                 this.ShowErr(sqlcmd, result);
+                DBProxy.Current.DefaultTimeout = 300; // Timeout 為5分鐘
                 return;
             }
             else
@@ -781,6 +785,7 @@ where f.lock=1 and d.Id = '{0}'", this.CurrentMaintain["id"]);
                     }
 
                     MyUtility.Msg.WarningBox("Material Locked!!" + Environment.NewLine + ids, "Warning");
+                    DBProxy.Current.DefaultTimeout = 300; // Timeout 為5分鐘
                     return;
                 }
             }
@@ -789,6 +794,7 @@ where f.lock=1 and d.Id = '{0}'", this.CurrentMaintain["id"]);
             #region 檢查庫存項WMSLock
             if (!Prgs.ChkWMSLock(this.CurrentMaintain["id"].ToString(), "Issue_Detail"))
             {
+                DBProxy.Current.DefaultTimeout = 300; // Timeout 為5分鐘
                 return;
             }
             #endregion
@@ -810,6 +816,7 @@ where (isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f
             if (!(result = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
             {
                 this.ShowErr(sqlcmd, result);
+                DBProxy.Current.DefaultTimeout = 300; // Timeout 為5分鐘
                 return;
             }
             else
@@ -822,6 +829,7 @@ where (isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f
                     }
 
                     MyUtility.Msg.WarningBox("Balacne Qty is not enough!!" + Environment.NewLine + ids, "Warning");
+                    DBProxy.Current.DefaultTimeout = 300; // Timeout 為5分鐘
                     return;
                 }
             }
@@ -921,6 +929,7 @@ where (isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f
             {
                 Prgs_WMS.WMSUnLock(false, (DataTable)this.detailgridbs.DataSource, this.Name, EnumStatus.UnLock, EnumStatus.Unconfirm, dtOriFtyInventory);
                 this.ShowErr(errMsg);
+                DBProxy.Current.DefaultTimeout = 300; // Timeout 為5分鐘
                 return;
             }
 
@@ -928,6 +937,8 @@ where (isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f
             Prgs_WMS.WMSprocess(false, (DataTable)this.detailgridbs.DataSource, this.Name, EnumStatus.Delete, EnumStatus.Unconfirm, dtOriFtyInventory, typeCreateRecord: 2, autoRecord: autoRecordList);
             MyUtility.Msg.InfoBox("UnConfirmed successful");
             #endregion
+
+            DBProxy.Current.DefaultTimeout = 300; // Timeout 為5分鐘
         }
 
         /// <inheritdoc/>
