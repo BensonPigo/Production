@@ -1,7 +1,4 @@
-﻿USE Production
-GO
-
-CREATE Function [dbo].GetIsHighRisk
+﻿CREATE Function [dbo].GetIsHighRisk
 (
 	@SuppID varchar(50),
 	@Refno varchar(50)
@@ -38,21 +35,6 @@ BEGIN
 		SET @FailCount = @FailCount + 1 
 	END
 
-	IF EXISTS(
-		select 1
-		from Quality.dbo.FabricTest
-		where CrockingResult='Fail'
-		AND SuppID = @SuppID AND Refno = @Refno
-	) OR EXISTS(
-		select 1
-		from Quality.dbo.FabricOven a
-		inner join  Quality.dbo.FabricOven_Detail b on a.ReportNo=b.ReportNo
-		where a.Status='Confirmed' AND b.Result = 'Fail' AND b.Refno = @Refno
-	) 
-	BEGIN
-		SET @FailCount = @FailCount + 1 
-	END
-
 	IF @FailCount >= 2
 	BEGIN
 		SET @IsHighRisk = 1
@@ -60,6 +42,3 @@ BEGIN
 
 	RETURN @IsHighRisk
 END
-
-
-GO
