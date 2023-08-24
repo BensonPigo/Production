@@ -32,13 +32,27 @@ namespace Sci.Production.Warehouse
             comboBox1_RowSource.Add(string.Empty, "All");
             comboBox1_RowSource.Add("F", "Fabric");
             comboBox1_RowSource.Add("A", "Accessory");
-            this.cmbMaterialType.DataSource = new BindingSource(comboBox1_RowSource, null);
-            this.cmbMaterialType.ValueMember = "Key";
-            this.cmbMaterialType.DisplayMember = "Value";
+            this.cmbFabricType.DataSource = new BindingSource(comboBox1_RowSource, null);
+            this.cmbFabricType.ValueMember = "Key";
+            this.cmbFabricType.DisplayMember = "Value";
 
             DataTable dt = (DataTable)this.comboStockType.DataSource;
             dt.Rows.InsertAt(dt.NewRow(), 0);
             this.comboStockType.SelectedIndex = 0;
+
+            #region Material Type
+            DualResult result;
+            if (result = DBProxy.Current.Select(null, @"select ID = '' union all select ID from MtlType ",out DataTable dtM))
+            {
+                this.comboBoxMaterialType.DataSource = dtM;
+                this.comboBoxMaterialType.DisplayMember = "ID";
+                this.comboBoxMaterialType.ValueMember = "ID";
+            }
+            else
+            {
+                this.ShowErr(result);
+            }
+            #endregion
         }
 
         // Button Query
@@ -53,8 +67,9 @@ namespace Sci.Production.Warehouse
             string transid = this.txtTransactionID.Text.TrimEnd();
             string wk = this.txtWk.Text.TrimEnd();
             string locationid = this.txtLocation.Text.TrimEnd();
-            string materialType = this.cmbMaterialType.SelectedValue.ToString();
+            string fabricType = this.cmbFabricType.SelectedValue.ToString();
             string stockType = this.comboStockType.SelectedValue.ToString();
+            string materialType = this.comboBoxMaterialType.SelectedValue.ToString();
 
             // SP#, Transaction ID, Ref#,Location#,WK#不可同時為空
             bool sql1 = false;
@@ -111,6 +126,7 @@ left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC
 left join PO_Supp_Detail_Spec psdsS WITH (NOLOCK) on psdsS.ID = psd.id and psdsS.seq1 = psd.seq1 and psdsS.seq2 = psd.seq2 and psdsS.SpecColumnID = 'Size'
 left join dbo.Receiving_Detail rd WITH (NOLOCK) on rd.POID = a.POID and rd.Seq1 = a.Seq1 and rd.Seq2 = a.Seq2 and rd.StockType = a.StockType and rd.Roll = a.Roll and rd.Dyelot = a.Dyelot
 left join dbo.Receiving r WITH (NOLOCK) on r.Id = rd.Id
+left join Fabric fb WITH (NOLOCK) on fb.SCIRefno = psd.SCIRefno
 Outer apply (
 	select t.val
 	from #tmp_LastEditDate t
@@ -158,11 +174,18 @@ where f.MDivisionID='{Env.User.Keyword}'
         and a.dyelot like '%{0}%' ", dyelot));
                 }
 
+                if (!MyUtility.Check.Empty(fabricType))
+                {
+                    strSQLCmd.Append(string.Format(
+                        @" 
+        and psd.FabricType='{0}' ", fabricType));
+                }
+
                 if (!MyUtility.Check.Empty(materialType))
                 {
                     strSQLCmd.Append(string.Format(
                         @" 
-        and psd.FabricType='{0}' ", materialType));
+        and fb.MtlTypeID='{0}' ", materialType));
                 }
 
                 if (!MyUtility.Check.Empty(stockType))
