@@ -166,6 +166,7 @@ namespace Sci.Production.PPIC
         /// <inheritdoc/>
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
+            List<DataRow> filteredRows;
             // 顯示筆數於PrintForm上Count欄位
             this.SetCount(this.printData.Rows.Count);
             bool result;
@@ -193,27 +194,45 @@ namespace Sci.Production.PPIC
                 worksheet.Select();
                 this.printData.Columns.Remove("StyleName");
 
-                DataTable pintDataFilter = this.printData.Copy();
-
+                DataTable printDataFilter = this.printData.Copy();
                 if (!this.chkIncludeCompleteSchedule.Checked)
                 {
-                    List<DataRow> filteredRows = pintDataFilter.AsEnumerable()
-                        .Where(x => x.Field<DateTime>("SewingDay") >= DateTime.Parse(this.SewingDate1.Value.Date.ToString("yyyy/MM/dd 00:00:00")) &&
-                                    x.Field<DateTime>("SewingDay") <= DateTime.Parse(this.SewingDate2.Value.Date.ToString("yyyy/MM/dd 00:00:00")))
+                    if (!MyUtility.Check.Empty(this.SewingDate1))
+                    {
+                        filteredRows = printDataFilter.AsEnumerable()
+                       .Where(x => x.Field<DateTime>("SewingDay") >= DateTime.Parse(this.SewingDate1.Value.Date.ToString("yyyy/MM/dd 00:00:00")))
+                       .ToList();
+
+                        if (filteredRows.Count > 0)
+                        {
+                            printDataFilter = filteredRows.CopyToDataTable();
+                        }
+                        else
+                        {
+                            MyUtility.Msg.WarningBox("Data not found!");
+                            return false;
+                        }
+                    }
+
+                    if (!MyUtility.Check.Empty(this.SewingDate2))
+                    {
+                        filteredRows = printDataFilter.AsEnumerable()
+                        .Where(x => x.Field<DateTime>("SewingDay") <= DateTime.Parse(this.SewingDate2.Value.Date.ToString("yyyy/MM/dd 00:00:00")))
                         .ToList();
 
-                    if (filteredRows.Count > 0)
-                    {
-                        pintDataFilter = filteredRows.CopyToDataTable();
-                    }
-                    else
-                    {
-                        MyUtility.Msg.WarningBox("Data not found!");
-                        return false;
+                        if (filteredRows.Count > 0)
+                        {
+                            printDataFilter = filteredRows.CopyToDataTable();
+                        }
+                        else
+                        {
+                            MyUtility.Msg.WarningBox("Data not found!");
+                            return false;
+                        }
                     }
                 }
 
-                result = MyUtility.Excel.CopyToXls(pintDataFilter, string.Empty, "PPIC_R01_Style_PerEachSewingDate.xltx", 1, false, string.Empty, objApp, false, worksheet, false);
+                result = MyUtility.Excel.CopyToXls(printDataFilter, string.Empty, "PPIC_R01_Style_PerEachSewingDate.xltx", 1, false, string.Empty, objApp, false, worksheet, false);
 
                 if (!result)
                 {
