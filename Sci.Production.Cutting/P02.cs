@@ -3118,16 +3118,17 @@ END";
                         return false;
                     }
 
-                    // 不能有相同Marker Name
+                    // 不能有相同[Marker Name],[CutNo]
                     var chksame2 = chkdrs.Select(m => new
                     {
                         MarkerName = MyUtility.Convert.GetString(m["MarkerName"]),
+                        CutNo = MyUtility.Convert.GetString(m["CutNo"]),
                     }).Distinct().ToList();
 
                     // 更新的欄位不能合併表示不一樣
                     if (chksame2.Count > 1)
                     {
-                        MyUtility.Msg.WarningBox($"Cannot have different [Marker Name], [Cut#] with same CurRef.");
+                        MyUtility.Msg.WarningBox($"Cannot have different [Marker Name], [Cut#] with same CutRef.");
                         return false;
                     }
                 }
