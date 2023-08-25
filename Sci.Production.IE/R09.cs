@@ -168,7 +168,7 @@ namespace Sci.Production.IE
 	            join Orders o on ss.OrderID = o.ID
 	            where 1=1
 	            {sqlwhereTmp}
-	            and o.StyleID = t.Style and o.SeasonID = t.Season and o.BrandID = t.Brand and o.FactoryID = t.Factory
+	            and o.StyleID = t.Style and o.SeasonID = t.Season and o.BrandID = t.Brand
              )
             ";
 
