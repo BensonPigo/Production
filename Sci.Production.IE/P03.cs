@@ -200,6 +200,7 @@ from (
         , IsMachineTypeID_MM = Cast( IIF( ld.MachineTypeID like 'MM%',1,0) as bit)
         , [ReasonName] = lbr.Name
         , [EmployeeJunk] = e.junk
+        , [IsRow] = ROW_NUMBER() OVER(PARTITION BY ld.EmployeeID,ld.Ukey ORDER by e.Junk asc) 
     from LineMapping_Detail ld WITH (NOLOCK) 
     left join Employee e WITH (NOLOCK) on ld.EmployeeID = e.ID
     left join Operation o WITH (NOLOCK) on ld.OperationID = o.ID
@@ -215,7 +216,7 @@ from (
     )show
     where ld.ID = '{0}' 
 )ld
-where ld.EmployeeJunk = 0 or ld.EmployeeJunk is null
+where ld.EmployeeJunk is null or  (ld.EmployeeID is not null and ld.IsRow = 1)
 order by case when ld.No = '' then 1
 	    when left(ld.No, 1) = 'P' then 2
 	    else 3
