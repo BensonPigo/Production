@@ -3142,36 +3142,6 @@ END";
 
             #endregion
 
-            #region 檢查相同MarkerName 不能有不同的MarkerLength和MarkerNo
-            var distnct_ListM = this.DetailDatas.AsEnumerable().
-              Select(m => new
-              {
-                  MarkerName = m.Field<string>("MarkerName"),
-              }).Distinct();
-
-            foreach (var item in distnct_ListM)
-            {
-                // 檢查已撈出資料
-                DataRow[] chkdrs = ((DataTable)this.detailgridbs.DataSource).Select($@" MarkerName = '{item.MarkerName}' and MarkerName <> ''");
-
-                if (chkdrs.Length > 1)
-                {
-                    var chksame = chkdrs.Select(m => new
-                    {
-                        MarkerLength = MyUtility.Convert.GetString(m["MarkerLength"]),
-                        MarkerNo = MyUtility.Convert.GetString(m["MarkerNo"]),
-                    }).Distinct().ToList();
-
-                    // 更新的欄位不能合併表示不一樣
-                    if (chksame.Count > 1)
-                    {
-                        MyUtility.Msg.WarningBox("Cannot have different [MarkerNo], [MarkerLength] with same MarkerName.");
-                        return false;
-                    }
-                }
-            }
-            #endregion
-
             #region 刪除Qty 為0
             DataRow[] sizeratioTbrow = this.sizeratioTb.AsEnumerable().Where(
                                 x => x.RowState != DataRowState.Deleted &&
