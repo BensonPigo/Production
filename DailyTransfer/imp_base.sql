@@ -5787,5 +5787,60 @@ SELECT
 from [Trade_To_Pms].[dbo].BrandRelation as b WITH (NOLOCK)
 where not exists(select BrandID,SuppGroup,SuppID from [Production].[dbo].BrandRelation as a WITH (NOLOCK) where a.SuppGroup = b.SuppGroup and a.BrandID = b.BrandID and a.SuppID = b.SuppID)
 
+/*Exchange*/
+----------------------Delete
+Delete a
+from [Production].[dbo].Exchange as a 
+left join [Trade_To_Pms].[dbo].Exchange  as b
+on a.ExchangeTypeID = b.ExchangeTypeID and a.CurrencyFrom = b.CurrencyFrom and a.CurrencyTo = b.CurrencyTo and a.DateStart = b.DateStart
+where 
+b.ExchangeTypeID is null 
+and b.CurrencyFrom is null
+and b.CurrencyTo is null
+and b.DateStart is null
+---------------------------UPDATE 
+UPDATE a
+SET a.DateEnd = b.DateEnd
+	,a.Rate = isnull(b.Rate, 0)
+	,a.Remark = isnull(b.Remark, '')
+	,a.AddDate = b.AddDate
+	,a.AddName = isnull(b.AddName, '')
+	,a.EditDate = b.EditDate
+	,a.EditName = isnull(b.EditName, '')
+	,a.Junk = isnull(b.Junk, 0)
+from [Production].[dbo].Exchange as a with(nolock)
+inner join [Trade_To_Pms].[dbo].Exchange  as b with(nolock) on a.ExchangeTypeID = b.ExchangeTypeID and a.CurrencyFrom = b.CurrencyFrom and a.CurrencyTo = b.CurrencyTo and a.DateStart = b.DateStart
+-------------------------- INSERT INTO 
+INSERT INTO [Production].[dbo].Exchange
+ (
+	 ExchangeTypeID
+	,CurrencyFrom
+	,CurrencyTo
+	,DateStart
+	,DateEnd
+	,Rate
+	,Remark
+	,AddDate
+	,AddName
+	,EditDate
+	,EditName
+	,Junk
+)
+SELECT
+	 ExchangeTypeID
+	,CurrencyFrom
+	,CurrencyTo
+	,DateStart
+	,DateEnd
+	,isnull(Rate, 0)
+	,isnull(Remark, '')
+	,AddDate
+	,isnull(AddName, '')
+	,EditDate
+	,isnull(EditName, '')
+	,isnull(Junk, 0)
+from [Trade_To_Pms].[dbo].Exchange as b WITH (NOLOCK)
+where not exists(select 1 from [Production].[dbo].Exchange as a WITH (NOLOCK) where a.ExchangeTypeID = b.ExchangeTypeID and a.CurrencyFrom = b.CurrencyFrom and a.CurrencyTo = b.CurrencyTo and a.DateStart = b.DateStart)
+
 
 END
