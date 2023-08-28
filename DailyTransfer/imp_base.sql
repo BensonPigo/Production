@@ -322,6 +322,48 @@ select
 from Trade_To_Pms.dbo.Supp as b WITH (NOLOCK)
 where not exists(select id from Production.dbo.Supp as a WITH (NOLOCK) where a.id = b.id)
 
+-- Supp_BrandSuppCode
+Delete a
+from Production.dbo.Supp_BrandSuppCode as a 
+left join Trade_To_Pms.dbo.Supp_BrandSuppCode as b on a.ID = b.ID and a.BrandID = b.BrandID
+where b.id is null
+
+UPDATE a
+SET 
+      a.SuppCode		      =isnull(b.SuppCode, '')
+      ,a.T2LO		      =isnull(b.T2LO, '')
+      ,a.AddName		      =isnull(b.AddName, '')
+      ,a.AddDate		      =b.AddDate
+      ,a.EditName		      =isnull(b.EditName, '')
+      ,a.EditDate		      =b.EditDate
+	  ,a.SuppName		      =isnull(b.SuppName, '')
+from Production.dbo.Supp_BrandSuppCode as a
+inner join Trade_To_Pms.dbo.Supp_BrandSuppCode as b ON a.ID = b.ID and a.BrandID = b.BrandID
+
+INSERT INTO Production.dbo.Supp_BrandSuppCode(
+		ID
+      ,BrandID
+      ,SuppCode
+      ,T2LO
+      ,AddName
+      ,AddDate
+      ,EditName
+      ,EditDate
+      ,SuppName
+)
+select 
+	   isnull(ID, '')
+      ,isnull(BrandID, 0)
+      ,isnull(SuppCode, '')
+      ,isnull(T2LO, '')
+      ,isnull(AddName, '')
+      ,AddDate
+      ,isnull(EditName, '')
+      ,EditDate
+      ,isnull(SuppName, '')
+from Trade_To_Pms.dbo.Supp_BrandSuppCode as b WITH (NOLOCK)
+where not exists(select id from Production.dbo.Supp_BrandSuppCode as a WITH (NOLOCK) where a.ID = b.ID and a.BrandID = b.BrandID)
+
 --Supp_ReplaceSupplier
 merge Production.dbo.Supp_ReplaceSupplier t 
 using Trade_To_Pms.dbo.Supp_ReplaceSupplier s
@@ -5747,6 +5789,61 @@ SELECT
 	,Editname
 from [Trade_To_Pms].[dbo].BrandRelation as b WITH (NOLOCK)
 where not exists(select BrandID,SuppGroup,SuppID from [Production].[dbo].BrandRelation as a WITH (NOLOCK) where a.SuppGroup = b.SuppGroup and a.BrandID = b.BrandID and a.SuppID = b.SuppID)
+
+/*Exchange*/
+----------------------Delete
+Delete a
+from [Production].[dbo].Exchange as a 
+left join [Trade_To_Pms].[dbo].Exchange  as b
+on a.ExchangeTypeID = b.ExchangeTypeID and a.CurrencyFrom = b.CurrencyFrom and a.CurrencyTo = b.CurrencyTo and a.DateStart = b.DateStart
+where 
+b.ExchangeTypeID is null 
+and b.CurrencyFrom is null
+and b.CurrencyTo is null
+and b.DateStart is null
+---------------------------UPDATE 
+UPDATE a
+SET a.DateEnd = b.DateEnd
+	,a.Rate = isnull(b.Rate, 0)
+	,a.Remark = isnull(b.Remark, '')
+	,a.AddDate = b.AddDate
+	,a.AddName = isnull(b.AddName, '')
+	,a.EditDate = b.EditDate
+	,a.EditName = isnull(b.EditName, '')
+	,a.Junk = isnull(b.Junk, 0)
+from [Production].[dbo].Exchange as a with(nolock)
+inner join [Trade_To_Pms].[dbo].Exchange  as b with(nolock) on a.ExchangeTypeID = b.ExchangeTypeID and a.CurrencyFrom = b.CurrencyFrom and a.CurrencyTo = b.CurrencyTo and a.DateStart = b.DateStart
+-------------------------- INSERT INTO 
+INSERT INTO [Production].[dbo].Exchange
+ (
+	 ExchangeTypeID
+	,CurrencyFrom
+	,CurrencyTo
+	,DateStart
+	,DateEnd
+	,Rate
+	,Remark
+	,AddDate
+	,AddName
+	,EditDate
+	,EditName
+	,Junk
+)
+SELECT
+	 ExchangeTypeID
+	,CurrencyFrom
+	,CurrencyTo
+	,DateStart
+	,DateEnd
+	,isnull(Rate, 0)
+	,isnull(Remark, '')
+	,AddDate
+	,isnull(AddName, '')
+	,EditDate
+	,isnull(EditName, '')
+	,isnull(Junk, 0)
+from [Trade_To_Pms].[dbo].Exchange as b WITH (NOLOCK)
+where not exists(select 1 from [Production].[dbo].Exchange as a WITH (NOLOCK) where a.ExchangeTypeID = b.ExchangeTypeID and a.CurrencyFrom = b.CurrencyFrom and a.CurrencyTo = b.CurrencyTo and a.DateStart = b.DateStart)
 
 
 END
