@@ -34,13 +34,13 @@ SELECT
     ,o.Qty
 	,f.KPICode
 	,CancelledButStillNeedProduction = IIF(o.NeedProduction = 0, 'N','Y')
-	,CFAInspectionResult = oq.CFAFinalInspectResult
 	,[3rdPartyInspection] = IIF(oq.CFAIs3rdInspect =1,'Y','N')
 	,[3rdPartyInspectionResult] = oq.CFA3rdInspectResult
     ,[BookingSP] = CASE WHEN o.Category='G' THEN OrderQtyGarment.value
                         WHEN ot.IsGMTMaster=1 THEN 'Y' 
                    ELSE ''
                    END
+	,[CFAInspectionResult] = oq.CFAFinalInspectResult
 into #tmpOrderMain
 FROM Production.dbo.Orders o WITH(NOLOCK)
 INNER JOIN Production.dbo.Factory f WITH(NOLOCK) ON f.ID=o.FactoryID
@@ -114,6 +114,53 @@ select OrderId,
 into #tmpInspection
 from #tmpInspection_Step1
 group by OrderId
+
+-- 新增欄位 [CFA inspection result]
+select
+ID,
+CTNStartNo,
+OrderID,
+OrigID,
+OrigOrderID,
+OrigCTNStartNo,
+OrderShipmodeSeq
+into #PackingList_Detail
+from Production.dbo.PackingList_Detail pld
+where exists(select 1 from #tmpOrderMain where ID = pld.OrderID)
+and CTNQty > 0
+
+select OrderID, OrderShipmodeSeq, AddDate = MAX(AddDate)
+into #CReceive
+from (
+select pd.OrderID, OrderShipmodeSeq, c.AddDate
+from #PackingList_Detail pd 
+inner join Production.dbo.ClogReceive c WITH (NOLOCK) on pd.ID = c.PackingListID 
+and pd.OrderID = c.OrderID 
+and pd.CTNStartNo = c.CTNStartNo
+where c.PackingListID != ''
+    and c.OrderID != ''
+    and c.CTNStartNo != ''
+ 
+union all -- 找拆箱
+select OrderID = pd.OrigOrderID, OrderShipmodeSeq, c.AddDate
+from #PackingList_Detail pd 
+inner join Production.dbo.ClogReceive c WITH (NOLOCK) on pd.OrigID = c.PackingListID
+and pd.OrigOrderID = c.OrderID
+and pd.OrigCTNStartNo = c.CTNStartNo
+where c.PackingListID != ''
+    and c.OrderID != ''
+    and c.CTNStartNo != ''
+) t
+where not exists (
+	-- 每個紙箱必須放在 Clog（ReceiveDate 有日期）
+	select 1 
+	from Production.dbo.PackingList_Detail pdCheck
+	where t.OrderID = pdCheck.OrderID 
+	and t.OrderShipmodeSeq = pdCheck.OrderShipmodeSeq
+	and pdCheck.ReceiveDate is null
+)
+group by OrderID, OrderShipmodeSeq
+
 ;
 
 select 
@@ -153,10 +200,12 @@ select
 	,main.CFAInspectionResult
 	,main.[3rdPartyInspection]
 	,main.[3rdPartyInspectionResult]
+	,[LastCartonReceivedDate]  = c.AddDate
 into #final
 from #tmpOrderMain main
 left join #tmpPackingList_Detail pd on pd.OrderID = main.id and pd.OrderShipmodeSeq = main.Seq
 left join #tmpInspection ins on ins.OrderId = main.ID
+left join #CReceive c on c.OrderID = main.id and c.OrderShipmodeSeq = main.Seq
 OUTER APPLY(
 	SELECT [Value]=MAX(s.OutputDate)
 	FROM Production.dbo.SewingOutput s WITH(NOLOCK)
@@ -199,7 +248,8 @@ SET
 	t.CancelledButStillNeedProduction = s.CancelledButStillNeedProduction,
 	t.CFAInspectionResult = s.CFAInspectionResult,
 	t.[3rdPartyInspection] = s.[3rdPartyInspection],
-	t.[3rdPartyInspectionResult] = s.[3rdPartyInspectionResult]
+	t.[3rdPartyInspectionResult] = s.[3rdPartyInspectionResult],
+	t.LastCartonReceivedDate = s.LastCartonReceivedDate
 from P_OustandingPO t
 inner join #Final s  
 		ON t.FactoryID=s.FactoryID  
@@ -209,7 +259,7 @@ inner join #Final s
 insert into P_OustandingPO ([FactoryID], [OrderID], [CustPONo], [StyleID], [BrandID], [BuyerDelivery], [Seq], [ShipModeID], [Category]
 , [PartialShipment], [Junk], [OrderQty], [PackingCtn], [PackingQty], [ClogRcvCtn], [ClogRcvQty], [LastCMPOutputDate], [CMPQty]
 , [LastDQSOutputDate], [DQSQty], [OSTPackingQty], [OSTCMPQty], [OSTDQSQty], [OSTClogQty], [OSTClogCtn], [PulloutComplete], [Dest]
-, [KPIGroup], [CancelledButStillNeedProduction], [CFAInspectionResult], [3rdPartyInspection], [3rdPartyInspectionResult], [BookingSP])
+, [KPIGroup], [CancelledButStillNeedProduction], [CFAInspectionResult], [3rdPartyInspection], [3rdPartyInspectionResult], [BookingSP],[LastCartonReceivedDate])
 select  s.FactoryID,
 		s.id,
 		s.CustPONo,
@@ -242,7 +292,8 @@ select  s.FactoryID,
 		s.CFAInspectionResult,
 		s.[3rdPartyInspection],
 		s.[3rdPartyInspectionResult],
-		s.BookingSP
+		s.BookingSP,
+		s.LastCartonReceivedDate
 from #Final s
 where not exists(
 	select 1 from P_OustandingPO t 
