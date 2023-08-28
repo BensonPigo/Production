@@ -25,4 +25,20 @@ BEGIN
 	FROM MainServer.Production.dbo.ADIDASComplain_24Month
 	'
 	Exec(@sqlcmd)
+
+	if exists (select 1 from BITableInfo b where b.id = 'P_ImportADIDASComplain_24Month')
+	begin
+		update b
+			set b.TransferDate = getdate()
+				, b.IS_Trans = 1
+		from BITableInfo b
+		where b.id = 'P_ImportADIDASComplain_24Month'
+	end
+	else 
+	begin
+		insert into BITableInfo(Id, TransferDate)
+		values('P_ImportADIDASComplain_24Month', getdate())
+	end
+
+
 END

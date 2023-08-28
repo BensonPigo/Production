@@ -32,6 +32,7 @@
     [3rdPartyInspection] VARCHAR(8) NOT NULL DEFAULT (''), 
     [3rdPartyInspectionResult] VARCHAR(16) NOT NULL DEFAULT (''), 
     [BookingSP]         VARCHAR (200) CONSTRAINT [DF_P_OustandingPO_BookingSP] DEFAULT ('') NOT NULL,
+    [LastCartonReceivedDate] DATETIME NULL, 
     CONSTRAINT [PK_P_OustandingPO] PRIMARY KEY CLUSTERED ([FactoryID] ASC, [OrderID] ASC, [Seq] ASC)
 );
 

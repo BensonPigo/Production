@@ -103,7 +103,57 @@ from #tmpInspection_Step1
 group by OrderId
 ';
 
-SET @SqlCmd2 = 'select 
+SET @SqlCmd2 = '
+
+-- 新增欄位 [CFA inspection result]
+select
+ID,
+CTNStartNo,
+OrderID,
+OrigID,
+OrigOrderID,
+OrigCTNStartNo,
+OrderShipmodeSeq
+into #PackingList_Detail
+from Production.dbo.PackingList_Detail pld
+where exists(select 1 from #tmpOrderMain where ID = pld.OrderID)
+and CTNQty > 0
+
+select OrderID, OrderShipmodeSeq, AddDate = MAX(AddDate)
+into #CReceive
+from (
+select pd.OrderID, OrderShipmodeSeq, c.AddDate
+from #PackingList_Detail pd 
+inner join Production.dbo.ClogReceive c WITH (NOLOCK) on pd.ID = c.PackingListID 
+and pd.OrderID = c.OrderID 
+and pd.CTNStartNo = c.CTNStartNo
+where c.PackingListID != ''
+    and c.OrderID != ''
+    and c.CTNStartNo != ''
+ 
+union all -- 找拆箱
+select OrderID = pd.OrigOrderID, OrderShipmodeSeq, c.AddDate
+from #PackingList_Detail pd 
+inner join Production.dbo.ClogReceive c WITH (NOLOCK) on pd.OrigID = c.PackingListID
+and pd.OrigOrderID = c.OrderID
+and pd.OrigCTNStartNo = c.CTNStartNo
+where c.PackingListID != ''
+    and c.OrderID != ''
+    and c.CTNStartNo != ''
+) t
+where not exists (
+	-- 每個紙箱必須放在 Clog（ReceiveDate 有日期）
+	select 1 
+	from Production.dbo.PackingList_Detail pdCheck
+	where t.OrderID = pdCheck.OrderID 
+	and t.OrderShipmodeSeq = pdCheck.OrderShipmodeSeq
+	and pdCheck.ReceiveDate is null
+)
+group by OrderID, OrderShipmodeSeq
+
+
+
+select 
 	main.FactoryID
     ,main.BrandID
 	,main.ID
@@ -134,10 +184,12 @@ SET @SqlCmd2 = 'select
 	,[OSTDQSQty]=IIF(main.PartialShipment=''Y'' , ''NA'' ,  CAST(( ISNULL(main.OrderQty,0) -  ISNULL(ins.DQSQty,0))  as varchar))
 	,[OSTClogQty]=IIF(main.PartialShipment=''Y'' , ''NA'' , CAST((  ISNULL(main.OrderQty,0) -  ISNULL(pd.ClogReceivedQty,0))  as varchar))
 	,[OSTClogCtn]= ISNULL(pd.PackingCarton,0) - ISNULL(pd.ClogReceivedCarton,0)
+	,[LastCartonReceivedDate]  = c.AddDate
 into #final
 from #tmpOrderMain main
 left join #tmpPackingList_Detail pd on pd.OrderID = main.id and pd.OrderShipmodeSeq = main.Seq
 left join #tmpInspection ins on ins.OrderId = main.ID
+left join #CReceive c on c.OrderID = main.id and c.OrderShipmodeSeq = main.Seq
 OUTER APPLY(
 	SELECT [Value]=MAX(s.OutputDate)
 	FROM ['+@LinkServerName+'].Production.dbo.SewingOutput s WITH(NOLOCK)
@@ -185,7 +237,8 @@ SET
 	t.OSTClogQty =  s.OSTClogQty,
 	t.OSTClogCtn =  s.OSTClogCtn,
 	t.PulloutComplete = s.PulloutComplete,
-	t.dest = s.dest
+	t.dest = s.dest,
+	t.LastCartonReceivedDate = s.LastCartonReceivedDate
 from P_OustandingPO_Original t
 inner join #Final s  
 		ON t.FactoryID=s.FactoryID  
@@ -220,7 +273,8 @@ select  s.FactoryID,
 		s.OSTClogQty,
 		s.OSTClogCtn,
 		s.PulloutComplete,
-		s.dest
+		s.dest,
+		s.LastCartonReceivedDate
 from #Final s
 where not exists(
 	select 1 from P_OustandingPO_Original t 
