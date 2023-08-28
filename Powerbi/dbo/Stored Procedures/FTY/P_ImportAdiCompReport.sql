@@ -106,6 +106,19 @@ Begin
 			';
 	Exec (@ExecSQL);
 
+	if exists (select 1 from BITableInfo b where b.id = 'P_ImportAdiCompReport')
+	begin
+		update b
+			set b.TransferDate = getdate()
+				, b.IS_Trans = 1
+		from BITableInfo b
+		where b.id = 'P_ImportAdiCompReport'
+	end
+	else 
+	begin
+		insert into BITableInfo(Id, TransferDate)
+		values('P_ImportAdiCompReport', getdate())
+	end
 End
 
 
