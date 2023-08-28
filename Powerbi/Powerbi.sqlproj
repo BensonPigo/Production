@@ -184,6 +184,8 @@
     <Build Include="dbo\Tables\P_InlineDefectDetail.sql" />
     <Build Include="dbo\Stored Procedures\FTY\P_ImportInlineDefec.sql" />
     <Build Include="dbo\Tables\P_ADIDASComplain_24Month.sql" />
+    <Build Include="dbo\Tables\P_MtltoFTYAnalysis.sql" />
+    <Build Include="dbo\Stored Procedures\FTY\P_Import_MtltoFTYAnalysis.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Utility.dll" />
