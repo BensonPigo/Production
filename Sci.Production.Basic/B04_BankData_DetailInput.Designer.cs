@@ -167,7 +167,7 @@
             this.txtAccountName.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
             this.txtAccountName.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtAccountName.Location = new System.Drawing.Point(144, 77);
-            this.txtAccountName.MaxLength = 60;
+            this.txtAccountName.MaxLength = 100;
             this.txtAccountName.Name = "txtAccountName";
             this.txtAccountName.Size = new System.Drawing.Size(378, 23);
             this.txtAccountName.TabIndex = 4;
