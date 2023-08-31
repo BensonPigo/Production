@@ -8,7 +8,7 @@
     [Orderqty]           DECIMAL (6)    CONSTRAINT [DF_Order_EachCons_Color_Orderqty] DEFAULT ((0)) NOT NULL,
     [SizeList]           NVARCHAR (100) CONSTRAINT [DF_Order_EachCons_Color_SizeList] DEFAULT ('') NOT NULL,
     [Variance]           DECIMAL (6)    CONSTRAINT [DF_Order_EachCons_Color_Variance] DEFAULT ((0)) NOT NULL,
-    [YDS]                NUMERIC (7, 2) CONSTRAINT [DF_Order_EachCons_Color_YDS] DEFAULT ((0)) NOT NULL,
+    [YDS]                NUMERIC (8, 2) CONSTRAINT [DF_Order_EachCons_Color_YDS] DEFAULT ((0)) NOT NULL,
     CONSTRAINT [PK_Order_EachCons_Color] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
 
