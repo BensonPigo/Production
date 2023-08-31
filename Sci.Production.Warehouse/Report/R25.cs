@@ -150,6 +150,7 @@ namespace Sci.Production.Warehouse
         /// <inheritdoc/>
         protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
+            DBProxy.Current.DefaultTimeout = 600;  // 加長時間為10分鐘，避免timeout
             #region Set SQL Command & SQLParameter
             string strSql = @"
 select
@@ -179,7 +180,7 @@ select
 	seq = ed.Seq1+' '+ed.Seq2,
 	ed.Refno,
 	[Color] = psdsC.SpecValue,
-	[Color Name] = dbo.GetColorMultipleID(o.BrandID,isnull(psdsC.SpecValue, '')) ,
+    [Color Name] = colName.value,	
 	[Description] = dbo.getmtldesc(ed.POID,ed.seq1,ed.seq2,2,0),
 	[MtlType]=case when ed.FabricType = 'F' then 'Fabric'
 				   when ed.FabricType = 'A' then 'Accessory' end,
@@ -220,6 +221,17 @@ left join po on po.id = ed.PoID
 left join TPEPass1 TEPPOHandle on TEPPOHandle.id = po.POHandle
 left join TPEPass1 TEPPOSMR on TEPPOSMR.id = po.POSMR
 left join Fabric f with(nolock)on f.SCIRefno = psd.SCIRefno
+outer APPLY(
+	select [value] = stuff((select concat('/', c2.Name)
+			   from dbo.Color as c
+			   LEFT join dbo.Color_multiple as m on m.ID = c.ID 
+				  								    and m.BrandID = c.BrandId
+               left join color c2 on c2.id = m.ColorID and c2.BrandID = m.BrandID
+			   where c.ID = isnull(psdsC.SpecValue, '') and c.BrandId = o.BrandID
+			   order by m.Seqno
+			   for xml path(''))
+			 , 1, 1, '')
+)colName
 OUTER APPLY(
 		SELECT [Val] = STUFF((
 		SELECT DISTINCT ','+esc.ContainerType
@@ -369,6 +381,7 @@ HAVING 1=1
             DualResult result = DBProxy.Current.Select(null, strSql, out this.dataTable);
             #endregion
 
+            DBProxy.Current.DefaultTimeout = 300;  // timeout時間改回5分鐘
             if (result)
             {
                 return Ict.Result.True;
