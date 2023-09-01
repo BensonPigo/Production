@@ -305,7 +305,7 @@ Declare @SewingOutput_Detail table(
 )
 INSERT INTO [dbo].[SewingOutput_Detail]
 ([ID],[OrderId],[ComboType],[Article],[Color],[TMS],[HourlyStandardOutput],[WorkHour],[QAQty],[DefectQty],[InlineQty],[OldDetailKey],[AutoCreate],[SewingReasonID],[Remark],[ImportFromDQS],[AutoSplit])
-OUTPUT INSERTED.* into @SewingOutput_Detail  -- 取得寫入的資料,ukey欄位
+OUTPUT INSERTED.ID, INSERTED.OrderId, INSERTED.ComboType, INSERTED.Article, INSERTED.Color, INSERTED.TMS, INSERTED.HourlyStandardOutput, INSERTED.WorkHour, INSERTED.UKey, INSERTED.QAQty, INSERTED.DefectQty, INSERTED.InlineQty, INSERTED.OldDetailKey, INSERTED.AutoCreate, INSERTED.SewingReasonID, INSERTED.Remark, INSERTED.ImportFromDQS, INSERTED.AutoSplit into @SewingOutput_Detail  -- 取得寫入的資料,ukey欄位
 select t.ID,t.ToOrderID,t.ToComboType,t.ToArticle,
 	Color = (select top 1 ColorID from View_OrderFAColor where Id = t.ToOrderID and Article = t.ToArticle),--※Sewing_P01
 	TMS = isnull(Round(o.CPU * o.CPUFactor * (r.rate / 100) * (select StdTMS from System WITH (NOLOCK)), 0),0),--※Sewing_P01
@@ -400,6 +400,41 @@ group by ID
 ";
             DataTable sumQaQty;
             result = this.proxyPMS.ProcessWithDatatable("Production", toDt, string.Empty, sqlcmd, out sumQaQty);
+            if (!result)
+            {
+                return result;
+            }
+            #endregion
+            #region 重新計算 Cumulate
+            sqlcmd = $@"
+DECLARE @Line as varchar(5)
+	, @FactoryID as varchar(8) 
+	, @OutputDate as date 
+
+
+DECLARE cursorSewingOutput 
+CURSOR FOR
+	select s.SewingLineID, s.FactoryID, s.OutputDate
+    from SewingOutput s
+    where s.id in(select distinct id from #tmp t where t.WillTransferQty > 0 )
+	group by s.SewingLineID, s.FactoryID, s.OutputDate
+	order by s.OutputDate
+
+OPEN cursorSewingOutput
+FETCH NEXT FROM cursorSewingOutput INTO @Line, @FactoryID, @OutputDate
+
+WHILE @@FETCH_STATUS = 0
+BEGIN
+    exec RecalculateCumulateDay @Line, @FactoryID, @OutputDate
+
+    FETCH NEXT FROM cursorSewingOutput INTO @Line, @FactoryID, @OutputDate
+END
+
+
+CLOSE cursorSewingOutput
+DEALLOCATE cursorSewingOutput
+";
+            result = this.proxyPMS.ProcessWithDatatable("Production", toDt, string.Empty, sqlcmd, out DataTable dataTable);
             if (!result)
             {
                 return result;
