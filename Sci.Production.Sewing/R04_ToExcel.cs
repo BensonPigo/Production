@@ -32,12 +32,12 @@ namespace Sci.Production.Sewing
             Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
             if (show_Accumulate_output == true)
             {
-                start_column = 49;
+                start_column = 50;
             }
             else
             {
-                start_column = 47;
-                objSheets.get_Range("AU:AV").EntireColumn.Delete();
+                start_column = 48;
+                objSheets.get_Range("AV:AW").EntireColumn.Delete();
             }
 
             for (int i = start_column; i < dtR04.Columns.Count; i++)
