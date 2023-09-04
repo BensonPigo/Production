@@ -39,7 +39,7 @@ namespace Sci.Production.IE
 
             MyUtility.Tool.SetupCombox(this.comboFactory, 1, factory);
             this.comboFactory.Text = Env.User.Factory;
-            this.dateTPmonth.Value = DateTime.Now;
+            this.dateTPmonth.Value = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
         }
 
         // Sewing Line
