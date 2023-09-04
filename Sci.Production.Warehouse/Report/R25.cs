@@ -207,7 +207,9 @@ select
     [SMR_Mail]=TEPPOSMR.Email,
     [EditName]=dbo.getTPEPass1(e.EditName),
 	t.TotalRollsCalculated,
-    a.PFETA
+    a.PFETA,
+	[FirstBulkSewInLine] = SewInLine.val,
+	[FirstCutDate] = c.FirstCutDate
 INTO #tmp
 from Export e
 Inner join Export_Detail ed on e.ID = ed.ID
@@ -221,6 +223,7 @@ left join po on po.id = ed.PoID
 left join TPEPass1 TEPPOHandle on TEPPOHandle.id = po.POHandle
 left join TPEPass1 TEPPOSMR on TEPPOSMR.id = po.POSMR
 left join Fabric f with(nolock)on f.SCIRefno = psd.SCIRefno
+left join Cutting c with(NOLOCK) on c.id = o.CuttingSP
 outer APPLY(
 	select [value] = stuff((select concat('/', c2.Name)
 			   from dbo.Color as c
@@ -268,6 +271,16 @@ outer apply
 	from Orders 
 	where PoID = o.poID 
 )a
+OUTER APPLY
+(
+	select top 1 
+	val = SewInLine 
+	from Orders  
+	where 
+	POID = o.poid and
+	Category = 'B' 
+	ORDER BY SewInLine ASC
+)SewInLine
 where exists (select 1 from Factory where o.FactoryId = id and IsProduceFty = 1)
 and ed.PoType = 'G' 
 
@@ -344,7 +357,9 @@ and ed.PoType = 'G'
     [WeightKg]=SUM(WeightKg),
     [ArriveQty]=  SUM(ArriveQty),
     [ArriveQty_StockUnit]=dbo.[GetUnitQty](UnitId,StockUnit,SUM(ArriveQty)),
-	Receiving_Detail.ReceiveQty,
+	t.[FirstBulkSewInLine],
+	t.[FirstCutDate],
+    Receiving_Detail.ReceiveQty,
     t.TotalRollsCalculated,
 	StockUnit,
     [ContainerType] ,[ContainerNo] ,PortArrival,t.WhseArrival,
@@ -366,7 +381,7 @@ OUTER APPLY(
  GROUP BY 
 	WK,t.eta,t.FactoryID,Consignee,ShipModeID,CYCFS,Blno,Vessel,[ProdFactory],OrderTypeID,ProjectID,Category ,BrandID, seasonid,styleid,t.PoID,seq,
 	Refno,[Color] ,[Description],[MtlType],WeaveTypeID,suppid,[SuppName] ,UnitId,SizeSpec,[ContainerType] ,[ContainerNo] ,PortArrival,[Color Name],
-    t.WhseArrival,KPILETA,[Earliest SCI Delivery],EarlyDays,[MR_Mail],[SMR_Mail],t.EditName,ReceiveQty,StockUnit, t.StyleName, t.TotalRollsCalculated, MtlTypeID,t.PFETA
+    t.WhseArrival,KPILETA,[Earliest SCI Delivery],EarlyDays,[MR_Mail],[SMR_Mail],t.EditName,ReceiveQty,StockUnit, t.StyleName, t.TotalRollsCalculated, MtlTypeID,t.PFETA,t.[FirstBulkSewInLine],t.[FirstCutDate]
 HAVING 1=1
 ";
             if (this.RecLessArv)
