@@ -1380,6 +1380,9 @@
     <None Include="XLT\Shipping_R63.xltx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="XLT\Subcon_R04.xltx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="XLT\Warehouse_P06_Detail.xltx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
