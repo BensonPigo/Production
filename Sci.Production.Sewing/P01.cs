@@ -2187,7 +2187,6 @@ select id,GarmentDefectCodeID,GarmentDefectTypeID,qty from #tmp";
                 }
             }
             #endregion
-
             return base.ClickSavePost();
         }
 
@@ -2420,22 +2419,6 @@ drop table #Child, #updateChild
                 transactionscope.Dispose();
             }
             #endregion
-
-            #region 重新計算 Cumulate
-            listSqlParmeter = new List<SqlParameter>
-            {
-                new SqlParameter("@Line", this.CurrentMaintain["SewingLineID"]),
-                new SqlParameter("@FactoryID", this.CurrentMaintain["FactoryID"]),
-                new SqlParameter("@OutputDate", this.CurrentMaintain["OutputDate"]),
-            };
-
-            if (!(result = DBProxy.Current.ExecuteSP(string.Empty, "dbo.RecalculateCumulateDay", listSqlParmeter)))
-            {
-                MyUtility.Msg.WarningBox(result.Description);
-            }
-
-            #endregion
-
             this.RenewData();
 
             // this.OnDetailEntered();
