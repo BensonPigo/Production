@@ -414,7 +414,7 @@
     <Compile Include="R09.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="R09.Designer.cs">
+    <Compile Include="R09.designer.cs">
       <DependentUpon>R09.cs</DependentUpon>
     </Compile>
   </ItemGroup>

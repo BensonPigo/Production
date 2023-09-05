@@ -21,6 +21,7 @@ namespace Sci.Production.IE
     /// </summary>
     public partial class P03 : Win.Tems.Input6
     {
+        private string selectDataTable_DefaultView_Sort = string.Empty;
         private object totalGSD;
         private object totalCycleTime;
         private DataTable EmployeeData;
@@ -503,10 +504,31 @@ and BrandID = '{this.CurrentMaintain["BrandID"]}'
                             }
 
                             IList<DataRow> selectedData = item.GetSelecteds();
-                            dr["EmployeeID"] = selectedData[0]["ID"];
-                            dr["EmployeeName"] = selectedData[0]["Name"];
-                            dr["EmployeeSkill"] = selectedData[0]["Skill"];
-                            dr.EndEdit();
+                            DataTable dt = (DataTable)this.detailgridbs.DataSource;
+
+                            DataRow[] errorDataRow = dt.Select($"EmployeeID = '{MyUtility.Convert.GetString(selectedData[0]["ID"])}' and NO <> '{MyUtility.Convert.GetString(dr["No"])}'");
+                            if (errorDataRow.Length > 0)
+                            {
+                                MyUtility.Msg.WarningBox($"<{selectedData[0]["ID"]} {selectedData[0]["Name"]}> already been used in No.{MyUtility.Convert.GetString(errorDataRow[0]["No"])}!!");
+                                return;
+                            }
+
+                            dt.DefaultView.Sort = this.selectDataTable_DefaultView_Sort == "ASC" ? "No ASC" : string.Empty;
+                            DataTable sortDataTable = dt.DefaultView.ToTable();
+
+                            DataRow[] listDataRows = sortDataTable.Select($"No = '{MyUtility.Convert.GetString(dr["No"])}'");
+                            if (listDataRows.Length > 0)
+                            {
+                                foreach (DataRow dataRow in listDataRows)
+                                {
+                                    int dataIndex = sortDataTable.Rows.IndexOf(dataRow);
+                                    DataRow row = this.detailgrid.GetDataRow<DataRow>(dataIndex);
+                                    row["EmployeeID"] = selectedData[0]["ID"];
+                                    row["EmployeeName"] = selectedData[0]["Name"];
+                                    row["EmployeeSkill"] = selectedData[0]["Skill"];
+                                    row.EndEdit();
+                                }
+                            }
                         }
                     }
                 }
@@ -566,10 +588,31 @@ and BrandID = '{this.CurrentMaintain["BrandID"]}'
                             }
 
                             IList<DataRow> selectedData = item.GetSelecteds();
-                            dr["EmployeeID"] = selectedData[0]["ID"];
-                            dr["EmployeeName"] = selectedData[0]["Name"];
-                            dr["EmployeeSkill"] = selectedData[0]["Skill"];
-                            dr.EndEdit();
+                            DataTable dt = (DataTable)this.detailgridbs.DataSource;
+
+                            DataRow[] errorDataRow = dt.Select($"EmployeeID = '{MyUtility.Convert.GetString(selectedData[0]["ID"])}' and NO <> '{MyUtility.Convert.GetString(dr["No"])}'");
+                            if (errorDataRow.Length > 0)
+                            {
+                                MyUtility.Msg.WarningBox($"<{selectedData[0]["ID"]} {selectedData[0]["Name"]}> already been used in No.{MyUtility.Convert.GetString(dr["No"])}!!");
+                                return;
+                            }
+
+                            dt.DefaultView.Sort = this.selectDataTable_DefaultView_Sort == "ASC" ? "No ASC" : string.Empty;
+                            DataTable sortDataTable = dt.DefaultView.ToTable();
+
+                            DataRow[] listDataRows = sortDataTable.Select($"No = '{MyUtility.Convert.GetString(dr["No"])}'");
+                            if (listDataRows.Length > 0)
+                            {
+                                foreach (DataRow dataRow in listDataRows)
+                                {
+                                    int dataIndex = sortDataTable.Rows.IndexOf(dataRow);
+                                    DataRow row = this.detailgrid.GetDataRow<DataRow>(dataIndex);
+                                    row["EmployeeID"] = selectedData[0]["ID"];
+                                    row["EmployeeName"] = selectedData[0]["Name"];
+                                    row["EmployeeSkill"] = selectedData[0]["Skill"];
+                                    row.EndEdit();
+                                }
+                            }
                         }
                     }
                 }
@@ -1194,6 +1237,7 @@ and Name = @PPA
                     DataTable dt = (DataTable)this.detailgridbs.DataSource;
                     dt.DefaultView.Sort = "sortNO, No";
                     this.detailgridbs.DataSource = dt;
+                    this.selectDataTable_DefaultView_Sort = "ASC";
 
                     this.IsShowTable();
                 }
@@ -1292,10 +1336,25 @@ and Name = @PPA
         // 將Employee相關欄位值清空
         private void ReviseEmployeeToEmpty(DataRow dr)
         {
-            dr["EmployeeID"] = string.Empty;
-            dr["EmployeeName"] = string.Empty;
-            dr["EmployeeSkill"] = string.Empty;
-            dr.EndEdit();
+            DataTable dt = (DataTable)this.detailgridbs.DataSource;
+
+            DataRow[] errorDataRow = dt.Select($"NO ='{MyUtility.Convert.GetString(dr["No"])}'");
+            dt.DefaultView.Sort = this.selectDataTable_DefaultView_Sort == "ASC" ? "No ASC" : string.Empty;
+            DataTable sortDataTable = dt.DefaultView.ToTable();
+
+            DataRow[] listDataRows = sortDataTable.Select($"No = '{MyUtility.Convert.GetString(dr["No"])}'");
+            if (listDataRows.Length > 0)
+            {
+                foreach (DataRow dataRow in listDataRows)
+                {
+                    int dataIndex = sortDataTable.Rows.IndexOf(dataRow);
+                    DataRow row = this.detailgrid.GetDataRow<DataRow>(dataIndex);
+                    row["EmployeeID"] = string.Empty;
+                    row["EmployeeName"] = string.Empty;
+                    row["EmployeeSkill"] = string.Empty;
+                    row.EndEdit();
+                }
+            }
         }
 
         private DataTable GetLBRNotHitName()
