@@ -273,13 +273,11 @@ outer apply
 )a
 OUTER APPLY
 (
-	select top 1 
-	val = SewInLine 
+	select val = min(SewInLine )
 	from Orders  
 	where 
 	POID = o.poid and
-	Category = 'B' 
-	ORDER BY SewInLine ASC
+	Category = 'B'
 )SewInLine
 where exists (select 1 from Factory where o.FactoryId = id and IsProduceFty = 1)
 and ed.PoType = 'G' 
