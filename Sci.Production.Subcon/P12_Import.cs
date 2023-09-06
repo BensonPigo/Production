@@ -1,6 +1,7 @@
 ﻿using Ict;
 using Ict.Win;
 using Sci.Data;
+using Sci.Production.Class.Command;
 using Sci.Production.PublicForm;
 using System;
 using System.Collections.Generic;
@@ -55,8 +56,8 @@ namespace Sci.Production.Subcon
                 .Text("ComboType", header: "Combo Type", iseditingreadonly: true)
                 .Text("Article", header: "Article", iseditingreadonly: true)
                 .Numeric("Qty", header: "Qty", settings: ns)
-                .Text("Price", header: "Price", iseditingreadonly: true)
-                .Text("Amount", header: "Amount", iseditingreadonly: true)
+                .Numeric("Price", header: "Price", iseditingreadonly: true, integer_places: 12, decimal_places: 4)
+                .Numeric("Amount", header: "Amount", iseditingreadonly: true, integer_places: 12, decimal_places: 4)
                 .Numeric("AccuSewingQty", header: "Accu. Sewing Qty", iseditingreadonly: true)
                 .Text("AccuPaidQty", header: "Accu. Paid Qty", iseditingreadonly: true)
                 .Numeric("BalQty", header: "Bal.Qty", iseditingreadonly: true, decimal_places: 4, integer_places: 4);
@@ -113,11 +114,6 @@ namespace Sci.Production.Subcon
                 strWhere += $@" and s.ContractNumber = @ContractNo_2 ";
             }
 
-            if (this.chBalQty.Checked)
-            {
-                sqlcmd_F += " and (cast(isnull(t.[AccuSewingQty],0) as int) - cast( isnull(APQty.PaidQty,0) as int)) > 0";
-            }
-
             sqlcmd = $@"
             select 
             Selected = 0,
@@ -126,7 +122,7 @@ namespace Sci.Production.Subcon
             [OrderID] = sd.OrderId,
             sd.ComboType,
             sd.Article,
-            [Price] = sd.LocalUnitPrice,
+            [Price] = sd.UnitPrice,
             [AccuSewingQty] = sum(sod.QAQty),
             [ID] = '{this.dr_Default_AP["ID"]}',
             [UKey] = 0
@@ -137,7 +133,7 @@ namespace Sci.Production.Subcon
             inner join SewingOutput_Detail sod with(nolock) on sod.ID = so.ID and sod.OrderId = sd.OrderId and sod.ComboType = sd.ComboType and sod.Article = sd.Article
             where 1 = 1
             {strWhere}
-            group by s.SubConOutFty,s.ContractNumber,sd.OrderId,sd.ComboType,sd.Article,sd.LocalUnitPrice
+            group by s.SubConOutFty,s.ContractNumber,sd.OrderId,sd.ComboType,sd.Article,sd.UnitPrice
 
             select 
             t.*,
@@ -170,7 +166,7 @@ namespace Sci.Production.Subcon
                 }
 
                 this.listControlBindingSource1.DataSource = this.dtlocal;
-                this.gridImport.AutoResizeColumns();
+                this.OnlyShowBalQty();
             }
             else
             {
@@ -234,6 +230,24 @@ namespace Sci.Production.Subcon
             }
 
             this.Close();
+        }
+
+        private void ChBalQty_Click(object sender, EventArgs e)
+        {
+            this.OnlyShowBalQty();
+        }
+
+        /// <inheritdoc/>
+        public void OnlyShowBalQty()
+        {
+            if (this.chBalQty.Checked)
+            {
+                this.listControlBindingSource1.DataSource = this.dtlocal.Select("BalQty > 0").TryCopyToDataTable(this.dtlocal);
+            }
+            else
+            {
+                this.listControlBindingSource1.DataSource = this.dtlocal;
+            }
         }
     }
 }

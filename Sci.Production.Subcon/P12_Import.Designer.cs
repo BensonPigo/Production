@@ -75,7 +75,7 @@
             this.btnCancel.Location = new System.Drawing.Point(815, 15);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(90, 30);
-            this.btnCancel.TabIndex = 2;
+            this.btnCancel.TabIndex = 10;
             this.btnCancel.Text = "Cancel";
             this.btnCancel.UseVisualStyleBackColor = true;
             this.btnCancel.Click += new System.EventHandler(this.BtnCancel_Click);
@@ -87,7 +87,7 @@
             this.btnImport.Location = new System.Drawing.Point(719, 16);
             this.btnImport.Name = "btnImport";
             this.btnImport.Size = new System.Drawing.Size(90, 30);
-            this.btnImport.TabIndex = 1;
+            this.btnImport.TabIndex = 9;
             this.btnImport.Text = "Import";
             this.btnImport.UseVisualStyleBackColor = true;
             this.btnImport.Click += new System.EventHandler(this.BtnImport_Click);
@@ -115,7 +115,7 @@
             this.btnFind.Location = new System.Drawing.Point(798, 12);
             this.btnFind.Name = "btnFind";
             this.btnFind.Size = new System.Drawing.Size(101, 30);
-            this.btnFind.TabIndex = 6;
+            this.btnFind.TabIndex = 7;
             this.btnFind.Text = "Find";
             this.btnFind.UseVisualStyleBackColor = true;
             this.btnFind.Click += new System.EventHandler(this.BtnFind_Click);
@@ -165,7 +165,7 @@
             this.txtFactory.Name = "txtFactory";
             this.txtFactory.ReadOnly = true;
             this.txtFactory.Size = new System.Drawing.Size(64, 23);
-            this.txtFactory.TabIndex = 28;
+            this.txtFactory.TabIndex = 4;
             // 
             // chBalQty
             // 
@@ -175,9 +175,10 @@
             this.chBalQty.Location = new System.Drawing.Point(407, 50);
             this.chBalQty.Name = "chBalQty";
             this.chBalQty.Size = new System.Drawing.Size(170, 21);
-            this.chBalQty.TabIndex = 27;
+            this.chBalQty.TabIndex = 8;
             this.chBalQty.Text = "Only show Bal. Qty > 0";
             this.chBalQty.UseVisualStyleBackColor = true;
+            this.chBalQty.Click += new System.EventHandler(this.ChBalQty_Click);
             // 
             // label1
             // 
@@ -195,7 +196,7 @@
             this.txtSP2.Location = new System.Drawing.Point(648, 15);
             this.txtSP2.Name = "txtSP2";
             this.txtSP2.Size = new System.Drawing.Size(136, 23);
-            this.txtSP2.TabIndex = 25;
+            this.txtSP2.TabIndex = 6;
             // 
             // txtSP1
             // 
@@ -204,7 +205,7 @@
             this.txtSP1.Location = new System.Drawing.Point(487, 15);
             this.txtSP1.Name = "txtSP1";
             this.txtSP1.Size = new System.Drawing.Size(136, 23);
-            this.txtSP1.TabIndex = 24;
+            this.txtSP1.TabIndex = 5;
             // 
             // lblFactory
             // 
@@ -230,7 +231,7 @@
             this.txtContractNo_2.Location = new System.Drawing.Point(268, 48);
             this.txtContractNo_2.Name = "txtContractNo_2";
             this.txtContractNo_2.Size = new System.Drawing.Size(136, 23);
-            this.txtContractNo_2.TabIndex = 20;
+            this.txtContractNo_2.TabIndex = 3;
             // 
             // txtContractNo_1
             // 
@@ -239,7 +240,7 @@
             this.txtContractNo_1.Location = new System.Drawing.Point(107, 48);
             this.txtContractNo_1.Name = "txtContractNo_1";
             this.txtContractNo_1.Size = new System.Drawing.Size(136, 23);
-            this.txtContractNo_1.TabIndex = 19;
+            this.txtContractNo_1.TabIndex = 2;
             // 
             // txtSupplier
             // 
@@ -252,7 +253,7 @@
             this.txtSupplier.Location = new System.Drawing.Point(107, 15);
             this.txtSupplier.Name = "txtSupplier";
             this.txtSupplier.Size = new System.Drawing.Size(174, 23);
-            this.txtSupplier.TabIndex = 18;
+            this.txtSupplier.TabIndex = 1;
             this.txtSupplier.TextBox1Binding = "";
             // 
             // panel1

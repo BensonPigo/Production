@@ -128,7 +128,7 @@
             this.masterpanel.Controls.Add(this.date_VoucherDate);
             this.masterpanel.Controls.Add(this.date_ApvDate);
             this.masterpanel.Controls.Add(this.date_IssueDate);
-            this.masterpanel.Size = new System.Drawing.Size(1121, 212);
+            this.masterpanel.Size = new System.Drawing.Size(1031, 212);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.date_IssueDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.date_ApvDate, 0);
@@ -176,15 +176,15 @@
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 212);
-            this.detailpanel.Size = new System.Drawing.Size(1121, 350);
+            this.detailpanel.Size = new System.Drawing.Size(1031, 350);
             // 
             // gridicon
             // 
-            this.gridicon.Location = new System.Drawing.Point(1014, 177);
+            this.gridicon.Location = new System.Drawing.Point(924, 177);
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(1121, 350);
+            this.detailgridcont.Size = new System.Drawing.Size(1031, 350);
             // 
             // detail2
             // 
@@ -200,16 +200,16 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(1121, 600);
+            this.detail.Size = new System.Drawing.Size(1031, 600);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(1121, 562);
+            this.detailcont.Size = new System.Drawing.Size(1031, 562);
             // 
             // detailbtm
             // 
             this.detailbtm.Location = new System.Drawing.Point(0, 562);
-            this.detailbtm.Size = new System.Drawing.Size(1121, 38);
+            this.detailbtm.Size = new System.Drawing.Size(1031, 38);
             // 
             // browse
             // 
@@ -217,14 +217,14 @@
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(1129, 629);
+            this.tabs.Size = new System.Drawing.Size(1039, 629);
             // 
             // txtMDivision
             // 
             this.txtMDivision.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.txtMDivision.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "MDivisionID", true));
             this.txtMDivision.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.txtMDivision.Location = new System.Drawing.Point(309, 9);
+            this.txtMDivision.Location = new System.Drawing.Point(230, 9);
             this.txtMDivision.Name = "txtMDivision";
             this.txtMDivision.Size = new System.Drawing.Size(46, 23);
             this.txtMDivision.TabIndex = 25;
@@ -239,7 +239,7 @@
             this.txtFactory.IsMultiselect = false;
             this.txtFactory.IsProduceFty = true;
             this.txtFactory.IssupportJunk = false;
-            this.txtFactory.Location = new System.Drawing.Point(414, 9);
+            this.txtFactory.Location = new System.Drawing.Point(336, 9);
             this.txtFactory.MDivision = null;
             this.txtFactory.Name = "txtFactory";
             this.txtFactory.Size = new System.Drawing.Size(64, 23);
@@ -251,9 +251,9 @@
             this.txtInvoice.BackColor = System.Drawing.Color.White;
             this.txtInvoice.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "InvNo", true));
             this.txtInvoice.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtInvoice.Location = new System.Drawing.Point(95, 93);
+            this.txtInvoice.Location = new System.Drawing.Point(89, 93);
             this.txtInvoice.Name = "txtInvoice";
-            this.txtInvoice.Size = new System.Drawing.Size(383, 23);
+            this.txtInvoice.Size = new System.Drawing.Size(311, 23);
             this.txtInvoice.TabIndex = 18;
             // 
             // txtRemark
@@ -261,9 +261,9 @@
             this.txtRemark.BackColor = System.Drawing.Color.White;
             this.txtRemark.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Remark", true));
             this.txtRemark.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtRemark.Location = new System.Drawing.Point(94, 121);
+            this.txtRemark.Location = new System.Drawing.Point(89, 121);
             this.txtRemark.Name = "txtRemark";
-            this.txtRemark.Size = new System.Drawing.Size(384, 23);
+            this.txtRemark.Size = new System.Drawing.Size(311, 23);
             this.txtRemark.TabIndex = 20;
             // 
             // txtAccountant
@@ -271,9 +271,9 @@
             this.txtAccountant.AllowSelectResign = false;
             this.txtAccountant.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "ApvName", true));
             this.txtAccountant.DisplayBox1Binding = "";
-            this.txtAccountant.Location = new System.Drawing.Point(95, 178);
+            this.txtAccountant.Location = new System.Drawing.Point(89, 178);
             this.txtAccountant.Name = "txtAccountant";
-            this.txtAccountant.Size = new System.Drawing.Size(384, 23);
+            this.txtAccountant.Size = new System.Drawing.Size(311, 23);
             this.txtAccountant.TabIndex = 22;
             this.txtAccountant.TextBox1Binding = "";
             // 
@@ -282,9 +282,9 @@
             this.txtHandle.AllowSelectResign = false;
             this.txtHandle.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "Handle", true));
             this.txtHandle.DisplayBox1Binding = "";
-            this.txtHandle.Location = new System.Drawing.Point(94, 150);
+            this.txtHandle.Location = new System.Drawing.Point(89, 150);
             this.txtHandle.Name = "txtHandle";
-            this.txtHandle.Size = new System.Drawing.Size(384, 23);
+            this.txtHandle.Size = new System.Drawing.Size(311, 23);
             this.txtHandle.TabIndex = 21;
             this.txtHandle.TextBox1Binding = "";
             // 
@@ -292,9 +292,9 @@
             // 
             this.txtTerms.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "PaytermID", true));
             this.txtTerms.DisplayBox1Binding = "";
-            this.txtTerms.Location = new System.Drawing.Point(95, 64);
+            this.txtTerms.Location = new System.Drawing.Point(88, 64);
             this.txtTerms.Name = "txtTerms";
-            this.txtTerms.Size = new System.Drawing.Size(383, 23);
+            this.txtTerms.Size = new System.Drawing.Size(312, 23);
             this.txtTerms.TabIndex = 17;
             this.txtTerms.TextBox1Binding = "";
             // 
@@ -307,7 +307,7 @@
             this.txtSupplier.IsMisc = false;
             this.txtSupplier.IsShipping = false;
             this.txtSupplier.IsSubcon = false;
-            this.txtSupplier.Location = new System.Drawing.Point(95, 38);
+            this.txtSupplier.Location = new System.Drawing.Point(87, 38);
             this.txtSupplier.Name = "txtSupplier";
             this.txtSupplier.Size = new System.Drawing.Size(174, 23);
             this.txtSupplier.TabIndex = 15;
@@ -316,7 +316,7 @@
             // 
             // lblAccountant
             // 
-            this.lblAccountant.Location = new System.Drawing.Point(14, 178);
+            this.lblAccountant.Location = new System.Drawing.Point(7, 178);
             this.lblAccountant.Name = "lblAccountant";
             this.lblAccountant.Size = new System.Drawing.Size(77, 23);
             this.lblAccountant.TabIndex = 31;
@@ -324,7 +324,7 @@
             // 
             // lblHandle
             // 
-            this.lblHandle.Location = new System.Drawing.Point(14, 150);
+            this.lblHandle.Location = new System.Drawing.Point(7, 150);
             this.lblHandle.Name = "lblHandle";
             this.lblHandle.Size = new System.Drawing.Size(77, 23);
             this.lblHandle.TabIndex = 30;
@@ -332,7 +332,7 @@
             // 
             // lblRemark
             // 
-            this.lblRemark.Location = new System.Drawing.Point(14, 121);
+            this.lblRemark.Location = new System.Drawing.Point(7, 121);
             this.lblRemark.Name = "lblRemark";
             this.lblRemark.Size = new System.Drawing.Size(77, 23);
             this.lblRemark.TabIndex = 29;
@@ -340,7 +340,7 @@
             // 
             // lblInvoice
             // 
-            this.lblInvoice.Location = new System.Drawing.Point(14, 93);
+            this.lblInvoice.Location = new System.Drawing.Point(7, 93);
             this.lblInvoice.Name = "lblInvoice";
             this.lblInvoice.Size = new System.Drawing.Size(77, 23);
             this.lblInvoice.TabIndex = 28;
@@ -348,7 +348,7 @@
             // 
             // lblTerms
             // 
-            this.lblTerms.Location = new System.Drawing.Point(14, 65);
+            this.lblTerms.Location = new System.Drawing.Point(7, 65);
             this.lblTerms.Name = "lblTerms";
             this.lblTerms.Size = new System.Drawing.Size(77, 23);
             this.lblTerms.TabIndex = 26;
@@ -356,7 +356,7 @@
             // 
             // lblSupplier
             // 
-            this.lblSupplier.Location = new System.Drawing.Point(14, 37);
+            this.lblSupplier.Location = new System.Drawing.Point(7, 37);
             this.lblSupplier.Name = "lblSupplier";
             this.lblSupplier.Size = new System.Drawing.Size(77, 23);
             this.lblSupplier.TabIndex = 24;
@@ -364,7 +364,7 @@
             // 
             // lblFactory
             // 
-            this.lblFactory.Location = new System.Drawing.Point(358, 9);
+            this.lblFactory.Location = new System.Drawing.Point(279, 9);
             this.lblFactory.Name = "lblFactory";
             this.lblFactory.Size = new System.Drawing.Size(53, 23);
             this.lblFactory.TabIndex = 23;
@@ -372,7 +372,7 @@
             // 
             // lblMDivision
             // 
-            this.lblMDivision.Location = new System.Drawing.Point(280, 9);
+            this.lblMDivision.Location = new System.Drawing.Point(200, 9);
             this.lblMDivision.Name = "lblMDivision";
             this.lblMDivision.Size = new System.Drawing.Size(26, 23);
             this.lblMDivision.TabIndex = 19;
@@ -383,14 +383,14 @@
             this.txtID.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.txtID.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "id", true));
             this.txtID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.txtID.Location = new System.Drawing.Point(95, 9);
+            this.txtID.Location = new System.Drawing.Point(87, 9);
             this.txtID.Name = "txtID";
-            this.txtID.Size = new System.Drawing.Size(182, 23);
+            this.txtID.Size = new System.Drawing.Size(107, 23);
             this.txtID.TabIndex = 14;
             // 
             // lblID
             // 
-            this.lblID.Location = new System.Drawing.Point(14, 9);
+            this.lblID.Location = new System.Drawing.Point(7, 9);
             this.lblID.Name = "lblID";
             this.lblID.Size = new System.Drawing.Size(77, 23);
             this.lblID.TabIndex = 16;
@@ -403,7 +403,7 @@
             this.numVat.DecimalPlaces = 2;
             this.numVat.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numVat.IsSupportEditMode = false;
-            this.numVat.Location = new System.Drawing.Point(582, 122);
+            this.numVat.Location = new System.Drawing.Point(502, 122);
             this.numVat.Name = "numVat";
             this.numVat.NullValue = new decimal(new int[] {
             0,
@@ -426,7 +426,7 @@
             this.numTotal.DecimalPlaces = 2;
             this.numTotal.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numTotal.IsSupportEditMode = false;
-            this.numTotal.Location = new System.Drawing.Point(582, 150);
+            this.numTotal.Location = new System.Drawing.Point(502, 150);
             this.numTotal.Name = "numTotal";
             this.numTotal.NullValue = new decimal(new int[] {
             0,
@@ -450,7 +450,7 @@
             this.numAmount.DecimalPlaces = 2;
             this.numAmount.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numAmount.IsSupportEditMode = false;
-            this.numAmount.Location = new System.Drawing.Point(582, 64);
+            this.numAmount.Location = new System.Drawing.Point(502, 64);
             this.numAmount.Name = "numAmount";
             this.numAmount.NullValue = new decimal(new int[] {
             0,
@@ -472,7 +472,7 @@
             this.numVatRate.BackColor = System.Drawing.Color.White;
             this.numVatRate.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "vatrate", true));
             this.numVatRate.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numVatRate.Location = new System.Drawing.Point(582, 93);
+            this.numVatRate.Location = new System.Drawing.Point(502, 93);
             this.numVatRate.Maximum = new decimal(new int[] {
             100,
             0,
@@ -504,7 +504,7 @@
             this.txtVoucherNo.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "VoucherID", true));
             this.txtVoucherNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.txtVoucherNo.IsSupportEditMode = false;
-            this.txtVoucherNo.Location = new System.Drawing.Point(844, 37);
+            this.txtVoucherNo.Location = new System.Drawing.Point(764, 37);
             this.txtVoucherNo.Name = "txtVoucherNo";
             this.txtVoucherNo.ReadOnly = true;
             this.txtVoucherNo.Size = new System.Drawing.Size(132, 23);
@@ -516,7 +516,7 @@
             this.txtExVoucherNo.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "ExVoucherID", true));
             this.txtExVoucherNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.txtExVoucherNo.IsSupportEditMode = false;
-            this.txtExVoucherNo.Location = new System.Drawing.Point(844, 93);
+            this.txtExVoucherNo.Location = new System.Drawing.Point(764, 93);
             this.txtExVoucherNo.Name = "txtExVoucherNo";
             this.txtExVoucherNo.ReadOnly = true;
             this.txtExVoucherNo.Size = new System.Drawing.Size(132, 23);
@@ -528,7 +528,7 @@
             this.txtCurrency.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "CurrencyID", true));
             this.txtCurrency.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.txtCurrency.IsSupportEditMode = false;
-            this.txtCurrency.Location = new System.Drawing.Point(582, 38);
+            this.txtCurrency.Location = new System.Drawing.Point(502, 38);
             this.txtCurrency.Name = "txtCurrency";
             this.txtCurrency.ReadOnly = true;
             this.txtCurrency.Size = new System.Drawing.Size(132, 23);
@@ -538,7 +538,7 @@
             // 
             this.date_ExVoucherNo.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ExVoucherDate", true));
             this.date_ExVoucherNo.IsSupportEditMode = false;
-            this.date_ExVoucherNo.Location = new System.Drawing.Point(844, 121);
+            this.date_ExVoucherNo.Location = new System.Drawing.Point(764, 121);
             this.date_ExVoucherNo.Name = "date_ExVoucherNo";
             this.date_ExVoucherNo.ReadOnly = true;
             this.date_ExVoucherNo.Size = new System.Drawing.Size(130, 23);
@@ -548,7 +548,7 @@
             // 
             this.date_VoucherDate.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "VoucherDate", true));
             this.date_VoucherDate.IsSupportEditMode = false;
-            this.date_VoucherDate.Location = new System.Drawing.Point(844, 65);
+            this.date_VoucherDate.Location = new System.Drawing.Point(764, 65);
             this.date_VoucherDate.Name = "date_VoucherDate";
             this.date_VoucherDate.ReadOnly = true;
             this.date_VoucherDate.Size = new System.Drawing.Size(130, 23);
@@ -558,7 +558,7 @@
             // 
             this.date_ApvDate.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ApvDate", true));
             this.date_ApvDate.IsSupportEditMode = false;
-            this.date_ApvDate.Location = new System.Drawing.Point(844, 9);
+            this.date_ApvDate.Location = new System.Drawing.Point(764, 9);
             this.date_ApvDate.Name = "date_ApvDate";
             this.date_ApvDate.ReadOnly = true;
             this.date_ApvDate.Size = new System.Drawing.Size(130, 23);
@@ -566,7 +566,7 @@
             // 
             // lblExVoucherDate
             // 
-            this.lblExVoucherDate.Location = new System.Drawing.Point(728, 122);
+            this.lblExVoucherDate.Location = new System.Drawing.Point(648, 122);
             this.lblExVoucherDate.Name = "lblExVoucherDate";
             this.lblExVoucherDate.Size = new System.Drawing.Size(113, 23);
             this.lblExVoucherDate.TabIndex = 67;
@@ -574,7 +574,7 @@
             // 
             // lbExlVoucherNo
             // 
-            this.lbExlVoucherNo.Location = new System.Drawing.Point(728, 93);
+            this.lbExlVoucherNo.Location = new System.Drawing.Point(648, 93);
             this.lbExlVoucherNo.Name = "lbExlVoucherNo";
             this.lbExlVoucherNo.Size = new System.Drawing.Size(113, 23);
             this.lbExlVoucherNo.TabIndex = 66;
@@ -582,7 +582,7 @@
             // 
             // lblVoucherDate
             // 
-            this.lblVoucherDate.Location = new System.Drawing.Point(728, 65);
+            this.lblVoucherDate.Location = new System.Drawing.Point(648, 65);
             this.lblVoucherDate.Name = "lblVoucherDate";
             this.lblVoucherDate.Size = new System.Drawing.Size(113, 23);
             this.lblVoucherDate.TabIndex = 65;
@@ -590,7 +590,7 @@
             // 
             // lblVoucherNo
             // 
-            this.lblVoucherNo.Location = new System.Drawing.Point(728, 38);
+            this.lblVoucherNo.Location = new System.Drawing.Point(648, 38);
             this.lblVoucherNo.Name = "lblVoucherNo";
             this.lblVoucherNo.Size = new System.Drawing.Size(113, 23);
             this.lblVoucherNo.TabIndex = 64;
@@ -598,7 +598,7 @@
             // 
             // lblApvDate
             // 
-            this.lblApvDate.Location = new System.Drawing.Point(728, 9);
+            this.lblApvDate.Location = new System.Drawing.Point(648, 9);
             this.lblApvDate.Name = "lblApvDate";
             this.lblApvDate.Size = new System.Drawing.Size(113, 23);
             this.lblApvDate.TabIndex = 63;
@@ -606,7 +606,7 @@
             // 
             // lblTotal
             // 
-            this.lblTotal.Location = new System.Drawing.Point(492, 150);
+            this.lblTotal.Location = new System.Drawing.Point(412, 150);
             this.lblTotal.Name = "lblTotal";
             this.lblTotal.Size = new System.Drawing.Size(87, 23);
             this.lblTotal.TabIndex = 62;
@@ -614,7 +614,7 @@
             // 
             // lblVat
             // 
-            this.lblVat.Location = new System.Drawing.Point(492, 122);
+            this.lblVat.Location = new System.Drawing.Point(412, 122);
             this.lblVat.Name = "lblVat";
             this.lblVat.Size = new System.Drawing.Size(87, 23);
             this.lblVat.TabIndex = 61;
@@ -622,7 +622,7 @@
             // 
             // lblVatRate
             // 
-            this.lblVatRate.Location = new System.Drawing.Point(492, 93);
+            this.lblVatRate.Location = new System.Drawing.Point(412, 93);
             this.lblVatRate.Name = "lblVatRate";
             this.lblVatRate.Size = new System.Drawing.Size(87, 23);
             this.lblVatRate.TabIndex = 60;
@@ -630,7 +630,7 @@
             // 
             // lblAmount
             // 
-            this.lblAmount.Location = new System.Drawing.Point(492, 65);
+            this.lblAmount.Location = new System.Drawing.Point(412, 65);
             this.lblAmount.Name = "lblAmount";
             this.lblAmount.Size = new System.Drawing.Size(87, 23);
             this.lblAmount.TabIndex = 59;
@@ -638,7 +638,7 @@
             // 
             // lblCurrency
             // 
-            this.lblCurrency.Location = new System.Drawing.Point(492, 38);
+            this.lblCurrency.Location = new System.Drawing.Point(412, 38);
             this.lblCurrency.Name = "lblCurrency";
             this.lblCurrency.Size = new System.Drawing.Size(87, 23);
             this.lblCurrency.TabIndex = 58;
@@ -646,7 +646,7 @@
             // 
             // lblDate
             // 
-            this.lblDate.Location = new System.Drawing.Point(492, 9);
+            this.lblDate.Location = new System.Drawing.Point(412, 9);
             this.lblDate.Name = "lblDate";
             this.lblDate.Size = new System.Drawing.Size(87, 23);
             this.lblDate.TabIndex = 57;
@@ -655,7 +655,7 @@
             // date_IssueDate
             // 
             this.date_IssueDate.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "IssueDate", true));
-            this.date_IssueDate.Location = new System.Drawing.Point(584, 9);
+            this.date_IssueDate.Location = new System.Drawing.Point(504, 9);
             this.date_IssueDate.Name = "date_IssueDate";
             this.date_IssueDate.Size = new System.Drawing.Size(130, 23);
             this.date_IssueDate.TabIndex = 50;
@@ -664,7 +664,7 @@
             // 
             this.btnImport.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
             this.btnImport.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnImport.Location = new System.Drawing.Point(994, 141);
+            this.btnImport.Location = new System.Drawing.Point(905, 141);
             this.btnImport.Name = "btnImport";
             this.btnImport.Size = new System.Drawing.Size(120, 30);
             this.btnImport.TabIndex = 72;
@@ -677,7 +677,7 @@
             this.lblStatus.BackColor = System.Drawing.Color.Transparent;
             this.lblStatus.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Status", true));
             this.lblStatus.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F);
-            this.lblStatus.Location = new System.Drawing.Point(991, 9);
+            this.lblStatus.Location = new System.Drawing.Point(910, 9);
             this.lblStatus.Name = "lblStatus";
             this.lblStatus.Size = new System.Drawing.Size(115, 23);
             this.lblStatus.TabIndex = 73;
@@ -689,7 +689,7 @@
             this.ApvChkValue = "New";
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1129, 662);
+            this.ClientSize = new System.Drawing.Size(1039, 662);
             this.Grid2New = 0;
             this.GridAlias = "SubconOutContractAP_Detail";
             this.GridNew = 0;

@@ -93,7 +93,7 @@ namespace Sci.Production.Subcon
 
             if (!this.rbPandQry_SewingQty.Checked && this.radioPanelReportType.Enabled)
             {
-                strWhere += " and (PaidQty.val <> sd.OutputQty)";
+                strWhere += " and (PaidQty.val <> sd.OutputQty) and s.Status <> 'Colsed' ";
             }
 
             string sqlcmd = $@"
@@ -110,8 +110,8 @@ namespace Sci.Production.Subcon
             , [ContractQty] = isnull(sd.OutputQty,0)
             , [PaidQty] = isnull(PaidQty.val,0)
             , [SewingQty] = isnull(SewingQty.val,0)
-            , [Currency] = isnull(sd.LocalCurrencyID,'')
-            , [UnitPrice] =isnull(sd.LocalUnitPrice,0)
+            , [Currency] = isnull(ls.CurrencyID,'')
+            , [UnitPrice] =isnull(sd.UnitPrice,0)
             , [Status] = s.Status
             FROM SubconOutContract s WITH(NOLOCK)
             LEFT JOIN LocalSupp ls WITH(NOLOCK) ON ls.ID = s.SubConOutFty
@@ -140,7 +140,7 @@ namespace Sci.Production.Subcon
 	            and sod.ComboType = sd.ComboType
 	            and sod.Article = sd.Article
 
-            )SewingQty
+            )SewingQty 
             WHERE 1 = 1
             {strWhere}
             ";

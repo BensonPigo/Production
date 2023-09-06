@@ -44,7 +44,6 @@ namespace Sci.Production.Subcon
                 {
                     this.CurrentMaintain["CurrencyID"] = MyUtility.GetValue.Lookup("CurrencyID", this.txtSupplier.TextBox1.Text, "LocalSupp", "ID");
                     this.CurrentMaintain["Paytermid"] = MyUtility.GetValue.Lookup("paytermid", this.txtSupplier.TextBox1.Text, "LocalSupp", "ID");
-                    ((DataTable)this.detailgridbs.DataSource).Rows.Clear();  // 清空表身資料
                 }
             };
         }
@@ -156,13 +155,13 @@ namespace Sci.Production.Subcon
 
             #region 欄位設定
             this.Helper.Controls.Grid.Generator(this.detailgrid)
-            .Text("ContractNumber", header: "Contract No.", width: Widths.AnsiChars(13), iseditingreadonly: true) // 0
-            .Text("OrderID", header: "SP#", width: Widths.AnsiChars(15), iseditingreadonly: true) // 1
+            .Text("ContractNumber", header: "Contract No.", width: Widths.AnsiChars(20), iseditingreadonly: true) // 0
+            .Text("OrderID", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true) // 1
             .Text("ComboType", header: "Combo Type", iseditingreadonly: true) // 2
             .Text("Article", header: "Article", width: Widths.AnsiChars(8), iseditingreadonly: true) // 3
             .Numeric("Qty", header: "Qty", width: Widths.AnsiChars(6), settings: ns2) // 4
-            .Numeric("Price", header: "Price", width: Widths.AnsiChars(5), decimal_places: 4, integer_places: 4, iseditingreadonly: true) // 5
-            .Numeric("Amount", header: "Amount", width: Widths.AnsiChars(12), iseditingreadonly: true, decimal_places: 15, integer_places: 14) // 6
+            .Numeric("Price", header: "Price", width: Widths.AnsiChars(5), integer_places: 12, decimal_places: 4, iseditingreadonly: true) // 5
+            .Numeric("Amount", header: "Amount", width: Widths.AnsiChars(12), integer_places: 12, decimal_places: 4, iseditingreadonly: true) // 6
             .Numeric("AccuSewingQty", header: "Accu. Sewing Qty", width: Widths.AnsiChars(6), iseditingreadonly: true) // 7
             .Numeric("AccuPaidQty", header: "Accu. Paid Qty", width: Widths.AnsiChars(6), iseditingreadonly: true) // 8
             .Numeric("BalQty", header: "Bal. Qty", width: Widths.AnsiChars(6), iseditingreadonly: true);    // 9
@@ -185,6 +184,13 @@ namespace Sci.Production.Subcon
 
         private void BtnImport_Click(object sender, EventArgs e)
         {
+            if (MyUtility.Check.Empty(this.CurrentMaintain["LocalSuppID"]))
+            {
+                MyUtility.Msg.WarningBox("< Suppiler >  can't be empty!", "Warning");
+                this.txtSupplier.TextBox1.Focus();
+                return;
+            }
+
             DataRow dr = this.CurrentMaintain;
             var windows = new P12_Import(dr, (DataTable)this.detailgridbs.DataSource);
             windows.ShowDialog(this);
@@ -216,35 +222,35 @@ namespace Sci.Production.Subcon
             if (MyUtility.Check.Empty(this.CurrentMaintain["FactoryID"]))
             {
                 MyUtility.Msg.WarningBox("< Factory ID >  can't be empty!", "Warning");
-                this.date_IssueDate.Focus();
+                this.txtFactory.Focus();
                 return false;
             }
 
             if (MyUtility.Check.Empty(this.CurrentMaintain["LocalSuppID"]))
             {
                 MyUtility.Msg.WarningBox("< Suppiler >  can't be empty!", "Warning");
-                this.date_IssueDate.Focus();
+                this.txtSupplier.TextBox1.Focus();
                 return false;
             }
 
             if (MyUtility.Check.Empty(this.CurrentMaintain["CurrencyID"]))
             {
                 MyUtility.Msg.WarningBox("< Currency >  can't be empty!", "Warning");
-                this.date_IssueDate.Focus();
+                this.txtCurrency.Focus();
                 return false;
             }
 
             if (MyUtility.Check.Empty(this.CurrentMaintain["PaytermID"]))
             {
                 MyUtility.Msg.WarningBox("< Terms >  can't be empty!", "Warning");
-                this.date_IssueDate.Focus();
+                this.txtTerms.Focus();
                 return false;
             }
 
             if (MyUtility.Check.Empty(this.CurrentMaintain["Handle"]))
             {
                 MyUtility.Msg.WarningBox("< Handle >  can't be empty!", "Warning");
-                this.date_IssueDate.Focus();
+                this.txtHandle.Focus();
                 return false;
             }
 
@@ -519,7 +525,7 @@ namespace Sci.Production.Subcon
 
             string sqlcmd = $@"
             select b.nameEn 
-		    ,b.AddressEN
+		    ,AddressEN = REPLACE(REPLACE(b.AddressEN,Char(13),''),Char(10),'')
 		    ,b.Tel
 		    ,a.Id
             ,c.name
@@ -541,7 +547,7 @@ namespace Sci.Production.Subcon
 		    ,a.CurrencyID
 		    ,a.Amount
 		    ,a.Vat
-		    ,[GrandTotal] = isnull(a.Amount,0) + isnull(a.Vat,0)
+		    ,[GrandTotal] = format(isnull(a.Amount,0) + isnull(a.Vat,0),'#,###,###,##0.00')
             from dbo.SubconOutContractAP a WITH (NOLOCK) 
             left join dbo.factory  b WITH (NOLOCK) on b.id = a.factoryid
             inner join dbo.LocalSupp c WITH (NOLOCK) on c.id=a.LocalSuppID
@@ -587,10 +593,12 @@ namespace Sci.Production.Subcon
             string swiftCode = dt.Rows[0]["SwiftCode"].ToString();
             string total = this.numAmount.Text;
             string vat = this.numVat.Text;
-            string grand_Total = (decimal.Parse(this.numAmount.Text) + decimal.Parse(this.numVat.Text)).ToString();
+            string grand_Total = dt.Rows[0]["GrandTotal"].ToString();
             string prepared_by = dt.Rows[0]["Prepared_by"].ToString();
             string currencyID = dt.Rows[0]["CurrencyID"].ToString();
             string vatRate = dt.Rows[0]["VatRate"].ToString();
+            int totalQty = this.DetailDatas.AsEnumerable().Sum(x => MyUtility.Convert.GetInt(x["Qty"]));
+
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("RptTitle", rptTitle));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("address", address));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Tel", tel));
@@ -603,12 +611,11 @@ namespace Sci.Production.Subcon
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Terms", terms));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Invoice", invoice));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Remark", remark));
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("TotalQty", this.numTotal.Text.ToString()));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("TotalQty", MyUtility.Convert.GetString(totalQty)));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("AC_No", aC_No));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("AC_Name", aC_Name));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Bank_Name", bank_Name));
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Country", country));
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("city", city));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Country", country + " / " + city));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("SwiftCode", swiftCode));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Total", total));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Vat", vat));
@@ -617,6 +624,7 @@ namespace Sci.Production.Subcon
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("CurrencyID", currencyID));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("VatRate", vatRate));
 
+
             List<P12_PrintData> data = this.DetailDatas.AsEnumerable()
             .Select(row1 => new P12_PrintData()
             {
@@ -624,9 +632,9 @@ namespace Sci.Production.Subcon
                 SP = row1["orderid"].ToString(),
                 ComboType = row1["ComboType"].ToString(),
                 Article = row1["Article"].ToString(),
-                Price = row1["Price"].ToString(),
+                Price = $"{MyUtility.Convert.GetDecimal(row1["Price"]):###,###,###,##0.00}",
                 Qty = row1["Qty"].ToString(),
-                Amount = row1["Amount"].ToString(),
+                Amount = $"{MyUtility.Convert.GetDecimal(row1["Amount"]):###,###,###,##0.00}",
             }).ToList();
 
             report.ReportDataSource = data;
@@ -712,7 +720,7 @@ namespace Sci.Production.Subcon
                 if (this.txtSupplier.TextBox1.Text != checkFactory)
                 {
                     DialogResult confirmResult = MessageBoxEX.Show($@"The Supplier is not the same as before, do you want to clear it?", "Warning", MessageBoxButtons.YesNo, new string[] { "Yes", "No" }, MessageBoxDefaultButton.Button2);
-                    if (confirmResult.EqualString("Yes"))
+                    if (confirmResult == DialogResult.Yes)
                     {
                         ((DataTable)this.detailgridbs.DataSource).Rows.Clear();
                     }

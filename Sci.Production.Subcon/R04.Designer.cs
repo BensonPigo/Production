@@ -57,10 +57,12 @@
             // toexcel
             // 
             this.toexcel.Location = new System.Drawing.Point(401, 10);
+            this.toexcel.TabIndex = 11;
             // 
             // close
             // 
             this.close.Location = new System.Drawing.Point(401, 46);
+            this.close.TabIndex = 12;
             // 
             // buttonCustomized
             // 
@@ -85,7 +87,7 @@
             this.txtSupplier.Location = new System.Drawing.Point(110, 38);
             this.txtSupplier.Name = "txtSupplier";
             this.txtSupplier.Size = new System.Drawing.Size(174, 23);
-            this.txtSupplier.TabIndex = 137;
+            this.txtSupplier.TabIndex = 2;
             this.txtSupplier.TextBox1Binding = "";
             // 
             // labelM
@@ -103,7 +105,7 @@
             this.txtMdivision.Location = new System.Drawing.Point(111, 124);
             this.txtMdivision.Name = "txtMdivision";
             this.txtMdivision.Size = new System.Drawing.Size(66, 23);
-            this.txtMdivision.TabIndex = 133;
+            this.txtMdivision.TabIndex = 6;
             // 
             // comboFactory
             // 
@@ -115,7 +117,7 @@
             this.comboFactory.Name = "comboFactory";
             this.comboFactory.OldText = "";
             this.comboFactory.Size = new System.Drawing.Size(121, 24);
-            this.comboFactory.TabIndex = 134;
+            this.comboFactory.TabIndex = 7;
             // 
             // labelFactory
             // 
@@ -159,7 +161,7 @@
             this.dateIssueDate.Location = new System.Drawing.Point(110, 9);
             this.dateIssueDate.Name = "dateIssueDate";
             this.dateIssueDate.Size = new System.Drawing.Size(280, 23);
-            this.dateIssueDate.TabIndex = 131;
+            this.dateIssueDate.TabIndex = 1;
             // 
             // label1
             // 
@@ -184,7 +186,7 @@
             this.txtstyle.Name = "txtstyle";
             this.txtstyle.SeasonObjectName = null;
             this.txtstyle.Size = new System.Drawing.Size(130, 23);
-            this.txtstyle.TabIndex = 139;
+            this.txtstyle.TabIndex = 3;
             this.txtstyle.TarBrand = null;
             this.txtstyle.TarSeason = null;
             // 
@@ -223,7 +225,7 @@
             this.txtSP_End.Location = new System.Drawing.Point(264, 94);
             this.txtSP_End.Name = "txtSP_End";
             this.txtSP_End.Size = new System.Drawing.Size(128, 23);
-            this.txtSP_End.TabIndex = 144;
+            this.txtSP_End.TabIndex = 5;
             // 
             // txtSP_Start
             // 
@@ -232,7 +234,7 @@
             this.txtSP_Start.Location = new System.Drawing.Point(111, 94);
             this.txtSP_Start.Name = "txtSP_Start";
             this.txtSP_Start.Size = new System.Drawing.Size(128, 23);
-            this.txtSP_Start.TabIndex = 143;
+            this.txtSP_Start.TabIndex = 4;
             // 
             // label4
             // 
@@ -250,7 +252,7 @@
             this.chShow.Location = new System.Drawing.Point(5, 188);
             this.chShow.Name = "chShow";
             this.chShow.Size = new System.Drawing.Size(61, 21);
-            this.chShow.TabIndex = 147;
+            this.chShow.TabIndex = 8;
             this.chShow.Text = "Show";
             this.chShow.UseVisualStyleBackColor = true;
             this.chShow.CheckedChanged += new System.EventHandler(this.ChShow_CheckedChanged);
