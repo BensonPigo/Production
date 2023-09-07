@@ -76,11 +76,18 @@ namespace Sci.Production.Shipping
         }
 
         private string baseDetailSql = @"
+
+select distinct p.ID, pd.OrderID, pd.OrderShipmodeSeq
+into #tmp_pdOrderID
+from PackingList p with(nolock)
+inner join PackingList_Detail pd with(nolock) on p.ID = pd.ID
+{1}
+
 select  p.GMTBookingLock
         , FactoryID = STUFF ((select CONCAT (',',a.FactoryID) 
                             from (
                                 select distinct o.FactoryID
-                                from PackingList_Detail pd WITH (NOLOCK) 
+                                from #tmp_pdOrderID pd 
 								left join orders o WITH (NOLOCK) on o.id = pd.OrderID 
                                 where pd.ID = p.id
                             ) a 
@@ -90,11 +97,9 @@ select  p.GMTBookingLock
         , OrderID = STUFF ((select CONCAT (',', cast (a.OrderID as nvarchar)) 
                             from (
                                 select pd.OrderID 
-                                from PackingList_Detail pd WITH (NOLOCK) 
-                                left join AirPP ap With (NoLock) on pd.OrderID = ap.OrderID
-                                                                     and pd.OrderShipmodeSeq = ap.OrderShipmodeSeq
+                                from #tmp_pdOrderID pd
                                 where pd.ID = p.id
-                                group by pd.OrderID, pd.OrderShipmodeSeq, ap.ID
+                                group by pd.OrderID
                             ) a 
 							order by a.OrderID
                             for xml path('')
@@ -102,16 +107,14 @@ select  p.GMTBookingLock
         , OrderShipmodeSeq = STUFF ((select CONCAT (',', cast (a.OrderShipmodeSeq as nvarchar)) 
                                      from (
                                          select pd.OrderShipmodeSeq 
-                                         from PackingList_Detail pd WITH (NOLOCK) 
-                                         left join AirPP ap With (NoLock) on pd.OrderID = ap.OrderID
-                                                                              and pd.OrderShipmodeSeq = ap.OrderShipmodeSeq
+                                         from #tmp_pdOrderID pd
                                          where pd.ID = p.id
-                                         group by pd.OrderID, pd.OrderShipmodeSeq, ap.ID
+                                         group by pd.OrderShipmodeSeq
                                      ) a 
                                      for xml path('')
                                    ), 1, 1, '') 
         , IDD = STUFF ((select distinct CONCAT (',', Format(oqs.IDD, 'yyyy/MM/dd')) 
-                            from PackingList_Detail pd WITH (NOLOCK) 
+                            from #tmp_pdOrderID pd 
                             inner join Order_QtyShip oqs with (nolock) on oqs.ID = pd.OrderID and oqs.Seq = pd.OrderShipmodeSeq
                             where pd.ID = p.id and oqs.IDD is not null
                             for xml path('')
@@ -119,7 +122,7 @@ select  p.GMTBookingLock
 		,[PONo]=STUFF ((select CONCAT (',',a.CustPONo) 
                             from (
                                 select distinct o.CustPONo
-                                from PackingList_Detail pd WITH (NOLOCK) 
+                                from #tmp_pdOrderID pd 
 								left join orders o WITH (NOLOCK) on o.id = pd.OrderID 
                                 where pd.ID = p.id AND o.CustPONo<>'' AND o.CustPONo IS NOT NULL
                             ) a 
@@ -128,7 +131,7 @@ select  p.GMTBookingLock
         , AirPPID = STUFF ((select CONCAT (',', cast (a.ID as nvarchar)) 
                             from (
                                 select ap.ID
-                                from PackingList_Detail pd WITH (NOLOCK) 
+                                from #tmp_pdOrderID pd
                                 left join AirPP ap With (NoLock) on pd.OrderID = ap.OrderID
                                                                     and pd.OrderShipmodeSeq = ap.OrderShipmodeSeq
                                 where pd.ID = p.id
@@ -141,7 +144,7 @@ select  p.GMTBookingLock
                             from (
                                 select  top 1 OrderID
                                         , OrderShipmodeSeq 
-                                from PackingList_Detail pd WITH (NOLOCK) 
+                                from #tmp_pdOrderID pd 
                                 where pd.ID = p.ID
                             ) a, Order_QtyShip oq 
                             where   a.OrderID = oq.Id 
@@ -150,7 +153,7 @@ select  p.GMTBookingLock
                      from (
                          select  top 1 OrderID
                                  , OrderShipmodeSeq 
-                         from PackingList_Detail pd WITH (NOLOCK) 
+                         from #tmp_pdOrderID pd
                          where pd.ID = p.ID
                      ) a, Order_QtyShip oq WITH (NOLOCK) 
                      where   a.OrderID = oq.Id 
@@ -161,20 +164,12 @@ select  p.GMTBookingLock
         , p.GW
         , p.CBM
         , p.InvNo
-        , CustCDID = (select o.CustCDID 
-                      from (
-                        select top 1 OrderID 
-                        from PackingList_Detail pd WITH (NOLOCK) 
-                        where pd.ID = p.ID
-                      ) a, Orders o WITH (NOLOCK)  
-                      where o.ID = a.OrderID)
-        , Dest = (select o.Dest 
-                  from (
-                        select top 1 OrderID 
-                        from PackingList_Detail pd WITH (NOLOCK) 
-                        where pd.ID = p.ID
-                  ) a, Orders o WITH (NOLOCK)
-                  where o.ID = a.OrderID)
+        , CustCDID = case when p.Type = 'B' then p.CustCDID
+						else o2.CustCDID
+						end
+        , Dest = case when p.Type = 'B' then p.Dest
+						else o2.Dest
+						end
         , p.NW
         , p.NNW
         , p.Status
@@ -188,21 +183,17 @@ select  p.GMTBookingLock
         , OrderQty = STUFF ((select CONCAT (',', cast (a.Qty as nvarchar)) 
                             from (
                                 select distinct o.id,o.Qty
-                                from PackingList_Detail pd WITH (NOLOCK) 
-                                inner join orders o with(nolock) on o.id= pd.orderid
-                                where pd.ID = p.id
+                                from #tmp_pdOrderID a 
+                                inner join orders o with(nolock) on o.id= a.OrderID
+                                where a.ID = p.id
                             ) a 
 							order by a.id
                             for xml path('')
                           ), 1, 1, '') 
          , SewingOutputQty = STUFF ((select CONCAT (',', cast (sum(sod.qaqty) as nvarchar)) 
-                            from (
-                                select pd.OrderID
-                                from PackingList_Detail pd WITH (NOLOCK) 
-                                where pd.ID = p.id
-                                group by pd.OrderID
-                            ) a 
+                            from #tmp_pdOrderID a 
                             inner join SewingOutput_Detail_Detail sod with(nolock) on sod.orderid= a.orderid
+							where a.ID = p.ID
 							group by sod.OrderId
 							order by sod.OrderId
                             for xml path('')
@@ -215,17 +206,26 @@ outer apply(
 	,APPEstAmtVW = ISNULL(sum(p2.APPEstAmtVW),0)
 	from PackingList_Detail p2
 	where p2.ID=p.ID
-) pl2";
+) pl2
+outer apply (
+	select o.Dest, o.CustCDID 
+    from #tmp_pdOrderID a
+	inner join Orders o WITH (NOLOCK) on o.ID = a.OrderID
+	where a.ID = p.ID
+)o2
+where exists (select 1 from #tmp_pdOrderID t where p.ID = t.ID)
+order by p.ID, p.OrderID
+
+drop table #tmp_pdOrderID";
 
         /// <inheritdoc/>
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
             this.masterID = (e.Master == null) ? string.Empty : MyUtility.Convert.GetString(e.Master["ID"]);
             this.DetailSelectCommand = string.Format(
-this.baseDetailSql +
-" where p.INVNo = '{1}'",
+this.baseDetailSql,
 string.Empty,
-this.masterID);
+$" where p.INVNo = '{this.masterID}'");
             return base.OnDetailSelectCommandPrepare(e);
         }
 
@@ -270,7 +270,7 @@ this.masterID);
             foreach (string pLFromRgCode in listPLFromRgCode)
             {
                 string sqlWhere = this.GetPackingIDForA2BWhere(dtGMTBooking_Detail.AsEnumerable(), pLFromRgCode);
-                string sqlGetA2B = string.Format(this.baseDetailSql, pLFromRgCode) + $" where p.ID in ({sqlWhere})";
+                string sqlGetA2B = string.Format(this.baseDetailSql, pLFromRgCode, $" where p.ID in ({sqlWhere})");
 
                 DataTable dtResult;
                 result = PackingA2BWebAPI.GetDataBySql(pLFromRgCode, sqlGetA2B, out dtResult);
