@@ -106,11 +106,12 @@ select  p.GMTBookingLock
                           ), 1, 1, '') 
         , OrderShipmodeSeq = STUFF ((select CONCAT (',', cast (a.OrderShipmodeSeq as nvarchar)) 
                                      from (
-                                         select pd.OrderShipmodeSeq 
+                                         select pd.OrderID, pd.OrderShipmodeSeq 
                                          from #tmp_pdOrderID pd
                                          where pd.ID = p.id
-                                         group by pd.OrderShipmodeSeq
-                                     ) a 
+                                         group by pd.OrderID, pd.OrderShipmodeSeq
+                                     ) a   
+                                     order by a.OrderID
                                      for xml path('')
                                    ), 1, 1, '') 
         , IDD = STUFF ((select distinct CONCAT (',', Format(oqs.IDD, 'yyyy/MM/dd')) 
