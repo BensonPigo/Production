@@ -208,7 +208,7 @@ outer apply(
 	where p2.ID=p.ID
 ) pl2
 outer apply (
-	select o.Dest, o.CustCDID 
+	select top 1 o.Dest, o.CustCDID 
     from #tmp_pdOrderID a
 	inner join Orders o WITH (NOLOCK) on o.ID = a.OrderID
 	where a.ID = p.ID
