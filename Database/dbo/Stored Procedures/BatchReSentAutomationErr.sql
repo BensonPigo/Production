@@ -21,7 +21,7 @@ begin
 			,EditDate
 	into #tmpRetryAutomation
 	from AutomationCreateRecord with (nolock)
-	where AddDate >= @RetryTimeFlag
+	where AddDate < @RetryTimeFlag
 
 	insert into AutomationErrMsg(
 		 SuppID
@@ -46,6 +46,9 @@ begin
 			,AddName
 			,AddDate
 	from #tmpRetryAutomation
+
+	delete AutomationCreateRecord 
+	where Ukey in (select Ukey from #tmpRetryAutomation)
 
 
 	select	APIThread,
