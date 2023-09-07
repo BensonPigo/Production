@@ -531,7 +531,8 @@ namespace Sci.Production.Subcon
             ,c.name
 		    ,c.Address
 		    ,c.Tel
-		    ,a.PaytermID+d.Name [Terms]
+		    ,[Supplier] = c.ID +'-' + c.Name
+		    ,d.ID + '-' +d.Name [Terms]
 		    ,a.InvNo [Invoice]
 		    ,a.Remark [Remark]
 		    ,LocalSuppBank.AccountNo [AC_No]
@@ -579,7 +580,7 @@ namespace Sci.Production.Subcon
             string address = dt.Rows[0]["AddressEN"].ToString();
             string tel = dt.Rows[0]["Tel"].ToString();
             string barcode = dt.Rows[0]["Id"].ToString();
-            string supplier = dt.Rows[0]["name"].ToString();
+            string supplier = dt.Rows[0]["Supplier"].ToString();
             string address1 = dt.Rows[0]["Address"].ToString();
             string tEL1 = dt.Rows[0]["Tel"].ToString();
             string terms = dt.Rows[0]["Terms"].ToString();
