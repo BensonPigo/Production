@@ -163,8 +163,8 @@ SELECT DISTINCT
  p.ID
 ,p.BrandID
 ,pd.CTNStartNo
-,pd.RefNo
-,[ShippingMarkCombinationUkey] = ISNULL(c.StampCombinationUkey,comb.Ukey)
+,pd.RefN
+,[ShippingMarkCombinationUkey] = IIF(c.StampCombinationUkey = 0 ,comb.Ukey ,c.StampCombinationUkey)
 ,p.CTNQty
 ,[SettingOK] =  dbo.CheckShippingMarkStampSetting(p.ID,pd.SCICtnNo,pd.RefNo,p.CustCDID,p.BrandID)
 INTO #base
@@ -269,7 +269,7 @@ SELECT DISTINCT
     ,pd.CTNStartNo
     ,pd.RefNo
     ,pd.SCICtnNo
-    ,[ShippingMarkCombinationUkey] = ISNULL(c.StampCombinationUkey,comb.Ukey)
+    ,[ShippingMarkCombinationUkey] = IIF(c.StampCombinationUkey = 0 ,comb.Ukey ,c.StampCombinationUkey)
     ,p.CTNQty
     ,[AlreadyGenerateStampFile]=IIF(EXISTS(SELECT 1 FROM ShippingMarkStamp stmp 
 										    INNER JOIN ShippingMarkStamp_Detail stmpD ON stmp.PackingListID= stmpD.PackingListID

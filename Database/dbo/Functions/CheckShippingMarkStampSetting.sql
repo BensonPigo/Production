@@ -28,7 +28,7 @@ BEGIN
 	/*
 		01 取得唯一的貼標組合
 	*/
-	select @ShippingMarkCombinationUkey = ISNULL(cc.StampCombinationUkey , def.Ukey)
+	select @ShippingMarkCombinationUkey = IIF(cc.StampCombinationUkey = 0 ,def.Ukey ,cc.StampCombinationUkey)
 	from [Production].[dbo].CustCD cc
 	outer apply (
 		select ukey = smc.Ukey

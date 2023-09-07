@@ -160,7 +160,7 @@ AND Junk = 0
             {
                 if (MyUtility.Check.Empty(newStickerComb))
                 {
-                    this.CurrentMaintain["StickerCombinationUkey"] = DBNull.Value;
+                    this.CurrentMaintain["StickerCombinationUkey"] = 0;
                     this.txtStickerComb.Text = string.Empty;
                     return;
                 }
@@ -187,7 +187,7 @@ AND Junk=0";
 
                 if (dt.Rows.Count == 0)
                 {
-                    this.CurrentMaintain["StickerCombinationUkey"] = DBNull.Value;
+                    this.CurrentMaintain["StickerCombinationUkey"] = 0;
                     this.txtStickerComb.Text = string.Empty;
                     MyUtility.Msg.WarningBox("Data not found !!");
                 }
@@ -239,7 +239,7 @@ AND ID = '{item.GetSelectedString()}'
             {
                 if (MyUtility.Check.Empty(newStickerCombMix))
                 {
-                    this.CurrentMaintain["StickerCombinationUkey_MixPack"] = DBNull.Value;
+                    this.CurrentMaintain["StickerCombinationUkey_MixPack"] = 0;
                     this.txtStickerCombMix.Text = string.Empty;
                     return;
                 }
@@ -266,7 +266,7 @@ AND Junk=0";
 
                 if (dt.Rows.Count == 0)
                 {
-                    this.CurrentMaintain["StickerCombinationUkey_MixPack"] = DBNull.Value;
+                    this.CurrentMaintain["StickerCombinationUkey_MixPack"] = 0;
                     this.txtStickerCombMix.Text = string.Empty;
                     MyUtility.Msg.WarningBox("Data not found !!");
                 }
@@ -348,7 +348,7 @@ AND ID = '{item.GetSelectedString()}'
             {
                 if (MyUtility.Check.Empty(newStampComb))
                 {
-                    this.CurrentMaintain["StampCombinationUkey"] = DBNull.Value;
+                    this.CurrentMaintain["StampCombinationUkey"] = 0;
                     this.txtStampComb.Text = string.Empty;
                     return;
                 }
@@ -374,7 +374,7 @@ AND Junk=0";
 
                 if (dt.Rows.Count == 0)
                 {
-                    this.CurrentMaintain["StampCombinationUkey"] = DBNull.Value;
+                    this.CurrentMaintain["StampCombinationUkey"] = 0;
                     this.txtStampComb.Text = string.Empty;
                     MyUtility.Msg.WarningBox("Data not found !!");
                 }
