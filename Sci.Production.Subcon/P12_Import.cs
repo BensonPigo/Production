@@ -154,6 +154,7 @@ namespace Sci.Production.Subcon
 				            and s.Status <> 'New' ) APQty
             where 1 = 1
             {sqlcmd_F}
+            order by OrderID
             drop TABLE #tmp
             ";
 
@@ -166,6 +167,7 @@ namespace Sci.Production.Subcon
                 }
 
                 this.listControlBindingSource1.DataSource = this.dtlocal;
+                this.gridImport.AutoResizeColumns();
                 this.OnlyShowBalQty();
             }
             else
@@ -242,7 +244,10 @@ namespace Sci.Production.Subcon
         {
             if (this.chBalQty.Checked)
             {
-                this.listControlBindingSource1.DataSource = this.dtlocal.Select("BalQty > 0").TryCopyToDataTable(this.dtlocal);
+                var dt = this.dtlocal.AsEnumerable()
+                    .Where(x => x.Field<int>("BalQty") > 0)
+                    .OrderBy(x => x.Field<string>("OrderId")).TryCopyToDataTable(this.dtlocal);
+                this.listControlBindingSource1.DataSource = dt;
             }
             else
             {

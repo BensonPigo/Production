@@ -88,12 +88,12 @@ namespace Sci.Production.Subcon
 
             if (this.rbPandQry_SewingQty.Checked && this.radioPanelReportType.Enabled)
             {
-                strWhere += " and (PaidQty.val > SewingQty.val)";
+                strWhere += " and (isnull(PaidQty.val,0) > isnull(SewingQty.val,0))";
             }
 
             if (!this.rbPandQry_SewingQty.Checked && this.radioPanelReportType.Enabled)
             {
-                strWhere += " and (PaidQty.val <> sd.OutputQty) and s.Status <> 'Colsed' ";
+                strWhere += " and (isnull(PaidQty.val,0) <> isnull(sd.OutputQty,0)) and s.Status <> 'Colsed' ";
             }
 
             string sqlcmd = $@"

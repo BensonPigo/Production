@@ -719,10 +719,15 @@ namespace Sci.Production.Subcon
 
                 if (this.txtSupplier.TextBox1.Text != checkFactory)
                 {
-                    DialogResult confirmResult = MessageBoxEX.Show($@"The Supplier is not the same as before, do you want to clear it?", "Warning", MessageBoxButtons.YesNo, new string[] { "Yes", "No" }, MessageBoxDefaultButton.Button2);
+                    DialogResult confirmResult = MessageBoxEX.Show($@"The new supplier dis-match with the Contract No., do you still want to change the supplier?", "Warning", MessageBoxButtons.YesNo, new string[] { "Yes", "No" }, MessageBoxDefaultButton.Button2);
                     if (confirmResult == DialogResult.Yes)
                     {
                         ((DataTable)this.detailgridbs.DataSource).Rows.Clear();
+                    }
+                    else
+                    {
+                        this.txtSupplier.TextBox1.Text = this.txtSupplier.TextBox1.OldValue;
+                        return;
                     }
                 }
             }

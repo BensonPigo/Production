@@ -1173,13 +1173,13 @@
               <Width>4.76864cm</Width>
             </TablixColumn>
             <TablixColumn>
-              <Width>3.13202cm</Width>
+              <Width>3.40761cm</Width>
             </TablixColumn>
             <TablixColumn>
-              <Width>2.08462cm</Width>
+              <Width>1.61114cm</Width>
             </TablixColumn>
             <TablixColumn>
-              <Width>2.02966cm</Width>
+              <Width>2.45611cm</Width>
             </TablixColumn>
             <TablixColumn>
               <Width>1.84604cm</Width>
@@ -1282,11 +1282,18 @@
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>ComboType</Value>
-                              <Style />
+                              <Value>Combo Type</Value>
+                              <Style>
+                                <FontStyle>Normal</FontStyle>
+                                <FontWeight>Normal</FontWeight>
+                                <TextDecoration>None</TextDecoration>
+                                <Color>#000000</Color>
+                              </Style>
                             </TextRun>
                           </TextRuns>
-                          <Style />
+                          <Style>
+                            <TextAlign>Center</TextAlign>
+                          </Style>
                         </Paragraph>
                       </Paragraphs>
                       <rd:DefaultName>Textbox72</rd:DefaultName>
@@ -1552,7 +1559,9 @@
                               <Style />
                             </TextRun>
                           </TextRuns>
-                          <Style />
+                          <Style>
+                            <TextAlign>Center</TextAlign>
+                          </Style>
                         </Paragraph>
                       </Paragraphs>
                       <rd:DefaultName>ComboType</rd:DefaultName>
@@ -1723,7 +1732,7 @@
         <DataSetName>DataSet1</DataSetName>
         <Left>0.73429cm</Left>
         <Height>1.67625cm</Height>
-        <Width>19.10032cm</Width>
+        <Width>19.32888cm</Width>
         <ZIndex>1</ZIndex>
         <Style>
           <Border>
@@ -1796,7 +1805,7 @@
             </Paragraph>
           </Paragraphs>
           <rd:DefaultName>Textbox2</rd:DefaultName>
-          <Top>3.28588cm</Top>
+          <Top>2.87313cm</Top>
           <Left>8.14281cm</Left>
           <Height>0.635cm</Height>
           <Width>5.05353cm</Width>
@@ -2297,7 +2306,7 @@
           <rd:DefaultName>Textbox12</rd:DefaultName>
           <Top>1.39789cm</Top>
           <Left>0.03175cm</Left>
-          <Height>0.99875cm</Height>
+          <Height>0.81354cm</Height>
           <Width>20.84243cm</Width>
           <ZIndex>17</ZIndex>
           <Style>
@@ -2328,7 +2337,7 @@
             </Paragraph>
           </Paragraphs>
           <rd:DefaultName>Textbox12</rd:DefaultName>
-          <Top>2.56234cm</Top>
+          <Top>2.24484cm</Top>
           <Left>5.36471cm</Left>
           <Height>0.6cm</Height>
           <Width>10.00085cm</Width>

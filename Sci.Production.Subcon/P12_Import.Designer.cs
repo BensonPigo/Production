@@ -300,7 +300,7 @@
             this.Controls.Add(this.groupBox1);
             this.Name = "P12_Import";
             this.OnLineHelpID = "Sci.Win.Subs.Base";
-            this.Text = "P12_Import";
+            this.Text = "Import";
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).EndInit();
             this.groupBox2.ResumeLayout(false);
             this.groupBox1.ResumeLayout(false);
