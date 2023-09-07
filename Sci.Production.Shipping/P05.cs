@@ -76,9 +76,10 @@ namespace Sci.Production.Shipping
         }
 
         private string baseDetailSql = @"
+DECLARE @tmp_pdOrderID table(ID varchar(13), OrderID varchar(13), OrderShipmodeSeq varchar(2))
 
+insert into @tmp_pdOrderID(ID, OrderID, OrderShipmodeSeq)
 select distinct p.ID, pd.OrderID, pd.OrderShipmodeSeq
-into #tmp_pdOrderID
 from PackingList p with(nolock)
 inner join PackingList_Detail pd with(nolock) on p.ID = pd.ID
 {1}
@@ -87,7 +88,7 @@ select  p.GMTBookingLock
         , FactoryID = STUFF ((select CONCAT (',',a.FactoryID) 
                             from (
                                 select distinct o.FactoryID
-                                from #tmp_pdOrderID pd 
+                                from @tmp_pdOrderID pd 
 								left join orders o WITH (NOLOCK) on o.id = pd.OrderID 
                                 where pd.ID = p.id
                             ) a 
@@ -97,7 +98,7 @@ select  p.GMTBookingLock
         , OrderID = STUFF ((select CONCAT (',', cast (a.OrderID as nvarchar)) 
                             from (
                                 select pd.OrderID 
-                                from #tmp_pdOrderID pd
+                                from @tmp_pdOrderID pd
                                 where pd.ID = p.id
                                 group by pd.OrderID
                             ) a 
@@ -107,7 +108,7 @@ select  p.GMTBookingLock
         , OrderShipmodeSeq = STUFF ((select CONCAT (',', cast (a.OrderShipmodeSeq as nvarchar)) 
                                      from (
                                          select pd.OrderID, pd.OrderShipmodeSeq 
-                                         from #tmp_pdOrderID pd
+                                         from @tmp_pdOrderID pd
                                          where pd.ID = p.id
                                          group by pd.OrderID, pd.OrderShipmodeSeq
                                      ) a   
@@ -115,7 +116,7 @@ select  p.GMTBookingLock
                                      for xml path('')
                                    ), 1, 1, '') 
         , IDD = STUFF ((select distinct CONCAT (',', Format(oqs.IDD, 'yyyy/MM/dd')) 
-                            from #tmp_pdOrderID pd 
+                            from @tmp_pdOrderID pd 
                             inner join Order_QtyShip oqs with (nolock) on oqs.ID = pd.OrderID and oqs.Seq = pd.OrderShipmodeSeq
                             where pd.ID = p.id and oqs.IDD is not null
                             for xml path('')
@@ -123,7 +124,7 @@ select  p.GMTBookingLock
 		,[PONo]=STUFF ((select CONCAT (',',a.CustPONo) 
                             from (
                                 select distinct o.CustPONo
-                                from #tmp_pdOrderID pd 
+                                from @tmp_pdOrderID pd 
 								left join orders o WITH (NOLOCK) on o.id = pd.OrderID 
                                 where pd.ID = p.id AND o.CustPONo<>'' AND o.CustPONo IS NOT NULL
                             ) a 
@@ -132,7 +133,7 @@ select  p.GMTBookingLock
         , AirPPID = STUFF ((select CONCAT (',', cast (a.ID as nvarchar)) 
                             from (
                                 select ap.ID
-                                from #tmp_pdOrderID pd
+                                from @tmp_pdOrderID pd
                                 left join AirPP ap With (NoLock) on pd.OrderID = ap.OrderID
                                                                     and pd.OrderShipmodeSeq = ap.OrderShipmodeSeq
                                 where pd.ID = p.id
@@ -145,7 +146,7 @@ select  p.GMTBookingLock
                             from (
                                 select  top 1 OrderID
                                         , OrderShipmodeSeq 
-                                from #tmp_pdOrderID pd 
+                                from @tmp_pdOrderID pd 
                                 where pd.ID = p.ID
                             ) a, Order_QtyShip oq 
                             where   a.OrderID = oq.Id 
@@ -154,7 +155,7 @@ select  p.GMTBookingLock
                      from (
                          select  top 1 OrderID
                                  , OrderShipmodeSeq 
-                         from #tmp_pdOrderID pd
+                         from @tmp_pdOrderID pd
                          where pd.ID = p.ID
                      ) a, Order_QtyShip oq WITH (NOLOCK) 
                      where   a.OrderID = oq.Id 
@@ -184,7 +185,7 @@ select  p.GMTBookingLock
         , OrderQty = STUFF ((select CONCAT (',', cast (a.Qty as nvarchar)) 
                             from (
                                 select distinct o.id,o.Qty
-                                from #tmp_pdOrderID a 
+                                from @tmp_pdOrderID a 
                                 inner join orders o with(nolock) on o.id= a.OrderID
                                 where a.ID = p.id
                             ) a 
@@ -192,7 +193,7 @@ select  p.GMTBookingLock
                             for xml path('')
                           ), 1, 1, '') 
          , SewingOutputQty = STUFF ((select CONCAT (',', cast (sum(sod.qaqty) as nvarchar)) 
-                            from #tmp_pdOrderID a 
+                            from @tmp_pdOrderID a 
                             inner join SewingOutput_Detail_Detail sod with(nolock) on sod.orderid= a.orderid
 							where a.ID = p.ID
 							group by sod.OrderId
@@ -210,14 +211,13 @@ outer apply(
 ) pl2
 outer apply (
 	select top 1 o.Dest, o.CustCDID 
-    from #tmp_pdOrderID a
+    from @tmp_pdOrderID a
 	inner join Orders o WITH (NOLOCK) on o.ID = a.OrderID
 	where a.ID = p.ID
 )o2
-where exists (select 1 from #tmp_pdOrderID t where p.ID = t.ID)
+where exists (select 1 from @tmp_pdOrderID t where p.ID = t.ID)
 order by p.ID, p.OrderID
-
-drop table #tmp_pdOrderID";
+";
 
         /// <inheritdoc/>
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
