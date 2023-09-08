@@ -2,7 +2,7 @@
     [MDivisionID]     VARCHAR (8)   CONSTRAINT [DF_Employee_MDivisionID] DEFAULT ('') NULL,
     [FactoryID]       VARCHAR (8)   CONSTRAINT [DF_Employee_FactoryID] DEFAULT ('') NOT NULL,
     [ID]              VARCHAR (10)  CONSTRAINT [DF_Employee_ID] DEFAULT ('') NOT NULL,
-    [Name]            NVARCHAR (30) CONSTRAINT [DF_Employee_Name] DEFAULT ('') NOT NULL,
+    [Name]            NVARCHAR (50) CONSTRAINT [DF_Employee_Name] DEFAULT ('') NOT NULL,
     [Skill]           NVARCHAR (20) CONSTRAINT [DF_Employee_Skill] DEFAULT ('') NULL,
     [OnBoardDate]     DATE          NULL,
     [ResignationDate] DATE          NULL,

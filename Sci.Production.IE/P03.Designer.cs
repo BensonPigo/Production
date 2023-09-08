@@ -1345,7 +1345,7 @@
             this.grid1.RowTemplate.Height = 24;
             this.grid1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.grid1.ShowCellToolTips = false;
-            this.grid1.Size = new System.Drawing.Size(283, 417);
+            this.grid1.Size = new System.Drawing.Size(285, 417);
             this.grid1.TabIndex = 2;
             // 
             // splitContainer1
@@ -1358,7 +1358,7 @@
             // 
             this.splitContainer1.Panel2.Controls.Add(this.grid1);
             this.splitContainer1.Size = new System.Drawing.Size(1153, 417);
-            this.splitContainer1.SplitterDistance = 866;
+            this.splitContainer1.SplitterDistance = 864;
             this.splitContainer1.TabIndex = 3;
             // 
             // txtFactory
@@ -1368,6 +1368,7 @@
             this.txtFactory.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "FactoryID", true));
             this.txtFactory.FilteMDivision = false;
             this.txtFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtFactory.IsMultiselect = false;
             this.txtFactory.IsProduceFty = false;
             this.txtFactory.IssupportJunk = true;
             this.txtFactory.Location = new System.Drawing.Point(58, 35);
