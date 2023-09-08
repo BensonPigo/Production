@@ -22,7 +22,7 @@ SET NOCOUNT ON
 	/************* 刪除P_CuttingScheduleOutputList的資料，規則刪除相同的WorkOrder.ID*************/
 	Delete P_CuttingScheduleOutputList
 	from P_CuttingScheduleOutputList as a 
-	inner join #tmp as b on a.FactoryID = b.FactoryID and a.POID =b.POID
+	inner join #tmp as b on a.FactoryID = b.FactoryID and a.POID =b.POID and a.EstCuttingDate = b.EstCuttingDate
 	'
 	set @SqlCmdinsert = '
 	/************* 新增P_CuttingScheduleOutputList的資料(ActCuttingDate,LackingLayers新增時欄位都要為空)*************/
@@ -177,6 +177,20 @@ SET NOCOUNT ON
 	p.[LackingLayers] = t.[LackingLayers]
 	from P_CuttingScheduleOutputList p with(nolock)
 	inner join #Integrate t with(nolock) on t.[FactoryID] = p.[FactoryID] and t.[ID] = p.[POID] and p.[CutRef] = t.[CutRef]
+
+	IF EXISTS (select 1 from BITableInfo b where b.id = ''P_CuttingScheduleOutputList'')
+	BEGIN
+		update b
+			set b.TransferDate = getdate()
+				, b.IS_Trans = 1
+		from BITableInfo b
+		where b.id = ''P_CuttingScheduleOutputList''
+	END
+	ELSE 
+	BEGIN
+		insert into BITableInfo(Id, TransferDate)
+		values(''P_CuttingScheduleOutputList'', getdate())
+	END
 	'
 	DECLARE @SqlCmdAll nVARCHAR(MAX);
 	set @SqlCmdAll = @SqlCmd + @SqlCmdDelete+@SqlCmdinsert+@SqlCmdUpdataIntegrate+@SqlCmdUpdata
