@@ -260,7 +260,22 @@ when not matched by target then
            )
 when not matched by source then 
 	delete;
-	
+---------------------------OperationRef---------------------------
+Delete Production.dbo.OperationRef
+from Production.dbo.OperationRef 
+
+
+INSERT INTO Production.dbo.OperationRef(
+ID
+,CodeType
+,CodeID
+)
+select 
+ isnull(ID      , '')
+,isnull(CodeType    , '')
+,isnull(CodeID  , '')
+from Trade_To_Pms.dbo.OperationRef 
+
 ------Thread_Quilting------
 Merge Production.dbo.Thread_Quilting as t
 Using (select a.* from Trade_To_Pms.dbo.Thread_Quilting a ) as s

@@ -21,6 +21,7 @@ namespace Sci.Production.IE
     /// </summary>
     public partial class P03 : Win.Tems.Input6
     {
+        private string selectDataTable_DefaultView_Sort = string.Empty;
         private object totalGSD;
         private object totalCycleTime;
         private DataTable EmployeeData;
@@ -199,6 +200,8 @@ from (
         , ld.MachineCount
         , IsMachineTypeID_MM = Cast( IIF( ld.MachineTypeID like 'MM%',1,0) as bit)
         , [ReasonName] = lbr.Name
+        , [EmployeeJunk] = e.junk
+        , [IsRow] = ROW_NUMBER() OVER(PARTITION BY ld.EmployeeID,ld.Ukey ORDER by e.Junk asc) 
     from LineMapping_Detail ld WITH (NOLOCK) 
     left join Employee e WITH (NOLOCK) on ld.EmployeeID = e.ID
     left join Operation o WITH (NOLOCK) on ld.OperationID = o.ID
@@ -214,6 +217,7 @@ from (
     )show
     where ld.ID = '{0}' 
 )ld
+where ld.EmployeeJunk is null or  (ld.EmployeeID is not null and ld.IsRow = 1)
 order by case when ld.No = '' then 1
 	    when left(ld.No, 1) = 'P' then 2
 	    else 3
@@ -298,6 +302,7 @@ and BrandID = '{this.CurrentMaintain["BrandID"]}'
             DataGridViewGeneratorNumericColumnSettings cycle = new DataGridViewGeneratorNumericColumnSettings();
             DataGridViewGeneratorTextColumnSettings machine = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorTextColumnSettings operatorid = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings operatorName = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorTextColumnSettings attachment = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorTextColumnSettings template = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorTextColumnSettings threadColor = new DataGridViewGeneratorTextColumnSettings();
@@ -488,7 +493,7 @@ and BrandID = '{this.CurrentMaintain["BrandID"]}'
 
                             this.GetEmployee(null);
 
-                            Win.Tools.SelectItem item = new Win.Tools.SelectItem(this.EmployeeData, "ID,Name,Skill,SewingLineID,FactoryID", "10,18,16,2,5", dr["EmployeeID"].ToString(), headercaptions: "ID,Name,Skill,SewingLine,Factory")
+                            Win.Tools.SelectItem item = new Win.Tools.SelectItem(this.EmployeeData, "ID,FirstName,LastName,Section,", "10,18,16,2,5", dr["EmployeeID"].ToString(), headercaptions: "ID,First Name,Last Name,Section")
                             {
                                 Width = 700,
                             };
@@ -499,10 +504,31 @@ and BrandID = '{this.CurrentMaintain["BrandID"]}'
                             }
 
                             IList<DataRow> selectedData = item.GetSelecteds();
-                            dr["EmployeeID"] = selectedData[0]["ID"];
-                            dr["EmployeeName"] = selectedData[0]["Name"];
-                            dr["EmployeeSkill"] = selectedData[0]["Skill"];
-                            dr.EndEdit();
+                            DataTable dt = (DataTable)this.detailgridbs.DataSource;
+
+                            DataRow[] errorDataRow = dt.Select($"EmployeeID = '{MyUtility.Convert.GetString(selectedData[0]["ID"])}' and NO <> '{MyUtility.Convert.GetString(dr["No"])}'");
+                            if (errorDataRow.Length > 0)
+                            {
+                                MyUtility.Msg.WarningBox($"<{selectedData[0]["ID"]} {selectedData[0]["Name"]}> already been used in No.{MyUtility.Convert.GetString(errorDataRow[0]["No"])}!!");
+                                return;
+                            }
+
+                            dt.DefaultView.Sort = this.selectDataTable_DefaultView_Sort == "ASC" ? "No ASC" : string.Empty;
+                            DataTable sortDataTable = dt.DefaultView.ToTable();
+
+                            DataRow[] listDataRows = sortDataTable.Select($"No = '{MyUtility.Convert.GetString(dr["No"])}'");
+                            if (listDataRows.Length > 0)
+                            {
+                                foreach (DataRow dataRow in listDataRows)
+                                {
+                                    int dataIndex = sortDataTable.Rows.IndexOf(dataRow);
+                                    DataRow row = this.detailgrid.GetDataRow<DataRow>(dataIndex);
+                                    row["EmployeeID"] = selectedData[0]["ID"];
+                                    row["EmployeeName"] = selectedData[0]["Name"];
+                                    row["EmployeeSkill"] = selectedData[0]["Skill"];
+                                    row.EndEdit();
+                                }
+                            }
                         }
                     }
                 }
@@ -526,6 +552,90 @@ and BrandID = '{this.CurrentMaintain["BrandID"]}'
                             this.ReviseEmployeeToEmpty(dr);
                             e.Cancel = true;
                             MyUtility.Msg.WarningBox(string.Format("< Employee ID: {0} > not found!!!", e.FormattedValue.ToString()));
+                            return;
+                        }
+                        else
+                        {
+                            dr["EmployeeID"] = this.EmployeeData.Rows[0]["ID"];
+                            dr["EmployeeName"] = this.EmployeeData.Rows[0]["Name"];
+                            dr["EmployeeSkill"] = this.EmployeeData.Rows[0]["Skill"];
+                            dr.EndEdit();
+                        }
+                    }
+                }
+            };
+
+            operatorName.EditingMouseDown += (s, e) =>
+            {
+                if (this.EditMode)
+                {
+                    if (e.Button == MouseButtons.Right)
+                    {
+                        if (e.RowIndex != -1)
+                        {
+                            DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
+
+                            this.GetEmployee(null);
+
+                            Win.Tools.SelectItem item = new Win.Tools.SelectItem(this.EmployeeData, "ID,FirstName,LastName,Section,", "10,18,16,2,5", dr["EmployeeID"].ToString(), headercaptions: "ID,First Name,Last Name,Section")
+                            {
+                                Width = 700,
+                            };
+                            DialogResult returnResult = item.ShowDialog();
+                            if (returnResult == DialogResult.Cancel)
+                            {
+                                return;
+                            }
+
+                            IList<DataRow> selectedData = item.GetSelecteds();
+                            DataTable dt = (DataTable)this.detailgridbs.DataSource;
+
+                            DataRow[] errorDataRow = dt.Select($"EmployeeID = '{MyUtility.Convert.GetString(selectedData[0]["ID"])}' and NO <> '{MyUtility.Convert.GetString(dr["No"])}'");
+                            if (errorDataRow.Length > 0)
+                            {
+                                MyUtility.Msg.WarningBox($"<{selectedData[0]["ID"]} {selectedData[0]["Name"]}> already been used in No.{MyUtility.Convert.GetString(dr["No"])}!!");
+                                return;
+                            }
+
+                            dt.DefaultView.Sort = this.selectDataTable_DefaultView_Sort == "ASC" ? "No ASC" : string.Empty;
+                            DataTable sortDataTable = dt.DefaultView.ToTable();
+
+                            DataRow[] listDataRows = sortDataTable.Select($"No = '{MyUtility.Convert.GetString(dr["No"])}'");
+                            if (listDataRows.Length > 0)
+                            {
+                                foreach (DataRow dataRow in listDataRows)
+                                {
+                                    int dataIndex = sortDataTable.Rows.IndexOf(dataRow);
+                                    DataRow row = this.detailgrid.GetDataRow<DataRow>(dataIndex);
+                                    row["EmployeeID"] = selectedData[0]["ID"];
+                                    row["EmployeeName"] = selectedData[0]["Name"];
+                                    row["EmployeeSkill"] = selectedData[0]["Skill"];
+                                    row.EndEdit();
+                                }
+                            }
+                        }
+                    }
+                }
+            };
+            operatorName.CellValidating += (s, e) =>
+            {
+                if (this.EditMode)
+                {
+                    DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
+                    if (MyUtility.Check.Empty(e.FormattedValue))
+                    {
+                        this.ReviseEmployeeToEmpty(dr);
+                        return;
+                    }
+
+                    if (e.FormattedValue.ToString() != dr["EmployeeName"].ToString())
+                    {
+                        this.GetEmployee(e.FormattedValue.ToString());
+                        if (this.EmployeeData.Rows.Count <= 0)
+                        {
+                            this.ReviseEmployeeToEmpty(dr);
+                            e.Cancel = true;
+                            MyUtility.Msg.WarningBox(string.Format("< Employee Name: {0} > not found!!!", e.FormattedValue.ToString()));
                             return;
                         }
                         else
@@ -1071,7 +1181,7 @@ and Name = @PPA
             .Text("ThreadColor", header: "ThreadColor", width: Widths.AnsiChars(1), settings: threadColor)
             .Text("Notice", header: "Notice", width: Widths.AnsiChars(60), settings: notice)
             .Text("EmployeeID", header: "Operator ID No.", width: Widths.AnsiChars(10), settings: operatorid)
-            .Text("EmployeeName", header: "Operator Name", width: Widths.AnsiChars(20), iseditingreadonly: true)
+            .Text("EmployeeName", header: "Operator Name", width: Widths.AnsiChars(20), settings: operatorName)
             .Text("EmployeeSkill", header: "Skill", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Numeric("Efficiency", header: "Eff(%)", width: Widths.AnsiChars(6), decimal_places: 2, iseditingreadonly: true);
 
@@ -1127,6 +1237,7 @@ and Name = @PPA
                     DataTable dt = (DataTable)this.detailgridbs.DataSource;
                     dt.DefaultView.Sort = "sortNO, No";
                     this.detailgridbs.DataSource = dt;
+                    this.selectDataTable_DefaultView_Sort = "ASC";
 
                     this.IsShowTable();
                 }
@@ -1183,6 +1294,7 @@ and Name = @PPA
         {
             string sqlCmd;
 
+            bool IsEmptySewingLine = MyUtility.Check.Empty(this.CurrentMaintain["SewingLineID"]);
             // sql參數
             System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter("@factoryid", this.CurrentMaintain["FactoryID"].ToString());
             System.Data.SqlClient.SqlParameter sp2 = new System.Data.SqlClient.SqlParameter
@@ -1202,15 +1314,16 @@ and Name = @PPA
             {
                 sp1,
                 sp2,
+                new SqlParameter("@SewingLine" , this.CurrentMaintain["SewingLineID"] + this.comboSewingTeam1.Text),
             };
 
             if (MyUtility.Check.Empty(this.CurrentMaintain["FactoryID"]))
             {
-                sqlCmd = "select ID,Name,Skill,SewingLineID,FactoryID from Employee WITH (NOLOCK) where ResignationDate is null" + (iD == null ? string.Empty : " and ID = @id");
+                sqlCmd = "select ID,FirstName,LastName,Section,Skill , [Name] = iif(LastName+ ','+ FirstName <> ',' ,LastName+ ','+ FirstName,'') from Employee WITH (NOLOCK) where (ResignationDate > GETDATE() or ResignationDate is null) and Junk = 0 " + (iD == null ? string.Empty : " and ID = @id ") + (IsEmptySewingLine ? string.Empty : " and (SewingLineID = @SewingLine or Section = @SewingLine)");
             }
             else
             {
-                sqlCmd = "select ID,Name,Skill,SewingLineID,FactoryID from Employee WITH (NOLOCK) where ResignationDate is null and FactoryID = @factoryid" + (iD == null ? string.Empty : " and ID = @id");
+                sqlCmd = "select ID,FirstName,LastName,Section,Skill , [Name] = iif(LastName+ ','+ FirstName <> ',' ,LastName+ ','+ FirstName,'')  from Employee WITH (NOLOCK) where (ResignationDate > GETDATE() or ResignationDate is null) and Junk = 0 and FactoryID = @factoryid " + (iD == null ? string.Empty : " and ID = @id ") + (IsEmptySewingLine ? string.Empty : " and (SewingLineID = @SewingLine or Section = @SewingLine)");
             }
 
             DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out this.EmployeeData);
@@ -1223,10 +1336,25 @@ and Name = @PPA
         // 將Employee相關欄位值清空
         private void ReviseEmployeeToEmpty(DataRow dr)
         {
-            dr["EmployeeID"] = string.Empty;
-            dr["EmployeeName"] = string.Empty;
-            dr["EmployeeSkill"] = string.Empty;
-            dr.EndEdit();
+            DataTable dt = (DataTable)this.detailgridbs.DataSource;
+
+            DataRow[] errorDataRow = dt.Select($"NO ='{MyUtility.Convert.GetString(dr["No"])}'");
+            dt.DefaultView.Sort = this.selectDataTable_DefaultView_Sort == "ASC" ? "No ASC" : string.Empty;
+            DataTable sortDataTable = dt.DefaultView.ToTable();
+
+            DataRow[] listDataRows = sortDataTable.Select($"No = '{MyUtility.Convert.GetString(dr["No"])}'");
+            if (listDataRows.Length > 0)
+            {
+                foreach (DataRow dataRow in listDataRows)
+                {
+                    int dataIndex = sortDataTable.Rows.IndexOf(dataRow);
+                    DataRow row = this.detailgrid.GetDataRow<DataRow>(dataIndex);
+                    row["EmployeeID"] = string.Empty;
+                    row["EmployeeName"] = string.Empty;
+                    row["EmployeeSkill"] = string.Empty;
+                    row.EndEdit();
+                }
+            }
         }
 
         private DataTable GetLBRNotHitName()
