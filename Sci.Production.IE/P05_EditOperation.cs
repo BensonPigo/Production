@@ -260,6 +260,12 @@ namespace Sci.Production.IE
                     return;
                 }
 
+                if (MyUtility.Convert.GetDecimal(e.FormattedValue) ==
+                    MyUtility.Convert.GetDecimal(dr[this.gridEditOperation.Columns[e.ColumnIndex].DataPropertyName]))
+                {
+                    return;
+                }
+
                 if (MyUtility.Check.Empty(e.FormattedValue))
                 {
                     dr["UpdSewerDiffPercentage"] = e.FormattedValue;
@@ -270,6 +276,17 @@ namespace Sci.Production.IE
                 dr[this.gridEditOperation.Columns[e.ColumnIndex].DataPropertyName] = e.FormattedValue;
 
                 this.CaculateUpdSewerColumn(this.gridEditOperation.Columns[e.ColumnIndex].DataPropertyName, dr);
+
+                // UpdDivSewer可能會有尾差，如果這筆是最後一筆，就做一次檢查修正
+                var sameTimeStudyDetailUkeyDatas = this.dtAutomatedLineMapping_DetailCopy.AsEnumerable()
+                          .Where(s => MyUtility.Convert.GetLong(s["TimeStudyDetailUkey"]) == MyUtility.Convert.GetLong(dr["TimeStudyDetailUkey"]));
+                int totalUpdSewerDiffPercentage = sameTimeStudyDetailUkeyDatas.Sum(s => MyUtility.Convert.GetInt(s["UpdSewerDiffPercentage"]));
+                if (totalUpdSewerDiffPercentage == 100)
+                {
+                    decimal totalUpdDivSewer = sameTimeStudyDetailUkeyDatas.Sum(s => MyUtility.Convert.GetDecimal(s["UpdDivSewer"]));
+                    decimal diffUpdDivSewer = MyUtility.Convert.GetDecimal(dr["OriSewer"]) - totalUpdDivSewer;
+                    dr["UpdDivSewer"] = MyUtility.Convert.GetDecimal(dr["UpdDivSewer"]) + diffUpdDivSewer;
+                }
             };
 
             this.Helper.Controls.Grid.Generator(this.gridEditOperation)

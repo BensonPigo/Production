@@ -232,6 +232,8 @@ outer apply (
 			select Data from dbo.SplitString(SewingMachineAttachmentID, ',')
 			union all
 			select Data from dbo.SplitString(Template, ',')
+            union all
+			select [Data] = ThreadComboID
 		) tmp
 		order by tmp.Data FOR XML PATH('')
 	), '')

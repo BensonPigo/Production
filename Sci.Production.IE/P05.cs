@@ -460,7 +460,7 @@ delete AutomatedLineMapping_NotHitTargetReason where ID = '{this.CurrentMaintain
             this.CurrentMaintain["EditName"] = string.Empty;
             this.CurrentMaintain["EditDate"] = DBNull.Value;
             this.CurrentMaintain["ID"] = DBNull.Value;
-
+            this.btnTransferToP06.Enabled = this.CurrentMaintain["Status"].ToString() == "Confirmed";
             return true;
         }
 

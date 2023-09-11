@@ -135,6 +135,7 @@ namespace Sci.Production.IE
                 this.dtAutomatedLineMapping_DetailAuto.AsEnumerable()
                     .Where(s => MyUtility.Convert.GetDecimal(s["SewerManpower"]) == this.numSewerManpower.Value).CopyToDataTable();
             this.gridMainBs.DataSource = this.dtAutomatedLineMapping_DetailCopys[this.tabNoOfOperator.SelectedIndex];
+            this.autoLineMappingGridSyncScroll.RefreshSubData();
         }
 
         private void BtnReload_Click(object sender, EventArgs e)

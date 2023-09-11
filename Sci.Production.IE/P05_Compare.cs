@@ -2,15 +2,10 @@
 using Ict.Win;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Windows.Forms.DataVisualization.Charting;
-using static Sci.Production.IE.AutoLineMappingGridSyncScroll;
 
 namespace Sci.Production.IE
 {
@@ -76,6 +71,25 @@ namespace Sci.Production.IE
 
             this.gridAutoNoDetail.DataSource = this.gridAutoDetailBs;
             this.gridManualNoDetail.DataSource = this.gridManualDetailBs;
+
+            this.gridAutoNoDetail.Scroll += this.GridAutoNoDetail_Scroll;
+            this.gridManualNoDetail.Scroll += this.GridManualNoDetail_Scroll;
+        }
+
+        private void GridManualNoDetail_Scroll(object sender, ScrollEventArgs e)
+        {
+            if (e.ScrollOrientation == ScrollOrientation.HorizontalScroll)
+            {
+                this.gridAutoNoDetail.HorizontalScrollingOffset = e.NewValue;
+            }
+        }
+
+        private void GridAutoNoDetail_Scroll(object sender, ScrollEventArgs e)
+        {
+            if (e.ScrollOrientation == ScrollOrientation.HorizontalScroll)
+            {
+                this.gridManualNoDetail.HorizontalScrollingOffset = e.NewValue;
+            }
         }
 
         private void Grid_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
