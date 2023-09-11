@@ -163,7 +163,7 @@ SELECT DISTINCT
  p.ID
 ,p.BrandID
 ,pd.CTNStartNo
-,pd.RefN
+,pd.RefNo
 ,[ShippingMarkCombinationUkey] = IIF(c.StampCombinationUkey = 0 ,comb.Ukey ,c.StampCombinationUkey)
 ,p.CTNQty
 ,[SettingOK] =  dbo.CheckShippingMarkStampSetting(p.ID,pd.SCICtnNo,pd.RefNo,p.CustCDID,p.BrandID)
