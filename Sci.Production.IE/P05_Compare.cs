@@ -82,6 +82,12 @@ namespace Sci.Production.IE
             {
                 this.gridAutoNoDetail.HorizontalScrollingOffset = e.NewValue;
             }
+
+            if (e.ScrollOrientation == ScrollOrientation.VerticalScroll &&
+                this.gridAutoNoDetail.Rows.Count > this.gridManualNoDetail.FirstDisplayedScrollingRowIndex)
+            {
+                this.gridAutoNoDetail.FirstDisplayedScrollingRowIndex = this.gridManualNoDetail.FirstDisplayedScrollingRowIndex;
+            }
         }
 
         private void GridAutoNoDetail_Scroll(object sender, ScrollEventArgs e)
@@ -89,6 +95,12 @@ namespace Sci.Production.IE
             if (e.ScrollOrientation == ScrollOrientation.HorizontalScroll)
             {
                 this.gridManualNoDetail.HorizontalScrollingOffset = e.NewValue;
+            }
+
+            if (e.ScrollOrientation == ScrollOrientation.VerticalScroll &&
+                this.gridManualNoDetail.Rows.Count > this.gridAutoNoDetail.FirstDisplayedScrollingRowIndex)
+            {
+                this.gridManualNoDetail.FirstDisplayedScrollingRowIndex = this.gridAutoNoDetail.FirstDisplayedScrollingRowIndex;
             }
         }
 

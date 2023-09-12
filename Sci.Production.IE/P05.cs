@@ -733,6 +733,11 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
                .Text("No", header: "PPA" + Environment.NewLine + "No.", width: Widths.AnsiChars(10))
                .Text("TotalGSDTime", header: "Total" + Environment.NewLine + "GSD Time", width: Widths.AnsiChars(10))
                .Text("OperatorLoading", header: "Operator" + Environment.NewLine + "Loading (%)", width: Widths.AnsiChars(10));
+
+            this.detailgrid.Columns["No"].Frozen = true;
+            this.gridCentralizedPPALeft.Columns["No"].Frozen = true;
+            this.gridLineMappingRight.Columns["No"].Frozen = true;
+            this.gridCentralizedPPARight.Columns["No"].Frozen = true;
         }
 
         /// <inheritdoc/>

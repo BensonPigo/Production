@@ -830,6 +830,11 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
 
             this.gridLineMappingRight.Columns["EmployeeID"].DefaultCellStyle.BackColor = Color.Pink;
             this.gridCentralizedPPARight.Columns["EmployeeID"].DefaultCellStyle.BackColor = Color.Pink;
+
+            this.detailgrid.Columns["No"].Frozen = true;
+            this.gridCentralizedPPALeft.Columns["No"].Frozen = true;
+            this.gridLineMappingRight.Columns["No"].Frozen = true;
+            this.gridCentralizedPPARight.Columns["No"].Frozen = true;
         }
 
         /// <inheritdoc/>
