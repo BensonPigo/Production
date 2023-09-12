@@ -3095,9 +3095,9 @@ END";
             }
 
             string checkmsg = string.Empty;
-            #region MarkerName, MarkerNo, CutNo(CutNo <> '') 相同資料的 markerlength, EstCutDate 必須相同
+            #region MarkerName, MarkerNo, CutNo(CutNo <> '') 相同資料的 markerlength, EstCutDate 必須相同(已建立P04 Cutplan 不檢查,會卡到舊資料)
             var groupedData = this.DetailDatas.AsEnumerable()
-                .Where(r => !MyUtility.Check.Empty(r["CutNo"]))
+                .Where(r => !MyUtility.Check.Empty(r["CutNo"]) && MyUtility.Check.Empty(r["Cutplanid"]))
                 .GroupBy(r => new
                 {
                     MarkerName = MyUtility.Convert.GetString(r["MarkerName"]),
@@ -3133,10 +3133,10 @@ END";
             }
             #endregion
 
-            #region Cutref 相同資料的 MarkerNo 必須相同
+            #region Cutref 相同資料的 MarkerNo 必須相同(已建立P04 Cutplan 不檢查,會卡到舊資料)
             checkmsg = string.Empty;
             var groupedData2 = this.DetailDatas.AsEnumerable()
-                .Where(r => !MyUtility.Check.Empty(r["Cutref"])) // 確保 Cutref 不為空
+                .Where(r => !MyUtility.Check.Empty(r["Cutref"]) && MyUtility.Check.Empty(r["Cutplanid"])) // 確保 Cutref 不為空
                 .GroupBy(r => MyUtility.Convert.GetString(r["Cutref"])); // 根據 Cutref 分組
 
             var processedCutrefs = new HashSet<string>(); // 用來追蹤已處理的 Cutref
