@@ -2,8 +2,10 @@
 using Ict.Win;
 using Sci.Data;
 using System;
+using System.CodeDom;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.SqlTypes;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -16,7 +18,6 @@ namespace Sci.Production.Subcon
     {
         private DataTable dt_detail;
         private DataTable dtDetail;
-        private Dictionary<string, string> selectedLocation = new Dictionary<string, string>();
 
         /// <inheritdoc/>
         public P11_BatchImport(DataTable detail)
@@ -27,7 +28,7 @@ namespace Sci.Production.Subcon
         }
 
         // Button Query
-        private void BtnQuery_Click(object sender, EventArgs e) 
+        private void BtnQuery_Click(object sender, EventArgs e)
         {
             StringBuilder strSQLCmd = new StringBuilder();
             string sp1 = this.txtSPNo1.Text.TrimEnd();
@@ -39,7 +40,7 @@ namespace Sci.Production.Subcon
             DateTime? buyerDel1 = this.dateBuyerDelivery.Value1;
             DateTime? buyerDel2 = this.dateBuyerDelivery.Value2;
 
-            // SP#不可為空
+            // 不可為空判斷
             if (MyUtility.Check.Empty(sp1) && MyUtility.Check.Empty(sp2) &&
                 MyUtility.Check.Empty(po1) && MyUtility.Check.Empty(po2) &&
                 MyUtility.Check.Empty(style1) && MyUtility.Check.Empty(style2) &&
@@ -58,13 +59,13 @@ select
 ,[ComboType] = iif(ol.Location is null, sl.Location,ol.Location)
 ,[Article] = oq.Article
 ,[OrderQty] = sum(oq.Qty)
-,[OutputQty] = 0
-,[UnitPrice] = 0
+,[OutputQty] = sum(oq.Qty)
+,[UnitPrice] = 0.0000
 ,[LocalCurrencyID] = ''
-,[LocalUnitPrice] = 0
-,[Vat] = 0
-,[UPIncludeVAT] = 0
-,[KpiRate] = 0
+,[LocalUnitPrice] = 0.0000
+,[Vat] = 0.00
+,[UPIncludeVAT] = 0.0000
+,[KpiRate] = 0.00
 
 ,[SewingCPU] = 0
 ,[CuttingCPU] = 0
@@ -76,6 +77,7 @@ select
 ,[OtherPrice] = 0
 ,[EMBPrice] = 0
 ,[PrintingPrice] = 0
+,[Addrow] = 'Y'
 from Orders o
 inner join Factory f on f.ID = o.FactoryID
 inner join Order_Qty oq on o.ID = oq.ID
@@ -116,6 +118,20 @@ and o.Category in ('B','S')
                 strSQLCmd.Append($@" and o.StyleID <= '{style2}'");
             }
 
+            if (!MyUtility.Check.Empty(buyerDel1))
+            {
+                strSQLCmd.Append(string.Format(
+                    @" 
+            and o.BuyerDelivery >= '{0}'", Convert.ToDateTime(buyerDel1).ToString("yyyy/MM/dd")));
+            }
+
+            if (!MyUtility.Check.Empty(buyerDel2))
+            {
+                strSQLCmd.Append(string.Format(
+                    @" 
+            and o.BuyerDelivery <= '{0}'", Convert.ToDateTime(buyerDel2).ToString("yyyy/MM/dd")));
+            }
+
             strSQLCmd.Append(Environment.NewLine + @"group by o.ID,o.StyleID,iif(ol.Location is null, sl.Location,ol.Location),oq.Article");
 
             this.ShowWaitMessage("Data Loading....");
@@ -143,7 +159,25 @@ and o.Category in ('B','S')
             base.OnFormLoaded();
             this.txtSPNo1.Focus();
 
-            #region
+            #region setting
+            DataGridViewGeneratorNumericColumnSettings col_SubconOut = new DataGridViewGeneratorNumericColumnSettings();
+            col_SubconOut.CellValidating += (s, e) =>
+            {
+                DataRow dr = this.gridImport.GetDataRow(e.RowIndex);
+                decimal outputqty = MyUtility.Convert.GetDecimal(e.FormattedValue);
+                decimal orderqty = MyUtility.Convert.GetDecimal(dr["OrderQty"]);
+                if (outputqty > orderqty)
+                {
+                    MyUtility.Msg.WarningBox("Subcon Out Qty cannot more than Order Qty");
+                    e.Cancel = true;
+                    return;
+                }
+
+                dr["OutputQty"] = e.FormattedValue;
+                dr["UPIncludeVAT"] = MyUtility.Convert.GetDecimal(dr["LocalUnitPrice"]) + MyUtility.Convert.GetDecimal(dr["Vat"]);
+                dr.EndEdit();
+            };
+
             DataGridViewGeneratorNumericColumnSettings localUnitPrice = new DataGridViewGeneratorNumericColumnSettings();
             localUnitPrice.CellValidating += (s, e) =>
             {
@@ -172,7 +206,7 @@ and o.Category in ('B','S')
                 .Text("ComboType", header: "Combo Type", width: Widths.AnsiChars(9), iseditingreadonly: true)
                 .Text("Article", header: "Article", width: Widths.AnsiChars(8), iseditingreadonly: true)
                 .Numeric("OrderQty", header: "Order Qty", width: Widths.AnsiChars(10), iseditingreadonly: true)
-                .Numeric("OutputQty", header: "Subcon Out Qty", width: Widths.AnsiChars(10), iseditingreadonly: false)
+                .Numeric("OutputQty", header: "Subcon Out Qty", width: Widths.AnsiChars(10), iseditingreadonly: false, settings: col_SubconOut)
                 .Numeric("UnitPrice", header: "Price(Unit)", width: Widths.AnsiChars(10), integer_places: 12, decimal_places: 4)
                 .Text("LocalCurrencyID", header: "Currency", width: Widths.AnsiChars(3))
                 .Numeric("LocalUnitPrice", header: "U/P Exclude VAT(Local currency)", width: Widths.AnsiChars(12), decimal_places: 4, settings: localUnitPrice)
@@ -239,7 +273,7 @@ and o.Category in ('B','S')
             this.Close();
         }
 
-        private void btnUpdate_Click(object sender, EventArgs e)
+        private void BtnUpdate_Click(object sender, EventArgs e)
         {
             this.listControlBindingSource1.EndEdit();
             DataTable dt = (DataTable)this.listControlBindingSource1.DataSource;
@@ -252,22 +286,45 @@ and o.Category in ('B','S')
 
             foreach (var item in drfound)
             {
-                switch (this.comboOrderBy.SelectedItem)
+                switch (this.comboColumnName.SelectedItem)
                 {
                     case "Price(Unit)":
-                        item["UnitPrice"] = this.txtBatchUpdate.Text;
+                        item["UnitPrice"] = this.numValue.Value;
                         break;
                     case "Currency":
                         item["LocalCurrencyID"] = this.txtBatchUpdate.Text;
                         break;
                     case "U/P Exclude VAT(Local currency)":
-                        item["LocalUnitPrice"] = this.txtBatchUpdate.Text;
+                        item["LocalUnitPrice"] = this.numValue.Value;
+                        item["UPIncludeVAT"] = MyUtility.Convert.GetDecimal(item["LocalUnitPrice"]) + MyUtility.Convert.GetDecimal(item["Vat"]);
                         break;
                     case "VAT(Local currency)":
-                        item["Vat"] = this.txtBatchUpdate.Text;
+                        item["Vat"] = Math.Round(MyUtility.Convert.GetDecimal(this.numValue.Value), 2);
+                        item["UPIncludeVAT"] = MyUtility.Convert.GetDecimal(item["LocalUnitPrice"]) + MyUtility.Convert.GetDecimal(item["Vat"]);
                         break;
                     case "Kpi Rate":
-                        item["KpiRate"] = this.txtBatchUpdate.Text;
+                        item["KpiRate"] = this.numValue.Value;
+                        break;
+                }
+            }
+        }
+
+        private void ComboColumnName_SelectedValueChanged(object sender, EventArgs e)
+        {
+            if (this.comboColumnName.SelectedItem != null)
+            {
+                switch (this.comboColumnName.SelectedItem)
+                {
+                    case "Price(Unit)":
+                    case "U/P Exclude VAT(Local currency)":
+                    case "VAT(Local currency)":
+                    case "Kpi Rate":
+                        this.txtBatchUpdate.Visible = false;
+                        this.numValue.Visible = true;
+                        break;
+                    case "Currency":
+                        this.txtBatchUpdate.Visible = true;
+                        this.numValue.Visible = false;
                         break;
                 }
             }

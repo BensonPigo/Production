@@ -8,6 +8,7 @@ using System.Linq;
 using Sci.Production.PublicPrg;
 using System.Text;
 using System;
+using System.Windows.Forms.VisualStyles;
 
 namespace Sci.Production.Subcon
 {
@@ -62,9 +63,11 @@ select
     LocalCurrencyID = LocalCurrencyID,
     LocalUnitPrice = isnull(LocalUnitPrice,0),
     Vat = isnull(Vat,0),
-    UPIncludeVAT = isnull(LocalUnitPrice,0)+isnull(Vat,0),
-    KpiRate = isnull(KpiRate,0)
 
+    UPIncludeVAT = isnull(LocalUnitPrice,0)+isnull(Vat,0),
+    KpiRate = isnull(KpiRate,0),
+    [Addrow] = '',
+    [old_OrderId] = ''
 from dbo.SubconOutContract_Detail sd with (nolock)
 left join Orders o with (nolock) on sd.Orderid = o.ID
 OUTER apply (
@@ -312,6 +315,11 @@ and ContractNumber = '{this.CurrentMaintain["ContractNumber"]}'";
         private Ict.Win.UI.DataGridViewTextBoxColumn col_ComboType;
         private Ict.Win.UI.DataGridViewTextBoxColumn col_Article;
         private Ict.Win.UI.DataGridViewNumericBoxColumn col_UnitPrice;
+        private Ict.Win.UI.DataGridViewNumericBoxColumn col_OutputQty;
+        private Ict.Win.UI.DataGridViewTextBoxColumn col_LocalCurrencyID;
+        private Ict.Win.UI.DataGridViewNumericBoxColumn col_LocalUnitPrice;
+        private Ict.Win.UI.DataGridViewNumericBoxColumn col_Vat;
+        private Ict.Win.UI.DataGridViewNumericBoxColumn col_KpiRate;
 
         /// <inheritdoc/>
         protected override void OnDetailGridSetup()
@@ -470,7 +478,7 @@ where o.id = '{this.CurrentDetailData["OrderID"]}' and sl.Location = '{e.Formatt
                 decimal output = decimal.Parse(e.FormattedValue.ToString());
                 if (output > (int)this.CurrentDetailData["OrderQty"])
                 {
-                    MyUtility.Msg.WarningBox("Output Qty can't more than Order Qty");
+                    MyUtility.Msg.WarningBox("Subcon Out Qty can't more than Order Qty");
                     e.Cancel = true;
                     return;
                 }
@@ -478,7 +486,7 @@ where o.id = '{this.CurrentDetailData["OrderID"]}' and sl.Location = '{e.Formatt
                 this.UpdateAccuOutputQty(this.CurrentDetailData);
                 if (this.CurrentMaintain["Status"].Equals("Confirmed") && output < (int)this.CurrentDetailData["AccuOutputQty"])
                 {
-                    MyUtility.Msg.WarningBox("Output Qty can't small than Accu.Output Qty");
+                    MyUtility.Msg.WarningBox("Subcon Out Qty can't small than Accu.Output Qty");
                     e.Cancel = true;
                     return;
                 }
@@ -564,7 +572,7 @@ where o.id = '{this.CurrentDetailData["OrderID"]}' and sl.Location = '{e.Formatt
                 .Text("ComboType", header: "ComboType", width: Widths.AnsiChars(5), settings: comboTypeSet).Get(out this.col_ComboType)
                 .Text("Article", header: "Article", width: Widths.AnsiChars(8), settings: articleSet).Get(out this.col_Article)
                 .Numeric("OrderQty", header: "Order Qty", width: Widths.AnsiChars(10), iseditingreadonly: true)
-                .Numeric("OutputQty", header: "Subcon Out Qty", width: Widths.AnsiChars(10), settings: outputQtySet)
+                .Numeric("OutputQty", header: "Subcon Out Qty", width: Widths.AnsiChars(10), settings: outputQtySet).Get(out this.col_OutputQty)
                 .Numeric("AccuOutputQty", header: "Accu. Subcon Out Qty", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Numeric("UnitPrice", header: "Price(Unit)", width: Widths.AnsiChars(10), integer_places: 12, decimal_places: 4).Get(out this.col_UnitPrice)
                 .Numeric("UnitPriceByComboType", header: "Price(Unit) by ComboType", width: Widths.AnsiChars(10), integer_places: 12, decimal_places: 4, iseditingreadonly: true)
@@ -576,11 +584,11 @@ where o.id = '{this.CurrentDetailData["OrderID"]}' and sl.Location = '{e.Formatt
                 .Numeric("EMBAmt", header: "EMB Amt", width: Widths.AnsiChars(10), decimal_places: 4, iseditingreadonly: true)
                 .Numeric("PrintingAmt", header: "Printing Amt", width: Widths.AnsiChars(10), decimal_places: 4, iseditingreadonly: true)
 
-                .Text("LocalCurrencyID", header: "Currency", width: Widths.AnsiChars(3))
-                .Numeric("LocalUnitPrice", header: "U/P Exclude VAT(Local currency)", width: Widths.AnsiChars(12), decimal_places: 4, settings: localUnitPrice)
-                .Numeric("Vat", header: "VAT (Local currency)", width: Widths.AnsiChars(10), decimal_places: 2, settings: vat)
+                .Text("LocalCurrencyID", header: "Currency", width: Widths.AnsiChars(3)).Get(out this.col_LocalCurrencyID)
+                .Numeric("LocalUnitPrice", header: "U/P Exclude VAT(Local currency)", width: Widths.AnsiChars(12), decimal_places: 4, settings: localUnitPrice).Get(out this.col_LocalUnitPrice)
+                .Numeric("Vat", header: "VAT (Local currency)", width: Widths.AnsiChars(10), decimal_places: 2, settings: vat).Get(out this.col_Vat)
                 .Numeric("UPIncludeVAT", header: "U/P Include VAT(Local currency)", width: Widths.AnsiChars(10), decimal_places: 4, iseditingreadonly: true)
-                .Numeric("KpiRate", header: "Kpi Rate", width: Widths.AnsiChars(3), maximum: 9, decimal_places: 2)
+                .Numeric("KpiRate", header: "Kpi Rate", width: Widths.AnsiChars(3), maximum: 9, decimal_places: 2).Get(out this.col_KpiRate)
                 ;
             this.detailgrid.RowSelecting += (s, e) =>
             {
@@ -592,27 +600,7 @@ where o.id = '{this.CurrentDetailData["OrderID"]}' and sl.Location = '{e.Formatt
                         item.DefaultCellStyle.ForeColor = Color.Black;
                     }
 
-                    if (curDr.RowState == DataRowState.Modified || curDr.RowState == DataRowState.Unchanged)
-                    {
-                        this.detailgrid.Rows[e.RowIndex].Cells["OutputQty"].ReadOnly = false;
-                        this.detailgrid.Rows[e.RowIndex].Cells["OutputQty"].Style.ForeColor = Color.Red;
-                        if ((int)curDr["AccuOutputQty"] > 0)
-                        {
-                            this.gridicon.Remove.Enabled = false;
-                        }
-                        else
-                        {
-                            this.gridicon.Remove.Enabled = true;
-                        }
-                    }
-                    else
-                    {
-                        this.detailgrid.Rows[e.RowIndex].Cells["OrderId"].Style.ForeColor = Color.Red;
-                        this.detailgrid.Rows[e.RowIndex].Cells["ComboType"].Style.ForeColor = Color.Red;
-                        this.detailgrid.Rows[e.RowIndex].Cells["Article"].Style.ForeColor = Color.Red;
-                        this.detailgrid.Rows[e.RowIndex].Cells["OutputQty"].Style.ForeColor = Color.Red;
-                        this.detailgrid.Rows[e.RowIndex].Cells["UnitPrice"].Style.ForeColor = Color.Red;
-                    }
+                    this.gridicon.Remove.Enabled = false;
                 }
                 else if (this.EditMode)
                 {
@@ -640,29 +628,15 @@ where o.id = '{this.CurrentDetailData["OrderID"]}' and sl.Location = '{e.Formatt
             DataRow curDr = ((DataTable)this.detailgridbs.DataSource).Rows[e.RowIndex];
             if (this.CurrentMaintain["Status"].Equals("Confirmed"))
             {
-                if (curDr.RowState == DataRowState.Modified || curDr.RowState == DataRowState.Unchanged)
-                {
-                    this.col_OrderId.IsEditingReadOnly = true;
-                    this.col_ComboType.IsEditingReadOnly = true;
-                    this.col_Article.IsEditingReadOnly = true;
-                    this.col_UnitPrice.IsEditingReadOnly = true;
-
-                    if ((int)curDr["AccuOutputQty"] > 0)
-                    {
-                        this.gridicon.Remove.Enabled = false;
-                    }
-                    else
-                    {
-                        this.gridicon.Remove.Enabled = true;
-                    }
-                }
-                else
-                {
-                    this.col_OrderId.IsEditingReadOnly = false;
-                    this.col_ComboType.IsEditingReadOnly = false;
-                    this.col_Article.IsEditingReadOnly = false;
-                    this.col_UnitPrice.IsEditingReadOnly = false;
-                }
+                this.col_OrderId.IsEditingReadOnly = true;
+                this.col_ComboType.IsEditingReadOnly = true;
+                this.col_Article.IsEditingReadOnly = true;
+                this.col_UnitPrice.IsEditingReadOnly = true;
+                this.col_LocalCurrencyID.IsEditingReadOnly = true;
+                this.col_OutputQty.IsEditingReadOnly = true;
+                this.col_LocalUnitPrice.IsEditingReadOnly = true;
+                this.col_Vat.IsEditingReadOnly = true;
+                this.col_KpiRate.IsEditingReadOnly = true;
             }
             else
             {
@@ -670,6 +644,11 @@ where o.id = '{this.CurrentDetailData["OrderID"]}' and sl.Location = '{e.Formatt
                 this.col_ComboType.IsEditingReadOnly = false;
                 this.col_Article.IsEditingReadOnly = false;
                 this.col_UnitPrice.IsEditingReadOnly = false;
+                this.col_OutputQty.IsEditingReadOnly = false;
+                this.col_LocalCurrencyID.IsEditingReadOnly = false;
+                this.col_LocalUnitPrice.IsEditingReadOnly = false;
+                this.col_Vat.IsEditingReadOnly = false;
+                this.col_KpiRate.IsEditingReadOnly = false;
             }
         }
 
@@ -816,6 +795,7 @@ where   o.MDivisionID = '{this.CurrentMaintain["MDivisionID"]}'
                 this.CurrentDetailData["OtherPrice"] = resultDr["OtherPrice"];
                 this.CurrentDetailData["EMBPrice"] = resultDr["EMBPrice"];
                 this.CurrentDetailData["PrintingPrice"] = resultDr["PrintingPrice"];
+
                 return result;
             }
         }
@@ -870,6 +850,30 @@ where   o.MDivisionID = '{this.CurrentMaintain["MDivisionID"]}'
                 this.detailgrid.EndEdit();
                 var frm = new P11_BatchImport((DataTable)this.detailgridbs.DataSource);
                 frm.ShowDialog(this);
+                int i = 0;
+                foreach (DataRow dr in ((DataTable)this.detailgridbs.DataSource).Rows)
+                {
+                    if (dr["Addrow"].ToString() == "Y")
+                    {
+                        this.detailgridbs.Position = i;
+                        DualResult result = this.GetTmsData(this.CurrentDetailData["OrderId"].ToString(), this.CurrentDetailData["ComboType"].ToString());
+                        if (result == false)
+                        {
+                            return;
+                        }
+
+                        this.GetAccuOutputQty();
+
+                        decimal output = MyUtility.Convert.GetDecimal(this.CurrentDetailData["OutputQty"]);
+                        this.CurrentDetailData["OtherAmt"] = (decimal)this.CurrentDetailData["OtherPrice"] * output;
+                        this.CurrentDetailData["EMBAmt"] = (decimal)this.CurrentDetailData["EMBPrice"] * output;
+                        this.CurrentDetailData["PrintingAmt"] = (decimal)this.CurrentDetailData["PrintingPrice"] * output;
+                    }
+
+                    i++;
+                }
+
+                this.CurrentDetailData.EndEdit();
                 this.RenewData();
             }
         }
@@ -879,6 +883,32 @@ where   o.MDivisionID = '{this.CurrentMaintain["MDivisionID"]}'
             this.detailgrid.EndEdit();
             var frm = new P11_SplitSP((DataTable)this.detailgridbs.DataSource);
             frm.ShowDialog(this);
+            foreach (DataRow dr in ((DataTable)this.detailgridbs.DataSource).Rows)
+            {
+                DataRow[] findrow = ((DataTable)this.detailgridbs.DataSource).AsEnumerable().Where(
+                  row => row.RowState != DataRowState.Deleted &&
+                  row["OrderID"].EqualString(dr["old_OrderID"].ToString()) &&
+                  row["ComboType"].EqualString(dr["ComboType"].ToString()) &&
+                  row["Article"].EqualString(dr["Article"].ToString())
+                  ).ToArray();
+
+                if (dr["Addrow"].ToString() == "Y" && findrow.Length > 0)
+                {
+                    dr["StyleID"] = findrow[0]["StyleID"];
+                    dr["SewingCPU"] = findrow[0]["SewingCPU"];
+                    dr["CuttingCPU"] = findrow[0]["CuttingCPU"];
+                    dr["InspectionCPU"] = findrow[0]["InspectionCPU"];
+                    dr["OtherCPU"] = findrow[0]["OtherCPU"];
+                    dr["OtherPrice"] = findrow[0]["OtherPrice"];
+                    dr["EMBPrice"] = findrow[0]["EMBPrice"];
+                    dr["PrintingPrice"] = findrow[0]["PrintingPrice"];
+                    dr["AccuOutputQty"] = findrow[0]["AccuOutputQty"];
+                    dr["UnitPrice"] = findrow[0]["UnitPrice"];
+                    dr["OtherAmt"] = findrow[0]["OtherAmt"];
+                    dr["EMBAmt"] = findrow[0]["EMBAmt"];
+                }
+            }
+
             this.RenewData();
         }
     }

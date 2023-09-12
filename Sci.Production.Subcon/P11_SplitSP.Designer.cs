@@ -61,7 +61,7 @@
             this.btnCancel.Location = new System.Drawing.Point(811, 49);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(90, 30);
-            this.btnCancel.TabIndex = 2;
+            this.btnCancel.TabIndex = 3;
             this.btnCancel.Text = "Cancel";
             this.btnCancel.UseVisualStyleBackColor = true;
             this.btnCancel.Click += new System.EventHandler(this.BtnCancel_Click);
@@ -73,10 +73,10 @@
             this.btnSplit.Location = new System.Drawing.Point(715, 50);
             this.btnSplit.Name = "btnSplit";
             this.btnSplit.Size = new System.Drawing.Size(90, 30);
-            this.btnSplit.TabIndex = 1;
+            this.btnSplit.TabIndex = 2;
             this.btnSplit.Text = "Split";
             this.btnSplit.UseVisualStyleBackColor = true;
-            this.btnSplit.Click += new System.EventHandler(this.btnSplit_Click);
+            this.btnSplit.Click += new System.EventHandler(this.BtnSplit_Click);
             // 
             // btnFind
             // 
@@ -95,11 +95,11 @@
             this.txtSPNo.BackColor = System.Drawing.Color.White;
             this.txtSPNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtSPNo.IsSupportEditMode = false;
-            this.txtSPNo.Location = new System.Drawing.Point(73, 22);
+            this.txtSPNo.Location = new System.Drawing.Point(73, 26);
             this.txtSPNo.Name = "txtSPNo";
             this.txtSPNo.Size = new System.Drawing.Size(122, 23);
             this.txtSPNo.TabIndex = 0;
-            this.txtSPNo.Validating += new System.ComponentModel.CancelEventHandler(this.txtSPNo_Validating);
+            this.txtSPNo.Validating += new System.ComponentModel.CancelEventHandler(this.TxtSPNo_Validating);
             // 
             // groupBox2
             // 
@@ -128,7 +128,7 @@
             0});
             this.numttlSubconOutQty.ReadOnly = true;
             this.numttlSubconOutQty.Size = new System.Drawing.Size(109, 23);
-            this.numttlSubconOutQty.TabIndex = 0;
+            this.numttlSubconOutQty.TabIndex = 1;
             this.numttlSubconOutQty.Value = new decimal(new int[] {
             0,
             0,
@@ -140,7 +140,7 @@
             this.label4.Location = new System.Drawing.Point(567, 15);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(146, 23);
-            this.label4.TabIndex = 16;
+            this.label4.TabIndex = 0;
             this.label4.Text = "Total Subcon Out Qty";
             // 
             // groupBox1
@@ -187,7 +187,7 @@
             this.label2.Location = new System.Drawing.Point(581, 26);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(112, 23);
-            this.label2.TabIndex = 14;
+            this.label2.TabIndex = 8;
             this.label2.Text = "Subcon Out Qty";
             // 
             // txtArticle
@@ -199,15 +199,15 @@
             this.txtArticle.Name = "txtArticle";
             this.txtArticle.Size = new System.Drawing.Size(93, 23);
             this.txtArticle.TabIndex = 2;
-            this.txtArticle.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtArticle_PopUp);
-            this.txtArticle.Validating += new System.ComponentModel.CancelEventHandler(this.txtArticle_Validating);
+            this.txtArticle.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtArticle_PopUp);
+            this.txtArticle.Validating += new System.ComponentModel.CancelEventHandler(this.TxtArticle_Validating);
             // 
             // label1
             // 
             this.label1.Location = new System.Drawing.Point(414, 26);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(52, 23);
-            this.label1.TabIndex = 12;
+            this.label1.TabIndex = 7;
             this.label1.Text = "Article";
             // 
             // txtComboType
@@ -219,15 +219,15 @@
             this.txtComboType.Name = "txtComboType";
             this.txtComboType.Size = new System.Drawing.Size(93, 23);
             this.txtComboType.TabIndex = 1;
-            this.txtComboType.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtComboType_PopUp);
-            this.txtComboType.Validating += new System.ComponentModel.CancelEventHandler(this.txtComboType_Validating);
+            this.txtComboType.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtComboType_PopUp);
+            this.txtComboType.Validating += new System.ComponentModel.CancelEventHandler(this.TxtComboType_Validating);
             // 
             // label3
             // 
-            this.label3.Location = new System.Drawing.Point(14, 22);
+            this.label3.Location = new System.Drawing.Point(14, 26);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(56, 23);
-            this.label3.TabIndex = 8;
+            this.label3.TabIndex = 5;
             this.label3.Text = "SP#";
             // 
             // labstyle
@@ -235,7 +235,7 @@
             this.labstyle.Location = new System.Drawing.Point(214, 25);
             this.labstyle.Name = "labstyle";
             this.labstyle.Size = new System.Drawing.Size(92, 23);
-            this.labstyle.TabIndex = 10;
+            this.labstyle.TabIndex = 6;
             this.labstyle.Text = "Combo Type";
             // 
             // panel1
