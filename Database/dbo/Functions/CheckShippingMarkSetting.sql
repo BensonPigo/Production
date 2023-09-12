@@ -30,8 +30,8 @@ BEGIN
 		01 取得為一個貼標組合
 	*/
 	select @ShippingMarkCombinationUkey = (case @IsMixPack
-												when 1 then iif (cc.StickerCombinationUkey_MixPack is null, def.Ukey, cc.StickerCombinationUkey_MixPack)
-												when 0 then iif (cc.StickerCombinationUkey is null, def.Ukey, cc.StickerCombinationUkey)
+												when 1 then iif (cc.StickerCombinationUkey_MixPack = 0, def.Ukey, cc.StickerCombinationUkey_MixPack)
+												when 0 then iif (cc.StickerCombinationUkey = 0, def.Ukey, cc.StickerCombinationUkey)
 												else null
 											end)
 	from CustCD cc

@@ -161,8 +161,8 @@ SELECT DISTINCT
 ,pd.CTNStartNo
 ,pd.RefNo
 ,[ShippingMarkCombinationUkey] = IIF( IsMixed.Val = 0 
-	,ISNULL(c.StickerCombinationUkey,comb.Ukey )
-	,ISNULL(c.StickerCombinationUkey_MixPack ,comb.Ukey)
+	,IIF(c.StickerCombinationUkey = 0 ,comb.Ukey , c.StickerCombinationUkey)
+	,IIF(c.StickerCombinationUkey_MixPack = 0 ,comb.Ukey ,c.StickerCombinationUkey_MixPack)
 )
 ,p.CTNQty
 INTO #base
@@ -320,8 +320,8 @@ SELECT DISTINCT
 ,pd.CTNStartNo
 ,pd.RefNo
 ,[ShippingMarkCombinationUkey] = IIF( IsMixed.Val = 0 
-	,ISNULL(c.StickerCombinationUkey,comb.Ukey )
-	,ISNULL(c.StickerCombinationUkey_MixPack ,comb.Ukey)
+	,IIF(c.StickerCombinationUkey = 0 ,comb.Ukey , c.StickerCombinationUkey)
+	,IIF(c.StickerCombinationUkey_MixPack = 0 ,comb.Ukey ,c.StickerCombinationUkey_MixPack)
 )
 ,p.CTNQty
 INTO #base
@@ -509,8 +509,8 @@ SELECT DISTINCT
     ,pd.RefNo
     ,pd.SCICtnNo
     ,[ShippingMarkCombinationUkey] = IIF( IsMixed.Val = 0 
-	    ,ISNULL(c.StickerCombinationUkey,comb.Ukey )
-	    ,ISNULL(c.StickerCombinationUkey_MixPack ,comb.Ukey)
+	    ,IIF(c.StickerCombinationUkey = 0 ,comb.Ukey , c.StickerCombinationUkey)
+	    ,IIF(c.StickerCombinationUkey_MixPack = 0 ,comb.Ukey ,c.StickerCombinationUkey_MixPack)
      )
     ,p.CTNQty
 INTO #base

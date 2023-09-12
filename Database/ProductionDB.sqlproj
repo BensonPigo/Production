@@ -2874,7 +2874,7 @@
     <Build Include="dbo\Stored Procedures\GetMtltoFTYAnalysis.sql" />
     <Build Include="dbo\Tables\Exchange.sql" />
     <Build Include="dbo\Views\View_Rate.sql" />
-	<Build Include="dbo\Stored Procedures\RecalculateCumulateDay.sql" />
+    <Build Include="dbo\Tables\OperationRef.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />

@@ -175,11 +175,13 @@ namespace Sci.Production.Packing
                                     tmpzplContent = oriZplConten.Replace("\r\n", string.Empty).Replace("^LH0,0", "^LH10,0");
 
                                     // 1-3.先取得檔名，CustCTN被包在 ^FD>;>8 和 ^FS之間，取得CustCTN，作為檔名
-                                    tmpArray = tmpzplContent.Split(new string[] { "^XA^SZ2^JMA^MCY^PMN^PW796~JSN^JZY^LH10,0^LRN^XZ^XA^CI0^FO80,50^BY4^BCN,200,N,N,^FD>;>8", "^FS^FT115,280^A0N,34,47^FD" }, StringSplitOptions.RemoveEmptyEntries);
+                                    //tmpArray = tmpzplContent.Split(new string[] { "^XA^SZ2^JMA^MCY^PMN^PW796~JSN^JZY^LH10,0^LRN^XZ^XA^CI0^FO80,50^BY4^BCN,200,N,N,^FD>;>8", "^FS^FT115,280^A0N,34,47^FD" }, StringSplitOptions.RemoveEmptyEntries);
+                                    tmpArray = tmpzplContent.Split(new string[] { "^FD>;>8", "^FS^" }, StringSplitOptions.RemoveEmptyEntries);
                                     zPL_FileName_List = tmpArray.Where(o => !o.Contains("^")).Distinct().ToList();
 
                                     // 1-4.拆出多個ZPL檔的內容，每一個ZPL都是以 ^XA^SZ2^JMA^MCY^PMN^PW796~JSN^JZY^LH10,0^LRN^XZ^XA^CI0 開頭
-                                    tmpzplContent = tmpzplContent.Replace("^XA^SZ2^JMA^MCY^PMN^PW796~JSN^JZY^LH10,0^LRN^XZ^XA^CI0", "\r\n^XA^SZ2^JMA^MCY^PMN^PW796~JSN^JZY^LH10,0^LRN^XZ^XA^CI0");
+                                    //tmpzplContent = tmpzplContent.Replace("^XA^SZ2^JMA^MCY^PMN^PW796~JSN^JZY^LH10,0^LRN^XZ^XA^CI0", "\r\n^XA^SZ2^JMA^MCY^PMN^PW796~JSN^JZY^LH10,0^LRN^XZ^XA^CI0");
+                                    tmpzplContent = tmpzplContent.Replace("~CC^^XA^EG^XZ^XA^EF^XZ^XA^MCY^XZ^XA^CVY^XZ^XA", "\r\n~CC^^XA^EG^XZ^XA^EF^XZ^XA^MCY^XZ^XA^CVY^XZ^XA");
 
                                     string[] stringSeparators = new string[] { "\r\n" };
 
@@ -868,19 +870,21 @@ AND (SELECT COUNT(qq.Ukey) FROM PackingList_Detail qq
 
 ----先找該PackingList的CustCD
 SELECT DISTINCT [StickerCombinationUkey]= IIF(  (IIF(EXISTS (SELECT 1 FROM #MixCTN0 t WHERE t.PackingListID = pd.ID AND t.SCICtnNo = pd.SCICtnNo ) ,1 ,0)) = 0
-,(ISNULL(c.StickerCombinationUkey,	
+,(IIF(c.StickerCombinationUkey = 0 ,	
 	(
 	SELECT Ukey 
 	FROM ShippingMarkCombination
 	WHERE BrandID = p.BrandID AND Category='PIC'  AND IsDefault = 1 AND IsMixPack = 0   
 	)
+    ,StickerCombinationUkey
 ))
-,(ISNULL(c.StickerCombinationUkey_MixPack,	
+,(IIF(c.StickerCombinationUkey_MixPack = 0 ,	
 	(
 	SELECT Ukey 
 	FROM ShippingMarkCombination
 	WHERE BrandID = p.BrandID AND Category='PIC'  AND IsDefault = 1 AND IsMixPack = 1
 	)
+    ,c.StickerCombinationUkey_MixPack
 ))
 )
 ,[IsMixPack] = (IIF(EXISTS (SELECT 1 FROM #MixCTN{i} t WHERE t.PackingListID = pd.ID AND t.SCICtnNo = pd.SCICtnNo ) ,1 ,0))   

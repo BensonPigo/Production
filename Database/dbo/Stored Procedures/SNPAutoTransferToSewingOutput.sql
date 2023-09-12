@@ -436,33 +436,7 @@ BEGIN
 			FROM #tmp_Into_SewingOutput_Detail a
 			INNER JOIN #tmp_SewingOutput b ON a.dDate=b.OutputDate AND a.WorkLine  = b.SewingLineID 
 				
-			--------------For cauclator SewingOutput_Detail Cumulate--------------
-
-			DECLARE @Line as varchar(5)
-				, @FactoryID as varchar(8) 
-				, @OutputDate as date 
-
-
-			DECLARE cursorSewingOutput 
-			CURSOR FOR
-				select s.SewingLineID, s.FactoryID, CAST(s.[OutputDate] AS DATE)
-				from #tmp_SewingOutput s
-				order by s.OutputDate
-
-			OPEN cursorSewingOutput
-			FETCH NEXT FROM cursorSewingOutput INTO @Line, @FactoryID, @OutputDate
-
-			WHILE @@FETCH_STATUS = 0
-			BEGIN
-				exec RecalculateCumulateDay @Line, @FactoryID, @OutputDate
-
-				FETCH NEXT FROM cursorSewingOutput INTO @Line, @FactoryID, @OutputDate
-			END
-
-
-			CLOSE cursorSewingOutput
-			DEALLOCATE cursorSewingOutput
-
+			
 			--------------For cauclator SewingOutput.TMS--------------
 			
 			SELECT DISTINCT

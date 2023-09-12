@@ -47,6 +47,9 @@ begin
 			,AddDate
 	from #tmpRetryAutomation
 
+	delete AutomationCreateRecord 
+	where Ukey in (select Ukey from #tmpRetryAutomation)
+
 
 	select	APIThread,
 			[ErrorType] = SUBSTRING(ErrorMsg, 0, 6),
