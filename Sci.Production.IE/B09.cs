@@ -70,6 +70,19 @@ namespace Sci.Production.IE
             this.numMachineAllowance.Text = MyUtility.GetValue.Lookup("MachineAllow", this.displayMachineTypeID.Text.ToString(), "MachineType", "ID");
             this.numManualAllowance.Text = MyUtility.GetValue.Lookup("ManAllow", this.displayMachineTypeID.Text.ToString(), "MachineType", "ID");
 
+            string sqlcmdMotion = $@"
+            select stuff((select distinct concat(',',Name)
+            from OperationRef a
+            inner JOIN IESELECTCODE b WITH(NOLOCK) on a.CodeID = b.ID and a.CodeType = b.Type
+            where a.CodeType = '00007' and a.id = '{this.displayOperationCode.Text}' for xml path('') ),1,1,'')";
+            this.txtMotion.Text = MyUtility.GetValue.Lookup(sqlcmdMotion, null);
+            string sqlcmdShape = $@"
+            select stuff((select distinct concat(',',Name)
+            from OperationRef a
+            inner JOIN IESELECTCODE b WITH(NOLOCK) on a.CodeID = b.ID and a.CodeType = b.Type
+            where a.CodeType = '00008' and a.id = '{this.displayOperationCode.Text}' for xml path('') ),1,1,'')";
+            this.txtShape.Text = MyUtility.GetValue.Lookup(sqlcmdShape, null);
+
             /*判斷路徑下圖片檔找不到,就將ImageLocation帶空值*/
             if (MyUtility.Check.Empty(this.CurrentMaintain["Picture1"]))
             {

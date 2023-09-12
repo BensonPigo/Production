@@ -965,9 +965,11 @@ from(
 	        left join po_supp b WITH (NOLOCK) on a.id = b.id and a.SEQ1 = b.SEQ1
             left join supp s WITH (NOLOCK) on s.id = b.suppid
             LEFT JOIN dbo.Factory f with(nolock) on orders.FtyGroup=f.ID
-            LEFT JOIN dbo.Style_RRLR_Report with(nolock) on Style_RRLR_Report.StyleUkey = orders.StyleUkey AND Style_RRLR_Report.SuppID =  b.suppid AND Style_RRLR_Report.Refno = a.RefNo
             left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = a.id and psdsC.seq1 = a.seq1 and psdsC.seq2 = a.seq2 and psdsC.SpecColumnID = 'Color'
             left join PO_Supp_Detail_Spec psdsS WITH (NOLOCK) on psdsS.ID = a.id and psdsS.seq1 = a.seq1 and psdsS.seq2 = a.seq2 and psdsS.SpecColumnID = 'Size'
+            LEFT JOIN dbo.Style_RRLR_Report with(nolock) on Style_RRLR_Report.StyleUkey = orders.StyleUkey AND
+                                                            Style_RRLR_Report.ColorID =  psdsC.SpecValue AND
+                                                            Style_RRLR_Report.Refno = fabric.RefNo
             left join #ArticleForThread aft on	aft.ID = m.POID		and
 												aft.SuppId	   = b.SuppId	and
 												aft.SCIRefNo   = a.SCIRefNo	and
@@ -1131,7 +1133,9 @@ from(
 									a.SEQ1 like 'T%' 
 		LEFT JOIN Order_BOF ob with(nolock) ON  a.RefNo=ob.RefNo AND a.ID=ob.Id
 		LEFT JOIN Fabric_Supp fs WITH (NOLOCK) ON fs.SCIRefno = a.SCIRefno AND fs.SuppID = iif(left(a.SEQ1, 1) = '7', a.StockSuppID, b.SuppID) 
-        LEFT JOIN dbo.Style_RRLR_Report with(nolock) on Style_RRLR_Report.StyleUkey = o.StyleUkey AND Style_RRLR_Report.SuppID =  b.suppid AND Style_RRLR_Report.Refno = a.RefNo
+        LEFT JOIN dbo.Style_RRLR_Report with(nolock) on Style_RRLR_Report.StyleUkey = o.StyleUkey AND
+                                                        Style_RRLR_Report.ColorID =  psdsC.SpecValue AND
+                                                        Style_RRLR_Report.Refno = fabric.RefNo
         outer apply(select fabrictype2 = iif(a.FabricType='F','Fabric',iif(a.FabricType='A','Accessory',iif(a.FabricType='O','Orher',a.FabricType))))mt
 		OUTER APPLY(
 		SELECT [FabricCombo]=STUFF((
