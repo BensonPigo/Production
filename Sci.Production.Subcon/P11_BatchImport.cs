@@ -317,8 +317,20 @@ and o.Category in ('B','S')
                 {
                     case "Price(Unit)":
                     case "U/P Exclude VAT(Local currency)":
+                        this.numValue.Maximum = new decimal(999999999999);
+                        this.numValue.DecimalPlaces = 4;
+                        this.txtBatchUpdate.Visible = false;
+                        this.numValue.Visible = true;
+                        break;
                     case "VAT(Local currency)":
+                        this.numValue.Maximum = new decimal(999999999);
+                        this.numValue.DecimalPlaces = 2;
+                        this.txtBatchUpdate.Visible = false;
+                        this.numValue.Visible = true;
+                        break;
                     case "Kpi Rate":
+                        this.numValue.Maximum = new decimal(9.99);
+                        this.numValue.DecimalPlaces = 2;
                         this.txtBatchUpdate.Visible = false;
                         this.numValue.Visible = true;
                         break;

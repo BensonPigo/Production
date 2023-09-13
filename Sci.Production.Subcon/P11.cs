@@ -163,6 +163,7 @@ where sd.SubConOutFty = '{subConOutFty}' and sd.ContractNumber = '{contractNumbe
             this.CurrentMaintain["MDivisionID"] = Env.User.Keyword;
             this.CurrentMaintain["factoryid"] = Env.User.Factory;
             this.CurrentMaintain["Status"] = "New";
+            this.btnBatchImport.Enabled = true;
 
             this.gridicon.Append.Enabled = true;
             this.gridicon.Insert.Enabled = true;
