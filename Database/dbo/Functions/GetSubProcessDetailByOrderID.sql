@@ -27,7 +27,7 @@ BEGIN
 		Select	ot.ArtworkTypeID,ot.Price,@CostType
 				from Order_TmsCost ot
 				inner join ArtworkType a on ot.ArtworkTypeID = a.ID
-				where ot.ID = @orderID and (a.Classify = 'A' or ( a.Classify = 'I' and a.IsTtlTMS = 0) and a.IsTMS=0)
+				where ot.ID = @orderID and ((a.Classify = 'A' or ( a.Classify = 'I' and a.IsTtlTMS = 0)) and a.IsTMS=0)
 				and a.ProductionUnit=@ProductionUnit			
 		        union all
 		        Select ot.ArtworkTypeID,ot.Price,@CostType
