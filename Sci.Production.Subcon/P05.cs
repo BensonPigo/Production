@@ -102,13 +102,7 @@ ap.OrderID
 from dbo.ArtworkReq_Detail ap with (nolock)
 left join dbo.Orders o with (nolock) on ap.OrderID = o.id
 left join Factory f with (nolock) on f.ID = o.FactoryID
-left join dbo.ArtworkPO_Detail apo with (nolock) on apo.ID = ap.ArtworkPOID
-	AND apo.OrderID = ap.OrderID 
-    AND apo.Article = ap.Article 
-    AND apo.SizeCode = ap.SizeCode    
-	AND AP.ArtworkID = APO.ArtworkId 
-	AND AP.PatternCode = APO.PatternCode
-	and apo.ArtworkReqID = ap.ID
+left join dbo.ArtworkPO_Detail apo with (nolock) on apo.ArtworkReq_Detailukey = ap.ukey
 where ap.id = '{0}'  
 ORDER BY ap.OrderID   ", masterID);
 

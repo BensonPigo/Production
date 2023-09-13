@@ -185,6 +185,7 @@ select  orderid = ard.OrderID
         , o.StyleUkey
         , ar.LocalSuppId
         , [OrderQtyArticle] = OrderQty.Article
+        , ArtworkReq_DetailUkey = ard.Ukey
 into #baseArtworkReq
 from orders o WITH (NOLOCK) 
 inner join ArtworkReq_Detail ard with (nolock) on   ard.OrderId = o.ID and 
@@ -436,6 +437,7 @@ select
         , bar.SizeCode
         , [QuotArticle] = isnull(vsa.Article, '')
         , [QuotSizeCode] = isnull(sao.SizeCode, '')
+        , ArtworkReq_DetailUkey
 into #quoteFromPlanningB03Base
 from  #baseArtworkReq bar
 left join dbo.View_Style_Artwork vsa on	vsa.StyleUkey = bar.StyleUkey and 
@@ -492,6 +494,7 @@ select distinct
         , IrregularQtyReason
 		,[Farmout]
 		,[FarmIn]
+        , ArtworkReq_DetailUkey
 from #quoteFromPlanningB03 main
 ";
 
@@ -529,6 +532,7 @@ select  Selected = 0
         , bar.SizeCode
         , o.Category
         , bar.IrregularQtyReason
+        , bar.ArtworkReq_DetailUkey
 from #baseArtworkReq bar
 inner join dbo.Orders o with (nolock) on o.ID = bar.OrderID
 inner join dbo.Order_TmsCost ot WITH (NOLOCK) on ot.ID = bar.OrderID and ot.ArtworkTypeID = bar.ArtworkTypeID
@@ -581,6 +585,7 @@ select  Selected = 0
         , bar.IrregularQtyReason
 		, [Farmout] = ISNULL(FarmOut.Value,0)
 		, [FarmIn] = ISNULL(FarmIn.Value,0)
+        , ArtworkReq_DetailUkey
 from  #baseArtworkReq bar
 inner join Orders o with (nolock) on o.ID = bar.OrderID
 --ISP20211197 P05維護的Article為空白時，要從Order_Qty抓第一筆Article，作為抓取Order_Artwork的條件
@@ -662,6 +667,7 @@ select	Selected = 0
         , o.Category
         , o.FactoryID
         , f.IsProduceFty 
+        , ArtworkReq_DetailUkey = ard.Ukey
 from ArtworkReq ar  with (nolock)
 inner join ArtworkReq_Detail ard with (nolock) on ar.ID = ard.ID 
 left join ArtworkReq_IrregularQty ai with (nolock) on ai.OrderID = ard.OrderID and ai.ArtworkTypeID = ar.ArtworkTypeID and ard.ExceedQty > 0
@@ -711,6 +717,7 @@ select  Selected = 0
         , t.Category
         , o.FactoryID
         , f.IsProduceFty 
+        , t.ArtworkReq_DetailUkey
 from #tmpArtwork t
 inner join dbo.Orders o with (nolock) on t.OrderID = o.id
 left join Factory f with (nolock) on f.ID = o.FactoryID
