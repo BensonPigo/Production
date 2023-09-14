@@ -180,8 +180,17 @@ namespace Sci.Production.Packing
                                     zPL_FileName_List = tmpArray.Where(o => !o.Contains("^")).Distinct().ToList();
 
                                     // 1-4.拆出多個ZPL檔的內容，每一個ZPL都是以 ^XA^SZ2^JMA^MCY^PMN^PW796~JSN^JZY^LH10,0^LRN^XZ^XA^CI0 開頭
-                                    //tmpzplContent = tmpzplContent.Replace("^XA^SZ2^JMA^MCY^PMN^PW796~JSN^JZY^LH10,0^LRN^XZ^XA^CI0", "\r\n^XA^SZ2^JMA^MCY^PMN^PW796~JSN^JZY^LH10,0^LRN^XZ^XA^CI0");
-                                    tmpzplContent = tmpzplContent.Replace("~CC^^XA^EG^XZ^XA^EF^XZ^XA^MCY^XZ^XA^CVY^XZ^XA", "\r\n~CC^^XA^EG^XZ^XA^EF^XZ^XA^MCY^XZ^XA^CVY^XZ^XA");
+
+                                    // 版本1
+                                    if (tmpzplContent.Contains("^XA^SZ2^JMA^MCY^PMN^PW796~JSN^JZY^LH10,0^LRN^XZ^XA^CI0"))
+                                    {
+                                        tmpzplContent = tmpzplContent.Replace("^XA^SZ2^JMA^MCY^PMN^PW796~JSN^JZY^LH10,0^LRN^XZ^XA^CI0", "\r\n^XA^SZ2^JMA^MCY^PMN^PW796~JSN^JZY^LH10,0^LRN^XZ^XA^CI0");
+                                    }
+                                    // 版本2 來自ISP20230884
+                                    else if (tmpzplContent.Contains("~CC^^XA^EG^XZ^XA^EF^XZ^XA^MCY^XZ^XA^CVY^XZ^XA"))
+                                    {
+                                        tmpzplContent = tmpzplContent.Replace("~CC^^XA^EG^XZ^XA^EF^XZ^XA^MCY^XZ^XA^CVY^XZ^XA", "\r\n~CC^^XA^EG^XZ^XA^EF^XZ^XA^MCY^XZ^XA^CVY^XZ^XA");
+                                    }
 
                                     string[] stringSeparators = new string[] { "\r\n" };
 
