@@ -3094,6 +3094,85 @@ END";
                 return false;
             }
 
+            string checkmsg = string.Empty;
+            #region MarkerName, MarkerNo, CutNo(CutNo <> '') 相同資料的 markerlength, EstCutDate 必須相同(已建立P04 Cutplan 不檢查,會卡到舊資料)
+            var groupedData = this.DetailDatas.AsEnumerable()
+                .Where(r => !MyUtility.Check.Empty(r["CutNo"]) && MyUtility.Check.Empty(r["Cutplanid"]))
+                .GroupBy(r => new
+                {
+                    MarkerName = MyUtility.Convert.GetString(r["MarkerName"]),
+                    MarkerNo = MyUtility.Convert.GetString(r["MarkerNo"]),
+                    CutNo = MyUtility.Convert.GetString(r["CutNo"]),
+                })
+                .Where(group => group.Count() > 1);
+
+            if (groupedData.Any())
+            {
+                foreach (var group in groupedData)
+                {
+                    var firstRow = group.First();
+                    var markerName = MyUtility.Convert.GetString(firstRow["MarkerName"]);
+                    var markerNo = MyUtility.Convert.GetString(firstRow["MarkerNo"]);
+                    var cutNo = MyUtility.Convert.GetString(firstRow["CutNo"]);
+
+                    var markerlength = Prgs.ConvertFullWidthToHalfWidth(MyUtility.Convert.GetString(firstRow["markerlength"]));
+                    var estCutDate = MyUtility.Convert.GetDate(firstRow["EstCutDate"]);
+
+                    if (group.Any(row => Prgs.ConvertFullWidthToHalfWidth(MyUtility.Convert.GetString(row["markerlength"])) != markerlength
+                                       || MyUtility.Convert.GetDate(row["EstCutDate"]) != estCutDate))
+                    {
+                        checkmsg += $"\r\nMarkerName: {markerName}, MarkerNo: {markerNo}, CutNo: {cutNo}";
+                    }
+                }
+
+                if (!MyUtility.Check.Empty(checkmsg))
+                {
+                    MyUtility.Msg.WarningBox("The following MarkerName, MarkerNo, and CutNo combinations have different Markerlength or EstCutDate:" + checkmsg);
+                    return false;
+                }
+            }
+            #endregion
+
+            #region Cutref 相同資料的 MarkerNo 必須相同(已建立P04 Cutplan 不檢查,會卡到舊資料)
+            checkmsg = string.Empty;
+            var groupedData2 = this.DetailDatas.AsEnumerable()
+                .Where(r => !MyUtility.Check.Empty(r["Cutref"]) && MyUtility.Check.Empty(r["Cutplanid"])) // 確保 Cutref 不為空
+                .GroupBy(r => MyUtility.Convert.GetString(r["Cutref"])); // 根據 Cutref 分組
+
+            var processedCutrefs = new HashSet<string>(); // 用來追蹤已處理的 Cutref
+
+            foreach (var group in groupedData2)
+            {
+                var firstRow = group.First();
+                var cutref = group.Key;
+                var cutNo = MyUtility.Convert.GetString(firstRow["cutNo"]);
+                var markerName = MyUtility.Convert.GetString(firstRow["markerName"]);
+
+                // 如果已處理過相同的 Cutref，則跳過
+                if (processedCutrefs.Contains(cutref))
+                {
+                    continue;
+                }
+
+                var markerNoList = group.Select(r => MyUtility.Convert.GetString(r["MarkerNo"])).Distinct().ToList();
+
+                if (markerNoList.Count > 1)
+                {
+                    checkmsg += $"\r\n[Cutref]: {cutref}, [CutNo]: {cutNo}, [MarkerName]: {markerName} - Different MarkerNo values found: {string.Join(", ", markerNoList)}";
+                }
+
+                // 將已處理的 Cutref 加入集合中
+                processedCutrefs.Add(cutref);
+            }
+
+            if (!MyUtility.Check.Empty(checkmsg))
+            {
+                checkmsg = "For the following Cutref, CutNo, MarkerName combinations, different MarkerNo values were found:" + checkmsg;
+                MyUtility.Msg.WarningBox(checkmsg);
+                return false;
+            }
+            #endregion
+
             #region 檢查相同CutRef#，spreading No、Cut Cell、Est.CutDate, 更新必須都一樣
             var distnct_List = this.DetailDatas.AsEnumerable().
               Select(m => new
