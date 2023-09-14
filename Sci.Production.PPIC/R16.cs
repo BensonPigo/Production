@@ -204,30 +204,83 @@ group by pd.OrderID,pd.OrderShipmodeSeq
 select 
 *
 into #tmpInspection_Step1
-from openquery([ExtendServer],'select   ins.OrderId,
-                                        ins.Location,
-                                        [DQSQty] = count(1),
-                                        [LastDQSOutputDate] = MAX(iif(ins.Status in (''Pass'',''Fixed''), ins.AddDate, null))
-                                from [ManufacturingExecution].[dbo].[Inspection] ins WITH(NOLOCK)
-                                where exists( select 1 
-                                                from [Production].[dbo].Orders o WITH(NOLOCK)
-                                                INNER JOIN [Production].[dbo].Factory f WITH(NOLOCK) ON f.ID=o.FactoryID
-                                                LEFT JOIN  [Production].[dbo].Order_QtyShip oq WITH(NOLOCK) ON o.ID=oq.ID
-                                                LEFT JOIN [Production].[dbo].OrderType ot WITH(NOLOCK) ON o.OrderTypeID=ot.ID AND o.BrandID = ot.BrandID
-                                                where o.ID = ins.OrderID 
-                                                      {sqlWhere.ToString().Replace("'", "''")}
-                                                )
-                                and ins.Status in (''Pass'',''Fixed'')
-                                group by ins.OrderId,ins.Location
-                                ')
+from openquery([ExtendServer],'
+    select  ins.OrderId,
+            ins.article,
+            ins.size,
+            [DQSQty] = count(1),
+            [LastDQSOutputDate] = MAX(iif(ins.Status in (''Pass'',''Fixed''), ins.AddDate, null))
+    from [ManufacturingExecution].[dbo].[Inspection] ins WITH(NOLOCK)
+    where exists(
+        select 1 
+        from [Production].[dbo].Orders o WITH(NOLOCK)
+        INNER JOIN [Production].[dbo].Factory f WITH(NOLOCK) ON f.ID=o.FactoryID
+        LEFT JOIN  [Production].[dbo].Order_QtyShip oq WITH(NOLOCK) ON o.ID=oq.ID
+        LEFT JOIN [Production].[dbo].OrderType ot WITH(NOLOCK) ON o.OrderTypeID=ot.ID AND o.BrandID = ot.BrandID
+        where o.ID = ins.OrderID 
+        {sqlWhere.ToString().Replace("'", "''")}
+    )
+    and ins.Status in (''Pass'',''Fixed'')
+    group by ins.OrderId,ins.article,ins.size
+')
 
 select OrderId,
-[DQSQty] = MIN(DQSQty),
 [LastDQSOutputDate] = MAX(LastDQSOutputDate)
 into #tmpInspection
 from #tmpInspection_Step1
 group by OrderId
 
+--- DQSQTY 計算分配
+--要先找每個OrderID所有的Seq,因為可能被篩選掉
+SELECT oq.Id,oq.Seq,oq.BuyerDelivery
+INTO #tmpOrder_QtyShip
+FROM Order_QtyShip oq
+WHERE EXISTS(SELECT 1 FROM #tmpOrderMain WHERE ID = oq.Id)
+
+SELECT m.Id,m.Seq,t.Article,t.Size, t.DQSQty,
+    Qty = ISNULL(od.Qty, 0),
+    RowNum = ROW_NUMBER() OVER(PARTITION BY m.Id,t.Article,t.Size ORDER BY m.BuyerDelivery, m.Seq)
+INTO #PrepareRn
+FROM #tmpOrder_QtyShip m
+INNER JOIN #tmpInspection_Step1 t on t.OrderID = m.ID
+Left JOIN Order_QtyShip_Detail od on od.Id = m.id AND od.Seq = m.Seq AND od.Article = t.Article AND od.SizeCode = t.Size
+ORDER by m.Id,t.Article,t.Size,m.Seq
+
+SELECT m.Id,m.Article,m.Size,RowNum,m.Seq,
+    TTL_DQSQty_bySame_ArticleSize = m.DQSQty,
+    m.Qty,
+    sumQty_OrderbySeq = SUM(m.Qty) OVER(PARTITION BY m.Id,m.Article,m.Size ORDER BY m.RowNum),
+    remaining_DQSQty = m.DQSQty - SUM(m.Qty) OVER(PARTITION BY m.Id,m.Article,m.Size ORDER BY m.RowNum),
+    MAXRowNum = MAX(m.RowNum) OVER(PARTITION BY m.Id,m.Article,m.Size),
+    MINRowNum = MIN(m.RowNum) OVER(PARTITION BY m.Id,m.Article,m.Size)    
+INTO #PrepareCalculate
+FROM #PrepareRn m
+ORDER by m.Id,m.Article,m.Size,m.RowNum
+
+SELECT *
+    ,previous_remaining_DQSQty = ISNULL((LAG(remaining_DQSQty) OVER(PARTITION BY Id,Article,Size ORDER BY RowNum)), 0) 
+    ,previous_sumQty_OrderbySeq = ISNULL((LAG(sumQty_OrderbySeq) OVER(PARTITION BY Id,Article,Size ORDER BY RowNum)), 0) 
+INTO #PrepareCalculate2
+FROM #PrepareCalculate
+
+SELECT *,
+    AssignedQty = CASE
+        WHEN RowNum = MINRowNum AND remaining_DQSQty <= 0 THEN TTL_DQSQty_bySame_ArticleSize
+        WHEN RowNum = MAXRowNum AND previous_remaining_DQSQty > sumQty_OrderbySeq THEN previous_remaining_DQSQty
+        WHEN RowNum = MAXRowNum AND remaining_DQSQty > 0 THEN remaining_DQSQty
+        WHEN remaining_DQSQty < 0 AND previous_remaining_DQSQty > 0 THEN previous_remaining_DQSQty
+        WHEN remaining_DQSQty < 0 THEN 0
+        ELSE Qty
+        END
+INTO #tmpAssignedQty_by_IDArtcleSizeSeq
+FROM #PrepareCalculate2
+
+SELECT ID,Seq,DQSQty = Sum(AssignedQty)
+INTO #tmpDQSQty
+from #tmpAssignedQty_by_IDArtcleSizeSeq
+GROUP BY ID,Seq
+
+--DQSQTY 計算結尾
 
 select main.KPICode
 	,main.FactoryID
@@ -256,10 +309,10 @@ select main.KPICode
 	,[LastCMPOutputDate]=LastCMPOutputDate.Value
     ,[CMPQty]=IIF(PartialShipment='Y' ,'NA', CAST(ISNULL( CMPQty.Value,0)  as varchar))
 	,ins.LastDQSOutputDate
-	,[DQSQty]=IIF(main.PartialShipment='Y' , 'NA' , CAST( ISNULL( ins.DQSQty,0)  as varchar))
+	,[DQSQty] = dq.DQSQty
 	,[OST Packing Qty]=IIF(main.PartialShipment='Y' , 'NA' , CAST(( ISNULL(main.OrderQty,0) -  ISNULL(pd.PackingQty,0)) as varchar))
 	,[OST CMP Qty]=IIF(main.PartialShipment='Y' , 'NA' , CAST((  ISNULL(main.OrderQty,0) -  ISNULL(CMPQty.Value,0))  as varchar))
-	,[OST DQS Qty]=IIF(main.PartialShipment='Y' , 'NA' ,  CAST(( ISNULL(main.OrderQty,0) -  ISNULL(ins.DQSQty,0))  as varchar))
+	,[OST DQS Qty] = ISNULL(main.OrderQty, 0) - ISNULL(dq.DQSQty, 0)
 	,[OST Clog Qty]=(ISNULL(main.OrderQty,0) - ISNULL(pd.ClogReceivedQty,0))
 	,[OST Clog Carton]= ISNULL(pd.PackingCarton,0) - ISNULL(pd.ClogReceivedCarton,0)
 	,[CFA Inspection result]=oq.CFAFinalInspectResult
@@ -269,6 +322,7 @@ from #tmpOrderMain main
 left join #tmpPackingList_Detail pd on pd.OrderID = main.id and pd.OrderShipmodeSeq = main.Seq
 LEFT JOIN Order_QtyShip oq ON oq.ID = main.ID AND oq.Seq = main.Seq
 left join #tmpInspection ins on ins.OrderId = main.ID
+LEFT JOIN #tmpDQSQty dq on dq.ID = main.ID AND dq.Seq = main.Seq
 OUTER APPLY(
 	SELECT [Value]=MAX(s.OutputDate)
 	FROM SewingOutput s WITH(NOLOCK)
@@ -278,10 +332,10 @@ OUTER APPLY(
 OUTER APPLY(
 	 SELECT [Value]=[dbo].[getMinCompleteSewQty](main.ID,NULL,NULL) 
 )CMPQty
-{sqlWhereOutstanding.ToString()}
+{sqlWhereOutstanding}
 order by main.ID
 
-DROP TABLE #tmpOrderMain,#tmpPackingList_Detail,#tmpInspection,#tmpInspection_Step1
+drop table #tmpOrderMain,#tmpPackingList_Detail,#tmpInspection_Step1,#tmpInspection,#PrepareCalculate,#PrepareCalculate2,#tmpAssignedQty_by_IDArtcleSizeSeq,#tmpDQSQty,#PrepareRn
 ");
             #endregion
 
