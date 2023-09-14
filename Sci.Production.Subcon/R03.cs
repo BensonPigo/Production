@@ -124,15 +124,17 @@ namespace Sci.Production.Subcon
             , [ExVoucherNo] = s.ExVoucherID
             , [ExVoucherDate] = s.ExVoucherDate
             , [Remark] = s.Remark
-            , [AddName] = s.AddName
+            , [AddName] = p3.ID + '-' + p3.Name
             , [AddDate] = s.AddDate
-            , [EditName] = s.EditName
+            , [EditName] = p4.ID + '-' + p4.Name 
             , [EditDate] = s.EditDate 
             FROM SubconOutContractAP s WITH(NOLOCK)
             LEFT JOIN LocalSupp ls WITH(NOLOCK) on ls.id = s.LocalSuppID
             LEFT JOIN PayTerm pt WITH(NOLOCK) on pt.id = s.PaytermID
             LEFT JOIN Pass1 p1 WITH(NOLOCK) on p1.id = s.Handle
             LEFT JOIN Pass1 p2 WITH(NOLOCK) on p2.id = s.ApvName
+            LEFT JOIN Pass1 p3 WITH(NOLOCK) on s.AddName = p3.ID
+            LEFT JOIN Pass1 p4 WITH(NOLOCK) on s.EditName = p4.ID
             WHERE 1 = 1
             {strWhere}
 
@@ -209,8 +211,6 @@ namespace Sci.Production.Subcon
 
             MyUtility.Excel.CopyToXls(this.printData[0], string.Empty, showExcel: false, xltfile: $"{excelName}.xltx", headerRow: 1, excelApp: objApp, wSheet: objApp.Sheets[1]);
             MyUtility.Excel.CopyToXls(this.printData[1], string.Empty, showExcel: false, xltfile: $"{excelName}.xltx", headerRow: 1, excelApp: objApp, wSheet: objApp.Sheets[2]);
-
-
             #region Save & Show Excel
             string strExcelName = Class.MicrosoftFile.GetName(excelName);
             Microsoft.Office.Interop.Excel.Workbook workbook = objApp.ActiveWorkbook;
