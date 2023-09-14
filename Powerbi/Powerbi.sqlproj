@@ -186,6 +186,8 @@
     <Build Include="dbo\Tables\P_ADIDASComplain_24Month.sql" />
     <Build Include="dbo\Tables\P_MtltoFTYAnalysis.sql" />
     <Build Include="dbo\Stored Procedures\FTY\P_Import_MtltoFTYAnalysis.sql" />
+    <Build Include="dbo\Stored Procedures\FTY\P_Import_PPIC_R04.sql" />
+    <Build Include="dbo\Tables\P_FabricStatus_And_IssueFabricTracking.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Utility.dll" />
