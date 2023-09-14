@@ -3115,10 +3115,10 @@ END";
                     var markerNo = MyUtility.Convert.GetString(firstRow["MarkerNo"]);
                     var cutNo = MyUtility.Convert.GetString(firstRow["CutNo"]);
 
-                    var markerlength = MyUtility.Convert.GetString(firstRow["markerlength"]);
+                    var markerlength = Prgs.ConvertFullWidthToHalfWidth(MyUtility.Convert.GetString(firstRow["markerlength"]));
                     var estCutDate = MyUtility.Convert.GetDate(firstRow["EstCutDate"]);
 
-                    if (group.Any(row => MyUtility.Convert.GetString(row["markerlength"]) != markerlength
+                    if (group.Any(row => Prgs.ConvertFullWidthToHalfWidth(MyUtility.Convert.GetString(row["markerlength"])) != markerlength
                                        || MyUtility.Convert.GetDate(row["EstCutDate"]) != estCutDate))
                     {
                         checkmsg += $"\r\nMarkerName: {markerName}, MarkerNo: {markerNo}, CutNo: {cutNo}";
