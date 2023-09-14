@@ -597,6 +597,35 @@ else
                 dt.Columns.Remove(columns);
             }
         }
+
+        /// <inheritdoc/>
+        public static string ConvertFullWidthToHalfWidth(string input)
+        {
+            if (string.IsNullOrEmpty(input))
+            {
+                return input;
+            }
+
+            char[] charArray = input.ToCharArray();
+            for (int i = 0; i < charArray.Length; i++)
+            {
+                if (char.IsWhiteSpace(charArray[i]))
+                {
+                    // 跳過空白字元
+                    continue;
+                }
+
+                // 判斷是否為全形字元
+                if (charArray[i] >= '！' && charArray[i] <= '～')
+                {
+                    // 將全形字元轉換為半形字元
+                    charArray[i] = (char)(charArray[i] - '！' + 0x21);
+                }
+            }
+
+            return new string(charArray);
+        }
+
     }
 
     /// <summary>
