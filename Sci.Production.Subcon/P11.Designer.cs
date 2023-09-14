@@ -86,7 +86,7 @@
             this.masterpanel.Controls.Add(this.label1);
             this.masterpanel.Controls.Add(this.dateBoxApvDate);
             this.masterpanel.Controls.Add(this.dateIssuedate);
-            this.masterpanel.Size = new System.Drawing.Size(1098, 110);
+            this.masterpanel.Size = new System.Drawing.Size(892, 110);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateIssuedate, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateBoxApvDate, 0);
@@ -113,7 +113,7 @@
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 110);
-            this.detailpanel.Size = new System.Drawing.Size(1098, 303);
+            this.detailpanel.Size = new System.Drawing.Size(892, 239);
             // 
             // gridicon
             // 
@@ -121,7 +121,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(1098, 303);
+            this.detailgridcont.Size = new System.Drawing.Size(892, 239);
             // 
             // detail2
             // 
@@ -134,19 +134,6 @@
             // detailpanel2
             // 
             this.detailpanel2.Size = new System.Drawing.Size(886, 40);
-            // 
-            // detail
-            // 
-            this.detail.Size = new System.Drawing.Size(1098, 451);
-            // 
-            // detailcont
-            // 
-            this.detailcont.Size = new System.Drawing.Size(1098, 413);
-            // 
-            // detailbtm
-            // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 413);
-            this.detailbtm.Size = new System.Drawing.Size(1098, 38);
             // 
             // browse
             // 
@@ -391,6 +378,7 @@
             this.ClientSize = new System.Drawing.Size(1106, 513);
             this.CloseChkValue = "Confirmed";
             this.GridAlias = "SubconOutContract_detail";
+            this.GridNew = 0;
             this.GridUniqueKey = "OrderID,ComboType,Article";
             this.IsSupportClose = true;
             this.IsSupportConfirm = true;
