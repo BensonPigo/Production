@@ -186,10 +186,15 @@ namespace Sci.Production.Packing
                                     {
                                         tmpzplContent = tmpzplContent.Replace("^XA^SZ2^JMA^MCY^PMN^PW796~JSN^JZY^LH10,0^LRN^XZ^XA^CI0", "\r\n^XA^SZ2^JMA^MCY^PMN^PW796~JSN^JZY^LH10,0^LRN^XZ^XA^CI0");
                                     }
-                                    // 版本2 來自ISP20230884
+                                    // 版本2 來自 ISP20230884
                                     else if (tmpzplContent.Contains("~CC^^XA^EG^XZ^XA^EF^XZ^XA^MCY^XZ^XA^CVY^XZ^XA"))
                                     {
                                         tmpzplContent = tmpzplContent.Replace("~CC^^XA^EG^XZ^XA^EF^XZ^XA^MCY^XZ^XA^CVY^XZ^XA", "\r\n~CC^^XA^EG^XZ^XA^EF^XZ^XA^MCY^XZ^XA^CVY^XZ^XA");
+                                    }
+                                    // 版本3 來自 ISP20230938
+                                    else if (tmpzplContent.Contains("~CC^^CD,^XA"))
+                                    {
+                                        tmpzplContent = tmpzplContent.Replace("~CC^^CD,^XA", "\r\n~CC^^CD,^XA");
                                     }
 
                                     string[] stringSeparators = new string[] { "\r\n" };
