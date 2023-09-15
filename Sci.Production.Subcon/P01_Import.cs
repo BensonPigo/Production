@@ -445,7 +445,7 @@ left join dbo.View_Style_Artwork vsa on	vsa.StyleUkey = bar.StyleUkey and
                                         vsa.ArtworkID = bar.ArtworkID and
                                         vsa.ArtworkTypeID = bar.ArtworkTypeID and 
                                         vsa.PatternCode = bar.PatternCode and
-										vsa.PatternDesc = bar.PatternDesc 
+										vsa.PatternDesc = bar.PatternDesc
 left join Style_Artwork_Quot sao with (nolock) on   sao.Ukey = vsa.StyleArtworkUkey and 
                                                     sao.PriceApv = 'Y' and 
                                                     sao.Price > 0 and 
@@ -457,11 +457,12 @@ left join ArtworkType at WITH (NOLOCK) on at.id = bar.ArtworkTypeID
 
             strSQLCmd += @"
 select	* ,
-		[QuotSeq] = ROW_NUMBER() OVER (PARTITION BY orderid,Article,SizeCode,ArtworkID,PatternCode,PatternDesc ORDER BY QuotArticle,QuotSizeCode desc)
+		[QuotSeq] = ROW_NUMBER() OVER (PARTITION BY orderid,Article,SizeCode,ArtworkID,PatternCode,PatternDesc ORDER BY QuotArticle,QuotSizeCode desc),
+		[ArtworkReq_DetailUkeySeq] = ROW_NUMBER() OVER (PARTITION BY orderid,Article,SizeCode,ArtworkID,PatternCode,PatternDesc,ArtworkReq_DetailUkey ORDER BY QuotArticle,QuotSizeCode desc)--處理因 ArtworkReq_DetailUkey 發散重複 
 into #quoteFromPlanningB03
 from #quoteFromPlanningB03Base 
 
-delete #quoteFromPlanningB03 where Article = '' and SizeCode <> QuotSizeCode and QuotSeq > 1
+delete #quoteFromPlanningB03 where (Article = '' and  SizeCode <> QuotSizeCode and QuotSeq > 1) OR [ArtworkReq_DetailUkeySeq] > 1
 
 --將報價相同的Article資料合併
 select distinct
