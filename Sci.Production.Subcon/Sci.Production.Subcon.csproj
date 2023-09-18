@@ -502,6 +502,7 @@
     </Compile>
     <Compile Include="R02.designer.cs">
       <DependentUpon>R02.cs</DependentUpon>
+	</Compile>
     <Compile Include="R03.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -800,6 +801,7 @@
     </EmbeddedResource>
     <EmbeddedResource Include="P11_SplitSP.resx">
       <DependentUpon>P11_SplitSP.cs</DependentUpon>
+	</EmbeddedResource>
     <EmbeddedResource Include="P12.resx">
       <DependentUpon>P12.cs</DependentUpon>
     </EmbeddedResource>
@@ -944,6 +946,7 @@
     </EmbeddedResource>
     <EmbeddedResource Include="R02.resx">
       <DependentUpon>R02.cs</DependentUpon>
+	</EmbeddedResource>
     <EmbeddedResource Include="R03.resx">
       <DependentUpon>R03.cs</DependentUpon>
     </EmbeddedResource>
