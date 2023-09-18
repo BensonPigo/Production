@@ -17,7 +17,7 @@ namespace Sci.Production.PublicForm
         private DataTable dt;
 
         /// <inheritdoc/>
-        public MessageYESNO(string strMsg, DataTable dataTable, string titleName)
+        public MessageYESNO(string strMsg, DataTable dataTable, string titleName, bool isOK = false)
         {
             this.InitializeComponent();
             this.Text = titleName;
@@ -27,6 +27,12 @@ namespace Sci.Production.PublicForm
             this.dataGridView.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             this.dataGridView.AllowUserToAddRows = false;
             this.dataGridView.DataSource = this.dt;
+
+            if (isOK)
+            {
+                this.btnYES.Visible = false;
+                this.btnNO.Text = "OK";
+            }
         }
 
         private void BtnYES_Click(object sender, EventArgs e)

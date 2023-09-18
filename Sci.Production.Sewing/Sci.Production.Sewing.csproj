@@ -249,12 +249,6 @@
     <Compile Include="P03_SaveComplete.Designer.cs">
       <DependentUpon>P03_SaveComplete.cs</DependentUpon>
     </Compile>
-    <Compile Include="P05.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="P05.Designer.cs">
-      <DependentUpon>P05.cs</DependentUpon>
-    </Compile>
     <Compile Include="P01_BatchRecall.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -366,12 +360,6 @@
     <Compile Include="R04.Designer.cs">
       <DependentUpon>R04.cs</DependentUpon>
     </Compile>
-    <Compile Include="R07.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="R07.designer.cs">
-      <DependentUpon>R07.cs</DependentUpon>
-    </Compile>
     <Compile Include="R09.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -455,9 +443,6 @@
     <EmbeddedResource Include="P03_SaveComplete.resx">
       <DependentUpon>P03_SaveComplete.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="P05.resx">
-      <DependentUpon>P05.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="P01_BatchRecall.resx">
       <DependentUpon>P01_BatchRecall.cs</DependentUpon>
     </EmbeddedResource>
@@ -514,9 +499,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="R04.resx">
       <DependentUpon>R04.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="R07.resx">
-      <DependentUpon>R07.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="R09.resx">
       <DependentUpon>R09.cs</DependentUpon>
