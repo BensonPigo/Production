@@ -90,8 +90,10 @@ where exists(select 1 from #tmpOrderMain main where pd.OrderID = main.ID and
 group by pd.OrderID,pd.OrderShipmodeSeq
 
 
-select   ins.OrderId,
+select  ins.OrderId,
         ins.Location,
+        ins.Article,
+        ins.Size,
         [DQSQty] = count(1),
         [LastDQSOutputDate] = MAX(iif(ins.Status in ('Pass','Fixed'), ins.AddDate, null))
 into #tmpInspection_Step1
@@ -106,14 +108,114 @@ where exists( select 1
 AND oq.BuyerDelivery <= @EDate
 AND f.IsProduceFty=1
                 )
-group by ins.OrderId,ins.Location
+group by ins.OrderId
+    ,ins.Location
+    ,ins.Article
+    ,ins.Size
 
 select OrderId,
-[DQSQty] = MIN(DQSQty),
 [LastDQSOutputDate] = MAX(LastDQSOutputDate)
 into #tmpInspection
 from #tmpInspection_Step1
 group by OrderId
+
+--要先找每個OrderID所有的Seq,因為可能被篩選掉
+SELECT oq.Id,oq.Seq,oq.BuyerDelivery
+INTO #tmpOrder_QtyShip
+FROM [Production].[dbo].Order_QtyShip oq
+WHERE EXISTS(SELECT 1 FROM #tmpOrderMain WHERE ID = oq.Id)
+
+--- DQSQTY 計算分配
+SELECT m.Id,m.Seq,t.Article,t.Size, t.DQSQty, Qty = ISNULL(od.Qty, 0)
+    ,RowNum = ROW_NUMBER() OVER(PARTITION BY m.Id,t.Article,t.Size ORDER BY m.BuyerDelivery, m.Seq)
+INTO #PrepareRn
+FROM #tmpOrder_QtyShip m
+INNER JOIN #tmpInspection_Step1 t on t.OrderID = m.ID
+Left JOIN [Production].[dbo].Order_QtyShip_Detail od on od.Id = m.id AND od.Seq = m.Seq AND od.Article = t.Article AND od.SizeCode = t.Size
+ORDER by m.Id,t.Article,t.Size,m.Seq
+
+SELECT m.Id, m.Article, m.Size, RowNum, m.Seq, m.DQSQty, m.Qty
+    ,remaining_DQSQty = m.DQSQty - SUM(m.Qty) OVER(PARTITION BY m.Id,m.Article,m.Size ORDER BY m.RowNum)
+    ,MAXRowNum = MAX(m.RowNum) OVER(PARTITION BY m.Id,m.Article,m.Size)
+INTO #PrepareCalculate
+FROM #PrepareRn m
+ORDER by m.Id,m.Article,m.Size,m.RowNum
+
+SELECT *, Calculate_previous_remaining_DQSQty = ISNULL((LAG(remaining_DQSQty) OVER(PARTITION BY Id,Article,Size ORDER BY RowNum)), 0) 
+INTO #PrepareCalculate2
+FROM #PrepareCalculate
+
+SELECT *, CalculateThisRowDQSQty = IIF(Calculate_previous_remaining_DQSQty < 0, 0, Calculate_previous_remaining_DQSQty)
+INTO #PrepareCalculate3
+FROM #PrepareCalculate2
+--計算出當前這筆還可使用數
+SELECT *, ThisRowDQSQty = IIF(RowNum = 1, DQSQty, CalculateThisRowDQSQty)
+INTO #PrepareCalculate4
+FROM #PrepareCalculate3
+
+SELECT Id, Article, Size, RowNum, Seq, ThisRowDQSQty, Qty
+    ,AssignedQty = CASE
+        WHEN RowNum = MAXRowNum THEN ThisRowDQSQty
+        WHEN ThisRowDQSQty >= QTY THEN QTY
+        ELSE ThisRowDQSQty
+        END
+INTO #tmpAssignedQty_by_IDArtcleSizeSeq
+FROM #PrepareCalculate4
+
+SELECT ID,Seq,DQSQty = Sum(AssignedQty)
+INTO #tmpDQSQty
+from #tmpAssignedQty_by_IDArtcleSizeSeq
+GROUP BY ID,Seq
+--DQSQTY 計算結尾
+
+--CMPQty 計算分配
+SELECT sodd.OrderId, sodd.Article, sodd.SizeCode, QAQty = SUM(sodd.QAQty)--可分配總數
+INTO #tmpSewingOutput_Detail_Detail
+FROM [Production].[dbo].SewingOutput_Detail_Detail sodd WITH(NOLOCK)
+WHERE EXISTS(SELECT 1 FROM #tmpOrderMain WHERE ID = sodd.OrderId)
+GROUP BY sodd.OrderId, sodd.Article, sodd.SizeCode
+
+SELECT m.Id, m.Seq, t.Article, t.SizeCode, t.QAQty, Qty = ISNULL(od.Qty, 0)
+    ,RowNum = ROW_NUMBER() OVER(PARTITION BY m.Id,t.Article,t.SizeCode ORDER BY m.BuyerDelivery, m.Seq)
+INTO #PrepareRn_CMPQty
+FROM #tmpOrder_QtyShip m
+INNER JOIN #tmpSewingOutput_Detail_Detail t on t.OrderID = m.ID
+Left JOIN [Production].[dbo].Order_QtyShip_Detail od on od.Id = m.id AND od.Seq = m.Seq AND od.Article = t.Article AND od.SizeCode = t.SizeCode
+ORDER by m.Id,t.Article,t.SizeCode,m.Seq
+
+SELECT m.Id, m.Article, m.SizeCode, RowNum, m.Seq, m.QAQty, m.Qty,
+    remaining_QAQty = m.QAQty - SUM(m.Qty) OVER(PARTITION BY m.Id,m.Article,m.SizeCode ORDER BY m.RowNum),
+    MAXRowNum = MAX(m.RowNum) OVER(PARTITION BY m.Id,m.Article,m.SizeCode)
+INTO #PrepareCalculate_CMPQty
+FROM #PrepareRn_CMPQty m
+ORDER by m.Id,m.Article,m.SizeCode,m.RowNum
+
+SELECT *, Calculate_previous_remaining_QAQty = ISNULL((LAG(remaining_QAQty) OVER(PARTITION BY Id,Article,SizeCode ORDER BY RowNum)), 0) 
+INTO #PrepareCalculate2_CMPQty
+FROM #PrepareCalculate_CMPQty
+
+SELECT *, CalculateThisRowQAQty = IIF(Calculate_previous_remaining_QAQty < 0, 0, Calculate_previous_remaining_QAQty)
+INTO #PrepareCalculate3_CMPQty
+FROM #PrepareCalculate2_CMPQty
+--計算出當前這筆還可使用數
+SELECT *, ThisRowQAQty = IIF(RowNum = 1, QAQty, CalculateThisRowQAQty)
+INTO #PrepareCalculate4_CMPQty
+FROM #PrepareCalculate3_CMPQty
+
+SELECT *
+    ,AssignedQty = CASE
+        WHEN RowNum = MAXRowNum THEN ThisRowQAQty
+        WHEN ThisRowQAQty >= QTY THEN QTY
+        ELSE ThisRowQAQty
+        END
+INTO #tmpAssignedQty_by_IDArtcleSizeSeq_CMPQty
+FROM #PrepareCalculate4_CMPQty
+
+SELECT ID,Seq,QAQty = Sum(AssignedQty)
+INTO #tmpCMPQty
+from #tmpAssignedQty_by_IDArtcleSizeSeq_CMPQty
+GROUP BY ID,Seq
+--CMPQty 計算結尾
 
 -- 新增欄位 [CFA inspection result]
 select
@@ -185,14 +287,14 @@ select
 	,[PackingCarton] = isnull(pd.PackingCarton,0)
 	,[PackingQty] = isnull(pd.PackingQty,0)
 	,[ClogReceivedCarton] = isnull(pd.ClogReceivedCarton,0)
-	,[ClogReceivedQty]=IIF(main.PartialShipment='Y' ,'NA' ,CAST( ISNULL( pd.ClogReceivedQty,0)  as varchar))
+	,[ClogReceivedQty] = CAST( ISNULL( pd.ClogReceivedQty,0)  as varchar)
 	,[LastCMPOutputDate]=LastCMPOutputDate.Value
-    ,[CMPQty]=IIF(PartialShipment='Y' ,'NA', CAST(ISNULL( CMPQty.Value,0)  as varchar))
+    ,[CMPQty] = CAST(ISNULL(cq.QAQty, 0) as varchar)
 	,ins.LastDQSOutputDate
-	,[DQSQty]=IIF(main.PartialShipment='Y' , 'NA' , CAST( ISNULL( ins.DQSQty,0)  as varchar))
+	,[DQSQty] = CAST(ISNULL(dq.DQSQty, 0) as varchar)
 	,[OSTPackingQty]=IIF(main.PartialShipment='Y' , 'NA' , CAST(( ISNULL(main.OrderQty,0) -  ISNULL(pd.PackingQty,0)) as varchar))
-	,[OSTCMPQty]=IIF(main.PartialShipment='Y' ,  'NA' , CAST((  ISNULL(main.OrderQty,0) -  ISNULL(CMPQty.Value,0))  as varchar))
-	,[OSTDQSQty]=IIF(main.PartialShipment='Y' ,  'NA' ,  CAST(( ISNULL(main.OrderQty,0) -  ISNULL(ins.DQSQty,0))  as varchar))
+	,[OSTCMPQty] = CAST((ISNULL(main.OrderQty,0) - ISNULL(cq.QAQty, 0)) as varchar)
+	,[OSTDQSQty] = ISNULL(main.OrderQty, 0) - ISNULL(dq.DQSQty, 0)
 	,[OSTClogQty]=IIF(main.PartialShipment='Y' , 'NA' , CAST((  ISNULL(main.OrderQty,0) -  ISNULL(pd.ClogReceivedQty,0))  as varchar))
 	,[OSTClogCtn]= ISNULL(pd.PackingCarton,0) - ISNULL(pd.ClogReceivedCarton,0)
 	,main.KPICode
@@ -206,15 +308,14 @@ from #tmpOrderMain main
 left join #tmpPackingList_Detail pd on pd.OrderID = main.id and pd.OrderShipmodeSeq = main.Seq
 left join #tmpInspection ins on ins.OrderId = main.ID
 left join #CReceive c on c.OrderID = main.id and c.OrderShipmodeSeq = main.Seq
+LEFT JOIN #tmpDQSQty dq on dq.ID = main.ID AND dq.Seq = main.Seq
+LEFT JOIN #tmpCMPQty cq on cq.ID = main.ID AND cq.Seq = main.Seq
 OUTER APPLY(
 	SELECT [Value]=MAX(s.OutputDate)
 	FROM Production.dbo.SewingOutput s WITH(NOLOCK)
 	INNER JOIN Production.dbo.SewingOutput_Detail sd WITH(NOLOCK) ON s.ID=sd.ID
 	WHERE sd.OrderId=main.ID AND sd.QAQty > 0
 )LastCMPOutputDate
-OUTER APPLY(
-	 SELECT [Value] = [Production].[dbo].[getMinCompleteSewQty](main.ID,NULL,NULL) 
-)CMPQty
 DROP TABLE #tmpOrderMain,#tmpPackingList_Detail,#tmpInspection,#tmpInspection_Step1
 
 update t
@@ -322,6 +423,3 @@ from BITableInfo b
 where b.id = 'P_OustandingPO'
 
 End
-
-
-
