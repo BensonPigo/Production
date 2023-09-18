@@ -2877,6 +2877,8 @@
     <Build Include="dbo\Tables\OperationRef.sql" />
     <Build Include="dbo\Stored Procedures\RecalculateCumulateDay.sql" />
     <Build Include="dbo\Stored Procedures\GetCuttingScheduleOutputList.sql" />
+    <Build Include="dbo\Tables\SubconOutContractAP.sql" />
+    <Build Include="dbo\Tables\SubconOutContractAP_Detail.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />
