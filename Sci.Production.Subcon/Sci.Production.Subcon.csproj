@@ -792,7 +792,6 @@
     <EmbeddedResource Include="P05_ReqQtyList.resx">
       <DependentUpon>P05_ReqQtyList.cs</DependentUpon>
     </EmbeddedResource>
-<<<<<<< HEAD
     <EmbeddedResource Include="P11.resx">
       <DependentUpon>P11.cs</DependentUpon>
     </EmbeddedResource>
@@ -801,13 +800,11 @@
     </EmbeddedResource>
     <EmbeddedResource Include="P11_SplitSP.resx">
       <DependentUpon>P11_SplitSP.cs</DependentUpon>
-=======
     <EmbeddedResource Include="P12.resx">
       <DependentUpon>P12.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P12_Import.resx">
       <DependentUpon>P12_Import.cs</DependentUpon>
->>>>>>> Mantis/ISP20230856
     </EmbeddedResource>
     <EmbeddedResource Include="P30_BatchApprove.resx">
       <DependentUpon>P30_BatchApprove.cs</DependentUpon>
@@ -945,16 +942,13 @@
     <EmbeddedResource Include="R01.resx">
       <DependentUpon>R01.cs</DependentUpon>
     </EmbeddedResource>
-<<<<<<< HEAD
     <EmbeddedResource Include="R02.resx">
       <DependentUpon>R02.cs</DependentUpon>
-=======
     <EmbeddedResource Include="R03.resx">
       <DependentUpon>R03.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="R04.resx">
       <DependentUpon>R04.cs</DependentUpon>
->>>>>>> Mantis/ISP20230856
     </EmbeddedResource>
     <EmbeddedResource Include="R05.resx">
       <DependentUpon>R05.cs</DependentUpon>
