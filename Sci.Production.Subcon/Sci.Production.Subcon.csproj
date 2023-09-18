@@ -244,6 +244,19 @@
     <Compile Include="P11_SplitSP.designer.cs">
       <DependentUpon>P11_SplitSP.cs</DependentUpon>
     </Compile>
+    <Compile Include="P12.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P12.Designer.cs">
+      <DependentUpon>P12.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P12_Import.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P12_Import.Designer.cs">
+      <DependentUpon>P12_Import.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P12_PrintData.cs" />
     <Compile Include="P30_ImportCartonReplacement.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -489,6 +502,17 @@
     </Compile>
     <Compile Include="R02.designer.cs">
       <DependentUpon>R02.cs</DependentUpon>
+    <Compile Include="R03.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="R03.Designer.cs">
+      <DependentUpon>R03.cs</DependentUpon>
+    </Compile>
+    <Compile Include="R04.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="R04.Designer.cs">
+      <DependentUpon>R04.cs</DependentUpon>
     </Compile>
     <Compile Include="R05.cs">
       <SubType>Form</SubType>
@@ -768,6 +792,7 @@
     <EmbeddedResource Include="P05_ReqQtyList.resx">
       <DependentUpon>P05_ReqQtyList.cs</DependentUpon>
     </EmbeddedResource>
+<<<<<<< HEAD
     <EmbeddedResource Include="P11.resx">
       <DependentUpon>P11.cs</DependentUpon>
     </EmbeddedResource>
@@ -776,6 +801,13 @@
     </EmbeddedResource>
     <EmbeddedResource Include="P11_SplitSP.resx">
       <DependentUpon>P11_SplitSP.cs</DependentUpon>
+=======
+    <EmbeddedResource Include="P12.resx">
+      <DependentUpon>P12.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P12_Import.resx">
+      <DependentUpon>P12_Import.cs</DependentUpon>
+>>>>>>> Mantis/ISP20230856
     </EmbeddedResource>
     <EmbeddedResource Include="P30_BatchApprove.resx">
       <DependentUpon>P30_BatchApprove.cs</DependentUpon>
@@ -823,6 +855,7 @@
     <EmbeddedResource Include="P32.resx">
       <DependentUpon>P32.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="P12_Print.rdlc" />
     <EmbeddedResource Include="P35_Print.rdlc" />
     <EmbeddedResource Include="P36_ModifyAfterSent.resx">
       <DependentUpon>P36_ModifyAfterSent.cs</DependentUpon>
@@ -912,8 +945,16 @@
     <EmbeddedResource Include="R01.resx">
       <DependentUpon>R01.cs</DependentUpon>
     </EmbeddedResource>
+<<<<<<< HEAD
     <EmbeddedResource Include="R02.resx">
       <DependentUpon>R02.cs</DependentUpon>
+=======
+    <EmbeddedResource Include="R03.resx">
+      <DependentUpon>R03.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="R04.resx">
+      <DependentUpon>R04.cs</DependentUpon>
+>>>>>>> Mantis/ISP20230856
     </EmbeddedResource>
     <EmbeddedResource Include="R05.resx">
       <DependentUpon>R05.cs</DependentUpon>
@@ -1032,6 +1073,7 @@
     <None Include="Properties\DataSources\P05_PrintData.datasource" />
     <None Include="Properties\DataSources\P10_PrintData.datasource" />
     <None Include="Properties\DataSources\P10_PrintData1.datasource" />
+    <None Include="Properties\DataSources\P12_PrintData.datasource" />
     <None Include="Properties\DataSources\P30_PrintData.datasource" />
     <None Include="Properties\DataSources\P35_PrintData.datasource" />
     <None Include="Properties\DataSources\P36_PrintData.datasource" />
