@@ -562,8 +562,8 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
                     return;
                 }
 
-                string firstDisplayNo = this.detailgrid.GetDataRow<DataRow>(this.detailgrid.FirstDisplayedScrollingRowIndex)["No"].ToString();
-                this.lineMappingGrids.RefreshSubData(false);
+                dr["Cycle"] = e.FormattedValue;
+
                 this.RefreshLineMappingBalancingSummary();
             };
 
@@ -586,7 +586,6 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
 
                 if (!MyUtility.Check.Empty(dr["No"]))
                 {
-                    string firstDisplayNo = this.gridCentralizedPPALeft.GetDataRow<DataRow>(this.gridCentralizedPPALeft.FirstDisplayedScrollingRowIndex)["No"].ToString();
                     this.centralizedPPAGrids.RefreshSubData(false);
                 }
             };
@@ -985,7 +984,6 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
                         }
                     }
 
-                    this.lineMappingGrids.RefreshSubData();
                     this.RefreshLineMappingBalancingSummary();
                 }
             }

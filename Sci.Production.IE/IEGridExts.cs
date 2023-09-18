@@ -566,10 +566,7 @@ where a.MoldID IN ('{string.Join("','", moldID.Split(','))}') ";
 select　Thread_ComboID
 from Style_ThreadColorCombo st with (nolock)
 where	st.StyleUkey = '{styleUkey}' and
-		st.MachineTypeID = '{dr["MachineTypeID"]}' and
-		exists(select 1 from Style_ThreadColorCombo_Operation sto with (nolock) 
-                        where   sto.Style_ThreadColorComboUkey = st.Ukey and 
-                                sto.OperationID = '{dr["OperationID"]}')
+		st.MachineTypeID = '{dr["MachineTypeID"]}'
 ";
                 SelectItem item = new Win.Tools.SelectItem(sqlCmd, "12", dr[propertyname].ToString());
                 DialogResult returnResult = item.ShowDialog();
@@ -609,11 +606,7 @@ where	st.StyleUkey = '{styleUkey}' and
 select　1
 from Style_ThreadColorCombo st with (nolock)
 where	st.StyleUkey = '{styleUkey}' and
-		st.MachineTypeID = '{dr["MachineTypeID"]}' and
-        st.Thread_ComboID = '{e.FormattedValue.ToString()}' and
-		exists(select 1 from Style_ThreadColorCombo_Operation sto with (nolock) 
-                        where   sto.Style_ThreadColorComboUkey = st.Ukey and 
-                                sto.OperationID = '{dr["OperationID"]}')
+        st.Thread_ComboID = '{e.FormattedValue}'
 ";
                 DataTable machineData;
                 DualResult result = DBProxy.Current.Select(null, sqlCmd, out machineData);

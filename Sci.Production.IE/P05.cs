@@ -1101,7 +1101,6 @@ from #tmp
                 DialogResult dialogResult = p05_EditOperation.ShowDialog();
                 if (dialogResult == DialogResult.OK)
                 {
-                    this.lineMappingGrids.RefreshSubData();
                     this.RefreshAutomatedLineMappingSummary();
                     this.ShowLBRChart(this.CurrentMaintain);
                 }
