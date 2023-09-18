@@ -458,11 +458,12 @@ left join ArtworkType at WITH (NOLOCK) on at.id = bar.ArtworkTypeID
             strSQLCmd += @"
 select	* ,
 		[QuotSeq] = ROW_NUMBER() OVER (PARTITION BY orderid,Article,SizeCode,ArtworkID,PatternCode,PatternDesc ORDER BY QuotArticle,QuotSizeCode desc),
-		[ArtworkReq_DetailUkeySeq] = ROW_NUMBER() OVER (PARTITION BY orderid,Article,SizeCode,ArtworkID,PatternCode,PatternDesc,ArtworkReq_DetailUkey ORDER BY QuotArticle,QuotSizeCode desc)--處理因 ArtworkReq_DetailUkey 發散重複 
+		[CostSeq] = ROW_NUMBER() OVER (PARTITION BY orderid,Article,SizeCode,ArtworkID,PatternCode,PatternDesc,Cost ORDER BY ArtworkReq_DetailUkey desc),--處理因 ArtworkReq_DetailUkey 發散重複 
+		[ArtworkReq_DetailUkeySeq] = ROW_NUMBER() OVER (PARTITION BY orderid,Article,SizeCode,ArtworkID,PatternCode,PatternDesc,ArtworkReq_DetailUkey ORDER BY Cost desc)--處理因 ArtworkReq_DetailUkey 發散重複 
 into #quoteFromPlanningB03
 from #quoteFromPlanningB03Base 
 
-delete #quoteFromPlanningB03 where (Article = '' and  SizeCode <> QuotSizeCode and QuotSeq > 1) OR [ArtworkReq_DetailUkeySeq] > 1
+delete #quoteFromPlanningB03 where (Article = '' and  SizeCode <> QuotSizeCode and QuotSeq > 1) OR ([CostSeq] <> [ArtworkReq_DetailUkeySeq])
 
 --將報價相同的Article資料合併
 select distinct
