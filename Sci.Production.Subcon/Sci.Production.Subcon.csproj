@@ -226,6 +226,24 @@
     <Compile Include="P05_ReqQtyList.Designer.cs">
       <DependentUpon>P05_ReqQtyList.cs</DependentUpon>
     </Compile>
+    <Compile Include="P11.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P11.designer.cs">
+      <DependentUpon>P11.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P11_BatchImport.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P11_BatchImport.designer.cs">
+      <DependentUpon>P11_BatchImport.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P11_SplitSP.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P11_SplitSP.designer.cs">
+      <DependentUpon>P11_SplitSP.cs</DependentUpon>
+    </Compile>
     <Compile Include="P30_ImportCartonReplacement.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -455,11 +473,22 @@
     <Compile Include="P30_Import.Designer.cs">
       <DependentUpon>P30_Import.cs</DependentUpon>
     </Compile>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
     <Compile Include="R01.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="R01.Designer.cs">
       <DependentUpon>R01.cs</DependentUpon>
+    </Compile>
+    <Compile Include="R02.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="R02.designer.cs">
+      <DependentUpon>R02.cs</DependentUpon>
     </Compile>
     <Compile Include="R05.cs">
       <SubType>Form</SubType>
@@ -739,6 +768,15 @@
     <EmbeddedResource Include="P05_ReqQtyList.resx">
       <DependentUpon>P05_ReqQtyList.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="P11.resx">
+      <DependentUpon>P11.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P11_BatchImport.resx">
+      <DependentUpon>P11_BatchImport.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P11_SplitSP.resx">
+      <DependentUpon>P11_SplitSP.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="P30_BatchApprove.resx">
       <DependentUpon>P30_BatchApprove.cs</DependentUpon>
     </EmbeddedResource>
@@ -867,8 +905,15 @@
     <EmbeddedResource Include="P42_SubProcessStatus.resx">
       <DependentUpon>P42_SubProcessStatus.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
     <EmbeddedResource Include="R01.resx">
       <DependentUpon>R01.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="R02.resx">
+      <DependentUpon>R02.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="R05.resx">
       <DependentUpon>R05.cs</DependentUpon>
@@ -997,6 +1042,9 @@
   <ItemGroup>
     <Analyzer Include="..\packages\StyleCop.Analyzers.1.1.118\analyzers\dotnet\cs\StyleCop.Analyzers.CodeFixes.dll" />
     <Analyzer Include="..\packages\StyleCop.Analyzers.1.1.118\analyzers\dotnet\cs\StyleCop.Analyzers.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\trffc15.bmp" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
