@@ -1314,6 +1314,7 @@ drop TABLE #tmp1
             #region MACHINE
             decimal allct = Math.Ceiling((decimal)allMachine.Length / 3);
             // Machine table 只計算MachineCount有勾選的
+            var machineGroup = allMachineData.Where(o => o.MachineCount && !MyUtility.Check.Empty(o.MachineTypeID) && !MyUtility.Check.Empty(o.MasterPlusGroup)).Select(o => new { o.MachineTypeID, o.MasterPlusGroup }).ToList();
             int machineCount = allMachineData.Where(o => o.MachineCount && !MyUtility.Check.Empty(o.MachineTypeID) && !MyUtility.Check.Empty(o.MasterPlusGroup)).Select(o => new { o.MachineTypeID, o.MasterPlusGroup }).Distinct().Count();
 
             List<AttachmentData> tmp = new List<AttachmentData>();
@@ -1356,6 +1357,7 @@ drop TABLE #tmp1
             {
                 worksheet.Cells[27 + surow, 10] = item.MachineTypeID;
                 worksheet.Cells[27 + surow, 11] = item.MasterPlusGroup;
+                 worksheet.Cells[27 + surow, 13] = machineGroup.Where(machine => machine.MachineTypeID == item.MachineTypeID && machine.MasterPlusGroup == item.MasterPlusGroup).Count();
                 surow++;
             }
 
