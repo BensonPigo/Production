@@ -87,6 +87,7 @@
     [M360MDScanDate] DATE NULL, 
     [M360MDFailQty] INT not null constraint [DF_PackingList_Detail_[M360MDFailQty] DEFAULT 0,
     [M360MDScanName] VARCHAR(10) not null constraint [DF_PackingList_Detail_M360MDScanName] DEFAULT '',
+    [MDMachineNo] VARCHAR(30) NOT NULL DEFAULT (''), 
     CONSTRAINT [PK_Ukey] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
 

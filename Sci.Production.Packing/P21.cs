@@ -20,6 +20,24 @@ namespace Sci.Production.Packing
             : base(menuitem)
         {
             this.InitializeComponent();
+
+            #region combo Error Type設定
+            Ict.DualResult result;
+            if (result = DBProxy.Current.Select(null, @"
+select [Type] = ID + '-' + Description , ID
+from PackingErrorTypeReason
+where Type='TP'
+", out DataTable dtErrorType))
+            {
+                this.comboErrorType.DataSource = dtErrorType;
+                this.comboErrorType.DisplayMember = "Type";
+                this.comboErrorType.ValueMember = "ID";
+            }
+            else
+            {
+                this.ShowErr(result);
+            }
+            #endregion
         }
 
         /// <inheritdoc/>
@@ -47,6 +65,9 @@ namespace Sci.Production.Packing
             .Text("RepackPackID", header: "Repack To Pack ID", width: Widths.AnsiChars(15), iseditable: false)
             .Text("RepackOrderID", header: "Repack To SP #", width: Widths.AnsiChars(15), iseditable: false)
             .Text("RepackCtnStartNo", header: "Repack To CTN #", width: Widths.AnsiChars(6), iseditable: false)
+            .Text("ReasonForGarmentSound", header: "Reason for Garment Sound", width: Widths.AnsiChars(20), iseditable: false)
+            .Text("AreaOperation", header: "Area/Operation", width: Widths.AnsiChars(20), iseditable: false)
+            .Text("ActionTaken", header: "Action Taken", width: Widths.AnsiChars(20), iseditable: false)
             ;
         }
 
@@ -58,6 +79,7 @@ namespace Sci.Production.Packing
             string dateTransferDate2 = string.Empty;
             string packid = string.Empty;
             string sp = string.Empty;
+            string errorType = string.Empty;
             string sqlwhere = string.Empty;
             if (!MyUtility.Check.Empty(this.dateTransfer.TextBox1.Value))
             {
@@ -78,11 +100,18 @@ namespace Sci.Production.Packing
                 sqlwhere += $@" and (pd.OrderID = @sp or pd.OrigOrderID = @sp) ";
             }
 
+            if (!MyUtility.Check.Empty(this.comboErrorType.SelectedValue))
+            {
+                errorType = this.comboErrorType.SelectedValue.ToString();
+                sqlwhere += $@" and (pe.PackingErrorID = @errorType) ";
+            }
+
             string sqlcmd = $@"
 declare @dateTransferDate1 date = '{dateTransferDate1}'
 declare @dateTransferDate2 date = '{dateTransferDate2}'
 declare @packid nvarchar(20) = '{packid}'
 declare @sp nvarchar(20) = '{sp}'
+declare @errorType nvarchar(20) = '{errorType}'
 
 select distinct
 	pe.TransferDate
@@ -104,11 +133,18 @@ select distinct
     ,[RepackCtnStartNo] = iif(pd.OrigCTNStartNo != '',pd.CTNStartNo, pd.OrigCTNStartNo)
     , ShipQty=(select sum(ShipQty) from PackingList_Detail pd2 with(nolock) where pd2.id=pd.id and pd2.ctnstartno=pd.ctnstartno)
     , pe.ErrQty
+	,[ReasonForGarmentSound] = isnull(eg.Description,'')
+	,[AreaOperation] = isnull(EO.Description,'')
+	,[ActionTaken] = isnull(et.Description,'')
 from PackErrTransfer pe with(nolock)
+left join PackErrTransfer_Detail ped WITH(NOLOCK) on pe.ID = ped.id
 left join orders o with(nolock) on pe.OrderID = o.ID
 left join Country with(nolock) on Country.id = o.Dest
 left join PackingErrorTypeReason perr with (nolock) on pe.PackingErrorID = perr.ID and perr.Type='TP'
 left join PackingList_Detail pd WITH (NOLOCK) on  pd.SCICtnNo = pe.SCICtnNo 
+left join PackingReason eg with(NOLOCK) on eg.Type='EG' and eg.ID=ped.PackingReasonIDForTypeEG
+left join PackingReason EO with(NOLOCK) on eg.Type='EO' and eg.ID=ped.PackingReasonIDForTypeEO
+left join PackingReason ET with(NOLOCK) on eg.Type='ET' and eg.ID=ped.PackingReasonIDForTypeET
 outer apply(
 	select top 1 CFMDate,AddName
 	from PackErrCFM pt with(nolock)

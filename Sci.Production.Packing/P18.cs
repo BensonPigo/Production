@@ -35,6 +35,7 @@ namespace Sci.Production.Packing
         private string PackingListID = string.Empty;
         private string CTNStarNo = string.Empty;
         private bool Boolfirst;
+        private string MachineID = string.Empty;
 
         public static System.Windows.Forms.Timer timer;
 
@@ -49,6 +50,7 @@ namespace Sci.Production.Packing
             this.EditMode = true;
             this.UseAutoScanPack = MyUtility.Check.Seek("select 1 from system where UseAutoScanPack = 1");
             this.Boolfirst = true;
+            this.comboMDMachineID.DataSource = new List<string>();
         }
 
         /// <summary>
@@ -56,6 +58,40 @@ namespace Sci.Production.Packing
         /// </summary>
         protected override void OnFormLoaded()
         {
+            #region combo Data Source設定
+            DataTable dtMDCalibrationList;
+            Ict.DualResult result;
+            if (result = DBProxy.Current.Select(null, @"
+select row = 0, MachineID = '',operator = ''
+union all
+select row = ROW_NUMBER () over(order by MachineID), MachineID , operator
+from MDMachineBasic
+Where Junk = 0
+", out dtMDCalibrationList))
+            {
+                this.comboMDMachineID.DataSource = dtMDCalibrationList;
+                this.comboMDMachineID.DisplayMember = "MachineID";
+                this.comboMDMachineID.ValueMember = "MachineID";
+            }
+            else
+            {
+                this.ShowErr(result);
+            }
+
+            // 根據userid來自動帶出MachineID
+            DataRow[] drUserRowNB = dtMDCalibrationList.Select($@" operator = '{Env.User.UserID}'");
+            if (drUserRowNB.Length > 0)
+            {
+                int row = MyUtility.Convert.GetInt(drUserRowNB[0]["row"]);
+                this.comboMDMachineID.SelectedIndex = row;
+                this.MachineID = this.comboMDMachineID.Text;
+            }
+            else
+            {
+                this.comboMDMachineID.SelectedIndex = 0;
+            }
+            #endregion
+
             base.OnFormLoaded();
             this.numBoxScanQty.ForeColor = Color.Red;
             this.gridSelectCartonDetail.DataSource = this.selcartonBS;
@@ -93,7 +129,7 @@ namespace Sci.Production.Packing
         {
             if (this.chkAutoCalibration.Checked)
             {
-                string machineID = P18_Calibration_List.MachineID;
+                string machineID = this.MachineID;
                 string sqlcmd = $@"
 select * from MDCalibrationList where MachineID = '{machineID}' and CalibrationDate = CONVERT(date, GETDATE()) and operator = '{Sci.Env.User.UserID}' order by CalibrationTime desc";
 
@@ -137,7 +173,7 @@ or Point9 = 0
             bool canScan = this.tabControlScanArea.SelectedIndex == 0;
             if (this.chkAutoCalibration.Checked && (this.Boolfirst || canScan))
             {
-                string machineID = P18_Calibration_List.MachineID;
+                string machineID = this.MachineID;
                 string sqlcmd = $@"
 select top 1 * from MDCalibrationList where MachineID = '{machineID}' and CalibrationDate = CONVERT(date, GETDATE()) and operator = '{Sci.Env.User.UserID}' order by CalibrationTime desc";
                 if (MyUtility.Check.Seek(sqlcmd, out DataRow dr))
@@ -188,8 +224,6 @@ select top 1 * from MDCalibrationList where MachineID = '{machineID}' and Calibr
             }
         }
 
-        private P18_Calibration_List callP18_Calibration_List = null;
-
         private void AlterMSg()
         {
             MyUtility.Msg.WarningBox("Move to MD Hourly Calibration!");
@@ -211,10 +245,8 @@ select top 1 * from MDCalibrationList where MachineID = '{machineID}' and Calibr
 
         private void Display_Calibration(int HH, int MM)
         {
-            string machineID = P18_Calibration_List.MachineID;
-
             // Machine 沒資料就不用顯示下一次時間
-            if (MyUtility.Check.Empty(machineID))
+            if (MyUtility.Check.Empty(this.MachineID))
             {
                 return;
             }
@@ -222,7 +254,7 @@ select top 1 * from MDCalibrationList where MachineID = '{machineID}' and Calibr
             if (HH == 0 && MM == 0)
             {
                 string sqlcmd = $@"
-select top 1 * from MDCalibrationList where MachineID = '{machineID}' and CalibrationDate = CONVERT(date, GETDATE()) and operator = '{Sci.Env.User.UserID}' order by CalibrationTime desc";
+select top 1 * from MDCalibrationList where MachineID = '{this.MachineID}' and CalibrationDate = CONVERT(date, GETDATE()) and operator = '{Sci.Env.User.UserID}' order by CalibrationTime desc";
                 if (MyUtility.Check.Seek(sqlcmd, out DataRow dr))
                 {
                     // 全都勾選
@@ -442,7 +474,7 @@ where p.Type in ('B','L')
             {
                 MyUtility.Msg.WarningBox("Please enter Paircode first.");
                 return true;
-            }
+            } 
 
             return false;
         }
@@ -880,6 +912,13 @@ WHERE o.ID='{dr.OrderID}'");
                 return;
             }
 
+            // Check MD Machine#
+            if (MyUtility.Check.Empty(this.comboMDMachineID.Text))
+            {
+                MyUtility.Msg.WarningBox("Please select MD Machine#!!");
+                return;
+            }
+
             DualResult sql_result;
 
             // 判斷輸入的Barcode，有沒有存在gridScanDetail
@@ -1047,6 +1086,7 @@ WHERE o.ID='{dr.OrderID}'");
                 , ActCTNWeight = {this.numWeight.Value}
                 , ScanPackMDDate = IIF(ScanPackMDDate is null, GETDATE(), ScanPackMDDate)
                 , ClogScanPackMDDate = IIF(ScanPackMDDate is not null , GETDATE(), ClogScanPackMDDate)
+                , MDMachineNo = '{this.comboMDMachineID.Text}'
                 where id = '{this.selecedPK.ID}' 
                 and CTNStartNo = '{this.selecedPK.CTNStartNo}' 
 
@@ -1760,6 +1800,13 @@ drop table #tmpUpdatedID
                 return;
             }
 
+            // Check MD Machine#
+            if (MyUtility.Check.Empty(this.comboMDMachineID.Text))
+            {
+                MyUtility.Msg.WarningBox("Please select MD Machine#!!");
+                return;
+            }
+
             DualResult sql_result;
             int barcode_pos = this.scanDetailBS.Find("Barcode", this.txtScanEAN.Text);
 
@@ -1897,6 +1944,7 @@ set ScanQty = QtyPerCTN
 , ActCTNWeight = {this.numWeight.Value}
 , ScanPackMDDate = IIF(ScanPackMDDate is null, GETDATE(), ScanPackMDDate)
 , ClogScanPackMDDate = IIF(ScanPackMDDate is not null , GETDATE(), ClogScanPackMDDate)
+, MDMachineNo = '{this.comboMDMachineID.Text}'
 where id = '{this.selecedPK.ID}' 
 and CTNStartNo = '{this.selecedPK.CTNStartNo}' 
 
@@ -1988,7 +2036,15 @@ drop table #tmpNeedUpdateGroup{this.intTmpNo}, #tmpNeedUpdPackUkeys{this.intTmpN
 
         private void btnCalibrationList_Click(object sender, EventArgs e)
         {
-            P18_Calibration_List callForm = new P18_Calibration_List(true, string.Empty, string.Empty, string.Empty);
+            // Check MD Machine#
+            if (MyUtility.Check.Empty(this.comboMDMachineID.Text))
+            {
+                MyUtility.Msg.WarningBox("Please select MD Machine#!!");
+                this.comboMDMachineID.Select();
+                return;
+            }
+
+            P18_Calibration_List callForm = new P18_Calibration_List(true, this.comboMDMachineID.Text, string.Empty, string.Empty);
             callForm.ShowDialog(this);
             this.disable_Carton_Scan();
             this.Display_Calibration(0, 0);
