@@ -285,23 +285,23 @@ select	pld.KPICode,
 		[Status] = case 
 			when Hauling.AddDate is null 
 					and AuditScanTime.ScanTime is null 
-					and MDScan.AddDate  is null
+					and MDScanTime.ScanTime  is null
 					and pld.ScanEditDate  is null 
 					and pld.TransferDate is null 
 					then 'Fty'
-			when pld.TransferDate is null and AuditScanTime.ScanTime > Hauling.AddDate and AuditScanTime.ScanTime > MDScan.AddDate and AuditScanTime.ScanTime > pld.ScanEditDate 
+			when pld.TransferDate is null and AuditScanTime.ScanTime > isnull(Hauling.AddDate, '19710101') and AuditScanTime.ScanTime > isnull(MDScanTime.ScanTime, '19710101') and AuditScanTime.ScanTime > isnull(pld.ScanEditDate, '19710101') 
 					then 'Packing Audit'
-			when pld.TransferDate is null and Hauling.AddDate > AuditScanTime.ScanTime and Hauling.AddDate > MDScan.AddDate and Hauling.AddDate > pld.ScanEditDate 
+			when pld.TransferDate is null and Hauling.AddDate > isnull(AuditScanTime.ScanTime, '19710101') and Hauling.AddDate > isnull(MDScanTime.ScanTime, '19710101') and Hauling.AddDate > isnull(pld.ScanEditDate, '19710101') 
 					then 'Hauiling'
-			when pld.TransferDate is null and MDScan.AddDate > AuditScanTime.ScanTime and MDScan.AddDate > Hauling.AddDate and MDScan.AddDate > pld.ScanEditDate 
+			when pld.TransferDate is null and MDScanTime.ScanTime > isnull(AuditScanTime.ScanTime, '19710101') and MDScanTime.ScanTime > isnull(Hauling.AddDate, '19710101') and MDScanTime.ScanTime > isnull(pld.ScanEditDate, '19710101') 
 					then 'M360 MD'
-			when pld.TransferDate is null and pld.ScanEditDate > AuditScanTime.ScanTime and pld.ScanEditDate > Hauling.AddDate and pld.ScanEditDate > MDScan.AddDate 
+			when pld.TransferDate is null and pld.ScanEditDate > isnull(AuditScanTime.ScanTime, '19710101') and pld.ScanEditDate > isnull(Hauling.AddDate, '19710101') and pld.ScanEditDate > isnull(MDScanTime.ScanTime, '19710101') 
 					then 'Scan & Pack'
 			when pld.TransferDate is not null and ClogReceive.AddDate is null 
 					then ' Transit to CLOG'
-			when CFAReceive.AddDate is not null and CFAReceive.AddDate > CFAReturn.AddDate 
+			when CFAReceive.AddDate is not null and CFAReceive.AddDate > isnull(CFAReturn.AddDate, '19710101') 
 					then 'CFA'
-			when ClogReceive.AddDate is not null and (CFAReceive.AddDate is null or ClogReceiveCFA.AddDate > CFAReturn.AddDate )
+			when ClogReceive.AddDate is not null and (CFAReceive.AddDate is null or ClogReceiveCFA.AddDate > isnull(CFAReturn.AddDate, '19710101') )
 					then 'Clog'
 		else '' end ,
 		[HaulingScanTime] = Hauling.AddDate,
