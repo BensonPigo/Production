@@ -565,8 +565,9 @@ where a.MoldID IN ('{string.Join("','", moldID.Split(','))}') ";
                 string sqlCmd = $@"
 select　Thread_ComboID
 from Style_ThreadColorCombo st with (nolock)
-where	st.StyleUkey = '{styleUkey}' and
-		st.MachineTypeID = '{dr["MachineTypeID"]}'
+where	st.StyleUkey = '{styleUkey}'
+GROUP by Thread_ComboID
+order by Thread_ComboID asc
 ";
                 SelectItem item = new Win.Tools.SelectItem(sqlCmd, "12", dr[propertyname].ToString());
                 DialogResult returnResult = item.ShowDialog();
