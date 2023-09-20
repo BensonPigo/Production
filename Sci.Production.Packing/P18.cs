@@ -290,7 +290,7 @@ select top 1 * from MDCalibrationList where MachineID = '{this.MachineID}' and C
         private void TxtScanCartonSP_Validating(object sender, CancelEventArgs e)
         {
             DualResult result;
-            this.PackingListID = string.Empty;
+                this.PackingListID = string.Empty;
             this.CTNStarNo = string.Empty;
 
             // 掃碼階段btnCalibrationList 不能啟用
@@ -397,7 +397,7 @@ select top 1 * from MDCalibrationList where MachineID = '{this.MachineID}' and C
                 DualResult result_load = this.LoadScanDetail(0);
             }
             #endregion
-        }
+            }
 
         private bool LoadDatas()
         {
@@ -1797,13 +1797,6 @@ drop table #tmpUpdatedID
 
             if (this.IsNotInitialedIDX_CTRL())
             {
-                return;
-            }
-
-            // Check MD Machine#
-            if (MyUtility.Check.Empty(this.comboMDMachineID.Text))
-            {
-                MyUtility.Msg.WarningBox("Please select MD Machine#!!");
                 return;
             }
 

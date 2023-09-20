@@ -9,6 +9,7 @@ namespace Sci.Production.Packing
     public partial class P18_Calibration_List : Sci.Win.Subs.Input4
     {
         private string MachineID;
+        private int CalibrationListCnt;
 
         public P18_Calibration_List(bool canedit, string keyvalue1, string keyvalue2, string keyvalue3)
              : base(canedit, keyvalue1, keyvalue2, keyvalue3)
@@ -214,6 +215,34 @@ and CalibrationDate = CONVERT(date,getdate())
             this.Close();
         }
 
+        protected override bool OnSaveBefore()
+        {
+            string sqlcmd = $@"
+    select cnt = count(1) from MDCalibrationList 
+    where CONVERT(date, SubmitDate) = CONVERT(date,GETDATE())
+    and Operator = '{Env.User.UserID}'";
+            if (MyUtility.Check.Seek(sqlcmd, out DataRow dr))
+            {
+                this.CalibrationListCnt = MyUtility.Convert.GetInt(dr["cnt"]);
+            }
+            else
+            {
+                this.CalibrationListCnt = 0;
+            }
+
+            this.grid.ValidateControl();
+            this.gridbs.EndEdit();
+            foreach (DataRow drC in this.Datas)
+            {
+                if (MyUtility.Check.Empty(drC["CalibrationTime"]))
+                {
+                    drC.Delete();
+                }
+            }
+
+            return base.OnSaveBefore();
+        }
+
         protected override void OnSaveAfter()
         {
             base.OnSaveAfter();
@@ -240,14 +269,16 @@ order by CalibrationTime desc
                     // 如果現在時間大於CalibrationTime 就取最後一筆CalibrationTime + 現在時間
                     DateTime lastTime = (DateTime)MyUtility.Convert.GetDate(dtDtail.Rows[0]["Date"]);
                     DateTime nowTime = DateTime.Now;
-                    if (DateTime.Compare(lastTime,nowTime) < 0 || dtDtail.Rows.Count == 1)
-                    {
-                        P18_Calibration_History callForm = new P18_Calibration_History(nowTime.ToString("yyyy-MM-dd HH:mm"), lastTime.ToString("yyyy-MM-dd HH:mm"));
-                        callForm.ShowDialog(this);
-                    }
-                    else if (dtDtail.Rows.Count == 2)
+
+                    // 代表有新增資料, 顯示資料庫倒數2筆資料
+                    if (this.gridbs.Count > this.CalibrationListCnt && dtDtail.Rows.Count == 2)
                     {
                         P18_Calibration_History callForm = new P18_Calibration_History(dtDtail.Rows[0]["Date"].ToString(), dtDtail.Rows[1]["Date"].ToString());
+                        callForm.ShowDialog(this);
+                    }
+                    else
+                    {
+                        P18_Calibration_History callForm = new P18_Calibration_History(nowTime.ToString("yyyy-MM-dd HH:mm"), lastTime.ToString("yyyy-MM-dd HH:mm"));
                         callForm.ShowDialog(this);
                     }
                 }
