@@ -137,14 +137,14 @@ select distinct
 	,[AreaOperation] = isnull(EO.Description,'')
 	,[ActionTaken] = isnull(et.Description,'')
 from PackErrTransfer pe with(nolock)
-left join PackErrTransfer_Detail ped WITH(NOLOCK) on pe.ID = ped.id
+left join PackErrTransfer_Detail ped WITH(NOLOCK) on pe.PackingListID = ped.PackID and pe.CTNStartNo = ped.CTN
 left join orders o with(nolock) on pe.OrderID = o.ID
 left join Country with(nolock) on Country.id = o.Dest
 left join PackingErrorTypeReason perr with (nolock) on pe.PackingErrorID = perr.ID and perr.Type='TP'
 left join PackingList_Detail pd WITH (NOLOCK) on  pd.SCICtnNo = pe.SCICtnNo 
 left join PackingReason eg with(NOLOCK) on eg.Type='EG' and eg.ID=ped.PackingReasonIDForTypeEG
-left join PackingReason EO with(NOLOCK) on eg.Type='EO' and eg.ID=ped.PackingReasonIDForTypeEO
-left join PackingReason ET with(NOLOCK) on eg.Type='ET' and eg.ID=ped.PackingReasonIDForTypeET
+left join PackingReason EO with(NOLOCK) on EO.Type='EO' and EO.ID=ped.PackingReasonIDForTypeEO
+left join PackingReason ET with(NOLOCK) on ET.Type='ET' and ET.ID=ped.PackingReasonIDForTypeET
 outer apply(
 	select top 1 CFMDate,AddName
 	from PackErrCFM pt with(nolock)
