@@ -14,6 +14,7 @@
     [UnrollScanner]       VARCHAR (10)    DEFAULT ('') NULL,
     [UnrollActualQty]     NUMERIC (11, 2) DEFAULT ((0)) NULL,
     [UnrollRemark]        NVARCHAR (100)  DEFAULT ('') NULL,
+    [IsAdvance] BIT NOT NULL DEFAULT ((0)), 
     CONSTRAINT [PK_Fabric_UnrollandRelax] PRIMARY KEY CLUSTERED ([Barcode] ASC)
 );
 
@@ -77,3 +78,13 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'鬆布時�
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'主料條碼', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Fabric_UnrollandRelax', @level2type = N'COLUMN', @level2name = N'Barcode';
 
+
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'判斷是否為提前鬆布',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'Fabric_UnrollandRelax',
+    @level2type = N'COLUMN',
+    @level2name = N'IsAdvance'
