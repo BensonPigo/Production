@@ -264,7 +264,7 @@ order by CalibrationTime desc
                     this.ShowErr(returnResult);
                 }
 
-                if (dtDtail != null || dtDtail.Rows.Count > 0)
+                if (dtDtail != null && dtDtail.Rows.Count > 0)
                 {
                     // 如果現在時間大於CalibrationTime 就取最後一筆CalibrationTime + 現在時間
                     DateTime lastTime = (DateTime)MyUtility.Convert.GetDate(dtDtail.Rows[0]["Date"]);
@@ -281,6 +281,10 @@ order by CalibrationTime desc
                         P18_Calibration_History callForm = new P18_Calibration_History(nowTime.ToString("yyyy-MM-dd HH:mm"), lastTime.ToString("yyyy-MM-dd HH:mm"));
                         callForm.ShowDialog(this);
                     }
+                }
+                else
+                {
+                    MyUtility.Msg.WarningBox("Please insert at least one Calibration Time!");
                 }
 
                 P18.timer.Start();
