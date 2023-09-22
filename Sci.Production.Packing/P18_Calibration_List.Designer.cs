@@ -29,8 +29,8 @@
         private void InitializeComponent()
         {
             this.labMDMachine = new Sci.Win.UI.Label();
-            this.comboMDMachineID = new System.Windows.Forms.ComboBox();
             this.btnClose = new Sci.Win.UI.Button();
+            this.displayMDMachineID = new Sci.Win.UI.DisplayBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.btmcont.SuspendLayout();
@@ -80,15 +80,6 @@
             this.labMDMachine.TabIndex = 150;
             this.labMDMachine.Text = "MD Machine#";
             // 
-            // comboMDMachineID
-            // 
-            this.comboMDMachineID.FormattingEnabled = true;
-            this.comboMDMachineID.Location = new System.Drawing.Point(132, 19);
-            this.comboMDMachineID.Name = "comboMDMachineID";
-            this.comboMDMachineID.Size = new System.Drawing.Size(166, 24);
-            this.comboMDMachineID.TabIndex = 151;
-            this.comboMDMachineID.SelectedValueChanged += new System.EventHandler(this.comboMDMachineID_SelectedValueChanged);
-            // 
             // btnClose
             // 
             this.btnClose.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -100,11 +91,21 @@
             this.btnClose.UseVisualStyleBackColor = true;
             this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
             // 
+            // displayMDMachineID
+            // 
+            this.displayMDMachineID.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayMDMachineID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayMDMachineID.Location = new System.Drawing.Point(132, 20);
+            this.displayMDMachineID.Name = "displayMDMachineID";
+            this.displayMDMachineID.Size = new System.Drawing.Size(188, 23);
+            this.displayMDMachineID.TabIndex = 152;
+            // 
             // P18_Calibration_List
             // 
             this.ClientSize = new System.Drawing.Size(805, 527);
-            this.Controls.Add(this.comboMDMachineID);
+            this.Controls.Add(this.displayMDMachineID);
             this.Controls.Add(this.labMDMachine);
+            this.KeyField1 = "MachineID";
             this.Name = "P18_Calibration_List";
             this.OnLineHelpID = "Sci.Win.Subs.Input4";
             this.Text = "Calibration List";
@@ -112,18 +113,19 @@
             this.Controls.SetChildIndex(this.btmcont, 0);
             this.Controls.SetChildIndex(this.gridcont, 0);
             this.Controls.SetChildIndex(this.labMDMachine, 0);
-            this.Controls.SetChildIndex(this.comboMDMachineID, 0);
+            this.Controls.SetChildIndex(this.displayMDMachineID, 0);
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).EndInit();
             this.btmcont.ResumeLayout(false);
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
         #endregion
 
         private Win.UI.Label labMDMachine;
-        private System.Windows.Forms.ComboBox comboMDMachineID;
         private Win.UI.Button btnClose;
+        private Win.UI.DisplayBox displayMDMachineID;
     }
 }

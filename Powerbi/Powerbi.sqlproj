@@ -64,6 +64,7 @@
     <Folder Include="dbo\Stored Procedures\" />
     <Folder Include="Assemblies\" />
     <Folder Include="dbo\Stored Procedures\FTY" />
+    <Folder Include="dbo\View" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="dbo\Tables\T_AnnualSalesReport.sql" />
@@ -169,7 +170,6 @@
     <Build Include="dbo\Stored Procedures\FTY\P_ImportQAInspection_Fty.sql" />
     <Build Include="dbo\Tables\PurchaseAnalysis.sql" />
     <Build Include="dbo\Tables\P_Factory.sql" />
-    <Build Include="dbo\Tables\P_ArtWorkType.sql" />
     <Build Include="dbo\Tables\P_LoadingvsCapacity.sql" />
     <Build Include="dbo\Stored Procedures\FTY\P_ImportLoadingvsCapacity.sql" />
     <Build Include="dbo\Tables\P_SDP.sql" />
@@ -188,6 +188,7 @@
     <Build Include="dbo\Stored Procedures\FTY\P_Import_MtltoFTYAnalysis.sql" />
     <Build Include="dbo\Tables\P_CuttingScheduleOutputList.sql" />
     <Build Include="dbo\Stored Procedures\FTY\P_ImportCuttingScheduleOutputList.sql" />
+    <Build Include="dbo\View\P_ArtworkType.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Utility.dll" />
