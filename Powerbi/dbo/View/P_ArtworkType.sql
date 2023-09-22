@@ -5,4 +5,4 @@
 			Classify,
 			[ArtworkTypeUnit] =  ArtworkUnit,
 			[ArtworkTypeKey] =  iif(ArtworkUnit = '', ID, concat(ID, '-', ArtworkUnit))
-	FROM Production.dbo.ArtworkType
+	FROM [MainServer].Production.dbo.ArtworkType
