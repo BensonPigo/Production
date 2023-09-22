@@ -102,6 +102,8 @@
             this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.lbCalibrationTime = new Sci.Win.UI.Label();
             this.txtDest = new Sci.Production.Class.Txtcountry();
+            this.comboMDMachineID = new System.Windows.Forms.ComboBox();
+            this.labMDMachine = new Sci.Win.UI.Label();
             this.tabControlScanArea.SuspendLayout();
             this.tabPageCarton.SuspendLayout();
             this.tabPageScan.SuspendLayout();
@@ -113,7 +115,7 @@
             // 
             // labelPackID
             // 
-            this.labelPackID.Location = new System.Drawing.Point(9, 9);
+            this.labelPackID.Location = new System.Drawing.Point(9, 36);
             this.labelPackID.Name = "labelPackID";
             this.labelPackID.Size = new System.Drawing.Size(75, 23);
             this.labelPackID.TabIndex = 1;
@@ -121,7 +123,7 @@
             // 
             // labelCtnNo
             // 
-            this.labelCtnNo.Location = new System.Drawing.Point(9, 38);
+            this.labelCtnNo.Location = new System.Drawing.Point(9, 65);
             this.labelCtnNo.Name = "labelCtnNo";
             this.labelCtnNo.Size = new System.Drawing.Size(75, 23);
             this.labelCtnNo.TabIndex = 2;
@@ -129,7 +131,7 @@
             // 
             // labelSP
             // 
-            this.labelSP.Location = new System.Drawing.Point(9, 67);
+            this.labelSP.Location = new System.Drawing.Point(9, 94);
             this.labelSP.Name = "labelSP";
             this.labelSP.Size = new System.Drawing.Size(75, 23);
             this.labelSP.TabIndex = 3;
@@ -137,7 +139,7 @@
             // 
             // labelPO
             // 
-            this.labelPO.Location = new System.Drawing.Point(9, 96);
+            this.labelPO.Location = new System.Drawing.Point(9, 123);
             this.labelPO.Name = "labelPO";
             this.labelPO.Size = new System.Drawing.Size(75, 23);
             this.labelPO.TabIndex = 4;
@@ -145,7 +147,7 @@
             // 
             // labelBrand
             // 
-            this.labelBrand.Location = new System.Drawing.Point(9, 125);
+            this.labelBrand.Location = new System.Drawing.Point(9, 152);
             this.labelBrand.Name = "labelBrand";
             this.labelBrand.Size = new System.Drawing.Size(75, 23);
             this.labelBrand.TabIndex = 5;
@@ -153,7 +155,7 @@
             // 
             // labelStyle
             // 
-            this.labelStyle.Location = new System.Drawing.Point(193, 125);
+            this.labelStyle.Location = new System.Drawing.Point(193, 152);
             this.labelStyle.Name = "labelStyle";
             this.labelStyle.Size = new System.Drawing.Size(56, 23);
             this.labelStyle.TabIndex = 6;
@@ -161,7 +163,7 @@
             // 
             // labelPackedCartons
             // 
-            this.labelPackedCartons.Location = new System.Drawing.Point(631, 67);
+            this.labelPackedCartons.Location = new System.Drawing.Point(631, 94);
             this.labelPackedCartons.Name = "labelPackedCartons";
             this.labelPackedCartons.Size = new System.Drawing.Size(118, 23);
             this.labelPackedCartons.TabIndex = 7;
@@ -169,7 +171,7 @@
             // 
             // labelttlCatons
             // 
-            this.labelttlCatons.Location = new System.Drawing.Point(631, 9);
+            this.labelttlCatons.Location = new System.Drawing.Point(631, 36);
             this.labelttlCatons.Name = "labelttlCatons";
             this.labelttlCatons.Size = new System.Drawing.Size(118, 23);
             this.labelttlCatons.TabIndex = 8;
@@ -177,7 +179,7 @@
             // 
             // labelttlQty
             // 
-            this.labelttlQty.Location = new System.Drawing.Point(631, 38);
+            this.labelttlQty.Location = new System.Drawing.Point(631, 65);
             this.labelttlQty.Name = "labelttlQty";
             this.labelttlQty.Size = new System.Drawing.Size(118, 23);
             this.labelttlQty.TabIndex = 9;
@@ -185,7 +187,7 @@
             // 
             // labelttlPackQty
             // 
-            this.labelttlPackQty.Location = new System.Drawing.Point(631, 96);
+            this.labelttlPackQty.Location = new System.Drawing.Point(631, 123);
             this.labelttlPackQty.Name = "labelttlPackQty";
             this.labelttlPackQty.Size = new System.Drawing.Size(118, 23);
             this.labelttlPackQty.TabIndex = 10;
@@ -193,7 +195,7 @@
             // 
             // labelRemainCartons
             // 
-            this.labelRemainCartons.Location = new System.Drawing.Point(631, 125);
+            this.labelRemainCartons.Location = new System.Drawing.Point(631, 152);
             this.labelRemainCartons.Name = "labelRemainCartons";
             this.labelRemainCartons.Size = new System.Drawing.Size(118, 23);
             this.labelRemainCartons.TabIndex = 11;
@@ -201,7 +203,7 @@
             // 
             // labelRemainQty
             // 
-            this.labelRemainQty.Location = new System.Drawing.Point(631, 154);
+            this.labelRemainQty.Location = new System.Drawing.Point(631, 181);
             this.labelRemainQty.Name = "labelRemainQty";
             this.labelRemainQty.Size = new System.Drawing.Size(118, 23);
             this.labelRemainQty.TabIndex = 12;
@@ -211,7 +213,7 @@
             // 
             this.displayPackID.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayPackID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayPackID.Location = new System.Drawing.Point(88, 9);
+            this.displayPackID.Location = new System.Drawing.Point(88, 36);
             this.displayPackID.Name = "displayPackID";
             this.displayPackID.Size = new System.Drawing.Size(260, 23);
             this.displayPackID.TabIndex = 15;
@@ -220,7 +222,7 @@
             // 
             this.displayCtnNo.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayCtnNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayCtnNo.Location = new System.Drawing.Point(88, 38);
+            this.displayCtnNo.Location = new System.Drawing.Point(88, 65);
             this.displayCtnNo.Name = "displayCtnNo";
             this.displayCtnNo.Size = new System.Drawing.Size(96, 23);
             this.displayCtnNo.TabIndex = 16;
@@ -229,7 +231,7 @@
             // 
             this.displaySPNo.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displaySPNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displaySPNo.Location = new System.Drawing.Point(88, 67);
+            this.displaySPNo.Location = new System.Drawing.Point(88, 94);
             this.displaySPNo.Name = "displaySPNo";
             this.displaySPNo.Size = new System.Drawing.Size(260, 23);
             this.displaySPNo.TabIndex = 17;
@@ -238,7 +240,7 @@
             // 
             this.displayPoNo.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayPoNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayPoNo.Location = new System.Drawing.Point(88, 96);
+            this.displayPoNo.Location = new System.Drawing.Point(88, 123);
             this.displayPoNo.Name = "displayPoNo";
             this.displayPoNo.Size = new System.Drawing.Size(260, 23);
             this.displayPoNo.TabIndex = 18;
@@ -247,7 +249,7 @@
             // 
             this.displayBrand.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayBrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBrand.Location = new System.Drawing.Point(88, 125);
+            this.displayBrand.Location = new System.Drawing.Point(88, 152);
             this.displayBrand.Name = "displayBrand";
             this.displayBrand.Size = new System.Drawing.Size(96, 23);
             this.displayBrand.TabIndex = 19;
@@ -256,7 +258,7 @@
             // 
             this.displayStyle.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayStyle.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayStyle.Location = new System.Drawing.Point(252, 125);
+            this.displayStyle.Location = new System.Drawing.Point(252, 152);
             this.displayStyle.Name = "displayStyle";
             this.displayStyle.Size = new System.Drawing.Size(96, 23);
             this.displayStyle.TabIndex = 20;
@@ -265,7 +267,7 @@
             // 
             this.tabControlScanArea.Controls.Add(this.tabPageCarton);
             this.tabControlScanArea.Controls.Add(this.tabPageScan);
-            this.tabControlScanArea.Location = new System.Drawing.Point(9, 254);
+            this.tabControlScanArea.Location = new System.Drawing.Point(9, 281);
             this.tabControlScanArea.Name = "tabControlScanArea";
             this.tabControlScanArea.SelectedIndex = 0;
             this.tabControlScanArea.Size = new System.Drawing.Size(319, 196);
@@ -435,7 +437,7 @@
             this.gridScanDetail.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
             this.gridScanDetail.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.gridScanDetail.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.gridScanDetail.Location = new System.Drawing.Point(345, 278);
+            this.gridScanDetail.Location = new System.Drawing.Point(345, 305);
             this.gridScanDetail.Name = "gridScanDetail";
             this.gridScanDetail.ReadOnly = true;
             this.gridScanDetail.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
@@ -450,7 +452,7 @@
             // label1
             // 
             this.label1.BackColor = System.Drawing.Color.Transparent;
-            this.label1.Location = new System.Drawing.Point(13, 453);
+            this.label1.Location = new System.Drawing.Point(13, 480);
             this.label1.Name = "label1";
             this.label1.RectStyle.BorderColors.Bottom = System.Drawing.Color.Black;
             this.label1.RectStyle.BorderWidth = 2F;
@@ -466,7 +468,7 @@
             this.chkBoxNotScan.Checked = true;
             this.chkBoxNotScan.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkBoxNotScan.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.chkBoxNotScan.Location = new System.Drawing.Point(13, 479);
+            this.chkBoxNotScan.Location = new System.Drawing.Point(13, 506);
             this.chkBoxNotScan.Name = "chkBoxNotScan";
             this.chkBoxNotScan.Size = new System.Drawing.Size(198, 21);
             this.chkBoxNotScan.TabIndex = 3;
@@ -476,7 +478,7 @@
             // 
             // labelPKFilter
             // 
-            this.labelPKFilter.Location = new System.Drawing.Point(211, 488);
+            this.labelPKFilter.Location = new System.Drawing.Point(211, 515);
             this.labelPKFilter.Name = "labelPKFilter";
             this.labelPKFilter.Size = new System.Drawing.Size(113, 23);
             this.labelPKFilter.TabIndex = 30;
@@ -488,7 +490,7 @@
             this.comboPKFilter.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboPKFilter.FormattingEnabled = true;
             this.comboPKFilter.IsSupportUnselect = true;
-            this.comboPKFilter.Location = new System.Drawing.Point(327, 488);
+            this.comboPKFilter.Location = new System.Drawing.Point(327, 515);
             this.comboPKFilter.Name = "comboPKFilter";
             this.comboPKFilter.OldText = "";
             this.comboPKFilter.Size = new System.Drawing.Size(121, 24);
@@ -497,7 +499,7 @@
             // 
             // labelQuickSelCTN
             // 
-            this.labelQuickSelCTN.Location = new System.Drawing.Point(451, 488);
+            this.labelQuickSelCTN.Location = new System.Drawing.Point(451, 515);
             this.labelQuickSelCTN.Name = "labelQuickSelCTN";
             this.labelQuickSelCTN.Size = new System.Drawing.Size(122, 23);
             this.labelQuickSelCTN.TabIndex = 32;
@@ -507,7 +509,7 @@
             // 
             this.txtQuickSelCTN.BackColor = System.Drawing.Color.White;
             this.txtQuickSelCTN.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtQuickSelCTN.Location = new System.Drawing.Point(576, 488);
+            this.txtQuickSelCTN.Location = new System.Drawing.Point(576, 515);
             this.txtQuickSelCTN.Name = "txtQuickSelCTN";
             this.txtQuickSelCTN.Size = new System.Drawing.Size(99, 23);
             this.txtQuickSelCTN.TabIndex = 5;
@@ -525,7 +527,7 @@
             this.gridSelectCartonDetail.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
             this.gridSelectCartonDetail.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.gridSelectCartonDetail.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.gridSelectCartonDetail.Location = new System.Drawing.Point(13, 526);
+            this.gridSelectCartonDetail.Location = new System.Drawing.Point(13, 553);
             this.gridSelectCartonDetail.MultiSelect = false;
             this.gridSelectCartonDetail.Name = "gridSelectCartonDetail";
             this.gridSelectCartonDetail.ReadOnly = true;
@@ -544,7 +546,7 @@
             this.numBoxttlCatons.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.numBoxttlCatons.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numBoxttlCatons.IsSupportEditMode = false;
-            this.numBoxttlCatons.Location = new System.Drawing.Point(752, 9);
+            this.numBoxttlCatons.Location = new System.Drawing.Point(752, 36);
             this.numBoxttlCatons.Name = "numBoxttlCatons";
             this.numBoxttlCatons.NullValue = new decimal(new int[] {
             0,
@@ -566,7 +568,7 @@
             this.numBoxttlQty.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.numBoxttlQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numBoxttlQty.IsSupportEditMode = false;
-            this.numBoxttlQty.Location = new System.Drawing.Point(752, 38);
+            this.numBoxttlQty.Location = new System.Drawing.Point(752, 65);
             this.numBoxttlQty.Name = "numBoxttlQty";
             this.numBoxttlQty.NullValue = new decimal(new int[] {
             0,
@@ -588,7 +590,7 @@
             this.numBoxPackedCartons.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.numBoxPackedCartons.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numBoxPackedCartons.IsSupportEditMode = false;
-            this.numBoxPackedCartons.Location = new System.Drawing.Point(752, 67);
+            this.numBoxPackedCartons.Location = new System.Drawing.Point(752, 94);
             this.numBoxPackedCartons.Name = "numBoxPackedCartons";
             this.numBoxPackedCartons.NullValue = new decimal(new int[] {
             0,
@@ -610,7 +612,7 @@
             this.numBoxttlPackQty.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.numBoxttlPackQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numBoxttlPackQty.IsSupportEditMode = false;
-            this.numBoxttlPackQty.Location = new System.Drawing.Point(752, 96);
+            this.numBoxttlPackQty.Location = new System.Drawing.Point(752, 123);
             this.numBoxttlPackQty.Name = "numBoxttlPackQty";
             this.numBoxttlPackQty.NullValue = new decimal(new int[] {
             0,
@@ -632,7 +634,7 @@
             this.numBoxRemainCartons.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.numBoxRemainCartons.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numBoxRemainCartons.IsSupportEditMode = false;
-            this.numBoxRemainCartons.Location = new System.Drawing.Point(752, 125);
+            this.numBoxRemainCartons.Location = new System.Drawing.Point(752, 152);
             this.numBoxRemainCartons.Name = "numBoxRemainCartons";
             this.numBoxRemainCartons.NullValue = new decimal(new int[] {
             0,
@@ -654,7 +656,7 @@
             this.numBoxRemainQty.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.numBoxRemainQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numBoxRemainQty.IsSupportEditMode = false;
-            this.numBoxRemainQty.Location = new System.Drawing.Point(752, 154);
+            this.numBoxRemainQty.Location = new System.Drawing.Point(752, 181);
             this.numBoxRemainQty.Name = "numBoxRemainQty";
             this.numBoxRemainQty.NullValue = new decimal(new int[] {
             0,
@@ -673,7 +675,7 @@
             // 
             // lbCustomize1
             // 
-            this.lbCustomize1.Location = new System.Drawing.Point(352, 9);
+            this.lbCustomize1.Location = new System.Drawing.Point(352, 36);
             this.lbCustomize1.Name = "lbCustomize1";
             this.lbCustomize1.Size = new System.Drawing.Size(118, 23);
             this.lbCustomize1.TabIndex = 100;
@@ -681,7 +683,7 @@
             // 
             // lbCustomize2
             // 
-            this.lbCustomize2.Location = new System.Drawing.Point(352, 38);
+            this.lbCustomize2.Location = new System.Drawing.Point(352, 65);
             this.lbCustomize2.Name = "lbCustomize2";
             this.lbCustomize2.Size = new System.Drawing.Size(118, 23);
             this.lbCustomize2.TabIndex = 101;
@@ -689,7 +691,7 @@
             // 
             // lbCustomize3
             // 
-            this.lbCustomize3.Location = new System.Drawing.Point(352, 67);
+            this.lbCustomize3.Location = new System.Drawing.Point(352, 94);
             this.lbCustomize3.Name = "lbCustomize3";
             this.lbCustomize3.Size = new System.Drawing.Size(118, 23);
             this.lbCustomize3.TabIndex = 102;
@@ -699,7 +701,7 @@
             // 
             this.displayCustomize1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayCustomize1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayCustomize1.Location = new System.Drawing.Point(473, 9);
+            this.displayCustomize1.Location = new System.Drawing.Point(473, 36);
             this.displayCustomize1.Name = "displayCustomize1";
             this.displayCustomize1.Size = new System.Drawing.Size(155, 23);
             this.displayCustomize1.TabIndex = 103;
@@ -708,7 +710,7 @@
             // 
             this.displayCustomize2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayCustomize2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayCustomize2.Location = new System.Drawing.Point(473, 38);
+            this.displayCustomize2.Location = new System.Drawing.Point(473, 65);
             this.displayCustomize2.Name = "displayCustomize2";
             this.displayCustomize2.Size = new System.Drawing.Size(155, 23);
             this.displayCustomize2.TabIndex = 104;
@@ -717,14 +719,14 @@
             // 
             this.displayCustomize3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayCustomize3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayCustomize3.Location = new System.Drawing.Point(473, 67);
+            this.displayCustomize3.Location = new System.Drawing.Point(473, 94);
             this.displayCustomize3.Name = "displayCustomize3";
             this.displayCustomize3.Size = new System.Drawing.Size(155, 23);
             this.displayCustomize3.TabIndex = 105;
             // 
             // label2
             // 
-            this.label2.Location = new System.Drawing.Point(9, 153);
+            this.label2.Location = new System.Drawing.Point(9, 180);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(75, 23);
             this.label2.TabIndex = 107;
@@ -732,7 +734,7 @@
             // 
             // lbWeight
             // 
-            this.lbWeight.Location = new System.Drawing.Point(9, 183);
+            this.lbWeight.Location = new System.Drawing.Point(9, 210);
             this.lbWeight.Name = "lbWeight";
             this.lbWeight.Size = new System.Drawing.Size(131, 23);
             this.lbWeight.TabIndex = 108;
@@ -740,7 +742,7 @@
             // 
             // lbTotalWeight
             // 
-            this.lbTotalWeight.Location = new System.Drawing.Point(678, 488);
+            this.lbTotalWeight.Location = new System.Drawing.Point(678, 515);
             this.lbTotalWeight.Name = "lbTotalWeight";
             this.lbTotalWeight.Size = new System.Drawing.Size(140, 23);
             this.lbTotalWeight.TabIndex = 109;
@@ -750,7 +752,7 @@
             // 
             this.txtTotalWeight.BackColor = System.Drawing.Color.White;
             this.txtTotalWeight.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtTotalWeight.Location = new System.Drawing.Point(821, 488);
+            this.txtTotalWeight.Location = new System.Drawing.Point(821, 515);
             this.txtTotalWeight.Name = "txtTotalWeight";
             this.txtTotalWeight.Size = new System.Drawing.Size(101, 23);
             this.txtTotalWeight.TabIndex = 110;
@@ -760,7 +762,7 @@
             this.numWeight.BackColor = System.Drawing.Color.White;
             this.numWeight.DecimalPlaces = 3;
             this.numWeight.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numWeight.Location = new System.Drawing.Point(144, 183);
+            this.numWeight.Location = new System.Drawing.Point(144, 210);
             this.numWeight.Name = "numWeight";
             this.numWeight.NullValue = new decimal(new int[] {
             0,
@@ -782,7 +784,7 @@
             this.chk_AutoCheckWeight.Checked = true;
             this.chk_AutoCheckWeight.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chk_AutoCheckWeight.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.chk_AutoCheckWeight.Location = new System.Drawing.Point(144, 212);
+            this.chk_AutoCheckWeight.Location = new System.Drawing.Point(144, 239);
             this.chk_AutoCheckWeight.Name = "chk_AutoCheckWeight";
             this.chk_AutoCheckWeight.Size = new System.Drawing.Size(201, 21);
             this.chk_AutoCheckWeight.TabIndex = 112;
@@ -791,7 +793,7 @@
             // 
             // label3
             // 
-            this.label3.Location = new System.Drawing.Point(352, 96);
+            this.label3.Location = new System.Drawing.Point(352, 123);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(118, 23);
             this.label3.TabIndex = 113;
@@ -799,7 +801,7 @@
             // 
             // label4
             // 
-            this.label4.Location = new System.Drawing.Point(352, 183);
+            this.label4.Location = new System.Drawing.Point(352, 210);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(118, 23);
             this.label4.TabIndex = 114;
@@ -809,7 +811,7 @@
             // 
             this.displayKIT.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayKIT.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayKIT.Location = new System.Drawing.Point(473, 96);
+            this.displayKIT.Location = new System.Drawing.Point(473, 123);
             this.displayKIT.Name = "displayKIT";
             this.displayKIT.Size = new System.Drawing.Size(155, 23);
             this.displayKIT.TabIndex = 116;
@@ -819,7 +821,7 @@
             this.boxPackingRemark.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.boxPackingRemark.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.boxPackingRemark.IsSupportEditMode = false;
-            this.boxPackingRemark.Location = new System.Drawing.Point(473, 183);
+            this.boxPackingRemark.Location = new System.Drawing.Point(473, 210);
             this.boxPackingRemark.Multiline = true;
             this.boxPackingRemark.Name = "boxPackingRemark";
             this.boxPackingRemark.ReadOnly = true;
@@ -831,7 +833,7 @@
             this.chkVasShas.AutoSize = true;
             this.chkVasShas.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.chkVasShas.IsSupportEditMode = false;
-            this.chkVasShas.Location = new System.Drawing.Point(352, 156);
+            this.chkVasShas.Location = new System.Drawing.Point(352, 183);
             this.chkVasShas.Name = "chkVasShas";
             this.chkVasShas.ReadOnly = true;
             this.chkVasShas.Size = new System.Drawing.Size(95, 21);
@@ -844,7 +846,7 @@
             this.chkBrokenneedles.AutoSize = true;
             this.chkBrokenneedles.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.chkBrokenneedles.IsSupportEditMode = false;
-            this.chkBrokenneedles.Location = new System.Drawing.Point(502, 156);
+            this.chkBrokenneedles.Location = new System.Drawing.Point(502, 183);
             this.chkBrokenneedles.Name = "chkBrokenneedles";
             this.chkBrokenneedles.ReadOnly = true;
             this.chkBrokenneedles.Size = new System.Drawing.Size(126, 21);
@@ -854,7 +856,7 @@
             // 
             // label5
             // 
-            this.label5.Location = new System.Drawing.Point(352, 125);
+            this.label5.Location = new System.Drawing.Point(352, 152);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(118, 23);
             this.label5.TabIndex = 121;
@@ -864,7 +866,7 @@
             // 
             this.displayCustCD.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayCustCD.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayCustCD.Location = new System.Drawing.Point(473, 125);
+            this.displayCustCD.Location = new System.Drawing.Point(473, 152);
             this.displayCustCD.Name = "displayCustCD";
             this.displayCustCD.Size = new System.Drawing.Size(155, 23);
             this.displayCustCD.TabIndex = 122;
@@ -873,7 +875,7 @@
             // 
             this.chkAutoScan.AutoSize = true;
             this.chkAutoScan.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.chkAutoScan.Location = new System.Drawing.Point(13, 502);
+            this.chkAutoScan.Location = new System.Drawing.Point(13, 529);
             this.chkAutoScan.Name = "chkAutoScan";
             this.chkAutoScan.Size = new System.Drawing.Size(181, 21);
             this.chkAutoScan.TabIndex = 123;
@@ -882,7 +884,7 @@
             // 
             // btnCalibrationList
             // 
-            this.btnCalibrationList.Location = new System.Drawing.Point(788, 239);
+            this.btnCalibrationList.Location = new System.Drawing.Point(788, 274);
             this.btnCalibrationList.Name = "btnCalibrationList";
             this.btnCalibrationList.Size = new System.Drawing.Size(134, 30);
             this.btnCalibrationList.TabIndex = 124;
@@ -894,7 +896,7 @@
             // 
             this.chkAutoCalibration.AutoSize = true;
             this.chkAutoCalibration.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.chkAutoCalibration.Location = new System.Drawing.Point(9, 212);
+            this.chkAutoCalibration.Location = new System.Drawing.Point(9, 239);
             this.chkAutoCalibration.Name = "chkAutoCalibration";
             this.chkAutoCalibration.Size = new System.Drawing.Size(127, 21);
             this.chkAutoCalibration.TabIndex = 125;
@@ -910,7 +912,7 @@
             // 
             this.lbCalibrationTime.BackColor = System.Drawing.Color.Transparent;
             this.lbCalibrationTime.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbCalibrationTime.Location = new System.Drawing.Point(350, 245);
+            this.lbCalibrationTime.Location = new System.Drawing.Point(350, 272);
             this.lbCalibrationTime.Name = "lbCalibrationTime";
             this.lbCalibrationTime.Size = new System.Drawing.Size(338, 23);
             this.lbCalibrationTime.TabIndex = 126;
@@ -921,15 +923,33 @@
             // txtDest
             // 
             this.txtDest.DisplayBox1Binding = "";
-            this.txtDest.Location = new System.Drawing.Point(88, 153);
+            this.txtDest.Location = new System.Drawing.Point(88, 180);
             this.txtDest.Name = "txtDest";
-            this.txtDest.Size = new System.Drawing.Size(236, 22);
+            this.txtDest.Size = new System.Drawing.Size(236, 24);
             this.txtDest.TabIndex = 106;
             this.txtDest.TextBox1Binding = "";
             // 
+            // comboMDMachineID
+            // 
+            this.comboMDMachineID.FormattingEnabled = true;
+            this.comboMDMachineID.Location = new System.Drawing.Point(108, 8);
+            this.comboMDMachineID.Name = "comboMDMachineID";
+            this.comboMDMachineID.Size = new System.Drawing.Size(166, 24);
+            this.comboMDMachineID.TabIndex = 152;
+            // 
+            // labMDMachine
+            // 
+            this.labMDMachine.Location = new System.Drawing.Point(9, 9);
+            this.labMDMachine.Name = "labMDMachine";
+            this.labMDMachine.Size = new System.Drawing.Size(96, 23);
+            this.labMDMachine.TabIndex = 153;
+            this.labMDMachine.Text = "MD Machine#";
+            // 
             // P18
             // 
-            this.ClientSize = new System.Drawing.Size(934, 684);
+            this.ClientSize = new System.Drawing.Size(934, 710);
+            this.Controls.Add(this.labMDMachine);
+            this.Controls.Add(this.comboMDMachineID);
             this.Controls.Add(this.lbCalibrationTime);
             this.Controls.Add(this.chkAutoCalibration);
             this.Controls.Add(this.btnCalibrationList);
@@ -1050,6 +1070,8 @@
             this.Controls.SetChildIndex(this.btnCalibrationList, 0);
             this.Controls.SetChildIndex(this.chkAutoCalibration, 0);
             this.Controls.SetChildIndex(this.lbCalibrationTime, 0);
+            this.Controls.SetChildIndex(this.comboMDMachineID, 0);
+            this.Controls.SetChildIndex(this.labMDMachine, 0);
             this.tabControlScanArea.ResumeLayout(false);
             this.tabPageCarton.ResumeLayout(false);
             this.tabPageCarton.PerformLayout();
@@ -1139,5 +1161,7 @@
         private Win.UI.CheckBox chkAutoCalibration;
         private System.Windows.Forms.Timer timer1;
         private Win.UI.Label lbCalibrationTime;
+        private System.Windows.Forms.ComboBox comboMDMachineID;
+        private Win.UI.Label labMDMachine;
     }
 }
