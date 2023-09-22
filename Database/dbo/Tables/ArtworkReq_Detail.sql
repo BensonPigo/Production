@@ -13,5 +13,6 @@
     [ArtworkPOID] VARCHAR(13) NOT NULL DEFAULT (''), 
     [Article] VARCHAR(8) NOT NULL CONSTRAINT [DF_ArtworkReq_Detail_Article] DEFAULT (''), 
     [SizeCode] VARCHAR(8) NOT NULL CONSTRAINT [DF_ArtworkReq_Detail_SizeCode] DEFAULT (''), 
+    [Remark] NVARCHAR(1000) NOT NULL CONSTRAINT [DF_ArtworkReq_Detail_Remark] DEFAULT (''), 
     CONSTRAINT [PK_ArtworkReq_Detail] PRIMARY KEY CLUSTERED ([uKey]) 
 )

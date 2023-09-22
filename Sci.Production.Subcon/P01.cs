@@ -486,6 +486,7 @@ select
 		, sewinline = o.sewinline
 		, scidelivery = o.scidelivery
         , f.IsProduceFty
+        , a.ArtworkReq_DetailUkey
 from dbo.ArtworkPO_Detail a
 left join dbo.Orders o on a.OrderID = o.id
 left join Factory f with (nolock) on f.ID = o.FactoryID
