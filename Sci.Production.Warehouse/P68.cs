@@ -40,6 +40,8 @@ namespace Sci.Production.Warehouse
         /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
+            base.OnFormLoaded();
+
             #region 上面的Grid
             this.Helper.Controls.Grid.Generator(this.grid1)
             .Text("ID", header: "Cutplan ID", width: Widths.AnsiChars(15), iseditingreadonly: true)
