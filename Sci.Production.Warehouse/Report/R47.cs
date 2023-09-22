@@ -36,13 +36,20 @@ namespace Sci.Production.Warehouse
             this.sqlWhere = string.Empty;
             this.listSqlPara.Clear();
 
-            if (MyUtility.Check.Empty(this.unrollStartTime.Value1) && MyUtility.Check.Empty(this.unrollStartTime.Value2) &&
+            if (MyUtility.Check.Empty(this.txtSP.Text) &&
+                MyUtility.Check.Empty(this.unrollStartTime.Value1) && MyUtility.Check.Empty(this.unrollStartTime.Value2) &&
                 MyUtility.Check.Empty(this.unrollEndTime.Value1) && MyUtility.Check.Empty(this.unrollEndTime.Value2) &&
                 MyUtility.Check.Empty(this.RelaxationStartTime.Value1) && MyUtility.Check.Empty(this.RelaxationStartTime.Value2) &&
                 MyUtility.Check.Empty(this.RelaxationEndTime.Value1) && MyUtility.Check.Empty(this.RelaxationEndTime.Value2))
             {
                 MyUtility.Msg.WarningBox("Unroll Start Time, Unroll End Time, Relaxation Start Time and Relaxation End Time cannot all be empty.");
                 return false;
+            }
+
+            if (!MyUtility.Check.Empty(this.txtSP.Text))
+            {
+                this.listSqlPara.Add(new SqlParameter("@POID", this.txtSP.Text));
+                this.sqlWhere += " and fur.POID  = @POID";
             }
 
             if (!MyUtility.Check.Empty(this.unrollStartTime.Value1))
@@ -116,6 +123,7 @@ namespace Sci.Production.Warehouse
                 fur.RelaxationEndTime, 
                 UnrollScanner = dbo.getPass1 (fur.UnrollScanner), 
                 fur.UnrollActualQty, 
+                IsAdvance = IIF(fur.IsAdvance = 1, 'Y', ''),
                 fur.UnrollRemark
             from Fabric_UnrollandRelax fur
             left join PO_Supp_Detail psd on fur.POID = psd.ID
