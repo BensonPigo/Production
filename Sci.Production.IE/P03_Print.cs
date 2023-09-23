@@ -1,13 +1,14 @@
-﻿using System;
+﻿using Ict;
+using Sci.Data;
+using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.SqlClient;
 using System.Drawing;
-using Ict;
-using Sci.Data;
-using System.Runtime.InteropServices;
 using System.IO;
 using System.Linq;
-using System.Data.SqlClient;
+using System.Net.Mail;
+using System.Runtime.InteropServices;
 
 namespace Sci.Production.IE
 {
@@ -249,11 +250,8 @@ outer apply (
 	where o.MachineTypeID = m2.ID and m2.junk = 0
 )show
 where a.ID = {MyUtility.Convert.GetString(this.masterData["ID"])}
-{(!this.nonSewing ? $@" and not exists(
-    select 1 from MachineType_Detail md where md.ID = m.ID and md.IsNonSewingLine = 1 and md.FactoryID=b.FactoryID
-)" : string.Empty)}
+{(!this.nonSewing ? $@"and not exists(select 1 from MachineType_Detail md where md.ID = m.ID and md.IsNonSewingLine = 1 and md.FactoryID=b.FactoryID)" : string.Empty)}
 {(!this.isPPA ? " and a.PPA != 'C' " : string.Empty)}
-
 ";
 
             List<AttachmentData> tmpAttachmentDataList = new List<AttachmentData>();
@@ -275,7 +273,6 @@ where a.ID = {MyUtility.Convert.GetString(this.masterData["ID"])}
 
             foreach (DataRow dr in this.machineTypeDT.Rows)
             {
-
                 if (MyUtility.Check.Empty(dr["No"]))
                 {
                     // 沒有No的Attachment和Template都不要被計算
@@ -729,7 +726,6 @@ drop TABLE #tmp
             #region 第三頁 PPA
             if (!this.changePPA)
             {
-
                 sqlCmd = $@"
 select No 
     ,CT = COUNT(1)
@@ -761,12 +757,8 @@ OUTER APPLY(
 	)b
 )ActCycle
 where ld.ID = {MyUtility.Convert.GetString(this.masterData["ID"])} and IsHide = 0
-
-{(!this.nonSewing ? $@" and not exists(
-    select 1 from MachineType_Detail md where md.ID = m.ID and md.IsNonSewingLine = 1 and md.FactoryID = l.FactoryID
-)" : string.Empty)}
-
-{(!this.isPPA ? " and ld.PPA = 'C' and ld.PPA != '' " : " and ld.PPA = 'C' " )}
+{(!this.nonSewing ? $@" and not exists(select 1 from MachineType_Detail md where md.ID = m.ID and md.IsNonSewingLine = 1 and md.FactoryID = l.FactoryID)" : string.Empty)}
+{(!this.isPPA ? " and ld.PPA = 'C' and ld.PPA != '' " : " and ld.PPA = 'C' ")}
 GROUP BY NO, ActCycle.Value
 order by NO
 
@@ -847,9 +839,7 @@ OUTER APPLY(
 where /*IsPPa = 1 and*/  IsHide = 0 
 and no between t.minno and t.maxno
 and ld.PPA = 'C' 
-{(!this.nonSewing ? $@" and not exists(
-    select 1 from MachineType_Detail md where md.ID = m.ID and md.IsNonSewingLine = 1 and md.FactoryID = l.FactoryID
-)" : string.Empty)}
+{(!this.nonSewing ? $@" and not exists(select 1 from MachineType_Detail md where md.ID = m.ID and md.IsNonSewingLine = 1 and md.FactoryID = l.FactoryID)" : string.Empty)}
 GROUP BY NO, ActCycle.Value
 order by NO
 
@@ -925,10 +915,7 @@ OUTER APPLY(
 where IsHide = 0 
 and no between t.minno and t.maxno
 and ld.PPA = 'C'
-{(!this.nonSewing ? $@" and not exists(
-    select 1 from MachineType_Detail md where md.ID = m.ID and md.IsNonSewingLine = 1 and md.FactoryID = l.FactoryID
-)" : string.Empty)}
-
+{(!this.nonSewing ? $@" and not exists(select 1 from MachineType_Detail md where md.ID = m.ID and md.IsNonSewingLine = 1 and md.FactoryID = l.FactoryID)" : string.Empty)}
 GROUP BY NO, ActCycle.Value
 order by NO
 
@@ -977,11 +964,11 @@ drop TABLE #tmp1
                 return false;
             }
 
-            // string strXltName = Sci.Env.Cfg.XltPathDir + (this.display == "U" ? "\\IE_P03_Print_U.xltx" : "\\IE_P03_Print_Z.xltx");
             string strXltName = Env.Cfg.XltPathDir + "\\IE_P03_Print.xltx";
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
-
+#if DEBUG
             // excel.Visible = true;
+#endif
             if (excel == null)
             {
                 return false;
@@ -1191,8 +1178,9 @@ drop TABLE #tmp1
                 {
                     No = MyUtility.Convert.GetString(s["No"]),
                     MachineCount = MyUtility.Convert.GetBool(s["MachineCount"]),
-                    MachineTypeID = s["MachineTypeID"].ToString(),
-                    MasterPlusGroup = s["MasterPlusGroup"].ToString(),
+                    MachineTypeID = MyUtility.Convert.GetString(s["MachineTypeID"]),
+                    MasterPlusGroup = MyUtility.Convert.GetString(s["MasterPlusGroup"]),
+                    Attachment = MyUtility.Convert.GetString(s["Attachment"]),
                     Template = MyUtility.Convert.GetString(s["Template"]),
                     SewingMachineAttachmentID = MyUtility.Convert.GetString(s["SewingMachineAttachmentID"]),
                 });
@@ -1313,9 +1301,11 @@ drop TABLE #tmp1
 
             #region MACHINE
             decimal allct = Math.Ceiling((decimal)allMachine.Length / 3);
+
             // Machine table 只計算MachineCount有勾選的
-            var machineGroup = allMachineData.Where(o => o.MachineCount && !MyUtility.Check.Empty(o.MachineTypeID) && !MyUtility.Check.Empty(o.MasterPlusGroup)).Select(o => new { o.MachineTypeID, o.MasterPlusGroup }).ToList();
-            int machineCount = allMachineData.Where(o => o.MachineCount && !MyUtility.Check.Empty(o.MachineTypeID) && !MyUtility.Check.Empty(o.MasterPlusGroup)).Select(o => new { o.MachineTypeID, o.MasterPlusGroup }).Distinct().Count();
+            int machineCount = allMachineData
+                .Where(o => o.MachineCount && !MyUtility.Check.Empty(o.MachineTypeID) && !MyUtility.Check.Empty(o.MasterPlusGroup))
+                .Select(o => new { o.MachineTypeID, o.MasterPlusGroup }).Distinct().Count();
 
             List<AttachmentData> tmp = new List<AttachmentData>();
             if (sheetName == "Line Mapping")
@@ -1343,21 +1333,18 @@ drop TABLE #tmp1
             }
 
             var mmData = allMachineData.Where(o => o.MachineCount && !MyUtility.Check.Empty(o.MachineTypeID) && !MyUtility.Check.Empty(o.MasterPlusGroup))
+                .Distinct() // [No.]+[ST/MC type]+[Machine group]+[Attachment]+[Part ID]+[Template]皆相同則只為一筆
                 .GroupBy(o => new { o.MachineTypeID, o.MasterPlusGroup })
                 .Select(o => new { o.Key.MachineTypeID, o.Key.MasterPlusGroup, Count = o.Count() });
 
-            var aaData = allMachineData.Where(o => !MyUtility.Check.Empty(o.No) && !MyUtility.Check.Empty(o.Template)).Select(o => new { o.Template, o.No, o.SewingMachineAttachmentID });
-
-            //worksheet.Cells[24, 13] = mmData.Sum(o => o.Count);
             worksheet.Cells[24, 13] = $@"=SUM(M27:M{maxhineEndRow})";
 
             int surow = 0;
-            int sucol = 0;
             foreach (var item in mmData)
             {
                 worksheet.Cells[27 + surow, 10] = item.MachineTypeID;
                 worksheet.Cells[27 + surow, 11] = item.MasterPlusGroup;
-                 worksheet.Cells[27 + surow, 13] = machineGroup.Where(machine => machine.MachineTypeID == item.MachineTypeID && machine.MasterPlusGroup == item.MasterPlusGroup).Count();
+                worksheet.Cells[27 + surow, 13] = item.Count; // [No.]+[ST/MC type]+[Machine group]+[Attachment]+[Part ID]+[Template]皆相同則只為一筆
                 surow++;
             }
 
@@ -1447,8 +1434,6 @@ drop TABLE #tmp1
                     {
                         rngToInsert.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown);
                         worksheet.get_Range(string.Format("E{0}:I{0}", MyUtility.Convert.GetString(norow + k))).Merge(false); // 合併儲存格
-                        // worksheet.get_Range(string.Format("T{0}:U{0}", MyUtility.Convert.GetString(norow + k))).Merge(false); // 合併儲存格
-
                         addct++;
                     }
 
@@ -1590,7 +1575,6 @@ drop TABLE #tmp1
                     {
                         rngToInsert.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown);
                         worksheet.get_Range(string.Format("E{0}:I{0}", MyUtility.Convert.GetString(norow + k))).Merge(false); // 合併儲存格
-                        // worksheet.get_Range(string.Format("T{0}:U{0}", MyUtility.Convert.GetString(norow + k))).Merge(false); // 合併儲存格
                         addct++;
                     }
 
@@ -1721,8 +1705,6 @@ drop TABLE #tmp1
                         {
                             rngToInsert.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown);
                             worksheet.get_Range(string.Format("E{0}:I{0}", MyUtility.Convert.GetString(norow + i))).Merge(false); // 合併儲存格
-                            // worksheet.get_Range(string.Format("T{0}:U{0}", MyUtility.Convert.GetString(norow + i))).Merge(false); // 合併儲存格
-
                             addct++;
                         }
 
@@ -1855,8 +1837,6 @@ drop TABLE #tmp1
                         {
                             rngToInsert.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown);
                             worksheet.get_Range(string.Format("E{0}:I{0}", MyUtility.Convert.GetString(norow + i))).Merge(false); // 合併儲存格
-                            // worksheet.get_Range(string.Format("T{0}:U{0}", MyUtility.Convert.GetString(norow + i))).Merge(false); // 合併儲存格
-
                             addct++;
                         }
 
@@ -1999,24 +1979,21 @@ drop TABLE #tmp1
             #endregion
         }
 
+#pragma warning disable SA1516 // Elements should be separated by blank line
         private class AttachmentData
         {
             public string No { get; set; }
-
             public string STMC_Type { get; set; }
-
             public string MachineGroup { get; set; }
             public string AttachmentCount { get; set; }
-
             public string Attachment { get; set; }
             public string AttachmentPartID { get; set; }
-
             public string Template { get; set; }
             public string TemplateMoldID { get; set; }
-
             public string PPA { get; set; }
             public bool IsHide { get; set; }
         }
+#pragma warning restore SA1516 // Elements should be separated by blank line
 
         private class GCTimeChartData
         {
