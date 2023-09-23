@@ -697,8 +697,8 @@ where  inv.Type in ('1', '4')
 group by a.ID,a.SEQ1,a.seq2
 
 SELECT a.POID,a.SEQ1,a.seq2
-,invtQty = Round(sum(dbo.getUnitQty(inv.UnitID, p.StockUnit, isnull(inv.Qty, 0.00))), 2)
-into #InvTrans_MDPo
+    ,invtQty = dbo.getUnitQty(inv.UnitID, p.StockUnit, isnull(inv.Qty, 0.00))
+into #InvTrans_MDPo_0
 FROM InvTrans inv WITH (NOLOCK)
 inner join MDivisionPoDetail a on   inv.InventoryPOID = a.POID
 	and inv.InventorySeq1 = a.Seq1
@@ -707,7 +707,11 @@ inner join #tmpOrder o on o.poid = a.POID
 left join PO_Supp_Detail p on p.ID = a.POID
     and p.SEQ1= a.Seq1 and p.seq2= a.seq2
 where  inv.Type in ('1', '4')
-group by a.POID,a.SEQ1,a.seq2
+
+SELECT POID,SEQ1,seq2,invtQty=Round(sum(invtQty), 2)
+INTO #InvTrans_MDPo
+FROM #InvTrans_MDPo_0
+group by POID,SEQ1,seq2
 
 
 ;WITH QA AS (
