@@ -76,7 +76,7 @@ declare @subProcessCPU numeric(16,4)
 select @subProcessAMT = sum(Isnull(Price,0)) from GetSubProcessDetailByOrderID(@orderid,'AMT') 
 select @subProcessCPU = sum(Isnull(Price,0)) from GetSubProcessDetailByOrderID(@orderid,'CPU')
 
-select  [SubProcessCPU] = @subProcessCPU,
+select  [SubProcessCPU] = Round(@subProcessCPU,3),
         [SubProcessAMT] = @subProcessAMT";
 
             List<SqlParameter> parGetStdCost = new List<SqlParameter>()
