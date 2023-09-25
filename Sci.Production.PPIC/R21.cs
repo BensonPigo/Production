@@ -345,7 +345,7 @@ outer apply(
 						 FOR XML PATH('')), 1, 1, '')
 ) Size
 outer apply(
-	select ScanTime = t.AddDate, AuditFailQty = t.Qty
+	select Top 1 ScanTime = t.AddDate, AuditFailQty = t.Qty
 	from CTNPackingAudit t with(nolock)
 	where t.SCICtnNo = pld.SCICtnNo
 	and t.PackingListID = pld.ID
@@ -356,7 +356,7 @@ outer apply(
 	)
 )AuditScanTime
 outer apply(
-	select ScanTime = md.AddDate, md.MDFailQty
+	select Top 1 ScanTime = md.AddDate, md.MDFailQty
 	from MDScan md
 	where DataRemark = 'Create from M360' 
 	and md.PackingListID = pld.ID and md.SCICtnNo= pld.SCICtnNo
