@@ -519,12 +519,12 @@ BEGIN
 	inner join #tmp_P_PPICMASTERLIST t on p.[SPNO] = t.[SPNO]
 
 	insert into P_PPICMasterList_Extend(OrderID, ColumnName, ColumnValue)
-	select OrderID, ColumnName, isnull(ColumnValue, '')
+	select OrderID, ColumnName, isnull(ColumnValue, 0)
 	from #tmp_P_PPICMasterList_Extend t
 	where not exists (select 1 from P_PPICMasterList_Extend p where t.OrderID = p.OrderID and t.ColumnName = p.ColumnName)
 
 	update p 
-		set p.[ColumnValue] = ISNULL(t.[ColumnValue], '')
+		set p.[ColumnValue] = ISNULL(t.[ColumnValue], 0)
 	from P_PPICMasterList_Extend p 
 	inner join #tmp_P_PPICMasterList_Extend t on t.OrderID = p.OrderID and t.ColumnName = p.ColumnName
 
