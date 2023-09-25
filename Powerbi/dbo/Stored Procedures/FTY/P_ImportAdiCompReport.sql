@@ -9,6 +9,7 @@ Begin
 		select [value] = 
 			CASE WHEN @current_ServerName= 'PHL-NEWPMS-02' THEN 'PHL-NEWPMS' -- PH1
 				 WHEN @current_ServerName= 'VT1-PH2-PMS2b' THEN 'VT1-PH2-PMS2' -- PH2
+				 WHEN @current_ServerName= 'VT1-PH2-PMS2B\PAN' THEN 'MainServer' -- PAN
 				 WHEN @current_ServerName= 'system2017BK' THEN 'SYSTEM2017' -- SNP
 				 WHEN @current_ServerName= 'SPS-SQL2' THEN 'SPS-SQL.spscd.com' -- SPS
 				 WHEN @current_ServerName= 'SQLBK' THEN 'PMS-SXR' -- SPR
