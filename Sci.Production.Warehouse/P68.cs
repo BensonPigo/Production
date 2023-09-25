@@ -35,6 +35,8 @@ namespace Sci.Production.Warehouse
             this.cutingDate.Value1 = DateTime.Now;
             this.cutingDate.Value2 = DateTime.Now;
             this.txtmultifactory1.Text = Sci.Env.User.Factory;
+
+            this.EditMode = true;
         }
 
         /// <inheritdoc/>
