@@ -10,6 +10,10 @@ using System.Runtime.InteropServices;
 using Sci.Production.Class;
 using System.Runtime.DesignerServices;
 using System.IO;
+using System.Collections.ObjectModel;
+using System.Drawing.Imaging;
+using System.Drawing;
+using Sci.Production.PublicPrg;
 
 namespace Sci.Production.Warehouse
 {
@@ -304,98 +308,6 @@ where o.iD = '{this.POID}' and article<>''
                 if (dt_CheckOld.Rows.Count == 0)
                 {
                     isNewOrder = true;
-
-                    // 新單
-                    // Article要從Style_ThreadColorCombo抓取
-                    #region 取得新單的Article
-
-                    this.sql = $@"
-
---1.從訂單串回物料
-select distinct StyleID,BrandID,POID,FtyGroup 
-into #tmpOrder
-from orders where id like '{this.orderID}'
-
-
-Select distinct [ID] = PO.POID
-, std.SuppId --Mapping PO_Supp
-, std.SCIRefNo, std.ColorID, std.Article --Mapping PO_Supp_Detail
-into #ArticleForThread_Detail
-From #tmpOrder PO
-Inner Join dbo.Orders as o On o.ID = po.POID 
-Inner Join dbo.Style as s On s.Ukey = o.StyleUkey
-Inner Join dbo.Style_ThreadColorCombo as st On st.StyleUkey = s.Ukey
-Inner Join dbo.Style_ThreadColorCombo_Detail as std On std.Style_ThreadColorComboUkey = st.Ukey
-
-
-
-select distinct
-a.ID,SuppId,SCIRefNo,ColorID,
-[Article] = Stuff((select distinct concat( ',',Article)   
-								from #ArticleForThread_Detail 
-								where	ID		   = a.ID		and
-										SuppId	   = a.SuppId	and
-										SCIRefNo   = a.SCIRefNo	and
-										ColorID	   = a.ColorID	
-								FOR XML PATH('')),1,1,'') 
-into #ArticleForThread
-from #ArticleForThread_Detail a
-
-
---2.得到跟WH P03 一樣的對應方式
-SELECT DISTINCT [OrderIdList] = stuff((select concat('/',tmp.OrderID) 
-		                                    from (
-			                                    select orderID from po_supp_Detail_orderList e
-			                                    where e.ID = a.ID and e.SEQ1 =a.SEQ1 and e.SEQ2 = a.SEQ2 AND orderID = '{this.orderID}'
-		                                    ) tmp for xml path(''))
-                                    ,1,1,'')
-									,[Article] = aft.Article
-INTO #tmpOrder_Article
-from #tmpOrder as orders WITH (NOLOCK) 
-inner join PO_Supp_Detail a WITH (NOLOCK) on a.id = orders.poid
-left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = a.id and psdsC.seq1 = a.seq1 and psdsC.seq2 = a.seq2 and psdsC.SpecColumnID = 'Color'
-left join dbo.MDivisionPoDetail m WITH (NOLOCK) on  m.POID = a.ID and m.seq1 = a.SEQ1 and m.Seq2 = a.Seq2
-left join po_supp b WITH (NOLOCK) on a.id = b.id and a.SEQ1 = b.SEQ1
-left join #ArticleForThread aft on	aft.ID = m.POID		and
-									aft.SuppId	   = b.SuppId	and
-									aft.SCIRefNo   = a.SCIRefNo	and
-									aft.ColorID	   = psdsC.SpecValue	and
-									a.SEQ1 like 'T%' 
-WHERE  stuff((select concat('/',tmp.OrderID) 
-		                                    from (
-			                                    select orderID from po_supp_Detail_orderList e
-			                                    where e.ID = a.ID and e.SEQ1 =a.SEQ1 and e.SEQ2 = a.SEQ2 AND orderID = '{this.orderID}'
-		                                    ) tmp for xml path(''))
-                                    ,1,1,'') 
-IS NOT NULL 
-AND aft.Article IS NOT NULL
-
---3.再回去Style_ThreadColorCombo串出需要的資料
- select DISTINCT 
- B.Article
- from Orders o WITH (NOLOCK) 
- inner join Orders allOrder With (NoLock) on o.Poid = allOrder.Poid
- inner join Style_ThreadColorCombo A WITH (NOLOCK) on allOrder.StyleUkey = a.StyleUkey
- left join Style_ThreadColorCombo_Detail B WITH (NOLOCK) on B.Style_ThreadColorComboUkey = A.Ukey
- where o.ID = '{this.POID}'
- AND (
-     EXISTS (SELECT 1 FROM #tmpOrder_Article WHERE [OrderIdList] = allOrder.ID AND Article = B.Article) 
-     OR
-     (SELECT COUNT(1) FROM #tmpOrder_Article) = 0
- )
---Order List如果是空，代表所有訂單都有用到這個物料
-
-
-
-DROP TABLE #tmpOrder,#ArticleForThread_Detail,#ArticleForThread , #tmpOrder_Article
-";
-
-                    #endregion
-                    result = DBProxy.Current.Select(null, this.sql, out this.dtPrint_LeftColumn);
-                    if (!result)
-                    {
-                        return result;
-                    }
                 }
 
                 // 3.找出對應的Color，新單的話，由於是透過Order的StyleUkey去串出Article，母單子單都是相同StyleUkey
@@ -409,7 +321,7 @@ DROP TABLE #tmpOrder,#ArticleForThread_Detail,#ArticleForThread , #tmpOrder_Arti
 --1.從訂單串回物料
 select distinct StyleID,BrandID,POID,FtyGroup 
 into #tmpOrder
-from orders where id like '{this.orderID}'
+from orders where id = '{this.orderID}'
 
 
 Select distinct [ID] = PO.POID
@@ -423,150 +335,85 @@ Inner Join dbo.Style_ThreadColorCombo as st On st.StyleUkey = s.Ukey
 Inner Join dbo.Style_ThreadColorCombo_Detail as std On std.Style_ThreadColorComboUkey = st.Ukey
 
 
-
-select distinct
-a.ID,SuppId,SCIRefNo,ColorID,
-[Article] = Stuff((select distinct concat( ',',Article)   
-								from #ArticleForThread_Detail 
-								where	ID		   = a.ID		and
-										SuppId	   = a.SuppId	and
-										SCIRefNo   = a.SCIRefNo	and
-										ColorID	   = a.ColorID	
-								FOR XML PATH('')),1,1,'') 
-into #ArticleForThread
-from #ArticleForThread_Detail a
-
-
 --2.得到跟WH P03 一樣的對應方式
-SELECT DISTINCT [OrderIdList] = stuff((select concat('/',tmp.OrderID) 
-		                                    from (
-			                                    select orderID from po_supp_Detail_orderList e
-			                                    where e.ID = a.ID and e.SEQ1 =a.SEQ1 and e.SEQ2 = a.SEQ2 AND orderID = '{this.orderID}'
-		                                    ) tmp for xml path(''))
-                                    ,1,1,'')
-									,[Article] = aft.Article
+SELECT DISTINCT orders.POID
+				,[Article] = aft.Article
 INTO #tmpOrder_Article
 from #tmpOrder as orders WITH (NOLOCK) 
 inner join PO_Supp_Detail a WITH (NOLOCK) on a.id = orders.poid
 left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = a.id and psdsC.seq1 = a.seq1 and psdsC.seq2 = a.seq2 and psdsC.SpecColumnID = 'Color'
 left join dbo.MDivisionPoDetail m WITH (NOLOCK) on  m.POID = a.ID and m.seq1 = a.SEQ1 and m.Seq2 = a.Seq2
 left join po_supp b WITH (NOLOCK) on a.id = b.id and a.SEQ1 = b.SEQ1
-left join #ArticleForThread aft on	aft.ID = m.POID		and
-									aft.SuppId	   = b.SuppId	and
-									aft.SCIRefNo   = a.SCIRefNo	and
-									aft.ColorID	   = psdsC.SpecValue	and
-									a.SEQ1 like 'T%' 
-WHERE  stuff((select concat('/',tmp.OrderID) 
-		                                    from (
-			                                    select orderID from po_supp_Detail_orderList e
-			                                    where e.ID = a.ID and e.SEQ1 =a.SEQ1 and e.SEQ2 = a.SEQ2 AND orderID = '{this.orderID}'
-		                                    ) tmp for xml path(''))
-                                    ,1,1,'') 
-IS NOT NULL 
-AND aft.Article IS NOT NULL
+left join #ArticleForThread_Detail aft on	aft.ID = m.POID		and
+											aft.SuppId	   = b.SuppId	and
+											aft.SCIRefNo   = a.SCIRefNo	and
+											aft.ColorID	   = psdsC.SpecValue	and
+											a.SEQ1 like 'T%' 
+WHERE	aft.Article IS NOT NULL AND
+		exists(select 1 from po_supp_Detail_orderList e
+			            where e.ID = a.ID and e.SEQ1 =a.SEQ1 and e.SEQ2 = a.SEQ2 AND e.orderID = e.ID)
 
 --3.再回去Style_ThreadColorCombo串出需要的資料
  select DISTINCT 
  B.Article
  , B.ColorID AS ThreadColorID
  , c.Picture
+ , [Refno] = isnull(f.Refno, '')
+ , [Description] = isnull(f.Description, '')
+ , [ThreadPicture] = isnull(f.Picture, '')
+into #tmpThreadInfo
  from Orders o WITH (NOLOCK) 
- inner join Orders allOrder With (NoLock) on o.Poid = allOrder.Poid
- inner join Style_ThreadColorCombo A WITH (NOLOCK) on allOrder.StyleUkey = a.StyleUkey
- left join Style_ThreadColorCombo_Detail B WITH (NOLOCK) on B.Style_ThreadColorComboUkey = A.Ukey
- left join Color c with(nolock) on c.ID = b.ColorID
-                                    and c.BrandID = '{this.BrandID}'
+ inner join Style_ThreadColorCombo A WITH (NOLOCK) on o.StyleUkey = a.StyleUkey
+ inner join Style_ThreadColorCombo_Detail B WITH (NOLOCK) on B.Style_ThreadColorComboUkey = A.Ukey
+ inner join Color c with(nolock) on c.ID = b.ColorID
+                                    and c.BrandID = o.BrandID
+ inner join Fabric f with (nolock) on f.SCIRefno = b.SCIRefNo
  where o.ID = '{this.POID}'
  AND (
-     EXISTS (SELECT 1 FROM #tmpOrder_Article WHERE [OrderIdList] = allOrder.ID AND Article = B.Article) 
+     EXISTS (SELECT 1 FROM #tmpOrder_Article WHERE POID = o.ID AND Article = B.Article) 
      OR
      (SELECT COUNT(1) FROM #tmpOrder_Article) = 0
  )
 --Order List如果是空，代表所有訂單都有用到這個物料
 
+select  distinct Article
+from    #tmpThreadInfo
 
+select  distinct    Refno, Description, ThreadPicture
+from    #tmpThreadInfo
 
-DROP TABLE #tmpOrder,#ArticleForThread_Detail,#ArticleForThread , #tmpOrder_Article
+select * from #tmpThreadInfo
+
+DROP TABLE #tmpOrder, #ArticleForThread_Detail, #tmpOrder_Article, #tmpThreadInfo
 ";
 
                     #endregion
-                    result = DBProxy.Current.Select(null, this.sql, out this.dtPrint_Content);
+                    DataTable[] listThreadResult;
+                    result = DBProxy.Current.Select(null, this.sql, out listThreadResult);
                     if (!result)
                     {
                         return result;
                     }
+
+                    this.dtPrint_LeftColumn = listThreadResult[0];
+                    this.dtPrint_Content = listThreadResult[1];
+                    this.dtColor = listThreadResult[2];
                 }
                 else
                 {
-                    #region 重新找一次Article。Style_ThreadColorCombo的也要納入
-                    this.sql = $@"
-
-SELECT Article FROM
-(
-	select DISTINCT
-	  B.Article
-	, A.ThreadColorID
-	from Orders o WITH (NOLOCK) 
-	inner join Orders allOrder With (NoLock) on o.Poid = allOrder.Poid
-	inner join ThreadRequisition_Detail A WITH (NOLOCK) on allOrder.id = a.OrderID
-	left join ThreadRequisition_Detail_Cons B WITH (NOLOCK) on B.ThreadRequisition_DetailUkey = A.Ukey
-	where o.ID = '{this.POID}' and article<>'' AND allOrder.ID='{this.orderID}'
-
-	UNION  --加上當地採購
-	SELECT DISTINCT 
-	[Artuicle] = IIF(BOA_Article.Article IS NULL 
-					,Order_Article.Article
-					,BOA_Article.Article 
-					)				
-
-	,[ThreadColorID] = IIF(PSD.SuppColor = '',dbo.GetColorMultipleID('{this.BrandID}',isnull(psdsC.SpecValue, '')),PSD.SuppColor)
-	FROM PO_Supp_Detail PSD
-	INNER join Fabric f on f.SCIRefno = PSD.SCIRefno
-	LEFT JOIN PO_Supp_Detail_OrderList pd ON PSD.ID = pd.ID AND PSD.SEQ1= pd.SEQ1 AND PSD.SEQ2= pd.SEQ2
-    LEFT JOIN PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
-	LEFT JOIN Order_BOA boa ON boa.id =psd.ID and boa.SCIRefno = psd.SCIRefno and boa.seq=psd.SEQ1
-	OUTER APPLY(
-		SELECT oba.Article FROM Order_BOA ob
-		LEFT join Order_BOA_Article oba on oba.Order_BoAUkey = ob.Ukey
-		WHERE ob.id =psd.ID and ob.SCIRefno = psd.SCIRefno and ob.seq=psd.SEQ1
-	)BOA_Article
-	OUTER APPLY(
-		SELECT Article 
-		FROM Order_Article 
-		WHERE id =psd.ID
-	)Order_Article
-	WHERE PSD.ID ='{this.POID}' and f.MtltypeId like '%thread%' AND PSD.Junk=0 AND boa.Ukey IS NOT NULL AND pd.OrderID='{this.orderID}'
-)A
-WHERE ThreadColorID <> '' AND ThreadColorID IS NOT NULL
-
-UNION
-
- select DISTINCT 
- B.Article
- from Orders o WITH (NOLOCK) 
- inner join Orders allOrder With (NoLock) on o.Poid = allOrder.Poid
- inner join Style_ThreadColorCombo A WITH (NOLOCK) on allOrder.StyleUkey = a.StyleUkey
- left join Style_ThreadColorCombo_Detail B WITH (NOLOCK) on B.Style_ThreadColorComboUkey = A.Ukey
- where o.ID = '{this.POID}' 
-";
-
-                    result = DBProxy.Current.Select(null, this.sql, out this.dtPrint_LeftColumn);
-                    if (!result)
-                    {
-                        return result;
-                    }
-
-                    #endregion
-
                     #region 找出對應的Article、Color，由於舊單的繡線物料不會直接顯示在Seq，因此無法按照新單的做法
 
                     this.sql = $@"
 
-SELECT * FROM
+SELECT * into #tmpThreadInfo  FROM
 (
 	select 
 	  B.Article
 	, A.ThreadColorID
+    , [Picture] = ''
+    , [Refno] = ''
+    , [Description] = ''
+    , [ThreadPicture] = ''
 	from Orders o WITH (NOLOCK) 
 	inner join Orders allOrder With (NoLock) on o.Poid = allOrder.Poid
 	inner join ThreadRequisition_Detail A WITH (NOLOCK) on allOrder.id = a.OrderID
@@ -581,10 +428,15 @@ SELECT * FROM
 					,BOA_Article.Article 
 					)				
 
-	,[ThreadColorID] = IIF(PSD.SuppColor = '',dbo.GetColorMultipleID('{this.BrandID}', PSD.ColorID),PSD.SuppColor)
+	, [ThreadColorID] = IIF(PSD.SuppColor = '',dbo.GetColorMultipleID('{this.BrandID}', psdsC.SpecValue),PSD.SuppColor)
+    , [Picture] = ''
+    , [Refno] = ''
+    , [Description] = ''
+    , [ThreadPicture] = ''
 	FROM PO_Supp_Detail PSD
 	INNER join Fabric f on f.SCIRefno = PSD.SCIRefno
-	LEFT JOIN Order_BOA boa ON boa.id =psd.ID and boa.SCIRefno = psd.SCIRefno and boa.seq=psd.SEQ1
+    left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = PSD.id and psdsC.seq1 = PSD.seq1 and psdsC.seq2 = PSD.seq2 and psdsC.SpecColumnID = 'Color'	
+    LEFT JOIN Order_BOA boa ON boa.id =psd.ID and boa.SCIRefno = psd.SCIRefno and boa.seq=psd.SEQ1
 	LEFT JOIN PO_Supp_Detail_OrderList pd ON PSD.ID = pd.ID AND PSD.SEQ1= pd.SEQ1 AND PSD.SEQ2= pd.SEQ2
 	OUTER APPLY(
 		SELECT oba.Article FROM Order_BOA ob
@@ -606,22 +458,44 @@ UNION
  select --o.ID,
  B.Article
  , B.ColorID AS ThreadColorID
+ , c.Picture
+ , [Refno] = isnull(f.Refno, '')
+ , [Description] = isnull(f.Description, '')
+ , [ThreadPicture] = isnull(f.Picture, '')
  from Orders o WITH (NOLOCK) 
  inner join Orders allOrder With (NoLock) on o.Poid = allOrder.Poid
  inner join Style_ThreadColorCombo A WITH (NOLOCK) on allOrder.StyleUkey = a.StyleUkey
  left join Style_ThreadColorCombo_Detail B WITH (NOLOCK) on B.Style_ThreadColorComboUkey = A.Ukey
+ inner join Color c with(nolock) on c.ID = b.ColorID
+                                    and c.BrandID = o.BrandID
+ inner join Fabric f with (nolock) on f.SCIRefno = b.SCIRefNo
  where o.ID = '{this.POID}' --and article<>''
- group by B.Article, B.ColorID-- ,o.ID
+ group by B.Article, B.ColorID, isnull(f.Refno, ''), isnull(f.Description, ''), isnull(f.Picture, ''), c.Picture
 
 
 ORDER BY ThreadColorID ASC
+
+select  distinct Article
+from    #tmpThreadInfo
+
+select  distinct    Refno, Description, ThreadPicture
+from    #tmpThreadInfo
+
+select * from #tmpThreadInfo
+
+drop table #tmpThreadInfo
 ";
                     #endregion
-                    result = DBProxy.Current.Select(null, this.sql, out this.dtPrint_Content);
+                    DataTable[] listThreadResult;
+                    result = DBProxy.Current.Select(null, this.sql, out listThreadResult);
                     if (!result)
                     {
                         return result;
                     }
+
+                    this.dtPrint_LeftColumn = listThreadResult[0];
+                    this.dtPrint_Content = listThreadResult[1];
+                    this.dtColor = listThreadResult[2];
                 }
                 #endregion
             }
@@ -739,30 +613,6 @@ ORDER BY ThreadColorID ASC
                     cC = ((this.dtPrint_Content.Rows.Count - 1) / 6) + 1;
                     rC = ((this.dtPrint_LeftColumn.Rows.Count - 1) / 7) + 1;
                     pagecount = cC * rC;
-                }
-                else if (this.radioThread.Checked)
-                {
-                    DataTable dtMaxLength;
-                    string strDtPrintMaxLengthSQL = @"
-select Max(ColorCount)
-from (
-    select ColorCount = count(1)
-    from #tmp
-    group by Article
-) tmp";
-                    DualResult resultMaxLength = MyUtility.Tool.ProcessWithDatatable(this.dtPrint_Content, null, strDtPrintMaxLengthSQL, out dtMaxLength);
-                    if (resultMaxLength == false)
-                    {
-                        MyUtility.Msg.WarningBox(resultMaxLength.Description);
-                        return false;
-                    }
-                    else
-                    {
-                        intThreadMaxLength = Convert.ToInt32(dtMaxLength.Rows[0][0]);
-                        cC = ((intThreadMaxLength - 1) / 6) + 1;
-                        rC = ((this.dtPrint_LeftColumn.Rows.Count - 1) / 4) + 1;
-                        pagecount = cC * rC;
-                    }
                 }
                 else
                 {
@@ -975,7 +825,6 @@ from (
                             int rowStr = 5;
                             rowStr += (k % 4) * 2;
                             tables.Cell(rowStr, 2 + (i % 6)).Range.Text = this.temp;
-
                         }
                         #endregion
                     }
@@ -1004,8 +853,13 @@ from (
                 }
                 else if (this.radioThread.Checked)
                 {
-                    for (int i = 0; i < intThreadMaxLength; i++)
+                    for (int i = 0; i < this.dtPrint_Content.Rows.Count; i++)
                     {
+                        #region 準備欄位名稱
+                        this.temp = this.dtPrint_Content.Rows[i]["Refno"].ToString() + Environment.NewLine
+                             + this.dtPrint_Content.Rows[i]["Description"].ToString().Trim();
+
+                        // 填入欄位名稱,從第一欄開始填入需要的頁數
                         for (int j = 0; j < rC; j++)
                         {
                             // 根據 DataColumn 選取 Table => 首頁 + (DataColumnIndex / 6 * 每個 FabricPanelCode 會占用的 Table 數) + 目前是編輯第 j 個 Table
@@ -1014,46 +868,73 @@ from (
 
                             // 有資料時才顯示Type
                             tables.Cell(2, 2 + (i % 6)).Range.Text = row2Type;
-                        }
-                    }
-                    #region 填入Datas
-                    for (int k = 0; k < this.dtPrint_LeftColumn.Rows.Count; k++)
-                    {
-                        // 準備filter字串
-                        this.sql = string.Format(
-                            @"Article='{0}'",
-                            this.dtPrint_LeftColumn.Rows[k]["Article"].ToString().Trim());
-                        if (this.dtPrint_Content.Select(this.sql).Length > 0)
-                        {
-                            DataRow[] rowColorA = this.dtPrint_Content.Select(this.sql);
-                            for (int l = 0; l < rowColorA.Count(); l++)
+                            tables.Cell(3, 2 + (i % 6)).Range.Text = this.temp;
+
+                            // 第一Row塞入圖片
+                            Microsoft.Office.Interop.Word.Range rng = tables.Cell(4, 2 + (i % 6)).Range;
+                            path = System.IO.Path.Combine(this.FabricPath, this.BrandID, this.dtPrint_Content.Rows[i]["ThreadPicture"].ToString().Trim());
+                            if (this.FileExists(path))
                             {
-                                // 填入字串
-                                this.temp = rowColorA[l]["ThreadColorID"].ToString().Trim();
-
-                                // 根據 DataColumn & DataRow 選取 Table => 首頁 + (DataColumnIndex / 6 * 每個 FabricPanelCode 會占用的 Table 數) + k / Table 可存的 Article 數量
-                                // 其中 K 代表, 目前編輯到 FabricPanelCode 的第幾個 Article
-                                tables = table[nextPage + (l / 6 * rC) + (k / 4)];
-
-                                // 填入字串
-                                // 塞入文字 5 7 9 11
-                                int rowStr = 5;
-                                rowStr += (k % 4) * 2;
-                                tables.Cell(rowStr, 2 + (l % 6)).Range.Text = this.temp;
+                                rng.InlineShapes.AddPicture(path).ConvertToShape().WrapFormat.Type = Word.WdWrapType.wdWrapInline;
+                            }
+                        }
+                        #endregion
+                        #region 填入Datas
+                        for (int k = 0; k < this.dtPrint_LeftColumn.Rows.Count; k++)
+                        {
+                            // 準備filter字串
+                            this.sql = string.Format(
+                                @"Refno='{0}' and Article='{1}'",
+                                this.dtPrint_Content.Rows[i]["Refno"].ToString().Trim(), this.dtPrint_LeftColumn.Rows[k]["Article"].ToString().Trim());
+                            if (this.dtColor.Select(this.sql).Length > 0)
+                            {
+                                DataRow[] colorDetails = this.dtColor.Select(this.sql);
+                                this.temp = colorDetails.Select(s => s["ThreadColorID"].ToString()).JoinToString(Environment.NewLine);
 
                                 // 塞入圖片 6 8 10 12
                                 int rowPic = 6;
                                 rowPic += (k % 4) * 2;
-                                Microsoft.Office.Interop.Word.Range rng = tables.Cell(rowPic, 2 + (l % 6)).Range;
-                                path = System.IO.Path.Combine(this.ColorPath, rowColorA[l]["Picture"].ToString().Trim());
-                                if (this.FileExists(path))
+                                Word.Cell cell = tables.Cell(rowPic, 2 + (i % 6));
+                                Microsoft.Office.Interop.Word.Range rng = cell.Range;
+
+                                List<string> colorPicPaths = colorDetails.Select(s => Path.Combine(this.ColorPath, s["Picture"].ToString().Trim())).ToList();
+                                Bitmap mergedImage = Prgs.MergeImages(colorPicPaths);
+
+                                if (mergedImage != null)
                                 {
-                                    rng.InlineShapes.AddPicture(path).ConvertToShape().WrapFormat.Type = Word.WdWrapType.wdWrapInline;
+                                    // 將合併後的圖片插入到 Word 表格中
+                                    Clipboard.SetImage(mergedImage);
+
+                                    // 直接將剪貼簿中的圖片插入到 Word 表格中
+                                    rng.Paste();
+
+                                    // 調整剪貼簿中的圖片大小以符合儲存格寬度
+                                    Word.InlineShape inlineShape = rng.InlineShapes[1]; // 假設圖片是第一個 InlineShape
+
+                                    if (inlineShape.Width > cell.Width)
+                                    {
+                                        inlineShape.Width = cell.Width - 10;
+                                    }
                                 }
                             }
+                            else
+                            {
+                                this.temp = string.Empty;
+                            }
+
+                            // 根據 DataColumn & DataRow 選取 Table => 首頁 + (DataColumnIndex / 6 * 每個 FabricPanelCode 會占用的 Table 數) + k / Table 可存的 Article 數量
+                            // 其中 K 代表, 目前編輯到 FabricPanelCode 的第幾個 Article
+                            tables = table[nextPage + (i / 6 * rC) + (k / 4)];
+
+                            // 填入字串
+                            //tables.Cell(4 + (k % 4), 2 + (i % 6)).Range.Text = this.temp;
+                            // 塞入文字 5 7 9 11
+                            int rowStr = 5;
+                            rowStr += (k % 4) * 2;
+                            tables.Cell(rowStr, 2 + (i % 6)).Range.Text = this.temp;
                         }
+                        #endregion
                     }
-                    #endregion
                 }
                 #endregion
 

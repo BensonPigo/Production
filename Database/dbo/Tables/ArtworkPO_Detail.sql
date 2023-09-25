@@ -21,6 +21,7 @@
 	[ArtworkReqID] VARCHAR (13)    CONSTRAINT [DF_ArtworkPO_Detail_ArtworkReqID] DEFAULT ('') NOT NULL,
     [Article] VARCHAR(8) NOT NULL CONSTRAINT [DF_ArtworkPO_Detail_Article] DEFAULT (''), 
     [SizeCode] VARCHAR(8) NOT NULL CONSTRAINT [DF_ArtworkPO_Detail_SizeCode] DEFAULT (''), 
+    [ArtworkReq_DetailUkey] BIGINT NOT NULL CONSTRAINT [DF_ArtworkPO_Detail_ArtworkReq_DetailUkey] DEFAULT ((0)), 
     CONSTRAINT [PK_ArtworkPO_Detail] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
 

@@ -58,6 +58,58 @@ namespace Sci.Production.PublicPrg
             }
         }
 
+        /// <summary>
+        /// 合併多張圖片的方法
+        /// </summary>
+        /// <param name="imagePaths">imagePaths</param>
+        /// <returns>Bitmap</returns>
+        public static Bitmap MergeImages(List<string> imagePaths)
+        {
+            int totalWidth = 0;
+            int maxHeight = 0;
+
+            foreach (string imagePath in imagePaths)
+            {
+                if (!File.Exists(imagePath))
+                {
+                    continue;
+                }
+
+                using (Image img = Image.FromFile(imagePath))
+                {
+                    totalWidth += img.Width;
+                    if (img.Height > maxHeight)
+                        maxHeight = img.Height;
+                }
+            }
+
+            if (totalWidth == 0)
+            {
+                return null;
+            }
+
+            Bitmap mergedImage = new Bitmap(totalWidth, maxHeight);
+            using (Graphics g = Graphics.FromImage(mergedImage))
+            {
+                int x = 0;
+                foreach (string imagePath in imagePaths)
+                {
+                    if (!File.Exists(imagePath))
+                    {
+                        continue;
+                    }
+
+                    using (Image img = Image.FromFile(imagePath))
+                    {
+                        g.DrawImage(img, x, 0);
+                        x += img.Width;
+                    }
+                }
+            }
+
+            return mergedImage;
+        }
+
         /// <inheritdoc/>
         public static void SetGridColumnsColor(Win.UI.Grid grid, string tag, Color color)
         {

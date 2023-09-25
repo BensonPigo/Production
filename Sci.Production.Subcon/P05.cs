@@ -1,23 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Ict;
+using Ict.Win;
+using Sci.Data;
+using Sci.Production.PublicPrg;
+using System;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
-using System.Text;
-using System.Windows.Forms;
-
-using Ict;
-using Ict.Win;
-using Sci;
-using Sci.Data;
-using Sci.Production;
-
-using Sci.Production.PublicPrg;
 using System.Linq;
-using System.Data.SqlClient;
-using Sci.Win;
-using System.Reflection;
-using System.Transactions;
+using System.Windows.Forms;
 
 namespace Sci.Production.Subcon
 {
@@ -108,16 +98,11 @@ ap.OrderID
 ,ap.ukey
 ,o.FactoryID
 ,f.IsProduceFty
+,ap.Remark
 from dbo.ArtworkReq_Detail ap with (nolock)
 left join dbo.Orders o with (nolock) on ap.OrderID = o.id
 left join Factory f with (nolock) on f.ID = o.FactoryID
-left join dbo.ArtworkPO_Detail apo with (nolock) on apo.ID = ap.ArtworkPOID
-	AND apo.OrderID = ap.OrderID 
-    AND apo.Article = ap.Article 
-    AND apo.SizeCode = ap.SizeCode    
-	AND AP.ArtworkID = APO.ArtworkId 
-	AND AP.PatternCode = APO.PatternCode
-	and apo.ArtworkReqID = ap.ID
+left join dbo.ArtworkPO_Detail apo with (nolock) on apo.ArtworkReq_Detailukey = ap.ukey
 where ap.id = '{0}'  
 ORDER BY ap.OrderID   ", masterID);
 
@@ -359,6 +344,7 @@ group by ReqQty.value,PoQty.value";
             .Text("SizeCode", header: "Size", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Text("patterncode", header: "Cut Part", width: Widths.AnsiChars(5), iseditingreadonly: true)
             .Text("PatternDesc", header: "Cut Part Name", width: Widths.AnsiChars(20), iseditingreadonly: true)
+            .Text("Remark", header: "Remark", iseditingreadonly: true, width: Widths.AnsiChars(15))
             .Numeric("ReqQty", header: "Req. Qty", width: Widths.AnsiChars(6), settings: col_ReqQty) // 可編輯
             .Numeric("stitch", header: "PCS/Stitch", width: Widths.AnsiChars(3)) // 可編輯
             .Numeric("qtygarment", header: "Qty/GMT", width: Widths.AnsiChars(5), maximum: 99, integer_places: 2) // 可編輯
@@ -1279,7 +1265,6 @@ outer apply (   select val = isnull(sum(AD.ReqQty), 0)
 
         private DualResult UpdateIrregularStatusByDelete(DataTable dtDelete)
         {
-
             if (dtDelete.Rows.Count == 0)
             {
                 return new DualResult(true);
@@ -1358,6 +1343,5 @@ update ArtworkReq_Detail set ExceedQty = 0 where ID = '{dr["ID"]}'
 
             return new DualResult(true);
         }
-
     }
 }
