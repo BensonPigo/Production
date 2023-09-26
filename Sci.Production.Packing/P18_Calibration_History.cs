@@ -10,12 +10,14 @@ namespace Sci.Production.Packing
     {
         private string CalibrationTimeStart;
         private string CalibrationTimeEnd;
+        private string MachineNo;
 
-        public P18_Calibration_History(string LastTime, string SecondTime)
+        public P18_Calibration_History(string lastTime, string secondTime, string machineNo)
         {
             this.InitializeComponent();
-            this.CalibrationTimeStart = SecondTime;
-            this.CalibrationTimeEnd = LastTime;
+            this.CalibrationTimeStart = secondTime;
+            this.CalibrationTimeEnd = lastTime;
+            this.MachineNo = machineNo;
         }
 
         protected override void OnFormLoaded()
@@ -30,7 +32,7 @@ namespace Sci.Production.Packing
                 .Text("OrderID", header: "SP#", width: Widths.Auto(), iseditingreadonly: true)
                 .Text("CustPONo", header: "PO#", width: Widths.Auto(), iseditingreadonly: true)
                 .Text("StyleID", header: "Style", width: Widths.Auto(), iseditingreadonly: true)
-                .DateTime("ScanEditDate",header: "ScanTime",width: Widths.Auto(), iseditingreadonly: true)
+                .DateTime("ScanEditDate", header: "ScanTime", width: Widths.Auto(), iseditingreadonly: true)
                 .Text("MDMachineNo", header: "MD Machine#", width: Widths.Auto(), iseditingreadonly: true)
                 ;
             this.GetData();
@@ -53,6 +55,7 @@ select pd.id
 from PackingList_Detail pd with(nolock)
 left join Orders o with (nolock) on o.ID = pd.OrderID
 where ScanEditDate between '{this.CalibrationTimeStart}' and '{this.CalibrationTimeEnd}'
+and pd.MDMachineNo = '{this.MachineNo}'
 group by pd.id,pd.CTNStartNo,o.CustPONo,o.StyleID ,pd.ScanEditDate 
     ,pd.MDMachineNo
 
