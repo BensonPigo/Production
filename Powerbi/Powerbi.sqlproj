@@ -189,6 +189,8 @@
     <Build Include="dbo\Tables\P_CuttingScheduleOutputList.sql" />
     <Build Include="dbo\Stored Procedures\FTY\P_ImportCuttingScheduleOutputList.sql" />
     <Build Include="dbo\View\P_ArtworkType.sql" />
+    <Build Include="dbo\Stored Procedures\FTY\P_Import_QA_R11_DefectDetail.sql" />
+    <Build Include="dbo\Tables\P_FabricInspReport_ReceivingTransferIn.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Utility.dll" />
