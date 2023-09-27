@@ -3,8 +3,8 @@ As
 Begin
 
 Set NoCount On;
-	declare @current_ServerName varchar(50) = (SELECT [Server Name] = @@SERVERNAME)	
-    declare @current_PMS_ServerName nvarchar(50) = 'MainServer' 
+	declare @current_ServerName varchar(50) = (SELECT [Server Name] = @@SERVERNAME)
+	declare @current_PMS_ServerName nvarchar(50) = 'MainServer' 
 
 Declare @ExecSQL1 NVarChar(MAX);
 Declare @ExecSQL2 NVarChar(MAX);
@@ -132,38 +132,38 @@ Set @ExecSQL2 = N'
     ,[InspectionDate] = sp.InspectionDate
 into #result
 from #tmp_Workorder w 
-inner join ['+@current_PMS_ServerName+'].Production.dbo.Bundle_Detail bd WITH (NOLOCK, Index(PK_Bundle_Detail)) on bd.BundleNo = w.BundleNo 
-inner join ['+@current_PMS_ServerName+'].Production.dbo.Bundle b WITH (NOLOCK, index(PK_Bundle)) on b.ID = bd.ID
+inner join ['+@current_PMS_ServerName+'].Production.dbo.Bundle_Detail bd WITH (NOLOCK) on bd.BundleNo = w.BundleNo 
+inner join ['+@current_PMS_ServerName+'].Production.dbo.Bundle b WITH (NOLOCK) on b.ID = bd.ID
 inner join ['+@current_PMS_ServerName+'].Production.dbo.orders o WITH (NOLOCK) on o.Id = b.OrderId and o.MDivisionID  = b.MDivisionID 
 inner join ['+@current_PMS_ServerName+'].Production.dbo.factory f WITH (NOLOCK) on o.FactoryID= f.id and f.IsProduceFty=1
 outer apply(
     select s.ID,s.InOutRule,s.ArtworkTypeId
     from ['+@current_PMS_ServerName+'].Production.dbo.SubProcess s
         where exists (
-                        select 1 from ['+@current_PMS_ServerName+'].Production.dbo.Bundle_Detail_Art bda with (nolock, index(ID_Bundleno_SubID))
+                        select 1 from ['+@current_PMS_ServerName+'].Production.dbo.Bundle_Detail_Art bda with (nolock)
                                 where   bda.BundleNo = bd.BundleNo    and
                                         bda.ID = b.ID   and
                                         bda.SubProcessID = s.ID
                         ) or  (s.IsSelection = 0 AND s.IsRFIDDefault = 1)
 ) s
-left join ['+@current_PMS_ServerName+'].Production.dbo.BundleInOut bio WITH (NOLOCK, index(PK_BundleInOut)) on bio.Bundleno=bd.Bundleno and bio.SubProcessId = s.Id
+left join ['+@current_PMS_ServerName+'].Production.dbo.BundleInOut bio WITH (NOLOCK) on bio.Bundleno=bd.Bundleno and bio.SubProcessId = s.Id
 outer apply(
 	    select sub= stuff((
 		    Select distinct concat(''+'', bda.SubprocessId)
-		    from ['+@current_PMS_ServerName+'].Production.dbo.Bundle_Detail_Art bda with (nolock, index(ID_Bundleno_SubID))
+		    from ['+@current_PMS_ServerName+'].Production.dbo.Bundle_Detail_Art bda with (nolock)
 		    where bda.Id = bd.Id and bda.Bundleno = bd.Bundleno
 		    for xml path('''')
 	    ),1,1,'''')
 ) as sub 
 outer apply(
     select sub = 1
-    from ['+@current_PMS_ServerName+'].Production.dbo.Bundle_Detail_Art bda with (nolock, index(ID_Bundleno_SubID))
+    from ['+@current_PMS_ServerName+'].Production.dbo.Bundle_Detail_Art bda with (nolock)
     where bda.Id = bd.Id and bda.Bundleno = bd.Bundleno and bda.PostSewingSubProcess = 1
     and bda.SubprocessId = s.ID
 ) as ps
 outer apply(
     select top 1 sub = 1
-    from ['+@current_PMS_ServerName+'].Production.dbo.Bundle_Detail_Art bda with (nolock, index(ID_Bundleno_SubID))
+    from ['+@current_PMS_ServerName+'].Production.dbo.Bundle_Detail_Art bda with (nolock)
     where bda.Id = bd.Id and bda.Bundleno = bd.Bundleno and bda.NoBundleCardAfterSubprocess = 1
     --and bda.SubprocessId = s.ID
 ) as nbs '
@@ -191,7 +191,7 @@ select [Value] =  case when isnull(bio.RFIDProcessLocationID,'''') = '''' and is
 outer apply(
 	 select SpreadingNo = stuff((
 		    Select distinct concat('','', wo.SpreadingNoID)
-		    from ['+@current_PMS_ServerName+'].Production.dbo.WorkOrder wo WITH (NOLOCK, Index(CutRefNo)) 
+		    from ['+@current_PMS_ServerName+'].Production.dbo.WorkOrder wo WITH (NOLOCK) 
 		    where   wo.CutRef = b.CutRef 
                     and wo.ID = b.POID
             and wo.SpreadingNoID is not null
