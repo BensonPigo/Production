@@ -190,6 +190,8 @@
     <Build Include="dbo\Stored Procedures\FTY\P_ImportCuttingScheduleOutputList.sql" />
     <Build Include="dbo\View\P_ArtworkType.sql" />
     <Build Include="dbo\Tables\P_PPICMasterList_Extend.sql" />
+    <Build Include="dbo\Stored Procedures\FTY\P_Import_PPIC_R04.sql" />
+    <Build Include="dbo\Tables\P_FabricStatus_And_IssueFabricTracking.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Utility.dll" />

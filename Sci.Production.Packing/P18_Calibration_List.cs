@@ -273,12 +273,12 @@ order by CalibrationTime desc
                     // 代表有新增資料, 顯示資料庫倒數2筆資料
                     if (this.gridbs.Count > this.CalibrationListCnt && dtDtail.Rows.Count == 2)
                     {
-                        P18_Calibration_History callForm = new P18_Calibration_History(dtDtail.Rows[0]["Date"].ToString(), dtDtail.Rows[1]["Date"].ToString());
+                        P18_Calibration_History callForm = new P18_Calibration_History(dtDtail.Rows[0]["Date"].ToString(), dtDtail.Rows[1]["Date"].ToString(), this.MachineID);
                         callForm.ShowDialog(this);
                     }
                     else
                     {
-                        P18_Calibration_History callForm = new P18_Calibration_History(nowTime.ToString("yyyy-MM-dd HH:mm"), lastTime.ToString("yyyy-MM-dd HH:mm"));
+                        P18_Calibration_History callForm = new P18_Calibration_History(nowTime.ToString("yyyy-MM-dd HH:mm"), lastTime.ToString("yyyy-MM-dd HH:mm"), this.MachineID);
                         callForm.ShowDialog(this);
                     }
                 }
