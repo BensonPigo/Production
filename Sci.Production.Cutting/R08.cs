@@ -117,7 +117,7 @@ namespace Sci.Production.Cutting
             }
             #endregion
             sqlcmd = $@"
-select w.ID,w.CutRef,co.MDivisionId,ActCutDate=max(co.cDate)
+select w.ID,w.CutRef,w.MDivisionId,ActCutDate=max(co.cDate)
 into #tmp1
 from WorkOrder w with(nolock) 
 left join CuttingOutput_Detail cod with(nolock) on cod.WorkOrderUkey = w.Ukey
@@ -125,7 +125,7 @@ left join CuttingOutput co with(nolock) on co.id = cod.id
 where 1=1
 and isnull(w.CutRef,'') <> ''
 {where}
-group by w.CutRef,co.MDivisionID,w.ID
+group by w.CutRef,w.MDivisionID,w.ID
 
 select w.*,ActCutDate=co.cDate
 into #tmpCutRefNull
@@ -194,7 +194,7 @@ select distinct
 	WindowLength=isnull(ct.WindowLength,0)
 into #tmp3
 from #tmp2 t
-inner join WorkOrder w with(nolock) on w.CutRef = t.CutRef
+OUTER APPLY(SELECT TOP 1 * FROM WorkOrder w with(nolock) WHERE w.CutRef = t.CutRef)w
 inner join orders o with(nolock) on o.id = w.ID
 left join Fabric f with(nolock) on f.SCIRefno = w.SCIRefno
 left join SpreadingTime st with(nolock) on st.WeaveTypeID = f.WeaveTypeID
@@ -253,6 +253,7 @@ outer apply(
 	where cc.id = w.CutCellid 
 	and t.Layer between cmd.LayerLowerBound and cmd.LayerUpperBound
 	and cmd.WeaveTypeID = f.WeaveTypeID 
+    and cc.MDivisionid = t.mdivisionid
 )ActSpd
 
 union all
@@ -360,6 +361,7 @@ outer apply(
 	where cc.id = t.CutCellid 
 	and t.Layer between cmd.LayerLowerBound and cmd.LayerUpperBound
 	and cmd.WeaveTypeID = f.WeaveTypeID 
+    and cc.MDivisionid = t.mdivisionid
 )ActSpd
 
 select MDivisionID,FactoryID,EstCutDate,ActCutDate,CutCellid,SpreadingNoID,CutplanID,CutRef,ID,SubSP,StyleID,Size,noEXCESSqty,Description,WeaveTypeID,FabricCombo,

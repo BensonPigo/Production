@@ -235,7 +235,7 @@ namespace Sci.Production.CallPmsAPI
             return Convert.ToBase64String(encode.GetBytes(input));
         }
 
-        public static void MergeTo(this DataTable targetDt, ref DataTable sourceDt)
+        public static void MergeTo(this DataTable targetDt, ref DataTable sourceDt, bool isAcceptChanges = true)
         {
             if (targetDt == null)
             {
@@ -258,7 +258,10 @@ namespace Sci.Production.CallPmsAPI
                 sourceDt.ImportRow(dr);
             }
 
-            sourceDt.AcceptChanges();
+            if (isAcceptChanges)
+            {
+                sourceDt.AcceptChanges();
+            }
         }
 
         public static void MergeBySyncColType(this DataTable sourceDt, DataTable targetDt)

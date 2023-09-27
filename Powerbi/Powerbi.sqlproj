@@ -192,6 +192,8 @@
     <Build Include="dbo\Tables\P_PPICMasterList_Extend.sql" />
     <Build Include="dbo\Stored Procedures\FTY\P_Import_PPIC_R04.sql" />
     <Build Include="dbo\Tables\P_FabricStatus_And_IssueFabricTracking.sql" />
+    <Build Include="dbo\Tables\P_ActualCutOutputReport.sql" />
+    <Build Include="dbo\Stored Procedures\P_Import_Cutting_R08.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Utility.dll" />

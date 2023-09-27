@@ -173,6 +173,10 @@ BEGIN
 	RAISERROR('MailGroup  - Starts',0,0)
 	select * into dbo.MailGroup from (select * from ProductionTPE.dbo.MailGroup where Code like 'P%') as tmp
 
+	-------------MailGroup-------------------
+	RAISERROR('MailGroup  - Starts',0,0)
+	select * into dbo.AutomatedLineMappingConditionSetting from (select * from ProductionTPE.dbo.AutomatedLineMappingConditionSetting) as tmp
+
 	set transaction isolation level read committed
 END
 
