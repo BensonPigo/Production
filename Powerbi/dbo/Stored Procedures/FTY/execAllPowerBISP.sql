@@ -1,4 +1,4 @@
-﻿Create PROCEDURE [dbo].[execAllPowerBISP1]
+﻿Create PROCEDURE [dbo].[execAllPowerBISP]
 	
 AS
 BEGIN
