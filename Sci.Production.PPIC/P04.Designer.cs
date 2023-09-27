@@ -134,6 +134,7 @@
             this.txttpeuserSMR = new Sci.Production.Class.Txttpeuser();
             this.txtcdcode = new Sci.Production.Class.Txtcdcode();
             this.btnPadPrintColor = new Sci.Win.UI.Button();
+            this.checkTeamWear = new Sci.Win.UI.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -151,6 +152,7 @@
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.checkTeamWear);
             this.detailcont.Controls.Add(this.btnPadPrintColor);
             this.detailcont.Controls.Add(this.txtcdcodenew);
             this.detailcont.Controls.Add(this.lbConstruction);
@@ -1342,6 +1344,7 @@
             this.txtbrand1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "BrandID", true));
             this.txtbrand1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtbrand1.Location = new System.Drawing.Point(107, 34);
+            this.txtbrand1.MyDocumentdName = null;
             this.txtbrand1.Name = "txtbrand1";
             this.txtbrand1.Size = new System.Drawing.Size(66, 23);
             this.txtbrand1.TabIndex = 81;
@@ -1349,6 +1352,7 @@
             // 
             // txtuserLocalMR
             // 
+            this.txtuserLocalMR.AllowSelectResign = false;
             this.txtuserLocalMR.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "LocalMR", true));
             this.txtuserLocalMR.DisplayBox1Binding = "";
             this.txtuserLocalMR.Location = new System.Drawing.Point(433, 305);
@@ -1398,6 +1402,20 @@
             this.btnPadPrintColor.Text = "Pad Print Color";
             this.btnPadPrintColor.UseVisualStyleBackColor = true;
             this.btnPadPrintColor.Click += new System.EventHandler(this.btnPadPrintColor_Click);
+            // 
+            // checkTeamWear
+            // 
+            this.checkTeamWear.AutoSize = true;
+            this.checkTeamWear.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "TeamWear", true));
+            this.checkTeamWear.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.checkTeamWear.IsSupportEditMode = false;
+            this.checkTeamWear.Location = new System.Drawing.Point(526, 333);
+            this.checkTeamWear.Name = "checkTeamWear";
+            this.checkTeamWear.ReadOnly = true;
+            this.checkTeamWear.Size = new System.Drawing.Size(97, 21);
+            this.checkTeamWear.TabIndex = 96;
+            this.checkTeamWear.Text = "TeamWear";
+            this.checkTeamWear.UseVisualStyleBackColor = true;
             // 
             // P04
             // 
@@ -1536,5 +1554,6 @@
         private Class.ComboPictureSize comboPictureSize2;
         private Class.ComboPictureSize comboPictureSize1;
         private Win.UI.Button btnPadPrintColor;
+        private Win.UI.CheckBox checkTeamWear;
     }
 }
