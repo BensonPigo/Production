@@ -8,6 +8,8 @@ using System.Configuration;
 using System.Xml.Linq;
 using Ict;
 using System.Data.SqlClient;
+using System.ComponentModel;
+using Sci.Win.Tools;
 
 namespace Sci.Production.Class
 {
@@ -16,6 +18,14 @@ namespace Sci.Production.Class
     /// </summary>
     public partial class TxtCentralizedmulitM : Win.UI.TextBox
     {
+
+        /// <summary>
+        /// IsSingleSelect
+        /// </summary>
+        [Category("Custom Properties")]
+        [Description("是否單選")]
+        public bool IsSingleSelect { get; set; } = false;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="TxtCentralizedmulitM"/> class.
         /// </summary>
@@ -74,14 +84,24 @@ namespace Sci.Production.Class
                 }
             }
 
-            Win.Tools.SelectItem2 item = new Win.Tools.SelectItem2(factoryData, "M", "M", "5", this.Text);
+            Win.Tools.BaseSelectItem item;
+
+            if (this.IsSingleSelect)
+            {
+                item = new Win.Tools.SelectItem(factoryData, "M", "M", "5", this.Text);
+            }
+            else
+            {
+                item = new Win.Tools.SelectItem2(factoryData, "M", "M", "5", this.Text);
+            }
+
             DialogResult dialogResult = item.ShowDialog();
             if (dialogResult == DialogResult.Cancel)
             {
                 return;
             }
 
-            this.Text = item.GetSelectedString();
+            this.Text = this.IsSingleSelect ? ((SelectItem)item).GetSelectedString() : ((SelectItem2)item).GetSelectedString();
             this.ValidateText();
         }
     }

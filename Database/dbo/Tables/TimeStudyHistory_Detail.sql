@@ -19,6 +19,8 @@
     [SewingMachineAttachmentID] VARCHAR(200)    CONSTRAINT [DF_TimeStudyHistory_Detail_SewingMachineAttachmentID] DEFAULT ('') NOT NULL , 
     [PPA] VARCHAR(2)                CONSTRAINT [DF_TimeStudyHistory_Detail_PPA] DEFAULT ('') NOT NULL , 
     [IsNonSewingLine] BIT           CONSTRAINT [DF_TimeStudyHistory_Detail_IsNonSewingLine] NOT NULL DEFAULT ((0)), 
+    [StdSMV] NUMERIC(12, 4) CONSTRAINT [DF_TimeStudyHistory_Detail_StdSMV] DEFAULT (0) not NULL,
+    [Thread_ComboID] VARCHAR(10) CONSTRAINT [DF_TimeStudyHistory_Detail_Thread_ComboID] DEFAULT ('') not NULL,
     CONSTRAINT [PK_TimeStudyHistory_Detail] PRIMARY KEY CLUSTERED ([ID] ASC, [Seq] ASC)
 );
 
