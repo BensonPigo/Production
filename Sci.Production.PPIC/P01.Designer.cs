@@ -336,6 +336,7 @@
             this.btn_ArtworkTestDox = new Sci.Win.UI.Button();
             this.txtOrderType = new Sci.Win.UI.TextBox();
             this.chbStyleCarryover = new Sci.Win.UI.CheckBox();
+            this.checkTeamWear = new Sci.Win.UI.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -355,6 +356,7 @@
             this.detailcont.Controls.Add(this.txtOrderType);
             this.detailcont.Controls.Add(this.chbStyleCarryover);
             this.detailcont.Controls.Add(this.checkBoxDirectShip);
+            this.detailcont.Controls.Add(this.checkTeamWear);
             this.detailcont.Controls.Add(this.btn_ArtworkTestDox);
             this.detailcont.Controls.Add(this.checkOrganicCotton);
             this.detailcont.Controls.Add(this.displayConstruction);
@@ -3769,6 +3771,20 @@
             this.chbStyleCarryover.TabIndex = 257;
             this.chbStyleCarryover.Text = "Carryover";
             // 
+            // checkTeamWear
+            // 
+            this.checkTeamWear.AutoSize = true;
+            this.checkTeamWear.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "AirFreightByBrand", true));
+            this.checkTeamWear.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.checkTeamWear.IsSupportEditMode = false;
+            this.checkTeamWear.Location = new System.Drawing.Point(839, 470);
+            this.checkTeamWear.Name = "checkTeamWear";
+            this.checkTeamWear.ReadOnly = true;
+            this.checkTeamWear.Size = new System.Drawing.Size(87, 19);
+            this.checkTeamWear.TabIndex = 258;
+            this.checkTeamWear.Text = "TeamWear";
+            this.checkTeamWear.UseVisualStyleBackColor = true;
+            // 
             // P01
             // 
             this.ClientSize = new System.Drawing.Size(1008, 752);
@@ -4108,5 +4124,6 @@
         private Win.UI.CheckBox chbStyleCarryover;
         private Win.UI.DateBox dateBox2;
         private Win.UI.Label label5;
+        private Win.UI.CheckBox checkTeamWear;
     }
 }
