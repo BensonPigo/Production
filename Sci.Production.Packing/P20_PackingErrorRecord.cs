@@ -48,10 +48,15 @@ namespace Sci.Production.Packing
             {
                 this.dateBuyerDel.Value = (DateTime)this.drDetail["BuyerDelivery"];
             }
+
             this.txtRemark.Text = this.drDetail["Remark"].ToString();
 
             string selectCommand = $@"
-select * from PackErrTransfer_Detail
+select *
+      ,[ReasonforGarmentSound] = isnull((select ID+'-'+Description from PackingReason where Type = 'EG' and ID = p.PackingReasonIDForTypeEG),'')
+      ,[AreaOperation] = isnull((select ID+'-'+Description from PackingReason where Type = 'EO' and ID = p.PackingReasonIDForTypeEO),'')
+      ,[ActionTaken] = isnull((select ID+'-'+Description from PackingReason where Type = 'ET' and ID = p.PackingReasonIDForTypeET),'')
+from PackErrTransfer_Detail p
 where PackID = '{this.drDetail["PackID"]}'
 and CTN = '{this.drDetail["CTN"].ToString()}'
 ";
