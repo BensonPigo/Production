@@ -126,6 +126,7 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.Transactions" />
     <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Windows.Forms.DataVisualization" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -133,6 +134,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AutoLineMappingGridSyncScroll.cs" />
     <Compile Include="B01.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -247,6 +249,7 @@
     <Compile Include="B05.designer.cs">
       <DependentUpon>B05.cs</DependentUpon>
     </Compile>
+    <Compile Include="IEGridExts.cs" />
     <Compile Include="P01.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -350,12 +353,92 @@
     <Compile Include="P04.Designer.cs">
       <DependentUpon>P04.cs</DependentUpon>
     </Compile>
+    <Compile Include="P06_Print.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P06_Print.Designer.cs">
+      <DependentUpon>P06_Print.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P06_Default.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P06_Default.Designer.cs">
+      <DependentUpon>P06_Default.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P06_NotHitTargetReason.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P06_NotHitTargetReason.Designer.cs">
+      <DependentUpon>P06_NotHitTargetReason.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P06.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P06.Designer.cs">
+      <DependentUpon>P06.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P05.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P05.Designer.cs">
+      <DependentUpon>P05.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P05_AutomatedLineMapping.cs" />
+    <Compile Include="P05_Compare.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P05_Compare.Designer.cs">
+      <DependentUpon>P05_Compare.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P05_CreateNewLineMapping.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P05_CreateNewLineMapping.Designer.cs">
+      <DependentUpon>P05_CreateNewLineMapping.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P05_Default.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P05_Default.Designer.cs">
+      <DependentUpon>P05_Default.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P05_EditOperation.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P05_EditOperation.Designer.cs">
+      <DependentUpon>P05_EditOperation.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P05_LBR.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P05_LBR.Designer.cs">
+      <DependentUpon>P05_LBR.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P05_NotHitTargetReason.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P05_NotHitTargetReason.Designer.cs">
+      <DependentUpon>P05_NotHitTargetReason.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P05_Print.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P05_Print.Designer.cs">
+      <DependentUpon>P05_Print.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P06_PrintData.cs" />
+    <Compile Include="P05_PrintData.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="P02_RepeatCheckList.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="P02_RepeatCheckList.Designer.cs">
       <DependentUpon>P02_RepeatCheckList.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="R08.cs">
       <SubType>Form</SubType>
@@ -553,6 +636,46 @@
     <EmbeddedResource Include="P04.resx">
       <DependentUpon>P04.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="P06_Print.resx">
+      <DependentUpon>P06_Print.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P06_Default.resx">
+      <DependentUpon>P06_Default.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P06_NotHitTargetReason.resx">
+      <DependentUpon>P06_NotHitTargetReason.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P06.resx">
+      <DependentUpon>P06.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P05.resx">
+      <DependentUpon>P05.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P05_Compare.resx">
+      <DependentUpon>P05_Compare.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P05_CreateNewLineMapping.resx">
+      <DependentUpon>P05_CreateNewLineMapping.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P05_Default.resx">
+      <DependentUpon>P05_Default.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P05_EditOperation.resx">
+      <DependentUpon>P05_EditOperation.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P05_LBR.resx">
+      <DependentUpon>P05_LBR.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P05_NotHitTargetReason.resx">
+      <DependentUpon>P05_NotHitTargetReason.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P05_Print.resx">
+      <DependentUpon>P05_Print.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
     <EmbeddedResource Include="R08.resx">
       <DependentUpon>R08.cs</DependentUpon>
     </EmbeddedResource>
@@ -586,6 +709,10 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Sci.Production.CallPmsAPI\Sci.Production.CallPmsAPI.csproj">
+      <Project>{fc94fcaf-9216-4a2d-9e89-15fe27aef028}</Project>
+      <Name>Sci.Production.CallPmsAPI</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Sci.Production.Class\Sci.Production.Class.csproj">
       <Project>{0E35FD31-4A86-4D4E-A393-B6C5E3D7C956}</Project>
       <Name>Sci.Production.Class</Name>
@@ -611,6 +738,9 @@
   <ItemGroup>
     <Analyzer Include="..\packages\StyleCop.Analyzers.1.1.118\analyzers\dotnet\cs\StyleCop.Analyzers.CodeFixes.dll" />
     <Analyzer Include="..\packages\StyleCop.Analyzers.1.1.118\analyzers\dotnet\cs\StyleCop.Analyzers.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\EditOperation.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

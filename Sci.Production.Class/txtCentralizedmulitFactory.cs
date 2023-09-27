@@ -9,6 +9,7 @@ using System.Configuration;
 using System.Xml.Linq;
 using Ict;
 using System.Data.SqlClient;
+using Sci.Win.Tools;
 
 namespace Sci.Production.Class
 {
@@ -32,6 +33,13 @@ namespace Sci.Production.Class
         [Category("Custom Properties")]
         [Description("是否ProduceFty")]
         public bool IsProduceFty { get; set; } = false;
+
+        /// <summary>
+        /// IsSingleSelect
+        /// </summary>
+        [Category("Custom Properties")]
+        [Description("是否單選")]
+        public bool IsSingleSelect { get; set; } = false;
 
         /// <summary>
         /// IsJunk
@@ -126,14 +134,24 @@ namespace Sci.Production.Class
                 }
             }
 
-            Win.Tools.SelectItem2 item = new Win.Tools.SelectItem2(factoryData, "Factory", "Factory", "5", this.Text);
+            Win.Tools.BaseSelectItem item;
+
+            if (this.IsSingleSelect)
+            {
+                item = new Win.Tools.SelectItem(factoryData, "Factory", "Factory", "5", this.Text);
+            }
+            else
+            {
+                item = new Win.Tools.SelectItem2(factoryData, "Factory", "Factory", "5", this.Text);
+            }
+
             DialogResult dialogResult = item.ShowDialog();
             if (dialogResult == DialogResult.Cancel)
             {
                 return;
             }
 
-            this.Text = item.GetSelectedString();
+            this.Text = this.IsSingleSelect ? ((SelectItem)item).GetSelectedString() : ((SelectItem2)item).GetSelectedString();
             this.ValidateText();
         }
     }
