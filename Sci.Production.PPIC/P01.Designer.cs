@@ -3774,7 +3774,6 @@
             // checkTeamWear
             // 
             this.checkTeamWear.AutoSize = true;
-            this.checkTeamWear.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "AirFreightByBrand", true));
             this.checkTeamWear.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.checkTeamWear.IsSupportEditMode = false;
             this.checkTeamWear.Location = new System.Drawing.Point(839, 470);
