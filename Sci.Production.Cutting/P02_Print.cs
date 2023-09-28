@@ -838,11 +838,22 @@ select {byType},estCutDate{byType2} {sqlFabricKindinto} from #tmp2 group by {byT
                     int la = spList.Length / l;
                     for (int i = 1; i <= la; i++)
                     {
-                        if (spList.Length > l * i)
+                        if (spList.Length <= l * i)
                         {
-                            Excel.Range rangeRow8 = (Excel.Range)worksheet.Rows[8, Type.Missing];
-                            rangeRow8.RowHeight = 20.25 * (i + 1);
+                            continue;
                         }
+
+                        double rowHeight = 20.25 * (i + 1);
+                        Excel.Range rangeRow8 = (Excel.Range)worksheet.Rows[8, Type.Missing];
+
+                        // row高只能到409
+                        if (rowHeight > 409)
+                        {
+                            rangeRow8.RowHeight = 409;
+                            break;
+                        }
+
+                        rangeRow8.RowHeight = 20.25 * (i + 1);
                     }
                 }
                 #endregion
