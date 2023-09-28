@@ -81,10 +81,10 @@ select  0 as selected
         , a.Seq2
         , concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2) as seq
         , dbo.getmtldesc(a.id,a.seq1,a.seq2,2,0) as [Description]
-        , [ToPoID] = c.POID
-        , [ToSeq] = concat(c.Seq1,' ',c.Seq2)
-        , [ToSeq1] = c.seq1
-        , [ToSeq2] = c.seq2
+        , [ToPoID] = ''
+        , [ToSeq] = ''
+        , [ToSeq1] = ''
+        , [ToSeq2] = ''
         , c.Roll
         , c.Dyelot
         , c.inqty - c.outqty + c.adjustqty - c.ReturnQty as QtyBefore
@@ -290,6 +290,23 @@ Where   c.lock = 0
 
                     this.gridImport.GetDataRow(this.gridImport.GetSelectedRowIndex())["reasonid"] = x[0]["id"];
                     this.gridImport.GetDataRow(this.gridImport.GetSelectedRowIndex())["reason_nm"] = x[0]["name"];
+
+                    if (x[0]["id"].Equals("00001") == false)
+                    {
+                        this.gridImport.GetDataRow(this.gridImport.GetSelectedRowIndex())["ToPOID"] = string.Empty;
+                        this.gridImport.GetDataRow(this.gridImport.GetSelectedRowIndex())["ToSeq"] = string.Empty;
+                        this.gridImport.GetDataRow(this.gridImport.GetSelectedRowIndex())["ToSeq1"] = string.Empty;
+                        this.gridImport.GetDataRow(this.gridImport.GetSelectedRowIndex())["ToSeq2"] = string.Empty;
+                        this.col_ToPoid.IsEditingReadOnly = true;
+                        this.col_ToSeq.IsEditingReadOnly = true;
+                    }
+                    else
+                    {
+                        this.col_ToPoid.IsEditingReadOnly = false;
+                        this.col_ToSeq.IsEditingReadOnly = false;
+                    }
+
+                    this.gridImport.EndEdit();
                 }
             };
             ts.CellValidating += (s, e) =>
@@ -324,6 +341,11 @@ and ReasonTypeID='Stock_Remove' AND junk = 0", e.FormattedValue), out dr))
                             this.gridImport.GetDataRow(this.gridImport.GetSelectedRowIndex())["reason_nm"] = dr["name"];
                         }
                     }
+
+                    this.gridImport.GetDataRow(this.gridImport.GetSelectedRowIndex())["ToPOID"] = string.Empty;
+                    this.gridImport.GetDataRow(this.gridImport.GetSelectedRowIndex())["ToSeq"] = string.Empty;
+                    this.gridImport.GetDataRow(this.gridImport.GetSelectedRowIndex())["ToSeq1"] = string.Empty;
+                    this.gridImport.GetDataRow(this.gridImport.GetSelectedRowIndex())["ToSeq2"] = string.Empty;
                 }
             };
             #endregion
@@ -353,7 +375,7 @@ where ID = '{e.FormattedValue}'
 and MDivisionID = '{Sci.Env.User.Keyword}'";
                 if (!MyUtility.Check.Seek(sqlchk))
                 {
-                    MyUtility.Msg.WarningBox($"<ToPOID>:{e.FormattedValue} not found");
+                    MyUtility.Msg.WarningBox($"<Bulk SP#>:{e.FormattedValue} not found");
                     e.Cancel = true;
                     return;
                 }

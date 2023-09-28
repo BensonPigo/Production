@@ -548,6 +548,24 @@ where ad.Id='{masterID}'
 
                     this.CurrentDetailData["reasonid"] = x[0]["id"];
                     this.CurrentDetailData["reason_nm"] = x[0]["name"];
+
+                    if (x[0]["id"].Equals("00001") == false)
+                    {
+                        this.CurrentDetailData["ToPOID"] = string.Empty;
+                        this.CurrentDetailData["ToSeq"] = string.Empty;
+                        this.CurrentDetailData["ToSeq1"] = string.Empty;
+                        this.CurrentDetailData["ToSeq2"] = string.Empty;
+
+                        this.col_ToPoid.IsEditingReadOnly = true;
+                        this.col_ToSeq.IsEditingReadOnly = true;
+                    }
+                    else
+                    {
+                        this.col_ToPoid.IsEditingReadOnly = false;
+                        this.col_ToSeq.IsEditingReadOnly = false;
+                    }
+
+                    this.CurrentDetailData.EndEdit();
                 }
             };
             ts.CellValidating += (s, e) =>
@@ -583,6 +601,11 @@ where ad.Id='{masterID}'
                             this.CurrentDetailData["reason_nm"] = dr["name"];
                         }
                     }
+
+                    this.CurrentDetailData["ToPOID"] = string.Empty;
+                    this.CurrentDetailData["ToSeq"] = string.Empty;
+                    this.CurrentDetailData["ToSeq1"] = string.Empty;
+                    this.CurrentDetailData["ToSeq2"] = string.Empty;
                 }
             };
 
@@ -614,7 +637,7 @@ where ID = '{e.FormattedValue}'
 and MDivisionID = '{Sci.Env.User.Keyword}'";
                 if (!MyUtility.Check.Seek(sqlchk))
                 {
-                    MyUtility.Msg.WarningBox($"<ToPOID>:{e.FormattedValue} not found");
+                    MyUtility.Msg.WarningBox($"<Bulk SP#>:{e.FormattedValue} not found");
                     e.Cancel = true;
                     return;
                 }
@@ -790,6 +813,8 @@ and seq2 = '{this.CurrentDetailData["ToSeq2"]}'
             // 設定detailGrid Rows 是否可以編輯
             this.detailgrid.RowEnter += this.Detailgrid_RowEnter;
         }
+
+        
 
         private void Detailgrid_RowEnter(object sender, DataGridViewCellEventArgs e)
         {
