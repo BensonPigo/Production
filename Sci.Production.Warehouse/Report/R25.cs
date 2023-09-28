@@ -190,6 +190,7 @@ select
 	[SuppName] = supp.AbbEN,
 	ed.UnitId,
 	psd.StockUnit,
+    [MCHandle] = iif(mc.Name is null, o.MCHandle, o.MCHandle + ' ' + mc.Name),
     SizeSpec= isnull(psdsS.SpecValue, ''),
     [ShipQty]=ed.Qty,
     ed.FOC,
@@ -222,6 +223,7 @@ left join PO_Supp_Detail_Spec psdsS WITH (NOLOCK) on psdsS.ID = psd.id and psdsS
 left join po on po.id = ed.PoID
 left join TPEPass1 TEPPOHandle on TEPPOHandle.id = po.POHandle
 left join TPEPass1 TEPPOSMR on TEPPOSMR.id = po.POSMR
+left join Pass1 mc with (nolock) on mc.ID = o.MCHandle
 left join Fabric f with(nolock)on f.SCIRefno = psd.SCIRefno
 left join Cutting c with(NOLOCK) on c.id = o.CuttingSP
 outer APPLY(
@@ -360,6 +362,7 @@ and ed.PoType = 'G'
     Receiving_Detail.ReceiveQty,
     t.TotalRollsCalculated,
 	StockUnit,
+    t.MCHandle,
     [ContainerType] ,[ContainerNo] ,PortArrival,t.WhseArrival,
     KPILETA,
     t.PFETA,
@@ -379,7 +382,7 @@ OUTER APPLY(
  GROUP BY 
 	WK,t.eta,t.FactoryID,Consignee,ShipModeID,CYCFS,Blno,Vessel,[ProdFactory],OrderTypeID,ProjectID,Category ,BrandID, seasonid,styleid,t.PoID,seq,
 	Refno,[Color] ,[Description],[MtlType],WeaveTypeID,suppid,[SuppName] ,UnitId,SizeSpec,[ContainerType] ,[ContainerNo] ,PortArrival,[Color Name],
-    t.WhseArrival,KPILETA,[Earliest SCI Delivery],EarlyDays,[MR_Mail],[SMR_Mail],t.EditName,ReceiveQty,StockUnit, t.StyleName, t.TotalRollsCalculated, MtlTypeID,t.PFETA,t.[FirstBulkSewInLine],t.[FirstCutDate]
+    t.WhseArrival,KPILETA,[Earliest SCI Delivery],EarlyDays,[MR_Mail],[SMR_Mail],t.EditName,ReceiveQty,StockUnit, t.MCHandle, t.StyleName, t.TotalRollsCalculated, MtlTypeID,t.PFETA,t.[FirstBulkSewInLine],t.[FirstCutDate]
 HAVING 1=1
 ";
             if (this.RecLessArv)
