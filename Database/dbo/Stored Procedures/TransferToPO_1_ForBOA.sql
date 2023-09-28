@@ -449,7 +449,8 @@ Begin
 				)tmp
 				pivot
 				(
-					MAX(SpecValue) for BomTypeID in (Color, Size, SizeUnit, ZipperInsert, Article, COO, Gender, CustomerSize, DecLabelSize, BrandFactoryCode, Style, StyleLocation, Season, CareCode, CustomerPO)
+					MAX(SpecValue) for BomTypeID in
+                    (Color, Size, SizeUnit, ZipperInsert, Article, COO, Gender, CustomerSize, DecLabelSize, BrandFactoryCode, Style, StyleLocation, Season, CareCode, CustomerPO, BuyMonth, BuyerDlvMonth)
 				) as p
 			  ) obe_spec
 			  inner join dbo.Order_BOA boa on obe.Order_BOAUkey = boa.Ukey
@@ -468,7 +469,8 @@ Begin
 					)tmp
 					pivot
 					(
-						MAX(SpecValue) for BomTypeID in (Color, Size, SizeUnit, ZipperInsert, Article, COO, Gender, CustomerSize, DecLabelSize, BrandFactoryCode, Style, StyleLocation, Season, CareCode, CustomerPO)
+                        MAX(SpecValue) for BomTypeID in
+                        (Color, Size, SizeUnit, ZipperInsert, Article, COO, Gender, CustomerSize, DecLabelSize, BrandFactoryCode, Style, StyleLocation, Season, CareCode, CustomerPO, BuyMonth, BuyerDlvMonth)
 					) as p
 				) tmp_spec
 				LEFT JOIN Production.dbo.Fabric f on tmp.SCIRefno = f.SCIRefno
@@ -502,7 +504,8 @@ Begin
 						)tmp
 						pivot
 						(
-							MAX(SpecValue) for BomTypeID in (Color, Size, SizeUnit, ZipperInsert, Article, COO, Gender, CustomerSize, DecLabelSize, BrandFactoryCode, Style, StyleLocation, Season, CareCode, CustomerPO)
+                            MAX(SpecValue) for BomTypeID in
+                            (Color, Size, SizeUnit, ZipperInsert, Article, COO, Gender, CustomerSize, DecLabelSize, BrandFactoryCode, Style, StyleLocation, Season, CareCode, CustomerPO, BuyMonth, BuyerDlvMonth)
 						) as p
 					) dobe_spec
 					inner join dbo.Order_BOA oboa on dobe.Order_BOAUkey = oboa.Ukey

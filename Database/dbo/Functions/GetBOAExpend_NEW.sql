@@ -19,7 +19,7 @@ RETURNS @Tmp_BoaExpend table (  ExpendUkey BigInt Identity(1,1) Not Null, ID Var
 	, BomZipperInsert VarChar(5), BomCustPONo VarChar(30), Keyword VarChar(Max), Keyword_Original VARCHAR(MAX), Keyword_xml VARCHAR(MAX), OrderList varchar(max), ColorDesc varchar(150), Special nvarchar(max)
 	, BomTypeColorID varchar(50), BomTypeSize varchar(50), BomTypeSizeUnit varchar(50), BomTypeZipperInsert varchar(50), BomTypeArticle varchar(50), BomTypeCOO varchar(50)
 	, BomTypeGender varchar(50), BomTypeCustomerSize varchar(50), BomTypeDecLabelSize varchar(50), BomTypeBrandFactoryCode varchar(50), BomTypeStyle varchar(50)
-	, BomTypeStyleLocation varchar(50), BomTypeSeason varchar(50), BomTypeCareCode varchar(50), BomTypeCustomerPO varchar(50)
+    , BomTypeStyleLocation varchar(50), BomTypeSeason varchar(50), BomTypeCareCode varchar(50), BomTypeCustomerPO varchar(50), BomTypeBuyMonth varchar(50), BomTypeBuyerDlvMonth varchar(50)
 	, Index Idx_ID NonClustered (ID, Order_BOAUkey, ColorID) -- table index
 )
 As
@@ -212,6 +212,8 @@ begin
 	   ,BomTypeSeason varchar(50)
 	   ,BomTypeCareCode varchar(50)
 	   ,BomTypeCustomerPO varchar(50)
+       ,BomTypeBuyMonth varchar(50)
+       ,BomTypeBuyerDlvMonth varchar(50)
 	);
 	DECLARE @tmpTbl TABLE (
 		RowID BIGINT IDENTITY (1, 1) NOT NULL
@@ -245,6 +247,8 @@ begin
 	   ,BomTypeSeason varchar(50)
 	   ,BomTypeCareCode varchar(50)
 	   ,BomTypeCustomerPO varchar(50)
+       ,BomTypeBuyMonth varchar(50)
+       ,BomTypeBuyerDlvMonth varchar(50)
 	);
 	DECLARE @Sum_QtyRowID INT;		--Sum_Qty ID
 	DECLARE @Sum_QtyRowCount INT;	--Sum_Qty總資料筆數
@@ -273,6 +277,8 @@ begin
 	DECLARE @BoaBomTypeSeason BIT;
 	DECLARE @BoaBomTypeCareCode BIT;
 	DECLARE @BoaBomTypePo BIT;
+    DECLARE @BomTypeBuyMonth BIT;
+    DECLARE @BomTypeBuyerDlvMonth BIT;
 
 	DECLARE @BomTypeCalculatePCS BIT;
 	DECLARE @BomTypeMatching BIT;
@@ -301,6 +307,8 @@ begin
 	   ,BomTypeSeason BIT
 	   ,BomTypeCareCode BIT
 	   ,BomTypePo BIT
+       ,BomTypeBuyMonth BIT
+       ,BomTypeBuyerDlvMonth BIT
 	   ,BomTypeMatching BIT
 	   ,Keyword VARCHAR(MAX)
 	   ,IsCustCD NUMERIC(1, 0)
@@ -313,7 +321,7 @@ begin
 	INSERT INTO @BoaCursor (Ukey, SCIRefNo, SuppID, FabricPanelCode, SizeItem, SizeItem_Elastic, ConsPC, Remark
 	, BomTypeColor, BomTypeSize, BomTypeZipper, BomTypeArticle, BomTypeCOO, BomTypeGender, BomTypeCustomerSize
 	, BomTypeDecLabelSize, BomTypeBrandFactoryCode, BomTypeStyle, BomTypeStyleLocation, BomTypeSeason, BomTypeCareCode, BomTypePo
-	, BomTypeCalculatePCS, BomTypeMatching, Keyword, IsCustCD, SizeItem_PCS)
+    , BomTypeBuyMonth, BomTypeBuyerDlvMonth, BomTypeCalculatePCS, BomTypeMatching, Keyword, IsCustCD, SizeItem_PCS)
 	SELECT
 		Ukey
 		,SCIRefNo
@@ -337,6 +345,8 @@ begin
 		,BomTypeSeason
 		,BomTypeCareCode
 		,BomTypePo
+        ,BomTypeBuyMonth
+        ,BomTypeBuyerDlvMonth
 		,BomTypeCalculatePCS
 		,BomTypeMatching
 		,Keyword
@@ -398,6 +408,8 @@ begin
 		   ,@BoaBomTypeSeason = BomTypeSeason
 		   ,@BoaBomTypeCareCode = BomTypeCareCode
 		   ,@BoaBomTypePo = BomTypePo
+           ,@BomTypeBuyMonth = BomTypeBuyMonth
+           ,@BomTypeBuyerDlvMonth = BomTypeBuyerDlvMonth
 
 		   ,@BomTypeCalculatePCS = BomTypeCalculatePCS
 		   ,@BomTypeMatching = BomTypeMatching
@@ -478,17 +490,19 @@ begin
            , BomTypeZipperInsert = IIF(@BoaBomTypeZipper = 1, tmpQtyBreakDown.ZipperInsert, null)
 		    --與Article相同
            , BomTypeArticle = IIF(@BoaBomTypeArticle = 1, tmpQtyBreakDown.Article, null)
-           , BomTypeCOO = IIF(@BoaBomTypeCOO = 1, dbo.GetBomTypeValue(@BoaUkey, 'COO', ky.Location, tmpQtyBreakDown.SizeCode), null)
-           , BomTypeGender = IIF(@BoaBomTypeGender = 1, dbo.GetBomTypeValue(@BoaUkey, 'Gender', ky.Location, tmpQtyBreakDown.SizeCode), null)
-           , BomTypeCustomerSize = IIF(@BoaBomTypeCustomerSize = 1, dbo.GetBomTypeValue(@BoaUkey, 'CustomerSize', ky.Location, tmpQtyBreakDown.SizeCode), null)
-           , BomTypeDecLabelSize = IIF(@BoaBomTypeDecLabelSize = 1, dbo.GetBomTypeValue(@BoaUkey, 'DecLabelSize', ky.Location, tmpQtyBreakDown.SizeCode), null)
-           , BomTypeBrandFactoryCode = IIF(@BoaBomTypeBrandFactoryCode = 1, dbo.GetBomTypeValue(@BoaUkey, 'BrandFactoryCode', ky.Location, tmpQtyBreakDown.SizeCode), null)
-           , BomTypeStyle = IIF(@BoaBomTypeStyle = 1, dbo.GetBomTypeValue(@BoaUkey, 'Style', ky.Location, tmpQtyBreakDown.SizeCode), null)
-           , BomTypeStyleLocation = IIF(@BoaBomTypeStyleLocation = 1, dbo.GetBomTypeValue(@BoaUkey, 'StyleLocation', ky.Location, tmpQtyBreakDown.SizeCode), null)
-           , BomTypeSeason = IIF(@BoaBomTypeSeason = 1, dbo.GetBomTypeValue(@BoaUkey, 'Season', ky.Location, tmpQtyBreakDown.SizeCode), null)
-           , BomTypeCareCode = IIF(@BoaBomTypeCareCode = 1, dbo.GetBomTypeValue(@BoaUkey, 'CareCode', ky.Location, tmpQtyBreakDown.SizeCode), null)
+           , BomTypeCOO = IIF(@BoaBomTypeCOO = 1, dbo.GetBomTypeValue(@BoaUkey, 'COO', ky.Location, tmpQtyBreakDown.SizeCode, tmpQtyBreakDown.ID), null)
+           , BomTypeGender = IIF(@BoaBomTypeGender = 1, dbo.GetBomTypeValue(@BoaUkey, 'Gender', ky.Location, tmpQtyBreakDown.SizeCode, tmpQtyBreakDown.ID), null)
+           , BomTypeCustomerSize = IIF(@BoaBomTypeCustomerSize = 1, dbo.GetBomTypeValue(@BoaUkey, 'CustomerSize', ky.Location, tmpQtyBreakDown.SizeCode, tmpQtyBreakDown.ID), null)
+           , BomTypeDecLabelSize = IIF(@BoaBomTypeDecLabelSize = 1, dbo.GetBomTypeValue(@BoaUkey, 'DecLabelSize', ky.Location, tmpQtyBreakDown.SizeCode, tmpQtyBreakDown.ID), null)
+           , BomTypeBrandFactoryCode = IIF(@BoaBomTypeBrandFactoryCode = 1, dbo.GetBomTypeValue(@BoaUkey, 'BrandFactoryCode', ky.Location, tmpQtyBreakDown.SizeCode, tmpQtyBreakDown.ID), null)
+           , BomTypeStyle = IIF(@BoaBomTypeStyle = 1, dbo.GetBomTypeValue(@BoaUkey, 'Style', ky.Location, tmpQtyBreakDown.SizeCode, tmpQtyBreakDown.ID), null)
+           , BomTypeStyleLocation = IIF(@BoaBomTypeStyleLocation = 1, dbo.GetBomTypeValue(@BoaUkey, 'StyleLocation', ky.Location, tmpQtyBreakDown.SizeCode, tmpQtyBreakDown.ID), null)
+           , BomTypeSeason = IIF(@BoaBomTypeSeason = 1, dbo.GetBomTypeValue(@BoaUkey, 'Season', ky.Location, tmpQtyBreakDown.SizeCode, tmpQtyBreakDown.ID), null)
+           , BomTypeCareCode = IIF(@BoaBomTypeCareCode = 1, dbo.GetBomTypeValue(@BoaUkey, 'CareCode', ky.Location, tmpQtyBreakDown.SizeCode, tmpQtyBreakDown.ID), null)
 		   --與BomCustPONo相同
-           , BomTypeCustomerPO = IIF(@BoaBomTypePo = 1, tmpQtyBreakDown.CustPONo, null)
+		   , BomTypeCustomerPO = IIF(@BoaBomTypePo = 1, tmpQtyBreakDown.CustPONo, null)
+		   , BomTypeBuyMonth = IIF(@BomTypeBuyMonth = 1, dbo.GetBomTypeValue(@BoaUkey, 'BuyMonth', ky.Location, tmpQtyBreakDown.SizeCode, tmpQtyBreakDown.ID), null)
+           , BomTypeBuyerDlvMonth = IIF(@BomTypeBuyerDlvMonth = 1, dbo.GetBomTypeValue(@BoaUkey, 'BuyerDlvMonth', ky.Location, tmpQtyBreakDown.SizeCode, tmpQtyBreakDown.ID), null)
 		   /* BomTypeValue End */
            
 		FROM @tmpOrder_Qty AS tmpQtyBreakDown
@@ -706,12 +720,14 @@ begin
 		, SizeSeq, SizeCode, SizeSpec, SizeUnit, Keyword, Keyword_Original, Keyword_xml, Special
 		, OrderQty, UsageQty, OrderList		
 		, BomTypeColorID, BomTypeSize, BomTypeSizeUnit, BomTypeZipperInsert, BomTypeArticle, BomTypeCOO, BomTypeGender, BomTypeCustomerSize
-		, BomTypeDecLabelSize, BomTypeBrandFactoryCode, BomTypeStyle, BomTypeStyleLocation, BomTypeSeason, BomTypeCareCode, BomTypeCustomerPO)
+        , BomTypeDecLabelSize, BomTypeBrandFactoryCode, BomTypeStyle, BomTypeStyleLocation, BomTypeSeason, BomTypeCareCode, BomTypeCustomerPO
+        , BomTypeBuyMonth, BomTypeBuyerDlvMonth)
 		SELECT ColorID, Article, BomZipperInsert, BomCustPONo
 		, SizeSeq, SizeCode, SizeSpec, SizeUnit, Keyword, Keyword_Original, Keyword_xml, Special
 		, SUM(OrderQty), SUM(UsageQty), IIF(VasShas.OrderList IS NULL, tmp2.OrderList, VasShas.OrderList)		
 		, BomTypeColorID, BomTypeSize, BomTypeSizeUnit, BomTypeZipperInsert, BomTypeArticle, BomTypeCOO, BomTypeGender, BomTypeCustomerSize
 		, BomTypeDecLabelSize, BomTypeBrandFactoryCode, BomTypeStyle, BomTypeStyleLocation, BomTypeSeason, BomTypeCareCode, BomTypeCustomerPO
+        , BomTypeBuyMonth, BomTypeBuyerDlvMonth
 		FROM @tmpTbl tmp1
 		CROSS APPLY (
 			SELECT Orderlist = (
@@ -748,6 +764,7 @@ begin
 		, tmp2.OrderList, VasShas.OrderList
 		, BomTypeColorID, BomTypeSize, BomTypeSizeUnit, BomTypeZipperInsert, BomTypeArticle, BomTypeCOO, BomTypeGender, BomTypeCustomerSize
 		, BomTypeDecLabelSize, BomTypeBrandFactoryCode, BomTypeStyle, BomTypeStyleLocation, BomTypeSeason, BomTypeCareCode, BomTypeCustomerPO
+        , BomTypeBuyMonth, BomTypeBuyerDlvMonth
 
 		ORDER BY BomZipperInsert, BomCustPONo
 		, Article, ColorID, SizeSeq, SizeCode, SizeSpec;
@@ -759,6 +776,7 @@ begin
 		, UsageUnit, SysUsageQty, BomZipperInsert, BomCustPONo, Keyword, Keyword_Original, Keyword_xml, OrderList, ColorDesc, Special
 		, BomTypeColorID, BomTypeSize, BomTypeSizeUnit, BomTypeZipperInsert, BomTypeArticle, BomTypeCOO, BomTypeGender, BomTypeCustomerSize
 		, BomTypeDecLabelSize, BomTypeBrandFactoryCode, BomTypeStyle, BomTypeStyleLocation, BomTypeSeason, BomTypeCareCode, BomTypeCustomerPO
+        , BomTypeBuyMonth, BomTypeBuyerDlvMonth
 		)
 		SELECT @ID, @BoaUkey, @RefNo, @SCIRefNo, Sum_Qty.Article, Sum_Qty.ColorID, tmpSuppColor.SuppColor
 		, Sum_Qty.SizeSeq, Sum_Qty.SizeCode, Sum_Qty.SizeSpec, Sum_Qty.SizeUnit, @Remark, Sum_Qty.OrderQty
@@ -767,6 +785,7 @@ begin
 		, @UsageUnit, Sum_Qty.UsageQty, Sum_Qty.BomZipperInsert, Sum_Qty.BomCustPONo, ReplaceKeyword.Keyword, Sum_Qty.Keyword_Original, ReplaceKeyword.Keyword_xml, Sum_Qty.OrderList, Color.Name, Special
 		, BomTypeColorID, BomTypeSize, BomTypeSizeUnit, BomTypeZipperInsert, BomTypeArticle, BomTypeCOO, BomTypeGender, BomTypeCustomerSize
 		, BomTypeDecLabelSize, BomTypeBrandFactoryCode, BomTypeStyle, BomTypeStyleLocation, BomTypeSeason, BomTypeCareCode, BomTypeCustomerPO
+        , BomTypeBuyMonth, BomTypeBuyerDlvMonth
 		FROM @Sum_Qty AS Sum_Qty
 		LEFT JOIN Production.dbo.Color ON Color.BrandID = @BrandID AND Color.ID = Sum_Qty.ColorID
 		OUTER APPLY (
