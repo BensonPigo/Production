@@ -44,10 +44,12 @@
             // toexcel
             // 
             this.toexcel.Location = new System.Drawing.Point(316, 12);
+            this.toexcel.TabIndex = 3;
             // 
             // close
             // 
             this.close.Location = new System.Drawing.Point(316, 48);
+            this.close.TabIndex = 4;
             // 
             // buttonCustomized
             // 
@@ -65,32 +67,32 @@
             // 
             this.txtbrand.BackColor = System.Drawing.Color.White;
             this.txtbrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtbrand.Location = new System.Drawing.Point(115, 12);
+            this.txtbrand.Location = new System.Drawing.Point(88, 12);
             this.txtbrand.MyDocumentdName = null;
             this.txtbrand.Name = "txtbrand";
             this.txtbrand.Size = new System.Drawing.Size(98, 23);
-            this.txtbrand.TabIndex = 105;
+            this.txtbrand.TabIndex = 0;
             // 
             // txtseason
             // 
             this.txtseason.BackColor = System.Drawing.Color.White;
             this.txtseason.BrandObjectName = null;
             this.txtseason.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtseason.Location = new System.Drawing.Point(115, 48);
+            this.txtseason.Location = new System.Drawing.Point(88, 48);
             this.txtseason.Name = "txtseason";
             this.txtseason.Size = new System.Drawing.Size(98, 23);
-            this.txtseason.TabIndex = 104;
+            this.txtseason.TabIndex = 1;
             // 
             // txtstyle
             // 
             this.txtstyle.BackColor = System.Drawing.Color.White;
             this.txtstyle.BrandObjectName = null;
             this.txtstyle.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtstyle.Location = new System.Drawing.Point(115, 84);
+            this.txtstyle.Location = new System.Drawing.Point(88, 84);
             this.txtstyle.Name = "txtstyle";
             this.txtstyle.SeasonObjectName = null;
             this.txtstyle.Size = new System.Drawing.Size(186, 23);
-            this.txtstyle.TabIndex = 103;
+            this.txtstyle.TabIndex = 2;
             this.txtstyle.TarBrand = null;
             this.txtstyle.TarSeason = null;
             // 
@@ -98,25 +100,25 @@
             // 
             this.labelBrand.Location = new System.Drawing.Point(9, 12);
             this.labelBrand.Name = "labelBrand";
-            this.labelBrand.Size = new System.Drawing.Size(102, 23);
-            this.labelBrand.TabIndex = 108;
-            this.labelBrand.Text = "Master Brand";
+            this.labelBrand.Size = new System.Drawing.Size(76, 23);
+            this.labelBrand.TabIndex = 5;
+            this.labelBrand.Text = "Brand";
             // 
             // labelSeason
             // 
             this.labelSeason.Location = new System.Drawing.Point(9, 48);
             this.labelSeason.Name = "labelSeason";
-            this.labelSeason.Size = new System.Drawing.Size(102, 23);
-            this.labelSeason.TabIndex = 107;
-            this.labelSeason.Text = "Master Season";
+            this.labelSeason.Size = new System.Drawing.Size(76, 23);
+            this.labelSeason.TabIndex = 6;
+            this.labelSeason.Text = "Season";
             // 
             // labelStyle
             // 
             this.labelStyle.Location = new System.Drawing.Point(9, 84);
             this.labelStyle.Name = "labelStyle";
-            this.labelStyle.Size = new System.Drawing.Size(102, 23);
-            this.labelStyle.TabIndex = 106;
-            this.labelStyle.Text = "Master Style";
+            this.labelStyle.Size = new System.Drawing.Size(76, 23);
+            this.labelStyle.TabIndex = 7;
+            this.labelStyle.Text = "Style";
             // 
             // R22
             // 
