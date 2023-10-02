@@ -338,6 +338,12 @@
     <Compile Include="P03_CopyFromOtherStyle.Designer.cs">
       <DependentUpon>P03_CopyFromOtherStyle.cs</DependentUpon>
     </Compile>
+    <Compile Include="P03_Operator.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P03_Operator.Designer.cs">
+      <DependentUpon>P03_Operator.cs</DependentUpon>
+    </Compile>
     <Compile Include="P03_Print.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -546,6 +552,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="P03_CopyFromOtherStyle.resx">
       <DependentUpon>P03_CopyFromOtherStyle.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P03_Operator.resx">
+      <DependentUpon>P03_Operator.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P03_Print.resx">
       <DependentUpon>P03_Print.cs</DependentUpon>
