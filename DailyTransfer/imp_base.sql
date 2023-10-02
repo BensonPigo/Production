@@ -5845,5 +5845,38 @@ SELECT
 from [Trade_To_Pms].[dbo].Exchange as b WITH (NOLOCK)
 where not exists(select 1 from [Production].[dbo].Exchange as a WITH (NOLOCK) where a.ExchangeTypeID = b.ExchangeTypeID and a.CurrencyFrom = b.CurrencyFrom and a.CurrencyTo = b.CurrencyTo and a.DateStart = b.DateStart)
 
+/*AutomatedLineMappingConditionSetting*/
+delete [Production].[dbo].AutomatedLineMappingConditionSetting
+
+insert into [Production].[dbo].AutomatedLineMappingConditionSetting
+			(
+				Ukey
+				,MDivisionID
+				,FactoryID
+				,FunctionIE
+				,Verify
+				,Condition1
+				,Condition2
+				,Condition3
+				,Junk
+				,AddName
+				,AddDate
+				,EditName
+				,EditDate
+			)
+select	Ukey
+		,MDivisionID
+		,FactoryID
+		,FunctionIE
+		,Verify
+		,Condition1
+		,Condition2
+		,Condition3
+		,Junk
+		,AddName
+		,AddDate
+		,EditName
+		,EditDate
+from	[Trade_To_Pms].[dbo].AutomatedLineMappingConditionSetting
 
 END

@@ -229,8 +229,9 @@ select s.Description
 	, s.Lining
 	, s.Gender
 	, [Construction] = d1.Name
-    ,s.CDCodeNew
-    ,[NewCO]  = iif(s.NewCO ='2','True','False')
+    , s.CDCodeNew
+    , [NewCO]  = iif(s.NewCO ='2','True','False')
+    , s.TeamWear
 from Style s WITH (NOLOCK) 
 left join DropDownList d1 WITH(NOLOCK) on d1.type= 'StyleConstruction' and d1.ID = s.Construction
 left join Reason r1 WITH(NOLOCK) on r1.ReasonTypeID= 'Fabric_Kind' and r1.ID = s.FabricType
@@ -267,6 +268,7 @@ where s.Ukey = '{0}'",
                 this.displayLining.Value = styleData["Lining"].ToString();
                 this.displayGender.Value = styleData["Gender"].ToString();
                 this.displayConstruction.Value = styleData["Construction"].ToString();
+                this.checkTeamWear.Checked = MyUtility.Convert.GetBool(styleData["TeamWear"]);
             }
             else
             {
@@ -275,6 +277,7 @@ where s.Ukey = '{0}'",
                 this.checkExceptionForm.Value = "false";
                 this.editFtyRemark.Text = string.Empty;
                 this.dateStyleApv.Value = null;
+                this.checkTeamWear.Checked = false;
             }
 
             #endregion
