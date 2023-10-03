@@ -236,6 +236,12 @@ You have checked <{this.itemCount}> Skills!!");
                     strPosition = $"'SEW','LL','PIT'";
                     strWhere = $@" and Dept in({strDept})  and Position in({strPosition})";
                     break;
+                case "SPS":
+                case "SPR":
+                    strDept = $"'SEW'";
+                    strPosition = $"'SWR','TRNEE','Lneldr','LINSUP','PRSSR','PCKR'";
+                    strWhere = $@" and Dept in({strDept})  and Position in({strPosition})";
+                    break;
             }
 
             return strWhere;
