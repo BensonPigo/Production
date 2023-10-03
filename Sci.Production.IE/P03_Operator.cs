@@ -84,13 +84,23 @@ namespace Sci.Production.IE
                 string tmp = this.txtDescription.Text.Replace("'", "''");
                 descList = tmp.Split(';').Where(o => !string.IsNullOrEmpty(o)).ToList();
             }
- 
+
             if (descList.Any())
             {
-                filterCondition.Append($@" and (ID like '%{string.Join("%' and ID like '%", descList)}%' ) ");
-                filterCondition.Append($@" or (FirstName like '%{string.Join("%' and FirstName like '%", descList)}%' ) ");
-                filterCondition.Append($@" or (LastName like '%{string.Join("%' and LastName like '%", descList)}%' ) ");
-                filterCondition.Append($@" or (Section like '%{string.Join("%' and Section like '%", descList)}%' ) ");
+                for (int i = 0; i < descList.Count; i++)
+                {
+                    filterCondition.Append(" AND (");
+                    foreach (var columnName in new[] { "ID", "FIRSTNAME", "LASTNAME", "SECTION" })
+                    {
+                        filterCondition.Append($"{columnName} LIKE '%{descList[i]}%'");
+                        if (columnName != "SECTION")
+                        {
+                            filterCondition.Append(" OR ");
+                        }
+                    }
+
+                    filterCondition.Append(")");
+                }
             }
 
             if (filterCondition.Length > 0)
