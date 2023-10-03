@@ -4,13 +4,9 @@ using Sci.Data;
 using Sci.Production.Prg;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Data.SqlClient;
-using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Sci.Production.Warehouse
@@ -45,25 +41,39 @@ namespace Sci.Production.Warehouse
             base.OnFormLoaded();
 
             #region 上面的Grid
+            DataGridViewGeneratorTextColumnSettings refno = new DataGridViewGeneratorTextColumnSettings();
+            refno.CellMouseDoubleClick += (s, e) =>
+            {
+                var dr = this.grid1.GetDataRow<DataRow>(e.RowIndex);
+                var frm = new P68_Refno(dr);
+                frm.ShowDialog(this);
+            };
+
             this.Helper.Controls.Grid.Generator(this.grid1)
-            .Text("ID", header: "Cutplan ID", width: Widths.AnsiChars(15), iseditingreadonly: true)
-            .Text("Factory", header: "Factory", width: Widths.AnsiChars(6), iseditingreadonly: true)
-            .Text("POID", header: "POID", width: Widths.AnsiChars(13), iseditingreadonly: true)
-            .Text("CutCell", header: "Cut\r\nCell", width: Widths.AnsiChars(5), iseditingreadonly: true)
-            .Date("EstCutdate", header: "Cutting Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
-            .Text("Refno", header: "Refno", width: Widths.AnsiChars(15), iseditingreadonly: true)
-            .Text("Color", header: "Color", width: Widths.AnsiChars(7), iseditingreadonly: true)
-            .Text("FabricRelaxationID", header: "Relaxation", width: Widths.AnsiChars(12), iseditingreadonly: true)
-            .Text("NeedUnroll", header: "Need\r\nUnroll", width: Widths.AnsiChars(5), iseditingreadonly: true)
-            .Text("Relaxtime", header: "Relaxtime\r\n(Hours)", width: Widths.AnsiChars(8), iseditingreadonly: true)
-            .Text("Status", header: "Status", width: Widths.AnsiChars(9), iseditingreadonly: true)
-            .Numeric("RequestCons", header: "Request\r\nCons", width: Widths.AnsiChars(10), decimal_places: 2, iseditingreadonly: true)
-            .Numeric("PreparingCons", header: "Preparing\r\nCons", width: Widths.AnsiChars(10), decimal_places: 2, iseditingreadonly: true)
-            .Numeric("UnrollCons", header: "Unroll\r\nCons", width: Widths.AnsiChars(10), decimal_places: 2, iseditingreadonly: true)
-            .Numeric("RelaxationCons", header: "Relaxation\r\nCons", width: Widths.AnsiChars(10), decimal_places: 2, iseditingreadonly: true)
-            .Numeric("DispatchedCons", header: "Dispatched\r\nCons", width: Widths.AnsiChars(10), decimal_places: 2, iseditingreadonly: true)
-            .Numeric("ReceivedCons", header: "Received\r\nCons", width: Widths.AnsiChars(10), decimal_places: 2, iseditingreadonly: true)
-            ;
+                .Text("Factory", header: "Factory", width: Widths.AnsiChars(6), iseditingreadonly: true)
+                .Text("CutCell", header: "Cut\r\nCell", width: Widths.AnsiChars(5), iseditingreadonly: true)
+                .Date("EditDate", header: "Cutplan\r\nEdit Time", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                .Text("ID", header: "Cutplan ID", width: Widths.AnsiChars(15), iseditingreadonly: true)
+                .Text("POID", header: "SP", width: Widths.AnsiChars(13), iseditingreadonly: true)
+                .Text("StyleID", header: "Style", width: Widths.AnsiChars(16), iseditingreadonly: true)
+                .Date("EstCutdate", header: "Cutting Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                .Text("Refno", header: "Refno", width: Widths.AnsiChars(15), iseditingreadonly: true, settings: refno)
+                .Text("Color", header: "Color", width: Widths.AnsiChars(7), iseditingreadonly: true)
+                .Date("ActETA", header: "Act ETA", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                .Text("FabricRelaxationID", header: "Relaxation", width: Widths.AnsiChars(12), iseditingreadonly: true)
+                .Text("NeedUnroll", header: "Need\r\nUnroll", width: Widths.AnsiChars(5), iseditingreadonly: true)
+                .Text("Relaxtime", header: "Relaxtime\r\n(Hours)", width: Widths.AnsiChars(8), iseditingreadonly: true)
+                .Text("Status", header: "Status", width: Widths.AnsiChars(9), iseditingreadonly: true)
+                .Numeric("RequestCons", header: "Request\r\nCons", width: Widths.AnsiChars(10), decimal_places: 2, iseditingreadonly: true)
+                .Numeric("PreparingCons", header: "Preparing\r\nCons", width: Widths.AnsiChars(10), decimal_places: 2, iseditingreadonly: true)
+                .Numeric("BalanceQty", header: "Balance\r\nCons", width: Widths.AnsiChars(10), decimal_places: 2, iseditingreadonly: true)
+                .Numeric("UnrollCons", header: "Unroll\r\nCons", width: Widths.AnsiChars(10), decimal_places: 2, iseditingreadonly: true)
+                .Numeric("RelaxationCons", header: "Relaxation\r\nCons", width: Widths.AnsiChars(10), decimal_places: 2, iseditingreadonly: true)
+                .Numeric("DispatchedCons", header: "Dispatched\r\nCons", width: Widths.AnsiChars(10), decimal_places: 2, iseditingreadonly: true)
+                .Numeric("ReceivedCons", header: "Received\r\nCons", width: Widths.AnsiChars(10), decimal_places: 2, iseditingreadonly: true)
+                .Text("RequestorRemark", header: "Requestor\r\nRemark", width: Widths.AnsiChars(9), iseditingreadonly: true)
+                .Text("WHRemark", header: "W/H Remark", width: Widths.AnsiChars(9), iseditingreadonly: true)
+                ;
             #endregion
 
             #region 下面的Grid
@@ -71,7 +81,11 @@ namespace Sci.Production.Warehouse
             .Text("Seq", header: "Seq", width: Widths.AnsiChars(6), iseditingreadonly: true)
             .Text("Roll", header: "Roll", width: Widths.AnsiChars(7), iseditingreadonly: true)
             .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(8), iseditingreadonly: true)
+            .Text("Tone", header: "Shade\r\nBand/Group", width: Widths.AnsiChars(8), iseditingreadonly: true)
+            .Date("LockDate", header: "Unlock Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
+            .Text("Location", header: "Location", width: Widths.AnsiChars(8), iseditingreadonly: true)
             .Numeric("IssueQty", header: "Issue Qty", width: Widths.AnsiChars(9), decimal_places: 2, iseditingreadonly: true)
+            .DateTime("MINDReleaseDate", header: "Pick Time", width: Widths.AnsiChars(18), iseditingreadonly: true)
             .DateTime("UnrollStartTime", header: "Unroll\r\nStart Time", width: Widths.AnsiChars(18), iseditingreadonly: true)
             .DateTime("UnrollEndTime", header: "Unroll\r\nEnd Time", width: Widths.AnsiChars(18), iseditingreadonly: true)
             .DateTime("RelaxationStartTime", header: "Relax\r\nStart Time", width: Widths.AnsiChars(18), iseditingreadonly: true)
@@ -91,10 +105,21 @@ namespace Sci.Production.Warehouse
         {
             this.listsqlParameter.Clear();
             this.strSQLWher = string.Empty;
-            if (MyUtility.Check.Empty (this.cutingDate.Value1) && MyUtility.Check.Empty(this.txtCutplanID.Text))
+            if (MyUtility.Check.Empty(this.txtstyle1.Text))
             {
-                MyUtility.Msg.WarningBox("<Cutting Date> and <Cutplan ID> cannot all be empty.");
-                return;
+                if (MyUtility.Check.Empty(this.cutingDate.Value1) && MyUtility.Check.Empty(this.txtCutplanID.Text))
+                {
+                    MyUtility.Msg.WarningBox("<Cutting Date> and <Cutplan ID> cannot all be empty.");
+                    return;
+                }
+            }
+            else
+            {
+                if (MyUtility.Check.Empty(this.cutingDate.Value1) && MyUtility.Check.Empty(this.dateCutPlanEditDate.Value1))
+                {
+                    MyUtility.Msg.WarningBox("<Cutting Date> and <Cut Plan EditDate> cannot all be empty.");
+                    return;
+                }
             }
 
             if (!MyUtility.Check.Empty(this.cutingDate.Value1))
@@ -133,18 +158,34 @@ namespace Sci.Production.Warehouse
                 this.strSQLWher += " and cp.POID  = @POID";
             }
 
+            if (!MyUtility.Check.Empty(this.txtstyle1.Text))
+            {
+                this.listsqlParameter.Add(new SqlParameter("@StyleID", this.txtstyle1.Text));
+                this.strSQLWher += " and o.StyleID  = @StyleID";
+            }
+
+            if (!MyUtility.Check.Empty(this.dateCutPlanEditDate.Value1))
+            {
+                this.listsqlParameter.Add(new SqlParameter("@CutPlanEditDate1", this.dateCutPlanEditDate.Value1));
+                this.listsqlParameter.Add(new SqlParameter("@CutPlanEditDate2", this.dateCutPlanEditDate.Value2));
+                this.strSQLWher += " and CAST(cp.EditDate as DATE) BETWEEN @CutPlanEditDate1 AND @CutPlanEditDate2";
+            }
+
             string sqlCmd = $@"
 			select cp.ID
 					, o.FactoryID
+                    , o.StyleID
 					, cp.POID
 					, cp.CutCellID
 					, cp.EstCutdate
+                    , cp.EditDate
 					, psd.Refno
 					, [Color] = psdsC.SpecValue
 					, rfrt.FabricRelaxationID
 					, frlx.NeedUnroll
 					, frlx.Relaxtime
 					, [Request Cons] = sum (cpdc.Cons)
+                    , FinalETA.ActETA
 			into #CutList
 			from Cutplan cp
 			inner join Cutplan_Detail_Cons cpdc on cp.ID = cpdc.ID
@@ -158,20 +199,35 @@ namespace Sci.Production.Warehouse
 			left join SciMES_RefnoRelaxtime rfrt on psd.Refno = rfrt.Refno
 			left join SciMES_FabricRelaxation frlx on rfrt.FabricRelaxationID = frlx.ID
 			left join Orders o on cp.POID = o.ID
+            outer apply
+            (
+                select ActETA = Max(p3.FinalETA) 
+                from PO_Supp_Detail p3 with (nolock) 
+                inner join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = p3.id and psdsC.seq1 = p3.seq1 and psdsC.seq2 = p3.seq2 and psdsC.SpecColumnID = 'Color'
+                where p3.id = psd.ID
+                and p3.SCIRefno = psd.SCIRefno
+                and psdsC.SpecValue = psdsC.SpecValue
+                and p3.Junk = 0
+                and p3.Seq1 not like 'A%'
+            ) FinalETA
 			where cp.Status = 'Confirmed'
 			{this.strSQLWher}
 			group by cp.ID, o.FactoryID, cp.POID, cp.CutCellID, cp.EstCutdate, psd.Refno, psdsC.SpecValue, rfrt.FabricRelaxationID, frlx.NeedUnroll, frlx.Relaxtime
-
+                , o.StyleID, cp.EditDate, FinalETA.ActETA
 			/*
 				發料準備清單
 			*/
 			select cl.ID, cl.Refno, cl.Color, cl.NeedUnroll, cl.Relaxtime
 					, isud.POID, isud.Seq1, isud.Seq2, isud.Roll, isud.Dyelot, isud.Qty
+                    , isud.MINDReleaseDate
 					, fur.UnrollStartTime, fur.UnrollEndTime
 					, [UnrollDone] = IIF (cl.NeedUnroll = 1 and UnrollStatus != '', 1, 0)
 					, fur.RelaxationStartTime, fur.RelaxationEndTime
 					, [RelaxationDone] = IIF (cl.Relaxtime > 0 and fur.RelaxationStartTime is not null, 1, 0)
 					, mmd.DispatchTime, mmd.FactoryReceivedTime
+                    , f.Tone
+                    , LockDate = IIF(f.Lock = 0, f.LockDate, Null)
+                    , [Location] = dbo.Getlocation(f.ukey)
 			into #issueDtl
 			from #CutList cl
 			inner join Issue isu on cl.ID = isu.CutplanID
@@ -190,6 +246,12 @@ namespace Sci.Production.Warehouse
 													and wbt.Action = 'Confirm'
 			left join Fabric_UnrollandRelax fur on wbt.To_NewBarcode = fur.Barcode
 			left join M360MINDDispatch mmd on isud.M360MINDDispatchUkey = mmd.Ukey
+            left join FtyInventory f on f.POID = isud.POID
+                                    and f.Seq1 = isud.Seq1
+                                    and f.Seq2 = isud.Seq2
+                                    and f.Roll = isud.Roll
+                                    and f.Dyelot = isud.Dyelot
+                                    and f.StockType = isud.StockType
 			where isu.Status = 'Confirmed'
 
 
@@ -220,6 +282,10 @@ namespace Sci.Production.Warehouse
 					, [RelaxationCons] = isnull (Relaxation.Cons, 0)
 					, [DispatchedCons] = isnull (Dispatched.Cons, 0)
 					, [ReceivedCons] = isnull (Received.Cons, 0)
+					, [BalanceQty] = cl.[Request Cons] - isnull (Preparing.Cons, 0)
+                    , cl.ActETA
+                    , cl.StyleID
+                    , cl.EditDate
 			from #CutList cl
 			outer apply (
 				select Cons = SUM (Qty)
@@ -278,6 +344,10 @@ namespace Sci.Production.Warehouse
 			idt.RelaxationEndTime, 
 			idt.DispatchTime,
 			idt.FactoryReceivedTime
+            ,idt.MINDReleaseDate
+            ,idt.Tone
+            ,idt.LockDate
+            ,idt.[Location]
 			from #issueDtl idt
 			order by idt.ID, idt.Refno, idt.Color, idt.Seq1, idt.Seq2, idt.Roll, idt.Dyelot
 
@@ -342,7 +412,7 @@ namespace Sci.Production.Warehouse
 
             if (this.cbStatus.Text != "All")
             {
-                this.grid1.DataSource = this.dt_Head.Select($"Status = '{this.cbStatus.Text}'").TryCopyToDataTable(this.dt_Head); 
+                this.grid1.DataSource = this.dt_Head.Select($"Status = '{this.cbStatus.Text}'").TryCopyToDataTable(this.dt_Head);
             }
             else
             {
