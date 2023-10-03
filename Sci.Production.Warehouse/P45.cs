@@ -606,6 +606,18 @@ where ad.Id='{masterID}'
                     this.CurrentDetailData["ToSeq"] = string.Empty;
                     this.CurrentDetailData["ToSeq1"] = string.Empty;
                     this.CurrentDetailData["ToSeq2"] = string.Empty;
+
+                }
+
+                if (this.CurrentDetailData["reasonid"].Equals("00001") == false)
+                {
+                    this.col_ToPoid.IsEditingReadOnly = true;
+                    this.col_ToSeq.IsEditingReadOnly = true;
+                }
+                else
+                {
+                    this.col_ToPoid.IsEditingReadOnly = false;
+                    this.col_ToSeq.IsEditingReadOnly = false;
                 }
             };
 
@@ -760,8 +772,8 @@ where ID = '{this.CurrentDetailData["ToPoID"]}'
                         string sqlchk = $@"
 select * from Po_Supp_Detail 
 where ID = '{this.CurrentDetailData["ToPoID"]}'
-and seq1 = '{this.CurrentDetailData["ToSeq1"]}'
-and seq2 = '{this.CurrentDetailData["ToSeq2"]}'
+and seq1 = '{seq[0]}'
+and seq2 = '{seq[1]}'
 ";
                         if (!MyUtility.Check.Seek(sqlchk, out DataRow drCheck))
                         {
@@ -813,8 +825,6 @@ and seq2 = '{this.CurrentDetailData["ToSeq2"]}'
             // 設定detailGrid Rows 是否可以編輯
             this.detailgrid.RowEnter += this.Detailgrid_RowEnter;
         }
-
-        
 
         private void Detailgrid_RowEnter(object sender, DataGridViewCellEventArgs e)
         {

@@ -312,6 +312,17 @@ and ReasonTypeID='Stock_Remove' AND junk = 0", e.FormattedValue), out dr, null))
                     this.gridImport.GetDataRow(this.gridImport.GetSelectedRowIndex())["ToSeq1"] = string.Empty;
                     this.gridImport.GetDataRow(this.gridImport.GetSelectedRowIndex())["ToSeq2"] = string.Empty;
                 }
+
+                if (this.gridImport.GetDataRow(this.gridImport.GetSelectedRowIndex())["reasonid"].ToString().Equals("00001") == false)
+                {
+                    this.col_ToPoid.IsEditingReadOnly = true;
+                    this.col_ToSeq.IsEditingReadOnly = true;
+                }
+                else
+                {
+                    this.col_ToPoid.IsEditingReadOnly = false;
+                    this.col_ToSeq.IsEditingReadOnly = false;
+                }
             };
             #endregion
 
@@ -465,8 +476,8 @@ where ID = '{dr["ToPoID"]}'
                         string sqlchk = $@"
 select * from Po_Supp_Detail 
 where ID = '{dr["ToPoID"]}'
-and seq1 = '{dr["ToSeq1"]}'
-and seq2 = '{dr["ToSeq2"]}'
+and seq1 = '{seq[0]}'
+and seq2 = '{seq[1]}'
 ";
                         if (!MyUtility.Check.Seek(sqlchk, out DataRow drCheck))
                         {
