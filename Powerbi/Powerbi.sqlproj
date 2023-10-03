@@ -198,6 +198,8 @@
     <Build Include="dbo\Stored Procedures\FTY\P_Import_Subcon_R41.sql" />
     <Build Include="dbo\Tables\P_WIP.sql" />
     <Build Include="dbo\Stored Procedures\FTY\P_Import_Planning_R15.sql" />
+    <Build Include="dbo\Tables\P_CuttingBCS.sql" />
+    <Build Include="dbo\Stored Procedures\FTY\P_ImportCuttingBCS.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Utility.dll" />

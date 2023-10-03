@@ -2891,6 +2891,7 @@
     <Build Include="dbo\Tables\LineMappingBalancing.sql" />
     <Build Include="dbo\Tables\LineMappingBalancing_Detail.sql" />
     <Build Include="dbo\Tables\LineMappingBalancing_NotHitTargetReason.sql" />
+    <Build Include="dbo\Stored Procedures\GetCuttingBCS.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />
