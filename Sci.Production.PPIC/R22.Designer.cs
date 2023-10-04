@@ -32,8 +32,8 @@
             this.txtseason = new Sci.Production.Class.Txtseason();
             this.txtstyle = new Sci.Production.Class.Txtstyle();
             this.labelBrand = new Sci.Win.UI.Label();
-            this.labelSeason = new Sci.Win.UI.Label();
             this.labelStyle = new Sci.Win.UI.Label();
+            this.lbSeason = new Sci.Win.UI.Label();
             this.SuspendLayout();
             // 
             // print
@@ -104,14 +104,6 @@
             this.labelBrand.TabIndex = 5;
             this.labelBrand.Text = "Brand";
             // 
-            // labelSeason
-            // 
-            this.labelSeason.Location = new System.Drawing.Point(9, 48);
-            this.labelSeason.Name = "labelSeason";
-            this.labelSeason.Size = new System.Drawing.Size(76, 23);
-            this.labelSeason.TabIndex = 6;
-            this.labelSeason.Text = "Season";
-            // 
             // labelStyle
             // 
             this.labelStyle.Location = new System.Drawing.Point(9, 84);
@@ -120,16 +112,26 @@
             this.labelStyle.TabIndex = 7;
             this.labelStyle.Text = "Style";
             // 
+            // lbSeason
+            // 
+            this.lbSeason.Location = new System.Drawing.Point(9, 48);
+            this.lbSeason.Name = "lbSeason";
+            this.lbSeason.RectStyle.Color = System.Drawing.Color.SkyBlue;
+            this.lbSeason.Size = new System.Drawing.Size(76, 23);
+            this.lbSeason.TabIndex = 98;
+            this.lbSeason.Text = "Season";
+            this.lbSeason.TextStyle.Color = System.Drawing.Color.Black;
+            // 
             // R22
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(408, 150);
+            this.Controls.Add(this.lbSeason);
             this.Controls.Add(this.txtbrand);
             this.Controls.Add(this.txtseason);
             this.Controls.Add(this.txtstyle);
             this.Controls.Add(this.labelBrand);
-            this.Controls.Add(this.labelSeason);
             this.Controls.Add(this.labelStyle);
             this.Name = "R22";
             this.OnLineHelpID = "Sci.Win.Tems.PrintForm";
@@ -141,11 +143,11 @@
             this.Controls.SetChildIndex(this.checkUseCustomized, 0);
             this.Controls.SetChildIndex(this.txtVersion, 0);
             this.Controls.SetChildIndex(this.labelStyle, 0);
-            this.Controls.SetChildIndex(this.labelSeason, 0);
             this.Controls.SetChildIndex(this.labelBrand, 0);
             this.Controls.SetChildIndex(this.txtstyle, 0);
             this.Controls.SetChildIndex(this.txtseason, 0);
             this.Controls.SetChildIndex(this.txtbrand, 0);
+            this.Controls.SetChildIndex(this.lbSeason, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -157,7 +159,7 @@
         private Class.Txtseason txtseason;
         private Class.Txtstyle txtstyle;
         private Win.UI.Label labelBrand;
-        private Win.UI.Label labelSeason;
         private Win.UI.Label labelStyle;
+        private Win.UI.Label lbSeason;
     }
 }
