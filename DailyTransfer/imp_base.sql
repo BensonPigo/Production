@@ -5853,7 +5853,7 @@ insert into [Production].[dbo].AutomatedLineMappingConditionSetting
 				Ukey
 				,MDivisionID
 				,FactoryID
-				,FunctionIE
+				,Functions
 				,Verify
 				,Condition1
 				,Condition2
@@ -5867,7 +5867,7 @@ insert into [Production].[dbo].AutomatedLineMappingConditionSetting
 select	Ukey
 		,MDivisionID
 		,FactoryID
-		,FunctionIE
+		,Functions
 		,Verify
 		,Condition1
 		,Condition2
