@@ -2455,6 +2455,50 @@ else
 		when not matched by source AND T.ID IN (SELECT ID FROM #Torder) then 
 			delete;
 
+		---------------Order_MarkerList------------Order_MarkerList_PatternPanel
+		Delete a
+		from Production.dbo.Order_MarkerList_PatternPanel as a
+		inner join #Torder b on a.id = b.id
+		where not exists(select 1 from Trade_To_Pms.dbo.Order_MarkerList_PatternPanel 
+								  where a.Order_MarkerlistUkey = Order_MarkerlistUkey and a.FabricPanelCode = FabricPanelCode)
+		---------------------------UPDATE 
+		
+		UPDATE a
+		SET	 a.Id			  = b.Id			
+			,a.PatternPanel	  = b.PatternPanel	
+			,a.AddName		  = b.AddName		
+			,a.AddDate		  = b.AddDate		
+			,a.EditName		  = b.EditName		
+			,a.EditDate		  = b.EditDate		
+		from Production.dbo.Order_MarkerList_PatternPanel as a
+		inner join #Torder o on a.id = o.id
+		inner join Trade_To_Pms.dbo.Order_MarkerList_PatternPanel as b ON a.Order_MarkerlistUkey = b.Order_MarkerlistUkey and a.FabricPanelCode = b.FabricPanelCode
+		-------------------------- INSERT
+		
+		INSERT INTO Production.dbo.Order_MarkerList_PatternPanel(
+		 Id
+		,PatternPanel
+		,Order_MarkerlistUkey
+		,FabricPanelCode
+		,AddName
+		,AddDate
+		,EditName
+		,EditDate
+		)
+		select 
+				 b.Id
+				,b.PatternPanel
+				,b.Order_MarkerlistUkey
+				,b.FabricPanelCode
+				,b.AddName
+				,b.AddDate
+				,b.EditName
+				,b.EditDate
+		from Trade_To_Pms.dbo.Order_MarkerList_PatternPanel as b WITH (NOLOCK)
+		inner join #Torder o on b.id = o.id
+		where not exists(select 1 from Production.dbo.Order_MarkerList_PatternPanel as a WITH (NOLOCK) 
+						 where a.Order_MarkerlistUkey = b.Order_MarkerlistUkey and a.FabricPanelCode = b.FabricPanelCode)
+
 		------Order_MarkerList_SizeQty----------------
 		Merge Production.dbo.Order_MarkerList_SizeQty as t
 		Using (select a.* from Trade_To_Pms.dbo.Order_MarkerList_SizeQty a WITH (NOLOCK) inner join #Torder b on a.id=b.id) as s
