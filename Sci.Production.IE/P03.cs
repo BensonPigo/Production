@@ -420,26 +420,20 @@ and BrandID = '{this.CurrentMaintain["BrandID"]}'
                         if (e.RowIndex != -1)
                         {
                             DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
-
                             this.GetEmployee(null);
-
-                            Win.Tools.SelectItem item = new Win.Tools.SelectItem(this.EmployeeData, "ID,FirstName,LastName,Section,", "10,18,16,2,5", dr["EmployeeID"].ToString(), headercaptions: "ID,First Name,Last Name,Section")
-                            {
-                                Width = 700,
-                            };
-                            DialogResult returnResult = item.ShowDialog();
-                            if (returnResult == DialogResult.Cancel)
+                            P03_Operator callNextForm = new P03_Operator(this.EmployeeData, MyUtility.Convert.GetString(this.CurrentMaintain["SewingLineID"]) + this.comboSewingTeam1.Text );
+                            DialogResult result = callNextForm.ShowDialog(this);
+                            if (result == DialogResult.Cancel)
                             {
                                 return;
                             }
 
-                            IList<DataRow> selectedData = item.GetSelecteds();
                             DataTable dt = (DataTable)this.detailgridbs.DataSource;
 
-                            DataRow[] errorDataRow = dt.Select($"EmployeeID = '{MyUtility.Convert.GetString(selectedData[0]["ID"])}' and NO <> '{MyUtility.Convert.GetString(dr["No"])}'");
+                            DataRow[] errorDataRow = dt.Select($"EmployeeID = '{MyUtility.Convert.GetString(callNextForm.SelectOperator["ID"])}' and NO <> '{MyUtility.Convert.GetString(dr["No"])}'");
                             if (errorDataRow.Length > 0)
                             {
-                                MyUtility.Msg.WarningBox($"<{selectedData[0]["ID"]} {selectedData[0]["Name"]}> already been used in No.{MyUtility.Convert.GetString(errorDataRow[0]["No"])}!!");
+                                MyUtility.Msg.WarningBox($"<{callNextForm.SelectOperator["ID"]} {callNextForm.SelectOperator["Name"]}> already been used in No.{MyUtility.Convert.GetString(errorDataRow[0]["No"])}!!");
                                 return;
                             }
 
@@ -453,9 +447,9 @@ and BrandID = '{this.CurrentMaintain["BrandID"]}'
                                 {
                                     int dataIndex = sortDataTable.Rows.IndexOf(dataRow);
                                     DataRow row = this.detailgrid.GetDataRow<DataRow>(dataIndex);
-                                    row["EmployeeID"] = selectedData[0]["ID"];
-                                    row["EmployeeName"] = selectedData[0]["Name"];
-                                    row["EmployeeSkill"] = selectedData[0]["Skill"];
+                                    row["EmployeeID"] = callNextForm.SelectOperator["ID"];
+                                    row["EmployeeName"] = callNextForm.SelectOperator["Name"];
+                                    row["EmployeeSkill"] = callNextForm.SelectOperator["Skill"];
                                     row.EndEdit();
                                 }
                             }
@@ -507,23 +501,19 @@ and BrandID = '{this.CurrentMaintain["BrandID"]}'
 
                             this.GetEmployee(null);
 
-                            Win.Tools.SelectItem item = new Win.Tools.SelectItem(this.EmployeeData, "ID,FirstName,LastName,Section,", "10,18,16,2,5", dr["EmployeeID"].ToString(), headercaptions: "ID,First Name,Last Name,Section")
-                            {
-                                Width = 700,
-                            };
-                            DialogResult returnResult = item.ShowDialog();
-                            if (returnResult == DialogResult.Cancel)
+                            P03_Operator callNextForm = new P03_Operator(this.EmployeeData, MyUtility.Convert.GetString(this.CurrentMaintain["SewingLineID"]) + this.comboSewingTeam1.Text);
+                            DialogResult result = callNextForm.ShowDialog(this);
+                            if (result == DialogResult.Cancel)
                             {
                                 return;
                             }
 
-                            IList<DataRow> selectedData = item.GetSelecteds();
                             DataTable dt = (DataTable)this.detailgridbs.DataSource;
 
-                            DataRow[] errorDataRow = dt.Select($"EmployeeID = '{MyUtility.Convert.GetString(selectedData[0]["ID"])}' and NO <> '{MyUtility.Convert.GetString(dr["No"])}'");
+                            DataRow[] errorDataRow = dt.Select($"EmployeeID = '{MyUtility.Convert.GetString(callNextForm.SelectOperator["ID"])}' and NO <> '{MyUtility.Convert.GetString(dr["No"])}'");
                             if (errorDataRow.Length > 0)
                             {
-                                MyUtility.Msg.WarningBox($"<{selectedData[0]["ID"]} {selectedData[0]["Name"]}> already been used in No.{MyUtility.Convert.GetString(dr["No"])}!!");
+                                MyUtility.Msg.WarningBox($"<{callNextForm.SelectOperator["ID"]} {callNextForm.SelectOperator["Name"]}> already been used in No.{MyUtility.Convert.GetString(dr["No"])}!!");
                                 return;
                             }
 
@@ -537,9 +527,9 @@ and BrandID = '{this.CurrentMaintain["BrandID"]}'
                                 {
                                     int dataIndex = sortDataTable.Rows.IndexOf(dataRow);
                                     DataRow row = this.detailgrid.GetDataRow<DataRow>(dataIndex);
-                                    row["EmployeeID"] = selectedData[0]["ID"];
-                                    row["EmployeeName"] = selectedData[0]["Name"];
-                                    row["EmployeeSkill"] = selectedData[0]["Skill"];
+                                    row["EmployeeID"] = callNextForm.SelectOperator["ID"];
+                                    row["EmployeeName"] = callNextForm.SelectOperator["Name"];
+                                    row["EmployeeSkill"] = callNextForm.SelectOperator["Skill"];
                                     row.EndEdit();
                                 }
                             }
@@ -876,6 +866,58 @@ and Name = @PPA
         // 撈出Employee資料
         private void GetEmployee(string iD)
         {
+
+            string strDept = string.Empty;
+            string strPosition = string.Empty;
+            string strWhere = string.Empty;
+            switch (Env.User.Factory)
+            {
+                case "MAI":
+                case "MA2":
+                case "MA3":
+                case "MW2":
+                case "FIT":
+                case "MWI":
+                case "FAC":
+                case "FA2":
+                case "PSR":
+                case "VT1":
+                case "VT2":
+                case "GMM":
+                case "GM2":
+                case "GMI":
+                case "PS2":
+                case "ALA":
+                    strDept = $"'PRO'";
+                    strPosition = $"'PCK','PRS','SEW','FSPR','LOP','STL','LL','SLS','SSLT'";
+                    strWhere = $@" and Dept in({strDept})  and Position in({strPosition})";
+                    break;
+                case "ESP":
+                case "ES2":
+                case "ES3":
+                case "VSP":
+                    strDept = $"'PRO'";
+                    strPosition = $"'PAC','PRS','SEW','LL'";
+                    strWhere = $@" and Dept in({strDept})  and Position in({strPosition})";
+                    break;
+                case "SPT":
+                    strDept = $"'PRO'";
+                    strPosition = $"'PAC','PRS','SEW','LL','SUP','PE','PIT','TL'";
+                    strWhere = $@" and Dept in({strDept})  and Position in({strPosition})";
+                    break;
+                case "SNP":
+                    strDept = $"'PRO'";
+                    strPosition = $"'SEW','LL','PIT'";
+                    strWhere = $@" and Dept in({strDept})  and Position in({strPosition})";
+                    break;
+                case "SPS":
+                case "SPR":
+                    strDept = $"'SEW'";
+                    strPosition = $"'SWR','TRNEE','Lneldr','LINSUP','PRSSR','PCKR'";
+                    strWhere = $@" and Dept in({strDept})  and Position in({strPosition})";
+                    break;
+            }
+
             string sqlCmd;
 
             bool IsEmptySewingLine = MyUtility.Check.Empty(this.CurrentMaintain["SewingLineID"]);
@@ -903,11 +945,11 @@ and Name = @PPA
 
             if (MyUtility.Check.Empty(this.CurrentMaintain["FactoryID"]))
             {
-                sqlCmd = "select ID,FirstName,LastName,Section,Skill , [Name] = iif(LastName+ ','+ FirstName <> ',' ,LastName+ ','+ FirstName,'') from Employee WITH (NOLOCK) where (ResignationDate > GETDATE() or ResignationDate is null) and Junk = 0 " + (iD == null ? string.Empty : " and ID = @id ") + (IsEmptySewingLine ? string.Empty : " and (SewingLineID = @SewingLine or Section = @SewingLine)");
+                sqlCmd = $@"select ID,FirstName,LastName,Section,Skill,SewingLineID , [Name] = iif(LastName+ ','+ FirstName <> ',' ,LastName+ ','+ FirstName,'') from Employee WITH (NOLOCK) where (ResignationDate > GETDATE() or ResignationDate is null) and Junk = 0 {strWhere} " + (iD == null ? string.Empty : " and ID = @id "); //+ (IsEmptySewingLine ? string.Empty : " and (SewingLineID = @SewingLine or Section = @SewingLine)");
             }
             else
             {
-                sqlCmd = "select ID,FirstName,LastName,Section,Skill , [Name] = iif(LastName+ ','+ FirstName <> ',' ,LastName+ ','+ FirstName,'')  from Employee WITH (NOLOCK) where (ResignationDate > GETDATE() or ResignationDate is null) and Junk = 0 and FactoryID = @factoryid " + (iD == null ? string.Empty : " and ID = @id ") + (IsEmptySewingLine ? string.Empty : " and (SewingLineID = @SewingLine or Section = @SewingLine)");
+                sqlCmd = $@"select ID,FirstName,LastName,Section,Skill,SewingLineID , [Name] = iif(LastName+ ','+ FirstName <> ',' ,LastName+ ','+ FirstName,'')  from Employee WITH (NOLOCK) where (ResignationDate > GETDATE() or ResignationDate is null) and Junk = 0 and FactoryID = @factoryid {strWhere} " + (iD == null ? string.Empty : " and ID = @id "); // + (IsEmptySewingLine ? string.Empty : " and (SewingLineID = @SewingLine or Section = @SewingLine)");
             }
 
             DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out this.EmployeeData);
