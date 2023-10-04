@@ -161,7 +161,10 @@ namespace Sci.Production.Quality
     a.CustInspNumber,
     Complete = IIF(d.Complete=1,'Y','N'),
     b.InspectionGroup,
-    [Inspection] = CONCAT(convert(decimal(20,2),ROUND(isnull(fp.ttlActualYds, 0) / ArriveQty * 100.0, 2)), '%')
+    [Inspection] = CONCAT( CASE WHEN ArriveQty <> 0
+                                    THEN convert(decimal(20,2),ROUND(isnull(fp.ttlActualYds, 0) / NULLIF(ArriveQty, 0) * 100.0, 2))
+                                    ELSE 0
+                            END, '%')
 From FIR a WITH (NOLOCK) 
 Left join Receiving c WITH (NOLOCK) on c.id = a.receivingid
 Left join TransferIn ti WITH (NOLOCK) on ti.id = a.receivingid
