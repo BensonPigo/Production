@@ -14,6 +14,7 @@ using System.Data.SqlClient;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using Sci.Production.Automation;
+using Sci.Production.Prg;
 
 namespace Sci.Production.Packing
 {
@@ -2392,6 +2393,11 @@ The rest of the data has been updated successfully!'
             {
                 dr["CustCTN"] = string.Empty;
             }
+        }
+
+        private void Button1_Click(object sender, EventArgs e)
+        {
+            WebServiceNikeMercury.StaticService.LabelsPackPlanCreate(this.CurrentMaintain["ID"].ToString());
         }
     }
 }

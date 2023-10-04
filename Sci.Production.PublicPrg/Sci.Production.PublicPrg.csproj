@@ -164,6 +164,7 @@
     <Compile Include="Entity\CallFrom.cs" />
     <Compile Include="Entity\ComparePO3Item.cs" />
     <Compile Include="Entity\LocalOrderInventory.cs" />
+    <Compile Include="Entity\NikeMercury\RequestLabelsPackPlanCreate.cs" />
     <Compile Include="Entity\TK_TPEStatus.cs" />
     <Compile Include="Entity\TK_FtyStatus.cs" />
     <Compile Include="Entity\FtyInventory.cs" />
@@ -205,6 +206,7 @@
     <Compile Include="Cutting.cs" />
     <Compile Include="Quality.cs" />
     <Compile Include="WebServiceHelper.cs" />
+    <Compile Include="WebServiceNikeMercury.cs" />
   </ItemGroup>
   <ItemGroup>
     <COMReference Include="Microsoft.Office.Core">

@@ -103,6 +103,7 @@
             this.btnClrearCustCtn = new Sci.Win.UI.Button();
             this.panel1 = new Sci.Win.UI.Panel();
             this.displayPLToRgCode = new Sci.Win.UI.DisplayBox();
+            this.button1 = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -121,6 +122,7 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.button1);
             this.masterpanel.Controls.Add(this.displayPLToRgCode);
             this.masterpanel.Controls.Add(this.panel1);
             this.masterpanel.Controls.Add(this.btnEdit);
@@ -246,6 +248,7 @@
             this.masterpanel.Controls.SetChildIndex(this.btnEdit, 0);
             this.masterpanel.Controls.SetChildIndex(this.panel1, 0);
             this.masterpanel.Controls.SetChildIndex(this.displayPLToRgCode, 0);
+            this.masterpanel.Controls.SetChildIndex(this.button1, 0);
             // 
             // detailpanel
             // 
@@ -750,6 +753,7 @@
             this.txtbrand.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "BrandID", true));
             this.txtbrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtbrand.Location = new System.Drawing.Point(149, 28);
+            this.txtbrand.MyDocumentdName = null;
             this.txtbrand.Name = "txtbrand";
             this.txtbrand.Size = new System.Drawing.Size(78, 23);
             this.txtbrand.TabIndex = 2;
@@ -1112,6 +1116,16 @@
             this.displayPLToRgCode.Size = new System.Drawing.Size(40, 23);
             this.displayPLToRgCode.TabIndex = 82;
             // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(758, 281);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(127, 30);
+            this.button1.TabIndex = 83;
+            this.button1.Text = "Test Mercury";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.Button1_Click);
+            // 
             // P03
             // 
             this.ApvChkValue = "New";
@@ -1236,5 +1250,6 @@
         private Win.UI.Button btnClrearCustCtn;
         private Win.UI.Panel panel1;
         private Win.UI.DisplayBox displayPLToRgCode;
+        private Win.UI.Button button1;
     }
 }
