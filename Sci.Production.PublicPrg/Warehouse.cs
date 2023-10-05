@@ -3785,7 +3785,7 @@ order by Barcode desc
         /// Confirm 時檢查
         /// </summary>
         /// <inheritdoc/>
-        public static bool CheckBarCode(DataTable dtDetail, string function, bool isLocalOrderInventory = false)
+        public static bool CheckBarCode(DataTable dtDetail, string function, bool isLocalOrderInventory = false, bool showmsg = true)
         {
             if (dtDetail == null)
             {
@@ -3840,8 +3840,11 @@ inner join #tmp t on t.ukey = f.Ukey
                         MyUtility.Msg.ErrorBox(result.ToString());
                     }
 
-                    Class.MsgGrid form = new Class.MsgGrid(dtS, showMsg);
-                    form.ShowDialog();
+                    if (showmsg)
+                    {
+                        Class.MsgGrid form = new Class.MsgGrid(dtS, showMsg);
+                        form.ShowDialog();
+                    }
 
                     //Class.WH_BarcodeEmpty wH_Barcode = new Class.WH_BarcodeEmpty(emptyBarcodedt, showMsg, isSubTransferOrBorrowBack: true, isLocalOrderInventory: isLocalOrderInventory);
                     //wH_Barcode.ShowDialog();
