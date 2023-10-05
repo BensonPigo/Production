@@ -397,7 +397,10 @@ INSERT into @RtnTable(
 		[DESC] ,[FABRICCONSTRUCTIONID] ,ROLL,INSPDATE,RESULT,GRADE,DEFECTRECORD,
 		[DEFECTTYPE] ,[DEFECTDESC] ,[POINTS],[DEFECTRATE] ,INSPECTOR
 )
-select *
+select isnull(POID,''),isnull(SEQ,''),isnull(WK,''),isnull(RECEIVINGID,''),isnull(STYLEID,''),isnull(BRANDID,''),isnull(SUPPLIER,''),isnull(REFNO,''),isnull(COLORID,''),
+		ARRIVEWHDATE,isnull(ARRIVEQTY,0),isnull(WEAVETYPEID,''),isnull(DYELOT,''),isnull(WIDTH,0),isnull(WEIGHT,0),isnull(COMPOSITION,''),
+		isnull(DESCRIPTION,'') ,isnull(CONSTRUCTIONID,'') ,isnull(ROLL,''),INSPDATE,isnull(RESULT,''),isnull(GRADE,''),isnull(DEFECTRECORD,''),
+		isnull(TYPE,'') ,isnull(DESCRIPTIONEN,'') ,isnull([POINT],0),isnull([DEFECTRATE],0) ,isnull(INSPECTOR,'')
 from (
 	select
 		T.POID,
