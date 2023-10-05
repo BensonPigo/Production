@@ -2879,6 +2879,7 @@
     <Build Include="dbo\Stored Procedures\GetCuttingScheduleOutputList.sql" />
     <Build Include="dbo\Tables\SubconOutContractAP.sql" />
     <Build Include="dbo\Tables\SubconOutContractAP_Detail.sql" />
+    <Build Include="dbo\Functions\GetQA_R11_ReceivingTransferIn_Detail.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />

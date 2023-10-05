@@ -964,9 +964,9 @@ SET @ErrorMessage = ''
 /****************************************************************************************************************************/
 /***********************************P_Import_QA_R11_DefectDetail****************************************************************/
 BEGIN TRY
-	set @Stime = getdate()  
-	execute [dbo].[P_Import_QA_R11_DefectDetail]
-	set @Etime = getdate()
+	set @StartDate = CONVERT(date, DATEADD(MONTH, -3, GETDATE()))
+	set @EndDate = CONVERT(date, getdate())
+	execute [dbo].[P_Import_QA_R11_DefectDetail]  @StartDate, @EndDate	
 END TRY
 
 BEGIN CATCH

@@ -43,6 +43,7 @@ namespace Sci.Production.Quality
             this.type = this.radioPanelTransaction.Value;
             if (this.type == "1")
             {
+                // 注意!! 調整SQL 也要一併調整Sql Table Function [GetQA_R11_ReceivingTransferIn_Detail]
                 if (!this.dateArriveWHDate.Value1.Empty())
                 {
                     where1 += $"and R.WhseArrival between @Date1 and @Date2" + Environment.NewLine;
