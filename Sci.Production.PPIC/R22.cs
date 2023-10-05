@@ -46,7 +46,7 @@ namespace Sci.Production.PPIC
             if (!MyUtility.Check.Empty(this.txtbrand.Text))
             {
                 this.listSqlPara.Add(new SqlParameter("@BrandID", this.txtbrand.Text));
-                this.sqlWhere += " and (ss.MasterBrandID = @BrandID or ss.ChildrenBrandID = @BrandID)";
+                this.sqlWhere += " and s.BrandID = @BrandID";
             }
 
             if (!MyUtility.Check.Empty(this.txtseason.Text))
@@ -58,7 +58,7 @@ namespace Sci.Production.PPIC
             if (!MyUtility.Check.Empty(this.txtstyle.Text))
             {
                 this.listSqlPara.Add(new SqlParameter("@StyleID", this.txtstyle.Text));
-                this.sqlWhere += " and (ss.MasterStyleID = @StyleID or ss.ChildrenStyleID = @StyleID)";
+                this.sqlWhere += " and s.ID = @StyleID";
             }
 
             return base.ValidateInput();
@@ -69,39 +69,51 @@ namespace Sci.Production.PPIC
         {
             StringBuilder sqlCmd = new StringBuilder();
             sqlCmd.Append($@"
-select 
-ss.*,
-s.SeasonID,
-[Createby] = dbo.getTPEPass1_ExtNo(ss.AddName),
-[CreateDate] = ss.AddDate,
-[Edit by] = dbo.getTPEPass1_ExtNo(ss.EditName),
-[Edit Date] = ss.EditDate,
-[Rowcnt] = ROW_NUMBER() over(PARTITION BY ss.MasterStyleID,ss.MasterBrandID order by ss.MasterStyleID,ss.MasterBrandID)
-into #tmp
-from Style_SimilarStyle ss with(nolock)
-inner join Style s with(nolock) on s.BrandID = ss.MasterBrandID and s.ID = ss.MasterStyleID
-where 1=1
+SELECT s.ID,s.BrandID
+INTO #tmpStyle
+FROM Style s with(nolock)
+WHERE 1=1
 {this.sqlWhere}
+
+SELECT 
+    ss.MasterStyleID,
+    ss.ChildrenStyleID,
+    ss.MasterBrandID,
+    ss.ChildrenBrandID,
+    [Createby] = dbo.getTPEPass1_ExtNo(ss.AddName),
+    [CreateDate] = ss.AddDate,
+    [Edit by] = dbo.getTPEPass1_ExtNo(ss.EditName),
+    [Edit Date] = ss.EditDate
+INTO #tmp
+FROM Style_SimilarStyle ss with(nolock)
+WHERE ss.MasterStyleID IN (
+    SELECT MasterStyleID
+    FROM Style_SimilarStyle ss with(nolock)
+    WHERE EXISTS(SELECT 1 FROM #tmpStyle s WHERE s.ID = ss.MasterStyleID OR s.ID = ss.ChildrenStyleID)
+)
 
 select * from (
     --Master
-	select [StyleGroup] = MasterStyleID,
-	[SimilarStyle] = MasterStyleID,
-	[SimilarStyleBrand] = MasterBrandID,
-	[Createby] = '',
-	[CreateDate] = null,
-	[Edit by] = '',
-	[Edit Date] = null
-	from #tmp where [Rowcnt] =1
-union 
+	select
+        [StyleGroup] = MasterStyleID,
+	    [SimilarStyle] = MasterStyleID,
+	    [SimilarStyleBrand] = MasterBrandID,
+	    [Createby] = '',
+	    [CreateDate] = null,
+	    [Edit by] = '',
+	    [Edit Date] = null
+	from #tmp
+
+    union 
 	-- Children
-	select [StyleGroup] = MasterStyleID,
-	[SimilarStyle] = ChildrenStyleID,
-	[SimilarStyleBrand] = ChildrenBrandID,
-	[Createby],
-	[CreateDate],
-	[Edit by],
-	[Edit Date]
+	select
+        [StyleGroup] = MasterStyleID,
+	    [SimilarStyle] = ChildrenStyleID,
+	    [SimilarStyleBrand] = ChildrenBrandID,
+	    [Createby],
+	    [CreateDate],
+	    [Edit by],
+	    [Edit Date]
 	from #tmp
 	where MasterStyleID!=ChildrenStyleID
 ) a
