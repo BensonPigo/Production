@@ -40,22 +40,6 @@ namespace Sci.Production.Subcon
         {
             this.p05 = (P05)this.ParentIForm;
             TxtSubconReason.CellSubconReason txtSubReason = (TxtSubconReason.CellSubconReason)TxtSubconReason.CellSubconReason.GetGridtxtCell("SQ");
-
-            // comboSubReason.EditingControlShowing += (s, e) =>
-            // {
-            //     if (s==null || e == null)
-            //     {
-            //         return;
-            //     }
-
-            // var eventArgs = (Ict.Win.UI.DataGridViewEditingControlShowingEventArgs)e;
-            //     ComboBox cb = eventArgs.Control as ComboBox;
-            //     if (cb != null)
-            //     {
-            //         cb.SelectionChangeCommitted -= this.combo_SelectionChangeCommitted;
-            //         cb.SelectionChangeCommitted += this.combo_SelectionChangeCommitted;
-            //     }
-            // };
             this.Query();
             this.gridIrregularQty.IsEditingReadOnly = false;
             this.gridIrregularQty.DataSource = this.listControlBindingSource1;
@@ -238,24 +222,27 @@ alter table #tmp alter column OrderID varchar(13)
 alter table #tmp alter column ArtworkID varchar(36)
 alter table #tmp alter column PatternCode varchar(20)
 alter table #tmp alter column PatternDesc varchar(40)
+alter table #tmp alter column Remark varchar(1000)
 
-select  t.OrderID,
-        [Article] = '',
-        [SizeCode] = '',
-        t.ArtworkID,
-        t.PatternCode,
-        t.PatternDesc,
-        [LocalSuppID] = '',
-        [OrderQty] = o.Qty,
-        [ReqQty] = sum(t.ReqQty)
+select  t.OrderID
+       ,t.ArtworkID
+       ,t.PatternCode
+       ,t.PatternDesc
+       ,t.Remark
+       ,[ReqQty] = sum(t.ReqQty)
+       ,[OrderQty] = o.Qty
+       ,[Article] = ''
+       ,[SizeCode] = ''
+       ,[LocalSuppID] = ''
 into #FinalArtworkReq
 from #tmp t
 inner join orders o with (nolock) on o.ID = t.OrderID
-group by    t.OrderID,
-            t.PatternCode,
-            t.PatternDesc,
-            t.ArtworkID,
-            o.Qty
+group by t.OrderID
+        ,t.PatternCode
+        ,t.PatternDesc
+        ,t.ArtworkID
+        ,t.Remark
+        ,o.Qty
 
 {this.sqlGetBuyBackDeduction(this._masterData["artworktypeid"].ToString())}
 
@@ -274,9 +261,6 @@ o.FactoryID
 ,[CreateDate] = ai.AddDate
 ,[EditBy] = (select name from pass1 where id=ai.EditName)
 ,[EditDate] = ai.EditDate
-,ArtworkID=''
-,PatternCode=''
-,PatternDesc=''
 ,[NeedUpdate] = 0
 ,[NeedDelete] = 0
 into #tmpDB
@@ -293,7 +277,7 @@ o.FactoryID
 ,o.StyleID
 ,o.BrandID
 ,[StandardQty] = sum(oq.Qty)
-,[ReqQty] = ReqQty.value + PoQty.value + s.ReqQty + isnull(tbbd.BuyBackArtworkReq,0)
+,[ReqQty] = ReqQty.value + ISNULL(PoQty.value, 0) + s.ReqQty + isnull(tbbd.BuyBackArtworkReq,0)
 ,[SubconReasonID] = ''
 ,[ReasonDesc] = ''
 ,[CreateBy] = ''
@@ -303,6 +287,7 @@ o.FactoryID
 ,s.ArtworkID
 ,s.PatternCode
 ,s.PatternDesc
+,s.Remark
 ,[BuyBackArtworkReq] = isnull(tbbd.BuyBackArtworkReq,0)
 into #tmpCurrent
 from  orders o WITH (NOLOCK) 
@@ -313,18 +298,21 @@ left join #tmpBuyBackDeduction tbbd on  tbbd.OrderID = s.OrderID       and
                                         tbbd.SizeCode = s.SizeCode     and
                                         tbbd.PatternCode = s.PatternCode   and
                                         tbbd.PatternDesc = s.PatternDesc   and
+                                        tbbd.Remark = s.Remark   and
                                         tbbd.ArtworkID = s.ArtworkID and
 										tbbd.LocalSuppID = ''
 outer apply(
-	select value = ISNULL(sum(PoQty),0)
-    from ArtworkPO_Detail ad, ArtworkPO a
-	where ad.ID = a.ID
-    and OrderID = o.ID 
-    and ad.PatternCode = isnull(s.PatternCode,'')
-	and ad.PatternDesc = isnull(s.PatternDesc,'') 
-    and ad.ArtworkID = iif(s.ArtworkID is null,'{this._masterData["ArtworkTypeID"]}',s.ArtworkID)
-	and ad.ArtworkReqID =''
-	and a.ArtworkTypeID = '{this._masterData["ArtworkTypeID"]}'
+--先找回對應的ArtworkReq_Detail, 再用ukey找到一對一的ArtworkPO_Detail
+	select value = sum(apd.PoQty)
+    from ArtworkReq_Detail ad
+    inner join ArtworkPO_Detail apd on apd.ArtworkReq_Detailukey = ad.ukey
+	where s.OrderID = ad.OrderID
+	AND s.ArtworkID = ad.ArtworkID
+    and s.PatternCode = ad.PatternCode
+    and s.PatternDesc = ad.PatternDesc
+    and s.Article = ad.Article
+    and s.SizeCode = ad.SizeCode
+    and s.Remark = ad.Remark
 ) PoQty
 outer apply(
 	select value = ISNULL(sum(ReqQty),0)
@@ -332,14 +320,16 @@ outer apply(
 	where ad.ID = a.ID
 	and OrderID = o.ID and ad.PatternCode= isnull(s.PatternCode,'')
 	and ad.PatternDesc = isnull(s.PatternDesc,'') 
+	and ad.Remark = isnull(s.Remark,'') 
     and ad.ArtworkID = iif(s.ArtworkID is null,'{this._masterData["ArtworkTypeID"]}',s.ArtworkID)
 	and ad.id !=  '{this._ArtWorkReq_ID}'
 	and a.ArtworkTypeID = '{this._masterData["ArtworkTypeID"]}'
     and a.status != 'Closed'
 )ReqQty
 group by o.FactoryID,o.ID,o.StyleID,o.BrandID,ReqQty.value,PoQty.value,s.ReqQty
-,s.ArtworkID,s.PatternCode,s.PatternDesc,isnull(tbbd.BuyBackArtworkReq,0)
-having ReqQty.value + PoQty.value + s.ReqQty + isnull(tbbd.BuyBackArtworkReq,0) > sum(oq.Qty) 
+    ,s.ArtworkID,s.PatternCode,s.PatternDesc,s.Remark
+    ,isnull(tbbd.BuyBackArtworkReq,0)
+having Isnull(ReqQty.value, 0) + isnull(PoQty.value, 0) + s.ReqQty + isnull(tbbd.BuyBackArtworkReq,0) > sum(oq.Qty) 
 
 select  FactoryID,
         ArtworkTypeID,
@@ -362,8 +352,8 @@ MERGE #tmpDB AS T
 USING #tmpCurrentFinal AS S
 ON (T.ArtworkTypeID = S.ArtworkTypeID and T.OrderID = S.OrderID) 
 WHEN NOT MATCHED BY TARGET 
-    THEN INSERT(FactoryID, ArtworkTypeID, OrderID, StyleID, BrandID, StandardQty, ReqQty, SubconReasonID, ReasonDesc, CreateBy, CreateDate, EditBy, EditDate, ArtworkID, PatternCode, PatternDesc, NeedUpdate, NeedDelete) 
-            VALUES(S.FactoryID, S.ArtworkTypeID, S.OrderID, S.StyleID, S.BrandID, S.StandardQty, S.ReqQty, '', '', '', getdate(), '', null, '', '', '', 0, 0)
+    THEN INSERT(FactoryID, ArtworkTypeID, OrderID, StyleID, BrandID, StandardQty, ReqQty, SubconReasonID, ReasonDesc, CreateBy, CreateDate, EditBy, EditDate, NeedUpdate, NeedDelete) 
+            VALUES(S.FactoryID, S.ArtworkTypeID, S.OrderID, S.StyleID, S.BrandID, S.StandardQty, S.ReqQty, '', '', '', getdate(), '', null, 0, 0)
 WHEN MATCHED 
     THEN UPDATE SET T.StandardQty = S.StandardQty,
                     T.ReqQty = S.ReqQty,

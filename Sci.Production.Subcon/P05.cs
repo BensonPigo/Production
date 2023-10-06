@@ -1110,6 +1110,7 @@ select  fr.orderID,
         fr.ArtworkID,
         fr.PatternCode,
         fr.PatternDesc,
+        fr.Remark,
         fr.OrderQty,
 		fr.LocalSuppID,
         obq.OrderIDFrom,
@@ -1131,6 +1132,7 @@ where   exists( select 1
 		        and ad.OrderID = obq.OrderIDFrom
                 and ad.PatternCode = fr.PatternCode
                 and ad.PatternDesc = fr.PatternDesc
+                and ad.Remark = fr.Remark
                 and ad.ArtworkID = fr.ArtworkID
                 and a.id != '{artworkTypeID}'
                 and a.status != 'Closed') 
@@ -1140,6 +1142,7 @@ Group by    fr.orderID,
             fr.ArtworkID,
             fr.PatternCode,
             fr.PatternDesc,
+            fr.Remark,
             fr.OrderQty,
 			fr.LocalSuppID,
             obq.OrderIDFrom,
@@ -1156,6 +1159,7 @@ select  tbbr.OrderIDFrom,
         tbbr.ArtworkID,
         tbbr.PatternCode,
         tbbr.PatternDesc,
+        tbbr.Remark,
 		tbbr.LocalSuppID,
         [BuyBackQty] = sum(obq.Qty)
 into #tmpBuyBackFrom
@@ -1176,6 +1180,7 @@ group by    tbbr.OrderIDFrom,
             tbbr.ArtworkID,
             tbbr.PatternCode,
             tbbr.PatternDesc,
+            tbbr.Remark,
 		    tbbr.LocalSuppID
 
 --推算出BuyBack的訂單可扣除的數量
@@ -1185,6 +1190,7 @@ select  tbbf.OrderIDFrom,
         tbbf.ArtworkID,
         tbbf.PatternCode,
         tbbf.PatternDesc,
+        tbbf.Remark,
 		tbbf.LocalSuppID,
         [BuyBackReqedQty] = Sum(case when ArtworkReq.val = 0 then 0
                                      when    (OrderQty.val - ArtworkReq.val) > tbbf.BuyBackQty then tbbf.BuyBackQty
@@ -1211,6 +1217,7 @@ cross apply (   select val = isnull(sum(AD.ReqQty), 0)
                 and ad.SizeCode = tbbf.SizeCode
                 and ad.PatternCode = tbbf.PatternCode
                 and ad.PatternDesc = tbbf.PatternDesc
+                and ad.Remark = tbbf.Remark
                 and ad.ArtworkID = tbbf.ArtworkID
                 and a.id != '{artworkTypeID}'
                 and a.status != 'Closed'
@@ -1221,6 +1228,7 @@ group by    tbbf.OrderIDFrom,
             tbbf.ArtworkID,
             tbbf.PatternCode,
             tbbf.PatternDesc,
+            tbbf.Remark,
 		    tbbf.LocalSuppID
 
 --算出此次申請的訂單應該被扣掉多少數量
@@ -1230,6 +1238,7 @@ select  tbbr.orderID,
         tbbr.ArtworkID,
         tbbr.PatternCode,
         tbbr.PatternDesc,
+        tbbr.Remark,
         tbbr.OrderQty,
         tbbr.OrderIDFrom,
         tbbr.BuyBackQty,
@@ -1244,6 +1253,7 @@ left join   #tmpBuyBackFromResult tbbfr on  tbbfr.OrderIDFrom = tbbr.OrderIDFrom
                                             tbbfr.SizeCodeFrom = tbbr.SizeCodeFrom       and
                                             tbbfr.PatternCode = tbbr.PatternCode     and
                                             tbbfr.PatternDesc = tbbr.PatternDesc     and
+                                            tbbfr.Remark = tbbr.Remark     and
                                             tbbfr.ArtworkID = tbbr.ArtworkID and
 											tbbfr.LocalSuppID = tbbr.LocalSuppID
 outer apply (   select val = isnull(sum(AD.ReqQty), 0)
@@ -1255,6 +1265,7 @@ outer apply (   select val = isnull(sum(AD.ReqQty), 0)
                 and ad.SizeCode = tbbr.SizeCodeFrom
                 and ad.PatternCode = tbbr.PatternCode
                 and ad.PatternDesc = tbbr.PatternDesc
+                and ad.Remark = tbbr.Remark
                 and ad.ArtworkID = tbbr.ArtworkID
                 and a.id != '{artworkTypeID}'
                 and a.status != 'Closed') BuyBackArtworkReq
