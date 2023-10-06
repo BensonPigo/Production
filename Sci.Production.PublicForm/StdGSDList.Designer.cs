@@ -28,9 +28,11 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.panel1 = new Sci.Win.UI.Panel();
             this.panel2 = new Sci.Win.UI.Panel();
             this.panel3 = new Sci.Win.UI.Panel();
+            this.btnCIPF = new Sci.Win.UI.Button();
             this.btnToExcel = new Sci.Win.UI.Button();
             this.comboTypeFilter = new Sci.Win.UI.ComboBox();
             this.labelTypeFilter = new Sci.Win.UI.Label();
@@ -55,14 +57,15 @@
             this.tabControl1 = new Sci.Win.UI.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.gridStdGSD = new Sci.Win.UI.Grid();
-            this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource();
+            this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.gridSummaryByArtwork = new Sci.Win.UI.Grid();
-            this.listControlBindingSource2 = new Sci.Win.UI.ListControlBindingSource();
+            this.listControlBindingSource2 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.tabPage3 = new System.Windows.Forms.TabPage();
             this.gridSummaryByMachine = new Sci.Win.UI.Grid();
-            this.listControlBindingSource3 = new Sci.Win.UI.ListControlBindingSource();
-            this.btnCIPF = new Sci.Win.UI.Button();
+            this.listControlBindingSource3 = new Sci.Win.UI.ListControlBindingSource(this.components);
+            this.displayActFty = new Sci.Win.UI.DisplayBox();
+            this.lblActFty = new Sci.Win.UI.Label();
             this.panel3.SuspendLayout();
             this.panel5.SuspendLayout();
             this.tabControl1.SuspendLayout();
@@ -95,6 +98,8 @@
             // 
             // panel3
             // 
+            this.panel3.Controls.Add(this.displayActFty);
+            this.panel3.Controls.Add(this.lblActFty);
             this.panel3.Controls.Add(this.btnCIPF);
             this.panel3.Controls.Add(this.btnToExcel);
             this.panel3.Controls.Add(this.comboTypeFilter);
@@ -120,6 +125,16 @@
             this.panel3.Name = "panel3";
             this.panel3.Size = new System.Drawing.Size(862, 130);
             this.panel3.TabIndex = 2;
+            // 
+            // btnCIPF
+            // 
+            this.btnCIPF.Location = new System.Drawing.Point(481, 96);
+            this.btnCIPF.Name = "btnCIPF";
+            this.btnCIPF.Size = new System.Drawing.Size(60, 30);
+            this.btnCIPF.TabIndex = 19;
+            this.btnCIPF.Text = "CIPF";
+            this.btnCIPF.UseVisualStyleBackColor = true;
+            this.btnCIPF.Click += new System.EventHandler(this.BtnCIPF_Click);
             // 
             // btnToExcel
             // 
@@ -394,10 +409,10 @@
             // tabPage2
             // 
             this.tabPage2.Controls.Add(this.gridSummaryByArtwork);
-            this.tabPage2.Location = new System.Drawing.Point(4, 25);
+            this.tabPage2.Location = new System.Drawing.Point(4, 22);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(854, 393);
+            this.tabPage2.Size = new System.Drawing.Size(854, 396);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Summary by artwork";
             // 
@@ -422,7 +437,7 @@
             this.gridSummaryByArtwork.RowTemplate.Height = 24;
             this.gridSummaryByArtwork.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridSummaryByArtwork.ShowCellToolTips = false;
-            this.gridSummaryByArtwork.Size = new System.Drawing.Size(848, 387);
+            this.gridSummaryByArtwork.Size = new System.Drawing.Size(848, 390);
             this.gridSummaryByArtwork.TabIndex = 0;
             this.gridSummaryByArtwork.TabStop = false;
             // 
@@ -461,15 +476,22 @@
             this.gridSummaryByMachine.TabIndex = 0;
             this.gridSummaryByMachine.TabStop = false;
             // 
-            // btnCIPF
+            // displayActFty
             // 
-            this.btnCIPF.Location = new System.Drawing.Point(481, 96);
-            this.btnCIPF.Name = "btnCIPF";
-            this.btnCIPF.Size = new System.Drawing.Size(60, 30);
-            this.btnCIPF.TabIndex = 19;
-            this.btnCIPF.Text = "CIPF";
-            this.btnCIPF.UseVisualStyleBackColor = true;
-            this.btnCIPF.Click += new System.EventHandler(this.BtnCIPF_Click);
+            this.displayActFty.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayActFty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayActFty.Location = new System.Drawing.Point(581, 34);
+            this.displayActFty.Name = "displayActFty";
+            this.displayActFty.Size = new System.Drawing.Size(100, 23);
+            this.displayActFty.TabIndex = 21;
+            // 
+            // lblActFty
+            // 
+            this.lblActFty.Location = new System.Drawing.Point(511, 34);
+            this.lblActFty.Name = "lblActFty";
+            this.lblActFty.Size = new System.Drawing.Size(66, 23);
+            this.lblActFty.TabIndex = 20;
+            this.lblActFty.Text = "Act. FTY";
             // 
             // StdGSDList
             // 
@@ -480,6 +502,7 @@
             this.Controls.Add(this.panel2);
             this.Controls.Add(this.panel1);
             this.Name = "StdGSDList";
+            this.OnLineHelpID = "Sci.Win.Subs.Base";
             this.Text = "Std. GSD List";
             this.panel3.ResumeLayout(false);
             this.panel3.PerformLayout();
@@ -535,5 +558,7 @@
         private Win.UI.Label labelTotalCPUTMS;
         private Win.UI.Button btnToExcel;
         private Win.UI.Button btnCIPF;
+        private Win.UI.DisplayBox displayActFty;
+        private Win.UI.Label lblActFty;
     }
 }
