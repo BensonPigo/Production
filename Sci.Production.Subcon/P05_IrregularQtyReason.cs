@@ -277,7 +277,7 @@ o.FactoryID
 ,o.StyleID
 ,o.BrandID
 ,[StandardQty] = sum(oq.Qty)
-,[ReqQty] = ReqQty.value + ISNULL(PoQty.value, 0) + s.ReqQty + isnull(tbbd.BuyBackArtworkReq,0)
+,[ReqQty] = ReqQty.value + s.ReqQty + isnull(tbbd.BuyBackArtworkReq,0)
 ,[SubconReasonID] = ''
 ,[ReasonDesc] = ''
 ,[CreateBy] = ''
@@ -302,19 +302,6 @@ left join #tmpBuyBackDeduction tbbd on  tbbd.OrderID = s.OrderID       and
                                         tbbd.ArtworkID = s.ArtworkID and
 										tbbd.LocalSuppID = ''
 outer apply(
---先找回對應的ArtworkReq_Detail, 再用ukey找到一對一的ArtworkPO_Detail
-	select value = sum(apd.PoQty)
-    from ArtworkReq_Detail ad
-    inner join ArtworkPO_Detail apd on apd.ArtworkReq_Detailukey = ad.ukey
-	where s.OrderID = ad.OrderID
-	AND s.ArtworkID = ad.ArtworkID
-    and s.PatternCode = ad.PatternCode
-    and s.PatternDesc = ad.PatternDesc
-    and s.Article = ad.Article
-    and s.SizeCode = ad.SizeCode
-    and s.Remark = ad.Remark
-) PoQty
-outer apply(
 	select value = ISNULL(sum(ReqQty),0)
 	from ArtworkReq_Detail ad , ArtworkReq a
 	where ad.ID = a.ID
@@ -326,10 +313,10 @@ outer apply(
 	and a.ArtworkTypeID = '{this._masterData["ArtworkTypeID"]}'
     and a.status != 'Closed'
 )ReqQty
-group by o.FactoryID,o.ID,o.StyleID,o.BrandID,ReqQty.value,PoQty.value,s.ReqQty
+group by o.FactoryID,o.ID,o.StyleID,o.BrandID,ReqQty.value,s.ReqQty
     ,s.ArtworkID,s.PatternCode,s.PatternDesc,s.Remark
     ,isnull(tbbd.BuyBackArtworkReq,0)
-having Isnull(ReqQty.value, 0) + isnull(PoQty.value, 0) + s.ReqQty + isnull(tbbd.BuyBackArtworkReq,0) > sum(oq.Qty) 
+having Isnull(ReqQty.value, 0) + s.ReqQty + isnull(tbbd.BuyBackArtworkReq,0) > sum(oq.Qty) 
 
 select  FactoryID,
         ArtworkTypeID,
