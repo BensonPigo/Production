@@ -1,18 +1,12 @@
 ﻿CREATE TABLE [dbo].[Style_FabricCode_QT] (
     [StyleUkey]      BIGINT         CONSTRAINT [DF_Style_FabricCode_QT_StyleUkey] DEFAULT ((0)) NOT NULL,
-    [PatternPanel]   VARCHAR (2)    CONSTRAINT [DF_Style_FabricCode_QT_PatternPanel] DEFAULT ('') NULL,
-    [FabricCode]     VARCHAR (3)    CONSTRAINT [DF_Style_FabricCode_QT_FabricCode] DEFAULT ('') NOT NULL,
     [FabricPanelCode]     VARCHAR (2)    CONSTRAINT [DF_Style_FabricCode_QT_FabricPanelCode] DEFAULT ('') NOT NULL,
     [SeqNO]          VARCHAR (2)    CONSTRAINT [DF_Style_FabricCode_QT_SeqNO] DEFAULT ('') NOT NULL,
-    [QTPatternPanel] VARCHAR (2)    CONSTRAINT [DF_Style_FabricCode_QT_QTPatternPanel] DEFAULT ('') NULL,
-    [QTFabricCode]   VARCHAR (3)    CONSTRAINT [DF_Style_FabricCode_QT_QTFabricCode] DEFAULT ('') NOT NULL,
-    [QTWidth]        NUMERIC (3, 1) CONSTRAINT [DF_Style_FabricCode_QT_QTWidth] DEFAULT ((0)) NULL,
     [QTFabricPanelCode]   VARCHAR (2)    CONSTRAINT [DF_Style_FabricCode_QT_QTFabricPanelCode] DEFAULT ('') NULL,
     [AddName]        VARCHAR (10)   CONSTRAINT [DF_Style_FabricCode_QT_AddName] DEFAULT ('') NULL,
     [AddDate]        DATETIME       NULL,
     [EditName]       VARCHAR (10)   CONSTRAINT [DF_Style_FabricCode_QT_EditName] DEFAULT ('') NULL,
     [EditDate]       DATETIME       NULL,
-    [StyleUkey_Old]  VARCHAR (10)   CONSTRAINT [DF_Style_FabricCode_QT_StyleUkey_Old] DEFAULT ('') NULL,
     CONSTRAINT [PK_Style_FabricCode_QT] PRIMARY KEY CLUSTERED ([StyleUkey] ASC, [FabricPanelCode] ASC, [SeqNO] ASC)
 );
 
@@ -26,26 +20,12 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Style : Fab
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'款式的唯一值', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Style_FabricCode_QT', @level2type = N'COLUMN', @level2name = N'StyleUkey';
 
-
-GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'布種', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Style_FabricCode_QT', @level2type = N'COLUMN', @level2name = N'FabricCode';
-
-
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'布別+布種的代碼', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Style_FabricCode_QT', @level2type = N'COLUMN', @level2name = N'FabricPanelCode';
 
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'編碼', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Style_FabricCode_QT', @level2type = N'COLUMN', @level2name = N'SeqNO';
-
-
-GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'QT布別', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Style_FabricCode_QT', @level2type = N'COLUMN', @level2name = N'QTFabricCode';
-
-
-GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'QT幅寬', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Style_FabricCode_QT', @level2type = N'COLUMN', @level2name = N'QTWidth';
-
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'新增人員', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Style_FabricCode_QT', @level2type = N'COLUMN', @level2name = N'AddName';
@@ -73,18 +53,3 @@ EXEC sp_addextendedproperty @name = N'MS_Description',
     @level2type = N'COLUMN',
     @level2name = N'QTFabricPanelCode'
 GO
-EXEC sp_addextendedproperty @name = N'MS_Description',
-    @value = N'Pattern Panel',
-    @level0type = N'SCHEMA',
-    @level0name = N'dbo',
-    @level1type = N'TABLE',
-    @level1name = N'Style_FabricCode_QT',
-    @level2type = N'COLUMN',
-    @level2name = N'PatternPanel'
-GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'QT Pattern Panel                                               QTPatternPanel', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Style_FabricCode_QT', @level2type = N'COLUMN', @level2name = N'QTPatternPanel';
-
-
-GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'舊系統的Style.Ukey', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Style_FabricCode_QT', @level2type = N'COLUMN', @level2name = N'StyleUkey_Old';
-
