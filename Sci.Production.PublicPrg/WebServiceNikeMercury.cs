@@ -2,13 +2,14 @@
 using Newtonsoft.Json;
 using PmsWebApiUtility45;
 using Sci.Data;
-using Sci.Production.Prg.Entity;
 using Sci.Production.Prg.Entity.NikeMercury;
+using Sci.Win.UI;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Security.AccessControl;
 using System.Text;
 using System.Threading.Tasks;
@@ -16,6 +17,7 @@ using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Serialization;
 using static PmsWebApiUtility20.WebApiTool;
+using static Sci.Production.Prg.Entity.NikeMercury.ResponseLabelsPackPlanCreate;
 
 namespace Sci.Production.Prg
 {
@@ -43,6 +45,8 @@ namespace Sci.Production.Prg
         }
 
         private string serviceUrl = string.Empty;
+        public string lastRequestXml = string.Empty;
+        public string lastResponseXml = string.Empty;
 
         /// <summary>
         /// WebServiceNikeMercury
@@ -78,18 +82,39 @@ namespace Sci.Production.Prg
                 xmlString = stringWriter.ToString();
             }
 
+            this.lastRequestXml = xmlString;
+
             return xmlString;
         }
 
-        private DualResult DeserializeNikeMercuryXml<T>(string xmlString, out T result)
+        public DualResult DeserializeNikeMercuryXml<T>(string xmlString, out T result)
+            where T : class
         {
             result = null;
+            this.lastResponseXml = xmlString;
+            try
+            {
+                // 使用 XmlSerializer 將 XML 字符串轉換為結構變數
+                //XElement xmlElement = XElement.Parse(xmlString);
 
-            // 使用 XmlSerializer 將 XML 字符串轉換為結構變數
-            XElement xmlElement = XElement.Parse(xmlString);
+                //if (xmlElement.Descendants("faultcode").Any())
+                //{
+                //    string errMsg = xmlElement.Descendants("faultstring").First().Value;
+                //    return new DualResult(false, errMsg);
+                //}
 
-            if(xmlElement.Descendants("faultcode").Any())
+                XmlSerializer serializer = new XmlSerializer(typeof(T));
+                using (StringReader stringReader = new StringReader(xmlString))
+                {
+                    result = (T)serializer.Deserialize(stringReader);
+                }
 
+                return new DualResult(true);
+            }
+            catch (Exception ex)
+            {
+                return new DualResult(false, ex);
+            }
         }
 
         /// <summary>
@@ -131,6 +156,8 @@ where   pg.ID = '{packID}'
 
             string[] orderInfo = drOrderInfo["CustPONo"].ToString().Split('-');
             string orderNumber = orderInfo[0];
+            string orderNumber2 = drOrderInfo["Customize1"].ToString();
+
             string orderItem = orderInfo.Length < 2 ? string.Empty : orderInfo[1];
 
             RequestLabelsPackPlanCreate.Envelope posBody = new RequestLabelsPackPlanCreate.Envelope()
@@ -168,20 +195,193 @@ where   pg.ID = '{packID}'
 
             Dictionary<string, string> dicHeader = new Dictionary<string, string>
             {
-                { "Content-Type", "text/xml; charset=utf-8" },
                 { "SOAPAction", "http://tempuri.org/ILabels/LabelsPackPlanCreate" },
             };
-
-            return new DualResult(true);
-
-            WebApiBaseResult webApiBaseResult = WebApiTool.WebApiPost(this.serviceUrl, string.Empty, soapRequest, headers: dicHeader);
+            HttpContent httpContent = new StringContent(soapRequest, Encoding.UTF8, "text/xml");
+            WebApiBaseResult webApiBaseResult = WebApiTool.WebApiSend(this.serviceUrl, string.Empty, soapRequest, HttpMethod.Post, httpContent: httpContent, headers: dicHeader);
 
             if (!webApiBaseResult.isSuccess)
             {
-                return new DualResult(false, webApiBaseResult.responseContent);
+                posBody.Body.LabelsPackPlanCreate.input.OrderNumber = orderNumber2;
+                soapRequest = this.SerializeNikeMercuryXml(posBody);
+                httpContent = new StringContent(soapRequest, Encoding.UTF8, "text/xml");
+                webApiBaseResult = WebApiTool.WebApiSend(this.serviceUrl, string.Empty, soapRequest, HttpMethod.Post, httpContent: httpContent, headers: dicHeader);
             }
 
-            return new DualResult(true, webApiBaseResult.responseContent);
+            if (!webApiBaseResult.isSuccess)
+            {
+                return new DualResult(false, webApiBaseResult.httpStatusCode.ToString() + webApiBaseResult.responseContent);
+            }
+
+            ResponseLabelsPackPlanCreate.Envelope responseResult;
+
+            DualResult resultDeserialize = this.DeserializeNikeMercuryXml<ResponseLabelsPackPlanCreate.Envelope>(webApiBaseResult.responseContent, out responseResult);
+
+            if (!resultDeserialize)
+            {
+                return resultDeserialize;
+            }
+
+            ResponseLabelsPackPlanCreate.LabelsPackPlanCreateResult labelsPackPlanCreateResult = responseResult.Body.LabelsPackPlanCreateResponse.LabelsPackPlanCreateResult;
+
+            if (labelsPackPlanCreateResult.OutputMessage.ReturnCode != -1)
+            {
+                MyUtility.Msg.ShowMsgGrid(labelsPackPlanCreateResult.OutputData.Cartons.ToDataTable());
+                //string resultJson = JsonConvert.SerializeObject(labelsPackPlanCreateResult.OutputData.Cartons);
+                //MyUtility.Msg.InfoBox(resultJson);
+                return new DualResult(true);
+            }
+
+            MyUtility.Msg.InfoBox(labelsPackPlanCreateResult.OutputMessage.ReturnDescription);
+
+            return new DualResult(true);
+        }
+
+        /// <summary>
+        /// LabelsPackPlanAdd
+        /// </summary>
+        /// <param name="cartonInfo">cartonInfo</param>
+        /// <returns>DualResult</returns>
+        public DualResult LabelsPackPlanAdd(RequestLabelsPackPlanCartonAdd.Input cartonInfo)
+        {
+            RequestLabelsPackPlanCartonAdd.Envelope posBody = new RequestLabelsPackPlanCartonAdd.Envelope()
+            {
+                Body = new RequestLabelsPackPlanCartonAdd.Body()
+                {
+                    LabelsPackPlanCartonAdd = new RequestLabelsPackPlanCartonAdd.LabelsPackPlanCartonAdd()
+                    {
+                        Input = cartonInfo,
+                    },
+                },
+            };
+
+            string soapRequest = this.SerializeNikeMercuryXml(posBody);
+
+            Dictionary<string, string> dicHeader = new Dictionary<string, string>
+            {
+                { "SOAPAction", "http://tempuri.org/ILabels/LabelsPackPlanCartonAdd" },
+            };
+
+            HttpContent httpContent = new StringContent(soapRequest, Encoding.UTF8, "text/xml");
+            WebApiBaseResult webApiBaseResult = WebApiTool.WebApiSend(this.serviceUrl, string.Empty, soapRequest, HttpMethod.Post, httpContent: httpContent, headers: dicHeader);
+
+            if (!webApiBaseResult.isSuccess)
+            {
+                return new DualResult(false, webApiBaseResult.httpStatusCode.ToString() + webApiBaseResult.responseContent);
+            }
+
+            ResponseLabelsPackPlanCartonAdd.Envelope responseResult;
+
+            DualResult resultDeserialize = this.DeserializeNikeMercuryXml<ResponseLabelsPackPlanCartonAdd.Envelope>(webApiBaseResult.responseContent, out responseResult);
+
+            if (!resultDeserialize)
+            {
+                return resultDeserialize;
+            }
+
+            MyUtility.Msg.InfoBox(responseResult.Body.LabelsPackPlanCartonAddResponse.LabelsPackPlanCartonAddResult.OutputMessage.ReturnDescription);
+
+            return new DualResult(true);
+        }
+
+        /// <summary>
+        /// LabelsPackPlanDelete
+        /// </summary>
+        /// <param name="factoryCode">factoryCode</param>
+        /// <param name="orderNumber">orderNumber</param>
+        /// <param name="orderItem">orderItem</param>
+        /// <returns>DualResult</returns>
+        public DualResult LabelsPackPlanDelete(string factoryCode, string orderNumber, string orderItem)
+        {
+            RequestLabelsPackPlanDelete.Envelope posBody = new RequestLabelsPackPlanDelete.Envelope()
+            {
+                Body = new RequestLabelsPackPlanDelete.Body()
+                {
+                    LabelsPackPlanDelete = new RequestLabelsPackPlanDelete.LabelsPackPlanDelete()
+                    {
+                        Input = new RequestLabelsPackPlanDelete.Input() {
+                            FactoryCode = factoryCode,
+                            OrderNumber = orderNumber,
+                            OrderItem = orderItem,
+                        },
+                    },
+                },
+            };
+
+            string soapRequest = this.SerializeNikeMercuryXml(posBody);
+
+            Dictionary<string, string> dicHeader = new Dictionary<string, string>
+            {
+                { "SOAPAction", "http://tempuri.org/ILabels/LabelsPackPlanDelete"},
+            };
+
+            HttpContent httpContent = new StringContent(soapRequest, Encoding.UTF8, "text/xml");
+            WebApiBaseResult webApiBaseResult = WebApiTool.WebApiSend(this.serviceUrl, string.Empty, soapRequest, HttpMethod.Post, httpContent: httpContent, headers: dicHeader);
+
+            if (!webApiBaseResult.isSuccess)
+            {
+                return new DualResult(false, webApiBaseResult.httpStatusCode.ToString() + webApiBaseResult.responseContent);
+            }
+
+            ResponseLabelsPackPlanDelete.Envelope responseResult;
+
+            DualResult resultDeserialize = this.DeserializeNikeMercuryXml<ResponseLabelsPackPlanDelete.Envelope>(webApiBaseResult.responseContent, out responseResult);
+
+            if (!resultDeserialize)
+            {
+                return resultDeserialize;
+            }
+
+            MyUtility.Msg.InfoBox(responseResult.Body.LabelsPackPlanDeleteResponse.LabelsPackPlanDeleteResult.OutputMessage.ReturnDescription);
+
+            return new DualResult(true);
+        }
+
+        /// <summary>
+        /// LabelsPackPlanUpdate
+        /// </summary>
+        /// <param name="cartonInfo">cartonInfo</param>
+        /// <returns>DualResult</returns>
+        public DualResult LabelsPackPlanUpdate(RequestLabelsPackPlanCartonUpdate.Input cartonInfo)
+        {
+            RequestLabelsPackPlanCartonUpdate.Envelope posBody = new RequestLabelsPackPlanCartonUpdate.Envelope()
+            {
+                Body = new RequestLabelsPackPlanCartonUpdate.Body()
+                {
+                    LabelsPackPlanCartonUpdate = new RequestLabelsPackPlanCartonUpdate.LabelsPackPlanCartonUpdate()
+                    {
+                        Input = cartonInfo,
+                    },
+                },
+            };
+
+            string soapRequest = this.SerializeNikeMercuryXml(posBody);
+
+            Dictionary<string, string> dicHeader = new Dictionary<string, string>
+            {
+                { "SOAPAction", "http://tempuri.org/ILabels/LabelsPackPlanCartonUpdate" },
+            };
+
+            HttpContent httpContent = new StringContent(soapRequest, Encoding.UTF8, "text/xml");
+            WebApiBaseResult webApiBaseResult = WebApiTool.WebApiSend(this.serviceUrl, string.Empty, soapRequest, HttpMethod.Post, httpContent: httpContent, headers: dicHeader);
+
+            if (!webApiBaseResult.isSuccess)
+            {
+                return new DualResult(false, webApiBaseResult.httpStatusCode.ToString() + webApiBaseResult.responseContent);
+            }
+
+            ResponseLabelsPackPlanCartonUpdate.Envelope responseResult;
+
+            DualResult resultDeserialize = this.DeserializeNikeMercuryXml<ResponseLabelsPackPlanCartonUpdate.Envelope>(webApiBaseResult.responseContent, out responseResult);
+
+            if (!resultDeserialize)
+            {
+                return resultDeserialize;
+            }
+
+            MyUtility.Msg.InfoBox(responseResult.Body.LabelsPackPlanCartonUpdateResponse.LabelsPackPlanCartonUpdateResult.OutputMessage.ReturnDescription);
+
+            return new DualResult(true);
         }
     }
 }

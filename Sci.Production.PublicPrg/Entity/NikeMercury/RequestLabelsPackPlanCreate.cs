@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Xml.Serialization;
 
-namespace Sci.Production.Prg.Entity
+namespace Sci.Production.Prg.Entity.NikeMercury
 {
     /// <summary>
     /// RequestLabelsPackPlanCreate
