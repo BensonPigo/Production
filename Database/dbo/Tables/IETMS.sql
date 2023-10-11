@@ -11,6 +11,7 @@
     [EditName]      VARCHAR (10)  CONSTRAINT [DF_IETMS_EditName] DEFAULT ('') NOT NULL,
     [EditDate]      DATETIME      NULL,
     [GSDType]       VARCHAR (1)   CONSTRAINT [DF_IETMS_GSDType] DEFAULT ('') NOT NULL,
+    [ActFtyIE] VARCHAR(8) CONSTRAINT [DF_IETMS_ActFtyIE] DEFAULT ('') NOT NULL , 
     CONSTRAINT [PK_IETMS] PRIMARY KEY CLUSTERED ([ID] ASC, [Version] ASC)
 );
 
@@ -70,3 +71,13 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'最後修�
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'IEUKEY', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'IETMS', @level2type = N'COLUMN', @level2name = N'Ukey';
 
+
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'製作工廠 ',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'IETMS',
+    @level2type = N'COLUMN',
+    @level2name = N'ActFtyIE'
