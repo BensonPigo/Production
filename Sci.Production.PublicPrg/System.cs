@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -678,6 +679,23 @@ else
             return new string(charArray);
         }
 
+        /// <inheritdoc/>
+        public static void ExecuteWithExecutionTimeMeasurement(Action action)
+        {
+            Stopwatch stopwatch = new Stopwatch();
+            stopwatch.Start();
+
+            // Execute the action
+            action.Invoke();
+
+            stopwatch.Stop();
+            TimeSpan elapsedTime = stopwatch.Elapsed;
+            string message = $"Execution time: {elapsedTime.TotalMinutes:00}:{elapsedTime.Seconds:00}.{elapsedTime.Milliseconds:000}";
+            if (Env.User.UserID == "SCIMIS")
+            {
+                MyUtility.Msg.InfoBox(message, "For MIS");
+            }
+        }
     }
 
     /// <summary>
