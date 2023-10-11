@@ -96,7 +96,7 @@ inner join dbo.PO_Supp p with (nolock) on psd.ID = p.ID and psd.Seq1 = p.Seq1
 inner join dbo.ftyinventory c WITH (NOLOCK) on c.poid = psd.id and c.seq1 = psd.seq1 and c.seq2  = psd.seq2 and c.stocktype = 'B'
 inner join dbo.Orders on c.poid = orders.id
 inner join dbo.Factory on orders.FactoryID = factory.ID
-INNER JOIN Fabric f on psd.SCIRefNo=f.SCIRefNo
+left JOIN Fabric f on psd.SCIRefNo=f.SCIRefNo
 left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
 left join PO_Supp_Detail_Spec psdsS WITH (NOLOCK) on psdsS.ID = psd.id and psdsS.seq1 = psd.seq1 and psdsS.seq2 = psd.seq2 and psdsS.SpecColumnID = 'Size'
 outer apply(
@@ -137,7 +137,7 @@ Where psd.id = '{sp}' and c.inqty - c.outqty + c.adjustqty - c.ReturnQty > 0 AND
                 }
                 else
                 {
-                    strSQLCmd.Append(" and f.MtlTypeID not in ('EMB THREAD','SP THREAD','THREAD')  " + Environment.NewLine);
+                    strSQLCmd.Append(" and (f.MtlTypeID not in ('EMB THREAD','SP THREAD','THREAD') or f.MtlTypeID is null) " + Environment.NewLine);
                 }
 
                 if (string.Compare(this.comboFabricType.SelectedValue.ToString(), "ALL") != 0)
