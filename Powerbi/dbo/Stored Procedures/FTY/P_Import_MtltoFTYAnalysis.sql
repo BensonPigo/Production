@@ -69,8 +69,7 @@ Begin
 	if exists (select 1 from BITableInfo b where b.id = 'P_MtltoFTYAnalysis')
 	begin
 		update b
-			set b.TransferDate = getdate()
-				, b.IS_Trans = 1
+			set b.TransferDate = getdate()				
 		from BITableInfo b
 		where b.id = 'P_MtltoFTYAnalysis'
 	end

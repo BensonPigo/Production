@@ -1,5 +1,6 @@
 ﻿CREATE PROCEDURE [dbo].[P_ImportLoadingvsCapacity]
 AS
+begin
 	SET NOCOUNT ON
 	declare @current_PMS_ServerName nvarchar(50) = 'MainServer'
 	declare @SqlCmd nvarchar(max) ='';;
@@ -18,7 +19,7 @@ AS
 	FROM OPENQUERY(['+ @current_PMS_ServerName +'], ''exec production.[dbo].GetLoadingvsCapacity'')
 
 	/************* 刪除P_LoadingvsCapacity全資料*************/
-	delete  P_LoadingvsCapacity
+	delete P_LoadingvsCapacity
 
 	/************* update 至 P_LoadingvsCapacity *************/
 	update p
@@ -32,11 +33,11 @@ AS
 	p.[Loading(CPU)]	= t.[LoadingCPU],
 	p.[TransferBIDate]	= t.[TransferBIDate]
 	from P_LoadingvsCapacity p with(nolock)
-	inner join #tmp t with(nolock) on p.[MDivisionID]		= t.[MDivisionID]	and 
-										   p.[FactoryID]			= t.[KpiCode]		and
-										   p.[Key]				= t.[Key]			and
-										   p.[Halfkey]			= t.[Halfkey]		and
-										   p.[ArtworkTypeID]	= t.[ArtworkTypeID] 
+	inner join #tmp t with(nolock) on p.[MDivisionID]	= t.[MDivisionID]	and 
+									p.[FactoryID]		= t.[KpiCode]		and
+									p.[Key]				= t.[Key]			and
+									p.[Halfkey]			= t.[Halfkey]		and
+									p.[ArtworkTypeID]	= t.[ArtworkTypeID] 
 	
 
 	/************* insert 至 P_LoadingvsCapacity *************/
@@ -56,19 +57,26 @@ AS
 		select 1 from P_LoadingvsCapacity p 
 		where 
 		p.[MDivisionID]		= t.[MDivisionID]	and 
-		p.[FactoryID]			= t.[KpiCode]		and
+		p.[FactoryID]		= t.[KpiCode]		and
 		p.[Key]				= t.[Key]			and
 		p.[Halfkey]			= t.[Halfkey]		and
 		p.[ArtworkTypeID]	= t.[ArtworkTypeID] 
 	)
 	order by [MDivisionID],[KpiCode],[Halfkey] asc,[ArtworkTypeID]
 
-	update b
-    set b.TransferDate = getdate()
-		, b.IS_Trans = 1
-	from BITableInfo b
-	where b.id = ''P_LoadingvsCapacity'' 
+	IF EXISTS (select 1 from BITableInfo b where b.id = ''P_LoadingvsCapacity'')
+	BEGIN
+		update b
+			set b.TransferDate = getdate()
+		from BITableInfo b
+		where b.id = ''P_LoadingvsCapacity''
+	END
+	ELSE 
+	BEGIN
+		insert into BITableInfo(Id, TransferDate)
+		values(''P_LoadingvsCapacity'', getdate())
+	END
 	';
 
 	EXEC sp_executesql @SqlCmd
-RETURN 0
+end
