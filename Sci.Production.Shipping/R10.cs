@@ -302,7 +302,6 @@ as (
 		, [OnBoardDate] = g.ETD 
 		, g.Shipper
         , [ShipTermID] = g.ShipTermID
-        , [HC] = HC.VAL
 		, [Foundry] = iif(ISNULL(gm.Foundry,'') = '', '' , 'Y')
 		, s.SisFtyAPID
 		, g.BrandID
@@ -313,6 +312,7 @@ as (
 		, g.CustCDID
 		, g.Dest
 		, g.ShipModeID
+        , [HC] = HC.VAL
 		, p.PulloutDate
 		, [Forwarder] = g.Forwarder+'-'+isnull(ls.Abb,'') 
 		, s.BLNo
@@ -332,18 +332,17 @@ as (
     inner join Orders o WITH (NOLOCK) on o.ID = pd.OrderID
     inner join LocalSupp ls WITH (NOLOCK) on ls.ID = g.Forwarder 
     outer apply(
-   	    select val = stuff(
-	    (
-		    select concat('/',tmp.ExpressID) 
-		    from
-		    (
-			    select distinct pl.ExpressID
-			    from PackingList pl WITH (NOLOCK) 
-			    LEFT JOIN GMTBooking gb WITH (NOLOCK)  ON pl.INVNo=gb.ID
-			    LEFT JOIN Express e ON e.ID=pl.ExpressID 
-			    WHERE pl.ExpressID <>'' and gb.id = g.ID
-		    )tmp for xml path('')
-	    ),1,1,'') 
+		select [val]= stuff(
+		(select CONCAT('/',ExpressID)
+		from (
+			select distinct pl.ExpressID
+			from PackingList pl WITH (NOLOCK) 
+			LEFT JOIN GMTBooking gb WITH (NOLOCK)  ON pl.INVNo=gb.ID
+			LEFT JOIN Express e ON e.ID=pl.ExpressID 
+			WHERE pl.ExpressID <>'' and gb.id = g.ID
+			)tmp
+			for xml path('')
+		),1,1,'')
     )HC
 	outer apply (
 		select top 1 Foundry 
@@ -362,7 +361,7 @@ as (
 		, [OnBoardDate] = g.ETD 
 		, g.Shipper
         , [ShipTermID] = g.ShipTermID
-        , [HC] = HC.VAL
+        
 		, [Foundry] = iif(ISNULL(gm.Foundry,'') = '', '' , 'Y')
 		, s.SisFtyAPID
 		, g.BrandID
@@ -373,6 +372,7 @@ as (
 		, g.CustCDID
 		, g.Dest
 		, g.ShipModeID
+        , [HC] = HC.VAL
 		, p.PulloutDate
 		, [Forwarder] = g.Forwarder+'-'+isnull(ls.Abb,'') 
 		, s.BLNo
@@ -389,18 +389,17 @@ as (
     inner join Orders o WITH (NOLOCK) on o.ID = pd.OrderID
     inner join LocalSupp ls WITH (NOLOCK) on ls.ID = g.Forwarder 
     outer apply(
-   	    select val = stuff(
-	    (
-		    select concat('/',tmp.ExpressID) 
-		    from
-		    (
-			    select distinct pl.ExpressID
-			    from PackingList pl WITH (NOLOCK) 
-			    LEFT JOIN GMTBooking gb WITH (NOLOCK)  ON pl.INVNo=gb.ID
-			    LEFT JOIN Express e ON e.ID=pl.ExpressID 
-			    WHERE pl.ExpressID <>'' and gb.id = g.ID
-		    )tmp for xml path('')
-	    ),1,1,'') 
+		select [val]= stuff(
+		(select CONCAT('/',ExpressID)
+		from (
+			select distinct pl.ExpressID
+			from PackingList pl WITH (NOLOCK) 
+			LEFT JOIN GMTBooking gb WITH (NOLOCK)  ON pl.INVNo=gb.ID
+			LEFT JOIN Express e ON e.ID=pl.ExpressID 
+			WHERE pl.ExpressID <>'' and gb.id = g.ID
+			)tmp
+			for xml path('')
+		),1,1,'')
     )HC
 	outer apply (
 		select top 1 Foundry 
@@ -473,7 +472,6 @@ tmpPL as
 		, [OnBoardDate] = null
 		, [Shipper] = ''  
         , [ShipTermID] = ''
-        , [HC] = ''
 		, [Foundry] = iif(ISNULL(gm.Foundry,'') = '', '' , 'Y')
 		, s.SisFtyAPID
 		, o.BrandID
@@ -484,6 +482,7 @@ tmpPL as
 		, o.CustCDID
 		, o.Dest
 		, p.ShipModeID
+        , [HC] = ''
 		, p.PulloutDate
 		, [Forwarder] = ''
 		, s.BLNo
@@ -518,7 +517,6 @@ tmpPL_A2B as
 		, [OnBoardDate] = null
 		, [Shipper] = ''  
         , [ShipTermID] = ''
-        , [HC] = ''
 		, [Foundry] = iif(ISNULL(gm.Foundry,'') = '', '' , 'Y')
 		, s.SisFtyAPID
 		, o.BrandID
@@ -529,6 +527,7 @@ tmpPL_A2B as
 		, o.CustCDID
 		, o.Dest
 		, p.ShipModeID
+        , [HC] = ''
 		, p.PulloutDate
 		, [Forwarder] = ''
 		, s.BLNo
@@ -913,7 +912,6 @@ select distinct [type]
 	, OnBoardDate
 	, shipper
     , [ShipTermID]
-    , [HC]
 	, Foundry = isnull(f.Foundry,'')
 	, SisFtyAPID
 	, Brandid
@@ -921,6 +919,7 @@ select distinct [type]
 	, custcdid
 	, dest
 	, shipmodeid
+    , [HC]
 	, pulloutdate
 	, forwarder
 	, s.BLNo
@@ -950,7 +949,6 @@ select [type]
 	, OnBoardDate
 	, Shipper
     , [ShipTermID]
-    , [HC]
 	, Foundry
 	, SisFtyAPID = SisFtyAPID.value
 	, BrandID
@@ -959,6 +957,7 @@ select [type]
 	, CustCDID
 	, Dest
 	, ShipModeID
+    , [HC]
 	, PulloutDate
 	, [ShipQty]=sum(pt.ShipQty)
 	, [ctnqty]=sum(pt.ctnqty)
@@ -1012,7 +1011,6 @@ select
 	, a.OnBoardDate
 	, a.Shipper
     , A.[ShipTermID]
-    , A.[HC]
 	, a.Foundry
 	, a.SisFtyAPID
 	, a.BrandID
@@ -1021,6 +1019,7 @@ select
 	, a.CustCDID
 	, a.Dest
 	, a.ShipModeID
+    , A.[HC]
 	, a.PulloutDate
 	, a.[ShipQty]
 	, a.[ctnqty]
@@ -2864,7 +2863,6 @@ as (
 		, [OnBoardDate] = g.ETD 
 		, g.Shipper
         , [ShipTermID] = g.ShipTermID
-        , [HC] = HC.VAL
 		, [Foundry] = iif(ISNULL(gm.Foundry,'') = '', '' , 'Y')
 		, s.SisFtyAPID
 		, g.BrandID
@@ -2875,6 +2873,7 @@ as (
 		, g.CustCDID
 		, g.Dest
 		, g.ShipModeID
+        , [HC] = HC.VAL
 		, p.PulloutDate
 		, [Forwarder] = g.Forwarder+'-'+isnull(ls.Abb,'') 
 		, s.BLNo
@@ -2926,7 +2925,6 @@ as (
 		, [OnBoardDate] = g.ETD 
 		, g.Shipper
         , [ShipTermID] = g.ShipTermID
-        , [HC] = HC.VAL
 		, [Foundry] = iif(ISNULL(gm.Foundry,'') = '', '' , 'Y')
 		, s.SisFtyAPID
 		, g.BrandID
@@ -2937,6 +2935,7 @@ as (
 		, g.CustCDID
 		, g.Dest
 		, g.ShipModeID
+        , [HC] = HC.VAL
 		, p.PulloutDate
 		, [Forwarder] = g.Forwarder+'-'+isnull(ls.Abb,'') 
 		, s.BLNo
@@ -3039,7 +3038,6 @@ tmpPL as
 		, [OnBoardDate] = null
 		, [Shipper] = ''  
         , [ShipTermID] = ''
-        , [HC] = ''
 		, [Foundry] = iif(ISNULL(gm.Foundry,'') = '', '' , 'Y')
 		, s.SisFtyAPID
 		, o.BrandID
@@ -3050,6 +3048,7 @@ tmpPL as
 		, o.CustCDID
 		, o.Dest
 		, p.ShipModeID
+        , [HC] = ''
 		, p.PulloutDate
 		, [Forwarder] = ''
 		, s.BLNo
@@ -3086,7 +3085,6 @@ tmpPL_A2B as
 		, [OnBoardDate] = null
 		, [Shipper] = ''  
         , [ShipTermID] = ''
-        , [HC] = ''
 		, [Foundry] = iif(ISNULL(gm.Foundry,'') = '', '' , 'Y')
 		, s.SisFtyAPID
 		, o.BrandID
@@ -3097,6 +3095,7 @@ tmpPL_A2B as
 		, o.CustCDID
 		, o.Dest
 		, p.ShipModeID
+        , [HC] = ''
 		, p.PulloutDate
 		, [Forwarder] = ''
 		, s.BLNo
@@ -3151,7 +3150,6 @@ select distinct
 	, OnBoardDate
 	, shipper
     , [ShipTermID]
-    , [HC]
 	, Foundry = isnull(f.Foundry,'')
 	, SisFtyAPID
 	, Brandid
@@ -3159,6 +3157,7 @@ select distinct
 	, custcdid
 	, dest
 	, shipmodeid
+    , [HC]
 	, pulloutdate
 	, forwarder
 	, s.BLNo
@@ -3189,7 +3188,6 @@ select Origin
 	, OnBoardDate
 	, Shipper
     , [ShipTermID]
-    , [HC]
 	, Foundry
 	, SisFtyAPID
 	, BrandID
@@ -3198,6 +3196,7 @@ select Origin
 	, CustCDID
 	, Dest
 	, ShipModeID
+    , [HC]
 	, PulloutDate
 	, [ShipQty]=sum(pt.ShipQty)
 	, [ctnqty]=sum(pt.ctnqty)
@@ -3254,7 +3253,6 @@ select Origin
 	, a.OnBoardDate
 	, a.Shipper
     , A.[ShipTermID]
-    , A.[HC]
 	, a.Foundry
 	, a.SisFtyAPID
 	, a.BrandID
@@ -3263,6 +3261,7 @@ select Origin
 	, a.CustCDID
 	, a.Dest
 	, a.ShipModeID
+    , A.[HC]
 	, a.PulloutDate
 	, a.[ShipQty]
 	, a.[ctnqty]
@@ -3285,7 +3284,6 @@ select a.Origin
 	, a.OnBoardDate
 	, a.Shipper
     , A.[ShipTermID]
-    , A.[HC]
 	, a.Foundry
 	, [SisFtyAPID]=t.Val
 	, a.BrandID
@@ -3294,6 +3292,7 @@ select a.Origin
 	, a.CustCDID
 	, a.Dest
 	, a.ShipModeID
+    , A.[HC]
 	, a.PulloutDate
 	, a.ShipQty
 	, a.ctnqty
@@ -3836,7 +3835,6 @@ FOR AccountID IN ({account})) a
 
             public string Shipper { get; set; }
             public string ShipTermID { get; set; }
-            public string HC { get; set; }
 
             public string Foundry { get; set; }
 
@@ -3853,6 +3851,7 @@ FOR AccountID IN ({account})) a
             public string Dest { get; set; }
 
             public string ShipModeID { get; set; }
+            public string HC { get; set; }
 
             public DateTime? PullOutDate { get; set; }
 
