@@ -2424,11 +2424,11 @@ drop table #tmp,#tmp2,#tmp3
                 objArray[intRowsStart, 146] = dr["CuttingSP"];
                 objArray[intRowsStart, 147] = MyUtility.Convert.GetString(dr["RainwearTestPassed"]).ToUpper() == "TRUE" ? "Y" : string.Empty;
                 objArray[intRowsStart, 148] = MyUtility.Convert.GetDecimal(dr["CPU"]) * this.stdTMS;
-                objArray[intRowsStart, 149] = dr["LastCTNTransDate"];
-                objArray[intRowsStart, 150] = dr["LastCTNRecdDate"];
-                objArray[intRowsStart, 151] = dr["DryRoomRecdDate"];
-                objArray[intRowsStart, 152] = dr["DryRoomTransDate"];
-                objArray[intRowsStart, 153] = dr["MdRoomScanDate"];
+                objArray[intRowsStart, 149] = dr["MdRoomScanDate"];
+                objArray[intRowsStart, 150] = dr["DryRoomRecdDate"];
+                objArray[intRowsStart, 151] = dr["DryRoomTransDate"];
+                objArray[intRowsStart, 152] = dr["LastCTNTransDate"];
+                objArray[intRowsStart, 153] = dr["LastCTNRecdDate"];
                 objArray[intRowsStart, 154] = dr["OrganicCotton"];
                 objArray[intRowsStart, 155] = dr["DirectShip"];
                 objArray[intRowsStart, 156] = dr["StyleCarryover"];
