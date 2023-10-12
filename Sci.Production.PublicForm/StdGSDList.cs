@@ -215,7 +215,7 @@ where s.ukey = '{this.styleUkey}'
         {
             StringBuilder sqlCmd = new StringBuilder();
             sqlCmd.Append(string.Format(
-                @"select s.ID,s.SeasonID,i.ActFinDate,s.IETMSID,s.IETMSVersion
+                @"select s.ID,s.SeasonID,i.ActFinDate,s.IETMSID,s.IETMSVersion, i.ActFtyIE
  from Style s WITH (NOLOCK) 
  left join IETMS i WITH (NOLOCK) on s.IETMSID = i.ID and s.IETMSVersion = i.Version
  left join IETMS_Detail id WITH (NOLOCK) on i.Ukey = id.IETMSUkey
@@ -229,7 +229,7 @@ where s.ukey = '{this.styleUkey}'
                 sqlCmd.Append(string.Format(" and id.Location = '{0}'", this.comboTypeFilter.SelectedValue.ToString()));
             }
 
-            sqlCmd.Append(" group by s.ID,s.SeasonID,i.ActFinDate,s.IETMSID,s.IETMSVersion");
+            sqlCmd.Append(" group by s.ID,s.SeasonID,i.ActFinDate,s.IETMSID,s.IETMSVersion, i.ActFtyIE");
 
             DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), out this.tmpData);
             if (!result)
@@ -243,6 +243,7 @@ where s.ukey = '{this.styleUkey}'
                 this.displaySeason.Value = this.tmpData.Rows[0]["SeasonID"].ToString();
                 this.displayApplyNo.Value = this.tmpData.Rows[0]["IETMSID"].ToString();
                 this.displayVersion.Value = this.tmpData.Rows[0]["IETMSVersion"].ToString();
+                this.displayActFty.Value = this.tmpData.Rows[0]["ActFtyIE"].ToString();
                 if (MyUtility.Check.Empty(this.tmpData.Rows[0]["ActFinDate"]))
                 {
                     this.dateRequireFinish.Value = null;

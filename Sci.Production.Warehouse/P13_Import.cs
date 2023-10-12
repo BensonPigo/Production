@@ -53,7 +53,7 @@ namespace Sci.Production.Warehouse
                 // 建立可以符合回傳的Cursor
                 strSQLCmd.Append($@"
 select  selected = 0  
-        , Orders.FtyGroup
+        , o.FtyGroup
         , id = '' 
         , PoId = psd.id 
         , psd.Seq1
@@ -73,7 +73,7 @@ select  selected = 0
 		,psd.LossQty
         , [FabricTypeName] = (select name from DropDownList where Type='FabricType_Condition' and psd.FabricType = id)
         , [Article] = case  when psd.Seq1 like 'T%' then Stuff((Select distinct concat( ',',tcd.Article) 
-			                                                         From dbo.Orders as o 
+			                                                         From dbo.View_WH_Orders as o 
 			                                                         Inner Join dbo.Style as s On s.Ukey = o.StyleUkey
 			                                                         Inner Join dbo.Style_ThreadColorCombo as tc On tc.StyleUkey = s.Ukey
 			                                                         Inner Join dbo.Style_ThreadColorCombo_Detail as tcd On tcd.Style_ThreadColorComboUkey = tc.Ukey 
@@ -87,15 +87,15 @@ select  selected = 0
         ,c.Tone
 	    , [Color] =
 			IIF(f.MtlTypeID = 'EMB THREAD' OR f.MtlTypeID = 'SP THREAD' OR f.MtlTypeID = 'THREAD' 
-			,IIF(psd.SuppColor = '' or psd.SuppColor is null,dbo.GetColorMultipleID(orders.BrandID,isnull(psdsC.SpecValue, '')),psd.SuppColor)
-			,dbo.GetColorMultipleID(orders.BrandID,isnull(psdsC.SpecValue, '')))
+			,IIF(psd.SuppColor = '' or psd.SuppColor is null,dbo.GetColorMultipleID(o.BrandID,isnull(psdsC.SpecValue, '')),psd.SuppColor)
+			,dbo.GetColorMultipleID(o.BrandID,isnull(psdsC.SpecValue, '')))
 		, [Size]= isnull(psdsS.SpecValue, '')
         , [GMTWash] = isnull(GMTWash.val, '')
 from dbo.PO_Supp_Detail psd WITH (NOLOCK) 
 inner join dbo.PO_Supp p with (nolock) on psd.ID = p.ID and psd.Seq1 = p.Seq1
 inner join dbo.ftyinventory c WITH (NOLOCK) on c.poid = psd.id and c.seq1 = psd.seq1 and c.seq2  = psd.seq2 and c.stocktype = 'B'
-inner join dbo.Orders on c.poid = orders.id
-inner join dbo.Factory on orders.FactoryID = factory.ID
+inner join dbo.View_WH_Orders o on c.poid = o.id
+inner join dbo.Factory on o.FactoryID = factory.ID
 left JOIN Fabric f on psd.SCIRefNo=f.SCIRefNo
 left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
 left join PO_Supp_Detail_Spec psdsS WITH (NOLOCK) on psdsS.ID = psd.id and psdsS.seq1 = psd.seq1 and psdsS.seq2 = psd.seq2 and psdsS.SpecColumnID = 'Size'
@@ -115,7 +115,7 @@ outer apply(
 			ttd.StockType = c.StockType and
             tt.Subcon = 'GMT Wash'
 ) GMTWash
-Where psd.id = '{sp}' and c.inqty - c.outqty + c.adjustqty - c.ReturnQty > 0 AND Orders.category!='A'
+Where psd.id = '{sp}' and c.inqty - c.outqty + c.adjustqty - c.ReturnQty > 0 AND o.category!='A'
     and factory.MDivisionID = '{Env.User.Keyword}'
 ");
                 if (!this.txtSeq1.CheckSeq1Empty() && this.txtSeq1.CheckSeq2Empty())

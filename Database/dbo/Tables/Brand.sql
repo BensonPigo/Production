@@ -40,6 +40,7 @@
     [UseRatioRule]              VARCHAR (1)    CONSTRAINT [DF_Brand_UseRatioRule] DEFAULT ('') NOT NULL,
     [UseRatioRule_Thick]        VARCHAR (1)    CONSTRAINT [DF_Brand_UseRatioRule_Thick] DEFAULT ('') NOT NULL,
     [Serial]                    TINYINT        CONSTRAINT [DF_Brand_Serial] DEFAULT ((0)) NOT NULL,
+    [ShipTermID] VARCHAR(5) NOT NULL DEFAULT (''), 
     CONSTRAINT [PK_Brand] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 
@@ -187,3 +188,13 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'最後修�
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'最後修改時間', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Brand', @level2type = N'COLUMN', @level2name = N'EditDate';
 
+
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'出貨條件',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'Brand',
+    @level2type = N'COLUMN',
+    @level2name = N'ShipTermID'

@@ -521,7 +521,6 @@ and p.Status = 'Confirmed'", MyUtility.Convert.GetString(dr["ID"]));
             this.CurrentMaintain["InvDate"] = DateTime.Today;
             this.CurrentMaintain["Handle"] = Env.User.UserID;
             this.CurrentMaintain["ShipModeID"] = "SEA";
-            this.CurrentMaintain["ShipTermID"] = "FOB";
 
             this.btnShippingMemo.Enabled = false;
         }
@@ -1524,7 +1523,7 @@ where fwd.UKey ='{this.CurrentMaintain["ForwarderWhse_DetailUKey"]}'", out DataR
                     cmds.Add(sp1);
                     cmds.Add(sp2);
 
-                    string sqlCmd = "select ID, CountryID, City from CustCD WITH (NOLOCK) where BrandID = @brandid and ID = @custcdid order by ID";
+                    string sqlCmd = "select ID, CountryID, City,ShipTermID from CustCD WITH (NOLOCK) where BrandID = @brandid and ID = @custcdid order by ID";
                     DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out DataTable custCDData);
                     if (!result || custCDData.Rows.Count <= 0)
                     {
@@ -1544,6 +1543,18 @@ where fwd.UKey ='{this.CurrentMaintain["ForwarderWhse_DetailUKey"]}'", out DataR
                     else
                     {
                         this.CurrentMaintain["CustCDID"] = this.txtCustCD.Text;
+                        if (MyUtility.Check.Empty(this.CurrentMaintain["ShipTermID"]))
+                        {
+                            if (!MyUtility.Check.Empty(custCDData.Rows[0]["ShipTermID"].ToString()))
+                            {
+                                this.CurrentMaintain["ShipTermID"] = custCDData.Rows[0]["ShipTermID"].ToString();
+                            }
+                            else
+                            {
+                                this.CurrentMaintain["ShipTermID"] = MyUtility.GetValue.Lookup($@"select ShipTermID from Brand where ID = '{this.CurrentMaintain["BrandID"]}'");
+                            }
+                        }
+
                         this.GetPaytermAP();
                     }
                 }
