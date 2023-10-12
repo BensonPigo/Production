@@ -2015,6 +2015,8 @@ else
                 t.BomTypeStyleLocation    = isnull(s.BomTypeStyleLocation   , 0),
                 t.BomTypeSeason           = isnull(s.BomTypeSeason          , 0),
                 t.BomTypeCareCode         = isnull(s.BomTypeCareCode        , 0)
+                , t.BomTypeBuyMonth = isnull(s.BomTypeBuyMonth,0)
+                , t.BomTypeBuyerDlvMonth = isnull(s.BomTypeBuyerDlvMonth,0)
 		when not matched by target then
 			insert (
 				Id					, Ukey				, Refno					, SCIRefno				, SuppID
@@ -2035,7 +2037,9 @@ else
                 ,BomTypeStyle            
                 ,BomTypeStyleLocation    
                 ,BomTypeSeason           
-                ,BomTypeCareCode         
+                ,BomTypeCareCode     
+               ,BomTypeBuyMonth
+               ,BomTypeBuyerDlvMonth    
 			)
            VALUES
            (
@@ -2084,6 +2088,8 @@ else
                 , isnull(s.BomTypeStyleLocation   , 0) 
                 , isnull(s.BomTypeSeason          , 0) 
                 , isnull(s.BomTypeCareCode        , 0)
+                , isnull(s.BomTypeBuyMonth,0)
+                , isnull(s.BomTypeBuyerDlvMonth,0)
 			)
 		when not matched by source AND T.ID IN (SELECT ID FROM #Torder) then 
 			delete;

@@ -776,6 +776,8 @@ SET
     ,a.IsFOC = isnull(b.IsFOC, 0)
 	,a.Picture = ISNULL(b.Picture,'')
     , a.InspectionGroup = isnull(b.InspectionGroup,'')
+    , a.BomTypeBuyMonth = isnull(b.BomTypeBuyMonth,0)
+    , a.BomTypeBuyerDlvMonth = isnull(b.BomTypeBuyerDlvMonth,0)
 from Production.dbo.Fabric as a 
 inner join Trade_To_Pms.dbo.Fabric as b ON a.SCIRefno=b.SCIRefno
 
@@ -833,6 +835,8 @@ INSERT INTO Production.dbo.Fabric(
         ,IsFOC
 		,Picture
        ,InspectionGroup
+       ,BomTypeBuyMonth
+       ,BomTypeBuyerDlvMonth
 )
 select 
         isnull(SCIRefno          ,'')
@@ -888,6 +892,8 @@ select
     ,isnull(IsFOC, 0)
 	,ISNULL(Picture,'')
     , isnull(InspectionGroup,'')
+    , isnull(BomTypeBuyMonth,0)
+    , isnull(BomTypeBuyerDlvMonth,0)
 from Trade_To_Pms.dbo.Fabric as b WITH (NOLOCK)
 where not exists(select SCIRefno from Production.dbo.Fabric as a WITH (NOLOCK) where a.SCIRefno = b.SCIRefno)
 

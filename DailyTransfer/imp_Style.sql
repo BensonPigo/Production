@@ -1112,7 +1112,6 @@ where not exists(select 1 from Production.dbo.Style_BOF as a WITH (NOLOCK) where
 --      ,[BomTypeArticle]
 --      ,[BomTypeCustCD]
 --      ,[BomTypeFactory]
---      ,[BomTypeBuyMonth]
 --      ,[BomTypeCountry]
 ----------------------刪除主TABLE多的資料
 RAISERROR('imp_Style - Starts',0,0)
@@ -1161,6 +1160,8 @@ a.StyleUkey	= isnull( b.StyleUkey,0)
 ,a.BomTypeStyleLocation    = isnull(b.BomTypeStyleLocation    , 0)
 ,a.BomTypeSeason           = isnull(b.BomTypeSeason           , 0)
 ,a.BomTypeCareCode         = isnull(b.BomTypeCareCode         , 0)
+    , a.BomTypeBuyMonth = isnull(b.BomTypeBuyMonth,0)
+    , a.BomTypeBuyerDlvMonth = isnull(b.BomTypeBuyerDlvMonth,0)
 
 from Production.dbo.Style_BOA as a 
 inner join Trade_To_Pms.dbo.Style_BOA as b ON a.Ukey=b.Ukey
@@ -1202,6 +1203,8 @@ StyleUkey
 ,BomTypeStyleLocation
 ,BomTypeSeason
 ,BomTypeCareCode
+    ,BomTypeBuyMonth
+    ,BomTypeBuyerDlvMonth
 
 )
 select 
@@ -1240,6 +1243,8 @@ select
 ,isnull(b.BomTypeStyleLocation    , 0)
 ,isnull(b.BomTypeSeason           , 0)
 ,isnull(b.BomTypeCareCode         , 0)
+    , isnull(b.BomTypeBuyMonth,0)
+    , isnull(b.BomTypeBuyerDlvMonth,0)
 from Trade_To_Pms.dbo.Style_BOA as b WITH (NOLOCK)
 where not exists(select 1 from Production.dbo.Style_BOA as a WITH (NOLOCK) where a.Ukey = b.Ukey)
 

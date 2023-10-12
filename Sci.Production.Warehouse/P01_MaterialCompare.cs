@@ -21,7 +21,7 @@ namespace Sci.Production.Warehouse
 
         /// <summary>
         /// P01_Seq1Item_His
-        /// 從Production複製過來
+        /// 從Trade複製過來
         /// </summary>
         /// <param name="poid">poid</param>
         public P01_MaterialCompare(string poid)
@@ -59,6 +59,8 @@ namespace Sci.Production.Warehouse
                 .Text("SpecSeason", header: "Season", width: Widths.AnsiChars(15), iseditingreadonly: true)
                 .Text("SpecCareCode", header: "CareCode", width: Widths.AnsiChars(15), iseditingreadonly: true)
                 .Text("SpecCustomerPO", header: "Customer PO", width: Widths.AnsiChars(15), iseditingreadonly: true)
+                .Text("SpecBuyMonth", header: "Buy Month", width: Widths.AnsiChars(15), iseditingreadonly: true)
+                .Text("SpecBuyerDlvMonth", header: "Buyer Dlv. Month", width: Widths.AnsiChars(15), iseditingreadonly: true)
                 ;
             #endregion
 
@@ -118,6 +120,8 @@ namespace Sci.Production.Warehouse
                 rowM["SpecSeason"] = m.Key.SpecSeason;
                 rowM["SpecCareCode"] = m.Key.SpecCareCode;
                 rowM["SpecCustomerPO"] = m.Key.SpecCustomerPO;
+                rowM["SpecBuyMonth"] = m.Key.SpecBuyMonth;
+                rowM["SpecBuyerDlvMonth"] = m.Key.SpecBuyerDlvMonth;
                 rowM["MappingKey"] = key;
                 if (m.Key.CompareState == ComparePO3StateEnu.Delete)
                 {
@@ -197,6 +201,8 @@ namespace Sci.Production.Warehouse
             this.masterDt.ColumnsStringAdd("SpecSeason");
             this.masterDt.ColumnsStringAdd("SpecCareCode");
             this.masterDt.ColumnsStringAdd("SpecCustomerPO");
+            this.masterDt.ColumnsStringAdd("SpecBuyMonth");
+            this.masterDt.ColumnsStringAdd("SpecBuyerDlvMonth");
             this.masterDt.ColumnsIntAdd("MappingKey");
 
             this.detailDt = new DataTable();
@@ -321,6 +327,8 @@ outer apply (
 	, SpecSeason = p.Season
 	, SpecCareCode = p.CareCode
 	, SpecCustomerPO = p.CustomerPO
+    , SpecBuyMonth = p.BuyMonth
+    , SpecBuyerDlvMonth = p.BuyerDlvMonth
 	from 
 	(
 		select BomTypeID = BomType.ID, SpecValue = isnull(po3s.SpecValue, '')
@@ -329,7 +337,7 @@ outer apply (
 	)tmp
 	pivot
 	(
-		MAX(SpecValue) for BomTypeID in (Color, Size, SizeUnit, ZipperInsert, Article, COO, Gender, CustomerSize, DecLabelSize, BrandFactoryCode, Style, StyleLocation, Season, CareCode, CustomerPO)
+		MAX(SpecValue) for BomTypeID in (Color, Size, SizeUnit, ZipperInsert, Article, COO, Gender, CustomerSize, DecLabelSize, BrandFactoryCode, Style, StyleLocation, Season, CareCode, CustomerPO, BuyMonth, BuyerDlvMonth)
 	) as p
 ) BomSpec
 where #tmpPO_Supp_Detail.Seq1 not like 'A%'
@@ -338,6 +346,7 @@ Group by #tmpPO_Supp_Detail.RefNo
 , BomSpec.SpecCOO, BomSpec.SpecGender, BomSpec.SpecCustomerSize, BomSpec.SpecDecLabelSize, BomSpec.SpecBrandFactoryCode
 , BomSpec.SpecStyle, BomSpec.SpecStyleLocation, BomSpec.SpecSeason, BomSpec.SpecCareCode, BomSpec.SpecCustomerPO
 , Po_Supp_Detail.StockUnit
+, BomSpec.SpecBuyMonth, BomSpec.SpecBuyerDlvMonth
 ";
             result = DBProxy.Current.SelectByConn(sqlConn, sqlCmd, out tmpPo_Supp_Detail);
             if (!result)
@@ -384,6 +393,8 @@ outer apply (
 	, SpecSeason = p.Season
 	, SpecCareCode = p.CareCode
 	, SpecCustomerPO = p.CustomerPO
+	, SpecBuyMonth = p.BuyMonth
+	, SpecBuyerDlvMonth = p.BuyerDlvMonth
 	from 
 	(
 		select BomTypeID = BomType.ID, SpecValue = isnull(po3s.SpecValue, '')
@@ -392,7 +403,7 @@ outer apply (
 	)tmp
 	pivot
 	(
-		MAX(SpecValue) for BomTypeID in (Color, Size, SizeUnit, ZipperInsert, Article, COO, Gender, CustomerSize, DecLabelSize, BrandFactoryCode, Style, StyleLocation, Season, CareCode, CustomerPO)
+		MAX(SpecValue) for BomTypeID in (Color, Size, SizeUnit, ZipperInsert, Article, COO, Gender, CustomerSize, DecLabelSize, BrandFactoryCode, Style, StyleLocation, Season, CareCode, CustomerPO, BuyMonth, BuyerDlvMonth)
 	) as p
 ) BomSpec
 where po3.id = @poID

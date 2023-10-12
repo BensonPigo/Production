@@ -40,7 +40,7 @@ namespace Sci.Production.Warehouse
                 ;
 
             this.Helper.Controls.Grid.Generator(this.grid2)
-                .Text("Name", header: "Spec Column", width: Widths.AnsiChars(11), iseditingreadonly: true)
+                .Text("Name", header: "Spec Column", width: Widths.AnsiChars(18), iseditingreadonly: true)
                 .Text("SpecValue", header: "Value", width: Widths.AnsiChars(15), iseditingreadonly: true)
                 ;
         }
