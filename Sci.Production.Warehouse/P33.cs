@@ -274,7 +274,7 @@ WITH tmpQT as (
     OUTER APPLY(
 	    SELECT SCIRefNo
 		    ,ColorID
-		    ,[Val]=SUM(((SeamLength  * Frequency * UseRatio ) + (Allowance*Segment))) 
+		    ,[Val]=sum (g.OpThreadQty)
 		    ,[Qty] = (	
 			    SELECt [Qty]=SUM(b.Qty)
 			    FROM (
@@ -925,7 +925,7 @@ OUTER APPLY(
 OUTER APPLY(
 	SELECT SCIRefNo
 		,ColorID
-		,[Val]=SUM(((SeamLength  * Frequency * UseRatio ) + (Allowance*Segment))) 
+		,[Val]=sum (g.OpThreadQty)
 		,[Qty] = (	
 			SELECt [Qty]=SUM(b.Qty)
 			FROM #step1 a
@@ -1280,7 +1280,7 @@ OUTER APPLY(
 OUTER APPLY(
 	SELECT SCIRefNo
 		,ColorID
-		,[Val]=SUM(((SeamLength  * Frequency * UseRatio ) + (Allowance*Segment))) 
+		,[Val]=sum (g.OpThreadQty)
 		,[Qty] = (	
 			SELECt [Qty]=SUM(b.Qty)
 			FROM #step1 a
@@ -1532,7 +1532,7 @@ DROP TABLE #tmp_sumQty,#step1,#tmp,#final,#final2
                 List<string> articles = modelList.Where(o => o.Qty > 0).Select(o => o.Article).Distinct().ToList();
                 string cmd = $@"
 
-SELECT Article, [Qty]=SUM(((SeamLength  * Frequency * UseRatio ) + (Allowance * Segment))) 
+SELECT Article, [Qty]=sum (OpThreadQty)
 FROM dbo.GetThreadUsedQtyByBOT('{this.poid}',default)
 WHERE SCIRefNo='{sCIRefNo}' 
 AND ColorID='{colorID}'
@@ -2728,7 +2728,7 @@ OUTER APPLY(
 		FromSuppColor = iif(TR1.FromSuppColor is not null, TR1.FromSuppColor, TR2.FromSuppColor)
 )TR
 OUTER APPLY(
-	SELECT Val=SUM((SeamLength * Frequency * UseRatio) +  (Allowance * Segment) )
+	SELECT Val=sum (g.OpThreadQty)
 	FROM dbo.GetThreadUsedQtyByBOT(psd.ID,default) g
 	WHERE g.SCIRefNo = psd.SCIRefno AND g.SuppColor = psd.SuppColor
     AND exists (
@@ -2736,7 +2736,7 @@ OUTER APPLY(
 	)
 )ThreadUsedQtyByBOT1
 OUTER APPLY(
-	SELECT Val=SUM((SeamLength * Frequency * UseRatio) +  (Allowance * Segment) )
+	SELECT Val=sum (g.OpThreadQty)
 	FROM dbo.GetThreadUsedQtyByBOT(psd.ID,default) g
 	WHERE g.SCIRefNo= TR.FromSCIRefno AND g.SuppColor = TR.FromSuppColor  
     AND exists (
@@ -3416,7 +3416,7 @@ OUTER APPLY(
 OUTER APPLY(
 	SELECT SCIRefNo
 		,ColorID
-		,[Val]=SUM(((SeamLength  * Frequency * UseRatio ) + (Allowance*Segment))) 
+		,[Val]=sum (g.OpThreadQty)
 		,[Qty] = (	
 			SELECt [Qty]=SUM(b.Qty)
 			FROM #step1 a
