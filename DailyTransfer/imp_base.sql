@@ -59,6 +59,7 @@ SET
 	  ,a. UseRatioRule = isnull(b.UseRatioRule, '')
 	  ,a. UseRatioRule_Thick =isnull(b.UseRatioRule_Thick, '')
 	  ,a. Serial = isnull(b.Serial, 0)
+	  ,a. ShipTermID = isnull(b.ShipTermID, '')
 from Production.dbo.Brand as a inner join Trade_To_Pms.dbo.Brand as b ON a.id=b.id
 -------------------------- INSERT INTO §ì
 INSERT INTO Production.dbo.Brand
@@ -102,6 +103,7 @@ INSERT INTO Production.dbo.Brand
 	  ,UseRatioRule
 	  ,UseRatioRule_Thick
 	  ,Serial
+	  ,ShipTermID
 )
 SELECT ID
       ,isnull(NameCH, '')
@@ -142,6 +144,7 @@ SELECT ID
 	  ,isnull(UseRatioRule, '')
 	  ,isnull(UseRatioRule_Thick, '')
 	  ,isnull(Serial, 0)
+	  ,isnull(ShipTermID,'')
 from Trade_To_Pms.dbo.Brand as b WITH (NOLOCK)
 where not exists(select id from Production.dbo.Brand as a WITH (NOLOCK) where a.id = b.id)
 
@@ -929,6 +932,7 @@ SET
       ,a.EditDate		      = b.EditDate				
 	  ,a.Kit		          = isnull(b.Kit						, '')
 	  ,a.HealthID		      = isnull(b.HealthID					, '')
+	  ,a.ShipTermID		      = isnull(b.ShipTermID					, '')
 
 from Production.dbo.CustCD as a inner join Trade_To_Pms.dbo.CustCD as b ON a.id=b.id and a.BrandID=b.BrandID
 -------------------------- INSERT INTO §ì
@@ -967,6 +971,7 @@ BrandID
       ,EditDate
 	  ,Kit
 	  ,HealthID
+	  ,ShipTermID
 )
 select 
        isnull(BrandID			, '')
@@ -1003,6 +1008,7 @@ select
       ,EditDate			
 	  ,isnull(Kit				, '')
 	  ,isnull(HealthID			, '')
+	  ,isnull(ShipTermID			, '')
 from Trade_To_Pms.dbo.CustCD as b WITH (NOLOCK)
 where not exists(select id from Production.dbo.CustCD as a WITH (NOLOCK) where a.id = b.id and a.BrandID=b.BrandID)
 

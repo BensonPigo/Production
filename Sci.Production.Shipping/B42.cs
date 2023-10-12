@@ -923,7 +923,7 @@ set @vncontractid = '{4}';
 with tmpMarkerData
 as (
 select sm.MarkerName,sm.StyleUkey,sm.FabricPanelCode,sma.Article,sms.SizeCode,dbo.MarkerLengthToYDS(sm.MarkerLength) as markerYDS,
-sm.Width,sms.Qty,sc.FabricCode,sfqt.QTFabricCode
+sm.Width,sms.Qty,sc.FabricCode
 from Style_MarkerList sm WITH (NOLOCK) 
 inner join Style_MarkerList_SizeQty sms WITH (NOLOCK) on sm.Ukey = sms.Style_MarkerListUkey and sms.SizeCode = @sizecode
 inner join Style_ColorCombo sc WITH (NOLOCK) on sc.StyleUkey = sm.StyleUkey and sc.FabricPanelCode = sm.FabricPanelCode
@@ -934,11 +934,9 @@ and sc.Article = @article
 ),
 tmpFabricCode
 as (
-select t.markerYDS,t.Width,t.Qty, IIF(t.QTFabricCode is null, sb.SCIRefno, sb1.SCIRefno) as SCIRefNo,
-IIF(t.QTFabricCode is null, sb.SuppIDBulk, sb1.SuppIDBulk) as SuppIDBulk
+select t.markerYDS,t.Width,t.Qty, sb.SCIRefno, sb.SuppIDBulk
 from tmpMarkerData t
 left join Style_BOF sb WITH (NOLOCK) on sb.StyleUkey = t.StyleUkey and sb.FabricCode = t.FabricCode
-left join Style_BOF sb1 WITH (NOLOCK) on sb1.StyleUkey = t.StyleUkey and sb1.FabricCode = t.QTFabricCode
 ),
 tmpBOFRateData
 as (

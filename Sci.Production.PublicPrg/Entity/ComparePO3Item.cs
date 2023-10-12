@@ -132,6 +132,8 @@ namespace Sci.Production.Prg.Entity
             this.GroupKey.Season = this.SpecSeason;
             this.GroupKey.CareCode = this.SpecCareCode;
             this.GroupKey.CustomerPO = this.SpecCustomerPO;
+            this.GroupKey.BuyMonth = this.SpecBuyMonth;
+            this.GroupKey.BuyerDlvMonth = this.SpecBuyerDlvMonth;
         }
     }
 
@@ -154,6 +156,8 @@ namespace Sci.Production.Prg.Entity
         public string Season { get; set; }
         public string CareCode { get; set; }
         public string CustomerPO { get; set; }
+        public string BuyMonth { get; set; }
+        public string BuyerDlvMonth { get; set; }
     }
 
     /// <summary>

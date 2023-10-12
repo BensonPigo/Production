@@ -26,7 +26,7 @@ Begin
 			, BomZipperInsert VarChar(5), BomCustPONo VarChar(30), Keyword VarChar(Max), Keyword_Original VarChar(Max), Keyword_xml VarChar(Max), OrderList nvarchar(max), ColorDesc nvarchar(150), Special nvarchar(max)
 			, BomTypeColorID varchar(50), BomTypeSize varchar(50), BomTypeSizeUnit varchar(50), BomTypeZipperInsert varchar(50), BomTypeArticle varchar(50), BomTypeCOO varchar(50)
 			, BomTypeGender varchar(50), BomTypeCustomerSize varchar(50), BomTypeDecLabelSize varchar(50), BomTypeBrandFactoryCode varchar(50), BomTypeStyle varchar(50)
-			, BomTypeStyleLocation varchar(50), BomTypeSeason varchar(50), BomTypeCareCode varchar(50), BomTypeCustomerPO varchar(50)
+			, BomTypeStyleLocation varchar(50), BomTypeSeason varchar(50), BomTypeCareCode varchar(50), BomTypeCustomerPO varchar(50), BomTypeBuyMonth varchar(50), BomTypeBuyerDlvMonth varchar(50)
 			, Primary Key (ExpendUkey)
 			, Index Idx_ID NonClustered (ID, Order_BOAUkey, ColorID) -- table index
 		);
@@ -62,14 +62,16 @@ Begin
         , UsageQty, UsageUnit, SysUsageQty, BomZipperInsert
 		, BomCustPONo, Keyword, Keyword_Original, Keyword_xml, OrderList, ColorDesc, Special
 		, BomTypeColorID, BomTypeSize, BomTypeSizeUnit, BomTypeZipperInsert, BomTypeArticle, BomTypeCOO, BomTypeGender, BomTypeCustomerSize
-		, BomTypeDecLabelSize, BomTypeBrandFactoryCode, BomTypeStyle, BomTypeStyleLocation, BomTypeSeason, BomTypeCareCode, BomTypeCustomerPO)
+        , BomTypeDecLabelSize, BomTypeBrandFactoryCode, BomTypeStyle, BomTypeStyleLocation, BomTypeSeason, BomTypeCareCode, BomTypeCustomerPO
+        , BomTypeBuyMonth, BomTypeBuyerDlvMonth)
 	select ID, Order_BOAUkey, RefNo, SCIRefNo, Article, ColorID, SuppColor, SizeCode
 		, SizeSpec, SizeUnit, Remark, OrderQty
         --, Price
         , UsageQty, UsageUnit, SysUsageQty , BomZipperInsert
 		, BomCustPONo, Keyword, Keyword_Original, Keyword_xml, OrderList, ColorDesc, Special
 		, BomTypeColorID, BomTypeSize, BomTypeSizeUnit, BomTypeZipperInsert, BomTypeArticle, BomTypeCOO, BomTypeGender, BomTypeCustomerSize
-		, BomTypeDecLabelSize, BomTypeBrandFactoryCode, BomTypeStyle, BomTypeStyleLocation, BomTypeSeason, BomTypeCareCode, BomTypeCustomerPO
+        , BomTypeDecLabelSize, BomTypeBrandFactoryCode, BomTypeStyle, BomTypeStyleLocation, BomTypeSeason, BomTypeCareCode, BomTypeCustomerPO
+        , BomTypeBuyMonth, BomTypeBuyerDlvMonth
 	from GetBOAExpend_NEW(@ID, @Order_BOAUkey, @IsGetFabQuot, @IsExpendDetail, @Tmp_Order_Qty, @IsExpendArticle, @IncludeQtyZero, 1)
 	order by RefNo, SCIRefNo, ColorID, Article, SizeSeq, SizeSpec, BomZipperInsert, Keyword, Special
 	

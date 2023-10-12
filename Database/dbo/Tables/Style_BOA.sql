@@ -38,6 +38,7 @@
     [BomTypeStyleLocation]    BIT             CONSTRAINT [DF_Style_BOA_BomTypeStyleLocation] DEFAULT ((0)) NOT NULL,
     [BomTypeSeason]           BIT             CONSTRAINT [DF_Style_BOA_BomTypeSeason] DEFAULT ((0)) NOT NULL,
     [BomTypeCareCode]         BIT             CONSTRAINT [DF_Style_BOA_BomTypeCareCode] DEFAULT ((0)) NOT NULL,
+    [BomTypeBuyerDlvMonth]    BIT             CONSTRAINT [DF_Style_BOA_BomTypeBuyerDlvMonth] DEFAULT ((0)) NOT NULL,
     CONSTRAINT [PK_Style_BOA] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
 
