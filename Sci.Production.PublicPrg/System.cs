@@ -63,51 +63,101 @@ namespace Sci.Production.PublicPrg
         /// </summary>
         /// <param name="imagePaths">imagePaths</param>
         /// <returns>Bitmap</returns>
-        public static Bitmap MergeImages(List<string> imagePaths)
+        public static List<Bitmap> MergeImages(List<string> imagePaths)
         {
-            int totalWidth = 0;
-            int maxHeight = 0;
+            List<Bitmap> result = new List<Bitmap>();
+            int imagesPerRow = 4; // 每一行合成4張圖片
+            int currentImageIndex = 0;
 
-            foreach (string imagePath in imagePaths)
+            if (!imagePaths.Any(s => !MyUtility.Check.Empty(s)))
             {
-                if (!File.Exists(imagePath))
-                {
-                    continue;
-                }
-
-                using (Image img = Image.FromFile(imagePath))
-                {
-                    totalWidth += img.Width;
-                    if (img.Height > maxHeight)
-                        maxHeight = img.Height;
-                }
+                return result;
             }
 
-            if (totalWidth == 0)
+            while (currentImageIndex < imagePaths.Count)
             {
-                return null;
-            }
+                List<Bitmap> imagesToMerge = new List<Bitmap>();
 
-            Bitmap mergedImage = new Bitmap(totalWidth, maxHeight);
-            using (Graphics g = Graphics.FromImage(mergedImage))
-            {
-                int x = 0;
-                foreach (string imagePath in imagePaths)
+                for (int i = 0; i < imagesPerRow; i++)
                 {
-                    if (!File.Exists(imagePath))
+                    Bitmap imgToAdd = null; // 預設為空白圖片
+                    if (currentImageIndex < imagePaths.Count && File.Exists(imagePaths[currentImageIndex]))
                     {
-                        continue;
+                        using (Image img = Image.FromFile(imagePaths[currentImageIndex]))
+                        {
+                            imgToAdd = new Bitmap(img);
+                        }
                     }
 
-                    using (Image img = Image.FromFile(imagePath))
+                    imagesToMerge.Add(imgToAdd);
+
+                    currentImageIndex++;
+                }
+
+                // 調整圖片大小為300x300
+                Bitmap mergedImage = new Bitmap(300, 200);
+                using (Graphics g = Graphics.FromImage(mergedImage))
+                {
+                    g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
+
+                    for (int i = 0; i < 4; i++)
                     {
-                        g.DrawImage(img, x, 0);
-                        x += img.Width;
+                        if (i < imagesToMerge.Count && imagesToMerge[i] != null)
+                        {
+                            g.DrawImage(imagesToMerge[i], new Rectangle((i % 2) * 150, i / 2 * 100, 150, 100));
+                            imagesToMerge[i].Dispose();
+                        }
+                        else
+                        {
+                            // 如果圖片為null，以白色填充
+                            using (SolidBrush brush = new SolidBrush(Color.White))
+                            {
+                                g.FillRectangle(brush, new Rectangle((i % 2) * 150, i / 2 * 100, 150, 100));
+                            }
+                        }
                     }
+                }
+
+                result.Add(mergedImage);
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// MergeBitmapsVertically
+        /// </summary>
+        /// <param name="bitmaps">bitmaps</param>
+        /// <returns>Bitmap</returns>
+        public static Bitmap MergeBitmapsVertically(List<Bitmap> bitmaps)
+        {
+            if (bitmaps == null || bitmaps.Count == 0)
+            {
+                return null; // 如果列表為空，返回null或者執行其他錯誤處理
+            }
+
+            int totalWidth = bitmaps[0].Width;
+            int totalHeight = 0;
+
+            // 計算總高度
+            foreach (Bitmap bmp in bitmaps)
+            {
+                totalHeight += bmp.Height;
+            }
+
+            Bitmap mergedBitmap = new Bitmap(totalWidth, totalHeight);
+
+            using (Graphics g = Graphics.FromImage(mergedBitmap))
+            {
+                int y = 0; // 垂直位置
+                foreach (Bitmap bmp in bitmaps)
+                {
+                    g.DrawImage(bmp, 0, y);
+                    y += bmp.Height;
                 }
             }
 
-            return mergedImage;
+            return mergedBitmap;
         }
 
         /// <inheritdoc/>
