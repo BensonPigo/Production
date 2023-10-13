@@ -54,7 +54,7 @@ namespace Sci.Production.Warehouse
                 .Text("CutCell", header: "Cut\r\nCell", width: Widths.AnsiChars(5), iseditingreadonly: true)
                 .Date("EditDate", header: "Cutplan\r\nEdit Time", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("ID", header: "Cutplan ID", width: Widths.AnsiChars(15), iseditingreadonly: true)
-                .Text("POID", header: "SP", width: Widths.AnsiChars(13), iseditingreadonly: true)
+                .Text("POID", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
                 .Text("StyleID", header: "Style", width: Widths.AnsiChars(16), iseditingreadonly: true)
                 .Date("EstCutdate", header: "Cutting Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("Refno", header: "Refno", width: Widths.AnsiChars(15), iseditingreadonly: true, settings: refno)
@@ -105,21 +105,10 @@ namespace Sci.Production.Warehouse
         {
             this.listsqlParameter.Clear();
             this.strSQLWher = string.Empty;
-            if (MyUtility.Check.Empty(this.txtstyle1.Text))
+            if (MyUtility.Check.Empty(this.cutingDate.Value1) && MyUtility.Check.Empty(this.txtCutplanID.Text) && MyUtility.Check.Empty(this.dateCutPlanEditDate.Value1))
             {
-                if (MyUtility.Check.Empty(this.cutingDate.Value1) && MyUtility.Check.Empty(this.txtCutplanID.Text))
-                {
-                    MyUtility.Msg.WarningBox("<Cutting Date> and <Cutplan ID> cannot all be empty.");
-                    return;
-                }
-            }
-            else
-            {
-                if (MyUtility.Check.Empty(this.cutingDate.Value1) && MyUtility.Check.Empty(this.dateCutPlanEditDate.Value1))
-                {
-                    MyUtility.Msg.WarningBox("<Cutting Date> and <Cut Plan EditDate> cannot all be empty.");
-                    return;
-                }
+                MyUtility.Msg.WarningBox("<Cutting Date> and <Cutplan ID> and <Cut Plan EditDate> cannot all be empty.");
+                return;
             }
 
             if (!MyUtility.Check.Empty(this.cutingDate.Value1))
