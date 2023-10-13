@@ -28,7 +28,6 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
             this.lblCuttingDate = new Sci.Win.UI.Label();
             this.cutingDate = new Sci.Win.UI.DateRange();
             this.lblFactory = new Sci.Win.UI.Label();
@@ -49,7 +48,11 @@
             this.panel2 = new System.Windows.Forms.Panel();
             this.grid2 = new Sci.Win.UI.Grid();
             this.txtCutplanID = new Sci.Win.UI.TextBox();
-            this.bindingDetail = new Sci.Win.UI.BindingSource(this.components);
+            this.bindingDetail = new Sci.Win.UI.BindingSource();
+            this.label1 = new Sci.Win.UI.Label();
+            this.dateCutPlanEditDate = new Sci.Win.UI.DateRange();
+            this.label2 = new Sci.Win.UI.Label();
+            this.txtstyle1 = new Sci.Production.Class.Txtstyle();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.grid1)).BeginInit();
             this.panel2.SuspendLayout();
@@ -96,7 +99,7 @@
             // 
             // lblCutpalnID
             // 
-            this.lblCutpalnID.Location = new System.Drawing.Point(400, 9);
+            this.lblCutpalnID.Location = new System.Drawing.Point(389, 9);
             this.lblCutpalnID.Name = "lblCutpalnID";
             this.lblCutpalnID.Size = new System.Drawing.Size(72, 23);
             this.lblCutpalnID.TabIndex = 5;
@@ -104,7 +107,7 @@
             // 
             // label3
             // 
-            this.label3.Location = new System.Drawing.Point(400, 46);
+            this.label3.Location = new System.Drawing.Point(389, 46);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(72, 23);
             this.label3.TabIndex = 9;
@@ -115,16 +118,16 @@
             this.txtPOID.BackColor = System.Drawing.Color.White;
             this.txtPOID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtPOID.IsSupportEditMode = false;
-            this.txtPOID.Location = new System.Drawing.Point(475, 46);
+            this.txtPOID.Location = new System.Drawing.Point(464, 46);
             this.txtPOID.Name = "txtPOID";
             this.txtPOID.Size = new System.Drawing.Size(121, 23);
             this.txtPOID.TabIndex = 10;
             // 
             // label4
             // 
-            this.label4.Location = new System.Drawing.Point(611, 46);
+            this.label4.Location = new System.Drawing.Point(588, 46);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(72, 23);
+            this.label4.Size = new System.Drawing.Size(59, 23);
             this.label4.TabIndex = 11;
             this.label4.Text = "Status";
             // 
@@ -135,7 +138,7 @@
             this.cbStatus.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.cbStatus.FormattingEnabled = true;
             this.cbStatus.IsSupportUnselect = true;
-            this.cbStatus.Location = new System.Drawing.Point(686, 46);
+            this.cbStatus.Location = new System.Drawing.Point(650, 46);
             this.cbStatus.Name = "cbStatus";
             this.cbStatus.OldText = "";
             this.cbStatus.Size = new System.Drawing.Size(121, 24);
@@ -144,16 +147,16 @@
             // 
             // lblCutCell
             // 
-            this.lblCutCell.Location = new System.Drawing.Point(611, 9);
+            this.lblCutCell.Location = new System.Drawing.Point(588, 9);
             this.lblCutCell.Name = "lblCutCell";
-            this.lblCutCell.Size = new System.Drawing.Size(72, 23);
+            this.lblCutCell.Size = new System.Drawing.Size(59, 23);
             this.lblCutCell.TabIndex = 13;
             this.lblCutCell.Text = "Cut Cell";
             // 
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(813, 12);
+            this.label6.Location = new System.Drawing.Point(774, 12);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(22, 17);
             this.label6.TabIndex = 14;
@@ -164,7 +167,7 @@
             this.txtCutCell_Value1.BackColor = System.Drawing.Color.White;
             this.txtCutCell_Value1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtCutCell_Value1.IsSupportEditMode = false;
-            this.txtCutCell_Value1.Location = new System.Drawing.Point(686, 9);
+            this.txtCutCell_Value1.Location = new System.Drawing.Point(650, 9);
             this.txtCutCell_Value1.Name = "txtCutCell_Value1";
             this.txtCutCell_Value1.Size = new System.Drawing.Size(121, 23);
             this.txtCutCell_Value1.TabIndex = 15;
@@ -174,7 +177,7 @@
             this.txtCutCell_Value2.BackColor = System.Drawing.Color.White;
             this.txtCutCell_Value2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtCutCell_Value2.IsSupportEditMode = false;
-            this.txtCutCell_Value2.Location = new System.Drawing.Point(841, 9);
+            this.txtCutCell_Value2.Location = new System.Drawing.Point(799, 9);
             this.txtCutCell_Value2.Name = "txtCutCell_Value2";
             this.txtCutCell_Value2.Size = new System.Drawing.Size(121, 23);
             this.txtCutCell_Value2.TabIndex = 16;
@@ -201,7 +204,7 @@
             // btnQuery
             // 
             this.btnQuery.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnQuery.Location = new System.Drawing.Point(981, 5);
+            this.btnQuery.Location = new System.Drawing.Point(1193, 5);
             this.btnQuery.Name = "btnQuery";
             this.btnQuery.Size = new System.Drawing.Size(80, 30);
             this.btnQuery.TabIndex = 18;
@@ -213,7 +216,7 @@
             // 
             this.btnClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnClose.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnClose.Location = new System.Drawing.Point(981, 42);
+            this.btnClose.Location = new System.Drawing.Point(1193, 42);
             this.btnClose.Name = "btnClose";
             this.btnClose.Size = new System.Drawing.Size(80, 30);
             this.btnClose.TabIndex = 20;
@@ -228,7 +231,7 @@
             this.panel1.Controls.Add(this.grid1);
             this.panel1.Location = new System.Drawing.Point(9, 75);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(1052, 244);
+            this.panel1.Size = new System.Drawing.Size(1264, 244);
             this.panel1.TabIndex = 21;
             // 
             // grid1
@@ -253,7 +256,7 @@
             this.grid1.RowTemplate.Height = 24;
             this.grid1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.grid1.ShowCellToolTips = false;
-            this.grid1.Size = new System.Drawing.Size(1046, 238);
+            this.grid1.Size = new System.Drawing.Size(1258, 238);
             this.grid1.SupportEditMode = Sci.Win.UI.AdvEditModesReadOnly.True;
             this.grid1.TabIndex = 3;
             this.grid1.TabStop = false;
@@ -267,7 +270,7 @@
             this.panel2.Controls.Add(this.grid2);
             this.panel2.Location = new System.Drawing.Point(9, 325);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(1052, 293);
+            this.panel2.Size = new System.Drawing.Size(1264, 293);
             this.panel2.TabIndex = 22;
             // 
             // grid2
@@ -292,7 +295,7 @@
             this.grid2.RowTemplate.Height = 24;
             this.grid2.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.grid2.ShowCellToolTips = false;
-            this.grid2.Size = new System.Drawing.Size(1046, 287);
+            this.grid2.Size = new System.Drawing.Size(1258, 287);
             this.grid2.SupportEditMode = Sci.Win.UI.AdvEditModesReadOnly.True;
             this.grid2.TabIndex = 4;
             this.grid2.TabStop = false;
@@ -302,16 +305,70 @@
             this.txtCutplanID.BackColor = System.Drawing.Color.White;
             this.txtCutplanID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtCutplanID.IsSupportEditMode = false;
-            this.txtCutplanID.Location = new System.Drawing.Point(475, 9);
+            this.txtCutplanID.Location = new System.Drawing.Point(464, 9);
             this.txtCutplanID.Name = "txtCutplanID";
             this.txtCutplanID.Size = new System.Drawing.Size(121, 23);
             this.txtCutplanID.TabIndex = 23;
+            // 
+            // label1
+            // 
+            this.label1.Location = new System.Drawing.Point(774, 46);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(117, 23);
+            this.label1.TabIndex = 24;
+            this.label1.Text = "Cutplan Edit Date";
+            // 
+            // dateCutPlanEditDate
+            // 
+            // 
+            // 
+            // 
+            this.dateCutPlanEditDate.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dateCutPlanEditDate.DateBox1.Name = "";
+            this.dateCutPlanEditDate.DateBox1.Size = new System.Drawing.Size(129, 23);
+            this.dateCutPlanEditDate.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.dateCutPlanEditDate.DateBox2.Location = new System.Drawing.Point(151, 0);
+            this.dateCutPlanEditDate.DateBox2.Name = "";
+            this.dateCutPlanEditDate.DateBox2.Size = new System.Drawing.Size(129, 23);
+            this.dateCutPlanEditDate.DateBox2.TabIndex = 1;
+            this.dateCutPlanEditDate.Location = new System.Drawing.Point(894, 46);
+            this.dateCutPlanEditDate.Name = "dateCutPlanEditDate";
+            this.dateCutPlanEditDate.Size = new System.Drawing.Size(280, 23);
+            this.dateCutPlanEditDate.TabIndex = 25;
+            // 
+            // label2
+            // 
+            this.label2.Location = new System.Drawing.Point(923, 9);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(44, 23);
+            this.label2.TabIndex = 26;
+            this.label2.Text = "Style";
+            // 
+            // txtstyle1
+            // 
+            this.txtstyle1.BackColor = System.Drawing.Color.White;
+            this.txtstyle1.BrandObjectName = null;
+            this.txtstyle1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtstyle1.Location = new System.Drawing.Point(970, 9);
+            this.txtstyle1.Name = "txtstyle1";
+            this.txtstyle1.SeasonObjectName = null;
+            this.txtstyle1.Size = new System.Drawing.Size(130, 23);
+            this.txtstyle1.TabIndex = 27;
+            this.txtstyle1.TarBrand = null;
+            this.txtstyle1.TarSeason = null;
             // 
             // P68
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1070, 630);
+            this.ClientSize = new System.Drawing.Size(1282, 630);
+            this.Controls.Add(this.txtstyle1);
+            this.Controls.Add(this.label2);
+            this.Controls.Add(this.dateCutPlanEditDate);
+            this.Controls.Add(this.label1);
             this.Controls.Add(this.txtCutplanID);
             this.Controls.Add(this.panel2);
             this.Controls.Add(this.panel1);
@@ -351,6 +408,10 @@
             this.Controls.SetChildIndex(this.panel1, 0);
             this.Controls.SetChildIndex(this.panel2, 0);
             this.Controls.SetChildIndex(this.txtCutplanID, 0);
+            this.Controls.SetChildIndex(this.label1, 0);
+            this.Controls.SetChildIndex(this.dateCutPlanEditDate, 0);
+            this.Controls.SetChildIndex(this.label2, 0);
+            this.Controls.SetChildIndex(this.txtstyle1, 0);
             this.panel1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.grid1)).EndInit();
             this.panel2.ResumeLayout(false);
@@ -384,5 +445,9 @@
         private Win.UI.Grid grid2;
         private Win.UI.TextBox txtCutplanID;
         private Win.UI.BindingSource bindingDetail;
+        private Win.UI.Label label1;
+        private Win.UI.DateRange dateCutPlanEditDate;
+        private Win.UI.Label label2;
+        private Class.Txtstyle txtstyle1;
     }
 }
