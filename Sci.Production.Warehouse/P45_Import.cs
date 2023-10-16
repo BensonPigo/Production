@@ -68,11 +68,11 @@ select  0 as selected
         , ColorID =dbo.GetColorMultipleID(psd.BrandId, isnull(psdsC.SpecValue, ''))
 from dbo.PO_Supp_Detail psd WITH (NOLOCK) 
 inner join dbo.ftyinventory c WITH (NOLOCK) on c.poid = psd.id and c.seq1 = psd.seq1 and c.seq2  = psd.seq2 and c.stocktype = 'O'
-inner join dbo.factory f WITH (NOLOCK) on psd.FactoryID=f.id
+inner join dbo.View_WH_Orders o WITH (NOLOCK) on o.ID = psd.id
 left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
 Where   c.lock = 0 
         and c.inqty - c.outqty + c.adjustqty - c.ReturnQty <> 0
-        and f.mdivisionid = '{Env.User.Keyword}'
+        and o.MDivisionID = '{Env.User.Keyword}'
 ");
 
                 if (!MyUtility.Check.Empty(sp))
