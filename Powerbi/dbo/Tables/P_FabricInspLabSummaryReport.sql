@@ -11,10 +11,10 @@
 	,[InvNo]						    varchar(25)		CONSTRAINT [PK_P_FabricInspLabSummaryReport_InvNo]                           DEFAULT ((''))	NOT NULL
 	,[CuttingDate]					    date			                    
 	,[ArriveWHDate]					    date			                    
-	,[ArriveQty]					    numeric(13, 2)	CONSTRAINT [PK_P_FabricInspLabSummaryReport_ArriveQty]                       DEFAULT ((0))	NOT NULL
-	,[Inventory]					    numeric(13, 2)	CONSTRAINT [PK_P_FabricInspLabSummaryReport_Inventory]                       DEFAULT ((0))	NOT NULL
-	,[Bulk]							    numeric(13, 2)	CONSTRAINT [PK_P_FabricInspLabSummaryReport_Bulk]                            DEFAULT ((0))	NOT NULL
-	,[BalanceQty]					    numeric(13, 2)	CONSTRAINT [PK_P_FabricInspLabSummaryReport_BalanceQty]                      DEFAULT ((0))	NOT NULL
+	,[ArriveQty]					    INT	CONSTRAINT [PK_P_FabricInspLabSummaryReport_ArriveQty]                       DEFAULT ((0))	NOT NULL
+	,[Inventory]					    INT	CONSTRAINT [PK_P_FabricInspLabSummaryReport_Inventory]                       DEFAULT ((0))	NOT NULL
+	,[Bulk]							    INT	CONSTRAINT [PK_P_FabricInspLabSummaryReport_Bulk]                            DEFAULT ((0))	NOT NULL
+	,[BalanceQty]					    INT	CONSTRAINT [PK_P_FabricInspLabSummaryReport_BalanceQty]                      DEFAULT ((0))	NOT NULL
 	,[TtlRollsCalculated]			    int				CONSTRAINT [PK_P_FabricInspLabSummaryReport_TtlRollsCalculated]              DEFAULT ((0))	NOT NULL
 	,[BulkLocation]					    varchar(5000)	CONSTRAINT [PK_P_FabricInspLabSummaryReport_BulkLocation]                    DEFAULT ((''))	NOT NULL
 	,[FirstUpdateBulkLocationDate]	    datetime      
@@ -29,7 +29,7 @@
 	,[SupplierCode]					    varchar(6)		CONSTRAINT [PK_P_FabricInspLabSummaryReport_SupplierCode]                    DEFAULT ((''))	NOT NULL
 	,[SupplierName]					    varchar(12)		CONSTRAINT [PK_P_FabricInspLabSummaryReport_SupplierName]                    DEFAULT ((''))	NOT NULL
 	,[WeaveType]					    varchar(20)		CONSTRAINT [PK_P_FabricInspLabSummaryReport_WeaveType]                       DEFAULT ((''))	NOT NULL
-	,[NAPhyscial]					    bit				CONSTRAINT [PK_P_FabricInspLabSummaryReport_NAPhyscial]                      DEFAULT ((0))	NOT NULL				
+	,[NAPhyscial]					    VARCHAR				CONSTRAINT [PK_P_FabricInspLabSummaryReport_NAPhyscial]                      DEFAULT ((0))	NOT NULL				
 	,[InspectionOverallResult]		    varchar(16)		CONSTRAINT [PK_P_FabricInspLabSummaryReport_InspectionOverallResult]         DEFAULT ((''))	NOT NULL
 	,[PhyscialInspResult]			    varchar(10)		CONSTRAINT [PK_P_FabricInspLabSummaryReport_PhyscialInspResult]              DEFAULT ((''))	NOT NULL
 	,[TtlYrdsUnderBCGrade]			    numeric(12, 2)	CONSTRAINT [PK_P_FabricInspLabSummaryReport_TtlYrdsUnderBCGrade]             DEFAULT ((0))	NOT NULL

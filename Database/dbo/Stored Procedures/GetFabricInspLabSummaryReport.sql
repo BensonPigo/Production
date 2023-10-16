@@ -345,7 +345,7 @@ SET NOCOUNT ON;
 		,[WeightTestInspector] = [WeightInspector]
 		,[WeightTestDate] = [WeightDate]
 		,[CutShadebandQtyByRoll]
-		,[CutShadebandPCT] = [CutShadeband]
+		,[CutShadebandPCT] = CAST([CutShadeband] * 100 AS NUMERIC(5,2))
 		,[ShadeBondResult] = [ShadeBond]
 		,[ShadeBondInspector] = [ShadeboneInspector]
 		,[ShadeBondDate] = [ShadeBondDate]
