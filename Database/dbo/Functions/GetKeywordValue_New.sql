@@ -1,5 +1,4 @@
-﻿
-CREATE FUNCTION [dbo].[GetKeywordValue_New]
+﻿CREATE FUNCTION GetKeywordValue
 (
 	  @OrderID		VarChar(13)
 	 ,@KeyWordID	VarChar(30)
@@ -35,13 +34,15 @@ BEGIN
 				when Upper('Buy month') then (Select Orders.Buymonth From dbo.Orders where Orders.ID = @OrderID)
 				when Upper('Country Code') then (Select Orders.BrandAreaCode From dbo.Orders where Orders.ID = @OrderID)
 				when Upper('Fty code') then (Select Orders.BrandFTYCode From dbo.Orders where Orders.ID = @OrderID)
-				when Upper('Orig Buyer deliver') then (Select CONVERT(char(10), OrigBuyerDelivery, 111) From dbo.Orders where Orders.ID = @OrderID)
 				when Upper('Plant code') then (Select Orders.BrandAreaCode From dbo.Orders where Orders.ID = @OrderID)
 				when Upper('Pono') then (Select Orders.CustPONo From dbo.Orders where Orders.ID = @OrderID)
 				when Upper('Program') then (Select Orders.ProgramID From dbo.Orders where Orders.ID = @OrderID)
 				when Upper('Season') then (Select Orders.SeasonID From dbo.Orders where Orders.ID = @OrderID)
 				when Upper('SpecId1') then (Select Orders.Customize1 From dbo.Orders where Orders.ID = @OrderID)
 				when Upper('Style') then (Select Orders.StyleID From dbo.Orders where Orders.ID = @OrderID)
+				when Upper('Customize1') then (Select Orders.Customize1 From dbo.Orders where Orders.ID = @OrderID)
+				when Upper('Customize2') then (Select Orders.Customize2 From dbo.Orders where Orders.ID = @OrderID)
+				when Upper('Customize3') then (Select Orders.Customize3 From dbo.Orders where Orders.ID = @OrderID)
 				else ''
 				end
 		End;
@@ -60,10 +61,15 @@ BEGIN
 							Left Join Production.dbo.Style On Style.Ukey = Orders.StyleUkey
 							Where Orders.ID = @OrderID)
 				when Upper('Content') then (
-							Select IIF(IsNull(Style_Article.Contents, '') = '', Style.Contents, Style_Article.Contents)
+							Select IsNull(Style_Article.Contents, '')
 							From dbo.Orders
 							Left Join Production.dbo.Style On Style.Ukey = Orders.StyleUkey
 							left join Production.dbo.Style_Article on Style_Article.StyleUkey = Style.Ukey and Style_Article.Article = @Article
+							Where Orders.ID = @OrderID)
+				when Upper('Style Content') then (
+							Select IsNull(Style.Contents, '')
+							From dbo.Orders
+							Left Join Production.dbo.Style On Style.Ukey = Orders.StyleUkey
 							Where Orders.ID = @OrderID)
 				when Upper('Gender') then (
 							Select iif(Style.Gender = 'M', 'Male', iif(Style.Gender = 'F', 'Female', Style.Gender)) 
@@ -102,18 +108,40 @@ BEGIN
 							Left Join Production.dbo.Style On Style.Ukey = Orders.StyleUkey
 							Left Join Production.dbo.DropDownList on DropDownList.ID = Style.BrandGender and DropDownList.Type = 'BrandGender'
 							Where Orders.ID = @OrderID)
+				when Upper('StyleDescription') then (
+							Select Style.Description From dbo.Orders
+							Left Join Production.dbo.Style On Style.Ukey = Orders.StyleUkey
+							Where Orders.ID = @OrderID)
+				when Upper('StyleFabricType') then (
+							Select Reason.Name From dbo.Orders
+							Left Join Production.dbo.Style On Style.Ukey = Orders.StyleUkey
+							Left Join Production.dbo.Reason on Reason.ID = Style.FabricType and Reason.ReasonTypeID = 'Fabric_Kind'
+							Where Orders.ID = @OrderID)
 				else ''
 				end
 		End;
 				
 		If Upper(@TableName) = Upper('Brand_Month')
 		Begin
-			-- Buyer delivery
-			Select @FieldValue = Brand_Month.MonthLabel From dbo.Orders
-			Left Join Production.dbo.Brand_Month On Brand_Month.ID = Orders.BrandID
-				And Brand_Month.Year = Year(Orders.BuyerDelivery)
-				And Brand_Month.Month = Month(Orders.BuyerDelivery)
-			Where Orders.ID = @OrderID
+			IF Upper(@KeyWordID) = Upper('Buyer delivery')
+			Begin
+				Select @FieldValue = isnull(Brand_Month.MonthLabel, FORMAT(Orders.BuyerDelivery, 'yyyy/MM'))
+				From dbo.Orders
+				Left Join Production.dbo.Brand_Month On Brand_Month.ID = Orders.BrandID
+					And Brand_Month.Year = Year(Orders.BuyerDelivery)
+					And Brand_Month.Month = Month(Orders.BuyerDelivery)
+				Where Orders.ID = @OrderID
+			End
+
+			IF Upper(@KeyWordID) = Upper('Orig Buyer deliver')
+			Begin
+				Select @FieldValue = isnull(Brand_Month.MonthLabel, FORMAT(Orders.OrigBuyerDelivery, 'yyyy/MM'))
+				From dbo.Orders
+				Left Join Production.dbo.Brand_Month On Brand_Month.ID = Orders.BrandID
+					And Brand_Month.Year = Year(Orders.OrigBuyerDelivery)
+					And Brand_Month.Month = Month(Orders.OrigBuyerDelivery)
+				Where Orders.ID = @OrderID
+			End
 		End;
 
 		If Upper(@TableName) = Upper('Factory')

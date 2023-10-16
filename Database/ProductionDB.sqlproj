@@ -1817,10 +1817,6 @@
       <AnsiNulls>On</AnsiNulls>
       <QuotedIdentifier>On</QuotedIdentifier>
     </Build>
-    <Build Include="dbo\Stored Procedures\BoaExpend_Insert.sql">
-      <AnsiNulls>On</AnsiNulls>
-      <QuotedIdentifier>On</QuotedIdentifier>
-    </Build>
     <Build Include="dbo\Stored Procedures\BoaExpend.sql">
       <AnsiNulls>On</AnsiNulls>
       <QuotedIdentifier>On</QuotedIdentifier>
@@ -2891,6 +2887,7 @@
     <Build Include="dbo\Tables\LineMappingBalancing.sql" />
     <Build Include="dbo\Tables\LineMappingBalancing_Detail.sql" />
     <Build Include="dbo\Tables\LineMappingBalancing_NotHitTargetReason.sql" />
+    <Build Include="dbo\Functions\GetQA_R08_Detail.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />

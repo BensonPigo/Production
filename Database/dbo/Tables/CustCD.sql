@@ -43,6 +43,7 @@
     [QAEditDate]                     DATETIME       NULL,
     [StampCombinationUkey]           BIGINT         CONSTRAINT [DF_CustCD_StampCombinationUkey] DEFAULT ((0)) NOT NULL,
     [HealthID]                       VARCHAR (10)   CONSTRAINT [DF_CustCD_HealthID] DEFAULT ('') NOT NULL,
+    [ShipTermID] VARCHAR(5) NOT NULL DEFAULT (''), 
     CONSTRAINT [PK_CustCD] PRIMARY KEY CLUSTERED ([BrandID] ASC, [ID] ASC)
 );
 
@@ -216,3 +217,12 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'噴碼組�
 
 
 Go
+
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'出貨條件',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'CustCD',
+    @level2type = N'COLUMN',
+    @level2name = N'ShipTermID'

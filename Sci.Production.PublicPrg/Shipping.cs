@@ -423,7 +423,6 @@ select  ts.*
         , sm.Width
         , sms.Qty
         , sc.FabricCode
-        , sfqt.QTFabricCode
 		, sm.ConsPC
 into #tmpMarkerData
 from #tmpAllStyle ts
@@ -433,8 +432,6 @@ inner join Style_MarkerList_SizeQty sms WITH (NOLOCK) on sm.Ukey = sms.Style_Mar
 inner join Style_ColorCombo sc WITH (NOLOCK) on sc.StyleUkey = sm.StyleUkey 
                                                 and sc.FabricPanelCode = sm.FabricPanelCode
 left join Style_MarkerList_Article sma WITH (NOLOCK) on sm.Ukey = sma.Style_MarkerListUkey 
-left join Style_FabricCode_QT sfqt WITH (NOLOCK) on sm.FabricPanelCode = sfqt.FabricPanelCode 
-                                                    and sm.StyleUkey = sfqt.StyleUkey
 where   sm.MixedSizeMarker = 1 
         and (sma.Article is null or sma.Article = ts.Article) 
         and sc.Article = ts.Article
@@ -451,8 +448,8 @@ select  t.StyleID
         , t.markerYDS
         , t.Width
         , t.Qty
-        , IIF(t.QTFabricCode is null, sb.SCIRefno, sb1.SCIRefno) as SCIRefNo
-        , IIF(t.QTFabricCode is null, sb.SuppIDBulk, sb1.SuppIDBulk) as SuppIDBulk
+        , sb.SCIRefno
+        , sb.SuppIDBulk
         , t.StyleCPU
         , t.StyleUKey
 		, t.ConsPC
@@ -460,8 +457,6 @@ into #tmpFabricCode
 from #tmpMarkerData t
 left join Style_BOF sb WITH (NOLOCK) on sb.StyleUkey = t.StyleUkey 
                                         and sb.FabricCode = t.FabricCode
-left join Style_BOF sb1 WITH (NOLOCK) on sb1.StyleUkey = t.StyleUkey 
-                                         and sb1.FabricCode = t.QTFabricCode
 
 --------------------------------------------------------------------------------------------------------------------------------------------------
 select  t.StyleID

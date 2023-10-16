@@ -62,6 +62,8 @@
     [IsFOC]                   BIT             CONSTRAINT [DF_Fabric_IsFOC] DEFAULT ((0)) NOT NULL,
     [Picture]                 NVARCHAR (100)  DEFAULT ('') NOT NULL,
     [InspectionGroup]         VARCHAR (1)     CONSTRAINT [DF_Fabric_InspectionGroup] DEFAULT ('') NOT NULL,
+    [BomTypeBuyMonth]         BIT             CONSTRAINT [DF_Fabric_BomTypeBuyMonth] DEFAULT ((0)) NOT NULL,
+    [BomTypeBuyerDlvMonth]    BIT             CONSTRAINT [DF_Fabric_BomTypeBuyerDlvMonth] DEFAULT ((0)) NOT NULL,
     CONSTRAINT [PK_Fabric] PRIMARY KEY CLUSTERED ([SCIRefno] ASC)
 );
 

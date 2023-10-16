@@ -27,7 +27,7 @@ a.Ukey	= isnull( b.Ukey                     , 0)
 ,a.EditName	= isnull( b.EditName             , '')
 ,a.EditDate	= b.EditDate
 ,a.GSDType	= isnull(b.GSDType, '')
-
+,a.ActFtyIE = ISNULL(b.ActFtyIE,'')
 from Production.dbo.IETMS as a inner join Trade_To_Pms.dbo.IETMS as b ON a.id=b.id AND a.Version = b.Version
 -------------------------- INSERT INTO ��
 INSERT INTO Production.dbo.IETMS(
@@ -43,6 +43,7 @@ ID
 ,EditName
 ,EditDate
 ,GSDType
+,ActFtyIE
 )
 select
  isnull(ID           , '')
@@ -57,6 +58,7 @@ select
 ,isnull(EditName     , '')
 ,EditDate
 ,isnull(b.GSDType, '')
+,ISNULL(b.ActFtyIE,'')
 from Trade_To_Pms.dbo.IETMS as b WITH (NOLOCK)
 where not exists(select id from Production.dbo.IETMS as a WITH (NOLOCK) where a.id = b.id AND a.Version = b.Version)
 --IETMS1

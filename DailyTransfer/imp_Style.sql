@@ -1112,7 +1112,6 @@ where not exists(select 1 from Production.dbo.Style_BOF as a WITH (NOLOCK) where
 --      ,[BomTypeArticle]
 --      ,[BomTypeCustCD]
 --      ,[BomTypeFactory]
---      ,[BomTypeBuyMonth]
 --      ,[BomTypeCountry]
 ----------------------刪除主TABLE多的資料
 RAISERROR('imp_Style - Starts',0,0)
@@ -1161,6 +1160,8 @@ a.StyleUkey	= isnull( b.StyleUkey,0)
 ,a.BomTypeStyleLocation    = isnull(b.BomTypeStyleLocation    , 0)
 ,a.BomTypeSeason           = isnull(b.BomTypeSeason           , 0)
 ,a.BomTypeCareCode         = isnull(b.BomTypeCareCode         , 0)
+    , a.BomTypeBuyMonth = isnull(b.BomTypeBuyMonth,0)
+    , a.BomTypeBuyerDlvMonth = isnull(b.BomTypeBuyerDlvMonth,0)
 
 from Production.dbo.Style_BOA as a 
 inner join Trade_To_Pms.dbo.Style_BOA as b ON a.Ukey=b.Ukey
@@ -1202,6 +1203,8 @@ StyleUkey
 ,BomTypeStyleLocation
 ,BomTypeSeason
 ,BomTypeCareCode
+    ,BomTypeBuyMonth
+    ,BomTypeBuyerDlvMonth
 
 )
 select 
@@ -1240,6 +1243,8 @@ select
 ,isnull(b.BomTypeStyleLocation    , 0)
 ,isnull(b.BomTypeSeason           , 0)
 ,isnull(b.BomTypeCareCode         , 0)
+    , isnull(b.BomTypeBuyMonth,0)
+    , isnull(b.BomTypeBuyerDlvMonth,0)
 from Trade_To_Pms.dbo.Style_BOA as b WITH (NOLOCK)
 where not exists(select 1 from Production.dbo.Style_BOA as a WITH (NOLOCK) where a.Ukey = b.Ukey)
 
@@ -2859,6 +2864,49 @@ left join Production.dbo.Marker_ML_SizeQty b
 on a.ID = b.ID and a.Version = b.Version and a.MarkerName = b.MarkerName
 and a.SizeCode = b.SizeCode
 where b.ID is null
+
+----------------------Style_FabricCode_QT----Start
+Delete Production.dbo.Style_FabricCode_QT
+from Production.dbo.Style_FabricCode_QT as a 
+INNER JOIN Trade_To_Pms.dbo.Style as t on a.StyleUkey = t.Ukey
+left join Trade_To_Pms.dbo.Style_FabricCode_QT as b
+on a.StyleUkey= b.StyleUkey AND a.FabricPanelCode = b.FabricPanelCode and a.SeqNO = b.SeqNO
+where b.StyleUkey is null
+---------------------------UPDATE 
+
+UPDATE a
+SET	 a.QTFabricPanelCode	= isnull(b.QTFabricPanelCode, '')
+	,a.AddName				= isnull(b.AddName, '')			
+	,a.AddDate				= b.AddDate			
+	,a.EditName				= isnull(b.EditName, '')			
+	,a.EditDate				= b.EditDate	
+from Production.dbo.Style_FabricCode_QT as a 
+inner join Trade_To_Pms.dbo.Style_FabricCode_QT as b ON a.StyleUkey= b.StyleUkey AND a.FabricPanelCode = b.FabricPanelCode and a.SeqNO = b.SeqNO
+-------------------------- INSERT
+
+INSERT INTO Production.dbo.Style_FabricCode_QT(
+ StyleUkey
+,FabricPanelCode
+,SeqNO
+,QTFabricPanelCode
+,AddName
+,AddDate
+,EditName
+,EditDate
+)
+select 
+		 b.StyleUkey	
+		,b.FabricPanelCode
+		,b.SeqNO
+		,isnull(b.QTFabricPanelCode, '')		
+		,isnull(b.AddName, '')	
+		,b.AddDate
+		,isnull(b.EditName, '')	
+		,b.EditDate
+from Trade_To_Pms.dbo.Style_FabricCode_QT as b WITH (NOLOCK)
+where not exists(select 1 from Production.dbo.Style_FabricCode_QT as a WITH (NOLOCK) where a.StyleUkey= b.StyleUkey AND a.FabricPanelCode = b.FabricPanelCode and a.SeqNO = b.SeqNO)
+----------------------Style_FabricCode_QT----End
+
 
 END
  

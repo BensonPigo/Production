@@ -2,7 +2,9 @@
 using Sci.Data;
 using Sci.Utility.Excel;
 using System;
+using System.Collections.Generic;
 using System.Data;
+using System.Data.SqlClient;
 using System.Drawing;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -64,114 +66,61 @@ namespace Sci.Production.Quality
         protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             #region 畫面上的條件
-            StringBuilder sqlCmdW = new StringBuilder();
-            sqlCmdW.Append(string.Format(
-                " and FP.InspDate between '{0}' and '{1}'",
-                ((DateTime)this.InspectionDate1).ToString("yyyy/MM/dd"),
-                ((DateTime)this.InspectionDate2).ToString("yyyy/MM/dd")));
-            if (!MyUtility.Check.Empty(this.uid))
-            {
-                string strUserid = string.Empty;
-                string[] getUserId = this.uid.Split(',').Distinct().ToArray();
-                foreach (var userID in getUserId)
-                {
-                    strUserid += ",'" + userID + "'";
-                }
+            List<SqlParameter> listPar = new List<SqlParameter>();
 
-                sqlCmdW.Append(string.Format(" and FP.Inspector in ({0})", strUserid.Substring(1)));
-            }
+            listPar.Add(new SqlParameter("@InspectionDateFrom", this.InspectionDate1));
+            listPar.Add(new SqlParameter("@InspectionDateTo", this.InspectionDate2));
+            listPar.Add(new SqlParameter("@Inspectors", this.uid));
+            listPar.Add(new SqlParameter("@POIDFrom", this.sp1));
+            listPar.Add(new SqlParameter("@POIDTo", this.sp2));
+            listPar.Add(new SqlParameter("@RefNoFrom", this.refno1));
+            listPar.Add(new SqlParameter("@RefNoTo", this.refno2));
+            listPar.Add(new SqlParameter("@BrandIDs", this.brand));
 
-            if (!MyUtility.Check.Empty(this.sp1))
-            {
-                sqlCmdW.Append(string.Format(" and F.POID >= '{0}'", this.sp1));
-            }
-
-            if (!MyUtility.Check.Empty(this.sp2))
-            {
-                sqlCmdW.Append(string.Format(" and F.POID <= '{0}'", this.sp2));
-            }
-
-            if (!MyUtility.Check.Empty(this.refno1))
-            {
-                sqlCmdW.Append(string.Format(" and p.RefNo >= '{0}'", this.refno1));
-            }
-
-            if (!MyUtility.Check.Empty(this.refno2))
-            {
-                sqlCmdW.Append(string.Format(" and p.RefNo <= '{0}'", this.refno2));
-            }
-
-            if (!MyUtility.Check.Empty(this.brand))
-            {
-                string str_multi = string.Empty;
-                foreach (string v_str in this.brand.Split(','))
-                {
-                    str_multi += "," + "'" + v_str + "'";
-                }
-
-                sqlCmdW.Append(string.Format(" and o.brandID in ({0})", str_multi.Substring(1)));
-            }
             #endregion
             #region 主Sql
             StringBuilder sqlCmd = new StringBuilder();
-            sqlCmd.Append(string.Format(
-                @"
-SELECT [Inspected Date] = FP.InspDate
-       ,[Inspector] = FP.Inspector
-       ,o.brandID
-       ,o.FtyGroup
-       ,o.StyleID
-       ,[SP#] = F.POID
-       ,[SEQ#] = concat(RTRIM(F.SEQ1) ,'-',F.SEQ2)
-       ,[StockType]=iif(isnull(rd. StockType, '') = '', '', (select Name from DropDownList ddl  where ddl.id like '%'+rd. StockType+'%' and ddl.Type = 'Pms_StockType'))
-       ,[WK#] = rd.ExportID
-	   ,[Supplier]=f.SuppID
-	   ,[Supplier Name]=(select AbbEN from Supp where id = f.SuppID)
-	   ,[ATA] = rd.WhseArrival
-       ,[Roll#] = fp.Roll
-       ,[Dyelot#] = fp.Dyelot
-	   ,[Ref#] = RTRIM(p.RefNo)
-	   ,[Color]=dbo.GetColorMultipleID(o.BrandID,isnull(psdsC.SpecValue ,''))
-       ,[Arrived YDS] = RD.StockQty
-       ,[Actual YDS] = FP.ActualYds
-       ,[LthOfDiff] = FP.ActualYds - FP.TicketYds
-	   ,[TransactionID] = FP.TransactionID
-	   ,[Shortage YDS] = isnull(isd.Qty, 0)
-	   ,[QCIssueTransactionID] = isd.Id
-       ,[Full Width] = ww.width
-       ,[Actual Width] = FP.ActualWidth
-       ,[Speed] = IIF((FP.QCTime- System.QCMachineDelayTime * FP.QCStopQty) <= 0, 0,
-	                Round(FP.ActualYds/((FP.QCTime- System.QCMachineDelayTime * FP.QCStopQty)/60),2))
-	   ,[Total Defect Points]=FP.TotalPoint
-       ,[Grade] = FP.Grade
-       ,[ActualInspectionTimeStart] = FP.StartTime
-	   ,[inspectionTimeStart] = DATEADD(second, FP.QCTime*-1, FP.AddDate)
-	   ,[inspectionTimeFinish] = FP.AddDate
-       ,[Remark]=FP.Remark
-       ,[MCHandle]= dbo.getPass1_ExtNo(o.MCHandle)
-       ,Fabric.WeaveTypeID
-	   ,[InspectorName] = Pass1.Name
-       ,[QCMachineStopTime] = case when fp.AddDate is null or fp.StartTime is null then fp.QCTime
-								   else DATEDIFF(SECOND,fp.StartTime,fp.AddDate) - fp.QCTime end
-	   ,[QCMachineRunTime] = fp.QCTime
-       ,[ActualInspectionTimeFinish] = fp.EditDate
+            sqlCmd.Append(@"
+SELECT [Inspected Date] = InspDate
+       ,[Inspector] = Inspector
+       ,BrandID
+       ,[FtyGroup] = Factory
+       ,StyleID
+       ,[SP#] = POID
+       ,[SEQ#] = SEQ
+       ,StockType
+       ,[WK#] = Wkno
+	   ,[Supplier] = SuppID
+	   ,[Supplier Name] = SuppName
+	   ,ATA
+       ,[Roll#] = Roll
+       ,[Dyelot#] = Dyelot
+	   ,[Ref#] = RefNo
+	   ,Color
+       ,[Arrived YDS] = ArrivedYDS
+       ,[Actual YDS] = ActualYDS
+       ,LthOfDiff
+	   ,TransactionID
+	   ,[Shortage YDS] = QCIssueQty
+	   ,[QCIssueTransactionID] = QCIssueTransactionID
+       ,[Full Width] = CutWidth
+       ,[Actual Width] = ActualWidth
+       ,Speed
+	   ,[Total Defect Points] = TotalDefectPoints
+       ,Grade
+       ,[ActualInspectionTimeStart] = ActInspTimeStart
+	   ,[inspectionTimeStart] = CalculatedInspTimeStartFirstTime
+	   ,[inspectionTimeFinish] = InspTimeFinishFirstTime
+       ,Remark
+       ,MCHandle
+       ,[WeaveTypeID] = WeaveType
+	   ,InspectorName
+       ,QCMachineStopTime
+	   ,QCMachineRunTime
+       ,[ActualInspectionTimeFinish] = ActInspTimeFinish
 into #tmp
-FROM System,FIR_Physical AS FP
-LEFT JOIN FIR AS F ON FP.ID=F.ID
-LEFT JOIN View_AllReceivingDetail RD ON RD.PoId= F.POID AND RD.Seq1 = F.SEQ1 AND RD.Seq2 = F.SEQ2
-								AND RD.Roll = FP.Roll AND RD.Dyelot = FP.Dyelot
-LEFT join PO_Supp_Detail p on p.ID = f.poid and p.seq1 = f.seq1 and p.seq2 = f.seq2
-left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = p.id and psdsC.seq1 = p.seq1 and psdsC.seq2 = p.seq2 and psdsC.SpecColumnID = 'Color'
-LEFT join orders o on o.id=f.POID
-LEFT JOIN Fabric on Fabric.SCIRefno  = f.SCIRefno
-LEFT JOIN Issue_Detail isd on FP.Issue_DetailUkey = isd.ukey and isd.IsQMS = 1
-LEFT JOIN Pass1 on Pass1.ID = FP.Inspector
-outer apply(select width from Fabric with(nolock) where SCIRefno = f.SCIRefno)ww
-WHERE 1=1
-{0}
-ORDER BY [Inspected Date],[Inspector],[SP#],[SEQ#],[Roll#],[Dyelot#]
-",
-                sqlCmdW.ToString()));
+FROM dbo.GetQA_R08_Detail(@InspectionDateFrom, @InspectionDateTo, @Inspectors, @POIDFrom, @POIDTo, @RefNoFrom, @RefNoTo, @BrandIDs, null, null)
+");
             if (this.radioDetail.Checked)
             {
                 sqlCmd.Append($@"
@@ -276,7 +225,7 @@ order by [inspected date]
             }
 
             #endregion
-            DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), out this.printData);
+            DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), listPar, out this.printData);
             if (!result)
             {
                 DualResult failResult = new DualResult(false, "Query data fail\r\n" + result.ToString());
