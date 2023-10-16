@@ -1,10 +1,20 @@
 ﻿CREATE PROCEDURE [dbo].[P_Import_PPIC_R01_SewingLineScheduleBySP]
 	@StartDate date = null,
-	@EndDate date = null
+	@EndDate date = null,
+	@DateType varchar(30) = ''
 AS
 begin
 Declare @SewingDateFromString varchar(8) = Format(@StartDate, 'yyyyMMdd')
 Declare @SewingDateToString varchar(8) = Format(@EndDate, 'yyyyMMdd')
+
+Declare @DateParameterFrom varchar(30) = '@SewingDateFrom'
+Declare @DateParameterTo varchar(30) = '@SewingDateTo'
+
+if(@DateType = 'SciDelivery')
+begin
+	set @DateParameterFrom = '@SciDeliveryFrom'
+	set @DateParameterTo = '@SciDeliveryTo'
+end
 
 select * into #tmpP_SewingLineScheduleBySP
 from P_SewingLineScheduleBySP
@@ -114,7 +124,7 @@ select
 ,TTL_PRINTING_PCS
 ,TTL_PRINTING_PPU_PPU
 ,SubCon
-from OPENQUERY([MainServer], '' SET NOCOUNT ON; exec Production.dbo.PPIC_R01_SewingLineScheduleBySP @SewingDateFrom = '''''+ @SewingDateFromString +''''', @SewingDateTo = '''''+ @SewingDateToString +''''''')
+from OPENQUERY([MainServer], '' SET NOCOUNT ON; exec Production.dbo.PPIC_R01_SewingLineScheduleBySP '+@DateParameterFrom+' = '''''+ @SewingDateFromString +''''', '+@DateParameterTo+' = '''''+ @SewingDateToString +''''''')
 
 '
 
