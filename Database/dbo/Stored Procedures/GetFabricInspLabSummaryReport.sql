@@ -366,7 +366,7 @@ SET NOCOUNT ON;
 		,[CrockingTestDate] = [CrockingDate]
 		,[NAHeatShrinkage]
 		,[HeatShrinkageTestResult] = [Heat]
-		,[HeatShrinkageInspector] = [CrockingInspector]
+		,[HeatShrinkageInspector] = [HeatInspector]
 		,[HeatShrinkageTestDate] = [HeatDate]
 		,[NAWashShrinkage] 
 		,[WashShrinkageTestResult] = [Wash]
