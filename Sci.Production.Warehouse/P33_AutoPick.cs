@@ -114,7 +114,7 @@ where o.ID = '{this.poid}'
 AND SQHD.SCIRefno='{sCIRefNo}' AND SQHD.ColorID='{colorID}'
 ------------------------------------------
 
-SELECT Article, [Qty]=SUM(((SeamLength  * Frequency * UseRatio ) + (Allowance *Segment))) + ISNULL(Qt.Val,0)
+SELECT Article, [Qty]=sum (f.OpThreadQty) + ISNULL(Qt.Val,0)
 FROM dbo.GetThreadUsedQtyByBOT('{this.poid}',default) f
 OUTER APPLY(
     SELECT Val = SUM(Val)
@@ -414,7 +414,7 @@ OUTER APPLY(
 )TR
 OUTER APPLY(
 	SELECT
-		 [Val]=SUM(((SeamLength  * Frequency * UseRatio ) +  (Allowance * Segment) )) 
+		 [Val]=sum (g.OpThreadQty)
 		,[Qty] = b.QTY
 	FROM DBO.GetThreadUsedQtyByBOT(psd.ID,{sqmMachineTypeIDs}) g
     INNER JOIN #step1 s1 on s1.SCIRefNo = g.SCIRefNo AND s1.SuppColor = g.SuppColor and s1.ColorID = g.ColorID AND s1.Article = g.Article
@@ -424,7 +424,7 @@ OUTER APPLY(
 )ThreadUsedQtyByBOT1
 OUTER APPLY(
 	SELECT
-		 [Val]=SUM(((SeamLength  * Frequency * UseRatio ) +  (Allowance * Segment) )) 
+		 [Val]=sum (g.OpThreadQty)
 		,[Qty] = b.QTY
 	FROM DBO.GetThreadUsedQtyByBOT(psd.ID,{sqmMachineTypeIDs}) g
     INNER JOIN #step1 s1 on s1.SCIRefNo = g.SCIRefNo AND s1.SuppColor = g.SuppColor and s1.ColorID = g.ColorID and s1.Article = g.Article
