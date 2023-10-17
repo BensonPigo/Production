@@ -383,7 +383,6 @@ drop table #tmp1,#tmp2a,#tmp2,#tmp3,#detail,#tmpCutRefNull,#tmpWorkOrderID
 	begin
 		update b
 			set b.TransferDate = getdate()
-				, b.IS_Trans = 1
 		from BITableInfo b
 		where b.id = 'P_ActualCutOutputReport'
 	end
