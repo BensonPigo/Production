@@ -208,16 +208,10 @@ VALUES ('{orderID}','{artworkType}',{standardQty},{reqQty},'{subconReasonID}',GE
             this.btnClose.Text = this.EditMode ? "Undo" : "Close";
         }
 
-        /// <summary>
-        /// GetData
-        /// </summary>
-        /// <returns>DataTable</returns>
-        public DataTable GetData()
+        /// <inheritdoc/>
+        public DataTable GetData(bool isClosed = false)
         {
-            string sqlcmd = string.Empty;
-
-            DualResult result;
-            sqlcmd = $@"
+            string sqlcmd = $@"
 alter table #tmp alter column OrderID varchar(13)
 alter table #tmp alter column ArtworkID varchar(36)
 alter table #tmp alter column PatternCode varchar(20)
@@ -277,7 +271,7 @@ o.FactoryID
 ,o.StyleID
 ,o.BrandID
 ,[StandardQty] = sum(oq.Qty)
-,[ReqQty] = ReqQty.value + s.ReqQty + isnull(tbbd.BuyBackArtworkReq,0)
+,[ReqQty] = ReqQty.value + isnull(tbbd.BuyBackArtworkReq,0) {(isClosed ? string.Empty : " + s.ReqQty ")}
 ,[SubconReasonID] = ''
 ,[ReasonDesc] = ''
 ,[CreateBy] = ''
@@ -309,7 +303,7 @@ outer apply(
 	and ad.PatternDesc = isnull(s.PatternDesc,'') 
 	and ad.Remark = isnull(s.Remark,'') 
     and ad.ArtworkID = iif(s.ArtworkID is null,'{this._masterData["ArtworkTypeID"]}',s.ArtworkID)
-	and ad.id !=  '{this._ArtWorkReq_ID}'
+	{(isClosed ? string.Empty : $"and ad.id != '{this._ArtWorkReq_ID}'")}
 	and a.ArtworkTypeID = '{this._masterData["ArtworkTypeID"]}'
     and a.status != 'Closed'
 )ReqQty
@@ -351,14 +345,20 @@ WHEN NOT MATCHED BY SOURCE
 
 select * from #tmpDB 
 
-drop table #tmpCurrent,#tmpDB,#tmpCurrentFinal
-
+drop table #tmpCurrent
+,#tmpDB
+,#tmpCurrentFinal
+,#tmp
+,#FinalArtworkReq
+,#tmpBuyBackFrom
+,#tmpBuyBackFromResult
+,#tmpBuyBackReqBase
+,#tmpBuyBackDeduction
 ";
-
-            result = MyUtility.Tool.ProcessWithDatatable(this._detailDatas, string.Empty, sqlcmd, out this.dtLoad);
-            if (result == false)
+            DualResult result = MyUtility.Tool.ProcessWithDatatable(this._detailDatas, string.Empty, sqlcmd, out this.dtLoad);
+            if (!result)
             {
-                this.ShowErr(sqlcmd, result);
+                this.ShowErr(result);
             }
 
             return this.dtLoad;

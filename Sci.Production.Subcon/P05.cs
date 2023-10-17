@@ -7,6 +7,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
+using System.Transactions;
 using System.Windows.Forms;
 
 namespace Sci.Production.Subcon
@@ -321,8 +322,7 @@ group by ReqQty.value,PoQty.value";
                         #endregion
                     }
 
-                    DataRow drQty;
-                    if (MyUtility.Check.Seek(sqlcmd, out drQty))
+                    if (MyUtility.Check.Seek(sqlcmd, out DataRow drQty))
                     {
                         this.CurrentDetailData["exceedqty"] = ((decimal)drQty["AccReqQty"] - (int)drQty["OrderQty"]) < 0 ? 0 : (decimal)drQty["AccReqQty"] - (int)drQty["OrderQty"];
                     }
@@ -681,20 +681,39 @@ where id = '{this.CurrentMaintain["id"]}'";
         protected override void ClickClose()
         {
             base.ClickClose();
-            string sqlcmd;
-            sqlcmd = $@"
-update artworkReq 
-set status = 'Closed'
-, OriStatus = Status
-, CloseUnCloseName = '{Env.User.UserID}', CloseUnCloseDate = GETDATE()
-, editname='{Env.User.UserID}', editdate = GETDATE() 
-where id = '{this.CurrentMaintain["id"]}'";
-
-            DualResult result;
-            if (!(result = DBProxy.Current.Execute(null, sqlcmd)))
+            string sqlcmd = $@"
+UPDATE ArtworkReq
+SET Status = 'Closed'
+   ,OriStatus = Status
+   ,CloseUnCloseName = '{Env.User.UserID}'
+   ,CloseUnCloseDate = GETDATE()
+   ,EditName = '{Env.User.UserID}'
+   ,EditDate = GETDATE()
+WHERE ID = '{this.CurrentMaintain["ID"]}'
+";
+            using (TransactionScope transactionscope = new TransactionScope())
             {
-                this.ShowErr(sqlcmd, result);
-                return;
+                try
+                {
+                    DualResult result = DBProxy.Current.Execute(null, sqlcmd);
+                    if (!result)
+                    {
+                        this.ShowErr(result);
+                        return;
+                    }
+
+                    result = this.UpdateIrregularStatusByDelete(this.DetailDatas.CopyToDataTable(), true);
+                    if (!result)
+                    {
+                        this.ShowErr(result);
+                        return;
+                    }
+
+                    transactionscope.Complete();
+                }
+                catch (Exception)
+                {
+                }
             }
 
             MyUtility.Msg.InfoBox("Successfully");
@@ -705,19 +724,38 @@ where id = '{this.CurrentMaintain["id"]}'";
         {
             base.ClickUnclose();
 
-            string sqlcmd;
-            sqlcmd = $@"
-update artworkReq 
-set status = OriStatus
-, CloseUnCloseName = '{Env.User.UserID}', CloseUnCloseDate = GETDATE()
-, editname='{Env.User.UserID}', editdate = GETDATE() 
-where id = '{this.CurrentMaintain["id"]}'";
-
-            DualResult result;
-            if (!(result = DBProxy.Current.Execute(null, sqlcmd)))
+            string sqlcmd = $@"
+UPDATE ArtworkReq
+SET Status = OriStatus
+   ,CloseUnCloseName = '{Env.User.UserID}'
+   ,CloseUnCloseDate = GETDATE()
+   ,EditName = '{Env.User.UserID}'
+   ,EditDate = GETDATE()
+WHERE ID = '{this.CurrentMaintain["ID"]}'
+";
+            using (TransactionScope transactionscope = new TransactionScope())
             {
-                this.ShowErr(sqlcmd, result);
-                return;
+                try
+                {
+                    DualResult result = DBProxy.Current.Execute(null, sqlcmd);
+                    if (!result)
+                    {
+                        this.ShowErr(result);
+                        return;
+                    }
+
+                    result = this.UpdateIrregularStatusByDelete(this.DetailDatas.CopyToDataTable());
+                    if (!result)
+                    {
+                        this.ShowErr(result);
+                        return;
+                    }
+
+                    transactionscope.Complete();
+                }
+                catch (Exception)
+                {
+                }
             }
 
             MyUtility.Msg.InfoBox("Successfully");
@@ -806,9 +844,7 @@ where id = '{this.CurrentMaintain["id"]}'";
                 return;
             }
 
-            var frm = new Sci.Production.Subcon.P05_Import(dr, (DataTable)this.detailgridbs.DataSource);
-            frm.ParentIForm = this;
-            frm.ShowDialog(this);
+            new P05_Import(dr, (DataTable)this.detailgridbs.DataSource).ShowDialog(this);
 
             DataTable dg = (DataTable)this.detailgridbs.DataSource;
             if (dg.Columns["style"] == null)
@@ -833,8 +869,7 @@ where id = '{this.CurrentMaintain["id"]}'";
                     continue;
                 }
 
-                DataTable order_dt;
-                DBProxy.Current.Select(null, string.Format("select styleid, sewinline, scidelivery from orders WITH (NOLOCK) where id='{0}'", drr["orderid"].ToString()), out order_dt);
+                DBProxy.Current.Select(null, string.Format("select styleid, sewinline, scidelivery from orders WITH (NOLOCK) where id='{0}'", drr["orderid"].ToString()), out DataTable order_dt);
                 if (order_dt.Rows.Count == 0)
                 {
                     break;
@@ -863,9 +898,7 @@ where id = '{this.CurrentMaintain["id"]}'";
                 return;
             }
 
-            var frm = new Sci.Production.Subcon.P05_BatchCreate();
-            frm.ParentIForm = this;
-            frm.ShowDialog(this);
+            new P05_BatchCreate().ShowDialog(this);
             this.ReloadDatas();
         }
 
@@ -966,10 +999,7 @@ where id = '{this.CurrentMaintain["id"]}'";
 
         private void P05_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if (this.batchapprove != null)
-            {
-                this.batchapprove.Dispose();
-            }
+            this.batchapprove?.Dispose();
         }
 
         private void TxtsubconSupplier_Validating(object sender, CancelEventArgs e)
@@ -1274,16 +1304,16 @@ outer apply (   select val = isnull(sum(AD.ReqQty), 0)
             return sql;
         }
 
-        private DualResult UpdateIrregularStatusByDelete(DataTable dtDelete)
+        private DualResult UpdateIrregularStatusByDelete(DataTable dtDelete, bool isClosed = false)
         {
             if (dtDelete.Rows.Count == 0)
             {
                 return new DualResult(true);
             }
 
-            var irregularQtyReason = new Sci.Production.Subcon.P05_IrregularQtyReason(this.CurrentMaintain["ID"].ToString(), this.CurrentMaintain, dtDelete, this.SqlGetBuyBackDeduction);
+            var irregularQtyReason = new P05_IrregularQtyReason(this.CurrentMaintain["ID"].ToString(), this.CurrentMaintain, dtDelete, this.SqlGetBuyBackDeduction);
 
-            DataTable dtIrregular = irregularQtyReason.GetData();
+            DataTable dtIrregular = irregularQtyReason.GetData(isClosed);
 
             if (dtIrregular.Rows.Count == 0)
             {
@@ -1316,10 +1346,8 @@ select  *
 from ArtworkReq_Detail
 where ID in (select ID from #ArtworkReq)
 ";
-
-            DataTable[] dtResult;
-            DualResult result = MyUtility.Tool.ProcessWithDatatable(dtIrregular, string.Empty, sqlUpdateIrregular, out dtResult);
-            if (result == false)
+            DualResult result = MyUtility.Tool.ProcessWithDatatable(dtIrregular, string.Empty, sqlUpdateIrregular, out DataTable[] dtResult);
+            if (!result)
             {
                 return result;
             }
@@ -1332,7 +1360,7 @@ where ID in (select ID from #ArtworkReq)
                 foreach (DataRow dr in dtArtworkReq.Rows)
                 {
                     DataTable dtArtworkReq_Detail = dtAllArtworkReq_Detail.Where(s => s["ID"].ToString() == dr["ID"].ToString()).CopyToDataTable();
-                    var irregularCheck = new Sci.Production.Subcon.P05_IrregularQtyReason(dr["ID"].ToString(), dr, dtArtworkReq_Detail, this.SqlGetBuyBackDeduction);
+                    var irregularCheck = new P05_IrregularQtyReason(dr["ID"].ToString(), dr, dtArtworkReq_Detail, this.SqlGetBuyBackDeduction);
 
                     DataTable dtIrregularCheck = irregularCheck.GetData();
 
