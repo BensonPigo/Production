@@ -114,7 +114,7 @@ where o.ID = '{this.poid}'
 AND SQHD.SCIRefno='{sCIRefNo}' AND SQHD.ColorID='{colorID}'
 ------------------------------------------
 
-SELECT Article, [Qty]=sum (f.OpThreadQty)
+SELECT Article, [Qty]=sum (f.OpThreadQty) + ISNULL(Qt.Val,0)
 FROM dbo.GetThreadUsedQtyByBOT('{this.poid}',default) f
 OUTER APPLY(
     SELECT Val = SUM(Val)
