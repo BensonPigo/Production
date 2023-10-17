@@ -3,7 +3,7 @@
 	@param2 int
 AS
 begin
-SET NOCOUNT ON
+	SET NOCOUNT ON
 	declare @current_PMS_ServerName nvarchar(50) = 'MainServer'
 	declare @SqlCmd nvarchar(max) ='';
 	declare @SqlCmdDelete nvarchar(max) ='';
@@ -175,7 +175,6 @@ SET NOCOUNT ON
 	BEGIN
 		update b
 			set b.TransferDate = getdate()
-				, b.IS_Trans = 1
 		from BITableInfo b
 		where b.id = ''P_SDP''
 	END
@@ -186,4 +185,4 @@ SET NOCOUNT ON
 
 
 	EXEC sp_executesql @Sqlcmdall
-end
+end 
