@@ -111,7 +111,6 @@ Begin
 	begin
 		update b
 			set b.TransferDate = getdate()
-				, b.IS_Trans = 1
 		from BITableInfo b
 		where b.id = 'P_ImportAdiCompReport'
 	end
@@ -121,5 +120,4 @@ Begin
 		values('P_ImportAdiCompReport', getdate())
 	end
 End
-
 

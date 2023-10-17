@@ -247,59 +247,90 @@ Begin
 	Where ed.POType ='G'
 	And e.CloseDate Between @CloseDate_S And @CloseDate_E
 	Order by e.ID, ed.POID
-
-	Delete FROM POWERBIReportData.dbo.P_MtlStatusAnalisis
-
-	select *
+	
+	Delete p
 	from POWERBIReportData.dbo.P_MtlStatusAnalisis p
 	inner join (
 		Select * From #tmpGarment
 		UNION
 		Select * From #tmpMMS
-	) t on t.PoID = p.[SP No]
+	) t on t.PoID = p.[SPNo]
 
-	Insert Into POWERBIReportData.dbo.P_MtlStatusAnalisis ([WK#]
-			   ,[Loading Country]
-			   ,[Loading Port]
-			   ,[Shipmode]
-			   ,[Close Date]
-			   ,[ETD]
-			   ,[ETA]
-			   ,[Arrive WH date]
-			   ,[KPI L/ETA]
-			   ,[Prod.LT]
-			   ,[WK# Factory]
-			   ,[Factory]
-			   ,[SP No]
-			   ,[SEQ]
-			   ,[Category]
-			   ,[PF ETA]
-			   ,[SewinLine]
-			   ,[Buyer Delivery]
-			   ,[SCI Delivery]
-			   ,[PO SMR]
-			   ,[PO Handle]
-			   ,[SMR]
-			   ,[MR]
-			   ,[PC Handle]
-			   ,[Style]
-			   ,[SP List]
-			   ,[PO Qty]
-			   ,[Project]
-			   ,[Early Ship Reason]
-			   ,[WK# Handle]
-			   ,[MTL Confirm]
-			   ,[Duty]
-			   ,[PF Remark]
-			   ,[Type])
-	select *
+	Insert Into POWERBIReportData.dbo.P_MtlStatusAnalisis ([WK]
+			, [LoadingCountry]
+			, [LoadingPort]
+			, [Shipmode]
+			, [Close_Date]
+			, [ETD]
+			, [ETA]
+			, [Arrive_WH_Date]
+			, [KPI_LETA]
+			, [Prod_LT]
+			, [WK_Factory]
+			, [FactoryID]
+			, [SPNo]
+			, [SEQ]
+			, [Category]
+			, [PF_ETA]
+			, [SewinLine]
+			, [BuyerDelivery]
+			, [SCIDelivery]
+			, [PO_SMR]
+			, [PO_Handle]
+			, [SMR]
+			, [MR]
+			, [PC_Handle]
+			, [Style]
+			, [SP_List]
+			, [PO_Qty]
+			, [Project]
+			, [Early_Ship_Reason]
+			, [WK_Handle]
+			, [MTL_Confirm]
+			, [Duty]
+			, [PF_Remark]
+			, [Type])
+	select ISNULL(t.ID, '')
+		, ISNULL(t.ExportCountry, '')
+		, ISNULL(t.ExportPort, '')
+		, ISNULL(t.ShipModeID, '')
+		, t.CloseDate
+		, t.ETD
+		, t.ETA
+		, t.WhseArrival
+		, t.LETA
+		, ISNULL(t.PFday, 0)
+		, ISNULL(t.ExportFty, '')
+		, ISNULL(t.FactoryID, '')
+		, ISNULL(t.POID, '')
+		, ISNULL(t.Seq, '')
+		, ISNULL(t.Category, '')
+		, t.PFETA
+		, t.SewDate
+		, t.BuyerDelivery
+		, t.SCIDelivery
+		, ISNULL(t.POSMR, '')
+		, ISNULL(t.POHandle, '')
+		, ISNULL(t.SMR, '')
+		, ISNULL(t.MRHandle, '')
+		, ISNULL(t.PCHandle, '')
+		, ISNULL(t.StyleID, '')
+		, ISNULL(t.POComboList, '')
+		, ISNULL(t.SumQty, 0)
+		, ISNULL(t.ProjectID, '')
+		, ISNULL(t.Reason, '')
+		, ISNULL(t.Handle, '')
+		, ISNULL(t.Confirm, '')
+		, ISNULL(t.Duty, '')
+		, ISNULL(t.PFRemark, '')
+		, ISNULL(t.POType, '')
 	from
 	(
 		Select * From #tmpGarment
 		UNION
 		Select * From #tmpMMS
 	) t 
-	where not exists (select 1 from POWERBIReportData.dbo.P_MtlStatusAnalisis p with(nolock) where t.PoID = p.[SP No])
+	where not exists (select 1 from POWERBIReportData.dbo.P_MtlStatusAnalisis p with(nolock) where t.PoID = p.[SPNo])
 
 	drop table #tmp_MmsPO_Detail, #tmpGarment, #tmpMMS
 
@@ -307,7 +338,6 @@ Begin
 	begin
 		update b
 			set b.TransferDate = getdate()
-				, b.IS_Trans = 1
 		from BITableInfo b
 		where b.id = 'P_MtlStatusAnalisis'
 	end

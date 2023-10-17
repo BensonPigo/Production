@@ -717,7 +717,6 @@ if exists (select 1 from BITableInfo b where b.id = 'P_WIP')
 begin
 	update b
 		set b.TransferDate = getdate()
-			, b.IS_Trans = 1
 	from BITableInfo b
 	where b.id = 'P_WIP'
 end
