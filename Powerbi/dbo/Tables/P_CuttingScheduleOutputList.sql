@@ -19,7 +19,7 @@
     [Layers] NUMERIC(5) NOT NULL DEFAULT ((0)), 
     [LayersLevel] VARCHAR(10) NOT NULL DEFAULT (('')), 
     [LackingLayers] NUMERIC(10) NOT NULL DEFAULT ((0)), 
-    [Ratio] VARCHAR(50) NOT NULL DEFAULT (('')), 
+    [Ratio] VARCHAR(MAX) NOT NULL DEFAULT (('')), 
     [Consumption] NUMERIC(9, 4) NOT NULL DEFAULT ((0)), 
     [ActConsOutput] VARCHAR(20) NOT NULL DEFAULT (('')), 
     [BalanceCons] VARCHAR(20) NOT NULL DEFAULT (('')), 
