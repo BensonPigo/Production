@@ -297,7 +297,7 @@ left join #tmpBuyBackDeduction tbbd on  tbbd.OrderID = s.OrderID       and
 										tbbd.LocalSuppID = ''
 outer apply(
 	select value = ISNULL(sum(ReqQty),0)
-	from ArtworkReq_Detail ad , ArtworkReq a
+	from ArtworkReq_Detail ad with (nolock), ArtworkReq a with (nolock)
 	where ad.ID = a.ID
 	and OrderID = o.ID and ad.PatternCode= isnull(s.PatternCode,'')
 	and ad.PatternDesc = isnull(s.PatternDesc,'') 
@@ -310,7 +310,7 @@ outer apply(
 group by o.FactoryID,o.ID,o.StyleID,o.BrandID,ReqQty.value,s.ReqQty
     ,s.ArtworkID,s.PatternCode,s.PatternDesc,s.Remark
     ,isnull(tbbd.BuyBackArtworkReq,0)
-having Isnull(ReqQty.value, 0) + s.ReqQty + isnull(tbbd.BuyBackArtworkReq,0) > sum(oq.Qty) 
+having Isnull(ReqQty.value, 0) + isnull(tbbd.BuyBackArtworkReq,0) {(isClosed ? string.Empty : " + s.ReqQty ")} > sum(oq.Qty)
 
 select  FactoryID,
         ArtworkTypeID,

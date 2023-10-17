@@ -490,6 +490,7 @@ group by ReqQty.value,PoQty.value";
                     drCheck["ArtworkID"] = dr["ArtworkID", DataRowVersion.Original];
                     drCheck["PatternCode"] = dr["PatternCode", DataRowVersion.Original];
                     drCheck["PatternDesc"] = dr["PatternDesc", DataRowVersion.Original];
+                    drCheck["Remark"] = dr["Remark", DataRowVersion.Original];
                     drCheck["ReqQty"] = 0;
                 }
                 else
@@ -498,6 +499,7 @@ group by ReqQty.value,PoQty.value";
                     drCheck["ArtworkID"] = dr["ArtworkID"];
                     drCheck["PatternCode"] = dr["PatternCode"];
                     drCheck["PatternDesc"] = dr["PatternDesc"];
+                    drCheck["Remark"] = dr["Remark"];
                     drCheck["ReqQty"] = dr["ReqQty"];
                 }
 
