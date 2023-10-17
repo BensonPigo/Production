@@ -19,7 +19,7 @@
 	,[BulkLocation]					    varchar(5000)	CONSTRAINT [PK_P_FabricInspLabSummaryReport_BulkLocation]                    DEFAULT ((''))	NOT NULL
 	,[FirstUpdateBulkLocationDate]	    datetime      
 	,[InventoryLocation]			    varchar(5000)	CONSTRAINT [PK_P_FabricInspLabSummaryReport_InventoryLocation]               DEFAULT ((''))	NOT NULL
-	,[FirstUpdateStocksLocationDate]    date          
+	,[FirstUpdateStocksLocationDate]    DATETIME          
 	,[EarliestSCIDelivery]			    date          
 	,[BuyerDelivery]				    date          
 	,[Refno]						    varchar(36)		CONSTRAINT [PK_P_FabricInspLabSummaryReport_Refno]                           DEFAULT ((''))	NOT NULL
