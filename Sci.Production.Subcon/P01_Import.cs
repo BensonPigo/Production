@@ -422,6 +422,7 @@ select
         , coststitch = vsa.qty
         , bar.Stitch 
         , bar.PatternDesc
+        , bar.Remark
         , bar.QtyGarment
         , Cost = iif(at.isArtwork = 1,vsa.Cost,sao.Price)
         , unitprice = isnull(sao.Price,0)
@@ -446,7 +447,8 @@ left join dbo.View_Style_Artwork vsa on	vsa.StyleUkey = bar.StyleUkey and
                                         vsa.ArtworkID = bar.ArtworkID and
                                         vsa.ArtworkTypeID = bar.ArtworkTypeID and 
                                         vsa.PatternCode = bar.PatternCode and
-										vsa.PatternDesc = bar.PatternDesc
+										vsa.PatternDesc = bar.PatternDesc and
+										vsa.Remark = bar.Remark
 left join Style_Artwork_Quot sao with (nolock) on   sao.Ukey = vsa.StyleArtworkUkey and 
                                                     sao.PriceApv = 'Y' and 
                                                     sao.Price > 0 and 

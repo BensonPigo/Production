@@ -226,6 +226,7 @@ outer apply (
 		and OrderID = o.ID 
         and ad.PatternCode= ''
         and ad.PatternDesc = ''
+        and ad.Remark = ''
         and ad.ArtworkID = '{this.CurrentMaintain["artworktypeid"]}'
         and a.id != '{this.CurrentMaintain["id"]}'
         and a.status != 'Closed'
@@ -256,7 +257,7 @@ inner join orders o WITH (NOLOCK) on ot.ID = o.ID
 cross apply(
 	select * 
 	from (		
-		select a.id,a.ArtworkTypeID,q.Article,q.Qty,q.SizeCode,a.PatternCode,a.PatternDesc,a.ArtworkID,a.ArtworkName
+		select a.id,a.ArtworkTypeID,q.Article,q.Qty,q.SizeCode,a.PatternCode,a.PatternDesc,a.ArtworkID,a.ArtworkName,a.Remark
 		,rowNo = ROW_NUMBER() over (
 			partition by a.id,a.ArtworkTypeID,q.Article,a.PatternCode,a.PatternDesc
 				,a.ArtworkID,q.sizecode order by a.AddDate desc)
@@ -278,7 +279,7 @@ outer apply(
 		where a.StyleUkey = o.StyleUkey
 		and a.Article = oa.Article and a.ArtworkID = oa.ArtworkID 
 		and a.ArtworkName = oa.ArtworkName and a.ArtworkTypeID = oa.ArtworkTypeID 
-		and a.PatternCode = oa.PatternCode and a.PatternDesc = oa.PatternDesc 
+		and a.PatternCode = oa.PatternCode and a.PatternDesc = oa.PatternDesc and a.Remark = oa.Remark 
 		) s
 	where rowNo = 1 
 )vsa
@@ -293,6 +294,7 @@ outer apply (
 		and a.ArtworkTypeID = '{this.CurrentMaintain["ArtworktypeId"]}' 
 		and OrderID = o.ID and ad.PatternCode= isnull(oa.PatternCode,'')
         and ad.PatternDesc = isnull(oa.PatternDesc,'') 
+        and ad.Remark = isnull(oa.Remark,'') 
         and ad.ArtworkID = iif(oa.ArtworkID is null,'{this.CurrentMaintain["ArtworktypeId"]}' ,oa.ArtworkID)
         and a.status != 'Closed' and ad.ArtworkPOID =''
         and a.id != '{dr["id"]}'
@@ -316,6 +318,7 @@ and o.Junk=0
 and o.id = '{dr["OrderID"]}'
 and isnull(oa.PatternCode,'') = '{dr["PatternCode"]}'
 and isnull(oa.PatternDesc,'') = '{dr["PatternDesc"]}'
+and isnull(oa.Remark,'') = '{dr["Remark"]}'
 and isnull(oa.ArtworkID,ot.ArtworkTypeID) = '{dr["ArtworkId"]}'
 and ((o.Category = 'B' and  ot.InhouseOSP = 'O') or (o.category = 'S'))
 group by ReqQty.value,PoQty.value";
@@ -360,7 +363,6 @@ group by ReqQty.value,PoQty.value";
             this.detailgrid.Columns["stitch"].DefaultCellStyle.BackColor = Color.Pink;
             this.detailgrid.Columns["qtygarment"].DefaultCellStyle.BackColor = Color.Pink;
             #endregion
-
         }
 
         // 新增時預設資料

@@ -437,7 +437,8 @@ left join dbo.View_Style_Artwork vsa on	vsa.StyleUkey = o.StyleUkey and
 										vsa.ArtworkName = oa.ArtworkName and 
                                         vsa.ArtworkTypeID = oa.ArtworkTypeID and 
                                         vsa.PatternCode = oa.PatternCode and
-										vsa.PatternDesc = oa.PatternDesc 
+										vsa.PatternDesc = oa.PatternDesc and
+										vsa.Remark = oa.Remark
 left join Style_Artwork_Quot sao with (nolock) on   sao.Ukey = vsa.StyleArtworkUkey and 
                                                     sao.LocalSuppId = '{this.dr_artworkReq["LocalSuppId"]}' and
                                                     (sao.SizeCode = oq.SizeCode or sao.SizeCode = '') 
