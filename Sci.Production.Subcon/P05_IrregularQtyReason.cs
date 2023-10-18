@@ -108,9 +108,9 @@ namespace Sci.Production.Subcon
         }
 
         /// <inheritdoc/>
-        public DataTable Check_Irregular_Qty()
+        public DataTable Check_Irregular_Qty(bool isClosed = false)
         {
-            DataTable dt = this.GetData();
+            DataTable dt = this.GetData(isClosed);
             this.listControlBindingSource1.DataSource = dt;
 
             return dt;

@@ -186,6 +186,7 @@ select  orderid = ard.OrderID
         , ar.LocalSuppId
         , [OrderQtyArticle] = OrderQty.Article
         , ArtworkReq_DetailUkey = ard.Ukey
+        , ard.Remark
 into #baseArtworkReq
 from orders o WITH (NOLOCK) 
 inner join ArtworkReq_Detail ard with (nolock) on   ard.OrderId = o.ID and 
@@ -588,6 +589,7 @@ select  Selected = 0
 		, [Farmout] = ISNULL(FarmOut.Value,0)
 		, [FarmIn] = ISNULL(FarmIn.Value,0)
         , ArtworkReq_DetailUkey
+        ,bar.Remark
 from  #baseArtworkReq bar
 inner join Orders o with (nolock) on o.ID = bar.OrderID
 --ISP20211197 P05維護的Article為空白時，要從Order_Qty抓第一筆Article，作為抓取Order_Artwork的條件
@@ -598,7 +600,8 @@ inner join dbo.Order_Artwork oa WITH (NOLOCK) on oa.ID = bar.OrderID and
                                                  oa.ArtworkTypeID = bar.ArtworkTypeID and
                                                  oa.ArtworkID = bar.ArtworkID      and
                                                  oa.PatternCode = bar.PatternCode  and
-                                                 oa.PatternDesc = bar.PatternDesc 
+                                                 oa.PatternDesc = bar.PatternDesc and
+                                                 oa.Remark = bar.Remark
 {this.sqlFarmOutApply}
 where  ((o.Category = 'B' and  oa.price > 0) or (o.category !='B'))
 ";

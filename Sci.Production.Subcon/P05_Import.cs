@@ -323,7 +323,6 @@ where id ='{this.dr_artworkReq["artworktypeid"]}'
             {
                 foreach (DataRow tmp in dr2)
                 {
-                    // DataRow[] findrow = dt_artworkReqDetail.Select($@"orderid = '{tmp["orderID"].ToString()}' and ArtworkId = '{tmp["ArtworkId"].ToString()}' and patterncode = '{tmp["patterncode"].ToString()}' and PatternDesc = '{tmp["PatternDesc"].ToString()}'");
                     DataRow[] findrow = this.dt_artworkReqDetail.Select($@"orderid = '{tmp["orderID"]}' and Article = '{tmp["Article"]}' and SizeCode = '{tmp["SizeCode"]}' and ArtworkId = '{tmp["ArtworkId"]}' and patterncode = '{tmp["patterncode"]}' and PatternDesc = '{tmp["PatternDesc"]}' and remark ='{tmp["remark"]}' ");
                     decimal exceedQty = MyUtility.Convert.GetDecimal(tmp["AccReqQty"]) + MyUtility.Convert.GetDecimal(tmp["ReqQty"]) - MyUtility.Convert.GetDecimal(tmp["OrderQty"]);
 

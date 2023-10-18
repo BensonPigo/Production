@@ -1042,9 +1042,9 @@ WHERE ID = '{this.CurrentMaintain["ID"]}'
             }
 
             this.btnIrrQtyReason.ForeColor = Color.Black;
-            var irregularQtyReason = new Sci.Production.Subcon.P05_IrregularQtyReason(this.CurrentMaintain["ID"].ToString(), this.CurrentMaintain, detailDatas, this.SqlGetBuyBackDeduction);
+            var irregularQtyReason = new P05_IrregularQtyReason(this.CurrentMaintain["ID"].ToString(), this.CurrentMaintain, detailDatas, this.SqlGetBuyBackDeduction);
 
-            DataTable dtIrregular = irregularQtyReason.Check_Irregular_Qty();
+            DataTable dtIrregular = irregularQtyReason.Check_Irregular_Qty(MyUtility.Convert.GetString(this.CurrentMaintain["Status"]) == "Closed");
             this.HideWaitMessage();
 
             this.UpdateExceedStatus(dtIrregular);
