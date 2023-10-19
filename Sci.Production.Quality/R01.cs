@@ -71,6 +71,24 @@ namespace Sci.Production.Quality
 
             this.lis = new List<SqlParameter>();
             string sqlWhere = string.Empty, rWhere = string.Empty, oWhere = string.Empty;
+
+            string sqlTotalYardageArrDate = string.Empty;
+
+            if (!this.dateArriveWHDate.Value1.HasValue && !this.dateArriveWHDate.Value2.HasValue)
+            {
+                sqlTotalYardageArrDate = $@" select Val = 0.0 ";
+            }
+            else
+            {
+                sqlTotalYardageArrDate = $@"
+select Val = Sum(ISNULL(fi.InQty,0))
+from FtyInventory fi
+inner join Receiving_Detail rd on rd.PoId = fi.POID and rd.Seq1 = fi.Seq1 and rd.Seq2 = fi.Seq2 AND fi.StockType=rd.StockType and rd.Roll = fi.Roll and rd.Dyelot = fi.Dyelot
+inner join Receiving r on r.Id=rd.Id
+where fi.POID = f.POID AND fi.Seq1 = f.Seq1 AND fi.Seq2 = f.Seq2 AND rd.Id=f.ReceivingID AND rd.ForInspection=1 ";
+
+            }
+
             List<string> sqlWheres = new List<string>();
             List<string> rWheres = new List<string>();
             List<string> oWheres = new List<string>();
@@ -90,12 +108,14 @@ namespace Sci.Production.Quality
             if (!this.dateArriveWHDate.Value1.Empty())
             {
                 rWheres.Add("rd.WhseArrival >= @ArrDate1");
+                sqlTotalYardageArrDate += " AND r.WhseArrival >= @ArrDate1";
                 this.lis.Add(new SqlParameter("@ArrDate1", this.DateArrStart));
             }
 
             if (!this.dateArriveWHDate.Value2.Empty())
             {
                 rWheres.Add("rd.WhseArrival <= @ArrDate2");
+                sqlTotalYardageArrDate += " AND r.WhseArrival <= @ArrDate2";
                 this.lis.Add(new SqlParameter("@ArrDate2", this.DateArrEnd));
             }
 
@@ -271,6 +291,8 @@ select
 	,F.Physical
 	,[PhysicalInspector] = (select name from Pass1 where id = f.PhysicalInspector)
 	,F.PhysicalDate
+	,TotalYardage = TotalYardage.Val
+    ,TotalYardageArrDate = {(!this.dateArriveWHDate.Value1.HasValue && !this.dateArriveWHDate.Value2.HasValue ? "NULL" : "TotalYardageArrDate.Val - fta.ActualYds")}
 	,fta.ActualYds
 	,[InspectionRate] = ROUND(iif(t.StockQty = 0,0,CAST (fta.ActualYds/t.StockQty AS FLOAT)) ,3)
 	,ftp.TotalPoint
@@ -425,6 +447,15 @@ Outer apply(
     where od.id=o.POID
 ) ps1
 outer apply(select TotalPoint = Sum(fp.TotalPoint) from FIR_Physical fp where fp.id=f.id) ftp
+outer apply(
+	select Val = Sum(ISNULL(fi.InQty,0))
+	from FtyInventory fi
+	inner join Receiving_Detail rd on rd.PoId = fi.POID and rd.Seq1 = fi.Seq1 and rd.Seq2 = fi.Seq2 AND fi.StockType=rd.StockType and rd.Roll = fi.Roll and rd.Dyelot = fi.Dyelot
+	where fi.POID = f.POID AND fi.Seq1 = f.Seq1 AND fi.Seq2 = f.Seq2 AND rd.Id=f.ReceivingID AND rd.ForInspection=1
+) TotalYardage
+outer apply(
+    {sqlTotalYardageArrDate}
+) TotalYardageArrDate
 outer apply(select ActualYds = Sum(fp.ActualYds) from FIR_Physical fp where fp.id=f.id) fta
 outer apply(select TicketYds = Sum(fp.TicketYds), TotalPoint = Sum(fp.TotalPoint) from FIR_Physical fp where fp.id = f.id and (fp.Grade = 'B' or fp.Grade = 'C')) fptbc
 outer apply(select TotalPoint = Sum(fp.TotalPoint) from FIR_Physical fp where fp.id = f.id and fp.Grade = 'A') fpta
@@ -526,6 +557,8 @@ select
     ,tf.TotalPointA
 	,tf.[PhysicalInspector]
 	,tf.PhysicalDate
+	,tf.TotalYardage
+	,tf.TotalYardageArrDate
 	,tf.ActualYds
     ,tf.InspectionRate
 	,tf.TotalPoint
