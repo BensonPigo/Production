@@ -1,4 +1,4 @@
 ﻿CREATE VIEW [dbo].[P_Factory]
 	AS 
-	SELECT	ID, KPICode, Junk
+	SELECT	[FtyCode] = ID, [SdpKpiCode] = KPICode, Junk
 	FROM [MainServer].Production.dbo.SCIFty

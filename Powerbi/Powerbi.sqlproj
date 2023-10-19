@@ -203,7 +203,7 @@
     <Build Include="dbo\Stored Procedures\FTY\P_Import_Cutting_R08.sql" />
     <Build Include="dbo\Tables\P_FabricInspLabSummaryReport.sql" />
     <Build Include="dbo\Stored Procedures\FTY\P_ImportFabricInspLabSummaryReport.sql" />
-    <Build Include="dbo\View\P_Factory_1.sql" />
+    <Build Include="dbo\View\P_Factory.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Utility.dll" />
