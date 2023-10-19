@@ -646,7 +646,7 @@ WITH BreakdownByArticle as (
     OUTER APPLY(
 	    SELECT SCIRefNo
 		    ,ColorID
-		    ,[Val]=SUM(((SeamLength  * Frequency * UseRatio ) + (Allowance*Segment))) 
+		    ,[Val]=sum (g.OpThreadQty)
 		    ,[Qty] = (	
 			    SELECt [Qty]=SUM(b.Qty)
 			    FROM (
