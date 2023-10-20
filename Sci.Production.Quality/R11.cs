@@ -178,55 +178,67 @@ Where 1=1
 
                 // 各sheet
                 this.Sqlcmd.Append(@"
-select
-	t.*,
-	FP.InspDate,
-	FP.Result,
-	FP.Grade,
-	TotalDefectyds = isnull((select SUM(Point) from FIR_Physical_Defect fpd where FPD.FIR_PhysicalDetailUKey = FP.DetailUkey), 0) * 0.25,
-	FP.TicketYds,
-	FP.DetailUkey,
-	FP.ActualYds,
-	FP.ActualWidth,
-	Composition,
-	Inspector = Concat (Fp.Inspector, ' ', p.Name) 
+select * 
 into #tmp1
-from #tmpR t
-Left join FIR_Physical FP on FP.ID = t.ID and FP.Roll = t.Roll and FP.Dyelot = t.Dyelot
-Left JOIN Pass1 p ON p.ID = Fp.Inspector
-outer apply(
-	select Composition = STUFF((
-		select CONCAT('+', FLOOR(fc.percentage), '%', fc.MtltypeId)
-		from Fabric_Content fc
-		where fc.SCIRefno = t.SCIRefno
-		for xml path('')
-	),1,1,'')
-)Composition
+from 
+(
+	select
+		t.*,
+		FP.InspDate,
+		FP.Result,
+		FP.Grade,
+		TotalDefectyds = isnull((select SUM(Point) from FIR_Physical_Defect fpd where FPD.FIR_PhysicalDetailUKey = FP.DetailUkey), 0) * 0.25,
+		FP.TicketYds,
+		FP.DetailUkey,
+		FP.ActualYds,
+		FP.ActualWidth,
+		Composition,
+		Inspector = Concat (Fp.Inspector, ' ', p.Name) ,
+		RowCnt = ROW_NUMBER() over(partition by t.POID,t.SEQ,t.RECEIVINGID,t.roll,t.dyelot order by fp.AddDate desc, fp.EditDate Desc)
+	from #tmpR t
+	Left join FIR_Physical FP on FP.ID = t.ID and FP.Roll = t.Roll and FP.Dyelot = t.Dyelot
+	Left JOIN Pass1 p ON p.ID = Fp.Inspector
+	outer apply(
+		select Composition = STUFF((
+			select CONCAT('+', FLOOR(fc.percentage), '%', fc.MtltypeId)
+			from Fabric_Content fc
+			where fc.SCIRefno = t.SCIRefno
+			for xml path('')
+		),1,1,'')
+	)Composition
+) a
+where RowCnt = 1
 
-select
-	t.*,
-	FP.InspDate,
-	FP.Result,
-	FP.Grade,
-	TotalDefectyds = isnull((select SUM(Point) from FIR_Physical_Defect fpd where FPD.FIR_PhysicalDetailUKey = FP.DetailUkey), 0) * 0.25,
-	FP.TicketYds,
-	FP.DetailUkey,
-	FP.ActualYds,
-	FP.ActualWidth,
-	Composition,
-	Inspector = Concat (Fp.Inspector, ' ', p.Name) 
+select * 
 into #tmp2
-from #tmpT t
-Left join FIR_Physical FP on FP.ID = t.ID and FP.Roll = t.Roll and FP.Dyelot = t.Dyelot
-Left JOIN Pass1 p ON p.ID = Fp.Inspector
-outer apply(
-	select Composition = STUFF((
-		select CONCAT('+', FLOOR(fc.percentage), '%', fc.MtltypeId)
-		from Fabric_Content fc
-		where fc.SCIRefno = t.SCIRefno
-		for xml path('')
-	),1,1,'')
-)Composition
+from 
+(
+	select
+		t.*,
+		FP.InspDate,
+		FP.Result,
+		FP.Grade,
+		TotalDefectyds = isnull((select SUM(Point) from FIR_Physical_Defect fpd where FPD.FIR_PhysicalDetailUKey = FP.DetailUkey), 0) * 0.25,
+		FP.TicketYds,
+		FP.DetailUkey,
+		FP.ActualYds,
+		FP.ActualWidth,
+		Composition,
+		Inspector = Concat (Fp.Inspector, ' ', p.Name) ,
+		RowCnt = ROW_NUMBER() over(partition by t.POID,t.SEQ,RECEIVINGID,t.roll,t.dyelot order by fp.AddDate desc, fp.EditDate Desc)
+	from #tmpT t
+	Left join FIR_Physical FP on FP.ID = t.ID and FP.Roll = t.Roll and FP.Dyelot = t.Dyelot
+	Left JOIN Pass1 p ON p.ID = Fp.Inspector
+	outer apply(
+		select Composition = STUFF((
+			select CONCAT('+', FLOOR(fc.percentage), '%', fc.MtltypeId)
+			from Fabric_Content fc
+			where fc.SCIRefno = t.SCIRefno
+			for xml path('')
+		),1,1,'')
+	)Composition
+)a
+where RowCnt = 1
 
 --Summary分頁
 select
