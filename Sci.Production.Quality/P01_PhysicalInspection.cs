@@ -272,6 +272,11 @@ namespace Sci.Production.Quality
                     dr["ReGrade"] = strGrade;
                     dr["Grade"] = strGrade == "B" ? "A" : dr["Grade"];
                 }
+                else
+                {
+                    // LLL以外的品牌，預設值是原本的Grade，避免Edit -> Save 時用空的ReGrade去覆蓋原本的Grade
+                    dr["ReGrade"] = dr["Grade"].ToString();
+                }
 
                 dr["Name"] = MyUtility.GetValue.Lookup("Name", dr["Inspector"].ToString(), "Pass1", "ID");
                 dr["NewKey"] = i;
@@ -1403,10 +1408,18 @@ Values({0},'{1}','{2}',{3},{4},{5},{6},{7},{8},'{9}','{10}','{11}','{12}','{13}'
                 if (dr.RowState == DataRowState.Modified)
                 {
                     var isGrandCCanUse_val = MyUtility.Convert.GetBool(dr["IsGrandCCanUse"]) == false ? 0 : 1;
-                    update_cmd = update_cmd + string.Format( 
-                        @"Update Fir_Physical set Roll = '{0}' ,Dyelot='{1}',TicketYds = {2},ActualYds = {3},FullWidth ={4},ActualWidth={5},TotalPoint ={6},PointRate={7},Grade='{8}',Result='{9}',Remark='{10}',InspDate='{11}',Inspector='{12}',Moisture={13},EditName = '{14}',EditDate = GetDate(),IsGrandCCanUse = {16} ,GrandCCanUseReason = '{17}',ColorToneCheck = '{18}'
-Where DetailUkey = {15};",
-                        dr["roll"].ToString().Replace("'", "''"), dr["Dyelot"], dr["TicketYds"], dr["ActualYds"], dr["FullWidth"], dr["ActualWidth"], dr["TotalPoint"], dr["PointRate"], dr["ReGrade"], dr["Result"], dr["Remark"].ToString().Replace("'", "''"), inspdate, dr["Inspector"], bolMoisture, this.loginID, dr["DetailUkey"], isGrandCCanUse_val, dr["GrandCCanUseReason"], dr["ColorToneCheck"]);
+
+                    update_cmd = update_cmd + $@"
+Update Fir_Physical 
+set Roll = '{dr["roll"].ToString().Replace("'", "''")}' ,Dyelot='{dr["Dyelot"]}',TicketYds = {dr["TicketYds"]}
+    ,ActualYds = {dr["ActualYds"]},FullWidth ={dr["FullWidth"]}
+    ,ActualWidth={dr["ActualWidth"]} ,TotalPoint ={dr["TotalPoint"]} ,PointRate={dr["PointRate"]}
+    ,Grade='{dr["ReGrade"]}',Result='{dr["Result"]}' ,Remark='{dr["Remark"].ToString().Replace("'", "''")}' ,InspDate='{inspdate}' 
+    ,Inspector='{dr["Inspector"]}'
+    ,Moisture={bolMoisture} ,EditName = '{this.loginID}' ,EditDate = GetDate() ,IsGrandCCanUse = {isGrandCCanUse_val} 
+    ,GrandCCanUseReason = '{dr["GrandCCanUseReason"]}' ,ColorToneCheck = '{dr["ColorToneCheck"]}'
+Where DetailUkey = {dr["DetailUkey"]};
+";
                 }
             }
 
