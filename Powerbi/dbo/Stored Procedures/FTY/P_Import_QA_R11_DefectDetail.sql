@@ -47,6 +47,7 @@ insert into #tmpP_FabricInspReport_ReceivingTransferIn(
     ,[DefectRate]
     ,[Inspector]
     ,[AddDate]
+	,[EditDate]
 )
 select 
 	[POID]
@@ -77,7 +78,8 @@ select
     ,[Points]
     ,[DefectRate]
     ,[Inspector]
-    ,[AddDate] = GETDATE()      
+    ,[AddDate]
+	,[EditDate]
 from OPENQUERY([MainServer], '' SET NOCOUNT ON; select * from Production.dbo.GetQA_R11_ReceivingTransferIn_Detail('''''+ @EditDateFrom +''''','''''+ @EditDateTo +''''',null,null) '')
 '
 
@@ -116,18 +118,18 @@ Merge P_FabricInspReport_ReceivingTransferIn t
       ,t.[Points] = s.[Points]
       ,t.[DefectRate] = s.[DefectRate]
       ,t.[Inspector] = s.[Inspector]
-      ,t.[EditDate] = GetDate()
+       ,t.[EditDate] = s.[EditDate]
 	WHEN NOT MATCHED BY TARGET THEN
 insert (
 	 [POID],[SEQ],[Wkno],[ReceivingID],[StyleID],[BrandID],[Supplier],[Refno],[Color],[ArriveWHDate],[ArriveQty],[WeaveTypeID]
 	 ,[Dyelot],[CutWidth],[Weight],[Composition],[Desc],[FabricConstructionID],[Roll],[InspDate],[Result],[Grade]
-      ,[DefectCode],[DefectType],[DefectDesc],[Points],[DefectRate],[Inspector],[AddDate]
+      ,[DefectCode],[DefectType],[DefectDesc],[Points],[DefectRate],[Inspector],[AddDate],[EditDate]
 )
 VALUES (
        s.[POID],s.[SEQ],s.[Wkno],s.[ReceivingID],s.[StyleID],s.[BrandID],s.[Supplier],s.[Refno],s.[Color],s.[ArriveWHDate],s.[ArriveQty]
       ,s.[WeaveTypeID],s.[Dyelot],s.[CutWidth],s.[Weight],s.[Composition],s.[Desc],s.[FabricConstructionID],s.[Roll],s.[InspDate]
       ,s.[Result],s.[Grade],s.[DefectCode],s.[DefectType],s.[DefectDesc],s.[Points],s.[DefectRate],s.[Inspector]
-      ,GetDate()
+      ,s.[AddDate],s.[EditDate]
 )
 when not matched by source and t.[ReceivingID] in (select ReceivingID from  #tmpP_FabricInspReport_ReceivingTransferIn)
 	then delete;
@@ -137,7 +139,6 @@ when not matched by source and t.[ReceivingID] in (select ReceivingID from  #tmp
 	begin
 		update b
 			set b.TransferDate = getdate()
-				, b.IS_Trans = 1
 		from BITableInfo b
 		where b.id = 'P_FabricInspReport_ReceivingTransferIn'
 	end

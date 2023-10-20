@@ -35,7 +35,9 @@ RETURNs @RtnTable TABLE
 	DEFECTDESC varchar(60),
 	POINTS int,
 	DEFECTRATE numeric(13,4),
-	INSPECTOR nvarchar(40)
+	INSPECTOR nvarchar(40),
+	AddDate datetime,
+	EditDate datetime
 )
 As
 Begin
@@ -249,7 +251,9 @@ Declare @tmp1 table(
 	ActualYds NUMERIC(8,2),
 	ActualWidth NUMERIC(5,2),
 	Composition nvarchar(500),
-	Inspector nvarchar(40)
+	Inspector nvarchar(40),
+	AddDate datetime,
+	EditDate datetime
 )
 INSERT into @tmp1
 select
@@ -289,7 +293,9 @@ select
 	FP.ActualYds,
 	FP.ActualWidth,
 	Composition,
-	Inspector = Concat (Fp.Inspector, ' ', p.Name) 
+	Inspector = Concat (Fp.Inspector, ' ', p.Name) ,
+	FP.AddDate,
+	FP.EditDate
 from @tmpR t
 Left join FIR_Physical FP on FP.ID = t.ID and FP.Roll = t.Roll and FP.Dyelot = t.Dyelot
 Left JOIN Pass1 p ON p.ID = Fp.Inspector
@@ -338,7 +344,9 @@ Declare @tmp2 table(
 	ActualYds NUMERIC(8,2),
 	ActualWidth NUMERIC(5,2),
 	Composition nvarchar(500),
-	Inspector nvarchar(40)
+	Inspector nvarchar(40),
+	AddDate datetime,
+	EditDate datetime
 )
 insert into @tmp2
 select
@@ -376,7 +384,9 @@ select
 	[ActualYds] = FP.ActualYds,
 	[ActualWidth] = FP.ActualWidth,
 	[Composition] = Composition.Composition,
-	[Inspector] = Concat (Fp.Inspector, ' ', p.Name) 
+	[Inspector] = Concat (Fp.Inspector, ' ', p.Name) ,
+	FP.AddDate,
+	FP.EditDate
 from @tmpT t
 Left join FIR_Physical FP on FP.ID = t.ID and FP.Roll = t.Roll and FP.Dyelot = t.Dyelot
 Left JOIN Pass1 p ON p.ID = Fp.Inspector
@@ -387,130 +397,144 @@ outer apply(
 		where fc.SCIRefno = t.SCIRefno
 		for xml path('')
 	),1,1,'')
-)Composition
+)Composition;
 
 
 
+with Final as (
+	select POID = isnull(POID,''),SEQ = isnull(SEQ,''),WK = isnull(WK,''),RECEIVINGID = isnull(RECEIVINGID,''),STYLEID = isnull(STYLEID,''),BRANDID = isnull(BRANDID,''),SUPPLIER = isnull(SUPPLIER,''),REFNO = isnull(REFNO,''),COLORID = isnull(COLORID,''),
+			ARRIVEWHDATE,ARRIVEQTY = isnull(ARRIVEQTY,0),WEAVETYPEID = isnull(WEAVETYPEID,''),DYELOT = isnull(DYELOT,''),WIDTH = isnull(WIDTH,0),[WEIGHT] = isnull(WEIGHT,0),COMPOSITION = isnull(COMPOSITION,''),
+			[DESCRIPTION] = isnull(DESCRIPTION,'') ,CONSTRUCTIONID = isnull(CONSTRUCTIONID,'') ,ROLL = isnull(ROLL,''),INSPDATE,RESULT = isnull(RESULT,''),GRADE = isnull(GRADE,''),DEFECTRECORD = isnull(DEFECTRECORD,''),
+			[TYPE] = isnull(TYPE,'') ,DESCRIPTIONEN = isnull(DESCRIPTIONEN,'') ,[POINT] = isnull([POINT],0),[DEFECTRATE] = isnull([DEFECTRATE],0) ,INSPECTOR = isnull(INSPECTOR,''),AddDate,EditDate
+			,RowCnt = ROW_NUMBER() over(partition by POID,SEQ,RECEIVINGID,roll,dyelot order by AddDate desc, EditDate Desc)
+	from (
+		select
+			T.POID,
+			T.SEQ,
+			T.WK,
+			T.RECEIVINGID,
+			T.STYLEID,
+			T.BRANDID,
+			T.SUPPLIER,
+			T.REFNO,
+			T.COLORID,
+			T.ARRIVEWHDATE,
+			T.ARRIVEQTY,
+			T.WEAVETYPEID,
+			T.DYELOT,
+			T.WIDTH,
+			T.WEIGHT,
+			T.COMPOSITION,
+			T.DESCRIPTION,
+			T.CONSTRUCTIONID,
+			T.ROLL,
+			T.INSPDATE,
+			T.RESULT,
+			T.GRADE,
+			DEFECT.DEFECTRECORD,
+			FD.TYPE,
+			FD.DESCRIPTIONEN,
+			POINT = isnull(Defect.point,  0),
+			DEFECTRATE = ISNULL(case when Q.PointRateOption = 1 then Defect.point / NULLIF(t.ActualYds, 0)
+									when Q.PointRateOption = 2 then Defect.point * 3600 / NULLIF(t.ActualYds * t.ActualWidth , 0)
+									when Q.PointRateOption = 3 then iif(t.WeaveTypeID = 'KNIT',Defect.point * 3600 / NULLIF(t.TicketYds * t.width , 0),Defect.point * 3600 / NULLIF(t.ActualYds * t.width , 0))
+									else Defect.point / NULLIF(t.ActualYds, 0)
+								 end 
+							, 0)
+			,T.INSPECTOR
+			,t.AddDate
+			,t.EditDate
+		from @tmp1 t
+		outer apply(
+			select
+				DefectRecord = dbo.SplitDefectNum(x.Data,0),	
+				point = sum(cast(dbo.SplitDefectNum(x.Data,1) as int))
+			from FIR_Physical_Defect
+			outer apply(select  * from SplitString(DefectRecord,'/'))x
+			where FIR_PhysicalDetailUKey = t.DetailUkey
+			group by dbo.SplitDefectNum(x.Data,0)
+		)Defect
+		outer apply (
+			select PointRateOption
+			from QABrandSetting
+			where Junk = 0 
+			and BrandID = t.BrandID
+		)Q
+		left join FabricDefect fd on fd.ID = Defect.DefectRecord
+		where Defect.DefectRecord is not null or fd.Type is not null
+
+		union all
+		select
+			T.POID,
+			T.SEQ,
+			WK = '',
+			T.RECEIVINGID,
+			T.STYLEID,
+			T.BRANDID,
+			T.SUPPLIER,
+			T.REFNO,
+			T.COLORID,
+			T.ARRIVEWHDATE,
+			ARRIVEQTY = T.QTY,
+			T.WEAVETYPEID,
+			T.DYELOT,
+			T.WIDTH,
+			T.WEIGHT,
+			T.COMPOSITION,
+			T.DESCRIPTION,
+			T.CONSTRUCTIONID,
+			T.ROLL,
+			T.INSPDATE,
+			T.RESULT,
+			T.GRADE,
+			DEFECT.DEFECTRECORD,
+			FD.TYPE,
+			FD.DESCRIPTIONEN,
+			POINT = isnull(Defect.point,  0),
+			DEFECTRATE = ISNULL(case when Q.PointRateOption = 1 then Defect.point / NULLIF(t.ActualYds, 0)
+									when Q.PointRateOption = 2 then Defect.point * 3600 / NULLIF(t.ActualYds * t.ActualWidth , 0)
+									when Q.PointRateOption = 3 then iif(t.WeaveTypeID = 'KNIT',Defect.point * 3600 / NULLIF(t.TicketYds * t.width , 0),Defect.point * 3600 / NULLIF(t.ActualYds * t.width , 0))
+									else Defect.point / NULLIF(t.ActualYds, 0)
+								 end 
+							, 0)
+			,T.INSPECTOR
+			,t.AddDate
+			,t.EditDate
+		from @tmp2 t
+		outer apply(
+			select 
+				DefectRecord = dbo.SplitDefectNum(x.Data,0),
+				point = sum(cast(dbo.SplitDefectNum(x.Data,1) as int))
+			from FIR_Physical_Defect
+			outer apply(select  * from SplitString(DefectRecord,'/'))x
+			where FIR_PhysicalDetailUKey = t.DetailUkey
+			group by dbo.SplitDefectNum(x.Data,0)
+		)Defect
+		outer apply (
+			select PointRateOption
+			from QABrandSetting
+			where Junk = 0 
+			and BrandID = t.BrandID
+		)Q
+		left join FabricDefect fd on fd.ID = Defect.DefectRecord
+		where Defect.DefectRecord is not null or fd.Type is not null
+	) A
+) 
 INSERT into @RtnTable(
 		POID,SEQ,WKNO,RECEIVINGID,STYLEID,BRANDID,SUPPLIER,REFNO,COLOR,
 		ARRIVEWHDATE,ARRIVEQTY,WEAVETYPEID,DYELOT,CUTWIDTH,WEIGHT,COMPOSITION,
 		[DESC] ,[FABRICCONSTRUCTIONID] ,ROLL,INSPDATE,RESULT,GRADE,DEFECTRECORD,
-		[DEFECTTYPE] ,[DEFECTDESC] ,[POINTS],[DEFECTRATE] ,INSPECTOR
+		[DEFECTTYPE] ,[DEFECTDESC] ,[POINTS],[DEFECTRATE] ,INSPECTOR,AddDate,EditDate
 )
-select isnull(POID,''),isnull(SEQ,''),isnull(WK,''),isnull(RECEIVINGID,''),isnull(STYLEID,''),isnull(BRANDID,''),isnull(SUPPLIER,''),isnull(REFNO,''),isnull(COLORID,''),
-		ARRIVEWHDATE,isnull(ARRIVEQTY,0),isnull(WEAVETYPEID,''),isnull(DYELOT,''),isnull(WIDTH,0),isnull(WEIGHT,0),isnull(COMPOSITION,''),
-		isnull(DESCRIPTION,'') ,isnull(CONSTRUCTIONID,'') ,isnull(ROLL,''),INSPDATE,isnull(RESULT,''),isnull(GRADE,''),isnull(DEFECTRECORD,''),
-		isnull(TYPE,'') ,isnull(DESCRIPTIONEN,'') ,isnull([POINT],0),isnull([DEFECTRATE],0) ,isnull(INSPECTOR,'')
-from (
-	select
-		T.POID,
-		T.SEQ,
-		T.WK,
-		T.RECEIVINGID,
-		T.STYLEID,
-		T.BRANDID,
-		T.SUPPLIER,
-		T.REFNO,
-		T.COLORID,
-		T.ARRIVEWHDATE,
-		T.ARRIVEQTY,
-		T.WEAVETYPEID,
-		T.DYELOT,
-		T.WIDTH,
-		T.WEIGHT,
-		T.COMPOSITION,
-		T.DESCRIPTION,
-		T.CONSTRUCTIONID,
-		T.ROLL,
-		T.INSPDATE,
-		T.RESULT,
-		T.GRADE,
-		DEFECT.DEFECTRECORD,
-		FD.TYPE,
-		FD.DESCRIPTIONEN,
-		POINT = isnull(Defect.point,  0),
-		DEFECTRATE = ISNULL(case when Q.PointRateOption = 1 then Defect.point / NULLIF(t.ActualYds, 0)
-								when Q.PointRateOption = 2 then Defect.point * 3600 / NULLIF(t.ActualYds * t.ActualWidth , 0)
-								when Q.PointRateOption = 3 then iif(t.WeaveTypeID = 'KNIT',Defect.point * 3600 / NULLIF(t.TicketYds * t.width , 0),Defect.point * 3600 / NULLIF(t.ActualYds * t.width , 0))
-								else Defect.point / NULLIF(t.ActualYds, 0)
-							 end 
-						, 0)
-		,T.INSPECTOR
-	from @tmp1 t
-	outer apply(
-		select
-			DefectRecord = dbo.SplitDefectNum(x.Data,0),	
-			point = sum(cast(dbo.SplitDefectNum(x.Data,1) as int))
-		from FIR_Physical_Defect
-		outer apply(select  * from SplitString(DefectRecord,'/'))x
-		where FIR_PhysicalDetailUKey = t.DetailUkey
-		group by dbo.SplitDefectNum(x.Data,0)
-	)Defect
-	outer apply (
-		select PointRateOption
-		from QABrandSetting
-		where Junk = 0 
-		and BrandID = t.BrandID
-	)Q
-	left join FabricDefect fd on fd.ID = Defect.DefectRecord
-	where Defect.DefectRecord is not null or fd.Type is not null
 
-	union all
-	select
-		T.POID,
-		T.SEQ,
-		WK = '',
-		T.RECEIVINGID,
-		T.STYLEID,
-		T.BRANDID,
-		T.SUPPLIER,
-		T.REFNO,
-		T.COLORID,
-		T.ARRIVEWHDATE,
-		ARRIVEQTY = T.QTY,
-		T.WEAVETYPEID,
-		T.DYELOT,
-		T.WIDTH,
-		T.WEIGHT,
-		T.COMPOSITION,
-		T.DESCRIPTION,
-		T.CONSTRUCTIONID,
-		T.ROLL,
-		T.INSPDATE,
-		T.RESULT,
-		T.GRADE,
-		DEFECT.DEFECTRECORD,
-		FD.TYPE,
-		FD.DESCRIPTIONEN,
-		POINT = isnull(Defect.point,  0),
-		DEFECTRATE = ISNULL(case when Q.PointRateOption = 1 then Defect.point / NULLIF(t.ActualYds, 0)
-								when Q.PointRateOption = 2 then Defect.point * 3600 / NULLIF(t.ActualYds * t.ActualWidth , 0)
-								when Q.PointRateOption = 3 then iif(t.WeaveTypeID = 'KNIT',Defect.point * 3600 / NULLIF(t.TicketYds * t.width , 0),Defect.point * 3600 / NULLIF(t.ActualYds * t.width , 0))
-								else Defect.point / NULLIF(t.ActualYds, 0)
-							 end 
-						, 0)
-		,T.INSPECTOR
-	from @tmp2 t
-	outer apply(
-		select 
-			DefectRecord = dbo.SplitDefectNum(x.Data,0),
-			point = sum(cast(dbo.SplitDefectNum(x.Data,1) as int))
-		from FIR_Physical_Defect
-		outer apply(select  * from SplitString(DefectRecord,'/'))x
-		where FIR_PhysicalDetailUKey = t.DetailUkey
-		group by dbo.SplitDefectNum(x.Data,0)
-	)Defect
-	outer apply (
-		select PointRateOption
-		from QABrandSetting
-		where Junk = 0 
-		and BrandID = t.BrandID
-	)Q
-	left join FabricDefect fd on fd.ID = Defect.DefectRecord
-	where Defect.DefectRecord is not null or fd.Type is not null
-) A
-
+select 	POID,SEQ,WK,RECEIVINGID,STYLEID,BRANDID,SUPPLIER,REFNO,COLORID,
+		ARRIVEWHDATE,ARRIVEQTY,WEAVETYPEID,DYELOT,WIDTH,WEIGHT,COMPOSITION,
+		[DESCRIPTION] ,CONSTRUCTIONID ,ROLL,INSPDATE,RESULT,GRADE,DEFECTRECORD,
+		[TYPE] ,DESCRIPTIONEN ,[POINT],[DEFECTRATE] ,INSPECTOR,AddDate,EditDate
+from Final
+where RowCnt = 1
 
 return
 
 end
+
