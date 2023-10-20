@@ -748,7 +748,7 @@ WHERE ID = '{this.CurrentMaintain["ID"]}'
                         return;
                     }
 
-                    result = this.UpdateIrregularStatusByDelete(this.DetailDatas.CopyToDataTable());
+                    result = this.UpdateIrregularStatusByDelete(this.DetailDatas.CopyToDataTable(), isUnClosed: true);
                     if (!result)
                     {
                         this.ShowErr(result);
@@ -757,8 +757,10 @@ WHERE ID = '{this.CurrentMaintain["ID"]}'
 
                     transactionscope.Complete();
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
+                    this.ShowErr(ex.ToString());
+                    return;
                 }
             }
 
@@ -1308,20 +1310,31 @@ outer apply (   select val = isnull(sum(AD.ReqQty), 0)
             return sql;
         }
 
-        private DualResult UpdateIrregularStatusByDelete(DataTable dtDelete, bool isClosed = false)
+        private DualResult UpdateIrregularStatusByDelete(DataTable dtDelete, bool isClosed = false, bool isUnClosed = false)
         {
             if (dtDelete.Rows.Count == 0)
             {
                 return new DualResult(true);
             }
 
-            var irregularQtyReason = new P05_IrregularQtyReason(this.CurrentMaintain["ID"].ToString(), this.CurrentMaintain, dtDelete, this.SqlGetBuyBackDeduction);
+            var irregularQtyReason = new P05_IrregularQtyReason(this.CurrentMaintain["ID"].ToString(), this.CurrentMaintain, dtDelete, this.SqlGetBuyBackDeduction, isUnClosed);
 
             DataTable dtIrregular = irregularQtyReason.GetData(isClosed);
 
             if (dtIrregular.Rows.Count == 0)
             {
                 return new DualResult(true);
+            }
+
+            if (isUnClosed)
+            {
+                irregularQtyReason.ShowDialog();
+                if (irregularQtyReason.DialogResult == DialogResult.Cancel)
+                {
+                    return new DualResult(false, "Irregular Qty Reason cannot be empty!");
+                }
+
+                this.RefreshIrregularQtyReason();
             }
 
             string sqlUpdateIrregular = $@"

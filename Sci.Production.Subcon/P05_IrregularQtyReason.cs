@@ -21,11 +21,11 @@ namespace Sci.Production.Subcon
         private DataTable dtLoad;
         private string _ArtWorkReq_ID = string.Empty;
         private Ict.Win.UI.DataGridViewTextBoxColumn txt_SubReason;
-        private P05 p05;
         private Func<string, string> sqlGetBuyBackDeduction;
+        private bool isUnClosed;
 
         /// <inheritdoc/>
-        public P05_IrregularQtyReason(string artWorkReq_ID, DataRow masterData, DataTable detailDatas, Func<string, string> sqlGetBuyBackDeduction)
+        public P05_IrregularQtyReason(string artWorkReq_ID, DataRow masterData, DataTable detailDatas, Func<string, string> sqlGetBuyBackDeduction, bool isUnClosed = false)
         {
             this.InitializeComponent();
             this.EditMode = false;
@@ -33,12 +33,12 @@ namespace Sci.Production.Subcon
             this._ArtWorkReq_ID = artWorkReq_ID;
             this._detailDatas = detailDatas;
             this.sqlGetBuyBackDeduction = sqlGetBuyBackDeduction;
+            this.isUnClosed = isUnClosed;
         }
 
         /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
-            this.p05 = (P05)this.ParentIForm;
             TxtSubconReason.CellSubconReason txtSubReason = (TxtSubconReason.CellSubconReason)TxtSubconReason.CellSubconReason.GetGridtxtCell("SQ");
             this.Query();
             this.gridIrregularQty.IsEditingReadOnly = false;
@@ -82,6 +82,27 @@ namespace Sci.Production.Subcon
             {
                 this.gridIrregularQty.Columns[i].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
             }
+
+            if (this.isUnClosed)
+            {
+                this.EditMode = true;
+                this.EditModeChange();
+            }
+        }
+
+        private void EditModeChange()
+        {
+            if (this.EditMode)
+            {
+                this.txt_SubReason.IsEditable = true;
+            }
+            else
+            {
+                this.txt_SubReason.IsEditable = false;
+            }
+
+            this.btnEdit.Text = this.EditMode ? "Save" : "Edit";
+            this.btnClose.Text = this.EditMode ? "Undo" : "Close";
         }
 
         private void Combo_SelectionChangeCommitted(object sender, EventArgs e)
@@ -104,7 +125,7 @@ namespace Sci.Production.Subcon
 
         private void Query()
         {
-            this.listControlBindingSource1.DataSource = this.GetData();
+            this.listControlBindingSource1.DataSource = this.GetData(MyUtility.Convert.GetString(this._masterData["Status"]) == "Closed");
         }
 
         /// <inheritdoc/>
@@ -195,17 +216,7 @@ VALUES ('{orderID}','{artworkType}',{standardQty},{reqQty},'{subconReasonID}',GE
 
             this.Query();
             this.EditMode = !this.EditMode;
-            if (this.EditMode)
-            {
-                this.txt_SubReason.IsEditable = true;
-            }
-            else
-            {
-                this.txt_SubReason.IsEditable = false;
-            }
-
-            this.btnEdit.Text = this.EditMode ? "Save" : "Edit";
-            this.btnClose.Text = this.EditMode ? "Undo" : "Close";
+            this.EditModeChange();
         }
 
         /// <inheritdoc/>
@@ -263,7 +274,23 @@ inner join Orders o on o.ID = ai.OrderID
 where   ai.ArtworkTypeID like '{this._masterData["ArtworkTypeID"]}%' and
         exists(select 1 from #FinalArtworkReq s where s.OrderID = ai.OrderID )
 
--- not exists DB
+-- not exists DB 要算非ArtworkReq_IrregularQty數量
+--Closed單狀況, 例:artworkreq_detail有兩筆資料, 但其中一筆已經建立了(Subcon P01) ArtworkPO_Detail 這筆實際意義不能算Closed, 只有要Close還沒有建立P01的artworkreq_detail資料
+
+SELECT *
+    ,ExistsPO = IIF(Exists(
+        SELECT 1
+        FROM ArtworkPO_Detail apd WITH (NOLOCK)
+        WHERE apd.orderid = s.orderid
+        AND apd.article = s.article
+        AND apd.sizecode = s.sizecode
+        AND apd.patterncode = s.patterncode
+        AND apd.patterndesc = s.patterndesc
+        AND apd.artworkid = s.artworkid
+    ), 1, 0)
+INTO #FinalArtworkReq2
+FROM #FinalArtworkReq s
+
 select 
 o.FactoryID
 ,ArtworkTypeID = '{this._masterData["ArtworkTypeID"]}'
@@ -271,7 +298,7 @@ o.FactoryID
 ,o.StyleID
 ,o.BrandID
 ,[StandardQty] = sum(oq.Qty)
-,[ReqQty] = ReqQty.value + isnull(tbbd.BuyBackArtworkReq,0) {(isClosed ? string.Empty : " + s.ReqQty ")}
+,[ReqQty] = ReqQty.value + isnull(tbbd.BuyBackArtworkReq,0) {(isClosed ? " + IIF(s.ExistsPO = 1, s.ReqQty, 0)" : " + s.ReqQty ")}
 ,[SubconReasonID] = ''
 ,[ReasonDesc] = ''
 ,[CreateBy] = ''
@@ -286,7 +313,7 @@ o.FactoryID
 into #tmpCurrent
 from  orders o WITH (NOLOCK) 
 inner join order_qty oq WITH (NOLOCK) on oq.id = o.ID
-inner join #FinalArtworkReq s  on s.OrderID = o.ID 
+inner join #FinalArtworkReq2 s  on s.OrderID = o.ID 
 left join #tmpBuyBackDeduction tbbd on  tbbd.OrderID = s.OrderID       and
                                         tbbd.Article = s.Article       and
                                         tbbd.SizeCode = s.SizeCode     and
@@ -307,10 +334,11 @@ outer apply(
 	and a.ArtworkTypeID = '{this._masterData["ArtworkTypeID"]}'
     and a.status != 'Closed'
 )ReqQty
-group by o.FactoryID,o.ID,o.StyleID,o.BrandID,ReqQty.value,s.ReqQty
+group by o.FactoryID,o.ID,o.StyleID,o.BrandID,ReqQty.value
+    ,{(isClosed ? " + IIF(s.ExistsPO = 1, s.ReqQty, 0)" : " + s.ReqQty ")}
     ,s.ArtworkID,s.PatternCode,s.PatternDesc,s.Remark
     ,isnull(tbbd.BuyBackArtworkReq,0)
-having Isnull(ReqQty.value, 0) + isnull(tbbd.BuyBackArtworkReq,0) {(isClosed ? string.Empty : " + s.ReqQty ")} > sum(oq.Qty)
+having Isnull(ReqQty.value, 0) + isnull(tbbd.BuyBackArtworkReq,0) {(isClosed ? " + IIF(s.ExistsPO = 1, s.ReqQty, 0)" : " + s.ReqQty ")} > sum(oq.Qty)
 
 select  FactoryID,
         ArtworkTypeID,
@@ -368,6 +396,15 @@ drop table #tmpCurrent
         {
             if (this.btnClose.Text == "Close")
             {
+                if (this.isUnClosed && ((DataTable)this.listControlBindingSource1.DataSource).Select($"SubconReasonID = ''").Length > 0)
+                {
+                    this.DialogResult = DialogResult.Cancel;
+                }
+                else
+                {
+                    this.DialogResult = DialogResult.OK;
+                }
+
                 this.Close();
             }
             else
