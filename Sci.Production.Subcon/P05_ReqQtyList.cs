@@ -37,6 +37,7 @@ and ad.OrderID ='{this.dr["orderID"]}'
 and ad.ArtworkID = '{this.dr["ArtworkID"]}'
 and ad.PatternCode = '{this.dr["PatternCode"]}'
 and ad.PatternDesc = '{this.dr["PatternDesc"]}'
+and ad.Remark = '{this.dr["Remark"]}'
 and a.ID != '{this.dr["id"]}'
 and a.status != 'Closed'
 union 

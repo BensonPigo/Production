@@ -21,11 +21,11 @@ namespace Sci.Production.Subcon
         private DataTable dtLoad;
         private string _ArtWorkReq_ID = string.Empty;
         private Ict.Win.UI.DataGridViewTextBoxColumn txt_SubReason;
-        private P05 p05;
         private Func<string, string> sqlGetBuyBackDeduction;
+        private bool isUnClosed;
 
         /// <inheritdoc/>
-        public P05_IrregularQtyReason(string artWorkReq_ID, DataRow masterData, DataTable detailDatas, Func<string, string> sqlGetBuyBackDeduction)
+        public P05_IrregularQtyReason(string artWorkReq_ID, DataRow masterData, DataTable detailDatas, Func<string, string> sqlGetBuyBackDeduction, bool isUnClosed = false)
         {
             this.InitializeComponent();
             this.EditMode = false;
@@ -33,29 +33,13 @@ namespace Sci.Production.Subcon
             this._ArtWorkReq_ID = artWorkReq_ID;
             this._detailDatas = detailDatas;
             this.sqlGetBuyBackDeduction = sqlGetBuyBackDeduction;
+            this.isUnClosed = isUnClosed;
         }
 
         /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
-            this.p05 = (P05)this.ParentIForm;
             TxtSubconReason.CellSubconReason txtSubReason = (TxtSubconReason.CellSubconReason)TxtSubconReason.CellSubconReason.GetGridtxtCell("SQ");
-
-            // comboSubReason.EditingControlShowing += (s, e) =>
-            // {
-            //     if (s==null || e == null)
-            //     {
-            //         return;
-            //     }
-
-            // var eventArgs = (Ict.Win.UI.DataGridViewEditingControlShowingEventArgs)e;
-            //     ComboBox cb = eventArgs.Control as ComboBox;
-            //     if (cb != null)
-            //     {
-            //         cb.SelectionChangeCommitted -= this.combo_SelectionChangeCommitted;
-            //         cb.SelectionChangeCommitted += this.combo_SelectionChangeCommitted;
-            //     }
-            // };
             this.Query();
             this.gridIrregularQty.IsEditingReadOnly = false;
             this.gridIrregularQty.DataSource = this.listControlBindingSource1;
@@ -98,6 +82,27 @@ namespace Sci.Production.Subcon
             {
                 this.gridIrregularQty.Columns[i].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
             }
+
+            if (this.isUnClosed)
+            {
+                this.EditMode = true;
+                this.EditModeChange();
+            }
+        }
+
+        private void EditModeChange()
+        {
+            if (this.EditMode)
+            {
+                this.txt_SubReason.IsEditable = true;
+            }
+            else
+            {
+                this.txt_SubReason.IsEditable = false;
+            }
+
+            this.btnEdit.Text = this.EditMode ? "Save" : "Edit";
+            this.btnClose.Text = this.EditMode ? "Undo" : "Close";
         }
 
         private void Combo_SelectionChangeCommitted(object sender, EventArgs e)
@@ -120,13 +125,13 @@ namespace Sci.Production.Subcon
 
         private void Query()
         {
-            this.listControlBindingSource1.DataSource = this.GetData();
+            this.listControlBindingSource1.DataSource = this.GetData(MyUtility.Convert.GetString(this._masterData["Status"]) == "Closed");
         }
 
         /// <inheritdoc/>
-        public DataTable Check_Irregular_Qty()
+        public DataTable Check_Irregular_Qty(bool isClosed = false)
         {
-            DataTable dt = this.GetData();
+            DataTable dt = this.GetData(isClosed);
             this.listControlBindingSource1.DataSource = dt;
 
             return dt;
@@ -211,51 +216,38 @@ VALUES ('{orderID}','{artworkType}',{standardQty},{reqQty},'{subconReasonID}',GE
 
             this.Query();
             this.EditMode = !this.EditMode;
-            if (this.EditMode)
-            {
-                this.txt_SubReason.IsEditable = true;
-            }
-            else
-            {
-                this.txt_SubReason.IsEditable = false;
-            }
-
-            this.btnEdit.Text = this.EditMode ? "Save" : "Edit";
-            this.btnClose.Text = this.EditMode ? "Undo" : "Close";
+            this.EditModeChange();
         }
 
-        /// <summary>
-        /// GetData
-        /// </summary>
-        /// <returns>DataTable</returns>
-        public DataTable GetData()
+        /// <inheritdoc/>
+        public DataTable GetData(bool isClosed = false)
         {
-            string sqlcmd = string.Empty;
-
-            DualResult result;
-            sqlcmd = $@"
+            string sqlcmd = $@"
 alter table #tmp alter column OrderID varchar(13)
 alter table #tmp alter column ArtworkID varchar(36)
 alter table #tmp alter column PatternCode varchar(20)
 alter table #tmp alter column PatternDesc varchar(40)
+alter table #tmp alter column Remark varchar(1000)
 
-select  t.OrderID,
-        [Article] = '',
-        [SizeCode] = '',
-        t.ArtworkID,
-        t.PatternCode,
-        t.PatternDesc,
-        [LocalSuppID] = '',
-        [OrderQty] = o.Qty,
-        [ReqQty] = sum(t.ReqQty)
+select  t.OrderID
+       ,t.ArtworkID
+       ,t.PatternCode
+       ,t.PatternDesc
+       ,t.Remark
+       ,[ReqQty] = sum(t.ReqQty)
+       ,[OrderQty] = o.Qty
+       ,[Article] = ''
+       ,[SizeCode] = ''
+       ,[LocalSuppID] = ''
 into #FinalArtworkReq
 from #tmp t
 inner join orders o with (nolock) on o.ID = t.OrderID
-group by    t.OrderID,
-            t.PatternCode,
-            t.PatternDesc,
-            t.ArtworkID,
-            o.Qty
+group by t.OrderID
+        ,t.PatternCode
+        ,t.PatternDesc
+        ,t.ArtworkID
+        ,t.Remark
+        ,o.Qty
 
 {this.sqlGetBuyBackDeduction(this._masterData["artworktypeid"].ToString())}
 
@@ -274,9 +266,6 @@ o.FactoryID
 ,[CreateDate] = ai.AddDate
 ,[EditBy] = (select name from pass1 where id=ai.EditName)
 ,[EditDate] = ai.EditDate
-,ArtworkID=''
-,PatternCode=''
-,PatternDesc=''
 ,[NeedUpdate] = 0
 ,[NeedDelete] = 0
 into #tmpDB
@@ -285,7 +274,23 @@ inner join Orders o on o.ID = ai.OrderID
 where   ai.ArtworkTypeID like '{this._masterData["ArtworkTypeID"]}%' and
         exists(select 1 from #FinalArtworkReq s where s.OrderID = ai.OrderID )
 
--- not exists DB
+-- not exists DB 要算非ArtworkReq_IrregularQty數量
+--Closed單狀況, 例:artworkreq_detail有兩筆資料, 但其中一筆已經建立了(Subcon P01) ArtworkPO_Detail 這筆實際意義不能算Closed, 只有要Close還沒有建立P01的artworkreq_detail資料
+
+SELECT *
+    ,ExistsPO = IIF(Exists(
+        SELECT 1
+        FROM ArtworkPO_Detail apd WITH (NOLOCK)
+        WHERE apd.orderid = s.orderid
+        AND apd.article = s.article
+        AND apd.sizecode = s.sizecode
+        AND apd.patterncode = s.patterncode
+        AND apd.patterndesc = s.patterndesc
+        AND apd.artworkid = s.artworkid
+    ), 1, 0)
+INTO #FinalArtworkReq2
+FROM #FinalArtworkReq s
+
 select 
 o.FactoryID
 ,ArtworkTypeID = '{this._masterData["ArtworkTypeID"]}'
@@ -293,7 +298,7 @@ o.FactoryID
 ,o.StyleID
 ,o.BrandID
 ,[StandardQty] = sum(oq.Qty)
-,[ReqQty] = ReqQty.value + PoQty.value + s.ReqQty + isnull(tbbd.BuyBackArtworkReq,0)
+,[ReqQty] = ReqQty.value + isnull(tbbd.BuyBackArtworkReq,0) {(isClosed ? " + IIF(s.ExistsPO = 1, s.ReqQty, 0)" : " + s.ReqQty ")}
 ,[SubconReasonID] = ''
 ,[ReasonDesc] = ''
 ,[CreateBy] = ''
@@ -303,43 +308,37 @@ o.FactoryID
 ,s.ArtworkID
 ,s.PatternCode
 ,s.PatternDesc
+,s.Remark
 ,[BuyBackArtworkReq] = isnull(tbbd.BuyBackArtworkReq,0)
 into #tmpCurrent
 from  orders o WITH (NOLOCK) 
 inner join order_qty oq WITH (NOLOCK) on oq.id = o.ID
-inner join #FinalArtworkReq s  on s.OrderID = o.ID 
+inner join #FinalArtworkReq2 s  on s.OrderID = o.ID 
 left join #tmpBuyBackDeduction tbbd on  tbbd.OrderID = s.OrderID       and
                                         tbbd.Article = s.Article       and
                                         tbbd.SizeCode = s.SizeCode     and
                                         tbbd.PatternCode = s.PatternCode   and
                                         tbbd.PatternDesc = s.PatternDesc   and
+                                        tbbd.Remark = s.Remark   and
                                         tbbd.ArtworkID = s.ArtworkID and
 										tbbd.LocalSuppID = ''
 outer apply(
-	select value = ISNULL(sum(PoQty),0)
-    from ArtworkPO_Detail ad, ArtworkPO a
-	where ad.ID = a.ID
-    and OrderID = o.ID 
-    and ad.PatternCode = isnull(s.PatternCode,'')
-	and ad.PatternDesc = isnull(s.PatternDesc,'') 
-    and ad.ArtworkID = iif(s.ArtworkID is null,'{this._masterData["ArtworkTypeID"]}',s.ArtworkID)
-	and ad.ArtworkReqID =''
-	and a.ArtworkTypeID = '{this._masterData["ArtworkTypeID"]}'
-) PoQty
-outer apply(
 	select value = ISNULL(sum(ReqQty),0)
-	from ArtworkReq_Detail ad , ArtworkReq a
+	from ArtworkReq_Detail ad with (nolock), ArtworkReq a with (nolock)
 	where ad.ID = a.ID
 	and OrderID = o.ID and ad.PatternCode= isnull(s.PatternCode,'')
 	and ad.PatternDesc = isnull(s.PatternDesc,'') 
+	and ad.Remark = isnull(s.Remark,'') 
     and ad.ArtworkID = iif(s.ArtworkID is null,'{this._masterData["ArtworkTypeID"]}',s.ArtworkID)
-	and ad.id !=  '{this._ArtWorkReq_ID}'
+	{(isClosed ? string.Empty : $"and ad.id != '{this._ArtWorkReq_ID}'")}
 	and a.ArtworkTypeID = '{this._masterData["ArtworkTypeID"]}'
     and a.status != 'Closed'
 )ReqQty
-group by o.FactoryID,o.ID,o.StyleID,o.BrandID,ReqQty.value,PoQty.value,s.ReqQty
-,s.ArtworkID,s.PatternCode,s.PatternDesc,isnull(tbbd.BuyBackArtworkReq,0)
-having ReqQty.value + PoQty.value + s.ReqQty + isnull(tbbd.BuyBackArtworkReq,0) > sum(oq.Qty) 
+group by o.FactoryID,o.ID,o.StyleID,o.BrandID,ReqQty.value
+    ,{(isClosed ? " + IIF(s.ExistsPO = 1, s.ReqQty, 0)" : " + s.ReqQty ")}
+    ,s.ArtworkID,s.PatternCode,s.PatternDesc,s.Remark
+    ,isnull(tbbd.BuyBackArtworkReq,0)
+having Isnull(ReqQty.value, 0) + isnull(tbbd.BuyBackArtworkReq,0) {(isClosed ? " + IIF(s.ExistsPO = 1, s.ReqQty, 0)" : " + s.ReqQty ")} > sum(oq.Qty)
 
 select  FactoryID,
         ArtworkTypeID,
@@ -362,8 +361,8 @@ MERGE #tmpDB AS T
 USING #tmpCurrentFinal AS S
 ON (T.ArtworkTypeID = S.ArtworkTypeID and T.OrderID = S.OrderID) 
 WHEN NOT MATCHED BY TARGET 
-    THEN INSERT(FactoryID, ArtworkTypeID, OrderID, StyleID, BrandID, StandardQty, ReqQty, SubconReasonID, ReasonDesc, CreateBy, CreateDate, EditBy, EditDate, ArtworkID, PatternCode, PatternDesc, NeedUpdate, NeedDelete) 
-            VALUES(S.FactoryID, S.ArtworkTypeID, S.OrderID, S.StyleID, S.BrandID, S.StandardQty, S.ReqQty, '', '', '', getdate(), '', null, '', '', '', 0, 0)
+    THEN INSERT(FactoryID, ArtworkTypeID, OrderID, StyleID, BrandID, StandardQty, ReqQty, SubconReasonID, ReasonDesc, CreateBy, CreateDate, EditBy, EditDate, NeedUpdate, NeedDelete) 
+            VALUES(S.FactoryID, S.ArtworkTypeID, S.OrderID, S.StyleID, S.BrandID, S.StandardQty, S.ReqQty, '', '', '', getdate(), '', null, 0, 0)
 WHEN MATCHED 
     THEN UPDATE SET T.StandardQty = S.StandardQty,
                     T.ReqQty = S.ReqQty,
@@ -374,14 +373,20 @@ WHEN NOT MATCHED BY SOURCE
 
 select * from #tmpDB 
 
-drop table #tmpCurrent,#tmpDB,#tmpCurrentFinal
-
+drop table #tmpCurrent
+,#tmpDB
+,#tmpCurrentFinal
+,#tmp
+,#FinalArtworkReq
+,#tmpBuyBackFrom
+,#tmpBuyBackFromResult
+,#tmpBuyBackReqBase
+,#tmpBuyBackDeduction
 ";
-
-            result = MyUtility.Tool.ProcessWithDatatable(this._detailDatas, string.Empty, sqlcmd, out this.dtLoad);
-            if (result == false)
+            DualResult result = MyUtility.Tool.ProcessWithDatatable(this._detailDatas, string.Empty, sqlcmd, out this.dtLoad);
+            if (!result)
             {
-                this.ShowErr(sqlcmd, result);
+                this.ShowErr(result);
             }
 
             return this.dtLoad;
@@ -391,6 +396,15 @@ drop table #tmpCurrent,#tmpDB,#tmpCurrentFinal
         {
             if (this.btnClose.Text == "Close")
             {
+                if (this.isUnClosed && ((DataTable)this.listControlBindingSource1.DataSource).Select($"SubconReasonID = ''").Length > 0)
+                {
+                    this.DialogResult = DialogResult.Cancel;
+                }
+                else
+                {
+                    this.DialogResult = DialogResult.OK;
+                }
+
                 this.Close();
             }
             else

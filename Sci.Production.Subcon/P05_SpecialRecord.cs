@@ -98,6 +98,7 @@ outer apply (
 		and OrderID = o.ID 
         and ad.PatternCode= ''
         and ad.PatternDesc = ''
+        and ad.Remark = ''
         and ad.ArtworkID = '{this.dr["artworktypeid"]}'
         and a.id != '{this.dr["id"]}'
         and a.status != 'Closed'

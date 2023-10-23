@@ -186,6 +186,7 @@ select  orderid = ard.OrderID
         , ar.LocalSuppId
         , [OrderQtyArticle] = OrderQty.Article
         , ArtworkReq_DetailUkey = ard.Ukey
+        , ard.Remark
 into #baseArtworkReq
 from orders o WITH (NOLOCK) 
 inner join ArtworkReq_Detail ard with (nolock) on   ard.OrderId = o.ID and 
@@ -421,6 +422,7 @@ select
         , coststitch = vsa.qty
         , bar.Stitch 
         , bar.PatternDesc
+        , bar.Remark
         , bar.QtyGarment
         , Cost = iif(at.isArtwork = 1,vsa.Cost,sao.Price)
         , unitprice = isnull(sao.Price,0)
@@ -445,7 +447,8 @@ left join dbo.View_Style_Artwork vsa on	vsa.StyleUkey = bar.StyleUkey and
                                         vsa.ArtworkID = bar.ArtworkID and
                                         vsa.ArtworkTypeID = bar.ArtworkTypeID and 
                                         vsa.PatternCode = bar.PatternCode and
-										vsa.PatternDesc = bar.PatternDesc
+										vsa.PatternDesc = bar.PatternDesc and
+										vsa.Remark = bar.Remark
 left join Style_Artwork_Quot sao with (nolock) on   sao.Ukey = vsa.StyleArtworkUkey and 
                                                     sao.PriceApv = 'Y' and 
                                                     sao.Price > 0 and 
@@ -588,6 +591,7 @@ select  Selected = 0
 		, [Farmout] = ISNULL(FarmOut.Value,0)
 		, [FarmIn] = ISNULL(FarmIn.Value,0)
         , ArtworkReq_DetailUkey
+        ,bar.Remark
 from  #baseArtworkReq bar
 inner join Orders o with (nolock) on o.ID = bar.OrderID
 --ISP20211197 P05維護的Article為空白時，要從Order_Qty抓第一筆Article，作為抓取Order_Artwork的條件
@@ -598,7 +602,8 @@ inner join dbo.Order_Artwork oa WITH (NOLOCK) on oa.ID = bar.OrderID and
                                                  oa.ArtworkTypeID = bar.ArtworkTypeID and
                                                  oa.ArtworkID = bar.ArtworkID      and
                                                  oa.PatternCode = bar.PatternCode  and
-                                                 oa.PatternDesc = bar.PatternDesc 
+                                                 oa.PatternDesc = bar.PatternDesc and
+                                                 oa.Remark = bar.Remark
 {this.sqlFarmOutApply}
 where  ((o.Category = 'B' and  oa.price > 0) or (o.category !='B'))
 ";

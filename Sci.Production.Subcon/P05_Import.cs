@@ -323,7 +323,6 @@ where id ='{this.dr_artworkReq["artworktypeid"]}'
             {
                 foreach (DataRow tmp in dr2)
                 {
-                    // DataRow[] findrow = dt_artworkReqDetail.Select($@"orderid = '{tmp["orderID"].ToString()}' and ArtworkId = '{tmp["ArtworkId"].ToString()}' and patterncode = '{tmp["patterncode"].ToString()}' and PatternDesc = '{tmp["PatternDesc"].ToString()}'");
                     DataRow[] findrow = this.dt_artworkReqDetail.Select($@"orderid = '{tmp["orderID"]}' and Article = '{tmp["Article"]}' and SizeCode = '{tmp["SizeCode"]}' and ArtworkId = '{tmp["ArtworkId"]}' and patterncode = '{tmp["patterncode"]}' and PatternDesc = '{tmp["PatternDesc"]}' and remark ='{tmp["remark"]}' ");
                     decimal exceedQty = MyUtility.Convert.GetDecimal(tmp["AccReqQty"]) + MyUtility.Convert.GetDecimal(tmp["ReqQty"]) - MyUtility.Convert.GetDecimal(tmp["OrderQty"]);
 
@@ -438,7 +437,8 @@ left join dbo.View_Style_Artwork vsa on	vsa.StyleUkey = o.StyleUkey and
 										vsa.ArtworkName = oa.ArtworkName and 
                                         vsa.ArtworkTypeID = oa.ArtworkTypeID and 
                                         vsa.PatternCode = oa.PatternCode and
-										vsa.PatternDesc = oa.PatternDesc 
+										vsa.PatternDesc = oa.PatternDesc and
+										vsa.Remark = oa.Remark
 left join Style_Artwork_Quot sao with (nolock) on   sao.Ukey = vsa.StyleArtworkUkey and 
                                                     sao.LocalSuppId = '{this.dr_artworkReq["LocalSuppId"]}' and
                                                     (sao.SizeCode = oq.SizeCode or sao.SizeCode = '') 
@@ -540,6 +540,7 @@ outer apply (select top 1 val = LocalSuppId
 					t1.Article = t.Article and
 					t1.PatternCode = t.PatternCode and
 					t1.PatternDesc = t.PatternDesc and
+					t1.Remark = t.Remark and
 					t1.ArtworkID = t.ArtworkID and
 					t1.LocalSuppId <> ''
 			 ) LocalSuppId
@@ -557,13 +558,13 @@ group by     LocalSuppId.val
 		    ,stitch
 		    ,PatternCode
 		    ,PatternDesc
+            ,Remark
 		    ,qtygarment
             ,StyleID
 		    ,POID
             ,id
             ,ExceedQty
             ,OrderQty.val
-            ,Remark
 union all
 select  [LocalSuppId] = isnull(LocalSuppId.val,'')
 		,orderID
@@ -589,6 +590,7 @@ outer apply (select top 1 val = LocalSuppId
 					t1.SizeCode = t.SizeCode and
 					t1.PatternCode = t.PatternCode and
 					t1.PatternDesc = t.PatternDesc and
+					t1.Remark = t.Remark and
 					t1.ArtworkID = t.ArtworkID and
 					t1.LocalSuppId <> ''
 			 ) LocalSuppId
@@ -606,13 +608,13 @@ group by     LocalSuppId.val
 		    ,stitch
 		    ,PatternCode
 		    ,PatternDesc
+            ,Remark
 		    ,qtygarment
             ,StyleID
 		    ,POID
             ,id
             ,ExceedQty
             ,OrderQty.val
-            ,Remark
 union all
 select  [LocalSuppId] = isnull(LocalSuppId.val,'')
 		,orderID
@@ -637,6 +639,7 @@ outer apply (select top 1 val = LocalSuppId
 			 where  t1.orderID = t.orderID and
 					t1.PatternCode = t.PatternCode and
 					t1.PatternDesc = t.PatternDesc and
+					t1.Remark = t.Remark and
 					t1.ArtworkID = t.ArtworkID and
 					t1.LocalSuppId <> ''
 			 ) LocalSuppId
@@ -652,13 +655,13 @@ group by     LocalSuppId.val
 		    ,stitch
 		    ,PatternCode
 		    ,PatternDesc
+		    ,Remark
 		    ,qtygarment
             ,StyleID
 		    ,POID
             ,id
             ,ExceedQty
             ,OrderQty.val
-            ,Remark
 ) a
 
 {this.p05.SqlGetBuyBackDeduction(this.dr_artworkReq["artworktypeid"].ToString())}
@@ -678,6 +681,7 @@ select  [Selected] = 0
 		,fr.stitch
 		,fr.PatternCode
 		,fr.PatternDesc
+        ,fr.Remark
 		,fr.qtygarment
         ,fr.StyleID
 		,fr.POID
@@ -686,7 +690,6 @@ select  [Selected] = 0
         ,[BuyBackArtworkReq] = isnull(tbbd.BuyBackArtworkReq, 0)
         ,o.FactoryID
         ,f.IsProduceFty
-        ,fr.Remark
 from #FinalArtworkReq fr
 inner join Orders o with (nolock) on o.ID = fr.orderID
 left join Factory f with (nolock) on f.ID = o.FactoryID
@@ -695,6 +698,7 @@ left join #tmpBuyBackDeduction tbbd on  tbbd.OrderID = fr.OrderID       and
                                         tbbd.SizeCode = fr.SizeCode     and
                                         tbbd.PatternCode = fr.PatternCode   and
                                         tbbd.PatternDesc = fr.PatternDesc   and
+                                        tbbd.Remark = fr.Remark   and
                                         tbbd.ArtworkID = fr.ArtworkID and
 										tbbd.LocalSuppID = fr.LocalSuppID
 outer apply (
@@ -707,6 +711,7 @@ outer apply (
         and ad.SizeCode = fr.SizeCode
         and ad.PatternCode = fr.PatternCode
         and ad.PatternDesc = fr.PatternDesc
+        and ad.Remark = fr.Remark
         and ad.ArtworkID = fr.ArtworkID
         and a.id != '{this.dr_artworkReq["id"]}'
         and a.status != 'Closed'
@@ -732,7 +737,8 @@ outer apply(
             SizeCode = fr.SizeCode and
             ArtworkID = fr.ArtworkID and
             PatternCode = isnull(fr.PatternCode,'') and
-            PatternDesc = isnull(fr.PatternDesc,'')  
+            PatternDesc = isnull(fr.PatternDesc,'')  and
+            Remark = isnull(fr.Remark,'')  
 ) CurrentReq
 order by    fr.orderID, fr.Article, fr.SizeCode
 ";

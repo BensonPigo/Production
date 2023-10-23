@@ -107,14 +107,7 @@ from ArtworkReq r
 inner join ArtworkReq_Detail rd ON r.ID = rd.ID
 left join LocalSupp l ON l.ID = r.LocalSuppID
 left join Orders o ON o.ID = rd.OrderID
-left join ArtworkPO_Detail pod ON pod.ID = rd.ArtworkPOID
-AND pod.OrderID = rd.OrderID 
-AND pod.Article = rd.Article 
-AND pod.SizeCode = rd.SizeCode    
-AND pod.ArtworkId  = rd.ArtworkId 
-AND pod.PatternCode= rd.PatternCode
-AND pod.ArtworkReqID = rd.ID
-
+left join ArtworkPO_Detail pod on pod.ArtworkReq_Detailukey = rd.ukey
 OUTER APPLY(
 	SELECT [Val]=IIF(rd.Article = '' OR rd.SizeCode = ''
 		,(

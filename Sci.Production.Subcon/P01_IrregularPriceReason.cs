@@ -663,7 +663,7 @@ DROP TABLE #tmp_AllOrders ,#total_PO ,#Embroidery_List ,#TmpSource
 
                 if (!result)
                 {
-                    this.ShowErr(result);
+                    MyUtility.Msg.ErrorBox(result.ToString());
                     return false;
                 }
 
