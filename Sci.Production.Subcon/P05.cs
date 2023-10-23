@@ -1331,7 +1331,7 @@ outer apply (   select val = isnull(sum(AD.ReqQty), 0)
                 irregularQtyReason.ShowDialog();
                 if (irregularQtyReason.DialogResult == DialogResult.Cancel)
                 {
-                    return new DualResult(false, "Irregular Qty Reason cannot be empty!");
+                    return new DualResult(false, "Can not UnClose:\r\nIrregular Qty Reason cannot be empty!");
                 }
 
                 this.RefreshIrregularQtyReason();
