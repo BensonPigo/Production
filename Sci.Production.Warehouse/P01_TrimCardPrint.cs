@@ -771,6 +771,10 @@ drop table #tmpThreadInfo
                         #region 填入Datas
                         for (int k = 0; k < this.dtPrint_LeftColumn.Rows.Count; k++)
                         {
+                            // 根據 DataColumn & DataRow 選取 Table => 首頁 + (DataColumnIndex / 6 * 每個 FabricPanelCode 會占用的 Table 數) + k / Table 可存的 Article 數量
+                            // 其中 K 代表, 目前編輯到 FabricPanelCode 的第幾個 Article
+                            tables = table[nextPage + (i / 6 * rC) + (k / 4)];
+
                             // 準備filter字串
                             string whereDetail = string.Empty;
 
@@ -838,10 +842,6 @@ drop table #tmpThreadInfo
                                     }
                                 }
                             }
-
-                            // 根據 DataColumn & DataRow 選取 Table => 首頁 + (DataColumnIndex / 6 * 每個 FabricPanelCode 會占用的 Table 數) + k / Table 可存的 Article 數量
-                            // 其中 K 代表, 目前編輯到 FabricPanelCode 的第幾個 Article
-                            tables = table[nextPage + (i / 6 * rC) + (k / 4)];
 
                             // 塞入文字 5 7 9 11
                             int rowStr = 5;
