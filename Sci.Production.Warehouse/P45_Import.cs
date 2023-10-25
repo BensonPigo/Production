@@ -182,6 +182,10 @@ Where   c.lock = 0
                 if (this.EditMode && !MyUtility.Check.Empty(e.FormattedValue))
                 {
                     DataRow dr = this.gridImport.GetDataRow(e.RowIndex);
+                    if (dr == null)
+                    {
+                        return;
+                    }
 
                     if (MyUtility.Convert.GetDecimal(dr["QtyBefore"]) - MyUtility.Convert.GetDecimal(e.FormattedValue) <= 0)
                     {
@@ -205,6 +209,10 @@ Where   c.lock = 0
                 if (this.EditMode)
                 {
                     DataRow dr = this.gridImport.GetDataRow(e.RowIndex);
+                    if (dr == null)
+                    {
+                        return;
+                    }
                     if (MyUtility.Convert.GetDecimal(dr["QtyBefore"]) - MyUtility.Convert.GetDecimal(e.FormattedValue) < 0 ||
                         MyUtility.Check.Empty(e.FormattedValue))
                     {
@@ -252,17 +260,23 @@ Where   c.lock = 0
                         return;
                     }
 
+                    DataRow dr = this.gridImport.GetDataRow(e.RowIndex);
+                    if (dr == null)
+                    {
+                        return;
+                    }
+
                     x = item.GetSelecteds();
 
-                    this.gridImport.GetDataRow(this.gridImport.GetSelectedRowIndex())["reasonid"] = x[0]["id"];
-                    this.gridImport.GetDataRow(this.gridImport.GetSelectedRowIndex())["reason_nm"] = x[0]["name"];
+                    dr["reasonid"] = x[0]["id"];
+                    dr["reason_nm"] = x[0]["name"];
 
                     if (x[0]["id"].Equals("00001") == false)
                     {
-                        this.gridImport.GetDataRow(this.gridImport.GetSelectedRowIndex())["ToPOID"] = string.Empty;
-                        this.gridImport.GetDataRow(this.gridImport.GetSelectedRowIndex())["ToSeq"] = string.Empty;
-                        this.gridImport.GetDataRow(this.gridImport.GetSelectedRowIndex())["ToSeq1"] = string.Empty;
-                        this.gridImport.GetDataRow(this.gridImport.GetSelectedRowIndex())["ToSeq2"] = string.Empty;
+                        dr["ToPOID"] = string.Empty;
+                        dr["ToSeq"] = string.Empty;
+                        dr["ToSeq1"] = string.Empty;
+                        dr["ToSeq2"] = string.Empty;
 
                         this.col_ToPoid.IsEditingReadOnly = true;
                         this.col_ToSeq.IsEditingReadOnly = true;
@@ -272,11 +286,18 @@ Where   c.lock = 0
                         this.col_ToPoid.IsEditingReadOnly = false;
                         this.col_ToSeq.IsEditingReadOnly = false;
                     }
+
+                    dr.EndEdit();
                 }
             };
             ts.CellValidating += (s, e) =>
             {
-                DataRow dr;
+                DataRow dr = this.gridImport.GetDataRow(e.RowIndex);
+                if (dr == null)
+                {
+                    return;
+                }
+
                 if (!this.EditMode)
                 {
                     return;
@@ -286,8 +307,8 @@ Where   c.lock = 0
                 {
                     if (MyUtility.Check.Empty(e.FormattedValue))
                     {
-                        this.gridImport.GetDataRow(this.gridImport.GetSelectedRowIndex())["reasonid"] = string.Empty;
-                        this.gridImport.GetDataRow(this.gridImport.GetSelectedRowIndex())["reason_nm"] = string.Empty;
+                        dr["reasonid"] = string.Empty;
+                        dr["reason_nm"] = string.Empty;
                     }
                     else
                     {
@@ -302,18 +323,18 @@ and ReasonTypeID='Stock_Remove' AND junk = 0", e.FormattedValue), out dr, null))
                         }
                         else
                         {
-                            this.gridImport.GetDataRow(this.gridImport.GetSelectedRowIndex())["reasonid"] = e.FormattedValue;
-                            this.gridImport.GetDataRow(this.gridImport.GetSelectedRowIndex())["reason_nm"] = dr["name"];
+                            dr["reasonid"] = e.FormattedValue;
+                            dr["reason_nm"] = dr["name"];
                         }
                     }
 
-                    this.gridImport.GetDataRow(this.gridImport.GetSelectedRowIndex())["ToPOID"] = string.Empty;
-                    this.gridImport.GetDataRow(this.gridImport.GetSelectedRowIndex())["ToSeq"] = string.Empty;
-                    this.gridImport.GetDataRow(this.gridImport.GetSelectedRowIndex())["ToSeq1"] = string.Empty;
-                    this.gridImport.GetDataRow(this.gridImport.GetSelectedRowIndex())["ToSeq2"] = string.Empty;
+                    dr["ToPOID"] = string.Empty;
+                    dr["ToSeq"] = string.Empty;
+                    dr["ToSeq1"] = string.Empty;
+                    dr["ToSeq2"] = string.Empty;
                 }
 
-                if (this.gridImport.GetDataRow(this.gridImport.GetSelectedRowIndex())["reasonid"].ToString().Equals("00001") == false)
+                if (dr["reasonid"].ToString().Equals("00001") == false)
                 {
                     this.col_ToPoid.IsEditingReadOnly = true;
                     this.col_ToSeq.IsEditingReadOnly = true;
@@ -323,14 +344,21 @@ and ReasonTypeID='Stock_Remove' AND junk = 0", e.FormattedValue), out dr, null))
                     this.col_ToPoid.IsEditingReadOnly = false;
                     this.col_ToSeq.IsEditingReadOnly = false;
                 }
+
+                dr.EndEdit();
             };
             #endregion
 
-            #region ToPoid Seq
+            #region ToPoid + Seq
             DataGridViewGeneratorTextColumnSettings cs_topoid = new DataGridViewGeneratorTextColumnSettings();
             cs_topoid.CellValidating += (s, e) =>
             {
                 DataRow dr = this.gridImport.GetDataRow(e.RowIndex);
+                if (dr == null)
+                {
+                    return;
+                }
+
                 if (!this.EditMode)
                 {
                     return; // 非編輯模式
@@ -393,6 +421,9 @@ and MDivisionID = '{Sci.Env.User.Keyword}'";
                     if (MyUtility.Check.Empty(dr["ToPoID"]))
                     {
                         MyUtility.Msg.WarningBox("Please fill in 'Bulk SP#' first.");
+                        dr["ToSeq"] = string.Empty;
+                        dr["ToSeq1"] = string.Empty;
+                        dr["ToSeq2"] = string.Empty;
                         return;
                     }
                     else
@@ -431,6 +462,11 @@ where ID = '{dr["ToPoID"]}'
             cs_toSeq.CellValidating += (s, e) =>
             {
                 DataRow dr = this.gridImport.GetDataRow(e.RowIndex);
+                if (dr == null)
+                {
+                    return;
+                }
+
                 if (!this.EditMode)
                 {
                     return; // 非編輯模式
@@ -444,6 +480,10 @@ where ID = '{dr["ToPoID"]}'
                 if (MyUtility.Check.Empty(dr["ToPoID"]))
                 {
                     MyUtility.Msg.WarningBox("Please fill in 'Bulk SP#' first.");
+                    dr["ToSeq"] = string.Empty;
+                    dr["ToSeq1"] = string.Empty;
+                    dr["ToSeq2"] = string.Empty;
+                    dr.EndEdit();
                     return;
                 }
 
@@ -492,6 +532,8 @@ and seq2 = '{seq[1]}'
                             dr["Toseq2"] = seq[1];
                         }
                     }
+
+                    dr.EndEdit();
                 }
             };
             #endregion
@@ -527,13 +569,18 @@ and seq2 = '{seq[1]}'
 
         private void Detailgrid_RowEnter(object sender, DataGridViewCellEventArgs e)
         {
-            if (e.RowIndex < 0 || !this.EditMode)
+            if (e.RowIndex < 0 || !this.EditMode || this.gridImport.GetSelectedRowIndex() < 0)
             {
                 return;
             }
 
-            DataRow curDr = ((DataTable)this.listControlBindingSource1.DataSource).Rows[e.RowIndex];
-            if (curDr["reasonid"].Equals("00001"))
+            var data = ((DataRowView)this.gridImport.Rows[e.RowIndex].DataBoundItem).Row;
+            if (data == null)
+            {
+                return;
+            }
+
+            if (data["reasonid"].ToString().Equals("00001") == true)
             {
                 this.col_ToPoid.IsEditingReadOnly = false;
                 this.col_ToSeq.IsEditingReadOnly = false;
@@ -703,3 +750,4 @@ where   StockType='O'
         }
     }
 }
+

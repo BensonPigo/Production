@@ -619,6 +619,8 @@ where ad.Id='{masterID}'
                     this.col_ToPoid.IsEditingReadOnly = false;
                     this.col_ToSeq.IsEditingReadOnly = false;
                 }
+
+                this.CurrentDetailData.EndEdit();
             };
 
             #endregion Seq 右鍵開窗
@@ -628,6 +630,11 @@ where ad.Id='{masterID}'
             cs_topoid.CellValidating += (s, e) =>
             {
                 DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
+                if (dr == null)
+                {
+                    return;
+                }
+
                 if (!this.EditMode)
                 {
                     return; // 非編輯模式
@@ -689,6 +696,10 @@ and MDivisionID = '{Sci.Env.User.Keyword}'";
                     if (MyUtility.Check.Empty(this.CurrentDetailData["ToPoID"]))
                     {
                         MyUtility.Msg.WarningBox("Please fill in 'Bulk SP#' first.");
+                        this.CurrentDetailData["ToSeq"] = string.Empty;
+                        this.CurrentDetailData["ToSeq1"] = string.Empty;
+                        this.CurrentDetailData["ToSeq2"] = string.Empty;
+                        this.CurrentDetailData.EndEdit();
                         return;
                     }
                     else
@@ -737,9 +748,18 @@ where ID = '{this.CurrentDetailData["ToPoID"]}'
                     return; // 沒東西 return
                 }
 
-                if (MyUtility.Check.Empty(dr["ToPoID"]))
+                if (dr == null)
+                {
+                    return;
+                }
+
+                if (!MyUtility.Check.Empty(this.CurrentDetailData["ToSeq"]) && MyUtility.Check.Empty(dr["ToPoID"]))
                 {
                     MyUtility.Msg.WarningBox("Please fill in 'Bulk SP#' first.");
+                    this.CurrentDetailData["ToSeq"] = string.Empty;
+                    this.CurrentDetailData["ToSeq1"] = string.Empty;
+                    this.CurrentDetailData["ToSeq2"] = string.Empty;
+                    this.CurrentDetailData.EndEdit();
                     return;
                 }
 
@@ -789,6 +809,8 @@ and seq2 = '{seq[1]}'
                         }
                     }
                 }
+
+                this.CurrentDetailData.EndEdit();
             };
             #endregion
 
