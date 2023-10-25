@@ -131,12 +131,24 @@ from OPENQUERY([MainServer], '' SET NOCOUNT ON; exec Production.dbo.PPIC_R01_Sew
 EXEC sp_executesql @DynamicSQL
 
 -- 更新 P_IssueFabricByCuttingTransactionList
-delete p
-from P_SewingLineScheduleBySP p
-where	(convert(date, p.Inline) >= @StartDate or (@StartDate between convert(date,p.Inline) and convert(date,p.Offline))) and
-	    (convert(date, p.Offline) <= @EndDate or (@EndDate between convert(date,p.Inline) and convert(date,p.Offline))) and
-		not exists(select 1 from #tmpP_SewingLineScheduleBySP t 
+if(@DateType = 'SciDelivery')
+begin
+	delete p
+	from P_SewingLineScheduleBySP p
+	where	p.SciDelivery >= @StartDate  and p.SciDelivery <= @EndDate and
+			not exists(select 1 from #tmpP_SewingLineScheduleBySP t 
 												where	p.ID = t.ID)
+end
+else
+begin
+	delete p
+	from P_SewingLineScheduleBySP p
+	where	(convert(date, p.Inline) >= @StartDate or (@StartDate between convert(date,p.Inline) and convert(date,p.Offline))) and
+		    (convert(date, p.Offline) <= @EndDate or (@EndDate between convert(date,p.Inline) and convert(date,p.Offline))) and
+			not exists(select 1 from #tmpP_SewingLineScheduleBySP t 
+												where	p.ID = t.ID)	
+end
+
 
 update p set p.SewingLineID				= t.SewingLineID
 			,p.MDivisionID				= t.MDivisionID
