@@ -738,6 +738,7 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
                     DataRow[] errorDataRow = dt.Select($"EmployeeID = '{MyUtility.Convert.GetString(this.EmployeeData.Rows[0]["ID"])}' and NO <> '{MyUtility.Convert.GetString(dr["No"])}'");
                     if (errorDataRow.Length > 0)
                     {
+                        this.ReviseEmployeeToEmpty(dr);
                         MyUtility.Msg.WarningBox($"<{this.EmployeeData.Rows[0]["ID"]} {this.EmployeeData.Rows[0]["Name"]}> already been used in No.{MyUtility.Convert.GetString(errorDataRow[0]["No"])}!!");
                         return;
                     }
@@ -842,6 +843,7 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
                     DataRow[] errorDataRow = dt.Select($"EmployeeID = '{MyUtility.Convert.GetString(this.EmployeeData.Rows[0]["ID"])}' and NO <> '{MyUtility.Convert.GetString(dr["No"])}'");
                     if (errorDataRow.Length > 0)
                     {
+                        this.ReviseEmployeeToEmpty(dr);
                         MyUtility.Msg.WarningBox($"<{this.EmployeeData.Rows[0]["ID"]} {this.EmployeeData.Rows[0]["Name"]}> already been used in No.{MyUtility.Convert.GetString(errorDataRow[0]["No"])}!!");
                         return;
                     }
