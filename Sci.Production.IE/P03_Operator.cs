@@ -1,11 +1,14 @@
-﻿using Ict.Win;
+﻿using Ict;
+using Ict.Win;
 using Microsoft.Office.Interop.Excel;
+using Sci.Data;
 using Sci.Production.Class.Command;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Data.SqlClient;
+using System.Data.SqlTypes;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -31,7 +34,7 @@ namespace Sci.Production.IE
             this.dtDeful = dataTable;
             this.strSewingLineID = sewingLineID;
             bool isEmptySewingLine = MyUtility.Check.Empty(sewingLineID);
-            var strSewingWhere = isEmptySewingLine ? string.Empty : $"(SewingLineID = '{sewingLineID}' or Section = '{sewingLineID}')";
+            var strSewingWhere = isEmptySewingLine ? string.Empty : $"(Section = '{sewingLineID}')";
             this.dt = dataTable.Select(strSewingWhere).TryCopyToDataTable(dataTable);
         }
 

@@ -470,7 +470,7 @@ and BrandID = '{this.CurrentMaintain["BrandID"]}'
 
                     if (e.FormattedValue.ToString() != dr["EmployeeID"].ToString())
                     {
-                        this.GetEmployee(e.FormattedValue.ToString());
+                        this.GetEmployee(iD: e.FormattedValue.ToString());
                         if (this.EmployeeData.Rows.Count <= 0)
                         {
                             this.ReviseEmployeeToEmpty(dr);
@@ -480,10 +480,30 @@ and BrandID = '{this.CurrentMaintain["BrandID"]}'
                         }
                         else
                         {
-                            dr["EmployeeID"] = this.EmployeeData.Rows[0]["ID"];
-                            dr["EmployeeName"] = this.EmployeeData.Rows[0]["Name"];
-                            dr["EmployeeSkill"] = this.EmployeeData.Rows[0]["Skill"];
-                            dr.EndEdit();
+                            DataTable dt = (DataTable)this.detailgridbs.DataSource;
+                            DataRow[] errorDataRow = dt.Select($"EmployeeID = '{MyUtility.Convert.GetString(this.EmployeeData.Rows[0]["ID"])}' and NO <> '{MyUtility.Convert.GetString(dr["No"])}'");
+                            if (errorDataRow.Length > 0)
+                            {
+                                MyUtility.Msg.WarningBox($"<{this.EmployeeData.Rows[0]["ID"]} {this.EmployeeData.Rows[0]["Name"]}> already been used in No.{MyUtility.Convert.GetString(errorDataRow[0]["No"])}!!");
+                                return;
+                            }
+
+                            dt.DefaultView.Sort = this.selectDataTable_DefaultView_Sort == "ASC" ? "No ASC" : string.Empty;
+                            DataTable sortDataTable = dt.DefaultView.ToTable();
+
+                            DataRow[] listDataRows = sortDataTable.Select($"No = '{MyUtility.Convert.GetString(dr["No"])}'");
+                            if (listDataRows.Length > 0)
+                            {
+                                foreach (DataRow dataRow in listDataRows)
+                                {
+                                    int dataIndex = sortDataTable.Rows.IndexOf(dataRow);
+                                    DataRow row = this.detailgrid.GetDataRow<DataRow>(dataIndex);
+                                    row["EmployeeID"] = this.EmployeeData.Rows[0]["ID"];
+                                    row["EmployeeName"] = this.EmployeeData.Rows[0]["Name"];
+                                    row["EmployeeSkill"] = this.EmployeeData.Rows[0]["Skill"];
+                                    row.EndEdit();
+                                }
+                            }
                         }
                     }
                 }
@@ -548,9 +568,16 @@ and BrandID = '{this.CurrentMaintain["BrandID"]}'
                         return;
                     }
 
+                    if (!e.FormattedValue.ToString().Contains(","))
+                    {
+                        MyUtility.Msg.WarningBox(string.Format("< Employee Name: {0} > not found!!!", e.FormattedValue.ToString()));
+                        this.ReviseEmployeeToEmpty(dr);
+                        return;
+                    }
+
                     if (e.FormattedValue.ToString() != dr["EmployeeName"].ToString())
                     {
-                        this.GetEmployee(e.FormattedValue.ToString());
+                        this.GetEmployee(null, name: e.FormattedValue.ToString());
                         if (this.EmployeeData.Rows.Count <= 0)
                         {
                             this.ReviseEmployeeToEmpty(dr);
@@ -560,10 +587,30 @@ and BrandID = '{this.CurrentMaintain["BrandID"]}'
                         }
                         else
                         {
-                            dr["EmployeeID"] = this.EmployeeData.Rows[0]["ID"];
-                            dr["EmployeeName"] = this.EmployeeData.Rows[0]["Name"];
-                            dr["EmployeeSkill"] = this.EmployeeData.Rows[0]["Skill"];
-                            dr.EndEdit();
+                            DataTable dt = (DataTable)this.detailgridbs.DataSource;
+                            DataRow[] errorDataRow = dt.Select($"EmployeeID = '{MyUtility.Convert.GetString(this.EmployeeData.Rows[0]["ID"])}' and NO <> '{MyUtility.Convert.GetString(dr["No"])}'");
+                            if (errorDataRow.Length > 0)
+                            {
+                                MyUtility.Msg.WarningBox($"<{this.EmployeeData.Rows[0]["ID"]} {this.EmployeeData.Rows[0]["Name"]}> already been used in No.{MyUtility.Convert.GetString(errorDataRow[0]["No"])}!!");
+                                return;
+                            }
+
+                            dt.DefaultView.Sort = this.selectDataTable_DefaultView_Sort == "ASC" ? "No ASC" : string.Empty;
+                            DataTable sortDataTable = dt.DefaultView.ToTable();
+
+                            DataRow[] listDataRows = sortDataTable.Select($"No = '{MyUtility.Convert.GetString(dr["No"])}'");
+                            if (listDataRows.Length > 0)
+                            {
+                                foreach (DataRow dataRow in listDataRows)
+                                {
+                                    int dataIndex = sortDataTable.Rows.IndexOf(dataRow);
+                                    DataRow row = this.detailgrid.GetDataRow<DataRow>(dataIndex);
+                                    row["EmployeeID"] = this.EmployeeData.Rows[0]["ID"];
+                                    row["EmployeeName"] = this.EmployeeData.Rows[0]["Name"];
+                                    row["EmployeeSkill"] = this.EmployeeData.Rows[0]["Skill"];
+                                    row.EndEdit();
+                                }
+                            }
                         }
                     }
                 }
@@ -864,8 +911,16 @@ and Name = @PPA
         }
 
         // 撈出Employee資料
-        private void GetEmployee(string iD)
+        private void GetEmployee(string iD, string name = "")
         {
+            string lastName = string.Empty;
+            string firstName = string.Empty;
+            if (!MyUtility.Check.Empty(name))
+            {
+                string[] nameParts = name.Split(',');
+                lastName = nameParts[0];
+                firstName = nameParts[1];
+            }
 
             string strDept = string.Empty;
             string strPosition = string.Empty;
@@ -940,16 +995,24 @@ and Name = @PPA
             {
                 sp1,
                 sp2,
-                new SqlParameter("@SewingLine" , this.CurrentMaintain["SewingLineID"] + this.comboSewingTeam1.Text),
+                new SqlParameter("@SewingLine", this.CurrentMaintain["SewingLineID"] + this.comboSewingTeam1.Text),
+                new SqlParameter("@LastName", lastName),
+                new SqlParameter("@FirstName", firstName),
             };
 
             if (MyUtility.Check.Empty(this.CurrentMaintain["FactoryID"]))
             {
-                sqlCmd = $@"select ID,FirstName,LastName,Section,Skill,SewingLineID , [Name] = iif(LastName+ ','+ FirstName <> ',' ,LastName+ ','+ FirstName,'') from Employee WITH (NOLOCK) where (ResignationDate > GETDATE() or ResignationDate is null) and Junk = 0 {strWhere} " + (iD == null ? string.Empty : " and ID = @id "); //+ (IsEmptySewingLine ? string.Empty : " and (SewingLineID = @SewingLine or Section = @SewingLine)");
+                sqlCmd = $@"select ID,FirstName,LastName,Section,Skill,SewingLineID , [Name] = iif(LastName+ ','+ FirstName <> ',' ,LastName+ ','+ FirstName,'') from Employee WITH (NOLOCK) where (ResignationDate > GETDATE() or ResignationDate is null) and Junk = 0 {strWhere} "//+ (IsEmptySewingLine ? string.Empty : " and (SewingLineID = @SewingLine or Section = @SewingLine)");
+                + (iD == null ? string.Empty : " and ID = @id ")
+                + (MyUtility.Check.Empty(lastName) ? string.Empty : " and LastName = @LastName")
+                + (MyUtility.Check.Empty(firstName) ? string.Empty : " and FirstName = @FirstName");
             }
             else
             {
-                sqlCmd = $@"select ID,FirstName,LastName,Section,Skill,SewingLineID , [Name] = iif(LastName+ ','+ FirstName <> ',' ,LastName+ ','+ FirstName,'')  from Employee WITH (NOLOCK) where (ResignationDate > GETDATE() or ResignationDate is null) and Junk = 0 and FactoryID = @factoryid {strWhere} " + (iD == null ? string.Empty : " and ID = @id "); // + (IsEmptySewingLine ? string.Empty : " and (SewingLineID = @SewingLine or Section = @SewingLine)");
+                sqlCmd = $@"select ID,FirstName,LastName,Section,Skill,SewingLineID , [Name] = iif(LastName+ ','+ FirstName <> ',' ,LastName+ ','+ FirstName,'')  from Employee WITH (NOLOCK) where (ResignationDate > GETDATE() or ResignationDate is null) and Junk = 0 and FactoryID = @factoryid {strWhere} " 
+                + (iD == null ? string.Empty : " and ID = @id ")
+                + (MyUtility.Check.Empty(lastName) ? string.Empty : " and LastName = @LastName")
+                + (MyUtility.Check.Empty(firstName) ? string.Empty : " and FirstName = @FirstName"); // + (IsEmptySewingLine ? string.Empty : " and (SewingLineID = @SewingLine or Section = @SewingLine)");
             }
 
             DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out this.EmployeeData);
