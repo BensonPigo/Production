@@ -73,10 +73,12 @@ namespace Sci.Production.Quality
             string sqlWhere = string.Empty, rWhere = string.Empty, oWhere = string.Empty;
 
             string sqlTotalYardageArrDate = string.Empty;
+            string sqlActTotalYdsArrDate = string.Empty;
 
             if (!this.dateArriveWHDate.Value1.HasValue && !this.dateArriveWHDate.Value2.HasValue)
             {
                 sqlTotalYardageArrDate = $@" select Val = 0.0 ";
+                sqlActTotalYdsArrDate = $@" select Val = 0.0 ";
             }
             else
             {
@@ -87,6 +89,17 @@ inner join Receiving_Detail rd on rd.PoId = fi.POID and rd.Seq1 = fi.Seq1 and rd
 inner join Receiving r on r.Id=rd.Id
 where fi.POID = f.POID AND fi.Seq1 = f.Seq1 AND fi.Seq2 = f.Seq2 AND rd.Id=f.ReceivingID AND rd.ForInspection=1 ";
 
+                sqlActTotalYdsArrDate = $@"
+select ActualYds = Sum(fp.ActualYds) 
+from FIR_Physical fp 
+where fp.ID = f.ID and EXISTS(
+	select 1
+	from  Receiving r  
+	where r.Id=f.ReceivingID
+	WhseArrival_1
+    WhseArrival_2
+)
+";
             }
 
             List<string> sqlWheres = new List<string>();
@@ -109,15 +122,26 @@ where fi.POID = f.POID AND fi.Seq1 = f.Seq1 AND fi.Seq2 = f.Seq2 AND rd.Id=f.Rec
             {
                 rWheres.Add("rd.WhseArrival >= @ArrDate1");
                 sqlTotalYardageArrDate += " AND r.WhseArrival >= @ArrDate1";
+                sqlActTotalYdsArrDate = sqlActTotalYdsArrDate.Replace($@"WhseArrival_1", "AND r.WhseArrival >= @ArrDate1");
                 this.lis.Add(new SqlParameter("@ArrDate1", this.DateArrStart));
+            }
+            else
+            {
+                sqlActTotalYdsArrDate.Replace("WhseArrival_1", string.Empty);
             }
 
             if (!this.dateArriveWHDate.Value2.Empty())
             {
                 rWheres.Add("rd.WhseArrival <= @ArrDate2");
                 sqlTotalYardageArrDate += " AND r.WhseArrival <= @ArrDate2";
+                sqlActTotalYdsArrDate = sqlActTotalYdsArrDate.Replace($@"WhseArrival_2", "AND r.WhseArrival <= @ArrDate2");
                 this.lis.Add(new SqlParameter("@ArrDate2", this.DateArrEnd));
             }
+            else
+            {
+                sqlActTotalYdsArrDate.Replace("WhseArrival_2", string.Empty);
+            }
+
 
             if (!this.dateSCIDelivery.Value1.Empty())
             {
@@ -292,7 +316,7 @@ select
 	,[PhysicalInspector] = (select name from Pass1 where id = f.PhysicalInspector)
 	,F.PhysicalDate
 	,TotalYardage = TotalYardage.Val
-    ,TotalYardageArrDate = {(!this.dateArriveWHDate.Value1.HasValue && !this.dateArriveWHDate.Value2.HasValue ? "NULL" : "TotalYardageArrDate.Val - fta.ActualYds")}
+    ,TotalYardageArrDate = {(!this.dateArriveWHDate.Value1.HasValue && !this.dateArriveWHDate.Value2.HasValue ? "NULL" : "TotalYardageArrDate.Val - ActTotalYdsArrDate.ActualYds")}
 	,fta.ActualYds
 	,[InspectionRate] = ROUND(iif(t.StockQty = 0,0,CAST (fta.ActualYds/t.StockQty AS FLOAT)) ,3)
 	,ftp.TotalPoint
@@ -457,6 +481,9 @@ outer apply(
     {sqlTotalYardageArrDate}
 ) TotalYardageArrDate
 outer apply(select ActualYds = Sum(fp.ActualYds) from FIR_Physical fp where fp.id=f.id) fta
+outer apply(
+    {sqlActTotalYdsArrDate}
+) ActTotalYdsArrDate
 outer apply(select TicketYds = Sum(fp.TicketYds), TotalPoint = Sum(fp.TotalPoint) from FIR_Physical fp where fp.id = f.id and (fp.Grade = 'B' or fp.Grade = 'C')) fptbc
 outer apply(select TotalPoint = Sum(fp.TotalPoint) from FIR_Physical fp where fp.id = f.id and fp.Grade = 'A') fpta
 outer apply(select  CrockingInspector = (select name from Pass1 where id = CrockingInspector)
