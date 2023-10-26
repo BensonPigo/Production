@@ -332,6 +332,7 @@
             // 
             this.chkJunk.AutoSize = true;
             this.chkJunk.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Junk", true));
+            this.chkJunk.Enabled = false;
             this.chkJunk.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.chkJunk.IsSupportEditMode = false;
             this.chkJunk.Location = new System.Drawing.Point(544, 16);

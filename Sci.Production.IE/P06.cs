@@ -733,6 +733,15 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
                 if (e.FormattedValue.ToString() != dr["EmployeeID"].ToString())
                 {
                     this.GetEmployee(null, e.FormattedValue.ToString(), this.CurrentMaintain["FactoryID"].ToString(), this.CurrentMaintain["SewingLineID"].ToString());
+
+                    DataTable dt = (DataTable)this.detailgridbs.DataSource;
+                    DataRow[] errorDataRow = dt.Select($"EmployeeID = '{MyUtility.Convert.GetString(this.EmployeeData.Rows[0]["ID"])}' and NO <> '{MyUtility.Convert.GetString(dr["No"])}'");
+                    if (errorDataRow.Length > 0)
+                    {
+                        MyUtility.Msg.WarningBox($"<{this.EmployeeData.Rows[0]["ID"]} {this.EmployeeData.Rows[0]["Name"]}> already been used in No.{MyUtility.Convert.GetString(errorDataRow[0]["No"])}!!");
+                        return;
+                    }
+
                     if (this.EmployeeData.Rows.Count <= 0)
                     {
                         this.ReviseEmployeeToEmpty(dr);
@@ -829,6 +838,14 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
                 if (e.FormattedValue.ToString() != dr["EmployeeName"].ToString())
                 {
                     this.GetEmployee(e.FormattedValue.ToString(), null, this.CurrentMaintain["FactoryID"].ToString(), this.CurrentMaintain["SewingLineID"].ToString());
+                    DataTable dt = (DataTable)this.detailgridbs.DataSource;
+                    DataRow[] errorDataRow = dt.Select($"EmployeeID = '{MyUtility.Convert.GetString(this.EmployeeData.Rows[0]["ID"])}' and NO <> '{MyUtility.Convert.GetString(dr["No"])}'");
+                    if (errorDataRow.Length > 0)
+                    {
+                        MyUtility.Msg.WarningBox($"<{this.EmployeeData.Rows[0]["ID"]} {this.EmployeeData.Rows[0]["Name"]}> already been used in No.{MyUtility.Convert.GetString(errorDataRow[0]["No"])}!!");
+                        return;
+                    }
+
                     if (this.EmployeeData.Rows.Count <= 0)
                     {
                         this.ReviseEmployeeToEmpty(dr);
