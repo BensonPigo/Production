@@ -1,10 +1,20 @@
 ﻿CREATE PROCEDURE [dbo].[P_Import_PPIC_R01_SewingLineScheduleBySP]
 	@StartDate date = null,
-	@EndDate date = null
+	@EndDate date = null,
+	@DateType varchar(30) = ''
 AS
 begin
 Declare @SewingDateFromString varchar(8) = Format(@StartDate, 'yyyyMMdd')
 Declare @SewingDateToString varchar(8) = Format(@EndDate, 'yyyyMMdd')
+
+Declare @DateParameterFrom varchar(30) = '@SewingDateFrom'
+Declare @DateParameterTo varchar(30) = '@SewingDateTo'
+
+if(@DateType = 'SciDelivery')
+begin
+	set @DateParameterFrom = '@SciDeliveryFrom'
+	set @DateParameterTo = '@SciDeliveryTo'
+end
 
 select * into #tmpP_SewingLineScheduleBySP
 from P_SewingLineScheduleBySP
@@ -114,19 +124,31 @@ select
 ,TTL_PRINTING_PCS
 ,TTL_PRINTING_PPU_PPU
 ,SubCon
-from OPENQUERY([MainServer], '' SET NOCOUNT ON; exec Production.dbo.PPIC_R01_SewingLineScheduleBySP @SewingDateFrom = '''''+ @SewingDateFromString +''''', @SewingDateTo = '''''+ @SewingDateToString +''''''')
+from OPENQUERY([MainServer], '' SET NOCOUNT ON; exec Production.dbo.PPIC_R01_SewingLineScheduleBySP '+@DateParameterFrom+' = '''''+ @SewingDateFromString +''''', '+@DateParameterTo+' = '''''+ @SewingDateToString +''''''')
 
 '
 
 EXEC sp_executesql @DynamicSQL
 
 -- 更新 P_IssueFabricByCuttingTransactionList
-delete p
-from P_SewingLineScheduleBySP p
-where	(convert(date, p.Inline) >= @StartDate or (@StartDate between convert(date,p.Inline) and convert(date,p.Offline))) and
-	    (convert(date, p.Offline) <= @EndDate or (@EndDate between convert(date,p.Inline) and convert(date,p.Offline))) and
-		not exists(select 1 from #tmpP_SewingLineScheduleBySP t 
+if(@DateType = 'SciDelivery')
+begin
+	delete p
+	from P_SewingLineScheduleBySP p
+	where	p.SciDelivery >= @StartDate  and p.SciDelivery <= @EndDate and
+			not exists(select 1 from #tmpP_SewingLineScheduleBySP t 
 												where	p.ID = t.ID)
+end
+else
+begin
+	delete p
+	from P_SewingLineScheduleBySP p
+	where	(convert(date, p.Inline) >= @StartDate or (@StartDate between convert(date,p.Inline) and convert(date,p.Offline))) and
+		    (convert(date, p.Offline) <= @EndDate or (@EndDate between convert(date,p.Inline) and convert(date,p.Offline))) and
+			not exists(select 1 from #tmpP_SewingLineScheduleBySP t 
+												where	p.ID = t.ID)	
+end
+
 
 update p set p.SewingLineID				= t.SewingLineID
 			,p.MDivisionID				= t.MDivisionID
