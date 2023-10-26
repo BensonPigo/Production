@@ -685,7 +685,7 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
                 {
                     DataRow dr = sourceGrid.GetDataRow<DataRow>(e.RowIndex);
 
-                    this.GetEmployee(null, this.CurrentMaintain["FactoryID"].ToString(), this.CurrentMaintain["SewingLineID"].ToString());
+                    this.GetEmployee(null,null, this.CurrentMaintain["FactoryID"].ToString(), this.CurrentMaintain["SewingLineID"].ToString());
                     P03_Operator callNextForm = new P03_Operator(this.EmployeeData, MyUtility.Convert.GetString(this.CurrentMaintain["SewingLineID"]) + this.txtSewingTeam.Text);
                     DialogResult result = callNextForm.ShowDialog(this);
                     if (result == DialogResult.Cancel)
@@ -732,7 +732,7 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
 
                 if (e.FormattedValue.ToString() != dr["EmployeeID"].ToString())
                 {
-                    this.GetEmployee(e.FormattedValue.ToString(), this.CurrentMaintain["FactoryID"].ToString(), this.CurrentMaintain["SewingLineID"].ToString());
+                    this.GetEmployee(null, e.FormattedValue.ToString(), this.CurrentMaintain["FactoryID"].ToString(), this.CurrentMaintain["SewingLineID"].ToString());
                     if (this.EmployeeData.Rows.Count <= 0)
                     {
                         this.ReviseEmployeeToEmpty(dr);
@@ -781,7 +781,7 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
                 {
                     DataRow dr = sourceGrid.GetDataRow<DataRow>(e.RowIndex);
 
-                    this.GetEmployee(null, this.CurrentMaintain["FactoryID"].ToString(), this.CurrentMaintain["SewingLineID"].ToString());
+                    this.GetEmployee(null,null, this.CurrentMaintain["FactoryID"].ToString(), this.CurrentMaintain["SewingLineID"].ToString());
                     P03_Operator callNextForm = new P03_Operator(this.EmployeeData, MyUtility.Convert.GetString(this.CurrentMaintain["SewingLineID"]) + this.txtSewingTeam.Text);
                     DialogResult result = callNextForm.ShowDialog(this);
                     if (result == DialogResult.Cancel)
@@ -828,7 +828,7 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
 
                 if (e.FormattedValue.ToString() != dr["EmployeeName"].ToString())
                 {
-                    this.GetEmployee(e.FormattedValue.ToString(), this.CurrentMaintain["FactoryID"].ToString(), this.CurrentMaintain["SewingLineID"].ToString());
+                    this.GetEmployee(e.FormattedValue.ToString(), null, this.CurrentMaintain["FactoryID"].ToString(), this.CurrentMaintain["SewingLineID"].ToString());
                     if (this.EmployeeData.Rows.Count <= 0)
                     {
                         this.ReviseEmployeeToEmpty(dr);
@@ -1081,8 +1081,18 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
         }
 
         // 撈出Employee資料
-        private void GetEmployee(string iD, string factoryID, string sewinglineID)
+        private void GetEmployee(string name, string iD, string factoryID, string sewinglineID)
         {
+
+            string lastName = string.Empty;
+            string firstName = string.Empty;
+            if (!MyUtility.Check.Empty(name))
+            {
+                string[] nameParts = name.Split(',');
+                lastName = nameParts[0];
+                firstName = nameParts[1];
+            }
+
             string sqlCmd;
 
             string sqlWhere = string.Empty;
@@ -1148,7 +1158,11 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
                 sqlWhere += $" and FactoryID = '{factoryID}' ";
             }
 
-            sqlCmd = "select ID,Name,FirstName,LastName,Section,Skill,SewingLineID,FactoryID from Employee WITH (NOLOCK) where ResignationDate is null " + sqlWhere + strWhere;
+            sqlCmd = "select ID,Name,FirstName,LastName,Section,Skill,SewingLineID,FactoryID from Employee WITH (NOLOCK) where ResignationDate is null " 
+                + sqlWhere
+                + strWhere
+                + (MyUtility.Check.Empty(lastName) ? string.Empty : $@" and LastName = '{lastName}' ")
+                + (MyUtility.Check.Empty(firstName) ? string.Empty : $@" and FirstName = '{firstName}'");
 
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out this.EmployeeData);
             if (!result)
