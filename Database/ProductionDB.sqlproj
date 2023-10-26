@@ -2889,6 +2889,7 @@
     <Build Include="dbo\Tables\LineMappingBalancing_NotHitTargetReason.sql" />
     <Build Include="dbo\Functions\GetQA_R08_Detail.sql" />
     <Build Include="dbo\Stored Procedures\GetFabricInspLabSummaryReport.sql" />
+    <Build Include="dbo\Stored Procedures\PPIC_R01_SewingLineScheduleBySP.sql" />
     <Build Include="dbo\Stored Procedures\GetCuttingBCS.sql" />
   </ItemGroup>
   <ItemGroup>
