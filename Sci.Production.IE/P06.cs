@@ -744,11 +744,11 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
                     this.GetEmployee(null, e.FormattedValue.ToString(), this.CurrentMaintain["FactoryID"].ToString(), this.CurrentMaintain["SewingLineID"].ToString());
 
                     DataTable dt = (DataTable)this.detailgridbs.DataSource;
-                    DataRow[] errorDataRow = dt.Select($"EmployeeID = '{MyUtility.Convert.GetString(this.EmployeeData.Rows[0]["ID"])}' and NO <> '{MyUtility.Convert.GetString(dr["No"])}'");
+                    DataRow[] errorDataRow = dt.Select($"EmployeeID = '{MyUtility.Convert.GetString(e.FormattedValue.ToString())}' and NO <> '{MyUtility.Convert.GetString(dr["No"])}'");
                     if (errorDataRow.Length > 0)
                     {
                         this.ReviseEmployeeToEmpty(dr);
-                        MyUtility.Msg.WarningBox($"<{this.EmployeeData.Rows[0]["ID"]} {this.EmployeeData.Rows[0]["Name"]}> already been used in No.{MyUtility.Convert.GetString(errorDataRow[0]["No"])}!!");
+                        MyUtility.Msg.WarningBox($"<{e.FormattedValue.ToString()} {this.EmployeeData.Rows[0]["Name"]}> already been used in No.{MyUtility.Convert.GetString(errorDataRow[0]["No"])}!!");
                         return;
                     }
 
@@ -854,11 +854,18 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
                     return;
                 }
 
+                if (!e.FormattedValue.ToString().Contains(","))
+                {
+                    MyUtility.Msg.WarningBox(string.Format("< Employee Name: {0} > not found!!!", e.FormattedValue.ToString()));
+                    this.ReviseEmployeeToEmpty(dr);
+                    return;
+                }
+
                 if (e.FormattedValue.ToString() != dr["EmployeeName"].ToString())
                 {
                     this.GetEmployee(e.FormattedValue.ToString(), null, this.CurrentMaintain["FactoryID"].ToString(), this.CurrentMaintain["SewingLineID"].ToString());
                     DataTable dt = (DataTable)this.detailgridbs.DataSource;
-                    DataRow[] errorDataRow = dt.Select($"EmployeeID = '{MyUtility.Convert.GetString(this.EmployeeData.Rows[0]["ID"])}' and NO <> '{MyUtility.Convert.GetString(dr["No"])}'");
+                    DataRow[] errorDataRow = dt.Select($"EmployeeName = '{MyUtility.Convert.GetString(e.FormattedValue.ToString())}' and NO <> '{MyUtility.Convert.GetString(dr["No"])}'");
                     if (errorDataRow.Length > 0)
                     {
                         this.ReviseEmployeeToEmpty(dr);
@@ -870,7 +877,7 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
                     {
                         this.ReviseEmployeeToEmpty(dr);
                         e.Cancel = true;
-                        MyUtility.Msg.WarningBox(string.Format("< Employee Name ID: {0} > not found!!!", e.FormattedValue.ToString()));
+                        MyUtility.Msg.WarningBox(string.Format("< Employee Name : {0} > not found!!!", e.FormattedValue.ToString()));
                         return;
                     }
                     else
@@ -1123,7 +1130,7 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
 
             string lastName = string.Empty;
             string firstName = string.Empty;
-            if (!MyUtility.Check.Empty(name))
+            if (!MyUtility.Check.Empty(name) && name.Contains(","))
             {
                 string[] nameParts = name.Split(',');
                 lastName = nameParts[0];

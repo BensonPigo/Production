@@ -568,6 +568,13 @@ and BrandID = '{this.CurrentMaintain["BrandID"]}'
                         return;
                     }
 
+                    if (!e.FormattedValue.ToString().Contains(","))
+                    {
+                        MyUtility.Msg.WarningBox(string.Format("< Employee Name: {0} > not found!!!", e.FormattedValue.ToString()));
+                        this.ReviseEmployeeToEmpty(dr);
+                        return;
+                    }
+
                     if (e.FormattedValue.ToString() != dr["EmployeeName"].ToString())
                     {
                         this.GetEmployee(null, name: e.FormattedValue.ToString());
