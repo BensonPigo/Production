@@ -693,6 +693,15 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
                         return;
                     }
 
+                    DataTable dt = (DataTable)this.detailgridbs.DataSource;
+                    DataRow[] errorDataRow = dt.Select($"EmployeeID = '{MyUtility.Convert.GetString(this.EmployeeData.Rows[0]["ID"])}' and NO <> '{MyUtility.Convert.GetString(dr["No"])}'");
+                    if (errorDataRow.Length > 0)
+                    {
+                        this.ReviseEmployeeToEmpty(dr);
+                        MyUtility.Msg.WarningBox($"<{this.EmployeeData.Rows[0]["ID"]} {this.EmployeeData.Rows[0]["Name"]}> already been used in No.{MyUtility.Convert.GetString(errorDataRow[0]["No"])}!!");
+                        return;
+                    }
+
                     dr["EmployeeID"] = callNextForm.SelectOperator["ID"];
                     dr["EmployeeName"] = callNextForm.SelectOperator["Name"];
                     dr["EmployeeSkill"] = callNextForm.SelectOperator["Skill"];
@@ -796,6 +805,15 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
                     DialogResult result = callNextForm.ShowDialog(this);
                     if (result == DialogResult.Cancel)
                     {
+                        return;
+                    }
+
+                    DataTable dt = (DataTable)this.detailgridbs.DataSource;
+                    DataRow[] errorDataRow = dt.Select($"EmployeeID = '{MyUtility.Convert.GetString(this.EmployeeData.Rows[0]["ID"])}' and NO <> '{MyUtility.Convert.GetString(dr["No"])}'");
+                    if (errorDataRow.Length > 0)
+                    {
+                        this.ReviseEmployeeToEmpty(dr);
+                        MyUtility.Msg.WarningBox($"<{this.EmployeeData.Rows[0]["ID"]} {this.EmployeeData.Rows[0]["Name"]}> already been used in No.{MyUtility.Convert.GetString(errorDataRow[0]["No"])}!!");
                         return;
                     }
 
