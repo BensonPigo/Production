@@ -694,7 +694,7 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
                     }
 
                     DataTable dt = (DataTable)this.detailgridbs.DataSource;
-                    DataRow[] errorDataRow = dt.Select($"EmployeeID = '{MyUtility.Convert.GetString(this.EmployeeData.Rows[0]["ID"])}' and NO <> '{MyUtility.Convert.GetString(dr["No"])}'");
+                    DataRow[] errorDataRow = dt.Select($"EmployeeID = '{MyUtility.Convert.GetString(callNextForm.SelectOperator["ID"])}' and NO <> '{MyUtility.Convert.GetString(dr["No"])}'");
                     if (errorDataRow.Length > 0)
                     {
                         this.ReviseEmployeeToEmpty(dr);
@@ -809,7 +809,7 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
                     }
 
                     DataTable dt = (DataTable)this.detailgridbs.DataSource;
-                    DataRow[] errorDataRow = dt.Select($"EmployeeID = '{MyUtility.Convert.GetString(this.EmployeeData.Rows[0]["ID"])}' and NO <> '{MyUtility.Convert.GetString(dr["No"])}'");
+                    DataRow[] errorDataRow = dt.Select($"EmployeeID = '{MyUtility.Convert.GetString(callNextForm.SelectOperator["ID"])}' and NO <> '{MyUtility.Convert.GetString(dr["No"])}'");
                     if (errorDataRow.Length > 0)
                     {
                         this.ReviseEmployeeToEmpty(dr);
