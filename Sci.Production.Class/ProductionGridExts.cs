@@ -5,6 +5,10 @@ using System.Windows.Forms;
 using Ict.Win;
 using Ict;
 using System.Data.SqlClient;
+using Sci.Win.Tems;
+using Sci.Data;
+using System.Net.Mail;
+using System.Linq;
 
 namespace Sci
 {

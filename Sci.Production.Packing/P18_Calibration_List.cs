@@ -1,24 +1,22 @@
 ﻿using Ict;
 using Ict.Win;
-using org.apache.pdfbox.io;
 using Sci.Data;
 using System;
-using System.Collections.Generic;
 using System.Data;
-using System.Diagnostics;
 
 namespace Sci.Production.Packing
 {
     public partial class P18_Calibration_List : Sci.Win.Subs.Input4
     {
-        public static string MachineID;
+        private string MachineID;
+        private int CalibrationListCnt;
 
         public P18_Calibration_List(bool canedit, string keyvalue1, string keyvalue2, string keyvalue3)
              : base(canedit, keyvalue1, keyvalue2, keyvalue3)
         {
             InitializeComponent();
-
-            this.comboMDMachineID.DataSource = new List<string>();
+            this.MachineID = keyvalue1;
+            this.displayMDMachineID.Text = this.MachineID;
         }
 
         protected override void OnUIConvertToMaintain()
@@ -31,7 +29,7 @@ namespace Sci.Production.Packing
 
         protected override DualResult OnRequery()
         {
-            if (this.comboMDMachineID.SelectedValue == null)
+            if (MyUtility.Check.Empty(this.displayMDMachineID.Text))
             {
                 return Ict.Result.True;
             }
@@ -67,7 +65,7 @@ Point9 = 1
 ,SubmitDate
 from MDCalibrationList
 where 1=1
-and MachineID = '{this.comboMDMachineID.Text}'
+and MachineID = '{this.displayMDMachineID.Text}'
 and CalibrationDate = CONVERT(date,getdate())
 ";
             DualResult returnResult = DBProxy.Current.Select(null, selectCommand, out DataTable dtDtail);
@@ -83,39 +81,6 @@ and CalibrationDate = CONVERT(date,getdate())
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-
-            // combo Data Source設定
-            DataTable dtMDCalibrationList;
-            Ict.DualResult result;
-            if (result = DBProxy.Current.Select(null, @"
-select row = 0, MachineID = '',operator = ''
-union all
-select row = ROW_NUMBER () over(order by MachineID), MachineID , operator
-from MDMachineBasic
-Where Junk = 0
-", out dtMDCalibrationList))
-            {
-                this.comboMDMachineID.DataSource = dtMDCalibrationList;
-                this.comboMDMachineID.DisplayMember = "MachineID";
-                this.comboMDMachineID.ValueMember = "MachineID";
-            }
-            else
-            {
-                this.ShowErr(result);
-            }
-
-            // 根據userid來自動帶出MachineID
-            DataRow[] drUserRowNB = dtMDCalibrationList.Select($@" operator = '{Env.User.UserID}'");
-            if (drUserRowNB.Length > 0)
-            {
-                int row = MyUtility.Convert.GetInt(drUserRowNB[0]["row"]);
-                this.comboMDMachineID.SelectedIndex = row;
-                MachineID = this.comboMDMachineID.Text;
-            }
-            else
-            {
-                this.comboMDMachineID.SelectedIndex = 0;
-            }
         }
 
         protected override bool OnGridSetup()
@@ -225,7 +190,7 @@ Where Junk = 0
 
             DataRow selectDr = ((DataRowView)this.grid.GetSelecteds(SelectedSort.Index)[0]).Row;
 
-            selectDr["MachineID"] = this.comboMDMachineID.Text;
+            selectDr["MachineID"] = this.displayMDMachineID.Text;
             selectDr["CalibrationDate"] = DateTime.Now;
             selectDr["SubmitDate"] = DateTime.Now;
             selectDr["Operator"] = Env.User.UserID;
@@ -245,20 +210,37 @@ Where Junk = 0
             }
         }
 
-        private void comboMDMachineID_SelectedValueChanged(object sender, EventArgs e)
-        {
-            if (this.comboMDMachineID.SelectedValue == null)
-            {
-                return;
-            }
-
-            MachineID = this.comboMDMachineID.Text;
-            this.OnRequery();
-        }
-
         private void btnClose_Click(object sender, EventArgs e)
         {
             this.Close();
+        }
+
+        protected override bool OnSaveBefore()
+        {
+            string sqlcmd = $@"
+    select cnt = count(1) from MDCalibrationList 
+    where CONVERT(date, SubmitDate) = CONVERT(date,GETDATE())
+    and Operator = '{Env.User.UserID}'";
+            if (MyUtility.Check.Seek(sqlcmd, out DataRow dr))
+            {
+                this.CalibrationListCnt = MyUtility.Convert.GetInt(dr["cnt"]);
+            }
+            else
+            {
+                this.CalibrationListCnt = 0;
+            }
+
+            this.grid.ValidateControl();
+            this.gridbs.EndEdit();
+            foreach (DataRow drC in this.Datas)
+            {
+                if (MyUtility.Check.Empty(drC["CalibrationTime"]))
+                {
+                    drC.Delete();
+                }
+            }
+
+            return base.OnSaveBefore();
         }
 
         protected override void OnSaveAfter()
@@ -272,7 +254,7 @@ select top 2
 [Date] =　SUBSTRING(CONVERT(varchar, CalibrationDate)　+' '+　convert(varchar,CalibrationTime),0,17)
 from MDCalibrationList
 where 1=1
-and MachineID = '{this.comboMDMachineID.Text}'
+and MachineID = '{this.displayMDMachineID.Text}'
 and CalibrationDate = CONVERT(date,getdate())
 order by CalibrationTime desc
 ";
@@ -282,10 +264,27 @@ order by CalibrationTime desc
                     this.ShowErr(returnResult);
                 }
 
-                if (dtDtail.Rows.Count == 2)
+                if (dtDtail != null && dtDtail.Rows.Count > 0)
                 {
-                    P18_Calibration_History callForm = new P18_Calibration_History(dtDtail.Rows[0]["Date"].ToString(), dtDtail.Rows[1]["Date"].ToString());
-                    callForm.ShowDialog(this);
+                    // 如果現在時間大於CalibrationTime 就取最後一筆CalibrationTime + 現在時間
+                    DateTime lastTime = (DateTime)MyUtility.Convert.GetDate(dtDtail.Rows[0]["Date"]);
+                    DateTime nowTime = DateTime.Now;
+
+                    // 代表有新增資料, 顯示資料庫倒數2筆資料
+                    if (this.gridbs.Count > this.CalibrationListCnt && dtDtail.Rows.Count == 2)
+                    {
+                        P18_Calibration_History callForm = new P18_Calibration_History(dtDtail.Rows[0]["Date"].ToString(), dtDtail.Rows[1]["Date"].ToString(), this.MachineID);
+                        callForm.ShowDialog(this);
+                    }
+                    else
+                    {
+                        P18_Calibration_History callForm = new P18_Calibration_History(nowTime.ToString("yyyy-MM-dd HH:mm"), lastTime.ToString("yyyy-MM-dd HH:mm"), this.MachineID);
+                        callForm.ShowDialog(this);
+                    }
+                }
+                else
+                {
+                    MyUtility.Msg.WarningBox("Please insert at least one Calibration Time!");
                 }
 
                 P18.timer.Start();

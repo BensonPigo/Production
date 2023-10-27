@@ -124,6 +124,8 @@ namespace Sci.Production.Prg.Entity
         private string mSpecSeason;
         private string mSpecCareCode;
         private string mSpecCustomerPO;
+        private string mSpecBuyMonth;
+        private string mSpecBuyerDlvMonth;
 
         /// <summary>
         /// ID
@@ -861,6 +863,24 @@ namespace Sci.Production.Prg.Entity
         {
             get { return this.mSpecCustomerPO; }
             set { this.mSpecCustomerPO = value; }
+        }
+
+        /// <summary>
+        /// BomSpec - BuyMonth
+        /// </summary>
+        public string SpecBuyMonth
+        {
+            get { return this.mSpecBuyMonth; }
+            set { this.mSpecBuyMonth = value; }
+        }
+
+        /// <summary>
+        /// BomSpec - BuyerDlvMonth
+        /// </summary>
+        public string SpecBuyerDlvMonth
+        {
+            get { return this.mSpecBuyerDlvMonth; }
+            set { this.mSpecBuyerDlvMonth = value; }
         }
 
         /// <summary>

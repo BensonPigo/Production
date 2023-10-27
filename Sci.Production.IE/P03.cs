@@ -312,7 +312,6 @@ and BrandID = '{this.CurrentMaintain["BrandID"]}'
             DataGridViewGeneratorCheckBoxColumnSettings hide = new DataGridViewGeneratorCheckBoxColumnSettings();
             DataGridViewGeneratorCheckBoxColumnSettings machineCount = new DataGridViewGeneratorCheckBoxColumnSettings();
 
-            DataGridViewGeneratorTextColumnSettings pardID = new DataGridViewGeneratorTextColumnSettings();
             TxtMachineGroup.CelltxtMachineGroup txtSubReason = (TxtMachineGroup.CelltxtMachineGroup)TxtMachineGroup.CelltxtMachineGroup.GetGridCell();
 
             #region No.的Valid
@@ -411,75 +410,6 @@ and BrandID = '{this.CurrentMaintain["BrandID"]}'
                 }
             };
             #endregion
-            #region ST/MC type的按右鍵與Validating
-            machine.EditingMouseDown += (s, e) =>
-            {
-                if (this.EditMode)
-                {
-                    if (e.Button == MouseButtons.Right)
-                    {
-                        if (e.RowIndex != -1)
-                        {
-                            DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
-                            string sqlCmd = "select ID,Description from MachineType WITH (NOLOCK) where Junk = 0";
-                            Win.Tools.SelectItem item = new Win.Tools.SelectItem(sqlCmd, "8,43", dr["MachineTypeID"].ToString())
-                            {
-                                Width = 590,
-                            };
-                            DialogResult returnResult = item.ShowDialog();
-                            if (returnResult == DialogResult.Cancel)
-                            {
-                                return;
-                            }
-
-                            e.EditingControl.Text = item.GetSelectedString();
-                        }
-                    }
-                }
-            };
-
-            machine.CellValidating += (s, e) =>
-            {
-                if (this.EditMode)
-                {
-                    DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
-                    if (!MyUtility.Check.Empty(e.FormattedValue) && e.FormattedValue.ToString() != dr["MachineTypeID"].ToString())
-                    {
-                        // sql參數
-                        System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter
-                        {
-                            ParameterName = "@id",
-                            Value = e.FormattedValue.ToString(),
-                        };
-
-                        IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>
-                        {
-                            sp1,
-                        };
-                        string sqlCmd = "select ID from MachineType WITH (NOLOCK) where Junk = 0 and ID = @id";
-                        DataTable machineData;
-                        DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out machineData);
-                        if (!result)
-                        {
-                            dr["MachineTypeID"] = string.Empty;
-                            e.Cancel = true;
-                            MyUtility.Msg.WarningBox("Sql connection fail!!\r\n" + result.ToString());
-                            return;
-                        }
-                        else
-                        {
-                            if (machineData.Rows.Count <= 0)
-                            {
-                                dr["MachineTypeID"] = string.Empty;
-                                e.Cancel = true;
-                                MyUtility.Msg.WarningBox(string.Format("< ST/MC type: {0} > not found!!!", e.FormattedValue.ToString()));
-                                return;
-                            }
-                        }
-                    }
-                }
-            };
-            #endregion
             #region Operator ID No.的按右鍵與Validating
             operatorid.EditingMouseDown += (s, e) =>
             {
@@ -490,26 +420,20 @@ and BrandID = '{this.CurrentMaintain["BrandID"]}'
                         if (e.RowIndex != -1)
                         {
                             DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
-
                             this.GetEmployee(null);
-
-                            Win.Tools.SelectItem item = new Win.Tools.SelectItem(this.EmployeeData, "ID,FirstName,LastName,Section,", "10,18,16,2,5", dr["EmployeeID"].ToString(), headercaptions: "ID,First Name,Last Name,Section")
-                            {
-                                Width = 700,
-                            };
-                            DialogResult returnResult = item.ShowDialog();
-                            if (returnResult == DialogResult.Cancel)
+                            P03_Operator callNextForm = new P03_Operator(this.EmployeeData, MyUtility.Convert.GetString(this.CurrentMaintain["SewingLineID"]) + this.comboSewingTeam1.Text );
+                            DialogResult result = callNextForm.ShowDialog(this);
+                            if (result == DialogResult.Cancel)
                             {
                                 return;
                             }
 
-                            IList<DataRow> selectedData = item.GetSelecteds();
                             DataTable dt = (DataTable)this.detailgridbs.DataSource;
 
-                            DataRow[] errorDataRow = dt.Select($"EmployeeID = '{MyUtility.Convert.GetString(selectedData[0]["ID"])}' and NO <> '{MyUtility.Convert.GetString(dr["No"])}'");
+                            DataRow[] errorDataRow = dt.Select($"EmployeeID = '{MyUtility.Convert.GetString(callNextForm.SelectOperator["ID"])}' and NO <> '{MyUtility.Convert.GetString(dr["No"])}'");
                             if (errorDataRow.Length > 0)
                             {
-                                MyUtility.Msg.WarningBox($"<{selectedData[0]["ID"]} {selectedData[0]["Name"]}> already been used in No.{MyUtility.Convert.GetString(errorDataRow[0]["No"])}!!");
+                                MyUtility.Msg.WarningBox($"<{callNextForm.SelectOperator["ID"]} {callNextForm.SelectOperator["Name"]}> already been used in No.{MyUtility.Convert.GetString(errorDataRow[0]["No"])}!!");
                                 return;
                             }
 
@@ -523,9 +447,9 @@ and BrandID = '{this.CurrentMaintain["BrandID"]}'
                                 {
                                     int dataIndex = sortDataTable.Rows.IndexOf(dataRow);
                                     DataRow row = this.detailgrid.GetDataRow<DataRow>(dataIndex);
-                                    row["EmployeeID"] = selectedData[0]["ID"];
-                                    row["EmployeeName"] = selectedData[0]["Name"];
-                                    row["EmployeeSkill"] = selectedData[0]["Skill"];
+                                    row["EmployeeID"] = callNextForm.SelectOperator["ID"];
+                                    row["EmployeeName"] = callNextForm.SelectOperator["Name"];
+                                    row["EmployeeSkill"] = callNextForm.SelectOperator["Skill"];
                                     row.EndEdit();
                                 }
                             }
@@ -546,7 +470,7 @@ and BrandID = '{this.CurrentMaintain["BrandID"]}'
 
                     if (e.FormattedValue.ToString() != dr["EmployeeID"].ToString())
                     {
-                        this.GetEmployee(e.FormattedValue.ToString());
+                        this.GetEmployee(iD: e.FormattedValue.ToString());
                         if (this.EmployeeData.Rows.Count <= 0)
                         {
                             this.ReviseEmployeeToEmpty(dr);
@@ -556,10 +480,30 @@ and BrandID = '{this.CurrentMaintain["BrandID"]}'
                         }
                         else
                         {
-                            dr["EmployeeID"] = this.EmployeeData.Rows[0]["ID"];
-                            dr["EmployeeName"] = this.EmployeeData.Rows[0]["Name"];
-                            dr["EmployeeSkill"] = this.EmployeeData.Rows[0]["Skill"];
-                            dr.EndEdit();
+                            DataTable dt = (DataTable)this.detailgridbs.DataSource;
+                            DataRow[] errorDataRow = dt.Select($"EmployeeID = '{MyUtility.Convert.GetString(this.EmployeeData.Rows[0]["ID"])}' and NO <> '{MyUtility.Convert.GetString(dr["No"])}'");
+                            if (errorDataRow.Length > 0)
+                            {
+                                MyUtility.Msg.WarningBox($"<{this.EmployeeData.Rows[0]["ID"]} {this.EmployeeData.Rows[0]["Name"]}> already been used in No.{MyUtility.Convert.GetString(errorDataRow[0]["No"])}!!");
+                                return;
+                            }
+
+                            dt.DefaultView.Sort = this.selectDataTable_DefaultView_Sort == "ASC" ? "No ASC" : string.Empty;
+                            DataTable sortDataTable = dt.DefaultView.ToTable();
+
+                            DataRow[] listDataRows = sortDataTable.Select($"No = '{MyUtility.Convert.GetString(dr["No"])}'");
+                            if (listDataRows.Length > 0)
+                            {
+                                foreach (DataRow dataRow in listDataRows)
+                                {
+                                    int dataIndex = sortDataTable.Rows.IndexOf(dataRow);
+                                    DataRow row = this.detailgrid.GetDataRow<DataRow>(dataIndex);
+                                    row["EmployeeID"] = this.EmployeeData.Rows[0]["ID"];
+                                    row["EmployeeName"] = this.EmployeeData.Rows[0]["Name"];
+                                    row["EmployeeSkill"] = this.EmployeeData.Rows[0]["Skill"];
+                                    row.EndEdit();
+                                }
+                            }
                         }
                     }
                 }
@@ -577,23 +521,19 @@ and BrandID = '{this.CurrentMaintain["BrandID"]}'
 
                             this.GetEmployee(null);
 
-                            Win.Tools.SelectItem item = new Win.Tools.SelectItem(this.EmployeeData, "ID,FirstName,LastName,Section,", "10,18,16,2,5", dr["EmployeeID"].ToString(), headercaptions: "ID,First Name,Last Name,Section")
-                            {
-                                Width = 700,
-                            };
-                            DialogResult returnResult = item.ShowDialog();
-                            if (returnResult == DialogResult.Cancel)
+                            P03_Operator callNextForm = new P03_Operator(this.EmployeeData, MyUtility.Convert.GetString(this.CurrentMaintain["SewingLineID"]) + this.comboSewingTeam1.Text);
+                            DialogResult result = callNextForm.ShowDialog(this);
+                            if (result == DialogResult.Cancel)
                             {
                                 return;
                             }
 
-                            IList<DataRow> selectedData = item.GetSelecteds();
                             DataTable dt = (DataTable)this.detailgridbs.DataSource;
 
-                            DataRow[] errorDataRow = dt.Select($"EmployeeID = '{MyUtility.Convert.GetString(selectedData[0]["ID"])}' and NO <> '{MyUtility.Convert.GetString(dr["No"])}'");
+                            DataRow[] errorDataRow = dt.Select($"EmployeeID = '{MyUtility.Convert.GetString(callNextForm.SelectOperator["ID"])}' and NO <> '{MyUtility.Convert.GetString(dr["No"])}'");
                             if (errorDataRow.Length > 0)
                             {
-                                MyUtility.Msg.WarningBox($"<{selectedData[0]["ID"]} {selectedData[0]["Name"]}> already been used in No.{MyUtility.Convert.GetString(dr["No"])}!!");
+                                MyUtility.Msg.WarningBox($"<{callNextForm.SelectOperator["ID"]} {callNextForm.SelectOperator["Name"]}> already been used in No.{MyUtility.Convert.GetString(dr["No"])}!!");
                                 return;
                             }
 
@@ -607,9 +547,9 @@ and BrandID = '{this.CurrentMaintain["BrandID"]}'
                                 {
                                     int dataIndex = sortDataTable.Rows.IndexOf(dataRow);
                                     DataRow row = this.detailgrid.GetDataRow<DataRow>(dataIndex);
-                                    row["EmployeeID"] = selectedData[0]["ID"];
-                                    row["EmployeeName"] = selectedData[0]["Name"];
-                                    row["EmployeeSkill"] = selectedData[0]["Skill"];
+                                    row["EmployeeID"] = callNextForm.SelectOperator["ID"];
+                                    row["EmployeeName"] = callNextForm.SelectOperator["Name"];
+                                    row["EmployeeSkill"] = callNextForm.SelectOperator["Skill"];
                                     row.EndEdit();
                                 }
                             }
@@ -628,9 +568,16 @@ and BrandID = '{this.CurrentMaintain["BrandID"]}'
                         return;
                     }
 
+                    if (!e.FormattedValue.ToString().Contains(","))
+                    {
+                        MyUtility.Msg.WarningBox(string.Format("< Employee Name: {0} > not found!!!", e.FormattedValue.ToString()));
+                        this.ReviseEmployeeToEmpty(dr);
+                        return;
+                    }
+
                     if (e.FormattedValue.ToString() != dr["EmployeeName"].ToString())
                     {
-                        this.GetEmployee(e.FormattedValue.ToString());
+                        this.GetEmployee(null, name: e.FormattedValue.ToString());
                         if (this.EmployeeData.Rows.Count <= 0)
                         {
                             this.ReviseEmployeeToEmpty(dr);
@@ -640,357 +587,31 @@ and BrandID = '{this.CurrentMaintain["BrandID"]}'
                         }
                         else
                         {
-                            dr["EmployeeID"] = this.EmployeeData.Rows[0]["ID"];
-                            dr["EmployeeName"] = this.EmployeeData.Rows[0]["Name"];
-                            dr["EmployeeSkill"] = this.EmployeeData.Rows[0]["Skill"];
-                            dr.EndEdit();
-                        }
-                    }
-                }
-            };
-            #endregion
-            #region Attachment
-            attachment.EditingMouseDown += (s, e) =>
-            {
-                DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
-                if (this.EditMode && e.Button == MouseButtons.Right)
-                {
-                    string sqlcmd = @"
-select ID,DescEN 
-from Mold WITH (NOLOCK) 
-where Junk = 0
-and IsAttachment = 1";
-
-                    Win.Tools.SelectItem2 item = new Win.Tools.SelectItem2(sqlcmd, "ID,DescEN", "13,60,10", this.CurrentDetailData["Attachment"].ToString(), null, null, null)
-                    {
-                        Width = 666,
-                    };
-                    DialogResult result = item.ShowDialog();
-                    if (result == DialogResult.Cancel)
-                    {
-                        return;
-                    }
-
-                    if (MyUtility.Convert.GetString(this.CurrentDetailData["Attachment"]) != item.GetSelectedString())
-                    {
-                        this.CurrentDetailData["SewingMachineAttachmentID"] = string.Empty;
-                    }
-
-                    this.CurrentDetailData["Attachment"] = item.GetSelectedString();
-                    this.CurrentDetailData["MoldID"] = item.GetSelectedString();
-                }
-            };
-
-            attachment.CellValidating += (s, e) =>
-            {
-                if (this.EditMode)
-                {
-                    DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
-
-                    List<SqlParameter> cmds = new List<SqlParameter>() { new SqlParameter { ParameterName = "@OperationID", Value = MyUtility.Convert.GetString(this.CurrentDetailData["OperationID"]) } };
-                    string sqlcmd = @"
-select [Attachment] = STUFF((
-		        select concat(',' ,s.Data)
-		        from SplitString(o.MoldID, ';') s
-		        inner join Mold m WITH (NOLOCK) on s.Data = m.ID
-		        where m.IsAttachment = 1
-                and m.Junk = 0
-		        for xml path ('')) 
-	        ,1,1,'')
-	,[Template] = STUFF((
-		            select concat(',' ,s.Data)
-		            from SplitString(o.MoldID, ';') s
-		            inner join Mold m WITH (NOLOCK) on s.Data = m.ID
-		            where m.IsTemplate = 1
-                    and m.Junk = 0
-		            for xml path ('')) 
-	            ,1,1,'')
-from Operation o WITH (NOLOCK) 
-where o.ID = @OperationID";
-                    DataTable dtOperation;
-                    DualResult result = DBProxy.Current.Select(null, sqlcmd, cmds, out dtOperation);
-                    List<string> operationList = new List<string>();
-                    if (!result)
-                    {
-                        this.CurrentDetailData["Attachment"] = string.Empty;
-                        this.CurrentDetailData["MoldID"] = string.Empty;
-                        MyUtility.Msg.WarningBox("SQL Connection failt!!\r\n" + result.ToString());
-                    }
-
-                    if (dtOperation.Rows.Count > 0)
-                    {
-                        operationList = dtOperation.Rows[0]["Attachment"].ToString().Replace(";", ",").Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries).Distinct().ToList();
-                        if (e.FormattedValue.Empty())
-                        {
-                            this.CurrentDetailData["Attachment"] = dtOperation.Rows[0]["Attachment"].ToString();
-                            this.CurrentDetailData["MoldID"] = dtOperation.Rows[0]["Attachment"].ToString();
-                            this.CurrentDetailData["SewingMachineAttachmentID"] = string.Empty;
-
-                            return;
-                        }
-                    }
-
-                    sqlcmd = @"
-select ID 
-from Mold WITH (NOLOCK) 
-where Junk = 0
-and IsAttachment = 1
-union all
-select ID
-from SewingMachineAttachment WITH (NOLOCK) 
-where Junk = 0";
-                    DataTable dtMold;
-                    result = DBProxy.Current.Select(null, sqlcmd, out dtMold);
-                    if (!result)
-                    {
-                        this.CurrentDetailData["Attachment"] = string.Empty;
-                        this.CurrentDetailData["MoldID"] = string.Empty;
-                        this.CurrentDetailData["SewingMachineAttachmentID"] = string.Empty;
-                        MyUtility.Msg.WarningBox("SQL Connection failt!!\r\n" + result.ToString());
-                    }
-
-                    // 前端轉進來的資料是用[;]區隔，統一用[,]區隔
-                    List<string> getMold = e.FormattedValue.ToString().Replace(";", ",").Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries).Distinct().ToList();
-
-                    // 不存在 Mold
-                    var existsMold = getMold.Except(dtMold.AsEnumerable().Select(x => x.Field<string>("ID")).ToList());
-                    getMold.AddRange(operationList);
-                    if (existsMold.Any())
-                    {
-                        e.Cancel = true;
-                        this.CurrentDetailData["Attachment"] = string.Join(",", getMold.Where(x => existsMold.Where(y => !y.EqualString(x)).Any()).Distinct().ToList());
-                        this.CurrentDetailData["MoldID"] = string.Join(",", getMold.Where(x => existsMold.Where(y => !y.EqualString(x)).Any()).Distinct().ToList());
-                        MyUtility.Msg.WarningBox("Attachment : " + string.Join(",", existsMold.ToList()) + "  need include in Mold setting !!", "Data need include in setting");
-                        return;
-                    }
-
-                    if (MyUtility.Convert.GetString(this.CurrentDetailData["Attachment"]) != string.Join(",", getMold.Distinct().ToList()))
-                    {
-                        this.CurrentDetailData["SewingMachineAttachmentID"] = string.Empty;
-                    }
-
-                    this.CurrentDetailData["Attachment"] = string.Join(",", getMold.Distinct().ToList());
-                    this.CurrentDetailData["MoldID"] = string.Join(",", getMold.Distinct().ToList());
-                }
-            };
-            #endregion
-            #region Template
-            template.EditingMouseDown += (s, e) =>
-            {
-                if (this.EditMode && e.Button == MouseButtons.Right)
-                {
-                    string sqlcmd = @"
-select PartID = smt.ID , m.DescEN ,MoldID = m.ID
-from Mold m WITH (NOLOCK)
-right join SewingMachineTemplate smt on m.ID = smt.MoldID
-where m.Junk = 0 and m.IsTemplate = 1 and smt.Junk = 0
-UNION
-SELECT PartID=ID , DescEN ,MoldID = ID
-from Mold
-where Junk=0 and IsTemplate=1
-";
-
-                    SelectItem2 item = new SelectItem2(sqlcmd, "MoldID,DescEN,PartID", "13,60,20", this.CurrentDetailData["Template"].ToString(), null, null, null)
-                    {
-                        Width = 1000,
-                    };
-                    DialogResult result = item.ShowDialog();
-                    if (result == DialogResult.Cancel)
-                    {
-                        return;
-                    }
-
-                    IList<DataRow> selectedRows = item.GetSelecteds();
-
-                    if (selectedRows.Any())
-                    {
-                        var t = selectedRows.ToList();
-                        this.CurrentDetailData["Template"] = string.Join(",", t.Select(o => o["PartID"]).ToList());
-                    }
-                    else
-                    {
-                        this.CurrentDetailData["Template"] = string.Empty;
-                    }
-                }
-            };
-
-            template.CellValidating += (s, e) =>
-            {
-                if (this.EditMode)
-                {
-                    List<SqlParameter> cmds = new List<SqlParameter>() { new SqlParameter { ParameterName = "@OperationID", Value = MyUtility.Convert.GetString(this.CurrentDetailData["OperationID"]) } };
-                    string sqlcmd = @"
-select [Mold] = STUFF((
-		        select concat(',' ,s.Data)
-		        from SplitString(o.MoldID, ';') s
-		        inner join Mold m WITH (NOLOCK) on s.Data = m.ID
-		        where m.IsAttachment = 1
-                and m.Junk = 0
-		        for xml path ('')) 
-	        ,1,1,'')
-	,[Template] = STUFF((
-		            select concat(',' ,s.Data)
-		            from SplitString(o.MoldID, ';') s
-		            inner join Mold m WITH (NOLOCK) on s.Data = m.ID
-		            where m.IsTemplate = 1
-                    and m.Junk = 0
-		            for xml path ('')) 
-	            ,1,1,'')
-from Operation o WITH (NOLOCK) 
-where o.ID = @OperationID";
-                    DataTable dtOperation;
-                    DualResult result = DBProxy.Current.Select(null, sqlcmd, cmds, out dtOperation);
-                    List<string> operationList = new List<string>();
-                    if (!result)
-                    {
-                        this.CurrentDetailData["Mold"] = string.Empty;
-                        MyUtility.Msg.WarningBox("SQL Connection failt!!\r\n" + result.ToString());
-                    }
-
-                    if (dtOperation.Rows.Count > 0)
-                    {
-                        operationList = dtOperation.Rows[0]["Mold"].ToString().Replace(";", ",").Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries).Distinct().ToList();
-
-                        if (MyUtility.Check.Empty(e.FormattedValue))
-                        {
-                            this.CurrentDetailData["Template"] = dtOperation.Rows[0]["Template"].ToString();
-                            return;
-                        }
-                    }
-
-                    this.CurrentDetailData["Template"] = e.FormattedValue;
-                    sqlcmd = @"
-select PartID = smt.ID , m.DescEN ,MoldID = m.ID
-from Mold m WITH (NOLOCK)
-right join SewingMachineTemplate smt on m.ID = smt.MoldID
-where m.Junk = 0 and m.IsTemplate = 1 and smt.Junk = 0
-UNION
-SELECT PartID=ID , DescEN ,MoldID = ID
-from Mold
-where Junk=0 and IsTemplate=1
-";
-                    DataTable dt;
-                    DBProxy.Current.Select(null, sqlcmd, out dt);
-                    string[] getLocation = this.CurrentDetailData["Template"].ToString().Split(',').Distinct().ToArray();
-                    bool selectId = true;
-                    List<string> errTemplate = new List<string>();
-                    List<string> trueTemplate = new List<string>();
-                    foreach (string item in getLocation)
-                    {
-                        if (!dt.AsEnumerable().Any(row => row["PartID"].EqualString(item)) && !item.EqualString(string.Empty))
-                        {
-                            selectId &= false;
-                            errTemplate.Add(item);
-                        }
-                        else if (!item.EqualString(string.Empty))
-                        {
-                            trueTemplate.Add(item);
-                        }
-                    }
-
-                    if (!selectId)
-                    {
-                        e.Cancel = true;
-                        MyUtility.Msg.WarningBox("Template : " + string.Join(",", errTemplate.ToArray()) + "  Data not found !!", "Data not found");
-                    }
-
-                    trueTemplate.Sort();
-                    this.CurrentDetailData["Template"] = string.Join(",", trueTemplate.ToArray());
-                }
-            };
-            #endregion
-            #region Part ID
-            pardID.EditingMouseDown += (s, e) =>
-            {
-                if (this.EditMode && e.Button == MouseButtons.Right)
-                {
-                    if (e.RowIndex != -1)
-                    {
-                        DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
-
-                        if (MyUtility.Check.Empty(dr["MoldID"]))
-                        {
-                            return;
-                        }
-
-                        P01_PartID callNextForm = new P01_PartID(MyUtility.Convert.GetString(dr["MoldID"]), MyUtility.Convert.GetString(dr["SewingMachineAttachmentID"]));
-                        DialogResult result = callNextForm.ShowDialog(this);
-
-
-                        if (result == DialogResult.Cancel)
-                        {
-                            if (callNextForm.P01SelectPartID != null)
+                            DataTable dt = (DataTable)this.detailgridbs.DataSource;
+                            DataRow[] errorDataRow = dt.Select($"EmployeeID = '{MyUtility.Convert.GetString(this.EmployeeData.Rows[0]["ID"])}' and NO <> '{MyUtility.Convert.GetString(dr["No"])}'");
+                            if (errorDataRow.Length > 0)
                             {
-                                dr["SewingMachineAttachmentID"] = callNextForm.P01SelectPartID["ID"].ToString();
-                                dr.EndEdit();
+                                MyUtility.Msg.WarningBox($"<{this.EmployeeData.Rows[0]["ID"]} {this.EmployeeData.Rows[0]["Name"]}> already been used in No.{MyUtility.Convert.GetString(errorDataRow[0]["No"])}!!");
+                                return;
+                            }
+
+                            dt.DefaultView.Sort = this.selectDataTable_DefaultView_Sort == "ASC" ? "No ASC" : string.Empty;
+                            DataTable sortDataTable = dt.DefaultView.ToTable();
+
+                            DataRow[] listDataRows = sortDataTable.Select($"No = '{MyUtility.Convert.GetString(dr["No"])}'");
+                            if (listDataRows.Length > 0)
+                            {
+                                foreach (DataRow dataRow in listDataRows)
+                                {
+                                    int dataIndex = sortDataTable.Rows.IndexOf(dataRow);
+                                    DataRow row = this.detailgrid.GetDataRow<DataRow>(dataIndex);
+                                    row["EmployeeID"] = this.EmployeeData.Rows[0]["ID"];
+                                    row["EmployeeName"] = this.EmployeeData.Rows[0]["Name"];
+                                    row["EmployeeSkill"] = this.EmployeeData.Rows[0]["Skill"];
+                                    row.EndEdit();
+                                }
                             }
                         }
-
-                        if (result == DialogResult.OK)
-                        {
-                            if (callNextForm.P01SelectPartID != null)
-                            {
-                                dr["SewingMachineAttachmentID"] = callNextForm.P01SelectPartID["ID"].ToString();
-                                dr.EndEdit();
-                            }
-                        }
-                    }
-                }
-            };
-
-            pardID.CellValidating += (s, e) =>
-            {
-                if (this.EditMode)
-                {
-                    if (MyUtility.Check.Empty(e.FormattedValue))
-                    {
-                        return;
-                    }
-
-                    string newSewingMachineAttachmentID = MyUtility.Convert.GetString(e.FormattedValue);
-                    string moldID = this.CurrentDetailData["MoldID"].ToString();
-
-                    string sqlcmd = $@"
-select a.ID
-    ,a.Description
-    ,a.MachineMasterGroupID
-    ,AttachmentTypeID
-    ,MeasurementID
-    ,FoldTypeID
-from SewingMachineAttachment a
-left join AttachmentType b on a.AttachmentTypeID = b.Type 
-left join AttachmentMeasurement c on a.MeasurementID = c.Measurement
-left join AttachmentFoldType d on a.FoldTypeID = d.FoldType 
-where a.MoldID IN ('{string.Join("','", moldID.Split(','))}') ";
-
-                    List<SqlParameter> paras = new List<SqlParameter>();
-
-                    // SewingMachineAttachment.ID可以多選
-                    if (newSewingMachineAttachmentID.Split(',').Length > 1)
-                    {
-                        sqlcmd += $@" AND a.ID IN ('{string.Join("','", newSewingMachineAttachmentID.Split(','))}')";
-                    }
-                    else
-                    {
-                        sqlcmd += " AND a.ID = @ID";
-                        paras.Add(new SqlParameter("@ID", MyUtility.Convert.GetString(e.FormattedValue)));
-                    }
-
-                    DataTable dt;
-
-                    DualResult r = DBProxy.Current.Select(null, sqlcmd, paras, out dt);
-
-                    if (!r)
-                    {
-                        e.Cancel = true;
-                        this.ShowErr(r);
-                        return;
-                    }
-
-                    if (dt.Rows == null || dt.Rows.Count == 0)
-                    {
-                        e.Cancel = true;
-                        MyUtility.Msg.WarningBox("Data not found");
                     }
                 }
             };
@@ -1169,15 +790,15 @@ and Name = @PPA
             .Text("PPAText", header: "PPA", width: Widths.AnsiChars(10), settings: ppaText)
             .CheckBox("IsHide", header: "Hide", width: Widths.AnsiChars(1), iseditable: true, trueValue: true, falseValue: false, settings: hide)
             .CheckBox("MachineCount", header: "Machine Count", width: Widths.AnsiChars(1), iseditable: true, trueValue: true, falseValue: false, settings: machineCount)
-            .Text("MachineTypeID", header: "ST/MC type", width: Widths.AnsiChars(10), settings: machine)
+            .CellMachineType("MachineTypeID", "ST/MC type", this, width: Widths.AnsiChars(10))
             .Text("MasterPlusGroup", header: "Machine Group", width: Widths.AnsiChars(10), settings: txtSubReason)
             .EditText("Description", header: "Operation", width: Widths.AnsiChars(30), iseditingreadonly: true)
             .EditText("Annotation", header: "Annotation", width: Widths.AnsiChars(30), iseditingreadonly: true)
             .Numeric("GSD", header: "GSD Time", width: Widths.AnsiChars(5), decimal_places: 2, iseditingreadonly: true)
             .Numeric("Cycle", header: "Cycle Time", width: Widths.AnsiChars(5), integer_places: 4, decimal_places: 2, minimum: 0, settings: cycle)
-            .Text("Attachment", header: "Attachment", width: Widths.AnsiChars(10), settings: attachment)
-            .Text("SewingMachineAttachmentID", header: "Part ID", width: Widths.AnsiChars(25), settings: pardID)
-            .Text("Template", header: "Template", width: Widths.AnsiChars(10), settings: template)
+            .CellAttachment("Attachment", "Attachment", this, width: Widths.AnsiChars(10))
+            .CellPartID("SewingMachineAttachmentID", "Part ID", this, width: Widths.AnsiChars(25))
+            .CellTemplate("Template", "Template", this, width: Widths.AnsiChars(10))
             .Text("ThreadColor", header: "ThreadColor", width: Widths.AnsiChars(1), settings: threadColor)
             .Text("Notice", header: "Notice", width: Widths.AnsiChars(60), settings: notice)
             .Text("EmployeeID", header: "Operator ID No.", width: Widths.AnsiChars(10), settings: operatorid)
@@ -1290,8 +911,68 @@ and Name = @PPA
         }
 
         // 撈出Employee資料
-        private void GetEmployee(string iD)
+        private void GetEmployee(string iD, string name = "")
         {
+            string lastName = string.Empty;
+            string firstName = string.Empty;
+            if (!MyUtility.Check.Empty(name))
+            {
+                string[] nameParts = name.Split(',');
+                lastName = nameParts[0];
+                firstName = nameParts[1];
+            }
+
+            string strDept = string.Empty;
+            string strPosition = string.Empty;
+            string strWhere = string.Empty;
+            switch (Env.User.Factory)
+            {
+                case "MAI":
+                case "MA2":
+                case "MA3":
+                case "MW2":
+                case "FIT":
+                case "MWI":
+                case "FAC":
+                case "FA2":
+                case "PSR":
+                case "VT1":
+                case "VT2":
+                case "GMM":
+                case "GM2":
+                case "GMI":
+                case "PS2":
+                case "ALA":
+                    strDept = $"'PRO'";
+                    strPosition = $"'PCK','PRS','SEW','FSPR','LOP','STL','LL','SLS','SSLT'";
+                    strWhere = $@" and Dept in({strDept})  and Position in({strPosition})";
+                    break;
+                case "ESP":
+                case "ES2":
+                case "ES3":
+                case "VSP":
+                    strDept = $"'PRO'";
+                    strPosition = $"'PAC','PRS','SEW','LL'";
+                    strWhere = $@" and Dept in({strDept})  and Position in({strPosition})";
+                    break;
+                case "SPT":
+                    strDept = $"'PRO'";
+                    strPosition = $"'PAC','PRS','SEW','LL','SUP','PE','PIT','TL'";
+                    strWhere = $@" and Dept in({strDept})  and Position in({strPosition})";
+                    break;
+                case "SNP":
+                    strDept = $"'PRO'";
+                    strPosition = $"'SEW','LL','PIT'";
+                    strWhere = $@" and Dept in({strDept})  and Position in({strPosition})";
+                    break;
+                case "SPS":
+                case "SPR":
+                    strDept = $"'SEW'";
+                    strPosition = $"'SWR','TRNEE','Lneldr','LINSUP','PRSSR','PCKR'";
+                    strWhere = $@" and Dept in({strDept})  and Position in({strPosition})";
+                    break;
+            }
+
             string sqlCmd;
 
             bool IsEmptySewingLine = MyUtility.Check.Empty(this.CurrentMaintain["SewingLineID"]);
@@ -1314,16 +995,24 @@ and Name = @PPA
             {
                 sp1,
                 sp2,
-                new SqlParameter("@SewingLine" , this.CurrentMaintain["SewingLineID"] + this.comboSewingTeam1.Text),
+                new SqlParameter("@SewingLine", this.CurrentMaintain["SewingLineID"] + this.comboSewingTeam1.Text),
+                new SqlParameter("@LastName", lastName),
+                new SqlParameter("@FirstName", firstName),
             };
 
             if (MyUtility.Check.Empty(this.CurrentMaintain["FactoryID"]))
             {
-                sqlCmd = "select ID,FirstName,LastName,Section,Skill , [Name] = iif(LastName+ ','+ FirstName <> ',' ,LastName+ ','+ FirstName,'') from Employee WITH (NOLOCK) where (ResignationDate > GETDATE() or ResignationDate is null) and Junk = 0 " + (iD == null ? string.Empty : " and ID = @id ") + (IsEmptySewingLine ? string.Empty : " and (SewingLineID = @SewingLine or Section = @SewingLine)");
+                sqlCmd = $@"select ID,FirstName,LastName,Section,Skill,SewingLineID , [Name] = iif(LastName+ ','+ FirstName <> ',' ,LastName+ ','+ FirstName,'') from Employee WITH (NOLOCK) where (ResignationDate > GETDATE() or ResignationDate is null) and Junk = 0 {strWhere} "//+ (IsEmptySewingLine ? string.Empty : " and (SewingLineID = @SewingLine or Section = @SewingLine)");
+                + (iD == null ? string.Empty : " and ID = @id ")
+                + (MyUtility.Check.Empty(lastName) ? string.Empty : " and LastName = @LastName")
+                + (MyUtility.Check.Empty(firstName) ? string.Empty : " and FirstName = @FirstName");
             }
             else
             {
-                sqlCmd = "select ID,FirstName,LastName,Section,Skill , [Name] = iif(LastName+ ','+ FirstName <> ',' ,LastName+ ','+ FirstName,'')  from Employee WITH (NOLOCK) where (ResignationDate > GETDATE() or ResignationDate is null) and Junk = 0 and FactoryID = @factoryid " + (iD == null ? string.Empty : " and ID = @id ") + (IsEmptySewingLine ? string.Empty : " and (SewingLineID = @SewingLine or Section = @SewingLine)");
+                sqlCmd = $@"select ID,FirstName,LastName,Section,Skill,SewingLineID , [Name] = iif(LastName+ ','+ FirstName <> ',' ,LastName+ ','+ FirstName,'')  from Employee WITH (NOLOCK) where (ResignationDate > GETDATE() or ResignationDate is null) and Junk = 0 and FactoryID = @factoryid {strWhere} " 
+                + (iD == null ? string.Empty : " and ID = @id ")
+                + (MyUtility.Check.Empty(lastName) ? string.Empty : " and LastName = @LastName")
+                + (MyUtility.Check.Empty(firstName) ? string.Empty : " and FirstName = @FirstName"); // + (IsEmptySewingLine ? string.Empty : " and (SewingLineID = @SewingLine or Section = @SewingLine)");
             }
 
             DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out this.EmployeeData);

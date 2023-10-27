@@ -10,12 +10,14 @@ namespace Sci.Production.Packing
     {
         private string CalibrationTimeStart;
         private string CalibrationTimeEnd;
+        private string MachineNo;
 
-        public P18_Calibration_History(string LastTime, string SecondTime)
+        public P18_Calibration_History(string lastTime, string secondTime, string machineNo)
         {
             this.InitializeComponent();
-            this.CalibrationTimeStart = SecondTime;
-            this.CalibrationTimeEnd = LastTime;
+            this.CalibrationTimeStart = secondTime;
+            this.CalibrationTimeEnd = lastTime;
+            this.MachineNo = machineNo;
         }
 
         protected override void OnFormLoaded()
@@ -30,6 +32,8 @@ namespace Sci.Production.Packing
                 .Text("OrderID", header: "SP#", width: Widths.Auto(), iseditingreadonly: true)
                 .Text("CustPONo", header: "PO#", width: Widths.Auto(), iseditingreadonly: true)
                 .Text("StyleID", header: "Style", width: Widths.Auto(), iseditingreadonly: true)
+                .DateTime("ScanEditDate", header: "ScanTime", width: Widths.Auto(), iseditingreadonly: true)
+                .Text("MDMachineNo", header: "MD Machine#", width: Widths.Auto(), iseditingreadonly: true)
                 ;
             this.GetData();
         }
@@ -38,17 +42,22 @@ namespace Sci.Production.Packing
         {
             string sqlcmd = $@"
 use Production
-select pd.id,pd.CTNStartNo,
-    ShipQty = sum(pd.ShipQty),
-	[OrderID] = Stuff((select distinct concat( '/',OrderID)   
+select pd.id
+    ,pd.CTNStartNo
+    ,ShipQty = sum(pd.ShipQty)
+    ,[OrderID] = Stuff((select distinct concat( '/',OrderID)   
         from PackingList_Detail where ID = pd.ID 
-        and CTNStartNo = pd.CTNStartNo and DisposeFromClog= 0  FOR XML PATH('')),1,1,''),
-    o.CustPONo,
-	o.StyleID
+        and CTNStartNo = pd.CTNStartNo and DisposeFromClog= 0  FOR XML PATH('')),1,1,'')
+    ,o.CustPONo
+    ,o.StyleID
+    ,pd.ScanEditDate 
+    ,pd.MDMachineNo
 from PackingList_Detail pd with(nolock)
 left join Orders o with (nolock) on o.ID = pd.OrderID
 where ScanEditDate between '{this.CalibrationTimeStart}' and '{this.CalibrationTimeEnd}'
-group by pd.id,pd.CTNStartNo,o.CustPONo,o.StyleID
+and pd.MDMachineNo = '{this.MachineNo}'
+group by pd.id,pd.CTNStartNo,o.CustPONo,o.StyleID ,pd.ScanEditDate 
+    ,pd.MDMachineNo
 
 -- CTN# 若是數值先依照數值排序
 order by pd.id,iif(ISNUMERIC(CTNStartno)=0,'ZZZZZZZZ',RIGHT(REPLICATE('0', 8) + CTNStartno, 8)), RIGHT(REPLICATE('0', 8) + CTNStartno, 8)

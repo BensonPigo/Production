@@ -266,6 +266,8 @@ Create Table #Tmp_BoaExpend
     , BomTypeSeason varchar(50)
     , BomTypeCareCode varchar(50)
     , BomTypeCustomerPO varchar(50)
+    , BomTypeBuyMonth varchar(50)
+    , BomTypeBuyerDlvMonth varchar(50)
 	, Primary Key (ExpendUkey)
 	, Index Idx_ID NonClustered (ID, Order_BOAUkey, ColorID) -- table index
 );
@@ -409,6 +411,8 @@ OUTER APPLY (
     AND dbo.ConditionIncludeNull(b.Style           , t.BomTypeStyle           ) = 1
     AND dbo.ConditionIncludeNull(b.StyleLocation   , t.BomTypeStyleLocation   ) = 1
     AND dbo.ConditionIncludeNull(b.ZipperInsert    , t.BomTypeZipperInsert    ) = 1
+    AND dbo.ConditionIncludeNull(b.BuyMonth        , t.BomTypeBuyMonth        ) = 1
+    AND dbo.ConditionIncludeNull(b.BuyerDlvMonth   , t.BomTypeBuyerDlvMonth   ) = 1
 ) boa
 GROUP BY b.POID, b.SEQ1, b.SEQ2, boa.SizeCode
 

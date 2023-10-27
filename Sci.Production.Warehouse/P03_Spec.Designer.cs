@@ -72,8 +72,8 @@
             this.splitContainer1.Panel2.Controls.Add(this.btnClose);
             this.splitContainer1.Panel2.Controls.Add(this.grid2);
             this.splitContainer1.Panel2.Controls.Add(this.label3);
-            this.splitContainer1.Size = new System.Drawing.Size(348, 596);
-            this.splitContainer1.SplitterDistance = 205;
+            this.splitContainer1.Size = new System.Drawing.Size(348, 651);
+            this.splitContainer1.SplitterDistance = 210;
             this.splitContainer1.TabIndex = 0;
             // 
             // grid1
@@ -100,7 +100,7 @@
             this.grid1.RowTemplate.Height = 24;
             this.grid1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.grid1.ShowCellToolTips = false;
-            this.grid1.Size = new System.Drawing.Size(337, 139);
+            this.grid1.Size = new System.Drawing.Size(337, 144);
             this.grid1.TabIndex = 12;
             this.grid1.TabStop = false;
             // 
@@ -150,7 +150,7 @@
             // 
             this.btnClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnClose.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnClose.Location = new System.Drawing.Point(256, 345);
+            this.btnClose.Location = new System.Drawing.Point(256, 395);
             this.btnClose.Name = "btnClose";
             this.btnClose.Size = new System.Drawing.Size(80, 30);
             this.btnClose.TabIndex = 14;
@@ -182,7 +182,7 @@
             this.grid2.RowTemplate.Height = 24;
             this.grid2.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.grid2.ShowCellToolTips = false;
-            this.grid2.Size = new System.Drawing.Size(337, 313);
+            this.grid2.Size = new System.Drawing.Size(337, 363);
             this.grid2.TabIndex = 13;
             this.grid2.TabStop = false;
             // 
@@ -196,7 +196,7 @@
             // 
             // P03_Spec
             // 
-            this.ClientSize = new System.Drawing.Size(348, 596);
+            this.ClientSize = new System.Drawing.Size(348, 651);
             this.Controls.Add(this.splitContainer1);
             this.Name = "P03_Spec";
             this.OnLineHelpID = "Sci.Win.Subs.Base";

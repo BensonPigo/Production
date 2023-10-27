@@ -418,16 +418,16 @@ DROP TABLE #tmp, #PO_Supp_tmp, #lasttmp
                 {
                     if (this.dt.Rows[i]["junk"].ToString().Equals("True"))
                     {
-                        worksheet.Range[worksheet.Cells[1][i + 2], worksheet.Cells[42][i + 2]].Interior.ColorIndex = 15;
+                        worksheet.Range[worksheet.Cells[1][i + 2], worksheet.Cells[43][i + 2]].Interior.ColorIndex = 15;
                     }
                 }
 
                 this.dt.Columns.Remove("Junk");
                 for (int i = this.dt.Columns.IndexOf("Remark"); i < this.dt.Columns.Count; i++)
                 {
-                    worksheet.Cells[1, i + 2] = this.dt.Columns[i].ColumnName;
-                    worksheet.Cells[1, i + 2].Interior.Color = Color.FromArgb(204, 255, 204);
-                    worksheet.Cells[1, i + 2].Borders.Weight = 2;
+                    worksheet.Cells[1, i + 1] = this.dt.Columns[i].ColumnName;
+                    worksheet.Cells[1, i + 1].Interior.Color = Color.FromArgb(204, 255, 204);
+                    worksheet.Cells[1, i + 1].Borders.Weight = 2;
                 }
 
                 MyUtility.Excel.CopyToXls(this.dt, string.Empty, "Warehouse_P03_Print-1.xltx", 1, false, null, objApp);

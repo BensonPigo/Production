@@ -36,22 +36,29 @@ namespace Sci.Production.PPIC
             this.sqlWhere = string.Empty;
             this.listSqlPara.Clear();
 
+            if (MyUtility.Check.Empty(this.txtseason.Text))
+            {
+                MyUtility.Msg.WarningBox("<Season> cannot be empty!");
+                this.txtseason.Focus();
+                return false;
+            }
+
             if (!MyUtility.Check.Empty(this.txtbrand.Text))
             {
-                this.listSqlPara.Add(new SqlParameter("@MasterBrandID", this.txtbrand.Text));
-                this.sqlWhere += " and ss.MasterBrandID = @MasterBrandID ";
+                this.listSqlPara.Add(new SqlParameter("@BrandID", this.txtbrand.Text));
+                this.sqlWhere += " and s.BrandID = @BrandID";
             }
 
             if (!MyUtility.Check.Empty(this.txtseason.Text))
             {
-                this.listSqlPara.Add(new SqlParameter("@MasterSeason", this.txtseason.Text));
-                this.sqlWhere += " and s.SeasonID = @MasterSeason ";
+                this.listSqlPara.Add(new SqlParameter("@Season", this.txtseason.Text));
+                this.sqlWhere += " and s.SeasonID = @Season";
             }
 
             if (!MyUtility.Check.Empty(this.txtstyle.Text))
             {
-                this.listSqlPara.Add(new SqlParameter("@MasterStyleID", this.txtstyle.Text));
-                this.sqlWhere += " and ss.MasterStyleID = @MasterStyleID ";
+                this.listSqlPara.Add(new SqlParameter("@StyleID", this.txtstyle.Text));
+                this.sqlWhere += " and s.ID = @StyleID";
             }
 
             return base.ValidateInput();
@@ -62,24 +69,58 @@ namespace Sci.Production.PPIC
         {
             StringBuilder sqlCmd = new StringBuilder();
             sqlCmd.Append($@"
-            select 
-            ss.MasterBrandID,
-            ss.MasterStyleID,
-            s.SeasonID as MasterSeasonID,
-            ss.ChildrenBrandID,
-            ss.ChildrenStyleID, 
-            s1.SeasonID as ChildrenSeasonID,
-            [Create by] = dbo.getTPEPass1_ExtNo(ss.AddName),
-            [Create Date] = ss.AddDate,
-            [Edit by] = dbo.getTPEPass1_ExtNo(ss.EditName),
-            [Edit Date] = ss.EditDate
-            from Style_SimilarStyle ss with(nolock)
-            inner join Style s with(nolock) on s.BrandID = ss.MasterBrandID and s.ID = ss.MasterStyleID
-            left join Style s1 with(nolock) on s1.ID = ss.ChildrenStyleID and s1.BrandID = ss.ChildrenBrandID
-            where 
-            s1.SeasonID is not null
-            {this.sqlWhere}
-            order by ss.MasterBrandID,ss.MasterStyleID,s.SeasonID,ss.ChildrenBrandID,ss.ChildrenStyleID,s1.SeasonID");
+SELECT s.ID,s.BrandID
+INTO #tmpStyle
+FROM Style s with(nolock)
+WHERE 1=1
+{this.sqlWhere}
+
+SELECT 
+    ss.MasterStyleID,
+    ss.ChildrenStyleID,
+    ss.MasterBrandID,
+    ss.ChildrenBrandID,
+    [Createby] = dbo.getTPEPass1_ExtNo(ss.AddName),
+    [CreateDate] = ss.AddDate,
+    [Edit by] = dbo.getTPEPass1_ExtNo(ss.EditName),
+    [Edit Date] = ss.EditDate
+INTO #tmp
+FROM Style_SimilarStyle ss with(nolock)
+WHERE ss.MasterStyleID IN (
+    SELECT MasterStyleID
+    FROM Style_SimilarStyle ss with(nolock)
+    WHERE EXISTS(SELECT 1 FROM #tmpStyle s WHERE s.ID = ss.MasterStyleID OR s.ID = ss.ChildrenStyleID)
+)
+
+select * from (
+    --Master
+	select
+        [StyleGroup] = MasterStyleID,
+	    [SimilarStyle] = MasterStyleID,
+	    [SimilarStyleBrand] = MasterBrandID,
+	    [Createby] = '',
+	    [CreateDate] = null,
+	    [Edit by] = '',
+	    [Edit Date] = null
+	from #tmp
+
+    union 
+	-- Children
+	select
+        [StyleGroup] = MasterStyleID,
+	    [SimilarStyle] = ChildrenStyleID,
+	    [SimilarStyleBrand] = ChildrenBrandID,
+	    [Createby],
+	    [CreateDate],
+	    [Edit by],
+	    [Edit Date]
+	from #tmp
+	where MasterStyleID!=ChildrenStyleID
+) a
+order by [StyleGroup],a.Createby,[SimilarStyle],[SimilarStyleBrand]
+
+drop table #tmp
+");
 
             DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), listSqlPara, out this.printData);
             if (!result)

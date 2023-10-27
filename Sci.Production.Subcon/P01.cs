@@ -419,14 +419,7 @@ where  apd.id = '{this.CurrentMaintain["id"]}'
             // 將detail被刪除的部分update ArtworkPOID為空
             foreach (DataRow drDetail in this.GetDetailGridDatasByDeleted())
             {
-                sqlUpdateArtworkReq_Detail += $@"
-update ArtworkReq_Detail set ArtworkPOID = '' 
-        where   ID = '{drDetail["ArtworkReqID", DataRowVersion.Original]}' and 
-                OrderID = '{drDetail["OrderID", DataRowVersion.Original]}' and 
-                ArtworkId = '{drDetail["ArtworkId", DataRowVersion.Original]}' and 
-                PatternCode = '{drDetail["PatternCode", DataRowVersion.Original]}' and 
-                PatternDesc = '{drDetail["PatternDesc", DataRowVersion.Original]}' 
-";
+                sqlUpdateArtworkReq_Detail += $@"update ArtworkReq_Detail set ArtworkPOID = '' where Ukey = '{drDetail["ArtworkReq_Detailukey", DataRowVersion.Original]}'";
             }
 
             if (!MyUtility.Check.Empty(sqlUpdateArtworkReq_Detail))
@@ -486,6 +479,7 @@ select
 		, sewinline = o.sewinline
 		, scidelivery = o.scidelivery
         , f.IsProduceFty
+        , a.ArtworkReq_DetailUkey
 from dbo.ArtworkPO_Detail a
 left join dbo.Orders o on a.OrderID = o.id
 left join Factory f with (nolock) on f.ID = o.FactoryID

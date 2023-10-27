@@ -105,7 +105,9 @@ thd.IsNonSewingLine,
 thd.PPA,
 o.MasterPlusGroup,
 thd.SewingMachineAttachmentID,
-thd.Template
+thd.Template,
+thd.StdSMV,
+thd.Thread_ComboID
 from TimeStudyHistory th WITH (NOLOCK) 
 left join TimeStudyHistory_Detail thd WITH (NOLOCK) on th.ID = thd.ID
 left join Operation o WITH (NOLOCK) on thd.OperationID = o.ID
@@ -138,6 +140,7 @@ order by IIF(Phase = 'Initial',1,iif(Phase = 'Prelim',2,iif(Phase = 'Estimate',3
                 .Text("Annotation", header: "Annotation", width: Widths.AnsiChars(30), iseditingreadonly: true)
                 .Numeric("Frequency", header: "Frequency", decimal_places: 2, iseditingreadonly: true)
                 .Text("MtlFactorID", header: "Factor", width: Widths.AnsiChars(3), iseditingreadonly: true)
+                .Numeric("StdSMV", header: "Std. SMV (sec)", integer_places: 4, decimal_places: 4, iseditingreadonly: true)
                 .Numeric("SMV", header: "SMV (sec)", decimal_places: 4, iseditingreadonly: true)
                 .CheckBox("IsSubprocess", header: "Subprocess", width: Widths.AnsiChars(7), iseditable: true)
                 .CheckBox("IsNonSewingLine", header: "Non-Sewing line", width: Widths.AnsiChars(7), iseditable: true)
@@ -147,6 +150,7 @@ order by IIF(Phase = 'Initial',1,iif(Phase = 'Prelim',2,iif(Phase = 'Estimate',3
                 .Text("Mold", header: "Attachment", width: Widths.AnsiChars(8), iseditingreadonly: true)
                 .Text("SewingMachineAttachmentID", header: "Part ID", width: Widths.AnsiChars(50), iseditingreadonly: true)
                 .Text("Template", header: "Template", width: Widths.AnsiChars(8), iseditingreadonly: true)
+                .Text("Thread_ComboID", "Thread Combination", width: Widths.AnsiChars(8), iseditingreadonly: true)
                 .Numeric("PcsPerHour", header: "Pcs/hr", decimal_places: 1, iseditingreadonly: true)
                 .Numeric("Sewer", header: "Sewer", decimal_places: 1, iseditingreadonly: true)
                 .Numeric("IETMSSMV", header: "Std. SMV", decimal_places: 4, iseditingreadonly: true);

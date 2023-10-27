@@ -1,6 +1,7 @@
 ﻿CREATE PROCEDURE [dbo].[PPIC_R03_FORBI]
      @SCIDeliveryS as date = null,
-	 @SCIDeliveryE as date = null
+	 @SCIDeliveryE as date = null,
+	 @ReturnType as int = 1
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -799,177 +800,178 @@ BEGIN
 		#tmp_PackingFOCQty, #tmp_PackingQty, #tmp_PFRemark, #tmp_StyleUkey, 
 		#tmp_SubProcess, #tmp_tmpOrders, #tmp_TTL_Subprocess
 
-	select [M] = b.MDivisionID
-		, [FactoryID] = b.FactoryID
-		, [Delivery] = b.BuyerDelivery
-		, [Delivery(YYYYMM)] = FORMAT(b.BuyerDelivery, 'yyyyMM')
-		, [Earliest SCIDlv] = b.EarliestSCIDlv
-		, [SCIDlv] = b.SciDelivery
-		, [KEY] = case when CAST(FORMAT(b.SciDelivery, 'dd') as int) <= 7 then FORMAT(DATEADD(MONTH, -1, b.SciDelivery), 'yyyyMM') else FORMAT(b.SciDelivery, 'yyyyMM') end
-		, [IDD] = b.IDD
-		, [CRD] = b.CRDDate
-		, [CRD(YYYYMM)] = FORMAT(b.CRDDate, 'yyyyMM')
-		, [Check CRD] = case when b.BuyerDelivery is null or b.CRDDate is null then 'Y'
-							when b.BuyerDelivery <> b.CRDDate then 'Y' 
-							else '' end
-		, [OrdCFM] = b.CFMDate
-		, [CRD-OrdCFM] = case when b.CRDDate is null or b.CFMDate is null then 0 else DATEDIFF(day, b.CRDDate, b.CFMDate) end
-		, [SPNO] = b.ID
-		, [Category] = b.Category
-		, [Est. download date] = case when b.isForecast = '' then '' else b.BuyMonth end
-		, [Buy Back] = b.BuyBack
-		, [Cancelled] = case when b.Junk = 1 then 'Y' else '' end
-		, [NeedProduction] = b.Cancelled
-		, [Dest] = b.DestAlias
-		, [Style] = b.StyleID
-		, [Style Name] = b.StyleName
-		, [Modular Parent] = b.ModularParent
-		, [CPUAdjusted] = b.CPUAdjusted
-		, [Similar Style] = b.SimilarStyle
-		, [Season] = b.SeasonID
-		, [Garment L/T] = b.GMTLT
-		, [Order Type] = b.OrderTypeID
-		, [Project] = b.ProjectID
-		, [PackingMethod] = b.PackingMethod
-		, [Hanger pack] = b.HangerPack
-		, [Order#] = b.Customize1
-		, [Buy Month] = case when b.isForecast = '' then b.BuyMonth else '' end
-		, [PONO] = b.CustPONo
-		, [VAS/SHAS] = case when b.VasShas = 1 then 'Y' else '' end
-		, [VAS/SHAS Apv.] = b.MnorderApv2
-		, [VAS/SHAS Cut Off Date] = b.VasShasCutOffDate
-		, [M/Notice Date] = b.MnorderApv
-		, [Est M/Notice Apv.] = b.KPIMNotice
-		, [Tissue] = case when b.TissuePaper =1 then 'Y' else '' end 
-		, [AF by adidas] = b.AirFreightByBrand
-		, [Factory Disclaimer] = b.FactoryDisclaimer
-		, [Factory Disclaimer Remark] = b.FactoryDisclaimerRemark
-		, [Approved/Rejected Date] = b.ApprovedRejectedDate
-		, [Global Foundation Range] = case when b.GFR = 1 then 'Y' else '' end
-		, [Brand] = b.BrandID
-		, [Cust CD] = b.CustCDID
-		, [KIT] = b.Kit
-		, [Fty Code] = b.BrandFTYCode
-		, [Program ] = b.ProgramID
-		, [Non Revenue] = b.NonRevenue
-		, [New CD Code] = b.CDCodeNew
-		, [ProductType] = b.ProductType
-		, [FabricType] = b.FabricType
-		, [Lining] = b.Lining
-		, [Gender] = b.Gender
-		, [Construction] = b.Construction
-		, [Cpu] = b.CPU
-		, [Qty] = b.Qty
-		, [FOC Qty] = b.FOCQty
-		, [Total CPU] = b.CPU * b.Qty * b.CPUFactor
-		, [SewQtyTop] = b.SewQtyTop
-		, [SewQtyBottom] = b.SewQtyBottom
-		, [SewQtyInner] = b.SewQtyInner
-		, [SewQtyOuter] = b.SewQtyOuter
-		, [Total Sewing Output] = b.TtlSewQty
-		, [Cut Qty] = b.CutQty
-		, [By Comb] = case when b.WorkType = 1 then 'Y' else '' end
-		, [Cutting Status] = case when b.CutQty >= b.Qty then 'Y' else '' end
-		, [Packing Qty] = b.PackingQty
-		, [Packing FOC Qty] = b.PackingFOCQty
- 		, [Booking Qty] = b.BookingQty
-		, [FOC Adj Qty] = b.FOCAdjQty
-		, [Not FOC Adj Qty] = b.NotFOCAdjQty -- 73
-		, [FOB] = b.PoPrice
-		, [Total] = b.Qty * b.PoPrice
-		, [KPI L/ETA] = b.KPILETA  --BG 76
-		, [PF ETA (SP)] = b.PFETA
-		, [Pull Forward Remark] = b.PFRemark
-		, [Pack L/ETA] = b.PackLETA
-		, [SCHD L/ETA] = b.LETA
-		, [Actual Mtl. ETA] = b.MTLETA
-		, [Fab ETA] = b.Fab_ETA
-		, [Acc ETA] = b.Acc_ETA
-		, [Sewing Mtl Complt(SP)] = b.SewingMtlComplt
-		, [Packing Mtl Complt(SP)] = b.PackingMtlComplt
-		, [Sew. MTL ETA (SP)] = b.SewETA
-		, [Pkg. MTL ETA (SP)] = b.PackETA
-		, [MTL Delay] = case when b.MTLDelay = 1 then 'Y' else '' end
-		, [MTL Cmplt] = case when isnull(b.MTLExport, '') = '' then b.MTLExportTimes else b.MTLExport end
-		, [MTL Cmplt (SP)] = case when b.MTLComplete = 1 then 'Y' else '' end
-		, [Arrive W/H Date] = b.ArriveWHDate
-		, [Sewing InLine] =  b.SewInLine
-		, [Sewing OffLine] = b.SewOffLine
-		, [1st Sewn Date] = b.FirstOutDate
-		, [Last Sewn Date] = b.LastOutDate
-		, [First Production Date] = b.FirstProduction
-		, [Last Production Date] = b.LastProductionDate
-		, [Each Cons Apv Date] = b.EachConsApv
-		, [Est Each Con Apv.] = b.KpiEachConsCheck
-		, [Cutting InLine] = b.CutInLine
-		, [Cutting OffLine] = b.CutOffLine
-		, [Cutting InLine(SP)] = b.CutInLine_SP
-		, [Cutting OffLine(SP)] = b.CutOffLine_SP
-		, [1st Cut Date] = b.FirstCutDate
-		, [Last Cut Date] = b.LastCutDate
-		, [Est. Pullout] = b.PulloutDate
-		, [Act. Pullout Date] = b.ActPulloutDate
-		, [Pullout Qty] = b.PulloutQty
-		, [Act. Pullout Times] = b.ActPulloutTime
-		, [Act. Pullout Cmplt] = case when b.PulloutComplete = 1 then 'OK' else '' end
-		, [KPI Delivery Date] = b.FtyKPI
-		, [Update Delivery Reason] = case when ISNULL(b.KPIChangeReason, '') = '' then '' else concat(b.KPIChangeReason, '-', b.KPIChangeReasonName) end
-		, [Plan Date] = b.PlanDate
-		, [Original Buyer Delivery Date] = b.OrigBuyerDelivery
-		, [SMR] = b.SMR
-		, [SMR Name] = b.SMRName
-		, [Handle] = b.MRHandle
-		, [Handle Name] = b.MRHandleName
-		, [Posmr] = b.POSMR
-		, [Posmr Name] = b.POSMRName
-		, [PoHandle] = b.POHandle
-		, [PoHandle Name] = b.POHandleName
-		, [PCHandle] = b.PCHandle
-		, [PCHandle Name] = b.PCHandleName
-		, [MCHandle] = b.MCHandle
-		, [MCHandle Name] = b.MCHandleName
-		, [DoxType] = b.DoxType
-		, [Packing CTN] = b.PackingCTN
-		, [TTLCTN] = b.TotalCTN
-		, [Pack Error CTN] = b.PackErrCTN
-		, [FtyCTN] = b.FtyCtn
-		, [cLog CTN] = b.ClogCTN
-		, [CFA CTN] = b.CFACTN
-		, [cLog Rec. Date] = b.ClogRcvDate
-		, [Final Insp. Date] = b.InspDate
-		, [Insp. Result] = b.InspResult
-		, [CFA Name] = b.InspHandle
-		, [Sewing Line#] = b.SewLine
-		, [ShipMode] = b.ShipModeList
-		, [SI#] = b.Customize2
-		, [ColorWay] = b.Article
-		, [Special Mark] = b.SpecialMarkName
-		, [Fty Remark] = b.FTYRemark
-		, [Sample Reason] = b.SampleReasonName
-		, [IS MixMarker] = b.IsMixMarker
-		, [Cutting SP] = b.CuttingSP
-		, [Rainwear test] = case when b.RainwearTestPassed = 1 then 'Y' else '' end
-		, [TMS] = b.CPU * @StdTMS
-		, [MD room scan date] = b.LastCTNTransDate
-		, [Dry Room received date] = b.LastCTNRecdDate
-		, [Dry room trans date] = b.DryRoomRecdDate
-		, [Last ctn trans date] = b.DryRoomTransDate
-		, [Last ctn recvd date] = b.MdRoomScanDate
-		, [OrganicCotton] = b.OrganicCotton
-		, [Direct Ship] = b.DirectShip		
-		, [StyleCarryover] = b.StyleCarryover
-		, t.ColumnN
-		, t.Val
-	into #tmp_final
-	from #tmp_LastBase b
-	left join #tmp_ArtworkTypeValue t on b.ID = t.ID
 
-	declare @cols nvarchar(max) = stuff((select concat(',[',ColumnN,']') from #tmp_ArtworkData group by ColumnN, rno order by rno for xml path('')),1,1,'')
-		, @query AS NVARCHAR(MAX)	
+	if @ReturnType = 1
+	begin
+		select [M] = b.MDivisionID
+			, [FactoryID] = b.FactoryID
+			, [Delivery] = b.BuyerDelivery
+			, [Delivery(YYYYMM)] = FORMAT(b.BuyerDelivery, 'yyyyMM')
+			, [Earliest SCIDlv] = b.EarliestSCIDlv
+			, [SCIDlv] = b.SciDelivery
+			, [KEY] = case when CAST(FORMAT(b.SciDelivery, 'dd') as int) <= 7 then FORMAT(DATEADD(MONTH, -1, b.SciDelivery), 'yyyyMM') else FORMAT(b.SciDelivery, 'yyyyMM') end
+			, [IDD] = b.IDD
+			, [CRD] = b.CRDDate
+			, [CRD(YYYYMM)] = FORMAT(b.CRDDate, 'yyyyMM')
+			, [Check CRD] = case when b.BuyerDelivery is null or b.CRDDate is null then 'Y'
+								when b.BuyerDelivery <> b.CRDDate then 'Y' 
+								else '' end
+			, [OrdCFM] = b.CFMDate
+			, [CRD-OrdCFM] = case when b.CRDDate is null or b.CFMDate is null then 0 else DATEDIFF(day, b.CRDDate, b.CFMDate) end
+			, [SPNO] = b.ID
+			, [Category] = b.Category
+			, [Est. download date] = case when b.isForecast = '' then '' else b.BuyMonth end
+			, [Buy Back] = b.BuyBack
+			, [Cancelled] = case when b.Junk = 1 then 'Y' else '' end
+			, [NeedProduction] = b.Cancelled
+			, [Dest] = b.DestAlias
+			, [Style] = b.StyleID
+			, [Style Name] = b.StyleName
+			, [Modular Parent] = b.ModularParent
+			, [CPUAdjusted] = b.CPUAdjusted
+			, [Similar Style] = b.SimilarStyle
+			, [Season] = b.SeasonID
+			, [Garment L/T] = b.GMTLT
+			, [Order Type] = b.OrderTypeID
+			, [Project] = b.ProjectID
+			, [PackingMethod] = b.PackingMethod
+			, [Hanger pack] = b.HangerPack
+			, [Order#] = b.Customize1
+			, [Buy Month] = case when b.isForecast = '' then b.BuyMonth else '' end
+			, [PONO] = b.CustPONo
+			, [VAS/SHAS] = case when b.VasShas = 1 then 'Y' else '' end
+			, [VAS/SHAS Apv.] = b.MnorderApv2
+			, [VAS/SHAS Cut Off Date] = b.VasShasCutOffDate
+			, [M/Notice Date] = b.MnorderApv
+			, [Est M/Notice Apv.] = b.KPIMNotice
+			, [Tissue] = case when b.TissuePaper =1 then 'Y' else '' end 
+			, [AF by adidas] = b.AirFreightByBrand
+			, [Factory Disclaimer] = b.FactoryDisclaimer
+			, [Factory Disclaimer Remark] = b.FactoryDisclaimerRemark
+			, [Approved/Rejected Date] = b.ApprovedRejectedDate
+			, [Global Foundation Range] = case when b.GFR = 1 then 'Y' else '' end
+			, [Brand] = b.BrandID
+			, [Cust CD] = b.CustCDID
+			, [KIT] = b.Kit
+			, [Fty Code] = b.BrandFTYCode
+			, [Program ] = b.ProgramID
+			, [Non Revenue] = b.NonRevenue
+			, [New CD Code] = b.CDCodeNew
+			, [ProductType] = b.ProductType
+			, [FabricType] = b.FabricType
+			, [Lining] = b.Lining
+			, [Gender] = b.Gender
+			, [Construction] = b.Construction
+			, [Cpu] = b.CPU
+			, [Qty] = b.Qty
+			, [FOC Qty] = b.FOCQty
+			, [Total CPU] = b.CPU * b.Qty * b.CPUFactor
+			, [SewQtyTop] = b.SewQtyTop
+			, [SewQtyBottom] = b.SewQtyBottom
+			, [SewQtyInner] = b.SewQtyInner
+			, [SewQtyOuter] = b.SewQtyOuter
+			, [Total Sewing Output] = b.TtlSewQty
+			, [Cut Qty] = b.CutQty
+			, [By Comb] = case when b.WorkType = 1 then 'Y' else '' end
+			, [Cutting Status] = case when b.CutQty >= b.Qty then 'Y' else '' end
+			, [Packing Qty] = b.PackingQty
+			, [Packing FOC Qty] = b.PackingFOCQty
+ 			, [Booking Qty] = b.BookingQty
+			, [FOC Adj Qty] = b.FOCAdjQty
+			, [Not FOC Adj Qty] = b.NotFOCAdjQty -- 73
+			, [FOB] = b.PoPrice
+			, [Total] = b.Qty * b.PoPrice
+			, [KPI L/ETA] = b.KPILETA  --BG 76
+			, [PF ETA (SP)] = b.PFETA
+			, [Pull Forward Remark] = b.PFRemark
+			, [Pack L/ETA] = b.PackLETA
+			, [SCHD L/ETA] = b.LETA
+			, [Actual Mtl. ETA] = b.MTLETA
+			, [Fab ETA] = b.Fab_ETA
+			, [Acc ETA] = b.Acc_ETA
+			, [Sewing Mtl Complt(SP)] = b.SewingMtlComplt
+			, [Packing Mtl Complt(SP)] = b.PackingMtlComplt
+			, [Sew. MTL ETA (SP)] = b.SewETA
+			, [Pkg. MTL ETA (SP)] = b.PackETA
+			, [MTL Delay] = case when b.MTLDelay = 1 then 'Y' else '' end
+			, [MTL Cmplt] = case when isnull(b.MTLExport, '') = '' then b.MTLExportTimes else b.MTLExport end
+			, [MTL Cmplt (SP)] = case when b.MTLComplete = 1 then 'Y' else '' end
+			, [Arrive W/H Date] = b.ArriveWHDate
+			, [Sewing InLine] =  b.SewInLine
+			, [Sewing OffLine] = b.SewOffLine
+			, [1st Sewn Date] = b.FirstOutDate
+			, [Last Sewn Date] = b.LastOutDate
+			, [First Production Date] = b.FirstProduction
+			, [Last Production Date] = b.LastProductionDate
+			, [Each Cons Apv Date] = b.EachConsApv
+			, [Est Each Con Apv.] = b.KpiEachConsCheck
+			, [Cutting InLine] = b.CutInLine
+			, [Cutting OffLine] = b.CutOffLine
+			, [Cutting InLine(SP)] = b.CutInLine_SP
+			, [Cutting OffLine(SP)] = b.CutOffLine_SP
+			, [1st Cut Date] = b.FirstCutDate
+			, [Last Cut Date] = b.LastCutDate
+			, [Est. Pullout] = b.PulloutDate
+			, [Act. Pullout Date] = b.ActPulloutDate
+			, [Pullout Qty] = b.PulloutQty
+			, [Act. Pullout Times] = b.ActPulloutTime
+			, [Act. Pullout Cmplt] = case when b.PulloutComplete = 1 then 'OK' else '' end
+			, [KPI Delivery Date] = b.FtyKPI
+			, [Update Delivery Reason] = case when ISNULL(b.KPIChangeReason, '') = '' then '' else concat(b.KPIChangeReason, '-', b.KPIChangeReasonName) end
+			, [Plan Date] = b.PlanDate
+			, [Original Buyer Delivery Date] = b.OrigBuyerDelivery
+			, [SMR] = b.SMR
+			, [SMR Name] = b.SMRName
+			, [Handle] = b.MRHandle
+			, [Handle Name] = b.MRHandleName
+			, [Posmr] = b.POSMR
+			, [Posmr Name] = b.POSMRName
+			, [PoHandle] = b.POHandle
+			, [PoHandle Name] = b.POHandleName
+			, [PCHandle] = b.PCHandle
+			, [PCHandle Name] = b.PCHandleName
+			, [MCHandle] = b.MCHandle
+			, [MCHandle Name] = b.MCHandleName
+			, [DoxType] = b.DoxType
+			, [Packing CTN] = b.PackingCTN
+			, [TTLCTN] = b.TotalCTN
+			, [Pack Error CTN] = b.PackErrCTN
+			, [FtyCTN] = b.FtyCtn
+			, [cLog CTN] = b.ClogCTN
+			, [CFA CTN] = b.CFACTN
+			, [cLog Rec. Date] = b.ClogRcvDate
+			, [Final Insp. Date] = b.InspDate
+			, [Insp. Result] = b.InspResult
+			, [CFA Name] = b.InspHandle
+			, [Sewing Line#] = b.SewLine
+			, [ShipMode] = b.ShipModeList
+			, [SI#] = b.Customize2
+			, [ColorWay] = b.Article
+			, [Special Mark] = b.SpecialMarkName
+			, [Fty Remark] = b.FTYRemark
+			, [Sample Reason] = b.SampleReasonName
+			, [IS MixMarker] = b.IsMixMarker
+			, [Cutting SP] = b.CuttingSP
+			, [Rainwear test] = case when b.RainwearTestPassed = 1 then 'Y' else '' end
+			, [TMS] = b.CPU * @StdTMS
+			, [MD room scan date] = b.LastCTNTransDate
+			, [Dry Room received date] = b.LastCTNRecdDate
+			, [Dry room trans date] = b.DryRoomRecdDate
+			, [Last ctn trans date] = b.DryRoomTransDate
+			, [Last ctn recvd date] = b.MdRoomScanDate
+			, [OrganicCotton] = b.OrganicCotton
+			, [Direct Ship] = b.DirectShip		
+			, [StyleCarryover] = b.StyleCarryover
+		from #tmp_LastBase b 
+	end
+	else if @ReturnType = 2
+	begin
+		select [OrderID] = t.ID
+			, [ColumnName] = t.ColumnN
+			, [ColumnValue] = SUM(ISNULL(try_convert(numeric(38, 6), t.Val), 0))
+		from #tmp_ArtworkTypeValue t
+		group by t.ID, t.ColumnN
+	end
 
-	SET @query = 'SELECT * FROM ( SELECT * FROM #tmp_final t ) src
-				  PIVOT ( MAX(Val) FOR ColumnN IN (' + @cols + ') ) piv'
-	EXECUTE(@query)
-
-	drop table #tmp_ArtworkData, #tmp_ArtworkTypeValue, #tmp_final, #tmp_LastBase, #tmp_Orders_base
+	drop table #tmp_ArtworkData, #tmp_ArtworkTypeValue, #tmp_LastBase, #tmp_Orders_base
 end

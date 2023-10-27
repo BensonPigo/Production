@@ -185,6 +185,8 @@ select  orderid = ard.OrderID
         , o.StyleUkey
         , ar.LocalSuppId
         , [OrderQtyArticle] = OrderQty.Article
+        , ArtworkReq_DetailUkey = ard.Ukey
+        , ard.Remark
 into #baseArtworkReq
 from orders o WITH (NOLOCK) 
 inner join ArtworkReq_Detail ard with (nolock) on   ard.OrderId = o.ID and 
@@ -420,6 +422,7 @@ select
         , coststitch = vsa.qty
         , bar.Stitch 
         , bar.PatternDesc
+        , bar.Remark
         , bar.QtyGarment
         , Cost = iif(at.isArtwork = 1,vsa.Cost,sao.Price)
         , unitprice = isnull(sao.Price,0)
@@ -436,6 +439,7 @@ select
         , bar.SizeCode
         , [QuotArticle] = isnull(vsa.Article, '')
         , [QuotSizeCode] = isnull(sao.SizeCode, '')
+        , ArtworkReq_DetailUkey
 into #quoteFromPlanningB03Base
 from  #baseArtworkReq bar
 left join dbo.View_Style_Artwork vsa on	vsa.StyleUkey = bar.StyleUkey and 
@@ -443,7 +447,8 @@ left join dbo.View_Style_Artwork vsa on	vsa.StyleUkey = bar.StyleUkey and
                                         vsa.ArtworkID = bar.ArtworkID and
                                         vsa.ArtworkTypeID = bar.ArtworkTypeID and 
                                         vsa.PatternCode = bar.PatternCode and
-										vsa.PatternDesc = bar.PatternDesc 
+										vsa.PatternDesc = bar.PatternDesc and
+										vsa.Remark = bar.Remark
 left join Style_Artwork_Quot sao with (nolock) on   sao.Ukey = vsa.StyleArtworkUkey and 
                                                     sao.PriceApv = 'Y' and 
                                                     sao.Price > 0 and 
@@ -455,11 +460,13 @@ left join ArtworkType at WITH (NOLOCK) on at.id = bar.ArtworkTypeID
 
             strSQLCmd += @"
 select	* ,
-		[QuotSeq] = ROW_NUMBER() OVER (PARTITION BY orderid,Article,SizeCode,ArtworkID,PatternCode,PatternDesc ORDER BY QuotArticle,QuotSizeCode desc)
+		[QuotSeq] = ROW_NUMBER() OVER (PARTITION BY orderid,Article,SizeCode,ArtworkID,PatternCode,PatternDesc ORDER BY QuotArticle,QuotSizeCode desc),
+		[CostSeq] = ROW_NUMBER() OVER (PARTITION BY orderid,Article,SizeCode,ArtworkID,PatternCode,PatternDesc,Cost ORDER BY ArtworkReq_DetailUkey desc),--處理因 ArtworkReq_DetailUkey 發散重複 
+		[ArtworkReq_DetailUkeySeq] = ROW_NUMBER() OVER (PARTITION BY orderid,Article,SizeCode,ArtworkID,PatternCode,PatternDesc,ArtworkReq_DetailUkey ORDER BY Cost desc)--處理因 ArtworkReq_DetailUkey 發散重複 
 into #quoteFromPlanningB03
 from #quoteFromPlanningB03Base 
 
-delete #quoteFromPlanningB03 where Article = '' and SizeCode <> QuotSizeCode and QuotSeq > 1
+delete #quoteFromPlanningB03 where (Article = '' and  SizeCode <> QuotSizeCode and QuotSeq > 1) OR ([CostSeq] <> [ArtworkReq_DetailUkeySeq])
 
 --將報價相同的Article資料合併
 select distinct
@@ -492,6 +499,7 @@ select distinct
         , IrregularQtyReason
 		,[Farmout]
 		,[FarmIn]
+        , ArtworkReq_DetailUkey
 from #quoteFromPlanningB03 main
 ";
 
@@ -529,6 +537,7 @@ select  Selected = 0
         , bar.SizeCode
         , o.Category
         , bar.IrregularQtyReason
+        , bar.ArtworkReq_DetailUkey
 from #baseArtworkReq bar
 inner join dbo.Orders o with (nolock) on o.ID = bar.OrderID
 inner join dbo.Order_TmsCost ot WITH (NOLOCK) on ot.ID = bar.OrderID and ot.ArtworkTypeID = bar.ArtworkTypeID
@@ -581,6 +590,8 @@ select  Selected = 0
         , bar.IrregularQtyReason
 		, [Farmout] = ISNULL(FarmOut.Value,0)
 		, [FarmIn] = ISNULL(FarmIn.Value,0)
+        , ArtworkReq_DetailUkey
+        ,bar.Remark
 from  #baseArtworkReq bar
 inner join Orders o with (nolock) on o.ID = bar.OrderID
 --ISP20211197 P05維護的Article為空白時，要從Order_Qty抓第一筆Article，作為抓取Order_Artwork的條件
@@ -591,7 +602,8 @@ inner join dbo.Order_Artwork oa WITH (NOLOCK) on oa.ID = bar.OrderID and
                                                  oa.ArtworkTypeID = bar.ArtworkTypeID and
                                                  oa.ArtworkID = bar.ArtworkID      and
                                                  oa.PatternCode = bar.PatternCode  and
-                                                 oa.PatternDesc = bar.PatternDesc 
+                                                 oa.PatternDesc = bar.PatternDesc and
+                                                 oa.Remark = bar.Remark
 {this.sqlFarmOutApply}
 where  ((o.Category = 'B' and  oa.price > 0) or (o.category !='B'))
 ";
@@ -662,6 +674,7 @@ select	Selected = 0
         , o.Category
         , o.FactoryID
         , f.IsProduceFty 
+        , ArtworkReq_DetailUkey = ard.Ukey
 from ArtworkReq ar  with (nolock)
 inner join ArtworkReq_Detail ard with (nolock) on ar.ID = ard.ID 
 left join ArtworkReq_IrregularQty ai with (nolock) on ai.OrderID = ard.OrderID and ai.ArtworkTypeID = ar.ArtworkTypeID and ard.ExceedQty > 0
@@ -711,6 +724,7 @@ select  Selected = 0
         , t.Category
         , o.FactoryID
         , f.IsProduceFty 
+        , t.ArtworkReq_DetailUkey
 from #tmpArtwork t
 inner join dbo.Orders o with (nolock) on t.OrderID = o.id
 left join Factory f with (nolock) on f.ID = o.FactoryID

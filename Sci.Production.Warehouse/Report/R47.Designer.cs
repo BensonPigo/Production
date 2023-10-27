@@ -36,6 +36,8 @@
             this.lblunrollEndTime = new Sci.Win.UI.Label();
             this.unrollStartTime = new Sci.Win.UI.DateRange();
             this.lblunrollStartTime = new Sci.Win.UI.Label();
+            this.label1 = new Sci.Win.UI.Label();
+            this.txtSP = new Sci.Win.UI.TextBox();
             this.SuspendLayout();
             // 
             // print
@@ -80,14 +82,14 @@
             this.RelaxationEndTime.DateBox2.Size = new System.Drawing.Size(129, 23);
             this.RelaxationEndTime.DateBox2.TabIndex = 1;
             this.RelaxationEndTime.IsRequired = false;
-            this.RelaxationEndTime.Location = new System.Drawing.Point(151, 94);
+            this.RelaxationEndTime.Location = new System.Drawing.Point(153, 123);
             this.RelaxationEndTime.Name = "RelaxationEndTime";
             this.RelaxationEndTime.Size = new System.Drawing.Size(280, 23);
             this.RelaxationEndTime.TabIndex = 111;
             // 
             // lblRelaxationEndTime
             // 
-            this.lblRelaxationEndTime.Location = new System.Drawing.Point(9, 94);
+            this.lblRelaxationEndTime.Location = new System.Drawing.Point(11, 123);
             this.lblRelaxationEndTime.Name = "lblRelaxationEndTime";
             this.lblRelaxationEndTime.RectStyle.BorderColor = System.Drawing.Color.Black;
             this.lblRelaxationEndTime.RectStyle.BorderWidth = 1F;
@@ -116,14 +118,14 @@
             this.RelaxationStartTime.DateBox2.Size = new System.Drawing.Size(129, 23);
             this.RelaxationStartTime.DateBox2.TabIndex = 1;
             this.RelaxationStartTime.IsRequired = false;
-            this.RelaxationStartTime.Location = new System.Drawing.Point(151, 68);
+            this.RelaxationStartTime.Location = new System.Drawing.Point(153, 97);
             this.RelaxationStartTime.Name = "RelaxationStartTime";
             this.RelaxationStartTime.Size = new System.Drawing.Size(280, 23);
             this.RelaxationStartTime.TabIndex = 109;
             // 
             // lblRelaxationStartTime
             // 
-            this.lblRelaxationStartTime.Location = new System.Drawing.Point(9, 68);
+            this.lblRelaxationStartTime.Location = new System.Drawing.Point(11, 97);
             this.lblRelaxationStartTime.Name = "lblRelaxationStartTime";
             this.lblRelaxationStartTime.RectStyle.BorderColor = System.Drawing.Color.Black;
             this.lblRelaxationStartTime.RectStyle.BorderWidth = 1F;
@@ -152,14 +154,14 @@
             this.unrollEndTime.DateBox2.Size = new System.Drawing.Size(129, 23);
             this.unrollEndTime.DateBox2.TabIndex = 1;
             this.unrollEndTime.IsRequired = false;
-            this.unrollEndTime.Location = new System.Drawing.Point(151, 38);
+            this.unrollEndTime.Location = new System.Drawing.Point(153, 67);
             this.unrollEndTime.Name = "unrollEndTime";
             this.unrollEndTime.Size = new System.Drawing.Size(280, 23);
             this.unrollEndTime.TabIndex = 107;
             // 
             // lblunrollEndTime
             // 
-            this.lblunrollEndTime.Location = new System.Drawing.Point(9, 38);
+            this.lblunrollEndTime.Location = new System.Drawing.Point(11, 67);
             this.lblunrollEndTime.Name = "lblunrollEndTime";
             this.lblunrollEndTime.RectStyle.BorderColor = System.Drawing.Color.Black;
             this.lblunrollEndTime.RectStyle.BorderWidth = 1F;
@@ -188,14 +190,14 @@
             this.unrollStartTime.DateBox2.Size = new System.Drawing.Size(129, 23);
             this.unrollStartTime.DateBox2.TabIndex = 1;
             this.unrollStartTime.IsRequired = false;
-            this.unrollStartTime.Location = new System.Drawing.Point(151, 9);
+            this.unrollStartTime.Location = new System.Drawing.Point(153, 38);
             this.unrollStartTime.Name = "unrollStartTime";
             this.unrollStartTime.Size = new System.Drawing.Size(280, 23);
             this.unrollStartTime.TabIndex = 105;
             // 
             // lblunrollStartTime
             // 
-            this.lblunrollStartTime.Location = new System.Drawing.Point(9, 9);
+            this.lblunrollStartTime.Location = new System.Drawing.Point(11, 38);
             this.lblunrollStartTime.Name = "lblunrollStartTime";
             this.lblunrollStartTime.RectStyle.BorderColor = System.Drawing.Color.Black;
             this.lblunrollStartTime.RectStyle.BorderWidth = 1F;
@@ -207,11 +209,36 @@
             this.lblunrollStartTime.TextStyle.BorderColor = System.Drawing.Color.Black;
             this.lblunrollStartTime.TextStyle.Color = System.Drawing.Color.Black;
             // 
+            // label1
+            // 
+            this.label1.Location = new System.Drawing.Point(11, 9);
+            this.label1.Name = "label1";
+            this.label1.RectStyle.BorderColor = System.Drawing.Color.Black;
+            this.label1.RectStyle.BorderWidth = 1F;
+            this.label1.RectStyle.Color = System.Drawing.Color.SkyBlue;
+            this.label1.RectStyle.ExtBorderWidth = 1F;
+            this.label1.Size = new System.Drawing.Size(139, 23);
+            this.label1.TabIndex = 113;
+            this.label1.Text = "SP#";
+            this.label1.TextStyle.BorderColor = System.Drawing.Color.Black;
+            this.label1.TextStyle.Color = System.Drawing.Color.Black;
+            // 
+            // txtSP
+            // 
+            this.txtSP.BackColor = System.Drawing.Color.White;
+            this.txtSP.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtSP.Location = new System.Drawing.Point(153, 9);
+            this.txtSP.Name = "txtSP";
+            this.txtSP.Size = new System.Drawing.Size(164, 23);
+            this.txtSP.TabIndex = 114;
+            // 
             // R47
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(531, 145);
+            this.ClientSize = new System.Drawing.Size(531, 176);
+            this.Controls.Add(this.txtSP);
+            this.Controls.Add(this.label1);
             this.Controls.Add(this.RelaxationEndTime);
             this.Controls.Add(this.lblRelaxationEndTime);
             this.Controls.Add(this.RelaxationStartTime);
@@ -237,6 +264,8 @@
             this.Controls.SetChildIndex(this.RelaxationStartTime, 0);
             this.Controls.SetChildIndex(this.lblRelaxationEndTime, 0);
             this.Controls.SetChildIndex(this.RelaxationEndTime, 0);
+            this.Controls.SetChildIndex(this.label1, 0);
+            this.Controls.SetChildIndex(this.txtSP, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -252,5 +281,7 @@
         private Win.UI.Label lblunrollEndTime;
         private Win.UI.DateRange unrollStartTime;
         private Win.UI.Label lblunrollStartTime;
+        private Win.UI.Label label1;
+        private Win.UI.TextBox txtSP;
     }
 }

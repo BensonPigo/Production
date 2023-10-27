@@ -32,8 +32,8 @@
             this.txtseason = new Sci.Production.Class.Txtseason();
             this.txtstyle = new Sci.Production.Class.Txtstyle();
             this.labelBrand = new Sci.Win.UI.Label();
-            this.labelSeason = new Sci.Win.UI.Label();
             this.labelStyle = new Sci.Win.UI.Label();
+            this.lbSeason = new Sci.Win.UI.Label();
             this.SuspendLayout();
             // 
             // print
@@ -44,10 +44,12 @@
             // toexcel
             // 
             this.toexcel.Location = new System.Drawing.Point(316, 12);
+            this.toexcel.TabIndex = 3;
             // 
             // close
             // 
             this.close.Location = new System.Drawing.Point(316, 48);
+            this.close.TabIndex = 4;
             // 
             // buttonCustomized
             // 
@@ -65,32 +67,32 @@
             // 
             this.txtbrand.BackColor = System.Drawing.Color.White;
             this.txtbrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtbrand.Location = new System.Drawing.Point(115, 12);
+            this.txtbrand.Location = new System.Drawing.Point(88, 12);
             this.txtbrand.MyDocumentdName = null;
             this.txtbrand.Name = "txtbrand";
             this.txtbrand.Size = new System.Drawing.Size(98, 23);
-            this.txtbrand.TabIndex = 105;
+            this.txtbrand.TabIndex = 0;
             // 
             // txtseason
             // 
             this.txtseason.BackColor = System.Drawing.Color.White;
             this.txtseason.BrandObjectName = null;
             this.txtseason.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtseason.Location = new System.Drawing.Point(115, 48);
+            this.txtseason.Location = new System.Drawing.Point(88, 48);
             this.txtseason.Name = "txtseason";
             this.txtseason.Size = new System.Drawing.Size(98, 23);
-            this.txtseason.TabIndex = 104;
+            this.txtseason.TabIndex = 1;
             // 
             // txtstyle
             // 
             this.txtstyle.BackColor = System.Drawing.Color.White;
             this.txtstyle.BrandObjectName = null;
             this.txtstyle.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtstyle.Location = new System.Drawing.Point(115, 84);
+            this.txtstyle.Location = new System.Drawing.Point(88, 84);
             this.txtstyle.Name = "txtstyle";
             this.txtstyle.SeasonObjectName = null;
             this.txtstyle.Size = new System.Drawing.Size(186, 23);
-            this.txtstyle.TabIndex = 103;
+            this.txtstyle.TabIndex = 2;
             this.txtstyle.TarBrand = null;
             this.txtstyle.TarSeason = null;
             // 
@@ -98,36 +100,38 @@
             // 
             this.labelBrand.Location = new System.Drawing.Point(9, 12);
             this.labelBrand.Name = "labelBrand";
-            this.labelBrand.Size = new System.Drawing.Size(102, 23);
-            this.labelBrand.TabIndex = 108;
-            this.labelBrand.Text = "Master Brand";
-            // 
-            // labelSeason
-            // 
-            this.labelSeason.Location = new System.Drawing.Point(9, 48);
-            this.labelSeason.Name = "labelSeason";
-            this.labelSeason.Size = new System.Drawing.Size(102, 23);
-            this.labelSeason.TabIndex = 107;
-            this.labelSeason.Text = "Master Season";
+            this.labelBrand.Size = new System.Drawing.Size(76, 23);
+            this.labelBrand.TabIndex = 5;
+            this.labelBrand.Text = "Brand";
             // 
             // labelStyle
             // 
             this.labelStyle.Location = new System.Drawing.Point(9, 84);
             this.labelStyle.Name = "labelStyle";
-            this.labelStyle.Size = new System.Drawing.Size(102, 23);
-            this.labelStyle.TabIndex = 106;
-            this.labelStyle.Text = "Master Style";
+            this.labelStyle.Size = new System.Drawing.Size(76, 23);
+            this.labelStyle.TabIndex = 7;
+            this.labelStyle.Text = "Style";
+            // 
+            // lbSeason
+            // 
+            this.lbSeason.Location = new System.Drawing.Point(9, 48);
+            this.lbSeason.Name = "lbSeason";
+            this.lbSeason.RectStyle.Color = System.Drawing.Color.SkyBlue;
+            this.lbSeason.Size = new System.Drawing.Size(76, 23);
+            this.lbSeason.TabIndex = 98;
+            this.lbSeason.Text = "Season";
+            this.lbSeason.TextStyle.Color = System.Drawing.Color.Black;
             // 
             // R22
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(408, 150);
+            this.Controls.Add(this.lbSeason);
             this.Controls.Add(this.txtbrand);
             this.Controls.Add(this.txtseason);
             this.Controls.Add(this.txtstyle);
             this.Controls.Add(this.labelBrand);
-            this.Controls.Add(this.labelSeason);
             this.Controls.Add(this.labelStyle);
             this.Name = "R22";
             this.OnLineHelpID = "Sci.Win.Tems.PrintForm";
@@ -139,11 +143,11 @@
             this.Controls.SetChildIndex(this.checkUseCustomized, 0);
             this.Controls.SetChildIndex(this.txtVersion, 0);
             this.Controls.SetChildIndex(this.labelStyle, 0);
-            this.Controls.SetChildIndex(this.labelSeason, 0);
             this.Controls.SetChildIndex(this.labelBrand, 0);
             this.Controls.SetChildIndex(this.txtstyle, 0);
             this.Controls.SetChildIndex(this.txtseason, 0);
             this.Controls.SetChildIndex(this.txtbrand, 0);
+            this.Controls.SetChildIndex(this.lbSeason, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -155,7 +159,7 @@
         private Class.Txtseason txtseason;
         private Class.Txtstyle txtstyle;
         private Win.UI.Label labelBrand;
-        private Win.UI.Label labelSeason;
         private Win.UI.Label labelStyle;
+        private Win.UI.Label lbSeason;
     }
 }

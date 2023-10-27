@@ -267,7 +267,7 @@ Select f.myKey, f.StyleUkey, f.FabricPanelCode, f.PatternPanel, f.FabricCode, Is
 from bof b
 Inner join fabericCode f on f.StyleUkey = b.StyleUkey and f.FabricCode = b.FabricCode
 Outer Apply (
-    Select Top 1 Concat(qt.QTFabricCode, qt.QTPatternPanel) as IsQT
+    Select Top 1 qt.FabricPanelCode as IsQT
     From qt
     Where qt.myKey = f.myKey
     and qt.FabricPanelCode = f.FabricPanelCode

@@ -2015,6 +2015,8 @@ else
                 t.BomTypeStyleLocation    = isnull(s.BomTypeStyleLocation   , 0),
                 t.BomTypeSeason           = isnull(s.BomTypeSeason          , 0),
                 t.BomTypeCareCode         = isnull(s.BomTypeCareCode        , 0)
+                , t.BomTypeBuyMonth = isnull(s.BomTypeBuyMonth,0)
+                , t.BomTypeBuyerDlvMonth = isnull(s.BomTypeBuyerDlvMonth,0)
 		when not matched by target then
 			insert (
 				Id					, Ukey				, Refno					, SCIRefno				, SuppID
@@ -2035,7 +2037,9 @@ else
                 ,BomTypeStyle            
                 ,BomTypeStyleLocation    
                 ,BomTypeSeason           
-                ,BomTypeCareCode         
+                ,BomTypeCareCode     
+               ,BomTypeBuyMonth
+               ,BomTypeBuyerDlvMonth    
 			)
            VALUES
            (
@@ -2084,6 +2088,8 @@ else
                 , isnull(s.BomTypeStyleLocation   , 0) 
                 , isnull(s.BomTypeSeason          , 0) 
                 , isnull(s.BomTypeCareCode        , 0)
+                , isnull(s.BomTypeBuyMonth,0)
+                , isnull(s.BomTypeBuyerDlvMonth,0)
 			)
 		when not matched by source AND T.ID IN (SELECT ID FROM #Torder) then 
 			delete;
@@ -2454,6 +2460,50 @@ else
            )
 		when not matched by source AND T.ID IN (SELECT ID FROM #Torder) then 
 			delete;
+
+		---------------Order_MarkerList------------Order_MarkerList_PatternPanel
+		Delete a
+		from Production.dbo.Order_MarkerList_PatternPanel as a
+		inner join #Torder b on a.id = b.id
+		where not exists(select 1 from Trade_To_Pms.dbo.Order_MarkerList_PatternPanel 
+								  where a.Order_MarkerlistUkey = Order_MarkerlistUkey and a.FabricPanelCode = FabricPanelCode)
+		---------------------------UPDATE 
+		
+		UPDATE a
+		SET	 a.Id			  = b.Id			
+			,a.PatternPanel	  = b.PatternPanel	
+			,a.AddName		  = b.AddName		
+			,a.AddDate		  = b.AddDate		
+			,a.EditName		  = b.EditName		
+			,a.EditDate		  = b.EditDate		
+		from Production.dbo.Order_MarkerList_PatternPanel as a
+		inner join #Torder o on a.id = o.id
+		inner join Trade_To_Pms.dbo.Order_MarkerList_PatternPanel as b ON a.Order_MarkerlistUkey = b.Order_MarkerlistUkey and a.FabricPanelCode = b.FabricPanelCode
+		-------------------------- INSERT
+		
+		INSERT INTO Production.dbo.Order_MarkerList_PatternPanel(
+		 Id
+		,PatternPanel
+		,Order_MarkerlistUkey
+		,FabricPanelCode
+		,AddName
+		,AddDate
+		,EditName
+		,EditDate
+		)
+		select 
+				 b.Id
+				,b.PatternPanel
+				,b.Order_MarkerlistUkey
+				,b.FabricPanelCode
+				,b.AddName
+				,b.AddDate
+				,b.EditName
+				,b.EditDate
+		from Trade_To_Pms.dbo.Order_MarkerList_PatternPanel as b WITH (NOLOCK)
+		inner join #Torder o on b.id = o.id
+		where not exists(select 1 from Production.dbo.Order_MarkerList_PatternPanel as a WITH (NOLOCK) 
+						 where a.Order_MarkerlistUkey = b.Order_MarkerlistUkey and a.FabricPanelCode = b.FabricPanelCode)
 
 		------Order_MarkerList_SizeQty----------------
 		Merge Production.dbo.Order_MarkerList_SizeQty as t

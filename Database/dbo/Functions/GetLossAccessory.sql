@@ -196,7 +196,8 @@ Begin
 					)tmp
 					pivot
 					(
-						MAX(SpecValue) for BomTypeID in (Color, Size, SizeUnit, ZipperInsert, Article, COO, Gender, CustomerSize, DecLabelSize, BrandFactoryCode, Style, StyleLocation, Season, CareCode, CustomerPO)
+                        MAX(SpecValue) for BomTypeID in
+                        (Color, Size, SizeUnit, ZipperInsert, Article, COO, Gender, CustomerSize, DecLabelSize, BrandFactoryCode, Style, StyleLocation, Season, CareCode, CustomerPO, BuyMonth, BuyerDlvMonth)
 					) as p
 				  ) boa_spec
 				 Where Order_BOAUkey = @BoaUkey

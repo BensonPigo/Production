@@ -173,11 +173,6 @@ BEGIN
 						If IsNull(@KeyValue, '') = ''
 						Begin
 							set @KeyValue = dbo.GetKeywordValue_New(@OrderID,@KeywordID,@Article,@SizeCode,@Location)
-
-							If Upper(@KeywordID) = Upper('Orig Buyer deliver')
-							Begin
-								Set @KeyValue = Format(Month(@KeyValue), '00') + '/' + Right(Format(Year(@KeyValue), '0000'), 2);
-							End;
 						End;
 					End;
 				End;

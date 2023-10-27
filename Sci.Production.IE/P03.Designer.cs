@@ -1370,7 +1370,7 @@
             this.txtFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtFactory.IsMultiselect = false;
             this.txtFactory.IsProduceFty = false;
-            this.txtFactory.IssupportJunk = true;
+            this.txtFactory.IssupportJunk = false;
             this.txtFactory.Location = new System.Drawing.Point(58, 35);
             this.txtFactory.MDivision = null;
             this.txtFactory.Name = "txtFactory";

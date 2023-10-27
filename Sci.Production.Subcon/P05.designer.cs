@@ -419,6 +419,7 @@
             this.txtmfactory.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "factoryid", true));
             this.txtmfactory.FilteMDivision = true;
             this.txtmfactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtmfactory.IsMultiselect = false;
             this.txtmfactory.IsProduceFty = false;
             this.txtmfactory.IssupportJunk = false;
             this.txtmfactory.Location = new System.Drawing.Point(373, 49);
@@ -429,6 +430,7 @@
             // 
             // txtuserHandle
             // 
+            this.txtuserHandle.AllowSelectResign = false;
             this.txtuserHandle.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "handle", true));
             this.txtuserHandle.DisplayBox1Binding = "";
             this.txtuserHandle.Location = new System.Drawing.Point(373, 80);
@@ -454,6 +456,7 @@
             // 
             this.txtsubconSupplier.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "localsuppid", true));
             this.txtsubconSupplier.DisplayBox1Binding = "";
+            this.txtsubconSupplier.IsFreightForwarder = false;
             this.txtsubconSupplier.IsIncludeJunk = false;
             this.txtsubconSupplier.IsMisc = false;
             this.txtsubconSupplier.IsShipping = false;
@@ -487,7 +490,7 @@
             this.DefaultControlForEdit = "txtsubconSupplier";
             this.ExpressQuery = true;
             this.GridAlias = "ArtworkReq_Detail";
-            this.GridUniqueKey = "id,artworkid,patterncode,PatternDesc,OrderId,Article,SizeCode";
+            this.GridUniqueKey = "id,artworkid,patterncode,PatternDesc,OrderId,Article,SizeCode,Remark";
             this.IsSupportCheck = true;
             this.IsSupportClose = true;
             this.IsSupportConfirm = true;

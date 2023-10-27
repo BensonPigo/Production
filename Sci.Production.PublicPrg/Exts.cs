@@ -9,6 +9,7 @@ using ZXing.QrCode;
 using ZXing.QrCode.Internal;
 using MsExcel = Microsoft.Office.Interop.Excel;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel;
 
 namespace Sci.Production.Prg
 {
@@ -190,6 +191,37 @@ namespace Sci.Production.Prg
             {
                 return srcTableForSchema.Clone();
             }
+        }
+
+        /// <summary>
+        /// 複製datatable並保留來源datatable狀態
+        /// </summary>
+        /// <param name="source">source</param>
+        /// <returns>DataTable</returns>
+        public static DataTable ToTableKeepRowState(this DataView source)
+        {
+            DataTable copiedDataTable = source.Table.Clone();
+
+            foreach (DataRowView originalRowView in source)
+            {
+                DataRow originalRow = originalRowView.Row;
+                DataRow copiedRow = copiedDataTable.NewRow();
+                copiedRow.ItemArray = originalRow.ItemArray; // 复制原始行的数据到新的行
+                copiedDataTable.Rows.Add(copiedRow);
+
+                // 设置新行的状态为原始行的状态
+                copiedRow.AcceptChanges(); // 先将行状态重置为 Unchanged
+                if (originalRow.RowState == DataRowState.Modified)
+                {
+                    copiedRow.SetModified();
+                }
+                else if (originalRow.RowState == DataRowState.Deleted)
+                {
+                    copiedRow.Delete();
+                }
+            }
+
+            return copiedDataTable;
         }
 
         /// <inheritdoc/>
@@ -467,6 +499,32 @@ namespace Sci.Production.Prg
             }
 
             return self == to;
+        }
+
+        /// <summary>
+        /// GetDescription
+        /// </summary>
+        /// <param name="value">value</param>
+        /// <returns>string</returns>
+        public static string GetDescription(this Enum value)
+        {
+            Type type = value.GetType();
+            string name = Enum.GetName(type, value);
+
+            if (name != null)
+            {
+                FieldInfo field = type.GetField(name);
+                if (field != null)
+                {
+                    DescriptionAttribute attr = field.GetCustomAttribute<DescriptionAttribute>();
+                    if (attr != null)
+                    {
+                        return attr.Description;
+                    }
+                }
+            }
+
+            return value.ToString();
         }
     }
 }

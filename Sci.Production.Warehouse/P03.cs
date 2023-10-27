@@ -1,10 +1,12 @@
 ﻿using Ict;
 using Ict.Win;
 using Sci.Data;
+using Sci.Production.PublicPrg;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
@@ -600,9 +602,9 @@ where Poid='{dr["id"]}' and seq1='{dr["Seq1"]}' and seq2='{dr["Seq2"]}'", out dr
                     if (!dr["ShipQty"].ToString().Empty() && !dr["Qty"].ToString().Empty())
                     {
                         if (shipQty < qty)
-                    {
-                        this.gridMaterialStatus.Rows[i].Cells["ShipQty"].Style.ForeColor = Color.Red;
-                    }
+                        {
+                            this.gridMaterialStatus.Rows[i].Cells["ShipQty"].Style.ForeColor = Color.Red;
+                        }
                     }
 
                     if (dr["SuppCountry"].ToString().EqualString(this.userCountry))
@@ -614,9 +616,9 @@ where Poid='{dr["id"]}' and seq1='{dr["Seq1"]}' and seq2='{dr["Seq2"]}'", out dr
                     if (!dr["OutQty"].ToString().Empty() && !dr["NETQty"].ToString().Empty() && !dr["NETQty"].ToString().Equals("-"))
                     {
                         if (Convert.ToDecimal(dr["OutQty"].ToString()) > Convert.ToDecimal(dr["NETQty"].ToString()))
-                    {
-                        this.gridMaterialStatus.Rows[i].Cells["OutQty"].Style.ForeColor = Color.Red;
-                    }
+                        {
+                            this.gridMaterialStatus.Rows[i].Cells["OutQty"].Style.ForeColor = Color.Red;
+                        }
                     }
                 }
             }
@@ -638,19 +640,18 @@ where Poid='{dr["id"]}' and seq1='{dr["Seq1"]}' and seq2='{dr["Seq2"]}'", out dr
         /// <inheritdoc/>
         public void Query()
         {
-            DataTable dtData = new DataTable();
+            this.ShowWaitMessage("Data Loading....");
+
             this.listControlBindingSource1.DataSource = null;
-            string junk_where1 = string.Empty, junk_where2 = string.Empty;
-            string spno = this.txtSPNo.Text.TrimEnd() + "%";
-            #region -- SQL Command --
-            string sqlcmd
-                = @"
+
+            string sqlcmd = @"
 SET ANSI_NULLS ON
 SET ANSI_PADDING ON
 SET ARITHABORT ON
 SET CONCAT_NULL_YIELDS_NULL ON
+SET ANSI_DEFAULTS ON
 
-declare @id varchar(20) = @sp1	
+declare @id varchar(20) = Rtrim(@sp1)+'%'
 
 select distinct StyleID,BrandID,POID,FtyGroup ,CuttingSP ,StyleUkey
 into #tmpOrder
@@ -667,7 +668,7 @@ Select distinct [ID] = PO.POID
 , tcd.SCIRefNo, tcd.ColorID, tcd.Article --Mapping PO_Supp_Detail
 into #ArticleForThread_Detail
 From #tmpOrder PO
-Inner Join View_WH_Orders as o On o.ID = po.POID 
+Inner Join View_WH_Orders as o WITH (NOLOCK) On o.ID = po.POID 
 Inner Join dbo.Style as s with(nolock) On s.Ukey = o.StyleUkey
 Inner Join dbo.Style_ThreadColorCombo as tc with(nolock) On tc.StyleUkey = s.Ukey
 Inner Join dbo.Style_ThreadColorCombo_Detail as tcd with(nolock) On tcd.Style_ThreadColorComboUkey = tc.Ukey
@@ -689,7 +690,7 @@ SELECT a.ID,a.SEQ1,a.seq2
 ,invtQty = Round(sum(dbo.getUnitQty(inv.UnitID, a.StockUnit, isnull(inv.Qty, 0.00))), 2)
 into #InvTrans_inv
 FROM InvTrans inv WITH (NOLOCK)
-inner join PO_Supp_Detail a on   inv.InventoryPOID = a.id
+inner join PO_Supp_Detail a WITH (NOLOCK) on   inv.InventoryPOID = a.id
 	and inv.InventorySeq1 = a.Seq1
 	and inv.InventorySeq2 = a.seq2	
 inner join #tmpOrder o on o.poid = a.id
@@ -697,76 +698,80 @@ where  inv.Type in ('1', '4')
 group by a.ID,a.SEQ1,a.seq2
 
 SELECT a.POID,a.SEQ1,a.seq2
-,invtQty = Round(sum(dbo.getUnitQty(inv.UnitID, p.StockUnit, isnull(inv.Qty, 0.00))), 2)
-into #InvTrans_MDPo
+    ,invtQty = dbo.getUnitQty(inv.UnitID, p.StockUnit, isnull(inv.Qty, 0.00))
+into #InvTrans_MDPo_0
 FROM InvTrans inv WITH (NOLOCK)
-inner join MDivisionPoDetail a on   inv.InventoryPOID = a.POID
+inner join MDivisionPoDetail a WITH (NOLOCK) on   inv.InventoryPOID = a.POID
 	and inv.InventorySeq1 = a.Seq1
 	and inv.InventorySeq2 = a.seq2	
 inner join #tmpOrder o on o.poid = a.POID
-left join PO_Supp_Detail p on p.ID = a.POID
+left join PO_Supp_Detail p WITH (NOLOCK) on p.ID = a.POID
     and p.SEQ1= a.Seq1 and p.seq2= a.seq2
 where  inv.Type in ('1', '4')
-group by a.POID,a.SEQ1,a.seq2
 
+SELECT POID,SEQ1,seq2,invtQty=Round(sum(invtQty), 2)
+INTO #InvTrans_MDPo
+FROM #InvTrans_MDPo_0
+group by POID,SEQ1,seq2
 
-;WITH QA AS (
-	Select  c.InvNo InvNo
-            ,a.POID POID
-            ,a.SEQ1 SEQ1
-            ,a.SEQ2 SEQ2
-            , CASE 
-	            when a.Nonphysical = 1 and a.nonContinuity=1 and nonShadebond=1 and a.nonWeight=1 and a.nonOdor=1 then 'N/A'
-	            when isnull(a.result,'')='' then 'Blank'
-	            else a.result
-	          END as [Result] 
-    from dbo.FIR a WITH (NOLOCK) 
-    left join [dbo].[View_AllReceiving] c WITH (NOLOCK) on c.Id = a.ReceivingID
-    where   a.POID LIKE @id
-    UNION all
-	Select   c.InvNo InvNo
-            ,a.POID POID
-            ,a.SEQ1 SEQ1
-            ,a.SEQ2 SEQ2
-            , CASE 
-	            when isnull(a.result,'')='' then 'Blank'
-	            else a.result
-	          END as [Result] 
-	from dbo.AIR a WITH (NOLOCK) 
-    left join [dbo].[View_AllReceiving] c WITH (NOLOCK) on c.Id = a.ReceivingID
-    where   a.POID like @id 
-            and a.Result !=''
-) , washlabQA as (
-    select 
-        a.POID,
-        a.seq1,
-        a.seq2,
-	    washlab=
-	    case  when a.[Crocking]='' or a.Heat='' or a.[Wash]='' or Oven.Result='' or ColorFastness.Result='' then 'Blank'
-              when a.[Crocking]='Fail'or a.Heat='Fail' or a.[Wash]='Fail' or Oven.Result='Fail' or ColorFastness.Result='Fail' then 'Fail'
-		      else 'Pass'
-	    end
-    from dbo.FIR_Laboratory a WITH (NOLOCK) 
-    inner join dbo.FIR b WITH (NOLOCK) on b.id = a.id
-    left join dbo.Receiving c WITH (NOLOCK) on c.Id = b.ReceivingID
-    outer apply(select (case when  sum(iif(od.Result = 'Fail' ,1,0)) > 0 then 'Fail'
-						     when  sum(iif(od.Result = 'Pass' ,1,0)) > 0 then 'Pass'
-				             else '' end) as Result,
-					    MIN( ov.InspDate) as InspDate 
-				    from Oven ov with(nolock)
-				    inner join dbo.Oven_Detail od with(nolock) on od.ID = ov.ID
-				    where ov.POID=a.POID and od.SEQ1=a.Seq1 
-				    and seq2=a.Seq2 and ov.Status='Confirmed') as Oven
-    outer apply(select (case when  sum(iif(cd.Result = 'Fail' ,1,0)) > 0 then 'Fail'
-						     when  sum(iif(cd.Result = 'Pass' ,1,0)) > 0 then 'Pass'
-				             else '' end) as Result,
-					    MIN( CF.InspDate) as InspDate 
-				    from dbo.ColorFastness CF WITH (NOLOCK) 
-				    inner join dbo.ColorFastness_Detail cd WITH (NOLOCK) on cd.ID = CF.ID
-				    where CF.Status = 'Confirmed' and CF.POID=a.POID 
-				    and cd.SEQ1=a.Seq1 and cd.seq2=a.Seq2) as ColorFastness
-    where a.POID like @id 
-)
+Select  c.InvNo InvNo
+        ,a.POID POID
+        ,a.SEQ1 SEQ1
+        ,a.SEQ2 SEQ2
+        , CASE 
+	        when a.Nonphysical = 1 and a.nonContinuity=1 and nonShadebond=1 and a.nonWeight=1 and a.nonOdor=1 then 'N/A'
+	        when isnull(a.result,'')='' then 'Blank'
+	        else a.result
+	        END as [Result]
+into #tmpQA
+from dbo.FIR a WITH (NOLOCK) 
+left join [dbo].[View_AllReceiving] c WITH (NOLOCK) on c.Id = a.ReceivingID
+where   a.POID LIKE @id
+UNION all
+Select   c.InvNo InvNo
+        ,a.POID POID
+        ,a.SEQ1 SEQ1
+        ,a.SEQ2 SEQ2
+        , CASE 
+	        when isnull(a.result,'')='' then 'Blank'
+	        else a.result
+	        END as [Result] 
+from dbo.AIR a WITH (NOLOCK) 
+left join [dbo].[View_AllReceiving] c WITH (NOLOCK) on c.Id = a.ReceivingID
+where   a.POID like @id 
+        and a.Result !=''
+        
+select 
+    a.POID,
+    a.seq1,
+    a.seq2,
+	washlab=
+	case  when a.[Crocking]='' or a.Heat='' or a.[Wash]='' or Oven.Result='' or ColorFastness.Result='' then 'Blank'
+            when a.[Crocking]='Fail'or a.Heat='Fail' or a.[Wash]='Fail' or Oven.Result='Fail' or ColorFastness.Result='Fail' then 'Fail'
+		    else 'Pass'
+	end
+into #tmpwashlabQA
+from dbo.FIR_Laboratory a WITH (NOLOCK) 
+inner join dbo.FIR b WITH (NOLOCK) on b.id = a.id
+left join dbo.Receiving c WITH (NOLOCK) on c.Id = b.ReceivingID
+outer apply(select (case when  sum(iif(od.Result = 'Fail' ,1,0)) > 0 then 'Fail'
+						    when  sum(iif(od.Result = 'Pass' ,1,0)) > 0 then 'Pass'
+				            else '' end) as Result,
+					MIN( ov.InspDate) as InspDate 
+				from Oven ov with(nolock)
+				inner join dbo.Oven_Detail od with(nolock) on od.ID = ov.ID
+				where ov.POID=a.POID and od.SEQ1=a.Seq1 
+				and seq2=a.Seq2 and ov.Status='Confirmed') as Oven
+outer apply(select (case when  sum(iif(cd.Result = 'Fail' ,1,0)) > 0 then 'Fail'
+						    when  sum(iif(cd.Result = 'Pass' ,1,0)) > 0 then 'Pass'
+				            else '' end) as Result,
+					MIN( CF.InspDate) as InspDate 
+				from dbo.ColorFastness CF WITH (NOLOCK) 
+				inner join dbo.ColorFastness_Detail cd WITH (NOLOCK) on cd.ID = CF.ID
+				where CF.Status = 'Confirmed' and CF.POID=a.POID 
+				and cd.SEQ1=a.Seq1 and cd.seq2=a.Seq2) as ColorFastness
+where a.POID like @id
+
 select *
 from(
     select  ROW_NUMBER() over (partition by id,seq1,seq2 order by id,seq1,seq2,len_D) as ROW_NUMBER_D
@@ -886,13 +891,13 @@ from(
                     , dbo.getmtldesc(a.id,a.seq1,a.seq2,2,0) AS description
                     , s.currencyid
                     , stuff((select Concat('/',t.Result) from ( SELECT seq1,seq2,Result 
-                                                                FROM QA 
+                                                                FROM #tmpQA 
                                                                 where   poid = m.POID 
                                                                         and seq1 = m.seq1 
                                                                         and seq2 = m.seq2 
                                                                 )t order by t.seq1,t.seq2  for xml path('')),1,1,'') FIR
 					,stuff((SELECT Concat('/',washlab)
-                               FROM washlabQA wqa
+                               FROM #tmpwashlabQA wqa
                                where   wqa.poid = a.id 
                                        and wqa.seq1 = a.seq1 
                                        and wqa.seq2 = a.seq2 
@@ -947,7 +952,19 @@ from(
 		                                    ) tmp for xml path(''))
                                     ,1,1,'')
                     , [From_Program] = 'P03'
-                    , [GarmentSize]=dbo.GetGarmentSizeByOrderIDSeq(a.Id, a.SEQ1,a.SEQ2)
+                    , [GarmentSize] = Stuff((
+                        select concat( ',',LOSS.SizeCode) 
+	                    from Order_SizeSpec LOSS WITH (NOLOCK)
+	                    LEFT JOIN Order_SizeCode LOSC WITH (NOLOCK) ON LOSC.Id=LOSS.ID AND LOSC.SizeCode = LOSS.SizeCode
+	                    where LOSS.Id = a.id
+                        AND LOSS.SizeItem = (
+		                    SELECT top 1 oBOA.SizeItem 
+		                    FROM Order_BOA oBOA WITH (NOLOCK) 
+		                    WHERE a.id = oBOA.ID AND a.SEQ1 = oBOA.Seq1 AND a.SCIRefno = oBOA.SCIRefno 
+	                    )
+                        AND LOSS.SizeSpec = psdsS.SpecValue
+                        ORDER BY LOSC.Seq ASC
+                        FOR XML PATH('')),1,1,'') 
 					, [Article] = aft.Article
 					, EachCons.FabricCombo 
 					, [SustainableMaterial] = IIF(fabric.IsRecycled = 1 and fabric.MtlTypeID='HANGTAG',1,0)
@@ -1049,9 +1066,9 @@ from(
                     , fabric.BomTypeCalculate
                     , dbo.getmtldesc(a.id,a.seq1,a.seq2,2,0) AS description
                     , s.currencyid
-                    , stuff((select Concat('/',t.Result) from (SELECT seq1,seq2, Result FROM QA where poid = m.POID and seq1 =m.seq1 and seq2 = m.seq2 )t order by seq1,seq2 for xml path('')),1,1,'') FIR
+                    , stuff((select Concat('/',t.Result) from (SELECT seq1,seq2, Result FROM #tmpQA where poid = m.POID and seq1 =m.seq1 and seq2 = m.seq2 )t order by seq1,seq2 for xml path('')),1,1,'') FIR
 					,stuff((SELECT Concat('/',washlab)
-                               FROM washlabQA wqa
+                               FROM #tmpwashlabQA wqa
                                where   wqa.poid = a.id 
                                        and wqa.seq1 = a.seq1 
                                        and wqa.seq2 = a.seq2 
@@ -1106,7 +1123,19 @@ from(
 		                                     ) tmp for xml path(''))
                                             ,1,1,'')
                     , [From_Program] = 'P03'
-                    , [GarmentSize]=dbo.GetGarmentSizeByOrderIDSeq(a.Id, a.SEQ1,a.SEQ2)
+                    , [GarmentSize] = Stuff((
+                        select concat( ',',LOSS.SizeCode) 
+	                    from Order_SizeSpec LOSS WITH (NOLOCK)
+	                    LEFT JOIN Order_SizeCode LOSC WITH (NOLOCK) ON LOSC.Id=LOSS.ID AND LOSC.SizeCode = LOSS.SizeCode
+	                    where LOSS.Id = a.id
+                        AND LOSS.SizeItem = (
+		                    SELECT top 1 oBOA.SizeItem 
+		                    FROM Order_BOA oBOA WITH (NOLOCK) 
+		                    WHERE a.id = oBOA.ID AND a.SEQ1 = oBOA.Seq1 AND a.SCIRefno = oBOA.SCIRefno 
+	                    )
+                        AND LOSS.SizeSpec = psdsS.SpecValue
+                        ORDER BY LOSC.Seq ASC
+                        FOR XML PATH('')),1,1,'')
 					, [Article] = aft.Article
 					, EachCons.FabricCombo 
 					, [SustainableMaterial] = IIF(fabric.IsRecycled = 1 and fabric.MtlTypeID='HANGTAG',1,0)
@@ -1235,37 +1264,34 @@ left join LocalInventory l with(nolock) on a.OrderId = l.OrderID and a.Refno = l
 left join LocalItem b with(nolock) on a.Refno=b.RefNo
 left join LocalSupp c with(nolock) on b.LocalSuppid=c.ID
 
-drop table #tmpOrder,#tmpLocalPO_Detail,#ArticleForThread_Detail,#ArticleForThread,#InvTrans_inv,#InvTrans_MDPo
-            ";
-            #endregion
-            #region -- 準備sql參數資料 --
-            SqlParameter sp1 = new SqlParameter();
-            sp1.ParameterName = "@sp1";
-            sp1.Value = spno;
+drop table #tmpOrder,#tmpLocalPO_Detail,#ArticleForThread_Detail,#ArticleForThread,#InvTrans_inv
+    ,#InvTrans_MDPo_0
+    ,#InvTrans_MDPo
+    ,#tmpQA
+    ,#tmpwashlabQA
+";
 
-            IList<SqlParameter> cmds = new List<SqlParameter>();
-            cmds.Add(sp1);
-            #endregion
-            this.ShowWaitMessage("Data Loading....");
+            List<SqlParameter> paras = new List<SqlParameter> { new SqlParameter("@sp1", this.txtSPNo.Text) };
 
-            DualResult result;
-            if (result = DBProxy.Current.Select(null, sqlcmd, cmds, out dtData))
-            {
-                if (dtData.Rows.Count == 0 && !this.ButtonOpen)
-                {
-                    MyUtility.Msg.WarningBox("Data not found!!");
-                }
-
-                this.listControlBindingSource1.DataSource = this.ReCombineOrderList(dtData);
-                this.Grid_Filter();
-                this.Grid1_sorting();
-                this.ChangeDetailColor();
-                this.ButtonOpen = false;
-            }
-            else
+            DualResult result = new DualResult(true);
+            DataTable dt = new DataTable();
+            Prgs.ExecuteWithExecutionTimeMeasurement(() => { result = DBProxy.Current.Select(null, sqlcmd, paras, out dt); });
+            if (!result)
             {
                 this.ShowErr(result);
+                return;
             }
+
+            if (dt.Rows.Count == 0 && !this.ButtonOpen)
+            {
+                MyUtility.Msg.WarningBox("Data not found!!");
+            }
+
+            this.listControlBindingSource1.DataSource = this.ReCombineOrderList(dt);
+            this.Grid_Filter();
+            this.Grid1_sorting();
+            this.ChangeDetailColor();
+            this.ButtonOpen = false;
 
             _Refno = string.Empty;
             _Color = string.Empty;

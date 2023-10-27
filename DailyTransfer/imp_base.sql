@@ -59,6 +59,7 @@ SET
 	  ,a. UseRatioRule = isnull(b.UseRatioRule, '')
 	  ,a. UseRatioRule_Thick =isnull(b.UseRatioRule_Thick, '')
 	  ,a. Serial = isnull(b.Serial, 0)
+	  ,a. ShipTermID = isnull(b.ShipTermID, '')
 from Production.dbo.Brand as a inner join Trade_To_Pms.dbo.Brand as b ON a.id=b.id
 -------------------------- INSERT INTO §ì
 INSERT INTO Production.dbo.Brand
@@ -102,6 +103,7 @@ INSERT INTO Production.dbo.Brand
 	  ,UseRatioRule
 	  ,UseRatioRule_Thick
 	  ,Serial
+	  ,ShipTermID
 )
 SELECT ID
       ,isnull(NameCH, '')
@@ -142,6 +144,7 @@ SELECT ID
 	  ,isnull(UseRatioRule, '')
 	  ,isnull(UseRatioRule_Thick, '')
 	  ,isnull(Serial, 0)
+	  ,isnull(ShipTermID,'')
 from Trade_To_Pms.dbo.Brand as b WITH (NOLOCK)
 where not exists(select id from Production.dbo.Brand as a WITH (NOLOCK) where a.id = b.id)
 
@@ -929,6 +932,7 @@ SET
       ,a.EditDate		      = b.EditDate				
 	  ,a.Kit		          = isnull(b.Kit						, '')
 	  ,a.HealthID		      = isnull(b.HealthID					, '')
+	  ,a.ShipTermID		      = isnull(b.ShipTermID					, '')
 
 from Production.dbo.CustCD as a inner join Trade_To_Pms.dbo.CustCD as b ON a.id=b.id and a.BrandID=b.BrandID
 -------------------------- INSERT INTO §ì
@@ -967,6 +971,7 @@ BrandID
       ,EditDate
 	  ,Kit
 	  ,HealthID
+	  ,ShipTermID
 )
 select 
        isnull(BrandID			, '')
@@ -1003,6 +1008,7 @@ select
       ,EditDate			
 	  ,isnull(Kit				, '')
 	  ,isnull(HealthID			, '')
+	  ,isnull(ShipTermID			, '')
 from Trade_To_Pms.dbo.CustCD as b WITH (NOLOCK)
 where not exists(select id from Production.dbo.CustCD as a WITH (NOLOCK) where a.id = b.id and a.BrandID=b.BrandID)
 
@@ -5845,5 +5851,38 @@ SELECT
 from [Trade_To_Pms].[dbo].Exchange as b WITH (NOLOCK)
 where not exists(select 1 from [Production].[dbo].Exchange as a WITH (NOLOCK) where a.ExchangeTypeID = b.ExchangeTypeID and a.CurrencyFrom = b.CurrencyFrom and a.CurrencyTo = b.CurrencyTo and a.DateStart = b.DateStart)
 
+/*AutomatedLineMappingConditionSetting*/
+delete [Production].[dbo].AutomatedLineMappingConditionSetting
+
+insert into [Production].[dbo].AutomatedLineMappingConditionSetting
+			(
+				Ukey
+				,MDivisionID
+				,FactoryID
+				,Functions
+				,Verify
+				,Condition1
+				,Condition2
+				,Condition3
+				,Junk
+				,AddName
+				,AddDate
+				,EditName
+				,EditDate
+			)
+select	Ukey
+		,MDivisionID
+		,FactoryID
+		,Functions
+		,Verify
+		,Condition1
+		,Condition2
+		,Condition3
+		,Junk
+		,AddName
+		,AddDate
+		,EditName
+		,EditDate
+from	[Trade_To_Pms].[dbo].AutomatedLineMappingConditionSetting
 
 END

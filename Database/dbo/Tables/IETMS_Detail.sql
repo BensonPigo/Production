@@ -13,6 +13,8 @@
     [MtlFactorRate] DECIMAL (8, 2)  CONSTRAINT [DF_IETMS_Detail_MtlFactorRate] DEFAULT ((0)) NOT NULL,
     [IsPPA]         BIT             CONSTRAINT [DF_IETMS_Detail_IsPPA] DEFAULT ((0)) NOT NULL,
     [PPA]           VARCHAR (2)     CONSTRAINT [DF_IETMS_Detail_PPA] DEFAULT ('') NOT NULL,
+    [ProOperationID] VARCHAR(20) CONSTRAINT [DF_IETMS_Detail_ProOperationID] DEFAULT ('') not NULL,
+    [CodeFrom] VARCHAR(20) CONSTRAINT [DF_IETMS_Detail_CodeFrom] DEFAULT ('') not NULL,
     CONSTRAINT [PK_IETMS_Detail] PRIMARY KEY CLUSTERED ([UKey] ASC)
 );
 

@@ -1168,7 +1168,7 @@ ORDER BY  a.PackingListID , b.SCICtnNo
                             sQLs = new List<string>();
                             filenames = new List<string>();
                             images = new List<byte[]>();
-
+                            counter = 0;
                             imageCount = 0;
                         }
                         else

@@ -69,7 +69,7 @@ namespace Sci.Production.Class
             /// GetGridCell
             /// </summary>
             /// <returns>DataGridViewGeneratorTextColumnSettings</returns>
-            public static DataGridViewGeneratorTextColumnSettings GetGridCell()
+            public static CelltxtMachineGroup GetGridCell()
             {
                 ////pur 為ture 表示需判斷PurchaseFrom
                 CelltxtMachineGroup ts = new CelltxtMachineGroup();
@@ -90,7 +90,20 @@ namespace Sci.Production.Class
                         DataRow row = grid.GetDataRow<DataRow>(e.RowIndex);
                         SelectItem sele;
 
-                        sele = new SelectItem("SELECT DISTINCT MasterPlusGroup FROM Operation WITH (NOLOCK) WHERE MasterPlusGroup <> '' AND Junk=0 ", "23", row["MasterPlusGroup"].ToString(), false, ",");
+                        string sqlMachineGroup = " SELECT DISTINCT MasterPlusGroup FROM Operation WITH (NOLOCK) WHERE MasterPlusGroup <> '' AND Junk=0 ";
+
+                        if (row.Table.Columns.IndexOf("MachineTypeID") != -1)
+                        {
+                            if (MyUtility.Check.Empty(row["MachineTypeID"]))
+                            {
+                                MyUtility.Msg.WarningBox("Please input ST/MC first.");
+                                return;
+                            }
+
+                            sqlMachineGroup += $" and MachineTypeID = '{row["MachineTypeID"]}'";
+                        }
+
+                        sele = new SelectItem(sqlMachineGroup, "23", row["MasterPlusGroup"].ToString(), false, ",");
 
                         DialogResult result = sele.ShowDialog();
                         if (result == DialogResult.Cancel)

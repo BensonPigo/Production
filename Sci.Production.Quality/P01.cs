@@ -161,7 +161,10 @@ namespace Sci.Production.Quality
     a.CustInspNumber,
     Complete = IIF(d.Complete=1,'Y','N'),
     b.InspectionGroup,
-    [Inspection] = CONCAT(convert(decimal(20,2),ROUND(isnull(fp.ttlActualYds, 0) / ArriveQty * 100.0, 2)), '%')
+    [Inspection] = CONCAT( CASE WHEN ArriveQty <> 0
+                                    THEN convert(decimal(20,2),ROUND(isnull(fp.ttlActualYds, 0) / NULLIF(ArriveQty, 0) * 100.0, 2))
+                                    ELSE 0
+                            END, '%')
 From FIR a WITH (NOLOCK) 
 Left join Receiving c WITH (NOLOCK) on c.id = a.receivingid
 Left join TransferIn ti WITH (NOLOCK) on ti.id = a.receivingid
@@ -514,6 +517,7 @@ and ActualYds > 0
                 .Numeric("TotalInspYds", header: "Act. Ttl Ysd\nInspection", width: Widths.AnsiChars(8), integer_places: 10, decimal_places: 2, iseditingreadonly: true, settings: phyYds)
                 .Date("PhysicalDate", header: "Last Phy.\nInsp. Date", width: Widths.AnsiChars(10), iseditingreadonly: true, settings: phyD)
                 .Text("CustInspNumber", header: "Cust Insp. Number", width: Widths.AnsiChars(12))
+                .Text("InspectionGroup", header: "Group", width: Widths.AnsiChars(12), iseditingreadonly: true)
 
                 // Continuity
                 .CheckBox("NonContinuity", header: "Continuity \nN/A", width: Widths.AnsiChars(2), iseditable: true, trueValue: 1, falseValue: 0, settings: nonCon)
@@ -521,7 +525,6 @@ and ActualYds > 0
                 .Date("ContinuityDate", header: "Last Cont.\nTest. Date", width: Widths.AnsiChars(10), iseditingreadonly: true, settings: conD)
 
                 // Weight
-                .Text("InspectionGroup", header: "Group", width: Widths.AnsiChars(12), iseditingreadonly: true)
                 .CheckBox("NonWeight", header: "Weight N/A", width: Widths.AnsiChars(2), iseditable: true, trueValue: 1, falseValue: 0, settings: nonWei)
                 .Text("Weight", header: "Weight\n Test", width: Widths.AnsiChars(4), iseditingreadonly: true, settings: wei)
                 .Date("WeightDate", header: "Last Wei.\nTest. Date", width: Widths.AnsiChars(10), iseditingreadonly: true, settings: weiD)
@@ -554,7 +557,7 @@ and ActualYds > 0
             this.detailgrid.Columns["TotalInspYds"].DefaultCellStyle.BackColor = Color.LemonChiffon;
             this.detailgrid.Columns["PhysicalDate"].DefaultCellStyle.BackColor = Color.LemonChiffon;
             this.detailgrid.Columns["CustInspNumber"].DefaultCellStyle.BackColor = Color.LemonChiffon;
-
+            this.detailgrid.Columns["InspectionGroup"].DefaultCellStyle.BackColor = Color.LemonChiffon;
             // 青藍組
             this.detailgrid.Columns["Weight"].DefaultCellStyle.BackColor = Color.LightCyan;
             this.detailgrid.Columns["WeightDate"].DefaultCellStyle.BackColor = Color.LightCyan;

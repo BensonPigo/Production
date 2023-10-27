@@ -29,7 +29,6 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.label1 = new Sci.Win.UI.Label();
             this.label2 = new Sci.Win.UI.Label();
             this.label3 = new Sci.Win.UI.Label();
@@ -39,6 +38,8 @@
             this.btnQuery = new Sci.Win.UI.Button();
             this.grid1 = new Sci.Win.UI.Grid();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
+            this.label4 = new Sci.Win.UI.Label();
+            this.comboErrorType = new System.Windows.Forms.ComboBox();
             ((System.ComponentModel.ISupportInitialize)(this.grid1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
             this.SuspendLayout();
@@ -48,7 +49,7 @@
             this.label1.Location = new System.Drawing.Point(9, 9);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(93, 23);
-            this.label1.TabIndex = 1;
+            this.label1.TabIndex = 5;
             this.label1.Text = "Transfer Date";
             // 
             // label2
@@ -56,7 +57,7 @@
             this.label2.Location = new System.Drawing.Point(9, 46);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(93, 23);
-            this.label2.TabIndex = 2;
+            this.label2.TabIndex = 7;
             this.label2.Text = "Pack ID";
             // 
             // label3
@@ -64,7 +65,7 @@
             this.label3.Location = new System.Drawing.Point(390, 46);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(75, 23);
-            this.label3.TabIndex = 3;
+            this.label3.TabIndex = 8;
             this.label3.Text = "SP#";
             // 
             // dateTransfer
@@ -87,7 +88,7 @@
             this.dateTransfer.Location = new System.Drawing.Point(105, 9);
             this.dateTransfer.Name = "dateTransfer";
             this.dateTransfer.Size = new System.Drawing.Size(280, 23);
-            this.dateTransfer.TabIndex = 4;
+            this.dateTransfer.TabIndex = 0;
             // 
             // txtPackID
             // 
@@ -97,7 +98,7 @@
             this.txtPackID.Location = new System.Drawing.Point(105, 46);
             this.txtPackID.Name = "txtPackID";
             this.txtPackID.Size = new System.Drawing.Size(163, 23);
-            this.txtPackID.TabIndex = 5;
+            this.txtPackID.TabIndex = 2;
             // 
             // txtsp
             // 
@@ -107,14 +108,14 @@
             this.txtsp.Location = new System.Drawing.Point(468, 46);
             this.txtsp.Name = "txtsp";
             this.txtsp.Size = new System.Drawing.Size(118, 23);
-            this.txtsp.TabIndex = 6;
+            this.txtsp.TabIndex = 3;
             // 
             // btnQuery
             // 
-            this.btnQuery.Location = new System.Drawing.Point(598, 9);
+            this.btnQuery.Location = new System.Drawing.Point(736, 4);
             this.btnQuery.Name = "btnQuery";
             this.btnQuery.Size = new System.Drawing.Size(80, 30);
-            this.btnQuery.TabIndex = 7;
+            this.btnQuery.TabIndex = 4;
             this.btnQuery.Text = "Query";
             this.btnQuery.UseVisualStyleBackColor = true;
             this.btnQuery.Click += new System.EventHandler(this.BtnQuery_Click);
@@ -137,25 +138,35 @@
             this.grid1.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.grid1.Location = new System.Drawing.Point(12, 75);
             this.grid1.Name = "grid1";
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.grid1.RowHeadersDefaultCellStyle = dataGridViewCellStyle1;
             this.grid1.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.grid1.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.grid1.RowTemplate.Height = 24;
             this.grid1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.grid1.ShowCellToolTips = false;
-            this.grid1.Size = new System.Drawing.Size(672, 296);
-            this.grid1.TabIndex = 8;
+            this.grid1.Size = new System.Drawing.Size(808, 296);
+            this.grid1.TabIndex = 9;
+            // 
+            // label4
+            // 
+            this.label4.Location = new System.Drawing.Point(400, 9);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(82, 23);
+            this.label4.TabIndex = 6;
+            this.label4.Text = "Error Type";
+            // 
+            // comboErrorType
+            // 
+            this.comboErrorType.FormattingEnabled = true;
+            this.comboErrorType.Location = new System.Drawing.Point(485, 8);
+            this.comboErrorType.Name = "comboErrorType";
+            this.comboErrorType.Size = new System.Drawing.Size(227, 24);
+            this.comboErrorType.TabIndex = 1;
             // 
             // P21
             // 
-            this.ClientSize = new System.Drawing.Size(696, 383);
+            this.ClientSize = new System.Drawing.Size(832, 383);
+            this.Controls.Add(this.comboErrorType);
+            this.Controls.Add(this.label4);
             this.Controls.Add(this.grid1);
             this.Controls.Add(this.btnQuery);
             this.Controls.Add(this.txtsp);
@@ -165,6 +176,7 @@
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
             this.Name = "P21";
+            this.OnLineHelpID = "Sci.Win.Tems.QueryForm";
             this.Text = "P21. Query For Transfer To Packing Error Record";
             this.Controls.SetChildIndex(this.label1, 0);
             this.Controls.SetChildIndex(this.label2, 0);
@@ -174,6 +186,8 @@
             this.Controls.SetChildIndex(this.txtsp, 0);
             this.Controls.SetChildIndex(this.btnQuery, 0);
             this.Controls.SetChildIndex(this.grid1, 0);
+            this.Controls.SetChildIndex(this.label4, 0);
+            this.Controls.SetChildIndex(this.comboErrorType, 0);
             ((System.ComponentModel.ISupportInitialize)(this.grid1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).EndInit();
             this.ResumeLayout(false);
@@ -192,5 +206,7 @@
         private Win.UI.Button btnQuery;
         private Win.UI.Grid grid1;
         private Win.UI.ListControlBindingSource listControlBindingSource1;
+        private Win.UI.Label label4;
+        private System.Windows.Forms.ComboBox comboErrorType;
     }
 }

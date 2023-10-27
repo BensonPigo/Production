@@ -28,7 +28,6 @@ this.dr["seq2"].ToString());
             base.OnFormLoaded();
 
             string selectCommand1 = $@"
-
 SELECT   a.id
        , a.ETD
 	   , a.ETA
@@ -39,6 +38,8 @@ SELECT   a.id
 	   , a.ShipModeID
        , a.Blno
 	   , con.Container
+       , a.CYCFS
+       , a.Cbm
 FROM Export a WITH (NOLOCK) 
 INNER JOIN Export_detail b WITH (NOLOCK)  ON a.ID = b.ID
 OUTER APPLY(
@@ -55,12 +56,11 @@ WHERE b.poid = '{this.dr["id"]}'
 And b.seq1 = '{this.dr["Seq1"]}'
 And b.seq2 = '{this.dr["Seq2"]}'
 ";
-
-            DataTable selectDataTable1;
-            DualResult selectResult1 = DBProxy.Current.Select(null, selectCommand1, out selectDataTable1);
-            if (selectResult1 == false)
+            DualResult selectResult1 = DBProxy.Current.Select(null, selectCommand1, out DataTable selectDataTable1);
+            if (!selectResult1)
             {
                 this.ShowErr(selectCommand1, selectResult1);
+                return;
             }
 
             this.bindingSource1.DataSource = selectDataTable1;
@@ -69,12 +69,14 @@ And b.seq2 = '{this.dr["Seq2"]}'
             this.gridWkno.IsEditingReadOnly = true;
             this.gridWkno.DataSource = this.bindingSource1;
             this.Helper.Controls.Grid.Generator(this.gridWkno)
-                 .Text("id", header: "WK#", width: Widths.AnsiChars(18))
-                 .Date("ETD", header: "ETD", width: Widths.AnsiChars(12))
-                 .Date("ETA", header: "ETA", width: Widths.AnsiChars(12))
+                 .Text("id", header: "WK#", width: Widths.AnsiChars(16))
+                 .Date("ETD", header: "ETD", width: Widths.AnsiChars(11))
+                 .Date("ETA", header: "ETA", width: Widths.AnsiChars(11))
                  .Date("WhseArrival", header: "Arrive W/H Date", width: Widths.AnsiChars(12))
-                 .Numeric("Qty", header: "Qty", width: Widths.AnsiChars(12), integer_places: 6, decimal_places: 4)
-                 .Numeric("Foc", header: "FOC", width: Widths.AnsiChars(12), integer_places: 6, decimal_places: 4)
+                 .Numeric("Qty", header: "Qty", width: Widths.AnsiChars(10), integer_places: 6, decimal_places: 4)
+                 .Numeric("Foc", header: "FOC", width: Widths.AnsiChars(10), integer_places: 6, decimal_places: 4)
+                 .Text("CYCFS", header: "CY/CFS", width: Widths.AnsiChars(8))
+                 .Numeric("CBM", header: "CBM", width: Widths.AnsiChars(10), integer_places: 10, decimal_places: 3)
                  .Text("Vessel", header: "Vessel Name", width: Widths.AnsiChars(20))
                  .Text("Shipmodeid", header: "Ship Mode", width: Widths.AnsiChars(6))
                  .Text("Blno", header: "B/L No.", width: Widths.AnsiChars(20))
