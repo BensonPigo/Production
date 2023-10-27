@@ -1,5 +1,6 @@
 ﻿using Ict;
 using Ict.Win;
+using Sci.Data;
 using Sci.Win.Tools;
 using System;
 using System.Collections.Generic;
@@ -17,13 +18,15 @@ namespace Sci.Production.Centralized
     public partial class PPIC_B03 : Sci.Win.Tems.Input1
     {
         private DataTable dt = new DataTable();
+        private string serverName;
 
         /// <inheritdoc/>
         public PPIC_B03(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
             this.InitializeComponent();
-            this.DefaultFilter = $"exists (select 1 from TradeDB.Trade.dbo.Factory where ID = MailGroup.FactoryID)";
+            this.serverName = DBProxy.Current.DefaultModuleName.Contains("testing") ? "TradeDB." : string.Empty;
+            this.DefaultFilter = $"exists (select 1 from {this.serverName}Trade.dbo.Factory where ID = MailGroup.FactoryID)";
             this.dt.Columns.Add("ToAddress", typeof(string));
             this.listControlBindingSource1.DataSource = this.dt;
             this.GridSetup();
@@ -155,9 +158,9 @@ namespace Sci.Production.Centralized
 
         private void TxtFactory_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
-            string sqlcmd = @"
+            string sqlcmd = $@"
 SELECT FtyZone as Factory 
-FROM TradeDB.Trade.dbo.Factory 
+FROM {this.serverName}Trade.dbo.Factory 
 WHERE JUNK=0 
 AND ISNULL(FtyZone,'') != ''
 GROUP BY CountryID, FtyZone
@@ -180,7 +183,7 @@ ORDER BY charindex(CountryID,'PH,VN,KH,CN,TW') ,FtyZone
             string fty = this.txtFactory.Text;
             string sqlcmd = $@"
 SELECT FtyZone as Factory 
-FROM TradeDB.Trade.dbo.Factory 
+FROM {this.serverName}Trade.dbo.Factory 
 WHERE JUNK=0 
 and FtyZone = '{fty}'
 AND ISNULL(FtyZone,'') != ''
