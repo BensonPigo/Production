@@ -85,6 +85,9 @@
     [PadPrintPath]                        VARCHAR (80)   DEFAULT ('') NOT NULL,
     [FabricPath]                          NVARCHAR (120) DEFAULT ('') NOT NULL,
     [ColorPath]                           NVARCHAR (120) DEFAULT ('') NOT NULL,
+    [NikeFactoryCode] VARCHAR(3) CONSTRAINT [DF_System_NikeFactoryCode] DEFAULT ('') NOT NULL,
+    [NikeStickerPrintServer] VARCHAR(20)  CONSTRAINT [DF_System_NikeStickerPrintServer] DEFAULT ('') NOT NULL,
+    [NikeStickerPrintFileFolder] VARCHAR(100)  CONSTRAINT [DF_System_NikeStickerPrintFileFolder] DEFAULT ('') NOT NULL,
     CONSTRAINT [PK_RgCode] PRIMARY KEY CLUSTERED ([RgCode] ASC)
 );
 
@@ -484,3 +487,30 @@ EXEC sp_addextendedproperty @name = N'MS_Description',
     @level1name = N'System',
     @level2type = N'COLUMN',
     @level2name = N'ColorPath'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'Nike 系統的廠代',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'System',
+    @level2type = N'COLUMN',
+    @level2name = N'NikeFactoryCode'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'Nike 標籤虛擬印表機 ( PDF )',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'System',
+    @level2type = N'COLUMN',
+    @level2name = N'NikeStickerPrintServer'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'Nike 標籤生成後下載的路徑',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'System',
+    @level2type = N'COLUMN',
+    @level2name = N'NikeStickerPrintFileFolder'

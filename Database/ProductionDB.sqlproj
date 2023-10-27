@@ -2889,6 +2889,7 @@
     <Build Include="dbo\Tables\LineMappingBalancing_NotHitTargetReason.sql" />
     <Build Include="dbo\Functions\GetQA_R08_Detail.sql" />
     <Build Include="dbo\Stored Procedures\GetFabricInspLabSummaryReport.sql" />
+    <Build Include="dbo\Tables\DownloadStickerQueue.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />

@@ -14,6 +14,7 @@ using System.Data.SqlClient;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using Sci.Production.Automation;
+using Sci.Production.Class;
 
 namespace Sci.Production.Packing
 {
@@ -265,6 +266,9 @@ where MDivisionID = '{0}'", Env.User.Keyword);
                 }
             }
 
+            this.labelCofirmed2.Visible = this.labelCofirmed.Visible;
+            this.labelCofirmed2.Text = this.labelCofirmed.Text;
+
             // UnConfirm History按鈕變色
             if (MyUtility.Check.Seek(this.CurrentMaintain["ID"].ToString(), "PackingList_History", "ID"))
             {
@@ -409,6 +413,17 @@ where RequestID='{this.CurrentMaintain["ID"]}' and l.status = 'Approved'
                 }
             }
             #endregion
+
+            if (UtilityAutomation.IsAutomationEnable && this.CurrentMaintain["BrandID"].ToString().ToUpper() == "NIKE")
+            {
+                this.btnCustSystem.Text = "Mercury";
+                this.btnCustSystem.Enabled = true;
+            }
+            else
+            {
+                this.btnCustSystem.Text = "Cust System";
+                this.btnCustSystem.Enabled = false;
+            }
 
         }
 
@@ -1080,6 +1095,8 @@ Carton has been output from the hanger system or transferred to clog.";
                 this.dateCartonEstBooking.ReadOnly = true;
                 this.dateCartonEstArrived.ReadOnly = true;
             }
+
+            this.txtbrand2.ReadOnly = this.txtbrand.ReadOnly;
         }
 
         private StringBuilder Ctn_no_combine(string sP, string seq)
@@ -1511,23 +1528,25 @@ left join Order_QtyShip oq WITH (NOLOCK) on oq.Id = a.OrderID and oq.Seq = a.Ord
         // Brand
         private void Txtbrand_Validated(object sender, EventArgs e)
         {
-            if (MyUtility.Check.Empty(this.txtbrand.OldValue))
+            Txtbrand tarTxtBrand = (Txtbrand)sender;
+            if (MyUtility.Check.Empty(tarTxtBrand.OldValue))
             {
                 return;
             }
 
-            if (this.EditMode && this.txtbrand.OldValue != this.txtbrand.Text)
+            if (this.EditMode && tarTxtBrand.OldValue != tarTxtBrand.Text)
             {
-                this.DeleteDetailData(this.txtbrand, this.txtbrand.OldValue);
+                this.DeleteDetailData(tarTxtBrand, tarTxtBrand.OldValue);
             }
         }
 
         // CustCD
         private void Txtcustcd_Validated(object sender, EventArgs e)
         {
-            if (this.EditMode && !MyUtility.Check.Empty(this.txtcustcd.Text) && this.txtcustcd.OldValue != this.txtcustcd.Text)
+            Txtcustcd tarTxtcustcd = (Txtcustcd)sender;
+            if (this.EditMode && !MyUtility.Check.Empty(tarTxtcustcd.Text) && tarTxtcustcd.OldValue != tarTxtcustcd.Text)
             {
-                this.CurrentMaintain["Dest"] = MyUtility.GetValue.Lookup(string.Format("SELECT CountryID FROM CustCD WITH (NOLOCK) WHERE BrandID = '{0}' AND ID = '{1}'", MyUtility.Convert.GetString(this.CurrentMaintain["BrandID"]), this.txtcustcd.Text));
+                this.CurrentMaintain["Dest"] = MyUtility.GetValue.Lookup(string.Format("SELECT CountryID FROM CustCD WITH (NOLOCK) WHERE BrandID = '{0}' AND ID = '{1}'", MyUtility.Convert.GetString(this.CurrentMaintain["BrandID"]), tarTxtcustcd.Text));
             }
         }
 
