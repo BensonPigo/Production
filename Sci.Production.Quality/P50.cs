@@ -790,7 +790,14 @@ namespace Sci.Production.Quality
             row["updateCol_Where"] = updateCol;
             #endregion
 
-            using (var dlg = new PublicForm.ClipGASA("UASentReport", id, true, row, apiUrlFile: "http://pmsap.sportscity.com.tw:16888/api/FileDelete/RemoveFile"))
+            string strResponsibility = MyUtility.GetValue.Lookup($@"Select Responsibility 
+                                                                    FROM MaterialDocument_Responsbility
+                                                                    WHERE 
+                                                                    BrandID = '{this.txtBrand1.Text}' AND 
+                                                                    DocumentName = '{this.cboDocumentname.Text}' AND 
+                                                                    SuppID = '{this.txtMultiSupplier1.Text}'");
+            bool isEnable = strResponsibility == "F" ? true : false;
+            using (var dlg = new PublicForm.ClipGASA("UASentReport", id, isEnable, row, apiUrlFile: "http://pmsap.sportscity.com.tw:16888/api/FileDelete/RemoveFile"))
             {
                 dlg.ShowDialog();
 
