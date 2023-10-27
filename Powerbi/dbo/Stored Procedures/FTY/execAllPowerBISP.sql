@@ -834,10 +834,10 @@ SET @ErrorMessage = ''
 
 	SET @ErrDesc = ''
 /****************************************************************************************************************************/
-/***********************************P_Import_PPIC_R04****************************************************************/
+/****************************P_Import_FabricStatus_And_IssueFabricTracking**********************************************************/
 BEGIN TRY
 	set @Stime = getdate()  
-	execute [dbo].[P_Import_PPIC_R04]
+	execute [dbo].P_Import_FabricStatus_And_IssueFabricTracking
 	set @Etime = getdate()
 END TRY
 
@@ -845,7 +845,7 @@ BEGIN CATCH
 
 SET @ErrorMessage = 
 '
-[20 P_Import_PPIC_R04]' + CHAR(13) +
+[20 P_Import_FabricStatus_And_IssueFabricTracking]' + CHAR(13) +
 ',錯誤代碼: ' + CONVERT(VARCHAR, ERROR_NUMBER()) + CHAR(13) +
 ',錯誤行數: ' + CONVERT(VARCHAR, ERROR_LINE()) + CHAR(13) +
 ',錯誤訊息: ' + ERROR_MESSAGE()
@@ -860,7 +860,7 @@ END CATCH;
 IF (@ErrorMessage IS NULL or @ErrorMessage='')
 BEGIN 
 	set @desc += CHAR(13) + '
-[20-P_Import_PPIC_R04] is completed' + ' Time:' + FORMAT(@Stime, 'yyyy/MM/dd HH:mm:ss') + ' - ' + FORMAT(@Etime, 'yyyy/MM/dd HH:mm:ss')
+[20-P_Import_FabricStatus_And_IssueFabricTracking] is completed' + ' Time:' + FORMAT(@Stime, 'yyyy/MM/dd HH:mm:ss') + ' - ' + FORMAT(@Etime, 'yyyy/MM/dd HH:mm:ss')
 END
 ELSE
 BEGIN
@@ -870,16 +870,16 @@ SET @ErrorMessage = ''
 
 -- Write in P_TransLog
 	insert into P_TransLog(functionName,Description,StartTime,EndTime,TransCode) 
-	values('P_Import_PPIC_R04',@ErrDesc,@Stime,@Etime,@TransCode)
+	values('P_Import_FabricStatus_And_IssueFabricTracking',@ErrDesc,@Stime,@Etime,@TransCode)
 
 	SET @ErrDesc = ''
 
 /****************************************************************************************************************************/
-/***********************************P_Import_Cutting_R08****************************************************************/
+/***********************************P_Import_ActualCutOutputReport****************************************************************/
 
 BEGIN TRY
 	set @Stime = getdate()  
-	execute [dbo].P_Import_Cutting_R08
+	execute [dbo].P_Import_ActualCutOutputReport
 	set @Etime = getdate()
 END TRY
 
@@ -887,7 +887,7 @@ BEGIN CATCH
 
 SET @ErrorMessage = 
 '
-[21-P_Import_Cutting_R08]' + CHAR(13) +
+[21-P_Import_ActualCutOutputReport]' + CHAR(13) +
 ',錯誤代碼: ' + CONVERT(VARCHAR, ERROR_NUMBER()) + CHAR(13) +
 ',錯誤行數: ' + CONVERT(VARCHAR, ERROR_LINE()) + CHAR(13) +
 ',錯誤訊息: ' + ERROR_MESSAGE()
@@ -902,7 +902,7 @@ END CATCH;
 IF (@ErrorMessage IS NULL or @ErrorMessage='')
 BEGIN 
 	set @desc += CHAR(13) + '
-[21-P_Import_Cutting_R08] is completed' + ' Time:' + FORMAT(@Stime, 'yyyy/MM/dd HH:mm:ss') + ' - ' + FORMAT(@Etime, 'yyyy/MM/dd HH:mm:ss')
+[21-P_Import_ActualCutOutputReport] is completed' + ' Time:' + FORMAT(@Stime, 'yyyy/MM/dd HH:mm:ss') + ' - ' + FORMAT(@Etime, 'yyyy/MM/dd HH:mm:ss')
 END
 ELSE
 BEGIN
@@ -912,14 +912,14 @@ SET @ErrorMessage = ''
 
 -- Write in P_TransLog
 	insert into P_TransLog(functionName,Description,StartTime,EndTime,TransCode) 
-	values('P_ActualCutOutputReport',@ErrDesc,@Stime,@Etime,@TransCode)
+	values('P_Import_ActualCutOutputReport',@ErrDesc,@Stime,@Etime,@TransCode)
 	SET @ErrDesc = ''
 
 /****************************************************************************************************************************/
-/***********************************P_Import_Subcon_R41****************************************************************/
+/***************************************P_Import_SubprocessWIP**********************************************************************/
 BEGIN TRY
 	set @Stime = getdate()  
-	execute [dbo].[P_Import_Subcon_R41]
+	execute [dbo].P_Import_SubprocessWIP
 	set @Etime = getdate()
 END TRY
 
@@ -927,7 +927,7 @@ BEGIN CATCH
 
 SET @ErrorMessage = 
 '
-[22-P_Import_Subcon_R41]' + CHAR(13) +
+[22-P_Import_SubprocessWIP]' + CHAR(13) +
 ',錯誤代碼: ' + CONVERT(VARCHAR, ERROR_NUMBER()) + CHAR(13) +
 ',錯誤行數: ' + CONVERT(VARCHAR, ERROR_LINE()) + CHAR(13) +
 ',錯誤訊息: ' + ERROR_MESSAGE()
@@ -942,7 +942,7 @@ END CATCH;
 IF (@ErrorMessage IS NULL or @ErrorMessage='')
 BEGIN 
 	set @desc += CHAR(13) + '
-[22-P_Import_Subcon_R41] is completed' + ' Time:' + FORMAT(@Stime, 'yyyy/MM/dd HH:mm:ss') + ' - ' + FORMAT(@Etime, 'yyyy/MM/dd HH:mm:ss')
+[22-P_Import_SubprocessWIP] is completed' + ' Time:' + FORMAT(@Stime, 'yyyy/MM/dd HH:mm:ss') + ' - ' + FORMAT(@Etime, 'yyyy/MM/dd HH:mm:ss')
 END
 ELSE
 BEGIN
@@ -952,15 +952,15 @@ SET @ErrorMessage = ''
 
 -- Write in P_TransLog
 	insert into P_TransLog(functionName,Description,StartTime,EndTime,TransCode) 
-	values('P_Import_Subcon_R41',@ErrDesc,@Stime,@Etime,@TransCode)
+	values('P_Import_SubprocessWIP',@ErrDesc,@Stime,@Etime,@TransCode)
 
 	SET @ErrDesc = ''
 
 /****************************************************************************************************************************/
-/***********************************P_Import_Planning_R15****************************************************************/
+/*******************************************************P_Import_WIP****************************************************************/
 BEGIN TRY
 	set @Stime = getdate()  
-	execute [dbo].[P_Import_Planning_R15]
+	execute [dbo].P_Import_WIP
 	set @Etime = getdate()
 END TRY
 
@@ -968,7 +968,7 @@ BEGIN CATCH
 
 SET @ErrorMessage = 
 '
-[23-P_Import_Planning_R15]' + CHAR(13) +
+[23-P_Import_WIP]' + CHAR(13) +
 ',錯誤代碼: ' + CONVERT(VARCHAR, ERROR_NUMBER()) + CHAR(13) +
 ',錯誤行數: ' + CONVERT(VARCHAR, ERROR_LINE()) + CHAR(13) +
 ',錯誤訊息: ' + ERROR_MESSAGE()
@@ -983,7 +983,7 @@ END CATCH;
 IF (@ErrorMessage IS NULL or @ErrorMessage='')
 BEGIN 
 	set @desc += CHAR(13) + '
-[23-P_Import_Planning_R15] is completed' + ' Time:' + FORMAT(@Stime, 'yyyy/MM/dd HH:mm:ss') + ' - ' + FORMAT(@Etime, 'yyyy/MM/dd HH:mm:ss')
+[23-P_Import_WIP] is completed' + ' Time:' + FORMAT(@Stime, 'yyyy/MM/dd HH:mm:ss') + ' - ' + FORMAT(@Etime, 'yyyy/MM/dd HH:mm:ss')
 END
 ELSE
 BEGIN
@@ -993,7 +993,7 @@ SET @ErrorMessage = ''
 
 -- Write in P_TransLog
 	insert into P_TransLog(functionName,Description,StartTime,EndTime,TransCode) 
-	values('P_Import_Planning_R15',@ErrDesc,@Stime,@Etime,@TransCode)
+	values('P_Import_WIP',@ErrDesc,@Stime,@Etime,@TransCode)
 
 	SET @ErrDesc = ''
 
