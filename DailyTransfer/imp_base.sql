@@ -5118,29 +5118,6 @@ from  Trade_To_Pms.dbo.QABrandSetting a
 left join production.dbo.QABrandSetting b on a.BrandID = b.BrandID
 where b.BrandID is null
 
---Brand_PullingTestStandarList
-delete a
-from production.dbo.Brand_PullingTestStandarList a
-left join Trade_To_Pms.dbo.Brand_PullingTestStandarList b on a.BrandID = b.BrandID and a.TestItem = b.TestItem and a.PullForceUnit = b.PullForceUnit
-where b.BrandID is null
-
-update a set 
-	PullForce = isnull(b.PullForce,0),
-	Time = isnull(b.Time,0)
-from production.dbo.Brand_PullingTestStandarList a
-inner join Trade_To_Pms.dbo.Brand_PullingTestStandarList b on a.BrandID = b.BrandID and a.TestItem = b.TestItem and a.PullForceUnit = b.PullForceUnit
-
-insert production.dbo.Brand_PullingTestStandarList (BrandID,TestItem,PullForceUnit,PullForce,Time)
-select
-     isnull(a.BrandID       ,'')
-    ,isnull(a.TestItem      ,'')
-    ,isnull(a.PullForceUnit ,'')
-    ,isnull(a.PullForce     ,0)
-    ,isnull(a.Time          ,0)
-from Trade_To_Pms.dbo.Brand_PullingTestStandarList a
-left join production.dbo.Brand_PullingTestStandarList b on a.BrandID = b.BrandID and a.TestItem = b.TestItem and a.PullForceUnit = b.PullForceUnit
-where b.BrandID is null
-
 --GarmentTestShrinkage
 delete a
 from production.dbo.GarmentTestShrinkage a
