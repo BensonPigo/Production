@@ -14,6 +14,9 @@
     [Ukey]             BIGINT          IDENTITY (1, 1) NOT NULL,
     [CompleteTime] DATETIME NULL, 
     [SentToWMS] BIT NOT NULL DEFAULT ((0)), 
+    [ToPOID] VARCHAR(13) NULL DEFAULT (''), 
+    [ToSeq1] VARCHAR(3) NULL DEFAULT (''), 
+    [ToSeq2] VARCHAR(2) NULL DEFAULT (''), 
     CONSTRAINT [PK_Adjust_Detail] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
 
@@ -67,3 +70,30 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'調整原�
 GO
 
 
+
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'轉入 A 倉訂單',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'Adjust_Detail',
+    @level2type = N'COLUMN',
+    @level2name = N'ToPOID'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'轉入A倉大項',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'Adjust_Detail',
+    @level2type = N'COLUMN',
+    @level2name = N'ToSeq1'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'轉入A倉小項',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'Adjust_Detail',
+    @level2type = N'COLUMN',
+    @level2name = N'ToSeq2'

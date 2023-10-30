@@ -204,6 +204,10 @@
     <Build Include="dbo\Tables\P_FabricInspLabSummaryReport.sql" />
     <Build Include="dbo\Stored Procedures\FTY\P_ImportFabricInspLabSummaryReport.sql" />
     <Build Include="dbo\View\P_Factory.sql" />
+    <Build Include="dbo\Tables\P_SewingLineScheduleBySP.sql" />
+    <Build Include="dbo\Stored Procedures\FTY\P_Import_PPIC_R01_SewingLineScheduleBySP.sql" />
+    <Build Include="dbo\Tables\P_CuttingBCS.sql" />
+    <Build Include="dbo\Stored Procedures\FTY\P_ImportCuttingBCS.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Utility.dll" />
