@@ -647,6 +647,11 @@ where ad.Id='{masterID}'
 
                 if (MyUtility.Check.Empty(e.FormattedValue))
                 {
+                    dr["ToPOID"] = string.Empty;
+                    dr["ToSeq1"] = string.Empty;
+                    dr["ToSeq2"] = string.Empty;
+                    dr["ToSeq"] = string.Empty;
+                    dr.EndEdit();
                     return;
                 }
 
@@ -865,6 +870,11 @@ and seq2 = '{seq[1]}'
             {
                 this.col_ToPoid.IsEditingReadOnly = true;
                 this.col_ToSeq.IsEditingReadOnly = true;
+                curDr["ToPOID"] = string.Empty;
+                curDr["ToSeq"] = string.Empty;
+                curDr["ToSeq1"] = string.Empty;
+                curDr["ToSeq2"] = string.Empty;
+                curDr.EndEdit();
             }
         }
 

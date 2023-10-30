@@ -336,19 +336,19 @@ Where   c.lock = 0
                     }
                     else
                     {
+                        DataRow drCheckReason;
                         if (!MyUtility.Check.Seek(
                             string.Format(
                             @"select id, Name from Reason WITH (NOLOCK) where id = '{0}' 
-and ReasonTypeID='Stock_Remove' AND junk = 0", e.FormattedValue), out dr))
+and ReasonTypeID='Stock_Remove' AND junk = 0", e.FormattedValue), out drCheckReason))
                         {
                             e.Cancel = true;
                             MyUtility.Msg.WarningBox("Data not found!", "Reason ID");
-                            return;
                         }
                         else
                         {
                             dr["reasonid"] = e.FormattedValue;
-                            dr["reason_nm"] = dr["name"];
+                            dr["reason_nm"] = drCheckReason["name"];
                         }
                     }
 
@@ -394,6 +394,11 @@ and ReasonTypeID='Stock_Remove' AND junk = 0", e.FormattedValue), out dr))
 
                 if (MyUtility.Check.Empty(e.FormattedValue))
                 {
+                    dr["ToPOID"] = string.Empty;
+                    dr["ToSeq1"] = string.Empty;
+                    dr["ToSeq2"] = string.Empty;
+                    dr["ToSeq"] = string.Empty;
+                    dr.EndEdit();
                     return;
                 }
 
@@ -642,6 +647,13 @@ and seq2 = '{seq[1]}'
             {
                 item["reasonid"] = reasonid;
                 item["reason_nm"] = this.comboReason.Text;
+                if (reasonid.Equals("00001") == false)
+                {
+                    item["ToPOID"] = string.Empty;
+                    item["ToSeq"] = string.Empty;
+                    item["ToSeq1"] = string.Empty;
+                    item["ToSeq2"] = string.Empty;
+                }
             }
         }
 

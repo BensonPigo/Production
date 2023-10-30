@@ -312,10 +312,11 @@ Where   c.lock = 0
                     }
                     else
                     {
+                        DataRow drCheckReason;
                         if (!MyUtility.Check.Seek(
                             string.Format(
                             @"select id, Name from Reason WITH (NOLOCK) where id = '{0}' 
-and ReasonTypeID='Stock_Remove' AND junk = 0", e.FormattedValue), out dr, null))
+and ReasonTypeID='Stock_Remove' AND junk = 0", e.FormattedValue), out drCheckReason, null))
                         {
                             e.Cancel = true;
                             MyUtility.Msg.WarningBox("Data not found!", "Reason ID");
@@ -324,7 +325,7 @@ and ReasonTypeID='Stock_Remove' AND junk = 0", e.FormattedValue), out dr, null))
                         else
                         {
                             dr["reasonid"] = e.FormattedValue;
-                            dr["reason_nm"] = dr["name"];
+                            dr["reason_nm"] = drCheckReason["name"];
                         }
                     }
 
@@ -371,6 +372,11 @@ and ReasonTypeID='Stock_Remove' AND junk = 0", e.FormattedValue), out dr, null))
 
                 if (MyUtility.Check.Empty(e.FormattedValue))
                 {
+                    dr["ToPOID"] = string.Empty;
+                    dr["ToSeq1"] = string.Empty;
+                    dr["ToSeq2"] = string.Empty;
+                    dr["ToSeq"] = string.Empty;
+                    dr.EndEdit();
                     return;
                 }
 
@@ -589,6 +595,11 @@ and seq2 = '{seq[1]}'
             {
                 this.col_ToPoid.IsEditingReadOnly = true;
                 this.col_ToSeq.IsEditingReadOnly = true;
+                data["ToPOID"] = string.Empty;
+                data["ToSeq"] = string.Empty;
+                data["ToSeq1"] = string.Empty;
+                data["ToSeq2"] = string.Empty;
+                data.EndEdit();
             }
         }
 
@@ -697,6 +708,13 @@ and seq2 = '{seq[1]}'
             {
                 item["reasonid"] = reasonid;
                 item["reason_nm"] = this.comboReason.Text;
+                if (reasonid.Equals("00001") == false)
+                {
+                    item["ToPOID"] = string.Empty;
+                    item["ToSeq"] = string.Empty;
+                    item["ToSeq1"] = string.Empty;
+                    item["ToSeq2"] = string.Empty;
+                }
             }
         }
 
