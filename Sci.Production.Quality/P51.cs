@@ -453,7 +453,15 @@ Update ExportRefnoSentReport SET  AWBNO = @updateData, EditName = @UserID ,EditD
             row["BasicDocumentName"] = this.drBasic["DocumentName"];
             #endregion
 
-            using (var dlg = new PublicForm.ClipGASA(tableName, id, true, row, apiUrlFile: "http://pmsap.sportscity.com.tw:16888/api/FileDelete/RemoveFile"))
+
+            string strResponsibility = MyUtility.GetValue.Lookup($@"Select Responsibility 
+                                                                    FROM MaterialDocument_Responsbility
+                                                                    WHERE 
+                                                                    BrandID = '{this.txtBrand1.Text}' AND 
+                                                                    DocumentName = '{this.cboDocumentname.Text}' AND 
+                                                                    SuppID = '{this.txtMultiSupplier1.Text}'");
+            bool isEnable = strResponsibility == "F" ? true : false;
+            using (var dlg = new PublicForm.ClipGASA(tableName, id, isEnable, row, apiUrlFile: "http://pmsap.sportscity.com.tw:16888/api/FileDelete/RemoveFile"))
             {
                 dlg.ShowDialog();
 

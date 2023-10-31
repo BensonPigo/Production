@@ -5651,7 +5651,6 @@ where
 b.DocumentName is null 
 and b.BrandID is null
 and b.SuppID is null
-and exists(select 1 from [Trade_To_Pms].[dbo].[MaterialDocument] t where t.DocumentName = b.DocumentName  and t.BrandID = b.BrandID) 
 
 ---------------------------UPDATE
 UPDATE a
