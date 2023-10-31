@@ -200,7 +200,7 @@
     <Build Include="dbo\Stored Procedures\FTY\P_Import_WIP.sql" />
     <Build Include="dbo\Tables\P_FabricInspDailyReport_Detail.sql" />
     <Build Include="dbo\Stored Procedures\FTY\P_Import_QA_R08_Detail.sql" />
-    <Build Include="dbo\Stored Procedures\FTY\P_Import_ActualCutOutputReport_1.sql" />
+    <Build Include="dbo\Stored Procedures\FTY\P_Import_ActualCutOutputReport.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Utility.dll" />
