@@ -406,7 +406,7 @@ with Final as (
 			ARRIVEWHDATE,ARRIVEQTY = isnull(ARRIVEQTY,0),WEAVETYPEID = isnull(WEAVETYPEID,''),DYELOT = isnull(DYELOT,''),WIDTH = isnull(WIDTH,0),[WEIGHT] = isnull(WEIGHT,0),COMPOSITION = isnull(COMPOSITION,''),
 			[DESCRIPTION] = isnull(DESCRIPTION,'') ,CONSTRUCTIONID = isnull(CONSTRUCTIONID,'') ,ROLL = isnull(ROLL,''),INSPDATE,RESULT = isnull(RESULT,''),GRADE = isnull(GRADE,''),DEFECTRECORD = isnull(DEFECTRECORD,''),
 			[TYPE] = isnull(TYPE,'') ,DESCRIPTIONEN = isnull(DESCRIPTIONEN,'') ,[POINT] = isnull([POINT],0),[DEFECTRATE] = isnull([DEFECTRATE],0) ,INSPECTOR = isnull(INSPECTOR,''),AddDate,EditDate
-			,RowCnt = ROW_NUMBER() over(partition by POID,SEQ,RECEIVINGID,roll,dyelot order by AddDate desc, EditDate Desc)
+			,RowCnt = ROW_NUMBER() over(partition by POID,SEQ,RECEIVINGID,roll,dyelot,DEFECTRECORD order by AddDate desc, EditDate Desc)
 	from (
 		select
 			T.POID,
