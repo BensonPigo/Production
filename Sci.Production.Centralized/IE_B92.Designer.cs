@@ -133,7 +133,6 @@
             // IE_B92
             // 
             this.ClientSize = new System.Drawing.Size(837, 349);
-            this.ConnectionName = "ProductionTPE";
             this.DefaultWhere = "Type='LM'";
             this.EnableGridJunkColor = true;
             this.IsSupportClip = false;
