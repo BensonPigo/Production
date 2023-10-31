@@ -46,7 +46,7 @@ namespace Sci.Production.Centralized
 
             if (MyUtility.Check.Empty(this.CurrentMaintain["ID"]))
             {
-                if (result = DBProxy.Current.Select("ProductionTPE", "select max_id = max(id) from IEReason  WITH (NOLOCK) WHERE  Type = 'LB'", out dt))
+                if (result = DBProxy.Current.Select(null, "select max_id = max(id) from IEReason  WITH (NOLOCK) WHERE  Type = 'LB'", out dt))
                 {
                     string id = dt.Rows[0]["max_id"].ToString();
                     if (string.IsNullOrWhiteSpace(id))
@@ -73,7 +73,7 @@ namespace Sci.Production.Centralized
                             new SqlParameter("@Description", this.CurrentMaintain["Description"].ToString()),
                         };
 
-            result = DBProxy.Current.Select("ProductionTPE", "select ID from IEReason  WITH (NOLOCK) WHERE Type = 'LB' AND Description = @Description", parameters, out dt);
+            result = DBProxy.Current.Select(null, "select ID from IEReason  WITH (NOLOCK) WHERE Type = 'LB' AND Description = @Description", parameters, out dt);
 
             if (!result)
             {
