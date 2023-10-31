@@ -133,7 +133,6 @@
             // B92
             // 
             this.ClientSize = new System.Drawing.Size(837, 327);
-            this.ConnectionName = "ProductionTPE";
             this.DefaultOrder = "ID";
             this.DefaultWhere = "Type=\'LM\'";
             this.EnableGridJunkColor = true;
