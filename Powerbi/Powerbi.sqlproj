@@ -208,6 +208,8 @@
     <Build Include="dbo\Stored Procedures\FTY\P_Import_PPIC_R01_SewingLineScheduleBySP.sql" />
     <Build Include="dbo\Tables\P_CuttingBCS.sql" />
     <Build Include="dbo\Stored Procedures\FTY\P_ImportCuttingBCS.sql" />
+    <Build Include="dbo\Tables\P_ProductionKitsTracking.sql" />
+    <Build Include="dbo\Stored Procedures\FTY\P_ImportProductionKitsTracking.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Utility.dll" />
