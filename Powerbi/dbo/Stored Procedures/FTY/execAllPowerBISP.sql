@@ -1045,7 +1045,7 @@ SET @ErrorMessage = ''
 /***********************************P_ImportFabricInspLabSummaryReport****************************************************************/
 BEGIN TRY
 	set @Stime = getdate()  
-	execute [dbo].[P_FabricInspLabSummaryReport]
+	execute [dbo].[P_ImportFabricInspLabSummaryReport]
 	set @Etime = getdate()
 END TRY
 
@@ -1083,10 +1083,10 @@ SET @ErrorMessage = ''
 	SET @ErrDesc = ''
 
 /****************************************************************************************************************************/
-/***********************************P_ImportProductionKitsTracking***************************************************************/
+/***********************************P_ImportCuttingBCS****************************************************************/
 BEGIN TRY
 	set @Stime = getdate()  
-	execute [dbo].[P_FabricInspLabSummaryReport]
+	execute [dbo].[P_ImportCuttingBCS]
 	set @Etime = getdate()
 END TRY
 
@@ -1094,7 +1094,7 @@ BEGIN CATCH
 
 SET @ErrorMessage = 
 '
-[26-P_ImportProductionKitsTracking]' + CHAR(13) +
+[26-P_ImportCuttingBCS]' + CHAR(13) +
 ',錯誤代碼: ' + CONVERT(VARCHAR, ERROR_NUMBER()) + CHAR(13) +
 ',錯誤行數: ' + CONVERT(VARCHAR, ERROR_LINE()) + CHAR(13) +
 ',錯誤訊息: ' + ERROR_MESSAGE()
@@ -1109,7 +1109,92 @@ END CATCH;
 IF (@ErrorMessage IS NULL or @ErrorMessage='')
 BEGIN 
 	set @desc += CHAR(13) + '
-[26-P_ImportProductionKitsTracking] is completed' + ' Time:' + FORMAT(@Stime, 'yyyy/MM/dd HH:mm:ss') + ' - ' + FORMAT(@Etime, 'yyyy/MM/dd HH:mm:ss')
+[26-P_ImportCuttingBCS] is completed' + ' Time:' + FORMAT(@Stime, 'yyyy/MM/dd HH:mm:ss') + ' - ' + FORMAT(@Etime, 'yyyy/MM/dd HH:mm:ss')
+END
+ELSE
+BEGIN
+	set @desc += CHAR(13) + @ErrorMessage
+END
+SET @ErrorMessage = ''
+
+-- Write in P_TransLog
+	insert into P_TransLog(functionName,Description,StartTime,EndTime,TransCode) 
+	values('P_ImportCuttingBCS',@ErrDesc,@Stime,@Etime,@TransCode)
+
+	SET @ErrDesc = ''
+
+/****************************************************************************************************************************/
+/***********************************P_Import_PPIC_R01_SewingLineScheduleBySP****************************************************************/
+BEGIN TRY
+	Declare @P_SewingLineScheduleBySP_StartData date = dateadd(DAY, -60, getdate())
+	Declare @P_SewingLineScheduleBySP_EndData date = dateadd(DAY, 120, getdate())
+	
+	set @Stime = getdate()  
+	execute [dbo].[P_Import_PPIC_R01_SewingLineScheduleBySP] @P_SewingLineScheduleBySP_StartData, @P_SewingLineScheduleBySP_EndData
+	set @Etime = getdate()
+END TRY
+
+BEGIN CATCH
+
+SET @ErrorMessage = 
+'
+[27-P_Import_PPIC_R01_SewingLineScheduleBySP]' + CHAR(13) +
+',錯誤代碼: ' + CONVERT(VARCHAR, ERROR_NUMBER()) + CHAR(13) +
+',錯誤行數: ' + CONVERT(VARCHAR, ERROR_LINE()) + CHAR(13) +
+',錯誤訊息: ' + ERROR_MESSAGE()
+
+SET @ErrDesc = '錯誤代碼: ' + CONVERT(VARCHAR, ERROR_NUMBER()) +
+',錯誤行數: ' + CONVERT(VARCHAR, ERROR_LINE())  +
+',錯誤訊息: ' + ERROR_MESSAGE()
+
+SET @ErrorStatus = 0
+
+END CATCH;
+IF (@ErrorMessage IS NULL or @ErrorMessage='')
+BEGIN 
+	set @desc += CHAR(13) + '
+[27-P_Import_PPIC_R01_SewingLineScheduleBySP] is completed' + ' Time:' + FORMAT(@Stime, 'yyyy/MM/dd HH:mm:ss') + ' - ' + FORMAT(@Etime, 'yyyy/MM/dd HH:mm:ss')
+END
+ELSE
+BEGIN
+	set @desc += CHAR(13) + @ErrorMessage
+END
+SET @ErrorMessage = ''
+
+-- Write in P_TransLog
+	insert into P_TransLog(functionName,Description,StartTime,EndTime,TransCode) 
+	values('P_Import_PPIC_R01_SewingLineScheduleBySP',@ErrDesc,@Stime,@Etime,@TransCode)
+
+	SET @ErrDesc = ''
+
+/****************************************************************************************************************************/
+/***********************************P_ImportProductionKitsTracking***************************************************************/
+BEGIN TRY
+	set @Stime = getdate()  
+	execute [dbo].[P_ImportProductionKitsTracking]
+	set @Etime = getdate()
+END TRY
+
+BEGIN CATCH
+
+SET @ErrorMessage = 
+'
+[28-P_ImportProductionKitsTracking]' + CHAR(13) +
+',錯誤代碼: ' + CONVERT(VARCHAR, ERROR_NUMBER()) + CHAR(13) +
+',錯誤行數: ' + CONVERT(VARCHAR, ERROR_LINE()) + CHAR(13) +
+',錯誤訊息: ' + ERROR_MESSAGE()
+
+SET @ErrDesc = '錯誤代碼: ' + CONVERT(VARCHAR, ERROR_NUMBER()) +
+',錯誤行數: ' + CONVERT(VARCHAR, ERROR_LINE())  +
+',錯誤訊息: ' + ERROR_MESSAGE()
+
+SET @ErrorStatus = 0
+
+END CATCH;
+IF (@ErrorMessage IS NULL or @ErrorMessage='')
+BEGIN 
+	set @desc += CHAR(13) + '
+[28-P_ImportProductionKitsTracking] is completed' + ' Time:' + FORMAT(@Stime, 'yyyy/MM/dd HH:mm:ss') + ' - ' + FORMAT(@Etime, 'yyyy/MM/dd HH:mm:ss')
 END
 ELSE
 BEGIN
