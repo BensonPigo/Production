@@ -55,40 +55,12 @@ where p.ID = '{this.packID}'
 
         private void BtnLabelsPackPlanCreate_Click(object sender, EventArgs e)
         {
-            DualResult result = WebServiceNikeMercury.StaticService.LabelsPackPlanCreate(this.packID);
-
-            if (!MyUtility.Check.Empty(result.Description))
-            {
-                MyUtility.Msg.InfoBox("Description:" + result.Description);
-                return;
-            }
-
-            if (!result)
-            {
-                this.ShowErr(result);
-            }
-
-            this.editBoxRequestXml.Text = WebServiceNikeMercury.StaticService.lastRequestXml;
-            this.editBoxResponseXml.Text = WebServiceNikeMercury.StaticService.lastResponseXml;
+            
         }
 
         private void BtnLabelsPackPlanDelete_Click(object sender, EventArgs e)
         {
-            DualResult result = WebServiceNikeMercury.StaticService.LabelsPackPlanDelete("SNY", this.orderNumber2, this.orderItem);
-
-            if (!MyUtility.Check.Empty(result.Description))
-            {
-                MyUtility.Msg.InfoBox("Description:" + result.Description);
-                return;
-            }
-
-            if (!result)
-            {
-                this.ShowErr(result);
-            }
-
-            this.editBoxRequestXml.Text = WebServiceNikeMercury.StaticService.lastRequestXml;
-            this.editBoxResponseXml.Text = WebServiceNikeMercury.StaticService.lastResponseXml;
+            
         }
 
         private void BtnTestDeserialize_Click(object sender, EventArgs e)
@@ -106,47 +78,7 @@ where p.ID = '{this.packID}'
 
         private void BtnLabelsPackPlanCartonAdd_Click(object sender, EventArgs e)
         {
-            RequestLabelsPackPlanCartonAdd.Input packPlanCartonAdd = new RequestLabelsPackPlanCartonAdd.Input()
-            {
-                FactoryCode = "SNY",
-                CartonTypeCode = "A4",
-                AddCartonContent = new RequestLabelsPackPlanCartonAdd.AddCartonContent()
-                {
-                    AddCartonContentInput = new List<RequestLabelsPackPlanCartonAdd.AddCartonContentInput>()
-                    {
-                        new RequestLabelsPackPlanCartonAdd.AddCartonContentInput()
-                        {
-                            OrderNumber = this.orderNumber2,
-                            OrderItem = this.orderItem,
-                            OrderSizeDescription = "M",
-                            PackPlanQty = 10,
-                        },
-                        new RequestLabelsPackPlanCartonAdd.AddCartonContentInput()
-                        {
-                            OrderNumber = this.orderNumber2,
-                            OrderItem = this.orderItem,
-                            OrderSizeDescription = "L",
-                            PackPlanQty = 12,
-                        },
-                    },
-                },
-            };
-
-            DualResult result = WebServiceNikeMercury.StaticService.LabelsPackPlanAdd(packPlanCartonAdd);
-
-            if (!MyUtility.Check.Empty(result.Description))
-            {
-                MyUtility.Msg.InfoBox("Description:" + result.Description);
-                return;
-            }
-
-            if (!result)
-            {
-                this.ShowErr(result);
-            }
-
-            this.editBoxRequestXml.Text = WebServiceNikeMercury.StaticService.lastRequestXml;
-            this.editBoxResponseXml.Text = WebServiceNikeMercury.StaticService.lastResponseXml;
+           
         }
 
         private void BtnLabelsPackPlanCartonUpdate_Click(object sender, EventArgs e)

@@ -167,6 +167,10 @@
     <Compile Include="Entity\LocalOrderInventory.cs" />
     <Compile Include="Entity\NikeMercury\RequestLabelsPackPlanCartonUpdate.cs" />
     <Compile Include="Entity\NikeMercury\RequestLabelsPackPlanCartonAdd.cs" />
+    <Compile Include="Entity\NikeMercury\RequestLabelsPackPlanCartonDelete.cs" />
+    <Compile Include="Entity\NikeMercury\ResponseLabelsPackPlanCartonDelete.cs" />
+    <Compile Include="Entity\NikeMercury\ResponseOrdersDataGet.cs" />
+    <Compile Include="Entity\NikeMercury\RequestOrdersDataGet.cs" />
     <Compile Include="Entity\NikeMercury\RequestLabelsPackPlanDelete.cs" />
     <Compile Include="Entity\NikeMercury\ResponseLabelsPackPlanCartonUpdate.cs" />
     <Compile Include="Entity\NikeMercury\ResponseLabelsPackPlanCartonAdd.cs" />

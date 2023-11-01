@@ -91,7 +91,7 @@ namespace Sci.Production.Prg.Entity.NikeMercury
         public class Carton
         {
             public string FactoryCode { get; set; }
-            public int CartonNumber { get; set; }
+            public string CartonNumber { get; set; }
             public string CartonBarcodeNumber { get; set; }
             public string CartonType { get; set; }
             public string DimensionUOM { get; set; }
@@ -102,22 +102,19 @@ namespace Sci.Production.Prg.Entity.NikeMercury
             public double GrossWeight { get; set; }
             public double NetWeight { get; set; }
             public double Volume { get; set; }
-            public List<Content> Content { get; set; }
+            public Content Content { get; set; }
         }
 
         public class Content
         {
-            public CartonContent CartonContent { get; set; }
+            [XmlElement(ElementName = "CartonContent", Namespace = "http://schemas.datacontract.org/2004/07/OLLIeLabels")]
+            public List<CartonContent> CartonContent { get; set; }
         }
 
         public class CartonContent
         {
-            public string OrderNumber { get; set; }
-            public string OrderItem { get; set; }
             public string OrderSizeDescription { get; set; }
             public int PackPlanQty { get; set; }
-            public string MaterialNumber { get; set; }
-            public string UPC { get; set; }
         }
     }
 }

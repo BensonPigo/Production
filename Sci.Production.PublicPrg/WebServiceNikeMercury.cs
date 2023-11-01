@@ -17,6 +17,7 @@ using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Serialization;
 using static PmsWebApiUtility20.WebApiTool;
+using static Sci.Production.Prg.Entity.NikeMercury.ResponseLabelsPackPlanCartonAdd;
 using static Sci.Production.Prg.Entity.NikeMercury.ResponseLabelsPackPlanCreate;
 
 namespace Sci.Production.Prg
@@ -47,6 +48,15 @@ namespace Sci.Production.Prg
         private string serviceUrl = string.Empty;
         public string lastRequestXml = string.Empty;
         public string lastResponseXml = string.Empty;
+        private string factoryCode = string.Empty;
+
+        /// <summary>
+        /// FactoryCode
+        /// </summary>
+        public string FactoryCode
+        {
+            get { return this.factoryCode; }
+        }
 
         /// <summary>
         /// WebServiceNikeMercury
@@ -55,6 +65,7 @@ namespace Sci.Production.Prg
         public WebServiceNikeMercury(string serviceUrl)
         {
             this.serviceUrl = serviceUrl;
+            this.factoryCode = MyUtility.GetValue.Lookup("select NikeFactoryCode from system", "Production");
         }
 
         private string SerializeNikeMercuryXml(object xmlObject)
@@ -94,14 +105,6 @@ namespace Sci.Production.Prg
             this.lastResponseXml = xmlString;
             try
             {
-                // 使用 XmlSerializer 將 XML 字符串轉換為結構變數
-                //XElement xmlElement = XElement.Parse(xmlString);
-
-                //if (xmlElement.Descendants("faultcode").Any())
-                //{
-                //    string errMsg = xmlElement.Descendants("faultstring").First().Value;
-                //    return new DualResult(false, errMsg);
-                //}
 
                 XmlSerializer serializer = new XmlSerializer(typeof(T));
                 using (StringReader stringReader = new StringReader(xmlString))
@@ -121,44 +124,35 @@ namespace Sci.Production.Prg
         /// LabelsPackPlanCreate
         /// </summary>
         /// <param name="packID">packID</param>
+        /// <param name="orderNumber">orderNumber</param>
+        /// <param name="orderItem">orderItem</param>
+        /// <param name="listMercuryCarton">listMercuryCarton</param>
         /// <returns>DualResult</returns>
-        public DualResult LabelsPackPlanCreate(string packID)
+        public DualResult LabelsPackPlanCreate(string packID, string orderNumber, string orderItem, out List<ResponseLabelsPackPlanCreate.Carton> listMercuryCarton)
         {
+            listMercuryCarton = new List<ResponseLabelsPackPlanCreate.Carton>();
             string sqlGetData = $@"
-select  CustPONo, Customize1
-from    PackingGuide p with (nolock)
-inner join  Orders o with (nolock) on o.ID = p.OrderID
-where p.ID = '{packID}'
-
-select  SizeCode,
-        QtyPerCTN,
-        ShipQty,
-        [BuildQty] = ShipQty / QtyPerCTN * QtyPerCTN,
-        [BalQty] = ShipQty - (ShipQty / QtyPerCTN * QtyPerCTN)
+select  pg.SizeCode,
+        pg.QtyPerCTN,
+        pg.ShipQty,
+        [BuildQty] = (pg.ShipQty / pg.QtyPerCTN) * pg.QtyPerCTN
+        l.NikeCartonType
 from PackingGuide_Detail pg with (nolock)
+left join LocalItem l with (nolock) on l.Refno = pg.Refno
 where   pg.ID = '{packID}'
 
 ";
-            DataTable[] dtResults;
-            DualResult result = DBProxy.Current.Select(null, sqlGetData, out dtResults);
+            DataTable dtPackPlanOrderSize;
+            DualResult result = DBProxy.Current.Select(null, sqlGetData, out dtPackPlanOrderSize);
             if (!result)
             {
                 return result;
             }
 
-            DataRow drOrderInfo = dtResults[0].Rows[0];
-            DataTable dtPackPlanOrderSize = dtResults[1];
-
             if (dtPackPlanOrderSize.Rows.Count == 0)
             {
                 return new DualResult(false, "Packing Guide not found");
             }
-
-            string[] orderInfo = drOrderInfo["CustPONo"].ToString().Split('-');
-            string orderNumber = orderInfo[0];
-            string orderNumber2 = drOrderInfo["Customize1"].ToString();
-
-            string orderItem = orderInfo.Length < 2 ? string.Empty : orderInfo[1];
 
             RequestLabelsPackPlanCreate.Envelope posBody = new RequestLabelsPackPlanCreate.Envelope()
             {
@@ -168,7 +162,7 @@ where   pg.ID = '{packID}'
                     {
                         input = new RequestLabelsPackPlanCreate.Input()
                         {
-                            FactoryCode = "SNY",
+                            FactoryCode = this.factoryCode,
                             OrderNumber = orderNumber,
                             OrderItem = orderItem,
                             SingleSizePerCartonFlag = 0,
@@ -182,7 +176,7 @@ where   pg.ID = '{packID}'
                                         Description = s["SizeCode"].ToString(),
                                         BuildQty = MyUtility.Convert.GetInt(s["BuildQty"]),
                                         CartonPackFactor = MyUtility.Convert.GetInt(s["QtyPerCTN"]),
-                                        CartonTypeCode = "A4",
+                                        CartonTypeCode = s["NikeCartonType"].ToString(),
                                     })
                                 .ToArray(),
                             },
@@ -202,7 +196,6 @@ where   pg.ID = '{packID}'
 
             if (!webApiBaseResult.isSuccess)
             {
-                posBody.Body.LabelsPackPlanCreate.input.OrderNumber = orderNumber2;
                 soapRequest = this.SerializeNikeMercuryXml(posBody);
                 httpContent = new StringContent(soapRequest, Encoding.UTF8, "text/xml");
                 webApiBaseResult = WebApiTool.WebApiSend(this.serviceUrl, string.Empty, soapRequest, HttpMethod.Post, httpContent: httpContent, headers: dicHeader);
@@ -224,15 +217,12 @@ where   pg.ID = '{packID}'
 
             ResponseLabelsPackPlanCreate.LabelsPackPlanCreateResult labelsPackPlanCreateResult = responseResult.Body.LabelsPackPlanCreateResponse.LabelsPackPlanCreateResult;
 
-            if (labelsPackPlanCreateResult.OutputMessage.ReturnCode != -1)
+            if (labelsPackPlanCreateResult.OutputMessage.ReturnCode == -1)
             {
-                MyUtility.Msg.ShowMsgGrid(labelsPackPlanCreateResult.OutputData.Cartons.ToDataTable());
-                //string resultJson = JsonConvert.SerializeObject(labelsPackPlanCreateResult.OutputData.Cartons);
-                //MyUtility.Msg.InfoBox(resultJson);
-                return new DualResult(true);
+                return new DualResult(false, labelsPackPlanCreateResult.OutputMessage.ReturnDescription);
             }
 
-            MyUtility.Msg.InfoBox(labelsPackPlanCreateResult.OutputMessage.ReturnDescription);
+            listMercuryCarton = labelsPackPlanCreateResult.OutputData.Cartons;
 
             return new DualResult(true);
         }
@@ -241,9 +231,12 @@ where   pg.ID = '{packID}'
         /// LabelsPackPlanAdd
         /// </summary>
         /// <param name="cartonInfo">cartonInfo</param>
+        /// <param name="mercuryCarton">mercuryCarton</param>
         /// <returns>DualResult</returns>
-        public DualResult LabelsPackPlanAdd(RequestLabelsPackPlanCartonAdd.Input cartonInfo)
+        public DualResult LabelsPackPlanAdd(RequestLabelsPackPlanCartonAdd.Input cartonInfo, out ResponseLabelsPackPlanCartonAdd.Carton mercuryCarton)
         {
+            mercuryCarton = new ResponseLabelsPackPlanCartonAdd.Carton();
+
             RequestLabelsPackPlanCartonAdd.Envelope posBody = new RequestLabelsPackPlanCartonAdd.Envelope()
             {
                 Body = new RequestLabelsPackPlanCartonAdd.Body()
@@ -279,7 +272,14 @@ where   pg.ID = '{packID}'
                 return resultDeserialize;
             }
 
-            MyUtility.Msg.InfoBox(responseResult.Body.LabelsPackPlanCartonAddResponse.LabelsPackPlanCartonAddResult.OutputMessage.ReturnDescription);
+            LabelsPackPlanCartonAddResult labelsPackPlanCartonAddResult = responseResult.Body.LabelsPackPlanCartonAddResponse.LabelsPackPlanCartonAddResult;
+
+            if (labelsPackPlanCartonAddResult.OutputMessage.ReturnCode == -1)
+            {
+                return new DualResult(false, labelsPackPlanCartonAddResult.OutputMessage.ReturnDescription);
+            }
+
+            mercuryCarton = labelsPackPlanCartonAddResult.OutputData.Carton;
 
             return new DualResult(true);
         }
@@ -287,11 +287,10 @@ where   pg.ID = '{packID}'
         /// <summary>
         /// LabelsPackPlanDelete
         /// </summary>
-        /// <param name="factoryCode">factoryCode</param>
         /// <param name="orderNumber">orderNumber</param>
         /// <param name="orderItem">orderItem</param>
         /// <returns>DualResult</returns>
-        public DualResult LabelsPackPlanDelete(string factoryCode, string orderNumber, string orderItem)
+        public DualResult LabelsPackPlanDelete(string orderNumber, string orderItem)
         {
             RequestLabelsPackPlanDelete.Envelope posBody = new RequestLabelsPackPlanDelete.Envelope()
             {
@@ -299,8 +298,9 @@ where   pg.ID = '{packID}'
                 {
                     LabelsPackPlanDelete = new RequestLabelsPackPlanDelete.LabelsPackPlanDelete()
                     {
-                        Input = new RequestLabelsPackPlanDelete.Input() {
-                            FactoryCode = factoryCode,
+                        Input = new RequestLabelsPackPlanDelete.Input()
+                        {
+                            FactoryCode = this.factoryCode,
                             OrderNumber = orderNumber,
                             OrderItem = orderItem,
                         },
@@ -332,7 +332,54 @@ where   pg.ID = '{packID}'
                 return resultDeserialize;
             }
 
-            MyUtility.Msg.InfoBox(responseResult.Body.LabelsPackPlanDeleteResponse.LabelsPackPlanDeleteResult.OutputMessage.ReturnDescription);
+            return new DualResult(true);
+        }
+
+        /// <summary>
+        /// LabelsPackPlanCartonDelete
+        /// </summary>
+        /// <param name="cartonNumber">cartonNumber</param>
+        /// <returns>DualResult</returns>
+        public DualResult LabelsPackPlanCartonDelete(string cartonNumber)
+        {
+            RequestLabelsPackPlanDelete.Envelope posBody = new RequestLabelsPackPlanDelete.Envelope()
+            {
+                Body = new RequestLabelsPackPlanDelete.Body()
+                {
+                    LabelsPackPlanDelete = new RequestLabelsPackPlanDelete.LabelsPackPlanDelete()
+                    {
+                        Input = new RequestLabelsPackPlanDelete.Input()
+                        {
+                            FactoryCode = this.factoryCode,
+                            OrderNumber = cartonNumber,
+                        },
+                    },
+                },
+            };
+
+            string soapRequest = this.SerializeNikeMercuryXml(posBody);
+
+            Dictionary<string, string> dicHeader = new Dictionary<string, string>
+            {
+                { "SOAPAction", "http://tempuri.org/ILabels/LabelsPackPlanCartonDelete"},
+            };
+
+            HttpContent httpContent = new StringContent(soapRequest, Encoding.UTF8, "text/xml");
+            WebApiBaseResult webApiBaseResult = WebApiTool.WebApiSend(this.serviceUrl, string.Empty, soapRequest, HttpMethod.Post, httpContent: httpContent, headers: dicHeader);
+
+            if (!webApiBaseResult.isSuccess)
+            {
+                return new DualResult(false, webApiBaseResult.httpStatusCode.ToString() + webApiBaseResult.responseContent);
+            }
+
+            ResponseLabelsPackPlanCartonDelete.Envelope responseResult;
+
+            DualResult resultDeserialize = this.DeserializeNikeMercuryXml<ResponseLabelsPackPlanCartonDelete.Envelope>(webApiBaseResult.responseContent, out responseResult);
+
+            if (!resultDeserialize)
+            {
+                return resultDeserialize;
+            }
 
             return new DualResult(true);
         }
@@ -380,6 +427,60 @@ where   pg.ID = '{packID}'
             }
 
             MyUtility.Msg.InfoBox(responseResult.Body.LabelsPackPlanCartonUpdateResponse.LabelsPackPlanCartonUpdateResult.OutputMessage.ReturnDescription);
+
+            return new DualResult(true);
+        }
+
+        /// <summary>
+        /// OrdersDataGet
+        /// </summary>
+        /// <param name="orderNumber">orderNumber</param>
+        /// <param name="outputData">outputData</param>
+        /// <returns>DualResult</returns>
+        public DualResult OrdersDataGet(string orderNumber, out ResponseOrdersDataGet.OutputData outputData)
+        {
+            outputData = new ResponseOrdersDataGet.OutputData();
+
+            RequestOrdersDataGet.Envelope posBody = new RequestOrdersDataGet.Envelope()
+            {
+                Body = new RequestOrdersDataGet.Body()
+                {
+                    OrdersDataGet = new RequestOrdersDataGet.OrdersDataGet()
+                    {
+                        Input = new RequestOrdersDataGet.Input()
+                        {
+                            FactoryCode = this.factoryCode,
+                            OrderNumber = orderNumber,
+                        },
+                    },
+                },
+            };
+
+            string soapRequest = this.SerializeNikeMercuryXml(posBody);
+
+            Dictionary<string, string> dicHeader = new Dictionary<string, string>
+            {
+                { "SOAPAction", "http://tempuri.org/IOrders/OrdersDataGet" },
+            };
+
+            HttpContent httpContent = new StringContent(soapRequest, Encoding.UTF8, "text/xml");
+            WebApiBaseResult webApiBaseResult = WebApiTool.WebApiSend(this.serviceUrl, string.Empty, soapRequest, HttpMethod.Post, httpContent: httpContent, headers: dicHeader);
+
+            if (!webApiBaseResult.isSuccess)
+            {
+                return new DualResult(false, webApiBaseResult.httpStatusCode.ToString() + webApiBaseResult.responseContent);
+            }
+
+            ResponseOrdersDataGet.Envelope responseResult;
+
+            DualResult resultDeserialize = this.DeserializeNikeMercuryXml<ResponseOrdersDataGet.Envelope>(webApiBaseResult.responseContent, out responseResult);
+
+            if (!resultDeserialize)
+            {
+                return resultDeserialize;
+            }
+
+            outputData = responseResult.Body.OrdersDataGetResponse.OrdersDataGetResult.OutputData;
 
             return new DualResult(true);
         }
