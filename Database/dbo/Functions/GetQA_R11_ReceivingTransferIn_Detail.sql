@@ -34,7 +34,7 @@ RETURNs @RtnTable TABLE
 	DEFECTTYPE varchar(20),
 	DEFECTDESC varchar(60),
 	POINTS int,
-	DEFECTRATE numeric(13,4),
+	DEFECTRATE numeric(9,2),
 	INSPECTOR nvarchar(40),
 	AddDate datetime,
 	EditDate datetime
@@ -435,10 +435,10 @@ with Final as (
 			FD.TYPE,
 			FD.DESCRIPTIONEN,
 			POINT = isnull(Defect.point,  0),
-			DEFECTRATE = ISNULL(case when Q.PointRateOption = 1 then Defect.point / NULLIF(t.ActualYds, 0)
-									when Q.PointRateOption = 2 then Defect.point * 3600 / NULLIF(t.ActualYds * t.ActualWidth , 0)
-									when Q.PointRateOption = 3 then iif(t.WeaveTypeID = 'KNIT',Defect.point * 3600 / NULLIF(t.TicketYds * t.width , 0),Defect.point * 3600 / NULLIF(t.ActualYds * t.width , 0))
-									else Defect.point / NULLIF(t.ActualYds, 0)
+			DEFECTRATE = ISNULL(case when Q.PointRateOption = 1 then round((Defect.point / NULLIF(t.ActualYds, 0)) * 100 ,2)
+									when Q.PointRateOption = 2 then round( (Defect.point * 3600 / NULLIF(t.ActualYds * t.ActualWidth , 0)) * 100,2)
+									when Q.PointRateOption = 3 then iif(t.WeaveTypeID = 'KNIT',round((Defect.point * 3600 / NULLIF(t.TicketYds * t.width , 0)) * 100 ,2) ,round((Defect.point * 3600 / NULLIF(t.ActualYds * t.width , 0)) *100,2))
+									else round((Defect.point / NULLIF(t.ActualYds, 0))*100,2)
 								 end 
 							, 0)
 			,T.INSPECTOR
@@ -491,10 +491,10 @@ with Final as (
 			FD.TYPE,
 			FD.DESCRIPTIONEN,
 			POINT = isnull(Defect.point,  0),
-			DEFECTRATE = ISNULL(case when Q.PointRateOption = 1 then Defect.point / NULLIF(t.ActualYds, 0)
-									when Q.PointRateOption = 2 then Defect.point * 3600 / NULLIF(t.ActualYds * t.ActualWidth , 0)
-									when Q.PointRateOption = 3 then iif(t.WeaveTypeID = 'KNIT',Defect.point * 3600 / NULLIF(t.TicketYds * t.width , 0),Defect.point * 3600 / NULLIF(t.ActualYds * t.width , 0))
-									else Defect.point / NULLIF(t.ActualYds, 0)
+			DEFECTRATE = ISNULL(case when Q.PointRateOption = 1 then round((Defect.point / NULLIF(t.ActualYds, 0)) * 100 ,2)
+									when Q.PointRateOption = 2 then round( (Defect.point * 3600 / NULLIF(t.ActualYds * t.ActualWidth , 0)) * 100,2)
+									when Q.PointRateOption = 3 then iif(t.WeaveTypeID = 'KNIT',round((Defect.point * 3600 / NULLIF(t.TicketYds * t.width , 0)) * 100 ,2) ,round((Defect.point * 3600 / NULLIF(t.ActualYds * t.width , 0)) *100,2))
+									else round((Defect.point / NULLIF(t.ActualYds, 0))*100,2)
 								 end 
 							, 0)
 			,T.INSPECTOR

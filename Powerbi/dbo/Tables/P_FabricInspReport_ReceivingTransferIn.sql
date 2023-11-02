@@ -25,7 +25,7 @@
 	[DefectType] [varchar](20) NOT NULL,
 	[DefectDesc] [varchar](60) NOT NULL,
 	[Points] [int] NOT NULL,
-	[DefectRate] [numeric](38, 10) NOT NULL,
+	[DefectRate] [numeric](7, 2) NOT NULL,
 	[Inspector] [nvarchar](50) NOT NULL,
 	[AddDate] [datetime] NULL,
 	[EditDate] [datetime] NULL,
