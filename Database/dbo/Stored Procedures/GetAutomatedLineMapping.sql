@@ -430,9 +430,9 @@ where   t.StyleID = @StyleID and
 
 select	tmd.TotalSewer,
 		[TotalGSDTime] = Sum(Round(tmd.GSD * tmd.SewerDiffPercentage, 2)),
-		[AvgGSDTime] = Round(Sum(Round(tmd.GSD * tmd.SewerDiffPercentage, 2)) / @ManualSewer, 2),
-		[PackerManpower] = iif(Floor(@PackingProTMS / Round(Sum(Round(tmd.GSD * tmd.SewerDiffPercentage, 2)) / @ManualSewer, 2)) = 0, 1, Floor(@PackingProTMS / Round(Sum(Round(tmd.GSD * tmd.SewerDiffPercentage, 2)) / @ManualSewer, 2))),
-		[PresserManpower] = iif(Floor(@PressingProTMS / Round(Sum(Round(tmd.GSD * tmd.SewerDiffPercentage, 2)) / @ManualSewer, 2)) = 0, 1, Floor(@PressingProTMS / Round(Sum(Round(tmd.GSD * tmd.SewerDiffPercentage, 2)) / @ManualSewer, 2)))
+		[AvgGSDTime] = Round(Sum(Round(tmd.GSD * tmd.SewerDiffPercentage, 2)) / NULLIF(@ManualSewer,0), 2),
+		[PackerManpower] = iif(Floor(@PackingProTMS / Round(Sum(Round(tmd.GSD * tmd.SewerDiffPercentage, 2)) / NULLIF(@ManualSewer,0), 2)) = 0, 1, Floor(@PackingProTMS / Round(Sum(Round(tmd.GSD * tmd.SewerDiffPercentage, 2)) / NULLIF(@ManualSewer,0), 2))),
+		[PresserManpower] = iif(Floor(@PressingProTMS / Round(Sum(Round(tmd.GSD * tmd.SewerDiffPercentage, 2)) / NULLIF(@ManualSewer,0), 2)) = 0, 1, Floor(@PressingProTMS / Round(Sum(Round(tmd.GSD * tmd.SewerDiffPercentage, 2)) / NULLIF(@ManualSewer,0), 2)))
 into #detailSummary
 from #tmpAutomatedLineMapping_Detail tmd
 where	tmd.OperationID not in ('PROCIPF00004', 'PROCIPF00003') and
@@ -596,8 +596,8 @@ select	[StyleUkey] = s.Ukey,
 		[OriSewerManpower] = @ManualSewer,
 		[PackerManpower] = ds.PackerManpower,
 		[PresserManpower] = ds.PresserManpower,
-		ds.TotalGSDTime,
-		[HighestGSDTime] = (select Max(GSD)
+		[TotalGSDTime] = isnull(ds.TotalGSDTime,0),
+		[HighestGSDTime] = isnull((select Max(GSD)
 							from (
 									select [GSD] = sum(GSD * SewerDiffPercentage)
 									from #tmpAutomatedLineMapping_Detail
@@ -607,7 +607,7 @@ select	[StyleUkey] = s.Ukey,
 											IsNonSewingLine = 0 and
 											No <> ''
 									Group by No) a
-							),
+							),0),
 		[TimeStudyID] = t.ID,
 		[TimeStudyStatus] = t.Status,
 		[TimeStudyVersion] = t.Version,
@@ -653,3 +653,4 @@ order by [SewerManpower], No, Seq
 drop table #tmpTotalSewerRange, #tmpTimeStudy_Detail, #tmpGroupSewer, #tmpReaultBase, #tmpLocation, #tmpAutomatedLineMapping_Detail, #detailSummary
 
 end
+

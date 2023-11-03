@@ -922,29 +922,80 @@ from #tmp
                 this.CurrentMaintain["TotalGSDTime"] = this.lineMappingGrids.TotalGSD;
             }
 
+            decimal.TryParse(MyUtility.Convert.GetString(this.CurrentMaintain["TotalGSDTime"]), out decimal s1);
+            decimal.TryParse(MyUtility.Convert.GetString(this.CurrentMaintain["HighestGSDTime"]), out decimal s2);
+            decimal.TryParse(MyUtility.Convert.GetString(this.CurrentMaintain["SewerManpower"]), out decimal s3);
+
             // LBRByGSDTime
-            this.CurrentMaintain["LBRByGSDTime"] = MyUtility.Math.Round(MyUtility.Convert.GetDecimal(this.CurrentMaintain["TotalGSDTime"]) / MyUtility.Convert.GetDecimal(this.CurrentMaintain["HighestGSDTime"]) / MyUtility.Convert.GetDecimal(this.CurrentMaintain["SewerManpower"]) * 100, 0);
+            if (s1 != 0 && s2 != 0 && s3 != 0)
+            {
+                this.CurrentMaintain["LBRByGSDTime"] = MyUtility.Math.Round(MyUtility.Convert.GetDecimal(this.CurrentMaintain["TotalGSDTime"]) / MyUtility.Convert.GetDecimal(this.CurrentMaintain["HighestGSDTime"]) / MyUtility.Convert.GetDecimal(this.CurrentMaintain["SewerManpower"]) * 100, 0);
+            }
+            else
+            {
+                this.CurrentMaintain["LBRByGSDTime"] = 0;
+            }
 
             // AvgGSDTime
-            this.CurrentMaintain["AvgGSDTime"] = MyUtility.Math.Round(MyUtility.Convert.GetDecimal(this.CurrentMaintain["TotalGSDTime"]) / MyUtility.Convert.GetDecimal(this.CurrentMaintain["SewerManpower"]), 2);
+            if (s1 != 0 && s3 != 0)
+            {
+                this.CurrentMaintain["AvgGSDTime"] = MyUtility.Math.Round(MyUtility.Convert.GetDecimal(this.CurrentMaintain["TotalGSDTime"]) / MyUtility.Convert.GetDecimal(this.CurrentMaintain["SewerManpower"]), 2);
+            }
+            else
+            {
+                this.CurrentMaintain["AvgGSDTime"] = 0;
+            }
 
             // TotalSewingLineOptrs
             this.CurrentMaintain["TotalSewingLineOptrs"] = MyUtility.Convert.GetInt(this.CurrentMaintain["SewerManpower"]) + MyUtility.Convert.GetInt(this.CurrentMaintain["PresserManpower"]) + MyUtility.Convert.GetInt(this.CurrentMaintain["PackerManpower"]);
 
             // TargetHr
-            this.CurrentMaintain["TargetHr"] = MyUtility.Math.Round(3600 * MyUtility.Convert.GetDecimal(this.CurrentMaintain["SewerManpower"]) / MyUtility.Convert.GetDecimal(this.CurrentMaintain["TotalGSDTime"]), 0);
+            if (s1 != 0 && s3 != 0)
+            {
+                this.CurrentMaintain["TargetHr"] = MyUtility.Math.Round(3600 * MyUtility.Convert.GetDecimal(this.CurrentMaintain["SewerManpower"]) / MyUtility.Convert.GetDecimal(this.CurrentMaintain["TotalGSDTime"]), 0);
+            }
+            else
+            {
+                this.CurrentMaintain["TargetHr"] = 0;
+            }
 
             // DailyDemand
             this.CurrentMaintain["DailyDemand"] = MyUtility.Math.Round(MyUtility.Convert.GetDecimal(this.CurrentMaintain["TargetHr"]) * MyUtility.Convert.GetDecimal(this.CurrentMaintain["WorkHour"]), 0);
+            decimal.TryParse(MyUtility.Convert.GetString(this.CurrentMaintain["DailyDemand"]), out decimal s4);
+            decimal.TryParse(MyUtility.Convert.GetString(this.CurrentMaintain["WorkHour"]), out decimal s5);
 
             // TaktTime
-            this.CurrentMaintain["TaktTime"] = MyUtility.Math.Round(3600 * MyUtility.Convert.GetDecimal(this.CurrentMaintain["WorkHour"]) / MyUtility.Convert.GetDecimal(this.CurrentMaintain["DailyDemand"]), 2);
+            if (s4 != 0 && s5 != 0)
+            {
+                this.CurrentMaintain["TaktTime"] = MyUtility.Math.Round(3600 * MyUtility.Convert.GetDecimal(this.CurrentMaintain["WorkHour"]) / MyUtility.Convert.GetDecimal(this.CurrentMaintain["DailyDemand"]), 2);
+            }
+            else
+            {
+                this.CurrentMaintain["TaktTime"] = 0;
+            }
 
             // EOLR
-            this.CurrentMaintain["EOLR"] = MyUtility.Math.Round(3600 / MyUtility.Convert.GetDecimal(this.CurrentMaintain["HighestGSDTime"]), 2);
+            if (s2 != 0)
+            {
+                this.CurrentMaintain["EOLR"] = MyUtility.Math.Round(3600 / MyUtility.Convert.GetDecimal(this.CurrentMaintain["HighestGSDTime"]), 2);
+            }
+            else
+            {
+                this.CurrentMaintain["EOLR"] = 0;
+            }
+
+            decimal.TryParse(MyUtility.Convert.GetString(this.CurrentMaintain["WorkHour"]), out decimal s6);
+            decimal.TryParse(MyUtility.Convert.GetString(this.CurrentMaintain["StyleCPU"]), out decimal s7);
 
             // PPH
-            this.CurrentMaintain["PPH"] = MyUtility.Math.Round(MyUtility.Convert.GetDecimal(this.CurrentMaintain["EOLR"]) * MyUtility.Convert.GetDecimal(this.CurrentMaintain["StyleCPU"]) / MyUtility.Convert.GetDecimal(this.CurrentMaintain["SewerManpower"]), 2);
+            if (s3 != 0 && s6 != 0 && s7 != 0)
+            {
+                this.CurrentMaintain["PPH"] = MyUtility.Math.Round(MyUtility.Convert.GetDecimal(this.CurrentMaintain["EOLR"]) * MyUtility.Convert.GetDecimal(this.CurrentMaintain["StyleCPU"]) / MyUtility.Convert.GetDecimal(this.CurrentMaintain["SewerManpower"]), 2);
+            }
+            else
+            {
+                this.CurrentMaintain["PPH"] = 0;
+            }
         }
 
         private void ShowLBRChart(DataRow drMain)
@@ -979,13 +1030,13 @@ from #tmp
                                 .GroupBy(s => new { SewerManpower = MyUtility.Convert.GetInt(s["SewerManpower"]) })
                                 .Select(groupItem =>
                                 {
-                                    decimal highestGSDTime = groupItem.GroupBy(s => s["No"].ToString()).Max(groupSubItem => groupSubItem.Sum(s => (decimal)s["GSD"] * (decimal)s["SewerDiffPercentage"]));
+                                    decimal highestGSDTime = groupItem.GroupBy(s => s["No"].ToString()).Max(groupSubItem => groupSubItem.Sum(s => (decimal)s["GSD"] * (MyUtility.Check.Empty(s["SewerDiffPercentage"]) ? 0 : (decimal)s["SewerDiffPercentage"])));
                                     return new
                                     {
                                         highestGSDTime,
-                                        TotalGSD = MyUtility.Math.Round(groupItem.Sum(s => (decimal)s["GSD"] * (decimal)s["SewerDiffPercentage"]), 2),
+                                        TotalGSD = MyUtility.Math.Round(groupItem.Sum(s => (decimal)s["GSD"] * (MyUtility.Check.Empty(s["SewerDiffPercentage"]) ? 0 : (decimal)s["SewerDiffPercentage"])), 2),
                                         groupItem.Key.SewerManpower,
-                                        LBR = MyUtility.Math.Round(MyUtility.Math.Round(groupItem.Sum(s => (decimal)s["GSD"] * (decimal)s["SewerDiffPercentage"]), 2) / highestGSDTime / groupItem.Key.SewerManpower * 100, 0),
+                                        LBR = MyUtility.Math.Round(MyUtility.Math.Round(groupItem.Sum(s => (decimal)s["GSD"] * (MyUtility.Check.Empty(s["SewerDiffPercentage"]) ? 0 : (decimal)s["SewerDiffPercentage"])), 2) / highestGSDTime / groupItem.Key.SewerManpower * 100, 0),
                                     };
                                 }).OrderBy(s => s.SewerManpower);
 
