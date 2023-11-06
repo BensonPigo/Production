@@ -1,6 +1,4 @@
 ﻿CREATE PROCEDURE [dbo].[P_ImportSDP]
-	@param1 int = 0,
-	@param2 int
 AS
 begin
 	SET NOCOUNT ON
@@ -23,6 +21,14 @@ begin
 	Delete P_SDP
 	from P_SDP as a 
 	inner join #tmp as b on a.FactoryID = b.FactoryID and a.SPNo=b.SPNo and a.Style = b.Style and a.Seq = b.Seq
+
+	-- 刪除掉#tmp不同Key且SPNo相同的資料
+	Delete P_SDP
+	from P_SDP as a 
+	where not exists(
+		select 1 from #tmp b where a.FactoryID = b.FactoryID and a.SPNo=b.SPNo and a.Style = b.Style and a.Seq = b.Seq
+	)
+	and exists(select 1 from #tmp b where a.SPNo = b.SPNo)
 	'
 	set @SqlCmdUpdata ='
 	/************* 更新P_SDP的資料*************/
