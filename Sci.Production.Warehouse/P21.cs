@@ -147,6 +147,7 @@ namespace Sci.Production.Warehouse
                  .Text("FactoryID", header: "Factory", width: Widths.AnsiChars(6), iseditingreadonly: true)
                  .Text("Supplier", header: "Supplier", width: Widths.AnsiChars(21), iseditingreadonly: true)
                  .Text("BrandID", header: "Brand", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                 .Text("MCHandle", header: "MC Handle", width: Widths.AnsiChars(15), iseditingreadonly: true)
                  .Text("LocalMR", header: "Local MR", width: Widths.AnsiChars(15), iseditingreadonly: true)
                  .Text("WeaveTypeID", header: "Weave Type", width: Widths.AnsiChars(10), iseditingreadonly: true)
                  .Text("Roll", header: "Roll#", width: Widths.AnsiChars(8), iseditingreadonly: true)
@@ -442,6 +443,7 @@ from
         ,fu.UnrollEndTime
         ,fu.RelaxationStartTime
         ,fu.RelaxationEndTime
+        ,[MCHandle] = dbo.GetPass1(o.MCHandle)
     from  Receiving r with (nolock)
     inner join Receiving_Detail rd with (nolock) on r.ID = rd.ID
     inner join View_WH_Orders o with (nolock) on o.ID = rd.POID 
@@ -572,6 +574,7 @@ from
         ,fu.UnrollEndTime
         ,fu.RelaxationStartTime
         ,fu.RelaxationEndTime
+        ,[MCHandle] = dbo.GetPass1(o.MCHandle)
     FROM TransferIn t with (nolock)
     INNER JOIN TransferIn_Detail td with (nolock) ON t.ID = td.ID
     INNER JOIN View_WH_Orders o with (nolock) ON o.ID = td.POID
