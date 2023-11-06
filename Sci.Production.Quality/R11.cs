@@ -43,6 +43,7 @@ namespace Sci.Production.Quality
             this.type = this.radioPanelTransaction.Value;
             if (this.type == "1")
             {
+                // 注意!! 調整SQL 也要一併調整Sql Table Function [GetQA_R11_ReceivingTransferIn_Detail]
                 if (!this.dateArriveWHDate.Value1.Empty())
                 {
                     where1 += $"and R.WhseArrival between @Date1 and @Date2" + Environment.NewLine;
@@ -188,7 +189,9 @@ select
 	FP.ActualYds,
 	FP.ActualWidth,
 	Composition,
-	Inspector = Concat (Fp.Inspector, ' ', p.Name) 
+	Inspector = Concat (Fp.Inspector, ' ', p.Name) ,
+	FP.AddDate,
+	FP.EditDate
 into #tmp1
 from #tmpR t
 Left join FIR_Physical FP on FP.ID = t.ID and FP.Roll = t.Roll and FP.Dyelot = t.Dyelot
@@ -202,6 +205,8 @@ outer apply(
 	),1,1,'')
 )Composition
 
+
+
 select
 	t.*,
 	FP.InspDate,
@@ -213,7 +218,9 @@ select
 	FP.ActualYds,
 	FP.ActualWidth,
 	Composition,
-	Inspector = Concat (Fp.Inspector, ' ', p.Name) 
+	Inspector = Concat (Fp.Inspector, ' ', p.Name) ,
+	FP.AddDate,
+	FP.EditDate
 into #tmp2
 from #tmpT t
 Left join FIR_Physical FP on FP.ID = t.ID and FP.Roll = t.Roll and FP.Dyelot = t.Dyelot
@@ -226,6 +233,7 @@ outer apply(
 		for xml path('')
 	),1,1,'')
 )Composition
+
 
 --Summary分頁
 select
@@ -322,6 +330,7 @@ select
 						 end 
 					, 0)
 	,t.Inspector
+	,RowCnt = ROW_NUMBER() over(partition by t.POID,t.SEQ,t.RECEIVINGID,t.roll,t.dyelot,DEFECT.DEFECTRECORD order by t.AddDate desc, t.EditDate Desc)
 INTO #Sheet2
 from #tmp1 t
 outer apply(
@@ -377,6 +386,7 @@ select
 						 end 
 					, 0)
 	,t.Inspector
+	,RowCnt = ROW_NUMBER() over(partition by t.POID,t.SEQ,t.RECEIVINGID,t.roll,t.dyelot,DEFECT.DEFECTRECORD order by t.AddDate desc, t.EditDate Desc)
 from #tmp2 t
 outer apply(
     select 
@@ -402,6 +412,7 @@ SELECT
 	Description,ConstructionID,Roll,InspDate,Result,Grade,DefectRecord,
 	Type,DescriptionEN,point,Defectrate,Inspector
 FROM #Sheet2
+where RowCnt = 1
 
 --Lacking yard分頁
 select
