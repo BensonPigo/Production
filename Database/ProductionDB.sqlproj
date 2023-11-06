@@ -2891,6 +2891,7 @@
     <Build Include="dbo\Stored Procedures\GetFabricInspLabSummaryReport.sql" />
     <Build Include="dbo\Stored Procedures\PPIC_R01_SewingLineScheduleBySP.sql" />
     <Build Include="dbo\Stored Procedures\GetCuttingBCS.sql" />
+    <Build Include="dbo\Functions\GetQA_R11_ReceivingTransferIn_Detail.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />
