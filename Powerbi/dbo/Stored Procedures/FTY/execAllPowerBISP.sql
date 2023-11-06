@@ -1291,6 +1291,49 @@ SET @ErrorMessage = ''
 	SET @ErrDesc = ''
 
 /****************************************************************************************************************************/
+/***********************************P_Import_WH_R16****************************************************************/
+BEGIN TRY
+	Declare @P_Import_WH_R16_EndData date = getdate()
+	Declare @P_Import_WH_R16_StartData date = dateadd(DAY, -30, @P_Import_WH_R16_EndData)
+	set @Stime = getdate()  
+	execute [dbo].[P_Import_WH_R16] @P_Import_WH_R16_StartData, @P_Import_WH_R16_EndData
+	set @Etime = getdate()
+END TRY
+
+BEGIN CATCH
+
+SET @ErrorMessage = 
+'
+[31-P_Import_WH_R16]' + CHAR(13) +
+',錯誤代碼: ' + CONVERT(VARCHAR, ERROR_NUMBER()) + CHAR(13) +
+',錯誤行數: ' + CONVERT(VARCHAR, ERROR_LINE()) + CHAR(13) +
+',錯誤訊息: ' + ERROR_MESSAGE()
+
+SET @ErrDesc = '錯誤代碼: ' + CONVERT(VARCHAR, ERROR_NUMBER()) +
+',錯誤行數: ' + CONVERT(VARCHAR, ERROR_LINE())  +
+',錯誤訊息: ' + ERROR_MESSAGE()
+
+SET @ErrorStatus = 0
+
+END CATCH;
+IF (@ErrorMessage IS NULL or @ErrorMessage='')
+BEGIN 
+	set @desc += CHAR(13) + '
+[31-P_Import_WH_R16] is completed' + ' Time:' + FORMAT(@Stime, 'yyyy/MM/dd HH:mm:ss') + ' - ' + FORMAT(@Etime, 'yyyy/MM/dd HH:mm:ss')
+END
+ELSE
+BEGIN
+	set @desc += CHAR(13) + @ErrorMessage
+END
+SET @ErrorMessage = ''
+
+-- Write in P_TransLog
+	insert into P_TransLog(functionName,Description,StartTime,EndTime,TransCode) 
+	values('P_Import_WH_R16',@ErrDesc,@Stime,@Etime,@TransCode)
+
+	SET @ErrDesc = ''
+
+/****************************************************************************************************************************/
 DECLARE @comboDesc nvarchar(4000);
 
 	set @comboDesc = '
