@@ -59,6 +59,7 @@ IssueID
 ,FactoryReceivedTime
 ,AddDate
 ,EditDate
+,Issue_DetailUkey
 )
 select IssueID
 ,MDivisionID
@@ -105,6 +106,7 @@ select IssueID
 ,FactoryReceivedTime
 ,AddDate
 ,EditDate
+,Issue_DetailUkey
 from OPENQUERY([MainServer], '' SET NOCOUNT ON; exec Production.dbo.Warehouse_Report_R16 @EditDateFrom = '''''+ @IssueDateFromString +''''', @EditDateTo = '''''+ @IssueDateToString +''''''')
 
 '
@@ -117,12 +119,7 @@ from P_IssueFabricByCuttingTransactionList p
 where	((AddDate >= @StartDate and AddDate <= @EndDate) or
 		(EditDate >= @StartDate and EditDate <= @EndDate)) and
 		not exists(select 1 from #tmpIssueFabricByCuttingTransactionList t 
-												where	p.IssueID = t.IssueID and
-														p.OrderID = t.OrderID and
-														p.Seq = t.Seq and
-														p.Roll = t.Roll and
-														p.Dyelot = t.Dyelot and
-														p.StockType = t.StockType)
+												where	p.Issue_DetailUkey = t.Issue_DetailUkey)
 
 update p set p.MDivisionID						   = t.MDivisionID					
 			,p.FactoryID						   = t.FactoryID					
@@ -162,14 +159,15 @@ update p set p.MDivisionID						   = t.MDivisionID
 			,p.FactoryReceivedName				   = t.FactoryReceivedName			
 			,p.FactoryReceivedTime				   = t.FactoryReceivedTime			
 			,p.AddDate							   = t.AddDate						
-			,p.EditDate							   = t.EditDate						
+			,p.EditDate							   = t.EditDate	
+			,p.IssueID							   = t.IssueID	
+			,p.Seq								   = t.Seq	
+			,p.OrderID							   = t.OrderID	
+			,p.Roll							       = t.Roll	
+			,p.Dyelot							   = t.Dyelot	
+			,p.StockType						   = t.StockType	
 from P_IssueFabricByCuttingTransactionList p
-inner join #tmpIssueFabricByCuttingTransactionList t on p.IssueID = t.IssueID and
-														p.OrderID = t.OrderID and
-														p.Seq = t.Seq and
-														p.Roll = t.Roll and
-														p.Dyelot = t.Dyelot and
-														p.StockType = t.StockType
+inner join #tmpIssueFabricByCuttingTransactionList t on p.Issue_DetailUkey = t.Issue_DetailUkey
 
 insert into P_IssueFabricByCuttingTransactionList(
 		IssueID
@@ -216,7 +214,8 @@ insert into P_IssueFabricByCuttingTransactionList(
 		,FactoryReceivedName
 		,FactoryReceivedTime
 		,AddDate
-		,EditDate)
+		,EditDate
+		,Issue_DetailUkey)
 select	 t.IssueID
 		,t.MDivisionID
 		,t.FactoryID
@@ -262,15 +261,11 @@ select	 t.IssueID
 		,t.FactoryReceivedTime
 		,t.AddDate
 		,t.EditDate
+		,t.Issue_DetailUkey
 from #tmpIssueFabricByCuttingTransactionList t
 where not exists(	select 1 
 					from P_IssueFabricByCuttingTransactionList p
-					where	p.IssueID = t.IssueID and
-							p.OrderID = t.OrderID and
-							p.Seq = t.Seq and
-							p.Roll = t.Roll and
-							p.Dyelot = t.Dyelot and
-							p.StockType = t.StockType)
+					where	p.Issue_DetailUkey = t.Issue_DetailUkey)
 
 if exists(select 1 from BITableInfo where Id = 'P_IssueFabricByCuttingTransactionList')
 begin
