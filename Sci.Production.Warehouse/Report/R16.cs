@@ -97,6 +97,7 @@ exec Warehouse_Report_R16 {parameters.JoinToString(",")}
             this.printData.Columns.Remove("AddDate");
             this.printData.Columns.Remove("EditDate");
             this.printData.Columns.Remove("StockType");
+            this.printData.Columns.Remove("Issue_DetailUkey");
 
             return Ict.Result.True;
         }
