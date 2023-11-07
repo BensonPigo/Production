@@ -1,4 +1,4 @@
-Create PROCEDURE [dbo].[P_Import_PPIC_R04]
+Create PROCEDURE [dbo].[P_Import_FabricStatus_And_IssueFabricTracking]
 As
 Begin
 	Set NoCount On;

@@ -191,13 +191,13 @@
     <Build Include="dbo\Stored Procedures\FTY\P_Import_WH_R16.sql" />
     <Build Include="dbo\View\P_ArtworkType.sql" />
     <Build Include="dbo\Tables\P_PPICMasterList_Extend.sql" />
-    <Build Include="dbo\Stored Procedures\FTY\P_Import_PPIC_R04.sql" />
+    <Build Include="dbo\Stored Procedures\FTY\P_Import_FabricStatus_And_IssueFabricTracking.sql" />
     <Build Include="dbo\Tables\P_FabricStatus_And_IssueFabricTracking.sql" />
     <Build Include="dbo\Tables\P_ActualCutOutputReport.sql" />
     <Build Include="dbo\Tables\P_SubprocessWIP.sql" />
-    <Build Include="dbo\Stored Procedures\FTY\P_Import_Subcon_R41.sql" />
+    <Build Include="dbo\Stored Procedures\FTY\P_Import_SubprocessWIP.sql" />
     <Build Include="dbo\Tables\P_WIP.sql" />
-    <Build Include="dbo\Stored Procedures\FTY\P_Import_Planning_R15.sql" />
+    <Build Include="dbo\Stored Procedures\FTY\P_Import_WIP.sql" />
     <Build Include="dbo\Tables\P_FabricInspDailyReport_Detail.sql" />
     <Build Include="dbo\Stored Procedures\FTY\P_Import_QA_R08_Detail.sql" />
     <Build Include="dbo\Stored Procedures\FTY\P_ImportADIDASComplain_24Month.sql" />
@@ -216,6 +216,7 @@
     <Build Include="dbo\Tables\P_ICRAnalysis.sql" />
     <Build Include="dbo\Stored Procedures\FTY\P_Import_QA_R11_DefectDetail.sql" />
     <Build Include="dbo\Tables\P_FabricInspReport_ReceivingTransferIn.sql" />
+    <Build Include="dbo\Stored Procedures\FTY\P_Import_ActualCutOutputReport.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Utility.dll" />
