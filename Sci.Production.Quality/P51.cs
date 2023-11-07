@@ -770,7 +770,7 @@ Outer APPLY (
                     Select
                    ed.ID as ExportID
                    ,Convert(varchar(10), e.Eta, 23) as ETA
-		           ,Qty = SUM(IIF(IsNull(po3.StockPOID, '') = '' , po3.Qty, stockPO3.Qty))
+		           ,Qty = SUM(IIF(IsNull(po3.StockPOID, '') = '' , po3.Qty, getpo3.Qty))
 		           ,ShipQty = SUM(ed.Qty)
 		           ,ShipFOC = SUM(ed.FOC)
                    ,SuppID = iif({this.drBasic["FileRule"]} = 5, s2.ID, Supp.ID)
@@ -791,19 +791,19 @@ Outer APPLY (
                    ,o.FtyGroup
                  from  PO_Supp_Detail po3 WITH (NOLOCK)
                  {getpo3_sql}
-                 INNER JOIN Orders o with(nolock) on o.ID = IIF(IsNull(po3.StockPOID, '') = '' , po3.ID, stockPO3.ID)
-                 inner join Fabric f WITH (NOLOCK) on f.SCIRefno = IIF(IsNull(po3.StockPOID, '') = '' , po3.SCIRefno, stockPO3.SCIRefno)
-                 inner join PO_Supp po2 WITH (NOLOCK) on po2.ID = o.ID and po2.Seq1 = IIF(IsNull(po3.StockPOID, '') = '' , po3.Seq1, stockPO3.Seq1)
+                 INNER JOIN Orders o with(nolock) on o.ID = IIF(IsNull(po3.StockPOID, '') = '' , po3.ID, getpo3.ID)
+                 inner join Fabric f WITH (NOLOCK) on f.SCIRefno = IIF(IsNull(po3.StockPOID, '') = '' , po3.SCIRefno, getpo3.SCIRefno)
+                 inner join PO_Supp po2 WITH (NOLOCK) on po2.ID = o.ID and po2.Seq1 = IIF(IsNull(po3.StockPOID, '') = '' , po3.Seq1, getpo3.Seq1)
                  inner join PO WITH (NOLOCK) on po.ID = po2.ID 
                  INNER JOIN Season WITH (NOLOCK) on o.SeasonID = Season.ID and o.BrandID = Season.BrandID
 		         INNER JOIN Style s WITH(NOLOCK) on s.Ukey = o.StyleUkey		 
-		         INNER join Export_Detail ed WITH (NOLOCK) on ed.PoID = o.ID and ed.Seq1 = po2.Seq1 and ed.Seq2 = IIF(IsNull(po3.StockPOID, '') = '' , po3.Seq2, stockPO3.Seq2)
+		         INNER join Export_Detail ed WITH (NOLOCK) on ed.PoID = o.ID and ed.Seq1 = po2.Seq1 and ed.Seq2 = IIF(IsNull(po3.StockPOID, '') = '' , po3.Seq2, getpo3.Seq2)
 		         INNER join Export e WITH (NOLOCK) on e.ID = ed.ID   
                  Inner Join Supp WITH (NOLOCK) on po2.SuppID = Supp.ID
                  Inner Join BrandRelation as bs WITH (NOLOCK) ON bs.BrandID = o.BrandID and bs.SuppID = supp.ID
                  Inner Join Supp s2 WITH (NOLOCK) on bs.SuppGroup = s2.ID
                  Outer Apply(
-                      SELECT Color FROM GetPo3Spec(IIF(IsNull(po3.StockPOID, '') = '' , po3.ID, stockPO3.ID),IIF(IsNull(po3.StockPOID, '') = '' , po3.Seq1, stockPO3.Seq1),IIF(IsNull(po3.StockPOID, '') = '' , po3.Seq2, stockPO3.Seq2)) po3Spec
+                      SELECT Color FROM GetPo3Spec(IIF(IsNull(po3.StockPOID, '') = '' , po3.ID, getpo3.ID),IIF(IsNull(po3.StockPOID, '') = '' , po3.Seq1, getpo3.Seq1),IIF(IsNull(po3.StockPOID, '') = '' , po3.Seq2, getpo3.Seq2)) po3Spec
                  )po3Spec
                  LEFT JOIN  Color WITH (NOLOCK) ON Color.BrandId = o.BrandID AND Color.ID = po3Spec.Color
                  Outer apply(
