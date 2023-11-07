@@ -14,7 +14,7 @@ begin
 	)
 
 	insert into @tmpIssueID(ID)
-	select i.Id
+	select distinct i.Id
 	from issue i WITH (NOLOCK) 
 	inner join issue_detail id WITH (NOLOCK) on i.id = id.id
 	inner join Orders o WITH (NOLOCK) on id.POID = o.id
@@ -52,7 +52,7 @@ begin
 			,[Seq] = CONCAT(LTRIM(RTRIM(id.Seq1)),' ',LTRIM(RTRIM(id.Seq2)))
 			,[Refno] = isnull(psd.Refno, '')
 			,[ColorID] = isnull(psdsC.SpecValue, '')
-			,[Description] = LTRIM(RTRIM(f.DescDetail))
+			,[Description] = LTRIM(RTRIM(isnull(f.DescDetail, '')))
 			,[WeaveTypeID] = isnull(f.WeaveTypeID, '')
 			,[RelaxTime] = isnull(r.Relaxtime, 0)
 			,[Roll] = id.roll
@@ -66,11 +66,11 @@ begin
 			,[MINDReleaseDate] = format(id.MINDReleaseDate,'yyyy/MM/dd HH:mm')
 			,[PickingCompletion] = isnull(CompletionNum.value, 0)
 			,[NeedUnroll] = iif (id.NeedUnroll = 1, 'Y', '')
-			,[UnrollScanName] = concat(fu.UnrollScanner,'-',(select Name from Pass1 where Pass1.id =fu.UnrollScanner ))
-			,[UnrollStartTime] = format(fu.UnrollStartTime,'yyyy/MM/dd HH:mm')
-			,[UnrollEndTime] = format(fu.UnrollEndTime,'yyyy/MM/dd HH:mm')
-			,[RelaxationStartTime] = format(fu.RelaxationStartTime,'yyyy/MM/dd HH:mm')
-			,[RelaxationEndTime] = format(fu.RelaxationEndTime,'yyyy/MM/dd HH:mm')
+			,[UnrollScanName] = concat(isnull(fu.UnrollScanner, ''), '-', isnull((select Name from Pass1 where Pass1.id =fu.UnrollScanner ), ''))
+			,[UnrollStartTime] = isnull(format(fu.UnrollStartTime, 'yyyy/MM/dd HH:mm'), '')
+			,[UnrollEndTime] = isnull(format(fu.UnrollEndTime, 'yyyy/MM/dd HH:mm'), '')
+			,[RelaxationStartTime] = isnull(format(fu.RelaxationStartTime,'yyyy/MM/dd HH:mm'), '')
+			,[RelaxationEndTime] = isnull(format(fu.RelaxationEndTime,'yyyy/MM/dd HH:mm'), '')
 			,[UnrollActualQty] = isnull(fu.UnrollActualQty, 0)
 			,[UnrollRemark] = isnull(fu.UnrollRemark, '')
 			,[UnrollingRelaxationCompletion] = case 
@@ -86,6 +86,7 @@ begin
 			,[AddDate] = i.AddDate
 			,[EditDate] = i.EditDate
 			,[StockType] = id.StockType
+			,[Issue_DetailUkey] = id.ukey
 	from issue i WITH (NOLOCK) 
 	inner join issue_detail id WITH (NOLOCK) on i.id = id.id
 	inner join Orders o WITH (NOLOCK) on id.POID = o.id
