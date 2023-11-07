@@ -1,5 +1,4 @@
-﻿
-Create PROCEDURE [dbo].[P_Import_Cutting_R08]	
+﻿CREATE PROCEDURE [dbo].[P_Import_ActualCutOutputReport]
 	 @Date1 Date = null
 	,@Date2 Date = null
 AS
@@ -393,3 +392,6 @@ drop table #tmp1,#tmp2a,#tmp2,#tmp3,#detail,#tmpCutRefNull,#tmpWorkOrderID
 	end
 
 END
+
+
+GO
