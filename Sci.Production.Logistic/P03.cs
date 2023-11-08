@@ -358,6 +358,9 @@ Select distinct '' as ID
 	, [ScanQty]=b.ScanQty
 	, b.ScanEditDate
 	, b.ScanName
+    , Reason = ''
+    , ClogReasonID = '' 
+    , ClogReasonRemark = '' 
 from PackingList a WITH (NOLOCK) , PackingList_Detail b WITH (NOLOCK) , Orders c WITH (NOLOCK) , Country d WITH (NOLOCK) where 1=0";
 
                 DualResult selectResult;
@@ -833,8 +836,8 @@ select GETDATE() ReturnDate
 	,GETDATE() AddDate
 	,@Userid AddName
 	,SCICtnNo SCICtnNo
-    ,ClogReasonID ClogReasonID
-    ,ClogReasonRemark ClogReasonRemark
+    ,isnull(ClogReasonID,'') ClogReasonID
+    ,isnull(ClogReasonRemark,'') ClogReasonRemark
 from #tmp ;
 
 
