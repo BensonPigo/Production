@@ -193,10 +193,10 @@ namespace Sci.Production.Warehouse
             (
                 select ActETA = Max(p3.FinalETA) 
                 from PO_Supp_Detail p3 with (nolock) 
-                inner join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = p3.id and psdsC.seq1 = p3.seq1 and psdsC.seq2 = p3.seq2 and psdsC.SpecColumnID = 'Color'
+                inner join PO_Supp_Detail_Spec psdsC2 WITH (NOLOCK) on psdsC2.ID = p3.id and psdsC2.seq1 = p3.seq1 and psdsC2.seq2 = p3.seq2 and psdsC2.SpecColumnID = 'Color'
                 where p3.id = psd.ID
                 and p3.SCIRefno = psd.SCIRefno
-                and psdsC.SpecValue = psdsC.SpecValue
+                and psdsC2.SpecValue = psdsC.SpecValue
                 and p3.Junk = 0
                 and p3.Seq1 not like 'A%'
             ) FinalETA

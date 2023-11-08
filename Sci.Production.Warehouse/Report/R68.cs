@@ -25,7 +25,7 @@ namespace Sci.Production.Warehouse
         /// <inheritdoc/>
         protected override bool ValidateInput()
         {
-            if (!this.dateEstCuttingDate.Value1.HasValue && !this.txtCutPlanID.Empty())
+            if (!this.dateEstCuttingDate.Value1.HasValue && MyUtility.Check.Empty(this.txtCutPlanID.Text))
             {
                 MyUtility.Msg.WarningBox("< Est. Cutting Date > and < Cutplan ID > cannot all be empty.");
                 return false;
