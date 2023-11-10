@@ -71,7 +71,7 @@
             this.groupBox1.Location = new System.Drawing.Point(205, 12);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Padding = new System.Windows.Forms.Padding(5);
-            this.groupBox1.Size = new System.Drawing.Size(605, 473);
+            this.groupBox1.Size = new System.Drawing.Size(817, 473);
             this.groupBox1.TabIndex = 3;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Download Sticker Queue";
@@ -96,7 +96,7 @@
             this.gridDownloadStickerQueue.RowTemplate.Height = 24;
             this.gridDownloadStickerQueue.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridDownloadStickerQueue.ShowCellToolTips = false;
-            this.gridDownloadStickerQueue.Size = new System.Drawing.Size(595, 447);
+            this.gridDownloadStickerQueue.Size = new System.Drawing.Size(807, 447);
             this.gridDownloadStickerQueue.TabIndex = 0;
             // 
             // panelUploadProgress
@@ -139,14 +139,14 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(822, 497);
+            this.ClientSize = new System.Drawing.Size(1034, 497);
             this.Controls.Add(this.panelUploadProgress);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.btnDownloadStickerFile);
             this.Controls.Add(this.btnUploadPL);
             this.Name = "P03_Mercury";
             this.OnLineHelpID = "Sci.Win.Tems.QueryForm";
-            this.Text = "Mercury";
+            this.Text = "Nike Mercury";
             this.Resize += new System.EventHandler(this.P03_Mercury_Resize);
             this.Controls.SetChildIndex(this.btnUploadPL, 0);
             this.Controls.SetChildIndex(this.btnDownloadStickerFile, 0);

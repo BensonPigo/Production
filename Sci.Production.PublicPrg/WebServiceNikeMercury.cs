@@ -38,7 +38,7 @@ namespace Sci.Production.Prg
             {
                 if (staticService == null)
                 {
-                    staticService = new WebServiceNikeMercury("http://localhost/OLLIe/OLLIe.svc/Labels");
+                    staticService = new WebServiceNikeMercury("http://localhost/OLLIe/OLLIe.svc/");
                 }
 
                 return staticService;
@@ -49,6 +49,7 @@ namespace Sci.Production.Prg
         public string lastRequestXml = string.Empty;
         public string lastResponseXml = string.Empty;
         private string factoryCode = string.Empty;
+        private string nikeStickerPrintServer = string.Empty;
 
         /// <summary>
         /// FactoryCode
@@ -65,15 +66,26 @@ namespace Sci.Production.Prg
         public WebServiceNikeMercury(string serviceUrl)
         {
             this.serviceUrl = serviceUrl;
-            this.factoryCode = MyUtility.GetValue.Lookup("select NikeFactoryCode from system", "Production");
-        }
+            DataRow drInitialValues;
+            if (MyUtility.Check.Seek("select NikeFactoryCode, NikeStickerPrintServer from system", out drInitialValues))
+            {
+                this.factoryCode = drInitialValues["NikeFactoryCode"].ToString();
+                this.nikeStickerPrintServer = drInitialValues["NikeStickerPrintServer"].ToString();
+            }
+         }
 
-        private string SerializeNikeMercuryXml(object xmlObject)
+        /// <summary>
+        /// SerializeNikeMercuryXml
+        /// </summary>
+        /// <param name="xmlObject">xmlObject</param>
+        /// <param name="ollNamespaces">ollNamespaces</param>
+        /// <returns>string</returns>
+        public string SerializeNikeMercuryXml(object xmlObject, string ollNamespaces = "http://schemas.datacontract.org/2004/07/OLLIeLabels")
         {
             XmlSerializerNamespaces xmlSerializerNamespaces = new XmlSerializerNamespaces();
             xmlSerializerNamespaces.Add("soapenv", "http://schemas.xmlsoap.org/soap/envelope/");
             xmlSerializerNamespaces.Add("tem", "http://tempuri.org/");
-            xmlSerializerNamespaces.Add("oll", "http://schemas.datacontract.org/2004/07/OLLIeLabels");
+            xmlSerializerNamespaces.Add("oll", ollNamespaces);
 
             XmlWriterSettings xmlWriterSettings = new XmlWriterSettings
             {
@@ -135,7 +147,7 @@ namespace Sci.Production.Prg
 select  pg.SizeCode,
         pg.QtyPerCTN,
         pg.ShipQty,
-        [BuildQty] = (pg.ShipQty / pg.QtyPerCTN) * pg.QtyPerCTN
+        [BuildQty] = (pg.ShipQty / pg.QtyPerCTN) * pg.QtyPerCTN,
         l.NikeCartonType
 from PackingGuide_Detail pg with (nolock)
 left join LocalItem l with (nolock) on l.Refno = pg.Refno
@@ -192,13 +204,13 @@ where   pg.ID = '{packID}'
                 { "SOAPAction", "http://tempuri.org/ILabels/LabelsPackPlanCreate" },
             };
             HttpContent httpContent = new StringContent(soapRequest, Encoding.UTF8, "text/xml");
-            WebApiBaseResult webApiBaseResult = WebApiTool.WebApiSend(this.serviceUrl, string.Empty, soapRequest, HttpMethod.Post, httpContent: httpContent, headers: dicHeader);
+            WebApiBaseResult webApiBaseResult = WebApiTool.WebApiSend(this.serviceUrl, "Labels", soapRequest, HttpMethod.Post, httpContent: httpContent, headers: dicHeader);
 
             if (!webApiBaseResult.isSuccess)
             {
                 soapRequest = this.SerializeNikeMercuryXml(posBody);
                 httpContent = new StringContent(soapRequest, Encoding.UTF8, "text/xml");
-                webApiBaseResult = WebApiTool.WebApiSend(this.serviceUrl, string.Empty, soapRequest, HttpMethod.Post, httpContent: httpContent, headers: dicHeader);
+                webApiBaseResult = WebApiTool.WebApiSend(this.serviceUrl, "Labels", soapRequest, HttpMethod.Post, httpContent: httpContent, headers: dicHeader);
             }
 
             if (!webApiBaseResult.isSuccess)
@@ -256,7 +268,7 @@ where   pg.ID = '{packID}'
             };
 
             HttpContent httpContent = new StringContent(soapRequest, Encoding.UTF8, "text/xml");
-            WebApiBaseResult webApiBaseResult = WebApiTool.WebApiSend(this.serviceUrl, string.Empty, soapRequest, HttpMethod.Post, httpContent: httpContent, headers: dicHeader);
+            WebApiBaseResult webApiBaseResult = WebApiTool.WebApiSend(this.serviceUrl, "Labels", soapRequest, HttpMethod.Post, httpContent: httpContent, headers: dicHeader);
 
             if (!webApiBaseResult.isSuccess)
             {
@@ -276,7 +288,8 @@ where   pg.ID = '{packID}'
 
             if (labelsPackPlanCartonAddResult.OutputMessage.ReturnCode == -1)
             {
-                return new DualResult(false, labelsPackPlanCartonAddResult.OutputMessage.ReturnDescription);
+                string addSize = cartonInfo.AddCartonContent.AddCartonContentInput.Select(s => s.OrderSizeDescription).JoinToString(",");
+                return new DualResult(false, "Size:" + addSize + Environment.NewLine + labelsPackPlanCartonAddResult.OutputMessage.ReturnDescription);
             }
 
             mercuryCarton = labelsPackPlanCartonAddResult.OutputData.Carton;
@@ -316,7 +329,7 @@ where   pg.ID = '{packID}'
             };
 
             HttpContent httpContent = new StringContent(soapRequest, Encoding.UTF8, "text/xml");
-            WebApiBaseResult webApiBaseResult = WebApiTool.WebApiSend(this.serviceUrl, string.Empty, soapRequest, HttpMethod.Post, httpContent: httpContent, headers: dicHeader);
+            WebApiBaseResult webApiBaseResult = WebApiTool.WebApiSend(this.serviceUrl, "Labels", soapRequest, HttpMethod.Post, httpContent: httpContent, headers: dicHeader);
 
             if (!webApiBaseResult.isSuccess)
             {
@@ -332,6 +345,13 @@ where   pg.ID = '{packID}'
                 return resultDeserialize;
             }
 
+            ResponseLabelsPackPlanDelete.OutputMessage outputMessage = responseResult.Body.LabelsPackPlanDeleteResponse.LabelsPackPlanDeleteResult.OutputMessage;
+
+            if (outputMessage.ReturnCode < 0)
+            {
+                return new DualResult(false, outputMessage.ReturnDescription);
+            }
+
             return new DualResult(true);
         }
 
@@ -342,16 +362,16 @@ where   pg.ID = '{packID}'
         /// <returns>DualResult</returns>
         public DualResult LabelsPackPlanCartonDelete(string cartonNumber)
         {
-            RequestLabelsPackPlanDelete.Envelope posBody = new RequestLabelsPackPlanDelete.Envelope()
+            RequestLabelsPackPlanCartonDelete.Envelope posBody = new RequestLabelsPackPlanCartonDelete.Envelope()
             {
-                Body = new RequestLabelsPackPlanDelete.Body()
+                Body = new RequestLabelsPackPlanCartonDelete.Body()
                 {
-                    LabelsPackPlanDelete = new RequestLabelsPackPlanDelete.LabelsPackPlanDelete()
+                    LabelsPackPlanCartonDelete = new RequestLabelsPackPlanCartonDelete.LabelsPackPlanCartonDelete()
                     {
-                        Input = new RequestLabelsPackPlanDelete.Input()
+                        Input = new RequestLabelsPackPlanCartonDelete.Input()
                         {
                             FactoryCode = this.factoryCode,
-                            OrderNumber = cartonNumber,
+                            CartonNumber = cartonNumber,
                         },
                     },
                 },
@@ -365,7 +385,7 @@ where   pg.ID = '{packID}'
             };
 
             HttpContent httpContent = new StringContent(soapRequest, Encoding.UTF8, "text/xml");
-            WebApiBaseResult webApiBaseResult = WebApiTool.WebApiSend(this.serviceUrl, string.Empty, soapRequest, HttpMethod.Post, httpContent: httpContent, headers: dicHeader);
+            WebApiBaseResult webApiBaseResult = WebApiTool.WebApiSend(this.serviceUrl, "Labels", soapRequest, HttpMethod.Post, httpContent: httpContent, headers: dicHeader);
 
             if (!webApiBaseResult.isSuccess)
             {
@@ -410,7 +430,7 @@ where   pg.ID = '{packID}'
             };
 
             HttpContent httpContent = new StringContent(soapRequest, Encoding.UTF8, "text/xml");
-            WebApiBaseResult webApiBaseResult = WebApiTool.WebApiSend(this.serviceUrl, string.Empty, soapRequest, HttpMethod.Post, httpContent: httpContent, headers: dicHeader);
+            WebApiBaseResult webApiBaseResult = WebApiTool.WebApiSend(this.serviceUrl, "Labels", soapRequest, HttpMethod.Post, httpContent: httpContent, headers: dicHeader);
 
             if (!webApiBaseResult.isSuccess)
             {
@@ -456,7 +476,7 @@ where   pg.ID = '{packID}'
                 },
             };
 
-            string soapRequest = this.SerializeNikeMercuryXml(posBody);
+            string soapRequest = this.SerializeNikeMercuryXml(posBody, "http://schemas.datacontract.org/2004/07/OLLIeOrders");
 
             Dictionary<string, string> dicHeader = new Dictionary<string, string>
             {
@@ -464,7 +484,7 @@ where   pg.ID = '{packID}'
             };
 
             HttpContent httpContent = new StringContent(soapRequest, Encoding.UTF8, "text/xml");
-            WebApiBaseResult webApiBaseResult = WebApiTool.WebApiSend(this.serviceUrl, string.Empty, soapRequest, HttpMethod.Post, httpContent: httpContent, headers: dicHeader);
+            WebApiBaseResult webApiBaseResult = WebApiTool.WebApiSend(this.serviceUrl, "Orders", soapRequest, HttpMethod.Post, httpContent: httpContent, headers: dicHeader);
 
             if (!webApiBaseResult.isSuccess)
             {
@@ -481,6 +501,67 @@ where   pg.ID = '{packID}'
             }
 
             outputData = responseResult.Body.OrdersDataGetResponse.OrdersDataGetResult.OutputData;
+
+            return new DualResult(true);
+        }
+
+        /// <summary>
+        /// LabelsGS1128CartonPrintByCartonRange
+        /// </summary>
+        /// <param name="cartonNumber">cartonNumber</param>
+        /// <returns>DualResult</returns>
+        public DualResult LabelsGS1128CartonPrintByCartonRange(string cartonNumber)
+        {
+            RequestLabelsGS1128CartonPrintByCartonRange.Envelope posBody = new RequestLabelsGS1128CartonPrintByCartonRange.Envelope()
+            {
+                Body = new RequestLabelsGS1128CartonPrintByCartonRange.Body()
+                {
+                    LabelsGS1128CartonPrintByCartonRange = new RequestLabelsGS1128CartonPrintByCartonRange.LabelsGS1128CartonPrintByCartonRange()
+                    {
+                        Input = new RequestLabelsGS1128CartonPrintByCartonRange.Input()
+                        {
+                            FactoryCode = this.factoryCode,
+                            PrintServerName = this.nikeStickerPrintServer,
+                            CartonNumberFrom = cartonNumber,
+                        },
+                    },
+                },
+            };
+
+            string soapRequest = this.SerializeNikeMercuryXml(posBody);
+
+            Dictionary<string, string> dicHeader = new Dictionary<string, string>
+            {
+                { "SOAPAction", "http://tempuri.org/ILabels/LabelsGS1128CartonPrintByCartonRange"},
+            };
+
+            HttpContent httpContent = new StringContent(soapRequest, Encoding.UTF8, "text/xml");
+            WebApiBaseResult webApiBaseResult = WebApiTool.WebApiSend(this.serviceUrl, "Labels", soapRequest, HttpMethod.Post, httpContent: httpContent, headers: dicHeader);
+
+            if (!webApiBaseResult.isSuccess)
+            {
+                return new DualResult(false, webApiBaseResult.httpStatusCode.ToString() + webApiBaseResult.responseContent);
+            }
+
+            ResponseLabelsGS1128CartonPrintByCartonRange.Envelope responseResult;
+
+            DualResult resultDeserialize = this.DeserializeNikeMercuryXml<ResponseLabelsGS1128CartonPrintByCartonRange.Envelope>(webApiBaseResult.responseContent, out responseResult);
+
+            if (!resultDeserialize)
+            {
+                return resultDeserialize;
+            }
+
+            string returnDescription = responseResult.Body.LabelsGS1128CartonPrintByCartonRangeResponse.LabelsGS1128CartonPrintByCartonRangeResult.OutputMessage.ReturnDescription;
+
+            // 有可能回傳成功但只建立0箱的情況，要回傳false
+            // 0 Carton Label(s) added to the print queue.
+            string createdCartonCnt = returnDescription.Split(' ')[0];
+
+            if (createdCartonCnt == "0")
+            {
+                return new DualResult(false, new Exception($"CartonNumber:{cartonNumber}" + Environment.NewLine + returnDescription));
+            }
 
             return new DualResult(true);
         }

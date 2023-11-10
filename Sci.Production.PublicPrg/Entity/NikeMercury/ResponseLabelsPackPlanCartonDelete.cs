@@ -22,18 +22,18 @@ namespace Sci.Production.Prg.Entity.NikeMercury
 
         public class Body
         {
-            [XmlElement(ElementName = "LabelsPackPlanDeleteResponse", Namespace = "http://tempuri.org/")]
-            public LabelsPackPlanDeleteResponse LabelsPackPlanDeleteResponse { get; set; }
+            [XmlElement(ElementName = "LabelsPackPlanCartonDeleteResponse", Namespace = "http://tempuri.org/")]
+            public LabelsPackPlanCartonDeleteResponse LabelsPackPlanCartonDeleteResponse { get; set; }
         }
 
-        [XmlRoot(ElementName = "LabelsPackPlanDeleteResponse", Namespace = "http://tempuri.org/")]
-        public class LabelsPackPlanDeleteResponse
+        [XmlRoot(ElementName = "LabelsPackPlanCartonDeleteResponse", Namespace = "http://tempuri.org/")]
+        public class LabelsPackPlanCartonDeleteResponse
         {
-            [XmlElement(ElementName = "LabelsPackPlanDeleteResult", Namespace = "http://tempuri.org/")]
-            public LabelsPackPlanDeleteResult LabelsPackPlanDeleteResult { get; set; }
+            [XmlElement(ElementName = "LabelsPackPlanCartonDeleteResult", Namespace = "http://tempuri.org/")]
+            public LabelsPackPlanCartonDeleteResult LabelsPackPlanCartonDeleteResult { get; set; }
         }
 
-        public class LabelsPackPlanDeleteResult
+        public class LabelsPackPlanCartonDeleteResult
         {
             [XmlElement(ElementName = "OutputMessage", Namespace = "http://schemas.datacontract.org/2004/07/OLLIeLabels")]
             public OutputMessage OutputMessage { get; set; }

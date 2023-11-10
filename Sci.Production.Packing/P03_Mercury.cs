@@ -10,6 +10,7 @@ using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Transactions;
 using System.Windows.Forms;
@@ -61,14 +62,16 @@ namespace Sci.Production.Packing
             base.OnFormLoaded();
 
             this.Helper.Controls.Grid.Generator(this.gridDownloadStickerQueue)
-                .Text("PackingID", header: "Pack ID", width: Widths.AnsiChars(13), iseditingreadonly: true)
+                .Text("PackingID", header: "Pack ID", width: Widths.AnsiChars(15), iseditingreadonly: true)
                 .Numeric("CTNQty", header: "Ttl Ctns", width: Widths.AnsiChars(6), iseditingreadonly: true)
                 .Numeric("ShipQty", header: "Ship Qty", width: Widths.AnsiChars(6), iseditingreadonly: true)
                 .EditText("ErrorMsg", header: "Error msg", width: Widths.AnsiChars(25), iseditingreadonly: true)
                 .DateTime("AddDate", header: "Add Date", iseditingreadonly: true)
                 .DateTime("UpdateDate", header: "Update Date", iseditingreadonly: true);
 
+            this.Query();
             this.timerRefreshDownloadStickerQueue.Enabled = true;
+            this.timerRefreshDownloadStickerQueue.Start();
         }
 
         private void Query()
@@ -83,7 +86,7 @@ select  dq.PackingID,
         dq.Processing
 from DownloadStickerQueue dq with (nolock)
 inner join PackingList p with (nolock) on p.ID = dq.PackingID
-order by    dq.UpdateDate desc
+order by    dq.UpdateDate
 ";
             DataTable dtResult;
             DualResult result = DBProxy.Current.Select(null, sqlGetDownloadStickerQueue, out dtResult);
@@ -173,7 +176,7 @@ select  pd.CTNStartNo,
         pd.SizeCode,
         pd.ShipQty,
         l.NikeCartonType
-from PakcingList_Detail pd with (nolock)
+from PackingList_Detail pd with (nolock)
 left join LocalItem l with (nolock) on l.Refno = pd.Refno
 where   ID = '{this.packID}'
 order by pd.Seq
@@ -190,7 +193,7 @@ order by pd.Seq
 
             var groupPack = dtPack.AsEnumerable().GroupBy(s => s["CTNStartNo"].ToString());
             List<RequestLabelsPackPlanCreate.PackPlanOrderSize> listPackSizeData = new List<RequestLabelsPackPlanCreate.PackPlanOrderSize>();
-            Dictionary<string, string> dicMercuryCartonNumber = new Dictionary<string, string>();
+            List<UpdatePackingInfo> listUpdatePackingInfo = new List<UpdatePackingInfo>();
 
             int totalCtn = groupPack.Count();
             this.lblUploadProgressStatus.Text = $"Uploading Carton 1 of {totalCtn}";
@@ -221,12 +224,18 @@ order by pd.Seq
                     PackPlanQty = MyUtility.Convert.GetInt(s["ShipQty"]),
                 }).ToList();
 
-                ResponseLabelsPackPlanCreate.Carton findMercuryCarton = listMercuryCarton.Find(s => s.Content.CartonContent.SequenceEqual(sciCartonInfo));
+                ResponseLabelsPackPlanCreate.Carton findMercuryCarton = listMercuryCarton
+                    .Find(s => s.Content.CartonContent.SequenceEqual(sciCartonInfo));
 
                 // 兩邊都有match，將mercury資訊中刪掉對應資料
                 if (findMercuryCarton != null)
                 {
-                    dicMercuryCartonNumber.Add(groupItem.Key, findMercuryCarton.CartonNumber);
+                    listUpdatePackingInfo.Add(new UpdatePackingInfo
+                    {
+                        CtnStartNo = groupItem.Key,
+                        CustCtn = findMercuryCarton.CartonBarcodeNumber,
+                        CustCtn2 = findMercuryCarton.CartonNumber,
+                    });
                     listMercuryCarton.Remove(findMercuryCarton);
                     continue;
                 }
@@ -260,11 +269,17 @@ order by pd.Seq
                     return;
                 }
 
-                dicMercuryCartonNumber.Add(groupItem.Key, mercuryCarton.CartonNumber);
+                listUpdatePackingInfo.Add(new UpdatePackingInfo
+                {
+                    CtnStartNo = groupItem.Key,
+                    CustCtn = mercuryCarton.CartonBarcodeNumber,
+                    CustCtn2 = mercuryCarton.CartonNumber,
+                });
 
                 this.lblUploadProgressStatus.Text = $"Uploading Carton {iterationCount} of {totalCtn}";
                 this.progressBarUploadPL.Value = iterationCount;
                 Application.DoEvents();
+                Thread.Sleep(100);
                 iterationCount++;
             }
 
@@ -281,8 +296,8 @@ order by pd.Seq
             }
 
             // update Packinglist_Detail.CustCTN
-            string sqlUpdate = dicMercuryCartonNumber
-                .Select(s => $"update PackingList_Detail set CustCTN = '{s.Value}' where ID = '{this.packID}' and CTNStartNo = '{s.Key}'")
+            string sqlUpdate = listUpdatePackingInfo
+                .Select(s => $"update PackingList_Detail set CustCTN = '{s.CustCtn}', CustCTN2 = '{s.CustCtn2}' where ID = '{this.packID}' and CTNStartNo = '{s.CtnStartNo}'")
                 .JoinToString(Environment.NewLine);
 
             using (TransactionScope transactionScope = new TransactionScope())
@@ -366,7 +381,7 @@ end
 
             string sqlInsertDownloadStickerQueue = $@"
 insert into DownloadStickerQueue(PackingID, AddDate, UpdateDate)
-            values('{this.packID}', getdate(), gedate())
+            values('{this.packID}', getdate(), getdate())
 ";
 
             DualResult result = DBProxy.Current.Execute(null, sqlInsertDownloadStickerQueue);
@@ -382,6 +397,13 @@ insert into DownloadStickerQueue(PackingID, AddDate, UpdateDate)
         private void TimerRefreshDownloadStickerQueue_Tick(object sender, EventArgs e)
         {
             this.Query();
+        }
+
+        private class UpdatePackingInfo
+        {
+            public string CtnStartNo { get; set; }
+            public string CustCtn { get; set; }
+            public string CustCtn2 { get; set; }
         }
     }
 }

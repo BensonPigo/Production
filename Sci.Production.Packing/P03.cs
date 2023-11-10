@@ -14,8 +14,6 @@ using System.Data.SqlClient;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using Sci.Production.Automation;
-using Sci.Production.Prg;
-using Sci.Production.Class;
 
 namespace Sci.Production.Packing
 {
@@ -266,9 +264,6 @@ where MDivisionID = '{0}'", Env.User.Keyword);
                     this.labelCofirmed.Text = "Shipping Lock";
                 }
             }
-
-            this.labelCofirmed2.Visible = this.labelCofirmed.Visible;
-            this.labelCofirmed2.Text = this.labelCofirmed.Text;
 
             // UnConfirm History按鈕變色
             if (MyUtility.Check.Seek(this.CurrentMaintain["ID"].ToString(), "PackingList_History", "ID"))
@@ -1096,8 +1091,6 @@ Carton has been output from the hanger system or transferred to clog.";
                 this.dateCartonEstBooking.ReadOnly = true;
                 this.dateCartonEstArrived.ReadOnly = true;
             }
-
-            this.txtbrand2.ReadOnly = this.txtbrand.ReadOnly;
         }
 
         private StringBuilder Ctn_no_combine(string sP, string seq)
@@ -1529,25 +1522,23 @@ left join Order_QtyShip oq WITH (NOLOCK) on oq.Id = a.OrderID and oq.Seq = a.Ord
         // Brand
         private void Txtbrand_Validated(object sender, EventArgs e)
         {
-            Txtbrand tarTxtBrand = (Txtbrand)sender;
-            if (MyUtility.Check.Empty(tarTxtBrand.OldValue))
+            if (MyUtility.Check.Empty(this.txtbrand.OldValue))
             {
                 return;
             }
 
-            if (this.EditMode && tarTxtBrand.OldValue != tarTxtBrand.Text)
+            if (this.EditMode && this.txtbrand.OldValue != this.txtbrand.Text)
             {
-                this.DeleteDetailData(tarTxtBrand, tarTxtBrand.OldValue);
+                this.DeleteDetailData(this.txtbrand, this.txtbrand.OldValue);
             }
         }
 
         // CustCD
         private void Txtcustcd_Validated(object sender, EventArgs e)
         {
-            Txtcustcd tarTxtcustcd = (Txtcustcd)sender;
-            if (this.EditMode && !MyUtility.Check.Empty(tarTxtcustcd.Text) && tarTxtcustcd.OldValue != tarTxtcustcd.Text)
+            if (this.EditMode && !MyUtility.Check.Empty(this.txtcustcd.Text) && this.txtcustcd.OldValue != this.txtcustcd.Text)
             {
-                this.CurrentMaintain["Dest"] = MyUtility.GetValue.Lookup(string.Format("SELECT CountryID FROM CustCD WITH (NOLOCK) WHERE BrandID = '{0}' AND ID = '{1}'", MyUtility.Convert.GetString(this.CurrentMaintain["BrandID"]), tarTxtcustcd.Text));
+                this.CurrentMaintain["Dest"] = MyUtility.GetValue.Lookup(string.Format("SELECT CountryID FROM CustCD WITH (NOLOCK) WHERE BrandID = '{0}' AND ID = '{1}'", MyUtility.Convert.GetString(this.CurrentMaintain["BrandID"]), this.txtcustcd.Text));
             }
         }
 
@@ -1781,7 +1772,7 @@ where ShipModeID in ('A/P', 'E/P')
 and p.ID = '{this.CurrentMaintain["ID"]}'
 group by p.ID
 ";
-            if (MyUtility.Check.Seek(sqlChk,out DataRow drChk))
+            if (MyUtility.Check.Seek(sqlChk, out DataRow drChk))
             {
                 if (MyUtility.Check.Empty(drChk["ttlNW"]))
                 {
@@ -2414,9 +2405,9 @@ The rest of the data has been updated successfully!'
             }
         }
 
-        private void Button1_Click(object sender, EventArgs e)
+        private void BtnCustSystem_Click(object sender, EventArgs e)
         {
-            new P03_NikeMercuryWebServiceTest(this.CurrentMaintain["ID"].ToString()).ShowDialog();
+            new P03_Mercury(this.CurrentMaintain["ID"].ToString()).ShowDialog();
         }
     }
 }

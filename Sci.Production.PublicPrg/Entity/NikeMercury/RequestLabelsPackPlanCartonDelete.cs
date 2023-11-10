@@ -27,12 +27,12 @@ namespace Sci.Production.Prg.Entity.NikeMercury
 
         public class Body
         {
-            [XmlElement(ElementName = "LabelsPackPlanDelete", Namespace = "http://tempuri.org/")]
-            public LabelsPackPlanDelete LabelsPackPlanDelete { get; set; }
+            [XmlElement(ElementName = "LabelsPackPlanCartonDelete", Namespace = "http://tempuri.org/")]
+            public LabelsPackPlanCartonDelete LabelsPackPlanCartonDelete { get; set; }
         }
 
-        [XmlRoot(ElementName = "LabelsPackPlanDelete", Namespace = "http://tempuri.org/")]
-        public class LabelsPackPlanDelete
+        [XmlRoot(ElementName = "LabelsPackPlanCartonDelete", Namespace = "http://tempuri.org/")]
+        public class LabelsPackPlanCartonDelete
         {
             [XmlElement(ElementName = "input", Namespace = "http://tempuri.org/")]
             public Input Input { get; set; }

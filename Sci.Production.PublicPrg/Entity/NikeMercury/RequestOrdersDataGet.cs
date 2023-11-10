@@ -24,7 +24,7 @@ namespace Sci.Production.Prg.Entity.NikeMercury
         [XmlRoot(ElementName = "OrdersDataGet", Namespace = "http://tempuri.org/")]
         public class OrdersDataGet
         {
-            [XmlElement(ElementName = "input", Namespace = "http://schemas.datacontract.org/2004/07/OLLIeOrders")]
+            [XmlElement(ElementName = "input", Namespace = "http://tempuri.org/")]
             public Input Input { get; set; }
         }
 

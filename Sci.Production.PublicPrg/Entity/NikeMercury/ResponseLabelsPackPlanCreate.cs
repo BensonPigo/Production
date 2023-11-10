@@ -111,10 +111,20 @@ namespace Sci.Production.Prg.Entity.NikeMercury
             public List<CartonContent> CartonContent { get; set; }
         }
 
-        public class CartonContent
+        public class CartonContent : IEquatable<CartonContent>
         {
             public string OrderSizeDescription { get; set; }
             public int PackPlanQty { get; set; }
+
+            public bool Equals(CartonContent other)
+            {
+                if (other is null)
+                    return false;
+
+                return this.OrderSizeDescription == other.OrderSizeDescription && this.PackPlanQty == other.PackPlanQty;
+            }
+
+            public override bool Equals(object obj) => Equals(obj as CartonContent);
         }
     }
 }
