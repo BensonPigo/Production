@@ -212,7 +212,15 @@ where a.id='{this.id}'
 UPDATE f SET 
 Lock = 1 , LockName='{Env.User.UserID}' ,LockDate=GETDATE(), F.Remark='Auto Lock by QA_P02.Accessory Inspection'
 FROM FtyInventory f 
-WHERE f.POID='{this.poid}' AND f.Seq1='{this.seq1}' AND f.Seq2='{this.seq2}'";
+WHERE f.POID='{this.poid}' AND f.Seq1='{this.seq1}' AND f.Seq2='{this.seq2}'
+and exists(
+    select 1 from Receiving_Detail r where r.ID = '{this.receivingID}' 
+    and r.Poid = f.POID
+    and r.Seq1 = f.Seq1
+    and r.Seq2 = f.Seq2
+    and r.StockType = f.StockType
+)
+";
                             break;
 
                         case "Pass":
@@ -252,7 +260,15 @@ AND ID<>'{this.id}' AND ReceivingID<>'{this.receivingID}'
 UPDATE f SET 
 Lock = 0 , LockName='{Env.User.UserID}' ,LockDate=GETDATE(), F.Remark='Auto unLock by QA_P02.Accessory Inspection'
 FROM FtyInventory f 
-WHERE f.POID='{this.poid}' AND f.Seq1='{this.seq1}' AND f.Seq2='{this.seq2}'";
+WHERE f.POID='{this.poid}' AND f.Seq1='{this.seq1}' AND f.Seq2='{this.seq2}'
+and exists(
+    select 1 from Receiving_Detail r where r.ID = '{this.receivingID}' 
+    and r.Poid = f.POID
+    and r.Seq1 = f.Seq1
+    and r.Seq2 = f.Seq2
+    and r.StockType = f.StockType
+)
+";
                             }
 
                             break;

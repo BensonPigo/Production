@@ -371,7 +371,15 @@ and id = '{dr["MtlTypeID"]}'
 UPDATE f SET 
 Lock = 1 , LockName='{Env.User.UserID}' ,LockDate=GETDATE(), F.Remark='Auto Lock by QA_P02.Accessory Inspection'
 FROM FtyInventory f 
-WHERE f.POID='{item["POID"].ToString().Trim()}' AND f.Seq1='{item["Seq1"].ToString().Trim()}' AND f.Seq2='{item["Seq2"].ToString().Trim()}'";
+WHERE f.POID='{item["POID"].ToString().Trim()}' AND f.Seq1='{item["Seq1"].ToString().Trim()}' AND f.Seq2='{item["Seq2"].ToString().Trim()}'
+and exists(
+    select 1 from Receiving_Detail r where r.ID = '{item["ReceivingID"]}' 
+    and r.Poid = f.POID
+    and r.Seq1 = f.Seq1
+    and r.Seq2 = f.Seq2
+    and r.StockType = f.StockType
+)
+";
                             break;
 
                         case "Pass":
@@ -413,7 +421,15 @@ AND ID<>'{item["ID"].ToString().Trim()}' AND ReceivingID<>'{item["ReceivingID"].
 UPDATE f SET 
 Lock = 0 , LockName='{Env.User.UserID}' ,LockDate=GETDATE(), F.Remark='Auto unLock by QA_P02.Accessory Inspection'
 FROM FtyInventory f 
-WHERE f.POID='{item["POID"].ToString().Trim()}' AND f.Seq1='{item["Seq1"].ToString().Trim()}' AND f.Seq2='{item["Seq2"].ToString().Trim()}'";
+WHERE f.POID='{item["POID"].ToString().Trim()}' AND f.Seq1='{item["Seq1"].ToString().Trim()}' AND f.Seq2='{item["Seq2"].ToString().Trim()}'
+and exists(
+    select 1 from Receiving_Detail r where r.ID = '{item["ReceivingID"]}' 
+    and r.Poid = f.POID
+    and r.Seq1 = f.Seq1
+    and r.Seq2 = f.Seq2
+    and r.StockType = f.StockType
+)
+";
                             }
 
                             break;
