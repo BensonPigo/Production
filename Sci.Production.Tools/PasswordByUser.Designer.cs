@@ -64,6 +64,8 @@
             this.labelID = new Sci.Win.UI.Label();
             this.grid1 = new Sci.Win.UI.Grid();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
+            this.txtADAccount = new Sci.Win.UI.TextBox();
+            this.lbADAccount = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -115,6 +117,8 @@
             // 
             this.radioGroup1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
+            this.radioGroup1.Controls.Add(this.txtADAccount);
+            this.radioGroup1.Controls.Add(this.lbADAccount);
             this.radioGroup1.Controls.Add(this.btnShowImg);
             this.radioGroup1.Controls.Add(this.btnSetPic);
             this.radioGroup1.Controls.Add(this.disBoxESignature);
@@ -219,6 +223,7 @@
             // 
             // txtUserDeputy
             // 
+            this.txtUserDeputy.AllowSelectResign = false;
             this.txtUserDeputy.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "Deputy", true));
             this.txtUserDeputy.DisplayBox1Binding = "";
             this.txtUserDeputy.Location = new System.Drawing.Point(96, 229);
@@ -229,6 +234,7 @@
             // 
             // txtUserSupervisor
             // 
+            this.txtUserSupervisor.AllowSelectResign = false;
             this.txtUserSupervisor.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "Supervisor", true));
             this.txtUserSupervisor.DisplayBox1Binding = "";
             this.txtUserSupervisor.Location = new System.Drawing.Point(96, 197);
@@ -239,6 +245,7 @@
             // 
             // txtUserManager
             // 
+            this.txtUserManager.AllowSelectResign = false;
             this.txtUserManager.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "Manager", true));
             this.txtUserManager.DisplayBox1Binding = "";
             this.txtUserManager.Location = new System.Drawing.Point(96, 164);
@@ -329,7 +336,7 @@
             this.txtExtNo.BackColor = System.Drawing.Color.White;
             this.txtExtNo.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "ExtNo", true));
             this.txtExtNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtExtNo.Location = new System.Drawing.Point(322, 51);
+            this.txtExtNo.Location = new System.Drawing.Point(322, 79);
             this.txtExtNo.Name = "txtExtNo";
             this.txtExtNo.Size = new System.Drawing.Size(110, 23);
             this.txtExtNo.TabIndex = 4;
@@ -381,7 +388,7 @@
             // 
             // labelExtNo
             // 
-            this.labelExtNo.Location = new System.Drawing.Point(238, 51);
+            this.labelExtNo.Location = new System.Drawing.Point(238, 79);
             this.labelExtNo.Name = "labelExtNo";
             this.labelExtNo.Size = new System.Drawing.Size(81, 23);
             this.labelExtNo.TabIndex = 10;
@@ -487,6 +494,24 @@
             this.grid1.TabIndex = 15;
             this.grid1.TabStop = false;
             // 
+            // txtADAccount
+            // 
+            this.txtADAccount.BackColor = System.Drawing.Color.White;
+            this.txtADAccount.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "ADAccount", true));
+            this.txtADAccount.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtADAccount.Location = new System.Drawing.Point(322, 51);
+            this.txtADAccount.Name = "txtADAccount";
+            this.txtADAccount.Size = new System.Drawing.Size(110, 23);
+            this.txtADAccount.TabIndex = 58;
+            // 
+            // lbADAccount
+            // 
+            this.lbADAccount.Location = new System.Drawing.Point(238, 51);
+            this.lbADAccount.Name = "lbADAccount";
+            this.lbADAccount.Size = new System.Drawing.Size(81, 23);
+            this.lbADAccount.TabIndex = 59;
+            this.lbADAccount.Text = "AD Account";
+            // 
             // PasswordByUser
             // 
             this.ClientSize = new System.Drawing.Size(1001, 634);
@@ -551,5 +576,7 @@
         private Win.UI.Button btnShowImg;
         private Win.UI.Button btnSetPic;
         private Win.UI.DisplayBox disBoxESignature;
+        private Win.UI.TextBox txtADAccount;
+        private Win.UI.Label lbADAccount;
     }
 }
