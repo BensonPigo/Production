@@ -34,6 +34,9 @@ namespace Sci.Production.MercuryDownloadStickerQueue
             this.InitializeComponent();
             this.gridDownloadStickerQueue.CellFormatting += this.GridDownloadStickerQueue_CellFormatting;
             this.mainTaskScheduler = TaskScheduler.FromCurrentSynchronizationContext();
+            this.EditMode = true;
+            this.gridDownloadStickerQueue.SupportEditMode = Win.UI.AdvEditModesReadOnly.False;
+            this.gridDownloadStickerQueue.ReadOnly = true;
         }
 
         protected override void OnFormLoaded()
@@ -282,7 +285,7 @@ alter table #tmpShippingMarkPic_DetailPMSFile add [Image] varbinary(max) null
 
                         // 等待檔案產生後轉檔成圖片
                         byte[] pdfImage;
-                        result = this.CreateTempShippingMarkPic(mercuryBarcodeCartonNo, nikeStickerPrintFileFolder, out pdfImage);
+                        result = this.CreateTempShippingMarkPic(mercuryBarcodeCartonNo, nikeStickerPrintFileFolder, this.checkCartonBarcode.Checked, out pdfImage);
                         if (!result)
                         {
                             returnMessage = this.UpdateDownloadStickerQueueErr(runPackingID, result);
@@ -432,7 +435,7 @@ insert into ShippingMarkPic_Detail(ShippingMarkPicUkey, SCICtnNo, ShippingMarkTy
             }
         }
 
-        private DualResult CreateTempShippingMarkPic(string mercuryBarcodeCartonNo, string nikeStickerPrintFileFolder, out byte[] pdfImage)
+        public DualResult CreateTempShippingMarkPic(string mercuryBarcodeCartonNo, string nikeStickerPrintFileFolder, bool checkCartonBarcode, out byte[] pdfImage)
         {
             pdfImage = null;
             string pdfFullFileName = string.Empty;
@@ -459,8 +462,35 @@ insert into ShippingMarkPic_Detail(ShippingMarkPicUkey, SCICtnNo, ShippingMarkTy
                 return new DualResult(false, $"Mercury sticker pdf create timeout({waitTimeoutForPDF} second)");
             }
 
+            // 確認Mercury是否已經沒有咬住pdf(timeout 30秒)
+            for (int i = 0; i < 30; i++)
+            {
+                try
+                {
+                    using (FileStream fs = new FileStream(pdfFullFileName, FileMode.Open, FileAccess.Read, FileShare.None))
+                    {
+                        // 如果上面的程式碼成功運行，表示檔案沒有被其他程序占用
+                        break;
+                    }
+                }
+                catch (IOException iex)
+                {
+                    // 如果這裡捕捉到 IOException，表示檔案正在被其他程序占用
+                    if (i == 29)
+                    {
+                        return new DualResult(false, iex);
+                    }
+                    Thread.Sleep(1000);
+                }
+                catch (Exception ex)
+                {
+                    return new DualResult(false, ex);
+                }
+                
+            }
+
             // 檢查pdf carton barcode是否相符
-            if (this.checkCartonBarcode.Checked)
+            if (checkCartonBarcode)
             {
                 // BarcodeReader
                 Reader reader = new Reader(this.BarcodeReader_RegistrationName, this.BarcodeReader_RegistrationKey);
