@@ -35,7 +35,7 @@
             this.editErrorMsg = new Sci.Win.UI.EditBox();
             this.label1 = new Sci.Win.UI.Label();
             this.checkCartonBarcode = new Sci.Win.UI.CheckBox();
-            this.button1 = new Sci.Win.UI.Button();
+            this.btnRun = new Sci.Win.UI.Button();
             this.progressBarProcessing = new System.Windows.Forms.ProgressBar();
             this.label2 = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.gridDownloadStickerQueue)).BeginInit();
@@ -109,18 +109,20 @@
             this.checkCartonBarcode.Text = "Carton barcode check";
             this.checkCartonBarcode.UseVisualStyleBackColor = true;
             // 
-            // button1
+            // btnRun
             // 
-            this.button1.Location = new System.Drawing.Point(13, 543);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(80, 30);
-            this.button1.TabIndex = 5;
-            this.button1.Text = "Run";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.btnRun.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.btnRun.Location = new System.Drawing.Point(13, 543);
+            this.btnRun.Name = "btnRun";
+            this.btnRun.Size = new System.Drawing.Size(80, 30);
+            this.btnRun.TabIndex = 5;
+            this.btnRun.Text = "Run";
+            this.btnRun.UseVisualStyleBackColor = true;
+            this.btnRun.Click += new System.EventHandler(this.btnRun_Click);
             // 
             // progressBarProcessing
             // 
+            this.progressBarProcessing.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.progressBarProcessing.Location = new System.Drawing.Point(690, 12);
             this.progressBarProcessing.Name = "progressBarProcessing";
             this.progressBarProcessing.Size = new System.Drawing.Size(191, 23);
@@ -128,7 +130,7 @@
             // 
             // label2
             // 
-            this.label2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.label2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label2.Location = new System.Drawing.Point(554, 12);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(133, 23);
@@ -142,7 +144,7 @@
             this.ClientSize = new System.Drawing.Size(893, 596);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.progressBarProcessing);
-            this.Controls.Add(this.button1);
+            this.Controls.Add(this.btnRun);
             this.Controls.Add(this.checkCartonBarcode);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.editErrorMsg);
@@ -154,7 +156,7 @@
             this.Controls.SetChildIndex(this.editErrorMsg, 0);
             this.Controls.SetChildIndex(this.label1, 0);
             this.Controls.SetChildIndex(this.checkCartonBarcode, 0);
-            this.Controls.SetChildIndex(this.button1, 0);
+            this.Controls.SetChildIndex(this.btnRun, 0);
             this.Controls.SetChildIndex(this.progressBarProcessing, 0);
             this.Controls.SetChildIndex(this.label2, 0);
             ((System.ComponentModel.ISupportInitialize)(this.gridDownloadStickerQueue)).EndInit();
@@ -171,7 +173,7 @@
         private Win.UI.EditBox editErrorMsg;
         private Win.UI.Label label1;
         private Win.UI.CheckBox checkCartonBarcode;
-        private Win.UI.Button button1;
+        private Win.UI.Button btnRun;
         private System.Windows.Forms.ProgressBar progressBarProcessing;
         private Win.UI.Label label2;
     }

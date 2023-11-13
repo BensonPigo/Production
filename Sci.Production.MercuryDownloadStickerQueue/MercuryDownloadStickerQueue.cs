@@ -34,9 +34,11 @@ namespace Sci.Production.MercuryDownloadStickerQueue
             this.InitializeComponent();
             this.gridDownloadStickerQueue.CellFormatting += this.GridDownloadStickerQueue_CellFormatting;
             this.mainTaskScheduler = TaskScheduler.FromCurrentSynchronizationContext();
-            this.EditMode = true;
-            this.gridDownloadStickerQueue.SupportEditMode = Win.UI.AdvEditModesReadOnly.False;
-            this.gridDownloadStickerQueue.ReadOnly = true;
+            this.EditMode = false;
+            this.gridDownloadStickerQueue.SupportEditMode = Win.UI.AdvEditModesReadOnly.True;
+            this.checkCartonBarcode.IsSupportEditMode = false;
+            this.btnRun.EditMode = Win.UI.AdvEditModes.DisableOnEdit;
+            this.timerRefresh.Interval = 30000;
         }
 
         protected override void OnFormLoaded()
@@ -51,8 +53,9 @@ namespace Sci.Production.MercuryDownloadStickerQueue
                 .DateTime("AddDate", header: "Add Date", iseditingreadonly: true)
                 .DateTime("UpdateDate", header: "Update Date", iseditingreadonly: true);
 
-            //this.timerRefresh.Enabled = true;
-            //this.timerRefresh.Start();
+            this.timerRefresh.Enabled = true;
+            this.timerRefresh.Start();
+            this.DoDownloadStickerQueue();
         }
 
         private void GridDownloadStickerQueue_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
@@ -91,7 +94,11 @@ order by    dq.UpdateDate
 ";
 
             DualResult result = DBProxy.Current.Select("Production", sqlGetData, out this.dtDownloadStickerQueue);
-
+            if (!result)
+            {
+                this.ShowErr(result);
+                return;
+            }
             this.gridDownloadStickerQueue.DataSource = this.dtDownloadStickerQueue;
         }
 
@@ -449,7 +456,6 @@ insert into ShippingMarkPic_Detail(ShippingMarkPicUkey, SCICtnNo, ShippingMarkTy
                 if (pdfFiles.Length > 0)
                 {
                     pdfFullFileName = pdfFiles[0];
-                    Thread.Sleep(300);
                     break;
                 }
 
@@ -462,31 +468,10 @@ insert into ShippingMarkPic_Detail(ShippingMarkPicUkey, SCICtnNo, ShippingMarkTy
                 return new DualResult(false, $"Mercury sticker pdf create timeout({waitTimeoutForPDF} second)");
             }
 
-            // 確認Mercury是否已經沒有咬住pdf(timeout 30秒)
-            for (int i = 0; i < 30; i++)
+            DualResult result = this.CheckFileLock(pdfFullFileName);
+            if (!result)
             {
-                try
-                {
-                    using (FileStream fs = new FileStream(pdfFullFileName, FileMode.Open, FileAccess.Read, FileShare.None))
-                    {
-                        // 如果上面的程式碼成功運行，表示檔案沒有被其他程序占用
-                        break;
-                    }
-                }
-                catch (IOException iex)
-                {
-                    // 如果這裡捕捉到 IOException，表示檔案正在被其他程序占用
-                    if (i == 29)
-                    {
-                        return new DualResult(false, iex);
-                    }
-                    Thread.Sleep(1000);
-                }
-                catch (Exception ex)
-                {
-                    return new DualResult(false, ex);
-                }
-                
+                return result;
             }
 
             // 檢查pdf carton barcode是否相符
@@ -535,6 +520,12 @@ insert into ShippingMarkPic_Detail(ShippingMarkPicUkey, SCICtnNo, ShippingMarkTy
                 bmp.Dispose();
                 pdfConverter.Dispose();
 
+                result = this.CheckFileLock(pdfFullFileName);
+                if (!result)
+                {
+                    return result;
+                }
+
                 // 刪除PDF檔案
                 File.Delete(pdfFullFileName);
             }
@@ -543,6 +534,38 @@ insert into ShippingMarkPic_Detail(ShippingMarkPicUkey, SCICtnNo, ShippingMarkTy
                 return new DualResult(false, ex);
             }
 
+            return new DualResult(true);
+        }
+
+        private DualResult CheckFileLock(string fullFilePath, int checkTimeout = 30)
+        {
+            int timeout = checkTimeout < 1 ? 2 : checkTimeout;
+            // 確認Mercury是否已經沒有咬住pdf(timeout 30秒)
+            for (int i = 0; i < timeout; i++)
+            {
+                try
+                {
+                    using (FileStream fs = new FileStream(fullFilePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+                    {
+                        // 如果上面的程式碼成功運行，表示檔案沒有被其他程序占用
+                        fs.Dispose();
+                        break;
+                    }
+                }
+                catch (IOException iex)
+                {
+                    // 如果這裡捕捉到 IOException，表示檔案正在被其他程序占用
+                    if (i == (timeout - 1))
+                    {
+                        return new DualResult(false, iex);
+                    }
+                    Thread.Sleep(1000);
+                }
+                catch (Exception ex)
+                {
+                    return new DualResult(false, ex);
+                }
+            }
             return new DualResult(true);
         }
 
@@ -591,13 +614,13 @@ insert into ShippingMarkPic_Detail(ShippingMarkPicUkey, SCICtnNo, ShippingMarkTy
             }
         }
 
-        private void timerRefresh_Tick(object sender, EventArgs e)
+        private void DoDownloadStickerQueue()
         {
             if (!this.backgroundDownloadSticker.IsBusy)
             {
                 this.Query();
 
-                if (this.dtDownloadStickerQueue.Rows.Count == 0)
+                if (this.dtDownloadStickerQueue == null || this.dtDownloadStickerQueue.Rows.Count == 0)
                 {
                     return;
                 }
@@ -606,19 +629,14 @@ insert into ShippingMarkPic_Detail(ShippingMarkPicUkey, SCICtnNo, ShippingMarkTy
             }
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void timerRefresh_Tick(object sender, EventArgs e)
         {
-            if (!this.backgroundDownloadSticker.IsBusy)
-            {
-                this.Query();
+            this.DoDownloadStickerQueue();
+        }
 
-                if (this.dtDownloadStickerQueue.Rows.Count == 0)
-                {
-                    return;
-                }
-
-                this.backgroundDownloadSticker.RunWorkerAsync();
-            }
+        private void btnRun_Click(object sender, EventArgs e)
+        {
+            this.DoDownloadStickerQueue();
         }
     }
 }

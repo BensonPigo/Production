@@ -285,12 +285,6 @@
     <Compile Include="P03_Mercury.Designer.cs">
       <DependentUpon>P03_Mercury.cs</DependentUpon>
     </Compile>
-    <Compile Include="P03_NikeMercuryWebServiceTest.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="P03_NikeMercuryWebServiceTest.Designer.cs">
-      <DependentUpon>P03_NikeMercuryWebServiceTest.cs</DependentUpon>
-    </Compile>
     <Compile Include="P01.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -750,9 +744,6 @@
     <EmbeddedResource Include="BarcodePrint.rdlc" />
     <EmbeddedResource Include="P03_Mercury.resx">
       <DependentUpon>P03_Mercury.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="P03_NikeMercuryWebServiceTest.resx">
-      <DependentUpon>P03_NikeMercuryWebServiceTest.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P01.resx">
       <DependentUpon>P01.cs</DependentUpon>

@@ -333,9 +333,9 @@ order by pd.Seq
             // 檢查packing是否可以download mercury sticker
             string sqlCheck = $@"
 --檢查CustCTN是否都有值
-if exists (select 1 from Packinglist_Detail with (nolock) where ID = '{this.packID}' and CustCTN = '')
+if exists (select 1 from Packinglist_Detail with (nolock) where ID = '{this.packID}' and CustCTN2 = '')
 begin
-    select [Result] = 'CustCTN can not empty'
+    select [Result] = 'Mercury carton number can not empty, please do <Upload PL> again'
     return
 end
 
