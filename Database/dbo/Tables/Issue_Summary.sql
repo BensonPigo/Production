@@ -1,6 +1,6 @@
 ﻿CREATE TABLE [dbo].[Issue_Summary] (
     [Id]              VARCHAR (13)    CONSTRAINT [DF_Issue_Summary_Id] DEFAULT ('') NOT NULL,
-    [Ukey]            BIGINT          IDENTITY (1, 1) NOT NULL,
+    [Ukey]            BIGINT          IDENTITY (1, 1) NOT FOR REPLICATION NOT NULL,
     [Poid]            VARCHAR (13)    CONSTRAINT [DF_Issue_Summary_Poid] DEFAULT ('') NOT NULL,
     [SCIRefno]        VARCHAR (30)    CONSTRAINT [DF_Issue_Summary_SCIRefno] DEFAULT ('') NOT NULL,
     [Colorid]         VARCHAR (6)     CONSTRAINT [DF_Issue_Summary_Colorid] DEFAULT ('') NOT NULL,
@@ -16,11 +16,14 @@
     [Qty]             NUMERIC (10, 2) CONSTRAINT [DF_Issue_Summary_Qty] DEFAULT ((0)) NULL,
     [seq1]            VARCHAR (3)     NULL,
     [seq2]            VARCHAR (2)     NULL,
-    [OldFabricUkey] VARCHAR(10) NULL DEFAULT (''), 
-    [OldFabricVer] VARCHAR(2) NULL DEFAULT (''), 
-    [SuppColor] NVARCHAR(MAX) NOT NULL DEFAULT (''), 
+    [OldFabricUkey]   VARCHAR (10)    DEFAULT ('') NULL,
+    [OldFabricVer]    VARCHAR (2)     DEFAULT ('') NULL,
+    [SuppColor]       NVARCHAR (MAX)  DEFAULT ('') NOT NULL,
+    [Remark]          VARCHAR (300)   CONSTRAINT [DF_Issue_Summary_Remark] DEFAULT ('') NOT NULL,
     CONSTRAINT [PK_Issue_Summary_1] PRIMARY KEY CLUSTERED ([Id] ASC, [Ukey] ASC)
 );
+
+
 
 
 
@@ -94,3 +97,7 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'客戶訂�
 GO
 
 CREATE INDEX [Poid_SCIRefo_Color] ON [dbo].[Issue_Summary] ([Poid],[SCIRefno],[Colorid])
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'WH在建立發料單時去備註這卷布有沒有多發或是其它Comment', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Issue_Summary', @level2type = N'COLUMN', @level2name = N'Remark';
+

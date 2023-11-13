@@ -862,6 +862,7 @@ namespace Sci.Production.Quality
                 return null;
             }
             #endregion
+
             #region where
             string where = string.Empty;
             if (!MyUtility.Check.Empty(this.txtSP.Text))
@@ -946,6 +947,7 @@ and  f.Type = '{this.comboMaterialType.SelectedValue.ToString()}'
             }
 
             #endregion
+
             string sqlcmd = $@"
 use Production
 IF OBJECT_ID('tempdb..#POList') IS NOT NULL
@@ -978,7 +980,7 @@ From Orders o with(nolock)
 inner Join dbo.PO_Supp p2 with(nolock) on p2.ID = o.ID
 inner Join dbo.PO_Supp_Detail p3 with(nolock) on p3.ID = p2.ID and p3.Seq1 = p2.SEQ1 
  	and IsNull(P3.Junk, 0) = 0 --作廢不顯示
-	and IsNull(p3.Qty, 0) != 0 --數量為0不顯示
+	and (IsNull(p3.Qty, 0) > 0 or IsNull(p3.foc, 0) > 0) --數量為0不顯示
 left join PO_Supp_Detail_spec  psds on psds.id = p3.ID and psds.Seq1 = p3.SEQ1 and psds.Seq2 = p3.SEQ2 and psds.SpecColumnID = 'Color'
 inner Join dbo.Supp su with(nolock) on su.ID = p2.SuppID
 Inner Join BrandRelation as bs WITH (NOLOCK) ON bs.BrandID = o.BrandID and bs.SuppID = su.ID
@@ -987,6 +989,7 @@ inner join dbo.Fabric f with(nolock) on p3.SciRefno = f.SciRefno
 inner JOIN Season WITH (NOLOCK) on o.SeasonID = Season.ID and o.BrandID = Season.BrandID
 LEFT JOIN DropDownList ddl WITH (NOLOCK) on ddl.type ='Category' and o.Category = ddl.ID
 where 1=1
+and f.BrandRefNo <> ''
 {where}
 
 
