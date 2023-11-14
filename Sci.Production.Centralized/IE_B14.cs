@@ -34,7 +34,7 @@ namespace Sci.Production.Centralized
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
             string masterID = (e.Master == null) ? string.Empty : e.Master["ID"].ToString();
-            string pass1Source = DBProxy.Current.DefaultModuleName.Contains("testing") ? "Production.dbo.pass1" : "tradedb.dbo.pass1";
+            string pass1Source = DBProxy.Current.DefaultModuleName.Contains("testing") ? "Production.dbo.pass1" : "trade.dbo.pass1";
             this.DetailSelectCommand = string.Format(
                 @"
 select  i.*,

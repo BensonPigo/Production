@@ -72,7 +72,7 @@ namespace Sci.Production.Warehouse
                 .Numeric("DispatchedCons", header: "Dispatched\r\nCons", width: Widths.AnsiChars(10), decimal_places: 2, iseditingreadonly: true)
                 .Numeric("ReceivedCons", header: "Received\r\nCons", width: Widths.AnsiChars(10), decimal_places: 2, iseditingreadonly: true)
                 .Text("RequestorRemark", header: "Requestor\r\nRemark", width: Widths.AnsiChars(9), iseditingreadonly: true)
-                .Text("WHRemark", header: "W/H Remark", width: Widths.AnsiChars(9), iseditingreadonly: true)
+                .EditText("WHRemark", header: "W/H Remark", width: Widths.AnsiChars(9), iseditingreadonly: true)
                 ;
             #endregion
 
@@ -175,6 +175,7 @@ namespace Sci.Production.Warehouse
 					, frlx.Relaxtime
 					, [Request Cons] = sum (cpdc.Cons)
                     , FinalETA.ActETA
+                    ,psd.SCIRefno
 			into #CutList
 			from Cutplan cp
 			inner join Cutplan_Detail_Cons cpdc on cp.ID = cpdc.ID
@@ -192,10 +193,10 @@ namespace Sci.Production.Warehouse
             (
                 select ActETA = Max(p3.FinalETA) 
                 from PO_Supp_Detail p3 with (nolock) 
-                inner join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = p3.id and psdsC.seq1 = p3.seq1 and psdsC.seq2 = p3.seq2 and psdsC.SpecColumnID = 'Color'
+                inner join PO_Supp_Detail_Spec psdsC2 WITH (NOLOCK) on psdsC2.ID = p3.id and psdsC2.seq1 = p3.seq1 and psdsC2.seq2 = p3.seq2 and psdsC2.SpecColumnID = 'Color'
                 where p3.id = psd.ID
                 and p3.SCIRefno = psd.SCIRefno
-                and psdsC.SpecValue = psdsC.SpecValue
+                and psdsC2.SpecValue = psdsC.SpecValue
                 and p3.Junk = 0
                 and p3.Seq1 not like 'A%'
             ) FinalETA
@@ -203,6 +204,7 @@ namespace Sci.Production.Warehouse
 			{this.strSQLWher}
 			group by cp.ID, o.FactoryID, cp.POID, cp.CutCellID, cp.EstCutdate, psd.Refno, psdsC.SpecValue, rfrt.FabricRelaxationID, frlx.NeedUnroll, frlx.Relaxtime
                 , o.StyleID, cp.EditDate, FinalETA.ActETA
+                ,psd.SCIRefno
 			/*
 				發料準備清單
 			*/
@@ -217,6 +219,8 @@ namespace Sci.Production.Warehouse
                     , f.Tone
                     , LockDate = IIF(f.Lock = 0, f.LockDate, Null)
                     , [Location] = dbo.Getlocation(f.ukey)
+                    ,cl.SCIRefno
+                    ,[issueid] = isu.id
 			into #issueDtl
 			from #CutList cl
 			inner join Issue isu on cl.ID = isu.CutplanID
@@ -275,6 +279,7 @@ namespace Sci.Production.Warehouse
                     , cl.ActETA
                     , cl.StyleID
                     , cl.EditDate
+                    , IssueSummary.WHRemark
 			from #CutList cl
 			outer apply (
 				select Cons = SUM (Qty)
@@ -315,6 +320,28 @@ namespace Sci.Production.Warehouse
 						and cl.Color = idt.Color
 						and idt.FactoryReceivedTime is not null
 			) Received
+            OUTER APPLY (
+                SELECT WHRemark = 
+	            REPLACE(
+		            REPLACE(
+			            (select stuff((
+				            select n=Remark
+				            from(
+                                SELECT DISTINCT iss.Remark
+                                FROM #issueDtl idt
+                                INNER JOIN Issue_Summary iss
+                                    ON iss.Id = idt.issueid
+                                WHERE cl.ID = idt.ID--裁剪計畫單號
+                                AND cl.POID = idt.POID
+                                AND cl.SCIRefno = iss.SCIRefno
+                                AND cl.Color = idt.Color
+                                AND iss.Remark <> ''
+				            )d  order by Remark
+				            for xml path('')
+			            ),1,3,''))
+		            ,'</n>','')
+	            ,'<n>',',' + CHAR(13) + char(10)) -- EditText 開窗換行方式
+            ) IssueSummary　 --串Issue Summary取Remark
 			order by cl.ID, cl.Refno, cl.Color
 			/*
 				顯示清單

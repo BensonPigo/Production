@@ -38,6 +38,7 @@
             this.grid1BS = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.grid2 = new Sci.Win.UI.Grid();
             this.grid2BS = new Sci.Win.UI.ListControlBindingSource(this.components);
+            this.chkIncludeJunkMaterial = new Sci.Win.UI.CheckBox();
             this.panel2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -169,9 +170,22 @@
             this.grid2.TabIndex = 4;
             this.grid2.TabStop = false;
             // 
+            // chkIncludeJunkMaterial
+            // 
+            this.chkIncludeJunkMaterial.AutoSize = true;
+            this.chkIncludeJunkMaterial.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkIncludeJunkMaterial.Location = new System.Drawing.Point(999, 9);
+            this.chkIncludeJunkMaterial.Name = "chkIncludeJunkMaterial";
+            this.chkIncludeJunkMaterial.Size = new System.Drawing.Size(160, 21);
+            this.chkIncludeJunkMaterial.TabIndex = 16;
+            this.chkIncludeJunkMaterial.Text = "Include Junk Material";
+            this.chkIncludeJunkMaterial.UseVisualStyleBackColor = true;
+            this.chkIncludeJunkMaterial.CheckedChanged += new System.EventHandler(this.ChkIncludeJunkMaterial_CheckedChanged);
+            // 
             // P68_Refno
             // 
             this.ClientSize = new System.Drawing.Size(1170, 561);
+            this.Controls.Add(this.chkIncludeJunkMaterial);
             this.Controls.Add(this.splitContainer1);
             this.Controls.Add(this.comboxStatus);
             this.Controls.Add(this.label4);
@@ -183,6 +197,7 @@
             this.Controls.SetChildIndex(this.label4, 0);
             this.Controls.SetChildIndex(this.comboxStatus, 0);
             this.Controls.SetChildIndex(this.splitContainer1, 0);
+            this.Controls.SetChildIndex(this.chkIncludeJunkMaterial, 0);
             this.panel2.ResumeLayout(false);
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel2.ResumeLayout(false);
@@ -193,6 +208,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.grid2)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.grid2BS)).EndInit();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -207,5 +223,6 @@
         private Win.UI.Grid grid2;
         private Win.UI.ListControlBindingSource grid1BS;
         private Win.UI.ListControlBindingSource grid2BS;
+        private Win.UI.CheckBox chkIncludeJunkMaterial;
     }
 }

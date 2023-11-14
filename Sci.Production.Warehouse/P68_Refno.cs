@@ -4,6 +4,7 @@ using Sci.Data;
 using System;
 using System.Data;
 using System.Data.SqlTypes;
+using System.Drawing;
 
 namespace Sci.Production.Warehouse
 {
@@ -26,6 +27,8 @@ namespace Sci.Production.Warehouse
             this.GridSetup();
             this.Query();
             this.comboxStatus.SelectedIndex = 0;
+            this.chkIncludeJunkMaterial.ReadOnly = false;
+            this.ChkIncludeJunkMaterial_CheckedChanged(null, null);
         }
 
         private void BtnClose_Click(object sender, EventArgs e)
@@ -77,6 +80,7 @@ SELECT
    ,o.BrandID
    ,Fabric.WeaveTypeID
    ,Color = dbo.GetColorMultipleID_MtlType(psd.BrandID, ISNULL(psdsC.SpecValue, ''), Fabric.MtlTypeID, psd.SuppColor)
+   ,PSD.junk
 INTO #tmp
 FROM dbo.PO_Supp_Detail PSD
 JOIN dbo.PO_Supp PS ON PSD.id = PS.id  AND PSD.Seq1 = PS.Seq1
@@ -165,6 +169,28 @@ DROP TABLE #tmp
             }
 
             this.grid2BS.Filter = filter;
+        }
+
+        private void ChkIncludeJunkMaterial_CheckedChanged(object sender, EventArgs e)
+        {
+            if (this.chkIncludeJunkMaterial.Checked)
+            {
+                this.grid1BS.Filter = string.Empty;
+
+                // 反灰
+                for (int i = 0; i < this.grid1.Rows.Count; i++)
+                {
+                    DataRow dr = this.grid1.GetDataRow(i);
+                    if (MyUtility.Convert.GetBool(dr["Junk"]))
+                    {
+                        this.grid1.Rows[i].DefaultCellStyle.BackColor = Color.LightGray;
+                    }
+                }
+            }
+            else
+            {
+                this.grid1BS.Filter = "Junk = 0";
+            }
         }
     }
 }
