@@ -294,10 +294,6 @@ select	distinct psd.id as [poid]
         , psd.Remark
         , IIF ( psd.UsedQty = 0.0000, 0, psd.UsedQty ) as UsedQty  
         , NetQty = Round(dbo.GetUnitQty(psd.PoUnit, psd.StockUnit, psd.NetQty), 2)
-        , RATE = case 
-                    when f.BomTypeCalculate = 1 then dbo.GetUnitRate(o.SizeUnit, psd.StockUnit) 
-                    else dbo.GetUnitRate(psd.POUnit, psd.StockUnit)
-                 end
         , psd.StockUnit
         , f.BomTypeCalculate
         , ColorMultipleID = isnull(dbo.GetColorMultipleID(psd.BrandId, isnull(bomType.Color, '')), '')
@@ -348,7 +344,6 @@ from (
             , b.UsedQty
             , b.NetQty
             , OrderListShow.OrderList
-            , b.RATE
             , b.StockUnit
             , Qty = 0.00
             , concat (Ltrim (Rtrim (b.seq1)), ' ', b.seq2) as seq
@@ -387,11 +382,11 @@ order by x.poid, x.seq1, x.seq2, x.scirefno, x.ColorID, x.SizeSpec, x.Special;
 --因為 #tmpPo_Supp_Detail 有用 Order_BoA 展開
 --計算數量時，必須根據 Poid, Seq, SizeCode 群組
 SELECT b.POID, b.SEQ1, b.SEQ2, boa.SizeCode
-    , qty = Round(SUM(boa.UsageQty * b.Rate) , 2)
+    , qty = Round(SUM(boa.UsageQty * dbo.GetUnitRate(boa.UsageUnit, b.StockUnit)) , 2)
 INTO #tmpLast
 FROM #tmpPO_supp_detail b
 OUTER APPLY (
-    SELECT t.SizeCode, t.UsageQty
+    SELECT t.SizeCode, t.UsageQty, t.UsageUnit
     FROM #Tmp_BoaExpend t
     INNER JOIN Order_BOA ob ON t.Order_BOAUkey = ob.Ukey
     WHERE b.SCIRefno = t.SciRefno 
