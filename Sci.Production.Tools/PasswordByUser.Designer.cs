@@ -30,6 +30,8 @@
         {
             this.components = new System.ComponentModel.Container();
             this.radioGroup1 = new Sci.Win.UI.RadioGroup();
+            this.txtADAccount = new Sci.Win.UI.TextBox();
+            this.lbADAccount = new Sci.Win.UI.Label();
             this.btnShowImg = new Sci.Win.UI.Button();
             this.btnSetPic = new Sci.Win.UI.Button();
             this.disBoxESignature = new Sci.Win.UI.DisplayBox();
@@ -64,8 +66,6 @@
             this.labelID = new Sci.Win.UI.Label();
             this.grid1 = new Sci.Win.UI.Grid();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
-            this.txtADAccount = new Sci.Win.UI.TextBox();
-            this.lbADAccount = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -156,6 +156,25 @@
             this.radioGroup1.Size = new System.Drawing.Size(463, 671);
             this.radioGroup1.TabIndex = 3;
             this.radioGroup1.TabStop = false;
+            // 
+            // txtADAccount
+            // 
+            this.txtADAccount.BackColor = System.Drawing.Color.White;
+            this.txtADAccount.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
+            this.txtADAccount.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "ADAccount", true));
+            this.txtADAccount.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtADAccount.Location = new System.Drawing.Point(254, 81);
+            this.txtADAccount.Name = "txtADAccount";
+            this.txtADAccount.Size = new System.Drawing.Size(198, 23);
+            this.txtADAccount.TabIndex = 58;
+            // 
+            // lbADAccount
+            // 
+            this.lbADAccount.Location = new System.Drawing.Point(170, 82);
+            this.lbADAccount.Name = "lbADAccount";
+            this.lbADAccount.Size = new System.Drawing.Size(81, 23);
+            this.lbADAccount.TabIndex = 59;
+            this.lbADAccount.Text = "AD Account";
             // 
             // btnShowImg
             // 
@@ -336,9 +355,9 @@
             this.txtExtNo.BackColor = System.Drawing.Color.White;
             this.txtExtNo.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "ExtNo", true));
             this.txtExtNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtExtNo.Location = new System.Drawing.Point(322, 79);
+            this.txtExtNo.Location = new System.Drawing.Point(322, 51);
             this.txtExtNo.Name = "txtExtNo";
-            this.txtExtNo.Size = new System.Drawing.Size(110, 23);
+            this.txtExtNo.Size = new System.Drawing.Size(130, 23);
             this.txtExtNo.TabIndex = 4;
             // 
             // txtPassword
@@ -388,7 +407,7 @@
             // 
             // labelExtNo
             // 
-            this.labelExtNo.Location = new System.Drawing.Point(238, 79);
+            this.labelExtNo.Location = new System.Drawing.Point(238, 51);
             this.labelExtNo.Name = "labelExtNo";
             this.labelExtNo.Size = new System.Drawing.Size(81, 23);
             this.labelExtNo.TabIndex = 10;
@@ -493,24 +512,6 @@
             this.grid1.Size = new System.Drawing.Size(514, 526);
             this.grid1.TabIndex = 15;
             this.grid1.TabStop = false;
-            // 
-            // txtADAccount
-            // 
-            this.txtADAccount.BackColor = System.Drawing.Color.White;
-            this.txtADAccount.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "ADAccount", true));
-            this.txtADAccount.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtADAccount.Location = new System.Drawing.Point(322, 51);
-            this.txtADAccount.Name = "txtADAccount";
-            this.txtADAccount.Size = new System.Drawing.Size(110, 23);
-            this.txtADAccount.TabIndex = 58;
-            // 
-            // lbADAccount
-            // 
-            this.lbADAccount.Location = new System.Drawing.Point(238, 51);
-            this.lbADAccount.Name = "lbADAccount";
-            this.lbADAccount.Size = new System.Drawing.Size(81, 23);
-            this.lbADAccount.TabIndex = 59;
-            this.lbADAccount.Text = "AD Account";
             // 
             // PasswordByUser
             // 

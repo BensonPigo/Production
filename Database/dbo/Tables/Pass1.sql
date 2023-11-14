@@ -23,7 +23,7 @@
 	[LastLoginTime] [datetime] NULL,
 	[ESignature] [nvarchar](60) NULL,
 	[Remark] [nvarchar](100) NOT NULL,
-	[ADAccount] [varchar](30) NOT NULL,
+	[ADAccount] [varchar](40) NOT NULL,
  CONSTRAINT [PK_Pass1_1] PRIMARY KEY CLUSTERED 
 (
 	[ID] ASC
