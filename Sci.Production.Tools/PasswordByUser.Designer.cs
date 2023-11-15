@@ -30,6 +30,8 @@
         {
             this.components = new System.ComponentModel.Container();
             this.radioGroup1 = new Sci.Win.UI.RadioGroup();
+            this.txtADAccount = new Sci.Win.UI.TextBox();
+            this.lbADAccount = new Sci.Win.UI.Label();
             this.btnShowImg = new Sci.Win.UI.Button();
             this.btnSetPic = new Sci.Win.UI.Button();
             this.disBoxESignature = new Sci.Win.UI.DisplayBox();
@@ -115,6 +117,8 @@
             // 
             this.radioGroup1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
+            this.radioGroup1.Controls.Add(this.txtADAccount);
+            this.radioGroup1.Controls.Add(this.lbADAccount);
             this.radioGroup1.Controls.Add(this.btnShowImg);
             this.radioGroup1.Controls.Add(this.btnSetPic);
             this.radioGroup1.Controls.Add(this.disBoxESignature);
@@ -152,6 +156,25 @@
             this.radioGroup1.Size = new System.Drawing.Size(463, 671);
             this.radioGroup1.TabIndex = 3;
             this.radioGroup1.TabStop = false;
+            // 
+            // txtADAccount
+            // 
+            this.txtADAccount.BackColor = System.Drawing.Color.White;
+            this.txtADAccount.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
+            this.txtADAccount.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "ADAccount", true));
+            this.txtADAccount.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtADAccount.Location = new System.Drawing.Point(254, 81);
+            this.txtADAccount.Name = "txtADAccount";
+            this.txtADAccount.Size = new System.Drawing.Size(198, 23);
+            this.txtADAccount.TabIndex = 58;
+            // 
+            // lbADAccount
+            // 
+            this.lbADAccount.Location = new System.Drawing.Point(170, 82);
+            this.lbADAccount.Name = "lbADAccount";
+            this.lbADAccount.Size = new System.Drawing.Size(81, 23);
+            this.lbADAccount.TabIndex = 59;
+            this.lbADAccount.Text = "AD Account";
             // 
             // btnShowImg
             // 
@@ -219,6 +242,7 @@
             // 
             // txtUserDeputy
             // 
+            this.txtUserDeputy.AllowSelectResign = false;
             this.txtUserDeputy.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "Deputy", true));
             this.txtUserDeputy.DisplayBox1Binding = "";
             this.txtUserDeputy.Location = new System.Drawing.Point(96, 229);
@@ -229,6 +253,7 @@
             // 
             // txtUserSupervisor
             // 
+            this.txtUserSupervisor.AllowSelectResign = false;
             this.txtUserSupervisor.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "Supervisor", true));
             this.txtUserSupervisor.DisplayBox1Binding = "";
             this.txtUserSupervisor.Location = new System.Drawing.Point(96, 197);
@@ -239,6 +264,7 @@
             // 
             // txtUserManager
             // 
+            this.txtUserManager.AllowSelectResign = false;
             this.txtUserManager.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "Manager", true));
             this.txtUserManager.DisplayBox1Binding = "";
             this.txtUserManager.Location = new System.Drawing.Point(96, 164);
@@ -331,7 +357,7 @@
             this.txtExtNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtExtNo.Location = new System.Drawing.Point(322, 51);
             this.txtExtNo.Name = "txtExtNo";
-            this.txtExtNo.Size = new System.Drawing.Size(110, 23);
+            this.txtExtNo.Size = new System.Drawing.Size(130, 23);
             this.txtExtNo.TabIndex = 4;
             // 
             // txtPassword
@@ -551,5 +577,7 @@
         private Win.UI.Button btnShowImg;
         private Win.UI.Button btnSetPic;
         private Win.UI.DisplayBox disBoxESignature;
+        private Win.UI.TextBox txtADAccount;
+        private Win.UI.Label lbADAccount;
     }
 }
