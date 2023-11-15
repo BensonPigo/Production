@@ -179,7 +179,7 @@ select 0 as Selected, isnull(o.SeamLength,0) SeamLength
       ,(isnull(td.Frequency,0) * isnull(o.SeamLength,0)) as ttlSeamLength
 	  ,td.MasterPlusGroup
       ,[IsShow] = cast(iif( td.OperationID like '--%' , 1, isnull(show.val, 1)) as bit)
-      ,td.IsSubprocess
+      ,[IsSubprocess] = isnull(td.IsSubprocess, 0)
       ,[MachineType_IsSubprocess] = isnull(md.IsSubprocess,0)
       ,td.PPA
       ,PPAText = ISNULL(d.Name,'')
@@ -496,7 +496,7 @@ where   ID = '{this.CurrentMaintain["StyleID"]}' and
 
                             string sqlCmd = $@"
 select o.ID,o.DescEN,o.SMV,o.MachineTypeID,o.SeamLength,o.MoldID,o.MtlFactorID,o.Annotation,o.MasterPlusGroup
-,[MachineType_IsSubprocess] = isnull(md.IsSubprocess,0) ,md.IsSubprocess ,md.IsNonSewingLine
+,[MachineType_IsSubprocess] = isnull(md.IsSubprocess,0) ,[IsSubprocess] = isnull(md.IsSubprocess,0) ,md.IsNonSewingLine
 from Operation o WITH (NOLOCK)
 left join MachineType_Detail md WITH (NOLOCK) on md.ID = o.MachineTypeID and md.FactoryID = '{Sci.Env.User.Factory}'
 where CalibratedCode = 1
@@ -1599,6 +1599,11 @@ group by id.Location,M.ArtworkTypeID";
                 else
                 {
                     dr["Sewer"] = 0;
+                }
+
+                if (!MyUtility.Convert.GetBool(dr["IsSubprocess"].ToString()))
+                {
+                    dr["IsSubprocess"] = 0;
                 }
             }
 
