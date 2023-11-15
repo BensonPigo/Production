@@ -177,6 +177,12 @@ namespace Sci.Production.Tools
                 return false;
             }
 
+            if (MyUtility.Check.Empty(this.CurrentMaintain["ADAccount"]))
+            {
+                MyUtility.Msg.ErrorBox("< AD Account > can not be empty!");
+                return false;
+            }
+
             if (this.IsDetailInserting)
             {
                 if (MyUtility.Check.Empty(this.CurrentMaintain["ID"]))
