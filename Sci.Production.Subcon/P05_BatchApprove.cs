@@ -123,6 +123,7 @@ select a.ID
     ,ad.PatternDesc
 	,ad.QtyGarment
     ,[Status],Exceed
+	,ad.Remark
 from ArtworkReq a
 inner join ArtworkReq_Detail ad on a.ID = ad.ID 
 left join Orders o on ad.OrderID = o.ID
