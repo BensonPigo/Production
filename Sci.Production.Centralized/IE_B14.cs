@@ -118,10 +118,5 @@ where   i.Type = '{0}'
 
             return base.ClickSaveBefore();
         }
-
-        private void gridicon_Click(object sender, EventArgs e)
-        {
-
-        }
     }
 }
