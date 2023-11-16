@@ -2433,7 +2433,17 @@ where WorkOrderUkey={0}", masterID);
                 this.txtBoxMarkerNo.IsSupportEditMode = false;
                 this.txtBoxMarkerNo.ReadOnly = true;
             }
-            #endregion
+
+            // WorkOrder.Order_EachconsUkey !=0 則不能修改編輯
+            if (!MyUtility.Check.Empty(this.CurrentDetailData["Order_EachconsUkey"]))
+            {
+                this.numMarkerLengthY.ReadOnly = true;
+                this.txtMarkerLengthE.ReadOnly = true;
+                this.numUnitCons.ReadOnly = true;
+                this.txtFabricCombo.ReadOnly = true;
+                this.txtFabricPanelCode.ReadOnly = true;
+            }
+            #endregion 
             this.TotalDisQty();
 
             #region 按鈕可否按
@@ -2749,7 +2759,7 @@ END";
             // 按複製
             else
             {
-                #region 複製欄位其它, 不複製 CutRef, Cutno, Cutplanid, Addname, AddDate, EditName, EditDate
+                #region 複製欄位其它, 不複製 CutRef, Cutno, Cutplanid, Addname, AddDate, EditName, EditDate, Order_EachconsUkey
                 newRow["OrderID"] = oldRow["OrderID"];
                 newRow["SEQ1"] = oldRow["SEQ1"];
                 newRow["SEQ2"] = oldRow["SEQ2"];
@@ -2766,7 +2776,6 @@ END";
                 newRow["MarkerVersion"] = oldRow["MarkerVersion"];
                 newRow["MarkerDownLoadID"] = oldRow["MarkerDownLoadID"];
                 newRow["FabricCode"] = oldRow["FabricCode"];
-                newRow["Order_EachconsUKey"] = oldRow["Order_EachconsUKey"];
                 newRow["Article"] = oldRow["Article"];
                 newRow["SizeCode"] = oldRow["SizeCode"];
                 newRow["CutQty"] = oldRow["CutQty"];
