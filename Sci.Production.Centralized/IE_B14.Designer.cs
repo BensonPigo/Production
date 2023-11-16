@@ -68,7 +68,6 @@
             // 
             this.gridicon.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.gridicon.Location = new System.Drawing.Point(757, 5);
-            this.gridicon.Click += new System.EventHandler(this.gridicon_Click);
             // 
             // detailgridcont
             // 
@@ -141,6 +140,7 @@
             this.IsSupportClip = false;
             this.IsSupportCopy = false;
             this.IsSupportDelete = false;
+            this.IsSupportNew = false;
             this.IsSupportPrint = false;
             this.KeyField1 = "ID";
             this.KeyField2 = "Type";
