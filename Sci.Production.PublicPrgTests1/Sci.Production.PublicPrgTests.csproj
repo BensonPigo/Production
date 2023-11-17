@@ -92,6 +92,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Sci.Production.Automation\Sci.Production.Automation.csproj">
+      <Project>{CB61A07F-7D72-490E-AEB6-BA5080F8D652}</Project>
+      <Name>Sci.Production.Automation</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Sci.Production.PublicPrg\Sci.Production.PublicPrg.csproj">
       <Project>{4A2F17B7-EFFE-454C-8F1E-9EEBEF170BC0}</Project>
       <Name>Sci.Production.PublicPrg</Name>

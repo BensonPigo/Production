@@ -3,7 +3,6 @@ using Ict;
 using Ict.Win;
 using Sci.Data;
 using Sci.Production.Automation;
-using Sci.Production.Prg;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -32,7 +31,6 @@ namespace Sci.Production.MercuryDownloadStickerQueue
         public MercuryDownloadStickerQueue()
         {
             this.InitializeComponent();
-            this.gridDownloadStickerQueue.CellFormatting += this.GridDownloadStickerQueue_CellFormatting;
             this.mainTaskScheduler = TaskScheduler.FromCurrentSynchronizationContext();
             this.EditMode = false;
             this.gridDownloadStickerQueue.SupportEditMode = Win.UI.AdvEditModesReadOnly.True;
@@ -58,26 +56,6 @@ namespace Sci.Production.MercuryDownloadStickerQueue
             this.DoDownloadStickerQueue();
         }
 
-        private void GridDownloadStickerQueue_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
-        {
-            if (e.RowIndex >= 0 && e.RowIndex < this.gridDownloadStickerQueue.Rows.Count)
-            {
-                DataGridViewRow row = this.gridDownloadStickerQueue.Rows[e.RowIndex];
-
-                DataRow curRow = this.gridDownloadStickerQueue.GetDataRow(e.RowIndex);
-
-                // 在這裡根據Row的內容設置背景色
-                if (MyUtility.Convert.GetBool(curRow["Processing"]))
-                {
-                    row.DefaultCellStyle.BackColor = Color.LightGreen;
-                }
-                else
-                {
-                    row.DefaultCellStyle.BackColor = Color.White;
-                }
-            }
-        }
-
         private void Query()
         {
             string sqlGetData = @"
@@ -100,6 +78,21 @@ order by    dq.UpdateDate
                 return;
             }
             this.gridDownloadStickerQueue.DataSource = this.dtDownloadStickerQueue;
+
+            foreach (DataGridViewRow gridRow in this.gridDownloadStickerQueue.Rows)
+            {
+                DataRow curRow = this.gridDownloadStickerQueue.GetDataRow(gridRow.Index);
+
+                // 在這裡根據Row的內容設置背景色
+                if (MyUtility.Convert.GetBool(curRow["Processing"]))
+                {
+                    gridRow.DefaultCellStyle.BackColor = Color.LightGreen;
+                }
+                else
+                {
+                    gridRow.DefaultCellStyle.BackColor = Color.White;
+                }
+            }
         }
 
         private void backgroundDownloadSticker_DoWork(object sender, DoWorkEventArgs e)
@@ -520,14 +513,26 @@ insert into ShippingMarkPic_Detail(ShippingMarkPicUkey, SCICtnNo, ShippingMarkTy
                 bmp.Dispose();
                 pdfConverter.Dispose();
 
-                result = this.CheckFileLock(pdfFullFileName);
-                if (!result)
-                {
-                    return result;
-                }
-
                 // 刪除PDF檔案
-                File.Delete(pdfFullFileName);
+                for (int i = 0; i < 15; i++)
+                {
+                    try
+                    {
+                        File.Delete(pdfFullFileName);
+                        break;
+                    }
+                    catch (IOException)
+                    {
+                        Thread.Sleep(1000);
+                        continue;
+                    }
+                    catch (Exception ex)
+                    {
+                        throw ex;
+                    }
+                }
+                
+                
             }
             catch (Exception ex)
             {
@@ -545,7 +550,7 @@ insert into ShippingMarkPic_Detail(ShippingMarkPicUkey, SCICtnNo, ShippingMarkTy
             {
                 try
                 {
-                    using (FileStream fs = new FileStream(fullFilePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+                    using (FileStream fs = new FileStream(fullFilePath, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite))
                     {
                         // 如果上面的程式碼成功運行，表示檔案沒有被其他程序占用
                         fs.Dispose();

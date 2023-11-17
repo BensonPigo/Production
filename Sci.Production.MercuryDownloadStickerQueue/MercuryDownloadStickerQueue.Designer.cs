@@ -108,6 +108,7 @@
             this.checkCartonBarcode.TabIndex = 4;
             this.checkCartonBarcode.Text = "Carton barcode check";
             this.checkCartonBarcode.UseVisualStyleBackColor = true;
+            this.checkCartonBarcode.Visible = false;
             // 
             // btnRun
             // 
@@ -142,6 +143,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(893, 596);
+            this.ControlBox = false;
             this.Controls.Add(this.label2);
             this.Controls.Add(this.progressBarProcessing);
             this.Controls.Add(this.btnRun);

@@ -18,9 +18,8 @@ using System.Xml.Linq;
 using System.Xml.Serialization;
 using static PmsWebApiUtility20.WebApiTool;
 using static Sci.Production.Prg.Entity.NikeMercury.ResponseLabelsPackPlanCartonAdd;
-using static Sci.Production.Prg.Entity.NikeMercury.ResponseLabelsPackPlanCreate;
 
-namespace Sci.Production.Prg
+namespace Sci.Production.Automation
 {
     /// <summary>
     /// Nike Mercury webservice相關method
@@ -38,7 +37,8 @@ namespace Sci.Production.Prg
             {
                 if (staticService == null)
                 {
-                    staticService = new WebServiceNikeMercury("http://localhost/OLLIe/OLLIe.svc/");
+                    string mercuryUrl = UtilityAutomation.GetSupplierUrl("NIKE", "MERCURY");
+                    staticService = new WebServiceNikeMercury(mercuryUrl);
                 }
 
                 return staticService;
@@ -347,7 +347,7 @@ where   pg.ID = '{packID}'
 
             ResponseLabelsPackPlanDelete.OutputMessage outputMessage = responseResult.Body.LabelsPackPlanDeleteResponse.LabelsPackPlanDeleteResult.OutputMessage;
 
-            if (outputMessage.ReturnCode < 0)
+            if (outputMessage.ReturnCode < 0 && outputMessage.ReturnDescription != "Item has not been built. The pack plan does not exist.")
             {
                 return new DualResult(false, outputMessage.ReturnDescription);
             }

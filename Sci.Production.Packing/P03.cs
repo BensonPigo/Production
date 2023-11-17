@@ -414,11 +414,13 @@ where RequestID='{this.CurrentMaintain["ID"]}' and l.status = 'Approved'
             {
                 this.btnCustSystem.Text = "Mercury";
                 this.btnCustSystem.Enabled = true;
+                this.btnCustSystem.Visible = true;
             }
             else
             {
                 this.btnCustSystem.Text = "Cust System";
                 this.btnCustSystem.Enabled = false;
+                this.btnCustSystem.Visible = false;
             }
 
         }

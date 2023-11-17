@@ -147,6 +147,7 @@
             this.Name = "P03_Mercury";
             this.OnLineHelpID = "Sci.Win.Tems.QueryForm";
             this.Text = "Nike Mercury";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.P03_Mercury_FormClosing);
             this.Resize += new System.EventHandler(this.P03_Mercury_Resize);
             this.Controls.SetChildIndex(this.btnUploadPL, 0);
             this.Controls.SetChildIndex(this.btnDownloadStickerFile, 0);

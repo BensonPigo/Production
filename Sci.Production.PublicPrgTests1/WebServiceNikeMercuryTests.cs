@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using System.IO;
 using System.Threading;
 using System.Windows.Forms;
+using Sci.Production.Automation;
 
 namespace Sci.Production.Prg.Tests
 {

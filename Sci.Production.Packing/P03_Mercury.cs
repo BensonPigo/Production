@@ -1,7 +1,7 @@
 ﻿using Ict;
 using Ict.Win;
 using Sci.Data;
-using Sci.Production.Prg;
+using Sci.Production.Automation;
 using Sci.Production.Prg.Entity.NikeMercury;
 using System;
 using System.Collections.Generic;
@@ -32,28 +32,7 @@ namespace Sci.Production.Packing
         {
             this.InitializeComponent();
             this.packID = packID;
-            this.gridDownloadStickerQueue.CellFormatting += this.GridDownloadStickerQueue_CellFormatting;
             this.timerRefreshDownloadStickerQueue.Interval = 10000;
-        }
-
-        private void GridDownloadStickerQueue_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
-        {
-            if (e.RowIndex >= 0 && e.RowIndex < this.gridDownloadStickerQueue.Rows.Count)
-            {
-                DataGridViewRow row = this.gridDownloadStickerQueue.Rows[e.RowIndex];
-
-                DataRow curRow = this.gridDownloadStickerQueue.GetDataRow(e.RowIndex);
-
-                // 在這裡根據Row的內容設置背景色
-                if (MyUtility.Convert.GetBool(curRow["Processing"]))
-                {
-                    row.DefaultCellStyle.BackColor = Color.LightGreen;
-                }
-                else
-                {
-                    row.DefaultCellStyle.BackColor = Color.White;
-                }
-            }
         }
 
         /// <inheritdoc/>
@@ -98,6 +77,21 @@ order by    dq.UpdateDate
             }
 
             this.gridDownloadStickerQueue.DataSource = dtResult;
+
+            foreach (DataGridViewRow gridRow in this.gridDownloadStickerQueue.Rows)
+            {
+                DataRow curRow = this.gridDownloadStickerQueue.GetDataRow(gridRow.Index);
+
+                // 在這裡根據Row的內容設置背景色
+                if (MyUtility.Convert.GetBool(curRow["Processing"]))
+                {
+                    gridRow.DefaultCellStyle.BackColor = Color.LightGreen;
+                }
+                else
+                {
+                    gridRow.DefaultCellStyle.BackColor = Color.White;
+                }
+            }
         }
 
         private void BtnUploadPL_Click(object sender, EventArgs e)
@@ -315,6 +309,8 @@ order by pd.Seq
                 transactionScope.Complete();
                 this.panelUploadProgress.Visible = false;
             }
+
+            this.btnDownloadStickerFile.PerformClick();
             #endregion
         }
 
@@ -402,8 +398,16 @@ insert into DownloadStickerQueue(PackingID, AddDate, UpdateDate)
         private class UpdatePackingInfo
         {
             public string CtnStartNo { get; set; }
+
             public string CustCtn { get; set; }
+
             public string CustCtn2 { get; set; }
+        }
+
+        private void P03_Mercury_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            this.timerRefreshDownloadStickerQueue.Stop();
+            this.timerRefreshDownloadStickerQueue.Enabled = false;
         }
     }
 }

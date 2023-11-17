@@ -220,7 +220,6 @@
     <Compile Include="Cutting.cs" />
     <Compile Include="Quality.cs" />
     <Compile Include="WebServiceHelper.cs" />
-    <Compile Include="WebServiceNikeMercury.cs" />
   </ItemGroup>
   <ItemGroup>
     <COMReference Include="Microsoft.Office.Core">
