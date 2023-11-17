@@ -153,10 +153,19 @@ where sotd.ID = '{masterID}'
         {
             this.FromOrderID.CellValidating += (s, e) =>
             {
+                DualResult result;
                 if (!MyUtility.Check.Empty(e.FormattedValue))
                 {
                     if (e.FormattedValue.Equals(this.CurrentDetailData["FromOrderID"]))
                     {
+                        result = CheckTransDataIsCreated(this.CurrentDetailData);
+                        if (!result)
+                        {
+                            this.ShowErr(result);
+                            e.Cancel = true;
+                            return;
+                        }
+
                         return;
                     }
 
@@ -192,6 +201,15 @@ and sd.AutoCreate = 0 --排除G單
 
                 this.CurrentDetailData["FromOrderID"] = e.FormattedValue;
                 this.CurrentDetailData.EndEdit();
+
+                result = CheckTransDataIsCreated(this.CurrentDetailData);
+                if (!result)
+                {
+                    this.ShowErr(result);
+                    e.Cancel = true;
+                    return;
+                }
+
                 this.GetDisplayFromQty();
                 this.GetDisplayFromSewingQty();
             };
@@ -217,12 +235,22 @@ and sd.AutoCreate = 0 --排除G單
                     this.GetDisplayFromSewingQty();
                 }
             };
+
             this.FromComboType.CellValidating += (s, e) =>
             {
+                DualResult result;
                 if (!MyUtility.Check.Empty(e.FormattedValue))
                 {
                     if (e.FormattedValue.Equals(this.CurrentDetailData["FromComboType"]))
                     {
+                        result = CheckTransDataIsCreated(this.CurrentDetailData);
+                        if (!result)
+                        {
+                            this.ShowErr(result);
+                            e.Cancel = true;
+                            return;
+                        }
+
                         return;
                     }
 
@@ -251,6 +279,15 @@ and sd.AutoCreate = 0 --排除G單
 
                 this.CurrentDetailData["FromComboType"] = e.FormattedValue;
                 this.CurrentDetailData.EndEdit();
+
+                result = CheckTransDataIsCreated(this.CurrentDetailData);
+                if (!result)
+                {
+                    this.ShowErr(result);
+                    e.Cancel = true;
+                    return;
+                }
+
                 this.GetDisplayFromSewingQty();
             };
 
@@ -279,10 +316,19 @@ and sd.AutoCreate = 0 --排除G單
             };
             this.Article.CellValidating += (s, e) =>
             {
+                DualResult result;
                 if (!MyUtility.Check.Empty(e.FormattedValue))
                 {
                     if (e.FormattedValue.Equals(this.CurrentDetailData["Article"]))
                     {
+                        result = CheckTransDataIsCreated(this.CurrentDetailData);
+                        if (!result)
+                        {
+                            this.ShowErr(result);
+                            e.Cancel = true;
+                            return;
+                        }
+
                         return;
                     }
 
@@ -311,6 +357,15 @@ and sd.AutoCreate = 0 --排除G單
 
                 this.CurrentDetailData["Article"] = e.FormattedValue;
                 this.CurrentDetailData.EndEdit();
+
+                result = CheckTransDataIsCreated(this.CurrentDetailData);
+                if (!result)
+                {
+                    this.ShowErr(result);
+                    e.Cancel = true;
+                    return;
+                }
+
                 this.SetDefaultToArticle();
                 this.GetDisplayFromQty();
                 this.GetDisplayFromSewingQty();
@@ -341,10 +396,19 @@ and sd.AutoCreate = 0 --排除G單
             };
             this.SizeCode.CellValidating += (s, e) =>
             {
+                DualResult result;
                 if (!MyUtility.Check.Empty(e.FormattedValue))
                 {
                     if (e.FormattedValue.Equals(this.CurrentDetailData["SizeCode"]))
                     {
+                        result = CheckTransDataIsCreated(this.CurrentDetailData);
+                        if (!result)
+                        {
+                            this.ShowErr(result);
+                            e.Cancel = true;
+                            return;
+                        }
+
                         return;
                     }
 
@@ -371,6 +435,15 @@ and sd.AutoCreate = 0 --排除G單
 
                 this.CurrentDetailData["SizeCode"] = e.FormattedValue;
                 this.CurrentDetailData.EndEdit();
+
+                result = CheckTransDataIsCreated(this.CurrentDetailData);
+                if (!result)
+                {
+                    this.ShowErr(result);
+                    e.Cancel = true;
+                    return;
+                }
+
                 this.SetDefaultToSizeCode();
                 this.GetDisplayFromQty();
                 this.GetDisplayFromSewingQty();
@@ -378,10 +451,19 @@ and sd.AutoCreate = 0 --排除G單
 
             this.ToOrderID.CellValidating += (s, e) =>
             {
+                DualResult result;
                 if (!MyUtility.Check.Empty(e.FormattedValue))
                 {
                     if (e.FormattedValue.Equals(this.CurrentDetailData["ToOrderID"]))
                     {
+                        result = CheckTransDataIsCreated(this.CurrentDetailData);
+                        if (!result)
+                        {
+                            this.ShowErr(result);
+                            e.Cancel = true;
+                            return;
+                        }
+
                         return;
                     }
 
@@ -420,6 +502,15 @@ and not exists (select 1 from Orders exludeOrder with (nolock)
 
                 this.CurrentDetailData["ToOrderID"] = e.FormattedValue;
                 this.CurrentDetailData.EndEdit();
+
+                result = CheckTransDataIsCreated(this.CurrentDetailData);
+                if (!result)
+                {
+                    this.ShowErr(result);
+                    e.Cancel = true;
+                    return;
+                }
+
                 this.GetDisplayToQty();
                 this.GetDisplayToSewingQty();
             };
@@ -451,10 +542,19 @@ where o.ID = @ToOrderID";
             };
             this.ToComboType.CellValidating += (s, e) =>
             {
+                DualResult result;
                 if (!MyUtility.Check.Empty(e.FormattedValue))
                 {
                     if (e.FormattedValue.Equals(this.CurrentDetailData["ToComboType"]))
                     {
+                        result = CheckTransDataIsCreated(this.CurrentDetailData);
+                        if (!result)
+                        {
+                            this.ShowErr(result);
+                            e.Cancel = true;
+                            return;
+                        }
+
                         return;
                     }
 
@@ -491,6 +591,15 @@ end
 
                 this.CurrentDetailData["ToComboType"] = e.FormattedValue;
                 this.CurrentDetailData.EndEdit();
+
+                result = CheckTransDataIsCreated(this.CurrentDetailData);
+                if (!result)
+                {
+                    this.ShowErr(result);
+                    e.Cancel = true;
+                    return;
+                }
+
                 this.GetDisplayToSewingQty();
             };
 
@@ -516,10 +625,19 @@ end
             };
             this.ToArticle.CellValidating += (s, e) =>
             {
+                DualResult result;
                 if (!MyUtility.Check.Empty(e.FormattedValue))
                 {
                     if (e.FormattedValue.Equals(this.CurrentDetailData["ToArticle"]))
                     {
+                        result = CheckTransDataIsCreated(this.CurrentDetailData);
+                        if (!result)
+                        {
+                            this.ShowErr(result);
+                            e.Cancel = true;
+                            return;
+                        }
+
                         return;
                     }
 
@@ -546,6 +664,15 @@ end
 
                 this.CurrentDetailData["ToArticle"] = e.FormattedValue;
                 this.CurrentDetailData.EndEdit();
+
+                result = CheckTransDataIsCreated(this.CurrentDetailData);
+                if (!result)
+                {
+                    this.ShowErr(result);
+                    e.Cancel = true;
+                    return;
+                }
+
                 this.GetDisplayToQty();
                 this.GetDisplayToSewingQty();
             };
@@ -572,10 +699,19 @@ end
             };
             this.ToSizeCode.CellValidating += (s, e) =>
             {
+                DualResult result;
                 if (!MyUtility.Check.Empty(e.FormattedValue))
                 {
                     if (e.FormattedValue.Equals(this.CurrentDetailData["ToSizeCode"]))
                     {
+                        result = CheckTransDataIsCreated(this.CurrentDetailData);
+                        if (!result)
+                        {
+                            this.ShowErr(result);
+                            e.Cancel = true;
+                            return;
+                        }
+
                         return;
                     }
 
@@ -602,6 +738,15 @@ end
 
                 this.CurrentDetailData["ToSizeCode"] = e.FormattedValue;
                 this.CurrentDetailData.EndEdit();
+
+                result = CheckTransDataIsCreated(this.CurrentDetailData);
+                if (!result)
+                {
+                    this.ShowErr(result);
+                    e.Cancel = true;
+                    return;
+                }
+
                 this.GetDisplayToQty();
                 this.GetDisplayToSewingQty();
             };
@@ -920,6 +1065,50 @@ and SizeCode = @S
         {
             P11_TransferInOutInformation frm = new P11_TransferInOutInformation();
             frm.ShowDialog(this);
+        }
+
+        /// <summary>
+        /// ISP20231073 判斷是否有New的單子已建立一樣的Detail
+        /// </summary>
+        /// <param name="checkRow">checkRow</param>
+        /// <returns>DualResult</returns>
+        public static DualResult CheckTransDataIsCreated(DataRow checkRow)
+        {
+            if (MyUtility.Check.Empty(checkRow["FromOrderID"]) ||
+                MyUtility.Check.Empty(checkRow["Article"]) ||
+                MyUtility.Check.Empty(checkRow["SizeCode"]) ||
+                MyUtility.Check.Empty(checkRow["FromComboType"]) ||
+                MyUtility.Check.Empty(checkRow["ToOrderID"]) ||
+                MyUtility.Check.Empty(checkRow["ToComboType"]) ||
+                MyUtility.Check.Empty(checkRow["ToArticle"]) ||
+                MyUtility.Check.Empty(checkRow["ToSizeCode"]))
+            {
+                return new DualResult(true);
+            }
+
+            string sqlCheck = $@"
+select  top 1 s.ID
+from    SewingOutputTransfer s with (nolock)
+inner join  SewingOutputTransfer_Detail sd with (nolock) on sd.ID = s.ID
+where   s.ID <> '{checkRow["ID"]}' and
+        sd.FromOrderID = '{checkRow["FromOrderID"]}' and
+        sd.Article = '{checkRow["Article"]}' and
+        sd.SizeCode = '{checkRow["SizeCode"]}' and
+        sd.FromComboType = '{checkRow["FromComboType"]}' and
+        sd.ToOrderID = '{checkRow["ToOrderID"]}' and
+        sd.ToComboType = '{checkRow["ToComboType"]}' and
+        sd.ToArticle = '{checkRow["ToArticle"]}' and
+        sd.ToSizeCode = '{checkRow["ToSizeCode"]}' and
+        s.Status = 'New'
+";
+            DataRow drResult;
+
+            if (MyUtility.Check.Seek(sqlCheck, out drResult))
+            {
+                return new DualResult(false, $"<{drResult["ID"]}> already contains the same transfer info. Duplicate data cannot be created!!");
+            }
+
+            return new DualResult(true);
         }
     }
 }
