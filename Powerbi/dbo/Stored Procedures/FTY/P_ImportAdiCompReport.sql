@@ -21,40 +21,8 @@ Begin
 
 	If Exists(Select * From POWERBIReportData.sys.tables Where Name = 'P_AdiCompReport')
 	Begin
-		Drop Table POWERBIReportData.dbo.P_AdiCompReport;
-	End;
-	Create Table POWERBIReportData.dbo.P_AdiCompReport
-		(Year			 Varchar(4),
-		 Month			 VarChar(2),
-		 ID				 VarChar(13),
-		 SalesID		 VarChar(5),
-		 SalesName		 NVarChar(50),
-		 Article		 VarChar(8),
-		 ArticleName	 NVarChar(60),
-		 ProductionDate	 Date,
-		 DefectMainID	 VarChar(2),
-		 DefectSubID	 VarChar(1),
-		 FOB			 Numeric(5,2),
-		 Qty			 Numeric(3,0),
-		 ValueinUSD		 Numeric(8,4),
-		 ValueINExRate	 Numeric(7,2),
-		 OrderID		 VarChar(13),
-		 RuleNo			 Numeric(1,0),
-		 UKEY			 Bigint,
-		 BrandID		 VarChar(8),
-		 FactoryID		 VarChar(8),
-		 SuppID			 VarChar(6),
-		 Refno		     VarChar(23),
-		 IsEM			 Bit,
-		 StyleID		 VarChar(15),
-		 ProgramID		 VarChar(12),
-		 Supplier		 VarChar(6),
-		 SupplierName	 NVarChar(12),
-		 DefectMain		 NVarChar(260),
-		 DefectSub		 NVarChar(260),
-		 Responsibility	 VarChar(2),
-		 MDivisionID	 VarChar(8),
-		)
+		Truncate Table POWERBIReportData.dbo.P_AdiCompReport;
+	End
 	;
 
 	Declare @ExecSQL NVarChar(MAX);
@@ -101,10 +69,11 @@ Begin
 	Left join Production.dbo.PO_Supp po2 With(Nolock) on po2.ID = po.ID and po2.SEQ1 = ''''01''''
 	Left join Production.dbo.Supp With(Nolock) on Supp.ID = po2.SuppID
 	Left join Production.dbo.Supp adSupp With(Nolock) on adSupp.ID = ad.SuppID
-	Left join Production.dbo.Factory f With(Nolock) on f.id = ad.FactoryID
+	Left join Production.dbo.SCIFty f With(Nolock) on f.id = ad.FactoryID
 	Order by a.ID
 	'');
 			';
+
 	Exec (@ExecSQL);
 
 	if exists (select 1 from BITableInfo b where b.id = 'P_ImportAdiCompReport')
