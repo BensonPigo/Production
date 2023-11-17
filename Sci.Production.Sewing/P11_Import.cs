@@ -333,7 +333,8 @@ Select Distinct Selected = 0,
     [DisplayFromSewingQty] = Sum(sdd.QAQty),
     ToOrderID = '{this.txtToSP.Text}', ToComboType = '', TransferQty = 0,
     ToArticle=sdd.Article,
-    ToSizeCode=sdd.SizeCode
+    ToSizeCode=sdd.SizeCode,
+    [ID] = ''
 From SewingOutput_Detail_Detail sdd with(nolock)
 Where OrderID = @sp
 And QAQty > 0
@@ -378,6 +379,13 @@ group by sdd.OrderID, sdd.ComboType, sdd.Article, sdd.SizeCode
                     MyUtility.Check.Empty(item["TransferQty"]))
                 {
                     MyUtility.Msg.WarningBox("* , Article, Sizecode, Transfer Qty can not empty!");
+                    return;
+                }
+
+                DualResult result = P11.CheckTransDataIsCreated(item);
+                if (!result)
+                {
+                    this.ShowErr(result);
                     return;
                 }
             }
