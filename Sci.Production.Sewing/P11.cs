@@ -161,6 +161,7 @@ where sotd.ID = '{masterID}'
                         result = CheckTransDataIsCreated(this.CurrentDetailData);
                         if (!result)
                         {
+                            this.CurrentDetailData["FromOrderID"] = string.Empty;
                             this.ShowErr(result);
                             e.Cancel = true;
                             return;
@@ -205,6 +206,7 @@ and sd.AutoCreate = 0 --排除G單
                 result = CheckTransDataIsCreated(this.CurrentDetailData);
                 if (!result)
                 {
+                    this.CurrentDetailData["FromOrderID"] = string.Empty;
                     this.ShowErr(result);
                     e.Cancel = true;
                     return;
@@ -246,6 +248,7 @@ and sd.AutoCreate = 0 --排除G單
                         result = CheckTransDataIsCreated(this.CurrentDetailData);
                         if (!result)
                         {
+                            this.CurrentDetailData["FromComboType"] = string.Empty;
                             this.ShowErr(result);
                             e.Cancel = true;
                             return;
@@ -283,6 +286,7 @@ and sd.AutoCreate = 0 --排除G單
                 result = CheckTransDataIsCreated(this.CurrentDetailData);
                 if (!result)
                 {
+                    this.CurrentDetailData["FromComboType"] = string.Empty;
                     this.ShowErr(result);
                     e.Cancel = true;
                     return;
@@ -324,6 +328,7 @@ and sd.AutoCreate = 0 --排除G單
                         result = CheckTransDataIsCreated(this.CurrentDetailData);
                         if (!result)
                         {
+                            this.CurrentDetailData["Article"] = string.Empty;
                             this.ShowErr(result);
                             e.Cancel = true;
                             return;
@@ -361,6 +366,7 @@ and sd.AutoCreate = 0 --排除G單
                 result = CheckTransDataIsCreated(this.CurrentDetailData);
                 if (!result)
                 {
+                    this.CurrentDetailData["Article"] = string.Empty;
                     this.ShowErr(result);
                     e.Cancel = true;
                     return;
@@ -404,6 +410,7 @@ and sd.AutoCreate = 0 --排除G單
                         result = CheckTransDataIsCreated(this.CurrentDetailData);
                         if (!result)
                         {
+                            this.CurrentDetailData["SizeCode"] = string.Empty;
                             this.ShowErr(result);
                             e.Cancel = true;
                             return;
@@ -439,6 +446,7 @@ and sd.AutoCreate = 0 --排除G單
                 result = CheckTransDataIsCreated(this.CurrentDetailData);
                 if (!result)
                 {
+                    this.CurrentDetailData["SizeCode"] = string.Empty;
                     this.ShowErr(result);
                     e.Cancel = true;
                     return;
@@ -459,6 +467,7 @@ and sd.AutoCreate = 0 --排除G單
                         result = CheckTransDataIsCreated(this.CurrentDetailData);
                         if (!result)
                         {
+                            this.CurrentDetailData["ToOrderID"] = string.Empty;
                             this.ShowErr(result);
                             e.Cancel = true;
                             return;
@@ -506,6 +515,7 @@ and not exists (select 1 from Orders exludeOrder with (nolock)
                 result = CheckTransDataIsCreated(this.CurrentDetailData);
                 if (!result)
                 {
+                    this.CurrentDetailData["ToOrderID"] = string.Empty;
                     this.ShowErr(result);
                     e.Cancel = true;
                     return;
@@ -550,6 +560,7 @@ where o.ID = @ToOrderID";
                         result = CheckTransDataIsCreated(this.CurrentDetailData);
                         if (!result)
                         {
+                            this.CurrentDetailData["ToComboType"] = string.Empty;
                             this.ShowErr(result);
                             e.Cancel = true;
                             return;
@@ -595,6 +606,7 @@ end
                 result = CheckTransDataIsCreated(this.CurrentDetailData);
                 if (!result)
                 {
+                    this.CurrentDetailData["ToComboType"] = string.Empty;
                     this.ShowErr(result);
                     e.Cancel = true;
                     return;
@@ -633,6 +645,7 @@ end
                         result = CheckTransDataIsCreated(this.CurrentDetailData);
                         if (!result)
                         {
+                            this.CurrentDetailData["ToArticle"] = string.Empty;
                             this.ShowErr(result);
                             e.Cancel = true;
                             return;
@@ -668,6 +681,7 @@ end
                 result = CheckTransDataIsCreated(this.CurrentDetailData);
                 if (!result)
                 {
+                    this.CurrentDetailData["ToArticle"] = string.Empty;
                     this.ShowErr(result);
                     e.Cancel = true;
                     return;
@@ -707,6 +721,7 @@ end
                         result = CheckTransDataIsCreated(this.CurrentDetailData);
                         if (!result)
                         {
+                            this.CurrentDetailData["ToSizeCode"] = string.Empty;
                             this.ShowErr(result);
                             e.Cancel = true;
                             return;
@@ -742,6 +757,7 @@ end
                 result = CheckTransDataIsCreated(this.CurrentDetailData);
                 if (!result)
                 {
+                    this.CurrentDetailData["ToSizeCode"] = string.Empty;
                     this.ShowErr(result);
                     e.Cancel = true;
                     return;
