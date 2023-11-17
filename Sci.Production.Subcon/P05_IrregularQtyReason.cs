@@ -227,13 +227,13 @@ alter table #tmp alter column OrderID varchar(13)
 alter table #tmp alter column ArtworkID varchar(36)
 alter table #tmp alter column PatternCode varchar(20)
 alter table #tmp alter column PatternDesc varchar(40)
-alter table #tmp alter column Remark varchar(1000)
+alter table #tmp alter column OrderArtworkUkey bigint
 
 select  t.OrderID
        ,t.ArtworkID
        ,t.PatternCode
        ,t.PatternDesc
-       ,t.Remark
+       ,t.OrderArtworkUkey
        ,[ReqQty] = sum(t.ReqQty)
        ,[OrderQty] = o.Qty
        ,[Article] = ''
@@ -246,7 +246,7 @@ group by t.OrderID
         ,t.PatternCode
         ,t.PatternDesc
         ,t.ArtworkID
-        ,t.Remark
+        ,t.OrderArtworkUkey
         ,o.Qty
 
 {this.sqlGetBuyBackDeduction(this._masterData["artworktypeid"].ToString())}
@@ -308,7 +308,7 @@ o.FactoryID
 ,s.ArtworkID
 ,s.PatternCode
 ,s.PatternDesc
-,s.Remark
+,s.OrderArtworkUkey
 ,[BuyBackArtworkReq] = isnull(tbbd.BuyBackArtworkReq,0)
 into #tmpCurrent
 from  orders o WITH (NOLOCK) 
@@ -319,7 +319,7 @@ left join #tmpBuyBackDeduction tbbd on  tbbd.OrderID = s.OrderID       and
                                         tbbd.SizeCode = s.SizeCode     and
                                         tbbd.PatternCode = s.PatternCode   and
                                         tbbd.PatternDesc = s.PatternDesc   and
-                                        tbbd.Remark = s.Remark   and
+                                        tbbd.OrderArtworkUkey = s.OrderArtworkUkey   and
                                         tbbd.ArtworkID = s.ArtworkID and
 										tbbd.LocalSuppID = ''
 outer apply(
@@ -328,7 +328,7 @@ outer apply(
 	where ad.ID = a.ID
 	and OrderID = o.ID and ad.PatternCode= isnull(s.PatternCode,'')
 	and ad.PatternDesc = isnull(s.PatternDesc,'') 
-	and ad.Remark = isnull(s.Remark,'') 
+	and ad.OrderArtworkUkey = isnull(s.OrderArtworkUkey, 0) 
     and ad.ArtworkID = iif(s.ArtworkID is null,'{this._masterData["ArtworkTypeID"]}',s.ArtworkID)
 	{(isClosed ? string.Empty : $"and ad.id != '{this._ArtWorkReq_ID}'")}
 	and a.ArtworkTypeID = '{this._masterData["ArtworkTypeID"]}'
@@ -336,7 +336,7 @@ outer apply(
 )ReqQty
 group by o.FactoryID,o.ID,o.StyleID,o.BrandID,ReqQty.value
     ,{(isClosed ? " + IIF(s.ExistsPO = 1, s.ReqQty, 0)" : " + s.ReqQty ")}
-    ,s.ArtworkID,s.PatternCode,s.PatternDesc,s.Remark
+    ,s.ArtworkID,s.PatternCode,s.PatternDesc,s.OrderArtworkUkey
     ,isnull(tbbd.BuyBackArtworkReq,0)
 having Isnull(ReqQty.value, 0) + isnull(tbbd.BuyBackArtworkReq,0) {(isClosed ? " + IIF(s.ExistsPO = 1, s.ReqQty, 0)" : " + s.ReqQty ")} > sum(oq.Qty)
 

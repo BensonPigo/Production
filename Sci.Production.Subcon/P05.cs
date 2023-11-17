@@ -99,7 +99,7 @@ ap.OrderID
 ,ap.ukey
 ,o.FactoryID
 ,f.IsProduceFty
-,ap.Remark
+,ap.OrderArtworkUkey
 from dbo.ArtworkReq_Detail ap with (nolock)
 left join dbo.Orders o with (nolock) on ap.OrderID = o.id
 left join Factory f with (nolock) on f.ID = o.FactoryID
@@ -226,7 +226,6 @@ outer apply (
 		and OrderID = o.ID 
         and ad.PatternCode= ''
         and ad.PatternDesc = ''
-        and ad.Remark = ''
         and ad.ArtworkID = '{this.CurrentMaintain["artworktypeid"]}'
         and a.id != '{this.CurrentMaintain["id"]}'
         and a.status != 'Closed'
@@ -257,7 +256,7 @@ inner join orders o WITH (NOLOCK) on ot.ID = o.ID
 cross apply(
 	select * 
 	from (		
-		select a.id,a.ArtworkTypeID,q.Article,q.Qty,q.SizeCode,a.PatternCode,a.PatternDesc,a.ArtworkID,a.ArtworkName,a.Remark
+		select a.id,a.ArtworkTypeID,q.Article,q.Qty,q.SizeCode,a.PatternCode,a.PatternDesc,a.ArtworkID,a.ArtworkName, [OrderArtworkUkey] = a.Ukey
 		,rowNo = ROW_NUMBER() over (
 			partition by a.id,a.ArtworkTypeID,q.Article,a.PatternCode,a.PatternDesc
 				,a.ArtworkID,q.sizecode order by a.AddDate desc)
@@ -279,7 +278,7 @@ outer apply(
 		where a.StyleUkey = o.StyleUkey
 		and a.Article = oa.Article and a.ArtworkID = oa.ArtworkID 
 		and a.ArtworkName = oa.ArtworkName and a.ArtworkTypeID = oa.ArtworkTypeID 
-		and a.PatternCode = oa.PatternCode and a.PatternDesc = oa.PatternDesc and a.Remark = oa.Remark 
+		and a.PatternCode = oa.PatternCode and a.PatternDesc = oa.PatternDesc 
 		) s
 	where rowNo = 1 
 )vsa
@@ -294,7 +293,7 @@ outer apply (
 		and a.ArtworkTypeID = '{this.CurrentMaintain["ArtworktypeId"]}' 
 		and OrderID = o.ID and ad.PatternCode= isnull(oa.PatternCode,'')
         and ad.PatternDesc = isnull(oa.PatternDesc,'') 
-        and ad.Remark = isnull(oa.Remark,'') 
+        and ad.OrderArtworkUkey = isnull(oa.OrderArtworkUkey, 0) 
         and ad.ArtworkID = iif(oa.ArtworkID is null,'{this.CurrentMaintain["ArtworktypeId"]}' ,oa.ArtworkID)
         and a.status != 'Closed' and ad.ArtworkPOID =''
         and a.id != '{dr["id"]}'
@@ -318,7 +317,6 @@ and o.Junk=0
 and o.id = '{dr["OrderID"]}'
 and isnull(oa.PatternCode,'') = '{dr["PatternCode"]}'
 and isnull(oa.PatternDesc,'') = '{dr["PatternDesc"]}'
-and isnull(oa.Remark,'') = '{dr["Remark"]}'
 and isnull(oa.ArtworkID,ot.ArtworkTypeID) = '{dr["ArtworkId"]}'
 and ((o.Category = 'B' and  ot.InhouseOSP = 'O') or (o.category = 'S'))
 group by ReqQty.value,PoQty.value";
@@ -347,7 +345,6 @@ group by ReqQty.value,PoQty.value";
             .Text("SizeCode", header: "Size", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Text("patterncode", header: "Cut Part", width: Widths.AnsiChars(5), iseditingreadonly: true)
             .Text("PatternDesc", header: "Cut Part Name", width: Widths.AnsiChars(20), iseditingreadonly: true)
-            .Text("Remark", header: "Remark", iseditingreadonly: true, width: Widths.AnsiChars(15))
             .Numeric("ReqQty", header: "Req. Qty", width: Widths.AnsiChars(6), settings: col_ReqQty) // 可編輯
             .Numeric("stitch", header: "PCS/Stitch", width: Widths.AnsiChars(3)) // 可編輯
             .Numeric("qtygarment", header: "Qty/GMT", width: Widths.AnsiChars(5), maximum: 99, integer_places: 2) // 可編輯
@@ -492,7 +489,6 @@ group by ReqQty.value,PoQty.value";
                     drCheck["ArtworkID"] = dr["ArtworkID", DataRowVersion.Original];
                     drCheck["PatternCode"] = dr["PatternCode", DataRowVersion.Original];
                     drCheck["PatternDesc"] = dr["PatternDesc", DataRowVersion.Original];
-                    drCheck["Remark"] = dr["Remark", DataRowVersion.Original];
                     drCheck["ReqQty"] = 0;
                 }
                 else
@@ -501,7 +497,6 @@ group by ReqQty.value,PoQty.value";
                     drCheck["ArtworkID"] = dr["ArtworkID"];
                     drCheck["PatternCode"] = dr["PatternCode"];
                     drCheck["PatternDesc"] = dr["PatternDesc"];
-                    drCheck["Remark"] = dr["Remark"];
                     drCheck["ReqQty"] = dr["ReqQty"];
                 }
 
@@ -1146,7 +1141,7 @@ select  fr.orderID,
         fr.ArtworkID,
         fr.PatternCode,
         fr.PatternDesc,
-        fr.Remark,
+        fr.OrderArtworkUkey,
         fr.OrderQty,
 		fr.LocalSuppID,
         obq.OrderIDFrom,
@@ -1168,7 +1163,7 @@ where   exists( select 1
 		        and ad.OrderID = obq.OrderIDFrom
                 and ad.PatternCode = fr.PatternCode
                 and ad.PatternDesc = fr.PatternDesc
-                and ad.Remark = fr.Remark
+                and ad.OrderArtworkUkey = fr.OrderArtworkUkey
                 and ad.ArtworkID = fr.ArtworkID
                 and a.id != '{artworkTypeID}'
                 and a.status != 'Closed') 
@@ -1178,7 +1173,7 @@ Group by    fr.orderID,
             fr.ArtworkID,
             fr.PatternCode,
             fr.PatternDesc,
-            fr.Remark,
+            fr.OrderArtworkUkey,
             fr.OrderQty,
 			fr.LocalSuppID,
             obq.OrderIDFrom,
@@ -1195,7 +1190,7 @@ select  tbbr.OrderIDFrom,
         tbbr.ArtworkID,
         tbbr.PatternCode,
         tbbr.PatternDesc,
-        tbbr.Remark,
+        tbbr.OrderArtworkUkey,
 		tbbr.LocalSuppID,
         [BuyBackQty] = sum(obq.Qty)
 into #tmpBuyBackFrom
@@ -1216,7 +1211,7 @@ group by    tbbr.OrderIDFrom,
             tbbr.ArtworkID,
             tbbr.PatternCode,
             tbbr.PatternDesc,
-            tbbr.Remark,
+            tbbr.OrderArtworkUkey,
 		    tbbr.LocalSuppID
 
 --推算出BuyBack的訂單可扣除的數量
@@ -1226,7 +1221,7 @@ select  tbbf.OrderIDFrom,
         tbbf.ArtworkID,
         tbbf.PatternCode,
         tbbf.PatternDesc,
-        tbbf.Remark,
+        tbbf.OrderArtworkUkey,
 		tbbf.LocalSuppID,
         [BuyBackReqedQty] = Sum(case when ArtworkReq.val = 0 then 0
                                      when    (OrderQty.val - ArtworkReq.val) > tbbf.BuyBackQty then tbbf.BuyBackQty
@@ -1253,7 +1248,7 @@ cross apply (   select val = isnull(sum(AD.ReqQty), 0)
                 and ad.SizeCode = tbbf.SizeCode
                 and ad.PatternCode = tbbf.PatternCode
                 and ad.PatternDesc = tbbf.PatternDesc
-                and ad.Remark = tbbf.Remark
+                and ad.OrderArtworkUkey = tbbf.OrderArtworkUkey
                 and ad.ArtworkID = tbbf.ArtworkID
                 and a.id != '{artworkTypeID}'
                 and a.status != 'Closed'
@@ -1264,7 +1259,7 @@ group by    tbbf.OrderIDFrom,
             tbbf.ArtworkID,
             tbbf.PatternCode,
             tbbf.PatternDesc,
-            tbbf.Remark,
+            tbbf.OrderArtworkUkey,
 		    tbbf.LocalSuppID
 
 --算出此次申請的訂單應該被扣掉多少數量
@@ -1274,7 +1269,7 @@ select  tbbr.orderID,
         tbbr.ArtworkID,
         tbbr.PatternCode,
         tbbr.PatternDesc,
-        tbbr.Remark,
+        tbbr.OrderArtworkUkey,
         tbbr.OrderQty,
         tbbr.OrderIDFrom,
         tbbr.BuyBackQty,
@@ -1289,7 +1284,7 @@ left join   #tmpBuyBackFromResult tbbfr on  tbbfr.OrderIDFrom = tbbr.OrderIDFrom
                                             tbbfr.SizeCodeFrom = tbbr.SizeCodeFrom       and
                                             tbbfr.PatternCode = tbbr.PatternCode     and
                                             tbbfr.PatternDesc = tbbr.PatternDesc     and
-                                            tbbfr.Remark = tbbr.Remark     and
+                                            tbbfr.OrderArtworkUkey = tbbr.OrderArtworkUkey     and
                                             tbbfr.ArtworkID = tbbr.ArtworkID and
 											tbbfr.LocalSuppID = tbbr.LocalSuppID
 outer apply (   select val = isnull(sum(AD.ReqQty), 0)
@@ -1301,7 +1296,7 @@ outer apply (   select val = isnull(sum(AD.ReqQty), 0)
                 and ad.SizeCode = tbbr.SizeCodeFrom
                 and ad.PatternCode = tbbr.PatternCode
                 and ad.PatternDesc = tbbr.PatternDesc
-                and ad.Remark = tbbr.Remark
+                and ad.OrderArtworkUkey = tbbr.OrderArtworkUkey
                 and ad.ArtworkID = tbbr.ArtworkID
                 and a.id != '{artworkTypeID}'
                 and a.status != 'Closed') BuyBackArtworkReq

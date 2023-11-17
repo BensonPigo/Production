@@ -123,7 +123,7 @@ select a.ID
     ,ad.PatternDesc
 	,ad.QtyGarment
     ,[Status],Exceed
-	,ad.Remark
+	,ad.OrderArtworkUkey
 from ArtworkReq a
 inner join ArtworkReq_Detail ad on a.ID = ad.ID 
 left join Orders o on ad.OrderID = o.ID
@@ -264,7 +264,7 @@ select aq.MDivisionID as [M]
 	,aqd.ArtworkId as [Pattern]
 	,aqd.PatternDesc as [Cutparts]
     ,aqd.ReqQty as [Q'ty]
-	,aq.Remark 
+	,aq.OrderArtworkUkey 
 from Artworkreq aq
 inner join Artworkreq_Detail aqd on aq.id = aqd.id
 left join orders o on aqd.OrderID = o.ID

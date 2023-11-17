@@ -280,7 +280,7 @@ namespace Sci.Production.Subcon
                                              t8 = row.Field<string>("Article"),
                                              t9 = row.Field<string>("SizeCode"),
                                              t10 = row.Field<decimal>("QtyGarment") == 0 ? 1 : row.Field<decimal>("QtyGarment"),
-                                             t11 = row.Field<string>("Remark"),
+                                             t11 = row.Field<string>("OrderArtworkUkey"),
                                          }
                                         into m
                                          select new
@@ -294,21 +294,21 @@ namespace Sci.Production.Subcon
                                              Article = m.Key.t8,
                                              SizeCode = m.Key.t9,
                                              QtyGarment = m.Key.t10,
-                                             Remark = m.Key.t11,
+                                             OrderArtworkUkey = m.Key.t11,
                                              ExceedQty =
                                              MyUtility.Convert.GetDecimal(
                                               (
                                               MyUtility.Convert.GetDecimal(dt.Compute(
                                                   "sum(ReqQty)",
                                                   $@"OrderID = '{m.Key.t1}' and ArtworkTypeID = '{m.Key.t2}' and artworkid = '{m.Key.t3}'
-                                                    and PatternCode = '{m.Key.t4}' and PatternDesc = '{m.Key.t5}' and Remark = '{m.Key.t11}' and Selected = 1"))
+                                                    and PatternCode = '{m.Key.t4}' and PatternDesc = '{m.Key.t5}' and OrderArtworkUkey = '{m.Key.t11}' and Selected = 1"))
                                              +
                                              MyUtility.Convert.GetDecimal(m.Sum(n => n.Field<decimal>("AccReqQty")))
                                              - MyUtility.Convert.GetDecimal(m.Sum(n => n.Field<int>("OrderQty")))) < 0 ? 0 :
                                               MyUtility.Convert.GetDecimal(dt.Compute(
                                                   "sum(ReqQty)",
                                                   $@"OrderID = '{m.Key.t1}' and ArtworkTypeID = '{m.Key.t2}' and artworkid = '{m.Key.t3}'
-                                                    and PatternCode = '{m.Key.t4}' and PatternDesc = '{m.Key.t5}' and Remark = '{m.Key.t11}' and Selected = 1"))
+                                                    and PatternCode = '{m.Key.t4}' and PatternDesc = '{m.Key.t5}' and OrderArtworkUkey = '{m.Key.t11}' and Selected = 1"))
                                              +
                                              MyUtility.Convert.GetDecimal(m.Sum(n => n.Field<decimal>("AccReqQty")))
                                              - MyUtility.Convert.GetDecimal(m.Sum(n => n.Field<int>("OrderQty")))),
@@ -334,7 +334,7 @@ namespace Sci.Production.Subcon
                                     ,[ArtworkId]  
                                     ,[PatternCode]
                                     ,[PatternDesc]
-                                    ,[Remark]
+                                    ,[OrderArtworkUkey]
                                     ,[Stitch]       
                                     ,[QtyGarment]   
                                     ,[ReqQty]
@@ -348,7 +348,7 @@ namespace Sci.Production.Subcon
                                     ,'{q2.artworkid}'  
                                     ,'{q2.PatternCode}'
                                     ,'{q2.PatternDesc}'
-                                    ,'{q2.Remark}'
+                                    ,'{q2.OrderArtworkUkey}'
                                     ,'{q2.stitch}'
                                     ,1      
                                     ,{q2.ReqQty}
@@ -372,7 +372,7 @@ namespace Sci.Production.Subcon
                                     ,[ArtworkId]  
                                     ,[PatternCode]
                                     ,[PatternDesc]
-                                    ,[Remark]
+                                    ,[OrderArtworkUkey]
                                     ,[Stitch]  
                                     ,[QtyGarment] 
                                     ,[ReqQty]
@@ -386,7 +386,7 @@ namespace Sci.Production.Subcon
                                     ,'{q2.artworkid}'  
                                     ,'{q2.PatternCode}'  
                                     ,'{q2.PatternDesc}'  
-                                    ,'{q2.Remark}'
+                                    ,'{q2.OrderArtworkUkey}'
                                     ,{q2.stitch}    
                                     ,{q2.QtyGarment}     
                                     ,{q2.ReqQty}
@@ -558,7 +558,7 @@ namespace Sci.Production.Subcon
 
             sqlCmd = $@"
 select Selected = 0
-        , LocalSuppID = isnull(rtrim(sao.LocalSuppId),'')
+        , LocalSuppID = isnull(rtrim(vsa.LocalSuppId),'')
         , o.FTYGroup
 		, [orderID] = o.ID
         , oa.Article
@@ -570,7 +570,7 @@ select Selected = 0
 		, stitch = iif(isnull(vsa.ActStitch,0) > 0, vsa.ActStitch, 1)
 		, [PatternCode] = isnull(oa.PatternCode,'')
 		, [PatternDesc] = isnull(oa.PatternDesc,'')
-		, [Remark] = isnull(oa.Remark,'')
+		, [OrderArtworkUkey] = isnull(oa.Ukey, 0)
 		, [qtygarment] = CONVERT(decimal, 1)
         , o.StyleID
 		, o.POID
@@ -579,21 +579,28 @@ select Selected = 0
 into #baseArtworkReq
 from  orders o WITH (NOLOCK) 
 inner join dbo.View_Order_Artworks oa on oa.ID = o.ID 
-left join dbo.View_Style_Artwork vsa on	vsa.StyleUkey = o.StyleUkey and vsa.Article = oa.Article and vsa.ArtworkID = oa.ArtworkID and
-														vsa.ArtworkName = oa.ArtworkName and vsa.ArtworkTypeID = oa.ArtworkTypeID and vsa.PatternCode = oa.PatternCode and
-														vsa.PatternDesc = oa.PatternDesc
-                                                        and vsa.Remark = oa.Remark
-left join Style_Artwork_Quot sao with (nolock) on   sao.Ukey = vsa.StyleArtworkUkey and 
+inner join factory f WITH (NOLOCK) on o.factoryid=f.id
+outer apply (
+	select vsa.ActStitch, sao.LocalSuppId
+	from  dbo.View_Style_Artwork vsa 
+	left join Style_Artwork_Quot sao with (nolock) on sao.Ukey = vsa.StyleArtworkUkey and 
                                                     sao.PriceApv = 'Y' and 
                                                     sao.Price > 0 and
                                                     sao.SizeCode = ''
-inner join factory f WITH (NOLOCK) on o.factoryid=f.id
+	where exists (select 1 from Style_Artwork sa where sa.StyleUkey = vsa.StyleUkey and vsa.StyleArtworkUkey = sa.Ukey and sa.Price = oa.Price and sa.Cost = oa.Cost)
+	and o.StyleUkey = vsa.StyleUkey
+	and oa.Article = vsa.Article
+	and oa.ArtworkID = vsa.ArtworkID
+	and oa.ArtworkTypeID = vsa.ArtworkTypeID
+	and oa.PatternCode = vsa.PatternCode	
+	and oa.PatternDesc = vsa.PatternDesc
+) vsa
 where f.IsProduceFty=1
 and oa.ArtworkTypeID = '{this.txtartworktype_ftyArtworkType.Text}'
 and o.category in ('B','S')
 and o.MDivisionID='{Sci.Env.User.Keyword}' 
 and (o.Junk=0 or o.Junk=1 and o.NeedProduction=1 or o.KeepPanels=1)
-and sao.LocalSuppId is not null
+and vsa.LocalSuppId is not null
 {sqlWhere}
 
 select  * into #FinalArtworkReq
@@ -615,7 +622,7 @@ select  LocalSuppID
 		, POID
         , ExceedQty
         , ArtworkTypeID
-        , Remark
+        , OrderArtworkUkey
 from #baseArtworkReq
 union all
 select Distinct LocalSuppID
@@ -635,7 +642,7 @@ select Distinct LocalSuppID
 		, POID
         , ExceedQty
         , ArtworkTypeID
-        , Remark
+        , OrderArtworkUkey
 from #baseArtworkReq t
 outer apply(select val = isnull(sum(oq.Qty),0)
             from Order_Qty oq with (nolock)
@@ -660,7 +667,7 @@ select Distinct LocalSuppID
 		, POID
         , ExceedQty
         , ArtworkTypeID
-        , Remark
+        , OrderArtworkUkey
 from #baseArtworkReq t
 outer apply(select val = isnull(sum(oq.Qty),0)
             from Order_Qty oq with (nolock)
@@ -685,7 +692,7 @@ select Distinct LocalSuppID
 		, POID
         , ExceedQty
         , ArtworkTypeID
-        , Remark
+        , OrderArtworkUkey
 from #baseArtworkReq t
 outer apply(select val = isnull(sum(oq.Qty),0)
             from Order_Qty oq with (nolock)
@@ -710,7 +717,7 @@ select  [Selected] = 0
 		, fr.stitch
 		, fr.PatternCode
 		, fr.PatternDesc
-		, fr.Remark
+		, fr.OrderArtworkUkey
 		, fr.qtygarment
         , fr.StyleID
 		, fr.POID
@@ -723,7 +730,7 @@ left join #tmpBuyBackDeduction tbbd on  tbbd.OrderID = fr.OrderID       and
                                         tbbd.SizeCode = fr.SizeCode     and
                                         tbbd.PatternCode = fr.PatternCode   and
                                         tbbd.PatternDesc = fr.PatternDesc   and
-                                        tbbd.Remark = fr.Remark   and
+                                        tbbd.OrderArtworkUkey = fr.OrderArtworkUkey   and
                                         tbbd.ArtworkID = fr.ArtworkID and
 										tbbd.LocalSuppID = fr.LocalSuppID
 outer apply (
@@ -736,7 +743,7 @@ outer apply (
         and ad.SizeCode = fr.SizeCode
         and ad.PatternCode = fr.PatternCode
         and ad.PatternDesc = fr.PatternDesc
-        and ad.Remark = fr.Remark
+        and ad.OrderArtworkUkey = fr.OrderArtworkUkey
         and ad.ArtworkID = fr.ArtworkID
         and a.status != 'Closed'
 ) ReqQty
