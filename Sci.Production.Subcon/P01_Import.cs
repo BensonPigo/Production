@@ -447,8 +447,7 @@ left join dbo.View_Style_Artwork vsa on	vsa.StyleUkey = bar.StyleUkey and
                                         vsa.ArtworkID = bar.ArtworkID and
                                         vsa.ArtworkTypeID = bar.ArtworkTypeID and 
                                         vsa.PatternCode = bar.PatternCode and
-										vsa.PatternDesc = bar.PatternDesc and
-										vsa.Remark = bar.Remark
+										vsa.PatternDesc = bar.PatternDesc
 left join Style_Artwork_Quot sao with (nolock) on   sao.Ukey = vsa.StyleArtworkUkey and 
                                                     sao.PriceApv = 'Y' and 
                                                     sao.Price > 0 and 
@@ -602,8 +601,7 @@ inner join dbo.Order_Artwork oa WITH (NOLOCK) on oa.ID = bar.OrderID and
                                                  oa.ArtworkTypeID = bar.ArtworkTypeID and
                                                  oa.ArtworkID = bar.ArtworkID      and
                                                  oa.PatternCode = bar.PatternCode  and
-                                                 oa.PatternDesc = bar.PatternDesc and
-                                                 oa.Remark = bar.Remark
+                                                 oa.PatternDesc = bar.PatternDesc
 {this.sqlFarmOutApply}
 where  ((o.Category = 'B' and  oa.price > 0) or (o.category !='B'))
 ";
