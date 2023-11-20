@@ -386,7 +386,7 @@ delete LineMappingBalancing_NotHitTargetReason where ID = '{this.CurrentMaintain
             decimal checkLBRCondition = this.StandardLBR;
 
             if (checkLBRCondition > 0 &&
-                MyUtility.Convert.GetDecimal(this.CurrentMaintain["LBRByGSDTime"]) < checkLBRCondition)
+                MyUtility.Convert.GetDecimal(this.CurrentMaintain["LBRByCycleTime"]) < checkLBRCondition)
             {
                 DialogResult dialogResult = CustomQuestionBox.ShowDialog($"[LBR By Cycle Time(%)] should not be lower than {checkLBRCondition}%, please double check and revise it, thanks!", string.Empty, "Confirm", "Close");
 
