@@ -226,7 +226,6 @@ outer apply (
 		and OrderID = o.ID 
         and ad.PatternCode= ''
         and ad.PatternDesc = ''
-        and ad.Remark = ''
         and ad.ArtworkID = '{this.CurrentMaintain["artworktypeid"]}'
         and a.id != '{this.CurrentMaintain["id"]}'
         and a.status != 'Closed'
@@ -279,7 +278,7 @@ outer apply(
 		where a.StyleUkey = o.StyleUkey
 		and a.Article = oa.Article and a.ArtworkID = oa.ArtworkID 
 		and a.ArtworkName = oa.ArtworkName and a.ArtworkTypeID = oa.ArtworkTypeID 
-		and a.PatternCode = oa.PatternCode and a.PatternDesc = oa.PatternDesc and a.Remark = oa.Remark 
+		and a.PatternCode = oa.PatternCode and a.PatternDesc = oa.PatternDesc
 		) s
 	where rowNo = 1 
 )vsa
@@ -294,7 +293,6 @@ outer apply (
 		and a.ArtworkTypeID = '{this.CurrentMaintain["ArtworktypeId"]}' 
 		and OrderID = o.ID and ad.PatternCode= isnull(oa.PatternCode,'')
         and ad.PatternDesc = isnull(oa.PatternDesc,'') 
-        and ad.Remark = isnull(oa.Remark,'') 
         and ad.ArtworkID = iif(oa.ArtworkID is null,'{this.CurrentMaintain["ArtworktypeId"]}' ,oa.ArtworkID)
         and a.status != 'Closed' and ad.ArtworkPOID =''
         and a.id != '{dr["id"]}'
@@ -318,7 +316,6 @@ and o.Junk=0
 and o.id = '{dr["OrderID"]}'
 and isnull(oa.PatternCode,'') = '{dr["PatternCode"]}'
 and isnull(oa.PatternDesc,'') = '{dr["PatternDesc"]}'
-and isnull(oa.Remark,'') = '{dr["Remark"]}'
 and isnull(oa.ArtworkID,ot.ArtworkTypeID) = '{dr["ArtworkId"]}'
 and ((o.Category = 'B' and  ot.InhouseOSP = 'O') or (o.category = 'S'))
 group by ReqQty.value,PoQty.value";
@@ -492,7 +489,6 @@ group by ReqQty.value,PoQty.value";
                     drCheck["ArtworkID"] = dr["ArtworkID", DataRowVersion.Original];
                     drCheck["PatternCode"] = dr["PatternCode", DataRowVersion.Original];
                     drCheck["PatternDesc"] = dr["PatternDesc", DataRowVersion.Original];
-                    drCheck["Remark"] = dr["Remark", DataRowVersion.Original];
                     drCheck["ReqQty"] = 0;
                 }
                 else
@@ -501,7 +497,6 @@ group by ReqQty.value,PoQty.value";
                     drCheck["ArtworkID"] = dr["ArtworkID"];
                     drCheck["PatternCode"] = dr["PatternCode"];
                     drCheck["PatternDesc"] = dr["PatternDesc"];
-                    drCheck["Remark"] = dr["Remark"];
                     drCheck["ReqQty"] = dr["ReqQty"];
                 }
 
@@ -1168,7 +1163,6 @@ where   exists( select 1
 		        and ad.OrderID = obq.OrderIDFrom
                 and ad.PatternCode = fr.PatternCode
                 and ad.PatternDesc = fr.PatternDesc
-                and ad.Remark = fr.Remark
                 and ad.ArtworkID = fr.ArtworkID
                 and a.id != '{artworkTypeID}'
                 and a.status != 'Closed') 
@@ -1253,7 +1247,6 @@ cross apply (   select val = isnull(sum(AD.ReqQty), 0)
                 and ad.SizeCode = tbbf.SizeCode
                 and ad.PatternCode = tbbf.PatternCode
                 and ad.PatternDesc = tbbf.PatternDesc
-                and ad.Remark = tbbf.Remark
                 and ad.ArtworkID = tbbf.ArtworkID
                 and a.id != '{artworkTypeID}'
                 and a.status != 'Closed'
@@ -1289,7 +1282,6 @@ left join   #tmpBuyBackFromResult tbbfr on  tbbfr.OrderIDFrom = tbbr.OrderIDFrom
                                             tbbfr.SizeCodeFrom = tbbr.SizeCodeFrom       and
                                             tbbfr.PatternCode = tbbr.PatternCode     and
                                             tbbfr.PatternDesc = tbbr.PatternDesc     and
-                                            tbbfr.Remark = tbbr.Remark     and
                                             tbbfr.ArtworkID = tbbr.ArtworkID and
 											tbbfr.LocalSuppID = tbbr.LocalSuppID
 outer apply (   select val = isnull(sum(AD.ReqQty), 0)
@@ -1301,7 +1293,6 @@ outer apply (   select val = isnull(sum(AD.ReqQty), 0)
                 and ad.SizeCode = tbbr.SizeCodeFrom
                 and ad.PatternCode = tbbr.PatternCode
                 and ad.PatternDesc = tbbr.PatternDesc
-                and ad.Remark = tbbr.Remark
                 and ad.ArtworkID = tbbr.ArtworkID
                 and a.id != '{artworkTypeID}'
                 and a.status != 'Closed') BuyBackArtworkReq
