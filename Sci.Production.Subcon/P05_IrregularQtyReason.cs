@@ -319,7 +319,6 @@ left join #tmpBuyBackDeduction tbbd on  tbbd.OrderID = s.OrderID       and
                                         tbbd.SizeCode = s.SizeCode     and
                                         tbbd.PatternCode = s.PatternCode   and
                                         tbbd.PatternDesc = s.PatternDesc   and
-                                        tbbd.Remark = s.Remark   and
                                         tbbd.ArtworkID = s.ArtworkID and
 										tbbd.LocalSuppID = ''
 outer apply(
@@ -328,7 +327,6 @@ outer apply(
 	where ad.ID = a.ID
 	and OrderID = o.ID and ad.PatternCode= isnull(s.PatternCode,'')
 	and ad.PatternDesc = isnull(s.PatternDesc,'') 
-	and ad.Remark = isnull(s.Remark,'') 
     and ad.ArtworkID = iif(s.ArtworkID is null,'{this._masterData["ArtworkTypeID"]}',s.ArtworkID)
 	{(isClosed ? string.Empty : $"and ad.id != '{this._ArtWorkReq_ID}'")}
 	and a.ArtworkTypeID = '{this._masterData["ArtworkTypeID"]}'

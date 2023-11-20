@@ -301,14 +301,14 @@ namespace Sci.Production.Subcon
                                               MyUtility.Convert.GetDecimal(dt.Compute(
                                                   "sum(ReqQty)",
                                                   $@"OrderID = '{m.Key.t1}' and ArtworkTypeID = '{m.Key.t2}' and artworkid = '{m.Key.t3}'
-                                                    and PatternCode = '{m.Key.t4}' and PatternDesc = '{m.Key.t5}' and Remark = '{m.Key.t11}' and Selected = 1"))
+                                                    and PatternCode = '{m.Key.t4}' and PatternDesc = '{m.Key.t5}' and Selected = 1"))
                                              +
                                              MyUtility.Convert.GetDecimal(m.Sum(n => n.Field<decimal>("AccReqQty")))
                                              - MyUtility.Convert.GetDecimal(m.Sum(n => n.Field<int>("OrderQty")))) < 0 ? 0 :
                                               MyUtility.Convert.GetDecimal(dt.Compute(
                                                   "sum(ReqQty)",
                                                   $@"OrderID = '{m.Key.t1}' and ArtworkTypeID = '{m.Key.t2}' and artworkid = '{m.Key.t3}'
-                                                    and PatternCode = '{m.Key.t4}' and PatternDesc = '{m.Key.t5}' and Remark = '{m.Key.t11}' and Selected = 1"))
+                                                    and PatternCode = '{m.Key.t4}' and PatternDesc = '{m.Key.t5}' and Selected = 1"))
                                              +
                                              MyUtility.Convert.GetDecimal(m.Sum(n => n.Field<decimal>("AccReqQty")))
                                              - MyUtility.Convert.GetDecimal(m.Sum(n => n.Field<int>("OrderQty")))),
@@ -582,7 +582,6 @@ inner join dbo.View_Order_Artworks oa on oa.ID = o.ID
 left join dbo.View_Style_Artwork vsa on	vsa.StyleUkey = o.StyleUkey and vsa.Article = oa.Article and vsa.ArtworkID = oa.ArtworkID and
 														vsa.ArtworkName = oa.ArtworkName and vsa.ArtworkTypeID = oa.ArtworkTypeID and vsa.PatternCode = oa.PatternCode and
 														vsa.PatternDesc = oa.PatternDesc
-                                                        and vsa.Remark = oa.Remark
 left join Style_Artwork_Quot sao with (nolock) on   sao.Ukey = vsa.StyleArtworkUkey and 
                                                     sao.PriceApv = 'Y' and 
                                                     sao.Price > 0 and
@@ -723,7 +722,6 @@ left join #tmpBuyBackDeduction tbbd on  tbbd.OrderID = fr.OrderID       and
                                         tbbd.SizeCode = fr.SizeCode     and
                                         tbbd.PatternCode = fr.PatternCode   and
                                         tbbd.PatternDesc = fr.PatternDesc   and
-                                        tbbd.Remark = fr.Remark   and
                                         tbbd.ArtworkID = fr.ArtworkID and
 										tbbd.LocalSuppID = fr.LocalSuppID
 outer apply (
@@ -736,7 +734,6 @@ outer apply (
         and ad.SizeCode = fr.SizeCode
         and ad.PatternCode = fr.PatternCode
         and ad.PatternDesc = fr.PatternDesc
-        and ad.Remark = fr.Remark
         and ad.ArtworkID = fr.ArtworkID
         and a.status != 'Closed'
 ) ReqQty
