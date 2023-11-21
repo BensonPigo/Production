@@ -148,7 +148,7 @@ SET NOCOUNT ON;
 		inner join (
 			select distinct poid,O.factoryid,O.BrandID,O.StyleID,O.SeasonID,O.Category,id ,CutInLine, o.OrderTypeID
 			from dbo.Orders o WITH (NOLOCK)  
-			 where O.Category in ('B')
+			 where O.Category in ('B','S','M','T','A')
 		) O on O.id = F.POID
 		left join DropDownList ddl with(nolock) on o.Category = ddl.ID and ddl.Type = 'Category'
 		inner join dbo.PO_Supp SP WITH (NOLOCK) on SP.id = F.POID and SP.SEQ1 = F.SEQ1
