@@ -12,22 +12,7 @@ namespace Sci.Production.Warehouse
     /// <inheritdoc/>
     public partial class R25 : Win.Tems.PrintForm
     {
-        private string KPIETA1;
-        private string KPIETA2;
-        private string WhseArrival1;
-        private string WhseArrival2;
-        private string ETA1;
-        private string ETA2;
-        private string WK1;
-        private string WK2;
-        private string SP1;
-        private string SP2;
-        private string Brand;
-        private string Supplier;
-        private string M;
-        private string Factorys;
-        private string MtlType;
-        private bool RecLessArv;
+        private string sqlcmd;
         private DataTable dataTable;
 
         /// <inheritdoc/>
@@ -91,59 +76,91 @@ namespace Sci.Production.Warehouse
                 return false;
             }
 
-            if (!MyUtility.Check.Empty(this.datekPIETA.Value1))
-            {
-                this.KPIETA1 = ((DateTime)this.datekPIETA.Value1).ToString("yyyy/MM/dd");
-                this.KPIETA2 = ((DateTime)this.datekPIETA.Value2).ToString("yyyy/MM/dd");
-            }
-            else
-            {
-                this.KPIETA1 = string.Empty;
-                this.KPIETA2 = string.Empty;
-            }
+            string kPIETA1 = !this.datekPIETA.HasValue1 ? "NULL" : "'" + ((DateTime)this.datekPIETA.Value1).ToString("yyyy/MM/dd") + "'";
+            string kPIETA2 = !this.datekPIETA.HasValue2 ? "NULL" : "'" + ((DateTime)this.datekPIETA.Value2).ToString("yyyy/MM/dd") + "'";
+            string whseArrival1 = !this.dateWhseArrival.HasValue1 ? "NULL" : "'" + ((DateTime)this.dateWhseArrival.Value1).ToString("yyyy/MM/dd") + "'";
+            string whseArrival2 = !this.dateWhseArrival.HasValue2 ? "NULL" : "'" + ((DateTime)this.dateWhseArrival.Value2).ToString("yyyy/MM/dd") + "'";
+            string eTA1 = !this.dateETA.HasValue1 ? "NULL" : "'" + ((DateTime)this.dateETA.Value1).ToString("yyyy/MM/dd") + "'";
+            string eTA2 = !this.dateETA.HasValue2 ? "NULL" : "'" + ((DateTime)this.dateETA.Value2).ToString("yyyy/MM/dd") + "'";
 
-            if (!MyUtility.Check.Empty(this.dateWhseArrival.Value1))
-            {
-                this.WhseArrival1 = ((DateTime)this.dateWhseArrival.Value1).ToString("yyyy/MM/dd");
-                this.WhseArrival2 = ((DateTime)this.dateWhseArrival.Value2).ToString("yyyy/MM/dd");
-            }
-            else
-            {
-                this.WhseArrival1 = string.Empty;
-                this.WhseArrival2 = string.Empty;
-            }
-
-            if (!MyUtility.Check.Empty(this.dateETA.Value1))
-            {
-                this.ETA1 = ((DateTime)this.dateETA.Value1).ToString("yyyy/MM/dd");
-                this.ETA2 = ((DateTime)this.dateETA.Value2).ToString("yyyy/MM/dd");
-            }
-            else
-            {
-                this.ETA1 = string.Empty;
-                this.ETA2 = string.Empty;
-            }
-
-            this.WK1 = this.txtWK1.Text;
-            this.WK2 = this.txtWK2.Text;
-            this.SP1 = this.txtSP1.Text;
-            this.SP2 = this.txtSP2.Text;
-            this.Brand = this.txtbrand1.Text;
-            this.Supplier = this.txtsupplier1.TextBox1.Text;
-            this.M = this.comboMDivision1.Text;
-            this.RecLessArv = this.chkRecLessArv.Checked;
-
-            if (!MyUtility.Check.Empty(this.txtfactory.Text))
-            {
-                this.Factorys = "'" + this.txtfactory.Text.Replace(",", "','") + "'";
-            }
-            else
-            {
-                this.Factorys = string.Empty;
-            }
-
-            this.MtlType = this.comboDropDownList1.SelectedValue.ToString();
-
+            this.sqlcmd = $@"
+SELECT
+    WK
+   ,ETA
+   ,FactoryID
+   ,Consignee
+   ,ShipModeID
+   ,CYCFS
+   ,Blno
+   ,Packages
+   ,Vessel
+   ,ProdFactory
+   ,OrderTypeID
+   ,ProjectID
+   ,Category
+   ,BrandID
+   ,SeasonID
+   ,StyleID
+   ,StyleName
+   ,PoID
+   ,Seq
+   ,Refno
+   ,Color
+   ,ColorName
+   ,[Description]
+   ,MtlType
+   ,SubMtlType
+   ,WeaveType
+   ,SuppID
+   ,SuppName
+   ,UnitID
+   ,SizeSpec
+   ,ShipQty
+   ,FOC
+   ,NetKg
+   ,WeightKg
+   ,ArriveQty
+   ,ArriveQtyStockUnit
+   ,FirstBulkSewInLine
+   ,FirstCutDate
+   ,ReceiveQty
+   ,TotalRollsCalculated
+   ,StockUnit
+   ,MCHandle
+   ,ContainerType
+   ,ContainerNo
+   ,PortArrival
+   ,WhseArrival
+   ,KPILETA
+   ,PFETA
+   ,EarliestSCIDelivery
+   ,EarlyDays
+   ,EarliestPFETA
+   ,MRMail
+   ,SMRMail
+   ,EditName
+FROM dbo.Warehouse_Report_R25 (
+    0--@ImportBI
+    ,NULL--@ImportBI StartTime
+    ,NULL--@ImportBI EndTime
+    ,'{this.txtWK1.Text}'--@WK1
+    ,'{this.txtWK2.Text}'--@WK2
+    ,'{this.txtSP1.Text}'--@POID1
+    ,'{this.txtSP2.Text}'--@POID2
+    ,'{this.txtsupplier1.TextBox1.Text}'--@SuppID
+    ,'{this.comboDropDownList1.SelectedValue.ToString().Replace("'", string.Empty)}'--@FabricType
+    ,{whseArrival1}--@WhseArrival1
+    ,{whseArrival2}--@WhseArrival2
+    ,{eTA1}--@Eta1
+    ,{eTA2}--@Eta2
+    ,'{this.txtbrand1.Text}'--@BrandID
+    ,'{this.comboMDivision1.Text}'--@MDivisionID
+    ,'{this.txtfactory.Text}'--@FactoryID
+    ,{kPIETA1}--@KPILETA1
+    ,{kPIETA2}--@KPILETA2
+    ,{(this.chkRecLessArv.Checked ? 1 : 0)}--@RecLessArv
+    )
+";
             return base.ValidateInput();
         }
 
@@ -151,295 +168,34 @@ namespace Sci.Production.Warehouse
         protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             DBProxy.Current.DefaultTimeout = 600;  // 加長時間為10分鐘，避免timeout
-            #region Set SQL Command & SQLParameter
-            string strSql = @"
-select
-	WK=ed.ID,
-	e.eta,
-	o.FactoryID,
-    e.Consignee,
-    e.ShipModeID,
-    e.CYCFS,
-    e.Blno,
-    e.Vessel,
-    [ProdFactory]=o.FactoryID,
-    o.OrderTypeID,
-	o.ProjectID,
-	Category = case when o.Category = 'B' then 'Bulk'
-					when o.Category = 'M' then 'Material'
-					when o.Category = 'S' then 'Sample'
-					when o.Category = 'T' then 'SMLT'
-					when o.Category = 'G' then 'Garment'
-					when o.Category = 'O' then 'Other'
-	end,
-	o.BrandID,
-    o.seasonid,
-    po.styleid,
-    s.StyleName,
-	ed.PoID,
-	seq = ed.Seq1+' '+ed.Seq2,
-	ed.Refno,
-	[Color] = psdsC.SpecValue,
-    [Color Name] = colName.value,	
-	[Description] = dbo.getmtldesc(ed.POID,ed.seq1,ed.seq2,2,0),
-	[MtlType]=case when ed.FabricType = 'F' then 'Fabric'
-				   when ed.FabricType = 'A' then 'Accessory' end,
-    f.MtlTypeID,
-	f.WeaveTypeID,
-	ed.suppid,
-	[SuppName] = supp.AbbEN,
-	ed.UnitId,
-	psd.StockUnit,
-    [MCHandle] = iif(mc.Name is null, o.MCHandle, o.MCHandle + ' ' + mc.Name),
-    SizeSpec= isnull(psdsS.SpecValue, ''),
-    [ShipQty]=ed.Qty,
-    ed.FOC,
-    ed.NetKg,
-    ed.WeightKg,
-	[ArriveQty]=isnull(ed.Qty,0)+isnull(ed.foc,0),
-    [ContainerType] = ContainerType.Val,
-    [ContainerNo] = ContainerNo.Val,
-    e.PortArrival,
-	e.WhseArrival,
-	o.KPILETA,
-	 (SELECT MinSciDelivery FROM DBO.GetSCI(ed.Poid,o.Category)) as [Earliest SCI Delivery],
-	EarlyDays=DATEDIFF(day,e.WhseArrival,o.KPILETA),
-	[MR_Mail]=TEPPOHandle.Email,
-    [SMR_Mail]=TEPPOSMR.Email,
-    [EditName]=dbo.getTPEPass1(e.EditName),
-	t.TotalRollsCalculated,
-    a.PFETA,
-	[FirstBulkSewInLine] = SewInLine.val,
-	[FirstCutDate] = c.FirstCutDate
-INTO #tmp
-from Export e
-Inner join Export_Detail ed on e.ID = ed.ID
-inner join orders o on o.id = ed.poid
-left join Style s with (nolock) on s.Ukey = o.StyleUkey
-left join supp on supp.id = ed.suppid
-left join PO_Supp_Detail psd on psd.id = ed.PoID and psd.SEQ1 = ed.Seq1 and psd.SEQ2 = ed.Seq2
-left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
-left join PO_Supp_Detail_Spec psdsS WITH (NOLOCK) on psdsS.ID = psd.id and psdsS.seq1 = psd.seq1 and psdsS.seq2 = psd.seq2 and psdsS.SpecColumnID = 'Size'
-left join po on po.id = ed.PoID
-left join TPEPass1 TEPPOHandle on TEPPOHandle.id = po.POHandle
-left join TPEPass1 TEPPOSMR on TEPPOSMR.id = po.POSMR
-left join Pass1 mc with (nolock) on mc.ID = o.MCHandle
-left join Fabric f with(nolock)on f.SCIRefno = psd.SCIRefno
-left join Cutting c with(NOLOCK) on c.id = o.CuttingSP
-outer APPLY(
-	select [value] = stuff((select concat('/', c2.Name)
-			   from dbo.Color as c
-			   LEFT join dbo.Color_multiple as m on m.ID = c.ID 
-				  								    and m.BrandID = c.BrandId
-               left join color c2 on c2.id = m.ColorID and c2.BrandID = m.BrandID
-			   where c.ID = isnull(psdsC.SpecValue, '') and c.BrandId = o.BrandID
-			   order by m.Seqno
-			   for xml path(''))
-			 , 1, 1, '')
-)colName
-OUTER APPLY(
-		SELECT [Val] = STUFF((
-		SELECT DISTINCT ','+esc.ContainerType
-		FROM Export_ShipAdvice_Container esc
-		WHERE esc.Export_DetailUkey=ed.Ukey
-		AND esc.ContainerType <> '' AND esc.ContainerNo <> ''
-		FOR XML PATH('')
-	),1,1,'')
-)ContainerType
-OUTER APPLY(
-		SELECT [Val] = STUFF((
-		SELECT DISTINCT ','+esc.ContainerNo
-		FROM Export_ShipAdvice_Container esc
-		WHERE esc.Export_DetailUkey=ed.Ukey
-		AND esc.ContainerType <> '' AND esc.ContainerNo <> ''
-		FOR XML PATH('')
-	),1,1,'')
-)ContainerNo
-OUTER apply(
-	select [TotalRollsCalculated] = count(1)
-	from Receiving r WITH (NOLOCK) 
-    inner join Receiving_Detail rd WITH (NOLOCK) on r.id = rd.id
-	where ed.FabricType='F'
-            and e.ID = r.ExportID
-			and r.status = 'Confirmed'
-			and rd.PoId = ed.POID 
-			and rd.Seq1 = ed.SEQ1 
-			and rd.Seq2 = ed.SEQ2 
-			AND ed.FabricType='F'
-) t
-outer apply
-(
-	select PFETA = Min (PFETA)
-	from Orders 
-	where PoID = o.poID 
-)a
-OUTER APPLY
-(
-	select val = min(SewInLine )
-	from Orders  
-	where 
-	POID = o.poid and
-	Category = 'B'
-)SewInLine
-where exists (select 1 from Factory where o.FactoryId = id and IsProduceFty = 1)
-and ed.PoType = 'G' 
-
-";
-            if (!MyUtility.Check.Empty(this.KPIETA1))
-            {
-                strSql += $@" and o.KPILETA between '{this.KPIETA1}' and '{this.KPIETA2}' ";
-            }
-
-            if (!MyUtility.Check.Empty(this.WhseArrival1))
-            {
-                strSql += $@" and e.WhseArrival between '{this.WhseArrival1}' and '{this.WhseArrival2}' ";
-            }
-
-            if (!MyUtility.Check.Empty(this.ETA1))
-            {
-                strSql += $@" and e.eta between '{this.ETA1}' and '{this.ETA2}' ";
-            }
-
-            if (!MyUtility.Check.Empty(this.WK1))
-            {
-                strSql += $@" and ed.ID >= '{this.WK1}' ";
-            }
-
-            if (!MyUtility.Check.Empty(this.WK2))
-            {
-                strSql += $@" and ed.ID <= '{this.WK2}' ";
-            }
-
-            if (!MyUtility.Check.Empty(this.SP1))
-            {
-                strSql += $@" and ed.PoID >= '{this.SP1}' ";
-            }
-
-            if (!MyUtility.Check.Empty(this.SP2))
-            {
-                strSql += $@" and ed.PoID <= '{this.SP2}' ";
-            }
-
-            if (!MyUtility.Check.Empty(this.Brand))
-            {
-                strSql += $@" and o.BrandID = '{this.Brand}' ";
-            }
-
-            if (!MyUtility.Check.Empty(this.Supplier))
-            {
-                strSql += $@" and ed.suppid = '{this.Supplier}' ";
-            }
-
-            if (!MyUtility.Check.Empty(this.M))
-            {
-                strSql += $@" and o.MDivisionID = '{this.M}' ";
-            }
-
-            if (!MyUtility.Check.Empty(this.Factorys))
-            {
-                strSql += $@" and o.FactoryID in ({this.Factorys}) ";
-            }
-
-            strSql += $@" and ed.FabricType in ({this.MtlType})";
-
-            strSql += $@"
-
- select 
-	WK, t.eta, t.FactoryID, Consignee, ShipModeID, CYCFS, Blno,
-    Packages =  (select [Packages] = sum(e2.Packages)from Export e2 with (nolock) where e2.Blno = t.Blno),
-    Vessel, [ProdFactory], OrderTypeID, ProjectID, Category ,
-	BrandID, seasonid, styleid, t.StyleName, t.PoID, seq, Refno,[Color],[Color Name],[Description], [MtlType],MtlTypeID ,WeaveTypeID, suppid, [SuppName] 
-	, UnitId
-	, SizeSpec,
-    [ShipQty]=SUM(t.ShipQty),
-    [FOC]=SUM(FOC),
-    [NetKg]=SUM(NetKg),
-    [WeightKg]=SUM(WeightKg),
-    [ArriveQty]=  SUM(ArriveQty),
-    [ArriveQty_StockUnit]=dbo.[GetUnitQty](UnitId,StockUnit,SUM(ArriveQty)),
-	t.[FirstBulkSewInLine],
-	t.[FirstCutDate],
-    Receiving_Detail.ReceiveQty,
-    t.TotalRollsCalculated,
-	StockUnit,
-    t.MCHandle,
-    [ContainerType] ,[ContainerNo] ,PortArrival,t.WhseArrival,
-    KPILETA,
-    t.PFETA,
-	[Earliest SCI Delivery],
-	EarlyDays,
-    [Earliest PF ETA] = DATEDIFF (day,WhseArrival,t.PFETA),
-	[MR_Mail],
-    [SMR_Mail],
-    t.EditName
- from #tmp t
-OUTER APPLY(
-	SELECT [ReceiveQty]=SUM(rd.StockQty)
-	FROM Receiving r 
-	INNER JOIN Receiving_Detail rd ON rd.ID = r.ID AND rd.PoId = t.PoID ANd rd.Seq1 + ' ' +rd.Seq2 = t.Seq
-	WHERE t.WK = r.ExportId AND r.Status = 'Confirmed'
-)Receiving_Detail
- GROUP BY 
-	WK,t.eta,t.FactoryID,Consignee,ShipModeID,CYCFS,Blno,Vessel,[ProdFactory],OrderTypeID,ProjectID,Category ,BrandID, seasonid,styleid,t.PoID,seq,
-	Refno,[Color] ,[Description],[MtlType],WeaveTypeID,suppid,[SuppName] ,UnitId,SizeSpec,[ContainerType] ,[ContainerNo] ,PortArrival,[Color Name],
-    t.WhseArrival,KPILETA,[Earliest SCI Delivery],EarlyDays,[MR_Mail],[SMR_Mail],t.EditName,ReceiveQty,StockUnit, t.MCHandle, t.StyleName, t.TotalRollsCalculated, MtlTypeID,t.PFETA,t.[FirstBulkSewInLine],t.[FirstCutDate]
-HAVING 1=1
-";
-            if (this.RecLessArv)
-            {
-                strSql += $@" AND  (Receiving_Detail.ReceiveQty is null or (Receiving_Detail.ReceiveQty < dbo.[GetUnitQty](UnitId,StockUnit,SUM(ArriveQty))))  ";
-            }
-
-            strSql += $@"drop table #tmp";
-
-            #endregion
-            #region SQL Data Loading...
-            DualResult result = DBProxy.Current.Select(null, strSql, out this.dataTable);
-            #endregion
-
+            DualResult result = DBProxy.Current.Select(null, this.sqlcmd, out this.dataTable);
             DBProxy.Current.DefaultTimeout = 300;  // timeout時間改回5分鐘
-            if (result)
-            {
-                return Ict.Result.True;
-            }
-            else
-            {
-                return new DualResult(false, "Query data fail\r\n" + result.ToString());
-            }
+            return result;
         }
 
         /// <inheritdoc/>
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
-            if (this.dataTable != null && this.dataTable.Rows.Count > 0)
+            this.SetCount(this.dataTable.Rows.Count);
+            if (this.dataTable.Rows.Count == 0)
             {
-                this.SetCount(this.dataTable.Rows.Count);
-                this.ShowWaitMessage("Excel Processing...");
-
-                Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Warehouse_R25.xltx"); // 預先開啟excel app
-                Sci.Utility.Report.ExcelCOM com = new Sci.Utility.Report.ExcelCOM(Sci.Env.Cfg.XltPathDir + "\\Warehouse_R25.xltx", objApp);
-                com.ColumnsAutoFit = false;
-                com.WriteTable(this.dataTable, 2);
-
-                Excel.Worksheet worksheet = objApp.Sheets[1];
-                this.CreateCustomizedExcel(ref worksheet);
-                this.HideWaitMessage();
-                #region Save & Show Excel
-                string strExcelName = Class.MicrosoftFile.GetName("Warehouse_R25");
-                objApp.ActiveWorkbook.SaveAs(strExcelName);
-                objApp.Quit();
-                Marshal.ReleaseComObject(objApp);
-                Marshal.ReleaseComObject(worksheet);
-
-                strExcelName.OpenFile();
-                #endregion
-            }
-            else
-            {
-                this.SetCount(0);
-                MyUtility.Msg.InfoBox("Data not found!!");
+                MyUtility.Msg.WarningBox("Data not found!!");
+                return false;
             }
 
+            this.ShowWaitMessage("Excel Processing...");
+            string fileName = "Warehouse_R25";
+            string fileNamexltx = fileName + ".xltx";
+            Excel.Application excelApp = new Excel.Application();
+            Utility.Report.ExcelCOM com = new Utility.Report.ExcelCOM(Sci.Env.Cfg.XltPathDir + "\\" + fileNamexltx, excelApp) { ColumnsAutoFit = false };
+            com.WriteTable(this.dataTable, 2);
+            Excel.Worksheet worksheet = excelApp.Sheets[1];
+            this.CreateCustomizedExcel(ref worksheet);
+            string excelfile = Class.MicrosoftFile.GetName(fileName);
+            excelApp.ActiveWorkbook.SaveAs(excelfile);
+            excelApp.Visible = true;
+            Marshal.ReleaseComObject(excelApp);
+            this.HideWaitMessage();
             return true;
         }
     }
