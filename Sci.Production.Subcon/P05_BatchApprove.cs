@@ -264,10 +264,11 @@ select aq.MDivisionID as [M]
 	,aqd.ArtworkId as [Pattern]
 	,aqd.PatternDesc as [Cutparts]
     ,aqd.ReqQty as [Q'ty]
-	,aq.OrderArtworkUkey 
+	,[Remark] = isnull(oa.Remark, '')
 from Artworkreq aq
 inner join Artworkreq_Detail aqd on aq.id = aqd.id
 left join orders o on aqd.OrderID = o.ID
+left join Order_Artwork oa with (nolock) on aqd.OrderArtworkUkey = oa.Ukey
 where 
 (
     (aq.Status = 'Locked' and Exceed = 1) 

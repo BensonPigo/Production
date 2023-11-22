@@ -291,7 +291,8 @@ where id ='{this.dr_artworkReq["artworktypeid"]}'
                 .Text("SizeCode", header: "Size", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Numeric("stitch", header: caption_stitch, iseditingreadonly: true)
                 .Text("PatternCode", header: "Cut. Part", iseditingreadonly: true)
-                .Text("PatternDesc", header: "Cut. Part Name", iseditingreadonly: true, width: Widths.AnsiChars(15))
+                .Text("PatternDesc", header: "Cut. Part Name", width: Widths.AnsiChars(15), iseditingreadonly: true)
+                .Text("Remark", header: "Remark", width: Widths.AnsiChars(15), iseditingreadonly: true)
                 .Numeric("qtygarment", header: "Qty/GMT", iseditable: true, integer_places: 2, iseditingreadonly: true)
                 ;
             this.gridBatchImport.Columns["ReqQty"].DefaultCellStyle.BackColor = Color.Pink;
@@ -380,6 +381,7 @@ select  distinct
 		, o.POID
         , id = ''
         , ExceedQty = 0
+        , Remark = ISNULL(oa.Remark, '')
         , OrderArtworkUkey = ISNULL(oa.Ukey, 0)
 into #baseArtworkReq
 from  orders o WITH (NOLOCK)
@@ -424,6 +426,7 @@ select  distinct
 		, o.POID
         , id = ''
         , ExceedQty = 0
+        , Remark = ISNULL(oa.Remark, '')
         , OrderArtworkUkey = ISNULL(oa.Ukey, 0)
 into #baseArtworkReq
 from  orders o WITH (NOLOCK) 
@@ -475,6 +478,7 @@ select  [LocalSuppId] = '{this.dr_artworkReq["LocalSuppId"]}'
 		, o.POID
         , id = ''
         , ExceedQty = 0
+        , Remark = ''
         , OrderArtworkUkey = 0
 into #baseArtworkReq
 from  Order_TmsCost ot
@@ -516,6 +520,7 @@ select  LocalSuppId
 		,POID
         ,id
         ,ExceedQty
+        ,Remark
         ,OrderArtworkUkey
 from #baseArtworkReq
 union all
@@ -535,6 +540,7 @@ select  [LocalSuppId] = isnull(LocalSuppId.val,'')
 		,POID
         ,id
         ,ExceedQty
+        ,Remark
         ,OrderArtworkUkey
 from #baseArtworkReq t
 outer apply (select top 1 val = LocalSuppId
@@ -567,6 +573,8 @@ group by     LocalSuppId.val
 		    ,POID
             ,id
             ,ExceedQty
+            ,Remark
+            ,OrderArtworkUkey
             ,OrderQty.val
 union all
 select  [LocalSuppId] = isnull(LocalSuppId.val,'')
@@ -585,6 +593,7 @@ select  [LocalSuppId] = isnull(LocalSuppId.val,'')
 		,POID
         ,id
         ,ExceedQty
+        ,Remark
         ,OrderArtworkUkey
 from #baseArtworkReq t
 outer apply (select top 1 val = LocalSuppId
@@ -617,6 +626,8 @@ group by     LocalSuppId.val
 		    ,POID
             ,id
             ,ExceedQty
+            ,Remark
+            ,OrderArtworkUkey
             ,OrderQty.val
 union all
 select  [LocalSuppId] = isnull(LocalSuppId.val,'')
@@ -635,6 +646,7 @@ select  [LocalSuppId] = isnull(LocalSuppId.val,'')
 		,POID
         ,id
         ,ExceedQty
+        ,Remark
         ,OrderArtworkUkey
 from #baseArtworkReq t
 outer apply (select top 1 val = LocalSuppId
@@ -664,6 +676,8 @@ group by     LocalSuppId.val
 		    ,POID
             ,id
             ,ExceedQty
+            ,Remark
+            ,OrderArtworkUkey
             ,OrderQty.val
 ) a
 
@@ -690,6 +704,7 @@ select  [Selected] = 0
 		,fr.POID
         ,fr.id
         ,fr.ExceedQty
+        ,fr.Remark
         ,[BuyBackArtworkReq] = isnull(tbbd.BuyBackArtworkReq, 0)
         ,o.FactoryID
         ,f.IsProduceFty

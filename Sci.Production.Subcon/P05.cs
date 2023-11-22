@@ -78,32 +78,34 @@ namespace Sci.Production.Subcon
             this.DetailSelectCommand = string.Format(
                 @"
 select 
-ap.OrderID
-,o.StyleID
-,ap.Article
-,ap.SizeCode
-,o.SewInLine
-,o.SciDelivery
-,ap.ArtworkID
-,ap.PatternCode
-,ap.PatternDesc
-,ap.ReqQty
-,ap.Stitch
-,ap.QtyGarment
-,[Farmout] = isnull(apo.Farmout,0)
-,[Farmin] = isnull(apo.Farmin,0)
-,[ApQty] = isnull(apo.ApQty,0)
-,ap.ExceedQty
-,ap.ArtworkPOID
-,ap.id
-,ap.ukey
-,o.FactoryID
-,f.IsProduceFty
-,ap.OrderArtworkUkey
+    ap.OrderID
+    ,o.StyleID
+    ,ap.Article
+    ,ap.SizeCode
+    ,o.SewInLine
+    ,o.SciDelivery
+    ,ap.ArtworkID
+    ,ap.PatternCode
+    ,ap.PatternDesc
+    ,ap.ReqQty
+    ,ap.Stitch
+    ,ap.QtyGarment
+    ,[Farmout] = isnull(apo.Farmout,0)
+    ,[Farmin] = isnull(apo.Farmin,0)
+    ,[ApQty] = isnull(apo.ApQty,0)
+    ,ap.ExceedQty
+    ,ap.ArtworkPOID
+    ,ap.id
+    ,ap.ukey
+    ,o.FactoryID
+    ,f.IsProduceFty
+    ,ap.OrderArtworkUkey
+    ,oa.Remark
 from dbo.ArtworkReq_Detail ap with (nolock)
 left join dbo.Orders o with (nolock) on ap.OrderID = o.id
 left join Factory f with (nolock) on f.ID = o.FactoryID
 left join dbo.ArtworkPO_Detail apo with (nolock) on apo.ArtworkReq_Detailukey = ap.ukey
+left join Order_Artwork oa with (nolock) on ap.OrderArtworkUkey = oa.Ukey
 where ap.id = '{0}'  
 ORDER BY ap.OrderID   ", masterID);
 
@@ -345,6 +347,7 @@ group by ReqQty.value,PoQty.value";
             .Text("SizeCode", header: "Size", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Text("patterncode", header: "Cut Part", width: Widths.AnsiChars(5), iseditingreadonly: true)
             .Text("PatternDesc", header: "Cut Part Name", width: Widths.AnsiChars(20), iseditingreadonly: true)
+            .Text("Remark", header: "Remark", width: Widths.AnsiChars(15), iseditingreadonly: true)
             .Numeric("ReqQty", header: "Req. Qty", width: Widths.AnsiChars(6), settings: col_ReqQty) // 可編輯
             .Numeric("stitch", header: "PCS/Stitch", width: Widths.AnsiChars(3)) // 可編輯
             .Numeric("qtygarment", header: "Qty/GMT", width: Widths.AnsiChars(5), maximum: 99, integer_places: 2) // 可編輯

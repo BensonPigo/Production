@@ -157,7 +157,8 @@ namespace Sci.Production.Subcon
                 .Text("SizeCode", header: "Size", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Numeric("stitch", header: "PCS/Stitch", iseditingreadonly: true)
                 .Text("PatternCode", header: "Cut. Part", iseditingreadonly: true)
-                .Text("PatternDesc", header: "Cut. Part Name", iseditingreadonly: true, width: Widths.AnsiChars(15))
+                .Text("PatternDesc", header: "Cut. Part Name", width: Widths.AnsiChars(15), iseditingreadonly: true)
+                .Text("Remark", header: "Remark", width: Widths.AnsiChars(15), iseditingreadonly: true)
                 .Numeric("qtygarment", header: "Qty/GMT", iseditable: true, integer_places: 2, iseditingreadonly: true)
                 ;
             #endregion
@@ -576,6 +577,7 @@ select Selected = 0
 		, o.POID
         , [ExceedQty] = 0
         , [ArtworkTypeID] = oa.ArtworkTypeID
+        , [Remark] = oa.Remark
 into #baseArtworkReq
 from  orders o WITH (NOLOCK) 
 inner join dbo.View_Order_Artworks oa on oa.ID = o.ID 
@@ -623,6 +625,7 @@ select  LocalSuppID
         , ExceedQty
         , ArtworkTypeID
         , OrderArtworkUkey
+        , Remark
 from #baseArtworkReq
 union all
 select Distinct LocalSuppID
@@ -643,6 +646,7 @@ select Distinct LocalSuppID
         , ExceedQty
         , ArtworkTypeID
         , OrderArtworkUkey
+        , Remark
 from #baseArtworkReq t
 outer apply(select val = isnull(sum(oq.Qty),0)
             from Order_Qty oq with (nolock)
@@ -668,6 +672,7 @@ select Distinct LocalSuppID
         , ExceedQty
         , ArtworkTypeID
         , OrderArtworkUkey
+        , Remark
 from #baseArtworkReq t
 outer apply(select val = isnull(sum(oq.Qty),0)
             from Order_Qty oq with (nolock)
@@ -693,6 +698,7 @@ select Distinct LocalSuppID
         , ExceedQty
         , ArtworkTypeID
         , OrderArtworkUkey
+        , Remark
 from #baseArtworkReq t
 outer apply(select val = isnull(sum(oq.Qty),0)
             from Order_Qty oq with (nolock)
@@ -723,6 +729,7 @@ select  [Selected] = 0
 		, fr.POID
         , fr.ExceedQty
         , fr.ArtworkTypeID
+        , fr.Remark
         , [BuyBackArtworkReq] = isnull(tbbd.BuyBackArtworkReq, 0)
 from #FinalArtworkReq fr
 left join #tmpBuyBackDeduction tbbd on  tbbd.OrderID = fr.OrderID       and
