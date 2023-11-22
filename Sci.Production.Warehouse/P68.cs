@@ -328,13 +328,12 @@ namespace Sci.Production.Warehouse
 				            select n=Remark
 				            from(
                                 SELECT DISTINCT iss.Remark
-                                FROM #issueDtl idt
-                                INNER JOIN Issue_Summary iss
-                                    ON iss.Id = idt.issueid
-                                WHERE cl.ID = idt.ID--裁剪計畫單號
-                                AND cl.POID = idt.POID
+                                FROM issue i
+                                INNER JOIN Issue_Summary iss ON iss.Id = i.ID
+                                WHERE cl.ID = i.CutplanID
+                                AND cl.POID = iss.POID
                                 AND cl.SCIRefno = iss.SCIRefno
-                                AND cl.Color = idt.Color
+                                AND cl.Color = iss.Colorid
                                 AND iss.Remark <> ''
 				            )d  order by Remark
 				            for xml path('')
