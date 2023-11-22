@@ -316,13 +316,12 @@ OUTER APPLY (SELECT
 OUTER APPLY (
     SELECT WHRemark = STUFF((
     SELECT DISTINCT CONCAT(',', CHAR(10), iss.Remark)
-    FROM #issueDtl idt
-    INNER JOIN Issue_Summary iss
-        ON iss.Id = idt.issueid
-    WHERE cl.ID = idt.ID--裁剪計畫單號
-    AND cl.POID = idt.POID
+    FROM issue i
+    INNER JOIN Issue_Summary iss ON iss.Id = i.ID
+    WHERE cl.ID = i.CutplanID
+    AND cl.POID = iss.POID
     AND cl.SCIRefno = iss.SCIRefno
-    AND cl.Color = idt.Color
+    AND cl.Color = iss.ColorID
     AND iss.Remark <> ''
     FOR XML PATH('')
     ), 1, 2, '')) IssueSummary　 --串Issue Summary取Remark
