@@ -3858,6 +3858,11 @@ and SEQ1='{this.CurrentDetailData["Seq1"]}' and SEQ2='{this.CurrentDetailData["S
 
         private void DisplayTime_DoubleClick(object sender, EventArgs e)
         {
+            if (this.EditMode)
+            {
+                return;
+            }
+
             if (this.CurrentDetailData == null)
             {
                 return;
