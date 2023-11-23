@@ -36,9 +36,9 @@ SET NOCOUNT ON;
 		AND (@ArrivalEndDate is null or rd.WhseArrival <= @ArrivalEndDate)
 		AND
 		(
-			((@StartDate IS NULL AND @EndDate IS NULL) OR f.AddDate >= DATEADD(MONTH, -3, GETDATE()) AND f.AddDate <= @EndDate)
+			((@StartDate IS NULL AND @EndDate IS NULL) OR f.AddDate >= @StartDate AND f.AddDate <= @EndDate)
 			OR
-			((@StartDate IS NULL AND @EndDate IS NULL) OR f.EditDate >= DATEADD(MONTH, -3, GETDATE()) AND f.EditDate <= @EndDate)
+			((@StartDate IS NULL AND @EndDate IS NULL) OR f.EditDate >= @StartDate AND f.EditDate <= @EndDate)
 		)
 		GROUP BY rd.poid,rd.seq1,rd.seq2,RD.ID
 	), TmpDataProcessing AS(
@@ -124,12 +124,14 @@ SET NOCOUNT ON;
 		,[TotalPointA] = isnull(fpta.TotalPoint, 0)
 		,F.AddDate
 		,F.EditDate
+		,t.StockType
 		from dbo.FIR F WITH (NOLOCK) 
 		cross apply(
 			select rd.WhseArrival,rd.InvNo,rd.ExportId,rd.Id,rd.PoId,RD.seq1,RD.seq2
 			,[StockQty] = sum(RD.StockQty)
 			,[InvStock] = iif(rd.StockType = 'I', sum(RD.StockQty), 0)
 			,[BulkStock] = iif(rd.StockType = 'B', sum(RD.StockQty), 0)
+			,[StockType] = rd.StockType
 			,TotalRollsCalculated = count(1)
 			from dbo.View_AllReceivingDetail rd WITH (NOLOCK) 
 			where rd.PoId = F.POID and rd.Seq1 = F.SEQ1 and rd.Seq2 = F.SEQ2 AND rd.Id=F.ReceivingID
@@ -137,16 +139,16 @@ SET NOCOUNT ON;
 			AND (@ArrivalEndDate is null or rd.WhseArrival <= @ArrivalEndDate)
 			AND
 			(
-				((@StartDate IS NULL AND @EndDate IS NULL) OR f.AddDate >= CONVERT(VARCHAR(10), DATEADD(MONTH, -3, GETDATE()), 120) AND f.AddDate <= @EndDate)
+				((@StartDate IS NULL AND @EndDate IS NULL) OR f.AddDate >= @StartDate AND f.AddDate <= @EndDate)
 				OR
-				((@StartDate IS NULL AND @EndDate IS NULL) OR f.EditDate >= CONVERT(VARCHAR(10), DATEADD(MONTH, -3, GETDATE()), 120) AND f.EditDate <= @EndDate)
+				((@StartDate IS NULL AND @EndDate IS NULL) OR f.EditDate >= @StartDate AND f.EditDate <= @EndDate)
 			)
 			group by rd.WhseArrival,rd.InvNo,rd.ExportId,rd.Id,rd.PoId,RD.seq1,RD.seq2,rd.StockType
 		) t
 		inner join (
 			select distinct poid,O.factoryid,O.BrandID,O.StyleID,O.SeasonID,O.Category,id ,CutInLine, o.OrderTypeID
 			from dbo.Orders o WITH (NOLOCK)  
-			 where O.Category in ('B')
+			 where O.Category in ('B','S','M','T','A')
 		) O on O.id = F.POID
 		left join DropDownList ddl with(nolock) on o.Category = ddl.ID and ddl.Type = 'Category'
 		inner join dbo.PO_Supp SP WITH (NOLOCK) on SP.id = F.POID and SP.SEQ1 = F.SEQ1
@@ -379,6 +381,7 @@ SET NOCOUNT ON;
 		,[LocalMR]
 		,[OrderType]
 		,[ReceivingID]
+		,[StockType]
 		,[AddDate]
 		,[EditDate]
 		from TmpDataProcessing
