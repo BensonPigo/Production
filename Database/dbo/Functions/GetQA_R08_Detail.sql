@@ -50,6 +50,7 @@ RETURNS @returntable TABLE
     Remark nvarchar(60),
     MCHandle varchar(45),
     WeaveType varchar(20),
+	ReceivingID varchar(13),
     AddDate datetime,
     EditDate datetime
 )
@@ -109,6 +110,7 @@ BEGIN
                              ,Remark
                              ,MCHandle
                              ,WeaveType
+							 ,ReceivingID
                              ,AddDate
                              ,EditDate
 )
@@ -151,6 +153,7 @@ BEGIN
             ,[Remark]=FP.Remark
             ,[MCHandle]= isnull(dbo.getPass1_ExtNo(o.MCHandle), '')
             ,isnull(Fabric.WeaveTypeID, '')
+			,[ReceivingID] = isnull(RD.ID,'')
             ,fp.AddDate
 	        ,fp.EditDate
     FROM System, FIR_Physical AS FP
