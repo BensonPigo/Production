@@ -42,6 +42,7 @@
     [UnfinishedCuttingReason] VARCHAR (50)   CONSTRAINT [DF_WorkOrder_UnfinishedCuttingReason] DEFAULT ('') NOT NULL,
     [Tone]                    VARCHAR (15)   CONSTRAINT [DF_WorkOrder_Tone] DEFAULT ('') NOT NULL,
     [Remark]                  NVARCHAR (MAX) CONSTRAINT [DF_WorkOrder_Remark] DEFAULT ('') NOT NULL,
+    [IsCreateByUser] BIT CONSTRAINT [DF_WorkOrder_IsCreateByUser] DEFAULT ((0)) NOT NULL, 
     CONSTRAINT [PK_WorkOrder] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
 
@@ -229,3 +230,13 @@ GO
 CREATE NONCLUSTERED INDEX [IDX_WorkOrder_EstCutDate]
     ON [dbo].[WorkOrder]([EstCutDate] ASC, [CutCellid] ASC);
 
+
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'是否由使用者建立',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'WorkOrder',
+    @level2type = N'COLUMN',
+    @level2name = N'IsCreateByUser'
