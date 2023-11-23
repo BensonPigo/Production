@@ -49,6 +49,7 @@ InspDate
 ,Remark
 ,MCHandle
 ,WeaveType
+,ReceivingID
 ,AddDate
 ,EditDate
 )
@@ -90,6 +91,7 @@ select
 ,Remark
 ,MCHandle
 ,WeaveType
+,ReceivingID
 ,AddDate
 ,EditDate
 from OPENQUERY([MainServer], '' SET NOCOUNT ON; select * from Production.dbo.GetQA_R08_Detail(null,null,'''''''','''''''','''''''','''''''','''''''','''''''','''''+ @EditDateFrom +''''','''''+ @EditDateTo +''''') '')
@@ -141,7 +143,8 @@ update p set p.InspectorName						= t.InspectorName
 			,p.QCMachineRunTime						= t.QCMachineRunTime					
 			,p.Remark								= t.Remark							
 			,p.MCHandle								= t.MCHandle							
-			,p.WeaveType							= t.WeaveType						
+			,p.WeaveType							= t.WeaveType	
+			,p.ReceivingID							= t.ReceivingID
 			,p.AddDate								= t.AddDate							
 			,p.EditDate								= t.EditDate							
 from P_FabricInspDailyReport_Detail p
@@ -191,6 +194,7 @@ insert into P_FabricInspDailyReport_Detail(
 		,Remark
 		,MCHandle
 		,WeaveType
+		,ReceivingID
 		,AddDate
 		,EditDate)
 select	 t.InspDate
@@ -230,6 +234,7 @@ select	 t.InspDate
 		,t.Remark
 		,t.MCHandle
 		,t.WeaveType
+		,t.ReceivingID
 		,t.AddDate
 		,t.EditDate
 from #tmpP_FabricInspDailyReport_Detail t
@@ -255,3 +260,6 @@ end
 
 end
 go
+
+
+
