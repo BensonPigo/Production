@@ -102,6 +102,7 @@ SET NOCOUNT ON;
 	,a.ColorFastnessInspector			= isnull(b.ColorFastnessInspector,'''')
 	,a.LocalMR							= isnull(b.LocalMR,'''')
 	,a.OrderType						= isnull(b.OrderType,'''')
+	,a.StockType                        = isnull(b.StockType,'''')
 	,a.AddDate							= b.AddDate
 	,a.EditDate							= b.EditDate
 	from P_FabricInspLabSummaryReport a
@@ -192,6 +193,7 @@ SET NOCOUNT ON;
 	,LocalMR
 	,OrderType
 	,ReceivingID
+	,StockType
 	,AddDate
 	,EditDate
 	)
@@ -225,7 +227,7 @@ SET NOCOUNT ON;
 	,isnull(b.SupplierCode,'''')
 	,isnull(b.SupplierName,'''')
 	,isnull(b.WeaveType,'''')
-	,isnull(b.NAPhysical = ''Y'' , '''') 
+	,isnull(b.NAPhysical,'''') 
 	,isnull(b.InspectionOverallResult,'''')
 	,isnull(b.PhysicalInspResult,'''')
 	,isnull(b.TtlYrdsUnderBCGrade,0)
@@ -275,6 +277,7 @@ SET NOCOUNT ON;
 	,isnull(b.LocalMR,'''')
 	,isnull(b.OrderType,'''')
 	,ISNULL(B.ReceivingID,'''')
+	,isnull(b.StockType,'''')
 	,b.AddDate
 	,b.EditDate
 	FROM #tmp B

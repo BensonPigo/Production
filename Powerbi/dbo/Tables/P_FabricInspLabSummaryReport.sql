@@ -81,6 +81,7 @@
 	,[ReceivingID]					    varchar(13)		CONSTRAINT [PK_P_FabricInspLabSummaryReport_ReceivingID]                     DEFAULT ((''))	NOT NULL
 	,[AddDate]						    datetime 
 	,[EditDate]						    datetime, 
+    [StockType] VARCHAR NOT NULL DEFAULT (('')), 
     CONSTRAINT [PK_P_FabricInspLabSummaryReport] PRIMARY KEY ([POID], [SEQ], [FactoryID],[ReceivingID])
 )
 GO
@@ -813,3 +814,12 @@ EXEC sp_addextendedproperty @name = N'MS_Description',
     @level1name = N'P_FabricInspLabSummaryReport',
     @level2type = N'COLUMN',
     @level2name = N'EditDate'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'StockType',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'P_FabricInspLabSummaryReport',
+    @level2type = N'COLUMN',
+    @level2name = N'StockType'
