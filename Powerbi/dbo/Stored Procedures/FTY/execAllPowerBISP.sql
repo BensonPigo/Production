@@ -1337,7 +1337,7 @@ SET @ErrorMessage = ''
 /***********************************P_Import_WH_R25****************************************************************/
 BEGIN TRY
 	Declare @P_Import_WH_R25_EndData date = getdate()
-	Declare @P_Import_WH_R25_StartData date = dateadd(DAY, -30, @P_Import_WH_R25_EndData)
+	Declare @P_Import_WH_R25_StartData date = dateadd(DAY, -90, @P_Import_WH_R25_EndData)
 	set @Stime = getdate()  
 	execute [dbo].[P_Import_WH_R25] @P_Import_WH_R25_StartData, @P_Import_WH_R25_EndData
 	set @Etime = getdate()
