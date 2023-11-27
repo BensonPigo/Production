@@ -12,7 +12,6 @@ using System.Data.SqlClient;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Runtime.Remoting.Messaging;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Transactions;
@@ -74,7 +73,7 @@ order by    dq.UpdateDate
             DualResult result = DBProxy.Current.Select("Production", sqlGetData, out this.dtDownloadStickerQueue);
             if (!result)
             {
-                this.ShowErr(result);
+                this.editErrorMsg.Text = $"{DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss")}" + Environment.NewLine + result.GetException().ToString();
                 return;
             }
             this.gridDownloadStickerQueue.DataSource = this.dtDownloadStickerQueue;
