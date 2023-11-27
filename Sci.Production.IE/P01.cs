@@ -409,8 +409,8 @@ where   ID = '{this.CurrentMaintain["StyleID"]}' and
                                     dr["OperationID"] = callNextForm.P01SelectOperationCode["ID"].ToString();
                                     dr["OperationDescEN"] = callNextForm.P01SelectOperationCode["DescEN"].ToString();
                                     dr["MachineTypeID"] = callNextForm.P01SelectOperationCode["MachineTypeID"].ToString();
-                                    dr["Mold"] = callNextForm.P01SelectOperationCode["MoldID"].ToString().Replace(";", ","); // 前端轉進來的資料是用[;]區隔，統一用[,]區隔
-                                    dr["Template"] = string.Empty;  // 將[Template]清空
+                                    dr["Mold"] = callNextForm.P01SelectOperationCode["Mold"].ToString(); // 前端轉進來的資料是用[;]區隔，統一用[,]區隔
+                                    dr["Template"] = callNextForm.P01SelectOperationCode["Template"].ToString();
                                     dr["MtlFactorID"] = callNextForm.P01SelectOperationCode["MtlFactorID"].ToString();
                                     dr["SeamLength"] = callNextForm.P01SelectOperationCode["SeamLength"].ToString();
                                     dr["SMV"] = MyUtility.Convert.GetDecimal(callNextForm.P01SelectOperationCode["SMV"]) * 60;
@@ -432,8 +432,8 @@ where   ID = '{this.CurrentMaintain["StyleID"]}' and
                                 dr["OperationID"] = callNextForm.P01SelectOperationCode["ID"].ToString();
                                 dr["OperationDescEN"] = callNextForm.P01SelectOperationCode["DescEN"].ToString();
                                 dr["MachineTypeID"] = callNextForm.P01SelectOperationCode["MachineTypeID"].ToString();
-                                dr["Mold"] = callNextForm.P01SelectOperationCode["MoldID"].ToString().Replace(";", ","); // 前端轉進來的資料是用[;]區隔，統一用[,]區隔
-                                dr["Template"] = string.Empty;  // 將[Template]清空
+                                dr["Mold"] = MyUtility.GetValue.Lookup($"select dbo.GetParseOperationMold('{callNextForm.P01SelectOperationCode["MoldID"]}', 'Attachment')"); // 前端轉進來的資料是用[;]區隔，統一用[,]區隔
+                                dr["Template"] = MyUtility.GetValue.Lookup($"select dbo.GetParseOperationMold('{callNextForm.P01SelectOperationCode["MoldID"]}', 'Template')");
                                 dr["MtlFactorID"] = callNextForm.P01SelectOperationCode["MtlFactorID"].ToString();
                                 dr["SeamLength"] = callNextForm.P01SelectOperationCode["SeamLength"].ToString();
                                 dr["SMV"] = MyUtility.Convert.GetDecimal(callNextForm.P01SelectOperationCode["SMV"]) * 60;
@@ -479,6 +479,7 @@ where   ID = '{this.CurrentMaintain["StyleID"]}' and
                             dr["StdSMV"] = 0;
                             dr["IETMSSMV"] = 0;
                             dr["Annotation"] = string.Empty;
+                            dr["MasterPlusGroup"] = string.Empty;
                         }
                         else
                         {
@@ -495,8 +496,19 @@ where   ID = '{this.CurrentMaintain["StyleID"]}' and
                             };
 
                             string sqlCmd = $@"
-select o.ID,o.DescEN,o.SMV,o.MachineTypeID,o.SeamLength,o.MoldID,o.MtlFactorID,o.Annotation,o.MasterPlusGroup
-,[MachineType_IsSubprocess] = isnull(md.IsSubprocess,0) ,[IsSubprocess] = isnull(md.IsSubprocess,0) ,md.IsNonSewingLine
+select  o.ID,
+        o.DescEN,
+        o.SMV,
+        o.MachineTypeID,
+        o.SeamLength,
+        [Mold] = dbo.GetParseOperationMold(o.MoldID, 'Attachment'),
+        [Template] = dbo.GetParseOperationMold(o.MoldID, 'Template'),
+        o.MtlFactorID,
+        o.Annotation,
+        o.MasterPlusGroup,
+        [MachineType_IsSubprocess] = isnull(md.IsSubprocess,0),
+        [IsSubprocess] = isnull(md.IsSubprocess,0),
+        [IsNonSewingLine] = isnull(md.IsNonSewingLine, 0)
 from Operation o WITH (NOLOCK)
 left join MachineType_Detail md WITH (NOLOCK) on md.ID = o.MachineTypeID and md.FactoryID = '{Sci.Env.User.Factory}'
 where CalibratedCode = 1
@@ -515,7 +527,8 @@ and o.ID = @id";
                                     dr["OperationID"] = e.FormattedValue.ToString();
                                     dr["OperationDescEN"] = opData.Rows[0]["DescEN"].ToString();
                                     dr["MachineTypeID"] = opData.Rows[0]["MachineTypeID"].ToString();
-                                    dr["Mold"] = opData.Rows[0]["MoldID"].ToString().Replace(";", ","); // 前端轉進來的資料是用[;]區隔，統一用[,]區隔
+                                    dr["Mold"] = opData.Rows[0]["Mold"].ToString(); // 前端轉進來的資料是用[;]區隔，統一用[,]區隔
+                                    dr["Template"] = opData.Rows[0]["Template"].ToString();
                                     dr["MtlFactorID"] = opData.Rows[0]["MtlFactorID"].ToString();
                                     dr["Frequency"] = 1;
                                     dr["SeamLength"] = MyUtility.Convert.GetDecimal(opData.Rows[0]["SeamLength"]);
@@ -527,6 +540,7 @@ and o.ID = @id";
                                     dr["MachineType_IsSubprocess"] = opData.Rows[0]["MachineType_IsSubprocess"];
                                     dr["IsSubprocess"] = opData.Rows[0]["IsSubprocess"];
                                     dr["IsNonSewingLine"] = opData.Rows[0]["IsNonSewingLine"];
+                                    dr["MasterPlusGroup"] = opData.Rows[0]["MasterPlusGroup"].ToString();
                                 }
                             }
                             else
@@ -2113,22 +2127,8 @@ select id.SEQ,
 	o.MachineTypeID,
 	id.Frequency,
 	id.SMV*(isnull(id.MtlFactorRate,0)/100+1)*id.Frequency as IETMSSMV,
-	[Mold] = STUFF((
-		        select concat(',' ,s.Data)
-		        from SplitString(id.Mold, ';') s
-		        inner join Mold m WITH (NOLOCK) on s.Data = m.ID
-		        where m.IsAttachment = 1
-                and m.Junk = 0
-		        for xml path ('')) 
-	        ,1,1,''),
-	[Template] = STUFF((
-		            select concat(',' ,s.Data)
-		            from SplitString(id.Mold, ';') s
-		            inner join Mold m WITH (NOLOCK) on s.Data = m.ID
-		            where m.IsTemplate = 1
-                    and m.Junk = 0
-		            for xml path ('')) 
-	            ,1,1,''),
+	[Mold] = dbo.GetParseOperationMold(id.Mold, 'Attachment'),
+	[Template] = dbo.GetParseOperationMold(id.Mold, 'Template'),
 	id.MtlFactorID,
 	round(id.SMV*(isnull(id.MtlFactorRate,0)/100+1)*id.Frequency*60,3) as SMV, 
     round(id.SMV*(isnull(id.MtlFactorRate,0)/100+1)*id.Frequency*60,3) as StdSMV, 
