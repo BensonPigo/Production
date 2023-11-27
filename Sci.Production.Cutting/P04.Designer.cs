@@ -47,6 +47,9 @@
             this.btnFabricIssueList = new Sci.Win.UI.Button();
             this.label1 = new Sci.Win.UI.Label();
             this.displaySpreadingNo = new Sci.Win.UI.DisplayBox();
+            this.brnEditFabricCutDate = new Sci.Win.UI.Button();
+            this.btnFabDelete = new Sci.Win.UI.Button();
+            this.btnFabDeleteHistory = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -63,6 +66,9 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.btnFabDeleteHistory);
+            this.masterpanel.Controls.Add(this.btnFabDelete);
+            this.masterpanel.Controls.Add(this.brnEditFabricCutDate);
             this.masterpanel.Controls.Add(this.displaySpreadingNo);
             this.masterpanel.Controls.Add(this.label1);
             this.masterpanel.Controls.Add(this.btnFabricIssueList);
@@ -103,6 +109,9 @@
             this.masterpanel.Controls.SetChildIndex(this.btnFabricIssueList, 0);
             this.masterpanel.Controls.SetChildIndex(this.label1, 0);
             this.masterpanel.Controls.SetChildIndex(this.displaySpreadingNo, 0);
+            this.masterpanel.Controls.SetChildIndex(this.brnEditFabricCutDate, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnFabDelete, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnFabDeleteHistory, 0);
             // 
             // detailpanel
             // 
@@ -277,9 +286,9 @@
             // 
             this.btnimport.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
             this.btnimport.Enabled = false;
-            this.btnimport.Location = new System.Drawing.Point(772, 77);
+            this.btnimport.Location = new System.Drawing.Point(741, 77);
             this.btnimport.Name = "btnimport";
-            this.btnimport.Size = new System.Drawing.Size(95, 30);
+            this.btnimport.Size = new System.Drawing.Size(144, 30);
             this.btnimport.TabIndex = 17;
             this.btnimport.Text = "import";
             this.btnimport.UseVisualStyleBackColor = true;
@@ -308,9 +317,9 @@
             // 
             // btnSendMail
             // 
-            this.btnSendMail.Location = new System.Drawing.Point(772, 9);
+            this.btnSendMail.Location = new System.Drawing.Point(743, 9);
             this.btnSendMail.Name = "btnSendMail";
-            this.btnSendMail.Size = new System.Drawing.Size(95, 30);
+            this.btnSendMail.Size = new System.Drawing.Size(142, 30);
             this.btnSendMail.TabIndex = 20;
             this.btnSendMail.Text = "Send Mail";
             this.btnSendMail.UseVisualStyleBackColor = true;
@@ -318,9 +327,9 @@
             // 
             // btnFabricIssueList
             // 
-            this.btnFabricIssueList.Location = new System.Drawing.Point(873, 77);
+            this.btnFabricIssueList.Location = new System.Drawing.Point(903, 77);
             this.btnFabricIssueList.Name = "btnFabricIssueList";
-            this.btnFabricIssueList.Size = new System.Drawing.Size(119, 30);
+            this.btnFabricIssueList.Size = new System.Drawing.Size(167, 30);
             this.btnFabricIssueList.TabIndex = 21;
             this.btnFabricIssueList.Text = "Fabric issue list";
             this.btnFabricIssueList.UseVisualStyleBackColor = true;
@@ -344,6 +353,36 @@
             this.displaySpreadingNo.Size = new System.Drawing.Size(46, 23);
             this.displaySpreadingNo.TabIndex = 24;
             // 
+            // brnEditFabricCutDate
+            // 
+            this.brnEditFabricCutDate.Location = new System.Drawing.Point(743, 43);
+            this.brnEditFabricCutDate.Name = "brnEditFabricCutDate";
+            this.brnEditFabricCutDate.Size = new System.Drawing.Size(142, 30);
+            this.brnEditFabricCutDate.TabIndex = 26;
+            this.brnEditFabricCutDate.Text = "Edit Fabric Cut Date";
+            this.brnEditFabricCutDate.UseVisualStyleBackColor = true;
+            this.brnEditFabricCutDate.Click += new System.EventHandler(this.BtnEditFabCutDate_Click);
+            // 
+            // btnFabDelete
+            // 
+            this.btnFabDelete.Location = new System.Drawing.Point(903, 11);
+            this.btnFabDelete.Name = "btnFabDelete";
+            this.btnFabDelete.Size = new System.Drawing.Size(167, 30);
+            this.btnFabDelete.TabIndex = 27;
+            this.btnFabDelete.Text = "Fabric Delete";
+            this.btnFabDelete.UseVisualStyleBackColor = true;
+            this.btnFabDelete.Click += new System.EventHandler(this.BtnFabDelete_Click);
+            // 
+            // btnFabDeleteHistory
+            // 
+            this.btnFabDeleteHistory.Location = new System.Drawing.Point(903, 44);
+            this.btnFabDeleteHistory.Name = "btnFabDeleteHistory";
+            this.btnFabDeleteHistory.Size = new System.Drawing.Size(167, 30);
+            this.btnFabDeleteHistory.TabIndex = 28;
+            this.btnFabDeleteHistory.Text = "Fabric Deleted History";
+            this.btnFabDeleteHistory.UseVisualStyleBackColor = true;
+            this.btnFabDeleteHistory.Click += new System.EventHandler(this.BtnFabDeleteHistory_Click);
+            // 
             // P04
             // 
             this.ApvChkValue = "New";
@@ -359,6 +398,7 @@
             this.IsSupportUnconfirm = true;
             this.KeyField1 = "id";
             this.Name = "P04";
+            this.OnLineHelpID = "Sci.Win.Tems.Input6";
             this.Text = "P04.Cutting Daily Plan";
             this.UnApvChkValue = "Confirmed";
             this.WorkAlias = "Cutplan";
@@ -403,5 +443,8 @@
         private Win.UI.Button btnFabricIssueList;
         private Win.UI.Label label1;
         private Win.UI.DisplayBox displaySpreadingNo;
+        private Win.UI.Button brnEditFabricCutDate;
+        private Win.UI.Button btnFabDelete;
+        private Win.UI.Button btnFabDeleteHistory;
     }
 }
