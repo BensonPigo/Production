@@ -217,6 +217,8 @@
     <Build Include="dbo\Stored Procedures\FTY\P_Import_QA_R11_DefectDetail.sql" />
     <Build Include="dbo\Tables\P_FabricInspReport_ReceivingTransferIn.sql" />
     <Build Include="dbo\Stored Procedures\FTY\P_Import_ActualCutOutputReport.sql" />
+    <Build Include="dbo\Tables\P_ImportScheduleList.sql" />
+    <Build Include="dbo\Stored Procedures\P_Import_WH_R25.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Utility.dll" />
