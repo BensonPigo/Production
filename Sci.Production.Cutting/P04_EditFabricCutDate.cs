@@ -29,7 +29,7 @@ namespace Sci.Production.Cutting
         public P04_EditFabricCutDate(DataTable dataTable)
         {
             this.InitializeComponent();
-            this.detailDataTable = dataTable.Select("FabricIssued = 'Y'").TryCopyToDataTable(dataTable);
+            this.detailDataTable = dataTable.Select("FabricIssued = 'N'").TryCopyToDataTable(dataTable);
             DataColumn column_Sel = new DataColumn("Sel", typeof(int));
             column_Sel.DefaultValue = 0;
             this.detailDataTable.Columns.Add(column_Sel);

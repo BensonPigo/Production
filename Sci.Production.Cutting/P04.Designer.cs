@@ -47,7 +47,7 @@
             this.btnFabricIssueList = new Sci.Win.UI.Button();
             this.label1 = new Sci.Win.UI.Label();
             this.displaySpreadingNo = new Sci.Win.UI.DisplayBox();
-            this.brnEditFabricCutDate = new Sci.Win.UI.Button();
+            this.btnEditFabricCutDate = new Sci.Win.UI.Button();
             this.btnFabDelete = new Sci.Win.UI.Button();
             this.btnFabDeleteHistory = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
@@ -68,7 +68,7 @@
             // 
             this.masterpanel.Controls.Add(this.btnFabDeleteHistory);
             this.masterpanel.Controls.Add(this.btnFabDelete);
-            this.masterpanel.Controls.Add(this.brnEditFabricCutDate);
+            this.masterpanel.Controls.Add(this.btnEditFabricCutDate);
             this.masterpanel.Controls.Add(this.displaySpreadingNo);
             this.masterpanel.Controls.Add(this.label1);
             this.masterpanel.Controls.Add(this.btnFabricIssueList);
@@ -109,7 +109,7 @@
             this.masterpanel.Controls.SetChildIndex(this.btnFabricIssueList, 0);
             this.masterpanel.Controls.SetChildIndex(this.label1, 0);
             this.masterpanel.Controls.SetChildIndex(this.displaySpreadingNo, 0);
-            this.masterpanel.Controls.SetChildIndex(this.brnEditFabricCutDate, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnEditFabricCutDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnFabDelete, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnFabDeleteHistory, 0);
             // 
@@ -353,15 +353,15 @@
             this.displaySpreadingNo.Size = new System.Drawing.Size(46, 23);
             this.displaySpreadingNo.TabIndex = 24;
             // 
-            // brnEditFabricCutDate
+            // btnEditFabricCutDate
             // 
-            this.brnEditFabricCutDate.Location = new System.Drawing.Point(743, 43);
-            this.brnEditFabricCutDate.Name = "brnEditFabricCutDate";
-            this.brnEditFabricCutDate.Size = new System.Drawing.Size(142, 30);
-            this.brnEditFabricCutDate.TabIndex = 26;
-            this.brnEditFabricCutDate.Text = "Edit Fabric Cut Date";
-            this.brnEditFabricCutDate.UseVisualStyleBackColor = true;
-            this.brnEditFabricCutDate.Click += new System.EventHandler(this.BtnEditFabCutDate_Click);
+            this.btnEditFabricCutDate.Location = new System.Drawing.Point(743, 43);
+            this.btnEditFabricCutDate.Name = "btnEditFabricCutDate";
+            this.btnEditFabricCutDate.Size = new System.Drawing.Size(142, 30);
+            this.btnEditFabricCutDate.TabIndex = 26;
+            this.btnEditFabricCutDate.Text = "Edit Fabric Cut Date";
+            this.btnEditFabricCutDate.UseVisualStyleBackColor = true;
+            this.btnEditFabricCutDate.Click += new System.EventHandler(this.BtnEditFabCutDate_Click);
             // 
             // btnFabDelete
             // 
@@ -443,7 +443,7 @@
         private Win.UI.Button btnFabricIssueList;
         private Win.UI.Label label1;
         private Win.UI.DisplayBox displaySpreadingNo;
-        private Win.UI.Button brnEditFabricCutDate;
+        private Win.UI.Button btnEditFabricCutDate;
         private Win.UI.Button btnFabDelete;
         private Win.UI.Button btnFabDeleteHistory;
     }

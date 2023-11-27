@@ -327,6 +327,12 @@ and o.ID=b.OrderID ", this.CurrentMaintain["ID"]);
         {
             base.OnDetailEntered();
             this.btnSendMail.Enabled = this.CurrentMaintain["Status"].ToString() != "New";
+
+            var status = MyUtility.Convert.GetString(this.CurrentMaintain["Status"]);
+            this.btnEditFabricCutDate.Enabled = status == "Confirmed" ? true : false;
+            this.btnFabDeleteHistory.Enabled = status == "Confirmed" ? true : false;
+            this.btnFabDelete.Enabled = status == "Confirmed" ? true : false;
+
             this.detailgrid.AutoResizeColumns();
         }
 
