@@ -204,6 +204,7 @@ select  [SewLine] = REVERSE(stuff(REVERSE(o.SewLine),1,1,'')) ,
 		o.FactoryID,
 		[OrderID] = o.ID,
 		oqs.Seq,
+        CategoryName = d.Name,
 		o.BrandID, 
 		o.StyleID,
 		o.SeasonID,
@@ -236,6 +237,7 @@ inner join Factory f with (nolock) on f.ID = o.FactoryID
 inner join PackingList_Detail pld with (nolock) on pld.OrderID = oqs.ID and pld.OrderShipmodeSeq = oqs.Seq and pld.CTNQty = 1
 inner join PackingList p with (nolock) on p.ID = pld.ID
 inner join PackingList_Detail pld2 with (nolock) on pld2.ID = pld.ID and pld2.CTNStartNo = pld.CTNStartNo
+LEFT JOIN DropDownList d WITH(NOLOCK) ON d.Type = 'Category' AND d.ID = o.Category
 where o.Category in ('B','G') {this.sqlWhere}
 group by	o.SewLine,
 			f.KPICode,
@@ -263,7 +265,8 @@ group by	o.SewLine,
 			p.PulloutDate,
 			pld.SCICtnNo,
 			o.CustPONo,
-			o.SciDelivery
+			o.SciDelivery,
+			d.Name
 
 
 select	pld.KPICode,
@@ -271,6 +274,7 @@ select	pld.KPICode,
 		pld.SewLine,
 		pld.OrderID,
 		pld.Seq,
+		pld.CategoryName,
 		pld.BrandID, 
 		pld.StyleID,
 		pld.CustPONo,
