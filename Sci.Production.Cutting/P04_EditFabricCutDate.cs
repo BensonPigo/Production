@@ -215,7 +215,7 @@ namespace Sci.Production.Cutting
             }
 
             // 判斷勾選的是否 FabricIssued = 'Y' (資料來源是ISSUE.Status為Confirm = 'Y'，不是的話就'N')
-            DataTable dt_FabricIssued = dt_1.Select("FabricIssued <> 'Y'").TryCopyToDataTable(dt_1);
+            DataTable dt_FabricIssued = dt_1.Select("FabricIssued = 'Y'").TryCopyToDataTable(dt_1);
             if (dt_FabricIssued.Rows.Count > 0)
             {
                 MyUtility.Msg.WarningBox("Edit failed because fabric have been issued.");
