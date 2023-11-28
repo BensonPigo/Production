@@ -99,7 +99,8 @@ where MDivisionID = '{0}'", Env.User.Keyword);
                 WHERE i.CutplanID = a.id AND iss.SCIRefno = e.SCIRefno AND iss.Colorid = a.colorid AND i.Status = 'Confirmed'
 	        )
             ,[Issue_Qty] = 
-	        (        SELECT val = COUNT(iss.Qty)
+	        (        
+                SELECT val = SUM(iss.Qty)
                 FROM Issue i
                 INNER JOIN Issue_Summary iss ON i.id = iss.Id
                 WHERE i.CutplanID = a.id AND iss.SCIRefno = e.SCIRefno AND iss.Colorid = a.colorid
