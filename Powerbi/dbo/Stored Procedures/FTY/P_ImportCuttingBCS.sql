@@ -21,7 +21,7 @@ SET NOCOUNT ON;
 	Select DISTINCT [OrderID] into #tmp_1 FROM #TMP
 	update b set b.BIPImportCuttingBCCmdTime = GETDATE()
 	from #tmp_1 a
-	inner join MainServer.Production.dbo.SewingSchedule b on a.OrderID = b.OrderID'
+	inner join ['+@current_PMS_ServerName+'].Production.dbo.SewingSchedule b on a.OrderID = b.OrderID'
 
 	set @SqlCmdDelete = '
 	/************* 刪除P_CuttingBCS的資料，規則刪除相同的OrderID*************/
