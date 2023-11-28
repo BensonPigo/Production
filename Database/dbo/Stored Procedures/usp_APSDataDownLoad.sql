@@ -944,7 +944,7 @@ BEGIN
 	execute (@cmd)
 
 	/*ISP20231174 為了成套運算加入的*/
-	UPDATE S SET S.BIPImportCuttingBCCmdTime = NULL
+	UPDATE S SET S.BIPImportCuttingBCSCmdTime = NULL
 	from #tmpAPSSchedule T WITH(NOLOCK) 
 	inner join SewingSchedule S WITH(NOLOCK) on T.SALESORDERNO = S.OrderID
 

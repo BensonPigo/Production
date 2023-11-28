@@ -102,7 +102,7 @@ else
 	inner join Production.dbo.Factory b on a.FactoryID=b.id
 
 	/* issue：ISP20231174 */
-	UPDATE S SET S.BIPImportCuttingBCCmdTime = NULL
+	UPDATE S SET S.BIPImportCuttingBCSCmdTime = NULL
 	FROM #TOrder A
 	INNER JOIN SewingSchedule S ON A.ORDERID = S.OrderID
 -------------------------------------------------------------------------Order
