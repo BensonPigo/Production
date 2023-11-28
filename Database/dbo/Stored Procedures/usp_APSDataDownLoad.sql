@@ -943,6 +943,11 @@ BEGIN
 		and f.Code = '''+ @factoryid + ''''
 	execute (@cmd)
 
+	/*ISP20231174 為了成套運算加入的*/
+	UPDATE S SET S.BIPImportCuttingBCCmdTime = NULL
+	from #tmpAPSSchedule T WITH(NOLOCK) 
+	inner join SewingSchedule S WITH(NOLOCK) on T.SALESORDERNO = S.OrderID
+
 	--DECLARE cursor_sewingschedule CURSOR FOR
 	select SALESORDERNO as OrderID
 		   , ComboType = IIF(REFNO is null or REFNO = '', isnull((select TOP (1) sl.Location from Orders o, Style_Location sl where o.ID = SALESORDERNO and o.StyleUkey = sl.StyleUkey),''),REFNO)
