@@ -19,7 +19,7 @@ SET NOCOUNT ON;
 
 	set @SqlCmdUpdata_1 = '
 	Select DISTINCT [OrderID] into #tmp_1 FROM #TMP
-	update b set b.BIPImportCuttingBCCmdTime = GETDATE()
+	update b set b.BIPImportCuttingBCSCmdTime = GETDATE()
 	from #tmp_1 a
 	inner join ['+@current_PMS_ServerName+'].Production.dbo.SewingSchedule b on a.OrderID = b.OrderID'
 
