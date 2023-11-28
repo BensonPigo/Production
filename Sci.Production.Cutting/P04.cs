@@ -91,7 +91,19 @@ where MDivisionID = '{0}'", Env.User.Keyword);
             ) as CutQty,
 			e.FabricPanelCode
 			,f.WeaveTypeID
-            ,[FabricIssued] = FabricIssued.val
+            ,[FabricIssued] = 
+	        (
+	            SELECT val = IIF(COUNT(iss.Qty) >= 1, 'Y', 'N')
+                FROM Issue i
+                INNER JOIN Issue_Summary iss ON i.id = iss.Id
+                WHERE i.CutplanID = a.id AND iss.SCIRefno = e.SCIRefno AND iss.Colorid = a.colorid AND i.Status = 'Confirmed'
+	        )
+            ,[Issue_Qty] = 
+	        (        SELECT val = COUNT(iss.Qty)
+                FROM Issue i
+                INNER JOIN Issue_Summary iss ON i.id = iss.Id
+                WHERE i.CutplanID = a.id AND iss.SCIRefno = e.SCIRefno AND iss.Colorid = a.colorid
+	        )
             ,[Reason] = iif(isnull(IsCutPlan_IssueCutDate.val,0) = 1 , IsCutPlan_IssueCutDate.Reason , '')
             ,[ReasonID] = ''
             ,[EstCutDate] = iif(isnull(IsCutPlan_IssueCutDate.val,0) = 1 , IsCutPlan_IssueCutDate.EstCutDate ,b.EstCutDate) 
@@ -102,13 +114,6 @@ where MDivisionID = '{0}'", Env.User.Keyword);
             inner join Cutplan b WITH(NOLOCK) on a.id = b.ID
 			INNER JOIN WorkOrder e WITH (NOLOCK) ON a.WorkOrderUkey = e.Ukey
 			LEFT JOIN Fabric f WITH (NOLOCK) ON f.SCIRefno=e.SCIRefno
-            OUTER APPLY
-            (
-	            select val = iif(COUNT(1) > 1 ,'Y','N') 
-	            from Issue i WITH (NOLOCK)
-	            inner join Issue_Summary iss WITH (NOLOCK) on i.id = iss.Id
-	            where i.CutplanID = a.id and iss.SCIRefno = e.SCIRefno and iss.Colorid = a.colorid and i.Status = 'Confirmed'
-            )FabricIssued
             OUTER APPLY
             (
 	            select 
@@ -460,22 +465,18 @@ and o.ID=b.OrderID ", this.CurrentMaintain["ID"]);
             cd.cons,isnull(f.DescDetail,'') as DescDetail
             ,[EstCutDate] = iif(isnull(IsCutPlan_IssueCutDate.val,0) = 1 , IsCutPlan_IssueCutDate.EstCutDate ,b.EstCutDate)
             ,[Reason] = iif(isnull(IsCutPlan_IssueCutDate.val,0) = 1 , IsCutPlan_IssueCutDate.Reason , '')
-            ,[FabricIssued] = FabricIssued.val
-            ,[EditName] = isnull(IsCutPlan_IssueCutDate.EditName,'')
-            ,[EditDate] = IsCutPlan_IssueCutDate.EditDate
-            ,[RequestorRemark] = iif(isnull(IsCutPlan_IssueCutDate.val,0) = 1 , IsCutPlan_IssueCutDate.RequestorRemark , '')
+            ,[FabricIssued] = 
+            (
+                select val = iif(COUNT(1) >= 1 ,'Y','N') 
+	            from Issue i WITH (NOLOCK)
+	            inner join Issue_Summary iss WITH (NOLOCK) on i.id = iss.Id
+	            where i.CutplanID = cd.id and iss.SCIRefno = w.SCIRefno and iss.Colorid = cd.colorid and i.Status = 'Confirmed'
+            )
             ,cd.remark 
             from Cutplan_Detail cd WITH (NOLOCK) 
             inner join Cutplan b WITH(NOLOCK) on cd.id = b.ID
             inner join WorkOrder w on cd.WorkorderUkey = w.Ukey
             left join Fabric f on f.SCIRefno = w.SCIRefno
-            OUTER APPLY
-            (
-	            select val = iif(COUNT(1) > 1 ,'Y','N') 
-	            from Issue i WITH (NOLOCK)
-	            inner join Issue_Summary iss WITH (NOLOCK) on i.id = iss.Id
-	            where i.CutplanID = cd.id and iss.SCIRefno = w.SCIRefno and iss.Colorid = cd.colorid and i.Status = 'Confirmed'
-            )FabricIssued
             OUTER APPLY
             (
 	            select 
@@ -487,7 +488,7 @@ and o.ID=b.OrderID ", this.CurrentMaintain["ID"]);
                 ,[RequestorRemark] = isnull(ci.RequestorRemark,'')
 	            from CutPlan_IssueCutDate ci WITH(NOLOCK)
                 LEFT JOIN CutReason Reason ON Reason.Junk = 0 AND Reason.type = 'RC' AND Reason.id = ci.Reason
-	            where ci.id = b.id and ci.Refno = e.Refno and ci.Colorid = a.colorid
+	            where ci.id = b.id and ci.Refno = w.Refno and ci.Colorid = cd.colorid
             )IsCutPlan_IssueCutDate
             where cd.id = '{0}'", this.CurrentDetailData["ID"]);
             DualResult dResult = DBProxy.Current.Select(null, cmdsql, out DataTable excelTb);

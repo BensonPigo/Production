@@ -28,7 +28,7 @@ namespace Sci.Production.Cutting
         public P04_FabricDelete(DataTable dataTable)
         {
             this.InitializeComponent();
-            this.detailDataTable = dataTable.Select("FabricIssued = 'N'").TryCopyToDataTable(dataTable);
+            this.detailDataTable = dataTable.Select("Issue_Qty = 0").TryCopyToDataTable(dataTable);
             DataColumn column_Sel = new DataColumn("Sel", typeof(int));
             column_Sel.DefaultValue = 0;
             this.detailDataTable.Columns.Add(column_Sel);
@@ -106,8 +106,8 @@ namespace Sci.Production.Cutting
                 return;
             }
 
-            // 判斷勾選的是否 FabricIssued = 'Y' (資料來源是ISSUE.Status為Confirm = 'Y'，不是的話就'N')
-            DataTable dt_FabricIssued = dt_1.Select("FabricIssued = 'Y'").TryCopyToDataTable(dt_1);
+            // 判斷勾選的是否 Issue_Qty <> 0
+            DataTable dt_FabricIssued = dt_1.Select("Issue_Qty <> 0").TryCopyToDataTable(dt_1);
             if (dt_FabricIssued.Rows.Count > 0)
             {
                 MyUtility.Msg.WarningBox("Save failed because fabric have been issued.");
@@ -148,6 +148,7 @@ namespace Sci.Production.Cutting
                     ,GETDATE()
                 )
                 
+                Delete Cutplan_Detail_Cons WHERE ID = '{MyUtility.Convert.GetString(dataRow["ID"])}' AND Seq1 = '{MyUtility.Convert.GetString(dataRow["Seq1"])}' AND Seq2 = '{MyUtility.Convert.GetString(dataRow["Seq2"])}'
                 Delete Cutplan_Detail WHERE ID = '{MyUtility.Convert.GetString(dataRow["ID"])}' AND WorkorderUkey = '{MyUtility.Convert.GetString(dataRow["WorkorderUkey"])}'
                 ";
             }
