@@ -100,7 +100,11 @@ else
 			, MDivisionID=isnull(b.MDivisionID, '')
 	from #TOrder a
 	inner join Production.dbo.Factory b on a.FactoryID=b.id
-	
+
+	/* issue：ISP20231174 */
+	UPDATE S SET S.BIPImportCuttingBCCmdTime = NULL
+	FROM #TOrder A
+	INNER JOIN SewingSchedule S ON A.ORDERID = S.OrderID
 -------------------------------------------------------------------------Order
 		--��欰Cutting�����,����sMDivisionID
 		Update a
