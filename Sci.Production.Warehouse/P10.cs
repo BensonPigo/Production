@@ -236,6 +236,7 @@ namespace Sci.Production.Warehouse
                                 FOR XML PATH('')),1,1,'') )
 			,f.WeaveTypeID 
             ,a.remark
+            ,Remark_old = ISNULL(a.remark, '')
 	from dbo.Issue_Summary a WITH (NOLOCK) 
     left join Fabric f on a.SciRefno = f.SciRefno
     outer apply (
@@ -399,6 +400,12 @@ outer apply(
                 foreach (DataRow row in tmp.Rows)
                 {
                     row.SetField("ID", tmpId);
+
+                    if (!MyUtility.Check.Empty(row["Remark"]))
+                    {
+                        row["RemarkEditDate"] = DateTime.Now;
+                        row["RemarkEditName"] = Sci.Env.User.UserID;
+                    }
                 }
             }
 
@@ -418,6 +425,27 @@ outer apply(
             }
 
             return base.ClickSaveBefore();
+        }
+
+        /// <inheritdoc/>
+        protected override DualResult ClickSavePost()
+        {
+            string sqlcmd = $@"
+UPDATE S
+SET
+    RemarkEditDate = GETDATE()
+    ,RemarkEditName = '{Sci.Env.User.UserID}'
+FROM Issue_Summary S WITH(NOLOCK)
+INNER JOIN #tmp t ON t.UKey = s.Ukey
+WHERE t.Remark_old <> s.Remark
+";
+            DualResult result = MyUtility.Tool.ProcessWithDatatable((DataTable)this.detailgridbs.DataSource, "Ukey,Remark,Remark_old", sqlcmd, out DataTable dt);
+            if (!result)
+            {
+                return result;
+            }
+
+            return base.ClickSavePost();
         }
 
         /// <inheritdoc/>

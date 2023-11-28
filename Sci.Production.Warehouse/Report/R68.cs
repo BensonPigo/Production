@@ -44,7 +44,7 @@ namespace Sci.Production.Warehouse
 
             if (this.dateEstCuttingDate.Value1.HasValue)
             {
-                where += $"\r\nAND cp.EstCutdate BETWEEN '{(DateTime)this.dateEstCuttingDate.Value1:yyyy/MM/dd}' AND '{(DateTime)this.dateEstCuttingDate.Value2:yyyy/MM/dd}'";
+                where += $"\r\nAND EstCutdate.EstCutdate BETWEEN '{(DateTime)this.dateEstCuttingDate.Value1:yyyy/MM/dd}' AND '{(DateTime)this.dateEstCuttingDate.Value2:yyyy/MM/dd}'";
             }
 
             if (!this.txtCutPlanID.Text.Empty())
@@ -83,20 +83,21 @@ namespace Sci.Production.Warehouse
 USE Production
 SELECT
     cp.ID  --裁剪計畫單號
-   ,o.FactoryID
-   ,o.StyleID
-   ,cp.POID
-   ,cp.CutCellID
-   ,cp.EstCutdate
-   ,cp.EditDate
-   ,psd.Refno
-   ,[Color] = psdsC.SpecValue
-   ,rfrt.FabricRelaxationID
-   ,frlx.NeedUnroll
-   ,frlx.Relaxtime
-   ,[Request Cons] = SUM(cpdc.Cons)
-   ,FinalETA.ActETA
-   ,psd.SCIRefno
+    ,o.FactoryID
+    ,o.StyleID
+    ,cp.POID
+    ,cp.CutCellID
+    ,EstCutdate.EstCutdate
+    ,EditDate.EditDate
+    ,psd.Refno
+    ,[Color] = psdsC.SpecValue
+    ,rfrt.FabricRelaxationID
+    ,frlx.NeedUnroll
+    ,frlx.Relaxtime
+    ,[Request Cons] = SUM(cpdc.Cons)
+    ,FinalETA.ActETA
+    ,psd.SCIRefno
+    ,cpi.RequestorRemark
 INTO #CutList
 FROM Cutplan cp
 INNER JOIN Cutplan_Detail_Cons cpdc
@@ -116,6 +117,9 @@ LEFT JOIN SciMES_FabricRelaxation frlx
     ON rfrt.FabricRelaxationID = frlx.ID
 LEFT JOIN Orders o
     ON cp.POID = o.ID
+LEFT JOIN CutPlan_IssueCutDate cpi WITH(NOLOCK) ON cpi.ID = cp.id AND cpi.Refno = psd.Refno AND cpi.Colorid = psdsC.SpecValue
+OUTER APPLY(SELECT EstCutdate = IIF(cpi.EstCutDate IS NOT NULL, cpi.EstCutDate, cp.EstCutdate))EstCutdate
+OUTER APPLY(SELECT EditDate = IIF(cpi.EditDate IS NOT NULL, cpi.EditDate, cp.EditDate))EditDate
 OUTER APPLY (
     SELECT
         ActETA = MAX(p3.FinalETA)
@@ -137,16 +141,17 @@ GROUP BY cp.ID
         ,o.FactoryID
         ,cp.POID
         ,cp.CutCellID
-        ,cp.EstCutdate
+        ,EstCutdate.EstCutdate
+        ,EditDate.EditDate
         ,psd.Refno
         ,psdsC.SpecValue
         ,rfrt.FabricRelaxationID
         ,frlx.NeedUnroll
         ,frlx.Relaxtime
         ,o.StyleID
-        ,cp.EditDate
         ,FinalETA.ActETA
         ,psd.SCIRefno
+        ,cpi.RequestorRemark
 /*
 	發料準備清單
 */
@@ -247,6 +252,7 @@ SELECT
    ,[RelaxTime] = FinRelaxTime.FinDate
    ,[DispatchTime] = FinDispatchTime.FinDate
    ,[FactoryReceiveTime] = FinFtyRcvTime.FinDate
+   ,cl.RequestorRemark
    ,[WHRemark] = IssueSummary.WHRemark
 FROM #CutList cl
 OUTER APPLY (SELECT
@@ -315,16 +321,16 @@ OUTER APPLY (SELECT
     AND cl.Color = idt.Color) FinFtyRcvTime
 OUTER APPLY (
     SELECT WHRemark = STUFF((
-    SELECT DISTINCT CONCAT(',', CHAR(10), iss.Remark)
-    FROM issue i
-    INNER JOIN Issue_Summary iss ON iss.Id = i.ID
-    WHERE cl.ID = i.CutplanID
-    AND cl.POID = iss.POID
-    AND cl.SCIRefno = iss.SCIRefno
-    AND cl.Color = iss.ColorID
-    AND iss.Remark <> ''
-    FOR XML PATH('')
-    ), 1, 2, '')) IssueSummary　 --串Issue Summary取Remark
+        SELECT DISTINCT CONCAT(',', CHAR(10), '[', iss.RemarkEditName, ' ', FORMAT(iss.RemarkEditDate, 'yyyy/MM/dd HH:mm:ss'), '] ', iss.Remark)
+        FROM issue i
+        INNER JOIN Issue_Summary iss ON iss.Id = i.ID
+        WHERE cl.ID = i.CutplanID
+        AND cl.POID = iss.POID
+        AND cl.SCIRefno = iss.SCIRefno
+        AND cl.Color = iss.ColorID
+        AND iss.Remark <> ''
+        FOR XML PATH('')), 1, 2, '')
+) IssueSummary　 --串Issue Summary取Remark
 ORDER BY cl.ID, cl.Refno, cl.Color
 ";
 

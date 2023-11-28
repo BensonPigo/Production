@@ -20,6 +20,8 @@
     [OldFabricVer]    VARCHAR (2)     DEFAULT ('') NULL,
     [SuppColor]       NVARCHAR (MAX)  DEFAULT ('') NOT NULL,
     [Remark]          VARCHAR (300)   CONSTRAINT [DF_Issue_Summary_Remark] DEFAULT ('') NOT NULL,
+    [RemarkEditDate] DATETIME NULL, 
+    [RemarkEditName] VARCHAR(10)      CONSTRAINT [DF_Issue_Summary_RemarkEditName] DEFAULT ('') NOT NULL, 
     CONSTRAINT [PK_Issue_Summary_1] PRIMARY KEY CLUSTERED ([Id] ASC, [Ukey] ASC)
 );
 
