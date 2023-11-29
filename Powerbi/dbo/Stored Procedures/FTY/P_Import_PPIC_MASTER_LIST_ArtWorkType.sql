@@ -83,7 +83,6 @@ BEGIN
 		inner join #UseArtworkType at on at.ID = t.ArtworkTypeID
 		where (o.ScIDelivery between @Date_S and @Date_E or o.BuyerDelivery BETWEEN @YearMonth_S and @YearMonth_E)
 		and o.Category in ('B','S')
-		and o.Junk = 0
 		and o.LocalOrder = 0
 	union all
 		--Forecast Style_TmsCost
@@ -109,9 +108,7 @@ BEGIN
 		From [MainServer].[Production].[dbo].Orders o WITH(NOLOCK)
 		inner join [MainServer].[Production].[dbo].Style_TmsCost t WITH(NOLOCK) on t.StyleUkey = o.StyleUkey
 		inner join #UseArtworkType at on at.ID = t.ArtworkTypeID
-		WHERE not exists (select 1 from [MainServer].[Production].[dbo].Order_TmsCost t WITH(NOLOCK) where t.ID = o.ID)
-		and (o.ScIDelivery between @Date_S and @Date_E or o.BuyerDelivery BETWEEN @YearMonth_S and @YearMonth_E)
-		and o.Junk = 0
+		WHERE (o.ScIDelivery between @Date_S and @Date_E or o.BuyerDelivery BETWEEN @YearMonth_S and @YearMonth_E)
 		and o.IsForecast = 1
 	union  all
 		--loacl訂單 Order_TmsCost 轉入
@@ -139,10 +136,8 @@ BEGIN
 		inner join #UseArtworkType at on at.ID = t.ArtworkTypeID
 		inner join [MainServer].[Production].[dbo].Factory f WITH(NOLOCK) on o.FactoryID = f.ID
 		where (o.ScIDelivery between @Date_S and @Date_E or o.BuyerDelivery BETWEEN @YearMonth_S and @YearMonth_E)
-		and SubconInType in ('1', '2')
 		and o.Junk = 0
 		and o.LocalOrder = 1
-		and f.Foundry = 1
 	union  all
 		-- Local訂單 Order_TmsCost 轉出
 		Select
@@ -172,7 +167,6 @@ BEGIN
 		and SubconInType in ('1','2')
 		and o.Junk = 0
 		and o.LocalOrder = 1
-		and f.Foundry = 1
 		and f.IsProduceFty = 0
 
 
