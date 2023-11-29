@@ -93,7 +93,7 @@ where MDivisionID = '{0}'", Env.User.Keyword);
 			,f.WeaveTypeID
             ,[FabricIssued] = 
 	        (
-	            SELECT val = IIF(COUNT(iss.Qty) >= 1, 'Y', 'N')
+	            SELECT val = IIF(SUM(iss.Qty) >= 1, 'Y', 'N')
                 FROM Issue i
                 INNER JOIN Issue_Summary iss ON i.id = iss.Id
                 WHERE i.CutplanID = a.id AND iss.SCIRefno = e.SCIRefno AND iss.Colorid = a.colorid AND i.Status = 'Confirmed'
@@ -468,7 +468,7 @@ and o.ID=b.OrderID ", this.CurrentMaintain["ID"]);
             ,[Reason] = iif(isnull(IsCutPlan_IssueCutDate.val,0) = 1 , IsCutPlan_IssueCutDate.Reason , '')
             ,[FabricIssued] = 
             (
-                select val = iif(COUNT(1) >= 1 ,'Y','N') 
+                select val = iif(SUM(1) >= 1 ,'Y','N') 
 	            from Issue i WITH (NOLOCK)
 	            inner join Issue_Summary iss WITH (NOLOCK) on i.id = iss.Id
 	            where i.CutplanID = cd.id and iss.SCIRefno = w.SCIRefno and iss.Colorid = cd.colorid and i.Status = 'Confirmed'
