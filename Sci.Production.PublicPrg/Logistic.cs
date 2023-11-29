@@ -25,15 +25,15 @@ namespace Sci.Production.PublicPrg
                 @"
 update Orders 
 set TotalCTN = (
-    select sum(b.CTNQty) 
+    select isnull(sum(b.CTNQty), 0) 
     from PackingList a, PackingList_Detail b 
     where a.ID = b.ID and (a.Type = 'B' or a.Type = 'L') and b.OrderID = '{0}' and b.DisposeFromClog = 0), 
 FtyCTN = (
-    select sum(b.CTNQty) 
+    select isnull(sum(b.CTNQty), 0)  
     from PackingList a, PackingList_Detail b 
     where a.ID = b.ID and (a.Type = 'B' or a.Type = 'L') and b.OrderID = '{0}' and b.DisposeFromClog = 0 and TransferDate is not null), 
 ClogCTN = (
-    select sum(b.CTNQty) 
+    select isnull(sum(b.CTNQty), 0)  
     from PackingList a, PackingList_Detail b 
     where a.ID = b.ID and (a.Type = 'B' or a.Type = 'L') and b.OrderID = '{0}' and b.DisposeFromClog = 0 and ReceiveDate is not null
     and TransferCFADate is null AND CFAReturnClogDate is null), 
@@ -42,7 +42,7 @@ ClogLastReceiveDate = (
     from PackingList a, PackingList_Detail b 
     where a.ID = b.ID and (a.Type = 'B' or a.Type = 'L') and b.OrderID = '{0}' and b.DisposeFromClog = 0), 
 cfaCTN = (
-    select sum(b.CTNQty)
+    select isnull(sum(b.CTNQty), 0) 
     from PackingList a, PackingList_Detail b 
     where a.id = b.id and (a.Type = 'B' or a.Type = 'L') and b.OrderID = '{0}' and b.DisposeFromClog = 0 and b.CFAReceiveDate is not null),
 DRYCTN = (
