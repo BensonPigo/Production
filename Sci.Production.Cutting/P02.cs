@@ -3374,6 +3374,12 @@ select [ID],@ID,[PatternPanel],[FabricPanelCode] from [dbo].[WorkOrder_PatternPa
 
 INSERT INTO [dbo].[WorkOrder_SizeRatioRevisedMarkerOriginalData]([WorkOrderRevisedMarkerOriginalDataUkey],[ID],[SizeCode],[Qty])
 select @ID,[ID],[SizeCode],[Qty] from [dbo].[WorkOrder_SizeRatio] where WorkOrderUkey = {dr["ukey"]}
+
+UPDATE S SET S.BIPImportCuttingBCSCmdTime = NULL
+FROM SewingSchedule S WITH(NOLOCK)
+INNER JOIN WORKORDER WO WITH(NOLOCK) ON S.OrderID = WO.OrderID
+WHERE WO.Ukey = {dr["ukey"]}
+
 ";
                 }
             }
@@ -3410,6 +3416,12 @@ select [ID],@ID2,[PatternPanel],[FabricPanelCode] from [dbo].[WorkOrder_PatternP
 
 INSERT INTO [dbo].[WorkOrder_SizeRatioRevisedMarkerOriginalData]([WorkOrderRevisedMarkerOriginalDataUkey],[ID],[SizeCode],[Qty])
 select @ID2,[ID],[SizeCode],[Qty] from [dbo].[WorkOrder_SizeRatio] where WorkOrderUkey = {dr["ukey"]}
+
+UPDATE S SET S.BIPImportCuttingBCSCmdTime = NULL
+FROM SewingSchedule S WITH(NOLOCK)
+INNER JOIN WORKORDER WO WITH(NOLOCK) ON S.OrderID = WO.OrderID
+WHERE WO.Ukey = {dr["ukey"]}
+
 ";
                 }
             }

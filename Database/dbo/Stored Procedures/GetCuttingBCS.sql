@@ -15,8 +15,9 @@ SET NOCOUNT ON;
 		FROM SewingSchedule s
 		inner join Orders o on o.id = s.OrderID
 		WHERE  
-		[Offline] BETWEEN DATEADD(DAY, -30, GETDATE()) AND GETDATE() -- Filter for the last 30 days
-		OR [Inline] BETWEEN GETDATE() AND DATEADD(DAY, 75, GETDATE()) -- Filter for the next 75 days
+		([Offline] BETWEEN DATEADD(DAY, -30, GETDATE()) AND GETDATE() -- Filter for the last 30 days
+		OR [Inline] BETWEEN GETDATE() AND DATEADD(DAY, 75, GETDATE())) -- Filter for the next 75 days
+		AND s.BIPImportCuttingBCSCmdTime IS NULL
 		GROUP BY s.FactoryID, OrderID, s.MDivisionID,o.FtyGroup
 	),  StdQ_DateRange AS (
 		SELECT DISTINCT

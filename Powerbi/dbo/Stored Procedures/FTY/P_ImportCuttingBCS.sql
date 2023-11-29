@@ -8,6 +8,7 @@ SET NOCOUNT ON;
 	declare @SqlCmdUpdataIntegrate nvarchar(max) = '';
 	declare @SqlCmdUpdata nvarchar(max) ='';
 	declare @SqlCmdinsert nvarchar(max) ='';
+	declare @SqlCmdUpdata_1 nvarchar(max) ='';
 	set @SqlCmd = '
 	/************* 抓Cutting.R13報表資料*************/
 	select 
@@ -15,6 +16,12 @@ SET NOCOUNT ON;
 	into #tmp
 	from OPENQUERY(['+@current_PMS_ServerName+'],
 	''exec Production.[dbo].[GetCuttingBCS]'')'
+
+	set @SqlCmdUpdata_1 = '
+	Select DISTINCT [OrderID] into #tmp_1 FROM #TMP
+	update b set b.BIPImportCuttingBCSCmdTime = GETDATE()
+	from #tmp_1 a
+	inner join ['+@current_PMS_ServerName+'].Production.dbo.SewingSchedule b on a.OrderID = b.OrderID'
 
 	set @SqlCmdDelete = '
 	/************* 刪除P_CuttingBCS的資料，規則刪除相同的OrderID*************/
@@ -110,6 +117,6 @@ SET NOCOUNT ON;
 	END
 	'
 	DECLARE @SqlCmdAll nVARCHAR(MAX);
-	set @SqlCmdAll = @SqlCmd + @SqlCmdDelete+@SqlCmdinsert+@SqlCmdUpdata
+	set @SqlCmdAll = @SqlCmd  + @SqlCmdDelete+@SqlCmdinsert+ @SqlCmdUpdata_1 +@SqlCmdUpdata
 	EXEC sp_executesql @Sqlcmdall
 END
