@@ -14,7 +14,7 @@ using Microsoft.SqlServer.Management.Common;
 using System.Linq;
 using System.Xml.Linq;
 using Sci.Production.Prg;
-using System.Runtime.CompilerServices;
+using static Sci.AuthenticationAPI.AuthenticationAD;
 
 namespace Sci.Production.Win
 {
@@ -94,8 +94,8 @@ namespace Sci.Production.Win
             }
 
             IUserInfo user = null;
-            UserInfo u = new UserInfo();
-            this.result = UserLogin(act, pwd, loginFactory, u);
+            UserInfo userInfo = new UserInfo();
+            this.result = UserLogin(act, pwd, loginFactory, userInfo);
 
             if (!this.result)
             {
@@ -103,7 +103,7 @@ namespace Sci.Production.Win
                 return;
             }
 
-            user = u;
+            user = userInfo;
             if (!(this.result = this.app.DoLogin(user)))
             {
                 this.ShowErr(this.result);
@@ -202,9 +202,9 @@ namespace Sci.Production.Win
         /// <param name="userid">User ID</param>
         /// <param name="pwd">PWD</param>
         /// <param name="factoryID">Factory ID</param>
-        /// <param name="u">User Info</param>
+        /// <param name="userInfo">User Info</param>
         /// <returns>DualResult</returns>
-        public static DualResult UserLogin(string userid, string pwd, string factoryID, UserInfo u)
+        public static DualResult UserLogin(string userid, string pwd, string factoryID, UserInfo userInfo)
         {
             DualResult result;
             DataTable dtFactory;
@@ -224,48 +224,60 @@ namespace Sci.Production.Win
                 return new DualResult(false, "Mdivision does not exist!");
             }
 
-            SCHEMAS.PASS1Row data;
-            if (!(result = ProjUtils.GetPass1(userid, pwd, out data)))
+            List<SqlParameter> parameters = new List<SqlParameter>()
             {
-                return result;
+                new SqlParameter("@ID", userid),
+                new SqlParameter("@Password", pwd),
+            };
+            if (!MyUtility.Check.Seek("Select * From Pass1 Where ID = @ID And Password = @Password", parameters, out DataRow drPass1))
+            {
+                return new DualResult(false, "Account or password invalid");
             }
 
-            if (data == null)
+            userInfo = new UserInfo
             {
-                return new DualResult(false, "Account or password invalid.");
-            }
+                UserID = drPass1.Field<string>("ID"),
+                UserPassword = drPass1.Field<string>("Password"),
+                UserName = drPass1.Field<string>("Name"),
+                IsAdmin = drPass1.Field<bool?>("IsAdmin").GetValueOrDefault(false),
+                IsMIS = drPass1.Field<bool?>("IsMIS").GetValueOrDefault(false),
+                FactoryList = drPass1.Field<string>("Factory"),
+                MailAddress = drPass1.Field<string>("EMAIL"),
+                Factory = factoryID,
+                Keyword = keyword,
+                LoginName = drPass1.Field<string>("ADAccount"),
+            };
 
-            u.UserID = userid;
-            u.UserPassword = pwd;
-            if (!data.IsNAMENull())
+            #region AD驗證
+            if (ConfigurationManager.AppSettings["TaipeiServer"] == string.Empty)
             {
-                u.UserName = data.NAME;
+                if (string.IsNullOrEmpty(drPass1.Field<string>("ADAccount")))
+                {
+                    return new DualResult(false, "AD Account is empty, please check with local IT.");
+                }
+
+                try
+                {
+                    string region = DBProxy.Current.DefaultModuleName
+                        .Replace("_Formal", string.Empty)
+                        .Replace("_Dummy", string.Empty)
+                        .Replace("_Training", string.Empty)
+                        .Replace("PMSDB_", string.Empty)
+                        .Replace("testing_", string.Empty)
+                        .Replace("PH1", "PHI");
+                    Env.User = userInfo; // dll裡面需要。
+                    ADAuthResult adResult = new AuthenticationAPI.AuthenticationAD().ADAuthByRegion(region, userInfo.LoginName);
+                    if (!adResult.Pass)
+                    {
+                        return new DualResult(false, adResult.Message);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MyUtility.Msg.ErrorBox(ex.Message);
+                }
             }
-
-            if (!data.IsISADMINNull())
-            {
-                u.IsAdmin = data.ISADMIN;
-            }
-
-            // if (!data.IsFACTORYNull()) Sci.Production.ProductionEnv.UserFactories = data.FACTORY;
-            if (!data.IsFACTORYNull())
-            {
-                u.FactoryList = data.FACTORY;
-            }
-
-            if (!data.IsISMISNull())
-            {
-                u.IsMIS = data.ISMIS;
-            }
-
-            if (!data.IsEMAILNull())
-            {
-                u.MailAddress = data.EMAIL;
-            }
-
-            u.Factory = factoryID;
-            u.Keyword = keyword;
-
+            #endregion
             #region 登入時將SYSTEM資料表相關設定載入Sci.Env.Cfg中
             DataRow drSystem;
             if (!MyUtility.Check.Seek("select * from system", out drSystem, "Production"))
