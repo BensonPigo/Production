@@ -569,8 +569,9 @@ select ToAddress = stuff ((select concat (';', tmp.email)
 						  for xml path('')
 						 ), 1, 1, '')", Env.User.UserID);
                 DBProxy.Current.Select(string.Empty, cmd_leader, out DataTable dt_Leader);
-                if (!MyUtility.Check.Empty(dt_Leader)
-                    && dt_Leader.Rows.Count > 0)
+                if (!MyUtility.Check.Empty(dt_Leader) &&
+                    dt_Leader.Rows.Count > 0 &&
+                    result == "Fail")
                 {
                     string mailto = dt_Leader.Rows[0]["ToAddress"].ToString();
                     string ccAddress = Env.User.MailAddress;
