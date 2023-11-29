@@ -100,7 +100,7 @@ where MDivisionID = '{0}'", Env.User.Keyword);
 	        )
             ,[Issue_Qty] = 
 	        (        
-                SELECT val = SUM(iss.Qty)
+                SELECT val = isnull(SUM(iss.Qty),0)
                 FROM Issue i
                 INNER JOIN Issue_Summary iss ON i.id = iss.Id
                 WHERE i.CutplanID = a.id AND iss.SCIRefno = e.SCIRefno AND iss.Colorid = a.colorid
