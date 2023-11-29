@@ -25,7 +25,7 @@
     [SewLineEff]      NUMERIC (5, 2) NULL,
     [LNCSERIALNumber] INT            NULL,
     [SwitchTime]      INT            DEFAULT ((0)) NOT NULL,
-    [BIPImportCuttingBCCmdTime] DATETIME NULL , 
+    [BIPImportCuttingBCSCmdTime] DATETIME NULL , 
     CONSTRAINT [PK_SewingSchedule] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 
