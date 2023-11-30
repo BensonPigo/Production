@@ -214,12 +214,24 @@ namespace Sci.Production.Cutting
                 return;
             }
 
-            // 判斷勾選的是否 Issue_Qty <> 0 
-            DataTable dt_FabricIssued = dt_1.Select("Issue_Qty <> 0").TryCopyToDataTable(dt_1);
-            if (dt_FabricIssued.Rows.Count > 0)
+            // 判斷勾選的是否 IssueQty > 0
+            foreach (DataRow row in dt_1.Rows)
             {
-                MyUtility.Msg.WarningBox("Edit failed because fabric have been issued.");
-                return;
+                var cutplanID = MyUtility.Convert.GetString(row["ID"]);
+                var sciRefno = MyUtility.Convert.GetString(row["SCIRefno"]);
+                var colorID = MyUtility.Convert.GetString(row["ColorID"]);
+                string issueQty = MyUtility.GetValue.Lookup($@"
+                SELECT val = isnull(SUM(iss.Qty),0)
+                FROM Issue i
+                INNER JOIN Issue_Summary iss ON i.id = iss.Id
+                WHERE i.CutplanID = '{cutplanID}' AND iss.SCIRefno = '{sciRefno}' AND iss.Colorid = '{colorID}'
+                ");
+
+                if (MyUtility.Convert.GetDecimal(issueQty) > 0)
+                {
+                    MyUtility.Msg.WarningBox("Edit failed because fabric have been issued.");
+                    return;
+                }
             }
 
             // 判斷勾選是否有EstCutDate、Reason有值
