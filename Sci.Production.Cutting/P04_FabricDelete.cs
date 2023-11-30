@@ -160,7 +160,7 @@ namespace Sci.Production.Cutting
                     ,'{MyUtility.Convert.GetString(dataRow["POID"])}'
                     ,GETDATE()
                 )
-                
+                UPDATE WorkOrder SET CutplanID = '' WHERE Ukey = '{MyUtility.Convert.GetString(dataRow["WorkorderUkey"])}'    
                 Delete Cutplan_Detail_Cons WHERE ID = '{MyUtility.Convert.GetString(dataRow["ID"])}' AND Seq1 = '{MyUtility.Convert.GetString(dataRow["Seq1"])}' AND Seq2 = '{MyUtility.Convert.GetString(dataRow["Seq2"])}'
                 Delete Cutplan_Detail WHERE ID = '{MyUtility.Convert.GetString(dataRow["ID"])}' AND WorkorderUkey = '{MyUtility.Convert.GetString(dataRow["WorkorderUkey"])}'
                 ";
