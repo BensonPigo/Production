@@ -144,6 +144,8 @@ namespace Sci.Production.Quality
                  .Text("Refno", header: "Ref#", width: Widths.AnsiChars(15), iseditingreadonly: true)
                  .Text("ColorName", header: "Color Name", width: Widths.AnsiChars(12), iseditingreadonly: true)
                  .DateTime("CutTime", header: "Cut Shadeband Time", width: Widths.AnsiChars(20))
+                 .Text("CutBy", header: "Cut Shadeband By", width: Widths.AnsiChars(20), iseditingreadonly: true)
+                 .Text("CutTimeEditName", header: "Cut Shadeband Edit By", width: Widths.AnsiChars(20), iseditingreadonly: true)
                  .DateTime("PasteTime", header: "Paste Shadeband Time", width: Widths.AnsiChars(20))
                  .DateTime("PassQATime", header: "Pass QA Time", width: Widths.AnsiChars(20))
                  .Text("ShadebandDocLocationID", header: "Shadeband Location", width: Widths.AnsiChars(10), settings: cellShadebandDocLocationID)
@@ -433,6 +435,8 @@ select
     , [oldRemark] = fs.Remark
     , [FIRID] = f.ID
     , [ToneGroup] = fs.Tone
+    , [CutBy] = fs.CutBy
+    , [CutTimeEditName] = fs.CutTimeEditName
 from  Receiving r with (nolock)
 inner join Receiving_Detail rd with (nolock) on r.ID = rd.ID
 inner join PO_Supp_Detail psd with (nolock) on rd.PoId = psd.ID and rd.Seq1 = psd.SEQ1 and rd.Seq2 = psd.SEQ2
@@ -481,6 +485,8 @@ select
     , [oldRemark] = fs.Remark
     , [FIRID] = f.ID
     , [ToneGroup] = fs.Tone
+    , [CutBy] = fs.CutBy
+    , [CutTimeEditName] = fs.CutTimeEditName
 FROM TransferIn t with (nolock)
 INNER JOIN TransferIn_Detail td with (nolock) ON t.ID = td.ID
 INNER JOIN PO_Supp_Detail psd with (nolock) on td.PoId = psd.ID and td.Seq1 = psd.SEQ1 and td.Seq2 = psd.SEQ2
@@ -539,13 +545,17 @@ left join Color c with (nolock) on isnull(psdsC.SpecValue ,'') = c.ID and psd.Br
                 return;
             }
 
-            string sqlcmd = @"
+            string sqlcmd = $@"
 update fs
 	set fs.CutTime = t.CutTime
 	, fs.PasteTime = t.PasteTime
 	, fs.PassQATime = t.PassQATime
 	, fs.ShadebandDocLocationID = t.ShadebandDocLocationID
     , fs.Remark = t.Remark
+	/* Cut Shadeband Time是初次寫入的情況下(且CutBy為空)，要將登入人的ID寫入CutBy; ISP20231183 */
+    , fs.CutBy = case when fs.CutTime is null and t.CutTime is not null and ISNULL(fs.CutBy,'') = '' 
+		then '{Env.User.UserID}' else fs.CutBy end 		
+	, fs.CutTimeEditName = case when t.CutTime is not null and fs.CutBy != '' then '{Env.User.UserID}' else fs.CutTimeEditName end	
 from FIR_Shadebone fs
 inner join #tmp t on t.id = fs.ID and t.Roll = fs.Roll and t.Dyelot = fs.Dyelot
 ";
