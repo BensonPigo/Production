@@ -104,7 +104,7 @@ else
 	/* issue：ISP20231174 */
 	UPDATE S SET S.BIPImportCuttingBCCmdTime = NULL
 	FROM #TOrder A
-	INNER JOIN SewingSchedule S ON A.ORDERID = S.OrderID
+	INNER JOIN SewingSchedule S ON A.ID = S.OrderID
 -------------------------------------------------------------------------Order
 		--��欰Cutting�����,����sMDivisionID
 		Update a
