@@ -91,9 +91,43 @@ where MDivisionID = '{0}'", Env.User.Keyword);
             ) as CutQty,
 			e.FabricPanelCode
 			,f.WeaveTypeID
+            ,[FabricIssued] = 
+	        (
+	            SELECT val = IIF(SUM(iss.Qty) >= 1, 'Y', 'N')
+                FROM Issue i
+                INNER JOIN Issue_Summary iss ON i.id = iss.Id
+                WHERE i.CutplanID = a.id AND iss.SCIRefno = e.SCIRefno AND iss.Colorid = a.colorid AND i.Status = 'Confirmed'
+	        )
+            ,[Issue_Qty] = 
+	        (        
+                SELECT val = isnull(SUM(iss.Qty),0)
+                FROM Issue i
+                INNER JOIN Issue_Summary iss ON i.id = iss.Id
+                WHERE i.CutplanID = a.id AND iss.SCIRefno = e.SCIRefno AND iss.Colorid = a.colorid
+	        )
+            ,[Reason] = iif(isnull(IsCutPlan_IssueCutDate.val,0) = 1 , IsCutPlan_IssueCutDate.Reason , '')
+            ,[ReasonID] = ''
+            ,[EstCutDate] = iif(isnull(IsCutPlan_IssueCutDate.val,0) = 1 , IsCutPlan_IssueCutDate.EstCutDate ,b.EstCutDate) 
+            ,[EditName] = isnull(IsCutPlan_IssueCutDate.EditName,'')
+            ,[EditDate] = IsCutPlan_IssueCutDate.EditDate
+            ,[RequestorRemark] = isnull(IsCutPlan_IssueCutDate.RequestorRemark,'')
             From Cutplan_Detail a 
+            inner join Cutplan b WITH(NOLOCK) on a.id = b.ID
 			INNER JOIN WorkOrder e WITH (NOLOCK) ON a.WorkOrderUkey = e.Ukey
 			LEFT JOIN Fabric f WITH (NOLOCK) ON f.SCIRefno=e.SCIRefno
+            OUTER APPLY
+            (
+	            select 
+	            [val] = isnull(IIF(COUNT(*) OVER (PARTITION BY ci.id, ci.Refno, ci.colorid) >= 1, 1, 0),0)
+	            ,[EstCutDate] = isnull(ci.EstCutDate,'')
+	            ,[Reason] = isnull(Reason.[Description],'')
+                ,[EditName] = isnull(ci.EditName,'')
+                ,[EditDate] = ci.EditDate
+                ,[RequestorRemark] = isnull(ci.RequestorRemark,'')
+	            from CutPlan_IssueCutDate ci WITH(NOLOCK)
+                LEFT JOIN CutReason Reason ON Reason.Junk = 0 AND Reason.type = 'RC' AND Reason.id = ci.Reason
+	            where ci.id = b.id and ci.Refno = e.Refno and ci.Colorid = a.colorid
+            )IsCutPlan_IssueCutDate
             where a.id = '{0}'
             ", masterID);
             this.DetailSelectCommand = cmdsql;
@@ -112,17 +146,23 @@ where MDivisionID = '{0}'", Env.User.Keyword);
             .Text("Fabriccode", header: "Fabric Code", width: Widths.Auto(), iseditingreadonly: true)
             .Text("FabricPanelCode", header: "Fab_Panel Code", width: Widths.Auto(), iseditingreadonly: true)
             .Text("orderid", header: "SP#", width: Widths.Auto(), iseditingreadonly: true)
-            .Text("SEQ1", header: "SEQ1", width: Widths.Auto(), iseditingreadonly: true)
-            .Text("SEQ2", header: "SEQ2", width: Widths.Auto(), iseditingreadonly: true)
+            .Text("WeaveTypeID", header: "Weave Type", width: Widths.Auto(), iseditingreadonly: true)
+             .Text("SCIRefno", header: "SCIRefno", width: Widths.Auto(), iseditingreadonly: true)
+            .Text("Refno", header: "Refno", width: Widths.Auto(), iseditingreadonly: true)
             .Text("Article", header: "Article", width: Widths.Auto(), iseditingreadonly: true)
             .Text("Colorid", header: "Color", width: Widths.Auto(), iseditingreadonly: true)
+            .Text("EstCutDate", header: "Est. Cutting Date", width: Widths.Auto(), iseditingreadonly: true)
+            .Text("Reason", header: "Reason", width: Widths.Auto(), iseditingreadonly: true)
+            .Text("FabricIssued", header: "FabricIssued", width: Widths.Auto(), iseditingreadonly: true)
+            .Text("SEQ1", header: "SEQ1", width: Widths.Auto(), iseditingreadonly: true)
+            .Text("SEQ2", header: "SEQ2", width: Widths.Auto(), iseditingreadonly: true)
             .Text("SizeCode", header: "Size", width: Widths.Auto(), iseditingreadonly: true)
             .Text("CutQty", header: "Total CutQty", width: Widths.Auto(), iseditingreadonly: true)
-            .Text("SCIRefno", header: "SCIRefno", width: Widths.Auto(), iseditingreadonly: true)
-            .Text("Refno", header: "Refno", width: Widths.Auto(), iseditingreadonly: true)
-            .Text("WeaveTypeID", header: "Weave Type", width: Widths.Auto(), iseditingreadonly: true)
             .Numeric("Cons", header: "Cons", width: Widths.Auto(), integer_places: 8, decimal_places: 2, iseditingreadonly: true)
-            .Text("Remark", header: "Remark", width: Widths.Auto());
+            .Text("Remark", header: "Remark", width: Widths.Auto())
+            .Text("RequestorRemark", header: "Requestor Remark", width: Widths.Auto())
+            .Date("EditDate", header: "EditDate", width: Widths.Auto());
+
             this.detailgrid.Columns["Remark"].DefaultCellStyle.BackColor = Color.Pink;
         }
 
@@ -293,6 +333,12 @@ and o.ID=b.OrderID ", this.CurrentMaintain["ID"]);
         {
             base.OnDetailEntered();
             this.btnSendMail.Enabled = this.CurrentMaintain["Status"].ToString() != "New";
+
+            var status = MyUtility.Convert.GetString(this.CurrentMaintain["Status"]);
+            this.btnEditFabricCutDate.Enabled = status == "Confirmed" ? true : false;
+            this.btnFabDeleteHistory.Enabled = status == "Confirmed" ? true : false;
+            this.btnFabDelete.Enabled = status == "Confirmed" ? true : false;
+
             this.detailgrid.AutoResizeColumns();
         }
 
@@ -397,31 +443,55 @@ and o.ID=b.OrderID ", this.CurrentMaintain["ID"]);
 
             string cmdsql = string.Format(
             @"select cd.id,cd.sewinglineid,cd.orderid,w.seq1,w.seq2,cd.StyleID,cd.cutref,cd.cutno,w.FabricCombo,w.FabricCode,
-(
-    Select c.sizecode+'/ '+convert(varchar(8),c.qty)+', ' 
-    From WorkOrder_SizeRatio c WITH (NOLOCK) 
-    Where  c.WorkOrderUkey =cd.WorkOrderUkey 
+            (
+                Select c.sizecode+'/ '+convert(varchar(8),c.qty)+', ' 
+                From WorkOrder_SizeRatio c WITH (NOLOCK) 
+                Where  c.WorkOrderUkey =cd.WorkOrderUkey 
                 
-    For XML path('')
-) as SizeCode,
-(
-    Select distinct Article+'/ ' 
-	From dbo.WorkOrder_Distribute b WITH (NOLOCK) 
-	Where b.workorderukey = cd.WorkOrderUkey and b.article!=''
-    For XML path('')
-) as article,cd.colorid,
-(
-    Select c.sizecode+'/ '+convert(varchar(8),c.qty*w.layer)+', ' 
-    From WorkOrder_SizeRatio c WITH (NOLOCK) 
-    Where  c.WorkOrderUkey =cd.WorkOrderUkey and c.WorkOrderUkey = w.Ukey
+                For XML path('')
+            ) as SizeCode,
+            (
+                Select distinct Article+'/ ' 
+	            From dbo.WorkOrder_Distribute b WITH (NOLOCK) 
+	            Where b.workorderukey = cd.WorkOrderUkey and b.article!=''
+                For XML path('')
+            ) as article,cd.colorid,
+            (
+                Select c.sizecode+'/ '+convert(varchar(8),c.qty*w.layer)+', ' 
+                From WorkOrder_SizeRatio c WITH (NOLOCK) 
+                Where  c.WorkOrderUkey =cd.WorkOrderUkey and c.WorkOrderUkey = w.Ukey
                
-    For XML path('')
-) as CutQty,
-cd.cons,isnull(f.DescDetail,'') as DescDetail,cd.remark 
-from Cutplan_Detail cd WITH (NOLOCK) 
-inner join WorkOrder w on cd.WorkorderUkey = w.Ukey
-left join Fabric f on f.SCIRefno = w.SCIRefno
-where cd.id = '{0}'", this.CurrentDetailData["ID"]);
+                For XML path('')
+            ) as CutQty,
+            cd.cons,isnull(f.DescDetail,'') as DescDetail
+            ,[EstCutDate] = iif(isnull(IsCutPlan_IssueCutDate.val,0) = 1 , IsCutPlan_IssueCutDate.EstCutDate ,b.EstCutDate)
+            ,[Reason] = iif(isnull(IsCutPlan_IssueCutDate.val,0) = 1 , IsCutPlan_IssueCutDate.Reason , '')
+            ,[FabricIssued] = 
+            (
+                select val = iif(SUM(1) >= 1 ,'Y','N') 
+	            from Issue i WITH (NOLOCK)
+	            inner join Issue_Summary iss WITH (NOLOCK) on i.id = iss.Id
+	            where i.CutplanID = cd.id and iss.SCIRefno = w.SCIRefno and iss.Colorid = cd.colorid and i.Status = 'Confirmed'
+            )
+            ,cd.remark 
+            from Cutplan_Detail cd WITH (NOLOCK) 
+            inner join Cutplan b WITH(NOLOCK) on cd.id = b.ID
+            inner join WorkOrder w on cd.WorkorderUkey = w.Ukey
+            left join Fabric f on f.SCIRefno = w.SCIRefno
+            OUTER APPLY
+            (
+	            select 
+	            [val] = isnull(IIF(COUNT(*) OVER (PARTITION BY ci.id, ci.Refno, ci.colorid) >= 1, 1, 0),0)
+	            ,[EstCutDate] = isnull(ci.EstCutDate,'')
+	            ,[Reason] = isnull(Reason.[Description],'')
+                ,[EditName] = isnull(ci.EditName,'')
+                ,[EditDate] = ci.EditDate
+                ,[RequestorRemark] = isnull(ci.RequestorRemark,'')
+	            from CutPlan_IssueCutDate ci WITH(NOLOCK)
+                LEFT JOIN CutReason Reason ON Reason.Junk = 0 AND Reason.type = 'RC' AND Reason.id = ci.Reason
+	            where ci.id = b.id and ci.Refno = w.Refno and ci.Colorid = cd.colorid
+            )IsCutPlan_IssueCutDate
+            where cd.id = '{0}'", this.CurrentDetailData["ID"]);
             DualResult dResult = DBProxy.Current.Select(null, cmdsql, out DataTable excelTb);
 
             if (dResult)
@@ -573,6 +643,28 @@ where cd.id = '{0}'", this.CurrentDetailData["ID"]);
             this.detailgrid.ValidateControl();
             var frm = new P04_FabricIssueList(this.CurrentMaintain["ID"].ToString().Trim());
             frm.ShowDialog(this);
+        }
+
+        private void BtnEditFabCutDate_Click(object sender, EventArgs e)
+        {
+            var dt = (DataTable)this.detailgridbs.DataSource;
+            var frm = new P04_EditFabricCutDate(dt);
+            frm.ShowDialog();
+            this.RenewData();
+        }
+
+        private void BtnFabDelete_Click(object sender, EventArgs e)
+        {
+            var dt = (DataTable)this.detailgridbs.DataSource;
+            var frm = new P04_FabricDelete(dt);
+            frm.ShowDialog();
+            this.RenewData();
+        }
+
+        private void BtnFabDeleteHistory_Click(object sender, EventArgs e)
+        {
+            var frm = new P04_FabricDeleteHistory(this.CurrentMaintain["ID"].ToString());
+            frm.ShowDialog();
         }
     }
 }
