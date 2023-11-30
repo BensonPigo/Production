@@ -2896,6 +2896,8 @@
     <Build Include="dbo\Functions\Get_SubCon_R41_Report.sql" />
     <Build Include="dbo\Functions\Warehouse_Report_R25.sql" />
     <Build Include="dbo\Functions\GetParseOperationMold.sql" />
+    <Build Include="dbo\Tables\CutPlan_IssueCutDate.sql" />
+    <Build Include="dbo\Tables\CutPlan_DetailDeletedHistory.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />
