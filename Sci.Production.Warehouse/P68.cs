@@ -78,7 +78,7 @@ namespace Sci.Production.Warehouse
                 .Numeric("RelaxationCons", header: "Relaxation\r\nCons", width: Widths.AnsiChars(10), decimal_places: 2, iseditingreadonly: true)
                 .Numeric("DispatchedCons", header: "Dispatched\r\nCons", width: Widths.AnsiChars(10), decimal_places: 2, iseditingreadonly: true)
                 .Numeric("ReceivedCons", header: "Received\r\nCons", width: Widths.AnsiChars(10), decimal_places: 2, iseditingreadonly: true)
-                .Text("RequestorRemark", header: "Requestor\r\nRemark", width: Widths.AnsiChars(9), iseditingreadonly: true)
+                .EditText("RequestorRemark", header: "Requestor\r\nRemark", width: Widths.AnsiChars(9), iseditingreadonly: true)
                 .Text("WHRemark", header: "W/H Remark", width: Widths.AnsiChars(9), iseditingreadonly: true, settings: whRemark)
                 ;
             #endregion

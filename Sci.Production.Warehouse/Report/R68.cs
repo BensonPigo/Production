@@ -426,7 +426,10 @@ DROP TABLE #CutList, #issueDtl
             string fileName = "Warehouse_R68_FabricIssuanceStatusReport.xltx";
             Excel.Application excelApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\" + fileName); // 預先開啟excel app
             MyUtility.Excel.CopyToXls(this.dts[0], null, fileName, headerRow: 1, showExcel: false, showSaveMsg: false, excelApp: excelApp, wSheet: excelApp.Sheets[1]);
-            MyUtility.Excel.CopyToXls(this.dts[1], null, fileName, headerRow: 1, showExcel: false, showSaveMsg: false, excelApp: excelApp, wSheet: excelApp.Sheets[2]);
+            if (this.dts[1].Rows.Count > 0)
+            {
+                MyUtility.Excel.CopyToXls(this.dts[1], null, fileName, headerRow: 1, showExcel: false, showSaveMsg: false, excelApp: excelApp, wSheet: excelApp.Sheets[2]);
+            }
 
             excelApp.Columns.AutoFit();
             excelApp.Rows.AutoFit();
