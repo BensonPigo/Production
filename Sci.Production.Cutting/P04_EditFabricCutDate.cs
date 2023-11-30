@@ -154,6 +154,8 @@ namespace Sci.Production.Cutting
             this.grid1.Columns["Reason"].DefaultCellStyle.BackColor = Color.LightGray;
             this.grid1.Columns["RequestorRemark"].DefaultCellStyle.BackColor = Color.LightGray;
 
+            this.grid1.Columns[0].Frozen = true;
+
             // EstCutDate、Reason，ReadOnly的預設值為true
             for (int i = 0; i < this.grid1.Rows.Count; i++)
             {
@@ -229,7 +231,7 @@ namespace Sci.Production.Cutting
 
                 if (MyUtility.Convert.GetDecimal(issueQty) > 0)
                 {
-                    MyUtility.Msg.WarningBox("Edit failed because fabric have been issued.");
+                    MyUtility.Msg.WarningBox("Edit failed because fabric have been issued,Please check with Warehouse.");
                     return;
                 }
             }

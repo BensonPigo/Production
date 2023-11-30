@@ -72,6 +72,7 @@ namespace Sci.Production.Cutting
                 ;
             this.grid1.DataSource = this.detailDataTable;
             this.grid1.CellClick += this.Detailgrid_CellClick;
+            this.grid1.Columns[0].Frozen = true;
         }
 
         private void Detailgrid_CellClick(object sender, DataGridViewCellEventArgs e)
@@ -121,7 +122,7 @@ namespace Sci.Production.Cutting
 
                 if (MyUtility.Convert.GetDecimal(issueQty) > 0)
                 {
-                    MyUtility.Msg.WarningBox("Save failed because fabric have been issued.");
+                    MyUtility.Msg.WarningBox("Delete failed because fabric have been issued,Please check with Warehouse.");
                     return;
                 }
             }
