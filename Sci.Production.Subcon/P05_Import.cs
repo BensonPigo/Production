@@ -386,10 +386,10 @@ select  distinct
 into #baseArtworkReq
 from  orders o WITH (NOLOCK)
 inner join Order_Qty oq with (nolock) on o.ID = oq.ID
-inner join dbo.Order_Artwork oa on  oa.ID = o.ID and 
-                                    (oq.Article = oa.Article or oa.Article = '----') and 
-                                    oa.ArtworkTypeID = '{this.dr_artworkReq["artworktypeid"]}'
-                                    and oa.Article = (select top 1 Article from Order_Artwork where id = o.ID)
+inner join dbo.Order_Artwork oa with (nolock) on oa.ID = o.ID  
+                                    and (oq.Article = oa.Article or oa.Article = '----')  
+                                    and oa.ArtworkTypeID = '{this.dr_artworkReq["artworktypeid"]}'
+                                    and exists (select 1 from Order_Article oq with(nolock) where oq.ID = oa.ID and oq.Article = oa.Article)
 left join Order_TmsCost ot WITH (NOLOCK) on ot.ID = o.ID
 inner join factory f WITH (NOLOCK) on o.factoryid=f.id
 where f.IsProduceFty=1
