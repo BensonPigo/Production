@@ -230,36 +230,38 @@ namespace Sci.Production.Logistic
             }
 
             #region 更新資料到ClogReceive_Detail & PackingList_Detail
-            using (TransactionScope transactionScope = new TransactionScope())
+            try
             {
-                try
+                // 只存畫面上看到的那幾筆資料
+                foreach (DataRowView currentRowView in this.gridData.DefaultView)
                 {
-                    bool lastResult = true;
-
-                    // 只存畫面上看到的那幾筆資料
-                    foreach (DataRowView currentRowView in this.gridData.DefaultView)
+                    DataRow currentRow = currentRowView.Row;
+                    if (currentRow["Selected"].ToString() == "1")
                     {
-                        DataRow currentRow = currentRowView.Row;
-                        if (currentRow["Selected"].ToString() == "1")
+                        // BUG FIX:512: LOGISTIC_P04_Update Location，存檔出現失敗訊息
+                        // string updateCmd = @"update ClogReceive_Detail
+                        //                                    set ClogLocationId = @clogLocationId
+                        //                                    where ID = @clogReceiveID and PackingListId = @id and OrderId = @orderId and CTNStartNo = @ctnStartNo;
+                        //                              update PackingList_Detail
+                        //                                    set ClogLocationId = @clogLocationId, Remark = @remark
+                        //                                    where id = @id and CTNStartNo = @ctnStartNo;";
+
+                        // ClogLocationId更新，EditLocationDate才要寫入，不過原本作法全部覆蓋，因此需要自己撈資料來比對
+                        string chkCmd = string.Format(@"SELECT ClogLocationId FROM PackingList_Detail PL WITH (NOLOCK) WHERE id ='{0}' AND CTNStartNo = '{1}' ", currentRow["ID"].ToString(), currentRow["CTNStartNo"].ToString());
+
+                        DualResult result1CHK = DBProxy.Current.Select(null, chkCmd, out DataTable tmpTable);
+
+                        if (!result1CHK)
                         {
-                            // BUG FIX:512: LOGISTIC_P04_Update Location，存檔出現失敗訊息
-                            // string updateCmd = @"update ClogReceive_Detail
-                            //                                    set ClogLocationId = @clogLocationId
-                            //                                    where ID = @clogReceiveID and PackingListId = @id and OrderId = @orderId and CTNStartNo = @ctnStartNo;
-                            //                              update PackingList_Detail
-                            //                                    set ClogLocationId = @clogLocationId, Remark = @remark
-                            //                                    where id = @id and CTNStartNo = @ctnStartNo;";
+                            this.ShowErr(result1CHK);
+                            return;
+                        }
 
-                            // ClogLocationId更新，EditLocationDate才要寫入，不過原本作法全部覆蓋，因此需要自己撈資料來比對
-                            string chkCmd = string.Format(@"SELECT ClogLocationId FROM PackingList_Detail PL WITH (NOLOCK) WHERE id ='{0}' AND CTNStartNo = '{1}' ", currentRow["ID"].ToString(), currentRow["CTNStartNo"].ToString());
+                        string updateCmd = string.Empty;
 
-                            DualResult result1CHK = DBProxy.Current.Select(null, chkCmd, out DataTable tmpTable);
-
-                            string updateCmd = string.Empty;
-
-                            if (tmpTable.Rows[0]["ClogLocationId"].ToString() != currentRow["ClogLocationId"].ToString())
-                            {
-                                updateCmd = @"
+                        if (tmpTable.Rows[0]["ClogLocationId"].ToString() != currentRow["ClogLocationId"].ToString())
+                        {
+                            updateCmd = @"
 update PackingList_Detail 
 set 
   ClogLocationId = @clogLocationId
@@ -268,69 +270,69 @@ set
 , EditLocationDate=@EditLocationDate
 , EditLocationName =@EditLocationName 
 where id = @id and CTNStartNo = @ctnStartNo;";
-                            }
-                            else
-                            {
-                                updateCmd = @"
+                        }
+                        else
+                        {
+                            updateCmd = @"
 update PackingList_Detail 
 set 
   ClogLocationId = @clogLocationId
 , Remark = @remark 
 where id = @id and CTNStartNo = @ctnStartNo;";
-                            }
+                        }
 
-                            #region 準備sql參數資料
-                            System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter
-                            {
-                                ParameterName = "@clogLocationId",
-                                Value = currentRow["ClogLocationId"].ToString(),
-                            };
+                        #region 準備sql參數資料
+                        System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter
+                        {
+                            ParameterName = "@clogLocationId",
+                            Value = currentRow["ClogLocationId"].ToString(),
+                        };
 
-                            System.Data.SqlClient.SqlParameter sp2 = new System.Data.SqlClient.SqlParameter
-                            {
-                                ParameterName = "@oriClogLocationID",
-                                Value = tmpTable.Rows[0]["ClogLocationId"].ToString(),
-                            };
+                        System.Data.SqlClient.SqlParameter sp2 = new System.Data.SqlClient.SqlParameter
+                        {
+                            ParameterName = "@oriClogLocationID",
+                            Value = tmpTable.Rows[0]["ClogLocationId"].ToString(),
+                        };
 
-                            // System.Data.SqlClient.SqlParameter sp2 = new System.Data.SqlClient.SqlParameter();
-                            // sp2.ParameterName = "@clogReceiveID";
-                            // sp2.Value = currentRow["ClogReceiveID"].ToString();
-                            System.Data.SqlClient.SqlParameter sp3 = new System.Data.SqlClient.SqlParameter
-                            {
-                                ParameterName = "@id",
-                                Value = currentRow["ID"].ToString(),
-                            };
+                        // System.Data.SqlClient.SqlParameter sp2 = new System.Data.SqlClient.SqlParameter();
+                        // sp2.ParameterName = "@clogReceiveID";
+                        // sp2.Value = currentRow["ClogReceiveID"].ToString();
+                        System.Data.SqlClient.SqlParameter sp3 = new System.Data.SqlClient.SqlParameter
+                        {
+                            ParameterName = "@id",
+                            Value = currentRow["ID"].ToString(),
+                        };
 
-                            System.Data.SqlClient.SqlParameter sp4 = new System.Data.SqlClient.SqlParameter
-                            {
-                                ParameterName = "@orderId",
-                                Value = currentRow["OrderId"].ToString(),
-                            };
+                        System.Data.SqlClient.SqlParameter sp4 = new System.Data.SqlClient.SqlParameter
+                        {
+                            ParameterName = "@orderId",
+                            Value = currentRow["OrderId"].ToString(),
+                        };
 
-                            System.Data.SqlClient.SqlParameter sp5 = new System.Data.SqlClient.SqlParameter
-                            {
-                                ParameterName = "@ctnStartNo",
-                                Value = currentRow["CTNStartNo"].ToString(),
-                            };
+                        System.Data.SqlClient.SqlParameter sp5 = new System.Data.SqlClient.SqlParameter
+                        {
+                            ParameterName = "@ctnStartNo",
+                            Value = currentRow["CTNStartNo"].ToString(),
+                        };
 
-                            System.Data.SqlClient.SqlParameter sp6 = new System.Data.SqlClient.SqlParameter
-                            {
-                                ParameterName = "@remark",
-                                Value = currentRow["Remark"].ToString(),
-                            };
+                        System.Data.SqlClient.SqlParameter sp6 = new System.Data.SqlClient.SqlParameter
+                        {
+                            ParameterName = "@remark",
+                            Value = currentRow["Remark"].ToString(),
+                        };
 
-                            System.Data.SqlClient.SqlParameter sp7 = new System.Data.SqlClient.SqlParameter();
-                            System.Data.SqlClient.SqlParameter sp8 = new System.Data.SqlClient.SqlParameter();
-                            if (tmpTable.Rows[0]["ClogLocationId"].ToString() != currentRow["ClogLocationId"].ToString())
-                            {
-                                sp7.ParameterName = "@EditLocationDate";
-                                sp7.Value = DateTime.Now;
-                                sp8.ParameterName = "@EditLocationName";
-                                sp8.Value = Env.User.UserID;
-                            }
+                        System.Data.SqlClient.SqlParameter sp7 = new System.Data.SqlClient.SqlParameter();
+                        System.Data.SqlClient.SqlParameter sp8 = new System.Data.SqlClient.SqlParameter();
+                        if (tmpTable.Rows[0]["ClogLocationId"].ToString() != currentRow["ClogLocationId"].ToString())
+                        {
+                            sp7.ParameterName = "@EditLocationDate";
+                            sp7.Value = DateTime.Now;
+                            sp8.ParameterName = "@EditLocationName";
+                            sp8.Value = Env.User.UserID;
+                        }
 
-                            // EditLocationDate
-                            IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>
+                        // EditLocationDate
+                        IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>
                             {
                                 sp1,
 
@@ -341,38 +343,26 @@ where id = @id and CTNStartNo = @ctnStartNo;";
                                 sp6,
                             };
 
-                            if (tmpTable.Rows[0]["ClogLocationId"].ToString() != currentRow["ClogLocationId"].ToString())
-                            {
-                                cmds.Add(sp2);
-                                cmds.Add(sp7);
-                                cmds.Add(sp8);
-                            }
-                            #endregion
-                            DualResult result = DBProxy.Current.Execute(null, updateCmd, cmds);
-                            if (!result)
-                            {
-                                lastResult = false;
-                            }
+                        if (tmpTable.Rows[0]["ClogLocationId"].ToString() != currentRow["ClogLocationId"].ToString())
+                        {
+                            cmds.Add(sp2);
+                            cmds.Add(sp7);
+                            cmds.Add(sp8);
+                        }
+                        #endregion
+                        DualResult result = DBProxy.Current.Execute(null, updateCmd, cmds);
+                        if (!result)
+                        {
+                            this.ShowErr(result);
+                            return;
                         }
                     }
-
-                    if (lastResult)
-                    {
-                        transactionScope.Complete();
-                    }
-                    else
-                    {
-                        transactionScope.Dispose();
-                        MyUtility.Msg.WarningBox("Save failed, Pleaes re-try");
-                        return;
-                    }
                 }
-                catch (Exception ex)
-                {
-                    transactionScope.Dispose();
-                    this.ShowErr("Commit transaction error.", ex);
-                    return;
-                }
+            }
+            catch (Exception ex)
+            {
+                this.ShowErr("save error.", ex);
+                return;
             }
             #endregion
 
