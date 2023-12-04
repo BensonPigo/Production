@@ -43,7 +43,7 @@ BEGIN
 			set PO.FIRLabInspPercent = (
 				select cnt= isnull(
 					convert(varchar,
-					round(convert(float, sum(case when b.Result <> '' or (b.nonCrocking = 1 and b.nonWash = 1 and b.nonHeat = 1) then 1 else 0 end))
+					round(convert(float, sum(case when b.Result <> '' or (b.nonCrocking = 1 and b.nonWash = 1 and b.nonHeat = 1 and b.nonIron = 1) then 1 else 0 end))
 					/convert(float, count(1)), 4) * 100), 0)
 			 	from FIR_Laboratory b 
 				where exists (select 1 from FIR a WITH(NOLOCK) where a.POID = @POID and a.ID = b.ID)
