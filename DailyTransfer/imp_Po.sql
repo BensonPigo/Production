@@ -500,8 +500,7 @@ WHERE po.StockUnit = '' OR po.StockUnit IS NULL
 ----PO_Supp_Detail_Spec
 Delete a 
 from Production.dbo.PO_Supp_Detail_Spec as a 
-where not exists (select 1 from Trade_To_Pms.dbo.#Trade_To_Pms_PO b where a.ID = b.ID a)
-or not exists (select 1 from Trade_To_Pms.dbo.PO_Supp_Detail b where a.ID = b.ID and a.Seq1 = b.Seq1 and a.Seq2 = b.Seq2)
+where not exists (select 1 from Trade_To_Pms.dbo.PO_Supp_Detail b where a.ID = b.ID and a.Seq1 = b.Seq1 and a.Seq2 = b.Seq2)
 
 UPDATE a
 SET  
