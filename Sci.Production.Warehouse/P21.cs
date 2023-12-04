@@ -162,6 +162,7 @@ namespace Sci.Production.Warehouse
                  .Text("StockTypeDesc", header: "Stock Type", width: Widths.AnsiChars(8), iseditingreadonly: true)
                  .DateTime("CutShadebandTime", header: "Cut Shadeband Time", width: Widths.AnsiChars(20), iseditingreadonly: false)
                  .Text("CutBy", header: "Cut Shadeband By", width: Widths.AnsiChars(8), iseditingreadonly: true)
+                 .Text("CutTimeEditName", header: "Cut Time EditName", width: Widths.AnsiChars(8), iseditingreadonly: true)
                  .DateTime("Fabric2LabTime", header: "Fabric to Lab Time", width: Widths.AnsiChars(20), iseditingreadonly: false)
                  .Text("Fabric2LabBy", header: "Fabric to Lab By", width: Widths.AnsiChars(8), iseditingreadonly: true)
                  .Text("Location", header: "Location", width: Widths.AnsiChars(12), settings: cellLocation)
@@ -407,6 +408,7 @@ from
         ,[CutShadebandTime]=cutTime.CutTime
         ,[OldCutShadebandTime]=cutTime.CutTime
         ,cutTime.CutBy
+        ,cutTime.CutTimeEditName
         ,o.BrandID
         ,fb.WeaveTypeID
         ,[OldFabric2LabTime]=rd.Fabric2LabTime
@@ -482,7 +484,7 @@ from
 			    , 1, 1, '')
     )Location
     OUTER APPLY(
-	    SELECT  fs.CutTime,fs.CutBy
+	    SELECT  fs.CutTime,fs.CutBy,fs.CutTimeEditName
 	    FROM FIR f
 	    INNER JOIN FIR_Shadebone fs with (nolock) on f.id = fs.ID 	
 	    WHERE  r.id = f.ReceivingID and rd.PoId = F.POID and rd.Seq1 = F.SEQ1 and rd.Seq2 = F.SEQ2 AND rd.Roll = fs.Roll and rd.Dyelot = fs.Dyelot
@@ -538,6 +540,7 @@ from
         ,[CutShadebandTime]=cutTime.CutTime
         ,[OldCutShadebandTime]=cutTime.CutTime
         ,cutTime.CutBy
+        ,cutTime.CutTimeEditName
         ,o.BrandID
         ,fb.WeaveTypeID
         ,[OldFabric2LabTime]=td.Fabric2LabTime
@@ -613,7 +616,7 @@ from
 			    , 1, 1, '')
     )Location
     OUTER APPLY(
-	    SELECT  fs.CutTime,fs.CutBy
+	    SELECT  fs.CutTime,fs.CutBy,fs.CutTimeEditName
 	    FROM FIR f
 	    INNER JOIN FIR_Shadebone fs with (nolock) on f.id = fs.ID 	
 	    WHERE  t.id = f.ReceivingID and td.PoId = F.POID and td.Seq1 = F.SEQ1 and td.Seq2 = F.SEQ2 AND td.Roll = fs.Roll and td.Dyelot = fs.Dyelot
@@ -954,7 +957,11 @@ Insert into LocationTrans_Detail(   ID,
                 string cutTime = MyUtility.Convert.GetDate(updateItem["CutShadebandTime"]).HasValue ? "'" + MyUtility.Convert.GetDate(updateItem["CutShadebandTime"]).Value.ToString("yyyy/MM/dd HH:mm:ss") + "'" : "NULL";
                 sqlUpdateFIR_Shadebone += $@"
 UPDATE fs
-SET  fs.CutTime = {cutTime}, Cutby = iif({cutTime} is null, Cutby, '{Sci.Env.User.UserID}')
+SET  fs.CutTime = {cutTime}
+, fs.CutBy = case when fs.CutTime is null and {cutTime} is not null and ISNULL(fs.CutBy,'') = '' 
+	then '{Env.User.UserID}' else fs.CutBy end 		
+, fs.CutTimeEditName = case when {cutTime} is not null and fs.CutBy != '' 
+    then '{Env.User.UserID}' else fs.CutTimeEditName end	
 FROM FIR f
 INNER JOIN FIR_Shadebone fs with (nolock) on f.id = fs.ID 	
 WHERE  f.ReceivingID='{updateItem["ID"]}'
