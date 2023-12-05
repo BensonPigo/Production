@@ -2898,6 +2898,7 @@
     <Build Include="dbo\Functions\GetParseOperationMold.sql" />
     <Build Include="dbo\Tables\CutPlan_IssueCutDate.sql" />
     <Build Include="dbo\Tables\CutPlan_DetailDeletedHistory.sql" />
+    <Build Include="dbo\Tables\FIR_Laboratory_Iron.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />
