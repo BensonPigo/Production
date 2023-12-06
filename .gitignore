@@ -53,6 +53,10 @@ Sci.Production.Centralized/bin
 Sci.Production.Centralized/obj
 Sci.Production.SubProcess/bin
 Sci.Production.SubProcess/obj
+MarkerFile.Hourly/bin
+MarkerFile.Hourly/obj
+MailQMS_Fabric_Inspection_record/bin
+MailQMS_Fabric_Inspection_record/obj
 .vs/Supercharger
 .vs/Production/v16
 .vs/Production/v15
