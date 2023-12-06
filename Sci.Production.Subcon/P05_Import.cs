@@ -386,10 +386,10 @@ select  distinct
 into #baseArtworkReq
 from  orders o WITH (NOLOCK)
 inner join Order_Qty oq with (nolock) on o.ID = oq.ID
-inner join dbo.Order_Artwork oa with (nolock) on oa.ID = o.ID  
-                                    and (oq.Article = oa.Article or oa.Article = '----')  
-                                    and oa.ArtworkTypeID = '{this.dr_artworkReq["artworktypeid"]}'
-                                    and exists (select 1 from Order_Article oq with(nolock) where oq.ID = oa.ID and oq.Article = oa.Article)
+inner join dbo.Order_Artwork oa with (nolock) on oa.ID = o.ID
+        and (oq.Article = oa.Article or oa.Article = '----')  
+        and oa.ArtworkTypeID = '{this.dr_artworkReq["artworktypeid"]}'
+        and exists (select 1 from Order_Article oa1 with(nolock) where oa1.ID = oa.ID and (oa1.Article = oa.Article or oa.Article = '----'))
 left join Order_TmsCost ot WITH (NOLOCK) on ot.ID = o.ID
 inner join factory f WITH (NOLOCK) on o.factoryid=f.id
 where f.IsProduceFty=1
@@ -429,12 +429,13 @@ select  distinct
         , Remark = ISNULL(oa.Remark, '')
         , OrderArtworkUkey = ISNULL(oa.Ukey, 0)
 into #baseArtworkReq
-from  orders o WITH (NOLOCK) 
+from  Orders o with (nolock)
 inner join Order_Qty oq with (nolock) on o.ID = oq.ID
-inner join factory f WITH (NOLOCK) on o.factoryid = f.id
-left join dbo.Order_Artwork oa on oa.ID = o.ID
-    and oa.Article = oq.Article
+inner join factory f with (nolock) on o.factoryid = f.id
+inner join dbo.Order_Artwork oa with(nolock) on oa.ID = o.ID
+    and (oq.Article = oa.Article or oa.Article = '----')  
     and oa.ArtworkTypeID = '{this.dr_artworkReq["artworktypeid"]}'
+    and exists (select 1 from Order_Article oa1 with (nolock) where oa1.ID = oa.ID and (oa1.Article = oa.Article or oa.Article = '----'))
 outer apply (
 	select vsa.ActStitch, sao.LocalSuppId
 	from  dbo.View_Style_Artwork vsa 
