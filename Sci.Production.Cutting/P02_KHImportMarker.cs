@@ -32,7 +32,7 @@ namespace Sci.Production.Cutting
 
             if (dialogResult != DialogResult.OK)
             {
-                return new DualResult(true);
+                return new DualResult(true, "NotImport");
             }
 
             this.ShowWaitMessage("Loading...");
@@ -82,6 +82,9 @@ namespace Sci.Production.Cutting
                         {
                             this.HideWaitMessage();
                             Marshal.ReleaseComObject(worksheet);
+                            excel.ActiveWorkbook.Close();
+                            excel.Quit();
+                            Marshal.ReleaseComObject(excel);
                             return result;
                         }
 
@@ -91,6 +94,9 @@ namespace Sci.Production.Cutting
                         {
                             this.HideWaitMessage();
                             Marshal.ReleaseComObject(worksheet);
+                            excel.ActiveWorkbook.Close();
+                            excel.Quit();
+                            Marshal.ReleaseComObject(excel);
                             return result;
                         }
 
@@ -99,12 +105,16 @@ namespace Sci.Production.Cutting
 
                     transactionScope.Complete();
                     transactionScope.Dispose();
+                    excel.ActiveWorkbook.Close();
+                    excel.Quit();
                     Marshal.ReleaseComObject(excel);
                 }
                 catch (Exception ex)
                 {
                     this.HideWaitMessage();
                     transactionScope.Dispose();
+                    excel.ActiveWorkbook.Close();
+                    excel.Quit();
                     Marshal.ReleaseComObject(excel);
                     return new DualResult(false, ex);
                 }
@@ -115,6 +125,7 @@ namespace Sci.Production.Cutting
             if (isNoMatchSP)
             {
                 MyUtility.Msg.InfoBox($"Excel not contain Cutting SP<{this.CurrentMaintain["ID"]}>");
+                return new DualResult(true, "NotImport");
             }
 
             return new DualResult(true);
@@ -316,6 +327,7 @@ ID
 ,SpreadingNoID
 ,Shift
 ,Tone
+,OrderID
 )
 values
 (
@@ -349,6 +361,7 @@ values
 ,''
 ,''
 ,'{drWorkOrder["Tone"]}'
+,'{this.CurrentMaintain["ID"]}'
 )
 
 select [WorkOrderUkey] = @@IDENTITY
