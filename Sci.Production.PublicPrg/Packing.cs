@@ -4850,6 +4850,23 @@ DROP TABLE #ShippingMarkPicture_PIC,#ShippingMarkPicture_HTML,#Ukeys,#CustPONo_H
         }
 
         /// <summary>
+        /// CheckDupSCICtnNo 檢查是否有重複建立SCICtnNo
+        /// </summary>
+        /// <param name="packID">packID</param>
+        /// <returns>bool</returns>
+        public static bool CheckDupSCICtnNo(string packID)
+        {
+            string sqlCheck = $@"
+select  1
+from Packinglist_Detail pd with (nolock)
+where   pd.ID <> '{packID}' and
+        pd.SCICtnNo in (select SCICtnNo from Packinglist_Detail pd2 with (nolock) where pd2.ID = '{packID}')
+";
+
+            return MyUtility.Check.Seek(sqlCheck);
+        }
+
+        /// <summary>
         /// Packing B03表身
         /// </summary>
         public class ShippingMarkPicture_Detail
