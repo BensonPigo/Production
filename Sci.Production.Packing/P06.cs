@@ -677,9 +677,13 @@ group by oqd.Article,oqd.SizeCode, oqd.Qty",
         /// <inheritdoc/>
         protected override DualResult ClickSavePost()
         {
-
             this.detailgrid.IsEditable = true;
             this.detailgrid.IsEditingReadOnly = false;
+
+            if (Prgs.CheckDupSCICtnNo(this.CurrentMaintain["ID"].ToString()))
+            {
+                return new DualResult(false, "SCICtnNo duplicate creation occurs, please save again.");
+            }
 
             return base.ClickSavePost();
         }
