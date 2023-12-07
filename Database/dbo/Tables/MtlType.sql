@@ -93,3 +93,12 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'最後修�
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'是否為線', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'MtlType', @level2type = N'COLUMN', @level2name = N'IsThread';
 
+GO
+
+
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Material Type的大類', @level0type = N'SCHEMA', @level0name = N'dbo'
+, @level1type = N'TABLE', @level1name = N'MtlType'
+, @level2type = N'COLUMN', @level2name = N'CategoryType';
+
+
+GO
