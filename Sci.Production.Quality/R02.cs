@@ -200,6 +200,7 @@ select A.POID
     ,et.ShipModeID
 	,t.ExportId
 	,t.InvNo
+    ,x.SewInLine
 	,t.WhseArrival
 	,t.StockQty
     ,total_t.InvStock
@@ -210,6 +211,7 @@ select A.POID
 	,A.refno
 	,[Article] = Style.Article
 	,[MaterialType] = fabric.MtlTypeID
+	,MtlType.CategoryType
 	, [Color]  = isnull( psdsC.SpecValue,'')
 	, [Color Name] = c.Name
 	,SizeSpec= isnull(psdsS.SpecValue ,'')
@@ -249,7 +251,7 @@ cross apply(
 ) total_t
 left join Export et with (nolock) on et.ID = t.ExportId
 inner join (
-		select distinct id,O.factoryid,O.BrandID,O.StyleID,O.SeasonID,O.Category,O.StyleUkey
+		select distinct id,O.factoryid,O.BrandID,O.StyleID,O.SeasonID,O.Category,O.StyleUkey ,o.SewInLine
 		from dbo.Orders o WITH (NOLOCK)  
 		{1}
 ) x on x. id = A.POID
@@ -260,6 +262,7 @@ left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = PS.id and psdsC.
 left join PO_Supp_Detail_Spec psdsS WITH (NOLOCK) on psdsS.ID = PS.id and psdsS.seq1 = PS.seq1 and psdsS.seq2 = PS.seq2 and psdsS.SpecColumnID = 'Size'
 left join dbo.Color C WITH (NOLOCK) on C.ID = isnull(psdsC.SpecValue ,'') and C.BrandId = x.BrandId
 left join fabric WITH (NOLOCK) on fabric.SCIRefno = PS.scirefno
+left join MtlType WITH (NOLOCK) on MtlType.ID = fabric.MtlTypeID
 left join dbo.AIR_Laboratory AIRL WITH (NOLOCK) on AIRL.ID = A.ID     
 OUTER APPLY (
 	SELECT  [Val]=  STUFF((

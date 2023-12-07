@@ -17,6 +17,7 @@
     [IsThread]                 BIT            CONSTRAINT [DF_MtlType_IsThread] DEFAULT ((0)) NOT NULL,
     [LossQtyCalculateType]     VARCHAR (1)    CONSTRAINT [DF_MtlType_LossQtyCalculateType] DEFAULT ('') NOT NULL,
     [AllowTransPoForGarmentSP] BIT            CONSTRAINT [DF_MtlType_AllowTransPoForGarmentSP] DEFAULT ((0)) NOT NULL,
+    CategoryType varchar(30) NOT NULL CONSTRAINT [DF_MtlType_CategoryType] default '',
     CONSTRAINT [PK_MtlType] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 
