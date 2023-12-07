@@ -185,6 +185,7 @@ namespace Sci.Production.Quality
             .CheckBox("selected", header: string.Empty, trueValue: 1, falseValue: 0, iseditable: true)
             .Text("ExportID", header: "WK#", width: Widths.AnsiChars(16), iseditingreadonly: true)
             .Text("InvoiceNo", header: "Invoice#", width: Widths.AnsiChars(16), iseditingreadonly: true)
+            .Text("ReceivingID", header: "Receiving ID", width: Widths.AnsiChars(15), iseditingreadonly: true)
             .Date("WhseArrival", header: "ATA", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Date("ETA", header: "ETA", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Text("SeasonID", header: "Season", width: Widths.AnsiChars(6), iseditingreadonly: true)
@@ -1894,8 +1895,9 @@ FileExistI= cast(0 as bit),
 FileExistT= cast(0 as bit),
 ed.id,
 ed.InvoiceNo,
-Export.ETA,
-Export.WhseArrival,
+[ReceivingID] = r.ID,
+r.ETA,
+r.WhseArrival,
 seasonID = s.ID,
 ed.PoID,
 seq=ed.seq1+'-'+ed.seq2,
@@ -2006,6 +2008,7 @@ a.selected
 ,[ExportID] = a.ID
 ,[InvoiceNo] = a.InvoiceNo
 ,[WhseArrival] = a.WhseArrival
+,[ReceivingID] = a.ReceivingID
 ,[ETA] = a.Eta
 ,[SeasonID] = a.seasonID
 ,[POID] = a.PoID
