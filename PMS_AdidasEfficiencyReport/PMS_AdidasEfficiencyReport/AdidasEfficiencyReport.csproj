@@ -69,6 +69,9 @@
     <Reference Include="ObjectListView">
       <HintPath>..\..\_Dll\ObjectListView.dll</HintPath>
     </Reference>
+    <Reference Include="PmsWebApiUtility20">
+      <HintPath>..\..\_Dll\PmsWebApiUtility20.dll</HintPath>
+    </Reference>
     <Reference Include="PostJobLog">
       <HintPath>..\..\_Dll\PostJobLog.dll</HintPath>
     </Reference>

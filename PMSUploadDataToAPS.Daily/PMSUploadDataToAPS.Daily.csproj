@@ -89,7 +89,11 @@
     <Reference Include="ObjectListView">
       <HintPath>..\_Dll\ObjectListView.dll</HintPath>
     </Reference>
-    <Reference Include="PostJobLog">
+    <Reference Include="PmsWebApiUtility20">
+      <HintPath>..\_Dll\PmsWebApiUtility20.dll</HintPath>
+    </Reference>
+    <Reference Include="PostJobLog, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\_Dll\PostJobLog.dll</HintPath>
     </Reference>
     <Reference Include="Sci, Version=1.0.17.918, Culture=neutral, processorArchitecture=MSIL">
