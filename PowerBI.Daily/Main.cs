@@ -147,17 +147,14 @@ namespace PowerBI.Daily
 
         private void ClickUpdate()
         {
-            SqlConnection conn;
             DateTime startDate;
             DateTime endDate;
-            if (!Sci.SQL.GetConnection(out conn)) { return; }
-            conn.InfoMessage += new SqlInfoMessageEventHandler(InfoMessage);
 
             startDate = DateTime.Now;
             // type 0 先排除 P_ImportEstShippingReport  跑完並寫 joblog
             DualResult result = AsyncHelper.Current.DataProcess(this, () =>
             {
-                return AsyncUpdateExport(conn, 0);
+                return AsyncUpdateExport(0);
             });
            
             endDate = DateTime.Now;
@@ -171,7 +168,7 @@ namespace PowerBI.Daily
             // type 1 只跑 P_ImportEstShippingReport 
             result = AsyncHelper.Current.DataProcess(this, () =>
             {
-                return AsyncUpdateExport(conn, 1);
+                return AsyncUpdateExport(1);
             });
 
             // 手動才彈談窗顯示
@@ -179,14 +176,12 @@ namespace PowerBI.Daily
             {
                 ShowErr(result);
             }
-
-            conn.Close();
             issucess = true;
         }
 
         bool issucess = true;
         #region Export/Update (非同步)
-        private DualResult AsyncUpdateExport(SqlConnection conn, int type = 0)
+        private DualResult AsyncUpdateExport(int type = 0)
         {
             DualResult result;
             try
