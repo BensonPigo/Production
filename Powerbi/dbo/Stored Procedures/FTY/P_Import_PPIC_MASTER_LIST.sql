@@ -5,6 +5,11 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
+	if @SCIDeliveryS is null
+	begin
+		set @SCIDeliveryS = dateadd(day, -60, Getdate())
+	end
+
 	create table #tmp_P_PPICMASTERLIST (
 			[M] VARCHAR(8) NULL ,
 			[FactoryID] VARCHAR(8) NULL ,
@@ -80,7 +85,6 @@ BEGIN
 			[Booking Qty] INT NULL ,
 			[FOC Adj Qty] INT NULL ,
 			[Not FOC Adj Qty] INT NULL ,
-			[FOB]　numeric(16,4)　NULL,
 			[Total]　numeric(38,6) NULL,
 			[KPI L/ETA] DATE NULL ,
 			[PF ETA (SP)] DATE NULL ,
@@ -162,7 +166,20 @@ BEGIN
 			[Last ctn recvd date] DATETIME NULL ,
 			[OrganicCotton] VARCHAR(1) NULL ,
 			[Direct Ship] VARCHAR(1) NULL ,
-			[StyleCarryover] VARCHAR(1) NULL
+			[StyleCarryover] VARCHAR(1) NULL,
+			[SCHDL/ETA(SP)] [date] NULL,
+			[SewingMtlETA(SPexclRepl)] [date] NULL,
+			[ActualMtlETA(exclRepl)] [date] NULL,
+			[HalfKey] [varchar](8) NULL,
+			[DevSample] [varchar](1) NULL,
+			[POID] [varchar](13) NULL,
+			[KeepPanels] [varchar](1) NULL,
+			[BuyBackReason] [varchar](20) NULL,
+			[SewQtybyRate] [numeric](38, 6) NULL,
+			[Unit] [varchar](8) NULL,
+			[SubconInType] [varchar](100) NULL,
+			[Article] [varchar](500) NULL,
+			[ProduceRgPMS] [varchar](3) NULL
 	)
 
 	create table #tmp_P_PPICMasterList_Extend (
@@ -186,7 +203,7 @@ BEGIN
 		, [KIT], [Fty Code], [Program], [Non Revenue], [New CD Code], [ProductType], [FabricType], [Lining], [Gender], [Construction]
 		, [Cpu], [Qty], [FOC Qty], [Total CPU], [SewQtyTop], [SewQtyBottom], [SewQtyInner], [SewQtyOuter], [Total Sewing Output]
 		, [Cut Qty], [By Comb], [Cutting Status], [Packing Qty], [Packing FOC Qty], [Booking Qty], [FOC Adj Qty], [Not FOC Adj Qty]
-		, [FOB], [Total], [KPI L/ETA], [PF ETA (SP)], [Pull Forward Remark], [Pack L/ETA], [SCHD L/ETA], [Actual Mtl. ETA], [Fab ETA]
+		, [Total], [KPI L/ETA], [PF ETA (SP)], [Pull Forward Remark], [Pack L/ETA], [SCHD L/ETA], [Actual Mtl. ETA], [Fab ETA]
 		, [Acc ETA], [Sewing Mtl Complt(SP)], [Packing Mtl Complt(SP)], [Sew. MTL ETA (SP)], [Pkg. MTL ETA (SP)], [MTL Delay], [MTL Cmplt]
 		, [MTL Cmplt (SP)], [Arrive W/H Date], [Sewing InLine], [Sewing OffLine], [1st Sewn Date], [Last Sewn Date], [First Production Date]
 		, [Last Production Date], [Each Cons Apv Date], [Est Each Con Apv.], [Cutting InLine], [Cutting OffLine], [Cutting InLine(SP)]
@@ -196,7 +213,9 @@ BEGIN
 		, [DoxType], [Packing CTN], [TTLCTN], [Pack Error CTN], [FtyCTN], [cLog CTN], [CFA CTN], [cLog Rec. Date], [Final Insp. Date]
 		, [Insp. Result], [CFA Name], [Sewing Line#], [ShipMode], [SI#], [ColorWay], [Special Mark], [Fty Remark], [Sample Reason], [IS MixMarker]
 		, [Cutting SP], [Rainwear test], [TMS], [MD room scan date], [Dry Room received date], [Dry room trans date], [Last ctn trans date]
-		, [Last ctn recvd date], [OrganicCotton], [Direct Ship], [StyleCarryover])
+		, [Last ctn recvd date], [OrganicCotton], [Direct Ship], [StyleCarryover], [SCHDL/ETA(SP)], [SewingMtlETA(SPexclRepl)]
+		, [ActualMtlETA(exclRepl)], [HalfKey], [DevSample], [POID], [KeepPanels], [BuyBackReason], [SewQtybyRate], [Unit], [SubconInType]
+		, [Article], [ProduceRgPMS])
 	select ISNULL(t.[M], '')
 		, ISNULL(t.[FactoryID], '')
 		, [Delivery]
@@ -271,7 +290,6 @@ BEGIN
 		, ISNULL(t.[Booking Qty], 0)
 		, ISNULL(t.[FOC Adj Qty], 0)
 		, ISNULL(t.[Not FOC Adj Qty], 0)
-		, ISNULL(t.[FOB], 0)
 		, ISNULL(t.[Total], 0)
 		, [KPI L/ETA]
 		, [PF ETA (SP)]
@@ -354,6 +372,19 @@ BEGIN
 		, ISNULL(t.[OrganicCotton], '')
 		, ISNULL(t.[Direct Ship], '')
 		, ISNULL(t.[StyleCarryover], '')
+		, t.[SCHDL/ETA(SP)]
+		, t.[SewingMtlETA(SPexclRepl)]
+		, t.[ActualMtlETA(exclRepl)]
+		, ISNULL(t.[HalfKey], '')
+		, ISNULL(t.[DevSample], '')
+		, ISNULL(t.[POID], '')
+		, ISNULL(t.[KeepPanels], '')
+		, ISNULL(t.[BuyBackReason], '')
+		, ISNULL(t.[SewQtybyRate], 0)
+		, ISNULL(t.[Unit], '')
+		, ISNULL(t.[SubconInType], '')
+		, ISNULL(t.[Article], '')
+		, ISNULL(t.[ProduceRgPMS], '')
 	from #tmp_P_PPICMASTERLIST t
 	where not exists (select 1 from P_PPICMASTERLIST p where t.[SPNO] = p.[SPNO])
 
@@ -432,7 +463,6 @@ BEGIN
 			, p.[Booking Qty] = ISNULL(t.[Booking Qty], 0)
 			, p.[FOC Adj Qty] = ISNULL(t.[FOC Adj Qty], 0)
 			, p.[Not FOC Adj Qty] = ISNULL(t.[Not FOC Adj Qty], 0)
-			, p.[FOB] = ISNULL(t.[FOB], 0)
 			, p.[Total] = ISNULL(t.[Total], 0)
 			, p.[KPI L/ETA] = t.[KPI L/ETA]
 			, p.[PF ETA (SP)] = t.[PF ETA (SP)]
@@ -515,8 +545,27 @@ BEGIN
 			, p.[OrganicCotton] = ISNULL(t.[OrganicCotton], '')
 			, p.[Direct Ship] = ISNULL(t.[Direct Ship], '')
 			, p.[StyleCarryover] = ISNULL(t.[StyleCarryover], '')
+			, p.[SCHDL/ETA(SP)] = t.[SCHDL/ETA(SP)]
+			, p.[SewingMtlETA(SPexclRepl)] = t.[SewingMtlETA(SPexclRepl)]
+			, p.[ActualMtlETA(exclRepl)] = t.[ActualMtlETA(exclRepl)]
+			, p.[HalfKey] = ISNULL(t.[HalfKey], '')
+			, p.[DevSample] = ISNULL(t.[DevSample], '')
+			, p.[POID] = ISNULL(t.[POID], '')
+			, p.[KeepPanels] = ISNULL(t.[KeepPanels], '')
+			, p.[BuyBackReason] = ISNULL(t.[BuyBackReason], '')
+			, p.[SewQtybyRate] = ISNULL(t.[SewQtybyRate], 0)
+			, p.[Unit] = ISNULL(t.[Unit], '')
+			, p.[SubconInType] = ISNULL(t.[SubconInType], '')
+			, p.[Article] = ISNULL(t.[Article], '')
+			, p.[ProduceRgPMS] = ISNULL(t.[ProduceRgPMS], '')
 	from P_PPICMASTERLIST p 
 	inner join #tmp_P_PPICMASTERLIST t on p.[SPNO] = t.[SPNO]
+
+	delete p
+	from P_PPICMASTERLIST p 
+	where (p.SCIDlv >= @SCIDeliveryS
+		or p.Delivery >= @SCIDeliveryS)
+	and not exists (select 1 from #tmp_P_PPICMASTERLIST t where t.[SPNO] = p.[SPNO])
 
 	insert into P_PPICMasterList_Extend(OrderID, ColumnName, ColumnValue)
 	select OrderID, ColumnName, isnull(ColumnValue, 0)
@@ -527,6 +576,14 @@ BEGIN
 		set p.[ColumnValue] = ISNULL(t.[ColumnValue], 0)
 	from P_PPICMasterList_Extend p 
 	inner join #tmp_P_PPICMasterList_Extend t on t.OrderID = p.OrderID and t.ColumnName = p.ColumnName
+
+	delete p
+	from P_PPICMasterList_Extend p
+	where not exists (select 1 from P_PPICMASTERLIST t where t.SPNO = p.OrderID)
+
+	delete p
+	from P_PPICMasterList_ArtworkType p
+	where not exists (select 1 from P_PPICMASTERLIST t where t.SPNO = p.[SP#])
 
 	drop table #tmp_P_PPICMASTERLIST, #tmp_P_PPICMasterList_Extend
 
