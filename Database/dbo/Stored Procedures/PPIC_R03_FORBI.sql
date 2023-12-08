@@ -8,7 +8,7 @@ BEGIN
 
 	if @SCIDeliveryS is null
 	begin
-		set @SCIDeliveryS = dateadd(day, -30, Getdate())
+		set @SCIDeliveryS = dateadd(day, -60, Getdate())
 	end
 
 	if @SCIDeliveryE is null
@@ -21,14 +21,18 @@ BEGIN
 	select *
 	into #tmp_Orders_base
 	from Orders o WITH (NOLOCK) 
-	where o.SCIDelivery >= @SCIDeliveryS 
-	and o.SCIDelivery <= @SCIDeliveryE
+	where (o.SCIDelivery >= @SCIDeliveryS 
+		or o.BuyerDelivery >= @SCIDeliveryS 
+		or o.EditDate >= DateAdd(Day,-5, GetDate())
+		or o.Transferdate >= DateAdd(day, -3, GetDate()))
 	and (o.Category = 'B' or o.Category = 'S' or o.Category = 'G' or o.Category = '' )
 	or (
 	((select NoRestrictOrdersDelivery from System) = 0) 
 		and (o.IsForecast = 0 or (o.IsForecast = 1 and (o.SciDelivery <= dateadd(m, datediff(m,0,dateadd(m, 5, GETDATE())),6) or o.BuyerDelivery < dateadd(m, datediff(m,0,dateadd(m, 5, GETDATE())),0))))
-		and o.SCIDelivery >= @SCIDeliveryS 
-		and o.SCIDelivery <= @SCIDeliveryE
+		and (o.SCIDelivery >= @SCIDeliveryS 
+			or o.BuyerDelivery >= @SCIDeliveryS 
+			or o.EditDate >= DateAdd(Day,-5, GetDate())
+			or o.Transferdate >= DateAdd(day, -3, GetDate()))
 		and (o.Category = 'B' or o.Category = 'S' or o.Category = 'G' or o.Category = '' )
 	)
 
@@ -162,6 +166,21 @@ BEGIN
             , o.DirectShip
             ,[StyleCarryover] = iif(s.NewCO = '2','V','')
             , o.PackLETA
+			, o.Max_ScheETAbySP
+			, o.Sew_ScheETAnoReplace
+			, o.MaxShipETA_Exclude5x
+			, [HalfKey] = iif(cast(format(dateadd(day,-7,o.SciDelivery), 'dd') as int) between 1 and 15
+							, format(dateadd(day,-7,o.SciDelivery), 'yyyyMM01')
+							, format(dateadd(day,-7,o.SciDelivery), 'yyyyMM02'))
+			, [DevSample] = iif((select IsDevSample from OrderType ot WITH (NOLOCK) where ot.ID = o.OrderTypeID and ot.BrandID = o.BrandID) = 1, 'Y', '')
+			, [KeepPanels] = iif(o.KeepPanels = 0, 'N', 'Y')
+			, o.BuyBackReason
+			, o.StyleUnit
+			, [SubconInType] = iif(o.SubconInType = '1', 'Subcon-in from sister factory (same M division)'
+								, iif(o.SubconInType = '2', 'Subcon-in from sister factory (different M division)'
+									, iif(o.SubconInType = '3', 'Subcon-in from non-sister factory', '')))
+			, [Article] = oa.Val
+			, [ProduceRgPMS] = (select ProduceRgCode from SCIFty sf WITH (NOLOCK) where sf.ID = o.FactoryID)
 	into #tmp_tmpOrders
 	from #tmp_Orders_base o
 	left join style s WITH (NOLOCK) on o.styleukey = s.ukey
@@ -240,7 +259,14 @@ BEGIN
 		    FOR XML PATH('')
 		),1,1,'')
 	)QtyShip_Handle
-	outer apply(select oa.Article from Order_article oa WITH (NOLOCK) where oa.id = o.id) a
+	outer apply(
+		SELECT [Val]=STUFF((
+			select DISTINCT concat(',', oa.Article)
+			from Order_Article oa WITH (NOLOCK) 
+			where oa.id = o.id
+		FOR XML PATH('')
+		),1,1,'')
+	) oa
 
 	CREATE NONCLUSTERED INDEX index_tmpOrders_ID ON #tmp_tmpOrders(	ID ASC);
 
@@ -300,6 +326,12 @@ BEGIN
 	from Order_Qty o WITH (NOLOCK) 
 	inner join #tmp_tmpOrders t on o.ID = t.ID
 	group by o.ID,o.Article 
+
+	select sd.OrderId, sd.QAQty, sd.ComboType, s.OutputDate
+	into #tmp_SewingOutput
+	from SewingOutput s WITH (NOLOCK) 
+	inner join SewingOutput_Detail sd WITH (NOLOCK) on s.ID = sd.ID
+	where exists (select 1 from #tmp_tmpOrders t where sd.OrderId = t.ID)
 
 	CREATE NONCLUSTERED INDEX index_tmp_PFRemark ON #tmp_PFRemark(	ID ASC);
 	CREATE NONCLUSTERED INDEX index_tmp_StyleUkey ON #tmp_StyleUkey(	StyleUkey ASC);
@@ -420,22 +452,22 @@ BEGIN
 			, PCHandle = isnull (p.PCHandle, '') 
 			, FTYRemark = isnull (s.FTYRemark, '')
 			, SewQtyTop = isnull ((select SUM(QAQty) 
-								   from SewingOutput_Detail WITH (NOLOCK) 
+								   from #tmp_SewingOutput 
 								   where OrderId = t.ID 
 										 and ComboType = 'T')
 								 , 0)
 			, SewQtyBottom = isnull ((select SUM(QAQty) 
-									  from SewingOutput_Detail WITH (NOLOCK) 
+									  from #tmp_SewingOutput
 									  where OrderId = t.ID 
 											and ComboType = 'B')
 									, 0)
 			, SewQtyInner = isnull ((select SUM(QAQty) 
-									 from SewingOutput_Detail WITH (NOLOCK) 
+									 from #tmp_SewingOutput
 									 where OrderId = t.ID 
 										   and ComboType = 'I')
 								   , 0) 
 			, SewQtyOuter = isnull ((select SUM(QAQty) 
-									 from SewingOutput_Detail WITH (NOLOCK) 
+									 from #tmp_SewingOutput
 									 where OrderId = t.ID 
 										   and ComboType = 'O')
 								   , 0)
@@ -501,14 +533,12 @@ BEGIN
 							  from Export e WITH (NOLOCK) 
 							  inner join Export_Detail ed WITH (NOLOCK) on e.ID = ed.ID 
 							  where ed.POID = t.POID) 
-			, FirstOutDate = (select Min(so.OutputDate) 
-							  from SewingOutput so WITH (NOLOCK) 
-							  inner join SewingOutput_Detail sod WITH (NOLOCK) on so.ID = sod.ID
-							  where sod.OrderID = t.ID) 
-			, LastOutDate = (select Max(so.OutputDate) 
-							 from SewingOutput so WITH (NOLOCK) 
-							 inner join SewingOutput_Detail sod WITH (NOLOCK) on so.ID = sod.ID
-							 where sod.OrderID = t.ID)
+			, FirstOutDate = (select Min(OutputDate) 
+							  from #tmp_SewingOutput
+							  where OrderID = t.ID) 
+			, LastOutDate = (select Max(OutputDate) 
+							 from #tmp_SewingOutput
+							 where OrderID = t.ID)
 			, PulloutQty = isnull ((select sum(pd.ShipQty)
 									from PackingList_Detail pd WITH (NOLOCK)
 									inner join PackingList p WITH (NOLOCK) on p.ID = pd.ID
@@ -528,7 +558,7 @@ BEGIN
 			, FtyCtn = isnull(t.TotalCTN,0) - isnull(t.FtyCTN,0)
 			, ClogCTN = isnull(t.ClogCTN,0)
 			, ClogRcvDate = t.ClogLastReceiveDate
-			, Article = isnull ((select CONCAT(a.Article, ',') 
+			, [ColorWay] = isnull ((select CONCAT(a.Article, ',') 
 								 from #tmp_Article a 
 								 where a.ID = t.ID
 								 for xml path(''))
@@ -547,6 +577,27 @@ BEGIN
 			, [DirectShip] = iif(t.DirectShip = 1, 'V','')
 			, [StyleCarryover] = iif(s.NewCO = '2','V','')
 			, t.PackLETA
+			, t.[Max_ScheETAbySP]
+			, t.[Sew_ScheETAnoReplace]
+			, t.[MaxShipETA_Exclude5x]
+			, t.[HalfKey]
+			, t.[DevSample]
+			, t.[KeepPanels]
+			, t.[BuyBackReason]
+			, [SewQtybyRate] = isnull(case when t.StyleUnit = 'PCS' then (select SUM(QAQty) from #tmp_SewingOutput where OrderID = t.ID) 
+								else (	select  SUM(ROUND(a.OutputQty * ol.Rate/100, 2))
+										from (
+											select OrderID, ComboType, [OutputQty] = SUM(QAQty)
+											from #tmp_SewingOutput
+											where OrderID = t.ID
+											group by OrderID, ComboType
+										) a
+										inner join Order_Location ol WITH (NOLOCK) on ol.OrderID = a.OrderID and ol.Location = a.ComboType
+								) end, 0)
+			, t.[StyleUnit]
+			, t.[SubconInType]
+			, t.[Article]
+			, t.[ProduceRgPMS]
 	into #tmp_LastBase
 	from #tmp_tmpOrders t
 	left join Cutting ct WITH (NOLOCK) on ct.ID = t.CuttingSP
@@ -798,7 +849,7 @@ BEGIN
 
 	drop table #tmp_Article, #tmp_BookingQty, #tmp_LastArtworkType, #tmp_MTLDelay, 
 		#tmp_PackingFOCQty, #tmp_PackingQty, #tmp_PFRemark, #tmp_StyleUkey, 
-		#tmp_SubProcess, #tmp_tmpOrders, #tmp_TTL_Subprocess
+		#tmp_SubProcess, #tmp_tmpOrders, #tmp_TTL_Subprocess, #tmp_SewingOutput
 
 
 	if @ReturnType = 1
@@ -879,7 +930,6 @@ BEGIN
  			, [Booking Qty] = b.BookingQty
 			, [FOC Adj Qty] = b.FOCAdjQty
 			, [Not FOC Adj Qty] = b.NotFOCAdjQty -- 73
-			, [FOB] = b.PoPrice
 			, [Total] = b.Qty * b.PoPrice
 			, [KPI L/ETA] = b.KPILETA  --BG 76
 			, [PF ETA (SP)] = b.PFETA
@@ -946,7 +996,7 @@ BEGIN
 			, [Sewing Line#] = b.SewLine
 			, [ShipMode] = b.ShipModeList
 			, [SI#] = b.Customize2
-			, [ColorWay] = b.Article
+			, [ColorWay] = b.ColorWay
 			, [Special Mark] = b.SpecialMarkName
 			, [Fty Remark] = b.FTYRemark
 			, [Sample Reason] = b.SampleReasonName
@@ -962,6 +1012,19 @@ BEGIN
 			, [OrganicCotton] = b.OrganicCotton
 			, [Direct Ship] = b.DirectShip		
 			, [StyleCarryover] = b.StyleCarryover
+			, [SCHDL/ETA(SP)] = b.[Max_ScheETAbySP]
+			, [SewingMtlETA(SPexclRepl)] = b.[Sew_ScheETAnoReplace]
+			, [ActualMtlETA(exclRepl)] = b.[MaxShipETA_Exclude5x]
+			, b.[HalfKey]
+			, b.[DevSample]
+			, b.[POID]
+			, b.[KeepPanels]
+			, b.[BuyBackReason]
+			, b.[SewQtybyRate]
+			, [Unit] = b.[StyleUnit]
+			, b.[SubconInType]
+			, b.[Article]
+			, b.[ProduceRgPMS]
 		from #tmp_LastBase b 
 	end
 	else if @ReturnType = 2
