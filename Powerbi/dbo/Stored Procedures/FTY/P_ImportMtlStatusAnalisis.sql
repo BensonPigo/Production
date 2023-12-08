@@ -96,7 +96,7 @@ Begin
 		, Reason = Convert(varchar(max), '')
 		, Handle =  handle.ID + '-' + handle.name + ' #' + handle.ExtNo
 		, Confirm = IIF(e.Confirm = 1, 'Y', 'N')
-		, Duty = iif(isnull(esa.Duty, '') != '', ed.Seq1 + '-' + ddlDuty.Name, '')
+		, Duty = iif(isnull(esa.Duty, '') != '', ed.Seq1 + '-' + duty.Name, '')
 		, PFRemark = ''
 		, POType = 'MMS'
 	into #tmpMMS
@@ -105,7 +105,7 @@ Begin
 	Left Join [MainServer].Production.dbo.Fabric f with(nolock) on ed.SCIRefno = f.SCIRefno
 	Left join [MainServer].Production.dbo.Supp s with(nolock) on s.ID = ed.SuppID
 	Left join [MainServer].Production.dbo.Export_ShareAmount esa with(nolock) on esa.Ukey = ed.Export_ShareAmount_Ukey
-	Left join [MainServer].Production.dbo.Reason ddlDuty with(nolock) on ddlDuty.ReasonTypeID = 'ExpressDuty' And ddlDuty.ID = iif(isnull(esa.Duty, '') = '', ed.Duty, esa.Duty) 
+	Left join [MainServer].Production.dbo.ExpressDuty duty with(nolock) on duty.ID = iif(isnull(esa.Duty, '') = '', ed.Duty, esa.Duty) 
 	Left Join [MainServer].Production.dbo.TPEPass1 handle with(nolock) on handle.ID = e.Handle
 	Outer apply(
 		select mp.Handle, mp.FactoryID, [BuyerDelivery] = min(mp.BuyerDelivery)
