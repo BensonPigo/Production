@@ -105,29 +105,18 @@ where MDivisionID = '{0}'", Env.User.Keyword);
                 INNER JOIN Issue_Summary iss ON i.id = iss.Id
                 WHERE i.CutplanID = a.id AND iss.SCIRefno = e.SCIRefno AND iss.Colorid = a.colorid
 	        )
-            ,[Reason] = iif(isnull(IsCutPlan_IssueCutDate.val,0) = 1 , IsCutPlan_IssueCutDate.Reason , '')
-            ,[ReasonID] = ''
-            ,[EstCutDate] = iif(isnull(IsCutPlan_IssueCutDate.val,0) = 1 , IsCutPlan_IssueCutDate.EstCutDate ,b.EstCutDate) 
-            ,[EditName] = isnull(IsCutPlan_IssueCutDate.EditName,'')
-            ,[EditDate] = IsCutPlan_IssueCutDate.EditDate
-            ,[RequestorRemark] = isnull(IsCutPlan_IssueCutDate.RequestorRemark,'')
+            ,[Reason] = isnull(Reason.[Description], '')
+            ,[ReasonID] = ci.Reason
+            ,[EstCutDate] = isnull(ci.EstCutDate, b.EstCutDate)
+            ,[EditName] = isnull(ci.EditName,'')
+            ,[EditDate] = ci.EditDate
+            ,[RequestorRemark] = isnull(ci.RequestorRemark,'')
             From Cutplan_Detail a 
             inner join Cutplan b WITH(NOLOCK) on a.id = b.ID
 			INNER JOIN WorkOrder e WITH (NOLOCK) ON a.WorkOrderUkey = e.Ukey
 			LEFT JOIN Fabric f WITH (NOLOCK) ON f.SCIRefno=e.SCIRefno
-            OUTER APPLY
-            (
-	            select 
-	            [val] = isnull(IIF(COUNT(*) OVER (PARTITION BY ci.id, ci.Refno, ci.colorid) >= 1, 1, 0),0)
-	            ,[EstCutDate] = isnull(ci.EstCutDate,'')
-	            ,[Reason] = isnull(Reason.[Description],'')
-                ,[EditName] = isnull(ci.EditName,'')
-                ,[EditDate] = ci.EditDate
-                ,[RequestorRemark] = isnull(ci.RequestorRemark,'')
-	            from CutPlan_IssueCutDate ci WITH(NOLOCK)
-                LEFT JOIN CutReason Reason ON Reason.Junk = 0 AND Reason.type = 'RC' AND Reason.id = ci.Reason
-	            where ci.id = b.id and ci.Refno = e.Refno and ci.Colorid = a.colorid
-            )IsCutPlan_IssueCutDate
+            LEFT JOIN CutPlan_IssueCutDate ci WITH (NOLOCK) on ci.id = b.id and ci.Refno = e.Refno and ci.Colorid = a.colorid
+            LEFT JOIN CutReason Reason with (nolock) ON Reason.Junk = 0 AND Reason.type = 'RC' AND Reason.id = ci.Reason
             where a.id = '{0}'
             ", masterID);
             this.DetailSelectCommand = cmdsql;
@@ -147,7 +136,7 @@ where MDivisionID = '{0}'", Env.User.Keyword);
             .Text("FabricPanelCode", header: "Fab_Panel Code", width: Widths.Auto(), iseditingreadonly: true)
             .Text("orderid", header: "SP#", width: Widths.Auto(), iseditingreadonly: true)
             .Text("WeaveTypeID", header: "Weave Type", width: Widths.Auto(), iseditingreadonly: true)
-             .Text("SCIRefno", header: "SCIRefno", width: Widths.Auto(), iseditingreadonly: true)
+            .Text("SCIRefno", header: "SCIRefno", width: Widths.Auto(), iseditingreadonly: true)
             .Text("Refno", header: "Refno", width: Widths.Auto(), iseditingreadonly: true)
             .Text("Article", header: "Article", width: Widths.Auto(), iseditingreadonly: true)
             .Text("Colorid", header: "Color", width: Widths.Auto(), iseditingreadonly: true)
