@@ -145,7 +145,7 @@ namespace SNPAutoTransferToSewingOutput.Daily
         {
             SqlConnection conn;
 
-            if (!Sci.SQL.GetConnection(out conn)) { return; }
+            if (!DBProxy._OpenConnection("Production", out conn)) { return; }
             conn.InfoMessage += new SqlInfoMessageEventHandler(InfoMessage);
 
             DualResult result;
