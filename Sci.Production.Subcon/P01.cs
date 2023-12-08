@@ -480,9 +480,12 @@ select
 		, scidelivery = o.scidelivery
         , f.IsProduceFty
         , a.ArtworkReq_DetailUkey
-from dbo.ArtworkPO_Detail a
-left join dbo.Orders o on a.OrderID = o.id
+        , oa.Remark
+from dbo.ArtworkPO_Detail a with (nolock)
+left join dbo.Orders o with (nolock) on a.OrderID = o.id
 left join Factory f with (nolock) on f.ID = o.FactoryID
+left join ArtworkReq_Detail ard with (nolock) on a.ArtworkReq_DetailUkey = ard.Ukey
+left join Order_Artwork oa on ard.OrderArtworkUkey = oa.Ukey
 where a.id = '{0}'  ORDER BY a.OrderID ", masterID);
 
             return base.OnDetailSelectCommandPrepare(e);
@@ -677,6 +680,7 @@ where a.id = '{0}'  ORDER BY a.OrderID ", masterID);
             .Numeric("stitch", header: "PCS/Stitch", width: Widths.AnsiChars(3)) // 7
             .Text("patterncode", header: "Cutpart" + Environment.NewLine + "ID", width: Widths.AnsiChars(5), iseditingreadonly: true) // 8
             .Text("PatternDesc", header: "Cutpart Name", width: Widths.AnsiChars(15), iseditingreadonly: true) // 9
+            .Text("Remark", header: "Remark", width: Widths.AnsiChars(15), iseditingreadonly: true) // 9
             .Numeric("unitprice", header: "Unit Price", width: Widths.AnsiChars(5), settings: ns, decimal_places: 4, integer_places: 4) // 10
             .Numeric("cost", header: "Cost" + Environment.NewLine + "(USD)", width: Widths.AnsiChars(5), iseditingreadonly: true, decimal_places: 4, integer_places: 4) // 11
             .Numeric("qtygarment", header: "Qty/GMT", width: Widths.AnsiChars(5), settings: ns2, maximum: 99, integer_places: 2) // 12

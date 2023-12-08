@@ -12,7 +12,7 @@
 	[ArtworkPOID] [varchar](13) NOT NULL,
 	[Article] [varchar](8) NOT NULL,
 	[SizeCode] [varchar](8) NOT NULL,
-	[Remark] [nvarchar](1000) NOT NULL,
+	[OrderArtworkUkey] [bigint] NOT NULL
 PRIMARY KEY CLUSTERED 
 (
 	[uKey] ASC
@@ -56,7 +56,10 @@ GO
 ALTER TABLE [dbo].[ArtworkReq_Detail] ADD  CONSTRAINT [DF_ArtworkReq_Detail_SizeCode]  DEFAULT ('') FOR [SizeCode]
 GO
 
-ALTER TABLE [dbo].[ArtworkReq_Detail] ADD  CONSTRAINT [DF_ArtworkReq_Detail_Remark]  DEFAULT ('') FOR [Remark]
+ALTER TABLE [dbo].[ArtworkReq_Detail] ADD  CONSTRAINT [DF_ArtworkReq_Detail_OrderArtworkUkey]  DEFAULT ((0)) FOR [OrderArtworkUkey]
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Order_Artwork.Ukey' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'ArtworkReq_Detail', @level2type=N'COLUMN',@level2name=N'OrderArtworkUkey'
 GO
 
 
