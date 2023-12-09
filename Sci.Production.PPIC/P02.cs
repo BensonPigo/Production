@@ -152,7 +152,7 @@ select oc.FactoryID
 	   , NewMnorder = iif(NewMnorderApv is null,'','V')
 	   , NewSMnorderApv = iif(NewSMnorderApv is null,'','V')
 	   , MnorderApv2 = iif(oc.MnorderApv2 is null,'','V')
-	   , TransferDate
+	   , oc.TransferDate
 from OrderComparisonList oc WITH (NOLOCK) 
 left join Orders o WITH (NOLOCK)  on oc.OrderId=o.ID
 where 1=1
