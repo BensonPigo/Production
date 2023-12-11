@@ -5861,4 +5861,53 @@ select	Ukey
 		,EditDate
 from	[Trade_To_Pms].[dbo].AutomatedLineMappingConditionSetting
 
+/*ExpressDuty*/
+delete [Production].[dbo].ExpressDuty
+
+insert into [Production].[dbo].ExpressDuty
+			(
+				ID
+				,Name
+				,Description
+				,Remark
+				,Mail
+				,Junk
+				,IsTransferExport
+				,NeedTaskTeamApprove
+				,AddName
+				,AddDate
+				,EditName
+				,EditDate
+			)
+select	ID
+		,Name
+		,Description
+		,Remark
+		,Mail
+		,Junk
+		,IsTransferExport
+		,NeedTaskTeamApprove
+		,AddName
+		,AddDate
+		,EditName
+		,EditDate
+from	[Trade_To_Pms].[dbo].ExpressDuty
+
+/*ExpressDuty_Functions*/
+delete [Production].[dbo].ExpressDuty_Functions
+
+insert into [Production].[dbo].ExpressDuty_Functions
+			(
+				ExpressDutyID
+				,FunctionID
+				,AddName
+				,AddDate
+			)
+select	ExpressDutyID
+				,FunctionID
+				,AddName
+				,AddDate
+from	[Trade_To_Pms].[dbo].ExpressDuty_Functions
+
+
 END
