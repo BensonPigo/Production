@@ -362,10 +362,61 @@ WHERE   StockType='{dr["toStocktype"]}'
                 return;
             }
 
-            StringBuilder sqlcmd = new StringBuilder();
+            bool mtlAutoLock = MyUtility.Convert.GetBool(MyUtility.GetValue.Lookup("select MtlAutoLock from system"));
+            string where = string.Empty;
+            if (!mtlAutoLock)
+            {
+                where = " AND fi.lock = 0 ";
+            }
+
+            #region -- 條件 --
+            string mainWhere = string.Empty;
+
+            if (!MyUtility.Check.Empty(mT))
+            {
+                if (mT != "All")
+                {
+                    mainWhere += $@" and pd.FabricType = '{mT}' ";
+                }
+            }
+
+            if (!MyUtility.Check.Empty(sP))
+            {
+                mainWhere += $@" and pd.id = '{sP}' ";
+            }
+
+            if (!MyUtility.Check.Empty(factory))
+            {
+                mainWhere += $@" and o.FtyGroup = '{factory}' ";
+            }
+
+            if (!string.IsNullOrWhiteSpace(aTA_b))
+            {
+                mainWhere += $@" and pd.FinalETA between '{aTA_b}' and '{aTA_e}' ";
+            }
+
+            if (!MyUtility.Check.Empty(inputDate_b))
+            {
+                mainWhere += $@" and exists(select 1 from dbo.Invtrans it WITH (NOLOCK) 
+							                where   type = '1'
+							                        and it.ConfirmDate between '{inputDate_b}' and '{inputDate_e}'
+							                        and it.poid = pd.id 
+							                        and it.seq1 = pd.seq1 
+							                        and it.seq2 = pd.seq2)
+";
+            }
+
+            if (!MyUtility.Check.Empty(mtlTypeID))
+            {
+                mainWhere += $@" and fabric.MtlTypeID = '{mtlTypeID}' ";
+            }
+
+            #endregion
+
+            string sqlcmd = string.Empty;
+
             #region -- sql command --
-            sqlcmd.Append(string.Format(@"
-;with cte as(
+            sqlcmd += $@"
     select  convert(bit,0) as selected
             , iif (y.cnt > 0, 'Y', '') complete
             , rtrim(o.id) poid
@@ -378,43 +429,20 @@ WHERE   StockType='{dr["toStocktype"]}'
             , pd.seq1 stockseq1
             , pd.seq2 stockseq2
             , pd.Refno
-            , ROUND(dbo.GetUnitQty(pd.POUnit, pd.StockUnit, xz.taipei_qty),2) N'inputqty'
+            , [inputqty] = ROUND(dbo.GetUnitQty(pd.POUnit, pd.StockUnit, xz.taipei_qty), 2)
             , pd.POUnit
             , pd.StockUnit
-            , isnull(x.accu_qty,0.00) accu_qty
+            , [accu_qty] = isnull(x.accu_qty, 0.00)
             , VarianceQty=ROUND(dbo.GetUnitQty(pd.POUnit, pd.StockUnit, xz.taipei_qty),2) - isnull(x.accu_qty,0.00)
             , pr.PRHandle
             , pd.FinalETA
+            , 0.00 qty 
+    into #tmp
     from View_WH_Orders o WITH (NOLOCK) 
     inner join dbo.PO_Supp_Detail pd WITH (NOLOCK) on pd.id = o.ID
     inner join dbo.Factory f WITH (NOLOCK) on f.id = o.FtyGroup
     inner join dbo.Factory checkProduceFty With (NoLock) on o.FactoryID = checkProduceFty.ID
-    left join Fabric WITH (NOLOCK) on pd.SCIRefno = fabric.SCIRefno"));
-            if (!string.IsNullOrWhiteSpace(inputDate_b))
-            {
-                sqlcmd.Append(string.Format(
-                    @" 
-    cross apply (
-	    select distinct 1 abc 
-        from dbo.Invtrans WITH (NOLOCK) 
-        where   type = '1'
-                and (convert(varchar, ConfirmDate, 111) between convert(varchar, '{0}', 111) and convert(varchar, '{1}', 111)) 
-                and poid = pd.id 
-                and seq1 = pd.seq1 
-                and seq2 = pd.seq2
-    ) z ",
-                    inputDate_b,
-                    inputDate_e));
-            }
-
-            bool mtlAutoLock = MyUtility.Convert.GetBool(MyUtility.GetValue.Lookup("select MtlAutoLock from system"));
-            string where = string.Empty;
-            if (!mtlAutoLock)
-            {
-                where = " AND fi.lock = 0 ";
-            }
-
-            sqlcmd.Append($@" 
+    left join Fabric WITH (NOLOCK) on pd.SCIRefno = fabric.SCIRefno
     outer apply (
         select count(1) cnt 
         from FtyInventory fi WITH (NOLOCK) 
@@ -455,58 +483,14 @@ WHERE   StockType='{dr["toStocktype"]}'
     )pr
     where   f.MDivisionID = '{Env.User.Keyword}'
             and checkProduceFty.IsProduceFty = '1'
-            and o.Category in ({selectindex})");
+            and o.Category in ({selectindex})
+            {mainWhere}
 
-            #region -- 條件 --
-
-            if (!MyUtility.Check.Empty(mT))
-            {
-                if (mT != "All")
-                {
-                    sqlcmd.Append(string.Format(" and pd.FabricType = '{0}'", mT));
-                }
-            }
-
-            if (!MyUtility.Check.Empty(mtlTypeID))
-            {
-                sqlcmd.Append(string.Format(" and fabric.MtlTypeID = '{0}'", mtlTypeID));
-            }
-
-            if (!MyUtility.Check.Empty(sP))
-            {
-                sqlcmd.Append(string.Format(
-                    @" 
-            and pd.id = '{0}'", sP));
-            }
-
-            if (!MyUtility.Check.Empty(factory))
-            {
-                sqlcmd.Append(string.Format(
-                    @" 
-            and o.FtyGroup = '{0}'", factory));
-            }
-
-            if (!string.IsNullOrWhiteSpace(aTA_b))
-            {
-                sqlcmd.Append(string.Format(
-                    @" 
-            and pd.FinalETA between '{0}' and '{1}'",
-                    aTA_b,
-                    aTA_e));
-            }
-
-            #endregion
-            sqlcmd.Append($@"
-)
-select  *
-        , 0.00 qty 
-into #tmp 
-from cte 
-where inputqty > accu_qty
+delete #tmp where inputqty <= accu_qty
 
 select * 
 from #tmp 
-order by poid, seq1, seq2 ;
+order by poid, seq1, seq2 
 
 select  convert(bit,0) as selected
         , fi.Ukey FromFtyInventoryUkey
@@ -548,10 +532,12 @@ inner join FtyInventory fi WITH (NOLOCK) on  fi.POID = t.POID
                                              and fi.Seq2 = t.Seq2
 left join View_WH_Orders o on fi.poid=o.id
 where   fi.StockType = 'B' 
-{where}
-        and fi.InQty - fi.OutQty + fi.AdjustQty - fi.ReturnQty > 0 
+        {where}
+        and (fi.InQty - fi.OutQty + fi.AdjustQty - fi.ReturnQty) > 0 
 order by topoid, toseq1, toseq2, GroupQty DESC, fi.Dyelot, BalanceQty DESC
-drop table #tmp");
+
+drop table #tmp
+";
 
             this.ShowWaitMessage("Data Loading....");
             #endregion

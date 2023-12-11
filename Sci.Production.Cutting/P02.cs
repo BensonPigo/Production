@@ -18,8 +18,6 @@ using System.Transactions;
 using System.Windows.Forms;
 using sxrc = Sci.Utility.Excel.SaveXltReportCls;
 using Excel = Microsoft.Office.Interop.Excel;
-using System.Security.Cryptography;
-//using Microsoft.Office.Interop.Excel;
 
 namespace Sci.Production.Cutting
 {
@@ -520,6 +518,8 @@ where WorkOrderUkey={0}", masterID);
                 this.downloadid_Text.Visible = false;
             }
             #endregion
+
+            this.btnKHImportMarker.Enabled = this.CurrentMaintain["WorkType"].ToString() == "1";
 
             this.Poid = MyUtility.GetValue.Lookup(string.Format("Select poid from orders WITH (NOLOCK) where id ='{0}'", this.CurrentMaintain["ID"]));
         }
@@ -4217,6 +4217,11 @@ DEALLOCATE CURSOR_
             if (!result)
             {
                 this.ShowErr(result);
+                return;
+            }
+
+            if (result.Description == "NotImport")
+            {
                 return;
             }
 
