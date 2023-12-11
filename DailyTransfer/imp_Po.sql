@@ -498,6 +498,11 @@ WHERE po.StockUnit = '' OR po.StockUnit IS NULL
 ------------------------------------------------------------------PO3 END
 
 ----PO_Supp_Detail_Spec
+Delete a 
+from Production.dbo.PO_Supp_Detail_Spec as a 
+where exists (select 1 from Trade_To_Pms.dbo.PO_Supp_Detail b where a.ID = b.ID and a.Seq1 = b.Seq1 and a.Seq2 = b.Seq2)
+and not exists(select id from Trade_To_Pms.dbo.PO_Supp_Detail_Spec as b where a.id = b.id and a.SEQ1 = b.Seq1 and a.SEQ2 = b.Seq2 and a.SpecColumnID = b.SpecColumnID)
+
 UPDATE a
 SET  
      [SpecValue] = isnull(b.[SpecValue], '')
@@ -530,7 +535,8 @@ select
     ,b.[AddDate]
     ,isnull(b.[EditName] , '')
     ,b.[EditDate]
-from Trade_To_Pms.dbo.PO_Supp_Detail_Spec as b WITH (NOLOCK) inner join  #Trade_To_Pms_PO c ON b.ID = c.ID
+from Trade_To_Pms.dbo.PO_Supp_Detail_Spec as b WITH (NOLOCK) 
+inner join  #Trade_To_Pms_PO c ON b.ID = c.ID
 where not exists(select id from Production.dbo.PO_Supp_Detail_Spec as a WITH (NOLOCK) where a.id = b.id and a.SEQ1 = b.Seq1 and a.SEQ2 = b.Seq2 and a.SpecColumnID = b.SpecColumnID)
 
 --PO_Supp_Detail_Keyword
