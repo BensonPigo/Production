@@ -135,11 +135,11 @@ from (
     and b.PackErrTransferDate is null
     and b.DisposeFromClog= 0 
     and ((
-			[ReturnDate] is null and 
-			[TransferDate] is null and 
-			[PackErrTransferDate] is null and
-			([DRYReceiveDate] is null or([DRYReceiveDate] is not null and [DRYTransferDate] is not null))
-		) or [ReturnDate] is not null)
+			b.[ReturnDate] is null and 
+			b.[TransferDate] is null and 
+			b.[PackErrTransferDate] is null and
+			(b.[DRYReceiveDate] is null or(b.[DRYReceiveDate] is not null and b.[DRYTransferDate] is not null))
+		) or b.[ReturnDate] is not null)
     and a.MDivisionID = '{0}' 
     and (a.Type = 'B' or a.Type = 'L')
 	and b.CTNQty=1
@@ -299,11 +299,11 @@ where   ((pd.ID = @ID and pd.CTNStartNo = @CTNStartNo) or pd.SCICtnNo = @SCICtnN
         and pd.CTNQty > 0 
         and pd.DisposeFromClog= 0
         and ((
-			[ReturnDate] is null and 
-			[TransferDate] is null and 
-			[PackErrTransferDate] is null and
-			([DRYReceiveDate] is null or([DRYReceiveDate] is not null and [DRYTransferDate] is not null))
-		) or [ReturnDate] is not null)
+			pd.[ReturnDate] is null and 
+			pd.[TransferDate] is null and 
+			pd.[PackErrTransferDate] is null and
+			(pd.[DRYReceiveDate] is null or(pd.[DRYReceiveDate] is not null and pd.[DRYTransferDate] is not null))
+		) or pd.[ReturnDate] is not null)
 ";
                                     }
 
@@ -407,11 +407,11 @@ where   pd.CustCTN= '{dr["CustCTN"]}'
         and pd.CTNQty > 0 
         and pd.DisposeFromClog= 0
         and ((
-			[ReturnDate] is null and 
-			[TransferDate] is null and 
-			[PackErrTransferDate] is null and
-			([DRYReceiveDate] is null or([DRYReceiveDate] is not null and [DRYTransferDate] is not null))
-		) or [ReturnDate] is not null)
+			pd.[ReturnDate] is null and 
+			pd.[TransferDate] is null and 
+			pd.[PackErrTransferDate] is null and
+			(pd.[DRYReceiveDate] is null or(pd.[DRYReceiveDate] is not null and pd.[DRYTransferDate] is not null))
+		) or pd.[ReturnDate] is not null)
 ";
 
                                             if (MyUtility.Check.Seek(sqlCmd, out seekData))
@@ -532,11 +532,11 @@ where   pd.CustCTN= '{dr["CustCTN"]}'
         and pd.CTNQty > 0 
         and pd.DisposeFromClog= 0
         and ((
-			[ReturnDate] is null and 
-			[TransferDate] is null and 
-			[PackErrTransferDate] is null and
-			([DRYReceiveDate] is null or([DRYReceiveDate] is not null and [DRYTransferDate] is not null))
-		) or [ReturnDate] is not null)
+			pd.[ReturnDate] is null and 
+			pd.[TransferDate] is null and 
+			pd.[PackErrTransferDate] is null and
+			(pd.[DRYReceiveDate] is null or(pd.[DRYReceiveDate] is not null and pd.[DRYTransferDate] is not null))
+		) or pd.[ReturnDate] is not null)
 ";
 
                                         if (MyUtility.Check.Seek(sqlCmd, out seekData))
