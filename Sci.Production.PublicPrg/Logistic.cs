@@ -31,12 +31,12 @@ set TotalCTN = (
 FtyCTN = (
     select isnull(sum(b.CTNQty), 0)  
     from PackingList a, PackingList_Detail b 
-    where a.ID = b.ID and (a.Type = 'B' or a.Type = 'L') and b.OrderID = '{0}' and b.DisposeFromClog = 0 and TransferDate is not null), 
+    where a.ID = b.ID and (a.Type = 'B' or a.Type = 'L') and b.OrderID = '{0}' and b.DisposeFromClog = 0 and b.TransferDate is not null), 
 ClogCTN = (
     select isnull(sum(b.CTNQty), 0)  
     from PackingList a, PackingList_Detail b 
-    where a.ID = b.ID and (a.Type = 'B' or a.Type = 'L') and b.OrderID = '{0}' and b.DisposeFromClog = 0 and ReceiveDate is not null
-    and TransferCFADate is null AND CFAReturnClogDate is null), 
+    where a.ID = b.ID and (a.Type = 'B' or a.Type = 'L') and b.OrderID = '{0}' and b.DisposeFromClog = 0 and b.ReceiveDate is not null
+    and b.TransferCFADate is null AND b.CFAReturnClogDate is null), 
 ClogLastReceiveDate = (
     select max(ReceiveDate) 
     from PackingList a, PackingList_Detail b 
@@ -80,12 +80,12 @@ set TotalCTN = (
 FtyCTN = (
     select isnull(sum(b.CTNQty), 0) 
     from PackingList a, PackingList_Detail b 
-    where a.ID = b.ID and (a.Type = 'B' or a.Type = 'L') and b.OrderID = '{0}' and b.DisposeFromClog = 0 and TransferDate is not null), 
+    where a.ID = b.ID and (a.Type = 'B' or a.Type = 'L') and b.OrderID = '{0}' and b.DisposeFromClog = 0 and b.TransferDate is not null), 
 ClogCTN = (
     select isnull(sum(b.CTNQty), 0) 
     from PackingList a, PackingList_Detail b 
-    where a.ID = b.ID and (a.Type = 'B' or a.Type = 'L') and b.OrderID = '{0}' and b.DisposeFromClog = 0 and ReceiveDate is not null
-    and TransferCFADate is null AND CFAReturnClogDate is null), 
+    where a.ID = b.ID and (a.Type = 'B' or a.Type = 'L') and b.OrderID = '{0}' and b.DisposeFromClog = 0 and b.ReceiveDate is not null
+    and b.TransferCFADate is null AND b.CFAReturnClogDate is null), 
 ClogLastReceiveDate = (
     select max(ReceiveDate) 
     from PackingList a, PackingList_Detail b 
