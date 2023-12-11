@@ -41,6 +41,8 @@
             this.labelIssueType = new Sci.Win.UI.Label();
             this.txtDropdownlistIssueType = new Sci.Production.Class.Txtdropdownlist();
             this.checkIsTrimCardOther = new Sci.Win.UI.CheckBox();
+            this.label1 = new Sci.Win.UI.Label();
+            this.comboCategoryType = new Sci.Production.Class.Txtdropdownlist();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -55,6 +57,8 @@
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.comboCategoryType);
+            this.detailcont.Controls.Add(this.label1);
             this.detailcont.Controls.Add(this.checkIsTrimCardOther);
             this.detailcont.Controls.Add(this.txtDropdownlistIssueType);
             this.detailcont.Controls.Add(this.labelIssueType);
@@ -99,28 +103,25 @@
             // 
             // labelMaterialType
             // 
-            this.labelMaterialType.Lines = 0;
-            this.labelMaterialType.Location = new System.Drawing.Point(70, 30);
+            this.labelMaterialType.Location = new System.Drawing.Point(60, 30);
             this.labelMaterialType.Name = "labelMaterialType";
-            this.labelMaterialType.Size = new System.Drawing.Size(90, 23);
+            this.labelMaterialType.Size = new System.Drawing.Size(100, 23);
             this.labelMaterialType.TabIndex = 0;
             this.labelMaterialType.Text = "Material Type";
             // 
             // labelArtwork
             // 
-            this.labelArtwork.Lines = 0;
-            this.labelArtwork.Location = new System.Drawing.Point(70, 70);
+            this.labelArtwork.Location = new System.Drawing.Point(60, 70);
             this.labelArtwork.Name = "labelArtwork";
-            this.labelArtwork.Size = new System.Drawing.Size(90, 23);
+            this.labelArtwork.Size = new System.Drawing.Size(100, 23);
             this.labelArtwork.TabIndex = 1;
             this.labelArtwork.Text = "Artwork";
             // 
             // labelProduction
             // 
-            this.labelProduction.Lines = 0;
-            this.labelProduction.Location = new System.Drawing.Point(70, 110);
+            this.labelProduction.Location = new System.Drawing.Point(60, 110);
             this.labelProduction.Name = "labelProduction";
-            this.labelProduction.Size = new System.Drawing.Size(90, 23);
+            this.labelProduction.Size = new System.Drawing.Size(100, 23);
             this.labelProduction.TabIndex = 2;
             this.labelProduction.Text = "Production";
             // 
@@ -153,6 +154,7 @@
             this.comboMaterialType.IsSupportUnselect = true;
             this.comboMaterialType.Location = new System.Drawing.Point(169, 30);
             this.comboMaterialType.Name = "comboMaterialType";
+            this.comboMaterialType.OldText = "";
             this.comboMaterialType.ReadOnly = true;
             this.comboMaterialType.Size = new System.Drawing.Size(100, 24);
             this.comboMaterialType.TabIndex = 0;
@@ -207,10 +209,9 @@
             // 
             // labelIssueType
             // 
-            this.labelIssueType.Lines = 0;
-            this.labelIssueType.Location = new System.Drawing.Point(70, 150);
+            this.labelIssueType.Location = new System.Drawing.Point(60, 150);
             this.labelIssueType.Name = "labelIssueType";
-            this.labelIssueType.Size = new System.Drawing.Size(90, 23);
+            this.labelIssueType.Size = new System.Drawing.Size(100, 23);
             this.labelIssueType.TabIndex = 11;
             this.labelIssueType.Text = "Issue Type";
             // 
@@ -223,6 +224,7 @@
             this.txtDropdownlistIssueType.IsSupportUnselect = true;
             this.txtDropdownlistIssueType.Location = new System.Drawing.Point(169, 150);
             this.txtDropdownlistIssueType.Name = "txtDropdownlistIssueType";
+            this.txtDropdownlistIssueType.OldText = "";
             this.txtDropdownlistIssueType.Size = new System.Drawing.Size(121, 24);
             this.txtDropdownlistIssueType.TabIndex = 3;
             this.txtDropdownlistIssueType.Type = "IssueType";
@@ -240,6 +242,28 @@
             this.checkIsTrimCardOther.Text = "Is Trim Card Other";
             this.checkIsTrimCardOther.UseVisualStyleBackColor = true;
             // 
+            // label1
+            // 
+            this.label1.Location = new System.Drawing.Point(60, 191);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(100, 23);
+            this.label1.TabIndex = 12;
+            this.label1.Text = "Category Type";
+            // 
+            // comboCategoryType
+            // 
+            this.comboCategoryType.BackColor = System.Drawing.Color.White;
+            this.comboCategoryType.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "CategoryType", true));
+            this.comboCategoryType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboCategoryType.FormattingEnabled = true;
+            this.comboCategoryType.IsSupportUnselect = true;
+            this.comboCategoryType.Location = new System.Drawing.Point(169, 191);
+            this.comboCategoryType.Name = "comboCategoryType";
+            this.comboCategoryType.OldText = "";
+            this.comboCategoryType.Size = new System.Drawing.Size(121, 24);
+            this.comboCategoryType.TabIndex = 13;
+            this.comboCategoryType.Type = "IssueType";
+            // 
             // B13
             // 
             this.ClientSize = new System.Drawing.Size(836, 457);
@@ -251,6 +275,7 @@
             this.IsSupportNew = false;
             this.IsSupportPrint = false;
             this.Name = "B13";
+            this.OnLineHelpID = "Sci.Win.Tems.Input1";
             this.Text = "B13. Material Type";
             this.UniqueExpress = "ID";
             this.WorkAlias = "MtlType";
@@ -282,5 +307,7 @@
         private Win.UI.Label labelIssueType;
         private Class.Txtdropdownlist txtDropdownlistIssueType;
         private Win.UI.CheckBox checkIsTrimCardOther;
+        private Class.Txtdropdownlist comboCategoryType;
+        private Win.UI.Label label1;
     }
 }

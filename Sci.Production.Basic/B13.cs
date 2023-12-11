@@ -24,6 +24,16 @@ namespace Sci.Production.Basic
             this.comboMaterialType.DataSource = new BindingSource(comboBox1_RowSource, null);
             this.comboMaterialType.ValueMember = "Key";
             this.comboMaterialType.DisplayMember = "Value";
+
+            Dictionary<string, string> comboBox2_RowSource = new Dictionary<string, string>();
+            comboBox2_RowSource.Add(string.Empty, string.Empty);
+            comboBox2_RowSource.Add("Labelling", "Labelling");
+            comboBox2_RowSource.Add("Supply", "Supply");
+            comboBox2_RowSource.Add("Zippers and Buttons", "Zippers and Buttons");
+            comboBox2_RowSource.Add("Packing", "Packing");
+            this.comboCategoryType.DataSource = new BindingSource(comboBox2_RowSource, null);
+            this.comboCategoryType.ValueMember = "Key";
+            this.comboCategoryType.DisplayMember = "Value";
         }
 
         /// <inheritdoc/>
