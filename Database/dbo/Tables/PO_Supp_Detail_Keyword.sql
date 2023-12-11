@@ -1,41 +1,61 @@
-﻿CREATE TABLE [dbo].[PO_Supp_Detail_Keyword] (
-    [ID]           VARCHAR (13)  CONSTRAINT [DF_PO_Supp_Detail_Keyword_ID] DEFAULT ('') NOT NULL,
-    [Seq1]         VARCHAR (3)   CONSTRAINT [DF_PO_Supp_Detail_Keyword_Seq1] DEFAULT ('') NOT NULL,
-    [Seq2]         VARCHAR (2)   CONSTRAINT [DF_PO_Supp_Detail_Keyword_Seq2] DEFAULT ('') NOT NULL,
-    [KeywordField] VARCHAR (30)  CONSTRAINT [DF_Table_1_SpecColumnID] DEFAULT ('') NOT NULL,
-    [KeywordValue] VARCHAR (200) CONSTRAINT [DF_Table_1_SpecValue] DEFAULT ('') NOT NULL,
-    [AddName]      VARCHAR (10)  CONSTRAINT [DF_PO_Supp_Detail_Keyword_AddName] DEFAULT ('') NOT NULL,
-    [AddDate]      DATETIME      NULL,
-    [EditName]     VARCHAR (10)  CONSTRAINT [DF_PO_Supp_Detail_Keyword_EditName] DEFAULT ('') NOT NULL,
-    [EditDate]     DATETIME      NULL,
-    CONSTRAINT [PK_PO_Supp_Detail_Keyword] PRIMARY KEY CLUSTERED ([ID] ASC, [Seq1] ASC, [Seq2] ASC, [KeywordField] ASC)
-);
-
-
+﻿CREATE TABLE [dbo].[PO_Supp_Detail_Keyword](
+	[ID] [varchar](13) NOT NULL,
+	[Seq1] [varchar](3) NOT NULL,
+	[Seq2] [varchar](2) NOT NULL,
+	[KeywordField] [varchar](30) NOT NULL,
+	[KeywordValue] [nvarchar](200) NOT NULL,
+	[AddName] [varchar](10) NOT NULL,
+	[AddDate] [datetime] NULL,
+	[EditName] [varchar](10) NOT NULL,
+	[EditDate] [datetime] NULL,
+ CONSTRAINT [PK_PO_Supp_Detail_Keyword] PRIMARY KEY CLUSTERED 
+(
+	[ID] ASC,
+	[Seq1] ASC,
+	[Seq2] ASC,
+	[KeywordField] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'最後修改時間', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'PO_Supp_Detail_Keyword', @level2type = N'COLUMN', @level2name = N'EditDate';
 
-
+ALTER TABLE [dbo].[PO_Supp_Detail_Keyword] ADD  CONSTRAINT [DF_PO_Supp_Detail_Keyword_ID]  DEFAULT ('') FOR [ID]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'最後修改人員', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'PO_Supp_Detail_Keyword', @level2type = N'COLUMN', @level2name = N'EditName';
 
-
+ALTER TABLE [dbo].[PO_Supp_Detail_Keyword] ADD  CONSTRAINT [DF_PO_Supp_Detail_Keyword_Seq1]  DEFAULT ('') FOR [Seq1]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'新增時間', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'PO_Supp_Detail_Keyword', @level2type = N'COLUMN', @level2name = N'AddDate';
 
-
+ALTER TABLE [dbo].[PO_Supp_Detail_Keyword] ADD  CONSTRAINT [DF_PO_Supp_Detail_Keyword_Seq2]  DEFAULT ('') FOR [Seq2]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'新增人員', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'PO_Supp_Detail_Keyword', @level2type = N'COLUMN', @level2name = N'AddName';
 
-
+ALTER TABLE [dbo].[PO_Supp_Detail_Keyword] ADD  CONSTRAINT [DF_Table_1_SpecColumnID]  DEFAULT ('') FOR [KeywordField]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'小項', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'PO_Supp_Detail_Keyword', @level2type = N'COLUMN', @level2name = N'Seq2';
 
-
+ALTER TABLE [dbo].[PO_Supp_Detail_Keyword] ADD  CONSTRAINT [DF_PO_Supp_Detail_Keyword_KeywordValue]  DEFAULT ('') FOR [KeywordValue]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'採購大項編號', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'PO_Supp_Detail_Keyword', @level2type = N'COLUMN', @level2name = N'Seq1';
 
-
+ALTER TABLE [dbo].[PO_Supp_Detail_Keyword] ADD  CONSTRAINT [DF_PO_Supp_Detail_Keyword_AddName]  DEFAULT ('') FOR [AddName]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'採購單號', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'PO_Supp_Detail_Keyword', @level2type = N'COLUMN', @level2name = N'ID';
 
+ALTER TABLE [dbo].[PO_Supp_Detail_Keyword] ADD  CONSTRAINT [DF_PO_Supp_Detail_Keyword_EditName]  DEFAULT ('') FOR [EditName]
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'採購單號' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'PO_Supp_Detail_Keyword', @level2type=N'COLUMN',@level2name=N'ID'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'採購大項編號' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'PO_Supp_Detail_Keyword', @level2type=N'COLUMN',@level2name=N'Seq1'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'小項' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'PO_Supp_Detail_Keyword', @level2type=N'COLUMN',@level2name=N'Seq2'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'新增人員' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'PO_Supp_Detail_Keyword', @level2type=N'COLUMN',@level2name=N'AddName'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'新增時間' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'PO_Supp_Detail_Keyword', @level2type=N'COLUMN',@level2name=N'AddDate'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'最後修改人員' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'PO_Supp_Detail_Keyword', @level2type=N'COLUMN',@level2name=N'EditName'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'最後修改時間' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'PO_Supp_Detail_Keyword', @level2type=N'COLUMN',@level2name=N'EditDate'
+GO
