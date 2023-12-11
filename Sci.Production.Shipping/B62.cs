@@ -244,11 +244,23 @@ where 1=1
                 this.CurrentMaintain["Refno"] = item.GetSelecteds()[0]["SCIRefno"];
                 this.CurrentMaintain["Description"] = item.GetSelecteds()[0]["Description"];
                 this.txtRefno.Text = item.GetSelecteds()[0]["Refno"].ToString();
+                this.CurrentMaintain["vk_Refno"] = item.GetSelecteds()[0]["Refno"].ToString();
             }
         }
 
         private void TxtRefno_Validating(object sender, CancelEventArgs e)
         {
+            if (MyUtility.Check.Empty(this.txtRefno.Text))
+            {
+                this.CurrentMaintain["vk_Refno"] = string.Empty;
+                this.CurrentMaintain["Refno"] = string.Empty;
+            }
+
+            if (this.CurrentMaintain["vk_Refno"].ToString() == this.txtRefno.Text)
+            {
+                return;
+            }
+
             if (MyUtility.Check.Empty(this.CurrentMaintain["CustomsType"]))
             {
                 MyUtility.Msg.InfoBox("Please select [Customs Type] first!");
