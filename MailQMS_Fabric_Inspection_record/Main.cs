@@ -151,12 +151,6 @@ namespace MailQMS_Fabric_Inspection_record
         #region Update/Update動作
         private void ClickExport()
         {
-            SqlConnection conn;
-
-            if (!Sci.SQL.GetConnection(out conn)) { return; }
-
-            conn.InfoMessage += new SqlInfoMessageEventHandler(InfoMessage);
-
             DualResult result;
 
             //result = AsyncUpdateExport();
@@ -191,7 +185,6 @@ namespace MailQMS_Fabric_Inspection_record
                 mymailTo(result.ToString());
             }
 
-            conn.Close();
             issucess = true;
         }
 
