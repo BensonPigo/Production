@@ -23,7 +23,6 @@ namespace Sci.Production.Cutting
     public partial class P04_EditFabricCutDate : Win.Tems.QueryForm
     {
         private DataTable detailDataTable;
-        private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk = new Ict.Win.UI.DataGridViewCheckBoxColumn();
 
         /// <inheritdoc/>
         public P04_EditFabricCutDate(DataTable dataTable)
@@ -47,7 +46,6 @@ namespace Sci.Production.Cutting
             DataGridViewGeneratorDateColumnSettings estCutDate = new DataGridViewGeneratorDateColumnSettings();
             DataGridViewGeneratorTextColumnSettings col_reason = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorTextColumnSettings col_RequestRemark = new DataGridViewGeneratorTextColumnSettings();
-            DataGridViewGeneratorCheckBoxColumnSettings col_chk = new DataGridViewGeneratorCheckBoxColumnSettings();
 
             col_RequestRemark.CellValidating += (s, e) =>
             {
@@ -71,7 +69,7 @@ namespace Sci.Production.Cutting
                 }
 
                 DataRow dr = this.grid1.GetDataRow(e.RowIndex);
-                string sqlcmd = $@"select Description from CutReason  where Type = 'RC' and Junk = 0";
+                string sqlcmd = $@"select Description, ID from CutReason  where Type = 'RC' and Junk = 0";
                 SelectItem sele = new SelectItem(sqlcmd, "20", null) { Width = 333 };
                 DialogResult result = sele.ShowDialog();
                 if (result == DialogResult.Cancel)
@@ -79,25 +77,20 @@ namespace Sci.Production.Cutting
                     return;
                 }
 
-                string reasonID = MyUtility.GetValue.Lookup($@"select ID from CutReason  where [Description] = '{sele.GetSelectedString()}' and Type = 'RC' and Junk = 0 ", "Production");
-                dr["ReasonID"] = reasonID;
-                e.EditingControl.Text = sele.GetSelectedString();
-            };
-
-            col_reason.CellValidating += (s, e) =>
-            {
-                var dr = this.grid1.GetDataRow(e.RowIndex);
+                DataRow resultSelect = sele.GetSelecteds()[0];
 
                 var query = ((DataTable)this.grid1.DataSource).AsEnumerable()
                     .Where(x =>
                     x.Field<string>("Refno") == MyUtility.Convert.GetString(dr["Refno"]) &&
                         x.Field<string>("ColorID") == MyUtility.Convert.GetString(dr["ColorID"]));
-                string reasonID = MyUtility.GetValue.Lookup($@"select ID from CutReason  where [Description] = '{e.FormattedValue}' and Type = 'RC' and Junk = 0 ", "Production");
+
                 query.ToList().ForEach(row =>
                 {
-                    row["ReasonID"] = reasonID;
-                    row["Reason"] = e.FormattedValue;
+                    row["ReasonID"] = resultSelect["ID"];
+                    row["Reason"] = resultSelect["Description"];
                 });
+
+                this.grid1.Refresh();
             };
 
             estCutDate.CellValidating += (s, e) =>
@@ -122,7 +115,7 @@ namespace Sci.Production.Cutting
 
             this.grid1.IsEditingReadOnly = false;
             this.Helper.Controls.Grid.Generator(this.grid1)
-                .CheckBox("Sel", header: string.Empty, width: Widths.AnsiChars(2), iseditable: true, trueValue: 1, falseValue: 0).Get(out this.col_chk)
+                .CheckBox("Sel", header: string.Empty, width: Widths.AnsiChars(2), iseditable: true, trueValue: 1, falseValue: 0)
                 .Text("Sewinglineid", header: "Line#", width: Widths.AnsiChars(4), iseditingreadonly: true)
                 .Text("Cutref", header: "CutRef#", width: Widths.AnsiChars(4), iseditingreadonly: true)
                 .Text("Cutno", header: "Cut#", width: Widths.AnsiChars(3), iseditingreadonly: true)
@@ -136,7 +129,7 @@ namespace Sci.Production.Cutting
                 .Text("Article", header: "Article", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("Colorid", header: "Color", width: Widths.AnsiChars(5), iseditingreadonly: true)
                 .Date("EstCutDate", header: "Est. Cutting Date", width: Widths.AnsiChars(10), settings: estCutDate)
-                .Text("Reason", header: "Reason", width: Widths.AnsiChars(25),settings: col_reason)
+                .Text("Reason", header: "Reason", width: Widths.AnsiChars(25), iseditingreadonly: true, settings: col_reason)
                 .Text("SEQ1", header: "SEQ1", width: Widths.AnsiChars(3), iseditingreadonly: true)
                 .Text("SEQ2", header: "SEQ2", width: Widths.AnsiChars(2), iseditingreadonly: true)
                 .Text("SizeCode", header: "Size", width: Widths.AnsiChars(10), iseditingreadonly: true)
@@ -150,9 +143,9 @@ namespace Sci.Production.Cutting
             this.grid1.DataSource = this.detailDataTable;
             this.grid1.CellClick += this.Detailgrid_CellClick;
 
-            this.grid1.Columns["EstCutDate"].DefaultCellStyle.BackColor = Color.LightGray;
-            this.grid1.Columns["Reason"].DefaultCellStyle.BackColor = Color.LightGray;
-            this.grid1.Columns["RequestorRemark"].DefaultCellStyle.BackColor = Color.LightGray;
+            this.grid1.Columns["EstCutDate"].DefaultCellStyle.BackColor = Color.Pink;
+            this.grid1.Columns["Reason"].DefaultCellStyle.BackColor = Color.Pink;
+            this.grid1.Columns["RequestorRemark"].DefaultCellStyle.BackColor = Color.Pink;
 
             this.grid1.Columns[0].Frozen = true;
 
@@ -162,6 +155,7 @@ namespace Sci.Production.Cutting
                 DataGridViewDateBoxCell ecd = (DataGridViewDateBoxCell)this.grid1.Rows[i].Cells["EstCutDate"];
                 DataGridViewCell r = (DataGridViewCell)this.grid1.Rows[i].Cells["Reason"];
                 DataGridViewCell rr = (DataGridViewCell)this.grid1.Rows[i].Cells["RequestorRemark"];
+
                 ecd.ReadOnly = true;
                 r.ReadOnly = true;
                 rr.ReadOnly = true;
@@ -195,8 +189,6 @@ namespace Sci.Production.Cutting
                 ecd.ReadOnly = sel == "1" ? false : true;
                 r.ReadOnly = sel == "1" ? false : true;
                 rr.ReadOnly = sel == "1" ? false : true;
-                // ecd.Style.BackColor = sel == "1" ? Color.White : Color.LightGray; // 變換背景顏色
-                // r.Style.BackColor = sel == "1" ? Color.White : Color.LightGray; // 變換背景顏色
             }
         }
 
@@ -210,14 +202,32 @@ namespace Sci.Production.Cutting
             DataTable dt = (DataTable)this.grid1.DataSource;
 
             // 先判斷是否有勾選，沒有就跳掉，有就往下走
-            DataTable dt_1 = dt.Select("Sel = '1'").TryCopyToDataTable(dt);
-            if (dt_1.Rows.Count == 0)
+            DataTable dtSelcted = dt.Select("Sel = '1'").TryCopyToDataTable(dt);
+            if (dtSelcted.Rows.Count == 0)
             {
                 return;
             }
 
+            // 判斷勾選是否有EstCutDate、Reason有值
+            DataTable dt_Empty = dtSelcted.Select("CONVERT(EstCutDate, System.String) = '' OR ISNULL(Reason, '') = ''").TryCopyToDataTable(dtSelcted);
+            if (dt_Empty.Rows.Count > 0)
+            {
+                MyUtility.Msg.WarningBox("Checked item’s Reason and EstCutDate can not be empty.");
+                return;
+            }
+
+            DataTable distinctTable = dtSelcted.AsEnumerable().GroupBy(row => new
+            {
+                ID = row.Field<string>("ID"),
+                Refno = row.Field<string>("Refno"),
+                EstCutDate = row.Field<DateTime>("EstCutDate"),
+                Reason = row.Field<string>("Reason"),
+                FabricIssued = row.Field<string>("FabricIssued"),
+                RequestorRemark = row.Field<string>("RequestorRemark"),
+            }).Select(group => group.First()).TryCopyToDataTable(dtSelcted);
+
             // 判斷勾選的是否 IssueQty > 0
-            foreach (DataRow row in dt_1.Rows)
+            foreach (DataRow row in distinctTable.Rows)
             {
                 var cutplanID = MyUtility.Convert.GetString(row["ID"]);
                 var sciRefno = MyUtility.Convert.GetString(row["SCIRefno"]);
@@ -236,25 +246,7 @@ namespace Sci.Production.Cutting
                 }
             }
 
-            // 判斷勾選是否有EstCutDate、Reason有值
-            DataTable dt_Empty = dt_1.Select("CONVERT(EstCutDate, System.String) = '' OR ISNULL(Reason, '') = ''").TryCopyToDataTable(dt_1);
-            if (dt_Empty.Rows.Count > 0)
-            {
-                MyUtility.Msg.WarningBox("Checked item’s Reason and EstCutDate can not be empty.");
-                return;
-            }
-
             string sqlCmd = string.Empty;
-
-            DataTable distinctTable = dt_1.AsEnumerable().GroupBy(row => new
-            {
-                ID = row.Field<string>("ID"),
-                Refno = row.Field<string>("Refno"),
-                EstCutDate = row.Field<DateTime>("EstCutDate"),
-                Reason = row.Field<string>("Reason"),
-                FabricIssued = row.Field<string>("FabricIssued"),
-                RequestorRemark = row.Field<string>("RequestorRemark"),
-            }).Select(group => group.First()).TryCopyToDataTable(dt_1);
 
             foreach (DataRow dataRow in distinctTable.Rows)
             {

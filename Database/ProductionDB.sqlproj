@@ -2899,6 +2899,8 @@
     <Build Include="dbo\Tables\CutPlan_IssueCutDate.sql" />
     <Build Include="dbo\Tables\CutPlan_DetailDeletedHistory.sql" />
     <Build Include="dbo\Tables\FIR_Laboratory_Iron.sql" />
+    <Build Include="dbo\Tables\ExpressDuty.sql" />
+    <Build Include="dbo\Tables\ExpressDuty_Functions.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />

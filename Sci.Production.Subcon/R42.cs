@@ -137,8 +137,8 @@ Select
 			        when bt.Type = '3' then 'In/Out'
 			        when bt.Type = '4' then 'Out/In' end,
     [TagId] = bt.TagId,
-    [TransferDate] = CAST(TransferDate AS DATE),
-    [TransferTime] = TransferDate,
+    [TransferDate] = CAST(bt.TransferDate AS DATE),
+    [TransferTime] = bt.TransferDate,
     bt.LocationID
     ,b.item
 	,bt.PanelNo
