@@ -502,6 +502,11 @@ namespace Sci.Production.IE
 
         private void MergeSameTimeStudy_DetailUkeyByNo()
         {
+            this.backgroundWorker.RunWorkerAsync();
+        }
+
+        private void BackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
+        {
             var groupTimeStudy_DetailUkeyNo = this.dtAutomatedLineMapping_DetailCopy.AsEnumerable()
                                                 .GroupBy(s => new
                                                 {
@@ -541,8 +546,13 @@ namespace Sci.Production.IE
                     }).CopyToDataTable();
 
                 this.dtAutomatedLineMapping_DetailCopy = newAutomatedLineMapping_DetailCopy;
-                this.gridEditOperationBs.DataSource = newAutomatedLineMapping_DetailCopy;
+                this.backgroundWorker.ReportProgress(0);
             }
+        }
+
+        private void BackgroundWorker_ProgressChanged(object sender, ProgressChangedEventArgs e)
+        {
+            this.gridEditOperationBs.DataSource = this.dtAutomatedLineMapping_DetailCopy;
         }
     }
 }
