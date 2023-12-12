@@ -44,6 +44,8 @@ namespace Sci.Production.Shipping
             : base(menuitem)
         {
             this.InitializeComponent();
+            this.gridicon.Insert.Visible = false;
+            this.gridicon.Append.Visible = false;
         }
 
         /// <inheritdoc/>
@@ -639,8 +641,11 @@ left  join KHCustomsDescription kd on kd.CDCName = kc.KHCustomsDescriptionCDCNam
     and kd.CustomsType in ('Fabric', 'Accessory')
 left  join KHCustomsDescription_Detail kdd on kd.CDCName=kdd.CDCName and kdd.PurchaseUnit = s.UnitId 
 ) a
- where 1=1
-   and not EXISTS (select * from KHImportDeclaration where Blno =@BLNo)
+ where  not EXISTS (select 1 from KHImportDeclaration_Detail with (nolock)
+                             where BLNo = a.BLNo
+                             and ExportID = a.ExportID
+                             and RefNo = a.RefNo
+                             and UnitId = a.UnitId)
 ";
             return sqlcmd;
         }
@@ -1034,15 +1039,6 @@ where id = '{this.CurrentMaintain["ID"]}'
 
                 if (MyUtility.Check.Empty(this.txtBLNo.Text))
                 {
-                    return;
-                }
-
-                string sqlcmd = $@"select id from KHImportDeclaration where Blno = '{this.txtBLNo.Text}'";
-                if (MyUtility.Check.Seek(sqlcmd, out DataRow dr))
-                {
-                    MyUtility.Msg.WarningBox($"<B/L No> has already in ID: {dr["id"]}");
-                    this.txtBLNo.Select();
-                    e.Cancel = true;
                     return;
                 }
 
