@@ -1925,7 +1925,7 @@ f.RibItem
 into #tmpBasc
 from Receiving r WITH(NOLOCK)
 inner join Receiving_Detail rd WITH(NOLOCK) on r.Id=rd.id	
-inner join Export_Detail ed WITH(NOLOCK) on ed.PoID = rd.PoId and ed.seq1 = rd.seq1 and ed.Seq2 = rd.seq2
+inner join Export_Detail ed WITH(NOLOCK) on ed.PoID = rd.PoId and ed.seq1 = rd.seq1 and ed.Seq2 = rd.seq2 and r.ExportID = ed.id
 inner join Export with(nolock) on Export.id = ed.id and Export.Confirm = 1
 inner join orders o with(nolock) on o.id = ed.PoID
 left join Po_Supp_Detail psd with(nolock) on psd.id = ed.poid and psd.seq1 = ed.seq1 and psd.seq2 = ed.seq2
