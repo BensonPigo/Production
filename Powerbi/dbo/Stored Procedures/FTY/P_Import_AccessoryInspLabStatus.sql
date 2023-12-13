@@ -57,6 +57,7 @@ BEGIN
 		, a.ReceivingID
 		, a.AddDate
 		, a.EditDate
+		, [CategoryType] = isnull(MtlType.CategoryType, '''''''')
 	from Production.dbo.AIR a WITH (NOLOCK) 
 	inner join Production.dbo.View_AllReceivingDetail t WITH (NOLOCK) on t.PoId = A.POID and t.Seq1 = A.SEQ1 and t.Seq2 = A.SEQ2 AND t.ID = a.ReceivingID
 	cross apply(
@@ -82,6 +83,7 @@ BEGIN
 	left join Production.dbo.PO_Supp_Detail_Spec psdsS WITH (NOLOCK) on psdsS.ID = PS.id and psdsS.seq1 = PS.seq1 and psdsS.seq2 = PS.seq2 and psdsS.SpecColumnID = ''''Size''''
 	left join Production.dbo.Color C WITH (NOLOCK) on C.ID = isnull(psdsC.SpecValue ,'''''''') and C.BrandId = x.BrandId
 	left join Production.dbo.fabric WITH (NOLOCK) on fabric.SCIRefno = PS.scirefno
+	left join Production.dbo.MtlType WITH (NOLOCK) on MtlType.ID = fabric.MtlTypeID
 	left join Production.dbo.AIR_Laboratory AIRL WITH (NOLOCK) on AIRL.ID = A.ID     
 	OUTER APPLY (
 		SELECT  [Val]=  STUFF((
@@ -114,14 +116,99 @@ BEGIN
 	';
 
 	set @SQLCMD2 = '	
-	insert into P_AccessoryInspLabStatus([POID], [SEQ], [Factory], [BrandID], [StyleID], [SeasonID], [ShipModeID], [Wkno], [Invo], [ArriveWHDate], [ArriveQty], [Inventory], [Bulk], [BalanceQty], [EarliestSCIDelivery], [BuyerDelivery], [RefNo], [Article], [MaterialType], [Color], [ColorName], [Size], [Unit], [Supplier], [OrderQty], [InspectionResult], [InspectedQty], [RejectedQty], [DefectType], [InspectionDate], [Inspector], [Remark], [NALaboratory], [LaboratoryOverallResult], [NAOvenTest], [OvenTestResult], [OvenScale], [OvenTestDate], [NAWashTest], [WashTestResult], [WashScale], [WashTestDate], [ReceivingID], [AddDate], [EditDate])	
-	select t.POID, t.[SEQ], t.FactoryID, t.BrandID, t.StyleID, t.SeasonID, t.ShipModeID, t.ExportId
-		, t.InvNo, t.WhseArrival, t.StockQty, t.InvStock, t.BulkStock, t.BalanceQty, t.[MinSciDelivery], t.[MinBuyerDelivery], t.[Refno]
-		, t.[Article], t.[MaterialType], t.[Color], t.[ColorName], t.[SizeSpec], t.stockunit, t.[Supplier], t.[OrderQty], t.Result
-		, t.[InspectedQty], t.[RejectedQty], t.[DefectType], t.[InspectionDate], t.[Inspector], t.Remark, t.[OvenEncode]
-		, t.[LaboratoryOverallResult], t.[NonOven], t.[Oven], t.[OvenScale], t.[OvenDate], t.[NonWash], t.[Wash]
-		, t.[WashScale], t.[WashDate]
-		, t.ReceivingID, t.AddDate, t.EditDate 
+	insert into P_AccessoryInspLabStatus(
+			[POID], 
+			[SEQ], 
+			[Factory], 
+			[BrandID], 
+			[StyleID], 
+			[SeasonID], 
+			[ShipModeID], 
+			[Wkno], 
+			[Invo], 
+			[ArriveWHDate], 
+			[ArriveQty], 
+			[Inventory], 
+			[Bulk], 
+			[BalanceQty], 
+			[EarliestSCIDelivery], 
+			[BuyerDelivery], 
+			[RefNo], 
+			[Article], 
+			[MaterialType], 
+			[Color], 
+			[ColorName], 
+			[Size], 
+			[Unit], 
+			[Supplier], 
+			[OrderQty], 
+			[InspectionResult], 
+			[InspectedQty], 
+			[RejectedQty], 
+			[DefectType], 
+			[InspectionDate], 
+			[Inspector], 
+			[Remark], 
+			[NALaboratory], 
+			[LaboratoryOverallResult], 
+			[NAOvenTest], 
+			[OvenTestResult], 
+			[OvenScale], 
+			[OvenTestDate], 
+			[NAWashTest], 
+			[WashTestResult], 
+			[WashScale], 
+			[WashTestDate], 
+			[ReceivingID], 
+			[AddDate], 
+			[EditDate], 
+			[CategoryType])
+	select	t.POID, 
+			t.[SEQ], 
+			t.FactoryID, 
+			t.BrandID, 
+			t.StyleID, 
+			t.SeasonID, 
+			t.ShipModeID, 
+			t.ExportId, 
+			t.InvNo, 
+			t.WhseArrival, 
+			t.StockQty, 
+			t.InvStock, 
+			t.BulkStock, 
+			t.BalanceQty, 
+			t.[MinSciDelivery], 
+			t.[MinBuyerDelivery], 
+			t.[Refno], 
+			t.[Article], 
+			t.[MaterialType], 
+			t.[Color], 
+			t.[ColorName], 
+			t.[SizeSpec], 
+			t.stockunit, 
+			t.[Supplier], 
+			t.[OrderQty], 
+			t.Result, 
+			t.[InspectedQty], 
+			t.[RejectedQty], 
+			t.[DefectType], 
+			t.[InspectionDate], 
+			t.[Inspector], 
+			t.Remark, 
+			t.[OvenEncode], 
+			t.[LaboratoryOverallResult], 
+			t.[NonOven], 
+			t.[Oven], 
+			t.[OvenScale], 
+			t.[OvenDate], 
+			t.[NonWash], 
+			t.[Wash], 
+			t.[WashScale], 
+			t.[WashDate], 
+			t.ReceivingID, 
+			t.AddDate, 
+			t.EditDate,
+			t.CategoryType
 	from #tmp t
 	where not exists (select 1 from P_AccessoryInspLabStatus p where p.POID = t.POID and p.SEQ = t.SEQ and p.ReceivingID = t.ReceivingID)
 
@@ -169,6 +256,7 @@ BEGIN
 		, p.[WashTestDate]  			 = t.[WashDate]
 		, p.[AddDate]  				 = t.AddDate
 		, p.[EditDate]  				 = t.EditDate 
+		, p.[CategoryType]  				 = t.CategoryType 
 	 from P_AccessoryInspLabStatus p
 	 inner join  #tmp t on p.POID = t.POID and p.SEQ = t.SEQ and p.ReceivingID = t.ReceivingID
 
