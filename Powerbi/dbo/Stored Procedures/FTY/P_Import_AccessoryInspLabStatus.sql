@@ -22,7 +22,7 @@ BEGIN
 		, [ExportId] = ISNULL(t.ExportId, '''''''')
 		, [InvNo] = ISNULL(t.InvNo, '''''''')
 		, [WhseArrival] = ISNULL(t.WhseArrival, '''''''')
-		, t.StockQty
+		, [StockQty] = isnull(t.StockQty, 0)
 		, total_t.InvStock
 		, total_t.BulkStock
 		, total_t.BalanceQty
@@ -30,7 +30,7 @@ BEGIN
 		, [MinBuyerDelivery] = g.MinBuyerDelivery
 		, a.Refno
 		, [Article] = isnull(Style.Article, '''''''')
-		, [MaterialType] = fabric.MtlTypeID
+		, [MaterialType] = isnull(fabric.MtlTypeID, '''''''')
 		, [Color]  = isnull(psdsC.SpecValue, '''''''')
 		, [ColorName] = isnull(c.Name, '''''''')
 		, [SizeSpec] = isnull(psdsS.SpecValue, '''''''')
@@ -45,7 +45,7 @@ BEGIN
 		, [Inspector] = ISNULL((select Pass1.Name from Production.dbo.Pass1 WITH (NOLOCK) where a.Inspector = pass1.id), '''''''')
 		, a.Remark
 		, [OvenEncode] = iif(AIRL.NonOven =1 and AIRL.NonWash =1, ''''Y'''', '''''''')
-		, [LaboratoryOverallResult] = AIRL.Result
+		, [LaboratoryOverallResult] = isnull(AIRL.Result, '''''''')
 		, [NonOven] = iif(AIRL.NonOven =1, ''''Y'''', '''''''')
 		, [Oven] = iif(AIRL.OvenEncode = 1, AIRL.Oven, '''''''')
 		, [OvenScale] = iif(AIRL.OvenEncode = 1, AIRL.OvenScale, '''''''') 
