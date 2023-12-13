@@ -44,7 +44,8 @@
 	[ReceivingID] [varchar](13) NOT NULL,
 	[AddDate] [datetime] NULL,
 	[EditDate] [datetime] NULL,
- CONSTRAINT [PK_P_AccessoryInspLabStatus] PRIMARY KEY CLUSTERED 
+	[CategoryType] VARCHAR(30) NOT NULL CONSTRAINT [DF_P_AccessoryInspLabStatus_CategoryType]  DEFAULT (''), 
+    CONSTRAINT [PK_P_AccessoryInspLabStatus] PRIMARY KEY CLUSTERED 
 (
 	[POID] ASC,
 	[SEQ] ASC,
@@ -276,3 +277,12 @@ EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'收料單號' 
 GO
 
 
+
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'Material Type的大類',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'P_AccessoryInspLabStatus',
+    @level2type = N'COLUMN',
+    @level2name = N'CategoryType'
