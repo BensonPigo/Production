@@ -68,7 +68,7 @@ SELECT
    ,[OutPut] = COUNT(1)
 FROM FIR WITH(NOLOCK)
 INNER JOIN FIR_Shadebone sb WITH(NOLOCK) ON sb.id = fir.ID
-INNER JOIN orders o WITH(NOLOCK) ON o.POID = FIR.POID
+INNER JOIN orders o WITH(NOLOCK) ON o.ID = FIR.POID
 INNER JOIN Pass1 WITH(NOLOCK) ON Pass1.ID = fir.ShadeboneInspector
 WHERE CAST(ShadeBondDate AS DATE) BETWEEN '{this.dateInspection.Text1}' AND '{this.dateInspection.Text2}'
 {where}
