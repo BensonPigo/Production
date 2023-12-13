@@ -55,9 +55,9 @@
             this.txtID.BackColor = System.Drawing.Color.White;
             this.txtID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtID.Location = new System.Drawing.Point(100, 21);
-            this.txtID.MaxLength = 10;
+            this.txtID.MaxLength = 20;
             this.txtID.Name = "txtID";
-            this.txtID.Size = new System.Drawing.Size(78, 23);
+            this.txtID.Size = new System.Drawing.Size(180, 23);
             this.txtID.TabIndex = 1;
             // 
             // labelCode
