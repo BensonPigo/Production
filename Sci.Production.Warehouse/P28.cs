@@ -429,7 +429,7 @@ WHERE   StockType='{dr["toStocktype"]}'
             , pd.seq1 stockseq1
             , pd.seq2 stockseq2
             , pd.Refno
-            , [inputqty] = ROUND(dbo.GetUnitQty(pd.POUnit, pd.StockUnit, xz.taipei_qty), 2)
+            , [inputqty] = isnull(ROUND(dbo.GetUnitQty(pd.POUnit, pd.StockUnit, xz.taipei_qty), 2), 0)
             , pd.POUnit
             , pd.StockUnit
             , [accu_qty] = isnull(x.accu_qty, 0.00)
