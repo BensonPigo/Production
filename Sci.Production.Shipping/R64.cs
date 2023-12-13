@@ -42,8 +42,8 @@ namespace Sci.Production.Shipping
 
             if (this.dateArrivedWHDate.HasValue)
             {
-                whereExport += $"and e.WhseArrival between '{(DateTime)this.dateETA.Value1:yyyy/MM/dd}' and '{(DateTime)this.dateETA.Value2:yyyy/MM/dd}'";
-                whereFtyExport += $"and fe.WhseArrival between '{(DateTime)this.dateETA.Value1:yyyy/MM/dd}' and '{(DateTime)this.dateETA.Value2:yyyy/MM/dd}'";
+                whereExport += $"and e.WhseArrival between '{(DateTime)this.dateArrivedWHDate.Value1:yyyy/MM/dd}' and '{(DateTime)this.dateArrivedWHDate.Value2:yyyy/MM/dd}'";
+                whereFtyExport += $"and fe.WhseArrival between '{(DateTime)this.dateArrivedWHDate.Value1:yyyy/MM/dd}' and '{(DateTime)this.dateArrivedWHDate.Value2:yyyy/MM/dd}'";
             }
 
             this.sqlcmd = $@"
@@ -136,7 +136,7 @@ left  join KHCustomsItem_Detail kcd on kc.Ukey=kcd.KHCustomsItemUkey and kcd.Por
 left  join KHCustomsDescription kd on kd.CDCName = kc.KHCustomsDescriptionCDCName
     and kd.CustomsType in ('Fabric', 'Accessory', 'Machine')
 left  join KHCustomsDescription_Detail kdd on kd.CDCName=kdd.CDCName and kdd.PurchaseUnit = s.UnitId   
-Left join KHImportDeclaration_Detail khd on khd.ExportID = e.ID
+Left join KHImportDeclaration_Detail khd on khd.ExportID = e.ID and khd.Refno = kc.Refno and khd.UnitId = s.UnitId
 Left join KHImportDeclaration kh on kh.id = khd.id
 where kh.DeclareNo is null
 
@@ -174,7 +174,7 @@ left  join KHCustomsItem_Detail kcd on kc.Ukey=kcd.KHCustomsItemUkey and kcd.Por
 left  join KHCustomsDescription kd on kd.CDCName = kc.KHCustomsDescriptionCDCName
     and kd.CustomsType in ('Fabric', 'Accessory', 'Machine')
 left join KHCustomsDescription_Detail kdd on kd.CDCName=kdd.CDCName and kdd.PurchaseUnit = s.UnitId   
-Left join KHImportDeclaration_Detail khd on khd.ExportID = e.ID
+Left join KHImportDeclaration_Detail khd on khd.ExportID = e.ID and khd.Refno = kc.Refno and khd.UnitId = s.UnitId
 Left join KHImportDeclaration kh on kh.id = khd.id
 where kh.DeclareNo is null
 
@@ -212,7 +212,7 @@ left join KHCustomsItem_Detail kcd on kc.Ukey=kcd.KHCustomsItemUkey and kcd.Port
 left join KHCustomsDescription kd on kd.CDCName = kc.KHCustomsDescriptionCDCName
     and kd.CustomsType in ('Fabric', 'Accessory')
 left join KHCustomsDescription_Detail kdd on kd.CDCName=kdd.CDCName and kdd.PurchaseUnit = s.UnitId 
-Left join KHImportDeclaration_Detail khd on khd.ExportID = FE.ID
+Left join KHImportDeclaration_Detail khd on khd.ExportID = FE.ID and khd.Refno = kc.Refno and khd.UnitId = s.UnitId
 Left join KHImportDeclaration kh on kh.id = khd.id
 where kh.DeclareNo is null
 ";
