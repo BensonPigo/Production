@@ -323,11 +323,10 @@ and o.ID=b.OrderID ", this.CurrentMaintain["ID"]);
             base.OnDetailEntered();
             this.btnSendMail.Enabled = this.CurrentMaintain["Status"].ToString() != "New";
 
-            var status = MyUtility.Convert.GetString(this.CurrentMaintain["Status"]);
-            this.btnEditFabricCutDate.Enabled = status == "Confirmed" ? true : false;
-            this.btnFabDeleteHistory.Enabled = status == "Confirmed" ? true : false;
-            this.btnFabDelete.Enabled = status == "Confirmed" ? true : false;
-
+            bool isConfirm = MyUtility.Convert.GetString(this.CurrentMaintain["Status"]) == "Confirmed";
+            this.btnFabDeleteHistory.Enabled = isConfirm;
+            this.btnEditFabricCutDate.Enabled = isConfirm & this.Perm.Edit && this.Perm.Delete;
+            this.btnFabDelete.Enabled = isConfirm & this.Perm.Edit && this.Perm.Delete;
             this.detailgrid.AutoResizeColumns();
         }
 
