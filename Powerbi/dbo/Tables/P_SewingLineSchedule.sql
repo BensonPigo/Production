@@ -69,6 +69,7 @@ CREATE TABLE [dbo].[P_SewingLineSchedule](
 	[PrintPcs] [int] NULL,
 	[Ukey] [bigint] NOT NULL,
     [InlineCategory] VARCHAR(80) NULL, 
+    [StyleSeason] NVARCHAR(MAX) NOT NULL CONSTRAINT [DF_P_SewingLineSchedule_StyleSeason] DEFAULT (''), 
     CONSTRAINT [PK_P_SewingLineSchedule] PRIMARY KEY CLUSTERED 
 (
 	[Ukey] ASC,
