@@ -17,6 +17,7 @@ using System.Net.Mail;
 using Sci.Production.Prg;
 using Sci.Production.Class.Command;
 using static Ict.Win.DataGridViewGenerator;
+using System.Security.AccessControl;
 
 namespace Sci.Production.IE
 {
@@ -25,8 +26,6 @@ namespace Sci.Production.IE
     /// </summary>
     public partial class P01 : Win.Tems.Input6
     {
-        private Ict.Win.UI.DataGridViewCheckBoxColumn col_IsSubprocess;
-        private Ict.Win.UI.DataGridViewCheckBoxColumn col_IsNonSewingLine;
         private DataGridViewGeneratorTextColumnSettings operation = new DataGridViewGeneratorTextColumnSettings();
         private DataGridViewGeneratorTextColumnSettings machine = new DataGridViewGeneratorTextColumnSettings();
         private DataGridViewGeneratorTextColumnSettings mold = new DataGridViewGeneratorTextColumnSettings();
@@ -72,6 +71,7 @@ namespace Sci.Production.IE
             this.detailgrid.Columns.DisableSortable();
             this.detailgrid.CellMouseMove += this.Detailgrid_CellMouseMove;
             this.detailgrid.CellMouseLeave += this.Detailgrid_CellMouseLeave;
+            this.detailgrid.CellFormatting += this.Detailgrid_CellFormatting;
             this.detailgrid.Columns.DisableSortable();
             this.detailgrid.AllowUserToOrderColumns = true;
             this.InsertDetailGridOnDoubleClick = false;
@@ -93,6 +93,7 @@ namespace Sci.Production.IE
             this.detailgrid.Columns.DisableSortable();
             this.detailgrid.CellMouseMove += this.Detailgrid_CellMouseMove;
             this.detailgrid.CellMouseLeave += this.Detailgrid_CellMouseLeave;
+            this.detailgrid.CellFormatting += this.Detailgrid_CellFormatting;
 
             StringBuilder df = new StringBuilder();
             df.Append(string.Format("StyleID = '{0}' ", styleID));
@@ -149,6 +150,15 @@ namespace Sci.Production.IE
             }
         }
 
+        private void Detailgrid_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
+        {
+            if (this.detailgrid.Columns[e.ColumnIndex].DataPropertyName == "IsNonSewingLine")
+            {
+                DataRow curRow = this.detailgrid.GetDataRow(e.RowIndex);
+                this.detailgrid.Rows[e.RowIndex].Cells[e.ColumnIndex].ReadOnly = !MyUtility.Convert.GetBool(curRow["IsNonSewingLineEditable"]);
+            }
+        }
+
         /// <summary>
         /// OnDetailSelectCommandPrepare
         /// </summary>
@@ -180,16 +190,19 @@ select 0 as Selected, isnull(o.SeamLength,0) SeamLength
 	  ,td.MasterPlusGroup
       ,[IsShow] = cast(iif( td.OperationID like '--%' , 1, isnull(show.val, 1)) as bit)
       ,[IsSubprocess] = isnull(td.IsSubprocess, 0)
-      ,[MachineType_IsSubprocess] = isnull(md.IsSubprocess,0)
+      ,[MachineType_IsSubprocess] = isnull(md.IsSubprocess, 0)
       ,td.PPA
       ,PPAText = ISNULL(d.Name,'')
       ,td.IsNonSewingLine
       ,td.SewingMachineAttachmentID
       ,td.Thread_ComboID
       ,td.StdSMV
+      ,[IsNonSewingLineEditable] = cast(case    when isnull(md.IsSubprocess, 0) = 1 then 1
+                                                when isnull(md.IsNonSewingLine, 0) = 1 then 1
+                                                else 0 end as bit)
 from TimeStudy_Detail td WITH (NOLOCK) 
 left join Operation o WITH (NOLOCK) on td.OperationID = o.ID
-left join MachineType_Detail md WITH (NOLOCK) on md.ID = o.MachineTypeID and md.FactoryID = '{Env.User.Factory}'
+left join MachineType_Detail md WITH (NOLOCK) on md.ID = td.MachineTypeID and md.FactoryID = '{Env.User.Factory}'
 left join Mold m WITH (NOLOCK) on m.ID=td.Mold
 left join DropDownList d (NOLOCK) on d.ID=td.PPA AND d.Type = 'PMS_IEPPA'
 outer apply (
@@ -360,6 +373,32 @@ where   ID = '{this.CurrentMaintain["StyleID"]}' and
             }
         }
 
+        private void GetMachineType_Detail(string machineTypeID)
+        {
+            string sqlGetMachineType_Detail = $@"
+select  IsSubprocess,
+        IsNonSewingLine,
+        [IsNonSewingLineEditable] = cast(case   when isnull(IsSubprocess, 0) = 1 then 1
+                                                when isnull(IsNonSewingLine, 0) = 1 then 1
+                                                else 0 end as bit)
+from MachineType_Detail where FactoryID = '{Env.User.Factory}' and ID = '{machineTypeID}'";
+
+            MyUtility.Check.Seek(sqlGetMachineType_Detail, out DataRow dataRow, "Production");
+
+            if (dataRow != null)
+            {
+                this.CurrentDetailData["IsSubprocess"] = dataRow["IsSubprocess"];
+                this.CurrentDetailData["IsNonSewingLine"] = dataRow["IsNonSewingLine"];
+                this.CurrentDetailData["IsNonSewingLineEditable"] = dataRow["IsNonSewingLineEditable"];
+            }
+            else
+            {
+                this.CurrentDetailData["IsSubprocess"] = 0;
+                this.CurrentDetailData["IsNonSewingLine"] = 0;
+                this.CurrentDetailData["IsNonSewingLineEditable"] = 0;
+            }
+        }
+
         /// <summary>
         /// OnDetailGridSetup()
         /// </summary>
@@ -370,7 +409,6 @@ where   ID = '{this.CurrentMaintain["StyleID"]}' and
             DataGridViewGeneratorTextColumnSettings template = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorTextColumnSettings pardID = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorTextColumnSettings ppa = new DataGridViewGeneratorTextColumnSettings();
-            DataGridViewGeneratorCheckBoxColumnSettings nonSl = new DataGridViewGeneratorCheckBoxColumnSettings();
             TxtMachineGroup.CelltxtMachineGroup txtSubReason = (TxtMachineGroup.CelltxtMachineGroup)TxtMachineGroup.CelltxtMachineGroup.GetGridCell();
 
             #region Seq & Operation Code & Frequency & SMV & ST/MC Type & Attachment按右鍵與Validating
@@ -409,8 +447,8 @@ where   ID = '{this.CurrentMaintain["StyleID"]}' and
                                     dr["OperationID"] = callNextForm.P01SelectOperationCode["ID"].ToString();
                                     dr["OperationDescEN"] = callNextForm.P01SelectOperationCode["DescEN"].ToString();
                                     dr["MachineTypeID"] = callNextForm.P01SelectOperationCode["MachineTypeID"].ToString();
-                                    dr["Mold"] = callNextForm.P01SelectOperationCode["Mold"].ToString(); // 前端轉進來的資料是用[;]區隔，統一用[,]區隔
-                                    dr["Template"] = callNextForm.P01SelectOperationCode["Template"].ToString();
+                                    dr["Mold"] = MyUtility.GetValue.Lookup($"select dbo.GetParseOperationMold('{callNextForm.P01SelectOperationCode["MoldID"]}', 'Attachment')"); // 前端轉進來的資料是用[;]區隔，統一用[,]區隔
+                                    dr["Template"] = MyUtility.GetValue.Lookup($"select dbo.GetParseOperationMold('{callNextForm.P01SelectOperationCode["MoldID"]}', 'Template')");
                                     dr["MtlFactorID"] = callNextForm.P01SelectOperationCode["MtlFactorID"].ToString();
                                     dr["SeamLength"] = callNextForm.P01SelectOperationCode["SeamLength"].ToString();
                                     dr["SMV"] = MyUtility.Convert.GetDecimal(callNextForm.P01SelectOperationCode["SMV"]) * 60;
@@ -423,6 +461,7 @@ where   ID = '{this.CurrentMaintain["StyleID"]}' and
                                     dr["MachineType_IsSubprocess"] = callNextForm.P01SelectOperationCode["MachineType_IsSubprocess"];
                                     dr["IsSubprocess"] = callNextForm.P01SelectOperationCode["IsSubprocess"];
                                     dr["IsNonSewingLine"] = callNextForm.P01SelectOperationCode["IsNonSewingLine"];
+                                    this.GetMachineType_Detail(dr["MachineTypeID"].ToString());
                                     dr.EndEdit();
                                 }
                             }
@@ -446,6 +485,7 @@ where   ID = '{this.CurrentMaintain["StyleID"]}' and
                                 dr["MachineType_IsSubprocess"] = callNextForm.P01SelectOperationCode["MachineType_IsSubprocess"];
                                 dr["IsSubprocess"] = callNextForm.P01SelectOperationCode["IsSubprocess"];
                                 dr["IsNonSewingLine"] = callNextForm.P01SelectOperationCode["IsNonSewingLine"];
+                                this.GetMachineType_Detail(dr["MachineTypeID"].ToString());
                                 dr.EndEdit();
                             }
                             else
@@ -541,6 +581,7 @@ and o.ID = @id";
                                     dr["IsSubprocess"] = opData.Rows[0]["IsSubprocess"];
                                     dr["IsNonSewingLine"] = opData.Rows[0]["IsNonSewingLine"];
                                     dr["MasterPlusGroup"] = opData.Rows[0]["MasterPlusGroup"].ToString();
+                                    this.GetMachineType_Detail(opData.Rows[0]["MachineTypeID"].ToString());
                                 }
                             }
                             else
@@ -623,105 +664,66 @@ and o.ID = @id";
             #region ST/MC Type
             this.machine.EditingMouseDown += (s, e) =>
             {
-                if (this.EditMode)
+                if (!this.EditMode)
                 {
-                    if (e.Button == MouseButtons.Right)
+                    return;
+                }
+
+                if (e.Button != MouseButtons.Right)
+                {
+                    return;
+                }
+
+                if (e.RowIndex != -1)
+                {
+                    DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
+                    string sqlCmd = "select ID,Description from MachineType WITH (NOLOCK) where Junk = 0";
+                    SelectItem item = new SelectItem(sqlCmd, "8,35", dr["MachineTypeID"].ToString());
+                    DialogResult returnResult = item.ShowDialog();
+                    if (returnResult == DialogResult.Cancel)
                     {
-                        if (e.RowIndex != -1)
-                        {
-                            DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
-                            string sqlCmd = "select ID,Description from MachineType WITH (NOLOCK) where Junk = 0";
-                            SelectItem item = new SelectItem(sqlCmd, "8,35", dr["MachineTypeID"].ToString());
-                            DialogResult returnResult = item.ShowDialog();
-                            if (returnResult == DialogResult.Cancel)
-                            {
-                                return;
-                            }
-
-                            string sqlcnd_sm = $@"select IsSubprocess,IsNonSewingLine  from MachineType_Detail where FactoryID = '{Env.User.Factory}' and ID = '{item.GetSelectedString()}'";
-
-                            MyUtility.Check.Seek(sqlcnd_sm, out DataRow dataRow, "Production");
-
-                            if ( dataRow != null)
-                            {
-                                this.CurrentDetailData["IsSubprocess"] = dataRow["IsSubprocess"];
-                                this.CurrentDetailData["IsNonSewingLine"] = dataRow["IsNonSewingLine"];
-
-                                if (!MyUtility.Convert.GetBool(dataRow["IsSubprocess"]) && MyUtility.Convert.GetBool(dataRow["IsNonSewingLine"]))
-                                {
-                                    this.col_IsNonSewingLine.IsEditable = true;
-                                }
-
-                                if (MyUtility.Convert.GetBool(dataRow["IsSubprocess"]))
-                                {
-                                    this.col_IsNonSewingLine.IsEditable = true;
-                                }
-                            }
-                            else
-                            {
-                                this.CurrentDetailData["IsSubprocess"] = 0;
-                                this.CurrentDetailData["IsNonSewingLine"] = 0;
-                                this.col_IsNonSewingLine.IsEditable = false;
-                            }
-
-                            e.EditingControl.Text = item.GetSelectedString();
-                        }
+                        return;
                     }
+
+                    this.GetMachineType_Detail(item.GetSelectedString());
+
+                    e.EditingControl.Text = item.GetSelectedString();
                 }
             };
 
             this.machine.CellValidating += (s, e) =>
             {
-                if (this.EditMode)
+                if (!this.EditMode)
                 {
-                    DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
-                    if (!MyUtility.Check.Empty(e.FormattedValue) && e.FormattedValue.ToString() != dr["MachineTypeID"].ToString())
-                    {
-                        if (!MyUtility.Check.Seek(string.Format("select ID,Description from MachineType WITH (NOLOCK) where Junk = 0 and ID = '{0}'", e.FormattedValue.ToString())))
-                        {
-                            dr["MachineTypeID"] = string.Empty;
-                            e.Cancel = true;
-                            MyUtility.Msg.WarningBox(string.Format("< ST/MC Type: {0} > not found!!!", e.FormattedValue.ToString()));
-                            return;
-                        }
-                        else
-                        {
-                            dr["MachineTypeID"] = e.FormattedValue.ToString();
-                            string sqlcnd_sm = $@"select IsSubprocess,IsNonSewingLine  from MachineType_Detail where FactoryID = '{Env.User.Factory}' and ID = '{e.FormattedValue.ToString()}'";
-
-                            MyUtility.Check.Seek(sqlcnd_sm, out DataRow dataRow, "Production");
-
-                            if (dataRow != null)
-                            {
-                                this.CurrentDetailData["IsSubprocess"] = dataRow["IsSubprocess"];
-                                this.CurrentDetailData["IsNonSewingLine"] = dataRow["IsNonSewingLine"];
-
-                                if (!MyUtility.Convert.GetBool(dataRow["IsSubprocess"]) && MyUtility.Convert.GetBool(dataRow["IsNonSewingLine"]))
-                                {
-                                    this.col_IsNonSewingLine.IsEditable = true;
-                                }
-
-                                if (MyUtility.Convert.GetBool(dataRow["IsSubprocess"]))
-                                {
-                                    this.col_IsNonSewingLine.IsEditable = true;
-                                }
-                            }
-                            else
-                            {
-                                this.CurrentDetailData["IsSubprocess"] = 0;
-                                this.CurrentDetailData["IsNonSewingLine"] = 0;
-                                this.col_IsNonSewingLine.IsEditable = false;
-                            }
-                        }
-                    }
-                    else
-                    {
-                        dr["MachineTypeID"] = string.Empty;
-                        this.CurrentDetailData["IsSubprocess"] = 0;
-                        this.CurrentDetailData["IsNonSewingLine"] = 0;
-                        this.col_IsNonSewingLine.IsEditable = false;
-                    }
+                    return;
                 }
+
+                if (MyUtility.Check.Empty(e.FormattedValue))
+                {
+                    this.CurrentDetailData["MachineTypeID"] = string.Empty;
+                    this.CurrentDetailData["IsSubprocess"] = 0;
+                    this.CurrentDetailData["IsNonSewingLine"] = 0;
+                    return;
+                }
+
+                DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
+
+                if (e.FormattedValue.ToString() == dr["MachineTypeID"].ToString())
+                {
+                    return;
+                }
+
+                if (!MyUtility.Check.Seek(string.Format("select ID,Description from MachineType WITH (NOLOCK) where Junk = 0 and ID = '{0}'", e.FormattedValue.ToString())))
+                {
+                    dr["MachineTypeID"] = string.Empty;
+                    e.Cancel = true;
+                    MyUtility.Msg.WarningBox(string.Format("< ST/MC Type: {0} > not found!!!", e.FormattedValue.ToString()));
+                    return;
+                }
+
+                this.GetMachineType_Detail(e.FormattedValue.ToString());
+
+                dr["MachineTypeID"] = e.FormattedValue.ToString();
             };
 
             #endregion
@@ -1142,32 +1144,6 @@ and Name = @PPA
                 }
             };
             #endregion
-
-            nonSl.CellValidating += (s, e) =>
-            {
-                if (e.RowIndex == -1)
-                {
-                    return; // 沒東西 return
-                }
-
-                if (this.EditMode)
-                {
-                    DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
-                    if (!MyUtility.Convert.GetBool(dr["IsSubprocess"]) && MyUtility.Convert.GetBool(dr["IsNonSewingLine"]))
-                    {
-                        this.col_IsNonSewingLine.IsEditable = false;
-                        this.CurrentDetailData["IsNonSewingLine"] = false;
-                    }
-                    else if (MyUtility.Convert.GetBool(dr["IsSubprocess"]))
-                    {
-                        this.col_IsNonSewingLine.IsEditable = true;
-                    }
-                    else
-                    {
-                        this.col_IsNonSewingLine.IsEditable = false;
-                    }
-                }
-            };
             #endregion
 
             template.MaxLength = 100;
@@ -1183,7 +1159,7 @@ and Name = @PPA
                 .Numeric("StdSMV", header: "Std. SMV (sec)", integer_places: 4, decimal_places: 4, maximum: 9999.9999M, minimum: 0, iseditingreadonly: true)
                 .Numeric("SMV", header: "SMV (sec)", integer_places: 4, decimal_places: 4, maximum: 9999.9999M, minimum: 0, settings: this.smvsec)
                 .CheckBox("IsSubprocess", header: "Subprocess", width: Widths.AnsiChars(7), iseditable: false, trueValue: 1, falseValue: 0)
-                .CheckBox("IsNonSewingLine", header: "Non-Sewing line", width: Widths.AnsiChars(7), iseditable: false, trueValue: 1, falseValue: 0, settings: nonSl).Get(out this.col_IsNonSewingLine)
+                .CheckBox("IsNonSewingLine", header: "Non-Sewing line", width: Widths.AnsiChars(7), iseditable: true, trueValue: 1, falseValue: 0)
                 .Text("PPAText", header: "PPA", width: Widths.AnsiChars(10), settings: ppa)
                 .Text("MachineTypeID", header: "ST/MC Type", width: Widths.AnsiChars(8), settings: this.machine)
                 .Text("MasterPlusGroup", header: "Machine Group", width: Widths.AnsiChars(8), settings: txtSubReason)
@@ -1245,20 +1221,6 @@ and Name = @PPA
             if (this.detailgridbs == null)
             {
                 return;
-            }
-
-            var data = ((DataRowView)this.detailgrid.Rows[e.RowIndex].DataBoundItem).Row;
-            if (!MyUtility.Convert.GetBool(data["IsSubprocess"]) && MyUtility.Convert.GetBool(data["IsNonSewingLine"]))
-            {
-                this.col_IsNonSewingLine.IsEditable = true;
-            }
-            else if (MyUtility.Convert.GetBool(data["IsSubprocess"]))
-            {
-                this.col_IsNonSewingLine.IsEditable = true;
-            }
-            else
-            {
-                this.col_IsNonSewingLine.IsEditable = false;
             }
         }
 
@@ -1385,6 +1347,21 @@ and Name = @PPA
         /// <returns>bool</returns>
         protected override bool ClickSaveBefore()
         {
+            #region ST/MC Type檢查
+            var listSTMCTypeCheckResult = this.DetailDatas
+                .Where(s => !MyUtility.Check.Empty(s["OperationDescEN"]) &&
+                            (MyUtility.Check.Empty(s["MachineTypeID"]) ||
+                             (!s["MachineTypeID"].ToString().StartsWith("MM") && MyUtility.Check.Empty(s["MasterPlusGroup"]))));
+
+            if (listSTMCTypeCheckResult.Any())
+            {
+                string errMsgSTMCTypeCheck = $@"
+[ST/MC Type] or [Machine Group] can not be empty since it is operation.
+{listSTMCTypeCheckResult.Select(s => s["Seq"].ToString()).JoinToString(Environment.NewLine)}";
+                MyUtility.Msg.WarningBox(errMsgSTMCTypeCheck);
+                return false;
+            }
+            #endregion
             #region 檢查必輸欄位
             if (MyUtility.Check.Empty(this.CurrentMaintain["StyleID"]))
             {
@@ -1496,7 +1473,6 @@ and s.StyleUnit='PCS'
             var machineSMV_List = ((DataTable)this.detailgridbs.DataSource).AsEnumerable()
                 .Where(o => o.RowState != DataRowState.Deleted &&
                             !MyUtility.Convert.GetBool(o["IsSubprocess"]) &&
-                            !MyUtility.Convert.GetBool(o["IsNonSewingLine"]) &&
                             MyUtility.Convert.GetString(o["PPA"]) != "C")
                 .Select(o => new { MachineTypeID = o["MachineTypeID"].ToString(), SMV = MyUtility.Convert.GetDecimal(o["SMV"]) })
                 .ToList();
@@ -2139,11 +2115,14 @@ select id.SEQ,
 	o.MasterPlusGroup,
     [IsShow] = cast(iif( id.OperationID like '--%' , 1, isnull(show.val, 1)) as bit)
     ,IsSubprocess = isnull(md.IsSubprocess,0)
-    ,[MachineType_IsSubprocess] = isnull(md.IsSubprocess,0)
+    ,[MachineType_IsSubprocess] = isnull(md.IsSubprocess, 0)
     ,PPA = IIF(id.isPPA = 1 ,'C' , '')
     ,PPAText = IIF(id.isPPA = 1 ,'Centralized' , '')
     ,IsNonSewingLine =  ISNULL(md.IsNonSewingLine ,0)
     ,[Thread_ComboID] = Thread_ComboID.val
+    ,[IsNonSewingLineEditable] = cast(case  when isnull(md.IsSubprocess, 0) = 1 then 1
+                                            when isnull(md.IsNonSewingLine, 0) = 1 then 1
+                                            else 0 end as bit)
 from Style s WITH (NOLOCK) 
 inner join IETMS i WITH (NOLOCK) on s.IETMSID = i.ID and s.IETMSVersion = i.Version
 inner join IETMS_Detail id WITH (NOLOCK) on i.Ukey = id.IETMSUkey
@@ -2424,10 +2403,6 @@ and s.BrandID = @brandid";
 
             var dlg = new CIPF(MyUtility.Convert.GetLong(ietmsUKEY));
             dlg.Show();
-        }
-
-        private void BtnLocationBatchUpdate_Click(object sender, EventArgs e)
-        {
         }
 
         private void BtnBatchDelete_Click(object sender, EventArgs e)
