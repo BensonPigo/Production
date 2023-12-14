@@ -378,7 +378,8 @@ declare @APSColumnGroup TABLE(
 	[MinBuyerDelivery] [date] NULL,
 	[BrandID] [varchar](500) NULL,
 	[OrderID] [varchar](13) NULL,
-	[MatchFabric] varchar(8) NULL
+	[MatchFabric] varchar(8) NULL,
+	[StyleSeason] varchar(10) null
 )
 insert into @APSColumnGroup
 select
@@ -401,9 +402,11 @@ oq.MaxBuyerDelivery,
 oq.MinBuyerDelivery,
 [BrandID] = o.BrandID,
 s.OrderID,
-[MatchFabric] = iif(o.IsNotRepeatOrMapping = 0, 'Y','N')
+[MatchFabric] = iif(o.IsNotRepeatOrMapping = 0, 'Y','N'),
+[StyleSeason] = Style.SeasonID
 from SewingSchedule s with (nolock)
-inner join Orders o WITH (NOLOCK) on o.ID = s.OrderID 
+inner join Orders o WITH (NOLOCK) on o.ID = s.OrderID
+inner join Style with (nolock) on Style.Ukey = o.StyleUkey
 outer apply(select MaxBuyerDelivery = max(oq.BuyerDelivery), MinBuyerDelivery = min(oq.BuyerDelivery) from Order_QtyShip oq where oq.id = o.id) oq
 left join @tmpOrderArtwork oa on oa.StyleID = o.StyleID
 left join Country c WITH (NOLOCK) on o.Dest = c.ID 
@@ -589,7 +592,8 @@ declare @APSMain TABLE(
 	[Subcon Qty] int,
 	[EMBStitch] varchar(20),
 	[EMBStitchCnt] int,
-	[PrintPcs] int
+	[PrintPcs] int,
+	[StyleSeason] NVARCHAR(MAX)
 )
 insert into @APSMain
 select
@@ -646,7 +650,8 @@ select
 	PrintingData.[Subcon Qty],
 	[EMBStitch] = EMBStitch.val,
 	[EMBStitchCnt] = LEN(EMBStitch.val) - LEN(REPLACE(EMBStitch.val, ',', '')) + 1,
-	[PrintPcs] = (select sum(PRINTING) from (select [PRINTING] = Max(PRINTING) from @StyleArtwork where APSNo = al.APSNo and PRINTING <> -1 group by StyleID) a)
+	[PrintPcs] = (select sum(PRINTING) from (select [PRINTING] = Max(PRINTING) from @StyleArtwork where APSNo = al.APSNo and PRINTING <> -1 group by StyleID) a),
+	SP.StyleSeason
 from @APSList al
 left join @APSCuttingOutput aco on al.APSNo = aco.APSNo
 left join @APSOrderQty aoo on al.APSNo = aoo.APSNo
@@ -657,7 +662,8 @@ outer apply (
 	SELECT val =  Stuff((select distinct concat( ',',SP)   from @APSColumnGroup where APSNo = al.APSNo FOR XML PATH('')),1,1,'') 
 		  ,[SP_Combotype] = Stuff((select distinct concat( ',',SP_ComboType)   from @APSColumnGroup where APSNo = al.APSNo FOR XML PATH('')),1,1,'')
 		  ,[MatchFabric] = Stuff((select distinct concat( ',',MatchFabric)   from @APSColumnGroup where APSNo = al.APSNo FOR XML PATH('')),1,1,'')
-			,FirststCuttingOutputDate=(
+		  ,[StyleSeason] = Stuff((select concat( ',',StyleSeason)   from @APSColumnGroup where APSNo = al.APSNo group by SP, StyleSeason order by SP FOR XML PATH('')),1,1,'')
+		  ,FirststCuttingOutputDate=(
 				SELECT [Date]=MIN(co2.cDate)
 				FROM  WorkOrder_Distribute wd2 WITH (NOLOCK)
 				INNER JOIN CuttingOutput_Detail cod2 WITH (NOLOCK) on cod2.WorkOrderUkey = wd2.WorkOrderUkey
@@ -1185,7 +1191,8 @@ declare  @APSResult TABLE(
 	EMBStitch varchar(20) null,
 	EMBStitchCnt int null,
 	TtlQtyEMB int null,
-	PrintPcs int null
+	PrintPcs int null,
+	StyleSeason NVARCHAR(MAX)
 )
 
 --計算這一天的標準產量
@@ -1263,7 +1270,8 @@ insert into @APSResult(
 	EMBStitch,
 	EMBStitchCnt,
 	TtlQtyEMB,
-	PrintPcs
+	PrintPcs,
+	StyleSeason
 )
 select
 	[APSNo]=apm.APSNo,
@@ -1335,7 +1343,8 @@ select
 	apm.EMBStitch,
 	apm.EMBStitchCnt,
 	apf.TtlQtyEMB,
-	apm.PrintPcs
+	apm.PrintPcs,
+	apm.StyleSeason
 from @APSMain apm
 inner join @APSExtendWorkDateFin apf on apm.APSNo = apf.APSNo
 order by apm.APSNo,apf.SewingStart
@@ -2162,7 +2171,8 @@ select
 							when tg.IsCrossStyle = 1 and tg.IsSimilarStyle = 1 then 'Changeover for similar style'
 							when tg.IsCrossStyle = 1 then  'Changeover day or 1st day inline for the style'
 							when tg.IsRepeatStyle = 1 then 'Repeat'
-							else 'New style' end
+							else 'New style' end,
+	apm.StyleSeason
 from @APSResult apm
 left join @tmpGantt tg on tg.FactoryID = apm.FactoryID and tg.SewingLineID = apm.SewingLineID and cast(apm.SewingDay as date) between tg.InLine and tg.OffLine
 order by apm.APSNo,apm.SewingStartTime
