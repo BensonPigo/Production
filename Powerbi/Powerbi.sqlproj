@@ -221,6 +221,8 @@
     <Build Include="dbo\Stored Procedures\P_Import_WH_R25.sql" />
     <Build Include="dbo\Stored Procedures\FTY\P_Import_AccessoryInspLabStatus.sql" />
     <Build Include="dbo\Tables\P_AccessoryInspLabStatus.sql" />
+    <Build Include="dbo\Tables\P_StyleChangeover.sql" />
+    <Build Include="dbo\Stored Procedures\FTY\P_Import_StyleChangeover.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Utility.dll" />
