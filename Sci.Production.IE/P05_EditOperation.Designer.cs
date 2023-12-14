@@ -35,6 +35,7 @@
             this.btnSave = new Sci.Win.UI.Button();
             this.btnCancel = new Sci.Win.UI.Button();
             this.gridEditOperationBs = new Sci.Win.UI.ListControlBindingSource(this.components);
+            this.backgroundWorker = new System.ComponentModel.BackgroundWorker();
             ((System.ComponentModel.ISupportInitialize)(this.gridEditOperation)).BeginInit();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gridEditOperationBs)).BeginInit();
@@ -104,6 +105,12 @@
             this.btnCancel.UseVisualStyleBackColor = true;
             this.btnCancel.Click += new System.EventHandler(this.BtnCancel_Click);
             // 
+            // backgroundWorker
+            // 
+            this.backgroundWorker.WorkerReportsProgress = true;
+            this.backgroundWorker.DoWork += new System.ComponentModel.DoWorkEventHandler(this.BackgroundWorker_DoWork);
+            this.backgroundWorker.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.BackgroundWorker_ProgressChanged);
+            // 
             // P05_EditOperation
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -135,5 +142,6 @@
         private Win.UI.Button btnSave;
         private Win.UI.Button btnCancel;
         private Win.UI.ListControlBindingSource gridEditOperationBs;
+        private System.ComponentModel.BackgroundWorker backgroundWorker;
     }
 }
