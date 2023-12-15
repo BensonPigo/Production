@@ -95,7 +95,7 @@ namespace Sci.Production.Win
 
             IUserInfo user = null;
             UserInfo userInfo = new UserInfo();
-            this.result = UserLogin(act, pwd, loginFactory, userInfo);
+            this.result = UserLogin(act, pwd, loginFactory, ref userInfo);
 
             if (!this.result)
             {
@@ -204,7 +204,7 @@ namespace Sci.Production.Win
         /// <param name="factoryID">Factory ID</param>
         /// <param name="userInfo">User Info</param>
         /// <returns>DualResult</returns>
-        public static DualResult UserLogin(string userid, string pwd, string factoryID, UserInfo userInfo)
+        public static DualResult UserLogin(string userid, string pwd, string factoryID, ref UserInfo userInfo)
         {
             DualResult result;
             DataTable dtFactory;
@@ -248,8 +248,29 @@ namespace Sci.Production.Win
                 LoginName = drPass1.Field<string>("ADAccount"),
             };
 
+            #region 登入時將SYSTEM資料表相關設定載入Sci.Env.Cfg中
+            bool isLoginCheckADAccount = true;
+            DataRow drSystem;
+            if (!MyUtility.Check.Seek("select * from system", out drSystem, "Production"))
+            {
+                return new DualResult(false, "Get system data fail !!");
+            }
+            else
+            {
+                Env.Cfg.MailServerIP = drSystem["Mailserver"].ToString().Trim();
+                Env.Cfg.MailFrom = drSystem["Sendfrom"].ToString().Trim();
+                Env.Cfg.MailServerAccount = drSystem["EmailID"].ToString().Trim();
+                Env.Cfg.MailServerPassword = drSystem["EmailPwd"].ToString().Trim();
+                Env.Cfg.FtpServerIP = drSystem["FtpIP"].ToString().Trim();
+                Env.Cfg.FtpServerAccount = drSystem["FtpID"].ToString().Trim();
+                Env.Cfg.FtpServerPassword = drSystem["FtpPwd"].ToString().Trim();
+                Env.Cfg.ClipDir = drSystem["ClipPath"].ToString().Trim();
+                Env.Cfg.MailServerPort = MyUtility.Check.Empty(drSystem["MailServerPort"]) ? Convert.ToUInt16(25) : Convert.ToUInt16(drSystem["MailServerPort"]);
+                isLoginCheckADAccount = drSystem.Field<bool>("IsLoginCheckADAccount");
+            }
+            #endregion
             #region AD驗證
-            if (ConfigurationManager.AppSettings["TaipeiServer"] == string.Empty)
+            if (ConfigurationManager.AppSettings["TaipeiServer"] == string.Empty && isLoginCheckADAccount)
             {
                 if (string.IsNullOrEmpty(drPass1.Field<string>("ADAccount")))
                 {
@@ -276,25 +297,6 @@ namespace Sci.Production.Win
                 {
                     MyUtility.Msg.ErrorBox(ex.Message);
                 }
-            }
-            #endregion
-            #region 登入時將SYSTEM資料表相關設定載入Sci.Env.Cfg中
-            DataRow drSystem;
-            if (!MyUtility.Check.Seek("select * from system", out drSystem, "Production"))
-            {
-                return new DualResult(false, "Get system data fail !!");
-            }
-            else
-            {
-                Env.Cfg.MailServerIP = drSystem["Mailserver"].ToString().Trim();
-                Env.Cfg.MailFrom = drSystem["Sendfrom"].ToString().Trim();
-                Env.Cfg.MailServerAccount = drSystem["EmailID"].ToString().Trim();
-                Env.Cfg.MailServerPassword = drSystem["EmailPwd"].ToString().Trim();
-                Env.Cfg.FtpServerIP = drSystem["FtpIP"].ToString().Trim();
-                Env.Cfg.FtpServerAccount = drSystem["FtpID"].ToString().Trim();
-                Env.Cfg.FtpServerPassword = drSystem["FtpPwd"].ToString().Trim();
-                Env.Cfg.ClipDir = drSystem["ClipPath"].ToString().Trim();
-                Env.Cfg.MailServerPort = MyUtility.Check.Empty(drSystem["MailServerPort"]) ? Convert.ToUInt16(25) : Convert.ToUInt16(drSystem["MailServerPort"]);
             }
             #endregion
             #region 寫入登入時間
