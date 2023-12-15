@@ -62,9 +62,13 @@ else
 						(a.EditDate >= @DateStart and a.EditDate < @DateEnd) or
 						(a.PulloutCmplDate >= @DateStart and a.PulloutCmplDate < @DateEnd)) 
 						and
-						(a.Category = 'M' or
+						(a.Category in ('M', '', 'T') or
 						(a.junk = 1 and a.NeedProduction = 0) or
 						(f.IsProduceFty = 0))
+				UNION
+				select [OrderID] = ID
+				from Orders with (nolock)
+				where GMTClose >= @DateStart and Finished = 1
 				union
 				select distinct ocl.OrderID 
 				from OrderComparisonList ocl with (nolock)
@@ -122,9 +126,13 @@ else
 						(a.EditDate >= @DateStart and a.EditDate < @DateEnd) or
 						(a.PulloutCmplDate >= @DateStart and a.PulloutCmplDate < @DateEnd)) 
 						and
-						(a.Category = 'M' or
+						(a.Category in ('M', '', 'T') or
 						(a.junk = 1 and a.NeedProduction = 0) or
 						(f.IsProduceFty = 0))
+				UNION
+				select [OrderID] = ID
+				from Orders with (nolock)
+				where GMTClose >= @DateStart and Finished = 1
 				union
 				select distinct ocl.OrderID 
 				from OrderComparisonList ocl with (nolock)
