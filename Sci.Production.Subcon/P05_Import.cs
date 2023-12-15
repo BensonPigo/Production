@@ -388,7 +388,7 @@ inner join Order_Qty oq with (nolock) on o.ID = oq.ID
 inner join dbo.Order_Artwork oa on  oa.ID = o.ID and 
                                     (oq.Article = oa.Article or oa.Article = '----') and 
                                     oa.ArtworkTypeID = '{this.dr_artworkReq["artworktypeid"]}'
-                                    and oa.Article = (select top 1 Article from Order_Artwork where id = o.ID)
+                                    and exists (select 1 from Order_Article oa1 with(nolock) where oa1.ID = oa.ID and (oa1.Article = oa.Article or oa.Article = '----'))
 left join Order_TmsCost ot WITH (NOLOCK) on ot.ID = o.ID
 inner join factory f WITH (NOLOCK) on o.factoryid=f.id
 where f.IsProduceFty=1
@@ -431,7 +431,7 @@ from  orders o WITH (NOLOCK)
 inner join Order_Qty oq with (nolock) on o.ID = oq.ID
 left join dbo.Order_Artwork oa on oa.ID = o.ID
     and oa.ArtworkTypeID = '{this.dr_artworkReq["artworktypeid"]}'
-    and oa.Article = (select top 1 Article from Order_Artwork where id = o.ID)
+    and exists (select 1 from Order_Article oa1 with(nolock) where oa1.ID = oa.ID and (oa1.Article = oa.Article or oa.Article = '----'))
 left join dbo.View_Style_Artwork vsa on	vsa.StyleUkey = o.StyleUkey and 
                                         vsa.Article = oq.Article and 
                                         vsa.ArtworkID = oa.ArtworkID and
