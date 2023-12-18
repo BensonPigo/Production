@@ -49,7 +49,7 @@
     [BomStyle]            VARCHAR (15)    CONSTRAINT [DF_Invtrans_BomStyle] DEFAULT ('') NOT NULL,
     [BomCountry]          VARCHAR (2)     CONSTRAINT [DF_Invtrans_BomCountry] DEFAULT ('') NOT NULL,
     [BomCustCD]           VARCHAR (16)    CONSTRAINT [DF_Invtrans_BomCustCD] DEFAULT ('') NOT NULL,
-    [BomCustPONo]         VARCHAR (30)    CONSTRAINT [DF_Invtrans_BomCustPONo] DEFAULT ('') NOT NULL,
+    [BomCustPONo]         VARCHAR (50)    CONSTRAINT [DF_Invtrans_BomCustPONo] DEFAULT ('') NOT NULL,
     [BomZipperInsert]     VARCHAR (5)     CONSTRAINT [DF_Invtrans_BomZipperInsert] DEFAULT ('') NOT NULL,
     [AddName]             VARCHAR (10)    CONSTRAINT [DF_Invtrans_AddName] DEFAULT ('') NOT NULL,
     [AddDate]             DATETIME        NULL,
