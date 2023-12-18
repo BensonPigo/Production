@@ -939,10 +939,11 @@ Where TransRegion.Is_Export = 0";
 
             string chkSqlcmd = @"
 select 1 from Production.dbo.System s
-where exists(
-	select 1 from Trade_To_PMS.dbo.TransRegion t
-	where RTRIM(s.ImportDataFileName) = RTRIM(t.[FileName])
-)
+where   exists(
+	            select 1 from Trade_To_PMS.dbo.TransRegion t
+	            where RTRIM(s.ImportDataFileName) = RTRIM(t.[FileName])
+            ) or
+        s.ImportDataFileName = 'wt_PMS.rar'
 ;";
             if (!MyUtility.Check.Seek(chkSqlcmd))
             {
