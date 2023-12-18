@@ -254,7 +254,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="packages.config" />
-    <None Include="Quality_R14_Detail.xlsx" />
     <None Include="SCHEMAS.xsc">
       <DependentUpon>SCHEMAS.xsd</DependentUpon>
     </None>
