@@ -26,12 +26,12 @@ CREATE TABLE [dbo].[FIR_Laboratory] (
     [HeatInspector]     VARCHAR (10)  CONSTRAINT [DF_FIR_Laboratory_HeatInspector] DEFAULT ('') NOT NULL,
     [WashInspector]     VARCHAR (10)  CONSTRAINT [DF_FIR_Laboratory_WashInspector] DEFAULT ('') NOT NULL,
 	ReportNo varchar(14) not null CONSTRAINT [DF_FIR_Laboratory_ReportNo] default '',
-    CrockingTestBeforePicture varbinary(max) NULL,
-    CrockingTestAfterPicture varbinary(max) NULL,
-    HeatTestBeforePicture varbinary(max) NULL,
-    HeatTestAfterPicture varbinary(max) NULL,
-    WashTestBeforePicture varbinary(max) NULL,
-    WashTestAfterPicture varbinary(max) NULL,
+	Iron varchar(5) not null CONSTRAINT [DF_FIR_Laboratory_Iron] DEFAULT '',
+	IronDate DATE NULL,
+	IronRemark nvarchar(100) not null CONSTRAINT [DF_FIR_Laboratory_IronRemark] DEFAULT '',
+	nonIron bit not null CONSTRAINT [DF_FIR_Laboratory_nonIron] DEFAULT 0,
+	IronEncode bit not null CONSTRAINT [DF_FIR_Laboratory_IronEncode] DEFAULT 0,
+	IronInspector varchar(10) not null CONSTRAINT [DF_FIR_Laboratory_IronInspector] DEFAULT '',
     CONSTRAINT [PK_FIR_Laboratory] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 

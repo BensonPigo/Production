@@ -99,7 +99,6 @@
     <Build Include="dbo\Tables\P_TransLog.sql" />
     <Build Include="dbo\Tables\P_TransImport.sql" />
     <Build Include="dbo\Tables\P_SDPOrderDetail.sql" />
-    <Build Include="dbo\Stored Procedures\P_ImportSewingLineScheduleData.sql" />
     <Build Include="dbo\Stored Procedures\FTY\ImportEfficiencyBI.sql" />
     <Build Include="dbo\Stored Procedures\FTY\P_ImportSDPOrderDetail.sql" />
     <Build Include="dbo\Stored Procedures\FTY\ImportForecastLoadingBI.sql" />
@@ -143,7 +142,6 @@
     <Build Include="dbo\Tables\P_QA_R06_Original.sql" />
     <Build Include="dbo\Tables\P_QA_R31_Original.sql" />
     <Build Include="dbo\Tables\P_SewingDailyOutput_Original.sql" />
-    <Build Include="dbo\Tables\P_SewingLineSchedule_Original.sql" />
     <Build Include="dbo\Stored Procedures\P_ImportEstShippingReport.sql" />
     <Build Include="dbo\Tables\BITableInfo.sql" />
     <Build Include="dbo\Tables\T_Credit.sql" />
@@ -221,6 +219,10 @@
     <Build Include="dbo\Stored Procedures\P_Import_WH_R25.sql" />
     <Build Include="dbo\Stored Procedures\FTY\P_Import_AccessoryInspLabStatus.sql" />
     <Build Include="dbo\Tables\P_AccessoryInspLabStatus.sql" />
+    <Build Include="dbo\Tables\P_ProdEfficiencyByFactorySewingLine.sql" />
+    <Build Include="dbo\Stored Procedures\FTY\P_Import_ProdEfficiencyByFactorySewingLine.sql" />
+    <Build Include="dbo\Tables\P_StyleChangeover.sql" />
+    <Build Include="dbo\Stored Procedures\FTY\P_Import_StyleChangeover.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Utility.dll" />

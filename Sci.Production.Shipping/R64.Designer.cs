@@ -143,7 +143,7 @@
             this.Controls.Add(this.dateETA);
             this.Name = "R64";
             this.OnLineHelpID = "Sci.Win.Tems.PrintForm";
-            this.Text = "R64. KH CMT Invoice Report";
+            this.Text = "R64. KH Import non-Declaration Report";
             this.Controls.SetChildIndex(this.dateETA, 0);
             this.Controls.SetChildIndex(this.print, 0);
             this.Controls.SetChildIndex(this.toexcel, 0);
