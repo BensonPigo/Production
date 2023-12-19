@@ -3655,6 +3655,12 @@ where td.ID = '{transcationID}'
 select top 1 Barcode
 from(
 	select Barcode
+	from FtyInventory
+	where Barcode like '{keyWord}%'
+	and len(Barcode) = 16
+
+	union all
+	select Barcode
 	from FtyInventory_Barcode
 	where Barcode like '{keyWord}%'
 	and Barcode not like '%-%'
