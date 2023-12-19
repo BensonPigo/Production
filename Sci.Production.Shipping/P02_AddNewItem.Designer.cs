@@ -285,7 +285,6 @@
             this.txtSPNo.Size = new System.Drawing.Size(120, 23);
             this.txtSPNo.TabIndex = 0;
             this.txtSPNo.Validating += new System.ComponentModel.CancelEventHandler(this.TxtSPNo_Validating);
-            this.txtSPNo.Validated += new System.EventHandler(this.TxtSPNo_Validated);
             // 
             // labelRemark
             // 
@@ -371,6 +370,7 @@
             this.txtstyle.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtstyle.Location = new System.Drawing.Point(530, 9);
             this.txtstyle.Name = "txtstyle";
+            this.txtstyle.SeasonObjectName = null;
             this.txtstyle.Size = new System.Drawing.Size(130, 23);
             this.txtstyle.TabIndex = 2;
             this.txtstyle.TarBrand = null;
@@ -383,6 +383,7 @@
             this.txtbrand.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "BrandID", true));
             this.txtbrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtbrand.Location = new System.Drawing.Point(487, 229);
+            this.txtbrand.MyDocumentdName = null;
             this.txtbrand.Name = "txtbrand";
             this.txtbrand.Size = new System.Drawing.Size(66, 23);
             this.txtbrand.TabIndex = 12;
