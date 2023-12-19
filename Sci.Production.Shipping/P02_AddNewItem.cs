@@ -1,13 +1,13 @@
-﻿using System;
+﻿using Ict;
+using Sci.Data;
+using Sci.Production.PublicPrg;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
-using System.Windows.Forms;
-using Ict;
-using Sci.Data;
 using System.Data.SqlClient;
-using Sci.Production.PublicPrg;
 using System.Drawing;
+using System.Windows.Forms;
 
 namespace Sci.Production.Shipping
 {
@@ -51,19 +51,23 @@ namespace Sci.Production.Shipping
         {
             if (this.EditMode && !string.IsNullOrEmpty(this.txtSPNo.Text))
             {
-                // sql參數
-                // System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter("@id", txtSPNo.Text);
-                IList<SqlParameter> cmds = new List<SqlParameter>();
-                cmds.Add(new SqlParameter("@id", this.txtSPNo.Text));
+                IList<SqlParameter> cmds = new List<SqlParameter> { new SqlParameter("@id", this.txtSPNo.Text) };
+                string sqlCmd = $@"
+SELECT ID, StyleID, SeasonID, BrandID, SMR, Description = [dbo].[getBOFMtlDesc](StyleUkey)
+FROM Orders WITH (NOLOCK)
+WHERE ID = @id
 
-                string sqlCmd = "select Orders.ID from Orders WITH (NOLOCK) ,factory WITH (NOLOCK) where Orders.ID = @id and Orders.FactoryID = Factory.ID ";
-                DataTable orderData;
-                DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out orderData);
-
+UNION ALL
+SELECT mo.ID, mo.StyleID, mo.SeasonID, mo.BrandID, mo.SMR, Description = [dbo].[getBOFMtlDesc](Style.Ukey)
+FROM MockupOrder mo WITH (NOLOCK)
+INNER JOIN Style WITH (NOLOCK) ON Style.ID = mo.StyleID AND Style.SeasonID = mo.SeasonID AND Style.BrandID = mo.BrandID
+WHERE mo.ID = @id
+";
+                DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out DataTable orderData);
                 if (!result)
                 {
-                    MyUtility.Msg.WarningBox("Sql connection fail!\r\n" + result.ToString());
-                    this.CurrentData["OrderID"] = string.Empty;
+                    this.ShowErr(result);
+                    this.ClearDatas();
                     e.Cancel = true;
                     return;
                 }
@@ -71,41 +75,28 @@ namespace Sci.Production.Shipping
                 if (orderData.Rows.Count == 0)
                 {
                     MyUtility.Msg.WarningBox("Data not found!!!");
-                    this.CurrentData["OrderID"] = string.Empty;
+                    this.ClearDatas();
                     e.Cancel = true;
                     return;
                 }
+
+                this.CurrentData["OrderID"] = orderData.Rows[0]["ID"];
+                this.CurrentData["SeasonID"] = orderData.Rows[0]["SeasonID"];
+                this.CurrentData["StyleID"] = orderData.Rows[0]["StyleID"];
+                this.CurrentData["BrandID"] = orderData.Rows[0]["BrandID"];
+                this.CurrentData["Leader"] = orderData.Rows[0]["SMR"];
+                this.CurrentData["Description"] = orderData.Rows[0]["Description"];
             }
         }
 
-        // SP#
-        private void TxtSPNo_Validated(object sender, EventArgs e)
+        private void ClearDatas()
         {
-            if (this.EditMode && this.txtSPNo.OldValue != this.txtSPNo.Text)
-            {
-                DataRow orderData;
-                if (MyUtility.Check.Seek(
-                    string.Format(
-                    @"select SeasonID,StyleID,BrandID,SMR,[dbo].[getBOFMtlDesc](StyleUkey) as Description
-from Orders WITH (NOLOCK) where ID = '{0}'", this.txtSPNo.Text), out orderData))
-                {
-                    this.CurrentData["OrderID"] = this.txtSPNo.Text;
-                    this.CurrentData["SeasonID"] = orderData["SeasonID"];
-                    this.CurrentData["StyleID"] = orderData["StyleID"];
-                    this.CurrentData["BrandID"] = orderData["BrandID"];
-                    this.CurrentData["Leader"] = orderData["SMR"];
-                    this.CurrentData["Description"] = orderData["Description"];
-                }
-                else
-                {
-                    this.CurrentData["OrderID"] = this.txtSPNo.Text;
-                    this.CurrentData["SeasonID"] = string.Empty;
-                    this.CurrentData["StyleID"] = string.Empty;
-                    this.CurrentData["BrandID"] = string.Empty;
-                    this.CurrentData["Leader"] = string.Empty;
-                    this.CurrentData["Description"] = string.Empty;
-                }
-            }
+            this.CurrentData["OrderID"] = this.txtSPNo.Text;
+            this.CurrentData["SeasonID"] = string.Empty;
+            this.CurrentData["StyleID"] = string.Empty;
+            this.CurrentData["BrandID"] = string.Empty;
+            this.CurrentData["Leader"] = string.Empty;
+            this.CurrentData["Description"] = string.Empty;
         }
 
         private void GetLeaderAndDesc()
