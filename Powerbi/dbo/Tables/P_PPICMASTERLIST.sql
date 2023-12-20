@@ -18,7 +18,7 @@
 	[Buy Back] [varchar](1) NOT NULL,
 	[Cancelled] [varchar](1) NOT NULL,
 	[NeedProduction] [varchar](1) NOT NULL,
-	[Dest] [varchar](30) NOT NULL,
+	[Dest] [varchar](2) NOT NULL,
 	[Style] [varchar](15) NOT NULL,
 	[Style Name] [nvarchar](50) NOT NULL,
 	[Modular Parent] [varchar](20) NOT NULL,
@@ -169,6 +169,8 @@
 	[SubconInType] [varchar](100) NOT NULL,
 	[Article] [varchar](500) NOT NULL,
 	[ProduceRgPMS] [varchar](3) NOT NULL,
+	[Buyerhalfkey] [varchar](8) NOT NULL,
+	[Country] [varchar](30) NOT NULL,
  CONSTRAINT [PK_P_PPICMASTERLIST] PRIMARY KEY CLUSTERED 
 (
 	[Ukey] DESC
@@ -527,6 +529,12 @@ GO
 ALTER TABLE [dbo].[P_PPICMASTERLIST] ADD  CONSTRAINT [DF_P_PPICMASTERLIST_ProduceRgPMS]  DEFAULT ('') FOR [ProduceRgPMS]
 GO
 
+ALTER TABLE [dbo].[P_PPICMASTERLIST] ADD  CONSTRAINT [DF_P_PPICMASTERLIST_Buyerhalfkey]  DEFAULT ('') FOR [Buyerhalfkey]
+GO
+
+ALTER TABLE [dbo].[P_PPICMASTERLIST] ADD  CONSTRAINT [DF_P_PPICMASTERLIST_Country]  DEFAULT ('') FOR [Country]
+GO
+
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Mdivision' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_PPICMASTERLIST', @level2type=N'COLUMN',@level2name=N'M'
 GO
 
@@ -584,7 +592,7 @@ GO
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'訂單是否取消了仍需生產' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_PPICMASTERLIST', @level2type=N'COLUMN',@level2name=N'NeedProduction'
 GO
 
-EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'運送目的地' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_PPICMASTERLIST', @level2type=N'COLUMN',@level2name=N'Dest'
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Orders.Dest' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_PPICMASTERLIST', @level2type=N'COLUMN',@level2name=N'Dest'
 GO
 
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'款式' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_PPICMASTERLIST', @level2type=N'COLUMN',@level2name=N'Style'
@@ -1019,4 +1027,8 @@ GO
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'SCIFty.ProduceRgCode' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_PPICMASTERLIST', @level2type=N'COLUMN',@level2name=N'ProduceRgPMS'
 GO
 
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Buyer Delivery-7 後分為上下半月' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_PPICMASTERLIST', @level2type=N'COLUMN',@level2name=N'Buyerhalfkey'
+GO
 
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'運送目的地' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_PPICMASTERLIST', @level2type=N'COLUMN',@level2name=N'Country'
+GO
