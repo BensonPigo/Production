@@ -1,6 +1,9 @@
 ﻿using System.ComponentModel;
+using System.Data;
 using System.Windows.Forms;
+using Ict;
 using Ict.Win.UI;
+using Sci.Data;
 using Sci.Win.UI;
 
 namespace Sci.Production.Class
@@ -87,8 +90,8 @@ Where ('{strBrand}' = '' or BrandID in (select Data From SplitString('{strBrand}
 And ('{strStyle}' = '' or ID in ( select SeasonID from Style where Style.ID = '{strStyle}'))
 order by id desc
 ";
-
-            item = new Win.Tools.SelectItem(selectCommand, "11", this.Text)
+            DualResult result = DBProxy.Current.Select("Production", selectCommand, out DataTable dt);
+            item = new Win.Tools.SelectItem(dt, "ID", "11", this.Text)
             {
                 Width = 300,
             };
