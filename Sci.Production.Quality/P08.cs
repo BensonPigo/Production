@@ -39,6 +39,7 @@ namespace Sci.Production.Quality
             this.comboBoxUpdateTime.ValueMember = "Key";
             this.comboBoxUpdateTime.DisplayMember = "Value";
             this.comboBoxUpdateTime.SelectedValue = "CutTime";
+            this.cmbUpdateType.SelectedIndex = 0;
         }
 
         /// <inheritdoc/>
@@ -639,6 +640,11 @@ inner join #tmp t on t.id = fs.ID and t.Roll = fs.Roll and t.Dyelot = fs.Dyelot
                     }
                 }
             }
+        }
+
+        private void BtnScanQRCode_Click(object sender, EventArgs e)
+        {
+            new P08_BatchUpdateTime(this.cmbUpdateType.SelectedIndex).ShowDialog();
         }
     }
 }
