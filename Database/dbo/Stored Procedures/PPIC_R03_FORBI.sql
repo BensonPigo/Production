@@ -172,6 +172,9 @@ BEGIN
 			, [HalfKey] = iif(cast(format(dateadd(day,-7,o.SciDelivery), 'dd') as int) between 1 and 15
 							, format(dateadd(day,-7,o.SciDelivery), 'yyyyMM01')
 							, format(dateadd(day,-7,o.SciDelivery), 'yyyyMM02'))
+			, [Buyerhalfkey] = iif(cast(format(dateadd(day,-7,o.BuyerDelivery), 'dd') as int) between 1 and 15
+							, format(dateadd(day,-7,o.BuyerDelivery), 'yyyyMM01')
+							, format(dateadd(day,-7,o.BuyerDelivery), 'yyyyMM02'))
 			, [DevSample] = iif((select IsDevSample from OrderType ot WITH (NOLOCK) where ot.ID = o.OrderTypeID and ot.BrandID = o.BrandID) = 1, 'Y', '')
 			, [KeepPanels] = iif(o.KeepPanels = 0, 'N', 'Y')
 			, o.BuyBackReason
@@ -581,6 +584,7 @@ BEGIN
 			, t.[Sew_ScheETAnoReplace]
 			, t.[MaxShipETA_Exclude5x]
 			, t.[HalfKey]
+			, t.[Buyerhalfkey]
 			, t.[DevSample]
 			, t.[KeepPanels]
 			, t.[BuyBackReason]
@@ -875,7 +879,7 @@ BEGIN
 			, [Buy Back] = b.BuyBack
 			, [Cancelled] = case when b.Junk = 1 then 'Y' else '' end
 			, [NeedProduction] = b.Cancelled
-			, [Dest] = b.DestAlias
+			, [Dest] = b.Dest
 			, [Style] = b.StyleID
 			, [Style Name] = b.StyleName
 			, [Modular Parent] = b.ModularParent
@@ -1015,7 +1019,7 @@ BEGIN
 			, [SCHDL/ETA(SP)] = b.[Max_ScheETAbySP]
 			, [SewingMtlETA(SPexclRepl)] = b.[Sew_ScheETAnoReplace]
 			, [ActualMtlETA(exclRepl)] = b.[MaxShipETA_Exclude5x]
-			, b.[HalfKey]
+			, b.[HalfKey]			
 			, b.[DevSample]
 			, b.[POID]
 			, b.[KeepPanels]
@@ -1025,6 +1029,8 @@ BEGIN
 			, b.[SubconInType]
 			, b.[Article]
 			, b.[ProduceRgPMS]
+			, b.[Buyerhalfkey]
+			, [Country] = b.DestAlias
 		from #tmp_LastBase b 
 	end
 	else if @ReturnType = 2
