@@ -104,6 +104,7 @@ SELECT
    ,StyleName
    ,PoID
    ,Seq
+   ,FabricCombo
    ,Refno
    ,Color
    ,ColorName
