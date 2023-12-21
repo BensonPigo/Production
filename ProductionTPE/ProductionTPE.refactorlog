@@ -1,1 +1,17 @@
-﻿
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Operations Version="1.0" xmlns="http://schemas.microsoft.com/sqlserver/dac/Serialization/2012/02">
+  <Operation Name="Rename Refactor" Key="5230b352-d5cc-4165-a36c-41668d7f09bb" ChangeDateTime="12/19/2023 06:10:34">
+    <Property Name="ElementName" Value="[dbo].[ShareRule].[ShipMode]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[ShareRule]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="ShipModeID" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="dee5b0aa-fa5c-4794-8ae6-cefd21af174f" ChangeDateTime="12/19/2023 06:10:42">
+    <Property Name="ElementName" Value="[dbo].[ShareRule].[AccountNo]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[ShareRule]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="AccountID" />
+  </Operation>
+</Operations>
