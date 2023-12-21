@@ -97,7 +97,7 @@ SELECT
    ,EditName = ISNULL(dbo.getTPEPass1(e.EditName), '')
    ,e.AddDate
    ,e.EditDate
-
+   ,[FabricCombo] = ISNULL(EachCons.FabricCombo, '')
 FROM Export_Detail ed WITH (NOLOCK)
 --以下皆是串各表 Pkey 沒有再展開
 INNER JOIN Export e WITH (NOLOCK) ON e.ID = ed.ID
@@ -172,6 +172,21 @@ OUTER APPLY(
 	WHERE ed.ID = r.ExportID
     AND r.Status = 'Confirmed'
 )rd
+OUTER APPLY(
+    SELECT [FabricCombo] = STUFF((
+        SELECT (
+            SELECT DISTINCT CONCAT(',', oe.FabricCombo)
+            FROM Order_EachCons oe WITH (NOLOCK)
+            WHERE EXISTS (select 1 from Order_BOF ob WITH (NOLOCK)
+                            where psd.RefNo = ob.RefNo 
+                            AND psd.ID = ob.Id 
+                            and psd.SEQ1 = ob.SEQ1 
+                            and oe.FabricCode = ob.FabricCode)
+            AND oe.Id= o.CuttingSP
+            FOR XML PATH('')
+        )
+    ),1,1,'')
+) EachCons
 WHERE ed.PoType = 'G'
 AND EXISTS (SELECT 1 FROM Factory WHERE IsProduceFty = 1 AND ID = o.FactoryID)
 AND (ISNULL(@WK1, '') = '' OR (@WK1 <> '' AND ed.ID >= @WK1))
