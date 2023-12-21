@@ -30,7 +30,7 @@ BEGIN
 			[Buy Back] VARCHAR(1) NULL ,
 			[Cancelled] VARCHAR(1) NULL ,
 			[NeedProduction] VARCHAR(1) NULL ,
-			[Dest] VARCHAR(30) NULL ,
+			[Dest] VARCHAR(2) NULL ,
 			[Style] VARCHAR(15) NULL ,
 			[Style Name] NVARCHAR(50) NULL ,
 			[Modular Parent] VARCHAR(20) NULL ,
@@ -85,7 +85,7 @@ BEGIN
 			[Booking Qty] INT NULL ,
 			[FOC Adj Qty] INT NULL ,
 			[Not FOC Adj Qty] INT NULL ,
-			[Total]　numeric(38,6) NULL,
+			[Total]　NUMERIC(38,6) NULL,
 			[KPI L/ETA] DATE NULL ,
 			[PF ETA (SP)] DATE NULL ,
 			[Pull Forward Remark] VARCHAR(MAX) NULL ,
@@ -167,25 +167,27 @@ BEGIN
 			[OrganicCotton] VARCHAR(1) NULL ,
 			[Direct Ship] VARCHAR(1) NULL ,
 			[StyleCarryover] VARCHAR(1) NULL,
-			[SCHDL/ETA(SP)] [date] NULL,
-			[SewingMtlETA(SPexclRepl)] [date] NULL,
-			[ActualMtlETA(exclRepl)] [date] NULL,
-			[HalfKey] [varchar](8) NULL,
-			[DevSample] [varchar](1) NULL,
-			[POID] [varchar](13) NULL,
-			[KeepPanels] [varchar](1) NULL,
-			[BuyBackReason] [varchar](20) NULL,
-			[SewQtybyRate] [numeric](38, 6) NULL,
-			[Unit] [varchar](8) NULL,
-			[SubconInType] [varchar](100) NULL,
-			[Article] [varchar](500) NULL,
-			[ProduceRgPMS] [varchar](3) NULL
+			[SCHDL/ETA(SP)] DATE NULL,
+			[SewingMtlETA(SPexclRepl)] DATE NULL,
+			[ActualMtlETA(exclRepl)] DATE NULL,
+			[HalfKey] VARCHAR(8) NULL,			
+			[DevSample] VARCHAR(1) NULL,
+			[POID] VARCHAR(13) NULL,
+			[KeepPanels] VARCHAR(1) NULL,
+			[BuyBackReason] VARCHAR(20) NULL,
+			[SewQtybyRate] NUMERIC(38, 6) NULL,
+			[Unit] VARCHAR(8) NULL,
+			[SubconInType] VARCHAR(100) NULL,
+			[Article] VARCHAR(500) NULL,
+			[ProduceRgPMS] VARCHAR(3) NULL,
+			[Buyerhalfkey] VARCHAR(8) NULL,
+			[Country] VARCHAR(30) NULL
 	)
 
 	create table #tmp_P_PPICMasterList_Extend (
-		[OrderID] [varchar](13) NULL,
-		[ColumnName] [varchar](50) NULL,
-		[ColumnValue] numeric(38, 6) NULL
+		[OrderID] VARCHAR(13) NULL,
+		[ColumnName] VARCHAR(50) NULL,
+		[ColumnValue] NUMERIC(38, 6) NULL
 	)
 
 	insert into #tmp_P_PPICMASTERLIST
@@ -215,7 +217,7 @@ BEGIN
 		, [Cutting SP], [Rainwear test], [TMS], [MD room scan date], [Dry Room received date], [Dry room trans date], [Last ctn trans date]
 		, [Last ctn recvd date], [OrganicCotton], [Direct Ship], [StyleCarryover], [SCHDL/ETA(SP)], [SewingMtlETA(SPexclRepl)]
 		, [ActualMtlETA(exclRepl)], [HalfKey], [DevSample], [POID], [KeepPanels], [BuyBackReason], [SewQtybyRate], [Unit], [SubconInType]
-		, [Article], [ProduceRgPMS])
+		, [Article], [ProduceRgPMS], [Buyerhalfkey], [Country])
 	select ISNULL(t.[M], '')
 		, ISNULL(t.[FactoryID], '')
 		, [Delivery]
@@ -385,6 +387,8 @@ BEGIN
 		, ISNULL(t.[SubconInType], '')
 		, ISNULL(t.[Article], '')
 		, ISNULL(t.[ProduceRgPMS], '')
+		, ISNULL(t.[Buyerhalfkey], '')
+		, ISNULL(t.[Country], '')
 	from #tmp_P_PPICMASTERLIST t
 	where not exists (select 1 from P_PPICMASTERLIST p where t.[SPNO] = p.[SPNO])
 
@@ -558,6 +562,8 @@ BEGIN
 			, p.[SubconInType] = ISNULL(t.[SubconInType], '')
 			, p.[Article] = ISNULL(t.[Article], '')
 			, p.[ProduceRgPMS] = ISNULL(t.[ProduceRgPMS], '')
+			, p.[Buyerhalfkey] = ISNULL(t.[Buyerhalfkey], '')
+			, p.[Country] = ISNULL(t.[Country], '')
 	from P_PPICMASTERLIST p 
 	inner join #tmp_P_PPICMASTERLIST t on p.[SPNO] = t.[SPNO]
 
