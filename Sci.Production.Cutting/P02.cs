@@ -18,8 +18,6 @@ using System.Transactions;
 using System.Windows.Forms;
 using sxrc = Sci.Utility.Excel.SaveXltReportCls;
 using Excel = Microsoft.Office.Interop.Excel;
-using System.Security.Cryptography;
-//using Microsoft.Office.Interop.Excel;
 
 namespace Sci.Production.Cutting
 {
@@ -167,20 +165,6 @@ where MDivisionID = '{this.KeyWord}'";
 
                 this.ReloadDatas();
             };
-
-            this.detailgrid.SelectionChanged += this.Detailgrid_SelectionChanged;
-        }
-
-        private void Detailgrid_SelectionChanged(object sender, EventArgs e)
-        {
-            if (this.detailgrid.GetSelectedRowIndex() <= 0)
-            {
-                this.btnAdditionalrevisedmarker.Enabled = false;
-            }
-            else
-            {
-                this.btnAdditionalrevisedmarker.Enabled = true;
-            }
         }
 
         /// <inheritdoc/>
@@ -254,6 +238,7 @@ Select
     ,CuttingLayer = iif(isnull(cs.CuttingLayer,0) = 0, 100 ,cs.CuttingLayer)
     ,ImportML = cast(0 as bit)
     ,CanDoAutoDistribute = cast(0 as bit)
+    ,IsCreateByUser
 from Workorder a WITH (NOLOCK)
 left join fabric c WITH (NOLOCK) on c.SCIRefno = a.SCIRefno
 left join Construction cs WITH (NOLOCK) on cs.ID = ConstructionID
@@ -533,6 +518,8 @@ where WorkOrderUkey={0}", masterID);
                 this.downloadid_Text.Visible = false;
             }
             #endregion
+
+            this.btnKHImportMarker.Enabled = this.CurrentMaintain["WorkType"].ToString() == "1";
 
             this.Poid = MyUtility.GetValue.Lookup(string.Format("Select poid from orders WITH (NOLOCK) where id ='{0}'", this.CurrentMaintain["ID"]));
         }
@@ -2433,7 +2420,17 @@ where WorkOrderUkey={0}", masterID);
                 this.txtBoxMarkerNo.IsSupportEditMode = false;
                 this.txtBoxMarkerNo.ReadOnly = true;
             }
-            #endregion
+
+            // WorkOrder.IsCreateByUser = 0 則不能修改編輯
+            if (MyUtility.Check.Empty(this.CurrentDetailData["IsCreateByUser"]))
+            {
+                this.numMarkerLengthY.ReadOnly = true;
+                this.txtMarkerLengthE.ReadOnly = true;
+                this.numUnitCons.ReadOnly = true;
+                this.txtFabricCombo.ReadOnly = true;
+                this.txtFabricPanelCode.ReadOnly = true;
+            }
+            #endregion 
             this.TotalDisQty();
 
             #region 按鈕可否按
@@ -2794,6 +2791,7 @@ END";
                 newRow["StraightLength"] = oldRow["StraightLengthNew"];
                 newRow["CurvedLength"] = oldRow["CurvedLengthNew"];
                 newRow["fromukey"] = oldRow["fromukey"];
+                newRow["IsCreateByUser"] = 1;
                 #endregion
 
                 this.AddThirdDatas(this.sizeratioTb, MyUtility.Convert.GetLong(oldRow["ukey"]), MyUtility.Convert.GetLong(oldRow["newkey"]), maxkey);
@@ -3376,6 +3374,12 @@ select [ID],@ID,[PatternPanel],[FabricPanelCode] from [dbo].[WorkOrder_PatternPa
 
 INSERT INTO [dbo].[WorkOrder_SizeRatioRevisedMarkerOriginalData]([WorkOrderRevisedMarkerOriginalDataUkey],[ID],[SizeCode],[Qty])
 select @ID,[ID],[SizeCode],[Qty] from [dbo].[WorkOrder_SizeRatio] where WorkOrderUkey = {dr["ukey"]}
+
+UPDATE S SET S.BIPImportCuttingBCSCmdTime = NULL
+FROM SewingSchedule S WITH(NOLOCK)
+INNER JOIN WORKORDER WO WITH(NOLOCK) ON S.OrderID = WO.OrderID
+WHERE WO.Ukey = {dr["ukey"]}
+
 ";
                 }
             }
@@ -3412,6 +3416,12 @@ select [ID],@ID2,[PatternPanel],[FabricPanelCode] from [dbo].[WorkOrder_PatternP
 
 INSERT INTO [dbo].[WorkOrder_SizeRatioRevisedMarkerOriginalData]([WorkOrderRevisedMarkerOriginalDataUkey],[ID],[SizeCode],[Qty])
 select @ID2,[ID],[SizeCode],[Qty] from [dbo].[WorkOrder_SizeRatio] where WorkOrderUkey = {dr["ukey"]}
+
+UPDATE S SET S.BIPImportCuttingBCSCmdTime = NULL
+FROM SewingSchedule S WITH(NOLOCK)
+INNER JOIN WORKORDER WO WITH(NOLOCK) ON S.OrderID = WO.OrderID
+WHERE WO.Ukey = {dr["ukey"]}
+
 ";
                 }
             }
@@ -3860,6 +3870,11 @@ and SEQ1='{this.CurrentDetailData["Seq1"]}' and SEQ2='{this.CurrentDetailData["S
 
         private void DisplayTime_DoubleClick(object sender, EventArgs e)
         {
+            if (this.EditMode)
+            {
+                return;
+            }
+
             if (this.CurrentDetailData == null)
             {
                 return;
@@ -4202,6 +4217,11 @@ DEALLOCATE CURSOR_
             if (!result)
             {
                 this.ShowErr(result);
+                return;
+            }
+
+            if (result.Description == "NotImport")
+            {
                 return;
             }
 

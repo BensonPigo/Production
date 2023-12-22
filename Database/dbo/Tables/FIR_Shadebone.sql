@@ -18,6 +18,7 @@
     [ShadebandDocLocationID] VARCHAR (10)   NULL,
     [CutBy]                  VARCHAR (10)   CONSTRAINT [DF_FIR_Shadebone_CutBy] DEFAULT ('') NOT NULL,
     [Tone]                   VARCHAR (8)    CONSTRAINT [DF_FIR_Shadebone_Tone] DEFAULT ('') NOT NULL,
+	[CutTimeEditName]		 VARCHAR (10)   DEFAULT ('') NOT NULL,
     CONSTRAINT [PK_FIR_Shadebone] PRIMARY KEY CLUSTERED ([ID] ASC, [Roll] ASC, [Dyelot] ASC)
 );
 

@@ -589,13 +589,13 @@ where	pd.CTNStartNo <> ''
 		and (pu.Status = 'New' or pu.Status is null) 
         and pd.CTNQty = 1
         and (
-		        [PackErrTransferDate] is null and 
-		        [TransferDate] is null and 
+		        pd.[PackErrTransferDate] is null and 
+		        pd.[TransferDate] is null and 
 		        (	
-			        [DRYReceiveDate] is null or 
+			        pd.[DRYReceiveDate] is null or 
 			        (
-                        [DRYReceiveDate] is not null and 
-			            [DRYTransferDate] is not null
+                        pd.[DRYReceiveDate] is not null and 
+			            pd.[DRYTransferDate] is not null
                     )
 		        )
 	        )
@@ -646,13 +646,13 @@ where	pd.CTNStartNo <> ''
         and pd.CTNQty = 1
         and pd.DisposeFromClog= 0
         and (
-		        [PackErrTransferDate] is null and 
-		        [TransferDate] is null and 
+		        pd.[PackErrTransferDate] is null and 
+		        pd.[TransferDate] is null and 
 		        (	
-		        [DRYReceiveDate] is null or 
+		        pd.[DRYReceiveDate] is null or 
 		        (
-                        [DRYReceiveDate] is not null and 
-		            [DRYTransferDate] is not null
+                        pd.[DRYReceiveDate] is not null and 
+		            pd.[DRYTransferDate] is not null
                     )
 		        )
 	        )

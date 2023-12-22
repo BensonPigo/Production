@@ -1,7 +1,7 @@
--- =============================================
+ï»¿-- =============================================
 -- Author:		<Aaron S02109>
 -- Create date: <2020/04/15>
--- Description:	¦bimp_Order«á­±°õ¦æ¡A³z¹Lweb api¶Ç°e¦³²§°Ê¹Lªº¸ê®Æµ¹¼t°Ó
+-- Description:	åœ¨imp_Orderå¾Œé¢åŸ·è¡Œï¼Œé€éweb apiå‚³é€æœ‰ç•°å‹•éçš„è³‡æ–™çµ¦å» å•†
 -- =============================================
 Create PROCEDURE [dbo].[imp_Order_Automation]
 AS
@@ -12,7 +12,7 @@ BEGIN
 	end
 
 	Declare @Url varchar(100)
-	--¶Ç°eOrder_Qty
+	--å‚³é€Order_Qty
 	select @Url = [dbo].[GetWebApiURL]('3A0197', 'AGV') 
 	if(isnull(@Url, '') <> '')
 	begin
@@ -20,22 +20,22 @@ BEGIN
 		exec dbo.SentOrderPatternPanelToAGV
 	end
 	
-	--¶Ç°eOrder¸ê°Tµ¹Sunrise
+	--å‚³é€Orderè³‡è¨Šçµ¦Sunrise
 ------------------------------------------------------------------------------------------------------
---***¸ê®Æ¥æ´«ªº±ø¥ó­­¨î***
---1. Àu¥ı¨ú±oProduction.dbo.DateInfo
+--***è³‡æ–™äº¤æ›çš„æ¢ä»¶é™åˆ¶***
+--1. å„ªå…ˆå–å¾—Production.dbo.DateInfo
 	declare @DateInfoName varchar(30) ='imp_Order_Automation';
 	declare @DateStart date= (select DateStart from Production.dbo.DateInfo where name = @DateInfoName);
 	declare @DateEnd date  = (select DateEnd   from Production.dbo.DateInfo where name = @DateInfoName);
 	declare @Remark nvarchar(max) = (select Remark from Production.dbo.DateInfo where name = @DateInfoName);
 
---2.¨ú±o¹w³]­È
+--2.å–å¾—é è¨­å€¼
 	if @DateStart is Null
 		set @DateStart= CONVERT(DATE,DATEADD(day,-7,GETDATE()))
 	if @DateEnd is Null
 		set @DateEnd = CONVERT(DATE,DATEADD(day,1,GETDATE()))
 
---3.§ó·sPms_To_Trade.dbo.dateInfo
+--3.æ›´æ–°Pms_To_Trade.dbo.dateInfo
 if exists(select 1 from Pms_To_Trade.dbo.dateInfo where Name = @DateInfoName )
 	update Pms_To_Trade.dbo.dateInfo  set DateStart = @DateStart,DateEnd = @DateEnd, Remark=@Remark where Name = @DateInfoName 
 else
@@ -47,11 +47,11 @@ else
 
 	-- Sunrise FinishingProcesses
 	select @Url = [dbo].[GetWebApiURL]('3A0134', 'FinishingProcesses') 
-	--»İ§R°£ªº­q³æ
-	--M ³æ
-	--Cancel ­q³æ¨Ã¥B¬O¤£»İ­n¦b¥Í²£ªº­q³æ
-	--SNP ½Ğ¨ä¥L¶¡¤u¼t¥N¤uªº­q³æ¡]g. N2E¡^
-	--­q³æ¤wÂà¨ì¨ä¥L¤u¼t¡]¦¹³¡¤À´N¬O¥Ø«e¨Ï¥Î OrderComparisonList ªº³¡¤À¡^
+	--éœ€åˆªé™¤çš„è¨‚å–®
+	--M å–®
+	--Cancel è¨‚å–®ä¸¦ä¸”æ˜¯ä¸éœ€è¦åœ¨ç”Ÿç”¢çš„è¨‚å–®
+	--SNP è«‹å…¶ä»–é–“å·¥å» ä»£å·¥çš„è¨‚å–®ï¼ˆg. N2Eï¼‰
+	--è¨‚å–®å·²è½‰åˆ°å…¶ä»–å·¥å» ï¼ˆæ­¤éƒ¨åˆ†å°±æ˜¯ç›®å‰ä½¿ç”¨ OrderComparisonList çš„éƒ¨åˆ†ï¼‰
 	if(isnull(@Url, '') <> '')
 	begin
 		select a.OrderID into #tmpDeleteOrder
@@ -62,9 +62,13 @@ else
 						(a.EditDate >= @DateStart and a.EditDate < @DateEnd) or
 						(a.PulloutCmplDate >= @DateStart and a.PulloutCmplDate < @DateEnd)) 
 						and
-						(a.Category = 'M' or
+						(a.Category in ('M', '', 'T') or
 						(a.junk = 1 and a.NeedProduction = 0) or
 						(f.IsProduceFty = 0))
+				UNION
+				select [OrderID] = ID
+				from Orders with (nolock)
+				where GMTClose >= @DateStart and Finished = 1
 				union
 				select distinct ocl.OrderID 
 				from OrderComparisonList ocl with (nolock)
@@ -85,7 +89,7 @@ else
 								FOR XML PATH('')),1,1,'') 
 
 								
-		----¥²¶·§ó·sªº­q³æ
+		----å¿…é ˆæ›´æ–°çš„è¨‚å–®
 		if(@orderList is not null and @orderList <> '')
 		begin
 			exec dbo.SentOrdersToFinishingProcesses @orderList,'Orders,Order_QtyShip,Order_SizeCode,Order_Qty'
@@ -93,13 +97,11 @@ else
 		
 
 		SELECT @orderList =  Stuff((select concat( ',',OrderId) from #tmpDeleteOrder FOR XML PATH('')),1,1,'') 
-		----¥²¶·§R°£ªº­q³æ
+		----å¿…é ˆåˆªé™¤çš„è¨‚å–®
 		if(@orderList is not null and @orderList <> '')
 		begin
-			----­YOrderID¤£¦s¦b¸ê®Æªí¡A¤~¯à¨Ï¥ÎOrder_Delete
-			----exec dbo.SentOrdersToFinishingProcesses @orderList,'Order_Delete'
-
-			exec dbo.SentOrdersToFinishingProcesses @orderList,'Orders,Order_QtyShip,Order_SizeCode,Order_Qty'
+			----è‹¥OrderIDä¸å­˜åœ¨è³‡æ–™è¡¨ï¼Œæ‰èƒ½ä½¿ç”¨Order_Delete
+			exec dbo.SentOrdersToFinishingProcesses @orderList,'Order_Delete'
 		end
 
 		drop table #tmpDeleteOrder
@@ -109,11 +111,11 @@ else
 	-- Gensong FinishingProcesses
 	select @Url = [dbo].[GetWebApiURL]('3A0174', 'FinishingProcesses') 
 	
-	--»İ§R°£ªº­q³æ
-	--M ³æ
-	--Cancel ­q³æ¨Ã¥B¬O¤£»İ­n¦b¥Í²£ªº­q³æ
-	--SNP ½Ğ¨ä¥L¶¡¤u¼t¥N¤uªº­q³æ¡]g. N2E¡^
-	--­q³æ¤wÂà¨ì¨ä¥L¤u¼t¡]¦¹³¡¤À´N¬O¥Ø«e¨Ï¥Î OrderComparisonList ªº³¡¤À¡^
+	--éœ€åˆªé™¤çš„è¨‚å–®
+	--M å–®
+	--Cancel è¨‚å–®ä¸¦ä¸”æ˜¯ä¸éœ€è¦åœ¨ç”Ÿç”¢çš„è¨‚å–®
+	--SNP è«‹å…¶ä»–é–“å·¥å» ä»£å·¥çš„è¨‚å–®ï¼ˆg. N2Eï¼‰
+	--è¨‚å–®å·²è½‰åˆ°å…¶ä»–å·¥å» ï¼ˆæ­¤éƒ¨åˆ†å°±æ˜¯ç›®å‰ä½¿ç”¨ OrderComparisonList çš„éƒ¨åˆ†ï¼‰
 	if(isnull(@Url, '') <> '')
 	begin
 		select a.OrderID into #tmpDeleteOrder_Gensong
@@ -124,9 +126,13 @@ else
 						(a.EditDate >= @DateStart and a.EditDate < @DateEnd) or
 						(a.PulloutCmplDate >= @DateStart and a.PulloutCmplDate < @DateEnd)) 
 						and
-						(a.Category = 'M' or
+						(a.Category in ('M', '', 'T') or
 						(a.junk = 1 and a.NeedProduction = 0) or
 						(f.IsProduceFty = 0))
+				UNION
+				select [OrderID] = ID
+				from Orders with (nolock)
+				where GMTClose >= @DateStart and Finished = 1
 				union
 				select distinct ocl.OrderID 
 				from OrderComparisonList ocl with (nolock)
@@ -146,7 +152,7 @@ else
 										not exists (select 1 from #tmpDeleteOrder_Gensong t where t.OrderID = Orders.ID)
 								FOR XML PATH('')),1,1,'') 
 
-		----¥²¶·§ó·sªº­q³æ
+		----å¿…é ˆæ›´æ–°çš„è¨‚å–®
 		if(@orderList is not null and @orderList <> '')
 		begin
 			exec dbo.SentOrdersToFinishingProcesses_Gensong @orderList,'Orders,Order_QtyShip'
@@ -154,10 +160,10 @@ else
 		
 
 		SELECT @orderList =  Stuff((select concat( ',',OrderId) from #tmpDeleteOrder_Gensong FOR XML PATH('')),1,1,'') 
-		----¥²¶·§R°£ªº­q³æ
+		----å¿…é ˆåˆªé™¤çš„è¨‚å–®
 		if(@orderList is not null and @orderList <> '')
 		begin
-			----­YOrderID¤£¦s¦b¸ê®Æªí¡A¤~¯à¨Ï¥ÎOrder_Delete
+			----è‹¥OrderIDä¸å­˜åœ¨è³‡æ–™è¡¨ï¼Œæ‰èƒ½ä½¿ç”¨Order_Delete
 			----exec dbo.SentOrdersToFinishingProcesses_Gensong @orderList,'Order_Delete'
 
 			exec dbo.SentOrdersToFinishingProcesses_Gensong @orderList,'Orders,Order_QtyShip'

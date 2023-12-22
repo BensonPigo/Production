@@ -185,6 +185,7 @@ namespace Sci.Production.Quality
             .CheckBox("selected", header: string.Empty, trueValue: 1, falseValue: 0, iseditable: true)
             .Text("ExportID", header: "WK#", width: Widths.AnsiChars(16), iseditingreadonly: true)
             .Text("InvoiceNo", header: "Invoice#", width: Widths.AnsiChars(16), iseditingreadonly: true)
+            .Text("ReceivingID", header: "Receiving ID", width: Widths.AnsiChars(15), iseditingreadonly: true)
             .Date("WhseArrival", header: "ATA", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Date("ETA", header: "ETA", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Text("SeasonID", header: "Season", width: Widths.AnsiChars(6), iseditingreadonly: true)
@@ -862,6 +863,7 @@ namespace Sci.Production.Quality
                 return null;
             }
             #endregion
+
             #region where
             string where = string.Empty;
             if (!MyUtility.Check.Empty(this.txtSP.Text))
@@ -946,6 +948,7 @@ and  f.Type = '{this.comboMaterialType.SelectedValue.ToString()}'
             }
 
             #endregion
+
             string sqlcmd = $@"
 use Production
 IF OBJECT_ID('tempdb..#POList') IS NOT NULL
@@ -978,7 +981,7 @@ From Orders o with(nolock)
 inner Join dbo.PO_Supp p2 with(nolock) on p2.ID = o.ID
 inner Join dbo.PO_Supp_Detail p3 with(nolock) on p3.ID = p2.ID and p3.Seq1 = p2.SEQ1 
  	and IsNull(P3.Junk, 0) = 0 --作廢不顯示
-	and IsNull(p3.Qty, 0) != 0 --數量為0不顯示
+	and (IsNull(p3.Qty, 0) > 0 or IsNull(p3.foc, 0) > 0) --數量為0不顯示
 left join PO_Supp_Detail_spec  psds on psds.id = p3.ID and psds.Seq1 = p3.SEQ1 and psds.Seq2 = p3.SEQ2 and psds.SpecColumnID = 'Color'
 inner Join dbo.Supp su with(nolock) on su.ID = p2.SuppID
 Inner Join BrandRelation as bs WITH (NOLOCK) ON bs.BrandID = o.BrandID and bs.SuppID = su.ID
@@ -987,6 +990,7 @@ inner join dbo.Fabric f with(nolock) on p3.SciRefno = f.SciRefno
 inner JOIN Season WITH (NOLOCK) on o.SeasonID = Season.ID and o.BrandID = Season.BrandID
 LEFT JOIN DropDownList ddl WITH (NOLOCK) on ddl.type ='Category' and o.Category = ddl.ID
 where 1=1
+and f.BrandRefNo <> ''
 {where}
 
 
@@ -1839,14 +1843,14 @@ drop table #probablySeasonList,#tmpBasc,#tmpFTYReceivedReport,#tmpReportDate
             {
                 listSQLParameter.Add(new SqlParameter("@ETA1", this.dateRangeETA.Value1));
                 listSQLParameter.Add(new SqlParameter("@ETA2", this.dateRangeETA.Value2));
-                sqlwheres.Add(" Export.ETA between @ETA1 and @ETA2 ");
+                sqlwheres.Add(" r.ETA between @ETA1 and @ETA2 ");
             }
 
             if (!MyUtility.Check.Empty(this.dateATA.Value1) && !MyUtility.Check.Empty(this.dateATA.Value2))
             {
                 listSQLParameter.Add(new SqlParameter("@ATA1", this.dateATA.Value1));
                 listSQLParameter.Add(new SqlParameter("@ATA2", this.dateATA.Value2));
-                sqlwheres.Add(" Export.WhseArrival between @ATA1 and @ATA2 ");
+                sqlwheres.Add(" r.WhseArrival between @ATA1 and @ATA2 ");
             }
 
             if (!MyUtility.Check.Empty(this.txtsp2.Text))
@@ -1891,8 +1895,9 @@ FileExistI= cast(0 as bit),
 FileExistT= cast(0 as bit),
 ed.id,
 ed.InvoiceNo,
-Export.ETA,
-Export.WhseArrival,
+[ReceivingID] = r.ID,
+r.ETA,
+r.WhseArrival,
 seasonID = s.ID,
 ed.PoID,
 seq=ed.seq1+'-'+ed.seq2,
@@ -1915,11 +1920,12 @@ b.T1DefectPoints,
 ed.seq1,
 ed.seq2,
 f.Clima,
-[bitRefnoColor] = case when f.Clima = 1 then ROW_NUMBER() over(partition by f.Clima, s2.ID, psd.Refno, isnull(psdsC.SpecValue ,''), Format(Export.CloseDate,'yyyyMM') order by Export.CloseDate) else 0 end,
 Export.CloseDate,
 f.RibItem
 into #tmpBasc
-from Export_Detail ed with(nolock)
+from Receiving r WITH(NOLOCK)
+inner join Receiving_Detail rd WITH(NOLOCK) on r.Id=rd.id	
+inner join Export_Detail ed WITH(NOLOCK) on ed.PoID = rd.PoId and ed.seq1 = rd.seq1 and ed.Seq2 = rd.seq2 and r.ExportID = ed.id
 inner join Export with(nolock) on Export.id = ed.id and Export.Confirm = 1
 inner join orders o with(nolock) on o.id = ed.PoID
 left join Po_Supp_Detail psd with(nolock) on psd.id = ed.poid and psd.seq1 = ed.seq1 and psd.seq2 = ed.seq2
@@ -2002,6 +2008,7 @@ a.selected
 ,[ExportID] = a.ID
 ,[InvoiceNo] = a.InvoiceNo
 ,[WhseArrival] = a.WhseArrival
+,[ReceivingID] = a.ReceivingID
 ,[ETA] = a.Eta
 ,[SeasonID] = a.seasonID
 ,[POID] = a.PoID
@@ -2033,7 +2040,7 @@ a.selected
 ,[Grade] = b.T2Grade
 ,[T1Inspected_Yards] = b.T1InspectedYards
 ,[T1Defect_Points] = b.T1DefectPoints
-,a.bitRefnoColor
+,[bitRefnoColor] = case when a.Clima = 1 then ROW_NUMBER() over(partition by Clima, SuppID, Refno, ColorID, CloseDate order by CloseDate) else 0 end
 ,[NewSentReport_Exists] = IIF(b.[Inspection Report] != '' or b.[Test report] != '' or b.[Continuity card] != '', 'Y','N')
 from #tmpBasc a
 inner join (

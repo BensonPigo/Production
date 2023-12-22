@@ -175,6 +175,7 @@
             this.txtbrand.BackColor = System.Drawing.Color.White;
             this.txtbrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtbrand.Location = new System.Drawing.Point(431, 20);
+            this.txtbrand.MyDocumentdName = null;
             this.txtbrand.Name = "txtbrand";
             this.txtbrand.Size = new System.Drawing.Size(92, 23);
             this.txtbrand.TabIndex = 115;
@@ -201,6 +202,7 @@
             this.txtfactory.BoolFtyGroupList = true;
             this.txtfactory.FilteMDivision = false;
             this.txtfactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtfactory.IsMultiselect = false;
             this.txtfactory.IsProduceFty = false;
             this.txtfactory.IssupportJunk = false;
             this.txtfactory.Location = new System.Drawing.Point(431, 51);

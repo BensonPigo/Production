@@ -100,7 +100,11 @@ else
 			, MDivisionID=isnull(b.MDivisionID, '')
 	from #TOrder a
 	inner join Production.dbo.Factory b on a.FactoryID=b.id
-	
+
+	/* issue：ISP20231174 */
+	UPDATE S SET S.BIPImportCuttingBCSCmdTime = NULL
+	FROM #TOrder A
+	INNER JOIN SewingSchedule S ON A.ID = S.OrderID
 -------------------------------------------------------------------------Order
 		--��欰Cutting�����,����sMDivisionID
 		Update a
@@ -1041,16 +1045,20 @@ else
 				t.BuyBackReason           = isnull (s.BuyBackReason, ''),
 				t.IsBuyBackCrossArticle           = isnull (s.IsBuyBackCrossArticle, 0),
 				t.IsBuyBackCrossSizeCode           = isnull (s.IsBuyBackCrossSizeCode, 0),
-				t.KpiEachConsCheck	   =  s.KpiEachConsCheck,
-				t.CMPLTDATE	   =  s.CMPLTDATE,
-				t.HangerPack = isnull( s.HangerPack,                0),
-				t.DelayCode = isnull( s.DelayCode,                  ''),
-				t.DelayDesc = isnull( s.DelayDesc,                  ''),
-				t.SizeUnitWeight = isnull( s.SizeUnitWeight        ,''),
-				t.OrganicCotton = isnull(s.OrganicCotton, 0),
-				t.DirectShip = isnull(s.DirectShip,0),
-				t.ScheETANoReplace = s.ScheETANoReplace,
-				t.SCHDLETA = s.SCHDLETA
+				t.KpiEachConsCheck		=  s.KpiEachConsCheck,
+				t.CMPLTDATE				=  s.CMPLTDATE,
+				t.HangerPack			= isnull( s.HangerPack,                0),
+				t.DelayCode				= isnull( s.DelayCode,                  ''),
+				t.DelayDesc				= isnull( s.DelayDesc,                  ''),
+				t.SizeUnitWeight		= isnull( s.SizeUnitWeight        ,''),
+				t.OrganicCotton			= isnull(s.OrganicCotton, 0),
+				t.DirectShip			= isnull(s.DirectShip,0),
+				t.ScheETANoReplace		= s.ScheETANoReplace,
+				t.SCHDLETA				= s.SCHDLETA,
+				t.Transferdate			= s.Transferdate,
+				t.Max_ScheETAbySP		= s.Max_ScheETAbySP,
+				t.Sew_ScheETAnoReplace	= s.Sew_ScheETAnoReplace,
+				t.MaxShipETA_Exclude5x	= s.MaxShipETA_Exclude5x
 		when not matched by target then
 		insert (
 			ID						, BrandID				, ProgramID				, StyleID				, SeasonID
@@ -1083,7 +1091,8 @@ else
 			, ForecastCategory		, OnSiteSample			, PulloutCmplDate		, NeedProduction		, KeepPanels
 			, IsBuyBack				, BuyBackReason			, IsBuyBackCrossArticle , IsBuyBackCrossSizeCode
 			, KpiEachConsCheck		, CMPLTDATE				, HangerPack			, DelayCode				, DelayDesc
-			, SizeUnitWeight		, OrganicCotton         , DirectShip			,ScheETANoReplace		,SCHDLETA
+			, SizeUnitWeight		, OrganicCotton         , DirectShip			, ScheETANoReplace		, SCHDLETA
+			, Transferdate			, Max_ScheETAbySP		, Sew_ScheETAnoReplace	, MaxShipETA_Exclude5x
 		) 
        VALUES
        (
@@ -1237,7 +1246,11 @@ else
               isnull(s.OrganicCotton, 0) ,
               isnull(s.DirectShip,0),
               s.ScheETANoReplace,
-              s.SCHDLETA
+              s.SCHDLETA,
+			  s.Transferdate,
+			  s.Max_ScheETAbySP,
+			  s.Sew_ScheETAnoReplace,
+			  s.MaxShipETA_Exclude5x
        )
 		output inserted.id, iif(deleted.id is null,1,0) into @OrderT; --將insert =1 , update =0 把改變過的id output;
 

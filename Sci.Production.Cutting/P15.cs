@@ -1046,12 +1046,28 @@ and o.mDivisionid = '{this.keyWord}'
 {distru_where}
 order by article.article,wd.sizecode,wd.orderid,w.FabricPanelCode
 
+select wd.ID,wd.CutRef,wd.Article,wd.Sizecode
+into #tmp_Bundle
+from Bundle wd with(nolock)
+where exists(select 1 from #tmp t where wd.cutref = t.CutRef and wd.Article = t.article)
+ 
+select bd.Id, bd.BundleNo,bd.PatternCode,bd.BundleGroup,bd.IsPair
+into #tmp_Bundle_Detail
+from Bundle_Detail bd with(nolock)
+where exists(select 1 from #tmp t where bd.Sizecode = t.sizecode)
+and exists(select 1 from #tmp_Bundle t where bd.Id = t.ID)
+
+select bdo.Qty,bdo.BundleNo,bdo.OrderID
+into #tmp_Bundle_Detail_Order
+from Bundle_Detail_Order bdo with(nolock)
+where exists(select 1 from #tmp t where bdo.OrderID = t.OrderID)
+and exists(select 1 from #tmp_Bundle_Detail t where bdo.BundleNo = t.BundleNo)
+
 select bdo.qty,wd.id,bdo.BundleNo,bd.PatternCode,bd.BundleGroup,wd.CutRef,wd.Article,wd.Sizecode,bdo.OrderID,bd.IsPair
 into #tmpx
-from Bundle wd with(nolock)
-inner join Bundle_Detail bd with(nolock) on bd.Id = wd.ID
-inner join Bundle_Detail_Order bdo with(nolock) on bdo.BundleNo = bd.BundleNo
-where exists(select 1 from #tmp t where wd.cutref = t.CutRef and wd.Article = t.article and bd.Sizecode = t.sizecode and bdo.OrderID = t.orderid)
+from #tmp_Bundle wd with(nolock)
+inner join #tmp_Bundle_Detail bd with(nolock) on bd.Id = wd.ID
+inner join #tmp_Bundle_Detail_Order bdo with(nolock) on bdo.BundleNo = bd.BundleNo
 
 select CutRef,Article,Sizecode,OrderID,qty=SUM(Qty)
 into #bundleSPCreatedQty
@@ -1158,7 +1174,7 @@ from #msfa m
 inner join FtyStyleInnovationCombineSubprocess f with(NOLOCK)
     on f.MDivisionID = m.MDivisionId and f.StyleUkey = m.StyleUkey and f.Fabriccombo = m.Fabriccombo and f.Article = m.Article
 
-drop table #tmp, #msfa
+drop table #tmp, #msfa, #bundleinfo, #bundleSPCreatedQty, #tmp_Bundle ,#tmp_Bundle_Detail, #tmp_Bundle_Detail_Order, #tmpx
 ";
             result = DBProxy.Current.Select(null, distru_cmd, out DataTable[] rightUpDt);
             if (!result)

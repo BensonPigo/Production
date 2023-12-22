@@ -156,6 +156,24 @@
     <Compile Include="P02_ImportML.Designer.cs">
       <DependentUpon>P02_ImportML.cs</DependentUpon>
     </Compile>
+    <Compile Include="P04_EditFabricCutDate.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P04_EditFabricCutDate.Designer.cs">
+      <DependentUpon>P04_EditFabricCutDate.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P04_FabricDelete.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P04_FabricDelete.Designer.cs">
+      <DependentUpon>P04_FabricDelete.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P04_FabricDeleteHistory.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P04_FabricDeleteHistory.Designer.cs">
+      <DependentUpon>P04_FabricDeleteHistory.cs</DependentUpon>
+    </Compile>
     <Compile Include="P08_MailTo_Detail.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -593,6 +611,15 @@
     </EmbeddedResource>
     <EmbeddedResource Include="P02_ImportML.resx">
       <DependentUpon>P02_ImportML.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P04_EditFabricCutDate.resx">
+      <DependentUpon>P04_EditFabricCutDate.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P04_FabricDelete.resx">
+      <DependentUpon>P04_FabricDelete.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P04_FabricDeleteHistory.resx">
+      <DependentUpon>P04_FabricDeleteHistory.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P08_MailTo_Detail.resx">
       <DependentUpon>P08_MailTo_Detail.cs</DependentUpon>

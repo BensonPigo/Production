@@ -112,6 +112,13 @@ namespace Sci.Production.IE
 
         private void BtnCreateAutoLineMapping_Click(object sender, EventArgs e)
         {
+            if (MyUtility.Convert.GetDecimal(this.numHours.Text) == 0 ||
+                MyUtility.Convert.GetDecimal(this.numSewer.Text) == 0)
+            {
+                MyUtility.Msg.WarningBox("[No. of Sewer] and [No. of Hours] cannot be empty.");
+                return;
+            }
+
             if (MyUtility.Check.Empty(this.txtFactoryCreate.Text))
             {
                 MyUtility.Msg.WarningBox("[*Create Auto Line Mapping][Factory] cannot be empty.");

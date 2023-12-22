@@ -49,6 +49,13 @@ namespace Sci.Production.Warehouse
                 frm.ShowDialog(this);
             };
 
+            DataGridViewGeneratorTextColumnSettings whRemark = new DataGridViewGeneratorTextColumnSettings();
+            whRemark.CellMouseDoubleClick += (s, e) =>
+            {
+                var dr = this.grid1.GetDataRow<DataRow>(e.RowIndex);
+                var frm = new P68_WHReamrk(dr);
+                frm.ShowDialog(this);
+            };
             this.Helper.Controls.Grid.Generator(this.grid1)
                 .Text("Factory", header: "Factory", width: Widths.AnsiChars(6), iseditingreadonly: true)
                 .Text("CutCell", header: "Cut\r\nCell", width: Widths.AnsiChars(5), iseditingreadonly: true)
@@ -71,8 +78,8 @@ namespace Sci.Production.Warehouse
                 .Numeric("RelaxationCons", header: "Relaxation\r\nCons", width: Widths.AnsiChars(10), decimal_places: 2, iseditingreadonly: true)
                 .Numeric("DispatchedCons", header: "Dispatched\r\nCons", width: Widths.AnsiChars(10), decimal_places: 2, iseditingreadonly: true)
                 .Numeric("ReceivedCons", header: "Received\r\nCons", width: Widths.AnsiChars(10), decimal_places: 2, iseditingreadonly: true)
-                .Text("RequestorRemark", header: "Requestor\r\nRemark", width: Widths.AnsiChars(9), iseditingreadonly: true)
-                .Text("WHRemark", header: "W/H Remark", width: Widths.AnsiChars(9), iseditingreadonly: true)
+                .EditText("RequestorRemark", header: "Requestor\r\nRemark", width: Widths.AnsiChars(9), iseditingreadonly: true)
+                .Text("WHRemark", header: "W/H Remark", width: Widths.AnsiChars(9), iseditingreadonly: true, settings: whRemark)
                 ;
             #endregion
 
@@ -115,7 +122,7 @@ namespace Sci.Production.Warehouse
             {
                 this.listsqlParameter.Add(new SqlParameter("@CuttingDateStart", this.cutingDate.Value1));
                 this.listsqlParameter.Add(new SqlParameter("@CuttingDateEnd", this.cutingDate.Value2));
-                this.strSQLWher += " and cp.EstCutdate  >= CAST(@CuttingDateStart AS DATE) AND cp.EstCutdate < DATEADD(DAY, 1, CAST(@CuttingDateEnd AS DATE))";
+                this.strSQLWher += " and EstCutdate.EstCutdate BETWEEN CAST(@CuttingDateStart AS DATE) AND CAST(@CuttingDateEnd AS DATE)";
             }
 
             if (!MyUtility.Check.Empty(this.txtCutplanID.Text))
@@ -157,7 +164,7 @@ namespace Sci.Production.Warehouse
             {
                 this.listsqlParameter.Add(new SqlParameter("@CutPlanEditDate1", this.dateCutPlanEditDate.Value1));
                 this.listsqlParameter.Add(new SqlParameter("@CutPlanEditDate2", this.dateCutPlanEditDate.Value2));
-                this.strSQLWher += " and CAST(cp.EditDate as DATE) BETWEEN @CutPlanEditDate1 AND @CutPlanEditDate2";
+                this.strSQLWher += " and CAST(EditDate.EditDate as DATE) BETWEEN @CutPlanEditDate1 AND @CutPlanEditDate2";
             }
 
             string sqlCmd = $@"
@@ -166,8 +173,8 @@ namespace Sci.Production.Warehouse
                     , o.StyleID
 					, cp.POID
 					, cp.CutCellID
-					, cp.EstCutdate
-                    , cp.EditDate
+					, EstCutdate.EstCutdate
+                    , EditDate.EditDate
 					, psd.Refno
 					, [Color] = psdsC.SpecValue
 					, rfrt.FabricRelaxationID
@@ -175,6 +182,8 @@ namespace Sci.Production.Warehouse
 					, frlx.Relaxtime
 					, [Request Cons] = sum (cpdc.Cons)
                     , FinalETA.ActETA
+                    ,psd.SCIRefno
+                    ,cpi.RequestorRemark
 			into #CutList
 			from Cutplan cp
 			inner join Cutplan_Detail_Cons cpdc on cp.ID = cpdc.ID
@@ -188,21 +197,34 @@ namespace Sci.Production.Warehouse
 			left join SciMES_RefnoRelaxtime rfrt on psd.Refno = rfrt.Refno
 			left join SciMES_FabricRelaxation frlx on rfrt.FabricRelaxationID = frlx.ID
 			left join Orders o on cp.POID = o.ID
+            LEFT JOIN CutPlan_IssueCutDate cpi WITH(NOLOCK) ON cpi.ID = cp.id AND cpi.Refno = psd.Refno AND cpi.Colorid = psdsC.SpecValue
+            OUTER APPLY(SELECT EstCutdate = IIF(cpi.EstCutDate IS NOT NULL, cpi.EstCutDate, cp.EstCutdate))EstCutdate
+            OUTER APPLY(SELECT EditDate = IIF(cpi.EditDate IS NOT NULL, cpi.EditDate, cp.EditDate))EditDate
             outer apply
             (
                 select ActETA = Max(p3.FinalETA) 
                 from PO_Supp_Detail p3 with (nolock) 
-                inner join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = p3.id and psdsC.seq1 = p3.seq1 and psdsC.seq2 = p3.seq2 and psdsC.SpecColumnID = 'Color'
+                inner join PO_Supp_Detail_Spec psdsC2 WITH (NOLOCK) on psdsC2.ID = p3.id and psdsC2.seq1 = p3.seq1 and psdsC2.seq2 = p3.seq2 and psdsC2.SpecColumnID = 'Color'
                 where p3.id = psd.ID
                 and p3.SCIRefno = psd.SCIRefno
-                and psdsC.SpecValue = psdsC.SpecValue
+                and psdsC2.SpecValue = psdsC.SpecValue
                 and p3.Junk = 0
                 and p3.Seq1 not like 'A%'
             ) FinalETA
 			where cp.Status = 'Confirmed'
 			{this.strSQLWher}
-			group by cp.ID, o.FactoryID, cp.POID, cp.CutCellID, cp.EstCutdate, psd.Refno, psdsC.SpecValue, rfrt.FabricRelaxationID, frlx.NeedUnroll, frlx.Relaxtime
-                , o.StyleID, cp.EditDate, FinalETA.ActETA
+			group by cp.ID, o.FactoryID, cp.POID, cp.CutCellID
+                ,EstCutdate.EstCutdate
+                ,psd.Refno
+                ,psdsC.SpecValue
+                ,rfrt.FabricRelaxationID
+                ,frlx.NeedUnroll
+                ,frlx.Relaxtime
+                ,o.StyleID
+                ,EditDate.EditDate
+                ,FinalETA.ActETA
+                ,psd.SCIRefno
+                ,cpi.RequestorRemark
 			/*
 				發料準備清單
 			*/
@@ -217,6 +239,8 @@ namespace Sci.Production.Warehouse
                     , f.Tone
                     , LockDate = IIF(f.Lock = 0, f.LockDate, Null)
                     , [Location] = dbo.Getlocation(f.ukey)
+                    ,cl.SCIRefno
+                    ,[issueid] = isu.id
 			into #issueDtl
 			from #CutList cl
 			inner join Issue isu on cl.ID = isu.CutplanID
@@ -275,6 +299,9 @@ namespace Sci.Production.Warehouse
                     , cl.ActETA
                     , cl.StyleID
                     , cl.EditDate
+                    , cl.SCIRefno
+                    , IssueSummary.WHRemark
+                    , cl.RequestorRemark
 			from #CutList cl
 			outer apply (
 				select Cons = SUM (Qty)
@@ -315,6 +342,27 @@ namespace Sci.Production.Warehouse
 						and cl.Color = idt.Color
 						and idt.FactoryReceivedTime is not null
 			) Received
+            OUTER APPLY (
+                SELECT WHRemark = 
+	            REPLACE(
+		            REPLACE(
+			            (select stuff((
+				            select n=Remark
+				            from(
+                                SELECT DISTINCT iss.Remark
+                                FROM issue i
+                                INNER JOIN Issue_Summary iss ON iss.Id = i.ID
+                                WHERE cl.ID = i.CutplanID
+                                AND cl.POID = iss.POID
+                                AND cl.SCIRefno = iss.SCIRefno
+                                AND cl.Color = iss.Colorid
+                                AND iss.Remark <> ''
+				            )d  order by Remark
+				            for xml path('')
+			            ),1,3,''))
+		            ,'</n>','')
+	            ,'<n>',',' + CHAR(13) + char(10)) -- EditText 開窗換行方式
+            ) IssueSummary　 --串Issue Summary取Remark
 			order by cl.ID, cl.Refno, cl.Color
 			/*
 				顯示清單

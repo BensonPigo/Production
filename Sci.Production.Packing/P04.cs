@@ -1046,6 +1046,11 @@ where InvA.OrderID = '{0}'
                 return failResult;
             }
 
+            if (Prgs.CheckDupSCICtnNo(this.CurrentMaintain["ID"].ToString()))
+            {
+                return new DualResult(false, "SCICtnNo duplicate creation occurs, please save again.");
+            }
+
             this.detailgrid.IsEditable = true;
             this.detailgrid.IsEditingReadOnly = false;
 

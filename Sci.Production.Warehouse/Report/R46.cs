@@ -101,6 +101,8 @@ select [Dispose ID] = a.ID
 ,[Unit] = psd.StockUnit
 ,[Location] = dbo.Getlocation(fty.Ukey)
 ,[Reason] = ad.ReasonId + '-' + (select name from Reason where ReasonTypeID='Stock_Remove' and id = ad.ReasonId)
+,[ToPoID] = ad.ToPOID
+,[ToSeq] = CONCAT(ad.ToSeq1,' ',ad.ToSeq2)
 from Adjust a
 Inner join Adjust_Detail ad on ad.ID = a.ID
 left join View_WH_Orders vo on vo.ID = ad.POID

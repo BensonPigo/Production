@@ -249,6 +249,11 @@ Create table #tmpReaultBase(
 	GroupSeq int
 )
 
+Create table #tmpCheckLimit(
+	StationNo int,
+	StationSewer numeric(6, 4)
+)
+
 DECLARE Create_StationNo_cursor CURSOR FOR 
 	select	td.Ukey, tgs.GroupSeq, td.Sewer, tgs.SewerLimitLow, tgs.SewerLimitMiddle, tgs.SewerLimitHigh, tgs.TotalSewer,
 			[NextGroupSeq] = LEAD(tgs.GroupSeq,1,0) OVER (PARTITION BY tgs.TotalSewer ORDER BY tgs.TotalSewer, tgs.GroupSeq, td.Seq),
@@ -275,6 +280,9 @@ Declare @LastTotalSewerForCreate int
 Declare @LimitGroupSewer int
 Declare @AccGroupSewer int
 
+Declare @StationNoForFix int = 0
+Declare @StationSewer numeric(6, 4)
+
 OPEN Create_StationNo_cursor  
 FETCH NEXT FROM Create_StationNo_cursor INTO @TimeStudyDetailUkey,  @GroupSeqCreateStation, @SewerCreateStation, @SewerLimitLow, @SewerLimitMiddle, @SewerLimitHigh, @TotalSewerForCreate, @NextGroupSeqCreateStation, @GroupSumSewer, @LimitGroupSewer
 WHILE @@FETCH_STATUS = 0 
@@ -294,11 +302,12 @@ BEGIN
 			where GroupSeq = @GroupSeqCreateStation and
 				  TotalSewer = @TotalSewerForCreate) a
 
-	--如果整個Group都在安全範圍內直接insert同一個No就好
 	if(@GroupSumSewer >= @SewerLimitLow and @GroupSumSewer <= @SewerLimitHigh)
 	begin
+		--如果整個Group都在安全範圍內直接insert同一個No就好
 		if @LastGroupAssignSewer = 0
-			set @StationNo = @StationNo + 1
+				set @StationNo = @StationNo + 1
+
 		insert into #tmpReaultBase(StationNo, TimeStudyDetailUkey, DivSewer, OriSewer, GroupSeq, TotalSewer)
 				values(@StationNo, @TimeStudyDetailUkey, @SewerCreateStation, @SewerCreateStation, @GroupSeqCreateStation, @TotalSewerForCreate)
 	end
@@ -306,8 +315,7 @@ BEGIN
 	begin
 		set @UnAssignSewer = @SewerCreateStation
 
-		--如果同group 上一個站位有小於RangeLow的sewer，就必須在這站先補到Middle
-		--如果同group使用人數已到達上限就只能捕在最後一站
+		--補相同group前一站不足的部分
 		if(	@LastGroupAssignSewer > 0 and 
 			(@LastGroupAssignSewer < @SewerLimitLow or @AccGroupSewer = @LimitGroupSewer))
 		begin
@@ -322,21 +330,58 @@ BEGIN
 			set @UnAssignSewer = @UnAssignSewer - @AssignSewer
 		end
 		
-		if(@LastGroupAssignSewer = 0 or @UnAssignSewer > 0)
-		begin
-			set @StationNo = @StationNo + 1
-
-			while @UnAssignSewer > @SewerLimitHigh
+		--剩餘人力開新站，但不能超過限定站數，超過站數折將多餘人力補到前站
+		while @UnAssignSewer > 0
 			begin
-				insert into #tmpReaultBase(StationNo, TimeStudyDetailUkey, DivSewer, OriSewer, GroupSeq, TotalSewer)
-				values(@StationNo, @TimeStudyDetailUkey, @SewerLimitMiddle, @SewerCreateStation, @GroupSeqCreateStation, @TotalSewerForCreate)
-				set @StationNo = @StationNo + 1
-				set @UnAssignSewer = @UnAssignSewer - @SewerLimitMiddle
-			end
+				
+				delete #tmpCheckLimit
 
-			insert into #tmpReaultBase(StationNo, TimeStudyDetailUkey, DivSewer, OriSewer, GroupSeq, TotalSewer)
-				values(@StationNo, @TimeStudyDetailUkey, @UnAssignSewer, @SewerCreateStation, @GroupSeqCreateStation, @TotalSewerForCreate)
-		end
+				insert into #tmpCheckLimit(StationNo, StationSewer)
+				select StationNo, sum(DivSewer)
+				from #tmpReaultBase
+				where GroupSeq = @GroupSeqCreateStation and
+					  TotalSewer = @TotalSewerForCreate
+				group by StationNo
+				
+				--檢查是否超過限定站數
+				if @LimitGroupSewer = (select count(*) from #tmpCheckLimit)
+				--ISP20231154 無法新增站數，將多餘人力往前站補
+				--假設有3個No，第3個超過範圍，則優先併入第2個No值到到達最大值，若若還有剩餘人力，則再併入到第1個No，若還有剩則再併入到第3個No
+				BEGIN
+					SELECT top 1 @StationNoForFix = StationNo, @StationSewer = StationSewer
+					from #tmpCheckLimit
+					where StationSewer < @SewerLimitHigh
+					order by iif(StationNo = @StationNo, 0, StationNo) desc
+
+					if(isnull(@StationNoForFix, '') = '')
+					BEGIN
+						insert into #tmpReaultBase(StationNo, TimeStudyDetailUkey, DivSewer, OriSewer, GroupSeq, TotalSewer)
+						values(@StationNo, @TimeStudyDetailUkey, @UnAssignSewer, @SewerCreateStation, @GroupSeqCreateStation, @TotalSewerForCreate)
+						set @UnAssignSewer = 0
+					end
+					ELSE
+					BEGIN
+						set @AssignSewer = iif(@UnAssignSewer < @SewerLimitHigh - @StationSewer, @UnAssignSewer, @SewerLimitHigh - @StationSewer) 
+
+						insert into #tmpReaultBase(StationNo, TimeStudyDetailUkey, DivSewer, OriSewer, GroupSeq, TotalSewer)
+						values(@StationNoForFix, @TimeStudyDetailUkey, @AssignSewer, @SewerCreateStation, @GroupSeqCreateStation, @TotalSewerForCreate)
+
+						set @UnAssignSewer = @UnAssignSewer - @AssignSewer
+					END
+					
+				END
+				else
+				-- 還可新增站數
+				BEGIN
+					set @StationNo = @StationNo + 1
+					set @AssignSewer = iif(@UnAssignSewer <= @SewerLimitHigh, @UnAssignSewer, @SewerLimitMiddle) 
+
+					insert into #tmpReaultBase(StationNo, TimeStudyDetailUkey, DivSewer, OriSewer, GroupSeq, TotalSewer)
+					values(@StationNo, @TimeStudyDetailUkey, @AssignSewer, @SewerCreateStation, @GroupSeqCreateStation, @TotalSewerForCreate)
+
+					set @UnAssignSewer = @UnAssignSewer - @AssignSewer
+				END
+			end
 	end
 
 	set @LastTotalSewerForCreate = @TotalSewerForCreate
@@ -430,9 +475,9 @@ where   t.StyleID = @StyleID and
 
 select	tmd.TotalSewer,
 		[TotalGSDTime] = Sum(Round(tmd.GSD * tmd.SewerDiffPercentage, 2)),
-		[AvgGSDTime] = Round(Sum(Round(tmd.GSD * tmd.SewerDiffPercentage, 2)) / @ManualSewer, 2),
-		[PackerManpower] = iif(Floor(@PackingProTMS / Round(Sum(Round(tmd.GSD * tmd.SewerDiffPercentage, 2)) / @ManualSewer, 2)) = 0, 1, Floor(@PackingProTMS / Round(Sum(Round(tmd.GSD * tmd.SewerDiffPercentage, 2)) / @ManualSewer, 2))),
-		[PresserManpower] = iif(Floor(@PressingProTMS / Round(Sum(Round(tmd.GSD * tmd.SewerDiffPercentage, 2)) / @ManualSewer, 2)) = 0, 1, Floor(@PressingProTMS / Round(Sum(Round(tmd.GSD * tmd.SewerDiffPercentage, 2)) / @ManualSewer, 2)))
+		[AvgGSDTime] = Round(Sum(Round(tmd.GSD * tmd.SewerDiffPercentage, 2)) / NULLIF(@ManualSewer,0), 2),
+		[PackerManpower] = iif(Floor(@PackingProTMS / Round(Sum(Round(tmd.GSD * tmd.SewerDiffPercentage, 2)) / NULLIF(@ManualSewer,0), 2)) = 0, 1, Floor(@PackingProTMS / Round(Sum(Round(tmd.GSD * tmd.SewerDiffPercentage, 2)) / NULLIF(@ManualSewer,0), 2))),
+		[PresserManpower] = iif(Floor(@PressingProTMS / Round(Sum(Round(tmd.GSD * tmd.SewerDiffPercentage, 2)) / NULLIF(@ManualSewer,0), 2)) = 0, 1, Floor(@PressingProTMS / Round(Sum(Round(tmd.GSD * tmd.SewerDiffPercentage, 2)) / NULLIF(@ManualSewer,0), 2)))
 into #detailSummary
 from #tmpAutomatedLineMapping_Detail tmd
 where	tmd.OperationID not in ('PROCIPF00004', 'PROCIPF00003') and
@@ -596,8 +641,8 @@ select	[StyleUkey] = s.Ukey,
 		[OriSewerManpower] = @ManualSewer,
 		[PackerManpower] = ds.PackerManpower,
 		[PresserManpower] = ds.PresserManpower,
-		ds.TotalGSDTime,
-		[HighestGSDTime] = (select Max(GSD)
+		[TotalGSDTime] = isnull(ds.TotalGSDTime,0),
+		[HighestGSDTime] = isnull((select Max(GSD)
 							from (
 									select [GSD] = sum(GSD * SewerDiffPercentage)
 									from #tmpAutomatedLineMapping_Detail
@@ -607,7 +652,7 @@ select	[StyleUkey] = s.Ukey,
 											IsNonSewingLine = 0 and
 											No <> ''
 									Group by No) a
-							),
+							),0),
 		[TimeStudyID] = t.ID,
 		[TimeStudyStatus] = t.Status,
 		[TimeStudyVersion] = t.Version,
@@ -650,6 +695,7 @@ cross join #tmpAutomatedLineMapping_Detail tmd
 where tmd.TotalSewer = 0
 order by [SewerManpower], No, Seq
 
-drop table #tmpTotalSewerRange, #tmpTimeStudy_Detail, #tmpGroupSewer, #tmpReaultBase, #tmpLocation, #tmpAutomatedLineMapping_Detail, #detailSummary
+drop table #tmpTotalSewerRange, #tmpTimeStudy_Detail, #tmpGroupSewer, #tmpReaultBase, #tmpLocation, #tmpAutomatedLineMapping_Detail, #detailSummary, #tmpCheckLimit
 
 end
+

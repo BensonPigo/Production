@@ -577,16 +577,9 @@ from (
                 string current_Dyelot = drModify["dyelot", DataRowVersion.Current].ToString();
                 if (original_Roll != current_Roll || original_Dyelot != current_Dyelot)
                 {
-                    string sqlcheckUniquekey = $@"
-select 1
-from {this.gridAlias} sd
-where RTRIM(Ltrim(sd.POID)) = RTRIM(Ltrim('{drModify["POID"]}'))
-and RTRIM(Ltrim(sd.Seq1)) = RTRIM(Ltrim('{drModify["Seq1"]}'))
-and RTRIM(Ltrim(sd.Seq2)) = RTRIM(Ltrim('{drModify["Seq2"]}'))
-and RTRIM(Ltrim(sd.Roll)) = RTRIM(Ltrim('{current_Roll}'))
-and RTRIM(Ltrim(sd.Dyelot)) = RTRIM(Ltrim('{current_Dyelot}'))
-";
-                    if (MyUtility.Check.Seek(sqlcheckUniquekey))
+                    // 判斷 在 FtyInventory 是否存在
+                    bool chkFtyInventory = PublicPrg.Prgs.ChkFtyInventory(MyUtility.Convert.GetString(drModify["POID"]), MyUtility.Convert.GetString(drModify["Seq1"]), MyUtility.Convert.GetString(drModify["Seq2"]), current_Roll, current_Dyelot, MyUtility.Convert.GetString(drModify["StockType"]));
+                    if (!chkFtyInventory)
                     {
                         msg += $@"SP#: {drModify["poid"]} Seq#: {drModify["seq1"]}-{drModify["seq2"]} Roll#: {drModify["roll"]} Dyelot: {drModify["Dyelot"]}." + Environment.NewLine;
                     }

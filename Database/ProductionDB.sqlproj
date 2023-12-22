@@ -2884,12 +2884,24 @@
     <Build Include="dbo\Stored Procedures\GetCuttingScheduleOutputList.sql" />
     <Build Include="dbo\Tables\SubconOutContractAP.sql" />
     <Build Include="dbo\Tables\SubconOutContractAP_Detail.sql" />
+    <Build Include="dbo\Stored Procedures\Warehouse_Report_R16.sql" />
     <Build Include="dbo\Tables\LineMappingBalancing.sql" />
     <Build Include="dbo\Tables\LineMappingBalancing_Detail.sql" />
     <Build Include="dbo\Tables\LineMappingBalancing_NotHitTargetReason.sql" />
     <Build Include="dbo\Functions\GetQA_R08_Detail.sql" />
     <Build Include="dbo\Stored Procedures\GetFabricInspLabSummaryReport.sql" />
     <Build Include="dbo\Tables\DownloadStickerQueue.sql" />
+    <Build Include="dbo\Stored Procedures\PPIC_R01_SewingLineScheduleBySP.sql" />
+    <Build Include="dbo\Stored Procedures\GetCuttingBCS.sql" />
+    <Build Include="dbo\Functions\GetQA_R11_ReceivingTransferIn_Detail.sql" />
+    <Build Include="dbo\Functions\Get_SubCon_R41_Report.sql" />
+    <Build Include="dbo\Functions\Warehouse_Report_R25.sql" />
+    <Build Include="dbo\Functions\GetParseOperationMold.sql" />
+    <Build Include="dbo\Tables\CutPlan_IssueCutDate.sql" />
+    <Build Include="dbo\Tables\CutPlan_DetailDeletedHistory.sql" />
+    <Build Include="dbo\Tables\FIR_Laboratory_Iron.sql" />
+    <Build Include="dbo\Tables\ExpressDuty.sql" />
+    <Build Include="dbo\Tables\ExpressDuty_Functions.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />

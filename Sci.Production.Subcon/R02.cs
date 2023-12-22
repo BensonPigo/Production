@@ -111,11 +111,13 @@ namespace Sci.Production.Subcon
             string sqlcmd = $@"
 select 
 [Factory] = s.Factoryid
+,[OrderFactory]  = o.FactoryID
 ,[Subcon Name]  = sd.SubConOutFty
 ,[Contract No] = sd.ContractNumber
 ,[Style] = o.StyleID
 ,[SP] = o.ID
-,[Qty] = Order_Qty.Qty
+,[OrderQty] = Order_Qty.Qty
+,[SubconOutQty] = sd.Outputqty
 ,[Sewing_CPU] = ROUND(tms.SewingCPU * r.rate,4,4)
 ,LocalCurrencyID = LocalCurrencyID
 ,LocalUnitPrice = isnull(LocalUnitPrice,0)
@@ -142,8 +144,7 @@ select
 ,[Remark]=''
 from dbo.SubconOutContract_Detail sd with (nolock)
 left join Orders o with (nolock) on sd.Orderid = o.ID
-left join SubconOutContract s with (nolock) 
-on sd.SubConOutFty=s.SubConOutFty  and sd.ContractNumber=s.ContractNumber
+left join SubconOutContract s with (nolock) on sd.SubConOutFty=s.SubConOutFty  and sd.ContractNumber=s.ContractNumber
 outer apply(
 	select isnull(sum(Qty),0) Qty
 	from Order_Qty with (nolock) 
@@ -201,9 +202,9 @@ where 1=1
             for (int c = 1; c <= this.printData.Rows.Count; c++)
             {
                 int tr = c + 3;
-                wks.Cells[c + 3, 22] = $"=(M{tr}-S{tr}-T{tr}-U{tr})/(G{tr}+O{tr}+P{tr}+Q{tr}+R{tr})";
-                wks.Cells[c + 3, 23] = $"=IF(Q{tr}<S{tr},\"<\",\">\")";
-                wks.Cells[c + 3, 28] = $"=U{tr}/V{tr}";
+                wks.Cells[c + 3, 24] = $"=(O{tr}-U{tr}-V{tr}-W{tr})/(I{tr}+Q{tr}+R{tr}+S{tr}+T{tr})";
+                wks.Cells[c + 3, 25] = $"=IF(S{tr}<U{tr},\"<\",\">\")";
+                wks.Cells[c + 3, 30] = $"=W{tr}/X{tr}";
             }
 
             objApp.Cells.EntireColumn.AutoFit();    // 自動欄寬
@@ -212,7 +213,7 @@ where 1=1
             // 畫框線
             int rowcnt = this.printData.Rows.Count + 3;
             Microsoft.Office.Interop.Excel.Range rg1;
-            rg1 = wks.get_Range("A4", $"AD{this.printData.Rows.Count + 3}");
+            rg1 = wks.get_Range("A4", $"AF{this.printData.Rows.Count + 3}");
             rg1.Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeBottom].LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlLineStyleNone;
             rg1.Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeBottom].Weight = 2;
             rg1.Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeTop].LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlLineStyleNone;

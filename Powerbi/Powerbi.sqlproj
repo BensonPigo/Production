@@ -99,7 +99,6 @@
     <Build Include="dbo\Tables\P_TransLog.sql" />
     <Build Include="dbo\Tables\P_TransImport.sql" />
     <Build Include="dbo\Tables\P_SDPOrderDetail.sql" />
-    <Build Include="dbo\Stored Procedures\P_ImportSewingLineScheduleData.sql" />
     <Build Include="dbo\Stored Procedures\FTY\ImportEfficiencyBI.sql" />
     <Build Include="dbo\Stored Procedures\FTY\P_ImportSDPOrderDetail.sql" />
     <Build Include="dbo\Stored Procedures\FTY\ImportForecastLoadingBI.sql" />
@@ -143,7 +142,6 @@
     <Build Include="dbo\Tables\P_QA_R06_Original.sql" />
     <Build Include="dbo\Tables\P_QA_R31_Original.sql" />
     <Build Include="dbo\Tables\P_SewingDailyOutput_Original.sql" />
-    <Build Include="dbo\Tables\P_SewingLineSchedule_Original.sql" />
     <Build Include="dbo\Stored Procedures\P_ImportEstShippingReport.sql" />
     <Build Include="dbo\Tables\BITableInfo.sql" />
     <Build Include="dbo\Tables\T_Credit.sql" />
@@ -187,15 +185,17 @@
     <Build Include="dbo\Stored Procedures\FTY\P_Import_MtltoFTYAnalysis.sql" />
     <Build Include="dbo\Tables\P_CuttingScheduleOutputList.sql" />
     <Build Include="dbo\Stored Procedures\FTY\P_ImportCuttingScheduleOutputList.sql" />
+    <Build Include="dbo\Tables\P_IssueFabricByCuttingTransactionList.sql" />
+    <Build Include="dbo\Stored Procedures\FTY\P_Import_WH_R16.sql" />
     <Build Include="dbo\View\P_ArtworkType.sql" />
     <Build Include="dbo\Tables\P_PPICMasterList_Extend.sql" />
-    <Build Include="dbo\Stored Procedures\FTY\P_Import_PPIC_R04.sql" />
+    <Build Include="dbo\Stored Procedures\FTY\P_Import_FabricStatus_And_IssueFabricTracking.sql" />
     <Build Include="dbo\Tables\P_FabricStatus_And_IssueFabricTracking.sql" />
     <Build Include="dbo\Tables\P_ActualCutOutputReport.sql" />
     <Build Include="dbo\Tables\P_SubprocessWIP.sql" />
-    <Build Include="dbo\Stored Procedures\FTY\P_Import_Subcon_R41.sql" />
+    <Build Include="dbo\Stored Procedures\FTY\P_Import_SubprocessWIP.sql" />
     <Build Include="dbo\Tables\P_WIP.sql" />
-    <Build Include="dbo\Stored Procedures\FTY\P_Import_Planning_R15.sql" />
+    <Build Include="dbo\Stored Procedures\FTY\P_Import_WIP.sql" />
     <Build Include="dbo\Tables\P_FabricInspDailyReport_Detail.sql" />
     <Build Include="dbo\Stored Procedures\FTY\P_Import_QA_R08_Detail.sql" />
     <Build Include="dbo\Stored Procedures\FTY\P_ImportADIDASComplain_24Month.sql" />
@@ -204,6 +204,25 @@
     <Build Include="dbo\Tables\P_FabricInspLabSummaryReport.sql" />
     <Build Include="dbo\Stored Procedures\FTY\P_ImportFabricInspLabSummaryReport.sql" />
     <Build Include="dbo\View\P_Factory.sql" />
+    <Build Include="dbo\Tables\P_SewingLineScheduleBySP.sql" />
+    <Build Include="dbo\Stored Procedures\FTY\P_Import_PPIC_R01_SewingLineScheduleBySP.sql" />
+    <Build Include="dbo\Tables\P_CuttingBCS.sql" />
+    <Build Include="dbo\Stored Procedures\FTY\P_ImportCuttingBCS.sql" />
+    <Build Include="dbo\Tables\P_ProductionKitsTracking.sql" />
+    <Build Include="dbo\Stored Procedures\FTY\P_ImportProductionKitsTracking.sql" />
+    <Build Include="dbo\Stored Procedures\FTY\P_Import_ICRAnalysis.sql" />
+    <Build Include="dbo\Tables\P_ICRAnalysis.sql" />
+    <Build Include="dbo\Stored Procedures\FTY\P_Import_QA_R11_DefectDetail.sql" />
+    <Build Include="dbo\Tables\P_FabricInspReport_ReceivingTransferIn.sql" />
+    <Build Include="dbo\Stored Procedures\FTY\P_Import_ActualCutOutputReport.sql" />
+    <Build Include="dbo\Tables\P_ImportScheduleList.sql" />
+    <Build Include="dbo\Stored Procedures\FTY\P_Import_AccessoryInspLabStatus.sql" />
+    <Build Include="dbo\Tables\P_AccessoryInspLabStatus.sql" />
+    <Build Include="dbo\Tables\P_ProdEfficiencyByFactorySewingLine.sql" />
+    <Build Include="dbo\Stored Procedures\FTY\P_Import_ProdEfficiencyByFactorySewingLine.sql" />
+    <Build Include="dbo\Tables\P_StyleChangeover.sql" />
+    <Build Include="dbo\Stored Procedures\FTY\P_Import_StyleChangeover.sql" />
+    <Build Include="dbo\Stored Procedures\FTY\P_Import_WH_R25.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Utility.dll" />

@@ -386,7 +386,7 @@ delete LineMappingBalancing_NotHitTargetReason where ID = '{this.CurrentMaintain
             decimal checkLBRCondition = this.StandardLBR;
 
             if (checkLBRCondition > 0 &&
-                MyUtility.Convert.GetDecimal(this.CurrentMaintain["LBRByGSDTime"]) < checkLBRCondition)
+                MyUtility.Convert.GetDecimal(this.CurrentMaintain["LBRByCycleTime"]) < checkLBRCondition)
             {
                 DialogResult dialogResult = CustomQuestionBox.ShowDialog($"[LBR By Cycle Time(%)] should not be lower than {checkLBRCondition}%, please double check and revise it, thanks!", string.Empty, "Confirm", "Close");
 
@@ -545,7 +545,8 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
             DataGridViewGeneratorMaskedTextColumnSettings colPPANo = new DataGridViewGeneratorMaskedTextColumnSettings();
             DataGridViewGeneratorNumericColumnSettings colCycleTime = new DataGridViewGeneratorNumericColumnSettings();
             DataGridViewGeneratorNumericColumnSettings colCycleTimePPA = new DataGridViewGeneratorNumericColumnSettings();
-            DataGridViewGeneratorTextColumnSettings colOperator = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings colOperator_ID = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings colOperator_Name = new DataGridViewGeneratorTextColumnSettings();
 
             colCycleTime.CellValidating += (s, e) =>
             {
@@ -659,8 +660,8 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
                 this.detailgrid.Refresh();
             };
 
-            #region Operator ID No.的按右鍵與Validating
-            colOperator.EditingMouseDown += (s, e) =>
+            #region Operator ID No. 和 Operator Name的按右鍵與Validating
+            colOperator_ID.EditingMouseDown += (s, e) =>
             {
                 if (!this.EditMode)
                 {
@@ -678,46 +679,44 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
                     return;
                 }
 
-                if (MyUtility.Check.Empty(this.CurrentMaintain["SewingLineID"]))
-                {
-                    MyUtility.Msg.WarningBox("Please input the [Sewing Line] before input the [Operator ID]");
-                    return;
-                }
-
                 DataGridView sourceGrid = ((DataGridViewColumn)s).DataGridView;
 
                 if (e.RowIndex != -1)
                 {
                     DataRow dr = sourceGrid.GetDataRow<DataRow>(e.RowIndex);
 
-                    this.GetEmployee(null, this.CurrentMaintain["FactoryID"].ToString(), this.CurrentMaintain["SewingLineID"].ToString());
-
-                    Win.Tools.SelectItem item = new Win.Tools.SelectItem(this.EmployeeData, "ID,Name,Skill,SewingLineID,FactoryID", "10,18,16,2,5", dr["EmployeeID"].ToString(), headercaptions: "ID,Name,Skill,SewingLine,Factory")
-                    {
-                        Width = 700,
-                    };
-                    DialogResult returnResult = item.ShowDialog();
-                    if (returnResult == DialogResult.Cancel)
+                    this.GetEmployee(null,null, this.CurrentMaintain["FactoryID"].ToString(), this.CurrentMaintain["SewingLineID"].ToString());
+                    P03_Operator callNextForm = new P03_Operator(this.EmployeeData, MyUtility.Convert.GetString(this.CurrentMaintain["SewingLineID"]) + this.txtSewingTeam.Text);
+                    DialogResult result = callNextForm.ShowDialog(this);
+                    if (result == DialogResult.Cancel)
                     {
                         return;
                     }
 
-                    IList<DataRow> selectedData = item.GetSelecteds();
-                    dr["EmployeeID"] = selectedData[0]["ID"];
-                    dr["EmployeeName"] = selectedData[0]["Name"];
-                    dr["EmployeeSkill"] = selectedData[0]["Skill"];
+                    DataTable dt = (DataTable)this.detailgridbs.DataSource;
+                    DataRow[] errorDataRow = dt.Select($"EmployeeID = '{MyUtility.Convert.GetString(callNextForm.SelectOperator["ID"])}' and NO <> '{MyUtility.Convert.GetString(dr["No"])}'");
+                    if (errorDataRow.Length > 0)
+                    {
+                        this.ReviseEmployeeToEmpty(dr);
+                        MyUtility.Msg.WarningBox($"<{this.EmployeeData.Rows[0]["ID"]} {this.EmployeeData.Rows[0]["Name"]}> already been used in No.{MyUtility.Convert.GetString(errorDataRow[0]["No"])}!!");
+                        return;
+                    }
+
+                    dr["EmployeeID"] = callNextForm.SelectOperator["ID"];
+                    dr["EmployeeName"] = callNextForm.SelectOperator["Name"];
+                    dr["EmployeeSkill"] = callNextForm.SelectOperator["Skill"];
                     dr.EndEdit();
 
                     foreach (DataRow drDetail in this.DetailDatas.Where(row => row["No"].ToString() == dr["No"].ToString()))
                     {
-                        drDetail["EmployeeID"] = selectedData[0]["ID"];
-                        drDetail["EmployeeName"] = selectedData[0]["Name"];
-                        drDetail["EmployeeSkill"] = selectedData[0]["Skill"];
+                        drDetail["EmployeeID"] = callNextForm.SelectOperator["ID"];
+                        drDetail["EmployeeName"] = callNextForm.SelectOperator["Name"];
+                        drDetail["EmployeeSkill"] = callNextForm.SelectOperator["Skill"];
                     }
                 }
             };
 
-            colOperator.CellValidating += (s, e) =>
+            colOperator_ID.CellValidating += (s, e) =>
             {
                 if (!this.EditMode)
                 {
@@ -740,21 +739,145 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
                     return;
                 }
 
-                if (MyUtility.Check.Empty(this.CurrentMaintain["SewingLineID"]))
-                {
-                    MyUtility.Msg.WarningBox("Please input the [Sewing Line] before input the [Operator ID]");
-                    this.ReviseEmployeeToEmpty(dr);
-                    return;
-                }
-
                 if (e.FormattedValue.ToString() != dr["EmployeeID"].ToString())
                 {
-                    this.GetEmployee(e.FormattedValue.ToString(), this.CurrentMaintain["FactoryID"].ToString(), this.CurrentMaintain["SewingLineID"].ToString());
+                    this.GetEmployee(null, e.FormattedValue.ToString(), this.CurrentMaintain["FactoryID"].ToString(), this.CurrentMaintain["SewingLineID"].ToString());
+
+                    DataTable dt = (DataTable)this.detailgridbs.DataSource;
+                    DataRow[] errorDataRow = dt.Select($"EmployeeID = '{MyUtility.Convert.GetString(e.FormattedValue.ToString())}' and NO <> '{MyUtility.Convert.GetString(dr["No"])}'");
+                    if (errorDataRow.Length > 0)
+                    {
+                        this.ReviseEmployeeToEmpty(dr);
+                        MyUtility.Msg.WarningBox($"<{e.FormattedValue.ToString()} {this.EmployeeData.Rows[0]["Name"]}> already been used in No.{MyUtility.Convert.GetString(errorDataRow[0]["No"])}!!");
+                        return;
+                    }
+
                     if (this.EmployeeData.Rows.Count <= 0)
                     {
                         this.ReviseEmployeeToEmpty(dr);
                         e.Cancel = true;
                         MyUtility.Msg.WarningBox(string.Format("< Employee ID: {0} > not found!!!", e.FormattedValue.ToString()));
+                        return;
+                    }
+                    else
+                    {
+                        dr["EmployeeID"] = this.EmployeeData.Rows[0]["ID"];
+                        dr["EmployeeName"] = this.EmployeeData.Rows[0]["Name"];
+                        dr["EmployeeSkill"] = this.EmployeeData.Rows[0]["Skill"];
+                        dr.EndEdit();
+
+                        foreach (DataRow drDetail in this.DetailDatas.Where(row => row["No"].ToString() == dr["No"].ToString()))
+                        {
+                            drDetail["EmployeeID"] = this.EmployeeData.Rows[0]["ID"];
+                            drDetail["EmployeeName"] = this.EmployeeData.Rows[0]["Name"];
+                            drDetail["EmployeeSkill"] = this.EmployeeData.Rows[0]["Skill"];
+                        }
+                    }
+                }
+            };
+
+            colOperator_Name.EditingMouseDown += (s, e) =>
+            {
+                if (!this.EditMode)
+                {
+                    return;
+                }
+
+                if (e.Button != MouseButtons.Right)
+                {
+                    return;
+                }
+
+                if (MyUtility.Check.Empty(this.CurrentMaintain["FactoryID"]))
+                {
+                    MyUtility.Msg.WarningBox("Please input the [Factory] before input the [Operator ID]");
+                    return;
+                }
+
+                DataGridView sourceGrid = ((DataGridViewColumn)s).DataGridView;
+
+                if (e.RowIndex != -1)
+                {
+                    DataRow dr = sourceGrid.GetDataRow<DataRow>(e.RowIndex);
+
+                    this.GetEmployee(null,null, this.CurrentMaintain["FactoryID"].ToString(), this.CurrentMaintain["SewingLineID"].ToString());
+                    P03_Operator callNextForm = new P03_Operator(this.EmployeeData, MyUtility.Convert.GetString(this.CurrentMaintain["SewingLineID"]) + this.txtSewingTeam.Text);
+                    DialogResult result = callNextForm.ShowDialog(this);
+                    if (result == DialogResult.Cancel)
+                    {
+                        return;
+                    }
+
+                    DataTable dt = (DataTable)this.detailgridbs.DataSource;
+                    DataRow[] errorDataRow = dt.Select($"EmployeeID = '{MyUtility.Convert.GetString(callNextForm.SelectOperator["ID"])}' and NO <> '{MyUtility.Convert.GetString(dr["No"])}'");
+                    if (errorDataRow.Length > 0)
+                    {
+                        this.ReviseEmployeeToEmpty(dr);
+                        MyUtility.Msg.WarningBox($"<{this.EmployeeData.Rows[0]["ID"]} {this.EmployeeData.Rows[0]["Name"]}> already been used in No.{MyUtility.Convert.GetString(errorDataRow[0]["No"])}!!");
+                        return;
+                    }
+
+                    dr["EmployeeID"] = callNextForm.SelectOperator["ID"];
+                    dr["EmployeeName"] = callNextForm.SelectOperator["Name"];
+                    dr["EmployeeSkill"] = callNextForm.SelectOperator["Skill"];
+                    dr.EndEdit();
+
+                    foreach (DataRow drDetail in this.DetailDatas.Where(row => row["No"].ToString() == dr["No"].ToString()))
+                    {
+                        drDetail["EmployeeID"] = callNextForm.SelectOperator["ID"];
+                        drDetail["EmployeeName"] = callNextForm.SelectOperator["Name"];
+                        drDetail["EmployeeSkill"] = callNextForm.SelectOperator["Skill"];
+                    }
+                }
+            };
+
+            colOperator_Name.CellValidating += (s, e) =>
+            {
+                if (!this.EditMode)
+                {
+                    return;
+                }
+
+                DataGridView sourceGrid = ((DataGridViewColumn)s).DataGridView;
+                DataRow dr = sourceGrid.GetDataRow<DataRow>(e.RowIndex);
+
+                if (MyUtility.Check.Empty(e.FormattedValue))
+                {
+                    this.ReviseEmployeeToEmpty(dr);
+                    return;
+                }
+
+                if (MyUtility.Check.Empty(this.CurrentMaintain["FactoryID"]))
+                {
+                    MyUtility.Msg.WarningBox("Please input the [Factory] before input the [Operator ID]");
+                    this.ReviseEmployeeToEmpty(dr);
+                    return;
+                }
+
+                if (!e.FormattedValue.ToString().Contains(","))
+                {
+                    MyUtility.Msg.WarningBox(string.Format("< Employee Name: {0} > not found!!!", e.FormattedValue.ToString()));
+                    this.ReviseEmployeeToEmpty(dr);
+                    return;
+                }
+
+                if (e.FormattedValue.ToString() != dr["EmployeeName"].ToString())
+                {
+                    this.GetEmployee(e.FormattedValue.ToString(), null, this.CurrentMaintain["FactoryID"].ToString(), this.CurrentMaintain["SewingLineID"].ToString());
+                    DataTable dt = (DataTable)this.detailgridbs.DataSource;
+                    DataRow[] errorDataRow = dt.Select($"EmployeeName = '{MyUtility.Convert.GetString(e.FormattedValue.ToString())}' and NO <> '{MyUtility.Convert.GetString(dr["No"])}'");
+                    if (errorDataRow.Length > 0)
+                    {
+                        this.ReviseEmployeeToEmpty(dr);
+                        MyUtility.Msg.WarningBox($"<{this.EmployeeData.Rows[0]["ID"]} {this.EmployeeData.Rows[0]["Name"]}> already been used in No.{MyUtility.Convert.GetString(errorDataRow[0]["No"])}!!");
+                        return;
+                    }
+
+                    if (this.EmployeeData.Rows.Count <= 0)
+                    {
+                        this.ReviseEmployeeToEmpty(dr);
+                        e.Cancel = true;
+                        MyUtility.Msg.WarningBox(string.Format("< Employee Name : {0} > not found!!!", e.FormattedValue.ToString()));
                         return;
                     }
                     else
@@ -813,8 +936,8 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
                .Text("No", header: "No. Of" + Environment.NewLine + "Station", width: Widths.AnsiChars(10), iseditingreadonly: true)
                .Text("TotalCycleTime", header: "Total" + Environment.NewLine + "Cycle Time", width: Widths.AnsiChars(10), iseditingreadonly: true)
                .Text("OperatorLoading", header: "Operator" + Environment.NewLine + "Loading (%)", width: Widths.AnsiChars(10), iseditingreadonly: true)
-               .Text("EmployeeID", header: "Operator ID", width: Widths.AnsiChars(10), settings: colOperator)
-               .Text("EmployeeName", header: "Operator" + Environment.NewLine + "Name", width: Widths.AnsiChars(10), iseditingreadonly: true)
+               .Text("EmployeeID", header: "Operator ID", width: Widths.AnsiChars(10), settings: colOperator_ID)
+               .Text("EmployeeName", header: "Operator" + Environment.NewLine + "Name", width: Widths.AnsiChars(10),settings: colOperator_Name)
                .Text("EmployeeSkill", header: "Skill", width: Widths.AnsiChars(10), iseditingreadonly: true)
                .Text("OperatorEffi", header: "Effi (%)", width: Widths.AnsiChars(10), iseditingreadonly: true);
 
@@ -822,13 +945,15 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
                .Text("No", header: "No. Of" + Environment.NewLine + "Station", width: Widths.AnsiChars(10), iseditingreadonly: true)
                .Text("TotalCycleTime", header: "Total" + Environment.NewLine + "Cycle Time", width: Widths.AnsiChars(10), iseditingreadonly: true)
                .Text("OperatorLoading", header: "Operator" + Environment.NewLine + "Loading (%)", width: Widths.AnsiChars(10), iseditingreadonly: true)
-               .Text("EmployeeID", header: "Operator ID", width: Widths.AnsiChars(10), settings: colOperator)
-               .Text("EmployeeName", header: "Operator" + Environment.NewLine + "Name", width: Widths.AnsiChars(10), iseditingreadonly: true)
+               .Text("EmployeeID", header: "Operator ID", width: Widths.AnsiChars(10), settings: colOperator_ID)
+               .Text("EmployeeName", header: "Operator" + Environment.NewLine + "Name", width: Widths.AnsiChars(10), settings: colOperator_Name)
                .Text("EmployeeSkill", header: "Skill", width: Widths.AnsiChars(10), iseditingreadonly: true)
                .Text("OperatorEffi", header: "Effi (%)", width: Widths.AnsiChars(10), iseditingreadonly: true);
 
             this.gridLineMappingRight.Columns["EmployeeID"].DefaultCellStyle.BackColor = Color.Pink;
+            this.gridLineMappingRight.Columns["EmployeeName"].DefaultCellStyle.BackColor = Color.Pink;
             this.gridCentralizedPPARight.Columns["EmployeeID"].DefaultCellStyle.BackColor = Color.Pink;
+            this.gridCentralizedPPARight.Columns["EmployeeName"].DefaultCellStyle.BackColor = Color.Pink;
 
             this.detailgrid.Columns["No"].Frozen = true;
             this.gridCentralizedPPALeft.Columns["No"].Frozen = true;
@@ -1000,11 +1125,72 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
         }
 
         // 撈出Employee資料
-        private void GetEmployee(string iD, string factoryID, string sewinglineID)
+        private void GetEmployee(string name, string iD, string factoryID, string sewinglineID)
         {
+
+            string lastName = string.Empty;
+            string firstName = string.Empty;
+            if (!MyUtility.Check.Empty(name) && name.Contains(","))
+            {
+                string[] nameParts = name.Split(',');
+                lastName = nameParts[0];
+                firstName = nameParts[1];
+            }
+
             string sqlCmd;
 
             string sqlWhere = string.Empty;
+
+            string strDept = string.Empty;
+            string strPosition = string.Empty;
+            string strWhere = string.Empty;
+            switch (factoryID)
+            {
+                case "MAI":
+                case "MA2":
+                case "MA3":
+                case "MW2":
+                case "FIT":
+                case "MWI":
+                case "FAC":
+                case "FA2":
+                case "PSR":
+                case "VT1":
+                case "VT2":
+                case "GMM":
+                case "GM2":
+                case "GMI":
+                case "PS2":
+                case "ALA":
+                    strDept = $"'PRO'";
+                    strPosition = $"'PCK','PRS','SEW','FSPR','LOP','STL','LL','SLS','SSLT'";
+                    strWhere = $@" and Dept in({strDept})  and Position in({strPosition})";
+                    break;
+                case "ESP":
+                case "ES2":
+                case "ES3":
+                case "VSP":
+                    strDept = $"'PRO'";
+                    strPosition = $"'PAC','PRS','SEW','LL'";
+                    strWhere = $@" and Dept in({strDept})  and Position in({strPosition})";
+                    break;
+                case "SPT":
+                    strDept = $"'PRO'";
+                    strPosition = $"'PAC','PRS','SEW','LL','SUP','PE','PIT','TL'";
+                    strWhere = $@" and Dept in({strDept})  and Position in({strPosition})";
+                    break;
+                case "SNP":
+                    strDept = $"'PRO'";
+                    strPosition = $"'SEW','LL','PIT'";
+                    strWhere = $@" and Dept in({strDept})  and Position in({strPosition})";
+                    break;
+                case "SPS":
+                case "SPR":
+                    strDept = $"'SEW'";
+                    strPosition = $"'SWR','TRNEE','Lneldr','LINSUP','PRSSR','PCKR'";
+                    strWhere = $@" and Dept in({strDept})  and Position in({strPosition})";
+                    break;
+            }
 
             if (!MyUtility.Check.Empty(iD))
             {
@@ -1016,12 +1202,11 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
                 sqlWhere += $" and FactoryID = '{factoryID}' ";
             }
 
-            if (!MyUtility.Check.Empty(sewinglineID))
-            {
-                sqlWhere += $" and SewingLineID = '{sewinglineID}' ";
-            }
-
-            sqlCmd = "select ID,Name,Skill,SewingLineID,FactoryID from Employee WITH (NOLOCK) where ResignationDate is null " + sqlWhere;
+            sqlCmd = "select ID,Name,FirstName,LastName,Section,Skill,SewingLineID,FactoryID from Employee WITH (NOLOCK) where ResignationDate is null " 
+                + sqlWhere
+                + strWhere
+                + (MyUtility.Check.Empty(lastName) ? string.Empty : $@" and LastName = '{lastName}' ")
+                + (MyUtility.Check.Empty(firstName) ? string.Empty : $@" and FirstName = '{firstName}'");
 
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out this.EmployeeData);
             if (!result)

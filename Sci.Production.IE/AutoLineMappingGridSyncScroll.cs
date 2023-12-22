@@ -531,7 +531,7 @@ namespace Sci.Production.IE
                                         newRow["EmployeeID"] = groupItem.Select(s => s["EmployeeID"].ToString()).First();
                                         newRow["EmployeeName"] = groupItem.Select(s => s["EmployeeName"].ToString()).First();
                                         newRow["EmployeeSkill"] = groupItem.Select(s => s["EmployeeSkill"].ToString()).First();
-                                        newRow["OperatorEffi"] = MyUtility.Convert.GetDecimal(newRow["TotalCycleTime"]) == 0 ? 0 : MyUtility.Math.Round(MyUtility.Convert.GetDecimal(newRow["TotalCycleTime"]) / MyUtility.Convert.GetDecimal(newRow["TotalGSDTime"]) * 100, 2);
+                                        newRow["OperatorEffi"] = MyUtility.Convert.GetDecimal(newRow["TotalCycleTime"]) == 0 ? 0 : MyUtility.Math.Round(MyUtility.Convert.GetDecimal(newRow["TotalGSDTime"]) / MyUtility.Convert.GetDecimal(newRow["TotalCycleTime"]) * 100, 2);
                                         return newRow;
                                     }).ToList();
                     break;
@@ -589,7 +589,7 @@ namespace Sci.Production.IE
                         newRow["EmployeeID"] = groupItem.Select(s => s["EmployeeID"].ToString()).First();
                         newRow["EmployeeName"] = groupItem.Select(s => s["EmployeeName"].ToString()).First();
                         newRow["EmployeeSkill"] = groupItem.Select(s => s["EmployeeSkill"].ToString()).First();
-                        newRow["OperatorEffi"] = MyUtility.Convert.GetDecimal(newRow["TotalCycleTime"]) == 0 ? 0 : MyUtility.Math.Round(MyUtility.Convert.GetDecimal(newRow["TotalCycleTime"]) / MyUtility.Convert.GetDecimal(newRow["TotalGSDTime"]) * 100, 2);
+                        newRow["OperatorEffi"] = MyUtility.Convert.GetDecimal(newRow["TotalCycleTime"]) == 0 ? 0 : MyUtility.Math.Round(MyUtility.Convert.GetDecimal(newRow["TotalGSDTime"]) / MyUtility.Convert.GetDecimal(newRow["TotalCycleTime"]) * 100, 2);
                         return newRow;
                     }).ToList();
                     break;

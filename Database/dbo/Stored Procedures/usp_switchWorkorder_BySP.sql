@@ -19,7 +19,34 @@ Select distinct @POID = POID,@FactoryID=FtyGroup From Orders  WITH (NOLOCK) Wher
 select *,Order_EachConsUkey = 0 into #tmp_WorkOrder_Distribute from [WorkOrder_Distribute] where 1=0
 alter table #tmp_WorkOrder_Distribute add colorid varchar(6)
 alter table #tmp_WorkOrder_Distribute add newKey int
-select *,newKey=0 into #tmp_Workorder from WorkOrder where 1=0
+select	ID,
+		FactoryID,
+		MDivisionid,
+		SEQ1,
+		SEQ2,
+		OrderID,
+		Layer,
+		Colorid,
+		MarkerName,
+		MarkerLength,
+		ConsPC,
+		Cons,
+		Refno,
+		SCIRefno,
+		Markerno,
+		MarkerVersion,
+		Type,
+		AddName,
+		AddDate,
+		MarkerDownLoadId,
+		FabricCombo,
+		FabricCode,
+		FabricPanelCode,
+		Order_eachconsUkey,
+		ActCuttingPerimeter,
+		StraightLength,
+		CurvedLength,
+		[newKey]=0 into #tmp_Workorder from WorkOrder where 1=0
 select *,newKey=0 into #tmp_WorkOrder_SizeRatio from WorkOrder_SizeRatio where 1=0
 select *,newKey=0 into #tmp_WorkOrder_PatternPanel from WorkOrder_PatternPanel where 1=0
 Select *,newKey=0 InTo #tmp_WorkOrder_PatternPaneltmp From WorkOrder_PatternPanel WITH (NOLOCK) Where 1 = 0
@@ -342,9 +369,9 @@ Begin
 		where sizecode = @FirstSizeCode and Order_EachConsUkey = @Order_EachConsUkey and colorid = @colorid and newkey = @tmpUkey2 order by orderid
 		set @Cons = @FLayer * @SumRatio * @ConsPC
 		Insert Into #tmp_Workorder(ID,FactoryID,MDivisionid,SEQ1,SEQ2,OrderID,Layer,Colorid,MarkerName,MarkerLength,ConsPC,Cons,Refno,SCIRefno,
-		Markerno,MarkerVersion,Type,AddName,AddDate,MarkerDownLoadId,FabricCombo,FabricCode,FabricPanelCode,newKey,Order_eachconsUkey,ActCuttingPerimeter,StraightLength,CurvedLength,[Shift],UnfinishedCuttingReason,Tone,Remark)
+		Markerno,MarkerVersion,Type,AddName,AddDate,MarkerDownLoadId,FabricCombo,FabricCode,FabricPanelCode,newKey,Order_eachconsUkey,ActCuttingPerimeter,StraightLength,CurvedLength)
 		values(@id,@FactoryID,@MDivisionid,@Seq1,@Seq2,@orderid,@FLayer,@ColorID,@MarkerName,@MarkerLength,@ConsPC,@Cons,@Refno,@SCIRefno,
-		@MarkerNo,@MarkerVersion,@type,@username,@AddDate,@MarkerDownloadID,@FabricCombo,@FabricCode,@FabricPanelCode,@tmpUkey2,@Order_EachConsUkey,@ActCuttingPerimeter,@StraightLength,@CurvedLength,'','','','')
+		@MarkerNo,@MarkerVersion,@type,@username,@AddDate,@MarkerDownloadID,@FabricCombo,@FabricCode,@FabricPanelCode,@tmpUkey2,@Order_EachConsUkey,@ActCuttingPerimeter,@StraightLength,@CurvedLength)
 		--SizeRatio
 		DECLARE Size CURSOR FOR Select SizeCode,qty	From Order_EachCons_SizeQty WITH (NOLOCK) Where Order_EachConsUkey = @Order_EachConsUkey order by Qty desc	
 		OPEN Size
@@ -401,12 +428,60 @@ OPEN insertALL
 FETCH NEXT FROM insertALL INTO @insertRow
 While @@FETCH_STATUS = 0
 Begin
-	insert into WorkOrder(id,factoryid,MDivisionId,SEQ1,SEQ2,CutRef,OrderID,CutplanID,Cutno,Layer,Colorid,Markername,
-					EstCutDate,CutCellid,MarkerLength,ConsPC,Cons,Refno,SCIRefno,MarkerNo,MarkerVersion,Type,Order_EachconsUkey,
-					AddName,AddDate,FabricCombo,MarkerDownLoadId,FabricCode,FabricPanelCode,ActCuttingPerimeter,StraightLength,CurvedLength,[Shift],Remark)
-	Select id,factoryid,MDivisionId,SEQ1,SEQ2,CutRef,OrderID,CutplanID,Cutno,Layer,Colorid,Markername,
-	EstCutDate,CutCellid,MarkerLength,ConsPC,Cons,Refno,SCIRefno,MarkerNo,MarkerVersion,Type,Order_EachconsUkey,
-	AddName,AddDate,FabricCombo,MarkerDownLoadId,FabricCode,FabricPanelCode ,ActCuttingPerimeter,StraightLength,CurvedLength,'',''
+	insert into WorkOrder(	ID,
+							FactoryID,
+							MDivisionid,
+							SEQ1,
+							SEQ2,
+							OrderID,
+							Layer,
+							Colorid,
+							MarkerName,
+							MarkerLength,
+							ConsPC,
+							Cons,
+							Refno,
+							SCIRefno,
+							Markerno,
+							MarkerVersion,
+							Type,
+							AddName,
+							AddDate,
+							MarkerDownLoadId,
+							FabricCombo,
+							FabricCode,
+							FabricPanelCode,
+							Order_eachconsUkey,
+							ActCuttingPerimeter,
+							StraightLength,
+							CurvedLength)
+	Select	ID,
+			FactoryID,
+			MDivisionid,
+			SEQ1,
+			SEQ2,
+			OrderID,
+			Layer,
+			Colorid,
+			MarkerName,
+			MarkerLength,
+			ConsPC,
+			Cons,
+			Refno,
+			SCIRefno,
+			Markerno,
+			MarkerVersion,
+			Type,
+			AddName,
+			AddDate,
+			MarkerDownLoadId,
+			FabricCombo,
+			FabricCode,
+			FabricPanelCode,
+			Order_eachconsUkey,
+			ActCuttingPerimeter,
+			StraightLength,
+			CurvedLength
 	From #tmp_Workorder Where newkey = @insertRow
 	select @iden = @@IDENTITY 
 	--------�N���X��Ident �g�J----------

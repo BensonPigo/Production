@@ -1,4 +1,4 @@
-﻿Create PROCEDURE [dbo].[P_Import_Planning_R15]
+﻿Create PROCEDURE [dbo].[P_Import_WIP]
 As
 Begin
 	Set NoCount On;

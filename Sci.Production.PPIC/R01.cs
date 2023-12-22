@@ -193,6 +193,7 @@ namespace Sci.Production.PPIC
                 worksheet = objApp.Sheets[3];
                 worksheet.Select();
                 this.printData.Columns.Remove("StyleName");
+                this.printData.Columns.Remove("StyleSeason");
 
                 DataTable printDataFilter = this.printData.Copy();
                 if (!this.chkIncludeCompleteSchedule.Checked)
@@ -606,8 +607,8 @@ namespace Sci.Production.PPIC
                     this.printData.Columns.Remove("CustPONo");
                     if (this.type == "SP#")
                     {
-                        this.printData.Columns.Remove("TTL_PRINTING (PCS)");
-                        this.printData.Columns.Remove("TTL_PRINTING PPU (PPU)");
+                        this.printData.Columns.Remove("TTL_PRINTING_PCS");
+                        this.printData.Columns.Remove("TTL_PRINTING_PPU_PPU");
                         this.printData.Columns.Remove("SubCon");
                     }
 
@@ -839,390 +840,84 @@ where id = '{0}'", Env.User.Factory), null);
             }
         }
 
-        private string SelectPrintingDatabySP()
-        {
-            return $@"
-select distinct orderid
-into #tmpSP
-from #tmp_main
-
-select  ot.ID
-		,ColumnN = RTRIM(at.ID) + ' ('+at.ArtworkUnit+')'
-        , val =  iif(at.ArtworkUnit = 'PCS',isnull(ot.Qty,0),isnull(ot.Price,0) )
-		, Supp = IIF(ot.ArtworkTypeID = 'PRINTING', IIF(ot.InhouseOSP = 'O', ls.abb, ot.LocalSuppID), '')
-into #tmp2P
-from Order_TmsCost ot WITH (NOLOCK) 
-inner join ArtworkType at WITH (NOLOCK) on at.ID = ot.ArtworkTypeID and at.ID in('PRINTING','PRINTING PPU')
-left join LocalSupp ls on ls.id = ot.LocalSuppID
-where exists(select 1 from #tmpSP where orderid = ot.id)
-
-select id,ColumnN,val into #tmp3P from #tmp2P
-
-select id,[PRINTING (PCS)],[PRINTING PPU (PPU)]
-into #tmp4P
-from #tmp3P
-pivot(min(val) for ColumnN in ([PRINTING (PCS)],[PRINTING PPU (PPU)]))p
-
-select *
-into #tmp5P
-from #tmp4P t
-outer apply(select top 1 SubCon = supp from #tmp2P where id = t.id and supp <> '')s
-
-drop table #tmp2P,#tmp3P,#tmp4P
-";
-        }
-
         private DualResult Query_by_SP()
         {
             DualResult result;
-            StringBuilder sqlCmd = new StringBuilder();
-            #region Main
-            sqlCmd.Append($@"
-select  s.SewingLineID
-            , s.MDivisionID
-            , s.FactoryID
-            , s.OrderID
-            , o.CustPONo
-            , s.ComboType
-            ,[Switch to Workorder] = Iif(cutting.WorkType='1','Combination',Iif(cutting.WorkType='2','By SP#',''))
-            , ( select CONCAT(Article,',') 
-                from (  select distinct Article 
-                        from SewingSchedule_Detail sd WITH (NOLOCK) 
-                        where sd.ID = s.ID
-                ) a for xml path('')) as Article            
-            , o.SeasonID
-            , [SizeCode] = ''
-            , o.CdCodeID
-            , o.StyleID
-            , o.Qty
-            , s.AlloQty
-            , isnull((select sum(Qty) 
-                        from CuttingOutput_WIP c WITH (NOLOCK) 
-                        where   c.OrderID = s.OrderID 
-                                and c.Article in (  select Article 
-                                                    from SewingSchedule_Detail sd WITH (NOLOCK) 
-                                                    where sd.ID = s.ID)
-                     ) ,0) as CutQty
-            , isnull((  select sum(sod.QAQty) 
-                        from    SewingOutput so WITH (NOLOCK) 
-                                , SewingOutput_Detail sod WITH (NOLOCK) 
-                        where   so.ID = sod.ID 
-                                and so.SewingLineID = s.SewingLineID 
-                                and sod.OrderId = s.OrderID 
-                                and sod.ComboType = s.ComboType
-                    ), 0) as SewingQty
-            , isnull((  select sum(pd.ShipQty) 
-                        from PackingList_Detail pd WITH (NOLOCK) 
-                        where   pd.OrderID = s.OrderID 
-                                and pd.ReceiveDate is not null
-                     ), '') as ClogQty
-			, [FirststCuttingOutputDate]=FirststCuttingOutputDate.Date
-            , InspDate = InspctDate.Val
-            , s.StandardOutput
-            , [Eff] = case when (s.sewer * s.workhour) = 0 then 0
-                      ELSE ROUND(CONVERT(float ,(s.AlloQty * s.TotalSewingTime) / (s.sewer * s.workhour * 3600)) * 100,2)
-                      END
-            , o.KPILETA
-            , o.MTLETA
-            , o.MTLExport
-            , s.Inline
-            , s.Offline
-            , o.SciDelivery
-            , o.BuyerDelivery
-			, o.CRDDate
-            , o.CPU * o.CPUFactor * ( isnull(isnull(ol_rate.value,sl_rate.value), 100) / 100) as CPU
-            , SewingCPU = convert(numeric(12,5), iif(isnull((SELECT StdTMS * 1.0 From System),0) = 0, 0, s.TotalSewingTime / (SELECT StdTMS * 1.0 From System)))
-            , IIF(o.VasShas=1, 'Y', '') as VasShas
-            , o.ShipModeList,isnull(c.Alias, '') as Alias 
-            , isnull((  select CONCAT(Remark, ', ') 
-                        from (  select s1.SewingLineID+'('+s1.ComboType+'):'+CONVERT(varchar,s1.AlloQty) as Remark 
-                                from SewingSchedule s1 WITH (NOLOCK) 
-                                where   s1.OrderID = s.OrderID 
-                                        and s1.ID != s.ID
-                        ) a for xml path('')
-                    ), '') as Remark
-            ,o.FtyGroup
-	        ,[CDCodeNew] = sty.CDCodeNew
-	        ,[ProductType] = sty.ProductType
-            ,[MatchFabric] = iif(o.IsNotRepeatOrMapping = 0 ,'Y','N')
-	        ,[FabricType] = sty.FabricType
-	        ,[Lining] = sty.Lining
-	        ,[Gender] = sty.Gender
-	        ,[Construction] = sty.Construction
-            ,o.Category
-	into #tmp_main
-    from SewingSchedule s WITH (NOLOCK) 
-    inner join Orders o WITH (NOLOCK) on o.ID = s.OrderID  
-    inner join Style st with (nolock) on st.Ukey = o.StyleUkey
-    left join Country c WITH (NOLOCK) on o.Dest = c.ID
-    left join cutting on cutting.ID =o.CuttingSP 
-    outer apply(select value = dbo.GetOrderLocation_Rate(o.id,s.ComboType) ) ol_rate
-    outer apply(select value = dbo.GetStyleLocation_Rate(o.StyleUkey,s.ComboType) ) sl_rate
-	OUTER APPLY(	
-		SELECT [Date]=MIN(co2.cDate)
-		FROM  WorkOrder_Distribute wd2 WITH (NOLOCK)
-		INNER JOIN CuttingOutput_Detail cod2 WITH (NOLOCK) on cod2.WorkOrderUkey = wd2.WorkOrderUkey
-		INNER JOIN CuttingOutput co2 WITH (NOLOCK) on co2.id = cod2.id and co2.Status <> 'New'
-		where wd2.OrderID =o.ID
-	)FirststCuttingOutputDate
-	OUTER APPLY(
-		SELECT [Val]=STUFF((
-		    SELECT  DISTINCT ','+ Cast(CFAFinalInspectDate as varchar)
-		    from Order_QtyShip oq
-		    WHERE ID = o.id
-		    FOR XML PATH('')
-		),1,1,'')
-	)InspctDate
-    Outer apply (
-	    SELECT s.[ID]
-		    , ProductType = r2.Name
-		    , FabricType = r1.Name
-		    , Lining
-		    , Gender
-		    , Construction = d1.Name
-            , s.CDCodeNew
-	    FROM Style s WITH(NOLOCK)
-	    left join DropDownList d1 WITH(NOLOCK) on d1.type= 'StyleConstruction' and d1.ID = s.Construction
-	    left join Reason r1 WITH(NOLOCK) on r1.ReasonTypeID= 'Fabric_Kind' and r1.ID = s.FabricType
-	    left join Reason r2 WITH(NOLOCK) on r2.ReasonTypeID= 'Style_Apparel_Type' and r2.ID = s.ApparelType
-	    where s.Ukey = o.StyleUkey
-    )sty
-    where 1=1
-");
-            #endregion
-            #region where條件
+            string sqlCmd = string.Empty;
+
+            List<string> sqlWhere = new List<string>();
+
             if (!MyUtility.Check.Empty(this.mDivision))
             {
-                sqlCmd.Append(string.Format(" and s.MDivisionID = '{0}'", this.mDivision));
+                sqlWhere.Add($" @MDivisionID = '{this.mDivision}'");
             }
 
             if (!MyUtility.Check.Empty(this.factory))
             {
-                sqlCmd.Append(string.Format(" and s.FactoryID = '{0}'", this.factory));
+                sqlWhere.Add($" @FactoryID = '{this.factory}'");
             }
 
             if (!MyUtility.Check.Empty(this.line1))
             {
-                sqlCmd.Append(string.Format(" and s.SewingLineID >= '{0}'", this.line1));
+                sqlWhere.Add($" @SewingLineIDFrom = '{this.line1}'");
             }
 
             if (!MyUtility.Check.Empty(this.line2))
             {
-                sqlCmd.Append(string.Format(" and s.SewingLineID <= '{0}'", this.line2));
+                sqlWhere.Add($" @SewingLineIDTo = '{this.line2}'");
             }
 
             if (!MyUtility.Check.Empty(this.SewingDate1))
             {
-                sqlCmd.Append(string.Format(" and (convert(date,s.Inline) >= '{0}' or ('{0}' between convert(date,s.Inline) and convert(date,s.Offline)))", Convert.ToDateTime(this.SewingDate1).ToString("yyyy/MM/dd")));
+                sqlWhere.Add($" @SewingDateFrom = '{Convert.ToDateTime(this.SewingDate1).ToString("yyyy/MM/dd")}'");
             }
 
             if (!MyUtility.Check.Empty(this.SewingDate2))
             {
-                sqlCmd.Append(string.Format(" and (convert(date,s.Offline) <= '{0}' or ('{0}' between convert(date,s.Inline) and convert(date,s.Offline)))", Convert.ToDateTime(this.SewingDate2).AddDays(1).ToString("yyyy/MM/dd")));
+                sqlWhere.Add($" @SewingDateTo = '{Convert.ToDateTime(this.SewingDate2).AddDays(1).ToString("yyyy/MM/dd")}'");
             }
 
             if (!MyUtility.Check.Empty(this.buyerDelivery1))
             {
-                sqlCmd.Append(string.Format(" and o.BuyerDelivery >= '{0}'", Convert.ToDateTime(this.buyerDelivery1).ToString("yyyy/MM/dd")));
+                sqlWhere.Add($" @BuyerDeliveryFrom = '{Convert.ToDateTime(this.buyerDelivery1).ToString("yyyy/MM/dd")}'");
             }
 
             if (!MyUtility.Check.Empty(this.buyerDelivery2))
             {
-                sqlCmd.Append(string.Format(" and o.BuyerDelivery <= '{0}'", Convert.ToDateTime(this.buyerDelivery2).ToString("yyyy/MM/dd")));
+                sqlWhere.Add($" @BuyerDeliveryTo = '{Convert.ToDateTime(this.buyerDelivery2).ToString("yyyy/MM/dd")}'");
             }
 
             if (!MyUtility.Check.Empty(this.sciDelivery1))
             {
-                sqlCmd.Append(string.Format(" and o.SciDelivery >= '{0}'", Convert.ToDateTime(this.sciDelivery1).ToString("yyyy/MM/dd")));
+                sqlWhere.Add($" @SciDeliveryFrom = '{Convert.ToDateTime(this.sciDelivery1).ToString("yyyy/MM/dd")}'");
             }
 
             if (!MyUtility.Check.Empty(this.sciDelivery2))
             {
-                sqlCmd.Append(string.Format(" and o.SciDelivery <= '{0}'", Convert.ToDateTime(this.sciDelivery2).ToString("yyyy/MM/dd")));
+                sqlWhere.Add($" @SciDeliveryTo = '{Convert.ToDateTime(this.sciDelivery2).ToString("yyyy/MM/dd")}'");
             }
 
             if (!MyUtility.Check.Empty(this.brand))
             {
-                sqlCmd.Append(string.Format(" and o.BrandID = '{0}'", this.brand));
+                sqlWhere.Add($" @BrandID = '{this.brand}'");
             }
 
             if (!MyUtility.Check.Empty(this.subProcess))
             {
-                sqlCmd.Append(string.Format(
-                    @"
-and exists(select 1 from Style_TmsCost st where o.StyleUkey = st.StyleUkey and st.ArtworkTypeID = '{0}' AND (st.Qty>0 or st.TMS>0 and st.Price>0) )", this.subProcess));
+                sqlWhere.Add($" @SubProcess = '{this.subProcess}'");
             }
-            #endregion
 
-            #region TempTable
-            sqlCmd.Append($@"
------------------------------------------------------------------
-/*                          TempTable                          */
------------------------------------------------------------------
-
-Select  w.FactoryID, w.SewingLineID, t.Inline, t.Offline
-		,isnull(sum(w.Hours),0) as Hours
-        , Count(w.Date) as ctn 
-into #tmp_WorkHour
-from WorkHour w WITH (NOLOCK) 
-inner join (select distinct FtyGroup,SewingLineID,Convert(Date,Inline) Inline,Convert(Date,Offline)Offline from #tmp_main) t 
-	on w.FactoryID = t.FtyGroup  and w.SewingLineID =t.SewingLineID and w.Date between Inline and Offline
-where w.Hours > 0 
-group by w.FactoryID, w.SewingLineID, t.Inline, t.Offline
-  
-select id, Remark as PFRemark
-into #tmp_PFRemark
-from
-(
-	 Select s.Id, s.Remark, s.AddDate, ROW_NUMBER() over(PARTITION BY s.Id order by s.AddDate desc) r_id
-     from Order_PFHis s WITH (NOLOCK) 
-	 inner join #tmp_main t on s.Id = t.OrderID
-) a
-where a.r_id = 1
-
-select 
-wd.OrderID,
-[CutInLine] = MIN(a.EstCutDate)
-into #tmp_CutInLine
-from WorkOrder_Distribute wd with (nolock)
-inner join  WorkOrder a with (nolock) on a.Ukey = wd.WorkOrderUkey
-where exists(select 1 from #tmp_main b where wd.OrderID = b.OrderID)
-group by wd.OrderID
-
-");
-            #endregion
-
-            #region 原CTE
-            sqlCmd.Append($@"
------------------------------------------------------------------
-/*                           原CTE                             */
------------------------------------------------------------------
-select  ot.ID
-        , at.Abbreviation
-        , ot.Qty
-        , ot.TMS
-        , at.Classify
-into #tmpAllArtwork
-from Order_TmsCost ot WITH (NOLOCK) 
-        , ArtworkType at WITH (NOLOCK) 
-where   ot.ArtworkTypeID = at.ID
-        and (ot.Price > 0 or at.Classify in ('O','I') )
-        and (at.Classify in ('S','I') or at.IsSubprocess = 1)
-        and (ot.TMS > 0 or ot.Qty > 0)
-        and at.Abbreviation !=''
-		and ot.ID in (select OrderID from #tmp_main) 
-
-select * 
-into #tmpArtWork
-from (
-    select  ID
-            , Abbreviation+':'+Convert(varchar,Qty) as Artwork 
-    from #tmpAllArtwork 
-    where Qty > 0
-        
-    union all
-    select  ID
-            , Abbreviation+':'+Convert(varchar,TMS) as Artwork 
-    from #tmpAllArtwork 
-    where TMS > 0 and Classify in ('O','I')
-) a 
-
-select tmpArtWorkID.ID
-        , Artwork = (select   CONCAT(Artwork,', ') 
-						from #tmpArtWork 
-						where ID = tmpArtWorkID.ID 
-						order by Artwork for xml path(''))  
-into #tmpOrderArtwork
-from (
-	select distinct ID
-	from #tmpArtWork
-) tmpArtWorkID
-
-drop table #tmpAllArtwork,#tmpArtWork
-
-");
-            #endregion
-
-            #region Final
-            sqlCmd.Append($@"
-{this.SelectPrintingDatabySP()}
------------------------------------------------------------------
-/*                           Final                            */
------------------------------------------------------------------
-select  SewingLineID
-        , MDivisionID
-        , FactoryID
-        , OrderID
-		, CustPONo
-        , Category
-        , ComboType
-        , [Switch to Workorder]
-        , IIF(Article = '', '', SUBSTRING(Article, 1, LEN(Article) - 1)) as Article
-        , SeasonID
-        , SizeCode
-        , CdCodeID
-	    , CDCodeNew
-	    , ProductType
-        , MatchFabric
-	    , FabricType
-	    , Lining
-	    , Gender
-	    , Construction
-        , StyleID
-        , Qty
-        , AlloQty
-        , CutQty
-        , SewingQty
-        , ClogQty
-		, FirststCuttingOutputDate
-        , InspDate
-        , StandardOutput * WorkHour as TotalStandardOutput
-        , WorkHour
-        , StandardOutput
-        , Eff
-        , KPILETA
-        , PFRemark
-        , MTLETA
-        , MTLExport
-        , CutInLine
-        , Inline
-        , Offline
-        , SciDelivery
-        , BuyerDelivery
-		, CRDDate
-        , CPU
-        , SewingCPU
-        , VasShas
-        , ShipModeList
-        , Alias
-        , ArtWork
-        , IIF(Remark = '','',SUBSTRING(Remark,1,LEN(Remark)-1)) as Remark 
-        , [TTL_PRINTING (PCS)] = t5.[PRINTING (PCS)] * Qty
-        , [TTL_PRINTING PPU (PPU)] = t5.[PRINTING PPU (PPU)] * Qty
-        , t5.SubCon
-from (
-	select t.* 
-			,isnull(pf.PFRemark,'') PFRemark
-			,IIF(w.ctn = 0, 0,w.Hours/w.ctn) WorkHour
-			, isnull(SUBSTRING(ta.Artwork, 1, LEN(ta.Artwork) - 1), '') as ArtWork 
-            , tc.CutInLine
-		from #tmp_main t
-		left join #tmp_PFRemark pf on t.OrderID = pf.Id
-		left join #tmp_WorkHour w on w.FactoryID = t.FtyGroup  and w.SewingLineID =t.SewingLineID and w.Inline = Convert(Date,t.Inline) and w.Offline = Convert(Date,t.Offline) 
-		left join #tmpOrderArtwork ta on ta.ID = t.OrderID 
-        left join #tmp_CutInLine tc on tc.OrderID = t.OrderID
-) a
-left join #tmp5P t5 on t5.id = a.orderid
-order by SewingLineID,MDivisionID,FactoryID,Inline,StyleID
-
-
-drop table #tmp_main,#tmp_PFRemark,#tmp_WorkHour,#tmpOrderArtwork,#tmp_CutInLine
-");
-            #endregion
+            sqlCmd = $" exec dbo.PPIC_R01_SewingLineScheduleBySP {sqlWhere.JoinToString(",")}";
 
             DBProxy.Current.DefaultTimeout = 1800;
             result = DBProxy.Current.Select(null, sqlCmd.ToString(), out this.printData);
             DBProxy.Current.DefaultTimeout = 300;
+
+            if (result)
+            {
+                this.printData.Columns.Remove("ID");
+            }
+
             return result;
         }
 

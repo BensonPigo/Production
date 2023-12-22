@@ -146,6 +146,7 @@ namespace Sci.Production.Warehouse
             .Numeric("avqty", name: "avqty", header: "Accu Var by Material", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10, iseditingreadonly: true) // 9
             .Text("unit", header: "unit", width: Widths.AnsiChars(4), iseditingreadonly: true) // add
             .Numeric("netqty", name: "netqty", header: "Net Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10, iseditingreadonly: true) // 10
+            .EditText("Remark", header: "Remark", width: Widths.AnsiChars(20))
             ;
             #endregion 欄位設定
 
@@ -234,6 +235,8 @@ namespace Sci.Production.Warehouse
                                       exists(select 1 from Issue_Detail with (nolock) where Issue_SummaryUkey = a.Ukey and f.seq1 = seq1 and f.seq2 = seq2)
                                 FOR XML PATH('')),1,1,'') )
 			,f.WeaveTypeID 
+            ,a.remark
+            ,Remark_old = ISNULL(a.remark, '')
 	from dbo.Issue_Summary a WITH (NOLOCK) 
     left join Fabric f on a.SciRefno = f.SciRefno
     outer apply (
@@ -397,6 +400,12 @@ outer apply(
                 foreach (DataRow row in tmp.Rows)
                 {
                     row.SetField("ID", tmpId);
+
+                    if (!MyUtility.Check.Empty(row["Remark"]))
+                    {
+                        row["RemarkEditDate"] = DateTime.Now;
+                        row["RemarkEditName"] = Sci.Env.User.UserID;
+                    }
                 }
             }
 
@@ -416,6 +425,27 @@ outer apply(
             }
 
             return base.ClickSaveBefore();
+        }
+
+        /// <inheritdoc/>
+        protected override DualResult ClickSavePost()
+        {
+            string sqlcmd = $@"
+UPDATE S
+SET
+    RemarkEditDate = GETDATE()
+    ,RemarkEditName = '{Sci.Env.User.UserID}'
+FROM Issue_Summary S WITH(NOLOCK)
+INNER JOIN #tmp t ON t.UKey = s.Ukey
+WHERE t.Remark_old <> s.Remark
+";
+            DualResult result = MyUtility.Tool.ProcessWithDatatable((DataTable)this.detailgridbs.DataSource, "Ukey,Remark,Remark_old", sqlcmd, out DataTable dt);
+            if (!result)
+            {
+                return result;
+            }
+
+            return base.ClickSavePost();
         }
 
         /// <inheritdoc/>

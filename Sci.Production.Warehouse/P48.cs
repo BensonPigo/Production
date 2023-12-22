@@ -5,6 +5,7 @@ using Sci.Data;
 using Sci.Production.Prg;
 using Sci.Production.Prg.Entity;
 using Sci.Production.PublicPrg;
+using Sci.Win.Tools;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -21,6 +22,8 @@ namespace Sci.Production.Warehouse
     public partial class P48 : Win.Tems.QueryForm
     {
         private DataTable dtInventory;
+        private Ict.Win.UI.DataGridViewTextBoxColumn col_ToPoid;
+        private Ict.Win.UI.DataGridViewTextBoxColumn col_ToSeq;
 
         /// <inheritdoc/>
         public P48(ToolStripMenuItem menuitem)
@@ -78,6 +81,10 @@ select  0 as selected
         , a.Seq2
         , concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2) as seq
         , dbo.getmtldesc(a.id,a.seq1,a.seq2,2,0) as [Description]
+        , [ToPoID] = ''
+        , [ToSeq] = ''
+        , [ToSeq1] = ''
+        , [ToSeq2] = ''
         , c.Roll
         , c.Dyelot
         , c.inqty - c.outqty + c.adjustqty - c.ReturnQty as QtyBefore
@@ -254,6 +261,12 @@ Where   c.lock = 0
             {
                 if (this.EditMode && e.Button == MouseButtons.Right)
                 {
+                    DataRow dr = this.gridImport.GetDataRow(e.RowIndex);
+                    if (dr == null)
+                    {
+                        return;
+                    }
+
                     DataTable poitems;
                     string sqlcmd = string.Empty;
                     IList<DataRow> x;
@@ -280,47 +293,279 @@ Where   c.lock = 0
                     }
 
                     x = item.GetSelecteds();
+                    dr["reasonid"] = x[0]["id"];
+                    dr["reason_nm"] = x[0]["name"];
 
-                    this.gridImport.GetDataRow(this.gridImport.GetSelectedRowIndex())["reasonid"] = x[0]["id"];
-                    this.gridImport.GetDataRow(this.gridImport.GetSelectedRowIndex())["reason_nm"] = x[0]["name"];
+                    if (x[0]["id"].Equals("00001") == false)
+                    {
+                        dr["ToPOID"] = string.Empty;
+                        dr["ToSeq"] = string.Empty;
+                        dr["ToSeq1"] = string.Empty;
+                        dr["ToSeq2"] = string.Empty;
+                        this.col_ToPoid.IsEditingReadOnly = true;
+                        this.col_ToSeq.IsEditingReadOnly = true;
+                    }
+                    else
+                    {
+                        this.col_ToPoid.IsEditingReadOnly = false;
+                        this.col_ToSeq.IsEditingReadOnly = false;
+                    }
+
+                    dr.EndEdit();
                 }
             };
             ts.CellValidating += (s, e) =>
             {
-                DataRow dr;
+                DataRow dr = this.gridImport.GetDataRow(e.RowIndex);
+                if (dr == null)
+                {
+                    return;
+                }
+
                 if (!this.EditMode)
                 {
                     return;
                 }
 
-                if (string.Compare(e.FormattedValue.ToString(), this.gridImport.GetDataRow(this.gridImport.GetSelectedRowIndex())["reasonid"].ToString()) != 0)
+                if (string.Compare(e.FormattedValue.ToString(), dr["reasonid"].ToString()) != 0)
                 {
                     if (MyUtility.Check.Empty(e.FormattedValue))
                     {
-                        this.gridImport.GetDataRow(this.gridImport.GetSelectedRowIndex())["reasonid"] = string.Empty;
-                        this.gridImport.GetDataRow(this.gridImport.GetSelectedRowIndex())["reason_nm"] = string.Empty;
+                        dr["reasonid"] = string.Empty;
+                        dr["reason_nm"] = string.Empty;
                     }
                     else
                     {
+                        DataRow drCheckReason;
                         if (!MyUtility.Check.Seek(
                             string.Format(
                             @"select id, Name from Reason WITH (NOLOCK) where id = '{0}' 
-and ReasonTypeID='Stock_Remove' AND junk = 0", e.FormattedValue), out dr))
+and ReasonTypeID='Stock_Remove' AND junk = 0", e.FormattedValue), out drCheckReason))
                         {
                             e.Cancel = true;
                             MyUtility.Msg.WarningBox("Data not found!", "Reason ID");
+                        }
+                        else
+                        {
+                            dr["reasonid"] = e.FormattedValue;
+                            dr["reason_nm"] = drCheckReason["name"];
+                        }
+                    }
+
+                    dr["ToPOID"] = string.Empty;
+                    dr["ToSeq"] = string.Empty;
+                    dr["ToSeq1"] = string.Empty;
+                    dr["ToSeq2"] = string.Empty;
+                }
+
+                if (this.gridImport.GetDataRow(this.gridImport.GetSelectedRowIndex())["reasonid"].ToString().Equals("00001") == false)
+                {
+                    this.col_ToPoid.IsEditingReadOnly = true;
+                    this.col_ToSeq.IsEditingReadOnly = true;
+                }
+                else
+                {
+                    this.col_ToPoid.IsEditingReadOnly = false;
+                    this.col_ToSeq.IsEditingReadOnly = false;
+                }
+
+                dr.EndEdit();
+            };
+            #endregion
+            #region ToPoid Seq
+            DataGridViewGeneratorTextColumnSettings cs_topoid = new DataGridViewGeneratorTextColumnSettings();
+            cs_topoid.CellValidating += (s, e) =>
+            {
+                DataRow dr = this.gridImport.GetDataRow(e.RowIndex);
+                if (!this.EditMode)
+                {
+                    return; // 非編輯模式
+                }
+
+                if (e.RowIndex == -1)
+                {
+                    return; // 沒東西 return
+                }
+
+                if (dr == null)
+                {
+                    return;
+                }
+
+                if (MyUtility.Check.Empty(e.FormattedValue))
+                {
+                    dr["ToPOID"] = string.Empty;
+                    dr["ToSeq1"] = string.Empty;
+                    dr["ToSeq2"] = string.Empty;
+                    dr["ToSeq"] = string.Empty;
+                    dr.EndEdit();
+                    return;
+                }
+
+                string sqlchk = $@"
+select * from View_WH_Orders 
+where ID = '{e.FormattedValue}'
+and MDivisionID = '{Sci.Env.User.Keyword}'";
+                if (!MyUtility.Check.Seek(sqlchk))
+                {
+                    MyUtility.Msg.WarningBox($"<Bulk SP#>:{e.FormattedValue} not found");
+                    e.Cancel = true;
+                    return;
+                }
+                else
+                {
+                    string oldValue = dr["ToPOID"].ToString();
+                    string newValue = e.FormattedValue.ToString();
+                    if (oldValue != newValue)
+                    {
+                        dr["ToSeq1"] = string.Empty;
+                        dr["ToSeq2"] = string.Empty;
+                        dr["ToSeq"] = string.Empty;
+                    }
+
+                    dr["ToPoID"] = e.FormattedValue;
+                    dr.EndEdit();
+                }
+            };
+
+            DataGridViewGeneratorTextColumnSettings cs_toSeq = new DataGridViewGeneratorTextColumnSettings();
+            cs_toSeq.EditingMouseDown += (s, e) =>
+            {
+                DataRow dr = this.gridImport.GetDataRow(e.RowIndex);
+                if (dr == null)
+                {
+                    return;
+                }
+
+                if (dr["reasonid"].Equals("00001") == false)
+                {
+                    return;
+                }
+
+                if (this.EditMode && e.Button == MouseButtons.Right)
+                {
+                    string sqlcmd = string.Empty;
+                    IList<DataRow> x;
+                    if (MyUtility.Check.Empty(dr["ToPoID"]))
+                    {
+                        MyUtility.Msg.WarningBox("Please fill in 'Bulk SP#' first.");
+                        dr["ToSeq"] = string.Empty;
+                        dr["ToSeq1"] = string.Empty;
+                        dr["ToSeq2"] = string.Empty;
+                        dr.EndEdit();
+                        return;
+                    }
+                    else
+                    {
+                        sqlcmd = $@"
+select ID,[Seq] = concat(Seq1,' ',Seq2),seq1,seq2
+from Po_Supp_Detail 
+where ID = '{dr["ToPoID"]}'
+";
+
+                        DBProxy.Current.Select(null, sqlcmd, out DataTable poitems);
+
+                        string columns = "ID,Seq";
+                        string headersercap = "POID,Seq,";
+                        string columnwidths = "14,10";
+                        SelectItem item = new SelectItem(poitems, columns, columnwidths, dr["seq"].ToString(), headersercap)
+                        {
+                            Width = 500,
+                        };
+                        DialogResult result = item.ShowDialog();
+                        if (result == DialogResult.Cancel)
+                        {
+                            return;
+                        }
+
+                        x = item.GetSelecteds();
+                    }
+
+                    dr["ToSeq"] = x[0]["seq"];
+                    dr["ToSeq1"] = x[0]["seq1"];
+                    dr["ToSeq2"] = x[0]["seq2"];
+
+                    dr.EndEdit();
+                }
+            };
+            cs_toSeq.CellValidating += (s, e) =>
+            {
+                DataRow dr = this.gridImport.GetDataRow(e.RowIndex);
+                if (!this.EditMode)
+                {
+                    return; // 非編輯模式
+                }
+
+                if (e.RowIndex == -1)
+                {
+                    return; // 沒東西 return
+                }
+
+                if (dr == null)
+                {
+                    return;
+                }
+
+                if (MyUtility.Check.Empty(dr["ToPoID"]))
+                {
+                    MyUtility.Msg.WarningBox("Please fill in 'Bulk SP#' first.");
+                    dr["ToSeq"] = string.Empty;
+                    dr["ToSeq1"] = string.Empty;
+                    dr["ToSeq2"] = string.Empty;
+                    dr.EndEdit();
+                    return;
+                }
+
+                string oldvalue = MyUtility.Convert.GetString(dr["ToSeq"]);
+                string newvalue = MyUtility.Convert.GetString(e.FormattedValue);
+                if (oldvalue == newvalue)
+                {
+                    return;
+                }
+
+                if (string.Compare(e.FormattedValue.ToString(), dr["ToSeq"].ToString()) != 0)
+                {
+                    if (MyUtility.Check.Empty(e.FormattedValue))
+                    {
+                        dr["ToSeq"] = string.Empty;
+                        dr["ToSeq1"] = string.Empty;
+                        dr["ToSeq2"] = string.Empty;
+                    }
+                    else
+                    {
+                        // check Seq Length
+                        string[] seq = e.FormattedValue.ToString().Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                        if (seq.Length < 2)
+                        {
+                            e.Cancel = true;
+                            MyUtility.Msg.WarningBox("Data not found!", "Seq");
+                            return;
+                        }
+
+                        string sqlchk = $@"
+select * from Po_Supp_Detail 
+where ID = '{dr["ToPoID"]}'
+and seq1 = '{seq[0]}'
+and seq2 = '{seq[1]}'
+";
+                        if (!MyUtility.Check.Seek(sqlchk, out DataRow drCheck))
+                        {
+                            e.Cancel = true;
+                            MyUtility.Msg.WarningBox("Data not found!", "Seq");
                             return;
                         }
                         else
                         {
-                            this.gridImport.GetDataRow(this.gridImport.GetSelectedRowIndex())["reasonid"] = e.FormattedValue;
-                            this.gridImport.GetDataRow(this.gridImport.GetSelectedRowIndex())["reason_nm"] = dr["name"];
+                            dr["Toseq"] = e.FormattedValue;
+                            dr["Toseq1"] = seq[0];
+                            dr["Toseq2"] = seq[1];
                         }
                     }
                 }
+
+                dr.EndEdit();
             };
             #endregion
-
             this.gridImport.IsEditingReadOnly = false; // 必設定, 否則CheckBox會顯示圖示
             this.gridImport.DataSource = this.listControlBindingSource1;
             this.Helper.Controls.Grid.Generator(this.gridImport)
@@ -342,11 +587,41 @@ and ReasonTypeID='Stock_Remove' AND junk = 0", e.FormattedValue), out dr))
                 .Text("reason_nm", header: "Reason Name", iseditingreadonly: true, width: Widths.AnsiChars(20))
                 .Text("MCHandle", header: "MC Handle", iseditingreadonly: true, width: Widths.AnsiChars(20))
                 .Text("CreateStatus", header: "Create Status", iseditingreadonly: true, width: Widths.AnsiChars(50))
+                .Text("ToPOID", header: "Bulk SP#", width: Widths.AnsiChars(15), iseditingreadonly: true, settings: cs_topoid).Get(out this.col_ToPoid)
+                .Text("ToSeq", header: "Bulk Seq", width: Widths.AnsiChars(8), iseditingreadonly: true, settings: cs_toSeq).Get(out this.col_ToSeq)
                ;
 
             this.gridImport.Columns["QtyAfter"].DefaultCellStyle.BackColor = Color.Pink;
             this.gridImport.Columns["reasonid"].DefaultCellStyle.BackColor = Color.Pink;
             this.comboCategory.SelectedIndex = 4;
+
+            // 設定detailGrid Rows 是否可以編輯
+            this.gridImport.RowEnter += this.Detailgrid_RowEnter;
+        }
+
+        private void Detailgrid_RowEnter(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex < 0 || !this.EditMode || this.gridImport.GetSelectedRowIndex() < 0)
+            {
+                return;
+            }
+
+            var data = ((DataRowView)this.gridImport.Rows[e.RowIndex].DataBoundItem).Row;
+            if (data == null)
+            {
+                return;
+            }
+
+            if (data["reasonid"].ToString().Equals("00001") == true)
+            {
+                this.col_ToPoid.IsEditingReadOnly = false;
+                this.col_ToSeq.IsEditingReadOnly = false;
+            }
+            else
+            {
+                this.col_ToPoid.IsEditingReadOnly = true;
+                this.col_ToSeq.IsEditingReadOnly = true;
+            }
         }
 
         // Close
@@ -372,6 +647,13 @@ and ReasonTypeID='Stock_Remove' AND junk = 0", e.FormattedValue), out dr))
             {
                 item["reasonid"] = reasonid;
                 item["reason_nm"] = this.comboReason.Text;
+                if (reasonid.Equals("00001") == false)
+                {
+                    item["ToPOID"] = string.Empty;
+                    item["ToSeq"] = string.Empty;
+                    item["ToSeq1"] = string.Empty;
+                    item["ToSeq2"] = string.Empty;
+                }
             }
         }
 
@@ -480,9 +762,9 @@ from #tmp";
             string insertDetail = @"
 insert into Adjust_Detail
 (ID, FtyInventoryUkey ,MDivisionID ,POID ,Seq1 ,Seq2 ,Roll    
-,Dyelot ,StockType ,QtyBefore ,QtyAfter ,ReasonID )
+,Dyelot ,StockType ,QtyBefore ,QtyAfter ,ReasonID,ToPoid,ToSeq1,ToSeq2 )
 select ID, FtyInventoryUkey ,MDivisionID ,POID ,Seq1 ,Seq2 ,Roll    
-,Dyelot ,StockType ,QtyBefore ,QtyAfter ,ReasonID
+,Dyelot ,StockType ,QtyBefore ,QtyAfter ,ReasonID,ToPoid,ToSeq1,ToSeq2
 from #tmp";
 
             DataTable dtMaster = new DataTable();
@@ -512,6 +794,9 @@ from #tmp";
             dtDetail.Columns.Add("ReasonID");
             dtDetail.Columns.Add("Location");
             dtDetail.Columns.Add("StockTypeName");
+            dtDetail.Columns.Add("ToPOID");
+            dtDetail.Columns.Add("ToSeq1");
+            dtDetail.Columns.Add("ToSeq2");
 
             for (int i = 0; i < listPoid.Count; i++)
             {
@@ -547,6 +832,9 @@ from #tmp";
                 drNewDetail["ReasonID"] = item["ReasonID"];
                 drNewDetail["Location"] = item["Location"];
                 drNewDetail["StockTypeName"] = item["StockTypeName"];
+                drNewDetail["ToPOID"] = item["ToPOID"];
+                drNewDetail["ToSeq1"] = item["ToSeq1"];
+                drNewDetail["ToSeq2"] = item["ToSeq2"];
                 dtDetail.Rows.Add(drNewDetail);
             }
 

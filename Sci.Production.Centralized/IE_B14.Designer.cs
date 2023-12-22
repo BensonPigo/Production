@@ -52,7 +52,7 @@
             this.masterpanel.Controls.Add(this.label2);
             this.masterpanel.Controls.Add(this.displayName);
             this.masterpanel.Controls.Add(this.label1);
-            this.masterpanel.Size = new System.Drawing.Size(792, 43);
+            this.masterpanel.Size = new System.Drawing.Size(892, 43);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.label1, 0);
             this.masterpanel.Controls.SetChildIndex(this.displayName, 0);
@@ -62,17 +62,16 @@
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 43);
-            this.detailpanel.Size = new System.Drawing.Size(792, 307);
+            this.detailpanel.Size = new System.Drawing.Size(892, 306);
             // 
             // gridicon
             // 
             this.gridicon.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.gridicon.Location = new System.Drawing.Point(757, 5);
-            this.gridicon.Click += new System.EventHandler(this.gridicon_Click);
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(792, 307);
+            this.detailgridcont.Size = new System.Drawing.Size(892, 306);
             // 
             // detail2
             // 
@@ -85,19 +84,6 @@
             // detailpanel2
             // 
             this.detailpanel2.Size = new System.Drawing.Size(886, 40);
-            // 
-            // detail
-            // 
-            this.detail.Size = new System.Drawing.Size(792, 388);
-            // 
-            // detailcont
-            // 
-            this.detailcont.Size = new System.Drawing.Size(792, 350);
-            // 
-            // detailbtm
-            // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 350);
-            this.detailbtm.Size = new System.Drawing.Size(792, 38);
             // 
             // browse
             // 

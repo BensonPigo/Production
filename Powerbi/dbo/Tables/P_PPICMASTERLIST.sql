@@ -18,7 +18,7 @@
 	[Buy Back] [varchar](1) NOT NULL,
 	[Cancelled] [varchar](1) NOT NULL,
 	[NeedProduction] [varchar](1) NOT NULL,
-	[Dest] [varchar](30) NOT NULL,
+	[Dest] [varchar](2) NOT NULL,
 	[Style] [varchar](15) NOT NULL,
 	[Style Name] [nvarchar](50) NOT NULL,
 	[Modular Parent] [varchar](20) NOT NULL,
@@ -73,7 +73,6 @@
 	[Booking Qty] [int] NOT NULL,
 	[FOC Adj Qty] [int] NOT NULL,
 	[Not FOC Adj Qty] [int] NOT NULL,
-	[FOB] [numeric](16, 4) NOT NULL,
 	[Total] [numeric](38, 6) NOT NULL,
 	[KPI L/ETA] [date] NULL,
 	[PF ETA (SP)] [date] NULL,
@@ -156,7 +155,22 @@
 	[OrganicCotton] [varchar](1) NOT NULL,
 	[Direct Ship] [varchar](1) NOT NULL,
 	[StyleCarryover] [varchar](1) NOT NULL,
-	[Ukey] [bigint] IDENTITY(1,1) NOT NULL
+	[Ukey] [bigint] IDENTITY(1,1) NOT NULL,
+	[SCHDL/ETA(SP)] [date] NULL,
+	[SewingMtlETA(SPexclRepl)] [date] NULL,
+	[ActualMtlETA(exclRepl)] [date] NULL,
+	[HalfKey] [varchar](8) NOT NULL,
+	[DevSample] [varchar](1) NOT NULL,
+	[POID] [varchar](13) NOT NULL,
+	[KeepPanels] [varchar](1) NOT NULL,
+	[BuyBackReason] [varchar](20) NOT NULL,
+	[SewQtybyRate] [numeric](38, 6) NOT NULL,
+	[Unit] [varchar](8) NOT NULL,
+	[SubconInType] [varchar](100) NOT NULL,
+	[Article] [varchar](500) NOT NULL,
+	[ProduceRgPMS] [varchar](3) NOT NULL,
+	[Buyerhalfkey] [varchar](8) NOT NULL,
+	[Country] [varchar](30) NOT NULL,
  CONSTRAINT [PK_P_PPICMASTERLIST] PRIMARY KEY CLUSTERED 
 (
 	[Ukey] DESC
@@ -485,6 +499,42 @@ GO
 ALTER TABLE [dbo].[P_PPICMASTERLIST] ADD  CONSTRAINT [DF_P_PPICMASTERLIST_DIRECT SHIP]  DEFAULT ('') FOR [Direct Ship]
 GO
 
+ALTER TABLE [dbo].[P_PPICMASTERLIST] ADD  CONSTRAINT [DF_P_PPICMASTERLIST_HalfKey]  DEFAULT ('') FOR [HalfKey]
+GO
+
+ALTER TABLE [dbo].[P_PPICMASTERLIST] ADD  CONSTRAINT [DF_P_PPICMASTERLIST_DevSample]  DEFAULT ('') FOR [DevSample]
+GO
+
+ALTER TABLE [dbo].[P_PPICMASTERLIST] ADD  CONSTRAINT [DF_P_PPICMASTERLIST_POID]  DEFAULT ('') FOR [POID]
+GO
+
+ALTER TABLE [dbo].[P_PPICMASTERLIST] ADD  CONSTRAINT [DF_P_PPICMASTERLIST_KeepPanels]  DEFAULT ('') FOR [KeepPanels]
+GO
+
+ALTER TABLE [dbo].[P_PPICMASTERLIST] ADD  CONSTRAINT [DF_P_PPICMASTERLIST_BuyBackReason]  DEFAULT ('') FOR [BuyBackReason]
+GO
+
+ALTER TABLE [dbo].[P_PPICMASTERLIST] ADD  CONSTRAINT [DF_P_PPICMASTERLIST_SewQtybyRate]  DEFAULT ((0)) FOR [SewQtybyRate]
+GO
+
+ALTER TABLE [dbo].[P_PPICMASTERLIST] ADD  CONSTRAINT [DF_P_PPICMASTERLIST_Unit]  DEFAULT ('') FOR [Unit]
+GO
+
+ALTER TABLE [dbo].[P_PPICMASTERLIST] ADD  CONSTRAINT [DF_P_PPICMASTERLIST_SubconInType]  DEFAULT ('') FOR [SubconInType]
+GO
+
+ALTER TABLE [dbo].[P_PPICMASTERLIST] ADD  CONSTRAINT [DF_P_PPICMASTERLIST_Article]  DEFAULT ('') FOR [Article]
+GO
+
+ALTER TABLE [dbo].[P_PPICMASTERLIST] ADD  CONSTRAINT [DF_P_PPICMASTERLIST_ProduceRgPMS]  DEFAULT ('') FOR [ProduceRgPMS]
+GO
+
+ALTER TABLE [dbo].[P_PPICMASTERLIST] ADD  CONSTRAINT [DF_P_PPICMASTERLIST_Buyerhalfkey]  DEFAULT ('') FOR [Buyerhalfkey]
+GO
+
+ALTER TABLE [dbo].[P_PPICMASTERLIST] ADD  CONSTRAINT [DF_P_PPICMASTERLIST_Country]  DEFAULT ('') FOR [Country]
+GO
+
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Mdivision' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_PPICMASTERLIST', @level2type=N'COLUMN',@level2name=N'M'
 GO
 
@@ -542,7 +592,7 @@ GO
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'訂單是否取消了仍需生產' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_PPICMASTERLIST', @level2type=N'COLUMN',@level2name=N'NeedProduction'
 GO
 
-EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'運送目的地' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_PPICMASTERLIST', @level2type=N'COLUMN',@level2name=N'Dest'
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Orders.Dest' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_PPICMASTERLIST', @level2type=N'COLUMN',@level2name=N'Dest'
 GO
 
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'款式' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_PPICMASTERLIST', @level2type=N'COLUMN',@level2name=N'Style'
@@ -936,4 +986,49 @@ EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'是否使用�
 GO
 
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'是否運送直達' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_PPICMASTERLIST', @level2type=N'COLUMN',@level2name=N'Direct Ship'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Orders.Max_ScheETAbySP' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_PPICMASTERLIST', @level2type=N'COLUMN',@level2name=N'SCHDL/ETA(SP)'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Orders.Sew_ScheETAnoReplace' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_PPICMASTERLIST', @level2type=N'COLUMN',@level2name=N'SewingMtlETA(SPexclRepl)'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Orders.MaxShipETA_Exclude5x' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_PPICMASTERLIST', @level2type=N'COLUMN',@level2name=N'ActualMtlETA(exclRepl)'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'SCI delivery-7 後分為上下半月' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_PPICMASTERLIST', @level2type=N'COLUMN',@level2name=N'HalfKey'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'OrderType.IsDevSample' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_PPICMASTERLIST', @level2type=N'COLUMN',@level2name=N'DevSample'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Orders.POID' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_PPICMASTERLIST', @level2type=N'COLUMN',@level2name=N'POID'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Orders.KeepPanels' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_PPICMASTERLIST', @level2type=N'COLUMN',@level2name=N'KeepPanels'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Orders.BuyBackReason' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_PPICMASTERLIST', @level2type=N'COLUMN',@level2name=N'BuyBackReason'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'SewingOutput_Detail.QAQty' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_PPICMASTERLIST', @level2type=N'COLUMN',@level2name=N'SewQtybyRate'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Orders.StyleUnit' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_PPICMASTERLIST', @level2type=N'COLUMN',@level2name=N'Unit'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Orders.SubconInType' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_PPICMASTERLIST', @level2type=N'COLUMN',@level2name=N'SubconInType'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Order_Article.Article ' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_PPICMASTERLIST', @level2type=N'COLUMN',@level2name=N'Article'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'SCIFty.ProduceRgCode' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_PPICMASTERLIST', @level2type=N'COLUMN',@level2name=N'ProduceRgPMS'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Buyer Delivery-7 後分為上下半月' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_PPICMASTERLIST', @level2type=N'COLUMN',@level2name=N'Buyerhalfkey'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'運送目的地' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_PPICMASTERLIST', @level2type=N'COLUMN',@level2name=N'Country'
 GO

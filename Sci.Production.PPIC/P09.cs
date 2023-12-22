@@ -217,8 +217,10 @@ select
 from ReplacementReport_Detail rd
 inner join PO_Supp_Detail psd on rd.PurchaseID = psd.ID
     and rd.SCIRefno = psd.SCIRefno
-    and (psd.SEQ1 = rd.NewSeq1 or psd.OutputSeq1 = rd.NewSeq1)
-    and (psd.SEQ2 = rd.NewSeq2 or psd.OutputSeq2 = rd.NewSeq2)
+    and (
+            (psd.SEQ1 = rd.NewSeq1 and psd.SEQ2 = rd.NewSeq2)
+         or (psd.OutputSeq1 = rd.NewSeq1 and psd.OutputSeq2 = rd.NewSeq2)
+)
 inner join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color' and psdsC.SpecValue = rd.ColorID
 where rd.id = '{this.CurrentMaintain["ID"]}'
 ";

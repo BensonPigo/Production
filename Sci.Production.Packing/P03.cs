@@ -14,6 +14,7 @@ using System.Data.SqlClient;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using Sci.Production.Automation;
+using System.Data.Common;
 
 namespace Sci.Production.Packing
 {
@@ -1257,6 +1258,15 @@ UPDATE PackingList_Detail
 SET CTNEndNo = CTNStartNo
 WHERE ID =  '{this.CurrentMaintain["ID"]}'";
             DualResult upd_result = DBProxy.Current.Execute(null, upd_sql);
+            if (!upd_result)
+            {
+                return upd_result;
+            }
+
+            if (Prgs.CheckDupSCICtnNo(this.CurrentMaintain["ID"].ToString()))
+            {
+                return new DualResult(false, "SCICtnNo duplicate creation occurs, please save again.");
+            }
 
             this.detailgrid.IsEditable = true;
             this.detailgrid.IsEditingReadOnly = false;

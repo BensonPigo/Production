@@ -4,7 +4,7 @@
     [MDivisionID] VARCHAR(8) NULL DEFAULT (''), 
     [FactoryID] VARCHAR(8) NULL DEFAULT (''), 
     [IssueDate] DATE NOT NULL, 
-    [Remark] NVARCHAR(60) NULL DEFAULT (''), 
+    [Remark] NVARCHAR(300) NULL DEFAULT (''), 
     [Status] VARCHAR(15) NULL DEFAULT (''), 
     [AddName] VARCHAR(10) NOT NULL DEFAULT ('') , 
     [AddDate] DATETIME NOT NULL, 
