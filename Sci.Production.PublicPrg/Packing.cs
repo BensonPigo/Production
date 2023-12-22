@@ -2612,6 +2612,17 @@ select BuyerDelivery = stuff((
             for (int i = 0; i < custPONoDT.Rows.Count; i++)
             {
                 sqlCmd.Append($@"
+select * 
+INTO #PackingList_Detail
+from PackingList_Detail
+where id = '{packingListID}'
+
+select * 
+INTO #MDScan
+from MDScan
+where PackingListID = '{packingListID}'
+
+
 select  pd.CTNStartNo,
         a.SizeCode,
         b.ShipQty,
@@ -2625,23 +2636,23 @@ select  pd.CTNStartNo,
                             else 'Please check Discrepancy'
                             end,
 		[M360Signature] = m.addName
-from PackingList_Detail pd
-left join orders o on o.id = pd.OrderID
-left join MDScan m on m.PackingListID = pd.ID and m.OrderID = pd.OrderID and pd.CTNStartNo = m.CTNStartNo and m.SCICtnNo = pd.SCICtnNo
+from #PackingList_Detail pd
+left join Orders o on o.id = pd.OrderID
+left join #MDScan m on m.PackingListID = pd.ID and m.OrderID = pd.OrderID and pd.CTNStartNo = m.CTNStartNo and m.SCICtnNo = pd.SCICtnNo
 outer apply(
 	select SizeCode = stuff((
 	select concat('/',SizeCode)
-	from PackingList_Detail pd2
+	from #PackingList_Detail pd2
 	where pd2.id = pd.id and pd2.CTNStartNo = pd.CTNStartNo
 	order by pd2.seq
 	for xml path('')
 	),1,1,'')
 )a
-outer apply(select ct=count(1)from PackingList_Detail pd2 where pd2.id=pd.id and pd2.CTNStartNo=pd.CTNStartNo and pd2.OrderID=pd.OrderID)b1
+outer apply(select ct=count(1)from #PackingList_Detail pd2 where pd2.id=pd.id and pd2.CTNStartNo=pd.CTNStartNo and pd2.OrderID=pd.OrderID)b1
 outer apply(
 	select ShipQty = stuff((
 	select iif(b1.ct>1 ,concat('/',SizeCode,' ',ShipQty), concat('/',ShipQty))
-	from PackingList_Detail pd2
+	from #PackingList_Detail pd2
 	where pd2.id = pd.id and pd2.CTNStartNo = pd.CTNStartNo
 	order by pd2.seq
 	for xml path('')),1,1,'')
@@ -2652,6 +2663,7 @@ outer apply(
 where pd.id = '{packingListID}' and o.CustPONo = '{custPONoDT.Rows[i]["CustPONo"]}'
 group by pd.CTNStartNo,a.SizeCode,b.ShipQty,o.CustPONo,Signature.Name,pd.DryRoomMDScanDate,m.ScanDate,m.addName
 order by min(pd.seq)
+DROP TABLE #PackingList_Detail,#MDScan--,#Orders
 ");
             }
 
