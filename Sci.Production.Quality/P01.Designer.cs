@@ -81,6 +81,9 @@
             this.labelMoisture = new Sci.Win.UI.Label();
             this.btnShadeBandStock = new Sci.Win.UI.Button();
             this.btnUpdateToneGrp = new Sci.Win.UI.Button();
+            this.btnBatchUpdateShadeBand = new Sci.Win.UI.Button();
+            this.btnBatchUpdateContinuity = new Sci.Win.UI.Button();
+            this.btnViewBatchUpdateDetail = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -97,6 +100,9 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.btnViewBatchUpdateDetail);
+            this.masterpanel.Controls.Add(this.btnBatchUpdateContinuity);
+            this.masterpanel.Controls.Add(this.btnBatchUpdateShadeBand);
             this.masterpanel.Controls.Add(this.btnUpdateToneGrp);
             this.masterpanel.Controls.Add(this.btnShadeBandStock);
             this.masterpanel.Controls.Add(this.txtLocateforWK);
@@ -128,7 +134,7 @@
             this.masterpanel.Controls.Add(this.labelSeason);
             this.masterpanel.Controls.Add(this.labelStyle);
             this.masterpanel.Controls.Add(this.labelSP);
-            this.masterpanel.Size = new System.Drawing.Size(1004, 188);
+            this.masterpanel.Size = new System.Drawing.Size(1004, 196);
             this.masterpanel.Controls.SetChildIndex(this.labelSP, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelStyle, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelSeason, 0);
@@ -161,15 +167,18 @@
             this.masterpanel.Controls.SetChildIndex(this.txtLocateforWK, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnShadeBandStock, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnUpdateToneGrp, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnBatchUpdateShadeBand, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnBatchUpdateContinuity, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnViewBatchUpdateDetail, 0);
             // 
             // detailpanel
             // 
-            this.detailpanel.Location = new System.Drawing.Point(0, 188);
-            this.detailpanel.Size = new System.Drawing.Size(1004, 442);
+            this.detailpanel.Location = new System.Drawing.Point(0, 196);
+            this.detailpanel.Size = new System.Drawing.Size(1004, 434);
             // 
             // gridicon
             // 
-            this.gridicon.Location = new System.Drawing.Point(5, 153);
+            this.gridicon.Location = new System.Drawing.Point(5, 161);
             // 
             // refresh
             // 
@@ -177,7 +186,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(1004, 442);
+            this.detailgridcont.Size = new System.Drawing.Size(1004, 434);
             // 
             // detail2
             // 
@@ -780,6 +789,36 @@
             this.btnUpdateToneGrp.UseVisualStyleBackColor = true;
             this.btnUpdateToneGrp.Click += new System.EventHandler(this.BtnUpdateToneGrp_Click);
             // 
+            // btnBatchUpdateShadeBand
+            // 
+            this.btnBatchUpdateShadeBand.Location = new System.Drawing.Point(811, 87);
+            this.btnBatchUpdateShadeBand.Name = "btnBatchUpdateShadeBand";
+            this.btnBatchUpdateShadeBand.Size = new System.Drawing.Size(181, 30);
+            this.btnBatchUpdateShadeBand.TabIndex = 162;
+            this.btnBatchUpdateShadeBand.Text = "Batch Update Shade Band";
+            this.btnBatchUpdateShadeBand.UseVisualStyleBackColor = true;
+            this.btnBatchUpdateShadeBand.Click += new System.EventHandler(this.BtnBatchUpdateShadeBand_Click);
+            // 
+            // btnBatchUpdateContinuity
+            // 
+            this.btnBatchUpdateContinuity.Location = new System.Drawing.Point(811, 123);
+            this.btnBatchUpdateContinuity.Name = "btnBatchUpdateContinuity";
+            this.btnBatchUpdateContinuity.Size = new System.Drawing.Size(181, 30);
+            this.btnBatchUpdateContinuity.TabIndex = 163;
+            this.btnBatchUpdateContinuity.Text = "Batch Update Continuity";
+            this.btnBatchUpdateContinuity.UseVisualStyleBackColor = true;
+            this.btnBatchUpdateContinuity.Click += new System.EventHandler(this.BtnBatchUpdateContinuity_Click);
+            // 
+            // btnViewBatchUpdateDetail
+            // 
+            this.btnViewBatchUpdateDetail.Location = new System.Drawing.Point(811, 159);
+            this.btnViewBatchUpdateDetail.Name = "btnViewBatchUpdateDetail";
+            this.btnViewBatchUpdateDetail.Size = new System.Drawing.Size(181, 30);
+            this.btnViewBatchUpdateDetail.TabIndex = 164;
+            this.btnViewBatchUpdateDetail.Text = "View Batch Update Detail";
+            this.btnViewBatchUpdateDetail.UseVisualStyleBackColor = true;
+            this.btnViewBatchUpdateDetail.Click += new System.EventHandler(this.BtnViewBatchUpdateDetail_Click);
+            // 
             // P01
             // 
             this.ClientSize = new System.Drawing.Size(1012, 730);
@@ -878,5 +917,8 @@
         private Win.UI.Label labelMoisture;
         private Win.UI.Button btnShadeBandStock;
         private Win.UI.Button btnUpdateToneGrp;
+        private Win.UI.Button btnViewBatchUpdateDetail;
+        private Win.UI.Button btnBatchUpdateContinuity;
+        private Win.UI.Button btnBatchUpdateShadeBand;
     }
 }
