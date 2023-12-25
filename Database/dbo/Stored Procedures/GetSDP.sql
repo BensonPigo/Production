@@ -1,14 +1,19 @@
 ﻿CREATE PROCEDURE [dbo].[GetSDP]
-	@param1 int = 0,
-	@param2 int
+	@Date_S date,
+	@Date_E date
 AS
 begin
 	SET NOCOUNT ON;	
-	declare @Date_S date	
-	declare @Date_E date
 
-	set @Date_S = CONVERT(date, DATEADD(DAY,-30,GETDATE()))
-	set @Date_E = GETDATE()
+	if @Date_S is null
+	begin
+		set @Date_S = CONVERT(date, DATEADD(DAY,-60,GETDATE()))
+	end
+	
+	if @Date_E is null
+	begin
+		set @Date_E = GETDATE()
+	end	
 	
 	/************************** 主表資訊 **************************/ 
 	declare @tmp_main TABLE
@@ -53,46 +58,46 @@ begin
 	)
 	INSERT INTO @tmp_main
 	SELECT
-	CountryID = F.CountryID
-	,KPICode = F.KPICode
-	,FactoryID = o.FactoryID
-	,OrderID = o.ID
-	,o.StyleID
-	,Seq = Order_QS.seq
-	,BrandID = o.BrandID
-	,Order_QS.BuyerDelivery
-	,Order_QS.FtyKPI 
-	,Order_QS.ShipmodeID
-	,b.OTDExtension 
-	,DeliveryByShipmode = Order_QS.ShipmodeID
-	,OrderQty = Cast(Order_QS.QTY as int)										
-	,Shipmode = Order_QS.ShipmodeID
-	,GMTComplete = CASE o.GMTComplete WHEN 'C' THEN 'Y' 
-									  WHEN 'S' THEN 'S' 
-									  ELSE '' END
-	,Order_QS.ReasonID
-	,ReasonName = case o.Category when 'B' then r.Name
-								  when 'S' then rs.Name
-								  else '' end
-	,o.MRHandle
-	,o.SMR
-	,PO.POHandle
-	,PO.POSMR
-	,o.OrderTypeID
-	,ot.isDevSample				
-	,c.alias
-	,o.MDivisionID 
-	,o.localorder
-	, OutsdReason = rd.Name
-	, ReasonRemark = o.OutstandingRemark
-	,o.OnsiteSample
-	,[CFAFinalInspectDate]=format(Order_QS.CFAFinalInspectDate, 'yyyy/MM/dd')
-	,Order_QS.CFAFinalInspectResult
-	,[CFA3rdInspectDate]=format(Order_QS.CFA3rdInspectDate, 'yyyy/MM/dd')
-	,Order_QS.CFA3rdInspectResult
-	,[IDDReason] = cr.Description
-	,o.Dest
-	,o.CustPONo
+		CountryID = F.CountryID
+		,KPICode = F.KPICode
+		,FactoryID = o.FactoryID
+		,OrderID = o.ID
+		,o.StyleID
+		,Seq = Order_QS.seq
+		,BrandID = o.BrandID
+		,Order_QS.BuyerDelivery
+		,Order_QS.FtyKPI 
+		,Order_QS.ShipmodeID
+		,b.OTDExtension 
+		,DeliveryByShipmode = Order_QS.ShipmodeID
+		,OrderQty = Cast(Order_QS.QTY as int)										
+		,Shipmode = Order_QS.ShipmodeID
+		,GMTComplete = CASE o.GMTComplete WHEN 'C' THEN 'Y' 
+										  WHEN 'S' THEN 'S' 
+										  ELSE '' END
+		,Order_QS.ReasonID
+		,ReasonName = case o.Category when 'B' then r.Name
+									  when 'S' then rs.Name
+									  else '' end
+		,o.MRHandle
+		,o.SMR
+		,PO.POHandle
+		,PO.POSMR
+		,o.OrderTypeID
+		,ot.isDevSample				
+		,c.alias
+		,o.MDivisionID 
+		,o.localorder
+		, OutsdReason = rd.Name
+		, ReasonRemark = o.OutstandingRemark
+		,o.OnsiteSample
+		,[CFAFinalInspectDate]=format(Order_QS.CFAFinalInspectDate, 'yyyy/MM/dd')
+		,Order_QS.CFAFinalInspectResult
+		,[CFA3rdInspectDate]=format(Order_QS.CFA3rdInspectDate, 'yyyy/MM/dd')
+		,Order_QS.CFA3rdInspectResult
+		,[IDDReason] = cr.Description
+		,o.Dest
+		,o.CustPONo
 	FROM [Orders] o WITH (NOLOCK)
 	LEFT JOIN [OrderType] ot with(nolock) on o.OrderTypeID = ot.ID and o.BrandID = ot.BrandID and o.BrandID = ot.BrandID
 	LEFT JOIN [Factory] f with(nolock) ON o.FACTORYID = f.ID
@@ -109,7 +114,7 @@ begin
 	and o.LocalOrder <> 1
 	and o.IsForecast <> 1
 	and exists (select 1 from [MainServer].[Production].[dbo].Factory where o.FactoryId = id and IsProduceFty = 1)
-	and o.Category = 'B' 
+	and o.Category in ('B', 'G')
 	and f.[Type] = 'B'
 	and 
 	(
