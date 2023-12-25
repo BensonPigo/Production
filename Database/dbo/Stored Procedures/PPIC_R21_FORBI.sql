@@ -227,7 +227,7 @@ BEGIN
 						cr.OrderID = pld.OrderID)
 	) CFAReturnTime
 	outer apply(
-		select [val] = (select MAX(AddDate)
+		select [val] = (select distinct cr.ReturnTo
 				from Production.dbo.CFAReturn cr with (nolock) 
 				where	cr.PackingListID = pld.ID and 
 						cr.CTNStartNo = pld.CTNStartNo and
