@@ -223,6 +223,8 @@
     <Build Include="dbo\Stored Procedures\FTY\P_Import_ProdEfficiencyByFactorySewingLine.sql" />
     <Build Include="dbo\Tables\P_StyleChangeover.sql" />
     <Build Include="dbo\Stored Procedures\FTY\P_Import_StyleChangeover.sql" />
+    <Build Include="dbo\Tables\P_CartonStatusTrackingList.sql" />
+    <Build Include="dbo\Stored Procedures\FTY\P_Import_CartonStatusTrackingList.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Utility.dll" />
