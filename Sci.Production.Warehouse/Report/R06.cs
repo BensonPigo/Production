@@ -134,6 +134,7 @@ SELECT
         ,handle = dbo.getPass1(a.ApplyName) 
         ,[CloseDate] = iif(il.status = 'Closed',il.editdate,null)
         ,[MTRtime] =  replace(iif(il.status = 'Closed',Str(Datediff(DAY,il.ApvDate,il.editdate)) + 'D' +  Str(Datediff(HOUR,il.ApvDate,il.editdate) % 24) +'H' + Str(Datediff(Minute,il.ApvDate,il.editdate) % 60) + 'M',null),' ','')
+        , il.Remark
 FROM Lack a WITH (NOLOCK) 
 inner join Lack_detail b WITH (NOLOCK) on a.id = b.id
 inner join po_supp_detail psd WITH (NOLOCK) on  psd.ID = a.poid and  psd.seq1 = B.Seq1 AND  psd.SEQ2 = B.Seq2
