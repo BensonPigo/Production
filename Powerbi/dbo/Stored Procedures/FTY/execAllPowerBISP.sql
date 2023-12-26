@@ -466,8 +466,10 @@ SET @ErrorMessage = ''
 /****************************************************************************************************************************/
 /***********************************P_ImportSDP****************************************************************/
 BEGIN TRY
+	set @StartDate = CONVERT(date, DATEADD(DAY,-60,GETDATE()))
+	set @EndDate = GETDATE()
 	set @Stime = getdate()  
-	execute [dbo].[P_ImportSDP]
+	execute [dbo].[P_ImportSDP] @StartDate, @EndDate
 	set @Etime = getdate()
 END TRY
 
