@@ -505,6 +505,7 @@
             // 
             // label3
             // 
+            this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label3.Location = new System.Drawing.Point(9, 449);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(103, 23);
@@ -530,7 +531,7 @@
             // 
             // btnScanQRCode
             // 
-            this.btnScanQRCode.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnScanQRCode.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.btnScanQRCode.Location = new System.Drawing.Point(281, 448);
             this.btnScanQRCode.Name = "btnScanQRCode";
             this.btnScanQRCode.Size = new System.Drawing.Size(119, 30);
