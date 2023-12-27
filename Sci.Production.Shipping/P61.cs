@@ -73,7 +73,7 @@ namespace Sci.Production.Shipping
             this.DetailSelectCommand = $@"
 select id2.* 
 ,kd.CustomsType
-,[CustomsDescription] = kd.CDCName
+,[CustomsDescription] = id2.CDCName
 ,[CDCAmount] = id2.CDCQty * id2.CDCUnitPrice
 ,[NWDiff] = id2.ActNetKg - id2.NetKg
 ,[HSCode] = kcd.HSCode
@@ -333,6 +333,67 @@ where vk.Refno = '{e.FormattedValue}'
                 }
             };
 
+            DataGridViewGeneratorTextColumnSettings customDesc_setting = new DataGridViewGeneratorTextColumnSettings();
+            customDesc_setting.CellValidating += (s, e) =>
+            {
+                if (!this.EditMode || this.CurrentDetailData == null || MyUtility.Check.Empty(e.FormattedValue))
+                {
+                    return;
+                }
+
+                DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
+                DataRow drSeek;
+                string sqlcmd = $@"
+select CDCCode, CDCName, CustomsType 
+from KHCustomsDescription 
+where Junk = 0 
+and CustomsType = '{this.CurrentDetailData["CustomsType"]}'
+and CDCName = '{e.FormattedValue}'
+";
+
+                if (!MyUtility.Check.Seek(sqlcmd, out drSeek))
+                {
+                    MyUtility.Msg.WarningBox("Data not found.");                    
+                    dr["CustomsDescription"] = string.Empty;
+                    e.Cancel = true;
+                    dr.EndEdit();
+                    return;
+                }
+
+                dr["CDCCode"] = drSeek["CDCCode"];
+                dr["CustomsType"] = drSeek["CustomsType"];
+                dr["CustomsDescription"] = drSeek["CDCName"];
+                dr.EndEdit();
+            };
+
+            customDesc_setting.EditingMouseDown += (s, e) =>
+            {
+                if (this.CurrentDetailData == null || !this.EditMode)
+                {
+                    return;
+                }
+
+                if (e.Button == MouseButtons.Right)
+                {
+                    string sqlcmd = $@"
+select CDCCode, CDCName 
+from KHCustomsDescription 
+where Junk = 0 
+and CustomsType = '{this.CurrentDetailData["CustomsType"]}'";
+                    Win.Tools.SelectItem item = new Win.Tools.SelectItem(sqlcmd, "7,20", this.CurrentDetailData["CustomsType"].ToString(), "CDC Code,Customs Description");
+                    DialogResult result = item.ShowDialog();
+                    if (result == DialogResult.Cancel)
+                    {
+                        return;
+                    }
+
+                    DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
+                    dr["CDCCode"] = item.GetSelecteds()[0]["CDCCode"];
+                    dr["CustomsDescription"] = item.GetSelecteds()[0]["CDCName"];
+                    dr.EndEdit();
+                }
+            };
+
             DataGridViewGeneratorNumericColumnSettings qty_setting = new DataGridViewGeneratorNumericColumnSettings();
             qty_setting.CellValidating += (s, e) =>
             {
@@ -424,7 +485,7 @@ where vk.Refno = '{dr["Refno"]}'
            .Numeric("WeightKg", header: "G.W.", width: Widths.AnsiChars(9), decimal_places: 2, integer_places: 9, iseditingreadonly: true).Get(out this.col_GW) // Edit on AddRow by hand
            .Text("CustomsType", header: "Customs Type", width: Widths.AnsiChars(10), iseditingreadonly: true)
            .Text("CDCCode", header: "CDC Code", width: Widths.AnsiChars(10), iseditingreadonly: true)
-           .Text("CustomsDescription", header: "Customs Description", width: Widths.AnsiChars(25), iseditingreadonly: true)
+           .Text("CustomsDescription", header: "Customs Description", width: Widths.AnsiChars(25), iseditingreadonly: false, settings: customDesc_setting)
            .Numeric("CDCQty", header: "CDC Qty", width: Widths.AnsiChars(9), decimal_places: 2, integer_places: 9, iseditingreadonly: true)
            .Text("CDCUnit", header: "CDC Unit", width: Widths.AnsiChars(25), iseditingreadonly: true)
            .Numeric("CDCUnitPrice", header: "CDC Unit Price", width: Widths.AnsiChars(9), decimal_places: 2, integer_places: 9, iseditingreadonly: true)
