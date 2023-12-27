@@ -173,7 +173,7 @@ BEGIN
 	insert into [P_PPICMasterList_ArtworkType] ([SP#], [FactoryID], [ArtworkTypeNo], [ArtworkType], [Value], [TotalValue], [ArtworkTypeUnit], [SubconInTypeID], [ArtworkTypeKey], [OrderDataKey])
 	select t.ID, t.FactoryID, t.Seq, t.ArtworkType, ISNULL(t.[Value], 0), ISNULL(t.TTL_Value, 0), t.Unit, t.SubconInType, t.ArtworkTypeKey, t.OrderDataKey
 	from #tmp t
-	where not exists (select 1 from P_PPICMasterList_ArtworkType p where t.ID = p.[SP#] and t.FactoryID = p.[FactoryID] and t.SubconInType = p.[SubconInTypeID] and t.ArtworkTypeKey = p.[ArtworkTypeKey])
+	where not exists (select 1 from P_PPICMasterList_ArtworkType p where t.ID = p.[SP#] and t.SubconInType = p.[SubconInTypeID] and t.ArtworkTypeKey = p.[ArtworkTypeKey])
 	order by ID, ArtworkType, SEQ
 
 	update p
@@ -183,8 +183,9 @@ BEGIN
 			, p.[TotalValue] = ISNULL(t.TTL_Value, 0)
 			, p.[ArtworkTypeUnit] = t.Unit
 			, p.[OrderDataKey] = t.OrderDataKey
+			, p.[FactoryID] = t.[FactoryID]
 	from P_PPICMasterList_ArtworkType p
-	inner join #tmp t on t.ID = p.[SP#] and t.FactoryID = p.[FactoryID] and t.SubconInType = p.[SubconInTypeID] and t.ArtworkTypeKey = p.[ArtworkTypeKey]
+	inner join #tmp t on t.ID = p.[SP#] and t.SubconInType = p.[SubconInTypeID] and t.ArtworkTypeKey = p.[ArtworkTypeKey]	
 
 	DROP TABLE #tmp, #UseArtworkType
 
