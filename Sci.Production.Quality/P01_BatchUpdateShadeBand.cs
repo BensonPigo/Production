@@ -107,7 +107,7 @@ namespace Sci.Production.Quality
                 .ComboBox("Result", header: "Result", width: Widths.AnsiChars(6), settings: this.Col_Result())
                 .Text("Tone", header: "Tone/Grp", width: Widths.AnsiChars(8))
                 .Text("ShadebandDocLocationID", header: "ShadeBand Location", width: Widths.AnsiChars(7), iseditingreadonly: true)
-                .Date("Inspdate", header: "Insp.Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                .Date("Inspdate", header: "Insp.Date", width: Widths.AnsiChars(10))
                 .Text("Inspector", header: "Inspector", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("Name", header: "Name", width: Widths.AnsiChars(15), iseditingreadonly: true)
                 .EditText("Remark", header: "Remark", width: Widths.AnsiChars(8), iseditingreadonly: true)
@@ -116,6 +116,7 @@ namespace Sci.Production.Quality
             this.grid.Columns["Scale"].DefaultCellStyle.BackColor = Color.MistyRose;
             this.grid.Columns["Result"].DefaultCellStyle.BackColor = Color.MistyRose;
             this.grid.Columns["Tone"].DefaultCellStyle.BackColor = Color.MistyRose;
+            this.grid.Columns["Inspdate"].DefaultCellStyle.BackColor = Color.MistyRose;
         }
 
         private DataGridViewGeneratorComboBoxColumnSettings Col_Scale()

@@ -105,7 +105,7 @@ namespace Sci.Production.Quality
                 .Numeric("Ticketyds", header: "Ticket Yds", width: Widths.AnsiChars(6), integer_places: 10, decimal_places: 2, iseditingreadonly: true)
                 .ComboBox("Scale", header: "Scale", width: Widths.AnsiChars(5), settings: this.Col_Scale())
                 .ComboBox("Result", header: "Result", width: Widths.AnsiChars(6), settings: this.Col_Result())
-                .Date("Inspdate", header: "Insp.Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                .Date("Inspdate", header: "Insp.Date", width: Widths.AnsiChars(10))
                 .Text("Inspector", header: "Inspector", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("Name", header: "Name", width: Widths.AnsiChars(15), iseditingreadonly: true)
                 .EditText("Remark", header: "Remark", width: Widths.AnsiChars(8), iseditingreadonly: true)
@@ -113,6 +113,7 @@ namespace Sci.Production.Quality
                 ;
             this.grid.Columns["Scale"].DefaultCellStyle.BackColor = Color.MistyRose;
             this.grid.Columns["Result"].DefaultCellStyle.BackColor = Color.MistyRose;
+            this.grid.Columns["Inspdate"].DefaultCellStyle.BackColor = Color.MistyRose;
         }
 
         private DataGridViewGeneratorComboBoxColumnSettings Col_Scale()
