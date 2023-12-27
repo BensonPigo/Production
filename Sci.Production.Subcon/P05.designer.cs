@@ -490,7 +490,7 @@
             this.DefaultControlForEdit = "txtsubconSupplier";
             this.ExpressQuery = true;
             this.GridAlias = "ArtworkReq_Detail";
-            this.GridUniqueKey = "id,artworkid,patterncode,PatternDesc,OrderId,Article,SizeCode,Remark";
+            this.GridUniqueKey = "id,artworkid,patterncode,PatternDesc,OrderId,Article,SizeCode,OrderArtworkUkey";
             this.IsSupportCheck = true;
             this.IsSupportClose = true;
             this.IsSupportConfirm = true;

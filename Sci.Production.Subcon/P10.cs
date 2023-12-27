@@ -293,17 +293,20 @@ where  ap.status = 'New'
             string cmdsql = string.Format(
                 @"
 select a.* 
-, PoQty=isnull(b.PoQty,0)
-, [balance]=isnull(b.PoQty,0) - a.AccumulatedQty
-,[LocalSuppCtn]=LocalSuppCtn.Val
-,b.Article
-,b.SizeCode
-,o.FactoryID
-,f.IsProduceFty 
-from ArtworkAP_detail a
-left join artworkpo_detail b on a.ArtworkPo_DetailUkey=b.Ukey
+    , PoQty=isnull(b.PoQty,0)
+    , [balance]=isnull(b.PoQty,0) - a.AccumulatedQty
+    ,[LocalSuppCtn]=LocalSuppCtn.Val
+    ,b.Article
+    ,b.SizeCode
+    ,o.FactoryID
+    ,f.IsProduceFty 
+    ,oa.Remark
+from ArtworkAP_detail a with (nolock) 
+left join Artworkpo_detail b with (nolock) on a.ArtworkPo_DetailUkey=b.Ukey
 left join dbo.Orders o with (nolock) on a.OrderID = o.id
 left join Factory f with (nolock) on f.ID = o.FactoryID
+left join ArtworkReq_Detail ard with (nolock) on b.ArtworkReq_DetailUkey = ard.Ukey
+left join Order_Artwork oa with (nolock) on ard.OrderArtworkUkey = oa.Ukey
 OUTER APPLY(
 	SELECT [Val]= COUNT(LocalSuppID)
 	FROM (
@@ -434,6 +437,7 @@ where a.id='{0}'
             .Numeric("stitch", header: "PCS/Stitch", width: Widths.AnsiChars(5), iseditingreadonly: true) // 3
             .Text("patterncode", header: "CutpartID", width: Widths.AnsiChars(10), iseditingreadonly: true) // 4
             .Text("PatternDesc", header: "Cutpart Name", width: Widths.AnsiChars(15), iseditingreadonly: true) // 5
+            .Text("Remark", header: "Remark", width: Widths.AnsiChars(15), iseditingreadonly: true) // 5
             .Numeric("price", header: "Price", width: Widths.AnsiChars(5), decimal_places: 4, integer_places: 4, iseditingreadonly: true) // 6
             .Numeric("PoQty", header: "PO Qty", width: Widths.AnsiChars(6), iseditingreadonly: true) // 7
             .Numeric("FarmOut", header: "Farm Out", width: Widths.AnsiChars(6), iseditingreadonly: true)

@@ -21,11 +21,11 @@ namespace Sci.Production.Subcon
         private DataTable dtLoad;
         private string _ArtWorkReq_ID = string.Empty;
         private Ict.Win.UI.DataGridViewTextBoxColumn txt_SubReason;
-        private Func<string, string> sqlGetBuyBackDeduction;
+        private Func<string, string, string> sqlGetBuyBackDeduction;
         private bool isUnClosed;
 
         /// <inheritdoc/>
-        public P05_IrregularQtyReason(string artWorkReq_ID, DataRow masterData, DataTable detailDatas, Func<string, string> sqlGetBuyBackDeduction, bool isUnClosed = false)
+        public P05_IrregularQtyReason(string artWorkReq_ID, DataRow masterData, DataTable detailDatas, Func<string, string, string> sqlGetBuyBackDeduction, bool isUnClosed = false)
         {
             this.InitializeComponent();
             this.EditMode = false;
@@ -227,29 +227,29 @@ alter table #tmp alter column OrderID varchar(13)
 alter table #tmp alter column ArtworkID varchar(36)
 alter table #tmp alter column PatternCode varchar(20)
 alter table #tmp alter column PatternDesc varchar(40)
-alter table #tmp alter column Remark varchar(1000)
+alter table #tmp alter column OrderArtworkUkey bigint
 
 select  t.OrderID
        ,t.ArtworkID
        ,t.PatternCode
        ,t.PatternDesc
-       ,t.Remark
-       ,[ReqQty] = sum(t.ReqQty)
+       ,t.OrderArtworkUkey
+       ,[ReqQty] = MAX(t.ReqQty)
        ,[OrderQty] = o.Qty
        ,[Article] = ''
        ,[SizeCode] = ''
        ,[LocalSuppID] = ''
 into #FinalArtworkReq
 from #tmp t
-inner join orders o with (nolock) on o.ID = t.OrderID
+inner join Orders o with (nolock) on o.ID = t.OrderID
 group by t.OrderID
         ,t.PatternCode
         ,t.PatternDesc
         ,t.ArtworkID
-        ,t.Remark
+        ,t.OrderArtworkUkey
         ,o.Qty
 
-{this.sqlGetBuyBackDeduction(this._masterData["artworktypeid"].ToString())}
+{this.sqlGetBuyBackDeduction(this._ArtWorkReq_ID, this._masterData["artworktypeid"].ToString())}
 
 -- exists DB
 select distinct
@@ -308,7 +308,7 @@ o.FactoryID
 ,s.ArtworkID
 ,s.PatternCode
 ,s.PatternDesc
-,s.Remark
+,s.OrderArtworkUkey
 ,[BuyBackArtworkReq] = isnull(tbbd.BuyBackArtworkReq,0)
 into #tmpCurrent
 from  orders o WITH (NOLOCK) 
@@ -319,6 +319,7 @@ left join #tmpBuyBackDeduction tbbd on  tbbd.OrderID = s.OrderID       and
                                         tbbd.SizeCode = s.SizeCode     and
                                         tbbd.PatternCode = s.PatternCode   and
                                         tbbd.PatternDesc = s.PatternDesc   and
+                                        tbbd.OrderArtworkUkey = s.OrderArtworkUkey   and
                                         tbbd.ArtworkID = s.ArtworkID and
 										tbbd.LocalSuppID = ''
 outer apply(
@@ -327,6 +328,7 @@ outer apply(
 	where ad.ID = a.ID
 	and OrderID = o.ID and ad.PatternCode= isnull(s.PatternCode,'')
 	and ad.PatternDesc = isnull(s.PatternDesc,'') 
+	and (s.OrderArtworkUkey = 0 or ad.OrderArtworkUkey = s.OrderArtworkUkey)
     and ad.ArtworkID = iif(s.ArtworkID is null,'{this._masterData["ArtworkTypeID"]}',s.ArtworkID)
 	{(isClosed ? string.Empty : $"and ad.id != '{this._ArtWorkReq_ID}'")}
 	and a.ArtworkTypeID = '{this._masterData["ArtworkTypeID"]}'
@@ -334,7 +336,7 @@ outer apply(
 )ReqQty
 group by o.FactoryID,o.ID,o.StyleID,o.BrandID,ReqQty.value
     ,{(isClosed ? " + IIF(s.ExistsPO = 1, s.ReqQty, 0)" : " + s.ReqQty ")}
-    ,s.ArtworkID,s.PatternCode,s.PatternDesc,s.Remark
+    ,s.ArtworkID,s.PatternCode,s.PatternDesc,s.OrderArtworkUkey
     ,isnull(tbbd.BuyBackArtworkReq,0)
 having Isnull(ReqQty.value, 0) + isnull(tbbd.BuyBackArtworkReq,0) {(isClosed ? " + IIF(s.ExistsPO = 1, s.ReqQty, 0)" : " + s.ReqQty ")} > sum(oq.Qty)
 
