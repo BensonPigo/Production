@@ -686,16 +686,21 @@ into #ArticleForThread
 from #ArticleForThread_Detail a
 
 -- 要把換算單位和計算的額外拉出來, 不然用子查詢遇到比數太多的會太慢
-SELECT a.ID,a.SEQ1,a.seq2
-,invtQty = Round(sum(dbo.getUnitQty(inv.UnitID, a.StockUnit, isnull(inv.Qty, 0.00))), 2)
+select  p.ID, p.SEQ1, p.seq2
+	, [invtQty] = dbo.getUnitQty(inv.UnitID, p.StockUnit, isnull(inv.Qty, 0.00))
+into #tmp_InvTrans_detail
+from PO_Supp_Detail p WITH (NOLOCK)
+inner join InvTrans inv WITH (NOLOCK) on inv.InventoryPOID = p.id
+	and inv.InventorySeq1 = p.Seq1
+	and inv.InventorySeq2 = p.seq2	
+	and inv.Type in ('1', '4')
+where exists (select 1 from #tmpOrder t where p.ID = t.POID)
+
+select p.ID, p.SEQ1, p.seq2
+	, [invtQty] = Round(sum(p.invtQty), 2)
 into #InvTrans_inv
-FROM InvTrans inv WITH (NOLOCK)
-inner join PO_Supp_Detail a WITH (NOLOCK) on   inv.InventoryPOID = a.id
-	and inv.InventorySeq1 = a.Seq1
-	and inv.InventorySeq2 = a.seq2	
-inner join #tmpOrder o on o.poid = a.id
-where  inv.Type in ('1', '4')
-group by a.ID,a.SEQ1,a.seq2
+from #tmp_InvTrans_detail p
+group by p.ID, p.SEQ1, p.seq2
 
 SELECT a.POID,a.SEQ1,a.seq2
     ,invtQty = dbo.getUnitQty(inv.UnitID, p.StockUnit, isnull(inv.Qty, 0.00))
@@ -1269,6 +1274,7 @@ drop table #tmpOrder,#tmpLocalPO_Detail,#ArticleForThread_Detail,#ArticleForThre
     ,#InvTrans_MDPo
     ,#tmpQA
     ,#tmpwashlabQA
+    ,#tmp_InvTrans_detail
 ";
 
             List<SqlParameter> paras = new List<SqlParameter> { new SqlParameter("@sp1", this.txtSPNo.Text) };
