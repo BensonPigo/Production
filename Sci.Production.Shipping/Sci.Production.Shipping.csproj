@@ -184,6 +184,18 @@
     <Compile Include="B08.Designer.cs">
       <DependentUpon>B08.cs</DependentUpon>
     </Compile>
+    <Compile Include="B11.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="B11.Designer.cs">
+      <DependentUpon>B11.cs</DependentUpon>
+    </Compile>
+    <Compile Include="B10.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="B10.Designer.cs">
+      <DependentUpon>B10.cs</DependentUpon>
+    </Compile>
     <Compile Include="B43_Copy_CustomsSP.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -279,6 +291,12 @@
     </Compile>
     <Compile Include="P05_FoundryList.Designer.cs">
       <DependentUpon>P05_FoundryList.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P05_MercuryPostScanShipment.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P05_MercuryPostScanShipment.Designer.cs">
+      <DependentUpon>P05_MercuryPostScanShipment.cs</DependentUpon>
     </Compile>
     <Compile Include="P05_SOCFMDate.cs">
       <SubType>Form</SubType>
@@ -1118,6 +1136,12 @@
     <EmbeddedResource Include="B08.resx">
       <DependentUpon>B08.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="B11.resx">
+      <DependentUpon>B11.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="B10.resx">
+      <DependentUpon>B10.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="B43_Copy_CustomsSP.resx">
       <DependentUpon>B43_Copy_CustomsSP.cs</DependentUpon>
     </EmbeddedResource>
@@ -1165,6 +1189,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="P05_FoundryList.resx">
       <DependentUpon>P05_FoundryList.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P05_MercuryPostScanShipment.resx">
+      <DependentUpon>P05_MercuryPostScanShipment.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P05_SOCFMDate.resx">
       <DependentUpon>P05_SOCFMDate.cs</DependentUpon>

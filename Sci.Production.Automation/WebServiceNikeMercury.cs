@@ -18,6 +18,8 @@ using System.Xml.Linq;
 using System.Xml.Serialization;
 using static PmsWebApiUtility20.WebApiTool;
 using static Sci.Production.Prg.Entity.NikeMercury.ResponseLabelsPackPlanCartonAdd;
+using static Sci.Production.Prg.Entity.NikeMercury.ResponseShipmentScannedCartonUploadLSP;
+using static Sci.Production.Prg.Entity.NikeMercury.ResponseShipmentShippingDetailsUpdateLSP;
 
 namespace Sci.Production.Automation
 {
@@ -562,6 +564,186 @@ where   pg.ID = '{packID}'
             {
                 return new DualResult(false, new Exception($"CartonNumber:{cartonNumber}" + Environment.NewLine + returnDescription));
             }
+
+            return new DualResult(true);
+        }
+
+        /// <summary>
+        /// ShipmentScannedCartonUploadLSP
+        /// </summary>
+        /// <param name="shipmentInfo">shipmentInfo</param>
+        /// <param name="shipmentNumber">shipmentNumber</param>
+        /// <returns>DualResult</returns>
+        public DualResult ShipmentScannedCartonUploadLSP(RequestShipmentScannedCartonUploadLSP.Input shipmentInfo, out string shipmentNumber)
+        {
+            shipmentNumber = string.Empty;
+
+            if (MyUtility.Check.Empty(this.factoryCode))
+            {
+                return new DualResult(false, "NikeFactoryCode is empty");
+            }
+
+            shipmentInfo.FactoryCode = this.factoryCode;
+            RequestShipmentScannedCartonUploadLSP.Envelope posBody = new RequestShipmentScannedCartonUploadLSP.Envelope()
+            {
+                Body = new RequestShipmentScannedCartonUploadLSP.Body()
+                {
+                    ShipmentScannedCartonUploadLSP = new RequestShipmentScannedCartonUploadLSP.ShipmentScannedCartonUploadLSP()
+                    {
+                        Input = shipmentInfo,
+                    },
+                },
+            };
+
+            string soapRequest = this.SerializeNikeMercuryXml(posBody, "http://schemas.datacontract.org/2004/07/OLLIeLogistics");
+
+            Dictionary<string, string> dicHeader = new Dictionary<string, string>
+            {
+                { "SOAPAction", "http://tempuri.org/ILogistics/ShipmentScannedCartonUploadLSP" },
+            };
+
+            HttpContent httpContent = new StringContent(soapRequest, Encoding.UTF8, "text/xml");
+            WebApiBaseResult webApiBaseResult = WebApiTool.WebApiSend(this.serviceUrl, "Logistics", soapRequest, HttpMethod.Post, httpContent: httpContent, headers: dicHeader);
+
+            if (!webApiBaseResult.isSuccess)
+            {
+                return new DualResult(false, webApiBaseResult.httpStatusCode.ToString() + webApiBaseResult.responseContent);
+            }
+
+            ResponseShipmentScannedCartonUploadLSP.Envelope responseResult;
+
+            DualResult resultDeserialize = this.DeserializeNikeMercuryXml<ResponseShipmentScannedCartonUploadLSP.Envelope>(webApiBaseResult.responseContent, out responseResult);
+
+            if (!resultDeserialize)
+            {
+                return resultDeserialize;
+            }
+
+            ShipmentScannedCartonUploadLSPResult shipmentScannedCartonUploadLSPResult = responseResult.Body.ShipmentScannedCartonUploadLSPResponse.ShipmentScannedCartonUploadLSPResult;
+
+            if (shipmentScannedCartonUploadLSPResult.OutputMessage.ReturnCode == -1)
+            {
+                return new DualResult(false, shipmentScannedCartonUploadLSPResult.OutputMessage.ReturnDescription);
+            }
+
+            shipmentNumber = shipmentScannedCartonUploadLSPResult.FactoryHubShipmentNumber;
+
+            return new DualResult(true, shipmentScannedCartonUploadLSPResult.OutputMessage.ReturnDescription);
+        }
+
+        /// <summary>
+        /// ShipmentShippingDetailsUpdateLSP
+        /// </summary>
+        /// <param name="shipmentInfo">shipmentInfo</param>
+        /// <returns>DualResult</returns>
+        public DualResult ShipmentShippingDetailsUpdateLSP(RequestShipmentShippingDetailsUpdateLSP.Input shipmentInfo)
+        {
+            if (MyUtility.Check.Empty(this.factoryCode))
+            {
+                return new DualResult(false, "NikeFactoryCode is empty");
+            }
+
+            shipmentInfo.FactoryCode = this.factoryCode;
+            RequestShipmentShippingDetailsUpdateLSP.Envelope posBody = new RequestShipmentShippingDetailsUpdateLSP.Envelope()
+            {
+                Body = new RequestShipmentShippingDetailsUpdateLSP.Body()
+                {
+                    ShipmentShippingDetailsUpdateLSP = new RequestShipmentShippingDetailsUpdateLSP.ShipmentShippingDetailsUpdateLSP()
+                    {
+                        Input = shipmentInfo,
+                    },
+                },
+            };
+
+            string soapRequest = this.SerializeNikeMercuryXml(posBody, "http://schemas.datacontract.org/2004/07/OLLIeLogistics");
+
+            Dictionary<string, string> dicHeader = new Dictionary<string, string>
+            {
+                { "SOAPAction", "http://tempuri.org/ILogistics/ShipmentShippingDetailsUpdateLSP" },
+            };
+
+            HttpContent httpContent = new StringContent(soapRequest, Encoding.UTF8, "text/xml");
+            WebApiBaseResult webApiBaseResult = WebApiTool.WebApiSend(this.serviceUrl, "Logistics", soapRequest, HttpMethod.Post, httpContent: httpContent, headers: dicHeader);
+
+            if (!webApiBaseResult.isSuccess)
+            {
+                return new DualResult(false, webApiBaseResult.httpStatusCode.ToString() + webApiBaseResult.responseContent);
+            }
+
+            ResponseShipmentShippingDetailsUpdateLSP.Envelope responseResult;
+
+            DualResult resultDeserialize = this.DeserializeNikeMercuryXml<ResponseShipmentShippingDetailsUpdateLSP.Envelope>(webApiBaseResult.responseContent, out responseResult);
+
+            if (!resultDeserialize)
+            {
+                return resultDeserialize;
+            }
+
+            ShipmentShippingDetailsUpdateLSPResult shipmentShippingDetailsUpdateLSPResult = responseResult.Body.ShipmentShippingDetailsUpdateLSPResponse.ShipmentShippingDetailsUpdateLSPResult;
+
+            if (shipmentShippingDetailsUpdateLSPResult.OutputMessage.ReturnCode == -1)
+            {
+                return new DualResult(false, shipmentShippingDetailsUpdateLSPResult.OutputMessage.ReturnDescription);
+            }
+
+            return new DualResult(true);
+        }
+
+        /// <summary>
+        /// ShipmentCommercialDocumentsBinaryArrayPDF
+        /// </summary>
+        /// <param name="docInfo">docInfo</param>
+        /// <returns>DualResult</returns>
+        public DualResult ShipmentCommercialDocumentsBinaryArrayPDF(RequestShipmentCommercialDocumentsFileLocationPDF.Input docInfo)
+        {
+            if (MyUtility.Check.Empty(this.factoryCode))
+            {
+                return new DualResult(false, "NikeFactoryCode is empty");
+            }
+
+            docInfo.FactoryCode = this.factoryCode;
+            RequestShipmentCommercialDocumentsFileLocationPDF.Envelope posBody = new RequestShipmentCommercialDocumentsFileLocationPDF.Envelope()
+            {
+                Body = new RequestShipmentCommercialDocumentsFileLocationPDF.Body()
+                {
+                    ShipmentCommercialDocumentsFileLocationPDF = new RequestShipmentCommercialDocumentsFileLocationPDF.ShipmentCommercialDocumentsFileLocationPDF()
+                    {
+                        Input = docInfo,
+                    },
+                },
+            };
+
+            string soapRequest = this.SerializeNikeMercuryXml(posBody, "http://schemas.datacontract.org/2004/07/OLLIeLogistics");
+
+            Dictionary<string, string> dicHeader = new Dictionary<string, string>
+            {
+                { "SOAPAction", "http://tempuri.org/ILogistics/ShipmentShippingDetailsUpdateLSP" },
+            };
+
+            HttpContent httpContent = new StringContent(soapRequest, Encoding.UTF8, "text/xml");
+            WebApiBaseResult webApiBaseResult = WebApiTool.WebApiSend(this.serviceUrl, "Logistics", soapRequest, HttpMethod.Post, httpContent: httpContent, headers: dicHeader);
+
+            if (!webApiBaseResult.isSuccess)
+            {
+                return new DualResult(false, webApiBaseResult.httpStatusCode.ToString() + webApiBaseResult.responseContent);
+            }
+
+            // 回傳解析內容等SA確認後再進行
+            //ResponseShipmentShippingDetailsUpdateLSP.Envelope responseResult;
+
+            //DualResult resultDeserialize = this.DeserializeNikeMercuryXml<ResponseShipmentShippingDetailsUpdateLSP.Envelope>(webApiBaseResult.responseContent, out responseResult);
+
+            //if (!resultDeserialize)
+            //{
+            //    return resultDeserialize;
+            //}
+
+            //ShipmentShippingDetailsUpdateLSPResult shipmentShippingDetailsUpdateLSPResult = responseResult.Body.ShipmentShippingDetailsUpdateLSPResponse.ShipmentShippingDetailsUpdateLSPResult;
+
+            //if (shipmentShippingDetailsUpdateLSPResult.OutputMessage.ReturnCode == -1)
+            //{
+            //    return new DualResult(false, shipmentShippingDetailsUpdateLSPResult.OutputMessage.ReturnDescription);
+            //}
 
             return new DualResult(true);
         }

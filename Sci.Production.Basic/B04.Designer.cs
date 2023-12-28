@@ -31,7 +31,6 @@ namespace Sci.Production.Basic
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.labelCode = new Sci.Win.UI.Label();
             this.labelAbbreviation = new Sci.Win.UI.Label();
             this.labelNationality = new Sci.Win.UI.Label();
@@ -75,6 +74,8 @@ namespace Sci.Production.Basic
             this.label4 = new Sci.Win.UI.Label();
             this.txtTaxNO = new Sci.Win.UI.TextBox();
             this.chkOverseas = new Sci.Win.UI.CheckBox();
+            this.label5 = new Sci.Win.UI.Label();
+            this.txtNikeLSPCode = new Sci.Win.UI.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -92,6 +93,8 @@ namespace Sci.Production.Basic
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.txtNikeLSPCode);
+            this.detailcont.Controls.Add(this.label5);
             this.detailcont.Controls.Add(this.chkOverseas);
             this.detailcont.Controls.Add(this.txtTaxNO);
             this.detailcont.Controls.Add(this.label4);
@@ -468,7 +471,7 @@ namespace Sci.Production.Basic
             this.editRemark.Location = new System.Drawing.Point(156, 376);
             this.editRemark.Multiline = true;
             this.editRemark.Name = "editRemark";
-            this.editRemark.Size = new System.Drawing.Size(400, 82);
+            this.editRemark.Size = new System.Drawing.Size(400, 71);
             this.editRemark.TabIndex = 11;
             // 
             // btnBatchApprove
@@ -499,14 +502,6 @@ namespace Sci.Production.Basic
             this.gridBankDetail.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.gridBankDetail.Location = new System.Drawing.Point(0, 0);
             this.gridBankDetail.Name = "gridBankDetail";
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridBankDetail.RowHeadersDefaultCellStyle = dataGridViewCellStyle1;
             this.gridBankDetail.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridBankDetail.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridBankDetail.RowTemplate.Height = 24;
@@ -519,7 +514,7 @@ namespace Sci.Production.Basic
             // 
             this.label2.BackColor = System.Drawing.Color.Transparent;
             this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
-            this.label2.Location = new System.Drawing.Point(28, 469);
+            this.label2.Location = new System.Drawing.Point(28, 483);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(125, 23);
             this.label2.TabIndex = 210;
@@ -532,7 +527,7 @@ namespace Sci.Production.Basic
             this.chkPayByChk.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "IsSintexSubcon", true));
             this.chkPayByChk.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.chkPayByChk.IsSupportEditMode = false;
-            this.chkPayByChk.Location = new System.Drawing.Point(156, 469);
+            this.chkPayByChk.Location = new System.Drawing.Point(156, 484);
             this.chkPayByChk.Name = "chkPayByChk";
             this.chkPayByChk.ReadOnly = true;
             this.chkPayByChk.Size = new System.Drawing.Size(114, 21);
@@ -627,6 +622,24 @@ namespace Sci.Production.Basic
             this.chkOverseas.UseVisualStyleBackColor = true;
             this.chkOverseas.CheckedChanged += new System.EventHandler(this.ChkOverseas_CheckedChanged);
             // 
+            // label5
+            // 
+            this.label5.Location = new System.Drawing.Point(28, 450);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(125, 23);
+            this.label5.TabIndex = 217;
+            this.label5.Text = "Nike LSP Code";
+            // 
+            // txtNikeLSPCode
+            // 
+            this.txtNikeLSPCode.BackColor = System.Drawing.Color.White;
+            this.txtNikeLSPCode.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "NikeLSPCode", true));
+            this.txtNikeLSPCode.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtNikeLSPCode.Location = new System.Drawing.Point(156, 450);
+            this.txtNikeLSPCode.Name = "txtNikeLSPCode";
+            this.txtNikeLSPCode.Size = new System.Drawing.Size(100, 23);
+            this.txtNikeLSPCode.TabIndex = 219;
+            // 
             // B04
             // 
             this.ClientSize = new System.Drawing.Size(953, 770);
@@ -712,5 +725,7 @@ namespace Sci.Production.Basic
         private Win.UI.TextBox txtTaxNO;
         private Win.UI.Label label4;
         private Win.UI.CheckBox chkOverseas;
+        private Win.UI.Label label5;
+        private Win.UI.TextBox txtNikeLSPCode;
     }
 }

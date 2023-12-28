@@ -312,6 +312,8 @@ where fwd.UKey ='{this.CurrentMaintain["ForwarderWhse_DetailUKey"]}'", out DataR
             this.btnRemark.Enabled = this.CurrentMaintain != null;
             this.btnRemark.ForeColor = !MyUtility.Check.Empty(this.CurrentMaintain["Remark"]) ? Color.Blue : Color.Black;
 
+            this.btnMercuryShipment.Visible = this.CurrentMaintain["BrandID"].ToString().ToUpper() == "NIKE";
+
             #region AirPP List按鈕變色
             if (!this.EditMode)
             {
@@ -663,6 +665,21 @@ where   pl.INVNo = '{0}'
             }
 
             return base.ClickDeleteBefore();
+        }
+
+        /// <inheritdoc/>
+        protected override DualResult ClickDeletePost()
+        {
+            string sqlDeleteNikePostScanShipment = $@" delete NikePostScanShipment where InvNo = '{this.CurrentMaintain["ID"]}'";
+
+            DualResult result = DBProxy.Current.Execute(null, sqlDeleteNikePostScanShipment);
+
+            if (!result)
+            {
+                return result;
+            }
+
+            return base.ClickDeletePost();
         }
 
         /// <inheritdoc/>
@@ -2836,6 +2853,11 @@ where ID = '{this.CurrentMaintain["ID"]}'
             {
                 this.btnShippingMemo.ForeColor = Color.Black;
             }
+        }
+
+        private void BtnMercuryShipment_Click(object sender, EventArgs e)
+        {
+            new P05_MercuryPostScanShipment(this.CurrentMaintain["ID"].ToString()).ShowDialog();
         }
     }
 }

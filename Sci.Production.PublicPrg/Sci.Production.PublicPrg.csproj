@@ -169,8 +169,13 @@
     <Compile Include="Entity\NikeMercury\RequestLabelsPackPlanCartonUpdate.cs" />
     <Compile Include="Entity\NikeMercury\RequestLabelsPackPlanCartonAdd.cs" />
     <Compile Include="Entity\NikeMercury\RequestLabelsPackPlanCartonDelete.cs" />
+    <Compile Include="Entity\NikeMercury\RequestShipmentCommercialDocumentsFileLocationPDF.cs" />
+    <Compile Include="Entity\NikeMercury\RequestShipmentShippingDetailsUpdateLSP.cs" />
+    <Compile Include="Entity\NikeMercury\RequestShipmentScannedCartonUploadLSP.cs" />
     <Compile Include="Entity\NikeMercury\ResponseLabelsGS1128CartonPrintByCartonRange.cs" />
     <Compile Include="Entity\NikeMercury\ResponseLabelsPackPlanCartonDelete.cs" />
+    <Compile Include="Entity\NikeMercury\ResponseShipmentShippingDetailsUpdateLSP.cs" />
+    <Compile Include="Entity\NikeMercury\ResponseShipmentScannedCartonUploadLSP.cs" />
     <Compile Include="Entity\NikeMercury\ResponseOrdersDataGet.cs" />
     <Compile Include="Entity\NikeMercury\RequestOrdersDataGet.cs" />
     <Compile Include="Entity\NikeMercury\RequestLabelsPackPlanDelete.cs" />

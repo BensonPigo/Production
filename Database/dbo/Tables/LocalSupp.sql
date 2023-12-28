@@ -26,6 +26,7 @@
 	TaxNo varchar(15) NOT NULL CONSTRAINT [DF_LocalSupp_TaxNo] DEFAULT(''),
 	IsFreightForwarder BIT			 CONSTRAINT [DF_LocalSupp_IsFreightForwarder] DEFAULT((0)) NOT NULL,
     [IsMiscOverseas] BIT NOT NULL DEFAULT ((0)), 
+    [NikeLSPCode] VARCHAR(4) NOT NULL CONSTRAINT [DF_LocalSupp_NikeLSPCode] DEFAULT (('')),
     CONSTRAINT [PK_LocalSupp] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 
