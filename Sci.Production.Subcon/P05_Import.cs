@@ -291,9 +291,9 @@ where id ='{this.dr_artworkReq["artworktypeid"]}'
                 .Text("SizeCode", header: "Size", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Numeric("stitch", header: caption_stitch, iseditingreadonly: true)
                 .Text("PatternCode", header: "Cut. Part", iseditingreadonly: true)
-                .Text("PatternDesc", header: "Cut. Part Name", iseditingreadonly: true, width: Widths.AnsiChars(15))
+                .Text("PatternDesc", header: "Cut. Part Name", width: Widths.AnsiChars(15), iseditingreadonly: true)
+                .Text("Remark", header: "Remark", width: Widths.AnsiChars(15), iseditingreadonly: true)
                 .Numeric("qtygarment", header: "Qty/GMT", iseditable: true, integer_places: 2, iseditingreadonly: true)
-                .Text("Remark", header: "Remark", iseditingreadonly: true, width: Widths.AnsiChars(15))
                 ;
             this.gridBatchImport.Columns["ReqQty"].DefaultCellStyle.BackColor = Color.Pink;
         }
@@ -323,7 +323,7 @@ where id ='{this.dr_artworkReq["artworktypeid"]}'
             {
                 foreach (DataRow tmp in dr2)
                 {
-                    DataRow[] findrow = this.dt_artworkReqDetail.Select($@"orderid = '{tmp["orderID"]}' and Article = '{tmp["Article"]}' and SizeCode = '{tmp["SizeCode"]}' and ArtworkId = '{tmp["ArtworkId"]}' and patterncode = '{tmp["patterncode"]}' and PatternDesc = '{tmp["PatternDesc"]}'");
+                    DataRow[] findrow = this.dt_artworkReqDetail.Select($@"orderid = '{tmp["orderID"]}' and Article = '{tmp["Article"]}' and SizeCode = '{tmp["SizeCode"]}' and ArtworkId = '{tmp["ArtworkId"]}' and patterncode = '{tmp["patterncode"]}' and PatternDesc = '{tmp["PatternDesc"]}' and OrderArtworkUkey ='{tmp["OrderArtworkUkey"]}' ");
 
                     decimal exceedQty = MyUtility.Convert.GetDecimal(tmp["AccReqQty"]) + MyUtility.Convert.GetDecimal(tmp["ReqQty"]) - MyUtility.Convert.GetDecimal(tmp["OrderQty"]);
 
@@ -382,13 +382,14 @@ select  distinct
         , id = ''
         , ExceedQty = 0
         , Remark = ISNULL(oa.Remark, '')
+        , OrderArtworkUkey = ISNULL(oa.Ukey, 0)
 into #baseArtworkReq
 from  orders o WITH (NOLOCK)
 inner join Order_Qty oq with (nolock) on o.ID = oq.ID
-inner join dbo.Order_Artwork oa on  oa.ID = o.ID and 
-                                    (oq.Article = oa.Article or oa.Article = '----') and 
-                                    oa.ArtworkTypeID = '{this.dr_artworkReq["artworktypeid"]}'
-                                    and exists (select 1 from Order_Article oa1 with(nolock) where oa1.ID = oa.ID and (oa1.Article = oa.Article or oa.Article = '----'))
+inner join dbo.Order_Artwork oa with (nolock) on oa.ID = o.ID
+        and (oq.Article = oa.Article or oa.Article = '----')  
+        and oa.ArtworkTypeID = '{this.dr_artworkReq["artworktypeid"]}'
+        and exists (select 1 from Order_Article oa1 with(nolock) where oa1.ID = oa.ID and (oa1.Article = oa.Article or oa.Article = '----'))
 left join Order_TmsCost ot WITH (NOLOCK) on ot.ID = o.ID
 inner join factory f WITH (NOLOCK) on o.factoryid=f.id
 where f.IsProduceFty=1
@@ -409,7 +410,7 @@ and ((o.Category = 'B' and  ot.InhouseOSP = 'O') or (o.category = 'S'))
             string strSQLCmd = $@"
 --因為Planning B03(Style_Artwork)會有同一個Artwork多筆報價關係，所以這邊distinct避免資料發散
 select  distinct
-        [LocalSuppId] = iif(o.category = 'S', '{this.dr_artworkReq["LocalSuppId"]}', isnull(sao.LocalSuppId, ''))
+        [LocalSuppId] = iif(o.category = 'S', '{this.dr_artworkReq["LocalSuppId"]}', isnull(vsa.LocalSuppId, ''))
 		, [orderID] = o.ID
         , oq.Article
         , oq.SizeCode
@@ -426,23 +427,29 @@ select  distinct
         , id = ''
         , ExceedQty = 0
         , Remark = ISNULL(oa.Remark, '')
+        , OrderArtworkUkey = ISNULL(oa.Ukey, 0)
 into #baseArtworkReq
-from  orders o WITH (NOLOCK) 
+from  Orders o with (nolock)
 inner join Order_Qty oq with (nolock) on o.ID = oq.ID
-left join dbo.Order_Artwork oa on oa.ID = o.ID
+inner join factory f with (nolock) on o.factoryid = f.id
+inner join dbo.Order_Artwork oa with(nolock) on oa.ID = o.ID
+    and (oq.Article = oa.Article or oa.Article = '----')  
     and oa.ArtworkTypeID = '{this.dr_artworkReq["artworktypeid"]}'
-    and exists (select 1 from Order_Article oa1 with(nolock) where oa1.ID = oa.ID and (oa1.Article = oa.Article or oa.Article = '----'))
-left join dbo.View_Style_Artwork vsa on	vsa.StyleUkey = o.StyleUkey and 
-                                        vsa.Article = oq.Article and 
-                                        vsa.ArtworkID = oa.ArtworkID and
-										vsa.ArtworkName = oa.ArtworkName and 
-                                        vsa.ArtworkTypeID = oa.ArtworkTypeID and 
-                                        vsa.PatternCode = oa.PatternCode and
-										vsa.PatternDesc = oa.PatternDesc
-left join Style_Artwork_Quot sao with (nolock) on   sao.Ukey = vsa.StyleArtworkUkey and 
+    and exists (select 1 from Order_Article oa1 with (nolock) where oa1.ID = oa.ID and (oa1.Article = oa.Article or oa.Article = '----'))
+outer apply (
+	select vsa.ActStitch, sao.LocalSuppId
+	from  dbo.View_Style_Artwork vsa 
+	left join Style_Artwork_Quot sao with (nolock) on sao.Ukey = vsa.StyleArtworkUkey and 
                                                     sao.LocalSuppId = '{this.dr_artworkReq["LocalSuppId"]}' and
                                                     (sao.SizeCode = oq.SizeCode or sao.SizeCode = '') 
-inner join factory f WITH (NOLOCK) on o.factoryid=f.id
+	where exists (select 1 from Style_Artwork sa where sa.StyleUkey = vsa.StyleUkey and vsa.StyleArtworkUkey = sa.Ukey and sa.Width = oa.Width and sa.Length = oa.Length and sa.Colors = oa.Colors)
+    and o.StyleUkey = vsa.StyleUkey
+	and oq.Article = vsa.Article
+	and oa.ArtworkID = vsa.ArtworkID
+	and oa.ArtworkTypeID = vsa.ArtworkTypeID
+	and oa.PatternCode = vsa.PatternCode	
+	and oa.PatternDesc = vsa.PatternDesc
+) vsa
 where f.IsProduceFty=1
 and o.category in ('B','S')
 and o.MDivisionID='{Sci.Env.User.Keyword}' 
@@ -473,6 +480,7 @@ select  [LocalSuppId] = '{this.dr_artworkReq["LocalSuppId"]}'
         , id = ''
         , ExceedQty = 0
         , Remark = ''
+        , OrderArtworkUkey = 0
 into #baseArtworkReq
 from  Order_TmsCost ot
 inner join orders o WITH (NOLOCK) on ot.ID = o.ID
@@ -514,6 +522,7 @@ select  LocalSuppId
         ,id
         ,ExceedQty
         ,Remark
+        ,OrderArtworkUkey
 from #baseArtworkReq
 union all
 select  [LocalSuppId] = isnull(LocalSuppId.val,'')
@@ -533,6 +542,7 @@ select  [LocalSuppId] = isnull(LocalSuppId.val,'')
         ,id
         ,ExceedQty
         ,Remark
+        ,OrderArtworkUkey
 from #baseArtworkReq t
 outer apply (select top 1 val = LocalSuppId
 			 from #baseArtworkReq t1 
@@ -540,6 +550,7 @@ outer apply (select top 1 val = LocalSuppId
 					t1.Article = t.Article and
 					t1.PatternCode = t.PatternCode and
 					t1.PatternDesc = t.PatternDesc and
+					t1.OrderArtworkUkey = t.OrderArtworkUkey and
 					t1.ArtworkID = t.ArtworkID and
 					t1.LocalSuppId <> ''
 			 ) LocalSuppId
@@ -557,12 +568,13 @@ group by     LocalSuppId.val
 		    ,stitch
 		    ,PatternCode
 		    ,PatternDesc
-            ,Remark
 		    ,qtygarment
             ,StyleID
 		    ,POID
             ,id
             ,ExceedQty
+            ,Remark
+            ,OrderArtworkUkey
             ,OrderQty.val
 union all
 select  [LocalSuppId] = isnull(LocalSuppId.val,'')
@@ -582,6 +594,7 @@ select  [LocalSuppId] = isnull(LocalSuppId.val,'')
         ,id
         ,ExceedQty
         ,Remark
+        ,OrderArtworkUkey
 from #baseArtworkReq t
 outer apply (select top 1 val = LocalSuppId
 			 from #baseArtworkReq t1 
@@ -589,6 +602,7 @@ outer apply (select top 1 val = LocalSuppId
 					t1.SizeCode = t.SizeCode and
 					t1.PatternCode = t.PatternCode and
 					t1.PatternDesc = t.PatternDesc and
+					t1.OrderArtworkUkey = t.OrderArtworkUkey and
 					t1.ArtworkID = t.ArtworkID and
 					t1.LocalSuppId <> ''
 			 ) LocalSuppId
@@ -606,12 +620,13 @@ group by     LocalSuppId.val
 		    ,stitch
 		    ,PatternCode
 		    ,PatternDesc
-            ,Remark
 		    ,qtygarment
             ,StyleID
 		    ,POID
             ,id
             ,ExceedQty
+            ,Remark
+            ,OrderArtworkUkey
             ,OrderQty.val
 union all
 select  [LocalSuppId] = isnull(LocalSuppId.val,'')
@@ -631,12 +646,14 @@ select  [LocalSuppId] = isnull(LocalSuppId.val,'')
         ,id
         ,ExceedQty
         ,Remark
+        ,OrderArtworkUkey
 from #baseArtworkReq t
 outer apply (select top 1 val = LocalSuppId
 			 from #baseArtworkReq t1 
 			 where  t1.orderID = t.orderID and
 					t1.PatternCode = t.PatternCode and
 					t1.PatternDesc = t.PatternDesc and
+					t1.OrderArtworkUkey = t.OrderArtworkUkey and
 					t1.ArtworkID = t.ArtworkID and
 					t1.LocalSuppId <> ''
 			 ) LocalSuppId
@@ -652,16 +669,17 @@ group by     LocalSuppId.val
 		    ,stitch
 		    ,PatternCode
 		    ,PatternDesc
-		    ,Remark
 		    ,qtygarment
             ,StyleID
 		    ,POID
             ,id
             ,ExceedQty
+            ,Remark
+            ,OrderArtworkUkey
             ,OrderQty.val
 ) a
 
-{this.p05.SqlGetBuyBackDeduction(this.dr_artworkReq["artworktypeid"].ToString())}
+{this.p05.SqlGetBuyBackDeduction(this.dr_artworkReq["ID"].ToString() ,this.dr_artworkReq["artworktypeid"].ToString())}
 
 select  [Selected] = 0
         ,fr.orderID
@@ -669,21 +687,22 @@ select  [Selected] = 0
         ,fr.Article
         ,fr.SizeCode
         ,fr.OrderQty
-        ,[AccReqQty] = isnull(ReqQty.value,0) + isnull(PoQty.value,0) + isnull(CurrentReq.value,0)
-        ,ReqQty = iif(  fr.OrderQty - (ReqQty.value + PoQty.value + isnull(CurrentReq.value,0) + isnull(tbbd.BuyBackArtworkReq, 0)) < 0, 0, 
-                        fr.OrderQty - (ReqQty.value + PoQty.value + isnull(CurrentReq.value,0) + isnull(tbbd.BuyBackArtworkReq, 0)))
+        ,[AccReqQty] = isnull(ReqQty.value,0) + isnull(PoQty.value,0)-- + isnull(CurrentReq.value,0)
+        ,ReqQty = iif(  fr.OrderQty - (ReqQty.value + PoQty.value + isnull(tbbd.BuyBackArtworkReq, 0)) < 0, 0, 
+                        fr.OrderQty - (ReqQty.value + PoQty.value + isnull(tbbd.BuyBackArtworkReq, 0)))
 		,fr.SewInLIne
 		,fr.SciDelivery
 		,fr.ArtworkID
 		,fr.stitch
 		,fr.PatternCode
 		,fr.PatternDesc
-        ,fr.Remark
+        ,fr.OrderArtworkUkey
 		,fr.qtygarment
         ,fr.StyleID
 		,fr.POID
         ,fr.id
         ,fr.ExceedQty
+        ,fr.Remark
         ,[BuyBackArtworkReq] = isnull(tbbd.BuyBackArtworkReq, 0)
         ,o.FactoryID
         ,f.IsProduceFty
@@ -695,6 +714,7 @@ left join #tmpBuyBackDeduction tbbd on  tbbd.OrderID = fr.OrderID       and
                                         tbbd.SizeCode = fr.SizeCode     and
                                         tbbd.PatternCode = fr.PatternCode   and
                                         tbbd.PatternDesc = fr.PatternDesc   and
+                                        tbbd.OrderArtworkUkey = fr.OrderArtworkUkey   and
                                         tbbd.ArtworkID = fr.ArtworkID and
 										tbbd.LocalSuppID = fr.LocalSuppID
 outer apply (
@@ -707,6 +727,7 @@ outer apply (
         and ad.SizeCode = fr.SizeCode
         and ad.PatternCode = fr.PatternCode
         and ad.PatternDesc = fr.PatternDesc
+        and ad.OrderArtworkUkey = fr.OrderArtworkUkey
         and ad.ArtworkID = fr.ArtworkID
         and a.id != '{this.dr_artworkReq["id"]}'
         and a.status != 'Closed'
@@ -732,7 +753,8 @@ outer apply(
             SizeCode = fr.SizeCode and
             ArtworkID = fr.ArtworkID and
             PatternCode = isnull(fr.PatternCode,'') and
-            PatternDesc = isnull(fr.PatternDesc,'')
+            PatternDesc = isnull(fr.PatternDesc,'')  and
+            OrderArtworkUkey = isnull(fr.OrderArtworkUkey, 0) 
 ) CurrentReq
 order by    fr.orderID, fr.Article, fr.SizeCode
 ";

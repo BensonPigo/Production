@@ -16,10 +16,10 @@ namespace Sci.Production.Subcon
         private bool boolDeptApv;
         private bool canConfrim;
         private bool canCheck;
-        private Func<string, string> sqlGetBuyBackDeduction;
+        private Func<string, string, string> sqlGetBuyBackDeduction;
 
         /// <inheritdoc/>
-        public P05_BatchApprove(Action reload, Func<string, string> sqlGetBuyBackDeduction)
+        public P05_BatchApprove(Action reload, Func<string, string, string> sqlGetBuyBackDeduction)
         {
             this.InitializeComponent();
             this.EditMode = true;
@@ -123,7 +123,7 @@ select a.ID
     ,ad.PatternDesc
 	,ad.QtyGarment
     ,[Status],Exceed
-	,ad.Remark
+	,ad.OrderArtworkUkey
 from ArtworkReq a
 inner join ArtworkReq_Detail ad on a.ID = ad.ID 
 left join Orders o on ad.OrderID = o.ID
@@ -264,10 +264,11 @@ select aq.MDivisionID as [M]
 	,aqd.ArtworkId as [Pattern]
 	,aqd.PatternDesc as [Cutparts]
     ,aqd.ReqQty as [Q'ty]
-	,aq.Remark 
+	,[Remark] = isnull(oa.Remark, '')
 from Artworkreq aq
 inner join Artworkreq_Detail aqd on aq.id = aqd.id
 left join orders o on aqd.OrderID = o.ID
+left join Order_Artwork oa with (nolock) on aqd.OrderArtworkUkey = oa.Ukey
 where 
 (
     (aq.Status = 'Locked' and Exceed = 1) 

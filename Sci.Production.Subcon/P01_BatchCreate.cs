@@ -223,6 +223,7 @@ WHERE bio.RFIDProcessLocationID=''
                 .Text("SizeCode", header: "Size", iseditingreadonly: true)
                 .Text("PatternCode", header: "Cutpart Id", iseditingreadonly: true)
                 .Text("PatternDesc", header: "Cutpart Name", iseditingreadonly: true)
+                .Text("Remark", header: "Remark", iseditingreadonly: true)
                 .Text("LocalSuppID", header: "Supplier", iseditingreadonly: true)
                 .Numeric("Cost", header: "Cost(USD)", iseditingreadonly: true, decimal_places: 4, integer_places: 4)
                 .Numeric("UnitPrice", header: "Unit Price", iseditable: true, decimal_places: 4, integer_places: 4)
@@ -410,6 +411,7 @@ WHERE bio.RFIDProcessLocationID=''
                                              t13 = MyUtility.Convert.GetDecimal(row["FarmIn"]),
                                              t14 = row.Field<string>("Article"),
                                              t15 = row.Field<string>("SizeCode"),
+                                             t16 = row.Field<Int64>("ArtworkReq_DetailUkey"),
                                          }
                                         into m
                                          select new
@@ -430,6 +432,7 @@ WHERE bio.RFIDProcessLocationID=''
                                              ArtworkReqID = m.Key.t11,
                                              FarmOut = m.Key.t12,
                                              FarmIn = m.Key.t13,
+                                             ArtworkReq_DetailUkey = m.Key.t16
                                          };
 
                             #endregion
@@ -514,7 +517,7 @@ WHERE bio.RFIDProcessLocationID=''
                                     ,[Amount]     
                                     ,[PoQty]      
                                     ,[ArtworkTypeID]
-                                    ,[ArtworkReqID],[Farmout],[FarmIn],[Article],[SizeCode])
+                                    ,[ArtworkReqID],[Farmout],[FarmIn],[Article],[SizeCode],[ArtworkReq_DetailUkey])
                                     VALUES    
                                     ('{0}'  
                                     ,'{1}'  
@@ -535,7 +538,7 @@ WHERE bio.RFIDProcessLocationID=''
                                     ,'{16}'
                                     ,'{17}'
                                     ,'{18}'
-)", id,
+                                    ,{19})", id,
                                         q2.orderid,
                                         q2.artworkid,
                                         q2.PatternCode,
@@ -553,7 +556,8 @@ WHERE bio.RFIDProcessLocationID=''
                                         q2.FarmOut,
                                         q2.FarmIn,
                                         q2.Article,
-                                        q2.SizeCode));
+                                        q2.SizeCode,
+                                        q2.ArtworkReq_DetailUkey));
                                     #endregion
                                 }
                             }
@@ -579,7 +583,7 @@ WHERE bio.RFIDProcessLocationID=''
                                     ,[Amount]     
                                     ,[PoQty]      
                                     ,[ArtworkTypeID]
-                                    ,[ArtworkReqID],[Farmout],[FarmIn],[Article],[SizeCode])
+                                    ,[ArtworkReqID],[Farmout],[FarmIn],[Article],[SizeCode],[ArtworkReq_DetailUkey])
                                     VALUES    
                                     ('{0}'  
                                     ,'{1}'  
@@ -599,7 +603,8 @@ WHERE bio.RFIDProcessLocationID=''
                                     ,'{15}'
                                     ,'{16}'
                                     ,'{17}'
-                                    ,'{18}')", id,
+                                    ,'{18}'
+                                    ,{19})", id,
                                         q2.orderid,
                                         q2.artworkid,
                                         q2.PatternCode,
@@ -617,7 +622,8 @@ WHERE bio.RFIDProcessLocationID=''
                                         q2.FarmOut,
                                         q2.FarmIn,
                                         q2.Article,
-                                        q2.SizeCode));
+                                        q2.SizeCode,
+                                        q2.ArtworkReq_DetailUkey));
                                     #endregion
                                 }
                             }
@@ -698,7 +704,7 @@ SELECT Selected = 0
 		, unitprice = isnull(unitprice.value,0)
 		, qtygarment = ard.QtyGarment
 		, poqty = ard.ReqQty
-		, sao.PriceApv 
+		, vsa.PriceApv 
 		, message = '' 
         , IsArtwork = 1
 		, [ArtworkReq_DetailUkey] = ard.Ukey
@@ -708,34 +714,41 @@ SELECT Selected = 0
 		,[Farmout] = ISNULL(FarmOut.Value,0)
 		,[FarmIn] = ISNULL(FarmIn.Value,0)
         , [QuotArticle] = isnull(vsa.Article, '')
-        , [QuotSizeCode] = isnull(sao.SizeCode, '')
+        , [QuotSizeCode] = isnull(vsa.SizeCode, '')
+        , oa.Remark
 into    #quoteDetailBase
 FROM Orders o WITH (NOLOCK) 
 inner join factory WITH (NOLOCK) on o.factoryid = factory.id
-inner join ArtworkType awt WITH (NOLOCK) on awt.ID = '{1}'
-inner join ArtworkReq_Detail ard with (nolock) on   ard.OrderId = o.ID and 
+inner join ArtworkType awt WITH (NOLOCK) on awt.ID = 'PRINTING'
+inner join ArtworkReq_Detail ard WITH (NOLOCK) on   ard.OrderId = o.ID and 
                                                     ard.ArtworkPOID = ''
+left join Order_Artwork oa on ard.OrderArtworkUkey = oa.Ukey
 inner join ArtworkReq ar WITH (NOLOCK) on ar.ID = ard.ID and ar.ArtworkTypeID = awt.ID and ar.Status = 'Approved' 
-outer apply (select top 1 Article from Order_Qty with (nolock) where ID = o.ID) oq
-left join dbo.View_Style_Artwork vsa on	vsa.StyleUkey = o.StyleUkey and 
-                                        (vsa.Article = ard.Article or (ard.Article = '' and vsa.Article = oq.Article)) and
-                                        vsa.ArtworkID = ard.ArtworkID and
-                                        vsa.ArtworkTypeID = ar.ArtworkTypeID and 
-                                        vsa.PatternCode = ard.PatternCode and
-										vsa.PatternDesc = ard.PatternDesc 
-left join ArtworkReq_IrregularQty ai with (nolock) on ai.OrderID = ard.OrderID and ai.ArtworkTypeID = ar.ArtworkTypeID and ard.ExceedQty > 0
-left join SubconReason sr with (nolock) on sr.Type = 'SQ' and sr.ID = ai.SubconReasonID
-left join Style_Artwork_Quot sao with (nolock) on   sao.Ukey = vsa.StyleArtworkUkey and 
+outer apply (select top 1 Article from Order_Qty WITH (NOLOCK) where ID = o.ID) oq
+outer apply (
+	select vsa.*, sao.Price, sao.PriceApv, sao.SizeCode
+	from dbo.View_Style_Artwork vsa WITH (NOLOCK)
+	left join Style_Artwork_Quot sao with (nolock) on   sao.Ukey = vsa.StyleArtworkUkey and 
                                                     ard.SizeCode = sao.SizeCode and
                                                     sao.LocalSuppID = ar.LocalSuppID  and 
                                                     sao.Price > 0  and sao.PriceApv = 'Y'
+	where exists (select 1 from Style_Artwork sa where sa.StyleUkey = vsa.StyleUkey and vsa.StyleArtworkUkey = sa.Ukey and sa.Width = oa.Width and sa.Length = oa.Length and sa.Colors = oa.Colors) -- 去除重複
+	and vsa.StyleUkey = o.StyleUkey
+	and  (vsa.Article = ard.Article or (ard.Article = '' and vsa.Article = oq.Article))
+	and oa.ArtworkID = vsa.ArtworkID
+	and oa.ArtworkTypeID = vsa.ArtworkTypeID
+	and oa.PatternCode = vsa.PatternCode	
+	and oa.PatternDesc = vsa.PatternDesc
+)vsa 									
+left join ArtworkReq_IrregularQty ai with (nolock) on ai.OrderID = ard.OrderID and ai.ArtworkTypeID = ar.ArtworkTypeID and ard.ExceedQty > 0
+left join SubconReason sr with (nolock) on sr.Type = 'SQ' and sr.ID = ai.SubconReasonID
 left join LocalSupp ls with (nolock) on ls.id = ar.LocalSuppID
-outer apply (select value = iif(ls.IsSintexSubcon = 1 and (awt.isArtwork = 1 or awt.useArtwork = 1), vsa.Cost,sao.Price)) unitprice
+outer apply (select value = iif(ls.IsSintexSubcon = 1 and (awt.isArtwork = 1 or awt.useArtwork = 1), vsa.Cost,vsa.Price)) unitprice
 outer apply (
     select value = 
         case when ls.IsSintexSubcon = 1 and (awt.isArtwork = 1 or awt.useArtwork = 1) then vsa.Cost
              when awt.isArtwork = 1 then vsa.Cost
-             else sao.Price
+             else vsa.Price
              end
 )cost
 OUTER APPLY(
@@ -837,8 +850,9 @@ select distinct
         , SizeCode
         , Category
         , [IrregularQtyReason]
-		,[Farmout]
-		,[FarmIn]
+		, [Farmout]
+		, [FarmIn]
+        , Remark
 from #quoteDetail main
 
 ";
@@ -882,8 +896,9 @@ SELECT 	Selected = 0
 		, [ArtworkReqID] = ar.ID
         , Orders.Category
         , [IrregularQtyReason] = sr.ID +'-'+sr.Reason
-		,[Farmout] = ISNULL(FarmOut.Value,0)
-		,[FarmIn] = ISNULL(FarmIn.Value,0)
+		, [Farmout] = ISNULL(FarmOut.Value,0)
+		, [FarmIn] = ISNULL(FarmIn.Value,0)
+        , oa.Remark
 FROM ArtworkReq_Detail ard WITH (NOLOCK) 
 inner join ArtworkReq ar WITH (NOLOCK) on ar.ID = ard.ID and ar.ArtworkTypeID = '{2}'  and ar.Status = 'Approved'
 left join ArtworkReq_IrregularQty ai with (nolock) on ai.OrderID = ard.OrderID and ai.ArtworkTypeID = ar.ArtworkTypeID and ard.ExceedQty > 0
@@ -891,6 +906,7 @@ left join SubconReason sr with (nolock) on sr.Type = 'SQ' and sr.ID = ai.SubconR
 inner join Order_TmsCost WITH (NOLOCK) on ard.OrderID = Order_TmsCost.ID and Order_TmsCost.ArtworkTypeID = ar.ArtworkTypeID
 inner join Orders WITH (NOLOCK) on orders.id = order_tmscost.id
 inner join factory WITH (NOLOCK) on orders.factoryid = factory.id
+left join Order_Artwork oa on ard.OrderArtworkUkey = oa.Ukey
 OUTER APPLY(
 	SELECT  [Value]= SUM( bd.QTY)
 	FROM #Bundle bd

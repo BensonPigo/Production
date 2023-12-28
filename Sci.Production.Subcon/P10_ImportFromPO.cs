@@ -136,10 +136,13 @@ Select 1 as Selected
         ,b.SizeCode
         ,o.FactoryID
         ,f.IsProduceFty
+        ,oa.Remark
 from ArtworkPO a WITH (NOLOCK) 
 INNER JOIN ArtworkPO_Detail b WITH (NOLOCK)  ON  a.id = b.id 
 inner join dbo.Orders o with (nolock) on b.OrderID = o.id
 left join Factory f with (nolock) on f.ID = o.FactoryID
+left join ArtworkReq_Detail ard with (nolock) on b.ArtworkReq_DetailUkey = ard.Ukey
+left join Order_Artwork oa with (nolock) on ard.OrderArtworkUkey = oa.Ukey
 OUTER APPLY(
 	SELECT  [Value]= SUM( bd.QTY)
 	FROM #Bundle bd
@@ -319,6 +322,7 @@ DROP TABLE #Bundle
                 .Numeric("Stitch", header: "Stitch", iseditable: true)
                 .Text("PatternCode", header: "Cutpart Id", iseditingreadonly: true)
                 .Text("PatternDesc", header: "Cutpart Name", iseditingreadonly: true)
+                .Text("Remark", header: "Remark", iseditingreadonly: true)
                 .Numeric("UnitPrice", header: "Unit Price", iseditingreadonly: true, decimal_places: 4, integer_places: 4)
                 .Numeric("qtygarment", header: "Qty/GMT", iseditingreadonly: true, integer_places: 2)
                 .Numeric("Price", header: "Price/GMT", iseditingreadonly: true, decimal_places: 4, integer_places: 5)
