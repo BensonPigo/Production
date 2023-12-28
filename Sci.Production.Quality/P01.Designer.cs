@@ -134,7 +134,7 @@
             this.masterpanel.Controls.Add(this.labelSeason);
             this.masterpanel.Controls.Add(this.labelStyle);
             this.masterpanel.Controls.Add(this.labelSP);
-            this.masterpanel.Size = new System.Drawing.Size(1004, 196);
+            this.masterpanel.Size = new System.Drawing.Size(1019, 196);
             this.masterpanel.Controls.SetChildIndex(this.labelSP, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelStyle, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelSeason, 0);
@@ -174,7 +174,7 @@
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 196);
-            this.detailpanel.Size = new System.Drawing.Size(1004, 434);
+            this.detailpanel.Size = new System.Drawing.Size(1019, 434);
             // 
             // gridicon
             // 
@@ -186,7 +186,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(1004, 434);
+            this.detailgridcont.Size = new System.Drawing.Size(1019, 434);
             // 
             // detail2
             // 
@@ -202,11 +202,11 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(1004, 668);
+            this.detail.Size = new System.Drawing.Size(1019, 668);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(1004, 630);
+            this.detailcont.Size = new System.Drawing.Size(1019, 630);
             // 
             // detailbtm
             // 
@@ -227,7 +227,7 @@
             this.detailbtm.Controls.Add(this.displayavailablemodified);
             this.detailbtm.Controls.Add(this.labelavailablemodified);
             this.detailbtm.Location = new System.Drawing.Point(0, 630);
-            this.detailbtm.Size = new System.Drawing.Size(1004, 38);
+            this.detailbtm.Size = new System.Drawing.Size(1019, 38);
             this.detailbtm.Controls.SetChildIndex(this.lbleditby, 0);
             this.detailbtm.Controls.SetChildIndex(this.lblcreateby, 0);
             this.detailbtm.Controls.SetChildIndex(this.editby, 0);
@@ -256,7 +256,7 @@
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(1012, 697);
+            this.tabs.Size = new System.Drawing.Size(1027, 697);
             // 
             // createby
             // 
@@ -773,7 +773,7 @@
             // 
             this.btnShadeBandStock.Location = new System.Drawing.Point(811, 15);
             this.btnShadeBandStock.Name = "btnShadeBandStock";
-            this.btnShadeBandStock.Size = new System.Drawing.Size(181, 30);
+            this.btnShadeBandStock.Size = new System.Drawing.Size(200, 30);
             this.btnShadeBandStock.TabIndex = 160;
             this.btnShadeBandStock.Text = "Shade Band of Stock";
             this.btnShadeBandStock.UseVisualStyleBackColor = true;
@@ -783,7 +783,7 @@
             // 
             this.btnUpdateToneGrp.Location = new System.Drawing.Point(811, 51);
             this.btnUpdateToneGrp.Name = "btnUpdateToneGrp";
-            this.btnUpdateToneGrp.Size = new System.Drawing.Size(181, 30);
+            this.btnUpdateToneGrp.Size = new System.Drawing.Size(200, 30);
             this.btnUpdateToneGrp.TabIndex = 161;
             this.btnUpdateToneGrp.Text = "Batch Update Tone/Grp";
             this.btnUpdateToneGrp.UseVisualStyleBackColor = true;
@@ -793,7 +793,7 @@
             // 
             this.btnBatchUpdateShadeBand.Location = new System.Drawing.Point(811, 87);
             this.btnBatchUpdateShadeBand.Name = "btnBatchUpdateShadeBand";
-            this.btnBatchUpdateShadeBand.Size = new System.Drawing.Size(181, 30);
+            this.btnBatchUpdateShadeBand.Size = new System.Drawing.Size(200, 30);
             this.btnBatchUpdateShadeBand.TabIndex = 162;
             this.btnBatchUpdateShadeBand.Text = "Batch Update Shade Band";
             this.btnBatchUpdateShadeBand.UseVisualStyleBackColor = true;
@@ -803,7 +803,7 @@
             // 
             this.btnBatchUpdateContinuity.Location = new System.Drawing.Point(811, 123);
             this.btnBatchUpdateContinuity.Name = "btnBatchUpdateContinuity";
-            this.btnBatchUpdateContinuity.Size = new System.Drawing.Size(181, 30);
+            this.btnBatchUpdateContinuity.Size = new System.Drawing.Size(200, 30);
             this.btnBatchUpdateContinuity.TabIndex = 163;
             this.btnBatchUpdateContinuity.Text = "Batch Update Continuity";
             this.btnBatchUpdateContinuity.UseVisualStyleBackColor = true;
@@ -813,7 +813,7 @@
             // 
             this.btnViewBatchUpdateDetail.Location = new System.Drawing.Point(811, 159);
             this.btnViewBatchUpdateDetail.Name = "btnViewBatchUpdateDetail";
-            this.btnViewBatchUpdateDetail.Size = new System.Drawing.Size(181, 30);
+            this.btnViewBatchUpdateDetail.Size = new System.Drawing.Size(200, 30);
             this.btnViewBatchUpdateDetail.TabIndex = 164;
             this.btnViewBatchUpdateDetail.Text = "View Batch Update Detail";
             this.btnViewBatchUpdateDetail.UseVisualStyleBackColor = true;
@@ -821,7 +821,7 @@
             // 
             // P01
             // 
-            this.ClientSize = new System.Drawing.Size(1012, 730);
+            this.ClientSize = new System.Drawing.Size(1027, 730);
             this.DefaultControlForEdit = "txtLocateforWK";
             this.DefaultDetailOrder = "seq1,seq2,Receivingid";
             this.DefaultOrder = "id";

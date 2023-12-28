@@ -43,7 +43,6 @@
             this.label1 = new Sci.Win.UI.Label();
             this.grid = new Sci.Win.UI.Grid();
             this.tabPage2 = new System.Windows.Forms.TabPage();
-            this.chkCheckByQC = new Sci.Win.UI.CheckBox();
             this.comboBoxReceivingID2 = new Sci.Win.UI.ComboBox();
             this.label5 = new Sci.Win.UI.Label();
             this.comboBoxWKNo2 = new Sci.Win.UI.ComboBox();
@@ -89,7 +88,7 @@
             this.tabPage1.Location = new System.Drawing.Point(4, 25);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(1332, 500);
+            this.tabPage1.Size = new System.Drawing.Size(1332, 533);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Shade Band";
             // 
@@ -208,12 +207,11 @@
             this.grid.RowTemplate.Height = 24;
             this.grid.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.grid.ShowCellToolTips = false;
-            this.grid.Size = new System.Drawing.Size(1326, 462);
+            this.grid.Size = new System.Drawing.Size(1326, 495);
             this.grid.TabIndex = 46;
             // 
             // tabPage2
             // 
-            this.tabPage2.Controls.Add(this.chkCheckByQC);
             this.tabPage2.Controls.Add(this.comboBoxReceivingID2);
             this.tabPage2.Controls.Add(this.label5);
             this.tabPage2.Controls.Add(this.comboBoxWKNo2);
@@ -229,18 +227,6 @@
             this.tabPage2.Size = new System.Drawing.Size(1332, 533);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Continuity";
-            // 
-            // chkCheckByQC
-            // 
-            this.chkCheckByQC.AutoSize = true;
-            this.chkCheckByQC.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.chkCheckByQC.Location = new System.Drawing.Point(803, 6);
-            this.chkCheckByQC.Name = "chkCheckByQC";
-            this.chkCheckByQC.Size = new System.Drawing.Size(110, 21);
-            this.chkCheckByQC.TabIndex = 64;
-            this.chkCheckByQC.Text = "Check By QC";
-            this.chkCheckByQC.UseVisualStyleBackColor = true;
-            this.chkCheckByQC.CheckedChanged += new System.EventHandler(this.ChkCheckByQC_CheckedChanged);
             // 
             // comboBoxReceivingID2
             // 
@@ -388,7 +374,6 @@
         private Win.UI.Label label4;
         private Win.UI.ComboBox comboBoxWKNo;
         private Win.UI.CheckBox chkPasteShadebandTime;
-        private Win.UI.CheckBox chkCheckByQC;
         private Win.UI.ComboBox comboBoxReceivingID2;
         private Win.UI.Label label5;
         private Win.UI.ComboBox comboBoxWKNo2;

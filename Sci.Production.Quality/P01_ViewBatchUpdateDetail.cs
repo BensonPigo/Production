@@ -226,11 +226,6 @@ WHERE FIR.POID = '{this.poid}'
                 filters.Add($"ReceivingID = '{selectedReceivingID}'");
             }
 
-            if (this.chkCheckByQC.Checked)
-            {
-                filters.Add("Inspector <> '' AND InspDate IS NOT NULL");
-            }
-
             string combinedFilter = string.Join(" AND ", filters);
             this.listControlBindingSource2.Filter = combinedFilter;
         }
