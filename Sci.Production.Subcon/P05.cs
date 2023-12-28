@@ -78,32 +78,34 @@ namespace Sci.Production.Subcon
             this.DetailSelectCommand = string.Format(
                 @"
 select 
-ap.OrderID
-,o.StyleID
-,ap.Article
-,ap.SizeCode
-,o.SewInLine
-,o.SciDelivery
-,ap.ArtworkID
-,ap.PatternCode
-,ap.PatternDesc
-,ap.ReqQty
-,ap.Stitch
-,ap.QtyGarment
-,[Farmout] = isnull(apo.Farmout,0)
-,[Farmin] = isnull(apo.Farmin,0)
-,[ApQty] = isnull(apo.ApQty,0)
-,ap.ExceedQty
-,ap.ArtworkPOID
-,ap.id
-,ap.ukey
-,o.FactoryID
-,f.IsProduceFty
-,ap.Remark
+    ap.OrderID
+    ,o.StyleID
+    ,ap.Article
+    ,ap.SizeCode
+    ,o.SewInLine
+    ,o.SciDelivery
+    ,ap.ArtworkID
+    ,ap.PatternCode
+    ,ap.PatternDesc
+    ,ap.ReqQty
+    ,ap.Stitch
+    ,ap.QtyGarment
+    ,[Farmout] = isnull(apo.Farmout,0)
+    ,[Farmin] = isnull(apo.Farmin,0)
+    ,[ApQty] = isnull(apo.ApQty,0)
+    ,ap.ExceedQty
+    ,ap.ArtworkPOID
+    ,ap.id
+    ,ap.ukey
+    ,o.FactoryID
+    ,f.IsProduceFty
+    ,ap.OrderArtworkUkey
+    ,oa.Remark
 from dbo.ArtworkReq_Detail ap with (nolock)
 left join dbo.Orders o with (nolock) on ap.OrderID = o.id
 left join Factory f with (nolock) on f.ID = o.FactoryID
 left join dbo.ArtworkPO_Detail apo with (nolock) on apo.ArtworkReq_Detailukey = ap.ukey
+left join Order_Artwork oa with (nolock) on ap.OrderArtworkUkey = oa.Ukey
 where ap.id = '{0}'  
 ORDER BY ap.OrderID   ", masterID);
 
@@ -256,7 +258,7 @@ inner join orders o WITH (NOLOCK) on ot.ID = o.ID
 cross apply(
 	select * 
 	from (		
-		select a.id,a.ArtworkTypeID,q.Article,q.Qty,q.SizeCode,a.PatternCode,a.PatternDesc,a.ArtworkID,a.ArtworkName,a.Remark
+		select a.id,a.ArtworkTypeID,q.Article,q.Qty,q.SizeCode,a.PatternCode,a.PatternDesc,a.ArtworkID,a.ArtworkName, [OrderArtworkUkey] = a.Ukey
 		,rowNo = ROW_NUMBER() over (
 			partition by a.id,a.ArtworkTypeID,q.Article,a.PatternCode,a.PatternDesc
 				,a.ArtworkID,q.sizecode order by a.AddDate desc)
@@ -293,6 +295,7 @@ outer apply (
 		and a.ArtworkTypeID = '{this.CurrentMaintain["ArtworktypeId"]}' 
 		and OrderID = o.ID and ad.PatternCode= isnull(oa.PatternCode,'')
         and ad.PatternDesc = isnull(oa.PatternDesc,'') 
+        and ad.OrderArtworkUkey = oa.OrderArtworkUkey
         and ad.ArtworkID = iif(oa.ArtworkID is null,'{this.CurrentMaintain["ArtworktypeId"]}' ,oa.ArtworkID)
         and a.status != 'Closed' and ad.ArtworkPOID =''
         and a.id != '{dr["id"]}'
@@ -344,7 +347,7 @@ group by ReqQty.value,PoQty.value";
             .Text("SizeCode", header: "Size", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Text("patterncode", header: "Cut Part", width: Widths.AnsiChars(5), iseditingreadonly: true)
             .Text("PatternDesc", header: "Cut Part Name", width: Widths.AnsiChars(20), iseditingreadonly: true)
-            .Text("Remark", header: "Remark", iseditingreadonly: true, width: Widths.AnsiChars(15))
+            .Text("Remark", header: "Remark", width: Widths.AnsiChars(15), iseditingreadonly: true)
             .Numeric("ReqQty", header: "Req. Qty", width: Widths.AnsiChars(6), settings: col_ReqQty) // 可編輯
             .Numeric("stitch", header: "PCS/Stitch", width: Widths.AnsiChars(3)) // 可編輯
             .Numeric("qtygarment", header: "Qty/GMT", width: Widths.AnsiChars(5), maximum: 99, integer_places: 2) // 可編輯
@@ -1131,8 +1134,14 @@ WHERE ID = '{this.CurrentMaintain["ID"]}'
         /// </summary>
         /// <param name="artworkTypeID">artworkTypeID</param>
         /// <returns>string</returns>
-        public string SqlGetBuyBackDeduction(string artworkTypeID)
+        public string SqlGetBuyBackDeduction(string artworkReqID, string artworkTypeID)
         {
+            string sqlWhere = "";
+            if (!string.IsNullOrEmpty(artworkReqID))
+            {
+                sqlWhere = $" and a.id != '{artworkReqID}'";
+            }
+
             string sql = $@"
 --抓出此次申請有BuyBack的訂單資料
 select  fr.orderID,
@@ -1141,14 +1150,14 @@ select  fr.orderID,
         fr.ArtworkID,
         fr.PatternCode,
         fr.PatternDesc,
-        fr.Remark,
+        fr.OrderArtworkUkey,
         fr.OrderQty,
 		fr.LocalSuppID,
         obq.OrderIDFrom,
         [ArticleFrom] = iif(fr.Article = '', '', obq.ArticleFrom),
         [SizeCodeFrom] = iif(fr.SizeCode = '', '', obq.SizeCodeFrom),
         [BuyBackQty] = sum(obq.Qty)
-into    #tmpBuyBackReqBase
+into #tmpBuyBackReqBase
 from #FinalArtworkReq fr 
 inner join Order_BuyBack_Qty obq with (nolock) on obq.ID = fr.OrderID and 
                                                   (
@@ -1164,7 +1173,7 @@ where   exists( select 1
                 and ad.PatternCode = fr.PatternCode
                 and ad.PatternDesc = fr.PatternDesc
                 and ad.ArtworkID = fr.ArtworkID
-                and a.id != '{artworkTypeID}'
+                {sqlWhere}
                 and a.status != 'Closed') 
 Group by    fr.orderID,
             fr.Article,
@@ -1172,7 +1181,7 @@ Group by    fr.orderID,
             fr.ArtworkID,
             fr.PatternCode,
             fr.PatternDesc,
-            fr.Remark,
+            fr.OrderArtworkUkey,
             fr.OrderQty,
 			fr.LocalSuppID,
             obq.OrderIDFrom,
@@ -1189,7 +1198,7 @@ select  tbbr.OrderIDFrom,
         tbbr.ArtworkID,
         tbbr.PatternCode,
         tbbr.PatternDesc,
-        tbbr.Remark,
+        tbbr.OrderArtworkUkey,
 		tbbr.LocalSuppID,
         [BuyBackQty] = sum(obq.Qty)
 into #tmpBuyBackFrom
@@ -1210,7 +1219,7 @@ group by    tbbr.OrderIDFrom,
             tbbr.ArtworkID,
             tbbr.PatternCode,
             tbbr.PatternDesc,
-            tbbr.Remark,
+            tbbr.OrderArtworkUkey,
 		    tbbr.LocalSuppID
 
 --推算出BuyBack的訂單可扣除的數量
@@ -1220,7 +1229,7 @@ select  tbbf.OrderIDFrom,
         tbbf.ArtworkID,
         tbbf.PatternCode,
         tbbf.PatternDesc,
-        tbbf.Remark,
+        tbbf.OrderArtworkUkey,
 		tbbf.LocalSuppID,
         [BuyBackReqedQty] = Sum(case when ArtworkReq.val = 0 then 0
                                      when    (OrderQty.val - ArtworkReq.val) > tbbf.BuyBackQty then tbbf.BuyBackQty
@@ -1242,13 +1251,14 @@ cross apply (   select val = isnull(sum(AD.ReqQty), 0)
                 from ArtworkReq_Detail AD with (nolock)
                 inner join ArtworkReq a with (nolock) on ad.ID = a.ID
                 where a.ArtworkTypeID = '{artworkTypeID}'
-                and ad.OrderID = tbbf.orderID
+                and ad.OrderID = tbbf.OrderID
                 and ad.Article = tbbf.Article
                 and ad.SizeCode = tbbf.SizeCode
                 and ad.PatternCode = tbbf.PatternCode
                 and ad.PatternDesc = tbbf.PatternDesc
+                and (tbbf.OrderArtworkUkey = 0 or ad.OrderArtworkUkey = tbbf.OrderArtworkUkey)
                 and ad.ArtworkID = tbbf.ArtworkID
-                and a.id != '{artworkTypeID}'
+                {sqlWhere}
                 and a.status != 'Closed'
             )   ArtworkReq
 group by    tbbf.OrderIDFrom,
@@ -1257,7 +1267,7 @@ group by    tbbf.OrderIDFrom,
             tbbf.ArtworkID,
             tbbf.PatternCode,
             tbbf.PatternDesc,
-            tbbf.Remark,
+            tbbf.OrderArtworkUkey,
 		    tbbf.LocalSuppID
 
 --算出此次申請的訂單應該被扣掉多少數量
@@ -1267,7 +1277,7 @@ select  tbbr.orderID,
         tbbr.ArtworkID,
         tbbr.PatternCode,
         tbbr.PatternDesc,
-        tbbr.Remark,
+        tbbr.OrderArtworkUkey,
         tbbr.OrderQty,
         tbbr.OrderIDFrom,
         tbbr.BuyBackQty,
@@ -1282,6 +1292,7 @@ left join   #tmpBuyBackFromResult tbbfr on  tbbfr.OrderIDFrom = tbbr.OrderIDFrom
                                             tbbfr.SizeCodeFrom = tbbr.SizeCodeFrom       and
                                             tbbfr.PatternCode = tbbr.PatternCode     and
                                             tbbfr.PatternDesc = tbbr.PatternDesc     and
+                                            tbbfr.OrderArtworkUkey = tbbr.OrderArtworkUkey     and
                                             tbbfr.ArtworkID = tbbr.ArtworkID and
 											tbbfr.LocalSuppID = tbbr.LocalSuppID
 outer apply (   select val = isnull(sum(AD.ReqQty), 0)
@@ -1293,8 +1304,9 @@ outer apply (   select val = isnull(sum(AD.ReqQty), 0)
                 and ad.SizeCode = tbbr.SizeCodeFrom
                 and ad.PatternCode = tbbr.PatternCode
                 and ad.PatternDesc = tbbr.PatternDesc
+                and (tbbr.OrderArtworkUkey = 0 or ad.OrderArtworkUkey = tbbr.OrderArtworkUkey)
                 and ad.ArtworkID = tbbr.ArtworkID
-                and a.id != '{artworkTypeID}'
+               {sqlWhere}
                 and a.status != 'Closed') BuyBackArtworkReq
 ";
 
