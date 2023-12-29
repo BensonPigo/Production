@@ -49,7 +49,7 @@ BEGIN
 						then 'Clog'
 			else '' end 
 		, [HaulingScanTime] = HaulingScanTime.val
-		, [HauledQty] = ISNULL(HauledQty.val, 0)
+		, [HauledQty] = IIF(HaulingScanTime.val is null, 0, ISNULL(HauledQty.val, 0))
 		, [DryRoomReceiveTime] = DryRoomReceiveTime.val
 		, [DryRoomTransferTime] = DryRoomTransferTime.val 
 		, [MDScanTime] = MDScan.val
@@ -61,7 +61,7 @@ BEGIN
 		, [TransferToPackingErrorTime] = TransferToPackingErrorTime.val
 		, [ConfirmPackingErrorReviseTime] = ConfirmPackingErrorReviseTime.val
 		, [ScanAndPackTime] = pld.ScanEditDate
-		, [ScanQty] = ISNULL(pld.ScanQty, 0)
+		, [ScanQty] = ISNULL(ScanQty.val, 0)
 		, [FtyTransferToClogTime] = FtyTransferToClogTime.val
 		, [ClogReceiveTime] = ClogReceiveTime.val
 		, [ClogLocation] = ISNULL(pld.ClogLocationId, '')
@@ -94,6 +94,13 @@ BEGIN
 								pd.CtnStartNo = pld.CtnStartNo and
 								pd.OrderID = pld.OrderID)
 	) CartonQty
+	outer apply(
+		select [val] = (select sum(pd.ScanQty)
+						from Production.dbo.PackingList_Detail pd with(nolock)
+						where	pd.ID = pld.ID and
+								pd.CtnStartNo = pld.CtnStartNo and
+								pd.OrderID = pld.OrderID)
+	) ScanQty
 	outer apply(
 		select [val] = (select max(ch.AddDate)
 						from Production.dbo.CTNHauling ch with(nolock)
