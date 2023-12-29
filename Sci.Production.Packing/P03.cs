@@ -1142,6 +1142,18 @@ Carton has been output from the hanger system or transferred to clog.";
             }
             #endregion
 
+            #region # of carton = 1的資料，CTN#不可以有重複值
+            var checkDupCtn = this.DetailDatas.Where(s => MyUtility.Convert.GetInt(s["CtnQty"]) == 1)
+                                .GroupBy(s => s["CTNStartNo"].ToString())
+                                .Where(s => s.Count() > 1);
+
+            if (checkDupCtn.Any())
+            {
+                MyUtility.Msg.WarningBox("<# of CTN> is 1 data, <CTN#> cannot be repeated");
+                return false;
+            }
+            #endregion
+
             // 保存前檢查加入若PackingLIst 的[Ship Mode]不在Order_QtyShip中，不給存
             DataTable detailsData = (DataTable)this.detailgridbs.DataSource;
             DataTable dataTableDistinct = detailsData.DefaultView.ToTable(true, "OrderID");
