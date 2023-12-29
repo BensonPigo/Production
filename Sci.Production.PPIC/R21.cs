@@ -308,7 +308,7 @@ select	pld.KPICode,
 					then 'Clog'
 		else '' end ,
 		[HaulingScanTime] = Hauling.AddDate,
-		[QtyPerCTN] = isnull(QtyPerCTN.value,0),--ISP20221189
+		[QtyPerCTN] = iif(Hauling.AddDate is null, 0, isnull(QtyPerCTN.value, 0)),--ISP20221189
 		[DryRoomReceiveTime] = DRYReceive.AddDate,
 		[DryRoomTransferTime] = DRYTransfer.AddDate,
 		[MDScanTime] = MDScan.AddDate,
