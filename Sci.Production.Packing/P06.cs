@@ -10,6 +10,7 @@ using Sci.Data;
 using Sci.Production.PublicPrg;
 using System.Threading.Tasks;
 using Sci.Production.Automation;
+using System.Linq;
 
 namespace Sci.Production.Packing
 {
@@ -513,6 +514,18 @@ Carton has been output from the hanger system or transferred to clog.";
                 MyUtility.Msg.WarningBox("SP No:" + this.CurrentMaintain["OrderID"].ToString() + ", Seq:" + this.CurrentMaintain["OrderShipmodeSeq"].ToString() + " already exist in packing list, can't be create again!");
                 return false;
             }
+
+            #region # of carton = 1的資料，CTN#不可以有重複值
+            var checkDupCtn = this.DetailDatas.Where(s => MyUtility.Convert.GetInt(s["CtnQty"]) == 1)
+                                .GroupBy(s => s["CTNStartNo"].ToString())
+                                .Where(s => s.Count() > 1);
+
+            if (checkDupCtn.Any())
+            {
+                MyUtility.Msg.WarningBox("<# of CTN> is 1 data, <CTN#> cannot be repeated");
+                return false;
+            }
+            #endregion
 
             // 表身的CTN#,Color Way與Size不可以為空值，順便填入OrderID, OrderShipmodeSeq與Seq欄位值，計算CTNQty, ShipQty，重算表身Grid的Bal. Qty
             int i = 0, ctnQty = 0, shipQty = 0, ttlShipQty = 0, needPackQty = 0, count = 0;
