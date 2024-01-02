@@ -238,14 +238,15 @@ where o.Id = '{this.masterData["OrderID"]}'",
                 worksheet.Cells[8, 3] = numOrderQty;
                 worksheet.Cells[9, 3] = MyUtility.Convert.GetString(this.masterData["ShipQty"]);
                 worksheet.Cells[9, 5] = MyUtility.Convert.GetString(this.masterData["Forwarder"]) + " - " + MyUtility.GetValue.Lookup(string.Format("select Abb from LocalSupp WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(this.masterData["Forwarder"])));
-                worksheet.Cells[9, 7] = MyUtility.Convert.GetString(this.masterData["Quotation"]) + "/KG";
+                worksheet.Cells[9, 7] = MyUtility.Convert.GetDecimal(this.masterData["Quotation"]);
                 worksheet.Cells[9, 8] = MyUtility.Convert.GetString(this.masterData["EstAmount"]);
+                worksheet.Cells[9, 9] = MyUtility.Convert.GetString(this.masterData["EstAmount"]);
                 worksheet.Cells[10, 3] = MyUtility.Convert.GetString(this.masterData["GW"]);
                 worksheet.Cells[10, 5] = MyUtility.Convert.GetString(this.masterData["Forwarder1"]) + " - " + MyUtility.GetValue.Lookup(string.Format("select Abb from LocalSupp WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(this.masterData["Forwarder1"])));
-                worksheet.Cells[10, 7] = MyUtility.Convert.GetString(this.masterData["Quotation1"]) + "/KG";
+                worksheet.Cells[10, 7] = MyUtility.Convert.GetDecimal(this.masterData["Quotation1"]);
                 worksheet.Cells[11, 3] = MyUtility.Convert.GetString(this.masterData["VW"]);
                 worksheet.Cells[11, 5] = MyUtility.Convert.GetString(this.masterData["Forwarder2"]) + " - " + MyUtility.GetValue.Lookup(string.Format("select Abb from LocalSupp WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(this.masterData["Forwarder2"])));
-                worksheet.Cells[11, 7] = MyUtility.Convert.GetString(this.masterData["Quotation2"]) + "/KG";
+                worksheet.Cells[11, 7] = MyUtility.Convert.GetDecimal(this.masterData["Quotation2"]);
                 worksheet.Cells[12, 3] = MyUtility.Convert.GetString(this.masterData["ReasonID"]) + "." + MyUtility.GetValue.Lookup(string.Format("select Name from Reason WITH (NOLOCK) where ReasonTypeID = 'Air_Prepaid_Reason' and ID = '{0}'", MyUtility.Convert.GetString(this.masterData["ReasonID"])));
                 worksheet.Cells[13, 3] = MyUtility.Convert.GetString(this.masterData["ResponsibleFty"]).ToUpper() == "TRUE" ? "Y" : string.Empty;
                 worksheet.Range["C13:I13"].Interior.Color = MyUtility.Convert.GetString(this.masterData["ResponsibleFty"]).ToUpper() == "TRUE" ? colorY_Mark : Color.White;
@@ -306,7 +307,7 @@ where o.Id = '{this.masterData["OrderID"]}'",
                     return false;
                 }
 
-                this.SetCountthis.dts[0].Rows.Count);
+                this.SetCount(this.dts[0].Rows.Count);
                 string strXltName = Env.Cfg.XltPathDir + "\\Shipping_P01_Print_PaymentDetail.xltx";
                 Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
                 if (excel == null)
