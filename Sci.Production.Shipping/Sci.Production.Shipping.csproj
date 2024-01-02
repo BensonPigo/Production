@@ -118,6 +118,8 @@
     <Reference Include="PmsWebApiUtility20">
       <HintPath>..\_Dll\PmsWebApiUtility20.dll</HintPath>
     </Reference>
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
     <Reference Include="Sci">
       <HintPath>..\_Dll\Sci.dll</HintPath>
     </Reference>
@@ -133,13 +135,16 @@
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Net.Http" />
+    <Reference Include="System.Security" />
     <Reference Include="System.Transactions" />
+    <Reference Include="System.Web" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
+    <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="B09.cs">
@@ -207,6 +212,12 @@
     </Compile>
     <Compile Include="B62.Designer.cs">
       <DependentUpon>B62.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P01_Print.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P01_Print.designer.cs">
+      <DependentUpon>P01_Print.cs</DependentUpon>
     </Compile>
     <Compile Include="P02_FTYRegularSendingSchedule.cs">
       <SubType>Form</SubType>
@@ -1129,6 +1140,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="B62.resx">
       <DependentUpon>B62.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P01_Print.resx">
+      <DependentUpon>P01_Print.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P02_FTYRegularSendingSchedule.resx">
       <DependentUpon>P02_FTYRegularSendingSchedule.cs</DependentUpon>
