@@ -360,6 +360,12 @@
     <Compile Include="P01_ShadeBandStock.Designer.cs">
       <DependentUpon>P01_ShadeBandStock.cs</DependentUpon>
     </Compile>
+    <Compile Include="P08_BatchUpdateTime.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P08_BatchUpdateTime.Designer.cs">
+      <DependentUpon>P08_BatchUpdateTime.cs</DependentUpon>
+    </Compile>
     <Compile Include="P30_MDFailbyCarton.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -987,6 +993,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="P04_Detail.resx">
       <DependentUpon>P04_Detail.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P08_BatchUpdateTime.resx">
+      <DependentUpon>P08_BatchUpdateTime.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P10_ToReport.resx">
       <DependentUpon>P10_ToReport.cs</DependentUpon>

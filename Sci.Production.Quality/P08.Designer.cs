@@ -69,6 +69,9 @@
             this.chkMaterial = new Sci.Win.UI.CheckBox();
             this.chkSample = new Sci.Win.UI.CheckBox();
             this.chkSMTL = new Sci.Win.UI.CheckBox();
+            this.label3 = new Sci.Win.UI.Label();
+            this.cmbUpdateType = new Sci.Win.UI.ComboBox();
+            this.btnScanQRCode = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.gridReceiving)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
             this.SuspendLayout();
@@ -270,14 +273,14 @@
             this.gridReceiving.RowTemplate.Height = 24;
             this.gridReceiving.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridReceiving.ShowCellToolTips = false;
-            this.gridReceiving.Size = new System.Drawing.Size(987, 279);
+            this.gridReceiving.Size = new System.Drawing.Size(987, 293);
             this.gridReceiving.SupportEditMode = Sci.Win.UI.AdvEditModesReadOnly.True;
             this.gridReceiving.TabIndex = 36;
             // 
             // btnUpdate
             // 
             this.btnUpdate.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnUpdate.Location = new System.Drawing.Point(829, 411);
+            this.btnUpdate.Location = new System.Drawing.Point(826, 418);
             this.btnUpdate.Name = "btnUpdate";
             this.btnUpdate.Size = new System.Drawing.Size(80, 30);
             this.btnUpdate.TabIndex = 37;
@@ -288,7 +291,7 @@
             // btnClose
             // 
             this.btnClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnClose.Location = new System.Drawing.Point(915, 411);
+            this.btnClose.Location = new System.Drawing.Point(912, 418);
             this.btnClose.Name = "btnClose";
             this.btnClose.Size = new System.Drawing.Size(80, 30);
             this.btnClose.TabIndex = 38;
@@ -303,7 +306,7 @@
             this.comboBoxUpdateTime.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboBoxUpdateTime.FormattingEnabled = true;
             this.comboBoxUpdateTime.IsSupportUnselect = true;
-            this.comboBoxUpdateTime.Location = new System.Drawing.Point(195, 412);
+            this.comboBoxUpdateTime.Location = new System.Drawing.Point(192, 419);
             this.comboBoxUpdateTime.Name = "comboBoxUpdateTime";
             this.comboBoxUpdateTime.OldText = "";
             this.comboBoxUpdateTime.Size = new System.Drawing.Size(160, 24);
@@ -312,7 +315,7 @@
             // btnUpdateTime
             // 
             this.btnUpdateTime.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.btnUpdateTime.Location = new System.Drawing.Point(460, 408);
+            this.btnUpdateTime.Location = new System.Drawing.Point(457, 415);
             this.btnUpdateTime.Name = "btnUpdateTime";
             this.btnUpdateTime.Size = new System.Drawing.Size(175, 30);
             this.btnUpdateTime.TabIndex = 41;
@@ -325,7 +328,7 @@
             this.dateTimePickerUpdateTime.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.dateTimePickerUpdateTime.CalendarForeColor = System.Drawing.Color.Red;
             this.dateTimePickerUpdateTime.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
-            this.dateTimePickerUpdateTime.Location = new System.Drawing.Point(12, 413);
+            this.dateTimePickerUpdateTime.Location = new System.Drawing.Point(9, 420);
             this.dateTimePickerUpdateTime.Name = "dateTimePickerUpdateTime";
             this.dateTimePickerUpdateTime.Size = new System.Drawing.Size(177, 23);
             this.dateTimePickerUpdateTime.TabIndex = 42;
@@ -337,7 +340,7 @@
             this.lbMsg.AutoSize = true;
             this.lbMsg.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lbMsg.ForeColor = System.Drawing.Color.Red;
-            this.lbMsg.Location = new System.Drawing.Point(641, 420);
+            this.lbMsg.Location = new System.Drawing.Point(638, 427);
             this.lbMsg.Name = "lbMsg";
             this.lbMsg.Size = new System.Drawing.Size(177, 13);
             this.lbMsg.TabIndex = 43;
@@ -348,7 +351,7 @@
             this.txtShadeandLocation.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.txtShadeandLocation.BackColor = System.Drawing.Color.White;
             this.txtShadeandLocation.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtShadeandLocation.Location = new System.Drawing.Point(361, 413);
+            this.txtShadeandLocation.Location = new System.Drawing.Point(358, 420);
             this.txtShadeandLocation.Name = "txtShadeandLocation";
             this.txtShadeandLocation.Size = new System.Drawing.Size(93, 23);
             this.txtShadeandLocation.TabIndex = 46;
@@ -500,11 +503,51 @@
             this.chkSMTL.Text = "SMTL";
             this.chkSMTL.UseVisualStyleBackColor = true;
             // 
+            // label3
+            // 
+            this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.label3.Location = new System.Drawing.Point(9, 449);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(103, 23);
+            this.label3.TabIndex = 60;
+            this.label3.Text = "Update Type";
+            // 
+            // cmbUpdateType
+            // 
+            this.cmbUpdateType.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.cmbUpdateType.BackColor = System.Drawing.Color.White;
+            this.cmbUpdateType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.cmbUpdateType.FormattingEnabled = true;
+            this.cmbUpdateType.IsSupportUnselect = true;
+            this.cmbUpdateType.Items.AddRange(new object[] {
+            "Cut Shadeband Time",
+            "Paste Shadeband Time",
+            "Pass QA Time"});
+            this.cmbUpdateType.Location = new System.Drawing.Point(115, 449);
+            this.cmbUpdateType.Name = "cmbUpdateType";
+            this.cmbUpdateType.OldText = "";
+            this.cmbUpdateType.Size = new System.Drawing.Size(160, 24);
+            this.cmbUpdateType.TabIndex = 61;
+            // 
+            // btnScanQRCode
+            // 
+            this.btnScanQRCode.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.btnScanQRCode.Location = new System.Drawing.Point(281, 448);
+            this.btnScanQRCode.Name = "btnScanQRCode";
+            this.btnScanQRCode.Size = new System.Drawing.Size(119, 30);
+            this.btnScanQRCode.TabIndex = 62;
+            this.btnScanQRCode.Text = "Scan QRCode";
+            this.btnScanQRCode.UseVisualStyleBackColor = true;
+            this.btnScanQRCode.Click += new System.EventHandler(this.BtnScanQRCode_Click);
+            // 
             // P08
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1008, 448);
+            this.ClientSize = new System.Drawing.Size(1008, 493);
+            this.Controls.Add(this.btnScanQRCode);
+            this.Controls.Add(this.cmbUpdateType);
+            this.Controls.Add(this.label3);
             this.Controls.Add(this.chkSMTL);
             this.Controls.Add(this.chkSample);
             this.Controls.Add(this.chkMaterial);
@@ -586,6 +629,9 @@
             this.Controls.SetChildIndex(this.chkMaterial, 0);
             this.Controls.SetChildIndex(this.chkSample, 0);
             this.Controls.SetChildIndex(this.chkSMTL, 0);
+            this.Controls.SetChildIndex(this.label3, 0);
+            this.Controls.SetChildIndex(this.cmbUpdateType, 0);
+            this.Controls.SetChildIndex(this.btnScanQRCode, 0);
             ((System.ComponentModel.ISupportInitialize)(this.gridReceiving)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).EndInit();
             this.ResumeLayout(false);
@@ -635,5 +681,8 @@
         private Win.UI.CheckBox chkMaterial;
         private Win.UI.CheckBox chkSample;
         private Win.UI.CheckBox chkSMTL;
+        private Win.UI.Label label3;
+        private Win.UI.ComboBox cmbUpdateType;
+        private Win.UI.Button btnScanQRCode;
     }
 }
