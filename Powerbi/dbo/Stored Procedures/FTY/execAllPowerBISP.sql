@@ -920,8 +920,10 @@ SET @ErrorMessage = ''
 /****************************************************************************************************************************/
 /***************************************P_Import_SubprocessWIP**********************************************************************/
 BEGIN TRY
+	Declare @StartData date = dateadd(DAY, -7, getdate())
+
 	set @Stime = getdate()  
-	execute [dbo].P_Import_SubprocessWIP
+	execute [dbo].P_Import_SubprocessWIP @StartData
 	set @Etime = getdate()
 END TRY
 

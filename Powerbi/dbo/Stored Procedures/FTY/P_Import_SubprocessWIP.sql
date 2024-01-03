@@ -1,12 +1,14 @@
 ﻿Create PROCEDURE [dbo].[P_Import_SubprocessWIP]
-	@StartDate date = null
+	@StartDate date = null,
+	@FirstDate date = null
 As
 Begin
 
 Set NoCount On;
 Declare @ExecSQL1 NVarChar(MAX);
 
-Declare @EditDateFrom varchar(12) = Format(@StartDate, 'yyyyMMdd')
+Declare @EditDateFrom varchar(12) = case when isnull(@StartDate,'') = '' then '' else Format(@StartDate, 'yyyyMMdd') end
+Declare @FirstDateFrom varchar(12) = case when isnull(@FirstDate,'') = '' then '' else Format(@FirstDate, 'yyyyMMdd') end
 
 select *
 into #tmpP_SubprocessWIP
@@ -117,7 +119,7 @@ select
 	[SpreadingNo] ,
 	[LastSewDate] ,
 	[SewQty]
-from OPENQUERY([MainServer], '' SET NOCOUNT ON; select * from Production.dbo.Get_SubCon_R41_Report('''''+ @EditDateFrom +''''',null) '')
+from OPENQUERY([MainServer], '' SET NOCOUNT ON; select * from Production.dbo.Get_SubCon_R41_Report('''''+ @EditDateFrom +''''','''''+ @FirstDateFrom +''''') '')
 '
 
 EXEC sp_executesql @ExecSQL1
