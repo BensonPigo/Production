@@ -61,6 +61,7 @@
             this.grid.Size = new System.Drawing.Size(470, 498);
             this.grid.TabIndex = 1;
             this.grid.TabStop = false;
+            this.grid.RowsAdded += new System.Windows.Forms.DataGridViewRowsAddedEventHandler(this.Grid_RowsAdded);
             // 
             // P03_ItemSeqFiles
             // 

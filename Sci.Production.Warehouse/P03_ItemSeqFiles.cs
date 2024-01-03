@@ -39,34 +39,6 @@ namespace Sci.Production.Warehouse
             .Text("SuppName", header: "Supplier", width: Widths.AnsiChars(25), iseditingreadonly: true)
             .Text("SuppID", header: "SuppID", width: Widths.AnsiChars(12), iseditingreadonly: true)
             .Button("...", header: "File", width: Widths.AnsiChars(5), onclick: this.ClickClip);
-
-            #region Grid 變色規則
-            Color backDefaultColor = this.grid.DefaultCellStyle.BackColor;
-
-            this.grid.RowsAdded += (s, e) =>
-            {
-                if (e.RowIndex < 0)
-                {
-                    return;
-                }
-
-                foreach (DataGridViewRow gridDr in this.grid.Rows)
-                {
-                    DataRow dr = this.grid.GetDataRow(gridDr.Index);
-
-                    if (MyUtility.Convert.GetBool(dr["ThirdCountry"]))
-                    {
-                        gridDr.DefaultCellStyle.BackColor = Color.FromArgb(220, 140, 255);
-                    }
-
-                    if (MyUtility.Convert.GetString(dr["IsJunk"]) == "1")
-                    {
-                        gridDr.DefaultCellStyle.BackColor = Color.Gray;
-                    }
-                }
-            };
-            #endregion
-
         }
 
         /// <inheritdoc/>
@@ -166,6 +138,41 @@ namespace Sci.Production.Warehouse
             }
 
             this.listControlBindingSource1.DataSource = gridtb;
+        }
+
+        private void Grid_RowsAdded(object sender, DataGridViewRowsAddedEventArgs e)
+        {
+            var rows = this.grid.Rows.Cast<DataGridViewRow>();
+
+            var coloredRows = rows.Select(gridDr =>
+            {
+                DataRow dr = this.grid.GetDataRow(gridDr.Index);
+                bool isThirdCountry = MyUtility.Convert.GetBool(dr["ThirdCountry"]);
+                string isJunkValue = MyUtility.Convert.GetString(dr["IsJunk"]);
+
+                Color backgroundColor = Color.Empty;
+
+                if (isThirdCountry)
+                {
+                    backgroundColor = Color.FromArgb(220, 140, 255);
+                }
+
+                if (isJunkValue == "1")
+                {
+                    backgroundColor = Color.FromArgb(190, 190, 190);
+                }
+
+                return new
+                {
+                    Row = gridDr,
+                    BackgroundColor = backgroundColor,
+                };
+            }).ToList();
+
+            coloredRows.ForEach(coloredRow =>
+            {
+                coloredRow.Row.DefaultCellStyle.BackColor = coloredRow.BackgroundColor;
+            });
         }
     }
 }

@@ -1266,8 +1266,8 @@ drop table #tmpPadPrintReq
 --------DELETE
 DELETE Production.dbo.Clip
 from Production.dbo.Clip pc
-INNER JOIN Trade_To_Pms.dbo.Clip tc on  tc.PKEY = pc.PKey AND tc.UniqueKey = pc.UniqueKey AND tc.TableName = 'PoItem'
-where NOT EXISTS (SELECT 1 FROM Production.dbo.PO_Supp WHERE tc.UniqueKey = ID+seq1)
+LEFT JOIN Trade_To_Pms.dbo.Clip tc on  tc.PKEY = pc.PKey AND tc.UniqueKey = pc.UniqueKey
+WHERE pc.TableName = 'PoItem' and tc.PKey is null
 --------UPDATE
 UPDATE pc
 SET
