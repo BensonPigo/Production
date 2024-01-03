@@ -979,15 +979,51 @@ where   p.PulloutID = '{this.CurrentMaintain["id"]}' and
 
             if (dtCfa.Rows.Count > 0)
             {
+                warningmsg.Append("PackingID + CTNNo Below\r\n");
                 foreach (DataRow dr in dtCfa.Rows)
                 {
-                    warningmsg.Append($@"SP#: {dr["OrderID"]}, Packing: {dr["PackingListID"]}
-, CTN#: {dr["CTNStartNo"]} is not in clog!" + Environment.NewLine);
+                    warningmsg.Append($@"<{dr["PackingListID"]}>+<{dr["CTNStartNo"]}>" + Environment.NewLine);
                 }
 
+                warningmsg.Append("contains cartons that has been returned from CFA but not yet received from Clog!!");
                 MyUtility.Msg.WarningBox(warningmsg.ToString());
                 return;
             }
+            #endregion
+
+            #region 檢查Clog已送出給CFA，但CFA還沒退回給Clog
+            string sqlcmd = $@"
+SELECT
+   c.ID
+   ,c.CTNStartNo
+FROM Pullout a WITH (NOLOCK)
+INNER JOIN PackingList b WITH (NOLOCK) ON a.ID = b.PulloutID
+INNER JOIN PackingList_Detail c WITH (NOLOCK) ON b.ID = c.ID
+WHERE a.ID = '{this.CurrentMaintain["id"]}'
+AND a.Status = 'New'
+AND ((c.CFAReturnClogDate IS NOT NULL　AND c.ClogReceiveCFADate IS NULL)
+　　　OR c.TransferCFADate IS NOT NULL)
+";
+            DualResult result = DBProxy.Current.Select(null, sqlcmd, out DataTable dtchk);
+            if (!result)
+            {
+                this.ShowErr(result);
+                return;
+            }
+
+            if (dtchk.Rows.Count > 0)
+            {
+                string msgchk = "Below\r\n";
+                foreach (DataRow dr in dtchk.Rows)
+                {
+                    msgchk += $"<{dr["ID"]}>+<{dr["CTNStartNo"]}>";
+                }
+
+                msgchk += "contains cartons that has been sent to CFA from Clog, but has not yet returned to Clog.";
+                MyUtility.Msg.WarningBox(msgchk);
+                return;
+            }
+
             #endregion
 
             IList<string> updateCmds = new List<string>();
@@ -1076,7 +1112,7 @@ where   pd.ID = '{this.CurrentMaintain["ID"]}'
             {
                 try
                 {
-                    DualResult result = DBProxy.Current.Select(null, updateCmds.JoinToString(" "), out DataTable dtNeedUpdateA2BOrders);
+                    result = DBProxy.Current.Select(null, updateCmds.JoinToString(" "), out DataTable dtNeedUpdateA2BOrders);
                     if (!result)
                     {
                         scope.Dispose();
