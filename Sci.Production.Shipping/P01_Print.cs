@@ -3,13 +3,9 @@ using Excel = Microsoft.Office.Interop.Excel;
 using Sci.Data;
 using System;
 using System.Data;
-using System.Data.SqlTypes;
 using System.Drawing;
-using System.IO;
-using System.IO.Packaging;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
-using static Sci.MyUtility;
 using Microsoft.Office.Interop.Excel;
 
 namespace Sci.Production.Shipping
@@ -73,8 +69,8 @@ where p.INVNo in (
 			where ID in (
 				select top 1 ID
 				from PackingList_Detail
-				where OrderID = '23061306II036'
-				and OrderShipmodeSeq = '01'
+				where OrderID = '{this.masterData["OrderID"]}'
+				and OrderShipmodeSeq = '{this.masterData["OrderShipmodeSeq"]}'
 			)
 		)
 	)
@@ -316,7 +312,6 @@ where o.Id = '{this.masterData["OrderID"]}'",
                 }
 
                 Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
-                excel.Visible = true;
                 string strBlno1 = string.Empty;
                 string strBlno2 = string.Empty;
                 string sqlBlno = $@"
