@@ -38,7 +38,7 @@ namespace Sci.Production.Shipping
             this.Helper.Controls.Grid.Generator(this.grid1)
                 .Text("CustomsType", header: "Customs Type", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("CDCCode", header: "CDC Code", width: Widths.AnsiChars(10), iseditingreadonly: true)
-                .Text("CustomsDescription", header: "Customs Description", width: Widths.AnsiChars(25), iseditingreadonly: true)
+                .Text("CDCName", header: "Customs Description", width: Widths.AnsiChars(25), iseditingreadonly: true)
                 .Numeric("TtlCDCQty", header: "CDC Qty", width: Widths.AnsiChars(9), decimal_places: 2, iseditingreadonly: true)
                 .Text("CDCUnit", header: "CDC Unit", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Numeric("OriTtlNetKg", header: "Ori Ttl\r\nN.W.", width: Widths.AnsiChars(11), decimal_places: 2, iseditingreadonly: true)
@@ -121,7 +121,7 @@ namespace Sci.Production.Shipping
             foreach (DataRow dr in ((DataTable)this.gridbs.DataSource).Rows)
             {
                 DataRow newdr = P61.KHImportDeclaration_ShareCDCExpense.NewRow();
-                newdr["KHCustomsDescriptionCDCName"] = dr["CustomsDescription"];
+                newdr["KHCustomsDescriptionCDCName"] = dr["CDCName"];
                 newdr["OriTtlNetKg"] = dr["OriTtlNetKg"];
                 newdr["OriTtlWeightKg"] = dr["OriTtlWeightKg"];
                 newdr["OriTtlCDCAmount"] = dr["OriTtlCDCAmount"];
@@ -135,56 +135,56 @@ namespace Sci.Production.Shipping
 
             DataTable sumDt = ((DataTable)this.gridbs.DataSource).Select($"ct > 1").TryCopyToDataTable((DataTable)this.gridbs.DataSource);
             DataTable sumDtct1 = ((DataTable)this.gridbs.DataSource).Select($"ct = 1").TryCopyToDataTable((DataTable)this.gridbs.DataSource);
-            var ct1 = sumDtct1.AsEnumerable().Select(s => MyUtility.Convert.GetString(s["CustomsDescription"])).ToList();
+            var ct1 = sumDtct1.AsEnumerable().Select(s => MyUtility.Convert.GetString(s["CDCName"])).ToList();
             var ct1Datas = sumDtct1.AsEnumerable()
                 .Select(s => new CalData
                 {
-                    Rn = MyUtility.Convert.GetLong(this.rateDt.Select($"CustomsDescription = '{s["CustomsDescription"]}'")[0]["Rn"]),
+                    Rn = MyUtility.Convert.GetLong(this.rateDt.Select($"CDCName = '{s["CDCName"]}'")[0]["Rn"]),
                     CustomsType = MyUtility.Convert.GetString(s["CustomsType"]),
-                    CustomsDescription = MyUtility.Convert.GetString(s["CustomsDescription"]),
+                    CDCName = MyUtility.Convert.GetString(s["CDCName"]),
                     ActNetKg = MyUtility.Math.Round(MyUtility.Convert.GetDecimal(s["ActTtlNetKg"]), 2),
                     ActWeightKg = MyUtility.Math.Round(MyUtility.Convert.GetDecimal(s["ActTtlWeightKg"]), 2),
                     ActAmount = MyUtility.Math.Round(MyUtility.Convert.GetDecimal(s["ActTtlAmount"]), 2),
                     ActHSCode = MyUtility.Convert.GetString(s["ActHSCode"]),
                 }).ToList();
 
-            string filter = "CustomsType = '{0}' and CustomsDescription = '{1}'";
-            var calDatas = this.rateDt.AsEnumerable().Where(w => !ct1.Contains(MyUtility.Convert.GetString(w["CustomsDescription"])))
+            string filter = "CustomsType = '{0}' and CDCName = '{1}'";
+            var calDatas = this.rateDt.AsEnumerable().Where(w => !ct1.Contains(MyUtility.Convert.GetString(w["CDCName"])))
                 .Select(s => new CalData
             {
                 Rn = MyUtility.Convert.GetLong(s["rn"]),
                 CustomsType = MyUtility.Convert.GetString(s["CustomsType"]),
-                CustomsDescription = MyUtility.Convert.GetString(s["CustomsDescription"]),
+                    CDCName = MyUtility.Convert.GetString(s["CDCName"]),
                 ActNetKg = MyUtility.Math.Round(
                     MyUtility.Convert.GetDecimal(s["RateNetKg"])
-                    * MyUtility.Convert.GetDecimal(sumDt.Select(string.Format(filter, s["CustomsType"].ToString(), s["CustomsDescription"].ToString()))[0]["ActTtlNetKg"]), 2),
+                    * MyUtility.Convert.GetDecimal(sumDt.Select(string.Format(filter, s["CustomsType"].ToString(), s["CDCName"].ToString()))[0]["ActTtlNetKg"]), 2),
                 ActWeightKg = MyUtility.Math.Round(
                     MyUtility.Convert.GetDecimal(s["RateWeightKg"])
-                    * MyUtility.Convert.GetDecimal(sumDt.Select(string.Format(filter, s["CustomsType"].ToString(), s["CustomsDescription"].ToString()))[0]["ActTtlWeightKg"]), 2),
+                    * MyUtility.Convert.GetDecimal(sumDt.Select(string.Format(filter, s["CustomsType"].ToString(), s["CDCName"].ToString()))[0]["ActTtlWeightKg"]), 2),
                 ActAmount = MyUtility.Math.Round(
                     MyUtility.Convert.GetDecimal(s["RateCDCAmount"])
-                    * MyUtility.Convert.GetDecimal(sumDt.Select(string.Format(filter, s["CustomsType"].ToString(), s["CustomsDescription"].ToString()))[0]["ActTtlAmount"]), 2),
-                ActHSCode = MyUtility.Convert.GetString(sumDt.Select(string.Format(filter, s["CustomsType"].ToString(), s["CustomsDescription"].ToString()))[0]["ActHSCode"]),
+                    * MyUtility.Convert.GetDecimal(sumDt.Select(string.Format(filter, s["CustomsType"].ToString(), s["CDCName"].ToString()))[0]["ActTtlAmount"]), 2),
+                ActHSCode = MyUtility.Convert.GetString(sumDt.Select(string.Format(filter, s["CustomsType"].ToString(), s["CDCName"].ToString()))[0]["ActHSCode"]),
             }).ToList();
 
             var groupNew = calDatas
-                .GroupBy(g => new { g.CustomsType, g.CustomsDescription })
-                .Select(s => new { s.Key.CustomsType, s.Key.CustomsDescription, maxrn = s.Max(m => m.Rn), ActNetKg = s.Sum(su => su.ActNetKg), ActWeightKg = s.Sum(su => su.ActWeightKg), ActAmount = s.Sum(su => su.ActAmount) })
+                .GroupBy(g => new { g.CustomsType, g.CDCName })
+                .Select(s => new { s.Key.CustomsType, s.Key.CDCName, maxrn = s.Max(m => m.Rn), ActNetKg = s.Sum(su => su.ActNetKg), ActWeightKg = s.Sum(su => su.ActWeightKg), ActAmount = s.Sum(su => su.ActAmount) })
                 .ToList();
 
             var lastDiff = groupNew.Select(s => new
             {
                 Rn = s.maxrn,
                 s.CustomsType,
-                s.CustomsDescription,
-                ActNetKg = s.ActNetKg - MyUtility.Convert.GetDecimal(sumDt.Select(string.Format(filter, s.CustomsType, s.CustomsDescription))[0]["ActTtlNetKg"]),
-                ActWeightKg = s.ActWeightKg - MyUtility.Convert.GetDecimal(sumDt.Select(string.Format(filter, s.CustomsType, s.CustomsDescription))[0]["ActTtlWeightKg"]),
-                ActAmount = s.ActAmount - MyUtility.Convert.GetDecimal(sumDt.Select(string.Format(filter, s.CustomsType, s.CustomsDescription))[0]["ActTtlAmount"]),
+                s.CDCName,
+                ActNetKg = s.ActNetKg - MyUtility.Convert.GetDecimal(sumDt.Select(string.Format(filter, s.CustomsType, s.CDCName))[0]["ActTtlNetKg"]),
+                ActWeightKg = s.ActWeightKg - MyUtility.Convert.GetDecimal(sumDt.Select(string.Format(filter, s.CustomsType, s.CDCName))[0]["ActTtlWeightKg"]),
+                ActAmount = s.ActAmount - MyUtility.Convert.GetDecimal(sumDt.Select(string.Format(filter, s.CustomsType, s.CDCName))[0]["ActTtlAmount"]),
             }).ToList();
 
             foreach (var item in calDatas)
             {
-                var lastSamern = lastDiff.Where(w => w.CustomsType == item.CustomsType && w.CustomsDescription == item.CustomsDescription).First();
+                var lastSamern = lastDiff.Where(w => w.CustomsType == item.CustomsType && w.CDCName == item.CDCName).First();
                 if (lastSamern.Rn == item.Rn)
                 {
                     item.ActNetKg -= lastSamern.ActNetKg;
@@ -204,7 +204,7 @@ namespace Sci.Production.Shipping
 
             public string CustomsType { get; set; }
 
-            public string CustomsDescription { get; set; }
+            public string CDCName { get; set; }
 
             public decimal ActNetKg { get; set; }
 
