@@ -1262,5 +1262,43 @@ where not exists(select 1 from  Production.dbo.PadPrintReq_Detail_spec p where p
 drop table #tmpPadPrintReq
 --------------------------
 
+/*********************Clip*********************/
+--------DELETE
+DELETE Production.dbo.Clip
+from Production.dbo.Clip pc
+LEFT JOIN Trade_To_Pms.dbo.Clip tc on  tc.PKEY = pc.PKey AND tc.UniqueKey = pc.UniqueKey
+WHERE pc.TableName = 'PoItem' and tc.PKey is null
+--------UPDATE
+UPDATE pc
+SET
+ pc.[TableName] = ISNULL(tc.[TableName],'')
+,pc.[SourceFile] = isnull(tc.[SourceFile],'')
+,pc.[Description] = ISNULL(tc.[Description],'')
+from Production.dbo.Clip pc
+INNER JOIN Trade_To_Pms.dbo.Clip tc on  tc.PKEY = pc.PKey AND tc.UniqueKey = pc.UniqueKey AND tc.TableName = 'PoItem'
+--------INSERT
+INSERT INTO Production.dbo.Clip
+(
+PKey
+,TableName
+,UniqueKey
+,SourceFile
+,[Description]
+,AddName
+,AddDate
+)
+select 
+c.[Pkey]
+,[TableName] = isnull(c.[TableName],'')
+,[UniqueKey] = isnull(c.[UniqueKey],'')
+,[SourceFile] = isnull(c.[SourceFile],'')
+,[Description] = isnull(c.[Description],'')
+,[AddName] = isnull(c.[AddName],'')
+,[AddDate] = c.AddDate
+from Trade_To_Pms.dbo.Clip c
+inner join Production.dbo.PO_Supp ps on c.UniqueKey = ps.ID+seq1
+where c.TableName = 'PoItem' AND 
+NOT EXISTS(SELECT 1 FROM Production.dbo.Clip pc WHERE c.UniqueKey = pc.UniqueKey and c.pkey = pc.PKey)
+/***********************************************/
 END
 

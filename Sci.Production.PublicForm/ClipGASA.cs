@@ -94,7 +94,7 @@ namespace Sci.Production.PublicForm
                 {
                     CharacterCasing = CharacterCasing.Normal,
                 })
-                .Text("PKEY", header: "UKey", width: Widths.AnsiChars(10))
+                .Text("PKEY", header: "UKey", width: Widths.AnsiChars(15))
                 .Text("ADDDATE", header: "Created by", width: Widths.AnsiChars(25), settings: new DataGridViewGeneratorTextColumnSettings()
                 {
                     CellFormatting = (s, e) =>
@@ -2587,7 +2587,7 @@ namespace Sci.Production.PublicForm
         [GeneratedCode("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
         private void InitCommandCollection()
         {
-            _commandCollection = new SqlCommand[3];
+            _commandCollection = new SqlCommand[4];
             _commandCollection[0] = new SqlCommand();
             _commandCollection[0].Connection = Connection;
             _commandCollection[0].CommandText = "SELECT          TABLENAME, UNIQUEKEY, SOURCEFILE, DESCRIPTION, PKEY, ADDNAME, ADDDATE\r\nFROM              GASAClip\r\nWHERE          (TABLENAME LIKE @tablename) AND (UNIQUEKEY = @uniquekey)";
@@ -2612,6 +2612,14 @@ namespace Sci.Production.PublicForm
             _commandCollection[2].Parameters.Add(new SqlParameter("@ADDNAME", SqlDbType.VarChar, 10, ParameterDirection.Input, 0, 0, "AddName", DataRowVersion.Current, sourceColumnNullMapping: false, value: null, xmlSchemaCollectionDatabase: "", xmlSchemaCollectionOwningSchema: "", xmlSchemaCollectionName: ""));
             _commandCollection[2].Parameters.Add(new SqlParameter("@ADDDATE", SqlDbType.DateTime, 8, ParameterDirection.Input, 0, 0, "AddDate", DataRowVersion.Current, sourceColumnNullMapping: false, value: null, xmlSchemaCollectionDatabase: "", xmlSchemaCollectionOwningSchema: "", xmlSchemaCollectionName: ""));
             _commandCollection[2].Parameters.Add(new SqlParameter("@Type", SqlDbType.VarChar, 3, ParameterDirection.Input, 0, 0, "Type", DataRowVersion.Current, sourceColumnNullMapping: false, value: null, xmlSchemaCollectionDatabase: "", xmlSchemaCollectionOwningSchema: "", xmlSchemaCollectionName: ""));
+            // Cilp PoItem
+            _commandCollection[3] = new SqlCommand();
+            _commandCollection[3].Connection = Connection;
+            _commandCollection[3].CommandText = "SELECT TABLENAME, UNIQUEKEY, SOURCEFILE, DESCRIPTION, PKEY, ADDNAME, ADDDATE FROM Clip WHERE (TABLENAME LIKE @tablename) AND (UNIQUEKEY = @uniquekey)";
+            _commandCollection[3].CommandType = CommandType.Text;
+            _commandCollection[3].Parameters.Add(new SqlParameter("@tablename", SqlDbType.VarChar, 50, ParameterDirection.Input, 0, 0, "TABLENAME", DataRowVersion.Current, sourceColumnNullMapping: false, value: null, xmlSchemaCollectionDatabase: "", xmlSchemaCollectionOwningSchema: "", xmlSchemaCollectionName: ""));
+            _commandCollection[3].Parameters.Add(new SqlParameter("@uniquekey", SqlDbType.VarChar, 80, ParameterDirection.Input, 0, 0, "UNIQUEKEY", DataRowVersion.Current, sourceColumnNullMapping: false, value: null, xmlSchemaCollectionDatabase: "", xmlSchemaCollectionOwningSchema: "", xmlSchemaCollectionName: ""));
+
         }
 
 
@@ -2635,7 +2643,16 @@ namespace Sci.Production.PublicForm
         [DataObjectMethod(DataObjectMethodType.Select, true)]
         public virtual CLIPGASADataTable Gets(string tablename, string uniquekey)
         {
-            Adapter.SelectCommand = CommandCollection[0];
+            if (tablename == "PoItem")
+            {
+                Adapter.SelectCommand = CommandCollection[3];
+
+            }
+            else
+            {
+                Adapter.SelectCommand = CommandCollection[0];
+            }
+
             if (tablename == null)
             {
                 Adapter.SelectCommand.Parameters[0].Value = DBNull.Value;

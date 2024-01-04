@@ -1568,5 +1568,17 @@ drop table #tmpOrder,#tmpLocalPO_Detail,#ArticleForThread_Detail,#ArticleForThre
             this.Grid1_sorting();
             this.ChangeDetailColor();
         }
+
+        private void BtnItemSeqFile_Click(object sender, EventArgs e)
+        {
+            DataRow dataRow = this.gridMaterialStatus.GetDataRow(this.listControlBindingSource1.Position);
+            if (dataRow == null)
+            {
+                return;
+            }
+
+            var frm = new P03_ItemSeqFiles(MyUtility.Convert.GetString(dataRow["ID"]));
+            frm.ShowDialog(this);
+        }
     }
 }
