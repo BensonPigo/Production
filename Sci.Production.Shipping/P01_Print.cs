@@ -53,29 +53,22 @@ namespace Sci.Production.Shipping
             if (this.reportType == "2")
             {
                 string sqlcmd = $@"
-select distinct pd.OrderID, pd.OrderShipmodeSeq, p.INVNo
+select pd.OrderID, pd.OrderShipmodeSeq, p.INVNo
 into #tmp
 from PackingList p
 inner join PackingList_Detail pd on p.ID = pd.ID
-where p.INVNo in (
-	select ID 
-	from GMTBooking
-	where BLNO in (
-		select BLNo
-		from GMTBooking
-		where ID in (
-			select InvNo
-			from PackingList
-			where ID in (
-				select top 1 ID
-				from PackingList_Detail
-				where OrderID = '{this.masterData["OrderID"]}'
-				and OrderShipmodeSeq = '{this.masterData["OrderShipmodeSeq"]}'
-			)
-		)
-	)
-	and ShipModeID like '%P%'
+inner join GMTBooking g on g.ID = p.INVNo
+where exists 
+(
+	select 1
+	from PackingList_Detail pd2
+	inner join PackingList p2 on pd2.ID = p2.ID
+	inner join GMTBooking g2 on g2.ID = p2.INVNo
+	where pd2.OrderID = '{this.masterData["OrderID"]}'
+	and pd2.OrderShipmodeSeq = '{this.masterData["OrderShipmodeSeq"]}'
+	and (g2.BLNo = g.BLNo or g2.BL2No = g.BL2No)
 )
+and g.ShipModeID like '%P%'
 
 
 select se.Description,a.Qty,se.UnitID,a.CurrencyID,a.Price
@@ -97,38 +90,31 @@ left join ShipExpense se on se.ID = a.ShipExpenseID
 
 select Description,Qty,UnitID,CurrencyID,Price,Amount,Rate,PayCurrency,PayAmount from #table1
 
-select distinct p.INVNo
+select p.INVNo
 ,pd.OrderID
 ,o.CustPONo
 ,[APPID] = ap.ID
-,[Qty] = ap.qty
-,[GW] = p.GW * (GW1.value / GW2.value)
-,[CW] = (select min(isnull(cw,0)) from #table1) * (GW1.value / GW2.value)
+,[Qty] = sum(pd.ShipQty)
+,[GW] = p.GW * gw.value
+,[CW] = (select min(isnull(cw,0)) from #table1) * gw.value
 ,[Air_FREIGHT] = af.total
 ,[EQV] = ap.Additional
 from PackingList p
 inner join PackingList_Detail pd on p.ID = pd.ID
 left join Orders o on o.ID = pd.OrderID
+left join AirPP ap on ap.OrderID= pd.OrderID and ap.OrderShipmodeSeq = pd.OrderShipmodeSeq
 outer apply (
-	select a.ID, Additional = sum(a.Additional),qty = sum(a2.ShipQty) 
-	from  AirPP a 
-	LEFT join PackingList_Detail a2 on a.OrderID = a2.OrderID and a.OrderShipmodeSeq = a2.OrderShipmodeSeq
-	where  a.OrderID = pd.OrderID and a.OrderShipmodeSeq = pd.OrderShipmodeSeq
-	GROUP by a.ID
-)ap
-outer apply(
-	-- by orderID + OrderShipmodeSeq
-	select value = sum(t.ShipQty * t.NWPerPcs) 
+	select value = sum(t.ShipQty * t.NWPerPcs) / (t2.value)
 	from PackingList_Detail t
-	where t.id = pd.id	and t.OrderID = pd.orderid
-	and t.OrderShipmodeSeq = pd.OrderShipmodeSeq
-)GW1
-outer apply(
-	-- by orderID
-	select value = sum(t.ShipQty * t.NWPerPcs) 
-	from PackingList_Detail t
-	where t.id = pd.id	and t.OrderID = pd.orderid
-)GW2
+	outer apply(
+		select value = sum(tt.ShipQty * tt.NWPerPcs) 
+		from PackingList_Detail tt
+		where tt.id=t.id
+	)t2
+	where t.OrderID = '{this.masterData["OrderID"]}'
+	and t.OrderShipmodeSeq = '{this.masterData["OrderShipmodeSeq"]}'
+	GROUP by t2.value
+)gw
 outer apply(
 	select total = round(sum((se.AmtFty+se.AmtOther)/sap.APPExchageRate),2)
 	from ShareExpense_APP se
@@ -140,7 +126,14 @@ where exists(
 	where OrderID = pd.OrderID
 	and OrderShipmodeSeq = pd.OrderShipmodeSeq
 )
-
+group by p.INVNo
+,pd.OrderID
+,o.CustPONo
+,ap.ID
+,p.GW ,gw.value
+,af.total
+,ap.Additional
+order by p.INVNo,pd.OrderID
 
 drop TABLE #tmp,#table1
 ";
