@@ -37,6 +37,7 @@
             this.labelSPNo = new Sci.Win.UI.Label();
             this.btnQuery = new Sci.Win.UI.Button();
             this.panel3 = new Sci.Win.UI.Panel();
+            this.btnItemSeqFile = new Sci.Win.UI.Button();
             this.label1 = new Sci.Win.UI.Label();
             this.displayRrLrHr = new Sci.Win.UI.DisplayBox();
             this.labelJunk = new Sci.Win.UI.Label();
@@ -70,7 +71,7 @@
             this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(1008, 88);
+            this.panel1.Size = new System.Drawing.Size(1132, 88);
             this.panel1.TabIndex = 2;
             // 
             // chk_includeJunk
@@ -124,6 +125,7 @@
             // 
             // panel3
             // 
+            this.panel3.Controls.Add(this.btnItemSeqFile);
             this.panel3.Controls.Add(this.label1);
             this.panel3.Controls.Add(this.displayRrLrHr);
             this.panel3.Controls.Add(this.labelJunk);
@@ -141,8 +143,20 @@
             this.panel3.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.panel3.Location = new System.Drawing.Point(0, 601);
             this.panel3.Name = "panel3";
-            this.panel3.Size = new System.Drawing.Size(1008, 60);
+            this.panel3.Size = new System.Drawing.Size(1132, 60);
             this.panel3.TabIndex = 3;
+            // 
+            // btnItemSeqFile
+            // 
+            this.btnItemSeqFile.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnItemSeqFile.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.btnItemSeqFile.Location = new System.Drawing.Point(829, 15);
+            this.btnItemSeqFile.Name = "btnItemSeqFile";
+            this.btnItemSeqFile.Size = new System.Drawing.Size(115, 30);
+            this.btnItemSeqFile.TabIndex = 50;
+            this.btnItemSeqFile.Text = "Item Seq1 Files";
+            this.btnItemSeqFile.UseVisualStyleBackColor = true;
+            this.btnItemSeqFile.Click += new System.EventHandler(this.BtnItemSeqFile_Click);
             // 
             // label1
             // 
@@ -283,7 +297,7 @@
             // 
             this.btnToExcel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnToExcel.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnToExcel.Location = new System.Drawing.Point(826, 15);
+            this.btnToExcel.Location = new System.Drawing.Point(950, 15);
             this.btnToExcel.Name = "btnToExcel";
             this.btnToExcel.Size = new System.Drawing.Size(90, 30);
             this.btnToExcel.TabIndex = 1;
@@ -294,7 +308,7 @@
             // btnClose
             // 
             this.btnClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnClose.Location = new System.Drawing.Point(922, 15);
+            this.btnClose.Location = new System.Drawing.Point(1046, 15);
             this.btnClose.Name = "btnClose";
             this.btnClose.Size = new System.Drawing.Size(80, 30);
             this.btnClose.TabIndex = 2;
@@ -308,7 +322,7 @@
             this.panel2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel2.Location = new System.Drawing.Point(0, 88);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(1008, 513);
+            this.panel2.Size = new System.Drawing.Size(1132, 513);
             this.panel2.TabIndex = 4;
             // 
             // gridMaterialStatus
@@ -334,7 +348,7 @@
             this.gridMaterialStatus.RowTemplate.Height = 24;
             this.gridMaterialStatus.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridMaterialStatus.ShowCellToolTips = false;
-            this.gridMaterialStatus.Size = new System.Drawing.Size(1002, 504);
+            this.gridMaterialStatus.Size = new System.Drawing.Size(1126, 504);
             this.gridMaterialStatus.TabIndex = 0;
             this.gridMaterialStatus.TabStop = false;
             this.gridMaterialStatus.DataError += new System.Windows.Forms.DataGridViewDataErrorEventHandler(this.GridMaterialStatus_DataError);
@@ -342,7 +356,7 @@
             // 
             // P03
             // 
-            this.ClientSize = new System.Drawing.Size(1008, 661);
+            this.ClientSize = new System.Drawing.Size(1132, 661);
             this.Controls.Add(this.panel2);
             this.Controls.Add(this.panel3);
             this.Controls.Add(this.panel1);
@@ -389,5 +403,6 @@
         private Win.UI.DisplayBox displayFtySupp;
         private Win.UI.Label label1;
         private Win.UI.DisplayBox displayRrLrHr;
+        private Win.UI.Button btnItemSeqFile;
     }
 }
