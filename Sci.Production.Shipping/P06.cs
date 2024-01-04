@@ -1016,7 +1016,7 @@ AND ((c.CFAReturnClogDate IS NOT NULL　AND c.ClogReceiveCFADate IS NULL)
                 string msgchk = "Below\r\n";
                 foreach (DataRow dr in dtchk.Rows)
                 {
-                    msgchk += $"<{dr["ID"]}>+<{dr["CTNStartNo"]}>";
+                    msgchk += $"<{dr["ID"]}>+<{dr["CTNStartNo"]}>\r\n";
                 }
 
                 msgchk += "contains cartons that has been sent to CFA from Clog, but has not yet returned to Clog.";
