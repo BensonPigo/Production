@@ -179,7 +179,7 @@ declare @P_MtltoFTYAnalysis TABLE(
 		Where Export.CloseDate >= @CloseDateFrom AND Export_Detail.PoType = 'G' 
 
 	) main
-	Left join [Production].dbo.Factory WITH (NOLOCK) on main.FactoryID = Factory.ID
+	inner join [Production].dbo.Factory WITH (NOLOCK) on main.FactoryID = Factory.ID and Factory.IsProduceFty = 1
 	Left join [Production].dbo.Supp WITH (NOLOCK) on main.SuppID = Supp.ID
 	Left join [Production].dbo.Country WITH (NOLOCK) On Country.ID = Supp.CountryID
 	Left join [Production].dbo.Fabric WITH (NOLOCK) on main.SciRefno = Fabric.SciRefno

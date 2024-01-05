@@ -123,6 +123,7 @@ Begin
 	Left join [MainServer].Production.dbo.TPEPass1 poHandle with(nolock) on poHandle.ID = mp.Handle
 	Where ed.POType = 'M'
 	And e.CloseDate Between @CloseDate_S And @CloseDate_E
+	And exists (select 1 from [MainServer].Production.dbo.Factory f with(nolock) where e.FactoryID = f.ID and f.IsProduceFty = 1)
 	Order by e.ID, ed.POID
 
 	Select Distinct 
@@ -246,6 +247,7 @@ Begin
 	) pocl
 	Where ed.POType ='G'
 	And e.CloseDate Between @CloseDate_S And @CloseDate_E
+	And exists (select 1 from [MainServer].Production.dbo.Factory f with(nolock) where e.FactoryID = f.ID and f.IsProduceFty = 1)
 	Order by e.ID, ed.POID
 	
 	Delete p
