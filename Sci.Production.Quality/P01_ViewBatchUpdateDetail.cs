@@ -117,37 +117,37 @@ WHERE FIR.POID = '{this.poid}'
 
         private void SetComboBox(DataTable dt, DataTable dt2)
         {
-            var seqList = dt.AsEnumerable().Select(row => MyUtility.Convert.GetString(row["SEQ"])).Distinct().ToList();
+            var seqList = dt.AsEnumerable().Select(row => MyUtility.Convert.GetString(row["SEQ"])).Distinct().OrderBy(o => o).ToList();
             seqList.Insert(0, string.Empty);
             this.comboBoxSEQ.DataSource = seqList;
             this.comboBoxSEQ.SelectedIndex = 0;
             this.comboBoxSEQ.SelectedItem = string.Empty;
 
-            var seqList2 = dt2.AsEnumerable().Select(row => MyUtility.Convert.GetString(row["SEQ"])).Distinct().ToList();
+            var seqList2 = dt2.AsEnumerable().Select(row => MyUtility.Convert.GetString(row["SEQ"])).Distinct().OrderBy(o => o).ToList();
             seqList2.Insert(0, string.Empty);
             this.comboBoxSEQ2.DataSource = seqList2;
             this.comboBoxSEQ2.SelectedIndex = 0;
             this.comboBoxSEQ2.SelectedItem = string.Empty;
 
-            var exportIdList = dt.AsEnumerable().Select(row => MyUtility.Convert.GetString(row["ExportId"])).Distinct().ToList();
+            var exportIdList = dt.AsEnumerable().Select(row => MyUtility.Convert.GetString(row["ExportId"])).Distinct().Where(w => w != string.Empty).OrderBy(o => o).ToList();
             exportIdList.Insert(0, string.Empty);
             this.comboBoxWKNo.DataSource = exportIdList;
             this.comboBoxWKNo.SelectedIndex = 0;
             this.comboBoxWKNo.SelectedItem = string.Empty;
 
-            var exportIdList2 = dt2.AsEnumerable().Select(row => MyUtility.Convert.GetString(row["ExportId"])).Distinct().ToList();
+            var exportIdList2 = dt2.AsEnumerable().Select(row => MyUtility.Convert.GetString(row["ExportId"])).Distinct().Where(w => w != string.Empty).OrderBy(o => o).ToList();
             exportIdList2.Insert(0, string.Empty);
             this.comboBoxWKNo2.DataSource = exportIdList2;
             this.comboBoxWKNo2.SelectedIndex = 0;
             this.comboBoxWKNo2.SelectedItem = string.Empty;
 
-            var receivingIDList = dt.AsEnumerable().Select(row => MyUtility.Convert.GetString(row["ReceivingID"])).Distinct().ToList();
+            var receivingIDList = dt.AsEnumerable().Select(row => MyUtility.Convert.GetString(row["ReceivingID"])).Distinct().OrderBy(o => o).ToList();
             receivingIDList.Insert(0, string.Empty);
             this.comboBoxReceivingID.DataSource = receivingIDList;
             this.comboBoxReceivingID.SelectedIndex = 0;
             this.comboBoxReceivingID.SelectedItem = string.Empty;
 
-            var receivingIDList2 = dt2.AsEnumerable().Select(row => MyUtility.Convert.GetString(row["ReceivingID"])).Distinct().ToList();
+            var receivingIDList2 = dt2.AsEnumerable().Select(row => MyUtility.Convert.GetString(row["ReceivingID"])).Distinct().OrderBy(o => o).ToList();
             receivingIDList2.Insert(0, string.Empty);
             this.comboBoxReceivingID2.DataSource = receivingIDList2;
             this.comboBoxReceivingID2.SelectedIndex = 0;
