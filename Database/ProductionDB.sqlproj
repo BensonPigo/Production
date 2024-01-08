@@ -2902,6 +2902,7 @@
     <Build Include="dbo\Tables\ExpressDuty.sql" />
     <Build Include="dbo\Tables\ExpressDuty_Functions.sql" />
     <Build Include="dbo\Stored Procedures\PPIC_R21_FORBI.sql" />
+    <Build Include="dbo\Tables\FabricNotch.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />

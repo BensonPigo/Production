@@ -157,9 +157,9 @@ select
 	ki.DeclareNo
 	, ki.Cdate
 	, x.ActHSCode
-    , kc.CustomsType as [Customs Type]
-	, kc.CDCName as [Customs Description]
-	, kc.CDCCode as [CDC Code]
+    , kid.CustomsType as [Customs Type]
+	, kid.CDCName as [Customs Description]
+	, kid.CDCCode as [CDC Code]
 	, kc.CDCUnit as [CDC Unit]
 	, kdQty.Value as [Total Qty]
 	, sum(ks.OriTtlNetKg) as [Ori Ttl N.W.]
@@ -174,6 +174,7 @@ select
 from KHImportDeclaration_ShareCDCExpense ks
 inner join KHImportDeclaration ki on ki.id = ks.id
 inner join KHCustomsDescription kc on ks.KHCustomsDescriptionCDCName=kc.CDCName
+inner join KHImportDeclaration_Detail kid on kid.ID = ki.ID and kid.CDCName = kc.CDCName
 outer apply(
 	select ActHSCode =  stuff((
 		select distinct concat(',', ActHSCode)
@@ -250,9 +251,9 @@ group by
 ki.DeclareNo
 , ki.Cdate
 , x.ActHSCode
-, kc.CustomsType
-, kc.CDCName
-, kc.CDCCode
+, kid.CustomsType
+, kid.CDCName
+, kid.CDCCode
 , kc.CDCUnit
 , kdQty.Value
 , diffNW.Value

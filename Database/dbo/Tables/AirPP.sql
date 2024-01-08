@@ -79,6 +79,7 @@
     [ShareExpenseEditDate] DATETIME        NULL,
     [SCIICRNo2]            VARCHAR (13)    CONSTRAINT [DF_AirPP_SCIICRNo2] DEFAULT ('') NOT NULL,
     [SCIICRRemark2]        NVARCHAR (MAX)  CONSTRAINT [DF_AirPP_SCIICRRemark2] DEFAULT ('') NOT NULL,
+    [Additional] NUMERIC(18, 8) NOT NULL DEFAULT ((0)), 
     CONSTRAINT [PK_AirPP] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 
@@ -425,3 +426,13 @@ EXEC sp_addextendedproperty @name = N'MS_Description',
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'	SCI-ICR備註', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'AirPP', @level2type = N'COLUMN', @level2name = N'SCIICRRemark2';
 
+
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'額外費用(由台北Pullout資料轉回)',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'AirPP',
+    @level2type = N'COLUMN',
+    @level2name = N'Additional'
