@@ -341,23 +341,36 @@ group by UnitID", MyUtility.Convert.GetString(this.masterData["ID"]));
                     }
                     else if (dr["CategoryName"].ToString() == "Material")
                     {
-                        strType = dr["Fabric_MtlTypeID"].ToString();
+                        if (dr["Fabric_Type"].ToString() == "F")
+                        {
+                            strType = "Fabric";
+                        }
+                        else if (dr["Fabric_Type"].ToString() == "A")
+                        {
+                            strType = dr["Fabric_MtlTypeID"].ToString();
+                        }
+
+                        strStyle_Ref = dr["Refno"].ToString();
+                        strDescription = dr["fabricDescription"].ToString();
 
                         var strHC = MyUtility.Convert.GetString(dr["Fabric_HsCode"]).Replace(".", "");
                         strHC = strHC.Replace(",", "");
                         strHSCODE = strHC.Length > 6 ? strHC.Substring(0, 6) : strHC;
-
-                        strDescription = dr["fabricDescription"].ToString();
                     }
                     else if (dr["CategoryName"].ToString() == "Other Sample")
                     {
                         var strHC = MyUtility.Convert.GetString(dr["HSCode"]).Replace(".", "");
                         strHC = strHC.Replace(",", "");
                         strHSCODE = strHC.Length > 6 ? strHC.Substring(0, 6) : strHC;
+                        strType = MyUtility.Convert.GetString(dr["Type"]);
                     }
                     else if (dr["CategoryName"].ToString() == "Other Material")
                     {
                         strDescription = dr["nDescription"].ToString();
+                    }
+                    else if (dr["CategoryName"].ToString() == "Other Sample")
+                    {
+                        strType = MyUtility.Convert.GetString(dr["Type"]);
                     }
 
                     if (!MyUtility.Check.Empty(dr["StyleID"].ToString()) && !MyUtility.Check.Empty(dr["RefNo"].ToString()))

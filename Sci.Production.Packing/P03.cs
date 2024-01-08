@@ -1393,7 +1393,7 @@ Packing list is locked in the hanger system.";
 
             bool sameInstance = mainServerName == extendServerName ? true : false;
 
-            #region 一併移除 PackingListID 相對應貼標 / 噴碼的資料
+            #region 一併移除 PackingListID 相對應貼標 / 噴碼的資料 / Express_Detail
             sqlCmd = $@"
 SET XACT_ABORT ON
 
@@ -1422,6 +1422,9 @@ SET XACT_ABORT ON
 
  DELETE ShippingMarkStamp
  WHERE PackingListID='{this.CurrentMaintain["ID"]}'
+
+ DELETE FROM Express_Detail 
+ WHERE PackingListID ='{this.CurrentMaintain["ID"]}'
 ";
             result = DBProxy.Current.Execute(null, sqlCmd);
             if (!result)

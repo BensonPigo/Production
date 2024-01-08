@@ -34,18 +34,7 @@ namespace Sci.Production.Shipping
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-            DataGridViewGeneratorTextColumnSettings ctnno = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorTextColumnSettings receiver = new DataGridViewGeneratorTextColumnSettings();
-
-            // CTNNo要Trim掉空白字元
-            ctnno.CellValidating += (s, e) =>
-            {
-                if (this.EditMode)
-                {
-                    DataRow dr = this.gridImport.GetDataRow<DataRow>(e.RowIndex);
-                    dr["CTNNo"] = MyUtility.Convert.GetString(e.FormattedValue).Trim();
-                }
-            };
             receiver.CharacterCasing = CharacterCasing.Normal;
             this.gridImport.IsEditingReadOnly = false;
             this.gridImport.DataSource = this.listControlBindingSource1;
@@ -54,7 +43,7 @@ namespace Sci.Production.Shipping
                 .Text("SeasonID", header: "Season", width: Widths.AnsiChars(6), iseditingreadonly: true)
                 .Text("StyleID", header: "Style", width: Widths.AnsiChars(20), iseditingreadonly: true)
                 .Text("Category", header: "Category", width: Widths.AnsiChars(10), iseditingreadonly: true)
-                .Text("CTNNo", header: "CTN No.", width: Widths.AnsiChars(5), settings: ctnno)
+                .Text("CTNNo", header: "CTN No.", width: Widths.AnsiChars(5), iseditingreadonly: true)
                 .Numeric("NW", header: "N.W. (kg)", integer_places: 5, decimal_places: 3, maximum: 99999.99m, minimum: 0m)
                 .Numeric("Price", header: "Price", integer_places: 6, decimal_places: 4, maximum: 999999.9999m, minimum: 0m, iseditingreadonly: true)
                 .Numeric("ShipQty", header: "Q'ty", decimal_places: 2, iseditingreadonly: true)
@@ -63,7 +52,6 @@ namespace Sci.Production.Shipping
                 .Text("Leader", header: "Team Leader", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("BrandID", header: "Brand", width: Widths.AnsiChars(8), iseditingreadonly: true);
 
-            this.gridImport.Columns["CTNNo"].DefaultCellStyle.BackColor = Color.FromArgb(255, 255, 191);
             this.gridImport.Columns["NW"].DefaultCellStyle.BackColor = Color.FromArgb(255, 255, 191);
             this.gridImport.Columns["Price"].DefaultCellStyle.BackColor = Color.FromArgb(255, 255, 191);
             this.gridImport.Columns["UnitID"].DefaultCellStyle.BackColor = Color.FromArgb(255, 255, 191);
@@ -111,8 +99,8 @@ Please create a Pullout Report with this Ship. Date as Pullout Date first!!");
 
             string sqlCmd = string.Format(
                 @"
-select pd.ID,pd.OrderID,o.SeasonID,o.StyleID,'Sample' as Category,
-    '' as CTNNo
+select pd.ID,pd.OrderID,o.SeasonID,o.StyleID,'Sample' as Category
+    , CTNNo = pd.CTNStartNo
     , [NW] = ROUND( TtlGW.GW * ( (pd.ShipQty * 1.0) / (TtlShipQty.Value *1.0)) ,3 ,1)  ----無條件捨去到小數點後第三位
     , [Price] = isnull(Style_UnitPrice.PoPrice,0)
     ,pd.ShipQty
@@ -122,6 +110,7 @@ select pd.ID,pd.OrderID,o.SeasonID,o.StyleID,'Sample' as Category,
     t.Name as Leader
     , o.BrandID
     , [dbo].[getBOFMtlDesc](o.StyleUkey) as Description
+    , pd.Refno
 from PackingList_Detail pd WITH (NOLOCK) 
 inner join PackingList p with (Nolock) on pd.id = p.id
 left join Orders o WITH (NOLOCK) on pd.OrderID = o.ID
@@ -273,7 +262,7 @@ from Express_Detail where ID = '{0}' and Seq2 = ''),'{2}','{3}','{4}',{5},{6},'{
                     MyUtility.Convert.GetString(dr["Description"]),
                     MyUtility.Convert.GetString(dr["ShipQty"]),
                     MyUtility.Convert.GetString(dr["NW"]),
-                    MyUtility.Convert.GetString(dr["CTNNo"]),
+                    MyUtility.Convert.GetString(dr["ID"]) + "-" + MyUtility.Convert.GetString(dr["CTNNo"]),
                     MyUtility.Convert.GetString(dr["ID"]),
                     MyUtility.Convert.GetString(dr["Price"]),
                     MyUtility.Convert.GetString(dr["UnitID"]),
@@ -281,6 +270,22 @@ from Express_Detail where ID = '{0}' and Seq2 = ''),'{2}','{3}','{4}',{5},{6},'{
                     MyUtility.Convert.GetString(dr["BrandID"]),
                     MyUtility.Convert.GetString(dr["LeaderID"]),
                     Env.User.UserID));
+
+                // 新增Express_CTNData
+                insertCmds.Add($@"
+INSERT INTO Express_CTNData(ID,CTNNo,CtnLength,CtnWidth,CtnHeight,CTNNW,AddName,AddDate)
+
+SELECT ID = '{this.masterData["id"]}'
+,CTNNO= '{MyUtility.Convert.GetString(dr["ID"]) + "-" + MyUtility.Convert.GetString(dr["CTNNo"])}'
+,CtnLength = CtnLength * IIF(CtnUnit = 'Inch',2.54,IIF(CtnUnit = 'MM',0.1,1))
+,CtnWidth = CtnWidth * IIF(CtnUnit = 'Inch',2.54,IIF(CtnUnit = 'MM',0.1,1))
+,CtnHeight = CtnHeight * IIF(CtnUnit = 'Inch',2.54,IIF(CtnUnit = 'MM',0.1,1))
+,CTNNW = CtnWeight
+,AddName = '{Env.User.UserID}'
+,AddDate = GETDATE()
+FROM LocalItem
+WHERE REFNO	= '{dr["Refno"]}'
+");
             }
 
             insertCmds.Add($"update PackingList set ExpressID = '{this.masterData["ID"]}' where ID = '{dt.Rows[0]["ID"]}'");

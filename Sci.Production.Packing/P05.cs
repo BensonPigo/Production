@@ -26,6 +26,7 @@ namespace Sci.Production.Packing
         private Ict.Win.DataGridViewGeneratorTextColumnSettings article = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
         private Ict.Win.DataGridViewGeneratorTextColumnSettings size = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
         private Ict.Win.DataGridViewGeneratorNumericColumnSettings balance = new Ict.Win.DataGridViewGeneratorNumericColumnSettings();
+        private Ict.Win.DataGridViewGeneratorTextColumnSettings refno = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
         private Ict.Win.UI.DataGridViewTextBoxColumn col_SP;
         private Ict.Win.UI.DataGridViewTextBoxColumn col_Art;
         private Ict.Win.UI.DataGridViewTextBoxColumn col_Size;
@@ -507,6 +508,66 @@ where InvA.OrderID = '{0}'
                     dr.EndEdit();
                 }
             };
+
+            this.refno.CellValidating += (s, e) =>
+            {
+                if (this.EditMode)
+                {
+                    DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
+                    if (MyUtility.Check.Empty(e.FormattedValue))
+                    {
+                        dr["RefNo"] = string.Empty;
+                        dr["Description"] = string.Empty;
+                        dr.EndEdit();
+                        return;
+                    }
+
+                    if (e.FormattedValue.ToString() != dr["RefNo"].ToString())
+                    {
+                        this.sqlCmd = $@"SELECT Description FROM LocalItem WHERE REFNO ='{e.FormattedValue.ToString()}'";
+                        if (!MyUtility.Check.Seek(this.sqlCmd, out DataRow drReFNO))
+                        {
+                            dr["RefNo"] = string.Empty;
+                            dr["Description"] = string.Empty;
+                            dr.EndEdit();
+                            e.Cancel = true;
+                            MyUtility.Msg.WarningBox(string.Format("< Ref No: <{0}> not found!!>", e.FormattedValue.ToString()));
+                            return;
+                        }
+                        else
+                        {
+                            dr["RefNo"] = e.FormattedValue.ToString();
+                            dr["Description"] = drReFNO["Description"];
+                            dr.EndEdit();
+                        }
+                    }
+                }
+            };
+
+            this.refno.EditingMouseDown += (s, e) =>
+            {
+                if (this.EditMode && this.article.IsEditingReadOnly == false)
+                {
+                    if (e.Button == MouseButtons.Right)
+                    {
+                        if (e.RowIndex != -1)
+                        {
+                            DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
+                            string sqlCmd = @"select RefNo,Description,STR(CtnLength,8,4)+'*'+STR(CtnWidth,8,4)+'*'+STR(CtnHeight,8,4) as Dim from LocalItem where Category = 'CARTON' and Junk = 0 order by RefNo";
+                            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "20,35,35", dr["RefNo"].ToString());
+                            DialogResult returnResult = item.ShowDialog();
+                            if (returnResult == DialogResult.Cancel)
+                            {
+                                return;
+                            }
+
+                            dr["RefNo"] = item.GetSelectedString();
+                            dr["Description"] = item.GetSelecteds()[0]["Description"];
+                            dr.EndEdit();
+                        }
+                    }
+                }
+            };
             #endregion
 
             this.Helper.Controls.Grid.Generator(this.detailgrid)
@@ -516,12 +577,21 @@ where InvA.OrderID = '{0}'
                 .Text("OrderShipmodeSeq", header: "Seq", width: Ict.Win.Widths.AnsiChars(2), iseditingreadonly: true, settings: this.seq)
                 .Text("StyleID", header: "Style No.", width: Ict.Win.Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("CustPONo", header: "P.O. No.", width: Ict.Win.Widths.AnsiChars(10), iseditingreadonly: true)
+                .Text("CTNStartNo", header: "1st CTN#", width: Ict.Win.Widths.AnsiChars(8), iseditingreadonly: false)
+                .Text("CTNEndNo", header: "Last CTN#", width: Ict.Win.Widths.AnsiChars(8), iseditingreadonly: false)
+                .Numeric("CTNQty", header: "# of CTN", iseditingreadonly: false)
+                .Text("RefNo", header: "Ref No", width: Ict.Win.Widths.AnsiChars(15), iseditingreadonly: false, settings: this.refno)
+                .Text("Description", header: "Description", width: Ict.Win.Widths.AnsiChars(15), iseditingreadonly: true)
                 .Text("Article", header: "ColorWay", width: Ict.Win.Widths.AnsiChars(8), settings: this.article).Get(out this.col_Art)
                 .Text("Color", header: "Color", width: Ict.Win.Widths.AnsiChars(6), iseditingreadonly: true)
                 .Text("SizeCode", header: "Size", width: Ict.Win.Widths.AnsiChars(8), settings: this.size).Get(out this.col_Size)
                 .Numeric("Qty", header: "Order Qty", iseditingreadonly: true)
                 .Numeric("ShipQty", header: "Qty", settings: this.balance).Get(out this.col_qty)
                 .Numeric("BalanceQty", header: "Bal. Qty", iseditingreadonly: true)
+                .Numeric("NW", header: "N.W./Ctn", iseditingreadonly: false, integer_places: 3, decimal_places: 3, maximum: 999.999M, minimum: 0)
+                .Numeric("GW", header: "G.W./Ctn", iseditingreadonly: false, integer_places: 3, decimal_places: 3, maximum: 999.999M, minimum: 0)
+                .Numeric("NNW", header: "N.N.W./Ctn", iseditingreadonly: false, integer_places: 3, decimal_places: 3, maximum: 999.999M, minimum: 0)
+                .Numeric("NWPerPcs", header: "N.W./Pcs", iseditingreadonly: false, integer_places: 2, decimal_places: 3, maximum: 99.999M, minimum: 0)
                 .Text("CustCDID", header: "Cust CD", width: Ict.Win.Widths.AnsiChars(15), iseditingreadonly: true)
                 .Text("Dest", header: "Dest", width: Ict.Win.Widths.AnsiChars(5), iseditingreadonly: true)
                 .Text("OrderTypeID", header: "Order Type", width: Ict.Win.Widths.AnsiChars(10), iseditingreadonly: true)
@@ -604,7 +674,7 @@ where InvA.OrderID = '{0}'
                     .ContinueWith(UtilityAutomation.AutomationExceptionHandler, System.Threading.CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.FromCurrentSynchronizationContext());
             }
             #endregion
-        }
+        }   
 
         /// <inheritdoc/>
         protected override DualResult ClickSavePost()
@@ -631,7 +701,7 @@ where InvA.OrderID = '{0}'
         /// <inheritdoc/>
         protected override DualResult ClickDeletePost()
         {
-            #region 一併移除 PackingListID 相對應貼標 / 噴碼的資料
+            #region 一併移除 PackingListID 相對應貼標 / 噴碼的資料 /Express_Detail
             string sqlCmd = $@"
 
  DELETE picd
@@ -650,6 +720,9 @@ where InvA.OrderID = '{0}'
 
  DELETE ShippingMarkStamp
  WHERE PackingListID='{this.CurrentMaintain["ID"]}'
+
+ DELETE FROM Express_Detail 
+ WHERE PackingListID ='{this.CurrentMaintain["ID"]}'
 ";
             DualResult result = DBProxy.Current.Execute(null, sqlCmd);
             if (!result)
@@ -894,7 +967,7 @@ Carton has been output from the hanger system or transferred to clog.";
             }
 
             // 刪除表身SP No.或Qty為空白的資料，檢查表身的Color Way與Size不可以為空值，計算ShipQty，重算表身Grid的Bal. Qty
-            int shipQty = 0, needPackQty = 0, ttlShipQty = 0, count = 0;
+            int shipQty = 0, needPackQty = 0, ttlShipQty = 0, count = 0, ctnQty = 0;
 
             bool isNegativeBalQty = false;
             DataTable needPackData, tmpPackData;
@@ -985,6 +1058,7 @@ select 1 from Orders o WITH (NOLOCK) where o.ID = @orderid and o.category in ('B
 
                 #region 計算ShipQty
                 shipQty = shipQty + MyUtility.Convert.GetInt(dr["ShipQty"].ToString());
+                ctnQty = ctnQty + MyUtility.Convert.GetInt(dr["ctnQty"].ToString());
                 #endregion
 
                 #region 重算表身Grid的Bal. Qty
@@ -1054,6 +1128,9 @@ where oqd.Id = '{0}'
 
             // ShipQty
             this.CurrentMaintain["ShipQty"] = shipQty;
+
+            // CTNQty
+            this.CurrentMaintain["ctnQty"] = ctnQty;
 
             if (!MyUtility.Check.Empty(msg.ToString()))
             {

@@ -980,7 +980,7 @@ where InvA.OrderID = '{0}'
         /// <inheritdoc/>
         protected override DualResult ClickDeletePost()
         {
-            #region 一併移除 PackingListID 相對應貼標 / 噴碼的資料
+            #region 一併移除 PackingListID 相對應貼標 / 噴碼的資料 /Express_Detail
             string sqlCmd = $@"
 
  DELETE picd
@@ -999,6 +999,9 @@ where InvA.OrderID = '{0}'
 
  DELETE ShippingMarkStamp
  WHERE PackingListID='{this.CurrentMaintain["ID"]}'
+
+ DELETE FROM Express_Detail 
+ WHERE PackingListID ='{this.CurrentMaintain["ID"]}'
 ";
             DualResult result = DBProxy.Current.Execute(null, sqlCmd);
             if (!result)
