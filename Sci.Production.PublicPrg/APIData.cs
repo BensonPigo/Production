@@ -7,7 +7,7 @@ using System.Xml.Linq;
 using System.Windows.Forms;
 using Sci.Data;
 
-namespace Sci.Production.Sewing
+namespace Sci.Production.Prg
 {
     /// <inheritdoc/>
     [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1402:FileMayOnlyContainASingleType", Justification = "Reviewed.")]

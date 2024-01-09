@@ -8,7 +8,10 @@ using Sci.Data;
 using System.Runtime.InteropServices;
 using System.Linq;
 using Excel = Microsoft.Office.Interop.Excel;
-using System.Data.SqlClient;
+using Sci.Production.Class.Command;
+using Sci.Production.Prg.PowerBI.Model;
+using Sci.Production.Prg.PowerBI.Logic;
+using Sci.Production.Prg;
 
 namespace Sci.Production.Sewing
 {
@@ -38,6 +41,7 @@ namespace Sci.Production.Sewing
         private DataTable subconData;
         private DataTable vphData;
         private List<APIData> dataMode = new List<APIData>();
+        private int workDay;
 
         /// <summary>
         /// R02
@@ -188,134 +192,45 @@ select distinct FTYGroup from Factory WITH (NOLOCK) order by FTYGroup"),
             StringBuilder sqlCmd = new StringBuilder();
             DualResult failResult;
             DBProxy.Current.DefaultTimeout = 600; // 加長時間成10分鐘, 避免time out
+            Sewing_R02 biModel = new Sewing_R02();
+
             #region 組撈全部Sewing output data SQL
-            List<SqlParameter> listPar = new List<SqlParameter>()
+            Sewing_R02_MonthlyProductionOutputReport sewing_R02_Model = new Sewing_R02_MonthlyProductionOutputReport()
             {
-                new SqlParameter("@StartOutputDate", this.dateDateStart.Value),
-                new SqlParameter("@EndOutputDate", this.dateDateEnd.Value),
-                new SqlParameter("@Factory", this.factory),
-                new SqlParameter("@M", this.mDivision),
-                new SqlParameter("@ReportType", this.reportType + 1),
-                new SqlParameter("@StartSewingLine", this.txtSewingLineStart.Text),
-                new SqlParameter("@EndSewingLine", this.txtSewingLineEnd.Text),
-                new SqlParameter("@OrderBy", this.orderby + 1),
-                new SqlParameter("@ExcludeNonRevenue", this.chkExcludeNonRevenue.Checked),
-                new SqlParameter("@ExcludeSampleFactory", this.checkSampleFty.Checked),
-                new SqlParameter("@ExcludeOfMockUp", this.checkExcludeOfMockUp.Checked),
+                StartOutputDate = this.dateDateStart.Value,
+                EndOutputDate = this.dateDateEnd.Value,
+                Factory = this.factory,
+                M = this.mDivision,
+                ReportType = this.reportType + 1,
+                StartSewingLine = this.txtSewingLineStart.Text,
+                EndSewingLine = this.txtSewingLineEnd.Text,
+                OrderBy = this.orderby + 1,
+                ExcludeNonRevenue = this.chkExcludeNonRevenue.Checked,
+                ExcludeSampleFactory = this.checkSampleFty.Checked,
+                ExcludeOfMockUp = this.checkExcludeOfMockUp.Checked,
             };
 
-            string sqlGetSewingData = @"
-exec dbo.GetMonthlyProductionOutputReport   @StartOutputDate,
-                                            @EndOutputDate,
-                                            @Factory,
-                                            @M,
-                                            @ReportType,
-                                            @StartSewingLine,
-                                            @EndSewingLine,
-                                            @OrderBy,
-                                            @ExcludeNonRevenue,
-                                            @ExcludeSampleFactory,
-                                            @ExcludeOfMockUp
-";
-            DataTable[] dtResults;
-            DualResult result = DBProxy.Current.Select(null, sqlGetSewingData, listPar, out dtResults);
-            if (!result)
+            ResultReport resultReport = biModel.GetMonthlyProductionOutputReport(sewing_R02_Model);
+            if (!resultReport.Result)
             {
-                return result;
+                return resultReport.Result;
             }
 
-            this.SewOutPutData = dtResults[0];
-            this.printData = dtResults[1];
+            this.SewOutPutData = resultReport.DtArr[0];
+            this.printData = resultReport.DtArr[1];
+
             #endregion
 
             #region 整理Total Exclude Subcon-In & Out
             try
             {
-                #region 組SQL
-                failResult = MyUtility.Tool.ProcessWithDatatable(
-                    this.SewOutPutData,
-                    "OutputDate,StdTMS,QAQty,WorkHour,ActManPower,LastShift,MockupCPU,MockupCPUFactor,OrderCPU,OrderCPUFactor,Rate,FactoryID,SewingLineID,Team,Category,SubconInType",
-                    string.Format(@"
-;with tmpQty as (
-	select StdTMS
-		   , QAQty = Sum(QAQty)
-		   , ManHour = ROUND(Sum(WorkHour * ActManPower), 2)
-		   , TotalCPU = ROUND(Sum(QAQty * IIF(Category = 'M', MockupCPU * MockupCPUFactor, OrderCPU * OrderCPUFactor * Rate)), 3)
-	from #tmp
-	where LastShift <> 'O' 
-          --排除Subcon in non sister資料
-          and LastShift <> 'I'
-		  or (LastShift = 'I' and SubconInType in ('1','2'))
-	group by StdTMS
-),
-tmpTtlManPower as (
-	/*select ManPower = Sum(Manpower)  算法更改，用下面的，舊的保留
-	from (
-		select OutputDate
-			   , FactoryID
-			   , SewingLineID
-			   , LastShift
-			   , Team
-			   , ManPower = Max(ActManPower) 
-		from #tmp
-		where LastShift <> 'O' 
-			  --排除Subcon in non sister資料
-              and LastShift <> 'I'
-		      or (LastShift = 'I' and SubconInType in ('1','2'))
-		group by OutputDate, FactoryID, SewingLineID, LastShift, Team
-	) a*/
-
-	select ManPower = Sum(a.Manpower)  - sum(iif(LastShift = 'I', 0, isnull(d.ManPower, 0)))
-	from (
-		select OutputDate
-				, FactoryID
-				, SewingLineID
-				, LastShift
-				, Team
-				, ManPower = Max(ActManPower)
-		from #tmp
-		where LastShift <> 'O'
-		--排除 subcon in non sister的數值
-        and ((LastShift <> 'I') or ( LastShift = 'I' and SubconInType not in ('0','3')))   
-		group by OutputDate, FactoryID, SewingLineID, LastShift, Team 
-	) a
-	outer apply
-	(
-		select ManPower
-		from (
-			select OutputDate
-					, FactoryID
-					, SewingLineID
-					, LastShift
-					, Team
-					, ManPower = Max(ActManPower)
-					,SubconInType
-			from #tmp
-			where LastShift <> 'O'
-			group by OutputDate, FactoryID, SewingLineID, LastShift, Team,SubconInType
-		) m2
-		where  (m2.LastShift = 'I' and m2.SubconInType in ('1','2'))
-				and m2.Team = a.Team 
-				and m2.SewingLineID = a.SewingLineID	
-				and a.OutputDate = m2.OutputDate
-				and m2.FactoryID = a.FactoryID	
-	) d
-)
-select q.QAQty
-	   , q.TotalCPU
-	   , CPUSewer = IIF(q.ManHour = 0, 0, Round(isnull(q.TotalCPU,0) / q.ManHour, 3))
-	   , AvgWorkHour = IIF(isnull(mp.ManPower, 0) = 0, 0, Round(q.ManHour / mp.ManPower, 2))
-	   , q.ManHour
-	   , Eff = IIF(q.ManHour * q.StdTMS = 0, 0, Round(q.TotalCPU / (q.ManHour * 3600 / q.StdTMS) * 100, 2))
-from tmpQty q
-left join tmpTtlManPower mp on 1 = 1"),
-                    out this.excludeInOutTotal);
-
-                if (failResult == false)
+                resultReport = biModel.GetTotalExcludeSubconIn(this.SewOutPutData);
+                if (!resultReport.Result)
                 {
-                    return failResult;
+                    return resultReport.Result;
                 }
-                #endregion
+
+                this.excludeInOutTotal = resultReport.Dt;
             }
             catch (Exception ex)
             {
@@ -327,33 +242,13 @@ left join tmpTtlManPower mp on 1 = 1"),
             #region 整理non Sister SubCon In
             try
             {
-                #region 組SQL
-                failResult = MyUtility.Tool.ProcessWithDatatable(
-                    this.SewOutPutData,
-                    "OutputDate,StdTMS,QAQty,WorkHour,ActManPower,LastShift,MockupCPU,MockupCPUFactor,OrderCPU,OrderCPUFactor,Rate,FactoryID,SewingLineID,Team,Category,SubconInType",
-                    string.Format(@"
-;with tmpQty as (
-	select StdTMS
-		   , QAQty = Sum(QAQty)
-		   , ManHour = ROUND(Sum(WorkHour * ActManPower), 2)
-		   , TotalCPU = ROUND(Sum(QAQty * IIF(Category = 'M', MockupCPU * MockupCPUFactor, OrderCPU * OrderCPUFactor * Rate)), 3)
-	from #tmp
-	where LastShift = 'I' and SubconInType in ('0','3')
-	group by StdTMS
-)
-select q.QAQty
-	   , q.TotalCPU
-	   , CPUSewer = IIF(q.ManHour = 0, 0, Round(isnull(q.TotalCPU,0) / q.ManHour, 3))
-	   , q.ManHour
-	   , Eff = IIF(q.ManHour * q.StdTMS = 0, 0, Round(q.TotalCPU / (q.ManHour * 3600 / q.StdTMS) * 100, 2))
-from tmpQty q"),
-                    out this.NonSisterInTotal);
-
-                if (failResult == false)
+                resultReport = biModel.GetNoNSisterSubConIn(this.SewOutPutData);
+                if (!resultReport.Result)
                 {
-                    return failResult;
+                    return resultReport.Result;
                 }
-                #endregion
+
+                this.NonSisterInTotal = resultReport.Dt;
             }
             catch (Exception ex)
             {
@@ -365,33 +260,13 @@ from tmpQty q"),
             #region 整理Sister SubCon In
             try
             {
-                #region 組SQL
-                failResult = MyUtility.Tool.ProcessWithDatatable(
-                    this.SewOutPutData,
-                    "OutputDate,StdTMS,QAQty,WorkHour,ActManPower,LastShift,MockupCPU,MockupCPUFactor,OrderCPU,OrderCPUFactor,Rate,FactoryID,SewingLineID,Team,Category,SubconInType",
-                    string.Format(@"
-;with tmpQty as (
-	select StdTMS
-		   , QAQty = Sum(QAQty)
-		   , ManHour = ROUND(Sum(WorkHour * ActManPower), 2)
-		   , TotalCPU = ROUND(Sum(QAQty * IIF(Category = 'M', MockupCPU * MockupCPUFactor, OrderCPU * OrderCPUFactor * Rate)), 3)
-	from #tmp
-	where LastShift = 'I' and SubconInType in ('1','2')
-	group by StdTMS
-)
-select q.QAQty
-	   , q.TotalCPU
-	   , CPUSewer = IIF(q.ManHour = 0, 0, Round(isnull(q.TotalCPU,0) / q.ManHour, 3))
-	   , q.ManHour
-	   , Eff = IIF(q.ManHour * q.StdTMS = 0, 0, Round(q.TotalCPU / (q.ManHour * 3600 / q.StdTMS) * 100, 2))
-from tmpQty q"),
-                    out this.SisterInTotal);
-
-                if (failResult == false)
+                resultReport = biModel.GetSisterSubConIn(this.SewOutPutData);
+                if (!resultReport.Result)
                 {
-                    return failResult;
+                    return resultReport.Result;
                 }
-                #endregion
+
+                this.SisterInTotal = resultReport.Dt;
             }
             catch (Exception ex)
             {
@@ -403,49 +278,13 @@ from tmpQty q"),
             #region 整理CPU Factor
             try
             {
-                #region 組SQL
-                failResult = MyUtility.Tool.ProcessWithDatatable(
-                    this.SewOutPutData,
-                    "Category,MockupCPUFactor,OrderCPUFactor,QAQty,MockupCPU,OrderCPU,Rate,Style",
-                    string.Format(@"
-;with tmpData as (
-	select CPUFactor = IIF(Category = 'M', MockupCPUFactor, OrderCPUFactor)
-		   , QAQty
-		   , CPU = QAQty * IIF(Category = 'M', MockupCPU * MockupCPUFactor, OrderCPU * OrderCPUFactor * Rate)
-		   , Style
-	from #tmp
-),
-tmpSumQAQty as (
-	select CPUFactor
-		   , QAQty = sum(QAQty)
-   	from tmpData 
-   	group by CPUFactor
-),
-tmpSumCPU as (
-	select CPUFactor
-		   , CPU = sum(CPU)
-   	from tmpData 
-   	group by CPUFactor
-),
-tmpCountStyle as (
-	select CPUFactor
-		   , Style = COUNT(distinct Style)
-   	from tmpData 
-   	group by CPUFactor
-)
-select q.* 
-	   , c.CPU
-	   , s.Style
-from tmpSumQAQty q
-left join tmpSumCPU c on q.CPUFactor = c.CPUFactor
-left join tmpCountStyle s on q.CPUFactor = s.CPUFactor"),
-                    out this.cpuFactor);
-
-                if (failResult == false)
+                resultReport = biModel.GetCPUFactor(this.SewOutPutData);
+                if (!resultReport.Result)
                 {
-                    return failResult;
+                    return resultReport.Result;
                 }
-                #endregion
+
+                this.cpuFactor = resultReport.Dt;
             }
             catch (Exception ex)
             {
@@ -459,81 +298,13 @@ left join tmpCountStyle s on q.CPUFactor = s.CPUFactor"),
             {
                 try
                 {
-                    failResult = MyUtility.Tool.ProcessWithDatatable(
-                        this.SewOutPutData,
-                        "OrderId,ComboType,QAQty,LastShift,SubconInType",
-                        string.Format(@"
-alter table #tmp alter column OrderId varchar(13)
-alter table #tmp alter column ComboType varchar(1)
-alter table #tmp alter column QAQty int
-alter table #tmp alter column LastShift varchar(1)
-alter table #tmp alter column SubconInType varchar(1)
-
-    Select ID
-		   , rs = iif(ProductionUnit = 'TMS', 'CPU'
-		   									, iif(ProductionUnit = 'QTY', 'AMT'
-		   																, '')),
-           [DecimalNumber] =case    when ProductionUnit = 'QTY' then 4
-							        when ProductionUnit = 'TMS' then 3
-							        else 0 end
-    into #tmpArtwork
-	from ArtworkType WITH (NOLOCK)
-	where Classify in ('I','A','P') 
-		  and IsTtlTMS = 0
-          and IsPrintToCMP=1
-
-	--準備台北資料(須排除這些)
-	select ps.ID
-	into #TPEtmp
-	from PO_Supp ps
-	inner join PO_Supp_Detail psd on ps.ID=psd.id and ps.SEQ1=psd.Seq1
-	inner join Fabric fb on psd.SCIRefno = fb.SCIRefno 
-	inner join MtlType ml on ml.id = fb.MtlTypeID
-	where 1=1 and ml.Junk =0 and psd.Junk=0 and fb.Junk =0
-	and ml.isThread=1 
-	and ps.SuppID <> 'FTY' and ps.Seq1 not Like '5%'
-    
-    select ot.ArtworkTypeID
-		   , a.OrderId
-		   , a.ComboType
-           , Price = sum(a.QAQty) * ot.Price * (isnull([dbo].[GetOrderLocation_Rate](a.OrderId ,a.ComboType), 100) / 100)
-    into  #tmpAllSubprocess
-	from #tmp a
-	inner join Order_TmsCost ot WITH (NOLOCK) on ot.ID = a.OrderId
-	inner join Orders o WITH (NOLOCK) on o.ID = a.OrderId and o.Category NOT IN ('G','A')
-	where ((a.LastShift = 'O' and o.LocalOrder <> 1) or (a.LastShift <> 'O') ) 
-            --排除 subcon in non sister的數值
-          and ((a.LastShift <> 'I') or ( a.LastShift = 'I' and a.SubconInType not in ('0','3') ))           
-          and ot.Price > 0 		    
-		  and ((ot.ArtworkTypeID = 'SP_THREAD' and not exists(select 1 from #TPEtmp t where t.ID = o.POID))
-			  or ot.ArtworkTypeID <> 'SP_THREAD')
-	group by ot.ArtworkTypeID, a.OrderId, a.ComboType, ot.Price
-
-    --FMS傳票部分顯示AT不分Hand/Machine，是因為政策問題，但比對Sewing R02時，會有落差，請根據SP#落在Hand CPU:10 /Machine:5，則只撈出Hand CPU:10這筆，抓其大值，以便加總總和等同於FMS傳票AT
-    -- 當AT(Machine) = AT(Hand)時, 也要將Price歸0 (ISP20190520)
-    update s set s.Price = 0
-        from #tmpAllSubprocess s
-        inner join (select * from #tmpAllSubprocess where ArtworkTypeID = 'AT (HAND)') a on s.OrderId = a.OrderId and s.ComboType = a.ComboType
-        where s.ArtworkTypeID = 'AT (MACHINE)'  and s.Price <= a.Price
-
-    update s set s.Price = 0
-        from #tmpAllSubprocess s
-        inner join (select * from #tmpAllSubprocess where ArtworkTypeID = 'AT (MACHINE)') a on s.OrderId = a.OrderId and s.ComboType = a.ComboType
-        where s.ArtworkTypeID = 'AT (HAND)'  and s.Price <= a.Price
-
-select ArtworkTypeID = t1.ID
-	   , Price = isnull(sum(Round(t2.Price,t1.DecimalNumber)), 0)
-	   , rs
-from #tmpArtwork t1
-left join #tmpAllSubprocess t2 on t2.ArtworkTypeID = t1.ID
-group by t1.ID, rs
-order by t1.ID"),
-                        out this.subprocessData);
-
-                    if (failResult == false)
+                    resultReport = biModel.GetSubprocess(this.SewOutPutData);
+                    if (!resultReport.Result)
                     {
-                        return failResult;
+                        return resultReport.Result;
                     }
+
+                    this.subprocessData = resultReport.Dt;
                 }
                 catch (Exception ex)
                 {
@@ -548,84 +319,13 @@ order by t1.ID"),
             {
                 try
                 {
-                    failResult = MyUtility.Tool.ProcessWithDatatable(
-                        this.SewOutPutData,
-                        "OrderId,ComboType,QAQty,LastShift,SubconInType,Program",
-                        string.Format(@"
-
-alter table #tmp alter column OrderId varchar(13)
-alter table #tmp alter column ComboType varchar(1)
-alter table #tmp alter column QAQty int
-alter table #tmp alter column LastShift varchar(1)
-alter table #tmp alter column SubconInType varchar(1)
-alter table #tmp alter column Program varchar(12)
-
-Select ID
-		, rs = iif(ProductionUnit = 'TMS', 'CPU'
-		   								, iif(ProductionUnit = 'QTY', 'AMT'
-		   															, '')),
-        [DecimalNumber] =case    when ProductionUnit = 'QTY' then 4
-							    when ProductionUnit = 'TMS' then 3
-							    else 0 end
-into #tmpArtwork
-from ArtworkType WITH (NOLOCK)
-where Classify in ('I','A','P') 
-		and IsTtlTMS = 0
-        and IsPrintToCMP=1
-
---準備台北資料(須排除這些)
-select ps.ID
-into #TPEtmp
-from PO_Supp ps
-inner join PO_Supp_Detail psd on ps.ID=psd.id and ps.SEQ1=psd.Seq1
-inner join Fabric fb on psd.SCIRefno = fb.SCIRefno 
-inner join MtlType ml on ml.id = fb.MtlTypeID
-where 1=1 and ml.Junk =0 and psd.Junk=0 and fb.Junk =0
-and ml.isThread=1 
-and ps.SuppID <> 'FTY' and ps.Seq1 not Like '5%'
-
-select ot.ArtworkTypeID
-		, a.OrderId
-		, a.ComboType
-        , Price = sum(a.QAQty) * ot.Price * (isnull([dbo].[GetOrderLocation_Rate](a.OrderId ,a.ComboType), 100) / 100)
-        , a.Program 
-into  #tmpAllSubprocess
-from #tmp a
-inner join Order_TmsCost ot WITH (NOLOCK) on ot.ID = a.OrderId
-inner join Orders o WITH (NOLOCK) on o.ID = a.OrderId and o.Category NOT IN ('G','A')
-where ((a.LastShift = 'O' and o.LocalOrder <> 1) or (a.LastShift <> 'O') ) 
-		and a.LastShift not in('O','D','N')
-		and ot.Price > 0 		    
-		and ((ot.ArtworkTypeID = 'SP_THREAD' and not exists(select 1 from #TPEtmp t where t.ID = o.POID))
-			or ot.ArtworkTypeID <> 'SP_THREAD')
-group by ot.ArtworkTypeID, a.OrderId, a.ComboType, ot.Price,a.Program
-
---FMS傳票部分顯示AT不分Hand/Machine，是因為政策問題，但比對Sewing R02時，會有落差，請根據SP#落在Hand CPU:10 /Machine:5，則只撈出Hand CPU:10這筆，抓其大值，以便加總總和等同於FMS傳票AT
--- 當AT(Machine) = AT(Hand)時, 也要將Price歸0 (ISP20190520)
-update s set s.Price = 0
-    from #tmpAllSubprocess s
-    inner join (select * from #tmpAllSubprocess where ArtworkTypeID = 'AT (HAND)') a on s.OrderId = a.OrderId and s.ComboType = a.ComboType
-    where s.ArtworkTypeID = 'AT (MACHINE)'  and s.Price <= a.Price
-
-update s set s.Price = 0
-    from #tmpAllSubprocess s
-    inner join (select * from #tmpAllSubprocess where ArtworkTypeID = 'AT (MACHINE)') a on s.OrderId = a.OrderId and s.ComboType = a.ComboType
-    where s.ArtworkTypeID = 'AT (HAND)'  and s.Price <= a.Price
-
-select ArtworkTypeID = t1.ID
-	   , Price = isnull(sum(Round(Price,t1.DecimalNumber)), 0)
-	   , rs
-       , [Company] = t2.Program
-from #tmpArtwork t1
-left join #tmpAllSubprocess t2 on t2.ArtworkTypeID = t1.ID
-group by t1.ID, rs,t2.Program having isnull(sum(Price), 0) > 0
-order by t1.ID"),
-                        out this.subprocessSubconInData);
-
-                    if (failResult == false)
+                    resultReport = biModel.GetSubprocessbyCompanySubconIn(this.SewOutPutData);
+                    if (!resultReport.Result)
                     {
-                        return failResult;
+                        return resultReport.Result;
                     }
+
+                    this.subprocessSubconInData = resultReport.Dt;
                 }
                 catch (Exception ex)
                 {
@@ -640,83 +340,13 @@ order by t1.ID"),
             {
                 try
                 {
-                    failResult = MyUtility.Tool.ProcessWithDatatable(
-                        this.SewOutPutData,
-                        "OrderId,ComboType,QAQty,LastShift,SubconInType,SubconOutFty",
-                        string.Format(@"
-alter table #tmp alter column OrderId varchar(13)
-alter table #tmp alter column ComboType varchar(1)
-alter table #tmp alter column QAQty int
-alter table #tmp alter column LastShift varchar(1)
-alter table #tmp alter column SubconInType varchar(1)
-alter table #tmp alter column SubconOutFty varchar(8)
-
-Select ID
-		, rs = iif(ProductionUnit = 'TMS', 'CPU'
-		   								, iif(ProductionUnit = 'QTY', 'AMT'
-		   															, '')),
-        [DecimalNumber] =case    when ProductionUnit = 'QTY' then 4
-							    when ProductionUnit = 'TMS' then 3
-							    else 0 end
-into #tmpArtwork
-from ArtworkType WITH (NOLOCK)
-where Classify in ('I','A','P') 
-		and IsTtlTMS = 0
-        and IsPrintToCMP=1
-
---準備台北資料(須排除這些)
-select ps.ID
-into #TPEtmp
-from PO_Supp ps
-inner join PO_Supp_Detail psd on ps.ID=psd.id and ps.SEQ1=psd.Seq1
-inner join Fabric fb on psd.SCIRefno = fb.SCIRefno 
-inner join MtlType ml on ml.id = fb.MtlTypeID
-where 1=1 and ml.Junk =0 and psd.Junk=0 and fb.Junk =0
-and ml.isThread=1 
-and ps.SuppID <> 'FTY' and ps.Seq1 not Like '5%'
-
-select ot.ArtworkTypeID
-		, a.OrderId
-		, a.ComboType
-        , Price = sum(a.QAQty) * ot.Price * (isnull([dbo].[GetOrderLocation_Rate](a.OrderId ,a.ComboType), 100) / 100)
-        , a.SubconOutFty 
-into  #tmpAllSubprocess
-from #tmp a
-inner join Order_TmsCost ot WITH (NOLOCK) on ot.ID = a.OrderId
-inner join Orders o WITH (NOLOCK) on o.ID = a.OrderId and o.Category NOT IN ('G','A')
-where ((a.LastShift = 'O' and o.LocalOrder <> 1) or (a.LastShift <> 'O') ) 
-		and a.LastShift not in('I','D','N')
-		and ot.Price > 0 		    
-and ((ot.ArtworkTypeID = 'SP_THREAD' and not exists(select 1 from #TPEtmp t where t.ID = o.POID))
-	or ot.ArtworkTypeID <> 'SP_THREAD')
-group by ot.ArtworkTypeID, a.OrderId, a.ComboType, ot.Price,a.SubconOutFty
-
---FMS傳票部分顯示AT不分Hand/Machine，是因為政策問題，但比對Sewing R02時，會有落差，請根據SP#落在Hand CPU:10 /Machine:5，則只撈出Hand CPU:10這筆，抓其大值，以便加總總和等同於FMS傳票AT
--- 當AT(Machine) = AT(Hand)時, 也要將Price歸0 (ISP20190520)
-update s set s.Price = 0
-    from #tmpAllSubprocess s
-    inner join (select * from #tmpAllSubprocess where ArtworkTypeID = 'AT (HAND)') a on s.OrderId = a.OrderId and s.ComboType = a.ComboType
-    where s.ArtworkTypeID = 'AT (MACHINE)'  and s.Price <= a.Price
-
-update s set s.Price = 0
-    from #tmpAllSubprocess s
-    inner join (select * from #tmpAllSubprocess where ArtworkTypeID = 'AT (MACHINE)') a on s.OrderId = a.OrderId and s.ComboType = a.ComboType
-    where s.ArtworkTypeID = 'AT (HAND)'  and s.Price <= a.Price
-
-select ArtworkTypeID = t1.ID
-	   , Price = isnull(sum(Round(Price,t1.DecimalNumber)), 0)
-	   , rs
-       , [Company] = t2.SubconOutFty
-from #tmpArtwork t1
-left join #tmpAllSubprocess t2 on t2.ArtworkTypeID = t1.ID
-group by t1.ID, rs,t2.SubconOutFty having isnull(sum(Price), 0) > 0
-order by t1.ID"),
-                        out this.subprocessSubconOutData);
-
-                    if (failResult == false)
+                    resultReport = biModel.GetSubprocessbyCompanySubconOut(this.SewOutPutData);
+                    if (!resultReport.Result)
                     {
-                        return failResult;
+                        return resultReport.Result;
                     }
+
+                    this.subprocessSubconOutData = resultReport.Dt;
                 }
                 catch (Exception ex)
                 {
@@ -731,37 +361,13 @@ order by t1.ID"),
             {
                 try
                 {
-                    failResult = MyUtility.Tool.ProcessWithDatatable(
-                        this.SewOutPutData,
-                        "SewingLineID,QAQty,LastShift,MockupCPU,MockupCPUFactor,OrderCPU,OrderCPUFactor,Rate,OrderId,Program,Category,FactoryID,SubconOutFty",
-                        string.Format(@"
-;with tmpSubconIn as (
-	Select 'I' as Type
-		   , Company = Program 
-		   , TtlCPU = ROUND(Sum(QAQty * IIF(Category = 'M', MockupCPU * MockupCPUFactor, OrderCPU * OrderCPUFactor * Rate)), 3)
-	from #tmp
-	where LastShift = 'I'
-	group by Program
-),
-tmpSubconOut as (
-    Select Type = 'O'
-		   , Company = t.SubconOutFty
-		   , TtlCPU = ROUND(Sum(t.QAQty*IIF(t.Category = 'M', t.MockupCPU * t.MockupCPUFactor, t.OrderCPU * t.OrderCPUFactor * t.Rate)),3)
-	from #tmp t
-	where LastShift = 'O'
-	group by t.SubconOutFty
-)
-select * from (
-select * from tmpSubconIn
-union all
-select * from tmpSubconOut ) as a 
-order by Type,iif(Company = 'Other','Z','A'),Company"),
-                        out this.subconData);
-
-                    if (failResult == false)
+                    resultReport = biModel.GetSubcon(this.SewOutPutData);
+                    if (!resultReport.Result)
                     {
-                        return failResult;
+                        return resultReport.Result;
                     }
+
+                    this.subconData = resultReport.Dt;
                 }
                 catch (Exception ex)
                 {
@@ -770,6 +376,7 @@ order by Type,iif(Company = 'Other','Z','A'),Company"),
                 }
             }
             #endregion
+
             if (MyUtility.Check.Empty(this.factory) && !MyUtility.Check.Empty(this.mDivision))
             {
                 this.factoryName = MyUtility.GetValue.Lookup(string.Format("select Name from Mdivision WITH (NOLOCK) where ID = '{0}'", this.mDivision));
@@ -779,41 +386,24 @@ order by Type,iif(Company = 'Other','Z','A'),Company"),
                 this.factoryName = MyUtility.GetValue.Lookup(string.Format("select NameEN from Factory WITH (NOLOCK) where ID = '{0}'", this.factory));
             }
 
-            sqlCmd.Clear();
-            sqlCmd.Append(string.Format(
-                @"
-select f.id
-	   , m.ActiveManpower
-	   , SumActiveManpower = SUM(m.ActiveManpower) over() 
-from Factory f
-left join Manpower m on m.FactoryID = f.ID 
-		  				and m.Year = {0} 
-		  				and m.Month = {1}
-where f.Junk = 0",
-                this.date1.Value.Year,
-                this.date1.Value.Month));
-
-            if (this.checkSampleFty.Checked)
+            #region 整理工作天數
+            sewing_R02_Model = new Sewing_R02_MonthlyProductionOutputReport()
             {
-                sqlCmd.Append(" and f.type <> 'S' ");
-            }
+                IsCN = Env.User.Keyword.EqualString("CM1") || Env.User.Keyword.EqualString("CM2"),
+                M = this.mDivision,
+                StartDate = this.date1.Value,
+                EndDate = this.date2.Value,
+            };
 
-            if (this.factory != string.Empty)
+            resultReport = biModel.GetWorkDay(this.SewOutPutData, sewing_R02_Model);
+            if (!resultReport.Result)
             {
-                sqlCmd.Append(string.Format(" and f.id= '{0}'", this.factory));
-            }
-
-            if (this.mDivision != string.Empty)
-            {
-                sqlCmd.Append(string.Format(" and f.MDivisionID = '{0}'", this.mDivision));
-            }
-
-            result = DBProxy.Current.Select(null, sqlCmd.ToString(), out this.vphData);
-            if (!result)
-            {
-                failResult = new DualResult(false, "Query sewing output data fail\r\n" + result.ToString());
+                failResult = new DualResult(false, "Query Work Day fail\r\n" + resultReport.Result.Messages.ToString());
                 return failResult;
             }
+
+            this.workDay = resultReport.IntValue;
+            #endregion
 
             DBProxy.Current.DefaultTimeout = 300;  // timeout時間改回5分鐘
             return Ict.Result.True;
@@ -833,31 +423,6 @@ where f.Junk = 0",
                 MyUtility.Msg.WarningBox("Data not found!");
                 return false;
             }
-
-            // 取得資料中IsSampleRoom的工廠
-            DataTable[] resultDts;
-            string sqlGetFactory = $@"
-alter table #tmp alter column FactoryID varchar(8)
-
-select distinct t.FactoryID, f.IsSampleRoom
-into    #tmpResult
-from    #tmp t
-inner join Factory f with (nolock) on f.ID = t.FactoryID
-
-select FactoryID from #tmpResult where IsSampleRoom = 0
-select FactoryID from #tmpResult where IsSampleRoom = 1
-";
-
-            DualResult result = MyUtility.Tool.ProcessWithDatatable(this.SewOutPutData, "FactoryID", sqlGetFactory, out resultDts);
-
-            if (!result)
-            {
-                this.ShowErr(result);
-                return false;
-            }
-
-            DataTable dtNotSampleRoomFty = resultDts[0];
-            DataTable dtIsSampleRoomFty = resultDts[1];
 
             this.ShowWaitMessage("Starting EXCEL...");
             string strXltName = Env.Cfg.XltPathDir;
@@ -964,66 +529,8 @@ select FactoryID from #tmpResult where IsSampleRoom = 1
             }
 
             insertRow = insertRow + 3;
-
-            #region  中國工廠自抓/其它場Pams [Total Work Day]
-            if (Env.User.Keyword.EqualString("CM1") ||
-                Env.User.Keyword.EqualString("CM2"))
-            {
-                int ttlWorkDay = 0;
-                string strWorkDay = @"select Distinct OutputDate from #tmp where LastShift <> 'O'";
-                DataTable dtWorkDay;
-                DualResult failResult = MyUtility.Tool.ProcessWithDatatable(this.SewOutPutData, null, strWorkDay, out dtWorkDay);
-                if (failResult == false)
-                {
-                    MyUtility.Msg.WarningBox(failResult.ToString());
-                    ttlWorkDay = 0;
-                }
-                else
-                {
-                    ttlWorkDay = dtWorkDay.Rows.Count;
-                }
-
-                worksheet.Cells[insertRow, 1] = "Total work day:";
-                worksheet.Cells[insertRow, 3] = ttlWorkDay;
-            }
-            else
-            {
-                List<string> listWorkDate = new List<string>();
-
-                if (dtIsSampleRoomFty.Rows.Count > 0)
-                {
-                    string whereFty = dtIsSampleRoomFty.AsEnumerable().Select(s => $"'{s["FactoryID"].ToString()}'").JoinToString(",");
-                    string strWorkDay = $@"select Distinct [OutputDate] = Format(OutputDate,'yyyyMMdd') from #tmp where LastShift <> 'O' and FactoryID in ({whereFty})";
-                    DataTable dtWorkDay;
-                    DualResult failResult = MyUtility.Tool.ProcessWithDatatable(this.SewOutPutData, null, strWorkDay, out dtWorkDay);
-                    if (failResult == false)
-                    {
-                        MyUtility.Msg.WarningBox(failResult.ToString());
-                    }
-                    else if (dtWorkDay.Rows.Count > 0)
-                    {
-                        listWorkDate.AddRange(dtWorkDay.AsEnumerable().Select(s => s["OutputDate"].ToString()).ToList());
-                    }
-                }
-
-                if (dtNotSampleRoomFty.Rows.Count > 0)
-                {
-                    foreach (DataRow dr in dtNotSampleRoomFty.Rows)
-                    {
-                        List<APIData> listAPIData = new List<APIData>();
-                        GetApiData.GetAPIData(this.mDivision, dr["FactoryID"].ToString(), (DateTime)this.date1.Value, (DateTime)this.date2.Value, out listAPIData);
-                        if (listAPIData != null)
-                        {
-                            listWorkDate.AddRange(listAPIData.Where(w => w.SewTtlManhours != 0).Select(s => s.DateYYYYMMDD));
-                        }
-                    }
-                }
-
-                int ttlWorkDay = listWorkDate.Distinct().Count();
-                worksheet.Cells[insertRow, 1] = "Total work day:";
-                worksheet.Cells[insertRow, 3] = ttlWorkDay;
-            }
-            #endregion
+            worksheet.Cells[insertRow, 1] = "Total work day:";
+            worksheet.Cells[insertRow, 3] = this.workDay;
 
             // Subcon
             int revenueStartRow = 0;
