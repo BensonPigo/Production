@@ -1039,6 +1039,7 @@ INNER JOIN PackingList_Detail c WITH (NOLOCK) ON b.ID = c.ID
 WHERE a.ID = '{this.CurrentMaintain["id"]}'
 AND a.Status = 'New'
 AND c.ReceiveDate is null
+AND b.type in ('B', 'L')
 ";
             result = DBProxy.Current.Select(null, sqlcmd, out dtchk);
             if (!result)
