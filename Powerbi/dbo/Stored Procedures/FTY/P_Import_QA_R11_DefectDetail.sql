@@ -147,5 +147,7 @@ when not matched by source and t.[ReceivingID] in (select ReceivingID from  #tmp
 		insert into BITableInfo(Id, TransferDate)
 		values('P_FabricInspReport_ReceivingTransferIn', getdate())
 	end
+
+    drop table #tmpP_FabricInspReport_ReceivingTransferIn
 End
 
