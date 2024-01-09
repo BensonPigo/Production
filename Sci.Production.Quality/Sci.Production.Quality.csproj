@@ -311,6 +311,24 @@
     <Compile Include="B29.Designer.cs">
       <DependentUpon>B29.cs</DependentUpon>
     </Compile>
+    <Compile Include="P01_ViewBatchUpdateDetail.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P01_ViewBatchUpdateDetail.Designer.cs">
+      <DependentUpon>P01_ViewBatchUpdateDetail.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P01_BatchUpdateContinuity.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P01_BatchUpdateContinuity.Designer.cs">
+      <DependentUpon>P01_BatchUpdateContinuity.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P01_BatchUpdateShadeBand.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P01_BatchUpdateShadeBand.Designer.cs">
+      <DependentUpon>P01_BatchUpdateShadeBand.cs</DependentUpon>
+    </Compile>
     <Compile Include="P01_BatchUpdateToneGrp.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -928,6 +946,15 @@
     </EmbeddedResource>
     <EmbeddedResource Include="P01.resx">
       <DependentUpon>P01.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P01_ViewBatchUpdateDetail.resx">
+      <DependentUpon>P01_ViewBatchUpdateDetail.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P01_BatchUpdateContinuity.resx">
+      <DependentUpon>P01_BatchUpdateContinuity.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P01_BatchUpdateShadeBand.resx">
+      <DependentUpon>P01_BatchUpdateShadeBand.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P01_BatchUpdateToneGrp.resx">
       <DependentUpon>P01_BatchUpdateToneGrp.cs</DependentUpon>

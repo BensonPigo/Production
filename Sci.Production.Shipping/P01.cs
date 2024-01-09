@@ -442,7 +442,8 @@ values ('{0}','Status','','New','{1}',GETDATE())",
         /// <inheritdoc/>
         protected override bool ClickPrint()
         {
-            this.ToExcel(false);
+            P01_Print callPurchaseForm = new P01_Print(this.CurrentMaintain);
+            callPurchaseForm.ShowDialog(this);
             return base.ClickPrint();
         }
 
