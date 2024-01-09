@@ -979,7 +979,7 @@ where   p.PulloutID = '{this.CurrentMaintain["id"]}' and
 
             if (dtCfa.Rows.Count > 0)
             {
-                warningmsg.Append("Below <OrderID>+<PackingID>+<CYNNo> contains cartons that has been returned from CFA but not yet received from Clog!!\r\n");
+                warningmsg.Append("Below <OrderID>+<PackingID>+<CTNNo> contains cartons that has been returned from CFA but not yet received from Clog!!\r\n");
                 foreach (DataRow dr in dtCfa.Rows)
                 {
                     warningmsg.Append($@"<{dr["OrderID"]}>+<{dr["PackingListID"]}>+<{dr["CTNStartNo"]}>" + Environment.NewLine);
@@ -1013,7 +1013,7 @@ AND ((c.CFAReturnClogDate IS NOT NULL　AND c.ClogReceiveCFADate IS NULL)
 
             if (dtchk.Rows.Count > 0)
             {
-                string msgchk = "Below <OrderID>+<PackingID>+<CYNNo> contains cartons that has been sent to CFA from Clog, but has not yet returned to Clog.\r\n";
+                string msgchk = "Below <OrderID>+<PackingID>+<CTNNo> contains cartons that has been sent to CFA from Clog, but has not yet returned to Clog.\r\n";
                 foreach (DataRow dr in dtchk.Rows)
                 {
                     msgchk += $"<{dr["OrderID"]}>+<{dr["ID"]}>+<{dr["CTNStartNo"]}>\r\n";
@@ -1048,7 +1048,7 @@ AND b.type in ('B', 'L')
 
             if (dtchk.Rows.Count > 0)
             {
-                string msgchk = "Below <OrderID>+<PackingID>+<CYNNo> contains cartons that has been returned to factory and not yet received from Clog.\r\n";
+                string msgchk = "Below <OrderID>+<PackingID>+<CTNNo> contains cartons that has been returned to factory and not yet received from Clog.\r\n";
                 foreach (DataRow dr in dtchk.Rows)
                 {
                     msgchk += $"<{dr["OrderID"]}>+<{dr["ID"]}>+<{dr["CTNStartNo"]}>\r\n";
