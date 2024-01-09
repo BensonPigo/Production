@@ -979,13 +979,12 @@ where   p.PulloutID = '{this.CurrentMaintain["id"]}' and
 
             if (dtCfa.Rows.Count > 0)
             {
-                warningmsg.Append("OrderID +PackingID + CTNNo Below\r\n");
+                warningmsg.Append("Below <OrderID>+<PackingID>+<CYNNo> contains cartons that has been returned from CFA but not yet received from Clog!!\r\n");
                 foreach (DataRow dr in dtCfa.Rows)
                 {
                     warningmsg.Append($@"<{dr["OrderID"]}>+<{dr["PackingListID"]}>+<{dr["CTNStartNo"]}>" + Environment.NewLine);
                 }
 
-                warningmsg.Append("contains cartons that has been returned from CFA but not yet received from Clog!!");
                 MyUtility.Msg.WarningBox(warningmsg.ToString());
                 return;
             }
@@ -1014,13 +1013,12 @@ AND ((c.CFAReturnClogDate IS NOT NULL　AND c.ClogReceiveCFADate IS NULL)
 
             if (dtchk.Rows.Count > 0)
             {
-                string msgchk = "Below\r\n";
+                string msgchk = "Below <OrderID>+<PackingID>+<CYNNo> contains cartons that has been sent to CFA from Clog, but has not yet returned to Clog.\r\n";
                 foreach (DataRow dr in dtchk.Rows)
                 {
                     msgchk += $"<{dr["OrderID"]}>+<{dr["ID"]}>+<{dr["CTNStartNo"]}>\r\n";
                 }
 
-                msgchk += "contains cartons that has been sent to CFA from Clog, but has not yet returned to Clog.";
                 MyUtility.Msg.WarningBox(msgchk);
                 return;
             }
@@ -1050,13 +1048,12 @@ AND b.type in ('B', 'L')
 
             if (dtchk.Rows.Count > 0)
             {
-                string msgchk = "Below\r\n";
+                string msgchk = "Below <OrderID>+<PackingID>+<CYNNo> contains cartons that has been returned to factory and not yet received from Clog.\r\n";
                 foreach (DataRow dr in dtchk.Rows)
                 {
                     msgchk += $"<{dr["OrderID"]}>+<{dr["ID"]}>+<{dr["CTNStartNo"]}>\r\n";
                 }
 
-                msgchk += "contains cartons that has been returned to factory and not yet received from Clog.";
                 MyUtility.Msg.WarningBox(msgchk);
                 return;
             }
