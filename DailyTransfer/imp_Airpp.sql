@@ -76,13 +76,13 @@ SET
 	  ,a.ActualAmountWVAT = ISNULL(b.ActualAmountWVAT, 0)
       ,a.SCIICRNo2 = ISNULL(b.SCIICRNo2, '')
       ,a.SCIICRRemark2 = ISNULL(b.SCIICRRemark2, '')
-	  ,a.Additional = Additional.value
+	  ,a.Additional = isnull(Additional.value,0)
 from Production.dbo.AirPP as a 
 inner join Trade_To_Pms.dbo.AirPP as b ON a.id=b.id
 outer apply(
 	select value = sum(ga.Additional)
 	from Trade_to_PMS.dbo.GarmentInvoice_additional ga
-	where ga.AdditionalReason = '02' 
+	where 1=1
 	and ga.OrderID = a.orderid
 	and ga.OrderShipmodeSeq = a.OrderShipmodeSeq
 )Additional
