@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.Globalization;
 using System.Transactions;
 
 namespace Sci.Production.Quality
@@ -149,10 +150,14 @@ WHERE rd.MINDQRCode = @MINDQRCode
             }
 
             string column = string.Empty;
+            string updCutby = string.Empty;
             switch (this.type)
             {
                 case 0:
                     column = "CutTime";
+                    updCutby = $@"
+, CutBy = case when fs.CutTime is null and ISNULL(fs.CutBy,'') = '' then '{Env.User.UserID}' else fs.CutBy end
+, CutTimeEditName = case when fs.CutTime is not null and fs.CutBy != '' then '{Env.User.UserID}' else fs.CutTimeEditName end";
                     break;
                 case 1:
                     column = "PasteTime";
@@ -165,6 +170,7 @@ WHERE rd.MINDQRCode = @MINDQRCode
             string sqlcmd = $@"
 UPDATE FIR_Shadebone
 SET {column} = GETDATE()
+{updCutby}
 FROM FIR_Shadebone fs
 INNER JOIN #tmp t ON t.FIRID = fs.ID AND t.Roll = fs.Roll AND t.Dyelot = fs.Dyelot
 ";
