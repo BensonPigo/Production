@@ -541,7 +541,7 @@ AND  (";
                 chkHasPass += $@"       )";
 
                 if (MyUtility.Check.Seek(chkHasPass))
-                {
+                { 
                     MyUtility.Msg.WarningBox("SP# has Pass record, can't confirm.");
                     return;
                 }
@@ -661,7 +661,7 @@ BEGIN
                 if (this.CurrentMaintain["Stage"].ToString() == "Final")
                 {
                     updateCmd += $@"
-        , CFAFinalInspectResult = (SELECT Result FROM #LastFail)
+        , CFAFinalInspectResult = 'Fail'
         , CFAFinalInspectDate =  IIF((SELECT EditDate FROM #LastFail)='',NULL,(SELECT EditDate FROM #LastFail))
         , CFAFinalInspectHandle  = ISNULL((SELECT EditName FROM #LastConfirm) ,'')
 ";
@@ -670,7 +670,7 @@ BEGIN
                 if (this.CurrentMaintain["Stage"].ToString() == "3rd party")
                 {
                     updateCmd += $@"
-        , CFA3rdInspectResult = (SELECT Result FROM #LastFail)
+        , CFA3rdInspectResult = 'Fail'
         , CFA3rdInspectDate =  IIF((SELECT EditDate FROM #LastFail)='',NULL,(SELECT EditDate FROM #LastFail))
         , CFAIs3rdInspectHandle   = ISNULL( (SELECT EditName FROM #LastConfirm),'')
 ";
@@ -1161,16 +1161,16 @@ DELETE FROM CFAInspectionRecord_OrderSEQ WHERE ID = '{this.CurrentMaintain["ID"]
         protected override void EnsureToolbarExt()
         {
             base.EnsureToolbarExt();
+            bool canConfrim = Prgs.GetAuthority(Sci.Env.User.UserID, "P32. CFA Inspection Record ", "CanConfirm");
+            bool canUnConfrim = Prgs.GetAuthority(Sci.Env.User.UserID, "P32. CFA Inspection Record ", "CanUnConfirm");
+            bool canNew = Prgs.GetAuthority(Sci.Env.User.UserID, "P32. CFA Inspection Record ", "CanNew");
+            bool canEdit = Prgs.GetAuthority(Sci.Env.User.UserID, "P32. CFA Inspection Record ", "CanEdit");
+            bool canDelete = Prgs.GetAuthority(Sci.Env.User.UserID, "P32. CFA Inspection Record ", "CanDelete");
+
             if (this._Type == "1")
             {
                 if (this.tabs.SelectedIndex != 0)
                 {
-                    bool canConfrim = Prgs.GetAuthority(Sci.Env.User.UserID, "P32. CFA Inspection Record ", "CanConfirm");
-                    bool canUnConfrim = Prgs.GetAuthority(Sci.Env.User.UserID, "P32. CFA Inspection Record ", "CanUnConfirm");
-                    bool canNew = Prgs.GetAuthority(Sci.Env.User.UserID, "P32. CFA Inspection Record ", "CanNew");
-                    bool canEdit = Prgs.GetAuthority(Sci.Env.User.UserID, "P32. CFA Inspection Record ", "CanEdit");
-                    bool canDelete = Prgs.GetAuthority(Sci.Env.User.UserID, "P32. CFA Inspection Record ", "CanDelete");
-
                     this.toolbar.cmdNew.Enabled = !this.EditMode && canNew;
                     this.toolbar.cmdEdit.Enabled = !this.EditMode && canEdit;
                     this.toolbar.cmdDelete.Enabled = !this.EditMode && canDelete;
@@ -1204,13 +1204,13 @@ DELETE FROM CFAInspectionRecord_OrderSEQ WHERE ID = '{this.CurrentMaintain["ID"]
             // IsImportFromMES = true 不可編輯
             if (!MyUtility.Check.Empty(this.CurrentMaintain["IsImportFromMES"]))
             {
-                this.toolbar.cmdUnconfirm.Enabled = false;
+                this.toolbar.cmdUnconfirm.Enabled = this.CurrentMaintain != null && MyUtility.Convert.GetString(this.CurrentMaintain["Status"]) == "Confirmed" && canUnConfrim;
                 this.toolbar.cmdEdit.Enabled = false;
                 this.labImportFromMES.Visible = true;
             }
             else
             {
-                this.toolbar.cmdUnconfirm.Enabled = true;
+                this.toolbar.cmdUnconfirm.Enabled = this.CurrentMaintain != null && MyUtility.Convert.GetString(this.CurrentMaintain["Status"]) == "Confirmed" && canUnConfrim;
                 this.toolbar.cmdEdit.Enabled = true;
                 this.labImportFromMES.Visible = false;
             }
