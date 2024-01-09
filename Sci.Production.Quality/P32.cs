@@ -628,8 +628,7 @@ AND a.Stage='{this.CurrentMaintain["Stage"].ToString()}'
 AND a.Status = 'Confirmed'
 AND a.ID != '{this.CurrentMaintain["ID"].ToString()}'
 ORDER BY a.EditDate DESC
-
-UPDATE CFAInspectionRecord SET Status='New',EditName='{Sci.Env.User.UserID}' ,EditDate=GETDATE() WHERE ID='{this.CurrentMaintain["ID"]}' ";
+ ";
 
                 updateCmd += $@"
 IF NOT EXISTS(
@@ -679,6 +678,7 @@ BEGIN
                 updateCmd += $@"    WHERE  {tmpOrder_QtyShip.JoinToString(" OR ")} ";
                 updateCmd += $@"
 END";
+                updateCmd += $@"UPDATE CFAInspectionRecord SET Status='New',EditName='{Sci.Env.User.UserID}' ,EditDate=GETDATE() WHERE ID='{this.CurrentMaintain["ID"]}'";
             }
             else
             {
