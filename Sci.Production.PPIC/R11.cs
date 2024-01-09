@@ -51,8 +51,8 @@ namespace Sci.Production.PPIC
             this.dateRangeReady1 = MyUtility.Check.Empty(this.dateRangeReadyDate.Value1) ? string.Empty : ((DateTime)this.dateRangeReadyDate.Value1).ToString("yyyy/MM/dd");
             this.dateRangeReady2 = MyUtility.Check.Empty(this.dateRangeReadyDate.Value2) ? string.Empty : ((DateTime)this.dateRangeReadyDate.Value2).ToString("yyyy/MM/dd");
             this.IsIDD = this.chkIDD.Checked;
-			
-			this.boolHoliday = string.Empty;
+            
+            this.boolHoliday = string.Empty;
             this.listSQLFilter = new List<string>();
             #region Sql where Filter
 
@@ -118,6 +118,7 @@ and convert(date,s.offline) between '{this.dateRangeReady1}' and '{this.dateRang
         {
             #region Sql Command
             string whereIncludeCancelOrder = this.chkIncludeCancelOrder.Checked ? string.Empty : " and o.Junk = 0 ";
+			string lastScanTOReadDate = this.chkLastScanTOReadDate.Checked ? "convert(date, Last_Scan_and_Pack_Date.value)" : "o.SewOffLine";
             string sqlCmd = $@"
 DECLARE  @t TABLE
 (
@@ -205,6 +206,7 @@ SELECT
 		,[TtlCTN] = pdm.TotalCTN
 		,[FtyCTN] = pdm.TotalCTN - isnull(Receive.ClogCTN,0)
 		,[ClogCTN] = isnull(Receive.ClogCTN,0)
+		,[Last_Scan_and_Pack_Date] = Last_Scan_and_Pack_Date.value
 		,[cLogRecDate] = Receive.ClogRcvDate
 		,[FinalInspDate]=cfa.FinalInsDate
 		,cfa.Result
@@ -215,7 +217,12 @@ SELECT
 		into #tmp1
 		FROM Orders o
 		left join Order_QtyShip os on o.ID=os.Id
-		inner join #CalendarData AllDate on AllDate.Dates= o.SewOffLine
+		outer apply(
+			select value = max(ScanEditDate)
+			from PackingList_Detail 
+			where OrderID = o.ID
+		)Last_Scan_and_Pack_Date
+		inner join #CalendarData AllDate on AllDate.Dates = {lastScanTOReadDate}
         and AllDate.FtyGroup = o.FtyGroup	
 		outer apply(
 			select top 1 [CfaName] =pass1.ID+'-'+pass1.Name
@@ -278,7 +285,6 @@ SELECT
 		where 1=1
 		and o.Category ='B' and o.junk !=1 
         and exists (select 1 from Factory where o.FactoryId = id and IsProduceFty = 1)
-		and o.SewOffLine=AllDate.Dates
         {this.listSQLFilter.JoinToString($"{Environment.NewLine} ")}
 
 /*將資料邏輯第二層 拉出來處理再下區間判斷*/
@@ -314,6 +320,7 @@ SELECT
 		,[TtlCTN] = pdm.TotalCTN
 		,[FtyCTN] = pdm.TotalCTN - isnull(Receive.ClogCTN,0)
 		,[ClogCTN] = isnull(Receive.ClogCTN,0)
+		,[Last_Scan_and_Pack_Date] = Last_Scan_and_Pack_Date.value
 		,[cLogRecDate] = Receive.ClogRcvDate
 		,[FinalInspDate]=cfa.FinalInsDate
 		,cfa.Result
@@ -381,7 +388,12 @@ SELECT
 			and pd.OrderShipmodeSeq = os.Seq
 			and CONVERT(date,pd.ReceiveDate) <= AllDate.Dates
 			and datepart(HH, c.AddDate) <= 17 -- 下午5點)
-		) Receive			
+		) Receive
+		outer apply(
+			select value = max(ScanEditDate)
+			from PackingList_Detail 
+			where OrderID = o.ID
+		)Last_Scan_and_Pack_Date
 		where 1=1
 		and o.Category ='B' and o.junk !=1 
         and exists (select 1 from Factory where o.FactoryId = id and IsProduceFty = 1)
@@ -458,6 +470,7 @@ select [ReadyDate] = AllDate.ReadyDate
 		,[TtlCTN] = pdm.TotalCTN
 		,[FtyCTN] = pdm.TotalCTN - isnull(Receive.ClogCTN,0)
 		,[ClogCTN] = isnull(Receive.ClogCTN,0)
+		,[Last_Scan_and_Pack_Date] = Last_Scan_and_Pack_Date.value
 		,[cLogRecDate] = Receive.ClogRcvDate
 		,[FinalInspDate]=cfa.FinalInsDate
 		,cfa.Result
@@ -555,6 +568,11 @@ outer apply(
 		and CONVERT(date,pd.ReceiveDate) <= AllDate.ReadyDate
 		and datepart(HH, c.AddDate) <= 17 -- 下午5點)
 	) Receive	
+	outer apply(
+		select value = max(ScanEditDate)
+		from PackingList_Detail 
+		where OrderID = o.ID
+	)Last_Scan_and_Pack_Date
 where O.Category ='B' and o.junk !=1
 and exists (select 1 from Factory where o.FactoryId = id and IsProduceFty = 1)
 and {(this.IsIDD ? "ISNULL(oq.IDD, oq.BuyerDelivery)" : "oq.BuyerDelivery")}  = AllDate.HolidayDates  
