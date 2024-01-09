@@ -33,6 +33,17 @@ namespace Sci.Production.PublicForm
             {
                 this.radioBySP.Enabled = false;
             }
+
+            string upSqlCmdDate = $@"
+            UPDATE oe SET NoNotch = COALESCE(FN.NoNotch, oe.NoNotch)
+            from orders o
+            inner join Order_EachCons  oe on oe.id = o.ID
+            inner join Order_BOF ob on ob.Id = oe.Id and ob.FabricCode = oe.FabricCode
+            LEFT join FabricNotch FN on FN.BrandID = o.BrandID AND  FN.SeasonID = o.SeasonID AND FN.Refno = ob.Refno
+            where o.id = '{this.cuttingid}'";
+
+            DBProxy.Current.Execute(null, upSqlCmdDate);
+
         }
 
         /// <inheritdoc/>

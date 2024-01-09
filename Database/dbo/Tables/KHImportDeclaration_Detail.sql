@@ -26,6 +26,9 @@
     [ActWeightKg]       NUMERIC (9, 2)  CONSTRAINT [DF_KHImportDeclaration_Detail_ActWeightKg] DEFAULT ((0)) NULL,
     [ActAmount]         NUMERIC (11, 4)  CONSTRAINT [DF_KHImportDeclaration_Detail_ActAmount] DEFAULT ((0)) NULL,
     [ActHSCode]         VARCHAR (14)    CONSTRAINT [DF_KHImportDeclaration_Detail_ActHSCode] DEFAULT ('') NULL,
+    [CDCName] VARCHAR(50) NOT NULL DEFAULT (''), 
+    [CDCCode] VARCHAR(5) NOT NULL DEFAULT (''), 
+    [CustomsType] VARCHAR(10) NOT NULL DEFAULT (''), 
     CONSTRAINT [PK_KHImportDeclaration_Detail] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
 
@@ -139,3 +142,31 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'KHCustomsIt
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'ID', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'KHImportDeclaration_Detail', @level2type = N'COLUMN', @level2name = N'ID';
 
+
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'報關內容分類',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'KHImportDeclaration_Detail',
+    @level2type = N'COLUMN',
+    @level2name = N'CustomsType'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'海關大類編號',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'KHImportDeclaration_Detail',
+    @level2type = N'COLUMN',
+    @level2name = N'CDCCode'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'海關物料大類',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'KHImportDeclaration_Detail',
+    @level2type = N'COLUMN',
+    @level2name = N'CDCName'

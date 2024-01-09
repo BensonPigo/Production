@@ -707,6 +707,10 @@ and ActualYds > 0
             this.displayMoisture.BackColor = Color.FromArgb(175, 205, 255);
             #endregion
             this.detailgrid.AutoResizeColumns();
+
+            this.btnBatchUpdateShadeBand.Enabled = !this.EditMode && this.DetailDatas.Count > 0;
+            this.btnBatchUpdateContinuity.Enabled = !this.EditMode && this.DetailDatas.Count > 0;
+            this.btnViewBatchUpdateDetail.Enabled = !this.EditMode && this.DetailDatas.Count > 0;
         }
 
         /// <inheritdoc/>
@@ -1081,6 +1085,21 @@ and ActualYds > 0
         {
             P01_BatchUpdateToneGrp p01_BatchUpdateToneGrp = new P01_BatchUpdateToneGrp(this.CurrentMaintain);
             p01_BatchUpdateToneGrp.ShowDialog(this);
+        }
+
+        private void BtnBatchUpdateShadeBand_Click(object sender, EventArgs e)
+        {
+            new P01_BatchUpdateShadeBand(MyUtility.Convert.GetString(this.CurrentMaintain["ID"])).ShowDialog();
+        }
+
+        private void BtnBatchUpdateContinuity_Click(object sender, EventArgs e)
+        {
+            new P01_BatchUpdateContinuity(MyUtility.Convert.GetString(this.CurrentMaintain["ID"])).ShowDialog();
+        }
+
+        private void BtnViewBatchUpdateDetail_Click(object sender, EventArgs e)
+        {
+            new P01_ViewBatchUpdateDetail(MyUtility.Convert.GetString(this.CurrentMaintain["ID"])).ShowDialog();
         }
     }
 }

@@ -920,10 +920,10 @@ SET @ErrorMessage = ''
 /****************************************************************************************************************************/
 /***************************************P_Import_SubprocessWIP**********************************************************************/
 BEGIN TRY
-	Declare @StartData date = dateadd(DAY, -7, getdate())
+	Declare @StartData_P_Import_SubprocessWIP date = dateadd(DAY, -7, getdate())
 
 	set @Stime = getdate()  
-	execute [dbo].P_Import_SubprocessWIP @StartData
+	execute [dbo].P_Import_SubprocessWIP @StartData_P_Import_SubprocessWIP
 	set @Etime = getdate()
 END TRY
 
@@ -1570,10 +1570,9 @@ SELECT @mailserver = Mailserver
 ,@eMailID = EmailID
 ,@eMailPwd = EmailPwd
 ,@sendFrom = Sendfrom
-,@toAddress = 'willy.wei@sportscity.com.tw'
 FROM Production.dbo.System
 
---select @toAddress = ToAddress from Production.dbo.MailTo where id = '101'
+select @toAddress = ToAddress from Production.dbo.MailTo where id = '101'
 DECLARE @EndTime datetime = getdate()
 
 exec callJobLog_SP @mailserver,@eMailID,@eMailPwd,@sendFrom,@toAddress,'Import BI Data',@comboDesc,0,@ErrorStatus,0,'Power BI',@Region,@M,@StartTime,@EndTime

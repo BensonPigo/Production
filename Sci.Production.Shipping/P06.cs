@@ -935,7 +935,7 @@ group by t.PackingListID, t.OrderID
             StringBuilder warningmsg = new StringBuilder();
             string strSqlcmd =
                    $@"
-SELECT  c.OrderID,c.ID as PackingListID,c.CTNStartNo 
+SELECT DISTINCT c.OrderID,c.ID as PackingListID,c.CTNStartNo 
 FROM Pullout a
 inner join PackingList b on a.ID=b.PulloutID
 inner join PackingList_Detail c on b.ID=c.ID
@@ -954,7 +954,7 @@ and c.ClogReceiveCFADate is null
 
             List<string> listPLFromRgCode = PackingA2BWebAPI.GetPLFromRgCodeByPulloutID(this.CurrentMaintain["id"].ToString());
             string strSqlcmdA2B = $@"
-select  pd.OrderID, pd.ID as PackingListID, pd.CTNStartNo
+select DISTINCT pd.OrderID, pd.ID as PackingListID, pd.CTNStartNo
 from    PackingList p with (nolock)
 inner join PackingList_Detail pd on p.ID = pd.ID
 where   p.PulloutID = '{this.CurrentMaintain["id"]}' and
@@ -979,15 +979,85 @@ where   p.PulloutID = '{this.CurrentMaintain["id"]}' and
 
             if (dtCfa.Rows.Count > 0)
             {
+                warningmsg.Append("Below <OrderID>+<PackingID>+<CTNNo> has been returned from CFA but not yet received from Clog!!\r\n");
                 foreach (DataRow dr in dtCfa.Rows)
                 {
-                    warningmsg.Append($@"SP#: {dr["OrderID"]}, Packing: {dr["PackingListID"]}
-, CTN#: {dr["CTNStartNo"]} is not in clog!" + Environment.NewLine);
+                    warningmsg.Append($@"<{dr["OrderID"]}>+<{dr["PackingListID"]}>+<{dr["CTNStartNo"]}>" + Environment.NewLine);
                 }
 
                 MyUtility.Msg.WarningBox(warningmsg.ToString());
                 return;
             }
+            #endregion
+
+            #region 檢查Clog已送出給CFA，但CFA還沒退回給Clog
+            string sqlcmd = $@"
+SELECT DISTINCT
+    c.OrderID
+   ,c.ID
+   ,c.CTNStartNo
+FROM Pullout a WITH (NOLOCK)
+INNER JOIN PackingList b WITH (NOLOCK) ON a.ID = b.PulloutID
+INNER JOIN PackingList_Detail c WITH (NOLOCK) ON b.ID = c.ID
+WHERE a.ID = '{this.CurrentMaintain["id"]}'
+AND a.Status = 'New'
+AND ((c.CFAReturnClogDate IS NOT NULL　AND c.ClogReceiveCFADate IS NULL)
+　　　OR c.TransferCFADate IS NOT NULL)
+";
+            DualResult result = DBProxy.Current.Select(null, sqlcmd, out DataTable dtchk);
+            if (!result)
+            {
+                this.ShowErr(result);
+                return;
+            }
+
+            if (dtchk.Rows.Count > 0)
+            {
+                string msgchk = "Below <OrderID>+<PackingID>+<CTNNo> has been sent to CFA from Clog, but has not yet returned to Clog.\r\n";
+                foreach (DataRow dr in dtchk.Rows)
+                {
+                    msgchk += $"<{dr["OrderID"]}>+<{dr["ID"]}>+<{dr["CTNStartNo"]}>\r\n";
+                }
+
+                MyUtility.Msg.WarningBox(msgchk);
+                return;
+            }
+
+            #endregion
+
+            #region 檢查 Clog or CFA 退回給 factory(PackingList.detail.ReceiveDate為空)
+            sqlcmd = $@"
+SELECT DISTINCT
+    c.OrderID
+   ,c.ID
+   ,c.CTNStartNo
+FROM Pullout a WITH (NOLOCK)
+INNER JOIN PackingList b WITH (NOLOCK) ON a.ID = b.PulloutID
+INNER JOIN PackingList_Detail c WITH (NOLOCK) ON b.ID = c.ID
+WHERE a.ID = '{this.CurrentMaintain["id"]}'
+AND a.Status = 'New'
+AND c.ReceiveDate is null
+AND b.type in ('B', 'L')
+";
+            result = DBProxy.Current.Select(null, sqlcmd, out dtchk);
+            if (!result)
+            {
+                this.ShowErr(result);
+                return;
+            }
+
+            if (dtchk.Rows.Count > 0)
+            {
+                string msgchk = "Below <OrderID>+<PackingID>+<CTNNo> has not yet received by Clog.\r\n";
+                foreach (DataRow dr in dtchk.Rows)
+                {
+                    msgchk += $"<{dr["OrderID"]}>+<{dr["ID"]}>+<{dr["CTNStartNo"]}>\r\n";
+                }
+
+                MyUtility.Msg.WarningBox(msgchk);
+                return;
+            }
+
             #endregion
 
             IList<string> updateCmds = new List<string>();
@@ -1076,7 +1146,7 @@ where   pd.ID = '{this.CurrentMaintain["ID"]}'
             {
                 try
                 {
-                    DualResult result = DBProxy.Current.Select(null, updateCmds.JoinToString(" "), out DataTable dtNeedUpdateA2BOrders);
+                    result = DBProxy.Current.Select(null, updateCmds.JoinToString(" "), out DataTable dtNeedUpdateA2BOrders);
                     if (!result)
                     {
                         scope.Dispose();
