@@ -216,13 +216,13 @@ AND (SELECT  COUNT(ID) FROM GarmentTest WHERE OrderID = '{this.CurrentMaintain["
 
             if (this.EditMode)
             {
-                this.btnCreateInsRecord.Enabled = false;
+                //this.btnCreateInsRecord.Enabled = false;
             }
             else
             {
                 bool canNew = Prgs.GetAuthority(Sci.Env.User.UserID, "P32. CFA Inspection Record ", "CanNew");
 
-                this.btnCreateInsRecord.Enabled = canNew;
+                //this.btnCreateInsRecord.Enabled = canNew;
             }
 
             // 雙行Column Header的做法
