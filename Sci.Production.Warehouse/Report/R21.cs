@@ -41,7 +41,8 @@ namespace Sci.Production.Warehouse
         private DateTime? OrigBuyerDelivery2;
         private DateTime? arriveWH1;
         private DateTime? arriveWH2;
-        private string sqlcolumn = @"select
+        private string sqlcolumn = @"
+    select
 	[M] = o.MDivisionID
 	,[Factory] = o.FactoryID
     ,[SewLine] = o.SewLine
@@ -176,6 +177,7 @@ namespace Sci.Production.Warehouse
 				    THEN IIF(psd.SuppColor = '',dbo.GetColorMultipleID(o.BrandID, isnull(psdsC.SpecValue, '')) , psd.SuppColor)
 				    ELSE isnull(psdsC.SpecValue, '')  
 			   END
+    ,[ColorName] = c.Name
 	,[Size] = isnull(psdsS.SpecValue, '')
 	,[Stock Unit] = psd.StockUnit
 	,[Purchase Qty] = dbo.GetUnitQty(psd.PoUnit, psd.StockUnit, psd.Qty)
@@ -449,6 +451,7 @@ left join PO_Supp_Detail_Spec psdsS WITH (NOLOCK) on psdsS.ID = psd.id and psdsS
 left join FtyInventory fi with (nolock) on fi.POID = psd.id and fi.Seq1 = psd.SEQ1 and fi.Seq2 = psd.SEQ2
 left join Fabric WITH (NOLOCK) on psd.SCIRefno = fabric.SCIRefno
 left join Supp on Supp.id = ps.SuppID 
+left join Color c with(nolock) on c.id = isnull(psdsc.SpecValue,'')　and c.BrandId = psd.BrandId
 outer apply
 (
 	select MtlLocationID = stuff(
