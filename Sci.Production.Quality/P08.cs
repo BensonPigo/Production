@@ -137,6 +137,7 @@ namespace Sci.Production.Quality
                  .Numeric("Packages", header: "Packages", width: Widths.AnsiChars(3), decimal_places: 0, iseditingreadonly: true)
                  .Date("ArriveDate", header: "Arrive W/H \r\n Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
                  .Text("POID", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
+                 .Text("SeasonID", header: "Season", width: Widths.AnsiChars(8), iseditingreadonly: true)
                  .Text("SEQ", header: "SEQ", width: Widths.AnsiChars(8), iseditingreadonly: true)
                  .Text("WeaveTypeID", header: "Weave\r\nType", width: Widths.AnsiChars(10), iseditingreadonly: true)
                  .Text("Roll", header: "Roll#", width: Widths.AnsiChars(5), iseditingreadonly: true)
@@ -415,6 +416,7 @@ select
 	, [ArriveDate] = r.WhseArrival
 	, f.POID
     , [SEQ] = CONCAT(f.SEQ1, ' ', f.SEQ2)
+    , o.SeasonID
 	, fb.WeaveTypeID
 	, fs.Roll
 	, fs.Dyelot
@@ -465,6 +467,7 @@ select
 	, [ArriveDate] = t.IssueDate
 	, f.POID
     , [SEQ] = CONCAT(f.SEQ1, ' ', f.SEQ2)
+    , o.SeasonID
 	, fb.WeaveTypeID
 	, fs.Roll
 	, fs.Dyelot
