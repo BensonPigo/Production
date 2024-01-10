@@ -123,6 +123,8 @@ namespace Sci.Production.Warehouse
                 fur.RelaxationEndTime, 
                 UnrollScanner = dbo.getPass1 (fur.UnrollScanner), 
                 fur.UnrollActualQty, 
+                fi.Tone,
+                Location = dbo.Getlocation(fi.ukey),
                 IsAdvance = IIF(fur.IsAdvance = 1, 'Y', ''),
                 fur.UnrollRemark
             from Fabric_UnrollandRelax fur
@@ -131,6 +133,12 @@ namespace Sci.Production.Warehouse
                                         and fur.Seq2 = psd.SEQ2
             left join [ExtendServer].ManufacturingExecution.dbo.RefnoRelaxtime rr on psd.Refno = rr.Refno
             left join [ExtendServer].ManufacturingExecution.dbo.FabricRelaxation fr on rr.FabricRelaxationID = fr.ID
+            inner join dbo.FtyInventory fi WITH (NOLOCK) on fi.POID = fur.poid 
+                                                            and fi.seq1 = fur.seq1 
+                                                            and fi.seq2 = fur.SEQ2 
+                                                            and fi.Roll = fur.Roll 
+                                                            and fi.Dyelot = fur.Dyelot 
+                                                            and fi.StockType = 'B'
             where 
             1=1
             {this.sqlWhere}
