@@ -319,6 +319,8 @@ select
     ,TotalYardageArrDate = {(!this.dateArriveWHDate.Value1.HasValue && !this.dateArriveWHDate.Value2.HasValue ? "NULL" : "TotalYardageArrDate.Val - ActTotalYdsArrDate.ActualYds")}
 	,fta.ActualYds
 	,[InspectionRate] = ROUND(iif(t.StockQty = 0,0,CAST (fta.ActualYds/t.StockQty AS FLOAT)) ,3)
+    ,TotalLotNumber
+    ,InspectedLotNumber
 	,ftp.TotalPoint
     ,F.CustInspNumber
 	,F.Weight
@@ -541,6 +543,31 @@ OUTER APPLY(
     where c.BrandId = O.BrandID 
     and c.ID = ps.SpecValue
 )color
+OUTER APPLY(
+    SELECT TotalLotNumber = COUNT(1)
+    FROM(
+        SELECT DISTINCT rd.Dyelot
+        FROM View_AllReceivingDetail rd WITH (NOLOCK)
+        WHERE rd.Id = F.ReceivingID 
+        AND rd.PoId = F.POID
+        AND rd.Seq1 = F.SEQ1
+        AND rd.Seq2 = F.SEQ2 
+    )TotalLotNumber
+)TotalLotNumber
+OUTER APPLY(
+    SELECT InspectedLotNumber = COUNT(1)
+    FROM(
+        SELECT DISTINCT rd.Dyelot
+        FROM View_AllReceivingDetail rd WITH (NOLOCK)
+	    INNER JOIN FIR f2 WITH (NOLOCK) on f2.ReceivingID = rd.Id and f2.POID = rd.PoId and f2.SEQ1 = rd.Seq1 and f2.SEQ2 = rd.Seq2
+	    INNER JOIN FIR_Physical fp WITH (NOLOCK) on f.id = fp.ID and fp.Roll = rd.Roll and fp.Dyelot = fp.Dyelot
+        WHERE rd.Id = F.ReceivingID 
+        AND rd.PoId = F.POID
+        AND rd.Seq1 = F.SEQ1
+        AND rd.Seq2 = F.SEQ2 
+    )InspectedLotNumber
+)InspectedLotNumber
+
 {sqlWhere} 
 ORDER BY POID,SEQ
 OPTION (OPTIMIZE FOR UNKNOWN)
@@ -588,6 +615,8 @@ select
 	,tf.TotalYardageArrDate
 	,tf.ActualYds
     ,tf.InspectionRate
+    ,tf.TotalLotNumber
+    ,tf.InspectedLotNumber
 	,tf.TotalPoint
     ,tf.CustInspNumber
 	,tf.Weight
