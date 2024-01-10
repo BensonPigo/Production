@@ -229,7 +229,7 @@ where o.Id = '{this.masterData["OrderID"]}'",
                 worksheet.Cells[9, 5] = MyUtility.Convert.GetString(this.masterData["Forwarder"]) + " - " + MyUtility.GetValue.Lookup(string.Format("select Abb from LocalSupp WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(this.masterData["Forwarder"])));
                 worksheet.Cells[9, 7] = MyUtility.Convert.GetDecimal(this.masterData["Quotation"]);
                 worksheet.Cells[9, 8] = MyUtility.Convert.GetString(this.masterData["EstAmount"]);
-                worksheet.Cells[9, 9] = MyUtility.Convert.GetString(this.masterData["EstAmount"]);
+                worksheet.Cells[9, 9] = MyUtility.Convert.GetString(this.masterData["ActualAmountWVAT"]);
                 worksheet.Cells[10, 3] = MyUtility.Convert.GetString(this.masterData["GW"]);
                 worksheet.Cells[10, 5] = MyUtility.Convert.GetString(this.masterData["Forwarder1"]) + " - " + MyUtility.GetValue.Lookup(string.Format("select Abb from LocalSupp WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(this.masterData["Forwarder1"])));
                 worksheet.Cells[10, 7] = MyUtility.Convert.GetDecimal(this.masterData["Quotation1"]);
