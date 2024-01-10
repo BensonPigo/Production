@@ -45,9 +45,9 @@ namespace Sci.Production.Warehouse
             this.combo = combo;
             this.Text += string.Format(" ({0})", this.poid);
 
-            this.strLabel = MyUtility.GetValue.Lookup($"select Label from Orders where id='{this.orderid}'");
-            this.strPacking = MyUtility.GetValue.Lookup($"select Packing from Orders where id='{this.orderid}'");
-            MyUtility.Check.Seek($@"select SMnorderApv,MnorderApv,* from Orders where id='{this.orderid}'", out this.drMnOrder);
+            this.strLabel = MyUtility.GetValue.Lookup($"select Label from Orders with(nolock) where id='{this.orderid}'");
+            this.strPacking = MyUtility.GetValue.Lookup($"select Packing from Orders with(nolock) where id='{this.orderid}'");
+            MyUtility.Check.Seek($@"select SMnorderApv,MnorderApv,* from Orders with(nolock) where id='{this.orderid}'", out this.drMnOrder);
         }
 
         /// <inheritdoc/>
@@ -149,16 +149,16 @@ Select  Orders.ID
         , Order_SizeCode.SizeCode
 		, IsNull(#tmp2.Qty, 0) Qty
 		, oq.OriQty
-From dbo.Orders
-Left Join dbo.Order_SizeCode On Order_SizeCode.ID = Orders.POID
-Left Join dbo.Order_Article On Order_Article.ID = Orders.ID
+From dbo.Orders with(nolock)
+Left Join dbo.Order_SizeCode with(nolock) On Order_SizeCode.ID = Orders.POID
+Left Join dbo.Order_Article with(nolock) On Order_Article.ID = Orders.ID
 Left Join #tmp2 On #tmp2.OrderID = Orders.ID
 			       And #tmp2.SizeCode = Order_SizeCode.SizeCode
 			       And #tmp2.Article = Order_Article.Article
-left join Order_Qty oq on oq.id = Orders.ID and oq.Article = Order_Article.Article and oq.SizeCode = Order_SizeCode.SizeCode
-Left Join dbo.CustCD On CustCD.BrandID = Orders.BrandID
+left join Order_Qty oq with(nolock) on oq.id = Orders.ID and oq.Article = Order_Article.Article and oq.SizeCode = Order_SizeCode.SizeCode
+Left Join dbo.CustCD with(nolock) On CustCD.BrandID = Orders.BrandID
 			            And CustCD.ID = Orders.CustCDID
-Left Join dbo.Factory On Factory.ID = Orders.FactoryID
+Left Join dbo.Factory with(nolock) On Factory.ID = Orders.FactoryID
 Where   Orders.POID = '{3}'
 		And Orders.Junk = 0
 
@@ -181,15 +181,15 @@ if @count = 0
             , Order_SizeCode.SizeCode
 		    , IsNull(Order_Qty.Qty, 0) Qty
 			, Order_Qty.OriQty
-	From dbo.Orders 
-	Left Join dbo.Order_SizeCode On Order_SizeCode.ID = Orders.POID
-	Left Join dbo.Order_Article On Order_Article.ID = Orders.ID
-	Left Join dbo.Order_Qty On Order_Qty.ID = Orders.ID
+	From dbo.Orders with(nolock)
+	Left Join dbo.Order_SizeCode with(nolock) On Order_SizeCode.ID = Orders.POID
+	Left Join dbo.Order_Article with(nolock) On Order_Article.ID = Orders.ID
+	Left Join dbo.Order_Qty with(nolock) On Order_Qty.ID = Orders.ID
 		                       And Order_Qty.SizeCode = Order_SizeCode.SizeCode
 			                   And Order_Qty.Article = Order_Article.Article
-	Left Join dbo.CustCD On CustCD.BrandID = Orders.BrandID
+	Left Join dbo.CustCD with(nolock) On CustCD.BrandID = Orders.BrandID
 			                And CustCD.ID = Orders.CustCDID
-	Left Join dbo.Factory On Factory.ID = Orders.FactoryID
+	Left Join dbo.Factory with(nolock) On Factory.ID = Orders.FactoryID
 	Where   Orders.POID = '{3}'
 	        And Orders.Junk = 0
 		    AND Order_Qty.ID = '{2}'
@@ -213,15 +213,15 @@ if @count = 0
                 , Order_SizeCode.SizeCode
 				, IsNull(Order_Qty.Qty, 0) Qty
 			    , Order_Qty.OriQty
-		From dbo.Orders 
-		Left Join dbo.Order_SizeCode On Order_SizeCode.ID = Orders.POID
-		Left Join dbo.Order_Article On Order_Article.ID = Orders.ID
-		Left Join dbo.Order_Qty On Order_Qty.ID = Orders.ID
+		From dbo.Orders with(nolock) 
+		Left Join dbo.Order_SizeCode with(nolock) On Order_SizeCode.ID = Orders.POID
+		Left Join dbo.Order_Article with(nolock) On Order_Article.ID = Orders.ID
+		Left Join dbo.Order_Qty with(nolock) On Order_Qty.ID = Orders.ID
 				                   And Order_Qty.SizeCode = Order_SizeCode.SizeCode
 				                   And Order_Qty.Article = Order_Article.Article
-		Left Join dbo.CustCD On CustCD.BrandID = Orders.BrandID
+		Left Join dbo.CustCD with(nolock) On CustCD.BrandID = Orders.BrandID
 				                And CustCD.ID = Orders.CustCDID
-		Left Join dbo.Factory On Factory.ID = Orders.FactoryID
+		Left Join dbo.Factory with(nolock) On Factory.ID = Orders.FactoryID
 		Where   Orders.POID = '{3}'
 			    And Orders.Junk = 0			 
 	end
@@ -368,7 +368,7 @@ from (
                                                                  and psdo.seq1 = b.seq1
                                                                  and psdo.seq2 = b.seq2
                                                                  and psdo.orderid = '{2}'    
-    left join PO_Supp_Detail_OrderList_Show OrderListShow On OrderListShow.ID = b.poid
+    left join PO_Supp_Detail_OrderList_Show OrderListShow with (NOLOCK) On OrderListShow.ID = b.poid
                                                             and OrderListShow.Seq1 = b.Seq1
                                                             and OrderListShow.Seq2 = b.Seq2
 ) x
@@ -388,7 +388,7 @@ FROM #tmpPO_supp_detail b
 OUTER APPLY (
     SELECT t.SizeCode, t.UsageQty, t.UsageUnit
     FROM #Tmp_BoaExpend t
-    INNER JOIN Order_BOA ob ON t.Order_BOAUkey = ob.Ukey
+    INNER JOIN Order_BOA ob with (NOLOCK) ON t.Order_BOAUkey = ob.Ukey
     WHERE b.SCIRefno = t.SciRefno 
     AND b.POID = t.ID 
     AND b.CompareBoAExpandSeq1 = ob.Seq1
