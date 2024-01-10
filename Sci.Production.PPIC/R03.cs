@@ -347,6 +347,7 @@ with tmpOrders as (
             , o.KpiMNotice
             , o.KpiEachConsCheck
             , o.LastCTNTransDate
+			, ScanEditDate = scanEditDate.Val
             , o.LastCTNRecdDate
             , o.DryRoomRecdDate
             , o.DryRoomTransDate
@@ -413,6 +414,11 @@ with tmpOrders as (
 		    where w.EstCutDate is not null
 		    and wd.OrderID = o.ID
 	 )csp
+	OUTER APPLY(
+		select Val = MAX(ScanEditDate)
+		from PackingList_Detail pd WITH (NOLOCK)
+		where pd.OrderID = o.id
+	)scanEditDate
 {order_QtyShip_OuterApply}    
 	outer apply(select oa.Article from Order_article oa WITH (NOLOCK) where oa.id = o.id) a
     where  1=1 {whereIncludeCancelOrder}
@@ -753,6 +759,7 @@ tmpFilterZone as (
             , o.KpiMNotice
             , o.KpiEachConsCheck
             , o.LastCTNTransDate
+			, ScanEditDate = scanEditDate.Val
             , o.LastCTNRecdDate
             , o.DryRoomRecdDate
             , o.DryRoomTransDate
@@ -821,6 +828,11 @@ tmpFilterZone as (
 			where tmp.Date is not null
 		)
 	) GetMinDate
+	OUTER APPLY(
+		select Val = MAX(ScanEditDate)
+		from PackingList_Detail pd WITH (NOLOCK)
+		where pd.OrderID = o.id
+	)scanEditDate
 {order_QtyShip_OuterApply}  
     where o.POID IN (select distinct POID from tmpFilterSubProcess) 
 {wherenoRestrictOrdersDelivery}
@@ -963,6 +975,7 @@ group by pd.OrderID, pd.OrderShipmodeSeq
             , t.KpiMNotice
             , t.KpiEachConsCheck
             , t.LastCTNTransDate
+            , t.ScanEditDate
             , t.LastCTNRecdDate
             , t.DryRoomRecdDate
             , t.DryRoomTransDate
@@ -1258,6 +1271,7 @@ select  t.ID
         , t.KpiMNotice
         , t.KpiEachConsCheck
         , LastCTNTransDate = IIF(isnull(t.FtyCtn1,0) =0 , t.LastCTNTransDate , null)
+		, ScanEditDate = IIF(isnull(t.FtyCtn1,0) =0 , t.ScanEditDate , null)
 		, LastCTNRecdDate = IIF(isnull(t.FtyCtn1,0) =0 , t.LastCTNRecdDate , null)
 		, DryRoomRecdDate = IIF(isnull(t.FtyCtn1,0) =0 , t.DryRoomRecdDate , null)
 		, DryRoomTransDate = IIF(isnull(t.FtyCtn1,0) =0 , t.DryRoomTransDate , null)
@@ -1587,6 +1601,7 @@ select distinct
         , t.KpiMNotice
         , t.KpiEachConsCheck
         , [LastCTNTransDate] = IIF(isnull(t.TotalCTN,0) - isnull(t.FtyCTN,0) = 0 ,t.LastCTNTransDate, null)
+        , [ScanEditDate] = IIF(isnull(t.TotalCTN,0) - isnull(t.FtyCTN,0) = 0 ,t.ScanEditDate, null)
         , [LastCTNRecdDate] = IIF(isnull(t.TotalCTN,0) - isnull(t.FtyCTN,0) = 0 ,t.LastCTNRecdDate, null)
         , [DryRoomRecdDate] = IIF(isnull(t.TotalCTN,0) - isnull(t.FtyCTN,0) = 0 ,t.DryRoomRecdDate, null)
         , [DryRoomTransDate] = IIF(isnull(t.TotalCTN,0) - isnull(t.FtyCTN,0) = 0 ,t.DryRoomTransDate, null)
@@ -2428,10 +2443,11 @@ drop table #tmp,#tmp2,#tmp3
                 objArray[intRowsStart, 150] = dr["DryRoomRecdDate"];
                 objArray[intRowsStart, 151] = dr["DryRoomTransDate"];
                 objArray[intRowsStart, 152] = dr["LastCTNTransDate"];
-                objArray[intRowsStart, 153] = dr["LastCTNRecdDate"];
-                objArray[intRowsStart, 154] = dr["OrganicCotton"];
-                objArray[intRowsStart, 155] = dr["DirectShip"];
-                objArray[intRowsStart, 156] = dr["StyleCarryover"];
+                objArray[intRowsStart, 153] = dr["ScanEditDate"];
+                objArray[intRowsStart, 154] = dr["LastCTNRecdDate"];
+                objArray[intRowsStart, 155] = dr["OrganicCotton"];
+                objArray[intRowsStart, 156] = dr["DirectShip"];
+                objArray[intRowsStart, 157] = dr["StyleCarryover"];
                 #endregion
 
                 if (this.artwork || this.pap)

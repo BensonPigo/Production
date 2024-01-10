@@ -153,6 +153,7 @@ BEGIN
             , o.KpiMNotice
             , o.KpiEachConsCheck
             , o.LastCTNTransDate
+			, ScanEditDate = scanEditDate.Val
             , o.LastCTNRecdDate
             , o.DryRoomRecdDate
             , o.DryRoomTransDate
@@ -270,6 +271,11 @@ BEGIN
 		FOR XML PATH('')
 		),1,1,'')
 	) oa
+	OUTER APPLY(
+		select Val = MAX(ScanEditDate)
+		from PackingList_Detail pd WITH (NOLOCK)
+		where pd.OrderID = o.id
+	)scanEditDate
 
 	CREATE NONCLUSTERED INDEX index_tmpOrders_ID ON #tmp_tmpOrders(	ID ASC);
 
@@ -569,6 +575,7 @@ BEGIN
 			, [Fab_ETA]=(select max(FinalETA) F_ETA from PO_Supp_Detail WITH (NOLOCK) where id=p.ID  and FabricType='F')
 			, [Acc_ETA]=(select max(FinalETA) A_ETA from PO_Supp_Detail WITH (NOLOCK) where id=p.ID  and FabricType='A')
 			, [LastCTNTransDate] = IIF(isnull(t.TotalCTN,0) - isnull(t.FtyCTN,0) = 0 ,t.LastCTNTransDate, null)
+			, ScanEditDate = IIF(isnull(t.TotalCTN,0) - isnull(t.FtyCTN,0) = 0 ,t.ScanEditDate, null)
 			, [LastCTNRecdDate] = IIF(isnull(t.TotalCTN,0) - isnull(t.FtyCTN,0) = 0 ,t.LastCTNRecdDate, null)
 			, [DryRoomRecdDate] = IIF(isnull(t.TotalCTN,0) - isnull(t.FtyCTN,0) = 0 ,t.DryRoomRecdDate, null)
 			, [DryRoomTransDate] = IIF(isnull(t.TotalCTN,0) - isnull(t.FtyCTN,0) = 0 ,t.DryRoomTransDate, null)
@@ -1012,6 +1019,7 @@ BEGIN
 			, [Dry Room received date] = b.LastCTNRecdDate
 			, [Dry room trans date] = b.DryRoomRecdDate
 			, [Last ctn trans date] = b.DryRoomTransDate
+			, [Last scan and pack date] = b.ScanEditDate
 			, [Last ctn recvd date] = b.MdRoomScanDate
 			, [OrganicCotton] = b.OrganicCotton
 			, [Direct Ship] = b.DirectShip		
