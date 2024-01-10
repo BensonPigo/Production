@@ -176,39 +176,39 @@ insert into dbo.P_ICRAnalysis(
       ,[IrregularAmtUSD]
 	  )
 	  select 
-	   [ICRNo]
-      ,[Status]
-      ,[Mdivision]
-      ,[ResponsibilityFTY]
-      ,[FTY]
-      ,[SDPKPICode]
-      ,[SPNo]
-      ,[StyleID]
-      ,[SeasonID]
-      ,[BrandID]
-      ,[TotalQty]
-      ,[POHandle]
-      ,[POSMR]
-      ,[MR]
-      ,[SMR]
-      ,[IssueSubject]
-      ,[ResponsibilityAndExplaination]
-      ,[RMtlAmtUSD]
-      ,[OtherAmtUSD]
-      ,[ActFreightAmtUSD]
-      ,[TotalUSD]
+       [ICRNo] = ISNULL([ICRNo] , '')
+      ,[Status] = ISNULL([Status], '')
+      ,[Mdivision] = ISNULL([Mdivision], '')
+      ,[ResponsibilityFTY] = ISNULL([ResponsibilityFTY], '')
+      ,[FTY] = ISNULL([FTY] , '')
+      ,[SDPKPICode] = ISNULL([SDPKPICode] ,'')
+      ,[SPNo] = ISNULL([SPNo], '')
+      ,[StyleID] = ISNULL([StyleID], '')
+      ,[SeasonID] = ISNULL([SeasonID], '')
+      ,[BrandID] = ISNULL([BrandID],'')
+      ,[TotalQty] = ISNULL([TotalQty] , 0)
+      ,[POHandle] = ISNULL([POHandle],'')
+      ,[POSMR] = ISNULL([POSMR],'')
+      ,[MR] = ISNULL([MR],'')
+      ,[SMR] = ISNULL([SMR],'')
+      ,[IssueSubject] = ISNULL([IssueSubject],'')
+      ,[ResponsibilityAndExplaination] = ISNULL([ResponsibilityAndExplaination],'')
+      ,[RMtlAmtUSD] = ISNULL([RMtlAmtUSD],0)
+      ,[OtherAmtUSD] = ISNULL([OtherAmtUSD],0)
+      ,[ActFreightAmtUSD] = ISNULL([ActFreightAmtUSD],0)
+      ,[TotalUSD] = ISNULL([TotalUSD],0)
       ,[Createdate]
       ,[Confirmeddate]
-      ,[VoucherNo]
+      ,[VoucherNo] = ISNULL([VoucherNo],'')
       ,[VoucherDate]
-      ,[Seq]
-      ,[SourceType]
-      ,[WeaveType]
-      ,[IrregularMtlType]
-      ,[IrregularQty]
-      ,[IrregularFOC]
-      ,[IrregularPriceUSD]
-      ,[IrregularAmtUSD]
+      ,[Seq] = ISNULL([Seq],'')
+      ,[SourceType] = ISNULL([SourceType],'')
+      ,[WeaveType] = ISNULL([WeaveType],'')
+      ,[IrregularMtlType] = ISNULL([IrregularMtlType],'')
+      ,[IrregularQty] = ISNULL([IrregularQty],0)
+      ,[IrregularFOC] = ISNULL([IrregularFOC],0)
+      ,[IrregularPriceUSD] = ISNULL([IrregularPriceUSD],0)
+      ,[IrregularAmtUSD] = ISNULL([IrregularAmtUSD],0)
 	  from #tmpFinal s
 	  where not exists(select 1 from P_ICRAnalysis where ICRNo = s.ICRNo and Seq = s.Seq)
 END
