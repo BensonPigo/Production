@@ -381,7 +381,21 @@ where ted.ID = '{0}'", masterID);
         /// <inheritdoc/>
         protected override void ClickRecall()
         {
+            this.OnDetailEntered();
             base.ClickRecall();
+            string ftyStatus = MyUtility.GetValue.Lookup($"select FtyStatus from TransferExport where ID = '{this.CurrentMaintain["ID"]}'");
+            if (ftyStatus == "Confirmed")
+            {
+                MyUtility.Msg.WarningBox($"This TK#<{this.CurrentMaintain["ID"]}> already Confirmed, cannot Recall!!");
+                return;
+            }
+
+            if (ftyStatus == "New")
+            {
+                MyUtility.Msg.WarningBox($"This TK#<{this.CurrentMaintain["ID"]}> already Recall!!");
+                return;
+            }
+
             string sqlRecall = $@"
 update TransferExport_Detail_Carton set GroupID = '' where ID = '{this.CurrentMaintain["ID"]}'
 update TransferExport set FtySendDate = null, FtyStatus = '{TK_FtyStatus.New}' where ID = '{this.CurrentMaintain["ID"]}'
@@ -496,11 +510,17 @@ values('{this.CurrentMaintain["ID"]}', '', '', '{TK_FtyStatus.Send}', '{TK_FtySt
         /// <inheritdoc/>
         protected override void ClickConfirm()
         {
-            string checkStatus = $"select 1 from TransferExport where ID = '{this.CurrentMaintain["ID"]}' and FtyStatus = '{TK_FtyStatus.Confirmed}'";
-            if (MyUtility.Check.Seek(checkStatus))
+            this.OnDetailEntered();
+            string ftyStatus = MyUtility.GetValue.Lookup($"select FtyStatus from TransferExport where ID = '{this.CurrentMaintain["ID"]}'");
+            if (ftyStatus == "Confirmed")
             {
-                MyUtility.Msg.WarningBox("Data is already confirmed, cannot confirm again");
-                this.EnsureToolbarExt();
+                MyUtility.Msg.WarningBox($"This TK#<{this.CurrentMaintain["ID"]}> already Confirmed!!");
+                return;
+            }
+
+            if (ftyStatus == "New")
+            {
+                MyUtility.Msg.WarningBox($"This TK#<{this.CurrentMaintain["ID"]}> already Recall, cannot Confirmed!!");
                 return;
             }
 
