@@ -85,8 +85,9 @@ select distinct sd.ID, sd.OrderId, sd.Article, sd.Color
 		from SewingOutput_Detail_Detail SDD WITH (NOLOCK) 
 		where SDD.SewingOutput_DetailUKey = sd.UKey
 	) t for xml path(''))
-, sd.QAQty, sd.InlineQty,sd.UKey,o.StyleID,o.SeasonID
+, sd.QAQty, sd.InlineQty,sd.UKey,o.StyleID,sd.ComboType,o.SeasonID
 ,[New Style/Repeat Style] = dbo.IsRepeatStyleBySewingOutput(t.FactoryID, t.OutputDate, t.SewinglineID, t.Team, o.StyleUkey)
+,[WorkHour] = sd.WorkHour
 ,[CPU/piece] = IIF(t.Category='M'
 	,isnull(mo.Cpu,0) * isnull(mo.CPUFactor,0)
 	,isnull(o.CPU,0) * isnull(o.CPUFactor,0) * 
