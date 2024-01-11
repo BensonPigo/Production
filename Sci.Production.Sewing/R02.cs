@@ -40,7 +40,7 @@ namespace Sci.Production.Sewing
         private DataTable subprocessSubconOutData;
         private DataTable subconData;
         private DataTable vphData;
-        private List<APIData> dataMode = new List<APIData>();
+        private List<APIData> pams = new List<APIData>();
         private int workDay;
 
         /// <summary>
@@ -195,7 +195,7 @@ select distinct FTYGroup from Factory WITH (NOLOCK) order by FTYGroup"),
             Sewing_R02 biModel = new Sewing_R02();
 
             #region 組撈全部Sewing output data SQL
-            Sewing_R02_MonthlyProductionOutputReport sewing_R02_Model = new Sewing_R02_MonthlyProductionOutputReport()
+            Sewing_R02_ViewModel sewing_R02_Model = new Sewing_R02_ViewModel()
             {
                 StartOutputDate = this.dateDateStart.Value,
                 EndOutputDate = this.dateDateEnd.Value,
@@ -210,7 +210,7 @@ select distinct FTYGroup from Factory WITH (NOLOCK) order by FTYGroup"),
                 ExcludeOfMockUp = this.checkExcludeOfMockUp.Checked,
             };
 
-            ResultReport resultReport = biModel.GetMonthlyProductionOutputReport(sewing_R02_Model);
+            Base_ViewModel resultReport = biModel.GetMonthlyProductionOutputReport(sewing_R02_Model);
             if (!resultReport.Result)
             {
                 return resultReport.Result;
@@ -377,17 +377,8 @@ select distinct FTYGroup from Factory WITH (NOLOCK) order by FTYGroup"),
             }
             #endregion
 
-            if (MyUtility.Check.Empty(this.factory) && !MyUtility.Check.Empty(this.mDivision))
-            {
-                this.factoryName = MyUtility.GetValue.Lookup(string.Format("select Name from Mdivision WITH (NOLOCK) where ID = '{0}'", this.mDivision));
-            }
-            else
-            {
-                this.factoryName = MyUtility.GetValue.Lookup(string.Format("select NameEN from Factory WITH (NOLOCK) where ID = '{0}'", this.factory));
-            }
-
             #region 整理工作天數
-            sewing_R02_Model = new Sewing_R02_MonthlyProductionOutputReport()
+            sewing_R02_Model = new Sewing_R02_ViewModel()
             {
                 IsCN = Env.User.Keyword.EqualString("CM1") || Env.User.Keyword.EqualString("CM2"),
                 M = this.mDivision,
@@ -404,6 +395,27 @@ select distinct FTYGroup from Factory WITH (NOLOCK) order by FTYGroup"),
 
             this.workDay = resultReport.IntValue;
             #endregion
+
+            #region Direct Manpower(From PAMS)
+            sewing_R02_Model = new Sewing_R02_ViewModel()
+            {
+                M = this.mDivision,
+                Factory = this.factory,
+                StartDate = this.date1.Value,
+                EndDate = this.date2.Value,
+            };
+
+            this.pams = biModel.GetPAMS(sewing_R02_Model);
+            #endregion
+
+            if (MyUtility.Check.Empty(this.factory) && !MyUtility.Check.Empty(this.mDivision))
+            {
+                this.factoryName = MyUtility.GetValue.Lookup(string.Format("select Name from Mdivision WITH (NOLOCK) where ID = '{0}'", this.mDivision));
+            }
+            else
+            {
+                this.factoryName = MyUtility.GetValue.Lookup(string.Format("select NameEN from Factory WITH (NOLOCK) where ID = '{0}'", this.factory));
+            }
 
             DBProxy.Current.DefaultTimeout = 300;  // timeout時間改回5分鐘
             return Ict.Result.True;
@@ -453,24 +465,11 @@ select distinct FTYGroup from Factory WITH (NOLOCK) order by FTYGroup"),
                 MyUtility.Check.Empty(this.factory) ? "All Factory" : this.factory,
                 Convert.ToDateTime(this.date1).ToString("yyyy/MM"));
 
-            #region Direct Manpower(From PAMS)
-            List<APIData> pams = new List<APIData>();
-            if (!Env.User.Keyword.EqualString("CM1"))
-            {
-                this.dataMode = new List<APIData>();
-                GetApiData.GetAPIData(this.mDivision, this.factory, (DateTime)this.date1.Value, (DateTime)this.date2.Value, out this.dataMode);
-                if (this.dataMode != null)
-                {
-                    pams = this.dataMode.ToList();
-                }
-            }
-            #endregion
-
             int insertRow;
             object[,] objArray = new object[1, 15];
 
             // Top Table建立
-            this.SetExcelTopTable(out insertRow, pams, worksheet, excel);
+            this.SetExcelTopTable(out insertRow, this.pams, worksheet, excel);
 
             // CPU Factor
             insertRow = insertRow + 2;

@@ -1,6 +1,7 @@
 ﻿using Ict;
 using Sci.Data;
 using Sci.Production.Prg.PowerBI.Model;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
@@ -14,7 +15,13 @@ namespace Sci.Production.Prg.PowerBI.Logic
     public class Sewing_R02
     {
         /// <inheritdoc/>
-        public ResultReport GetMonthlyProductionOutputReport(Sewing_R02_MonthlyProductionOutputReport model)
+        public Sewing_R02()
+        {
+            DBProxy.Current.DefaultTimeout = 900;
+        }
+
+        /// <inheritdoc/>
+        public Base_ViewModel GetMonthlyProductionOutputReport(Sewing_R02_ViewModel model)
         {
             List<SqlParameter> listPar = new List<SqlParameter>()
             {
@@ -44,9 +51,9 @@ exec dbo.GetMonthlyProductionOutputReport   @StartOutputDate,
                                             @ExcludeSampleFactory,
                                             @ExcludeOfMockUp
 ";
-            ResultReport resultReport = new ResultReport
+            Base_ViewModel resultReport = new Base_ViewModel
             {
-                Result = DBProxy.Current.Select(null, sql, listPar, out DataTable[] dataTables),
+                Result = DBProxy.Current.Select("Production", sql, listPar, out DataTable[] dataTables),
             };
 
             if (!resultReport.Result)
@@ -59,9 +66,12 @@ exec dbo.GetMonthlyProductionOutputReport   @StartOutputDate,
         }
 
         /// <inheritdoc/>
-        public ResultReport GetTotalExcludeSubconIn(DataTable dt)
+        public Base_ViewModel GetTotalExcludeSubconIn(DataTable dt)
         {
-            string sql = string.Format(@"
+            DBProxy.Current.OpenConnection("Production", out SqlConnection sqlConn);
+            using (sqlConn)
+            {
+                string sql = string.Format(@"
 ;with tmpQty as (
 	select StdTMS
 		   , QAQty = Sum(QAQty)
@@ -135,24 +145,28 @@ select q.QAQty
 	   , Eff = IIF(q.ManHour * q.StdTMS = 0, 0, Round(q.TotalCPU / (q.ManHour * 3600 / q.StdTMS) * 100, 2))
 from tmpQty q
 left join tmpTtlManPower mp on 1 = 1");
-            ResultReport resultReport = new ResultReport
-            {
-                Result = MyUtility.Tool.ProcessWithDatatable(dt, "OutputDate,StdTMS,QAQty,WorkHour,ActManPower,LastShift,MockupCPU,MockupCPUFactor,OrderCPU,OrderCPUFactor,Rate,FactoryID,SewingLineID,Team,Category,SubconInType", sqlcmd: sql, result: out DataTable dataTable),
-            };
+                Base_ViewModel resultReport = new Base_ViewModel
+                {
+                    Result = MyUtility.Tool.ProcessWithDatatable(dt, "OutputDate,StdTMS,QAQty,WorkHour,ActManPower,LastShift,MockupCPU,MockupCPUFactor,OrderCPU,OrderCPUFactor,Rate,FactoryID,SewingLineID,Team,Category,SubconInType", sqlcmd: sql, result: out DataTable dataTable, conn: sqlConn),
+                };
 
-            if (!resultReport.Result)
-            {
+                if (!resultReport.Result)
+                {
+                    return resultReport;
+                }
+
+                resultReport.Dt = dataTable;
                 return resultReport;
             }
-
-            resultReport.Dt = dataTable;
-            return resultReport;
         }
 
         /// <inheritdoc/>
-        public ResultReport GetNoNSisterSubConIn(DataTable dt)
+        public Base_ViewModel GetNoNSisterSubConIn(DataTable dt)
         {
-            string sql = string.Format(@"
+            DBProxy.Current.OpenConnection("Production", out SqlConnection sqlConn);
+            using (sqlConn)
+            {
+                string sql = string.Format(@"
 ;with tmpQty as (
 	select StdTMS
 		   , QAQty = Sum(QAQty)
@@ -168,24 +182,28 @@ select q.QAQty
 	   , q.ManHour
 	   , Eff = IIF(q.ManHour * q.StdTMS = 0, 0, Round(q.TotalCPU / (q.ManHour * 3600 / q.StdTMS) * 100, 2))
 from tmpQty q");
-            ResultReport resultReport = new ResultReport
-            {
-                Result = MyUtility.Tool.ProcessWithDatatable(dt, "OutputDate,StdTMS,QAQty,WorkHour,ActManPower,LastShift,MockupCPU,MockupCPUFactor,OrderCPU,OrderCPUFactor,Rate,FactoryID,SewingLineID,Team,Category,SubconInType", sqlcmd: sql, result: out DataTable dataTable),
-            };
+                Base_ViewModel resultReport = new Base_ViewModel
+                {
+                    Result = MyUtility.Tool.ProcessWithDatatable(dt, "OutputDate,StdTMS,QAQty,WorkHour,ActManPower,LastShift,MockupCPU,MockupCPUFactor,OrderCPU,OrderCPUFactor,Rate,FactoryID,SewingLineID,Team,Category,SubconInType", sqlcmd: sql, result: out DataTable dataTable, conn: sqlConn),
+                };
 
-            if (!resultReport.Result)
-            {
+                if (!resultReport.Result)
+                {
+                    return resultReport;
+                }
+
+                resultReport.Dt = dataTable;
                 return resultReport;
             }
-
-            resultReport.Dt = dataTable;
-            return resultReport;
         }
 
         /// <inheritdoc/>
-        public ResultReport GetSisterSubConIn(DataTable dt)
+        public Base_ViewModel GetSisterSubConIn(DataTable dt)
         {
-            string sql = string.Format(@"
+            DBProxy.Current.OpenConnection("Production", out SqlConnection sqlConn);
+            using (sqlConn)
+            {
+                string sql = string.Format(@"
 ;with tmpQty as (
 	select StdTMS
 		   , QAQty = Sum(QAQty)
@@ -201,24 +219,28 @@ select q.QAQty
 	   , q.ManHour
 	   , Eff = IIF(q.ManHour * q.StdTMS = 0, 0, Round(q.TotalCPU / (q.ManHour * 3600 / q.StdTMS) * 100, 2))
 from tmpQty q");
-            ResultReport resultReport = new ResultReport
-            {
-                Result = MyUtility.Tool.ProcessWithDatatable(dt, "OutputDate,StdTMS,QAQty,WorkHour,ActManPower,LastShift,MockupCPU,MockupCPUFactor,OrderCPU,OrderCPUFactor,Rate,FactoryID,SewingLineID,Team,Category,SubconInType", sqlcmd: sql, result: out DataTable dataTable),
-            };
+                Base_ViewModel resultReport = new Base_ViewModel
+                {
+                    Result = MyUtility.Tool.ProcessWithDatatable(dt, "OutputDate,StdTMS,QAQty,WorkHour,ActManPower,LastShift,MockupCPU,MockupCPUFactor,OrderCPU,OrderCPUFactor,Rate,FactoryID,SewingLineID,Team,Category,SubconInType", sqlcmd: sql, result: out DataTable dataTable, conn: sqlConn),
+                };
 
-            if (!resultReport.Result)
-            {
+                if (!resultReport.Result)
+                {
+                    return resultReport;
+                }
+
+                resultReport.Dt = dataTable;
                 return resultReport;
             }
-
-            resultReport.Dt = dataTable;
-            return resultReport;
         }
 
         /// <inheritdoc/>
-        public ResultReport GetCPUFactor(DataTable dt)
+        public Base_ViewModel GetCPUFactor(DataTable dt)
         {
-            string sql = string.Format(@"
+            DBProxy.Current.OpenConnection("Production", out SqlConnection sqlConn);
+            using (sqlConn)
+            {
+                string sql = string.Format(@"
 ;with tmpData as (
 	select CPUFactor = IIF(Category = 'M', MockupCPUFactor, OrderCPUFactor)
 		   , QAQty
@@ -250,25 +272,28 @@ select q.*
 from tmpSumQAQty q
 left join tmpSumCPU c on q.CPUFactor = c.CPUFactor
 left join tmpCountStyle s on q.CPUFactor = s.CPUFactor");
+                Base_ViewModel resultReport = new Base_ViewModel
+                {
+                    Result = MyUtility.Tool.ProcessWithDatatable(dt, "Category,MockupCPUFactor,OrderCPUFactor,QAQty,MockupCPU,OrderCPU,Rate,Style", sqlcmd: sql, result: out DataTable dataTable, conn: sqlConn),
+                };
 
-            ResultReport resultReport = new ResultReport
-            {
-                Result = MyUtility.Tool.ProcessWithDatatable(dt, "Category,MockupCPUFactor,OrderCPUFactor,QAQty,MockupCPU,OrderCPU,Rate,Style", sqlcmd: sql, result: out DataTable dataTable),
-            };
+                if (!resultReport.Result)
+                {
+                    return resultReport;
+                }
 
-            if (!resultReport.Result)
-            {
+                resultReport.Dt = dataTable;
                 return resultReport;
             }
-
-            resultReport.Dt = dataTable;
-            return resultReport;
         }
 
         /// <inheritdoc/>
-        public ResultReport GetSubprocess(DataTable dt)
+        public Base_ViewModel GetSubprocess(DataTable dt)
         {
-            string sql = string.Format(@"
+            DBProxy.Current.OpenConnection("Production", out SqlConnection sqlConn);
+            using (sqlConn)
+            {
+                string sql = string.Format(@"
 alter table #tmp alter column OrderId varchar(13)
 alter table #tmp alter column ComboType varchar(1)
 alter table #tmp alter column QAQty int
@@ -334,25 +359,117 @@ from #tmpArtwork t1
 left join #tmpAllSubprocess t2 on t2.ArtworkTypeID = t1.ID
 group by t1.ID, rs
 order by t1.ID");
+                Base_ViewModel resultReport = new Base_ViewModel
+                {
+                    Result = MyUtility.Tool.ProcessWithDatatable(dt, "OrderId,ComboType,QAQty,LastShift,SubconInType", sqlcmd: sql, result: out DataTable dataTable, conn: sqlConn),
+                };
 
-            ResultReport resultReport = new ResultReport
-            {
-                Result = MyUtility.Tool.ProcessWithDatatable(dt, "OrderId,ComboType,QAQty,LastShift,SubconInType", sqlcmd: sql, result: out DataTable dataTable),
-            };
+                if (!resultReport.Result)
+                {
+                    return resultReport;
+                }
 
-            if (!resultReport.Result)
-            {
+                resultReport.Dt = dataTable;
                 return resultReport;
             }
-
-            resultReport.Dt = dataTable;
-            return resultReport;
         }
 
         /// <inheritdoc/>
-        public ResultReport GetSubprocessbyCompanySubconIn(DataTable dt)
+        public Base_ViewModel GetSubprocessByFactoryOutPutDate(DataTable dt)
         {
-            string sql = string.Format(@"
+            DBProxy.Current.OpenConnection("Production", out SqlConnection sqlConn);
+            using (sqlConn)
+            {
+                string sql = string.Format(@"
+alter table #tmp alter column OrderId varchar(13)
+alter table #tmp alter column ComboType varchar(1)
+alter table #tmp alter column QAQty int
+alter table #tmp alter column LastShift varchar(1)
+alter table #tmp alter column SubconInType varchar(1)
+
+    Select ID
+		   , rs = iif(ProductionUnit = 'TMS', 'CPU'
+		   									, iif(ProductionUnit = 'QTY', 'AMT'
+		   																, '')),
+           [DecimalNumber] =case    when ProductionUnit = 'QTY' then 4
+							        when ProductionUnit = 'TMS' then 3
+							        else 0 end
+    into #tmpArtwork
+	from ArtworkType WITH (NOLOCK)
+	where Classify in ('I','A','P') 
+		  and IsTtlTMS = 0
+          and IsPrintToCMP=1
+
+	--準備台北資料(須排除這些)
+	select ps.ID
+	into #TPEtmp
+	from PO_Supp ps
+	inner join PO_Supp_Detail psd on ps.ID=psd.id and ps.SEQ1=psd.Seq1
+	inner join Fabric fb on psd.SCIRefno = fb.SCIRefno 
+	inner join MtlType ml on ml.id = fb.MtlTypeID
+	where 1=1 and ml.Junk =0 and psd.Junk=0 and fb.Junk =0
+	and ml.isThread=1 
+	and ps.SuppID <> 'FTY' and ps.Seq1 not Like '5%'
+    
+    select a.FactoryID
+		   , [OutputDate] = dateadd(day, -1, cast(FORMAT(dateadd(month, 1, a.OutputDate), 'yyyy/MM/01') as date))
+		   , ot.ArtworkTypeID
+		   , a.OrderId
+		   , a.ComboType
+           , Price = sum(a.QAQty) * ot.Price * (isnull([dbo].[GetOrderLocation_Rate](a.OrderId ,a.ComboType), 100) / 100)
+    into  #tmpAllSubprocess
+	from #tmp a
+	inner join Order_TmsCost ot WITH (NOLOCK) on ot.ID = a.OrderId
+	inner join Orders o WITH (NOLOCK) on o.ID = a.OrderId and o.Category NOT IN ('G','A')
+	where ((a.LastShift = 'O' and o.LocalOrder <> 1) or (a.LastShift <> 'O') ) 
+            --排除 subcon in non sister的數值
+          and ((a.LastShift <> 'I') or ( a.LastShift = 'I' and a.SubconInType not in ('0','3') ))           
+          and ot.Price > 0 		    
+		  and ((ot.ArtworkTypeID = 'SP_THREAD' and not exists(select 1 from #TPEtmp t where t.ID = o.POID))
+			  or ot.ArtworkTypeID <> 'SP_THREAD')
+	group by a.FactoryID
+		   , dateadd(day, -1, cast(FORMAT(dateadd(month, 1, a.OutputDate), 'yyyy/MM/01') as date))
+		   , ot.ArtworkTypeID, a.OrderId, a.ComboType, ot.Price
+
+    --FMS傳票部分顯示AT不分Hand/Machine，是因為政策問題，但比對Sewing R02時，會有落差，請根據SP#落在Hand CPU:10 /Machine:5，則只撈出Hand CPU:10這筆，抓其大值，以便加總總和等同於FMS傳票AT
+    -- 當AT(Machine) = AT(Hand)時, 也要將Price歸0 (ISP20190520)
+    update s set s.Price = 0
+        from #tmpAllSubprocess s
+        inner join (select * from #tmpAllSubprocess where ArtworkTypeID = 'AT (HAND)') a on s.OrderId = a.OrderId and s.ComboType = a.ComboType and s.FactoryID = a.FactoryID and s.OutputDate = a.OutputDate
+        where s.ArtworkTypeID = 'AT (MACHINE)'  and s.Price <= a.Price
+
+    update s set s.Price = 0
+        from #tmpAllSubprocess s
+        inner join (select * from #tmpAllSubprocess where ArtworkTypeID = 'AT (MACHINE)') a on s.OrderId = a.OrderId and s.ComboType = a.ComboType and s.FactoryID = a.FactoryID and s.OutputDate = a.OutputDate
+        where s.ArtworkTypeID = 'AT (HAND)'  and s.Price <= a.Price
+
+	select s.FactoryID, s.OutputDate
+		, Price = isnull(sum(Round(s.Price,t.DecimalNumber)), 0)	
+	from #tmpAllSubprocess s
+	left join #tmpArtwork t on s.ArtworkTypeID = t.ID
+	group by s.FactoryID, s.OutputDate");
+                Base_ViewModel resultReport = new Base_ViewModel
+                {
+                    Result = MyUtility.Tool.ProcessWithDatatable(dt, null, sqlcmd: sql, result: out DataTable dataTable, conn: sqlConn),
+                };
+
+                if (!resultReport.Result)
+                {
+                    return resultReport;
+                }
+
+                resultReport.Dt = dataTable;
+                return resultReport;
+            }
+        }
+
+        /// <inheritdoc/>
+        public Base_ViewModel GetSubprocessbyCompanySubconIn(DataTable dt)
+        {
+            DBProxy.Current.OpenConnection("Production", out SqlConnection sqlConn);
+            using (sqlConn)
+            {
+                string sql = string.Format(@"
 
 alter table #tmp alter column OrderId varchar(13)
 alter table #tmp alter column ComboType varchar(1)
@@ -421,25 +538,28 @@ from #tmpArtwork t1
 left join #tmpAllSubprocess t2 on t2.ArtworkTypeID = t1.ID
 group by t1.ID, rs,t2.Program having isnull(sum(Price), 0) > 0
 order by t1.ID");
+                Base_ViewModel resultReport = new Base_ViewModel
+                {
+                    Result = MyUtility.Tool.ProcessWithDatatable(dt, "OrderId,ComboType,QAQty,LastShift,SubconInType,Program", sqlcmd: sql, result: out DataTable dataTable, conn: sqlConn),
+                };
 
-            ResultReport resultReport = new ResultReport
-            {
-                Result = MyUtility.Tool.ProcessWithDatatable(dt, "OrderId,ComboType,QAQty,LastShift,SubconInType,Program", sqlcmd: sql, result: out DataTable dataTable),
-            };
+                if (!resultReport.Result)
+                {
+                    return resultReport;
+                }
 
-            if (!resultReport.Result)
-            {
+                resultReport.Dt = dataTable;
                 return resultReport;
             }
-
-            resultReport.Dt = dataTable;
-            return resultReport;
         }
 
         /// <inheritdoc/>
-        public ResultReport GetSubprocessbyCompanySubconOut(DataTable dt)
+        public Base_ViewModel GetSubprocessbyCompanySubconOut(DataTable dt)
         {
-            string sql = string.Format(@"
+            DBProxy.Current.OpenConnection("Production", out SqlConnection sqlConn);
+            using (sqlConn)
+            {
+                string sql = string.Format(@"
 alter table #tmp alter column OrderId varchar(13)
 alter table #tmp alter column ComboType varchar(1)
 alter table #tmp alter column QAQty int
@@ -507,25 +627,28 @@ from #tmpArtwork t1
 left join #tmpAllSubprocess t2 on t2.ArtworkTypeID = t1.ID
 group by t1.ID, rs,t2.SubconOutFty having isnull(sum(Price), 0) > 0
 order by t1.ID");
+                Base_ViewModel resultReport = new Base_ViewModel
+                {
+                    Result = MyUtility.Tool.ProcessWithDatatable(dt, "OrderId,ComboType,QAQty,LastShift,SubconInType,SubconOutFty", sqlcmd: sql, result: out DataTable dataTable, conn: sqlConn),
+                };
 
-            ResultReport resultReport = new ResultReport
-            {
-                Result = MyUtility.Tool.ProcessWithDatatable(dt, "OrderId,ComboType,QAQty,LastShift,SubconInType,SubconOutFty", sqlcmd: sql, result: out DataTable dataTable),
-            };
+                if (!resultReport.Result)
+                {
+                    return resultReport;
+                }
 
-            if (!resultReport.Result)
-            {
+                resultReport.Dt = dataTable;
                 return resultReport;
             }
-
-            resultReport.Dt = dataTable;
-            return resultReport;
         }
 
         /// <inheritdoc/>
-        public ResultReport GetSubcon(DataTable dt)
+        public Base_ViewModel GetSubcon(DataTable dt)
         {
-            string sql = string.Format(@"
+            DBProxy.Current.OpenConnection("Production", out SqlConnection sqlConn);
+            using (sqlConn)
+            {
+                string sql = string.Format(@"
 ;with tmpSubconIn as (
 	Select 'I' as Type
 		   , Company = Program 
@@ -547,43 +670,46 @@ select * from tmpSubconIn
 union all
 select * from tmpSubconOut ) as a 
 order by Type,iif(Company = 'Other','Z','A'),Company");
+                Base_ViewModel resultReport = new Base_ViewModel
+                {
+                    Result = MyUtility.Tool.ProcessWithDatatable(dt, "SewingLineID,QAQty,LastShift,MockupCPU,MockupCPUFactor,OrderCPU,OrderCPUFactor,Rate,OrderId,Program,Category,FactoryID,SubconOutFty", sqlcmd: sql, result: out DataTable dataTable, conn: sqlConn),
+                };
 
-            ResultReport resultReport = new ResultReport
-            {
-                Result = MyUtility.Tool.ProcessWithDatatable(dt, "SewingLineID,QAQty,LastShift,MockupCPU,MockupCPUFactor,OrderCPU,OrderCPUFactor,Rate,OrderId,Program,Category,FactoryID,SubconOutFty", sqlcmd: sql, result: out DataTable dataTable),
-            };
+                if (!resultReport.Result)
+                {
+                    return resultReport;
+                }
 
-            if (!resultReport.Result)
-            {
+                resultReport.Dt = dataTable;
                 return resultReport;
             }
-
-            resultReport.Dt = dataTable;
-            return resultReport;
         }
 
         /// <inheritdoc/>
-        public ResultReport GetWorkDay(DataTable dt, Sewing_R02_MonthlyProductionOutputReport model)
+        public Base_ViewModel GetWorkDay(DataTable dt, Sewing_R02_ViewModel model)
         {
-            ResultReport resultReport = new ResultReport();
-            string sql = string.Empty;
-            #region  中國工廠自抓/其它場Pams [Total Work Day]
-            if (model.IsCN)
+            DBProxy.Current.OpenConnection("Production", out SqlConnection sqlConn);
+            using (sqlConn)
             {
-                sql = @"select Distinct OutputDate from #tmp where LastShift <> 'O'";
-                resultReport.Result = MyUtility.Tool.ProcessWithDatatable(dt, null, sql, out DataTable dtWorkDay);
-                if (!resultReport.Result)
+                Base_ViewModel resultReport = new Base_ViewModel();
+                string sql = string.Empty;
+                #region  中國工廠自抓/其它場Pams [Total Work Day]
+                if (model.IsCN)
                 {
-                    resultReport.IntValue = 0;
+                    sql = @"select Distinct OutputDate from #tmp where LastShift <> 'O'";
+                    resultReport.Result = MyUtility.Tool.ProcessWithDatatable(dt, null, sql, out DataTable dtWorkDay, conn: sqlConn);
+                    if (!resultReport.Result)
+                    {
+                        resultReport.IntValue = 0;
+                    }
+                    else
+                    {
+                        resultReport.IntValue = dtWorkDay.Rows.Count;
+                    }
                 }
                 else
                 {
-                    resultReport.IntValue = dtWorkDay.Rows.Count;
-                }
-            }
-            else
-            {
-                sql = $@"
+                    sql = $@"
 alter table #tmp alter column FactoryID varchar(8)
 
 select distinct t.FactoryID, f.IsSampleRoom
@@ -594,50 +720,70 @@ inner join Factory f with (nolock) on f.ID = t.FactoryID
 select FactoryID from #tmpResult where IsSampleRoom = 0
 select FactoryID from #tmpResult where IsSampleRoom = 1
 ";
-
-                resultReport.Result = MyUtility.Tool.ProcessWithDatatable(dt, "FactoryID", sql, out DataTable[] datatable);
-                if (!resultReport.Result)
-                {
-                    resultReport.IntValue = 0;
-                    return resultReport;
-                }
-
-                DataTable dtNotSampleRoomFty = datatable[0];
-                DataTable dtIsSampleRoomFty = datatable[1];
-                List<string> listWorkDate = new List<string>();
-
-                if (dtIsSampleRoomFty.Rows.Count > 0)
-                {
-                    string whereFty = dtIsSampleRoomFty.AsEnumerable().Select(s => $"'{s["FactoryID"].ToString()}'").JoinToString(",");
-                    string strWorkDay = $@"select Distinct [OutputDate] = Format(OutputDate,'yyyyMMdd') from #tmp where LastShift <> 'O' and FactoryID in ({whereFty})";
-                    resultReport.Result = MyUtility.Tool.ProcessWithDatatable(dt, null, strWorkDay, out DataTable dtWorkDay);
+                    resultReport.Result = MyUtility.Tool.ProcessWithDatatable(dt, null, sql, out DataTable[] datatable, conn: sqlConn);
                     if (!resultReport.Result)
                     {
                         resultReport.IntValue = 0;
+                        return resultReport;
                     }
-                    else if (dtWorkDay.Rows.Count > 0)
-                    {
-                        listWorkDate.AddRange(dtWorkDay.AsEnumerable().Select(s => s["OutputDate"].ToString()).ToList());
-                    }
-                }
 
-                if (dtNotSampleRoomFty.Rows.Count > 0)
-                {
-                    foreach (DataRow dr in dtNotSampleRoomFty.Rows)
+                    DataTable dtNotSampleRoomFty = datatable[0];
+                    DataTable dtIsSampleRoomFty = datatable[1];
+                    List<string> listWorkDate = new List<string>();
+
+                    if (dtIsSampleRoomFty.Rows.Count > 0)
                     {
-                        List<APIData> listAPIData = new List<APIData>();
-                        GetApiData.GetAPIData(model.M, dr["FactoryID"].ToString(), model.StartDate, model.EndDate, out listAPIData);
-                        if (listAPIData != null)
+                        string whereFty = dtIsSampleRoomFty.AsEnumerable().Select(s => $"'{s["FactoryID"]}'").JoinToString(",");
+                        string strWorkDay = $@"select Distinct [OutputDate] = Format(OutputDate,'yyyyMMdd') from #tmp where LastShift <> 'O' and FactoryID in ({whereFty}) and OutputDate >= '{model.StartDate.ToString("yyyy/MM/dd")}' and OutputDate <= '{model.EndDate.ToString("yyyy/MM/dd")}'";
+                        resultReport.Result = DBProxy.Current.SelectByConn(conn: sqlConn, cmdtext: strWorkDay, datas: out DataTable dtWorkDay);
+                        if (!resultReport.Result)
                         {
-                            listWorkDate.AddRange(listAPIData.Where(w => w.SewTtlManhours != 0).Select(s => s.DateYYYYMMDD));
+                            resultReport.IntValue = 0;
+                        }
+                        else if (dtWorkDay.Rows.Count > 0)
+                        {
+                            listWorkDate.AddRange(dtWorkDay.AsEnumerable().Select(s => s["OutputDate"].ToString()).ToList());
                         }
                     }
-                }
 
-                resultReport.IntValue = listWorkDate.Distinct().Count();
+                    if (dtNotSampleRoomFty.Rows.Count > 0)
+                    {
+                        foreach (DataRow dr in dtNotSampleRoomFty.Rows)
+                        {
+                            List<APIData> listAPIData = new List<APIData>();
+                            GetApiData.GetAPIData(model.M, dr["FactoryID"].ToString(), model.StartDate, model.EndDate, out listAPIData);
+                            if (listAPIData != null)
+                            {
+                                listWorkDate.AddRange(listAPIData.Where(w => w.SewTtlManhours != 0).Select(s => s.DateYYYYMMDD));
+                            }
+                        }
+                    }
+
+                    resultReport.IntValue = listWorkDate.Distinct().Count();
+                }
+                #endregion
+                return resultReport;
             }
-            #endregion
-            return resultReport;
+        }
+
+        /// <summary>
+        /// Direct Manpower(From PAMS)
+        /// </summary>
+        /// <param name="model">Sewing R02 ViewModel</param>
+        /// <returns>List<APIData></returns>
+        public List<APIData> GetPAMS(Sewing_R02_ViewModel model)
+        {
+            List<APIData> pams = new List<APIData>();
+            if (!Env.User.Keyword.EqualString("CM1"))
+            {
+                GetApiData.GetAPIData(model.M, model.Factory, model.StartDate, model.EndDate, out List<APIData> dataMode);
+                if (dataMode != null)
+                {
+                    pams = dataMode.ToList();
+                }
+            }
+
+            return pams;
         }
     }
 }
