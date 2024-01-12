@@ -851,7 +851,7 @@ set TransferDate = null
 , ScanEditDate = null
 , ScanName = ''
 , Lacking = 0
-, ActCTNWeight = null
+, ActCTNWeight = 0
 , DRYReceiveDate  = null
 , DRYTransferDate = null
 from PackingList_Detail pd
