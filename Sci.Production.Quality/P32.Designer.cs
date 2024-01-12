@@ -891,6 +891,7 @@
             this.IsSupportNew = false;
             this.IsSupportPrint = false;
             this.IsSupportUnconfirm = true;
+            this.IsSupportCopy = false;
             this.KeyField1 = "ID";
             this.Name = "P32";
             this.OnLineHelpID = "Sci.Win.Tems.Input6";
