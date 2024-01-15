@@ -920,8 +920,10 @@ SET @ErrorMessage = ''
 /****************************************************************************************************************************/
 /***************************************P_Import_SubprocessWIP**********************************************************************/
 BEGIN TRY
+	Declare @StartDate_P_Import_SubprocessWIP date = dateadd(DAY, -7, getdate())
+
 	set @Stime = getdate()  
-	execute [dbo].P_Import_SubprocessWIP
+	execute [dbo].P_Import_SubprocessWIP @StartDate_P_Import_SubprocessWIP
 	set @Etime = getdate()
 END TRY
 
@@ -1002,11 +1004,11 @@ SET @ErrorMessage = ''
 /****************************************************************************************************************************/
 /***********************************P_Import_QA_R08_Detail****************************************************************/
 BEGIN TRY
-	Declare @P_Import_QA_R08_Detail_StartData date = dateadd(MONTH, -3, getdate())
-	Declare @P_Import_QA_R08_Detail_EndData date = getdate()
+	Declare @P_Import_QA_R08_Detail_StartDate date = dateadd(MONTH, -3, getdate())
+	Declare @P_Import_QA_R08_Detail_EndDate date = getdate()
 	
 	set @Stime = getdate()  
-	execute [dbo].[P_Import_QA_R08_Detail] @P_Import_QA_R08_Detail_StartData, @P_Import_QA_R08_Detail_EndData
+	execute [dbo].[P_Import_QA_R08_Detail] @P_Import_QA_R08_Detail_StartDate, @P_Import_QA_R08_Detail_EndDate
 	set @Etime = getdate()
 END TRY
 
@@ -1128,11 +1130,11 @@ SET @ErrorMessage = ''
 /****************************************************************************************************************************/
 /***********************************P_Import_PPIC_R01_SewingLineScheduleBySP****************************************************************/
 BEGIN TRY
-	Declare @P_SewingLineScheduleBySP_StartData date = dateadd(DAY, -60, getdate())
-	Declare @P_SewingLineScheduleBySP_EndData date = dateadd(DAY, 120, getdate())
+	Declare @P_SewingLineScheduleBySP_StartDate date = dateadd(DAY, -60, getdate())
+	Declare @P_SewingLineScheduleBySP_EndDate date = dateadd(DAY, 120, getdate())
 	
 	set @Stime = getdate()  
-	execute [dbo].[P_Import_PPIC_R01_SewingLineScheduleBySP] @P_SewingLineScheduleBySP_StartData, @P_SewingLineScheduleBySP_EndData
+	execute [dbo].[P_Import_PPIC_R01_SewingLineScheduleBySP] @P_SewingLineScheduleBySP_StartDate, @P_SewingLineScheduleBySP_EndDate
 	set @Etime = getdate()
 END TRY
 
@@ -1212,11 +1214,11 @@ SET @ErrorMessage = ''
 /****************************************************************************************************************************/
 /***********************************[P_Import_ICRAnalysis]****************************************************************/
 BEGIN TRY
-	Declare @StartData date = dateadd(DAY, -7, getdate())
-	Declare @EndData date = getdate()
+	Declare @StartDate_P_Import_ICRAnalysis date = dateadd(DAY, -7, getdate())
+	Declare @EndDate_P_Import_ICRAnalysis date = getdate()
 
 	set @Stime = getdate()
-	execute [dbo].[P_Import_ICRAnalysis] @StartData,@EndData,null
+	execute [dbo].[P_Import_ICRAnalysis] @StartDate_P_Import_ICRAnalysis,@EndDate_P_Import_ICRAnalysis,null
 	set @Etime = getdate()
 END TRY
 
@@ -1295,10 +1297,10 @@ SET @ErrorMessage = ''
 /****************************************************************************************************************************/
 /***********************************P_Import_WH_R16****************************************************************/
 BEGIN TRY
-	Declare @P_Import_WH_R16_EndData date = getdate()
-	Declare @P_Import_WH_R16_StartData date = dateadd(DAY, -30, @P_Import_WH_R16_EndData)
+	Declare @P_Import_WH_R16_EndDate date = getdate()
+	Declare @P_Import_WH_R16_StartDate date = dateadd(DAY, -30, @P_Import_WH_R16_EndDate)
 	set @Stime = getdate()  
-	execute [dbo].[P_Import_WH_R16] @P_Import_WH_R16_StartData, @P_Import_WH_R16_EndData
+	execute [dbo].[P_Import_WH_R16] @P_Import_WH_R16_StartDate, @P_Import_WH_R16_EndDate
 	set @Etime = getdate()
 END TRY
 
@@ -1338,10 +1340,10 @@ SET @ErrorMessage = ''
 /****************************************************************************************************************************/
 /***********************************P_Import_WH_R25****************************************************************/
 BEGIN TRY
-	Declare @P_Import_WH_R25_EndData date = getdate()
-	Declare @P_Import_WH_R25_StartData date = dateadd(DAY, -90, @P_Import_WH_R25_EndData)
+	Declare @P_Import_WH_R25_EndDate date = getdate()
+	Declare @P_Import_WH_R25_StartDate date = dateadd(DAY, -90, @P_Import_WH_R25_EndDate)
 	set @Stime = getdate()  
-	execute [dbo].[P_Import_WH_R25] @P_Import_WH_R25_StartData, @P_Import_WH_R25_EndData
+	execute [dbo].[P_Import_WH_R25] @P_Import_WH_R25_StartDate, @P_Import_WH_R25_EndDate
 	set @Etime = getdate()
 END TRY
 
@@ -1381,10 +1383,10 @@ SET @ErrorMessage = ''
 /****************************************************************************************************************************/
 /***********************************P_Import_AccessoryInspLabStatus****************************************************************/
 BEGIN TRY
-	Declare @P_Import_AccessoryInspLabStatus_EndData date = getdate()
-	Declare @P_Import_AccessoryInspLabStatus_StartData date = dateadd(DAY, -90, @P_Import_WH_R25_EndData)
+	Declare @P_Import_AccessoryInspLabStatus_EndDate date = getdate()
+	Declare @P_Import_AccessoryInspLabStatus_StartDate date = dateadd(DAY, -90, @P_Import_WH_R25_EndDate)
 	set @Stime = getdate()  
-	execute [dbo].[P_Import_AccessoryInspLabStatus] @P_Import_AccessoryInspLabStatus_StartData, @P_Import_AccessoryInspLabStatus_EndData
+	execute [dbo].[P_Import_AccessoryInspLabStatus] @P_Import_AccessoryInspLabStatus_StartDate, @P_Import_AccessoryInspLabStatus_EndDate
 	set @Etime = getdate()
 END TRY
 
@@ -1568,10 +1570,9 @@ SELECT @mailserver = Mailserver
 ,@eMailID = EmailID
 ,@eMailPwd = EmailPwd
 ,@sendFrom = Sendfrom
-,@toAddress = 'willy.wei@sportscity.com.tw'
 FROM Production.dbo.System
 
---select @toAddress = ToAddress from Production.dbo.MailTo where id = '101'
+select @toAddress = ToAddress from Production.dbo.MailTo where id = '101'
 DECLARE @EndTime datetime = getdate()
 
 exec callJobLog_SP @mailserver,@eMailID,@eMailPwd,@sendFrom,@toAddress,'Import BI Data',@comboDesc,0,@ErrorStatus,0,'Power BI',@Region,@M,@StartTime,@EndTime

@@ -78,7 +78,7 @@ namespace Sci.Production.PPIC
         {
             StringBuilder sqlCmd = new StringBuilder();
             sqlCmd.Append(string.Format(@"
-select s.BrandID,s.ID,s.SeasonID,sp.MDivisionID,sp.FactoryID
+select s.BrandID,s.ID,s.SeasonID,sp.ProductionKitsGroup,sp.MDivisionID,sp.FactoryID
 	,Doc = CONCAT(sp.DOC,'-',r.Name)
 	,sp.SendDate,sp.ReceiveDate,sp.SendToQA,sp.QAReceived,
     [UnnecessaryToSend] = iif(Len(isnull(sp.ReasonID,'')) = 0,'N','Y')

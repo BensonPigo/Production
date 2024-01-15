@@ -1,5 +1,3 @@
-
-
 -- =============================================
 -- Author:		LEO
 -- Create date: 20160903
@@ -81,6 +79,19 @@ SET
 from Production.dbo.AirPP as a 
 inner join Trade_To_Pms.dbo.AirPP as b ON a.id=b.id
 where isnull(a.TPEEditDate,'') != isnull(b.EditDate,'')
+
+update t
+set t.Additional = ISNULL(Additional.value,0)
+from Production.dbo.AirPP as t
+outer apply(
+	select value = sum(ga.Additional)
+	from Trade_to_PMS.dbo.GarmentInvoice_additional ga
+	where ga.AdditionalReason = '02' 
+	and ga.OrderID = t.orderid
+	and ga.OrderShipmodeSeq = t.OrderShipmodeSeq
+)Additional
+where Additional.value is not null
+
 
 END
 

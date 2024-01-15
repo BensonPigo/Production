@@ -8,6 +8,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using System.Linq;
 using System.Collections.Generic;
+using System.Windows.Forms.VisualStyles;
 
 namespace Sci.Production.Shipping
 {
@@ -73,7 +74,6 @@ namespace Sci.Production.Shipping
             this.DetailSelectCommand = $@"
 select id2.* 
 ,kd.CustomsType
-,[CustomsDescription] = kd.CDCName
 ,[CDCAmount] = id2.CDCQty * id2.CDCUnitPrice
 ,[NWDiff] = id2.ActNetKg - id2.NetKg
 ,[HSCode] = kcd.HSCode
@@ -258,7 +258,7 @@ where refno='{e.FormattedValue}' and junk=0
                     dr["Refno"] = string.Empty;
 
                     dr["CustomsType"] = string.Empty;
-                    dr["CustomsDescription"] = string.Empty;
+                    dr["CDCName"] = string.Empty;
                     dr["CDCUnit"] = string.Empty;
                     dr["CDCUnitPrice"] = 0;
                     dr["CDCCode"] = string.Empty;
@@ -274,7 +274,7 @@ where refno='{e.FormattedValue}' and junk=0
 
                 sqlcmd = $@"
 Select kd.CDCUnit, Ki.CDCUnitPrice,kd.CustomsType
-,[CustomsDescription] = kd.CDCName  
+,[CDCName] = kd.CDCName  
 , [CDCUnit] = kd.CDCUnit  
 , [CDCUnitPrice] = ki.CDCUnitPrice  
 , kd.CDCCode
@@ -289,7 +289,7 @@ where vk.Refno = '{e.FormattedValue}'
                 if (MyUtility.Check.Seek(sqlcmd, out drSeek))
                 {
                     dr["CustomsType"] = drSeek["CustomsType"];
-                    dr["CustomsDescription"] = drSeek["CustomsDescription"];
+                    dr["CDCName"] = drSeek["CDCName"];
                     dr["CDCUnit"] = drSeek["CDCUnit"];
                     dr["CDCUnitPrice"] = drSeek["CDCUnitPrice"];
                     dr["CDCCode"] = drSeek["CDCCode"];
@@ -298,7 +298,7 @@ where vk.Refno = '{e.FormattedValue}'
                 else
                 {
                     dr["CustomsType"] = string.Empty;
-                    dr["CustomsDescription"] = string.Empty;
+                    dr["CDCName"] = string.Empty;
                     dr["CDCUnit"] = string.Empty;
                     dr["CDCUnitPrice"] = 0;
                     dr["CDCCode"] = string.Empty;
@@ -330,6 +330,83 @@ where vk.Refno = '{e.FormattedValue}'
                     dr["vk_Refno"] = item.GetSelecteds()[0]["Refno"];
                     dr["Refno"] = item.GetSelecteds()[0]["SCIRefno"];
                     dr.EndEdit();
+                }
+            };
+
+            DataGridViewGeneratorTextColumnSettings customDesc_setting = new DataGridViewGeneratorTextColumnSettings();
+            customDesc_setting.CellValidating += (s, e) =>
+            {
+                if (!this.EditMode || this.CurrentDetailData == null)
+                {
+                    return;
+                }
+
+                DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
+
+                if (MyUtility.Check.Empty(e.FormattedValue))
+                {
+                    dr["CDCName"] = string.Empty;
+                    dr["CDCCode"] = string.Empty;
+                    dr.EndEdit();
+                    return;
+                }
+
+                DataRow drSeek;
+                string sqlcmd = $@"
+select CDCCode, CDCName, CustomsType 
+from KHCustomsDescription 
+where Junk = 0 
+and CustomsType = '{this.CurrentDetailData["CustomsType"]}'
+and CDCName = '{e.FormattedValue}'
+";
+
+                if (!MyUtility.Check.Seek(sqlcmd, out drSeek))
+                {
+                    MyUtility.Msg.WarningBox("Data not found.");
+                    dr["CDCName"] = string.Empty;
+                    dr["CDCCode"] = string.Empty;
+                    e.Cancel = true;
+                    dr.EndEdit();
+                    return;
+                }
+
+                dr["CDCCode"] = drSeek["CDCCode"];
+                dr["CustomsType"] = drSeek["CustomsType"];
+                dr["CDCName"] = drSeek["CDCName"];
+                dr.EndEdit();
+
+                P61.KHImportDeclaration_ShareCDCExpense.Clear();
+                this.GetCustomsTypeDescription();
+            };
+
+            customDesc_setting.EditingMouseDown += (s, e) =>
+            {
+                if (this.CurrentDetailData == null || !this.EditMode)
+                {
+                    return;
+                }
+
+                if (e.Button == MouseButtons.Right)
+                {
+                    string sqlcmd = $@"
+select CDCCode, CDCName 
+from KHCustomsDescription 
+where Junk = 0 
+and CustomsType = '{this.CurrentDetailData["CustomsType"]}'";
+                    Win.Tools.SelectItem item = new Win.Tools.SelectItem(sqlcmd, "7,20", this.CurrentDetailData["CustomsType"].ToString(), "CDC Code,Customs Description");
+                    DialogResult result = item.ShowDialog();
+                    if (result == DialogResult.Cancel)
+                    {
+                        return;
+                    }
+
+                    DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
+                    dr["CDCCode"] = item.GetSelecteds()[0]["CDCCode"];
+                    dr["CDCName"] = item.GetSelecteds()[0]["CDCName"];
+                    dr.EndEdit();
+
+                    P61.KHImportDeclaration_ShareCDCExpense.Clear();
+                    this.GetCustomsTypeDescription();
                 }
             };
 
@@ -424,7 +501,7 @@ where vk.Refno = '{dr["Refno"]}'
            .Numeric("WeightKg", header: "G.W.", width: Widths.AnsiChars(9), decimal_places: 2, integer_places: 9, iseditingreadonly: true).Get(out this.col_GW) // Edit on AddRow by hand
            .Text("CustomsType", header: "Customs Type", width: Widths.AnsiChars(10), iseditingreadonly: true)
            .Text("CDCCode", header: "CDC Code", width: Widths.AnsiChars(10), iseditingreadonly: true)
-           .Text("CustomsDescription", header: "Customs Description", width: Widths.AnsiChars(25), iseditingreadonly: true)
+           .Text("CDCName", header: "Customs Description", width: Widths.AnsiChars(25), iseditingreadonly: false, settings: customDesc_setting)
            .Numeric("CDCQty", header: "CDC Qty", width: Widths.AnsiChars(9), decimal_places: 2, integer_places: 9, iseditingreadonly: true)
            .Text("CDCUnit", header: "CDC Unit", width: Widths.AnsiChars(25), iseditingreadonly: true)
            .Numeric("CDCUnitPrice", header: "CDC Unit Price", width: Widths.AnsiChars(9), decimal_places: 2, integer_places: 9, iseditingreadonly: true)
@@ -450,6 +527,12 @@ where vk.Refno = '{dr["Refno"]}'
             this.detailgrid.Columns["Qty"].DefaultCellStyle.BackColor = Color.Pink;
             this.detailgrid.Columns["NetKg"].DefaultCellStyle.BackColor = Color.Pink;
             this.detailgrid.Columns["WeightKg"].DefaultCellStyle.BackColor = Color.Pink;
+            this.detailgrid.Columns["CDCName"].DefaultCellStyle.BackColor = Color.Pink;
+            this.detailgrid.Columns["ActNetKg"].DefaultCellStyle.BackColor = Color.Pink;
+            this.detailgrid.Columns["ActWeightKg"].DefaultCellStyle.BackColor = Color.Pink;
+            this.detailgrid.Columns["ActAmount"].DefaultCellStyle.BackColor = Color.Pink;
+            this.detailgrid.Columns["ActHSCode"].DefaultCellStyle.BackColor = Color.Pink;
+            this.Change_Color();
 
             this.col_Consignee.MaxLength = 8;
             this.col_Vessel.MaxLength = 60;
@@ -457,6 +540,294 @@ where vk.Refno = '{dr["Refno"]}'
 
             // 設定是否可以編輯
             this.detailgrid.RowEnter += this.Detailgrid_RowEnter;
+        }
+
+        private void Change_Color()
+        {
+            this.col_Fty.CellFormatting += (s, e) =>
+            {
+                if (e.RowIndex == -1)
+                {
+                    return;
+                }
+
+                DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
+                if (MyUtility.Check.Empty(dr["ExportID"]))
+                {
+                    e.CellStyle.BackColor = Color.Pink;
+                }
+                else
+                {
+                    e.CellStyle.BackColor = Color.White;
+                    e.CellStyle.ForeColor = Color.Black;
+                }
+            };
+
+            this.col_ShipMode.CellFormatting += (s, e) =>
+            {
+                if (e.RowIndex == -1)
+                {
+                    return;
+                }
+
+                DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
+                if (MyUtility.Check.Empty(dr["ExportID"]))
+                {
+                    e.CellStyle.BackColor = Color.Pink;
+                }
+                else
+                {
+                    e.CellStyle.BackColor = Color.White;
+                    e.CellStyle.ForeColor = Color.Black;
+                }
+            };
+
+            this.col_Vessel.CellFormatting += (s, e) =>
+            {
+                if (e.RowIndex == -1)
+                {
+                    return;
+                }
+
+                DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
+                if (MyUtility.Check.Empty(dr["ExportID"]))
+                {
+                    e.CellStyle.BackColor = Color.Pink;
+                }
+                else
+                {
+                    e.CellStyle.BackColor = Color.White;
+                    e.CellStyle.ForeColor = Color.Black;
+                }
+            };
+
+            this.col_Port.CellFormatting += (s, e) =>
+            {
+                if (e.RowIndex == -1)
+                {
+                    return;
+                }
+
+                DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
+                if (MyUtility.Check.Empty(dr["ExportID"]))
+                {
+                    e.CellStyle.BackColor = Color.Pink;
+                }
+                else
+                {
+                    e.CellStyle.BackColor = Color.White;
+                    e.CellStyle.ForeColor = Color.Black;
+                }
+            };
+
+            this.col_Refno.CellFormatting += (s, e) =>
+            {
+                if (e.RowIndex == -1)
+                {
+                    return;
+                }
+
+                DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
+                if (MyUtility.Check.Empty(dr["ExportID"]))
+                {
+                    e.CellStyle.BackColor = Color.Pink;
+                }
+                else
+                {
+                    e.CellStyle.BackColor = Color.White;
+                    e.CellStyle.ForeColor = Color.Black;
+                }
+            };
+
+            this.col_ETA.CellFormatting += (s, e) =>
+            {
+                if (e.RowIndex == -1)
+                {
+                    return;
+                }
+
+                DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
+                if (MyUtility.Check.Empty(dr["ExportID"]))
+                {
+                    e.CellStyle.BackColor = Color.Pink;
+                }
+                else
+                {
+                    e.CellStyle.BackColor = Color.White;
+                    e.CellStyle.ForeColor = Color.Black;
+                }
+            };
+
+            this.col_PortDate.CellFormatting += (s, e) =>
+            {
+                if (e.RowIndex == -1)
+                {
+                    return;
+                }
+
+                DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
+                if (MyUtility.Check.Empty(dr["ExportID"]))
+                {
+                    e.CellStyle.BackColor = Color.Pink;
+                }
+                else
+                {
+                    e.CellStyle.BackColor = Color.White;
+                    e.CellStyle.ForeColor = Color.Black;
+                }
+            };
+
+            this.col_WHDate.CellFormatting += (s, e) =>
+            {
+                if (e.RowIndex == -1)
+                {
+                    return;
+                }
+
+                DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
+                if (MyUtility.Check.Empty(dr["ExportID"]))
+                {
+                    e.CellStyle.BackColor = Color.Pink;
+                }
+                else
+                {
+                    e.CellStyle.BackColor = Color.White;
+                    e.CellStyle.ForeColor = Color.Black;
+                }
+            };
+
+            this.col_Qty.CellFormatting += (s, e) =>
+            {
+                if (e.RowIndex == -1)
+                {
+                    return;
+                }
+
+                DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
+                if (MyUtility.Check.Empty(dr["ExportID"]))
+                {
+                    e.CellStyle.BackColor = Color.Pink;
+                }
+                else
+                {
+                    e.CellStyle.BackColor = Color.White;
+                    e.CellStyle.ForeColor = Color.Black;
+                }
+            };
+
+            this.col_NW.CellFormatting += (s, e) =>
+            {
+                if (e.RowIndex == -1)
+                {
+                    return;
+                }
+
+                DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
+                if (MyUtility.Check.Empty(dr["ExportID"]))
+                {
+                    e.CellStyle.BackColor = Color.Pink;
+                }
+                else
+                {
+                    e.CellStyle.BackColor = Color.White;
+                    e.CellStyle.ForeColor = Color.Black;
+                }
+            };
+
+            this.col_GW.CellFormatting += (s, e) =>
+            {
+                if (e.RowIndex == -1)
+                {
+                    return;
+                }
+
+                DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
+                if (MyUtility.Check.Empty(dr["ExportID"]))
+                {
+                    e.CellStyle.BackColor = Color.Pink;
+                }
+                else
+                {
+                    e.CellStyle.BackColor = Color.White;
+                    e.CellStyle.ForeColor = Color.Black;
+                }
+            };
+
+            this.col_ActNetKg.CellFormatting += (s, e) =>
+            {
+                if (e.RowIndex == -1)
+                {
+                    return;
+                }
+
+                DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
+                if (MyUtility.Check.Empty(dr["ExportID"]))
+                {
+                    e.CellStyle.BackColor = Color.Pink;
+                }
+                else
+                {
+                    e.CellStyle.BackColor = Color.White;
+                    e.CellStyle.ForeColor = Color.Black;
+                }
+            };
+
+            this.col_ActWeightKg.CellFormatting += (s, e) =>
+            {
+                if (e.RowIndex == -1)
+                {
+                    return;
+                }
+
+                DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
+                if (MyUtility.Check.Empty(dr["ExportID"]))
+                {
+                    e.CellStyle.BackColor = Color.Pink;
+                }
+                else
+                {
+                    e.CellStyle.BackColor = Color.White;
+                    e.CellStyle.ForeColor = Color.Black;
+                }
+            };
+
+            this.col_ActAmount.CellFormatting += (s, e) =>
+            {
+                if (e.RowIndex == -1)
+                {
+                    return;
+                }
+
+                DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
+                if (MyUtility.Check.Empty(dr["ExportID"]))
+                {
+                    e.CellStyle.BackColor = Color.Pink;
+                }
+                else
+                {
+                    e.CellStyle.BackColor = Color.White;
+                    e.CellStyle.ForeColor = Color.Black;
+                }
+            };
+
+            this.col_ActHSCode.CellFormatting += (s, e) =>
+            {
+                if (e.RowIndex == -1)
+                {
+                    return;
+                }
+
+                DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
+                if (MyUtility.Check.Empty(dr["ExportID"]))
+                {
+                    e.CellStyle.BackColor = Color.Pink;
+                }
+                else
+                {
+                    e.CellStyle.BackColor = Color.White;
+                    e.CellStyle.ForeColor = Color.Black;
+                }
+            };
         }
 
         private string GetDetailData()
@@ -541,7 +912,7 @@ select distinct [ExportID] = e.ID
              , [WeightKg] = s.GW
              , [CustomsType] = kd.CustomsType  
              , kd.CDCCode
-             , [CustomsDescription] = kd.CDCName
+             , [CDCName] = kd.CDCName
              , [CDCQty] = iif(kd.IsDeclareByNetKg = 1, s.NW, s.Qty*kdd.Ratio)
              , [CDCUnit] = kd.CDCUnit  
              , [CDCUnitPrice] = kc.CDCUnitPrice  
@@ -581,7 +952,7 @@ select distinct [ExportID] = e.ID
              , [WeightKg] = s.GW
              , [CustomsType] = kd.CustomsType  
              , kd.CDCCode
-             , [CustomsDescription] = kd.CDCName
+             , [CDCName] = kd.CDCName
              , [CDCQty] = iif(kd.IsDeclareByNetKg = 1, s.NW, s.Qty*kdd.Ratio)
              , [CDCUnit] = kd.CDCUnit  
              , [CDCUnitPrice] = kc.CDCUnitPrice  
@@ -621,7 +992,7 @@ select [ExportID] = FE.ID
              , [WeightKg] = s.GW  
              , [CustomsType] = kd.CustomsType  
              , kd.CDCCode
-             , [CustomsDescription] = kd.CDCName  
+             , [CDCName] = kd.CDCName  
              , [CDCQty] = iif(kd.IsDeclareByNetKg = 1, s.NW, s.Qty*kdd.Ratio)
              , [CDCUnit] = kd.CDCUnit  
              , [CDCUnitPrice] = kc.CDCUnitPrice  
@@ -696,7 +1067,7 @@ left  join KHCustomsDescription_Detail kdd on kd.CDCName=kdd.CDCName and kdd.Pur
             foreach (DataRow dr in this.DetailDatas)
             {
                 if (MyUtility.Check.Empty(dr["CustomsType"]) ||
-                    MyUtility.Check.Empty(dr["CustomsDescription"]) ||
+                    MyUtility.Check.Empty(dr["CDCName"]) ||
                     MyUtility.Check.Empty(dr["CDCUnit"]) ||
                     MyUtility.Check.Empty(dr["CDCUnitPrice"]) ||
                     MyUtility.Check.Empty(dr["ActHSCode"]))
@@ -779,7 +1150,7 @@ left  join KHCustomsDescription_Detail kdd on kd.CDCName=kdd.CDCName and kdd.Pur
                 foreach (DataRow dr in dt.Rows)
                 {
                     DataRow newdr = P61.KHImportDeclaration_ShareCDCExpense.NewRow();
-                    newdr["KHCustomsDescriptionCDCName"] = dr["CustomsDescription"];
+                    newdr["KHCustomsDescriptionCDCName"] = dr["CDCName"];
                     newdr["OriTtlNetKg"] = dr["OriTtlNetKg"];
                     newdr["OriTtlWeightKg"] = dr["OriTtlWeightKg"];
                     newdr["OriTtlCDCAmount"] = dr["OriTtlCDCAmount"];
@@ -959,10 +1330,12 @@ where id = '{this.CurrentMaintain["ID"]}'
                 this.col_ActWeightKg.IsEditingReadOnly = false;
                 this.col_ActAmount.IsEditingReadOnly = false;
                 this.col_ActHSCode.IsEditingReadOnly = false;
+
             }
             else
             {
                 this.col_Fty.IsEditingReadOnly = true;
+                this.detailgrid.Columns["FactoryID"].DefaultCellStyle.BackColor = Color.White;
                 this.col_ShipMode.IsEditingReadOnly = true;
                 this.col_Vessel.IsEditingReadOnly = true;
                 this.col_Port.IsEditingReadOnly = true;
@@ -1094,6 +1467,25 @@ where id = '{this.CurrentMaintain["ID"]}'
             }
         }
 
+        private void GetCustomsTypeDescription()
+        {
+            DataTable dt = this.GetSumbyCustomsTypeDescription();
+            foreach (DataRow dr in dt.Rows)
+            {
+                DataRow newdr = P61.KHImportDeclaration_ShareCDCExpense.NewRow();
+                newdr["KHCustomsDescriptionCDCName"] = dr["CDCName"];
+                newdr["OriTtlNetKg"] = dr["OriTtlNetKg"];
+                newdr["OriTtlWeightKg"] = dr["OriTtlWeightKg"];
+                newdr["OriTtlCDCAmount"] = dr["OriTtlCDCAmount"];
+                newdr["ActCDCQty"] = dr["ActCDCQty"];
+                newdr["ActTtlNetKg"] = dr["ActTtlNetKg"];
+                newdr["ActTtlWeightKg"] = dr["ActTtlWeightKg"];
+                newdr["ActTtlAmount"] = dr["ActTtlAmount"];
+                newdr["ActHSCode"] = dr["ActHSCode"];
+                P61.KHImportDeclaration_ShareCDCExpense.Rows.Add(newdr);
+            }
+        }
+
         private DataTable GetbyCustomsTypeDescription()
         {
             var xlist = ((DataTable)this.detailgridbs.DataSource).AsEnumerable()
@@ -1102,7 +1494,7 @@ where id = '{this.CurrentMaintain["ID"]}'
                 {
                     CustomsType = MyUtility.Convert.GetString(s["CustomsType"]),
                     CDCCode = MyUtility.Convert.GetString(s["CDCCode"]),
-                    CustomsDescription = MyUtility.Convert.GetString(s["CustomsDescription"]),
+                    CDCName = MyUtility.Convert.GetString(s["CDCName"]),
                     CDCUnit = MyUtility.Convert.GetString(s["CDCUnit"]),
                     NetKg = MyUtility.Convert.GetDecimal(s["NetKg"]),
                     WeightKg = MyUtility.Convert.GetDecimal(s["WeightKg"]),
@@ -1126,7 +1518,7 @@ where id = '{this.CurrentMaintain["ID"]}'
                 {
                     CustomsType = MyUtility.Convert.GetString(s["CustomsType"]),
                     CDCCode = MyUtility.Convert.GetString(s["CDCCode"]),
-                    CustomsDescription = MyUtility.Convert.GetString(s["CustomsDescription"]),
+                    CDCName = MyUtility.Convert.GetString(s["CDCName"]),
                     CDCUnit = MyUtility.Convert.GetString(s["CDCUnit"]),
                     NetKg = MyUtility.Convert.GetDecimal(s["NetKg"]),
                     WeightKg = MyUtility.Convert.GetDecimal(s["WeightKg"]),
@@ -1141,28 +1533,28 @@ where id = '{this.CurrentMaintain["ID"]}'
                 .Where(w => this.customsTypelist.Contains(w.CustomsType))
                 .ToList();
             var groupNoActHSCode = xlist
-                .GroupBy(g => new { g.CustomsType, g.CDCCode, g.CustomsDescription, g.CDCUnit, g.ActHSCode })
-                .Select(s => new { s.Key.CustomsType, s.Key.CDCCode, s.Key.CustomsDescription, s.Key.CDCUnit, s.Key.ActHSCode, })
-                .GroupBy(g => new { g.CustomsType, g.CDCCode, g.CustomsDescription, g.CDCUnit })
+                .GroupBy(g => new { g.CustomsType, g.CDCCode, g.CDCName, g.CDCUnit, g.ActHSCode })
+                .Select(s => new { s.Key.CustomsType, s.Key.CDCCode, s.Key.CDCName, s.Key.CDCUnit, s.Key.ActHSCode, })
+                .GroupBy(g => new { g.CustomsType, g.CDCCode, g.CDCName, g.CDCUnit })
                 .Select(s => new
                 {
                     s.Key.CustomsType,
                     s.Key.CDCCode,
-                    s.Key.CustomsDescription,
+                    s.Key.CDCName,
                     s.Key.CDCUnit,
                     ActHSCode = s.Count() == 1 ? s.Max(su => su.ActHSCode) : string.Empty,
                 }).ToList();
 
             var sumlist = xlist
-                .GroupBy(g => new { g.CustomsType, g.CDCCode, g.CustomsDescription, g.CDCUnit })
+                .GroupBy(g => new { g.CustomsType, g.CDCCode, g.CDCName, g.CDCUnit })
                 .Select(s => new
                 {
                     s.Key.CustomsType,
                     s.Key.CDCCode,
-                    s.Key.CustomsDescription,
+                    s.Key.CDCName,
                     s.Key.CDCUnit,
                     ct = s.Count(),
-                    ActHSCode = groupNoActHSCode.Where(w => w.CustomsType == s.Key.CustomsType && w.CDCCode == s.Key.CDCCode && w.CustomsDescription == s.Key.CustomsDescription && w.CDCUnit == s.Key.CDCUnit).Select(s1 => s1.ActHSCode).FirstOrDefault(),
+                    ActHSCode = groupNoActHSCode.Where(w => w.CustomsType == s.Key.CustomsType && w.CDCCode == s.Key.CDCCode && w.CDCName == s.Key.CDCName && w.CDCUnit == s.Key.CDCUnit).Select(s1 => s1.ActHSCode).FirstOrDefault(),
                     OriTtlNetKg = s.Sum(su => su.NetKg),
                     OriTtlWeightKg = s.Sum(su => su.WeightKg),
                     OriTtlCDCAmount = s.Sum(su => su.CDCAmount),
@@ -1171,7 +1563,7 @@ where id = '{this.CurrentMaintain["ID"]}'
                     ActTtlAmount = s.Sum(su => su.ActAmount),
                     TtlQty = s.Sum(su => su.Qty),
                     TtlCDCQty = s.Sum(su => su.CDCQty),
-                    ActCDCQty = KHImportDeclaration_ShareCDCExpense.Select($"KHCustomsDescriptionCDCName = '{s.Key.CustomsDescription}'").Length == 0 || MyUtility.Convert.GetDecimal(KHImportDeclaration_ShareCDCExpense.Select($"KHCustomsDescriptionCDCName = '{s.Key.CustomsDescription}'")[0]["ActCDCQty"]) == 0 ? s.Sum(su => su.CDCQty) : MyUtility.Convert.GetDecimal(KHImportDeclaration_ShareCDCExpense.Select($"KHCustomsDescriptionCDCName = '{s.Key.CustomsDescription}'")[0]["ActCDCQty"]),
+                    ActCDCQty = KHImportDeclaration_ShareCDCExpense.Select($"KHCustomsDescriptionCDCName = '{s.Key.CDCName}'").Length == 0 || MyUtility.Convert.GetDecimal(KHImportDeclaration_ShareCDCExpense.Select($"KHCustomsDescriptionCDCName = '{s.Key.CDCName}'")[0]["ActCDCQty"]) == 0 ? s.Sum(su => su.CDCQty) : MyUtility.Convert.GetDecimal(KHImportDeclaration_ShareCDCExpense.Select($"KHCustomsDescriptionCDCName = '{s.Key.CDCName}'")[0]["ActCDCQty"]),
                 }).ToList();
             return PublicPrg.ListToDataTable.ToDataTable(sumlist);
         }
@@ -1180,14 +1572,14 @@ where id = '{this.CurrentMaintain["ID"]}'
         {
             DataTable dt = this.GetbyCustomsTypeDescription();
             DataTable sumDt = this.GetSumbyCustomsTypeDescription();
-            string filter = "CustomsType = '{0}' and CustomsDescription = '{1}'";
+            string filter = "CustomsType = '{0}' and CDCName = '{1}'";
             var ratelist = ((DataTable)this.detailgridbs.DataSource).AsEnumerable()
                 .Where(w => w.RowState != DataRowState.Deleted)
                 .Select(s => new
                 {
                     rn = MyUtility.Convert.GetLong(s["rn"]),
                     CustomsType = MyUtility.Convert.GetString(s["CustomsType"]),
-                    CustomsDescription = MyUtility.Convert.GetString(s["CustomsDescription"]),
+                    CDCName = MyUtility.Convert.GetString(s["CDCName"]),
                     NetKg = MyUtility.Convert.GetDecimal(s["NetKg"]),
                     WeightKg = MyUtility.Convert.GetDecimal(s["WeightKg"]),
                     CDCAmount = MyUtility.Convert.GetDecimal(s["CDCAmount"]),
@@ -1198,21 +1590,21 @@ where id = '{this.CurrentMaintain["ID"]}'
                 {
                     s.rn,
                     s.CustomsType,
-                    s.CustomsDescription,
-                    RateNetKg = dt.Select(string.Format(filter, s.CustomsType, s.CustomsDescription) + " and NetKg = 0").Any() ?
-                    (MyUtility.Convert.GetDecimal(sumDt.Select(string.Format(filter, s.CustomsType, s.CustomsDescription))[0]["TtlQty"]) == 0 ? 0 : s.Qty / MyUtility.Convert.GetDecimal(sumDt.Select(string.Format(filter, s.CustomsType, s.CustomsDescription))[0]["TtlQty"]))
+                    s.CDCName,
+                    RateNetKg = dt.Select(string.Format(filter, s.CustomsType, s.CDCName) + " and NetKg = 0").Any() ?
+                    (MyUtility.Convert.GetDecimal(sumDt.Select(string.Format(filter, s.CustomsType, s.CDCName))[0]["TtlQty"]) == 0 ? 0 : s.Qty / MyUtility.Convert.GetDecimal(sumDt.Select(string.Format(filter, s.CustomsType, s.CDCName))[0]["TtlQty"]))
                     :
-                    (MyUtility.Convert.GetDecimal(sumDt.Select(string.Format(filter, s.CustomsType, s.CustomsDescription))[0]["OriTtlNetKg"]) == 0 ? 0 : s.NetKg / MyUtility.Convert.GetDecimal(sumDt.Select(string.Format(filter, s.CustomsType, s.CustomsDescription))[0]["OriTtlNetKg"])),
+                    (MyUtility.Convert.GetDecimal(sumDt.Select(string.Format(filter, s.CustomsType, s.CDCName))[0]["OriTtlNetKg"]) == 0 ? 0 : s.NetKg / MyUtility.Convert.GetDecimal(sumDt.Select(string.Format(filter, s.CustomsType, s.CDCName))[0]["OriTtlNetKg"])),
 
-                    RateWeightKg = dt.Select(string.Format(filter, s.CustomsType, s.CustomsDescription) + " and WeightKg = 0").Any() ?
-                    (MyUtility.Convert.GetDecimal(sumDt.Select(string.Format(filter, s.CustomsType, s.CustomsDescription))[0]["TtlQty"]) == 0 ? 0 : s.Qty / MyUtility.Convert.GetDecimal(sumDt.Select(string.Format(filter, s.CustomsType, s.CustomsDescription))[0]["TtlQty"]))
+                    RateWeightKg = dt.Select(string.Format(filter, s.CustomsType, s.CDCName) + " and WeightKg = 0").Any() ?
+                    (MyUtility.Convert.GetDecimal(sumDt.Select(string.Format(filter, s.CustomsType, s.CDCName))[0]["TtlQty"]) == 0 ? 0 : s.Qty / MyUtility.Convert.GetDecimal(sumDt.Select(string.Format(filter, s.CustomsType, s.CDCName))[0]["TtlQty"]))
                     :
-                    (MyUtility.Convert.GetDecimal(sumDt.Select(string.Format(filter, s.CustomsType, s.CustomsDescription))[0]["OriTtlWeightKg"]) == 0 ? 0 : s.WeightKg / MyUtility.Convert.GetDecimal(sumDt.Select(string.Format(filter, s.CustomsType, s.CustomsDescription))[0]["OriTtlWeightKg"])),
+                    (MyUtility.Convert.GetDecimal(sumDt.Select(string.Format(filter, s.CustomsType, s.CDCName))[0]["OriTtlWeightKg"]) == 0 ? 0 : s.WeightKg / MyUtility.Convert.GetDecimal(sumDt.Select(string.Format(filter, s.CustomsType, s.CDCName))[0]["OriTtlWeightKg"])),
 
-                    RateCDCAmount = dt.Select(string.Format(filter, s.CustomsType, s.CustomsDescription) + " and CDCAmount = 0").Any() ?
-                    (MyUtility.Convert.GetDecimal(sumDt.Select(string.Format(filter, s.CustomsType, s.CustomsDescription))[0]["TtlQty"]) == 0 ? 0 : s.Qty / MyUtility.Convert.GetDecimal(sumDt.Select(string.Format(filter, s.CustomsType, s.CustomsDescription))[0]["TtlQty"]))
+                    RateCDCAmount = dt.Select(string.Format(filter, s.CustomsType, s.CDCName) + " and CDCAmount = 0").Any() ?
+                    (MyUtility.Convert.GetDecimal(sumDt.Select(string.Format(filter, s.CustomsType, s.CDCName))[0]["TtlQty"]) == 0 ? 0 : s.Qty / MyUtility.Convert.GetDecimal(sumDt.Select(string.Format(filter, s.CustomsType, s.CDCName))[0]["TtlQty"]))
                     :
-                    (MyUtility.Convert.GetDecimal(sumDt.Select(string.Format(filter, s.CustomsType, s.CustomsDescription))[0]["OriTtlCDCAmount"]) == 0 ? 0 : s.CDCAmount / MyUtility.Convert.GetDecimal(sumDt.Select(string.Format(filter, s.CustomsType, s.CustomsDescription))[0]["OriTtlCDCAmount"])),
+                    (MyUtility.Convert.GetDecimal(sumDt.Select(string.Format(filter, s.CustomsType, s.CDCName))[0]["OriTtlCDCAmount"]) == 0 ? 0 : s.CDCAmount / MyUtility.Convert.GetDecimal(sumDt.Select(string.Format(filter, s.CustomsType, s.CDCName))[0]["OriTtlCDCAmount"])),
                 }).ToList();
             return PublicPrg.ListToDataTable.ToDataTable(ratelist);
         }

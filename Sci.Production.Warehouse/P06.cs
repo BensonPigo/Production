@@ -142,6 +142,19 @@ namespace Sci.Production.Warehouse
                 return;
             }
 
+            string ftyStatus = MyUtility.GetValue.Lookup($"select FtyStatus from TransferExport where ID = '{this.CurrentMaintain["ID"]}'");
+            if (ftyStatus == "Send")
+            {
+                MyUtility.Msg.WarningBox($"This TK#<{this.CurrentMaintain["ID"]}> already Send!!");
+                return;
+            }
+
+            if (ftyStatus == "Confirmed")
+            {
+                MyUtility.Msg.WarningBox($"This TK#<{this.CurrentMaintain["ID"]}> already Confirmed!!");
+                return;
+            }
+
             string sqlCheckCartonNoMissed = $@"
 select 1 
 from TransferExport_Detail_Carton with (nolock)
@@ -273,6 +286,18 @@ insert into TransferExport_StatusHistory(ID, OldStatus, NewStatus, OldFtyStatus,
         /// <inheritdoc/>
         protected override void ClickRecall()
         {
+            string ftyStatus = MyUtility.GetValue.Lookup($"select FtyStatus from TransferExport where ID = '{this.CurrentMaintain["ID"]}'");
+            if (ftyStatus == "Confirmed")
+            {
+                MyUtility.Msg.WarningBox($"This TK#<{this.CurrentMaintain["ID"]}> already Confirmed, cannot Recall!!");
+                return;
+            }
+
+            if (ftyStatus == "New")
+            {
+                MyUtility.Msg.WarningBox($"This TK#<{this.CurrentMaintain["ID"]}> already Recall!!");
+                return;
+            }
 
             if (!this.IsTransferOut)
             {

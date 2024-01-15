@@ -163,6 +163,7 @@ BEGIN
 			[Dry Room received date] DATETIME NULL ,
 			[Dry room trans date] DATETIME NULL ,
 			[Last ctn trans date] DATETIME NULL ,
+			[Last Scan And Pack Date] DATETIME NULL ,
 			[Last ctn recvd date] DATETIME NULL ,
 			[OrganicCotton] VARCHAR(1) NULL ,
 			[Direct Ship] VARCHAR(1) NULL ,
@@ -215,7 +216,7 @@ BEGIN
 		, [DoxType], [Packing CTN], [TTLCTN], [Pack Error CTN], [FtyCTN], [cLog CTN], [CFA CTN], [cLog Rec. Date], [Final Insp. Date]
 		, [Insp. Result], [CFA Name], [Sewing Line#], [ShipMode], [SI#], [ColorWay], [Special Mark], [Fty Remark], [Sample Reason], [IS MixMarker]
 		, [Cutting SP], [Rainwear test], [TMS], [MD room scan date], [Dry Room received date], [Dry room trans date], [Last ctn trans date]
-		, [Last ctn recvd date], [OrganicCotton], [Direct Ship], [StyleCarryover], [SCHDL/ETA(SP)], [SewingMtlETA(SPexclRepl)]
+		, [Last Scan And Pack Date], [Last ctn recvd date], [OrganicCotton], [Direct Ship], [StyleCarryover], [SCHDL/ETA(SP)], [SewingMtlETA(SPexclRepl)]
 		, [ActualMtlETA(exclRepl)], [HalfKey], [DevSample], [POID], [KeepPanels], [BuyBackReason], [SewQtybyRate], [Unit], [SubconInType]
 		, [Article], [ProduceRgPMS], [Buyerhalfkey], [Country])
 	select ISNULL(t.[M], '')
@@ -370,6 +371,7 @@ BEGIN
 		, [Dry Room received date]
 		, [Dry room trans date]
 		, [Last ctn trans date]
+		, [Last Scan And Pack Date]
 		, [Last ctn recvd date]
 		, ISNULL(t.[OrganicCotton], '')
 		, ISNULL(t.[Direct Ship], '')
@@ -545,6 +547,7 @@ BEGIN
 			, p.[Dry Room received date] = t.[Dry Room received date]
 			, p.[Dry room trans date] = t.[Dry room trans date]
 			, p.[Last ctn trans date] = t.[Last ctn trans date]
+			, p.[Last Scan And Pack Date] = t.[Last Scan And Pack Date]
 			, p.[Last ctn recvd date] = t.[Last ctn recvd date]
 			, p.[OrganicCotton] = ISNULL(t.[OrganicCotton], '')
 			, p.[Direct Ship] = ISNULL(t.[Direct Ship], '')
