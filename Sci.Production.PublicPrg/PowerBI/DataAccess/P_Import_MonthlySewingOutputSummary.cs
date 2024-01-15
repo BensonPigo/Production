@@ -104,6 +104,8 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                         TransferManpowerPAMS = int.Parse(Math.Round(pams.Sum(y => y.TransManpowerIn) - pams.Sum(y => y.TransManpowerOut), 0).ToString()),
                         TransferManhoursPAMS = Math.Round(pams.Sum(y => y.TransManhoursIn) - pams.Sum(y => y.TransManhoursOut), 4),
                         TtlRevenue = Math.Round(
+                            decimal.Parse(dr["TtlCPUInclSubconIn"].ToString()) +
+                            decimal.Parse(dr["SubconOutTtlCPU"].ToString()) +
                             subprocessData.AsEnumerable()
                                     .Where(s => s.Field<string>("FactoryID") == dr["Fty"].ToString()
                                             && s.Field<DateTime>("OutputDate") == DateTime.Parse(dr["LastDatePerMonth"].ToString()))
