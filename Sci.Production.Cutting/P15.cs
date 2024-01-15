@@ -948,6 +948,7 @@ Select
     , IsCombineSubProcess = cast({(this.isCombineSubProcess ? "1" : "0")} as bit)
     , isNoneShellNoCreateAllParts = cast(iif(FabricKind.FabricKindID <> '1' and {(this.isNoneShellNoCreateAllParts ? "1" : "0")} = 1, 1, 0) as bit)
     , [IsShowRFIDScan] = dbo.IsShowRFIDScan(o.poid, w.Fabriccombo)
+    , w.Tone
 from  workorder w WITH (NOLOCK) 
 inner join orders o WITH (NOLOCK) on o.ID = w.id and o.cuttingsp = w.id
 outer apply(
