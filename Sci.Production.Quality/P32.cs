@@ -90,7 +90,7 @@ namespace Sci.Production.Quality
 
             if (this._sourceHeader != null)
             {
-                this.DoNew();
+                //this.DoNew();
             }
         }
 
@@ -1161,6 +1161,9 @@ DELETE FROM CFAInspectionRecord_OrderSEQ WHERE ID = '{this.CurrentMaintain["ID"]
         protected override void EnsureToolbarExt()
         {
             base.EnsureToolbarExt();
+            this.toolbar.cmdConfirm.Enabled = false;
+            this.toolbar.cmdUnconfirm.Enabled = false;
+            this.toolbar.cmdAttach.Enabled = false;
             if (this._Type == "1")
             {
                 if (this.tabs.SelectedIndex != 0)
@@ -1171,29 +1174,29 @@ DELETE FROM CFAInspectionRecord_OrderSEQ WHERE ID = '{this.CurrentMaintain["ID"]
                     bool canEdit = Prgs.GetAuthority(Sci.Env.User.UserID, "P32. CFA Inspection Record ", "CanEdit");
                     bool canDelete = Prgs.GetAuthority(Sci.Env.User.UserID, "P32. CFA Inspection Record ", "CanDelete");
 
-                    this.toolbar.cmdNew.Enabled = !this.EditMode && canNew;
-                    this.toolbar.cmdEdit.Enabled = !this.EditMode && canEdit;
-                    this.toolbar.cmdDelete.Enabled = !this.EditMode && canDelete;
+                    //this.toolbar.cmdNew.Enabled = !this.EditMode && canNew;
+                    //this.toolbar.cmdEdit.Enabled = !this.EditMode && canEdit;
+                    //this.toolbar.cmdDelete.Enabled = !this.EditMode && canDelete;
 
-                    this.toolbar.cmdConfirm.Enabled = !this.EditMode && this.CurrentMaintain != null && MyUtility.Convert.GetString(this.CurrentMaintain["Status"]) == "New" && canConfrim;
-                    this.toolbar.cmdUnconfirm.Enabled = !this.EditMode && this.CurrentMaintain != null && MyUtility.Convert.GetString(this.CurrentMaintain["Status"]) == "Confirmed" && canUnConfrim;
+                    //this.toolbar.cmdConfirm.Enabled = !this.EditMode && this.CurrentMaintain != null && MyUtility.Convert.GetString(this.CurrentMaintain["Status"]) == "New" && canConfrim;
+                    //this.toolbar.cmdUnconfirm.Enabled = !this.EditMode && this.CurrentMaintain != null && MyUtility.Convert.GetString(this.CurrentMaintain["Status"]) == "Confirmed" && canUnConfrim;
 
-                    this.toolbar.cmdConfirm.Visible = true;
-                    this.toolbar.cmdUnconfirm.Visible = true;
+                    //this.toolbar.cmdConfirm.Visible = true;
+                    //this.toolbar.cmdUnconfirm.Visible = true;
                 }
                 else
                 {
-                    this.toolbar.cmdConfirm.Enabled = false;
-                    this.toolbar.cmdSave.Enabled = false;
+                    //this.toolbar.cmdConfirm.Enabled = false;
+                    //this.toolbar.cmdSave.Enabled = false;
                 }
             }
             else
             {
-                this.toolbar.cmdConfirm.Enabled = false;
-                this.toolbar.cmdUnconfirm.Enabled = false;
+                //this.toolbar.cmdConfirm.Enabled = false;
+                //this.toolbar.cmdUnconfirm.Enabled = false;
 
-                this.toolbar.cmdConfirm.Visible = true;
-                this.toolbar.cmdUnconfirm.Visible = true;
+                //this.toolbar.cmdConfirm.Visible = true;
+                //this.toolbar.cmdUnconfirm.Visible = true;
             }
 
             if (this.CurrentMaintain == null)
@@ -1204,15 +1207,15 @@ DELETE FROM CFAInspectionRecord_OrderSEQ WHERE ID = '{this.CurrentMaintain["ID"]
             // IsImportFromMES = true 不可編輯
             if (!MyUtility.Check.Empty(this.CurrentMaintain["IsImportFromMES"]))
             {
-                this.toolbar.cmdUnconfirm.Enabled = false;
-                this.toolbar.cmdEdit.Enabled = false;
-                this.labImportFromMES.Visible = true;
+                //this.toolbar.cmdUnconfirm.Enabled = false;
+                //this.toolbar.cmdEdit.Enabled = false;
+                //this.labImportFromMES.Visible = true;
             }
             else
             {
-                this.toolbar.cmdUnconfirm.Enabled = true;
-                this.toolbar.cmdEdit.Enabled = true;
-                this.labImportFromMES.Visible = false;
+                //this.toolbar.cmdUnconfirm.Enabled = true;
+                //this.toolbar.cmdEdit.Enabled = true;
+                //this.labImportFromMES.Visible = false;
             }
         }
 
