@@ -363,8 +363,18 @@ BEGIN
 					BEGIN
 						set @AssignSewer = iif(@UnAssignSewer < @SewerLimitHigh - @StationSewer, @UnAssignSewer, @SewerLimitHigh - @StationSewer) 
 
-						insert into #tmpReaultBase(StationNo, TimeStudyDetailUkey, DivSewer, OriSewer, GroupSeq, TotalSewer)
-						values(@StationNoForFix, @TimeStudyDetailUkey, @AssignSewer, @SewerCreateStation, @GroupSeqCreateStation, @TotalSewerForCreate)
+						if exists (select 1 from #tmpReaultBase where StationNo = @StationNoForFix and TotalSewer = @TotalSewerForCreate and TimeStudyDetailUkey = @TimeStudyDetailUkey)
+						BEGIN
+							update #tmpReaultBase 
+							set DivSewer = @AssignSewer + DivSewer
+							where StationNo = @StationNoForFix and TotalSewer = @TotalSewerForCreate and TimeStudyDetailUkey = @TimeStudyDetailUkey
+							
+						END
+						else
+						begin
+							insert into #tmpReaultBase(StationNo, TimeStudyDetailUkey, DivSewer, OriSewer, GroupSeq, TotalSewer)
+							values(@StationNoForFix, @TimeStudyDetailUkey, @AssignSewer, @SewerCreateStation, @GroupSeqCreateStation, @TotalSewerForCreate)
+						end
 
 						set @UnAssignSewer = @UnAssignSewer - @AssignSewer
 					END
@@ -447,6 +457,92 @@ left join #tmpLocation tl on td.Seq >= tl.Seq and (td.Seq < tl.NextSeq or tl.Nex
 where	td.ID = @TimeStudyID and
 		td.OperationID not like '-%'
 
+-- 相同Ukey下取出加總不等於100%的資料
+DECLARE Create_SewerDiffPercentage_cursor CURSOR FOR 
+	select * 
+	from (
+		select timestudyDetailUkey,totalPercent = sum(sewerDiffPercentage) 
+		from #tmpAutomatedLineMapping_Detail
+		where timestudyDetailUkey !=0
+		group by timestudyDetailUkey
+	) a
+	where totalPercent != 1 and totalPercent !=0
+
+
+DECLARE @UnAssignPercent decimal(5,2)
+DECLARE @CheckTimestudyDetailUkey bigint
+DECLARE @totalPercent numeric(5, 2)
+Declare @CheckNo varchar(2) = 0
+Declare @CheckSeq int = 0
+DECLARE @ChecktotalPercent decimal(5,2)
+
+OPEN Create_SewerDiffPercentage_cursor  
+FETCH NEXT FROM Create_SewerDiffPercentage_cursor INTO @CheckTimestudyDetailUkey,@totalPercent
+WHILE @@FETCH_STATUS = 0 
+BEGIN
+
+	set @ChecktotalPercent = @totalPercent
+	-- 分配到相同的Ukey底下
+	DECLARE Create_SewerDiffPercentage_cursor2 CURSOR FOR 
+	select no,seq
+	from #tmpAutomatedLineMapping_Detail
+	where [TimeStudyDetailUkey] = @CheckTimestudyDetailUkey
+
+	OPEN Create_SewerDiffPercentage_cursor2  
+	FETCH NEXT FROM Create_SewerDiffPercentage_cursor2 INTO @CheckNo,@CheckSeq
+	WHILE @@FETCH_STATUS = 0 
+	BEGIN		
+		
+		set @UnAssignPercent = 0
+		if @totalPercent > 1
+		begin 
+			-- 扣除100% 多出來幾%
+			set @UnAssignPercent = @totalPercent - 1.00
+			-- 差的%數每0.01逐筆扣 or 補到不同的StationNo & Seq
+			while @UnAssignPercent > 0 and @ChecktotalPercent !=0
+			begin
+				update #tmpAutomatedLineMapping_Detail
+				set [SewerDiffPercentage] = [SewerDiffPercentage] - 0.01
+				,[SewerDiffPercentageDesc] = [SewerDiffPercentageDesc] - 1
+				where [TimeStudyDetailUkey] = @CheckTimestudyDetailUkey
+				and  [No] = @CheckNo and [Seq] = @CheckSeq
+
+				set @UnAssignPercent = @UnAssignPercent - 0.01
+				set @ChecktotalPercent = @ChecktotalPercent - 0.01
+			end
+		end
+		if @ChecktotalPercent < 1 and @ChecktotalPercent != 1
+		begin
+			-- 少100%幾%
+			set @UnAssignPercent = 1.00 - @totalPercent
+			-- 差的%數每0.01逐筆扣 or 補到不同的StationNo & Seq
+			if @UnAssignPercent > 0 and @ChecktotalPercent !=0
+			begin
+				update #tmpAutomatedLineMapping_Detail
+				set [SewerDiffPercentage] = [SewerDiffPercentage] + 0.01
+				,[SewerDiffPercentageDesc] = [SewerDiffPercentageDesc] + 1
+				where [TimeStudyDetailUkey] = @CheckTimestudyDetailUkey
+				and  [No] = @CheckNo and [Seq] = @CheckSeq
+
+				set @UnAssignPercent = @UnAssignPercent - 0.01
+				set @ChecktotalPercent = @ChecktotalPercent + 0.01
+			end
+		end
+
+		if @ChecktotalPercent = 1
+		begin
+			break;
+		end
+		
+		FETCH NEXT FROM Create_SewerDiffPercentage_cursor2 INTO @CheckNo,@CheckSeq
+	end
+	CLOSE Create_SewerDiffPercentage_cursor2
+	DEALLOCATE Create_SewerDiffPercentage_cursor2
+
+	FETCH NEXT FROM Create_SewerDiffPercentage_cursor INTO @CheckTimestudyDetailUkey,@totalPercent
+END
+CLOSE Create_SewerDiffPercentage_cursor
+DEALLOCATE Create_SewerDiffPercentage_cursor
 
 --取得**Pressing與**Packing資料
 Declare @PressingProTMS numeric(7, 2)
@@ -698,4 +794,3 @@ order by [SewerManpower], No, Seq
 drop table #tmpTotalSewerRange, #tmpTimeStudy_Detail, #tmpGroupSewer, #tmpReaultBase, #tmpLocation, #tmpAutomatedLineMapping_Detail, #detailSummary, #tmpCheckLimit
 
 end
-
