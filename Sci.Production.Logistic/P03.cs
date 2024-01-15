@@ -823,66 +823,65 @@ and DisposeFromClog = 0";
                 return;
             }
 
-            string sql = $@"
-declare @MDivisionID as varchar(8) = '{Env.User.Keyword}'
-	, @Userid As nvarchar(10) = '{Env.User.UserID}'
-
+            IList<string> cmds = new List<string>();
+            foreach (DataRow dr in selectedData)
+            {
+                cmds.Add(
+                    string.Format(
+                        @"
 insert into ClogReturn(ReturnDate,MDivisionID,PackingListID,OrderID,CTNStartNo, AddDate,AddName,SCICtnNo,ClogReasonID,ClogReasonRemark)
-select GETDATE() ReturnDate
-	,@MDivisionID MDivisionID
-	,PackingListID PackingListID
-	,OrderID OrderID
-	,CTNStartNo CTNStartNo
-	,GETDATE() AddDate
-	,@Userid AddName
-	,SCICtnNo SCICtnNo
-    ,isnull(ClogReasonID,'') ClogReasonID
-    ,isnull(ClogReasonRemark,'') ClogReasonRemark
-from #tmp ;
-
+values (GETDATE(), '{0}', '{1}', '{2}', '{3}', GETDATE(), '{4}', '{5}', isnull('{6}',''), isnull('{7}',''));
 
 update pd 
 set TransferDate = null
-, ReceiveDate = null
-, ClogLocationId = ''
-, ReturnDate = GETDATE()
-, ClogReceiveCFADate =null
-, ScanQty = 0 
-, ScanEditDate = null
-, ScanName = ''
-, Lacking = 0
-, ActCTNWeight = 0
-, DRYReceiveDate  = null
-, DRYTransferDate = null
+    , ReceiveDate = null
+    , ClogLocationId = ''
+    , ReturnDate = GETDATE()
+    , ClogReceiveCFADate =null
+    , ScanQty = 0 
+    , ScanEditDate = null
+    , ScanName = ''
+    , Lacking = 0
+    , ActCTNWeight = 0
+    , DRYReceiveDate  = null
+    , DRYTransferDate = null
 from PackingList_Detail pd
-inner join #tmp t on pd.ID = t.PackingListID and pd.CTNStartNo = t.CTNStartNo 
-where pd.DisposeFromClog= 0 ;
-
+where pd.ID = '{1}'
+and pd.CTNStartNo = '{3}'
+and pd.DisposeFromClog= 0 ;
 
 INSERT INTO [PackingScan_History]([MDivisionID],[PackingListID],[OrderID],[CTNStartNo],[SCICtnNo]
 	,[DeleteFrom],[ScanQty],[ScanEditDate],[ScanName],[AddName],[AddDate],[LackingQty])
-select @MDivisionID [MDivisionID]
-    ,t.PackingListID [PackingListID]
-    ,t.OrderID [OrderID]
-    ,t.CTNStartNo [CTNStartNo]
-    ,t.SCICtnNo [SCICtnNo]
+select '{0}' [MDivisionID]
+    ,'{1}' [PackingListID]
+    ,'{2}' [OrderID]
+    ,'{3}' [CTNStartNo]
+    ,'{5}' [SCICtnNo]
     ,'Clog P03' [DeleteFrom]
-    ,t.ScanQty [ScanQty]
-    ,t.ScanEditDate [ScanEditDate]
-    ,t.ScanName [ScanName]
-    ,@Userid [AddName]
+    ,{8} [ScanQty]
+    ,'{9}' [ScanEditDate]
+    ,'{10}' [ScanName]
+    ,'{4}' [AddName]
     ,GETDATE() [AddDate]
     ,[LackingQty] = ( ISNULL( (
                                 SELECT SUM(pd.ShipQty)
                                 FROM PackingList_Detail pd
-                                WHERE  pd.ID=t.PackingListID AND pd.CTNStartNo=t.CTNStartNo) 
+                                WHERE  pd.ID = '{1}' AND pd.CTNStartNo = '{3}') 
                             ,0) 
-                       - ScanQty
-                    )
-from #tmp t ;
-
- ----LackingQty計算規則詳見：ISP20191801
-";
+                    );
+",
+                        Env.User.Keyword,
+                        MyUtility.Convert.GetString(dr["PackingListID"]),
+                        MyUtility.Convert.GetString(dr["OrderID"]),
+                        MyUtility.Convert.GetString(dr["CTNStartNo"]),
+                        Env.User.UserID,
+                        MyUtility.Convert.GetString(dr["SCICtnNo"]),
+                        MyUtility.Convert.GetString(dr["ClogReasonID"]),
+                        MyUtility.Convert.GetString(dr["ClogReasonRemark"]),
+                        MyUtility.Convert.GetInt(dr["ScanQty"]),
+                        MyUtility.Convert.GetDate(dr["ScanEditDate"]),
+                        MyUtility.Convert.GetString(dr["ScanName"])));
+            }
 
             // Update Orders的資料
             DataTable selectOrdersData = null;
@@ -906,8 +905,7 @@ from #tmp t ;
             {
                 try
                 {
-                    // 主要Insert進TransferToClog的資料
-                    result1 = MyUtility.Tool.ProcessWithDatatable(selectedData.CopyToDataTable(), "PackingListID,OrderID,CTNStartNo,SCICtnNo,ScanQty,ScanEditDate,ScanName,ClogReasonID,ClogReasonRemark", sql, out resulttb, "#tmp");
+                    result1 = DBProxy.Current.Executes(null, cmds);
 
                     if (result1 == false)
                     {
