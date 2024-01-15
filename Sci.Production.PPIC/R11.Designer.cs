@@ -41,6 +41,7 @@
             this.txtMdivision = new Sci.Production.Class.TxtMdivision();
             this.txtfactory = new Sci.Production.Class.Txtfactory();
             this.chkIDD = new Sci.Win.UI.CheckBox();
+            this.chkLastScanTOReadDate = new Sci.Win.UI.CheckBox();
             this.SuspendLayout();
             // 
             // print
@@ -170,6 +171,7 @@
             this.txtbrand.BackColor = System.Drawing.Color.White;
             this.txtbrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtbrand.Location = new System.Drawing.Point(332, 59);
+            this.txtbrand.MyDocumentdName = null;
             this.txtbrand.Name = "txtbrand";
             this.txtbrand.Size = new System.Drawing.Size(66, 23);
             this.txtbrand.TabIndex = 103;
@@ -189,6 +191,7 @@
             this.txtfactory.BoolFtyGroupList = true;
             this.txtfactory.FilteMDivision = false;
             this.txtfactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtfactory.IsMultiselect = false;
             this.txtfactory.IsProduceFty = false;
             this.txtfactory.IssupportJunk = false;
             this.txtfactory.Location = new System.Drawing.Point(202, 59);
@@ -208,9 +211,21 @@
             this.chkIDD.Text = "via IDD";
             this.chkIDD.UseVisualStyleBackColor = true;
             // 
+            // chkLastScanTOReadDate
+            // 
+            this.chkLastScanTOReadDate.AutoSize = true;
+            this.chkLastScanTOReadDate.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkLastScanTOReadDate.Location = new System.Drawing.Point(188, 150);
+            this.chkLastScanTOReadDate.Name = "chkLastScanTOReadDate";
+            this.chkLastScanTOReadDate.Size = new System.Drawing.Size(314, 21);
+            this.chkLastScanTOReadDate.TabIndex = 163;
+            this.chkLastScanTOReadDate.Text = "Use Last Scan and Pack Date as Ready Date";
+            this.chkLastScanTOReadDate.UseVisualStyleBackColor = true;
+            // 
             // R11
             // 
             this.ClientSize = new System.Drawing.Size(542, 196);
+            this.Controls.Add(this.chkLastScanTOReadDate);
             this.Controls.Add(this.chkIDD);
             this.Controls.Add(this.chkIncludeCancelOrder);
             this.Controls.Add(this.chkHoliday);
@@ -246,6 +261,7 @@
             this.Controls.SetChildIndex(this.close, 0);
             this.Controls.SetChildIndex(this.chkIncludeCancelOrder, 0);
             this.Controls.SetChildIndex(this.chkIDD, 0);
+            this.Controls.SetChildIndex(this.chkLastScanTOReadDate, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -266,5 +282,6 @@
         private Win.UI.CheckBox chkHoliday;
         private Win.UI.CheckBox chkIncludeCancelOrder;
         private Win.UI.CheckBox chkIDD;
+        private Win.UI.CheckBox chkLastScanTOReadDate;
     }
 }

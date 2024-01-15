@@ -151,6 +151,7 @@
 	[Dry Room received date] [datetime] NULL,
 	[Dry room trans date] [datetime] NULL,
 	[Last ctn trans date] [datetime] NULL,
+	[Last scan and pack date] [datetime] NULL,
 	[Last ctn recvd date] [datetime] NULL,
 	[OrganicCotton] [varchar](1) NOT NULL,
 	[Direct Ship] [varchar](1) NOT NULL,
