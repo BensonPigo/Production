@@ -718,6 +718,7 @@
             // 
             // txtCFA
             // 
+            this.txtCFA.AllowSelectResign = false;
             this.txtCFA.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "CFA", true));
             this.txtCFA.DisplayBox1Binding = "";
             this.txtCFA.Location = new System.Drawing.Point(108, 10);
@@ -885,8 +886,12 @@
             this.GridUniqueKey = "ID,GarmentDefectCodeID";
             this.IsGridIcon2Visible = false;
             this.IsSupportConfirm = true;
+            this.IsSupportDelete = false;
+            this.IsSupportEdit = false;
+            this.IsSupportNew = false;
             this.IsSupportPrint = false;
             this.IsSupportUnconfirm = true;
+            this.IsSupportCopy = false;
             this.KeyField1 = "ID";
             this.Name = "P32";
             this.OnLineHelpID = "Sci.Win.Tems.Input6";
