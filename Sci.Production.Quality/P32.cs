@@ -676,9 +676,8 @@ BEGIN
                 }
 
                 updateCmd += $@"    WHERE  {tmpOrder_QtyShip.JoinToString(" OR ")} ";
-                updateCmd += $@"
-END";
-                updateCmd += $@"UPDATE CFAInspectionRecord SET Status='New',EditName='{Sci.Env.User.UserID}' ,EditDate=GETDATE() WHERE ID='{this.CurrentMaintain["ID"]}'";
+                updateCmd += $@" END";
+                updateCmd += $@" UPDATE CFAInspectionRecord SET Status='New',EditName='{Sci.Env.User.UserID}' ,EditDate=GETDATE() WHERE ID='{this.CurrentMaintain["ID"]}'";
             }
             else
             {
