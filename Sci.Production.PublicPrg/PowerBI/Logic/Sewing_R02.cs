@@ -696,7 +696,12 @@ order by Type,iif(Company = 'Other','Z','A'),Company");
                 #region  中國工廠自抓/其它場Pams [Total Work Day]
                 if (model.IsCN)
                 {
-                    sql = @"select Distinct OutputDate from #tmp where LastShift <> 'O'";
+                    sql = $@"select Distinct OutputDate from #tmp where LastShift <> 'O' and OutputDate >= '{model.StartDate.ToString("yyyy/MM/dd")}' and OutputDate <= '{model.EndDate.ToString("yyyy/MM/dd")}' ";
+                    if (!string.IsNullOrEmpty(model.Factory))
+                    {
+                        sql += $"and FactoryID = '{model.Factory}' ";
+                    }
+
                     resultReport.Result = MyUtility.Tool.ProcessWithDatatable(dt, null, sql, out DataTable dtWorkDay, conn: sqlConn);
                     if (!resultReport.Result)
                     {
