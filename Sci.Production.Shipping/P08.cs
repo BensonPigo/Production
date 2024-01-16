@@ -1593,6 +1593,8 @@ Thank you.";
                 return;
             }
 
+            this.comboType2.SelectedIndexChanged -= this.ComboType2_SelectedIndexChanged;
+
             // switch (CurrentMaintain["Type"].ToString())
             switch (this.comboType.SelectedValue.ToString())
             {
@@ -1612,6 +1614,8 @@ Thank you.";
             }
 
             this.comboType2.SelectedIndex = -1;
+
+            this.comboType2.SelectedIndexChanged += this.ComboType2_SelectedIndexChanged;
         }
 
         private void TxtReason_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
