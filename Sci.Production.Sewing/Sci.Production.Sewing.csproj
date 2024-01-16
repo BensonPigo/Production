@@ -133,7 +133,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="APIData.cs" />
     <Compile Include="B04.cs">
       <SubType>Form</SubType>
     </Compile>

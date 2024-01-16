@@ -148,6 +148,9 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
+    <Reference Include="TaskJobCommonLibrary">
+      <HintPath>..\_Dll\TaskJobCommonLibrary.dll</HintPath>
+    </Reference>
     <Reference Include="zxing, Version=0.16.5.0, Culture=neutral, PublicKeyToken=4e88037ac681fe60, processorArchitecture=MSIL">
       <HintPath>..\packages\ZXing.Net.0.16.5\lib\net45\zxing.dll</HintPath>
     </Reference>
@@ -156,6 +159,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="APIData.cs" />
     <Compile Include="APITransfer.cs" />
     <Compile Include="DataTableToList.cs" />
     <Compile Include="DBProxyPMS.cs" />
@@ -188,6 +192,17 @@
     <Compile Include="Packing.cs" />
     <Compile Include="PmsWebAPI.cs" />
     <Compile Include="Entity\Prgs_POSuppDetailData.cs" />
+    <Compile Include="PowerBI\DataAccess\P_Import_MonthlySewingOutputSummary.cs" />
+    <Compile Include="PowerBI\FormPage\Form1.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="PowerBI\FormPage\Form1.Designer.cs">
+      <DependentUpon>Form1.cs</DependentUpon>
+    </Compile>
+    <Compile Include="PowerBI\Logic\Base.cs" />
+    <Compile Include="PowerBI\Model\Base_ViewModel.cs" />
+    <Compile Include="PowerBI\Model\Sewing_R02_ViewModel.cs" />
+    <Compile Include="PowerBI\Logic\Sewing_R02.cs" />
     <Compile Include="SewingOutputOrderChange.cs" />
     <Compile Include="SewingPrg.cs" />
     <Compile Include="StaticEntity.cs" />
@@ -235,6 +250,11 @@
   <ItemGroup>
     <Analyzer Include="..\packages\StyleCop.Analyzers.1.1.118\analyzers\dotnet\cs\StyleCop.Analyzers.CodeFixes.dll" />
     <Analyzer Include="..\packages\StyleCop.Analyzers.1.1.118\analyzers\dotnet\cs\StyleCop.Analyzers.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="PowerBI\FormPage\Form1.resx">
+      <DependentUpon>Form1.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
