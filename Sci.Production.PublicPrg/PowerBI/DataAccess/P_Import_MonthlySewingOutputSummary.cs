@@ -1,6 +1,7 @@
 ﻿using Ict;
 using PostJobLog;
 using Sci.Data;
+using Sci.Production.Class;
 using Sci.Production.Prg.PowerBI.Logic;
 using Sci.Production.Prg.PowerBI.Model;
 using System;
@@ -18,6 +19,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
         public Base_ViewModel P_MonthlySewingOutputSummary(DateTime? sDate, DateTime? eDate)
         {
             Base_ViewModel finalResult = new Base_ViewModel();
+            Base biBase = new Base();
             Sewing_R02 biModel = new Sewing_R02();
             if (!sDate.HasValue)
             {
@@ -54,7 +56,6 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 
                 DataTable detailTable = resultReport.DtArr[0];
                 DataTable totalTable = this.GetTotalTable(detailTable);
-
                 resultReport = biModel.GetSubprocessByFactoryOutPutDate(detailTable);
                 if (!resultReport.Result)
                 {
@@ -65,17 +66,21 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 List<P_MonthlySewingOutputSummary_ViewModel> dataList = new List<P_MonthlySewingOutputSummary_ViewModel>();
                 foreach (DataRow dr in totalTable.Rows)
                 {
-                    List<APIData> pams;
+                    var outputdateList = detailTable.AsEnumerable()
+                        .Where(x => x.Field<string>("FactoryID").EqualString(dr["Fty"]))
+                        .GroupBy(x => x.Field<DateTime>("OutputDate"))
+                        .Select(x => x.Key).ToList();
+                    List<APIData> pams = new List<APIData>();
                     sewing_R02_Model = new Sewing_R02_ViewModel()
                     {
-                        M = string.Empty,
+                        M = biBase.GetMDivision(dr["Fty"].ToString()),
                         Factory = dr["Fty"].ToString(),
                         StartDate = DateTime.Parse(DateTime.Parse(dr["LastDatePerMonth"].ToString()).ToString("yyyy/MM/01")),
                         EndDate = DateTime.Parse(dr["LastDatePerMonth"].ToString()),
                         IsCN = this.IsCN(dr["Fty"].ToString()),
                     };
-                    pams = biModel.GetPAMS(sewing_R02_Model);
-                    resultReport = biModel.GetWorkDay(detailTable, sewing_R02_Model);
+                    pams = biModel.GetPAMS(sewing_R02_Model).Where(x => outputdateList.Contains(x.Date)).ToList();
+                    resultReport = biModel.GetWorkDay(detailTable.AsEnumerable().Where(x => x.Field<string>("FactoryID").EqualString(dr["Fty"])).CopyToDataTable(), sewing_R02_Model);
                     if (!resultReport.Result)
                     {
                         throw new Exception("Query Work Day fail\r\n" + resultReport.Result.Messages.ToString());
@@ -93,7 +98,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                         SubconInTtlCPU = Math.Round(decimal.Parse(dr["SubconInTtlCPU"].ToString()), 3),
                         SubconOutTtlCPU = Math.Round(decimal.Parse(dr["SubconOutTtlCPU"].ToString()), 3),
                         PPH = Math.Round(decimal.Parse(dr["TtlCPUInclSubconIn"].ToString()) / decimal.Parse(dr["TtlManhours"].ToString()), 2),
-                        AvgWorkHr = Math.Round(decimal.Parse(dr["AvgWorkHr"].ToString()), 2),
+                        AvgWorkHr = Math.Round(decimal.Parse(dr["TtlManhours"].ToString()) / decimal.Parse(dr["TtlManpower"].ToString()), 2),
                         TtlManpower = int.Parse(Math.Round(decimal.Parse(dr["TtlManpower"].ToString()), 0).ToString()),
                         TtlManhours = Math.Round(decimal.Parse(dr["TtlManhours"].ToString()), 1),
                         Eff = decimal.Parse(dr["TtlManhours"].ToString()) == 0 ? 0 : Math.Round((decimal.Parse(dr["TtlCPUInclSubconIn"].ToString()) / (decimal.Parse(dr["TtlManhours"].ToString()) * 3600 / 1400)) * 100, 1), // =IF(I10=0,0,ROUND((C10/(I10*3600/1400))*100,1))

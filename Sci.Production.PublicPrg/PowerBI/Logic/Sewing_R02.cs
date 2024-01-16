@@ -734,7 +734,7 @@ select FactoryID from #tmpResult where IsSampleRoom = 1
                     if (dtIsSampleRoomFty.Rows.Count > 0)
                     {
                         string whereFty = dtIsSampleRoomFty.AsEnumerable().Select(s => $"'{s["FactoryID"]}'").JoinToString(",");
-                        string strWorkDay = $@"select Distinct [OutputDate] = Format(OutputDate,'yyyyMMdd') from #tmp where LastShift <> 'O' and FactoryID in ({whereFty}) and OutputDate >= '{model.StartDate.ToString("yyyy/MM/dd")}' and OutputDate <= '{model.EndDate.ToString("yyyy/MM/dd")}'";
+                        string strWorkDay = $@"select Distinct [OutputDate] = Format(OutputDate,'yyyyMMdd') from #tmp where LastShift <> 'O' and MDivisionID = '{model.M}' and FactoryID in ({whereFty}) and OutputDate >= '{model.StartDate.ToString("yyyy/MM/dd")}' and OutputDate <= '{model.EndDate.ToString("yyyy/MM/dd")}'";
                         resultReport.Result = DBProxy.Current.SelectByConn(conn: sqlConn, cmdtext: strWorkDay, datas: out DataTable dtWorkDay);
                         if (!resultReport.Result)
                         {

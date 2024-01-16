@@ -63,5 +63,16 @@ namespace Sci.Production.Prg.PowerBI.Logic
             string sql = $"select [RgCode] = REPLACE(s.RgCode, 'PHI', 'PH1') from System s";
             return MyUtility.GetValue.Lookup(sql, connectionName: "Production");
         }
+
+        /// <summary>
+        /// Get MDivision
+        /// </summary>
+        /// <param name="factoryID">Factory ID</param>
+        /// <returns>MDivision</returns>
+        public string GetMDivision(string factoryID)
+        {
+            string sql = $"select f.MDivisionID from Factory f where f.ID = '{factoryID}'";
+            return MyUtility.GetValue.Lookup(sql, connectionName: "Production");
+        }
     }
 }
