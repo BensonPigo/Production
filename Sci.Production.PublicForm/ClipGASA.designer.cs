@@ -35,16 +35,18 @@
             this.download = new Sci.Win.UI.Button();
             this.openfile = new Sci.Win.UI.Button();
             this.loc = new Sci.Win.UI.Label();
+            this.btnDownloadAll = new Sci.Win.UI.Button();
             this.btm.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             this.SuspendLayout();
             // 
             // top
             // 
-            this.top.Size = new System.Drawing.Size(1006, 10);
+            this.top.Size = new System.Drawing.Size(1077, 10);
             // 
             // btm
             // 
+            this.btm.Controls.Add(this.btnDownloadAll);
             this.btm.Controls.Add(this.download);
             this.btm.Controls.Add(this.openfile);
             this.btm.Controls.Add(this.mailto);
@@ -53,7 +55,7 @@
             this.btm.Controls.Add(this.nem);
             this.btm.Controls.Add(this.loc);
             this.btm.Location = new System.Drawing.Point(10, 367);
-            this.btm.Size = new System.Drawing.Size(1006, 45);
+            this.btm.Size = new System.Drawing.Size(1077, 45);
             // 
             // left
             // 
@@ -61,12 +63,12 @@
             // 
             // right
             // 
-            this.right.Location = new System.Drawing.Point(1016, 0);
+            this.right.Location = new System.Drawing.Point(1087, 0);
             this.right.Size = new System.Drawing.Size(10, 412);
             // 
             // cont
             // 
-            this.cont.Size = new System.Drawing.Size(1006, 357);
+            this.cont.Size = new System.Drawing.Size(1077, 357);
             // 
             // nem
             // 
@@ -92,7 +94,7 @@
             // 
             this.close.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.close.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
-            this.close.Location = new System.Drawing.Point(920, 7);
+            this.close.Location = new System.Drawing.Point(991, 7);
             this.close.Name = "close";
             this.close.Size = new System.Drawing.Size(80, 30);
             this.close.TabIndex = 6;
@@ -103,7 +105,7 @@
             // 
             this.mailto.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.mailto.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
-            this.mailto.Location = new System.Drawing.Point(834, 7);
+            this.mailto.Location = new System.Drawing.Point(905, 7);
             this.mailto.Name = "mailto";
             this.mailto.Size = new System.Drawing.Size(80, 30);
             this.mailto.TabIndex = 5;
@@ -115,7 +117,7 @@
             // 
             this.download.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.download.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
-            this.download.Location = new System.Drawing.Point(734, 7);
+            this.download.Location = new System.Drawing.Point(681, 7);
             this.download.Name = "download";
             this.download.Size = new System.Drawing.Size(94, 30);
             this.download.TabIndex = 4;
@@ -126,7 +128,7 @@
             // 
             this.openfile.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.openfile.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
-            this.openfile.Location = new System.Drawing.Point(638, 7);
+            this.openfile.Location = new System.Drawing.Point(586, 7);
             this.openfile.Name = "openfile";
             this.openfile.Size = new System.Drawing.Size(90, 30);
             this.openfile.TabIndex = 3;
@@ -139,13 +141,24 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.loc.Location = new System.Drawing.Point(176, 12);
             this.loc.Name = "loc";
-            this.loc.Size = new System.Drawing.Size(459, 23);
+            this.loc.Size = new System.Drawing.Size(404, 23);
             this.loc.TabIndex = 1;
             this.loc.Text = "loc";
             // 
+            // btnDownloadAll
+            // 
+            this.btnDownloadAll.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnDownloadAll.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
+            this.btnDownloadAll.Location = new System.Drawing.Point(779, 7);
+            this.btnDownloadAll.Name = "btnDownloadAll";
+            this.btnDownloadAll.Size = new System.Drawing.Size(123, 30);
+            this.btnDownloadAll.TabIndex = 7;
+            this.btnDownloadAll.Text = "Download All";
+            this.btnDownloadAll.UseVisualStyleBackColor = true;
+            // 
             // ClipGASA
             // 
-            this.ClientSize = new System.Drawing.Size(1026, 412);
+            this.ClientSize = new System.Drawing.Size(1097, 412);
             this.Name = "ClipGASA";
             this.OnLineHelpID = "Sci.Win.Tools.BaseGrid";
             this.btm.ResumeLayout(false);
@@ -163,5 +176,6 @@
         private Win.UI.Button download;
         private Win.UI.Button openfile;
         private Win.UI.Label loc;
+        private Win.UI.Button btnDownloadAll;
     }
 }
