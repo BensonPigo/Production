@@ -27,6 +27,7 @@ select  s.OutputDate
 		, [OrderCategory] = isnull(o.Category,'')
 		, o.LocalOrder
 		, s.FactoryID
+		, f.MDivisionID
 		, [OrderProgram] = isnull(o.ProgramID,'') 
 		, [MockupProgram] = isnull(mo.ProgramID,'')
 		, [OrderCPU] = isnull(o.CPU,0)
@@ -69,6 +70,7 @@ select OutputDate,Category
 	   , OrderCategory
 	   , LocalOrder
 	   , FactoryID
+	   , MDivisionID
 	   , OrderProgram
 	   , MockupProgram
 	   , OrderCPU
@@ -85,7 +87,7 @@ select OutputDate,Category
 INTO #tmpSewingGroup
 from #tmpSewingDetail
 group by OutputDate, Category, Shift, SewingLineID, Team, OrderId, ComboType
-		 , OrderCategory, LocalOrder, FactoryID, OrderProgram, MockupProgram
+		 , OrderCategory, LocalOrder, FactoryID, MDivisionID, OrderProgram, MockupProgram
 		 , OrderCPU, OrderCPUFactor, MockupCPU, MockupCPUFactor, OrderStyle
 		 , MockupStyle, Rate, StdTMS,SubconInType,isnull(SubconOutFty,'')
         ,ActManPower
@@ -123,6 +125,7 @@ select OutputDate
 	   , LastShift
 	   , ComboType
 	   , FactoryID
+	   , MDivisionID
        , SubconInType
        , SubconOutFty
 into #tmp
