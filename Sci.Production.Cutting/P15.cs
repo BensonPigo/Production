@@ -140,6 +140,7 @@ namespace Sci.Production.Cutting
                 .Text("Cutno", header: "Cut#", width: Widths.AnsiChars(3), iseditingreadonly: true)
                 .Text("Item", header: "Item", width: Widths.AnsiChars(20), settings: itemsetting).Get(out Ict.Win.UI.DataGridViewTextBoxColumn item)
                 .Text("FabricKind", header: "Fabric Kind", width: Widths.AnsiChars(5), iseditingreadonly: true)
+                .Text("Tone", header: "Tone", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 ;
 
             item.MaxLength = 20;
