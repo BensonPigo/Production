@@ -31,7 +31,6 @@ namespace Sci.Production.Basic
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.labelCode = new Sci.Win.UI.Label();
             this.labelAbbreviation = new Sci.Win.UI.Label();
             this.labelNationality = new Sci.Win.UI.Label();
@@ -75,6 +74,7 @@ namespace Sci.Production.Basic
             this.label4 = new Sci.Win.UI.Label();
             this.txtTaxNO = new Sci.Win.UI.TextBox();
             this.chkOverseas = new Sci.Win.UI.CheckBox();
+            this.checkIsCustoms = new Sci.Win.UI.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -92,6 +92,7 @@ namespace Sci.Production.Basic
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.checkIsCustoms);
             this.detailcont.Controls.Add(this.chkOverseas);
             this.detailcont.Controls.Add(this.txtTaxNO);
             this.detailcont.Controls.Add(this.label4);
@@ -499,14 +500,6 @@ namespace Sci.Production.Basic
             this.gridBankDetail.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.gridBankDetail.Location = new System.Drawing.Point(0, 0);
             this.gridBankDetail.Name = "gridBankDetail";
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridBankDetail.RowHeadersDefaultCellStyle = dataGridViewCellStyle1;
             this.gridBankDetail.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridBankDetail.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridBankDetail.RowTemplate.Height = 24;
@@ -627,6 +620,18 @@ namespace Sci.Production.Basic
             this.chkOverseas.UseVisualStyleBackColor = true;
             this.chkOverseas.CheckedChanged += new System.EventHandler(this.ChkOverseas_CheckedChanged);
             // 
+            // checkIsCustoms
+            // 
+            this.checkIsCustoms.AutoSize = true;
+            this.checkIsCustoms.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "IsCustoms", true));
+            this.checkIsCustoms.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkIsCustoms.Location = new System.Drawing.Point(585, 235);
+            this.checkIsCustoms.Name = "checkIsCustoms";
+            this.checkIsCustoms.Size = new System.Drawing.Size(95, 21);
+            this.checkIsCustoms.TabIndex = 217;
+            this.checkIsCustoms.Text = "Is Customs";
+            this.checkIsCustoms.UseVisualStyleBackColor = true;
+            // 
             // B04
             // 
             this.ClientSize = new System.Drawing.Size(953, 770);
@@ -712,5 +717,6 @@ namespace Sci.Production.Basic
         private Win.UI.TextBox txtTaxNO;
         private Win.UI.Label label4;
         private Win.UI.CheckBox chkOverseas;
+        private Win.UI.CheckBox checkIsCustoms;
     }
 }

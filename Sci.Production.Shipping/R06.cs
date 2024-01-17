@@ -8,6 +8,8 @@ using System.Runtime.InteropServices;
 using System.Linq;
 using Sci.Production.CallPmsAPI;
 using Newtonsoft.Json;
+using System.Collections.Generic;
+using System.Data.SqlClient;
 
 namespace Sci.Production.Shipping
 {
@@ -22,6 +24,10 @@ namespace Sci.Production.Shipping
         private DateTime? apvDate2;
         private DateTime? VoucherDate1;
         private DateTime? VoucherDate2;
+        private DateTime? pulloutArrivalDate1;
+        private DateTime? pulloutArrivalDate2;
+        private DateTime? onboardDate1;
+        private DateTime? onboardDate2;
         private string blno1;
         private string blno2;
         private string supplier;
@@ -43,6 +49,12 @@ namespace Sci.Production.Shipping
             this.dateDate.Value1 = new DateTime(DateTime.Now.Year, 1, 1); // 預設帶入登入系統當年的第一天
             this.dateDate.Value2 = DateTime.Today;
             this.dateApvDate.Value2 = DateTime.Today;
+
+            this.radioByAPP.CheckedChanged += this.RadioReportType_CheckedChanged;
+            this.radioByInvWK.CheckedChanged += this.RadioReportType_CheckedChanged;
+            this.radioDetail.CheckedChanged += this.RadioReportType_CheckedChanged;
+            this.radioSummary.CheckedChanged += this.RadioReportType_CheckedChanged;
+
             DataTable mDivision;
             DBProxy.Current.Select(null, "select '' as ID union all select ID from MDivision WITH (NOLOCK) ", out mDivision);
             MyUtility.Tool.SetupCombox(this.comboM, 1, mDivision);
@@ -51,7 +63,27 @@ namespace Sci.Production.Shipping
             MyUtility.Tool.SetupCombox(this.comboOrderby, 1, 1, "M,B/L No.");
             MyUtility.Tool.SetupCombox(this.comboRateType, 2, 1, ",Original currency,FX,Fixed exchange rate,KP,KPI exchange rate");
             this.comboOrderby.SelectedIndex = 0;
+        }
+
+        /// <inheritdoc/>
+        protected override void OnFormLoaded()
+        {
+            base.OnFormLoaded();
             this.radioDetail.Checked = true;
+        }
+
+        private void RadioReportType_CheckedChanged(object sender, EventArgs e)
+        {
+            if (this.radioByInvWK.Checked || this.radioByAPP.Checked)
+            {
+                this.datePulloutArrival.ReadOnly = false;
+                this.dateOnBoard.ReadOnly = false;
+            }
+            else
+            {
+                this.datePulloutArrival.ReadOnly = true;
+                this.dateOnBoard.ReadOnly = true;
+            }
         }
 
         /// <inheritdoc/>
@@ -70,6 +102,10 @@ namespace Sci.Production.Shipping
             this.apvDate2 = this.dateApvDate.Value2;
             this.VoucherDate1 = this.dateVoucherDate.Value1;
             this.VoucherDate2 = this.dateVoucherDate.Value2;
+            this.pulloutArrivalDate1 = this.datePulloutArrival.Value1 == null ? DateTime.Parse("1900/01/01") : this.datePulloutArrival.Value1;
+            this.pulloutArrivalDate2 = this.datePulloutArrival.Value2 == null ? DateTime.Parse("2222/01/01") : this.datePulloutArrival.Value2;
+            this.onboardDate1 = this.dateOnBoard.Value1;
+            this.onboardDate2 = this.dateOnBoard.Value2;
             this.blno1 = this.txtBLNoStart.Text;
             this.blno2 = this.txtBLNoEnd.Text;
             this.supplier = this.txtSubconSupplier.TextBox1.Text;
@@ -84,7 +120,9 @@ namespace Sci.Production.Shipping
         /// <inheritdoc/>
         protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
+            List<SqlParameter> listPar = new List<SqlParameter>();
             StringBuilder sqlCmd = new StringBuilder();
+
             if (this.radioDetail.Checked == true)
             {
                 sqlCmd.Append($@"select	s.Type,
@@ -139,6 +177,7 @@ where s.Status = 'Approved'");
         s.Type
         ,s.SubType
 		,Supplier = s.LocalSuppID+'-'+ISNULL(ls.Abb,'')
+        ,[IsFreightForwarder] = iif(ls.IsFreightForwarder = 1, 'Y', 'N')
 		,s.ID
 		,s.VoucherID
         ,s.VoucherDate
@@ -156,6 +195,8 @@ where s.Status = 'Approved'");
                             when sh.WKNo != '' and sh.InvNo != '' then Concat (sh.WKNo, '/', sh.InvNo)
                             else ''
                         end
+        ,[PulloutArrival] = isnull(pulloutDate.val, '') + '/' + isnull(Format(isnull(te.WhseArrival, isnull(e.WhseArrival, fe.WhseArrival)), 'yyyy-MM-dd'), '')
+        ,[OnBoardDate] = Format(g.ETD, 'yyyy/MM/dd')
 		,[Foundry] = iif(ISNULL(gm.Foundry,'') = '', '' , 'Y')
 		,s.SisFtyAPID
 		,[CurrencyID]= ISNULL(sh.CurrencyID , ShippingAP_Deatai.CurrencyID)
@@ -164,11 +205,13 @@ where s.Status = 'Approved'");
 		,[AccountName]= ISNULL(an.Name, ShippingAP_Deatai.AccountName)
 into #tmp
 from ShippingAP s WITH (NOLOCK)
-left join View_ShareExpense sh WITH (NOLOCK) ON s.ID = sh.ShippingAPID
-                                           and sh.Junk != 1
-left join SciFMS_AccountNo an WITH (NOLOCK) on an.ID = sh.AccountID 
+left join View_ShareExpense sh WITH (NOLOCK) ON s.ID = sh.ShippingAPID and sh.Junk != 1
+left join TransferExport te with (nolock) on te.id = sh.Wkno
+left join Export e with (nolock) on e.id = sh.Wkno
+left join FtyExport fe with (nolock) on fe.id = sh.Wkno
+left join SciFMS_AccountNo an WITH (NOLOCK) on an.ID = sh.AccountID
+left join GMTBooking g with (nolock) on g.ID = sh.InvNo
 left join LocalSupp ls WITH (NOLOCK) on s.LocalSuppID = ls.ID
-
 OUTER APPLY(
 	SELECT sd.AccountID,[AccountName]=a.Name,sd.CurrencyID,[Amount]=SUM(Amount)
 	FROM ShippingAP_Detail sd WITH (NOLOCK) 
@@ -186,7 +229,27 @@ outer apply (
 　　and (BLNo = s.BLNo or BL2No = s.BLNo) 
 　　and Foundry = 1
 )gm
+outer apply (
+    SELECT val =  Stuff((   select distinct concat( ',', Format(p.PulloutDate, 'yyyy-MM-dd')) 
+                            from PackingList p with (nolock) 
+                            where p.InvNo = g.ID
+                    FOR XML PATH('')), 1, 1, '') 
+)   pulloutDate
 where s.Status = 'Approved'");
+
+                if (this.datePulloutArrival.HasValue)
+                {
+                    listPar.Add(new SqlParameter("@pulloutArrivalDateFrom", this.pulloutArrivalDate1.Value));
+                    listPar.Add(new SqlParameter("@pulloutArrivalDateTo", this.pulloutArrivalDate2.Value));
+                    sqlCmd.Append(@" and
+    (
+		(e.WhseArrival >= @pulloutArrivalDateFrom and e.WhseArrival <= @pulloutArrivalDateTo) or 
+		(te.WhseArrival >= @pulloutArrivalDateFrom and te.WhseArrival <= @pulloutArrivalDateTo) or 
+		(fe.WhseArrival >= @pulloutArrivalDateFrom and fe.WhseArrival <= @pulloutArrivalDateTo) or
+		exists(select 1 from PackingList p with (nolock) where p.InvNo = g.ID and p.PulloutDate >= @pulloutArrivalDateFrom and p.PulloutDate <= @pulloutArrivalDateTo)
+	 )
+");
+                }
             }
             else if (this.radioByAPP.Checked)
             {
@@ -195,6 +258,7 @@ select
         s.Type
         ,s.SubType
 		,Supplier = s.LocalSuppID+'-'+ISNULL(ls.Abb,'')
+        ,[IsFreightForwarder] = iif(ls.IsFreightForwarder = 1, 'Y', 'N')
 		,s.ID
 		,s.VoucherID
         ,s.VoucherDate
@@ -207,6 +271,8 @@ select
 		,s.[Remark]
 		,[Invoice ]= s.InvNo
 		,[ExportINV] =  sp.InvNo
+        ,[PulloutArrival] = isnull(Format(p.PulloutDate, 'yyyy-MM-dd'), '') + '/' + isnull(arrivalDate.val, '')
+        ,[OnBoardDate] = Format(g.ETD, 'yyyy/MM/dd')
 		,[Foundry] = iif(ISNULL(gm.Foundry,'') = '', '' , 'Y')
 		,s.SisFtyAPID
 		,[CurrencyID]= sp.CurrencyID
@@ -228,6 +294,7 @@ left join ShareExpense_APP sp WITH (NOLOCK) on s.ID = sp.ShippingAPID
 left join SciFMS_AccountNo an WITH (NOLOCK)  on an.ID = sp.AccountID 
 left join AirPP air WITH (NOLOCK) on sp.AirPPID = air.ID
 left join PackingList p WITH (NOLOCK) on sp.PackingListID = p.ID
+left join GMTBooking g with (nolock) on g.ID = p.INVNo
 OUTER APPLY (
 	SELECT sd.AccountID,[AccountName]=a.Name,sd.CurrencyID,[Amount]=SUM(Amount)
 	FROM ShippingAP_Detail sd WITH (NOLOCK) 
@@ -251,7 +318,30 @@ outer apply (
 　　and (BLNo = s.BLNo or BL2No = s.BLNo) 
 　　and Foundry = 1
 )gm
+outer apply (
+    SELECT val =  Stuff((   select distinct concat( ',', Format(WhseArrival, 'yyyy-MM-dd'))
+                            from (  select WhseArrival from TransferExport with (nolock) where Blno = s.Blno
+						            union all
+						            select WhseArrival from Export with (nolock) where Blno = s.Blno
+						            union all
+						            select WhseArrival from FtyExport with (nolock) where Blno = s.Blno) a
+                        FOR XML PATH('')),1,1,'')
+) arrivalDate 
 where s.Status = 'Approved'");
+
+                if (this.datePulloutArrival.HasValue)
+                {
+                    listPar.Add(new SqlParameter("@pulloutArrivalDateFrom", this.pulloutArrivalDate1.Value));
+                    listPar.Add(new SqlParameter("@pulloutArrivalDateTo", this.pulloutArrivalDate2.Value));
+                    sqlCmd.Append(@" and
+    (
+		(p.PulloutDate >= @pulloutArrivalDateFrom and p.PulloutDate <= @pulloutArrivalDateTo) or
+		exists(select 1 from TransferExport with (nolock) where Blno = s.Blno and WhseArrival >= @pulloutArrivalDateFrom and WhseArrival <= @pulloutArrivalDateTo) or
+		exists(select 1 from Export with (nolock) where Blno = s.Blno and WhseArrival >= @pulloutArrivalDateFrom and WhseArrival <= @pulloutArrivalDateTo) or
+		exists(select 1 from FtyExport with (nolock) where Blno = s.Blno and WhseArrival >= @pulloutArrivalDateFrom and WhseArrival <= @pulloutArrivalDateTo)
+	  )
+");
+                }
             }
             else
             {
@@ -355,6 +445,21 @@ where s.Status = 'Approved'");
                 sqlCmd.Append(string.Format(" and s.LocalSuppID = '{0}'", this.supplier));
             }
 
+            if (this.radioByInvWK.Checked || this.radioByAPP.Checked)
+            {
+                if (this.onboardDate1.HasValue)
+                {
+                    listPar.Add(new SqlParameter("@onboardDateFrom", this.onboardDate1.Value));
+                    sqlCmd.Append(" and g.ETD >= @onboardDateFrom ");
+                }
+
+                if (this.onboardDate2.HasValue)
+                {
+                    listPar.Add(new SqlParameter("@onboardDateTo", this.onboardDate2.Value));
+                    sqlCmd.Append(" and g.ETD <= @onboardDateTo ");
+                }
+            }
+
             if (this.subType != "ALL")
             {
                 sqlCmd.Append(string.Format(" and s.SubType = {0}", this.subType));
@@ -384,7 +489,7 @@ select * from #tmp where 1 = 1");
                     break;
             }
 
-            DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), out this.printData);
+            DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), listPar, out this.printData);
 
             if (!result)
             {
@@ -441,6 +546,7 @@ group by    t.PackingListID,
                         {
                             SqlString = sqlGetShipQtyA2B,
                             TmpTable = JsonConvert.SerializeObject(groupItem.GroupTmpTable),
+                            SqlParameter = listPar.ToListSqlPar(),
                         };
 
                         DataTable dtResultA2B;

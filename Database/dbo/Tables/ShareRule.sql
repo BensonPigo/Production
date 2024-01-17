@@ -3,6 +3,7 @@
     [ExpenseReason] VARCHAR (25) CONSTRAINT [DF_ShareRule_ExpenseReason] DEFAULT ('') NOT NULL,
     [ShareBase]     VARCHAR (1)  CONSTRAINT [DF_ShareRule_ShareBase] DEFAULT ('') NOT NULL,
     [ShipModeID]    VARCHAR (90) CONSTRAINT [DF_ShareRule_ShipModeID] DEFAULT ('') NULL,
+    [Junk] BIT NOT NULL CONSTRAINT [DF_ShareRule_Junk] DEFAULT (0),
     CONSTRAINT [PK_ShareRule] PRIMARY KEY CLUSTERED ([AccountID] ASC, [ExpenseReason] ASC, [ShareBase] ASC)
 );
 
