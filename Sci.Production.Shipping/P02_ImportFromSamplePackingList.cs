@@ -44,7 +44,7 @@ namespace Sci.Production.Shipping
                 .Text("SeasonID", header: "Season", width: Widths.AnsiChars(6), iseditingreadonly: true)
                 .Text("StyleID", header: "Style", width: Widths.AnsiChars(20), iseditingreadonly: true)
                 .Text("Category", header: "Category", width: Widths.AnsiChars(10), iseditingreadonly: true)
-                .Text("CTNNo", header: "CTN No.", width: Widths.AnsiChars(5), iseditingreadonly: true)
+                .Text("ShowCTNNo", header: "CTN No.", width: Widths.AnsiChars(18), iseditingreadonly: true)
                 .Numeric("NW", header: "N.W. (kg)", integer_places: 5, decimal_places: 3, maximum: 99999.99m, minimum: 0m)
                 .Numeric("Price", header: "Price", integer_places: 6, decimal_places: 4, maximum: 999999.9999m, minimum: 0m, iseditingreadonly: true)
                 .Numeric("ShipQty", header: "Q'ty", decimal_places: 2, iseditingreadonly: true)
@@ -108,6 +108,7 @@ from (
         , o.StyleID
         , Category = 'SMS'
         , CTNNo = pd.CTNStartNo
+        , ShowCTNNo = pd.ID + '-' + pd.CTNStartNo
         , GW = p.GW
 		, TtlShipQty = p.ShipQty
         , Price = o.PoPrice
@@ -184,7 +185,7 @@ from (
 
             return true;
         }
-
+         
         // Update
         private void BtnUpdate_Click(object sender, EventArgs e)
         {

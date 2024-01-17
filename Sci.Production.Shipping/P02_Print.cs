@@ -339,7 +339,7 @@ group by UnitID", MyUtility.Convert.GetString(this.masterData["ID"]));
                         strHSCODE = strHC.Length > 6 ? strHC.Substring(0, 6) : strHC;
                         strDescription = dr["styleDescription"].ToString();
                     }
-                    else if (dr["CategoryName"].ToString() == "Material")
+                    else if (dr["CategoryName"].ToString() == "Material" || dr["CategoryName"].ToString() == "Other Material")
                     {
                         if (dr["Fabric_Type"].ToString() == "F")
                         {
@@ -364,22 +364,17 @@ group by UnitID", MyUtility.Convert.GetString(this.masterData["ID"]));
                         strHSCODE = strHC.Length > 6 ? strHC.Substring(0, 6) : strHC;
                         strType = MyUtility.Convert.GetString(dr["Type"]);
                     }
-                    else if (dr["CategoryName"].ToString() == "Other Material")
-                    {
-                        strDescription = dr["nDescription"].ToString();
-                    }
-                    else if (dr["CategoryName"].ToString() == "Other Sample")
-                    {
-                        strType = MyUtility.Convert.GetString(dr["Type"]);
-                    }
 
-                    if (!MyUtility.Check.Empty(dr["StyleID"].ToString()) && !MyUtility.Check.Empty(dr["RefNo"].ToString()))
+                    if (dr["CategoryName"].ToString() != "Material" && dr["CategoryName"].ToString() != "Other Material")
                     {
-                        strStyle_Ref = dr["StyleID"] + " / " + dr["RefNo"];
-                    }
-                    else
-                    {
-                        strStyle_Ref = !MyUtility.Check.Empty(dr["StyleID"].ToString()) ? dr["StyleID"].ToString() : dr["RefNo"].ToString();
+                        if (!MyUtility.Check.Empty(dr["StyleID"].ToString()) && !MyUtility.Check.Empty(dr["RefNo"].ToString()))
+                        {
+                            strStyle_Ref = dr["StyleID"] + " / " + dr["RefNo"];
+                        }
+                        else
+                        {
+                            strStyle_Ref = !MyUtility.Check.Empty(dr["StyleID"].ToString()) ? dr["StyleID"].ToString() : dr["RefNo"].ToString();
+                        }
                     }
 
                     int iCategory = MyUtility.Convert.GetInt(dr["Category"]);
