@@ -382,6 +382,7 @@ select distinct FTYGroup from Factory WITH (NOLOCK) order by FTYGroup"),
             {
                 IsCN = Env.User.Keyword.EqualString("CM1") || Env.User.Keyword.EqualString("CM2"),
                 M = this.mDivision,
+                Factory = this.factory,
                 StartDate = this.date1.Value,
                 EndDate = this.date2.Value,
             };
