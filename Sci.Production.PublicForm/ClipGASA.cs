@@ -22,6 +22,8 @@ using System.Data.Common;
 using System.Threading;
 using System.Collections;
 using System.Xml.Schema;
+using System.Net;
+using System.Threading.Tasks;
 
 namespace Sci.Production.PublicForm
 {
@@ -132,6 +134,7 @@ namespace Sci.Production.PublicForm
             this.download.Click += this.download_Click;
             this.mailto.Click += this.mailto_Click;
             this.close.Click += this.close_Click;
+            this.btnDownloadAll.Click += this.downloadAll_Click;
 
             this.grid.CellMouseDoubleClick += this.Grid_CellMouseDoubleClick;
             ;
@@ -1072,6 +1075,29 @@ namespace Sci.Production.PublicForm
             this.FileDownload(data);
         }
 
+        void downloadAll_Click(object sender, EventArgs e)
+        {
+            List<CLIPGASARow> dataList = new List<CLIPGASARow>();
+            DataTable dt = (DataTable)this.gridbs.DataSource;
+            if (dt == null || dt.Rows.Count == 0)
+            {
+                return;
+            }
+
+            foreach (DataRowView dr in this.gridbs)
+            {
+                var data = (CLIPGASARow)dr.Row;
+                if (data == null)
+                {
+                    return;
+                }
+
+                dataList.Add(data);
+            }
+
+            this.FileDownload(dataList);
+        }
+
         /// <summary>
         /// Download SingleFile
         /// </summary>
@@ -1204,6 +1230,59 @@ namespace Sci.Production.PublicForm
                 if (fileExistsStr != string.Empty)
                 {
                     MessageBox.Show($"Files already exists:{Environment.NewLine}" + fileExistsStr, "Exists file", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                }
+
+                // download 多筆檔案才壓縮
+                if (!singleFile)
+                {
+                    var fileList = new List<string>();
+                    foreach (var filePath in files)
+                    {
+                        string savefile = Path.Combine(savedir, filePath.Key.SOURCEFILE);
+                        fileList.Add(savefile);
+                    }
+
+                    DateTime date = DateTime.Now;
+                    string fileName = Path.Combine(savedir, $"MaterialDocuments_{date.ToString("yyyyMMddHHmmss")}") + ".rar";
+                    string[] filesArry = fileList.ToArray();
+                    MyUtility.File.RARFile(filesArry, rarOutputFilePath: fileName);
+
+                    List<string> deleteFails = new List<string>();
+                    Exception e = null;
+
+                    // 將壓縮後的檔案給刪除掉
+                    foreach (var delFile in filesArry)
+                    {
+                        try
+                        {
+                            if (File.Exists(delFile))
+                            {
+                                var fileinfo = new FileInfo(delFile);
+                                fileinfo.IsReadOnly = false;
+                                File.Delete(delFile);
+
+                                if (File.Exists(delFile))
+                                {
+                                    // reCheck...
+                                    deleteFails.Add(delFile);
+                                }
+                            }
+
+                        }
+                        catch (Exception ex)
+                        {
+                            e = ex;
+                            deleteFails.Add(delFile);
+                        }
+                    }
+
+                    if (deleteFails.Count > 0)
+                    {
+                        string msg = "These files are fail :" +
+                            Environment.NewLine +
+                            string.Join(Environment.NewLine, deleteFails);
+                        result = Result.F(msg, e);
+                    }
                 }
 
                 if (savedir != this._path)
@@ -1386,7 +1465,7 @@ namespace Sci.Production.PublicForm
         /// <param name="addTime"></param>
         /// <param name="alianClipConnectionName"></param>
         /// <returns>success or not</returns>
-        
+
         ///// <summary>
         ///// 不顯示畫面, 直接夾檔
         ///// </summary>
