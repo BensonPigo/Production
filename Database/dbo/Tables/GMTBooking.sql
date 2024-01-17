@@ -227,11 +227,11 @@ CREATE NONCLUSTERED INDEX [shipplanid]
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'提單號碼', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'GMTBooking', @level2type = N'COLUMN', @level2name = N'BLNo';
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'主提單號碼(船公司提單)', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'GMTBooking', @level2type = N'COLUMN', @level2name = N'BLNo';
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'提單號碼', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'GMTBooking', @level2type = N'COLUMN', @level2name = N'BL2No';
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'副提單號碼(貨代提單)', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'GMTBooking', @level2type = N'COLUMN', @level2name = N'BL2No';
 
 
 GO

@@ -13,6 +13,7 @@ namespace Sci.Production.Class
     {
         private string type;
         private bool addAllItem = false;
+
         /// <summary>
         /// 是否有All的選項
         /// </summary>

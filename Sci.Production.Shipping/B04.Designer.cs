@@ -38,6 +38,7 @@
             this.displayShippingMode = new Sci.Win.UI.DisplayBox();
             this.comboSharebase = new Sci.Win.UI.ComboBox();
             this.txtAccountNo = new Sci.Win.UI.TextBox();
+            this.chkJunk = new Sci.Win.UI.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -52,6 +53,7 @@
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.chkJunk);
             this.detailcont.Controls.Add(this.txtAccountNo);
             this.detailcont.Controls.Add(this.comboSharebase);
             this.detailcont.Controls.Add(this.displayShippingMode);
@@ -91,7 +93,6 @@
             // 
             // labelAccountNo
             // 
-            this.labelAccountNo.Lines = 0;
             this.labelAccountNo.Location = new System.Drawing.Point(33, 30);
             this.labelAccountNo.Name = "labelAccountNo";
             this.labelAccountNo.Size = new System.Drawing.Size(115, 23);
@@ -100,7 +101,6 @@
             // 
             // labelAccountName
             // 
-            this.labelAccountName.Lines = 0;
             this.labelAccountName.Location = new System.Drawing.Point(33, 70);
             this.labelAccountName.Name = "labelAccountName";
             this.labelAccountName.Size = new System.Drawing.Size(115, 23);
@@ -109,7 +109,6 @@
             // 
             // labelExpenseReason
             // 
-            this.labelExpenseReason.Lines = 0;
             this.labelExpenseReason.Location = new System.Drawing.Point(33, 110);
             this.labelExpenseReason.Name = "labelExpenseReason";
             this.labelExpenseReason.Size = new System.Drawing.Size(115, 23);
@@ -118,7 +117,6 @@
             // 
             // labelShippingMode
             // 
-            this.labelShippingMode.Lines = 0;
             this.labelShippingMode.Location = new System.Drawing.Point(33, 150);
             this.labelShippingMode.Name = "labelShippingMode";
             this.labelShippingMode.Size = new System.Drawing.Size(115, 23);
@@ -127,7 +125,6 @@
             // 
             // labelSharebase
             // 
-            this.labelSharebase.Lines = 0;
             this.labelSharebase.Location = new System.Drawing.Point(33, 190);
             this.labelSharebase.Name = "labelSharebase";
             this.labelSharebase.Size = new System.Drawing.Size(115, 23);
@@ -172,6 +169,7 @@
             this.comboSharebase.IsSupportUnselect = true;
             this.comboSharebase.Location = new System.Drawing.Point(151, 190);
             this.comboSharebase.Name = "comboSharebase";
+            this.comboSharebase.OldText = "";
             this.comboSharebase.Size = new System.Drawing.Size(178, 24);
             this.comboSharebase.TabIndex = 9;
             // 
@@ -186,6 +184,18 @@
             this.txtAccountNo.Size = new System.Drawing.Size(70, 23);
             this.txtAccountNo.TabIndex = 10;
             // 
+            // chkJunk
+            // 
+            this.chkJunk.AutoSize = true;
+            this.chkJunk.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Junk", true));
+            this.chkJunk.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkJunk.Location = new System.Drawing.Point(227, 32);
+            this.chkJunk.Name = "chkJunk";
+            this.chkJunk.Size = new System.Drawing.Size(57, 21);
+            this.chkJunk.TabIndex = 11;
+            this.chkJunk.Text = "Junk";
+            this.chkJunk.UseVisualStyleBackColor = true;
+            // 
             // B04
             // 
             this.ClientSize = new System.Drawing.Size(831, 457);
@@ -195,6 +205,7 @@
             this.IsSupportNew = false;
             this.IsSupportPrint = false;
             this.Name = "B04";
+            this.OnLineHelpID = "Sci.Win.Tems.Input1";
             this.Text = "B04. Share base of Share Expense";
             this.WorkAlias = "ShareRule";
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).EndInit();
@@ -222,5 +233,6 @@
         private Win.UI.Label labelAccountName;
         private Win.UI.Label labelAccountNo;
         private Win.UI.TextBox txtAccountNo;
+        private Win.UI.CheckBox chkJunk;
     }
 }

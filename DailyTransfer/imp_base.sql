@@ -5909,5 +5909,35 @@ select	ExpressDutyID
 				,AddDate
 from	[Trade_To_Pms].[dbo].ExpressDuty_Functions
 
+/*ShareRule*/
+----------------------Delete
+Delete a
+from [Production].[dbo].ShareRule as a 
+left join [Trade_To_Pms].[dbo].ShareRule  as b on a.AccountID = b.AccountID and a.ExpenseReason = b.ExpenseReason and a.ShareBase = b.ShareBase
+where	b.AccountID is null and
+		b.ExpenseReason is null and
+		b.ShareBase is null
+---------------------------UPDATE 
+UPDATE a
+SET a.ShipModeID = b.ShipModeID,
+	a.Junk = isnull(b.Junk, 0)
+from [Production].[dbo].ShareRule as a with(nolock)
+inner join [Trade_To_Pms].[dbo].ShareRule  as b with(nolock) on a.AccountID = b.AccountID and a.ExpenseReason = b.ExpenseReason and a.ShareBase = b.ShareBase
+-------------------------- INSERT INTO 
+INSERT INTO [Production].[dbo].ShareRule
+ (
+	 AccountID
+	 ,ExpenseReason
+	 ,ShareBase
+	 ,ShipModeID
+	 ,Junk
+)
+SELECT b.AccountID
+	  ,b.ExpenseReason
+	  ,b.ShareBase
+	  ,isnull(b.ShipModeID, '')
+	  ,isnull(b.Junk, 0)
+from [Trade_To_Pms].[dbo].ShareRule as b WITH (NOLOCK)
+where not exists(select 1 from [Production].[dbo].ShareRule a WITH (NOLOCK) where a.AccountID = b.AccountID and a.ExpenseReason = b.ExpenseReason and a.ShareBase = b.ShareBase)
 
 END

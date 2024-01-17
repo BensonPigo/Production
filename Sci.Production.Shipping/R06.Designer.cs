@@ -57,40 +57,44 @@
             this.comboShareExpense = new Sci.Production.Class.ComboDropDownList(this.components);
             this.comboSubType = new Sci.Production.Class.ComboDropDownList(this.components);
             this.txtSubconSupplier = new Sci.Production.Class.TxtsubconNoConfirm();
+            this.label4 = new Sci.Win.UI.Label();
+            this.label5 = new Sci.Win.UI.Label();
+            this.datePulloutArrival = new Sci.Win.UI.DateRange();
+            this.dateOnBoard = new Sci.Win.UI.DateRange();
             this.radioPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // print
             // 
-            this.print.Location = new System.Drawing.Point(425, 12);
+            this.print.Location = new System.Drawing.Point(479, 12);
             // 
             // toexcel
             // 
-            this.toexcel.Location = new System.Drawing.Point(425, 48);
+            this.toexcel.Location = new System.Drawing.Point(479, 48);
             this.toexcel.TabIndex = 13;
             // 
             // close
             // 
-            this.close.Location = new System.Drawing.Point(425, 84);
+            this.close.Location = new System.Drawing.Point(479, 84);
             this.close.TabIndex = 14;
             // 
             // buttonCustomized
             // 
-            this.buttonCustomized.Location = new System.Drawing.Point(280, 185);
+            this.buttonCustomized.Location = new System.Drawing.Point(330, 273);
             // 
             // checkUseCustomized
             // 
-            this.checkUseCustomized.Location = new System.Drawing.Point(251, 194);
+            this.checkUseCustomized.Location = new System.Drawing.Point(301, 282);
             // 
             // txtVersion
             // 
-            this.txtVersion.Location = new System.Drawing.Point(329, 192);
+            this.txtVersion.Location = new System.Drawing.Point(379, 280);
             // 
             // labelDate
             // 
             this.labelDate.Location = new System.Drawing.Point(8, 12);
             this.labelDate.Name = "labelDate";
-            this.labelDate.Size = new System.Drawing.Size(103, 23);
+            this.labelDate.Size = new System.Drawing.Size(153, 23);
             this.labelDate.TabIndex = 94;
             this.labelDate.Text = "Date";
             // 
@@ -98,39 +102,39 @@
             // 
             this.labelApvDate.Location = new System.Drawing.Point(8, 48);
             this.labelApvDate.Name = "labelApvDate";
-            this.labelApvDate.Size = new System.Drawing.Size(103, 23);
+            this.labelApvDate.Size = new System.Drawing.Size(153, 23);
             this.labelApvDate.TabIndex = 95;
             this.labelApvDate.Text = "Apv. Date";
             // 
             // labelBLNo
             // 
-            this.labelBLNo.Location = new System.Drawing.Point(8, 121);
+            this.labelBLNo.Location = new System.Drawing.Point(8, 209);
             this.labelBLNo.Name = "labelBLNo";
-            this.labelBLNo.Size = new System.Drawing.Size(103, 23);
+            this.labelBLNo.Size = new System.Drawing.Size(153, 23);
             this.labelBLNo.TabIndex = 96;
             this.labelBLNo.Text = "BL No.";
             // 
             // labelM
             // 
-            this.labelM.Location = new System.Drawing.Point(8, 185);
+            this.labelM.Location = new System.Drawing.Point(8, 273);
             this.labelM.Name = "labelM";
-            this.labelM.Size = new System.Drawing.Size(103, 23);
+            this.labelM.Size = new System.Drawing.Size(153, 23);
             this.labelM.TabIndex = 97;
             this.labelM.Text = "M";
             // 
             // labelSupplier
             // 
-            this.labelSupplier.Location = new System.Drawing.Point(8, 221);
+            this.labelSupplier.Location = new System.Drawing.Point(8, 309);
             this.labelSupplier.Name = "labelSupplier";
-            this.labelSupplier.Size = new System.Drawing.Size(103, 23);
+            this.labelSupplier.Size = new System.Drawing.Size(153, 23);
             this.labelSupplier.TabIndex = 98;
             this.labelSupplier.Text = "Supplier";
             // 
             // labelOrderby
             // 
-            this.labelOrderby.Location = new System.Drawing.Point(8, 258);
+            this.labelOrderby.Location = new System.Drawing.Point(8, 346);
             this.labelOrderby.Name = "labelOrderby";
-            this.labelOrderby.Size = new System.Drawing.Size(103, 23);
+            this.labelOrderby.Size = new System.Drawing.Size(153, 23);
             this.labelOrderby.TabIndex = 99;
             this.labelOrderby.Text = "Order by";
             // 
@@ -151,7 +155,7 @@
             this.dateDate.DateBox2.Size = new System.Drawing.Size(129, 23);
             this.dateDate.DateBox2.TabIndex = 1;
             this.dateDate.IsRequired = false;
-            this.dateDate.Location = new System.Drawing.Point(114, 12);
+            this.dateDate.Location = new System.Drawing.Point(164, 12);
             this.dateDate.Name = "dateDate";
             this.dateDate.Size = new System.Drawing.Size(280, 23);
             this.dateDate.TabIndex = 1;
@@ -173,7 +177,7 @@
             this.dateApvDate.DateBox2.Size = new System.Drawing.Size(129, 23);
             this.dateApvDate.DateBox2.TabIndex = 1;
             this.dateApvDate.IsRequired = false;
-            this.dateApvDate.Location = new System.Drawing.Point(114, 48);
+            this.dateApvDate.Location = new System.Drawing.Point(164, 48);
             this.dateApvDate.Name = "dateApvDate";
             this.dateApvDate.Size = new System.Drawing.Size(280, 23);
             this.dateApvDate.TabIndex = 2;
@@ -182,7 +186,7 @@
             // 
             this.txtBLNoStart.BackColor = System.Drawing.Color.White;
             this.txtBLNoStart.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtBLNoStart.Location = new System.Drawing.Point(114, 121);
+            this.txtBLNoStart.Location = new System.Drawing.Point(164, 209);
             this.txtBLNoStart.Name = "txtBLNoStart";
             this.txtBLNoStart.Size = new System.Drawing.Size(190, 23);
             this.txtBLNoStart.TabIndex = 4;
@@ -191,7 +195,7 @@
             // 
             this.txtBLNoEnd.BackColor = System.Drawing.Color.White;
             this.txtBLNoEnd.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtBLNoEnd.Location = new System.Drawing.Point(114, 151);
+            this.txtBLNoEnd.Location = new System.Drawing.Point(164, 239);
             this.txtBLNoEnd.Name = "txtBLNoEnd";
             this.txtBLNoEnd.Size = new System.Drawing.Size(190, 23);
             this.txtBLNoEnd.TabIndex = 5;
@@ -202,7 +206,7 @@
             this.comboM.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboM.FormattingEnabled = true;
             this.comboM.IsSupportUnselect = true;
-            this.comboM.Location = new System.Drawing.Point(114, 185);
+            this.comboM.Location = new System.Drawing.Point(164, 273);
             this.comboM.Name = "comboM";
             this.comboM.OldText = "";
             this.comboM.Size = new System.Drawing.Size(73, 24);
@@ -214,7 +218,7 @@
             this.comboOrderby.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboOrderby.FormattingEnabled = true;
             this.comboOrderby.IsSupportUnselect = true;
-            this.comboOrderby.Location = new System.Drawing.Point(114, 258);
+            this.comboOrderby.Location = new System.Drawing.Point(164, 346);
             this.comboOrderby.Name = "comboOrderby";
             this.comboOrderby.OldText = "";
             this.comboOrderby.Size = new System.Drawing.Size(101, 24);
@@ -223,7 +227,7 @@
             // label7
             // 
             this.label7.BackColor = System.Drawing.Color.Transparent;
-            this.label7.Location = new System.Drawing.Point(311, 121);
+            this.label7.Location = new System.Drawing.Point(361, 209);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(22, 23);
             this.label7.TabIndex = 107;
@@ -235,9 +239,9 @@
             // 
             // labelReportType
             // 
-            this.labelReportType.Location = new System.Drawing.Point(8, 394);
+            this.labelReportType.Location = new System.Drawing.Point(8, 482);
             this.labelReportType.Name = "labelReportType";
-            this.labelReportType.Size = new System.Drawing.Size(103, 23);
+            this.labelReportType.Size = new System.Drawing.Size(153, 23);
             this.labelReportType.TabIndex = 108;
             this.labelReportType.Text = "Report Type";
             // 
@@ -271,7 +275,7 @@
             this.radioPanel1.Controls.Add(this.radioByInvWK);
             this.radioPanel1.Controls.Add(this.radioSummary);
             this.radioPanel1.Controls.Add(this.radioDetail);
-            this.radioPanel1.Location = new System.Drawing.Point(114, 394);
+            this.radioPanel1.Location = new System.Drawing.Point(164, 482);
             this.radioPanel1.Name = "radioPanel1";
             this.radioPanel1.Size = new System.Drawing.Size(219, 109);
             this.radioPanel1.TabIndex = 9;
@@ -316,7 +320,7 @@
             this.dateVoucherDate.DateBox2.Name = "";
             this.dateVoucherDate.DateBox2.Size = new System.Drawing.Size(129, 23);
             this.dateVoucherDate.DateBox2.TabIndex = 1;
-            this.dateVoucherDate.Location = new System.Drawing.Point(114, 84);
+            this.dateVoucherDate.Location = new System.Drawing.Point(164, 84);
             this.dateVoucherDate.Name = "dateVoucherDate";
             this.dateVoucherDate.Size = new System.Drawing.Size(280, 23);
             this.dateVoucherDate.TabIndex = 3;
@@ -325,7 +329,7 @@
             // 
             this.label1.Location = new System.Drawing.Point(8, 84);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(103, 23);
+            this.label1.Size = new System.Drawing.Size(153, 23);
             this.label1.TabIndex = 110;
             this.label1.Text = "Voucher Date";
             // 
@@ -335,7 +339,7 @@
             this.comboRateType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboRateType.FormattingEnabled = true;
             this.comboRateType.IsSupportUnselect = true;
-            this.comboRateType.Location = new System.Drawing.Point(114, 294);
+            this.comboRateType.Location = new System.Drawing.Point(164, 382);
             this.comboRateType.Name = "comboRateType";
             this.comboRateType.OldText = "";
             this.comboRateType.Size = new System.Drawing.Size(171, 24);
@@ -343,25 +347,25 @@
             // 
             // lbRateType
             // 
-            this.lbRateType.Location = new System.Drawing.Point(8, 294);
+            this.lbRateType.Location = new System.Drawing.Point(8, 382);
             this.lbRateType.Name = "lbRateType";
-            this.lbRateType.Size = new System.Drawing.Size(103, 23);
+            this.lbRateType.Size = new System.Drawing.Size(153, 23);
             this.lbRateType.TabIndex = 118;
             this.lbRateType.Text = "Rate Type";
             // 
             // label2
             // 
-            this.label2.Location = new System.Drawing.Point(8, 330);
+            this.label2.Location = new System.Drawing.Point(8, 418);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(103, 23);
+            this.label2.Size = new System.Drawing.Size(153, 23);
             this.label2.TabIndex = 119;
             this.label2.Text = "Sub Type";
             // 
             // label3
             // 
-            this.label3.Location = new System.Drawing.Point(8, 362);
+            this.label3.Location = new System.Drawing.Point(8, 450);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(103, 23);
+            this.label3.Size = new System.Drawing.Size(153, 23);
             this.label3.TabIndex = 120;
             this.label3.Text = "Share Expense";
             // 
@@ -372,7 +376,7 @@
             this.comboShareExpense.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboShareExpense.FormattingEnabled = true;
             this.comboShareExpense.IsSupportUnselect = true;
-            this.comboShareExpense.Location = new System.Drawing.Point(114, 361);
+            this.comboShareExpense.Location = new System.Drawing.Point(164, 449);
             this.comboShareExpense.Name = "comboShareExpense";
             this.comboShareExpense.OldText = "";
             this.comboShareExpense.Size = new System.Drawing.Size(121, 24);
@@ -386,7 +390,7 @@
             this.comboSubType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboSubType.FormattingEnabled = true;
             this.comboSubType.IsSupportUnselect = true;
-            this.comboSubType.Location = new System.Drawing.Point(114, 330);
+            this.comboSubType.Location = new System.Drawing.Point(164, 418);
             this.comboSubType.Name = "comboSubType";
             this.comboSubType.OldText = "";
             this.comboSubType.Size = new System.Drawing.Size(169, 24);
@@ -396,19 +400,82 @@
             // txtSubconSupplier
             // 
             this.txtSubconSupplier.DisplayBox1Binding = "";
+            this.txtSubconSupplier.IsFreightForwarder = false;
             this.txtSubconSupplier.IsIncludeJunk = true;
             this.txtSubconSupplier.IsMisc = false;
             this.txtSubconSupplier.IsShipping = false;
             this.txtSubconSupplier.IsSubcon = false;
-            this.txtSubconSupplier.Location = new System.Drawing.Point(114, 221);
+            this.txtSubconSupplier.Location = new System.Drawing.Point(164, 309);
             this.txtSubconSupplier.Name = "txtSubconSupplier";
             this.txtSubconSupplier.Size = new System.Drawing.Size(170, 23);
             this.txtSubconSupplier.TabIndex = 7;
             this.txtSubconSupplier.TextBox1Binding = "";
             // 
+            // label4
+            // 
+            this.label4.Location = new System.Drawing.Point(9, 123);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(152, 39);
+            this.label4.TabIndex = 123;
+            this.label4.Text = "Pullout Date (for GB#) /\nArrival Date (for WK#)";
+            // 
+            // label5
+            // 
+            this.label5.Location = new System.Drawing.Point(8, 173);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(153, 23);
+            this.label5.TabIndex = 124;
+            this.label5.Text = "On Board Date";
+            // 
+            // datePulloutArrival
+            // 
+            // 
+            // 
+            // 
+            this.datePulloutArrival.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.datePulloutArrival.DateBox1.Name = "";
+            this.datePulloutArrival.DateBox1.Size = new System.Drawing.Size(129, 23);
+            this.datePulloutArrival.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.datePulloutArrival.DateBox2.Location = new System.Drawing.Point(151, 0);
+            this.datePulloutArrival.DateBox2.Name = "";
+            this.datePulloutArrival.DateBox2.Size = new System.Drawing.Size(129, 23);
+            this.datePulloutArrival.DateBox2.TabIndex = 1;
+            this.datePulloutArrival.Location = new System.Drawing.Point(164, 131);
+            this.datePulloutArrival.Name = "datePulloutArrival";
+            this.datePulloutArrival.Size = new System.Drawing.Size(280, 23);
+            this.datePulloutArrival.TabIndex = 125;
+            // 
+            // dateOnBoard
+            // 
+            // 
+            // 
+            // 
+            this.dateOnBoard.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dateOnBoard.DateBox1.Name = "";
+            this.dateOnBoard.DateBox1.Size = new System.Drawing.Size(129, 23);
+            this.dateOnBoard.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.dateOnBoard.DateBox2.Location = new System.Drawing.Point(151, 0);
+            this.dateOnBoard.DateBox2.Name = "";
+            this.dateOnBoard.DateBox2.Size = new System.Drawing.Size(129, 23);
+            this.dateOnBoard.DateBox2.TabIndex = 1;
+            this.dateOnBoard.Location = new System.Drawing.Point(164, 173);
+            this.dateOnBoard.Name = "dateOnBoard";
+            this.dateOnBoard.Size = new System.Drawing.Size(280, 23);
+            this.dateOnBoard.TabIndex = 126;
+            // 
             // R06
             // 
-            this.ClientSize = new System.Drawing.Size(528, 541);
+            this.ClientSize = new System.Drawing.Size(599, 660);
+            this.Controls.Add(this.dateOnBoard);
+            this.Controls.Add(this.datePulloutArrival);
+            this.Controls.Add(this.label5);
+            this.Controls.Add(this.label4);
             this.Controls.Add(this.comboShareExpense);
             this.Controls.Add(this.comboSubType);
             this.Controls.Add(this.label3);
@@ -467,6 +534,10 @@
             this.Controls.SetChildIndex(this.label3, 0);
             this.Controls.SetChildIndex(this.comboSubType, 0);
             this.Controls.SetChildIndex(this.comboShareExpense, 0);
+            this.Controls.SetChildIndex(this.label4, 0);
+            this.Controls.SetChildIndex(this.label5, 0);
+            this.Controls.SetChildIndex(this.datePulloutArrival, 0);
+            this.Controls.SetChildIndex(this.dateOnBoard, 0);
             this.radioPanel1.ResumeLayout(false);
             this.radioPanel1.PerformLayout();
             this.ResumeLayout(false);
@@ -504,5 +575,9 @@
         private Win.UI.Label label3;
         private Class.ComboDropDownList comboSubType;
         private Class.ComboDropDownList comboShareExpense;
+        private Win.UI.Label label4;
+        private Win.UI.Label label5;
+        private Win.UI.DateRange datePulloutArrival;
+        private Win.UI.DateRange dateOnBoard;
     }
 }

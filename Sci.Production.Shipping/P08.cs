@@ -41,6 +41,31 @@ namespace Sci.Production.Shipping
         private Ict.Win.UI.DataGridViewTextBoxColumn col_remark;
         private bool haveEditShareFee;
 
+        private bool IsExistsBLNo
+        {
+            get
+            {
+                string sqlCheck = $@"
+select  1   from    GMTBooking with (nolock) where BLNo = '{this.CurrentMaintain["BLNo"]}' or BL2No = '{this.CurrentMaintain["BLNo"]}'
+union all
+select  1   from    Export with (nolock) where BLNo = '{this.CurrentMaintain["BLNo"]}'
+union all
+select  1   from    FtyExport with (nolock) where BLNo = '{this.CurrentMaintain["BLNo"]}'
+union all
+select  1   from    TransferExport with (nolock) where BLNo = '{this.CurrentMaintain["BLNo"]}'
+";
+                return MyUtility.Check.Seek(sqlCheck);
+            }
+        }
+
+        private bool IsCustoms
+        {
+            get
+            {
+                return MyUtility.Check.Seek($"select 1 from LocalSupp with (nolock) where ID = '{this.CurrentMaintain["LocalSuppID"]}' and IsCustoms = 1");
+            }
+        }
+
         /// <summary>
         /// P08
         /// </summary>
@@ -282,15 +307,16 @@ select ID
 	, [Brand] = BrandID
 	, CurrencyID
 	, Price
-	, [Unit] = UnitID 
-from ShipExpense WITH (NOLOCK) 
+	, [Unit] = UnitID
+    , AccountID
+from ShipExpense WITH (NOLOCK)
 where exists (select 1 from SciFMS_AccountNo sa where sa.ID = ShipExpense.AccountID and sa.ExpressTypeID in ({1}, 3))
 and Junk = 0 
 and LocalSuppID = '{0}' 
 and AccountID != ''",
                         localSuppID,
                         expressTypeID);
-                    Win.Tools.SelectItem item = new Win.Tools.SelectItem(sqlCmd, "20,50,6,3,11,8", MyUtility.Convert.GetString(dr["ShipExpenseID"]), columndecimals: "0,0,0,0,4");
+                    Win.Tools.SelectItem item = new Win.Tools.SelectItem(sqlCmd, "20,50,6,3,11,8,13", MyUtility.Convert.GetString(dr["ShipExpenseID"]), columndecimals: "0,0,0,0,4");
                     DialogResult returnResult = item.ShowDialog();
                     if (returnResult == DialogResult.Cancel)
                     {
@@ -565,12 +591,23 @@ and Junk = 0",
                 return false;
             }
 
-            if (MyUtility.Check.Empty(this.CurrentMaintain["BLNo"]) &&
-                !(this.checkIsFreightForwarder.Checked && this.CurrentMaintain["Reason"].EqualString("AP007")))
+            if (MyUtility.Check.Empty(this.CurrentMaintain["BLNo"]) && this.checkIsFreightForwarder.Checked)
             {
                 this.txtBLNo.Focus();
                 MyUtility.Msg.WarningBox("B/L No. can't empty!!");
                 return false;
+            }
+
+            if ((this.checkIsFreightForwarder.Checked && this.CurrentMaintain["Reason"].ToString() != "AP007") || this.IsCustoms)
+            {
+                if (!this.IsExistsBLNo)
+                {
+                    string errMsg = this.IsCustoms ?
+                        $"Since Supplier：<{this.CurrentMaintain["LocalSuppID"]}> is Customs, the B/L#<{this.CurrentMaintain["BLNo"]}> should be filled in with the existing B/L No.!!" :
+                        $"Since [Is Freight Forwarder] is checked, the B/L#<{this.CurrentMaintain["BLNo"]}> should be filled in with the existing B/L No.!!";
+                    MyUtility.Msg.WarningBox(errMsg);
+                    return false;
+                }
             }
 
             if (MyUtility.Check.Empty(this.CurrentMaintain["Handle"]))
@@ -644,61 +681,6 @@ and gb.ShipModeID in ('A/P', 'E/P')",
                     MyUtility.Msg.WarningBox("Please encode <APP Exchange Rate> if <Is Freight FWD> is selected and the <Invoice No.> shipmode is A/P or E/P which is belong to this <B/L No.>");
                     this.numericBox1.Focus();
                     return false;
-                }
-            }
-
-            // ISP20210513
-            if (!this.CurrentMaintain["SubType"].EqualString("Other") &&
-                this.checkIsFreightForwarder.Checked &&
-                !this.CurrentMaintain["Reason"].EqualString("AP007"))
-            {
-                if (this.CurrentMaintain["BLNo"].Empty())
-                {
-                    MyUtility.Msg.WarningBox("No share expense data, cannot be save!");
-                    return false;
-                }
-                else
-                {
-                    string strSQLcmd;
-                    if (this.CurrentMaintain["Type"].EqualString("IMPORT"))
-                    {
-                        strSQLcmd = string.Format(
-                            @"
-select  1
-from Export with (nolock) where BLno = '{0}'
-union all
-select  1
-from FtyExport with (nolock) where BLno = '{0}' and Type <> 3 
-union all
-select 1
-from TransferExport with (nolock) where BLno = '{0}'",
-                            this.CurrentMaintain["BLNo"]);
-
-                        if (!MyUtility.Check.Seek(strSQLcmd))
-                        {
-                            MyUtility.Msg.WarningBox("No share expense data, cannot be save!");
-                            this.numericBox1.Focus();
-                            return false;
-                        }
-                    }
-                    else
-                    {
-                        strSQLcmd = string.Format(
-                            @"
-select  1 from GMTBooking with (nolock) where BLno = '{0}' or BL2no = '{0}'
-union select 1 from FtyExport f with (nolock) where Blno = '{0}'
-union select 1 from Export f with (nolock) where Blno = '{0}'
-union select 1 from TransferExport with (nolock) where Blno = '{0}'
-",
-                            this.CurrentMaintain["BLNo"]);
-
-                        if (!MyUtility.Check.Seek(strSQLcmd))
-                        {
-                            MyUtility.Msg.WarningBox("No share expense data, cannot be save!");
-                            this.numericBox1.Focus();
-                            return false;
-                        }
-                    }
                 }
             }
 
@@ -884,7 +866,10 @@ If the application is for Air - Prepaid Invoice, please ensure that all item cod
         protected override DualResult ClickSavePre()
         {
             DualResult result;
-            if (this.haveEditShareFee)
+            string oldBLNo = MyUtility.GetValue.Lookup($"select BLNo from ShippingAP with (nolock) where ID = '{this.CurrentMaintain["ID"]}'");
+
+            if (this.haveEditShareFee ||
+                oldBLNo != this.CurrentMaintain["BLNo"].ToString())
             {
                 result = DBProxy.Current.Execute(null, string.Format("delete from ShareExpense where ShippingAPID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"])));
                 if (!result)
@@ -907,7 +892,8 @@ If the application is for Air - Prepaid Invoice, please ensure that all item cod
         private DualResult InitialShareExpense(DataRow drCurrentMaintain, bool checkIsFreightForwarder)
         {
             DualResult result;
-            if (checkIsFreightForwarder && !drCurrentMaintain["Reason"].EqualString("AP007"))
+            if ((checkIsFreightForwarder && this.IsExistsBLNo) ||
+                (this.IsCustoms && !MyUtility.Check.Empty(drCurrentMaintain["BLNO"])))
             {
                 string strSqlCmd;
                 if (drCurrentMaintain["Type"].EqualString("EXPORT") && drCurrentMaintain["SubType"].EqualString("GARMENT"))
@@ -1607,6 +1593,8 @@ Thank you.";
                 return;
             }
 
+            this.comboType2.SelectedIndexChanged -= this.ComboType2_SelectedIndexChanged;
+
             // switch (CurrentMaintain["Type"].ToString())
             switch (this.comboType.SelectedValue.ToString())
             {
@@ -1626,6 +1614,8 @@ Thank you.";
             }
 
             this.comboType2.SelectedIndex = -1;
+
+            this.comboType2.SelectedIndexChanged += this.ComboType2_SelectedIndexChanged;
         }
 
         private void TxtReason_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
@@ -1737,7 +1727,8 @@ Non SP# Sample/Mock-up
             }
 
             #region ISP20210237 check [GB#]and[WK#]and[FTY WK#]
-            if (this.checkIsFreightForwarder.Checked)
+            if ((this.checkIsFreightForwarder.Checked && this.CurrentMaintain["Reason"].ToString() != "AP007") ||
+                this.IsCustoms)
             {
                 if (!MyUtility.Check.Empty(this.CurrentMaintain["SisFtyAPID"]))
                 {
