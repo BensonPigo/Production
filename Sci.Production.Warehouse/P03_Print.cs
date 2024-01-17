@@ -1,6 +1,7 @@
 ﻿using Ict;
 using Sci.Data;
 using Sci.Win;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
@@ -412,7 +413,8 @@ DROP TABLE #tmp, #PO_Supp_tmp, #lasttmp
             this.SetCount(this.dt.Rows.Count);
             if (this.radioPanel1.Value == this.radioMaterialStatus.Value)
             {
-                Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Warehouse_P03_Print-1.xltx"); // 預先開啟excel app
+                Excel.Application objApp = new Excel.Application();
+                Utility.Report.ExcelCOM com = new Utility.Report.ExcelCOM(Env.Cfg.XltPathDir + "\\Warehouse_P03_Print-1.xltx", objApp);
                 Excel.Worksheet worksheet = objApp.Sheets[1];
                 for (int i = 0; i < this.dt.Rows.Count; i++)
                 {
@@ -430,22 +432,17 @@ DROP TABLE #tmp, #PO_Supp_tmp, #lasttmp
                     worksheet.Cells[1, i + 1].Borders.Weight = 2;
                 }
 
-                MyUtility.Excel.CopyToXls(this.dt, string.Empty, "Warehouse_P03_Print-1.xltx", 1, false, null, objApp);
-                string strExcelName = Class.MicrosoftFile.GetName("Warehouse_P03");
-                objApp.ActiveWorkbook.SaveAs(strExcelName);
-                objApp.ActiveWorkbook.Close(true);
-                objApp.Quit();
+                com.WriteTable(this.dt, 2);
+                com.ExcelApp.ActiveWorkbook.Sheets[1].Select(Type.Missing);
+                objApp.Visible = true;
                 Marshal.ReleaseComObject(worksheet);
                 Marshal.ReleaseComObject(objApp);
-
-                strExcelName.OpenFile();
             }
             else
             {
-                Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Warehouse_P03_Print-2.xltx"); // 預先開啟excel app
-                MyUtility.Excel.CopyToXls(this.dt, string.Empty, "Warehouse_P03_Print-2.xltx", 1, false, null, objApp);      // 將datatable copy to excel
+                Excel.Application objApp = new Excel.Application();
+                Utility.Report.ExcelCOM com = new Utility.Report.ExcelCOM(Env.Cfg.XltPathDir + "\\Warehouse_P03_Print-2.xltx", objApp);
                 Excel.Worksheet worksheet = objApp.Sheets[1];
-
                 for (int i = 0; i < this.dt.Rows.Count; i++)
                 {
                     if (this.dt.Rows[i]["junk"].ToString().Equals("True"))
@@ -454,15 +451,12 @@ DROP TABLE #tmp, #PO_Supp_tmp, #lasttmp
                     }
                 }
 
+                com.WriteTable(this.dt, 2);
+                com.ExcelApp.ActiveWorkbook.Sheets[1].Select(Type.Missing);
                 worksheet.Columns[23].Delete();
-                string strExcelName = Class.MicrosoftFile.GetName("Warehouse_P03");
-                objApp.ActiveWorkbook.SaveAs(strExcelName);
-                objApp.ActiveWorkbook.Close(true);
-                objApp.Quit();
+                objApp.Visible = true;
                 Marshal.ReleaseComObject(worksheet);
                 Marshal.ReleaseComObject(objApp);
-
-                strExcelName.OpenFile();
             }
 
             return true;
