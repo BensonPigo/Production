@@ -20,7 +20,7 @@ namespace Sci.Production.Class
             try
             {
                 // url = "http://localhost:48926/api/FileDownload/GetFile"; // for test
-                string MaterialDoc_Path = @"\\evamgr\Clip\Trade\Material Doc";
+                string MaterialDoc_Path = @"\\evamgr\Clip\Trade";
                 var httpWebRequest = (HttpWebRequest)HttpWebRequest.Create(url);
 
                 if (!filePath.ToUpper().Contains(MaterialDoc_Path.ToUpper()))
