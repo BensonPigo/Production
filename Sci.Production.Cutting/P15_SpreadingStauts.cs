@@ -27,12 +27,14 @@ namespace Sci.Production.Cutting
         private readonly string sizeRatio;
         private readonly DataTable spDt;
         private DataTable Dt = new DataTable();
+        private DataRow drCutref;
 
         /// <inheritdoc/>
         public P15_SpreadingStauts(DataRow cutrefrow, string sizeRatio, DataTable spDt)
         {
             this.InitializeComponent();
             this.sizeRatio = sizeRatio;
+            this.drCutref = cutrefrow;
             this.spDt = spDt;
             this.txtCutRef.Text = MyUtility.Convert.GetString(cutrefrow["cutref"]);
             this.txtSPNo.Text = MyUtility.Convert.GetString(cutrefrow["OrderID"]);
@@ -109,6 +111,7 @@ namespace Sci.Production.Cutting
         {
             DataRow newRow = this.Dt.NewRow();
             newRow["SizeRatiio"] = this.sizeRatio;
+            newRow["ToneChar"] = this.drCutref["Tone"];
             this.Dt.Rows.Add(newRow);
             this.SerialNumber();
         }
