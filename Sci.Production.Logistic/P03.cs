@@ -859,7 +859,7 @@ select '{0}' [MDivisionID]
     ,'{5}' [SCICtnNo]
     ,'Clog P03' [DeleteFrom]
     ,{8} [ScanQty]
-    ,'{9}' [ScanEditDate]
+    ,CONVERT(DATETIME, '{9}', 120) [ScanEditDate]
     ,'{10}' [ScanName]
     ,'{4}' [AddName]
     ,GETDATE() [AddDate]
@@ -879,7 +879,7 @@ select '{0}' [MDivisionID]
                         MyUtility.Convert.GetString(dr["ClogReasonID"]),
                         MyUtility.Convert.GetString(dr["ClogReasonRemark"]),
                         MyUtility.Convert.GetInt(dr["ScanQty"]),
-                        MyUtility.Convert.GetDate(dr["ScanEditDate"]),
+                        ((DateTime)dr["ScanEditDate"]).ToString("yyyy-MM-dd HH:mm:ss"),
                         MyUtility.Convert.GetString(dr["ScanName"])));
             }
 
