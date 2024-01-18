@@ -12,8 +12,6 @@ CREATE TABLE PerspirationFastness(
 	Temperature int NULL CONSTRAINT [DF_PerspirationFastness_Temperature] DEFAULT 0,
 	Time int NULL CONSTRAINT [DF_PerspirationFastness_Time] DEFAULT 0,
 	MetalContent nvarchar(120) NULL CONSTRAINT [DF_PerspirationFastness_MetalContent] DEFAULT '',
-	--TestBeforePicture varbinary(MAX) NULL,
-	--TestAfterPicture varbinary(MAX) NULL,		
 	AddName varchar(10) NULL CONSTRAINT [DF_PerspirationFastness_AddName] DEFAULT '',
 	AddDate datetime NULL ,
 	EditName varchar(10) NULL CONSTRAINT [DF_PerspirationFastness_EditName] DEFAULT '',

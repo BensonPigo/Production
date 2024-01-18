@@ -11,8 +11,6 @@
 		Remark nvarchar(120) NULL CONSTRAINT [DF_WaterFastness_Remark] DEFAULT '',
 		Temperature int NULL CONSTRAINT [DF_WaterFastness_Temperature] DEFAULT 0,
 		Time int NULL CONSTRAINT [DF_WaterFastness_Time] DEFAULT 0,
-		--TestBeforePicture varbinary(MAX) NULL,
-		--TestAfterPicture varbinary(MAX) NULL,		
 		AddName varchar(10) NULL CONSTRAINT [DF_WaterFastness_AddName] DEFAULT '',
 		AddDate datetime NULL ,
 		EditName varchar(10) NULL CONSTRAINT [DF_WaterFastness_EditName] DEFAULT '',
