@@ -31,8 +31,6 @@ CREATE TABLE [dbo].[MockupWash](
 	[HT2ndPressnoreverse] [int] NULL,
 	[HT2ndPressreversed] [int] NULL,
 	[HTCoolingTime] varchar(50) NULL,
-	[TestBeforePicture] [varbinary](max) NULL,
-	[TestAfterPicture] [varbinary](max) NULL,
 	[Type] [varchar](1) NOT NULL,
  CONSTRAINT [PK_MockupWash] PRIMARY KEY CLUSTERED 
 (
@@ -168,12 +166,6 @@ EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'HT2ndPressreve
 GO
 
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'HTCoolingTime' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'MockupWash', @level2type=N'COLUMN',@level2name=N'HTCoolingTime'
-GO
-
-EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'測試前拍照' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'MockupWash', @level2type=N'COLUMN',@level2name=N'TestBeforePicture'
-GO
-
-EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'測試後拍照' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'MockupWash', @level2type=N'COLUMN',@level2name=N'TestAfterPicture'
 GO
 
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'區分大貨階段 (B) 與開發階段 (S)' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'MockupWash', @level2type=N'COLUMN',@level2name=N'Type'

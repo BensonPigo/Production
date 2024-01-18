@@ -25,10 +25,6 @@
     [EditName]      VARCHAR (10)    CONSTRAINT [DF_AIR_Laboratory_EditName] DEFAULT ('') NULL,
     [EditDate]      DATETIME        NULL,
 	ReportNo varchar(14) not null CONSTRAINT [DF_AIR_Laboratory_ReportNo] default '',
-    OvenTestBeforePicture  varbinary(max) NULL ,
-    OvenTestAfterPicture  varbinary(max) NULL,
-    WashTestBeforePicture  varbinary(max) NULL ,
-    WashTestAfterPicture  varbinary(max) NULL ,
     CONSTRAINT [PK_AIR_Laboratory] PRIMARY KEY CLUSTERED ([ID] ASC, [POID] ASC, [SEQ1] ASC, [SEQ2] ASC)
 );
 
@@ -140,41 +136,4 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'烘箱結�
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'大小項', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'AIR_Laboratory', @level2type = N'COLUMN', @level2name = N'SEQ1';
 
-GO
-EXEC sp_addextendedproperty @name = N'MS_Description',
-	@value = N'烘箱測試前的照片',
-	@level0type = N'SCHEMA',
-	@level0name = N'dbo',
-	@level1type = N'TABLE',
-	@level1name = N'AIR_Laboratory',
-	@level2type = N'COLUMN',
-	@level2name = N'OvenTestBeforePicture'
-GO
-EXEC sp_addextendedproperty @name = N'MS_Description',
-	@value = N'烘箱測試後的照片',
-	@level0type = N'SCHEMA',
-	@level0name = N'dbo',
-	@level1type = N'TABLE',
-	@level1name = N'AIR_Laboratory',
-	@level2type = N'COLUMN',
-	@level2name = N'OvenTestAfterPicture'
-GO
-
-EXEC sp_addextendedproperty @name = N'MS_Description',
-	@value = N'水洗測試前的照片',
-	@level0type = N'SCHEMA',
-	@level0name = N'dbo',
-	@level1type = N'TABLE',
-	@level1name = N'AIR_Laboratory',
-	@level2type = N'COLUMN',
-	@level2name = N'WashTestBeforePicture'
-GO
-EXEC sp_addextendedproperty @name = N'MS_Description',
-	@value = N'水洗測試後的照片',
-	@level0type = N'SCHEMA',
-	@level0name = N'dbo',
-	@level1type = N'TABLE',
-	@level1name = N'AIR_Laboratory',
-	@level2type = N'COLUMN',
-	@level2name = N'WashTestAfterPicture'
 GO
