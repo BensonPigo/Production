@@ -541,7 +541,7 @@ AND  (";
                 chkHasPass += $@"       )";
 
                 if (MyUtility.Check.Seek(chkHasPass))
-                {
+                { 
                     MyUtility.Msg.WarningBox("SP# has Pass record, can't confirm.");
                     return;
                 }
@@ -628,8 +628,7 @@ AND a.Stage='{this.CurrentMaintain["Stage"].ToString()}'
 AND a.Status = 'Confirmed'
 AND a.ID != '{this.CurrentMaintain["ID"].ToString()}'
 ORDER BY a.EditDate DESC
-
-UPDATE CFAInspectionRecord SET Status='New',EditName='{Sci.Env.User.UserID}' ,EditDate=GETDATE() WHERE ID='{this.CurrentMaintain["ID"]}' ";
+ ";
 
                 updateCmd += $@"
 IF NOT EXISTS(
@@ -661,7 +660,7 @@ BEGIN
                 if (this.CurrentMaintain["Stage"].ToString() == "Final")
                 {
                     updateCmd += $@"
-        , CFAFinalInspectResult = (SELECT Result FROM #LastFail)
+        , CFAFinalInspectResult = 'Fail'
         , CFAFinalInspectDate =  IIF((SELECT EditDate FROM #LastFail)='',NULL,(SELECT EditDate FROM #LastFail))
         , CFAFinalInspectHandle  = ISNULL((SELECT EditName FROM #LastConfirm) ,'')
 ";
@@ -670,15 +669,15 @@ BEGIN
                 if (this.CurrentMaintain["Stage"].ToString() == "3rd party")
                 {
                     updateCmd += $@"
-        , CFA3rdInspectResult = (SELECT Result FROM #LastFail)
+        , CFA3rdInspectResult = 'Fail'
         , CFA3rdInspectDate =  IIF((SELECT EditDate FROM #LastFail)='',NULL,(SELECT EditDate FROM #LastFail))
         , CFAIs3rdInspectHandle   = ISNULL( (SELECT EditName FROM #LastConfirm),'')
 ";
                 }
 
                 updateCmd += $@"    WHERE  {tmpOrder_QtyShip.JoinToString(" OR ")} ";
-                updateCmd += $@"
-END";
+                updateCmd += $@" END";
+                updateCmd += $@" UPDATE CFAInspectionRecord SET Status='New',EditName='{Sci.Env.User.UserID}' ,EditDate=GETDATE() WHERE ID='{this.CurrentMaintain["ID"]}'";
             }
             else
             {
