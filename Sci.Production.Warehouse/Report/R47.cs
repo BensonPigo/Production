@@ -123,8 +123,8 @@ namespace Sci.Production.Warehouse
                 fur.RelaxationEndTime, 
                 UnrollScanner = dbo.getPass1 (fur.UnrollScanner), 
                 fur.UnrollActualQty, 
-                fi.Tone,
                 Location = dbo.Getlocation(fi.ukey),
+                fi.Tone,
                 IsAdvance = IIF(fur.IsAdvance = 1, 'Y', ''),
                 fur.UnrollRemark
             from Fabric_UnrollandRelax fur
