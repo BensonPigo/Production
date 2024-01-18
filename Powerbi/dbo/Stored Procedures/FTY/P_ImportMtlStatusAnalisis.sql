@@ -102,7 +102,7 @@ Begin
 	into #tmpMMS
 	From [MainServer].Production.dbo.Export e with(nolock)
 	Inner Join [MainServer].Production.dbo.Export_Detail ed with(nolock) on e.ID = ed.ID
-	Left join [MainServer].Production.dbo.Orders o with(nolock) on ed.PoID = o.ID
+	Inner join [MainServer].Production.dbo.Orders o with(nolock) on ed.PoID = o.ID
 	Left Join [MainServer].Production.dbo.Fabric f with(nolock) on ed.SCIRefno = f.SCIRefno
 	Left join [MainServer].Production.dbo.Supp s with(nolock) on s.ID = ed.SuppID
 	Left join [MainServer].Production.dbo.Export_ShareAmount esa with(nolock) on esa.Ukey = ed.Export_ShareAmount_Ukey
@@ -198,7 +198,7 @@ Begin
 	From [MainServer].Production.dbo.Export_Detail ed with(nolock)
 	Inner join [MainServer].Production.dbo.Export e with(nolock) on e.ID = ed.ID 
 	Left join [MainServer].Production.dbo.Export_ShareAmount esa with(nolock) on esa.Ukey = ed.Export_ShareAmount_Ukey --要追加轉入 ed.[Export_ShareAmount_Ukey]
-	Left join [MainServer].Production.dbo.Orders o with(nolock) on ed.PoID = o.ID
+	inner join [MainServer].Production.dbo.Orders o with(nolock) on ed.PoID = o.ID
 	Left join [MainServer].Production.dbo.PO with(nolock) on ed.POID = PO.ID
 	Left join [MainServer].Production.dbo.Fabric f with(nolock) on ed.SCIRefno = f.SCIRefno --要追加轉入 ed.SCIRefno
 	Left join [MainServer].Production.dbo.Supp s with(nolock) on s.ID = ed.SuppID
