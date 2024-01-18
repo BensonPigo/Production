@@ -185,6 +185,8 @@ BEGIN
 									, iif(o.SubconInType = '3', 'Subcon-in from non-sister factory', '')))
 			, [Article] = oa.Val
 			, [ProduceRgPMS] = (select ProduceRgCode from SCIFty sf WITH (NOLOCK) where sf.ID = o.FactoryID)
+			, [Third_Party_Insepction] = iif(oqs.cnt > 0,1,0)
+			, [ColorID] = Order_ColorCombo.ColorID
 	into #tmp_tmpOrders
 	from #tmp_Orders_base o
 	left join style s WITH (NOLOCK) on o.styleukey = s.ukey
@@ -276,6 +278,18 @@ BEGIN
 		from PackingList_Detail pd WITH (NOLOCK)
 		where pd.OrderID = o.id
 	)scanEditDate
+	outer apply (
+		select top 1 ColorID
+		from Order_ColorCombo occ WITH (NOLOCK)
+		where occ.ID = o.Poid and occ.Patternpanel = 'FA'
+		order by occ.Adddate desc
+	) Order_ColorCombo	
+	outer apply(
+		select cnt = count(1)
+		from Order_Qtyship
+		where id=o.id
+		and CFAIs3rdInspect = 1
+	) oqs
 
 	CREATE NONCLUSTERED INDEX index_tmpOrders_ID ON #tmp_tmpOrders(	ID ASC);
 
@@ -609,6 +623,8 @@ BEGIN
 			, t.[SubconInType]
 			, t.[Article]
 			, t.[ProduceRgPMS]
+			, t.[Third_Party_Insepction]
+			, t.[ColorID]
 	into #tmp_LastBase
 	from #tmp_tmpOrders t
 	left join Cutting ct WITH (NOLOCK) on ct.ID = t.CuttingSP
@@ -1039,6 +1055,8 @@ BEGIN
 			, b.[ProduceRgPMS]
 			, b.[Buyerhalfkey]
 			, [Country] = b.DestAlias
+			, b.[Third_Party_Insepction]
+			, b.[ColorID]
 		from #tmp_LastBase b 
 	end
 	else if @ReturnType = 2

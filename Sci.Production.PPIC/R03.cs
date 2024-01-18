@@ -171,7 +171,7 @@ from Factory f WITH (NOLOCK) where Zone <> ''";
         private StringBuilder Select_cmd(string p_type)
         {
             StringBuilder sqlCmd = new StringBuilder();
-            string seperCmd = string.Empty, seperCmdkpi = string.Empty, seperCmdkpi2 = string.Empty;
+            string seperCmd = string.Empty, seperCmdkpi = string.Empty, seperCmdkpi2 = string.Empty, thridColumn = string.Empty;
             string order_QtyShip_Source_InspDate = string.Empty, order_QtyShip_Source_InspResult = string.Empty, order_QtyShip_Source_InspHandle = string.Empty, order_QtyShip_OuterApply = string.Empty;
 
             this.printingDetail = this.chkPrintingDetail.Checked;
@@ -217,6 +217,7 @@ from Factory f WITH (NOLOCK) where Zone <> ''";
 		),1,1,'')
 	)QtyShip_Handle
 ";
+            thridColumn = this.seperate ? " iif(oq.CFAIs3rdInspect = 1,'Y','N')" : " iif(oqs.cnt > 0,'Y','N')";
 
             string whereIncludeCancelOrder = this.chkIncludeCancelOrder.Checked ? string.Empty : " and o.Junk = 0 ";
             string wherenoRestrictOrdersDelivery = string.Empty;
@@ -280,7 +281,7 @@ with tmpOrders as (
             , o.CutOffLine
 			, [CutInLine_SP] = csp.InLine
 			, [CutOffLine_SP] = csp.OffLine
-            , [3rd_Party_Inspection] = ''
+            , [3rd_Party_Inspection] = {thridColumn}
             , Category=case when o.Category='B'then'Bulk'
 							when o.Category='G'then'Garment'
 							when o.Category='M'then'Material'
@@ -434,6 +435,12 @@ with tmpOrders as (
 		and occ.Article = a.Article and occ.Patternpanel = 'FA'
 		order by occ.Adddate desc
 	) Order_ColorCombo	
+    outer apply(
+		select cnt = count(1)
+		from Order_Qtyship
+		where id=o.id
+		and CFAIs3rdInspect = 1
+	) oqs
     where  1=1 {whereIncludeCancelOrder}
     {wherenoRestrictOrdersDelivery}
 ");
@@ -705,7 +712,7 @@ tmpFilterZone as (
             , o.CutOffLine
             , [CutInLine_SP] = csp.InLine
 			, [CutOffLine_SP] = csp.OffLine
-            , [3rd_Party_Inspection] = ''
+            , [3rd_Party_Inspection] = {thridColumn}
             , Category=case when o.Category='B'then'Bulk'
 							when o.Category='G'then'Garment'
 							when o.Category='M'then'Material'
@@ -854,7 +861,13 @@ tmpFilterZone as (
 		where occ.ID = o.Poid 
 		and occ.Patternpanel = 'FA'
 		order by occ.Adddate desc
-	) Order_ColorCombo	
+	) Order_ColorCombo
+	outer apply(
+		select cnt = count(1)
+		from Order_Qtyship
+		where id=o.id
+		and CFAIs3rdInspect = 1
+	) oqs
 {order_QtyShip_OuterApply}  
     where o.POID IN (select distinct POID from tmpFilterSubProcess) 
 {wherenoRestrictOrdersDelivery}

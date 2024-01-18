@@ -1,4 +1,4 @@
-﻿Create PROCEDURE [dbo].[P_Import_PPIC_MASTER_LIST] 
+﻿Create PROCEDURE [dbo].[P_Import_PPICMasterList] 
 	 @SCIDeliveryS as date = null,
 	 @SCIDeliveryE as date = null
 AS
@@ -182,7 +182,9 @@ BEGIN
 			[Article] VARCHAR(500) NULL,
 			[ProduceRgPMS] VARCHAR(3) NULL,
 			[Buyerhalfkey] VARCHAR(8) NULL,
-			[Country] VARCHAR(30) NULL
+			[Country] VARCHAR(30) NULL,
+			[Third_Party_Insepction] BIT NULL, 
+			[ColorID] VARCHAR(6) NULL , 
 	)
 
 	create table #tmp_P_PPICMasterList_Extend (
@@ -218,7 +220,7 @@ BEGIN
 		, [Cutting SP], [Rainwear test], [TMS], [MD room scan date], [Dry Room received date], [Dry room trans date], [Last ctn trans date]
 		, [Last Scan And Pack Date], [Last ctn recvd date], [OrganicCotton], [Direct Ship], [StyleCarryover], [SCHDL/ETA(SP)], [SewingMtlETA(SPexclRepl)]
 		, [ActualMtlETA(exclRepl)], [HalfKey], [DevSample], [POID], [KeepPanels], [BuyBackReason], [SewQtybyRate], [Unit], [SubconInType]
-		, [Article], [ProduceRgPMS], [Buyerhalfkey], [Country])
+		, [Article], [ProduceRgPMS], [Buyerhalfkey], [Country],[Third_Party_Insepction],[ColorID])
 	select ISNULL(t.[M], '')
 		, ISNULL(t.[FactoryID], '')
 		, [Delivery]
@@ -391,6 +393,8 @@ BEGIN
 		, ISNULL(t.[ProduceRgPMS], '')
 		, ISNULL(t.[Buyerhalfkey], '')
 		, ISNULL(t.[Country], '')
+		, ISNULL(t.[Third_Party_Insepction],0)
+		, ISNULL(t.[ColorID],'')
 	from #tmp_P_PPICMASTERLIST t
 	where not exists (select 1 from P_PPICMASTERLIST p where t.[SPNO] = p.[SPNO])
 
@@ -567,6 +571,8 @@ BEGIN
 			, p.[ProduceRgPMS] = ISNULL(t.[ProduceRgPMS], '')
 			, p.[Buyerhalfkey] = ISNULL(t.[Buyerhalfkey], '')
 			, p.[Country] = ISNULL(t.[Country], '')
+			, P.[Third_Party_Insepction] = ISNULL(t.[Third_Party_Insepction], '')
+			, p.[ColorID] = ISNULL(t.[ColorID], '')
 	from P_PPICMASTERLIST p 
 	inner join #tmp_P_PPICMASTERLIST t on p.[SPNO] = t.[SPNO]
 

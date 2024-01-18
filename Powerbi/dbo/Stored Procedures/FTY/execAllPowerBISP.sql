@@ -594,7 +594,7 @@ SET @ErrorMessage = ''
 /***********************************P_PPICMASTERLIST****************************************************************/
 BEGIN TRY
 	set @Stime = getdate()  
-	execute [dbo].[P_Import_PPIC_MASTER_LIST]
+	execute [dbo].[P_Import_PPICMasterList]
 	set @Etime = getdate()
 END TRY
 
