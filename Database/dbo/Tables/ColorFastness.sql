@@ -17,8 +17,6 @@
     [Detergent]   VARCHAR (15)   NULL,
     [Machine]     VARCHAR (20)   NULL,
     [Drying]      VARCHAR (20)   NULL,
-    TestBeforePicture varbinary(max) NULL ,
-    TestAfterPicture varbinary(max) NULL ,
     CycleTime int NULL,
 	 CONSTRAINT [PK_ColorFastness] PRIMARY KEY CLUSTERED 
 	(
@@ -93,25 +91,6 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'最後編�
 GO
 CREATE NONCLUSTERED INDEX [Index_GetFirQaRecord_ColorFasTness]
     ON [dbo].[ColorFastness]([POID] ASC);
-GO
-
-EXEC sp_addextendedproperty @name = N'MS_Description',
-	@value = N'測試前的照片',
-	@level0type = N'SCHEMA',
-	@level0name = N'dbo',
-	@level1type = N'TABLE',
-	@level1name = N'ColorFastness',
-	@level2type = N'COLUMN',
-	@level2name = N'TestBeforePicture'
-GO
-EXEC sp_addextendedproperty @name = N'MS_Description',
-	@value = N'測試後的照片',
-	@level0type = N'SCHEMA',
-	@level0name = N'dbo',
-	@level1type = N'TABLE',
-	@level1name = N'ColorFastness',
-	@level2type = N'COLUMN',
-	@level2name = N'TestAfterPicture'
 GO
 
 EXEC sp_addextendedproperty @name = N'MS_Description',

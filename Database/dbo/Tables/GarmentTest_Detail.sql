@@ -24,8 +24,6 @@
     SeamBreakageResult varchar(1)  CONSTRAINT [DF_GarmentTest_Detail_SeamBreakageResult] default('') NOT NULL,
     OdourResult varchar(1)  CONSTRAINT [DF_GarmentTest_Detail_OdourResult] default('') NOT NULL,
     WashResult varchar(1)  CONSTRAINT [DF_GarmentTest_Detail_WashResult] default('') NOT NULL,
-    TestBeforePicture varbinary(max) NULL,
-    TestAfterPicture varbinary(max) NULL,
 	ReportNo varchar(14) not null CONSTRAINT [DF_GarmentTest_Detail_ReportNo] default '',
 	FabricationType varchar(10) not null CONSTRAINT [DF_GarmentTest_Detail_FabricationType] default '',
     CONSTRAINT [PK_GarmentTest_Detail] PRIMARY KEY CLUSTERED ([ID] ASC, [No] ASC)
@@ -155,24 +153,4 @@ EXEC sp_addextendedproperty @name = N'MS_Description',
 	@level1name = N'GarmentTest_Detail',
 	@level2type = N'COLUMN',
 	@level2name = N'WashResult'
-GO
-
-EXEC sp_addextendedproperty @name = N'MS_Description',
-	@value = N'測試前的照片',
-	@level0type = N'SCHEMA',
-	@level0name = N'dbo',
-	@level1type = N'TABLE',
-	@level1name = N'GarmentTest_Detail',
-	@level2type = N'COLUMN',
-	@level2name = N'TestBeforePicture'
-GO
-
-EXEC sp_addextendedproperty @name = N'MS_Description',
-	@value = N'測試後的照片',
-	@level0type = N'SCHEMA',
-	@level0name = N'dbo',
-	@level1type = N'TABLE',
-	@level1name = N'GarmentTest_Detail',
-	@level2type = N'COLUMN',
-	@level2name = N'TestAfterPicture'
 GO

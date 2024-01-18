@@ -16,8 +16,6 @@ CREATE TABLE [dbo].[MockupCrocking](
 	[Technician] [varchar](10) NOT NULL,
 	[MR] [varchar](10) NOT NULL,
 	[Type] [varchar](1) NOT NULL,
-	[TestBeforePicture] [varbinary](max) NULL,
-	[TestAfterPicture] [varbinary](max) NULL,
 	[AddDate] [datetime] NULL,
 	[AddName] [varchar](10) NOT NULL,
 	[EditDate] [datetime] NULL,
@@ -111,12 +109,6 @@ EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'業務' , @lev
 
 GO
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'區分大貨階段 (B) 與開發階段 (S)' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'MockupCrocking', @level2type=N'COLUMN',@level2name=N'Type'
-
-GO
-EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'測試前拍照' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'MockupCrocking', @level2type=N'COLUMN',@level2name=N'TestBeforePicture'
-
-GO
-EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'測試後拍照' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'MockupCrocking', @level2type=N'COLUMN',@level2name=N'TestAfterPicture'
 
 GO
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'新增日期' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'MockupCrocking', @level2type=N'COLUMN',@level2name=N'AddDate'
