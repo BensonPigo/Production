@@ -1160,7 +1160,7 @@ Carton has been output from the hanger system or transferred to clog.";
 
             if (checkCtnQty.Any())
             {
-                MyUtility.Msg.WarningBox("The total number of boxes（CTN#) with the same box number (# of CTN) cannot be 0!!");
+                MyUtility.Msg.WarningBox("The total number of boxes (# of CTN) with the same box number (CTN#) cannot be 0!");
                 return false;
             }
             #endregion
