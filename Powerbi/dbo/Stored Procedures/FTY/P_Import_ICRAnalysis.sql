@@ -1,13 +1,11 @@
 ﻿CREATE PROCEDURE P_Import_ICRAnalysis
 	@StartDate date = null,
-	@EndDate date = null,
-	@First date = null
+	@EndDate date = null
 AS
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
 	-- interfering with SELECT statements.
 	SET NOCOUNT ON;
-
   
 	select
 		ICR.ID,
@@ -42,9 +40,7 @@ BEGIN
 	left join [MainServer].Production.dbo.Orders o with (nolock) on ICR.OrderID = o.ID
 	left join [MainServer].Production.dbo.PO with (nolock) on o.POID = PO.ID
 	left join [MainServer].Production.dbo.Factory f with (nolock) on ICR.Department = f.ID
-	where 1 = 1  
-	and ICR.CFMDate is not null
-	and (@First is null or ICR.CFMDate >= @First )
+	where ICR.CFMDate is not null
 	and 
 	(
 		(@StartDate is null or ICR.AddDate >= @StartDate)
@@ -55,7 +51,6 @@ BEGIN
 		or
 		(@EndDate is null or ICR.EditDate <= @EndDate)
 	)
-
 
 	select
 		ICRNo = ICR.ID,
@@ -175,7 +170,7 @@ BEGIN
       ,[IrregularPriceUSD]
       ,[IrregularAmtUSD]
 	  )
-	  select 
+	select 
        [ICRNo] = ISNULL([ICRNo] , '')
       ,[Status] = ISNULL([Status], '')
       ,[Mdivision] = ISNULL([Mdivision], '')
@@ -209,10 +204,8 @@ BEGIN
       ,[IrregularFOC] = ISNULL([IrregularFOC],0)
       ,[IrregularPriceUSD] = ISNULL([IrregularPriceUSD],0)
       ,[IrregularAmtUSD] = ISNULL([IrregularAmtUSD],0)
-	  from #tmpFinal s
-	  where not exists(select 1 from P_ICRAnalysis where ICRNo = s.ICRNo and Seq = s.Seq)
-END
-
+	from #tmpFinal s
+	where not exists(select 1 from P_ICRAnalysis where ICRNo = s.ICRNo and Seq = s.Seq)
 
 	if exists(select 1 from BITableInfo where Id = 'P_ICRAnalysis')
 	begin
@@ -223,5 +216,4 @@ END
 	begin
 		insert into BITableInfo(Id, TransferDate, IS_Trans) values('P_ICRAnalysis', GETDATE(), 0)
 	end
-
 END
