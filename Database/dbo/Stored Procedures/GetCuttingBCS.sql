@@ -579,7 +579,38 @@ BEGIN
 	FROM #tmp_EstCutQty_Step8
 	
 
-	SELECT * FROM #tmp_EstCutQty_END;
+	SELECT [MDivisionID] = ISNULL(MDivisionID, '')
+		, [FactoryID] = ISNULL(FactoryID, '')
+		, [BrandID] = ISNULL(BrandID, '')
+		, [StyleID] = ISNULL(StyleID, '')
+		, [SeasonID] = ISNULL(SeasonID, '')
+		, [CDCodeNew] = ISNULL(CDCodeNew, '')
+		, [FabricType] = ISNULL(FabricType, '')
+		, [POID] = ISNULL(POID, '')
+		, [Category] = ISNULL(Category, '')
+		, [WorkType] = ISNULL(WorkType, '')
+		, [MatchFabric] = ISNULL(MatchFabric, '')
+		, [OrderID] = ISNULL(OrderID, '')
+		, [SciDelivery] = SciDelivery
+		, [BuyerDelivery] = BuyerDelivery
+		, [OrderQty] = ISNULL(OrderQty, 0)
+		, [SewInLineDate] = SewInLineDate
+		, [SewOffLineDate] = SewOffLineDate
+		, [SewingLineID] = ISNULL(SewingLineID, '')
+		, [RequestDate] = RequestDate
+		, [StdQty] = ISNULL(StdQty, 0)
+		, [StdQtyByLine] = ISNULL(StdQtyByLine, 0)
+		, [AccuStdQty] = ISNULL(AccuStdQty, 0)
+		, [AccuStdQtyByLine] = ISNULL(AccuStdQtyByLine, 0)
+		, [AccuEstCutQty] = ISNULL(AccuEstCutQty, 0)
+		, [AccuEstCutQtyByLine] = ISNULL(AccuEstCutQtyByLine, 0)
+		, [SupplyCutQty] = ISNULL(SupplyCutQty, 0)
+		, [SupplyCutQtyByLine] = ISNULL(SupplyCutQtyByLine, 0)
+		, [BalanceCutQty] = ISNULL(BalanceCutQty, 0)
+		, [BalanceCutQtyByLine] = ISNULL(BalanceCutQtyByLine, 0)
+		, [SupplyCutQtyVSStdQty] = ISNULL(SupplyCutQtyVSStdQty, 0)
+		, [SupplyCutQtyVSStdQtyByLine] = ISNULL(SupplyCutQtyVSStdQtyByLine, 0)
+	FROM #tmp_EstCutQty_END;
 
 	drop table #tmp_EstCutALLGroup,#tmp_EstCutCount,#tmp_EstCutGroup,#tmp_EstCutQty_END,#tmp_EstCutQty_Step1,#tmp_EstCutQty_Step2
 	,#tmp_EstCutQty_Step3,#tmp_EstCutQty_Step4,#tmp_EstCutQty_Step5,#tmp_EstCutQty_Step6,#tmp_EstCutQty_Step7,#tmp_EstCutQty_Step8

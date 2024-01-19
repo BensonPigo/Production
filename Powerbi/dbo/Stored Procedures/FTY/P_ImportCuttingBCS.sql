@@ -21,11 +21,8 @@ begin
 	WHERE 1 = 0
 
 	/************* 抓Cutting.R13報表資料*************/
-	DECLARE @SqlCmd NVARCHAR(MAX) = '
 	INSERT INTO #tmp_P_CuttingBCS
-	exec [MainServer].Production.[dbo].[GetCuttingBCS] ''' + format(@StartDate, 'yyyy/MM/dd') + ''', ''' + format(@EndDate, 'yyyy/MM/dd') + ''' '
-
-	EXEC sp_executesql @SqlCmd
+	exec [MainServer].[Production].[dbo].[GetCuttingBCS] @StartDate, @EndDate
 
 	update b 
 		set b.BIPImportCuttingBCSCmdTime = GETDATE()
