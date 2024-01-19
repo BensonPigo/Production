@@ -184,7 +184,7 @@ BEGIN
 			[Buyerhalfkey] VARCHAR(8) NULL,
 			[Country] VARCHAR(30) NULL,
 			[Third_Party_Insepction] BIT NULL, 
-			[ColorID] VARCHAR(6) NULL , 
+			[ColorID] NVARCHAR(Max) NULL , 
 	)
 
 	create table #tmp_P_PPICMasterList_Extend (
