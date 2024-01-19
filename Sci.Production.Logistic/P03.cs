@@ -826,6 +826,13 @@ and DisposeFromClog = 0";
             IList<string> cmds = new List<string>();
             foreach (DataRow dr in selectedData)
             {
+                DateTime? scanEditDate = null;
+                if (!MyUtility.Check.Empty(dr["ScanEditDate"].ToString()) && DateTime.TryParse(dr["ScanEditDate"].ToString(), out DateTime tempDate))
+                {
+                    scanEditDate = tempDate;
+                }
+
+                object dateTimeValue = scanEditDate.HasValue ? "'" + (object)scanEditDate.Value.ToString("yyyy-MM-dd HH:mm:ss") + "'" : "Null";
                 cmds.Add(
                     string.Format(
                         @"
@@ -859,7 +866,7 @@ select '{0}' [MDivisionID]
     ,'{5}' [SCICtnNo]
     ,'Clog P03' [DeleteFrom]
     ,{8} [ScanQty]
-    ,'{9}' [ScanEditDate]
+    , {9} [ScanEditDate]
     ,'{10}' [ScanName]
     ,'{4}' [AddName]
     ,GETDATE() [AddDate]
@@ -879,7 +886,7 @@ select '{0}' [MDivisionID]
                         MyUtility.Convert.GetString(dr["ClogReasonID"]),
                         MyUtility.Convert.GetString(dr["ClogReasonRemark"]),
                         MyUtility.Convert.GetInt(dr["ScanQty"]),
-                        MyUtility.Convert.GetDate(dr["ScanEditDate"]),
+                        dateTimeValue,
                         MyUtility.Convert.GetString(dr["ScanName"])));
             }
 
