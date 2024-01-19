@@ -1154,6 +1154,17 @@ Carton has been output from the hanger system or transferred to clog.";
             }
             #endregion
 
+            #region 一個CTNStartNo下CTNQty加總不能為0
+            var checkCtnQty = this.DetailDatas.GroupBy(s => s["CTNStartNo"].ToString())
+                                    .Where(groupItem => groupItem.Sum(s => MyUtility.Convert.GetInt(s["CTNQty"])) == 0);
+
+            if (checkCtnQty.Any())
+            {
+                MyUtility.Msg.WarningBox("The total number of boxes (# of CTN) with the same box number (CTN#) cannot be 0!");
+                return false;
+            }
+            #endregion
+
             // 保存前檢查加入若PackingLIst 的[Ship Mode]不在Order_QtyShip中，不給存
             DataTable detailsData = (DataTable)this.detailgridbs.DataSource;
             DataTable dataTableDistinct = detailsData.DefaultView.ToTable(true, "OrderID");
