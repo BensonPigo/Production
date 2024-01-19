@@ -34,6 +34,8 @@
             this.btnEditSave = new Sci.Win.UI.Button();
             this.btnCloseUnDo = new Sci.Win.UI.Button();
             this.GroupShippingInfo = new Sci.Win.UI.RadioGroup();
+            this.txtContainerSealNumber = new Sci.Win.UI.TextBox();
+            this.label15 = new Sci.Win.UI.Label();
             this.displayPortOrginDesc = new Sci.Win.UI.DisplayBox();
             this.txtPortOrgin = new Sci.Win.UI.TextBox();
             this.dateShippingDate = new Sci.Win.UI.DateBox();
@@ -142,6 +144,8 @@
             // 
             this.GroupShippingInfo.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.GroupShippingInfo.Controls.Add(this.txtContainerSealNumber);
+            this.GroupShippingInfo.Controls.Add(this.label15);
             this.GroupShippingInfo.Controls.Add(this.displayPortOrginDesc);
             this.GroupShippingInfo.Controls.Add(this.txtPortOrgin);
             this.GroupShippingInfo.Controls.Add(this.dateShippingDate);
@@ -160,6 +164,23 @@
             this.GroupShippingInfo.TabIndex = 7;
             this.GroupShippingInfo.TabStop = false;
             this.GroupShippingInfo.Text = "Shipping Info.";
+            // 
+            // txtContainerSealNumber
+            // 
+            this.txtContainerSealNumber.BackColor = System.Drawing.Color.White;
+            this.txtContainerSealNumber.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtContainerSealNumber.Location = new System.Drawing.Point(540, 69);
+            this.txtContainerSealNumber.Name = "txtContainerSealNumber";
+            this.txtContainerSealNumber.Size = new System.Drawing.Size(217, 23);
+            this.txtContainerSealNumber.TabIndex = 20;
+            // 
+            // label15
+            // 
+            this.label15.Location = new System.Drawing.Point(397, 69);
+            this.label15.Name = "label15";
+            this.label15.Size = new System.Drawing.Size(140, 23);
+            this.label15.TabIndex = 19;
+            this.label15.Text = "Seal#";
             // 
             // displayPortOrginDesc
             // 
@@ -209,6 +230,7 @@
             this.comboLoadIndicator.OldText = "";
             this.comboLoadIndicator.Size = new System.Drawing.Size(61, 24);
             this.comboLoadIndicator.TabIndex = 12;
+            this.comboLoadIndicator.SelectedIndexChanged += new System.EventHandler(this.ComboLoadIndicator_SelectedIndexChanged);
             // 
             // displayLSPDesc
             // 
@@ -771,5 +793,7 @@
         private Win.UI.CheckBox chkTradingCmpyPL;
         private Win.UI.CheckBox chkPackingList;
         private Win.UI.CheckBox chkTradingCmpyCI;
+        private Win.UI.TextBox txtContainerSealNumber;
+        private Win.UI.Label label15;
     }
 }

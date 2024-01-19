@@ -11,5 +11,6 @@
   FSPCode varchar(4) NOT NULL CONSTRAINT DF_NikePostScanShipment_FSPCode DEFAULT '',
   LCReferenceNbr varchar(100) NOT NULL CONSTRAINT DF_NikePostScanShipment_LCReferenceNbr DEFAULT '',
   QAReferenceNbr varchar(100) NOT NULL CONSTRAINT DF_NikePostScanShipment_QAReferenceNbr DEFAULT '',
-  CONSTRAINT PK_NikePostScanShipment PRIMARY KEY (InvNo)
+  ContainerSealNumber VARCHAR(100) NOT NULL CONSTRAINT DF_NikePostScanShipment_ContainerSealNumber DEFAULT '',
+    CONSTRAINT PK_NikePostScanShipment PRIMARY KEY (InvNo)
 );

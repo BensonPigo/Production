@@ -71,6 +71,7 @@ namespace Sci.Production.Shipping
             {
                 this.btnCloseUnDo.Text = "Undo";
                 this.btnEditSave.Text = "Save";
+                this.txtContainerSealNumber.ReadOnly = this.comboLoadIndicator.Text == "C";
             }
             else
             {
@@ -97,6 +98,7 @@ select  ns.ShipmentNo
         ,l.Abb
         ,np.TCPLocation
         ,nps.FSPDesc
+        ,ns.ContainerSealNumber
 from    NikePostScanShipment ns with (nolock)
 inner join  GMTBooking g with (nolock) on g.ID = ns.InvNo
 left join   LocalSupp l with (nolock) on l.ID = g.Forwarder
@@ -135,6 +137,7 @@ where   ns.InvNo = '{this.invNo}'
             this.displayFSPDesc.Text = dtResult.Rows[0]["FSPDesc"].ToString();
             this.txtLCReferenceNbr.Text = dtResult.Rows[0]["LCReferenceNbr"].ToString();
             this.txtQAReferenceNbr.Text = dtResult.Rows[0]["QAReferenceNbr"].ToString();
+            this.txtContainerSealNumber.Text = dtResult.Rows[0]["ContainerSealNumber"].ToString();
 
             if (MyUtility.Check.Empty(this.displayShipmentNo.Text))
             {
@@ -265,6 +268,7 @@ where   ns.InvNo = '{this.invNo}'
                 new SqlParameter("@FSPCode", this.txtFSP.Text),
                 new SqlParameter("@LCReferenceNbr", this.txtLCReferenceNbr.Text),
                 new SqlParameter("@QAReferenceNbr", this.txtQAReferenceNbr.Text),
+                new SqlParameter("@ContainerSealNumber", this.txtContainerSealNumber.Text),
             };
 
             string sqlSaveNikePostScanShipment = @"
@@ -282,6 +286,7 @@ begin
         ,FSPCode            = @FSPCode
         ,LCReferenceNbr     = @LCReferenceNbr
         ,QAReferenceNbr     = @QAReferenceNbr
+        ,ContainerSealNumber = @ContainerSealNumber
     where   InvNo = @InvNo
 end
 else
@@ -297,7 +302,8 @@ begin
                                     ,FactoryInvoiceDate
                                     ,FSPCode
                                     ,LCReferenceNbr
-                                    ,QAReferenceNbr)
+                                    ,QAReferenceNbr
+                                    ,ContainerSealNumber)
     values( @InvNo
              ,@ShipmentNo
              ,@ShippingDate
@@ -309,7 +315,8 @@ begin
              ,@FactoryInvoiceDate
              ,@FSPCode
              ,@LCReferenceNbr
-             ,@QAReferenceNbr)
+             ,@QAReferenceNbr
+             ,@ContainerSealNumber)
 end
 ";
 
@@ -407,6 +414,8 @@ where p.InvNo = '{this.invNo}'
                 LoadIndicator = this.comboLoadIndicator.Text,
                 Trackingnumber = this.txtTrackingContainer.Text,
                 LSPBookingNumber = this.txtLSPBookingNumber.Text,
+                ContainerSealNumber = MyUtility.Check.Empty(this.txtContainerSealNumber.Text) ? null : this.txtContainerSealNumber.Text,
+                ContainerType = " ",
                 InvoiceNumber = this.txtFactoryInvoiceNbr.Text,
                 InvoiceDate = this.dateFactoryInvoiceDate.Value.HasValue ? this.dateFactoryInvoiceDate.Value.ToStringEx("yyyy-MM-dd") : null,
                 ScannerID = "Admin",
@@ -467,6 +476,7 @@ where p.InvNo = '{this.invNo}'
                     PortofOrigin = this.txtPortOrgin.Text,
                     LoadIndicator = this.comboLoadIndicator.Text,
                     Trackingnumber = this.txtTrackingContainer.Text,
+                    ContainerSealNumber = this.txtContainerSealNumber.Text,
                     FSPCode = this.txtFSP.Text,
                 },
                 FinancialList = new FinancialList()
@@ -502,6 +512,22 @@ where p.InvNo = '{this.invNo}'
                 ShipmentNo = this.displayShipmentNo.Text
             };
             DualResult result = WebServiceNikeMercury.StaticService.ShipmentCommercialDocumentsBinaryArrayPDF(docInfo);
+        }
+
+        private void ComboLoadIndicator_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (this.comboLoadIndicator.SelectedIndex == -1 || !this.EditMode)
+            {
+                return;
+            }
+
+            this.txtContainerSealNumber.ReadOnly = false;
+
+            if (this.comboLoadIndicator.Text == "C")
+            {
+                this.txtContainerSealNumber.Text = string.Empty;
+                this.txtContainerSealNumber.ReadOnly = true;
+            }
         }
     }
 }
