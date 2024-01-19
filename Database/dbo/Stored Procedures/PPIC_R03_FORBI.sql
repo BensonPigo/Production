@@ -278,12 +278,18 @@ BEGIN
 		from PackingList_Detail pd WITH (NOLOCK)
 		where pd.OrderID = o.id
 	)scanEditDate
-	outer apply (
-		select top 1 ColorID
-		from Order_ColorCombo occ WITH (NOLOCK)
-		where occ.ID = o.Poid and occ.Patternpanel = 'FA'
-		order by occ.Adddate desc
-	) Order_ColorCombo	
+	outer apply(
+		select ColorID = Stuff((
+			select concat(',',ColorID)
+			from (
+					select 	distinct ColorID
+					from dbo.Order_ColorCombo occ WITH (NOLOCK)
+					where occ.ID = o.Poid 
+					and occ.Patternpanel = 'FA'
+				) s
+			for xml path ('')
+		) , 1, 1, '')
+	) Order_ColorCombo
 	outer apply(
 		select cnt = count(1)
 		from Order_Qtyship

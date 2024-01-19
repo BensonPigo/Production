@@ -173,7 +173,7 @@
 	[Buyerhalfkey] [varchar](8) NOT NULL,
 	[Country] [varchar](30) NOT NULL,
 	[Third_Party_Insepction] BIT NOT NULL DEFAULT ((0)), 
-    [ColorID] VARCHAR(6) NOT NULL DEFAULT (''), 
+    [ColorID] NVARCHAR(MAX) NOT NULL DEFAULT (''), 
     CONSTRAINT [PK_P_PPICMASTERLIST] PRIMARY KEY CLUSTERED 
 (
 	[Ukey] DESC
