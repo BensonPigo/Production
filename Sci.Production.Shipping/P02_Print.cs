@@ -339,34 +339,42 @@ group by UnitID", MyUtility.Convert.GetString(this.masterData["ID"]));
                         strHSCODE = strHC.Length > 6 ? strHC.Substring(0, 6) : strHC;
                         strDescription = dr["styleDescription"].ToString();
                     }
-                    else if (dr["CategoryName"].ToString() == "Material")
+                    else if (dr["CategoryName"].ToString() == "Material" || dr["CategoryName"].ToString() == "Other Material")
                     {
-                        strType = dr["Fabric_MtlTypeID"].ToString();
+                        if (dr["Fabric_Type"].ToString() == "F")
+                        {
+                            strType = "Fabric";
+                        }
+                        else if (dr["Fabric_Type"].ToString() == "A")
+                        {
+                            strType = dr["Fabric_MtlTypeID"].ToString();
+                        }
+
+                        strStyle_Ref = dr["Refno"].ToString();
+                        strDescription = dr["fabricDescription"].ToString();
 
                         var strHC = MyUtility.Convert.GetString(dr["Fabric_HsCode"]).Replace(".", "");
                         strHC = strHC.Replace(",", "");
                         strHSCODE = strHC.Length > 6 ? strHC.Substring(0, 6) : strHC;
-
-                        strDescription = dr["fabricDescription"].ToString();
                     }
                     else if (dr["CategoryName"].ToString() == "Other Sample")
                     {
                         var strHC = MyUtility.Convert.GetString(dr["HSCode"]).Replace(".", "");
                         strHC = strHC.Replace(",", "");
                         strHSCODE = strHC.Length > 6 ? strHC.Substring(0, 6) : strHC;
-                    }
-                    else if (dr["CategoryName"].ToString() == "Other Material")
-                    {
-                        strDescription = dr["nDescription"].ToString();
+                        strType = MyUtility.Convert.GetString(dr["Type"]);
                     }
 
-                    if (!MyUtility.Check.Empty(dr["StyleID"].ToString()) && !MyUtility.Check.Empty(dr["RefNo"].ToString()))
+                    if (dr["CategoryName"].ToString() != "Material" && dr["CategoryName"].ToString() != "Other Material")
                     {
-                        strStyle_Ref = dr["StyleID"] + " / " + dr["RefNo"];
-                    }
-                    else
-                    {
-                        strStyle_Ref = !MyUtility.Check.Empty(dr["StyleID"].ToString()) ? dr["StyleID"].ToString() : dr["RefNo"].ToString();
+                        if (!MyUtility.Check.Empty(dr["StyleID"].ToString()) && !MyUtility.Check.Empty(dr["RefNo"].ToString()))
+                        {
+                            strStyle_Ref = dr["StyleID"] + " / " + dr["RefNo"];
+                        }
+                        else
+                        {
+                            strStyle_Ref = !MyUtility.Check.Empty(dr["StyleID"].ToString()) ? dr["StyleID"].ToString() : dr["RefNo"].ToString();
+                        }
                     }
 
                     int iCategory = MyUtility.Convert.GetInt(dr["Category"]);

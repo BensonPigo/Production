@@ -626,14 +626,14 @@ SELECT OrderNumber = ROW_NUMBER() over (order by   TRY_CONVERT (int, CTNNo )
 										    , (RIGHT (REPLICATE ('0', 10) + rtrim (ltrim (CTNNo)), 10))
 										    , DropDownListSeq
 							    )        
-      ,allData.* 
+      ,allData.*       
 FROM(
     select ed.*
 	    ,case when ed.Category in ('4') then ed.MtlDesc else ed.Description end nDescription
 	    ,AirPPno=iif(isnull(ed.PackingListID,'') = '',ed.DutyNo , airpp.AirPPno)
     from
     (
-	    select ed.*,p.Refno,ed.SuppID+'-'+isnull(s.AbbEN,'') as Supplier,ec.CTNNW,
+	    select ed.*,ed.SuppID+'-'+isnull(s.AbbEN,'') as Supplier,ec.CTNNW,
 		    dbo.getMtlDesc(ed.OrderID,ed.Seq1,ed.Seq2,1,0) as MtlDesc,
 		    isnull(cast(ec.CtnLength as varchar),'')+'*'+isnull(cast(ec.CtnWidth as varchar),'')+'*'+isnull(cast(ec.CtnHeight as varchar),'') as Dimension,
 		    isnull((ed.InCharge+' '+(select Name+' #'+ExtNo from Pass1 WITH (NOLOCK) where ID = ed.InCharge)),ed.InCharge) as InChargeName,
@@ -652,18 +652,21 @@ FROM(
 			    ELSE N''
 		    END as CategoryName
 		    ,[DropDownListSeq]=dp.Seq
-			,[CategoryNameFromDD]=dp.Description
+			,[CategoryNameFromDD]=dp.Description 
             ,pl.PulloutID
-            ,pl.Type
+            ,Type = dp_type.Name
             ,ColorID = IIF(f.MtlTypeID = 'EMB THREAD' OR f.MtlTypeID = 'SP THREAD' OR f.MtlTypeID = 'THREAD' 
 			,IIF(isnull(p.SuppColor,'') = '',dbo.GetColorMultipleID(o.BrandID,psds.SpecValue) , p.SuppColor)
 			,dbo.GetColorMultipleID(o.BrandID,psds.SpecValue))
-            ,[fabricDescription] = f.Description
+            ,[fabricDescription] = case ed.Category when '9' then om.Description  else f.Description end
             ,[styleDescription] = st.Description
             ,[Reason_Gender] = r.Name +'/' + st.Gender
             ,[HSCode] = SHC.val
             ,[Fabric_HsCode] = fhcode.val
-            ,[Fabric_MtlTypeID] = f.MtlTypeID
+            ,[Fabric_MtlTypeID] = case ed.Category when '9' then om.MtlTypeID  else f.MtlTypeID end
+            ,Refno_Reason = case when ed.category = '9' then ed.Refno 
+                                 when ed.category = '8' then sr.Description else '' end
+             ,[Fabric_Type] = case ed.Category when '9' then om.Type  else f.Type end
 	    from Express_Detail ed WITH (NOLOCK) 
 	    left join PO_Supp_Detail p WITH (NOLOCK) on ed.OrderID = p.ID and ed.Seq1 = p.SEQ1 and ed.Seq2 = p.SEQ2
 	    left join PO_Supp_Detail_Spec psds WITH (NOLOCK) on psds.ID = p.id and psds.seq1 = p.seq1 and psds.seq2 = p.seq2 and psds.SpecColumnID = 'Color'
@@ -673,8 +676,10 @@ FROM(
 		left join PackingList pl WITH (NOLOCK) on ed.PackingListID = pl.ID
 		left join Orders o WITH (NOLOCK) on o.ID = ed.OrderID
         left join Style st WITH (NOLOCK) on ed.StyleID = st.Id and ed.BrandID = st.BrandID and ed.SeasonID = st.SeasonID
+        left join DropDownList dp_type ON dp_type.Type='ProductType' AND st.ApparelType = dp_type.ID
         left join Reason r with(nolock) on st.ApparelType = r.ID and r.ReasonTypeID='Style_Apparel_type'
         left join fabric f WITH (NOLOCK) on f.SCIRefno = p.SCIRefno
+        left join ShippingReason sr WITH (NOLOCK) on sr.Type = 'OS' and sr.ID = ed.Reason 
         outer apply
 		(
 			select top 1
@@ -691,6 +696,11 @@ FROM(
 			where f.SCIRefno = fh.SCIRefno
             Order by year desc,isnull(EditDate,AddDate)desc
 		)fhcode
+        outer apply(
+			select top 1 description,Type,MtlTypeID
+			from fabric
+			where refno = ed.Refno
+		)om
 	    where ed.ID = '{0}'
     )ed
     outer apply(
@@ -749,10 +759,10 @@ Order by CTNNo,Seq1,Seq2", masterID);
                 .Text("Seq2", header: "Seq2#", width: Widths.AnsiChars(2))
                 .Text("SeasonID", header: "Season", width: Widths.AnsiChars(8))
                 .Text("StyleID", header: "Style", width: Widths.AnsiChars(15))
-                .Text("RefNo", header: "Ref#", width: Widths.AnsiChars(15))
+                .Text("Refno_Reason", header: "Refno/Reason", width: Widths.AnsiChars(15))
                 .Text("ColorID", header: "Color", width: Widths.AnsiChars(12))
                 .Text("Supplier", header: "Supplier", width: Widths.AnsiChars(15))
-                .Text("CTNNo", header: "C/No.", width: Widths.AnsiChars(5))
+                .Text("CTNNo", header: "C/No.", width: Widths.AnsiChars(15))
                 .Numeric("NW", header: "N.W.", width: Widths.AnsiChars(10), decimal_places: 3)
                 .Numeric("Price", header: "Price", width: Widths.AnsiChars(10), decimal_places: 4)
                 .Numeric("Qty", header: "Q'ty", width: Widths.AnsiChars(7), decimal_places: 2)

@@ -50,6 +50,8 @@
             this.txtshipmode = new Sci.Production.Class.Txtshipmode();
             this.txtbrand = new Sci.Production.Class.Txtbrand();
             this.labelConfirmed = new Sci.Win.UI.Label();
+            this.numtTTLCTN = new Sci.Win.UI.NumericBox();
+            this.label1 = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -66,6 +68,8 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.numtTTLCTN);
+            this.masterpanel.Controls.Add(this.label1);
             this.masterpanel.Controls.Add(this.labelConfirmed);
             this.masterpanel.Controls.Add(this.btnBatchImport);
             this.masterpanel.Controls.Add(this.displayHCNo);
@@ -88,7 +92,7 @@
             this.masterpanel.Controls.Add(this.labelShipQty);
             this.masterpanel.Controls.Add(this.labelNo);
             this.masterpanel.Controls.Add(this.datePullOutDate);
-            this.masterpanel.Size = new System.Drawing.Size(913, 142);
+            this.masterpanel.Size = new System.Drawing.Size(913, 178);
             this.masterpanel.Title = "3";
             this.masterpanel.Controls.SetChildIndex(this.datePullOutDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelNo, 0);
@@ -113,15 +117,17 @@
             this.masterpanel.Controls.SetChildIndex(this.btnBatchImport, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelConfirmed, 0);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
+            this.masterpanel.Controls.SetChildIndex(this.label1, 0);
+            this.masterpanel.Controls.SetChildIndex(this.numtTTLCTN, 0);
             // 
             // detailpanel
             // 
-            this.detailpanel.Location = new System.Drawing.Point(0, 142);
-            this.detailpanel.Size = new System.Drawing.Size(913, 303);
+            this.detailpanel.Location = new System.Drawing.Point(0, 178);
+            this.detailpanel.Size = new System.Drawing.Size(913, 267);
             // 
             // gridicon
             // 
-            this.gridicon.Location = new System.Drawing.Point(745, 107);
+            this.gridicon.Location = new System.Drawing.Point(745, 143);
             this.gridicon.TabIndex = 10;
             // 
             // refresh
@@ -130,7 +136,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(913, 303);
+            this.detailgridcont.Size = new System.Drawing.Size(913, 267);
             // 
             // detail2
             // 
@@ -196,7 +202,7 @@
             // 
             // labelRemark
             // 
-            this.labelRemark.Location = new System.Drawing.Point(4, 86);
+            this.labelRemark.Location = new System.Drawing.Point(4, 114);
             this.labelRemark.Name = "labelRemark";
             this.labelRemark.Size = new System.Drawing.Size(60, 23);
             this.labelRemark.TabIndex = 9;
@@ -239,7 +245,7 @@
             this.editRemark.BackColor = System.Drawing.Color.White;
             this.editRemark.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Remark", true));
             this.editRemark.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.editRemark.Location = new System.Drawing.Point(70, 86);
+            this.editRemark.Location = new System.Drawing.Point(70, 114);
             this.editRemark.Multiline = true;
             this.editRemark.Name = "editRemark";
             this.editRemark.Size = new System.Drawing.Size(359, 50);
@@ -426,6 +432,7 @@
             this.txtbrand.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "BrandID", true));
             this.txtbrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtbrand.Location = new System.Drawing.Point(68, 32);
+            this.txtbrand.MyDocumentdName = null;
             this.txtbrand.Name = "txtbrand";
             this.txtbrand.Size = new System.Drawing.Size(66, 23);
             this.txtbrand.TabIndex = 0;
@@ -443,6 +450,36 @@
             this.labelConfirmed.TextStyle.BorderColor = System.Drawing.Color.Red;
             this.labelConfirmed.TextStyle.Color = System.Drawing.Color.Red;
             this.labelConfirmed.Visible = false;
+            // 
+            // numtTTLCTN
+            // 
+            this.numtTTLCTN.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numtTTLCTN.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "CTNQty", true));
+            this.numtTTLCTN.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numtTTLCTN.IsSupportEditMode = false;
+            this.numtTTLCTN.Location = new System.Drawing.Point(68, 86);
+            this.numtTTLCTN.Name = "numtTTLCTN";
+            this.numtTTLCTN.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numtTTLCTN.ReadOnly = true;
+            this.numtTTLCTN.Size = new System.Drawing.Size(60, 23);
+            this.numtTTLCTN.TabIndex = 57;
+            this.numtTTLCTN.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            // 
+            // label1
+            // 
+            this.label1.Location = new System.Drawing.Point(4, 86);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(60, 23);
+            this.label1.TabIndex = 58;
+            this.label1.Text = "Ttl CTN.";
             // 
             // P05
             // 
@@ -511,5 +548,7 @@
         private Class.Txtshipmode txtshipmode;
         private Win.UI.Button btnBatchImport;
         private Win.UI.Label labelConfirmed;
+        private Win.UI.NumericBox numtTTLCTN;
+        private Win.UI.Label label1;
     }
 }

@@ -7,7 +7,7 @@
     [StyleID]       VARCHAR (15)    CONSTRAINT [DF_Express_Detail_StyleID] DEFAULT ('') NULL,
     [Description]   NVARCHAR (MAX)  CONSTRAINT [DF_Express_Detail_Description] DEFAULT ('') NULL,
     [SuppID]        VARCHAR (6)     CONSTRAINT [DF_Express_Detail_SuppID] DEFAULT ('') NULL,
-    [CTNNo]         VARCHAR (10)    CONSTRAINT [DF_Express_Detail_CTNNo] DEFAULT ('') NOT NULL,
+    [CTNNo]         VARCHAR (20)    CONSTRAINT [DF_Express_Detail_CTNNo] DEFAULT ('') NOT NULL,
     [NW]            NUMERIC (9, 3)  CONSTRAINT [DF_Express_Detail_NW] DEFAULT ((0)) NULL,
     [Price]         NUMERIC (10, 4) CONSTRAINT [DF_Express_Detail_Price] DEFAULT ((0)) NULL,
     [Qty]           NUMERIC (8, 2)  CONSTRAINT [DF_Express_Detail_Qty] DEFAULT ((0)) NULL,
@@ -25,6 +25,8 @@
     [EditDate]      DATETIME        NULL,
     [PackingListID] VARCHAR (13)    CONSTRAINT [DF__Express_D__Packi__089BAC90] DEFAULT ('') NULL,
     [SubCategory]   VARCHAR         CONSTRAINT [DF_Express_Detail_SubCategory] DEFAULT ('') NOT NULL, 
+    [Refno] VARCHAR(36) NOT NULL DEFAULT (''), 
+    [Reason] VARCHAR(5) NOT NULL DEFAULT (''), 
     CONSTRAINT [PK_Express_Detail] PRIMARY KEY CLUSTERED ([ID] ASC, [OrderID] ASC, [Seq1] ASC, [Seq2] ASC, [CTNNo] ASC, [Category] ASC)
 );
 
@@ -141,3 +143,21 @@ EXEC sp_addextendedproperty @name = N'MS_Description',
     @level1name = N'Express_Detail',
     @level2type = N'COLUMN',
     @level2name = N'SubCategory'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'物料編號',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'Express_Detail',
+    @level2type = N'COLUMN',
+    @level2name = N'Refno'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'Other Sample Reason',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'Express_Detail',
+    @level2type = N'COLUMN',
+    @level2name = N'Reason'

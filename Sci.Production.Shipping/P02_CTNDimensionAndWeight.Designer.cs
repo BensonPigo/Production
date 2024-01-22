@@ -36,11 +36,11 @@
             // btmcont
             // 
             this.btmcont.Location = new System.Drawing.Point(0, 252);
-            this.btmcont.Size = new System.Drawing.Size(524, 44);
+            this.btmcont.Size = new System.Drawing.Size(591, 44);
             // 
             // gridcont
             // 
-            this.gridcont.Size = new System.Drawing.Size(500, 234);
+            this.gridcont.Size = new System.Drawing.Size(567, 234);
             // 
             // append
             // 
@@ -56,20 +56,21 @@
             // 
             // undo
             // 
-            this.undo.Location = new System.Drawing.Point(434, 5);
+            this.undo.Location = new System.Drawing.Point(501, 5);
             this.undo.Size = new System.Drawing.Size(80, 34);
             // 
             // save
             // 
-            this.save.Location = new System.Drawing.Point(354, 5);
+            this.save.Location = new System.Drawing.Point(421, 5);
             this.save.Size = new System.Drawing.Size(80, 34);
             this.save.Click += new System.EventHandler(this.Save_Click);
             // 
             // P02_CTNDimensionAndWeight
             // 
-            this.ClientSize = new System.Drawing.Size(524, 296);
+            this.ClientSize = new System.Drawing.Size(591, 296);
             this.KeyField1 = "ID";
             this.Name = "P02_CTNDimensionAndWeight";
+            this.OnLineHelpID = "Sci.Win.Subs.Input4";
             this.Text = "Carton Dimension & Weight";
             this.WorkAlias = "Express_CTNData";
             this.Controls.SetChildIndex(this.btmcont, 0);

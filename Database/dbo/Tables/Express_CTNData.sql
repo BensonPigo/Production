@@ -1,6 +1,6 @@
 ﻿CREATE TABLE [dbo].[Express_CTNData] (
     [ID]        VARCHAR (13)   CONSTRAINT [DF_Express_CTNData_ID] DEFAULT ('') NOT NULL,
-    [CTNNo]     VARCHAR (10)   CONSTRAINT [DF_Express_CTNData_CTNNo] DEFAULT ('') NOT NULL,
+    [CTNNo]     VARCHAR (20)   CONSTRAINT [DF_Express_CTNData_CTNNo] DEFAULT ('') NOT NULL,
     [CtnLength] NUMERIC (5, 2) CONSTRAINT [DF_Express_CTNData_CtnLength] DEFAULT ((0)) NULL,
     [CtnWidth]  NUMERIC (5, 2) CONSTRAINT [DF_Express_CTNData_CtnWidth] DEFAULT ((0)) NULL,
     [CtnHeight] NUMERIC (5, 2) CONSTRAINT [DF_Express_CTNData_CtnHeight] DEFAULT ((0)) NULL,
