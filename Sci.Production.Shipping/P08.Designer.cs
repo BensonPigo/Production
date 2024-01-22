@@ -175,7 +175,7 @@
             this.masterpanel.Controls.Add(this.labelNo);
             this.masterpanel.Controls.Add(this.dateApvDate);
             this.masterpanel.Controls.Add(this.dateDate);
-            this.masterpanel.Size = new System.Drawing.Size(892, 241);
+            this.masterpanel.Size = new System.Drawing.Size(1000, 241);
             this.masterpanel.TabIndex = 28;
             this.masterpanel.Controls.SetChildIndex(this.dateDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateApvDate, 0);
@@ -246,7 +246,7 @@
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 241);
-            this.detailpanel.Size = new System.Drawing.Size(892, 108);
+            this.detailpanel.Size = new System.Drawing.Size(1000, 287);
             // 
             // gridicon
             // 
@@ -259,7 +259,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(892, 108);
+            this.detailgridcont.Size = new System.Drawing.Size(1000, 287);
             // 
             // detail2
             // 
@@ -272,6 +272,19 @@
             // detailpanel2
             // 
             this.detailpanel2.Size = new System.Drawing.Size(886, 40);
+            // 
+            // detail
+            // 
+            this.detail.Size = new System.Drawing.Size(1000, 566);
+            // 
+            // detailcont
+            // 
+            this.detailcont.Size = new System.Drawing.Size(1000, 528);
+            // 
+            // detailbtm
+            // 
+            this.detailbtm.Location = new System.Drawing.Point(0, 528);
+            this.detailbtm.Size = new System.Drawing.Size(1000, 38);
             // 
             // browse
             // 
@@ -690,6 +703,7 @@
             // 
             // txtSserAccountant
             // 
+            this.txtSserAccountant.AllowSelectResign = false;
             this.txtSserAccountant.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "Accountant", true));
             this.txtSserAccountant.DisplayBox1Binding = "";
             this.txtSserAccountant.Location = new System.Drawing.Point(698, 131);
@@ -700,6 +714,7 @@
             // 
             // txtUserHandle
             // 
+            this.txtUserHandle.AllowSelectResign = false;
             this.txtUserHandle.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "Handle", true));
             this.txtUserHandle.DisplayBox1Binding = "";
             this.txtUserHandle.Location = new System.Drawing.Point(698, 106);
@@ -986,6 +1001,7 @@
             // 
             // btnImport
             // 
+            this.btnImport.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
             this.btnImport.Location = new System.Drawing.Point(890, 167);
             this.btnImport.Name = "btnImport";
             this.btnImport.Size = new System.Drawing.Size(80, 30);

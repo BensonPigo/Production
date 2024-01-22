@@ -26,6 +26,7 @@
 	TaxNo varchar(15) NOT NULL CONSTRAINT [DF_LocalSupp_TaxNo] DEFAULT(''),
 	IsFreightForwarder BIT			 CONSTRAINT [DF_LocalSupp_IsFreightForwarder] DEFAULT((0)) NOT NULL,
     [IsMiscOverseas] BIT NOT NULL DEFAULT ((0)), 
+    [IsCustoms] BIT CONSTRAINT [DF_LocalSupp_IsCustoms] DEFAULT((0)) NOT NULL,
     CONSTRAINT [PK_LocalSupp] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 
@@ -154,3 +155,12 @@ EXEC sp_addextendedproperty @name = N'MS_Description',
     @level1name = N'LocalSupp',
     @level2type = N'COLUMN',
     @level2name = N'IsMiscOverseas'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'Supplier是否為海關預設 0 ，勾選為1代表是海關',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'LocalSupp',
+    @level2type = N'COLUMN',
+    @level2name = N'IsCustoms'

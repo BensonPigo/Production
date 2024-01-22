@@ -199,6 +199,7 @@ namespace Sci.Production.Warehouse
 	,[POHandle] = isnull(dbo.getPassEmail(p.POHandle) ,'')
 	,[POSMR] = isnull(dbo.getPassEmail(p.POSMR) ,'')
     ,[Supplier] = concat(Supp.ID, '-' + Supp.AbbEN)
+    ,[VID] = isnull(VID.CustPONoList,'')
     ";
 
         private string sqlcolumn_sum = @"select
@@ -344,6 +345,7 @@ namespace Sci.Production.Warehouse
 	,[POHandle] = isnull(dbo.getPassEmail(p.POHandle) ,'')
 	,[POSMR] = isnull(dbo.getPassEmail(p.POSMR) ,'') 
     ,[Supplier] = concat(Supp.ID, '-' + Supp.AbbEN)
+    ,[VID] = isnull(VID.CustPONoList,'')
     ";
 
         private string sql_yyyy = @"select distinct left(CONVERT(CHAR(8),o.SciDelivery, 112),4) as SciYYYY";
@@ -468,6 +470,19 @@ outer apply
 	from Fabric f with (nolock)
 	where f.SCIRefno = psd.SCIRefno
 )d
+outer apply(
+	select CustPONoList = Stuff((
+		select concat(',',CustPONo)
+		from (
+				select distinct o.CustPONo 
+				from PO_Supp_Detail_OrderList spdo  
+				inner join Fabric f on f.SCIRefno = psd.SCIRefno and f.SCIRefno like '%VID%' and f.Type = 'A' and f.MtlTypeID='LABEL' and f.Junk =0
+				inner join orders o on o.ID = spdo.OrderID
+				where spdo.id = psd.ID and spdo.SEQ1 =psd.SEQ1 and spdo.SEQ2 =psd.SEQ2 and spdo.OrderID = o.id
+			) s
+		for xml path ('')
+	) , 1, 1, '')
+) VID
 where 1=1
 ");
                 #endregion
@@ -498,6 +513,19 @@ outer apply
 	from Unit_Rate WITH (NOLOCK) 
 	where UnitFrom = psd.PoUnit and UnitTo = psd.StockUnit
 )r
+outer apply(
+	select CustPONoList = Stuff((
+		select concat(',',CustPONo)
+		from (
+				select distinct o.CustPONo 
+				from PO_Supp_Detail_OrderList spdo  
+				inner join Fabric f on f.SCIRefno = psd.SCIRefno and f.SCIRefno like '%VID%' and f.Type = 'A' and f.MtlTypeID='LABEL' and f.Junk =0
+				inner join orders o on o.ID = spdo.OrderID
+				where spdo.id = psd.ID and spdo.SEQ1 =psd.SEQ1 and spdo.SEQ2 =psd.SEQ2 and spdo.OrderID = o.id
+			) s
+		for xml path ('')
+	) , 1, 1, '')
+) VID
 where 1=1
 ");
                 #endregion

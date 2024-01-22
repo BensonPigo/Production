@@ -140,6 +140,7 @@ namespace Sci.Production.Cutting
                 .Text("Cutno", header: "Cut#", width: Widths.AnsiChars(3), iseditingreadonly: true)
                 .Text("Item", header: "Item", width: Widths.AnsiChars(20), settings: itemsetting).Get(out Ict.Win.UI.DataGridViewTextBoxColumn item)
                 .Text("FabricKind", header: "Fabric Kind", width: Widths.AnsiChars(5), iseditingreadonly: true)
+                .Text("Tone", header: "Tone", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 ;
 
             item.MaxLength = 20;
@@ -948,6 +949,7 @@ Select
     , IsCombineSubProcess = cast({(this.isCombineSubProcess ? "1" : "0")} as bit)
     , isNoneShellNoCreateAllParts = cast(iif(FabricKind.FabricKindID <> '1' and {(this.isNoneShellNoCreateAllParts ? "1" : "0")} = 1, 1, 0) as bit)
     , [IsShowRFIDScan] = dbo.IsShowRFIDScan(o.poid, w.Fabriccombo)
+    , w.Tone
 from  workorder w WITH (NOLOCK) 
 inner join orders o WITH (NOLOCK) on o.ID = w.id and o.cuttingsp = w.id
 outer apply(

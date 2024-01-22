@@ -43,6 +43,18 @@ namespace Sci.Production.Shipping
                 this.editDescription.IsSupportEditMode = false;
             }
 
+            Ict.DualResult cbResult;
+            if (cbResult = DBProxy.Current.Select(null, "SELECT distinct Description ,ID FROM ShippingReason where Type= 'OS' order by Description", out DataTable dtReason))
+            {
+                this.comboReason.DataSource = dtReason;
+                this.comboReason.DisplayMember = "Description";
+                this.comboReason.ValueMember = "ID";
+            }
+            else 
+            {
+                this.ShowErr(cbResult);
+            }
+
             this.GetLeaderName();
         }
 
@@ -242,6 +254,26 @@ from Style s WITH (NOLOCK) where s.ID = '{0}' and s.SeasonID = '{1}'",
                 }
             }
 
+            if (this.comboCategory.Text == "Other Material")
+            {
+                if (this.txtRefno.Text.Empty())
+                {
+                    this.txtRefno.Focus();
+                    MyUtility.Msg.WarningBox("Please fill in [Refno]!");
+                    return false;
+                }
+            }
+
+            if (this.comboCategory.Text == "Other Sample")
+            {
+                if (this.comboReason.Text.Empty())
+                {
+                    this.comboReason.Focus();
+                    MyUtility.Msg.WarningBox("Please select [Reason]!");
+                    return false;
+                }
+            }
+
             // 該單Approved / Junk都不允許調整資料
             if (!Prgs.CheckP02Status(this.CurrentData["ID"].ToString()))
             {
@@ -407,6 +439,28 @@ from Express_Detail WITH (NOLOCK) where ID = '{0}' and Seq2 = ''", MyUtility.Con
             {
                 this.comboDoxItem.Visible = false;
             }
+
+            if (this.comboCategory.Text == "Other Material")
+            {
+                this.txtRefno.Enabled = true;
+            }
+            else
+            {
+                this.txtRefno.Enabled = false;
+            }
+
+            if (this.comboCategory.Text == "Other Sample")
+            {
+                this.txtRefno.Visible = false;
+                this.comboReason.Visible = true;
+                this.labRefno.Text = "Reason";
+            }
+            else
+            {
+                this.txtRefno.Visible = true;
+                this.comboReason.Visible = false;
+                this.labRefno.Text = "Refno";
+            }
         }
 
         private void ComboDoxItem_SelectedValueChanged(object sender, EventArgs e)
@@ -423,6 +477,48 @@ from Express_Detail WITH (NOLOCK) where ID = '{0}' and Seq2 = ''", MyUtility.Con
                     this.editRemark.WatermarkText = string.Empty;
                     this.editRemark.WatermarkColor = SystemColors.WindowText;
                 }
+            }
+        }
+
+        private void txtRefno_Validating(object sender, CancelEventArgs e)
+        {
+            if (this.EditMode && this.txtRefno.OldValue != this.txtRefno.Text && !MyUtility.Check.Empty(this.txtRefno.Text))
+            {
+                string sqlcmd = $@"select 1 from Fabric where Refno = '{this.txtRefno.Text}'";
+                if (!MyUtility.Check.Seek(sqlcmd, out DataRow dr))
+                {
+                    MyUtility.Msg.WarningBox($"This Refno：<{this.txtRefno.Text}> does not exist!!");
+                    e.Cancel = true;
+                    return;
+                }
+            }
+        }
+
+        private void txtRefno_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        {
+            if (this.EditMode && this.txtRefno.OldValue != this.txtRefno.Text && !MyUtility.Check.Empty(this.txtRefno.Text))
+            {
+                string sqlcmd = $@"select 1 from Fabric where Refno = '{this.txtRefno.Text}'";
+                if (!MyUtility.Check.Seek(sqlcmd, out DataRow dr))
+                {
+                    MyUtility.Msg.WarningBox($"This Refno：<{this.txtRefno.Text}> does not exist!!");
+                    this.txtRefno.Focus();
+                    return;
+                }
+            }
+
+            if (this.EditMode)
+            {
+                string sqlcmd = "select DISTINCT Refno = (Refno) from Fabric where Junk = 0 order by Refno";
+
+                Win.Tools.SelectItem item = new Win.Tools.SelectItem(sqlcmd, "30", this.txtRefno.Text, headercaptions: "Refno");
+                DialogResult returnResult = item.ShowDialog();
+                if (returnResult == DialogResult.Cancel)
+                {
+                    return;
+                }
+
+                this.txtRefno.Text = item.GetSelectedString();
             }
         }
     }

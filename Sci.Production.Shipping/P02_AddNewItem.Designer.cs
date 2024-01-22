@@ -59,13 +59,16 @@
             this.displayTeamLeader = new Sci.Win.UI.DisplayBox();
             this.editRemark = new Sci.Production.Class.WatermarkEditBox();
             this.comboDoxItem = new Sci.Win.UI.ComboBox();
+            this.labRefno = new Sci.Win.UI.Label();
+            this.txtRefno = new Sci.Win.UI.TextBox();
+            this.comboReason = new Sci.Win.UI.ComboBox();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.btmcont.SuspendLayout();
             this.SuspendLayout();
             // 
             // btmcont
             // 
-            this.btmcont.Location = new System.Drawing.Point(0, 323);
+            this.btmcont.Location = new System.Drawing.Point(0, 329);
             this.btmcont.Size = new System.Drawing.Size(684, 40);
             // 
             // undo
@@ -94,7 +97,7 @@
             // 
             // labelBrand
             // 
-            this.labelBrand.Location = new System.Drawing.Point(413, 229);
+            this.labelBrand.Location = new System.Drawing.Point(413, 230);
             this.labelBrand.Name = "labelBrand";
             this.labelBrand.Size = new System.Drawing.Size(70, 23);
             this.labelBrand.TabIndex = 152;
@@ -121,14 +124,14 @@
             this.txtReceiver.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
             this.txtReceiver.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Receiver", true));
             this.txtReceiver.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtReceiver.Location = new System.Drawing.Point(487, 202);
+            this.txtReceiver.Location = new System.Drawing.Point(487, 203);
             this.txtReceiver.Name = "txtReceiver";
             this.txtReceiver.Size = new System.Drawing.Size(185, 23);
             this.txtReceiver.TabIndex = 11;
             // 
             // labelReceiver
             // 
-            this.labelReceiver.Location = new System.Drawing.Point(413, 202);
+            this.labelReceiver.Location = new System.Drawing.Point(413, 203);
             this.labelReceiver.Name = "labelReceiver";
             this.labelReceiver.Size = new System.Drawing.Size(70, 23);
             this.labelReceiver.TabIndex = 149;
@@ -288,7 +291,7 @@
             // 
             // labelRemark
             // 
-            this.labelRemark.Location = new System.Drawing.Point(9, 257);
+            this.labelRemark.Location = new System.Drawing.Point(8, 259);
             this.labelRemark.Name = "labelRemark";
             this.labelRemark.Size = new System.Drawing.Size(87, 23);
             this.labelRemark.TabIndex = 145;
@@ -296,7 +299,7 @@
             // 
             // labelTeamLeader
             // 
-            this.labelTeamLeader.Location = new System.Drawing.Point(9, 203);
+            this.labelTeamLeader.Location = new System.Drawing.Point(9, 230);
             this.labelTeamLeader.Name = "labelTeamLeader";
             this.labelTeamLeader.Size = new System.Drawing.Size(87, 23);
             this.labelTeamLeader.TabIndex = 144;
@@ -382,7 +385,7 @@
             this.txtbrand.BackColor = System.Drawing.Color.White;
             this.txtbrand.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "BrandID", true));
             this.txtbrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtbrand.Location = new System.Drawing.Point(487, 229);
+            this.txtbrand.Location = new System.Drawing.Point(487, 230);
             this.txtbrand.MyDocumentdName = null;
             this.txtbrand.Name = "txtbrand";
             this.txtbrand.Size = new System.Drawing.Size(66, 23);
@@ -393,7 +396,7 @@
             this.txtTeamLeader.BackColor = System.Drawing.Color.White;
             this.txtTeamLeader.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Leader", true));
             this.txtTeamLeader.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtTeamLeader.Location = new System.Drawing.Point(100, 203);
+            this.txtTeamLeader.Location = new System.Drawing.Point(100, 230);
             this.txtTeamLeader.Name = "txtTeamLeader";
             this.txtTeamLeader.Size = new System.Drawing.Size(74, 23);
             this.txtTeamLeader.TabIndex = 10;
@@ -405,7 +408,7 @@
             // 
             this.displayTeamLeader.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayTeamLeader.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayTeamLeader.Location = new System.Drawing.Point(176, 203);
+            this.displayTeamLeader.Location = new System.Drawing.Point(176, 230);
             this.displayTeamLeader.Name = "displayTeamLeader";
             this.displayTeamLeader.Size = new System.Drawing.Size(221, 23);
             this.displayTeamLeader.TabIndex = 161;
@@ -415,7 +418,7 @@
             this.editRemark.BackColor = System.Drawing.Color.White;
             this.editRemark.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Remark", true));
             this.editRemark.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.editRemark.Location = new System.Drawing.Point(100, 257);
+            this.editRemark.Location = new System.Drawing.Point(99, 259);
             this.editRemark.Multiline = true;
             this.editRemark.Name = "editRemark";
             this.editRemark.Size = new System.Drawing.Size(572, 60);
@@ -438,9 +441,46 @@
             this.comboDoxItem.Visible = false;
             this.comboDoxItem.SelectedValueChanged += new System.EventHandler(this.ComboDoxItem_SelectedValueChanged);
             // 
+            // labRefno
+            // 
+            this.labRefno.Location = new System.Drawing.Point(9, 203);
+            this.labRefno.Name = "labRefno";
+            this.labRefno.Size = new System.Drawing.Size(87, 23);
+            this.labRefno.TabIndex = 164;
+            this.labRefno.Text = "Refno";
+            // 
+            // txtRefno
+            // 
+            this.txtRefno.BackColor = System.Drawing.Color.White;
+            this.txtRefno.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Refno", true));
+            this.txtRefno.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtRefno.Location = new System.Drawing.Point(100, 203);
+            this.txtRefno.Name = "txtRefno";
+            this.txtRefno.Size = new System.Drawing.Size(120, 23);
+            this.txtRefno.TabIndex = 165;
+            this.txtRefno.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtRefno_PopUp);
+            this.txtRefno.Validating += new System.ComponentModel.CancelEventHandler(this.txtRefno_Validating);
+            // 
+            // comboReason
+            // 
+            this.comboReason.BackColor = System.Drawing.Color.White;
+            this.comboReason.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "Reason", true));
+            this.comboReason.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboReason.FormattingEnabled = true;
+            this.comboReason.IsSupportUnselect = true;
+            this.comboReason.Location = new System.Drawing.Point(99, 202);
+            this.comboReason.Name = "comboReason";
+            this.comboReason.OldText = "";
+            this.comboReason.Size = new System.Drawing.Size(120, 24);
+            this.comboReason.TabIndex = 166;
+            this.comboReason.Visible = false;
+            // 
             // P02_AddNewItem
             // 
-            this.ClientSize = new System.Drawing.Size(684, 363);
+            this.ClientSize = new System.Drawing.Size(684, 369);
+            this.Controls.Add(this.comboReason);
+            this.Controls.Add(this.txtRefno);
+            this.Controls.Add(this.labRefno);
             this.Controls.Add(this.comboDoxItem);
             this.Controls.Add(this.editRemark);
             this.Controls.Add(this.displayTeamLeader);
@@ -508,6 +548,9 @@
             this.Controls.SetChildIndex(this.displayTeamLeader, 0);
             this.Controls.SetChildIndex(this.editRemark, 0);
             this.Controls.SetChildIndex(this.comboDoxItem, 0);
+            this.Controls.SetChildIndex(this.labRefno, 0);
+            this.Controls.SetChildIndex(this.txtRefno, 0);
+            this.Controls.SetChildIndex(this.comboReason, 0);
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).EndInit();
             this.btmcont.ResumeLayout(false);
             this.ResumeLayout(false);
@@ -548,5 +591,8 @@
         private Win.UI.DisplayBox displayTeamLeader;
         private Class.WatermarkEditBox editRemark;
         private Win.UI.ComboBox comboDoxItem;
+        private Win.UI.Label labRefno;
+        private Win.UI.TextBox txtRefno;
+        private Win.UI.ComboBox comboReason;
     }
 }

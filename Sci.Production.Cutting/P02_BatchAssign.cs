@@ -405,6 +405,7 @@ namespace Sci.Production.Cutting
              .Text("SpreadingNoID", header: "Spreading No", width: Widths.AnsiChars(3), settings: spreadingNo, iseditingreadonly: false)
              .Text("Cutcellid", header: "Cell", width: Widths.AnsiChars(2), settings: cell, iseditingreadonly: false)
              .Text("Shift", header: "Shift", width: Widths.AnsiChars(2), iseditingreadonly: false, settings: col_Shift)
+             .Text("Tone", header: "Tone", width: Widths.AnsiChars(10), iseditingreadonly: false)
              .Text("Article", header: "Article", width: Widths.AnsiChars(10), iseditingreadonly: true)
              .Text("Colorid", header: "Color", width: Widths.AnsiChars(6), iseditingreadonly: true)
              .Text("SizeCode", header: "Size", width: Widths.AnsiChars(10), iseditingreadonly: true)
@@ -427,6 +428,8 @@ namespace Sci.Production.Cutting
             this.gridBatchAssignCellEstCutDate.Columns["estcutdate"].DefaultCellStyle.ForeColor = Color.Red;
             this.gridBatchAssignCellEstCutDate.Columns["Shift"].DefaultCellStyle.BackColor = Color.Pink;
             this.gridBatchAssignCellEstCutDate.Columns["Shift"].DefaultCellStyle.ForeColor = Color.Red;
+            this.gridBatchAssignCellEstCutDate.Columns["Tone"].DefaultCellStyle.BackColor = Color.Pink;
+            this.gridBatchAssignCellEstCutDate.Columns["Tone"].DefaultCellStyle.ForeColor = Color.Red;
 
             // col_wketa.Width = 97;
             col_wketa.EditingControlShowing += (s, e) =>
@@ -815,6 +818,7 @@ Do you want to continue? ");
                     detaildr[0]["Seq1"] = dr["Seq1"];
                     detaildr[0]["Seq2"] = dr["Seq2"];
                     detaildr[0]["shift"] = dr["shift"];
+                    detaildr[0]["Tone"] = dr["Tone"];
                 }
             }
 

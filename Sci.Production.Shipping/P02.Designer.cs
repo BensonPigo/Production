@@ -260,7 +260,7 @@
             // refresh
             // 
             this.refresh.Anchor = System.Windows.Forms.AnchorStyles.Top;
-            this.refresh.Location = new System.Drawing.Point(7905, 8);
+            this.refresh.Location = new System.Drawing.Point(7958, 8);
             // 
             // detailgridcont
             // 
@@ -949,6 +949,7 @@
             // 
             // txtUserManager
             // 
+            this.txtUserManager.AllowSelectResign = false;
             this.txtUserManager.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "Manager", true));
             this.txtUserManager.DisplayBox1Binding = "";
             this.txtUserManager.Location = new System.Drawing.Point(510, 30);
@@ -959,6 +960,7 @@
             // 
             // txtUserHandle
             // 
+            this.txtUserHandle.AllowSelectResign = false;
             this.txtUserHandle.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "Handle", true));
             this.txtUserHandle.DisplayBox1Binding = "";
             this.txtUserHandle.Location = new System.Drawing.Point(510, 4);

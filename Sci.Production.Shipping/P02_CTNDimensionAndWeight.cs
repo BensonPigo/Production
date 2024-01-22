@@ -28,7 +28,7 @@ namespace Sci.Production.Shipping
         protected override bool OnGridSetup()
         {
             this.Helper.Controls.Grid.Generator(this.grid)
-                .Text("CTNNo", header: "C/No.", width: Widths.AnsiChars(5), iseditingreadonly: true)
+                .Text("CTNNo", header: "C/No.", width: Widths.AnsiChars(15), iseditingreadonly: true)
                 .Numeric("CtnLength", header: "Length (cm)", integer_places: 3, decimal_places: 2, maximum: 999.99m, minimum: 0m)
                 .Numeric("CtnWidth", header: "Width (cm)", integer_places: 3, decimal_places: 2, maximum: 999.99m, minimum: 0m)
                 .Numeric("CtnHeight", header: "Height (cm)", integer_places: 3, decimal_places: 2, maximum: 999.99m, minimum: 0m)

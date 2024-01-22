@@ -664,7 +664,8 @@ where sd.ID = '{this.apData["ID"]}' and sd.AccountID != ''");
                 .Text("ShipModeID", header: "Shipping Mode", width: Widths.AnsiChars(5), iseditingreadonly: true)
                 .Numeric("GW", header: "G.W.", decimal_places: 3, iseditingreadonly: true)
                 .Numeric("CBM", header: "CBM", decimal_places: 4, iseditingreadonly: true)
-                .Numeric("Amount", header: "Total Amount", decimal_places: 2, iseditingreadonly: true);
+                .Numeric("Amount", header: "Total Amount", decimal_places: 2, iseditingreadonly: true)
+                .Text("Ecfa", header: "Mode", width: Widths.AnsiChars(8), iseditingreadonly: true);
             this.gridBLNo.SelectionChanged += (s, e) =>
             {
                 DataRow dr = this.gridBLNo.GetDataRow<DataRow>(this.gridBLNo.GetSelectedRowIndex());
@@ -777,7 +778,6 @@ where sd.ID = '{this.apData["ID"]}' and sd.AccountID != ''");
 
                         if (dtA2BPacking.Rows.Count > 0)
                         {
-
                             result = Prgs.CalculateShareExpense_APP(this.apData["ID"].ToString(), Env.User.UserID, dtA2BPacking, plFromRgCode);
 
                             if (!result)
@@ -959,28 +959,30 @@ and sa.InvNo = '{invNo}'
                 @"
 select  ShippingAPID
         , se.Blno
-        , [Bl2no] = (select BL2No from GMTBooking where id=se.InvNo)
-        , WKNo
-        , InvNo
-        , ShipModeID
-        , [GW] = sum(GW)
-        , [CBM] = sum(CBM)
-        , CurrencyID
+        , [Bl2no] = (select BL2No from GMTBooking where id = se.InvNo)
+        , se.WKNo
+        , se.InvNo
+        , se.ShipModeID
+        , [GW] = sum(se.GW)
+        , [CBM] = sum(se.CBM)
+        , se.CurrencyID
         , DropDownListName = (
             select Name
             from DropDownList dl
             inner join FtyExport f on f.Type = dl.ID
             where dl.Type='Pms_FtyExportType'
             and f.ID = se.InvNo)
-        , ShipModeID
-        , FtyWK
+        , se.ShipModeID
+        , se.FtyWK
         , isnull(sum(Amount),0) as Amount 
         , '' as SubTypeRule
         , [NoExportCharges] = (select NoExportCharges from GMTBooking where id=se.InvNo)
-from ShareExpense se WITH (NOLOCK) 
+        , [Ecfa] = iif(e.Ecfa = 1, 'ECFA', 'FORM E')
+from ShareExpense se WITH (NOLOCK)
+left join Export e with (nolock) on e.ID = se.WKNo
 where   ShippingAPID = '{0}' 
-        and (Junk = 0 or Junk is null)
-group by ShippingAPID,se.BLNo,WKNo,InvNo,ShipModeID,CurrencyID,ShipModeID,FtyWK
+        and (se.Junk = 0 or se.Junk is null)
+group by se.ShippingAPID,se.BLNo,se.WKNo,se.InvNo,se.ShipModeID,se.CurrencyID,se.ShipModeID,se.FtyWK,e.Ecfa
 ", MyUtility.Convert.GetString(this.apData["ID"]));
             result = DBProxy.Current.Select(null, sqlCmd, out this.SEGroupData);
             if (!result)
