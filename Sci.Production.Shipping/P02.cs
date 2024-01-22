@@ -652,21 +652,21 @@ FROM(
 			    ELSE N''
 		    END as CategoryName
 		    ,[DropDownListSeq]=dp.Seq
-			,[CategoryNameFromDD]=dp.Description
+			,[CategoryNameFromDD]=dp.Description 
             ,pl.PulloutID
             ,Type = dp_type.Name
             ,ColorID = IIF(f.MtlTypeID = 'EMB THREAD' OR f.MtlTypeID = 'SP THREAD' OR f.MtlTypeID = 'THREAD' 
 			,IIF(isnull(p.SuppColor,'') = '',dbo.GetColorMultipleID(o.BrandID,psds.SpecValue) , p.SuppColor)
 			,dbo.GetColorMultipleID(o.BrandID,psds.SpecValue))
-            ,[fabricDescription] = f.Description
+            ,[fabricDescription] = case ed.Category when '9' then om.Description  else f.Description end
             ,[styleDescription] = st.Description
             ,[Reason_Gender] = r.Name +'/' + st.Gender
             ,[HSCode] = SHC.val
             ,[Fabric_HsCode] = fhcode.val
-            ,[Fabric_MtlTypeID] = f.MtlTypeID
+            ,[Fabric_MtlTypeID] = case ed.Category when '9' then om.MtlTypeID  else f.MtlTypeID end
             ,Refno_Reason = case when ed.category = '9' then ed.Refno 
                                  when ed.category = '8' then sr.Description else '' end
-            ,[Fabric_Type] = f.Type
+             ,[Fabric_Type] = case ed.Category when '9' then om.Type  else f.Type end
 	    from Express_Detail ed WITH (NOLOCK) 
 	    left join PO_Supp_Detail p WITH (NOLOCK) on ed.OrderID = p.ID and ed.Seq1 = p.SEQ1 and ed.Seq2 = p.SEQ2
 	    left join PO_Supp_Detail_Spec psds WITH (NOLOCK) on psds.ID = p.id and psds.seq1 = p.seq1 and psds.seq2 = p.seq2 and psds.SpecColumnID = 'Color'
@@ -696,6 +696,11 @@ FROM(
 			where f.SCIRefno = fh.SCIRefno
             Order by year desc,isnull(EditDate,AddDate)desc
 		)fhcode
+        outer apply(
+			select top 1 description,Type,MtlTypeID
+			from fabric
+			where refno = ed.Refno
+		)om
 	    where ed.ID = '{0}'
     )ed
     outer apply(
