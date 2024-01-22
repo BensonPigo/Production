@@ -1,9 +1,22 @@
 ﻿CREATE PROCEDURE [dbo].[GetCuttingBCS]
+	@StartDate date = null,
+	@EndDate date = null
 AS
 BEGIN
-SET NOCOUNT ON;
-	WITH StdQ_MainDates AS (
-		SELECT 
+	SET NOCOUNT ON;
+
+	if @StartDate is null
+	begin
+		set @StartDate = DATEADD(DAY, -30, GETDATE())
+	end
+
+	if @EndDate is null
+	begin
+		set @EndDate = DATEADD(DAY, 75, GETDATE())
+	end
+
+	-- print concat(format(getdate(), 'HH:mm:ss'), ' #tmp_StdQ_MainDates')
+	SELECT 
 		  [MDivisionID] = s.MDivisionID
 		, [FactoryID] = s.FactoryID
 		, [FactoryGroup] = o.FtyGroup
@@ -12,16 +25,17 @@ SET NOCOUNT ON;
 		, [SewOffLineDate] = CONVERT(DATE, MIN(CONVERT(DATE, offline)))
 		, [MinDate] = CONVERT(DATE, MIN(CONVERT(DATE, Inline)))
 		, [MaxDate] = CONVERT(DATE, Max(CONVERT(DATE, offline)))
-		FROM SewingSchedule s
-		inner join Orders o on o.id = s.OrderID
-		WHERE  
-		([Offline] BETWEEN DATEADD(DAY, -30, GETDATE()) AND GETDATE() -- Filter for the last 30 days
-		OR [Inline] BETWEEN GETDATE() AND DATEADD(DAY, 75, GETDATE())) -- Filter for the next 75 days
-		AND s.BIPImportCuttingBCSCmdTime IS NULL
-		GROUP BY s.FactoryID, OrderID, s.MDivisionID,o.FtyGroup
-	),  StdQ_DateRange AS (
-		SELECT DISTINCT
-		  [APSNo] = SS.APSNo
+	into #tmp_StdQ_MainDates
+	FROM SewingSchedule s
+	inner join Orders o on o.id = s.OrderID
+	WHERE ([Offline] BETWEEN @StartDate AND GETDATE() -- Filter for the last 30 days
+		OR [Inline] BETWEEN GETDATE() AND @EndDate) -- Filter for the next 75 days
+	AND s.BIPImportCuttingBCSCmdTime IS NULL
+	GROUP BY s.FactoryID, OrderID, s.MDivisionID,o.FtyGroup
+
+	-- print concat(format(getdate(), 'HH:mm:ss'), ' #tmp_StdQ_DateRange')
+	SELECT DISTINCT
+			[APSNo] = SS.APSNo
 		, [MDivisionID] = MD.MDivisionID
 		, [FactoryID] = MD.FactoryID
 		, [OrderID] = MD.OrderID
@@ -42,21 +56,24 @@ SET NOCOUNT ON;
 		, [SwitchTime] = SS.SwitchTime
 		, [Sewer] = SS.Sewer
 		, [AlloQty] = SS.AlloQty
-		FROM StdQ_MainDates MD WITH(NOLOCK)
-		INNER JOIN SewingSchedule SS WITH(NOLOCK) ON MD.FactoryID = SS.FactoryID AND MD.OrderID = SS.OrderID AND MD.MDivisionID = SS.MDivisionID
-		OUTER APPLY(SELECT  [val] = iif(SS.OriEff IS NULL AND SS.SewLineEff IS NULL,SS.MaxEff, isnull(SS.OriEff,100) * isnull(SS.SewLineEff,100) / 100) ) ScheduleEff 
+	into #tmp_StdQ_DateRange
+	FROM #tmp_StdQ_MainDates MD WITH(NOLOCK)
+	INNER JOIN SewingSchedule SS WITH(NOLOCK) ON MD.FactoryID = SS.FactoryID AND MD.OrderID = SS.OrderID AND MD.MDivisionID = SS.MDivisionID
+	OUTER APPLY(SELECT  [val] = iif(SS.OriEff IS NULL AND SS.SewLineEff IS NULL,SS.MaxEff, isnull(SS.OriEff,100) * isnull(SS.SewLineEff,100) / 100) ) ScheduleEff 
 
-		GROUP BY MD.MDivisionID, MD.FactoryID, MD.OrderID, MD.[SewInLineDate], MD.[SewOffLineDate], SS.SewingLineID,SS.Inline,SS.Offline,MD.[MaxDate], MD.[MinDate]
-				,SS.TotalSewingTime,SS.Sewer,ScheduleEff.val,SS.TotalSewingTime,SS.ComboType,SS.APSNo, SS.LearnCurveID, SS.LNCSERIALNumber, SS.SwitchTime,SS.AlloQty
-	), StdQ_WorkDate AS(
-			SELECT f.FactoryID,cast(DATEADD(DAY,number,(select CAST(min([SewInLineDate])AS date) from StdQ_MainDates)) as datetime) [WorkDate]
-		FROM master..spt_values s
-		cross join (select distinct FactoryID from StdQ_MainDates) f
-		WHERE s.type = 'P'
-		AND DATEADD(DAY,number,(select CAST(min(MinDate)AS date) from StdQ_MainDates)) <= (select cast(max(MaxDate)as Date) from StdQ_MainDates)
-	), StdQ_DateList AS(
-		SELECT
-		  [APSNo] = sdr.APSNo
+	GROUP BY MD.MDivisionID, MD.FactoryID, MD.OrderID, MD.[SewInLineDate], MD.[SewOffLineDate], SS.SewingLineID,SS.Inline,SS.Offline,MD.[MaxDate], MD.[MinDate]
+			,SS.TotalSewingTime,SS.Sewer,ScheduleEff.val,SS.TotalSewingTime,SS.ComboType,SS.APSNo, SS.LearnCurveID, SS.LNCSERIALNumber, SS.SwitchTime,SS.AlloQty
+
+	-- print concat(format(getdate(), 'HH:mm:ss'), ' #tmp_StdQ_WorkDate')
+	SELECT f.FactoryID,cast(DATEADD(DAY,number,(select CAST(min([SewInLineDate])AS date) from #tmp_StdQ_MainDates)) as datetime) [WorkDate]
+	into #tmp_StdQ_WorkDate
+	FROM master..spt_values s
+	cross join (select distinct FactoryID from #tmp_StdQ_MainDates) f
+	WHERE s.type = 'P'
+	AND DATEADD(DAY,number,(select CAST(min(MinDate)AS date) from #tmp_StdQ_MainDates)) <= (select cast(max(MaxDate)as Date) from #tmp_StdQ_MainDates)
+
+	-- print concat(format(getdate(), 'HH:mm:ss'), ' #tmp_StdQ_DateList')
+	SELECT [APSNo] = sdr.APSNo
 		, [MDivisionID] = sdr.MDivisionID
 		, [FactoryID] = sdr.FactoryID
 		, [OrderID] = OrderID
@@ -73,15 +90,16 @@ SET NOCOUNT ON;
 		, [EndHour] = iif(WorkDate = OfflineDate and ROW_NUMBER() OVER (PARTITION BY APSNo,WorkDate,OrderID,ComboType ORDER BY EndHour desc) = 1 and OfflineHour < EndHour,OfflineHour, cast(wkd.EndHour as float))
 		, [StartHourSort] = ROW_NUMBER() OVER (PARTITION BY APSNo,WorkDate,OrderID,ComboType ORDER BY StartHour)
 		, [EndHourSort] = ROW_NUMBER() OVER (PARTITION BY APSNo,WorkDate,OrderID,ComboType ORDER BY EndHour desc)
-		FROM StdQ_DateRange sdr
-		INNER JOIN StdQ_WorkDate swd on swd.WorkDate >= sdr.InlineDate and swd.WorkDate <= sdr.OfflineDate and swd.FactoryID = sdr.FactoryID
-		INNER JOIN Workhour_Detail wkd with (nolock) on wkd.FactoryID = sdr.FactoryID and 
-														wkd.SewingLineID = sdr.SewingLineID and 
-														wkd.Date = swd.WorkDate
-		WHERE NOT ((swd.WorkDate = sdr.InlineDate AND wkd.EndHour <= sdr.InlineHour) OR  (swd.WorkDate = sdr.OfflineDate AND wkd.StartHour >= sdr.OfflineHour)) 
-	), StdQ_WorkDataList AS (
-		SELECT
-		  [APSNo] --
+	into #tmp_StdQ_DateList
+	FROM #tmp_StdQ_DateRange sdr
+	INNER JOIN #tmp_StdQ_WorkDate swd on swd.WorkDate >= sdr.InlineDate and swd.WorkDate <= sdr.OfflineDate and swd.FactoryID = sdr.FactoryID
+	INNER JOIN Workhour_Detail wkd with (nolock) on wkd.FactoryID = sdr.FactoryID and 
+													wkd.SewingLineID = sdr.SewingLineID and 
+													wkd.Date = swd.WorkDate
+	WHERE NOT ((swd.WorkDate = sdr.InlineDate AND wkd.EndHour <= sdr.InlineHour) OR  (swd.WorkDate = sdr.OfflineDate AND wkd.StartHour >= sdr.OfflineHour)) 
+
+	-- print concat(format(getdate(), 'HH:mm:ss'), ' #tmp_StdQ_WorkDataList')
+	SELECT [APSNo] --
 		, [MDivisionID]
 		, [FactoryID]
 		, [SewingLineID]
@@ -99,11 +117,12 @@ SET NOCOUNT ON;
 		, [Work_Minute] = sum(EndHour - StartHour) * 60
 		, [WorkingTime] = sum(EndHour - StartHour)
 		, [OriWorkDateSer] = ROW_NUMBER() OVER (PARTITION BY APSNo,orderID,ComboType ORDER BY WorkDate)
-		from StdQ_DateList
-		group by APSNo,LearnCurveID,WorkDate,HourOutput,OriWorkHour,Sewer,LNCSERIALNumber,ComboType,SwitchTime,OrderID, [SewingLineID], [MDivisionID], [FactoryID]
-	), StdQ_WorkDataList_Step1 AS(
-		SELECT
-		  [APSNo] --
+	into #tmp_StdQ_WorkDataList
+	from #tmp_StdQ_DateList
+	group by APSNo,LearnCurveID,WorkDate,HourOutput,OriWorkHour,Sewer,LNCSERIALNumber,ComboType,SwitchTime,OrderID, [SewingLineID], [MDivisionID], [FactoryID]
+
+	-- print concat(format(getdate(), 'HH:mm:ss'), ' #tmp_StdQ_WorkDataList_Step1')
+	SELECT [APSNo] --
 		, [MDivisionID]
 		, [FactoryID]
 		, [SewingLineID]
@@ -122,10 +141,11 @@ SET NOCOUNT ON;
 		, [WorkingTime]
 		, [OriWorkDateSer] 
 		, [Sum_Work_Minute] = sum(Work_Minute) over(partition by APSNo order by SewingStart)
-		FROM StdQ_WorkDataList
-	), StdQ_WorkDataList_Step2 AS (
-		select 
-		  [APSNo] --
+	into #tmp_StdQ_WorkDataList_Step1
+	FROM #tmp_StdQ_WorkDataList
+
+	-- print concat(format(getdate(), 'HH:mm:ss'), ' #tmp_StdQ_WorkDataList_Step2')
+	select [APSNo] --
 		, [MDivisionID]
 		, [FactoryID]
 		, [SewingLineID]
@@ -147,10 +167,11 @@ SET NOCOUNT ON;
 		, [New_SwitchTime] = case when (SwitchTime - LAG(Sum_Work_Minute,1,0) over (partition by APSNo order by sewingstart) <= 0) then 0
 			else SwitchTime - LAG(Sum_Work_Minute,1,0) over (partition by APSNo order by sewingstart)
 			end
-		from StdQ_WorkDataList_Step1
-	), StdQ_WorkDataList_Step3 AS (
-		select 
-		  [APSNo] --
+	into #tmp_StdQ_WorkDataList_Step2
+	from #tmp_StdQ_WorkDataList_Step1
+
+	-- print concat(format(getdate(), 'HH:mm:ss'), ' StdQ_WorkDataList_Step3')
+	select [APSNo] --
 		, [MDivisionID]
 		, [FactoryID]
 		, [SewingLineID]
@@ -172,16 +193,17 @@ SET NOCOUNT ON;
 		, [New_SwitchTime] 
 		, [New_Work_Minute] = 
 			case when Work_Minute = Sum_Work_Minute and Work_Minute - SwitchTime > 0 then Work_Minute - SwitchTime
-				 when Work_Minute != Sum_Work_Minute and Sum_Work_Minute - Work_Minute > SwitchTime then Work_Minute
-				 when LAG(New_SwitchTime,1,0) OVER (PARTITION BY APSNo ORDER BY SewingStart) !=0 
+					when Work_Minute != Sum_Work_Minute and Sum_Work_Minute - Work_Minute > SwitchTime then Work_Minute
+					when LAG(New_SwitchTime,1,0) OVER (PARTITION BY APSNo ORDER BY SewingStart) !=0 
 					and Work_Minute - LAG(New_SwitchTime,1,0) OVER (PARTITION BY APSNo ORDER BY SewingStart) > 0 
 					then Work_Minute - LAG(New_SwitchTime,1,0) OVER (PARTITION BY APSNo ORDER BY SewingStart)
-				 else 0
-				 end
-		from StdQ_WorkDataList_Step2
-	), StdQ_WorkDataList_Step4 AS (
-		select 
-		  [APSNo] --
+					else 0
+					end
+	into #tmp_StdQ_WorkDataList_Step3
+	from #tmp_StdQ_WorkDataList_Step2
+
+	-- print concat(format(getdate(), 'HH:mm:ss'), ' StdQ_WorkDataList_Step4')
+	select [APSNo] --
 		, [MDivisionID]
 		, [FactoryID]
 		, [SewingLineID]
@@ -206,94 +228,101 @@ SET NOCOUNT ON;
 		, [WorkDateSer] = case	when isnull(LNCSERIALNumber,0) = 0 then OriWorkDateSer
 							when LNCSERIALNumber - isnull(max(OriWorkDateSer) OVER (PARTITION BY APSNo),0) <= 0 then OriWorkDateSer
 							else OriWorkDateSer + LNCSERIALNumber - isnull(max(OriWorkDateSer) OVER (PARTITION BY APSNo),0) end
-		from StdQ_WorkDataList_Step3
-	), StdQ_OriTotalWorkHour AS (
-		SELECT wds4.APSNo,wds4.WorkDate,[TotalWorkHour] = sum(OriWorkHour)
-		FROM StdQ_WorkDataList_Step4 wds4
-		group by wds4.APSNo,wds4.WorkDate
-	),Stdq_Finsh AS (
-		select 
-		 [MDivisionID]
-		, [FactoryID]
-		, [ComboType]
-		, awd.[OrderID]
-		, awd.SewingLineID
-		, [Date] = cast(awd.SewingStart as date)
-		, StdQty = round(sum(iif (isnull (otw.TotalWorkHour, 0) = 0, 0, awd.New_WorkingTime * awd.HourOutput * awd.OriWorkHour / otw.TotalWorkHour))
-				* ISNULL(lcd.Efficiency,ISNULL(LastEff.val,100.0))/100.0,0)
-		from StdQ_WorkDataList_Step4 awd
-		inner join StdQ_OriTotalWorkHour otw on otw.APSNo = awd.APSNo and otw.WorkDate = awd.WorkDate
-		left join LearnCurve_Detail lcd with (nolock) on awd.LearnCurveID = lcd.ID and awd.WorkDateSer = lcd.Day
-		outer apply(select top 1 [val] = Efficiency from LearnCurve_Detail where ID = awd.LearnCurveID order by Day desc ) LastEff
-		group by awd.SewingStart,awd.SewingEnd,awd.WorkingTime,ISNULL(lcd.Efficiency,ISNULL(LastEff.val,100.0)),awd.Sewer, awd.SewingLineID, awd.[OrderID], [MDivisionID], [FactoryID], [ComboType]
-	),Stdq_Finsh_GroupBy AS(
-		SELECT 
-		[MDivisionID]
+	into #tmp_StdQ_WorkDataList_Step4
+	from #tmp_StdQ_WorkDataList_Step3
+
+	-- print concat(format(getdate(), 'HH:mm:ss'), ' StdQ_OriTotalWorkHour')
+	SELECT wds4.APSNo,wds4.WorkDate,[TotalWorkHour] = sum(OriWorkHour)
+	into #tmp_StdQ_OriTotalWorkHour
+	FROM #tmp_StdQ_WorkDataList_Step4 wds4
+	group by wds4.APSNo,wds4.WorkDate
+
+	-- print concat(format(getdate(), 'HH:mm:ss'), ' Stdq_Finsh')
+	select [MDivisionID]
+	, [FactoryID]
+	, [ComboType]
+	, awd.[OrderID]
+	, awd.SewingLineID
+	, [Date] = cast(awd.SewingStart as date)
+	, StdQty = round(sum(iif (isnull (otw.TotalWorkHour, 0) = 0, 0, awd.New_WorkingTime * awd.HourOutput * awd.OriWorkHour / otw.TotalWorkHour))
+			* ISNULL(lcd.Efficiency,ISNULL(LastEff.val,100.0))/100.0,0)
+	into #tmp_Stdq_Finsh
+	from #tmp_StdQ_WorkDataList_Step4 awd
+	inner join #tmp_StdQ_OriTotalWorkHour otw on otw.APSNo = awd.APSNo and otw.WorkDate = awd.WorkDate
+	left join LearnCurve_Detail lcd with (nolock) on awd.LearnCurveID = lcd.ID and awd.WorkDateSer = lcd.Day
+	outer apply(select top 1 [val] = Efficiency from LearnCurve_Detail where ID = awd.LearnCurveID order by Day desc ) LastEff
+	group by awd.SewingStart,awd.SewingEnd,awd.WorkingTime,ISNULL(lcd.Efficiency,ISNULL(LastEff.val,100.0)),awd.Sewer, awd.SewingLineID, awd.[OrderID], [MDivisionID], [FactoryID], [ComboType]
+
+	-- print concat(format(getdate(), 'HH:mm:ss'), ' Stdq_Finsh_GroupBy')
+	SELECT [MDivisionID]
 		, [FactoryID]
 		, [ComboType]
 		, [OrderID]
 		, [SewingLineID]
 		, [Date]
 		, [StdQty] = isnull(SUM(STDQTY),0)
-		FROM Stdq_Finsh 
-		GROUP BY [MDivisionID], [FactoryID], [ComboType], [OrderID], [SewingLineID], [Date]
-		HAVING ISNULL(SUM(STDQTY), 0) <> 0
-	),Stdq_Finsh_Step1 AS (
-		SELECT
-		 [OrderID]
+	into #tmp_Stdq_Finsh_GroupBy
+	FROM #tmp_Stdq_Finsh 
+	GROUP BY [MDivisionID], [FactoryID], [ComboType], [OrderID], [SewingLineID], [Date]
+	HAVING ISNULL(SUM(STDQTY), 0) <> 0
+
+	-- print concat(format(getdate(), 'HH:mm:ss'), ' Stdq_Finsh_Step1')
+	SELECT [OrderID]
 		,[Request date] = DATE
 		,[COMBOTYPE] = ComboType
 		,[SewingLineID] = SewingLineID
 		,[STD QTY] = STDQTY
 		,[PREVIOUS STD QTY] = LAG(STDQTY) OVER (PARTITION BY SewingLineID, COMBOTYPE ORDER BY DATE)
-		FROM Stdq_Finsh_GroupBy
-	), Stdq_Finsh_Step2 AS (
+	into #tmp_Stdq_Finsh_Step1
+	FROM #tmp_Stdq_Finsh_GroupBy
 
-	  SELECT
-		[OrderID],
-		[Request date],
-		[SewingLineID],
-		[COMBOTYPE],
-		[DAILY TOTAL],
-		ROW_NUMBER() OVER (PARTITION BY [OrderID],[Request date], [SewingLineID] ORDER BY [DAILY TOTAL] DESC) AS RowNum
-	  FROM (
+	-- print concat(format(getdate(), 'HH:mm:ss'), ' Stdq_Finsh_Step2')
+	SELECT [OrderID],
+	[Request date],
+	[SewingLineID],
+	[COMBOTYPE],
+	[DAILY TOTAL],
+	ROW_NUMBER() OVER (PARTITION BY [OrderID],[Request date], [SewingLineID] ORDER BY [DAILY TOTAL] DESC) AS RowNum
+	into #tmp_Stdq_Finsh_Step2
+	FROM (
 		SELECT
-		  [OrderID]
-		  ,[Request date]
-		  ,[SewingLineID]
-		  ,[COMBOTYPE]
-		  ,[DAILY TOTAL] = SUM([STD QTY]) OVER (PARTITION BY [OrderID],SewingLineID, COMBOTYPE ORDER BY [Request date])
-		FROM Stdq_Finsh_Step1
+			[OrderID]
+			,[Request date]
+			,[SewingLineID]
+			,[COMBOTYPE]
+			,[DAILY TOTAL] = SUM([STD QTY]) OVER (PARTITION BY [OrderID],SewingLineID, COMBOTYPE ORDER BY [Request date])
+		FROM #tmp_Stdq_Finsh_Step1
 		GROUP BY [OrderID], [Request date], [SewingLineID], [COMBOTYPE],[STD QTY]
-	  ) AS Subquery
-	), Stdq_Finsh_Step3 AS (
-		SELECT
-		[OrderID] = SFS2.OrderID
+	) AS Subquery
+
+	-- print concat(format(getdate(), 'HH:mm:ss'), ' Stdq_Finsh_Step3')
+	SELECT [OrderID] = SFS2.OrderID
 		,[Request date] = CONVERT(NVARCHAR,  SFS1.[Request date], 23)
 		,[SewingLineID] = SFS1. SewingLineID
 		,[COMBOTYPE] = SFS1.COMBOTYPE
 		,[ACCU. STDQTY] = SUM(SFS1.[STD QTY]) OVER (PARTITION BY SFS1.OrderID, SFS1.COMBOTYPE ORDER BY SFS1.[Request date])
 		--,[STD QTY BY LINE] = SFS1.[STD QTY]
 		,[ACCU. STD QTY BY LINE] = MAX([DAILY TOTAL]) OVER (PARTITION BY SFS1.OrderID,SFS1.SewingLineID, SFS1.COMBOTYPE ORDER BY SFS1.[Request date])
-		FROM Stdq_Finsh_Step1 SFS1 WITH(NOLOCK)
-		JOIN Stdq_Finsh_Step2 SFS2 WITH(NOLOCK) ON SFS1.OrderID = SFS2.OrderID  AND SFS1.[Request date] = SFS2.[Request date] AND SFS1.SewingLineID = SFS2.SewingLineID AND SFS1.COMBOTYPE = SFS2.COMBOTYPE and SFS2.RowNum = 1
-	), Stdq_Finsh_Step4 AS (
-		select 
-		[OrderID] 
+	into #tmp_Stdq_Finsh_Step3
+	FROM #tmp_Stdq_Finsh_Step1 SFS1 WITH(NOLOCK)
+	JOIN #tmp_Stdq_Finsh_Step2 SFS2 WITH(NOLOCK) ON SFS1.OrderID = SFS2.OrderID  AND SFS1.[Request date] = SFS2.[Request date] AND SFS1.SewingLineID = SFS2.SewingLineID AND SFS1.COMBOTYPE = SFS2.COMBOTYPE and SFS2.RowNum = 1
+
+	-- print concat(format(getdate(), 'HH:mm:ss'), ' Stdq_Finsh_Step4')
+	select [OrderID] 
 		,[Request date] 
 		,[SewingLineID]
 		,[COMBOTYPE]
 		,[ACCU. STDQTY] = case when  [ACCU. STDQTY] = LAG([ACCU. STDQTY]) OVER (ORDER BY [Request date]) 
-							   THEN LAG([ACCU. STDQTY]) OVER (ORDER BY [Request date]) 
-							   ELSE [ACCU. STDQTY] END
+								THEN LAG([ACCU. STDQTY]) OVER (ORDER BY [Request date]) 
+								ELSE [ACCU. STDQTY] END
 		,[STD QTY BY LINE] = [ACCU. STD QTY BY LINE] - ISNULL(LAG([ACCU. STD QTY BY LINE]) OVER (PARTITION BY OrderID, [SewingLineID] ORDER BY [Request date]),0) 
 		,[ACCU. STD QTY BY LINE]
 		--,[RowNum] = ROW_NUMBER() OVER (PARTITION BY OrderID,[Request date], [SewingLineID] ORDER BY[Request date]ASC , [ACCU. STD QTY BY LINE] DESC)
-		FROM Stdq_Finsh_Step3
+	into #tmp_Stdq_Finsh_Step4
+	FROM #tmp_Stdq_Finsh_Step3
 
-	), Stdq_Finsh_Step5 AS (
-		SELECT
-		 [OrderID] = a.[OrderID] 
+	-- print concat(format(getdate(), 'HH:mm:ss'), ' Stdq_Finsh_Step5')
+	SELECT [OrderID] = a.[OrderID] 
 		,[Request date]  = a.[Request date] 
 		,[SewingLineID] = a.[SewingLineID]
 		,[COMBOTYPE] = a.[COMBOTYPE]
@@ -301,14 +330,14 @@ SET NOCOUNT ON;
 		,[ACCU. STDQTY] = MAX(a.[ACCU. STDQTY]) OVER (PARTITION BY a.OrderID ORDER BY a.[Request date])
 		,[STD QTY BY LINE] =a.[STD QTY BY LINE]
 		,[ACCU. STD QTY BY LINE] = a.[ACCU. STD QTY BY LINE]
-		From Stdq_Finsh_Step4 a
-		inner join Stdq_Finsh_Step4 b on a.[Request date] = b.[Request date]
-		--where a.RowNum = 1
-		GROUP BY a.OrderID,a.[SewingLineID],a.[Request date],a.[STD QTY BY LINE],a.[ACCU. STD QTY BY LINE],a.[COMBOTYPE],a.[ACCU. STDQTY]
-	
-	),Stdq_Finsh_Step6 AS(
-		SELECT
-		[OrderID]
+	into #tmp_Stdq_Finsh_Step5
+	From #tmp_Stdq_Finsh_Step4 a
+	inner join #tmp_Stdq_Finsh_Step4 b on a.[Request date] = b.[Request date]
+	--where a.RowNum = 1
+	GROUP BY a.OrderID,a.[SewingLineID],a.[Request date],a.[STD QTY BY LINE],a.[ACCU. STD QTY BY LINE],a.[COMBOTYPE],a.[ACCU. STDQTY]
+
+	-- print concat(format(getdate(), 'HH:mm:ss'), ' Stdq_Finsh_Step6')
+	SELECT [OrderID]
 		,[Request date]
 		,[SewingLineID]
 		,[COMBOTYPE]
@@ -322,11 +351,12 @@ SET NOCOUNT ON;
 		,[ACCU. STDQTY]
 		,[STD QTY BY LINE]
 		,[ACCU. STD QTY BY LINE]
-		--,[RowNum] = ROW_NUMBER() OVER (PARTITION BY OrderID,[Request date], [SewingLineID] ORDER BY [ACCU. STD QTY BY LINE] DESC)
-		FROM Stdq_Finsh_Step5
-	),EstCutQty_Step1 As (
-		select distinct
-		wd.OrderID,
+	--,[RowNum] = ROW_NUMBER() OVER (PARTITION BY OrderID,[Request date], [SewingLineID] ORDER BY [ACCU. STD QTY BY LINE] DESC)
+	into #tmp_Stdq_Finsh_Step6
+	FROM #tmp_Stdq_Finsh_Step5
+
+	-- print concat(format(getdate(), 'HH:mm:ss'), ' EstCutQty_Step1')
+	select distinct wd.OrderID,
 		POID = w.ID,
 		wd.Article,
 		wd.SizeCode,
@@ -337,97 +367,104 @@ SET NOCOUNT ON;
 		w.Colorid
 		,w.EstCutDate
 		,[CutQty] = CutQty.val
-		from WorkOrder w with(nolock)
-		inner join WorkOrder_Distribute wd WITH(NOLOCK) on wd.WorkOrderUkey = w.Ukey
-		inner join WorkOrder_PatternPanel wp WITH(NOLOCK) on wp.WorkOrderUkey = w.Ukey
-		/* WorkOrder_Distribute.SizeCode與SewingSchedule_Detail.Size WorkOrder_Distribute.Article與SewingSchedule_Detail.Article對照*/
-		inner join SewingSchedule_Detail ssd WITH(NOLOCK) on ssd.OrderID = wd.OrderID and ssd.Article = wd.Article and ssd.SizeCode = wd.SizeCode
-		left join StdQ_MainDates main WITH(NOLOCK) on main.OrderID = wd.OrderID
-		/****************************************************************************************************************************/
-		outer apply
-		(
-			Select  val = c.qty * w.layer
-			From WorkOrder_SizeRatio c
-			Where  c.WorkOrderUkey =w.Ukey 
-		) as CutQty
-		where wd.OrderID = main.OrderID   
-		and exists (select 1 from Orders o WITH(NOLOCK)  where wd.OrderID  = o.ID and o.LocalOrder = 0) --非local單 
-		and not exists(select 1 from Cutting_WIPExcludePatternPanel cw WITH(NOLOCK) where cw.ID = w.ID and cw.PatternPanel = wp.PatternPanel) -- ISP20201886 排除指定 PatternPanel
-		and (((select WIP_ByShell from system) = 1 and exists(select 1 from Order_BOF bof WITH(NOLOCK) where bof.Id = w.Id and bof.FabricCode = w.FabricCode and bof.Kind = 1)) or (select WIP_ByShell from system) = 0)
-	)
-	,EstCutQty_Step2 AS(
-		select x.*,x2.PatternPanel,x2.FabricCombo,FabricPanelCode
-		from (select distinct Orderid,POID,Article,SizeCode,FabricCode,ColorID,EstCutDate,[CutQty] from EstCutQty_Step1) x
-		outer apply(select top 1 * from EstCutQty_Step1 where Orderid = x.Orderid and POID = x.POID and Article = x.Article and SizeCode = x.SizeCode and FabricCode = x.FabricCode and ColorID = x.ColorID order by FabricPanelCode)x2
-	),EstCutWorkDate AS(
-		SELECT DISTINCT [Date]
-		FROM Workhour WH
-		INNER JOIN StdQ_MainDates SM on WH.FactoryID = SM.FactoryGroup 
-		where Holiday = 0 
-		and not exists(select 1 from holiday where holiday.HolidayDate =WH.Date)
-	),EstCutQty_Step3 AS(
-		SELECT 
-		  [OrderID] =ECQS2.Orderid
+	into #tmp_EstCutQty_Step1
+	from WorkOrder w with(nolock)
+	inner join WorkOrder_Distribute wd WITH(NOLOCK) on wd.WorkOrderUkey = w.Ukey
+	inner join WorkOrder_PatternPanel wp WITH(NOLOCK) on wp.WorkOrderUkey = w.Ukey
+	/* WorkOrder_Distribute.SizeCode與SewingSchedule_Detail.Size WorkOrder_Distribute.Article與SewingSchedule_Detail.Article對照*/
+	inner join SewingSchedule_Detail ssd WITH(NOLOCK) on ssd.OrderID = wd.OrderID and ssd.Article = wd.Article and ssd.SizeCode = wd.SizeCode
+	/****************************************************************************************************************************/
+	outer apply
+	(
+		Select  val = c.qty * w.layer
+		From WorkOrder_SizeRatio c
+		Where  c.WorkOrderUkey =w.Ukey 
+	) as CutQty
+	where exists (select 1 from #tmp_StdQ_MainDates main WITH(NOLOCK) where main.OrderID = wd.OrderID)
+	and exists (select 1 from Orders o WITH(NOLOCK)  where wd.OrderID  = o.ID and o.LocalOrder = 0) --非local單 
+	and not exists(select 1 from Cutting_WIPExcludePatternPanel cw WITH(NOLOCK) where cw.ID = w.ID and cw.PatternPanel = wp.PatternPanel) -- ISP20201886 排除指定 PatternPanel
+	and (((select WIP_ByShell from system) = 1 and exists(select 1 from Order_BOF bof WITH(NOLOCK) where bof.Id = w.Id and bof.FabricCode = w.FabricCode and bof.Kind = 1)) or (select WIP_ByShell from system) = 0)
+
+	-- print concat(format(getdate(), 'HH:mm:ss'), ' EstCutQty_Step2')
+	select x.*,x2.PatternPanel,x2.FabricCombo,FabricPanelCode
+	into #tmp_EstCutQty_Step2
+	from (select distinct Orderid,POID,Article,SizeCode,FabricCode,ColorID,EstCutDate,[CutQty] from #tmp_EstCutQty_Step1) x
+	outer apply(select top 1 * from #tmp_EstCutQty_Step1 where Orderid = x.Orderid and POID = x.POID and Article = x.Article and SizeCode = x.SizeCode and FabricCode = x.FabricCode and ColorID = x.ColorID order by FabricPanelCode)x2
+
+	-- print concat(format(getdate(), 'HH:mm:ss'), ' EstCutWorkDate')
+	SELECT DISTINCT [Date]
+	into #tmp_EstCutWorkDate
+	FROM Workhour WH
+	INNER JOIN #tmp_StdQ_MainDates SM on WH.FactoryID = SM.FactoryGroup 
+	where Holiday = 0 
+	and not exists(select 1 from holiday where holiday.HolidayDate =WH.Date)
+
+	-- print concat(format(getdate(), 'HH:mm:ss'), ' EstCutQty_Step3')
+	SELECT [OrderID] =ECQS2.Orderid
 		, [POID]
 		, [Article]
 		, [SizeCode]
 		, [EstCutDate]
 		, [FabricCombo]
 		, [CutQty]
-		FROM EstCutQty_Step2 ECQS2 
-		LEFT JOIN StdQ_MainDates SM  on SM.OrderID = ECQS2.OrderID
-		left JOIN EstCutWorkDate ECWD on ECWD.[Date] = ECQS2.[EstCutDate]
-	), EstCutCount AS (
-		SELECT 
-		OrderID 
+	into #tmp_EstCutQty_Step3
+	FROM #tmp_EstCutQty_Step2 ECQS2 
+	LEFT JOIN #tmp_StdQ_MainDates SM  on SM.OrderID = ECQS2.OrderID
+	left JOIN #tmp_EstCutWorkDate ECWD on ECWD.[Date] = ECQS2.[EstCutDate]
+
+	-- print concat(format(getdate(), 'HH:mm:ss'), ' EstCutCount')
+	SELECT OrderID 
 		, Article
 		,[Count] = COUNT(DISTINCT [FabricCombo])
-		FROM EstCutQty_Step3 
-		GROUP by OrderID , Article
-	) ,EstCutSum as(
-		SELECT
+	into #tmp_EstCutCount
+	FROM #tmp_EstCutQty_Step3 
+	GROUP by OrderID , Article
+
+	-- print concat(format(getdate(), 'HH:mm:ss'), ' EstCutSum')
+	SELECT
 		a.OrderID,Article,SizeCode,
 		[val] = COUNT(DISTINCT [FabricCombo])  
-		FROM EstCutQty_Step2 a
-		left JOIN StdQ_MainDates SM on a.orderID = SM.orderid
-		Where 
-		a.EstCutDate <= DATEADD(DAY, -2, SM.maxdate)
-		GROUP BY a.OrderID,Article,SizeCode
-	)
-	,EstCutGroup AS (
-		SELECT 
-		[OrderID] = c.OrderID
+	into #tmp_EstCutSum
+	FROM #tmp_EstCutQty_Step2 a
+	left JOIN #tmp_StdQ_MainDates SM on a.orderID = SM.orderid
+	Where a.EstCutDate <= DATEADD(DAY, -2, SM.maxdate)
+	GROUP BY a.OrderID,Article,SizeCode
+
+	-- print concat(format(getdate(), 'HH:mm:ss'), ' EstCutGroup')
+	SELECT [OrderID] = c.OrderID
 		,[Count]
 		,[SizeCode] = c.SizeCode
 		,[CutQty] =  MIN(C.[CutQty])
-		FROM 
-		(
-			SELECT
-			t.OrderID
-			,t.Article
-			,t.SizeCode
-			,t.EstCutDate
-			,t.FabricCombo
-			, [CutQty] = Sum(CutQty)
-			, [Count] = e.[val]
-			FROM EstCutQty_Step2 t
-			--left JOIN StdQ_MainDates sfs6 on t.orderID = sfs6.orderid
-			left join estcutsum e on e.OrderID = t. orderid AND e.Article = t.article AND e.SizeCode = t.sizecode
-			WHERE EXISTS (SELECT 1 FROM StdQ_MainDates sfs6 WHERE t.OrderID = sfs6.OrderID)
-			GROUP BY t.OrderID,t.Article,t.SizeCode,EStCutDate,FabricCombo,e.[val]
-		) c
-		inner join EstCutQty_Step2 ecqs2 on ecqs2.orderid = c.orderid
-		GROUP BY c.SizeCode ,c.OrderID,c.[Count]
-	), EstCutALLGroup AS(
+	into #tmp_EstCutGroup
+	FROM 
+	(
 		SELECT
-		e.orderid
+		t.OrderID
+		,t.Article
+		,t.SizeCode
+		,t.EstCutDate
+		,t.FabricCombo
+		, [CutQty] = Sum(CutQty)
+		, [Count] = e.[val]
+		FROM #tmp_EstCutQty_Step2 t
+		--left JOIN StdQ_MainDates sfs6 on t.orderID = sfs6.orderid
+		left join #tmp_EstCutSum e on e.OrderID = t. orderid AND e.Article = t.article AND e.SizeCode = t.sizecode
+		WHERE EXISTS (SELECT 1 FROM #tmp_StdQ_MainDates sfs6 WHERE t.OrderID = sfs6.OrderID)
+		GROUP BY t.OrderID,t.Article,t.SizeCode,EStCutDate,FabricCombo,e.[val]
+	) c
+	inner join #tmp_EstCutQty_Step2 ecqs2 on ecqs2.orderid = c.orderid
+	GROUP BY c.SizeCode ,c.OrderID,c.[Count]
+
+	-- print concat(format(getdate(), 'HH:mm:ss'), ' EstCutALLGroup')
+	SELECT e.orderid
 		,[AccuEstCutQty] = SUM(ec.[CutQty])
-		FROM  EstCutCount e 
-		left JOIN EstCutGroup  ec on ec.OrderID = e.OrderID and ec.[Count] = e.[Count] 
-		 group by e.orderid
-	),EstCutQty_Step4 AS(
-	-------------------------------
-		SELECT
+	into #tmp_EstCutALLGroup
+	FROM #tmp_EstCutCount e 
+	left JOIN #tmp_EstCutGroup  ec on ec.OrderID = e.OrderID and ec.[Count] = e.[Count] 
+	group by e.orderid
+
+	-- print concat(format(getdate(), 'HH:mm:ss'), ' EstCutQty_Step4')
+	SELECT
 		sfs6.[OrderID],
 		sfs6.[Request date],
 		sfs6.[SewingLineID],
@@ -436,25 +473,53 @@ SET NOCOUNT ON;
 		sfs6.[STD QTY BY LINE],
 		sfs6.[ACCU. STD QTY BY LINE],
 		eag.[AccuEstCutQty]
-		FROM Stdq_Finsh_Step6 sfs6
-		LEFT join EstCutALLGroup eag on eag.orderid = sfs6.[OrderID]
-	), EstCutQty_Step5 AS (
-		SELECT
-		[ROWNumber] = ROW_NUMBER() OVER (PARTITION BY OrderID, SewingLineID ORDER BY [Request Date])
-		,*
-		,[STDQTY BY SUM] = SUM([STD QTY BY LINE]) OVER(PARTITION BY OrderID,SewingLineID ORDER BY [Request Date])
-		FROM EstCutQty_Step4
-	), EstCutQty_Step6 AS (
-		SELECT 
-		* ,
+	into #tmp_EstCutQty_Step4
+	FROM #tmp_Stdq_Finsh_Step6 sfs6
+	LEFT join #tmp_EstCutALLGroup eag on eag.orderid = sfs6.[OrderID]
+
+	-- print concat(format(getdate(), 'HH:mm:ss'), ' EstCutQty_Step5')
+	SELECT [ROWNumber] = ROW_NUMBER() OVER (PARTITION BY OrderID, SewingLineID ORDER BY [Request Date])
+	,*
+	,[STDQTY BY SUM] = SUM([STD QTY BY LINE]) OVER(PARTITION BY OrderID,SewingLineID ORDER BY [Request Date])
+	into #tmp_EstCutQty_Step5
+	FROM #tmp_EstCutQty_Step4
+
+	-- print concat(format(getdate(), 'HH:mm:ss'), ' EstCutQty_Step6')
+	SELECT  * ,
 		CASE
 			WHEN AccuEstCutQty - [STDQTY BY SUM]  >= 0 THEN [STD QTY BY LINE]
 			ELSE AccuEstCutQty - LAG([STDQTY BY SUM]) OVER (PARTITION BY OrderID,SewingLineID ORDER BY [Request date])
 		END AS AccEstCutQtyByLine
-		from EstCutQty_Step5
-	), EstCutQty_Step7 AS(
-		SELECT 
-		 [MDivisionID] = MAIN.MDivisionID
+	into #tmp_EstCutQty_Step6
+	from #tmp_EstCutQty_Step5
+
+	-- print concat(format(getdate(), 'HH:mm:ss'), ' Marker_ML')
+	select *
+		, r_id = ROW_NUMBER() over(partition by OrderID order by case when [MatchFabric] <> '' or [OneTwoWay] <> '' or [HorizontalCutting] <> '' then 1 else 2 end)		
+	into #tmp_Marker_ML
+	from (
+		select distinct [MatchFabric] = ( case ml.MatchFabric
+											when '1' then concat('Body Mapping:V-Repeat ',IIF(ml.V_Repeat is null,'',CAST(ml.V_Repeat AS VARCHAR)))
+											when '2' then concat('Checker:V-Repeat ',IIF(ml.V_Repeat is null,'',CAST(ml.V_Repeat AS VARCHAR)),' Checker:H-Repeat '+IIF(ml.H_Repeat is null,'',CAST(ml.H_Repeat AS VARCHAR)))
+											when '3' then concat('Horizontal stripe:V-Repeat ',IIF(ml.V_Repeat is null,'',CAST(ml.V_Repeat AS VARCHAR)))
+											when '4' then concat('Straight stripe:H-Repeat ',IIF(ml.H_Repeat is null,'',CAST(ml.H_Repeat AS VARCHAR)))
+											else '' end),
+				[OneTwoWay] = IIF(ml.OneTwoWay=1, 'one way cutting', ''),
+				[HorizontalCutting] = IIF(ml.HorizontalCutting =1, 'Straight fabric use Horizontal cutting', ''),
+				wo.OrderID,
+				ml.ID,
+				ml.Version
+		from Marker_ML ml with (nolock)
+		inner join WorkOrder wo with (nolock) on wo.MarkerVersion = ml.Version and ml.MarkerName = wo.Markername
+		where exists (select 1 from DropDownList d with (nolock) where ml.MatchFabric = d.ID and d.type = 'MatchFabric')
+		and exists (select 1 from Marker m with (nolock) where ml.ID = m.ID and m.Version = ml.Version and wo.MarkerNo = m.MarkerNo
+			and m.EditDate = (select MAX(m2.EditDate) from Marker m2 with (nolock) where m.ID = m2.ID and m.Version = m2.Version)
+		)
+		and exists (select 1 from #tmp_StdQ_MainDates t WITH(NOLOCK) INNER JOIN Orders o WITH(NOLOCK) ON t.OrderID = o.ID where o.POID = wo.OrderID)
+	) ml	
+
+	-- print concat(format(getdate(), 'HH:mm:ss'), ' EstCutQty_Step7')
+	SELECT [MDivisionID] = MAIN.MDivisionID
 		,[FactoryID] = MAIN.FactoryID
 		,[BrandID] = O.BrandID
 		,[StyleID] = O.StyleID
@@ -464,10 +529,10 @@ SET NOCOUNT ON;
 		,[POID] = O.POID
 		,[Category] = DDL.[Name]
 		,[WorkType] = CASE when c.WorkType = 1 THEN 'Combination'
-						   when c.workType = 2 THEN 'By SP#'
-						   ELSE ''
-					  END
-		,[MatchFabric] = MarkerInfo.MatchFabric + char(10) + MarkerInfo.OneTwoWay + ' ' + MarkerInfo.HorizontalCutting
+							when c.workType = 2 THEN 'By SP#'
+							ELSE ''
+						END
+		,[MatchFabric] = ISNULL(MarkerInfo.MatchFabric, '') + char(10) + ISNULL(MarkerInfo.OneTwoWay, '') + ' ' + ISNULL(MarkerInfo.HorizontalCutting, '')
 		,[OrderID] = O.ID
 		,[SciDelivery] = O.SciDelivery
 		,[BuyerDelivery] = O.BuyerDelivery
@@ -484,42 +549,74 @@ SET NOCOUNT ON;
 		,[AccuEstCutQtyByLine] = ECQE.AccEstCutQtyByLine
 		,[SupplyCutQty] = ECQE.AccuEstCutQty - ECQE.[ACCU. STDQTY]
 		,[SupplyCutQtyByLine] = ECQE.AccEstCutQtyByLine - ECQE.[ACCU. STD QTY BY LINE]
-		FROM EstCutQty_Step6 ECQE
-		INNER JOIN StdQ_MainDates MAIN WITH(NOLOCK) on ECQE.OrderID = MAIN.OrderID
-		INNER JOIN Orders O WITH(NOLOCK) ON MAIN.OrderID = O.ID
-		left join Cutting c WITH (NOLOCK) on c.ID = o.CuttingSP
-		INNER JOIN Style S WITH(NOLOCK) ON O.StyleID = S.ID AND o.BrandID = s.BrandID and o.SeasonID = s.SeasonID
-		INNER JOIN DropDownList DDL WITH(NOLOCK) on DDL.ID = o.Category and DDL.[Type] = 'Category'
-		OUTER APPLY(
-			select  top 1 [MatchFabric] = ( case ml.MatchFabric
-											when '1' then concat('Body Mapping:V-Repeat ',IIF(ml.V_Repeat is null,'',CAST(ml.V_Repeat AS VARCHAR)))
-											when '2' then concat('Checker:V-Repeat ',IIF(ml.V_Repeat is null,'',CAST(ml.V_Repeat AS VARCHAR)),' Checker:H-Repeat '+IIF(ml.H_Repeat is null,'',CAST(ml.H_Repeat AS VARCHAR)))
-											when '3' then concat('Horizontal stripe:V-Repeat ',IIF(ml.V_Repeat is null,'',CAST(ml.V_Repeat AS VARCHAR)))
-											when '4' then concat('Straight stripe:H-Repeat ',IIF(ml.H_Repeat is null,'',CAST(ml.H_Repeat AS VARCHAR)))
-											else '' end),
-							[OneTwoWay] = IIF(ml.OneTwoWay=1, 'one way cutting', ''),
-							[HorizontalCutting] = IIF(ml.HorizontalCutting =1, 'Straight fabric use Horizontal cutting', '')
-			from    Marker m with (nolock)
-			INNER JOIN WorkOrder wo on wo.OrderID = o.POID
-			inner join Marker_ML ml with (nolock) on ml.ID = m.ID and m.Version = ml.Version and ml.MarkerName = wo.Markername
-			inner join DropDownList d on ml.MatchFabric = d.ID and d.type = 'MatchFabric'
-			where   wo.MarkerVersion = m.Version and wo.MarkerNo = m.MarkerNo 
-			order by m.EditDate desc
-		) MarkerInfo
-	), EstCutQty_Step8 AS(
-		SELECT 
-		*
+	into #tmp_EstCutQty_Step7
+	FROM #tmp_EstCutQty_Step6 ECQE
+	INNER JOIN #tmp_StdQ_MainDates MAIN WITH(NOLOCK) on ECQE.OrderID = MAIN.OrderID
+	INNER JOIN Orders O WITH(NOLOCK) ON MAIN.OrderID = O.ID
+	left join Cutting c WITH (NOLOCK) on c.ID = o.CuttingSP
+	INNER JOIN Style S WITH(NOLOCK) ON O.StyleID = S.ID AND o.BrandID = s.BrandID and o.SeasonID = s.SeasonID
+	INNER JOIN DropDownList DDL WITH(NOLOCK) on DDL.ID = o.Category and DDL.[Type] = 'Category'
+	OUTER APPLY(
+		select MatchFabric, OneTwoWay, HorizontalCutting
+		from #tmp_Marker_ML ml
+		where ml.OrderID = o.POID
+		and ml.r_id = 1
+	) MarkerInfo
+
+
+	-- print concat(format(getdate(), 'HH:mm:ss'), ' EstCutQty_Step8')
+	SELECT  *
 		,[BalanceCutQty] = SupplyCutQty - StdQty
 		,[BalanceCutQtyByLine] = SupplyCutQtyByLine - StdQtyByLine
-		FROM EstCutQty_Step7
-	), EstCutQty_END AS(
-		SELECT 
-		* 
+	into #tmp_EstCutQty_Step8
+	FROM #tmp_EstCutQty_Step7
+
+	-- print concat(format(getdate(), 'HH:mm:ss'), ' EstCutQty_END')
+	SELECT  * 
 		,[SupplyCutQtyVSStdQty] = IIF (BalanceCutQty < 0, SupplyCutQty, StdQty)
 		,[SupplyCutQtyVSStdQtyByLine] = IIF (BalanceCutQtyByLine < 0, SupplyCutQtyByLine, StdQtyByLine)
+	into #tmp_EstCutQty_END
+	FROM #tmp_EstCutQty_Step8
+	
 
-		FROM EstCutQty_Step8
-	)
+	SELECT [MDivisionID] = ISNULL(MDivisionID, '')
+		, [FactoryID] = ISNULL(FactoryID, '')
+		, [BrandID] = ISNULL(BrandID, '')
+		, [StyleID] = ISNULL(StyleID, '')
+		, [SeasonID] = ISNULL(SeasonID, '')
+		, [CDCodeNew] = ISNULL(CDCodeNew, '')
+		, [FabricType] = ISNULL(FabricType, '')
+		, [POID] = ISNULL(POID, '')
+		, [Category] = ISNULL(Category, '')
+		, [WorkType] = ISNULL(WorkType, '')
+		, [MatchFabric] = ISNULL(MatchFabric, '')
+		, [OrderID] = ISNULL(OrderID, '')
+		, [SciDelivery] = SciDelivery
+		, [BuyerDelivery] = BuyerDelivery
+		, [OrderQty] = ISNULL(OrderQty, 0)
+		, [SewInLineDate] = SewInLineDate
+		, [SewOffLineDate] = SewOffLineDate
+		, [SewingLineID] = ISNULL(SewingLineID, '')
+		, [RequestDate] = RequestDate
+		, [StdQty] = ISNULL(StdQty, 0)
+		, [StdQtyByLine] = ISNULL(StdQtyByLine, 0)
+		, [AccuStdQty] = ISNULL(AccuStdQty, 0)
+		, [AccuStdQtyByLine] = ISNULL(AccuStdQtyByLine, 0)
+		, [AccuEstCutQty] = ISNULL(AccuEstCutQty, 0)
+		, [AccuEstCutQtyByLine] = ISNULL(AccuEstCutQtyByLine, 0)
+		, [SupplyCutQty] = ISNULL(SupplyCutQty, 0)
+		, [SupplyCutQtyByLine] = ISNULL(SupplyCutQtyByLine, 0)
+		, [BalanceCutQty] = ISNULL(BalanceCutQty, 0)
+		, [BalanceCutQtyByLine] = ISNULL(BalanceCutQtyByLine, 0)
+		, [SupplyCutQtyVSStdQty] = ISNULL(SupplyCutQtyVSStdQty, 0)
+		, [SupplyCutQtyVSStdQtyByLine] = ISNULL(SupplyCutQtyVSStdQtyByLine, 0)
+	FROM #tmp_EstCutQty_END;
 
-	SELECT * FROM EstCutQty_END;
+	drop table #tmp_EstCutALLGroup,#tmp_EstCutCount,#tmp_EstCutGroup,#tmp_EstCutQty_END,#tmp_EstCutQty_Step1,#tmp_EstCutQty_Step2
+	,#tmp_EstCutQty_Step3,#tmp_EstCutQty_Step4,#tmp_EstCutQty_Step5,#tmp_EstCutQty_Step6,#tmp_EstCutQty_Step7,#tmp_EstCutQty_Step8
+	,#tmp_EstCutSum,#tmp_EstCutWorkDate,#tmp_StdQ_DateList,#tmp_StdQ_DateRange,#tmp_Stdq_Finsh,#tmp_Stdq_Finsh_GroupBy,#tmp_Stdq_Finsh_Step1
+	,#tmp_Stdq_Finsh_Step2,#tmp_Stdq_Finsh_Step3,#tmp_Stdq_Finsh_Step4,#tmp_Stdq_Finsh_Step5,#tmp_Stdq_Finsh_Step6,#tmp_StdQ_MainDates
+	,#tmp_StdQ_OriTotalWorkHour,#tmp_StdQ_WorkDataList,#tmp_StdQ_WorkDataList_Step1,#tmp_StdQ_WorkDataList_Step2,#tmp_StdQ_WorkDataList_Step3
+	,#tmp_StdQ_WorkDataList_Step4,#tmp_StdQ_WorkDate,#tmp_Marker_ML
+
 END
