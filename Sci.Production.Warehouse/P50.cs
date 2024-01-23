@@ -321,6 +321,7 @@ where id = '{this.CurrentMaintain["ID"]}'
             .Text("roll", header: "Roll", width: Widths.AnsiChars(6), iseditingreadonly: true) // 2
             .Text("dyelot", header: "Dyelot", width: Widths.AnsiChars(8), iseditingreadonly: true) // 3
             .Text("Location", header: "Book Location", iseditingreadonly: true) // 4
+            .Text("ContainerCode", header: "Container Code", width: Widths.AnsiChars(18), iseditingreadonly: true) // 4
             .Numeric("qtybefore", header: "Book Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10, iseditingreadonly: true) // 5
             .Numeric("qtyafter", header: "Actual Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10) // 6
             .Numeric("variance", header: "Variance", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10, iseditingreadonly: true) // 7
@@ -465,6 +466,7 @@ select a.id
 ,dbo.getmtldesc(a.poid,a.seq1,a.seq2,2,0) as [description]
 ,a.ukey
 ,a.ftyinventoryukey
+,FI.ContainerCode
 from dbo.StockTaking_detail as a WITH (NOLOCK) 
 left join PO_Supp_Detail psd WITH (NOLOCK) on psd.ID = a.PoId and psd.seq1 = a.SEQ1 and psd.SEQ2 = a.seq2
 left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'

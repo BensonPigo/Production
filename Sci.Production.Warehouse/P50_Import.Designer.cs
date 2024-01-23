@@ -37,6 +37,9 @@
             this.labelSortby = new Sci.Win.UI.Label();
             this.comboSortby = new Sci.Win.UI.ComboBox();
             this.groupBox1 = new Sci.Win.UI.GroupBox();
+            this.txtContainerCode = new Sci.Win.UI.TextBox();
+            this.label2 = new Sci.Win.UI.Label();
+            this.label1 = new Sci.Win.UI.Label();
             this.label9 = new Sci.Win.UI.Label();
             this.labelFabricType = new Sci.Win.UI.Label();
             this.labelCategory = new Sci.Win.UI.Label();
@@ -54,7 +57,6 @@
             this.panel1 = new Sci.Win.UI.Panel();
             this.gridImport = new Sci.Win.UI.Grid();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
-            this.label1 = new Sci.Win.UI.Label();
             this.groupBox2.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -90,9 +92,9 @@
             // 
             this.btnFindNow.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnFindNow.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnFindNow.Location = new System.Drawing.Point(895, 54);
+            this.btnFindNow.Location = new System.Drawing.Point(916, 54);
             this.btnFindNow.Name = "btnFindNow";
-            this.btnFindNow.Size = new System.Drawing.Size(101, 30);
+            this.btnFindNow.Size = new System.Drawing.Size(86, 30);
             this.btnFindNow.TabIndex = 8;
             this.btnFindNow.Text = "Find Now";
             this.btnFindNow.UseVisualStyleBackColor = true;
@@ -102,7 +104,7 @@
             // 
             this.txtSPNoStart.BackColor = System.Drawing.Color.White;
             this.txtSPNoStart.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtSPNoStart.Location = new System.Drawing.Point(402, 58);
+            this.txtSPNoStart.Location = new System.Drawing.Point(368, 57);
             this.txtSPNoStart.Name = "txtSPNoStart";
             this.txtSPNoStart.Size = new System.Drawing.Size(122, 23);
             this.txtSPNoStart.TabIndex = 5;
@@ -140,12 +142,15 @@
             "Inventory"});
             this.comboSortby.Location = new System.Drawing.Point(87, 19);
             this.comboSortby.Name = "comboSortby";
+            this.comboSortby.OldText = "";
             this.comboSortby.Size = new System.Drawing.Size(119, 24);
             this.comboSortby.TabIndex = 5;
             this.comboSortby.SelectedIndexChanged += new System.EventHandler(this.ComboSortby_SelectedIndexChanged);
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.txtContainerCode);
+            this.groupBox1.Controls.Add(this.label2);
             this.groupBox1.Controls.Add(this.label1);
             this.groupBox1.Controls.Add(this.label9);
             this.groupBox1.Controls.Add(this.labelFabricType);
@@ -170,10 +175,37 @@
             this.groupBox1.TabIndex = 17;
             this.groupBox1.TabStop = false;
             // 
+            // txtContainerCode
+            // 
+            this.txtContainerCode.BackColor = System.Drawing.Color.White;
+            this.txtContainerCode.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtContainerCode.Location = new System.Drawing.Point(916, 23);
+            this.txtContainerCode.Name = "txtContainerCode";
+            this.txtContainerCode.Size = new System.Drawing.Size(86, 23);
+            this.txtContainerCode.TabIndex = 110;
+            // 
+            // label2
+            // 
+            this.label2.Location = new System.Drawing.Point(808, 23);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(105, 23);
+            this.label2.TabIndex = 109;
+            this.label2.Text = "Container Code";
+            // 
+            // label1
+            // 
+            this.label1.BackColor = System.Drawing.SystemColors.Control;
+            this.label1.Location = new System.Drawing.Point(495, 23);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(19, 23);
+            this.label1.TabIndex = 108;
+            this.label1.Text = "~";
+            this.label1.TextStyle.Color = System.Drawing.Color.Black;
+            // 
             // label9
             // 
             this.label9.BackColor = System.Drawing.SystemColors.Control;
-            this.label9.Location = new System.Drawing.Point(530, 60);
+            this.label9.Location = new System.Drawing.Point(496, 57);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(19, 23);
             this.label9.TabIndex = 107;
@@ -202,7 +234,7 @@
             // 
             // labelSPNo
             // 
-            this.labelSPNo.Location = new System.Drawing.Point(282, 57);
+            this.labelSPNo.Location = new System.Drawing.Point(248, 57);
             this.labelSPNo.Name = "labelSPNo";
             this.labelSPNo.RectStyle.Color = System.Drawing.Color.SkyBlue;
             this.labelSPNo.Size = new System.Drawing.Size(117, 23);
@@ -214,7 +246,7 @@
             // 
             this.numRandom.BackColor = System.Drawing.Color.White;
             this.numRandom.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numRandom.Location = new System.Drawing.Point(804, 58);
+            this.numRandom.Location = new System.Drawing.Point(759, 57);
             this.numRandom.Name = "numRandom";
             this.numRandom.NullValue = new decimal(new int[] {
             0,
@@ -232,7 +264,7 @@
             // 
             // labelCountOfRandom
             // 
-            this.labelCountOfRandom.Location = new System.Drawing.Point(681, 57);
+            this.labelCountOfRandom.Location = new System.Drawing.Point(636, 57);
             this.labelCountOfRandom.Name = "labelCountOfRandom";
             this.labelCountOfRandom.Size = new System.Drawing.Size(120, 23);
             this.labelCountOfRandom.TabIndex = 12;
@@ -242,17 +274,17 @@
             // 
             this.txtLocation.BackColor = System.Drawing.Color.White;
             this.txtLocation.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtLocation.Location = new System.Drawing.Point(779, 23);
+            this.txtLocation.Location = new System.Drawing.Point(706, 23);
             this.txtLocation.Name = "txtLocation";
-            this.txtLocation.Size = new System.Drawing.Size(100, 23);
+            this.txtLocation.Size = new System.Drawing.Size(99, 23);
             this.txtLocation.TabIndex = 3;
             this.txtLocation.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtLocation_PopUp);
             // 
             // labelLocation
             // 
-            this.labelLocation.Location = new System.Drawing.Point(681, 23);
+            this.labelLocation.Location = new System.Drawing.Point(636, 23);
             this.labelLocation.Name = "labelLocation";
-            this.labelLocation.Size = new System.Drawing.Size(95, 23);
+            this.labelLocation.Size = new System.Drawing.Size(67, 23);
             this.labelLocation.TabIndex = 10;
             this.labelLocation.Text = "Location";
             // 
@@ -266,8 +298,9 @@
             "ALL",
             "Fabric",
             "Accessory"});
-            this.comboFabricType.Location = new System.Drawing.Point(124, 57);
+            this.comboFabricType.Location = new System.Drawing.Point(124, 56);
             this.comboFabricType.Name = "comboFabricType";
+            this.comboFabricType.OldText = "";
             this.comboFabricType.Size = new System.Drawing.Size(121, 24);
             this.comboFabricType.TabIndex = 4;
             // 
@@ -275,7 +308,7 @@
             // 
             this.numPrice2.BackColor = System.Drawing.Color.White;
             this.numPrice2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numPrice2.Location = new System.Drawing.Point(551, 23);
+            this.numPrice2.Location = new System.Drawing.Point(517, 23);
             this.numPrice2.Name = "numPrice2";
             this.numPrice2.NullValue = new decimal(new int[] {
             0,
@@ -294,7 +327,7 @@
             // 
             this.numPrice1.BackColor = System.Drawing.Color.White;
             this.numPrice1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numPrice1.Location = new System.Drawing.Point(402, 23);
+            this.numPrice1.Location = new System.Drawing.Point(368, 23);
             this.numPrice1.Name = "numPrice1";
             this.numPrice1.NullValue = new decimal(new int[] {
             0,
@@ -311,7 +344,7 @@
             // 
             // labelUnitPrice
             // 
-            this.labelUnitPrice.Location = new System.Drawing.Point(282, 21);
+            this.labelUnitPrice.Location = new System.Drawing.Point(248, 23);
             this.labelUnitPrice.Name = "labelUnitPrice";
             this.labelUnitPrice.Size = new System.Drawing.Size(117, 23);
             this.labelUnitPrice.TabIndex = 5;
@@ -330,6 +363,7 @@
             "Material"});
             this.comboCategory.Location = new System.Drawing.Point(124, 22);
             this.comboCategory.Name = "comboCategory";
+            this.comboCategory.OldText = "";
             this.comboCategory.Size = new System.Drawing.Size(121, 24);
             this.comboCategory.TabIndex = 0;
             // 
@@ -337,7 +371,7 @@
             // 
             this.txtSPNoEnd.BackColor = System.Drawing.Color.White;
             this.txtSPNoEnd.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtSPNoEnd.Location = new System.Drawing.Point(551, 58);
+            this.txtSPNoEnd.Location = new System.Drawing.Point(517, 57);
             this.txtSPNoEnd.Name = "txtSPNoEnd";
             this.txtSPNoEnd.Size = new System.Drawing.Size(116, 23);
             this.txtSPNoEnd.TabIndex = 6;
@@ -371,19 +405,10 @@
             this.gridImport.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridImport.RowTemplate.Height = 24;
             this.gridImport.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridImport.ShowCellToolTips = false;
             this.gridImport.Size = new System.Drawing.Size(1008, 376);
             this.gridImport.TabIndex = 0;
             this.gridImport.TabStop = false;
-            // 
-            // label1
-            // 
-            this.label1.BackColor = System.Drawing.SystemColors.Control;
-            this.label1.Location = new System.Drawing.Point(529, 23);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(19, 23);
-            this.label1.TabIndex = 108;
-            this.label1.Text = "~";
-            this.label1.TextStyle.Color = System.Drawing.Color.Black;
             // 
             // P50_Import
             // 
@@ -392,6 +417,7 @@
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.groupBox2);
             this.Name = "P50_Import";
+            this.OnLineHelpID = "Sci.Win.Subs.Base";
             this.Text = "P50. Import Detail";
             this.groupBox2.ResumeLayout(false);
             this.groupBox1.ResumeLayout(false);
@@ -431,5 +457,7 @@
         private Win.UI.ComboBox comboSortby;
         private Win.UI.Label label9;
         private Win.UI.Label label1;
+        private Win.UI.TextBox txtContainerCode;
+        private Win.UI.Label label2;
     }
 }
