@@ -281,6 +281,7 @@ namespace Sci.Production.Warehouse
                         this.CurrentDetailData["dyelot"] = string.Empty;
                         this.CurrentDetailData["Location"] = string.Empty;
                         this.CurrentDetailData["description"] = string.Empty;
+                        this.CurrentDetailData["ContainerCode"] = string.Empty;
                     }
                     else
                     {
@@ -344,6 +345,7 @@ namespace Sci.Production.Warehouse
                         @"select a.ukey,a.roll,a.dyelot, a.inqty - a.outqty + a.adjustqty - a.ReturnQty qty 
                                  ,dbo.Getlocation(a.ukey) as location 
                                  ,dbo.getmtldesc('{0}','{1}','{2}',2,0) as [description]
+                                 ,a.ContainerCode
                                         from dbo.ftyinventory a WITH (NOLOCK) 
                                         where poid='{0}' and seq1='{1}' and seq2='{2}' 
                                         and stocktype='{3}' and lock =0",
@@ -371,6 +373,7 @@ namespace Sci.Production.Warehouse
                     this.CurrentDetailData["qtyafter"] = 0m;
                     this.CurrentDetailData["Location"] = x[0]["Location"];
                     this.CurrentDetailData["description"] = x[0]["description"];
+                    this.CurrentDetailData["ContainerCode"] = x[0]["ContainerCode"];
                 }
             };
             ts2.CellValidating += (s, e) =>
@@ -397,6 +400,7 @@ namespace Sci.Production.Warehouse
                         this.CurrentDetailData["qtyafter"] = 0m;
                         this.CurrentDetailData["Location"] = string.Empty;
                         this.CurrentDetailData["description"] = string.Empty;
+                        this.CurrentDetailData["ContainerCode"] = string.Empty;
                     }
                     else
                     {
@@ -411,6 +415,7 @@ select a.ukey,a.roll,a.dyelot
     ,a.inqty - a.outqty + a.adjustqty - a.ReturnQty qty
     ,dbo.Getlocation(a.ukey) as location 
     ,dbo.getmtldesc('{this.CurrentDetailData["poid"]}','{this.CurrentDetailData["seq1"]}','{this.CurrentDetailData["seq2"]}',2,0) as [description] 
+    ,a.ContainerCode
 from dbo.ftyinventory a WITH (NOLOCK) where poid='{this.CurrentDetailData["poid"]}' and seq1='{this.CurrentDetailData["seq1"]}' and seq2='{this.CurrentDetailData["seq2"]}' 
 and stocktype='{this.CurrentDetailData["stocktype"]}' and roll='{e.FormattedValue.ToString()}' and lock =0
 ";
@@ -430,6 +435,7 @@ and stocktype='{this.CurrentDetailData["stocktype"]}' and roll='{e.FormattedValu
                             this.CurrentDetailData["qtyafter"] = 0m;
                             this.CurrentDetailData["Location"] = dr["Location"];
                             this.CurrentDetailData["description"] = dr["description"];
+                            this.CurrentDetailData["ContainerCode"] = dr["ContainerCode"];
                         }
                     }
                 }
@@ -443,6 +449,7 @@ and stocktype='{this.CurrentDetailData["stocktype"]}' and roll='{e.FormattedValu
             .Text("roll", header: "Roll", width: Widths.AnsiChars(6), iseditingreadonly: false, settings: ts2) // 2
             .Text("dyelot", header: "Dyelot", width: Widths.AnsiChars(8), iseditingreadonly: true) // 3
             .Text("Location", header: "Book Location", iseditingreadonly: true) // 4
+            .Text("ContainerCode", header: "Container Code", width: Widths.AnsiChars(18), iseditingreadonly: true) // 4
             .Numeric("qtybefore", header: "Book Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10, iseditingreadonly: true) // 5
             .Numeric("qtyafter", header: "Actual Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10) // 6
             .Numeric("variance", header: "Variance", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10, iseditingreadonly: true) // 7
@@ -594,6 +601,7 @@ select a.id
     ,dbo.getmtldesc(a.poid,a.seq1,a.seq2,2,0) as [description]
     ,a.ukey
     ,a.ftyinventoryukey
+    ,FI.ContainerCode
 from dbo.StockTaking_detail as a WITH (NOLOCK) 
 left join PO_Supp_Detail psd WITH (NOLOCK) on psd.ID = a.PoId and psd.seq1 = a.SEQ1 and psd.SEQ2 = a.seq2
 left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
