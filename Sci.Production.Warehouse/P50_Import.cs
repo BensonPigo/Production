@@ -100,6 +100,7 @@ namespace Sci.Production.Warehouse
 ,dbo.Getlocation(a.ukey) [location]
 ,a.inqty - a.OutQty + a.AdjustQty - a.ReturnQty qtybefore
 ,0.00 as QtyAfter
+,a.ContainerCode
 from dbo.FtyInventory a WITH (NOLOCK) 
 inner join dbo.PO_Supp_Detail b WITH (NOLOCK) on b.ID = a.POID and b.SEQ1 = a.Seq1 and b.SEQ2 = a.Seq2
 inner join dbo.Factory f on f.ID=b.factoryID
@@ -143,6 +144,11 @@ and f.MDivisionID='{0}' ", Env.User.Keyword, this.dr_master["stocktype"]));
             if (!MyUtility.Check.Empty(location))
             {
                 strSQLCmd.Append(string.Format(@" and d.mtllocationid = '{0}' ", location));
+            }
+
+            if (!MyUtility.Check.Empty(this.txtContainerCode.Text))
+            {
+                strSQLCmd.Append(string.Format(@" and a.ContainerCode  = '{0}' ", this.txtContainerCode.Text));
             }
 
             if (!MyUtility.Check.Empty(this.numPrice1.Value) && !MyUtility.Check.Empty(this.numPrice2.Value))
@@ -207,6 +213,7 @@ and f.MDivisionID='{0}' ", Env.User.Keyword, this.dr_master["stocktype"]));
                 .ComboBox("FabricType", header: "Material Type", iseditable: false).Get(out cbb_fabrictype) // 5
                 .Text("StockUnit", header: "Unit", iseditingreadonly: true) // 5
                 .Text("location", header: "Bulk Location", iseditingreadonly: true) // 2
+                .Text("ContainerCode", header: "Container Code", width: Widths.AnsiChars(18), iseditingreadonly: true)
                .EditText("Description", header: "Description", iseditingreadonly: true, width: Widths.AnsiChars(25))
                .Numeric("qtybefore", header: "Book Qty", decimal_places: 2, integer_places: 10, iseditingreadonly: true) // 7
                ; // 8
