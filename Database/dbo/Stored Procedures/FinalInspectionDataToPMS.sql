@@ -36,7 +36,8 @@ BEGIN
 		from [ExtendServer].[ManufacturingExecution].dbo.FinalInspection f
 		left join CFAInspectionRecord c on f.ID = c.ID
 		outer apply(
-			select [IsCombinePO] = iif(exists(select 1 from [ExtendServer].[ManufacturingExecution].dbo.FinalInspection_Order fo where f.id = fo.id), 1, 0)
+			select [IsCombinePO] = iif(COUNT(1) > 1 , 1, 0)
+			from [ExtendServer].[ManufacturingExecution].dbo.FinalInspection_Order fo where f.id = fo.id
 		) Forder
 		outer apply(
 			SELECT Value = CAST(ROUND( SUM(IIF( CFAReceiveDate IS NOT NULL OR ReceiveDate IS NOT NULL
@@ -70,8 +71,8 @@ BEGIN
 		where not exists (select 1 from CFAInspectionRecord t where s.ID = t.ID)
 
 		-- CFAInspectionRecord_Detail
-		insert into [dbo].[CFAInspectionRecord_Detail]([ID], [GarmentDefectCodeID], [GarmentDefectTypeID], [Qty])
-		select fd.ID, fd.GarmentDefectCodeID, fd.GarmentDefectTypeID, fd.Qty
+		insert into [dbo].[CFAInspectionRecord_Detail]([ID], [GarmentDefectCodeID], [GarmentDefectTypeID], [Qty],[CFAAreaID],[Remark])
+		select fd.ID, fd.GarmentDefectCodeID, fd.GarmentDefectTypeID, fd.Qty,fd.AreaCode,fd.Remark
 		from [ExtendServer].[ManufacturingExecution].dbo.FinalInspection_Detail fd	
 		where exists (select 1 from #tmp_FinalInspection t where fd.ID = t.ID)
 		and not exists (select 1 from CFAInspectionRecord_Detail t where fd.ID = t.ID and fd.GarmentDefectCodeID = t.GarmentDefectCodeID)
