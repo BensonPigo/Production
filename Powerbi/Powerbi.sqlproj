@@ -202,7 +202,6 @@
     <Build Include="dbo\Stored Procedures\FTY\P_ImportSDP.sql" />
     <Build Include="dbo\Stored Procedures\FTY\P_Import_Cutting_R08.sql" />
     <Build Include="dbo\Tables\P_FabricInspLabSummaryReport.sql" />
-    <Build Include="dbo\Stored Procedures\FTY\P_ImportFabricInspLabSummaryReport.sql" />
     <Build Include="dbo\View\P_Factory.sql" />
     <Build Include="dbo\Tables\P_SewingLineScheduleBySP.sql" />
     <Build Include="dbo\Stored Procedures\FTY\P_Import_PPIC_R01_SewingLineScheduleBySP.sql" />
@@ -225,6 +224,7 @@
     <Build Include="dbo\Stored Procedures\FTY\P_Import_WH_R25.sql" />
     <Build Include="dbo\Tables\P_CartonStatusTrackingList.sql" />
     <Build Include="dbo\Stored Procedures\FTY\P_Import_CartonStatusTrackingList.sql" />
+    <Build Include="dbo\Stored Procedures\FTY\P_Import_FabricInspLabSummaryReport.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Utility.dll" />
