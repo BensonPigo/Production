@@ -1214,11 +1214,10 @@ SET @ErrorMessage = ''
 /****************************************************************************************************************************/
 /***********************************[P_Import_ICRAnalysis]****************************************************************/
 BEGIN TRY
-	Declare @StartDate_P_Import_ICRAnalysis date = dateadd(DAY, -7, getdate())
-	Declare @EndDate_P_Import_ICRAnalysis date = getdate()
-
+	set @StartDate = dateadd(DAY, -7, getdate())
+	set @EndDate = getdate()
 	set @Stime = getdate()
-	execute [dbo].[P_Import_ICRAnalysis] @StartDate_P_Import_ICRAnalysis,@EndDate_P_Import_ICRAnalysis,null
+	execute [dbo].[P_Import_ICRAnalysis] @StartDate,@EndDate
 	set @Etime = getdate()
 END TRY
 
