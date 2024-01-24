@@ -47,7 +47,7 @@ namespace Sci.Production.Shipping
                 .Text("Category", header: "Category", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("ShowCTNNo", header: "CTN No.", width: Widths.AnsiChars(18), iseditingreadonly: true)
                 .Numeric("NW", header: "N.W. (kg)", integer_places: 5, decimal_places: 3, maximum: 99999.99m, minimum: 0m)
-                .Numeric("Price", header: "Price", integer_places: 6, decimal_places: 4, maximum: 999999.9999m, minimum: 0m,iseditingreadonly:true)
+                .Numeric("Price", header: "Price", integer_places: 6, decimal_places: 4, maximum: 999999.9999m, minimum: 0m, iseditingreadonly: true)
                 .Numeric("ShipQty", header: "Q'ty", decimal_places: 2)
                 .Text("UnitID", header: "Unit", width: Widths.AnsiChars(8))
                 .Text("Receiver", header: "Receiver", width: Widths.AnsiChars(10), settings: receiver)
@@ -248,40 +248,47 @@ and Factory.IsProduceFty=1
             }
 
             IList<string> insertCmds = new List<string>();
+            var groupExpress_CTNData = dt.AsEnumerable()
+                .GroupBy(s => new
+                {
+                    CTNNo = s["ID"].ToString() + "-" + s["CTNNo"].ToString(),
+                });
 
-            foreach (DataRow dr in dt.Rows)
+            foreach (var itemExpress_CTNData in groupExpress_CTNData)
             {
-                if (MyUtility.Check.Empty(dr["CTNNo"]))
+                foreach (DataRow dr in itemExpress_CTNData)
                 {
-                    MyUtility.Msg.WarningBox("CTN No. cannot be empty.");
-                    return;
-                }
+                    if (MyUtility.Check.Empty(dr["CTNNo"]))
+                    {
+                        MyUtility.Msg.WarningBox("CTN No. cannot be empty.");
+                        return;
+                    }
 
-                if (MyUtility.Check.Empty(dr["NW"]))
-                {
-                    MyUtility.Msg.WarningBox("N.W. (kg) cannot be empty.");
-                    return;
-                }
+                    if (MyUtility.Check.Empty(dr["NW"]))
+                    {
+                        MyUtility.Msg.WarningBox("N.W. (kg) cannot be empty.");
+                        return;
+                    }
 
-                if (MyUtility.Check.Empty(dr["UnitID"]))
-                {
-                    MyUtility.Msg.WarningBox("Unit cannot be empty.");
-                    return;
-                }
+                    if (MyUtility.Check.Empty(dr["UnitID"]))
+                    {
+                        MyUtility.Msg.WarningBox("Unit cannot be empty.");
+                        return;
+                    }
 
-                if (MyUtility.Check.Empty(dr["Receiver"]))
-                {
-                    MyUtility.Msg.WarningBox("Receiver cannot be empty.");
-                    return;
-                }
+                    if (MyUtility.Check.Empty(dr["Receiver"]))
+                    {
+                        MyUtility.Msg.WarningBox("Receiver cannot be empty.");
+                        return;
+                    }
 
-                if (!this.HcImportCheck(dr["ID"].ToString(), dr["OrderID"].ToString()))
-                {
-                    return;
-                }
+                    if (!this.HcImportCheck(dr["ID"].ToString(), dr["OrderID"].ToString()))
+                    {
+                        return;
+                    }
 
-                insertCmds.Add(string.Format(
-                    @"insert into Express_Detail(
+                    insertCmds.Add(string.Format(
+                        @"insert into Express_Detail(
 ID ,OrderID 
 ,Seq1
 ,SeasonID,StyleID,Description,Qty,NW,CTNNo
@@ -293,28 +300,29 @@ values(
 ,'{2}','{3}','{4}',{5},{6},'{7}'
 ,'3'  ----Category
 ,'{8}',{9},'{10}','{11}','{12}','{13}','{14}','{14}',GETDATE());",
-                    MyUtility.Convert.GetString(this.masterData["ID"]),
-                    MyUtility.Convert.GetString(dr["OrderID"]),
-                    MyUtility.Convert.GetString(dr["SeasonID"]),
-                    MyUtility.Convert.GetString(dr["StyleID"]),
-                    MyUtility.Convert.GetString(dr["Description"]),
-                    MyUtility.Convert.GetString(dr["ShipQty"]),
-                    MyUtility.Convert.GetString(dr["NW"]),
-                    MyUtility.Convert.GetString(dr["ID"]) + "-" + MyUtility.Convert.GetString(dr["CTNNo"]),
-                    MyUtility.Convert.GetString(dr["ID"]),
-                    MyUtility.Convert.GetString(dr["Price"]),
-                    MyUtility.Convert.GetString(dr["UnitID"]),
-                    MyUtility.Convert.GetString(dr["Receiver"]),
-                    MyUtility.Convert.GetString(dr["BrandID"]),
-                    MyUtility.Convert.GetString(dr["LeaderID"]),
-                    Env.User.UserID));
+                        MyUtility.Convert.GetString(this.masterData["ID"]),
+                        MyUtility.Convert.GetString(dr["OrderID"]),
+                        MyUtility.Convert.GetString(dr["SeasonID"]),
+                        MyUtility.Convert.GetString(dr["StyleID"]),
+                        MyUtility.Convert.GetString(dr["Description"]),
+                        MyUtility.Convert.GetString(dr["ShipQty"]),
+                        MyUtility.Convert.GetString(dr["NW"]),
+                        MyUtility.Convert.GetString(itemExpress_CTNData.Key.CTNNo),
+                        MyUtility.Convert.GetString(dr["ID"]),
+                        MyUtility.Convert.GetString(dr["Price"]),
+                        MyUtility.Convert.GetString(dr["UnitID"]),
+                        MyUtility.Convert.GetString(dr["Receiver"]),
+                        MyUtility.Convert.GetString(dr["BrandID"]),
+                        MyUtility.Convert.GetString(dr["LeaderID"]),
+                        Env.User.UserID));
+                }
 
                 // 新增Express_CTNData
                 insertCmds.Add($@"
 INSERT INTO Express_CTNData(ID,CTNNo,CtnLength,CtnWidth,CtnHeight,CTNNW,AddName,AddDate)
 
 SELECT ID = '{this.masterData["id"]}'
-,CTNNO= '{MyUtility.Convert.GetString(dr["ID"]) + "-" + MyUtility.Convert.GetString(dr["CTNNo"])}'
+,CTNNO= '{itemExpress_CTNData.Key.CTNNo}'
 ,CtnLength = CtnLength * IIF(CtnUnit = 'Inch',2.54,IIF(CtnUnit = 'MM',0.1,1))
 ,CtnWidth = CtnWidth * IIF(CtnUnit = 'Inch',2.54,IIF(CtnUnit = 'MM',0.1,1))
 ,CtnHeight = CtnHeight * IIF(CtnUnit = 'Inch',2.54,IIF(CtnUnit = 'MM',0.1,1))
@@ -322,7 +330,7 @@ SELECT ID = '{this.masterData["id"]}'
 ,AddName = '{Env.User.UserID}'
 ,AddDate = GETDATE()
 FROM LocalItem
-WHERE REFNO	= '{dr["Refno"]}'
+WHERE REFNO	= '{itemExpress_CTNData.First()["Refno"]}'
 ");
             }
 

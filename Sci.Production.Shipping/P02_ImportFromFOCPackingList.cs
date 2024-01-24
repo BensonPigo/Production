@@ -9,6 +9,7 @@ using Sci.Data;
 using System.Transactions;
 using System.Data.SqlClient;
 using Sci.Production.PublicPrg;
+using System.Linq;
 
 namespace Sci.Production.Shipping
 {
@@ -225,59 +226,66 @@ where pd.ID = '{0}'
             }
 
             IList<string> insertCmds = new List<string>();
-
-            foreach (DataRow dr in dt.Rows)
+            var groupExpress_CTNData = dt.AsEnumerable()
+                .GroupBy(s => new
+                {
+                    CTNNo = s["ID"].ToString() + "-" + s["CTNNo"].ToString(),
+                });
+            foreach (var itemExpress_CTNData in groupExpress_CTNData)
             {
-                if (MyUtility.Check.Empty(dr["CTNNo"]))
+                foreach (DataRow dr in itemExpress_CTNData)
                 {
-                    MyUtility.Msg.WarningBox("CTN No. can't empty!!");
-                    return;
-                }
+                    if (MyUtility.Check.Empty(dr["CTNNo"]))
+                    {
+                        MyUtility.Msg.WarningBox("CTN No. can't empty!!");
+                        return;
+                    }
 
-                if (MyUtility.Check.Empty(dr["NW"]))
-                {
-                    MyUtility.Msg.WarningBox("N.W. (kg) can't empty!!");
-                    return;
-                }
+                    if (MyUtility.Check.Empty(dr["NW"]))
+                    {
+                        MyUtility.Msg.WarningBox("N.W. (kg) can't empty!!");
+                        return;
+                    }
 
-                if (MyUtility.Check.Empty(dr["UnitID"]))
-                {
-                    MyUtility.Msg.WarningBox("Unit can't empty!!");
-                    return;
-                }
+                    if (MyUtility.Check.Empty(dr["UnitID"]))
+                    {
+                        MyUtility.Msg.WarningBox("Unit can't empty!!");
+                        return;
+                    }
 
-                if (MyUtility.Check.Empty(dr["Receiver"]))
-                {
-                    MyUtility.Msg.WarningBox("Receiver can't empty!!");
-                    return;
-                }
+                    if (MyUtility.Check.Empty(dr["Receiver"]))
+                    {
+                        MyUtility.Msg.WarningBox("Receiver can't empty!!");
+                        return;
+                    }
 
-                insertCmds.Add(string.Format(
-                    @"insert into Express_Detail(ID,OrderID,Seq1,SeasonID,StyleID,Description,Qty,NW,CTNNo,Category,PackingListID,Price,UnitID,Receiver,BrandID,Leader,InCharge,AddName,AddDate)
+                    insertCmds.Add(string.Format(
+                        @"insert into Express_Detail(ID,OrderID,Seq1,SeasonID,StyleID,Description,Qty,NW,CTNNo,Category,PackingListID,Price,UnitID,Receiver,BrandID,Leader,InCharge,AddName,AddDate)
  values('{0}','{1}',(select ISNULL(RIGHT(REPLICATE('0',3)+CAST(MAX(CAST(Seq1 as int))+1 as varchar),3),'001')
 from Express_Detail where ID = '{0}' and Seq2 = ''),'{2}','{3}','{4}',{5},{6},'{7}','1','{8}',{9},'{10}','{11}','{12}','{13}','{14}','{14}',GETDATE());",
-                    MyUtility.Convert.GetString(this.masterData["ID"]),
-                    MyUtility.Convert.GetString(dr["OrderID"]),
-                    MyUtility.Convert.GetString(dr["SeasonID"]),
-                    MyUtility.Convert.GetString(dr["StyleID"]),
-                    MyUtility.Convert.GetString(dr["Description"]),
-                    MyUtility.Convert.GetString(dr["ShipQty"]),
-                    MyUtility.Convert.GetString(dr["NW"]),
-                    MyUtility.Convert.GetString(dr["ID"]) + "-" + MyUtility.Convert.GetString(dr["CTNNo"]),
-                    MyUtility.Convert.GetString(dr["ID"]),
-                    MyUtility.Convert.GetString(dr["Price"]),
-                    MyUtility.Convert.GetString(dr["UnitID"]),
-                    MyUtility.Convert.GetString(dr["Receiver"]),
-                    MyUtility.Convert.GetString(dr["BrandID"]),
-                    MyUtility.Convert.GetString(dr["LeaderID"]),
-                    Env.User.UserID));
+                        MyUtility.Convert.GetString(this.masterData["ID"]),
+                        MyUtility.Convert.GetString(dr["OrderID"]),
+                        MyUtility.Convert.GetString(dr["SeasonID"]),
+                        MyUtility.Convert.GetString(dr["StyleID"]),
+                        MyUtility.Convert.GetString(dr["Description"]),
+                        MyUtility.Convert.GetString(dr["ShipQty"]),
+                        MyUtility.Convert.GetString(dr["NW"]),
+                        MyUtility.Convert.GetString(itemExpress_CTNData.Key.CTNNo),
+                        MyUtility.Convert.GetString(dr["ID"]),
+                        MyUtility.Convert.GetString(dr["Price"]),
+                        MyUtility.Convert.GetString(dr["UnitID"]),
+                        MyUtility.Convert.GetString(dr["Receiver"]),
+                        MyUtility.Convert.GetString(dr["BrandID"]),
+                        MyUtility.Convert.GetString(dr["LeaderID"]),
+                        Env.User.UserID));
+                }
 
                 // 新增Express_CTNData
                 insertCmds.Add($@"
 INSERT INTO Express_CTNData(ID,CTNNo,CtnLength,CtnWidth,CtnHeight,CTNNW,AddName,AddDate)
 
-SELECT ID = '{this.masterData["id"]}'
-,CTNNO= '{MyUtility.Convert.GetString(dr["ID"]) + "-" + MyUtility.Convert.GetString(dr["CTNNo"])}'
+SELECT ID = '{this.masterData["ID"]}'
+,CTNNO= '{itemExpress_CTNData.Key.CTNNo}'
 ,CtnLength = CtnLength * IIF(CtnUnit = 'Inch',2.54,IIF(CtnUnit = 'MM',0.1,1))
 ,CtnWidth = CtnWidth * IIF(CtnUnit = 'Inch',2.54,IIF(CtnUnit = 'MM',0.1,1))
 ,CtnHeight = CtnHeight * IIF(CtnUnit = 'Inch',2.54,IIF(CtnUnit = 'MM',0.1,1))
@@ -285,7 +293,7 @@ SELECT ID = '{this.masterData["id"]}'
 ,AddName = '{Env.User.UserID}'
 ,AddDate = GETDATE()
 FROM LocalItem
-WHERE REFNO	= '{dr["Refno"]}'
+WHERE REFNO	= '{itemExpress_CTNData.First()["Refno"]}'
 ");
             }
 
