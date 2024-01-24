@@ -2903,6 +2903,8 @@
     <Build Include="dbo\Tables\ExpressDuty_Functions.sql" />
     <Build Include="dbo\Stored Procedures\PPIC_R21_FORBI.sql" />
     <Build Include="dbo\Tables\FabricNotch.sql" />
+    <Build Include="dbo\Tables\IETMS_AT.sql" />
+    <Build Include="dbo\Tables\IETMS_AT_Detail.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />
