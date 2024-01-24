@@ -1046,10 +1046,10 @@ SET @ErrorMessage = ''
 	SET @ErrDesc = ''
 
 /****************************************************************************************************************************/
-/***********************************P_ImportFabricInspLabSummaryReport****************************************************************/
+/***********************************P_Import_FabricInspLabSummaryReport****************************************************************/
 BEGIN TRY
 	set @Stime = getdate()  
-	execute [dbo].[P_ImportFabricInspLabSummaryReport]
+	execute [dbo].[P_Import_FabricInspLabSummaryReport]
 	set @Etime = getdate()
 END TRY
 
@@ -1057,7 +1057,7 @@ BEGIN CATCH
 
 SET @ErrorMessage = 
 '
-[25-P_ImportFabricInspLabSummaryReport]' + CHAR(13) +
+[25-P_Import_FabricInspLabSummaryReport]' + CHAR(13) +
 ',錯誤代碼: ' + CONVERT(VARCHAR, ERROR_NUMBER()) + CHAR(13) +
 ',錯誤行數: ' + CONVERT(VARCHAR, ERROR_LINE()) + CHAR(13) +
 ',錯誤訊息: ' + ERROR_MESSAGE()
@@ -1072,7 +1072,7 @@ END CATCH;
 IF (@ErrorMessage IS NULL or @ErrorMessage='')
 BEGIN 
 	set @desc += CHAR(13) + '
-[25-P_ImportFabricInspLabSummaryReport] is completed' + ' Time:' + FORMAT(@Stime, 'yyyy/MM/dd HH:mm:ss') + ' - ' + FORMAT(@Etime, 'yyyy/MM/dd HH:mm:ss')
+[25-P_Import_FabricInspLabSummaryReport] is completed' + ' Time:' + FORMAT(@Stime, 'yyyy/MM/dd HH:mm:ss') + ' - ' + FORMAT(@Etime, 'yyyy/MM/dd HH:mm:ss')
 END
 ELSE
 BEGIN
@@ -1082,7 +1082,7 @@ SET @ErrorMessage = ''
 
 -- Write in P_TransLog
 	insert into P_TransLog(functionName,Description,StartTime,EndTime,TransCode) 
-	values('P_ImportFabricInspLabSummaryReport',@ErrDesc,@Stime,@Etime,@TransCode)
+	values('P_Import_FabricInspLabSummaryReport',@ErrDesc,@Stime,@Etime,@TransCode)
 
 	SET @ErrDesc = ''
 

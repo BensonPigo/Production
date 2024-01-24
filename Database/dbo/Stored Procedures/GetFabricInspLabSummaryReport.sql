@@ -1,24 +1,19 @@
 ﻿CREATE PROCEDURE [dbo].[GetFabricInspLabSummaryReport]
+	@StartDate as date = null,
+	@EndDate as date = null
 AS
 BEGIN
-SET NOCOUNT ON;
-	DECLARE @ArrivalStartDate VARCHAR(10);
-	DECLARE @ArrivalEndDate VARCHAR(10);
-	DECLARE @StartDate VARCHAR(10);
-	DECLARE @EndDate VARCHAR(10);
-
-
-
-	IF NOT EXISTS (SELECT 1 FROM [ExtendServer].[POWERBIReportData].[DBO].[P_FabricInspLabSummaryReport])
-	BEGIN
-		SET @ArrivalStartDate = '2022-01-01';
-		SET @ArrivalEndDate= CONVERT(VARCHAR(10), GETDATE(), 120);
-	END
-	ELSE
-	BEGIN
+	SET NOCOUNT ON;
+	 
+	if @StartDate is null 
+	begin
 		SET @StartDate = CONVERT(VARCHAR(10), DATEADD(MONTH, -3, GETDATE()), 120);
+	end
+
+	if @EndDate is null 
+	begin
 		SET @EndDate = CONVERT(VARCHAR(10), GETDATE(), 120);
-	END;
+	end;
 
 	WITH Main AS(
 		select 
@@ -30,16 +25,8 @@ SET NOCOUNT ON;
 		from dbo.View_AllReceivingDetail rd
 		inner join FIR f on f.POID=rd.poid AND  f.ReceivingID = rd.id AND f.seq1 = rd.seq1 and f.seq2 = rd.Seq2
 		inner join FtyInventory fit on fit.poid = rd.PoId and fit.seq1 = rd.seq1 and fit.seq2 = rd.Seq2 AND fit.StockType=rd.StockType and fit.Roll=rd.Roll and fit.Dyelot=rd.Dyelot
-		WHERE
-		1 = 1 
-		AND (@ArrivalStartDate is null or rd.WhseArrival >= @ArrivalStartDate)
-		AND (@ArrivalEndDate is null or rd.WhseArrival <= @ArrivalEndDate)
-		AND
-		(
-			((@StartDate IS NULL AND @EndDate IS NULL) OR f.AddDate >= @StartDate AND f.AddDate <= @EndDate)
-			OR
-			((@StartDate IS NULL AND @EndDate IS NULL) OR f.EditDate >= @StartDate AND f.EditDate <= @EndDate)
-		)
+		WHERE (f.AddDate >= @StartDate AND f.AddDate <= @EndDate)
+			OR (f.EditDate >= @StartDate AND f.EditDate <= @EndDate)
 		GROUP BY rd.poid,rd.seq1,rd.seq2,RD.ID
 	), TmpDataProcessing AS(
 		select  
@@ -135,14 +122,8 @@ SET NOCOUNT ON;
 			,TotalRollsCalculated = count(1)
 			from dbo.View_AllReceivingDetail rd WITH (NOLOCK) 
 			where rd.PoId = F.POID and rd.Seq1 = F.SEQ1 and rd.Seq2 = F.SEQ2 AND rd.Id=F.ReceivingID
-			AND (@ArrivalStartDate is null or rd.WhseArrival >= @ArrivalStartDate)
-			AND (@ArrivalEndDate is null or rd.WhseArrival <= @ArrivalEndDate)
-			AND
-			(
-				((@StartDate IS NULL AND @EndDate IS NULL) OR f.AddDate >= @StartDate AND f.AddDate <= @EndDate)
-				OR
-				((@StartDate IS NULL AND @EndDate IS NULL) OR f.EditDate >= @StartDate AND f.EditDate <= @EndDate)
-			)
+			AND ((f.AddDate >= @StartDate AND f.AddDate <= @EndDate)
+				OR (f.EditDate >= @StartDate AND f.EditDate <= @EndDate))
 			group by rd.WhseArrival,rd.InvNo,rd.ExportId,rd.Id,rd.PoId,RD.seq1,RD.seq2,rd.StockType
 		) t
 		inner join (
@@ -301,89 +282,88 @@ SET NOCOUNT ON;
 			and c.ID = ps.SpecValue
 		)color
 	), Tmp_Finish AS(
-		select
-		[Category]
-		,[POID]
-		,[SEQ]
-		,[FactoryID]
-		,[BrandID]
-		,[StyleID]
-		,[SeasonID]
-		,[Wkno] = [ExportId]
-		,[InvNo]
-		,[CuttingDate]
-		,[ArriveWHDate] = [WhseArrival]
-		,[ArriveQty] = [StockQty1]
-		,[Inventory] = [InvStock]
-		,[Bulk] = [BulkStock]
-		,[BalanceQty]
-		,[TtlRollsCalculated] = [TotalRollsCalculated]
-		,[BulkLocation] = [ALocation]
-		,[FirstUpdateBulkLocationDate] = [BulkLocationDate]
-		,[InventoryLocation] = [BLocation]
-		,[FirstUpdateStocksLocationDate] = [InvLocationDate]
-		,[EarliestSCIDelivery] = [MinSciDelivery]
-		,[BuyerDelivery] = [MinBuyerDelivery]
-		,[Refno]
-		,[Description]
-		,[Color] = [ColorID]
-		,[ColorName]
-		,[SupplierCode]
-		,[SupplierName]
-		,[WeaveType] = [WeaveTypeID]
-		,[NAPhysical] = [NAPhysical]
-		,[InspectionOverallResult] = Result
-		,[PhysicalInspResult] = Physical
-		,[TtlYrdsUnderBCGrade] =  [TotalYardsBC]
-		,[TtlPointsUnderBCGrade] = [TotalPointBC]
-		,[TtlPointsUnderAGrade] = [TotalPointA]
-		,[PhysicalInspector]
-		,[PhysicalInspDate] = [PhysicalDate]
-		,[ActTtlYdsInspection] = [ActualYds]
-		,[InspectionPCT] = CAST([InspectionRate] * 100 AS NUMERIC(6,1))
-		,[PhysicalInspDefectPoint] = [TotalPoint]
-		,[CustInspNumber] = [CustInspNumber]
-		,[WeightTestResult] = [Weight]
-		,[WeightTestInspector] = [WeightInspector]
-		,[WeightTestDate] = [WeightDate]
-		,[CutShadebandQtyByRoll]
-		,[CutShadebandPCT] = CAST([CutShadeband] * 100 AS NUMERIC(5,2))
-		,[ShadeBondResult] = [ShadeBond]
-		,[ShadeBondInspector] = [ShadeboneInspector]
-		,[ShadeBondDate] = [ShadeBondDate]
-		,[NoOfRollShadebandPass] = [ShadeBandPass]
-		,[NoOfRollShadebandFail] = [ShadeBandFail]
-		,[ContinuityResult] = [Continuity]
-		,[ContinuityInspector]
-		,[ContinuityDate]
-		,[OdorResult] = [Odor]
-		,[OdorInspector]
-		,[OdorDate]
-		,[MoistureResult] = [Moisture]
-		,[MoistureDate]
-		,[CrockingShrinkageOverAllResult]
-		,[NACrocking] 
-		,[CrockingResult] = [Crocking]
-		,[CrockingInspector]
-		,[CrockingTestDate] = [CrockingDate]
-		,[NAHeatShrinkage]
-		,[HeatShrinkageTestResult] = [Heat]
-		,[HeatShrinkageInspector] = [HeatInspector]
-		,[HeatShrinkageTestDate] = [HeatDate]
-		,[NAWashShrinkage] 
-		,[WashShrinkageTestResult] = [Wash]
-		,[WashShrinkageInspector] = [WashInspector]
-		,[WashShrinkageTestDate] = [WashDate]
-		,[OvenTestResult]
-		,[OvenTestInspector]
-		,[ColorFastnessResult]
-		,[ColorFastnessInspector]
-		,[LocalMR]
-		,[OrderType]
-		,[ReceivingID]
-		,[StockType]
-		,[AddDate]
-		,[EditDate]
+		select [Category] = ISNULL([Category], '')
+			,[POID] = ISNULL([POID], '')
+			,[SEQ] = ISNULL([SEQ], '')
+			,[FactoryID] = ISNULL([FactoryID], '')
+			,[BrandID] = ISNULL([BrandID], '')
+			,[StyleID] = ISNULL([StyleID], '')
+			,[SeasonID] = ISNULL([SeasonID], '')
+			,[Wkno] = ISNULL([ExportId], '')
+			,[InvNo] = ISNULL([InvNo], '')
+			,[CuttingDate]
+			,[ArriveWHDate] = [WhseArrival]
+			,[ArriveQty] = ISNULL([StockQty1], 0)
+			,[Inventory] = ISNULL([InvStock], 0)
+			,[Bulk] = ISNULL([BulkStock], 0)
+			,[BalanceQty] = ISNULL([BalanceQty], 0)
+			,[TtlRollsCalculated] = ISNULL([TotalRollsCalculated], 0)
+			,[BulkLocation] = ISNULL([ALocation], '')
+			,[FirstUpdateBulkLocationDate] = [BulkLocationDate]
+			,[InventoryLocation] = ISNULL([BLocation], '')
+			,[FirstUpdateStocksLocationDate] = [InvLocationDate]
+			,[EarliestSCIDelivery] = [MinSciDelivery]
+			,[BuyerDelivery] = [MinBuyerDelivery]
+			,[Refno] = ISNULL([Refno], '')
+			,[Description] = ISNULL([Description], '')
+			,[Color] = ISNULL([ColorID], '')
+			,[ColorName] = ISNULL([ColorName], '')
+			,[SupplierCode] = ISNULL([SupplierCode], '')
+			,[SupplierName] = ISNULL([SupplierName], '')
+			,[WeaveType] = ISNULL([WeaveTypeID], '')
+			,[NAPhysical] = ISNULL([NAPhysical], '')
+			,[InspectionOverallResult] = ISNULL([Result], '')
+			,[PhysicalInspResult] = ISNULL(Physical, '')
+			,[TtlYrdsUnderBCGrade] = ISNULL([TotalYardsBC], 0)
+			,[TtlPointsUnderBCGrade] = ISNULL([TotalPointBC], 0)
+			,[TtlPointsUnderAGrade] = ISNULL([TotalPointA], 0)
+			,[PhysicalInspector] = ISNULL([PhysicalInspector], '')
+			,[PhysicalInspDate] = [PhysicalDate]
+			,[ActTtlYdsInspection] = ISNULL([ActualYds], 0)
+			,[InspectionPCT] = ISNULL(CAST([InspectionRate] * 100 AS NUMERIC(6,1)), 0)
+			,[PhysicalInspDefectPoint] = ISNULL([TotalPoint], 0)
+			,[CustInspNumber] = ISNULL([CustInspNumber], '')
+			,[WeightTestResult] = ISNULL([Weight], '')
+			,[WeightTestInspector] = ISNULL([WeightInspector], '')
+			,[WeightTestDate] = [WeightDate]
+			,[CutShadebandQtyByRoll] = ISNULL([CutShadebandQtyByRoll], 0)
+			,[CutShadebandPCT] = ISNULL(CAST([CutShadeband] * 100 AS NUMERIC(5,2)), 0)
+			,[ShadeBondResult] = ISNULL([ShadeBond], '')
+			,[ShadeBondInspector] = ISNULL([ShadeboneInspector], '')
+			,[ShadeBondDate] = [ShadeBondDate]
+			,[NoOfRollShadebandPass] = ISNULL([ShadeBandPass], 0)
+			,[NoOfRollShadebandFail] = ISNULL([ShadeBandFail], 0)
+			,[ContinuityResult] = ISNULL([Continuity], '')
+			,[ContinuityInspector] = ISNULL([ContinuityInspector], '')
+			,[ContinuityDate]
+			,[OdorResult] = ISNULL([Odor], '')
+			,[OdorInspector] = ISNULL([OdorInspector], '')
+			,[OdorDate]
+			,[MoistureResult] = ISNULL([Moisture], '')
+			,[MoistureDate]
+			,[CrockingShrinkageOverAllResult] = ISNULL([CrockingShrinkageOverAllResult], '')
+			,[NACrocking] = ISNULL([NACrocking], '')
+			,[CrockingResult] = ISNULL([Crocking], '')
+			,[CrockingInspector] = ISNULL([CrockingInspector], '')
+			,[CrockingTestDate] = [CrockingDate]
+			,[NAHeatShrinkage] = ISNULL([NAHeatShrinkage], '')
+			,[HeatShrinkageTestResult] = ISNULL([Heat], '')
+			,[HeatShrinkageInspector] = ISNULL([HeatInspector], '')
+			,[HeatShrinkageTestDate] = [HeatDate]
+			,[NAWashShrinkage] = ISNULL([NAWashShrinkage], '')
+			,[WashShrinkageTestResult] = ISNULL([Wash], '')
+			,[WashShrinkageInspector] = ISNULL([WashInspector], '')
+			,[WashShrinkageTestDate] = [WashDate]
+			,[OvenTestResult] = ISNULL([OvenTestResult], '')
+			,[OvenTestInspector] = ISNULL([OvenTestInspector], '')
+			,[ColorFastnessResult] = ISNULL([ColorFastnessResult], '')
+			,[ColorFastnessInspector] = ISNULL([ColorFastnessInspector], '')
+			,[LocalMR] = ISNULL([LocalMR], '')
+			,[OrderType] = ISNULL([OrderType], '')
+			,[ReceivingID] = ISNULL([ReceivingID], '')			
+			,[AddDate]
+			,[EditDate]
+			,[StockType] = ISNULL([StockType], '')
 		from TmpDataProcessing
 	)
 
