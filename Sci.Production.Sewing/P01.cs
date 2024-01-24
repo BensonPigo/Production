@@ -1760,7 +1760,16 @@ where (OrderID <> '' or OrderID is not null)
                 {
                     DataTable subDt;
                     this.GetSubDetailDatas(dr, out subDt);
-                    subDt = subDt.AsEnumerable().Where(row => true).CopyToDataTable();
+
+                    // user unlock 再維護時，可能因為調整Article資料造成第三層資料串不到
+                    // 檢查第三層是否有資料
+                    if (subDt.Rows.Count == 0)
+                    {
+                        MyUtility.Msg.WarningBox($"SP#<{dr["OrderID"]}>, Article<{dr["Article"]}> does not exist in the system. Please recheck!!\r\n\r\n\r\n");
+                        return false;
+                    }
+
+                    subDt = subDt.AsEnumerable().CopyToDataTable();
                     subDt.Columns.Add("AutoCreate");
                     if (dtSubDetail == null)
                     {
