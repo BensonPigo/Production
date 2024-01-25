@@ -14,7 +14,7 @@
     [Location]    VARCHAR (1)    DEFAULT ('') NOT NULL,
     [RFUID]       VARCHAR (10)   CONSTRAINT [DF_Bundle_Detail_RFUID] DEFAULT ('') NOT NULL,
     [RFPrintDate] DATETIME       NULL,
-    [Tone]        VARCHAR (1)    CONSTRAINT [DF_Bundle_Detail_Tone] DEFAULT ('') NOT NULL,
+    [Tone]        VARCHAR (15)    CONSTRAINT [DF_Bundle_Detail_Tone] DEFAULT ('') NOT NULL,
     [PrintGroup]  TINYINT        NULL,
     [RFIDScan] BIT CONSTRAINT [DF_Bundle_Detail_RFIDScan] DEFAULT ((0)) NOT NULL,
     [Dyelot] VARCHAR(50) CONSTRAINT [DF_Bundle_Detail_Dyelot] DEFAULT ('') NOT NULL,
