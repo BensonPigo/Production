@@ -18,6 +18,8 @@
 	[UnitID]     VARCHAR (8)     CONSTRAINT [DF_VNConsumption_Detail_Detail_UnitID] DEFAULT ('') NULL,
 	[UsageQty] NUMERIC(12, 4) CONSTRAINT [DF_VNConsumption_Detail_Detail_UsageQty] DEFAULT ((0)) NOT NULL, 
 	[UsageUnit] VARCHAR(8) CONSTRAINT [DF_VNConsumption_Detail_Detail_UsageUnit] DEFAULT (('')) NOT NULL,
+    [Waste] NUMERIC(5, 3) NOT NULL CONSTRAINT [DF_VNConsumption_Detail_Detail_Waste] DEFAULT ((0)), 
+    [ModifyRecord] BIT NOT NULL CONSTRAINT [DF_VNConsumption_Detail_Detail_ModifyRecord] DEFAULT ((0)),
     CONSTRAINT [PK_VNConsumption_Detail_Detail] PRIMARY KEY CLUSTERED ([UKey] ASC)
 );
 

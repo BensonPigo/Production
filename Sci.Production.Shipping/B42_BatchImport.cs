@@ -347,6 +347,15 @@ and v.VNContractID = '{0}' and v.CustomSP = '{1}'",
                 foreach (string id in distinctID)
                 {
                     idu.Append($"exec CreateVNConsumption_Detail '{id}'");
+
+                    // 將產生的預設VNConsumption_Detail.Waste update回VNConsumption_Detail_Detail.Waste
+                    string sqlUpdateVNConsumption_Detail_DetailWaste = $@"
+update  vdd set vdd.Waste = vd.Waste
+from    VNConsumption_Detail_Detail vdd
+inner join  VNConsumption_Detail vd on vd.ID = vdd.ID and vd.NLCode = vdd.NLCode
+where vdd.ID = '{id}'
+";
+                    idu.Append(sqlUpdateVNConsumption_Detail_DetailWaste);
                 }
 
                 drResult = DBProxy.Current.Execute(null, idu.ToString());
