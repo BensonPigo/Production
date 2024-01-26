@@ -795,7 +795,7 @@ namespace Sci.Production.Quality
                                                                     WHERE 
                                                                     BrandID = '{this.txtBrand1.Text}' AND 
                                                                     DocumentName = '{this.cboDocumentname.Text}' AND 
-                                                                    SuppID = '{this.txtMultiSupplier1.Text}'");
+                                                                    SuppID = '{row["SuppID"]}'");
             bool isEnable = strResponsibility == "F" ? true : false;
             using (var dlg = new PublicForm.ClipGASA("UASentReport", id, isEnable, row, apiUrlFile: "http://pmsap.sportscity.com.tw:16888/api/FileDelete/RemoveFile"))
             {

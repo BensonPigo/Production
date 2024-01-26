@@ -453,13 +453,12 @@ Update ExportRefnoSentReport SET  AWBNO = @updateData, EditName = @UserID ,EditD
             row["BasicDocumentName"] = this.drBasic["DocumentName"];
             #endregion
 
-
             string strResponsibility = MyUtility.GetValue.Lookup($@"Select Responsibility 
                                                                     FROM MaterialDocument_Responsbility
                                                                     WHERE 
                                                                     BrandID = '{this.txtBrand1.Text}' AND 
                                                                     DocumentName = '{this.cboDocumentname.Text}' AND 
-                                                                    SuppID = '{this.txtMultiSupplier1.Text}'");
+                                                                    SuppID = '{row["SuppID"]}'");
             bool isEnable = strResponsibility == "F" ? true : false;
             using (var dlg = new PublicForm.ClipGASA(tableName, id, isEnable, row, apiUrlFile: "http://pmsap.sportscity.com.tw:16888/api/FileDelete/RemoveFile"))
             {
@@ -754,8 +753,7 @@ Outer APPLY (
            ,main.ColorDesc
            ,main.POID
            ,main.Seq1
-           ,main.Seq2
-           ,main.FactoryID
+           ,main.Seq2           
            ,AWBNO = sr.AWBNO
 	       ,ReportDate = CONVERT(VARCHAR(10), sr.ReportDate, 23)
            ,sr.AddName
@@ -786,7 +784,6 @@ Outer APPLY (
 		           ,Pino = iif({this.drBasic["FileRule"]} = 5, '', ed.Pino)
 		           ,InvNo = iif({this.drBasic["FileRule"]} = 5, '', e.InvNo)
 		           ,ExportIDOld = iif({this.drBasic["FileRule"]} = 5, '', ed.ExportIDOld)
-				   ,o.FactoryID
                    ,canModify = CAST(iif((chkNoRes.value is null and '{this.drBasic["Responsibility"]}' = 'F') or chkNoRes.value = 'F', 1, 0) AS BIT)
                    ,o.FtyGroup
                  from  PO_Supp_Detail po3 WITH (NOLOCK)
@@ -816,7 +813,7 @@ Outer APPLY (
 	                and s.DevOption = 0
                     and f.BrandRefNo <> ''
                     and {conditions}
-                GROUP BY ed.ID,e.Eta,iif({this.drBasic["FileRule"]} = 5, s2.ID, Supp.ID),iif({this.drBasic["FileRule"]} = 5, s2.AbbEN, Supp.AbbEN),f.BrandRefNo,Color.ID,Color.Name,o.BrandID,iif({this.drBasic["FileRule"]} = 5, '', ed.ExportIDOld),iif({this.drBasic["FileRule"]} = 5, '', e.InvNo),iif({this.drBasic["FileRule"]} = 5, '', ed.Pino),iif({this.drBasic["FileRule"]} = 5, '', ed.POID),iif({this.drBasic["FileRule"]} = 5, '', ed.Seq1),iif({this.drBasic["FileRule"]} = 5, '', ed.Seq2),o.FactoryID,chkNoRes.value,o.FtyGroup
+                GROUP BY ed.ID,e.Eta,iif({this.drBasic["FileRule"]} = 5, s2.ID, Supp.ID),iif({this.drBasic["FileRule"]} = 5, s2.AbbEN, Supp.AbbEN),f.BrandRefNo,Color.ID,Color.Name,o.BrandID,iif({this.drBasic["FileRule"]} = 5, '', ed.ExportIDOld),iif({this.drBasic["FileRule"]} = 5, '', e.InvNo),iif({this.drBasic["FileRule"]} = 5, '', ed.Pino),iif({this.drBasic["FileRule"]} = 5, '', ed.POID),iif({this.drBasic["FileRule"]} = 5, '', ed.Seq1),iif({this.drBasic["FileRule"]} = 5, '', ed.Seq2),chkNoRes.value,o.FtyGroup
         )main
         {join}
         Where 1 = 1
