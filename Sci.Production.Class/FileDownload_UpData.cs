@@ -34,11 +34,11 @@ namespace Sci.Production.Class
                 httpWebRequest.KeepAlive = false; // 關閉 Keep-Alive
                 var httpWebResponse = (HttpWebResponse)await httpWebRequest.GetResponseAsync().ConfigureAwait(false);
 
-                // 限制檔案大小
-                // if (httpWebResponse.ContentLength > 15 * 1024 * 1024)
-                // {
-                //    throw new Exception("檔案大小超過 15MB 的上限！");
-                // }
+                //限制檔案大小
+                 if (httpWebResponse.ContentLength > 15 * 1024 * 1024)
+                {
+                    throw new Exception("檔案大小超過 15MB 的上限！");
+                }
                 using (var respStream = httpWebResponse.GetResponseStream())
                 {
                     if (Directory.Exists(saveFilePath) == false)

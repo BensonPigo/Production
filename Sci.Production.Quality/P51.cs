@@ -1023,6 +1023,14 @@ Update ExportRefnoSentReport SET  {(isUpdateAwbNo ? "AWBNO" : "ReportDate")} = @
 
                 count++;
 
+                // 限制檔案大小
+                var fileInfo = new FileInfo(ofdFileName.FileName);
+                if (fileInfo.Length > 15 * 1024 * 1024)
+                {
+                    MyUtility.Msg.WarningBox("File size cannot exceed 15 MB limit!");
+                    return;
+                }
+
                 // call API上傳檔案到Trade
                 lock (FileDownload_UpData.UploadFile("http://pmsap.sportscity.com.tw:16888/api/FileUpload/PostFile", saveFilePath, newFileName, ofdFileName.FileName))
                 {
