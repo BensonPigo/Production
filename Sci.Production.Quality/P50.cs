@@ -790,13 +790,7 @@ namespace Sci.Production.Quality
             row["updateCol_Where"] = updateCol;
             #endregion
 
-            string strResponsibility = MyUtility.GetValue.Lookup($@"Select Responsibility 
-                                                                    FROM MaterialDocument_Responsbility
-                                                                    WHERE 
-                                                                    BrandID = '{this.txtBrand1.Text}' AND 
-                                                                    DocumentName = '{this.cboDocumentname.Text}' AND 
-                                                                    SuppID = '{row["SuppID"]}'");
-            bool isEnable = strResponsibility == "F" ? true : false;
+            bool isEnable = MyUtility.Check.Empty(row["canModify"]) ? false : true;
             using (var dlg = new PublicForm.ClipGASA("UASentReport", id, isEnable, row, apiUrlFile: "http://pmsap.sportscity.com.tw:16888/api/FileDelete/RemoveFile"))
             {
                 dlg.ShowDialog();
@@ -1402,6 +1396,14 @@ namespace Sci.Production.Quality
                 pkeys.Add(pkey + "-" + filenamme);
 
                 count++;
+
+                // 限制檔案大小
+                var fileInfo = new FileInfo(ofdFileName.FileName);
+                if (fileInfo.Length > 15 * 1024 * 1024)
+                {
+                    MyUtility.Msg.WarningBox("File size cannot exceed 15 MB limit!");
+                    return;
+                }
 
                 // call API上傳檔案到Trade
                 lock (FileDownload_UpData.UploadFile("http://pmsap.sportscity.com.tw:16888/api/FileUpload/PostFile", saveFilePath, newFileName, ofdFileName.FileName))

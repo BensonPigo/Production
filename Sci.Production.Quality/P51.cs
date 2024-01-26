@@ -453,13 +453,7 @@ Update ExportRefnoSentReport SET  AWBNO = @updateData, EditName = @UserID ,EditD
             row["BasicDocumentName"] = this.drBasic["DocumentName"];
             #endregion
 
-            string strResponsibility = MyUtility.GetValue.Lookup($@"Select Responsibility 
-                                                                    FROM MaterialDocument_Responsbility
-                                                                    WHERE 
-                                                                    BrandID = '{this.txtBrand1.Text}' AND 
-                                                                    DocumentName = '{this.cboDocumentname.Text}' AND 
-                                                                    SuppID = '{row["SuppID"]}'");
-            bool isEnable = strResponsibility == "F" ? true : false;
+            bool isEnable = MyUtility.Check.Empty(row["canModify"]) ? false : true;
             using (var dlg = new PublicForm.ClipGASA(tableName, id, isEnable, row, apiUrlFile: "http://pmsap.sportscity.com.tw:16888/api/FileDelete/RemoveFile"))
             {
                 dlg.ShowDialog();
@@ -557,6 +551,7 @@ Update ExportRefnoSentReport SET  AWBNO = @updateData, EditName = @UserID ,EditD
             this.colPINO.Visible = isByPO;
             this.colInvNO.Visible = isByPO;
             this.colWKold.Visible = isByPO;
+
             string join = string.Empty;
             if (isByPO)
             {
