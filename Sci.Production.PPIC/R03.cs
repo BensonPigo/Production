@@ -432,10 +432,11 @@ with tmpOrders as (
 		select ColorID = Stuff((
 			select concat(',',ColorID)
 			from (
-					select 	distinct ColorID
-					from dbo.Order_ColorCombo occ WITH (NOLOCK)
-					where occ.ID = o.Poid 
-					and occ.Patternpanel = 'FA'
+                    select o.id,oa.Article,oc.ColorID
+                    from orders 
+                    inner join Order_Article oa on o.id = oa.id
+                    inner join Order_ColorCombo oc on o.poid = oc.Id and oa.Article = oc.Article and oc.PatternPanel = 'FA'
+                    where orders.id = o.id
 				) s
 			for xml path ('')
 		) , 1, 1, '')
