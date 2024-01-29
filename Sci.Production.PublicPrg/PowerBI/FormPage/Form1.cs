@@ -71,6 +71,15 @@ namespace Sci.Production.Prg.PowerBI.FormPage
         private void AutoExecute()
         {
             Logic.Base biBase = new Logic.Base();
+            if (DateTime.Now.DayOfWeek != DayOfWeek.Sunday)
+            {
+                var query = this.executedList.Where(x => x.RunOnSunday).ToList();
+                foreach (var item in query)
+                {
+                    this.executedList.Remove(item);
+                }
+            }
+
             biBase.ExecuteAll(this.executedList);
         }
 
