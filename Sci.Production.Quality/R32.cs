@@ -394,7 +394,7 @@ SELECT
 	,c.DefectQty
 	,[SQR] = IIF( c.InspectQty = 0,0 , (c.DefectQty * 1.0 / c.InspectQty) * 100)
 	,[DefectDescription] = g.Description
-	,[AreaCodeDesc] = cd.CFAAreaID + ' - ' + CfaArea.Description
+	,[AreaCodeDesc] = CfaArea.val
 	,[NoOfDefect] = cd.Qty
 	,cd.Remark
 	,c.ID
@@ -410,7 +410,14 @@ INTO #tmp
 FROm #MainData  c
 LEFT JOIN CFAInspectionRecord_Detail cd ON c.ID = cd.ID
 LEFT JOIN GarmentDefectCode g ON g.ID = cd.GarmentDefectCodeID
-LEFT JOIN CfaArea ON CfaArea.ID = cd.CFAAreaID
+OUTER APPLY
+(
+    SELECT [val] = STUFF((
+            SELECT ',' + ca.Id + ' - ' + ca.Description
+            FROM CfaArea ca
+            WHERE CHARINDEX(ca.ID, cd.CFAAreaID) > 0
+            FOR XML PATH(''), TYPE).value('.', 'NVARCHAR(MAX)'), 1, 1, '')
+)CfaArea
 
 ----找出CFAInspectionRecord_OrderSEQ所對應到的PackingList_Detail
 SELECT pd.*
