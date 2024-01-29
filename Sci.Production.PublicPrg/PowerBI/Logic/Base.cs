@@ -18,7 +18,6 @@ namespace Sci.Production.Prg.PowerBI.Logic
         private enum ListName
         {
             P_MonthlySewingOutputSummary,
-            P_SewingDailyOutput,
         }
 
         /// <summary>
@@ -188,14 +187,9 @@ namespace Sci.Production.Prg.PowerBI.Logic
                 case ListName.P_MonthlySewingOutputSummary:
                     result = new P_Import_MonthlySewingOutputSummary().P_MonthlySewingOutputSummary(item.SDate, item.EDate);
                     break;
-                case ListName.P_SewingDailyOutput:
-                    result = this.ExecuteSP(item);
-                    break;
                 default:
-                    result = new Base_ViewModel()
-                    {
-                        Result = new DualResult(false, "List Not Found"),
-                    };
+                    // Execute all Stored Procedures
+                    result = this.ExecuteSP(item);
                     break;
             }
 
