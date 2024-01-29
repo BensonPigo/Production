@@ -605,15 +605,13 @@ insert into ClogReceive (
                     @"
 update PackingList_Detail 
 set ReceiveDate = GETDATE()
-    , ClogLocationId = '{3}'
+    , ClogLocationId = '{2}'
     , ReturnDate = null 
 where   ID = '{0}' 
-        and OrderID = '{1}' 
-        and CTNStartNo = '{2}'
+        and CTNStartNo = '{1}'
         and DisposeFromClog= 0 
 ; ",
                     MyUtility.Convert.GetString(dr["PackingListID"]),
-                    MyUtility.Convert.GetString(dr["OrderID"]),
                     MyUtility.Convert.GetString(dr["CTNStartNo"]),
                     MyUtility.Convert.GetString(dr["ClogLocationId"])));
 

@@ -731,10 +731,9 @@ values (GETDATE(),'{0}','{1}','{2}','{3}',GETDATE(),'{4}','{5}');",
                 updateCmds.Add(string.Format(
                     @"update PackingList_Detail 
 set TransferDate = GETDATE(), ReceiveDate = null, ClogLocationId = '', ReturnDate = null 
-where ID = '{0}' and OrderID = '{1}' and CTNStartNo = '{2}' and DisposeFromClog= 0
+where ID = '{0}' and CTNStartNo = '{1}' and DisposeFromClog= 0
 ; ",
                     MyUtility.Convert.GetString(dr["PackingListID"]),
-                    MyUtility.Convert.GetString(dr["OrderID"]),
                     MyUtility.Convert.GetString(dr["CTNStartNo"])));
 
                 // 也要順便更新Orders.LastCTNTransDate
