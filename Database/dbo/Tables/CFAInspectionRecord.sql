@@ -22,6 +22,7 @@ CREATE TABLE [dbo].[CFAInspectionRecord](
 	[FirstInspection] [bit] NOT NULL,
 	[IsImportFromMES] [bit] NOT NULL,
  [InspectionFailCount] INT NOT NULL DEFAULT ((0)), 
+    [ReInspection] BIT NOT NULL DEFAULT ((0)), 
     CONSTRAINT [PK_CFAInspectionRecord] PRIMARY KEY CLUSTERED 
 (
 	[ID] ASC
@@ -88,3 +89,11 @@ GO
 
 EXEC sys.sp_addextendedproperty @name=N'IsImportFromMES', @value=N'是否為從MES轉入的資料' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'CFAInspectionRecord', @level2type=N'COLUMN',@level2name=N'IsImportFromMES'
 GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'0: 一般驗貨/ 1: 重新驗貨',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'CFAInspectionRecord',
+    @level2type = N'COLUMN',
+    @level2name = N'ReInspection'
