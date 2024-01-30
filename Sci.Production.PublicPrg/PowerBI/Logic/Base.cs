@@ -18,6 +18,7 @@ namespace Sci.Production.Prg.PowerBI.Logic
         private enum ListName
         {
             P_MonthlySewingOutputSummary,
+            P_SewingLineSchedule,
         }
 
         /// <summary>
@@ -186,6 +187,9 @@ namespace Sci.Production.Prg.PowerBI.Logic
             {
                 case ListName.P_MonthlySewingOutputSummary:
                     result = new P_Import_MonthlySewingOutputSummary().P_MonthlySewingOutputSummary(item.SDate, item.EDate);
+                    break;
+                case ListName.P_SewingLineSchedule:
+                    result = new P_Import_SewingLineScheduleBIData().P_SewingLineScheduleBIData(item.SDate, item.EDate);
                     break;
                 default:
                     // Execute all Stored Procedures
