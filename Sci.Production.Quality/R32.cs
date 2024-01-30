@@ -184,6 +184,7 @@ SELECT
 	,c.Status
 	,[Carton]= IIF(c.Carton ='' AND c.Stage = '3rd party','N/A',c.Carton)
 	,[CFA] = dbo.getPass1(c.CFA)
+    ,[ReInspection] = iif(C.ReInspection =1,'Y',' ')
 	,c.stage
 	,[FirstInspection] = IIF(c.FirstInspection = 1, 'Y','')
 	,c.Result
@@ -248,6 +249,7 @@ SELECT  t.ID
 		,[Inspected PoQty] = InspectedPoQty.Val
 		,Carton
 		,CFA
+        ,[ReInspection]
 		,Stage
 		,FirstInspection
 		,Result
@@ -392,7 +394,7 @@ SELECT
 	,c.DefectQty
 	,[SQR] = IIF( c.InspectQty = 0,0 , (c.DefectQty * 1.0 / c.InspectQty) * 100)
 	,[DefectDescription] = g.Description
-	,[AreaCodeDesc] = cd.CFAAreaID + ' - ' + CfaArea.Description
+	,[AreaCodeDesc] = CfaArea.val
 	,[NoOfDefect] = cd.Qty
 	,cd.Remark
 	,c.ID
@@ -408,7 +410,14 @@ INTO #tmp
 FROm #MainData  c
 LEFT JOIN CFAInspectionRecord_Detail cd ON c.ID = cd.ID
 LEFT JOIN GarmentDefectCode g ON g.ID = cd.GarmentDefectCodeID
-LEFT JOIN CfaArea ON CfaArea.ID = cd.CFAAreaID
+OUTER APPLY
+(
+    SELECT [val] = STUFF((
+            SELECT ',' + ca.Id + ' - ' + ca.Description
+            FROM CfaArea ca
+            WHERE CHARINDEX(ca.ID, cd.CFAAreaID) > 0
+            FOR XML PATH(''), TYPE).value('.', 'NVARCHAR(MAX)'), 1, 1, '')
+)CfaArea
 
 ----找出CFAInspectionRecord_OrderSEQ所對應到的PackingList_Detail
 SELECT pd.*
@@ -775,6 +784,7 @@ drop table #tmpMain,#tmpMainRow6
 
                 this.printData.ColumnsStringAdd("Carton");
                 this.printData.ColumnsStringAdd("CFA");
+                this.printData.ColumnsStringAdd("ReInspection");
                 this.printData.ColumnsStringAdd("Stage");
                 this.printData.ColumnsStringAdd("FirstInspection");
                 this.printData.ColumnsStringAdd("Result");
@@ -817,6 +827,7 @@ drop table #tmpMain,#tmpMainRow6
 
                     nRow["Carton"] = sameIDs.Select(o => MyUtility.Convert.GetString(o["Carton"])).JoinToString(Environment.NewLine);
                     nRow["CFA"] = MyUtility.Convert.GetString(sameIDs.FirstOrDefault()["CFA"]);
+                    nRow["ReInspection"] = MyUtility.Convert.GetString(sameIDs.FirstOrDefault()["ReInspection"]);
                     nRow["Stage"] = stage;
                     nRow["FirstInspection"] = MyUtility.Convert.GetString(sameIDs.FirstOrDefault()["FirstInspection"]);
                     nRow["Result"] = MyUtility.Convert.GetString(sameIDs.FirstOrDefault()["Result"]);

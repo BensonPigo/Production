@@ -6,14 +6,14 @@ CREATE TABLE [dbo].[CFAInspectionRecord_Detail](
 	[Qty] [numeric](5, 0) NOT NULL,
 	[Action] [nvarchar](300) NOT NULL,
 	[Remark] [nvarchar](500) NOT NULL,
-	[CFAAreaID] [varchar](3) NOT NULL,
+	[CFAAreaID] [varchar](50) NOT NULL,
 	 CONSTRAINT [PK_CFAInspectionRecord_Detail] PRIMARY KEY CLUSTERED 
 	(
 		[ID] ASC,
 		[GarmentDefectCodeID] ASC
 	)
 ) 
-;
+go
 
 ALTER TABLE [dbo].[CFAInspectionRecord_Detail] ADD  DEFAULT ('') FOR [GarmentDefectTypeID]
 GO

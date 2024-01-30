@@ -179,6 +179,7 @@
             // 
             // txtToneGrp
             // 
+            this.txtToneGrp.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.txtToneGrp.BackColor = System.Drawing.Color.White;
             this.txtToneGrp.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtToneGrp.Location = new System.Drawing.Point(82, 419);

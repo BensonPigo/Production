@@ -25,9 +25,24 @@ namespace Sci.Production.Prg.PowerBI.Model
         public DateTime? EDate { get; set; }
 
         /// <summary>
+        /// 條件 起始日期
+        /// </summary>
+        public DateTime? SDate2 { get; set; }
+
+        /// <summary>
+        /// 條件 結束日期
+        /// </summary>
+        public DateTime? EDate2 { get; set; }
+
+        /// <summary>
         /// TSQL Store ProcedureName
         /// </summary>
         public string ProcedureName { get; set; }
+
+        /// <summary>
+        /// DB Name
+        /// </summary>
+        public string DBName { get; set; }
 
         /// <summary>
         /// TSQL
@@ -53,6 +68,16 @@ namespace Sci.Production.Prg.PowerBI.Model
         /// 錯誤訊息
         /// </summary>
         public string ErrorMsg { get; set; }
+
+        /// <summary>
+        /// 備註
+        /// </summary>
+        public string Remark { get; set; }
+
+        /// <summary>
+        /// 只在假日執行
+        /// </summary>
+        public bool RunOnSunday { get; set; }
 
         /// <summary>
         /// 執行清單

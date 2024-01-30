@@ -225,6 +225,7 @@
     <Build Include="dbo\Tables\P_CartonStatusTrackingList.sql" />
     <Build Include="dbo\Stored Procedures\FTY\P_Import_CartonStatusTrackingList.sql" />
     <Build Include="dbo\Stored Procedures\FTY\P_Import_FabricInspLabSummaryReport.sql" />
+    <Build Include="dbo\Tables\BITaskInfo.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Utility.dll" />
