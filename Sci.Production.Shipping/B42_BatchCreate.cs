@@ -876,7 +876,16 @@ Insert into VNConsumption_Detail_Detail (
                         }
 
                         // 產生VNConsumption_Detail的資料 呼叫CreateVNConsumption_Detail
-                        insertCmds.Add($"exec CreateVNConsumption_Detail '{newID}'");
+                        insertCmds.Add($" exec CreateVNConsumption_Detail '{newID}'");
+
+                        // 將產生的預設VNConsumption_Detail.Waste update回VNConsumption_Detail_Detail.Waste
+                        string sqlUpdateVNConsumption_Detail_DetailWaste = $@"
+update  vdd set vdd.Waste = vd.Waste
+from    VNConsumption_Detail_Detail vdd
+inner join  VNConsumption_Detail vd on vd.ID = vdd.ID and vd.NLCode = vdd.NLCode
+where vdd.ID = '{newID}'
+";
+                        insertCmds.Add(sqlUpdateVNConsumption_Detail_DetailWaste);
 
                         DualResult result = DBProxy.Current.Executes(null, insertCmds);
                         if (!result)
