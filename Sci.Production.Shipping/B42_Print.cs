@@ -81,12 +81,18 @@ namespace Sci.Production.Shipping
             if (this.reportType == "1")
             {
                 sqlCmd.Append(string.Format(@"
-select vc.CustomSP,vcd.NLCode,vcd.Qty,isnull(vcd.Waste,0)*100 as Waste,Round(vcd.Qty * (isnull(vcd.Waste,0)+1),4) as CCOA,vncd.DescVI as Remark
+select  vc.CustomSP,
+        vcd.NLCode,
+        [Qty] = sum(vcd.Qty),
+        isnull(sum(vcd.Waste) / count(*),0) * 100 as Waste,
+        Round(sum(vcd.Qty) * (isnull(sum(vcd.Waste) / count(*),0) + 1),4) as CCOA,
+        vncd.DescVI as Remark
 from VNConsumption vc WITH (NOLOCK) 
-inner join VNConsumption_Detail vcd WITH (NOLOCK) on vc.ID = vcd.ID
+inner join VNConsumption_Detail_Detail vcd WITH (NOLOCK) on vc.ID = vcd.ID
 left join VNContract_Detail vd WITH (NOLOCK) on vc.VNContractID = vd.ID and vcd.NLCode = vd.NLCode
 left join (select iif(NLCode = 'VNBUY' ,1,0) as LocalPurchase,DescVI from VNNLCodeDesc  WITH (NOLOCK)  where NLCode in ('VNBUY','NOVNBUY')) vncd on vd.LocalPurchase = vncd.LocalPurchase
-where 1=1 and vc.Status = 'Confirmed'"));
+where 1=1 and vc.Status = 'Confirmed'
+"));
 
                 if (!MyUtility.Check.Empty(this.contractNo))
                 {
@@ -108,7 +114,11 @@ where 1=1 and vc.Status = 'Confirmed'"));
                     sqlCmd.Append(string.Format(" and vc.CustomSP between '{0}' and '{1}'", this.customSP1, this.customSP2));
                 }
 
-                sqlCmd.Append(" order by CustomSP, TRY_CONVERT(int, SUBSTRING(vcd.NLCode, 3, LEN(vcd.NLCode))), vcd.NLCode");
+                sqlCmd.Append(@"
+group by    vc.CustomSP,
+            vcd.NLCode,
+            vncd.DescVI
+order by vc.CustomSP, TRY_CONVERT(int, SUBSTRING(vcd.NLCode, 3, LEN(vcd.NLCode))), vcd.NLCode");
 
                 result = DBProxy.Current.Select(null, sqlCmd.ToString(), out this.printData);
                 if (!result)
@@ -149,42 +159,73 @@ and 1=1"));
 
                 this.recCount = MyUtility.Convert.GetInt(MyUtility.GetValue.Lookup(sqlCmd.ToString()));
                 sqlCmd.Clear();
-                sqlCmd.Append(string.Format(@"
-select vc.VNContractID,v.StartDate,v.EndDate,isnull(v.SubConName,'') as SubConName,
-isnull(v.SubConAddress,'') as SubConAddress,isnull(v.TotalQty,0) as TotalQty,
-vc.CustomSP,vc.Qty as GMTQty,isnull(vn.DescVI,'') as DescVI,isnull(vcd.NLCode,'') as NLCode,
-isnull(vn.UnitVI,'') as UnitVI,isnull(vcd.Qty,0) as Qty,isnull(vcd.Waste,0)*100 as Waste,
-isnull(IIF(vd.LocalPurchase = 1,(select DescVI from VNNLCodeDesc WITH (NOLOCK) where NLCode = 'VNBUY'),(select DescVI from VNNLCodeDesc WITH (NOLOCK) where NLCode = 'NOVNBUY')),'') as Original,
-isnull(s.Picture1,'') as Picture1,isnull(s.Picture2,'') as Picture2,(select StyleSketch from System WITH (NOLOCK) ) as StyleSketch,vc.StyleID
-from VNConsumption vc WITH (NOLOCK) 
-left join VNConsumption_Detail vcd WITH (NOLOCK) on vcd.ID = vc.ID
-left join VNContract v WITH (NOLOCK) on v.ID = vc.VNContractID
-left join VNContract_Detail vd WITH (NOLOCK) on vd.ID = vc.VNContractID and vd.NLCode = vcd.NLCode
-left join VNNLCodeDesc vn WITH (NOLOCK) on vn.NLCode = vcd.NLCode
-left join Style s WITH (NOLOCK) on s.Ukey = vc.StyleUKey
-where vc.Status = 'Confirmed'
-and 1=1 "));
+
+                string sqlType2Where = string.Empty;
+
                 if (!MyUtility.Check.Empty(this.contractNo))
                 {
-                    sqlCmd.Append(string.Format(" and vc.VNContractID = '{0}' ", this.contractNo));
+                    sqlType2Where += string.Format(" and vc.VNContractID = '{0}' ", this.contractNo);
                 }
 
                 if (!MyUtility.Check.Empty(this.date1))
                 {
-                    sqlCmd.Append(string.Format(" and vc.CDate >= '{0}' ", Convert.ToDateTime(this.date1).ToString("yyyy/MM/dd")));
+                    sqlType2Where += string.Format(" and vc.CDate >= '{0}' ", Convert.ToDateTime(this.date1).ToString("yyyy/MM/dd"));
                 }
 
                 if (!MyUtility.Check.Empty(this.date2))
                 {
-                    sqlCmd.Append(string.Format(" and vc.CDate <= '{0}' ", Convert.ToDateTime(this.date2).ToString("yyyy/MM/dd")));
+                    sqlType2Where += string.Format(" and vc.CDate <= '{0}' ", Convert.ToDateTime(this.date2).ToString("yyyy/MM/dd"));
                 }
 
                 if (!MyUtility.Check.Empty(this.customSP1))
                 {
-                    sqlCmd.Append(string.Format(" and vc.CustomSP between '{0}' and '{1}'", this.customSP1, this.customSP2));
+                    sqlType2Where += string.Format(" and vc.CustomSP between '{0}' and '{1}'", this.customSP1, this.customSP2);
                 }
 
-                sqlCmd.Append(" order by CustomSP,NLCode");
+                sqlCmd.Append($@"
+select  vc.VNContractID,
+        vc.CustomSP,
+        [GMTQty] = vc.Qty,
+        vc.StyleID,
+        vc.StyleUKey,
+        [NLCode] = isnull(vcd.NLCode,''),
+        [Qty] = isnull(sum(vcd.Qty),0),
+        [Waste] = iif(count(*) = 0, 0, isnull(sum(vcd.Waste) / count(*),0) * 100)
+into #tmp
+from    VNConsumption vc WITH (NOLOCK)
+left join VNConsumption_Detail_Detail vcd WITH (NOLOCK) on vcd.ID = vc.ID
+where   vc.Status = 'Confirmed' {sqlType2Where}
+group by    vc.VNContractID,
+            vc.CustomSP,
+            vc.Qty,
+            vc.StyleID,
+            vc.StyleUKey,
+            isnull(vcd.NLCode,'')
+
+select  t.VNContractID,
+        v.StartDate,
+        v.EndDate,
+        isnull(v.SubConName, '') as SubConName,
+        isnull(v.SubConAddress, '') as SubConAddress,
+        isnull(v.TotalQty, 0) as TotalQty,
+        t.CustomSP,
+        t.Qty as GMTQty,
+        isnull(vn.DescVI,'') as DescVI,
+        t.NLCode,
+        isnull(vn.UnitVI,'') as UnitVI,
+        t.Qty,
+        t.Waste,
+        isnull(IIF(vd.LocalPurchase = 1,(select DescVI from VNNLCodeDesc WITH (NOLOCK) where NLCode = 'VNBUY'),(select DescVI from VNNLCodeDesc WITH (NOLOCK) where NLCode = 'NOVNBUY')),'') as Original,
+        isnull(s.Picture1,'') as Picture1,
+        isnull(s.Picture2,'') as Picture2,
+        (select StyleSketch from System WITH (NOLOCK) ) as StyleSketch,
+        t.StyleID
+from    #tmp t
+left join VNContract v WITH (NOLOCK) on v.ID = t.VNContractID
+left join VNContract_Detail vd WITH (NOLOCK) on vd.ID = t.VNContractID and vd.NLCode = t.NLCode
+left join VNNLCodeDesc vn WITH (NOLOCK) on vn.NLCode = t.NLCode
+left join Style s WITH (NOLOCK) on s.Ukey = t.StyleUKey
+order by t.CustomSP, t.NLCode");
 
                 result = DBProxy.Current.Select(null, sqlCmd.ToString(), out this.printData);
                 if (!result)
