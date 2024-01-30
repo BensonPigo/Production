@@ -10,6 +10,7 @@ using System.Data.SqlClient;
 using System.Drawing;
 using System.Transactions;
 using System.Windows.Forms;
+using static Ict.Win.UI.DataGridView;
 
 namespace Sci.Production.Quality
 {
@@ -117,6 +118,20 @@ namespace Sci.Production.Quality
             this.grid.Columns["Result"].DefaultCellStyle.BackColor = Color.MistyRose;
             this.grid.Columns["Tone"].DefaultCellStyle.BackColor = Color.MistyRose;
             this.grid.Columns["Inspdate"].DefaultCellStyle.BackColor = Color.MistyRose;
+
+            #region Grid 變色規則
+            Color backDefaultColor = this.grid.DefaultCellStyle.BackColor;
+
+            this.grid.RowsAdded += (s, e) =>
+            {
+                foreach (DataGridViewRow dr in this.grid.Rows)
+                {
+
+                    dr.DefaultCellStyle.BackColor = MyUtility.Convert.GetString(dr.Cells["ShadebondEncodeDisplay"].Value) == "Encode" ? Color.Gray : Color.White;
+                    dr.ReadOnly = MyUtility.Convert.GetString(dr.Cells["ShadebondEncodeDisplay"].Value) == "Encode" ? true : false;
+                }
+            };
+            #endregion
         }
 
         private DataGridViewGeneratorComboBoxColumnSettings Col_Scale()
@@ -245,31 +260,6 @@ WHERE rd.MINDQRCode = @MINDQRCode
             this.listControlBindingSource1.DataSource = this.dt;
             this.txtScanQRCode.Text = string.Empty;
             e.Cancel = true;
-            this.RowEditEnable();
-        }
-
-        private void RowEditEnable()
-        {
-            try
-            {
-                foreach (DataGridViewRow row in this.grid.Rows)
-                {
-                    if (MyUtility.Convert.GetString(row.Cells["ShadebondEncodeDisplay"].Value) == "Encode")
-                    {
-                        row.DefaultCellStyle.BackColor = Color.Gray;
-                        row.ReadOnly = true;
-                    }
-                    else
-                    {
-                        row.ReadOnly = false;
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                this.ShowErr(ex);
-                this.Dispose();
-            }
         }
 
         private void BtnSave_Click(object sender, EventArgs e)
@@ -292,6 +282,15 @@ SET
     ,EditName = t.Inspector
 FROM FIR_Shadebone fs
 INNER JOIN #tmp t on t.FIRID = fs.ID AND t.Roll = fs.Roll AND t.Dyelot = fs.Dyelot
+
+update FtyInventory
+set Tone = #tmp.Tone
+from #tmp
+inner join FtyInventory on FtyInventory.POID = #tmp.POID
+                       and FtyInventory.Seq1 = #tmp.Seq1
+                       and FtyInventory.Seq2 = #tmp.Seq2
+                       and FtyInventory.Roll = #tmp.Roll
+                       and FtyInventory.Dyelot = #tmp.Dyelot
 ";
             using (TransactionScope transactionscope = new TransactionScope())
             {

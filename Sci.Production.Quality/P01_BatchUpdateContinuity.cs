@@ -114,6 +114,19 @@ namespace Sci.Production.Quality
             this.grid.Columns["Scale"].DefaultCellStyle.BackColor = Color.MistyRose;
             this.grid.Columns["Result"].DefaultCellStyle.BackColor = Color.MistyRose;
             this.grid.Columns["Inspdate"].DefaultCellStyle.BackColor = Color.MistyRose;
+
+            #region Grid 變色規則
+            Color backDefaultColor = this.grid.DefaultCellStyle.BackColor;
+
+            this.grid.RowsAdded += (s, e) =>
+            {
+                foreach (DataGridViewRow dr in this.grid.Rows)
+                {
+                    dr.DefaultCellStyle.BackColor = MyUtility.Convert.GetString(dr.Cells["ContinuityEncodeDisplay"].Value) == "Encode" ? Color.Gray : Color.White;
+                    dr.ReadOnly = MyUtility.Convert.GetString(dr.Cells["ContinuityEncodeDisplay"].Value) == "Encode" ? true : false;
+                }
+            };
+            #endregion
         }
 
         private DataGridViewGeneratorComboBoxColumnSettings Col_Scale()
@@ -168,7 +181,7 @@ SELECT
 FROM Receiving_Detail rd WITH(NOLOCK)
 INNER JOIN Receiving r WITH(NOLOCK) ON r.Id = rd.Id
 INNER JOIN FIR f with (nolock) on r.id = f.ReceivingID and rd.PoId = F.POID and rd.Seq1 = F.SEQ1 and rd.Seq2 = F.SEQ2
-INNER JOIN FIR_Continuity fs with (nolock) on f.id = fs.ID and rd.Roll = fs.Roll and rd.Dyelot = fs.Dyelot
+LEFT JOIN FIR_Continuity fs with (nolock) on f.id = fs.ID and rd.Roll = fs.Roll and rd.Dyelot = fs.Dyelot
 WHERE rd.MINDQRCode = @MINDQRCode
 
 UNION ALL
@@ -194,7 +207,7 @@ SELECT
 FROM TransferIn_Detail rd WITH(NOLOCK)
 INNER JOIN TransferIn r WITH(NOLOCK) ON r.Id = rd.Id
 INNER JOIN FIR f with (nolock) on r.id = f.ReceivingID and rd.PoId = F.POID and rd.Seq1 = F.SEQ1 and rd.Seq2 = F.SEQ2
-INNER JOIN FIR_Continuity fs with (nolock) on f.id = fs.ID and rd.Roll = fs.Roll and rd.Dyelot = fs.Dyelot
+LEFT JOIN FIR_Continuity fs with (nolock) on f.id = fs.ID and rd.Roll = fs.Roll and rd.Dyelot = fs.Dyelot
 WHERE rd.MINDQRCode = @MINDQRCode
 ";
             List<SqlParameter> paras = new List<SqlParameter>();
@@ -238,31 +251,6 @@ WHERE rd.MINDQRCode = @MINDQRCode
             this.listControlBindingSource1.DataSource = this.dt;
             this.txtScanQRCode.Text = string.Empty;
             e.Cancel = true;
-            this.RowEditEnable();
-        }
-
-        private void RowEditEnable()
-        {
-            try
-            {
-                foreach (DataGridViewRow row in this.grid.Rows)
-                {
-                    if (MyUtility.Convert.GetString(row.Cells["ContinuityEncodeDisplay"].Value) == "Encode")
-                    {
-                        row.DefaultCellStyle.BackColor = Color.Gray;
-                        row.ReadOnly = true;
-                    }
-                    else
-                    {
-                        row.ReadOnly = false;
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                this.ShowErr(ex);
-                this.Dispose();
-            }
         }
 
         private void BtnSave_Click(object sender, EventArgs e)

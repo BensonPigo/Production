@@ -193,14 +193,23 @@
     <Compile Include="PmsWebAPI.cs" />
     <Compile Include="Entity\Prgs_POSuppDetailData.cs" />
     <Compile Include="PowerBI\DataAccess\P_Import_MonthlySewingOutputSummary.cs" />
+    <Compile Include="PowerBI\DataAccess\P_Import_SewingLineScheduleBIData.cs" />
     <Compile Include="PowerBI\FormPage\Form1.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="PowerBI\FormPage\Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
+    <Compile Include="PowerBI\FormPage\UserControl_Detail.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="PowerBI\FormPage\UserControl_Detail.Designer.cs">
+      <DependentUpon>UserControl_Detail.cs</DependentUpon>
+    </Compile>
     <Compile Include="PowerBI\Logic\Base.cs" />
+    <Compile Include="PowerBI\Logic\PPIC_R01.cs" />
     <Compile Include="PowerBI\Model\Base_ViewModel.cs" />
+    <Compile Include="PowerBI\Model\PPIC_R01_ViewModel.cs" />
     <Compile Include="PowerBI\Model\Sewing_R02_ViewModel.cs" />
     <Compile Include="PowerBI\Logic\Sewing_R02.cs" />
     <Compile Include="SewingOutputOrderChange.cs" />
@@ -244,8 +253,11 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
+    <None Include="PowerBI\BI_開發注意事項_開發前請先進來看.docx" />
     <None Include="packages.config" />
     <None Include="Sci.Production.PublicPrg.ruleset" />
+    <None Include="stylecop.json" />
+    <None Include="stylecop1.json" />
   </ItemGroup>
   <ItemGroup>
     <Analyzer Include="..\packages\StyleCop.Analyzers.1.1.118\analyzers\dotnet\cs\StyleCop.Analyzers.CodeFixes.dll" />
@@ -254,6 +266,9 @@
   <ItemGroup>
     <EmbeddedResource Include="PowerBI\FormPage\Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PowerBI\FormPage\UserControl_Detail.resx">
+      <DependentUpon>UserControl_Detail.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
