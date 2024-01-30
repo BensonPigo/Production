@@ -65,22 +65,6 @@ namespace Sci.Production.Shipping
             btn2.Size = new Size(120, 30);
         }
 
-        /// <inheritdoc/>
-        protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
-        {
-            string masterID = (e.Master == null) ? string.Empty : MyUtility.Convert.GetString(e.Master["ID"]);
-            this.DetailSelectCommand = string.Format(
-                @"
-select
-vdd.*,
-vd.Waste
-from VNConsumption_Detail_Detail vdd with (nolock)
-inner join VNConsumption_Detail vd with (nolock) on vd.ID = vdd.ID and vd.NLCode = vdd.NLCode
-where vdd.ID = '{0}'
-                ", masterID);
-            return base.OnDetailSelectCommandPrepare(e);
-        }
-
         private void Btn2_Click(object sender, EventArgs e)
         {
             B42_BatchImport callNextForm = new B42_BatchImport();
@@ -387,6 +371,25 @@ where vdd.ID = '{0}'
                 }
             };
             #endregion
+            #region Waste
+            DataGridViewGeneratorNumericColumnSettings colWaste = new DataGridViewGeneratorNumericColumnSettings();
+            colWaste.CellValidating += (s, e) =>
+            {
+                if (!this.EditMode)
+                {
+                    return;
+                }
+
+                decimal newWaste = MyUtility.Convert.GetDecimal(e.FormattedValue);
+                decimal oriWaste = MyUtility.Convert.GetDecimal(this.CurrentDetailData["Waste"]);
+
+                if (newWaste != oriWaste)
+                {
+                    this.CurrentDetailData["ModifyRecord"] = 1;
+                    this.CurrentDetailData["Waste"] = e.FormattedValue;
+                }
+            };
+            #endregion
 
             Ict.Win.UI.DataGridViewNumericBoxColumn qtyColumn;
             Ict.Win.UI.DataGridViewNumericBoxColumn systemQtyColumn;
@@ -400,7 +403,8 @@ where vdd.ID = '{0}'
                 .Numeric("SystemQty", header: "System Qty", decimal_places: 6, width: Widths.AnsiChars(15), iseditingreadonly: true).Get(out systemQtyColumn)
                 .Numeric("UsageQty", header: " Act. Qty", decimal_places: 6, width: Widths.AnsiChars(15), settings: usageQtyCol).Get(out qtyColumn)
                 .Numeric("Qty", header: "Customs Qty", decimal_places: 6, width: Widths.AnsiChars(15), iseditingreadonly: true).Get(out qtyColumn)
-                .Numeric("Waste", header: "Waste", decimal_places: 6, iseditingreadonly: true)
+                .Numeric("Waste", header: "Waste", decimal_places: 6, settings: colWaste)
+                .CheckBox("ModifyRecord", header: "Modify record", width: Widths.AnsiChars(3), iseditable: false, trueValue: 1, falseValue: 0)
                 .CheckBox("UserCreate", header: "Create by user", width: Widths.AnsiChars(3), iseditable: false, trueValue: 1, falseValue: 0);
 
             qtyColumn.DecimalZeroize = Ict.Win.UI.NumericBoxDecimalZeroize.Default;
@@ -781,7 +785,16 @@ select [dbo].[getWaste]( '{this.CurrentMaintain["StyleID"]}','{this.CurrentMaint
         {
             if (this.EditMode)
             {
-                Win.Tools.SelectItem item = new Win.Tools.SelectItem("Select ID, SeasonID, BrandID,Ukey,CPU from Style WITH (NOLOCK) Order By BrandID, ID, SeasonID", "15,10,10,0", this.txtContractNo.Text, headercaptions: "Contract No.,Start Date, End Date,");
+                DataTable dtStyle;
+                DualResult result = DBProxy.Current.Select("Production", "Select ID, SeasonID, BrandID, CPU, Ukey from Style WITH (NOLOCK) Order By BrandID, ID, SeasonID", out dtStyle);
+
+                if (!result)
+                {
+                    this.ShowErr(result);
+                    return;
+                }
+
+                Win.Tools.SelectItem item = new Win.Tools.SelectItem(dtStyle, "ID,SeasonID,BrandID,CPU", "15,10,10,8", this.CurrentMaintain["StyleID"].ToString(), false, null);
                 DialogResult returnResult = item.ShowDialog();
                 if (returnResult == DialogResult.Cancel)
                 {
