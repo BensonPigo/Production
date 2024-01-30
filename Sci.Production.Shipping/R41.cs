@@ -254,17 +254,44 @@ order by v.ID", sqlCondition);
         private DualResult QueryExport(string sqlCondition)
         {
             string sqlCmd = string.Format(
-                @"select v.ID,v.CDate,v.VNContractID,v.DeclareNo,v.InvNo,ed.StyleID,ed.SeasonID,ed.BrandID,ed.ExportQty,
-isnull(vd.NLCode,'') as NLCode,isnull(vd.HSCode,'') as HSCode,isnull(vd.Qty,0) as Usage,
-isnull(vd.UnitID,'') as UnitID,isnull(vd.Waste,0) as Waste,
-Round(ed.ExportQty*isnull(vd.Qty,0)*(1+isnull(vd.Waste,0)),3) as Total,
-IIF(v.Status = 'Junked','Y','') as Cancel
+                @"
+select  v.ID,
+        v.CDate,
+        v.VNContractID,
+        v.DeclareNo,
+        v.InvNo,
+        ed.StyleID,
+        ed.SeasonID,
+        ed.BrandID,
+        ed.ExportQty,
+        isnull(vd.NLCode,'') as NLCode,
+        isnull(vd.HSCode,'') as HSCode,
+        isnull(vd.Qty,0) as Usage,
+        isnull(vd.UnitID,'') as UnitID,
+        (iif(count(*) = 0, 0, sum(vdd.Waste) / count(*))) as Waste,
+        Round(ed.ExportQty * isnull(vd.Qty,0) * (1 + iif(count(*) = 0, 0, sum(vdd.Waste) / count(*))), 3) as Total,
+        IIF(v.Status = 'Junked','Y','') as Cancel
 from VNExportDeclaration v WITH (NOLOCK) 
 inner join VNExportDeclaration_Detail ed WITH (NOLOCK) on v.ID = ed.ID
 left join VNConsumption c WITH (NOLOCK) on c.VNContractID = v.VNContractID and c.CustomSP = ed.CustomSP
 left join VNConsumption_Detail vd WITH (NOLOCK) on c.ID = vd.ID
+left join VNConsumption_Detail_Detail vdd with (nolock) on vdd.ID = vd.ID and vdd.NLCode = vd.NLCode
 left join VNContract_Detail vcd WITH (NOLOCK) on vcd.ID = v.VNContractID and vcd.NLCode = vd.NLCode
 where 1=1 {0} and (v.Status = 'Confirmed' or v.Status = 'Junked')
+group by    v.ID,
+            v.CDate,
+            v.VNContractID,
+            v.DeclareNo,
+            v.InvNo,
+            ed.StyleID,
+            ed.SeasonID,
+            ed.BrandID,
+            ed.ExportQty,
+            vd.NLCode,
+            vd.HSCode,
+            vd.Qty,
+            vd.UnitID,
+            v.Status
 order by v.ID", sqlCondition);
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out this.printExport);
             return result;
@@ -310,13 +337,24 @@ order by v.ID", sqlCondition);
         {
             string sqlCmd = string.Format(
                 @"
-select v.ID,v.CDate,vdd.RefNo,
-	FabricType= iif(vdd.FabricType = 'L', li.Category,dbo.GetMaterialTypeDesc(vdd.FabricType)),
-	v.VNContractID,v.DeclareNo,v.InvNo,ed.StyleID,ed.SeasonID,ed.BrandID,ed.ExportQty,
-	isnull(vd.NLCode,'') as NLCode,isnull(vd.HSCode,'') as HSCode,isnull(vdd.Qty,0) as Usage,
-	isnull(vd.UnitID,'') as UnitID,isnull(vd.Waste,0) as Waste,
-	Round(ed.ExportQty*isnull(vdd.Qty,0)*(1+isnull(vd.Waste,0)),3) as Total,
-	IIF(v.Status = 'Junked','Y','') as Cancel
+select  v.ID,
+        v.CDate,
+        vdd.RefNo,
+        FabricType = iif(vdd.FabricType = 'L', li.Category, dbo.GetMaterialTypeDesc(vdd.FabricType)),
+        v.VNContractID,
+        v.DeclareNo,
+        v.InvNo,
+        ed.StyleID,
+        ed.SeasonID,
+        ed.BrandID,
+        ed.ExportQty,
+        isnull(vd.NLCode,'') as NLCode,
+        isnull(vd.HSCode,'') as HSCode,
+        isnull(vdd.Qty,0) as Usage,
+        isnull(vd.UnitID,'') as UnitID,
+        isnull(vdd.Waste,0) as Waste,
+        Round(ed.ExportQty*isnull(vdd.Qty,0)*(1+isnull(vdd.Waste,0)),3) as Total,
+        IIF(v.Status = 'Junked','Y','') as Cancel
 from VNExportDeclaration v WITH (NOLOCK) 
 inner join VNExportDeclaration_Detail ed WITH (NOLOCK) on v.ID = ed.ID
 left join VNConsumption c WITH (NOLOCK) on c.VNContractID = v.VNContractID and c.CustomSP = ed.CustomSP

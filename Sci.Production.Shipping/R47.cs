@@ -112,10 +112,10 @@ namespace Sci.Production.Shipping
             [SystemQty] = vcdd.SystemQty,
             [ActQty] = vcdd.UsageQty,
             [CustomsQty] = vcdd.Qty,
-            [Waste] = vcd.Waste,
+            [Waste] = vcdd.Waste,
             [CreateByUser] = iif(vcdd.UserCreate = 1 , 'Yes','No'),
             [Consumption] = vcd.Qty,
-            [Consumption consist of the allowance] = vcd.Qty * ( 1 + vcd.Waste / 100),
+            [Consumption consist of the allowance] = vcd.Qty * ( 1 + vcdd.Waste / 100),
             [Remark] = vn.DescVI
             from VNConsumption vc WITH (NOLOCK) 
             inner join VNConsumption_Detail vcd WITH (NOLOCK) on vc.ID = vcd.ID
