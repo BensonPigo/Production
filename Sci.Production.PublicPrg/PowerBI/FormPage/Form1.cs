@@ -1,8 +1,5 @@
-﻿using PostJobLog;
-using Sci.Production.Class.Command;
-using Sci.Production.Prg.PowerBI.DataAccess;
+﻿using Ict;
 using Sci.Production.Prg.PowerBI.Model;
-using Sci.Win.Tools;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,20 +11,23 @@ namespace Sci.Production.Prg.PowerBI.FormPage
     /// <inheritdoc/>
     public partial class Form1 : Form, IFactoryTaskJob
     {
-        private List<ExecutedList> executedList;
-        private DateTime StratExecutedTime;
-
-        private enum ListName
-        {
-            P_MonthlySewingOutputSummary,
-        }
+        private List<ExecutedList> executedList = new List<ExecutedList>();
 
         /// <inheritdoc/>
         public Form1()
         {
             this.InitializeComponent();
-            this.StratExecutedTime = DateTime.Now;
-            this.lbTitle.Text = "P_MonthlySewingOutputSummary";
+
+            this.SetFormHeightAndWidth();
+            this.executedList = new Logic.Base().GetExecuteList();
+            this.AddControl();
+        }
+
+        private void SetFormHeightAndWidth()
+        {
+            Screen screen = Screen.PrimaryScreen;
+            this.Height = (int)Math.Round(screen.Bounds.Height * 0.8, 0);
+            this.Width = (int)Math.Round(screen.Bounds.Width * 0.9, 0);
         }
 
         /// <summary>
@@ -52,89 +52,152 @@ namespace Sci.Production.Prg.PowerBI.FormPage
         /// </summary>
         public void TaskJobRun()
         {
-            this.Execute();
+            this.AutoExecute();
+        }
+
+        private void AddControl()
+        {
+            foreach (ExecutedList item in this.executedList.Where(x => !string.IsNullOrEmpty(x.ClassName)))
+            {
+                UserControl_Detail detail = new UserControl_Detail
+                {
+                    Execute = item,
+                };
+                detail.Init();
+                this.flowLayoutPanel1.Controls.Add(detail);
+            }
+        }
+
+        private void AutoExecute()
+        {
+            Logic.Base biBase = new Logic.Base();
+            if (DateTime.Now.DayOfWeek != DayOfWeek.Sunday)
+            {
+                var query = this.executedList.Where(x => x.RunOnSunday).ToList();
+                foreach (var item in query)
+                {
+                    this.executedList.Remove(item);
+                }
+            }
+
+            biBase.ExecuteAll(this.executedList);
         }
 
         /// <inheritdoc/>
         private void BtnSubmit_Click(object sender, System.EventArgs e)
         {
-            this.TaskJobRun();
-        }
+            List<ExecutedList> executedList = new List<ExecutedList>();
+            foreach (Control control in this.flowLayoutPanel1.Controls)
+            {
+                UserControl_Detail detailFrom = (UserControl_Detail)control;
+                Control detailFromControl = detailFrom.Controls["panelBase"].Controls["flowLayoutPanel1"];
 
-        private void Execute()
-        {
-            // 未來做動態產生。
-            ExecutedList executed = new ExecutedList()
-            {
-                ClassName = "P_MonthlySewingOutputSummary",
-                SDate = this.dateRange1.Value1,
-                EDate = this.dateRange1.Value2,
-            };
-            this.executedList = new List<ExecutedList>
-            {
-                executed,
-            };
-
-            Logic.Base biBase = new Logic.Base();
-            List<ExecutedList> executedLists = new List<ExecutedList>();
-            foreach (var item in this.executedList.Where(x => !string.IsNullOrEmpty(x.ClassName)))
-            {
-                Base_ViewModel result = new Base_ViewModel();
-                DateTime? executeSDate = DateTime.Now;
-                switch (Enum.Parse(typeof(ListName), item.ClassName))
+                string className = ((TextBox)detailFromControl.Controls["panel_BIname"].Controls["txtBIname"]).Text.ToString();
+                var query = this.executedList.Where(x => x.ClassName == className).Select(x => x);
+                if (!query.Any())
                 {
-                    case ListName.P_MonthlySewingOutputSummary:
-                        result = new P_Import_MonthlySewingOutputSummary().P_MonthlySewingOutputSummary(item.SDate, item.EDate);
-                        break;
+                    continue;
                 }
 
-                DateTime? executeEDate = DateTime.Now;
-                ExecutedList model = new ExecutedList
+                ExecutedList item = new ExecutedList()
                 {
-                    ClassName = item.ClassName,
-                    Sucess = result.Result,
-                    ErrorMsg = !result.Result ? result.Result.Messages.ToString() : string.Empty,
-                    ExecuteSDate = executeSDate,
-                    ExecuteEDate = executeEDate,
+                    ClassName = className,
                 };
 
-                executedLists.Add(model);
+                bool isExecute = false;
+                foreach (Control detailControl in detailFromControl.Controls)
+                {
+                    switch (detailControl.Name)
+                    {
+                        case "panel_DateRange1":
+                            Win.UI.DateRange dateRange = (Win.UI.DateRange)detailControl.Controls["dateRange1"];
+                            item.SDate = dateRange.Value1;
+                            item.EDate = dateRange.Value2;
+                            break;
+                        case "panel_DateRange2":
+                            Win.UI.DateRange dateRange2 = (Win.UI.DateRange)detailControl.Controls["dateRange2"];
+                            item.SDate2 = dateRange2.Value1;
+                            item.EDate2 = dateRange2.Value2;
+                            break;
+                        case "panel_Date":
+                            Win.UI.DateBox dateBox1 = (Win.UI.DateBox)detailControl.Controls["dateBox1"];
+                            item.SDate = dateBox1.Value;
+                            break;
+                        case "tableLayoutPanel1":
+                            CheckBox checkbox = (CheckBox)detailControl.Controls["chkRun"];
+                            isExecute = checkbox.Checked;
+                            break;
+                    }
+                }
+
+                if (isExecute)
+                {
+                    ExecutedList itemBase = query.FirstOrDefault();
+                    item.ProcedureName = itemBase.ProcedureName;
+                    item.DBName = itemBase.DBName;
+                    item.RunOnSunday = itemBase.RunOnSunday;
+                    executedList.Add(item);
+                }
             }
 
-            string region = biBase.GetRegion();
-            string description = string.Join(Environment.NewLine, executedLists.Select(x => $"[{x.ClassName}] is {(x.Sucess ? "completed " : "fail ")} Time: {x.ExecuteSDate.Value.ToString("yyyy/MM/dd HH:mm:ss")} - {x.ExecuteEDate.Value.ToString("yyyy/MM/dd HH:mm:ss")}。 {(x.Sucess ? string.Empty : Environment.NewLine + x.ErrorMsg)}"));
-            bool nonSucceed = executedLists.Where(x => !x.Sucess).Count() > 0;
-
-            JobLog jobLog = new JobLog()
+            if (executedList.Count() > 0)
             {
-                GroupID = "P",
-                SystemID = "Power BI",
-                Region = region,
-                MDivisionID = string.Empty,
-                OperationName = "Factory BI transfer",
-                StartTime = this.StratExecutedTime.ToString("yyyy/MM/dd HH:mm:ss"),
-                EndTime = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"),
-                Description = description,
-                FileName = new List<string>(),
-                FilePath = string.Empty,
-                Succeeded = !nonSucceed,
-            };
+                Logic.Base biBase = new Logic.Base();
+                biBase.ExecuteAll(executedList);
+            }
+        }
 
-            string jobLogUkey = biBase.CallJobLogApi(jobLog);
-
-            if (nonSucceed)
+        /// <inheritdoc/>
+        private void BtnReSet_Click(object sender, EventArgs e)
+        {
+            this.chkAllCheck.Checked = false;
+            foreach (Control control in this.flowLayoutPanel1.Controls)
             {
-                // Send Mail
-                string mailTo = biBase.IsTest() ? "jack.hsu@sportscity.com.tw" : "pmshelp@sportscity.com.tw";
-                string mailCC = string.Empty;
-                string subject = "Import BI Data Error - Facotry";
-                string content = $@"
-Please check below information.
-Transfer date: {DateTime.Now.ToString("yyyy/MM/dd")}
-M: {region}
-{description}
-";
-                var email = new MailTo(Env.Cfg.MailFrom, mailTo, mailCC, subject, string.Empty, content, false, true);
+                UserControl_Detail detailFrom = (UserControl_Detail)control;
+                Control detailFromControl = detailFrom.Controls["panelBase"].Controls["flowLayoutPanel1"];
+                string className = ((TextBox)detailFromControl.Controls["panel_BIname"].Controls["txtBIname"]).Text.ToString();
+                var query = this.executedList.Where(x => x.ClassName == className).Select(x => x);
+                if (!query.Any())
+                {
+                    continue;
+                }
+
+                ExecutedList item = query.FirstOrDefault();
+                foreach (Control detailControl in detailFromControl.Controls)
+                {
+                    switch (detailControl.Name)
+                    {
+                        case "panel_DateRange1":
+                            Win.UI.DateRange dateRange = (Win.UI.DateRange)detailControl.Controls["dateRange1"];
+                            dateRange.Value1 = item.SDate.Value;
+                            dateRange.Value2 = item.EDate.Value;
+                            break;
+                        case "panel_DateRange2":
+                            Win.UI.DateRange dateRange2 = (Win.UI.DateRange)detailControl.Controls["dateRange2"];
+                            dateRange2.Value1 = item.SDate2.Value;
+                            dateRange2.Value2 = item.EDate2.Value;
+                            break;
+                        case "panel_Date":
+                            Win.UI.DateBox dateBox1 = (Win.UI.DateBox)detailControl.Controls["dateBox1"];
+                            dateBox1.Value = item.SDate.Value;
+                            break;
+                        case "tableLayoutPanel1":
+                            CheckBox checkbox = (CheckBox)detailControl.Controls["chkRun"];
+                            checkbox.Checked = false;
+                            break;
+                    }
+                }
+            }
+        }
+
+        /// <inheritdoc/>
+        private void ChkAllCheck_CheckedChanged(object sender, EventArgs e)
+        {
+            foreach (Control control in this.flowLayoutPanel1.Controls)
+            {
+                UserControl_Detail detailFrom = (UserControl_Detail)control;
+                CheckBox checkbox = (CheckBox)detailFrom.Controls["panelBase"].Controls["flowLayoutPanel1"].Controls["tableLayoutPanel1"].Controls["chkRun"];
+                checkbox.Checked = this.chkAllCheck.Checked;
             }
         }
     }
