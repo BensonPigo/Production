@@ -250,8 +250,8 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
+    <None Include="PowerBI\BI_開發注意事項_開發前請先進來看.docx" />
     <None Include="packages.config" />
-    <None Include="PowerBI\BI_開發規則_開發前請先進來看.xlsx" />
     <None Include="Sci.Production.PublicPrg.ruleset" />
     <None Include="stylecop.json" />
     <None Include="stylecop1.json" />
