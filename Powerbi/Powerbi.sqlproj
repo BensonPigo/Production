@@ -117,7 +117,6 @@
     <Build Include="dbo\Stored Procedures\P_ImportQAInspection.sql" />
     <Build Include="dbo\Stored Procedures\P_ImportLoadingProductionOutput.sql" />
     <Build Include="dbo\Functions\SplitString.sql" />
-    <Build Include="dbo\Stored Procedures\FTY\P_ImportLoadingProductionOutput_FTY.sql" />
     <Build Include="dbo\Tables\P_EstShippingReport.sql" />
     <Build Include="dbo\Tables\P_QA_R06.sql" />
     <Build Include="dbo\Stored Procedures\FTY\P_Import_QA_R06.sql" />
@@ -226,6 +225,7 @@
     <Build Include="dbo\Stored Procedures\FTY\P_Import_CartonStatusTrackingList.sql" />
     <Build Include="dbo\Stored Procedures\FTY\P_Import_FabricInspLabSummaryReport.sql" />
     <Build Include="dbo\Tables\BITaskInfo.sql" />
+    <Build Include="dbo\Stored Procedures\FTY\P_Import_LoadingProductionOutput.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Utility.dll" />
