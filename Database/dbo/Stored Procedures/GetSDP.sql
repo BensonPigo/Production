@@ -367,7 +367,7 @@ begin
 		,[Brand] = t.BrandID
 		,[BuyerDelivery] = t.BuyerDelivery
 		,[FactoryKPI] = isnull(CONVERT(date, t.FtyKPI),'')
-		,[Extension] = CONVERT(date,DATEADD(day, isnull(t.OTDExtension,0), t.BuyerDelivery))
+		,[Extension] = CONVERT(date,DATEADD(day, isnull(t.OTDExtension,0), t.FtyKPI))
 		,[DeliveryByShipmode] = t.ShipmodeID
 		,[OrderQty] = t.OrderQty
 		,[OnTimeQty] = CASE WHEN t.OnsiteSample = 1 THEN IIF(GetOnsiteSampleFail.isFail = 1 or sew.SewLastDate is null, 0, Cast(t.OrderQty as int))
@@ -483,7 +483,7 @@ begin
 		,[Brand] = t.BrandID
 		,[BuyerDelivery] = t.BuyerDelivery
 		,[FactoryKPI] = isnull(CONVERT(date, t.FtyKPI),'')
-		,[Extension] = CONVERT(date,DATEADD(day, isnull(t.OTDExtension,0), t.BuyerDelivery))
+		,[Extension] = CONVERT(date,DATEADD(day, isnull(t.OTDExtension,0), t.FtyKPI))
 		,[DeliveryByShipmode] = t.ShipmodeID
 		,[OrderQty] = 0
 		,[OnTimeQty] = 0
