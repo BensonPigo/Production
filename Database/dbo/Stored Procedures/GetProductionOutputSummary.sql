@@ -1,5 +1,4 @@
-﻿
-CREATE PROCEDURE [dbo].[GetProductionOutputSummary]
+﻿Create PROCEDURE [dbo].[GetProductionOutputSummary]
 
 	@Year varchar(10) = '',
 	@Brand varchar(10) = '',
@@ -48,54 +47,58 @@ from
 	from Orders o with(nolock)
 	inner join Factory f with(nolock) on f.ID = o.FactoryID and f.junk = 0
 	left join SCIFty with(nolock) on SCIFty.ID = o.FactoryID
-	where    (@IsPowerBI = 1 or IsProduceFty = 1) and o.Category !='' and (o.IsBuyBack != 1 or o.BuyBackReason != 'Garment')
-			 and 
-			 (	-- if use in PowerBI then filter SciDelivery or BuyerDelivery
-				(@IsPowerBI = 1 and 
-					(
-						o.SciDelivery between @StartDateForBI and @EndSCIDeliveryForBI
-						or
-						o.BuyerDelivery between @StartBuyerDeliveryForBI and @EndBuyerDeliveryForBI
-					)
+	where    (@IsPowerBI = 1 or IsProduceFty = 1) 
+	and o.Category !='' 
+	and (o.IsBuyBack != 1 or o.BuyBackReason != 'Garment')
+		and 
+		(	-- if use in PowerBI then filter SciDelivery or BuyerDelivery
+			(@IsPowerBI = 1 and 
+				(
+					o.SciDelivery between @StartDateForBI and @EndSCIDeliveryForBI
+					or
+					o.BuyerDelivery between @StartBuyerDeliveryForBI and @EndBuyerDeliveryForBI
 				)
-				or -- if not use in PowerBI then depend on @DateType
-				(@IsPowerBI = 0 and 
-					(
-						(@DateType = 1 and Year(cast(dateadd(day,-7,o.SciDelivery) as date)) = @Year )
-						or 
-						(@DateType = 2 and Year(o.BuyerDelivery) = @Year )
-					)
-				)
-			 )
-			 and (o.BrandID = @Brand or @Brand = '')
-			 and (o.MDivisionID = @MDivisionID or @MDivisionID = '')
-			 and (SCIFty.FtyZone = @Zone or @Zone = '')
-			 and (o.FtyGroup = @Fty or @Fty = '')
-			 and (
-				(@ExcludeSampleFactory = 1 and SCIFty.Type <> 'S')
-				or
-				(@ExcludeSampleFactory = 0)
-			 )
-			 and (
-				(@IsFtySide = 1 and
-					(
-						(
-							@NoRestrictOrdersDelivery = 0 and
-							(
-								((@DateType = 1 and O.SciDelivery <= @SpecialDay) or (@DateType = 2 and o.BuyerDelivery < @SpecialDay2))	
-							)
-						)
-						or @NoRestrictOrdersDelivery = 1
-					)
-				)
-				or 
-				(@IsFtySide = 0)
-			 )
-			 and (
-				@IncludeCancelOrder = 0 and o.Junk = 0
-				or
-				@IncludeCancelOrder = 1 and 1 = 1
 			)
+			or -- if not use in PowerBI then depend on @DateType
+			(@IsPowerBI = 0 and 
+				(
+					(@DateType = 1 and Year(cast(dateadd(day,-7,o.SciDelivery) as date)) = @Year )
+					or 
+					(@DateType = 2 and @ChkMonthly = 1 and Year(o.BuyerDelivery) = @Year )
+					or
+					(@DateType = 2 and @ChkMonthly = 0 and Year(cast(dateadd(day,-7,o.BuyerDelivery) as date)) = @Year)
+				)
+			)
+		)
+		and (o.BrandID = @Brand or @Brand = '')
+		and (o.MDivisionID = @MDivisionID or @MDivisionID = '')
+		and (SCIFty.FtyZone = @Zone or @Zone = '')
+		and (o.FtyGroup = @Fty or @Fty = '')
+		and (
+		(@ExcludeSampleFactory = 1 and SCIFty.Type <> 'S')
+		or
+		(@ExcludeSampleFactory = 0)
+		)
+		and (
+		(@IsFtySide = 1 and
+			(
+				(
+					@NoRestrictOrdersDelivery = 0 and
+					(
+						((@DateType = 1 and O.SciDelivery <= @SpecialDay) or (@DateType = 2 and o.BuyerDelivery < @SpecialDay2))	
+					)
+				)
+				or @NoRestrictOrdersDelivery = 1
+			)
+		)
+		or 
+		(@IsFtySide = 0)
+		)
+		and (
+		@IncludeCancelOrder = 0 and o.Junk = 0
+		or
+		@IncludeCancelOrder = 1 and 1 = 1
+	)
 
 	union all
 
@@ -118,7 +121,10 @@ from
 					(
 						(@DateType = 1 and Year(cast(dateadd(day,-7,o.SciDelivery) as date)) = @Year )
 						or 
-						(@DateType = 2 and Year(o.BuyerDelivery) = @Year )
+						(@DateType = 2 and @ChkMonthly = 1 and Year(o.BuyerDelivery) = @Year )
+						or
+						(@DateType = 2 and @ChkMonthly = 0 and Year(cast(dateadd(day,-7,o.BuyerDelivery) as date)) = @Year)
+
 					)
 				)
 			 )
@@ -167,12 +173,14 @@ from (
 	select  o.ID,[TransFtyZone] = f.FtyZone
 	from Orders o with(nolock)
 	left join Factory f with(nolock) on f.ID = o.ProgramID and f.junk = 0
-	where   o.LocalOrder = 1 and o.SubconInType = 2 and o.Category !='' and (o.IsBuyBack != 1 or o.BuyBackReason != 'Garment')
+	where   o.LocalOrder = 1 and o.SubconInType = 2 and o.Category !='' 
+	and (o.IsBuyBack != 1 or o.BuyBackReason != 'Garment')
 		and (
 				(@DateType = 1 and Year(cast(dateadd(day,-7,o.SciDelivery) as date)) = @Year )
 				or 
-				(@DateType = 2 and Year(o.BuyerDelivery) = @Year )
-
+				(@DateType = 2 and @ChkMonthly = 1 and Year(o.BuyerDelivery) = @Year )
+				or
+				(@DateType = 2 and @ChkMonthly = 0 and Year(cast(dateadd(day,-7,o.BuyerDelivery) as date)) = @Year)
 		 )
 		and 
 		(	-- if use in PowerBI then filter SciDelivery or BuyerDelivery
@@ -188,8 +196,10 @@ from (
 				(
 					(@DateType = 1 and Year(cast(dateadd(day,-7,o.SciDelivery) as date)) = @Year )
 					or 
-					(@DateType = 2 and Year(o.BuyerDelivery) = @Year )
-				)
+					(@DateType = 2 and @ChkMonthly = 1 and Year(o.BuyerDelivery) = @Year )
+					or
+					(@DateType = 2 and @ChkMonthly = 0 and Year(cast(dateadd(day,-7,o.BuyerDelivery) as date)) = @Year)
+					)
 			)
 		)
 		and (o.BrandID = @Brand or @Brand = '')
@@ -235,8 +245,10 @@ from (
 		 	(@IsPowerBI = 0 and 
 		 		(
 		 			(@DateType = 1 and Year(cast(dateadd(day,-7,o.SciDelivery) as date)) = @Year )
-		 			or 
-		 			(@DateType = 2 and Year(o.BuyerDelivery) = @Year )
+					or 
+					(@DateType = 2 and @ChkMonthly = 1 and Year(o.BuyerDelivery) = @Year )
+					or
+					(@DateType = 2 and @ChkMonthly = 0 and Year(cast(dateadd(day,-7,o.BuyerDelivery) as date)) = @Year)
 		 		)
 		 	)
 		 )
@@ -334,6 +346,7 @@ declare @tmpBase TABLE(
 	[SCIKeyHalf] [VARCHAR](8) NULL,
 	[BuyerKey] [VARCHAR](8) NULL,
 	[BuyerKeyHalf] [VARCHAR](8) NULL,
+	[BuyerMonthHalf] [VARCHAR](8) NULL,
 	[OutputDate] [VARCHAR](8) NULL,
 	[OrderCPU] [NUMERIC](10,3) NULL,
 	[OrderShortageCPU] [NUMERIC](10,4) NULL,
@@ -361,7 +374,8 @@ select
     [SCIKey] = format(KeyDate.SCI, 'yyyyMM'),
     [SCIKeyHalf] = iif(cast(format(KeyDate.SCI, 'dd') as int) between 1 and 15, format(KeyDate.SCI, 'yyyyMM01'), format(KeyDate.SCI, 'yyyyMM02')),
     [BuyerKey] = format(KeyDate.Buyer, 'yyyyMM'),
-    [BuyerKeyHalf] = iif(cast(format(KeyDate.Buyer, 'dd') as int) between 1 and 15, format(KeyDate.Buyer, 'yyyyMM01'), format(KeyDate.Buyer, 'yyyyMM02')),
+	[BuyerKeyHalf] = iif(cast(format(KeyDate.Buyer, 'dd') as int) between 1 and 15, format(KeyDate.Buyer, 'yyyyMM01'), format(KeyDate.Buyer, 'yyyyMM02')),
+    [BuyerMonthHalf] = iif(cast(format(KeyDate.BuyerMonthHalf, 'dd') as int) between 1 and 15, format(KeyDate.BuyerMonthHalf, 'yyyyMM01'), format(KeyDate.BuyerMonthHalf, 'yyyyMM02')),
     [OutputDate] = FORMAT(sdd.OutputDate,'yyyyMM'),
     [OrderCPU] = o.Qty * gcRate.CpuRate * o.CPU,
     [OrderShortageCPU] = iif(o.GMTComplete = 'S' ,(o.Qty - GetPulloutData.Qty)  * gcRate.CpuRate * o.CPU ,0),
@@ -394,8 +408,11 @@ outer apply (select Qty=sum(pd.ShipQty)
 		  and p.PulloutID <> '' 
 		  and pd.OrderID = o.ID
 ) GetPulloutData
-outer apply (select [SCI] = dateadd(day,-7,o.SciDelivery),
-                    [Buyer] = o.BuyerDelivery) KeyDate
+outer apply (
+	select  [SCI] = dateadd(day,-7,o.SciDelivery)
+           ,[Buyer] = dateadd(day,-7,o.BuyerDelivery)
+		   ,[BuyerMonthHalf] = o.BuyerDelivery
+) KeyDate
 
 
 
@@ -411,6 +428,7 @@ declare @tmpBaseBySource TABLE(
 	[SCIKeyHalf] [VARCHAR](8) NULL,
 	[BuyerKey] [VARCHAR](8) NULL,
 	[BuyerKeyHalf] [VARCHAR](8) NULL,
+	[BuyerMonthHalf] [VARCHAR](8) NULL,
 	[OutputDate] [VARCHAR](8) NULL,
 	[OrderCPU] [NUMERIC](10,3) NULL,
 	[OrderShortageCPU] [NUMERIC](10,4) NULL,
@@ -433,6 +451,7 @@ select  ID,
         SCIKeyHalf,
         BuyerKey,
         BuyerKeyHalf,
+		BuyerMonthHalf,
         OutputDate,
         OrderCPU,
         OrderShortageCPU,
@@ -443,7 +462,7 @@ select  ID,
         [isNormalOrderCanceled] = iif(  Junk = 1 and 
                                         --正常訂單
                                         (( Category in ('B','S')  and (localorder = 0 or SubconInType=2)) or
-                                        --當地訂單
+                                         --當地訂單
                                         (LocalOrder = 1 )),1,0),
         FtyZone,
         ProgramID,
@@ -475,7 +494,8 @@ declare @tmpBaseByOrderID TABLE(
 	[SCIKey] [VARCHAR](8) NULL,
 	[SCIKeyHalf] [VARCHAR](8) NULL,
 	[BuyerKey] [VARCHAR](8) NULL,
-	[BuyerKeyHalf] [VARCHAR](8) NULL
+	[BuyerKeyHalf] [VARCHAR](8) NULL,
+	[BuyerMonthHalf] [VARCHAR](8) NULL
 )
 INSERT INTO @tmpBaseByOrderID
 select
@@ -491,10 +511,11 @@ select
     SCIKey,
     SCIKeyHalf,
     BuyerKey,
-    BuyerKeyHalf
+    BuyerKeyHalf,
+	BuyerMonthHalf
 --into #tmpBaseByOrderID
 from @tmpBaseBySource
-group by ID,Date,OrderCPU,OrderShortageCPU,FtyZone,TransFtyZone,IsCancelNeedProduction,SCIKey,SCIKeyHalf,BuyerKey,BuyerKeyHalf
+group by ID,Date,OrderCPU,OrderShortageCPU,FtyZone,TransFtyZone,IsCancelNeedProduction,SCIKey,SCIKeyHalf,BuyerKey,BuyerKeyHalf,BuyerMonthHalf
 
 declare @tmpOrder_QtyShip TABLE(
 	[ID] [VARCHAR](13) NULL INDEX tmptmpOrder_QtyShipID_IDX CLUSTERED,
@@ -530,7 +551,8 @@ select
     tb.SCIKey,
     tb.SCIKeyHalf,
     tb.BuyerKey,
-    tb.BuyerKeyHalf,
+	[BuyerKeyHalf] = tb.BuyerKeyHalf,
+    [BuyerMonthHalf] = tb.BuyerMonthHalf,
 	o.ID,
 	Category =case when o.Category='B' then 'Bulk'
 				when o.Category='S' then 'Sample'

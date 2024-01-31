@@ -122,10 +122,10 @@ SET @ErrorMessage = ''
 
 	SET @ErrDesc = ''
 
---05) P_ImportLoadingProductionOutput_FTY
+--05) P_Import_LoadingProductionOutput
 BEGIN TRY
 	set @Stime = getdate()
-	execute [dbo].[P_ImportLoadingProductionOutput_FTY]
+	execute [dbo].[P_Import_LoadingProductionOutput]
 	set @Etime = getdate()
 END TRY
 
@@ -156,7 +156,7 @@ SET @ErrorMessage = ''
 
 -- Write in P_TransLog
 	insert into P_TransLog(functionName,Description,StartTime,EndTime,TransCode) 
-	values('P_ImportLoadingProductionOutput_FTY',@ErrDesc,@Stime,@Etime,@TransCode)
+	values('P_Import_LoadingProductionOutput',@ErrDesc,@Stime,@Etime,@TransCode)
 
 	SET @ErrDesc = ''
 

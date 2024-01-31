@@ -8,6 +8,7 @@
 	[SCIKeyHalf] [nvarchar](4000) NULL,
 	[BuyerKey] [nvarchar](4000) NULL,
 	[BuyerKeyHalf] [nvarchar](4000) NULL,
+	[BuyerMonthHalf] [nvarchar](4000) NULL,
 	[SPNO] [varchar](24) NULL,
 	[Category] [varchar](8) NULL,
 	[Cancelled] [varchar](1) NOT NULL,
