@@ -80,6 +80,7 @@ namespace Sci.Production.Quality
                .Text("Seq1", header: "#1", width: Widths.AnsiChars(5), iseditingreadonly: true).Get(out this.colSeq1)
                .Text("Seq2", header: "#2", width: Widths.AnsiChars(5), iseditingreadonly: true).Get(out this.colSeq2)
                .Text("FactoryID", header: "FTY", width: Widths.AnsiChars(8), iseditingreadonly: true)
+               .Text("SuppGroup", header: "Supp Group", width: Widths.AnsiChars(15), iseditingreadonly: true)
                .Text("Supplier", header: "Supplier", width: Widths.AnsiChars(15), iseditingreadonly: true)
                .Text("RefNo", header: "RefNo", width: Widths.AnsiChars(15), iseditingreadonly: true)
                .Text("BrandRefNo", header: "BrandRefNo", width: Widths.AnsiChars(15), iseditingreadonly: true)
@@ -738,6 +739,7 @@ Outer APPLY (
            ,main.ShipQty
            ,main.ShipFOC
            ,main.ExportIDOld
+           ,main.SuppGroup
            ,main.SuppID
            ,main.Supplier
            ,main.RefNo
@@ -766,6 +768,7 @@ Outer APPLY (
 		           ,Qty = SUM(IIF(IsNull(po3.StockPOID, '') = '' , po3.Qty, getpo3.Qty))
 		           ,ShipQty = SUM(ed.Qty)
 		           ,ShipFOC = SUM(ed.FOC)
+                   ,SuppGroup = Concat(s2.ID, '-', s2.AbbEN)
                    ,SuppID = iif({this.drBasic["FileRule"]} = 5, s2.ID, Supp.ID)
 		           ,Supplier = iif({this.drBasic["FileRule"]} = 5, IIF(Isnull(s2.AbbEN, '') = '', s2.ID, Concat(s2.ID, '-', s2.AbbEN)), IIF(Isnull(Supp.AbbEN, '') = '', Supp.ID, Concat(Supp.ID, '-', Supp.AbbEN)))  
                    ,RefNo = min(f.RefNo)
@@ -808,7 +811,7 @@ Outer APPLY (
 	                and s.DevOption = 0
                     and f.BrandRefNo <> ''
                     and {conditions}
-                GROUP BY ed.ID,e.Eta,iif({this.drBasic["FileRule"]} = 5, s2.ID, Supp.ID),iif({this.drBasic["FileRule"]} = 5, s2.AbbEN, Supp.AbbEN),f.BrandRefNo,Color.ID,Color.Name,o.BrandID,iif({this.drBasic["FileRule"]} = 5, '', ed.ExportIDOld),iif({this.drBasic["FileRule"]} = 5, '', e.InvNo),iif({this.drBasic["FileRule"]} = 5, '', ed.Pino),iif({this.drBasic["FileRule"]} = 5, '', ed.POID),iif({this.drBasic["FileRule"]} = 5, '', ed.Seq1),iif({this.drBasic["FileRule"]} = 5, '', ed.Seq2),chkNoRes.value,o.FtyGroup
+                GROUP BY ed.ID,e.Eta,iif({this.drBasic["FileRule"]} = 5, s2.ID, Supp.ID),iif({this.drBasic["FileRule"]} = 5, s2.AbbEN, Supp.AbbEN),f.BrandRefNo,Color.ID,Color.Name,o.BrandID,iif({this.drBasic["FileRule"]} = 5, '', ed.ExportIDOld),iif({this.drBasic["FileRule"]} = 5, '', e.InvNo),iif({this.drBasic["FileRule"]} = 5, '', ed.Pino),iif({this.drBasic["FileRule"]} = 5, '', ed.POID),iif({this.drBasic["FileRule"]} = 5, '', ed.Seq1),iif({this.drBasic["FileRule"]} = 5, '', ed.Seq2),chkNoRes.value,o.FtyGroup,s2.ID, s2.AbbEN
         )main
         {join}
         Where 1 = 1
