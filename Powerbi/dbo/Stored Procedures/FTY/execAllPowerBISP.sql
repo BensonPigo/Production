@@ -592,10 +592,12 @@ SET @ErrorMessage = ''
 	SET @ErrDesc = ''
 
 /****************************************************************************************************************************/
-/***********************************P_MtlStatusAnalisis****************************************************************/
+/***********************************P_Import_MtlStatusAnalisis****************************************************************/
 BEGIN TRY
+	set @StartDate = CONVERT(date, DATEADD(DAY,-60,GETDATE()))
+	set @EndDate = GETDATE()
 	set @Stime = getdate()  
-	execute [dbo].[P_ImportMtlStatusAnalisis]
+	execute [dbo].[P_Import_MtlStatusAnalisis] @StartDate,@EndDate
 	set @Etime = getdate()
 END TRY
 
@@ -603,7 +605,7 @@ BEGIN CATCH
 
 SET @ErrorMessage = 
 '
-[15-P_ImportMtlStatusAnalisis]' + CHAR(13) +
+[15-P_Import_MtlStatusAnalisis]' + CHAR(13) +
 ',錯誤代碼: ' + CONVERT(VARCHAR, ERROR_NUMBER()) + CHAR(13) +
 ',錯誤行數: ' + CONVERT(VARCHAR, ERROR_LINE()) + CHAR(13) +
 ',錯誤訊息: ' + ERROR_MESSAGE()
@@ -618,7 +620,7 @@ END CATCH;
 IF (@ErrorMessage IS NULL or @ErrorMessage='')
 BEGIN 
 	set @desc += CHAR(13) + '
-[15-P_ImportMtlStatusAnalisis] is completed' + ' Time:' + FORMAT(@Stime, 'yyyy/MM/dd HH:mm:ss') + ' - ' + FORMAT(@Etime, 'yyyy/MM/dd HH:mm:ss')
+[15-P_Import_MtlStatusAnalisis] is completed' + ' Time:' + FORMAT(@Stime, 'yyyy/MM/dd HH:mm:ss') + ' - ' + FORMAT(@Etime, 'yyyy/MM/dd HH:mm:ss')
 END
 ELSE
 BEGIN
@@ -628,7 +630,7 @@ SET @ErrorMessage = ''
 
 -- Write in P_TransLog
 	insert into P_TransLog(functionName,Description,StartTime,EndTime,TransCode) 
-	values('P_ImportMtlStatusAnalisis',@ErrDesc,@Stime,@Etime,@TransCode)
+	values('P_Import_MtlStatusAnalisis',@ErrDesc,@Stime,@Etime,@TransCode)
 
 	SET @ErrDesc = ''
 
