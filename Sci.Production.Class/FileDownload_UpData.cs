@@ -34,11 +34,11 @@ namespace Sci.Production.Class
                 httpWebRequest.KeepAlive = false; // 關閉 Keep-Alive
                 var httpWebResponse = (HttpWebResponse)await httpWebRequest.GetResponseAsync().ConfigureAwait(false);
 
-                // 限制檔案大小
+                //限制檔案大小
                 // if (httpWebResponse.ContentLength > 15 * 1024 * 1024)
-                // {
+                //{
                 //    throw new Exception("檔案大小超過 15MB 的上限！");
-                // }
+                //}
                 using (var respStream = httpWebResponse.GetResponseStream())
                 {
                     if (Directory.Exists(saveFilePath) == false)
@@ -78,7 +78,7 @@ namespace Sci.Production.Class
                 var fileInfo = new FileInfo(sourceFile);
                 if (fileInfo.Length > 15 * 1024 * 1024)
                 {
-                    throw new Exception("檔案大小超過 15MB 的上限！");
+                    throw new Exception("File size cannot exceed 15 MB limit!");
                 }
 
                 // url = "http://localhost:48926/api/FileUpload/PostFile"; // for test

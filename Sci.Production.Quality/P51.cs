@@ -80,6 +80,7 @@ namespace Sci.Production.Quality
                .Text("Seq1", header: "#1", width: Widths.AnsiChars(5), iseditingreadonly: true).Get(out this.colSeq1)
                .Text("Seq2", header: "#2", width: Widths.AnsiChars(5), iseditingreadonly: true).Get(out this.colSeq2)
                .Text("FactoryID", header: "FTY", width: Widths.AnsiChars(8), iseditingreadonly: true)
+               .Text("SuppGroup", header: "Supp Group", width: Widths.AnsiChars(15), iseditingreadonly: true)
                .Text("Supplier", header: "Supplier", width: Widths.AnsiChars(15), iseditingreadonly: true)
                .Text("RefNo", header: "RefNo", width: Widths.AnsiChars(15), iseditingreadonly: true)
                .Text("BrandRefNo", header: "BrandRefNo", width: Widths.AnsiChars(15), iseditingreadonly: true)
@@ -453,14 +454,7 @@ Update ExportRefnoSentReport SET  AWBNO = @updateData, EditName = @UserID ,EditD
             row["BasicDocumentName"] = this.drBasic["DocumentName"];
             #endregion
 
-
-            string strResponsibility = MyUtility.GetValue.Lookup($@"Select Responsibility 
-                                                                    FROM MaterialDocument_Responsbility
-                                                                    WHERE 
-                                                                    BrandID = '{this.txtBrand1.Text}' AND 
-                                                                    DocumentName = '{this.cboDocumentname.Text}' AND 
-                                                                    SuppID = '{this.txtMultiSupplier1.Text}'");
-            bool isEnable = strResponsibility == "F" ? true : false;
+            bool isEnable = MyUtility.Check.Empty(row["canModify"]) ? false : true;
             using (var dlg = new PublicForm.ClipGASA(tableName, id, isEnable, row, apiUrlFile: "http://pmsap.sportscity.com.tw:16888/api/FileDelete/RemoveFile"))
             {
                 dlg.ShowDialog();
@@ -558,6 +552,7 @@ Update ExportRefnoSentReport SET  AWBNO = @updateData, EditName = @UserID ,EditD
             this.colPINO.Visible = isByPO;
             this.colInvNO.Visible = isByPO;
             this.colWKold.Visible = isByPO;
+
             string join = string.Empty;
             if (isByPO)
             {
@@ -744,6 +739,7 @@ Outer APPLY (
            ,main.ShipQty
            ,main.ShipFOC
            ,main.ExportIDOld
+           ,main.SuppGroup
            ,main.SuppID
            ,main.Supplier
            ,main.RefNo
@@ -754,8 +750,7 @@ Outer APPLY (
            ,main.ColorDesc
            ,main.POID
            ,main.Seq1
-           ,main.Seq2
-           ,main.FactoryID
+           ,main.Seq2           
            ,AWBNO = sr.AWBNO
 	       ,ReportDate = CONVERT(VARCHAR(10), sr.ReportDate, 23)
            ,sr.AddName
@@ -773,6 +768,7 @@ Outer APPLY (
 		           ,Qty = SUM(IIF(IsNull(po3.StockPOID, '') = '' , po3.Qty, getpo3.Qty))
 		           ,ShipQty = SUM(ed.Qty)
 		           ,ShipFOC = SUM(ed.FOC)
+                   ,SuppGroup = Concat(s2.ID, '-', s2.AbbEN)
                    ,SuppID = iif({this.drBasic["FileRule"]} = 5, s2.ID, Supp.ID)
 		           ,Supplier = iif({this.drBasic["FileRule"]} = 5, IIF(Isnull(s2.AbbEN, '') = '', s2.ID, Concat(s2.ID, '-', s2.AbbEN)), IIF(Isnull(Supp.AbbEN, '') = '', Supp.ID, Concat(Supp.ID, '-', Supp.AbbEN)))  
                    ,RefNo = min(f.RefNo)
@@ -786,7 +782,6 @@ Outer APPLY (
 		           ,Pino = iif({this.drBasic["FileRule"]} = 5, '', ed.Pino)
 		           ,InvNo = iif({this.drBasic["FileRule"]} = 5, '', e.InvNo)
 		           ,ExportIDOld = iif({this.drBasic["FileRule"]} = 5, '', ed.ExportIDOld)
-				   ,o.FactoryID
                    ,canModify = CAST(iif((chkNoRes.value is null and '{this.drBasic["Responsibility"]}' = 'F') or chkNoRes.value = 'F', 1, 0) AS BIT)
                    ,o.FtyGroup
                  from  PO_Supp_Detail po3 WITH (NOLOCK)
@@ -816,7 +811,7 @@ Outer APPLY (
 	                and s.DevOption = 0
                     and f.BrandRefNo <> ''
                     and {conditions}
-                GROUP BY ed.ID,e.Eta,iif({this.drBasic["FileRule"]} = 5, s2.ID, Supp.ID),iif({this.drBasic["FileRule"]} = 5, s2.AbbEN, Supp.AbbEN),f.BrandRefNo,Color.ID,Color.Name,o.BrandID,iif({this.drBasic["FileRule"]} = 5, '', ed.ExportIDOld),iif({this.drBasic["FileRule"]} = 5, '', e.InvNo),iif({this.drBasic["FileRule"]} = 5, '', ed.Pino),iif({this.drBasic["FileRule"]} = 5, '', ed.POID),iif({this.drBasic["FileRule"]} = 5, '', ed.Seq1),iif({this.drBasic["FileRule"]} = 5, '', ed.Seq2),o.FactoryID,chkNoRes.value,o.FtyGroup
+                GROUP BY ed.ID,e.Eta,iif({this.drBasic["FileRule"]} = 5, s2.ID, Supp.ID),iif({this.drBasic["FileRule"]} = 5, s2.AbbEN, Supp.AbbEN),f.BrandRefNo,Color.ID,Color.Name,o.BrandID,iif({this.drBasic["FileRule"]} = 5, '', ed.ExportIDOld),iif({this.drBasic["FileRule"]} = 5, '', e.InvNo),iif({this.drBasic["FileRule"]} = 5, '', ed.Pino),iif({this.drBasic["FileRule"]} = 5, '', ed.POID),iif({this.drBasic["FileRule"]} = 5, '', ed.Seq1),iif({this.drBasic["FileRule"]} = 5, '', ed.Seq2),chkNoRes.value,o.FtyGroup,s2.ID, s2.AbbEN
         )main
         {join}
         Where 1 = 1
@@ -1025,6 +1020,14 @@ Update ExportRefnoSentReport SET  {(isUpdateAwbNo ? "AWBNO" : "ReportDate")} = @
                 pkeys.Add(pkey + "-" + filenamme);
 
                 count++;
+
+                // 限制檔案大小
+                var fileInfo = new FileInfo(ofdFileName.FileName);
+                if (fileInfo.Length > 15 * 1024 * 1024)
+                {
+                    MyUtility.Msg.WarningBox("File size cannot exceed 15 MB limit!");
+                    return;
+                }
 
                 // call API上傳檔案到Trade
                 lock (FileDownload_UpData.UploadFile("http://pmsap.sportscity.com.tw:16888/api/FileUpload/PostFile", saveFilePath, newFileName, ofdFileName.FileName))

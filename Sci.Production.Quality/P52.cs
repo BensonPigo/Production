@@ -668,6 +668,7 @@ namespace Sci.Production.Quality
                .Text("Seq", header: "SEQ", width: Widths.AnsiChars(6), iseditingreadonly: true)
                .Text("Season", header: "Season", width: Widths.AnsiChars(6), iseditingreadonly: true)
                .Text("BrandID", header: "Brand", width: Widths.AnsiChars(10), iseditingreadonly: true)
+               .Text("SuppGroup", header: "Supp Group", width: Widths.AnsiChars(17), iseditingreadonly: true)
                .Text("supplier", header: "Supplier", width: Widths.AnsiChars(17), iseditingreadonly: true)
                .Text("Refno", header: "Refno", width: Widths.AnsiChars(17), iseditingreadonly: true)
                .Text("BrandRefno", header: "BrandRefno", width: Widths.AnsiChars(17), iseditingreadonly: true)
@@ -962,6 +963,7 @@ o.FactoryID,
 	   Season = o.SeasonID,	   
        p3.Seq1,
        p3.Seq2,
+       SuppGroup = Concat(s2.ID, '-', s2.AbbEN),
        p2.SuppID,
        supplier = IIF(Isnull(su.AbbEN, '') = '', su.ID, Concat(su.ID, '-', su.AbbEN)),
        FinalETD=IsNull(p3.CfmETD, p3.SystemETD),

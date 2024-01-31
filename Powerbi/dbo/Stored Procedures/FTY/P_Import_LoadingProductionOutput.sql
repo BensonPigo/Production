@@ -2,8 +2,8 @@
 -- Create date: 2020/08/06
 -- Description:	Data Query Logic by PMS.Centralized R05 Report Sheet [Balance_Detail], Import Data to P_SDPOrderDetail
 -- =============================================
-CREATE PROCEDURE [dbo].[P_ImportLoadingProductionOutput_FTY]
-
+CREATE PROCEDURE [dbo].[P_Import_LoadingProductionOutput]
+	@useYear varchar(4) =''
 AS
 BEGIN
 	SET NOCOUNT ON
@@ -16,8 +16,6 @@ declare @SqlCmd2 nvarchar(max) ='';
 declare @SqlCmd3 nvarchar(max) ='';
 declare @strID nvarchar(15) = N'SubCON-Out_'
 
-
-declare @useYear varchar(4) = (select YEAR(GETDATE()))
 declare @curr_Month varchar(2) = (select MONTH(GETDATE()))
 
 if( @curr_Month = '1' or @curr_Month = '01')
@@ -48,6 +46,7 @@ from (
 		T.SCIKeyHalf,
 		T.BuyerKey,
 		T.BuyerKeyHalf,
+		t.BuyerMonthHalf,
 		t.[ID],
 		T.Category ,
 		T.Cancelled,
@@ -124,6 +123,7 @@ SET @SqlCmd2 = '
 		T.SCIKeyHalf,
 		T.BuyerKey,
 		T.BuyerKeyHalf,
+		t.BuyerMonthHalf,
 		[ID] =  CONVERT(varchar(24), '''+@strID+''' + T.ID),
 		T.Category ,
 		T.Cancelled,
@@ -206,6 +206,7 @@ set	    t.MDivisionID =  s.MDivisionID,
 		t.SCIKeyHalf =  s.SCIKeyHalf,
 		t.BuyerKey =  s.BuyerKey,
 		t.BuyerKeyHalf =  s.BuyerKeyHalf,
+		t.BuyerMonthHalf = s.BuyerMonthHalf,
 		t.SPNO =  s.ID,
 		t.Category =  s.Category,
 		t.Cancelled =  s.Cancelled,
@@ -256,8 +257,62 @@ on t.FactoryID=s.FactoryID
    AND t.SPNO=s.ID 
 
 
-insert into P_LoadingProductionOutput
-	select  s.MDivisionID,
+insert into P_LoadingProductionOutput(
+	   [MDivisionID]
+      ,[FtyZone]
+      ,[FactoryID]
+      ,[BuyerDelivery]
+      ,[SciDelivery]
+      ,[SCIKey]
+      ,[SCIKeyHalf]
+      ,[BuyerKey]
+      ,[BuyerKeyHalf]
+	  ,[BuyerMonthHalf]
+      ,[SPNO]
+      ,[Category]
+      ,[Cancelled]
+      ,[IsCancelNeedProduction]
+      ,[PartialShipment]
+      ,[LastBuyerDelivery]
+      ,[StyleID]
+      ,[SeasonID]
+      ,[CustPONO]
+      ,[BrandID]
+      ,[CPU]
+      ,[Qty]
+      ,[FOCQty]
+      ,[PulloutQty]
+      ,[OrderShortageCPU]
+      ,[TotalCPU]
+      ,[SewingOutput]
+      ,[SewingOutputCPU]
+      ,[BalanceQty]
+      ,[BalanceCPU]
+      ,[BalanceCPUIrregular]
+      ,[SewLine]
+      ,[Dest]
+      ,[OrderTypeID]
+      ,[ProgramID]
+      ,[CdCodeID]
+      ,[ProductionFamilyID]
+      ,[FtyGroup]
+      ,[PulloutComplete]
+      ,[SewInLine]
+      ,[SewOffLine]
+      ,[TransFtyZone]
+      ,[CDCodeNew]
+      ,[ProductType]
+      ,[FabricType]
+      ,[Lining]
+      ,[Gender]
+      ,[Construction]
+      ,[FM Sister]
+      ,[Sample Group]
+      ,[Order Reason]
+      ,[BuyBackReason]
+      ,[LastProductionDate]
+      ,[CRDDate])
+select  s.MDivisionID,
 	s.FtyZone,
 	s.FactoryID,
 	s.BuyerDelivery,
@@ -266,6 +321,7 @@ insert into P_LoadingProductionOutput
 	s.SCIKeyHalf,
 	s.BuyerKey,
 	s.BuyerKeyHalf,
+	s.BuyerMonthHalf,
 	s.ID,
 	s.Category,
 	s.Cancelled,
