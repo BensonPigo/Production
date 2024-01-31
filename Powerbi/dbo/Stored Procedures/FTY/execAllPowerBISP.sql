@@ -124,8 +124,9 @@ SET @ErrorMessage = ''
 
 --05) P_Import_LoadingProductionOutput
 BEGIN TRY
+	declare @P_Import_LoadingProductionOutput_UseYear varchar(4) = (select YEAR(GETDATE()))
 	set @Stime = getdate()
-	execute [dbo].[P_Import_LoadingProductionOutput]
+	execute [dbo].[P_Import_LoadingProductionOutput] @P_Import_LoadingProductionOutput_UseYear
 	set @Etime = getdate()
 END TRY
 

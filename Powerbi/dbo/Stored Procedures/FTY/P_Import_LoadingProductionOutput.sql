@@ -3,7 +3,7 @@
 -- Description:	Data Query Logic by PMS.Centralized R05 Report Sheet [Balance_Detail], Import Data to P_SDPOrderDetail
 -- =============================================
 CREATE PROCEDURE [dbo].[P_Import_LoadingProductionOutput]
-
+	@useYear varchar(4) =''
 AS
 BEGIN
 	SET NOCOUNT ON
@@ -16,8 +16,6 @@ declare @SqlCmd2 nvarchar(max) ='';
 declare @SqlCmd3 nvarchar(max) ='';
 declare @strID nvarchar(15) = N'SubCON-Out_'
 
-
-declare @useYear varchar(4) = (select YEAR(GETDATE()))
 declare @curr_Month varchar(2) = (select MONTH(GETDATE()))
 
 if( @curr_Month = '1' or @curr_Month = '01')
