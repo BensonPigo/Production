@@ -16,6 +16,7 @@ using Sci.Production.Prg.Entity;
 using Sci.Data;
 using static Ict.Win.UI.DataGridView;
 using Ict.Win.Defs;
+using System.Diagnostics;
 
 namespace Sci.Production.PublicForm
 {
@@ -360,6 +361,14 @@ namespace Sci.Production.PublicForm
                 string newFileName = this._tablename + pkeys[ix] + Path.GetExtension(it.LOCALFILE);
                 string filename = this.GetClipFileName(it);
                 string saveFilePath = dir;
+
+                // 限制檔案大小
+                var fileInfo = new FileInfo(it.LOCALFILE);
+                if (fileInfo.Length > 15 * 1024 * 1024)
+                {
+                    MyUtility.Msg.WarningBox("File size cannot exceed 15 MB limit!");
+                    return;
+                }
 
                 // call API上傳檔案到Trade
                 lock (FileDownload_UpData.UploadFile("http://pmsap.sportscity.com.tw:16888/api/FileUpload/PostFile", saveFilePath, newFileName, it.LOCALFILE))
