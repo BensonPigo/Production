@@ -64,6 +64,32 @@ namespace Sci.Production.Warehouse
                 // PO_Supp_tmp為了Chinese Abb Fabric_Supp 的suppID如果找不到，請找 PO_Supp_Detail.SCIRefno seq1最小的且suppID在 Fabric_Supp是有資料的那筆
                 sqlcmd = $@"
 --declare @ID varchar(20) ='23011761GG'
+Select  c.InvNo InvNo
+        ,a.POID POID
+        ,a.SEQ1 SEQ1
+        ,a.SEQ2 SEQ2
+        , CASE 
+	        when a.Nonphysical = 1 and a.nonContinuity=1 and nonShadebond=1 and a.nonWeight=1 and a.nonOdor=1 then 'N/A'
+	        when isnull(a.result,'')='' then 'Blank'
+	        else a.result
+	        END as [Result]
+into #tmpQA
+from dbo.FIR a WITH (NOLOCK) 
+left join [dbo].[View_AllReceiving] c WITH (NOLOCK) on c.Id = a.ReceivingID
+where   a.POID LIKE @id
+UNION all
+Select   c.InvNo InvNo
+        ,a.POID POID
+        ,a.SEQ1 SEQ1
+        ,a.SEQ2 SEQ2
+        , CASE 
+	        when isnull(a.result,'')='' then 'Blank'
+	        else a.result
+	        END as [Result] 
+from dbo.AIR a WITH (NOLOCK) 
+left join [dbo].[View_AllReceiving] c WITH (NOLOCK) on c.Id = a.ReceivingID
+where   a.POID like @id 
+        and a.Result !=''
 
 select psd.ID,
        psd.SCIRefno,
@@ -127,7 +153,13 @@ from (
         ,format(i.LObQty,'###,###,###.##') [Scrap Qty]
         ,i.ALocation [Bulk Location]
         ,i.BLocation [Stock Location]
-        ,[FIR]=dbo.getinspectionresult(a.id,a.seq1,a.seq2)
+        ,[InspectionGroup] = Fabric.InspectionGroup
+        ,[FIR]= stuff((select Concat(',',t.Result) from ( SELECT seq1,seq2,Result 
+                                                          FROM #tmpQA 
+                                                          where   poid = a.id 
+                                                                and seq1 = a.seq1 
+                                                                and seq2 = a.seq2 
+                                                         )t order by t.seq1,t.seq2  for xml path('')),1,1,'') 
         ,(select Remark+',' from 
         (select r.Remark  from dbo.Receiving_Detail r WITH (NOLOCK) where POID =a.id and seq1=a.seq1 and seq2=a.seq2 and remark !='') r for xml path('')) [Remark]
         ,a.junk
@@ -207,6 +239,7 @@ from (
         , [Scrap Qty] = '-'
         , [Bulk Location] = l.ALocation
         , [Stock Location] = '-'
+        , [InspectionGroup] = '-'
         , [FIR] = '-'
         , [Remark] = '-'
         , [junk]  = 'false'
@@ -263,6 +296,7 @@ select
 	, [Scrap Qty]
 	, [Bulk Location]
 	, [Stock Location]
+    , [InspectionGroup]
 	, [FIR]
 	, [Remark]
 	, [junk]

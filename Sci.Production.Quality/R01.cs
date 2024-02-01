@@ -308,6 +308,7 @@ select
     ,[SupplierCode] = SP.SuppID
     ,[SupplierName] = s.AbbEN
 	,C.WeaveTypeID
+    ,[InspectionGroup] = (Select InspectionGroup from Fabric where SCIRefno = p.SCIRefno)
 	,[N/A Physical] = IIF(F.Nonphysical = 1,'Y',' ')
 	,F.Result
 	,[Cut Shadeband Qty (Roll)] = Qty.Roll
@@ -603,6 +604,7 @@ select
     ,tf.SupplierCode
     ,tf.SupplierName
 	,tf.WeaveTypeID
+    ,tf.[InspectionGroup]
 	,tf.[N/A Physical]
 	,tf.Result
 	,tf.Physical
