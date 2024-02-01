@@ -432,11 +432,12 @@ with tmpOrders as (
 		select ColorID = Stuff((
 			select concat(',',ColorID)
 			from (
-                    select o.id,oa.Article,oc.ColorID
+                    select od.id,od.seq,od.Article,oc.ColorID
                     from orders 
-                    inner join Order_Article oa on o.id = oa.id
-                    inner join Order_ColorCombo oc on o.poid = oc.Id and oa.Article = oc.Article and oc.PatternPanel = 'FA'
+                    inner join Order_QtyShip_Detail  od on o.id = od.id
+                    inner join Order_ColorCombo oc on o.poid = oc.Id and od.Article = oc.Article and oc.PatternPanel = 'FA'
                     where orders.id = o.id
+                    group by od.ID,od.Seq,od.Article,oc.ColorID
 				) s
 			for xml path ('')
 		) , 1, 1, '')
