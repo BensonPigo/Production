@@ -99,7 +99,6 @@
     <Build Include="dbo\Tables\P_TransLog.sql" />
     <Build Include="dbo\Tables\P_TransImport.sql" />
     <Build Include="dbo\Tables\P_SDPOrderDetail.sql" />
-    <Build Include="dbo\Stored Procedures\FTY\ImportEfficiencyBI.sql" />
     <Build Include="dbo\Stored Procedures\FTY\P_ImportSDPOrderDetail.sql" />
     <Build Include="dbo\Stored Procedures\FTY\ImportForecastLoadingBI.sql" />
     <Build Include="dbo\Stored Procedures\FTY\execAllPowerBISP.sql" />
@@ -226,6 +225,7 @@
     <Build Include="dbo\Stored Procedures\FTY\P_Import_FabricInspLabSummaryReport.sql" />
     <Build Include="dbo\Tables\BITaskInfo.sql" />
     <Build Include="dbo\Stored Procedures\FTY\P_Import_LoadingProductionOutput.sql" />
+    <Build Include="dbo\Stored Procedures\FTY\P_Import_EfficiencyBI.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Utility.dll" />
