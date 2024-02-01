@@ -2442,7 +2442,7 @@ drop table #tmp,#tmp2,#tmp3
                 objArray[intRowsStart, 97] = dr["FirstProduction"]; // CB
                 objArray[intRowsStart, 98] = dr["LastProductionDate"]; // CC
                 objArray[intRowsStart, 99] = dr["EachConsApv"];
-                objArray[intRowsStart, 10] = dr["KpiEachConsCheck"];
+                objArray[intRowsStart, 100] = dr["KpiEachConsCheck"];
                 objArray[intRowsStart, 101] = dr["CutInLine"];
                 objArray[intRowsStart, 102] = dr["CutOffLine"];
                 objArray[intRowsStart, 103] = dr["CutInLine_SP"];
