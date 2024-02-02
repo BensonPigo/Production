@@ -387,6 +387,7 @@ SELECT
 	,c.Status
 	,[Carton]= IIF(c.Carton ='' AND c.Stage = '3rd party','N/A',c.Carton)
 	,[CFA] = dbo.getPass1(c.CFA)
+    ,[ReInspection] = IIF(c.ReInspection = 1, 'Y','')
 	,c.stage
 	,[FirstInspection] = IIF(c.FirstInspection = 1, 'Y','')
 	,c.Result
@@ -449,6 +450,7 @@ SELECT   t.ID
 		,[Inspected PoQty] = InspectedPoQty.Val
 		,Carton
 		,CFA
+        ,[ReInspection]
 		,Stage
 		,FirstInspection
 		,Result
@@ -873,6 +875,7 @@ drop table #tmpMain,#tmpMainRow6
 
                 this.printData.ColumnsStringAdd("Carton");
                 this.printData.ColumnsStringAdd("CFA");
+                this.printData.ColumnsStringAdd("ReInspection");
                 this.printData.ColumnsStringAdd("Stage");
                 this.printData.ColumnsStringAdd("FirstInspection");
                 this.printData.ColumnsStringAdd("Result");
@@ -922,6 +925,7 @@ drop table #tmpMain,#tmpMainRow6
 
                     nRow["Carton"] = sameIDs.Select(o => MyUtility.Convert.GetString(o["Carton"])).JoinToString(Environment.NewLine);
                     nRow["CFA"] = MyUtility.Convert.GetString(sameIDs.FirstOrDefault()["CFA"]);
+                    nRow["ReInspection"] = MyUtility.Convert.GetString(sameIDs.FirstOrDefault()["ReInspection"]);
                     nRow["Stage"] = MyUtility.Convert.GetString(sameIDs.FirstOrDefault()["Stage"]);
                     nRow["FirstInspection"] = MyUtility.Convert.GetString(sameIDs.FirstOrDefault()["FirstInspection"]);
                     nRow["Result"] = MyUtility.Convert.GetString(sameIDs.FirstOrDefault()["Result"]);
