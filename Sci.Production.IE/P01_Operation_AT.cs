@@ -55,8 +55,8 @@ namespace Sci.Production.IE
             ,[TradeRPM] = IA.RPM
             ,[RPM] =  COALESCE(NULLIF(IA.RPMEdited , ''), IA.RPM,IA.RPMEdited)
             ,[LaserSpeed] = COALESCE(NULLIF(IA.LaserSpeedEdited, ''), IA.LaserSpeed)
-            ,[TradeLaserSpeed] = IA.LaserSpeed
-            ,[SewingLength] = IA.SewingLength
+            ,[TradeLaserSpeed] = isnull(IA.LaserSpeed,'')
+            ,[SewingLength] = isnull(IA.SewingLength,'')
             ,[SewingLine] = IA.SewingLine
             ,[LaserLength] =IA.LaserLength
             ,[LaserLine] = IA.LaserLine
@@ -91,7 +91,13 @@ namespace Sci.Production.IE
             #endregion 表頭
 
             #region RPM下拉選單
-            DualResult cbResult = DBProxy.Current.Select(null, "select ID, Name, Value from IESelectCode where Type = '00016' order by ID", out this.dtRPM);
+
+            string sqlRPM = $@"select [ID] = '',[Name] = '', [Value] = 0  
+                               UNION  
+                               select [ID], [Name], [Value] from IESelectCode 
+                               where Type = '00016'";
+
+            DualResult cbResult = DBProxy.Current.Select(null, sqlRPM , out this.dtRPM);
             if (!cbResult)
             {
                 MyUtility.Msg.WarningBox(cbResult.ToString());
@@ -104,7 +110,13 @@ namespace Sci.Production.IE
             #endregion RPM下拉選單
 
             #region Speed下拉選單
-            if (cbResult = DBProxy.Current.Select(null, "select ID, Name, Value from IESelectCode where Type = '00017' order by ID", out this.dtSpeed))
+
+            string sqlSpeed = $@"select [ID] = '',[Name] = '', [Value] = 0  
+                               UNION  
+                               select [ID], [Name], [Value] from IESelectCode 
+                               where Type = '00017'";
+
+            if (cbResult = DBProxy.Current.Select(null, sqlSpeed, out this.dtSpeed))
             {
                 this.dtSpeed.Rows.InsertAt(this.dtSpeed.NewRow(), 0);
                 this.cbSpeedLaser.DataSource = this.dtSpeed;
@@ -195,8 +207,8 @@ namespace Sci.Production.IE
             decimal lineSewing = MyUtility.Convert.GetDecimal(this.txtLineSewing.Text);
             decimal lengthLaser = MyUtility.Convert.GetDecimal(this.txtLenghtLaser.Text);
             decimal lineLaser = MyUtility.Convert.GetDecimal(this.txtLineLaser.Text);
-            decimal rpmValue = this.dtRPM.AsEnumerable().Where(r => r["ID"].ToString() == this.cbRPM.SelectedValue2.ToString()).Select(r => r.Field<decimal>("Value")).FirstOrDefault();
-            decimal speedValue = this.dtSpeed.AsEnumerable().Where(r => r["ID"].ToString() == this.cbSpeedLaser.SelectedValue2.ToString()).Select(r => MyUtility.Convert.GetDecimal(r["Value"])).FirstOrDefault();
+            decimal rpmValue = this.dtRPM.AsEnumerable().Where(r => r["ID"].ToString() == this.cbRPM.SelectedValue2.ToString()).Select(r => r.Field<decimal?>("Value") ?? 0m).FirstOrDefault();
+            decimal speedValue = this.dtSpeed.AsEnumerable().Where(r => r["ID"].ToString() == this.cbSpeedLaser.SelectedValue2.ToString()).Select(r => r.Field<decimal?>("Value") ?? 0m).FirstOrDefault();
 
             foreach (DataRow dr in dtATDetail.Rows)
             {
