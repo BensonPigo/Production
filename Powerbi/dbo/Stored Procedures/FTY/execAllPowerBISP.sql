@@ -41,12 +41,12 @@ DECLARE @ErrDesc NVARCHAR(4000) = '';
 
 DECLARE @Stime datetime, @Etime datetime
 
---02) ImportEfficiencyBI 
+--02) P_Import_EfficiencyBI 
 BEGIN TRY
 	set @Stime = getdate()
 	set @StartDate = CAST(DATEADD(day,-60, GETDATE()) AS date)
 	set @EndDate   = CAST(GETDATE() AS date)
-	EXEC ImportEfficiencyBI @StartDate	,@EndDate
+	EXEC P_Import_EfficiencyBI @StartDate	,@EndDate
 	set @Etime = getdate()
 END TRY
 BEGIN CATCH
@@ -75,7 +75,7 @@ SET @ErrorMessage = ''
 
 -- Write in P_TransLog
 	insert into P_TransLog(functionName,Description,StartTime,EndTime,TransCode) 
-	values('ImportEfficiencyBI',@ErrDesc,@Stime,@Etime,@TransCode)
+	values('P_Import_EfficiencyBI',@ErrDesc,@Stime,@Etime,@TransCode)
 
 	SET @ErrDesc = ''
 

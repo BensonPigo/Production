@@ -2,14 +2,13 @@
 -- Create date: 2020/03/20
 -- Description:	Data Query Logic by PMS.Sewing R04, Import Data to P_SewingDailyOutput
 -- =============================================
-Create PROCEDURE [dbo].[ImportEfficiencyBI]
-
-@StartDate date,
-@EndDate date
-
+CREATE PROCEDURE [dbo].[P_Import_EfficiencyBI]
+	@StartDate date,
+	@EndDate date
 AS
 
 BEGIN
+SET NOCOUNT ON;
 
 declare @SDate as varchar(20) = CAST(@StartDate AS varchar) 
 declare @EDate as varchar(20) = CAST(@EndDate AS varchar)   
@@ -28,7 +27,7 @@ select s.id
 	,[SizeCode] = isnull(sdd.SizeCode, '')
 	,sd.ComboType
 	,[ActManPower] = s.Manpower
-	,[WorkHour] = iif(sdd.QAQty is null, sd.WorkHour, cast(sd.WorkHour * (sdd.QAQty * 1.0 / sd.QAQty) as numeric(6, 4)))
+	,[WorkHour] = iif(isnull(sd.QAQty, 0) = 0, sd.WorkHour, cast(sd.WorkHour * (sdd.QAQty * 1.0 / sd.QAQty) as numeric(6, 4)))
 	,[QAQty] = isnull(sdd.QAQty, 0)
 	,sd.InlineQty
 	,o.LocalOrder
@@ -283,23 +282,35 @@ order by MDivisionID,FactoryID,OutputDate,SewingLineID,Shift,Team,OrderId,Articl
 drop table #tmpSewingDetail,#tmp1stFilter,#tmpSewingGroup--,#tmp_s1
  
 
-MERGE INTO P_SewingDailyOutput t --要被insert/update/delete的表
-USING #Final s --被參考的表
-   ON t.FactoryID=s.FactoryID  
-   AND t.MDivisionID=s.MDivisionID 
-   AND t.SewingLineID=s.SewingLineID 
-   AND t.Team=s.Team 
-   AND t.Shift=s.Shift 
-   AND t.OrderId=s.OrderId 
-   AND t.Article=s.Article 
-   AND t.SizeCode=s.SizeCode 
-   AND t.ComboType=s.ComboType  
-   AND t.OutputDate = s.OutputDate
-   AND t.SubConOutContractNumber = s.SubConOutContractNumber
+insert into P_SewingDailyOutput(MDivisionID, FactoryID, ComboType, Category, CountryID, OutputDate, SewingLineID, Shift
+	, SubconOutFty, SubConOutContractNumber, Team, OrderID, Article, SizeCode, CustPONo, BuyerDelivery
+	, OrderQty, BrandID, OrderCategory, ProgramID, OrderTypeID, DevSample, CPURate, StyleID, Season, CdCodeID, ActualManpower
+	, NoOfHours, TotalManhours, TargetCPU, TMS, CPUPrice, TargetQty, TotalOutputQty, TotalCPU, CPUSewerHR, EFF, RFT, CumulateOfDays
+	, DateRange, ProdOutput, Diff, Rate, SewingReasonDesc, SciDelivery, CDCodeNew, ProductType, FabricType
+	, Lining, Gender, Construction, LockStatus)
+select s.MDivisionID,s.FactoryID,s.ComboType,s.FtyType,s.FtyCountry,s.OutputDate,s.SewingLineID,s.Shift
+	,s.SubconOutFty,s.SubConOutContractNumber,s.Team,s.OrderID,s.Article,s.SizeCode,s.CustPONo,s.BuyerDelivery
+	,s.OrderQty,s.Brand,s.Category,s.Program,s.OrderType,s.IsDevSample,s.CPURate,s.Style,s.Season,s.CDNo,s.ActManPower
+	,s.WorkHour,s.ManHour,s.TargetCPU,s.TMS,s.CPUPrice,s.TargetQty,s.QAQTY,s.TotalCPU,s.CPUSewer,s.EFF,s.RFT,s.CumulateDate
+	,s.DateRange,s.InlineQty,s.Diff,s.Rate,s.SewingReasonDesc,s.SciDelivery,s.CDCodeNew,s.ProductType,s.FabricType
+	,s.Lining,s.Gender,s.Construction,s.LockStatus
+from #Final s
+where not exists (select 1 from P_SewingDailyOutput t where t.FactoryID=s.FactoryID  
+													   AND t.MDivisionID=s.MDivisionID 
+													   AND t.SewingLineID=s.SewingLineID 
+													   AND t.Team=s.Team 
+													   AND t.Shift=s.Shift 
+													   AND t.OrderId=s.OrderId 
+													   AND t.Article=s.Article 
+													   AND t.SizeCode=s.SizeCode 
+													   AND t.ComboType=s.ComboType  
+													   AND t.OutputDate = s.OutputDate
+													   AND t.SubConOutContractNumber = s.SubConOutContractNumber)
 
-WHEN MATCHED THEN   
-    UPDATE SET 
-		t.MDivisionID =s.MDivisionID
+
+
+update t
+	set t.MDivisionID =s.MDivisionID
 		,t.FactoryID =s.FactoryID
 		,t.ComboType =s.ComboType
 		,t.Category =s.FtyType
@@ -351,61 +362,19 @@ WHEN MATCHED THEN
 		,t.Gender = s.Gender
 		,t.Construction = s.Construction
 		,t.LockStatus = s.LockStatus
-WHEN NOT MATCHED THEN
-    INSERT VALUES (
-			s.MDivisionID
-           ,s.FactoryID
-		   ,s.ComboType
-           ,s.FtyType
-           ,s.FtyCountry
-           ,s.OutputDate
-           ,s.SewingLineID
-           ,s.Shift
-           ,s.SubconOutFty
-           ,s.SubConOutContractNumber
-           ,s.Team
-           ,s.OrderID
-		   ,s.Article
-		   ,s.SizeCode
-           ,s.CustPONo
-           ,s.BuyerDelivery
-           ,s.OrderQty
-           ,s.Brand
-           ,s.Category
-           ,s.Program
-           ,s.OrderType
-           ,s.IsDevSample
-           ,s.CPURate
-           ,s.Style
-           ,s.Season
-           ,s.CDNo
-           ,s.ActManPower
-           ,s.WorkHour
-           ,s.ManHour
-           ,s.TargetCPU
-           ,s.TMS
-           ,s.CPUPrice
-           ,s.TargetQty
-           ,s.QAQTY
-           ,s.TotalCPU
-           ,s.CPUSewer
-           ,s.EFF
-           ,s.RFT
-           ,s.CumulateDate
-           ,s.DateRange
-           ,s.InlineQty
-           ,s.Diff
-           ,s.Rate
-           ,s.SewingReasonDesc
-		   ,s.SciDelivery
-		   ,s.CDCodeNew
-		   ,s.ProductType
-		   ,s.FabricType
-		   ,s.Lining
-		   ,s.Gender
-		   ,s.Construction
-		   ,s.LockStatus
-		  );
+from P_SewingDailyOutput t
+inner join #Final s on t.FactoryID=s.FactoryID  
+				   AND t.MDivisionID=s.MDivisionID 
+				   AND t.SewingLineID=s.SewingLineID 
+				   AND t.Team=s.Team 
+				   AND t.Shift=s.Shift 
+				   AND t.OrderId=s.OrderId 
+				   AND t.Article=s.Article 
+				   AND t.SizeCode=s.SizeCode 
+				   AND t.ComboType=s.ComboType  
+				   AND t.OutputDate = s.OutputDate
+				   AND t.SubConOutContractNumber = s.SubConOutContractNumber
+
 
 delete t
 from P_SewingDailyOutput t 
@@ -431,7 +400,3 @@ from BITableInfo b
 where b.id = 'P_SewingDailyOutput'
 
 End
-
-
-
-
