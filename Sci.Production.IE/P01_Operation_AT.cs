@@ -235,7 +235,16 @@ namespace Sci.Production.IE
             if (!VFP.Empty(this.cbSpeedLaser.SelectedValue2))
             {
                 var speedLengthValue = lengthLaser / 120m * speedValue * garment;
-                var speedLinesValue = ((lineLaser * garment) - 1m) * (speedLengthValue / (lineLaser * garment) / (this.cbSpeedLaser.SelectedValue2.ToString().Contains("40") ? 2m : 1.39m));
+                decimal speedLinesValue = 0;
+                decimal lineLaserGarmentProduct = lineLaser * garment;
+                decimal divisor = this.cbSpeedLaser.SelectedValue2.ToString().Contains("40") ? 2m : 1.39m;
+
+                // 檢查分母是否為零
+                if (lineLaserGarmentProduct != 0 && divisor != 0)
+                {
+                    speedLinesValue = (lineLaserGarmentProduct - 1m) * (speedLengthValue / lineLaserGarmentProduct / divisor);
+                }
+
                 sum_RPM_Speed += speedLengthValue + speedLinesValue;
             }
 
