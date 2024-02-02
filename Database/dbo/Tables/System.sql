@@ -86,6 +86,12 @@
 	[FabricPath] [nvarchar](120) NOT NULL,
 	[ColorPath] [nvarchar](120) NOT NULL,
 	[IsLoginCheckADAccount] [bit] NOT NULL,
+	[FtpIPDummy] [varchar](36) NOT NULL CONSTRAINT [DF_System_FtpIPDummy]  DEFAULT (''),
+	[FtpIDDummy] [varchar](20) NOT NULL CONSTRAINT [DF_System_FtpIDDummy]  DEFAULT (''),
+	[FtpPwdDummy] [varchar](36) NOT NULL CONSTRAINT [DF_System_FtpPwdDummy]  DEFAULT (''),
+	[ImportDataPathDummy] [varchar](60) NOT NULL CONSTRAINT [DF_System_ImportDataPathDummy]  DEFAULT (''),
+	[ImportDataFileNameDummy] [varchar](60) NOT NULL CONSTRAINT [DF_System_ImportDataFileNameDummy]  DEFAULT (''),
+	[ExportDataPathDummy] [varchar](60) NOT NULL CONSTRAINT [DF_System_ExportDataPathDummy]  DEFAULT (''),
  CONSTRAINT [PK_RgCode] PRIMARY KEY CLUSTERED 
 (
 	[RgCode] ASC
@@ -514,3 +520,57 @@ EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'系統參數�
 GO
 
 
+
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'資料交換dummy ftp ip',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'System',
+    @level2type = N'COLUMN',
+    @level2name = N'FtpIPDummy'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'資料交換dummy ftp 帳號',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'System',
+    @level2type = N'COLUMN',
+    @level2name = N'FtpIDDummy'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'資料交換dummy ftp 密碼',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'System',
+    @level2type = N'COLUMN',
+    @level2name = N'FtpPwdDummy'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'資料交換dummy Import檔案位置',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'System',
+    @level2type = N'COLUMN',
+    @level2name = N'ImportDataPathDummy'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'資料交換dummy import檔案名稱',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'System',
+    @level2type = N'COLUMN',
+    @level2name = N'ImportDataFileNameDummy'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'資料交換dummy 轉出檔案位置',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'System',
+    @level2type = N'COLUMN',
+    @level2name = N'ExportDataPathDummy'
