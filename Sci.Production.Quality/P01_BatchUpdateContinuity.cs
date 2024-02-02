@@ -102,7 +102,7 @@ namespace Sci.Production.Quality
                 .Text("SEQ2", header: "SEQ2", width: Widths.AnsiChars(2), iseditingreadonly: true)
                 .Text("Roll", header: "Roll", width: Widths.AnsiChars(8), iseditingreadonly: true)
                 .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(8), iseditingreadonly: true)
-                .Numeric("Ticketyds", header: "Ticket Yds", width: Widths.AnsiChars(6), integer_places: 10, decimal_places: 2, iseditingreadonly: true)
+                .Numeric("QTY", header: "Ticket Yds", width: Widths.AnsiChars(6), integer_places: 10, decimal_places: 2, iseditingreadonly: true)
                 .ComboBox("Scale", header: "Scale", width: Widths.AnsiChars(5), settings: this.Col_Scale())
                 .ComboBox("Result", header: "Result", width: Widths.AnsiChars(6), settings: this.Col_Result())
                 .Date("Inspdate", header: "Insp.Date", width: Widths.AnsiChars(10))
@@ -168,7 +168,7 @@ SELECT
     ,rd.Seq2
     ,rd.Roll
     ,rd.Dyelot
-    ,fs.TicketYds
+    ,[QTY] = rd.stockqty
     ,fs.Scale
     ,fs.Result
     ,fs.Inspdate
@@ -194,7 +194,7 @@ SELECT
     ,rd.Seq2
     ,rd.Roll
     ,rd.Dyelot
-    ,fs.TicketYds
+    ,[QTY] = rd.QTY
     ,fs.Scale
     ,fs.Result
     ,fs.Inspdate
@@ -262,17 +262,66 @@ WHERE rd.MINDQRCode = @MINDQRCode
             }
 
             string sqlcmd = $@"
-UPDATE fs
-SET
-    Scale = t.Scale
-    ,Result = t.Result
-    ,Inspdate = t.Inspdate
-    ,Inspector = t.Inspector
-    ,EditDate = GetDate()
-    ,EditName = t.Inspector
-FROM FIR_Continuity fs
-INNER JOIN #tmp t on t.FIRID = fs.ID AND t.Roll = fs.Roll AND t.Dyelot = fs.Dyelot
-";
+            /*UPDATE*/
+            IF EXISTS(
+	            SELECT 1
+	            FROM FIR_Continuity F 
+	            INNER JOIN #tmp t on t.FIRID = F.ID AND t.Roll = F.Roll AND t.Dyelot = F.Dyelot and t.selected = 1
+            )
+            BEGIN
+	            UPDATE fs
+	            SET
+		            Scale = t.Scale
+		            ,Result = t.Result
+		            ,Inspdate = t.Inspdate
+		            ,Inspector = t.Inspector
+		            ,EditDate = GetDate()
+		            ,EditName = '{Env.User.UserID}'
+	            FROM FIR_Continuity fs
+	            INNER JOIN #tmp t on t.FIRID = fs.ID AND t.Roll = fs.Roll AND t.Dyelot = fs.Dyelot and t.Selected = 1
+	            SELECT * FROM FIR_Continuity where id = 429467
+            END
+            
+            /*INSERT*/
+            IF EXISTS(
+            SELECT 1
+            FROM #tmp t
+            left JOIN FIR_Continuity f on t.FIRID = F.ID AND t.Roll = F.Roll AND t.Dyelot = F.Dyelot
+            where t.selected = 1 and f.Roll is null
+            )
+            BEGIN
+	            INSERT INTO FIR_Continuity
+	            (
+		            [ID]
+                  ,[Roll]
+                  ,[Dyelot]
+                  ,[Scale]
+                  ,[Inspdate]
+                  ,[Inspector]
+                  ,[Result]
+                  ,[AddName]
+                  ,[AddDate]
+                  ,[TicketYds]
+	            )
+	            SELECT 
+	            [ID] = T.FIRID
+	            ,[ROLL] = T.ROLL
+	            ,[DYELOT] = T.DYELOT
+	            ,[SCALE] = T.SCALE
+	            ,[Inspdate] = t.Inspdate
+	            ,[Inspector] = t.Inspector
+	            ,[RESULT] = t.Result
+	            ,[AddName] = '{Env.User.UserID}'
+	            ,[AddDate] = GETDATE()
+	            ,[TicketYds] = T.qty
+	            FROM #tmp t
+	            left JOIN FIR_Continuity f on t.FIRID = F.ID AND t.Roll = F.Roll AND t.Dyelot = F.Dyelot
+	            where t.selected = 1 and f.Roll is null
+            END
+
+            DROP TABLE #TMP
+
+            ";
             using (TransactionScope transactionscope = new TransactionScope())
             {
                 try
