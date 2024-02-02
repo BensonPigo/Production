@@ -331,13 +331,13 @@ and (((lmdavg.avgTotalCycle - lmd.TotalCycle) / lmdavg.avgTotalCycle) * 100 >  (
                     dateQuery += string.Format("and convert(varchar(10), ss.Inline, 120) <= '{0}' ", this.dateInlineDate.Value2.Value.ToString("yyyy-MM-dd"));
                 }
 
-                if (!MyUtility.Check.Empty(this.dateSewingDate.Value1.Value))
+                if (!MyUtility.Check.Empty(this.dateSewingDate.Value1))
                 {
                     dateQuery += $@" 
 and (convert(date,ss.Inline) >= '{this.dateSewingDate.Value1.Value.ToString("yyyy/MM/dd")}' or ('{this.dateSewingDate.Value1.Value.ToString("yyyy/MM/dd")}' between convert(date,ss.Inline) and convert(date,ss.Offline)))";
                 }
 
-                if (!MyUtility.Check.Empty(this.dateSewingDate.Value2.Value))
+                if (!MyUtility.Check.Empty(this.dateSewingDate.Value2))
                 {
                     dateQuery += $@" 
 and (convert(date,ss.Offline) <= '{this.dateSewingDate.Value2.Value.ToString("yyyy/MM/dd")}' or ('{this.dateSewingDate.Value2.Value.ToString("yyyy/MM/dd")}' between convert(date,ss.Inline) and convert(date,ss.Offline)))";
