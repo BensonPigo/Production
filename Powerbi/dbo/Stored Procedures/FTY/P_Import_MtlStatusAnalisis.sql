@@ -1,4 +1,4 @@
-﻿Create Procedure [dbo].[P_ImportMtlStatusAnalisis]
+﻿Create Procedure [dbo].[P_Import_MtlStatusAnalisis]
 	@CloseDate_S Date = NULL,
 	@CloseDate_E Date = NULL
 As
@@ -12,7 +12,7 @@ Begin
 
 	IF @CloseDate_E IS NULL
 	BEGIN
-		SET @CloseDate_E = getdate()
+		SET @CloseDate_E = dateadd(DAY, 30, getdate())
 	END
 
 
