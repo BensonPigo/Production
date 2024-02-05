@@ -5,6 +5,7 @@ using System.Windows.Forms;
 using Sci.Production.PublicPrg;
 using Ict;
 using Sci.Data;
+using static Sci.MyUtility;
 
 namespace Sci.Production.Shipping
 {
@@ -67,7 +68,7 @@ namespace Sci.Production.Shipping
             {
                 this.editDescription.ReadOnly = true;
                 this.txtUnit.ReadOnly = true;
-                this.txtAccountNo.TextBox1.ReadOnly = true;
+                this.txtAccNo.ReadOnly = true;
             }
         }
 
@@ -103,7 +104,7 @@ namespace Sci.Production.Shipping
 
             if (string.IsNullOrWhiteSpace(MyUtility.Convert.GetString(this.CurrentMaintain["AccountID"])))
             {
-                this.txtAccountNo.Focus();
+                this.txtAccNo.Focus();
                 MyUtility.Msg.WarningBox("< Account No > can not be empty!");
                 return false;
             }
@@ -265,6 +266,64 @@ namespace Sci.Production.Shipping
             DBProxy.Current.Execute(null, $"UPDATE ShipExpense SET Junk=0,Status='New',EditDate=GETDATE(),EditName='{Env.User.UserID}' WHERE ID='{this.CurrentMaintain["ID"]}'");
             MyUtility.Msg.InfoBox("Success!");
             this.RenewData();
+        }
+
+        private void TxtAccNo_Validating(object sender, CancelEventArgs e)
+        {
+            string textValue = this.txtAccNo.Text;
+            if (!string.IsNullOrWhiteSpace(textValue) && textValue != this.txtAccNo.OldValue)
+            {
+                string sqlcmd = $@"
+                select 
+                [ID] = pms_Account.ID
+                ,[Name] = fms_Account.[Name]
+                from AccountNoSetting pms_Account
+                inner join SciFMS_AccountNo fms_Account WITH(NOLOCK) on fms_Account.ID = pms_Account.ID
+                where UnselectableShipB03 = 0 and fms_Account.ID = '{textValue}'
+                ORDER BY pms_Account.ID";
+                if (!MyUtility.Check.Seek(sqlcmd))
+                {
+                    this.txtAccNo.Text = string.Empty;
+                    e.Cancel = true;
+                    MyUtility.Msg.WarningBox(string.Format("< Account No: {0} > not found!!!", textValue));
+                    return;
+                }
+            }
+            }
+
+        private void TxtAccNo_TextChanged(object sender, EventArgs e)
+        {
+            string textValue = this.txtAccNo.Text;
+            string sqlcmd = $@"
+            select [Name] = fms_Account.[Name]
+            from AccountNoSetting pms_Account
+            inner join SciFMS_AccountNo fms_Account WITH(NOLOCK) on fms_Account.ID = pms_Account.ID
+            where UnselectableShipB03 = 0 and fms_Account.ID = '{textValue}'
+            ORDER BY pms_Account.ID";
+
+            this.txtAccName.Text = MyUtility.GetValue.Lookup(sqlcmd);
+        }
+
+        private void TxtAccNo_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        {
+            string sqlcmd = $@"
+            select 
+            [ID] = pms_Account.ID
+            ,[Name] = fms_Account.[Name]
+            from AccountNoSetting pms_Account
+            inner join SciFMS_AccountNo fms_Account WITH(NOLOCK) on fms_Account.ID = pms_Account.ID
+            where UnselectableShipB03 = 0
+            ORDER BY pms_Account.ID";
+
+            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlcmd, "8,30", this.txtAccNo.Text);
+
+            DialogResult returnResult = item.ShowDialog();
+            if (returnResult == DialogResult.Cancel)
+            {
+                return;
+            }
+
+            this.txtAccNo.Text = item.GetSelectedString();
         }
     }
 }
