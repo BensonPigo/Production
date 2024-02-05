@@ -84,7 +84,7 @@ namespace Sci.Production.IE
             this.cbType.Text = MyUtility.Convert.GetString(this.dtHead.Rows[0]["Type"]);
             this.txtATGroup.Text = MyUtility.Convert.GetString(this.dtHead.Rows[0]["ATGroup"]);
             this.txtComponent.Text = MyUtility.Convert.GetString(this.dtHead.Rows[0]["Component"]);
-            this.chkQuilting.Checked = MyUtility.Convert.GetString(this.dtHead.Rows[0]["IsQuilting"]) == "1" ? true : false;
+            this.chkQuilting.Checked = MyUtility.Convert.GetBool(this.dtHead.Rows[0]["IsQuilting"]);
             this.txtReplacedOperation.Text = MyUtility.Convert.GetString(this.dtHead.Rows[0]["OperationID"]);
             this.txtPieceOfGarment.Text = MyUtility.Convert.GetString(this.dtHead.Rows[0]["PieceOfGarment"]);
             this.txtPieceOfSeamer.Text = isSetAT ? MyUtility.Convert.GetString(this.dtHead.Rows[0]["PieceOfSeamer"]) : MyUtility.Convert.GetString(this.dtHead.Rows[0]["TradePieceOfSeamer"]);
