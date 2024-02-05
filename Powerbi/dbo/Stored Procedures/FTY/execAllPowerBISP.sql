@@ -1388,7 +1388,7 @@ SET @ErrorMessage = ''
 /****************************************************************************************************************************/
 /***********************************P_Import_ProdEfficiencyByFactorySewingLine****************************************************************/
 BEGIN TRY
-	set @StartDate = cast(concat(cast(year(getdate())as varchar), cast(month(dateadd(month, -1, getdate())) as varchar), '01') as date) 
+	set @StartDate = DATEADD(MONTH, DATEDIFF(MONTH, 0, GETDATE()) - 1, 0)
 	set @Stime = getdate()  
 	execute [dbo].[P_Import_ProdEfficiencyByFactorySewingLine] @StartDate
 	set @Etime = getdate()
