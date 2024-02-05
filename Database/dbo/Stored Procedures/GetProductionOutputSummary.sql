@@ -64,9 +64,7 @@ from
 				(
 					(@DateType = 1 and Year(cast(dateadd(day,-7,o.SciDelivery) as date)) = @Year )
 					or 
-					(@DateType = 2 and @ChkMonthly = 1 and Year(o.BuyerDelivery) = @Year )
-					or
-					(@DateType = 2 and @ChkMonthly = 0 and Year(cast(dateadd(day,-7,o.BuyerDelivery) as date)) = @Year)
+					(@DateType = 2 and Year(o.BuyerDelivery) = @Year )
 				)
 			)
 		)
@@ -121,9 +119,7 @@ from
 					(
 						(@DateType = 1 and Year(cast(dateadd(day,-7,o.SciDelivery) as date)) = @Year )
 						or 
-						(@DateType = 2 and @ChkMonthly = 1 and Year(o.BuyerDelivery) = @Year )
-						or
-						(@DateType = 2 and @ChkMonthly = 0 and Year(cast(dateadd(day,-7,o.BuyerDelivery) as date)) = @Year)
+						(@DateType = 2 and Year(o.BuyerDelivery) = @Year )
 
 					)
 				)
@@ -178,9 +174,7 @@ from (
 		and (
 				(@DateType = 1 and Year(cast(dateadd(day,-7,o.SciDelivery) as date)) = @Year )
 				or 
-				(@DateType = 2 and @ChkMonthly = 1 and Year(o.BuyerDelivery) = @Year )
-				or
-				(@DateType = 2 and @ChkMonthly = 0 and Year(cast(dateadd(day,-7,o.BuyerDelivery) as date)) = @Year)
+				(@DateType = 2 and Year(o.BuyerDelivery) = @Year )
 		 )
 		and 
 		(	-- if use in PowerBI then filter SciDelivery or BuyerDelivery
@@ -196,9 +190,7 @@ from (
 				(
 					(@DateType = 1 and Year(cast(dateadd(day,-7,o.SciDelivery) as date)) = @Year )
 					or 
-					(@DateType = 2 and @ChkMonthly = 1 and Year(o.BuyerDelivery) = @Year )
-					or
-					(@DateType = 2 and @ChkMonthly = 0 and Year(cast(dateadd(day,-7,o.BuyerDelivery) as date)) = @Year)
+					(@DateType = 2 and Year(o.BuyerDelivery) = @Year )
 					)
 			)
 		)
@@ -246,9 +238,7 @@ from (
 		 		(
 		 			(@DateType = 1 and Year(cast(dateadd(day,-7,o.SciDelivery) as date)) = @Year )
 					or 
-					(@DateType = 2 and @ChkMonthly = 1 and Year(o.BuyerDelivery) = @Year )
-					or
-					(@DateType = 2 and @ChkMonthly = 0 and Year(cast(dateadd(day,-7,o.BuyerDelivery) as date)) = @Year)
+					(@DateType = 2 and Year(o.BuyerDelivery) = @Year )
 		 		)
 		 	)
 		 )
@@ -410,7 +400,7 @@ outer apply (select Qty=sum(pd.ShipQty)
 ) GetPulloutData
 outer apply (
 	select  [SCI] = dateadd(day,-7,o.SciDelivery)
-           ,[Buyer] = dateadd(day,-7,o.BuyerDelivery)
+           ,[Buyer] = o.BuyerDelivery
 		   ,[BuyerMonthHalf] = o.BuyerDelivery
 ) KeyDate
 
