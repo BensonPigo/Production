@@ -92,10 +92,7 @@ namespace Sci.Production.IE
 
             #region RPM下拉選單
 
-            string sqlRPM = $@"select [ID] = '',[Name] = '', [Value] = 0  
-                               UNION  
-                               select [ID], [Name], [Value] from IESelectCode 
-                               where Type = '00016'";
+            string sqlRPM = $@" select [ID], [Name], [Value] from IESelectCode where Type = '00016'";
 
             DualResult cbResult = DBProxy.Current.Select(null, sqlRPM , out this.dtRPM);
             if (!cbResult)
@@ -104,6 +101,7 @@ namespace Sci.Production.IE
                 return;
             }
 
+            this.dtRPM.Rows.InsertAt(this.dtRPM.NewRow(), 0);
             this.cbRPM.DataSource = this.dtRPM;
             this.cbRPM.DisplayMember = "Name";
             this.cbRPM.ValueMember = "ID";
@@ -111,10 +109,7 @@ namespace Sci.Production.IE
 
             #region Speed下拉選單
 
-            string sqlSpeed = $@"select [ID] = '',[Name] = '', [Value] = 0  
-                               UNION  
-                               select [ID], [Name], [Value] from IESelectCode 
-                               where Type = '00017'";
+            string sqlSpeed = $@" select [ID], [Name], [Value] from IESelectCode where Type = '00017'";
 
             if (cbResult = DBProxy.Current.Select(null, sqlSpeed, out this.dtSpeed))
             {
@@ -167,7 +162,7 @@ namespace Sci.Production.IE
             FROM IETMS_AT_Detail IAD WITH(NOLOCK)
             LEFT JOIN IESelectCode IC WITH(NOLOCK) ON IAD.IESelectCodeType = IC.Type AND IAD.IESelectCodeID = IC.ID
             LEFT JOIN Reason R WITH(NOLOCK) ON IAD.IESelectCodeType = R.ID AND R.ReasonTypeID = 'IE_SELECT_CODE'
-            WHERE IAD.IETMSUkey = {this.strIetmsUkey}";
+            WHERE IAD.IETMSUkey = {this.strIetmsUkey} and IAD.CodeFrom = '{this.strCodeFrom}'";
 
             dualResult = DBProxy.Current.Select(null, sqlcmd, out DataTable dt);
             if (!dualResult)
@@ -199,6 +194,8 @@ namespace Sci.Production.IE
             decimal sum_RPM_Speed = 0.0m;
             int iSuggested_Manpower = 0;
             int iSuggested_Machine = 0;
+            decimal speedValue = 0m;
+            decimal rpmValue = 0m;
 
             // 資料來源
             decimal seamer = MyUtility.Convert.GetDecimal(this.txtPieceOfSeamer.Text);
@@ -207,8 +204,15 @@ namespace Sci.Production.IE
             decimal lineSewing = MyUtility.Convert.GetDecimal(this.txtLineSewing.Text);
             decimal lengthLaser = MyUtility.Convert.GetDecimal(this.txtLenghtLaser.Text);
             decimal lineLaser = MyUtility.Convert.GetDecimal(this.txtLineLaser.Text);
-            decimal rpmValue = this.dtRPM.AsEnumerable().Where(r => r["ID"].ToString() == this.cbRPM.SelectedValue2.ToString()).Select(r => r.Field<decimal?>("Value") ?? 0m).FirstOrDefault();
-            decimal speedValue = this.dtSpeed.AsEnumerable().Where(r => r["ID"].ToString() == this.cbSpeedLaser.SelectedValue2.ToString()).Select(r => r.Field<decimal?>("Value") ?? 0m).FirstOrDefault();
+            if (this.cbRPM.SelectedValue2 != null)
+            {
+                rpmValue = this.dtRPM.AsEnumerable().Where(r => r["ID"].ToString() == this.cbRPM.SelectedValue2.ToString()).Select(r => r.Field<decimal?>("Value") ?? 0m).FirstOrDefault();
+            }
+
+            if (this.cbSpeedLaser.SelectedValue2 != null)
+            {
+                speedValue = this.dtSpeed.AsEnumerable().Where(r => r["ID"].ToString() == this.cbSpeedLaser.SelectedValue2.ToString()).Select(r => r.Field<decimal?>("Value") ?? 0m).FirstOrDefault();
+            }
 
             foreach (DataRow dr in dtATDetail.Rows)
             {
@@ -321,9 +325,9 @@ namespace Sci.Production.IE
             ID.CodeFrom = '{this.strCodeFrom}' and 
             td.ID = '{this.strTimeStudyID}' and 
             td.[MachineTypeID] like 'AT%'
-
             ";
             DBProxy.Current.Execute(null, sqlcmd);
+            this.GetBottom();
         }
     }
 }
