@@ -257,6 +257,7 @@ SELECT  t.ID
 		,DefectQty
 		,SQR
 		,Remark
+into #tmpFinal
 FROM  #tmp t
 OUTER APPLY(
 	SELECT [Val] = COUNT(1)
@@ -277,7 +278,92 @@ OUTER APPLY(
         AND (',' + t.Carton + ',') like ('%,' + pd.CTNStartNo + ',%')
 )InspectedPoQty   --計算所有階段的總成衣件數
 
-DROP TABLE #tmp ,#MainData ,#PackingList_Detail,#MainData1
+-- 相同ID合併成一筆 by ISP20240116
+select   AuditDate
+		,BuyerDelivery
+		,OrderID
+		,CustPoNo
+		,StyleID
+		,BrandID
+		,Dest
+		,Seq = Seq.value
+	    ,SewingLineID
+		,VasShas
+		,ClogReceivedPercentage
+		,MDivisionid
+		,FactoryID
+		,Shift
+		,Team
+		,Qty = sum(Qty)
+		,Status
+		,[TTL CTN] = sum([TTL CTN])
+		,[Inspected Ctn] = sum([Inspected Ctn])
+		,[Inspected PoQty] = sum([Inspected PoQty])
+		,Carton = Carton.value
+		,CFA
+        ,[ReInspection]
+		,Stage
+		,FirstInspection
+		,Result
+		,InspectQty
+		,DefectQty
+		,SQR
+		,Remark
+from #tmpFinal t
+outer apply(
+	select value = Stuff((
+		select concat(',',seq)
+		from (
+				select 	distinct
+					seq
+				from dbo.#tmpFinal s
+				where s.id = t.ID
+			) s
+		for xml path ('')
+	) , 1, 1, '')
+) Seq
+outer apply(
+	select value = Stuff((
+		select concat(',',Carton)
+		from (
+				select 	distinct
+					Carton
+				from dbo.#tmpFinal s
+				where s.id = t.ID
+			) s
+		for xml path ('')
+	) , 1, 1, '')
+) Carton
+group by AuditDate
+		,BuyerDelivery
+		,OrderID
+		,CustPoNo
+		,StyleID
+		,BrandID
+		,Dest
+		,Seq.value
+	    ,SewingLineID
+		,VasShas
+		,ClogReceivedPercentage
+		,MDivisionid
+		,FactoryID
+		,Shift
+		,Team
+		,Status
+		, Carton.value
+		,CFA
+        ,[ReInspection]
+		,Stage
+		,FirstInspection
+		,Result
+		,InspectQty
+		,DefectQty
+		,SQR
+		,Remark
+
+
+DROP TABLE #tmp ,#MainData ,#PackingList_Detail,#MainData1,#tmpFinal
+
 ");
 
                 #endregion
@@ -460,6 +546,7 @@ SELECT   t.ID
 		,NoOfDefect
 		,Remark
 		,Action
+into #tmpFinal
 FROM  #tmp t
 OUTER APPLY(
 	SELECT [Val] = COUNT(1)
@@ -481,7 +568,96 @@ OUTER APPLY(
 )InspectedPoQty   --計算所有階段的總成衣件數
 Order by id
 
-DROP TABLE #tmp ,#MainData ,#PackingList_Detail,#MainData1
+-- 相同CFAInspectionRecord_Detail_Key合併成一筆 by ISP20240116
+select  AuditDate
+		,BuyerDelivery
+		,OrderID
+		,CustPoNo
+		,StyleID
+		,BrandID
+		,Dest
+		,Seq = Seq.value
+        ,SewingLineID
+		,VasShas
+		,ClogReceivedPercentage
+		,MDivisionid
+		,FactoryID
+		,Shift
+		,Team
+		,Qty = sum(Qty)
+		,Status
+		,[TTL CTN] = sum([TTL CTN])
+		,[Inspected Ctn] = sum([Inspected Ctn])
+		,[Inspected PoQty] = sum([Inspected PoQty])
+		,Carton = Carton.value
+		,CFA
+		,Stage
+		,FirstInspection
+		,Result
+		,InspectQty
+		,DefectQty
+		,SQR
+		,DefectDescription
+		,AreaCodeDesc
+		,NoOfDefect
+		,Remark
+		,Action 
+FROM #tmpFinal t
+outer apply(
+	select value = Stuff((
+		select concat(',',seq)
+		from (
+				select 	distinct
+					seq
+				from dbo.#tmpFinal s
+				where s.CFAInspectionRecord_Detail_Key = t.CFAInspectionRecord_Detail_Key
+			) s
+		for xml path ('')
+	) , 1, 1, '')
+) Seq
+outer apply(
+	select value = Stuff((
+		select concat(',',Carton)
+		from (
+				select 	distinct
+					Carton
+				from dbo.#tmpFinal s
+				where s.CFAInspectionRecord_Detail_Key = t.CFAInspectionRecord_Detail_Key
+			) s
+		for xml path ('')
+	) , 1, 1, '')
+) Carton
+group by AuditDate
+		,BuyerDelivery
+		,OrderID
+		,CustPoNo
+		,StyleID
+		,BrandID
+		,Dest
+		,Seq.value
+        ,SewingLineID
+		,VasShas
+		,ClogReceivedPercentage
+		,MDivisionid
+		,FactoryID
+		,Shift
+		,Team
+		,Status
+		,Carton.value
+		,CFA
+		,Stage
+		,FirstInspection
+		,Result
+		,InspectQty
+		,DefectQty
+		,SQR
+		,DefectDescription
+		,AreaCodeDesc
+		,NoOfDefect
+		,Remark
+		,Action 
+
+DROP TABLE #tmp ,#MainData ,#PackingList_Detail,#MainData1,#tmpFinal
 
 ");
                 #endregion
@@ -745,212 +921,11 @@ drop table #tmpMain,#tmpMainRow6
 ");
             }
 
-            DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), paramList, out this.final);
+            DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), paramList, out this.printData);
             if (!result)
             {
                 DualResult failResult = new DualResult(false, "Query data fail\r\n" + result.ToString());
                 return failResult;
-            }
-
-            this.printData = new DataTable();
-            if (this.reportType == "Summary")
-            {
-                List<string> idList = this.final.AsEnumerable().Select(o => MyUtility.Convert.GetString(o["ID"])).Distinct().ToList();
-                List<DataRow> orderList = this.final.AsEnumerable().OrderBy(o => MyUtility.Convert.GetString(o["OrderID"])).ToList();
-
-                this.printData.ColumnsStringAdd("AuditDate");
-                this.printData.ColumnsStringAdd("BuyerDelivery");
-                this.printData.ColumnsStringAdd("OrderID");
-                this.printData.ColumnsStringAdd("CustPoNo");
-                this.printData.ColumnsStringAdd("StyleID");
-
-                this.printData.ColumnsStringAdd("BrandID");
-                this.printData.ColumnsStringAdd("Dest");
-                this.printData.ColumnsStringAdd("Seq");
-                this.printData.ColumnsStringAdd("SewingLineID");
-                this.printData.ColumnsStringAdd("VasShas");
-
-                this.printData.ColumnsStringAdd("ClogReceivedPercentage");
-                this.printData.ColumnsStringAdd("MDivisionid");
-                this.printData.ColumnsStringAdd("FactoryID");
-                this.printData.ColumnsStringAdd("Shift");
-                this.printData.ColumnsStringAdd("Team");
-
-                this.printData.ColumnsIntAdd("Qty");
-                this.printData.ColumnsStringAdd("Status");
-                this.printData.ColumnsIntAdd("TTL CTN");
-                this.printData.ColumnsIntAdd("Inspected Ctn");
-                this.printData.ColumnsIntAdd("Inspected PoQty");
-
-                this.printData.ColumnsStringAdd("Carton");
-                this.printData.ColumnsStringAdd("CFA");
-                this.printData.ColumnsStringAdd("ReInspection");
-                this.printData.ColumnsStringAdd("Stage");
-                this.printData.ColumnsStringAdd("FirstInspection");
-                this.printData.ColumnsStringAdd("Result");
-
-                this.printData.ColumnsIntAdd("InspectQty");
-                this.printData.ColumnsIntAdd("DefectQty");
-                this.printData.ColumnsDecimalAdd("SQR");
-                this.printData.ColumnsStringAdd("Remark");
-
-                foreach (string cFAInspectionRecord_ID in idList)
-                {
-                    DataRow nRow = this.printData.NewRow();
-                    List<DataRow> sameIDs = orderList.Where(o => MyUtility.Convert.GetString(o["ID"]) == cFAInspectionRecord_ID).ToList();
-                    string stage = MyUtility.Convert.GetString(sameIDs.FirstOrDefault()["Stage"]);
-
-                    nRow["AuditDate"] = MyUtility.Convert.GetDate(sameIDs.FirstOrDefault()["AuditDate"]).Value.ToShortDateString();
-                    nRow["BuyerDelivery"] = sameIDs.Select(o => MyUtility.Convert.GetDate(o["BuyerDelivery"]).Value.ToShortDateString()).JoinToString(Environment.NewLine);
-                    nRow["OrderID"] = sameIDs.Select(o => MyUtility.Convert.GetString(o["OrderID"])).JoinToString(Environment.NewLine);
-                    nRow["CustPoNo"] = sameIDs.Select(o => MyUtility.Convert.GetString(o["CustPoNo"])).JoinToString(Environment.NewLine);
-                    nRow["StyleID"] = sameIDs.Select(o => MyUtility.Convert.GetString(o["StyleID"])).JoinToString(Environment.NewLine);
-
-                    nRow["BrandID"] = sameIDs.Select(o => MyUtility.Convert.GetString(o["BrandID"])).JoinToString(Environment.NewLine);
-                    nRow["Dest"] = sameIDs.Select(o => MyUtility.Convert.GetString(o["Dest"])).JoinToString(Environment.NewLine);
-                    nRow["Seq"] = sameIDs.Select(o => MyUtility.Convert.GetString(o["Seq"])).JoinToString(Environment.NewLine);
-                    nRow["SewingLineID"] = MyUtility.Convert.GetString(sameIDs.FirstOrDefault()["SewingLineID"]);
-                    nRow["VasShas"] = sameIDs.Select(o => MyUtility.Convert.GetString(o["VasShas"])).JoinToString(Environment.NewLine);
-
-                    nRow["ClogReceivedPercentage"] = MyUtility.Convert.GetString(sameIDs.FirstOrDefault()["ClogReceivedPercentage"]);
-                    nRow["MDivisionid"] = MyUtility.Convert.GetString(sameIDs.FirstOrDefault()["MDivisionid"]);
-                    nRow["FactoryID"] = MyUtility.Convert.GetString(sameIDs.FirstOrDefault()["FactoryID"]);
-                    nRow["Shift"] = MyUtility.Convert.GetString(sameIDs.FirstOrDefault()["Shift"]);
-                    nRow["Team"] = MyUtility.Convert.GetString(sameIDs.FirstOrDefault()["Team"]);
-
-                    nRow["Qty"] = sameIDs.Sum(o => MyUtility.Convert.GetInt(o["Qty"]));
-                    nRow["Status"] = MyUtility.Convert.GetString(sameIDs.FirstOrDefault()["Status"]);
-                    nRow["TTL CTN"] = sameIDs.Sum(o => MyUtility.Convert.GetInt(o["TTL CTN"]));
-
-                    nRow["Inspected Ctn"] = sameIDs.Sum(o => MyUtility.Convert.GetInt(o["Inspected Ctn"]));
-                    nRow["Inspected PoQty"] = sameIDs.Sum(o => MyUtility.Convert.GetInt(o["Inspected PoQty"]));
-
-                    nRow["Carton"] = sameIDs.Select(o => MyUtility.Convert.GetString(o["Carton"])).JoinToString(Environment.NewLine);
-                    nRow["CFA"] = MyUtility.Convert.GetString(sameIDs.FirstOrDefault()["CFA"]);
-                    nRow["ReInspection"] = MyUtility.Convert.GetString(sameIDs.FirstOrDefault()["ReInspection"]);
-                    nRow["Stage"] = stage;
-                    nRow["FirstInspection"] = MyUtility.Convert.GetString(sameIDs.FirstOrDefault()["FirstInspection"]);
-                    nRow["Result"] = MyUtility.Convert.GetString(sameIDs.FirstOrDefault()["Result"]);
-
-                    // 表頭 CFAInspectionRecord 的值, 不重複加總
-                    nRow["InspectQty"] = MyUtility.Convert.GetInt(sameIDs.FirstOrDefault()["InspectQty"]);
-                    nRow["DefectQty"] = MyUtility.Convert.GetInt(sameIDs.FirstOrDefault()["DefectQty"]);
-                    nRow["SQR"] = MyUtility.Convert.GetDecimal(sameIDs.FirstOrDefault()["SQR"]);
-                    nRow["Remark"] = MyUtility.Convert.GetString(sameIDs.FirstOrDefault()["Remark"]);
-
-                    this.printData.Rows.Add(nRow);
-                }
-            }
-
-            if (this.reportType == "Detail")
-            {
-                List<string> idList = this.final.AsEnumerable().Select(o => MyUtility.Convert.GetString(o["CFAInspectionRecord_Detail_Key"])).Distinct().ToList();
-                List<DataRow> orderList = this.final.AsEnumerable().OrderBy(o => MyUtility.Convert.GetString(o["OrderID"])).ToList();
-
-                this.printData.ColumnsStringAdd("AuditDate");
-                this.printData.ColumnsStringAdd("BuyerDelivery");
-                this.printData.ColumnsStringAdd("OrderID");
-                this.printData.ColumnsStringAdd("CustPoNo");
-                this.printData.ColumnsStringAdd("StyleID");
-
-                this.printData.ColumnsStringAdd("BrandID");
-                this.printData.ColumnsStringAdd("Dest");
-                this.printData.ColumnsStringAdd("Seq");
-                this.printData.ColumnsStringAdd("SewingLineID");
-                this.printData.ColumnsStringAdd("VasShas");
-
-                this.printData.ColumnsStringAdd("ClogReceivedPercentage");
-                this.printData.ColumnsStringAdd("MDivisionid");
-                this.printData.ColumnsStringAdd("FactoryID");
-                this.printData.ColumnsStringAdd("Shift");
-                this.printData.ColumnsStringAdd("Team");
-
-                this.printData.ColumnsIntAdd("Qty");
-                this.printData.ColumnsStringAdd("Status");
-                this.printData.ColumnsIntAdd("TTL CTN");
-                this.printData.ColumnsIntAdd("Inspected Ctn");
-                this.printData.ColumnsIntAdd("Inspected PoQty");
-
-                this.printData.ColumnsStringAdd("Carton");
-                this.printData.ColumnsStringAdd("CFA");
-                this.printData.ColumnsStringAdd("Stage");
-                this.printData.ColumnsStringAdd("FirstInspection");
-                this.printData.ColumnsStringAdd("Result");
-
-                this.printData.ColumnsIntAdd("InspectQty");
-                this.printData.ColumnsIntAdd("DefectQty");
-                this.printData.ColumnsDecimalAdd("SQR");
-                this.printData.ColumnsStringAdd("DefectDescription");
-                this.printData.ColumnsStringAdd("AreaCodeDesc");
-
-                this.printData.ColumnsIntAdd("NoOfDefect");
-                this.printData.ColumnsStringAdd("Remark");
-                this.printData.ColumnsStringAdd("Action");
-
-                // this.printData = this.final.Copy();
-                // ISP20201551 的Detail寫法，先保留
-                foreach (var cFAInspectionRecord_ID in idList)
-                {
-                    DataRow nRow = this.printData.NewRow();
-                    List<DataRow> sameIDs = orderList.Where(o => MyUtility.Convert.GetString(o["CFAInspectionRecord_Detail_Key"]) == cFAInspectionRecord_ID).ToList();
-                    string stage = MyUtility.Convert.GetString(sameIDs.FirstOrDefault()["Stage"]);
-
-                    nRow["AuditDate"] = MyUtility.Convert.GetDate(sameIDs.FirstOrDefault()["AuditDate"]).Value.ToShortDateString();
-                    nRow["BuyerDelivery"] = sameIDs.Select(o => MyUtility.Convert.GetDate(o["BuyerDelivery"]).Value.ToShortDateString()).JoinToString(Environment.NewLine);
-                    nRow["OrderID"] = sameIDs.Select(o => MyUtility.Convert.GetString(o["OrderID"])).JoinToString(Environment.NewLine);
-                    nRow["CustPoNo"] = sameIDs.Select(o => MyUtility.Convert.GetString(o["CustPoNo"])).JoinToString(Environment.NewLine);
-                    nRow["StyleID"] = sameIDs.Select(o => MyUtility.Convert.GetString(o["StyleID"])).JoinToString(Environment.NewLine);
-
-                    nRow["BrandID"] = sameIDs.Select(o => MyUtility.Convert.GetString(o["BrandID"])).JoinToString(Environment.NewLine);
-                    nRow["Dest"] = sameIDs.Select(o => MyUtility.Convert.GetString(o["Dest"])).JoinToString(Environment.NewLine);
-                    nRow["Seq"] = sameIDs.Select(o => MyUtility.Convert.GetString(o["Seq"])).JoinToString(Environment.NewLine);
-                    nRow["SewingLineID"] = MyUtility.Convert.GetString(sameIDs.FirstOrDefault()["SewingLineID"]);
-                    nRow["VasShas"] = sameIDs.Select(o => MyUtility.Convert.GetString(o["VasShas"])).JoinToString(Environment.NewLine);
-
-                    nRow["ClogReceivedPercentage"] = MyUtility.Convert.GetString(sameIDs.FirstOrDefault()["ClogReceivedPercentage"]);
-                    nRow["MDivisionid"] = MyUtility.Convert.GetString(sameIDs.FirstOrDefault()["MDivisionid"]);
-                    nRow["FactoryID"] = MyUtility.Convert.GetString(sameIDs.FirstOrDefault()["FactoryID"]);
-                    nRow["Shift"] = MyUtility.Convert.GetString(sameIDs.FirstOrDefault()["Shift"]);
-                    nRow["Team"] = MyUtility.Convert.GetString(sameIDs.FirstOrDefault()["Team"]);
-
-                    nRow["Qty"] = sameIDs.Sum(o => MyUtility.Convert.GetInt(o["Qty"]));
-                    nRow["Status"] = MyUtility.Convert.GetString(sameIDs.FirstOrDefault()["Status"]);
-                    nRow["TTL CTN"] = sameIDs.Sum(o => MyUtility.Convert.GetInt(o["TTL CTN"]));
-
-                    nRow["Inspected Ctn"] = sameIDs.Sum(o => MyUtility.Convert.GetInt(o["Inspected Ctn"]));
-                    nRow["Inspected PoQty"] = sameIDs.Sum(o => MyUtility.Convert.GetInt(o["Inspected PoQty"]));
-
-                    nRow["Carton"] = sameIDs.Select(o => MyUtility.Convert.GetString(o["Carton"])).JoinToString(Environment.NewLine);
-                    nRow["CFA"] = MyUtility.Convert.GetString(sameIDs.FirstOrDefault()["CFA"]);
-                    nRow["Stage"] = MyUtility.Convert.GetString(sameIDs.FirstOrDefault()["Stage"]);
-                    nRow["FirstInspection"] = MyUtility.Convert.GetString(sameIDs.FirstOrDefault()["FirstInspection"]);
-                    nRow["Result"] = MyUtility.Convert.GetString(sameIDs.FirstOrDefault()["Result"]);
-
-                    nRow["InspectQty"] = MyUtility.Convert.GetInt(sameIDs.FirstOrDefault()["InspectQty"]);
-                    nRow["DefectQty"] = MyUtility.Convert.GetInt(sameIDs.FirstOrDefault()["DefectQty"]);
-                    nRow["SQR"] = MyUtility.Convert.GetDecimal(sameIDs.FirstOrDefault()["SQR"]);
-                    nRow["DefectDescription"] = MyUtility.Convert.GetString(sameIDs.FirstOrDefault()["DefectDescription"]);
-                    nRow["AreaCodeDesc"] = MyUtility.Convert.GetString(sameIDs.FirstOrDefault()["AreaCodeDesc"]);
-
-                    if (sameIDs.FirstOrDefault()["NoOfDefect"] == DBNull.Value)
-                    {
-                        nRow["NoOfDefect"] = DBNull.Value;
-                    }
-                    else
-                    {
-                        nRow["NoOfDefect"] = MyUtility.Convert.GetInt(sameIDs.FirstOrDefault()["NoOfDefect"]);
-                    }
-
-                    nRow["Remark"] = MyUtility.Convert.GetString(sameIDs.FirstOrDefault()["Remark"]);
-                    nRow["Action"] = MyUtility.Convert.GetString(sameIDs.FirstOrDefault()["Action"]);
-
-                    this.printData.Rows.Add(nRow);
-                }
-            }
-
-            if (this.reportType == "5X5Report")
-            {
-                this.printData = this.final.Copy();
             }
 
             return Result.True;
