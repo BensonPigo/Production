@@ -829,7 +829,7 @@ from ShippingAP_Detail sd WITH (NOLOCK)
 where 
 EXISTS (SELECT 1 FROM AccountNoSetting A WHERE (A.ID = SD.AccountID or A.ID = LEFT(SD.AccountID , 4)) AND A.NeedShareExpense = 1) AND
 sd.ID = '{0}'
-and not (dbo.GetAccountNoExpressType(sd.AccountID,'Vat') = 1 or dbo.GetAccountNoExpressType(sd.AccountID,'SisFty') = 1)", MyUtility.Convert.GetString(this.apData["ID"]));
+and not (dbo.GetAccountNoExpressType(LEFT(SD.AccountID , 4),'Vat') = 1 or dbo.GetAccountNoExpressType(LEFT(SD.AccountID , 4),'SisFty') = 1)", MyUtility.Convert.GetString(this.apData["ID"]));
             MyUtility.Check.Seek(sqlCmd, out queryData);
             this.numTtlAmt.Value = MyUtility.Convert.GetDecimal(queryData["Amount"]);
 
