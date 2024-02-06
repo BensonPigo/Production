@@ -19,6 +19,7 @@ namespace Sci.Production.Prg.PowerBI.Logic
         {
             P_MonthlySewingOutputSummary,
             P_SewingLineSchedule,
+            P_PPICMASTERLIST,
         }
 
         /// <summary>
@@ -190,6 +191,9 @@ namespace Sci.Production.Prg.PowerBI.Logic
                     break;
                 case ListName.P_SewingLineSchedule:
                     result = new P_Import_SewingLineScheduleBIData().P_SewingLineScheduleBIData(item.SDate, item.EDate);
+                    break;
+                case ListName.P_PPICMASTERLIST:
+                    result = new P_Import_PPICMasterListBIData().P_PPICMasterListBIData(item.SDate, item.EDate);
                     break;
                 default:
                     // Execute all Stored Procedures
