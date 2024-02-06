@@ -938,7 +938,7 @@ BEGIN
 			, [Cust CD] = b.CustCDID
 			, [KIT] = b.Kit
 			, [Fty Code] = b.BrandFTYCode
-			, [Program ] = b.ProgramID
+			, [Program] = b.ProgramID
 			, [Non Revenue] = b.NonRevenue
 			, [New CD Code] = b.CDCodeNew
 			, [ProductType] = b.ProductType
