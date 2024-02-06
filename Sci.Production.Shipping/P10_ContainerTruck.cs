@@ -6,6 +6,7 @@ using Ict.Win;
 using Ict;
 using Sci.Data;
 using System.Linq;
+using Sci.Andy.ExtensionMethods;
 
 namespace Sci.Production.Shipping
 {
@@ -146,6 +147,21 @@ and g.CYCFS = 'CY-CY'
         protected override bool OnSaveBefore()
         {
             DataTable dt = (DataTable)this.gridbs.DataSource;
+
+            int errorCount = dt.AsEnumerable().Where(r => r.RowState != DataRowState.Deleted && r["ID"].IsEmpty()).Count();
+            if (errorCount > 0)
+            {
+                MyUtility.Msg.WarningBox("<GB#> can not be empty!");
+                return false;
+            }
+
+            errorCount = dt.AsEnumerable().Where(r => r.RowState != DataRowState.Deleted && r["Type"].IsEmpty()).Count();
+            if (errorCount > 0)
+            {
+                MyUtility.Msg.WarningBox("<Container Type> can not be empty!");
+                return false;
+            }
+
             for (int i = dt.Rows.Count - 1; i >= 0; i--)
             {
                 if (dt.Rows[i].RowState != DataRowState.Deleted &&

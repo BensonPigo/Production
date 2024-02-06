@@ -257,6 +257,7 @@ SELECT  t.ID
 		,DefectQty
 		,SQR
 		,Remark
+into #tmpFinal
 FROM  #tmp t
 OUTER APPLY(
 	SELECT [Val] = COUNT(1)
@@ -277,7 +278,96 @@ OUTER APPLY(
         AND (',' + t.Carton + ',') like ('%,' + pd.CTNStartNo + ',%')
 )InspectedPoQty   --計算所有階段的總成衣件數
 
-DROP TABLE #tmp ,#MainData ,#PackingList_Detail,#MainData1
+-- 相同ID合併成一筆 by ISP20240116
+select  ID
+        ,AuditDate
+		,BuyerDelivery
+		,OrderID
+		,CustPoNo
+		,StyleID
+		,BrandID
+		,Dest
+		,Seq = Seq.value
+	    ,SewingLineID
+		,VasShas
+		,ClogReceivedPercentage
+		,MDivisionid
+		,FactoryID
+		,Shift
+		,Team
+		,Qty = sum(Qty)
+		,Status
+		,[TTL CTN] = sum([TTL CTN])
+		,[Inspected Ctn] = sum([Inspected Ctn])
+		,[Inspected PoQty] = sum([Inspected PoQty])
+		,Carton = Carton.value
+		,CFA
+        ,[ReInspection]
+		,Stage
+		,FirstInspection
+		,Result
+		,InspectQty
+		,DefectQty
+		,SQR
+		,Remark
+from #tmpFinal t
+outer apply(
+	select value = Stuff((
+		select concat(',',seq)
+		from (
+				select 	distinct
+					seq
+				from dbo.#tmpFinal s
+				where s.id = t.ID
+                and s.OrderID = t.OrderID
+			) s
+		for xml path ('')
+	) , 1, 1, '')
+) Seq
+outer apply(
+	select value = Stuff((
+		select concat(',',Carton)
+		from (
+				select 	distinct
+					Carton
+				from dbo.#tmpFinal s
+				where s.id = t.ID
+                and s.OrderID = t.OrderID
+			) s
+		for xml path ('')
+	) , 1, 1, '')
+) Carton
+group by ID
+        ,AuditDate
+		,BuyerDelivery
+		,OrderID
+		,CustPoNo
+		,StyleID
+		,BrandID
+		,Dest
+		,Seq.value
+	    ,SewingLineID
+		,VasShas
+		,ClogReceivedPercentage
+		,MDivisionid
+		,FactoryID
+		,Shift
+		,Team
+		,Status
+		, Carton.value
+		,CFA
+        ,[ReInspection]
+		,Stage
+		,FirstInspection
+		,Result
+		,InspectQty
+		,DefectQty
+		,SQR
+		,Remark
+
+
+DROP TABLE #tmp ,#MainData ,#PackingList_Detail,#MainData1,#tmpFinal
+
 ");
 
                 #endregion
@@ -462,6 +552,7 @@ SELECT   t.ID
 		,NoOfDefect
 		,Remark
 		,Action
+into #tmpFinal
 FROM  #tmp t
 OUTER APPLY(
 	SELECT [Val] = COUNT(1)
@@ -483,7 +574,104 @@ OUTER APPLY(
 )InspectedPoQty   --計算所有階段的總成衣件數
 Order by id
 
-DROP TABLE #tmp ,#MainData ,#PackingList_Detail,#MainData1
+-- 相同CFAInspectionRecord_Detail_Key合併成一筆 by ISP20240116
+select  t.ID
+        ,CFAInspectionRecord_Detail_Key
+        ,AuditDate
+		,BuyerDelivery
+		,OrderID
+		,CustPoNo
+		,StyleID
+		,BrandID
+		,Dest
+		,Seq = Seq.value
+        ,SewingLineID
+		,VasShas
+		,ClogReceivedPercentage
+		,MDivisionid
+		,FactoryID
+		,Shift
+		,Team
+		,Qty = sum(Qty)
+		,Status
+		,[TTL CTN] = sum([TTL CTN])
+		,[Inspected Ctn] = sum([Inspected Ctn])
+		,[Inspected PoQty] = sum([Inspected PoQty])
+		,Carton = Carton.value
+		,CFA
+        ,ReInspection
+		,Stage
+		,FirstInspection
+		,Result
+		,InspectQty
+		,DefectQty
+		,SQR
+		,DefectDescription
+		,AreaCodeDesc
+		,NoOfDefect
+		,Remark
+		,Action 
+FROM #tmpFinal t
+outer apply(
+	select value = Stuff((
+		select concat(',',seq)
+		from (
+				select 	distinct
+					seq
+				from dbo.#tmpFinal s
+				where s.CFAInspectionRecord_Detail_Key = t.CFAInspectionRecord_Detail_Key
+                and s.OrderID = t.OrderID
+			) s
+		for xml path ('')
+	) , 1, 1, '')
+) Seq
+outer apply(
+	select value = Stuff((
+		select concat(',',Carton)
+		from (
+				select 	distinct
+					Carton
+				from dbo.#tmpFinal s
+				where s.CFAInspectionRecord_Detail_Key = t.CFAInspectionRecord_Detail_Key
+                and s.OrderID = t.OrderID
+			) s
+		for xml path ('')
+	) , 1, 1, '')
+) Carton
+group by t.ID
+        , CFAInspectionRecord_Detail_Key
+        ,AuditDate
+		,BuyerDelivery
+		,OrderID
+		,CustPoNo
+		,StyleID
+		,BrandID
+		,Dest
+		,Seq.value
+        ,SewingLineID
+		,VasShas
+		,ClogReceivedPercentage
+		,MDivisionid
+		,FactoryID
+		,Shift
+		,Team
+		,Status
+		,Carton.value
+		,CFA
+        ,ReInspection
+		,Stage
+		,FirstInspection
+		,Result
+		,InspectQty
+		,DefectQty
+		,SQR
+		,DefectDescription
+		,AreaCodeDesc
+		,NoOfDefect
+		,Remark
+		,Action 
+
+DROP TABLE #tmp ,#MainData ,#PackingList_Detail,#MainData1,#tmpFinal
 
 ");
                 #endregion
@@ -956,6 +1144,7 @@ drop table #tmpMain,#tmpMainRow6
             {
                 this.printData = this.final.Copy();
             }
+
 
             return Result.True;
         }

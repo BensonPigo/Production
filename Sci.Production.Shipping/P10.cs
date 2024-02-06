@@ -1212,6 +1212,25 @@ left join LocalSupp ls WITH (NOLOCK) on g.Forwarder = ls.ID
             // #endregion
             this.CheckIDD();
             this.CheckPulloutputIDD();
+
+            string sql = $"select * from GMTBooking g left join GMTBooking_CTNR gc on gc.ID = g.ID where g.ShipPlanID = '{this.CurrentMaintain["ID"].ToString()}' and gc.ID is null";
+
+            DataTable dtChk;
+            DualResult resultChk = DBProxy.Current.Select(null, sql, out dtChk);
+            if (!resultChk)
+            {
+                MyUtility.Msg.ErrorBox("Check GMTBooking error:\r\n" + resultChk.ToString());
+                return;
+            }
+
+            if (dtChk.Rows.Count > 0)
+            {
+                string strChk = dtChk.AsEnumerable().Select(s => s["ID"].ToString()).ToList().JoinToString("、");
+
+                MyUtility.Msg.ErrorBox($"GB#:{strChk}\r\n\r\nLoading types is CY-CY,must be exist in 'Container/Truck'!");
+                return;
+            }
+
             List<string> listPLFromRgCode = PackingA2BWebAPI.GetPLFromRgCodeByShipPlanID(this.CurrentMaintain["ID"].ToString());
 
             // Pullout Date有空值就不可以Confirm
