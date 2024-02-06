@@ -1,5 +1,4 @@
-﻿
-Create PROCEDURE  [dbo].[GetSewingLineScheduleData]
+﻿Create PROCEDURE  [dbo].[GetSewingLineScheduleData]
 	@Inline DATE = null,
 	@Offline DATE = null,
 	@Line1 varchar(10) = '',
@@ -11,10 +10,21 @@ Create PROCEDURE  [dbo].[GetSewingLineScheduleData]
 	@SciDelivery1 date = null,
 	@SciDelivery2 date = null,
 	@Brand varchar(10) = '',
-	@subprocess varchar(20) = ''
+	@subprocess varchar(20) = '',
+	@IsPowerBI bit = 0
 AS
 begin
 	SET NOCOUNT ON;
+
+	if @IsPowerBI = 1 and @Inline is null
+	begin
+		set @Inline = dateadd(day, -90, getdate())
+	end
+
+	if @IsPowerBI = 1 and @Offline is null
+	begin
+		set @Offline = getdate()
+	end
 
 --開抓Detail資料
 --Declare @Inline nvarchar(20) = format(dateadd(Day,-15,FORMAT(getdate(), 'hh:mm:ss')) ,'yyyy/MM/dd' )
@@ -77,9 +87,14 @@ inner join Orders o WITH (NOLOCK) on o.ID = s.OrderID
 inner join Factory f with (nolock) on f.id = s.FactoryID and Type <> 'S'
 left join Country c WITH (NOLOCK) on o.Dest = c.ID
 outer apply(select [val] = iif(isnull(s.OriEff,0)=0 or isnull(s.SewLineEff,0)=0, s.MaxEff, isnull(s.OriEff,100) * isnull(s.SewLineEff,100) / 100) ) ScheduleEff
-where 1 = 1  
-and (convert(date, s.Inline) >= @Inline  or (@Inline  between convert(date,s.Inline) and convert(date,s.Offline)) or @Inline is null)
-and (convert(date,s.Offline) <= @Offline or (@Offline between convert(date,s.Inline) and convert(date,s.Offline)) or @Offline is null) 
+where ((@IsPowerBI = 0    
+	and (convert(date,s.Inline) >= @Inline  or (@Inline  between convert(date,s.Inline) and convert(date,s.Offline)) or @Inline is null)
+	and (convert(date,s.Offline) <= @Offline or (@Offline between convert(date,s.Inline) and convert(date,s.Offline)) or @Offline is null) 
+)
+or (@IsPowerBI = 1 and ((s.AddDate >= @Inline and s.AddDate < dateadd(day, 1, @Offline))
+					or (s.EditDate >= @Inline and s.EditDate < dateadd(day, 1, @Offline))
+					or (s.Offline >= @Inline and s.Offline < dateadd(day, 1, @Offline)))
+))
 and (s.MDivisionID = @MDivisionID or @MDivisionID = '')
 and (s.FactoryID = @FactoryID or @FactoryID = '')
 and (s.SewingLineID >= @Line1 or @Line1 = '')
@@ -114,17 +129,18 @@ group by	s.APSNo ,
 			s.SwitchTime,
 			o.StyleUkey
 			
-declare  @StyleData TABLE(
-	[APSNo] [int] NULL INDEX IDX_TMP_APSNNo,
-	[CDCodeNew] [varchar](Max) NULL,
-	[ProductType] [nvarchar](Max) NULL,
-	[FabricType] [nvarchar](Max) NULL,
-	[Lining] [varchar](Max) NULL,
-	[Gender] [varchar](Max) NULL,
-	[Construction] [nvarchar](Max) NULL,
-	[StyleName] [nvarchar](Max) NULL
-)
-insert into @StyleData
+CREATE TABLE #StyleData (
+    [APSNo] [int] NULL,
+    [CDCodeNew] [varchar](Max) NULL,
+    [ProductType] [nvarchar](Max) NULL,
+    [FabricType] [nvarchar](Max) NULL,
+    [Lining] [varchar](Max) NULL,
+    [Gender] [varchar](Max) NULL,
+    [Construction] [nvarchar](Max) NULL,
+    [StyleName] [nvarchar](Max) NULL,
+	Index IX_APSNo NonClustered (APSNo)
+);
+insert into #StyleData
 select distinct a.APSNo,
 	sty.[CDCodeNew],
 	sty.[ProductType],
@@ -150,28 +166,29 @@ Outer apply (
 	where s.Ukey = a.StyleUkey
 )sty
 
-declare  @StyleDatabyAPSNo TABLE(
-	[APSNo] [int] NULL INDEX IDX_TMP_APSNNo,
+CREATE TABLE #StyleDatabyAPSNo (
+	[APSNo] [int] NULL,
 	[CDCodeNew] [varchar](Max) NULL,
 	[ProductType] [nvarchar](Max) NULL,
 	[FabricType] [nvarchar](Max) NULL,
 	[Lining] [varchar](Max) NULL,
 	[Gender] [varchar](Max) NULL,
 	[Construction] [nvarchar](Max) NULL,
-	[StyleName] [nvarchar](Max) NULL
+	[StyleName] [nvarchar](Max) NULL,
+	Index IX_APSNo NonClustered (APSNo)
 )
-insert into @StyleDatabyAPSNo
+insert into #StyleDatabyAPSNo
 select a.APSNo,[CDCodeNew],[ProductType],[FabricType],[Lining],[Gender],[Construction],[StyleName]
-from(select distinct APSNo from @StyleData)a
-outer apply (SELECT [CDCodeNew] =  Stuff((select distinct concat( '/',[CDCodeNew]) from @StyleData s where APSNo = a.APSNo FOR XML PATH('')),1,1,'') ) s1
-outer apply (SELECT [ProductType] =  Stuff((select distinct concat( '/',[ProductType]) from @StyleData s where APSNo = a.APSNo FOR XML PATH('')),1,1,'') ) s2
-outer apply (SELECT [FabricType] =  Stuff((select distinct concat( '/',[FabricType]) from @StyleData s where APSNo = a.APSNo FOR XML PATH('')),1,1,'') ) s3
-outer apply (SELECT [Lining] =  Stuff((select distinct concat( '/',[Lining]) from @StyleData s where APSNo = a.APSNo FOR XML PATH('')),1,1,'') ) s4
-outer apply (SELECT [Gender] =  Stuff((select distinct concat( '/',[Gender]) from @StyleData s where APSNo = a.APSNo FOR XML PATH('')),1,1,'') ) s5
-outer apply (SELECT [Construction] =  Stuff((select distinct concat( '/',[Construction]) from @StyleData s where APSNo = a.APSNo FOR XML PATH('')),1,1,'') ) s6
-outer apply (SELECT [StyleName] =  Stuff((select distinct concat( '/',[StyleName]) from @StyleData s where APSNo = a.APSNo FOR XML PATH('')),1,1,'') ) s7
+from(select distinct APSNo from #StyleData)a
+outer apply (SELECT [CDCodeNew] =  Stuff((select distinct concat( '/',[CDCodeNew]) from #StyleData s where APSNo = a.APSNo FOR XML PATH('')),1,1,'') ) s1
+outer apply (SELECT [ProductType] =  Stuff((select distinct concat( '/',[ProductType]) from #StyleData s where APSNo = a.APSNo FOR XML PATH('')),1,1,'') ) s2
+outer apply (SELECT [FabricType] =  Stuff((select distinct concat( '/',[FabricType]) from #StyleData s where APSNo = a.APSNo FOR XML PATH('')),1,1,'') ) s3
+outer apply (SELECT [Lining] =  Stuff((select distinct concat( '/',[Lining]) from #StyleData s where APSNo = a.APSNo FOR XML PATH('')),1,1,'') ) s4
+outer apply (SELECT [Gender] =  Stuff((select distinct concat( '/',[Gender]) from #StyleData s where APSNo = a.APSNo FOR XML PATH('')),1,1,'') ) s5
+outer apply (SELECT [Construction] =  Stuff((select distinct concat( '/',[Construction]) from #StyleData s where APSNo = a.APSNo FOR XML PATH('')),1,1,'') ) s6
+outer apply (SELECT [StyleName] =  Stuff((select distinct concat( '/',[StyleName]) from #StyleData s where APSNo = a.APSNo FOR XML PATH('')),1,1,'') ) s7
 
-declare @APSList TABLE(
+CREATE TABLE #APSList(
 	[APSNo] [int] NULL,
 	[MDivisionID] [varchar](8) NULL,
 	[SewingLineID] [varchar](5) NULL,
@@ -183,9 +200,10 @@ declare @APSList TABLE(
 	[OriEff] [numeric](5, 2) NULL,
 	[SewLineEff] [numeric](5, 2) NULL,
 	[TotalSewingTime] int NULL,
-	[AlloQty] [int] NULL
+	[AlloQty] [int] NULL,
+	Index IX_APSNo NonClustered (APSNo)
 )
-insert into @APSList
+insert into #APSList
 select 
 	APSNo,
 	MDivisionID,
@@ -211,13 +229,14 @@ group by APSNo,
          SewLineEff
 
 --取得OrderQty by APSNo
-declare @APSOrderQty TABLE(
+CREATE TABLE #APSOrderQty(
 	[APSNo] [int] NULL,
-	[OrderQty] [int] NULL
+	[OrderQty] [int] NULL,
+    INDEX IX_APSNo NONCLUSTERED (APSNo)
 )
-insert into @APSOrderQty
+insert into #APSOrderQty
 select  aps.APSNo,[OrderQty] =sum(o.Qty) 
-from @APSList aps
+from #APSList aps
 inner join SewingSchedule s with (nolock) on aps.APSNo = s.APSNo
 inner join Orders o with (nolock) on s.OrderID = o.ID
 where (@subprocess = '' or
@@ -225,43 +244,46 @@ where (@subprocess = '' or
 	and exists(select 1 from Style_TmsCost st where o.StyleUkey = st.StyleUkey and st.ArtworkTypeID = @subprocess AND (st.Qty>0 or st.TMS>0 and st.Price>0) ) ))
 group by aps.APSNo
 
-declare @APSCuttingOutput TABLE(
+CREATE TABLE #APSCuttingOutput(
 	[APSNo] [int] NULL,
-	[CuttingOutput] [numeric](38, 2) NULL
+	[CuttingOutput] [numeric](38, 2) NULL,
+    INDEX IX_APSNo NONCLUSTERED (APSNo)
 )
 --取得Cutting Output by APSNo
-insert into @APSCuttingOutput
+insert into #APSCuttingOutput
 select  aps.APSNo,[CuttingOutput] =sum(cw.Qty) 
-from @APSList aps
+from #APSList aps
 inner join SewingSchedule s with (nolock) on aps.APSNo = s.APSNo
 inner join CuttingOutput_WIP cw with (nolock) on s.OrderID = cw.OrderID
 group by aps.APSNo
 
 --取得Packing data by APSNo
-declare @APSPackingQty TABLE(
+CREATE TABLE #APSPackingQty(
 	[APSNo] [int] NULL,
 	[ScannedQty] [int] NULL,
-	[ClogQty] [int] NULL
+	[ClogQty] [int] NULL,
+    INDEX IX_APSNo NONCLUSTERED (APSNo)
 )
-insert into @APSPackingQty
+insert into #APSPackingQty
 select  aps.APSNo,[ScannedQty] =sum(pld.ScanQty),[ClogQty] = sum(pld.ShipQty)
-from @APSList aps
+from #APSList aps
 inner join SewingSchedule s with (nolock) on aps.APSNo = s.APSNo
 inner join PackingList_Detail pld with (nolock) on s.OrderID = pld.OrderID and pld.ReceiveDate is not null
 group by aps.APSNo
 
 --取得SewingOutput
-declare @APSSewingOutput TABLE(
+CREATE TABLE #APSSewingOutput(
 	[APSNo] [int] NULL,
 	[OutputDate] [date] NOT NULL,
-	[SewingOutput] [int] NULL
+	[SewingOutput] [int] NULL,
+    INDEX IX_APSNo NONCLUSTERED (APSNo, OutputDate)
 ) 
-insert into @APSSewingOutput
+insert into #APSSewingOutput
 select
 aps.APSNo,
 so.OutputDate,
 [SewingOutput] = sum(isnull(sod.QAQty,0))
-from @APSList aps
+from #APSList aps
 inner join SewingSchedule s with (nolock) on aps.APSNo = s.APSNo
 inner join SewingOutput_Detail sod with (nolock) on s.OrderID = sod.OrderID and s.ComboType = sod.ComboType
 inner join SewingOutput so with (nolock) on so.ID = sod.ID and s.SewingLineID = so.SewingLineID
@@ -290,7 +312,7 @@ where   (ot.Price > 0 or at.Classify in ('O','I') )
         and (at.Classify in ('S','I') or at.IsSubprocess = 1)
         and (ot.TMS > 0 or ot.Qty > 0)
         and at.Abbreviation !=''
-		and ot.ID in (select OrderID from SewingSchedule where exists(select 1 from @APSList where APSNo = SewingSchedule.APSNo)) 		
+		and ot.ID in (select OrderID from SewingSchedule where exists(select 1 from #APSList where APSNo = SewingSchedule.APSNo)) 		
 		and (@subprocess = '' or
 			(@subprocess<> '' 
 			and exists(select 1 from Style_TmsCost st where o.StyleUkey = st.StyleUkey and st.ArtworkTypeID = @subprocess AND (st.Qty>0 or st.TMS>0 and st.Price>0) ) ))
@@ -329,37 +351,39 @@ from (
 	from @tmpArtWork
 ) tmpArtWorkID
 
-declare @APSListArticle TABLE(
-	[APSNo] [int] NULL INDEX IDX_TMP_APSListArticle,
-	[Colorway] [varchar](40) NULL
+CREATE TABLE #APSListArticle(
+	[APSNo] [int] NULL,
+	[Colorway] [varchar](40) NULL,
+    INDEX IX_APSNo NONCLUSTERED (APSNo)
 )
-insert into @APSListArticle
+insert into #APSListArticle
 --取得order對應的Articl
 select
 s.APSNo,
 [Colorway] = Rtrim(sd.Article) +'(' + cast(SUM(sd.AlloQty) as varchar) + ')'
 from SewingSchedule s with (nolock)
 inner join SewingSchedule_Detail sd with (nolock) on s.ID = sd.ID
-where exists( select 1 from @APSList where APSNo = s.APSNo)
+where exists( select 1 from #APSList where APSNo = s.APSNo)
 group by s.APSNo,sd.Article
 
 --取得 Remarks欄位
-declare @APSRemarks TABLE(
+CREATE TABLE #APSRemarks (
 	[APSNo] [int] NULL,
-	[Remarks] [varchar](50) NULL
+	[Remarks] [varchar](50) NULL,
+    INDEX IX_APSNo NONCLUSTERED (APSNo)
 )
-insert into @APSRemarks
+insert into #APSRemarks
 select
 s.APSNo,
 [Remarks] = s.OrderID + '(' + s_other.SewingLineID + ',' + s.ComboType + ',' + CAST(sum(s_other.AlloQty) as varchar) + ')'
 from SewingSchedule s with (nolock)
 inner join SewingSchedule s_other on s_other.OrderID = s.OrderID and s_other.ComboType = s.ComboType and s_other.APSNo <> s.APSNo
-where  exists( select 1 from @APSList where APSNo = s.APSNo)
+where  exists( select 1 from #APSList where APSNo = s.APSNo)
 group by s.APSNo,s.OrderID,s_other.SewingLineID,s.ComboType
 
 --取得每個計劃需要串接起來的欄位，供後續使用
-declare @APSColumnGroup TABLE(
-	[APSNo] [int] NULL INDEX IDX_TMP_APSColumnGroup CLUSTERED,
+CREATE TABLE #APSColumnGroup (
+	[APSNo] [int] NULL,
 	[CustPONo] [varchar](30) NULL,
 	[SP] [varchar](16) NULL,
 	[SP_ComboType][varchar](15) NULL,
@@ -379,9 +403,10 @@ declare @APSColumnGroup TABLE(
 	[BrandID] [varchar](500) NULL,
 	[OrderID] [varchar](13) NULL,
 	[MatchFabric] varchar(8) NULL,
-	[StyleSeason] varchar(10) null
+	[StyleSeason] varchar(10) null,
+    INDEX IX_APSNo NONCLUSTERED (APSNo)
 )
-insert into @APSColumnGroup
+insert into #APSColumnGroup
 select
 APSNo,
 o.CustPONo,
@@ -410,21 +435,22 @@ inner join Style with (nolock) on Style.Ukey = o.StyleUkey
 outer apply(select MaxBuyerDelivery = max(oq.BuyerDelivery), MinBuyerDelivery = min(oq.BuyerDelivery) from Order_QtyShip oq where oq.id = o.id) oq
 left join @tmpOrderArtwork oa on oa.StyleID = o.StyleID
 left join Country c WITH (NOLOCK) on o.Dest = c.ID 
-where exists( select 1 from @APSList where APSNo = s.APSNo)
+where exists( select 1 from #APSList where APSNo = s.APSNo)
 and (@subprocess = '' or
 	(@subprocess<> '' 
 	and exists(select 1 from Style_TmsCost st where o.StyleUkey = st.StyleUkey and st.ArtworkTypeID = @subprocess AND (st.Qty>0 or st.TMS>0 and st.Price>0) ) ))
 
 
-declare @StyleArtwork TABLE(
+CREATE TABLE #StyleArtwork (
 	[APSNo] [int] NULL,
 	[StyleID] [varchar](15) NULL,
 	[Article] [varchar](8) NULL,
 	[AlloRatio] numeric(5,2) NULL,
 	[EMBROIDERY] int NULL,
-	[PRINTING] int NULL
+	[PRINTING] int NULL,
+    INDEX IX_APSNo NONCLUSTERED (APSNo)
 )
-insert into @StyleArtwork
+insert into #StyleArtwork
 select	APSNo,
 		StyleID,
 		Article,
@@ -457,7 +483,7 @@ outer apply(select EMBROIDERY, PRINTING from
 					FOR ArtworkTypeID IN ([EMBROIDERY], [PRINTING])
 				) p 
 			) ArtworkQty
-where ss.APSNo in (select APSNo from @APSList)
+where ss.APSNo in (select APSNo from #APSList)
 group by ss.APSNo,o.StyleID,ssd.Article) a
 	
 declare @tmp2 TABLE(
@@ -474,18 +500,19 @@ select  ot.ID
 from Order_TmsCost ot WITH (NOLOCK) 
 inner join ArtworkType at WITH (NOLOCK) on at.ID = ot.ArtworkTypeID and at.ID in('PRINTING','PRINTING PPU')
 left join LocalSupp ls on ls.id = ot.LocalSuppID
-where exists(select 1 from @APSColumnGroup where orderid = ot.id)
+where exists(select 1 from #APSColumnGroup where orderid = ot.id)
 
 
-declare @tmpPrintData TABLE(
-	[APSNo] [int] NULL INDEX IDX_TMP_APSColumnGroup CLUSTERED,
+CREATE TABLE #tmpPrintData (
+	[APSNo] [int] NULL,
 	OrderID varchar(13),
 	[PRINTING (PCS)] numeric(38,6),
 	[PRINTING PPU (PPU)] numeric(38,6),
 	SubCon nvarchar(max),
-	AlloQty int
+	AlloQty int,
+    INDEX IX_APSNo NONCLUSTERED (APSNo)
 )
-insert into @tmpPrintData
+insert into #tmpPrintData
 select a.APSNo,
 	a.OrderID,
 	t.[PRINTING (PCS)],
@@ -504,35 +531,37 @@ inner join (
 ) t on t.id = a.OrderID
 
 
-declare @tmpPrintDataSum TABLE(
-	[APSNo] [int] NULL INDEX IDX_TMP_APSColumnGroup CLUSTERED,
+CREATE TABLE #tmpPrintDataSum (
+	[APSNo] [int] NULL,
 	SubCon nvarchar(max),
-	[Subcon Qty] int
+	[Subcon Qty] int,
+    INDEX IX_APSNo NONCLUSTERED (APSNo)
 )
-insert into @tmpPrintDataSum
+insert into #tmpPrintDataSum
 select p.APSNo,x.SubCon, sum(iif(p.SubCon<>'', p.AlloQty, 0))
-from @tmpPrintData p
+from #tmpPrintData p
 outer apply(
 	select SubCon = stuff((
 		select distinct concat('/', subcon)
-		from @tmpPrintData
+		from #tmpPrintData
 		where APSNo = p.APSNo
 		for xml path('')
 	),1,1,'')
 )x
 group by p.APSNo,x.SubCon
 
-declare @tmpPrintSumbuSP TABLE(
-	[APSNo] [int] NULL INDEX IDX_TMP_APSColumnGroup CLUSTERED,
+CREATE TABLE #tmpPrintSumbuSP (
+	[APSNo] [int] NULL,
 	OrderID varchar(13),
 	[PRINTING (PCS)] numeric(38,6),
-	[PRINTING PPU (PPU)] numeric(38,6)
+	[PRINTING PPU (PPU)] numeric(38,6),
+    INDEX IX_APSNo NONCLUSTERED (APSNo)
 )
-insert into @tmpPrintSumbuSP
+insert into #tmpPrintSumbuSP
 select p.APSNo,p.OrderID,
 	sum(p.[PRINTING (PCS)]),
 	sum(p.[PRINTING PPU (PPU)])
-from @tmpPrintData p
+from #tmpPrintData p
 where subcon <>''
 group by p.APSNo,p.OrderID
 
@@ -593,7 +622,9 @@ declare @APSMain TABLE(
 	[EMBStitch] varchar(20),
 	[EMBStitchCnt] int,
 	[PrintPcs] int,
-	[StyleSeason] NVARCHAR(MAX)
+	[StyleSeason] NVARCHAR(MAX),
+	[AddDate] [date] NULL,
+	[EditDate] [date] NULL
 )
 insert into @APSMain
 select
@@ -615,8 +646,8 @@ select
 	al.LearnCurveID,
 	al.Inline,
 	al.Offline,
-	[PFRemark] = iif(exists(select 1 from @APSColumnGroup where APSNo = al.APSNo and PFOrder = 1),'Y',''),
-	[MTLComplete] = iif(exists(select 1 from @APSColumnGroup where APSNo = al.APSNo and MTLExport = ''),'','Y'),
+	[PFRemark] = iif(exists(select 1 from #APSColumnGroup where APSNo = al.APSNo and PFOrder = 1),'Y',''),
+	[MTLComplete] = iif(exists(select 1 from #APSColumnGroup where APSNo = al.APSNo and MTLExport = ''),'','Y'),
 	OrderMax.KPILETA,
 	OrderMax.MTLETA,
 	[ArtworkType] = ArtworkType.val,
@@ -650,46 +681,50 @@ select
 	PrintingData.[Subcon Qty],
 	[EMBStitch] = EMBStitch.val,
 	[EMBStitchCnt] = LEN(EMBStitch.val) - LEN(REPLACE(EMBStitch.val, ',', '')) + 1,
-	[PrintPcs] = (select sum(PRINTING) from (select [PRINTING] = Max(PRINTING) from @StyleArtwork where APSNo = al.APSNo and PRINTING <> -1 group by StyleID) a),
-	SP.StyleSeason
-from @APSList al
-left join @APSCuttingOutput aco on al.APSNo = aco.APSNo
-left join @APSOrderQty aoo on al.APSNo = aoo.APSNo
-left join @APSPackingQty apo on al.APSNo = apo.APSNo
-left join @StyleDatabyAPSNo sty on al.APSNo = sty.APSNo
-outer apply (SELECT val =  Stuff((select distinct concat( ',',CustPONo)   from @APSColumnGroup where APSNo = al.APSNo and CustPONo <> '' FOR XML PATH('')),1,1,'') ) as CustPO
+	[PrintPcs] = (select sum(PRINTING) from (select [PRINTING] = Max(PRINTING) from #StyleArtwork where APSNo = al.APSNo and PRINTING <> -1 group by StyleID) a),
+	SP.StyleSeason,
+	s.AddDate,
+	s.EditDate
+from #APSList al
+left join #APSCuttingOutput aco on al.APSNo = aco.APSNo
+left join #APSOrderQty aoo on al.APSNo = aoo.APSNo
+left join #APSPackingQty apo on al.APSNo = apo.APSNo
+left join #StyleDatabyAPSNo sty on al.APSNo = sty.APSNo
+outer apply (SELECT val =  Stuff((select distinct concat( ',',CustPONo)   from #APSColumnGroup where APSNo = al.APSNo and CustPONo <> '' FOR XML PATH('')),1,1,'') ) as CustPO
 outer apply (
-	SELECT val =  Stuff((select distinct concat( ',',SP)   from @APSColumnGroup where APSNo = al.APSNo FOR XML PATH('')),1,1,'') 
-		  ,[SP_Combotype] = Stuff((select distinct concat( ',',SP_ComboType)   from @APSColumnGroup where APSNo = al.APSNo FOR XML PATH('')),1,1,'')
-		  ,[MatchFabric] = Stuff((select distinct concat( ',',MatchFabric)   from @APSColumnGroup where APSNo = al.APSNo FOR XML PATH('')),1,1,'')
-		  ,[StyleSeason] = Stuff((select concat( ',',StyleSeason)   from @APSColumnGroup where APSNo = al.APSNo group by SP, StyleSeason order by SP FOR XML PATH('')),1,1,'')
+	SELECT val =  Stuff((select distinct concat( ',',SP)   from #APSColumnGroup where APSNo = al.APSNo FOR XML PATH('')),1,1,'') 
+		  ,[SP_Combotype] = Stuff((select distinct concat( ',',SP_ComboType)   from #APSColumnGroup where APSNo = al.APSNo FOR XML PATH('')),1,1,'')
+		  ,[MatchFabric] = Stuff((select distinct concat( ',',MatchFabric)   from #APSColumnGroup where APSNo = al.APSNo FOR XML PATH('')),1,1,'')
+		  ,[StyleSeason] = Stuff((select concat( ',',StyleSeason)   from #APSColumnGroup where APSNo = al.APSNo group by SP, StyleSeason order by SP FOR XML PATH('')),1,1,'')
 		  ,FirststCuttingOutputDate=(
 				SELECT [Date]=MIN(co2.cDate)
 				FROM  WorkOrder_Distribute wd2 WITH (NOLOCK)
 				INNER JOIN CuttingOutput_Detail cod2 WITH (NOLOCK) on cod2.WorkOrderUkey = wd2.WorkOrderUkey
 				INNER JOIN CuttingOutput co2 WITH (NOLOCK) on co2.id = cod2.id and co2.Status <> 'New'
-				where wd2.OrderID IN (SELECT OrderID from @APSColumnGroup where APSNo = al.APSNo )
+				where wd2.OrderID IN (SELECT OrderID from #APSColumnGroup where APSNo = al.APSNo )
 			)
 ) as SP
-outer apply (SELECT val =  Stuff((select distinct concat( '+',Category)   from @APSColumnGroup where APSNo = al.APSNo FOR XML PATH('')),1,1,'') ) as Category
-outer apply (SELECT val =  Stuff((select distinct concat( ',',Colorway)   from @APSListArticle where APSNo = al.APSNo FOR XML PATH('')),1,1,'') ) as Colorway
-outer apply (SELECT val =  Stuff((select distinct concat( ',',CdCodeID)   from @APSColumnGroup where APSNo = al.APSNo FOR XML PATH('')),1,1,'') ) as CDCode
-outer apply (SELECT val =  Stuff((select distinct concat( ',',ProductionFamilyID)   from @APSColumnGroup where APSNo = al.APSNo FOR XML PATH('')),1,1,'') ) as ProductionFamilyID
-outer apply (SELECT val =  Stuff((select distinct concat( ',',StyleID)   from @APSColumnGroup where APSNo = al.APSNo FOR XML PATH('')),1,1,'') ) as Style
-outer apply (SELECT val =  Stuff((select distinct concat( ',',Artwork)   from @APSColumnGroup where APSNo = al.APSNo FOR XML PATH('')),1,1,'') ) as ArtworkType
-outer apply (select [KPILETA] = MAX(KPILETA),[MTLETA] = MAX(MTLETA),[InspDate] = MAX(InspDate) from @APSColumnGroup where APSNo = al.APSNo) as OrderMax
-outer apply (SELECT val =  Stuff((select distinct concat( ',',Remarks)   from @APSRemarks where APSNo = al.APSNo FOR XML PATH('')),1,1,'') ) as Remarks
+outer apply (SELECT val =  Stuff((select distinct concat( '+',Category)   from #APSColumnGroup where APSNo = al.APSNo FOR XML PATH('')),1,1,'') ) as Category
+outer apply (SELECT val =  Stuff((select distinct concat( ',',Colorway)   from #APSListArticle where APSNo = al.APSNo FOR XML PATH('')),1,1,'') ) as Colorway
+outer apply (SELECT val =  Stuff((select distinct concat( ',',CdCodeID)   from #APSColumnGroup where APSNo = al.APSNo FOR XML PATH('')),1,1,'') ) as CDCode
+outer apply (SELECT val =  Stuff((select distinct concat( ',',ProductionFamilyID)   from #APSColumnGroup where APSNo = al.APSNo FOR XML PATH('')),1,1,'') ) as ProductionFamilyID
+outer apply (SELECT val =  Stuff((select distinct concat( ',',StyleID)   from #APSColumnGroup where APSNo = al.APSNo FOR XML PATH('')),1,1,'') ) as Style
+outer apply (SELECT val =  Stuff((select distinct concat( ',',Artwork)   from #APSColumnGroup where APSNo = al.APSNo FOR XML PATH('')),1,1,'') ) as ArtworkType
+outer apply (select [KPILETA] = MAX(KPILETA),[MTLETA] = MAX(MTLETA),[InspDate] = MAX(InspDate) from #APSColumnGroup where APSNo = al.APSNo) as OrderMax
+outer apply (SELECT val =  Stuff((select distinct concat( ',',Remarks)   from #APSRemarks where APSNo = al.APSNo FOR XML PATH('')),1,1,'') ) as Remarks
 outer apply (SELECT MaxSCIDelivery = Max(SCIDelivery),MinSCIDelivery = Min(SCIDelivery),
                     MaxBuyerDelivery = Max(MaxBuyerDelivery),MinBuyerDelivery = Min(MinBuyerDelivery)
-                    from @APSColumnGroup where APSNo = al.APSNo) as OrderDateInfo
-outer apply (SELECT val =  Stuff((select distinct concat( ',',BrandID)   from @APSColumnGroup where APSNo = al.APSNo FOR XML PATH('')),1,1,'') ) as BrandID
-outer apply (select * from @tmpPrintDataSum where  APSNo = al.APSNo) as PrintingData
-outer apply(select [val] = Stuff((select distinct concat( ',',EMBROIDERY) from @StyleArtwork sa where sa.APSNo = al.APSNo and sa.EMBROIDERY <> -1 FOR XML PATH('')),1,1,'') ) EMBStitch
+                    from #APSColumnGroup where APSNo = al.APSNo) as OrderDateInfo
+outer apply (SELECT val =  Stuff((select distinct concat( ',',BrandID)   from #APSColumnGroup where APSNo = al.APSNo FOR XML PATH('')),1,1,'') ) as BrandID
+outer apply (select * from #tmpPrintDataSum where  APSNo = al.APSNo) as PrintingData
+outer apply (select [val] = Stuff((select distinct concat( ',',EMBROIDERY) from #StyleArtwork sa where sa.APSNo = al.APSNo and sa.EMBROIDERY <> -1 FOR XML PATH('')),1,1,'') ) EMBStitch
+outer apply (select [AddDate] = min(s.AddDate), [EditDate] = max(s.EditDate) from SewingSchedule s with(nolock) where s.APSNo = al.APSNo) s
+
 --組出所有計畫最大Inline,最小Offline之間所有的日期，後面展開個計畫每日資料使用
 Declare @StartDate date
 Declare @EndDate date
 select @StartDate = min(Inline),@EndDate = max(Offline)
-from @APSList
+from #APSList
 
 Declare @WorkDate table(
 	[FactoryID] [varchar](8) NULL,
@@ -698,7 +733,7 @@ Declare @WorkDate table(
 insert into @WorkDate
 SELECT f.FactoryID,cast(DATEADD(DAY,number,@StartDate) as datetime) [WorkDate]
 FROM master..spt_values s
-cross join (select distinct FactoryID from @APSList) f
+cross join (select distinct FactoryID from #APSList) f
 WHERE s.type = 'P'
 AND DATEADD(DAY,number,@StartDate) <= @EndDate
 
@@ -999,18 +1034,25 @@ LNCSERIALNumber
 from @APSExtendWorkDate_step4
 
 --取得每個計劃去除LearnCurve後的總工時
-Declare @OriTotalWorkHour table(
+CREATE TABLE #OriTotalWorkHour(
 	[APSNo] [int] NULL,
 	[WorkDate] [datetime] NULL,
-	[TotalWorkHour] [numeric](38, 13) NULL
+	[TotalWorkHour] [numeric](38, 13) NULL,
+    INDEX IX_APSNo NONCLUSTERED (APSNo, WorkDate)
 )
-insert into @OriTotalWorkHour
+insert into #OriTotalWorkHour
 SELECT
 awd.APSNo,
 awd.WorkDate,
 [TotalWorkHour] = sum(OriWorkHour)
 FROM @APSExtendWorkDate awd
 group by awd.APSNo,awd.WorkDate
+
+--單獨處理getDailystdq (效能)
+SELECT s.*
+INTO #tmpStdQ
+FROM(SELECT DISTINCT awd.APSNo from @APSExtendWorkDate awd)awd
+outer apply(select * from dbo.[getDailystdq](awd.APSNo) x) s
 
 --取得LearnCurve Efficiency by Work Date
 Declare @APSExtendWorkDateFin table(
@@ -1049,11 +1091,11 @@ select  awd.APSNo
 		, [StdQtyEMB] = StdQtyEMB.val
 		, [TtlQtyEMB] = TtlQtyEMB.val
 from @APSExtendWorkDate awd
-inner join @OriTotalWorkHour otw on otw.APSNo = awd.APSNo and otw.WorkDate = awd.WorkDate
+inner join #OriTotalWorkHour otw on otw.APSNo = awd.APSNo and otw.WorkDate = awd.WorkDate
 left join LearnCurve_Detail lcd with (nolock) on awd.LearnCurveID = lcd.ID and awd.WorkDateSer = lcd.Day
-left join @APSSewingOutput apo on awd.APSNo = apo.APSNo and awd.WorkDate = apo.OutputDate
+left join #APSSewingOutput apo on awd.APSNo = apo.APSNo and awd.WorkDate = apo.OutputDate
+LEFT JOIN #tmpStdQ s ON s.APSNo = awd.APSNo and s.Date = cast(awd.SewingStart as date)
 outer apply(select top 1 [val] = Efficiency from LearnCurve_Detail where ID = awd.LearnCurveID order by Day desc ) LastEff
-outer apply(select * from dbo.[getDailystdq](awd.APSNo)x where x.APSNo=awd.APSNo and x.Date = cast(awd.SewingStart as date)) s
 outer apply( 
 			select [val] = Stuff((select concat( ',',StdQty) 
 								   from (
@@ -1069,7 +1111,7 @@ outer apply(
 																[IsLast] = LEAD(sa.AlloRatio,1,0) over (order by sa.StyleID, sa.Article, sa.AlloRatio desc),
 																sa.AlloRatio,
 																sa.EMBROIDERY
-														from @StyleArtwork sa
+														from #StyleArtwork sa
 														where sa.APSNo = awd.APSNo) StdQtyEMBStep1
 											) StdQtyEMBStep2 where EMBROIDERY <> -1 group by StyleID
 									) StdQtyFinal
@@ -1088,7 +1130,7 @@ outer apply(
 									[IsLast] = LEAD(sa.AlloRatio,1,0) over (order by sa.StyleID, sa.Article, sa.AlloRatio desc),
 									sa.AlloRatio,
 									sa.EMBROIDERY
-							from @StyleArtwork sa
+							from #StyleArtwork sa
 							where sa.APSNo = awd.APSNo) StdQtyEMBStep1
 				) StdQtyEMBStep2 where EMBROIDERY <> -1 
 			) TtlQtyEMB
@@ -1098,7 +1140,7 @@ outer apply(
 		select tsp.APSNo,tsp.OrderID,
 			[PRINTING (PCS)] = tsp.[PRINTING (PCS)] * sr.Rate,
 			[PRINTING PPU (PPU)] = tsp.[PRINTING PPU (PPU)] * sr.Rate
-		from @tmpPrintSumbuSP tsp
+		from #tmpPrintSumbuSP tsp
 		outer apply(select * from dbo.getSPRatebyAPSNo(tsp.APSNo)x where x.APSNo=awd.APSNo and x.OrderID = tsp.OrderID)sr
 		where tsp.APSNo = awd.APSNo
 	)x
@@ -1192,7 +1234,9 @@ declare  @APSResult TABLE(
 	EMBStitchCnt int null,
 	TtlQtyEMB int null,
 	PrintPcs int null,
-	StyleSeason NVARCHAR(MAX)
+	StyleSeason NVARCHAR(MAX),
+	[AddDate] [date] NULL,
+	[EditDate] [date] NULL
 )
 
 --計算這一天的標準產量
@@ -1271,7 +1315,9 @@ insert into @APSResult(
 	EMBStitchCnt,
 	TtlQtyEMB,
 	PrintPcs,
-	StyleSeason
+	StyleSeason,
+	AddDate,
+	EditDate
 )
 select
 	[APSNo]=apm.APSNo,
@@ -1344,7 +1390,9 @@ select
 	apm.EMBStitchCnt,
 	apf.TtlQtyEMB,
 	apm.PrintPcs,
-	apm.StyleSeason
+	apm.StyleSeason,
+	apm.AddDate,
+	apm.EditDate
 from @APSMain apm
 inner join @APSExtendWorkDateFin apf on apm.APSNo = apf.APSNo
 order by apm.APSNo,apf.SewingStart
@@ -1376,16 +1424,16 @@ option (maxrecursion 0) -- 突破遞迴100筆資料限制
 
 
 --WorkHour table
-declare  @workhourtmp  TABLE(
+CREATE TABLE #workhourtmp(
 	FactoryID varchar(10) null,
 	SewingLineID varchar(10) null,
 	[Date] date null,
 	[Hours] numeric(3, 1) null,
 	Holiday bit null,
-	INDEX IDX_workhourtmp CLUSTERED(Date,FactoryID,SewingLineID)
+    INDEX IDX_workhourtmp CLUSTERED(Date,FactoryID,SewingLineID)
 )
 
-insert into @workhourtmp(FactoryID,SewingLineID,Date,Hours,Holiday)
+insert into #workhourtmp(FactoryID,SewingLineID,Date,Hours,Holiday)
 select FactoryID,SewingLineID,Date,Hours,Holiday
 from WorkHour s
 where (s.FactoryID = @FactoryID or @FactoryID = '')
@@ -1394,20 +1442,21 @@ and (s.SewingLineID >= @Line1 or @Line1 = '')
 and ( s.SewingLineID <= @Line2 or @Line2 = '')
 --order by Date
 --準備一整個月workhour的資料判斷Holiday
-declare  @tmpd  TABLE(
+CREATE TABLE #tmpd (
 	FactoryID varchar(10) null,
 	SewingLineID varchar(10) null,
 	[Date] date null,
-	INDEX IDX CLUSTERED(Date,FactoryID,SewingLineID)
+    INDEX IDX CLUSTERED(Date,FactoryID,SewingLineID)
 )
 
-insert into @tmpd(Date, FactoryID, SewingLineID)
+
+insert into #tmpd(Date, FactoryID, SewingLineID)
 select distinct d.date,w.FactoryID,w.SewingLineID
-from @workhourtmp w
+from #workhourtmp w
 cross join @daterange d
 --
 
-declare  @Holiday  TABLE(
+CREATE TABLE #Holiday (
 	FactoryID varchar(10) null,
 	SewingLineID varchar(10) null,
 	[Date] date null,
@@ -1415,10 +1464,10 @@ declare  @Holiday  TABLE(
 	INDEX IDX CLUSTERED(Date,FactoryID,SewingLineID,Holiday)
 )
 
-insert into @Holiday(FactoryID, SewingLineID, [Date], Holiday)
+insert into #Holiday(FactoryID, SewingLineID, [Date], Holiday)
 select distinct d.FactoryID,d.SewingLineID,d.date,Holiday = iif(w.Holiday is null or w.Holiday = 1 or w.Hours = 0,1,0)
-from @tmpd d
-left join @workhourtmp w on d.date = w.Date and d.FactoryID = w.FactoryID and d.SewingLineID = w.SewingLineID
+from #tmpd d
+left join #workhourtmp w on d.date = w.Date and d.FactoryID = w.FactoryID and d.SewingLineID = w.SewingLineID
 order by FactoryID,SewingLineID,date
 
 --先將符合條件的Sewing schedule撈出來
@@ -1509,7 +1558,7 @@ group by  s.FactoryID,s.SewingLineID,o.StyleID,s.Inline,s.Offline
 	,o.StyleUkey
 	,o.ID
 
-print '@Stmp'  + FORMAT(getdate(), 'hh:mm:ss')
+-- print '@Stmp'  + FORMAT(getdate(), 'hh:mm:ss')
 declare  @Stmp  TABLE(
 	FactoryID varchar(10) null,
 	SewingLineID varchar(10) null,
@@ -1570,10 +1619,10 @@ select distinct
 	,s.OrderID
 	,s.ComboType
 from @Sewtmp s 
-left join @tmpd d on d.FactoryID = s.FactoryID and d.SewingLineID = s.SewingLineID and d.date between s.Inline and s.Offline
+left join #tmpd d on d.FactoryID = s.FactoryID and d.SewingLineID = s.SewingLineID and d.date between s.Inline and s.Offline
 left join Workhour_Detail wkd with(nolock) on wkd.FactoryID = s.FactoryID
 										and wkd.SewingLineID = s.SewingLineID and wkd.Date = d.date
-print '@tmpStmp_step1'  + FORMAT(getdate(), 'hh:mm:ss')
+-- print '@tmpStmp_step1'  + FORMAT(getdate(), 'hh:mm:ss')
 declare  @tmpStmp_step1  TABLE(
 	FactoryID varchar(10) null,
 	SewingLineID varchar(10) null,
@@ -1638,7 +1687,7 @@ group by FactoryID, SewingLineID,date,StyleID,IsLastMonth,IsNextMonth,IsBulk
 ,LearnCurveID,LNCSERIALNumber,OrderID,ComboType,Inline,Offline,InlineHour,OfflineHour,IsSample
 
 --抓出各style連續作業天數，不含假日
-print '@tmpLongDayCheck1'  + FORMAT(getdate(), 'hh:mm:ss')
+-- print '@tmpLongDayCheck1'  + FORMAT(getdate(), 'hh:mm:ss')
 declare  @tmpLongDayCheck1  TABLE(
 	FactoryID varchar(10) null,
 	SewingLineID varchar(10) null,
@@ -1649,7 +1698,7 @@ declare  @tmpLongDayCheck1  TABLE(
 insert into @tmpLongDayCheck1(FactoryID, SewingLineID, date, StyleID)
 select distinct FactoryID, SewingLineID, date, StyleID from @Stmp where FactoryID is not null
 
-print '@tmpLongDayCheck2'  + FORMAT(getdate(), 'hh:mm:ss')
+-- print '@tmpLongDayCheck2'  + FORMAT(getdate(), 'hh:mm:ss')
 declare  @tmpLongDayCheck2  TABLE(
 	FactoryID varchar(10) null,
 	SewingLineID varchar(10) null,
@@ -1669,7 +1718,7 @@ select	FactoryID,
 from @tmpLongDayCheck1
 order by factoryid, sewinglineid, styleID, date
 
-print '@tmpLongDayCheck3'  + FORMAT(getdate(), 'hh:mm:ss')
+-- print '@tmpLongDayCheck3'  + FORMAT(getdate(), 'hh:mm:ss')
 declare  @tmpLongDayCheck3  TABLE(
 	rownum int null,
 	FactoryID varchar(10) null,
@@ -1688,8 +1737,8 @@ select *, rownum = ROW_NUMBER() over (order by factoryid, sewinglineid, styleID,
 ) a 
 group by rownum, factoryid, sewinglineid, styleID
 
-print '@tmpLongDayCheck'  + FORMAT(getdate(), 'hh:mm:ss')
-declare  @tmpLongDayCheck  TABLE(
+-- print '#tmpLongDayCheck'  + FORMAT(getdate(), 'hh:mm:ss')
+CREATE TABLE #tmpLongDayCheck (
 	rownum int null,
 	FactoryID varchar(10) null,
 	SewingLineID varchar(10) null,
@@ -1700,10 +1749,10 @@ declare  @tmpLongDayCheck  TABLE(
 	INDEX IDX CLUSTERED(StyleID,FactoryID,SewingLineID,BeginDate,EndDate)
 )
 
-insert into @tmpLongDayCheck(rownum, factoryid, sewinglineid, styleID, BeginDate, EndDate, WorkDays)
+insert into #tmpLongDayCheck(rownum, factoryid, sewinglineid, styleID, BeginDate, EndDate, WorkDays)
 select t.rownum, t.factoryid, t.sewinglineid, t.styleID, t.BeginDate, t.EndDate, [WorkDays] = DATEDIFF(day, BeginDate, EndDate) + 1 - holiday.val
 from @tmpLongDayCheck3 t
-outer apply(select val = count(*) from @Holiday where Holiday = 1 and FactoryID = t.FactoryID and SewingLineID = t.SewingLineID and date between BeginDate and EndDate) holiday
+outer apply(select val = count(*) from #Holiday where Holiday = 1 and FactoryID = t.FactoryID and SewingLineID = t.SewingLineID and date between BeginDate and EndDate) holiday
 
 --
 
@@ -1712,8 +1761,8 @@ outer apply(select val = count(*) from @Holiday where Holiday = 1 and FactoryID 
 delete @tmpStmp_step1 where [date] = Inline and EndHour <= InlineHour
 delete @tmpStmp_step1 where [date] = Offline and StartHour >= OfflineHour
 
-print '@tmpStmp_step2'  + FORMAT(getdate(), 'hh:mm:ss')
-declare  @tmpStmp_step2  TABLE(
+-- print '#tmpStmp_step2'  + FORMAT(getdate(), 'hh:mm:ss')
+CREATE TABLE #tmpStmp_step2 (
 	FactoryID varchar(10) null,
 	SewingLineID varchar(10) null,
 	[date] date null,
@@ -1738,7 +1787,7 @@ declare  @tmpStmp_step2  TABLE(
 	INDEX IDX CLUSTERED(Date,FactoryID,SewingLineID)
 )
 
-insert into @tmpStmp_step2(FactoryID
+insert into #tmpStmp_step2(FactoryID
 , SewingLineID
 ,date
 ,StyleID
@@ -1785,8 +1834,8 @@ select FactoryID
 ,LNCSERIALNumber
 from @tmpStmp_step1
 
-print '@ConcatStyle'  + FORMAT(getdate(), 'hh:mm:ss')
-declare  @ConcatStyle  TABLE(
+-- print '#ConcatStyle'  + FORMAT(getdate(), 'hh:mm:ss')
+CREATE TABLE #ConcatStyle(
 	FactoryID varchar(10) null,
 	SewingLineID varchar(10) null,
 	[date] date null,
@@ -1794,20 +1843,20 @@ declare  @ConcatStyle  TABLE(
 	INDEX IDX CLUSTERED(Date,FactoryID,SewingLineID)
 )
 
-insert into @ConcatStyle(FactoryID,SewingLineID,date,StyleID)
+insert into #ConcatStyle(FactoryID,SewingLineID,date,StyleID)
 select distinct FactoryID,SewingLineID,date,StyleID = a.s
-from @tmpStmp_step2 s
+from #tmpStmp_step2 s
 outer apply(
 	select s =(
 		select distinct concat(StyleID,'(',CdCodeID,')',';')
-		from @tmpStmp_step2 s2
+		from #tmpStmp_step2 s2
 		where s2.FactoryID = s.FactoryID and s2.SewingLineID = s.SewingLineID and s2.date = s.date
 		for xml path('')
 	)
 )a
 
 --
-print '@c'  + FORMAT(getdate(), 'hh:mm:ss')
+-- print '@c'  + FORMAT(getdate(), 'hh:mm:ss')
 declare  @c  TABLE(
 	FactoryID varchar(10) null,
 	SewingLineID varchar(10) null,
@@ -1839,13 +1888,13 @@ select h.FactoryID,h.SewingLineID,h.date,h.Holiday,IsLastMonth,IsNextMonth,IsBul
 ,s.WorkDateSer
 ,[OriStyle] = s.StyleID
 ,[IsRepeatStyle] = iif(DENSE_RANK() OVER (PARTITION BY s.FactoryID, s.SewingLineID, s.StyleID, h.Holiday ORDER BY s.date) > 10, 1, 0)
-from @Holiday h
-left join @tmpStmp_step2 s on s.FactoryID = h.FactoryID and s.SewingLineID = h.SewingLineID and s.date = h.date
-inner join(select distinct FactoryID,SewingLineID from @tmpStmp_step2) x on x.FactoryID = h.FactoryID and x.SewingLineID = h.SewingLineID--排掉沒有在SewingSchedule內的資料by FactoryID,SewingLineID
+from #Holiday h
+left join #tmpStmp_step2 s on s.FactoryID = h.FactoryID and s.SewingLineID = h.SewingLineID and s.date = h.date
+inner join(select distinct FactoryID,SewingLineID from #tmpStmp_step2) x on x.FactoryID = h.FactoryID and x.SewingLineID = h.SewingLineID--排掉沒有在SewingSchedule內的資料by FactoryID,SewingLineID
 order by h.FactoryID,h.SewingLineID,h.date ASC, IsSample DESC
 
-print '@tmpTotalWT'  + FORMAT(getdate(), 'hh:mm:ss')
-declare  @tmpTotalWT  TABLE(
+-- print '#tmpTotalWT'  + FORMAT(getdate(), 'hh:mm:ss')
+CREATE TABLE #tmpTotalWT(
 	FactoryID varchar(10) null,
 	SewingLineID varchar(10) null,
 	[date] date null,
@@ -1854,7 +1903,7 @@ declare  @tmpTotalWT  TABLE(
 	INDEX IDX CLUSTERED(APSNo,Date,FactoryID,SewingLineID)
 )
 
-insert into @tmpTotalWT(FactoryID, SewingLineID, [date], APSNo, TotalSewingTime)
+insert into #tmpTotalWT(FactoryID, SewingLineID, [date], APSNo, TotalSewingTime)
 select FactoryID,SewingLineID,date,APSNo
 ,[Total_WorkingTime] = sum(OriWorkHour)
 from @Stmp
@@ -1877,8 +1926,8 @@ select  c.FactoryID
 	    ,c.IsRepeatStyle
 	    ,c.OriStyle
 from @c c 
-left join @ConcatStyle cs on c.FactoryID = cs.FactoryID and c.SewingLineID = cs.SewingLineID and c.date = cs.date
-left join @tmpTotalWT twt on twt.APSNo = c.APSNo and twt.SewingLineID = c.SewingLineID and twt.FactoryID = c.FactoryID
+left join #ConcatStyle cs on c.FactoryID = cs.FactoryID and c.SewingLineID = cs.SewingLineID and c.date = cs.date
+left join #tmpTotalWT twt on twt.APSNo = c.APSNo and twt.SewingLineID = c.SewingLineID and twt.FactoryID = c.FactoryID
 and twt.date = c.date
 left join LearnCurve_Detail lcd with (nolock) on c.LearnCurveID = lcd.ID and c.WorkDateSer = lcd.Day
 outer  apply(select * from dbo.[getDailystdq](c.APSNo)x where x.APSNo=c.APSNo and x.Date = cast(c.date as date)
@@ -2020,8 +2069,8 @@ END
 CLOSE cursor_sewingschedule
 DEALLOCATE cursor_sewingschedule
 
-print '@tmpGantt'  + FORMAT(getdate(), 'hh:mm:ss')
-DECLARE @tmpGantt TABLE (
+-- print '#tmpGantt'  + FORMAT(getdate(), 'hh:mm:ss')
+CREATE TABLE #tmpGantt (
    FactoryID VARCHAR(8),
    SewingLineID VARCHAR(5),
    StyleID VARCHAR(MAX),
@@ -2043,7 +2092,7 @@ DECLARE @tmpGantt TABLE (
    INDEX IDX CLUSTERED(FactoryID,SewingLineID,InLine,OffLine)
 )
 
-insert into @tmpGantt(
+insert into #tmpGantt(
 		FactoryID,
 		SewingLineID,
 		StyleID,
@@ -2083,7 +2132,7 @@ select  t.FactoryID,
         [WorkDays] = isnull(workDays.val, 0)
 from @tempPintData t
 outer apply (   select val = max(WorkDays) 
-                from @tmpLongDayCheck tdc
+                from #tmpLongDayCheck tdc
                 where   tdc.FactoryID = t.FactoryID and
                         tdc.SewingLineID = t.SewingLineID and
                         t.StyleID like '%' + tdc.StyleID + '%'  and
@@ -2093,7 +2142,7 @@ where t.StyleID <> ''
 
 
 --R01 detail and BI
-print 'Final' + FORMAT(getdate(), 'hh:mm:ss') 
+-- print 'Final' + FORMAT(getdate(), 'hh:mm:ss') 
 select
 	apm.APSNo,
 	apm.SewingLineID,
@@ -2172,20 +2221,46 @@ select
 							when tg.IsCrossStyle = 1 then  'Changeover day or 1st day inline for the style'
 							when tg.IsRepeatStyle = 1 then 'Repeat'
 							else 'New style' end,
-	apm.StyleSeason
+	apm.StyleSeason,
+	apm.AddDate,
+	apm.EditDate
 from @APSResult apm
-left join @tmpGantt tg on tg.FactoryID = apm.FactoryID and tg.SewingLineID = apm.SewingLineID and cast(apm.SewingDay as date) between tg.InLine and tg.OffLine
+left join #tmpGantt tg on tg.FactoryID = apm.FactoryID and tg.SewingLineID = apm.SewingLineID and cast(apm.SewingDay as date) between tg.InLine and tg.OffLine
 order by apm.APSNo,apm.SewingStartTime
 
 --PPIC.R01用
 if(@Inline is not null and @Offline is not null)
 begin
 
-delete @tmpGantt where InLine > @Offline or OffLine < @Inline
-update @tmpGantt set	InLine = iif(InLine < @Inline, @Inline, InLine),
+delete #tmpGantt where InLine > @Offline or OffLine < @Inline
+update #tmpGantt set	InLine = iif(InLine < @Inline, @Inline, InLine),
 						OffLine = iif(OffLine > @Offline, @Offline, OffLine)
 end
 
-select * from @tmpGantt
+select * from #tmpGantt
 
+DROP TABLE 
+    #APSColumnGroup
+    ,#APSCuttingOutput
+    ,#APSList
+    ,#APSListArticle
+    ,#APSOrderQty
+    ,#APSPackingQty
+    ,#APSRemarks
+    ,#StyleArtwork
+    ,#StyleData
+    ,#StyleDatabyAPSNo
+    ,#tmpPrintDataSum
+    ,#tmpPrintData
+    ,#tmpPrintSumbuSP
+    ,#OriTotalWorkHour
+    ,#APSSewingOutput
+    ,#tmpStdQ
+    ,#workhourtmp
+    ,#tmpd
+    ,#tmpLongDayCheck
+    ,#tmpStmp_step2
+    ,#ConcatStyle
+    ,#tmpTotalWT
+    ,#tmpGantt
 END
