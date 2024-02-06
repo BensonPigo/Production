@@ -13,6 +13,7 @@ using System.Data.SqlClient;
 using System.Configuration;
 using System.Linq;
 using Excel = Microsoft.Office.Interop.Excel;
+using System.Runtime.InteropServices;
 
 namespace Sci.Production.Planning
 {
@@ -351,7 +352,7 @@ drop table #tmp
 
             // 複製分頁
             Excel.Worksheet worksheet1 = (Excel.Worksheet)excelApp.ActiveWorkbook.Worksheets[1];
-            Excel.Worksheet newSummarySheet;
+            Excel.Worksheet newSummarySheet = null;
 
             this.dtAllDetail.Columns.Remove(this.dtAllDetail.Columns["FtyGroup"]);
             this.dtAllDetail.Columns.Remove(this.dtAllDetail.Columns["TransFtyZone"]);
@@ -449,8 +450,23 @@ drop table #tmp
                 excelApp.ActiveWorkbook.Worksheets[i].Columns[1].ColumnWidth = 11.25;
             }
 
-            excelApp.Visible = true;
+            //excelApp.Visible = true;
             this.HideWaitMessage();
+
+            #region Save & Show Excel
+            string strExcelName = Class.MicrosoftFile.GetName("Planning_R02");
+            Microsoft.Office.Interop.Excel.Workbook workbook = excelApp.ActiveWorkbook;
+            workbook.SaveAs(strExcelName);
+            workbook.Close();
+            excelApp.Quit();
+            Marshal.ReleaseComObject(excelApp);
+            Marshal.ReleaseComObject(worksheet);
+            Marshal.ReleaseComObject(worksheet1);
+            Marshal.ReleaseComObject(newSummarySheet);
+            Marshal.ReleaseComObject(workbook);
+
+            strExcelName.OpenFile();
+            #endregion
             return true;
         }
     }
