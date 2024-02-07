@@ -1124,7 +1124,7 @@ select distinct sd.AccountID
 from ShippingAP_Detail sd WITH (NOLOCK)
 where sd.ID = '{this.apData["ID"]}'
 and sd.AccountID != ''
-and not (dbo.GetAccountNoExpressType(sd.AccountID,'Vat') = 1 or dbo.GetAccountNoExpressType(sd.AccountID,'SisFty') = 1)";
+and not (dbo.GetAccountNoExpressType(LEFT(SD.AccountID , 4),'Vat') = 1 or dbo.GetAccountNoExpressType(LEFT(SD.AccountID , 4),'SisFty') = 1)";
                 DBProxy.Current.Select(null, sqlCmd, out DataTable dtAccNo);
 
                 List<CheckResult> listCheckResult = new List<CheckResult>();
@@ -1842,8 +1842,8 @@ from GMTBooking g WITH (NOLOCK)
 outer apply(select distinct [val] = sd.AccountID 
             from ShippingAP_Detail sd WITH(NOLOCK)
                 where sd.ID = '{this.apData["ID"]}' and sd.AccountID != ''
-                and not (dbo.GetAccountNoExpressType(sd.AccountID,'Vat') = 1 
-		            or dbo.GetAccountNoExpressType(sd.AccountID,'SisFty') = 1)) AccountID
+                and not (dbo.GetAccountNoExpressType(LEFT(SD.AccountID , 4),'Vat') = 1 
+		            or dbo.GetAccountNoExpressType(LEFT(SD.AccountID , 4),'SisFty') = 1)) AccountID
 inner join GMTBooking_Detail gd with (nolock) on g.ID = gd.ID
 where g.ID = '{dr["InvNo"]}' and AccountID.val is not null
 ";
@@ -1930,8 +1930,8 @@ from GMTBooking g WITH (NOLOCK)
 outer apply(select distinct [val] = sd.AccountID 
             from ShippingAP_Detail sd WITH(NOLOCK)
                 where sd.ID = '{this.apData["ID"]}' and sd.AccountID != ''
-                and not (dbo.GetAccountNoExpressType(sd.AccountID,'Vat') = 1 
-		            or dbo.GetAccountNoExpressType(sd.AccountID,'SisFty') = 1)) AccountID
+                and not (dbo.GetAccountNoExpressType(LEFT(SD.AccountID , 4),'Vat') = 1 
+		            or dbo.GetAccountNoExpressType(LEFT(SD.AccountID , 4),'SisFty') = 1)) AccountID
 inner join PackingList p with (nolock) on p.INVNo = g.ID  and p.Type != 'L'
 inner join PackingList_Detail pd with (nolock) on  pd.ID = p.ID and pd.CTNQty > 0
 inner join Orders o with (nolock) on o.ID = pd.OrderID
