@@ -682,7 +682,7 @@ select
 	[EMBStitch] = EMBStitch.val,
 	[EMBStitchCnt] = LEN(EMBStitch.val) - LEN(REPLACE(EMBStitch.val, ',', '')) + 1,
 	[PrintPcs] = (select sum(PRINTING) from (select [PRINTING] = Max(PRINTING) from #StyleArtwork where APSNo = al.APSNo and PRINTING <> -1 group by StyleID) a),
-	SP.StyleSeason,
+	[StyleSeason] = ISNULL(SP.StyleSeason, ''),
 	s.AddDate,
 	s.EditDate
 from #APSList al

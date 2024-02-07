@@ -45,7 +45,7 @@ CREATE TABLE [dbo].[P_SewingLineSchedule](
 	[ScannedQty] [int] NULL,
 	[ClogQty] [int] NULL,
 	[Sewer] [int] NULL,
-	[SewingCPU] [numeric](10, 2) NULL,
+	[SewingCPU] [numeric](12, 5) NULL,
 	[BrandID] [nvarchar](max) NULL,
 	[Orig_WorkHourPerDay] [float] NULL,
 	[New_SwitchTime] [float] NULL,
