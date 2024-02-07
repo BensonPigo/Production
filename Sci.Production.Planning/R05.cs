@@ -454,7 +454,7 @@ drop table #tmp
             this.HideWaitMessage();
 
             #region Save & Show Excel
-            string strExcelName = Class.MicrosoftFile.GetName("Planning_R02");
+            string strExcelName = Class.MicrosoftFile.GetName("Planning_R05");
             Microsoft.Office.Interop.Excel.Workbook workbook = excelApp.ActiveWorkbook;
             workbook.SaveAs(strExcelName);
             workbook.Close();
@@ -462,7 +462,12 @@ drop table #tmp
             Marshal.ReleaseComObject(excelApp);
             Marshal.ReleaseComObject(worksheet);
             Marshal.ReleaseComObject(worksheet1);
-            Marshal.ReleaseComObject(newSummarySheet);
+
+            if (newSummarySheet != null)
+            {
+                Marshal.ReleaseComObject(newSummarySheet);
+            }
+
             Marshal.ReleaseComObject(workbook);
 
             strExcelName.OpenFile();
