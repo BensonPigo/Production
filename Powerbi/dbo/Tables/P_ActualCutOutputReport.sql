@@ -9,7 +9,7 @@
     [SP]                        VARCHAR (13)    CONSTRAINT [DF_P_ActualCutOutputReport_SP] DEFAULT ('') NOT NULL,
     [SubSP]                     NVARCHAR (MAX)  CONSTRAINT [DF_P_ActualCutOutputReport_SubSP] DEFAULT ('') NOT NULL,
     [StyleID]                   VARCHAR (15)    CONSTRAINT [DF_P_ActualCutOutputReport_StyleID] DEFAULT ('') NOT NULL,
-    [Size]                      NVARCHAR (50)   CONSTRAINT [DF_P_ActualCutOutputReport_Size] DEFAULT ('') NOT NULL,
+    [Size]                      NVARCHAR (100)   CONSTRAINT [DF_P_ActualCutOutputReport_Size] DEFAULT ('') NOT NULL,
     [noEXCESSqty]               NUMERIC (10)    CONSTRAINT [DF_P_ActualCutOutputReport_noEXCESSqty] DEFAULT ((0)) NOT NULL,
     [Description]               NVARCHAR (MAX)  CONSTRAINT [DF_P_ActualCutOutputReport_Description] DEFAULT ('') NOT NULL,
     [WeaveTypeID]               VARCHAR (20)    CONSTRAINT [DF_P_ActualCutOutputReport_WeaveTypeID] DEFAULT ('') NOT NULL,
