@@ -6,8 +6,8 @@
 	[TotalQty] [int] NOT NULL,
 	[TotalCPU] [numeric](15, 3) NOT NULL,
 	[TotalManhours] [numeric](15, 3) NOT NULL,
-	[PPH] [numeric](5, 2) NOT NULL,
-	[EFF] [numeric](5, 2) NOT NULL,
+	[PPH] [numeric](10, 2) NOT NULL,
+	[EFF] [numeric](10, 2) NOT NULL,
  CONSTRAINT [PK_P_ProdEfficiencyByFactorySewingLine] PRIMARY KEY CLUSTERED 
 (
 	[Year-Month] ASC,
