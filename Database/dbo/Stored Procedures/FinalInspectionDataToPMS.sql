@@ -19,7 +19,7 @@ BEGIN
 			, f.Team 
 			, f.[Shift] 
 			, f.InspectionStage 
-			, f.SampleSize 
+			, [SampleSize] = ISNULL(f.SampleSize, 0)
 			, f.RejectQty
 			, [ClogReceivedPercentage] = isnull(clog.Value, 0)
 			, f.InspectionResult 
@@ -32,10 +32,12 @@ BEGIN
 			, [IsCombinePO] = Forder.IsCombinePO
 			, [FirstInspection] = IIF(f.InspectionTimes = 1, 1 , 0)	
 			, f.InspectionTimes
+			, f.ReInspection
 		into #tmp_FinalInspection
 		from [ExtendServer].[ManufacturingExecution].dbo.FinalInspection f
 		left join CFAInspectionRecord c on f.ID = c.ID
-		outer apply(
+		outer apply
+		(
 			select [IsCombinePO] = iif(COUNT(1) > 1 , 1, 0)
 			from [ExtendServer].[ManufacturingExecution].dbo.FinalInspection_Order fo where f.id = fo.id
 		) Forder
@@ -63,10 +65,10 @@ BEGIN
 
 		insert into [dbo].[CFAInspectionRecord] ([ID], [AuditDate], [FactoryID], [MDivisionid], [SewingLineID], [Team], [Shift]
 			, [Stage], [InspectQty], [DefectQty], [ClogReceivedPercentage], [Result], [CFA], [Status], [Remark], [AddName]
-			, [AddDate], [EditName], [EditDate], [IsCombinePO], [FirstInspection], [IsImportFromMES])
+			, [AddDate], [EditName], [EditDate], [IsCombinePO], [FirstInspection], [IsImportFromMES],[ReInspection])
 		select s.ID, s.AuditDate, isnull(s.FactoryID,''), isnull(s.MDivisionid,''), isnull(s.[SewingLineID],''), isnull(s.Team,'A'), isnull(s.[Shift],'D'),
 			isnull(s.InspectionStage,''), s.SampleSize, s.RejectQty, s.ClogReceivedPercentage, isnull(s.InspectionResult,''), isnull(s.CFA,''),	'Confirmed', isnull(s.OthersRemark,''),	s.AddName,
-			s.AddDate, isnull(s.EditName,''), s.EditDate, s.IsCombinePO, s.FirstInspection, '1'
+			s.AddDate, isnull(s.EditName,''), s.EditDate, s.IsCombinePO, s.FirstInspection, '1',isnull(s.ReInspection,0)
 		from #tmp_FinalInspection s
 		where not exists (select 1 from CFAInspectionRecord t where s.ID = t.ID)
 
@@ -77,7 +79,7 @@ BEGIN
 		where exists (select 1 from #tmp_FinalInspection t where fd.ID = t.ID)
 		and not exists (select 1 from CFAInspectionRecord_Detail t where fd.ID = t.ID and fd.GarmentDefectCodeID = t.GarmentDefectCodeID)
 
-		-- CFAInspectionRecord_OrderSEQ
+		-- CFAInspectionRecord_OrderSEQn
 		insert into [dbo].[CFAInspectionRecord_OrderSEQ]([ID], [OrderID], [SEQ], [Carton])
 		select foq.ID, foq.OrderID, foq.Seq
 			,[CTNNo] = isnull(CTN.CTNNoList, '')
