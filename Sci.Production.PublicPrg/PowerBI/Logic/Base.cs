@@ -19,7 +19,7 @@ namespace Sci.Production.Prg.PowerBI.Logic
         {
             P_MonthlySewingOutputSummary,
             P_SewingLineSchedule,
-            P_QA_R31,
+            P_QAR31,
         }
 
         /// <summary>
@@ -192,8 +192,8 @@ namespace Sci.Production.Prg.PowerBI.Logic
                 case ListName.P_SewingLineSchedule:
                     result = new P_Import_SewingLineScheduleBIData().P_SewingLineScheduleBIData(item.SDate, item.EDate);
                     break;
-                case ListName.P_QA_R31:
-                    result = new P_Import_QA_R31().P_QA_R31(item.SDate, item.EDate);
+                case ListName.P_QAR31:
+                    result = new P_Import_QAR31().P_QAR31(item.SDate, item.EDate);
                     break;
                 default:
                     // Execute all Stored Procedures

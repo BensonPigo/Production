@@ -9,10 +9,10 @@ using Sci.Data;
 namespace Sci.Production.Prg.PowerBI.DataAccess
 {
     /// <inheritdoc/>
-    public class P_Import_QA_R31
+    public class P_Import_QAR31
     {
         /// <inheritdoc/>
-        public Base_ViewModel P_QA_R31(DateTime? sDate, DateTime? eDate)
+        public Base_ViewModel P_QAR31(DateTime? sDate, DateTime? eDate)
         {
             Base_ViewModel finalResult = new Base_ViewModel();
             QA_R31 biModel = new QA_R31();
