@@ -193,6 +193,7 @@
     <Compile Include="PmsWebAPI.cs" />
     <Compile Include="Entity\Prgs_POSuppDetailData.cs" />
     <Compile Include="PowerBI\DataAccess\P_Import_MonthlySewingOutputSummary.cs" />
+    <Compile Include="PowerBI\DataAccess\P_Import_QA_R31.cs" />
     <Compile Include="PowerBI\DataAccess\P_Import_SewingLineScheduleBIData.cs" />
     <Compile Include="PowerBI\FormPage\Form1.cs">
       <SubType>Form</SubType>
@@ -208,8 +209,10 @@
     </Compile>
     <Compile Include="PowerBI\Logic\Base.cs" />
     <Compile Include="PowerBI\Logic\PPIC_R01.cs" />
+    <Compile Include="PowerBI\Logic\QA_R31.cs" />
     <Compile Include="PowerBI\Model\Base_ViewModel.cs" />
     <Compile Include="PowerBI\Model\PPIC_R01_ViewModel.cs" />
+    <Compile Include="PowerBI\Model\QA_R31_ViewModel.cs" />
     <Compile Include="PowerBI\Model\Sewing_R02_ViewModel.cs" />
     <Compile Include="PowerBI\Logic\Sewing_R02.cs" />
     <Compile Include="SewingOutputOrderChange.cs" />
