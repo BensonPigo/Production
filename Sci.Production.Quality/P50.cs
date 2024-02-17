@@ -834,34 +834,48 @@ namespace Sci.Production.Quality
             }
 
             string cmd = $@"
-            Select m.* ,MtlType = MtlType.value,WeaveType = WeaveType.value,supplier = supp.value
-            From MaterialDocument m
-            Outer apply ( SELECT
-		            value = STUFF((SELECT
-				            CONCAT(',', MtlType.MtltypeId)
-			            FROM MaterialDocument_MtlType MtlType WITH (NOLOCK)
-			            WHERE MtlType.DocumentName = m.DocumentName and MtlType.BrandID = m.BrandID
-			            FOR XML PATH (''))
-		            , 1, 1, '')
-            ) MtlType
-			Outer apply ( SELECT
-		            value = STUFF((SELECT
-				            CONCAT(',', WeaveType.WeaveTypeId)
-			            FROM MaterialDocument_WeaveType WeaveType WITH (NOLOCK)
-			            WHERE WeaveType.DocumentName = m.DocumentName and WeaveType.BrandID = m.BrandID
-			            FOR XML PATH (''))
-		            , 1, 1, '')
-            ) WeaveType
-            Outer apply ( SELECT
-		            value = STUFF((SELECT
-				            CONCAT(',', supp.SuppID)
-			            FROM MaterialDocument_Supplier supp WITH (NOLOCK)
-			            WHERE supp.DocumentName = m.DocumentName
-			            AND supp.BrandID = m.BrandID
-			            FOR XML PATH (''))
-		            , 1, 1, '')
-            ) supp
-            Where documentName = @documentName and brandID = @brandID and m.FileRule in ('1','2') and m.junk = 0";
+Select m.* 
+, MtlType = MtlType.value
+, WeaveType = WeaveType.value
+, supplier = supp.value
+, MergedBrand = MergedBrand.value
+From MaterialDocument m
+Outer apply ( SELECT
+		value = STUFF((SELECT
+				CONCAT(',', MtlType.MtltypeId)
+			FROM MaterialDocument_MtlType MtlType WITH (NOLOCK)
+			WHERE MtlType.DocumentName = m.DocumentName and MtlType.BrandID = m.BrandID
+			FOR XML PATH (''))
+		, 1, 1, '')
+) MtlType
+Outer apply ( SELECT
+		value = STUFF((SELECT
+				CONCAT(',', WeaveType.WeaveTypeId)
+			FROM MaterialDocument_WeaveType WeaveType WITH (NOLOCK)
+			WHERE WeaveType.DocumentName = m.DocumentName and WeaveType.BrandID = m.BrandID
+			FOR XML PATH (''))
+		, 1, 1, '')
+) WeaveType
+Outer apply ( SELECT
+		value = STUFF((SELECT
+				CONCAT(',', supp.SuppID)
+			FROM MaterialDocument_Supplier supp WITH (NOLOCK)
+			WHERE supp.DocumentName = m.DocumentName
+			AND supp.BrandID = m.BrandID
+			FOR XML PATH (''))
+		, 1, 1, '')
+) supp
+Outer apply (
+    SELECT value = STUFF((
+        SELECT CONCAT(',', MergedBrand)
+		FROM MaterialDocument_Brand WITH (NOLOCK)
+		WHERE DocumentName = m.DocumentName
+		AND BrandID = m.BrandID
+		FOR XML PATH (''))
+	, 1, 1, '')
+) MergedBrand
+Where documentName = @documentName and brandID = @brandID and m.FileRule in ('1','2') and m.junk = 0
+";
 
             var res = DBProxy.Current.SeekEx(cmd, "documentName", this.cboDocumentname.Text, "brandID", this.txtBrand1.Text);
             if (!res)
@@ -995,7 +1009,11 @@ namespace Sci.Production.Quality
             SELECT
 	            RowNo = ROW_NUMBER() OVER (ORDER BY Month)
                ,ID INTO #probablySeasonList
-            FROM dbo.Season Where BrandID = @BrandID
+            FROM(
+                Select DISTINCT Month, ID
+                From Season 
+                where BrandID = @brandID or BrandID in (select MergedBrand From MaterialDocument_Brand Where DocumentName = @documentName and BrandID = @BrandID)
+            )a
 
             select  
               TestReportTestDate = CONVERT(VARCHAR(10), sr.TestReportTestDate, 23)
@@ -1021,7 +1039,7 @@ namespace Sci.Production.Quality
                ,FactoryID = o.FtyGroup
              INTO #tmp
              from PO_Supp_Detail po3 WITH (NOLOCK)
-            LEFT JOIN PO_Supp_Detail stockPO3 with (nolock) on iif(po3.StockPOID >'', 1, 0) = 0 AND stockPO3.ID =  po3.StockPOID
+             LEFT JOIN PO_Supp_Detail stockPO3 with (nolock) on iif(po3.StockPOID >'', 1, 0) = 0 AND stockPO3.ID =  po3.StockPOID
 			        and stockPO3.Seq1 = po3.StockSeq1
 			        and stockPO3.Seq2 = po3.StockSeq2	        
              INNER JOIN Orders o with(nolock) on o.ID = IIF(IsNull(po3.StockPOID, '') = '' , po3.ID, stockPO3.ID)
@@ -1047,7 +1065,7 @@ namespace Sci.Production.Quality
                 and po2.SuppID <> 'FTY'
                 and IIF(IsNull(po3.StockPOID, '') = '' , po3.Junk, stockPO3.Junk)  = 0        
 	            and IIF(IsNull(po3.StockPOID, '') = '' , po3.Qty, stockPO3.Qty) > 0
-                and o.BrandID = @brandID
+                and (o.BrandID = @BrandID or o.BrandID in (select MergedBrand From MaterialDocument_Brand Where DocumentName = @documentName and BrandID = @BrandID))
                 and s.DevOption = 0
                 and {conditions}
           

@@ -1001,7 +1001,7 @@ Order by POID,Seq
 
 Select distinct md.DocumentName, md.FileRule, po.Seq, po.POID
 FROM MaterialDocument md
-inner join #POList po on md.BrandID = po.BrandID
+inner join #POList po on md.BrandID = po.BrandID or po.BrandID in (select MergedBrand From MaterialDocument_Brand Where DocumentName = md.DocumentName and BrandID = md.BrandID)
 Outer apply ( 
 	SELECT value = STUFF((SELECT CONCAT(',', MtlType.MtltypeId) 
 	FROM MaterialDocument_MtlType MtlType WITH (NOLOCK)
@@ -1460,7 +1460,8 @@ Select sr.Ukey
 FROM UASentReport sr
 WHERE  sr.SuppID in (select top 1 SuppGroup FROM BrandRelation where SuppID = @SuppID)  
 and (sr.BrandRefno = @BrandRefno  or sr.BrandRefno = @Refno)
-and sr.BrandID = @BrandID and sr.DocumentName = @DocumentName
+and (sr.BrandID = @BrandID or sr.BrandID in (select MergedBrand From MaterialDocument_Brand Where DocumentName = @documentName and BrandID = @BrandID))
+and sr.DocumentName = @DocumentName
                     ";
                     parmes.Add(new SqlParameter("@SuppID", mainrow["SuppID"]));
                     parmes.Add(new SqlParameter("@BrandRefno", mainrow["BrandRefno"]));
@@ -1486,7 +1487,9 @@ Select sr.Ukey
 FROM UASentReport sr
 WHERE  sr.SuppID in (select top 1 SuppGroup FROM BrandRelation where SuppID = @SuppID)  
 and (sr.BrandRefno = @BrandRefno  or sr.BrandRefno = @Refno)
-and sr.ColorID = @ColorID and sr.BrandID = @BrandID and sr.DocumentName = @DocumentName 
+and sr.ColorID = @ColorID 
+and (sr.BrandID = @BrandID or sr.BrandID in (select MergedBrand From MaterialDocument_Brand Where DocumentName = @documentName and BrandID = @BrandID))
+and sr.DocumentName = @DocumentName 
                     ";
                     parmes.Add(new SqlParameter("@SuppID", mainrow["SuppID"]));
                     parmes.Add(new SqlParameter("@BrandRefno", mainrow["BrandRefno"]));
@@ -1516,7 +1519,9 @@ Select DocSeason = SeasonID
 FROM dbo.FirstDyelot 
 WHERE SuppID in (select top 1 SuppGroup FROM BrandRelation where SuppID = @SuppID) 
 and (BrandRefno = @BrandRefno  or BrandRefno = @Refno)
-and ColorID = @ColorID and BrandID = @BrandID and DocumentName = @DocumentName
+and ColorID = @ColorID 
+and (BrandID = @BrandID or BrandID in (select MergedBrand From MaterialDocument_Brand Where DocumentName = @documentName and BrandID = @BrandID))
+and DocumentName = @DocumentName
 and deleteColumn = 0
 Order by SeasonID desc";
                     parmes.Add(new SqlParameter("@SuppID", mainrow["SuppID"]));
