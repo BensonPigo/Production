@@ -233,3 +233,4 @@ packages/Microsoft.SqlServer.Types.14.0.314.76/nativeBinaries/x86/msvcr120.dll
 packages/Microsoft.SqlServer.Types.14.0.314.76/nativeBinaries/x86/SqlServerSpatial140.dll
 packages/Microsoft.SqlServer.Types.14.0.314.76/tools/install.ps1
 packages/Microsoft.SqlServer.Types.14.0.314.76/tools/uninstall.ps1
+/.vs
