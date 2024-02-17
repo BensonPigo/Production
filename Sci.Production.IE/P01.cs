@@ -447,8 +447,10 @@ from MachineType_Detail where FactoryID = '{Env.User.Factory}' and ID = '{machin
 
                             if (dr["CodeFrom"].ToString().StartsWith("AT"))
                             {
-                                var frm = new P01_Operation_AT(new string[] { "AT" }, dr["IETMSUkey"].ToString(), dr["CodeFrom"].ToString(), strTimeStudyID: this.strTimeStudtID);
+                                DataTable dataSource = (DataTable)this.detailgridbs.DataSource;
+                                var frm = new P01_Operation_AT(new string[] { "AT" }, ref dataSource, dr["IETMSUkey"].ToString(), dr["CodeFrom"].ToString(), strTimeStudyID: this.strTimeStudtID);
                                 frm.ShowDialog();
+                                this.detailgridbs.DataSource = dataSource;
                             }
                             else
                             {
@@ -2657,8 +2659,11 @@ and s.BrandID = @brandid";
         private void BtnATSummary_Click(object sender, EventArgs e)
         {
             string ietmsUKEY = MyUtility.GetValue.Lookup($"select ukey from IETMS where id = '{this.CurrentMaintain["Ietmsid"]}' and Version = '{this.CurrentMaintain["ietmsversion"]}'");
-            var windows = new P01_AT_Summary(ietmsUKEY, this.EditMode, this.strTimeStudtID);
+            DataTable dataSource = (DataTable)this.detailgridbs.DataSource;
+            var windows = new P01_AT_Summary(ietmsUKEY, ref dataSource, this.EditMode, this.strTimeStudtID);
             windows.ShowDialog();
+
+            this.detailgridbs.DataSource = dataSource;
         }
     }
 }

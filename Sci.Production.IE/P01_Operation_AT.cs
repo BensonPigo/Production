@@ -25,15 +25,18 @@ namespace Sci.Production.IE
         private DataTable dtSpeed;
         private DataTable dtHead;
         private string strTimeStudyID = string.Empty;
+        private DataTable dtDetail;
 
         /// <inheritdoc/>
-        public P01_Operation_AT(string[] typeList, string ietmsUkey = "", string codeFrom = "", bool isEnabled = true, bool isSetAT = true, string strTimeStudyID = "")
+        public P01_Operation_AT(string[] typeList, ref DataTable dataTable, string ietmsUkey = "", string codeFrom = "", bool isEnabled = true, bool isSetAT = true, string strTimeStudyID = "")
         {
             this.InitializeComponent();
             this.strIetmsUkey = ietmsUkey;
             this.strCodeFrom = codeFrom;
             this.strTimeStudyID = strTimeStudyID;
             this.Text = !isSetAT ? "Std. AT" : "Operation AT";
+
+            this.dtDetail = dataTable;
 
             this.btnStdAT.Visible = isSetAT;
             this.btnCalculate.Visible = isEnabled;
@@ -288,7 +291,18 @@ namespace Sci.Production.IE
 
         private void BtnStdAT_Click(object sender, EventArgs e)
         {
-            var frm = new P01_Operation_AT(new string[] { "AT" }, this.strIetmsUkey, this.strCodeFrom, false, false);
+            var frm = new P01_Operation_AT(new string[] { "AT" }, ref this.dtDetail, this.strIetmsUkey, this.strCodeFrom, false, false);
+            frm.StartPosition = FormStartPosition.Manual;
+            foreach (Form openForm in Application.OpenForms)
+            {
+                if (openForm is P01_Operation_AT)
+                {
+                    int newX = openForm.Left + 25;
+                    int newY = openForm.Top + 25;
+                    frm.Location = new Point(newX, newY);
+                }
+            }
+
             frm.ShowDialog();
         }
 
@@ -328,6 +342,21 @@ namespace Sci.Production.IE
             ";
             DBProxy.Current.Execute(null, sqlcmd);
             this.GetBottom();
+
+            var drMM2AT = this.dtDetail.AsEnumerable().Where(
+                x => x.Field<long>("IETMSUkey") == Convert.ToInt64(this.strIetmsUkey) &&
+                x.Field<string>("CodeFrom") == this.strCodeFrom &&
+                x.Field<string>("MachineTypeID").StartsWith("MM2AT")
+                ).FirstOrDefault();
+
+            drMM2AT["SMV"] = MyUtility.Convert.GetDecimal(this.txtMM2AT_Gaement.Text);
+
+            var drAT = this.dtDetail.AsEnumerable().Where(
+                x => x.Field<long>("IETMSUkey") == Convert.ToInt64(this.strIetmsUkey) &&
+                x.Field<string>("CodeFrom") == this.strCodeFrom &&
+                x.Field<string>("MachineTypeID").StartsWith("AT")
+                ).FirstOrDefault();
+            drAT["SMV"] = MyUtility.Convert.GetDecimal(this.txtAT_Garment.Text);
         }
     }
 }
