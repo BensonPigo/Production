@@ -193,7 +193,7 @@ namespace Sci.Production.Prg.PowerBI.Logic
                     result = new P_Import_SewingLineScheduleBIData().P_SewingLineScheduleBIData(item.SDate, item.EDate);
                     break;
                 case ListName.P_PPICMASTERLIST:
-                    result = new P_Import_PPICMasterListBIData().P_PPICMasterListBIData(item.SDate, item.EDate);
+                    result = new P_Import_PPICMasterListBIData().P_PPICMasterListBIData(item.SDate);
                     break;
                 default:
                     // Execute all Stored Procedures
