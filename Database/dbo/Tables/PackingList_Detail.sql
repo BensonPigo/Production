@@ -88,6 +88,7 @@
     [M360MDFailQty] INT not null constraint [DF_PackingList_Detail_[M360MDFailQty] DEFAULT 0,
     [M360MDScanName] VARCHAR(10) not null constraint [DF_PackingList_Detail_M360MDScanName] DEFAULT '',
     [MDMachineNo] VARCHAR(30) NOT NULL DEFAULT (''), 
+    [CustCTN2]     VARCHAR (30)    not null constraint [DF_PackingList_Detail_CustCTN2] DEFAULT '',
     CONSTRAINT [PK_Ukey] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
 

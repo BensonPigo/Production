@@ -411,6 +411,19 @@ where RequestID='{this.CurrentMaintain["ID"]}' and l.status = 'Approved'
             }
             #endregion
 
+            if (UtilityAutomation.IsAutomationEnable && this.CurrentMaintain["BrandID"].ToString().ToUpper() == "NIKE")
+            {
+                this.btnCustSystem.Text = "Mercury";
+                this.btnCustSystem.Enabled = true;
+                this.btnCustSystem.Visible = true;
+            }
+            else
+            {
+                this.btnCustSystem.Text = "Cust System";
+                this.btnCustSystem.Enabled = false;
+                this.btnCustSystem.Visible = false;
+            }
+
         }
 
         /// <summary>
@@ -1797,7 +1810,7 @@ where ShipModeID in ('A/P', 'E/P')
 and p.ID = '{this.CurrentMaintain["ID"]}'
 group by p.ID
 ";
-            if (MyUtility.Check.Seek(sqlChk,out DataRow drChk))
+            if (MyUtility.Check.Seek(sqlChk, out DataRow drChk))
             {
                 if (MyUtility.Check.Empty(drChk["ttlNW"]))
                 {
@@ -2428,6 +2441,11 @@ The rest of the data has been updated successfully!'
             {
                 dr["CustCTN"] = string.Empty;
             }
+        }
+
+        private void BtnCustSystem_Click(object sender, EventArgs e)
+        {
+            new P03_Mercury(this.CurrentMaintain["ID"].ToString()).ShowDialog();
         }
     }
 }
