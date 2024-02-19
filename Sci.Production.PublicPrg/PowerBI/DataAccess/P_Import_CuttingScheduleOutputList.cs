@@ -78,7 +78,9 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 DBProxy.Current.OpenConnection("PowerBI", out SqlConnection sqlConn);
                 using (sqlConn)
                 {
-                    string sql = @"	
+                    string sDateS = sDate.ToString("yyyy/MM/dd");
+                    string eDateS = sDate.ToString("yyyy/MM/dd");
+                    string sql = $@"	
 /************* 刪除P_CuttingScheduleOutputList的資料，規則刪除相同的WorkOrder.ID*************/
 Delete P_CuttingScheduleOutputList
 from P_CuttingScheduleOutputList as a 
@@ -164,8 +166,8 @@ into #cuttingSum
 FROM SciProduction_CuttingOutput co
 INNER JOIN SciProduction_CuttingOutput_Detail cod ON co.id = cod.ID
 WHERE 
-(co.EditDate BETWEEN GETDATE() - 7 AND GETDATE()) OR
-(co.AddDate BETWEEN GETDATE() - 7 AND GETDATE())
+(co.EditDate BETWEEN '{sDateS}' AND '{eDateS}') OR
+(co.AddDate BETWEEN '{sDateS}' AND '{eDateS}')
 GROUP BY cod.CuttingID,cod.CutRef,co.cDate,co.FactoryID
 
 /*************找出的workOrder的資料*************/
