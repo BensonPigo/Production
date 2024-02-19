@@ -892,8 +892,7 @@ If the application is for Air - Prepaid Invoice, please ensure that all item cod
         private DualResult InitialShareExpense(DataRow drCurrentMaintain, bool checkIsFreightForwarder)
         {
             DualResult result;
-            if ((checkIsFreightForwarder && this.IsExistsBLNo) ||
-                (this.IsCustoms && !MyUtility.Check.Empty(drCurrentMaintain["BLNO"])))
+            if (((checkIsFreightForwarder && this.IsExistsBLNo) || this.IsCustoms) && MyUtility.Check.Empty(this.txtBLNo.Text) == false)
             {
                 string strSqlCmd;
                 if (drCurrentMaintain["Type"].EqualString("EXPORT") && drCurrentMaintain["SubType"].EqualString("GARMENT"))
