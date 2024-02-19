@@ -38,6 +38,7 @@
     [UnPack] BIT NOT NULL DEFAULT 0, 
 	CartonType Varchar (6) NOT NULL CONSTRAINT [DF_LocalItem_CartonType]  DEFAULT(''),
 	[NLCode2] VARCHAR(9) CONSTRAINT [DF_LocalItem_NLCode2] DEFAULT ('') NOT NULL, 
+    [NikeCartonType] VARCHAR(5) CONSTRAINT [DF_LocalItem_NikeCartonType] DEFAULT ('') NOT NULL,
     CONSTRAINT [PK_LocalItem] PRIMARY KEY CLUSTERED ([RefNo] ASC)
 );
 
@@ -185,3 +186,12 @@ EXEC sp_addextendedproperty @name = N'MS_Description',
 	@level2type = N'COLUMN',
 	@level2name = N'CartonType'
 GO
+
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'Nike 紙箱的代號',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'LocalItem',
+    @level2type = N'COLUMN',
+    @level2name = N'NikeCartonType'

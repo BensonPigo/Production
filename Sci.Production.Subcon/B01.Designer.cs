@@ -60,6 +60,8 @@
             this.label25 = new Sci.Win.UI.Label();
             this.label26 = new Sci.Win.UI.Label();
             this.groupBox1 = new Sci.Win.UI.GroupBox();
+            this.label5 = new Sci.Win.UI.Label();
+            this.txtNikeCartonType = new Sci.Win.UI.TextBox();
             this.label4 = new Sci.Win.UI.Label();
             this.txtCartonType = new Sci.Win.UI.TextBox();
             this.dropDownUnpack = new Sci.Production.Class.ComboDropDownList(this.components);
@@ -435,6 +437,8 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.label5);
+            this.groupBox1.Controls.Add(this.txtNikeCartonType);
             this.groupBox1.Controls.Add(this.label4);
             this.groupBox1.Controls.Add(this.txtCartonType);
             this.groupBox1.Controls.Add(this.dropDownUnpack);
@@ -461,6 +465,24 @@
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Carton Only";
             // 
+            // label5
+            // 
+            this.label5.Location = new System.Drawing.Point(417, 80);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(116, 23);
+            this.label5.TabIndex = 48;
+            this.label5.Text = "Nike Carton Type";
+            // 
+            // txtNikeCartonType
+            // 
+            this.txtNikeCartonType.BackColor = System.Drawing.Color.White;
+            this.txtNikeCartonType.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "NikeCartonType", true));
+            this.txtNikeCartonType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtNikeCartonType.Location = new System.Drawing.Point(536, 80);
+            this.txtNikeCartonType.Name = "txtNikeCartonType";
+            this.txtNikeCartonType.Size = new System.Drawing.Size(100, 23);
+            this.txtNikeCartonType.TabIndex = 47;
+            // 
             // label4
             // 
             this.label4.Location = new System.Drawing.Point(219, 80);
@@ -474,7 +496,7 @@
             this.txtCartonType.BackColor = System.Drawing.Color.White;
             this.txtCartonType.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "CartonType", true));
             this.txtCartonType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtCartonType.Location = new System.Drawing.Point(307, 79);
+            this.txtCartonType.Location = new System.Drawing.Point(307, 80);
             this.txtCartonType.Name = "txtCartonType";
             this.txtCartonType.Size = new System.Drawing.Size(100, 23);
             this.txtCartonType.TabIndex = 7;
@@ -1095,5 +1117,7 @@
         private Win.UI.Label label3;
         private Win.UI.Label label4;
         private Win.UI.TextBox txtCartonType;
+        private Win.UI.Label label5;
+        private Win.UI.TextBox txtNikeCartonType;
     }
 }
