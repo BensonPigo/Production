@@ -14,7 +14,7 @@ namespace Sci.Production.Prg.PowerBI.Logic
         /// <inheritdoc/>
         public QA_R31()
         {
-            DBProxy.Current.DefaultTimeout = 900;
+            DBProxy.Current.DefaultTimeout = 5400;
         }
 
         /// <inheritdoc/>
