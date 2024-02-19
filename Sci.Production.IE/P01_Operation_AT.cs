@@ -27,17 +27,17 @@ namespace Sci.Production.IE
         private string strTimeStudyID = string.Empty;
         private DataTable dtDetail;
 
+        private List<P01_OperationClass> p01List;
+
         /// <inheritdoc/>
-        public P01_Operation_AT(string[] typeList, ref DataTable dataTable, string ietmsUkey = "", string codeFrom = "", bool isEnabled = true, bool isSetAT = true, string strTimeStudyID = "")
+        public P01_Operation_AT(string[] typeList, ref DataTable dataTable,ref List<P01_OperationClass> list, string ietmsUkey = "", string codeFrom = "", bool isEnabled = true, bool isSetAT = true, string strTimeStudyID = "")
         {
             this.InitializeComponent();
             this.strIetmsUkey = ietmsUkey;
             this.strCodeFrom = codeFrom;
             this.strTimeStudyID = strTimeStudyID;
             this.Text = !isSetAT ? "Std. AT" : "Operation AT";
-
             this.dtDetail = dataTable;
-
             this.btnStdAT.Visible = isSetAT;
             this.btnCalculate.Visible = isEnabled;
             this.btnConfirm.Visible = isEnabled;
@@ -56,7 +56,7 @@ namespace Sci.Production.IE
             ,[PieceOfGarment] = IA.PieceOfGarment
             ,[OperationID] = IA.OperationID
             ,[TradeRPM] = IA.RPM
-            ,[RPM] =  COALESCE(NULLIF(IA.RPMEdited , ''), IA.RPM,IA.RPMEdited)
+            ,[RPM] =  COALESCE(NULLIF(IA.RPMEdited , ''),IA.RPMEdited)
             ,[LaserSpeed] = COALESCE(NULLIF(IA.LaserSpeedEdited, ''), IA.LaserSpeed)
             ,[TradeLaserSpeed] = isnull(IA.LaserSpeed,'')
             ,[SewingLength] = isnull(IA.SewingLength,'')
@@ -95,35 +95,39 @@ namespace Sci.Production.IE
 
             #region RPM下拉選單
 
-            string sqlRPM = $@" select [ID], [Name], [Value] from IESelectCode where Type = '00016'";
+            string sqlRPM = $@" Select [ID], [Name], [Value] from IESelectCode where Type = '00016'";
 
-            DualResult cbResult = DBProxy.Current.Select(null, sqlRPM , out this.dtRPM);
+            DualResult cbResult = DBProxy.Current.Select(null, sqlRPM, out this.dtRPM);
             if (!cbResult)
             {
                 MyUtility.Msg.WarningBox(cbResult.ToString());
                 return;
             }
+            else
+            {
+                this.dtRPM.Rows.InsertAt(this.dtRPM.NewRow(), 0);
+                this.cbRPM.DataSource = this.dtRPM;
+                this.cbRPM.ValueMember = "ID";
+                this.cbRPM.DisplayMember = "Name";
+            }
 
-            this.dtRPM.Rows.InsertAt(this.dtRPM.NewRow(), 0);
-            this.cbRPM.DataSource = this.dtRPM;
-            this.cbRPM.DisplayMember = "Name";
-            this.cbRPM.ValueMember = "ID";
             #endregion RPM下拉選單
 
             #region Speed下拉選單
 
-            string sqlSpeed = $@" select [ID], [Name], [Value] from IESelectCode where Type = '00017'";
+            string sqlSpeed = $@"select [ID], [Name], [Value] from IESelectCode where Type = '00017'";
 
             if (cbResult = DBProxy.Current.Select(null, sqlSpeed, out this.dtSpeed))
             {
                 this.dtSpeed.Rows.InsertAt(this.dtSpeed.NewRow(), 0);
                 this.cbSpeedLaser.DataSource = this.dtSpeed;
-                this.cbSpeedLaser.DisplayMember = "Name";
                 this.cbSpeedLaser.ValueMember = "ID";
+                this.cbSpeedLaser.DisplayMember = "Name";
             }
             else
             {
                 this.ShowErr(cbResult);
+                return;
             }
             #endregion
 
@@ -137,6 +141,24 @@ namespace Sci.Production.IE
             #endregion 下方表身
 
             this.GetBottom();
+
+            #region 存取原始資料
+            this.p01List = list;
+            if (this.p01List.Where(x => x.IETMSUkey == ietmsUkey && x.CodeFrom == codeFrom).ToList().Count == 0 && isEnabled)
+            {
+                this.p01List.Add(new P01_OperationClass()
+                {
+                    IETMSUkey = MyUtility.Convert.GetString(this.strIetmsUkey),
+                    CodeFrom = MyUtility.Convert.GetString(this.strCodeFrom),
+                    ID = MyUtility.Convert.GetString(this.strTimeStudyID),
+                    PieceOfSeamerEdited = MyUtility.Convert.GetString(this.txtPieceOfSeamer.Text),
+                    RPMEdited = MyUtility.Convert.GetString(this.cbRPM.SelectedValue2),
+                    LaserSpeedEdited = MyUtility.Convert.GetString(this.cbSpeedLaser.SelectedValue2),
+                    AT_SMV = MyUtility.Convert.GetString(this.txtAT_Garment.Text),
+                    MM2AT_SMV = MyUtility.Convert.GetString(this.txtMM2AT_Gaement.Text),
+                });
+            }
+            #endregion 存取原始資料
         }
 
         /// <inheritdoc/>
@@ -291,7 +313,7 @@ namespace Sci.Production.IE
 
         private void BtnStdAT_Click(object sender, EventArgs e)
         {
-            var frm = new P01_Operation_AT(new string[] { "AT" }, ref this.dtDetail, this.strIetmsUkey, this.strCodeFrom, false, false);
+            var frm = new P01_Operation_AT(new string[] { "AT" }, ref this.dtDetail,ref this.p01List, this.strIetmsUkey, this.strCodeFrom, false, false);
             frm.StartPosition = FormStartPosition.Manual;
             foreach (Form openForm in Application.OpenForms)
             {

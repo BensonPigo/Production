@@ -36,6 +36,7 @@ namespace Sci.Production.IE
         private string brandID;
         private string comboType;
         private string strTimeStudtID = string.Empty;
+        private List<P01_OperationClass> p01_OperationList = new List<P01_OperationClass>();
 
         /// <summary>
         /// 將目前DetailGrid裡面，使用者所選擇的Row，將它們綁定的資料列取出
@@ -448,7 +449,7 @@ from MachineType_Detail where FactoryID = '{Env.User.Factory}' and ID = '{machin
                             if (dr["CodeFrom"].ToString().StartsWith("AT"))
                             {
                                 DataTable dataSource = (DataTable)this.detailgridbs.DataSource;
-                                var frm = new P01_Operation_AT(new string[] { "AT" }, ref dataSource, dr["IETMSUkey"].ToString(), dr["CodeFrom"].ToString(), strTimeStudyID: this.strTimeStudtID);
+                                var frm = new P01_Operation_AT(new string[] { "AT" }, ref dataSource, ref this.p01_OperationList, dr["IETMSUkey"].ToString(), dr["CodeFrom"].ToString(), strTimeStudyID: this.strTimeStudtID);
                                 frm.ShowDialog();
                                 this.detailgridbs.DataSource = dataSource;
                             }
@@ -1661,7 +1662,49 @@ where p.EMail is not null and p.EMail <>'' and ts.id = '{this.CurrentMaintain["I
                 email.ShowDialog();
             }
 
+            this.p01_OperationList.Clear();
             this.HideRows();
+        }
+
+        /// <inheritdoc/>
+        protected override void ClickUndo()
+        {
+            base.ClickUndo();
+            string sqlcmd = string.Empty;
+            foreach (var item in this.p01_OperationList)
+            {
+                sqlcmd += $@"
+                UPDATE IETMS_AT SET
+                PieceOfSeamerEdited = {item.PieceOfSeamerEdited}
+                , RPMEdited  = '{item.RPMEdited}' , LaserSpeedEdited = '{item.LaserSpeedEdited}' 
+                WHERE IETMSUkey =  '{item.IETMSUkey}' AND CodeFrom  = '{item.CodeFrom}'
+
+                UPDATE TimeStudy_Detail SET SMV = '{item.MM2AT_SMV}'
+                from TimeStudy_Detail td WITH (NOLOCK) 
+                INNER JOIN TimeStudy t WITH(NOLOCK) ON td.id = t.id
+                INNER JOIN IETMS i ON t.IETMSID = i.ID AND t.IETMSVersion = i.[Version]
+                INNER JOIN IETMS_Detail ID ON I.Ukey = ID.IETMSUkey AND ID.SEQ = TD.Seq
+                WHERE  
+                Id.IETMSUkey = {item.IETMSUkey} and 
+                ID.CodeFrom = '{item.CodeFrom}' and 
+                td.ID = '{item.ID}' and 
+                td.[MachineTypeID] like 'MM2AT%'
+
+                UPDATE TimeStudy_Detail SET SMV = '{item.AT_SMV}'
+                from TimeStudy_Detail td WITH (NOLOCK) 
+                INNER JOIN TimeStudy t WITH(NOLOCK) ON td.id = t.id
+                INNER JOIN IETMS i ON t.IETMSID = i.ID AND t.IETMSVersion = i.[Version]
+                INNER JOIN IETMS_Detail ID ON I.Ukey = ID.IETMSUkey AND ID.SEQ = TD.Seq
+                WHERE  
+                Id.IETMSUkey = {item.IETMSUkey} and 
+                ID.CodeFrom = '{item.CodeFrom}' and 
+                td.ID = '{item.ID}' and 
+                td.[MachineTypeID] like 'AT%'
+                ";
+            }
+
+            DBProxy.Current.Execute(null, sqlcmd);
+            this.p01_OperationList.Clear();
         }
 
         /// <summary>
@@ -2660,9 +2703,8 @@ and s.BrandID = @brandid";
         {
             string ietmsUKEY = MyUtility.GetValue.Lookup($"select ukey from IETMS where id = '{this.CurrentMaintain["Ietmsid"]}' and Version = '{this.CurrentMaintain["ietmsversion"]}'");
             DataTable dataSource = (DataTable)this.detailgridbs.DataSource;
-            var windows = new P01_AT_Summary(ietmsUKEY, ref dataSource, this.EditMode, this.strTimeStudtID);
+            var windows = new P01_AT_Summary(ietmsUKEY, ref dataSource,ref this.p01_OperationList, this.EditMode, this.strTimeStudtID);
             windows.ShowDialog();
-
             this.detailgridbs.DataSource = dataSource;
         }
     }

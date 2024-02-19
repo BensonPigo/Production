@@ -23,15 +23,17 @@ namespace Sci.Production.IE
         private bool IsEdit;
         private string strTimeStudyID = string.Empty;
         private DataTable dtDetail;
-
+        private List<P01_OperationClass> p01List;
         /// <inheritdoc/>
-        public P01_AT_Summary(string iETMSUkey, ref DataTable dataTable, bool isEdit = false, string strTimeStudy = "")
+        public P01_AT_Summary(string iETMSUkey, ref DataTable dataTable, ref List<P01_OperationClass> list, bool isEdit = false, string strTimeStudy = "")
         {
             this.InitializeComponent();
             this.IETMSUKEY = iETMSUkey;
             this.IsEdit = isEdit;
             this.strTimeStudyID = strTimeStudy;
             this.dtDetail = dataTable;
+
+            this.p01List = list;
         }
 
         /// <inheritdoc/>
@@ -113,7 +115,7 @@ namespace Sci.Production.IE
                 return;
             }
 
-            var frm = new P01_Operation_AT(new string[] { "AT" }, ref this.dtDetail, row["IETMSUkey"].ToString(), row["CodeFrom"].ToString(), this.IsEdit, strTimeStudyID: this.strTimeStudyID);
+            var frm = new P01_Operation_AT(new string[] { "AT" }, ref this.dtDetail,ref this.p01List, row["IETMSUkey"].ToString(), row["CodeFrom"].ToString(), this.IsEdit, strTimeStudyID: this.strTimeStudyID);
             frm.ShowDialog();
         }
     }

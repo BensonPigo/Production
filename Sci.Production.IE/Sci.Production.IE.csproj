@@ -298,6 +298,7 @@
     <Compile Include="P01_Operation_AT.Designer.cs">
       <DependentUpon>P01_Operation_AT.cs</DependentUpon>
     </Compile>
+    <Compile Include="P01_OperationClass.cs" />
     <Compile Include="P01_Print.cs">
       <SubType>Form</SubType>
     </Compile>
