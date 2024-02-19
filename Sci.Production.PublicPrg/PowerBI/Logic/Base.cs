@@ -193,7 +193,7 @@ namespace Sci.Production.Prg.PowerBI.Logic
                     result = new P_Import_SewingLineScheduleBIData().P_SewingLineScheduleBIData(item.SDate, item.EDate);
                     break;
                 case ListName.P_FabricInspReport_ReceivingTransferIn:
-                    result = new P_Import_FabricInspReportReceivingTransferIn().P_FabricInspReport_ReceivingTransferIn(item.SDate, item.EDate);
+                    result = new P_Import_FabricInspReportReceivingTransferIn().P_FabricInspReportReceivingTransferIn(item.SDate, item.EDate);
                     break;
                 default:
                     // Execute all Stored Procedures

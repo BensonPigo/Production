@@ -12,7 +12,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
     public class P_Import_FabricInspReportReceivingTransferIn
     {
         /// <inheritdoc/>
-        public Base_ViewModel P_FabricInspReport_ReceivingTransferIn(DateTime? sDate, DateTime? eDate)
+        public Base_ViewModel P_FabricInspReportReceivingTransferIn(DateTime? sDate, DateTime? eDate)
         {
             Base_ViewModel finalResult = new Base_ViewModel();
             QA_R11 biModel = new QA_R11();

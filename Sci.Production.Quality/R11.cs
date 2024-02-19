@@ -44,32 +44,7 @@ namespace Sci.Production.Quality
             string where1 = string.Empty;
             string where2 = string.Empty;
             this.type = this.radioPanelTransaction.Value;
-            if (this.type == "1")
-            {
-				// 資料邏輯跟BI共用
-                QA_R11 biModel = new QA_R11();
-                QA_R11_ViewModel qa_R11_Model = new QA_R11_ViewModel()
-                {
-                    ArriveWHDate1 = this.dateArriveWHDate.Value1,
-                    ArriveWHDate2 = this.dateArriveWHDate.Value2,
-                    SP1 = this.txtSP1.Text,
-                    SP2 = this.txtSP2.Text,
-                    Brand = this.txtBrand.Text,
-                    Refno1 = this.txtRefno1.Text,
-                    Refno2 = this.txtRefno2.Text,
-                    IsPowerBI = false,
-                };
-
-                Base_ViewModel resultReport = biModel.GetQA_R11Data(qa_R11_Model);
-                if (!resultReport.Result)
-                {
-                    return resultReport.Result;
-                }
-
-                this.PrintData = resultReport.DtArr;
-            }
-
-            if (this.type == "1")
+            if (this.type == "2")
             {
                 if (!this.dateArriveWHDate.Value1.Empty())
                 {
@@ -635,6 +610,27 @@ drop table #tmp1,#tmp2,#tmp3,#Sheet2,#DefectSummary,#tmpR,#tmpT
         {
             if (this.type == "1")
             {
+                // 資料邏輯跟BI共用
+                QA_R11 biModel = new QA_R11();
+                QA_R11_ViewModel qa_R11_Model = new QA_R11_ViewModel()
+                {
+                    ArriveWHDate1 = this.dateArriveWHDate.Value1,
+                    ArriveWHDate2 = this.dateArriveWHDate.Value2,
+                    SP1 = this.txtSP1.Text,
+                    SP2 = this.txtSP2.Text,
+                    Brand = this.txtBrand.Text,
+                    Refno1 = this.txtRefno1.Text,
+                    Refno2 = this.txtRefno2.Text,
+                    IsPowerBI = false,
+                };
+
+                Base_ViewModel resultReport = biModel.GetQA_R11Data(qa_R11_Model);
+                if (!resultReport.Result)
+                {
+                    return resultReport.Result;
+                }
+
+                this.PrintData = resultReport.DtArr;
                 return Ict.Result.True;
             }
             else
