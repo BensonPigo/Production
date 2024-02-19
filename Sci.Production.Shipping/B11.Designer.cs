@@ -73,7 +73,7 @@
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(94, 23);
             this.label1.TabIndex = 0;
-            this.label1.Text = "FSP Code";
+            this.label1.Text = "TCP Code";
             // 
             // label2
             // 
@@ -81,12 +81,12 @@
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(94, 23);
             this.label2.TabIndex = 1;
-            this.label2.Text = "FSP Desc";
+            this.label2.Text = "TCP Location";
             // 
             // txtTCPCode
             // 
             this.txtTCPCode.BackColor = System.Drawing.Color.White;
-            this.txtTCPCode.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "FSPCode", true));
+            this.txtTCPCode.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "TCPCode", true));
             this.txtTCPCode.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtTCPCode.Location = new System.Drawing.Point(126, 18);
             this.txtTCPCode.Name = "txtTCPCode";
@@ -108,14 +108,14 @@
             // txtTCPLocation
             // 
             this.txtTCPLocation.BackColor = System.Drawing.Color.White;
-            this.txtTCPLocation.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "FSPDesc", true));
+            this.txtTCPLocation.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "TCPLocation", true));
             this.txtTCPLocation.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtTCPLocation.Location = new System.Drawing.Point(126, 58);
             this.txtTCPLocation.Name = "txtTCPLocation";
             this.txtTCPLocation.Size = new System.Drawing.Size(363, 23);
             this.txtTCPLocation.TabIndex = 4;
             // 
-            // B11
+            // B10
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -123,10 +123,10 @@
             this.IsSupportClip = false;
             this.IsSupportCopy = false;
             this.IsSupportPrint = false;
-            this.Name = "B11";
+            this.Name = "B10";
             this.OnLineHelpID = "Sci.Win.Tems.Input1";
-            this.Text = "B11. Nike FSP List";
-            this.WorkAlias = "NikeFSPList";
+            this.Text = "B10. Nike Port City List";
+            this.WorkAlias = "NikePortCityList";
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).EndInit();
             this.detail.ResumeLayout(false);

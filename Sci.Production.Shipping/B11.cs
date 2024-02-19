@@ -28,9 +28,9 @@ namespace Sci.Production.Shipping
         /// <inheritdoc/>
         protected override bool ClickSaveBefore()
         {
-            if (MyUtility.Check.Empty(this.CurrentMaintain["FSPCode"]))
+            if (MyUtility.Check.Empty(this.CurrentMaintain["TCPCode"]))
             {
-                MyUtility.Msg.WarningBox(" <FSP Code> cannot be empty.");
+                MyUtility.Msg.WarningBox(" <TCP Code> cannot be empty.");
                 return false;
             }
 

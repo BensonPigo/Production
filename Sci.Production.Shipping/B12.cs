@@ -13,13 +13,13 @@ namespace Sci.Production.Shipping
     /// <summary>
     /// B10
     /// </summary>
-    public partial class B10 : Win.Tems.Input1
+    public partial class B12 : Win.Tems.Input1
     {
         /// <summary>
         /// B10
         /// </summary>
         /// <param name="menuitem">menuitem</param>
-        public B10(ToolStripMenuItem menuitem)
+        public B12(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
             this.InitializeComponent();
@@ -28,9 +28,9 @@ namespace Sci.Production.Shipping
         /// <inheritdoc/>
         protected override bool ClickSaveBefore()
         {
-            if (MyUtility.Check.Empty(this.CurrentMaintain["TCPCode"]))
+            if (MyUtility.Check.Empty(this.CurrentMaintain["FSPCode"]))
             {
-                MyUtility.Msg.WarningBox(" <TCP Code> cannot be empty.");
+                MyUtility.Msg.WarningBox(" <FSP Code> cannot be empty.");
                 return false;
             }
 
