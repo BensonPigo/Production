@@ -225,11 +225,25 @@ BEGIN
 			t.EditDate,
 			t.CategoryType
 	from #tmp t
-	where not exists (select 1 from P_AccessoryInspLabStatus p where p.POID = t.POID and p.SEQ = t.SEQ and p.ReceivingID = t.ReceivingID)
-		  and exists(
-				select * from #LastUpdateData a
-				where a.POID=t.POID and a.SEQ=t.SEQ and a.ReceivingID=t.ReceivingID
-				and a.LastDate = iSNULL(t.EditDate,t.AddDate)
+	where   not exists (select 1 from P_AccessoryInspLabStatus p where p.POID = t.POID and p.SEQ = t.SEQ and p.ReceivingID = t.ReceivingID)
+			and ( 
+				not exists( ----PKey無重複資料
+					select * from #DuplicateData a
+					where a.POID=t.POID and a.SEQ=t.SEQ and a.ReceivingID=t.ReceivingID
+				)
+				or
+				(----PKey有重複資料，抓最後更新的PKey
+					exists(
+						select * from #DuplicateData b
+						where b.POID=t.POID and b.SEQ=t.SEQ and b.ReceivingID=t.ReceivingID
+					)
+					and 
+					exists(
+						select * from #LastUpdateData a
+						where a.POID=t.POID and a.SEQ=t.SEQ and a.ReceivingID=t.ReceivingID
+						and a.LastDate = iSNULL(t.EditDate,t.AddDate)
+					)
+				)
 			)
 
 
