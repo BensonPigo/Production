@@ -174,7 +174,7 @@
     <Build Include="dbo\Stored Procedures\FTY\P_Import_PPIC_MASTER_LIST_ArtWorkType.sql" />
     <Build Include="dbo\Stored Procedures\FTY\P_Import_PPICMasterList.sql" />
     <Build Include="dbo\Tables\P_PPICMASTERLIST.sql" />
-    <Build Include="dbo\Stored Procedures\FTY\P_ImportMtlStatusAnalisis.sql" />
+    <Build Include="dbo\Stored Procedures\FTY\P_Import_MtlStatusAnalisis.sql" />
     <Build Include="dbo\Tables\P_InlineDefectSummary.sql" />
     <Build Include="dbo\Tables\P_InlineDefectDetail.sql" />
     <Build Include="dbo\Stored Procedures\FTY\P_ImportInlineDefec.sql" />

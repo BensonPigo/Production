@@ -129,6 +129,7 @@
             this.btnShippingMemo = new Sci.Win.UI.Button();
             this.txtTerminalWhseName = new Sci.Win.UI.TextBox();
             this.label3 = new Sci.Win.UI.Label();
+            this.btnMercuryShipment = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -145,6 +146,7 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.btnMercuryShipment);
             this.masterpanel.Controls.Add(this.txtTerminalWhseName);
             this.masterpanel.Controls.Add(this.label3);
             this.masterpanel.Controls.Add(this.btnShippingMemo);
@@ -348,6 +350,7 @@
             this.masterpanel.Controls.SetChildIndex(this.btnShippingMemo, 0);
             this.masterpanel.Controls.SetChildIndex(this.label3, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtTerminalWhseName, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnMercuryShipment, 0);
             // 
             // detailpanel
             // 
@@ -914,7 +917,7 @@
             // btnAirPPList
             // 
             this.btnAirPPList.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.btnAirPPList.Location = new System.Drawing.Point(904, 33);
+            this.btnAirPPList.Location = new System.Drawing.Point(904, 28);
             this.btnAirPPList.Name = "btnAirPPList";
             this.btnAirPPList.Size = new System.Drawing.Size(146, 30);
             this.btnAirPPList.TabIndex = 20;
@@ -926,7 +929,7 @@
             // btnExpenseData
             // 
             this.btnExpenseData.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.btnExpenseData.Location = new System.Drawing.Point(904, 105);
+            this.btnExpenseData.Location = new System.Drawing.Point(904, 94);
             this.btnExpenseData.Name = "btnExpenseData";
             this.btnExpenseData.Size = new System.Drawing.Size(146, 30);
             this.btnExpenseData.TabIndex = 22;
@@ -1043,7 +1046,7 @@
             // btnAirPPStatus
             // 
             this.btnAirPPStatus.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.btnAirPPStatus.Location = new System.Drawing.Point(904, 141);
+            this.btnAirPPStatus.Location = new System.Drawing.Point(904, 127);
             this.btnAirPPStatus.Name = "btnAirPPStatus";
             this.btnAirPPStatus.Size = new System.Drawing.Size(146, 30);
             this.btnAirPPStatus.TabIndex = 23;
@@ -1152,7 +1155,7 @@
             // btnUnCfmHis
             // 
             this.btnUnCfmHis.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.btnUnCfmHis.Location = new System.Drawing.Point(904, 69);
+            this.btnUnCfmHis.Location = new System.Drawing.Point(904, 61);
             this.btnUnCfmHis.Name = "btnUnCfmHis";
             this.btnUnCfmHis.Size = new System.Drawing.Size(146, 30);
             this.btnUnCfmHis.TabIndex = 21;
@@ -1302,7 +1305,7 @@
             // 
             // btnRemark
             // 
-            this.btnRemark.Location = new System.Drawing.Point(904, 177);
+            this.btnRemark.Location = new System.Drawing.Point(904, 160);
             this.btnRemark.Name = "btnRemark";
             this.btnRemark.Size = new System.Drawing.Size(146, 30);
             this.btnRemark.TabIndex = 24;
@@ -1380,6 +1383,7 @@
             // 
             // txtUserHandle
             // 
+            this.txtUserHandle.AllowSelectResign = false;
             this.txtUserHandle.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "Handle", true));
             this.txtUserHandle.DisplayBox1Binding = "";
             this.txtUserHandle.Location = new System.Drawing.Point(679, 4);
@@ -1439,6 +1443,7 @@
             this.txtbrand.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "BrandID", true));
             this.txtbrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtbrand.Location = new System.Drawing.Point(101, 111);
+            this.txtbrand.MyDocumentdName = null;
             this.txtbrand.Name = "txtbrand";
             this.txtbrand.Size = new System.Drawing.Size(84, 23);
             this.txtbrand.TabIndex = 5;
@@ -1506,7 +1511,7 @@
             // 
             // btnShippingMemo
             // 
-            this.btnShippingMemo.Location = new System.Drawing.Point(904, 213);
+            this.btnShippingMemo.Location = new System.Drawing.Point(904, 193);
             this.btnShippingMemo.Name = "btnShippingMemo";
             this.btnShippingMemo.Size = new System.Drawing.Size(146, 30);
             this.btnShippingMemo.TabIndex = 99;
@@ -1534,6 +1539,17 @@
             this.label3.Size = new System.Drawing.Size(126, 23);
             this.label3.TabIndex = 101;
             this.label3.Text = "Terminal/Whse Name";
+            // 
+            // btnMercuryShipment
+            // 
+            this.btnMercuryShipment.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
+            this.btnMercuryShipment.Location = new System.Drawing.Point(904, 226);
+            this.btnMercuryShipment.Name = "btnMercuryShipment";
+            this.btnMercuryShipment.Size = new System.Drawing.Size(146, 30);
+            this.btnMercuryShipment.TabIndex = 102;
+            this.btnMercuryShipment.Text = "Mercury Shipment";
+            this.btnMercuryShipment.UseVisualStyleBackColor = true;
+            this.btnMercuryShipment.Click += new System.EventHandler(this.BtnMercuryShipment_Click);
             // 
             // P05
             // 
@@ -1680,5 +1696,6 @@
         private Win.UI.Button btnShippingMemo;
         private Win.UI.TextBox txtTerminalWhseName;
         private Win.UI.Label label3;
+        private Win.UI.Button btnMercuryShipment;
     }
 }

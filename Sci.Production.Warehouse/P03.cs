@@ -529,6 +529,7 @@ where Poid='{dr["id"]}' and seq1='{dr["Seq1"]}' and seq2='{dr["Seq2"]}'", out dr
             .Text("ALocation", header: "Bulk Location", iseditingreadonly: true, settings: ts9) // 31
             .Text("BLocation", header: "Stock Location", iseditingreadonly: true, settings: ts11) // 32
             .Text("CLocation", header: "Crap Location", iseditingreadonly: true, settings: ts12) // 32
+            .Text("InspectionGroup", header: "Inspection Group", iseditingreadonly: true, settings: ts10) // 33
             .Text("FIR", header: "FIR", iseditingreadonly: true, settings: ts10) // 33
             .Text("WashLab", header: "WashLab Report", iseditingreadonly: true, settings: ts10) // 33
             .Date("TestReport", header: "Supp. test report \r\n received date", iseditingreadonly: true)
@@ -824,6 +825,7 @@ from(
             , BomTypeCalculate
             , description
             , currencyid
+            , InspectionGroup
             , FIR
             , washlab
             , T2TestingReport
@@ -895,6 +897,7 @@ from(
                     , fabric.BomTypeCalculate
                     , dbo.getmtldesc(a.id,a.seq1,a.seq2,2,0) AS description
                     , s.currencyid
+                    , fabric.InspectionGroup
                     , stuff((select Concat('/',t.Result) from ( SELECT seq1,seq2,Result 
                                                                 FROM #tmpQA 
                                                                 where   poid = m.POID 
@@ -1071,6 +1074,7 @@ from(
                     , fabric.BomTypeCalculate
                     , dbo.getmtldesc(a.id,a.seq1,a.seq2,2,0) AS description
                     , s.currencyid
+                    , fabric.InspectionGroup
                     , stuff((select Concat('/',t.Result) from (SELECT seq1,seq2, Result FROM #tmpQA where poid = m.POID and seq1 =m.seq1 and seq2 = m.seq2 )t order by seq1,seq2 for xml path('')),1,1,'') FIR
 					,stuff((SELECT Concat('/',washlab)
                                FROM #tmpwashlabQA wqa
@@ -1244,6 +1248,7 @@ select ROW_NUMBER_D = 1
        , [BomTypeCalculate] = 0
        , [description]  = b.Description
        , [currencyid] = '-'
+       , [InspectionGroup] = '-'
        , [FIR] = '-'
        , [washlab] = '-'
        , [T2TestingReport] = 0

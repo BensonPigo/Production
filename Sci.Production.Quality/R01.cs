@@ -142,7 +142,6 @@ where fp.ID = f.ID and EXISTS(
                 sqlActTotalYdsArrDate.Replace("WhseArrival_2", string.Empty);
             }
 
-
             if (!this.dateSCIDelivery.Value1.Empty())
             {
                 oWheres.Add("O.SciDelivery >= @SCIDate1");
@@ -308,6 +307,7 @@ select
     ,[SupplierCode] = SP.SuppID
     ,[SupplierName] = s.AbbEN
 	,C.WeaveTypeID
+    ,[InspectionGroup] = (Select InspectionGroup from Fabric where SCIRefno = p.SCIRefno)
 	,[N/A Physical] = IIF(F.Nonphysical = 1,'Y',' ')
 	,F.Result
 	,[Cut Shadeband Qty (Roll)] = Qty.Roll
@@ -363,6 +363,8 @@ select
     ,[TotalYardsBC] = isnull(fptbc.TicketYds, 0)
     ,[TotalPointBC] = isnull(fptbc.TotalPoint, 0)
     ,[TotalPointA] = isnull(fpta.TotalPoint, 0)
+	,[C_Grade_TOP3Defects] = isnull(CGradT3.Value,'')
+	,[A_Grade_TOP3Defects] = isnull(AGradT3.Value,'')
 into #tmpFinal
 from dbo.FIR F WITH (NOLOCK) 
 cross apply(
@@ -567,6 +569,43 @@ OUTER APPLY(
         AND rd.Seq2 = F.SEQ2 
     )InspectedLotNumber
 )InspectedLotNumber
+OUTER APPLY(
+	select [Value]= Stuff((
+		select concat(',',defect)
+		from (
+			select TOP 3 defect = concat(fd.DescriptionEN,'(',count(1),')'),count(1) as Qty
+			from FIR
+			INNER JOIN FIR_Physical fp ON FIR.ID= FP.ID
+			inner join FIR_Physical_Defect_Realtime fpd on fp.DetailUkey = fpd.FIR_PhysicalDetailUKey
+			inner join FabricDefect fd on fd.ID=fpd.FabricdefectID
+			where 1=1
+			and fp.Grade='C'
+			AND FIR.ID = F.ID 
+			group by fd.DescriptionEN
+			order by Qty desc, fd.DescriptionEN asc
+		) s
+		for xml path ('')
+	) , 1, 1, '')
+)CGradT3
+OUTER APPLY(
+	select [Value]= Stuff((
+		select concat(',',defect)
+		from (
+			select TOP 3 defect = concat(fd.DescriptionEN,'(',count(1),')'),count(1) as Qty
+			from FIR
+			INNER JOIN FIR_Physical fp ON FIR.ID= FP.ID
+			inner join FIR_Physical_Defect_Realtime fpd on fp.DetailUkey = fpd.FIR_PhysicalDetailUKey
+			inner join FabricDefect fd on fd.ID=fpd.FabricdefectID
+			where 1=1
+			and fp.Grade='A'
+			AND FIR.ID=F.ID
+			group by fd.DescriptionEN
+			order by Qty desc, fd.DescriptionEN asc
+		) s
+		for xml path ('')
+	) , 1, 1, '')
+)AGradT3
+
 
 {sqlWhere} 
 ORDER BY POID,SEQ
@@ -603,12 +642,15 @@ select
     ,tf.SupplierCode
     ,tf.SupplierName
 	,tf.WeaveTypeID
+    ,tf.[InspectionGroup]
 	,tf.[N/A Physical]
 	,tf.Result
 	,tf.Physical
     ,tf.TotalYardsBC
     ,tf.TotalPointBC
+	,tf.C_Grade_TOP3Defects
     ,tf.TotalPointA
+	,tf.A_Grade_TOP3Defects
 	,tf.[PhysicalInspector]
 	,tf.PhysicalDate
 	,tf.TotalYardage

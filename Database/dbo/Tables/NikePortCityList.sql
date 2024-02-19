@@ -1,0 +1,10 @@
+﻿CREATE TABLE NikePortCityList (
+    TCPCode VARCHAR(10) NOT NULL,
+    TCPLocation VARCHAR(30) NOT NULL CONSTRAINT DF_NikePortCityList_TCPLocation DEFAULT (''),
+    Junk BIT NOT NULL CONSTRAINT DF_NikePortCityList_Junk DEFAULT (0),
+    AddName VARCHAR(10) NOT NULL CONSTRAINT DF_NikePortCityList_AddName DEFAULT (''),
+    AddDate DATETIME NULL,
+    EditName VARCHAR(10) NOT NULL CONSTRAINT DF_NikePortCityList_EditName DEFAULT (''),
+    EditDate DATETIME NULL,
+    CONSTRAINT PK_NikePortCityList PRIMARY KEY (TCPCode)
+);
