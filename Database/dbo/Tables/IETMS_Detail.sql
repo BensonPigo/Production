@@ -15,6 +15,8 @@
     [PPA]           VARCHAR (2)     CONSTRAINT [DF_IETMS_Detail_PPA] DEFAULT ('') NOT NULL,
     [ProOperationID] VARCHAR(20) CONSTRAINT [DF_IETMS_Detail_ProOperationID] DEFAULT ('') not NULL,
     [CodeFrom] VARCHAR(20) CONSTRAINT [DF_IETMS_Detail_CodeFrom] DEFAULT ('') not NULL,
+    [Draft]                     NVARCHAR(100)   CONSTRAINT [DF_IETMS_Detail_Draft]   DEFAULT ('') NOT NULL, 
+    [Pattern_GL_ArtworkUkey]    VARCHAR(100)    CONSTRAINT [DF_IETMS_Detail_Pattern_GL_ArtworkUkey]   DEFAULT ('') NOT NULL, 
     CONSTRAINT [PK_IETMS_Detail] PRIMARY KEY CLUSTERED ([UKey] ASC)
 );
 
@@ -75,3 +77,30 @@ EXEC sp_addextendedproperty @name = N'MS_Description',
     @level1name = N'IETMS_Detail',
     @level2type = N'COLUMN',
     @level2name = N'SeamLength'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'工段前置中文說明',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'IETMS_Detail',
+    @level2type = N'COLUMN',
+    @level2name = N'Draft'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'Pattern_GL_Artwork Ukey',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'IETMS_Detail',
+    @level2type = N'COLUMN',
+    @level2name = N'Pattern_GL_ArtworkUkey'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'Operation Code來源處',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'IETMS_Detail',
+    @level2type = N'COLUMN',
+    @level2name = N'CodeFrom'

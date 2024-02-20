@@ -35,6 +35,8 @@ namespace Sci.Production.IE
         private string seasonID;
         private string brandID;
         private string comboType;
+        private string strTimeStudtID = string.Empty;
+        private List<P01_OperationClass> p01_OperationList = new List<P01_OperationClass>();
 
         /// <summary>
         /// 將目前DetailGrid裡面，使用者所選擇的Row，將它們綁定的資料列取出
@@ -166,10 +168,13 @@ namespace Sci.Production.IE
         /// <returns>DualResult</returns>
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
-            string masterID = (e.Master == null) ? string.Empty : e.Master["ID"].ToString();
+            this.strTimeStudtID = (e.Master == null) ? string.Empty : e.Master["ID"].ToString();
+
             this.DetailSelectCommand =
                 $@"
 select 0 as Selected, isnull(o.SeamLength,0) SeamLength
+      ,ID.CodeFrom
+      ,ID.IETMSUkey
       ,td.[ID]
       ,td.[SEQ]
 	  ,td.[OperationID]
@@ -201,6 +206,9 @@ select 0 as Selected, isnull(o.SeamLength,0) SeamLength
                                                 when isnull(md.IsNonSewingLine, 0) = 1 then 1
                                                 else 0 end as bit)
 from TimeStudy_Detail td WITH (NOLOCK) 
+INNER JOIN TimeStudy t WITH(NOLOCK) ON td.id = t.id
+INNER JOIN IETMS i ON t.IETMSID = i.ID AND t.IETMSVersion = i.[Version]
+INNER JOIN IETMS_Detail ID ON I.Ukey = ID.IETMSUkey AND ID.SEQ = TD.Seq
 left join Operation o WITH (NOLOCK) on td.OperationID = o.ID
 left join MachineType_Detail md WITH (NOLOCK) on md.ID = td.MachineTypeID and md.FactoryID = '{Env.User.Factory}'
 left join Mold m WITH (NOLOCK) on m.ID=td.Mold
@@ -211,7 +219,7 @@ outer apply (
 	Inner Join MachineType_Detail mt on o2.MachineTypeID = mt.ID and mt.FactoryID = '{Env.User.Factory}'
 	where o.ID = o2.ID
 )show
-where td.ID = '{masterID}'
+where td.ID = '{this.strTimeStudtID}'
 order by td.Seq";
             return base.OnDetailSelectCommandPrepare(e);
         }
@@ -438,11 +446,44 @@ from MachineType_Detail where FactoryID = '{Env.User.Factory}' and ID = '{machin
                         {
                             DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
 
-                            P01_SelectOperationCode callNextForm = new P01_SelectOperationCode();
-                            DialogResult result = callNextForm.ShowDialog(this);
-                            if (result == DialogResult.Cancel)
+                            if (dr["CodeFrom"].ToString().StartsWith("AT"))
                             {
-                                if (callNextForm.P01SelectOperationCode != null)
+                                DataTable dataSource = (DataTable)this.detailgridbs.DataSource;
+                                var frm = new P01_Operation_AT(new string[] { "AT" }, ref dataSource, ref this.p01_OperationList, dr["IETMSUkey"].ToString(), dr["CodeFrom"].ToString(), strTimeStudyID: this.strTimeStudtID);
+                                frm.ShowDialog();
+                                this.detailgridbs.DataSource = dataSource;
+                            }
+                            else
+                            {
+                                P01_SelectOperationCode callNextForm = new P01_SelectOperationCode();
+                                DialogResult result = callNextForm.ShowDialog(this);
+                                if (result == DialogResult.Cancel)
+                                {
+                                    if (callNextForm.P01SelectOperationCode != null)
+                                    {
+                                        dr["OperationID"] = callNextForm.P01SelectOperationCode["ID"].ToString();
+                                        dr["OperationDescEN"] = callNextForm.P01SelectOperationCode["DescEN"].ToString();
+                                        dr["MachineTypeID"] = callNextForm.P01SelectOperationCode["MachineTypeID"].ToString();
+                                        dr["Mold"] = MyUtility.GetValue.Lookup($"select dbo.GetParseOperationMold('{callNextForm.P01SelectOperationCode["MoldID"]}', 'Attachment')"); // 前端轉進來的資料是用[;]區隔，統一用[,]區隔
+                                        dr["Template"] = MyUtility.GetValue.Lookup($"select dbo.GetParseOperationMold('{callNextForm.P01SelectOperationCode["MoldID"]}', 'Template')");
+                                        dr["MtlFactorID"] = callNextForm.P01SelectOperationCode["MtlFactorID"].ToString();
+                                        dr["SeamLength"] = callNextForm.P01SelectOperationCode["SeamLength"].ToString();
+                                        dr["SMV"] = MyUtility.Convert.GetDecimal(callNextForm.P01SelectOperationCode["SMV"]) * 60;
+                                        dr["StdSMV"] = MyUtility.Convert.GetDecimal(callNextForm.P01SelectOperationCode["SMV"]) * 60;
+                                        dr["IETMSSMV"] = MyUtility.Convert.GetDecimal(callNextForm.P01SelectOperationCode["SMV"]);
+                                        dr["Frequency"] = 1;
+                                        dr["ttlSeamLength"] = MyUtility.Convert.GetDecimal(dr["Frequency"]) * MyUtility.Convert.GetDecimal(dr["SeamLength"]);
+                                        dr["Annotation"] = callNextForm.P01SelectOperationCode["Annotation"].ToString();
+                                        dr["MasterPlusGroup"] = callNextForm.P01SelectOperationCode["MasterPlusGroup"].ToString();
+                                        dr["MachineType_IsSubprocess"] = callNextForm.P01SelectOperationCode["MachineType_IsSubprocess"];
+                                        dr["IsSubprocess"] = callNextForm.P01SelectOperationCode["IsSubprocess"];
+                                        dr["IsNonSewingLine"] = callNextForm.P01SelectOperationCode["IsNonSewingLine"];
+                                        this.GetMachineType_Detail(dr["MachineTypeID"].ToString());
+                                        dr.EndEdit();
+                                    }
+                                }
+
+                                if (result == DialogResult.OK)
                                 {
                                     dr["OperationID"] = callNextForm.P01SelectOperationCode["ID"].ToString();
                                     dr["OperationDescEN"] = callNextForm.P01SelectOperationCode["DescEN"].ToString();
@@ -464,33 +505,10 @@ from MachineType_Detail where FactoryID = '{Env.User.Factory}' and ID = '{machin
                                     this.GetMachineType_Detail(dr["MachineTypeID"].ToString());
                                     dr.EndEdit();
                                 }
-                            }
-
-                            if (result == DialogResult.OK)
-                            {
-                                dr["OperationID"] = callNextForm.P01SelectOperationCode["ID"].ToString();
-                                dr["OperationDescEN"] = callNextForm.P01SelectOperationCode["DescEN"].ToString();
-                                dr["MachineTypeID"] = callNextForm.P01SelectOperationCode["MachineTypeID"].ToString();
-                                dr["Mold"] = MyUtility.GetValue.Lookup($"select dbo.GetParseOperationMold('{callNextForm.P01SelectOperationCode["MoldID"]}', 'Attachment')"); // 前端轉進來的資料是用[;]區隔，統一用[,]區隔
-                                dr["Template"] = MyUtility.GetValue.Lookup($"select dbo.GetParseOperationMold('{callNextForm.P01SelectOperationCode["MoldID"]}', 'Template')");
-                                dr["MtlFactorID"] = callNextForm.P01SelectOperationCode["MtlFactorID"].ToString();
-                                dr["SeamLength"] = callNextForm.P01SelectOperationCode["SeamLength"].ToString();
-                                dr["SMV"] = MyUtility.Convert.GetDecimal(callNextForm.P01SelectOperationCode["SMV"]) * 60;
-                                dr["StdSMV"] = MyUtility.Convert.GetDecimal(callNextForm.P01SelectOperationCode["SMV"]) * 60;
-                                dr["IETMSSMV"] = MyUtility.Convert.GetDecimal(callNextForm.P01SelectOperationCode["SMV"]);
-                                dr["Frequency"] = 1;
-                                dr["ttlSeamLength"] = MyUtility.Convert.GetDecimal(dr["Frequency"]) * MyUtility.Convert.GetDecimal(dr["SeamLength"]);
-                                dr["Annotation"] = callNextForm.P01SelectOperationCode["Annotation"].ToString();
-                                dr["MasterPlusGroup"] = callNextForm.P01SelectOperationCode["MasterPlusGroup"].ToString();
-                                dr["MachineType_IsSubprocess"] = callNextForm.P01SelectOperationCode["MachineType_IsSubprocess"];
-                                dr["IsSubprocess"] = callNextForm.P01SelectOperationCode["IsSubprocess"];
-                                dr["IsNonSewingLine"] = callNextForm.P01SelectOperationCode["IsNonSewingLine"];
-                                this.GetMachineType_Detail(dr["MachineTypeID"].ToString());
-                                dr.EndEdit();
-                            }
-                            else
-                            {
-                                return;
+                                else
+                                {
+                                    return;
+                                }
                             }
                         }
                     }
@@ -502,7 +520,6 @@ from MachineType_Detail where FactoryID = '{Env.User.Factory}' and ID = '{machin
                 if (this.EditMode)
                 {
                     DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
-
                     if (!MyUtility.Check.Empty(e.FormattedValue) && e.FormattedValue.ToString() != dr["OperationID"].ToString())
                     {
                         if (e.FormattedValue.ToString().Length > 1 && e.FormattedValue.ToString().Substring(0, 2) == "--")
@@ -1645,7 +1662,49 @@ where p.EMail is not null and p.EMail <>'' and ts.id = '{this.CurrentMaintain["I
                 email.ShowDialog();
             }
 
+            this.p01_OperationList.Clear();
             this.HideRows();
+        }
+
+        /// <inheritdoc/>
+        protected override void ClickUndo()
+        {
+            base.ClickUndo();
+            string sqlcmd = string.Empty;
+            foreach (var item in this.p01_OperationList)
+            {
+                sqlcmd += $@"
+                UPDATE IETMS_AT SET
+                PieceOfSeamerEdited = {item.PieceOfSeamerEdited}
+                , RPMEdited  = '{item.RPMEdited}' , LaserSpeedEdited = '{item.LaserSpeedEdited}' 
+                WHERE IETMSUkey =  '{item.IETMSUkey}' AND CodeFrom  = '{item.CodeFrom}'
+
+                UPDATE TimeStudy_Detail SET SMV = '{item.MM2AT_SMV}'
+                from TimeStudy_Detail td WITH (NOLOCK) 
+                INNER JOIN TimeStudy t WITH(NOLOCK) ON td.id = t.id
+                INNER JOIN IETMS i ON t.IETMSID = i.ID AND t.IETMSVersion = i.[Version]
+                INNER JOIN IETMS_Detail ID ON I.Ukey = ID.IETMSUkey AND ID.SEQ = TD.Seq
+                WHERE  
+                Id.IETMSUkey = {item.IETMSUkey} and 
+                ID.CodeFrom = '{item.CodeFrom}' and 
+                td.ID = '{item.ID}' and 
+                td.[MachineTypeID] like 'MM2AT%'
+
+                UPDATE TimeStudy_Detail SET SMV = '{item.AT_SMV}'
+                from TimeStudy_Detail td WITH (NOLOCK) 
+                INNER JOIN TimeStudy t WITH(NOLOCK) ON td.id = t.id
+                INNER JOIN IETMS i ON t.IETMSID = i.ID AND t.IETMSVersion = i.[Version]
+                INNER JOIN IETMS_Detail ID ON I.Ukey = ID.IETMSUkey AND ID.SEQ = TD.Seq
+                WHERE  
+                Id.IETMSUkey = {item.IETMSUkey} and 
+                ID.CodeFrom = '{item.CodeFrom}' and 
+                td.ID = '{item.ID}' and 
+                td.[MachineTypeID] like 'AT%'
+                ";
+            }
+
+            DBProxy.Current.Execute(null, sqlcmd);
+            this.p01_OperationList.Clear();
         }
 
         /// <summary>
@@ -2638,6 +2697,15 @@ and s.BrandID = @brandid";
                 curRow.EndEdit();
                 rowIndex++;
             }
+        }
+
+        private void BtnATSummary_Click(object sender, EventArgs e)
+        {
+            string ietmsUKEY = MyUtility.GetValue.Lookup($"select ukey from IETMS where id = '{this.CurrentMaintain["Ietmsid"]}' and Version = '{this.CurrentMaintain["ietmsversion"]}'");
+            DataTable dataSource = (DataTable)this.detailgridbs.DataSource;
+            var windows = new P01_AT_Summary(ietmsUKEY, ref dataSource,ref this.p01_OperationList, this.EditMode, this.strTimeStudtID);
+            windows.ShowDialog();
+            this.detailgridbs.DataSource = dataSource;
         }
     }
 }
