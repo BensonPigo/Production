@@ -56,7 +56,7 @@ namespace Sci.Production.IE
             ,[PieceOfGarment] = IA.PieceOfGarment
             ,[OperationID] = IA.OperationID
             ,[TradeRPM] = IA.RPM
-            ,[RPM] =  COALESCE(NULLIF(IA.RPMEdited , ''),IA.RPMEdited)
+            ,[RPM] =  COALESCE(NULLIF(IA.RPMEdited , ''),IA.RPM)
             ,[LaserSpeed] = COALESCE(NULLIF(IA.LaserSpeedEdited, ''), IA.LaserSpeed)
             ,[TradeLaserSpeed] = isnull(IA.LaserSpeed,'')
             ,[SewingLength] = isnull(IA.SewingLength,'')
@@ -95,7 +95,10 @@ namespace Sci.Production.IE
 
             #region RPM下拉選單
 
-            string sqlRPM = $@" Select [ID], [Name], [Value] from IESelectCode where Type = '00016'";
+            string sqlRPM = $@" 
+            Select [ID] = '0', [Name] = ' ', [Value] = 0
+            UNION
+            Select [ID], [Name], [Value] from IESelectCode where Type = '00016'";
 
             DualResult cbResult = DBProxy.Current.Select(null, sqlRPM, out this.dtRPM);
             if (!cbResult)
@@ -105,7 +108,6 @@ namespace Sci.Production.IE
             }
             else
             {
-                this.dtRPM.Rows.InsertAt(this.dtRPM.NewRow(), 0);
                 this.cbRPM.DataSource = this.dtRPM;
                 this.cbRPM.ValueMember = "ID";
                 this.cbRPM.DisplayMember = "Name";
@@ -115,11 +117,13 @@ namespace Sci.Production.IE
 
             #region Speed下拉選單
 
-            string sqlSpeed = $@"select [ID], [Name], [Value] from IESelectCode where Type = '00017'";
+            string sqlSpeed = $@"
+            Select [ID] = '0', [Name] = ' ', [Value] = 0
+            UNION
+            select [ID], [Name], [Value] from IESelectCode where Type = '00017'";
 
             if (cbResult = DBProxy.Current.Select(null, sqlSpeed, out this.dtSpeed))
             {
-                this.dtSpeed.Rows.InsertAt(this.dtSpeed.NewRow(), 0);
                 this.cbSpeedLaser.DataSource = this.dtSpeed;
                 this.cbSpeedLaser.ValueMember = "ID";
                 this.cbSpeedLaser.DisplayMember = "Name";
