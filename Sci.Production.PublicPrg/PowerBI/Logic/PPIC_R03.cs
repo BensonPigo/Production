@@ -49,6 +49,7 @@ namespace Sci.Production.Prg.PowerBI.Logic
                 new SqlParameter("@Zone", SqlDbType.VarChar) { Value = (object)model.Zone ?? DBNull.Value },
                 new SqlParameter("@MDivisionID", SqlDbType.VarChar) { Value = (object)model.MDivisionID ?? DBNull.Value },
                 new SqlParameter("@FtyGroup", SqlDbType.VarChar) { Value = (object)model.Factory ?? DBNull.Value },
+                new SqlParameter("@ArtworkTypeID", SqlDbType.VarChar) { Value = (object)model.ArtworkTypeID ?? DBNull.Value },
             };
 
             List<DataTable> dts = new List<DataTable>();
@@ -65,7 +66,7 @@ namespace Sci.Production.Prg.PowerBI.Logic
             if (model.Forecast && model.SeparateByQtyBdownByShipmode)
             {
                 model.P_type = "forecast";
-                result = DBProxy.Current.Select(null, this.GetMainDatas(model), out DataTable printData_forecast);
+                result = DBProxy.Current.Select(null, this.GetMainDatas(model), listPar, out DataTable printData_forecast);
                 if (!result)
                 {
                     resultReport.Result = result;
@@ -192,7 +193,7 @@ AND o.Category IN ('B','S','G','')
                         whereSDPDate = "AND oqs.SDPDate <= @SDPDate2";
                     }
 
-                    whereOrders += $"AND EXISTS (SELECT 1 FROM Order_QtyShip oqs WITH (NOLOCK) oqs.ID = o.ID {whereSDPDate})";
+                    whereOrders += $"AND EXISTS (SELECT 1 FROM Order_QtyShip oqs WITH (NOLOCK) WHERE oqs.ID = o.ID {whereSDPDate})\r\n";
                 }
 
                 if (model.CRDDate1.HasValue)
@@ -347,6 +348,7 @@ AND o.Category IN ('B','S','G','')
 INNER JOIN Order_QtyShip oqs WITH (NOLOCK) ON oqs.ID = o.ID";
             }
 
+            // 第1段 , 篩選 Orders, Order_QtyShip
             string sqlcmd = $@"
 --1.先依據篩選條件找出需要資料,不做任何處理
 SELECT o.*
