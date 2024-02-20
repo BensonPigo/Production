@@ -59,7 +59,7 @@ namespace Sci.Production.IE
             ,[RPM] =  COALESCE(NULLIF(IA.RPMEdited , ''),IA.RPM)
             ,[LaserSpeed] = COALESCE(NULLIF(IA.LaserSpeedEdited, ''), IA.LaserSpeed)
             ,[TradeLaserSpeed] = isnull(IA.LaserSpeed,'')
-            ,[SewingLength] = isnull(IA.SewingLength,'')
+            ,[SewingLength] = CONVERT(DECIMAL(18,2),IA.SewingLength / IA.PieceOfGarment)
             ,[SewingLine] = IA.SewingLine
             ,[LaserLength] =IA.LaserLength
             ,[LaserLine] = IA.LaserLine
