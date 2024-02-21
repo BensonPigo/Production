@@ -2089,15 +2089,14 @@ WHERE EXISTS (SELECT ID FROM #tmpOrders o WITH (NOLOCK) WHERE ot.ID = o.ID)
         private string GetPrintingDetail(PPIC_R03_ViewModel model)
         {
             return $@"
-SELECT DISTINCT ID INTO #tmpOrders FROM #tmp
-
+SELECT DISTINCT ID INTO #tmpOrderID FROM #tmp
 SELECT DISTINCT
     oa.ID
    ,InkTypecolorsize = CONCAT(oa.InkType, '/', oa.Colors, ' ', '/', IIF(s.SmallLogo = 1, 'Small logo', 'Big logo'))
    ,PrintingLT = CAST(plt.LeadTime + plt.AddLeadTime AS FLOAT)
 INTO #tmpOrder_Artwork
 FROM Order_Artwork oa WITH (NOLOCK)
-INNER JOIN #tmpOrders o WITH (NOLOCK) ON o.ID = oa.ID
+INNER JOIN Orders o WITH (NOLOCK) ON o.ID = oa.ID
 OUTER APPLY (SELECT SmallLogo = IIF(EXISTS(SELECT 1 FROM System WITH (NOLOCK) WHERE SmallLogoCM <= oa.Width OR SmallLogoCM <= oa.Length), 0, 1)) s
 OUTER APPLY (SELECT tmpRTL = IIF(o.Cpu = 0, 0, s.SewlineAvgCPU / o.Cpu) FROM System s WITH (NOLOCK)) tr
 OUTER APPLY (SELECT RTLQty = IIF(o.Qty < tmpRTL, o.Qty, tmpRTL)) r
@@ -2126,12 +2125,13 @@ OUTER APPLY (
        ,AddLeadTime = IIF(e.ex = 1, pEx.AddLeadTime, pnEx.AddLeadTime)
 ) plt
 WHERE oa.ArtworkTypeID = 'Printing'
+AND oa.ID IN (SELECT ID FROM #tmpOrderID)
 
 SELECT
     t.ID
    ,a.PrintingLT
    ,b.InkTypecolorsize
-FROM #tmpOrders t
+FROM #tmpOrderID t
 OUTER APPLY (
     SELECT PrintingLT = STUFF((
         SELECT CONCAT(',', t2.PrintingLT)
