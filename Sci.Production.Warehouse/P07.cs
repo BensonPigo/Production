@@ -745,30 +745,40 @@ and ID = '{Sci.Env.User.UserID}'"))
 
                 if (this.EditMode && e.FormattedValue.ToString() != string.Empty)
                 {
-                    if (!MyUtility.Check.Empty(this.CurrentDetailData["seq"]))
-                    {
-                        string sqlmcd = string.Format(Prgs.SelePoItemSqlCmd() + @"and psd.seq1 ='{2}' and psd.seq2 = '{3}' and left(psd.seq1, 1) !='7'", newvalue, Env.User.Keyword, this.CurrentDetailData["seq1"], this.CurrentDetailData["seq2"]);
-                        if (!MyUtility.Check.Seek(sqlmcd, out DataRow dr_reload))
-                        {
-                            e.Cancel = true;
-                            MyUtility.Msg.WarningBox("Data not found!", "Seq");
-                            return;
-                        }
-                        else
-                        {
-                            sqlmcd = $@"select StockUnit from PO_Supp_Detail where ID = '{newvalue}' and SEQ1 = '{this.CurrentDetailData["seq1"]}' and SEQ2 = '{this.CurrentDetailData["seq2"]}' ";
-                            bool unti_result = MyUtility.Check.Seek(sqlmcd, out DataRow dr_StockUnit, null);
-                            this.CurrentDetailData["stockunit"] = unti_result ? dr_StockUnit["stockunit"] : dr_reload["stockunit"];
-                            this.CurrentDetailData["pounit"] = dr_reload["pounit"];
-                            this.CurrentDetailData["fabrictype"] = dr_reload["fabrictype"];
-                            this.CurrentDetailData["Refno"] = dr_reload["Refno"];
-                            this.CurrentDetailData["ColorID"] = dr_reload["WH_P07_Color"];
-                            this.CurrentDetailData["MtlTypeID"] = dr_reload["MtlTypeID"];
-                        }
-                    }
-
                     if (MyUtility.Check.Seek(string.Format("select 1 where exists(select * from po WITH (NOLOCK) where id = '{0}')", e.FormattedValue), null))
                     {
+                        if (!MyUtility.Check.Empty(this.CurrentDetailData["seq"]))
+                        {
+                            string sqlmcd = string.Format(Prgs.SelePoItemSqlCmd() + @"and psd.seq1 ='{2}' and psd.seq2 = '{3}' and left(psd.seq1, 1) !='7'", newvalue, Env.User.Keyword, this.CurrentDetailData["seq1"], this.CurrentDetailData["seq2"]);
+                            if (!MyUtility.Check.Seek(sqlmcd, out DataRow dr_reload))
+                            {
+                                MyUtility.Msg.WarningBox("Data not found!", "SP & Seq");
+                                this.CurrentDetailData["seq"] = string.Empty;
+                                this.CurrentDetailData["seq1"] = string.Empty;
+                                this.CurrentDetailData["seq2"] = string.Empty;
+                                this.CurrentDetailData["pounit"] = string.Empty;
+                                this.CurrentDetailData["stockunit"] = string.Empty;
+                                this.CurrentDetailData["fabrictype"] = string.Empty;
+                                this.CurrentDetailData["shipqty"] = 0m;
+                                this.CurrentDetailData["Actualqty"] = 0m;
+                                this.CurrentDetailData["PoidSeq1"] = string.Empty;
+                                this.CurrentDetailData["PoidSeq"] = string.Empty;
+                                this.CurrentDetailData["Refno"] = string.Empty;
+                                this.CurrentDetailData["ColorID"] = string.Empty;
+                            }
+                            else
+                            {
+                                sqlmcd = $@"select StockUnit from PO_Supp_Detail where ID = '{newvalue}' and SEQ1 = '{this.CurrentDetailData["seq1"]}' and SEQ2 = '{this.CurrentDetailData["seq2"]}' ";
+                                bool unti_result = MyUtility.Check.Seek(sqlmcd, out DataRow dr_StockUnit, null);
+                                this.CurrentDetailData["stockunit"] = unti_result ? dr_StockUnit["stockunit"] : dr_reload["stockunit"];
+                                this.CurrentDetailData["pounit"] = dr_reload["pounit"];
+                                this.CurrentDetailData["fabrictype"] = dr_reload["fabrictype"];
+                                this.CurrentDetailData["Refno"] = dr_reload["Refno"];
+                                this.CurrentDetailData["ColorID"] = dr_reload["WH_P07_Color"];
+                                this.CurrentDetailData["MtlTypeID"] = dr_reload["MtlTypeID"];
+                            }
+                        }
+
                         string sqlorders = string.Format("select category,FactoryID,OrderTypeID from View_WH_Orders WITH (NOLOCK) where id='{0}'", e.FormattedValue);
                         if (MyUtility.Check.Seek(sqlorders, out DataRow dr))
                         {
