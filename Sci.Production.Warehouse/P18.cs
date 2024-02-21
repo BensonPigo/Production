@@ -552,7 +552,10 @@ and I.FactoryID = '{this.CurrentMaintain["FromFtyID"]}'
                 }
 
                 string seq = MyUtility.Convert.GetString(this.CurrentDetailData["seq"]);
-                DualResult result = P18_Utility.CheckDetailSeq(seq, this.CurrentMaintain["FromFtyID"].ToString(), this.CurrentDetailData);
+                if (!MyUtility.Check.Empty(seq))
+                {
+                    DualResult result = P18_Utility.CheckDetailSeq(seq, this.CurrentMaintain["FromFtyID"].ToString(), this.CurrentDetailData);
+                }
 
                 if (this.EditMode == true && string.Compare(e.FormattedValue.ToString(), this.CurrentDetailData["poid"].ToString()) != 0)
                 {
