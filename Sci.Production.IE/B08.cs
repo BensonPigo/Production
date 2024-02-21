@@ -23,7 +23,7 @@ namespace Sci.Production.IE
             : base(menuitem)
         {
             this.InitializeComponent();
-            this.DefaultFilter = "FactoryID = '" + Env.User.Factory + $"' ";
+            //this.DefaultFilter = "FactoryID = '" + Env.User.Factory + $"' ";
         }
 
         /// <summary>
