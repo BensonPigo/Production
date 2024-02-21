@@ -34,6 +34,10 @@
             this.disAccountNoname = new Sci.Win.UI.DisplayBox();
             this.chkUnselected = new Sci.Win.UI.CheckBox();
             this.txtAccountNo = new Sci.Win.UI.TextBox();
+            this.checkBox1 = new Sci.Win.UI.CheckBox();
+            this.label4 = new Sci.Win.UI.Label();
+            this.textBox1 = new Sci.Win.UI.TextBox();
+            this.label5 = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -42,14 +46,28 @@
             this.tabs.SuspendLayout();
             this.SuspendLayout();
             // 
+            // detail
+            // 
+            this.detail.Size = new System.Drawing.Size(768, 388);
+            // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.textBox1);
+            this.detailcont.Controls.Add(this.label5);
+            this.detailcont.Controls.Add(this.checkBox1);
+            this.detailcont.Controls.Add(this.label4);
             this.detailcont.Controls.Add(this.txtAccountNo);
             this.detailcont.Controls.Add(this.chkUnselected);
             this.detailcont.Controls.Add(this.disAccountNoname);
             this.detailcont.Controls.Add(this.label3);
             this.detailcont.Controls.Add(this.label2);
             this.detailcont.Controls.Add(this.label1);
+            this.detailcont.Size = new System.Drawing.Size(768, 350);
+            // 
+            // detailbtm
+            // 
+            this.detailbtm.Location = new System.Drawing.Point(0, 350);
+            this.detailbtm.Size = new System.Drawing.Size(768, 38);
             // 
             // browse
             // 
@@ -116,6 +134,45 @@
             this.txtAccountNo.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtAccountNo_PopUp);
             this.txtAccountNo.Validating += new System.ComponentModel.CancelEventHandler(this.TxtAccountNo_Validating);
             // 
+            // checkBox1
+            // 
+            this.checkBox1.AutoSize = true;
+            this.checkBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "NeedShareExpense", true));
+            this.checkBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkBox1.Location = new System.Drawing.Point(183, 141);
+            this.checkBox1.Name = "checkBox1";
+            this.checkBox1.Size = new System.Drawing.Size(161, 21);
+            this.checkBox1.TabIndex = 5;
+            this.checkBox1.Text = "Need Share Expense";
+            this.checkBox1.UseVisualStyleBackColor = true;
+            // 
+            // label4
+            // 
+            this.label4.Location = new System.Drawing.Point(32, 141);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(136, 23);
+            this.label4.TabIndex = 6;
+            this.label4.Text = "Share Expense";
+            // 
+            // textBox1
+            // 
+            this.textBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.textBox1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Remark", true));
+            this.textBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.textBox1.Location = new System.Drawing.Point(183, 183);
+            this.textBox1.Name = "textBox1";
+            this.textBox1.ReadOnly = true;
+            this.textBox1.Size = new System.Drawing.Size(214, 23);
+            this.textBox1.TabIndex = 12;
+            // 
+            // label5
+            // 
+            this.label5.Location = new System.Drawing.Point(32, 183);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(136, 23);
+            this.label5.TabIndex = 11;
+            this.label5.Text = "Remark";
+            // 
             // Basic_B18
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -149,5 +206,9 @@
         private Win.UI.TextBox txtAccountNo;
         private Win.UI.CheckBox chkUnselected;
         private Win.UI.DisplayBox disAccountNoname;
+        private Win.UI.CheckBox checkBox1;
+        private Win.UI.Label label4;
+        private Win.UI.TextBox textBox1;
+        private Win.UI.Label label5;
     }
 }

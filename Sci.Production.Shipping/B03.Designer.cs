@@ -49,7 +49,8 @@
             this.txtUnit = new Sci.Production.Class.Txtunit_local();
             this.txtsubconSupplier = new Sci.Production.Class.TxtsubconNoConfirm();
             this.txtbrand = new Sci.Production.Class.Txtbrand();
-            this.txtAccountNo = new Sci.Production.Class.TxtAccountNo();
+            this.txtAccName = new Sci.Win.UI.TextBox();
+            this.txtAccNo = new Sci.Win.UI.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -64,7 +65,8 @@
             // 
             // detailcont
             // 
-            this.detailcont.Controls.Add(this.txtAccountNo);
+            this.detailcont.Controls.Add(this.txtAccNo);
+            this.detailcont.Controls.Add(this.txtAccName);
             this.detailcont.Controls.Add(this.label2);
             this.detailcont.Controls.Add(this.labelUnit);
             this.detailcont.Controls.Add(this.btnPaymentHistory);
@@ -314,6 +316,7 @@
             // 
             this.txtsubconSupplier.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "LocalSuppID", true));
             this.txtsubconSupplier.DisplayBox1Binding = "";
+            this.txtsubconSupplier.IsFreightForwarder = false;
             this.txtsubconSupplier.IsIncludeJunk = false;
             this.txtsubconSupplier.IsMisc = false;
             this.txtsubconSupplier.IsShipping = false;
@@ -330,20 +333,34 @@
             this.txtbrand.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "BrandID", true));
             this.txtbrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtbrand.Location = new System.Drawing.Point(120, 118);
+            this.txtbrand.MyDocumentdName = null;
             this.txtbrand.Name = "txtbrand";
             this.txtbrand.Size = new System.Drawing.Size(66, 23);
             this.txtbrand.TabIndex = 1;
             // 
-            // txtAccountNo
+            // txtAccName
             // 
-            this.txtAccountNo.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "AccountID", true));
-            this.txtAccountNo.DisplayBox1Binding = "";
-            this.txtAccountNo.IsUnselectableShipB03 = true;
-            this.txtAccountNo.Location = new System.Drawing.Point(120, 292);
-            this.txtAccountNo.Name = "txtAccountNo";
-            this.txtAccountNo.Size = new System.Drawing.Size(308, 23);
-            this.txtAccountNo.TabIndex = 24;
-            this.txtAccountNo.TextBox1Binding = "";
+            this.txtAccName.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.txtAccName.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.txtAccName.IsSupportEditMode = false;
+            this.txtAccName.Location = new System.Drawing.Point(217, 292);
+            this.txtAccName.Name = "txtAccName";
+            this.txtAccName.ReadOnly = true;
+            this.txtAccName.Size = new System.Drawing.Size(211, 23);
+            this.txtAccName.TabIndex = 27;
+            // 
+            // txtAccNo
+            // 
+            this.txtAccNo.BackColor = System.Drawing.Color.White;
+            this.txtAccNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtAccNo.Location = new System.Drawing.Point(120, 292);
+            this.txtAccNo.Name = "txtAccNo";
+            this.txtAccNo.PopUpMode = Sci.Win.UI.TextBoxPopUpMode.NonReadOnly;
+            this.txtAccNo.Size = new System.Drawing.Size(96, 23);
+            this.txtAccNo.TabIndex = 28;
+            this.txtAccNo.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtAccNo_PopUp);
+            this.txtAccNo.TextChanged += new System.EventHandler(this.TxtAccNo_TextChanged);
+            this.txtAccNo.Validating += new System.ComponentModel.CancelEventHandler(this.TxtAccNo_Validating);
             // 
             // B03
             // 
@@ -407,6 +424,7 @@
         private Class.Txtunit_local txtUnit;
         private Win.UI.Label label2;
         private Win.UI.Button btnBatchApprove;
-        private Class.TxtAccountNo txtAccountNo;
+        private Win.UI.TextBox txtAccNo;
+        private Win.UI.TextBox txtAccName;
     }
 }

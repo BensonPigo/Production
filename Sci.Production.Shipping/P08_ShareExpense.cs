@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
+using System.Data.SqlTypes;
 using System.Linq;
 using System.Text;
 using System.Transactions;
@@ -92,7 +93,14 @@ when not matched by target then
                 this.ControlButton();
                 this.displayCurrency.Value = MyUtility.Convert.GetString(this.apData["CurrencyID"]);
                 this.numTtlAmt.DecimalPlaces = MyUtility.Convert.GetInt(MyUtility.GetValue.Lookup("Exact", MyUtility.Convert.GetString(this.apData["CurrencyID"]), "Currency", "ID"));
-                this.numTtlAmt.Value = MyUtility.Convert.GetDecimal(this.apData["Amount"]);
+                string sqlCmd = $@"
+                select [Amount] = ISNULL(SUM(SD.Amount),0)
+                from ShippingAP_Detail sd WITH (NOLOCK)
+                where 
+                EXISTS (SELECT 1 FROM AccountNoSetting A WHERE (A.ID = SD.AccountID or A.ID = LEFT(SD.AccountID , 4)) AND A.NeedShareExpense = 1) AND
+                sd.ID = '{MyUtility.Convert.GetString(this.apData["ID"])}'";
+                string strAmpunt = MyUtility.GetValue.Lookup(sqlCmd);
+                this.numTtlAmt.Value = MyUtility.Convert.GetDecimal(strAmpunt);
             }
             else
             {
@@ -816,10 +824,12 @@ from (
 
             sqlCmd = string.Format(
                 @"
-select [Amount] = Sum(sd.Amount)
+select [Amount] = ISNULL(SUM(SD.Amount),0)
 from ShippingAP_Detail sd WITH (NOLOCK)
-where sd.ID = '{0}'
-and not (dbo.GetAccountNoExpressType(sd.AccountID,'Vat') = 1 or dbo.GetAccountNoExpressType(sd.AccountID,'SisFty') = 1)", MyUtility.Convert.GetString(this.apData["ID"]));
+where 
+EXISTS (SELECT 1 FROM AccountNoSetting A WHERE (A.ID = SD.AccountID or A.ID = LEFT(SD.AccountID , 4)) AND A.NeedShareExpense = 1) AND
+sd.ID = '{0}'
+and not (dbo.GetAccountNoExpressType(LEFT(SD.AccountID , 4),'Vat') = 1 or dbo.GetAccountNoExpressType(LEFT(SD.AccountID , 4),'SisFty') = 1)", MyUtility.Convert.GetString(this.apData["ID"]));
             MyUtility.Check.Seek(sqlCmd, out queryData);
             this.numTtlAmt.Value = MyUtility.Convert.GetDecimal(queryData["Amount"]);
 
@@ -1114,7 +1124,7 @@ select distinct sd.AccountID
 from ShippingAP_Detail sd WITH (NOLOCK)
 where sd.ID = '{this.apData["ID"]}'
 and sd.AccountID != ''
-and not (dbo.GetAccountNoExpressType(sd.AccountID,'Vat') = 1 or dbo.GetAccountNoExpressType(sd.AccountID,'SisFty') = 1)";
+and not (dbo.GetAccountNoExpressType(LEFT(SD.AccountID , 4),'Vat') = 1 or dbo.GetAccountNoExpressType(LEFT(SD.AccountID , 4),'SisFty') = 1)";
                 DBProxy.Current.Select(null, sqlCmd, out DataTable dtAccNo);
 
                 List<CheckResult> listCheckResult = new List<CheckResult>();
@@ -1832,8 +1842,8 @@ from GMTBooking g WITH (NOLOCK)
 outer apply(select distinct [val] = sd.AccountID 
             from ShippingAP_Detail sd WITH(NOLOCK)
                 where sd.ID = '{this.apData["ID"]}' and sd.AccountID != ''
-                and not (dbo.GetAccountNoExpressType(sd.AccountID,'Vat') = 1 
-		            or dbo.GetAccountNoExpressType(sd.AccountID,'SisFty') = 1)) AccountID
+                and not (dbo.GetAccountNoExpressType(LEFT(SD.AccountID , 4),'Vat') = 1 
+		            or dbo.GetAccountNoExpressType(LEFT(SD.AccountID , 4),'SisFty') = 1)) AccountID
 inner join GMTBooking_Detail gd with (nolock) on g.ID = gd.ID
 where g.ID = '{dr["InvNo"]}' and AccountID.val is not null
 ";
@@ -1920,8 +1930,8 @@ from GMTBooking g WITH (NOLOCK)
 outer apply(select distinct [val] = sd.AccountID 
             from ShippingAP_Detail sd WITH(NOLOCK)
                 where sd.ID = '{this.apData["ID"]}' and sd.AccountID != ''
-                and not (dbo.GetAccountNoExpressType(sd.AccountID,'Vat') = 1 
-		            or dbo.GetAccountNoExpressType(sd.AccountID,'SisFty') = 1)) AccountID
+                and not (dbo.GetAccountNoExpressType(LEFT(SD.AccountID , 4),'Vat') = 1 
+		            or dbo.GetAccountNoExpressType(LEFT(SD.AccountID , 4),'SisFty') = 1)) AccountID
 inner join PackingList p with (nolock) on p.INVNo = g.ID  and p.Type != 'L'
 inner join PackingList_Detail pd with (nolock) on  pd.ID = p.ID and pd.CTNQty > 0
 inner join Orders o with (nolock) on o.ID = pd.OrderID
