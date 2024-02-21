@@ -747,6 +747,38 @@ and ID = '{Sci.Env.User.UserID}'"))
                 {
                     if (MyUtility.Check.Seek(string.Format("select 1 where exists(select * from po WITH (NOLOCK) where id = '{0}')", e.FormattedValue), null))
                     {
+                        if (!MyUtility.Check.Empty(this.CurrentDetailData["seq"]))
+                        {
+                            string sqlmcd = string.Format(Prgs.SelePoItemSqlCmd() + @"and psd.seq1 ='{2}' and psd.seq2 = '{3}' and left(psd.seq1, 1) !='7'", newvalue, Env.User.Keyword, this.CurrentDetailData["seq1"], this.CurrentDetailData["seq2"]);
+                            if (!MyUtility.Check.Seek(sqlmcd, out DataRow dr_reload))
+                            {
+                                MyUtility.Msg.WarningBox("Data not found!", "SP & Seq");
+                                this.CurrentDetailData["seq"] = string.Empty;
+                                this.CurrentDetailData["seq1"] = string.Empty;
+                                this.CurrentDetailData["seq2"] = string.Empty;
+                                this.CurrentDetailData["pounit"] = string.Empty;
+                                this.CurrentDetailData["stockunit"] = string.Empty;
+                                this.CurrentDetailData["fabrictype"] = string.Empty;
+                                this.CurrentDetailData["shipqty"] = 0m;
+                                this.CurrentDetailData["Actualqty"] = 0m;
+                                this.CurrentDetailData["PoidSeq1"] = string.Empty;
+                                this.CurrentDetailData["PoidSeq"] = string.Empty;
+                                this.CurrentDetailData["Refno"] = string.Empty;
+                                this.CurrentDetailData["ColorID"] = string.Empty;
+                            }
+                            else
+                            {
+                                sqlmcd = $@"select StockUnit from PO_Supp_Detail where ID = '{newvalue}' and SEQ1 = '{this.CurrentDetailData["seq1"]}' and SEQ2 = '{this.CurrentDetailData["seq2"]}' ";
+                                bool unti_result = MyUtility.Check.Seek(sqlmcd, out DataRow dr_StockUnit, null);
+                                this.CurrentDetailData["stockunit"] = unti_result ? dr_StockUnit["stockunit"] : dr_reload["stockunit"];
+                                this.CurrentDetailData["pounit"] = dr_reload["pounit"];
+                                this.CurrentDetailData["fabrictype"] = dr_reload["fabrictype"];
+                                this.CurrentDetailData["Refno"] = dr_reload["Refno"];
+                                this.CurrentDetailData["ColorID"] = dr_reload["WH_P07_Color"];
+                                this.CurrentDetailData["MtlTypeID"] = dr_reload["MtlTypeID"];
+                            }
+                        }
+
                         string sqlorders = string.Format("select category,FactoryID,OrderTypeID from View_WH_Orders WITH (NOLOCK) where id='{0}'", e.FormattedValue);
                         if (MyUtility.Check.Seek(sqlorders, out DataRow dr))
                         {
@@ -1169,111 +1201,6 @@ WHERE   StockType='{this.CurrentDetailData["stocktype"].ToString()}'
             };
 
             #endregion In Qty Valid
-
-            #region Roll驗證
-
-            Ict.Win.DataGridViewGeneratorTextColumnSettings roll_setting1 = new DataGridViewGeneratorTextColumnSettings();
-            roll_setting1.CellValidating += (s, e) =>
-            {
-                if (!this.EditMode)
-                {
-                    return;
-                }
-
-                if (this.CurrentDetailData == null)
-                {
-                    return;
-                }
-
-                string oldvalue = MyUtility.Convert.GetString(this.CurrentDetailData["Roll"]);
-                string newvalue = MyUtility.Convert.GetString(e.FormattedValue);
-                if (oldvalue == newvalue)
-                {
-                    return;
-                }
-
-                this.CurrentDetailData["Roll"] = newvalue;
-
-                // 開始檢查FtyInventory
-                string poid = MyUtility.Convert.GetString(this.CurrentDetailData["poid"]);
-                string seq1 = MyUtility.Convert.GetString(this.CurrentDetailData["seq1"]);
-                string seq2 = MyUtility.Convert.GetString(this.CurrentDetailData["seq2"]);
-                string roll = MyUtility.Convert.GetString(this.CurrentDetailData["roll"]);
-                string dyelot = MyUtility.Convert.GetString(this.CurrentDetailData["dyelot"]);
-                string fabricType = MyUtility.Convert.GetString(this.CurrentDetailData["fabrictype"]);
-                string stockType = MyUtility.Convert.GetString(this.CurrentDetailData["stockType"]);
-
-                // 布料，且都有值了才檢查
-                if (fabricType.ToUpper() == "F" && !MyUtility.Check.Empty(poid) && !MyUtility.Check.Empty(seq1) && !MyUtility.Check.Empty(seq2) && !MyUtility.Check.Empty(roll) && !MyUtility.Check.Empty(dyelot))
-                {
-                    bool chkFtyInventory1 = PublicPrg.Prgs.ChkFtyInventory(poid, seq1, seq2, roll, dyelot, stockType);
-
-                    if (!chkFtyInventory1)
-                    {
-                        MyUtility.Msg.WarningBox($"The Roll & Dyelot of <SP#>:{poid}, <Seq>:{seq1} {seq2}, <Roll>:{roll}, <Dyelot>:{dyelot} already exists.");
-
-                        // 未通過驗證 清空欄位
-                        this.CurrentDetailData["Roll"] = string.Empty;
-
-                        this.CurrentDetailData.EndEdit();
-                        return;
-                    }
-                }
-            };
-            #endregion
-
-            #region Dyelot驗證
-
-            Ict.Win.DataGridViewGeneratorTextColumnSettings dyelot_setting1 = new DataGridViewGeneratorTextColumnSettings();
-
-            dyelot_setting1.CellValidating += (s, e) =>
-            {
-                if (!this.EditMode)
-                {
-                    return;
-                }
-
-                if (this.CurrentDetailData == null)
-                {
-                    return;
-                }
-
-                string oldvalue = MyUtility.Convert.GetString(this.CurrentDetailData["Dyelot"]);
-                string newvalue = MyUtility.Convert.GetString(e.FormattedValue);
-                if (oldvalue == newvalue)
-                {
-                    return;
-                }
-
-                this.CurrentDetailData["Dyelot"] = newvalue;
-
-                // 開始檢查FtyInventory
-                string poid = MyUtility.Convert.GetString(this.CurrentDetailData["poid"]);
-                string seq1 = MyUtility.Convert.GetString(this.CurrentDetailData["seq1"]);
-                string seq2 = MyUtility.Convert.GetString(this.CurrentDetailData["seq2"]);
-                string roll = MyUtility.Convert.GetString(this.CurrentDetailData["roll"]);
-                string dyelot = MyUtility.Convert.GetString(this.CurrentDetailData["dyelot"]);
-                string fabricType = MyUtility.Convert.GetString(this.CurrentDetailData["fabrictype"]);
-                string stockType = MyUtility.Convert.GetString(this.CurrentDetailData["stockType"]);
-
-                // 布料，且都有值了才檢查
-                if (fabricType.ToUpper() == "F" && !MyUtility.Check.Empty(poid) && !MyUtility.Check.Empty(seq1) && !MyUtility.Check.Empty(seq2) && !MyUtility.Check.Empty(roll) && !MyUtility.Check.Empty(dyelot))
-                {
-                    bool chkFtyInventory1 = PublicPrg.Prgs.ChkFtyInventory(poid, seq1, seq2, roll, dyelot, stockType);
-
-                    if (!chkFtyInventory1)
-                    {
-                        MyUtility.Msg.WarningBox($"The Roll & Dyelot of <SP#>:{poid}, <Seq>:{seq1} {seq2}, <Roll>:{roll}, <Dyelot>:{dyelot} already exists.");
-
-                        // 未通過驗證 清空欄位
-                        this.CurrentDetailData["Dyelot"] = string.Empty;
-
-                        this.CurrentDetailData.EndEdit();
-                        return;
-                    }
-                }
-            };
-            #endregion
 
             #region Roll setting
             Ict.Win.DataGridViewGeneratorTextColumnSettings roll_setting = new DataGridViewGeneratorTextColumnSettings();
