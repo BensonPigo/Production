@@ -375,28 +375,28 @@ BEGIN
 			  [ID]
 			, [OutputDate]=CAST([OutputDate] AS DATE)
 			, [SewingLineID]=ISNULL(ProductionLineAllocation.SewingLineID,ts.[SewingLineID])
-			, [QAQty]
-			, [DefectQty]
-			, [InlineQty]
-			, [TMS]
+			, ISNULL([QAQty] ,0)
+			, ISNULL([DefectQty] ,0)
+			, ISNULL([InlineQty] ,0)
+			, ISNULL([TMS] ,0)
 			, [Manpower]=0
 			, [Manhour]=0
 			, [Efficiency]=0
-			, [Shift]
-			, [Team]
-			, [Status] 
+			, ISNULL([Shift] ,'')
+			, ISNULL([Team],'')
+			, ISNULL([Status] ,'')
 			, [LockDate]=NULL
-			, [Workhour] 
-			, [FactoryID]
-			, [MDivision]
-			, [Category]
+			, ISNULL([Workhour] ,'')
+			, ISNULL([FactoryID],'')
+			, ISNULL([MDivision],'')
+			, ISNULL([Category],'')
 			, [SFCData]
-			, [AddName] 
+			, ISNULL([AddName] ,'')
 			, [AddDate] 
 			, [EditName]=''
 			, [EditDate]=CAST([EditDate] AS DATETIME)
-			, [SubconOutFty]
-			, [SubConOutContractNumber]
+			, ISNULL([SubconOutFty] ,'')
+			, ISNULL([SubConOutContractNumber] ,'')
 			FROM #tmp_SewingOutput ts
 			OUTER APPLY(			
 				SELECT t2.SewingLineID
@@ -460,7 +460,7 @@ BEGIN
 
 				
 			UPDATE t
-			SET t.TMS= t2.TMS
+			SET t.TMS= ISNULL(t2.TMS ,0)
 			FROM SewingOutput t
 			INNER JOIN #tmp_SewingOutputTMS_Final t2 ON t2.ID=t.ID
 
