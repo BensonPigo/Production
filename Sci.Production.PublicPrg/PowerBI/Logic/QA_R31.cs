@@ -14,7 +14,8 @@ namespace Sci.Production.Prg.PowerBI.Logic
         /// <inheritdoc/>
         public QA_R31()
         {
-            DBProxy.Current.DefaultTimeout = 5400;
+            // 3小時timeout時間, 如果遇到初始化一次撈取2年的資料,會需要更長的時間
+            DBProxy.Current.DefaultTimeout = 10800;
         }
 
         /// <inheritdoc/>
