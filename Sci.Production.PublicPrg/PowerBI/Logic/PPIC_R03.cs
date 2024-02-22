@@ -1330,10 +1330,6 @@ select  t.ID
                            , '')
         , [Fab_ETA]=(select max(FinalETA) F_ETA from PO_Supp_Detail WITH (NOLOCK) where id=p.ID  and FabricType='F')
         , [Acc_ETA]=(select max(FinalETA) A_ETA from PO_Supp_Detail WITH (NOLOCK) where id=p.ID  and FabricType='A')
-		, t.Cancelled
-        , t.Customize2
-        , t.KpiMNotice
-        , t.KpiEachConsCheck
         , LastCTNTransDate = IIF(isnull(t.FtyCtn1,0) =0 , t.LastCTNTransDate , null)
 		, ScanEditDate = IIF(isnull(t.FtyCtn1,0) =0 , t.ScanEditDate , null)
 		, LastCTNRecdDate = IIF(isnull(t.FtyCtn1,0) =0 , t.LastCTNRecdDate , null)
@@ -1669,9 +1665,6 @@ select distinct
                            , '') 
         , [Fab_ETA]=(select max(FinalETA) F_ETA from PO_Supp_Detail WITH (NOLOCK) where id=p.ID  and FabricType='F')
         , [Acc_ETA]=(select max(FinalETA) A_ETA from PO_Supp_Detail WITH (NOLOCK) where id=p.ID  and FabricType='A')
-        , t.Customize2
-        , t.KpiMNotice
-        , t.KpiEachConsCheck
         , [LastCTNTransDate] = IIF(isnull(t.TotalCTN,0) - isnull(t.FtyCTN,0) = 0 ,t.LastCTNTransDate, null)
         , [ScanEditDate] = IIF(isnull(t.TotalCTN,0) - isnull(t.FtyCTN,0) = 0 ,t.ScanEditDate, null)
         , [LastCTNRecdDate] = IIF(isnull(t.TotalCTN,0) - isnull(t.FtyCTN,0) = 0 ,t.LastCTNRecdDate, null)
@@ -1763,9 +1756,6 @@ UNION ALL
 SELECT
     ID = 'PRINTING'
     ,Seq = ''
-    ,ArtworkUnit = ''
-    ,ProductionUnit = ''
-    ,SystemType = ''
     ,FakeID = ''
     ,ColumnN = 'Printing LT'
     ,ColumnSeq = -1 
@@ -1774,9 +1764,6 @@ UNION ALL
 SELECT
     ID = 'PRINTING'
     ,Seq = ''
-    ,ArtworkUnit = ''
-    ,ProductionUnit = ''
-    ,SystemType = ''
     ,FakeID = ''
     ,ColumnN = 'InkType/Color/Size'
     ,ColumnSeq = 0 

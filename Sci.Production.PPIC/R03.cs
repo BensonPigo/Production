@@ -342,8 +342,6 @@ from Factory f WITH (NOLOCK) where Zone <> ''";
                 objArray[intRowsStart, 49] = dr["BrandFTYCode"];
                 objArray[intRowsStart, 50] = dr["ProgramID"];
                 objArray[intRowsStart, 51] = dr["NonRevenue"];
-
-                // objArray[intRowsStart, 51] = dr["CdCodeID"];
                 objArray[intRowsStart, 52] = dr["CDCodeNew"];
                 objArray[intRowsStart, 53] = dr["ProductType"];
                 objArray[intRowsStart, 54] = dr["FabricType"];
