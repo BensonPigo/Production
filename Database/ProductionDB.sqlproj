@@ -2890,6 +2890,7 @@
     <Build Include="dbo\Tables\LineMappingBalancing_NotHitTargetReason.sql" />
     <Build Include="dbo\Functions\GetQA_R08_Detail.sql" />
     <Build Include="dbo\Stored Procedures\GetFabricInspLabSummaryReport.sql" />
+    <Build Include="dbo\Tables\DownloadStickerQueue.sql" />
     <Build Include="dbo\Stored Procedures\PPIC_R01_SewingLineScheduleBySP.sql" />
     <Build Include="dbo\Stored Procedures\GetCuttingBCS.sql" />
     <Build Include="dbo\Functions\GetQA_R11_ReceivingTransferIn_Detail.sql" />
@@ -2906,6 +2907,9 @@
     <Build Include="dbo\Tables\AcceptableQualityLevelsPro_DefectCategory.sql" />
     <Build Include="dbo\Tables\AcceptableQualityLevelsPro_Detail.sql" />
     <Build Include="dbo\Tables\FabricNotch.sql" />
+    <Build Include="dbo\Tables\NikePortCityList.sql" />
+    <Build Include="dbo\Tables\NikeFSPList.sql" />
+    <Build Include="dbo\Tables\NikePostScanShipment.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />

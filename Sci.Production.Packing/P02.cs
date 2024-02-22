@@ -3029,7 +3029,7 @@ from PackingList_Detail with (nolock) where OrderID = '{this.CurrentMaintain["Or
                                             OrderShipmodeSeq = '{this.CurrentMaintain["OrderShipmodeSeq"].ToString()}' and
                                             ID <> '{this.CurrentMaintain["ID"].ToString()}' 
 
-select @shipQty = sum (Qty)
+select @shipQty = isnull(sum (Qty),0)
 from Order_QtyShip_Detail with (nolock) where ID = '{this.CurrentMaintain["OrderID"].ToString()}' and Seq = '{this.CurrentMaintain["OrderShipmodeSeq"].ToString()}'
 
 select [PKQty] = @PKQty,[shipQty] = @shipQty

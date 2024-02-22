@@ -75,6 +75,8 @@ namespace Sci.Production.Basic
             this.txtTaxNO = new Sci.Win.UI.TextBox();
             this.chkOverseas = new Sci.Win.UI.CheckBox();
             this.checkIsCustoms = new Sci.Win.UI.CheckBox();
+            this.label5 = new Sci.Win.UI.Label();
+            this.txtNikeLSPCode = new Sci.Win.UI.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -93,6 +95,8 @@ namespace Sci.Production.Basic
             // detailcont
             // 
             this.detailcont.Controls.Add(this.checkIsCustoms);
+            this.detailcont.Controls.Add(this.txtNikeLSPCode);
+            this.detailcont.Controls.Add(this.label5);
             this.detailcont.Controls.Add(this.chkOverseas);
             this.detailcont.Controls.Add(this.txtTaxNO);
             this.detailcont.Controls.Add(this.label4);
@@ -469,7 +473,7 @@ namespace Sci.Production.Basic
             this.editRemark.Location = new System.Drawing.Point(156, 376);
             this.editRemark.Multiline = true;
             this.editRemark.Name = "editRemark";
-            this.editRemark.Size = new System.Drawing.Size(400, 82);
+            this.editRemark.Size = new System.Drawing.Size(400, 71);
             this.editRemark.TabIndex = 11;
             // 
             // btnBatchApprove
@@ -512,7 +516,7 @@ namespace Sci.Production.Basic
             // 
             this.label2.BackColor = System.Drawing.Color.Transparent;
             this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
-            this.label2.Location = new System.Drawing.Point(28, 469);
+            this.label2.Location = new System.Drawing.Point(28, 483);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(125, 23);
             this.label2.TabIndex = 210;
@@ -525,7 +529,7 @@ namespace Sci.Production.Basic
             this.chkPayByChk.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "IsSintexSubcon", true));
             this.chkPayByChk.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.chkPayByChk.IsSupportEditMode = false;
-            this.chkPayByChk.Location = new System.Drawing.Point(156, 469);
+            this.chkPayByChk.Location = new System.Drawing.Point(156, 484);
             this.chkPayByChk.Name = "chkPayByChk";
             this.chkPayByChk.ReadOnly = true;
             this.chkPayByChk.Size = new System.Drawing.Size(114, 21);
@@ -631,6 +635,23 @@ namespace Sci.Production.Basic
             this.checkIsCustoms.TabIndex = 217;
             this.checkIsCustoms.Text = "Is Customs";
             this.checkIsCustoms.UseVisualStyleBackColor = true;
+            // label5
+            // 
+            this.label5.Location = new System.Drawing.Point(28, 450);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(125, 23);
+            this.label5.TabIndex = 217;
+            this.label5.Text = "Nike LSP Code";
+            // 
+            // txtNikeLSPCode
+            // 
+            this.txtNikeLSPCode.BackColor = System.Drawing.Color.White;
+            this.txtNikeLSPCode.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "NikeLSPCode", true));
+            this.txtNikeLSPCode.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtNikeLSPCode.Location = new System.Drawing.Point(156, 450);
+            this.txtNikeLSPCode.Name = "txtNikeLSPCode";
+            this.txtNikeLSPCode.Size = new System.Drawing.Size(100, 23);
+            this.txtNikeLSPCode.TabIndex = 219;
             // 
             // B04
             // 
@@ -718,5 +739,7 @@ namespace Sci.Production.Basic
         private Win.UI.Label label4;
         private Win.UI.CheckBox chkOverseas;
         private Win.UI.CheckBox checkIsCustoms;
+        private Win.UI.Label label5;
+        private Win.UI.TextBox txtNikeLSPCode;
     }
 }

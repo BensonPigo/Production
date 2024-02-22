@@ -514,29 +514,33 @@ drop table #InsertData ,#FailData
 
             DualResult result = MyUtility.Tool.ProcessWithDatatable(this.grid2Data, string.Empty, sqlCmd, out System.Data.DataTable dt);
 
-            dt.Columns.Add("Picture1_File", typeof(byte[]));
-            dt.Columns.Add("Picture2_File", typeof(byte[]));
-            this.grid2Data.Columns.Add("Picture1_File", typeof(byte[]));
-            this.grid2Data.Columns.Add("Picture2_File", typeof(byte[]));
             if (!result)
             {
                 this.ShowErr(result);
                 return;
             }
-            else
+            else if (dt == null)
             {
-                foreach (DataRow row in dt.Rows)
-                {
-                    row["ErrMsg"] = row["ErrMsg1"];
-                }
-
-                dt.Columns.Remove("ErrMsg1");
-
-                this.grid2Data = dt;
-                this.listControlBindingSource2.DataSource = this.grid2Data;
-                this.gridDetail.DataSource = this.listControlBindingSource2;
-                MyUtility.Msg.InfoBox("Success!!");
+                this.ShowErr("Import error.");
+                return;
             }
+
+            dt.Columns.Add("Picture1_File", typeof(byte[]));
+            dt.Columns.Add("Picture2_File", typeof(byte[]));
+            this.grid2Data.Columns.Add("Picture1_File", typeof(byte[]));
+            this.grid2Data.Columns.Add("Picture2_File", typeof(byte[]));
+
+            foreach (DataRow row in dt.Rows)
+            {
+                row["ErrMsg"] = row["ErrMsg1"];
+            }
+
+            dt.Columns.Remove("ErrMsg1");
+
+            this.grid2Data = dt;
+            this.listControlBindingSource2.DataSource = this.grid2Data;
+            this.gridDetail.DataSource = this.listControlBindingSource2;
+            MyUtility.Msg.InfoBox("Success!!");
         }
 
         private void Button5_Click(object sender, EventArgs e)

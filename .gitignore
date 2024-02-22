@@ -31,8 +31,14 @@ Sci.Production.PPIC/bin
 Sci.Production.PPIC/obj
 Sci.Production.PublicForm/bin
 Sci.Production.PublicForm/obj
+Sci.Production.MercuryDownloadStickerQueue/bin
+Sci.Production.MercuryDownloadStickerQueue/obj
+Sci.Production.MercuryDownloadStickerQueueTests/bin
+Sci.Production.MercuryDownloadStickerQueueTests/obj
 Sci.Production.PublicPrg/bin
 Sci.Production.PublicPrg/obj
+Sci.Production.PublicPrgTests1/bin
+Sci.Production.PublicPrgTests1/obj
 Sci.Production.Quality/bin
 Sci.Production.Quality/obj
 Sci.Production.Sewing/bin
@@ -233,3 +239,4 @@ packages/Microsoft.SqlServer.Types.14.0.314.76/nativeBinaries/x86/msvcr120.dll
 packages/Microsoft.SqlServer.Types.14.0.314.76/nativeBinaries/x86/SqlServerSpatial140.dll
 packages/Microsoft.SqlServer.Types.14.0.314.76/tools/install.ps1
 packages/Microsoft.SqlServer.Types.14.0.314.76/tools/uninstall.ps1
+/.vs

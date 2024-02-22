@@ -27,6 +27,7 @@
 	IsFreightForwarder BIT			 CONSTRAINT [DF_LocalSupp_IsFreightForwarder] DEFAULT((0)) NOT NULL,
     [IsMiscOverseas] BIT NOT NULL DEFAULT ((0)), 
     [IsCustoms] BIT CONSTRAINT [DF_LocalSupp_IsCustoms] DEFAULT((0)) NOT NULL,
+    [NikeLSPCode] VARCHAR(4) NOT NULL CONSTRAINT [DF_LocalSupp_NikeLSPCode] DEFAULT (('')),
     CONSTRAINT [PK_LocalSupp] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 
