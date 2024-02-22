@@ -14,8 +14,7 @@ namespace Sci.Production.Prg.PowerBI.Logic
         /// <inheritdoc/>
         public QA_R31()
         {
-            // 3小時timeout時間, 如果遇到初始化一次撈取2年的資料,會需要更長的時間
-            DBProxy.Current.DefaultTimeout = 10800;
+            DBProxy.Current.DefaultTimeout = 1800;
         }
 
         /// <inheritdoc/>
@@ -243,6 +242,8 @@ WHERE EXISTS(
 	WHERE co.OrderID = n.Id AND co.SEQ = n.Seq
 )
 
+CREATE NONCLUSTERED INDEX index_#CFAInspectionRecord_OrderSEQ ON #CFAInspectionRecord_OrderSEQ([OrderID],[SEQ]);
+
 SELECT * 
 INTO #CFAInspectionRecord
 FROM CFAInspectionRecord c
@@ -250,6 +251,8 @@ WHERE ID IN(
 	SELECT ID 
 	FROM #CFAInspectionRecord_OrderSEQ
 )	 
+
+CREATE NONCLUSTERED INDEX index_#CFAInspectionRecord ON #CFAInspectionRecord([ID],[Stage],[Status]);
 
 ");
             #region Outstanding WHERE
