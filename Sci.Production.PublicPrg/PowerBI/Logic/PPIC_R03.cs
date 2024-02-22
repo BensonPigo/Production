@@ -19,7 +19,7 @@ namespace Sci.Production.Prg.PowerBI.Logic
         /// <inheritdoc/>
         public PPIC_R03()
         {
-            DBProxy.Current.DefaultTimeout = 1800;
+            DBProxy.Current.DefaultTimeout = 7200;
         }
 
         /// <inheritdoc/>
