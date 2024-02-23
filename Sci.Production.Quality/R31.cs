@@ -315,11 +315,6 @@ WHERE 1=1
                 #endregion
             }
 
-            if (this.Outstanding)
-            {
-                this.printData.Columns.Remove("Stage1");
-            }
-
             return Result.True;
         }
 

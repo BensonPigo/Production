@@ -304,7 +304,8 @@ CREATE NONCLUSTERED INDEX index_#CFAInspectionRecord ON #CFAInspectionRecord([ID
                 string stageSql = $@"
 
 /*-----Staggered-----*/
-SELECT [InspResult]=CASE WHEN EXISTS(
+SELECT need.[Stage]
+	,[InspResult]=CASE WHEN EXISTS(
 								-- Result  - Fail的情況
 								SELECT 1
 								FROM #NeedCkeck a
@@ -403,7 +404,32 @@ SELECT [InspResult]=CASE WHEN EXISTS(
 									)
 								) )
 	{colBI}
-	,need.*
+,need.MDivisionID
+,need.FactoryID
+,need.BuyerDelivery
+,need.BrandID
+,need.ID
+,need.Category 
+,need.OrderTypeID
+,need.CustPoNo
+,need.StyleID
+,need.StyleName
+,need.SeasonID
+,need.[Dest]
+,need.Customize1
+,need.CustCDID
+,need.Seq
+,need.ShipModeID
+,need.[ColorWay]
+,need.SewLine
+,need.[TtlCtn]
+,need.[StaggeredCtn]
+,need.[ClogCtn] 
+,need.[ClogCtn%]
+,need.[LastCartonReceivedDate]
+,need.CFAFinalInspectDate
+,need.CFA3rdInspectDate
+,need.CFARemark
 FROM #NeedCkeck need
 WHERE need.Stage = 'Stagger' AND need.Category != 'Sample'	
 AND (
@@ -441,7 +467,8 @@ WHERE OrderID = need.ID AND OrderShipmodeSeq = need.Seq )
                 string stageSql = $@"
 
 /*-----Final-----*/
-SELECT [InspResult]=CASE WHEN NOT EXISTS(
+SELECT need.[Stage]
+	,[InspResult]=CASE WHEN NOT EXISTS(
 						SELECT 1 
 						FROM #CFAInspectionRecord cr 
 						INNER JOIN #CFAInspectionRecord_OrderSEQ cfoq ON cr.ID = cfoq.ID
@@ -479,7 +506,32 @@ SELECT [InspResult]=CASE WHEN NOT EXISTS(
 		),',')
 	)
 	{colBI}
-	,need.*
+,need.MDivisionID
+,need.FactoryID
+,need.BuyerDelivery
+,need.BrandID
+,need.ID
+,need.Category 
+,need.OrderTypeID
+,need.CustPoNo
+,need.StyleID
+,need.StyleName
+,need.SeasonID
+,need.[Dest]
+,need.Customize1
+,need.CustCDID
+,need.Seq
+,need.ShipModeID
+,need.[ColorWay]
+,need.SewLine
+,need.[TtlCtn]
+,need.[StaggeredCtn]
+,need.[ClogCtn] 
+,need.[ClogCtn%]
+,need.[LastCartonReceivedDate]
+,need.CFAFinalInspectDate
+,need.CFA3rdInspectDate
+,need.CFARemark
 FROM #NeedCkeck need
 WHERE need.Stage = 'Final'
 AND NOT EXISTS (	
@@ -498,7 +550,8 @@ AND NOT EXISTS (
                 string stageSql = $@"
 
 /*-----3rd Party-----*/
-SELECT[InspResult]=CASE WHEN NOT EXISTS(
+SELECT need.[Stage]
+	,[InspResult]=CASE WHEN NOT EXISTS(
 						SELECT 1 
 						FROM #CFAInspectionRecord cr 
 						INNER JOIN #CFAInspectionRecord_OrderSEQ cfoq ON cr.ID = cfoq.ID
@@ -536,7 +589,32 @@ SELECT[InspResult]=CASE WHEN NOT EXISTS(
 						ORDER BY cr.AuditDate DESC, cr.EditDate DESC
 		),',')
 	)
-	,need.*
+,need.MDivisionID
+,need.FactoryID
+,need.BuyerDelivery
+,need.BrandID
+,need.ID
+,need.Category 
+,need.OrderTypeID
+,need.CustPoNo
+,need.StyleID
+,need.StyleName
+,need.SeasonID
+,need.[Dest]
+,need.Customize1
+,need.CustCDID
+,need.Seq
+,need.ShipModeID
+,need.[ColorWay]
+,need.SewLine
+,need.[TtlCtn]
+,need.[StaggeredCtn]
+,need.[ClogCtn] 
+,need.[ClogCtn%]
+,need.[LastCartonReceivedDate]
+,need.CFAFinalInspectDate
+,need.CFA3rdInspectDate
+,need.CFARemark
 FROM #NeedCkeck need
 WHERE need.Stage = '3rd Party'
 AND NOT EXISTS (	
