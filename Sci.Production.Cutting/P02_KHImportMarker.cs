@@ -328,6 +328,7 @@ ID
 ,Shift
 ,Tone
 ,OrderID
+,IsCreateByUser 
 )
 values
 (
@@ -362,6 +363,7 @@ values
 ,''
 ,'{drWorkOrder["Tone"]}'
 ,'{this.CurrentMaintain["ID"]}'
+,1
 )
 
 select [WorkOrderUkey] = @@IDENTITY
