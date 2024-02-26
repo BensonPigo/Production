@@ -1,10 +1,14 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Sci.Production.Prg.PowerBI.Model
 {
     /// <inheritdoc/>
     public class QA_R31_ViewModel
     {
+        /// <inheritdoc/>
+        public List<string> CategoryList { get; set; } = new List<string>();
+
         /// <inheritdoc/>
         public DateTime? BuyerDelivery1 { get; set; }
 
@@ -37,6 +41,9 @@ namespace Sci.Production.Prg.PowerBI.Model
 
         /// <inheritdoc/>
         public string InspStaged { get; set; }
+
+        /// <inheritdoc/>
+        public DateTime? BIFilterDate { get; set; } = null;
 
         /// <inheritdoc/>
         public bool IsPowerBI { get; set; }

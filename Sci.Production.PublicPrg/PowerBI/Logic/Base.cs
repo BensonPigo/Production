@@ -20,6 +20,7 @@ namespace Sci.Production.Prg.PowerBI.Logic
             P_MonthlySewingOutputSummary,
             P_SewingLineSchedule,
             P_QAR31,
+            P_QA_CFAMasterList,
         }
 
         /// <summary>
@@ -194,6 +195,9 @@ namespace Sci.Production.Prg.PowerBI.Logic
                     break;
                 case ListName.P_QAR31:
                     result = new P_Import_QAR31().P_QAR31(item.SDate, item.EDate);
+                    break;
+                case ListName.P_QA_CFAMasterList:
+                    result = new P_Import_QA_CFAMasterList().P_QA_CFAMasterList(item.SDate);
                     break;
                 default:
                     // Execute all Stored Procedures

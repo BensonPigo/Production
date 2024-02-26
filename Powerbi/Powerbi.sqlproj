@@ -225,6 +225,7 @@
     <Build Include="dbo\Tables\BITaskInfo.sql" />
     <Build Include="dbo\Stored Procedures\FTY\P_Import_LoadingProductionOutput.sql" />
     <Build Include="dbo\Stored Procedures\FTY\P_Import_EfficiencyBI.sql" />
+    <Build Include="dbo\Tables\P_QA_CFAMasterList.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Utility.dll" />

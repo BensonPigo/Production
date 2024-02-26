@@ -214,6 +214,7 @@
     <Compile Include="Entity\Prgs_POSuppDetailData.cs" />
     <Compile Include="PowerBI\DataAccess\P_Import_MonthlySewingOutputSummary.cs" />
     <Compile Include="PowerBI\DataAccess\P_Import_QAR31.cs" />
+    <Compile Include="PowerBI\DataAccess\P_Import_QA_CFAMasterList.cs" />
     <Compile Include="PowerBI\DataAccess\P_Import_SewingLineScheduleBIData.cs" />
     <Compile Include="PowerBI\FormPage\Form1.cs">
       <SubType>Form</SubType>
