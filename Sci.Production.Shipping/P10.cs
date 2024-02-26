@@ -1225,10 +1225,13 @@ left join LocalSupp ls WITH (NOLOCK) on g.Forwarder = ls.ID
 
             if (dtChk.Rows.Count > 0)
             {
-                string strChk = dtChk.AsEnumerable().Select(s => s["ID"].ToString()).ToList().JoinToString("、");
+                string strChk = dtChk.AsEnumerable().Where(r => r["CYCFS"].ToString() == "CY-CY").Select(s => s["ID"].ToString()).ToList().JoinToString("、");
 
-                MyUtility.Msg.ErrorBox($"GB#:{strChk}\r\n\r\nLoading types is CY-CY,must be exist in 'Container/Truck'!");
-                return;
+                if (!string.IsNullOrEmpty(strChk))
+                {
+                    MyUtility.Msg.ErrorBox($"GB#:{strChk}\r\n\r\nLoading types is CY-CY,must be exist in 'Container/Truck'!");
+                    return;
+                }
             }
 
             List<string> listPLFromRgCode = PackingA2BWebAPI.GetPLFromRgCodeByShipPlanID(this.CurrentMaintain["ID"].ToString());

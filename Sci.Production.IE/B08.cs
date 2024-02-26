@@ -23,7 +23,7 @@ namespace Sci.Production.IE
             : base(menuitem)
         {
             this.InitializeComponent();
-            this.DefaultFilter = "FactoryID = '" + Env.User.Factory + $"' ";
+            //this.DefaultFilter = "FactoryID = '" + Env.User.Factory + $"' ";
         }
 
         /// <summary>
@@ -196,53 +196,53 @@ You have checked <{this.itemCount}> Skills!!");
             string strDept = string.Empty;
             string strPosition = string.Empty;
             string strWhere = string.Empty;
-            switch (Env.User.Factory)
-            {
-                case "MAI":
-                case "MA2":
-                case "MA3":
-                case "MW2":
-                case "FIT":
-                case "MWI":
-                case "FAC":
-                case "FA2":
-                case "PSR":
-                case "VT1":
-                case "VT2":
-                case "GMM":
-                case "GM2":
-                case "GMI":
-                case "PS2":
-                case "ALA":
-                    strDept = $"'PRO'";
-                    strPosition = $"'PCK','PRS','SEW','FSPR','LOP','STL','LL','SLS','SSLT'";
-                    strWhere = $@" and Dept in({strDept})  and Position in({strPosition})";
-                    break;
-                case "ESP":
-                case "ES2":
-                case "ES3":
-                case "VSP":
-                    strDept = $"'PRO'";
-                    strPosition = $"'PAC','PRS','SEW','LL'";
-                    strWhere = $@" and Dept in({strDept})  and Position in({strPosition})";
-                    break;
-                case "SPT":
-                    strDept = $"'PRO'";
-                    strPosition = $"'PAC','PRS','SEW','LL','SUP','PE','PIT','TL'";
-                    strWhere = $@" and Dept in({strDept})  and Position in({strPosition})";
-                    break;
-                case "SNP":
-                    strDept = $"'PRO'";
-                    strPosition = $"'SEW','LL','PIT'";
-                    strWhere = $@" and Dept in({strDept})  and Position in({strPosition})";
-                    break;
-                case "SPS":
-                case "SPR":
-                    strDept = $"'SEW'";
-                    strPosition = $"'SWR','TRNEE','Lneldr','LINSUP','PRSSR','PCKR'";
-                    strWhere = $@" and Dept in({strDept})  and Position in({strPosition})";
-                    break;
-            }
+            //switch (Env.User.Factory)
+            //{
+            //    case "MAI":
+            //    case "MA2":
+            //    case "MA3":
+            //    case "MW2":
+            //    case "FIT":
+            //    case "MWI":
+            //    case "FAC":
+            //    case "FA2":
+            //    case "PSR":
+            //    case "VT1":
+            //    case "VT2":
+            //    case "GMM":
+            //    case "GM2":
+            //    case "GMI":
+            //    case "PS2":
+            //    case "ALA":
+            //        strDept = $"'PRO'";
+            //        strPosition = $"'PCK','PRS','SEW','FSPR','LOP','STL','LL','SLS','SSLT'";
+            //        strWhere = $@" and Dept in({strDept})  and Position in({strPosition})";
+            //        break;
+            //    case "ESP":
+            //    case "ES2":
+            //    case "ES3":
+            //    case "VSP":
+            //        strDept = $"'PRO'";
+            //        strPosition = $"'PAC','PRS','SEW','LL'";
+            //        strWhere = $@" and Dept in({strDept})  and Position in({strPosition})";
+            //        break;
+            //    case "SPT":
+            //        strDept = $"'PRO'";
+            //        strPosition = $"'PAC','PRS','SEW','LL','SUP','PE','PIT','TL'";
+            //        strWhere = $@" and Dept in({strDept})  and Position in({strPosition})";
+            //        break;
+            //    case "SNP":
+            //        strDept = $"'PRO'";
+            //        strPosition = $"'SEW','LL','PIT'";
+            //        strWhere = $@" and Dept in({strDept})  and Position in({strPosition})";
+            //        break;
+            //    case "SPS":
+            //    case "SPR":
+            //        strDept = $"'SEW'";
+            //        strPosition = $"'SWR','TRNEE','Lneldr','LINSUP','PRSSR','PCKR'";
+            //        strWhere = $@" and Dept in({strDept})  and Position in({strPosition})";
+            //        break;
+            //}
 
             return strWhere;
         }
