@@ -115,7 +115,22 @@ BEGIN
 			or (a.EditDate >= ''''' + @SDate + ''''' and a.EditDate <= ''''' + @EDate + '''''))
 	';
 
-	set @SQLCMD2 = '	
+	set @SQLCMD2 = '		
+	select  POID, SEQ, ReceivingID ,Ctn=COUNT(1)
+	into #DuplicateData
+	from #tmp
+	GROUP BY POID, SEQ, ReceivingID
+	HAVING COUNT(1) > 1
+
+	SELECT POID, SEQ, ReceivingID , LastDate = MAX(iSNULL(EditDate,AddDate))
+	INTO #LastUpdateData
+	FROM #tmp t
+	where exists(
+		select 1 from #DuplicateData d
+		where t.POID=d.POID and t.SEQ=d.SEQ and t.ReceivingID=d.ReceivingID
+	)
+	GROUP BY POID, SEQ, ReceivingID
+
 	insert into P_AccessoryInspLabStatus(
 			[POID], 
 			[SEQ], 
@@ -210,7 +225,26 @@ BEGIN
 			t.EditDate,
 			t.CategoryType
 	from #tmp t
-	where not exists (select 1 from P_AccessoryInspLabStatus p where p.POID = t.POID and p.SEQ = t.SEQ and p.ReceivingID = t.ReceivingID)
+	where   not exists (select 1 from P_AccessoryInspLabStatus p where p.POID = t.POID and p.SEQ = t.SEQ and p.ReceivingID = t.ReceivingID)
+			and ( 
+				not exists( ----PKey無重複資料
+					select * from #DuplicateData a
+					where a.POID=t.POID and a.SEQ=t.SEQ and a.ReceivingID=t.ReceivingID
+				)
+				or
+				(----PKey有重複資料，抓最後更新的PKey
+					exists(
+						select * from #DuplicateData b
+						where b.POID=t.POID and b.SEQ=t.SEQ and b.ReceivingID=t.ReceivingID
+					)
+					and 
+					exists(
+						select * from #LastUpdateData a
+						where a.POID=t.POID and a.SEQ=t.SEQ and a.ReceivingID=t.ReceivingID
+						and a.LastDate = iSNULL(t.EditDate,t.AddDate)
+					)
+				)
+			)
 
 
 	 update p 
@@ -273,6 +307,8 @@ BEGIN
 	into #tmp 
 	FROM OPENQUERY([MainServer], ''' + @SQLCMD + @SQLCMD1 + ''' )
 	' +  @SQLCMD2 + '
+	
+	DROP TABLE #tmp,#LastUpdateData,#DuplicateData
 	'
 
 	--select @SQLCMD_final

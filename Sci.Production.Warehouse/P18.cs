@@ -436,9 +436,6 @@ and I.FactoryID = '{this.CurrentMaintain["FromFtyID"]}'
                         this.CurrentDetailData["seq"] = string.Empty;
                         this.CurrentDetailData["seq1"] = string.Empty;
                         this.CurrentDetailData["seq2"] = string.Empty;
-
-                        // CurrentDetailData["Roll"] = "";
-                        // CurrentDetailData["Dyelot"] = "";
                         this.CurrentDetailData["stockunit"] = string.Empty;
                         this.CurrentDetailData["Description"] = string.Empty;
                         this.CurrentDetailData["fabrictype"] = string.Empty;
@@ -553,6 +550,23 @@ and I.FactoryID = '{this.CurrentMaintain["FromFtyID"]}'
 
                 if (this.EditMode == true && string.Compare(e.FormattedValue.ToString(), this.CurrentDetailData["poid"].ToString()) != 0)
                 {
+                    string seq = MyUtility.Convert.GetString(this.CurrentDetailData["seq"]);
+                    if (!MyUtility.Check.Empty(seq))
+                    {
+                        DualResult result = P18_Utility.CheckDetailSeq(seq, this.CurrentMaintain["FromFtyID"].ToString(), this.CurrentDetailData);
+                        if (!result)
+                        {
+                            MyUtility.Msg.WarningBox(result.Description);
+                            this.CurrentDetailData["seq"] = string.Empty;
+                            this.CurrentDetailData["seq1"] = string.Empty;
+                            this.CurrentDetailData["seq2"] = string.Empty;
+                            this.CurrentDetailData["stockunit"] = string.Empty;
+                            this.CurrentDetailData["Description"] = string.Empty;
+                            this.CurrentDetailData["fabrictype"] = string.Empty;
+                            return;
+                        }
+                    }
+
                     string dataFrom = "Po_Supp_Detail";
 
                     DualResult checkResult = P18_Utility.CheckDetailPOID(e.FormattedValue.ToString(), this.CurrentMaintain["FromFtyID"].ToString(), out dataFrom);
