@@ -85,6 +85,7 @@
             this.numericFtySMV = new Sci.Win.UI.NumericBox();
             this.label7 = new Sci.Win.UI.Label();
             this.numericStdSMV = new Sci.Win.UI.NumericBox();
+            this.btnATSummary = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -102,6 +103,7 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.btnATSummary);
             this.masterpanel.Controls.Add(this.label6);
             this.masterpanel.Controls.Add(this.numericFtySMV);
             this.masterpanel.Controls.Add(this.label7);
@@ -208,6 +210,7 @@
             this.masterpanel.Controls.SetChildIndex(this.label7, 0);
             this.masterpanel.Controls.SetChildIndex(this.numericFtySMV, 0);
             this.masterpanel.Controls.SetChildIndex(this.label6, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnATSummary, 0);
             // 
             // detailpanel
             // 
@@ -230,15 +233,15 @@
             // 
             // detail2
             // 
-            this.detail2.Size = new System.Drawing.Size(892, 387);
+            this.detail2.Size = new System.Drawing.Size(1000, 593);
             // 
             // detailgridcont2
             // 
-            this.detailgridcont2.Size = new System.Drawing.Size(886, 341);
+            this.detailgridcont2.Size = new System.Drawing.Size(994, 547);
             // 
             // detailpanel2
             // 
-            this.detailpanel2.Size = new System.Drawing.Size(886, 40);
+            this.detailpanel2.Size = new System.Drawing.Size(994, 40);
             // 
             // detail
             // 
@@ -899,6 +902,16 @@
             0,
             0});
             // 
+            // btnATSummary
+            // 
+            this.btnATSummary.Location = new System.Drawing.Point(784, 173);
+            this.btnATSummary.Name = "btnATSummary";
+            this.btnATSummary.Size = new System.Drawing.Size(106, 30);
+            this.btnATSummary.TabIndex = 191;
+            this.btnATSummary.Text = "AT Summary";
+            this.btnATSummary.UseVisualStyleBackColor = true;
+            this.btnATSummary.Click += new System.EventHandler(this.BtnATSummary_Click);
+            // 
             // P01
             // 
             this.ApvChkValue = "New";
@@ -1000,5 +1013,6 @@
         private Win.UI.NumericBox numericFtySMV;
         private Win.UI.Label label7;
         private Win.UI.NumericBox numericStdSMV;
+        private Win.UI.Button btnATSummary;
     }
 }

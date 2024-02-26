@@ -6,6 +6,7 @@
     [ArtworkTypeID] VARCHAR (20) CONSTRAINT [DF_Pattern_GL_Artwork_ArtworkTypeID] DEFAULT ('') NOT NULL,
     [PatternUkey]   BIGINT       CONSTRAINT [DF_Pattern_GL_Artwork_PatternUkey] DEFAULT ((0)) NULL,
     [UKEY_OLD]      VARCHAR (10) CONSTRAINT [DF_Pattern_GL_Artwork_UKEY_OLD] DEFAULT ('') NULL,
+    [Annotation] NVARCHAR(50)   CONSTRAINT [DF_Pattern_GL_Artwork_Annotation]  DEFAULT ('') NOT NULL, 
     CONSTRAINT [PK_Pattern_GL_Artwork] PRIMARY KEY CLUSTERED ([UKEY] ASC)
 );
 
@@ -41,3 +42,13 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Pattern ID'
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'打版作業 - 版片明細裁片加工檔', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Pattern_GL_Artwork';
 
+
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'註解',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'Pattern_GL_Artwork',
+    @level2type = N'COLUMN',
+    @level2name = N'Annotation'
