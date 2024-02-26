@@ -219,9 +219,10 @@ when matched then
 		,t.AddDate	=  s.AddDate
 		,t.EditName	= isnull( s.EditName, '')
 		,t.EditDate = s.EditDate
+		,t.value = isnull(s.Value,0)
 when not matched by target then
-insert (type,id,name,AddName,AddDate,EditName,EditDate)
-values (s.type,s.id,s.name,s.AddName,s.AddDate,s.EditName,s.EditDate);
+insert (type,id,name,AddName,AddDate,EditName,EditDate,Value)
+values (s.type,s.id,s.name,s.AddName,s.AddDate,s.EditName,s.EditDate,isnull(s.Value,0));
 
 
 ------Operation_His------

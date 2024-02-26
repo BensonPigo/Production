@@ -193,7 +193,8 @@ namespace Sci.Production.PPIC
                 worksheet = objApp.Sheets[3];
                 worksheet.Select();
                 this.printData.Columns.Remove("StyleName");
-                this.printData.Columns.Remove("StyleSeason");
+                this.printData.Columns.Remove("AddDate");
+                this.printData.Columns.Remove("EditDate");
 
                 DataTable printDataFilter = this.printData.Copy();
                 if (!this.chkIncludeCompleteSchedule.Checked)

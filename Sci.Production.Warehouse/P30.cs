@@ -933,7 +933,11 @@ where id = '{dr["ID"]}'";
             if (this.comboMaterialType.Text.ToUpper() != "ALL")
             {
                 string type = this.comboMaterialType.SelectedValue.ToString();
-                string sqlcmd = $"select distinct MtlTypeID from Fabric where Type in ({type}) order by MtlTypeID";
+                string sqlcmd = $@"
+select MtlTypeID = ''
+union all
+select distinct MtlTypeID from Fabric where Type in ({type}) and MtlTypeID !='' order by MtlTypeID
+";
                 DBProxy.Current.Select(null, sqlcmd, out dt);
             }
 
