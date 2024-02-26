@@ -119,8 +119,6 @@ namespace Sci.Production.Quality
                 this.printData = resultReport.DtArr[0];
 
                 #endregion
-
-                this.printData.Columns.Remove("Stage1");
             }
             else
             {
