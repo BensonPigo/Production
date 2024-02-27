@@ -12,10 +12,13 @@ namespace Sci.Production.Shipping
     /// </summary>
     public partial class P41_Print : Win.Tems.PrintForm
     {
-        private DataTable printData;
+        private DataTable[] printData;
         private DateTime? date1;
         private DateTime? date2;
         private string brand;
+        private string invno;
+        private string declarationNo;
+        private string declarationStatus;
 
         /// <summary>
         /// P41_Print
@@ -25,6 +28,9 @@ namespace Sci.Production.Shipping
             this.InitializeComponent();
             this.dateDate.Value1 = DateTime.Today;
             this.dateDate.Value2 = DateTime.Today;
+            this.comboDeclarationStatus.Add(string.Empty, string.Empty);
+            this.comboDeclarationStatus.Add("Confirmed", "Confirmed");
+            this.comboDeclarationStatus.Add("New", "New");
         }
 
         /// <inheritdoc/>
@@ -40,6 +46,10 @@ namespace Sci.Production.Shipping
             this.date1 = this.dateDate.Value1;
             this.date2 = this.dateDate.Value2;
             this.brand = this.txtbrand.Text;
+            this.invno = this.txtInvNo.Text;
+            this.declarationNo = this.txtDeclarationNo.Text;
+            this.declarationStatus = this.comboDeclarationStatus.Text;
+
             return base.ValidateInput();
         }
 
@@ -47,18 +57,51 @@ namespace Sci.Production.Shipping
         protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             StringBuilder sqlCondition = new StringBuilder();
+            string sqlWhereBreakdownChanged = string.Empty;
+            string sqlWhereBreakdownChangedBrand = string.Empty;
+
             if (!MyUtility.Check.Empty(this.date1))
             {
                 sqlCondition.Append(string.Format(" and e.CDate >= '{0}' ", Convert.ToDateTime(this.date1).ToString("yyyy/MM/dd")));
+                sqlWhereBreakdownChanged += $"  and e.CDate >= '{Convert.ToDateTime(this.date1).ToString("yyyy/MM/dd")}'";
             }
 
             if (!MyUtility.Check.Empty(this.date2))
             {
                 sqlCondition.Append(string.Format(" and e.CDate <= '{0}' ", Convert.ToDateTime(this.date2).ToString("yyyy/MM/dd")));
+                sqlWhereBreakdownChanged += $"  and e.CDate <= '{Convert.ToDateTime(this.date2).ToString("yyyy/MM/dd")}'";
             }
 
-            string sqlCmd = string.Format(
-                @"with FirstStepFilterData
+            if (!MyUtility.Check.Empty(this.invno))
+            {
+                sqlCondition.Append($" and e.InvNo = '{this.invno}'");
+                sqlWhereBreakdownChanged += $" and e.InvNo = '{this.invno}'";
+            }
+
+            if (!MyUtility.Check.Empty(this.declarationNo))
+            {
+                sqlCondition.Append($" and e.DeclareNo = '{this.declarationNo}'");
+                sqlWhereBreakdownChanged += $" and e.DeclareNo = '{this.declarationNo}'";
+            }
+
+            if (!MyUtility.Check.Empty(this.declarationStatus))
+            {
+                sqlCondition.Append($" and e.Status = '{this.declarationStatus}'");
+                sqlWhereBreakdownChanged += $" and e.Status = '{this.declarationStatus}'";
+            }
+
+            if (!MyUtility.Check.Empty(this.brand))
+            {
+                sqlCondition.Append($@" and (
+pl.BrandID = '{this.brand}') or g.BrandID = '{this.brand}'
+)");
+                sqlWhereBreakdownChangedBrand += $" and p.BrandID = '{this.brand}'";
+            }
+
+            string sqlCmd =
+                $@"
+--Summary
+with FirstStepFilterData
 as (
 select e.ID,e.CDate,e.InvNo,e.VNContractID,e.VNExportPortID,e.DataFrom, isnull(ep.Name,'') as ExportPort,
 IIF(e.DataFrom = 'PACKINGLIST',pl.BrandID,g.BrandID) as BrandID,
@@ -72,8 +115,7 @@ from VNExportDeclaration e WITH (NOLOCK)
 left join VNExportPort ep WITH (NOLOCK) on e.VNExportPortID = ep.ID
 left join GMTBooking g WITH (NOLOCK) on e.InvNo = g.ID
 left join PackingList pl WITH (NOLOCK) on e.InvNo = pl.INVNo
-where 1=1 {0}
-and e.Status = 'Confirmed'
+where 1=1 {sqlCondition}
 ),
 SecondStepFilterData
 as (
@@ -81,7 +123,7 @@ select *,(select sum(ROUND(ed.ExportQty*c.CPU*c.VNMultiple,2))
 from VNExportDeclaration_Detail ed WITH (NOLOCK) 
 inner join VNConsumption c WITH (NOLOCK) on c.CustomSP = ed.CustomSP
 where ed.ID = FirstStepFilterData.ID
-and c.VNContractID = FirstStepFilterData.VNContractID) as CMP from FirstStepFilterData where {1}
+and c.VNContractID = FirstStepFilterData.VNContractID) as CMP from FirstStepFilterData
 ),
 tmpDetail
 as (
@@ -110,9 +152,66 @@ select '1' as Type,ROW_NUMBER() OVER (ORDER BY InvNo) as rno,*,
 union all
 select '2' as Type,0 as rno,'' as InvNo,'' as VNExportPortID,'' as ExportPort,'' as Dest,'' as CountryAlias,'' as ShipTerm,0 as ShipQty,0 as CTNQty,0 as GW,0 as NW,0 as CMP,
 InvNo as InvNo1,OrderID,StyleID,SizeCode,CustomSP,TtlExportQty,FOB
-from tmpSumDetail",
-                sqlCondition,
-                MyUtility.Check.Empty(this.brand) ? "1=1" : string.Format("BrandID = '{0}'", this.brand));
+from tmpSumDetail
+
+--Breakdown changed
+SELECT	distinct
+		e.InvNo,
+		vdd.OrderID,
+		vdd.Article,
+		vdd.SizeCode,
+		vdd.ExportQty
+into #tmpDeclaration
+from VNExportDeclaration e with (nolock)
+inner join VNExportDeclaration_Detail vdd with (nolock) on vdd.ID = e.ID
+where 1 = 1 {sqlWhereBreakdownChanged}
+
+select  p.ID,
+        t.InvNo,
+		t.OrderID,
+		t.Article,
+		t.SizeCode,
+		t.ExportQty,
+        [PackQty] = sum(pd.ShipQty)
+into    #tmpPack
+from    #tmpDeclaration t
+inner join  Packinglist p with (nolock) on p.InvNo = t.InvNo
+inner join  PackingList_Detail pd with (nolock) on  pd.ID = p.ID and
+                                                    pd.OrderID = t.OrderID and
+                                                    pd.Article = t.Article and
+                                                    pd.SizeCode = t.SizeCode
+where 1 = 1 {sqlWhereBreakdownChangedBrand}
+group by    p.ID,
+            t.InvNo,
+		    t.OrderID,
+		    t.Article,
+		    t.SizeCode,
+		    t.ExportQty
+
+select  t.InvNo,
+		t.OrderID,
+		t.Article,
+		t.SizeCode,
+		t.ExportQty,
+        [PackID] = PackID.val,
+        [PackQty] = PackQty.val
+from    #tmpDeclaration t
+outer apply (select val = sum(p.PackQty) from #tmpPack p 
+             where   p.InvNo = t.InvNo and
+                     p.OrderID = t.OrderID and
+                     p.Article = t.Article and
+                     p.SizeCode = t.SizeCode)  PackQty
+outer apply (select val = Stuff((select distinct concat( ',', p.ID)
+                                from #tmpPack p 
+                                where   p.InvNo = t.InvNo and
+                                        p.OrderID = t.OrderID and
+                                        p.Article = t.Article and
+                                        p.SizeCode = t.SizeCode FOR XML PATH('')),1,1,'')
+            )  PackID
+
+drop table #tmpDeclaration, #tmpPack
+
+";
 
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out this.printData);
             if (!result)
@@ -127,14 +226,14 @@ from tmpSumDetail",
         /// <inheritdoc/>
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
-            // 顯示筆數於PrintForm上Count欄位
-            this.SetCount(this.printData.Rows.Count);
-
-            if (this.printData.Rows.Count <= 1)
+            if (this.printData[0].Rows.Count <= 1)
             {
                 MyUtility.Msg.WarningBox("Data not found!");
                 return false;
             }
+
+            // 顯示筆數於PrintForm上Count欄位
+            this.SetCount(this.printData[0].Rows.Count);
 
             this.ShowWaitMessage("Starting EXCEL...");
 
@@ -146,12 +245,17 @@ from tmpSumDetail",
                 return false;
             }
 
-            Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[2];
-            int row = 1, sheetcount = 1;
+            if (this.printData[1].Rows.Count > 0)
+            {
+                MyUtility.Excel.CopyToXls(this.printData[1], string.Empty, "Shipping_P41_Print.xltx", 1, false, null, excel, wSheet: excel.Sheets[1]);
+            }
+
+            Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[3];
+            int row = 1, sheetcount = 2;
             string invNo = "XXX";
             object[,] objArray = new object[1, 13];
             object[,] objArray1 = new object[1, 7];
-            foreach (DataRow dr in this.printData.Rows)
+            foreach (DataRow dr in this.printData[0].Rows)
             {
                 if (MyUtility.Convert.GetString(dr["Type"]) == "0")
                 {
@@ -167,7 +271,7 @@ from tmpSumDetail",
 
                 if (MyUtility.Convert.GetString(dr["Type"]) == "1")
                 {
-                    worksheet = excel.ActiveWorkbook.Worksheets[1];
+                    worksheet = excel.ActiveWorkbook.Worksheets[2];
                     row++;
                     objArray[0, 0] = dr["rno"];
                     objArray[0, 1] = dr["InvNo"];
