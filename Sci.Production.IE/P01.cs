@@ -208,7 +208,7 @@ select 0 as Selected, isnull(o.SeamLength,0) SeamLength
 from TimeStudy_Detail td WITH (NOLOCK) 
 INNER JOIN TimeStudy t WITH(NOLOCK) ON td.id = t.id
 INNER JOIN IETMS i ON t.IETMSID = i.ID AND t.IETMSVersion = i.[Version]
-INNER JOIN IETMS_Detail ID ON I.Ukey = ID.IETMSUkey AND ID.SEQ = TD.Seq
+LEFT JOIN IETMS_Detail ID ON I.Ukey = ID.IETMSUkey AND ID.SEQ = TD.Seq
 left join Operation o WITH (NOLOCK) on td.OperationID = o.ID
 left join MachineType_Detail md WITH (NOLOCK) on md.ID = td.MachineTypeID and md.FactoryID = '{Env.User.Factory}'
 left join Mold m WITH (NOLOCK) on m.ID=td.Mold
@@ -1364,6 +1364,27 @@ and Name = @PPA
         /// <returns>bool</returns>
         protected override bool ClickSaveBefore()
         {
+            #region Seq 重複資料檢查
+            var dataTable = this.DetailDatas.CopyToDataTable();
+            var duplicateSeqs = dataTable.AsEnumerable()
+             .GroupBy(row => row.Field<string>("SEQ"))
+             .Where(grp => grp.Count() > 1)
+             .Select(grp => grp.Key).ToList();
+
+            if (duplicateSeqs.Any())
+            {
+                string seqError = string.Empty;
+                foreach (var duplicateSeq in duplicateSeqs)
+                {
+                    seqError += Environment.NewLine + $"'{duplicateSeq}'";
+                }
+
+                string strMsg = $"[Seq] cannot be duplicated! {seqError}";
+                MyUtility.Msg.WarningBox(strMsg);
+                return false;
+            }
+            #endregion Seq 重複資料檢查
+
             #region ST/MC Type檢查
             var listSTMCTypeCheckResult = this.DetailDatas
                 .Where(s => !MyUtility.Check.Empty(s["OperationDescEN"]) &&
