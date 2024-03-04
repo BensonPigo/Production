@@ -27,11 +27,6 @@ namespace Sci.Production.Basic
 
             this.label2.ForeColor = Color.Black;
 
-            // ISP20231270
-            this.txtNikeLSPCode.Visible = false;
-            this.txtNikeLSPCode.DataBindings.Clear();
-            this.label5.Visible = false;
-
             // this.label2.BackColor = Color.White;
         }
 
