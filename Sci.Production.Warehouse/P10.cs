@@ -424,6 +424,13 @@ outer apply(
                 }
             }
 
+            string dbStatus = MyUtility.GetValue.Lookup($"SELECT Status FROM Issue WHERE ID ='{this.CurrentMaintain["ID"]}'");
+            if (dbStatus == "Confirmed")
+            {
+                MyUtility.Msg.WarningBox("Already Confirmed");
+                return false;
+            }
+
             return base.ClickSaveBefore();
         }
 
