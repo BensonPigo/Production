@@ -711,6 +711,13 @@ and ID = '{Sci.Env.User.UserID}'"))
         protected override void ClickConfirm()
         {
             this.RenewData(); // 先重載資料, 避免雙開程式狀況
+            string dbStatus = MyUtility.GetValue.Lookup($"SELECT Status FROM Issue WHERE ID ='{this.CurrentMaintain["ID"]}'");
+            if (dbStatus == "Confirmed")
+            {
+                MyUtility.Msg.WarningBox("Already Confirmed");
+                return;
+            }
+
             base.ClickConfirm();
             if (this.CurrentMaintain == null)
             {
