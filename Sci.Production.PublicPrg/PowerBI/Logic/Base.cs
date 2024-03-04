@@ -33,6 +33,7 @@ namespace Sci.Production.Prg.PowerBI.Logic
             P_PPICMASTERLIST,
             P_FabricInspReport_ReceivingTransferIn,
             P_MtlStatusAnalisis,
+            P_SubProInsReport,
         }
 
         /// <summary>
@@ -289,6 +290,19 @@ ORDER BY [Group], [SEQ], [NAME]";
             {
                 // Execute all Stored Procedures
                 result = this.ExecuteSP(item);
+                case ListName.P_MonthlySewingOutputSummary:
+                    result = new P_Import_MonthlySewingOutputSummary().P_MonthlySewingOutputSummary(item.SDate, item.EDate);
+                    break;
+                case ListName.P_SewingLineSchedule:
+                    result = new P_Import_SewingLineScheduleBIData().P_SewingLineScheduleBIData(item.SDate, item.EDate);
+                    break;
+                case ListName.P_SubProInsReport:
+                    result = new P_Import_SubProInsReport().P_SubProInsReport(item.SDate, item.EDate);
+                    break;
+                default:
+                    // Execute all Stored Procedures
+                    result = this.ExecuteSP(item);
+                    break;
             }
 
             DateTime? executeEDate = DateTime.Now;
