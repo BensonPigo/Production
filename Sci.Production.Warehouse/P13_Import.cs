@@ -91,6 +91,8 @@ select  selected = 0
 			,dbo.GetColorMultipleID(o.BrandID,isnull(psdsC.SpecValue, '')))
 		, [Size]= isnull(psdsS.SpecValue, '')
         , [GMTWash] = isnull(GMTWash.val, '')
+        , [Grade] = phy.Grade
+        ,[Refno] = psd.Refno
 from dbo.PO_Supp_Detail psd WITH (NOLOCK) 
 inner join dbo.PO_Supp p with (nolock) on psd.ID = p.ID and psd.Seq1 = p.Seq1
 inner join dbo.ftyinventory c WITH (NOLOCK) on c.poid = psd.id and c.seq1 = psd.seq1 and c.seq2  = psd.seq2 and c.stocktype = 'B'
@@ -115,6 +117,12 @@ outer apply(
 			ttd.StockType = c.StockType and
             tt.Subcon = 'GMT Wash'
 ) GMTWash
+outer apply
+(
+	select [Grade] = isnull(Grade,'') from FIR
+	inner join FIR_Physical pd on pd.id = fir.ID
+	where poid = c.POID and SEQ1 =c.Seq1 and SEQ2 =c.Seq2 and Roll =c.Roll and Dyelot =c.Dyelot
+) as phy
 Where psd.id = '{sp}' and c.inqty - c.outqty + c.adjustqty - c.ReturnQty > 0 AND o.category!='A'
     and factory.MDivisionID = '{Env.User.Keyword}'
 ");
@@ -143,6 +151,16 @@ Where psd.id = '{sp}' and c.inqty - c.outqty + c.adjustqty - c.ReturnQty > 0 AND
                 if (string.Compare(this.comboFabricType.SelectedValue.ToString(), "ALL") != 0)
                 {
                     strSQLCmd.Append($@" and psd.FabricType='{this.comboFabricType.SelectedValue}'");
+                }
+
+                if (!MyUtility.Check.Empty(this.txtColor.Text))
+                {
+                    strSQLCmd.Append($@" and psdsC.SpecValue ='{this.txtColor.Text}'");
+                }
+
+                if (!MyUtility.Check.Empty(this.txtRefno.Text))
+                {
+                    strSQLCmd.Append($@" and psd.Refno ='{this.txtRefno.Text}'");
                 }
 
                 this.ShowWaitMessage("Data Loading....");
@@ -254,9 +272,12 @@ Where psd.id = '{sp}' and c.inqty - c.outqty + c.adjustqty - c.ReturnQty > 0 AND
                 .Numeric("LossQty", header: "Loss Qty", iseditingreadonly: true, decimal_places: 2, integer_places: 10)
                 .Numeric("balance", header: "Stock Qty", iseditingreadonly: true, decimal_places: 2, integer_places: 10) // 6
                 .Numeric("qty", header: "Issue Qty", decimal_places: 2, integer_places: 10, settings: ns) // 7
-               .EditText("Description", header: "Description", iseditingreadonly: true, width: Widths.AnsiChars(25))
-               .Text("Tone", header: "Tone/Grp", iseditingreadonly: true, width: Widths.AnsiChars(8))
-               .Text("GMTWash", header: "GMT Wash", width: Widths.AnsiChars(10), iseditingreadonly: true); // 8
+                .EditText("Description", header: "Description", iseditingreadonly: true, width: Widths.AnsiChars(25))
+                .Text("Tone", header: "Tone/Grp", iseditingreadonly: true, width: Widths.AnsiChars(8))
+                .Text("GMTWash", header: "GMT Wash", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                .Text("Grade", header: "Grade", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                .Text("Refno", header: "Refno", width: Widths.AnsiChars(18), iseditingreadonly: true)
+                .Text("Color", header: "Color", width: Widths.AnsiChars(20), iseditingreadonly: true); // 8
 
             this.grid1.Columns["qty"].DefaultCellStyle.BackColor = Color.Pink;
 

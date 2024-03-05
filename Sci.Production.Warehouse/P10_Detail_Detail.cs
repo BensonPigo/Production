@@ -101,6 +101,8 @@ select 0 as selected
        , c.ReturnQty
        , [Tone] = c.Tone
        , [GMTWash] = isnull(GMTWash.val, '')
+       , [Grade] = isnull(phy.Grade, '')
+	   , [ActualWidth] = phy.ActualWidth
 from dbo.PO_Supp_Detail psd WITH (NOLOCK) 
 inner join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
 inner join dbo.ftyinventory c WITH (NOLOCK) on c.poid = psd.id and c.seq1 = psd.seq1 and c.seq2 = psd.seq2 and c.stocktype = 'B'
@@ -121,6 +123,15 @@ outer apply(
 			ttd.StockType = c.StockType and            
             tt.Subcon = 'GMT Wash'
 ) GMTWash
+outer apply
+(
+	select 
+	Grade
+	, ActualWidth 
+	from FIR f
+	inner join FIR_Physical fp on fp.id = f.ID
+	where f.poid = psd.id and f.SEQ1 =psd.seq1 and f.SEQ2 =psd.SEQ2 and fp.Roll =c.Roll and fp.Dyelot =c.Dyelot
+)as phy
 Where psd.id = '{this.dr_master["poid"]}' and c.lock = 0 and c.inqty - c.outqty + c.adjustqty - c.ReturnQty > 0 
 and psd.Refno='{this.dr_master["Refno"]}' and isnull(psdsC.SpecValue, '')='{this.dr_master["colorid"]}' {(this.Type == 0 ? " and ltrim(psd.seq1) between '01' and '99'" : string.Empty)}
 order by d.GroupQty DESC,c.Dyelot,balanceqty DESC
@@ -188,7 +199,9 @@ order by d.GroupQty DESC,c.Dyelot,balanceqty DESC
                 .Numeric("qty", header: "Issue Qty", iseditable: true, decimal_places: 2, integer_places: 10, settings: ns) // 7
                 .EditText("Description", header: "Description", iseditingreadonly: true, width: Widths.AnsiChars(25)) // 8
                 .Text("Tone", header: "Shade Band" + Environment.NewLine + "Tone/Grp", width: Widths.AnsiChars(10), iseditingreadonly: true)
-                .Text("GMTWash", header: "GMT Wash", width: Widths.AnsiChars(10), iseditingreadonly: true);
+                .Text("GMTWash", header: "GMT Wash", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                .Text("Grade", header: "Grade", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                .Text("ActualWidth", header: "Act Width", width: Widths.AnsiChars(10), iseditingreadonly: true);
 
             this.gridRollNo.Columns["qty"].DefaultCellStyle.BackColor = Color.Pink;
         }

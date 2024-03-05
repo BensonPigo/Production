@@ -38,12 +38,16 @@
             this.displayTotal = new Sci.Win.UI.DisplayBox();
             this.labelTotal = new Sci.Win.UI.Label();
             this.groupBox1 = new Sci.Win.UI.GroupBox();
+            this.comboFabricType = new Sci.Production.Class.ComboDropDownList(this.components);
+            this.labFabricType = new Sci.Win.UI.Label();
             this.txtSeq1 = new Sci.Production.Class.TxtSeq();
             this.panel1 = new Sci.Win.UI.Panel();
             this.grid1 = new Sci.Win.UI.Grid();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
-            this.labFabricType = new Sci.Win.UI.Label();
-            this.comboFabricType = new Sci.Production.Class.ComboDropDownList(this.components);
+            this.txtRefno = new Sci.Win.UI.TextBox();
+            this.lblRefno = new Sci.Win.UI.Label();
+            this.txtColor = new Sci.Win.UI.TextBox();
+            this.lblColor = new Sci.Win.UI.Label();
             this.groupBox2.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -136,6 +140,10 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.txtColor);
+            this.groupBox1.Controls.Add(this.lblColor);
+            this.groupBox1.Controls.Add(this.txtRefno);
+            this.groupBox1.Controls.Add(this.lblRefno);
             this.groupBox1.Controls.Add(this.comboFabricType);
             this.groupBox1.Controls.Add(this.labFabricType);
             this.groupBox1.Controls.Add(this.txtSeq1);
@@ -148,6 +156,28 @@
             this.groupBox1.Size = new System.Drawing.Size(1008, 58);
             this.groupBox1.TabIndex = 17;
             this.groupBox1.TabStop = false;
+            // 
+            // comboFabricType
+            // 
+            this.comboFabricType.AddAllItem = false;
+            this.comboFabricType.BackColor = System.Drawing.Color.White;
+            this.comboFabricType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboFabricType.FormattingEnabled = true;
+            this.comboFabricType.IsSupportUnselect = true;
+            this.comboFabricType.Location = new System.Drawing.Point(404, 18);
+            this.comboFabricType.Name = "comboFabricType";
+            this.comboFabricType.OldText = "";
+            this.comboFabricType.Size = new System.Drawing.Size(110, 24);
+            this.comboFabricType.TabIndex = 2;
+            this.comboFabricType.Type = "FabricType_Condition";
+            // 
+            // labFabricType
+            // 
+            this.labFabricType.Location = new System.Drawing.Point(306, 19);
+            this.labFabricType.Name = "labFabricType";
+            this.labFabricType.Size = new System.Drawing.Size(95, 23);
+            this.labFabricType.TabIndex = 5;
+            this.labFabricType.Text = "Material Type";
             // 
             // txtSeq1
             // 
@@ -193,26 +223,39 @@
             this.grid1.TabIndex = 0;
             this.grid1.TabStop = false;
             // 
-            // labFabricType
+            // txtRefno
             // 
-            this.labFabricType.Location = new System.Drawing.Point(306, 19);
-            this.labFabricType.Name = "labFabricType";
-            this.labFabricType.Size = new System.Drawing.Size(95, 23);
-            this.labFabricType.TabIndex = 5;
-            this.labFabricType.Text = "Material Type";
+            this.txtRefno.BackColor = System.Drawing.Color.White;
+            this.txtRefno.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtRefno.Location = new System.Drawing.Point(567, 18);
+            this.txtRefno.Name = "txtRefno";
+            this.txtRefno.Size = new System.Drawing.Size(122, 23);
+            this.txtRefno.TabIndex = 6;
             // 
-            // comboFabricType
+            // lblRefno
             // 
-            this.comboFabricType.BackColor = System.Drawing.Color.White;
-            this.comboFabricType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboFabricType.FormattingEnabled = true;
-            this.comboFabricType.IsSupportUnselect = true;
-            this.comboFabricType.Location = new System.Drawing.Point(404, 18);
-            this.comboFabricType.Name = "comboFabricType";
-            this.comboFabricType.OldText = "";
-            this.comboFabricType.Size = new System.Drawing.Size(110, 24);
-            this.comboFabricType.TabIndex = 2;
-            this.comboFabricType.Type = "FabricType_Condition";
+            this.lblRefno.Location = new System.Drawing.Point(517, 18);
+            this.lblRefno.Name = "lblRefno";
+            this.lblRefno.Size = new System.Drawing.Size(47, 23);
+            this.lblRefno.TabIndex = 7;
+            this.lblRefno.Text = "Refno";
+            // 
+            // txtColor
+            // 
+            this.txtColor.BackColor = System.Drawing.Color.White;
+            this.txtColor.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtColor.Location = new System.Drawing.Point(742, 18);
+            this.txtColor.Name = "txtColor";
+            this.txtColor.Size = new System.Drawing.Size(122, 23);
+            this.txtColor.TabIndex = 8;
+            // 
+            // lblColor
+            // 
+            this.lblColor.Location = new System.Drawing.Point(692, 18);
+            this.lblColor.Name = "lblColor";
+            this.lblColor.Size = new System.Drawing.Size(47, 23);
+            this.lblColor.TabIndex = 9;
+            this.lblColor.Text = "Color";
             // 
             // P13_Import
             // 
@@ -251,5 +294,9 @@
         private Class.TxtSeq txtSeq1;
         private Win.UI.Label labFabricType;
         private Class.ComboDropDownList comboFabricType;
+        private Win.UI.TextBox txtColor;
+        private Win.UI.Label lblColor;
+        private Win.UI.TextBox txtRefno;
+        private Win.UI.Label lblRefno;
     }
 }
