@@ -1,0 +1,291 @@
+﻿using Ict;
+using Sci.Data;
+using Sci.Production.Prg.PowerBI.Logic;
+using Sci.Production.Prg.PowerBI.Model;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Data.SqlClient;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Transactions;
+
+namespace Sci.Production.Prg.PowerBI.DataAccess
+{
+    /// <inheritdoc/>
+    public class P_Import_InlineDefec
+    {
+        /// <inheritdoc/>
+        public Base_ViewModel P_InlineDefecBIData(DateTime? sDate, DateTime? eDate)
+        {
+            Base_ViewModel finalResult = new Base_ViewModel();
+            PPIC_R01 biModel = new PPIC_R01();
+            if (!sDate.HasValue)
+            {
+                sDate = DateTime.Parse(DateTime.Now.ToString("yyyy/MM/dd"));
+            }
+
+            if (!eDate.HasValue)
+            {
+                eDate = DateTime.Parse(DateTime.Now.AddDays(1).ToString("yyyy/MM/dd"));
+            }
+
+            try
+            {
+                Inline_R08_ViewModel inline_R08_ViewModel = new Inline_R08_ViewModel()
+                {
+                    SDate = sDate.Value,
+                    EDate = eDate.Value,
+                    OrderID1 = string.Empty,
+                    OrderID2 = string.Empty,
+                    BrandID = string.Empty,
+                    Zone = string.Empty,
+                    FactoryID = string.Empty,
+                    Team = string.Empty,
+                    Line = string.Empty,
+                };
+
+                Base_ViewModel resultReport = this.GetInlineDefecData(inline_R08_ViewModel);
+                if (!resultReport.Result)
+                {
+                    throw resultReport.Result.GetException();
+                }
+
+                // insert into PowerBI
+                finalResult = this.UpdateBIData(resultReport.DtArr, sDate.Value, eDate.Value);
+                if (!finalResult.Result)
+                {
+                    throw finalResult.Result.GetException();
+                }
+
+                finalResult.Result = new Ict.DualResult(true);
+            }
+            catch (Exception ex)
+            {
+                finalResult.Result = new Ict.DualResult(false, ex);
+            }
+
+            return finalResult;
+        }
+
+        private Base_ViewModel GetInlineDefecData(Inline_R08_ViewModel model)
+        {
+            List<SqlParameter> listPar = new List<SqlParameter>
+            {
+                new SqlParameter("@SDate", model.SDate),
+                new SqlParameter("@EDate", model.EDate),
+                new SqlParameter("@OrderID1", model.OrderID1),
+                new SqlParameter("@OrderID2", model.OrderID2),
+                new SqlParameter("@BrandID", model.BrandID),
+                new SqlParameter("@Zone", model.Zone),
+                new SqlParameter("@FactoryID", model.FactoryID),
+                new SqlParameter("@Team", model.Team),
+                new SqlParameter("@Line", model.Line),
+            };
+
+            string sql = @"
+exec dbo.Inline_R08  @SDate,
+                     @EDate,
+                     @OrderID1,
+                     @OrderID2,
+                     @BrandID,
+                     @Zone,
+                     @FactoryID,
+                     @Team,
+                     @Line
+";
+            Base_ViewModel resultReport = new Base_ViewModel
+            {
+                Result = DBProxy.Current.Select("ManufacturingExecution", sql, listPar, out DataTable[] dataTables),
+            };
+
+            if (!resultReport.Result)
+            {
+                return resultReport;
+            }
+
+            resultReport.DtArr = dataTables;
+            return resultReport;
+        }
+
+        private Base_ViewModel UpdateBIData(DataTable[] dt, DateTime sDate, DateTime eDate)
+        {
+            Base_ViewModel finalResult = new Base_ViewModel();
+            DataTable detailTable = dt[0];
+            DataTable summaryTable = dt[1];
+            TransactionScope transactionscope = new TransactionScope();
+            using (transactionscope)
+            {
+                try
+                {
+                    DualResult result;
+                    DBProxy.Current.OpenConnection("PowerBI", out SqlConnection sqlConn);
+                    using (sqlConn)
+                    {
+                        string sql = @"	
+insert into P_InlineDefectSummary
+(
+    [FirstInspectedDate]
+  ,[FactoryID]
+  ,[BrandID]
+  ,[StyleID]
+  ,[CustPoNo]
+  ,[OrderID]
+  ,[Article]
+  ,[Alias]
+  ,[CDCodeID]
+  ,[CDCodeNew]
+  ,[ProductType]
+  ,[FabricType]
+  ,[Lining]
+  ,[Gender]
+  ,[Construction]
+  ,[ProductionFamilyID]
+  ,[Team]
+  ,[QCName]
+  ,[Shift]
+  ,[Line]
+  ,[SewingCell]
+  ,[InspectedQty]
+  ,[RejectWIP]
+  ,[InlineWFT]
+  ,[InlineRFT]
+)
+select
+    t.[First Inspection Date]
+    ,isnull(t.Factory,'')
+    ,isnull(t.Brand	,'')
+    ,isnull(t.Style	,'')
+    ,isnull(t.[PO#]	,'')
+    ,isnull(t.[SP#]	,'')
+    ,isnull(t.Article,'')
+    ,isnull(t.[Destination],'')
+    ,isnull(t.CdCodeID,'')
+    ,isnull(t.CDCodeNew,'')
+    ,isnull(t.ProductType,'')
+    ,isnull(t.FabricType,'')
+    ,isnull(t.Lining,'')
+    ,isnull(t.Gender,'')
+    ,isnull(t.Construction,'')
+    ,isnull(t.ProductionFamilyID,'')
+    ,isnull(t.Team,'')
+    ,isnull(t.[QC Name],'')
+    ,isnull(t.[Shift],'')
+    ,isnull(t.Line,'')
+    ,isnull(t.[Cell],'')
+    ,isnull(t.[Inspected Qty],0)
+    ,isnull(t.[Reject Qty] ,0)
+    ,isnull(t.[Inline WFT(%)] ,0)
+    ,isnull(t.[Inline RFT(%)] ,0)
+from #tmpSummy t
+
+IF EXISTS (select 1 from BITableInfo b where b.id = 'P_InlineDefectSummary')
+BEGIN
+	update b
+		set b.TransferDate = getdate()
+			, b.IS_Trans = 1
+	from BITableInfo b
+	where b.id = 'P_InlineDefectSummary'
+END
+ELSE 
+BEGIN
+	insert into BITableInfo(Id, TransferDate)
+	values('P_InlineDefectSummary', getdate())
+END
+";
+                        result = MyUtility.Tool.ProcessWithDatatable(summaryTable, null, sqlcmd: sql, result: out DataTable dataTable, temptablename: "#tmpSummy", conn: sqlConn, paramters: null);
+                        if (!result.Result)
+                        {
+                            throw result.GetException();
+                        }
+
+                        sql = @"	
+insert into P_InlineDefectDetail
+(
+   [Zone]
+  ,[BrandID]
+  ,[BuyerDelivery]
+  ,[FactoryID]
+  ,[Line]
+  ,[Team]
+  ,[Shift]
+  ,[CustPoNo]
+  ,[StyleID]
+  ,[OrderId]
+  ,[Article]
+  ,[FirstInspectionDate]
+  ,[FirstInspectedTime]
+  ,[InspectedQC]
+  ,[ProductType]
+  ,[Operation]
+  ,[SewerName]
+  ,[GarmentDefectTypeID]
+  ,[GarmentDefectTypeDesc]
+  ,[GarmentDefectCodeID]
+  ,[GarmentDefectCodeDesc]
+  ,[IsCriticalDefect]
+)
+select
+    isnull(t.Zone,'')
+    , isnull(t.Brand,'')
+    , t.[Buyer Delivery Date]
+    , isnull(t.[Factory],'')
+    , isnull(t.Line,'')
+    , isnull(t.Team ,'')
+    , isnull(t.Shift,'')
+    , isnull(t.[PO#],'')
+    , isnull(t.[Style],'')
+    , isnull(t.[SP#],'')
+    , isnull(t.Article,'')
+    , t.[First Inspection Date]
+    , t.[Inspected Time]     
+    , isnull(t.[Inspected QC],'')
+    , isnull(t.[Product Type],'')
+    , isnull(t.Operation,'')
+    , isnull(t.[Sewer Name],'')
+    , isnull(t.[DefectTypeID],'')
+    , isnull(t.[DefectTypeDescritpion],'')
+    , isnull(t.[DefectCodeID],'')
+    , isnull(t.[DefectCodeDescritpion],'')  
+    , isnull(t.IsCriticalDefect,'') 
+From #tmpDetail t
+
+IF EXISTS (select 1 from BITableInfo b where b.id = 'P_InlineDefectDetail')
+BEGIN
+	update b
+		set b.TransferDate = getdate()
+			, b.IS_Trans = 1
+	from BITableInfo b
+	where b.id = 'P_InlineDefectDetail'
+END
+ELSE 
+BEGIN
+	insert into BITableInfo(Id, TransferDate)
+	values('P_InlineDefectDetail', getdate())
+END
+";
+                        result = MyUtility.Tool.ProcessWithDatatable(detailTable, null, sqlcmd: sql, result: out DataTable dataTable2, temptablename: "#tmpDetail", conn: sqlConn, paramters: null);
+                        if (!result.Result)
+                        {
+                            throw result.GetException();
+                        }
+                    }
+
+                    finalResult.Result = new DualResult(true);
+                    transactionscope.Complete();
+                }
+                catch (Exception ex)
+                {
+                    finalResult.Result = new DualResult(false, ex);
+                }
+                finally
+                {
+                    transactionscope.Dispose();
+                }
+            }
+
+            return finalResult;
+        }
+    }
+}
