@@ -83,9 +83,9 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 };
                 string sql = @"	
 UPDATE t 
-	SET t.SewingLineID =  s.SewingLineID,
-		t.SewingStartTime =  s.SewingStartTime,
+	SET t.SewingStartTime =  s.SewingStartTime,
 		t.SewingEndTime =  s.SewingEndTime,
+		t.MDivisionID =  s.MDivisionID,
 		t.PO =  s.PO,
 		t.POCount =  s.POCount,
 		t.SP =  s.SP,
@@ -124,7 +124,6 @@ UPDATE t
 		t.SewingOutput =  s.SewingOutput,
 		t.ScannedQty =  s.ScannedQty,
 		t.ClogQty =  s.ClogQty,
-		t.Sewer =  s.Sewer,
 		t.SewingCPU =  s.SewingCPU,
 		t.BrandID =  s.BrandID,
 		t.Orig_WorkHourPerDay =  s.Orig_WorkHourPerDay,
@@ -154,7 +153,8 @@ UPDATE t
 from P_SewingLineSchedule t 
 inner join #tmp s on t.APSNo = s.APSNo 
 				AND t.SewingDay = s.SewingDay 
-				AND t.MDivisionID = s.MDivisionID 
+				AND t.SewingLineID = s.SewingLineID  
+				AND t.Sewer = s.Sewer 
 				AND t.FactoryID = s.FactoryID
 
 
@@ -183,15 +183,17 @@ select 	s.APSNo, s.SewingLineID, s.SewingDay, s.SewingStartTime, s.SewingEndTime
 from #tmp s
 where not exists (select 1 from P_SewingLineSchedule t where t.APSNo = s.APSNo 
 														AND t.SewingDay = s.SewingDay 
-														AND t.MDivisionID = s.MDivisionID 
+														AND t.SewingLineID = s.SewingLineID  
+														AND t.Sewer = s.Sewer 
 														AND t.FactoryID = s.FactoryID)
 
 delete t
 from P_SewingLineSchedule t
 where not exists (select 1 from #tmp s where t.APSNo = s.APSNo 
-									AND t.SewingDay = s.SewingDay 
-									AND t.MDivisionID = s.MDivisionID 
-									AND t.FactoryID = s.FactoryID)
+										AND t.SewingDay = s.SewingDay 
+										AND t.SewingLineID = s.SewingLineID  
+										AND t.Sewer = s.Sewer 
+										AND t.FactoryID = s.FactoryID)
 and ((t.AddDate >= @SDate and  t.AddDate <= @EDate)
 	or (t.EditDate >= @SDate and t.EditDate <= @EDate)
 	or (t.SewingOffline >= @SDate and t.SewingOffline <= @EDate)
