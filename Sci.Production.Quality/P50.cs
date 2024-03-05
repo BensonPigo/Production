@@ -25,6 +25,10 @@ namespace Sci.Production.Quality
         private Ict.Win.UI.DataGridViewTextBoxColumn colColorID;
         private Ict.Win.UI.DataGridViewTextBoxColumn colColorDesc;
         static string CHARs = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        private Ict.Win.UI.DataGridViewTextBoxColumn col_TestSeason;
+        private Ict.Win.UI.DataGridViewTextBoxColumn col_DueSeason;
+        private Ict.Win.UI.DataGridViewDateBoxColumn col_TestDate;
+        private Ict.Win.UI.DataGridViewDateBoxColumn col_DueDate;
 
         /// <inheritdoc/>
         public P50(ToolStripMenuItem menuitem)
@@ -74,10 +78,10 @@ namespace Sci.Production.Quality
                .Text("ColorDesc", header: "Color Desc", width: Widths.AnsiChars(15), iseditingreadonly: true).Get(out this.colColorDesc)
                .Button("...", header: "File", width: Widths.AnsiChars(8), onclick: this.ClickClip)
                .Date("TestReport", header: "Upload date", width: Widths.AnsiChars(15), iseditingreadonly: true)
-               .Date("TestReportTestDate", header: "Test Date", width: Widths.AnsiChars(15), iseditingreadonly: false, settings: this.GetTestDateCell())
-               .Date("DueDate", header: "Due Date", width: Widths.AnsiChars(15), iseditingreadonly: false, settings: this.GetDueDateCell())
-               .Text("TestSeasonID", header: "Test Season", width: Widths.AnsiChars(15), iseditingreadonly: false, settings: this.GetSeasonCell())
-               .Text("DueSeason", header: "Due Season", width: Widths.AnsiChars(15), iseditingreadonly: false, settings: this.GetDueSeasonCell())
+               .Date("TestReportTestDate", header: "Test Date", width: Widths.AnsiChars(15), iseditingreadonly: false, settings: this.GetTestDateCell()).Get(out this.col_TestDate)
+               .Date("DueDate", header: "Due Date", width: Widths.AnsiChars(15), iseditingreadonly: false, settings: this.GetDueDateCell()).Get(out this.col_DueDate)
+               .Text("TestSeasonID", header: "Test Season", width: Widths.AnsiChars(15), iseditingreadonly: false, settings: this.GetSeasonCell()).Get(out this.col_TestSeason)
+               .Text("DueSeason", header: "Due Season", width: Widths.AnsiChars(15), iseditingreadonly: false, settings: this.GetDueSeasonCell()).Get(out this.col_DueSeason)
                .Text("AddName", header: "Add Name ", width: Widths.AnsiChars(15), iseditingreadonly: true)
                .Date("AddDate", header: "Add Date", width: Widths.AnsiChars(13), iseditingreadonly: true)
                .Text("EditName", header: "Edit Name ", width: Widths.AnsiChars(15), iseditingreadonly: true)
@@ -86,6 +90,36 @@ namespace Sci.Production.Quality
 
             this.UI_grid.DataSource = this.gridBS;
             this.UI_grid.RowPrePaint += new System.Windows.Forms.DataGridViewRowPrePaintEventHandler(this.UI_grid_RowPrePaint);
+            this.UI_grid.RowEnter += this.UI_Grid_RowEnter;
+        }
+
+        private void UI_Grid_RowEnter(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex < 0 || this.EditMode == false)
+            {
+                return;
+            }
+
+            var data = ((DataRowView)this.UI_grid.Rows[e.RowIndex].DataBoundItem).Row;
+            if (data == null)
+            {
+                return;
+            }
+
+            if (MyUtility.Check.Empty(data["CanModify"]))
+            {
+                this.col_DueDate.IsEditingReadOnly = true;
+                this.col_DueSeason.IsEditingReadOnly = true;
+                this.col_TestDate.IsEditingReadOnly = true;
+                this.col_TestSeason.IsEditingReadOnly = true;
+            }
+            else
+            {
+                this.col_DueDate.IsEditingReadOnly = false;
+                this.col_DueSeason.IsEditingReadOnly = false;
+                this.col_TestDate.IsEditingReadOnly = false;
+                this.col_TestSeason.IsEditingReadOnly = false;
+            }
         }
 
         private void UI_grid_RowPrePaint(object sender, DataGridViewRowPrePaintEventArgs e)

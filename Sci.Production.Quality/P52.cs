@@ -1003,8 +1003,13 @@ Order by POID,Seq
 
 Select distinct md.DocumentName, md.FileRule, po.Seq, po.POID, md.BrandID
 FROM MaterialDocument md
---inner join #POList po on md.BrandID = po.BrandID or po.BrandID in (select MergedBrand From MaterialDocument_Brand Where DocumentName = md.DocumentName and BrandID = md.BrandID)
-inner join #POList po on md.BrandID = po.BrandID or po.[MergedBrand] = md.BrandID
+inner join #POList po on md.BrandID = po.BrandID or 
+exists (
+	select 1 from MaterialDocument_Brand mdb
+	where md.DocumentName = mdb.DocumentName
+	and mdb.MergedBrand = po.MergedBrand
+	and md.BrandID = mdb.BrandID
+)
 Outer apply ( 
 	SELECT value = STUFF((SELECT CONCAT(',', MtlType.MtltypeId) 
 	FROM MaterialDocument_MtlType MtlType WITH (NOLOCK)
