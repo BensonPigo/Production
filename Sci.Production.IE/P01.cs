@@ -18,6 +18,7 @@ using Sci.Production.Prg;
 using Sci.Production.Class.Command;
 using static Ict.Win.DataGridViewGenerator;
 using System.Security.AccessControl;
+using System.Diagnostics;
 
 namespace Sci.Production.IE
 {
@@ -1190,11 +1191,8 @@ and Name = @PPA
 
             // 設定detailGrid Rows 是否可以編輯
             this.detailgrid.RowEnter += this.Detailgrid_RowEnter;
-            this.detailgrid.Sorted += (s, e) =>
-            {
-                this.HideRows();
-            };
             this.detailgrid.ColumnHeaderMouseClick += this.Detailgrid_ColumnHeaderMouseClick;
+            this.HideRows();
         }
 
         private void Detailgrid_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
@@ -2337,28 +2335,40 @@ and s.BrandID = @brandid ", Env.User.Factory,
         /// DetailGrid Insert、Append
         /// </summary>
         /// <param name="index">index</param>
-        protected override void OnDetailGridInsert(int index = -1)
+        protected override void OnDetailGridInsert(int index = 1)
         {
             base.OnDetailGridInsert(index);
-            if (index == -1)
-            {
-                int seq = 0;
-                if (((DataTable)this.detailgridbs.DataSource).DefaultView.Count > 1)
-                {
-                    seq = MyUtility.Convert.GetInt(((DataTable)this.detailgridbs.DataSource).Compute("max(seq)", string.Empty));
-                }
+            int seq = 0;
+            DataTable dt = (DataTable)this.detailgridbs.DataSource;
 
+            if (dt.Rows.Count < 1)
+            {
+                seq = 0;
+                base.OnDetailGridInsert(0);
                 this.CurrentDetailData["Seq"] = MyUtility.Convert.GetString(seq + 10).PadLeft(4, '0');
             }
             else
             {
-                DataRow dr = this.DetailDatas[this.detailgridbs.Position + 1];
-                this.CurrentDetailData["Seq"] = dr["Seq"];
-                int seq = MyUtility.Convert.GetInt(dr["Seq"]);
-                for (int i = this.detailgridbs.Position + 1; i < this.DetailDatas.Count; i++)
+                seq = 10;
+                foreach (DataRow dr in dt.Rows)
                 {
+                    string maxColumnValue = dt.AsEnumerable().Max(row => row.Field<string>("Seq"));
+                    var maxValue = MyUtility.Convert.GetInt(maxColumnValue);
+                    if (!MyUtility.Check.Empty(seq) && !MyUtility.Check.Empty(dr["Seq"]))
+                    {
+                        if (seq != MyUtility.Convert.GetInt(dr["Seq"]))
+                        {
+                            seq = MyUtility.Convert.GetInt(dr["Seq"]);
+                        }
+                    }
+
+                    if (dr.RowState == DataRowState.Deleted)
+                    {
+                        continue;
+                    }
+
+                    dr["seq"] = MyUtility.Convert.GetString(seq).PadLeft(4, '0');
                     seq += 10;
-                    this.DetailDatas[i]["Seq"] = MyUtility.Convert.GetString(seq).PadLeft(4, '0');
                 }
             }
         }
