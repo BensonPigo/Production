@@ -89,6 +89,7 @@ select  selected = 0
 			IIF(f.MtlTypeID = 'EMB THREAD' OR f.MtlTypeID = 'SP THREAD' OR f.MtlTypeID = 'THREAD' 
 			,IIF(psd.SuppColor = '' or psd.SuppColor is null,dbo.GetColorMultipleID(o.BrandID,isnull(psdsC.SpecValue, '')),psd.SuppColor)
 			,dbo.GetColorMultipleID(o.BrandID,isnull(psdsC.SpecValue, '')))
+        , [Color_SpecValue] = isnull(psdsC.SpecValue, '')
 		, [Size]= isnull(psdsS.SpecValue, '')
         , [GMTWash] = isnull(GMTWash.val, '')
         , [Grade] = phy.Grade
@@ -277,7 +278,7 @@ Where psd.id = '{sp}' and c.inqty - c.outqty + c.adjustqty - c.ReturnQty > 0 AND
                 .Text("GMTWash", header: "GMT Wash", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("Grade", header: "Grade", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("Refno", header: "Refno", width: Widths.AnsiChars(18), iseditingreadonly: true)
-                .Text("Color", header: "Color", width: Widths.AnsiChars(20), iseditingreadonly: true); // 8
+                .Text("Color_SpecValue", header: "Color", width: Widths.AnsiChars(10), iseditingreadonly: true); // 8
 
             this.grid1.Columns["qty"].DefaultCellStyle.BackColor = Color.Pink;
 
