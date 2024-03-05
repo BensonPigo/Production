@@ -34,34 +34,12 @@
             this.btnEditSave = new Sci.Win.UI.Button();
             this.btnCloseUnDo = new Sci.Win.UI.Button();
             this.GroupShippingInfo = new Sci.Win.UI.RadioGroup();
-            this.txtContainerSealNumber = new Sci.Win.UI.TextBox();
-            this.label15 = new Sci.Win.UI.Label();
-            this.displayPortOrginDesc = new Sci.Win.UI.DisplayBox();
-            this.txtPortOrgin = new Sci.Win.UI.TextBox();
-            this.dateShippingDate = new Sci.Win.UI.DateBox();
             this.txtTrackingContainer = new Sci.Win.UI.TextBox();
-            this.comboLoadIndicator = new Sci.Win.UI.ComboBox();
             this.displayLSPDesc = new Sci.Win.UI.DisplayBox();
             this.displayNikeLSPCode = new Sci.Win.UI.DisplayBox();
-            this.label6 = new Sci.Win.UI.Label();
-            this.label5 = new Sci.Win.UI.Label();
             this.label4 = new Sci.Win.UI.Label();
             this.label3 = new Sci.Win.UI.Label();
             this.label2 = new Sci.Win.UI.Label();
-            this.GroupFinancialInfo = new Sci.Win.UI.RadioGroup();
-            this.dateFactoryInvoiceDate = new Sci.Win.UI.DateBox();
-            this.displayFSPDesc = new Sci.Win.UI.DisplayBox();
-            this.txtFSP = new Sci.Win.UI.TextBox();
-            this.txtQAReferenceNbr = new Sci.Win.UI.TextBox();
-            this.txtLCReferenceNbr = new Sci.Win.UI.TextBox();
-            this.txtFactoryInvoiceNbr = new Sci.Win.UI.TextBox();
-            this.txtLSPBookingNumber = new Sci.Win.UI.TextBox();
-            this.label12 = new Sci.Win.UI.Label();
-            this.label11 = new Sci.Win.UI.Label();
-            this.label10 = new Sci.Win.UI.Label();
-            this.label9 = new Sci.Win.UI.Label();
-            this.label8 = new Sci.Win.UI.Label();
-            this.label7 = new Sci.Win.UI.Label();
             this.GroupDocumentsScanFile = new Sci.Win.UI.RadioGroup();
             this.chkMultipleMaterialsPackingList = new Sci.Win.UI.CheckBox();
             this.chkFactoryAddressPackingList = new Sci.Win.UI.CheckBox();
@@ -83,8 +61,8 @@
             this.label14 = new Sci.Win.UI.Label();
             this.label13 = new Sci.Win.UI.Label();
             this.btnPrint = new Sci.Win.UI.Button();
+            this.displayLoadIndicator = new Ict.Win.UI.DisplayBox();
             this.GroupShippingInfo.SuspendLayout();
-            this.GroupFinancialInfo.SuspendLayout();
             this.GroupDocumentsScanFile.SuspendLayout();
             this.groupChoiceShippingDoc.SuspendLayout();
             this.SuspendLayout();
@@ -121,7 +99,7 @@
             // btnEditSave
             // 
             this.btnEditSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnEditSave.Location = new System.Drawing.Point(703, 496);
+            this.btnEditSave.Location = new System.Drawing.Point(703, 365);
             this.btnEditSave.Name = "btnEditSave";
             this.btnEditSave.Size = new System.Drawing.Size(83, 30);
             this.btnEditSave.TabIndex = 4;
@@ -132,7 +110,7 @@
             // btnCloseUnDo
             // 
             this.btnCloseUnDo.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnCloseUnDo.Location = new System.Drawing.Point(792, 496);
+            this.btnCloseUnDo.Location = new System.Drawing.Point(792, 365);
             this.btnCloseUnDo.Name = "btnCloseUnDo";
             this.btnCloseUnDo.Size = new System.Drawing.Size(83, 30);
             this.btnCloseUnDo.TabIndex = 5;
@@ -144,93 +122,29 @@
             // 
             this.GroupShippingInfo.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.GroupShippingInfo.Controls.Add(this.txtContainerSealNumber);
-            this.GroupShippingInfo.Controls.Add(this.label15);
-            this.GroupShippingInfo.Controls.Add(this.displayPortOrginDesc);
-            this.GroupShippingInfo.Controls.Add(this.txtPortOrgin);
-            this.GroupShippingInfo.Controls.Add(this.dateShippingDate);
+            this.GroupShippingInfo.Controls.Add(this.displayLoadIndicator);
             this.GroupShippingInfo.Controls.Add(this.txtTrackingContainer);
-            this.GroupShippingInfo.Controls.Add(this.comboLoadIndicator);
             this.GroupShippingInfo.Controls.Add(this.displayLSPDesc);
             this.GroupShippingInfo.Controls.Add(this.displayNikeLSPCode);
-            this.GroupShippingInfo.Controls.Add(this.label6);
-            this.GroupShippingInfo.Controls.Add(this.label5);
             this.GroupShippingInfo.Controls.Add(this.label4);
             this.GroupShippingInfo.Controls.Add(this.label3);
             this.GroupShippingInfo.Controls.Add(this.label2);
             this.GroupShippingInfo.Location = new System.Drawing.Point(9, 46);
             this.GroupShippingInfo.Name = "GroupShippingInfo";
-            this.GroupShippingInfo.Size = new System.Drawing.Size(872, 101);
+            this.GroupShippingInfo.Size = new System.Drawing.Size(872, 83);
             this.GroupShippingInfo.TabIndex = 7;
             this.GroupShippingInfo.TabStop = false;
             this.GroupShippingInfo.Text = "Shipping Info.";
-            // 
-            // txtContainerSealNumber
-            // 
-            this.txtContainerSealNumber.BackColor = System.Drawing.Color.White;
-            this.txtContainerSealNumber.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtContainerSealNumber.Location = new System.Drawing.Point(540, 69);
-            this.txtContainerSealNumber.Name = "txtContainerSealNumber";
-            this.txtContainerSealNumber.Size = new System.Drawing.Size(217, 23);
-            this.txtContainerSealNumber.TabIndex = 20;
-            // 
-            // label15
-            // 
-            this.label15.Location = new System.Drawing.Point(397, 69);
-            this.label15.Name = "label15";
-            this.label15.Size = new System.Drawing.Size(140, 23);
-            this.label15.TabIndex = 19;
-            this.label15.Text = "Seal#";
-            // 
-            // displayPortOrginDesc
-            // 
-            this.displayPortOrginDesc.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayPortOrginDesc.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayPortOrginDesc.Location = new System.Drawing.Point(224, 69);
-            this.displayPortOrginDesc.Name = "displayPortOrginDesc";
-            this.displayPortOrginDesc.Size = new System.Drawing.Size(153, 23);
-            this.displayPortOrginDesc.TabIndex = 16;
-            // 
-            // txtPortOrgin
-            // 
-            this.txtPortOrgin.BackColor = System.Drawing.Color.White;
-            this.txtPortOrgin.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtPortOrgin.Location = new System.Drawing.Point(161, 69);
-            this.txtPortOrgin.Name = "txtPortOrgin";
-            this.txtPortOrgin.Size = new System.Drawing.Size(62, 23);
-            this.txtPortOrgin.TabIndex = 15;
-            this.txtPortOrgin.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtPortOrgin_PopUp);
-            this.txtPortOrgin.Validating += new System.ComponentModel.CancelEventHandler(this.TxtPortOrgin_Validating);
-            // 
-            // dateShippingDate
-            // 
-            this.dateShippingDate.Location = new System.Drawing.Point(161, 44);
-            this.dateShippingDate.Name = "dateShippingDate";
-            this.dateShippingDate.Size = new System.Drawing.Size(130, 23);
-            this.dateShippingDate.TabIndex = 14;
             // 
             // txtTrackingContainer
             // 
             this.txtTrackingContainer.BackColor = System.Drawing.Color.White;
             this.txtTrackingContainer.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtTrackingContainer.Location = new System.Drawing.Point(540, 44);
+            this.txtTrackingContainer.Location = new System.Drawing.Point(161, 48);
             this.txtTrackingContainer.Name = "txtTrackingContainer";
             this.txtTrackingContainer.Size = new System.Drawing.Size(217, 23);
             this.txtTrackingContainer.TabIndex = 13;
             this.txtTrackingContainer.TextChanged += new System.EventHandler(this.OnlyEnglishNumber_TextChanged);
-            // 
-            // comboLoadIndicator
-            // 
-            this.comboLoadIndicator.BackColor = System.Drawing.Color.White;
-            this.comboLoadIndicator.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboLoadIndicator.FormattingEnabled = true;
-            this.comboLoadIndicator.IsSupportUnselect = true;
-            this.comboLoadIndicator.Location = new System.Drawing.Point(540, 18);
-            this.comboLoadIndicator.Name = "comboLoadIndicator";
-            this.comboLoadIndicator.OldText = "";
-            this.comboLoadIndicator.Size = new System.Drawing.Size(61, 24);
-            this.comboLoadIndicator.TabIndex = 12;
-            this.comboLoadIndicator.SelectedIndexChanged += new System.EventHandler(this.ComboLoadIndicator_SelectedIndexChanged);
             // 
             // displayLSPDesc
             // 
@@ -250,28 +164,12 @@
             this.displayNikeLSPCode.Size = new System.Drawing.Size(62, 23);
             this.displayNikeLSPCode.TabIndex = 10;
             // 
-            // label6
-            // 
-            this.label6.Location = new System.Drawing.Point(8, 69);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(150, 23);
-            this.label6.TabIndex = 9;
-            this.label6.Text = "Port of Origin";
-            // 
-            // label5
-            // 
-            this.label5.Location = new System.Drawing.Point(8, 44);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(150, 23);
-            this.label5.TabIndex = 8;
-            this.label5.Text = "Shipping Date";
-            // 
             // label4
             // 
             this.label4.BackColor = System.Drawing.Color.SkyBlue;
-            this.label4.Location = new System.Drawing.Point(397, 44);
+            this.label4.Location = new System.Drawing.Point(8, 48);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(140, 23);
+            this.label4.Size = new System.Drawing.Size(150, 23);
             this.label4.TabIndex = 4;
             this.label4.Text = "Tracking#/Container#";
             this.label4.TextStyle.Color = System.Drawing.Color.Black;
@@ -296,145 +194,6 @@
             this.label2.Text = "LSP";
             this.label2.TextStyle.Color = System.Drawing.Color.Black;
             // 
-            // GroupFinancialInfo
-            // 
-            this.GroupFinancialInfo.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.GroupFinancialInfo.Controls.Add(this.dateFactoryInvoiceDate);
-            this.GroupFinancialInfo.Controls.Add(this.displayFSPDesc);
-            this.GroupFinancialInfo.Controls.Add(this.txtFSP);
-            this.GroupFinancialInfo.Controls.Add(this.txtQAReferenceNbr);
-            this.GroupFinancialInfo.Controls.Add(this.txtLCReferenceNbr);
-            this.GroupFinancialInfo.Controls.Add(this.txtFactoryInvoiceNbr);
-            this.GroupFinancialInfo.Controls.Add(this.txtLSPBookingNumber);
-            this.GroupFinancialInfo.Controls.Add(this.label12);
-            this.GroupFinancialInfo.Controls.Add(this.label11);
-            this.GroupFinancialInfo.Controls.Add(this.label10);
-            this.GroupFinancialInfo.Controls.Add(this.label9);
-            this.GroupFinancialInfo.Controls.Add(this.label8);
-            this.GroupFinancialInfo.Controls.Add(this.label7);
-            this.GroupFinancialInfo.Location = new System.Drawing.Point(9, 153);
-            this.GroupFinancialInfo.Name = "GroupFinancialInfo";
-            this.GroupFinancialInfo.Size = new System.Drawing.Size(872, 106);
-            this.GroupFinancialInfo.TabIndex = 8;
-            this.GroupFinancialInfo.TabStop = false;
-            this.GroupFinancialInfo.Text = "Financial Info.";
-            // 
-            // dateFactoryInvoiceDate
-            // 
-            this.dateFactoryInvoiceDate.Location = new System.Drawing.Point(161, 69);
-            this.dateFactoryInvoiceDate.Name = "dateFactoryInvoiceDate";
-            this.dateFactoryInvoiceDate.Size = new System.Drawing.Size(130, 23);
-            this.dateFactoryInvoiceDate.TabIndex = 15;
-            // 
-            // displayFSPDesc
-            // 
-            this.displayFSPDesc.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayFSPDesc.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayFSPDesc.Location = new System.Drawing.Point(603, 19);
-            this.displayFSPDesc.Name = "displayFSPDesc";
-            this.displayFSPDesc.Size = new System.Drawing.Size(93, 23);
-            this.displayFSPDesc.TabIndex = 17;
-            // 
-            // txtFSP
-            // 
-            this.txtFSP.BackColor = System.Drawing.Color.White;
-            this.txtFSP.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtFSP.Location = new System.Drawing.Point(540, 19);
-            this.txtFSP.Name = "txtFSP";
-            this.txtFSP.Size = new System.Drawing.Size(62, 23);
-            this.txtFSP.TabIndex = 17;
-            this.txtFSP.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtFSP_PopUp);
-            this.txtFSP.Validating += new System.ComponentModel.CancelEventHandler(this.TxtFSP_Validating);
-            // 
-            // txtQAReferenceNbr
-            // 
-            this.txtQAReferenceNbr.BackColor = System.Drawing.Color.White;
-            this.txtQAReferenceNbr.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtQAReferenceNbr.Location = new System.Drawing.Point(540, 69);
-            this.txtQAReferenceNbr.Name = "txtQAReferenceNbr";
-            this.txtQAReferenceNbr.Size = new System.Drawing.Size(217, 23);
-            this.txtQAReferenceNbr.TabIndex = 18;
-            this.txtQAReferenceNbr.TextChanged += new System.EventHandler(this.OnlyEnglishNumber_TextChanged);
-            // 
-            // txtLCReferenceNbr
-            // 
-            this.txtLCReferenceNbr.BackColor = System.Drawing.Color.White;
-            this.txtLCReferenceNbr.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtLCReferenceNbr.Location = new System.Drawing.Point(540, 44);
-            this.txtLCReferenceNbr.Name = "txtLCReferenceNbr";
-            this.txtLCReferenceNbr.Size = new System.Drawing.Size(217, 23);
-            this.txtLCReferenceNbr.TabIndex = 17;
-            this.txtLCReferenceNbr.TextChanged += new System.EventHandler(this.OnlyEnglishNumber_TextChanged);
-            // 
-            // txtFactoryInvoiceNbr
-            // 
-            this.txtFactoryInvoiceNbr.BackColor = System.Drawing.Color.White;
-            this.txtFactoryInvoiceNbr.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtFactoryInvoiceNbr.Location = new System.Drawing.Point(161, 44);
-            this.txtFactoryInvoiceNbr.Name = "txtFactoryInvoiceNbr";
-            this.txtFactoryInvoiceNbr.Size = new System.Drawing.Size(217, 23);
-            this.txtFactoryInvoiceNbr.TabIndex = 16;
-            this.txtFactoryInvoiceNbr.TextChanged += new System.EventHandler(this.OnlyEnglishNumber_TextChanged);
-            // 
-            // txtLSPBookingNumber
-            // 
-            this.txtLSPBookingNumber.BackColor = System.Drawing.Color.White;
-            this.txtLSPBookingNumber.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtLSPBookingNumber.Location = new System.Drawing.Point(161, 19);
-            this.txtLSPBookingNumber.Name = "txtLSPBookingNumber";
-            this.txtLSPBookingNumber.Size = new System.Drawing.Size(216, 23);
-            this.txtLSPBookingNumber.TabIndex = 15;
-            this.txtLSPBookingNumber.TextChanged += new System.EventHandler(this.OnlyEnglishNumber_TextChanged);
-            // 
-            // label12
-            // 
-            this.label12.Location = new System.Drawing.Point(397, 69);
-            this.label12.Name = "label12";
-            this.label12.Size = new System.Drawing.Size(140, 23);
-            this.label12.TabIndex = 14;
-            this.label12.Text = "QA Reference Nbr";
-            // 
-            // label11
-            // 
-            this.label11.Location = new System.Drawing.Point(397, 44);
-            this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(140, 23);
-            this.label11.TabIndex = 13;
-            this.label11.Text = "LC Reference Nbr";
-            // 
-            // label10
-            // 
-            this.label10.Location = new System.Drawing.Point(397, 19);
-            this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(140, 23);
-            this.label10.TabIndex = 12;
-            this.label10.Text = "FSP";
-            // 
-            // label9
-            // 
-            this.label9.Location = new System.Drawing.Point(8, 69);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(150, 23);
-            this.label9.TabIndex = 11;
-            this.label9.Text = "Factory Invoice Date";
-            // 
-            // label8
-            // 
-            this.label8.Location = new System.Drawing.Point(8, 44);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(150, 23);
-            this.label8.TabIndex = 10;
-            this.label8.Text = "Factory Invoice Nbr";
-            // 
-            // label7
-            // 
-            this.label7.Location = new System.Drawing.Point(8, 19);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(150, 23);
-            this.label7.TabIndex = 9;
-            this.label7.Text = "LSP Booking Number";
-            // 
             // GroupDocumentsScanFile
             // 
             this.GroupDocumentsScanFile.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -453,9 +212,9 @@
             this.GroupDocumentsScanFile.Controls.Add(this.label13);
             this.GroupDocumentsScanFile.Controls.Add(this.btnPrint);
             this.GroupDocumentsScanFile.IsSupportEditMode = false;
-            this.GroupDocumentsScanFile.Location = new System.Drawing.Point(9, 265);
+            this.GroupDocumentsScanFile.Location = new System.Drawing.Point(9, 135);
             this.GroupDocumentsScanFile.Name = "GroupDocumentsScanFile";
-            this.GroupDocumentsScanFile.Size = new System.Drawing.Size(872, 218);
+            this.GroupDocumentsScanFile.Size = new System.Drawing.Size(872, 217);
             this.GroupDocumentsScanFile.TabIndex = 9;
             this.GroupDocumentsScanFile.TabStop = false;
             this.GroupDocumentsScanFile.Text = "Documents and Scan File";
@@ -675,7 +434,7 @@
             // label14
             // 
             this.label14.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.label14.Location = new System.Drawing.Point(397, 189);
+            this.label14.Location = new System.Drawing.Point(397, 188);
             this.label14.Name = "label14";
             this.label14.Size = new System.Drawing.Size(140, 23);
             this.label14.TabIndex = 16;
@@ -684,7 +443,7 @@
             // label13
             // 
             this.label13.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.label13.Location = new System.Drawing.Point(8, 189);
+            this.label13.Location = new System.Drawing.Point(8, 188);
             this.label13.Name = "label13";
             this.label13.Size = new System.Drawing.Size(150, 23);
             this.label13.TabIndex = 15;
@@ -693,7 +452,7 @@
             // btnPrint
             // 
             this.btnPrint.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnPrint.Location = new System.Drawing.Point(783, 182);
+            this.btnPrint.Location = new System.Drawing.Point(783, 181);
             this.btnPrint.Name = "btnPrint";
             this.btnPrint.Size = new System.Drawing.Size(83, 30);
             this.btnPrint.TabIndex = 10;
@@ -701,13 +460,21 @@
             this.btnPrint.UseVisualStyleBackColor = true;
             this.btnPrint.Click += new System.EventHandler(this.BtnPrint_Click);
             // 
+            // displayLoadIndicator
+            // 
+            this.displayLoadIndicator.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayLoadIndicator.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayLoadIndicator.Location = new System.Drawing.Point(540, 19);
+            this.displayLoadIndicator.Name = "displayLoadIndicator";
+            this.displayLoadIndicator.Size = new System.Drawing.Size(100, 23);
+            this.displayLoadIndicator.TabIndex = 14;
+            // 
             // P05_MercuryPostScanShipment
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(893, 538);
+            this.ClientSize = new System.Drawing.Size(893, 407);
             this.Controls.Add(this.GroupDocumentsScanFile);
-            this.Controls.Add(this.GroupFinancialInfo);
             this.Controls.Add(this.GroupShippingInfo);
             this.Controls.Add(this.btnCloseUnDo);
             this.Controls.Add(this.btnEditSave);
@@ -723,12 +490,9 @@
             this.Controls.SetChildIndex(this.btnEditSave, 0);
             this.Controls.SetChildIndex(this.btnCloseUnDo, 0);
             this.Controls.SetChildIndex(this.GroupShippingInfo, 0);
-            this.Controls.SetChildIndex(this.GroupFinancialInfo, 0);
             this.Controls.SetChildIndex(this.GroupDocumentsScanFile, 0);
             this.GroupShippingInfo.ResumeLayout(false);
             this.GroupShippingInfo.PerformLayout();
-            this.GroupFinancialInfo.ResumeLayout(false);
-            this.GroupFinancialInfo.PerformLayout();
             this.GroupDocumentsScanFile.ResumeLayout(false);
             this.GroupDocumentsScanFile.PerformLayout();
             this.groupChoiceShippingDoc.ResumeLayout(false);
@@ -747,17 +511,8 @@
         private Win.UI.Button btnCloseUnDo;
         private Win.UI.RadioGroup GroupShippingInfo;
         private Win.UI.Label label2;
-        private Win.UI.Label label6;
-        private Win.UI.Label label5;
         private Win.UI.Label label4;
         private Win.UI.Label label3;
-        private Win.UI.RadioGroup GroupFinancialInfo;
-        private Win.UI.Label label12;
-        private Win.UI.Label label11;
-        private Win.UI.Label label10;
-        private Win.UI.Label label9;
-        private Win.UI.Label label8;
-        private Win.UI.Label label7;
         private Win.UI.RadioGroup GroupDocumentsScanFile;
         private Win.UI.Button btnPrint;
         private Win.UI.Label label14;
@@ -765,18 +520,7 @@
         private Win.UI.RadioGroup groupChoiceShippingDoc;
         private Win.UI.DisplayBox displayLSPDesc;
         private Win.UI.DisplayBox displayNikeLSPCode;
-        private Win.UI.ComboBox comboLoadIndicator;
-        private Win.UI.DateBox dateShippingDate;
         private Win.UI.TextBox txtTrackingContainer;
-        private Win.UI.DisplayBox displayPortOrginDesc;
-        private Win.UI.TextBox txtPortOrgin;
-        private Win.UI.DateBox dateFactoryInvoiceDate;
-        private Win.UI.DisplayBox displayFSPDesc;
-        private Win.UI.TextBox txtFSP;
-        private Win.UI.TextBox txtQAReferenceNbr;
-        private Win.UI.TextBox txtLCReferenceNbr;
-        private Win.UI.TextBox txtFactoryInvoiceNbr;
-        private Win.UI.TextBox txtLSPBookingNumber;
         private Win.UI.ComboBox comboSellerAddress;
         private Win.UI.ComboBox comboFactoryAddress;
         private Win.UI.CheckBox chkCommercialInvoice;
@@ -793,7 +537,6 @@
         private Win.UI.CheckBox chkTradingCmpyPL;
         private Win.UI.CheckBox chkPackingList;
         private Win.UI.CheckBox chkTradingCmpyCI;
-        private Win.UI.TextBox txtContainerSealNumber;
-        private Win.UI.Label label15;
+        private Ict.Win.UI.DisplayBox displayLoadIndicator;
     }
 }

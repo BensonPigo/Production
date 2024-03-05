@@ -108,7 +108,7 @@ namespace Sci.Production.Prg.Entity.NikeMercury
             /// FSPCode
             /// </summary>
             [XmlElement(Namespace = "http://schemas.datacontract.org/2004/07/OLLIeLogistics", ElementName = "FSPCode")]
-            public string FSPCode { get; set; }
+            public string FSPCode { get; set; } = string.Empty;
 
             /// <summary>
             /// Trackingnumber
@@ -121,54 +121,6 @@ namespace Sci.Production.Prg.Entity.NikeMercury
             /// </summary>
             [XmlElement(Namespace = "http://schemas.datacontract.org/2004/07/OLLIeLogistics", ElementName = "LoadIndicator")]
             public string LoadIndicator { get; set; }
-
-            /// <summary>
-            /// ContainerSealNumber
-            /// </summary>
-            [XmlElement(Namespace = "http://schemas.datacontract.org/2004/07/OLLIeLogistics", ElementName = "ContainerSealNumber")]
-            public string ContainerSealNumber { get; set; }
-
-            /// <summary>
-            /// ShipmentDate
-            /// </summary>
-            [XmlElement(Namespace = "http://schemas.datacontract.org/2004/07/OLLIeLogistics", ElementName = "ShipmentDate")]
-            public string ShipmentDate { get; set; }
-
-            /// <summary>
-            /// PortofOrigin
-            /// </summary>
-            [XmlElement(Namespace = "http://schemas.datacontract.org/2004/07/OLLIeLogistics", ElementName = "PortofOrigin")]
-            public string PortofOrigin { get; set; }
-
-            /// <summary>
-            /// MCO
-            /// </summary>
-            [XmlElement(Namespace = "http://schemas.datacontract.org/2004/07/OLLIeLogistics", ElementName = "MCO")]
-            public string MCO { get; set; }
-
-            /// <summary>
-            /// INCOTerm
-            /// </summary>
-            [XmlElement(Namespace = "http://schemas.datacontract.org/2004/07/OLLIeLogistics", ElementName = "INCOTerm")]
-            public string INCOTerm { get; set; }
-
-            /// <summary>
-            /// BuyerCode
-            /// </summary>
-            [XmlElement(Namespace = "http://schemas.datacontract.org/2004/07/OLLIeLogistics", ElementName = "BuyerCode")]
-            public string BuyerCode { get; set; }
-
-            /// <summary>
-            /// Vessel
-            /// </summary>
-            [XmlElement(Namespace = "http://schemas.datacontract.org/2004/07/OLLIeLogistics", ElementName = "Vessel")]
-            public string Vessel { get; set; }
-
-            /// <summary>
-            /// FSPSendIndicator
-            /// </summary>
-            [XmlElement(Namespace = "http://schemas.datacontract.org/2004/07/OLLIeLogistics", ElementName = "FSPSendIndicator")]
-            public string FSPSendIndicator { get; set; }
         }
 
         /// <summary>

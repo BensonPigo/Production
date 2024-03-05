@@ -120,6 +120,7 @@ from (
         ,[HS Code]= FabricHsCode.value
         ,concat(mt.fabrictype2,'-',Fabric.MtlTypeID) Material_Type
         ,Fabric.WeaveTypeID
+        ,MTL.ProductionType
         ,dbo.GetColorMultipleID(b.BrandID,isnull(psdsC.SpecValue, '')) [Color]
         ,psdsS.SpecValue [Size]
         ,h.Currencyid [Currency]
@@ -174,6 +175,7 @@ from (
     left join dbo.supp h WITH (NOLOCK) on h.id=c.SuppID
     left join dbo.MDivisionPoDetail i WITH (NOLOCK) on i.POID=a.ID and a.SEQ1=i.Seq1 and a.SEQ2=i.Seq2
     left join #PO_Supp_tmp j on a.ID = j.ID and a.SEQ1 = j.SEQ1 and a.SEQ2 = j.SEQ2
+    LEFT JOIN MtlType MTL WITH (NOLOCK) ON MTL.ID = fabric.MtlTypeID
     outer apply(select fabrictype2 = case a.FabricType 
 	    when 'F' then 'Fabric'
 	    when 'A'then 'Accessory'
@@ -212,6 +214,7 @@ from (
         , [HS Code] = '-'
         , [Material_Type] = l.UnitID
         , [WeaveTypeID] = ''
+        , [ProductionType] = ''
         , [Color] = l.ThreadColorID
         , [Size] = '-'
         , [Currency] = '-'
@@ -266,6 +269,7 @@ select
 	, [HS Code] 
 	, [Material_Type] 
     , [WeaveTypeID]
+    , [ProductionType]
 	, [Color] 
 	, [Size] 
 	, [Currency] 
@@ -346,6 +350,7 @@ DROP TABLE #tmp, #PO_Supp_tmp, #lasttmp
                                               ,chinese_abb=d.AbbCH
 			                                  ,concat(mt.fabrictype2,'-',Fabric.MtlTypeID) Material_Type
                                               ,[WeaveTypeID] = Fabric.WeaveTypeID
+                                              ,MTL.ProductionType
                                               --,Hs_code=e.HsCode
                                               ,[HS Code]= FabricHsCode.value
                                               ,supp=c.SuppID
@@ -374,6 +379,7 @@ DROP TABLE #tmp, #PO_Supp_tmp, #lasttmp
                                        left join Fabric with(nolock) on Fabric.SCIRefno = a.SCIRefno
                                        left join dbo.Fabric_Supp d WITH (NOLOCK) on d.SCIRefno=a.SCIRefno and d.SuppID=c.SuppID
                                        left join dbo.Supp f WITH (NOLOCK) on f.id=c.SuppID
+                                       LEFT JOIN MtlType MTL WITH (NOLOCK) ON MTL.ID = fabric.MtlTypeID
                                         outer apply(select fabrictype2 = case a.FabricType 
 			                                            when 'F' then 'Fabric'
 			                                            when 'A'then 'Accessory'
@@ -405,6 +411,7 @@ DROP TABLE #tmp, #PO_Supp_tmp, #lasttmp
                                     	 , [Chinese Abb] = '-'
                                     	 , [Material_Type] = l.UnitID
                                          , [WeaveTypeID] = ''
+                                         , [ProductionType] = ''
                                     	 , [HS Code] = '-'
                                     	 , [Supp]  = c.ID 
                                     	 , [Supp Name] = '-'

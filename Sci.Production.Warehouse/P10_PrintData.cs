@@ -30,5 +30,6 @@
 
         public string Total { get; set; }
         public string ToneGrp { get; set; }
+        public string ActualWidth { get; set; }
     }
 }

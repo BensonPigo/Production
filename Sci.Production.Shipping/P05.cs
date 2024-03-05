@@ -312,9 +312,7 @@ where fwd.UKey ='{this.CurrentMaintain["ForwarderWhse_DetailUKey"]}'", out DataR
             this.btnRemark.Enabled = this.CurrentMaintain != null;
             this.btnRemark.ForeColor = !MyUtility.Check.Empty(this.CurrentMaintain["Remark"]) ? Color.Blue : Color.Black;
 
-            // ISP20231270
-            //this.btnMercuryShipment.Visible = this.CurrentMaintain["BrandID"].ToString().ToUpper() == "NIKE";
-            this.btnMercuryShipment.Visible = false;
+            this.btnMercuryShipment.Visible = this.CurrentMaintain["BrandID"].ToString().ToUpper() == "NIKE";
 
             #region AirPP List按鈕變色
             if (!this.EditMode)
@@ -672,15 +670,14 @@ where   pl.INVNo = '{0}'
         /// <inheritdoc/>
         protected override DualResult ClickDeletePost()
         {
-            // ISP20231270
-            //string sqlDeleteNikePostScanShipment = $@" delete NikePostScanShipment where InvNo = '{this.CurrentMaintain["ID"]}'";
+            string sqlDeleteNikePostScanShipment = $@" delete NikePostScanShipment where InvNo = '{this.CurrentMaintain["ID"]}'";
 
-            //DualResult result = DBProxy.Current.Execute(null, sqlDeleteNikePostScanShipment);
+            DualResult result = DBProxy.Current.Execute(null, sqlDeleteNikePostScanShipment);
 
-            //if (!result)
-            //{
-            //    return result;
-            //}
+            if (!result)
+            {
+                return result;
+            }
 
             return base.ClickDeletePost();
         }
