@@ -105,6 +105,7 @@ select selected = 0
        , [LackReason] = iif(a.PPICReasonID is null, '', CONCAT(a.PPICReasonID, '-', p.Description))
        , psd.Refno
        , [Color] = dbo.GetColorMultipleID_MtlType(psd.BrandID, isnull(psdsC.SpecValue ,''), Fabric.MtlTypeID, psd.SuppColor)
+       , [Grade] = phy.Grade 
 from dbo.Lack_Detail a WITH (NOLOCK) 
 inner join dbo.Lack b WITH (NOLOCK) on b.ID = a.ID
 inner join dbo.ftyinventory c WITH (NOLOCK) on c.poid = b.POID 
@@ -116,6 +117,13 @@ INNER JOIN Fabric with(nolock) on Fabric.SCIRefno = psd.SCIRefno
 LEFT JOIN PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
 left join PPICReason p with (nolock) on p.Type = 'FL' and p.ID = a.PPICReasonID
 LEFT JOIN Orders o ON o.ID=c.PoId
+outer apply
+(
+	select [Grade] = isnull(Grade,'') 
+    from FIR f
+	inner join FIR_Physical fp on fp.id = f.ID
+	where f.poid = c.POID and f.SEQ1 =c.Seq1 and f.SEQ2 =c.Seq2 and fp.Roll =c.Roll and fp.Dyelot = c.Dyelot
+) as phy
 Where a.id = '{this.dr_master["requestid"]}' 
 	  AND o.Category!='A'
 ");
@@ -135,7 +143,7 @@ Where a.id = '{this.dr_master["requestid"]}'
             DBProxy.Current.DefaultTimeout = 1200;
             try
             {
-                if (!PublicPrg.Prgs.SelectSet(string.Empty, strSQLCmd.ToString(), out data))
+                 if (!PublicPrg.Prgs.SelectSet(string.Empty, strSQLCmd.ToString(), out data))
                 {
                     this.ShowErr(strSQLCmd.ToString());
                     return;
@@ -250,6 +258,7 @@ Where a.id = '{this.dr_master["requestid"]}'
                 .Numeric("qty", header: "Issue Qty", decimal_places: 2, integer_places: 10, settings: ns) // 4
                 .Text("location", header: "Bulk Location", iseditingreadonly: true) // 5
                 .Text("Tone", header: "Tone/Grp", iseditingreadonly: true, width: Widths.AnsiChars(8))
+                .Text("Grade", header: "Grade", iseditingreadonly: true, width: Widths.AnsiChars(8))
                 ;
             this.gridLack_Detail.Columns["qty"].DefaultCellStyle.BackColor = Color.Pink;
             #endregion
