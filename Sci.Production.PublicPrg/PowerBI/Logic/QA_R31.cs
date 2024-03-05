@@ -908,7 +908,7 @@ WHERE 1=1
                 string sqlGetNeedDeleteFilterBase = $@"
 		select distinct ocl.OrderID, oqs.Seq
 		from OrderComparisonList ocl with (nolock)
-		inner join Order_QtyShip oqs with (nolock) on ocl.OrderId = oqs.Id
+		left join Order_QtyShip oqs with (nolock) on ocl.OrderId = oqs.Id
 		where	ocl.DeleteOrder = 1	and ocl.UpdateDate >= '{par.BIFilterDate.Value.ToString("yyyy/MM/dd")}'
 ";
                 base_ViewModel.Result = DBProxy.Current.Select("Production", sqlGetNeedDeleteFilterBase, out dtP_QA_CFAMasterListNeedDeleteFilterBase);
