@@ -636,47 +636,6 @@ SET @ErrorMessage = ''
 	SET @ErrDesc = ''
 
 /****************************************************************************************************************************/
-/***********************************P_ImportInlineDefec****************************************************************/
-BEGIN TRY
-	set @Stime = getdate()  
-	execute [dbo].[P_ImportInlineDefec]
-	set @Etime = getdate()
-END TRY
-
-BEGIN CATCH
-
-SET @ErrorMessage = 
-'
-[16-P_ImportInlineDefec]' + CHAR(13) +
-',錯誤代碼: ' + CONVERT(VARCHAR, ERROR_NUMBER()) + CHAR(13) +
-',錯誤行數: ' + CONVERT(VARCHAR, ERROR_LINE()) + CHAR(13) +
-',錯誤訊息: ' + ERROR_MESSAGE()
-
-SET @ErrDesc = '錯誤代碼: ' + CONVERT(VARCHAR, ERROR_NUMBER()) +
-',錯誤行數: ' + CONVERT(VARCHAR, ERROR_LINE())  +
-',錯誤訊息: ' + ERROR_MESSAGE()
-
-SET @ErrorStatus = 0
-
-END CATCH;
-IF (@ErrorMessage IS NULL or @ErrorMessage='')
-BEGIN 
-	set @desc += CHAR(13) + '
-[16-P_ImportInlineDefec] is completed' + ' Time:' + FORMAT(@Stime, 'yyyy/MM/dd HH:mm:ss') + ' - ' + FORMAT(@Etime, 'yyyy/MM/dd HH:mm:ss')
-END
-ELSE
-BEGIN
-	set @desc += CHAR(13) + @ErrorMessage
-END
-SET @ErrorMessage = ''
-
--- Write in P_TransLog
-	insert into P_TransLog(functionName,Description,StartTime,EndTime,TransCode) 
-	values('P_ImportInlineDefec',@ErrDesc,@Stime,@Etime,@TransCode)
-
-	SET @ErrDesc = ''
-
-/****************************************************************************************************************************/
 /***********************************P_ImportADIDASComplain_24Month****************************************************************/
 BEGIN TRY
 	set @Stime = getdate()  
@@ -758,46 +717,6 @@ SET @ErrorMessage = ''
 
 	SET @ErrDesc = ''
 
-/****************************************************************************************************************************/
-/***********************************P_ImportCuttingScheduleOutputList****************************************************************/
-BEGIN TRY
-	set @Stime = getdate()  
-	execute [dbo].[P_ImportCuttingScheduleOutputList]
-	set @Etime = getdate()
-END TRY
-
-BEGIN CATCH
-
-SET @ErrorMessage = 
-'
-[19-P_P_ImportCuttingScheduleOutputList]' + CHAR(13) +
-',錯誤代碼: ' + CONVERT(VARCHAR, ERROR_NUMBER()) + CHAR(13) +
-',錯誤行數: ' + CONVERT(VARCHAR, ERROR_LINE()) + CHAR(13) +
-',錯誤訊息: ' + ERROR_MESSAGE()
-
-SET @ErrDesc = '錯誤代碼: ' + CONVERT(VARCHAR, ERROR_NUMBER()) +
-',錯誤行數: ' + CONVERT(VARCHAR, ERROR_LINE())  +
-',錯誤訊息: ' + ERROR_MESSAGE()
-
-SET @ErrorStatus = 0
-
-END CATCH;
-IF (@ErrorMessage IS NULL or @ErrorMessage='')
-BEGIN 
-	set @desc += CHAR(13) + '
-[19-P_ImportCuttingScheduleOutputList] is completed' + ' Time:' + FORMAT(@Stime, 'yyyy/MM/dd HH:mm:ss') + ' - ' + FORMAT(@Etime, 'yyyy/MM/dd HH:mm:ss')
-END
-ELSE
-BEGIN
-	set @desc += CHAR(13) + @ErrorMessage
-END
-SET @ErrorMessage = ''
-
--- Write in P_TransLog
-	insert into P_TransLog(functionName,Description,StartTime,EndTime,TransCode) 
-	values('P_ImportCuttingScheduleOutputLists',@ErrDesc,@Stime,@Etime,@TransCode)
-
-	SET @ErrDesc = ''
 /****************************************************************************************************************************/
 /****************************P_Import_FabricStatus_And_IssueFabricTracking**********************************************************/
 BEGIN TRY
