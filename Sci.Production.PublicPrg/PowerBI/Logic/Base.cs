@@ -19,6 +19,8 @@ namespace Sci.Production.Prg.PowerBI.Logic
         {
             P_MonthlySewingOutputSummary,
             P_SewingLineSchedule,
+            P_InlineDefectSummary,
+            P_CuttingScheduleOutputList,
         }
 
         /// <summary>
@@ -183,18 +185,29 @@ namespace Sci.Production.Prg.PowerBI.Logic
         {
             DateTime? executeSDate = DateTime.Now;
             Base_ViewModel result = new Base_ViewModel();
-            switch (Enum.Parse(typeof(ListName), item.ClassName))
+
+            if (Enum.TryParse(item.ClassName, out ListName className))
             {
-                case ListName.P_MonthlySewingOutputSummary:
-                    result = new P_Import_MonthlySewingOutputSummary().P_MonthlySewingOutputSummary(item.SDate, item.EDate);
-                    break;
-                case ListName.P_SewingLineSchedule:
-                    result = new P_Import_SewingLineScheduleBIData().P_SewingLineScheduleBIData(item.SDate, item.EDate);
-                    break;
-                default:
-                    // Execute all Stored Procedures
-                    result = this.ExecuteSP(item);
-                    break;
+                switch (className)
+                {
+                    case ListName.P_MonthlySewingOutputSummary:
+                        result = new P_Import_MonthlySewingOutputSummary().P_MonthlySewingOutputSummary(item.SDate, item.EDate);
+                        break;
+                    case ListName.P_SewingLineSchedule:
+                        result = new P_Import_SewingLineScheduleBIData().P_SewingLineScheduleBIData(item.SDate, item.EDate);
+                        break;
+                    case ListName.P_InlineDefectSummary:
+                        result = new P_Import_InlineDefec().P_InlineDefecBIData(item.SDate, item.EDate);
+                        break;
+                    case ListName.P_CuttingScheduleOutputList:
+                        result = new P_Import_CuttingScheduleOutputList().P_CuttingScheduleOutputList(item.SDate, item.EDate);
+                        break;
+                }
+            }
+            else
+            {
+                // Execute all Stored Procedures
+                result = this.ExecuteSP(item);
             }
 
             DateTime? executeEDate = DateTime.Now;

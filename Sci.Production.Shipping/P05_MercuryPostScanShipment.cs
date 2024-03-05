@@ -3,21 +3,12 @@ using Sci.Data;
 using Sci.Production.Automation;
 using Sci.Production.Class.Command;
 using Sci.Production.Prg.Entity.NikeMercury;
-using Sci.Win.Tools;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Data.SqlClient;
-using System.Drawing;
 using System.Linq;
-using System.Reflection.Emit;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using static Ict.Win.UI.DirectoryView;
 using static Sci.Production.Prg.Entity.NikeMercury.RequestShipmentScannedCartonUploadLSP;
-using static Sci.Production.Prg.Entity.NikeMercury.RequestShipmentShippingDetailsUpdateLSP;
 
 namespace Sci.Production.Shipping
 {
@@ -36,10 +27,17 @@ namespace Sci.Production.Shipping
         {
             this.InitializeComponent();
 
+            string sqlGetLoadIndicator = $@"
+select  [LoadIndicator] =   case CYCFS    when 'CFS-CY'  then 'C'
+										  when 'CFS-CFS' then 'C'
+                                          when 'CY-CY'  then 'F'
+                            else '' end
+from GMTBooking with (nolock) where ID = '{invNo}'
+";
+
+            this.displayLoadIndicator.Text = MyUtility.GetValue.Lookup(sqlGetLoadIndicator, "Production");
+
             this.invNo = invNo;
-            this.comboLoadIndicator.Add("F", "F");
-            this.comboLoadIndicator.Add("C", "C");
-            this.comboLoadIndicator.SelectedIndex = 0;
 
             this.comboFactoryAddress.Add("SAP Default", "SAP Default");
             this.comboFactoryAddress.Add("FACTORY", "FACTORY");
@@ -71,7 +69,6 @@ namespace Sci.Production.Shipping
             {
                 this.btnCloseUnDo.Text = "Undo";
                 this.btnEditSave.Text = "Save";
-                this.txtContainerSealNumber.ReadOnly = this.comboLoadIndicator.Text == "C";
             }
             else
             {
@@ -84,16 +81,9 @@ namespace Sci.Production.Shipping
         {
             string sqlGetData = $@"
 select  ns.ShipmentNo
-        ,ns.ShippingDate
-        ,ns.TCPCode
         ,ns.LoadIndicator
         ,ns.TrackingNo
         ,ns.LSPBookingNumber
-        ,ns.FactoryInvoiceNbr
-        ,ns.FactoryInvoiceDate
-        ,ns.FSPCode
-        ,ns.LCReferenceNbr
-        ,ns.QAReferenceNbr
         ,l.NikeLSPCode
         ,l.Abb
         ,np.TCPLocation
@@ -125,19 +115,8 @@ where   ns.InvNo = '{this.invNo}'
             this.displayShipmentNo.Text = dtResult.Rows[0]["ShipmentNo"].ToString();
             this.displayNikeLSPCode.Text = dtResult.Rows[0]["NikeLSPCode"].ToString();
             this.displayLSPDesc.Text = dtResult.Rows[0]["Abb"].ToString();
-            this.dateShippingDate.Value = MyUtility.Convert.GetDate(dtResult.Rows[0]["ShippingDate"]);
-            this.txtPortOrgin.Text = dtResult.Rows[0]["TCPCode"].ToString();
-            this.displayPortOrginDesc.Text = dtResult.Rows[0]["TCPLocation"].ToString();
-            this.comboLoadIndicator.SelectedIndex = this.comboLoadIndicator.FindString(dtResult.Rows[0]["LoadIndicator"].ToString());
+            this.displayLoadIndicator.Text = dtResult.Rows[0]["LoadIndicator"].ToString();
             this.txtTrackingContainer.Text = dtResult.Rows[0]["TrackingNo"].ToString();
-            this.txtLSPBookingNumber.Text = dtResult.Rows[0]["LSPBookingNumber"].ToString();
-            this.txtFactoryInvoiceNbr.Text = dtResult.Rows[0]["FactoryInvoiceNbr"].ToString();
-            this.dateFactoryInvoiceDate.Value = MyUtility.Convert.GetDate(dtResult.Rows[0]["FactoryInvoiceDate"]);
-            this.txtFSP.Text = dtResult.Rows[0]["FSPCode"].ToString();
-            this.displayFSPDesc.Text = dtResult.Rows[0]["FSPDesc"].ToString();
-            this.txtLCReferenceNbr.Text = dtResult.Rows[0]["LCReferenceNbr"].ToString();
-            this.txtQAReferenceNbr.Text = dtResult.Rows[0]["QAReferenceNbr"].ToString();
-            this.txtContainerSealNumber.Text = dtResult.Rows[0]["ContainerSealNumber"].ToString();
 
             if (MyUtility.Check.Empty(this.displayShipmentNo.Text))
             {
@@ -146,46 +125,6 @@ where   ns.InvNo = '{this.invNo}'
             else
             {
                 this.btnCreateUpdateShipment.Text = "Update Shipment";
-            }
-        }
-
-        private void TxtPortOrgin_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
-        {
-            string sqlNikePortCityList = "select TCPCode, TCPLocation from NikePortCityList with (nolock) where junk = 0";
-            SelectItem selectItem = new SelectItem(sqlNikePortCityList, null, string.Empty, headercaptions: "TCP Code,TCP Location");
-
-            DialogResult dialogResult = selectItem.ShowDialog();
-
-            if (dialogResult != DialogResult.OK)
-            {
-                return;
-            }
-
-            this.txtPortOrgin.Text = selectItem.GetSelecteds()[0]["TCPCode"].ToString();
-            this.displayPortOrginDesc.Text = selectItem.GetSelecteds()[0]["TCPLocation"].ToString();
-        }
-
-        private void TxtPortOrgin_Validating(object sender, CancelEventArgs e)
-        {
-            if (this.txtPortOrgin.OldValue == this.txtPortOrgin.Text)
-            {
-                return;
-            }
-
-            if (MyUtility.Check.Empty(this.txtPortOrgin.Text))
-            {
-                this.displayPortOrginDesc.Text = string.Empty;
-                return;
-            }
-
-            string portOrginDesc = MyUtility.GetValue.Lookup($"select TCPLocation from NikePortCityList with (nolock) where TCPCode = '{this.txtPortOrgin.Text}' and junk = 0");
-            this.displayPortOrginDesc.Text = portOrginDesc;
-
-            if (MyUtility.Check.Empty(portOrginDesc))
-            {
-                MyUtility.Msg.WarningBox($"<{this.txtPortOrgin.Text}> not exist in Nike Port City List.");
-                e.Cancel = true;
-                return;
             }
         }
 
@@ -204,46 +143,6 @@ where   ns.InvNo = '{this.invNo}'
             }
         }
 
-        private void TxtFSP_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
-        {
-            string sqlNikeFSPList = "select FSPCode, FSPDesc from NikeFSPList with (nolock) where junk = 0";
-            SelectItem selectItem = new SelectItem(sqlNikeFSPList, null, string.Empty, headercaptions: "FSP Code,FSP Desc");
-
-            DialogResult dialogResult = selectItem.ShowDialog();
-
-            if (dialogResult != DialogResult.OK)
-            {
-                return;
-            }
-
-            this.txtFSP.Text = selectItem.GetSelecteds()[0]["FSPCode"].ToString();
-            this.displayFSPDesc.Text = selectItem.GetSelecteds()[0]["FSPDesc"].ToString();
-        }
-
-        private void TxtFSP_Validating(object sender, CancelEventArgs e)
-        {
-            if (this.txtFSP.OldValue == this.txtFSP.Text)
-            {
-                return;
-            }
-
-            if (MyUtility.Check.Empty(this.txtFSP.Text))
-            {
-                this.displayFSPDesc.Text = string.Empty;
-                return;
-            }
-
-            string fSPDesc = MyUtility.GetValue.Lookup($"select FSPDesc from NikeFSPList with (nolock) where FSPCode = '{this.txtFSP.Text}' and junk = 0");
-            this.displayFSPDesc.Text = fSPDesc;
-
-            if (MyUtility.Check.Empty(fSPDesc))
-            {
-                MyUtility.Msg.WarningBox($"<{this.txtFSP.Text}> not exist in Nike FSP List.");
-                e.Cancel = true;
-                return;
-            }
-        }
-
         private void BtnEditSave_Click(object sender, EventArgs e)
         {
             // Clck Edit
@@ -258,17 +157,8 @@ where   ns.InvNo = '{this.invNo}'
             {
                 new SqlParameter("@InvNo", this.invNo),
                 new SqlParameter("@ShipmentNo", this.displayShipmentNo.Text),
-                new SqlParameter("@ShippingDate", this.dateShippingDate.Value != null ? (object)this.dateShippingDate.Value : DBNull.Value),
-                new SqlParameter("@TCPCode", this.txtPortOrgin.Text),
-                new SqlParameter("@LoadIndicator", this.comboLoadIndicator.Text),
+                new SqlParameter("@LoadIndicator", this.displayLoadIndicator.Text),
                 new SqlParameter("@TrackingNo", this.txtTrackingContainer.Text),
-                new SqlParameter("@LSPBookingNumber", this.txtLSPBookingNumber.Text),
-                new SqlParameter("@FactoryInvoiceNbr", this.txtFactoryInvoiceNbr.Text),
-                new SqlParameter("@FactoryInvoiceDate", this.dateFactoryInvoiceDate.Value != null ? (object)this.dateFactoryInvoiceDate.Value : DBNull.Value),
-                new SqlParameter("@FSPCode", this.txtFSP.Text),
-                new SqlParameter("@LCReferenceNbr", this.txtLCReferenceNbr.Text),
-                new SqlParameter("@QAReferenceNbr", this.txtQAReferenceNbr.Text),
-                new SqlParameter("@ContainerSealNumber", this.txtContainerSealNumber.Text),
             };
 
             string sqlSaveNikePostScanShipment = @"
@@ -276,47 +166,20 @@ if exists(select 1 from NikePostScanShipment where InvNo = @InvNo)
 begin
     update  NikePostScanShipment
     set ShipmentNo          = @ShipmentNo
-        ,ShippingDate       = @ShippingDate
-        ,TCPCode            = @TCPCode
         ,LoadIndicator      = @LoadIndicator
         ,TrackingNo         = @TrackingNo
-        ,LSPBookingNumber   = @LSPBookingNumber
-        ,FactoryInvoiceNbr  = @FactoryInvoiceNbr
-        ,FactoryInvoiceDate = @FactoryInvoiceDate
-        ,FSPCode            = @FSPCode
-        ,LCReferenceNbr     = @LCReferenceNbr
-        ,QAReferenceNbr     = @QAReferenceNbr
-        ,ContainerSealNumber = @ContainerSealNumber
     where   InvNo = @InvNo
 end
 else
 begin
     insert into NikePostScanShipment(InvNo
                                     ,ShipmentNo
-                                    ,ShippingDate
-                                    ,TCPCode
                                     ,LoadIndicator
-                                    ,TrackingNo
-                                    ,LSPBookingNumber
-                                    ,FactoryInvoiceNbr
-                                    ,FactoryInvoiceDate
-                                    ,FSPCode
-                                    ,LCReferenceNbr
-                                    ,QAReferenceNbr
-                                    ,ContainerSealNumber)
+                                    ,TrackingNo)
     values( @InvNo
              ,@ShipmentNo
-             ,@ShippingDate
-             ,@TCPCode
              ,@LoadIndicator
-             ,@TrackingNo
-             ,@LSPBookingNumber
-             ,@FactoryInvoiceNbr
-             ,@FactoryInvoiceDate
-             ,@FSPCode
-             ,@LCReferenceNbr
-             ,@QAReferenceNbr
-             ,@ContainerSealNumber)
+             ,@TrackingNo)
 end
 ";
 
@@ -374,7 +237,7 @@ end
         private DualResult CreateShipment()
         {
             if (MyUtility.Check.Empty(this.displayNikeLSPCode.Text) ||
-                MyUtility.Check.Empty(this.comboLoadIndicator.Text) ||
+                MyUtility.Check.Empty(this.displayLoadIndicator.Text) ||
                 MyUtility.Check.Empty(this.txtTrackingContainer.Text))
             {
                 return new DualResult(false, "<LSP>, <Load Indicator>, <Tracking#/Container#> cannot be empty.");
@@ -409,15 +272,9 @@ where p.InvNo = '{this.invNo}'
             RequestShipmentScannedCartonUploadLSP.Input shipmentInfo = new RequestShipmentScannedCartonUploadLSP.Input()
             {
                 LSPCode = this.displayNikeLSPCode.Text,
-                ShipmentDate = this.dateShippingDate.Value.HasValue ? this.dateShippingDate.Value.ToStringEx("yyyy-MM-dd") : null,
-                PortofOrigin = this.txtPortOrgin.Text,
-                LoadIndicator = this.comboLoadIndicator.Text,
+                LoadIndicator = this.displayLoadIndicator.Text,
                 Trackingnumber = this.txtTrackingContainer.Text,
-                LSPBookingNumber = this.txtLSPBookingNumber.Text,
-                ContainerSealNumber = MyUtility.Check.Empty(this.txtContainerSealNumber.Text) ? null : this.txtContainerSealNumber.Text,
                 ContainerType = " ",
-                InvoiceNumber = this.txtFactoryInvoiceNbr.Text,
-                InvoiceDate = this.dateFactoryInvoiceDate.Value.HasValue ? this.dateFactoryInvoiceDate.Value.ToStringEx("yyyy-MM-dd") : null,
                 ScannerID = "Admin",
                 CartonNumberList = new CartonNumberList()
                 {
@@ -448,20 +305,13 @@ where p.InvNo = '{this.invNo}'
 
             this.Query();
 
-            if (MyUtility.Check.Empty(this.txtFSP.Text))
-            {
-                return new DualResult(true);
-            }
-
-            // 有維護FSP，繼續作UpdateShipment
-            return this.UpdateShipment();
+            return new DualResult(true);
         }
 
         private DualResult UpdateShipment()
         {
             if (MyUtility.Check.Empty(this.displayShipmentNo.Text) ||
-                MyUtility.Check.Empty(this.txtTrackingContainer.Text) ||
-                MyUtility.Check.Empty(this.txtFSP.Text))
+                MyUtility.Check.Empty(this.txtTrackingContainer.Text))
             {
                 return new DualResult(false, "<Shipment Nbr>, <Tracking#/Container#>, <FSP> cannot be empty.");
             }
@@ -472,25 +322,8 @@ where p.InvNo = '{this.invNo}'
                 ShippingDetail = new RequestShipmentShippingDetailsUpdateLSP.ShippingDetail()
                 {
                     FactoryHubShipmentNumber = this.displayShipmentNo.Text,
-                    ShipmentDate = this.dateShippingDate.Value.HasValue ? this.dateShippingDate.Value.ToStringEx("yyyy-MM-dd") : null,
-                    PortofOrigin = this.txtPortOrgin.Text,
-                    LoadIndicator = this.comboLoadIndicator.Text,
+                    LoadIndicator = this.displayLoadIndicator.Text,
                     Trackingnumber = this.txtTrackingContainer.Text,
-                    ContainerSealNumber = this.txtContainerSealNumber.Text,
-                    FSPCode = this.txtFSP.Text,
-                },
-                FinancialList = new FinancialList()
-                {
-                    FinancialDetails = new List<FinancialDetails>()
-                    {
-                        new FinancialDetails()
-                        {
-                            LSPBookingNumber = this.txtLSPBookingNumber.Text,
-                            InvoiceNumber = this.txtFactoryInvoiceNbr.Text,
-                            LCReferenceNbr = this.txtLCReferenceNbr.Text,
-                            OAReferenceNbr = this.txtQAReferenceNbr.Text,
-                        },
-                    },
                 },
             };
 
@@ -512,22 +345,6 @@ where p.InvNo = '{this.invNo}'
                 ShipmentNo = this.displayShipmentNo.Text
             };
             DualResult result = WebServiceNikeMercury.StaticService.ShipmentCommercialDocumentsBinaryArrayPDF(docInfo);
-        }
-
-        private void ComboLoadIndicator_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            if (this.comboLoadIndicator.SelectedIndex == -1 || !this.EditMode)
-            {
-                return;
-            }
-
-            this.txtContainerSealNumber.ReadOnly = false;
-
-            if (this.comboLoadIndicator.Text == "C")
-            {
-                this.txtContainerSealNumber.Text = string.Empty;
-                this.txtContainerSealNumber.ReadOnly = true;
-            }
         }
     }
 }

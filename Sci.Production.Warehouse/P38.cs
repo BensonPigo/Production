@@ -180,6 +180,7 @@ namespace Sci.Production.Warehouse
                 .Text("lockname", header: "Lock/Unlock" + Environment.NewLine + "Name", width: Widths.AnsiChars(8), iseditingreadonly: true)
                 .EditText("Remark", header: "Remark", width: Widths.AnsiChars(12), iseditingreadonly: false, settings: remark)
                 .Text("FIR", header: "FIR", width: Widths.AnsiChars(5), iseditingreadonly: true)
+                .Text("Grade", header: "Grade", width: Widths.AnsiChars(5), iseditingreadonly: true)
                 .Text("Scale", header: "Shade Band\r\nScale", width: Widths.AnsiChars(5), iseditingreadonly: true)
                 .Text("Tone", header: "Shade Band\r\nTone/Grp", width: Widths.AnsiChars(8), iseditingreadonly: true)
                 .Text("PointRate", header: "Point rate\n\rper 100yds", width: Widths.AnsiChars(2), iseditingreadonly: true)
@@ -704,10 +705,11 @@ inner join #tmp_FtyInventory fi on a.POID= fi.POID	and a.SEQ1 =fi.Seq1 and a.SEQ
 
 --#tmp_PointRate
 SELECT POID,seq1,seq2,roll,Dyelot ,[PointRate]=ISNULL(Cast(FIR.PointRate as varchar),'Blank')
+,FIR.Grade
 INTO #tmp_PointRate
 FROM #tmp_FtyInventory t
 OUTER APPLY(
-	select fp.PointRate
+	select fp.PointRate,fp.Grade
 	from FIR f
 	left join FIR_Physical fp on fp.ID = f.ID
 	WHERE 	f.POID = t.POID
@@ -724,24 +726,25 @@ select distinct fi.*
                         when 'I' then 'Inventory' 
                         else fi.StockType 
                        end 
-	 ,[FIR] = case when fi.sFabricType='A' then iif(Air.Result ='','Blank',Air.Result)
+	,[FIR] = case when fi.sFabricType='A' then iif(Air.Result ='','Blank',Air.Result)
 				   else FIR_Result1.Result end
-		,[PointRate]=IIF(fi.FabricType='Accessory','',PointRate.PointRate)
-		,[WashLab Report] = case when fi.sFabricType='A' then iif(Air_Lab.Result='','Blank',Air_Lab.Result)
+    ,[Grade] = isnull(PointRate.Grade,'')
+	,[PointRate]=IIF(fi.FabricType='Accessory','',PointRate.PointRate)
+	,[WashLab Report] = case when fi.sFabricType='A' then iif(Air_Lab.Result='','Blank',Air_Lab.Result)
 							when WashLab.FLResult='Fail' or WashLab.ovenResult='Fail' or WashLab.cfResult='Fail'
 								then 'Fail'
 							when WashLab.FLResult is null and WashLab.ovenResult is null and WashLab.cfResult is null 
 								then 'Blank'
 							else 'Pass' end 
-        ,f3.Scale, f3.Tone
-        ,[ForInspection] = IIf(rdValue.ForInspection = '1', 'Y', IIf(tdValue.ForInspection = '1', 'Y', ''))
+    ,f3.Scale, f3.Tone
+    ,[ForInspection] = IIf(rdValue.ForInspection = '1', 'Y', IIf(tdValue.ForInspection = '1', 'Y', ''))
 from #tmp_FtyInventory fi
 left join #tmp_FIR_Result1 FIR_Result1 on FIR_Result1.POID=fi.POID	and FIR_Result1.SEQ1 = fi.Seq1 and FIR_Result1.SEQ2 = fi.Seq2 and FIR_Result1.Dyelot=fi.Dyelot AND FIR_Result1.Roll=fi.Roll 
 left join #tmp_FIR_3 f3 on f3.POID=fi.POID	and f3.SEQ1 = fi.Seq1 and f3.SEQ2 = fi.Seq2 and f3.Dyelot=fi.Dyelot AND f3.Roll=fi.Roll
 left join #tmp_WashLab WashLab on WashLab.POID= fi.POID	and WashLab.SEQ1 =fi.Seq1 and WashLab.SEQ2 = fi.Seq2 
 left join #tmp_Air Air on Air.POID= fi.POID	and Air.SEQ1 =fi.Seq1 and Air.SEQ2 = fi.Seq2  
 left join #tmp_Air_Lab Air_Lab on Air_Lab.POID= fi.POID	and Air_Lab.SEQ1 =fi.Seq1 and Air_Lab.SEQ2 = fi.Seq2  
-left join #tmp_PointRate PointRate on PointRate.POID=fi.POID	and PointRate.SEQ1 = fi.Seq1 and PointRate.SEQ2 = fi.Seq2 and PointRate.Roll=fi.Roll and PointRate.Dyelot=fi.Dyelot   
+left join #tmp_PointRate PointRate on PointRate.POID=fi.POID and PointRate.SEQ1 = fi.Seq1 and PointRate.SEQ2 = fi.Seq2 and PointRate.Roll=fi.Roll and PointRate.Dyelot=fi.Dyelot   
 outer apply
 (	select top 1 [ForInspection] = isnull(ForInspection,'') from
 	Receiving_Detail rd where rd.POID=fi.POID and rd.SEQ1 = fi.Seq1 and rd.SEQ2 = fi.Seq2 and rd.Roll=fi.Roll and rd.Dyelot=fi.Dyelot and rd.StockType = fi.stocktype 																 
