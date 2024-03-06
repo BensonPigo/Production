@@ -38,12 +38,14 @@ namespace Sci.Production.Quality
 
             this.Helper.Controls.Grid.Generator(this.grid1)
                  .CheckBox("Selected", header: string.Empty, trueValue: 1, falseValue: 0, settings: col_Select)
-                 .Text("MINDQRCode", header: "MINDQRCode", width: Widths.AnsiChars(20), iseditingreadonly: true)
+                 .Text("MINDQRCode", header: "MINDQRCode", width: Widths.AnsiChars(18), iseditingreadonly: true)
                  .DateTime("ScanTime", header: "Scan Time", width: Widths.AnsiChars(20), iseditingreadonly: true)
                  .Text("POID", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
-                 .Text("SEQ", header: "SEQ", width: Widths.AnsiChars(8), iseditingreadonly: true)
+                 .Text("SEQ", header: "SEQ", width: Widths.AnsiChars(7), iseditingreadonly: true)
+                 .Text("Roll", header: "Roll", width: Widths.AnsiChars(8), iseditingreadonly: true)
+                 .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(8), iseditingreadonly: true)
                  .Text("ReceivingID", header: "ReceivingID", width: Widths.AnsiChars(16), iseditingreadonly: true)
-                 .Text("ExportID", header: "WK#", width: Widths.AnsiChars(20), iseditingreadonly: true)
+                 .Text("ExportID", header: "WK#", width: Widths.AnsiChars(16), iseditingreadonly: true)
                  ;
         }
 
@@ -128,6 +130,9 @@ WHERE rd.MINDQRCode = @MINDQRCode
 
             this.listControlBindingSource1.DataSource = this.dt;
             this.txtScanQRCode.Text = string.Empty;
+
+            // 調整順序 倒序ScanTime
+            ((DataTable)this.listControlBindingSource1.DataSource).DefaultView.Sort = " ScanTime desc";
             e.Cancel = true;
         }
 
