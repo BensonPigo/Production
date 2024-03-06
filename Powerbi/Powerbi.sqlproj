@@ -155,7 +155,6 @@
     <Build Include="dbo\Tables\T_MtlStatusAnalisis.sql" />
     <Build Include="dbo\Tables\T_MtltoFTYAnalysis.sql" />
     <Build Include="dbo\Stored Procedures\FTY\P_ImportOustandingPO_Fty.sql" />
-    <Build Include="dbo\Stored Procedures\FTY\P_Import_QA_R31.sql" />
     <Build Include="dbo\Tables\P_SubProInsReport.sql" />
     <Build Include="dbo\Stored Procedures\FTY\P_ImportSubProInsReport.sql" />
     <Build Include="dbo\Tables\T_ArtworkType.sql" />
@@ -224,6 +223,7 @@
     <Build Include="dbo\Tables\BITaskInfo.sql" />
     <Build Include="dbo\Stored Procedures\FTY\P_Import_LoadingProductionOutput.sql" />
     <Build Include="dbo\Stored Procedures\FTY\P_Import_EfficiencyBI.sql" />
+    <Build Include="dbo\Tables\P_QA_CFAMasterList.sql" />
     <Build Include="dbo\Tables\P_CartonScanRate.sql" />
   </ItemGroup>
   <ItemGroup>
