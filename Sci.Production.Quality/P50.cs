@@ -1,19 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Data;
+using System.Data.SqlClient;
+using System.IO;
+using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using Ict;
 using Ict.Win;
 using Sci.Data;
-using System.IO;
-using System.Data.SqlClient;
 using Sci.Production.Class;
 using Sci.Production.Class.Command;
-using static Ict.Win.UI.DataGridView;
-using Ict.Win.Defs;
-//using Microsoft.Office.Interop.Excel;
 
 namespace Sci.Production.Quality
 {
@@ -963,7 +960,10 @@ Outer apply (
 		FOR XML PATH (''))
 	, 1, 1, '')
 ) MergedBrand
-Where documentName = @documentName and brandID = @brandID and m.FileRule in ('1','2') and m.junk = 0
+Where documentName = @documentName 
+and brandID = @brandID 
+and m.FileRule in ('1','2') 
+and m.junk = 0
 ";
 
             var res = DBProxy.Current.SeekEx(cmd, "documentName", this.cboDocumentname.Text, "brandID", this.txtBrand1.Text);
@@ -980,10 +980,6 @@ Where documentName = @documentName and brandID = @brandID and m.FileRule in ('1'
             }
 
             this.drBasic = res.ExtendedData;
-
-            // this.UI_grid.IsEditingReadOnly = this.drBasic["Responsibility"].ToString() != "T";
-            // this.BtnFileUpload.Enabled = this.drBasic["Responsibility"].ToString() == "T";
-            // this.BtnUpdate.Enabled = this.drBasic["Responsibility"].ToString() == "T";
             this.colColorID.Visible = this.drBasic["FileRule"].ToString() != "1";
             this.colColorDesc.Visible = this.drBasic["FileRule"].ToString() != "1";
 
@@ -1052,6 +1048,8 @@ Where documentName = @documentName and brandID = @brandID and m.FileRule in ('1'
             parmes.Add(new SqlParameter() { ParameterName = "@brandID", SqlDbType = SqlDbType.VarChar, Size = 8, Value = this.txtBrand1.Text });
             parmes.Add(new SqlParameter() { ParameterName = "@FileRule", SqlDbType = SqlDbType.Int, Value = this.drBasic["FileRule"] });
             #endregion
+
+            #region 查詢條件
             if (this.txtRefno.Text != string.Empty)
             {
                 conditions.AppendLine(" And f.Refno = @SearchRefno");
@@ -1094,116 +1092,216 @@ Where documentName = @documentName and brandID = @brandID and m.FileRule in ('1'
                 parmes.Add(new SqlParameter() { ParameterName = "@pchandle", SqlDbType = SqlDbType.VarChar, Size = 10, Value = this.txtUser1.TextBox1.Text });
             }
 
-            string sql = $@"
-            SELECT
-	            RowNo = ROW_NUMBER() OVER (ORDER BY Month)
-               ,ID INTO #probablySeasonList
-            FROM(
-                Select DISTINCT Month, ID
-                From Season 
-                where BrandID = @brandID or BrandID in (select MergedBrand From MaterialDocument_Brand Where DocumentName = @documentName and BrandID = @BrandID)
-            )a
+            parmes.Add(new SqlParameter() { ParameterName = "@Responsibility", SqlDbType = SqlDbType.VarChar, Size = 50, Value = this.drBasic["Responsibility"] });
+            #endregion
 
-            select  
-              TestReportTestDate = CONVERT(VARCHAR(10), sr.TestReportTestDate, 23)
-	           ,TestReport = CONVERT(VARCHAR(10), sr.TestReport, 23)
-               ,SuppID = s2.ID
-		       ,Supplier = IIF(Isnull(s2.AbbEN, '') = '', s2.ID, Concat(s2.ID, '-', s2.AbbEN))
-               ,Refno = f.Refno
-		       ,SCIRefNo = f.SCIRefNo
-		       ,f.BrandRefNo
-               ,ColorID = iif(@FileRule = 1, '', Color.ID)
-               ,ColorDesc = iif(@FileRule = 1, '', Color.Name)
-               ,sr.TestSeasonID
-               ,sr.DueSeason
-               ,sr.DueDate
-               ,sr.AddName
-               ,sr.AddDate
-               ,sr.EditName
-               ,sr.EditDate
-               ,sr.Ukey
-               ,sr.UniqueKey
-               ,[SeasonRow] = seasonList.RowNo
-               ,canModify = CAST(iif((chkNoRes.value is null and '{this.drBasic["Responsibility"]}' = 'F') or chkNoRes.value = 'F', 1, 0) AS BIT)
-               ,FactoryID = o.FtyGroup
-             INTO #tmp
-             from PO_Supp_Detail po3 WITH (NOLOCK)
-             LEFT JOIN PO_Supp_Detail stockPO3 with (nolock) on iif(po3.StockPOID >'', 1, 0) = 0 AND stockPO3.ID =  po3.StockPOID
-			        and stockPO3.Seq1 = po3.StockSeq1
-			        and stockPO3.Seq2 = po3.StockSeq2	        
-             INNER JOIN Orders o with(nolock) on o.ID = IIF(IsNull(po3.StockPOID, '') = '' , po3.ID, stockPO3.ID)
-             inner join Fabric f WITH (NOLOCK) on f.SCIRefno =  IIF(IsNull(po3.StockPOID, '') = '' , po3.SCIRefno, stockPO3.SCIRefno)
-             inner join PO_Supp po2 WITH (NOLOCK) on po2.ID = o.ID and po2.Seq1 = IIF(IsNull(po3.StockPOID, '') = '' , po3.Seq1, stockPO3.Seq1)
-             inner join PO WITH (NOLOCK) on po.ID = po2.ID 
-             INNER JOIN Season WITH (NOLOCK) on o.SeasonID = Season.ID and o.BrandID = Season.BrandID
-		     INNER JOIN Style s WITH(NOLOCK) on s.Ukey = o.StyleUkey		 
-             Inner Join Supp WITH (NOLOCK) on po2.SuppID = Supp.ID
-             INNER Join dbo.BrandRelation as bs WITH (NOLOCK) ON bs.BrandID = o.BrandID and bs.SuppID = Supp.ID
-             Inner Join Supp s2 WITH (NOLOCK) on s2.ID = bs.SuppGroup 
-             Outer Apply(
-                  SELECT Color FROM GetPo3Spec(IIF(IsNull(po3.StockPOID, '') = '' , po3.ID, stockPO3.ID),IIF(IsNull(po3.StockPOID, '') = '' , po3.Seq1, stockPO3.Seq1),IIF(IsNull(po3.StockPOID, '') = '' , po3.Seq2, stockPO3.Seq2)) po3Spec
-             )po3Spec
-             LEFT JOIN  Color WITH (NOLOCK) ON Color.BrandId = o.BrandID AND Color.ID = po3Spec.Color
-             {(this.chkUploadRecord.Checked ? "Inner" : "LEFT")} JOIN UASentReport sr WITH (NOLOCK) on sr.SuppID = s2.ID  and sr.BrandRefno = f.BrandRefNo and (@FileRule = 1 or (@FileRule = 2 and sr.ColorID = Color.ID)) and sr.BrandID = o.BrandID and sr.DocumentName = @DocumentName
-             Left join #probablySeasonList seasonList on seasonList.ID = sr.TestSeasonID
-             Outer apply(
-                    select top 1 value = Responsibility FROM MaterialDocument_Responsbility where DocumentName = @documentName and BrandID = @brandID and SuppID = s2.ID
-             )chkNoRes
-	         where o.Junk = 0
-                and o.Qty > 0
-                and po2.SuppID <> 'FTY'
-                and IIF(IsNull(po3.StockPOID, '') = '' , po3.Junk, stockPO3.Junk)  = 0        
-	            and IIF(IsNull(po3.StockPOID, '') = '' , po3.Qty, stockPO3.Qty) > 0
-                and (o.BrandID = @BrandID or o.BrandID in (select MergedBrand From MaterialDocument_Brand Where DocumentName = @documentName and BrandID = @BrandID))
-                and s.DevOption = 0
-                and {conditions}
-          
-            SELECT DISTINCT
-	                CAST(0 AS BIT) sel
-	               ,TestReportTestDate
-	               ,TestReport 
-                   ,SuppID 
-		           ,Supplier 
-                   ,Refno = min(Refno)
-		           ,BrandRefNo
-                   ,ColorID 
-                   ,ColorDesc 
-                   ,TestSeasonID
-                   ,DueSeason
-                   ,DueDate
-                   ,AddName
-                   ,AddDate
-                   ,EditName
-                   ,EditDate
-                   ,Ukey
-                   ,UniqueKey
-                   ,[SeasonRow]	
-                   ,canModify
-                   ,FactoryID
-	         FROM #tmp
-             GROUP BY TestReportTestDate
-	               ,TestReport 
-                   ,SuppID 
-		           ,Supplier 
-		           ,BrandRefNo
-                   ,ColorID 
-                   ,ColorDesc 
-                   ,TestSeasonID
-                   ,DueSeason
-                   ,DueDate
-                   ,AddName
-                   ,AddDate
-                   ,EditName
-                   ,EditDate
-                   ,Ukey
-                   ,UniqueKey
-                   ,[SeasonRow]	
-                   ,canModify
-                   ,FactoryID
-	         Order By BrandRefNo,ColorID";
+            // 品牌共用
+            string sql = @"
+SELECT BrandID 
+From MaterialDocument_Brand 
+Where DocumentName = @documentName 
+and MergedBrand = @BrandID
+";
+            DataTable dtBrand;
+            var result = DBProxy.Current.Select(string.Empty, sql, parmes, out dtBrand);
+            if (!result)
+            {
+                this.ShowErr(result);
+                return;
+            }
+
+            // 物料清單同一種料且同色只會出現一次,就算是品牌共用也只會有一筆
+            string mainSql = $@"
+select  distinct
+    o.SeasonID
+    ,SuppID = s2.ID
+	,Supplier = IIF(Isnull(s2.AbbEN, '') = '', s2.ID, Concat(s2.ID, '-', s2.AbbEN))
+    ,Refno = f.Refno
+	,SCIRefNo = f.SCIRefNo
+	,f.BrandRefNo
+    ,ColorID = iif(@FileRule = 1, '', Color.ID)
+    ,ColorDesc = iif(@FileRule = 1, '', Color.Name)
+    ,canModify = CAST(iif((chkNoRes.value is null and @Responsibility = 'F') or chkNoRes.value = 'F', 1, 0) AS BIT)
+    ,FactoryID = o.FtyGroup 
+    ,[SeasonRow] = seasonList.RowNo
+    from PO_Supp_Detail po3 WITH (NOLOCK)
+    LEFT JOIN PO_Supp_Detail stockPO3 with (nolock) on iif(po3.StockPOID >'', 1, 0) = 0 AND stockPO3.ID =  po3.StockPOID
+		and stockPO3.Seq1 = po3.StockSeq1
+		and stockPO3.Seq2 = po3.StockSeq2	        
+    INNER JOIN Orders o with(nolock) on o.ID = IIF(IsNull(po3.StockPOID, '') = '' , po3.ID, stockPO3.ID)
+    inner join Fabric f WITH (NOLOCK) on f.SCIRefno =  IIF(IsNull(po3.StockPOID, '') = '' , po3.SCIRefno, stockPO3.SCIRefno)
+    inner join PO_Supp po2 WITH (NOLOCK) on po2.ID = o.ID and po2.Seq1 = IIF(IsNull(po3.StockPOID, '') = '' , po3.Seq1, stockPO3.Seq1)
+    inner join PO WITH (NOLOCK) on po.ID = po2.ID 
+    INNER JOIN Season WITH (NOLOCK) on o.SeasonID = Season.ID and o.BrandID = Season.BrandID
+	INNER JOIN Style s WITH(NOLOCK) on s.Ukey = o.StyleUkey		 
+    Inner Join Supp WITH (NOLOCK) on po2.SuppID = Supp.ID
+    INNER Join dbo.BrandRelation as bs WITH (NOLOCK) ON bs.BrandID = o.BrandID and bs.SuppID = Supp.ID
+    Inner Join Supp s2 WITH (NOLOCK) on s2.ID = bs.SuppGroup 
+    Outer Apply(
+        SELECT Color FROM GetPo3Spec(IIF(IsNull(po3.StockPOID, '') = '' , po3.ID, stockPO3.ID),IIF(IsNull(po3.StockPOID, '') = '' , po3.Seq1, stockPO3.Seq1),IIF(IsNull(po3.StockPOID, '') = '' , po3.Seq2, stockPO3.Seq2)) po3Spec
+    )po3Spec
+    LEFT JOIN  Color WITH (NOLOCK) ON Color.BrandId = o.BrandID AND Color.ID = po3Spec.Color
+  
+    Left join #probablySeasonList seasonList on seasonList.ID = Season.ID
+    Outer apply(
+        select top 1 value = Responsibility 
+        FROM MaterialDocument_Responsbility 
+        where DocumentName = @documentName 
+        and BrandID = @brandID 
+        and SuppID = s2.ID
+    )chkNoRes
+	where o.Junk = 0
+    and o.Qty > 0
+    and po2.SuppID <> 'FTY'
+    and IIF(IsNull(po3.StockPOID, '') = '' , po3.Junk, stockPO3.Junk)  = 0        
+	and IIF(IsNull(po3.StockPOID, '') = '' , po3.Qty, stockPO3.Qty) > 0
+    and s.DevOption = 0
+    and o.BrandID = @BrandID
+    and {conditions}
+";
+
+            foreach (DataRow dr in dtBrand.Rows)
+            {
+                mainSql += $@"
+UNION
+select  distinct
+     o.SeasonID
+    ,SuppID = s2.ID
+	,Supplier = IIF(Isnull(s2.AbbEN, '') = '', s2.ID, Concat(s2.ID, '-', s2.AbbEN))
+    ,Refno = f.Refno
+	,SCIRefNo = f.SCIRefNo
+	,f.BrandRefNo
+    ,ColorID = iif(@FileRule = 1, '', Color.ID)
+    ,ColorDesc = iif(@FileRule = 1, '', Color.Name)
+    ,canModify = CAST(iif((chkNoRes.value is null and @Responsibility = 'F') or chkNoRes.value = 'F', 1, 0) AS BIT)
+    ,FactoryID = o.FtyGroup      
+    ,[SeasonRow] = seasonList.RowNo
+    from PO_Supp_Detail po3 WITH (NOLOCK)
+    LEFT JOIN PO_Supp_Detail stockPO3 with (nolock) on iif(po3.StockPOID >'', 1, 0) = 0 AND stockPO3.ID =  po3.StockPOID
+		and stockPO3.Seq1 = po3.StockSeq1
+		and stockPO3.Seq2 = po3.StockSeq2	        
+    INNER JOIN Orders o with(nolock) on o.ID = IIF(IsNull(po3.StockPOID, '') = '' , po3.ID, stockPO3.ID)
+    inner join Fabric f WITH (NOLOCK) on f.SCIRefno =  IIF(IsNull(po3.StockPOID, '') = '' , po3.SCIRefno, stockPO3.SCIRefno)
+    inner join PO_Supp po2 WITH (NOLOCK) on po2.ID = o.ID and po2.Seq1 = IIF(IsNull(po3.StockPOID, '') = '' , po3.Seq1, stockPO3.Seq1)
+    inner join PO WITH (NOLOCK) on po.ID = po2.ID 
+    INNER JOIN Season WITH (NOLOCK) on o.SeasonID = Season.ID and o.BrandID = Season.BrandID
+	INNER JOIN Style s WITH(NOLOCK) on s.Ukey = o.StyleUkey		 
+    Inner Join Supp WITH (NOLOCK) on po2.SuppID = Supp.ID
+    INNER Join dbo.BrandRelation as bs WITH (NOLOCK) ON bs.BrandID = o.BrandID and bs.SuppID = Supp.ID
+    Inner Join Supp s2 WITH (NOLOCK) on s2.ID = bs.SuppGroup 
+    Outer Apply(
+        SELECT Color FROM GetPo3Spec(IIF(IsNull(po3.StockPOID, '') = '' , po3.ID, stockPO3.ID),IIF(IsNull(po3.StockPOID, '') = '' , po3.Seq1, stockPO3.Seq1),IIF(IsNull(po3.StockPOID, '') = '' , po3.Seq2, stockPO3.Seq2)) po3Spec
+    )po3Spec
+    LEFT JOIN  Color WITH (NOLOCK) ON Color.BrandId = o.BrandID AND Color.ID = po3Spec.Color
+  
+    Left join #probablySeasonList seasonList on seasonList.ID = Season.ID
+    Outer apply(
+        select top 1 value = Responsibility 
+        FROM MaterialDocument_Responsbility 
+        where DocumentName = @documentName 
+        and BrandID = @brandID 
+        and SuppID = s2.ID
+    )chkNoRes
+	where o.Junk = 0
+    and o.Qty > 0
+    and po2.SuppID <> 'FTY'
+    and IIF(IsNull(po3.StockPOID, '') = '' , po3.Junk, stockPO3.Junk)  = 0        
+	and IIF(IsNull(po3.StockPOID, '') = '' , po3.Qty, stockPO3.Qty) > 0
+    and s.DevOption = 0
+    and o.BrandID = '{dr["BrandID"]}'
+    and {conditions}
+";
+            }
+
+            sql = $@"
+--先把Season排序號並加上編號
+if object_id('tempdb..#probablySeasonList') is not null 
+Drop Table #probablySeasonList
+
+if object_id('tempdb..#tmpBrand') is not null 
+Drop Table #tmpBrand
+
+SELECT
+	RowNo = ROW_NUMBER() OVER (ORDER BY Month)
+    ,ID 
+INTO #probablySeasonList
+FROM(
+    Select DISTINCT Month, ID
+    From Season 
+    where BrandID = @brandID or BrandID in (select MergedBrand From MaterialDocument_Brand Where DocumentName = @documentName and BrandID = @BrandID)
+)a
+
+if object_id('tempdb..#tmpMain') is not null 
+Drop Table #tmpMain
+
+Select * 
+into #tmpMain
+From (
+	Select *
+	, rNo = Row_Number() Over(Partition by SuppID, BrandRefNo, Refno, ColorID  Order by SeasonRow desc)
+    FROM (
+        {mainSql}
+    ) tmp
+) main
+WHERE rNo = 1
+
+Select RowNo = ROW_NUMBER() OVER (ORDER BY BrandRefno,colorID)
+, * 
+from(
+	SELECT DISTINCT
+	    CAST(0 AS BIT) sel
+	    ,TestReportTestDate = CONVERT(VARCHAR(10), sr.TestReportTestDate, 23)
+	    ,TestReport = CONVERT(VARCHAR(10), sr.TestReport, 23)
+        ,m.SuppID 
+		,m.Supplier 
+        ,Refno = min(Refno)
+		,m.BrandRefNo
+        ,m.ColorID 
+        ,m.ColorDesc 
+        ,sr.TestSeasonID
+        ,sr.DueSeason
+        ,sr.DueDate
+        ,sr.AddName
+        ,sr.AddDate
+        ,sr.EditName
+        ,sr.EditDate
+        ,sr.Ukey
+        ,sr.UniqueKey
+        ,[SeasonRow]	
+        ,canModify
+        ,FactoryID
+	FROM #tmpMain m
+	 {(this.chkUploadRecord.Checked ? "Inner" : "LEFT")} JOIN UASentReport sr WITH (NOLOCK) on sr.SuppID = m.SuppID  
+	 and sr.BrandRefno = m.BrandRefNo 
+	 and (@FileRule = 1 or (@FileRule = 2 and sr.ColorID = m.ColorID)) 
+	 and sr.BrandID = @BrandID 
+	 and sr.DocumentName = @DocumentName
+    GROUP BY sr.TestReportTestDate
+	    ,sr.TestReport 
+        ,m.SuppID   
+		,m.Supplier 
+		,m.BrandRefNo
+        ,m.ColorID 
+        ,m.ColorDesc 
+        ,sr.TestSeasonID
+        ,sr.DueSeason
+        ,sr.DueDate
+        ,sr.AddName
+        ,sr.AddDate
+        ,sr.EditName
+        ,sr.EditDate
+        ,sr.Ukey
+        ,sr.UniqueKey
+        ,[SeasonRow]	
+        ,canModify
+        ,FactoryID
+)a
+  Order By BrandRefNo,ColorID
+
+";
 
             DataTable dt = new DataTable();
-            var result = DBProxy.Current.Select(string.Empty, sql, parmes, out dt);
+            result = DBProxy.Current.Select(string.Empty, sql, parmes, out dt);
             if (!result)
             {
                 this.ShowErr(result);
