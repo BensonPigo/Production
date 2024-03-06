@@ -21,6 +21,8 @@ namespace Sci.Production.Prg.PowerBI.Logic
             P_SewingLineSchedule,
             P_InlineDefectSummary,
             P_CuttingScheduleOutputList,
+            P_QAR31,
+            P_QA_CFAMasterList,
         }
 
         /// <summary>
@@ -201,6 +203,12 @@ namespace Sci.Production.Prg.PowerBI.Logic
                         break;
                     case ListName.P_CuttingScheduleOutputList:
                         result = new P_Import_CuttingScheduleOutputList().P_CuttingScheduleOutputList(item.SDate, item.EDate);
+                        break;
+                    case ListName.P_QAR31:
+                        result = new P_Import_QAR31().P_QAR31(item.SDate, item.EDate);
+                        break;
+                    case ListName.P_QA_CFAMasterList:
+                        result = new P_Import_QA_CFAMasterList().P_QA_CFAMasterList(item.SDate);
                         break;
                 }
             }

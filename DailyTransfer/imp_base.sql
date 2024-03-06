@@ -4346,6 +4346,7 @@ ON t.ID = s.ID
     WHEN MATCHED
     THEN UPDATE SET 
                     t.UnselectableShipB03 = ISNULL(s.UnselectableShipB03, 0), 
+					t.NeedShareExpense  = ISNULL(s.NeedShareExpense  ,0),
                     t.AddDate = s.AddDate, 
                     t.AddName = ISNULL(s.AddName, ''), 
                     t.EditDate = s.EditDate, 
@@ -4354,6 +4355,7 @@ ON t.ID = s.ID
     THEN
       INSERT(ID, 
              UnselectableShipB03, 
+             NeedShareExpense, 
              AddDate, 
              AddName, 
              EditDate, 
@@ -4361,6 +4363,7 @@ ON t.ID = s.ID
       VALUES
 (ISNULL(s.ID,                 ''),
  ISNULL(s.UnselectableShipB03, 0),
+ ISNULL(s.NeedShareExpense, 0),
  s.AddDate, 			  
  ISNULL(s.AddName, 			   ''),
  s.EditDate, 		  

@@ -2,6 +2,7 @@
 CREATE TABLE [dbo].[AccountNoSetting](
 	ID [varchar](8) NOT NULL,
 	UnselectableShipB03 bit NULL,
+	NeedShareExpense  bit NULL,
 	AddDate DATETIME NULL,
 	AddName Varchar(10) NOT NULL,
 	EditDate DATETIME NULL,
