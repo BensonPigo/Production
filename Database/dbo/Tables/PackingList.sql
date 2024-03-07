@@ -46,6 +46,7 @@
     [EditShipPlanDate]      DATE            NULL,
     [AddShipPlanDate]       DATE            NULL,
     [PulloutStatus]         VARCHAR (15)    DEFAULT ('') NOT NULL,
+    [IsSingleShipment] BIT CONSTRAINT [DF_PackingList_IsSingleShipment] DEFAULT ((0)) NOT NULL,
     CONSTRAINT [PK_PackingList] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 
@@ -238,3 +239,12 @@ EXEC sp_addextendedproperty @name = N'MS_Description',
     @level1name = N'PackingList',
     @level2type = N'COLUMN',
     @level2name = N'QueryDate'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'確認該次出貨是否有合併不同的 SP# or ShipmentSeq',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'PackingList',
+    @level2type = N'COLUMN',
+    @level2name = N'IsSingleShipment'
