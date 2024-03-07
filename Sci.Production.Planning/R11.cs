@@ -237,7 +237,7 @@ outer apply(
 )rs2
 ";
                 strType = $@", [Type] = case 
-				   when r.max_OutputDate > dateadd(month,{-this.months},{strOutputDate} )  or rs2.cnt >= 1 then 'Repeat'
+				   when  isnull(r.R,'') !='' or (R_Similar.max_OutputDate > dateadd(month,{-this.months},{strOutputDate} )  or rs2.cnt >= 1) then 'Repeat'
 				   else 'New Style' end";
             }
 
@@ -436,6 +436,7 @@ left join #tmp_A a on a.StyleID = o.StyleID
 left join #tmp_R r on r.StyleID = o.StyleID
 left join #tmp_P w on w.StyleID = o.StyleID
 left join #cls s on s.StyleID = o.StyleID
+left join #tmp_R_Similar R_Similar on R_Similar.OldStyleID = o.StyleID and R_Similar !=''
 outer apply(	
 	select RS = Stuff((
 	select  concat(',',R_Similar)
