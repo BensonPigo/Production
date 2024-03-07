@@ -50,6 +50,8 @@ namespace Sci.Production.Packing
         private int RowIndex = 0;
         private int ColumnIndex = 0;
         private int detailgridSort = 0;
+        private string formParameter = string.Empty;
+        private bool isSingleShipment = true;
 
         /// <summary>
         /// ComboBox1_RowSource
@@ -103,7 +105,8 @@ namespace Sci.Production.Packing
         /// P03
         /// </summary>
         /// <param name="menuitem">menuitem</param>
-        public P03(ToolStripMenuItem menuitem)
+        /// <param name="formParameter">formParameter</param>
+        public P03(ToolStripMenuItem menuitem, string formParameter)
             : base(menuitem)
         {
             this.InitializeComponent();
@@ -134,6 +137,20 @@ namespace Sci.Production.Packing
                 }
             };
             #endregion
+
+            if (formParameter == "PACKP03")
+            {
+                this.DefaultWhere = "IsSingleShipment = 1";
+                this.Text = "P03. Packing List(Bulk Single Shipment)";
+            }
+            else
+            {
+                this.DefaultWhere = "IsSingleShipment = 0";
+                this.Text = "P031. Packing List(Bulk Combine Shipments)";
+            }
+
+            this.formParameter = formParameter;
+            this.isSingleShipment = formParameter == "PACKP03";
         }
 
         /// <summary>
@@ -154,6 +171,14 @@ namespace Sci.Production.Packing
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
+
+            if (this.formParameter == "PACKP031")
+            {
+                this.grid.Columns.Remove("OrderID");
+                this.grid.Columns.Remove("CancelOrder");
+                this.grid.Columns.Remove("PONo");
+            }
+
             this.btnEdit.Enabled = this.Perm.Edit;
 
             this.ComboBox1_RowSource.Add(string.Empty);
@@ -301,17 +326,7 @@ WHERE pd.ID='{this.CurrentMaintain["ID"]}'
             }
 
             // Repack Cartons 控制
-            bool isNotNew = !this.CurrentMaintain["Status"].Equals("New");
-            bool isShippingLock = this.CurrentMaintain["GMTBookingLock"].Equals("Y");
-            bool isCanEdit = Prgs.GetAuthority(Env.User.UserID, "P03. Packing List Weight && Summary(Bulk)", "CanEdit");
-            if (this.EditMode || isNotNew || !isCanEdit || isShippingLock)
-            {
-                this.btnRepackCartons.Enabled = false;
-            }
-            else
-            {
-                this.btnRepackCartons.Enabled = true;
-            }
+            this.btnRepackCartons.Enabled = false;
 
             // Start Ctn#
             string sqlCmd;
@@ -1247,6 +1262,32 @@ Carton has been output from the hanger system or transferred to clog.";
                 }
             }
 
+            bool newIsSingleShipment = this.DetailDatas
+                .GroupBy(s => new
+                {
+                    OrderID = s["OrderID"].ToString(),
+                    OrderShipmodeSeq = s["OrderShipmodeSeq"].ToString(),
+                }).Count() == 1;
+
+            bool oriIsSingleShipment = MyUtility.Convert.GetBool(this.CurrentMaintain["IsSingleShipment"]);
+
+            if (oriIsSingleShipment != newIsSingleShipment)
+            {
+                string confirmMsg = oriIsSingleShipment ?
+                    "Packing List including multiple shipments, pack ID will transfer to Packing P031 combine shipments." :
+                    "Packing List is single shipment, pack ID will transfer to Packing P03 single shipment.";
+                DialogResult confirmResult = MyUtility.Msg.QuestionBox(confirmMsg, buttons: MessageBoxButtons.OKCancel);
+
+                if (confirmResult == DialogResult.Cancel)
+                {
+                    return false;
+                }
+
+                this.CurrentMaintain["IsSingleShipment"] = newIsSingleShipment;
+                this.CurrentMaintain["OrderID"] = newIsSingleShipment ? this.DetailDatas[0]["OrderID"] : string.Empty;
+                this.CurrentMaintain["OrderShipmodeSeq"] = newIsSingleShipment ? this.DetailDatas[0]["OrderShipmodeSeq"] : string.Empty;
+            }
+
             return base.ClickSaveBefore();
         }
 
@@ -1313,6 +1354,14 @@ WHERE ID =  '{this.CurrentMaintain["ID"]}'";
                 // 不透過Call API的方式，自己組合，傳送API
                 Task.Run(() => new Gensong_FinishingProcesses().SentPackingListToFinishingProcesses(this.CurrentMaintain["ID"].ToString(), string.Empty))
                     .ContinueWith(UtilityAutomation.AutomationExceptionHandler, System.Threading.CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.FromCurrentSynchronizationContext());
+            }
+            #endregion
+
+            #region 如果存檔後IsSingleShipment有改變，該筆資料必須被移除Grid
+            if (MyUtility.Convert.GetBool(this.CurrentMaintain["IsSingleShipment"]) != this.isSingleShipment)
+            {
+                this.grid.Rows.Remove(this.grid.CurrentRow);
+                this.tabs.SelectTab(0);
             }
             #endregion
         }

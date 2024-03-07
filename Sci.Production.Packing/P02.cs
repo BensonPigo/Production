@@ -2928,6 +2928,13 @@ ELSE
                 #endregion
             }
 
+            insertCmd += $@"
+update Packinglist set  IsSingleShipment = 1,
+                        OrderID = '{this.CurrentMaintain["OrderID"]}',
+                        OrderShipmodeSeq = '{this.CurrentMaintain["OrderShipmodeSeq"]}'
+where ID = '{this.CurrentMaintain["ID"]}'
+";
+
             return insertCmd;
         }
 
