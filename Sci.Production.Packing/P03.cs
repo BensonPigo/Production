@@ -326,9 +326,6 @@ WHERE pd.ID='{this.CurrentMaintain["ID"]}'
             }
 
             // Repack Cartons 控制
-            bool isNotNew = !this.CurrentMaintain["Status"].Equals("New");
-            bool isShippingLock = this.CurrentMaintain["GMTBookingLock"].Equals("Y");
-            bool isCanEdit = Prgs.GetAuthority(Env.User.UserID, "P03. Packing List Weight && Summary(Bulk)", "CanEdit");
             this.btnRepackCartons.Enabled = false;
 
             // Start Ctn#
