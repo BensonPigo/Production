@@ -225,6 +225,7 @@
     <Build Include="dbo\Stored Procedures\FTY\P_Import_EfficiencyBI.sql" />
     <Build Include="dbo\Tables\P_QA_CFAMasterList.sql" />
     <Build Include="dbo\Tables\P_CartonScanRate.sql" />
+    <Build Include="dbo\Tables\P_WBScanRate.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Utility.dll" />
