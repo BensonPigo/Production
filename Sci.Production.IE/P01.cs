@@ -2335,30 +2335,71 @@ and s.BrandID = @brandid ", Env.User.Factory,
         /// DetailGrid Insert、Append
         /// </summary>
         /// <param name="index">index</param>
-        protected override void OnDetailGridInsert(int index = 1)
+        protected override void OnDetailGridInsert(int index = 0)
         {
             base.OnDetailGridInsert(index);
+            DataTable oriDt = (DataTable)this.detailgridbs.DataSource;
+            if (index >= 0)
+            {
+                this.detailgrid.AllowUserToAddRows = false;
+                DataRow drSelect = oriDt.Rows[index + 1];
+                DataRow newDrSelect = oriDt.Rows[index];
+                newDrSelect["Seq"] = MyUtility.Convert.GetString(MyUtility.Convert.GetInt(drSelect["Seq"])).PadLeft(4, '0');  // 插入位置
+                drSelect["Seq"] = MyUtility.Convert.GetString(MyUtility.Convert.GetInt(newDrSelect["Seq"]) + 10).PadLeft(4, '0'); // 現有資料 +10
+                for (int i = index + 1; i < oriDt.Rows.Count; i++)
+                {
+                    if (i + 1 != oriDt.Rows.Count)
+                    {
+                        DataRow preDataRow = oriDt.Rows[i];
+                        DataRow nextDataRow = oriDt.Rows[i + 1];
+
+                        if (MyUtility.Convert.GetInt(nextDataRow["Seq"]) - MyUtility.Convert.GetInt(preDataRow["Seq"]) <= 10)
+                        {
+                            nextDataRow["Seq"] = MyUtility.Convert.GetString(MyUtility.Convert.GetInt(nextDataRow["Seq"]) + 10).PadLeft(4, '0');
+                        }
+                        else
+                        {
+                            break;
+                        }
+                     }
+                }
+
+               this.detailgridbs.DataSource = oriDt;
+            }
+            else if (index == -1)
+            {
+                if (oriDt.Rows.Count == 1)
+                {
+                    this.CurrentDetailData["Seq"] = MyUtility.Convert.GetString(10).PadLeft(4, '0');
+                }
+            }
+        }
+
+        /// <summary>
+        /// gridIcon 新增按鈕.....
+        /// </summary>
+        protected override void OnDetailGridAppendClick()
+        {
+            base.OnDetailGridAppendClick();
+
             int seq = 0;
             DataTable dt = (DataTable)this.detailgridbs.DataSource;
 
-            if (dt.Rows.Count < 1)
-            {
-                seq = 0;
-                base.OnDetailGridInsert(0);
-                this.CurrentDetailData["Seq"] = MyUtility.Convert.GetString(seq + 10).PadLeft(4, '0');
-            }
-            else
+            DataRow drSelect = this.detailgrid.GetDataRow(this.detailgrid.SelectedRows[0].Index);
+
+            if (dt.Rows.Count >= 0)
             {
                 seq = 10;
                 foreach (DataRow dr in dt.Rows)
                 {
-                    string maxColumnValue = dt.AsEnumerable().Max(row => row.Field<string>("Seq"));
-                    var maxValue = MyUtility.Convert.GetInt(maxColumnValue);
-                    if (!MyUtility.Check.Empty(seq) && !MyUtility.Check.Empty(dr["Seq"]))
+                    if (MyUtility.Convert.GetInt(seq) != 0 && MyUtility.Convert.GetInt(dr["Seq"]) != 0)
                     {
-                        if (seq != MyUtility.Convert.GetInt(dr["Seq"]))
+                        if (MyUtility.Convert.GetInt(dr["Seq"]) != 0)
                         {
-                            seq = MyUtility.Convert.GetInt(dr["Seq"]);
+                            if (seq != MyUtility.Convert.GetInt(dr["Seq"]))
+                            {
+                                seq = MyUtility.Convert.GetInt(dr["Seq"]);
+                            }
                         }
                     }
 
@@ -2373,7 +2414,7 @@ and s.BrandID = @brandid ", Env.User.Factory,
             }
         }
 
-        // Copy
+            // Copy
         private void BtnCopy_Click(object sender, EventArgs e)
         {
             // 將要Copy的資料記錄起來
