@@ -237,7 +237,7 @@ outer apply(
 )rs2
 ";
                 strType = $@", [Type] = case 
-				   when R_Similar.max_OutputDate > dateadd(month,{-this.months},{strOutputDate} )  or rs2.cnt >= 1 then 'Repeat'
+				   when  isnull(r.R,'') !='' or (R_Similar.max_OutputDate > dateadd(month,{-this.months},{strOutputDate} )  or rs2.cnt >= 1) then 'Repeat'
 				   else 'New Style' end";
             }
 
