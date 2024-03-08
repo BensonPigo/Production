@@ -164,15 +164,16 @@ namespace Sci.Production.Quality
                         return;
                     }
 
-                    // 來源取共用品牌頭的Brand, 所以對應MaterialDocument_Brand.MergedBrand
+                    // 來源取共用品牌頭的Brand, 所以對應MaterialDocument_Brand.BrandID
                     string sql = $@"
-select ID 
+select distinct ID 
 from Season s with(nolock) 
 where exists(
 	select 1 from MaterialDocument_Brand m
-	where s.BrandID = m.MergedBrand
-	and m.BrandID = '{this.txtBrand1.Text}'
-) ";
+	where (mergedbrand = '{this.txtBrand1.Text}' or brandid = '{this.txtBrand1.Text}')
+	and m.Brandid = s.Brandid
+)
+";
 
                     Sci.Win.Tools.SelectItem item =
                     new Sci.Win.Tools.SelectItem(sql, "20", row["TestSeasonID"].ToString(), "Season");
@@ -195,9 +196,9 @@ where exists(
                         FROM dbo.Season s
                         where exists(
 	                        select 1 from MaterialDocument_Brand m
-	                        where s.BrandID = m.MergedBrand
-	                        and m.BrandID = @BrandID
-                        ) 
+	                        where (mergedbrand = @brandid or brandid = @brandid)
+	                        and m.Brandid = s.Brandid
+                        )
 
                         SELECT ID,RowNo 
                         FROM #probablySeasonList
@@ -276,15 +277,17 @@ where exists(
                         return;
                     }
 
-                    // 來源取共用品牌頭的Brand, 所以對應MaterialDocument_Brand.MergedBrand
+                    // 來源取共用品牌頭的Brand, 所以對應MaterialDocument_Brand.BrandID
                     string sql = $@"
 select ID 
 from Season s with(nolock) 
 where exists(
 	select 1 from MaterialDocument_Brand m
-	where s.BrandID = m.MergedBrand
-	and m.BrandID = '{this.txtBrand1.Text}'
-) ";
+	where (mergedbrand = '{this.txtBrand1.Text}' or brandid = '{this.txtBrand1.Text}')
+	and m.Brandid = s.Brandid
+)
+and s.ID = @SeasonID
+";
 
                     if (DBProxy.Current.SeekEx(sql, "SeasonID", newValue).ExtendedData == null)
                     {
@@ -304,9 +307,9 @@ where exists(
                         FROM dbo.Season s
                         where exists(
 	                        select 1 from MaterialDocument_Brand m
-	                        where s.BrandID = m.MergedBrand
-	                        and m.BrandID = @BrandID
-                        ) 
+	                        where (mergedbrand = @brandid or brandid = @brandid)
+	                        and m.Brandid = s.Brandid
+                        )
 
                         SELECT ID,RowNo FROM #probablySeasonList
                         WHERE RowNo = (SELECT RowNo FROM #probablySeasonList WHERE ID =@SeasonID)+{expiration - 1}",
@@ -394,15 +397,16 @@ where exists(
                         return;
                     }
 
-                    // 來源取共用品牌頭的Brand, 所以對應MaterialDocument_Brand.MergedBrand
+                    // 來源取共用品牌頭的Brand, 所以對應MaterialDocument_Brand.BrandID
                     string sql = $@"
 select ID 
 from Season s with(nolock) 
 where exists(
 	select 1 from MaterialDocument_Brand m
-	where s.BrandID = m.MergedBrand
-	and m.BrandID = '{this.txtBrand1.Text}'
-) ";
+	where (mergedbrand = '{this.txtBrand1.Text}' or brandid = '{this.txtBrand1.Text}')
+	and m.Brandid = s.Brandid
+)
+";
 
                     Sci.Win.Tools.SelectItem item =
                     new Sci.Win.Tools.SelectItem(sql, "20", row["DueSeason"].ToString(), "Season");
@@ -420,10 +424,10 @@ where exists(
                        ,ID INTO #probablySeasonList
                     FROM dbo.Season s
                     where exists(
-	                    select 1 from MaterialDocument_Brand m
-	                    where s.BrandID = m.MergedBrand
-	                    and m.BrandID = @BrandID
-                    ) 
+	                        select 1 from MaterialDocument_Brand m
+	                        where (mergedbrand = @brandid or brandid = @brandid)
+	                        and m.Brandid = s.Brandid
+                     )
 
                     SELECT main.ID FROM #probablySeasonList main
                     Outer Apply (
@@ -501,16 +505,17 @@ where exists(
 
                     if (!row["TestSeasonID"].Empty())
                     {
-                        // 來源取共用品牌頭的Brand, 所以對應MaterialDocument_Brand.MergedBrand
+                        // 來源取共用品牌頭的Brand, 所以對應MaterialDocument_Brand.BrandID
                         sql = $@"
 Select ID 
 From Season s with(nolock) 
 where exists(
 	select 1 from MaterialDocument_Brand m
-	where s.BrandID = m.MergedBrand
-	and m.BrandID = '{this.txtBrand1.Text}'
+	where (mergedbrand = '{this.txtBrand1.Text}' or brandid = '{this.txtBrand1.Text}')
+	and m.Brandid = s.Brandid
 )
-and ID = @SeasonID";
+and ID = @SeasonID
+";
 
                         if (DBProxy.Current.SeekEx(sql, "SeasonID", newValue).ExtendedData == null)
                         {
@@ -528,8 +533,8 @@ and ID = @SeasonID";
                         FROM dbo.Season s
                         where exists(
 	                        select 1 from MaterialDocument_Brand m
-	                        where s.BrandID = m.MergedBrand
-	                        and m.BrandID = @BrandID
+	                        where (mergedbrand = @brandid or brandid = @brandid)
+	                        and m.Brandid = s.Brandid
                         )
 
                         SELECT main.ID FROM #probablySeasonList main
