@@ -101,8 +101,8 @@ BEGIN
 			select [SPCount] = count(distinct p.SP)
 				, [SPCountWithPulloutCmplt] = isnull(p2.SPCountWithPulloutCmplt, 0)
 				, [HauledQty] = Sum(p.HauledQty)
-				, [PackingAuditQty] = Sum(IIF(p.PackingAuditScanTime is null, 0, p.CartonQty - p.PackingAuditFailQty))
-				, [MDScanQty] = Sum(IIF(p.MDScanTime is null, 0, p.CartonQty - p.MDFailQty))
+				, [PackingAuditQty] = Sum(IIF(p.PackingAuditScanTime is null, 0, p.CartonQty))
+				, [MDScanQty] = Sum(IIF(p.MDScanTime is null, 0, p.CartonQty))
 				, [ScanAndPackQty] = Sum(p.ScanQty)
 				, [TotalCartonQty] = Sum(p.CartonQty)
 				, f.FTYGroup
