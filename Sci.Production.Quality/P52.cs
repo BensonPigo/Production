@@ -976,7 +976,6 @@ o.FactoryID,
        f.Type,
        Season.Month,
        o.BrandID,
-	   mb.[MergedBrand],
        Category = ddl.Name,
        f.BrandRefno
 into #POList
@@ -992,7 +991,6 @@ Inner Join Supp s2 WITH (NOLOCK) on bs.SuppGroup = s2.ID
 inner join dbo.Fabric f with(nolock) on p3.SciRefno = f.SciRefno
 inner JOIN Season WITH (NOLOCK) on o.SeasonID = Season.ID and o.BrandID = Season.BrandID
 LEFT JOIN DropDownList ddl WITH (NOLOCK) on ddl.type ='Category' and o.Category = ddl.ID
-left join [MaterialDocument_Brand] mb with(nolock) on mb.BrandID = o.BrandID
 where 1=1
 and f.BrandRefNo <> ''
 {where}
@@ -1007,7 +1005,7 @@ inner join #POList po on md.BrandID = po.BrandID or
 exists (
 	select 1 from MaterialDocument_Brand mdb
 	where md.DocumentName = mdb.DocumentName
-	and mdb.MergedBrand = po.MergedBrand
+	and mdb.MergedBrand = po.BrandID
 	and md.BrandID = mdb.BrandID
 )
 Outer apply ( 

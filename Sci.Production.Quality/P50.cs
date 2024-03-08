@@ -1097,10 +1097,10 @@ and m.junk = 0
 
             // 品牌共用
             string sql = @"
-SELECT BrandID 
+SELECT MergedBrand
 From MaterialDocument_Brand 
 Where DocumentName = @documentName 
-and MergedBrand = @BrandID
+and BrandID = @BrandID
 ";
             DataTable dtBrand;
             var result = DBProxy.Current.Select(string.Empty, sql, parmes, out dtBrand);
@@ -1208,7 +1208,7 @@ select  distinct
     and IIF(IsNull(po3.StockPOID, '') = '' , po3.Junk, stockPO3.Junk)  = 0        
 	and IIF(IsNull(po3.StockPOID, '') = '' , po3.Qty, stockPO3.Qty) > 0
     and s.DevOption = 0
-    and o.BrandID = '{dr["BrandID"]}'
+    and o.BrandID = '{dr["MergedBrand"]}'
     and {conditions}
 ";
             }
