@@ -1304,7 +1304,7 @@ drop TABLE #tmp1
 
             // Machine table 只計算MachineCount有勾選的
             int machineCount = allMachineData
-                .Where(o => o.MachineCount && !MyUtility.Check.Empty(o.MachineTypeID) && !MyUtility.Check.Empty(o.MasterPlusGroup))
+                .Where(o => o.MachineCount && !MyUtility.Check.Empty(o.MachineTypeID) && !MyUtility.Check.Empty(o.MasterPlusGroup) && !MyUtility.Check.Empty(o.No))
                 .Select(o => new { o.MachineTypeID, o.MasterPlusGroup }).Distinct().Count();
 
             List<AttachmentData> tmp = new List<AttachmentData>();
@@ -1332,7 +1332,7 @@ drop TABLE #tmp1
                 maxhineEndRow++;
             }
 
-            var mmData = allMachineData.Where(o => o.MachineCount && !MyUtility.Check.Empty(o.MachineTypeID) && !MyUtility.Check.Empty(o.MasterPlusGroup))
+            var mmData = allMachineData.Where(o => o.MachineCount && !MyUtility.Check.Empty(o.MachineTypeID) && !MyUtility.Check.Empty(o.MasterPlusGroup) && !MyUtility.Check.Empty(o.No))
                 .Distinct() // [No.]+[ST/MC type]+[Machine group]+[Attachment]+[Part ID]+[Template]皆相同則只為一筆
                 .GroupBy(o => new { o.MachineTypeID, o.MasterPlusGroup })
                 .Select(o => new { o.Key.MachineTypeID, o.Key.MasterPlusGroup, Count = o.Count() });
