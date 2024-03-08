@@ -2352,19 +2352,11 @@ and s.BrandID = @brandid ", Env.User.Factory,
                     {
                         DataRow preDataRow = oriDt.Rows[i];
                         DataRow nextDataRow = oriDt.Rows[i + 1];
-
-                        if (MyUtility.Convert.GetInt(nextDataRow["Seq"]) - MyUtility.Convert.GetInt(preDataRow["Seq"]) <= 10)
-                        {
-                            nextDataRow["Seq"] = MyUtility.Convert.GetString(MyUtility.Convert.GetInt(nextDataRow["Seq"]) + 10).PadLeft(4, '0');
-                        }
-                        else
-                        {
-                            break;
-                        }
+                        nextDataRow["Seq"] = MyUtility.Convert.GetString(MyUtility.Convert.GetInt(nextDataRow["Seq"]) + 10).PadLeft(4, '0');
                      }
                 }
 
-               this.detailgridbs.DataSource = oriDt;
+                this.detailgridbs.DataSource = oriDt;
             }
             else if (index == -1)
             {
