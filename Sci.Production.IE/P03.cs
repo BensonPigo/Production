@@ -313,6 +313,8 @@ and BrandID = '{this.CurrentMaintain["BrandID"]}'
             DataGridViewGeneratorCheckBoxColumnSettings machineCount = new DataGridViewGeneratorCheckBoxColumnSettings();
 
             TxtMachineGroup.CelltxtMachineGroup txtSubReason = (TxtMachineGroup.CelltxtMachineGroup)TxtMachineGroup.CelltxtMachineGroup.GetGridCell();
+           
+            machineCount.HeaderAction = DataGridViewGeneratorCheckBoxHeaderAction.None;
 
             #region No.的Valid
             no.CellValidating += (s, e) =>
