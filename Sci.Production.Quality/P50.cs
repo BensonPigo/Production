@@ -204,6 +204,7 @@ namespace Sci.Production.Quality
                     row["TestSeasonID"] = newValue;
                     row["EditDate"] = DateTime.Now;
                     row["EditName"] = Env.User.UserID;
+                    row.EndEdit();
 
                     sql = $@"
                     Update UASentReport
@@ -300,6 +301,7 @@ namespace Sci.Production.Quality
                     row["TestSeasonID"] = newValue;
                     row["EditDate"] = DateTime.Now;
                     row["EditName"] = Env.User.UserID;
+                    row.EndEdit();
 
                     sql = $@"
                     Update 
@@ -402,6 +404,7 @@ namespace Sci.Production.Quality
                     row["DueSeason"] = newValue;
                     row["EditDate"] = DateTime.Now;
                     row["EditName"] = Env.User.UserID;
+                    row.EndEdit();
 
                     sql = $@"
                     Update 
@@ -505,6 +508,7 @@ namespace Sci.Production.Quality
                     row["DueSeason"] = newValue;
                     row["EditDate"] = DateTime.Now;
                     row["EditName"] = Env.User.UserID;
+                    row.EndEdit();
                     sql = $@"
                     Update 
                     UASentReport
@@ -579,8 +583,9 @@ namespace Sci.Production.Quality
                     }
 
                     row["TestReportTestDate"] = newValue;
-                    row["EditDate"] = DateTime.Now;
+                    row["EditDate"] = DateTime.Now; 
                     row["EditName"] = Env.User.UserID;
+                    row.EndEdit();
 
                     string sql = $@"
                     Update 
@@ -676,6 +681,7 @@ namespace Sci.Production.Quality
                     row["DueDate"] = newValue;
                     row["EditDate"] = DateTime.Now;
                     row["EditName"] = Env.User.UserID;
+                    row.EndEdit();
 
                     string sql = $@"
                     Update

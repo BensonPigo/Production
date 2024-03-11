@@ -705,7 +705,6 @@ namespace Sci.Production.Quality
                 .Date("FTYReceivedReport", header: "FTY Received Date", width: Widths.AnsiChars(13), iseditingreadonly: true)
                 .Date("AddDate", header: "Add Date", width: Widths.AnsiChars(13), iseditingreadonly: true)
                 .Text("AddName", header: "Add Name ", width: Widths.AnsiChars(15), iseditingreadonly: true)
-                .Date("AddDate", header: "Add Date", width: Widths.AnsiChars(13), iseditingreadonly: true)
                 .Text("EditName", header: "Edit Name ", width: Widths.AnsiChars(15), iseditingreadonly: true)
                 .Date("EditDate", header: "Edit Date", width: Widths.AnsiChars(13), iseditingreadonly: true)
                 ;
