@@ -699,6 +699,7 @@ where id = '{0}'", Env.User.Factory), null);
                     else
                     {
                         ExcelPrg.ExcelDeleteColumn(worksheet, 1, "Sewing CPU");
+                        ExcelPrg.ExcelDeleteColumn(worksheet, 1, "Sew. MTL ETA (SP)");
                     }
 
                     result = MyUtility.Excel.CopyToXls(this.printData, string.Empty, xltfile: "PPIC_R01_SewingLineScheduleReport.xltx", headerRow: 1, showExcel: false, excelApp: objApp, wSheet: objApp.Sheets[2]);
