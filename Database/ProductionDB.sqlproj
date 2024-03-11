@@ -2911,6 +2911,7 @@
     <Build Include="dbo\Tables\NikePostScanShipment.sql" />
     <Build Include="dbo\Tables\IETMS_AT.sql" />
     <Build Include="dbo\Tables\IETMS_AT_Detail.sql" />
+    <Build Include="dbo\Tables\MaterialDocument_Brand.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />
