@@ -208,7 +208,7 @@ select 0 as Selected, isnull(o.SeamLength,0) SeamLength
                                                 else 0 end as bit)
 from TimeStudy_Detail td WITH (NOLOCK) 
 INNER JOIN TimeStudy t WITH(NOLOCK) ON td.id = t.id
-INNER JOIN IETMS i ON t.IETMSID = i.ID AND t.IETMSVersion = i.[Version]
+LEFT JOIN IETMS i ON t.IETMSID = i.ID AND t.IETMSVersion = i.[Version]
 LEFT JOIN IETMS_Detail ID ON I.Ukey = ID.IETMSUkey AND ID.SEQ = TD.Seq
 left join Operation o WITH (NOLOCK) on td.OperationID = o.ID
 left join MachineType_Detail md WITH (NOLOCK) on md.ID = td.MachineTypeID and md.FactoryID = '{Env.User.Factory}'
