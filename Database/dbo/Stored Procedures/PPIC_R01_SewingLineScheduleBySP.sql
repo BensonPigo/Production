@@ -59,6 +59,7 @@ Declare @tmp_main table(
 	StandardOutput numeric(11,6),
 	Efficiency numeric(10,2),
 	KPILETA date,
+	SewETA date,
 	MTLETA date,
 	MTLExport varchar(2),
 	Inline datetime,
@@ -106,6 +107,7 @@ insert into @tmp_main(
     StandardOutput,
     Efficiency,
     KPILETA,
+	SewETA,
     MTLETA,
     MTLExport,
     Inline,
@@ -175,6 +177,7 @@ select  s.SewingLineID
                       ELSE ROUND(CONVERT(float ,(s.AlloQty * s.TotalSewingTime) / (s.sewer * s.workhour * 3600)) * 100,2)
                       END
             , o.KPILETA
+			, o.SewETA
             , o.MTLETA
             , o.MTLExport
             , s.Inline
@@ -410,6 +413,7 @@ select  SewingLineID
         , [Efficiency] = isnull(a.Efficiency, 0)
         , KPILETA
         , PFRemark
+		, SewETA
         , [ActMTLETA] = MTLETA
         , MTLExport
         , CutInLine

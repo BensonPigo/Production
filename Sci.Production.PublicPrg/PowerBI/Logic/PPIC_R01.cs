@@ -66,5 +66,52 @@ exec dbo.GetSewingLineScheduleData  @Inline,
             resultReport.DtArr = dataTables;
             return resultReport;
         }
+
+        /// <inheritdoc/>
+        public Base_ViewModel GetSewingLineScheduleDataBySP(PPIC_R01bySP_ViewModel model)
+        {
+            List<SqlParameter> listPar = new List<SqlParameter>
+            {
+                new SqlParameter("@MDivisionID", SqlDbType.VarChar, 8) { Value = model.MDivisionID },
+                new SqlParameter("@FactoryID", SqlDbType.VarChar, 8) { Value = model.FactoryID },
+                new SqlParameter("@SewingLineIDFrom", SqlDbType.VarChar, 5) { Value = model.SewingLineIDFrom },
+                new SqlParameter("@SewingLineIDTo", SqlDbType.VarChar, 5) { Value = model.SewingLineIDTo },
+                new SqlParameter("@SewingDateFrom", SqlDbType.Date) { Value = (object)model.SewingDateFrom.Value ?? DBNull.Value },
+                new SqlParameter("@SewingDateTo", SqlDbType.Date) { Value = (object)model.SewingDateTo.Value ?? DBNull.Value },
+                new SqlParameter("@BuyerDeliveryFrom", SqlDbType.Date) { Value = (object)model.BuyerDeliveryFrom ?? DBNull.Value },
+                new SqlParameter("@BuyerDeliveryTo", SqlDbType.Date) { Value = (object)model.BuyerDeliveryTo ?? DBNull.Value },
+                new SqlParameter("@SciDeliveryFrom", SqlDbType.Date) { Value = (object)model.SciDeliveryFrom ?? DBNull.Value },
+                new SqlParameter("@SciDeliveryTo", SqlDbType.Date) { Value = (object)model.SciDeliveryTo ?? DBNull.Value },
+                new SqlParameter("@BrandID", SqlDbType.VarChar, 8) { Value = model.BrandID },
+                new SqlParameter("@SubProcess", SqlDbType.VarChar, 20) { Value = model.SubProcess },
+            };
+
+            string sql = @"
+exec dbo.PPIC_R01_SewingLineScheduleBySP  @MDivisionID,
+                                    @FactoryID,
+                                    @SewingLineIDFrom,
+                                    @SewingLineIDTo,
+                                    @SewingDateFrom,
+                                    @SewingDateTo,
+                                    @BuyerDeliveryFrom,
+                                    @BuyerDeliveryTo,
+                                    @SciDeliveryFrom,
+                                    @SciDeliveryTo,
+                                    @BrandID,
+                                    @SubProcess
+";
+            Base_ViewModel resultReport = new Base_ViewModel
+            {
+                Result = DBProxy.Current.Select("Production", sql, listPar, out DataTable dataTable),
+            };
+
+            if (!resultReport.Result)
+            {
+                return resultReport;
+            }
+
+            resultReport.Dt = dataTable;
+            return resultReport;
+        }
     }
 }
