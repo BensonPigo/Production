@@ -138,7 +138,7 @@ namespace Sci.Production.Warehouse
                                                             and fi.seq2 = fur.SEQ2 
                                                             and fi.Roll = fur.Roll 
                                                             and fi.Dyelot = fur.Dyelot 
-                                                            and fi.StockType = 'B'
+                                                            and fi.StockType = fur.StockType
             where 
             1=1
             {this.sqlWhere}

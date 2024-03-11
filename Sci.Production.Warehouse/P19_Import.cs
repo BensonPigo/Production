@@ -103,6 +103,7 @@ select  0 as selected
         , FI.Tone
         , TransferExport_DetailUkey = cast(0 as bigint)
 		, MDivisionID = '{this.M}'
+        , [Grade] = phy.Grade
 FROM FtyInventory FI WITH (NOLOCK)
 LEFT JOIN View_WH_Orders O WITH (NOLOCK) ON O.ID = FI.POID
 LEFT JOIN Factory F WITH (NOLOCK) ON F.ID = O.FactoryID
@@ -110,6 +111,12 @@ LEFT JOIN PO_Supp_Detail PSD WITH (NOLOCK) ON PSD.ID=FI.POID AND PSD.SEQ1 = FI.S
 left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
 left join PO_Supp_Detail_Spec psdsS WITH (NOLOCK) on psdsS.ID = psd.id and psdsS.seq1 = psd.seq1 and psdsS.seq2 = psd.seq2 and psdsS.SpecColumnID = 'Size'
 left join Fabric on Fabric.SCIRefno = psd.SCIRefno
+outer apply
+(
+	select [Grade] = isnull(fp.Grade,'') from FIR f
+	inner join FIR_Physical fp on fp.id = f.ID
+	where poid = FI.POID and f.SEQ1 =FI.Seq1 and f.SEQ2 =FI.Seq2 and fp.Roll =FI.Roll and fp.Dyelot =FI.Dyelot
+) as phy
 Where ( F.MDivisionID = '{Env.User.Keyword}' OR o.MDivisionID= '{Env.User.Keyword}' )
         and FI.inqty - FI.outqty + FI.adjustqty - FI.ReturnQty > 0         
         and FI.stocktype = '{stocktype}'
@@ -244,6 +251,7 @@ AND exists (select 1
                 .Text("FabricType", header: "Material Type", iseditingreadonly: true, width: Widths.AnsiChars(8)) // 3
                 .EditText("Description", header: "Description", iseditingreadonly: true) // 4
                 .Text("Tone", header: "Tone/Grp", iseditingreadonly: true, width: Widths.AnsiChars(8))
+                .Text("Grade", header: "Grade", iseditingreadonly: true, width: Widths.AnsiChars(8))
                 .Text("Refno", header: "Ref#", width: Widths.AnsiChars(8), iseditingreadonly: true)
                 .Text("Color", header: "Color", width: Widths.AnsiChars(8), iseditingreadonly: true)
                 .Text("SizeSpec", header: "Size", width: Widths.AnsiChars(8), iseditingreadonly: true)
