@@ -420,7 +420,8 @@ select  [Poid] = IIF (( t.poid = lag (t.poid,1,'') over (order by t.poid, t.seq1
         , p.StockUnit
         , [location]=dbo.Getlocation(b.ukey)      
         , b.ContainerCode
-        , [Total]=sum(t.Qty) OVER (PARTITION BY t.POID ,t.Seq1,t.Seq2 )       
+        , [Total]=sum(t.Qty) OVER (PARTITION BY t.POID ,t.Seq1,t.Seq2 )  
+        , [ActualWidth] = phy.ActualWidth
 from dbo.Issue_Detail t WITH (NOLOCK) 
 inner join Issue_Summary iss WITH (NOLOCK) on t.Issue_SummaryUkey = iss.Ukey
 left join dbo.PO_Supp_Detail p  WITH (NOLOCK) on    p.id= t.poid 
@@ -436,6 +437,13 @@ outer apply (
     select value = iif (left (t.seq1, 1) != '7', ''
                                                , '**PLS USE STOCK FROM SP#:' + iif (isnull (concat (p.StockPOID, p.StockSeq1, p.StockSeq2), '') = '', '',concat (p.StockPOID, p.StockSeq1, p.StockSeq2)) + '**')
 ) as stock7X
+outer apply
+(
+    select ActualWidth 
+    from FIR f
+    inner join FIR_Physical fp on fp.id = f.ID
+    where f.poid = t.POID and f.SEQ1 =t.Seq1 and f.SEQ2 =t.Seq2 and fp.Roll =t.Roll and fp.Dyelot =t.Dyelot
+) as phy
 where t.id= @ID
 ";
                 result = DBProxy.Current.Select(string.Empty, sqlcmd, pars, out DataTable bb);
@@ -467,6 +475,7 @@ where t.id= @ID
                         Tone = row1["Tone"].ToString().Trim(),
                         Qty = row1["Qty"].ToString().Trim(),
                         Total = row1["Total"].ToString().Trim(),
+                        ActualWidth = row1["ActualWidth"].ToString().Trim(),
                     }).OrderBy(s => s.GroupPoid).ThenBy(s => s.GroupSeq).ThenBy(s => s.Dyelot).ThenBy(s => s.Roll).ToList();
 
                 report.ReportDataSource = data;
