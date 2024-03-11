@@ -1465,7 +1465,12 @@ Select sr.Ukey
        ,sr.EditDate
        ,FileRule = '1'
 FROM UASentReport sr
-WHERE  sr.SuppID in (select top 1 SuppGroup FROM BrandRelation where SuppID = @SuppID)  
+WHERE exists (
+    select 1
+    from BrandRelation b
+    where b.BrandID = sr.BrandID
+    and b.SuppGroup = sr.SuppID
+    and b.SuppID = @SuppID)
 and (sr.BrandRefno = @BrandRefno  or sr.BrandRefno = @Refno)
 and sr.BrandID = @BrandID
 and sr.DocumentName = @DocumentName
@@ -1492,7 +1497,12 @@ Select sr.Ukey
        ,sr.EditDate
        ,FileRule = '2'
 FROM UASentReport sr
-WHERE  sr.SuppID in (select top 1 SuppGroup FROM BrandRelation where SuppID = @SuppID)  
+WHERE exists (
+    select 1
+    from BrandRelation b
+    where b.BrandID = sr.BrandID
+    and b.SuppGroup = sr.SuppID
+    and b.SuppID = @SuppID)
 and (sr.BrandRefno = @BrandRefno  or sr.BrandRefno = @Refno)
 and sr.ColorID = @ColorID 
 and sr.BrandID = @BrandID
@@ -1507,35 +1517,53 @@ and sr.DocumentName = @DocumentName
                     break;
                 case "3":
                     sql = @"
-Select DocSeason = SeasonID
-       ,Period 
-       ,TestDocFactoryGroup
-       ,FTYReceivedReport
-       ,ReceivedRemark
-       ,FirstDyelot
-       ,AddName
-       ,AddDate
-       ,EditName
-       ,EditDate
+if object_id('tempdb..#probablySeasonList') is not null 
+Drop Table #probablySeasonList
+
+Select RowNo = ROW_NUMBER() OVER(ORDER by Month), ID 
+Into #probablySeasonList
+FROM(
+    Select DISTINCT Month, ID
+    From Season where BrandID = @brandID or BrandID in (select BrandID From MaterialDocument_Brand Where DocumentName = @documentName and MergedBrand = @BrandID)
+)a
+
+Select DocSeason = f.SeasonID
+       ,f.Period 
+       ,f.TestDocFactoryGroup
+       ,f.FTYReceivedReport
+       ,f.ReceivedRemark
+       ,f.FirstDyelot
+       ,f.AddName
+       ,f.AddDate
+       ,f.EditName
+       ,f.EditDate
        ,FileRule = '3'
-       ,SuppID
-       ,TestDocFactoryGroup
-       ,BrandRefno
-       ,ColorID
-       ,SeasonID
-FROM dbo.FirstDyelot 
-WHERE SuppID in (select top 1 SuppGroup FROM BrandRelation where SuppID = @SuppID) 
-and (BrandRefno = @BrandRefno  or BrandRefno = @Refno)
-and ColorID = @ColorID 
-and BrandID = @BrandID 
-and DocumentName = @DocumentName
-and deleteColumn = 0
-Order by SeasonID desc";
+       ,f.SuppID
+       ,f.TestDocFactoryGroup
+       ,f.BrandRefno
+       ,f.ColorID
+       ,f.SeasonID
+FROM dbo.FirstDyelot f
+INNER JOIN #probablySeasonList season ON f.SeasonID = season.ID
+INNER JOIN #probablySeasonList seasonSCI ON seasonSCI.ID = @SeasonID
+WHERE exists (
+    select 1
+    from BrandRelation b
+    where b.BrandID = f.BrandID
+    and b.SuppGroup = f.SuppID
+    and b.SuppID = @SuppID)
+and (f.BrandRefno = @BrandRefno  or BrandRefno = @Refno)
+and f.ColorID = @ColorID 
+and f.BrandID = @BrandID 
+and f.DocumentName = @DocumentName
+and f.deleteColumn = 0
+Order by f.SeasonID desc";
                     parmes.Add(new SqlParameter("@SuppID", mainrow["SuppID"]));
                     parmes.Add(new SqlParameter("@BrandRefno", mainrow["BrandRefno"]));
                     parmes.Add(new SqlParameter("@Refno", mainrow["Refno"]));
                     parmes.Add(new SqlParameter("@BrandID", row["BrandID"]));
                     parmes.Add(new SqlParameter("@ColorID", mainrow["Color"]));
+                    parmes.Add(new SqlParameter("@SeasonID", mainrow["Season"]));
                     parmes.Add(new SqlParameter("@DocumentName", row["DocumentName"]));
                     break;
                 case "4":
@@ -1577,7 +1605,8 @@ FROM ExportRefnoSentReport sr
 INNER JOIN Export e on sr.ExportID = e.ID
 WHERE sr.ColorID = @ColorID 
 and (sr.BrandRefno = @BrandRefno  or sr.BrandRefno = @Refno)
-and sr.BrandID = @BrandID and sr.DocumentName = @DocumentName
+and sr.BrandID = @BrandID 
+and sr.DocumentName = @DocumentNames
 and exists(
     select 1 FROM Export_Detail ed WITH (NOLOCK) 
 	inner join PO_Supp_Detail psd WITH (NOLOCK)  on psd.ID = ed.PoID

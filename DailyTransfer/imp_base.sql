@@ -5942,6 +5942,13 @@ where not exists(select 1 from [Production].[dbo].ShareRule a WITH (NOLOCK) wher
 
 
 -------- insert MaterialDocument_Brand 
+DELETE [Production].[dbo].[MaterialDocument_Brand]
+from [Production].[dbo].[MaterialDocument_Brand] a
+left join [Trade_To_Pms].[dbo].[MaterialDocument_Brand] b
+on a.DocumentName = b.DocumentName and a.BrandID = b.BrandID and a.MergedBrand = b.MergedBrand
+where b.DocumentName is null 
+
+
 INSERT INTO [Production].[dbo].MaterialDocument_Brand (DocumentName,BrandID,MergedBrand)
 SELECT DocumentName,BrandID,MergedBrand 
 FROM  [Trade_To_Pms].[dbo].MaterialDocument_Brand t
