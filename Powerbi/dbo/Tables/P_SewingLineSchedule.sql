@@ -63,7 +63,7 @@ CREATE TABLE [dbo].[P_SewingLineSchedule](
 	[Std Qty for printing] [int] NULL,
 	[StyleName] [nvarchar](max) NULL,
 	[StdQtyEMB] [varchar](50) NULL,
-	[EMBStitch] [varchar](20) NULL,
+	[EMBStitch] [varchar](50) NULL,
 	[EMBStitchCnt] [int] NULL,
 	[TtlQtyEMB] [int] NULL,
 	[PrintPcs] [int] NULL,
