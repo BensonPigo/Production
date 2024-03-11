@@ -226,8 +226,10 @@ where oc.ID = '{poID}' and oc.FabricPanelCode = '{drWorkOrder["FabricPanelCode"]
                 int idxSize = 3;
                 int totalLayer = 0;
                 int garmentCnt = 0;
-                decimal conPcs = 0;
+                decimal consPc = 0;
                 decimal layerYDS = 0;
+                decimal layerInch = 0;
+                decimal inchToYdsRate = MyUtility.Convert.GetDecimal(MyUtility.GetValue.Lookup("SELECT dbo.GetUnitRate('Inch','YDS')"));
                 Dictionary<string, int> dicSizeRatio = new Dictionary<string, int>();
 
                 while (true)
@@ -237,6 +239,8 @@ where oc.ID = '{poID}' and oc.FabricPanelCode = '{drWorkOrder["FabricPanelCode"]
                     {
                         totalLayer = MyUtility.Convert.GetInt(rangeSizeRatio.GetCellValue(idxSize, idxMarker));
                         layerYDS = MyUtility.Convert.GetDecimal(rangeSizeRatio.GetCellValue(idxSize + 2, idxMarker));
+                        layerInch = MyUtility.Convert.GetDecimal(rangeSizeRatio.GetCellValue(idxSize + 3, idxMarker));
+                        layerYDS += layerInch * inchToYdsRate;
                         break;
                     }
 
@@ -257,11 +261,10 @@ where oc.ID = '{poID}' and oc.FabricPanelCode = '{drWorkOrder["FabricPanelCode"]
                 }
 
                 garmentCnt = dicSizeRatio.Sum(s => s.Value);
-                List<SqlParameter> listPar = new List<SqlParameter>() { new SqlParameter("@ydsPcs", layerYDS / garmentCnt) };
-                conPcs = MyUtility.Convert.GetDecimal(MyUtility.GetValue.Lookup("select dbo.GetUnitQty('M', 'CONE', dbo.GetUnitQty('YDS', 'M', @ydsPcs))", listPar));
+                consPc = layerYDS / garmentCnt; // 每層Yds / 每層SizeRatio
 
                 // insert WorkOrder
-                List<long> newWorkOrderUkey = this.InsertWorkOrder(drWorkOrder, totalLayer, cuttingLayer, conPcs, garmentCnt, sqlConnection);
+                List<long> newWorkOrderUkey = this.InsertWorkOrder(drWorkOrder, totalLayer, cuttingLayer, consPc, garmentCnt, sqlConnection);
                 this.listWorkOrderUkey.AddRange(newWorkOrderUkey);
                 foreach (long workOrderUkey in newWorkOrderUkey)
                 {
@@ -283,7 +286,7 @@ insert into WorkOrder_SizeRatio(WorkOrderUkey, ID, SizeCode, Qty)
             return new DualResult(true);
         }
 
-        private List<long> InsertWorkOrder(DataRow drWorkOrder, int totalLayer, int cuttingLayer, decimal conPcs, int garmentCnt, SqlConnection sqlConnection)
+        private List<long> InsertWorkOrder(DataRow drWorkOrder, int totalLayer, int cuttingLayer, decimal consPc, int garmentCnt, SqlConnection sqlConnection)
         {
             List<long> listWorkOrderUkey = new List<long>();
             string markername = "MK_" + this.markerSerNo.ToString().PadLeft(3, '0');
@@ -292,8 +295,8 @@ insert into WorkOrder_SizeRatio(WorkOrderUkey, ID, SizeCode, Qty)
                 int layer = totalLayer > cuttingLayer ? cuttingLayer : totalLayer;
                 List<SqlParameter> sqlParameters = new List<SqlParameter>()
                 {
-                    new SqlParameter("@conPcs", conPcs),
-                    new SqlParameter("@Cons", garmentCnt * conPcs * layer),
+                    new SqlParameter("@consPc", consPc),
+                    new SqlParameter("@Cons", garmentCnt * consPc * layer),
                 };
                 string sqlInsertWorkOrder = $@"
 insert into WorkOrder(
@@ -341,7 +344,7 @@ values
 ,'{drWorkOrder["Colorid"]}'
 ,'{markername}'
 ,'' --MarkerLength
-,@conPcs --ConsPC
+,@consPc --ConsPC
 ,@Cons --Cons
 ,'{drWorkOrder["Refno"]}'
 ,'{drWorkOrder["SCIRefno"]}'
