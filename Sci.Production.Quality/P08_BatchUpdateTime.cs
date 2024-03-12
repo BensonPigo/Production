@@ -78,7 +78,7 @@ WHERE rd.MINDQRCode = @MINDQRCode
 
 UNION ALL
 SELECT
-    Selected = CAST(0 AS BIT)
+    Selected = CAST(1 AS BIT)
     ,rd.MINDQRCode
     ,ScanTime = GETDATE()
     ,rd.POID
