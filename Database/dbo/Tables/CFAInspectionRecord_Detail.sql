@@ -5,7 +5,7 @@ CREATE TABLE [dbo].[CFAInspectionRecord_Detail](
 	[GarmentDefectTypeID] [varchar](1) NOT NULL,
 	[Qty] [numeric](5, 0) NOT NULL,
 	[Action] [nvarchar](300) NOT NULL,
-	[Remark] [nvarchar](500) NOT NULL,
+	[Remark] [nvarchar](MAX) NOT NULL,
 	[CFAAreaID] [varchar](50) NOT NULL,
 	 CONSTRAINT [PK_CFAInspectionRecord_Detail] PRIMARY KEY CLUSTERED 
 	(
