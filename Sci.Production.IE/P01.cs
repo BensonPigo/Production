@@ -1192,7 +1192,10 @@ and Name = @PPA
             // 設定detailGrid Rows 是否可以編輯
             this.detailgrid.RowEnter += this.Detailgrid_RowEnter;
             this.detailgrid.ColumnHeaderMouseClick += this.Detailgrid_ColumnHeaderMouseClick;
-            this.HideRows();
+            this.detailgrid.Sorted += (s, e) =>
+            {
+                this.HideRows();
+            };
         }
 
         private void Detailgrid_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
@@ -2363,6 +2366,7 @@ and s.BrandID = @brandid ", Env.User.Factory,
                 if (oriDt.Rows.Count == 1)
                 {
                     this.CurrentDetailData["Seq"] = MyUtility.Convert.GetString(10).PadLeft(4, '0');
+                    this.CurrentDetailData["IsShow"] = 1;
                 }
             }
         }
@@ -2401,6 +2405,7 @@ and s.BrandID = @brandid ", Env.User.Factory,
                     }
 
                     dr["seq"] = MyUtility.Convert.GetString(seq).PadLeft(4, '0');
+                    dr["IsShow"] = 1;
                     seq += 10;
                 }
             }
