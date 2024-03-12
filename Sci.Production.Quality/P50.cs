@@ -209,9 +209,9 @@ namespace Sci.Production.Quality
                     sql = $@"
                     Update UASentReport
                     SET 
-                    TestSeasonID = @SeasonID,
-                    DueSeason = @DueSeason,
-                    EditName = @UserID ,
+                    TestSeasonID = isnull(@SeasonID,''),
+                    DueSeason = isnull(@DueSeason,''),
+                    EditName = isnull(@UserID,'') ,
                     EditDate = getdate() 
                     WHERE 
                     BrandRefno = @BrandRefno and
@@ -231,7 +231,13 @@ namespace Sci.Production.Quality
                         new SqlParameter("BrandID", this.drBasic["BrandID"]),
                     };
 
-                    DBProxy.Current.Execute(null, sql, plis);
+                    DualResult result1 = DBProxy.Current.Execute(null, sql, plis);
+
+                    if (!result1)
+                    {
+                        this.ShowErr(result1.ToString());
+                        return;
+                    }
                 }
             };
 
@@ -307,9 +313,9 @@ namespace Sci.Production.Quality
                     Update 
                     UASentReport 
                     SET 
-                    TestSeasonID = @SeasonID,
-                    DueSeason = @DueSeason,
-                    EditName = @UserID ,
+                    TestSeasonID = isnull(@SeasonID,''),
+                    DueSeason = isnull(@DueSeason,''),
+                    EditName = isnull(@UserID,'') ,
                     EditDate = getdate() 
                     WHERE 
                     BrandRefno = @BrandRefno and 
@@ -329,7 +335,13 @@ namespace Sci.Production.Quality
                         new SqlParameter("BrandID", this.drBasic["BrandID"]),
                     };
 
-                    DBProxy.Current.Execute(null, sql, plis);
+                    DualResult result1 = DBProxy.Current.Execute(null, sql, plis);
+
+                    if (!result1)
+                    {
+                        this.ShowErr(result1.ToString());
+                        return;
+                    }
                 }
             };
 
@@ -410,7 +422,7 @@ namespace Sci.Production.Quality
                     Update 
                     UASentReport 
                     SET  
-                    DueSeason = @DueSeason 
+                    DueSeason = isnull(@DueSeason ,'')
                     WHERE 
                     BrandRefno = @BrandRefno and
                     ColorID = @ColorID and 
@@ -428,7 +440,13 @@ namespace Sci.Production.Quality
                         new SqlParameter("BrandID", this.drBasic["BrandID"]),
                     };
 
-                    DBProxy.Current.Execute(null, sql, plis);
+                    DualResult result1 = DBProxy.Current.Execute(null, sql, plis);
+
+                    if (!result1)
+                    {
+                        this.ShowErr(result1.ToString());
+                        return;
+                    }
                 }
             };
 
@@ -513,8 +531,8 @@ namespace Sci.Production.Quality
                     Update 
                     UASentReport
                     SET  
-                    DueSeason = @DueSeason, 
-                    EditName = @UserID ,
+                    DueSeason = isnull(@DueSeason,''), 
+                    EditName = isnull(@UserID,'') ,
                     EditDate = getdate() 
                     WHERE 
                     BrandRefno = @BrandRefno and 
@@ -533,7 +551,13 @@ namespace Sci.Production.Quality
                         new SqlParameter("BrandID", this.drBasic["BrandID"]),
                     };
 
-                    DBProxy.Current.Execute(null, sql, plis);
+                    DualResult result1 = DBProxy.Current.Execute(null, sql, plis);
+
+                    if (!result1)
+                    {
+                        this.ShowErr(result1.ToString());
+                        return;
+                    }
                 }
             };
 
@@ -611,7 +635,13 @@ namespace Sci.Production.Quality
                         new SqlParameter("BrandID", this.drBasic["BrandID"]),
                     };
 
-                    DBProxy.Current.Execute(null, sql, plis);
+                    DualResult result1 = DBProxy.Current.Execute(null, sql, plis);
+
+                    if (!result1)
+                    {
+                        this.ShowErr(result1.ToString());
+                        return;
+                    }
                 }
             };
 
@@ -707,7 +737,13 @@ namespace Sci.Production.Quality
                         new SqlParameter("BrandID", this.drBasic["BrandID"]),
                     };
 
-                    DBProxy.Current.Execute(null, sql, plis);
+                    DualResult result1 = DBProxy.Current.Execute(null, sql, plis);
+
+                    if (!result1)
+                    {
+                        this.ShowErr(result1.ToString());
+                        return;
+                    }
                 }
             };
 
