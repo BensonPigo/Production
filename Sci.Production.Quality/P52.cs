@@ -705,7 +705,6 @@ namespace Sci.Production.Quality
                 .Date("FTYReceivedReport", header: "FTY Received Date", width: Widths.AnsiChars(13), iseditingreadonly: true)
                 .Date("AddDate", header: "Add Date", width: Widths.AnsiChars(13), iseditingreadonly: true)
                 .Text("AddName", header: "Add Name ", width: Widths.AnsiChars(15), iseditingreadonly: true)
-                .Date("AddDate", header: "Add Date", width: Widths.AnsiChars(13), iseditingreadonly: true)
                 .Text("EditName", header: "Edit Name ", width: Widths.AnsiChars(15), iseditingreadonly: true)
                 .Date("EditDate", header: "Edit Date", width: Widths.AnsiChars(13), iseditingreadonly: true)
                 ;
@@ -999,9 +998,15 @@ and f.BrandRefNo <> ''
 select * from #POList
 Order by POID,Seq
 
-Select distinct md.DocumentName, md.FileRule, po.Seq, po.POID
+Select distinct md.DocumentName, md.FileRule, po.Seq, po.POID, md.BrandID
 FROM MaterialDocument md
-inner join #POList po on md.BrandID = po.BrandID
+inner join #POList po on md.BrandID = po.BrandID or 
+exists (
+	select 1 from MaterialDocument_Brand mdb
+	where md.DocumentName = mdb.DocumentName
+	and mdb.MergedBrand = po.BrandID
+	and md.BrandID = mdb.BrandID
+)
 Outer apply ( 
 	SELECT value = STUFF((SELECT CONCAT(',', MtlType.MtltypeId) 
 	FROM MaterialDocument_MtlType MtlType WITH (NOLOCK)
@@ -1030,6 +1035,7 @@ and (isnull(md.SupplierClude,'') = '' or isnull(supp.value,'') = ''
     or (md.SupplierClude = 'I' and po.SuppID in (select data from splitstring(supp.value, ',')))
     )
 and (po.Category in (select data from splitstring(md.Category,',')))
+and md.junk=0
 IF OBJECT_ID('tempdb..#POList') IS NOT NULL
 DROP TABLE #POList
 
@@ -1458,14 +1464,20 @@ Select sr.Ukey
        ,sr.EditDate
        ,FileRule = '1'
 FROM UASentReport sr
-WHERE  sr.SuppID in (select top 1 SuppGroup FROM BrandRelation where SuppID = @SuppID)  
+WHERE exists (
+    select 1
+    from BrandRelation b
+    where b.BrandID = sr.BrandID
+    and b.SuppGroup = sr.SuppID
+    and b.SuppID = @SuppID)
 and (sr.BrandRefno = @BrandRefno  or sr.BrandRefno = @Refno)
-and sr.BrandID = @BrandID and sr.DocumentName = @DocumentName
+and sr.BrandID = @BrandID
+and sr.DocumentName = @DocumentName
                     ";
                     parmes.Add(new SqlParameter("@SuppID", mainrow["SuppID"]));
                     parmes.Add(new SqlParameter("@BrandRefno", mainrow["BrandRefno"]));
                     parmes.Add(new SqlParameter("@Refno", mainrow["Refno"]));
-                    parmes.Add(new SqlParameter("@BrandID", mainrow["BrandID"]));
+                    parmes.Add(new SqlParameter("@BrandID", row["BrandID"]));
                     parmes.Add(new SqlParameter("@DocumentName", row["DocumentName"]));
                     break;
                 case "2":
@@ -1484,46 +1496,73 @@ Select sr.Ukey
        ,sr.EditDate
        ,FileRule = '2'
 FROM UASentReport sr
-WHERE  sr.SuppID in (select top 1 SuppGroup FROM BrandRelation where SuppID = @SuppID)  
+WHERE exists (
+    select 1
+    from BrandRelation b
+    where b.BrandID = sr.BrandID
+    and b.SuppGroup = sr.SuppID
+    and b.SuppID = @SuppID)
 and (sr.BrandRefno = @BrandRefno  or sr.BrandRefno = @Refno)
-and sr.ColorID = @ColorID and sr.BrandID = @BrandID and sr.DocumentName = @DocumentName 
+and sr.ColorID = @ColorID 
+and sr.BrandID = @BrandID
+and sr.DocumentName = @DocumentName 
                     ";
                     parmes.Add(new SqlParameter("@SuppID", mainrow["SuppID"]));
                     parmes.Add(new SqlParameter("@BrandRefno", mainrow["BrandRefno"]));
                     parmes.Add(new SqlParameter("@Refno", mainrow["Refno"]));
-                    parmes.Add(new SqlParameter("@BrandID", mainrow["BrandID"]));
+                    parmes.Add(new SqlParameter("@BrandID", row["BrandID"]));
                     parmes.Add(new SqlParameter("@ColorID", mainrow["Color"]));
                     parmes.Add(new SqlParameter("@DocumentName", row["DocumentName"]));
                     break;
                 case "3":
                     sql = @"
-Select DocSeason = SeasonID
-       ,Period 
-       ,TestDocFactoryGroup
-       ,FTYReceivedReport
-       ,ReceivedRemark
-       ,FirstDyelot
-       ,AddName
-       ,AddDate
-       ,EditName
-       ,EditDate
+if object_id('tempdb..#probablySeasonList') is not null 
+Drop Table #probablySeasonList
+
+Select RowNo = ROW_NUMBER() OVER(ORDER by Month), ID 
+Into #probablySeasonList
+FROM(
+    Select DISTINCT Month, ID
+    From Season where BrandID = @brandID or BrandID in (select BrandID From MaterialDocument_Brand Where DocumentName = @documentName and MergedBrand = @BrandID)
+)a
+
+Select DocSeason = f.SeasonID
+       ,f.Period 
+       ,f.TestDocFactoryGroup
+       ,f.FTYReceivedReport
+       ,f.ReceivedRemark
+       ,f.FirstDyelot
+       ,f.AddName
+       ,f.AddDate
+       ,f.EditName
+       ,f.EditDate
        ,FileRule = '3'
-       ,SuppID
-       ,TestDocFactoryGroup
-       ,BrandRefno
-       ,ColorID
-       ,SeasonID
-FROM dbo.FirstDyelot 
-WHERE SuppID in (select top 1 SuppGroup FROM BrandRelation where SuppID = @SuppID) 
-and (BrandRefno = @BrandRefno  or BrandRefno = @Refno)
-and ColorID = @ColorID and BrandID = @BrandID and DocumentName = @DocumentName
-and deleteColumn = 0
-Order by SeasonID desc";
+       ,f.SuppID
+       ,f.TestDocFactoryGroup
+       ,f.BrandRefno
+       ,f.ColorID
+       ,f.SeasonID
+FROM dbo.FirstDyelot f
+INNER JOIN #probablySeasonList season ON f.SeasonID = season.ID
+INNER JOIN #probablySeasonList seasonSCI ON seasonSCI.ID = @SeasonID
+WHERE exists (
+    select 1
+    from BrandRelation b
+    where b.BrandID = f.BrandID
+    and b.SuppGroup = f.SuppID
+    and b.SuppID = @SuppID)
+and (f.BrandRefno = @BrandRefno  or BrandRefno = @Refno)
+and f.ColorID = @ColorID 
+and f.BrandID = @BrandID 
+and f.DocumentName = @DocumentName
+and f.deleteColumn = 0
+Order by f.SeasonID desc";
                     parmes.Add(new SqlParameter("@SuppID", mainrow["SuppID"]));
                     parmes.Add(new SqlParameter("@BrandRefno", mainrow["BrandRefno"]));
                     parmes.Add(new SqlParameter("@Refno", mainrow["Refno"]));
-                    parmes.Add(new SqlParameter("@BrandID", mainrow["BrandID"]));
+                    parmes.Add(new SqlParameter("@BrandID", row["BrandID"]));
                     parmes.Add(new SqlParameter("@ColorID", mainrow["Color"]));
+                    parmes.Add(new SqlParameter("@SeasonID", mainrow["Season"]));
                     parmes.Add(new SqlParameter("@DocumentName", row["DocumentName"]));
                     break;
                 case "4":
@@ -1565,7 +1604,8 @@ FROM ExportRefnoSentReport sr
 INNER JOIN Export e on sr.ExportID = e.ID
 WHERE sr.ColorID = @ColorID 
 and (sr.BrandRefno = @BrandRefno  or sr.BrandRefno = @Refno)
-and sr.BrandID = @BrandID and sr.DocumentName = @DocumentName
+and sr.BrandID = @BrandID 
+and sr.DocumentName = @DocumentNames
 and exists(
     select 1 FROM Export_Detail ed WITH (NOLOCK) 
 	inner join PO_Supp_Detail psd WITH (NOLOCK)  on psd.ID = ed.PoID
