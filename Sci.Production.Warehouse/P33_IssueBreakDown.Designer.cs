@@ -30,16 +30,18 @@
         {
             this.components = new System.ComponentModel.Container();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.txtArticleFilter = new Sci.Win.UI.TextBox();
+            this.label1 = new Sci.Win.UI.Label();
             this.gridQtyBreakDown = new Sci.Win.UI.Grid();
             this.gridIssueBreakDown = new Sci.Win.UI.Grid();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.labe = new Sci.Win.UI.Label();
+            this.displayColor = new Sci.Win.UI.DisplayBox();
             this.btnCopyQTY = new Sci.Win.UI.Button();
             this.btnCancel = new Sci.Win.UI.Button();
             this.btnSave = new Sci.Win.UI.Button();
             this.gridIssueBreakDownBS = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.gridQtyBreakDownBS = new Sci.Win.UI.ListControlBindingSource(this.components);
-            this.labe = new Sci.Win.UI.Label();
-            this.displayColor = new Sci.Win.UI.DisplayBox();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -62,6 +64,8 @@
             // 
             // splitContainer1.Panel1
             // 
+            this.splitContainer1.Panel1.Controls.Add(this.txtArticleFilter);
+            this.splitContainer1.Panel1.Controls.Add(this.label1);
             this.splitContainer1.Panel1.Controls.Add(this.gridQtyBreakDown);
             // 
             // splitContainer1.Panel2
@@ -71,6 +75,27 @@
             this.splitContainer1.SplitterDistance = 234;
             this.splitContainer1.TabIndex = 0;
             // 
+            // txtArticleFilter
+            // 
+            this.txtArticleFilter.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.txtArticleFilter.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.txtArticleFilter.IsSupportEditMode = false;
+            this.txtArticleFilter.Location = new System.Drawing.Point(89, 208);
+            this.txtArticleFilter.Name = "txtArticleFilter";
+            this.txtArticleFilter.PopUpMode = Sci.Win.UI.TextBoxPopUpMode.EditMode;
+            this.txtArticleFilter.ReadOnly = true;
+            this.txtArticleFilter.Size = new System.Drawing.Size(175, 23);
+            this.txtArticleFilter.TabIndex = 109;
+            this.txtArticleFilter.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtFilter_PopUp);
+            // 
+            // label1
+            // 
+            this.label1.Location = new System.Drawing.Point(3, 208);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(83, 23);
+            this.label1.TabIndex = 108;
+            this.label1.Text = "Article Filter";
+            // 
             // gridQtyBreakDown
             // 
             this.gridQtyBreakDown.AllowUserToAddRows = false;
@@ -79,7 +104,6 @@
             this.gridQtyBreakDown.BackgroundColor = System.Drawing.SystemColors.Control;
             this.gridQtyBreakDown.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
             this.gridQtyBreakDown.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.gridQtyBreakDown.Dock = System.Windows.Forms.DockStyle.Fill;
             this.gridQtyBreakDown.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
             this.gridQtyBreakDown.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
             this.gridQtyBreakDown.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
@@ -91,7 +115,7 @@
             this.gridQtyBreakDown.RowTemplate.Height = 24;
             this.gridQtyBreakDown.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridQtyBreakDown.ShowCellToolTips = false;
-            this.gridQtyBreakDown.Size = new System.Drawing.Size(784, 234);
+            this.gridQtyBreakDown.Size = new System.Drawing.Size(784, 206);
             this.gridQtyBreakDown.TabIndex = 0;
             this.gridQtyBreakDown.TabStop = false;
             // 
@@ -136,6 +160,28 @@
             this.panel1.Size = new System.Drawing.Size(784, 50);
             this.panel1.TabIndex = 1;
             // 
+            // labe
+            // 
+            this.labe.BackColor = System.Drawing.Color.Transparent;
+            this.labe.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F);
+            this.labe.Location = new System.Drawing.Point(147, 12);
+            this.labe.Name = "labe";
+            this.labe.Size = new System.Drawing.Size(294, 23);
+            this.labe.TabIndex = 49;
+            this.labe.Text = "Canceled(No Need to Produce)or BuyBack(Garment) Order";
+            this.labe.TextStyle.Alignment = System.Drawing.ContentAlignment.MiddleRight;
+            this.labe.TextStyle.Color = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            // 
+            // displayColor
+            // 
+            this.displayColor.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayColor.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.displayColor.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayColor.Location = new System.Drawing.Point(124, 14);
+            this.displayColor.Name = "displayColor";
+            this.displayColor.Size = new System.Drawing.Size(20, 21);
+            this.displayColor.TabIndex = 48;
+            // 
             // btnCopyQTY
             // 
             this.btnCopyQTY.Location = new System.Drawing.Point(12, 10);
@@ -168,28 +214,6 @@
             this.btnSave.UseVisualStyleBackColor = true;
             this.btnSave.Click += new System.EventHandler(this.BtnSave_Click);
             // 
-            // labe
-            // 
-            this.labe.BackColor = System.Drawing.Color.Transparent;
-            this.labe.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F);
-            this.labe.Location = new System.Drawing.Point(147, 12);
-            this.labe.Name = "labe";
-            this.labe.Size = new System.Drawing.Size(294, 23);
-            this.labe.TabIndex = 49;
-            this.labe.Text = "Canceled(No Need to Produce)or BuyBack(Garment) Order";
-            this.labe.TextStyle.Alignment = System.Drawing.ContentAlignment.MiddleRight;
-            this.labe.TextStyle.Color = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            // 
-            // displayColor
-            // 
-            this.displayColor.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayColor.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.displayColor.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayColor.Location = new System.Drawing.Point(124, 14);
-            this.displayColor.Name = "displayColor";
-            this.displayColor.Size = new System.Drawing.Size(20, 21);
-            this.displayColor.TabIndex = 48;
-            // 
             // P33_IssueBreakDown
             // 
             this.ClientSize = new System.Drawing.Size(784, 561);
@@ -199,6 +223,7 @@
             this.OnLineHelpID = "Sci.Win.Subs.Base";
             this.Text = "P33. Issue Qty Break Down";
             this.splitContainer1.Panel1.ResumeLayout(false);
+            this.splitContainer1.Panel1.PerformLayout();
             this.splitContainer1.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
@@ -225,5 +250,7 @@
         private Win.UI.Button btnCopyQTY;
         private Win.UI.Label labe;
         private Win.UI.DisplayBox displayColor;
+        private Win.UI.Label label1;
+        private Win.UI.TextBox txtArticleFilter;
     }
 }
