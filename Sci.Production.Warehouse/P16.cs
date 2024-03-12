@@ -991,6 +991,7 @@ where i.Id='{row["ID"].ToString()}'");
             report.ReportParameters.Add(new ReportParameter("issuetime", DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss")));
             report.ReportParameters.Add(new ReportParameter("Dept", this.displayDept.Text));
             report.ReportParameters.Add(new ReportParameter("AddName", addName));
+            report.ReportParameters.Add(new ReportParameter("Line", this.txtSewingLine.Text));
 
             string sqlcmd = @"
 select b.ApvDate
