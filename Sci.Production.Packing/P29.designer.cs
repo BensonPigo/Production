@@ -30,6 +30,11 @@
         {
             this.components = new System.ComponentModel.Container();
             this.panel1 = new Sci.Win.UI.Panel();
+            this.btnExcel = new Sci.Win.UI.Button();
+            this.label3 = new Sci.Win.UI.Label();
+            this.label2 = new Sci.Win.UI.Label();
+            this.txtfactory1 = new Sci.Production.Class.Txtfactory();
+            this.txtMdivision1 = new Sci.Production.Class.TxtMdivision();
             this.labelSP = new Sci.Win.UI.Label();
             this.lbSP = new Sci.Win.UI.Label();
             this.lbPackID = new Sci.Win.UI.Label();
@@ -45,11 +50,6 @@
             this.label1 = new Sci.Win.UI.Label();
             this.gridDetail = new Sci.Win.UI.Grid();
             this.listControlBindingSource2 = new Sci.Win.UI.ListControlBindingSource(this.components);
-            this.txtfactory1 = new Sci.Production.Class.Txtfactory();
-            this.txtMdivision1 = new Sci.Production.Class.TxtMdivision();
-            this.label2 = new Sci.Win.UI.Label();
-            this.label3 = new Sci.Win.UI.Label();
-            this.btnExcel = new Sci.Win.UI.Button();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -85,6 +85,60 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(1060, 78);
             this.panel1.TabIndex = 1;
+            // 
+            // btnExcel
+            // 
+            this.btnExcel.Location = new System.Drawing.Point(949, 38);
+            this.btnExcel.Name = "btnExcel";
+            this.btnExcel.Size = new System.Drawing.Size(99, 30);
+            this.btnExcel.TabIndex = 16;
+            this.btnExcel.Text = "To Excel";
+            this.btnExcel.UseVisualStyleBackColor = true;
+            this.btnExcel.Click += new System.EventHandler(this.btnExcel_Click);
+            // 
+            // label3
+            // 
+            this.label3.BackColor = System.Drawing.Color.LightSkyBlue;
+            this.label3.Location = new System.Drawing.Point(622, 6);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(93, 23);
+            this.label3.TabIndex = 15;
+            this.label3.Text = "Factory";
+            this.label3.TextStyle.Color = System.Drawing.Color.Black;
+            // 
+            // label2
+            // 
+            this.label2.BackColor = System.Drawing.Color.LightSkyBlue;
+            this.label2.Location = new System.Drawing.Point(399, 6);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(93, 23);
+            this.label2.TabIndex = 14;
+            this.label2.Text = "M";
+            this.label2.TextStyle.Color = System.Drawing.Color.Black;
+            // 
+            // txtfactory1
+            // 
+            this.txtfactory1.BackColor = System.Drawing.Color.White;
+            this.txtfactory1.BoolFtyGroupList = true;
+            this.txtfactory1.FilteMDivision = false;
+            this.txtfactory1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtfactory1.IsMultiselect = false;
+            this.txtfactory1.IsProduceFty = false;
+            this.txtfactory1.IssupportJunk = false;
+            this.txtfactory1.Location = new System.Drawing.Point(718, 6);
+            this.txtfactory1.MDivision = null;
+            this.txtfactory1.Name = "txtfactory1";
+            this.txtfactory1.Size = new System.Drawing.Size(121, 23);
+            this.txtfactory1.TabIndex = 11;
+            // 
+            // txtMdivision1
+            // 
+            this.txtMdivision1.BackColor = System.Drawing.Color.White;
+            this.txtMdivision1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtMdivision1.Location = new System.Drawing.Point(495, 6);
+            this.txtMdivision1.Name = "txtMdivision1";
+            this.txtMdivision1.Size = new System.Drawing.Size(121, 23);
+            this.txtMdivision1.TabIndex = 10;
             // 
             // labelSP
             // 
@@ -232,7 +286,7 @@
             // 
             this.splitContainer2.Panel2.Controls.Add(this.gridDetail);
             this.splitContainer2.Size = new System.Drawing.Size(1060, 174);
-            this.splitContainer2.SplitterDistance = 31;
+            this.splitContainer2.SplitterDistance = 30;
             this.splitContainer2.TabIndex = 6;
             // 
             // label1
@@ -264,62 +318,9 @@
             this.gridDetail.RowTemplate.Height = 24;
             this.gridDetail.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridDetail.ShowCellToolTips = false;
-            this.gridDetail.Size = new System.Drawing.Size(1060, 139);
+            this.gridDetail.Size = new System.Drawing.Size(1060, 140);
             this.gridDetail.TabIndex = 0;
             this.gridDetail.TabStop = false;
-            // 
-            // txtfactory1
-            // 
-            this.txtfactory1.BackColor = System.Drawing.Color.White;
-            this.txtfactory1.BoolFtyGroupList = true;
-            this.txtfactory1.FilteMDivision = false;
-            this.txtfactory1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtfactory1.IsProduceFty = false;
-            this.txtfactory1.IssupportJunk = false;
-            this.txtfactory1.Location = new System.Drawing.Point(718, 6);
-            this.txtfactory1.MDivision = null;
-            this.txtfactory1.Name = "txtfactory1";
-            this.txtfactory1.Size = new System.Drawing.Size(121, 23);
-            this.txtfactory1.TabIndex = 11;
-            // 
-            // txtMdivision1
-            // 
-            this.txtMdivision1.BackColor = System.Drawing.Color.White;
-            this.txtMdivision1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtMdivision1.Location = new System.Drawing.Point(495, 6);
-            this.txtMdivision1.Name = "txtMdivision1";
-            this.txtMdivision1.Size = new System.Drawing.Size(121, 23);
-            this.txtMdivision1.TabIndex = 10;
-            // 
-            // label2
-            // 
-            this.label2.BackColor = System.Drawing.Color.LightSkyBlue;
-            this.label2.Location = new System.Drawing.Point(399, 6);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(93, 23);
-            this.label2.TabIndex = 14;
-            this.label2.Text = "M";
-            this.label2.TextStyle.Color = System.Drawing.Color.Black;
-            // 
-            // label3
-            // 
-            this.label3.BackColor = System.Drawing.Color.LightSkyBlue;
-            this.label3.Location = new System.Drawing.Point(622, 6);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(93, 23);
-            this.label3.TabIndex = 15;
-            this.label3.Text = "Factory";
-            this.label3.TextStyle.Color = System.Drawing.Color.Black;
-            // 
-            // btnExcel
-            // 
-            this.btnExcel.Location = new System.Drawing.Point(857, 6);
-            this.btnExcel.Name = "btnExcel";
-            this.btnExcel.Size = new System.Drawing.Size(80, 30);
-            this.btnExcel.TabIndex = 16;
-            this.btnExcel.Text = "To Excel";
-            this.btnExcel.UseVisualStyleBackColor = true;
-            this.btnExcel.Click += new System.EventHandler(this.btnExcel_Click);
             // 
             // P29
             // 
