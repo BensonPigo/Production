@@ -1366,24 +1366,29 @@ and Name = @PPA
         protected override bool ClickSaveBefore()
         {
             #region Seq 重複資料檢查
-            var dataTable = this.DetailDatas.CopyToDataTable();
-            var duplicateSeqs = dataTable.AsEnumerable()
-             .GroupBy(row => row.Field<string>("SEQ"))
-             .Where(grp => grp.Count() > 1)
-             .Select(grp => grp.Key).ToList();
-
-            if (duplicateSeqs.Any())
+            if (this.DetailDatas.Count != 0)
             {
-                string seqError = string.Empty;
-                foreach (var duplicateSeq in duplicateSeqs)
-                {
-                    seqError += Environment.NewLine + $"'{duplicateSeq}'";
-                }
+                var dataTable = this.DetailDatas.CopyToDataTable();
+                var duplicateSeqs = dataTable.AsEnumerable()
+                 .GroupBy(row => row.Field<string>("SEQ"))
+                 .Where(grp => grp.Count() > 1)
+                 .Select(grp => grp.Key).ToList();
 
-                string strMsg = $"[Seq] cannot be duplicated! {seqError}";
-                MyUtility.Msg.WarningBox(strMsg);
-                return false;
+                if (duplicateSeqs.Any())
+                {
+                    string seqError = string.Empty;
+                    foreach (var duplicateSeq in duplicateSeqs)
+                    {
+                        seqError += Environment.NewLine + $"'{duplicateSeq}'";
+                    }
+
+                    string strMsg = $"[Seq] cannot be duplicated! {seqError}";
+                    MyUtility.Msg.WarningBox(strMsg);
+                    return false;
+                }
             }
+
+
             #endregion Seq 重複資料檢查
 
             #region ST/MC Type檢查
@@ -2363,7 +2368,8 @@ and s.BrandID = @brandid ", Env.User.Factory,
             }
             else if (index == -1)
             {
-                if (oriDt.Rows.Count == 1)
+                var count = oriDt.AsEnumerable().Where(x => x.RowState != DataRowState.Deleted).Count();
+                if (count == 1)
                 {
                     this.CurrentDetailData["Seq"] = MyUtility.Convert.GetString(10).PadLeft(4, '0');
                     this.CurrentDetailData["IsShow"] = 1;
@@ -2388,6 +2394,11 @@ and s.BrandID = @brandid ", Env.User.Factory,
                 seq = 10;
                 foreach (DataRow dr in dt.Rows)
                 {
+                    if (dr.RowState == DataRowState.Deleted)
+                    {
+                        continue;
+                    }
+
                     if (MyUtility.Convert.GetInt(seq) != 0 && MyUtility.Convert.GetInt(dr["Seq"]) != 0)
                     {
                         if (MyUtility.Convert.GetInt(dr["Seq"]) != 0)
@@ -2397,11 +2408,6 @@ and s.BrandID = @brandid ", Env.User.Factory,
                                 seq = MyUtility.Convert.GetInt(dr["Seq"]);
                             }
                         }
-                    }
-
-                    if (dr.RowState == DataRowState.Deleted)
-                    {
-                        continue;
                     }
 
                     dr["seq"] = MyUtility.Convert.GetString(seq).PadLeft(4, '0');
