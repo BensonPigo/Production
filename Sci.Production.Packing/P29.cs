@@ -141,7 +141,7 @@ select [PackingAuditDate] = c.PackingAuditDate
 	,[CTN] = c.CTNStartNo
 	,[Qty] = pd_QtyPerCTN.Qty
 	,[Discrepancy] = c.Qty
-    ,[Desc] = isnull(pd.Description,'')
+    ,[Desc] = isnull(pd.val,'')
 	,[SP] = c.OrderID
 	,[PO] = o.CustPONo
 	,[Style] = o.StyleID
@@ -176,14 +176,17 @@ outer apply (
 	,1,1,'')
 )pd_Barcode
 outer apply (
-    select top 1 pr.Description 
-    from PackingList_Detail pd
-    left join CTNPackingAudit_Detail cd on c.ID = cd.ID
-    left join PackingReason pr on cd.PackingReasonID = pr.ID
-    where pr.Type = 'PA'
-    and pd.id = c.PackingListID
-    and pd.CTNStartNo = c.CTNStartNo
-    and pd.Orderid = c.Orderid
+	SELECT val = Stuff((
+		select distinct concat('/',pr.Description )
+		from PackingList_Detail pd
+		left join CTNPackingAudit_Detail cd on c.ID = cd.ID
+		left join PackingReason pr on cd.PackingReasonID = pr.ID
+		where pr.Type = 'PA'
+		and pd.id = c.PackingListID
+		and pd.CTNStartNo = c.CTNStartNo
+		and pd.Orderid = c.Orderid
+	FOR XML PATH(''))
+	,1,1,'')
 ) PD
 outer apply (
 	SELECT val = Stuff((
