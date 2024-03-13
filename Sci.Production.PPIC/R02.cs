@@ -4,6 +4,8 @@ using System.Text;
 using System.Windows.Forms;
 using Ict;
 using Sci.Data;
+using Sci.Production.Prg.PowerBI.Logic;
+using Sci.Production.Prg.PowerBI.Model;
 
 namespace Sci.Production.PPIC
 {
@@ -12,22 +14,8 @@ namespace Sci.Production.PPIC
     /// </summary>
     public partial class R02 : Win.Tems.PrintForm
     {
+        private PPIC_R02_ViewModel viewModel;
         private DataTable printData;
-        private DateTime? sciDate1;
-        private DateTime? sciDate2;
-        private DateTime? prodiveDate1;
-        private DateTime? prodiveDate2;
-        private DateTime? rcvDate1;
-        private DateTime? rcvDate2;
-        private string brand;
-        private string style;
-        private string season;
-        private string mDivision;
-        private string mr;
-        private string smr;
-        private string pohandle;
-        private string posmr;
-        private int printType;
 
         /// <summary>
         /// R02
@@ -54,138 +42,34 @@ namespace Sci.Production.PPIC
                 return false;
             }
 
-            this.mDivision = this.comboM.Text;
-            this.sciDate1 = this.dateSCIDelivery.Value1;
-            this.sciDate2 = this.dateSCIDelivery.Value2;
-            this.prodiveDate1 = this.dateProvideDate.Value1;
-            this.prodiveDate2 = this.dateProvideDate.Value2;
-            this.rcvDate1 = this.dateFtyMRRcvDate.Value1;
-            this.rcvDate2 = this.dateFtyMRRcvDate.Value2;
-            this.brand = this.txtbrand.Text;
-            this.style = this.txtstyle.Text;
-            this.season = this.txtseason.Text;
-            this.mr = this.txttpeuser_caneditMR.TextBox1.Text;
-            this.smr = this.txttpeuser_caneditSMR.TextBox1.Text;
-            this.pohandle = this.txttpeuser_caneditPOHandle.TextBox1.Text;
-            this.posmr = this.txttpeuser_caneditPOSMR.TextBox1.Text;
-            this.printType = this.comboPrintType.SelectedIndex;
-
+            this.viewModel = new PPIC_R02_ViewModel()
+            {
+                SciDelivery1 = this.dateSCIDelivery.Value1,
+                SciDelivery2 = this.dateSCIDelivery.Value2,
+                ProvideDate1 = this.dateProvideDate.Value1,
+                ProvideDate2 = this.dateProvideDate.Value2,
+                ReceiveDate1 = this.dateFtyMRRcvDate.Value1,
+                ReceiveDate2 = this.dateFtyMRRcvDate.Value2,
+                BrandID = this.txtbrand.Text,
+                StyleID = this.txtstyle.Text,
+                SeasonID = this.txtseason.Text,
+                MDivisionID = this.comboM.Text,
+                MRHandle = this.txttpeuser_caneditMR.TextBox1.Text,
+                SMR = this.txttpeuser_caneditSMR.TextBox1.Text,
+                PoHandle = this.txttpeuser_caneditPOHandle.TextBox1.Text,
+                POSMR = this.txttpeuser_caneditPOSMR.TextBox1.Text,
+                PrintType = this.comboPrintType.SelectedIndex,
+            };
             return base.ValidateInput();
         }
 
         /// <inheritdoc/>
         protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
-            StringBuilder sqlCmd = new StringBuilder();
-            sqlCmd.Append(string.Format(@"
-select s.BrandID,s.ID,s.SeasonID,sp.ProductionKitsGroup,sp.MDivisionID,sp.FactoryID
-	,Doc = CONCAT(sp.DOC,'-',r.Name)
-	,sp.SendDate,sp.ReceiveDate,sp.SendToQA,sp.QAReceived,
-    [UnnecessaryToSend] = iif(Len(isnull(sp.ReasonID,'')) = 0,'N','Y')
-    ,sp.ProvideDate,sp.OrderId,sp.SCIDelivery,sp.BuyerDelivery
-	,PullForward = IIF(sp.IsPF = 1,'Y','N')
-	,Handle		 = CONCAT(sp.SendName,'-',(select Name from TPEPass1 WITH (NOLOCK) where ID = sp.SendName))
-	,MRHandle	 = CONCAT(sp.MRHandle,'-',(select Name from TPEPass1 WITH (NOLOCK) where ID = sp.MRHandle))
-	,SMR		 = CONCAT(sp.SMR,'-',(select Name from TPEPass1 WITH (NOLOCK) where ID = sp.SMR))
-	,POHandle	 = CONCAT(sp.PoHandle,'-',(select Name from TPEPass1 WITH (NOLOCK) where ID = sp.PoHandle))
-	,POSMR		 = CONCAT(sp.POSMR,'-',(select Name from TPEPass1 WITH (NOLOCK) where ID = sp.POSMR))
-	,FtyHandle	 = CONCAT(sp.FtyHandle,'-',(select Name from Pass1 WITH (NOLOCK) where ID = sp.FtyHandle))
-from Style_ProductionKits sp WITH (NOLOCK) 
-inner join Style s WITH (NOLOCK) on s.Ukey = sp.StyleUkey
-left join Reason r WITH (NOLOCK) on r.ReasonTypeID = 'ProductionKits' and r.ID = sp.DOC
-where 1=1 "));
-
-            if (!MyUtility.Check.Empty(this.sciDate1))
-            {
-                sqlCmd.Append(string.Format(@" and sp.SCIDelivery >= '{0}'", Convert.ToDateTime(this.sciDate1).ToString("yyyy/MM/dd")));
-            }
-
-            if (!MyUtility.Check.Empty(this.sciDate2))
-            {
-                sqlCmd.Append(string.Format(@" and sp.SCIDelivery <= '{0}'", Convert.ToDateTime(this.sciDate2).ToString("yyyy/MM/dd")));
-            }
-
-            if (!MyUtility.Check.Empty(this.prodiveDate1))
-            {
-                sqlCmd.Append(string.Format(@" and sp.ProvideDate >= '{0}'", Convert.ToDateTime(this.prodiveDate1).ToString("yyyy/MM/dd")));
-            }
-
-            if (!MyUtility.Check.Empty(this.prodiveDate2))
-            {
-                sqlCmd.Append(string.Format(@" and sp.ProvideDate <= '{0}'", Convert.ToDateTime(this.prodiveDate2).ToString("yyyy/MM/dd")));
-            }
-
-            if (!MyUtility.Check.Empty(this.rcvDate1))
-            {
-                sqlCmd.Append(string.Format(@" and sp.ReceiveDate >= '{0}'", Convert.ToDateTime(this.rcvDate1).ToString("yyyy/MM/dd")));
-            }
-
-            if (!MyUtility.Check.Empty(this.rcvDate2))
-            {
-                sqlCmd.Append(string.Format(@" and sp.ReceiveDate <= '{0}'", Convert.ToDateTime(this.rcvDate2).ToString("yyyy/MM/dd")));
-            }
-
-            if (!MyUtility.Check.Empty(this.brand))
-            {
-                sqlCmd.Append(string.Format(" and s.BrandID = '{0}'", this.brand));
-            }
-
-            if (!MyUtility.Check.Empty(this.style))
-            {
-                sqlCmd.Append(string.Format(" and s.ID = '{0}'", this.style));
-            }
-
-            if (!MyUtility.Check.Empty(this.season))
-            {
-                sqlCmd.Append(string.Format(" and s.SeasonID = '{0}'", this.season));
-            }
-
-            if (!MyUtility.Check.Empty(this.mDivision))
-            {
-                sqlCmd.Append(string.Format(" and sp.ProductionKitsGroup = '{0}'", this.mDivision));
-            }
-
-            if (!MyUtility.Check.Empty(this.mr))
-            {
-                sqlCmd.Append(string.Format(" and sp.MRHandle = '{0}'", this.mr));
-            }
-
-            if (!MyUtility.Check.Empty(this.smr))
-            {
-                sqlCmd.Append(string.Format(" and sp.SMR = '{0}'", this.smr));
-            }
-
-            if (!MyUtility.Check.Empty(this.pohandle))
-            {
-                sqlCmd.Append(string.Format(" and sp.PoHandle = '{0}'", this.pohandle));
-            }
-
-            if (!MyUtility.Check.Empty(this.posmr))
-            {
-                sqlCmd.Append(string.Format(" and sp.POSMR = '{0}'", this.posmr));
-            }
-
-            if (this.printType == 1)
-            {
-                sqlCmd.Append(" and sp.SendDate is null");
-            }
-            else if (this.printType == 2)
-            {
-                sqlCmd.Append(" and sp.SendDate is not null");
-            }
-            else if (this.printType == 3)
-            {
-                sqlCmd.Append(" and sp.ReceiveDate is not null");
-            }
-
-            DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), out this.printData);
-            if (!result)
-            {
-                DualResult failResult = new DualResult(false, "Query data fail\r\n" + result.ToString());
-                return failResult;
-            }
-
-            return Ict.Result.True;
+            PPIC_R02 biModel = new PPIC_R02();
+            Base_ViewModel resultReport = biModel.GetPPIC_R02(this.viewModel);
+            this.printData = resultReport.Dt;
+            return resultReport.Result;
         }
 
         /// <inheritdoc/>

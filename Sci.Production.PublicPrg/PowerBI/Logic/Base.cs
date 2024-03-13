@@ -24,6 +24,7 @@ namespace Sci.Production.Prg.PowerBI.Logic
             P_CuttingScheduleOutputList,
             P_QAR31,
             P_QA_CFAMasterList,
+            P_ProductionKitsTracking,
         }
 
         /// <summary>
@@ -213,6 +214,9 @@ namespace Sci.Production.Prg.PowerBI.Logic
                         break;
                     case ListName.P_SewingLineScheduleBySP:
                         result = new P_Import_SewingLineScheduleBySP().P_SewingLineScheduleBySP(item.SDate, item.EDate);
+                        break;
+                    case ListName.P_ProductionKitsTracking:
+                        result = new P_Import_ProductionKitsTracking().P_ProductionKitsTracking(item.SDate, item.EDate);
                         break;
                 }
             }

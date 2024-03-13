@@ -1,0 +1,200 @@
+﻿using Sci.Data;
+using Sci.Production.Prg.PowerBI.Logic;
+using Sci.Production.Prg.PowerBI.Model;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Data.SqlClient;
+
+namespace Sci.Production.Prg.PowerBI.DataAccess
+{
+    /// <inheritdoc/>
+    public class P_Import_ProductionKitsTracking
+    {
+        /// <inheritdoc/>
+        public Base_ViewModel P_ProductionKitsTracking(DateTime? sDate, DateTime? eDate)
+        {
+            Base_ViewModel finalResult = new Base_ViewModel();
+            PPIC_R02 biModel = new PPIC_R02();
+            if (!sDate.HasValue)
+            {
+                sDate = DateTime.Parse(DateTime.Now.AddDays(-30).ToString("yyyy/MM/dd"));
+            }
+
+            if (!eDate.HasValue)
+            {
+                eDate = DateTime.Parse(DateTime.Now.ToString("yyyy/MM/dd"));
+            }
+
+            try
+            {
+                PPIC_R02_ViewModel ppic_R02 = new PPIC_R02_ViewModel()
+                {
+                    IsPowerBI = true,
+                    Date1 = sDate,
+                    Date2 = eDate,
+                };
+
+                Base_ViewModel resultReport = biModel.GetPPIC_R02(ppic_R02);
+                if (!resultReport.Result)
+                {
+                    throw resultReport.Result.GetException();
+                }
+
+                DataTable detailTable = resultReport.Dt;
+
+                // insert into PowerBI
+                finalResult = this.UpdateBIData(detailTable, sDate.Value, eDate.Value);
+                if (!finalResult.Result)
+                {
+                    throw finalResult.Result.GetException();
+                }
+
+                finalResult.Result = new Ict.DualResult(true);
+            }
+            catch (Exception ex)
+            {
+                finalResult.Result = new Ict.DualResult(false, ex);
+            }
+
+            return finalResult;
+        }
+
+        private Base_ViewModel UpdateBIData(DataTable dt, DateTime sDate, DateTime eDate)
+        {
+            Base_ViewModel finalResult;
+            DBProxy.Current.OpenConnection("PowerBI", out SqlConnection sqlConn);
+            using (sqlConn)
+            {
+                List<SqlParameter> sqlParameters = new List<SqlParameter>()
+                {
+                    new SqlParameter("@StartDate", sDate),
+                    new SqlParameter("@EndDate", eDate),
+                };
+                string sql = @"
+UPDATE p SET
+	p.BrandID				= isnull(t.BrandID,'')
+	,p.StyleID				= isnull(t.StyleID,'')
+	,p.SeasonID				= isnull(t.SeasonID,'')
+	,p.Article				= isnull(t.Article,'')
+	,p.Mdivision			= isnull(t.Mdivision,'')
+	,p.FactoryID			= isnull(t.FactoryID,'')
+	,p.Doc					= isnull(t.Doc,'')
+	,p.TWSendDate			= t.TWSendDate
+	,p.FtyMRRcvDate			= t.FtyMRRcvDate
+	,p.FtySendtoQADate		= t.FtySendtoQADate
+	,p.QARcvDate			= t.QARcvDate
+	,p.UnnecessaryToSend	= isnull(t.UnnecessaryToSend,'')
+	,p.ProvideDate			= t.ProvideDate
+	,p.SPNo					= isnull(t.SPNo,'')
+	,p.SCIDelivery			= t.SCIDelivery
+	,p.BuyerDelivery		= t.BuyerDelivery
+	,p.Pullforward			= isnull(t.Pullforward,'')
+	,p.Handle				= isnull(t.Handle,'')
+	,p.MRHandle				= isnull(t.MRHandle,'')
+	,p.SMR					= isnull(t.SMR,'')
+	,p.POHandle				= isnull(t.POHandle,'')
+	,p.POSMR				= isnull(t.POSMR,'')
+	,p.FtyHandle			= isnull(t.FtyHandle,'')
+	,p.ProductionKitsGroup	= isnull(t.ProductionKitsGroup,'')
+	,p.AddDate				= t.AddDate
+	,p.EditDate				= t.EditDate
+FROM P_ProductionKitsTracking p
+inner join #tmp t on t.Article = p.Article and t.FactoryID = p.FactoryID and t.Doc = p.Doc and t.SPNo = p.SPNo and t.ProductionKitsGroup = p.ProductionKitsGroup
+
+insert into P_ProductionKitsTracking (
+		BrandID
+	,StyleID
+	,SeasonID
+	,Article
+	,Mdivision
+	,FactoryID
+	,Doc
+	,TWSendDate
+	,FtyMRRcvDate
+	,FtySendtoQADate
+	,QARcvDate
+	,UnnecessaryToSend
+	,ProvideDate
+	,SPNo
+	,SCIDelivery
+	,BuyerDelivery
+	,Pullforward
+	,Handle
+	,MRHandle
+	,SMR
+	,POHandle
+	,POSMR
+	,FtyHandle
+	,ProductionKitsGroup
+	,AddDate
+	,EditDate
+)
+SELECT
+	isnull(t.BrandID,'')
+	,isnull(t.StyleID,'')
+	,isnull(t.SeasonID,'')
+	,isnull(t.Article,'')
+	,isnull(t.Mdivision,'')
+	,isnull(t.FactoryID,'')
+	,isnull(t.Doc,'')
+	,t.TWSendDate
+	,t.FtyMRRcvDate
+	,t.FtySendtoQADate
+	,t.QARcvDate
+	,isnull(t.UnnecessaryToSend,'')
+	,t.ProvideDate
+	,isnull(t.SPNo,'')
+	,t.SCIDelivery
+	,t.BuyerDelivery
+	,isnull(t.Pullforward,'')
+	,isnull(t.Handle,'')
+	,isnull(t.MRHandle,'')
+	,isnull(t.SMR,'')
+	,isnull(t.POHandle,'')
+	,isnull(t.POSMR,'')
+	,isnull(t.FtyHandle,'')
+	,isnull(t.ProductionKitsGroup,'')
+	,t.AddDate
+	,t.EditDate
+FROM #tmp t 
+where not exists (select 1 from P_ProductionKitsTracking p where t.Article = p.Article 
+															and t.FactoryID = p.FactoryID 
+															and t.Doc = p.Doc 
+															and t.SPNo = p.SPNo
+															and t.ProductionKitsGroup = p.ProductionKitsGroup)
+
+DELETE P_ProductionKitsTracking
+FROM P_ProductionKitsTracking p
+where not exists (select 1 from #tmp t where t.Article = p.Article 
+										and t.FactoryID = p.FactoryID 
+										and t.Doc = p.Doc 
+										and t.SPNo = p.SPNo 
+										and t.ProductionKitsGroup = p.ProductionKitsGroup)
+and (p.AddDate >= @StartDate AND p.AddDate <= @EndDate
+	or p.EditDate >= @StartDate AND p.EditDate <= @EndDate)
+
+IF EXISTS (select 1 from BITableInfo b where b.id = 'P_ImportProductionKitsTracking')
+BEGIN
+	update b
+		set b.TransferDate = getdate()
+			, b.IS_Trans = 1
+	from BITableInfo b
+	where b.id = 'P_ImportProductionKitsTracking'
+END
+ELSE 
+BEGIN
+	insert into BITableInfo(Id, TransferDate)
+	values('P_ImportProductionKitsTracking', getdate())
+END
+";
+                finalResult = new Base_ViewModel()
+                {
+                    Result = MyUtility.Tool.ProcessWithDatatable(dt, null, sqlcmd: sql, result: out DataTable dataTable, conn: sqlConn, paramters: sqlParameters),
+                };
+            }
+
+            return finalResult;
+        }
+    }
+}
