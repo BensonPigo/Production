@@ -97,7 +97,14 @@ namespace Sci.Production.Prg.PowerBI.Logic
         public List<ExecutedList> GetExecuteList()
         {
             List<ExecutedList> executes = new List<ExecutedList>();
-            string sql = "select * from BITaskInfo where junk = 0";
+            string sql = @"
+SELECT i.*
+	, [Group] = ISNULL(g.[GroupID], 0)
+	, [SEQ] = ISNULL(g.[SEQ], 1)
+FROM BITaskInfo i
+LEFt JOIN BITaskGroup g ON i.[Name] = g.[Name]
+WHERE i.[Junk] = 0
+ORDER BY [Group], [SEQ], [NAME]";
             DualResult result = DBProxy.Current.Select("PowerBI", sql, out DataTable dataTable);
             if (!result || dataTable.Rows.Count == 0)
             {
@@ -124,6 +131,8 @@ namespace Sci.Production.Prg.PowerBI.Logic
                 string sDate_s2 = hasStartDate2 ? "Sdate2 : " + sDate2.Value.ToShortDateString() : string.Empty;
                 string eDate_s2 = hasEndDate2 ? "Edate2 : " + eDate2.Value.ToShortDateString() : string.Empty;
                 string remark = $@"{dr["Source"]}{procedureNameS}{Environment.NewLine}{sDate_s}{Environment.NewLine}{eDate_s}{Environment.NewLine}{sDate_s2}{Environment.NewLine}{eDate_s2}";
+                int group = (int)dr["Group"];
+                int seq = (int)dr["SEQ"];
 
                 ExecutedList model = new ExecutedList()
                 {
@@ -136,6 +145,8 @@ namespace Sci.Production.Prg.PowerBI.Logic
                     EDate2 = eDate2,
                     RunOnSunday = runOnSunday,
                     Remark = remark,
+                    Group = group,
+                    SEQ = seq,
                 };
 
                 executes.Add(model);
@@ -161,19 +172,42 @@ namespace Sci.Production.Prg.PowerBI.Logic
         /// <param name="executedList">ExecutedList</param>
         public void ExecuteAll(List<ExecutedList> executedList)
         {
+            if (executedList.Where(x => !string.IsNullOrEmpty(x.ClassName)).Count() == 0)
+            {
+                return;
+            }
+
             DateTime stratExecutedTime = DateTime.Now;
+            List<ExecutedList> executedListDetail = new List<ExecutedList>();
             List<ExecutedList> executedListEnd = new List<ExecutedList>();
-            var results = executedList.Where(x => !string.IsNullOrEmpty(x.ClassName))
+
+            var results = executedList
+                .GroupBy(x => x.Group)
                 .AsParallel()
+                .AsOrdered()
                 .Select(item =>
                 {
-                    ExecutedList model = this.ExecuteSingle(item);
-                    return model;
+                    var results_detail = item
+                        .OrderBy(x => x.SEQ)
+                        .AsParallel()
+                        .AsSequential()
+                        .Select(detail =>
+                        {
+                            ExecutedList model = this.ExecuteSingle(detail);
+                            return model;
+                        });
+
+                    foreach (var item_detail in results_detail)
+                    {
+                        executedListDetail.Add(item_detail);
+                    }
+
+                    return executedListDetail;
                 });
 
             foreach (var item in results)
             {
-                executedListEnd.Add(item);
+                executedListEnd.AddRange(executedListDetail);
             }
 
             this.UpdateJobLogAndSendMail(executedListEnd, stratExecutedTime);

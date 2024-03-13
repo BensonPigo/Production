@@ -80,6 +80,16 @@ namespace Sci.Production.Prg.PowerBI.Model
         public bool RunOnSunday { get; set; }
 
         /// <summary>
+        /// 群組
+        /// </summary>
+        public int Group { get; set; }
+
+        /// <summary>
+        /// 順序
+        /// </summary>
+        public int SEQ { get; set; }
+
+        /// <summary>
         /// 執行清單
         /// </summary>
         public List<ExecutedList> ExecutedLists { get; set; }
