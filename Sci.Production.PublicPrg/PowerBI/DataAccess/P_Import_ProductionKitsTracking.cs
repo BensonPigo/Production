@@ -103,7 +103,7 @@ FROM P_ProductionKitsTracking p
 inner join #tmp t on t.Article = p.Article and t.FactoryID = p.FactoryID and t.Doc = p.Doc and t.SPNo = p.SPNo and t.ProductionKitsGroup = p.ProductionKitsGroup
 
 insert into P_ProductionKitsTracking (
-		BrandID
+	BrandID
 	,StyleID
 	,SeasonID
 	,Article
@@ -174,18 +174,18 @@ where not exists (select 1 from #tmp t where t.Article = p.Article
 and (p.AddDate >= @StartDate AND p.AddDate <= @EndDate
 	or p.EditDate >= @StartDate AND p.EditDate <= @EndDate)
 
-IF EXISTS (select 1 from BITableInfo b where b.id = 'P_ImportProductionKitsTracking')
+IF EXISTS (select 1 from BITableInfo b where b.id = 'P_ProductionKitsTracking')
 BEGIN
 	update b
 		set b.TransferDate = getdate()
 			, b.IS_Trans = 1
 	from BITableInfo b
-	where b.id = 'P_ImportProductionKitsTracking'
+	where b.id = 'P_ProductionKitsTracking'
 END
 ELSE 
 BEGIN
 	insert into BITableInfo(Id, TransferDate)
-	values('P_ImportProductionKitsTracking', getdate())
+	values('P_ProductionKitsTracking', getdate())
 END
 ";
                 finalResult = new Base_ViewModel()
