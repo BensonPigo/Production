@@ -72,37 +72,42 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                     new SqlParameter("@EndDate", eDate),
                 };
                 string sql = @"
-UPDATE p SET
-	p.BrandID				= isnull(t.BrandID,'')
-	,p.StyleID				= isnull(t.StyleID,'')
-	,p.SeasonID				= isnull(t.SeasonID,'')
-	,p.Article				= isnull(t.Article,'')
-	,p.Mdivision			= isnull(t.Mdivision,'')
-	,p.FactoryID			= isnull(t.FactoryID,'')
-	,p.Doc					= isnull(t.Doc,'')
-	,p.TWSendDate			= t.TWSendDate
-	,p.FtyMRRcvDate			= t.FtyMRRcvDate
-	,p.FtySendtoQADate		= t.FtySendtoQADate
-	,p.QARcvDate			= t.QARcvDate
-	,p.UnnecessaryToSend	= isnull(t.UnnecessaryToSend,'')
-	,p.ProvideDate			= t.ProvideDate
-	,p.SPNo					= isnull(t.SPNo,'')
-	,p.SCIDelivery			= t.SCIDelivery
-	,p.BuyerDelivery		= t.BuyerDelivery
-	,p.Pullforward			= isnull(t.Pullforward,'')
-	,p.Handle				= isnull(t.Handle,'')
-	,p.MRHandle				= isnull(t.MRHandle,'')
-	,p.SMR					= isnull(t.SMR,'')
-	,p.POHandle				= isnull(t.POHandle,'')
-	,p.POSMR				= isnull(t.POSMR,'')
-	,p.FtyHandle			= isnull(t.FtyHandle,'')
-	,p.ProductionKitsGroup	= isnull(t.ProductionKitsGroup,'')
-	,p.AddDate				= t.AddDate
-	,p.EditDate				= t.EditDate
+UPDATE p
+SET p.BrandID = ISNULL(t.BrandID, '')
+   ,p.StyleID = ISNULL(t.StyleID, '')
+   ,p.SeasonID = ISNULL(t.SeasonID, '')
+   ,p.Article = ISNULL(t.Article, '')
+   ,p.Mdivision = ISNULL(t.Mdivision, '')
+   ,p.FactoryID = ISNULL(t.FactoryID, '')
+   ,p.Doc = ISNULL(t.Doc, '')
+   ,p.TWSendDate = t.TWSendDate
+   ,p.FtyMRRcvDate = t.FtyMRRcvDate
+   ,p.FtySendtoQADate = t.FtySendtoQADate
+   ,p.QARcvDate = t.QARcvDate
+   ,p.UnnecessaryToSend = ISNULL(t.UnnecessaryToSend, '')
+   ,p.ProvideDate = t.ProvideDate
+   ,p.SPNo = ISNULL(t.SPNo, '')
+   ,p.SCIDelivery = t.SCIDelivery
+   ,p.BuyerDelivery = t.BuyerDelivery
+   ,p.Pullforward = ISNULL(t.Pullforward, '')
+   ,p.Handle = ISNULL(t.Handle, '')
+   ,p.MRHandle = ISNULL(t.MRHandle, '')
+   ,p.SMR = ISNULL(t.SMR, '')
+   ,p.POHandle = ISNULL(t.POHandle, '')
+   ,p.POSMR = ISNULL(t.POSMR, '')
+   ,p.FtyHandle = ISNULL(t.FtyHandle, '')
+   ,p.ProductionKitsGroup = ISNULL(t.ProductionKitsGroup, '')
+   ,p.AddDate = t.AddDate
+   ,p.EditDate = t.EditDate
 FROM P_ProductionKitsTracking p
-inner join #tmp t on t.Article = p.Article and t.FactoryID = p.FactoryID and t.Doc = p.Doc and t.SPNo = p.SPNo and t.ProductionKitsGroup = p.ProductionKitsGroup
+INNER JOIN #tmp t
+    ON t.Article = p.Article
+    AND t.FactoryID = p.FactoryID
+    AND t.Doc = p.Doc
+    AND t.SPNo = p.SPNo
+    AND t.ProductionKitsGroup = p.ProductionKitsGroup
 
-insert into P_ProductionKitsTracking (
+INSERT INTO P_ProductionKitsTracking (
 	BrandID
 	,StyleID
 	,SeasonID
@@ -131,61 +136,67 @@ insert into P_ProductionKitsTracking (
 	,EditDate
 )
 SELECT
-	isnull(t.BrandID,'')
-	,isnull(t.StyleID,'')
-	,isnull(t.SeasonID,'')
-	,isnull(t.Article,'')
-	,isnull(t.Mdivision,'')
-	,isnull(t.FactoryID,'')
-	,isnull(t.Doc,'')
-	,t.TWSendDate
-	,t.FtyMRRcvDate
-	,t.FtySendtoQADate
-	,t.QARcvDate
-	,isnull(t.UnnecessaryToSend,'')
-	,t.ProvideDate
-	,isnull(t.SPNo,'')
-	,t.SCIDelivery
-	,t.BuyerDelivery
-	,isnull(t.Pullforward,'')
-	,isnull(t.Handle,'')
-	,isnull(t.MRHandle,'')
-	,isnull(t.SMR,'')
-	,isnull(t.POHandle,'')
-	,isnull(t.POSMR,'')
-	,isnull(t.FtyHandle,'')
-	,isnull(t.ProductionKitsGroup,'')
-	,t.AddDate
-	,t.EditDate
-FROM #tmp t 
-where not exists (select 1 from P_ProductionKitsTracking p where t.Article = p.Article 
-															and t.FactoryID = p.FactoryID 
-															and t.Doc = p.Doc 
-															and t.SPNo = p.SPNo
-															and t.ProductionKitsGroup = p.ProductionKitsGroup)
+    ISNULL(t.BrandID, '')
+   ,ISNULL(t.StyleID, '')
+   ,ISNULL(t.SeasonID, '')
+   ,ISNULL(t.Article, '')
+   ,ISNULL(t.Mdivision, '')
+   ,ISNULL(t.FactoryID, '')
+   ,ISNULL(t.Doc, '')
+   ,t.TWSendDate
+   ,t.FtyMRRcvDate
+   ,t.FtySendtoQADate
+   ,t.QARcvDate
+   ,ISNULL(t.UnnecessaryToSend, '')
+   ,t.ProvideDate
+   ,ISNULL(t.SPNo, '')
+   ,t.SCIDelivery
+   ,t.BuyerDelivery
+   ,ISNULL(t.Pullforward, '')
+   ,ISNULL(t.Handle, '')
+   ,ISNULL(t.MRHandle, '')
+   ,ISNULL(t.SMR, '')
+   ,ISNULL(t.POHandle, '')
+   ,ISNULL(t.POSMR, '')
+   ,ISNULL(t.FtyHandle, '')
+   ,ISNULL(t.ProductionKitsGroup, '')
+   ,t.AddDate
+   ,t.EditDate
+FROM #tmp t
+WHERE NOT EXISTS (
+    SELECT 1
+    FROM P_ProductionKitsTracking p
+    WHERE t.Article = p.Article
+    AND t.FactoryID = p.FactoryID
+    AND t.Doc = p.Doc
+    AND t.SPNo = p.SPNo
+    AND t.ProductionKitsGroup = p.ProductionKitsGroup
+)
 
 DELETE P_ProductionKitsTracking
-FROM P_ProductionKitsTracking p
-where not exists (select 1 from #tmp t where t.Article = p.Article 
-										and t.FactoryID = p.FactoryID 
-										and t.Doc = p.Doc 
-										and t.SPNo = p.SPNo 
-										and t.ProductionKitsGroup = p.ProductionKitsGroup)
-and (p.AddDate >= @StartDate AND p.AddDate <= @EndDate
-	or p.EditDate >= @StartDate AND p.EditDate <= @EndDate)
+FROM P_ProductionKitsTracking p WITH(NOLOCK)
+WHERE NOT EXISTS (
+    SELECT 1
+    FROM #tmp t
+    WHERE t.Article = p.Article
+    AND t.FactoryID = p.FactoryID
+    AND t.Doc = p.Doc
+    AND t.SPNo = p.SPNo
+    AND t.ProductionKitsGroup = p.ProductionKitsGroup
+)
+AND ((AddDate >= @StartDate AND AddDate <= @EndDate)
+  OR (EditDate >= @StartDate AND EditDate <= @EndDate))
 
-IF EXISTS (select 1 from BITableInfo b where b.id = 'P_ProductionKitsTracking')
+IF EXISTS (SELECT 1 FROM BITableInfo b WHERE b.id = 'P_ProductionKitsTracking')
 BEGIN
-	update b
-		set b.TransferDate = getdate()
-			, b.IS_Trans = 1
-	from BITableInfo b
-	where b.id = 'P_ProductionKitsTracking'
+    UPDATE BITableInfo
+    SET TransferDate = GETDATE()
+    WHERE id = 'P_ProductionKitsTracking'
 END
-ELSE 
+ELSE
 BEGIN
-	insert into BITableInfo(Id, TransferDate)
-	values('P_ProductionKitsTracking', getdate())
+    INSERT INTO BITableInfo (Id, TransferDate)
+    VALUES ('P_ProductionKitsTracking', GETDATE())
 END
 ";
                 finalResult = new Base_ViewModel()

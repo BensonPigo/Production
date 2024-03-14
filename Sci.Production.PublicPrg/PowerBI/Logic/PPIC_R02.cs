@@ -184,11 +184,8 @@ SELECT
     ,FtyHandle = CONCAT(sp.FtyHandle, '-', (SELECT Name FROM Pass1 WITH (NOLOCK) WHERE ID = sp.FtyHandle))
     {biColumn}
 FROM Style_ProductionKits sp WITH (NOLOCK)
-INNER JOIN Style s WITH (NOLOCK)
-    ON s.Ukey = sp.StyleUkey
-LEFT JOIN Reason r WITH (NOLOCK)
-    ON r.ReasonTypeID = 'ProductionKits'
-        AND r.ID = sp.DOC
+INNER JOIN Style s WITH (NOLOCK) ON s.Ukey = sp.StyleUkey
+LEFT JOIN Reason r WITH (NOLOCK) ON r.ReasonTypeID = 'ProductionKits' AND r.ID = sp.DOC
 WHERE 1 = 1
 {where}
 ";
