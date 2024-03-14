@@ -683,11 +683,18 @@ delete p
 from P_PPICMasterList_Extend p
 where not exists (select 1 from P_PPICMASTERLIST t where t.SPNO = p.OrderID)
 
-update b
-	set b.TransferDate = getdate()
-		, b.IS_Trans = 1
-from BITableInfo b
-where b.id = 'P_PPICMASTERLIST'
+if exists (select 1 from BITableInfo b where b.id = 'P_PPICMASTERLIST')
+begin
+	update b
+		set b.TransferDate = getdate()
+	from BITableInfo b
+	where b.id = 'P_PPICMASTERLIST'
+end
+else 
+begin
+	insert into BITableInfo(Id, TransferDate)
+	values('P_PPICMASTERLIST', getdate())
+end
 ";
                 finalResult = new Base_ViewModel()
                 {
