@@ -17,6 +17,7 @@ namespace Sci.Production.Shipping
             : base(menuitem)
         {
             this.InitializeComponent();
+            this.DefaultWhere = "Junk = 0";
         }
 
         /// <inheritdoc/>
