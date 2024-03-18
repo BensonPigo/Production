@@ -1,12 +1,13 @@
-﻿using System;
+﻿using Ict;
+using Sci.Data;
+using Sci.Win.Tools;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Drawing;
+using System.Linq;
 using System.Text;
 using System.Windows.Forms;
-using Sci.Data;
-using Ict;
-using System.Linq;
 
 namespace Sci.Production.Warehouse
 {
@@ -18,7 +19,9 @@ namespace Sci.Production.Warehouse
         private DataTable DtIssueBreakDown;
         private DataTable DtSizeCode;
         private DataTable DtModifyIssueBDown;
+        private DataTable DtArticle;
         private StringBuilder sbSizecode;
+        private string enterFilter;
 
         /// <inheritdoc/>
         public P33_IssueBreakDown()
@@ -40,7 +43,8 @@ namespace Sci.Production.Warehouse
                 this.DtModifyIssueBDown.ImportRow(dr);
             }
 
-            this.DtModifyIssueBDown.DefaultView.RowFilter = this.DtIssueBreakDown.DefaultView.RowFilter;
+            this.DtModifyIssueBDown.DefaultView.RowFilter = this.enterFilter = this.DtIssueBreakDown.DefaultView.RowFilter;
+            this.DtArticle = dtIssueBreakDown.DefaultView.ToTable(true, "Article");
 
             this.displayColor.BackColor = Color.LightGray;
         }
@@ -386,6 +390,52 @@ order by [OrderID], [Article]", this.Master["orderid"], this.sbSizecode.ToString
                     }
                 }
             }
+        }
+
+        private void TxtFilter_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        {
+            // 篩選 Article
+            SelectItem2 item = new SelectItem2(this.DtArticle, "Article", "Article", "12", this.txtArticleFilter.Text);
+            DialogResult result = item.ShowDialog();
+            if (result == DialogResult.Cancel)
+            {
+                return;
+            }
+
+            this.txtArticleFilter.Text = item.GetSelectedString();
+            this.FilterArticle();
+        }
+
+        private void FilterArticle()
+        {
+            List<string> listFilter = new List<string>();
+
+            if (!MyUtility.Check.Empty(this.txtArticleFilter.Text))
+            {
+                List<string> listArticle = this.txtArticleFilter.Text.Split(',').Where(r => !r.Empty()).ToList();
+                string filterStrArticle = "('" + listArticle.JoinToString("','") + "')";
+                listFilter.Add("Article IN " + filterStrArticle);
+            }
+
+            if (!this.enterFilter.Empty())
+            {
+                listFilter.Add(this.enterFilter);
+            }
+
+            this.gridIssueBreakDownBS.Filter = listFilter.JoinToString(" AND ");
+
+            // 不在畫面上的取消勾選
+            DataTable dt = (DataTable)this.gridIssueBreakDownBS.DataSource;
+            string filterView = this.gridIssueBreakDownBS.Filter;
+            if (!MyUtility.Check.Empty(filterView))
+            {
+                foreach (DataRow row in dt.Select("Not (" + filterView + ")"))
+                {
+                    row["Selected"] = 0;
+                }
+            }
+
+            this.Pink();
         }
     }
 }
