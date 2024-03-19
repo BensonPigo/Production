@@ -273,8 +273,8 @@ namespace Sci.Production.Warehouse
                 .Text("RQNo", header: "RQ NO", width: Widths.AnsiChars(14), iseditingreadonly: true)
                 .Text("SP", header: "SP", width: Widths.AnsiChars(14), iseditingreadonly: true)
                 .Text("Department", header: "Department", width: Widths.AnsiChars(15), iseditingreadonly: true)
+                .Text("SewingLineID", header: "Sewing Line", width: Widths.AnsiChars(8), iseditingreadonly: true)
                 .DateTime("RequestDate", header: "Request Date", width: Widths.AnsiChars(18), iseditingreadonly: true)
-                // .DateTime("IssueDate", header: "Issue Date", width: Widths.AnsiChars(18), iseditingreadonly: true).Get(out this.col_IssueDate)
                 .MaskedText("IssueDate", "0000/00/00 00:00", header: "Issue Date", width: Widths.AnsiChars(18), iseditingreadonly: false, settings: mask_IssueDate).Get(out this.col_IssueDate)
                 .Numeric("ttlRoll", header: "Total Roll", width: Widths.AnsiChars(8), iseditingreadonly: true).Get(out this.col_ttlRol)
                 .Text("Remark", header: "Remark", width: Widths.AnsiChars(25), iseditingreadonly: true).Get(out this.col_Remark)
@@ -440,6 +440,7 @@ select
 ,[RQNo] = Lack.ID
 ,[SP] = Lack.OrderID
 ,[Department] = Lack.Dept
+,Lack.SewingLineID
 ,[RequestDate] = Lack.ApvDate
 ,[IssueDate] = IIF(il.RequestID is null, format(Lack.WHIssueDate, 'yyyyMMddHHmm') ,format(iL.EditDate, 'yyyyMMddHHmm'))
 ,[ttlRoll] = IIF(il.RequestID is null, Lack.TotalRoll ,ttlRoll.value)

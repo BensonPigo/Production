@@ -209,9 +209,9 @@ namespace Sci.Production.Quality
                     sql = $@"
                     Update UASentReport
                     SET 
-                    TestSeasonID = @SeasonID,
-                    DueSeason = @DueSeason,
-                    EditName = @UserID ,
+                    TestSeasonID = isnull(@SeasonID,''),
+                    DueSeason = isnull(@DueSeason,''),
+                    EditName = isnull(@UserID,'') ,
                     EditDate = getdate() 
                     WHERE 
                     BrandRefno = @BrandRefno and
@@ -231,7 +231,13 @@ namespace Sci.Production.Quality
                         new SqlParameter("BrandID", this.drBasic["BrandID"]),
                     };
 
-                    DBProxy.Current.Execute(null, sql, plis);
+                    DualResult result1 = DBProxy.Current.Execute(null, sql, plis);
+
+                    if (!result1)
+                    {
+                        this.ShowErr(result1.ToString());
+                        return;
+                    }
                 }
             };
 
@@ -307,9 +313,9 @@ namespace Sci.Production.Quality
                     Update 
                     UASentReport 
                     SET 
-                    TestSeasonID = @SeasonID,
-                    DueSeason = @DueSeason,
-                    EditName = @UserID ,
+                    TestSeasonID = isnull(@SeasonID,''),
+                    DueSeason = isnull(@DueSeason,''),
+                    EditName = isnull(@UserID,'') ,
                     EditDate = getdate() 
                     WHERE 
                     BrandRefno = @BrandRefno and 
@@ -329,7 +335,13 @@ namespace Sci.Production.Quality
                         new SqlParameter("BrandID", this.drBasic["BrandID"]),
                     };
 
-                    DBProxy.Current.Execute(null, sql, plis);
+                    DualResult result1 = DBProxy.Current.Execute(null, sql, plis);
+
+                    if (!result1)
+                    {
+                        this.ShowErr(result1.ToString());
+                        return;
+                    }
                 }
             };
 
@@ -410,7 +422,7 @@ namespace Sci.Production.Quality
                     Update 
                     UASentReport 
                     SET  
-                    DueSeason = @DueSeason 
+                    DueSeason = isnull(@DueSeason ,'')
                     WHERE 
                     BrandRefno = @BrandRefno and
                     ColorID = @ColorID and 
@@ -428,7 +440,13 @@ namespace Sci.Production.Quality
                         new SqlParameter("BrandID", this.drBasic["BrandID"]),
                     };
 
-                    DBProxy.Current.Execute(null, sql, plis);
+                    DualResult result1 = DBProxy.Current.Execute(null, sql, plis);
+
+                    if (!result1)
+                    {
+                        this.ShowErr(result1.ToString());
+                        return;
+                    }
                 }
             };
 
@@ -513,8 +531,8 @@ namespace Sci.Production.Quality
                     Update 
                     UASentReport
                     SET  
-                    DueSeason = @DueSeason, 
-                    EditName = @UserID ,
+                    DueSeason = isnull(@DueSeason,''), 
+                    EditName = isnull(@UserID,'') ,
                     EditDate = getdate() 
                     WHERE 
                     BrandRefno = @BrandRefno and 
@@ -533,7 +551,13 @@ namespace Sci.Production.Quality
                         new SqlParameter("BrandID", this.drBasic["BrandID"]),
                     };
 
-                    DBProxy.Current.Execute(null, sql, plis);
+                    DualResult result1 = DBProxy.Current.Execute(null, sql, plis);
+
+                    if (!result1)
+                    {
+                        this.ShowErr(result1.ToString());
+                        return;
+                    }
                 }
             };
 
@@ -558,7 +582,8 @@ namespace Sci.Production.Quality
                 var newValue = e.FormattedValue;
                 var oldValue = MyUtility.Convert.GetDate(row["TestReportTestDate"]);
 
-                if (!MyUtility.Check.Empty(newValue) && !newValue.EqualString(oldValue))
+                if (!MyUtility.Check.Empty(newValue) &&
+                    (MyUtility.Convert.GetDate(newValue) != MyUtility.Convert.GetDate(oldValue)))
                 {
                     if (row["UniqueKey"] == DBNull.Value)
                     {
@@ -577,13 +602,14 @@ namespace Sci.Production.Quality
 
                     if (MyUtility.Convert.GetDate(newValue) > DateTime.Now)
                     {
-                        MyUtility.Msg.ErrorBox("[Teset Date] can't bigger than Today!", "Error");
+                        MyUtility.Msg.ErrorBox("[Test Date] can't bigger than Today!", "Error");
                         row["TestReportTestDate"] = DBNull.Value;
                         return;
                     }
 
+                    newValue = MyUtility.Check.Empty(newValue) ? DBNull.Value : newValue;
                     row["TestReportTestDate"] = newValue;
-                    row["EditDate"] = DateTime.Now; 
+                    row["EditDate"] = DateTime.Now;
                     row["EditName"] = Env.User.UserID;
                     row.EndEdit();
 
@@ -611,7 +637,13 @@ namespace Sci.Production.Quality
                         new SqlParameter("BrandID", this.drBasic["BrandID"]),
                     };
 
-                    DBProxy.Current.Execute(null, sql, plis);
+                    DualResult result1 = DBProxy.Current.Execute(null, sql, plis);
+
+                    if (!result1)
+                    {
+                        this.ShowErr(result1.ToString());
+                        return;
+                    }
                 }
             };
 
@@ -636,7 +668,8 @@ namespace Sci.Production.Quality
                 var newValue = e.FormattedValue;
                 var oldValue = MyUtility.Convert.GetDate(row["DueDate"]);
 
-                if (!MyUtility.Check.Empty(newValue) && !newValue.EqualString(oldValue))
+                if (!MyUtility.Check.Empty(newValue) &&
+                    (MyUtility.Convert.GetDate(newValue) != MyUtility.Convert.GetDate(oldValue)))
                 {
                     if (row["UniqueKey"] == DBNull.Value)
                     {
@@ -707,7 +740,13 @@ namespace Sci.Production.Quality
                         new SqlParameter("BrandID", this.drBasic["BrandID"]),
                     };
 
-                    DBProxy.Current.Execute(null, sql, plis);
+                    DualResult result1 = DBProxy.Current.Execute(null, sql, plis);
+
+                    if (!result1)
+                    {
+                        this.ShowErr(result1.ToString());
+                        return;
+                    }
                 }
             };
 
@@ -819,7 +858,7 @@ namespace Sci.Production.Quality
                 updateCol += $",TestReportTestDate = '{this.dateTestDate.Text}'";
                 if (this.dateTestDate.Value > DateTime.Now)
                 {
-                    MyUtility.Msg.ErrorBox("[Teset Date] can't bigger than Today!", "Error");
+                    MyUtility.Msg.ErrorBox("[Test Date] can't bigger than Today!", "Error");
                     return;
                 }
 
@@ -1337,7 +1376,7 @@ from(
 
                     if (tm > DateTime.Now)
                     {
-                        MyUtility.Msg.ErrorBox("[Teset Date] can't bigger than Today!", "Error");
+                        MyUtility.Msg.ErrorBox("[Test Date] can't bigger than Today!", "Error");
                         return;
                     }
 
@@ -1583,7 +1622,7 @@ from(
                 updateCol += $",TestReportTestDate = '{this.dateTestDate.Text}'";
                 if (this.dateTestDate.Value > DateTime.Now)
                 {
-                    MyUtility.Msg.ErrorBox("[Teset Date] can't bigger than Today!", "Error");
+                    MyUtility.Msg.ErrorBox("[Test Date] can't bigger than Today!", "Error");
                     return;
                 }
 
