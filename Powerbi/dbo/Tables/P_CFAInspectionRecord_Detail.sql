@@ -19,7 +19,7 @@
 	[NoOfDefect] [int] NULL,
 	[OrderQty] [int] NULL,
 	[PONO] [varchar](30) NULL,
-	[Remark] [nvarchar](500) NULL,
+	[Remark] [nvarchar](MAX) NULL,
 	[Result] [varchar](16) NULL,
 	[SampleLot] [int] NULL,
 	[Seq] [varchar](2) NULL,
