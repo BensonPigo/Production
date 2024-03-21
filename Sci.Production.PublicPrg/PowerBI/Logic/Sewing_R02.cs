@@ -1,7 +1,6 @@
 ﻿using Ict;
 using Sci.Data;
 using Sci.Production.Prg.PowerBI.Model;
-using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
@@ -14,10 +13,15 @@ namespace Sci.Production.Prg.PowerBI.Logic
     /// </summary>
     public class Sewing_R02
     {
+        private DBProxy DBProxy;
+
         /// <inheritdoc/>
         public Sewing_R02()
         {
-            DBProxy.Current.DefaultTimeout = 900;
+            this.DBProxy = new DBProxy()
+            {
+                DefaultTimeout = 900,
+            };
         }
 
         /// <inheritdoc/>
@@ -53,7 +57,7 @@ exec dbo.GetMonthlyProductionOutputReport   @StartOutputDate,
 ";
             Base_ViewModel resultReport = new Base_ViewModel
             {
-                Result = DBProxy.Current.Select("Production", sql, listPar, out DataTable[] dataTables),
+                Result = this.DBProxy.Select("Production", sql, listPar, out DataTable[] dataTables),
             };
 
             if (!resultReport.Result)
@@ -68,7 +72,7 @@ exec dbo.GetMonthlyProductionOutputReport   @StartOutputDate,
         /// <inheritdoc/>
         public Base_ViewModel GetTotalExcludeSubconIn(DataTable dt)
         {
-            DBProxy.Current.OpenConnection("Production", out SqlConnection sqlConn);
+            this.DBProxy.OpenConnection("Production", out SqlConnection sqlConn);
             using (sqlConn)
             {
                 string sql = string.Format(@"
@@ -163,7 +167,7 @@ left join tmpTtlManPower mp on 1 = 1");
         /// <inheritdoc/>
         public Base_ViewModel GetNoNSisterSubConIn(DataTable dt)
         {
-            DBProxy.Current.OpenConnection("Production", out SqlConnection sqlConn);
+            this.DBProxy.OpenConnection("Production", out SqlConnection sqlConn);
             using (sqlConn)
             {
                 string sql = string.Format(@"
@@ -200,7 +204,7 @@ from tmpQty q");
         /// <inheritdoc/>
         public Base_ViewModel GetSisterSubConIn(DataTable dt)
         {
-            DBProxy.Current.OpenConnection("Production", out SqlConnection sqlConn);
+            this.DBProxy.OpenConnection("Production", out SqlConnection sqlConn);
             using (sqlConn)
             {
                 string sql = string.Format(@"
@@ -237,7 +241,7 @@ from tmpQty q");
         /// <inheritdoc/>
         public Base_ViewModel GetCPUFactor(DataTable dt)
         {
-            DBProxy.Current.OpenConnection("Production", out SqlConnection sqlConn);
+            this.DBProxy.OpenConnection("Production", out SqlConnection sqlConn);
             using (sqlConn)
             {
                 string sql = string.Format(@"
@@ -290,7 +294,7 @@ left join tmpCountStyle s on q.CPUFactor = s.CPUFactor");
         /// <inheritdoc/>
         public Base_ViewModel GetSubprocess(DataTable dt)
         {
-            DBProxy.Current.OpenConnection("Production", out SqlConnection sqlConn);
+            this.DBProxy.OpenConnection("Production", out SqlConnection sqlConn);
             using (sqlConn)
             {
                 string sql = string.Format(@"
@@ -377,7 +381,7 @@ order by t1.ID");
         /// <inheritdoc/>
         public Base_ViewModel GetSubprocessByFactoryOutPutDate(DataTable dt)
         {
-            DBProxy.Current.OpenConnection("Production", out SqlConnection sqlConn);
+            this.DBProxy.OpenConnection("Production", out SqlConnection sqlConn);
             using (sqlConn)
             {
                 string sql = string.Format(@"
@@ -466,7 +470,7 @@ alter table #tmp alter column SubconInType varchar(1)
         /// <inheritdoc/>
         public Base_ViewModel GetSubprocessbyCompanySubconIn(DataTable dt)
         {
-            DBProxy.Current.OpenConnection("Production", out SqlConnection sqlConn);
+            this.DBProxy.OpenConnection("Production", out SqlConnection sqlConn);
             using (sqlConn)
             {
                 string sql = string.Format(@"
@@ -556,7 +560,7 @@ order by t1.ID");
         /// <inheritdoc/>
         public Base_ViewModel GetSubprocessbyCompanySubconOut(DataTable dt)
         {
-            DBProxy.Current.OpenConnection("Production", out SqlConnection sqlConn);
+            this.DBProxy.OpenConnection("Production", out SqlConnection sqlConn);
             using (sqlConn)
             {
                 string sql = string.Format(@"
@@ -645,7 +649,7 @@ order by t1.ID");
         /// <inheritdoc/>
         public Base_ViewModel GetSubcon(DataTable dt)
         {
-            DBProxy.Current.OpenConnection("Production", out SqlConnection sqlConn);
+            this.DBProxy.OpenConnection("Production", out SqlConnection sqlConn);
             using (sqlConn)
             {
                 string sql = string.Format(@"
@@ -688,7 +692,7 @@ order by Type,iif(Company = 'Other','Z','A'),Company");
         /// <inheritdoc/>
         public Base_ViewModel GetWorkDay(DataTable dt, Sewing_R02_ViewModel model)
         {
-            DBProxy.Current.OpenConnection("Production", out SqlConnection sqlConn);
+            this.DBProxy.OpenConnection("Production", out SqlConnection sqlConn);
             using (sqlConn)
             {
                 Base_ViewModel resultReport = new Base_ViewModel();
@@ -740,7 +744,7 @@ select FactoryID from #tmpResult where IsSampleRoom = 1
                     {
                         string whereFty = dtIsSampleRoomFty.AsEnumerable().Select(s => $"'{s["FactoryID"]}'").JoinToString(",");
                         string strWorkDay = $@"select Distinct [OutputDate] = Format(OutputDate,'yyyyMMdd') from #tmp where LastShift <> 'O' and MDivisionID = '{model.M}' and FactoryID in ({whereFty}) and OutputDate >= '{model.StartDate.ToString("yyyy/MM/dd")}' and OutputDate <= '{model.EndDate.ToString("yyyy/MM/dd")}'";
-                        resultReport.Result = DBProxy.Current.SelectByConn(conn: sqlConn, cmdtext: strWorkDay, datas: out DataTable dtWorkDay);
+                        resultReport.Result = this.DBProxy.SelectByConn(conn: sqlConn, cmdtext: strWorkDay, datas: out DataTable dtWorkDay);
                         if (!resultReport.Result)
                         {
                             resultReport.IntValue = 0;
