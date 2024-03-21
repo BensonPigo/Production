@@ -1,7 +1,9 @@
 ﻿using Ict;
 using Sci.Data;
 using System;
+using System.Collections.Generic;
 using System.Data;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
@@ -127,7 +129,7 @@ namespace Sci.Production.Logistic
             }
 
             this._po1 = this.txtPONoStart.Text;
-            this.Po2 = this.txtPONoEnd.Text;
+            this._po2 = this.txtPONoEnd.Text;
             this._brand = this.txtbrand.Text;
             this._mDivision = this.txtMdivision1.Text;
             this._factory = this.comboFactory.Text;
@@ -139,22 +141,6 @@ namespace Sci.Production.Logistic
 
         // 非同步取資料
         private DataTable printData;
-
-        /// <summary>
-        /// Po2
-        /// </summary>
-        public string Po2
-        {
-            get
-            {
-                return this._po2;
-            }
-
-            set
-            {
-                this._po2 = value;
-            }
-        }
 
         /// <summary>
         /// OnAsyncDataLoad
@@ -212,9 +198,9 @@ namespace Sci.Production.Logistic
                 sqlwhere.Append(string.Format(" and o.CustPONo >= '{0}'", this._po1));
             }
 
-            if (!MyUtility.Check.Empty(this.Po2))
+            if (!MyUtility.Check.Empty(this._po2))
             {
-                sqlwhere.Append(string.Format(" and o.CustPONo <= '{0}'", this.Po2));
+                sqlwhere.Append(string.Format(" and o.CustPONo <= '{0}'", this._po2));
             }
 
             if (!MyUtility.Check.Empty(this._brand))
@@ -257,7 +243,7 @@ namespace Sci.Production.Logistic
             #region 先準備主要資料table
             sqlcmd = string.Format(
                 @"
-select 
+select distinct
  c.PackingListID
 ,p.FactoryID
 ,p.ShipModeID
@@ -280,13 +266,14 @@ select
 ,[ScanName] = concat(c.AddName,'-',Pass1.Name)
 ,[Lacking] = iif(c.LackingQty > 0,'Y','')
 ,cp.LackingQty
-,[OrderNo] = dense_rank() over (partition by c.PackingListID,pd.SCICtnNo order by o.AddDate)
+,[OrderNo] = dense_rank() over (partition by c.PackingListID order by o.AddDate)
+,[OrderListNo] = dense_rank() over (partition by c.PackingListID, o.poid order by o.ID)
 into #tmp
 from ClogScanPack c with(nolock)
 left join ClogScanPack_Detail cp with(nolock) on cp.ClogScanPackUkey = c.Ukey
 left join PackingList p with(nolock) on p.id = c.PackingListID
 left join Packinglist_Detail pd with(nolock) on pd.id = p.id
-	and pd.CTNStartNo =  c.CTNStartNo and pd.orderid = c.orderid
+	and pd.CTNStartNo =  c.CTNStartNo and pd.orderid = cp.orderid
 left join orders o with(nolock) on o.id = pd.OrderID
 left join Order_QtyShip oq with (nolock) ON pd.OrderID = oq.ID AND pd.OrderShipModeSeq = oq.Seq
 left join Pass1 with(nolock) on pass1.id = c.AddName
@@ -297,10 +284,10 @@ where 1=1
 select t.PackingListID
 ,t.FactoryID
 ,t.ShipModeID
-,OrderList.Value
-,StyleID = Style.Value
+,[OrderList] = OrderList.Value
+,StyleID = StyleSeason.StyleID
 ,t.BrandID
-,SeasonID = Season.Value
+,SeasonID = StyleSeason.SeasonID
 ,t.[Dest]
 ,t.[BuyerDelivery]
 ,[ColorWay] = ColorWay.Value
@@ -320,33 +307,31 @@ select t.PackingListID
 into #tmpFinal
 from #tmp t
 outer apply(
-	select value =stuff(
-		(select concat('/',tmp.OrderID) 
-			from (
-				select distinct s.orderID 
-				from #tmp s with(nolock)
-				where s.PackingListID = t.PackingListID
-				and s.CTNStartNo = t.CTNStartNo
-				and s.Article = t.Article
-				and s.SizeCode = t.SizeCode
-			) tmp for xml path('')
+	select value =
+	stuff((
+		select concat('/',
+			case when OrderListNo > 1
+			then　substring(tmp.OrderID,11,len(tmp.OrderID)-10)
+			else tmp.OrderID end		
+		) 
+		from (
+			select distinct s.orderID ,OrderListNo
+			from #tmp s with(nolock)			
+			where s.PackingListID = t.PackingListID
+			and s.CTNStartNo = t.CTNStartNo
+		) tmp 
+		order by orderID,OrderListNo
+		for xml path('')
 		)
-	,1,1,'')
+	,1,1,''
+	)
 )OrderList
 outer apply(
-	select Value = s.StyleID 
+	select top 1 s.StyleID ,s.SeasonID 
 	from #tmp s
 	where [OrderNo] = 1
-	and  s.PackingListID = t.PackingListID
-	and s.SCICtnNo = t.SCICtnNo
-)Style
-outer apply(
-	select Value = s.SeasonID 
-	from #tmp s
-	where [OrderNo] = 1
-	and  s.PackingListID = t.PackingListID
-	and s.SCICtnNo = t.SCICtnNo
-)Season
+	and s.PackingListID = t.PackingListID
+)StyleSeason
 outer apply(
 	select value =stuff(
 		(select concat('/',tmp.Article) 
@@ -460,9 +445,9 @@ group by t.PackingListID
 ,t.FactoryID
 ,t.ShipModeID
 ,OrderList.Value
-,Style.Value
+,StyleSeason.StyleID
 ,t.BrandID
-,Season.Value
+,StyleSeason.SeasonID
 ,t.[Dest]
 ,t.[BuyerDelivery]
 ,ColorWay.Value
@@ -480,9 +465,9 @@ group by t.PackingListID
 order by t.FactoryID,t.PackingListID,t.[ScanDate]
 
 {1}
-
 DROP TABLE #TMP,#tmpFinal
-", sqlwhere.ToString(), sqlShow.ToString());
+", sqlwhere.ToString()
+, sqlShow.ToString());
             #endregion
 
             #region Get Data
@@ -491,6 +476,7 @@ DROP TABLE #TMP,#tmpFinal
             {
                 return result;
             }
+
             #endregion
 
             return Ict.Result.True;
@@ -518,16 +504,8 @@ DROP TABLE #TMP,#tmpFinal
             string reportname = "Clog_R05.xltx";
             Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\" + reportname);
             Excel.Worksheet worksheet = objApp.Sheets[1];
-
-            // 畫框線
-            Excel.Range rngBorders;
-            rngBorders = worksheet.get_Range(string.Format("A{0}:V{1}", MyUtility.Convert.GetString(1), MyUtility.Convert.GetString(printData.Rows.Count)), Type.Missing);
-            rngBorders.BorderAround(Excel.XlLineStyle.xlContinuous, Excel.XlBorderWeight.xlThick, Excel.XlColorIndex.xlColorIndexAutomatic, System.Drawing.Color.Black.ToArgb());     // 給單元格加邊框
-            rngBorders = worksheet.get_Range(string.Format("A{0}:V{0}", MyUtility.Convert.GetString(1)), Type.Missing);
-            rngBorders.Borders[Excel.XlBordersIndex.xlEdgeBottom].LineStyle = 1;
-            rngBorders.Borders[Excel.XlBordersIndex.xlEdgeBottom].Weight = Excel.XlBorderWeight.xlThin;
-
-            MyUtility.Excel.CopyToXls(this.printData, string.Empty, reportname, 3, showExcel: false, excelApp: objApp);
+            this.printData.Columns.Remove("SCICtnNoNo");
+            MyUtility.Excel.CopyToXls(this.printData, string.Empty, reportname, 2, showExcel: false, excelApp: objApp);
             worksheet.Columns.AutoFit();
 
             #region Save & Show Excel
