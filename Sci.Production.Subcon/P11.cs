@@ -135,6 +135,58 @@ where sd.SubConOutFty = '{subConOutFty}' and sd.ContractNumber = '{contractNumbe
             }
             #endregion
 
+            #region 檢查Subcon Out Qty是否大於Accu. Subcon Out Qty
+            string sqlCheckSubconOutQty = @"
+alter table #tmp alter column ContractNumber varchar(50)
+alter table #tmp alter column SubConOutFty varchar(8)
+alter table #tmp alter column OrderID varchar(13)
+alter table #tmp alter column Article varchar(8)
+alter table #tmp alter column Combotype varchar(1)
+
+select  sd.OrderID,
+        sd.Article,
+        sd.Combotype,
+        [Subcon Out Qty] = sd.OutputQty,
+        [Accu. Subcon Out Qty] = AccuOutputQty.val
+from    #tmp sd
+outer   apply( select [val] = isnull(sum(sod.QAQty),0) 
+               from SewingOutput s with (nolock)
+               inner join SewingOutput_Detail sod with (nolock) on s.ID = sod.ID
+               where   s.SubConOutContractNumber = sd.ContractNumber and
+                       s.SubconOutFty = sd.SubConOutFty  and
+                       sod.OrderID = sd.OrderID and
+                       sod.Article = sd.Article and
+                       sod.Combotype  = sd.Combotype) AccuOutputQty
+where   AccuOutputQty.val > sd.OutputQty
+";
+            DataTable dtCheckSubconOutQtyResult;
+            DualResult checkSubconOutQtyResult = MyUtility.Tool.ProcessWithDatatable(this.DetailDatas.CopyToDataTable(), "ContractNumber,SubConOutFty,OrderID,Article,Combotype,OutputQty", sqlCheckSubconOutQty, out dtCheckSubconOutQtyResult);
+
+            if (!checkSubconOutQtyResult)
+            {
+                this.ShowErr(checkSubconOutQtyResult);
+                return false;
+            }
+
+            if (dtCheckSubconOutQtyResult.Rows.Count > 0)
+            {
+                MyUtility.Msg.ShowMsgGrid(dtCheckSubconOutQtyResult, "Subcon Out Qty can not less than Accu. Subcon Out Qty.", "Warning");
+
+                foreach (DataRow dr in dtCheckSubconOutQtyResult.Rows)
+                {
+                    DataRow drRefreshAccuSubconQty = this.DetailDatas.Where(s =>
+                    s["OrderID"].ToString() == dr["OrderID"].ToString() &&
+                    s["Article"].ToString() == dr["Article"].ToString() &&
+                    s["Combotype"].ToString() == dr["Combotype"].ToString())
+                    .First();
+
+                    drRefreshAccuSubconQty["AccuOutputQty"] = dr["Accu. Subcon Out Qty"];
+                }
+
+                return false;
+            }
+            #endregion
+
             StringBuilder errorMsg = new StringBuilder("<Subcon Qty> over than <Order Qty> SP# List:");
             int errorcnt = 0;
             foreach (DataRow dr in this.DetailDatas)
@@ -634,7 +686,7 @@ where o.id = '{this.CurrentDetailData["OrderID"]}' and sl.Location = '{e.Formatt
                 this.col_Article.IsEditingReadOnly = true;
                 this.col_UnitPrice.IsEditingReadOnly = true;
                 this.col_LocalCurrencyID.IsEditingReadOnly = true;
-                this.col_OutputQty.IsEditingReadOnly = true;
+                this.col_OutputQty.IsEditingReadOnly = false;
                 this.col_LocalUnitPrice.IsEditingReadOnly = true;
                 this.col_Vat.IsEditingReadOnly = true;
                 this.col_KpiRate.IsEditingReadOnly = true;
