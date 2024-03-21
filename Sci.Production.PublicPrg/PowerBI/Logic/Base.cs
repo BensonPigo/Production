@@ -24,6 +24,8 @@ namespace Sci.Production.Prg.PowerBI.Logic
             P_CuttingScheduleOutputList,
             P_QAR31,
             P_QA_CFAMasterList,
+            P_CartonScanRate,
+            P_CartonStatusTrackingList,
         }
 
         /// <summary>
@@ -191,11 +193,9 @@ ORDER BY [Group], [SEQ], [NAME]";
                         .OrderBy(x => x.SEQ)
                         .AsParallel()
                         .AsSequential()
-                        .Select(detail =>
-                        {
-                            ExecutedList model = this.ExecuteSingle(detail);
-                            return model;
-                        });
+                        .Select(detail => this.ExecuteSingle(detail))
+                        .TakeWhile(model => model.Group == 0 || model.Success) // 只保留成功的结果
+                        .ToList();
 
                     foreach (var item_detail in results_detail)
                     {
@@ -207,7 +207,7 @@ ORDER BY [Group], [SEQ], [NAME]";
 
             foreach (var item in results)
             {
-                executedListEnd.AddRange(executedListDetail);
+                executedListEnd.AddRange(item);
             }
 
             this.UpdateJobLogAndSendMail(executedListEnd, stratExecutedTime);
@@ -248,6 +248,12 @@ ORDER BY [Group], [SEQ], [NAME]";
                     case ListName.P_SewingLineScheduleBySP:
                         result = new P_Import_SewingLineScheduleBySP().P_SewingLineScheduleBySP(item.SDate, item.EDate);
                         break;
+                    case ListName.P_CartonScanRate:
+                        result = new P_Import_CartonScanRate().P_CartonScanRate();
+                        break;
+                    case ListName.P_CartonStatusTrackingList:
+                        result = new P_Import_CartonStatusTrackingList().P_CartonStatusTrackingList(item.SDate);
+                        break;
                 }
             }
             else
@@ -261,7 +267,9 @@ ORDER BY [Group], [SEQ], [NAME]";
             {
                 ClassName = item.ClassName,
                 ProcedureName = item.ProcedureName,
-                Sucess = result.Result,
+                Success = result.Result,
+                Group = item.Group,
+                SEQ = item.SEQ,
                 ErrorMsg = !result.Result ? result.Result.Messages.ToString() : string.Empty,
                 ExecuteSDate = executeSDate,
                 ExecuteEDate = executeEDate,
@@ -278,8 +286,8 @@ ORDER BY [Group], [SEQ], [NAME]";
         public void UpdateJobLogAndSendMail(List<ExecutedList> executedList, DateTime stratExecutedTime)
         {
             string region = this.GetRegion();
-            string description = string.Join(Environment.NewLine, executedList.Select(x => $"[{x.ClassName}] is {(x.Sucess ? "completed " : "fail ")} Time: {x.ExecuteSDate.Value.ToString("yyyy/MM/dd HH:mm:ss")} - {x.ExecuteEDate.Value.ToString("yyyy/MM/dd HH:mm:ss")}。 {(x.Sucess ? string.Empty : Environment.NewLine + x.ErrorMsg)}"));
-            bool nonSucceed = executedList.Where(x => !x.Sucess).Count() > 0;
+            string description = string.Join(Environment.NewLine, executedList.Select(x => $"[{x.ClassName}] is {(x.Success ? "completed " : "fail ")} Time: {x.ExecuteSDate.Value.ToString("yyyy/MM/dd HH:mm:ss")} - {x.ExecuteEDate.Value.ToString("yyyy/MM/dd HH:mm:ss")}。 {(x.Success ? string.Empty : Environment.NewLine + x.ErrorMsg)}"));
+            bool nonSucceed = executedList.Where(x => !x.Success).Count() > 0;
 
             JobLog jobLog = new JobLog()
             {

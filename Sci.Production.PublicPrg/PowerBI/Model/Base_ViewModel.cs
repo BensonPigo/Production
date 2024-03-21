@@ -52,7 +52,7 @@ namespace Sci.Production.Prg.PowerBI.Model
         /// <summary>
         /// 執行成功
         /// </summary>
-        public bool Sucess { get; set; }
+        public bool Success { get; set; }
 
         /// <summary>
         /// 執行時間 起
