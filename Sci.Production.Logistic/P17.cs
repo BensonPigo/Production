@@ -68,6 +68,27 @@ namespace Sci.Production.Logistic
             }
         }
 
+        private string GetSicCtnNo()
+        {
+            string strSciCtnNo = string.Empty;
+            if (MyUtility.Check.Empty(this.txtScanCartonSP.Text))
+            {
+                this.txtScanCartonSP.Text = string.Empty;
+                return string.Empty;
+            }
+
+            if (this.txtScanCartonSP.Text.Length >= 13)
+            {
+                int iPath = this.txtScanCartonSP.Text.Length >= 16 ? this.txtScanCartonSP.Text.Length : 13;
+                string ctnStartNo = this.txtScanCartonSP.Text.Length < 16 ? this.txtScanCartonSP.Text.Substring(13, this.txtScanCartonSP.Text.Length - 13).TrimStart('^') : string.Empty;
+                string sciCtnNo = this.txtScanCartonSP.Text.Substring(0, iPath);
+                string sqlWhere = this.txtScanCartonSP.Text.Length < 16 ? $@"PLD.ID ='{sciCtnNo}' and pld.CTNStartNo = '{ctnStartNo}'" : $@"pld.SCICtnNo = '{sciCtnNo}'";
+                strSciCtnNo = MyUtility.GetValue.Lookup($@"select SciCtnNo from PackingList_Detail pld WHERE  {sqlWhere}");
+            }
+
+            return strSciCtnNo;
+        }
+
         private void TxtScanCartonSP_Validating(object sender, CancelEventArgs e)
         {
             if (MyUtility.Check.Empty(this.txtScanCartonSP.Text))
@@ -95,17 +116,11 @@ namespace Sci.Production.Logistic
                 }
             }
 
-            // 檢查字元
-            int iPath = this.txtScanCartonSP.Text.Length >= 16 ? this.txtScanCartonSP.Text.Length : 13;
-            string ctnStartNo = this.txtScanCartonSP.Text.Length < 16 ? this.txtScanCartonSP.Text.Substring(13, this.txtScanCartonSP.Text.Length - 13) : string.Empty;
-            string sciCtnNo = this.txtScanCartonSP.Text.Substring(0, iPath);
-
-            string sqlWhere = this.txtScanCartonSP.Text.Length < 16 ? $@" and pld.CTNStartNo = '{ctnStartNo}'" : string.Empty;
-
-            string packListSciCtnNo = MyUtility.GetValue.Lookup($@"select 1 from PackingList_Detail pld WHERE pld.SCICtnNo = '{sciCtnNo}' {sqlWhere}");
+            //// 檢查字元
+            string packListSciCtnNo = MyUtility.GetValue.Lookup($@"select 1 from PackingList_Detail pld WHERE pld.SciCtnNo ='{this.GetSicCtnNo()}'");
             if (MyUtility.Check.Empty(packListSciCtnNo))
             {
-                MyUtility.Msg.WarningBox($"This carton No.({sciCtnNo}) does not exist.");
+                AutoClosingMessageBox.Show($"This carton No.({this.txtScanCartonSP.Text}) does not exist.", "Warning", 3000);
                 e.Cancel = true;
                 this.ClearAll("ALL");
                 return;
@@ -116,7 +131,7 @@ namespace Sci.Production.Logistic
             FROM PackingList_Detail pld
             inner join TransferToCFA CFA on pld.id = cfa.PackingListID
 							            and pld.CTNStartNo = CFA.CTNStartNo
-            WHERE pld.SCICtnNo in(CFA.SCICtnNo)  and pld.SCICtnNo = '{sciCtnNo}' {sqlWhere}";
+            WHERE pld.SCICtnNo in(CFA.SCICtnNo) AND pld.SciCtnNo ='{this.GetSicCtnNo()}'";
             string cfaSciCtnNo = MyUtility.GetValue.Lookup(strSQL_CFA);
 
             if (MyUtility.Check.Empty(cfaSciCtnNo) && !MyUtility.Check.Empty(packListSciCtnNo))
@@ -131,12 +146,13 @@ namespace Sci.Production.Logistic
             this.upd_sql_barcode = string.Empty;
             this.intTmpNo = 0;
 
-            this.LoadingData(sciCtnNo);
+            this.LoadingData(this.GetSicCtnNo());
 
             if (this.dtDetail.Rows.Count == 0)
             {
-                AutoClosingMessageBox.Show($"<{this.txtScanCartonSP.Text}> Invalid CTN#!!", "Warning", 3000);
+                AutoClosingMessageBox.Show($"This carton No.({this.txtScanCartonSP.Text}) does not exist.", "Warning", 3000);
                 e.Cancel = true;
+                this.ClearAll("ALL");
                 return;
             }
 
@@ -210,21 +226,22 @@ namespace Sci.Production.Logistic
             }
 
             string sum_sql = $@"
+            DECLARE @PackingID  varchar(20)
+            SELECT @PackingID = ID FROM PackingList_Detail WHERE SCICtnNo = '{sciCtnNo}'                                                
+
             SELECT 
             TtlCartons= isnull(sum(pld.CTNQty),0)
             ,TtlQty = isnull(sum(pld.ShipQty),0)
             ,TtlPackedCartons = isnull(sum(case when pld.ClogScanQty > 0 and pld.CTNQty>0 then 1 else 0 end),0)
             ,TtlPackQty = isnull(sum(pld.ClogScanQty),0)
-            ,pld.SCICtnNo
             FROM PackingList p
             INNER join PackingList_Detail pld with(NOLOCK) on p.id = pld.id
             inner join TransferToCFA CFA on pld.id = cfa.PackingListID
-							            and pld.CTNStartNo = CFA.CTNStartNo
+					            and pld.CTNStartNo = CFA.CTNStartNo
             WHERE 
             pld.SCICtnNo in(CFA.SCICtnNo) AND 
             p.Type in ('B','L') AND 
-            pld.SCICtnNo = '{sciCtnNo}'
-            GROUP BY pld.SCICtnNo";
+            pld.ID = @PackingID";
             DataRow dr_sum;
             MyUtility.Check.Seek(sum_sql, out dr_sum);
 
@@ -466,7 +483,8 @@ namespace Sci.Production.Logistic
                         if (dr["Article"].Equals(no_barcode_dr["Article"]) && dr["SizeCode"].Equals(no_barcode_dr["SizeCode"]))
                         {
                             dr["Barcode"] = this.txtScanEAN.Text;
-                            dr["ScanQty"] = (short)dr["ScanQty"] + 1;
+
+                           // dr["ScanQty"] = (short)dr["ScanQty"] + 1;
 
                             // 變更是否為第一次掃描的標記
                             dr["IsFirstTimeScan"] = false;
@@ -509,6 +527,7 @@ namespace Sci.Production.Logistic
 
                     AutoClosingMessageBox.Show($"This Size scan is complete,can not scan again!!", "Warning", 3000);
                     this.txtScanEAN.Text = string.Empty;
+                    e.Cancel = true;
                     return;
                 }
                 else
@@ -837,7 +856,7 @@ namespace Sci.Production.Logistic
                 }
 
                 // 重新從DB撈取下方Grid資料
-                this.LoadingData(this.txtScanCartonSP.Text);
+                this.LoadingData(this.GetSicCtnNo());
                 this.LoadSelectCarton();
             }
 
