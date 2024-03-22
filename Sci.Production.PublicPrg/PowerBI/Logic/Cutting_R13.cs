@@ -1,23 +1,22 @@
 ﻿using Sci.Data;
-using Sci.Production.Class.Command;
 using Sci.Production.Prg.PowerBI.Model;
 using System;
-using System.Collections.Generic;
 using System.Data;
-using System.Data.SqlClient;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Sci.Production.Prg.PowerBI.Logic
 {
     /// <inheritdoc/>
     public class Cutting_R13
     {
+        private DBProxy DBProxy;
+
         /// <inheritdoc/>
         public Cutting_R13()
         {
-            DBProxy.Current.DefaultTimeout = 900;
+            this.DBProxy = new DBProxy()
+            {
+                DefaultTimeout = 900,
+            };
         }
 
         /// <summary>
@@ -179,7 +178,7 @@ namespace Sci.Production.Prg.PowerBI.Logic
 
             Base_ViewModel resultReport = new Base_ViewModel
             {
-                Result = DBProxy.Current.Select("Production", sqlCmd, null, out DataTable dataTable),
+                Result = this.DBProxy.Select("Production", sqlCmd, null, out DataTable dataTable),
             };
 
             if (!resultReport.Result)

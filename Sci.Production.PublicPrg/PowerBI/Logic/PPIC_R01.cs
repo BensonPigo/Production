@@ -12,10 +12,15 @@ namespace Sci.Production.Prg.PowerBI.Logic
     /// </summary>
     public class PPIC_R01
     {
+        private DBProxy DBProxy;
+
         /// <inheritdoc/>
         public PPIC_R01()
         {
-            DBProxy.Current.DefaultTimeout = 7200;
+            this.DBProxy = new DBProxy()
+            {
+                DefaultTimeout = 7200,
+            };
         }
 
         /// <inheritdoc/>
@@ -55,7 +60,7 @@ exec dbo.GetSewingLineScheduleData  @Inline,
 ";
             Base_ViewModel resultReport = new Base_ViewModel
             {
-                Result = DBProxy.Current.Select("Production", sql, listPar, out DataTable[] dataTables),
+                Result = this.DBProxy.Select("Production", sql, listPar, out DataTable[] dataTables),
             };
 
             if (!resultReport.Result)
@@ -102,7 +107,7 @@ exec dbo.PPIC_R01_SewingLineScheduleBySP  @MDivisionID,
 ";
             Base_ViewModel resultReport = new Base_ViewModel
             {
-                Result = DBProxy.Current.Select("Production", sql, listPar, out DataTable dataTable),
+                Result = this.DBProxy.Select("Production", sql, listPar, out DataTable dataTable),
             };
 
             if (!resultReport.Result)
