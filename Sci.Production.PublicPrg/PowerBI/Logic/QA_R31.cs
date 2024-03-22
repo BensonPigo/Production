@@ -11,10 +11,15 @@ namespace Sci.Production.Prg.PowerBI.Logic
     /// <inheritdoc/>
     public class QA_R31
     {
+        private DBProxy DBProxy;
+
         /// <inheritdoc/>
         public QA_R31()
         {
-            DBProxy.Current.DefaultTimeout = 1800;
+            this.DBProxy = new DBProxy()
+            {
+                DefaultTimeout = 1800,
+            };
         }
 
         /// <inheritdoc/>
@@ -632,7 +637,7 @@ AND NOT EXISTS (
 
             Base_ViewModel resultReport = new Base_ViewModel
             {
-                Result = DBProxy.Current.Select("Production", sqlCmd.ToString(), listPar, out DataTable[] dataTables),
+                Result = this.DBProxy.Select("Production", sqlCmd.ToString(), listPar, out DataTable[] dataTables),
             };
 
             if (!resultReport.Result)
@@ -893,7 +898,7 @@ WHERE 1=1
 
             DataTable dtResult;
 
-            base_ViewModel.Result = DBProxy.Current.Select("Production", sqlCmd.ToString(), paramList, out dtResult);
+            base_ViewModel.Result = this.DBProxy.Select("Production", sqlCmd.ToString(), paramList, out dtResult);
             if (!base_ViewModel.Result)
             {
                 return base_ViewModel;
@@ -911,7 +916,7 @@ WHERE 1=1
 		left join Order_QtyShip oqs with (nolock) on ocl.OrderId = oqs.Id
 		where	ocl.DeleteOrder = 1	and ocl.UpdateDate >= '{par.BIFilterDate.Value.ToString("yyyy/MM/dd")}'
 ";
-                base_ViewModel.Result = DBProxy.Current.Select("Production", sqlGetNeedDeleteFilterBase, out dtP_QA_CFAMasterListNeedDeleteFilterBase);
+                base_ViewModel.Result = this.DBProxy.Select("Production", sqlGetNeedDeleteFilterBase, out dtP_QA_CFAMasterListNeedDeleteFilterBase);
                 if (!base_ViewModel.Result)
                 {
                     return base_ViewModel;
