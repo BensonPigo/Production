@@ -45,13 +45,15 @@ select p.BuyerDelivery
 	, [MDScanRate] = cast(iif(isnull(p.TotalCartonQty, 0) = 0, 0, (p.MDScanQty * 1.0 / p.TotalCartonQty) * 100) as decimal(5, 2))
 	, [ScanAndPackRate] = cast(iif(isnull(p.TotalCartonQty, 0) = 0, 0, (p.ScanAndPackQty * 1.0 / p.TotalCartonQty) * 100) as decimal(5, 2))
 	, [PullOutRate] = cast(iif(isnull(p.TotalCartonQty, 0) = 0, 0, (p.SPCountWithPulloutCmplt * 1.0 / p.TotalCartonQty) * 100) as decimal(5,2))
+	, [ClogReceivedRate] = cast(iif(isnull(p.SPCount, 0) = 0, 0, (p.ClogReceivedQty * 1.0 / p.SPCount) * 100) as decimal(5,2))
 into #tmp_P_CartonScanRate
 from (
 	select [SPCount] = count(distinct p.SP)
-		, [SPCountWithPulloutCmplt] = isnull(p2.SPCountWithPulloutCmplt, 0)
+		, [SPCountWithPulloutCmplt] = isnull(p2.[SPCountWithPulloutCmplt], 0)
 		, [HauledQty] = Sum(p.HauledQty)
 		, [PackingAuditQty] = Sum(IIF(p.PackingAuditScanTime is null, 0, p.CartonQty))
 		, [MDScanQty] = Sum(IIF(p.MDScanTime is null, 0, p.CartonQty))
+		, [ClogReceivedQty] = isnull([SPCountWithClogReceiveTime], 0)
 		, [ScanAndPackQty] = Sum(p.ScanQty)
 		, [TotalCartonQty] = Sum(p.CartonQty)
 		, f.FTYGroup
@@ -68,9 +70,19 @@ from (
 		and p.PulloutComplete = 'Y'
 		group by f.FTYGroup, p.BuyerDelivery
 	) p2 on f.FTYGroup = p2.FTYGroup and p.BuyerDelivery = p2.BuyerDelivery
+	left join (
+		select [SPCountWithClogReceiveTime] = count(distinct p.SP)
+			, f.FTYGroup, p.BuyerDelivery
+		from P_CartonStatusTrackingList p WITH(NOLOCK)
+		inner join [MainServer].Production.dbo.Factory f WITH(NOLOCK) on p.fty = f.ID
+		where p.BuyerDelivery >= CONVERT(date, GETDATE()) 
+		and p.BuyerDelivery <= DATEADD(DAY ,7,CONVERT(date, GETDATE())) 
+		and p.ClogReceiveTime is not null
+		group by f.FTYGroup, p.BuyerDelivery
+	)p3 on f.FTYGroup = p3.FTYGroup and p.BuyerDelivery = p3.BuyerDelivery
 	where p.BuyerDelivery >= CONVERT(date, GETDATE()) 
 	and p.BuyerDelivery <= DATEADD(DAY ,7,CONVERT(date, GETDATE())) 
-	group by f.FTYGroup, p.BuyerDelivery, p2.SPCountWithPulloutCmplt
+	group by f.FTYGroup, p.BuyerDelivery, p2.[SPCountWithPulloutCmplt], p3.[SPCountWithClogReceiveTime]
 ) p
 
 
@@ -80,12 +92,13 @@ update p
 		, p.[MDScanRate] = t.[MDScanRate]
 		, p.[ScanAndPackRate] = t.[ScanAndPackRate]
 		, p.[PullOutRate] = t.[PullOutRate]
+		, p.[ClogReceivedRate] = t.[ClogReceivedRate]
 from P_CartonScanRate p
 inner join #tmp_P_CartonScanRate t on p.[Date]= t.[BuyerDelivery] and p.[FactoryID] = t.[FTYGroup]
 
 
-insert into P_CartonScanRate([Date], [FactoryID], [HaulingScanRate], [PackingAuditScanRate], [MDScanRate], [ScanAndPackRate], [PullOutRate])
-select [BuyerDelivery], [FTYGroup], [HaulingScanRate], [PackingAuditScanRate], [MDScanRate], [ScanAndPackRate], [PullOutRate]
+insert into P_CartonScanRate([Date], [FactoryID], [HaulingScanRate], [PackingAuditScanRate], [MDScanRate], [ScanAndPackRate], [PullOutRate], [ClogReceivedRate])
+select [BuyerDelivery], [FTYGroup], [HaulingScanRate], [PackingAuditScanRate], [MDScanRate], [ScanAndPackRate], [PullOutRate], [ClogReceivedRate]
 from #tmp_P_CartonScanRate t
 where not exists (select 1 from P_CartonScanRate p where p.[Date]= t.[BuyerDelivery] and p.[FactoryID] = t.[FTYGroup])
 
