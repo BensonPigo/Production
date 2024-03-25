@@ -24,6 +24,8 @@ namespace Sci.Production.Prg.PowerBI.Logic
             P_CuttingScheduleOutputList,
             P_QAR31,
             P_QA_CFAMasterList,
+            P_FabricDispatchRate,
+            P_IssueFabricByCuttingTransactionList,
         }
 
         /// <summary>
@@ -213,6 +215,12 @@ namespace Sci.Production.Prg.PowerBI.Logic
                         break;
                     case ListName.P_SewingLineScheduleBySP:
                         result = new P_Import_SewingLineScheduleBySP().P_SewingLineScheduleBySP(item.SDate, item.EDate);
+                        break;
+                    case ListName.P_FabricDispatchRate:
+                        result = new P_Import_FabricDispatchRate().P_FabricDispatchRate(item.SDate);
+                        break;
+                    case ListName.P_IssueFabricByCuttingTransactionList:
+                        result = new P_Import_IssueFabricByCuttingTransactionList().P_IssueFabricByCuttingTransactionList(item.SDate, item.EDate);
                         break;
                 }
             }
