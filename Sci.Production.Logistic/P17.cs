@@ -79,7 +79,6 @@ namespace Sci.Production.Logistic
 
             if (this.txtScanCartonSP.Text.Length >= 13)
             {
-
                 string packingListID = this.txtScanCartonSP.Text.Substring(0, 13);
                 string cTNStarNo = this.txtScanCartonSP.Text.Substring(13, this.txtScanCartonSP.Text.Length - 13).TrimStart('^');
 
@@ -87,7 +86,6 @@ namespace Sci.Production.Logistic
                 {
                     this.txtScanCartonSP.Text.Length > 13 ? $"  pld.ID = '{packingListID}' and  pld.CTNStartNo = '{cTNStarNo}'" : " 1=0 ",
                     $" pld.SCICtnNo = '{this.txtScanCartonSP.Text.GetPackScanContent()}'",
-                    $" pld.ID = '{this.txtScanCartonSP.Text}'",
                 };
 
                 foreach (string where in aLLwhere)
@@ -111,6 +109,8 @@ namespace Sci.Production.Logistic
                 return;
             }
 
+            string strWhere = string.Empty;
+            string sciCtnNo = this.GetSicCtnNo();
             string oldValue = this.txtScanCartonSP.OldValue;
 
             // 檢查是否有正在掃packing未刷完
@@ -130,8 +130,10 @@ namespace Sci.Production.Logistic
                 }
             }
 
+            strWhere = MyUtility.Check.Empty(sciCtnNo) ? " 1=0" : $"pld.SciCtnNo ='{sciCtnNo}'";
+
             //// 檢查字元
-            string packListSciCtnNo = MyUtility.GetValue.Lookup($@"select 1 from PackingList_Detail pld WHERE pld.SciCtnNo ='{this.GetSicCtnNo()}'");
+            string packListSciCtnNo = MyUtility.GetValue.Lookup($@"select 1 from PackingList_Detail pld WHERE {strWhere}");
             if (MyUtility.Check.Empty(packListSciCtnNo))
             {
                 AutoClosingMessageBox.Show($"This carton No.({this.txtScanCartonSP.Text}) does not exist.", "Warning", 3000);
@@ -145,7 +147,7 @@ namespace Sci.Production.Logistic
             FROM PackingList_Detail pld
             inner join TransferToCFA CFA on pld.id = cfa.PackingListID
 							            and pld.CTNStartNo = CFA.CTNStartNo
-            WHERE pld.SCICtnNo in(CFA.SCICtnNo) AND pld.SciCtnNo ='{this.GetSicCtnNo()}'";
+            WHERE pld.SCICtnNo in(CFA.SCICtnNo) AND pld.SciCtnNo ='{sciCtnNo}'";
             string cfaSciCtnNo = MyUtility.GetValue.Lookup(strSQL_CFA);
 
             if (MyUtility.Check.Empty(cfaSciCtnNo) && !MyUtility.Check.Empty(packListSciCtnNo))
@@ -160,7 +162,7 @@ namespace Sci.Production.Logistic
             this.upd_sql_barcode = string.Empty;
             this.intTmpNo = 0;
 
-            this.LoadingData(this.GetSicCtnNo());
+            this.LoadingData(sciCtnNo);
 
             if (this.dtDetail == null || this.dtDetail.Rows.Count == 0)
             {
@@ -170,27 +172,22 @@ namespace Sci.Production.Logistic
                 return;
             }
 
-            int cnt_selectCarton = this.LoadSelectCarton();
-            if (cnt_selectCarton == 1)
+            if (Convert.ToInt16(this.dtDetail.Compute("Sum(ScanQty)", null)) > 0)
             {
-                // 1.=PackingList_Detail.ID+PackingList_Detail.CTNStartNo
-                if (Convert.ToInt16(this.dtDetail.Compute("Sum(ScanQty)", null)) > 0)
+                if (MyUtility.Msg.InfoBox("This carton had been scanned, are you sure you want to rescan again?", buttons: MessageBoxButtons.YesNo) == DialogResult.Yes)
                 {
-                    if (MyUtility.Msg.InfoBox("This carton had been scanned, are you sure you want to rescan again?", buttons: MessageBoxButtons.YesNo) == DialogResult.Yes)
+                    DualResult dualResult = this.ClearScanQty(this.dtDetail.Select(), "ALL");
+                    if (!dualResult)
                     {
-                        DualResult dualResult = this.ClearScanQty(this.dtDetail.Select(), "ALL");
-                        if (!dualResult)
-                        {
-                            this.ShowErr(dualResult);
-                            return;
-                        }
-                    }
-                    else
-                    {
-                        this.ClearAll("ALL");
-                        e.Cancel = true;
+                        this.ShowErr(dualResult);
                         return;
                     }
+                }
+                else
+                {
+                    this.ClearAll("ALL");
+                    e.Cancel = true;
+                    return;
                 }
             }
 
@@ -820,30 +817,9 @@ namespace Sci.Production.Logistic
             else
             {
                 this.ClearAll("SCAN");
-                this.LoadSelectCarton();
             }
         }
 
-        private int LoadSelectCarton()
-        {
-            if (this.dtDetail == null)
-            {
-                return 0;
-            }
-
-            var list_selectCarton = (from c in this.dtDetail.AsEnumerable()
-                                                          group c by new
-                                                          {
-                                                              ID = c.Field<string>("ID"),
-                                                              CTNStartNo = c.Field<string>("CTNStartNo"),
-                                                              CustPoNo = c.Field<string>("CustPoNo"),
-                                                              BrandID = c.Field<string>("BrandID"),
-                                                              StyleID = c.Field<string>("StyleID"),
-                                                              Dest = c.Field<string>("Dest"),
-                                                              Remark = c.Field<string>("Remark"),
-                                                          }).ToList();
-            return list_selectCarton.Count;
-        }
 
         private DualResult ClearScanQty(DataRow[] tmp, string clearType)
         {
@@ -899,7 +875,6 @@ namespace Sci.Production.Logistic
 
                 // 重新從DB撈取下方Grid資料
                 this.LoadingData(this.GetSicCtnNo());
-                this.LoadSelectCarton();
             }
 
             return new DualResult(result1);
