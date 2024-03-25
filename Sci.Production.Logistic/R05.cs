@@ -341,7 +341,6 @@ outer apply(
 				from #tmp s with(nolock)
 				where s.PackingListID = t.PackingListID
 				and s.CTNStartNo = t.CTNStartNo
-				and s.SizeCode = t.SizeCode			
 			) tmp 
 			order by Article
 			for xml path('')
@@ -356,8 +355,6 @@ outer apply(
 				from #tmp s with(nolock)
 				where s.PackingListID = t.PackingListID
 				and s.CTNStartNo = t.CTNStartNo
-				and s.SizeCode = t.SizeCode
-				and s.Article = t.Article				
 			) tmp 
 			order by Color
 			for xml path('')
@@ -383,7 +380,7 @@ outer apply(
 	select value =stuff(
 		(select concat('/',tmp.QtyPerCTN) 
 			from (
-				select distinct s.QtyPerCTN ,Seq = isnull(os.Seq,'')
+				select s.QtyPerCTN ,Seq = isnull(os.Seq,'')
 				from #tmp s with(nolock)
 				left join Order_SizeCode os with(nolock) on os.id = s.POID and os.SizeCode = s.SizeCode
 				where s.PackingListID = t.PackingListID
@@ -418,8 +415,7 @@ outer apply(
 				left join Order_SizeCode os with(nolock) on os.id = s.POID and os.SizeCode = s.SizeCode
 				where s.PackingListID = t.PackingListID
 				and s.CTNStartNo = t.CTNStartNo
-				and s.Article = t.Article
-				and s.SizeCode = t.SizeCode				
+                and s.Barcode !=''
 			) tmp 
 			order by Seq
 			for xml path('')
@@ -430,7 +426,7 @@ outer apply(
 	select value =stuff(
 		(select concat('/',tmp.LackingQty) 
 			from (
-				select distinct s.LackingQty,Seq = isnull(os.Seq,'')
+				select s.LackingQty,Seq = isnull(os.Seq,'')
 				from #tmp s with(nolock)
 				left join Order_SizeCode os with(nolock) on os.id = s.POID and os.SizeCode = s.SizeCode
 				where s.PackingListID = t.PackingListID
