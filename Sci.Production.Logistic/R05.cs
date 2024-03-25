@@ -267,6 +267,7 @@ select distinct
 ,[Lacking] = iif(c.LackingQty > 0,'Y','')
 ,cp.LackingQty
 ,o.POID
+,c.Ukey
 ,[OrderNo] = dense_rank() over (partition by c.PackingListID order by o.AddDate)
 ,[OrderListNo] = dense_rank() over (partition by c.PackingListID, o.poid order by o.ID)
 into #tmp
@@ -320,6 +321,7 @@ outer apply(
 			from #tmp s with(nolock)			
 			where s.PackingListID = t.PackingListID
 			and s.CTNStartNo = t.CTNStartNo
+			and s.Ukey = t.Ukey
 		) tmp 
 		order by orderID,OrderListNo
 		for xml path('')
@@ -332,6 +334,7 @@ outer apply(
 	from #tmp s
 	where [OrderNo] = 1
 	and s.PackingListID = t.PackingListID
+	and s.Ukey = t.Ukey
 )StyleSeason
 outer apply(
 	select value =stuff(
@@ -341,6 +344,7 @@ outer apply(
 				from #tmp s with(nolock)
 				where s.PackingListID = t.PackingListID
 				and s.CTNStartNo = t.CTNStartNo
+				and s.Ukey = t.Ukey
 			) tmp 
 			order by Article
 			for xml path('')
@@ -355,6 +359,7 @@ outer apply(
 				from #tmp s with(nolock)
 				where s.PackingListID = t.PackingListID
 				and s.CTNStartNo = t.CTNStartNo
+				and s.Ukey = t.Ukey
 			) tmp 
 			order by Color
 			for xml path('')
@@ -370,6 +375,7 @@ outer apply(
 				left join Order_SizeCode os with(nolock) on os.id = s.POID and os.SizeCode = s.SizeCode
 				where s.PackingListID = t.PackingListID
 				and s.CTNStartNo = t.CTNStartNo
+				and s.Ukey = t.Ukey
 			) tmp 
 			order by Seq
 			for xml path('')
@@ -385,6 +391,7 @@ outer apply(
 				left join Order_SizeCode os with(nolock) on os.id = s.POID and os.SizeCode = s.SizeCode
 				where s.PackingListID = t.PackingListID
 				and s.CTNStartNo = t.CTNStartNo
+				and s.Ukey = t.Ukey
 			) tmp
 			order by Seq
 			for xml path('')
@@ -400,6 +407,7 @@ outer apply(
 				left join Order_SizeCode os with(nolock) on os.id = s.POID and os.SizeCode = s.SizeCode
 				where s.PackingListID = t.PackingListID
 				and s.CTNStartNo = t.CTNStartNo		
+				and s.Ukey = t.Ukey
 			) tmp
 			order by Seq
 			for xml path('')
@@ -415,6 +423,7 @@ outer apply(
 				left join Order_SizeCode os with(nolock) on os.id = s.POID and os.SizeCode = s.SizeCode
 				where s.PackingListID = t.PackingListID
 				and s.CTNStartNo = t.CTNStartNo
+				and s.Ukey = t.Ukey
                 and s.Barcode !=''
 			) tmp 
 			order by Seq
@@ -431,6 +440,7 @@ outer apply(
 				left join Order_SizeCode os with(nolock) on os.id = s.POID and os.SizeCode = s.SizeCode
 				where s.PackingListID = t.PackingListID
 				and s.CTNStartNo = t.CTNStartNo
+				and s.Ukey = t.Ukey
 			) tmp 
 			order by Seq
 			for xml path('')
