@@ -162,7 +162,7 @@ namespace Sci.Production.Logistic
 
             this.LoadingData(this.GetSicCtnNo());
 
-            if (this.dtDetail.Rows.Count == 0)
+            if (this.dtDetail == null || this.dtDetail.Rows.Count == 0)
             {
                 AutoClosingMessageBox.Show($"This carton No.({this.txtScanCartonSP.Text}) does not exist.", "Warning", 3000);
                 e.Cancel = true;
@@ -199,6 +199,11 @@ namespace Sci.Production.Logistic
 
         private void LoadingData(string sciCtnNo)
         {
+            if (MyUtility.Check.Empty(sciCtnNo))
+            {
+                return;
+            }
+
             this.dtHade = null;
             this.dtDetail = null;
             string sqlcmd = $@"
