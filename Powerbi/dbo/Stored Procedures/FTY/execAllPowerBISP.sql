@@ -289,13 +289,13 @@ SET @ErrorMessage = ''
 
 /****************************************************************************************************************************/
 
---Sunday Job) P_ImportAdiCompReport
+--Sunday Job) P_Import_AdiCompReport
 
 if (select DATEPART(WEEKDAY,GETDATE())) = 1
 BEGIN
 	BEGIN TRY
 		set @Stime = getdate()
-		EXEC P_ImportAdiCompReport
+		EXEC P_Import_AdiCompReport
 		set @Etime = getdate()
 	END TRY
 
@@ -303,7 +303,7 @@ BEGIN
 
 	SET @ErrorMessage = 
 	'
-	[Sunday_Job-P_ImportAdiCompReport]' + CHAR(13) +
+	[Sunday_Job-P_Import_AdiCompReport]' + CHAR(13) +
 	',錯誤代碼: ' + CONVERT(VARCHAR, ERROR_NUMBER()) + CHAR(13) +
 	',錯誤行數: ' + CONVERT(VARCHAR, ERROR_LINE()) + CHAR(13) +
 	',錯誤訊息: ' + ERROR_MESSAGE()
@@ -320,7 +320,7 @@ BEGIN
 	IF (@ErrorMessage IS NULL or @ErrorMessage='')
 	BEGIN 
 		set @desc += CHAR(13) + '
-	[Sunday-Job-P_ImportAdiCompReport] is completed' + ' Time:' + FORMAT(@Stime, 'yyyy/MM/dd HH:mm:ss') + ' - ' + FORMAT(@Etime, 'yyyy/MM/dd HH:mm:ss')
+	[Sunday-Job-P_Import_AdiCompReport] is completed' + ' Time:' + FORMAT(@Stime, 'yyyy/MM/dd HH:mm:ss') + ' - ' + FORMAT(@Etime, 'yyyy/MM/dd HH:mm:ss')
 	END
 	ELSE
 	BEGIN
@@ -330,7 +330,7 @@ BEGIN
 
 	-- Write in P_TransLog
 		insert into P_TransLog(functionName,Description,StartTime,EndTime,TransCode) 
-		values('P_ImportAdiCompReport',@ErrDesc,@Stime,@Etime,@TransCode)
+		values('P_Import_AdiCompReport',@ErrDesc,@Stime,@Etime,@TransCode)
 
 		SET @ErrDesc = ''
 END
@@ -633,8 +633,9 @@ SET @ErrorMessage = ''
 /****************************************************************************************************************************/
 /***********************************P_Import_MtltoFTYAnalysis****************************************************************/
 BEGIN TRY
-	set @Stime = getdate()  
-	execute [dbo].[P_Import_MtltoFTYAnalysis]
+	Declare @CloseDateFrom Datetime = dateadd(day, -150, getdate())
+	set @Stime = getdate()  	
+	execute [dbo].[P_Import_MtltoFTYAnalysis] @CloseDateFrom
 	set @Etime = getdate()
 END TRY
 

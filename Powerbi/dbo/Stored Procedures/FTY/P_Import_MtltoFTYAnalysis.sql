@@ -1,11 +1,17 @@
 ﻿Create Procedure [dbo].[P_Import_MtltoFTYAnalysis]
+		@CloseDateFrom Datetime = null
 As
 Begin
 	Set NoCount On;
-	Declare @CloseDateFrom Datetime = dateadd(day, -150, getdate())
-	
-	SELECT * into #Final 
-	FROM OPENQUERY([MainServer],  'exec Production.dbo.GetMtltoFTYAnalysis' )
+
+	select * into #Final  from P_MtltoFTYAnalysis where 1=0
+
+	DECLARE @SqlCmd NVARCHAR(MAX) = '
+	insert into #Final([Factory], [Country], [Brand], [WeaveType], [ETD], [ETA], [CloseDate], [ActDate], [Category], [OrderID], [Seq1], [Seq2], [OrderCfmDate], [SciDelivery], [Refno], [SCIRefno], [SuppID], [SuppName], [CurrencyID], [CurrencyRate], [Price], [Price(TWD)], [Unit], [PoQty], [PoFoc], [ShipQty], [ShipFoc], [TTShipQty], [ShipAmt(TWD)], [FabricJunk], [WKID], [ShipmentTerm], [FabricType], [PINO], [PIDATE], [Color], [ColorName], [Season], [PCHandle], [POHandle], [POSMR], [Style], [OrderType], [ShipModeID], [Supp1stCfmDate], [BrandSuppCode], [BrandSuppName], [CountryofLoading], [SupdelRvsd], [ProdItem], [KPILETA], [MaterialConfirm], [SupplierGroup], [TransferBIDate])
+	select [Factory], [Country], [Brand], [WeaveType], [ETD], [ETA], [CloseDate], [ActDate], [Category], [OrderID], [Seq1], [Seq2], [OrderCfmDate], [SciDelivery], [Refno], [SCIRefno], [SuppID], [SuppName], [CurrencyID], [CurrencyRate], [Price], [Price(TWD)], [Unit], [PoQty], [PoFoc], [ShipQty], [ShipFoc], [TTShipQty], [ShipAmt(TWD)], [FabricJunk], [WKID], [ShipmentTerm], [FabricType], [PINO], [PIDATE], [Color], [ColorName], [Season], [PCHandle], [POHandle], [POSMR], [Style], [OrderType], [ShipModeID], [Supp1stCfmDate], [BrandSuppCode], [BrandSuppName], [CountryofLoading], [SupdelRvsd], [ProdItem], [KPILETA], [MaterialConfirm], [SupplierGroup], [TransferBIDate]
+	FROM OPENQUERY([MainServer],  ''exec Production.dbo.GetMtltoFTYAnalysis @CloseDateFrom = ''''' +  convert(varchar, @CloseDateFrom,120) +''''''' )'
+
+	EXEC sp_executesql @SqlCmd
 
 	update p
 		set p.Factory				= t.Factory
