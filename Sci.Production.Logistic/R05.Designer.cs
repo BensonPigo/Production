@@ -47,7 +47,6 @@
             this.labelBrand = new Sci.Win.UI.Label();
             this.txtMdivision1 = new Sci.Production.Class.TxtMdivision();
             this.labelM = new Sci.Win.UI.Label();
-            this.comboFactory = new Sci.Win.UI.ComboBox();
             this.label2 = new Sci.Win.UI.Label();
             this.rdbDetail = new Sci.Win.UI.RadioButton();
             this.rdbSummary = new Sci.Win.UI.RadioButton();
@@ -59,6 +58,7 @@
             this.dateScan2 = new System.Windows.Forms.DateTimePicker();
             this.dateScan1 = new System.Windows.Forms.DateTimePicker();
             this.label4 = new System.Windows.Forms.Label();
+            this.comboFactory = new Sci.Production.Class.Txtfactory();
             this.SuspendLayout();
             // 
             // print
@@ -69,10 +69,12 @@
             // toexcel
             // 
             this.toexcel.Location = new System.Drawing.Point(445, 9);
+            this.toexcel.TabIndex = 16;
             // 
             // close
             // 
             this.close.Location = new System.Drawing.Point(445, 45);
+            this.close.TabIndex = 17;
             // 
             // buttonCustomized
             // 
@@ -102,7 +104,7 @@
             this.txtSPNoEnd.Location = new System.Drawing.Point(285, 37);
             this.txtSPNoEnd.Name = "txtSPNoEnd";
             this.txtSPNoEnd.Size = new System.Drawing.Size(130, 23);
-            this.txtSPNoEnd.TabIndex = 1;
+            this.txtSPNoEnd.TabIndex = 3;
             // 
             // txtSPNoStart
             // 
@@ -111,7 +113,7 @@
             this.txtSPNoStart.Location = new System.Drawing.Point(127, 37);
             this.txtSPNoStart.Name = "txtSPNoStart";
             this.txtSPNoStart.Size = new System.Drawing.Size(130, 23);
-            this.txtSPNoStart.TabIndex = 0;
+            this.txtSPNoStart.TabIndex = 2;
             // 
             // labelSPNo
             // 
@@ -141,7 +143,7 @@
             this.txtPackingEnd.Location = new System.Drawing.Point(285, 9);
             this.txtPackingEnd.Name = "txtPackingEnd";
             this.txtPackingEnd.Size = new System.Drawing.Size(130, 23);
-            this.txtPackingEnd.TabIndex = 3;
+            this.txtPackingEnd.TabIndex = 1;
             // 
             // txtPackingStart
             // 
@@ -150,7 +152,7 @@
             this.txtPackingStart.Location = new System.Drawing.Point(127, 9);
             this.txtPackingStart.Name = "txtPackingStart";
             this.txtPackingStart.Size = new System.Drawing.Size(130, 23);
-            this.txtPackingStart.TabIndex = 2;
+            this.txtPackingStart.TabIndex = 0;
             // 
             // labelPacking
             // 
@@ -179,7 +181,7 @@
             this.dateBuyerDelivery.Location = new System.Drawing.Point(127, 93);
             this.dateBuyerDelivery.Name = "dateBuyerDelivery";
             this.dateBuyerDelivery.Size = new System.Drawing.Size(280, 23);
-            this.dateBuyerDelivery.TabIndex = 4;
+            this.dateBuyerDelivery.TabIndex = 6;
             // 
             // labelBuyerDelivery
             // 
@@ -217,7 +219,7 @@
             this.txtPONoEnd.Location = new System.Drawing.Point(285, 65);
             this.txtPONoEnd.Name = "txtPONoEnd";
             this.txtPONoEnd.Size = new System.Drawing.Size(130, 23);
-            this.txtPONoEnd.TabIndex = 9;
+            this.txtPONoEnd.TabIndex = 5;
             // 
             // txtPONoStart
             // 
@@ -226,7 +228,7 @@
             this.txtPONoStart.Location = new System.Drawing.Point(127, 65);
             this.txtPONoStart.Name = "txtPONoStart";
             this.txtPONoStart.Size = new System.Drawing.Size(130, 23);
-            this.txtPONoStart.TabIndex = 8;
+            this.txtPONoStart.TabIndex = 4;
             // 
             // labelPONo
             // 
@@ -271,18 +273,6 @@
             this.labelM.Size = new System.Drawing.Size(115, 23);
             this.labelM.TabIndex = 128;
             this.labelM.Text = "M";
-            // 
-            // comboFactory
-            // 
-            this.comboFactory.BackColor = System.Drawing.Color.White;
-            this.comboFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboFactory.FormattingEnabled = true;
-            this.comboFactory.IsSupportUnselect = true;
-            this.comboFactory.Location = new System.Drawing.Point(127, 235);
-            this.comboFactory.Name = "comboFactory";
-            this.comboFactory.OldText = "";
-            this.comboFactory.Size = new System.Drawing.Size(80, 24);
-            this.comboFactory.TabIndex = 12;
             // 
             // label2
             // 
@@ -339,7 +329,7 @@
             this.txtuser1.Location = new System.Drawing.Point(127, 150);
             this.txtuser1.Name = "txtuser1";
             this.txtuser1.Size = new System.Drawing.Size(300, 23);
-            this.txtuser1.TabIndex = 7;
+            this.txtuser1.TabIndex = 9;
             this.txtuser1.TextBox1Binding = "";
             // 
             // txtBarcode
@@ -365,7 +355,7 @@
             this.dateScan2.Location = new System.Drawing.Point(299, 122);
             this.dateScan2.Name = "dateScan2";
             this.dateScan2.Size = new System.Drawing.Size(146, 23);
-            this.dateScan2.TabIndex = 6;
+            this.dateScan2.TabIndex = 8;
             this.dateScan2.Value = new System.DateTime(2017, 6, 1, 14, 42, 7, 0);
             // 
             // dateScan1
@@ -374,7 +364,7 @@
             this.dateScan1.Location = new System.Drawing.Point(127, 121);
             this.dateScan1.Name = "dateScan1";
             this.dateScan1.Size = new System.Drawing.Size(146, 23);
-            this.dateScan1.TabIndex = 5;
+            this.dateScan1.TabIndex = 7;
             this.dateScan1.Value = new System.DateTime(2017, 6, 1, 14, 42, 7, 0);
             // 
             // label4
@@ -386,9 +376,25 @@
             this.label4.TabIndex = 146;
             this.label4.Text = "～";
             // 
+            // comboFactory
+            // 
+            this.comboFactory.BackColor = System.Drawing.Color.White;
+            this.comboFactory.BoolFtyGroupList = true;
+            this.comboFactory.FilteMDivision = false;
+            this.comboFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboFactory.IsMultiselect = false;
+            this.comboFactory.IsProduceFty = false;
+            this.comboFactory.IssupportJunk = false;
+            this.comboFactory.Location = new System.Drawing.Point(127, 235);
+            this.comboFactory.MDivision = null;
+            this.comboFactory.Name = "comboFactory";
+            this.comboFactory.Size = new System.Drawing.Size(67, 23);
+            this.comboFactory.TabIndex = 12;
+            // 
             // R05
             // 
             this.ClientSize = new System.Drawing.Size(537, 365);
+            this.Controls.Add(this.comboFactory);
             this.Controls.Add(this.dateScan2);
             this.Controls.Add(this.dateScan1);
             this.Controls.Add(this.label4);
@@ -399,7 +405,6 @@
             this.Controls.Add(this.rdbDetail);
             this.Controls.Add(this.rdbSummary);
             this.Controls.Add(this.labReportType);
-            this.Controls.Add(this.comboFactory);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.txtMdivision1);
             this.Controls.Add(this.labelM);
@@ -420,6 +425,8 @@
             this.Controls.Add(this.txtSPNoEnd);
             this.Controls.Add(this.txtSPNoStart);
             this.Controls.Add(this.labelSPNo);
+            this.DefaultControl = "txtPackingStart";
+            this.DefaultControlForEdit = "txtPackingStart";
             this.Name = "R05";
             this.OnLineHelpID = "Sci.Win.Tems.PrintForm";
             this.Text = "R05. Clog Scan & Pack List";
@@ -446,7 +453,6 @@
             this.Controls.SetChildIndex(this.labelM, 0);
             this.Controls.SetChildIndex(this.txtMdivision1, 0);
             this.Controls.SetChildIndex(this.label2, 0);
-            this.Controls.SetChildIndex(this.comboFactory, 0);
             this.Controls.SetChildIndex(this.labReportType, 0);
             this.Controls.SetChildIndex(this.rdbSummary, 0);
             this.Controls.SetChildIndex(this.rdbDetail, 0);
@@ -460,6 +466,7 @@
             this.Controls.SetChildIndex(this.label4, 0);
             this.Controls.SetChildIndex(this.dateScan1, 0);
             this.Controls.SetChildIndex(this.dateScan2, 0);
+            this.Controls.SetChildIndex(this.comboFactory, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -486,7 +493,6 @@
         private Win.UI.Label labelBrand;
         private Class.TxtMdivision txtMdivision1;
         private Win.UI.Label labelM;
-        private Win.UI.ComboBox comboFactory;
         private Win.UI.Label label2;
         private Win.UI.RadioButton rdbDetail;
         private Win.UI.RadioButton rdbSummary;
@@ -498,5 +504,6 @@
         private System.Windows.Forms.DateTimePicker dateScan2;
         private System.Windows.Forms.DateTimePicker dateScan1;
         private System.Windows.Forms.Label label4;
+        private Class.Txtfactory comboFactory;
     }
 }

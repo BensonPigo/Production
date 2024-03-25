@@ -155,12 +155,12 @@ namespace Sci.Production.Logistic
             #region 準備where條件, 兩段sql用相同條件
             if (!MyUtility.Check.Empty(this._sp1))
             {
-                sqlwhere.Append(string.Format(" and c.OrderID >= '{0}'", this._sp1));
+                sqlwhere.Append(string.Format(" and cp.OrderID >= '{0}'", this._sp1));
             }
 
             if (!MyUtility.Check.Empty(this._sp2))
             {
-                sqlwhere.Append(string.Format(" and c.OrderID <= '{0}'", this._sp2));
+                sqlwhere.Append(string.Format(" and cp.OrderID <= '{0}'", this._sp2));
             }
 
             if (!MyUtility.Check.Empty(this._packingno1))
@@ -170,17 +170,17 @@ namespace Sci.Production.Logistic
 
             if (!MyUtility.Check.Empty(this._packingno2))
             {
-                sqlwhere.Append(string.Format(" and pld.PackingListID <= '{0}'", this._packingno2));
+                sqlwhere.Append(string.Format(" and c.PackingListID <= '{0}'", this._packingno2));
             }
 
             if (!MyUtility.Check.Empty(this._bdate1))
             {
-                sqlwhere.Append(string.Format(" and o.BuyerDelivery >= '{0}'", this._bdate1));
+                sqlwhere.Append(string.Format(" and oq.BuyerDelivery >= '{0}'", this._bdate1));
             }
 
             if (!MyUtility.Check.Empty(this._bdate2))
             {
-                sqlwhere.Append(string.Format(" and o.BuyerDelivery <= '{0}'", this._bdate2));
+                sqlwhere.Append(string.Format(" and oq.BuyerDelivery <= '{0}'", this._bdate2));
             }
 
             if (!MyUtility.Check.Empty(this._scandate1))
@@ -205,7 +205,7 @@ namespace Sci.Production.Logistic
 
             if (!MyUtility.Check.Empty(this._brand))
             {
-                sqlwhere.Append(string.Format(" and p.brandid = '{0}'", this._brand));
+                sqlwhere.Append(string.Format(" and p.BrandID = '{0}'", this._brand));
             }
 
             if (!MyUtility.Check.Empty(this._mDivision))
@@ -225,7 +225,7 @@ namespace Sci.Production.Logistic
 
             if (!MyUtility.Check.Empty(this._Barcode))
             {
-                sqlwhere.Append(string.Format(" and p.Barcode = '{0}'", this._Barcode));
+                sqlwhere.Append(string.Format(" and pd.Barcode = '{0}'", this._Barcode));
             }
             #endregion
 
@@ -247,7 +247,7 @@ select distinct
  c.PackingListID
 ,p.FactoryID
 ,p.ShipModeID
-,pd.OrderID
+,cp.OrderID
 ,o.StyleID
 ,p.BrandID
 ,o.SeasonID
@@ -266,15 +266,16 @@ select distinct
 ,[ScanName] = concat(c.AddName,'-',Pass1.Name)
 ,[Lacking] = iif(c.LackingQty > 0,'Y','')
 ,cp.LackingQty
+,o.POID
 ,[OrderNo] = dense_rank() over (partition by c.PackingListID order by o.AddDate)
 ,[OrderListNo] = dense_rank() over (partition by c.PackingListID, o.poid order by o.ID)
 into #tmp
 from ClogScanPack c with(nolock)
 left join ClogScanPack_Detail cp with(nolock) on cp.ClogScanPackUkey = c.Ukey
 left join PackingList p with(nolock) on p.id = c.PackingListID
-left join Packinglist_Detail pd with(nolock) on pd.id = p.id
-	and pd.CTNStartNo =  c.CTNStartNo and pd.orderid = cp.orderid
-left join orders o with(nolock) on o.id = pd.OrderID
+inner join Packinglist_Detail pd with(nolock) on pd.id = p.id
+	and pd.CTNStartNo =  c.CTNStartNo and pd.orderid = cp.orderid and cp.Article = pd.Article and cp.SizeCode=pd.SizeCode
+left join orders o with(nolock) on o.id = cp.OrderID
 left join Order_QtyShip oq with (nolock) ON pd.OrderID = oq.ID AND pd.OrderShipModeSeq = oq.Seq
 left join Pass1 with(nolock) on pass1.id = c.AddName
 left join CustCD cd with(nolock) on cd.ID = o.custcdID and cd.BrandID = o.BrandID
@@ -367,12 +368,11 @@ outer apply(
 	select value =stuff(
 		(select concat('/',tmp.SizeCode) 
 			from (
-				select distinct s.SizeCode ,Seq = isnull(Seq,'')
+				select distinct s.SizeCode ,Seq = isnull(os.Seq,'')
 				from #tmp s with(nolock)
-				left join Order_SizeCode os with(nolock) on os.id = s.OrderID and os.SizeCode = s.SizeCode
+				left join Order_SizeCode os with(nolock) on os.id = s.POID and os.SizeCode = s.SizeCode
 				where s.PackingListID = t.PackingListID
 				and s.CTNStartNo = t.CTNStartNo
-				and s.Article = t.Article
 			) tmp 
 			order by Seq
 			for xml path('')
@@ -383,9 +383,9 @@ outer apply(
 	select value =stuff(
 		(select concat('/',tmp.QtyPerCTN) 
 			from (
-				select distinct s.QtyPerCTN ,Seq = isnull(Seq,'')
+				select distinct s.QtyPerCTN ,Seq = isnull(os.Seq,'')
 				from #tmp s with(nolock)
-				left join Order_SizeCode os with(nolock) on os.id = s.OrderID and os.SizeCode = s.SizeCode
+				left join Order_SizeCode os with(nolock) on os.id = s.POID and os.SizeCode = s.SizeCode
 				where s.PackingListID = t.PackingListID
 				and s.CTNStartNo = t.CTNStartNo
 			) tmp
@@ -398,9 +398,9 @@ outer apply(
 	select value =stuff(
 		(select concat('/',convert(varchar(100),tmp.ScanQty)) 
 			from (
-				select distinct s.ScanQty ,Seq = isnull(Seq,'')
+				select s.ScanQty ,Seq = isnull(os.Seq,'')
 				from #tmp s with(nolock)
-				left join Order_SizeCode os with(nolock) on os.id = s.OrderID and os.SizeCode = s.SizeCode
+				left join Order_SizeCode os with(nolock) on os.id = s.POID and os.SizeCode = s.SizeCode
 				where s.PackingListID = t.PackingListID
 				and s.CTNStartNo = t.CTNStartNo		
 			) tmp
@@ -413,9 +413,9 @@ outer apply(
 	select value =stuff(
 		(select concat('/',tmp.Barcode) 
 			from (
-				select distinct s.Barcode ,Seq = isnull(Seq,'')
+				select s.Barcode ,Seq = isnull(os.Seq,'')
 				from #tmp s with(nolock)
-				left join Order_SizeCode os with(nolock) on os.id = s.OrderID and os.SizeCode = s.SizeCode
+				left join Order_SizeCode os with(nolock) on os.id = s.POID and os.SizeCode = s.SizeCode
 				where s.PackingListID = t.PackingListID
 				and s.CTNStartNo = t.CTNStartNo
 				and s.Article = t.Article
@@ -430,9 +430,9 @@ outer apply(
 	select value =stuff(
 		(select concat('/',tmp.LackingQty) 
 			from (
-				select distinct s.LackingQty,Seq = isnull(Seq,'')
+				select distinct s.LackingQty,Seq = isnull(os.Seq,'')
 				from #tmp s with(nolock)
-				left join Order_SizeCode os with(nolock) on os.id = s.OrderID and os.SizeCode = s.SizeCode
+				left join Order_SizeCode os with(nolock) on os.id = s.POID and os.SizeCode = s.SizeCode
 				where s.PackingListID = t.PackingListID
 				and s.CTNStartNo = t.CTNStartNo
 			) tmp 
