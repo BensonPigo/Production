@@ -79,11 +79,25 @@ namespace Sci.Production.Logistic
 
             if (this.txtScanCartonSP.Text.Length >= 13)
             {
-                int iPath = this.txtScanCartonSP.Text.Length >= 16 ? this.txtScanCartonSP.Text.Length : 13;
-                string ctnStartNo = this.txtScanCartonSP.Text.Length < 16 ? this.txtScanCartonSP.Text.Substring(13, this.txtScanCartonSP.Text.Length - 13).TrimStart('^') : string.Empty;
-                string sciCtnNo = this.txtScanCartonSP.Text.Substring(0, iPath);
-                string sqlWhere = this.txtScanCartonSP.Text.Length < 16 ? $@"PLD.ID ='{sciCtnNo}' and pld.CTNStartNo = '{ctnStartNo}'" : $@"pld.SCICtnNo = '{sciCtnNo}'";
-                strSciCtnNo = MyUtility.GetValue.Lookup($@"select SciCtnNo from PackingList_Detail pld WHERE  {sqlWhere}");
+
+                string packingListID = this.txtScanCartonSP.Text.Substring(0, 13);
+                string cTNStarNo = this.txtScanCartonSP.Text.Substring(13, this.txtScanCartonSP.Text.Length - 13).TrimStart('^');
+
+                string[] aLLwhere = new string[]
+                {
+                    this.txtScanCartonSP.Text.Length > 13 ? $"  pld.ID = '{packingListID}' and  pld.CTNStartNo = '{cTNStarNo}'" : " 1=0 ",
+                    $" pld.SCICtnNo = '{this.txtScanCartonSP.Text.GetPackScanContent()}'",
+                    $" pld.ID = '{this.txtScanCartonSP.Text}'",
+                };
+
+                foreach (string where in aLLwhere)
+                {
+                    strSciCtnNo = MyUtility.GetValue.Lookup($@"select SciCtnNo from PackingList_Detail pld WHERE {where}");
+                    if (!MyUtility.Check.Empty(strSciCtnNo))
+                    {
+                        break;
+                    }
+                }
             }
 
             return strSciCtnNo;
@@ -214,10 +228,33 @@ namespace Sci.Production.Logistic
             ,o.CustCDID
             ,pd.SciCtnNo
             ,[MDStatus] = IIF(pd.ScanPackMDDate is null, '1st MD', '2rd MD')
+            ,[OrderList] = OrderList.value
             from PackingList_Detail pd WITH (NOLOCK)
             inner join PackingList p WITH (NOLOCK) on p.ID = pd.ID
             inner join Orders o WITH (NOLOCK) on o.ID = pd.OrderID
-            left join Order_SizeCode os WITH (NOLOCK) on os.id = o.POID and os.SizeCode = pd.SizeCode 
+            left join Order_SizeCode os WITH (NOLOCK) on os.id = o.POID and os.SizeCode = pd.SizeCode
+            outer apply
+            (
+	            select value =
+	            stuff((
+		            select concat('/',
+			               case when OrderListNo > 1
+			               then　substring(tmp.OrderID,11,len(tmp.OrderID)-10)
+			               else tmp.OrderID end) 
+		            from (
+			            select DISTINCT op_pd.OrderID,
+			            OrderListNo =  dense_rank() over (partition by op_p.ID, op_o.poid order by op_o.ID)
+			            from PackingList_Detail op_pd WITH (NOLOCK)
+			            inner join PackingList op_p WITH (NOLOCK) on op_pd.ID = op_p.ID
+			            left join orders op_o with(nolock) on op_o.id = op_pd.OrderID
+			            WHERE op_pd.SCICtnNo = pd.SCICtnNo
+		            ) tmp 
+		            order by orderID
+		            for xml path('')
+		            )
+		            ,1,1,''
+	            )
+            )OrderList
             where p.Type in ('B','L') and pd.SCICtnNo = '{sciCtnNo}'";
             DualResult result_Head = DBProxy.Current.Select(null, sqlcmd, out this.dtHade);
             if (!result_Head)
@@ -248,7 +285,7 @@ namespace Sci.Production.Logistic
             #region 左邊 Head
             this.displayPackID.Text = MyUtility.Convert.GetString(this.dtHade.Rows[0]["ID"]);
             this.displayCtnNo.Text = MyUtility.Convert.GetString(this.dtHade.Rows[0]["CTNStartNo"]);
-            this.displaySPNo.Text = MyUtility.Convert.GetString(this.dtHade.Rows[0]["OrderID"]);
+            this.displaySPNo.Text = MyUtility.Convert.GetString(this.dtHade.Rows[0]["OrderList"]);
             this.displayPoNo.Text = MyUtility.Convert.GetString(this.dtHade.Rows[0]["CustPoNo"]);
             this.displayBrand.Text = MyUtility.Convert.GetString(this.dtHade.Rows[0]["BrandID"]);
             this.displayStyle.Text = MyUtility.Convert.GetString(this.dtHade.Rows[0]["StyleID"]);
