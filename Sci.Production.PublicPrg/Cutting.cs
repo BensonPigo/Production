@@ -41,7 +41,7 @@ namespace Sci.Production.PublicPrg
                 bool hasMain = drs.AsEnumerable().
                     Where(w => MyUtility.Convert.GetString(w["annotation"]).Split('+').Contains(item) && MyUtility.Convert.GetBool(w["Main"])).Any();
 
-                if (isBoundedProcess && hasMain)
+                if (isBoundedProcess && !hasMain)
                 {
                     annList.Add(anno); // 去除字串中數字並加入List
                 }
