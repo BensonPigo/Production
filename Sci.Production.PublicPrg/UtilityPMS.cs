@@ -22,9 +22,17 @@ namespace Sci.Production.Prg
         {
             CallFromInfo callFromInfo = new CallFromInfo();
             StackTrace stackTrace = new StackTrace();
-            var sciStackTrace = stackTrace.GetFrames().Where(s => (s.GetMethod().DeclaringType.FullName.Contains("Sci.Production") ||
-                                                                       s.GetMethod().DeclaringType.FullName.Contains("ProductionWebAPI.Controllers")) &&
-                                                                      !s.GetMethod().DeclaringType.FullName.Contains("Sci.Production.Program"));
+            var sciStackTrace = stackTrace.GetFrames().Where(s => {
+                if (s.GetMethod().DeclaringType == null)
+                {
+                    return false;
+                }
+
+                return (s.GetMethod().DeclaringType.FullName.Contains("Sci.Production") ||
+                         s.GetMethod().DeclaringType.FullName.Contains("ProductionWebAPI.Controllers")) &&
+                        !s.GetMethod().DeclaringType.FullName.Contains("Sci.Production.Program");
+            });
+
             MethodBase methodBase = sciStackTrace.Any() ? sciStackTrace.Last().GetMethod() : stackTrace.GetFrame(7).GetMethod();
 
             callFromInfo.CallFrom = methodBase.DeclaringType.FullName;
