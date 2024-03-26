@@ -989,7 +989,7 @@ else
 				t.IsNotRepeatOrMapping	= isnull( s.IsNotRepeatOrMapping ,  0),
 				t.SplitOrderId			= isnull( s.SplitOrderId ,          ''),
 				t.FtyKPI				= s.FtyKPI ,
-				t.EditName				= iif((s.EditDate <= t.EditDate AND s.EditDate is null) OR (s.EditDate is not null AND s.EditDate <= t.EditDate),t.EditName, s.EditName) ,
+				t.EditName				= ISNULL(iif((s.EditDate <= t.EditDate AND s.EditDate is null) OR (s.EditDate is not null AND s.EditDate <= t.EditDate),t.EditName, s.EditName), '') ,
 				t.EditDate				= iif((s.EditDate <= t.EditDate AND s.EditDate is null) OR (s.EditDate is not null AND s.EditDate <= t.EditDate),t.EditDate, s.EditDate) ,
 				t.IsForecast			= isnull(s.IsForecast ,0),
 				t.PulloutComplete		= isnull(iif((s.GMTComplete='C' OR s.GMTComplete='S') and t.PulloutComplete=0  ,1,t.PulloutComplete),0),

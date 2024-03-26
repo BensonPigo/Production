@@ -209,6 +209,12 @@
     <Compile Include="P16_BrokenNeedlesRecord.Designer.cs">
       <DependentUpon>P16_BrokenNeedlesRecord.cs</DependentUpon>
     </Compile>
+    <Compile Include="P17.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P17.Designer.cs">
+      <DependentUpon>P17.cs</DependentUpon>
+    </Compile>
     <Compile Include="P19.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -396,6 +402,12 @@
     <Compile Include="R03.Designer.cs">
       <DependentUpon>R03.cs</DependentUpon>
     </Compile>
+    <Compile Include="R05.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="R05.designer.cs">
+      <DependentUpon>R05.cs</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="B01.resx">
@@ -426,6 +438,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="P16_BrokenNeedlesRecord.resx">
       <DependentUpon>P16_BrokenNeedlesRecord.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P17.resx">
+      <DependentUpon>P17.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P19.resx">
       <DependentUpon>P19.cs</DependentUpon>
@@ -521,6 +536,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="R03.resx">
       <DependentUpon>R03.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="R05.resx">
+      <DependentUpon>R05.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
