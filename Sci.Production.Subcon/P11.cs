@@ -362,13 +362,48 @@ and ContractNumber = '{this.CurrentMaintain["ContractNumber"]}'";
 
             this.btnBatchImport.Enabled = (this.EditMode == true && this.CurrentMaintain["Status"].ToString().ToUpper().EqualString("NEW"));
             this.btnSplitSP.Enabled = (this.EditMode == true && this.CurrentMaintain["Status"].ToString().ToUpper().EqualString("CONFIRMED"));
+
+            if (this.CurrentMaintain["Status"].Equals("Confirmed"))
+            {
+                this.col_OrderId.IsEditingReadOnly = true;
+                this.col_ComboType.IsEditingReadOnly = true;
+                this.col_Article.IsEditingReadOnly = true;
+                this.col_UnitPrice.IsEditingReadOnly = true;
+                this.col_LocalCurrencyID.IsEditingReadOnly = true;
+                this.col_LocalUnitPrice.IsEditingReadOnly = true;
+                this.col_Vat.IsEditingReadOnly = true;
+                this.col_KpiRate.IsEditingReadOnly = true;
+            }
+            else
+            {
+                this.col_OrderId.IsEditingReadOnly = false;
+                this.col_ComboType.IsEditingReadOnly = false;
+                this.col_Article.IsEditingReadOnly = false;
+                this.col_UnitPrice.IsEditingReadOnly = false;
+                this.col_LocalCurrencyID.IsEditingReadOnly = false;
+                this.col_LocalUnitPrice.IsEditingReadOnly = false;
+                this.col_Vat.IsEditingReadOnly = false;
+                this.col_KpiRate.IsEditingReadOnly = false;
+            }
+
+            if (this.EditMode && this.CurrentMaintain["Status"].Equals("Confirmed"))
+            {
+                foreach (Ict.Win.UI.DataGridViewTextBoxBaseColumn item in this.detailgrid.Columns)
+                {
+                    if (item.IsEditingReadOnly)
+                    {
+                        item.DefaultCellStyle.ForeColor = Color.Black;
+                    }
+                }
+
+                this.gridicon.Remove.Enabled = false;
+            }
         }
 
         private Ict.Win.UI.DataGridViewTextBoxColumn col_OrderId;
         private Ict.Win.UI.DataGridViewTextBoxColumn col_ComboType;
         private Ict.Win.UI.DataGridViewTextBoxColumn col_Article;
         private Ict.Win.UI.DataGridViewNumericBoxColumn col_UnitPrice;
-        private Ict.Win.UI.DataGridViewNumericBoxColumn col_OutputQty;
         private Ict.Win.UI.DataGridViewTextBoxColumn col_LocalCurrencyID;
         private Ict.Win.UI.DataGridViewNumericBoxColumn col_LocalUnitPrice;
         private Ict.Win.UI.DataGridViewNumericBoxColumn col_Vat;
@@ -625,7 +660,7 @@ where o.id = '{this.CurrentDetailData["OrderID"]}' and sl.Location = '{e.Formatt
                 .Text("ComboType", header: "ComboType", width: Widths.AnsiChars(5), settings: comboTypeSet).Get(out this.col_ComboType)
                 .Text("Article", header: "Article", width: Widths.AnsiChars(8), settings: articleSet).Get(out this.col_Article)
                 .Numeric("OrderQty", header: "Order Qty", width: Widths.AnsiChars(10), iseditingreadonly: true)
-                .Numeric("OutputQty", header: "Subcon Out Qty", width: Widths.AnsiChars(10), settings: outputQtySet).Get(out this.col_OutputQty)
+                .Numeric("OutputQty", header: "Subcon Out Qty", width: Widths.AnsiChars(10), iseditingreadonly: false, settings: outputQtySet)
                 .Numeric("AccuOutputQty", header: "Accu. Subcon Out Qty", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Numeric("UnitPrice", header: "Price(Unit)", width: Widths.AnsiChars(10), integer_places: 12, decimal_places: 4).Get(out this.col_UnitPrice)
                 .Numeric("UnitPriceByComboType", header: "Price(Unit) by ComboType", width: Widths.AnsiChars(10), integer_places: 12, decimal_places: 4, iseditingreadonly: true)
@@ -643,66 +678,8 @@ where o.id = '{this.CurrentDetailData["OrderID"]}' and sl.Location = '{e.Formatt
                 .Numeric("UPIncludeVAT", header: "U/P Include VAT(Local currency)", width: Widths.AnsiChars(10), decimal_places: 4, iseditingreadonly: true)
                 .Numeric("KpiRate", header: "Kpi Rate", width: Widths.AnsiChars(3), maximum: 9, decimal_places: 2).Get(out this.col_KpiRate)
                 ;
-            this.detailgrid.RowSelecting += (s, e) =>
-            {
-                DataRow curDr = ((DataTable)this.detailgridbs.DataSource).Rows[e.RowIndex];
-                if (this.EditMode && this.CurrentMaintain["Status"].Equals("Confirmed"))
-                {
-                    foreach (DataGridViewColumn item in this.detailgrid.Columns)
-                    {
-                        item.DefaultCellStyle.ForeColor = Color.Black;
-                    }
-
-                    this.gridicon.Remove.Enabled = false;
-                }
-                else if (this.EditMode)
-                {
-                    this.detailgrid.Rows[e.RowIndex].Cells["OrderId"].Style.ForeColor = Color.Red;
-                    this.detailgrid.Rows[e.RowIndex].Cells["ComboType"].Style.ForeColor = Color.Red;
-                    this.detailgrid.Rows[e.RowIndex].Cells["Article"].Style.ForeColor = Color.Red;
-                    this.detailgrid.Rows[e.RowIndex].Cells["OutputQty"].Style.ForeColor = Color.Red;
-                    this.detailgrid.Rows[e.RowIndex].Cells["UnitPrice"].Style.ForeColor = Color.Red;
-                }
-            };
-
-            // 設定detailGrid Rows 是否可以編輯
-            this.detailgrid.RowEnter += this.Detailgrid_RowEnter;
 
             base.OnDetailGridSetup();
-        }
-
-        private void Detailgrid_RowEnter(object sender, DataGridViewCellEventArgs e)
-        {
-            if (e.RowIndex < 0 || !this.EditMode)
-            {
-                return;
-            }
-
-            DataRow curDr = ((DataTable)this.detailgridbs.DataSource).Rows[e.RowIndex];
-            if (this.CurrentMaintain["Status"].Equals("Confirmed"))
-            {
-                this.col_OrderId.IsEditingReadOnly = true;
-                this.col_ComboType.IsEditingReadOnly = true;
-                this.col_Article.IsEditingReadOnly = true;
-                this.col_UnitPrice.IsEditingReadOnly = true;
-                this.col_LocalCurrencyID.IsEditingReadOnly = true;
-                this.col_OutputQty.IsEditingReadOnly = false;
-                this.col_LocalUnitPrice.IsEditingReadOnly = true;
-                this.col_Vat.IsEditingReadOnly = true;
-                this.col_KpiRate.IsEditingReadOnly = true;
-            }
-            else
-            {
-                this.col_OrderId.IsEditingReadOnly = false;
-                this.col_ComboType.IsEditingReadOnly = false;
-                this.col_Article.IsEditingReadOnly = false;
-                this.col_UnitPrice.IsEditingReadOnly = false;
-                this.col_OutputQty.IsEditingReadOnly = false;
-                this.col_LocalCurrencyID.IsEditingReadOnly = false;
-                this.col_LocalUnitPrice.IsEditingReadOnly = false;
-                this.col_Vat.IsEditingReadOnly = false;
-                this.col_KpiRate.IsEditingReadOnly = false;
-            }
         }
 
         private DualResult GetComboType()
