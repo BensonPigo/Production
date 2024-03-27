@@ -579,11 +579,11 @@ where 1=1
 
             if (this.chkSeparateByWK.Checked)
             {
-                objApp.Sheets[1].Cells[1, 44].Value = "WK No.";
-                objApp.Sheets[1].Cells[1, 45].Value = "WK ETA";
-                objApp.Sheets[1].Cells[1, 46].Value = "WK Arrive W/H Date";
-                objApp.Sheets[1].Cells[1, 47].Value = "WK ShipQty";
-                objApp.Sheets[1].Cells[1, 48].Value = "WK F.O.C";
+                objApp.Sheets[1].Cells[1, 45].Value = "WK No.";
+                objApp.Sheets[1].Cells[1, 46].Value = "WK ETA";
+                objApp.Sheets[1].Cells[1, 47].Value = "WK Arrive W/H Date";
+                objApp.Sheets[1].Cells[1, 48].Value = "WK ShipQty";
+                objApp.Sheets[1].Cells[1, 49].Value = "WK F.O.C";
             }
 
             // Excel.Worksheet worksheet = objApp.Sheets[1];
