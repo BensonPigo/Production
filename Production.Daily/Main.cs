@@ -36,6 +36,13 @@ namespace Production.Daily
         bool isSkipRarCheckDate = false;
         Int64 procedureID_Export = 250;
         Int64 procedureID_Import = 251;
+        private string ftpIP = string.Empty;
+        private string ftpID = string.Empty;
+        private string ftpPwd = string.Empty;
+        private string importDataPath = string.Empty;
+        private string importDataFileName = string.Empty;
+        private string exportDataPath = string.Empty;
+        private bool isDummy = false;
 
         public Main()
         {
@@ -61,6 +68,30 @@ namespace Production.Daily
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
+
+            #region ISP20240102 區分Formal Dummy改變參數
+            if (DBProxy.Current.DefaultModuleName.Contains("Dummy"))
+            {
+                this.isDummy = true;
+                this.ftpIP = this.CurrentData["FtpIPDummy"].ToString();
+                this.ftpID = this.CurrentData["FtpIDDummy"].ToString();
+                this.ftpPwd = this.CurrentData["FtpPwdDummy"].ToString();
+                this.importDataPath = this.CurrentData["ImportDataPathDummy"].ToString();
+                this.importDataFileName = this.CurrentData["ImportDataFileNameDummy"].ToString();
+                this.exportDataPath = this.CurrentData["ExportDataPathDummy"].ToString();
+            }
+            else
+            {
+                this.isDummy = false;
+                this.ftpIP = this.CurrentData["FtpIP"].ToString();
+                this.ftpID = this.CurrentData["FtpID"].ToString();
+                this.ftpPwd = this.CurrentData["FtpPwd"].ToString();
+                this.importDataPath = this.CurrentData["ImportDataPath"].ToString();
+                this.importDataFileName = this.CurrentData["ImportDataFileName"].ToString();
+                this.exportDataPath = this.CurrentData["ExportDataPath"].ToString();
+            }
+            this.isTestJobLog = this.isDummy;
+            #endregion
 
             if (DBProxy.Current.DefaultModuleName == "PMS_Formal")
             {
@@ -131,7 +162,7 @@ namespace Production.Daily
 
             sqlCmd = "Update dbo.TransRegion Set RarName = @RarName Where Is_Export = 0";
             paras = new List<SqlParameter>();
-            paras.Add(new SqlParameter("@RarName", this.CurrentData["ImportDataFileName"]));
+            paras.Add(new SqlParameter("@RarName", this.importDataFileName));
             result = DBProxy.Current.Execute(null, sqlCmd, paras);
             if (!result) { return result; }
 
@@ -171,7 +202,7 @@ namespace Production.Daily
         private void btnTestFTP_Click(object sender, EventArgs e)
         {
             DualResult result;
-            result = transferPMS.Ftp_Ping(this.CurrentData["FtpIP"].ToString(), this.CurrentData["FtpID"].ToString(), this.CurrentData["FtpPwd"].ToString());
+            result = transferPMS.Ftp_Ping(this.ftpIP, this.ftpID, this.ftpPwd);
 
             string rarFile = ConfigurationSettings.AppSettings["rarexefile"].ToString();
 
@@ -223,6 +254,11 @@ namespace Production.Daily
         #region Send Mail
         private void SendMail(String subject = "", String desc = "", bool isFail = true)
         {
+            if (!isFail && this.isDummy)
+            {
+                return;
+            }
+
             String mailServer = this.CurrentData["MailServer"].ToString();
             String eMailID = this.CurrentData["EMailID"].ToString();
             String eMailPwd = this.CurrentData["EMailPwd"].ToString();
@@ -237,6 +273,13 @@ namespace Production.Daily
             {
                 toAddress += MyUtility.Check.Empty(toAddress) ? this.tpeMisMail : ";" + this.tpeMisMail;
             }
+
+            if (this.isDummy)
+            {
+                toAddress = this.tpeMisMail;
+                ccAddress = string.Empty;
+            }
+
             //String toAddress = "willy.wei@sportscity.com.tw";
             //String ccAddress = "";
             if (MyUtility.Check.Empty(toAddress))
@@ -252,6 +295,12 @@ namespace Production.Daily
             {
                 desc = mailTo["Content"].ToString();
             }
+
+            if (this.isDummy)
+            {
+                subject = "Dummy-" + subject;
+            }
+
             Sci.Win.Tools.MailTo mail = new Sci.Win.Tools.MailTo(sendFrom, toAddress, ccAddress, subject, "", desc, true, true);
             DualResult mailResult = mail.Send();
             if (!mailResult)
@@ -285,7 +334,7 @@ namespace Production.Daily
                 FileName = new List<string>(),
                 FilePath = string.Empty,
                 Succeeded = succeeded,
-                ProcedureID = procedureID,
+                ProcedureID = isTest ? null : procedureID,
             };
             CallTPEWebAPI callTPEWebAPI = new CallTPEWebAPI(isTest);
             callTPEWebAPI.CreateJobLogAsnc(jobLog, null);
@@ -343,17 +392,17 @@ namespace Production.Daily
             String desc = "";
             String sqlCmd = "";
 
-            String ftpIP = this.CurrentData["FtpIP"].ToString().Trim() + "/";
-            String ftpID = this.CurrentData["FtpID"].ToString().Trim();
-            String ftpPwd = this.CurrentData["FtpPwd"].ToString().Trim();
-            string exangeDate = DateTime.Now.Hour >= 20 ? DateTime.Now.ToString("yyyy/MM/dd") 
+            String ftpIP = this.ftpIP.Trim() + "/";
+            String ftpID = this.ftpID.Trim();
+            String ftpPwd = this.ftpPwd.Trim();
+            string exangeDate = DateTime.Now.Hour >= 20 ? DateTime.Now.ToString("yyyy/MM/dd")
                                                         : DateTime.Now.AddDays(-1).ToString("yyyy/MM/dd");
 
             #region 寫入ExchangeDate Table
             this.UpdateExchangeDate(conn, exangeDate, false);
             #endregion
             #region [File Name (with ZIP)]不可為空白
-            if (String.IsNullOrEmpty(this.CurrentData["ImportDataFileName"].ToString()))
+            if (String.IsNullOrEmpty(this.importDataFileName))
             {
                 return new DualResult(false, "File Name(with Zip) can not be empty!");
             }
@@ -361,10 +410,10 @@ namespace Production.Daily
             #region 若[Rg Code]為空，則用[File Name (with ZIP)]的值補上
             if (String.IsNullOrEmpty(this.CurrentData["RgCode"].ToString()))
             {
-                int posStart = this.CurrentData["ImportDataFileName"].ToString().IndexOf('_') + 1;
-                int posEnd = this.CurrentData["ImportDataFileName"].ToString().IndexOf('.');
+                int posStart = this.importDataFileName.IndexOf('_') + 1;
+                int posEnd = this.importDataFileName.IndexOf('.');
 
-                this.CurrentData["RgCode"] = this.CurrentData["ImportDataFileName"].ToString().Substring(posStart, posEnd - posStart);
+                this.CurrentData["RgCode"] = this.importDataFileName.Substring(posStart, posEnd - posStart);
 
                 String updCmd = String.Format("Update dbo.System Set RgCode = {0}", this.CurrentData["RgCode"].ToString());
 
@@ -376,7 +425,7 @@ namespace Production.Daily
             }
             #endregion
             #region 判斷[Updatae datas path(Taipei)]路徑是否存在
-            String importDataPath = this.CurrentData["ImportDataPath"].ToString();
+            String importDataPath = this.importDataPath;
             if (importDataPath.Substring(importDataPath.Length - 1, 1) != "\\")
             {
                 importDataPath += "\\";
@@ -387,21 +436,11 @@ namespace Production.Daily
             }
             #endregion
             #region 判斷[Export datas path]路徑是否存在
-            String exportDataPath = this.CurrentData["ExportDataPath"].ToString();
+            String exportDataPath = this.exportDataPath;
             if (exportDataPath.Substring(exportDataPath.Length - 1, 1) != "\\")
             {
                 exportDataPath += "\\";
             }
-            if (!Directory.Exists(exportDataPath))
-            {
-                Directory.CreateDirectory(exportDataPath);
-            }
-            #endregion
-            #region 判斷[Export datas path]路徑底下的轉入當日的Week
-            String weekDayPath = GetWeekDayPath();
-
-            //exportDataPath = exportDataPath + weekDayPath;
-
             if (!Directory.Exists(exportDataPath))
             {
                 Directory.CreateDirectory(exportDataPath);
@@ -453,7 +492,7 @@ namespace Production.Daily
             {
                 exportFileName = this.CurrentData["RgCode"].ToString().Trim() + "_Reports.rar";
             }
-            importFileName = this.CurrentData["ImportDataFileName"].ToString();
+            importFileName = this.importDataFileName;
 
             exportRgCode = this.CurrentData["RgCode"].ToString();
             importRgCode = importFileName;
@@ -602,7 +641,7 @@ namespace Production.Daily
             SendMail(subject, desc, false);
             this.CallJobLogApi("Daily transfer", desc, startDate.ToString("yyyyMMdd HH:mm"), endDate.ToString("yyyyMMdd HH:mm"), isTestJobLog, true);
             #endregion
-   
+
             return Ict.Result.True;
         }
 
@@ -653,9 +692,9 @@ Region      Succeeded       Message
         {
             DualResult result;
             String sqlCmd = "";
-            String ftpIP = this.CurrentData["FtpIP"].ToString().Trim();
-            String ftpID = this.CurrentData["FtpID"].ToString().Trim();
-            String ftpPwd = this.CurrentData["FtpPwd"].ToString().Trim();
+            String ftpIP = this.ftpIP.Trim();
+            String ftpID = this.ftpID.Trim();
+            String ftpPwd = this.ftpPwd.Trim();
 
             if (this.chk_export.Checked == false)
             {
@@ -678,7 +717,7 @@ Region      Succeeded       Message
                     //row["DirName"] = exportRegion.DirName;
 
                     //by System
-                    _fromPath = CurrentData["ExportDataPath"].ToString();
+                    _fromPath = this.exportDataPath;
                     row["DirName"] = exportRegion.DirName;
                 }
 
@@ -821,9 +860,9 @@ Region      Succeeded       Message
         private DualResult DailyImport(TransRegion region)
         {
             DualResult result;
-            String ftpIP = this.CurrentData["FtpIP"].ToString().Trim();
-            String ftpID = this.CurrentData["FtpID"].ToString().Trim();
-            String ftpPwd = this.CurrentData["FtpPwd"].ToString().Trim();
+            String ftpIP = this.ftpIP.Trim();
+            String ftpID = this.ftpID.Trim();
+            String ftpPwd = this.ftpPwd.Trim();
 
             if (this.chk_import.Checked == false)
             {
@@ -891,7 +930,7 @@ Where TransRegion.Is_Export = 0";
             #endregion
 
             #region 將資料Copy To DB資料夾以掛載
-            String fromPath = this.CurrentData["ImportDataPath"].ToString();
+            String fromPath = this.importDataPath;
             String toPath = transImport.Rows[0]["DirName"].ToString();
 
             //1.清空已存在的檔案 2.從ftp 下載檔案 3.解壓縮
@@ -977,9 +1016,9 @@ where   exists(
         private bool IsFtpFileExist(String fileName)
         {
             bool isExists = false;
-            String ftpIP = @"ftp://" + this.CurrentData["FtpIP"].ToString().Trim() + @"/";
-            String ftpID = this.CurrentData["FtpID"].ToString().Trim();
-            String ftpPwd = this.CurrentData["FtpPwd"].ToString().Trim();
+            String ftpIP = @"ftp://" + this.ftpIP.Trim() + @"/";
+            String ftpID = this.ftpID.Trim();
+            String ftpPwd = this.ftpPwd.Trim();
             FtpWebRequest request = (FtpWebRequest)WebRequest.Create(ftpIP + fileName);
             request.Credentials = new NetworkCredential(ftpID, ftpPwd);
             request.Method = WebRequestMethods.Ftp.GetFileSize;

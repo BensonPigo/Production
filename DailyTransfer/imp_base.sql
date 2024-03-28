@@ -4346,6 +4346,7 @@ ON t.ID = s.ID
     WHEN MATCHED
     THEN UPDATE SET 
                     t.UnselectableShipB03 = ISNULL(s.UnselectableShipB03, 0), 
+					t.NeedShareExpense  = ISNULL(s.NeedShareExpense  ,0),
                     t.AddDate = s.AddDate, 
                     t.AddName = ISNULL(s.AddName, ''), 
                     t.EditDate = s.EditDate, 
@@ -4354,6 +4355,7 @@ ON t.ID = s.ID
     THEN
       INSERT(ID, 
              UnselectableShipB03, 
+             NeedShareExpense, 
              AddDate, 
              AddName, 
              EditDate, 
@@ -4361,6 +4363,7 @@ ON t.ID = s.ID
       VALUES
 (ISNULL(s.ID,                 ''),
  ISNULL(s.UnselectableShipB03, 0),
+ ISNULL(s.NeedShareExpense, 0),
  s.AddDate, 			  
  ISNULL(s.AddName, 			   ''),
  s.EditDate, 		  
@@ -5939,5 +5942,25 @@ SELECT b.AccountID
 	  ,isnull(b.Junk, 0)
 from [Trade_To_Pms].[dbo].ShareRule as b WITH (NOLOCK)
 where not exists(select 1 from [Production].[dbo].ShareRule a WITH (NOLOCK) where a.AccountID = b.AccountID and a.ExpenseReason = b.ExpenseReason and a.ShareBase = b.ShareBase)
+
+
+-------- insert MaterialDocument_Brand 
+DELETE [Production].[dbo].[MaterialDocument_Brand]
+from [Production].[dbo].[MaterialDocument_Brand] a
+left join [Trade_To_Pms].[dbo].[MaterialDocument_Brand] b
+on a.DocumentName = b.DocumentName and a.BrandID = b.BrandID and a.MergedBrand = b.MergedBrand
+where b.DocumentName is null 
+
+
+INSERT INTO [Production].[dbo].MaterialDocument_Brand (DocumentName,BrandID,MergedBrand)
+SELECT DocumentName,BrandID,MergedBrand 
+FROM  [Trade_To_Pms].[dbo].MaterialDocument_Brand t
+WHERE not exists(
+	select 1 
+	from [Production].[dbo].MaterialDocument_Brand s
+	where s.DocumentName = t.DocumentName
+	and s.BrandID = t.BrandID
+	and s.MergedBrand = t.MergedBrand
+)
 
 END

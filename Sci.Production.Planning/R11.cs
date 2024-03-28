@@ -235,9 +235,16 @@ outer apply(
     and s.StyleID != o.StyleID -- 排除自己StyleID
 	and s.max_OutputDate > dateadd(month,{-this.months},{strOutputDate} ) 
 )rs2
+outer apply(	
+	select  Val = MAX(max_OutputDate)
+	from #tmp_R_Similar s
+	where s.OldStyleID = o.StyleID
+	and R_Similar !=''
+    and s.StyleID != o.StyleID -- 排除自己StyleID
+)max_OutputDate
 ";
                 strType = $@", [Type] = case 
-				   when r.max_OutputDate > dateadd(month,{-this.months},{strOutputDate} )  or rs2.cnt >= 1 then 'Repeat'
+				   when  isnull(r.R,'') !='' or (max_OutputDate.Val > dateadd(month,{-this.months},{strOutputDate} )  or rs2.cnt >= 1) then 'Repeat'
 				   else 'New Style' end";
             }
 

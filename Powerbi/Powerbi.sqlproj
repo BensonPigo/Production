@@ -155,7 +155,6 @@
     <Build Include="dbo\Tables\T_MtlStatusAnalisis.sql" />
     <Build Include="dbo\Tables\T_MtltoFTYAnalysis.sql" />
     <Build Include="dbo\Stored Procedures\FTY\P_ImportOustandingPO_Fty.sql" />
-    <Build Include="dbo\Stored Procedures\FTY\P_Import_QA_R31.sql" />
     <Build Include="dbo\Tables\P_SubProInsReport.sql" />
     <Build Include="dbo\Stored Procedures\FTY\P_ImportSubProInsReport.sql" />
     <Build Include="dbo\Tables\T_ArtworkType.sql" />
@@ -177,12 +176,10 @@
     <Build Include="dbo\Stored Procedures\FTY\P_Import_MtlStatusAnalisis.sql" />
     <Build Include="dbo\Tables\P_InlineDefectSummary.sql" />
     <Build Include="dbo\Tables\P_InlineDefectDetail.sql" />
-    <Build Include="dbo\Stored Procedures\FTY\P_ImportInlineDefec.sql" />
     <Build Include="dbo\Tables\P_ADIDASComplain_24Month.sql" />
     <Build Include="dbo\Tables\P_MtltoFTYAnalysis.sql" />
     <Build Include="dbo\Stored Procedures\FTY\P_Import_MtltoFTYAnalysis.sql" />
     <Build Include="dbo\Tables\P_CuttingScheduleOutputList.sql" />
-    <Build Include="dbo\Stored Procedures\FTY\P_ImportCuttingScheduleOutputList.sql" />
     <Build Include="dbo\Tables\P_IssueFabricByCuttingTransactionList.sql" />
     <Build Include="dbo\Stored Procedures\FTY\P_Import_WH_R16.sql" />
     <Build Include="dbo\View\P_ArtworkType.sql" />
@@ -226,6 +223,9 @@
     <Build Include="dbo\Tables\BITaskInfo.sql" />
     <Build Include="dbo\Stored Procedures\FTY\P_Import_LoadingProductionOutput.sql" />
     <Build Include="dbo\Stored Procedures\FTY\P_Import_EfficiencyBI.sql" />
+    <Build Include="dbo\Tables\P_QA_CFAMasterList.sql" />
+    <Build Include="dbo\Tables\P_CartonScanRate.sql" />
+    <Build Include="dbo\Tables\P_WBScanRate.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Utility.dll" />

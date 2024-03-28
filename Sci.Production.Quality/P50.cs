@@ -1,19 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Data;
+using System.Data.SqlClient;
+using System.IO;
+using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using Ict;
 using Ict.Win;
 using Sci.Data;
-using System.IO;
-using System.Data.SqlClient;
 using Sci.Production.Class;
 using Sci.Production.Class.Command;
-using static Ict.Win.UI.DataGridView;
-using Ict.Win.Defs;
-//using Microsoft.Office.Interop.Excel;
 
 namespace Sci.Production.Quality
 {
@@ -25,6 +22,10 @@ namespace Sci.Production.Quality
         private Ict.Win.UI.DataGridViewTextBoxColumn colColorID;
         private Ict.Win.UI.DataGridViewTextBoxColumn colColorDesc;
         static string CHARs = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        private Ict.Win.UI.DataGridViewTextBoxColumn col_TestSeason;
+        private Ict.Win.UI.DataGridViewTextBoxColumn col_DueSeason;
+        private Ict.Win.UI.DataGridViewDateBoxColumn col_TestDate;
+        private Ict.Win.UI.DataGridViewDateBoxColumn col_DueDate;
 
         /// <inheritdoc/>
         public P50(ToolStripMenuItem menuitem)
@@ -74,10 +75,10 @@ namespace Sci.Production.Quality
                .Text("ColorDesc", header: "Color Desc", width: Widths.AnsiChars(15), iseditingreadonly: true).Get(out this.colColorDesc)
                .Button("...", header: "File", width: Widths.AnsiChars(8), onclick: this.ClickClip)
                .Date("TestReport", header: "Upload date", width: Widths.AnsiChars(15), iseditingreadonly: true)
-               .Date("TestReportTestDate", header: "Test Date", width: Widths.AnsiChars(15), iseditingreadonly: false, settings: this.GetTestDateCell())
-               .Date("DueDate", header: "Due Date", width: Widths.AnsiChars(15), iseditingreadonly: false, settings: this.GetDueDateCell())
-               .Text("TestSeasonID", header: "Test Season", width: Widths.AnsiChars(15), iseditingreadonly: false, settings: this.GetSeasonCell())
-               .Text("DueSeason", header: "Due Season", width: Widths.AnsiChars(15), iseditingreadonly: false, settings: this.GetDueSeasonCell())
+               .Date("TestReportTestDate", header: "Test Date", width: Widths.AnsiChars(15), iseditingreadonly: false, settings: this.GetTestDateCell()).Get(out this.col_TestDate)
+               .Date("DueDate", header: "Due Date", width: Widths.AnsiChars(15), iseditingreadonly: false, settings: this.GetDueDateCell()).Get(out this.col_DueDate)
+               .Text("TestSeasonID", header: "Test Season", width: Widths.AnsiChars(15), iseditingreadonly: false, settings: this.GetSeasonCell()).Get(out this.col_TestSeason)
+               .Text("DueSeason", header: "Due Season", width: Widths.AnsiChars(15), iseditingreadonly: false, settings: this.GetDueSeasonCell()).Get(out this.col_DueSeason)
                .Text("AddName", header: "Add Name ", width: Widths.AnsiChars(15), iseditingreadonly: true)
                .Date("AddDate", header: "Add Date", width: Widths.AnsiChars(13), iseditingreadonly: true)
                .Text("EditName", header: "Edit Name ", width: Widths.AnsiChars(15), iseditingreadonly: true)
@@ -86,6 +87,36 @@ namespace Sci.Production.Quality
 
             this.UI_grid.DataSource = this.gridBS;
             this.UI_grid.RowPrePaint += new System.Windows.Forms.DataGridViewRowPrePaintEventHandler(this.UI_grid_RowPrePaint);
+            this.UI_grid.RowEnter += this.UI_Grid_RowEnter;
+        }
+
+        private void UI_Grid_RowEnter(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex < 0 || this.EditMode == false)
+            {
+                return;
+            }
+
+            var data = ((DataRowView)this.UI_grid.Rows[e.RowIndex].DataBoundItem).Row;
+            if (data == null)
+            {
+                return;
+            }
+
+            if (MyUtility.Check.Empty(data["CanModify"]))
+            {
+                this.col_DueDate.IsEditingReadOnly = true;
+                this.col_DueSeason.IsEditingReadOnly = true;
+                this.col_TestDate.IsEditingReadOnly = true;
+                this.col_TestSeason.IsEditingReadOnly = true;
+            }
+            else
+            {
+                this.col_DueDate.IsEditingReadOnly = false;
+                this.col_DueSeason.IsEditingReadOnly = false;
+                this.col_TestDate.IsEditingReadOnly = false;
+                this.col_TestSeason.IsEditingReadOnly = false;
+            }
         }
 
         private void UI_grid_RowPrePaint(object sender, DataGridViewRowPrePaintEventArgs e)
@@ -151,11 +182,13 @@ namespace Sci.Production.Quality
                         $@"
                         SELECT
 	                        RowNo = ROW_NUMBER() OVER (ORDER BY Month)
-                            ,ID INTO #probablySeasonList
-                        FROM dbo.Season Where BrandID = @BrandID
+                            ,ID 
+                        INTO #probablySeasonList
+                        FROM Season Where BrandID = @BrandID
 
-                        SELECT ID,RowNo FROM #probablySeasonList
-                        WHERE RowNo = (SELECT RowNo FROM #probablySeasonList WHERE ID =@SeasonID)+{expiration - 1}",
+                        SELECT ID,RowNo 
+                        FROM #probablySeasonList
+                        WHERE RowNo = (SELECT RowNo FROM #probablySeasonList WHERE ID = @SeasonID) + {expiration - 1}",
                         "SeasonID",
                         newValue,
                         "BrandID",
@@ -171,13 +204,14 @@ namespace Sci.Production.Quality
                     row["TestSeasonID"] = newValue;
                     row["EditDate"] = DateTime.Now;
                     row["EditName"] = Env.User.UserID;
+                    row.EndEdit();
 
                     sql = $@"
                     Update UASentReport
                     SET 
-                    TestSeasonID = @SeasonID,
-                    DueSeason = @DueSeason,
-                    EditName = @UserID ,
+                    TestSeasonID = isnull(@SeasonID,''),
+                    DueSeason = isnull(@DueSeason,''),
+                    EditName = isnull(@UserID,'') ,
                     EditDate = getdate() 
                     WHERE 
                     BrandRefno = @BrandRefno and
@@ -197,7 +231,13 @@ namespace Sci.Production.Quality
                         new SqlParameter("BrandID", this.drBasic["BrandID"]),
                     };
 
-                    DBProxy.Current.Execute(null, sql, plis);
+                    DualResult result1 = DBProxy.Current.Execute(null, sql, plis);
+
+                    if (!result1)
+                    {
+                        this.ShowErr(result1.ToString());
+                        return;
+                    }
                 }
             };
 
@@ -246,8 +286,9 @@ namespace Sci.Production.Quality
                         $@"
                         SELECT
 	                        RowNo = ROW_NUMBER() OVER (ORDER BY Month)
-                            ,ID INTO #probablySeasonList
-                        FROM dbo.Season Where BrandID = @BrandID
+                            ,ID 
+                        INTO #probablySeasonList
+                        FROM Season Where BrandID = @BrandID
 
                         SELECT ID,RowNo FROM #probablySeasonList
                         WHERE RowNo = (SELECT RowNo FROM #probablySeasonList WHERE ID =@SeasonID)+{expiration - 1}",
@@ -266,14 +307,15 @@ namespace Sci.Production.Quality
                     row["TestSeasonID"] = newValue;
                     row["EditDate"] = DateTime.Now;
                     row["EditName"] = Env.User.UserID;
+                    row.EndEdit();
 
                     sql = $@"
                     Update 
                     UASentReport 
                     SET 
-                    TestSeasonID = @SeasonID,
-                    DueSeason = @DueSeason,
-                    EditName = @UserID ,
+                    TestSeasonID = isnull(@SeasonID,''),
+                    DueSeason = isnull(@DueSeason,''),
+                    EditName = isnull(@UserID,'') ,
                     EditDate = getdate() 
                     WHERE 
                     BrandRefno = @BrandRefno and 
@@ -293,7 +335,13 @@ namespace Sci.Production.Quality
                         new SqlParameter("BrandID", this.drBasic["BrandID"]),
                     };
 
-                    DBProxy.Current.Execute(null, sql, plis);
+                    DualResult result1 = DBProxy.Current.Execute(null, sql, plis);
+
+                    if (!result1)
+                    {
+                        this.ShowErr(result1.ToString());
+                        return;
+                    }
                 }
             };
 
@@ -350,7 +398,8 @@ namespace Sci.Production.Quality
                     sql = $@"
                     SELECT
 	                    RowNo = ROW_NUMBER() OVER (ORDER BY Month)
-                       ,ID INTO #probablySeasonList
+                        ,ID 
+                    INTO #probablySeasonList
                     FROM dbo.Season Where BrandID = @BrandID
 
                     SELECT main.ID FROM #probablySeasonList main
@@ -367,12 +416,13 @@ namespace Sci.Production.Quality
                     row["DueSeason"] = newValue;
                     row["EditDate"] = DateTime.Now;
                     row["EditName"] = Env.User.UserID;
+                    row.EndEdit();
 
                     sql = $@"
                     Update 
                     UASentReport 
                     SET  
-                    DueSeason = @DueSeason 
+                    DueSeason = isnull(@DueSeason ,'')
                     WHERE 
                     BrandRefno = @BrandRefno and
                     ColorID = @ColorID and 
@@ -390,7 +440,13 @@ namespace Sci.Production.Quality
                         new SqlParameter("BrandID", this.drBasic["BrandID"]),
                     };
 
-                    DBProxy.Current.Execute(null, sql, plis);
+                    DualResult result1 = DBProxy.Current.Execute(null, sql, plis);
+
+                    if (!result1)
+                    {
+                        this.ShowErr(result1.ToString());
+                        return;
+                    }
                 }
             };
 
@@ -443,8 +499,9 @@ namespace Sci.Production.Quality
                         sql = $@"
                         SELECT
 	                        RowNo = ROW_NUMBER() OVER (ORDER BY Month)
-                           ,ID INTO #probablySeasonList
-                        FROM dbo.Season Where BrandID = @BrandID
+                            ,ID 
+                        INTO #probablySeasonList                     
+                        FROM Season Where BrandID = @BrandID
 
                         SELECT main.ID FROM #probablySeasonList main
                         Outer Apply (
@@ -469,12 +526,13 @@ namespace Sci.Production.Quality
                     row["DueSeason"] = newValue;
                     row["EditDate"] = DateTime.Now;
                     row["EditName"] = Env.User.UserID;
+                    row.EndEdit();
                     sql = $@"
                     Update 
                     UASentReport
                     SET  
-                    DueSeason = @DueSeason, 
-                    EditName = @UserID ,
+                    DueSeason = isnull(@DueSeason,''), 
+                    EditName = isnull(@UserID,'') ,
                     EditDate = getdate() 
                     WHERE 
                     BrandRefno = @BrandRefno and 
@@ -493,7 +551,13 @@ namespace Sci.Production.Quality
                         new SqlParameter("BrandID", this.drBasic["BrandID"]),
                     };
 
-                    DBProxy.Current.Execute(null, sql, plis);
+                    DualResult result1 = DBProxy.Current.Execute(null, sql, plis);
+
+                    if (!result1)
+                    {
+                        this.ShowErr(result1.ToString());
+                        return;
+                    }
                 }
             };
 
@@ -518,7 +582,8 @@ namespace Sci.Production.Quality
                 var newValue = e.FormattedValue;
                 var oldValue = MyUtility.Convert.GetDate(row["TestReportTestDate"]);
 
-                if (!MyUtility.Check.Empty(newValue) && !newValue.EqualString(oldValue))
+                if (!MyUtility.Check.Empty(newValue) &&
+                    (MyUtility.Convert.GetDate(newValue) != MyUtility.Convert.GetDate(oldValue)))
                 {
                     if (row["UniqueKey"] == DBNull.Value)
                     {
@@ -537,14 +602,16 @@ namespace Sci.Production.Quality
 
                     if (MyUtility.Convert.GetDate(newValue) > DateTime.Now)
                     {
-                        MyUtility.Msg.ErrorBox("[Teset Date] can't bigger than Today!", "Error");
+                        MyUtility.Msg.ErrorBox("[Test Date] can't bigger than Today!", "Error");
                         row["TestReportTestDate"] = DBNull.Value;
                         return;
                     }
 
+                    newValue = MyUtility.Check.Empty(newValue) ? DBNull.Value : newValue;
                     row["TestReportTestDate"] = newValue;
                     row["EditDate"] = DateTime.Now;
                     row["EditName"] = Env.User.UserID;
+                    row.EndEdit();
 
                     string sql = $@"
                     Update 
@@ -570,7 +637,13 @@ namespace Sci.Production.Quality
                         new SqlParameter("BrandID", this.drBasic["BrandID"]),
                     };
 
-                    DBProxy.Current.Execute(null, sql, plis);
+                    DualResult result1 = DBProxy.Current.Execute(null, sql, plis);
+
+                    if (!result1)
+                    {
+                        this.ShowErr(result1.ToString());
+                        return;
+                    }
                 }
             };
 
@@ -595,7 +668,8 @@ namespace Sci.Production.Quality
                 var newValue = e.FormattedValue;
                 var oldValue = MyUtility.Convert.GetDate(row["DueDate"]);
 
-                if (!MyUtility.Check.Empty(newValue) && !newValue.EqualString(oldValue))
+                if (!MyUtility.Check.Empty(newValue) &&
+                    (MyUtility.Convert.GetDate(newValue) != MyUtility.Convert.GetDate(oldValue)))
                 {
                     if (row["UniqueKey"] == DBNull.Value)
                     {
@@ -640,6 +714,7 @@ namespace Sci.Production.Quality
                     row["DueDate"] = newValue;
                     row["EditDate"] = DateTime.Now;
                     row["EditName"] = Env.User.UserID;
+                    row.EndEdit();
 
                     string sql = $@"
                     Update
@@ -665,7 +740,13 @@ namespace Sci.Production.Quality
                         new SqlParameter("BrandID", this.drBasic["BrandID"]),
                     };
 
-                    DBProxy.Current.Execute(null, sql, plis);
+                    DualResult result1 = DBProxy.Current.Execute(null, sql, plis);
+
+                    if (!result1)
+                    {
+                        this.ShowErr(result1.ToString());
+                        return;
+                    }
                 }
             };
 
@@ -777,7 +858,7 @@ namespace Sci.Production.Quality
                 updateCol += $",TestReportTestDate = '{this.dateTestDate.Text}'";
                 if (this.dateTestDate.Value > DateTime.Now)
                 {
-                    MyUtility.Msg.ErrorBox("[Teset Date] can't bigger than Today!", "Error");
+                    MyUtility.Msg.ErrorBox("[Test Date] can't bigger than Today!", "Error");
                     return;
                 }
 
@@ -834,34 +915,51 @@ namespace Sci.Production.Quality
             }
 
             string cmd = $@"
-            Select m.* ,MtlType = MtlType.value,WeaveType = WeaveType.value,supplier = supp.value
-            From MaterialDocument m
-            Outer apply ( SELECT
-		            value = STUFF((SELECT
-				            CONCAT(',', MtlType.MtltypeId)
-			            FROM MaterialDocument_MtlType MtlType WITH (NOLOCK)
-			            WHERE MtlType.DocumentName = m.DocumentName and MtlType.BrandID = m.BrandID
-			            FOR XML PATH (''))
-		            , 1, 1, '')
-            ) MtlType
-			Outer apply ( SELECT
-		            value = STUFF((SELECT
-				            CONCAT(',', WeaveType.WeaveTypeId)
-			            FROM MaterialDocument_WeaveType WeaveType WITH (NOLOCK)
-			            WHERE WeaveType.DocumentName = m.DocumentName and WeaveType.BrandID = m.BrandID
-			            FOR XML PATH (''))
-		            , 1, 1, '')
-            ) WeaveType
-            Outer apply ( SELECT
-		            value = STUFF((SELECT
-				            CONCAT(',', supp.SuppID)
-			            FROM MaterialDocument_Supplier supp WITH (NOLOCK)
-			            WHERE supp.DocumentName = m.DocumentName
-			            AND supp.BrandID = m.BrandID
-			            FOR XML PATH (''))
-		            , 1, 1, '')
-            ) supp
-            Where documentName = @documentName and brandID = @brandID and m.FileRule in ('1','2') and m.junk = 0";
+Select m.* 
+, MtlType = MtlType.value
+, WeaveType = WeaveType.value
+, supplier = supp.value
+, MergedBrand = MergedBrand.value
+From MaterialDocument m
+Outer apply ( SELECT
+		value = STUFF((SELECT
+				CONCAT(',', MtlType.MtltypeId)
+			FROM MaterialDocument_MtlType MtlType WITH (NOLOCK)
+			WHERE MtlType.DocumentName = m.DocumentName and MtlType.BrandID = m.BrandID
+			FOR XML PATH (''))
+		, 1, 1, '')
+) MtlType
+Outer apply ( SELECT
+		value = STUFF((SELECT
+				CONCAT(',', WeaveType.WeaveTypeId)
+			FROM MaterialDocument_WeaveType WeaveType WITH (NOLOCK)
+			WHERE WeaveType.DocumentName = m.DocumentName and WeaveType.BrandID = m.BrandID
+			FOR XML PATH (''))
+		, 1, 1, '')
+) WeaveType
+Outer apply ( SELECT
+		value = STUFF((SELECT
+				CONCAT(',', supp.SuppID)
+			FROM MaterialDocument_Supplier supp WITH (NOLOCK)
+			WHERE supp.DocumentName = m.DocumentName
+			AND supp.BrandID = m.BrandID
+			FOR XML PATH (''))
+		, 1, 1, '')
+) supp
+Outer apply (
+    SELECT value = STUFF((
+        SELECT CONCAT(',', MergedBrand)
+		FROM MaterialDocument_Brand WITH (NOLOCK)
+		WHERE DocumentName = m.DocumentName
+		AND BrandID = m.BrandID
+		FOR XML PATH (''))
+	, 1, 1, '')
+) MergedBrand
+Where documentName = @documentName 
+and brandID = @brandID 
+and m.FileRule in ('1','2') 
+and m.junk = 0
+";
 
             var res = DBProxy.Current.SeekEx(cmd, "documentName", this.cboDocumentname.Text, "brandID", this.txtBrand1.Text);
             if (!res)
@@ -877,10 +975,6 @@ namespace Sci.Production.Quality
             }
 
             this.drBasic = res.ExtendedData;
-
-            // this.UI_grid.IsEditingReadOnly = this.drBasic["Responsibility"].ToString() != "T";
-            // this.BtnFileUpload.Enabled = this.drBasic["Responsibility"].ToString() == "T";
-            // this.BtnUpdate.Enabled = this.drBasic["Responsibility"].ToString() == "T";
             this.colColorID.Visible = this.drBasic["FileRule"].ToString() != "1";
             this.colColorDesc.Visible = this.drBasic["FileRule"].ToString() != "1";
 
@@ -949,6 +1043,8 @@ namespace Sci.Production.Quality
             parmes.Add(new SqlParameter() { ParameterName = "@brandID", SqlDbType = SqlDbType.VarChar, Size = 8, Value = this.txtBrand1.Text });
             parmes.Add(new SqlParameter() { ParameterName = "@FileRule", SqlDbType = SqlDbType.Int, Value = this.drBasic["FileRule"] });
             #endregion
+
+            #region 查詢條件
             if (this.txtRefno.Text != string.Empty)
             {
                 conditions.AppendLine(" And f.Refno = @SearchRefno");
@@ -991,112 +1087,216 @@ namespace Sci.Production.Quality
                 parmes.Add(new SqlParameter() { ParameterName = "@pchandle", SqlDbType = SqlDbType.VarChar, Size = 10, Value = this.txtUser1.TextBox1.Text });
             }
 
-            string sql = $@"
-            SELECT
-	            RowNo = ROW_NUMBER() OVER (ORDER BY Month)
-               ,ID INTO #probablySeasonList
-            FROM dbo.Season Where BrandID = @BrandID
+            parmes.Add(new SqlParameter() { ParameterName = "@Responsibility", SqlDbType = SqlDbType.VarChar, Size = 50, Value = this.drBasic["Responsibility"] });
+            #endregion
 
-            select  
-              TestReportTestDate = CONVERT(VARCHAR(10), sr.TestReportTestDate, 23)
-	           ,TestReport = CONVERT(VARCHAR(10), sr.TestReport, 23)
-               ,SuppID = s2.ID
-		       ,Supplier = IIF(Isnull(s2.AbbEN, '') = '', s2.ID, Concat(s2.ID, '-', s2.AbbEN))
-               ,Refno = f.Refno
-		       ,SCIRefNo = f.SCIRefNo
-		       ,f.BrandRefNo
-               ,ColorID = iif(@FileRule = 1, '', Color.ID)
-               ,ColorDesc = iif(@FileRule = 1, '', Color.Name)
-               ,sr.TestSeasonID
-               ,sr.DueSeason
-               ,sr.DueDate
-               ,sr.AddName
-               ,sr.AddDate
-               ,sr.EditName
-               ,sr.EditDate
-               ,sr.Ukey
-               ,sr.UniqueKey
-               ,[SeasonRow] = seasonList.RowNo
-               ,canModify = CAST(iif((chkNoRes.value is null and '{this.drBasic["Responsibility"]}' = 'F') or chkNoRes.value = 'F', 1, 0) AS BIT)
-               ,FactoryID = o.FtyGroup
-             INTO #tmp
-             from PO_Supp_Detail po3 WITH (NOLOCK)
-            LEFT JOIN PO_Supp_Detail stockPO3 with (nolock) on iif(po3.StockPOID >'', 1, 0) = 0 AND stockPO3.ID =  po3.StockPOID
-			        and stockPO3.Seq1 = po3.StockSeq1
-			        and stockPO3.Seq2 = po3.StockSeq2	        
-             INNER JOIN Orders o with(nolock) on o.ID = IIF(IsNull(po3.StockPOID, '') = '' , po3.ID, stockPO3.ID)
-             inner join Fabric f WITH (NOLOCK) on f.SCIRefno =  IIF(IsNull(po3.StockPOID, '') = '' , po3.SCIRefno, stockPO3.SCIRefno)
-             inner join PO_Supp po2 WITH (NOLOCK) on po2.ID = o.ID and po2.Seq1 = IIF(IsNull(po3.StockPOID, '') = '' , po3.Seq1, stockPO3.Seq1)
-             inner join PO WITH (NOLOCK) on po.ID = po2.ID 
-             INNER JOIN Season WITH (NOLOCK) on o.SeasonID = Season.ID and o.BrandID = Season.BrandID
-		     INNER JOIN Style s WITH(NOLOCK) on s.Ukey = o.StyleUkey		 
-             Inner Join Supp WITH (NOLOCK) on po2.SuppID = Supp.ID
-             INNER Join dbo.BrandRelation as bs WITH (NOLOCK) ON bs.BrandID = o.BrandID and bs.SuppID = Supp.ID
-             Inner Join Supp s2 WITH (NOLOCK) on s2.ID = bs.SuppGroup 
-             Outer Apply(
-                  SELECT Color FROM GetPo3Spec(IIF(IsNull(po3.StockPOID, '') = '' , po3.ID, stockPO3.ID),IIF(IsNull(po3.StockPOID, '') = '' , po3.Seq1, stockPO3.Seq1),IIF(IsNull(po3.StockPOID, '') = '' , po3.Seq2, stockPO3.Seq2)) po3Spec
-             )po3Spec
-             LEFT JOIN  Color WITH (NOLOCK) ON Color.BrandId = o.BrandID AND Color.ID = po3Spec.Color
-             {(this.chkUploadRecord.Checked ? "Inner" : "LEFT")} JOIN UASentReport sr WITH (NOLOCK) on sr.SuppID = s2.ID  and sr.BrandRefno = f.BrandRefNo and (@FileRule = 1 or (@FileRule = 2 and sr.ColorID = Color.ID)) and sr.BrandID = o.BrandID and sr.DocumentName = @DocumentName
-             Left join #probablySeasonList seasonList on seasonList.ID = sr.TestSeasonID
-             Outer apply(
-                    select top 1 value = Responsibility FROM MaterialDocument_Responsbility where DocumentName = @documentName and BrandID = @brandID and SuppID = s2.ID
-             )chkNoRes
-	         where o.Junk = 0
-                and o.Qty > 0
-                and po2.SuppID <> 'FTY'
-                and IIF(IsNull(po3.StockPOID, '') = '' , po3.Junk, stockPO3.Junk)  = 0        
-	            and IIF(IsNull(po3.StockPOID, '') = '' , po3.Qty, stockPO3.Qty) > 0
-                and o.BrandID = @brandID
-                and s.DevOption = 0
-                and {conditions}
-          
-            SELECT DISTINCT
-	                CAST(0 AS BIT) sel
-	               ,TestReportTestDate
-	               ,TestReport 
-                   ,SuppID 
-		           ,Supplier 
-                   ,Refno = min(Refno)
-		           ,BrandRefNo
-                   ,ColorID 
-                   ,ColorDesc 
-                   ,TestSeasonID
-                   ,DueSeason
-                   ,DueDate
-                   ,AddName
-                   ,AddDate
-                   ,EditName
-                   ,EditDate
-                   ,Ukey
-                   ,UniqueKey
-                   ,[SeasonRow]	
-                   ,canModify
-                   ,FactoryID
-	         FROM #tmp
-             GROUP BY TestReportTestDate
-	               ,TestReport 
-                   ,SuppID 
-		           ,Supplier 
-		           ,BrandRefNo
-                   ,ColorID 
-                   ,ColorDesc 
-                   ,TestSeasonID
-                   ,DueSeason
-                   ,DueDate
-                   ,AddName
-                   ,AddDate
-                   ,EditName
-                   ,EditDate
-                   ,Ukey
-                   ,UniqueKey
-                   ,[SeasonRow]	
-                   ,canModify
-                   ,FactoryID
-	         Order By BrandRefNo,ColorID";
+            // 品牌共用
+            string sql = @"
+SELECT MergedBrand
+From MaterialDocument_Brand 
+Where DocumentName = @documentName 
+and BrandID = @BrandID
+";
+            DataTable dtBrand;
+            var result = DBProxy.Current.Select(string.Empty, sql, parmes, out dtBrand);
+            if (!result)
+            {
+                this.ShowErr(result);
+                return;
+            }
+
+            // 物料清單同一種料且同色只會出現一次,就算是品牌共用也只會有一筆
+            string mainSql = $@"
+select  distinct
+    o.SeasonID
+    ,SuppID = s2.ID
+	,Supplier = IIF(Isnull(s2.AbbEN, '') = '', s2.ID, Concat(s2.ID, '-', s2.AbbEN))
+    ,Refno = f.Refno
+	,SCIRefNo = f.SCIRefNo
+	,f.BrandRefNo
+    ,ColorID = iif(@FileRule = 1, '', Color.ID)
+    ,ColorDesc = iif(@FileRule = 1, '', Color.Name)
+    ,canModify = CAST(iif((chkNoRes.value is null and @Responsibility = 'F') or chkNoRes.value = 'F', 1, 0) AS BIT)
+    ,FactoryID = o.FtyGroup 
+    ,[SeasonRow] = seasonList.RowNo
+    from PO_Supp_Detail po3 WITH (NOLOCK)
+    LEFT JOIN PO_Supp_Detail stockPO3 with (nolock) on iif(po3.StockPOID >'', 1, 0) = 0 AND stockPO3.ID =  po3.StockPOID
+		and stockPO3.Seq1 = po3.StockSeq1
+		and stockPO3.Seq2 = po3.StockSeq2	        
+    INNER JOIN Orders o with(nolock) on o.ID = IIF(IsNull(po3.StockPOID, '') = '' , po3.ID, stockPO3.ID)
+    inner join Fabric f WITH (NOLOCK) on f.SCIRefno =  IIF(IsNull(po3.StockPOID, '') = '' , po3.SCIRefno, stockPO3.SCIRefno)
+    inner join PO_Supp po2 WITH (NOLOCK) on po2.ID = o.ID and po2.Seq1 = IIF(IsNull(po3.StockPOID, '') = '' , po3.Seq1, stockPO3.Seq1)
+    inner join PO WITH (NOLOCK) on po.ID = po2.ID 
+    INNER JOIN Season WITH (NOLOCK) on o.SeasonID = Season.ID and o.BrandID = Season.BrandID
+	INNER JOIN Style s WITH(NOLOCK) on s.Ukey = o.StyleUkey		 
+    Inner Join Supp WITH (NOLOCK) on po2.SuppID = Supp.ID
+    INNER Join dbo.BrandRelation as bs WITH (NOLOCK) ON bs.BrandID = o.BrandID and bs.SuppID = Supp.ID
+    Inner Join Supp s2 WITH (NOLOCK) on s2.ID = bs.SuppGroup 
+    Outer Apply(
+        SELECT Color FROM GetPo3Spec(IIF(IsNull(po3.StockPOID, '') = '' , po3.ID, stockPO3.ID),IIF(IsNull(po3.StockPOID, '') = '' , po3.Seq1, stockPO3.Seq1),IIF(IsNull(po3.StockPOID, '') = '' , po3.Seq2, stockPO3.Seq2)) po3Spec
+    )po3Spec
+    LEFT JOIN  Color WITH (NOLOCK) ON Color.BrandId = o.BrandID AND Color.ID = po3Spec.Color
+  
+    Left join #probablySeasonList seasonList on seasonList.ID = Season.ID
+    Outer apply(
+        select top 1 value = Responsibility 
+        FROM MaterialDocument_Responsbility 
+        where DocumentName = @documentName 
+        and BrandID = @brandID 
+        and SuppID = s2.ID
+    )chkNoRes
+	where o.Junk = 0
+    and o.Qty > 0
+    and po2.SuppID <> 'FTY'
+    and IIF(IsNull(po3.StockPOID, '') = '' , po3.Junk, stockPO3.Junk)  = 0        
+	and IIF(IsNull(po3.StockPOID, '') = '' , po3.Qty, stockPO3.Qty) > 0
+    and s.DevOption = 0
+    and o.BrandID = @BrandID
+    and {conditions}
+";
+
+            foreach (DataRow dr in dtBrand.Rows)
+            {
+                mainSql += $@"
+UNION
+select  distinct
+     o.SeasonID
+    ,SuppID = s2.ID
+	,Supplier = IIF(Isnull(s2.AbbEN, '') = '', s2.ID, Concat(s2.ID, '-', s2.AbbEN))
+    ,Refno = f.Refno
+	,SCIRefNo = f.SCIRefNo
+	,f.BrandRefNo
+    ,ColorID = iif(@FileRule = 1, '', Color.ID)
+    ,ColorDesc = iif(@FileRule = 1, '', Color.Name)
+    ,canModify = CAST(iif((chkNoRes.value is null and @Responsibility = 'F') or chkNoRes.value = 'F', 1, 0) AS BIT)
+    ,FactoryID = o.FtyGroup      
+    ,[SeasonRow] = seasonList.RowNo
+    from PO_Supp_Detail po3 WITH (NOLOCK)
+    LEFT JOIN PO_Supp_Detail stockPO3 with (nolock) on iif(po3.StockPOID >'', 1, 0) = 0 AND stockPO3.ID =  po3.StockPOID
+		and stockPO3.Seq1 = po3.StockSeq1
+		and stockPO3.Seq2 = po3.StockSeq2	        
+    INNER JOIN Orders o with(nolock) on o.ID = IIF(IsNull(po3.StockPOID, '') = '' , po3.ID, stockPO3.ID)
+    inner join Fabric f WITH (NOLOCK) on f.SCIRefno =  IIF(IsNull(po3.StockPOID, '') = '' , po3.SCIRefno, stockPO3.SCIRefno)
+    inner join PO_Supp po2 WITH (NOLOCK) on po2.ID = o.ID and po2.Seq1 = IIF(IsNull(po3.StockPOID, '') = '' , po3.Seq1, stockPO3.Seq1)
+    inner join PO WITH (NOLOCK) on po.ID = po2.ID 
+    INNER JOIN Season WITH (NOLOCK) on o.SeasonID = Season.ID and o.BrandID = Season.BrandID
+	INNER JOIN Style s WITH(NOLOCK) on s.Ukey = o.StyleUkey		 
+    Inner Join Supp WITH (NOLOCK) on po2.SuppID = Supp.ID
+    INNER Join dbo.BrandRelation as bs WITH (NOLOCK) ON bs.BrandID = o.BrandID and bs.SuppID = Supp.ID
+    Inner Join Supp s2 WITH (NOLOCK) on s2.ID = bs.SuppGroup 
+    Outer Apply(
+        SELECT Color FROM GetPo3Spec(IIF(IsNull(po3.StockPOID, '') = '' , po3.ID, stockPO3.ID),IIF(IsNull(po3.StockPOID, '') = '' , po3.Seq1, stockPO3.Seq1),IIF(IsNull(po3.StockPOID, '') = '' , po3.Seq2, stockPO3.Seq2)) po3Spec
+    )po3Spec
+    LEFT JOIN  Color WITH (NOLOCK) ON Color.BrandId = o.BrandID AND Color.ID = po3Spec.Color
+  
+    Left join #probablySeasonList seasonList on seasonList.ID = Season.ID
+    Outer apply(
+        select top 1 value = Responsibility 
+        FROM MaterialDocument_Responsbility 
+        where DocumentName = @documentName 
+        and BrandID = @brandID 
+        and SuppID = s2.ID
+    )chkNoRes
+	where o.Junk = 0
+    and o.Qty > 0
+    and po2.SuppID <> 'FTY'
+    and IIF(IsNull(po3.StockPOID, '') = '' , po3.Junk, stockPO3.Junk)  = 0        
+	and IIF(IsNull(po3.StockPOID, '') = '' , po3.Qty, stockPO3.Qty) > 0
+    and s.DevOption = 0
+    and o.BrandID = '{dr["MergedBrand"]}'
+    and {conditions}
+";
+            }
+
+            sql = $@"
+--先把Season排序號並加上編號
+if object_id('tempdb..#probablySeasonList') is not null 
+Drop Table #probablySeasonList
+
+if object_id('tempdb..#tmpBrand') is not null 
+Drop Table #tmpBrand
+
+SELECT
+	RowNo = ROW_NUMBER() OVER (ORDER BY Month)
+    ,ID 
+INTO #probablySeasonList
+FROM(
+    Select DISTINCT Month, ID
+    From Season 
+    where BrandID = @brandID or BrandID in (select MergedBrand From MaterialDocument_Brand Where DocumentName = @documentName and BrandID = @BrandID)
+)a
+
+if object_id('tempdb..#tmpMain') is not null 
+Drop Table #tmpMain
+
+Select * 
+into #tmpMain
+From (
+	Select *
+	, rNo = Row_Number() Over(Partition by SuppID, BrandRefNo, Refno, ColorID  Order by SeasonRow desc)
+    FROM (
+        {mainSql}
+    ) tmp
+) main
+WHERE rNo = 1
+
+Select RowNo = ROW_NUMBER() OVER (ORDER BY BrandRefno,colorID)
+, * 
+from(
+	SELECT DISTINCT
+	    CAST(0 AS BIT) sel
+	    ,TestReportTestDate = CONVERT(VARCHAR(10), sr.TestReportTestDate, 23)
+	    ,TestReport = CONVERT(VARCHAR(10), sr.TestReport, 23)
+        ,m.SuppID 
+		,m.Supplier 
+        ,Refno = min(Refno)
+		,m.BrandRefNo
+        ,m.ColorID 
+        ,m.ColorDesc 
+        ,sr.TestSeasonID
+        ,sr.DueSeason
+        ,sr.DueDate
+        ,sr.AddName
+        ,sr.AddDate
+        ,sr.EditName
+        ,sr.EditDate
+        ,sr.Ukey
+        ,sr.UniqueKey
+        ,[SeasonRow]	
+        ,canModify
+        ,FactoryID
+	FROM #tmpMain m
+	 {(this.chkUploadRecord.Checked ? "Inner" : "LEFT")} JOIN UASentReport sr WITH (NOLOCK) on sr.SuppID = m.SuppID  
+	 and sr.BrandRefno = m.BrandRefNo 
+	 and (@FileRule = 1 or (@FileRule = 2 and sr.ColorID = m.ColorID)) 
+	 and sr.BrandID = @BrandID 
+	 and sr.DocumentName = @DocumentName
+    GROUP BY sr.TestReportTestDate
+	    ,sr.TestReport 
+        ,m.SuppID   
+		,m.Supplier 
+		,m.BrandRefNo
+        ,m.ColorID 
+        ,m.ColorDesc 
+        ,sr.TestSeasonID
+        ,sr.DueSeason
+        ,sr.DueDate
+        ,sr.AddName
+        ,sr.AddDate
+        ,sr.EditName
+        ,sr.EditDate
+        ,sr.Ukey
+        ,sr.UniqueKey
+        ,[SeasonRow]	
+        ,canModify
+        ,FactoryID
+)a
+  Order By BrandRefNo,ColorID
+
+";
 
             DataTable dt = new DataTable();
-            var result = DBProxy.Current.Select(string.Empty, sql, parmes, out dt);
+            result = DBProxy.Current.Select(string.Empty, sql, parmes, out dt);
             if (!result)
             {
                 this.ShowErr(result);
@@ -1176,7 +1376,7 @@ namespace Sci.Production.Quality
 
                     if (tm > DateTime.Now)
                     {
-                        MyUtility.Msg.ErrorBox("[Teset Date] can't bigger than Today!", "Error");
+                        MyUtility.Msg.ErrorBox("[Test Date] can't bigger than Today!", "Error");
                         return;
                     }
 
@@ -1422,7 +1622,7 @@ namespace Sci.Production.Quality
                 updateCol += $",TestReportTestDate = '{this.dateTestDate.Text}'";
                 if (this.dateTestDate.Value > DateTime.Now)
                 {
-                    MyUtility.Msg.ErrorBox("[Teset Date] can't bigger than Today!", "Error");
+                    MyUtility.Msg.ErrorBox("[Test Date] can't bigger than Today!", "Error");
                     return;
                 }
 

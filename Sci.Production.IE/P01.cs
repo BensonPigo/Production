@@ -18,6 +18,7 @@ using Sci.Production.Prg;
 using Sci.Production.Class.Command;
 using static Ict.Win.DataGridViewGenerator;
 using System.Security.AccessControl;
+using System.Diagnostics;
 
 namespace Sci.Production.IE
 {
@@ -207,8 +208,8 @@ select 0 as Selected, isnull(o.SeamLength,0) SeamLength
                                                 else 0 end as bit)
 from TimeStudy_Detail td WITH (NOLOCK) 
 INNER JOIN TimeStudy t WITH(NOLOCK) ON td.id = t.id
-INNER JOIN IETMS i ON t.IETMSID = i.ID AND t.IETMSVersion = i.[Version]
-INNER JOIN IETMS_Detail ID ON I.Ukey = ID.IETMSUkey AND ID.SEQ = TD.Seq
+LEFT JOIN IETMS i ON t.IETMSID = i.ID AND t.IETMSVersion = i.[Version]
+LEFT JOIN IETMS_Detail ID ON I.Ukey = ID.IETMSUkey AND ID.SEQ = TD.Seq
 left join Operation o WITH (NOLOCK) on td.OperationID = o.ID
 left join MachineType_Detail md WITH (NOLOCK) on md.ID = td.MachineTypeID and md.FactoryID = '{Env.User.Factory}'
 left join Mold m WITH (NOLOCK) on m.ID=td.Mold
@@ -1190,11 +1191,11 @@ and Name = @PPA
 
             // 設定detailGrid Rows 是否可以編輯
             this.detailgrid.RowEnter += this.Detailgrid_RowEnter;
+            this.detailgrid.ColumnHeaderMouseClick += this.Detailgrid_ColumnHeaderMouseClick;
             this.detailgrid.Sorted += (s, e) =>
             {
                 this.HideRows();
             };
-            this.detailgrid.ColumnHeaderMouseClick += this.Detailgrid_ColumnHeaderMouseClick;
         }
 
         private void Detailgrid_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
@@ -1364,6 +1365,32 @@ and Name = @PPA
         /// <returns>bool</returns>
         protected override bool ClickSaveBefore()
         {
+            #region Seq 重複資料檢查
+            if (this.DetailDatas.Count != 0)
+            {
+                var dataTable = this.DetailDatas.CopyToDataTable();
+                var duplicateSeqs = dataTable.AsEnumerable()
+                 .GroupBy(row => row.Field<string>("SEQ"))
+                 .Where(grp => grp.Count() > 1)
+                 .Select(grp => grp.Key).ToList();
+
+                if (duplicateSeqs.Any())
+                {
+                    string seqError = string.Empty;
+                    foreach (var duplicateSeq in duplicateSeqs)
+                    {
+                        seqError += Environment.NewLine + $"'{duplicateSeq}'";
+                    }
+
+                    string strMsg = $"[Seq] cannot be duplicated! {seqError}";
+                    MyUtility.Msg.WarningBox(strMsg);
+                    return false;
+                }
+            }
+
+
+            #endregion Seq 重複資料檢查
+
             #region ST/MC Type檢查
             var listSTMCTypeCheckResult = this.DetailDatas
                 .Where(s => !MyUtility.Check.Empty(s["OperationDescEN"]) &&
@@ -2316,33 +2343,81 @@ and s.BrandID = @brandid ", Env.User.Factory,
         /// DetailGrid Insert、Append
         /// </summary>
         /// <param name="index">index</param>
-        protected override void OnDetailGridInsert(int index = -1)
+        protected override void OnDetailGridInsert(int index = 0)
         {
             base.OnDetailGridInsert(index);
-            if (index == -1)
+            DataTable oriDt = (DataTable)this.detailgridbs.DataSource;
+            if (index >= 0)
             {
-                int seq = 0;
-                if (((DataTable)this.detailgridbs.DataSource).DefaultView.Count > 1)
+                this.detailgrid.AllowUserToAddRows = false;
+                DataRow drSelect = oriDt.Rows[index + 1];
+                DataRow newDrSelect = oriDt.Rows[index];
+                newDrSelect["Seq"] = MyUtility.Convert.GetString(MyUtility.Convert.GetInt(drSelect["Seq"])).PadLeft(4, '0');  // 插入位置
+                drSelect["Seq"] = MyUtility.Convert.GetString(MyUtility.Convert.GetInt(newDrSelect["Seq"]) + 10).PadLeft(4, '0'); // 現有資料 +10
+                for (int i = index + 1; i < oriDt.Rows.Count; i++)
                 {
-                    seq = MyUtility.Convert.GetInt(((DataTable)this.detailgridbs.DataSource).Compute("max(seq)", string.Empty));
+                    if (i + 1 != oriDt.Rows.Count)
+                    {
+                        DataRow preDataRow = oriDt.Rows[i];
+                        DataRow nextDataRow = oriDt.Rows[i + 1];
+                        nextDataRow["Seq"] = MyUtility.Convert.GetString(MyUtility.Convert.GetInt(nextDataRow["Seq"]) + 10).PadLeft(4, '0');
+                     }
                 }
 
-                this.CurrentDetailData["Seq"] = MyUtility.Convert.GetString(seq + 10).PadLeft(4, '0');
+                this.detailgridbs.DataSource = oriDt;
             }
-            else
+            else if (index == -1)
             {
-                DataRow dr = this.DetailDatas[this.detailgridbs.Position + 1];
-                this.CurrentDetailData["Seq"] = dr["Seq"];
-                int seq = MyUtility.Convert.GetInt(dr["Seq"]);
-                for (int i = this.detailgridbs.Position + 1; i < this.DetailDatas.Count; i++)
+                var count = oriDt.AsEnumerable().Where(x => x.RowState != DataRowState.Deleted).Count();
+                if (count == 1)
                 {
-                    seq += 10;
-                    this.DetailDatas[i]["Seq"] = MyUtility.Convert.GetString(seq).PadLeft(4, '0');
+                    this.CurrentDetailData["Seq"] = MyUtility.Convert.GetString(10).PadLeft(4, '0');
+                    this.CurrentDetailData["IsShow"] = 1;
                 }
             }
         }
 
-        // Copy
+        /// <summary>
+        /// gridIcon 新增按鈕.....
+        /// </summary>
+        protected override void OnDetailGridAppendClick()
+        {
+            base.OnDetailGridAppendClick();
+
+            int seq = 0;
+            DataTable dt = (DataTable)this.detailgridbs.DataSource;
+
+            DataRow drSelect = this.detailgrid.GetDataRow(this.detailgrid.SelectedRows[0].Index);
+
+            if (dt.Rows.Count >= 0)
+            {
+                seq = 10;
+                foreach (DataRow dr in dt.Rows)
+                {
+                    if (dr.RowState == DataRowState.Deleted)
+                    {
+                        continue;
+                    }
+
+                    if (MyUtility.Convert.GetInt(seq) != 0 && MyUtility.Convert.GetInt(dr["Seq"]) != 0)
+                    {
+                        if (MyUtility.Convert.GetInt(dr["Seq"]) != 0)
+                        {
+                            if (seq != MyUtility.Convert.GetInt(dr["Seq"]))
+                            {
+                                seq = MyUtility.Convert.GetInt(dr["Seq"]);
+                            }
+                        }
+                    }
+
+                    dr["seq"] = MyUtility.Convert.GetString(seq).PadLeft(4, '0');
+                    dr["IsShow"] = 1;
+                    seq += 10;
+                }
+            }
+        }
+
+            // Copy
         private void BtnCopy_Click(object sender, EventArgs e)
         {
             // 將要Copy的資料記錄起來

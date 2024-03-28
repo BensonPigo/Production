@@ -12,6 +12,8 @@ using System.Data.SqlTypes;
 using Sci.Production.Prg;
 using System.Collections.Generic;
 using System.Linq;
+using Sci.Production.Prg.PowerBI.Model;
+using Sci.Production.Prg.PowerBI.Logic;
 
 namespace Sci.Production.PPIC
 {
@@ -697,6 +699,7 @@ where id = '{0}'", Env.User.Factory), null);
                     else
                     {
                         ExcelPrg.ExcelDeleteColumn(worksheet, 1, "Sewing CPU");
+                        ExcelPrg.ExcelDeleteColumn(worksheet, 1, "Sew. MTL ETA (SP)");
                     }
 
                     result = MyUtility.Excel.CopyToXls(this.printData, string.Empty, xltfile: "PPIC_R01_SewingLineScheduleReport.xltx", headerRow: 1, showExcel: false, excelApp: objApp, wSheet: objApp.Sheets[2]);
@@ -843,83 +846,31 @@ where id = '{0}'", Env.User.Factory), null);
 
         private DualResult Query_by_SP()
         {
-            DualResult result;
-            string sqlCmd = string.Empty;
-
-            List<string> sqlWhere = new List<string>();
-
-            if (!MyUtility.Check.Empty(this.mDivision))
+            PPIC_R01bySP_ViewModel model = new PPIC_R01bySP_ViewModel()
             {
-                sqlWhere.Add($" @MDivisionID = '{this.mDivision}'");
-            }
+                MDivisionID = this.mDivision,
+                FactoryID = this.factory,
+                SewingLineIDFrom = this.line1,
+                SewingLineIDTo = this.line2,
+                SewingDateFrom = this.SewingDate1,
+                SewingDateTo = this.SewingDate2,
+                BuyerDeliveryFrom = this.buyerDelivery1,
+                BuyerDeliveryTo = this.buyerDelivery2,
+                SciDeliveryFrom = this.sciDelivery1,
+                SciDeliveryTo = this.sciDelivery2,
+                BrandID = this.brand,
+                SubProcess = this.subProcess,
+            };
 
-            if (!MyUtility.Check.Empty(this.factory))
-            {
-                sqlWhere.Add($" @FactoryID = '{this.factory}'");
-            }
-
-            if (!MyUtility.Check.Empty(this.line1))
-            {
-                sqlWhere.Add($" @SewingLineIDFrom = '{this.line1}'");
-            }
-
-            if (!MyUtility.Check.Empty(this.line2))
-            {
-                sqlWhere.Add($" @SewingLineIDTo = '{this.line2}'");
-            }
-
-            if (!MyUtility.Check.Empty(this.SewingDate1))
-            {
-                sqlWhere.Add($" @SewingDateFrom = '{Convert.ToDateTime(this.SewingDate1).ToString("yyyy/MM/dd")}'");
-            }
-
-            if (!MyUtility.Check.Empty(this.SewingDate2))
-            {
-                sqlWhere.Add($" @SewingDateTo = '{Convert.ToDateTime(this.SewingDate2).AddDays(1).ToString("yyyy/MM/dd")}'");
-            }
-
-            if (!MyUtility.Check.Empty(this.buyerDelivery1))
-            {
-                sqlWhere.Add($" @BuyerDeliveryFrom = '{Convert.ToDateTime(this.buyerDelivery1).ToString("yyyy/MM/dd")}'");
-            }
-
-            if (!MyUtility.Check.Empty(this.buyerDelivery2))
-            {
-                sqlWhere.Add($" @BuyerDeliveryTo = '{Convert.ToDateTime(this.buyerDelivery2).ToString("yyyy/MM/dd")}'");
-            }
-
-            if (!MyUtility.Check.Empty(this.sciDelivery1))
-            {
-                sqlWhere.Add($" @SciDeliveryFrom = '{Convert.ToDateTime(this.sciDelivery1).ToString("yyyy/MM/dd")}'");
-            }
-
-            if (!MyUtility.Check.Empty(this.sciDelivery2))
-            {
-                sqlWhere.Add($" @SciDeliveryTo = '{Convert.ToDateTime(this.sciDelivery2).ToString("yyyy/MM/dd")}'");
-            }
-
-            if (!MyUtility.Check.Empty(this.brand))
-            {
-                sqlWhere.Add($" @BrandID = '{this.brand}'");
-            }
-
-            if (!MyUtility.Check.Empty(this.subProcess))
-            {
-                sqlWhere.Add($" @SubProcess = '{this.subProcess}'");
-            }
-
-            sqlCmd = $" exec dbo.PPIC_R01_SewingLineScheduleBySP {sqlWhere.JoinToString(",")}";
-
-            DBProxy.Current.DefaultTimeout = 1800;
-            result = DBProxy.Current.Select(null, sqlCmd.ToString(), out this.printData);
-            DBProxy.Current.DefaultTimeout = 300;
-
-            if (result)
+            PPIC_R01 biModel = new PPIC_R01();
+            Base_ViewModel resultReport = biModel.GetSewingLineScheduleDataBySP(model);
+            this.printData = resultReport.Dt;
+            if (resultReport.Result)
             {
                 this.printData.Columns.Remove("ID");
             }
 
-            return result;
+            return resultReport.Result;
         }
 
         private DualResult Query_by_ArticleSize()
@@ -1321,65 +1272,44 @@ drop table #tmp_main,#tmp_PFRemark,#tmp_WorkHour,#tmpOrderArtwork,#tmp_Qty,#tmp_
         /// <returns>DualResult</returns>
         private DualResult Query_by_StylePerEachSewingDate()
         {
-            DualResult result;
-
-            StringBuilder sqlCmd = new StringBuilder();
-
-            #region MinSQL
-            sqlCmd.Append("exec dbo.GetSewingLineScheduleData ");
-            #endregion
-            #region where條件
-
-            // 搜尋時判斷的是在 Inline - Offline 的期間有包含到 SewingDate1 這一段區間的 Schedule
-            sqlCmd.Append(!MyUtility.Check.Empty(this.SewingDate1) ? $" '{Convert.ToDateTime(this.SewingDate1):yyyy/MM/dd}'," : " null,");
-            sqlCmd.Append(!MyUtility.Check.Empty(this.SewingDate2) ? $" '{Convert.ToDateTime(this.SewingDate2):yyyy/MM/dd}'," : " null,");
-
-            // SewingLineID
-            sqlCmd.Append(!MyUtility.Check.Empty(this.line1) ? $" '{this.line1}'," : " '',");
-            sqlCmd.Append(!MyUtility.Check.Empty(this.line2) ? $" '{this.line2}'," : " '',");
-
-            // M,Factory
-            sqlCmd.Append(!MyUtility.Check.Empty(this.mDivision) ? $" '{this.mDivision}'," : " '',");
-            sqlCmd.Append(!MyUtility.Check.Empty(this.factory) ? $" '{this.factory}'," : " '',");
-
-            // BuyerDelivery
-            sqlCmd.Append(!MyUtility.Check.Empty(this.buyerDelivery1) ? $" '{Convert.ToDateTime(this.buyerDelivery1):yyyy/MM/dd}'," : " null,");
-            sqlCmd.Append(!MyUtility.Check.Empty(this.buyerDelivery2) ? $" '{Convert.ToDateTime(this.buyerDelivery2):yyyy/MM/dd}'," : " null,");
-
-            // SCIDelivery
-            sqlCmd.Append(!MyUtility.Check.Empty(this.sciDelivery1) ? $" '{Convert.ToDateTime(this.sciDelivery1):yyyy/MM/dd}'," : " null,");
-            sqlCmd.Append(!MyUtility.Check.Empty(this.sciDelivery2) ? $" '{Convert.ToDateTime(this.sciDelivery2):yyyy/MM/dd}'," : " null,");
-
-            // Brand
-            sqlCmd.Append(!MyUtility.Check.Empty(this.brand) ? $" '{this.brand}'," : " '',");
-            sqlCmd.Append(!MyUtility.Check.Empty(this.subProcess) ? $" '{this.subProcess}'," : " '',");
-
-            #endregion
-
-            DBProxy.Current.DefaultTimeout = 1800;
-            DataTable[] dtsResult;
-            result = DBProxy.Current.Select(null, sqlCmd.ToString().Substring(0, sqlCmd.Length - 1), out dtsResult);
-            DBProxy.Current.DefaultTimeout = 300;
-
-            if (!result)
+            PPIC_R01_ViewModel model = new PPIC_R01_ViewModel()
             {
-                return result;
+                Inline = this.SewingDate1,
+                Offline = this.SewingDate2,
+                Line1 = this.line1,
+                Line2 = this.line2,
+                MDivisionID = this.mDivision,
+                FactoryID = this.factory,
+                BuyerDelivery1 = this.buyerDelivery1,
+                BuyerDelivery2 = this.buyerDelivery2,
+                SciDelivery1 = this.sciDelivery1,
+                SciDelivery2 = this.sciDelivery2,
+                Brand = this.brand,
+                Subprocess = this.subProcess,
+                IsPowerBI = false,
+            };
+
+            PPIC_R01 biModel = new PPIC_R01();
+            Base_ViewModel resultReport = biModel.GetSewingLineScheduleData(model);
+            if (!resultReport.Result)
+            {
+                return resultReport.Result;
             }
 
-            this.printData = dtsResult[0];
-            this.dtGantt = dtsResult[1];
+            this.printData = resultReport.DtArr[0];
+            this.dtGantt = resultReport.DtArr[1];
 
             if (this.chkGanttChart.Checked)
             {
-                result = this.GetGanttChartData();
+                resultReport.Result = this.GetGanttChartData();
 
-                if (!result)
+                if (!resultReport.Result)
                 {
-                    return result;
+                    return resultReport.Result;
                 }
             }
 
-            return result;
+            return resultReport.Result;
         }
 
         private void ComboSummaryBy_SelectedValueChanged(object sender, EventArgs e)

@@ -6,6 +6,7 @@ using System.Data.SqlClient;
 using Ict;
 using System.Runtime.InteropServices;
 using Excel = Microsoft.Office.Interop.Excel;
+using Sci.Data;
 
 namespace Sci.Production.Packing
 {
@@ -123,7 +124,7 @@ namespace Sci.Production.Packing
 
             if (!MyUtility.Check.Empty(this.txtfactory1.Text))
             {
-                strWhere += $@" and o.FactoryID = @fty";
+                strWhere += $@" and o.FtyGroup = @fty";
             }
 
             #endregion
@@ -140,7 +141,7 @@ select [PackingAuditDate] = c.PackingAuditDate
 	,[CTN] = c.CTNStartNo
 	,[Qty] = pd_QtyPerCTN.Qty
 	,[Discrepancy] = c.Qty
-    ,[Desc] = isnull(pd.Description,'')
+    ,[Desc] = isnull(pd.val,'')
 	,[SP] = c.OrderID
 	,[PO] = o.CustPONo
 	,[Style] = o.StyleID
@@ -150,8 +151,7 @@ select [PackingAuditDate] = c.PackingAuditDate
 	,[SCIDelivery] = o.SciDelivery
 	,[Barcode] = pd_Barcode.Barcode
 	,[AuditBy] = c.AddName + '-' + pass1.Name
-	,[AuditTime] = Format(c.AddDate, 'yyyy/MM/dd HH:mm:ss')
-	,[PassDate] = PassDate.AddDate
+    ,c.AddDate
     ,c.Status
     ,[ReturntoProduction] = iif(c.Status = 'Return', 'Yes', '')
     ,c.Remark
@@ -175,21 +175,18 @@ outer apply (
 		FOR XML PATH(''))
 	,1,1,'')
 )pd_Barcode
-outer apply(
-	select top 1 AddDate 
-	from CTNPackingAudit 
-	where Status='Pass' 
-	and AddDate> = c.AddDate
-)PassDate
 outer apply (
-    select top 1 pr.Description 
-    from PackingList_Detail pd
-    left join CTNPackingAudit_Detail cd on c.ID = cd.ID
-    left join PackingReason pr on cd.PackingReasonID = pr.ID
-    where pr.Type = 'PA'
-    and pd.id = c.PackingListID
-    and pd.CTNStartNo = c.CTNStartNo
-    and pd.Orderid = c.Orderid
+	SELECT val = Stuff((
+		select distinct concat('/',pr.Description )
+		from PackingList_Detail pd
+		left join CTNPackingAudit_Detail cd on c.ID = cd.ID
+		left join PackingReason pr on cd.PackingReasonID = pr.ID
+		where pr.Type = 'PA'
+		and pd.id = c.PackingListID
+		and pd.CTNStartNo = c.CTNStartNo
+		and pd.Orderid = c.Orderid
+	FOR XML PATH(''))
+	,1,1,'')
 ) PD
 outer apply (
 	SELECT val = Stuff((
@@ -202,7 +199,36 @@ outer apply (
 where 1 = 1
 {strWhere}
 
-select * from #tmp
+select  [PackingAuditDate]
+    ,[FactoryID] 
+	,[PackingListID] 
+	,[CTN] 
+	,[Qty] 
+	,[Discrepancy]
+    ,[Desc] 
+	,[SP] 
+	,[PO] 
+	,[Style] 
+	,[Brand] 
+	,[Destination]
+	,[BuyerDelivery] 
+	,[SCIDelivery]
+	,[Barcode]
+	,[AuditBy]
+	,[AuditTime] = Format(t.AddDate, 'yyyy/MM/dd HH:mm:ss')
+	,[PassDate] = PassDate.AddDate
+    ,Status
+    ,[ReturntoProduction] 
+    ,Remark
+    ,[SewingLineID]
+    ,t.ID
+from #tmp t
+outer apply(
+	select AddDate = min(s.AddDate)
+	from CTNPackingAudit s
+	where s.Status='Pass' 
+	and s.AddDate > t.AddDate
+)PassDate
 order by PackingListID, CTN,PackingAuditDate
 
 select cd.ID,cd.PackingReasonID,pr.Description,cd.Qty 
@@ -216,11 +242,11 @@ drop table #mesPass1
 
             this.ShowWaitMessage("Data Loading...");
             #region Set Grid Data
-            DataSet datas = null;
 
-            if (!PublicPrg.Prgs.SelectSet(string.Empty, strSqlCmd, out datas, listSqlParameter))
+            DualResult result = PublicPrg.Prgs.SelectSet(string.Empty, strSqlCmd, out DataSet datas, listSqlParameter);
+            if (!result)
             {
-                MyUtility.Msg.WarningBox(strSqlCmd, "DB error!!");
+                this.ShowErr(result.ToString());
                 return;
             }
 

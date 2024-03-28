@@ -501,6 +501,7 @@ where Poid='{dr["id"]}' and seq1='{dr["Seq1"]}' and seq2='{dr["Seq2"]}'", out dr
             .Button("...", null, header: "Spec", width: Widths.AnsiChars(2), onclick: this.BtnSpec)
             .Text("fabrictype2", header: "Material\r\nType", iseditingreadonly: true, width: Widths.AnsiChars(20)) // 7
             .Text("WeaveTypeID", header: "Weave\r\nType", iseditingreadonly: true, width: Widths.AnsiChars(9)) // 7
+            .Text("ProductionType", header: "Production\r\nType", iseditingreadonly: true, width: Widths.AnsiChars(9)) // 7
             .EditText("Article", header: "Article", iseditingreadonly: true, width: Widths.AnsiChars(15)) // 8
             .Text("ColorID", header: "Color", iseditingreadonly: true, width: Widths.AnsiChars(6)) // 9
             .Text("SizeSpec", header: "Size", iseditingreadonly: true, width: Widths.AnsiChars(2)) // 10
@@ -795,6 +796,7 @@ from(
             , FabricType 
             , fabrictype2
 			, WeaveTypeID
+            , ProductionType
             , fabrictypeOrderby
             , ColorID
             , SizeSpec
@@ -864,6 +866,7 @@ from(
                     , a.FabricType 
                     , concat(mt.fabrictype2,'-'+Fabric.MtlTypeID) as fabrictype2
 					, Fabric.WeaveTypeID
+                    , MTL.ProductionType
                     , iif(a.FabricType='F',1,iif(a.FabricType='A',2,3)) as fabrictypeOrderby
                      , ColorID = IIF(Fabric.MtlTypeID = 'EMB THREAD' OR Fabric.MtlTypeID = 'SP THREAD' OR Fabric.MtlTypeID = 'THREAD' 
                                      ,IIF( a.SuppColor = '' or a.SuppColor is null,dbo.GetColorMultipleID(Orders.BrandID,isnull(psdsC.SpecValue, '')),a.SuppColor)
@@ -1003,6 +1006,7 @@ from(
 
 			LEFT JOIN Order_BOF ob with(nolock) ON  a.RefNo=ob.RefNo AND a.ID=ob.Id
 			LEFT JOIN Fabric_Supp fs WITH (NOLOCK) ON fs.SCIRefno = a.SCIRefno AND fs.SuppID = iif(left(a.SEQ1, 1) = '7', a.StockSuppID, b.SuppID)
+            LEFT JOIN MtlType MTL WITH (NOLOCK) ON MTL.ID = fabric.MtlTypeID
             outer apply(select fabrictype2 = iif(a.FabricType='F','Fabric',iif(a.FabricType='A','Accessory',iif(a.FabricType='O','Orher',a.FabricType))))mt
 			OUTER APPLY(
 			SELECT [FabricCombo]=STUFF((
@@ -1040,6 +1044,7 @@ from(
                     , a.FabricType 
                     , concat(mt.fabrictype2,'-'+Fabric.MtlTypeID) as fabrictype2
 					, Fabric.WeaveTypeID
+                    , MTL.ProductionType
                     , iif(a.FabricType='F',1,iif(a.FabricType='A',2,3)) as fabrictypeOrderby
                     , ColorID = IIF(Fabric.MtlTypeID = 'EMB THREAD' OR Fabric.MtlTypeID = 'SP THREAD' OR Fabric.MtlTypeID = 'THREAD' 
                                  ,IIF( a.SuppColor = '' or a.SuppColor is null,dbo.GetColorMultipleID(o.BrandID,isnull(psdsC.SpecValue, '')),a.SuppColor)
@@ -1174,6 +1179,7 @@ from(
         LEFT JOIN dbo.Style_RRLR_Report with(nolock) on Style_RRLR_Report.StyleUkey = o.StyleUkey AND
                                                         Style_RRLR_Report.ColorID =  psdsC.SpecValue AND
                                                         Style_RRLR_Report.Refno = fabric.RefNo
+        LEFT JOIN MtlType MTL WITH (NOLOCK) ON MTL.ID = fabric.MtlTypeID
         outer apply(select fabrictype2 = iif(a.FabricType='F','Fabric',iif(a.FabricType='A','Accessory',iif(a.FabricType='O','Orher',a.FabricType))))mt
 		OUTER APPLY(
 		SELECT [FabricCombo]=STUFF((
@@ -1218,6 +1224,7 @@ select ROW_NUMBER_D = 1
        , [FabricType] = a.UnitID
        , [fabrictype2] = '-'
 	   , [WeaveTypeID] = '-'
+       , [ProductionType] = '-'
        , [fabrictypeOrderby] = null
        , [ColorID] = a.ThreadColorID
        , [SizeSpec] = '-'

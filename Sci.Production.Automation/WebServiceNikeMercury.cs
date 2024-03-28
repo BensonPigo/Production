@@ -667,7 +667,7 @@ where   pg.ID = '{packID}'
 
             if (!webApiBaseResult.isSuccess)
             {
-                return new DualResult(false, webApiBaseResult.httpStatusCode.ToString() + webApiBaseResult.responseContent);
+                return new DualResult(false, soapRequest + webApiBaseResult.httpStatusCode.ToString() + webApiBaseResult.responseContent);
             }
 
             ResponseShipmentShippingDetailsUpdateLSP.Envelope responseResult;

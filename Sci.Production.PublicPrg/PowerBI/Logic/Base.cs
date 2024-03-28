@@ -19,6 +19,11 @@ namespace Sci.Production.Prg.PowerBI.Logic
         {
             P_MonthlySewingOutputSummary,
             P_SewingLineSchedule,
+            P_SewingLineScheduleBySP,
+            P_InlineDefectSummary,
+            P_CuttingScheduleOutputList,
+            P_QAR31,
+            P_QA_CFAMasterList,
         }
 
         /// <summary>
@@ -183,18 +188,38 @@ namespace Sci.Production.Prg.PowerBI.Logic
         {
             DateTime? executeSDate = DateTime.Now;
             Base_ViewModel result = new Base_ViewModel();
-            switch (Enum.Parse(typeof(ListName), item.ClassName))
+
+            if (Enum.TryParse(item.ClassName, out ListName className))
             {
-                case ListName.P_MonthlySewingOutputSummary:
-                    result = new P_Import_MonthlySewingOutputSummary().P_MonthlySewingOutputSummary(item.SDate, item.EDate);
-                    break;
-                case ListName.P_SewingLineSchedule:
-                    result = new P_Import_SewingLineScheduleBIData().P_SewingLineScheduleBIData(item.SDate, item.EDate);
-                    break;
-                default:
-                    // Execute all Stored Procedures
-                    result = this.ExecuteSP(item);
-                    break;
+                switch (className)
+                {
+                    case ListName.P_MonthlySewingOutputSummary:
+                        result = new P_Import_MonthlySewingOutputSummary().P_MonthlySewingOutputSummary(item.SDate, item.EDate);
+                        break;
+                    case ListName.P_SewingLineSchedule:
+                        result = new P_Import_SewingLineScheduleBIData().P_SewingLineScheduleBIData(item.SDate, item.EDate);
+                        break;
+                    case ListName.P_InlineDefectSummary:
+                        result = new P_Import_InlineDefec().P_InlineDefecBIData(item.SDate, item.EDate);
+                        break;
+                    case ListName.P_CuttingScheduleOutputList:
+                        result = new P_Import_CuttingScheduleOutputList().P_CuttingScheduleOutputList(item.SDate, item.EDate);
+                        break;
+                    case ListName.P_QAR31:
+                        result = new P_Import_QAR31().P_QAR31(item.SDate, item.EDate);
+                        break;
+                    case ListName.P_QA_CFAMasterList:
+                        result = new P_Import_QA_CFAMasterList().P_QA_CFAMasterList(item.SDate);
+                        break;
+                    case ListName.P_SewingLineScheduleBySP:
+                        result = new P_Import_SewingLineScheduleBySP().P_SewingLineScheduleBySP(item.SDate, item.EDate);
+                        break;
+                }
+            }
+            else
+            {
+                // Execute all Stored Procedures
+                result = this.ExecuteSP(item);
             }
 
             DateTime? executeEDate = DateTime.Now;

@@ -978,7 +978,7 @@ select  t.ShipPlanID,
 from #tmp t
 left join GMTBooking g WITH (NOLOCK) on t.INVNo = g.ID
 left join ForwarderWarehouse_Detail fd WITH (NOLOCK) on g.ForwarderWhse_DetailUKey = fd.UKey
-lefy join ForwarderWarehouse fw WITH (NOLOCK) on fd.id  = fw.id
+left join ForwarderWarehouse fw WITH (NOLOCK) on fd.id  = fw.id
 left join LocalSupp ls WITH (NOLOCK) on g.Forwarder = ls.ID
 ";
 
