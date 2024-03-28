@@ -104,6 +104,8 @@ pl.BrandID = '{this.brand}') or g.BrandID = '{this.brand}'
 with FirstStepFilterData
 as (
 select e.ID,e.CDate,e.InvNo,e.VNContractID,e.VNExportPortID,e.DataFrom, isnull(ep.Name,'') as ExportPort,
+[GMTBookingStatus] = g.Status,
+[ExportDeclarationStatus] = e.Status,
 IIF(e.DataFrom = 'PACKINGLIST',pl.BrandID,g.BrandID) as BrandID,
 IIF(e.DataFrom = 'PACKINGLIST',pl.ShipQty,g.TotalShipQty) as ShipQty,
 IIF(e.DataFrom = 'PACKINGLIST',pl.CTNQty,g.TotalCTNQty) as CTNQty,
@@ -139,18 +141,18 @@ group by InvNo,OrderID,StyleID,SizeCode,CustomSP,FOB
 ),
 tmpSummaryData
 as (
-select distinct sd.InvNo,sd.VNExportPortID,sd.ExportPort,sd.Dest,isnull(c.Alias,'') as CountryAlias,sd.ShipTerm,sd.ShipQty,
+select distinct sd.GMTBookingStatus, sd.ExportDeclarationStatus, sd.InvNo,sd.VNExportPortID,sd.ExportPort,sd.Dest,isnull(c.Alias,'') as CountryAlias,sd.ShipTerm,sd.ShipQty,
 CTNQty,sd.GW,sd.NW,sd.CMP
 from SecondStepFilterData sd
 left join Country c WITH (NOLOCK) on sd.Dest = c.ID
 )
-select '0' as Type,count(InvNo)  as rno,'' as InvNo,'' as VNExportPortID,'' as ExportPort,'' as Dest,'' as CountryAlias,'' as ShipTerm,0 as ShipQty,0 as CTNQty,0 as GW,0 as NW,0 as CMP,
+select '0' as Type,count(InvNo)  as rno,'' as GMTBookingStatus,'' as ExportDeclarationStatus,'' as InvNo,'' as VNExportPortID,'' as ExportPort,'' as Dest,'' as CountryAlias,'' as ShipTerm,0 as ShipQty,0 as CTNQty,0 as GW,0 as NW,0 as CMP,
 '' as InvNo1,'' as OrderID,'' as StyleID,'' as SizeCode,'' as CustomSP,0 as TtlExportQty,0.0 as FOB from tmpSummaryData
 union all
 select '1' as Type,ROW_NUMBER() OVER (ORDER BY InvNo) as rno,*,
 '' as InvNo1,'' as OrderID,'' as StyleID,'' as SizeCode,'' as CustomSP,0 as TtlExportQty,0.0 as FOB from tmpSummaryData
 union all
-select '2' as Type,0 as rno,'' as InvNo,'' as VNExportPortID,'' as ExportPort,'' as Dest,'' as CountryAlias,'' as ShipTerm,0 as ShipQty,0 as CTNQty,0 as GW,0 as NW,0 as CMP,
+select '2' as Type,0 as rno,'' as GMTBookingStatus,'' as ExportDeclarationStatus,'' as InvNo,'' as VNExportPortID,'' as ExportPort,'' as Dest,'' as CountryAlias,'' as ShipTerm,0 as ShipQty,0 as CTNQty,0 as GW,0 as NW,0 as CMP,
 InvNo as InvNo1,OrderID,StyleID,SizeCode,CustomSP,TtlExportQty,FOB
 from tmpSumDetail
 
@@ -196,7 +198,8 @@ select  t.InvNo,
         [PackID] = PackID.val,
         [PackQty] = PackQty.val
 from    #tmpDeclaration t
-outer apply (select val = sum(p.PackQty) from #tmpPack p 
+outer apply (select val = isnull(sum(p.PackQty), 0)
+             from #tmpPack p 
              where   p.InvNo = t.InvNo and
                      p.OrderID = t.OrderID and
                      p.Article = t.Article and
@@ -208,6 +211,7 @@ outer apply (select val = Stuff((select distinct concat( ',', p.ID)
                                         p.Article = t.Article and
                                         p.SizeCode = t.SizeCode FOR XML PATH('')),1,1,'')
             )  PackID
+where   t.ExportQty <> PackQty.val
 
 drop table #tmpDeclaration, #tmpPack
 
@@ -253,7 +257,7 @@ drop table #tmpDeclaration, #tmpPack
             Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[3];
             int row = 1, sheetcount = 2;
             string invNo = "XXX";
-            object[,] objArray = new object[1, 13];
+            object[,] objArray = new object[1, 15];
             object[,] objArray1 = new object[1, 7];
             foreach (DataRow dr in this.printData[0].Rows)
             {
@@ -275,17 +279,19 @@ drop table #tmpDeclaration, #tmpPack
                     row++;
                     objArray[0, 0] = dr["rno"];
                     objArray[0, 1] = dr["InvNo"];
-                    objArray[0, 2] = dr["VNExportPortID"];
-                    objArray[0, 3] = dr["ExportPort"];
-                    objArray[0, 4] = dr["CountryAlias"];
-                    objArray[0, 5] = MyUtility.Check.Empty(dr["CountryAlias"]) ? string.Empty : MyUtility.Convert.GetString(dr["CountryAlias"]).Substring(0, 1);
-                    objArray[0, 6] = MyUtility.Check.Empty(dr["CountryAlias"]) ? string.Empty : MyUtility.Convert.GetString(dr["CountryAlias"]).Substring(1, 1);
-                    objArray[0, 7] = dr["ShipTerm"];
-                    objArray[0, 8] = dr["ShipQty"];
-                    objArray[0, 9] = dr["CTNQty"];
-                    objArray[0, 10] = dr["GW"];
-                    objArray[0, 11] = dr["NW"];
-                    objArray[0, 12] = dr["CMP"];
+                    objArray[0, 2] = dr["GMTBookingStatus"];
+                    objArray[0, 3] = dr["ExportDeclarationStatus"];
+                    objArray[0, 4] = dr["VNExportPortID"];
+                    objArray[0, 5] = dr["ExportPort"];
+                    objArray[0, 6] = dr["CountryAlias"];
+                    objArray[0, 7] = MyUtility.Check.Empty(dr["CountryAlias"]) ? string.Empty : MyUtility.Convert.GetString(dr["CountryAlias"]).Substring(0, 1);
+                    objArray[0, 8] = MyUtility.Check.Empty(dr["CountryAlias"]) ? string.Empty : MyUtility.Convert.GetString(dr["CountryAlias"]).Substring(1, 1);
+                    objArray[0, 9] = dr["ShipTerm"];
+                    objArray[0, 10] = dr["ShipQty"];
+                    objArray[0, 11] = dr["CTNQty"];
+                    objArray[0, 12] = dr["GW"];
+                    objArray[0, 13] = dr["NW"];
+                    objArray[0, 14] = dr["CMP"];
                     worksheet.Range[string.Format("A{0}:M{0}", row)].Value2 = objArray;
                 }
 
