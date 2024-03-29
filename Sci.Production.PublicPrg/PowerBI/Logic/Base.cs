@@ -194,7 +194,8 @@ ORDER BY [Group], [SEQ], [NAME]";
                         .AsParallel()
                         .AsSequential()
                         .Select(detail => this.ExecuteSingle(detail))
-                        .TakeWhile(model => model.Group == 0 || model.Success) // 只保留成功的结果
+
+                        // .TakeWhile(model => model.Group == 0 || model.Success) // 只保留成功的结果
                         .ToList();
 
                     foreach (var item_detail in results_detail)
