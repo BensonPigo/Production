@@ -36,7 +36,7 @@ namespace Sci.Production.Prg.PowerBI.FormPage
         /// <returns>FactoryTaskJobInfo Class</returns>
         public FactoryTaskJobInfo GetJobInfo()
         {
-            return new FactoryTaskJobInfo("Power BI", "1.0.0", "工廠端BI執行");
+            return new FactoryTaskJobInfo("Power BI", "1.2.0", "工廠端BI執行, 增加群組機制");
         }
 
         /// <summary>
@@ -136,6 +136,8 @@ namespace Sci.Production.Prg.PowerBI.FormPage
                     item.ProcedureName = itemBase.ProcedureName;
                     item.DBName = itemBase.DBName;
                     item.RunOnSunday = itemBase.RunOnSunday;
+                    item.Group = itemBase.Group;
+                    item.SEQ = itemBase.SEQ;
                     executedList.Add(item);
                 }
             }
