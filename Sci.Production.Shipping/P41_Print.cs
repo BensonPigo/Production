@@ -4,6 +4,8 @@ using System.Text;
 using Ict;
 using Sci.Data;
 using System.Runtime.InteropServices;
+using Sci.Production.CallPmsAPI;
+using System.Linq;
 
 namespace Sci.Production.Shipping
 {
@@ -98,25 +100,102 @@ pl.BrandID = '{this.brand}') or g.BrandID = '{this.brand}'
                 sqlWhereBreakdownChangedBrand += $" and p.BrandID = '{this.brand}'";
             }
 
+            string sqlGetA2B = $@"
+select  distinct gd.ID, gd.PLFromRgCode
+from    GMTBooking_Detail gd with (nolock)
+where exists(select 1 from VNExportDeclaration e WITH (NOLOCK) where gd.ID = e.InvNo {sqlWhereBreakdownChanged})
+";
+            DataTable dtA2BBase;
+            DualResult result = DBProxy.Current.Select("Production", sqlGetA2B, out dtA2BBase);
+
+            if (!result)
+            {
+                return result;
+            }
+
+            DataTable dtA2BPackResult = new DataTable();
+
+            // 給預設結構
+            string sqlInitialA2BPackResult = @"
+select  p.InvNo,
+        p.ID,
+        p.OrderID,
+        pd.Article,
+        pd.SizeCode,
+        pd.ShipQty
+from Packinglist p with (nolock)
+inner join Packinglist_Detail pd with (nolock) on p.ID = pd.ID
+where 1 = 0
+";
+            result = DBProxy.Current.Select("Production", sqlInitialA2BPackResult, out dtA2BPackResult);
+
+            if (!result)
+            {
+                return result;
+            }
+
+            if (dtA2BBase.Rows.Count > 0)
+            {
+                string sqlGetA2BPackDetail = string.Empty;
+                var groupPLFromRgCode = dtA2BBase.AsEnumerable()
+                                                .GroupBy(s => s["PLFromRgCode"].ToString());
+                foreach (var itemPLFromRgCode in groupPLFromRgCode)
+                {
+                    string whereInvno = itemPLFromRgCode.Select(s => $"'{s["ID"]}'").JoinToString(",");
+
+                    sqlGetA2BPackDetail = $@"
+select  p.InvNo,
+        p.ID,
+        pd.OrderID,
+        pd.Article,
+        pd.SizeCode,
+        pd.ShipQty
+from    Packinglist p with (nolock)
+inner join Packinglist_Detail pd with (nolock) on p.ID = pd.ID
+where   p.InvNo in  ({whereInvno}) {sqlWhereBreakdownChangedBrand}
+";
+                    DataTable dtA2BResult;
+                    result = PackingA2BWebAPI.GetDataBySql(itemPLFromRgCode.Key, sqlGetA2BPackDetail, out dtA2BResult);
+
+                    if (!result)
+                    {
+                        return result;
+                    }
+
+                    dtA2BResult.MergeTo(ref dtA2BPackResult);
+                }
+            }
+
             string sqlCmd =
                 $@"
+alter table #tmpPackA2B alter column InvNo varchar(25)
+alter table #tmpPackA2B alter column ID varchar(13)
+alter table #tmpPackA2B alter column OrderID varchar(13)
+alter table #tmpPackA2B alter column Article varchar(8)
+alter table #tmpPackA2B alter column SizeCode varchar(8)
+
 --Summary
-with FirstStepFilterData
+;with FirstStepFilterData
 as (
-select e.ID,e.CDate,e.InvNo,e.VNContractID,e.VNExportPortID,e.DataFrom, isnull(ep.Name,'') as ExportPort,
+select  e.ID,
+e.CDate,
+e.InvNo,
+e.VNContractID,
+e.VNExportPortID,
+e.DataFrom,
+[ExportPort] = isnull(ep.Name,''),
 [GMTBookingStatus] = g.Status,
 [ExportDeclarationStatus] = e.Status,
-IIF(e.DataFrom = 'PACKINGLIST',pl.BrandID,g.BrandID) as BrandID,
-IIF(e.DataFrom = 'PACKINGLIST',pl.ShipQty,g.TotalShipQty) as ShipQty,
-IIF(e.DataFrom = 'PACKINGLIST',pl.CTNQty,g.TotalCTNQty) as CTNQty,
-IIF(e.DataFrom = 'PACKINGLIST',pl.GW,g.TotalGW) as GW,
-IIF(e.DataFrom = 'PACKINGLIST',pl.NW,g.TotalNW) as NW,
-IIF(e.DataFrom = 'PACKINGLIST',(select Dest from Orders WITH (NOLOCK) where ID = (select top 1 OrderID from PackingList_Detail WITH (NOLOCK) where ID = pl.ID)),g.Dest) as Dest,
-IIF(e.DataFrom = 'PACKINGLIST',(select ShipTermID from Orders WITH (NOLOCK) where ID = (select top 1 OrderID from PackingList_Detail WITH (NOLOCK) where ID = pl.ID)),g.ShipTermID) as ShipTerm
+g.BrandID,
+g.TotalShipQty as ShipQty,
+g.TotalCTNQty as CTNQty,
+g.TotalGW as GW,
+g.TotalNW as NW,
+g.Dest as Dest,
+g.ShipTermID as ShipTerm
 from VNExportDeclaration e WITH (NOLOCK) 
 left join VNExportPort ep WITH (NOLOCK) on e.VNExportPortID = ep.ID
 left join GMTBooking g WITH (NOLOCK) on e.InvNo = g.ID
-left join PackingList pl WITH (NOLOCK) on e.InvNo = pl.INVNo
 where 1=1 {sqlCondition}
 ),
 SecondStepFilterData
@@ -168,27 +247,48 @@ from VNExportDeclaration e with (nolock)
 inner join VNExportDeclaration_Detail vdd with (nolock) on vdd.ID = e.ID
 where 1 = 1 {sqlWhereBreakdownChanged}
 
-select  p.ID,
-        t.InvNo,
-		t.OrderID,
-		t.Article,
-		t.SizeCode,
-		t.ExportQty,
-        [PackQty] = sum(pd.ShipQty)
-into    #tmpPack
-from    #tmpDeclaration t
-inner join  Packinglist p with (nolock) on p.InvNo = t.InvNo
-inner join  PackingList_Detail pd with (nolock) on  pd.ID = p.ID and
-                                                    pd.OrderID = t.OrderID and
-                                                    pd.Article = t.Article and
-                                                    pd.SizeCode = t.SizeCode
-where 1 = 1 {sqlWhereBreakdownChangedBrand}
-group by    p.ID,
+select * into #tmpPack
+from (
+    select  p.ID,
             t.InvNo,
-		    t.OrderID,
-		    t.Article,
-		    t.SizeCode,
-		    t.ExportQty
+    		t.OrderID,
+    		t.Article,
+    		t.SizeCode,
+    		t.ExportQty,
+            [PackQty] = isnull(sum(pd.ShipQty), 0)
+    from    #tmpDeclaration t
+    inner join  Packinglist p with (nolock) on p.InvNo = t.InvNo
+    inner join  PackingList_Detail pd with (nolock) on  pd.ID = p.ID and
+                                                        pd.OrderID = t.OrderID and
+                                                        pd.Article = t.Article and
+                                                        pd.SizeCode = t.SizeCode
+    where 1 = 1 {sqlWhereBreakdownChangedBrand}
+    group by    p.ID,
+                t.InvNo,
+    		    t.OrderID,
+    		    t.Article,
+    		    t.SizeCode,
+    		    t.ExportQty
+    union all
+    select  ta.ID,
+            t.InvNo,
+    		t.OrderID,
+    		t.Article,
+    		t.SizeCode,
+    		t.ExportQty,
+            [PackQty] = isnull(sum(ta.ShipQty), 0)
+    from    #tmpDeclaration t
+    inner join  #tmpPackA2B ta on  ta.InvNo = t.InvNo and
+                                   ta.OrderID = t.OrderID and
+                                   ta.Article = t.Article and
+                                   ta.SizeCode = t.SizeCode
+    group by    ta.ID,
+                t.InvNo,
+    		    t.OrderID,
+    		    t.Article,
+    		    t.SizeCode,
+    		    t.ExportQty
+) a
 
 select  t.InvNo,
 		t.OrderID,
@@ -217,7 +317,8 @@ drop table #tmpDeclaration, #tmpPack
 
 ";
 
-            DualResult result = DBProxy.Current.Select(null, sqlCmd, out this.printData);
+            result = MyUtility.Tool.ProcessWithDatatable(dtA2BPackResult, null, sqlCmd, out this.printData, temptablename: "#tmpPackA2B");
+
             if (!result)
             {
                 DualResult failResult = new DualResult(false, "Query data fail\r\n" + result.ToString());
