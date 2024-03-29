@@ -28,8 +28,8 @@ namespace Sci.Production.Prg.PowerBI.Logic
         {
             List<SqlParameter> listPar = new List<SqlParameter>
             {
-                new SqlParameter("@Inline", SqlDbType.Date) { Value = (object)model.Inline.Value ?? DBNull.Value },
-                new SqlParameter("@Offline", SqlDbType.Date) { Value = (object)model.Offline.Value ?? DBNull.Value },
+                new SqlParameter("@Inline", SqlDbType.Date) { Value = (object)model.Inline ?? DBNull.Value },
+                new SqlParameter("@Offline", SqlDbType.Date) { Value = (object)model.Offline ?? DBNull.Value },
                 new SqlParameter("@Line1", SqlDbType.VarChar, 10) { Value = model.Line1 },
                 new SqlParameter("@Line2", SqlDbType.VarChar, 10) { Value = model.Line2 },
                 new SqlParameter("@MDivisionID", SqlDbType.VarChar, 10) { Value = model.MDivisionID },
