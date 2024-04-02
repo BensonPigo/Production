@@ -1057,3 +1057,10 @@ GO
 
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Order' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders'
 GO
+
+CREATE NONCLUSTERED INDEX [IDX_Orders_BrandStyle] ON [dbo].[Orders]
+(
+	[BrandID] ASC,
+	[StyleID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+go
