@@ -175,6 +175,17 @@ namespace Sci.Production.Prg.PowerBI.Logic
 						and pld.ScanEditDate  is null 
 						and pld.TransferDate is null 
 						then 'Fty'
+				when pld.TransferDate is null and 
+					((ClogReturn.AddDate > isnull(PackingAuditScanTime.val, '19710101') 
+					and ClogReturn.AddDate > isnull(M360MDScanTime.val, '19710101') 
+					and ClogReturn.AddDate > isnull(pld.ScanEditDate, '19710101') 
+					and ClogReturn.AddDate > isnull(HaulingScanTime.val, '19710101')) 
+					or 
+					(CFAReturn.AddDate > isnull(PackingAuditScanTime.val, '19710101') 
+					and CFAReturn.AddDate > isnull(M360MDScanTime.val, '19710101')
+					and CFAReturn.AddDate > isnull(pld.ScanEditDate, '19710101') 
+					and CFAReturn.AddDate > isnull(HaulingScanTime.val, '19710101')))
+						then 'Fty'
 				when pld.TransferDate is null and PackingAuditScanTime.val > isnull(HaulingScanTime.val, '19710101') and PackingAuditScanTime.val > isnull(M360MDScanTime.val, '19710101') and PackingAuditScanTime.val > isnull(pld.ScanEditDate, '19710101') 
 						then 'Packing Audit'
 				when pld.TransferDate is null and HaulingScanTime.val > isnull(PackingAuditScanTime.val, '19710101') and HaulingScanTime.val > isnull(M360MDScanTime.val, '19710101') and HaulingScanTime.val > isnull(pld.ScanEditDate, '19710101') 
@@ -183,8 +194,12 @@ namespace Sci.Production.Prg.PowerBI.Logic
 						then 'M360 MD'
 				when pld.TransferDate is null and pld.ScanEditDate > isnull(PackingAuditScanTime.val, '19710101') and pld.ScanEditDate > isnull(HaulingScanTime.val, '19710101') and pld.ScanEditDate > isnull(M360MDScanTime.val, '19710101') 
 						then 'Scan & Pack'
-				when pld.TransferDate is not null and ClogReceiveTime.val is null 
-						then 'Transit to CLOG'
+				when pld.TransferDate is not null and pld.TransferDate > isnull(pld.ReceiveDate, '19710101')
+						then 'Fty transit to CLOG'
+				when pld.TransferCFADate is not null and pld.ClogLocationID = '2CFA'
+						then 'CLOG transit to CFA'
+				when pld.CFAReturnClogDate is not null and pld.ClogLocationID = '2Clog'
+						then 'CFA transit to CLOG'
 				when CFAReceiveTime.val is not null and CFAReceiveTime.val > isnull(CFAReturnTime.val, '19710101') 
 						then 'CFA'
 				when ClogReceiveTime.val is not null and (CFAReceiveTime.val is null or ClogReceiveFromCFATime.val > isnull(CFAReturnTime.val, '19710101') )
