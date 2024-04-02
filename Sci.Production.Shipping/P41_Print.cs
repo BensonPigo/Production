@@ -393,7 +393,7 @@ drop table #tmpDeclaration, #tmpPack
                     objArray[0, 12] = dr["GW"];
                     objArray[0, 13] = dr["NW"];
                     objArray[0, 14] = dr["CMP"];
-                    worksheet.Range[string.Format("A{0}:M{0}", row)].Value2 = objArray;
+                    worksheet.Range[string.Format("A{0}:O{0}", row)].Value2 = objArray;
                 }
 
                 if (MyUtility.Convert.GetString(dr["Type"]) == "2")

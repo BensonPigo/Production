@@ -593,7 +593,7 @@ Declare @invno VARCHAR(25),
 SET @invno = '{MyUtility.Convert.GetString(this.CurrentMaintain["InvNo"])}'
 SET @contractid = '{MyUtility.Convert.GetString(this.CurrentMaintain["VNContractID"])}'
 ";
-            return strReturn; 
+            return strReturn;
         }
 
         private string PackingSql(bool isA2B)
