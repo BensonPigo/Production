@@ -45,7 +45,7 @@ select p.BuyerDelivery
 	, [MDScanRate] = cast(iif(isnull(p.TotalCartonQty, 0) = 0, 0, (p.MDScanQty * 1.0 / p.TotalCartonQty) * 100) as decimal(5, 2))
 	, [ScanAndPackRate] = cast(iif(isnull(p.TotalCartonQty, 0) = 0, 0, (p.ScanAndPackQty * 1.0 / p.TotalCartonQty) * 100) as decimal(5, 2))
 	, [PullOutRate] = cast(iif(isnull(p.TotalCartonQty, 0) = 0, 0, (p.SPCountWithPulloutCmplt * 1.0 / p.TotalCartonQty) * 100) as decimal(5,2))
-	, [ClogReceivedRate] = cast(iif(isnull(p.SPCount, 0) = 0, 0, (p.ClogReceivedQty * 1.0 / p.SPCount) * 100) as decimal(5,2))
+	, [ClogReceivedRate] = cast(iif(isnull(p.TotalCartonQty, 0) = 0, 0, (p.ClogReceivedQty * 1.0 / p.TotalCartonQty) * 100) as decimal(5,2))
 into #tmp_P_CartonScanRate
 from (
 	select [SPCount] = count(distinct p.SP)
@@ -53,7 +53,7 @@ from (
 		, [HauledQty] = Sum(p.HauledQty)
 		, [PackingAuditQty] = Sum(IIF(p.PackingAuditScanTime is null, 0, p.CartonQty))
 		, [MDScanQty] = Sum(IIF(p.MDScanTime is null, 0, p.CartonQty))
-		, [ClogReceivedQty] = isnull([SPCountWithClogReceiveTime], 0)
+		, [ClogReceivedQty] = isnull([CartonQtyWithClogReceiveTime], 0)
 		, [ScanAndPackQty] = Sum(p.ScanQty)
 		, [TotalCartonQty] = Sum(p.CartonQty)
 		, f.FTYGroup
@@ -71,7 +71,7 @@ from (
 		group by f.FTYGroup, p.BuyerDelivery
 	) p2 on f.FTYGroup = p2.FTYGroup and p.BuyerDelivery = p2.BuyerDelivery
 	left join (
-		select [SPCountWithClogReceiveTime] = count(distinct p.SP)
+		select [CartonQtyWithClogReceiveTime] = Sum(p.CartonQty)
 			, f.FTYGroup, p.BuyerDelivery
 		from P_CartonStatusTrackingList p WITH(NOLOCK)
 		inner join [MainServer].Production.dbo.Factory f WITH(NOLOCK) on p.fty = f.ID
@@ -82,7 +82,7 @@ from (
 	)p3 on f.FTYGroup = p3.FTYGroup and p.BuyerDelivery = p3.BuyerDelivery
 	where p.BuyerDelivery >= CONVERT(date, GETDATE()) 
 	and p.BuyerDelivery <= DATEADD(DAY ,7,CONVERT(date, GETDATE())) 
-	group by f.FTYGroup, p.BuyerDelivery, p2.[SPCountWithPulloutCmplt], p3.[SPCountWithClogReceiveTime]
+	group by f.FTYGroup, p.BuyerDelivery, p2.[SPCountWithPulloutCmplt], p3.[CartonQtyWithClogReceiveTime]
 ) p
 
 
