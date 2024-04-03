@@ -24,8 +24,8 @@ namespace Sci.Production.Prg.PowerBI.Logic
             P_CuttingScheduleOutputList,
             P_QAR31,
             P_QA_CFAMasterList,
-            P_FabricDispatchRate,
-            P_IssueFabricByCuttingTransactionList,
+            P_CartonScanRate,
+            P_CartonStatusTrackingList,
         }
 
         /// <summary>
@@ -99,7 +99,14 @@ namespace Sci.Production.Prg.PowerBI.Logic
         public List<ExecutedList> GetExecuteList()
         {
             List<ExecutedList> executes = new List<ExecutedList>();
-            string sql = "select * from BITaskInfo where junk = 0";
+            string sql = @"
+SELECT i.*
+	, [Group] = ISNULL(g.[GroupID], 0)
+	, [SEQ] = ISNULL(g.[SEQ], 1)
+FROM BITaskInfo i
+LEFt JOIN BITaskGroup g ON i.[Name] = g.[Name]
+WHERE i.[Junk] = 0
+ORDER BY [Group], [SEQ], [NAME]";
             DualResult result = DBProxy.Current.Select("PowerBI", sql, out DataTable dataTable);
             if (!result || dataTable.Rows.Count == 0)
             {
@@ -126,6 +133,8 @@ namespace Sci.Production.Prg.PowerBI.Logic
                 string sDate_s2 = hasStartDate2 ? "Sdate2 : " + sDate2.Value.ToShortDateString() : string.Empty;
                 string eDate_s2 = hasEndDate2 ? "Edate2 : " + eDate2.Value.ToShortDateString() : string.Empty;
                 string remark = $@"{dr["Source"]}{procedureNameS}{Environment.NewLine}{sDate_s}{Environment.NewLine}{eDate_s}{Environment.NewLine}{sDate_s2}{Environment.NewLine}{eDate_s2}";
+                int group = (int)dr["Group"];
+                int seq = (int)dr["SEQ"];
 
                 ExecutedList model = new ExecutedList()
                 {
@@ -138,6 +147,8 @@ namespace Sci.Production.Prg.PowerBI.Logic
                     EDate2 = eDate2,
                     RunOnSunday = runOnSunday,
                     Remark = remark,
+                    Group = group,
+                    SEQ = seq,
                 };
 
                 executes.Add(model);
@@ -163,19 +174,41 @@ namespace Sci.Production.Prg.PowerBI.Logic
         /// <param name="executedList">ExecutedList</param>
         public void ExecuteAll(List<ExecutedList> executedList)
         {
+            if (executedList.Where(x => !string.IsNullOrEmpty(x.ClassName)).Count() == 0)
+            {
+                return;
+            }
+
             DateTime stratExecutedTime = DateTime.Now;
+            List<ExecutedList> executedListDetail = new List<ExecutedList>();
             List<ExecutedList> executedListEnd = new List<ExecutedList>();
-            var results = executedList.Where(x => !string.IsNullOrEmpty(x.ClassName))
+
+            var results = executedList
+                .GroupBy(x => x.Group)
                 .AsParallel()
+                .AsOrdered()
                 .Select(item =>
                 {
-                    ExecutedList model = this.ExecuteSingle(item);
-                    return model;
+                    var results_detail = item
+                        .OrderBy(x => x.SEQ)
+                        .AsParallel()
+                        .AsSequential()
+                        .Select(detail => this.ExecuteSingle(detail))
+
+                        // .TakeWhile(model => model.Group == 0 || model.Success) // 只保留成功的结果
+                        .ToList();
+
+                    foreach (var item_detail in results_detail)
+                    {
+                        executedListDetail.Add(item_detail);
+                    }
+
+                    return executedListDetail;
                 });
 
             foreach (var item in results)
             {
-                executedListEnd.Add(item);
+                executedListEnd.AddRange(item);
             }
 
             this.UpdateJobLogAndSendMail(executedListEnd, stratExecutedTime);
@@ -216,11 +249,11 @@ namespace Sci.Production.Prg.PowerBI.Logic
                     case ListName.P_SewingLineScheduleBySP:
                         result = new P_Import_SewingLineScheduleBySP().P_SewingLineScheduleBySP(item.SDate, item.EDate);
                         break;
-                    case ListName.P_FabricDispatchRate:
-                        result = new P_Import_FabricDispatchRate().P_FabricDispatchRate(item.SDate);
+                    case ListName.P_CartonScanRate:
+                        result = new P_Import_CartonScanRate().P_CartonScanRate();
                         break;
-                    case ListName.P_IssueFabricByCuttingTransactionList:
-                        result = new P_Import_IssueFabricByCuttingTransactionList().P_IssueFabricByCuttingTransactionList(item.SDate, item.EDate);
+                    case ListName.P_CartonStatusTrackingList:
+                        result = new P_Import_CartonStatusTrackingList().P_CartonStatusTrackingList(item.SDate);
                         break;
                 }
             }
@@ -235,7 +268,9 @@ namespace Sci.Production.Prg.PowerBI.Logic
             {
                 ClassName = item.ClassName,
                 ProcedureName = item.ProcedureName,
-                Sucess = result.Result,
+                Success = result.Result,
+                Group = item.Group,
+                SEQ = item.SEQ,
                 ErrorMsg = !result.Result ? result.Result.Messages.ToString() : string.Empty,
                 ExecuteSDate = executeSDate,
                 ExecuteEDate = executeEDate,
@@ -252,8 +287,8 @@ namespace Sci.Production.Prg.PowerBI.Logic
         public void UpdateJobLogAndSendMail(List<ExecutedList> executedList, DateTime stratExecutedTime)
         {
             string region = this.GetRegion();
-            string description = string.Join(Environment.NewLine, executedList.Select(x => $"[{x.ClassName}] is {(x.Sucess ? "completed " : "fail ")} Time: {x.ExecuteSDate.Value.ToString("yyyy/MM/dd HH:mm:ss")} - {x.ExecuteEDate.Value.ToString("yyyy/MM/dd HH:mm:ss")}。 {(x.Sucess ? string.Empty : Environment.NewLine + x.ErrorMsg)}"));
-            bool nonSucceed = executedList.Where(x => !x.Sucess).Count() > 0;
+            string description = string.Join(Environment.NewLine, executedList.Select(x => $"[{x.ClassName}] is {(x.Success ? "completed " : "fail ")} Time: {x.ExecuteSDate.Value.ToString("yyyy/MM/dd HH:mm:ss")} - {x.ExecuteEDate.Value.ToString("yyyy/MM/dd HH:mm:ss")}。 {(x.Success ? string.Empty : Environment.NewLine + x.ErrorMsg)}"));
+            bool nonSucceed = executedList.Where(x => !x.Success).Count() > 0;
 
             JobLog jobLog = new JobLog()
             {

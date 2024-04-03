@@ -52,7 +52,7 @@ namespace Sci.Production.Prg.PowerBI.Model
         /// <summary>
         /// 執行成功
         /// </summary>
-        public bool Sucess { get; set; }
+        public bool Success { get; set; }
 
         /// <summary>
         /// 執行時間 起
@@ -78,6 +78,16 @@ namespace Sci.Production.Prg.PowerBI.Model
         /// 只在假日執行
         /// </summary>
         public bool RunOnSunday { get; set; }
+
+        /// <summary>
+        /// 群組
+        /// </summary>
+        public int Group { get; set; }
+
+        /// <summary>
+        /// 順序
+        /// </summary>
+        public int SEQ { get; set; }
 
         /// <summary>
         /// 執行清單

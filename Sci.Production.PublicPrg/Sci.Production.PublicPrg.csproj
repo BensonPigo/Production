@@ -212,6 +212,8 @@
     <Compile Include="Packing.cs" />
     <Compile Include="PmsWebAPI.cs" />
     <Compile Include="Entity\Prgs_POSuppDetailData.cs" />
+    <Compile Include="PowerBI\DataAccess\P_Import_CartonScanRate.cs" />
+    <Compile Include="PowerBI\DataAccess\P_Import_CartonStatusTrackingList.cs" />
     <Compile Include="PowerBI\DataAccess\P_Import_CuttingScheduleOutputList.cs" />
     <Compile Include="PowerBI\DataAccess\P_Import_FabricDispatchRate.cs" />
     <Compile Include="PowerBI\DataAccess\P_Import_InlineDefec.cs" />
@@ -235,12 +237,14 @@
     </Compile>
     <Compile Include="PowerBI\Logic\Base.cs" />
     <Compile Include="PowerBI\Logic\Cutting_R13.cs" />
+    <Compile Include="PowerBI\Logic\PPIC_R21.cs" />
     <Compile Include="PowerBI\Logic\PPIC_R01.cs" />
     <Compile Include="PowerBI\Logic\QA_R31.cs" />
     <Compile Include="PowerBI\Logic\Warehouse_R16.cs" />
     <Compile Include="PowerBI\Model\Base_ViewModel.cs" />
     <Compile Include="PowerBI\Model\Cutting_R13_ViewModel.cs" />
     <Compile Include="PowerBI\Model\Inline_R08_ViewModel.cs" />
+    <Compile Include="PowerBI\Model\PPIC_R21_ViewModel.cs" />
     <Compile Include="PowerBI\Model\PPIC_R01_ViewModel.cs" />
     <Compile Include="PowerBI\Model\PPIC_R16_ViewModel.cs" />
     <Compile Include="PowerBI\Model\QA_R31_ViewModel.cs" />

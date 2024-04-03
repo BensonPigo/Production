@@ -6,6 +6,7 @@
 	[MDScanRate] [numeric](5, 2) NOT NULL,
 	[ScanAndPackRate] [numeric](5, 2) NOT NULL,
 	[PullOutRate] [numeric](5, 2) NOT NULL,
+	[ClogReceivedRate] [numeric](5, 2) NOT NULL,
  CONSTRAINT [PK_P_CartonScanRate] PRIMARY KEY CLUSTERED 
 (
 	[Date] ASC,
@@ -32,3 +33,5 @@ GO
 ALTER TABLE [dbo].[P_CartonScanRate] ADD  CONSTRAINT [DF_P_CartonScanRate_PullOutRate]  DEFAULT ((0)) FOR [PullOutRate]
 GO
 
+ALTER TABLE [dbo].[P_CartonScanRate] ADD  CONSTRAINT [DF_P_CartonScanRate_ClogReceivedRate]  DEFAULT ((0)) FOR [ClogReceivedRate]
+GO
