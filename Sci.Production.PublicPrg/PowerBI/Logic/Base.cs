@@ -26,6 +26,8 @@ namespace Sci.Production.Prg.PowerBI.Logic
             P_QA_CFAMasterList,
             P_CartonScanRate,
             P_CartonStatusTrackingList,
+            P_FabricDispatchRate,
+            P_IssueFabricByCuttingTransactionList,
         }
 
         /// <summary>
@@ -254,6 +256,12 @@ ORDER BY [Group], [SEQ], [NAME]";
                         break;
                     case ListName.P_CartonStatusTrackingList:
                         result = new P_Import_CartonStatusTrackingList().P_CartonStatusTrackingList(item.SDate);
+						break;
+                    case ListName.P_FabricDispatchRate:
+                        result = new P_Import_FabricDispatchRate().P_FabricDispatchRate(item.SDate);
+                        break;
+                    case ListName.P_IssueFabricByCuttingTransactionList:
+                        result = new P_Import_IssueFabricByCuttingTransactionList().P_IssueFabricByCuttingTransactionList(item.SDate, item.EDate);
                         break;
                 }
             }

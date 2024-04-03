@@ -227,6 +227,7 @@
     <Build Include="dbo\Tables\P_CartonScanRate.sql" />
     <Build Include="dbo\Tables\P_WBScanRate.sql" />
     <Build Include="dbo\Tables\BITaskGroup.sql" />
+    <Build Include="dbo\Tables\P_FabricDispatchRate.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Utility.dll" />
