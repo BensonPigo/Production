@@ -188,7 +188,9 @@ inner join ( select * from dbo.SciTrade_To_Pms_Part WITH (NOLOCK) where type = '
                  t.AddDate=  s.AddDate,
                  t.EditName= isnull( s.EditName,                   ''),
                  t.EditDate=  s.EditDate,
-                 t.DescriptionDetail = isnull( s.DescriptionDetail,'')
+                 t.DescriptionDetail = isnull( s.DescriptionDetail,''),
+                 t.Handle= isnull( s.Handle,                     ''),
+                 t.FactoryID= isnull( s.FactoryID,                     '')
     from dbo.MiscOther  t
     inner join dbo.SciTrade_To_Pms_Part s on t.id=s.Refno and t.BrandID = s.BrandID and t.SuppID = s.SuppID and s.type='R' 
 
@@ -210,7 +212,9 @@ inner join ( select * from dbo.SciTrade_To_Pms_Part WITH (NOLOCK) where type = '
                             ,AddDate
                             ,EditName
                             ,EditDate
-                            ,DescriptionDetail)
+                            ,DescriptionDetail
+							,Handle
+							,FactoryID)
                 select  isnull(s.refno,            ''),
                         isnull(s.Model,            ''),
                         isnull(s.BrandID,          ''),
@@ -229,7 +233,9 @@ inner join ( select * from dbo.SciTrade_To_Pms_Part WITH (NOLOCK) where type = '
                         s.AddDate,
                         isnull(s.EditName,         ''),
                         s.EditDate,
-                        isnull(s.DescriptionDetail,'')
+                        isnull(s.DescriptionDetail,''),
+                        isnull(s.Handle,''),
+                        isnull(s.FactoryID,'')
                 from dbo.SciTrade_To_Pms_Part s
                 where s.type='R' and not exists(select 1 from dbo.MiscOther t where t.id = s.Refno and t.BrandID = s.BrandID and t.SuppID = s.SuppID)
 
@@ -731,6 +737,8 @@ inner join ( select * from dbo.SciTrade_To_Pms_Part WITH (NOLOCK) where type = '
         ,[TPEFoc]	   = isnull( s.Foc         ,0)
 		,MachineReqID  = isnull( s.MmsReqID    ,'')
 		,Junk		   = isnull( s.Junk        ,0)
+		,Delivery	   =  s.Delivery
+		,ShipQty		   = isnull( s.ShipQty        ,0)
 	from dbo.MiscOtherPO_Detail t
 	inner join dbo.SciTrade_To_Pms_MmsPO_Detail s WITH (NOLOCK) on t.id=s.id and t.seq1=s.seq1 and t.seq2=s.seq2
 	inner join dbo.SciTrade_To_Pms_MmsPO sM WITH (NOLOCK) on sM.id = s.ID
@@ -791,7 +799,9 @@ inner join ( select * from dbo.SciTrade_To_Pms_Part WITH (NOLOCK) where type = '
 			,[TPEQty]
 			,[TPEFoc]
 			,MachineReqID
-			,Junk)
+			,Junk
+			,Delivery
+			,ShipQty)
 	select
 		 isnull(s.[ID]      ,'')
 		,isnull(s.[Seq1]    ,'')
@@ -806,6 +816,8 @@ inner join ( select * from dbo.SciTrade_To_Pms_Part WITH (NOLOCK) where type = '
 		,isnull(s.Foc       ,0)
 		,isnull(s.MmsReqID  ,'')
 		,isnull(s.Junk      ,0)
+		,s.Delivery
+		,isnull( s.ShipQty        ,0)
 	from dbo.SciTrade_To_Pms_MmsPO sM 
 	inner join dbo.SciTrade_To_Pms_MmsPO_Detail s WITH (NOLOCK) on sM.id = s.ID
 	left join dbo.MiscOtherPO_Detail t on t.id=s.id and t.seq1=s.seq1 and t.seq2=s.seq2

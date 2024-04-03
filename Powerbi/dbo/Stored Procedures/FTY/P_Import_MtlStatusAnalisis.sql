@@ -39,6 +39,12 @@ Begin
 		From Machine.dbo.PartPO_Detail ppd with(nolock)
 		inner join Machine.dbo.PartPO pp with(nolock) on ppd.ID = pp.ID
 		where exists (select 1 from [MainServer].Production.dbo.Export_Detail ed with(nolock) where ppd.TPEPOID = ed.PoID and ed.POType = 'M')
+		union all
+		Select type = 'MiscOtherPO_Detail',motd.ID, motd.SEQ1, motd.SEQ2, motd.Delivery, mo.Handle, mo.FactoryID, motd.Qty, motd.SuppID
+			, [BalQty] = motd.Qty - motd.ShipQty
+		From Machine.dbo.MiscOtherPO_Detail motd with(nolock)
+		inner join Machine.dbo.MiscOther mo with(nolock) on motd.ID = mo.ID
+		where exists (select 1 from [MainServer].Production.dbo.Export_Detail ed with(nolock) where motd.ID = ed.PoID and ed.POType = 'M')
 	) a
 	group by  type,  a.ID, a.Seq1, a.Seq2, a.Handle, a.FactoryID, a.SuppID
 
@@ -124,7 +130,7 @@ Begin
 	Left join [MainServer].Production.dbo.TPEPass1 poHandle with(nolock) on poHandle.ID = mp.Handle
 	Where ed.POType = 'M'
 	And e.CloseDate Between @CloseDate_S And @CloseDate_E
-	And exists (select 1 from [MainServer].Production.dbo.Factory f with(nolock) where o.FactoryID = f.ID and f.IsProduceFty = 1)
+	And exists (select 1 from [MainServer].Production.dbo.Factory f with(nolock) where e.FactoryID = f.ID and f.IsProduceFty = 1)
 	Order by e.ID, ed.POID
 
 	Select Distinct 
