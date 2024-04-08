@@ -89,6 +89,9 @@ CREATE TABLE [dbo].[System] (
     [NikeFactoryCode] VARCHAR(3) CONSTRAINT [DF_System_NikeFactoryCode] DEFAULT ('') NOT NULL,
     [NikeStickerPrintServer] VARCHAR(20)  CONSTRAINT [DF_System_NikeStickerPrintServer] DEFAULT ('') NOT NULL,
     [NikeStickerPrintFileFolder] VARCHAR(100)  CONSTRAINT [DF_System_NikeStickerPrintFileFolder] DEFAULT ('') NOT NULL,
+    [ImportDataPathDummy] [varchar](60) NOT NULL CONSTRAINT [DF_System_ImportDataPathDummy]  DEFAULT (''),
+	[ImportDataFileNameDummy] [varchar](60) NOT NULL CONSTRAINT [DF_System_ImportDataFileNameDummy]  DEFAULT (''),
+	[ExportDataPathDummy] [varchar](60) NOT NULL CONSTRAINT [DF_System_ExportDataPathDummy]  DEFAULT (''),
     CONSTRAINT [PK_RgCode] PRIMARY KEY CLUSTERED ([RgCode] ASC)
 );
 go
@@ -238,3 +241,29 @@ EXEC sp_addextendedproperty @name = N'MS_Description',
 go
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'是否檢查AD帳號' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'System', @level2type=N'COLUMN',@level2name=N'IsLoginCheckADAccount'
 GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'資料交換dummy Import檔案位置',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'System',
+    @level2type = N'COLUMN',
+    @level2name = N'ImportDataPathDummy'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'資料交換dummy import檔案名稱',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'System',
+    @level2type = N'COLUMN',
+    @level2name = N'ImportDataFileNameDummy'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'資料交換dummy 轉出檔案位置',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'System',
+    @level2type = N'COLUMN',
+    @level2name = N'ExportDataPathDummy'
