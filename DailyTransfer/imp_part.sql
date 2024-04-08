@@ -188,9 +188,7 @@ inner join ( select * from dbo.SciTrade_To_Pms_Part WITH (NOLOCK) where type = '
                  t.AddDate=  s.AddDate,
                  t.EditName= isnull( s.EditName,                   ''),
                  t.EditDate=  s.EditDate,
-                 t.DescriptionDetail = isnull( s.DescriptionDetail,''),
-                 t.Handle= isnull( s.Handle,                     ''),
-                 t.FactoryID= isnull( s.FactoryID,                     '')
+                 t.DescriptionDetail = isnull( s.DescriptionDetail,'')
     from dbo.MiscOther  t
     inner join dbo.SciTrade_To_Pms_Part s on t.id=s.Refno and t.BrandID = s.BrandID and t.SuppID = s.SuppID and s.type='R' 
 
@@ -212,9 +210,7 @@ inner join ( select * from dbo.SciTrade_To_Pms_Part WITH (NOLOCK) where type = '
                             ,AddDate
                             ,EditName
                             ,EditDate
-                            ,DescriptionDetail
-							,Handle
-							,FactoryID)
+                            ,DescriptionDetail)
                 select  isnull(s.refno,            ''),
                         isnull(s.Model,            ''),
                         isnull(s.BrandID,          ''),
@@ -233,9 +229,7 @@ inner join ( select * from dbo.SciTrade_To_Pms_Part WITH (NOLOCK) where type = '
                         s.AddDate,
                         isnull(s.EditName,         ''),
                         s.EditDate,
-                        isnull(s.DescriptionDetail,''),
-                        isnull(s.Handle,''),
-                        isnull(s.FactoryID,'')
+                        isnull(s.DescriptionDetail,'')
                 from dbo.SciTrade_To_Pms_Part s
                 where s.type='R' and not exists(select 1 from dbo.MiscOther t where t.id = s.Refno and t.BrandID = s.BrandID and t.SuppID = s.SuppID)
 
@@ -721,6 +715,7 @@ inner join ( select * from dbo.SciTrade_To_Pms_Part WITH (NOLOCK) where type = '
         ,[AddDate]		= sM.[AddDate]
         ,[EditName]		= isnull( sM.[EditName],'')
         ,[EditDate]		= sM.[EditDate]
+		,Handle		= isnull( sM.Handle,'')
 	from MiscOtherPO t
 	inner join dbo.SciTrade_To_Pms_MmsPO sM WITH (NOLOCK) on sM.id = t.ID
 	left join Production.dbo.scifty b on sM.FactoryID = b.ID
@@ -761,7 +756,8 @@ inner join ( select * from dbo.SciTrade_To_Pms_Part WITH (NOLOCK) where type = '
            ,[AddName]
            ,[AddDate]
            ,[EditName]
-           ,[EditDate])
+           ,[EditDate]
+		   ,Handle)
 	select
 		 isnull(sM.[ID]       ,'')
         ,sM.[Cdate]
@@ -779,7 +775,8 @@ inner join ( select * from dbo.SciTrade_To_Pms_Part WITH (NOLOCK) where type = '
         ,isnull(sM.[AddName]   ,'')
         ,sM.[AddDate]
         ,isnull(sM.[EditName],'')
-        ,sM.[EditDate]
+        ,sM.[EditDate]		
+        ,isnull(sM.Handle,'')
 	from dbo.SciTrade_To_Pms_MmsPO sM
 	left join MiscOtherPO t WITH (NOLOCK) on sM.id = t.ID
 	left join Production.dbo.scifty b on sM.FactoryID = b.ID

@@ -43,7 +43,7 @@ Begin
 		Select type = 'MiscOtherPO_Detail',motd.ID, motd.SEQ1, motd.SEQ2, motd.Delivery, mo.Handle, mo.FactoryID, motd.Qty, motd.SuppID
 			, [BalQty] = motd.Qty - motd.ShipQty
 		From Machine.dbo.MiscOtherPO_Detail motd with(nolock)
-		inner join Machine.dbo.MiscOther mo with(nolock) on motd.ID = mo.ID
+		inner join Machine.dbo.MiscOtherPO mo with(nolock) on motd.ID = mo.ID
 		where exists (select 1 from [MainServer].Production.dbo.Export_Detail ed with(nolock) where motd.ID = ed.PoID and ed.POType = 'M')
 	) a
 	group by  type,  a.ID, a.Seq1, a.Seq2, a.Handle, a.FactoryID, a.SuppID
