@@ -221,6 +221,8 @@ outer apply(
     and td.Dyelot = sd.Dyelot
     and td.StockType = sd.StockType
 )td
+ORDER BY POID,Seq,Roll, Dyelot
+
 
 select
     Sel = Cast(0 as bit)
@@ -280,6 +282,8 @@ outer apply(
     and td.Dyelot = sd.ToDyelot
     and td.StockType = sd.ToStockType
 )td
+ORDER BY POID,Seq,Roll, Dyelot
+
 
 drop table #tmp,#tmpFrom
 ";
