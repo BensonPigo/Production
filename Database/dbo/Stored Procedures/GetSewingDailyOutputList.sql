@@ -213,7 +213,7 @@ select t.*
     ,[FtyType] = f.Type
     ,[FtyCountry] = f.CountryID
     ,[SPFactory] = o.FactoryID
-into #tmp1stFilter_First
+into #tmp1stFilter
 from #tmpSewingGroup t
 left join Factory f on t.FactoryID = f.ID
 left join Orders o on t.OrderId = o.ID
