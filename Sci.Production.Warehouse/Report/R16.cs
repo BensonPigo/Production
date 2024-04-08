@@ -1,7 +1,7 @@
 ﻿using Ict;
-using Sci.Data;
+using Sci.Production.Prg.PowerBI.Logic;
+using Sci.Production.Prg.PowerBI.Model;
 using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
@@ -50,50 +50,26 @@ namespace Sci.Production.Warehouse
         /// <inheritdoc/>
         protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
-            #region where
-            List<string> parameters = new List<string>();
-            if (!MyUtility.Check.Empty(this.issueDate1))
+            PPIC_R16_ViewModel model = new PPIC_R16_ViewModel()
             {
-                parameters.Add($" @IssueDateFrom = '{((DateTime)this.issueDate1).ToString("yyyy/MM/dd")}'");
+                IssueDateFrom = this.issueDate1,
+                IssueDateTo = this.issueDate2,
+                MDivisionID = this.mdivision,
+                FactoryID = this.factory,
+                CutplanIDFrom = this.request1,
+                CutplanIDTo = this.request2,
+                EditDateFrom = null,
+                EditDateTo = null,
+            };
+
+            Warehouse_R16 biModel = new Warehouse_R16();
+            Base_ViewModel resultReport = biModel.GetIssueFabricByCuttingTransactionList(model);
+            if (!resultReport.Result)
+            {
+                return resultReport.Result;
             }
 
-            if (!MyUtility.Check.Empty(this.issueDate2))
-            {
-                parameters.Add($" @IssueDateTo = '{((DateTime)this.issueDate2).ToString("yyyy/MM/dd")}'");
-            }
-
-            if (!MyUtility.Check.Empty(this.mdivision))
-            {
-                parameters.Add($" @MDivisionID = '{this.mdivision}'");
-            }
-
-            if (!MyUtility.Check.Empty(this.factory))
-            {
-                parameters.Add($" @FactoryID = '{this.factory}'");
-            }
-
-            if (!MyUtility.Check.Empty(this.request1))
-            {
-                parameters.Add($" @CutplanIDFrom = '{this.request1}'");
-            }
-
-            if (!MyUtility.Check.Empty(this.request2))
-            {
-                parameters.Add($" @CutplanIDTo = '{this.request2}'");
-            }
-
-            #endregion
-
-            string sqlcmd = $@"
-exec Warehouse_Report_R16 {parameters.JoinToString(",")}
-";
-
-            DualResult result = DBProxy.Current.Select(null, sqlcmd, null, out this.printData);
-            if (!result)
-            {
-                return result;
-            }
-
+            this.printData = resultReport.Dt;
             this.printData.Columns.Remove("AddDate");
             this.printData.Columns.Remove("EditDate");
             this.printData.Columns.Remove("StockType");
@@ -101,8 +77,6 @@ exec Warehouse_Report_R16 {parameters.JoinToString(",")}
 
             return Ict.Result.True;
         }
-
-        // 產生Excel
 
         /// <inheritdoc/>
         protected override bool OnToExcel(Win.ReportDefinition report)

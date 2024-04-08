@@ -89,6 +89,10 @@
     [M360MDScanName] VARCHAR(10) not null constraint [DF_PackingList_Detail_M360MDScanName] DEFAULT '',
     [MDMachineNo] VARCHAR(30) NOT NULL DEFAULT (''), 
     [CustCTN2]     VARCHAR (30)    not null constraint [DF_PackingList_Detail_CustCTN2] DEFAULT '',
+    [ClogScanQty] SMALLINT NOT NULL DEFAULT ((0)), 
+    [ClogLackingQty] SMALLINT NOT NULL DEFAULT ((0)), 
+    [ClogScanDate] DATETIME NULL, 
+    [ClogScanName] VARCHAR(10) NOT NULL, 
     CONSTRAINT [PK_Ukey] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
 
@@ -378,3 +382,39 @@ EXEC sp_addextendedproperty @name = N'MS_Description',
     @level1name = N'PackingList_Detail',
     @level2type = N'COLUMN',
     @level2name = N'M360MDScanName'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'成品倉掃描數量',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'PackingList_Detail',
+    @level2type = N'COLUMN',
+    @level2name = N'ClogScanQty'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'成品倉缺件數量',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'PackingList_Detail',
+    @level2type = N'COLUMN',
+    @level2name = N'ClogLackingQty'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'成品倉最後掃描日',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'PackingList_Detail',
+    @level2type = N'COLUMN',
+    @level2name = N'ClogScanDate'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'成品倉最後掃描人員',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'PackingList_Detail',
+    @level2type = N'COLUMN',
+    @level2name = N'ClogScanName'
