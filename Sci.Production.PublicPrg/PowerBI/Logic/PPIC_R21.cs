@@ -176,15 +176,15 @@ namespace Sci.Production.Prg.PowerBI.Logic
 						and pld.TransferDate is null 
 						then 'Fty'
 				when pld.TransferDate is null and 
-					((ClogReturn.AddDate > isnull(PackingAuditScanTime.val, '19710101') 
-					and ClogReturn.AddDate > isnull(M360MDScanTime.val, '19710101') 
-					and ClogReturn.AddDate > isnull(pld.ScanEditDate, '19710101') 
-					and ClogReturn.AddDate > isnull(HaulingScanTime.val, '19710101')) 
+					((ClogReturnTime.val > isnull(PackingAuditScanTime.val, '19710101') 
+					and ClogReturnTime.val > isnull(M360MDScanTime.val, '19710101') 
+					and ClogReturnTime.val > isnull(pld.ScanEditDate, '19710101') 
+					and ClogReturnTime.val > isnull(HaulingScanTime.val, '19710101')) 
 					or 
-					(CFAReturn.AddDate > isnull(PackingAuditScanTime.val, '19710101') 
-					and CFAReturn.AddDate > isnull(M360MDScanTime.val, '19710101')
-					and CFAReturn.AddDate > isnull(pld.ScanEditDate, '19710101') 
-					and CFAReturn.AddDate > isnull(HaulingScanTime.val, '19710101')))
+					(CFAReturnTime.val > isnull(PackingAuditScanTime.val, '19710101') 
+					and CFAReturnTime.val > isnull(M360MDScanTime.val, '19710101')
+					and CFAReturnTime.val > isnull(pld.ScanEditDate, '19710101') 
+					and CFAReturnTime.val > isnull(HaulingScanTime.val, '19710101')))
 						then 'Fty'
 				when pld.TransferDate is null and PackingAuditScanTime.val > isnull(HaulingScanTime.val, '19710101') and PackingAuditScanTime.val > isnull(M360MDScanTime.val, '19710101') and PackingAuditScanTime.val > isnull(pld.ScanEditDate, '19710101') 
 						then 'Packing Audit'
