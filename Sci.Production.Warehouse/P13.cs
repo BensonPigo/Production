@@ -483,6 +483,7 @@ and ID = '{Sci.Env.User.UserID}'"))
                 .Text("Color", header: "Color", width: Widths.AnsiChars(10), iseditingreadonly: true) // 7
                 .Text("Size", header: "Size", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("GMTWash", header: "GMT Wash", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                .Text("HCHandle", header: "HC Handle", width: Widths.AnsiChars(20), iseditingreadonly: true)
             ;
             #endregion 欄位設定
 
@@ -984,6 +985,7 @@ select  o.FtyGroup
 		, [Size]= isnull(psdsS.SpecValue, '')
         , [GMTWash] = isnull(GMTWash.val, '')
         , [FtyInventoryUkey] = c.Ukey
+        , [HCHandle] = (select IdAndName from dbo.GetPassName(o.MCHandle))
 from dbo.issue_detail as a WITH (NOLOCK) 
 left join Orders o on a.poid = o.id
 left join PO_Supp_Detail psd WITH (NOLOCK) on psd.ID = a.PoId and psd.seq1 = a.SEQ1 and psd.SEQ2 = a.seq2
