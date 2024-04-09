@@ -715,6 +715,7 @@ inner join ( select * from dbo.SciTrade_To_Pms_Part WITH (NOLOCK) where type = '
         ,[AddDate]		= sM.[AddDate]
         ,[EditName]		= isnull( sM.[EditName],'')
         ,[EditDate]		= sM.[EditDate]
+		,Handle		= isnull( sM.Handle,'')
 	from MiscOtherPO t
 	inner join dbo.SciTrade_To_Pms_MmsPO sM WITH (NOLOCK) on sM.id = t.ID
 	left join Production.dbo.scifty b on sM.FactoryID = b.ID
@@ -731,6 +732,8 @@ inner join ( select * from dbo.SciTrade_To_Pms_Part WITH (NOLOCK) where type = '
         ,[TPEFoc]	   = isnull( s.Foc         ,0)
 		,MachineReqID  = isnull( s.MmsReqID    ,'')
 		,Junk		   = isnull( s.Junk        ,0)
+		,Delivery	   =  s.Delivery
+		,ShipQty		   = isnull( s.ShipQty        ,0)
 	from dbo.MiscOtherPO_Detail t
 	inner join dbo.SciTrade_To_Pms_MmsPO_Detail s WITH (NOLOCK) on t.id=s.id and t.seq1=s.seq1 and t.seq2=s.seq2
 	inner join dbo.SciTrade_To_Pms_MmsPO sM WITH (NOLOCK) on sM.id = s.ID
@@ -753,7 +756,8 @@ inner join ( select * from dbo.SciTrade_To_Pms_Part WITH (NOLOCK) where type = '
            ,[AddName]
            ,[AddDate]
            ,[EditName]
-           ,[EditDate])
+           ,[EditDate]
+		   ,Handle)
 	select
 		 isnull(sM.[ID]       ,'')
         ,sM.[Cdate]
@@ -771,7 +775,8 @@ inner join ( select * from dbo.SciTrade_To_Pms_Part WITH (NOLOCK) where type = '
         ,isnull(sM.[AddName]   ,'')
         ,sM.[AddDate]
         ,isnull(sM.[EditName],'')
-        ,sM.[EditDate]
+        ,sM.[EditDate]		
+        ,isnull(sM.Handle,'')
 	from dbo.SciTrade_To_Pms_MmsPO sM
 	left join MiscOtherPO t WITH (NOLOCK) on sM.id = t.ID
 	left join Production.dbo.scifty b on sM.FactoryID = b.ID
@@ -791,7 +796,9 @@ inner join ( select * from dbo.SciTrade_To_Pms_Part WITH (NOLOCK) where type = '
 			,[TPEQty]
 			,[TPEFoc]
 			,MachineReqID
-			,Junk)
+			,Junk
+			,Delivery
+			,ShipQty)
 	select
 		 isnull(s.[ID]      ,'')
 		,isnull(s.[Seq1]    ,'')
@@ -806,6 +813,8 @@ inner join ( select * from dbo.SciTrade_To_Pms_Part WITH (NOLOCK) where type = '
 		,isnull(s.Foc       ,0)
 		,isnull(s.MmsReqID  ,'')
 		,isnull(s.Junk      ,0)
+		,s.Delivery
+		,isnull( s.ShipQty        ,0)
 	from dbo.SciTrade_To_Pms_MmsPO sM 
 	inner join dbo.SciTrade_To_Pms_MmsPO_Detail s WITH (NOLOCK) on sM.id = s.ID
 	left join dbo.MiscOtherPO_Detail t on t.id=s.id and t.seq1=s.seq1 and t.seq2=s.seq2
