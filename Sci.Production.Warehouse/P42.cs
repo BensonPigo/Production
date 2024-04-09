@@ -131,6 +131,8 @@ namespace Sci.Production.Warehouse
                 .Text("stockunit", header: "Stock Unit", width: Widths.AnsiChars(8), iseditingreadonly: true)
                 .Date("TapeInline", header: "Inline", width: Widths.AnsiChars(10), settings: ts2)
                 .Date("TapeOffline", header: "Offline", width: Widths.AnsiChars(10), settings: ts3)
+                .Numeric("ArrivedQty", header: "Arrived Qty", width: Widths.AnsiChars(2), iseditingreadonly: true)
+                .Numeric("ReleasedQty", header: "Released Qty", width: Widths.AnsiChars(2), iseditingreadonly: true)
                 .Text("seq1", header: "Seq1", width: Widths.AnsiChars(3), iseditingreadonly: true)
                 .Text("seq2", header: "Seq2", width: Widths.AnsiChars(2), iseditingreadonly: true)
                 .Date("fstSCIdlv", header: "SCI Dlv.", width: Widths.AnsiChars(10), iseditingreadonly: true)
@@ -230,9 +232,12 @@ select 0 as Selected,c.POID,EachConsApv = format(a.EachConsApv,'yyyy/MM/dd'),psd
 	,min(a.BuyerDelivery) FstBuyerDlv
 	,(select color.Name from color WITH (NOLOCK) where color.id = isnull(psdsC.SpecValue, '') and color.BrandId = a.brandid ) as color
     ,a.StyleID
+	,ArrivedQty = m.InQty
+	,ReleasedQty = m.OutQty
 from orders a WITH (NOLOCK) 
 inner join Po_supp_detail psd WITH (NOLOCK) on a.poid = psd.id
 inner join dbo.cuttingtape_detail c WITH (NOLOCK) on c.mdivisionid = '{Env.User.Keyword}' and c.poid = psd.id and c.seq1 = psd.seq1 and c.seq2 = psd.seq2
+left join dbo.MDivisionPoDetail m WITH (NOLOCK) on m.POID = psd.ID and m.seq1 = psd.SEQ1 and m.Seq2 = psd.Seq2
 left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
 left join PO_Supp_Detail_Spec psdsS WITH (NOLOCK) on psdsS.ID = psd.id and psdsS.seq1 = psd.seq1 and psdsS.seq2 = psd.seq2 and psdsS.SpecColumnID = 'Size'
 outer apply( select value =  iif(psd.stockunit = '',dbo.GetStockUnitBySPSeq( psd.id,psd.SEQ1,psd.SEQ2),psd.stockunit) ) stockunit
@@ -263,6 +268,9 @@ AND ((psd.Special NOT LIKE ('%DIE CUT%')) and psd.Special is not null)
 
             sqlcmd += @"
 GROUP BY c.MdivisionId,psd.FactoryID,c.POID,a.EachConsApv,psd.Special,psd.Qty,psdsS.SpecValue,psd.Refno,psd.SEQ1,psd.SEQ2,c.TapeInline,c.TapeOffline,psd.ID,psdsC.SpecValue,psd.SCIRefno,a.brandid,psd.POUnit, stockunit.value,a.StyleID
+,m.InQty
+,m.OutQty
+
 ORDER BY psd.FactoryID,c.POID
 ";
             DualResult result;
