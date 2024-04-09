@@ -568,8 +568,8 @@ group by ed.CustomSP", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
                         }
                         else
                         {
-                            this.CurrentMaintain["InvNo"] = this.txtInvNo.Text;
-                            this.CurrentMaintain["DataFrom"] = "PACKINGLIST";
+                        this.CurrentMaintain["InvNo"] = this.txtInvNo.Text;
+                        this.CurrentMaintain["DataFrom"] = "PACKINGLIST";
                         }
                     }
                     else
@@ -601,7 +601,7 @@ Declare @invno VARCHAR(25),
 SET @invno = '{MyUtility.Convert.GetString(this.CurrentMaintain["InvNo"])}'
 SET @contractid = '{MyUtility.Convert.GetString(this.CurrentMaintain["VNContractID"])}'
 ";
-            return strReturn; 
+            return strReturn;
         }
 
         private string PackingSql(bool isA2B)
