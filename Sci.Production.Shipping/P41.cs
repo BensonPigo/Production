@@ -559,10 +559,18 @@ group by ed.CustomSP", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
                 {
                     if (!MyUtility.Check.Seek(string.Format("select ID from GMTBooking WITH (NOLOCK) where ID = '{0}'", this.txtInvNo.Text)))
                     {
-                        this.txtInvNo.Text = string.Empty;
-                        e.Cancel = true;
-                        MyUtility.Msg.WarningBox("Data not found!!");
-                        return;
+                        if (!MyUtility.Check.Seek(string.Format("select ID from PackingList WITH (NOLOCK) where INVNo = '{0}'", this.txtInvNo.Text)))
+                        {
+                            this.txtInvNo.Text = string.Empty;
+                            e.Cancel = true;
+                            MyUtility.Msg.WarningBox("Data not found!!");
+                            return;
+                        }
+                        else
+                        {
+                        this.CurrentMaintain["InvNo"] = this.txtInvNo.Text;
+                        this.CurrentMaintain["DataFrom"] = "PACKINGLIST";
+                        }
                     }
                     else
                     {
