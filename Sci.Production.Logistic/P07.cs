@@ -12,6 +12,7 @@ using System.Transactions;
 using System.Linq;
 using Ict.Win;
 using Sci.Production.Prg;
+using static Sci.MyUtility;
 
 namespace Sci.Production.Logistic
 {
@@ -662,105 +663,100 @@ order by p2.ID,p2.CTNStartNo
                 return;
             }
 
-            string wherePackID = selectedData.Select(s => $"'{s["ID"].ToString()}'").Distinct().JoinToString(",");
-            DataTable dtTransedPack;
-            string sqlCheckTransedPack = $"select ID from PAckingList with (nolock) where ID in ({wherePackID}) and PLCtnTrToRgCodeDate is not null";
-            DualResult resultCheck = DBProxy.Current.Select(null, sqlCheckTransedPack, out dtTransedPack);
-            if (!resultCheck)
-            {
-                this.ShowErr(resultCheck);
-                return;
-            }
+            string sqlUpdate = $@"
+select distinct Remark = 
+	case when t3.PLCtnTrToRgCodeDate is not null then 'This PL already transfer to shipping factory, cannot transfer to CFA Inspection.'
+		 when t2.ReceiveDate is null then 'This carton not yet Received!'
+		 when t2.TransferCFADate is not null then 'This carton has been transferred to CFA!'
+		 when t3.MdivisionID !='{Env.User.Keyword}' then 'The orders M is not equal to login M.'
+		 when po.Status not in ('New','') then 'This carton Already pullout!'
+	else '' end
+,t.CFANeedInsp
+,PackingListID = t2.ID
+,t.CTNStartNo
+,t.OrderID
+,t.CustPONo
+,t.StyleID
+,t.SeasonID              
+,t.BrandID
+,t.Alias
+,t.BuyerDelivery
+,t.ClogLocationId
+,t.Size
+,t.Qty
+,t.PCCTN
+,t.SCICtnNo
+,t3.MDivisionID
+into #tmp2
+from #tmp t
+inner join PackingList_Detail t2 WITH (NOLOCK) on t2.id=t.ID and t2.CTNStartNo = t.CTNStartNo
+inner join Packinglist t3 with (nolock) on t3.id=t2.id
+left join Pullout po WITH (NOLOCK) on po.ID = t3.PulloutID
+where  t2.CTNStartNo != '' 
+	and t3.Type in ('B','L')	
+	and t2.CFAReturnClogDate is null
+	and t2.DisposeFromClog= 0
+	and t3.PLCtnTrToRgCodeDate is null
 
-            if (dtTransedPack.Rows.Count > 0)
-            {
-                string transedPackID = dtTransedPack.AsEnumerable().Select(s => s["ID"].ToString()).JoinToString(",");
-                MyUtility.Msg.WarningBox($"PL[{transedPackID}] already transfer to shipping factory, cannot transfer to CFA Inspection.");
-                return;
-            }
+-- 顯示有問題的資料
+select * from #tmp2 where Remark !=''
 
-            DataRow drSelect;
-            StringBuilder warningmsg = new StringBuilder();
-            IList<string> insertCmds = new List<string>();
-            IList<string> updateCmds = new List<string>();
-            foreach (DataRow dr in selectedData)
-            {
-                if (!MyUtility.Check.Seek(
-                    $@"
-select p2.ReceiveDate ,p2.TransferCFADate ,p.Status 
-from PackingList_detail p2
-inner join PackingList p1 on p2.id=p1.id
-left join pullout p on p1.PulloutID = p.id
-where p2.id='{dr["id"].ToString().Trim()}' 
-and p2.CTNStartNo='{dr["CTNStartNo"].ToString().Trim()}' and p2.DisposeFromClog= 0", out drSelect))
-                {
-                    warningmsg.Append($@"<CNT#: {dr["id"]}{dr["CTNStartNo"]}> does not exist!" + Environment.NewLine);
-                    continue;
-                }
-                else
-                {
-                    if (MyUtility.Check.Empty(drSelect["ReceiveDate"]))
-                    {
-                        warningmsg.Append($@"<CNT#: {dr["id"]}{dr["CTNStartNo"]}> Not yet Received!" + Environment.NewLine);
-                    }
-                    else if (!MyUtility.Check.Empty(drSelect["TransferCFADate"]))
-                    {
-                        warningmsg.Append($@"<CNT#: {dr["id"]}{dr["CTNStartNo"]}> has been transferred to CFA!" + Environment.NewLine);
-                    }
-                    else if (drSelect["Status"].ToString().Trim().ToUpper() == "CONFIRMED" || drSelect["Status"].ToString().Trim().ToUpper() == "LOCKED")
-                    {
-                        warningmsg.Append($@"<CNT#: {dr["id"]}{dr["CTNStartNo"]}> Already pullout!" + Environment.NewLine);
-                    }
-                    else
-                    {
-                        updateCmds.Add($@"
-update PackingList_Detail 
-set TransferCFADate = CONVERT(varchar(100), GETDATE(), 111), ClogReceiveCFADate = null, ClogLocationID  = '2CFA'
-where id='{dr["id"].ToString().Trim()}' and CTNStartNo='{dr["CTNStartNo"].ToString().Trim()}' and DisposeFromClog= 0
-");
-                        insertCmds.Add($@"
+-- 要判斷是否可以更新,確保資料沒被新增錯誤的
 insert into TransferToCFA(TransferDate,MDivisionID,OrderID,PackingListID,CTNStartNo,AddName,AddDate,OrigloactionID,SCICtnNo)
-values(CONVERT(varchar(100), GETDATE(), 111),'{Env.User.Keyword}','{dr["OrderID"].ToString().Trim()}','{dr["ID"].ToString().Trim()}','{dr["CTNStartNo"].ToString().Trim()}','{Env.User.UserID}',GETDATE(),'{dr["ClogLocationId"]}','{dr["SCICtnNo"]}')
-");
-                    }
-                }
-            }
+select distinct TransferDate = CONVERT(varchar(100), GETDATE(), 111)
+    , MDivisionID = t.MdivisionID
+    , OrderID = t.OrderID
+    , PackingListID = t.PackingListID
+    , CTNStartNo = t.CTNStartNo
+    , AddName = '{Env.User.UserID}'
+    , AddDate = GetDate()
+    , ClogLocationId = t.ClogLocationId
+    , SCICtnNo = t.SCICtnNo
+from #tmp2 t
+where t.Remark =''
 
-            // Update Orders的資料
-            DataTable selectData = null;
-            try
-            {
-                MyUtility.Tool.ProcessWithDatatable(
-                    dt,
-                    "Selected,OrderID",
-                    @"select distinct OrderID from #tmp a where a.Selected = 1",
-                    out selectData);
-            }
-            catch (Exception ex)
-            {
-                MyUtility.Msg.ErrorBox("Prepare update orders data fail!\r\n" + ex.ToString());
-            }
+update pd
+set pd.TransferCFADate = CONVERT(varchar(100), GETDATE(), 111)
+, pd.ClogReceiveCFADate = null
+, pd.ClogLocationID  = '2CFA'
+from PackingList_Detail pd
+inner join PackingList p on pd.id = p.id
+left join pullout pu on p.PulloutID = pu.id
+where exists(
+	select 1 from #tmp2 t
+	where pd.id = t.PackingListID
+	and pd.CTNStartNo = t.CTNStartNo
+	and t.Remark =''
+)
 
+-- Update Orders的資料
+select distinct OrderID from #tmp2 where Remark=''
+
+drop table #tmp2
+";
             DualResult result1 = Ict.Result.True, result2 = Ict.Result.True;
+            DataTable[] dtCheck;
             using (TransactionScope transactionScope = new TransactionScope())
             {
                 try
                 {
-                    if (updateCmds.Count > 0)
+                    DualResult result = MyUtility.Tool.ProcessWithDatatable(
+                     selectedData.CopyToDataTable(),
+                     string.Empty,
+                     sqlUpdate,
+                     out dtCheck);
+                    if (!result)
                     {
-                        result1 = DBProxy.Current.Executes(null, updateCmds);
+                        transactionScope.Dispose();
+                        this.ShowErr(result.ToString());
+                        return;
                     }
 
-                    if (insertCmds.Count > 0)
+                    if (dtCheck[1].Rows.Count > 0)
                     {
-                        result2 = DBProxy.Current.Executes(null, insertCmds);
-                    }
+                        DualResult prgResult = Prgs.UpdateOrdersCTN(dtCheck[1]);
 
-                    if (updateCmds.Count > 0 && insertCmds.Count > 0)
-                    {
-                        DualResult prgResult = Prgs.UpdateOrdersCTN(selectData);
-
-                        if (result1 && result2 && prgResult)
+                        if (prgResult)
                         {
                             transactionScope.Complete();
                             transactionScope.Dispose();
@@ -791,9 +787,12 @@ values(CONVERT(varchar(100), GETDATE(), 111),'{Env.User.Keyword}','{dr["OrderID"
                 }
             }
 
-            if (warningmsg.ToString().Length > 0)
+            if (dtCheck[0] != null && dtCheck[0].Rows.Count > 0)
             {
-                MyUtility.Msg.WarningBox(warningmsg.ToString());
+                var m = MyUtility.Msg.ShowMsgGrid(dtCheck[0], "Update data failed, please check below Remark message.");
+                m.grid1.Columns[0].Width = 270;
+                m.TopMost = true;
+                return;
             }
         }
 
