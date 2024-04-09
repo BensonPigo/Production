@@ -196,7 +196,28 @@ g.ShipTermID as ShipTerm
 from VNExportDeclaration e WITH (NOLOCK) 
 left join VNExportPort ep WITH (NOLOCK) on e.VNExportPortID = ep.ID
 left join GMTBooking g WITH (NOLOCK) on e.InvNo = g.ID
-where 1=1 {sqlCondition}
+where e.DataFrom = 'GMTBOOKING' {sqlCondition}
+union all
+select  e.ID,
+e.CDate,
+e.InvNo,
+e.VNContractID,
+e.VNExportPortID,
+e.DataFrom,
+[ExportPort] = isnull(ep.Name,''),
+[GMTBookingStatus] = '',
+[ExportDeclarationStatus] = e.Status,
+p.BrandID,
+p.ShipQty,
+p.CTNQty,
+p.GW,
+p.NW,
+p.Dest,
+[ShipTerm] = (select ShipTermID from Orders WITH (NOLOCK) where ID = (select top 1 OrderID from PackingList_Detail WITH (NOLOCK) where ID = p.ID))
+from VNExportDeclaration e WITH (NOLOCK) 
+left join VNExportPort ep WITH (NOLOCK) on e.VNExportPortID = ep.ID
+left join Packinglist p WITH (NOLOCK) on e.InvNo = p.INVNo
+where e.DataFrom = 'PACKINGLIST' {sqlCondition}
 ),
 SecondStepFilterData
 as (
