@@ -199,7 +199,7 @@ else
 			update set 
 				t.NewOrder				= 1
 				, t.OrderID				= isnull( s.ID           , '')
-				, t.OriginalStyleID		= isnull( s.StyleID      , '')
+				, t.NewStyleID		= isnull( s.StyleID      , '')
 				, t.NewQty				= isnull( s.Qty          , 0)
 				, t.NewBuyerDelivery	= s.BuyerDelivery
 				, t.NewSCIDelivery		= s.SCIDelivery
@@ -208,11 +208,13 @@ else
 				, t.BrandID				= isnull( s.BrandID      , '')
 				, t.UpdateDate			= @dToDay--寫入到IMP MOCKUPORDER
 				, t.TransferDate		= @OldDate--寫入到IMP MOCKUPORDER
+				, t.NewFOC 			= IIF(isnull(s.FOC, 0)=1,'v','')
+				, t.NewOrderTypeID 	= isnull( s.OrderTypeID, '')
 		when not matched by target then
 			insert (
-				NewOrder		, OrderID		, OriginalStyleID	, NewQty	, NewBuyerDelivery
+				NewOrder		, OrderID		, NewStyleID	, NewQty	, NewBuyerDelivery
 				, NewSCIDelivery, MDivisionID	, FactoryID			, UpdateDate, TransferDate
-				, BrandID
+				, BrandID , NewFOC, NewOrderTypeID
 			) 
        VALUES
        (
@@ -226,7 +228,9 @@ else
               isnull(s.factoryid ,    ''),
               @dToDay ,
               @OldDate ,
-              isnull(s.brandid,    '')
+              isnull(s.brandid,    ''), 
+			  IIF(isnull(s.FOC, 0)=1,'v',''), 
+			  isnull( s.OrderTypeID, '')
        );
 
 		----2.Delete 記錄 Trade 沒有 PMS 有的資料 (DeleteOrder = 1)
@@ -348,7 +352,7 @@ else
 			update set
 				t.NewOrder				= 1
 				, t.OrderID				= isnull( s.ID           , '')
-				, t.OriginalStyleID		= isnull( s.StyleID      , '')
+				, t.NewStyleID		= isnull( s.StyleID      , '')
 				, t.NewQty				= isnull( s.Qty          , 0)
 				, t.NewBuyerDelivery	=  s.BuyerDelivery
 				, t.NewSCIDelivery		=  s.SCIDelivery
@@ -357,11 +361,13 @@ else
 				, t.BrandID				= isnull( s.BrandID		 , '')
 				, t.UpdateDate			= @dToday
 				, t.TransferDate		= @OldDate
+				, t.NewFOC 			= IIF(isnull(s.FOC, 0)=1,'v','')
+				, t.NewOrderTypeID 	= isnull( s.OrderTypeID, '')
 		when not matched by target then
 			insert (
-				NewOrder		, OrderID		, OriginalStyleID	, NewQty	, NewBuyerDelivery
+				NewOrder		, OrderID		, NewStyleID	, NewQty	, NewBuyerDelivery
 				, NewSCIDelivery, MDivisionID	, FactoryID			, UpdateDate, TransferDate
-				, BrandID
+				, BrandID , NewFOC, NewOrderTypeID
 			)
            VALUES
            (
@@ -375,7 +381,9 @@ else
                   isnull(s.factoryid ,    ''),
                   @dToDay ,
                   @OldDate ,
-                  isnull(s.brandid,'')
+                  isnull(s.brandid,''),
+				  IIF(isnull(s.FOC, 0)=1,'v',''), 
+				  isnull( s.OrderTypeID, '')
            );
 
 		----4.ChangeData 記錄資料異動
