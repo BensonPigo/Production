@@ -889,6 +889,15 @@ If the application is for Air - Prepaid Invoice, please ensure that all item cod
             return base.ClickSavePre();
         }
 
+        /// <inheritdoc/>
+        protected override void ClickSaveAfter()
+        {
+            base.ClickSaveAfter();
+
+            // 期望船務能再確認，但因P08有異動會先存檔才能點按鈕，有可能存完檔就關掉了
+            this.BtnShareExpense_Click(null, null);
+        }
+
         private DualResult InitialShareExpense(DataRow drCurrentMaintain, bool checkIsFreightForwarder)
         {
             DualResult result;
