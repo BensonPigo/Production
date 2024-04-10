@@ -1,5 +1,4 @@
-﻿
-CREATE PROCEDURE [dbo].[CalculateShareExpense]
+﻿CREATE PROCEDURE [dbo].[CalculateShareExpense]
 (
     @APID as varchar(13) = '',
     @login as varchar(20) = '',
@@ -22,7 +21,7 @@ BEGIN
 	DECLARE @ShippingAPID VARCHAR(13),
 			@Type varchar(25)
 
-	DECLARE  @id VARCHAR(25), -- InvNo, WK 取最高
+	DECLARE  @id VARCHAR(25), -- InvNo, WK ���̰�
 			@shipmode VARCHAR(10),
 			@blno VARCHAR(20),
 			@gw NUMERIC(10, 3),
@@ -67,7 +66,7 @@ BEGIN
 	where ShippingAPID = @APID and Junk = 0
 
 	/*
-	 * 計算前先更新 ShareExpense 資料
+	 * �p��e����s ShareExpense ���
 	 */
 	OPEN cursor_ShareExpense
 	FETCH NEXT FROM cursor_ShareExpense INTO @ShippingAPID, @Type
@@ -76,7 +75,7 @@ BEGIN
 		IF @Type = 'IMPORT'
 		BEGIN
 			/*
-			 * 只有勾選[Is Freight Forwarder] 才需要將已不存在系統中的 BLNo Junk
+			 * �u���Ŀ�[Is Freight Forwarder] �~�ݭn�N�w���s�b�t�Τ��� BLNo Junk
 			 */
 			if @IsFreightFwd = 1 and @ShippingReasonID <> 'AP007'
 			BEGIN
@@ -92,7 +91,7 @@ BEGIN
 
 
 			/*
-			 * 將已不存在系統中的 WK Junk
+			 * �N�w���s�b�t�Τ��� WK Junk
 			 */
 			update s
 			set s.Junk = 1				
@@ -105,7 +104,7 @@ BEGIN
 				  and	s.WKNo not in (select ID from TransferExport where ID = s.WKNo and ID is not null)
 						
 			/*
-			 * 更新 WK 基本資料
+			 * ��s WK �򥻸��
 			 */ 
 			DECLARE cursor_allExport CURSOR FOR
 				select  e.ID
@@ -144,7 +143,7 @@ BEGIN
 		ELSE
 		BEGIN
 			/*
-			 * 只有勾選[Is Freight Forwarder] 才需要將已不存在系統中的 BLNo Junk
+			 * �u���Ŀ�[Is Freight Forwarder] �~�ݭn�N�w���s�b�t�Τ��� BLNo Junk
 			 */
 			if @IsFreightFwd = 1 and @ShippingReasonID <> 'AP007'
 			BEGIN
@@ -163,7 +162,7 @@ BEGIN
 			END
 
 			/*
-			 * 將已不存在系統中的 Inv Junk
+			 * �N�w���s�b�t�Τ��� Inv Junk
 			 */
 			update s
 			set s.Junk = 1				
@@ -183,7 +182,7 @@ BEGIN
 						)
 			
 			/*
-			 * 更新 Inv 基本資料
+			 * ��s Inv �򥻸��
 			 */ 
 
 			DECLARE cursor_FtyWK CURSOR FOR
@@ -242,7 +241,7 @@ BEGIN
 		END
 
 		/*
-		 * 將 ShareExpense_APP 資料全部 Junk
+		 * �N ShareExpense_APP ��ƥ��� Junk
 		 */ 
 		 update s
 		 set s.Junk = 1
@@ -253,11 +252,11 @@ BEGIN
 
  
 		/* 
-		 * 費用分攤 CalculateShareExpense
+		 * �O�Τ��u CalculateShareExpense
 		 */
 		BEGIN
 			/*
-			 * 設定變數值 
+			 * �]�w�ܼƭ� 
 			 */
 			set @CurrencyID=(select CurrencyID from ShippingAP where id = @ShippingAPID)
 		
@@ -271,7 +270,7 @@ BEGIN
 			SELECT @exact = isnull(c.Exact,0) FROM ShippingAP s WITH (NOLOCK) , Currency c WITH (NOLOCK) WHERE s.ID = @ShippingAPID and c.ID = s.CurrencyID
 
 			/*
-			 * 找出欲分攤的對象
+			 * ��X�����u����H
 			 */
 			select distinct BLNo,WKNo,InvNo,Type,GW,CBM,ShipModeID,FtyWK,FactoryID
 			into #ShareInvWK
@@ -279,36 +278,36 @@ BEGIN
 			where ShippingAPID = @ShippingAPID and junk = 0
 
 			/*
-			 * 撈出須排除的會計科目
+			 * ���X���ư����|�p���
 			 */
 			DECLARE cursor_diffAccNo CURSOR FOR
 			(
-				-- 費用分攤的會科不存在 AP 可分攤的清單中 --
+				-- �O�Τ��u���|�줣�s�b AP �i���u���M�椤 --
 				select distinct AccountID
 				from ShareExpense se WITH (NOLOCK) 
 				where ShippingAPID = @ShippingAPID				
-					  and dbo.GetAccountNoExpressType(se.AccountID,'Vat') = 0 
-					  and dbo.GetAccountNoExpressType(se.AccountID,'SisFty') = 0
+					  and dbo.GetAccountNoExpressType(LEFT(se.AccountID , 4),'Vat') = 0 
+					  and dbo.GetAccountNoExpressType(LEFT(se.AccountID , 4),'SisFty') = 0
 					  and not exists (
 							select 1
 							from ShippingAP_Detail sd WITH (NOLOCK) 
-							where sd.ID = @ShippingAPID and sd.AccountID = se.AccountID								  
+							where sd.ID = @ShippingAPID and sd.AccountID = LEFT(se.AccountID , 4)							  
 					  )
 					  and se.Junk = 0
 			)
 			union
 			(
-				-- AP 不可分攤的會科清單 --
+				-- AP ���i���u���|��M�� --
 				select distinct sd.AccountID
 				from ShippingAP_Detail sd WITH (NOLOCK) 
 				where sd.ID = @ShippingAPID
 						and (
-							dbo.GetAccountNoExpressType(sd.AccountID,'Vat') = 1 
-							or dbo.GetAccountNoExpressType(sd.AccountID,'SisFty') = 1
+							dbo.GetAccountNoExpressType(LEFT(sd.AccountID , 4),'Vat') = 1 
+							or dbo.GetAccountNoExpressType(LEFT(sd.AccountID , 4),'SisFty') = 1
 						)
 			)
 
-			-- 更新 ShareExpense 應該標註為 Junk 的歷史資料 --
+			-- ��s ShareExpense ���Ӽе��� Junk �����v��� --
 			OPEN cursor_diffAccNo
 			FETCH NEXT FROM cursor_diffAccNo INTO @accno
 			WHILE @@FETCH_STATUS = 0
@@ -317,14 +316,14 @@ BEGIN
 				set Junk = 1					
 					, EditName = @login
 					, EditDate = @adddate
-				where ShippingAPID = @ShippingAPID and AccountID = @accno
+				where ShippingAPID = @ShippingAPID and AccountID = LEFT(@accno , 4)
 				FETCH NEXT FROM cursor_diffAccNo INTO @accno
 			END
 			CLOSE cursor_diffAccNo
 			DEALLOCATE cursor_diffAccNo
 		
 			/*
-			 * 撈出依會科加總的金額與要分攤的WK or GB
+			 * ���X�̷|��[�`�����B�P�n���u��WK or GB
 			 */
 			DECLARE cursor_ttlAmount CURSOR FOR
 				select a.AccountID
@@ -358,12 +357,12 @@ BEGIN
 					from (
 						select isnull(sd.AccountID,'') as AccountID, sum(sd.Amount) as Amount, s.CurrencyID, s.Type, s.SubType
 						from ShippingAP_Detail sd WITH (NOLOCK) 
-						left join SciFMS_AccountNo a on a.ID = sd.AccountID
+						left join SciFMS_AccountNo a on a.ID = LEFT(sd.AccountID , 4)
 						left join ShippingAP s WITH (NOLOCK) on s.ID = sd.ID
 						where sd.ID = @ShippingAPID
 								and not (
-									dbo.GetAccountNoExpressType(sd.AccountID,'Vat') = 1 
-									or dbo.GetAccountNoExpressType(sd.AccountID,'SisFty') = 1
+									dbo.GetAccountNoExpressType(LEFT(sd.AccountID , 4),'Vat') = 1 
+									or dbo.GetAccountNoExpressType(LEFT(sd.AccountID , 4),'SisFty') = 1
 								)
 						group by sd.AccountID, a.Name, s.CurrencyID, s.Type, s.SubType
 					) a
@@ -373,13 +372,13 @@ BEGIN
 						from #ShareInvWK
 					) b
 				) a
-				left join ShareRule sr WITH (NOLOCK) on sr.AccountID = a.AccountID 
+				left join ShareRule sr WITH (NOLOCK) on sr.AccountID = a.AccountID
 														and sr.ExpenseReason = a.SubType 
 														and (
 															sr.ShipModeID = '' 
 															or sr.ShipModeID like '%'+a.ShipModeID+'%'
 														)
-				left join ShareRule sr1 WITH (NOLOCK) on sr1.AccountID = left(a.AccountID,4) 
+				left join ShareRule sr1 WITH (NOLOCK) on sr1.AccountID = a.AccountID
 														 and sr1.ExpenseReason = a.SubType 
 														 and (
 															sr1.ShipModeID = '' 
@@ -433,7 +432,7 @@ BEGIN
 				IF @recno = 0
 					BEGIN
 						/*
-						 * 只有勾選[Is Freight Forwarder] 才需要將資料自動帶入
+						 * �u���Ŀ�[Is Freight Forwarder] �~�ݭn�N��Ʀ۰ʱa�J
 						 */
 						if @IsFreightFwd = 1 and @ShippingReasonID <> 'AP007'
 						BEGIN
@@ -489,9 +488,9 @@ BEGIN
 			DEALLOCATE cursor_ttlAmount
 
 			/*
-			 * 分攤 AirPP			 
-			 *   以下為Airpp 拆分Factory與Other部分
-			 *   只有AirPP的資料需要再往下分攤
+			 * ���u AirPP			 
+			 *   �H�U��Airpp ���Factory�POther����
+			 *   �u��AirPP����ƻݭn�A���U���u
 			 */
 			select se.InvNo,se.AccountID,[Amount] = sum(se.Amount)
 			into #InvNoSharedAmt
@@ -504,10 +503,10 @@ BEGIN
 						where gmt.ID = se.InvNo and sm.NeedCreateAPP = 1
 					)
 					and not (
-						dbo.GetAccountNoExpressType(se.AccountID,'Vat') = 1 
-						or dbo.GetAccountNoExpressType(se.AccountID,'SisFty') = 1
+						dbo.GetAccountNoExpressType(LEFT(se.AccountID , 4),'Vat') = 1 
+						or dbo.GetAccountNoExpressType(LEFT(se.AccountID , 4),'SisFty') = 1
 					)
-					AND dbo.GetAccountNoExpressType(se.AccountID,'IsApp') = 1 
+					AND dbo.GetAccountNoExpressType(LEFT(se.AccountID , 4),'IsApp') = 1 
 			group by se.InvNo,se.AccountID
 
 			select	t.InvNo,[PackID] = pl.ID,t.AccountID,t.Amount
@@ -606,7 +605,7 @@ BEGIN
  
 
 			drop table #InvNoSharedAmt,#PLSharedAmtStep1,#PLSharedAmtStep2,#PLSharedAmt,#OrderSharedAmtStep1,#OrderSharedAmtStep2,#OrderSharedAmt,#source
-			--以上為Airpp 拆分Factory與Other部分
+			--�H�W��Airpp ���Factory�POther����
 
 		END
 
@@ -616,8 +615,11 @@ BEGIN
 	CLOSE cursor_ShareExpense
 	DEALLOCATE cursor_ShareExpense
 
-	-- ISP20220298 更新AirPP
+	-- ISP20220298 ��sAirPP
 	update a set a.ActAmt = airAmt.ActAmt, a.ExchangeRate = airAmt.ExchangeRate, a.ShareExpenseEditDate = getdate()
 	from AirPP a
 	inner join dbo.GetAirPPAmt(@APID, '') airAmt on airAmt.AirPPID = a.ID
 END
+GO
+
+
