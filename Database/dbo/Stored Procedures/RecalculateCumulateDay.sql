@@ -100,6 +100,15 @@ Begin
 					left join Orders o WITH (NOLOCK) on o.ID =  sd.OrderId
 					left join MockupOrder mo WITH (NOLOCK) on mo.ID = sd.OrderId
 					where s.ID = sd.ID and (o.StyleID = t.OrderStyle or mo.StyleID = t.MockupStyle))
+
+	select distinct t.FactoryID, t.SewingLineID ,t.OrderStyle, t.MockupStyle, s.OutputDate
+	into #tmpSewingOutputSimilar
+	from #tmpOutputDate t
+	inner join SewingOutput s WITH (NOLOCK) on s.SewingLineID = t.SewingLineID and s.FactoryID = t.FactoryID and s.OutputDate between dateadd(day,-240, t.MinOutputDate) and t.MaxOutputDate
+	where  exists(	select 1 from SewingOutput_Detail sd WITH (NOLOCK)
+					left join Orders o WITH (NOLOCK) on o.ID =  sd.OrderId
+					left join MockupOrder mo WITH (NOLOCK) on mo.ID = sd.OrderId
+					where s.ID = sd.ID and (o.StyleID = t.OrderStyle or mo.StyleID = t.MockupStyle))
 	or exists (select 1 from SewingOutput_Detail sd WITH (NOLOCK)
 			left join Orders o WITH (NOLOCK) on o.ID =  sd.OrderId
 			Outer apply (
@@ -129,7 +138,8 @@ Begin
 	and w.SewingLineID = @Line
 
 	select t.*
-		, [CumulateDate_Before] = CumulateDate.val
+		, [CumulateDate] = CumulateDate.val
+		, [CumulateDate_Before] = CumulateDateSimilar.val
 	into #tmp1stFilter_First
 	from #tmpSewingGroup t
 	outer apply (	select val = IIF(Count(1)=0, 1, Count(1))
@@ -157,6 +167,31 @@ Begin
 													w.Date <= t.OutputDate
 										)
 	) CumulateDate
+ 	outer apply (	select val = IIF(Count(1)=0, 1, Count(1))
+					from #tmpSewingOutputSimilar s
+					where	s.FactoryID = t.FactoryID and
+							s.MockupStyle = t.MockupStyle and
+							s.OrderStyle = t.OrderStyle and
+							s.SewingLineID = t.SewingLineID and
+							s.OutputDate <= t.OutputDate and
+							s.OutputDate >(
+											select case when max(iif(s1.OutputDate is null, w.Date, null)) is not null then max(iif(s1.OutputDate is null, w.Date, null))
+														--區間內都連續生產，第一天也要算是生產日，所以要減一天
+														when min(w.Date) is not null then DATEADD(day, -1, min(w.Date))
+														else t.OutputDate end
+											from #tmpWorkHour w 
+											left join #tmpSewingOutputSimilar s1 on s1.OutputDate = w.Date and
+																			 s1.FactoryID = w.FactoryID and
+																			 s1.MockupStyle = t.MockupStyle and
+																			 s1.OrderStyle = t.OrderStyle and
+																			 s1.SewingLineID = w.SewingLineID
+											where	w.FactoryID = t.FactoryID and
+													isnull(w.MockupStyle, t.MockupStyle) = t.MockupStyle and
+													isnull(w.OrderStyle, t.OrderStyle) = t.OrderStyle and
+													w.SewingLineID = t.SewingLineID and
+													w.Date <= t.OutputDate
+										)
+	) CumulateDateSimilar
 
 	select w.*
 		, [RID] = ROW_NUMBER() over(partition by w.FactoryID, w.SewingLineID order by w.Date)
@@ -171,7 +206,6 @@ Begin
 	) w 
 
 	select t.*
-		, [CumulateDate] = coalesce(t.CumulateDate_Before, 0)
 		, [CumulateDateSimilar] = iif(t.MasterStyleID <> '', coalesce(t2.CumulateDateSimilar, 0), coalesce(t.CumulateDate_Before, 0))
 	into #tmp1stFilter
 	from #tmp1stFilter_First t 
@@ -224,7 +258,6 @@ Begin
 			, s.CumulateSimilar = t.CumulateDateSimilar
 	from SewingOutput_Detail s
 	inner join #tmp1stFilter t on s.UKey = t.UKey
-
 
 	drop table #tmpOutputDate, #tmpSewingGroup, #tmpSewingOutput, #tmpSewingOutput_Base, #tmpWorkHour, #tmp1stFilter_First, #tmpWorkHour_Factory
 END
