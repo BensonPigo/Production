@@ -56,6 +56,8 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 base_ViewModel.Result = this.DeleteData(dtDeleteSource);
             }
 
+            this.UpdateBITableInfo();
+
             return base_ViewModel;
         }
 
@@ -208,6 +210,35 @@ where	exists(select 1 from #tmp tt where tt.OrderID = p.OrderID)  AND
             using (connBI)
             {
                 result = MyUtility.Tool.ProcessWithDatatable(dtDeleteSource, null, sqlDelete, out DataTable dtEmpty, conn: connBI);
+            }
+
+            return result;
+        }
+
+        private DualResult UpdateBITableInfo()
+        {
+            string sql = @"
+IF EXISTS (select 1 from BITableInfo b where b.id = 'P_QA_CFAMasterList')
+BEGIN
+	update b
+		set b.TransferDate = getdate()
+	from BITableInfo b
+	where b.id = 'P_QA_CFAMasterList'
+END
+ELSE 
+BEGIN
+	insert into BITableInfo(Id, TransferDate)
+	values('P_QA_CFAMasterList', getdate())
+END
+";
+
+            SqlConnection connBI;
+            DBProxy.Current.OpenConnection("PowerBI", out connBI);
+            DualResult result = new DualResult(true);
+
+            using (connBI)
+            {
+                result = DBProxy.Current.ExecuteByConn(conn: connBI, cmdtext: sql);
             }
 
             return result;
