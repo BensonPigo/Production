@@ -269,7 +269,7 @@ select  v.ID,
         isnull(vd.Qty,0) as Usage,
         isnull(vd.UnitID,'') as UnitID,
         (iif(count(*) = 0, 0, sum(vdd.Waste) / count(*))) as Waste,
-        Round(ed.ExportQty * isnull(vd.Qty,0) * (1 + iif(count(*) = 0, 0, sum(vdd.Waste) / count(*))), 3) as Total,
+        Round(ed.ExportQty * isnull(vd.Qty,0) * count(*) * (1 + iif(count(*) = 0, 0, sum(vdd.Waste) / count(*))), 3) as Total,
         IIF(v.Status = 'Junked','Y','') as Cancel
 from VNExportDeclaration v WITH (NOLOCK) 
 inner join VNExportDeclaration_Detail ed WITH (NOLOCK) on v.ID = ed.ID
