@@ -36,6 +36,10 @@
     [NewShipModeList]       VARCHAR (30) CONSTRAINT [DF_OrderComparisonList_NewShipModeList] DEFAULT ('') NOT NULL,
     [OriginalPFETA]         DATE         NULL,
     [NewPFETA]              DATE         NULL,
+    OriginalFOC varchar(1) NOT NULL CONSTRAINT [DF_OrderComparisonList_OriginalFOC] DEFAULT '',
+    NewFOC varchar(1) NOT NULL CONSTRAINT [DF_OrderComparisonList_NewFOC] DEFAULT '',
+    OriginalOrderTypeID varchar(20) NOT NULL CONSTRAINT [DF_OrderComparisonList_OriginalOrderTypeID] DEFAULT '',
+    NewOrderTypeID varchar(20) NOT NULL CONSTRAINT [DF_OrderComparisonList_NewOrderTypeID] DEFAULT '',
     CONSTRAINT [PK_OrderComparisonList] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
 
