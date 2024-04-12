@@ -53,6 +53,8 @@
             this.label5 = new Sci.Win.UI.Label();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.panel3 = new Sci.Win.UI.Panel();
+            this.label6 = new Sci.Win.UI.Label();
+            this.progressBarProcessing = new System.Windows.Forms.ProgressBar();
             this.chkOnlyReqCarton = new Sci.Win.UI.CheckBox();
             this.dateReqDate = new Sci.Win.UI.DateRange();
             this.label3 = new Sci.Win.UI.Label();
@@ -74,6 +76,7 @@
             this.lineShape1 = new Microsoft.VisualBasic.PowerPacks.LineShape();
             this.shapeContainer1 = new Microsoft.VisualBasic.PowerPacks.ShapeContainer();
             this.shapeContainer3 = new Microsoft.VisualBasic.PowerPacks.ShapeContainer();
+            this.backgroundDownloadSticker = new System.ComponentModel.BackgroundWorker();
             this.panel5.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gridReceiveDate)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
@@ -297,6 +300,8 @@
             // 
             // panel3
             // 
+            this.panel3.Controls.Add(this.label6);
+            this.panel3.Controls.Add(this.progressBarProcessing);
             this.panel3.Controls.Add(this.chkOnlyReqCarton);
             this.panel3.Controls.Add(this.dateReqDate);
             this.panel3.Controls.Add(this.label3);
@@ -326,6 +331,21 @@
             this.panel3.Name = "panel3";
             this.panel3.Size = new System.Drawing.Size(712, 187);
             this.panel3.TabIndex = 19;
+            // 
+            // label6
+            // 
+            this.label6.Location = new System.Drawing.Point(399, 76);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(133, 23);
+            this.label6.TabIndex = 52;
+            this.label6.Text = "Processing progress";
+            // 
+            // progressBarProcessing
+            // 
+            this.progressBarProcessing.Location = new System.Drawing.Point(535, 76);
+            this.progressBarProcessing.Name = "progressBarProcessing";
+            this.progressBarProcessing.Size = new System.Drawing.Size(170, 23);
+            this.progressBarProcessing.TabIndex = 51;
             // 
             // chkOnlyReqCarton
             // 
@@ -432,6 +452,7 @@
             this.txtfactory.BoolFtyGroupList = true;
             this.txtfactory.FilteMDivision = false;
             this.txtfactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtfactory.IsMultiselect = false;
             this.txtfactory.IsProduceFty = false;
             this.txtfactory.IssupportJunk = false;
             this.txtfactory.Location = new System.Drawing.Point(488, 47);
@@ -556,6 +577,14 @@
             this.shapeContainer3.TabIndex = 0;
             this.shapeContainer3.TabStop = false;
             // 
+            // backgroundDownloadSticker
+            // 
+            this.backgroundDownloadSticker.WorkerReportsProgress = true;
+            this.backgroundDownloadSticker.WorkerSupportsCancellation = true;
+            this.backgroundDownloadSticker.DoWork += new System.ComponentModel.DoWorkEventHandler(this.BackgroundDownloadSticker_DoWork);
+            this.backgroundDownloadSticker.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.BackgroundDownloadSticker_ProgressChanged);
+            this.backgroundDownloadSticker.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.BackgroundDownloadSticker_RunWorkerCompleted);
+            // 
             // P03
             // 
             this.ClientSize = new System.Drawing.Size(712, 548);
@@ -631,5 +660,8 @@
         private Win.UI.TextBox txtReason;
         private Win.UI.Label label5;
         private Microsoft.VisualBasic.PowerPacks.ShapeContainer shapeContainer3;
+        private Win.UI.Label label6;
+        private System.Windows.Forms.ProgressBar progressBarProcessing;
+        private System.ComponentModel.BackgroundWorker backgroundDownloadSticker;
     }
 }
