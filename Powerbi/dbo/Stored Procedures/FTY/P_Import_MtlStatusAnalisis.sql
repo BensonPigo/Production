@@ -29,13 +29,13 @@ Begin
 		where exists (select 1 from [MainServer].Production.dbo.Export_Detail ed with(nolock) where mpd.ID = ed.PoID and ed.POType = 'M')
 		union all
 		Select type = 'MiscPO_Detail',mid.TPEPOID, mid.SEQ1, mid.SEQ2, mid.SuppDelivery, mi.Handle, mi.FactoryID, mid.TPEQty, mid.SuppID
-			, [BalQty] = mid.TPEQty - mid.ShipQty
+			, [BalQty] = mid.Qty - mid.ShipQty
 		From Machine.dbo.MiscPO_Detail mid with(nolock)
 		inner join Machine.dbo.MiscPO mi with(nolock) on mid.ID = mi.ID
 		where exists (select 1 from [MainServer].Production.dbo.Export_Detail ed with(nolock) where mid.TPEPOID = ed.PoID and ed.POType = 'M')	
 		union all
 		Select type = 'PartPO_Detail',ppd.TPEPOID, ppd.SEQ1, ppd.SEQ2, ppd.SuppDelivery, pp.Handle, pp.FactoryID, ppd.TPEQty, ppd.SuppID
-			, [BalQty] = ppd.TPEQty - ppd.ShipQty
+			, [BalQty] = ppd.Qty - ppd.ShipQty
 		From Machine.dbo.PartPO_Detail ppd with(nolock)
 		inner join Machine.dbo.PartPO pp with(nolock) on ppd.ID = pp.ID
 		where exists (select 1 from [MainServer].Production.dbo.Export_Detail ed with(nolock) where ppd.TPEPOID = ed.PoID and ed.POType = 'M')
