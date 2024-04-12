@@ -888,15 +888,16 @@ where pd.CustCTN = '{dr["CustCTN"]}' and pd.CTNQty > 0 and pd.DisposeFromClog= 0
 
         private StringBuilder warningmsg = new StringBuilder();
 
+        private int progressCnt = 0;
         private void BackgroundDownloadSticker_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
-        {   
+        {
             try
             {
                 DataTable dt = this.selectDataTable;
                 this.warningmsg = new StringBuilder();
                 this.backgroundDownloadSticker.ReportProgress(0);
 
-                int progressCnt = 0;
+                this.progressCnt = 0;
                 foreach (DataRow dr in this.selectedData)
                 {
                     string checkPackSql = $@"
@@ -1070,7 +1071,7 @@ where pd.CustCTN = '{dr["CustCTN"]}' and pd.CTNQty > 0 and pd.DisposeFromClog= 0
                     }
 
                     // 更新進度條
-                    progressCnt++;
+                    this.progressCnt++;
                     this.backgroundDownloadSticker.ReportProgress(progressCnt, string.Empty);
                 }
 
@@ -1088,6 +1089,7 @@ where pd.CustCTN = '{dr["CustCTN"]}' and pd.CTNQty > 0 and pd.DisposeFromClog= 0
         private void BackgroundDownloadSticker_ProgressChanged(object sender, System.ComponentModel.ProgressChangedEventArgs e)
         {
             this.progressBarProcessing.Value = e.ProgressPercentage;
+            this.labProcessingBar.Text = $"{this.progressCnt}/{this.progressBarProcessing.Maximum}";
         }
 
         private void SetInterfaceLocked(bool isLocked)

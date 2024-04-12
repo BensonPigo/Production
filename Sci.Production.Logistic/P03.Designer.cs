@@ -53,6 +53,7 @@
             this.label5 = new Sci.Win.UI.Label();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.panel3 = new Sci.Win.UI.Panel();
+            this.labProcessingBar = new System.Windows.Forms.Label();
             this.label6 = new Sci.Win.UI.Label();
             this.progressBarProcessing = new System.Windows.Forms.ProgressBar();
             this.chkOnlyReqCarton = new Sci.Win.UI.CheckBox();
@@ -300,6 +301,7 @@
             // 
             // panel3
             // 
+            this.panel3.Controls.Add(this.labProcessingBar);
             this.panel3.Controls.Add(this.label6);
             this.panel3.Controls.Add(this.progressBarProcessing);
             this.panel3.Controls.Add(this.chkOnlyReqCarton);
@@ -332,6 +334,15 @@
             this.panel3.Size = new System.Drawing.Size(712, 187);
             this.panel3.TabIndex = 19;
             // 
+            // labProcessingBar
+            // 
+            this.labProcessingBar.AutoSize = true;
+            this.labProcessingBar.Location = new System.Drawing.Point(603, 79);
+            this.labProcessingBar.Name = "labProcessingBar";
+            this.labProcessingBar.Size = new System.Drawing.Size(28, 17);
+            this.labProcessingBar.TabIndex = 53;
+            this.labProcessingBar.Text = "0/0";
+            // 
             // label6
             // 
             this.label6.Location = new System.Drawing.Point(399, 76);
@@ -345,6 +356,7 @@
             this.progressBarProcessing.Location = new System.Drawing.Point(535, 76);
             this.progressBarProcessing.Name = "progressBarProcessing";
             this.progressBarProcessing.Size = new System.Drawing.Size(170, 23);
+            this.progressBarProcessing.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
             this.progressBarProcessing.TabIndex = 51;
             // 
             // chkOnlyReqCarton
@@ -663,5 +675,6 @@
         private Win.UI.Label label6;
         private System.Windows.Forms.ProgressBar progressBarProcessing;
         private System.ComponentModel.BackgroundWorker backgroundDownloadSticker;
+        private System.Windows.Forms.Label labProcessingBar;
     }
 }
