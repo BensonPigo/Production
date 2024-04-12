@@ -28,13 +28,13 @@ Begin
 		inner join Machine.dbo.MachinePO mp with(nolock) on mpd.ID = mp.ID
 		where exists (select 1 from [MainServer].Production.dbo.Export_Detail ed with(nolock) where mpd.ID = ed.PoID and ed.POType = 'M')
 		union all
-		Select type = 'MiscPO_Detail',mid.TPEPOID, mid.SEQ1, mid.SEQ2, mid.SuppDelivery, mi.Handle, mi.FactoryID, mid.Qty, mid.SuppID
+		Select type = 'MiscPO_Detail',mid.TPEPOID, mid.SEQ1, mid.SEQ2, mid.SuppDelivery, mi.Handle, mi.FactoryID, mid.TPEQty, mid.SuppID
 			, [BalQty] = mid.Qty - mid.ShipQty
 		From Machine.dbo.MiscPO_Detail mid with(nolock)
 		inner join Machine.dbo.MiscPO mi with(nolock) on mid.ID = mi.ID
 		where exists (select 1 from [MainServer].Production.dbo.Export_Detail ed with(nolock) where mid.TPEPOID = ed.PoID and ed.POType = 'M')	
 		union all
-		Select type = 'PartPO_Detail',ppd.TPEPOID, ppd.SEQ1, ppd.SEQ2, ppd.SuppDelivery, pp.Handle, pp.FactoryID, ppd.Qty, ppd.SuppID
+		Select type = 'PartPO_Detail',ppd.TPEPOID, ppd.SEQ1, ppd.SEQ2, ppd.SuppDelivery, pp.Handle, pp.FactoryID, ppd.TPEQty, ppd.SuppID
 			, [BalQty] = ppd.Qty - ppd.ShipQty
 		From Machine.dbo.PartPO_Detail ppd with(nolock)
 		inner join Machine.dbo.PartPO pp with(nolock) on ppd.ID = pp.ID
@@ -108,7 +108,6 @@ Begin
 	into #tmpMMS
 	From [MainServer].Production.dbo.Export e with(nolock)
 	Inner Join [MainServer].Production.dbo.Export_Detail ed with(nolock) on e.ID = ed.ID
-	Inner join [MainServer].Production.dbo.Orders o with(nolock) on ed.PoID = o.ID
 	Left Join [MainServer].Production.dbo.Fabric f with(nolock) on ed.SCIRefno = f.SCIRefno
 	Left join [MainServer].Production.dbo.Supp s with(nolock) on s.ID = ed.SuppID
 	Left join [MainServer].Production.dbo.Export_ShareAmount esa with(nolock) on esa.Ukey = ed.Export_ShareAmount_Ukey
