@@ -208,13 +208,13 @@ else
 				, t.BrandID				= isnull( s.BrandID      , '')
 				, t.UpdateDate			= @dToDay--寫入到IMP MOCKUPORDER
 				, t.TransferDate		= @OldDate--寫入到IMP MOCKUPORDER
-				, t.NewFOC 			= IIF(isnull(s.FOC, 0)=1,'v','')
-				, t.NewOrderTypeID 	= isnull( s.OrderTypeID, '')
+				, t.NewFOC = iif(isnull(s.FOC, 0) = 1 , 'v','')
+				, t.NewOrderTypeID = isnull(s.OrderTypeID, '')
 		when not matched by target then
 			insert (
 				NewOrder		, OrderID		, NewStyleID	, NewQty	, NewBuyerDelivery
 				, NewSCIDelivery, MDivisionID	, FactoryID			, UpdateDate, TransferDate
-				, BrandID , NewFOC, NewOrderTypeID
+				, BrandID		, NewFOC		, NewOrderTypeID
 			) 
        VALUES
        (
@@ -228,9 +228,9 @@ else
               isnull(s.factoryid ,    ''),
               @dToDay ,
               @OldDate ,
-              isnull(s.brandid,    ''), 
-			  IIF(isnull(s.FOC, 0)=1,'v',''), 
-			  isnull( s.OrderTypeID, '')
+              isnull(s.brandid,    ''),
+			  iif(isnull(s.FOC, 0) = 1 , 'v',''),
+			  isnull(s.OrderTypeID, '')
        );
 
 		----2.Delete 記錄 Trade 沒有 PMS 有的資料 (DeleteOrder = 1)
@@ -253,11 +253,13 @@ else
 				, t.BrandID				    = isnull( s.BrandID      , '')
 				, t.UpdateDate				= @dToday
 				, t.TransferDate			= @OldDate
+				, t.OriginalFOC = iif(isnull(s.FOC, 0) = 1 , 'v','')
+				, t.OriginalOrderTypeID = isnull(s.OrderTypeID, '')
 		when not matched by target then
 			insert (
 				DeleteOrder				, OrderID		, OriginalStyleID	, OriginalQty	, OriginalBuyerDelivery
 				, OriginalSciDelivery	, MDivisionID	, FactoryID			, UpdateDate	, TransferDate
-				, BrandID
+				, BrandID	, OriginalFOC	, OriginalOrderTypeID
 			)
            VALUES
            (
@@ -271,7 +273,9 @@ else
                   isnull(s.factoryid ,     ''),
                   @dToDay ,
                   @OldDate ,
-                  isnull(s.brandid, '')
+                  isnull(s.brandid, ''),
+				  iif(isnull(s.FOC, 0) = 1 , 'v',''),
+				  isnull(s.OrderTypeID, '')
            );
 
 		----3.ChangeFactory 記錄換工廠
@@ -298,12 +302,14 @@ else
 				, t.BrandID				    = isnull( s.BrandID			, '')
 				, t.UpdateDate				= @dToday
 				, t.TransferDate			= @OldDate
+				, t.OriginalFOC = iif(isnull(s.FOC, 0) = 1 , 'v','')
+				, t.OriginalOrderTypeID = isnull(s.OrderTypeID, '')
 		when not matched by target then
 			insert (
 				DeleteOrder				, TransferToFactory		, OrderID		, OriginalStyleID	, OriginalQty
 				, OriginalBuyerDelivery	, OriginalSciDelivery	, MDivisionID	, FactoryID			, UpdateDate
 				, TransferDate
-				, BrandID
+				, BrandID		, OriginalFOC		, OriginalOrderTypeID
 			) 
            VALUES
            (
@@ -318,7 +324,9 @@ else
                   isnull(s.factoryid ,       ''),
                   @dToDay ,
                   @OldDate ,
-                  isnull(s.brandid, '')
+                  isnull(s.brandid, ''),
+				  iif(isnull(s.FOC, 0) = 1 , 'v',''),
+				  isnull(s.OrderTypeID, '')
            );
 		--------3.1.2.Delete 舊工廠的資料，資料帶入 PMS.Orders(跨M)
 		Merge Production.dbo.OrderComparisonList as t
@@ -361,13 +369,13 @@ else
 				, t.BrandID				= isnull( s.BrandID		 , '')
 				, t.UpdateDate			= @dToday
 				, t.TransferDate		= @OldDate
-				, t.NewFOC 			= IIF(isnull(s.FOC, 0)=1,'v','')
-				, t.NewOrderTypeID 	= isnull( s.OrderTypeID, '')
+				, t.NewFOC = iif(isnull(s.FOC, 0) = 1 , 'v','')
+				, t.NewOrderTypeID = isnull(s.OrderTypeID, '')
 		when not matched by target then
 			insert (
 				NewOrder		, OrderID		, NewStyleID	, NewQty	, NewBuyerDelivery
 				, NewSCIDelivery, MDivisionID	, FactoryID			, UpdateDate, TransferDate
-				, BrandID , NewFOC, NewOrderTypeID
+				, BrandID		, NewFOC		, NewOrderTypeID
 			)
            VALUES
            (
@@ -382,8 +390,8 @@ else
                   @dToDay ,
                   @OldDate ,
                   isnull(s.brandid,''),
-				  IIF(isnull(s.FOC, 0)=1,'v',''), 
-				  isnull( s.OrderTypeID, '')
+				  iif(isnull(s.FOC, 0) = 1 , 'v',''),
+				  isnull(s.OrderTypeID, '')
            );
 
 		----4.ChangeData 記錄資料異動
@@ -424,6 +432,10 @@ else
 						, N_ShipModeList	= IIF(isnull(a.ShipModeList, '') != isnull(b.ShipModeList, '') , b.ShipModeList, '')
 						, O_PFETA			= IIF(isnull(a.PFETA, '') != isnull(b.PFETA, '') , a.PFETA, null)
 						, N_PFETA			= IIF(isnull(a.PFETA, '') != isnull(b.PFETA, '') , b.PFETA, null)
+						, O_FOC = iif((iif(isnull(a.FOC, 0) != isnull(b.FOC, 0), a.FOC, 0) = 1),'v','')
+						, N_FOC = iif((iif(isnull(a.FOC, 0) != isnull(b.FOC, 0), b.FOC, 0) = 1),'v','')
+						, O_OrderTypeID = iif(isnull(a.OrderTypeID, '') != isnull(b.OrderTypeID, 0), a.OrderTypeID, '')
+						, N_OrderTypeID = iif(isnull(a.OrderTypeID, '') != isnull(b.OrderTypeID, 0), b.OrderTypeID, '')
 				from Production.dbo.Orders a WITH (NOLOCK)
 				inner join Trade_To_Pms.dbo.Orders b on a.id = b.id and a.FactoryID = b.FactoryID
 				where	(isnull(A.QTY, 0) != isnull(B.QTY, 0) 
@@ -441,6 +453,8 @@ else
 						OR isnull(A.CustPONo, '') != isnull(B.CustPONo, '')	
 						OR isnull(A.ShipModeList, '') != isnull(B.ShipModeList, '')	
 						OR isnull(A.PFETA, '') != isnull(B.PFETA, '')	
+						OR isnull(A.FOC, 0) != isnull(B.FOC, 0)	
+						OR isnull(A.OrderTypeID, '') != isnull(B.OrderTypeID, '')	
 						)
 						and b.FactoryID in (select ID from Factory)) s
 		on t.OrderID = s.ID and t.FactoryID = s.FactoryID and t.UpdateDate = @dToday
@@ -479,6 +493,10 @@ else
 				, t.JunkOrder				= isnull( s.N_Junk         , 0)
 				, t.UpdateDate				= @dToday
 				, t.TransferDate			= @OldDate
+				, t.OriginalFOC				= isnull( s.O_FOC     , '')
+				, t.NewFOC			= isnull( s.N_FOC     , '')
+				, t.OriginalOrderTypeID			= isnull( s.O_OrderTypeID     , '')
+				, t.NewOrderTypeID				= isnull( s.N_OrderTypeID     , '')
 		when not matched by target then 
 			insert (
 				OrderID					, FactoryID			, MDivisionID		, OriginalQty			, OriginalBuyerDelivery
@@ -490,6 +508,7 @@ else
 				, KPILETA			    , MnorderApv2		, JunkOrder			, UpdateDate
 				, TransferDate			, BrandID			
 				, OriginalShipModeList	, NewShipModeList	, OriginalPFETA 	, NewPFETA 
+				, OriginalFOC	, NewFOC	, OriginalOrderTypeID 	, NewOrderTypeID 
 			) 
            VALUES
            (
@@ -525,7 +544,11 @@ else
                   isnull(s.o_shipmodelist , ''),
                   isnull(s.n_shipmodelist , ''),
                   s.o_pfeta ,
-                  s.n_pfeta
+                  s.n_pfeta ,
+				  isnull( s.O_FOC     , '') ,
+				  isnull( s.N_FOC     , ''), 
+				  isnull( s.O_OrderTypeID     , ''), 
+				  isnull( s.N_OrderTypeID     , '')
            );
 
         ----5.No Change!
