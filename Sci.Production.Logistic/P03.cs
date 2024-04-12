@@ -920,10 +920,6 @@ where pd.CustCTN = '{dr["CustCTN"]}' and pd.CTNQty > 0 and pd.DisposeFromClog= 0
                         }
                         else if (MyUtility.Convert.GetString(dr["Reason"]).ToUpper() == "OTHER" && MyUtility.Check.Empty(dr["ClogReasonRemark"]))
                         {
-                            this.warningmsg.Append($@"<CNT#: {dr["PackingListID"]}{dr["CTNStartNo"]}>This CTN# has been return." + Environment.NewLine);
-                        }
-                        else if (MyUtility.Convert.GetString(dr["Reason"]).ToUpper() == "OTHER" && MyUtility.Check.Empty(dr["ClogReasonRemark"]))
-                        {
                             this.warningmsg.Append($@"Please fill in [Remark] since [Reason] is equal to ""Other"" for PackId：{dr["PackingListID"]}, SP#：{dr["OrderID"]}, CTN#：{dr["CTNStartNo"]}." + Environment.NewLine);
                         }
                         else if (!MyUtility.Check.Empty(dr["Remark"].ToString().Trim()))
