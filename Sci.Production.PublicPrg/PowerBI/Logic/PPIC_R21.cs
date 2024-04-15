@@ -189,7 +189,7 @@ namespace Sci.Production.Prg.PowerBI.Logic
 				when pld.TransferDate is null and PackingAuditScanTime.val > isnull(HaulingScanTime.val, '19710101') and PackingAuditScanTime.val > isnull(M360MDScanTime.val, '19710101') and PackingAuditScanTime.val > isnull(pld.ScanEditDate, '19710101') 
 						then 'Packing Audit'
 				when pld.TransferDate is null and HaulingScanTime.val > isnull(PackingAuditScanTime.val, '19710101') and HaulingScanTime.val > isnull(M360MDScanTime.val, '19710101') and HaulingScanTime.val > isnull(pld.ScanEditDate, '19710101') 
-						then 'Hauiling'
+						then 'Hauling'
 				when pld.TransferDate is null and M360MDScanTime.val > isnull(PackingAuditScanTime.val, '19710101') and M360MDScanTime.val > isnull(HaulingScanTime.val, '19710101') and M360MDScanTime.val > isnull(pld.ScanEditDate, '19710101') 
 						then 'M360 MD'
 				when pld.TransferDate is null and pld.ScanEditDate > isnull(PackingAuditScanTime.val, '19710101') and pld.ScanEditDate > isnull(HaulingScanTime.val, '19710101') and pld.ScanEditDate > isnull(M360MDScanTime.val, '19710101') 
