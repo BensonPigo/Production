@@ -630,7 +630,8 @@ SELECT OrderNumber = ROW_NUMBER() over (order by   TRY_CONVERT (int, CTNNo )
 FROM(
     select ed.*
 	    ,case when ed.Category in ('4') then ed.MtlDesc else ed.Description end nDescription
-	    ,AirPPno=iif(isnull(ed.PackingListID,'') = '',ed.DutyNo , airpp.AirPPno)
+	    ,AirPPno=iif(isnull(ed.PackingListID,'') = '',iif(ed.Category = '4', '', ed.DutyNo) , airpp.AirPPno)
+        ,FtyWKNo=iif(ed.Category = '4', ed.DutyNo, '')
     from
     (
 	    select ed.*,ed.SuppID+'-'+isnull(s.AbbEN,'') as Supplier,ec.CTNNW,
@@ -771,6 +772,7 @@ Order by CTNNo,Seq1,Seq2", masterID);
                 .Text("PackingListID", header: "PL#", width: Widths.AnsiChars(13))
                 .Text("PulloutID", header: "Pullout ID", width: Widths.AnsiChars(13))
                 .Text("AirPPno", header: "AirPP#", width: Widths.AnsiChars(13))
+                .Text("FtyWKNo", header: "Fty WK No", width: Widths.AnsiChars(13))
                 .Text("InChargeName", header: "In Charge", width: Widths.AnsiChars(25))
                 .Text("ReceiverName", header: "Receiver", width: Widths.AnsiChars(13))
                 .Text("LeaderName", header: "Team Leader", width: Widths.AnsiChars(30))

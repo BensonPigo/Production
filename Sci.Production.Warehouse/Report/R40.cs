@@ -331,6 +331,7 @@ drop table #tmpResult
 select
 	[ReceivingID] = r.ID
 	,r.ExportID
+	,e.Packages
 	,[ArriveDate] = r.WhseArrival
 	,rd.PoId
     ,rd.seq1
@@ -388,6 +389,16 @@ OUTER APPLY(
 	INNER JOIN FIR_Shadebone fs with (nolock) on f.id = fs.ID 	
 	WHERE  r.id = f.ReceivingID and rd.PoId = F.POID and rd.Seq1 = F.SEQ1 and rd.Seq2 = F.SEQ2 AND rd.Roll = fs.Roll and rd.Dyelot = fs.Dyelot
 ) cutTime
+outer apply (
+	select [Packages] = sum(e.Packages)
+	from Export e with (nolock) 
+	where EXISTS (
+		select distinct e2.BLNO
+		from Export e2 with (nolock) 
+		where r.ExportId = e2.ID AND e2.BLNO =  e.Blno
+	)
+)e
+
 where   psd.FabricType ='F' and r.Type = 'A'
 {whereReceiving}
 
@@ -395,6 +406,7 @@ union all
 select
 	[ReceivingID] = r.ID
 	,[ExportID] = ''
+	,r.Packages
 	,[ArriveDate] = r.IssueDate
 	,rd.PoId
     ,rd.seq1
@@ -453,8 +465,10 @@ OUTER APPLY(
 ) cutTime
 where   psd.FabricType ='F' 
 {whereTransferIn}
+
 select  ReceivingID
 		,ExportID
+		,Packages
 		,ArriveDate
 		,PoId
 		,Seq

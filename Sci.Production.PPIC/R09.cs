@@ -135,22 +135,26 @@ select	UpdateDate
 		, OrderId
 		, OriginalStyleID
         , OriginalCustPONo
+        , OriginalOrderTypeID
 		, OriginalQty			= iif (convert (varchar, OriginalQty) = 0, ''
 																		 , convert (varchar, OriginalQty))
 		, OriginalBuyerDelivery	= RIGHT (CONVERT (VARCHAR (20), OriginalBuyerDelivery, 111), 5) 
 		, OriginalSCIDelivery	= RIGHT (CONVERT (VARCHAR (20), OriginalSCIDelivery,111), 5) 
 		, OriginalLETA			= RIGHT (CONVERT (VARCHAR (20), OriginalLETA,111), 5) 
         , OriginalShipModeList
+        , OriginalFOC 
 		, KPILETA				= RIGHT (CONVERT (VARCHAR (20), KPILETA,111), 5) 
         , OriginalPFETA 		= RIGHT (CONVERT (VARCHAR (20), OriginalPFETA,111), 5) 
 		, TransferToFactory
         , NewCustPONo
+        , NewOrderTypeID
 		, NewQty				= iif (convert (varchar, NewQty) = 0, ''
 																	, convert (varchar, NewQty)) 
 		, NewBuyerDelivery		= RIGHT (CONVERT (VARCHAR (20), NewBuyerDelivery, 111), 5) 
 		, NewSCIDelivery		= RIGHT (CONVERT (VARCHAR(20), NewSCIDelivery, 111), 5) 
 		, NewLETA				= RIGHT (CONVERT (VARCHAR(20), NewLETA, 111), 5) 
         , NewShipModeList
+        , NewFOC
 		, NewOrder				= IIF (NewOrder = 1, 'V', '') 
 		, DeleteOrder			= iif (DeleteOrder=1, 'V', '')  
 		, JunkOrder				= iif (JunkOrder=1, 'V', '') 
