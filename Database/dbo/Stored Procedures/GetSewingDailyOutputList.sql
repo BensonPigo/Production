@@ -102,7 +102,6 @@ select s.id
     ,[Inline Category] = (select CONCAT(s.SewingReasonIDForTypeIC, '-' + SR.Description) from SewingReason sr where sr.ID = s.SewingReasonIDForTypeIC and sr.Type='IC')
     ,[Low output Reason] = (select CONCAT(s.SewingReasonIDForTypeLO, '-' + SR.Description) from SewingReason sr where sr.ID = s.SewingReasonIDForTypeLO and sr.Type='LO')
     ,[New Style/Repeat style] = dbo.IsRepeatStyleBySewingOutput(s.FactoryID, s.OutputDate, s.SewinglineID, s.Team, o.StyleUkey)
-	,[CumulateDate] = sd.Cumulate
 	,[CumulateDateSimilar] = sd.CumulateSimilar
 into #tmpSewingDetail
 from System WITH (NOLOCK),SewingOutput s WITH (NOLOCK) 
@@ -199,7 +198,6 @@ select distinct OutputDate
     ,[Inline Category]
     ,[Low output Reason]
     ,[New Style/Repeat style]
-	,[CumulateDate]
 	,[CumulateDateSimilar]
 into #tmpSewingGroup
 from #tmpSewingDetail t
@@ -364,7 +362,6 @@ select	MDivisionID
 		,[CPUSewer] = CPUSewer
 		,[EFF] = EFF
 		,[RFT] = RFT
-		,CumulateDate
 		,CumulateDateSimilar
 		,DateRange
 		,InlineQty'
@@ -435,9 +432,8 @@ from(
 		,CPUSewer = IIF(ROUND(ActManPower*WorkHour,2)>0,(IIF(t.Category=''M'',MockupCPU*MockupCPUFactor,OrderCPU*OrderCPUFactor*Rate)*t.QAQty)/ROUND(ActManPower*WorkHour,2),0)
 		,EFF = ROUND(IIF(ROUND(ActManPower*WorkHour,2)>0,((IIF(t.Category=''M'',MockupCPU*MockupCPUFactor,OrderCPU*OrderCPUFactor*Rate)*t.QAQty)/(ROUND(ActManPower*WorkHour,2)*3600/StdTMS))*100,0),1)
 		,RFT = IIF(ori_InlineQty = 0, 0, ROUND(ori_QAQty* 1.0 / ori_InlineQty * 1.0 * 100 ,2))
-		,CumulateDate = CONVERT(VARCHAR, CumulateDate)
 		,CumulateDateSimilar = CONVERT(VARCHAR, CumulateDateSimilar)
-		,DateRange = IIF(CumulateDate >= 10,''>=10'',CONVERT(VARCHAR,CumulateDate))
+		,DateRange = IIF(CumulateDateSimilar >= 10,''>=10'',CONVERT(VARCHAR,CumulateDateSimilar))
 		,InlineQty'
 
 		if(@ShowAccumulate_output = 1)
