@@ -1165,6 +1165,7 @@ and Name = @PPA
             #endregion
 
             template.MaxLength = 100;
+            CheckBoxColumn colIsNonSewingLine;
 
             this.Helper.Controls.Grid.Generator(this.detailgrid)
                 .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0)
@@ -1177,7 +1178,7 @@ and Name = @PPA
                 .Numeric("StdSMV", header: "Std. SMV (sec)", integer_places: 4, decimal_places: 4, maximum: 9999.9999M, minimum: 0, iseditingreadonly: true)
                 .Numeric("SMV", header: "SMV (sec)", integer_places: 4, decimal_places: 4, maximum: 9999.9999M, minimum: 0, settings: this.smvsec)
                 .CheckBox("IsSubprocess", header: "Subprocess", width: Widths.AnsiChars(7), iseditable: false, trueValue: 1, falseValue: 0)
-                .CheckBox("IsNonSewingLine", header: "Non-Sewing line", width: Widths.AnsiChars(7), iseditable: true, trueValue: 1, falseValue: 0)
+                .CheckBox("IsNonSewingLine", header: "Non-Sewing line", width: Widths.AnsiChars(7), iseditable: true, trueValue: 1, falseValue: 0).Get(out colIsNonSewingLine)
                 .Text("PPAText", header: "PPA", width: Widths.AnsiChars(10), settings: ppa)
                 .Text("MachineTypeID", header: "ST/MC Type", width: Widths.AnsiChars(8), settings: this.machine)
                 .Text("MasterPlusGroup", header: "Machine Group", width: Widths.AnsiChars(8), settings: txtSubReason)
@@ -1192,6 +1193,7 @@ and Name = @PPA
             // 設定detailGrid Rows 是否可以編輯
             this.detailgrid.RowEnter += this.Detailgrid_RowEnter;
             this.detailgrid.ColumnHeaderMouseClick += this.Detailgrid_ColumnHeaderMouseClick;
+            colIsNonSewingLine.HeaderAction = DataGridViewGeneratorCheckBoxHeaderAction.None;
             this.detailgrid.Sorted += (s, e) =>
             {
                 this.HideRows();
@@ -1390,7 +1392,6 @@ and Name = @PPA
 
 
             #endregion Seq 重複資料檢查
-
             #region ST/MC Type檢查
             var listSTMCTypeCheckResult = this.DetailDatas
                 .Where(s => !MyUtility.Check.Empty(s["OperationDescEN"]) &&
