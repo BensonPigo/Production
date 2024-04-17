@@ -24,6 +24,7 @@ namespace Sci.Production.Prg.PowerBI.Logic
             P_CuttingScheduleOutputList,
             P_QAR31,
             P_QA_CFAMasterList,
+            P_CFAMasterListRelatedrate,
             P_CartonScanRate,
             P_CartonStatusTrackingList,
             P_FabricDispatchRate,
@@ -248,6 +249,9 @@ ORDER BY [Group], [SEQ], [NAME]";
                     case ListName.P_QA_CFAMasterList:
                         result = new P_Import_QA_CFAMasterList().P_QA_CFAMasterList(item.SDate);
                         break;
+                    case ListName.P_CFAMasterListRelatedrate:
+                        result = new P_Import_CFAMasterListRelatedrate().P_CFAMasterListRelatedrate(item.SDate);
+                        break;
                     case ListName.P_SewingLineScheduleBySP:
                         result = new P_Import_SewingLineScheduleBySP().P_SewingLineScheduleBySP(item.SDate, item.EDate);
                         break;
@@ -256,7 +260,7 @@ ORDER BY [Group], [SEQ], [NAME]";
                         break;
                     case ListName.P_CartonStatusTrackingList:
                         result = new P_Import_CartonStatusTrackingList().P_CartonStatusTrackingList(item.SDate);
-						break;
+                        break;
                     case ListName.P_FabricDispatchRate:
                         result = new P_Import_FabricDispatchRate().P_FabricDispatchRate(item.SDate);
                         break;
