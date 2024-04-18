@@ -28,6 +28,7 @@ namespace Sci.Production.Prg.PowerBI.Logic
             P_CartonStatusTrackingList,
             P_FabricDispatchRate,
             P_IssueFabricByCuttingTransactionList,
+            P_ProductionKitsTracking,
         }
 
         /// <summary>
@@ -262,6 +263,8 @@ ORDER BY [Group], [SEQ], [NAME]";
                         break;
                     case ListName.P_IssueFabricByCuttingTransactionList:
                         result = new P_Import_IssueFabricByCuttingTransactionList().P_IssueFabricByCuttingTransactionList(item.SDate, item.EDate);
+                    case ListName.P_ProductionKitsTracking:
+                        result = new P_Import_ProductionKitsTracking().P_ProductionKitsTracking(item.SDate, item.EDate);
                         break;
                 }
             }
