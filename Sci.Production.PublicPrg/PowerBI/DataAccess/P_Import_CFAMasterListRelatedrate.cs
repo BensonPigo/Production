@@ -63,7 +63,7 @@ from (
 		where p.BuyerDelivery = @BuyerDelivery
 		and p.FinalInspDate is not null
 		group by p.OrderID
-	)p2 on p.OrderID = p.OrderID
+	)p2 on p.OrderID = p2.OrderID
 	left join (
 		select p.OrderID, [TotalSP] = count(*)
 		from P_QA_CFAMasterList p with(nolock)
