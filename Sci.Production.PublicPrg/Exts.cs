@@ -526,5 +526,54 @@ namespace Sci.Production.Prg
 
             return value.ToString();
         }
+
+        /// <summary>
+        /// 將小數點轉為分數格式
+        /// </summary>
+        /// <param name="num">num</param>
+        /// <param name="maxDenominator">maxDenominator</param>
+        /// <returns>string</returns>
+        public static string DecimalToFraction(decimal num, int maxDenominator = 1000)
+        {
+            if (num < 0 || num > 1)
+            {
+                return string.Empty;
+            }
+
+            decimal tolerance = 1.0m / (2 * maxDenominator);
+            decimal numerator = 0;
+            decimal denominator = 1;
+            decimal fraction = 0;
+            decimal error = num;
+
+            while (denominator <= maxDenominator)
+            {
+                fraction = decimal.Round(num * denominator);
+                if (Math.Abs(fraction / denominator - num) < tolerance)
+                {
+                    break;
+                }
+
+                if (fraction / denominator < num)
+                {
+                    numerator = fraction;
+                }
+                else
+                {
+                    denominator++;
+                }
+
+                if (Math.Abs(fraction / denominator - num) < error)
+                {
+                    error = Math.Abs(fraction / denominator - num);
+                }
+                else
+                {
+                    break;
+                }
+            }
+
+            return $"{fraction}/{denominator}";
+        }
     }
 }
