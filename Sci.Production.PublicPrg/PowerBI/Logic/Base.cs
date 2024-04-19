@@ -253,7 +253,7 @@ ORDER BY [Group], [SEQ], [NAME]";
                         result = new P_Import_SewingLineScheduleBySP().P_SewingLineScheduleBySP(item.SDate, item.EDate);
                         break;
                     case ListName.P_CartonScanRate:
-                        result = new P_Import_CartonScanRate().P_CartonScanRate();
+                        result = new P_Import_CartonScanRate().P_CartonScanRate(item.SDate, item.EDate);
                         break;
                     case ListName.P_CartonStatusTrackingList:
                         result = new P_Import_CartonStatusTrackingList().P_CartonStatusTrackingList(item.SDate);
