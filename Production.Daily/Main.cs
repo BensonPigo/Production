@@ -995,6 +995,26 @@ where   exists(
 
             #endregion
 
+            #region DateInfo 的 Transfer Date 檢核
+
+            chkSqlcmd = @"
+---- Trade_To_PMS.dbo.DateInfo，Name = TransferDate 的資料的DateStart，必須是昨天或今天，是的話才進行後續的動作
+select 1 from Trade_To_PMS.dbo.DateInfo 
+where Name = 'TransferDate'
+AND DateStart in (CAST(DATEADD(DAY,-1,GETDATE()) AS date), CAST(GETDATE() AS DATE))
+	
+;";
+            if (!MyUtility.Check.Seek(chkSqlcmd))
+            {
+                String subject = "PMS Trans Date Error";
+                String desc = "The DB transferdate is wrong!!,Pls Check File(" + region.RarName + ") is correct";
+                SendMail(subject, desc);
+                this.CallJobLogApi("Daily transfer Region error", desc, DateTime.Now.ToString("yyyyMMdd HH:mm"), DateTime.Now.ToString("yyyyMMdd HH:mm"), isTestJobLog, false);
+                return Ict.Result.F("Wrong transferdate!!,Pls Check File(" + region.RarName + ") is correct");
+            }
+
+            #endregion
+
             if (!transferPMS.Import_Trade_To_Pms(ftpIP, ftpID, ftpPwd))
             {
                 return new DualResult(false, "Update failed!");
