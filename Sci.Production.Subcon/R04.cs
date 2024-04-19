@@ -188,6 +188,8 @@ namespace Sci.Production.Subcon
             this.strFactoryID = this.comboFactory.Text;
             this.strSupplier = this.txtSupplier.TextBox1.Text;
             this.strStyle = this.txtstyle.Text;
+            this.strSP_Start = this.txtSP_Start.Text;
+            this.strSP_End = this.txtSP_End.Text;
             return base.ValidateInput();
         }
 
