@@ -12,6 +12,19 @@ BEGIN
 	-- interfering with SELECT statements.
 	SET NOCOUNT ON;
 
+	---- Check TransferDate before everything
+	IF NOT  EXISTS(
+		select 1 from Trade_To_PMS..DateInfo 
+		where Name = 'TransferDate'
+		AND DateStart in (CAST(DATEADD(DAY,-1,GETDATE()) AS date), CAST(GETDATE() AS DATE))
+	)
+	BEGIN
+		-- 拋出錯誤
+		RAISERROR ('The DB transferdate is wrong. Trade_To_PMS..DateInfo  中不存在符合條件的 TransferDate 記錄。', 16, 1); -- 16是錯誤的嚴重程度，1是錯誤狀態	
+		RETURN; 
+	END
+	
+
    -- INVENTORY
 ---------------------------UPDATE 主TABLE跟來源TABLE 為一樣(主TABLE多的話 記起來 ~來源TABLE多的話不理會)
 UPDATE a

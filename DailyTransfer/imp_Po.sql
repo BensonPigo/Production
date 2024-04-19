@@ -5,6 +5,19 @@ BEGIN
 	SET NOCOUNT ON;
 	SET XACT_ABORT ON;
 
+	---- Check TransferDate before everything
+	IF NOT  EXISTS(
+		select 1 from Trade_To_PMS..DateInfo 
+		where Name = 'TransferDate'
+		AND DateStart in (CAST(DATEADD(DAY,-1,GETDATE()) AS date), CAST(GETDATE() AS DATE))
+	)
+	BEGIN
+		-- 拋出錯誤
+		RAISERROR ('The DB transferdate is wrong. Trade_To_PMS..DateInfo  中不存在符合條件的 TransferDate 記錄。', 16, 1); -- 16是錯誤的嚴重程度，1是錯誤狀態	
+		RETURN; 
+	END
+	
+
    SELECT b.*
 INTO #Trade_To_Pms_PO --先下條件把PO成為工廠別
  FROM  Trade_To_Pms.dbo.PO b WITH (NOLOCK) inner join Production.dbo.Factory c WITH (NOLOCK) on b.FactoryID = c.ID
