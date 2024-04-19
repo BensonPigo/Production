@@ -15,7 +15,7 @@ begin
 	SELECT *
 	into #tmp
 	FROM OPENQUERY(['+ @current_PMS_ServerName +'], 
-	''exec production.[dbo].GetSDP ''''' + Cast(@Date_S as varchar(8)) + ''''', ''''' + Cast(@Date_E as varchar(8)) + ''''' '')'
+	''exec Production.[dbo].GetSDP ''''' + Cast(@Date_S as varchar(10)) + ''''', ''''' + Cast(@Date_E as varchar(10)) + ''''' '')'
 
 	set @SqlCmdDelete = 
 	'
@@ -29,9 +29,15 @@ begin
 
 	Delete p
 	from P_SDP p
-	inner join Orders o with(nolock) on p.[SPNo] = o.ID
-	inner join OrderType ot with(nolock) on o.OrderTypeID = ot.ID and o.BrandID = ot.BrandID and o.BrandID = ot.BrandID
+	inner join [Production].[dbo].Orders o with(nolock) on p.[SPNo] = o.ID
+	inner join [MainServer].Production.[dbo].OrderType ot with(nolock) on o.OrderTypeID = ot.ID and o.BrandID = ot.BrandID and o.BrandID = ot.BrandID
 	where ot.IsGMTMaster = 1
+
+	Delete p
+	from P_SDP p
+	inner join [Production].[dbo].Orders o with(nolock) on p.[SPNo] = o.ID
+	inner join [Production].[dbo].Factory f with(nolock) on o.FactoryID = f.ID
+	where f.IsProduceFty = 0
 	'
 	set @SqlCmdUpdata ='
 	/************* 更新P_SDP的資料*************/
@@ -188,6 +194,6 @@ begin
 	DECLARE @SqlCmdAll nVARCHAR(MAX);
 	set @SqlCmdAll = @SqlCmd + @SqlCmdDelete+@SqlCmdUpdata+@SqlCmdinsert
 
-
+	--select @Sqlcmdall
 	EXEC sp_executesql @Sqlcmdall
 end 
