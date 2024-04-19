@@ -1,5 +1,6 @@
 ﻿using Sci.Production.Prg.PowerBI.Model;
 using System;
+using System.Collections.Generic;
 using System.Data.SqlClient;
 
 namespace Sci.Production.Prg.PowerBI.DataAccess
@@ -8,14 +9,24 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
     public class P_Import_CartonScanRate
     {
         /// <inheritdoc/>
-        public Base_ViewModel P_CartonScanRate()
+        public Base_ViewModel P_CartonScanRate(DateTime? sDate, DateTime? eDate)
         {
             Base_ViewModel finalResult = new Base_ViewModel();
 
             try
             {
+                if (!sDate.HasValue)
+                {
+                    sDate = DateTime.Now;
+                }
+
+                if (!eDate.HasValue)
+                {
+                    eDate = DateTime.Now.AddDays(7);
+                }
+
                 // insert into PowerBI
-                finalResult = this.UpdateBIData();
+                finalResult = this.UpdateBIData(sDate, eDate);
                 if (!finalResult.Result)
                 {
                     throw finalResult.Result.GetException();
@@ -31,13 +42,21 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             return finalResult;
         }
 
-        private Base_ViewModel UpdateBIData()
+        private Base_ViewModel UpdateBIData(DateTime? sDate, DateTime? eDate)
         {
             Base_ViewModel finalResult;
             Data.DBProxy.Current.OpenConnection("PowerBI", out SqlConnection sqlConn);
+            List<SqlParameter> sqlParameters = new List<SqlParameter>()
+            {
+                new SqlParameter("@sDate", sDate),
+                new SqlParameter("@eDate", eDate),
+            };
             using (sqlConn)
             {
                 string sql = @"	
+--declare @sDate as date = CONVERT(date, GETDATE()) 
+--	, @eDate as date = DATEADD(DAY ,7,CONVERT(date, GETDATE())) 
+
 select p.BuyerDelivery
 	, p.FTYGroup
 	, [HaulingScanRate] = cast(iif(isnull(p.TotalCartonPieces, 0) = 0, 0, (p.HauledPieces * 1.0 / p.TotalCartonPieces) * 100) as decimal(5, 2))
@@ -60,14 +79,14 @@ from (
 		, f.FTYGroup
 		, p.BuyerDelivery
 	from P_CartonStatusTrackingList p WITH(NOLOCK)
-	inner join [MainServer].Production.dbo.Factory f WITH(NOLOCK) on p.fty = f.ID
+	inner join Production.dbo.Factory f WITH(NOLOCK) on p.fty = f.ID and f.IsProduceFty = 1
 	left join (
 		select [SPCountWithPulloutCmplt] = count(distinct p.SP)
 			, f.FTYGroup, p.BuyerDelivery
 		from P_CartonStatusTrackingList p WITH(NOLOCK)
-		inner join [MainServer].Production.dbo.Factory f WITH(NOLOCK) on p.fty = f.ID
-		where p.BuyerDelivery >= CONVERT(date, GETDATE()) 
-		and p.BuyerDelivery <= DATEADD(DAY ,7,CONVERT(date, GETDATE())) 
+		inner join Production.dbo.Factory f WITH(NOLOCK) on p.fty = f.ID and f.IsProduceFty = 1
+		where p.BuyerDelivery >= @sDate
+		and p.BuyerDelivery <= @eDate
 		and p.PulloutComplete = 'Y'
 		group by f.FTYGroup, p.BuyerDelivery
 	) p2 on f.FTYGroup = p2.FTYGroup and p.BuyerDelivery = p2.BuyerDelivery
@@ -75,9 +94,9 @@ from (
 		select [PiecesQty] = count(*)
 			, f.FTYGroup, p.BuyerDelivery
 		from P_CartonStatusTrackingList p WITH(NOLOCK)
-		inner join [MainServer].Production.dbo.Factory f WITH(NOLOCK) on p.fty = f.ID
-		where p.BuyerDelivery >= CONVERT(date, GETDATE()) 
-		and p.BuyerDelivery <= DATEADD(DAY ,7,CONVERT(date, GETDATE())) 
+		inner join Production.dbo.Factory f WITH(NOLOCK) on p.fty = f.ID and f.IsProduceFty = 1
+		where p.BuyerDelivery >= @sDate 
+		and p.BuyerDelivery <= @eDate
 		and p.ClogReceiveTime is not null
 		group by f.FTYGroup, p.BuyerDelivery
 	)p_ClogReceiveTime on f.FTYGroup = p_ClogReceiveTime.FTYGroup and p.BuyerDelivery = p_ClogReceiveTime.BuyerDelivery
@@ -85,9 +104,9 @@ from (
 		select [PiecesQty] = count(*)
 			, f.FTYGroup, p.BuyerDelivery
 		from P_CartonStatusTrackingList p WITH(NOLOCK)
-		inner join [MainServer].Production.dbo.Factory f WITH(NOLOCK) on p.fty = f.ID
-		where p.BuyerDelivery >= CONVERT(date, GETDATE()) 
-		and p.BuyerDelivery <= DATEADD(DAY ,7,CONVERT(date, GETDATE())) 
+		inner join Production.dbo.Factory f WITH(NOLOCK) on p.fty = f.ID and f.IsProduceFty = 1
+		where p.BuyerDelivery >= @sDate 
+		and p.BuyerDelivery <= @eDate
 		and p.HaulingScanTime is not null
 		group by f.FTYGroup, p.BuyerDelivery
 	)p_Hauling on f.FTYGroup = p_Hauling.FTYGroup and p.BuyerDelivery = p_Hauling.BuyerDelivery
@@ -95,9 +114,9 @@ from (
 		select [PiecesQty] = count(*)
 			, f.FTYGroup, p.BuyerDelivery
 		from P_CartonStatusTrackingList p WITH(NOLOCK)
-		inner join [MainServer].Production.dbo.Factory f WITH(NOLOCK) on p.fty = f.ID
-		where p.BuyerDelivery >= CONVERT(date, GETDATE()) 
-		and p.BuyerDelivery <= DATEADD(DAY ,7,CONVERT(date, GETDATE())) 
+		inner join Production.dbo.Factory f WITH(NOLOCK) on p.fty = f.ID and f.IsProduceFty = 1
+		where p.BuyerDelivery >= @sDate
+		and p.BuyerDelivery <= @eDate
 		and p.PackingAuditScanTime is not null
 		group by f.FTYGroup, p.BuyerDelivery
 	)p_PackingAuditScanTime on f.FTYGroup = p_PackingAuditScanTime.FTYGroup and p.BuyerDelivery = p_PackingAuditScanTime.BuyerDelivery
@@ -105,9 +124,9 @@ from (
 		select [PiecesQty] = count(*)
 			, f.FTYGroup, p.BuyerDelivery
 		from P_CartonStatusTrackingList p WITH(NOLOCK)
-		inner join [MainServer].Production.dbo.Factory f WITH(NOLOCK) on p.fty = f.ID
-		where p.BuyerDelivery >= CONVERT(date, GETDATE()) 
-		and p.BuyerDelivery <= DATEADD(DAY ,7,CONVERT(date, GETDATE())) 
+		inner join Production.dbo.Factory f WITH(NOLOCK) on p.fty = f.ID and f.IsProduceFty = 1
+		where p.BuyerDelivery >= @sDate
+		and p.BuyerDelivery <= @eDate
 		and p.MDScanTime is not null
 		group by f.FTYGroup, p.BuyerDelivery
 	)p_MDScanTime on f.FTYGroup = p_MDScanTime.FTYGroup and p.BuyerDelivery = p_MDScanTime.BuyerDelivery
@@ -115,14 +134,14 @@ from (
 		select [PiecesQty] = count(*)
 			, f.FTYGroup, p.BuyerDelivery
 		from P_CartonStatusTrackingList p WITH(NOLOCK)
-		inner join [MainServer].Production.dbo.Factory f WITH(NOLOCK) on p.fty = f.ID
-		where p.BuyerDelivery >= CONVERT(date, GETDATE()) 
-		and p.BuyerDelivery <= DATEADD(DAY ,7,CONVERT(date, GETDATE())) 
+		inner join Production.dbo.Factory f WITH(NOLOCK) on p.fty = f.ID and f.IsProduceFty = 1
+		where p.BuyerDelivery >= @sDate 
+		and p.BuyerDelivery <= @eDate
 		and p.ScanAndPackTime is not null
 		group by f.FTYGroup, p.BuyerDelivery
 	)p_ScanAndPackTime on f.FTYGroup = p_ScanAndPackTime.FTYGroup and p.BuyerDelivery = p_ScanAndPackTime.BuyerDelivery
-	where p.BuyerDelivery >= CONVERT(date, GETDATE()) 
-	and p.BuyerDelivery <= DATEADD(DAY ,7,CONVERT(date, GETDATE())) 
+	where p.BuyerDelivery >= @sDate 
+	and p.BuyerDelivery <= @eDate
 	group by f.FTYGroup, p.BuyerDelivery, p2.[SPCountWithPulloutCmplt], p_ClogReceiveTime.PiecesQty, p_Hauling.PiecesQty, p_PackingAuditScanTime.PiecesQty, p_MDScanTime.PiecesQty, p_ScanAndPackTime.PiecesQty
 ) p
 
@@ -157,7 +176,7 @@ end
 ";
                 finalResult = new Base_ViewModel()
                 {
-                    Result = Data.DBProxy.Current.ExecuteByConn(conn: sqlConn, cmdtext: sql),
+                    Result = Data.DBProxy.Current.ExecuteByConn(conn: sqlConn, cmdtext: sql, parameters: sqlParameters),
                 };
             }
 
