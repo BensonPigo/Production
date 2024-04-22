@@ -424,6 +424,42 @@ group by ID
             }
             #endregion
 
+            #region 重新計算 Cumulate
+            sqlcmd = $@"
+DECLARE @Line as varchar(5)
+	, @FactoryID as varchar(8) 
+	, @OutputDate as date 
+
+
+DECLARE cursorSewingOutput 
+CURSOR FOR
+	select s.SewingLineID, s.FactoryID, s.OutputDate
+    from SewingOutput s
+    where s.id in(select distinct id from #tmp t where t.WillTransferQty > 0 )
+	group by s.SewingLineID, s.FactoryID, s.OutputDate
+	order by s.OutputDate
+
+OPEN cursorSewingOutput
+FETCH NEXT FROM cursorSewingOutput INTO @Line, @FactoryID, @OutputDate
+
+WHILE @@FETCH_STATUS = 0
+BEGIN
+    exec RecalculateCumulateDay @Line, @FactoryID, @OutputDate
+
+    FETCH NEXT FROM cursorSewingOutput INTO @Line, @FactoryID, @OutputDate
+END
+
+
+CLOSE cursorSewingOutput
+DEALLOCATE cursorSewingOutput
+";
+            result = this.proxyPMS.ProcessWithDatatable("Production", toDt, string.Empty, sqlcmd, out DataTable dataTable);
+            if (!result)
+            {
+                return result;
+            }
+            #endregion
+
             #region 重算第2層 WorkHour (在重算完 第2層 QAQty 之後) ※Sewing_P01
             foreach (DataRow item in sumQaQty.Rows)
             {
