@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Transactions;
 using System.Windows.Forms;
@@ -541,6 +542,22 @@ where   mo.Junk = 0
         /// <inheritdoc/>
         protected override void ClickSaveAfter()
         {
+            #region 重新計算 Cumulate
+            DualResult result;
+            List<SqlParameter> listSqlParmeter = new List<SqlParameter>
+            {
+                new SqlParameter("@Line", this.CurrentMaintain["SewingLineID"]),
+                new SqlParameter("@FactoryID", this.CurrentMaintain["FactoryID"]),
+                new SqlParameter("@OutputDate", this.CurrentMaintain["OutputDate"]),
+            };
+
+            if (!(result = DBProxy.Current.ExecuteSP(string.Empty, "dbo.RecalculateCumulateDay", listSqlParmeter)))
+            {
+                MyUtility.Msg.WarningBox(result.Description);
+            }
+
+            #endregion
+
             base.ClickSaveAfter();
             this.txtsewinglineLine.Enabled = true;
         }
