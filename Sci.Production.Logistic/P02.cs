@@ -12,6 +12,7 @@ using System.Linq;
 using Sci.Production.Prg;
 using System.Text;
 using Sci.Production.Class;
+using System.Runtime.CompilerServices;
 
 namespace Sci.Production.Logistic
 {
@@ -547,8 +548,6 @@ where pd.CustCTN = '{dr["CustCTN"]}' and pd.CTNQty > 0 and pd.DisposeFromClog= 0
                 this.SetInterfaceLocked(true);
                 this.backgroundDownloadSticker.RunWorkerAsync();
             }
-
-            this.Countselectcount();
         }
 
         // Cancel
@@ -595,6 +594,7 @@ where pd.CustCTN = '{dr["CustCTN"]}' and pd.CTNQty > 0 and pd.DisposeFromClog= 0
         private void Countselectcount()
         {
             this.gridImport.ValidateControl();
+            this.listControlBindingSource1.EndEdit();
             DataGridViewColumn column = this.gridImport.Columns["Selected"];
             if (!MyUtility.Check.Empty(column) && !MyUtility.Check.Empty(this.listControlBindingSource1.DataSource))
             {
@@ -611,7 +611,7 @@ where pd.CustCTN = '{dr["CustCTN"]}' and pd.CTNQty > 0 and pd.DisposeFromClog= 0
         {
             try
             {
-                DataTable dt = this.selectDataTable;
+                DataTable dt = this.selectedData.CopyToDataTable();
                 this.dtError = dt.Clone();
                 StringBuilder warningmsg = new StringBuilder();
                 this.backgroundDownloadSticker.ReportProgress(0);
@@ -779,10 +779,53 @@ insert into ClogReceive (
 
         private void BackgroundDownloadSticker_RunWorkerCompleted(object sender, System.ComponentModel.RunWorkerCompletedEventArgs e)
         {
+            // 檢查是否有勾選資料
+            this.gridImport.ValidateControl();
+            this.listControlBindingSource1.EndEdit();
+
+            // 使用Find撈出的全部資料
+            DataTable dt =
+                    (DataTable)this.listControlBindingSource1.DataSource;
             if (this.dtError.Rows.Count > 0)
             {
                 MyUtility.Msg.WarningBox("Some carton cannot receive, please refer to field <Remark>.");
-                this.listControlBindingSource1.DataSource = this.dtError;
+
+                if (dt.AsEnumerable().Any(row => !row["Selected"].EqualDecimal(1)))
+                {
+                    /*
+                     沒勾選的放table #1
+                     有錯誤的放table #2
+                     再將2者合併一起, 畫面只會顯示沒勾的+有錯誤的
+                     最後再將Selected清空
+                     */
+
+                    DataTable dtCopy = dt.AsEnumerable().Where(row => !row["Selected"].EqualDecimal(1)).CopyToDataTable();
+                    dtCopy.Merge(this.dtError, true, MissingSchemaAction.AddWithKey);
+                    foreach (DataRow dr in dtCopy.Rows)
+                    {
+                        if (MyUtility.Check.Empty(dr["Selected"]))
+                        {
+                            dr["Remark"] = string.Empty;
+                        }
+                        else
+                        {
+                            dr["Selected"] = false;
+                        }
+                    }
+
+                    this.listControlBindingSource1.DataSource = dtCopy;
+                }
+                else
+                {
+                    foreach (DataRow dr in this.dtError.Rows)
+                    {
+                        dr["Selected"] = false;
+                    }
+
+                    this.listControlBindingSource1.DataSource = this.dtError;
+                }
+
+                ((DataTable)this.listControlBindingSource1.DataSource).DefaultView.Sort = " rn1 ASC";
             }
             else if (e.Result != null)
             {
@@ -791,7 +834,6 @@ insert into ClogReceive (
             }
             else
             {
-                DataTable dt = this.selectDataTable;
                 if (dt.AsEnumerable().Any(row => !row["selected"].EqualDecimal(1)))
                 {
                     this.listControlBindingSource1.DataSource = dt.AsEnumerable().Where(row => !row["selected"].EqualDecimal(1)).CopyToDataTable();
@@ -804,6 +846,8 @@ insert into ClogReceive (
                 this.ControlButton4Text("Close");
                 MyUtility.Msg.InfoBox("Complete!!");
             }
+
+            this.Countselectcount();
 
             // 把UI介解除鎖定
             this.SetInterfaceLocked(false);
