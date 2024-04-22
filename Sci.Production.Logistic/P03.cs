@@ -16,6 +16,8 @@ using System.Runtime.Remoting.Messaging;
 using System.ComponentModel;
 using System.Threading;
 using Newtonsoft.Json.Bson;
+using System.Diagnostics;
+using System.Net.Http.Headers;
 
 namespace Sci.Production.Logistic
 {
@@ -42,6 +44,7 @@ namespace Sci.Production.Logistic
         private bool check_OnlyReqCarton;
         private string selectDataTable_DefaultView_Sort = string.Empty;
         private DataRow[] selectedData;
+        private int threadCnt = 0;
 
         /// <summary>
         /// SelectDataTable_DefaultView_Sort
@@ -161,6 +164,7 @@ namespace Sci.Production.Logistic
                 return;
             }
 
+            this.labProcessingBar.Text = "0/0";
             this.numSelectedCTNQty.Value = 0;
             this.numTotalCTNQty.Value = 0;
             StringBuilder sqlCmd = new StringBuilder();
@@ -315,6 +319,9 @@ order by rn ");
             this.listControlBindingSource1.DataSource = this.selectDataTable;
             this.numTotalCTNQty.Value = this.selectDataTable.Rows.Count;
             this.numSelectedCTNQty.Value = this.selectDataTable.Rows.Count;
+            this.backgroundDownloadSticker.ReportProgress(0);
+            this.labProcessingBar.Text = "0/0";
+            this.progressCnt = 0;
         }
 
         // Find
@@ -742,6 +749,8 @@ where pd.CustCTN = '{dr["CustCTN"]}' and pd.CTNQty > 0 and pd.DisposeFromClog= 0
             this.Grid_Filter();
         }
 
+        private System.ComponentModel.BackgroundWorker[] workers;
+
         // Save
         private void BtnSave_Click(object sender, EventArgs e)
         {
@@ -749,7 +758,9 @@ where pd.CustCTN = '{dr["CustCTN"]}' and pd.CTNQty > 0 and pd.DisposeFromClog= 0
             this.gridReceiveDate.ValidateControl();
             this.listControlBindingSource1.EndEdit();
             DataTable dt = (DataTable)this.listControlBindingSource1.DataSource;
+            this.dtError = dt.Clone();
             this.check_OnlyReqCarton = this.chkOnlyReqCarton.Checked;
+            completeCnt = 0;
 
             if (dt == null || dt.Rows.Count == 0)
             {
@@ -772,11 +783,45 @@ where pd.CustCTN = '{dr["CustCTN"]}' and pd.CTNQty > 0 and pd.DisposeFromClog= 0
                     return;
                 }
 
-                this.progressBarProcessing.Maximum = this.selectedData.CopyToDataTable().Rows.Count;
+                int rowCnt = this.selectedData.CopyToDataTable().Rows.Count;
+                this.threadCnt = (rowCnt / 100) + (rowCnt % 100 == 0 ? 0 : 1);
+
+                // 初始化 workers 陣列
+                this.workers = new System.ComponentModel.BackgroundWorker[this.threadCnt];
+
+                // 初始化 ProgressBar
+                this.progressBarProcessing.Minimum = 0;
+                this.progressBarProcessing.Maximum = 100;
+                this.progressBarProcessing.Step = 1;
 
                 // 先把UI介面鎖住
                 this.SetInterfaceLocked(true);
-                this.backgroundDownloadSticker.RunWorkerAsync();
+                this.backgroundDownloadSticker.ReportProgress(0);
+
+                // 初始化 BackgroundWorker
+                for (int i = 0; i < this.threadCnt; i++)
+                {
+                    this.workers[i] = new System.ComponentModel.BackgroundWorker();
+                    this.workers[i].WorkerReportsProgress = true;
+                    this.workers[i].DoWork += this.BackgroundDownloadSticker_DoWork;
+                    this.workers[i].ProgressChanged += this.BackgroundDownloadSticker_ProgressChanged;
+                    this.workers[i].RunWorkerCompleted += this.BackgroundDownloadSticker_RunWorkerCompleted;
+                }
+
+                int processedRows = 0;
+                int batchSize = 100;
+
+                for (int i = 0; i < this.threadCnt; i++)
+                {
+                    //this.workers[i].RunWorkerAsync(i + 1); // 將索引作為參數傳遞給後台操作
+
+                    int remainingRows = rowCnt - processedRows;
+                    int rowsToProcess = Math.Min(batchSize, remainingRows);
+                    this.workers[i].RunWorkerAsync(new object[] { this.selectDataTable, processedRows, rowsToProcess });
+
+                    // 更新處理行數
+                    processedRows += rowsToProcess;
+                }
             }
 
             this.Countselectcount();
@@ -886,20 +931,23 @@ where pd.CustCTN = '{dr["CustCTN"]}' and pd.CTNQty > 0 and pd.DisposeFromClog= 0
             this.txtReason.Text = sele.GetSelectedString();
         }
 
-        private StringBuilder warningmsg = new StringBuilder();
-
+        private DataTable dtError = new DataTable();
         private int progressCnt = 0;
+
         private void BackgroundDownloadSticker_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
         {
             try
             {
-                DataTable dt = this.selectDataTable;
-                this.warningmsg = new StringBuilder();
-                this.backgroundDownloadSticker.ReportProgress(0);
+                DataTable dt = (DataTable)((object[])e.Argument)[0];
+                int startIndex = (int)((object[])e.Argument)[1];
+                int count = (int)((object[])e.Argument)[2];
 
-                this.progressCnt = 0;
-                foreach (DataRow dr in this.selectedData)
+                // 抓取分割跑多執行緒的table區間
+                dt = this.selectDataTable.AsEnumerable().Skip(startIndex).Take(count).CopyToDataTable();
+
+                foreach (DataRow dr in dt.Rows)
                 {
+                    StringBuilder singleWarningmsg = new StringBuilder();
                     string checkPackSql = $@"
             select CFAReturnClogDate, ReceiveDate, TransferCFADate, Remark, ReturnDate 
             from PackingList_Detail WITH (NOLOCK)
@@ -909,30 +957,30 @@ where pd.CustCTN = '{dr["CustCTN"]}' and pd.CTNQty > 0 and pd.DisposeFromClog= 0
             and DisposeFromClog = 0";
                     if (!MyUtility.Check.Seek(checkPackSql, null, out DataRow drPackResult))
                     {
-                        this.warningmsg.Append($@"<CNT#: {dr["PackingListID"]}{dr["CTNStartNo"]}> does not exist!" + Environment.NewLine);
+                        singleWarningmsg.Append($@"<CNT#: {dr["PackingListID"]}{dr["CTNStartNo"]}> does not exist!" + Environment.NewLine);
                         continue;
                     }
                     else
                     {
                         if (!MyUtility.Check.Empty(drPackResult["ReturnDate"]))
                         {
-                            this.warningmsg.Append($@"<CNT#: {dr["PackingListID"]}{dr["CTNStartNo"]}>This CTN# has been return." + Environment.NewLine);
+                            singleWarningmsg.Append($@"<CNT#: {dr["PackingListID"]}{dr["CTNStartNo"]}>This CTN# has been return." + Environment.NewLine);
                         }
                         else if (MyUtility.Convert.GetString(dr["Reason"]).ToUpper() == "OTHER" && MyUtility.Check.Empty(dr["ClogReasonRemark"]))
                         {
-                            this.warningmsg.Append($@"Please fill in [Remark] since [Reason] is equal to ""Other"" for PackId：{dr["PackingListID"]}, SP#：{dr["OrderID"]}, CTN#：{dr["CTNStartNo"]}." + Environment.NewLine);
+                            singleWarningmsg.Append($@"Please fill in [Remark] since [Reason] is equal to ""Other"" for PackId：{dr["PackingListID"]}, SP#：{dr["OrderID"]}, CTN#：{dr["CTNStartNo"]}." + Environment.NewLine);
                         }
                         else if (!MyUtility.Check.Empty(dr["Remark"].ToString().Trim()))
                         {
-                            this.warningmsg.Append($@"<CNT#: {dr["PackingListID"]}{dr["CTNStartNo"]}>This CTN# cannot be received, please check again." + Environment.NewLine);
+                            singleWarningmsg.Append($@"<CNT#: {dr["PackingListID"]}{dr["CTNStartNo"]}>This CTN# cannot be received, please check again." + Environment.NewLine);
                         }
                         else if (!(MyUtility.Check.Empty(drPackResult["TransferCFADate"]) && !MyUtility.Check.Empty(drPackResult["ReceiveDate"]) && MyUtility.Check.Empty(drPackResult["CFAReturnClogDate"])))
                         {
-                            this.warningmsg.Append($@"<CTN#:{dr["PackingListID"]}{dr["CTNStartNo"]}> does not exist Clog!" + Environment.NewLine);
+                            singleWarningmsg.Append($@"<CTN#:{dr["PackingListID"]}{dr["CTNStartNo"]}> does not exist Clog!" + Environment.NewLine);
                         }
                         else if (!MyUtility.Check.Empty(drPackResult["CFAReturnClogDate"]))
                         {
-                            this.warningmsg.Append($@"<CTN#:{dr["PackingListID"]}> has CFA Return Clog Date!" + Environment.NewLine);
+                            singleWarningmsg.Append($@"<CTN#:{dr["PackingListID"]}> has CFA Return Clog Date!" + Environment.NewLine);
                         }
                         else if (MyUtility.Check.Seek($@"
             select ID 
@@ -940,7 +988,7 @@ where pd.CustCTN = '{dr["CustCTN"]}' and pd.CTNQty > 0 and pd.DisposeFromClog= 0
             where ID = '{dr["PackingListID"]}'
             and PLCtnTrToRgCodeDate is not null"))
                         {
-                            this.warningmsg.Append($@"<PL#:{dr["PackingListID"]} already transfer to shipping factory, cannot return to production." + Environment.NewLine);
+                            singleWarningmsg.Append($@"<PL#:{dr["PackingListID"]} already transfer to shipping factory, cannot return to production." + Environment.NewLine);
                         }
 
                         // 代表都沒錯,可以單筆進行更新新增
@@ -1023,7 +1071,7 @@ where pd.CustCTN = '{dr["CustCTN"]}' and pd.CTNQty > 0 and pd.DisposeFromClog= 0
                             }
                             catch (Exception ex)
                             {
-                                e.Result = "Prepare update orders data fail!\r\n" + ex.ToString();
+                                singleWarningmsg.Append($@"Prepare update orders data fail!\r\n" + ex.ToString() + Environment.NewLine);
                             }
 
                             DualResult result1 = Ict.Result.True;
@@ -1037,9 +1085,7 @@ where pd.CustCTN = '{dr["CustCTN"]}' and pd.CTNQty > 0 and pd.DisposeFromClog= 0
                                     if (result1 == false)
                                     {
                                         transactionScope.Dispose();
-                                        e.Result = result1.ToString();
-                                        this.backgroundDownloadSticker.ReportProgress(0);
-                                        return;
+                                        singleWarningmsg.Append(result1.ToString() + Environment.NewLine);
                                     }
 
                                     DualResult prgResult = Prgs.UpdateOrdersCTN(selectOrdersData);
@@ -1047,9 +1093,7 @@ where pd.CustCTN = '{dr["CustCTN"]}' and pd.CTNQty > 0 and pd.DisposeFromClog= 0
                                     if (prgResult == false)
                                     {
                                         transactionScope.Dispose();
-                                        e.Result = prgResult.ToString();
-                                        this.backgroundDownloadSticker.ReportProgress(0);
-                                        return;
+                                        singleWarningmsg.Append(prgResult.ToString() + Environment.NewLine);
                                     }
 
                                     transactionScope.Complete();
@@ -1058,9 +1102,7 @@ where pd.CustCTN = '{dr["CustCTN"]}' and pd.CTNQty > 0 and pd.DisposeFromClog= 0
                                 catch (Exception ex)
                                 {
                                     transactionScope.Dispose();
-                                    e.Result = "Commit transaction error." + ex;
-                                    this.backgroundDownloadSticker.ReportProgress(0);
-                                    return;
+                                    singleWarningmsg.Append("Commit transaction error." + ex + Environment.NewLine);
                                 }
                             }
                         }
@@ -1068,24 +1110,40 @@ where pd.CustCTN = '{dr["CustCTN"]}' and pd.CTNQty > 0 and pd.DisposeFromClog= 0
 
                     // 更新進度條
                     this.progressCnt++;
-                    this.backgroundDownloadSticker.ReportProgress(progressCnt, string.Empty);
-                }
 
-                this.backgroundDownloadSticker.ReportProgress(0);
+                    double barPercentage = Math.Abs(MyUtility.Convert.GetDouble(this.progressCnt) / this.selectedData.CopyToDataTable().Rows.Count) * 100;
+                    if (this.progressCnt == this.selectedData.CopyToDataTable().Rows.Count)
+                    {
+                        ((System.ComponentModel.BackgroundWorker)sender).ReportProgress(MyUtility.Convert.GetInt(100));
+                        break;
+                    }
+                    else
+                    {
+                        ((System.ComponentModel.BackgroundWorker)sender).ReportProgress(MyUtility.Convert.GetInt(barPercentage));
+                    }
+
+                    if (singleWarningmsg.ToString().Length > 0)
+                    {
+                        DataRow drError = this.dtError.NewRow();
+                        dr["Remark"] = singleWarningmsg;
+                        dr.CopyTo(drError);
+                        this.dtError.Rows.Add(drError);
+                    }
+                }
             }
             catch (Exception ex)
             {
-                this.backgroundDownloadSticker.ReportProgress(0, ex.ToString());
                 e.Result = ex.ToString();
             }
-
-            this.backgroundDownloadSticker.ReportProgress(0);
         }
 
         private void BackgroundDownloadSticker_ProgressChanged(object sender, System.ComponentModel.ProgressChangedEventArgs e)
         {
-            this.progressBarProcessing.Value = e.ProgressPercentage;
-            this.labProcessingBar.Text = $"{this.progressCnt}/{this.progressBarProcessing.Maximum}";
+            if (this.selectedData != null && e.ProgressPercentage <= 100)
+            {
+                this.progressBarProcessing.Value = e.ProgressPercentage;
+                this.labProcessingBar.Text = $"{this.progressCnt}/{this.selectedData.CopyToDataTable().Rows.Count}";
+            }
         }
 
         private void SetInterfaceLocked(bool isLocked)
@@ -1096,42 +1154,90 @@ where pd.CustCTN = '{dr["CustCTN"]}' and pd.CTNQty > 0 and pd.DisposeFromClog= 0
             this.btnImportFromBarcode.Enabled = !isLocked;
             this.btnSave.Enabled = !isLocked;
             this.btnClose.Enabled = !isLocked;
-            this.pictureBox.Enabled = isLocked;
-            this.txtReason.Enabled= !isLocked;
-            this.txtRemark.Enabled= !isLocked;
+            this.pictureBox.Enabled = !isLocked;
+            this.txtReason.Enabled = !isLocked;
+            this.txtRemark.Enabled = !isLocked;
 
             // 或者顯示一個等待光標等
             Cursor.Current = isLocked ? Cursors.WaitCursor : Cursors.Default;
         }
 
+        private int completeCnt = 0;
+
         private void BackgroundDownloadSticker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            if (this.warningmsg.ToString().Length > 0)
+            this.completeCnt++;
+            if (this.completeCnt == this.threadCnt)
             {
-                MyUtility.Msg.WarningBox(this.warningmsg.ToString());
-            }
-            else if (e.Result != null)
-            {
-                MyUtility.Msg.WarningBox("error Msg: " + e.Result.ToString());
-            }
-            else
-            {
-                DataTable dt = this.selectDataTable;
-                if (dt.AsEnumerable().Any(row => !row["Selected"].EqualDecimal(1)))
+                // 檢查是否有勾選資料
+                this.gridReceiveDate.ValidateControl();
+                this.listControlBindingSource1.EndEdit();
+
+                // 使用Find撈出的全部資料
+                DataTable dt =
+                        (DataTable)this.listControlBindingSource1.DataSource;
+
+                if (this.dtError.Rows.Count > 0)
                 {
-                    this.listControlBindingSource1.DataSource = dt.AsEnumerable().Where(row => !row["Selected"].EqualDecimal(1)).CopyToDataTable();
+                    MyUtility.Msg.WarningBox("Some carton cannot receive, please refer to field <Save Result>.");
+                    if (dt.AsEnumerable().Any(row => !row["Selected"].EqualDecimal(1)))
+                    {
+                        /*
+                         沒勾選的放table #1
+                         有錯誤的放table #2
+                         再將2者合併一起, 畫面只會顯示沒勾的+有錯誤的
+                         最後再將Selected清空
+                         */
+
+                        DataTable dtCopy = dt.AsEnumerable().Where(row => !row["Selected"].EqualDecimal(1)).CopyToDataTable();
+                        dtCopy.Merge(this.dtError, true, MissingSchemaAction.AddWithKey);
+                        foreach (DataRow dr in dtCopy.Rows)
+                        {
+                            if (MyUtility.Check.Empty(dr["Selected"]))
+                            {
+                                dr["Remark"] = string.Empty;
+                            }
+                            else
+                            {
+                                dr["Selected"] = false;
+                            }
+                        }
+
+                        this.listControlBindingSource1.DataSource = dtCopy;
+                    }
+                    else
+                    {
+                        foreach (DataRow dr in this.dtError.Rows)
+                        {
+                            dr["Selected"] = false;
+                        }
+
+                        this.listControlBindingSource1.DataSource = this.dtError;
+                    }
+
+                    ((DataTable)this.listControlBindingSource1.DataSource).DefaultView.Sort = " rn ASC";
                 }
                 else
                 {
-                    this.listControlBindingSource1.DataSource = null;
+                    if (dt.AsEnumerable().Any(row => !row["Selected"].EqualDecimal(1)))
+                    {
+                        this.listControlBindingSource1.DataSource = dt.AsEnumerable().Where(row => !row["Selected"].EqualDecimal(1)).CopyToDataTable();
+                    }
+                    else
+                    {
+                        this.listControlBindingSource1.DataSource = null;
+                    }
+
+                    this.ControlButton4Text("Close");
+                    MyUtility.Msg.InfoBox("Complete!!");
                 }
 
-                this.ControlButton4Text("Close");
-                MyUtility.Msg.InfoBox("Complete!!");
-            }
+                this.backgroundDownloadSticker.ReportProgress(0);
+                this.Countselectcount();
 
-            // 先把UI介面鎖住
-            this.SetInterfaceLocked(false);
+                // 先把UI介面鎖住
+                this.SetInterfaceLocked(false);
+            }
         }
     }
 }
