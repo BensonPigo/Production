@@ -528,52 +528,35 @@ namespace Sci.Production.Prg
         }
 
         /// <summary>
-        /// 將小數點轉為分數格式
+        /// DecimalToFraction
         /// </summary>
-        /// <param name="num">num</param>
-        /// <param name="maxDenominator">maxDenominator</param>
+        /// <param name="number">number</param>
         /// <returns>string</returns>
-        public static string DecimalToFraction(decimal num, int maxDenominator = 1000)
+        public static string DecimalToFraction(decimal number)
         {
-            if (num < 0 || num > 1)
+            // 將小數轉換為分數
+            decimal epsilon = 0.0001M; // 適當的誤差範圍
+            int maxDenominator = 10; // 分母的最大值（1位數）
+
+            for (int denominator = 1; denominator <= maxDenominator; denominator++)
             {
-                return string.Empty;
-            }
+                int numerator = (int)Math.Round(number * denominator);
 
-            decimal tolerance = 1.0m / (2 * maxDenominator);
-            decimal numerator = 0;
-            decimal denominator = 1;
-            decimal fraction = 0;
-            decimal error = num;
-
-            while (denominator <= maxDenominator)
-            {
-                fraction = decimal.Round(num * denominator);
-                if (Math.Abs(fraction / denominator - num) < tolerance)
+                // 檢查分子和分母是否超過1位數
+                if (numerator > 9 || denominator > 9)
                 {
-                    break;
+                    return "0/0";
                 }
 
-                if (fraction / denominator < num)
+                // 檢查分數是否接近原始數字
+                if (Math.Abs(number - ((decimal)numerator / denominator)) < epsilon)
                 {
-                    numerator = fraction;
-                }
-                else
-                {
-                    denominator++;
-                }
-
-                if (Math.Abs(fraction / denominator - num) < error)
-                {
-                    error = Math.Abs(fraction / denominator - num);
-                }
-                else
-                {
-                    break;
+                    return $"{numerator}/{denominator}";
                 }
             }
 
-            return $"{fraction}/{denominator}";
+            // 找不到符合條件的分數
+            return "0/0";
         }
     }
 }
