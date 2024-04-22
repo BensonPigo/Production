@@ -1,6 +1,7 @@
 ﻿using Ict;
 using Sci.Data;
 using Sci.Production.Prg;
+using Sci.Production.PublicPrg;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -133,6 +134,7 @@ namespace Sci.Production.Cutting
 
         private DualResult LoadDetailPart(Microsoft.Office.Interop.Excel.Worksheet worksheet, string poID, SqlConnection sqlConnection)
         {
+            DualResult result = new DualResult(true);
             this.listWorkOrderUkey = new List<long>();
             string keyWord_FabPanelCode = "布种:";
             DataTable dtWorkOrder;
@@ -210,16 +212,23 @@ where oc.ID = '{poID}' and oc.FabricPanelCode = '{drWorkOrder["FabricPanelCode"]
 
                 // 取得SizeRatio Range
                 Excel.Range rangeSizeRatio = worksheet.GetRange(1, curRowIndex, 21, curRowIndex + 13);
-                this.LoadSizeRatio(rangeSizeRatio, drWorkOrder, MyUtility.Convert.GetInt(drWorkOrderInfo["CuttingLayer"]), sqlConnection);
+                result = this.LoadSizeRatio(rangeSizeRatio, drWorkOrder, MyUtility.Convert.GetInt(drWorkOrderInfo["CuttingLayer"]), sqlConnection);
+
+                if (!result)
+                {
+                    return result;
+                }
 
                 curRowIndex += 16;
             }
 
-            return new DualResult(true);
+            return result;
         }
 
         private DualResult LoadSizeRatio(Excel.Range rangeSizeRatio, DataRow drWorkOrder, int cuttingLayer, SqlConnection sqlConnection)
         {
+            DualResult result;
+
             // 讀每一個MkName
             for (int idxMarker = 7; idxMarker < 15; idxMarker++)
             {
@@ -230,6 +239,9 @@ where oc.ID = '{poID}' and oc.FabricPanelCode = '{drWorkOrder["FabricPanelCode"]
                 decimal layerYDS = 0;
                 decimal layerInch = 0;
                 decimal inchToYdsRate = MyUtility.Convert.GetDecimal(MyUtility.GetValue.Lookup("SELECT dbo.GetUnitRate('Inch','YDS')"));
+                string importPatternPanel = string.Empty;
+                string markerLength = string.Empty;
+
                 Dictionary<string, int> dicSizeRatio = new Dictionary<string, int>();
 
                 while (true)
@@ -240,6 +252,9 @@ where oc.ID = '{poID}' and oc.FabricPanelCode = '{drWorkOrder["FabricPanelCode"]
                         totalLayer = MyUtility.Convert.GetInt(rangeSizeRatio.GetCellValue(idxSize, idxMarker));
                         layerYDS = MyUtility.Convert.GetDecimal(rangeSizeRatio.GetCellValue(idxSize + 2, idxMarker));
                         layerInch = MyUtility.Convert.GetDecimal(rangeSizeRatio.GetCellValue(idxSize + 3, idxMarker));
+                        decimal inchDecimalPart = layerInch - Math.Floor(layerInch);
+                        string inchFraction = inchDecimalPart == 0 ? "0/0" : Prg.ProjExts.DecimalToFraction(inchDecimalPart);
+                        markerLength = $"{layerYDS}Y{Math.Floor(layerInch).ToString().PadLeft(2, '0')}-{inchFraction}+2";
                         layerYDS += layerInch * inchToYdsRate;
                         break;
                     }
@@ -260,12 +275,21 @@ where oc.ID = '{poID}' and oc.FabricPanelCode = '{drWorkOrder["FabricPanelCode"]
                     continue;
                 }
 
+                importPatternPanel = rangeSizeRatio.GetCellValue(1, idxMarker);
                 garmentCnt = dicSizeRatio.Sum(s => s.Value);
                 consPc = layerYDS / garmentCnt; // 每層Yds / 每層SizeRatio
 
                 // insert WorkOrder
-                List<long> newWorkOrderUkey = this.InsertWorkOrder(drWorkOrder, totalLayer, cuttingLayer, consPc, garmentCnt, sqlConnection);
+                List<long> newWorkOrderUkey = this.InsertWorkOrder(drWorkOrder, totalLayer, cuttingLayer, consPc, garmentCnt, markerLength, sqlConnection);
                 this.listWorkOrderUkey.AddRange(newWorkOrderUkey);
+
+                result = this.InsertWorkOrder_PatternPanel(newWorkOrderUkey, importPatternPanel);
+
+                if (!result)
+                {
+                    return result;
+                }
+
                 foreach (long workOrderUkey in newWorkOrderUkey)
                 {
                     foreach (KeyValuePair<string, int> itemSizeRatio in dicSizeRatio)
@@ -274,7 +298,7 @@ where oc.ID = '{poID}' and oc.FabricPanelCode = '{drWorkOrder["FabricPanelCode"]
 insert into WorkOrder_SizeRatio(WorkOrderUkey, ID, SizeCode, Qty)
             values('{workOrderUkey}', '{this.CurrentMaintain["ID"]}', '{itemSizeRatio.Key}', '{itemSizeRatio.Value}')
 ";
-                        DualResult result = DBProxy.Current.ExecuteByConn(sqlConnection, sqlInsertWorkOrder_SizeRatio);
+                        result = DBProxy.Current.ExecuteByConn(sqlConnection, sqlInsertWorkOrder_SizeRatio);
                         if (!result)
                         {
                             return result;
@@ -286,7 +310,41 @@ insert into WorkOrder_SizeRatio(WorkOrderUkey, ID, SizeCode, Qty)
             return new DualResult(true);
         }
 
-        private List<long> InsertWorkOrder(DataRow drWorkOrder, int totalLayer, int cuttingLayer, decimal consPc, int garmentCnt, SqlConnection sqlConnection)
+        private DualResult InsertWorkOrder_PatternPanel(List<long> listWorkorderUkey, string importPatternPanel)
+        {
+            if (MyUtility.Check.Empty(importPatternPanel) || listWorkorderUkey.Count == 0)
+            {
+                return new DualResult(true);
+            }
+
+            string sqlInsertWorkOrder_PatternPanel = string.Empty;
+            string sqlInsertPattern = $@"
+insert into WorkOrder_PatternPanel(ID, WorkOrderUkey, PatternPanel, FabricPanelCode) values('{this.CurrentMaintain["ID"]}', '{"{0}"}', '{"{1}"}', '{"{2}"}')";
+
+            foreach (string itemPatternPanel in importPatternPanel.Split('+'))
+            {
+                if (itemPatternPanel.Length != 2)
+                {
+                    continue;
+                }
+
+                string patternPanel = itemPatternPanel;
+                string fabricPanelCode = itemPatternPanel[1].ToString();
+
+                sqlInsertWorkOrder_PatternPanel += listWorkorderUkey
+                    .Select(workorderUkey => string.Format(sqlInsertPattern, workorderUkey, patternPanel, fabricPanelCode))
+                    .JoinToString(string.Empty);
+            }
+
+            if (MyUtility.Check.Empty(sqlInsertWorkOrder_PatternPanel))
+            {
+                return new DualResult(true);
+            }
+
+            return DBProxy.Current.Execute("Production", sqlInsertWorkOrder_PatternPanel);
+        }
+
+        private List<long> InsertWorkOrder(DataRow drWorkOrder, int totalLayer, int cuttingLayer, decimal consPc, int garmentCnt, string markerLength, SqlConnection sqlConnection)
         {
             List<long> listWorkOrderUkey = new List<long>();
             string markername = "MK_" + this.markerSerNo.ToString().PadLeft(3, '0');
@@ -343,7 +401,7 @@ values
 ,'{layer}'
 ,'{drWorkOrder["Colorid"]}'
 ,'{markername}'
-,'' --MarkerLength
+,'{markerLength}' --MarkerLength
 ,@consPc --ConsPC
 ,@Cons --Cons
 ,'{drWorkOrder["Refno"]}'
