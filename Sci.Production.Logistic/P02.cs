@@ -78,7 +78,7 @@ namespace Sci.Production.Logistic
             .Text("Alias", header: "Destination", width: Widths.AnsiChars(12), iseditingreadonly: true)
             .Date("BuyerDelivery", header: "Buyer Delivery", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .CellClogLocation("ClogLocationId", header: "Location No", width: Widths.AnsiChars(10))
-            .Text("Remark", header: "Remark", width: Widths.AnsiChars(15), iseditingreadonly: true);
+            .EditText("Remark", header: "Remark", width: Widths.AnsiChars(15), iseditingreadonly: true);
 
             // 增加CTNStartNo 有中文字的情況之下 按照我們希望的順序排
             int rowIndex = 0;
@@ -604,21 +604,23 @@ where pd.CustCTN = '{dr["CustCTN"]}' and pd.CTNQty > 0 and pd.DisposeFromClog= 0
             }
         }
 
-        private StringBuilder warningmsg = new StringBuilder();
         private int progressCnt = 0;
+        private DataTable dtError = new DataTable();
 
         private void BackgroundDownloadSticker_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
         {
             try
             {
                 DataTable dt = this.selectDataTable;
-                this.warningmsg = new StringBuilder();
+                this.dtError = dt.Clone();
+                StringBuilder warningmsg = new StringBuilder();
                 this.backgroundDownloadSticker.ReportProgress(0);
                 string sqlUpdate = string.Empty;
 
                 this.progressCnt = 0;
                 foreach (DataRow dr in this.selectedData)
                 {
+                    warningmsg.Clear();
                     string checkPackSql = $@"
                     select pd.TransferDate, pd.ReceiveDate, pd.Remark, P.MDivisionID
                     from PackingList_Detail pd WITH (NOLOCK)
@@ -629,22 +631,22 @@ where pd.CustCTN = '{dr["CustCTN"]}' and pd.CTNQty > 0 and pd.DisposeFromClog= 0
                     and pd.DisposeFromClog = 0";
                     if (!MyUtility.Check.Seek(checkPackSql, null, out DataRow drPackResult))
                     {
-                        this.warningmsg.Append($@"<CNT#: {dr["PackingListID"]}{dr["CTNStartNo"]}> does not exist!" + Environment.NewLine);
+                        warningmsg.Append($@"<CNT#: {dr["PackingListID"]}{dr["CTNStartNo"]}> does not exist!" + Environment.NewLine);
                         continue;
                     }
                     else
                     {
                         if (MyUtility.Check.Empty(drPackResult["TransferDate"]))
                         {
-                            this.warningmsg.Append($@"<CNT#: {dr["PackingListID"]}{dr["CTNStartNo"]}> This carton not yet transfer to clog." + Environment.NewLine);
+                            warningmsg.Append($@"<CNT#: {dr["PackingListID"]}{dr["CTNStartNo"]}> This carton not yet transfer to clog." + Environment.NewLine);
                         }
                         else if (!MyUtility.Check.Empty(drPackResult["ReceiveDate"]))
                         {
-                            this.warningmsg.Append($@"<CNT#: {dr["PackingListID"]}{dr["CTNStartNo"]}> This carton already in clog." + Environment.NewLine);
+                            warningmsg.Append($@"<CNT#: {dr["PackingListID"]}{dr["CTNStartNo"]}> This carton already in clog." + Environment.NewLine);
                         }
                         else if (drPackResult["MDivisionID"].ToString().ToUpper() != Env.User.Keyword.ToString().ToUpper())
                         {
-                            this.warningmsg.Append($@"<CNT#: {dr["PackingListID"]}{dr["CTNStartNo"]}> The order's M is not equal to login M." + Environment.NewLine);
+                            warningmsg.Append($@"<CNT#: {dr["PackingListID"]}{dr["CTNStartNo"]}> The order's M is not equal to login M." + Environment.NewLine);
                         }
 
                         // 代表都沒錯,可以單筆進行更新新增
@@ -658,7 +660,7 @@ set ReceiveDate = GETDATE()
     , ReturnDate = null 
 where   ID = '{dr["PackingListID"]}' 
         and CTNStartNo = '{dr["CTNStartNo"]}'
-        and DisposeFromClog= 0' 
+        and DisposeFromClog= 0 
 
 -- 也要順便更新Orders.LastCTNTransDate
 update o
@@ -745,6 +747,14 @@ insert into ClogReceive (
                         }
                     }
 
+                    if (warningmsg.ToString().Length > 0)
+                    {
+                        DataRow drError = this.dtError.NewRow();
+                        dr["Remark"] = warningmsg;
+                        dr.CopyTo(drError);
+                        this.dtError.Rows.Add(drError);
+                    }
+
                     // 更新進度條
                     this.progressCnt++;
                     this.backgroundDownloadSticker.ReportProgress(this.progressCnt, string.Empty);
@@ -769,13 +779,15 @@ insert into ClogReceive (
 
         private void BackgroundDownloadSticker_RunWorkerCompleted(object sender, System.ComponentModel.RunWorkerCompletedEventArgs e)
         {
-            if (this.warningmsg.ToString().Length > 0)
+            if (this.dtError.Rows.Count > 0)
             {
-                MyUtility.Msg.WarningBox(this.warningmsg.ToString());
+                MyUtility.Msg.WarningBox("Some carton cannot receive, please refer to field <Remark>.");
+                this.listControlBindingSource1.DataSource = this.dtError;
             }
             else if (e.Result != null)
             {
                 MyUtility.Msg.WarningBox("error Msg: " + e.Result.ToString());
+                this.listControlBindingSource1.DataSource = null;
             }
             else
             {
@@ -793,7 +805,7 @@ insert into ClogReceive (
                 MyUtility.Msg.InfoBox("Complete!!");
             }
 
-            // 先把UI介面鎖住
+            // 把UI介解除鎖定
             this.SetInterfaceLocked(false);
         }
 
