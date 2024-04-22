@@ -250,7 +250,7 @@ ORDER BY [Group], [SEQ], [NAME]";
                         result = new P_Import_QA_CFAMasterList().P_QA_CFAMasterList(item.SDate);
                         break;
                     case ListName.P_CFAMasterListRelatedrate:
-                        result = new P_Import_CFAMasterListRelatedrate().P_CFAMasterListRelatedrate(item.SDate);
+                        result = new P_Import_CFAMasterListRelatedrate().P_CFAMasterListRelatedrate(item.SDate, item.EDate);
                         break;
                     case ListName.P_SewingLineScheduleBySP:
                         result = new P_Import_SewingLineScheduleBySP().P_SewingLineScheduleBySP(item.SDate, item.EDate);
