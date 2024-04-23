@@ -461,7 +461,7 @@ begin
 		   , ColorID = IIF(@BoaBomTypeColor = 1 OR @IsExpendDetail = 1, ISNULL(Order_ColorCombo.ColorID, ''), '')
 		   , Article = IIF(@BoaBomTypeColor = 1 OR @IsExpendDetail = 1 OR (@IsExpendArticle = 1 and ExpendArticle = 1), tmpQtyBreakDown.Article, '')
 		   , BomZipperInsert = IIF(@BoaBomTypeZipper = 1 OR @IsExpendDetail = 1, tmpQtyBreakDown.ZipperInsert, '')
-		   , BomCustPONo = IIF(@BoaBomTypePo = 1 OR @IsExpendDetail = 1, tmpQtyBreakDown.CustPONo, '')
+		   , BomCustPONo = IIF(@BoaBomTypePo = 1 OR @IsExpendDetail = 1, iif(ky.Keyword like '%{PONo_Combine}%', '', tmpQtyBreakDown.CustPONo), '')
 		   , SizeSeq = IIF(@BoaBomTypeSize = 1 OR @IsExpendDetail = 1, tmpQtyBreakDown.SizeSeq, '')
 		   , SizeCode = tmpQtyBreakDown.SizeCode
 		   , SizeSpec = IIF(@BoaBomTypeSize = 1 OR @IsExpendDetail = 1,
@@ -500,7 +500,7 @@ begin
            , BomTypeSeason = IIF(@BoaBomTypeSeason = 1, dbo.GetBomTypeValue(@BoaUkey, 'Season', ky.Location, tmpQtyBreakDown.SizeCode, tmpQtyBreakDown.ID), null)
            , BomTypeCareCode = IIF(@BoaBomTypeCareCode = 1, dbo.GetBomTypeValue(@BoaUkey, 'CareCode', ky.Location, tmpQtyBreakDown.SizeCode, tmpQtyBreakDown.ID), null)
 		   --與BomCustPONo相同
-		   , BomTypeCustomerPO = IIF(@BoaBomTypePo = 1, tmpQtyBreakDown.CustPONo, null)
+		   , BomTypeCustomerPO = IIF(@BoaBomTypePo = 1, iif(Keyword like '%{PONo_Combine}%', '', tmpQtyBreakDown.CustPONo), null)
 		   , BomTypeBuyMonth = IIF(@BomTypeBuyMonth = 1, dbo.GetBomTypeValue(@BoaUkey, 'BuyMonth', ky.Location, tmpQtyBreakDown.SizeCode, tmpQtyBreakDown.ID), null)
            , BomTypeBuyerDlvMonth = IIF(@BomTypeBuyerDlvMonth = 1, dbo.GetBomTypeValue(@BoaUkey, 'BuyerDlvMonth', ky.Location, tmpQtyBreakDown.SizeCode, tmpQtyBreakDown.ID), null)
 		   /* BomTypeValue End */
@@ -782,7 +782,7 @@ begin
 		, Sum_Qty.SizeSeq, Sum_Qty.SizeCode, Sum_Qty.SizeSpec, Sum_Qty.SizeUnit, @Remark, Sum_Qty.OrderQty
         --, IIF(@IsGetFabQuot = 1, tmpPrice.Price, 0) AS Price
         , Sum_Qty.UsageQty
-		, @UsageUnit, Sum_Qty.UsageQty, Sum_Qty.BomZipperInsert, Sum_Qty.BomCustPONo, ReplaceKeyword.Keyword, Sum_Qty.Keyword_Original, ReplaceKeyword.Keyword_xml, Sum_Qty.OrderList, Color.Name, Special
+		, @UsageUnit, Sum_Qty.UsageQty, Sum_Qty.BomZipperInsert, BomCustPONo = tmpBomCustPONo.BomCustPONo, ReplaceKeyword.Keyword, Sum_Qty.Keyword_Original, ReplaceKeyword.Keyword_xml, Sum_Qty.OrderList, Color.Name, Special
 		, BomTypeColorID, BomTypeSize, BomTypeSizeUnit, BomTypeZipperInsert, BomTypeArticle, BomTypeCOO, BomTypeGender, BomTypeCustomerSize
 		, BomTypeDecLabelSize, BomTypeBrandFactoryCode, BomTypeStyle, BomTypeStyleLocation, BomTypeSeason, BomTypeCareCode, BomTypeCustomerPO
         , BomTypeBuyMonth, BomTypeBuyerDlvMonth
@@ -808,6 +808,9 @@ begin
 			Select Keyword = IIF(Sum_Qty.Keyword like '%{PONo_Combine}%', Replace(Sum_Qty.Keyword, '{PONo_Combine}', CustPonoList.Value), Sum_Qty.Keyword)
 			, Keyword_xml = Sum_Qty.Keyword_xml + IIF(Sum_Qty.Keyword like '%{PONo_Combine}%', '<row><KeywordField>PONo_Combine</KeywordField><KeywordValue>' + CustPonoList.Value + '</KeywordValue></row>', '')
 		) ReplaceKeyword
+		OUTER APPLY (
+			Select BomCustPONo = iif(Sum_Qty.Keyword like '%{PONo_Combine}%', SUBSTRING(cast(CustPonoList.Value as varchar), 1, 50), Sum_Qty.BomTypeCustomerPO)
+		) tmpBomCustPONo
 
 		SET @BoaRowID += 1
 	End;

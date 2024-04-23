@@ -4,7 +4,7 @@ AS
 BEGIN
     DECLARE @result BIT = 0;
 
-    IF (@value1 = @value2 OR (@value1 IS NULL AND @value2 IS NULL))
+    IF isnull(@value1, '') = isnull(@value2, '')
         SET @result = 1;
 
     RETURN @result;
