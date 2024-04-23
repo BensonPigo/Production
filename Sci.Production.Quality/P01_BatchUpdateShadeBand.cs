@@ -244,6 +244,7 @@ WHERE rd.MINDQRCode = @MINDQRCode
             if (this.dt == null)
             {
                 this.dt = dt0;
+                this.listControlBindingSource1.DataSource = this.dt;
             }
             else
             {
@@ -254,10 +255,14 @@ WHERE rd.MINDQRCode = @MINDQRCode
                     this.dt.AcceptChanges();
                 }
 
-                this.dt.Merge(dt0);
+                foreach (DataRow newRow in dt0.Rows)
+                {
+                    DataRow clonedRow = this.dt.NewRow();
+                    clonedRow.ItemArray = newRow.ItemArray;
+                    this.dt.Rows.InsertAt(clonedRow, 0);
+                }
             }
 
-            this.listControlBindingSource1.DataSource = this.dt;
             this.txtScanQRCode.Text = string.Empty;
             e.Cancel = true;
         }
