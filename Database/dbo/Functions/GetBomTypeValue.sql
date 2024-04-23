@@ -27,7 +27,6 @@ Begin
 
 	select @StyleUkey = o.StyleUkey
 		, @POID = o.ID
-		, @OrderComboID = OrderComboID
 		, @SizeItem = case Upper(@KeywordID)
 						when Upper('Customer size') then boa.CustomerSizeRelation
 						when Upper('Dec lable size') then boa.DecLabelSizeRelation
@@ -35,6 +34,8 @@ Begin
 	from dbo.Order_BOA boa with (nolock)
 	inner join dbo.Orders o with (nolock) on boa.Id = o.ID
 	where boa.Ukey = @Order_BoaUkey;
+
+	select @OrderComboID = OrderComboID from dbo.Orders where ID = @OrderID
 
 	IF @KeywordID in (Upper('Customer size'), Upper('Dec lable size'))
 	Begin
@@ -61,7 +62,7 @@ Begin
 	select @BomTypeValue = 
 	case
 		when @KeywordID = Upper('COO')
-			then (select f.CountryID from dbo.Orders o with (nolock) left join Factory f on f.ID = o.FactoryID where o.ID = @POID)
+			then (select c.Alias from dbo.Orders o with (nolock) left join Factory f on f.ID = o.FactoryID left join Country c on c.ID = f.CountryID where o.ID = @POID)
 		when @KeywordID = Upper('Gender')
 			then (select Gender from Production.dbo.Style with (nolock) where Ukey = @StyleUkey)
 		when @KeywordID = Upper('Brand Gender')
