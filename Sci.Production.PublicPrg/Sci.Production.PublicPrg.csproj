@@ -212,6 +212,7 @@
     <Compile Include="Packing.cs" />
     <Compile Include="PmsWebAPI.cs" />
     <Compile Include="Entity\Prgs_POSuppDetailData.cs" />
+    <Compile Include="PowerBI\DataAccess\P_Import_CFAMasterListRelatedrate.cs" />
     <Compile Include="PowerBI\DataAccess\P_Import_CartonScanRate.cs" />
     <Compile Include="PowerBI\DataAccess\P_Import_CartonStatusTrackingList.cs" />
     <Compile Include="PowerBI\DataAccess\P_Import_CuttingScheduleOutputList.cs" />
