@@ -169,6 +169,8 @@ where Zone <> ''";
                 worksheet.Cells[1, columnIndex].Value = this.dtArtworkData.Rows[i]["ColumnN"];
             }
 
+            excelapp.Cells.EntireColumn.AutoFit();
+
             // 填充欄位值
             List<object[,]> rowValuesList = new List<object[,]>();
             foreach (DataRow mainRow in this.printData.Rows)
@@ -218,8 +220,6 @@ where Zone <> ''";
             #endregion
 
             worksheet.Range[worksheet.Cells[1, 1], worksheet.Cells[1, this.printData.Columns.Count + this.dtArtworkData.Rows.Count]].Interior.Color = Color.FromArgb(191, 191, 191); // 底色
-
-            excelapp.Cells.EntireColumn.AutoFit();
 
             // 若有 Seq 欄位,此處才移除,前面需要用
             if ((worksheet.Cells[1, 1] as Excel.Range).Value2?.ToString() == "Seq")
