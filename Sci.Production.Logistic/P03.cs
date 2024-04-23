@@ -43,7 +43,6 @@ namespace Sci.Production.Logistic
         private DataTable selectDataTable;
         private bool check_OnlyReqCarton;
         private string selectDataTable_DefaultView_Sort = string.Empty;
-        private DataRow[] selectedData;
         private int threadCnt = 0;
 
         /// <summary>
@@ -75,8 +74,18 @@ namespace Sci.Production.Logistic
                 DataRow dr = this.gridReceiveDate.GetDataRow<DataRow>(e.RowIndex);
                 dr["selected"] = e.FormattedValue;
                 dr.EndEdit();
-                int sint = ((DataTable)this.listControlBindingSource1.DataSource).Select("selected = 1" + (this.chkOnlyReqCarton.Checked ? "AND FtyReqReturnDate IS NOT NULL" : string.Empty)).Length;
-                this.numSelectedCTNQty.Value = sint;
+
+                int selectCnt = 0;
+                if (this.chkOnlyReqCarton.Checked)
+                {
+                    selectCnt = this.gridReceiveDate.Rows.Cast<DataGridViewRow>().Where(row => row.Cells["selected"].Value.ToString().Equals("1") && !MyUtility.Check.Empty(row.Cells["FtyReqReturnDate"].Value)).Count();
+                }
+                else
+                {
+                    selectCnt = this.gridReceiveDate.Rows.Cast<DataGridViewRow>().Where(row => row.Cells["selected"].Value.ToString().Equals("1")).Count();
+                }
+
+                this.numSelectedCTNQty.Value = selectCnt;
             };
 
             col_Reason.EditingMouseDown += (s, e) =>
@@ -760,7 +769,8 @@ where pd.CustCTN = '{dr["CustCTN"]}' and pd.CTNQty > 0 and pd.DisposeFromClog= 0
             DataTable dt = (DataTable)this.listControlBindingSource1.DataSource;
             this.dtError = dt.Clone();
             this.check_OnlyReqCarton = this.chkOnlyReqCarton.Checked;
-            completeCnt = 0;
+            this.completeCnt = 0;
+            this.progressCnt = 0;
 
             if (dt == null || dt.Rows.Count == 0)
             {
@@ -768,9 +778,17 @@ where pd.CustCTN = '{dr["CustCTN"]}' and pd.CTNQty > 0 and pd.DisposeFromClog= 0
                 return;
             }
 
-            this.selectedData = this.check_OnlyReqCarton ? dt.Select("Selected = 1 AND FtyReqReturnDate IS NOT NULL") : dt.Select("Selected = 1");
+            if (this.chkOnlyReqCarton.Checked)
+            {
+                this.selectDataTable = dt.AsEnumerable().Where(r => MyUtility.Convert.GetInt(r["selected"]) == 1 && MyUtility.Check.Empty(r["FtyReqReturnDate"]) == false).ToList().CopyToDataTable();
+            }
+            else
+            {
+                this.selectDataTable = dt.AsEnumerable().Where(r => MyUtility.Convert.GetInt(r["selected"]) == 1).ToList().CopyToDataTable();
+            }
+
             string returnMessage = string.Empty;
-            if (this.selectedData.Length == 0)
+            if (this.selectDataTable.Rows.Count == 0)
             {
                 MyUtility.Msg.WarningBox("No data need to import!");
                 return;
@@ -783,7 +801,7 @@ where pd.CustCTN = '{dr["CustCTN"]}' and pd.CTNQty > 0 and pd.DisposeFromClog= 0
                     return;
                 }
 
-                int rowCnt = this.selectedData.CopyToDataTable().Rows.Count;
+                int rowCnt = this.selectDataTable.Rows.Count;
                 this.threadCnt = (rowCnt / 100) + (rowCnt % 100 == 0 ? 0 : 1);
 
                 // 初始化 workers 陣列
@@ -846,11 +864,12 @@ where pd.CustCTN = '{dr["CustCTN"]}' and pd.CTNQty > 0 and pd.DisposeFromClog= 0
         private void Countselectcount()
         {
             this.gridReceiveDate.ValidateControl();
+            this.listControlBindingSource1.EndEdit();
             DataGridViewColumn column = this.gridReceiveDate.Columns["Selected"];
             if (!MyUtility.Check.Empty(column) && !MyUtility.Check.Empty(this.listControlBindingSource1.DataSource))
             {
-                int sint = ((DataTable)this.listControlBindingSource1.DataSource).Select("selected = 1").Length;
-                this.numSelectedCTNQty.Value = sint;
+                int selectCnt = this.gridReceiveDate.Rows.Cast<DataGridViewRow>().Where(row => row.Cells["selected"].Value.ToString().Equals("1")).Count();
+                this.numSelectedCTNQty.Value = selectCnt;
                 this.numTotalCTNQty.Value = ((DataTable)this.listControlBindingSource1.DataSource).Rows.Count;
             }
         }
@@ -938,12 +957,11 @@ where pd.CustCTN = '{dr["CustCTN"]}' and pd.CTNQty > 0 and pd.DisposeFromClog= 0
         {
             try
             {
-                DataTable dt = (DataTable)((object[])e.Argument)[0];
                 int startIndex = (int)((object[])e.Argument)[1];
                 int count = (int)((object[])e.Argument)[2];
 
                 // 抓取分割跑多執行緒的table區間
-                dt = this.selectDataTable.AsEnumerable().Skip(startIndex).Take(count).CopyToDataTable();
+                DataTable dt = ((DataTable)((object[])e.Argument)[0]).AsEnumerable().Skip(startIndex).Take(count).CopyToDataTable();
 
                 foreach (DataRow dr in dt.Rows)
                 {
@@ -1111,11 +1129,10 @@ where pd.CustCTN = '{dr["CustCTN"]}' and pd.CTNQty > 0 and pd.DisposeFromClog= 0
                     // 更新進度條
                     this.progressCnt++;
 
-                    double barPercentage = Math.Abs(MyUtility.Convert.GetDouble(this.progressCnt) / this.selectedData.CopyToDataTable().Rows.Count) * 100;
-                    if (this.progressCnt == this.selectedData.CopyToDataTable().Rows.Count)
+                    double barPercentage = Math.Abs(MyUtility.Convert.GetDouble(this.progressCnt) / this.selectDataTable.Rows.Count) * 100;
+                    if (this.progressCnt == this.selectDataTable.Rows.Count)
                     {
                         ((System.ComponentModel.BackgroundWorker)sender).ReportProgress(MyUtility.Convert.GetInt(100));
-                        break;
                     }
                     else
                     {
@@ -1139,10 +1156,10 @@ where pd.CustCTN = '{dr["CustCTN"]}' and pd.CTNQty > 0 and pd.DisposeFromClog= 0
 
         private void BackgroundDownloadSticker_ProgressChanged(object sender, System.ComponentModel.ProgressChangedEventArgs e)
         {
-            if (this.selectedData != null && e.ProgressPercentage <= 100)
+            if (this.selectDataTable != null && e.ProgressPercentage <= 100)
             {
                 this.progressBarProcessing.Value = e.ProgressPercentage;
-                this.labProcessingBar.Text = $"{this.progressCnt}/{this.selectedData.CopyToDataTable().Rows.Count}";
+                this.labProcessingBar.Text = $"{this.progressCnt}/{this.selectDataTable.Rows.Count}";
             }
         }
 
@@ -1180,7 +1197,8 @@ where pd.CustCTN = '{dr["CustCTN"]}' and pd.CTNQty > 0 and pd.DisposeFromClog= 0
                 if (this.dtError.Rows.Count > 0)
                 {
                     MyUtility.Msg.WarningBox("Some carton cannot receive, please refer to field <Save Result>.");
-                    if (dt.AsEnumerable().Any(row => !row["Selected"].EqualDecimal(1)))
+
+                    if (this.gridReceiveDate.Rows.Cast<DataGridViewRow>().Any(row => !row.Cells["Selected"].Value.ToString().Equals("1")))
                     {
                         /*
                          沒勾選的放table #1
@@ -1189,7 +1207,7 @@ where pd.CustCTN = '{dr["CustCTN"]}' and pd.CTNQty > 0 and pd.DisposeFromClog= 0
                          最後再將Selected清空
                          */
 
-                        DataTable dtCopy = dt.AsEnumerable().Where(row => !row["Selected"].EqualDecimal(1)).CopyToDataTable();
+                        DataTable dtCopy = dt.AsEnumerable().Where(r => MyUtility.Convert.GetInt(r["selected"]) == 0).ToList().CopyToDataTable();
                         dtCopy.Merge(this.dtError, true, MissingSchemaAction.AddWithKey);
                         foreach (DataRow dr in dtCopy.Rows)
                         {
@@ -1219,13 +1237,14 @@ where pd.CustCTN = '{dr["CustCTN"]}' and pd.CTNQty > 0 and pd.DisposeFromClog= 0
                 }
                 else
                 {
-                    if (dt.AsEnumerable().Any(row => !row["Selected"].EqualDecimal(1)))
+                    if (dt.AsEnumerable().Where(r => MyUtility.Convert.GetInt(r["selected"]) == 0).ToList().Count() == 0)
                     {
-                        this.listControlBindingSource1.DataSource = dt.AsEnumerable().Where(row => !row["Selected"].EqualDecimal(1)).CopyToDataTable();
+                        this.listControlBindingSource1.DataSource = null;
                     }
                     else
                     {
-                        this.listControlBindingSource1.DataSource = null;
+                        DataTable newdt = dt.AsEnumerable().Where(r => MyUtility.Convert.GetInt(r["selected"]) == 0).ToList().CopyToDataTable();
+                        this.listControlBindingSource1.DataSource = newdt;
                     }
 
                     this.ControlButton4Text("Close");
