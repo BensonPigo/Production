@@ -1,18 +1,22 @@
 ﻿using Sci.Data;
-using Sci.Production.Class.Command;
 using Sci.Production.Prg.PowerBI.Model;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-using System.Data.SqlTypes;
 using System.Linq;
-using System.Text;
 
 namespace Sci.Production.Prg.PowerBI.Logic
 {
     /// <summary>
-    /// 有調整到需要一併更新至BI
+    /// 調整欄位名稱
+    /// 新增欄位
+    /// 需要一併更新至 BI :  P_Import_PPICMasterListBIData
+    /// **************************************
+    /// ***  各為維護的大大 這支很複雜     ***
+    /// ***  請不要因為趕時間硬塞,目視困難 ***
+    /// ***  容易搞錯的規則請備註          ***
+    /// **************************************
     /// </summary>
     public class PPIC_R03
     {
@@ -23,6 +27,10 @@ namespace Sci.Production.Prg.PowerBI.Logic
         }
 
         /// <inheritdoc/>
+        /// <summary>
+        /// 資料展開欄位 OrderID
+        /// 只有報表, 勾選 Seperate by <Qtyb'down by shipmode>, [部分]資訊會依據 Order_QtyShip.Seq 展開計算, 但報表上不顯示此 Seq
+        /// </summary>
         public Base_ViewModel GetPPICMasterList(PPIC_R03_ViewModel model)
         {
             List<SqlParameter> listPar = new List<SqlParameter>
@@ -52,64 +60,16 @@ namespace Sci.Production.Prg.PowerBI.Logic
                 new SqlParameter("@ArtworkTypeID", SqlDbType.VarChar) { Value = (object)model.ArtworkTypeID ?? DBNull.Value },
             };
 
-            List<DataTable> dts = new List<DataTable>();
             Base_ViewModel resultReport = new Base_ViewModel();
-            model.P_type = "ALL";
-            var result = DBProxy.Current.Select(null, this.GetMainDatas(model), listPar, out DataTable printData);
+            var result = DBProxy.Current.Select(null, this.GetMainDatas(model), listPar, out DataTable[] printData);
             if (!result)
             {
                 resultReport.Result = result;
                 return resultReport;
             }
 
-            // 抓取forecast資料再merge回主datatable，只有forecast和seperate有勾的時候才做
-            if (model.Forecast && model.SeparateByQtyBdownByShipmode)
-            {
-                model.P_type = "forecast";
-                result = DBProxy.Current.Select(null, this.GetMainDatas(model), listPar, out DataTable printData_forecast);
-                if (!result)
-                {
-                    resultReport.Result = result;
-                    return resultReport;
-                }
-
-                printData.Merge(printData_forecast);
-            }
-
-            dts.Add(printData);
-
-            if (printData.Rows.Count > 0)
-            {
-                if (model.IncludeArtworkData || model.IncludeArtworkDataKindIsPAP)
-                {
-                    result = MyUtility.Tool.ProcessWithDatatable(printData, "ID,Qty,CPU", this.GetArtworkTypeValue(model), out DataTable[] artworkDatas);
-                    if (!result)
-                    {
-                        resultReport.Result = result;
-                        return resultReport;
-                    }
-
-                    foreach (var dt in artworkDatas)
-                    {
-                        dts.Add(dt);
-                    }
-                }
-
-                if (model.PrintingDetail)
-                {
-                    result = MyUtility.Tool.ProcessWithDatatable(printData, "ID", this.GetPrintingDetail(model), out DataTable artworkDatas);
-                    if (!result)
-                    {
-                        resultReport.Result = result;
-                        return resultReport;
-                    }
-
-                    dts.Add(artworkDatas);
-                }
-            }
-
             resultReport.Result = result;
-            resultReport.DtArr = dts.ToArray();
+            resultReport.DtArr = printData;
             return resultReport;
         }
 
@@ -123,16 +83,20 @@ namespace Sci.Production.Prg.PowerBI.Logic
         /// </summary>
         private string GetMainDatas(PPIC_R03_ViewModel model)
         {
-            // 需要注意規則
-            // 有勾選 Seperate by < Qty b'down by shipmode > 展開到 Order_QtyShip
-            // 若同時勾選 forecast && Seperate by < Qty b'down by shipmode >, 則在 PPIC R03產出的Excel o.Category = '' 的資料必須在最下方
-            #region 篩選條件, 不包含 List PO Combo 判斷
+            // 輸出 Pkey 欄位
+            // 1.無勾選 Seperate by < Qty b'down by shipmode > → [SPNO] = OrderID
+            // 2.有勾選 Seperate by < Qty b'down by shipmode > → [SPNO] = OrderID, [Seq] = Order_QtyShip.Seq
+            #region 篩選基礎條件, 不包含 List PO Combo 判斷
+            string where_NoRestrictOrdersDelivery = string.Empty;
             string whereOrders = string.Empty;
             if (MyUtility.Check.Seek($"SELECT 1 FROM System WHERE NoRestrictOrdersDelivery = 0"))
             {
-                whereOrders += "AND (o.IsForecast = 0 OR (o.IsForecast = 1 AND (o.SciDelivery <= DATEADD(m, DATEDIFF(m, 0, DATEADD(m, 5, GETDATE())), 6) OR o.BuyerDelivery < DATEADD(m, DATEDIFF(m, 0, DATEADD(m, 5, GETDATE())), 0))))\r\n";
+                where_NoRestrictOrdersDelivery = "AND (o.IsForecast = 0 OR (o.IsForecast = 1 AND (o.SciDelivery <= DATEADD(m, DATEDIFF(m, 0, DATEADD(m, 5, GETDATE())), 6) OR o.BuyerDelivery < DATEADD(m, DATEDIFF(m, 0, DATEADD(m, 5, GETDATE())), 0))))\r\n";
+                whereOrders += where_NoRestrictOrdersDelivery;
             }
 
+            string order_QtyShip_Seq = string.Empty;
+            string order_QtyShip_Join = string.Empty;
             if (model.IsPowerBI)
             {
                 string whereSCIDelivery = "o.SCIDelivery >= @SCIDelivery1";
@@ -159,15 +123,58 @@ AND o.Category IN ('B','S','G','')
             }
             else
             {
-                string sqlTableAlias = model.SeparateByQtyBdownByShipmode ? "oqs" : "o";  // Order_QtyShip oqs : Orders o
-                if (model.BuyerDelivery1.HasValue)
+                // 是否展開 Order_QtyShip, Pkey:ID, Seq
+                if (model.SeparateByQtyBdownByShipmode)
                 {
-                    whereOrders += $"AND {sqlTableAlias}.BuyerDelivery >= @BuyerDelivery1\r\n";
-                }
+                    order_QtyShip_Seq = ",Seq";
+                    order_QtyShip_Join = "INNER JOIN Order_QtyShip oqs WITH (NOLOCK) ON oqs.ID = o.ID";
+                    if (model.BuyerDelivery1.HasValue)
+                    {
+                        whereOrders += $"AND oqs.BuyerDelivery >= @BuyerDelivery1\r\n";
+                    }
 
-                if (model.BuyerDelivery2.HasValue)
+                    if (model.BuyerDelivery2.HasValue)
+                    {
+                        whereOrders += $"AND oqs.BuyerDelivery <= @BuyerDelivery2\r\n";
+                    }
+
+                    if (model.SDPDate1.HasValue)
+                    {
+                        whereOrders += "AND oqs.SDPDate >= @SDPDate1\r\n";
+                    }
+
+                    if (model.SDPDate2.HasValue)
+                    {
+                        whereOrders += "AND oqs.SDPDate <= @SDPDate2\r\n";
+                    }
+                }
+                else
                 {
-                    whereOrders += $"AND {sqlTableAlias}.BuyerDelivery <= @BuyerDelivery2\r\n";
+                    if (model.BuyerDelivery1.HasValue)
+                    {
+                        whereOrders += $"AND o.BuyerDelivery >= @BuyerDelivery1\r\n";
+                    }
+
+                    if (model.BuyerDelivery2.HasValue)
+                    {
+                        whereOrders += $"AND o.BuyerDelivery <= @BuyerDelivery2\r\n";
+                    }
+
+                    if (model.SDPDate1.HasValue || model.SDPDate2.HasValue)
+                    {
+                        string whereSDPDate = string.Empty;
+                        if (model.SDPDate1.HasValue)
+                        {
+                            whereSDPDate += "AND oqs.SDPDate >= @SDPDate1\r\n";
+                        }
+
+                        if (model.SDPDate2.HasValue)
+                        {
+                            whereSDPDate += "AND oqs.SDPDate <= @SDPDate2\r\n";
+                        }
+
+                        whereOrders += $"AND EXISTS (SELECT 1 FROM Order_QtyShip oqs WITH (NOLOCK) WHERE oqs.ID = o.ID {whereSDPDate})\r\n";
+                    }
                 }
 
                 if (model.SciDelivery1.HasValue)
@@ -178,22 +185,6 @@ AND o.Category IN ('B','S','G','')
                 if (model.SciDelivery2.HasValue)
                 {
                     whereOrders += "AND o.SciDelivery <= @SCIDelivery2\r\n";
-                }
-
-                if (model.SDPDate1.HasValue || model.SDPDate2.HasValue)
-                {
-                    string whereSDPDate = string.Empty;
-                    if (model.SDPDate1.HasValue)
-                    {
-                        whereSDPDate = "AND oqs.SDPDate >= @SDPDate1";
-                    }
-
-                    if (model.SDPDate2.HasValue)
-                    {
-                        whereSDPDate = "AND oqs.SDPDate <= @SDPDate2";
-                    }
-
-                    whereOrders += $"AND EXISTS (SELECT 1 FROM Order_QtyShip oqs WITH (NOLOCK) WHERE oqs.ID = o.ID {whereSDPDate})\r\n";
                 }
 
                 if (model.CRDDate1.HasValue)
@@ -277,6 +268,12 @@ AND o.Category IN ('B','S','G','')
                 }
 
                 List<string> listCategory = new List<string>();
+
+                if (model.Forecast)
+                {
+                    listCategory.Add("''");
+                }
+
                 if (model.Bulk)
                 {
                     listCategory.Add("'B'");
@@ -290,11 +287,6 @@ AND o.Category IN ('B','S','G','')
                 if (model.Material)
                 {
                     listCategory.Add("'M'");
-                }
-
-                if (model.Forecast)
-                {
-                    listCategory.Add("''");
                 }
 
                 if (model.Garment)
@@ -314,7 +306,7 @@ AND o.Category IN ('B','S','G','')
 
                 if (!MyUtility.Check.Empty(model.ArtworkTypeID))
                 {
-                    whereOrders += "AND EXISTS(SELECT 1 FROM Style_TmsCost stc WITH (NOLOCK) WHERE stc.StyleUkey = o.StyleUkey AND stc.ArtworkTypeID = @ArtworkTypeID AND (stc.Qty > 0 OR stc.TMS > 0 AND stc.Price > 0))\r\n";
+                    whereOrders += "AND EXISTS(SELECT 1 FROM Style_TmsCost stc WITH (NOLOCK) WHERE stc.StyleUkey = o.StyleUkey AND stc.ArtworkTypeID = @ArtworkTypeID AND ((stc.Qty > 0 AND stc.Price > 0) OR stc.TMS > 0))\r\n";
                 }
 
                 if (!model.IncludeHistoryOrder)
@@ -329,1385 +321,836 @@ AND o.Category IN ('B','S','G','')
             }
             #endregion
 
-            // 是否展開 Order_QtyShip, Pkey:ID, Seq
-            string order_QtyShip_Columns = string.Empty;
-            string order_QtyShip_Join = string.Empty;
-            if (model.SeparateByQtyBdownByShipmode)
-            {
-                order_QtyShip_Columns = @"
-    ,oqs.Seq
-    ,oqs.ShipmodeID
-    ,oqs.EstPulloutDate
-    ,oqs.CFAIs3rdInspect
-    ,oqs.CFAFinalInspectResult
-    ,oqs.CFAFinalInspectDate
-    ,oqs.IDD
-    ,oqs.CFAFinalInspectHandle
-    ,oqs.ClogReasonID";
-                order_QtyShip_Join = @"
-INNER JOIN Order_QtyShip oqs WITH (NOLOCK) ON oqs.ID = o.ID";
-            }
-
-            // 第1段 , 篩選 Orders, Order_QtyShip
+            #region step 1 基礎條件 取得 OrderID, POID, or (Seq)
             string sqlcmd = $@"
 --1.先依據篩選條件找出需要資料,不做任何處理
-SELECT o.*
-{order_QtyShip_Columns}
-INTO #tmpOrders
+SELECT
+    o.ID
+   ,o.POID
+    {order_QtyShip_Seq}
+INTO #tmpOrdersBase
 FROM Orders o WITH (NOLOCK)
 {order_QtyShip_Join}
 WHERE 1 = 1
 {whereOrders}
+";
+            #endregion
+
+            #region step 2 有or無 <List PO Combo> 條件, 用 step1 資料的 POID, 找出所有 OrderID <<<除了NoRestrictOrdersDelivery此條件, 不限制基礎條件, 從原 PPIC R03 整理出來條件>>>
+            if (model.ListPOCombo)
+            {
+                // <此篩選出的 OrderID 不受畫面上篩選條件限制>
+                sqlcmd += $@"
+--2. List PO Combo 有勾選, 不回找 POID = ''
+SELECT
+    o.ID
+   ,o.POID
+    {order_QtyShip_Seq}   
+INTO #tmpPOComboStep
+FROM Orders o WITH (NOLOCK)
+{order_QtyShip_Join}
+WHERE EXISTS(SELECT 1 FROM #tmpOrdersBase WHERE POID = o.POID AND POID <> '')
+{where_NoRestrictOrdersDelivery}
+
+--Category = '' 的 POID = '' 不可回找
+UNION ALL
+SELECT *
+FROM #tmpOrdersBase b
+WHERE POID = ''
+";
+            }
+            else
+            {
+                sqlcmd += $@"
+--2. List PO Combo 無勾選
+SELECT *
+INTO #tmpPOComboStep
+FROM #tmpOrdersBase b
+";
+            }
+            #endregion
+
+            #region step 3 有or無 勾選 Seperate by < Qty b'down by shipmode >, 不同展開方式的欄位 來源( Orders / Order_QtyShip)
+            if (model.SeparateByQtyBdownByShipmode)
+            {
+                sqlcmd += $@"
+--處理 有 展開 Separate By Qty BdownBy Shipmode 的欄位
+SELECT
+    s.*
+   ,oqs.BuyerDelivery
+   ,oqs.IDD
+   ,oqs.CFAIs3rdInspect
+   ,oqs.Qty
+   ,oqs.EstPulloutDate
+   ,oqs.FtyKPI
+   ,oqs.CFAFinalInspectDate
+   ,oqs.CFAFinalInspectResult
+   ,oqs.CFAFinalInspectHandle
+   ,oqs.ShipmodeID
+INTO #tmpOqs_Step
+FROM #tmpPOComboStep s
+INNER JOIN Order_QtyShip oqs WITH (NOLOCK) ON s.ID = oqs.ID AND s.Seq = oqs.Seq
+";
+            }
+            else
+            {
+                sqlcmd += $@"
+--處理 無 展開 Separate By Qty BdownBy Shipmode 的欄位
+SELECT
+    s.*
+   ,o.BuyerDelivery
+   ,IDD = STUFF((
+            SELECT DISTINCT ',' + FORMAT(oqs.IDD, 'yyyy/MM/dd')
+            FROM Order_QtyShip oqs WITH (NOLOCK)
+            WHERE oqs.ID = o.ID
+            FOR XML PATH (''))
+        , 1, 1, '')
+   ,CFAIs3rdInspect = (
+        SELECT COUNT(1)
+        FROM Order_Qtyship oqs WITH (NOLOCK)
+        WHERE oqs.ID = o.ID
+        AND oqs.CFAIs3rdInspect = 1)
+   ,o.Qty
+   ,EstPulloutDate = PulloutDate
+   ,o.FtyKPI
+   ,CFAFinalInspectDate = STUFF((
+            SELECT DISTINCT ',' + FORMAT(CFAFinalInspectDate, 'yyyy/MM/dd')
+            FROM Order_QtyShip oqs WITH (NOLOCK)
+            WHERE oqs.ID = o.ID
+            FOR XML PATH (''))
+        , 1, 1, '')
+   ,CFAFinalInspectResult = STUFF((
+            SELECT DISTINCT ',' + CFAFinalInspectResult
+            FROM Order_QtyShip oqs WITH (NOLOCK)
+            WHERE oqs.ID = o.ID
+            AND CFAFinalInspectResult <> ''
+            FOR XML PATH (''))
+        , 1, 1, '')
+   ,CFAFinalInspectHandle = STUFF((
+            SELECT DISTINCT ',' + CFAFinalInspectHandle + '-' + p.Name
+            FROM Order_QtyShip oqs WITH (NOLOCK)
+            LEFT JOIN Pass1 p WITH (NOLOCK) ON oqs.CFAFinalInspectHandle = p.ID
+            WHERE oqs.ID = o.id
+            AND CFAFinalInspectHandle <> ''
+            FOR XML PATH (''))
+        , 1, 1, '')
+   ,ShipmodeID = o.ShipModeList
+INTO #tmpOqs_Step
+FROM #tmpPOComboStep s
+INNER JOIN Orders o ON s.ID = o.ID
+";
+            }
+            #endregion
+
+            #region step 4 來源 Orders 欄位, #tmpOrders 後續處理各資料使用
+            sqlcmd += $@"
+SELECT
+    s.*
+   ,o.StyleUkey
+   ,o.MDivisionID
+   ,o.FactoryID
+   ,o.SciDelivery
+   ,o.CRDDate
+   ,o.CFMDate
+   ,o.Category
+   ,o.ForecastSampleGroup
+   ,o.BuyMonth
+   ,o.Junk
+   ,o.NeedProduction
+   ,o.KeepPanels
+   ,o.StyleID
+   ,o.SeasonID
+   ,o.BrandID
+   ,o.OrderTypeID
+   ,o.ProjectID
+   ,o.HangerPack
+   ,o.Customize1
+   ,o.CustPONo
+   ,o.VasShas
+   ,o.MnorderApv
+   ,o.MnorderApv2
+   ,o.KPIMNotice
+   ,o.TissuePaper
+   ,o.AirFreightByBrand
+   ,o.GFR
+   ,o.CustCDID
+   ,o.BrandFTYCode
+   ,o.ProgramID
+   ,o.NonRevenue
+   ,o.CPU
+   ,o.FOCQty
+   ,o.CPUFactor
+   ,o.PoPrice
+   ,o.KPILETA
+   ,o.PFETA
+   ,o.PackLETA
+   ,o.LETA
+   ,o.MTLETA
+   ,o.SewETA
+   ,o.PackETA
+   ,o.MTLExport
+   ,o.MTLComplete
+   ,o.SewInLine
+   ,o.SewOffLine
+   ,o.FirstProduction
+   ,o.LastProductionDate
+   ,o.EachConsApv
+   ,o.KpiEachConsCheck
+   ,o.CutInLine
+   ,o.CutOffLine
+   ,o.PulloutComplete
+   ,o.KPIChangeReason
+   ,o.PlanDate
+   ,o.OrigBuyerDelivery
+   ,o.SMR
+   ,o.MRHandle
+   ,o.MCHandle
+   ,o.DoxType
+   ,o.SewLine
+   ,o.Customize2
+   ,o.IsMixMarker
+   ,o.CuttingSP
+   ,o.RainwearTestPassed
+   ,o.MdRoomScanDate
+   ,o.DryRoomRecdDate
+   ,o.DryRoomTransDate
+   ,o.LastCTNTransDate
+   ,o.LastCTNRecdDate
+   ,o.OrganicCotton
+   ,o.DirectShip
+   ,o.Dest
+   ,o.CtnType
+   ,o.SampleReason
+   ,o.Max_ScheETAbySP
+   ,o.Sew_ScheETAnoReplace
+   ,o.MaxShipETA_Exclude5x
+   ,o.BuyBackReason
+   ,o.StyleUnit
+   ,o.SubconInType
+   ,o.isForecast
+INTO #tmpOrders
+FROM #tmpOqs_Step s
+INNER JOIN Orders o WITH (NOLOCK) ON s.ID = o.ID
 
 CREATE NONCLUSTERED INDEX index_tmpOrders_ID ON #tmpOrders(ID ASC);
 ";
+            #endregion
 
-            // 以下從 PPIC R03 移動過來沒動任何規則, 只是改用tmp
-            string seperCmdkpi = model.SeparateByQtyBdownByShipmode ? "oq.FtyKPI" : "o.FtyKPI";
-            string seperCmdkpi2 = model.SeparateByQtyBdownByShipmode ? @" left join Order_QtyShip oq WITH (NOLOCK) on o.id=oq.Id and o.seq = oq.seq" : string.Empty;
-            string order_QtyShip_Source_InspDate = model.SeparateByQtyBdownByShipmode ? "oq.CFAFinalInspectDate " : "QtyShip_InspectDate.Val";
-            string order_QtyShip_Source_InspResult = model.SeparateByQtyBdownByShipmode ? "oq.CFAFinalInspectResult" : "QtyShip_Result.Val";
-            string order_QtyShip_Source_InspHandle = model.SeparateByQtyBdownByShipmode ? "oq.CFAFinalInspectHandle" : "QtyShip_Handle.Val";
-            string thridColumn = model.SeparateByQtyBdownByShipmode ? " iif(oq.CFAIs3rdInspect = 1,'Y','N')" : " iif(oqs.cnt > 0,'Y','N')";
-            string order_QtyShip_OuterApply = model.SeparateByQtyBdownByShipmode ? string.Empty : $@"
-	OUTER APPLY(
-		SELECT [Val]=STUFF((
-		    SELECT  DISTINCT ','+ Cast(CFAFinalInspectDate as varchar)
-		    from Order_QtyShip oq WITH (NOLOCK)
-		    WHERE ID = o.id
-		    FOR XML PATH('')
-		),1,1,'')
-	)QtyShip_InspectDate
-	OUTER APPLY(
-		SELECT [Val]=STUFF((
-		    SELECT  DISTINCT ','+ CFAFinalInspectResult
-		    from Order_QtyShip oq WITH (NOLOCK)
-		    WHERE ID = o.id AND CFAFinalInspectResult <> '' AND CFAFinalInspectResult IS NOT NULL
-		    FOR XML PATH('')
-		),1,1,'')
-	)QtyShip_Result
-	OUTER APPLY(
-		SELECT [Val]=STUFF((
-		SELECT  DISTINCT ','+ CFAFinalInspectHandle +'-'+ p.Name
-		    from Order_QtyShip oq WITH (NOLOCK)
-			LEFT JOIN Pass1 p WITH (NOLOCK) ON oq.CFAFinalInspectHandle = p.ID 
-		    WHERE oq.ID = o.id AND CFAFinalInspectHandle <> '' AND CFAFinalInspectHandle IS NOT NULL
-		    FOR XML PATH('')
-		),1,1,'')
-	)QtyShip_Handle
+            #region step 5-1 暫存表 有or無 勾選 Seperate by < Qty b'down by shipmode > 因為效能, 需要(聚合/串接字串)的欄位先分別處理
+            string sqlmaybePldSeq = model.SeparateByQtyBdownByShipmode ? "AND pld.OrderShipmodeSeq = o.Seq" : string.Empty;
+            string sqlmaybeInvSeq = model.SeparateByQtyBdownByShipmode ? "AND i.OrderShipmodeSeq = o.Seq" : string.Empty;
+            string sqltmp = $@"
+LEFT JOIN #tmp_PackingList_Detail pld ON o.ID = pld.OrderID {sqlmaybePldSeq}
+LEFT JOIN #tmp_invAdj i ON o.ID = i.OrderID {sqlmaybeInvSeq}
 ";
-            string seperCmd;
-            if (model.SeparateByQtyBdownByShipmode && model.P_type.Equals("ALL"))
-            {
-                seperCmd = " ,oq.Seq,[IDD] = Format(oq.IDD, 'yyyy/MM/dd')";
-            }
-            else
-            {
-                seperCmd = @" ,[IDD] = (SELECT  Stuff((select distinct concat( ',',Format(oqs.IDD, 'yyyy/MM/dd'))   from Order_QtyShip oqs with (nolock) where oqs.ID = o.ID FOR XML PATH('')),1,1,'') )";
-            }
-
-            string biMoreColumn = !model.IsPowerBI ? string.Empty : @"
-        , o.Max_ScheETAbySP
-        , o.Sew_ScheETAnoReplace
-        , o.MaxShipETA_Exclude5x
-        , [HalfKey] = iif(cast(format(dateadd(day,-7,o.SciDelivery), 'dd') as int) between 1 and 15
-				        , format(dateadd(day,-7,o.SciDelivery), 'yyyyMM01')
-				        , format(dateadd(day,-7,o.SciDelivery), 'yyyyMM02'))
-        , [Buyerhalfkey] = iif(cast(format(dateadd(day,-7,o.BuyerDelivery), 'dd') as int) between 1 and 15
-				        , format(dateadd(day,-7,o.BuyerDelivery), 'yyyyMM01')
-				        , format(dateadd(day,-7,o.BuyerDelivery), 'yyyyMM02'))
-        , [DevSample] = iif((select IsDevSample from OrderType ot WITH (NOLOCK) where ot.ID = o.OrderTypeID and ot.BrandID = o.BrandID) = 1, 'Y', '')
-        , [KeepPanels] = iif(o.KeepPanels = 0, 'N', 'Y')
-        , o.BuyBackReason
-        , o.StyleUnit
-        , [SubconInType] = iif(o.SubconInType = '1', 'Subcon-in from sister factory (same M division)'
-					        , iif(o.SubconInType = '2', 'Subcon-in from sister factory (different M division)'
-						        , iif(o.SubconInType = '3', 'Subcon-in from non-sister factory', '')))
-        , [ProduceRgPMS] = (select ProduceRgCode from SCIFty sf WITH (NOLOCK) where sf.ID = o.FactoryID)
-        , [Third_Party_Insepction] = iif(oqs.cnt > 0,1,0)
-        , TMS = o.CPU * (select StdTMS from System WITH (NOLOCK))
-";
-            string biMoreColumn2 = !model.IsPowerBI ? string.Empty : @"
-        , Max_ScheETAbySP
-        , Sew_ScheETAnoReplace
-        , MaxShipETA_Exclude5x
-        , [HalfKey]
-        , [Buyerhalfkey]
-        , [DevSample]
-        , [KeepPanels]
-        , BuyBackReason
-        , t.StyleUnit
-        , [SubconInType]
-        , [ProduceRgPMS]
-        , [Third_Party_Insepction]
-		, [SewQtybyRate] = isnull(case when t.StyleUnit = 'PCS' then (select SUM(QAQty) from #tmp_SewingOutput where OrderID = t.ID) 
-							else (	select  SUM(ROUND(a.OutputQty * ol.Rate/100, 2))
-									from (
-										select OrderID, ComboType, [OutputQty] = SUM(QAQty)
-										from #tmp_SewingOutput
-										where OrderID = t.ID
-										group by OrderID, ComboType
-									) a
-									inner join Order_Location ol WITH (NOLOCK) on ol.OrderID = a.OrderID and ol.Location = a.ComboType
-							) end, 0)
-        ,TMS
-";
-
-            // 第2段
             sqlcmd += $@"
-select DISTINCT o.ID
-        , o.MDivisionID
-        , o.FtyGroup
-        , o.FactoryID
-        , o.BuyerDelivery
-        , o.SciDelivery
-        , o.POID
-        , o.CRDDate
-        , o.CFMDate
-        , o.Dest
-        , o.StyleID
-        , s.StyleName
-        , o.SeasonID
-        , o.BrandID
-        , o.ProjectID
-        , Kit=(SELECT top 1 c.Kit From CustCD c WITH (NOLOCK) where c.ID=o.CustCDID AND c.BrandID=o.BrandID)
-		,[PackingMethod]=d.Name 
-        , o.HangerPack
-        , o.Customize1
-        , o.BuyMonth
-        , o.CustPONo
-        , o.CustCDID
-        , o.ProgramID
-		, [NonRevenue]=IIF(o.NonRevenue=1,'Y','N')
-        , o.CdCodeID
-	    , s.CDCodeNew
-        , [ProductType] = r2.Name
-		, [FabricType] = r1.Name
-		, s.Lining
-		, s.Gender
-		, [Construction] = d1.Name
-        , o.CPU
-        , o.Qty as Qty
-        , o.FOCQty
-        , o.LocalOrder
-        , o.PoPrice
-        , o.CMPPrice
-        , o.KPILETA
-        , o.PFETA
-        , o.LETA
-        , o.MTLETA
-        , o.SewETA
-        , o.PackETA
-        , o.MTLComplete
-        , o.SewInLine
-        , o.SewOffLine
-        , o.CutInLine
-        , o.CutOffLine
-		, [CutInLine_SP] = csp.InLine
-		, [CutOffLine_SP] = csp.OffLine
-        , [3rd_Party_Inspection] = {thridColumn}
-        , Category=case when o.Category='B'then'Bulk'
-						when o.Category='G'then'Garment'
-						when o.Category='M'then'Material'
-						when o.Category='S'then'Sample'
-						when o.Category='T'then'Sample mtl.'
-						when isnull(o.Category,'')=''and isnull(o.ForecastSampleGroup,'')='' then'Bulk fc'
-						when isnull(o.Category,'')=''and isnull(o.ForecastSampleGroup,'')='D' then'Dev. sample fc'
-						when isnull(o.Category,'')=''and isnull(o.ForecastSampleGroup,'')='S' then'Sa. sample fc'
-					end
-        , o.PulloutDate
-        , o.ActPulloutDate
-        , o.SMR
-        , o.MRHandle
-        , o.MCHandle
-        , o.OrigBuyerDelivery
-        , o.DoxType
-        , o.TotalCTN
-        , PackErrorCtn = isnull(o.PackErrCTN,0)
-        , o.FtyCTN
-        , o.ClogCTN
-        , CFACTN=isnull(o.CFACTN,0)
-        , o.VasShas
-        , o.TissuePaper
-        , [MTLExport]=IIF(o.MTLExport='OK','Y',o.MTLExport)
-        , o.SewLine
-        , o.ShipModeList
-        , o.PlanDate
-        , o.FirstProduction
-		, o.LastProductionDate
-        , o.OrderTypeID
-        , Order_ColorCombo.ColorID
-        , o.SpecialMark
-        , o.SampleReason
-        , InspDate = {order_QtyShip_Source_InspDate}
-        , InspResult = {order_QtyShip_Source_InspResult}
-        , InspHandle = {order_QtyShip_Source_InspHandle}
-        , o.MnorderApv2
-        , o.MnorderApv
-        , o.PulloutComplete
-        , {seperCmdkpi}
-        , o.KPIChangeReason
-        , o.EachConsApv
-        , o.Junk
-        , o.StyleUkey
-        , o.CuttingSP
-        , o.RainwearTestPassed
-        , o.BrandFTYCode
-        , o.CPUFactor
-        , o.ClogLastReceiveDate
-		, [IsMixMarker]=  CASE WHEN o.IsMixMarker=0 THEN 'Is Single Marker'
-							WHEN o.IsMixMarker=1 THEN 'Is Mix  Marker'		
-							WHEN o.IsMixMarker=2 THEN ' Is Mix Marker - SCI'
-							ELSE ''
-						END
-        , o.GFR 
-		, isForecast = iif(isnull(o.Category,'')='','1','')
-        , [AirFreightByBrand] = IIF(o.AirFreightByBrand='1','Y','')
-        , [BuyBack] = iif(exists (select 1 from Order_BuyBack WITH (NOLOCK) where ID = o.ID), 'Y', '')
-        , [Cancelled] = case when o.junk = 1 then 
-                                case when o.NeedProduction = 1 then 'Y' 
-                                    when o.KeepPanels = 1 then 'K'
-                                    else 'N' end
-                        else ''
-                        end
-        , o.Customize2
-        , o.KpiMNotice
-        , o.KpiEachConsCheck
-        , o.LastCTNTransDate
-		, ScanEditDate = scanEditDate.Val
-        , o.LastCTNRecdDate
-        , o.DryRoomRecdDate
-        , o.DryRoomTransDate
-        , o.MdRoomScanDate
-        , [VasShasCutOffDate] = Format(DATEADD(DAY, -30, iif(GetMinDate.value is null, coalesce(o.BuyerDelivery, o.CRDDate, o.PlanDate, o.OrigBuyerDelivery), GetMinDate.value)), 'yyyy/MM/dd')
-        , [StyleSpecialMark] = s.SpecialMark
-        {seperCmd}
-	    , [SewingMtlComplt]  = isnull(CompltSP.SewingMtlComplt, '')
-	    , [PackingMtlComplt] = isnull(CompltSP.PackingMtlComplt, '')
-        , o.OrganicCotton
-        , o.DirectShip
-        ,[StyleCarryover] = iif(s.NewCO = '2','V','')
-        , o.PackLETA
-        {biMoreColumn}
-into #tmpOrders2
-from #tmpOrders o WITH (NOLOCK) 
-left join style s WITH (NOLOCK) on o.styleukey = s.ukey
-left join DropDownList d with (nolock) ON o.CtnType=d.ID AND d.Type='PackingMethod'
-left join DropDownList d1 WITH(NOLOCK) on d1.type= 'StyleConstruction' and d1.ID = s.Construction
-left join Reason r1 WITH(NOLOCK) on r1.ReasonTypeID= 'Fabric_Kind' and r1.ID = s.FabricType
-left join Reason r2 WITH(NOLOCK) on r2.ReasonTypeID= 'Style_Apparel_Type' and r2.ID = s.ApparelType
-{seperCmdkpi2}
-OUTER APPLY(
-    SELECT  Name 
-    FROM Pass1 WITH (NOLOCK) 
-    WHERE Pass1.ID = O.InspHandle
-)I
-outer apply (
-	select value = (
-		select Min(Date)
-		From (Values (o.BuyerDelivery), (o.CRDDate), (o.PlanDate), (o.OrigBuyerDelivery)) as tmp (Date)
-		where tmp.Date is not null
-	)
-) GetMinDate
-outer apply (
-	select 
-		[PackingMtlComplt] = max([PackingMtlComplt])
-		, [SewingMtlComplt] = max([SewingMtlComplt])
-	from 
-	(
-		select  f.ProductionType
-			, [PackingMtlComplt] = iif(f.ProductionType = 'Packing' and sum(iif(f.ProductionType = 'Packing', 1, 0)) = sum(iif(f.ProductionType = 'Packing' and f.Complete = 1, 1, 0)), 'Y', '')
-			, [SewingMtlComplt] = iif(f.ProductionType <> 'Packing' and sum(iif(f.ProductionType <> 'Packing', 1, 0)) = sum(iif(f.ProductionType <> 'Packing' and f.Complete = 1, 1, 0)), 'Y', '')
-		from 
-		(
-			select f.ProductionType
-				, psd.Complete
-			from PO_Supp_Detail psd WITH (NOLOCK)
-			inner join PO_Supp_Detail_OrderList psdo WITH (NOLOCK) on psd.ID = psdo.ID and psd.SEQ1 = psdo.SEQ1 and psd.SEQ2 = psdo.SEQ2
-			outer apply (
-				select [ProductionType] = iif(m.ProductionType = 'Packing', 'Packing', 'Sewing')
-				from Fabric f WITH (NOLOCK)
-				left join MtlType m WITH (NOLOCK) on f.MtlTypeID = m.ID
-				where f.SCIRefno = psd.SCIRefno
-			)f  
-			where psdo.OrderID	= o.ID
-			and psd.Junk = 0
-		)f
-		group by f.ProductionType
-	)f
-)CompltSP
-outer apply(
-		select InLine = MIN(w.EstCutDate),OffLine = MAX(w.EstCutDate) 
-		from WorkOrder_Distribute wd WITH (NOLOCK)
-		inner join WorkOrder w WITH (NOLOCK) on wd.WorkOrderUkey = w.Ukey
-		where w.EstCutDate is not null
-		and wd.OrderID = o.ID
-	)csp
-OUTER APPLY(
-	select Val = MAX(ScanEditDate)
-	from PackingList_Detail pd WITH (NOLOCK)
-	where pd.OrderID = o.id
-)scanEditDate
-{order_QtyShip_OuterApply}    
-outer apply(
-    select oa.Article 
-    from Order_article oa WITH (NOLOCK) 
-    where oa.id = o.id
-) a
-outer apply(
-	select ColorID = Stuff((
-		select concat(',',ColorID)
-		from (
-                select od.id,od.seq,od.Article,oc.ColorID
-                from orders 
-                inner join Order_QtyShip_Detail  od on o.id = od.id
-                inner join Order_ColorCombo oc on o.poid = oc.Id and od.Article = oc.Article and oc.PatternPanel = 'FA'
-                where orders.id = o.id
-                group by od.ID,od.Seq,od.Article,oc.ColorID
-			) s
-		for xml path ('')
-	) , 1, 1, '')
-) Order_ColorCombo
-outer apply(
-	select cnt = count(1)
-	from Order_Qtyship
-	where id=o.id
-	and CFAIs3rdInspect = 1
-) oqs
+--暫存表 by OrderID,OrderShipmodeSeq
+SELECT
+    pld.OrderID
+   ,pld.OrderShipmodeSeq
+   ,ScanEditDate = MAX(pld.ScanEditDate)
+   ,PulloutQty = SUM(IIF(pl.PulloutID <> '', pld.ShipQty, 0))
+   ,PackingCTN = SUM(pld.CTNQty)
+   ,TotalCTN = SUM(IIF(pl.Type IN ('B', 'L') AND pld.DisposeFromClog = 0, pld.CTNQty, 0))
+   ,FtyCtn_Remaining = SUM(IIF(pl.Type IN ('B', 'L') AND pld.TransferDate IS NULL, pld.CTNQty, 0))--和 UpdateOrdersCTN 中的 FtyCtn 不一樣喔, 這是目前在工廠的剩餘紙箱數量
+   ,ClogCTN = SUM(IIF(pl.Type IN ('B', 'L') AND pld.DisposeFromClog = 0 AND pld.ReceiveDate IS NOT NULL AND pld.TransferCFADate IS NULL AND pld.CFAReturnClogDate IS NULL, pld.CTNQty, 0))
+   ,FtyToClogTransit = SUM(IIF(pld.TransferDate IS NOT NULL AND pld.ReceiveDate  IS NULL, pld.CTNQty, 0))
+   ,ClogToCFATansit = SUM(IIF(pld.TransferCFADate IS NOT NULL AND pld.CFAReceiveDate IS NULL AND pld.ClogLocationID = '2CFA', pld.CTNQty, 0))
+   ,CFACTN = SUM(IIF(pl.Type IN ('B', 'L') AND pld.DisposeFromClog = 0 AND pld.CFAReceiveDate IS NOT NULL, pld.CTNQty, 0))
+   ,CFAToClogTransit = SUM(IIF(pld.TransferCFADate IS NULL AND pld.CFAReceiveDate IS NULL AND pld.CFAReturnClogDate IS NOT NULL AND pld.ClogLocationID = '2Clog', pld.CTNQty, 0))
+   ,ClogLastReceiveDate = MAX(IIF(pl.Type IN ('B', 'L') AND pld.DisposeFromClog = 0, ReceiveDate, NULL))
+   ,PackErrCTN = SUM(IIF(pl.Type IN ('B', 'L') AND pld.DisposeFromClog = 0 AND pld.PackErrTransferDate IS NOT NULL, pld.CTNQty, 0))
+   ,PackingQty = SUM(IIF(pl.Type <> 'F', pld.ShipQty, 0))
+   ,PackingFOCQty = SUM(IIF(pl.Type = 'F', pld.ShipQty, 0))
+   ,BookingQty = SUM(IIF(pl.Type IN ('B', 'L') AND pl.INVNo <> '', pld.ShipQty, 0))
+   ,ClogRcvDate = MAX(ReceiveDate)
+   ,ActPulloutDate = MAX(pl.PulloutDate)
+INTO #tmp_PackingList_Detail
+FROM PackingList_Detail pld WITH (NOLOCK)
+INNER JOIN PackingList pl WITH (NOLOCK) ON pld.ID = pl.ID
+WHERE EXISTS (SELECT 1 FROM #tmpOrders o WHERE pld.OrderID = o.ID {sqlmaybePldSeq})
+GROUP BY pld.OrderID, pld.OrderShipmodeSeq
+
+SELECT
+    i.OrderID
+   ,i.OrderShipmodeSeq
+   ,InvoiceAdjQty = SUM(iq.DiffQty)
+   ,FOCAdjQty = SUM(IIF(iq.Price = 0, iq.DiffQty, 0))
+INTO #tmp_invAdj
+FROM InvAdjust i WITH (NOLOCK)
+INNER JOIN InvAdjust_Qty iq WITH (NOLOCK) ON i.ID = iq.ID
+WHERE EXISTS (SELECT 1 FROM #tmpOrders o WHERE i.OrderID = o.ID {sqlmaybeInvSeq})
+GROUP BY i.OrderID, i.OrderShipmodeSeq
+";
+            #endregion
+
+            #region step 5-2 暫存表 因為效能, 需要(聚合/串接字串)的欄位先分別處理
+
+            // by StyleUkey
+            sqlcmd += @"
+-- by StyleUkey
+SELECT
+    StyleUkey
+   ,GetStyleUkey = dbo.GetSimilarStyleList(StyleUkey)
+INTO #tmp_StyleUkey
+FROM (SELECT DISTINCT StyleUkey FROM #tmpOrders) o";
+
+            // by OrderID
+            sqlcmd += @"
+--by OrderID
+SELECT
+    o.ID
+   ,[Garment L/T] = dbo.GetGMTLT(o.BrandID, o.StyleID, o.SeasonID, o.FactoryID, o.ID)
+INTO #tmpGMTLT
+FROM (SELECT DISTINCT o.BrandID, o.StyleID, o.SeasonID, o.FactoryID, o.ID FROM #tmpOrders o) o
+
+SELECT
+    f.OrderID
+   ,[PackingMtlComplt] = MAX([PackingMtlComplt])
+   ,[SewingMtlComplt] = MAX([SewingMtlComplt])
+INTO #tmpComplt
+FROM (
+    SELECT
+        f.OrderID
+       ,[PackingMtlComplt] = IIF(f.ProductionType = 'Packing' AND SUM(IIF(f.ProductionType = 'Packing', 1, 0)) = SUM(IIF(f.ProductionType = 'Packing' AND f.Complete = 1, 1, 0)), 'Y', '')
+       ,[SewingMtlComplt] = IIF(f.ProductionType <> 'Packing' AND SUM(IIF(f.ProductionType <> 'Packing', 1, 0)) = SUM(IIF(f.ProductionType <> 'Packing' AND f.Complete = 1, 1, 0)), 'Y', '')
+    FROM (
+        SELECT
+            psdo.OrderID
+           ,[ProductionType] = IIF(m.ProductionType = 'Packing', 'Packing', 'Sewing')
+           ,psd.Complete
+        FROM PO_Supp_Detail_OrderList psdo WITH (NOLOCK)
+        INNER JOIN PO_Supp_Detail psd WITH (NOLOCK) ON psd.ID = psdo.ID AND psd.SEQ1 = psdo.SEQ1 AND psd.SEQ2 = psdo.SEQ2
+        LEFT JOIN Fabric f WITH (NOLOCK) ON f.SCIRefno = psd.SCIRefno
+        LEFT JOIN MtlType m WITH (NOLOCK) ON f.MtlTypeID = m.ID
+        WHERE EXISTS (SELECT 1 FROM #tmpOrders WHERE ID = psdo.OrderID)
+        AND psd.Junk = 0
+    ) f
+    GROUP BY f.ProductionType, f.OrderID
+) f
+GROUP BY f.OrderID
+
+SELECT
+    sod.OrderID
+   ,SewQtyTop = SUM(IIF(sod.ComboType = 'T', sod.QAQty, 0))
+   ,SewQtyBottom = SUM(IIF(sod.ComboType = 'B', sod.QAQty, 0))
+   ,SewQtyInner = SUM(IIF(sod.ComboType = 'I', sod.QAQty, 0))
+   ,SewQtyOuter = SUM(IIF(sod.ComboType = 'O', sod.QAQty, 0))
+   ,FirstOutDate = MIN(so.OutputDate)
+   ,LastOutDate = MAX(so.OutputDate)
+INTO #tmp_sewDetial
+FROM SewingOutput so WITH (NOLOCK)
+INNER JOIN SewingOutput_Detail sod WITH (NOLOCK) ON so.ID = sod.ID
+WHERE EXISTS (SELECT 1 FROM #tmpOrders WHERE ID = sod.OrderID)
+GROUP BY sod.OrderID
+
+SELECT
+    ID
+   ,[Total Sewing Output] = ISNULL(dbo.getMinCompleteSewQty(o.ID, NULL, NULL), 0)
+INTO #tmp_TtlSewQty
+FROM (SELECT DISTINCT ID FROM #tmpOrders) o
+
+SELECT
+    OrderID
+   ,CutQty = SUM(Qty)
+INTO #tmpCutQty
+FROM CuttingOutput_WIP wip WITH (NOLOCK)
+WHERE EXISTS (SELECT 1 FROM #tmpOrders WHERE ID = wip.OrderID)
+GROUP BY wip.OrderID
+
+SELECT
+    ID
+   ,op.Remark
+INTO #tmp_PFRemark
+FROM (
+    SELECT
+        op.ID
+       ,op.Remark
+       ,rn =
+        ROW_NUMBER() OVER (PARTITION BY op.ID ORDER BY op.AddDate DESC)
+    FROM Order_PFHis op WITH (NOLOCK)
+    WHERE EXISTS (SELECT 1 FROM #tmpOrders WHERE ID = op.ID)
+    AND AddDate IS NOT NULL
+) op
+WHERE rn = 1
+
+SELECT
+    wd.OrderID
+   ,InLine = MIN(w.EstCutDate)
+   ,OffLine = MAX(w.EstCutDate) INTO #tmpEstCutDate
+FROM WorkOrder_Distribute wd WITH (NOLOCK)
+INNER JOIN WorkOrder w WITH (NOLOCK) ON wd.WorkOrderUkey = w.Ukey
+WHERE w.EstCutDate IS NOT NULL
+AND EXISTS (SELECT 1 FROM #tmpOrders WHERE ID = wd.OrderID)
+GROUP BY wd.OrderID
+
+SELECT
+    o.ID
+   ,Article = STUFF((
+        SELECT ',' + oq.Article
+        FROM Order_Qty oq WITH (NOLOCK)
+        WHERE oq.ID = o.ID
+        GROUP BY oq.Article
+        ORDER BY oq.Article
+        FOR XML PATH (''))
+    , 1, 1, '')
+INTO #tmp_Article
+FROM (SELECT DISTINCT ID FROM #tmpOrders) o
+
+SELECT DISTINCT
+    o.ID
+   ,oc.ColorID
+INTO #tmpOrder_ColorCombo
+FROM #tmpOrders o
+INNER JOIN Order_QtyShip_Detail od WITH (NOLOCK) ON o.ID = od.ID
+INNER JOIN Order_ColorCombo oc WITH (NOLOCK) ON o.POID = oc.ID AND od.Article = oc.Article
+WHERE oc.PatternPanel = 'FA'
+
+SELECT
+    o.ID
+   ,ColorID = STUFF((
+        SELECT ',' + ColorID
+        FROM #tmpOrder_ColorCombo
+        WHERE id = o.ID
+        FOR XML PATH (''))
+    , 1, 1, '')
+INTO #tmpColorCombo
+FROM (SELECT DISTINCT ID FROM #tmpOrders) o
 ";
 
-            // 第3段 有無勾選 ListPOCombo, 若有勾選,則 union 一段, BI不會走這段
-            if (model.ListPOCombo && model.P_type != "forecast")
-            {
-                sqlcmd += $@"
-select * 
-into #tmpListPoCombo
-from #tmpOrders2
+            // by POID
+            sqlcmd += @"
+--暫存表 by POID
+SELECT
+    POID
+   ,EarliestSCIDlv = dbo.getMinSCIDelivery(POID, '')
+INTO #tmp_EarliestSCIDlv
+FROM (SELECT DISTINCT POID FROM #tmpOrders WHERE POID <> '') o
 
-union
-select  o.ID
-        , o.MDivisionID
-        , o.FtyGroup
-        , o.FactoryID
-        , o.BuyerDelivery
-        , o.SciDelivery
-        , O.POID
-        , o.CRDDate
-        , o.CFMDate
-        , o.Dest
-        , o.StyleID
-        , s.StyleName
-        , o.SeasonID
-        , o.BrandID
-        , o.ProjectID
-        , Kit=(SELECT top 1 c.Kit From CustCD c WITH (NOLOCK) where c.ID=o.CustCDID AND c.BrandID=o.BrandID)
-		,[PackingMethod] = d.Name
-        , o.HangerPack
-        , o.Customize1
-        , o.BuyMonth
-        , o.CustPONo
-        , o.CustCDID
-        , o.ProgramID
-        , [NonRevenue]=IIF(o.NonRevenue=1,'Y','N')
-        , o.CdCodeID
-        , s.CDCodeNew
-        , [ProductType] = r2.Name
-		, [FabricType] = r1.Name
-		, s.Lining
-		, s.Gender
-		, [Construction] = d1.Name
-        , o.CPU
-        , o.Qty
-        , o.FOCQty
-        , o.LocalOrder
-        , o.PoPrice
-        , o.CMPPrice
-        , o.KPILETA
-        , o.PFETA
-        , o.LETA
-        , o.MTLETA
-        , o.SewETA
-        , o.PackETA
-        , o.MTLComplete
-        , o.SewInLine
-        , o.SewOffLine
-        , o.CutInLine
-        , o.CutOffLine
-        , [CutInLine_SP] = csp.InLine
-		, [CutOffLine_SP] = csp.OffLine
-        , [3rd_Party_Inspection] = {thridColumn}
-        , Category=case when o.Category='B'then'Bulk'
-						when o.Category='G'then'Garment'
-						when o.Category='M'then'Material'
-						when o.Category='S'then'Sample'
-						when o.Category='T'then'Sample mtl.'
-						when isnull(o.Category,'')=''and isnull(o.ForecastSampleGroup,'')='' then'Bulk fc'
-						when isnull(o.Category,'')=''and isnull(o.ForecastSampleGroup,'')='D' then'Dev. sample fc'
-						when isnull(o.Category,'')=''and isnull(o.ForecastSampleGroup,'')='S' then'Sa. sample fc'
-					end
-        , o.PulloutDate
-        , o.ActPulloutDate
-        , o.SMR
-        , o.MRHandle
-        , o.MCHandle
-        , o.OrigBuyerDelivery
-        , o.DoxType
-        , o.TotalCTN
-        , PackErrorCtn = isnull(o.PackErrCTN,0)
-        , o.FtyCTN
-        , o.ClogCTN
-        , CFACTN=isnull(o.CFACTN,0)
-        , o.VasShas
-        , o.TissuePaper
-        , o.MTLExport
-        , o.SewLine
-        , o.ShipModeList
-        , o.PlanDate
-        , o.FirstProduction
-		, o.LastProductionDate
-        , o.OrderTypeID
-        , Order_ColorCombo.ColorID
-        , o.SpecialMark
-        , o.SampleReason
-        , InspDate = {order_QtyShip_Source_InspDate}
-        , InspResult = {order_QtyShip_Source_InspResult}
-        , InspHandle = {order_QtyShip_Source_InspHandle}
-        , o.MnorderApv2
-        , o.MnorderApv
-        , o.PulloutComplete
-        , {seperCmdkpi}
-        , o.KPIChangeReason
-        , o.EachConsApv
-        , o.Junk
-        , o.StyleUkey
-        , o.CuttingSP
-        , o.RainwearTestPassed
-        , o.BrandFTYCode
-        , o.CPUFactor
-        , o.ClogLastReceiveDate
-		, [IsMixMarker]=  CASE WHEN o.IsMixMarker=0 THEN 'Is Single Marker'
-							WHEN o.IsMixMarker=1 THEN 'Is Mix  Marker'		
-							WHEN o.IsMixMarker=2 THEN ' Is Mix Marker - SCI'
-							ELSE ''
-						END
-        , o.GFR 
-		, isForecast = iif(isnull(o.Category,'')='','1','') 
-        , [AirFreightByBrand] = IIF(o.AirFreightByBrand='1','Y','')
-        , [BuyBack] = iif(exists (select 1 from Order_BuyBack WITH (NOLOCK) where ID = o.ID), 'Y', '')
-        , [Cancelled] = case when o.junk = 1 then 
-                                case when o.NeedProduction = 1 then 'Y' 
-                                    when o.KeepPanels = 1 then 'K'
-                                    else 'N' end
-                        else ''
-                        end
-        , o.Customize2
-        , o.KpiMNotice
-        , o.KpiEachConsCheck
-        , o.LastCTNTransDate
-		, ScanEditDate = scanEditDate.Val
-        , o.LastCTNRecdDate
-        , o.DryRoomRecdDate
-        , o.DryRoomTransDate
-        , o.MdRoomScanDate
-        , [VasShasCutOffDate] = Format(DATEADD(DAY, -30, iif(GetMinDate.value	is null, coalesce(o.BuyerDelivery, o.CRDDate, o.PlanDate, o.OrigBuyerDelivery), GetMinDate.value)), 'yyyy/MM/dd')
-        , [StyleSpecialMark] = s.SpecialMark
-        {seperCmd}
-        , [SewingMtlComplt]  = isnull(CompltSP.SewingMtlComplt, '')
-        , [PackingMtlComplt] = isnull(CompltSP.PackingMtlComplt, '')
-        , o.OrganicCotton
-        ,o.DirectShip
-        ,[StyleCarryover] = iif(s.NewCO = '2','V','')
-        ,o.PackLETA
-from #tmpOrders o  WITH (NOLOCK) 
-left join style s WITH (NOLOCK) on o.styleukey = s.ukey
-left join DropDownList d WITH (NOLOCK) ON o.CtnType=d.ID AND d.Type='PackingMethod'
-left join DropDownList d1 WITH(NOLOCK) on d1.type= 'StyleConstruction' and d1.ID = s.Construction
-left join Reason r1 WITH(NOLOCK) on r1.ReasonTypeID= 'Fabric_Kind' and r1.ID = s.FabricType
-left join Reason r2 WITH(NOLOCK) on r2.ReasonTypeID= 'Style_Apparel_Type' and r2.ID = s.ApparelType
-outer apply (
-	    select 
-		    [PackingMtlComplt] = max([PackingMtlComplt])
-		    , [SewingMtlComplt] = max([SewingMtlComplt])
-	    from 
-	    (
-		    select  f.ProductionType
-			    , [PackingMtlComplt] = iif(f.ProductionType = 'Packing' and sum(iif(f.ProductionType = 'Packing', 1, 0)) = sum(iif(f.ProductionType = 'Packing' and f.Complete = 1, 1, 0)), 'Y', '')
-			    , [SewingMtlComplt] = iif(f.ProductionType <> 'Packing' and sum(iif(f.ProductionType <> 'Packing', 1, 0)) = sum(iif(f.ProductionType <> 'Packing' and f.Complete = 1, 1, 0)), 'Y', '')
-		    from 
-		    (
-			    select f.ProductionType
-				    , psd.Complete
-			    from PO_Supp_Detail psd WITH (NOLOCK)
-			    inner join PO_Supp_Detail_OrderList psdo WITH (NOLOCK) on psd.ID = psdo.ID and psd.SEQ1 = psdo.SEQ1 and psd.SEQ2 = psdo.SEQ2
-			    outer apply (
-				    select [ProductionType] = iif(m.ProductionType = 'Packing', 'Packing', 'Sewing')
-				    from Fabric f WITH (NOLOCK)
-				    left join MtlType m WITH (NOLOCK) on f.MtlTypeID = m.ID
-				    where f.SCIRefno = psd.SCIRefno
-			    )f  
-			    where psdo.OrderID	= o.ID
-			    and psd.Junk = 0
-		    )f
-		    group by f.ProductionType
-	    )f
-    )CompltSP
-outer apply(
-	select InLine = MIN(w.EstCutDate),OffLine = MAX(w.EstCutDate) 
-	from WorkOrder_Distribute wd WITH (NOLOCK)
-	inner join WorkOrder w WITH (NOLOCK) on wd.WorkOrderUkey = w.Ukey
-	where w.EstCutDate is not null
-	and wd.OrderID = o.ID
-)csp
-{seperCmdkpi2}
-OUTER APPLY (
-    SELECT Name 
-    FROM Pass1 WITH (NOLOCK) 
-    WHERE Pass1.ID=O.InspHandle
-)I
-outer apply (
-	select value = (
-		select Min(Date)
-		From (Values (o.BuyerDelivery), (o.CRDDate), (o.PlanDate), (o.OrigBuyerDelivery)) as tmp (Date)
-		where tmp.Date is not null
-	)
-) GetMinDate
-OUTER APPLY(
-	select Val = MAX(ScanEditDate)
-	from PackingList_Detail pd WITH (NOLOCK)
-	where pd.OrderID = o.id
-)scanEditDate
-outer apply(
-	select ColorID = Stuff((
-		select concat(',',ColorID)
-		from (
-				select 	distinct ColorID
-				from dbo.Order_ColorCombo occ WITH (NOLOCK)
-				where occ.ID = o.Poid 
-				and occ.Patternpanel = 'FA'
-			) s
-		for xml path ('')
-	) , 1, 1, '')
-) Order_ColorCombo
-outer apply(
-	select cnt = count(1)
-	from Order_Qtyship
-	where id=o.id
-	and CFAIs3rdInspect = 1
-) oqs
+SELECT
+    POID
+   ,MTLDelay = dbo.GetHaveDelaySupp(POID)
+INTO #tmp_MTLDelay
+FROM (SELECT DISTINCT POID FROM #tmpOrders WHERE POID <> '') o
+
+SELECT
+    POID
+   ,MTLExportTimes = CONCAT(COUNT(ID), '')
+INTO #tmpMTLExportTimes
+FROM (
+    SELECT DISTINCT
+        POID
+        ,ID
+    FROM Export_Detail ed WITH (NOLOCK)
+    WHERE EXISTS (SELECT 1 FROM #tmpOrders WHERE POID = ed.POID AND POID <> '')
+) ed
+GROUP BY POID
+
+SELECT
+    psd.ID
+   ,[Fab ETA] = MAX(IIF(FabricType = 'F', FinalETA, NULL))
+   ,[Acc ETA] = MAX(IIF(FabricType = 'A', FinalETA, NULL))
+INTO #tmpPSD
+FROM PO_Supp_Detail psd WITH (NOLOCK)
+WHERE EXISTS (SELECT 1 FROM #tmpOrders WHERE POID = psd.ID AND POID <> '')
+GROUP BY psd.ID
+
+SELECT
+    ed.POID
+   ,ArriveWHDate = MAX(e.WhseArrival)
+INTO #tmp_ArriveWHDate
+FROM Export e WITH (NOLOCK)
+INNER JOIN Export_Detail ed WITH (NOLOCK) ON e.ID = ed.ID
+WHERE EXISTS (SELECT 1 FROM #tmpOrders WHERE POID = ed.POID AND POID <> '')
+GROUP BY ed.POID
+
+SELECT
+    pld.OrderID
+   ,ActPulloutTimes = COUNT(DISTINCT pl.PulloutID)
+INTO #tmp_Pullout
+FROM PackingList pl WITH (NOLOCK)
+INNER JOIN PackingList_Detail pld WITH (NOLOCK) ON pl.ID = pld.ID
+WHERE pl.PulloutID <> ''
+AND pld.ShipQty > 0
+AND EXISTS (SELECT 1 FROM #tmpOrders WHERE ID = pld.OrderID)
+GROUP BY pld.OrderID
 ";
-            }
-            else
+            #endregion
+
+            #region step 6 判斷各種狀況, 輸出時不同來源欄位
+            string biColunn = string.Empty;
+            string dest = string.Empty;
+            if (model.IsPowerBI)
             {
                 sqlcmd += @"
-select * 
-into #tmpListPoCombo
-from #tmpOrders2
+SELECT
+    s.OrderID
+    ,SewQty = SUM(s.QAQty)
+    ,SewQtybyRate = SUM(ROUND(s.QAQty * ol.Rate / 100, 2))
+INTO #tmpSewingOutput
+FROM (
+    SELECT
+        sd.OrderId
+       ,sd.ComboType
+       ,QAQty = SUM(sd.QAQty)
+    FROM SewingOutput s WITH (NOLOCK)
+    INNER JOIN SewingOutput_Detail sd WITH (NOLOCK) ON s.ID = sd.ID
+    WHERE EXISTS (SELECT 1 FROM #tmpOrders WHERE sd.OrderId = ID)
+    GROUP BY sd.OrderId, sd.ComboType
+) s
+INNER JOIN Order_Location ol WITH (NOLOCK) ON ol.OrderID = s.OrderID AND ol.Location = s.ComboType
+GROUP BY s.OrderID
 ";
-            }
-
-            sqlcmd += @"
-CREATE NONCLUSTERED INDEX index_tmpListPoCombo_ID ON #tmpListPoCombo(ID ASC);
+                biColunn = @"
+    --以下是BI需要
+   ,[SCHDL/ETA(SP)] = o.Max_ScheETAbySP
+   ,[SewingMtlETA(SPexclRepl)] = o.Sew_ScheETAnoReplace
+   ,[ActualMtlETA(exclRepl)] = o.MaxShipETA_Exclude5x
+   ,[HalfKey] = IIF(CAST(FORMAT(DATEADD(DAY, -7, o.SciDelivery), 'dd') AS INT) BETWEEN 1 AND 15
+        , FORMAT(DATEADD(DAY, -7, o.SciDelivery), 'yyyyMM01')
+        , FORMAT(DATEADD(DAY, -7, o.SciDelivery), 'yyyyMM02'))
+   ,[Buyerhalfkey] = IIF(CAST(FORMAT(DATEADD(DAY, -7, o.BuyerDelivery), 'dd') AS INT) BETWEEN 1 AND 15
+        , FORMAT(DATEADD(DAY, -7, o.BuyerDelivery), 'yyyyMM01')
+        , FORMAT(DATEADD(DAY, -7, o.BuyerDelivery), 'yyyyMM02'))
+   ,[DevSample] = IIF((SELECT IsDevSample FROM OrderType ot WITH (NOLOCK) WHERE ot.ID = o.OrderTypeID AND ot.BrandID = o.BrandID) = 1, 'Y', '')
+   ,[POID] = o.POID
+   ,[KeepPanels] = IIF(o.KeepPanels = 0, 'N', 'Y')
+   ,[BuyBackReason] = o.BuyBackReason
+   ,[SewQtybyRate] = IIF(o.StyleUnit = 'PCS' ,(SELECT SewQty FROM #tmpSewingOutput WHERE OrderID = o.ID), (SELECT SewQtybyRate FROM #tmpSewingOutput WHERE OrderID = o.ID))
+   ,[Unit] = o.StyleUnit
+   ,[SubconInType] = IIF(o.SubconInType = '1', 'Subcon-in from sister factory (same M division)'
+        , IIF(o.SubconInType = '2', 'Subcon-in from sister factory (different M division)'
+        , IIF(o.SubconInType = '3', 'Subcon-in from non-sister factory', '')))
+   ,[Article] = #tmp_Article.Article
+   ,[ProduceRgPMS] = (SELECT ProduceRgCode FROM SCIFty WITH (NOLOCK) WHERE ID = o.FactoryID)
+   ,[Third_Party_Insepction] = o.CFAIs3rdInspect
+   ,[ColorID] = #tmpColorCombo.ColorID
+   ,[NeedProduction] =
+        CASE
+            WHEN o.Junk = 1 THEN CASE
+                    WHEN o.NeedProduction = 1 THEN 'Y'
+                    WHEN o.KeepPanels = 1 THEN 'K'
+                    ELSE 'N'
+                END
+            ELSE ''
+        END
+   ,[SewQtyTop] = SewQtyTop
+   ,[SewQtyBottom] = SewQtyBottom
+   ,[SewQtyInner] = SewQtyInner
+   ,[SewQtyOuter] = SewQtyOuter
+   ,[Dest] = o.Dest
+   ,[Country] = Country.Alias
 ";
-
-            // 第4段
-            if (model.SeparateByQtyBdownByShipmode && model.P_type.Equals("ALL"))
-            {
-                sqlcmd += $@"
-select pd.OrderID, pd.OrderShipmodeSeq, Sum( pd.CTNQty) PackingCTN ,
-	Sum( case when p.Type in ('B', 'L') then pd.CTNQty else 0 end) TotalCTN,
-	Sum( case when p.Type in ('B', 'L') and pd.TransferDate is null then pd.CTNQty else 0 end) FtyCtn,
-	Sum(case when p.Type in ('B', 'L') and pd.ReceiveDate is not null then pd.CTNQty else 0 end) ClogCTN ,
-	Sum(case when p.Type <> 'F'  then pd.ShipQty else 0 end) PackingQty ,
-	Sum(case when p.Type = 'F'   then pd.ShipQty else 0 end) PackingFOCQty ,
-	Sum(case when p.Type in ('B', 'L') and p.INVNo <> ''  then pd.ShipQty else 0 end) BookingQty ,
-	Max (ReceiveDate) ClogRcvDate,
-	MAX(p.PulloutDate)  ActPulloutDate
-into #tmp_PLDetial
-from PackingList_Detail pd WITH (NOLOCK) 
-LEFT JOIN PackingList p WITH (NOLOCK) on pd.ID = p.ID 
-inner join (select distinct id, seq from #tmpListPoCombo) t on pd.OrderID = t.ID  and pd.OrderShipmodeSeq = t.Seq
-group by pd.OrderID, pd.OrderShipmodeSeq 
-
-select  t.ID
-        , t.MDivisionID
-        , t.FtyGroup
-        , t.FactoryID
-        , oq.BuyerDelivery
-        , t.SciDelivery
-        , t.POID
-        , t.CRDDate
-        , t.CFMDate
-        , t.Dest
-        , t.StyleID
-        , t.StyleName
-        , t.SeasonID
-        , t.BrandID
-        , t.ProjectID
-		, t.PackingMethod
-        , t.HangerPack
-        , t.Customize1
-        , t.BuyMonth
-        , t.CustPONo
-        , t.CustCDID
-		, t.Kit
-        , t.ProgramID
-		, t.NonRevenue
-        , t.CdCodeID
-	    , t.CDCodeNew
-	    , t.ProductType
-	    , t.FabricType
-	    , t.Lining
-	    , t.Gender
-	    , t.Construction
-        , t.CPU
-        , oq.Qty as Qty
-        , t.FOCQty
-        , t.LocalOrder
-        , t.PoPrice
-        , t.CMPPrice
-        , t.KPILETA
-        , t.PFETA
-        , t.LETA
-        , t.MTLETA
-        , t.SewETA
-        , t.PackETA
-        , t.MTLComplete
-        , t.SewInLine
-        , t.SewOffLine
-        , t.CutInLine
-        , t.CutOffLine
-		, t.CutInLine_SP
-		, t.CutOffLine_SP
-        , t.[3rd_Party_Inspection]
-        , t.Category
-        , PulloutDate = oq.EstPulloutDate
-        , pdm.ActPulloutDate 
-        , t.SMR
-        , t.MRHandle
-        , t.MCHandle
-        , t.OrigBuyerDelivery
-        , t.DoxType
-        , t.VasShas
-        , t.TissuePaper
-        , t.MTLExport
-        , t.SewLine
-        , oq.ShipmodeID as ShipModeList
-        , t.PlanDate
-        , t.FirstProduction
-        , t.LastProductionDate
-        , t.OrderTypeID
-        , t.ColorID
-        , t.SpecialMark
-        , t.SampleReason
-        , t.InspDate
-        , t.InspResult
-        , t.InspHandle
-        , t.MnorderApv2
-        , t.MnorderApv
-        , t.PulloutComplete
-        , t.FtyKPI
-        , t.KPIChangeReason
-        , t.EachConsApv
-        , t.Junk
-        , t.StyleUkey
-        , t.CuttingSP
-        , t.RainwearTestPassed
-        , t.BrandFTYCode
-        , t.CPUFactor
-        , oq.Seq
-        , [IDD] = Format(oq.IDD, 'yyyy/MM/dd')
-        , t.ClogLastReceiveDate
-        , t.IsMixMarker
-        , t.GFR
-        , pdm.PackingQty
-		, pdm.PackingFOCQty 
-		, pdm.BookingQty
-		, pdm.PackingCTN
-		, pdm.TotalCTN as  TotalCTN1
-		, pdm.FtyCtn as  FtyCtn1
-		, pdm.ClogCTN as  ClogCTN1
-		, pdm.ClogRcvDate
-        , t.PackErrorCtn
-        , t.CFACTN
-		, t.isForecast
-		, t.AirFreightByBrand
-        , [BuyBack] = iif(exists (select 1 from Order_BuyBack with (nolock) where ID = t.ID), 'Y', '')
-        , t.Cancelled
-        , t.Customize2
-        , t.KpiMNotice
-        , t.KpiEachConsCheck
-        , t.LastCTNTransDate
-        , t.ScanEditDate
-        , t.LastCTNRecdDate
-        , t.DryRoomRecdDate
-        , t.DryRoomTransDate
-        , t.MdRoomScanDate
-        , t.VasShasCutOffDate
-        , t.StyleSpecialMark
-        , t.SewingMtlComplt
-        , t.PackingMtlComplt
-        , t.OrganicCotton
-        , t.DirectShip
-        , t.[StyleCarryover]
-        , t.PackLETA
-into #tmpFilterSeperate
-from #tmpListPoCombo t
-inner join Order_QtyShip oq WITH(NOLOCK) on t.ID = oq.Id and t.Seq = oq.Seq
-left join #tmp_PLDetial pdm on pdm.OrderID = t.ID  and pdm.OrderShipmodeSeq = t.Seq ;
-
-CREATE NONCLUSTERED INDEX index_tmpFilterSeperate ON #tmpFilterSeperate(	ID ASC,seq asc);
-CREATE NONCLUSTERED INDEX index_tmpFilterSeperate_POID ON #tmpFilterSeperate(	POID ASC);
-CREATE NONCLUSTERED INDEX index_tmpFilterSeperate_CuttingSP ON #tmpFilterSeperate(	CuttingSP ASC);
-CREATE NONCLUSTERED INDEX index_tmpFilterSeperate_StyleUkey ON #tmpFilterSeperate(	StyleUkey ASC);
-
-
-select sod.OrderId,Sum( case when sod.ComboType = 'T'  then sod.QAQty else 0 end) SewQtyTop, 
-	Sum( case when sod.ComboType = 'B'  then sod.QAQty else 0 end) SewQtyBottom, 
-	Sum( case when sod.ComboType = 'I'  then sod.QAQty else 0 end) SewQtyInner, 
-	Sum( case when sod.ComboType = 'O'  then sod.QAQty else 0 end) SewQtyOuter,
-	Min (so.OutputDate) FirstOutDate,
-	Max (so.OutputDate) LastOutDate
-into #tmp_sewDetial
-from SewingOutput so WITH (NOLOCK) 
-inner join SewingOutput_Detail sod WITH (NOLOCK) on so.ID = sod.ID
-inner join (select distinct ID from #tmpFilterSeperate) t on sod.OrderId = t.ID
-group by sod.OrderId
-
-select ID, Remark
-into #tmp_PFRemark
-from (
-	select ROW_NUMBER() OVER (PARTITION BY o.ID ORDER BY o.addDate, o.Ukey) r_id
-		,o.ID, o.Remark
-	from Order_PFHis o WITH (NOLOCK) 
-	inner join #tmpFilterSeperate t on o.ID = t.ID 
-	where AddDate = (
-			select Max(o.AddDate) 
-			from Order_PFHis o WITH (NOLOCK) 
-			where ID = t.ID
-		)   
-	group by o.ID, o.Remark ,o.addDate, o.Ukey
-)a
-where r_id = '1' 
-
-select ed.POID,Max(e.WhseArrival) ArriveWHDate 
-into #tmp_ArriveWHDate
-from Export e WITH (NOLOCK) 
-inner join Export_Detail ed WITH (NOLOCK) on e.ID = ed.ID
-inner join #tmpFilterSeperate t on ed.POID = t.POID
-group by ed.POID 
-
-select StyleUkey ,dbo.GetSimilarStyleList(StyleUkey) GetStyleUkey
-into #tmp_StyleUkey
-from #tmpFilterSeperate 
-group by StyleUkey 
-
-select POID ,dbo.GetHaveDelaySupp(POID) MTLDelay
-into #tmp_MTLDelay
-from #tmpFilterSeperate 
-group by POID 
-
-select pd.OrderID, pd.OrderShipmodeSeq, sum(pd.ShipQty) PulloutQty
-into #tmp_PulloutQty
-from PackingList_Detail pd WITH (NOLOCK)
-inner join #tmpFilterSeperate t on pd.OrderID = t.ID and pd.OrderShipmodeSeq = t.Seq
-inner join PackingList p WITH (NOLOCK) on p.ID = pd.ID
-where p.PulloutID <> ''
-group by pd.OrderID, pd.OrderShipmodeSeq
-
-select pd.OrderID, count(distinct p.PulloutID) ActPulloutTime
-into #tmp_ActPulloutTime
-from PackingList p WITH (NOLOCK)
-inner join PackingList_Detail pd WITH (NOLOCK) on p.ID = pd.ID
-inner join #tmpFilterSeperate t on t.ID = pd.OrderID
-where p.PulloutID <> ''
-and pd.ShipQty > 0
-group by pd.OrderID
-
-select od.ID,od.Seq,od.Article 
-into #tmp_Article
-from Order_QtyShip_Detail od WITH (NOLOCK) 
-inner join #tmpFilterSeperate t on  od.ID = t.ID and od.Seq = t.Seq 
-group by od.ID,od.Seq,od.Article 
-
-
-CREATE NONCLUSTERED INDEX index_tmp_sewDetial ON #tmp_sewDetial(	OrderId ASC);
-CREATE NONCLUSTERED INDEX index_tmp_PFRemark ON #tmp_PFRemark(	ID ASC);
-CREATE NONCLUSTERED INDEX index_tmp_ArriveWHDate ON #tmp_ArriveWHDate(	PoID ASC);
-CREATE NONCLUSTERED INDEX index_tmp_StyleUkey ON #tmp_StyleUkey(	StyleUkey ASC);
-CREATE NONCLUSTERED INDEX index_tmp_MTLDelay ON #tmp_MTLDelay(	POID ASC);
-CREATE NONCLUSTERED INDEX index_tmp_PulloutQty ON #tmp_PulloutQty(	OrderID ASC, OrderShipmodeSeq);
-CREATE NONCLUSTERED INDEX index_tmp_ActPulloutTime ON #tmp_ActPulloutTime(	OrderID ASC);
-
-
-select  t.ID
-            , t.MDivisionID
-            , t.FtyGroup
-            , t.FactoryID
-            , t.BuyerDelivery
-            , t.SciDelivery
-            , t.POID
-            , t.CRDDate
-            , t.CFMDate
-            , t.Dest
-            , t.StyleID
-            , t.StyleName
-            , t.SeasonID
-            , t.BrandID
-            , t.ProjectID
-			, t.PackingMethod
-            , t.HangerPack
-            , t.Customize1
-            , t.BuyMonth
-            , t.CustPONo
-            , t.CustCDID
-			, t.Kit
-            , t.ProgramID
-			, t.NonRevenue
-            , t.CdCodeID
-	        , t.CDCodeNew
-	        , t.ProductType
-	        , t.FabricType
-	        , t.Lining
-	        , t.Gender
-	        , t.Construction
-            , t.CPU
-            , t.Qty as Qty
-            , t.FOCQty
-            , t.LocalOrder
-            , t.PoPrice
-            , t.CMPPrice
-            , t.KPILETA
-            , t.PFETA
-            , t.LETA
-            , t.MTLETA
-            , t.SewETA
-            , t.PackETA
-            , t.MTLComplete
-            , t.SewInLine
-            , t.SewOffLine
-            , t.CutInLine
-            , t.CutOffLine
-			, t.CutInLine_SP
-			, t.CutOffLine_SP
-            , t.[3rd_Party_Inspection]
-            , t.Category
-            , t.PulloutDate
-            , t.ActPulloutDate 
-            , t.SMR
-            , t.MRHandle
-            , t.MCHandle
-            , t.OrigBuyerDelivery
-            , t.DoxType
-            , t.VasShas
-            , t.TissuePaper
-            , t.MTLExport
-            , t.SewLine
-            , t.ShipModeList
-            , t.PlanDate
-            , t.FirstProduction
-            , t.LastProductionDate
-            , t.OrderTypeID
-            , t.ColorID
-            , t.SpecialMark
-            , t.SampleReason
-            , t.InspDate
-            , t.InspResult
-            , t.InspHandle
-            , t.MnorderApv2
-            , t.MnorderApv
-            , t.PulloutComplete
-            , t.FtyKPI
-            , t.KPIChangeReason
-            , t.EachConsApv
-            , t.Junk
-            , t.StyleUkey
-            , t.CuttingSP
-            , t.RainwearTestPassed
-            , t.BrandFTYCode
-            , t.CPUFactor
-            , t.Seq
-            , t.[IDD]
-            , t.ClogLastReceiveDate
-            , t.IsMixMarker
-            , t.GFR
-            , t.PackingQty
-			, t.PackingFOCQty 
-			, t.BookingQty
-			, t.PackingCTN
-			, t.TotalCTN1
-			, t.FtyCtn1
-			, t.ClogCTN1
-			, t.ClogRcvDate
-            , t.PackErrorCtn
-            , t.CFACTN
-			, t.isForecast
-			, t.AirFreightByBrand
-            , [BuyBack] = iif(exists (select 1 from Order_BuyBack WITH (NOLOCK) where ID = t.ID), 'Y', '')
-            , t.Cancelled
-            , t.Customize2
-            , t.KpiMNotice
-            , t.KpiEachConsCheck
-        , ModularParent = isnull (s.ModularParent, '')
-        , CPUAdjusted = isnull (s.CPUAdjusted * 100, 0)
-        , DestAlias = isnull (c.Alias, '')
-        , FactoryDisclaimer = isnull (dd.Name, '')
-        , FactoryDisclaimerRemark = isnull (s.ExpectionFormRemark, '')
-        , ApprovedRejectedDate  = s.ExpectionFormDate
-        , WorkType = isnull (ct.WorkType, '')
-        , ct.FirstCutDate
-        , POSMR = isnull (p.POSMR, '')
-        , POHandle = isnull (p.POHandle, '') 
-        , PCHandle = isnull (p.PCHandle, '') 
-        , FTYRemark = isnull (s.FTYRemark, '')
-        , som.SewQtyTop
-        , som.SewQtyBottom
-        , som.SewQtyInner
-        , som.SewQtyOuter
-        , TtlSewQty = isnull (dbo.getMinCompleteSewQty (t.ID, null, null) ,0)
-        , CutQty = isnull ((select SUM(Qty) 
-                            from CuttingOutput_WIP WITH (NOLOCK) 
-                            where OrderID = t.ID)
-                          , 0)
-        , PFRemark = isnull(pf.Remark,'')
-        , EarliestSCIDlv =dbo.getMinSCIDelivery(t.POID,'')
-        , KPIChangeReasonName = isnull ((select Name 
-                                         from Reason WITH (NOLOCK) 
-                                         where  ReasonTypeID = 'Order_BuyerDelivery' 
-                                                and ID = t.KPIChangeReason)
-                                       , '')
-        , SMRName = isnull ((select Name 
-                             from TPEPass1 WITH (NOLOCK) 
-                             where Id = t.SMR)
-                           , '')
-        , MRHandleName = isnull ((select Name 
-                                  from TPEPass1 WITH (NOLOCK) 
-                                  where Id = t.MRHandle)
-                                , '')
-        , POSMRName = isnull ((select Name 
-                               from TPEPass1 WITH (NOLOCK) 
-                               where Id = p.POSMR)
-                             , '')
-        , POHandleName = isnull ((select Name 
-                                  from TPEPass1 WITH (NOLOCK)
-                                  where Id = p.POHandle)
-                                , '')
-        , PCHandleName = isnull ((select Name 
-                                  from TPEPass1 WITH (NOLOCK)
-                                  where Id = p.PCHandle)
-                                , '')
-        , MCHandleName = isnull ((select Name 
-                                  from Pass1 WITH (NOLOCK) 
-                                  where Id = t.MCHandle)
-                                , '')
-        , SampleReasonName = isnull ((select Name 
-                                      from Reason WITH (NOLOCK) 
-                                      where ReasonTypeID = 'Order_reMakeSample' 
-                                            and ID = t.SampleReason)
-                                    , '')
-        , SpecialMarkName = isnull ((select Name 
-                                     from Style_SpecialMark sp WITH(NOLOCK) 
-                                     where sp.ID = t.[StyleSpecialMark]
-                                     and sp.BrandID = t.BrandID
-                                     and sp.Junk = 0)
-                                    , '') 
-        , MTLExportTimes = isnull ([dbo].getMTLExport (t.POID, t.MTLExport), '')
-        , GMTLT = dbo.GetGMTLT(t.BrandID, t.StyleID, t.SeasonID, t.FactoryID,t.ID)
-        , SimilarStyle = su.GetStyleUkey         
-        , MTLDelay = isnull(mt.MTLDelay ,0)
-        , InvoiceAdjQty = dbo.getInvAdjQty (t.ID, t.Seq) 
-		, FOCAdjQty = dbo.getFOCInvAdjQty (t.ID, t.Seq) 
-		, NotFOCAdjQty= dbo.getInvAdjQty (t.ID, t.Seq)-dbo.getFOCInvAdjQty (t.ID, t.Seq) 
-        , ct.LastCutDate
-        , ArriveWHDate =　aw.ArriveWHDate
-        , som.FirstOutDate
-        , som.LastOutDate 
-        , PulloutQty = isnull(pu.PulloutQty,0)
-        , ActPulloutTime = isnull(apu.ActPulloutTime,0) 
-        , Article = isnull ((select CONCAT(Article,',') 
-                             from #tmp_Article a 
-							 where a.ID = t.ID and a.Seq = t.Seq
-							 for xml path(''))
-                           , '')
-        , [Fab_ETA]=(select max(FinalETA) F_ETA from PO_Supp_Detail WITH (NOLOCK) where id=p.ID  and FabricType='F')
-        , [Acc_ETA]=(select max(FinalETA) A_ETA from PO_Supp_Detail WITH (NOLOCK) where id=p.ID  and FabricType='A')
-        , LastCTNTransDate = IIF(isnull(t.FtyCtn1,0) =0 , t.LastCTNTransDate , null)
-		, ScanEditDate = IIF(isnull(t.FtyCtn1,0) =0 , t.ScanEditDate , null)
-		, LastCTNRecdDate = IIF(isnull(t.FtyCtn1,0) =0 , t.LastCTNRecdDate , null)
-		, DryRoomRecdDate = IIF(isnull(t.FtyCtn1,0) =0 , t.DryRoomRecdDate , null)
-		, DryRoomTransDate = IIF(isnull(t.FtyCtn1,0) =0 , t.DryRoomTransDate , null)
-		, MdRoomScanDate = IIF(isnull(t.FtyCtn1,0) =0 , t.MdRoomScanDate , null)
-        , t.VasShasCutOffDate
-        , t.SewingMtlComplt
-        , t.PackingMtlComplt
-        , [OrganicCotton] = iif(t.OrganicCotton = 1, 'Y', 'N')
-        , [DirectShip] = iif(t.DirectShip = 1, 'V','')
-        ,[StyleCarryover] = iif(s.NewCO = '2','V','')
-        , t.PackLETA
-from #tmpFilterSeperate t
-left join Cutting ct WITH (NOLOCK) on ct.ID = t.CuttingSP
-left join Style s WITH (NOLOCK) on s.Ukey = t.StyleUkey
-left join DropDownList dd WITH (NOLOCK) on dd.Type = 'FactoryDisclaimer' and dd.id = s.ExpectionFormStatus
-left join PO p WITH (NOLOCK) on p.ID = t.POID
-left join Country c WITH (NOLOCK) on c.ID = t.Dest
-left join #tmp_sewDetial som on som.OrderID = t.ID
-left join #tmp_PFRemark pf on pf.ID = t.ID
-left join #tmp_ArriveWHDate aw on aw.PoID = t.POID
-left join #tmp_StyleUkey su on su.StyleUkey = t.StyleUkey 
-left join #tmp_MTLDelay mt on mt.POID = t.POID
-left join #tmp_PulloutQty pu on pu.OrderID = t.ID and pu.OrderShipmodeSeq = t.Seq
-left join #tmp_ActPulloutTime apu on apu.OrderID = t.ID 
-order by t.ID;
-drop table #tmpListPoCombo;
-drop table #tmp_PLDetial,#tmpFilterSeperate,#tmp_sewDetial,#tmp_PFRemark,#tmp_ArriveWHDate,#tmp_StyleUkey,#tmp_MTLDelay,#tmp_PulloutQty,#tmp_ActPulloutTime,#tmp_Article;";
             }
             else
             {
-                sqlcmd += $@"
-select ID, Remark
-into #tmp_PFRemark
-from (
-	select ROW_NUMBER() OVER (PARTITION BY o.ID ORDER BY o.addDate, o.Ukey) r_id
-		,o.ID, o.Remark
-	from Order_PFHis o WITH (NOLOCK) 
-	inner join #tmpListPoCombo t on o.ID = t.ID 
-	where AddDate = (
-			select Max(o.AddDate) 
-			from Order_PFHis o WITH (NOLOCK) 
-			where ID = t.ID
-		)   
-	group by o.ID, o.Remark ,o.addDate, o.Ukey
-)a
-where r_id = '1'
-
-select StyleUkey ,dbo.GetSimilarStyleList(StyleUkey) GetStyleUkey
-into #tmp_StyleUkey
-from #tmpListPoCombo
-group by StyleUkey 
-
-select POID ,dbo.GetHaveDelaySupp(POID) MTLDelay
-into #tmp_MTLDelay
-from #tmpListPoCombo
-group by POID 		    
-
-select pld.OrderID, SUM(pld.ShipQty) PackingQty
-into #tmp_PackingQty
-from PackingList pl WITH (NOLOCK) 
-inner join PackingList_Detail pld WITH (NOLOCK) on pl.ID = pld.ID
-inner join #tmpListPoCombo t on pld.OrderID = t.ID
-where  pl.Type <> 'F'  
-group by pld.OrderID  
-
-select pld.OrderID, SUM(pld.ShipQty) PackingFOCQty 
-into #tmp_PackingFOCQty
-from PackingList pl WITH (NOLOCK) 
-inner join PackingList_Detail pld WITH (NOLOCK) on pl.ID = pld.ID
-inner join #tmpListPoCombo t on pld.OrderID = t.ID
-where pl.Type = 'F' 
-group by pld.OrderID 
-
-select pld.OrderID, SUM(pld.ShipQty) BookingQty
-into #tmp_BookingQty
-from PackingList pl WITH (NOLOCK) 
-inner join PackingList_Detail pld WITH (NOLOCK) on pl.ID = pld.ID
-inner join #tmpListPoCombo t on pld.OrderID = t.ID
-where   (pl.Type = 'B' or pl.Type = 'S') 
-        and pl.INVNo <> ''  
-group by pld.OrderID 
- 
-select o.ID, o.Article 
-into #tmp_Article
-from Order_Qty o WITH (NOLOCK) 
-inner join #tmpListPoCombo t on o.ID = t.ID
-group by o.ID,o.Article 
-
-select sd.OrderId, sd.QAQty, sd.ComboType, s.OutputDate
-into #tmp_SewingOutput
-from SewingOutput s WITH (NOLOCK) 
-inner join SewingOutput_Detail sd WITH (NOLOCK) on s.ID = sd.ID
-where exists (select 1 from #tmpOrders t where sd.OrderId = t.ID)
-
-CREATE NONCLUSTERED INDEX index_tmp_PFRemark ON #tmp_PFRemark(	ID ASC);
-CREATE NONCLUSTERED INDEX index_tmp_StyleUkey ON #tmp_StyleUkey(	StyleUkey ASC);
-CREATE NONCLUSTERED INDEX index_tmp_MTLDelay ON #tmp_MTLDelay(	POID ASC);
-CREATE NONCLUSTERED INDEX index_tmp_PackingQty ON #tmp_PackingQty(	OrderID ASC);
-CREATE NONCLUSTERED INDEX index_tmp_PackingFOCQty ON #tmp_PackingFOCQty(	OrderID ASC);
-CREATE NONCLUSTERED INDEX index_tmp_BookingQty ON #tmp_BookingQty(	OrderID ASC);
-
-select distinct 
-              t.ID
-            , t.MDivisionID
-            , t.FtyGroup
-            , t.FactoryID
-            , t.BuyerDelivery
-            , t.SciDelivery
-            , t.POID
-            , t.CRDDate
-            , t.CFMDate
-            , t.Dest
-            , t.StyleID
-            , t.StyleName
-            , t.SeasonID
-            , t.BrandID
-            , t.ProjectID
-            , t.Kit
-			,[PackingMethod] 
-            , t.HangerPack
-            , t.Customize1
-            , t.BuyMonth
-            , t.CustPONo
-            , t.CustCDID
-            , t.ProgramID
-			, [NonRevenue]
-            , t.CdCodeID
-	        , t.CDCodeNew
-            , [ProductType]
-		    , t. [FabricType]
-		    , t.Lining
-		    , t.Gender
-		    , t.[Construction]
-            , t.CPU
-            , t.Qty
-            , t.FOCQty
-            , t.LocalOrder
-            , t.PoPrice
-            , t.CMPPrice
-            , t.KPILETA
-            , t.PFETA
-            , t.LETA
-            , t.MTLETA
-            , t.SewETA
-            , t.PackETA
-            , t.MTLComplete
-            , t.SewInLine
-            , t.SewOffLine
-            , t.CutInLine
-            , t.CutOffLine
-			, t.CutInLine_SP
-			, t.CutOffLine_SP
-            , t.[3rd_Party_Inspection]
-            , t.Category
-            , t.PulloutDate
-            , t.ActPulloutDate
-            , t.SMR
-            , t.MRHandle
-            , t.MCHandle
-            , t.OrigBuyerDelivery
-            , t.DoxType
-            , t.TotalCTN
-            , PackErrorCtn
-            , t.FtyCTN
-            , t.ClogCTN
-            , t.CFACTN
-            , t.VasShas
-            , t.TissuePaper
-            , [MTLExport]
-            , t.SewLine
-            , t.ShipModeList
-            , t.PlanDate
-            , t.FirstProduction
-			, t.LastProductionDate
-            , t.OrderTypeID
-            , t.ColorID
-            , t.SpecialMark
-            , t.SampleReason
-            , InspDate 
-            , InspResult 
-            , InspHandle 
-            , t.MnorderApv2
-            , t.MnorderApv
-            , t.PulloutComplete
-            , t.FtyKPI
-            , t.KPIChangeReason
-            , t.EachConsApv
-            , t.Junk
-            , t.StyleUkey
-            , t.CuttingSP
-            , t.RainwearTestPassed
-            , t.BrandFTYCode
-            , t.CPUFactor
-            , t.ClogLastReceiveDate
-			, [IsMixMarker]
-            , t.GFR 
-			, isForecast
-            , [AirFreightByBrand]
-            , [BuyBack]
-            , [Cancelled]
-            , t.Customize2
-            , t.KpiMNotice
-            , t.KpiEachConsCheck
-            , t.[IDD] 
-        , ModularParent = isnull (s.ModularParent, '')  
-        , CPUAdjusted = isnull(s.CPUAdjusted * 100, 0)  
-        , DestAlias = isnull (c.Alias, '') 
-        , FactoryDisclaimer = isnull (dd.Name, '')
-        , FactoryDisclaimerRemark = isnull (s.ExpectionFormRemark, '')
-        , ApprovedRejectedDate  = s.ExpectionFormDate
-        , WorkType = isnull(ct.WorkType,'')
-        , ct.FirstCutDate
-        , POSMR = isnull (p.POSMR, '')
-        , POHandle = isnull (p.POHandle, '') 
-        , PCHandle = isnull (p.PCHandle, '') 
-        , FTYRemark = isnull (s.FTYRemark, '')
-        , SewQtyTop = isnull ((select SUM(QAQty) 
-                               from SewingOutput_Detail WITH (NOLOCK) 
-                               where OrderId = t.ID 
-                                     and ComboType = 'T')
-                             , 0)
-        , SewQtyBottom = isnull ((select SUM(QAQty) 
-                                  from SewingOutput_Detail WITH (NOLOCK) 
-                                  where OrderId = t.ID 
-                                        and ComboType = 'B')
-                                , 0)
-        , SewQtyInner = isnull ((select SUM(QAQty) 
-                                 from SewingOutput_Detail WITH (NOLOCK) 
-                                 where OrderId = t.ID 
-                                       and ComboType = 'I')
-                               , 0) 
-        , SewQtyOuter = isnull ((select SUM(QAQty) 
-                                 from SewingOutput_Detail WITH (NOLOCK) 
-                                 where OrderId = t.ID 
-                                       and ComboType = 'O')
-                               , 0)
-        , TtlSewQty = isnull (dbo.getMinCompleteSewQty (t.ID, null, null), 0)
-        , CutQty = isnull ((select SUM(Qty) 
-                            from CuttingOutput_WIP WITH (NOLOCK) 
-                            where OrderID = t.ID)
-                          , 0)
-        , PFRemark = isnull(pf.Remark,'')
-        , EarliestSCIDlv = dbo.getMinSCIDelivery (t.POID, '')
-        , KPIChangeReasonName = isnull ((select Name 
-                                         from Reason WITH (NOLOCK)  
-                                         where  ReasonTypeID = 'Order_BuyerDelivery' 
-                                                and ID = t.KPIChangeReason)
-                                        , '')
-        , SMRName = isnull ((select Name 
-                             from TPEPass1 WITH (NOLOCK) 
-                             where Id = t.SMR)
-                            , '')
-        , MRHandleName = isnull ((select Name 
-                                  from TPEPass1 WITH (NOLOCK) 
-                                  where Id = t.MRHandle)
-                                , '')
-        , POSMRName = isnull ((select Name 
-                               from TPEPass1 WITH (NOLOCK) 
-                               where Id = p.POSMR)
-                             , '')
-        , POHandleName = isnull ((select Name 
-                                  from TPEPass1 WITH (NOLOCK) 
-                                  where Id = p.POHandle)
-                                , '')
-        , PCHandleName = isnull ((select Name 
-                                  from TPEPass1 WITH (NOLOCK)
-                                  where Id = p.PCHandle)
-                                , '')
-        , MCHandleName = isnull ((select Name 
-                                  from Pass1 WITH (NOLOCK) 
-                                  where Id = t.MCHandle)
-                                , '')
-        , SampleReasonName = isnull ((select Name 
-                                      from Reason WITH (NOLOCK) 
-                                      where ReasonTypeID = 'Order_reMakeSample' 
-                                            and ID = t.SampleReason)
-                                    , '') 
-        , SpecialMarkName = isnull ((select Name 
-                                     from Style_SpecialMark sp WITH(NOLOCK) 
-                                     where sp.ID = t.[StyleSpecialMark] 
-                                     and sp.BrandID = t.BrandID
-                                     and sp.Junk = 0)
-                                   , '')
-        , MTLExportTimes = isnull ([dbo].getMTLExport (t.POID, t.MTLExport), '')
-        , GMTLT = dbo.GetGMTLT(t.BrandID, t.StyleID, t.SeasonID, t.FactoryID, t.ID)
-        , SimilarStyle = su.GetStyleUkey
-        , MTLDelay = isnull(mt.MTLDelay,0)
-        , PackingQty = isnull(pa.PackingQty ,0)
-        , PackingFOCQty = isnull(paf.PackingFOCQty,0)
-        , BookingQty = isnull(bo.BookingQty ,0)
-        , InvoiceAdjQty = isnull (i.value, 0)
-		, FOCAdjQty = isnull (i2.value, 0)
-		, NotFOCAdjQty= isnull (i.value, 0)-isnull (i2.value, 0)
-        , ct.LastCutDate
-        , ArriveWHDate = (select Max(e.WhseArrival) 
-                          from Export e WITH (NOLOCK) 
-                          inner join Export_Detail ed WITH (NOLOCK) on e.ID = ed.ID 
-                          where ed.POID = t.POID) 
-        , FirstOutDate = (select Min(so.OutputDate) 
-                          from SewingOutput so WITH (NOLOCK) 
-                          inner join SewingOutput_Detail sod WITH (NOLOCK) on so.ID = sod.ID
-                          where sod.OrderID = t.ID) 
-        , LastOutDate = (select Max(so.OutputDate) 
-                         from SewingOutput so WITH (NOLOCK) 
-                         inner join SewingOutput_Detail sod WITH (NOLOCK) on so.ID = sod.ID
-                         where sod.OrderID = t.ID)
-        , PulloutQty = isnull ((select sum(pd.ShipQty)
-                                from PackingList_Detail pd WITH (NOLOCK)
-                                inner join PackingList p WITH (NOLOCK) on p.ID = pd.ID
-                                where p.PulloutID <> ''
-                                and pd.OrderID = t.ID)
-                              , 0)
-        , ActPulloutTime = (select count(distinct p.PulloutID)
-                            from PackingList_Detail pd WITH (NOLOCK)
-                            inner join PackingList p WITH (NOLOCK) on p.ID = pd.ID
-                            where p.PulloutID <> ''
-                            and pd.OrderID = t.ID
-                            and pd.ShipQty > 0)
-        , PackingCTN = isnull ((select Sum(CTNQty) 
-                                from PackingList_Detail WITH (NOLOCK) 
-                                where OrderID = t.ID)
-                              , 0) 
-        , t.TotalCTN
-        , FtyCtn = isnull(t.TotalCTN,0) - isnull(t.FtyCTN,0)
-        , ClogCTN = isnull(t.ClogCTN,0)
-        , ClogRcvDate = t.ClogLastReceiveDate
-		, Article = isnull ((select CONCAT(a.Article, ',') 
-                             from #tmp_Article a 
-							 where a.ID = t.ID
-							 for xml path(''))
-                           , '') 
-        , [Fab_ETA]=(select max(FinalETA) F_ETA from PO_Supp_Detail WITH (NOLOCK) where id=p.ID  and FabricType='F')
-        , [Acc_ETA]=(select max(FinalETA) A_ETA from PO_Supp_Detail WITH (NOLOCK) where id=p.ID  and FabricType='A')
-        , [LastCTNTransDate] = IIF(isnull(t.TotalCTN,0) - isnull(t.FtyCTN,0) = 0 ,t.LastCTNTransDate, null)
-        , [ScanEditDate] = IIF(isnull(t.TotalCTN,0) - isnull(t.FtyCTN,0) = 0 ,t.ScanEditDate, null)
-        , [LastCTNRecdDate] = IIF(isnull(t.TotalCTN,0) - isnull(t.FtyCTN,0) = 0 ,t.LastCTNRecdDate, null)
-        , [DryRoomRecdDate] = IIF(isnull(t.TotalCTN,0) - isnull(t.FtyCTN,0) = 0 ,t.DryRoomRecdDate, null)
-        , [DryRoomTransDate] = IIF(isnull(t.TotalCTN,0) - isnull(t.FtyCTN,0) = 0 ,t.DryRoomTransDate, null)
-        , [MdRoomScanDate] = IIF(isnull(t.TotalCTN,0) - isnull(t.FtyCTN,0) = 0 ,t.MdRoomScanDate, null)
-        , t.VasShasCutOffDate
-        , t.SewingMtlComplt
-        , t.PackingMtlComplt
-        , [OrganicCotton] = iif(t.OrganicCotton = 1, 'Y', 'N')
-        , [DirectShip] = iif(t.DirectShip = 1, 'V','')
-        ,[StyleCarryover] = iif(s.NewCO = '2','V','')
-        , t.PackLETA
-        {biMoreColumn2}
-from #tmpListPoCombo t
-left join Cutting ct WITH (NOLOCK) on ct.ID = t.CuttingSP
-left join Style s WITH (NOLOCK) on s.Ukey = t.StyleUkey
-left join DropDownList dd WITH (NOLOCK) on dd.Type = 'FactoryDisclaimer' and dd.id = s.ExpectionFormStatus
-left join PO p WITH (NOLOCK) on p.ID = t.POID
-left join Country c WITH (NOLOCK) on c.ID = t.Dest
-left join #tmp_PFRemark pf on pf.ID = t.ID
-left join #tmp_StyleUkey su on su.StyleUkey = t.StyleUkey 
-left join #tmp_MTLDelay mt on mt.POID = t.POID
-left join #tmp_PackingQty pa on pa.OrderID = t.ID
-left join #tmp_PackingFOCQty paf on paf.OrderID = t.ID
-left join #tmp_BookingQty bo on bo.OrderID = t.ID
-outer apply(
-	select value = sum(iq.DiffQty) 
-	from InvAdjust i WITH (NOLOCK) 
-	inner join InvAdjust_Qty iq WITH (NOLOCK) on i.ID = iq.ID
-	where i.OrderID = t.ID
-)i
-outer apply(
-	select value = sum(iq.DiffQty) 
-	from InvAdjust i WITH (NOLOCK) 
-	inner join InvAdjust_Qty iq WITH (NOLOCK) on i.ID = iq.ID
-	where i.OrderID = t.ID
-    and iq.Price = 0
-)i2
-order by t.ID;
-
-drop table #tmpListPoCombo,#tmp_PFRemark,#tmp_StyleUkey,#tmp_MTLDelay,#tmp_PackingQty,#tmp_PackingFOCQty,#tmp_BookingQty,#tmp_Article;";
+                // 報表顯示[Dest] 和 匯入BI的值不一樣, BI 是寫入 Country.ID
+                dest = ",[Dest] = Country.Alias";
             }
+
+            string ttl_tms = string.Empty;
+            if (!(model.IncludeArtworkData || model.IncludeArtworkDataKindIsPAP))
+            {
+                ttl_tms = ",[TTL_TMS] = o.QTY * o.CPU * (select StdTMS from System WITH (NOLOCK))";
+            }
+
+            string seq = string.Empty;
+            if (model.SeparateByQtyBdownByShipmode)
+            {
+                seq = "o.Seq,";
+            }
+            #endregion
+
+            #region step 7 輸出, 要按照Excel欄位順序, 欄位名稱是一起輸出的
+            sqlcmd += $@"
+SELECT
+    {seq}
+    [M] = o.MDivisionID
+   ,[FactoryID] = o.FactoryID
+   ,[Delivery] = o.BuyerDelivery
+   ,[Delivery(YYYYMM)] = FORMAT(o.BuyerDelivery, 'yyyyMM')
+   ,[Earliest SCIDlv] = #tmp_EarliestSCIDlv.EarliestSCIDlv
+   ,[SCIDlv] = o.SciDelivery
+   ,[KEY] = FORMAT(IIF(DAY(SciDelivery) <= 7, DATEADD(MONTH, -1, SciDelivery), SciDelivery), 'yyyyMM')
+   ,[IDD] = o.IDD-- #tmpIDD.IDD
+   ,[CRD] = o.CRDDate
+   ,[CRD(YYYYMM)] = FORMAT(o.CRDDate, 'yyyyMM')
+   ,[Check CRD] = IIF(ISNULL(o.BuyerDelivery, '') <> ISNULL(o.CRDDate, ''), 'Y', '')
+   ,[OrdCFM] = o.CFMDate
+   ,[CRD-OrdCFM] = ISNULL(DATEDIFF(DAY, o.CFMDate, CRDDate), 0)
+   ,[SPNO] = o.ID
+   ,[3rd Party Insepction] = IIF(o.CFAIs3rdInspect > 0, 'Y', 'N')
+   ,[Category] =
+        CASE o.Category
+            WHEN 'B' THEN 'Bulk'
+            WHEN 'G' THEN 'Garment'
+            WHEN 'M' THEN 'Material'
+            WHEN 'S' THEN 'Sample'
+            WHEN 'T' THEN 'Sample mtl.'
+            WHEN '' THEN
+                CASE o.ForecastSampleGroup
+                    WHEN '' THEN 'Bulk fc'
+                    WHEN 'D' THEN 'Dev. sample fc'
+                    WHEN 'S' THEN 'Sa. sample fc'
+                END
+        END
+   ,[Est. download date] = IIF(o.isForecast = 0, '', o.BuyMonth)--和[Buy Month]相反
+   ,[Buy Back] = IIF(EXISTS (SELECT 1 FROM Order_BuyBack WITH (NOLOCK) WHERE ID = o.ID), 'Y', '')
+   ,[Cancelled] = IIF(o.Junk = 1, 'Y', '')
+   ,[Cancel still need to continue production] =
+        CASE
+            WHEN o.Junk = 1 THEN
+                CASE
+                    WHEN o.NeedProduction = 1 THEN 'Y'
+                    WHEN o.KeepPanels = 1 THEN 'K'
+                    ELSE 'N'
+                END
+            ELSE ''
+        END
+    {dest}
+   ,[Style] = o.StyleID
+   ,[Style Name] = s.StyleName
+   ,[Modular Parent] = s.ModularParent
+   ,[CPU Adjusted %] = ISNULL(s.CPUAdjusted * 100, 0)
+   ,[Similar Style] = #tmp_StyleUkey.GetStyleUkey
+   ,[Season] = o.SeasonID
+   ,[Garment L/T] = ISNULL(#tmpGMTLT.[Garment L/T], 0)
+   ,[Order Type] = o.OrderTypeID
+   ,[Project] = o.ProjectID
+   ,[PackingMethod] = d1.Name
+   ,[Hanger pack] = o.HangerPack
+   ,[Order#] = o.Customize1
+   ,[Buy Month] = IIF(o.isForecast = 0, o.BuyMonth, '')--和[Est. download date]相反
+   ,[PONO] = o.CustPONo
+   ,[VAS/SHAS] = IIF(o.VasShas = 1, 'Y', '')
+   ,[VAS/SHAS Apv.] = o.MnorderApv2
+   ,[VAS/SHAS Cut Off Date] = FORMAT(DATEADD(DAY, -30, GetMinDate.minDate), 'yyyy/MM/dd')
+   ,[M/Notice Date] = o.MnorderApv
+   ,[Est M/Notice Apv.] = o.KPIMNotice
+   ,[Tissue] = IIF(o.TissuePaper = 1, 'Y', '')
+   ,[AF by adidas] = IIF(o.AirFreightByBrand = '1', 'Y', '')
+   ,[Factory Disclaimer] = d3.Name
+   ,[Factory Disclaimer Remark] = s.ExpectionFormRemark
+   ,[Approved/Rejected Date] = s.ExpectionFormDate
+   ,[Global Foundation Range] = IIF(o.GFR = 1, 'Y', '')
+   ,[Brand] = o.BrandID
+   ,[Cust CD] = o.CustCDID
+   ,[KIT] = CustCD.Kit
+   ,[Fty Code] = o.BrandFTYCode
+   ,[Program] = o.ProgramID
+   ,[Non Revenue] = IIF(o.NonRevenue = 1, 'Y', 'N')
+   ,[New CD Code] = s.CDCodeNew
+   ,[ProductType] = r2.Name
+   ,[FabricType] = r1.Name
+   ,[Lining] = s.Lining
+   ,[Gender] = s.Gender
+   ,[Construction] = d2.Name
+   ,[Cpu] = o.CPU
+   ,[Qty] = O.Qty
+   ,[FOC Qty] = o.FOCQty
+   ,[Total CPU] = o.CPU * o.Qty * o.CPUFactor
+   ,[Sew_Qty -- TOP] = ISNULL(#tmp_sewDetial.SewQtyTop, 0)
+   ,[Sew_Qty -- Bottom] = ISNULL(#tmp_sewDetial.SewQtyBottom, 0)
+   ,[Sew_Qty -- Inner] = ISNULL(#tmp_sewDetial.SewQtyInner, 0)
+   ,[Sew_Qty -- Outer] = ISNULL(#tmp_sewDetial.SewQtyOuter, 0)
+   ,[Total Sewing Output] = ISNULL(#tmp_TtlSewQty.[Total Sewing Output], 0)
+   ,[Cut Qty] = ISNULL(#tmpCutQty.CutQty, 0)
+   ,[By Comb] = IIF(ct.WorkType = '1', 'Y', '')
+   ,[Cutting Status] = IIF(#tmpCutQty.CutQty >= o.Qty, 'Y', '')
+   ,[Packing Qty] = ISNULL(pld.PackingQty, 0)
+   ,[Packing FOC Qty] = ISNULL(pld.PackingFOCQty, 0)
+   ,[Booking Qty] = ISNULL(pld.BookingQty, 0)
+   ,[FOC Adj Qty] = ISNULL(i.FOCAdjQty, 0)
+   ,[Not FOC Adj Qty] = ISNULL(i.InvoiceAdjQty, 0) - ISNULL(i.FOCAdjQty, 0)
+   ,[FOB] = o.PoPrice
+   ,[Total] = o.Qty * o.PoPrice
+   ,[KPI L/ETA] = o.KPILETA
+   ,[PF ETA (SP)] = o.PFETA
+   ,[Pull Forward Remark] = #tmp_PFRemark.Remark
+   ,[Pack L/ETA] = o.PackLETA
+   ,[SCHD L/ETA] = o.LETA
+   ,[Actual Mtl. ETA] = o.MTLETA
+   ,[Fab ETA] = #tmpPSD.[Fab ETA]
+   ,[Acc ETA] = #tmpPSD.[Acc ETA]
+   ,[Sewing Mtl Complt(SP)] = #tmpComplt.SewingMtlComplt
+   ,[Packing Mtl Complt(SP)] = #tmpComplt.PackingMtlComplt
+   ,[Sew. MTL ETA (SP)] = o.SewETA
+   ,[Pkg. MTL ETA (SP)] = o.PackETA
+   ,[MTL Delay] = IIF(#tmp_MTLDelay.MTLDelay = 1, 'Y', '')
+   ,[MTL Cmplt] = IIF(o.MTLExport = '', #tmpMTLExportTimes.MTLExportTimes, IIF(o.MTLExport = 'OK', 'Y', o.MTLExport))
+   ,[MTL Cmplt (SP)] = IIF(o.MTLComplete = 1, 'Y', 'N')
+   ,[Arrive W/H Date] = #tmp_ArriveWHDate.ArriveWHDate
+   ,[Sewing InLine] = o.SewInLine
+   ,[Sewing OffLine] = o.SewOffLine
+   ,[1st Sewn Date] = #tmp_sewDetial.FirstOutDate
+   ,[Last Sewn Date] = #tmp_sewDetial.LastOutDate
+   ,[First Production Date] = o.FirstProduction
+   ,[Last Production Date] = o.LastProductionDate
+   ,[Each Cons Apv Date] = o.EachConsApv
+   ,[Est Each Con Apv.] = o.KpiEachConsCheck
+   ,[Cutting InLine] = o.CutInLine
+   ,[Cutting OffLine] = o.CutOffLine
+   ,[Cutting InLine(SP)] = #tmpEstCutDate.InLine
+   ,[Cutting OffLine(SP)] = #tmpEstCutDate.OffLine
+   ,[1st Cut Date] = ct.FirstCutDate
+   ,[Last Cut Date] = ct.LastCutDate
+   ,[Est. Pullout] = o.EstPulloutDate
+   ,[Act. Pullout Date] = pld.ActPulloutDate
+   ,[Pullout Qty] = ISNULL(pld.PulloutQty, 0)
+   ,[Act. Pullout Times] = ISNULL(#tmp_Pullout.ActPulloutTimes, 0)
+   ,[Act. Pullout Cmplt] = IIF(o.PulloutComplete = 1, 'OK', '')
+   ,[KPI Delivery Date] = o.FtyKPI
+   ,[Update Delivery Reason] = IIF(ISNULL(o.KPIChangeReason, '') = '', '', CONCAT(o.KPIChangeReason, '-', r3.Name))
+   ,[Plan Date] = o.PlanDate
+   ,[Original Buyer Delivery Date] = o.OrigBuyerDelivery
+   ,[SMR] = o.SMR
+   ,[SMR Name] = tp1.Name
+   ,[Handle] = o.MRHandle
+   ,[Handle Name] = tp2.Name
+   ,[Posmr] = PO.POSMR
+   ,[Posmr Name] = tp3.Name
+   ,[PoHandle] = PO.POHandle
+   ,[PoHandle Name] = tp4.Name
+   ,[PCHandle] = PO.PCHandle
+   ,[PCHandle Name] = tp5.Name
+   ,[MCHandle] = o.MCHandle
+   ,[MCHandle Name] = p1.Name
+   ,[DoxType] = o.DoxType
+   ,[Packing CTN] = ISNULL(pld.PackingCTN, 0)
+   ,[TTLCTN] = ISNULL(pld.TotalCTN, 0)
+   ,[Pack Error CTN] = pld.PackErrCTN
+   ,[FtyCTN] = ISNULL(pld.FtyCtn_Remaining, 0)--和 UpdateOrdersCTN 中的 FtyCtn 不一樣喔, 這是目前在工廠的剩餘紙箱數量
+   ,[Fty To Clog Transit] = ISNULL(pld.FtyToClogTransit, 0)
+   ,[cLog CTN] = ISNULL(pld.ClogCTN, 0)
+   ,[Clog To CFA Tansit] = ISNULL(pld.ClogToCFATansit, 0)
+   ,[CFA CTN] = pld.CFACTN
+   ,[CFA To Clog Transit] = pld.CFAToClogTransit
+   ,[cLog Rec. Date] = pld.ClogLastReceiveDate
+   ,[Final Insp. Date] = o.CFAFinalInspectDate
+   ,[Insp. Result] = o.CFAFinalInspectResult
+   ,[CFA Name] = o.CFAFinalInspectHandle
+   ,[Sewing Line#] = o.SewLine
+   ,[ShipMode] = o.ShipmodeID
+   ,[SI#] = o.Customize2
+   ,[ColorWay] = #tmp_Article.Article
+   ,[Color] = #tmpColorCombo.ColorID
+   ,[Special Mark] = ssm.Name
+   ,[Fty Remark] = s.FTYRemark
+   ,[Sample Reason] = r4.Name
+   ,[IS MixMarker] =
+        CASE o.IsMixMarker
+            WHEN 0 THEN 'Is Single Marker'
+            WHEN 1 THEN 'Is Mix  Marker'
+            WHEN 2 THEN ' Is Mix Marker - SCI'
+            ELSE ''
+        END
+   ,[Cutting SP] = o.CuttingSP
+   ,[Rainwear test] = IIF(o.RainwearTestPassed = 1, 'Y', '')
+   ,[TMS] = o.CPU * (SELECT StdTMS FROM System WITH (NOLOCK))
+    
+    --這6個時間欄位,當紙箱全部從工廠轉出才顯示時間
+   ,[MD room scan date] = IIF(ISNULL(pld.FtyCtn_Remaining, 0) = 0, o.MdRoomScanDate, NULL)
+   ,[Dry Room received date] = IIF(ISNULL(pld.FtyCtn_Remaining, 0) = 0, o.DryRoomRecdDate, NULL)
+   ,[Dry room trans date] = IIF(ISNULL(pld.FtyCtn_Remaining, 0) = 0, o.DryRoomTransDate, NULL)
+   ,[Last ctn trans date] = IIF(ISNULL(pld.FtyCtn_Remaining, 0) = 0, o.LastCTNTransDate, NULL)
+   ,[Last scan and pack date] = IIF(ISNULL(pld.FtyCtn_Remaining, 0) = 0, pld.ScanEditDate, NULL)
+   ,[Last ctn recvd date] = IIF(ISNULL(pld.FtyCtn_Remaining, 0) = 0, o.LastCTNRecdDate, NULL)
+
+   ,[Organic Cotton/Recycle Polyester/Recycle Nylon] = IIF(o.OrganicCotton = 1, 'Y', 'N')
+   ,[Direct Ship] = IIF(o.DirectShip = 1, 'V', '')
+   ,[StyleCarryover] = IIF(s.NewCO = '2', 'V', '')
+   {ttl_tms}
+   {biColunn}
+FROM #tmpOrders o
+LEFT JOIN Style s WITH (NOLOCK) ON o.StyleUkey = s.Ukey
+LEFT JOIN CustCD WITH (NOLOCK) ON o.CustCDID = CustCD.ID AND o.BrandID = CustCD.BrandID
+LEFT JOIN Country WITH (NOLOCK) ON o.Dest = Country.ID
+LEFT JOIN Cutting ct WITH (NOLOCK) ON o.CuttingSP = ct.ID
+LEFT JOIN Style_SpecialMark ssm WITH (NOLOCK) ON s.SpecialMark = ssm.ID AND o.BrandID = ssm.BrandID AND ssm.Junk = 0
+OUTER APPLY (
+    SELECT minDate = MIN(Date)
+    FROM (VALUES (o.BuyerDelivery), (o.CRDDate), (o.PlanDate), (o.OrigBuyerDelivery)) AS tmp (Date)
+    WHERE tmp.Date IS NOT NULL
+) GetMinDate
+LEFT JOIN PO WITH (NOLOCK) ON PO.ID = o.POID
+LEFT JOIN TPEPass1 tp1 WITH (NOLOCK) ON o.SMR = tp1.ID
+LEFT JOIN TPEPass1 tp2 WITH (NOLOCK) ON o.MRHandle = tp2.ID
+LEFT JOIN TPEPass1 tp3 WITH (NOLOCK) ON PO.POSMR = tp3.ID
+LEFT JOIN TPEPass1 tp4 WITH (NOLOCK) ON PO.POHandle = tp4.ID
+LEFT JOIN TPEPass1 tp5 WITH (NOLOCK) ON PO.PCHandle = tp5.ID
+LEFT JOIN Pass1 p1 WITH (NOLOCK) ON o.MCHandle = p1.ID
+
+LEFT JOIN DropDownList d1 WITH (NOLOCK) ON d1.Type = 'PackingMethod' AND o.CtnType = d1.ID
+LEFT JOIN DropDownList d2 WITH (NOLOCK) ON d2.type = 'StyleConstruction' AND s.Construction = d2.ID
+LEFT JOIN DropDownList d3 WITH (NOLOCK) ON d3.Type = 'FactoryDisclaimer' AND s.ExpectionFormStatus = d3.ID
+LEFT JOIN Reason r1 WITH (NOLOCK) ON r1.ReasonTypeID = 'Fabric_Kind' AND s.FabricType = r1.ID
+LEFT JOIN Reason r2 WITH (NOLOCK) ON r2.ReasonTypeID = 'Style_Apparel_Type' AND s.ApparelType = r2.ID
+LEFT JOIN Reason r3 WITH (NOLOCK) ON r3.ReasonTypeID = 'Order_BuyerDelivery' AND o.KPIChangeReason = r3.ID
+LEFT JOIN Reason r4 WITH (NOLOCK) ON r4.ReasonTypeID = 'Order_reMakeSample' AND o.SampleReason = r4.ID
+
+LEFT JOIN #tmp_StyleUkey ON o.StyleUkey = #tmp_StyleUkey.StyleUkey
+LEFT JOIN #tmpGMTLT ON o.ID = #tmpGMTLT.ID
+LEFT JOIN #tmpComplt ON o.ID = #tmpComplt.OrderID
+LEFT JOIN #tmp_sewDetial ON o.ID = #tmp_sewDetial.OrderID
+LEFT JOIN #tmp_TtlSewQty ON o.ID = #tmp_TtlSewQty.ID
+LEFT JOIN #tmpCutQty ON o.ID = #tmpCutQty.OrderID
+LEFT JOIN #tmp_PFRemark ON o.ID = #tmp_PFRemark.ID
+LEFT JOIN #tmpEstCutDate ON o.ID = #tmpEstCutDate.OrderID
+LEFT JOIN #tmp_Pullout ON o.ID = #tmp_Pullout.OrderID
+LEFT JOIN #tmp_Article ON o.ID = #tmp_Article.ID
+LEFT JOIN #tmpColorCombo ON o.ID = #tmpColorCombo.ID
+
+--暫存表 by POID
+LEFT JOIN #tmp_EarliestSCIDlv ON o.POID = #tmp_EarliestSCIDlv.POID
+LEFT JOIN #tmp_MTLDelay ON o.POID = #tmp_MTLDelay.POID
+LEFT JOIN #tmpMTLExportTimes ON o.POID = #tmpMTLExportTimes.POID
+LEFT JOIN #tmpPSD ON o.POID = #tmpPSD.ID
+LEFT JOIN #tmp_ArriveWHDate ON o.POID = #tmp_ArriveWHDate.POID
+
+{sqltmp}
+
+ORDER BY IIF(o.POID = '', 'Z', o.POID), o.ID
+
+";
+
+            // Artwork 資訊
+            if (model.IncludeArtworkData || model.IncludeArtworkDataKindIsPAP)
+            {
+                sqlcmd += this.GetArtworkTypeValue(model);
+            }
+
+            // drop table
+            sqlcmd += @"
+DROP TABLE #tmpOrdersBase
+, #tmpPOComboStep
+, #tmpOqs_Step
+, #tmpOrders
+, #tmp_StyleUkey
+
+--暫存表 by OrderID
+, #tmpGMTLT
+, #tmpComplt
+, #tmp_sewDetial
+, #tmp_TtlSewQty
+, #tmpCutQty
+, #tmp_PFRemark
+, #tmpEstCutDate
+, #tmp_Pullout
+, #tmp_Article
+, #tmpOrder_ColorCombo
+, #tmpColorCombo
+
+, #tmp_PackingList_Detail
+, #tmp_invAdj
+
+--暫存表 by POID
+, #tmp_EarliestSCIDlv
+, #tmp_MTLDelay
+, #tmpMTLExportTimes
+, #tmpPSD
+, #tmp_ArriveWHDate
+";
+            #endregion
 
             return sqlcmd;
         }
@@ -1721,7 +1164,7 @@ drop table #tmpListPoCombo,#tmp_PFRemark,#tmp_StyleUkey,#tmp_MTLDelay,#tmp_Packi
         /// 2.= 沒勾選 Include Artwork data -- Kind is 'PAP'
         /// 3.= 沒勾選 Printing Detail
         /// 4.= 沒勾選 by CPU
-        /// 結果:撈出3個欄位 OrderID, ColumnName(顯示用), 對應值
+        /// 結果:3個欄位 OrderID, ColumnName(顯示欄位名稱), ColumnValue(對應值)
         /// 使用1.BI 直接寫入 P_PPICMasterList_Extend
         /// 使用2.R03 樞紐後, 在報表最右方
         /// </summary>
@@ -1729,7 +1172,7 @@ drop table #tmpListPoCombo,#tmp_PFRemark,#tmp_StyleUkey,#tmp_MTLDelay,#tmp_Packi
         {
             int byCPUsqlbit = model.ByCPU ? 1 : 0;
 
-            #region Classify  1.Include Artwork data ||  2.'PAP'
+            #region step 1 條件 Classify  1.Include Artwork data ||  2.'PAP'
             List<string> listClassify = new List<string>();
             if (model.IncludeArtworkData)
             {
@@ -1745,17 +1188,21 @@ drop table #tmpListPoCombo,#tmp_PFRemark,#tmp_StyleUkey,#tmp_MTLDelay,#tmp_Packi
             }
 
             string whereClassify = listClassify.JoinToString(",");
+
+            string seq = model.SeparateByQtyBdownByShipmode ? ",Seq" : string.Empty;
             #endregion
 
-            // 勾選 Printing Detail
-            string sql_printingDetail = string.Empty;
+            #region step 2 準備 有or無 勾選 Printing Detail, 顯示欄位 [Printing LT] , [InkType/Color/Size], 皆為 varchar 欄位
+            string sql_printingDetail_BaseUnion = string.Empty;
+            string sql_printingDetail_Select = string.Empty;
+            string sql_printingDetail_OutputUnion = string.Empty;
             if (model.PrintingDetail)
             {
-                sql_printingDetail = @"
+                // 勾選 Printing Detail, 欄位 [Printing LT] , [InkType/Color/Size] 的值
+                sql_printingDetail_BaseUnion = @"
 UNION ALL
 SELECT
     ID = 'PRINTING'
-    ,Seq = ''
     ,FakeID = ''
     ,ColumnN = 'Printing LT'
     ,ColumnSeq = -1 
@@ -1763,148 +1210,89 @@ SELECT
 UNION ALL
 SELECT
     ID = 'PRINTING'
-    ,Seq = ''
     ,FakeID = ''
     ,ColumnN = 'InkType/Color/Size'
     ,ColumnSeq = 0 
 ";
-            }
+                sql_printingDetail_Select = $@"
+SELECT DISTINCT
+    oa.ID
+   ,InkTypeColorSize = CONCAT(oa.InkType, '/', oa.Colors, ' ', '/', IIF(s.SmallLogo = 1, 'Small logo', 'Big logo'))
+   ,PrintingLT = CAST(plt.LeadTime + plt.AddLeadTime AS FLOAT)
+INTO #tmpOrder_Artwork
+FROM Order_Artwork oa WITH (NOLOCK)
+INNER JOIN Orders o WITH (NOLOCK) ON o.ID = oa.ID
+OUTER APPLY (SELECT SmallLogo = IIF(EXISTS(SELECT 1 FROM System WITH (NOLOCK) WHERE SmallLogoCM <= oa.Width OR SmallLogoCM <= oa.Length), 0, 1)) s
+OUTER APPLY (SELECT tmpRTL = IIF(o.Cpu = 0, 0, s.SewlineAvgCPU / o.Cpu) FROM System s WITH (NOLOCK)) tr
+OUTER APPLY (SELECT RTLQty = IIF(o.Qty < tmpRTL, o.Qty, tmpRTL)) r
+OUTER APPLY (SELECT Colors = IIF(oa.Colors = '', 0, oa.Colors)) c
+OUTER APPLY (SELECT ex = IIF(EXISTS (SELECT 1 FROM PrintLeadTime WITH (NOLOCK) WHERE InkType = oa.InkType), 1, 0)) e
+OUTER APPLY (
+    SELECT LeadTime, AddLeadTime
+    FROM PrintLeadTime plt WITH (NOLOCK)
+    WHERE plt.InkType = oa.InkType
+    AND plt.SmallLogo = s.SmallLogo
+    AND r.RTLQty BETWEEN plt.RTLQtyLowerBound AND plt.RTLQtyUpperBound
+    AND c.Colors BETWEEN plt.ColorsLowerBound AND plt.ColorsUpperBound
+) pEx
+OUTER APPLY (
+    SELECT LeadTime, AddLeadTime
+    FROM PrintLeadTime plt WITH (NOLOCK)
+    WHERE plt.SmallLogo = s.SmallLogo
+    AND plt.IsDefault = 1
+    AND r.RTLQty BETWEEN plt.RTLQtyLowerBound AND plt.RTLQtyUpperBound
+    AND c.Colors BETWEEN plt.ColorsLowerBound AND plt.ColorsUpperBound
+) pNEx
+OUTER APPLY (
+    SELECT
+        LeadTime = IIF(e.ex = 1, pEx.LeadTime, pnEx.LeadTime)
+       ,AddLeadTime = IIF(e.ex = 1, pEx.AddLeadTime, pnEx.AddLeadTime)
+) plt
+WHERE oa.ArtworkTypeID = 'Printing'
+AND oa.ID IN (SELECT ID FROM #tmpOrders)
 
-            string sqloutput;
-            if (model.IsPowerBI)
-            {
-                sqloutput = @"
---彙整 ColumnN 和計算 Value
-SELECT
-    a.ID
-    ,[ColumnN] = AUnitRno.ColumnN
-    ,[Val] = CAST(
-        CASE
-            WHEN a.AUnitRno IS NOT NULL THEN a.Qty
-            ELSE NULL
-        END AS VARCHAR(100))
-INTO #tmp_ArtworkTypeValue
-FROM #tmp_LastArtworkType a
-INNER JOIN #tmpArtworkData AUnitRno ON a.AUnitRno = AUnitRno.rno
-
-UNION ALL
-SELECT
-    a.ID
-    ,[ColumnN] = PUnitRno.ColumnN
-    ,[Val] = CAST(
-        CASE
-        WHEN a.PUnitRno IS NOT NULL THEN CASE
-                WHEN a.ProductionUnit = 'TMS' THEN a.TMS
-                ELSE a.Price
-            END
-        ELSE NULL
-        END AS VARCHAR(100))
-FROM #tmp_LastArtworkType a
-INNER JOIN #tmpArtworkData PUnitRno ON a.PUnitRno = PUnitRno.rno
-
-UNION ALL
-SELECT
-    a.ID
-    ,[ColumnN] = NRno.ColumnN
-    ,[Val] = CAST(
-        CASE
-        WHEN a.NRno IS NOT NULL THEN a.Qty
-        ELSE NULL
-        END AS VARCHAR(100))
-FROM #tmp_LastArtworkType a
-INNER JOIN #tmpArtworkData NRno ON a.NRno = NRno.rno
-
-UNION ALL
-SELECT
-    a.ID
-    ,[ColumnN] = TAUnitRno.ColumnN
-    ,[Val] = CAST(
-        CASE
-        WHEN a.TAUnitRno IS NOT NULL THEN b.Qty * a.Qty
-        ELSE NULL
-        END AS VARCHAR(100))
-FROM #tmp_LastArtworkType a
-INNER JOIN #tmpArtworkData TAUnitRno ON a.TAUnitRno = TAUnitRno.rno
-INNER JOIN #tmpOrders b ON a.ID = b.ID
-
-UNION ALL
-SELECT
-    a.ID
-    ,[ColumnN] = TPUnitRno.ColumnN
-    ,[Val] = CAST(
-        CASE
-        WHEN a.TPUnitRno IS NOT NULL THEN
-            CASE
-            WHEN a.ProductionUnit = 'TMS' THEN b.Qty * a.TMS
-            ELSE b.Qty * a.Price
-            END
-        ELSE NULL
-        END AS VARCHAR(100))
-FROM #tmp_LastArtworkType a
-INNER JOIN #tmpArtworkData TPUnitRno ON a.TPUnitRno = TPUnitRno.rno
-INNER JOIN #tmpOrders b ON a.ID = b.ID
-
-UNION ALL
-SELECT
-    a.ID
-    ,[ColumnN] = TNRno.ColumnN
-    ,[Val] = CAST(
-        CASE
-        WHEN a.TNRno IS NOT NULL THEN b.Qty * a.Qty
-        ELSE NULL
-        END AS VARCHAR(100))
-FROM #tmp_LastArtworkType a
-INNER JOIN #tmpArtworkData TNRno ON a.TNRno = TNRno.rno
-INNER JOIN #tmpOrders b ON a.ID = b.ID
-
-UNION ALL
-SELECT
-    a.ID
-    ,[ColumnN] = 'POSubCon'
-    ,[Val] = a.PoSupp
-FROM #tmp_LastArtworkType a
-WHERE ISNULL(a.PoSupp, '') <> ''
-
-UNION ALL
-SELECT
-    a.ID
-    ,[ColumnN] = 'SubCon'
-    ,[Val] = a.Supp
-FROM #tmp_LastArtworkType a
-WHERE ISNULL(a.Supp, '') <> ''
-
-UNION ALL
-SELECT
-    b.ID
-    ,[ColumnN] = 'TTL_TMS'
-    ,[Val] = CAST(b.Qty * b.CPU * @StdTMS AS VARCHAR(100))
-FROM #tmpOrders b
-
---BI 更新到 P_PPICMasterList_Exten
-SELECT
-    [OrderID] = t.ID
-   ,[ColumnName] = t.ColumnN
-   ,[ColumnValue] = SUM(ISNULL(TRY_CONVERT(NUMERIC(38, 6), t.Val), 0))
-FROM #tmp_ArtworkTypeValue t
-GROUP BY t.ID, t.ColumnN";
-            }
-            else
-            {
-                sqloutput = @"
---PPIC R03
-SELECT * FROM #tmpArtworkData
-SELECT * FROM #tmp_LastArtworkType
+SELECT DISTINCT-- 沒有 by Order_QtyShip.Seq
+    t.ID
+   {seq}
+   ,a.PrintingLT
+   ,b.InkTypeColorSize
+INTO #tmpPrintingValue
+FROM #tmpOrders t
+OUTER APPLY (
+    SELECT PrintingLT = STUFF((
+        SELECT CONCAT(',', t2.PrintingLT)
+        FROM #tmpOrder_Artwork t2
+        WHERE t2.ID = t.id
+        ORDER BY PrintingLT DESC
+        FOR XML PATH ('')), 1, 1, '')
+) a
+OUTER APPLY (
+    SELECT InkTypecolorsize = STUFF((
+        SELECT CONCAT(',', t2.InkTypecolorsize)
+        FROM #tmpOrder_Artwork t2
+        WHERE t2.ID = t.id
+        ORDER BY PrintingLT DESC
+        FOR XML PATH ('')), 1, 1, '')
+) b
 ";
+                sql_printingDetail_OutputUnion = $@"
+UNION ALL
+SELECT ID {seq}, [ColumnName] = 'Printing LT', [ColumnValue] = PrintingLT
+FROM #tmpPrintingValue
+UNION ALL
+SELECT ID {seq}, [ColumnName] = 'InkType/Color/Size', [ColumnValue] = InkTypeColorSize
+FROM #tmpPrintingValue";
             }
+            #endregion
 
+            #region step 3 處理顯示的欄位名稱 & 不同 ArtworkTypeID 不同計算規則
+
+            // 處理顯示的欄位名稱
             string sqlcmd = $@"
-SELECT DISTINCT ID,Qty,CPU INTO #tmpOrders FROM #tmp
-
-DECLARE @StdTMS INT = (SELECT StdTMS FROM System WITH (NOLOCK))
+{sql_printingDetail_Select}
 
 SELECT
     ID
-    ,Seq
     ,FakeID = Seq + 'U1'
     ,ColumnN = RTRIM(ID) + ' (' + ArtworkUnit + ')'
     ,ColumnSeq = '1'
@@ -1916,7 +1304,6 @@ AND Classify IN ({whereClassify})
 UNION ALL
 SELECT
     ID
-    ,Seq
     ,FakeID = Seq + 'U2'
     ,ColumnN = RTRIM(ID) + ' (' + IIF(ProductionUnit = 'QTY', 'Price', p.PUnit) + ')'
     ,ColumnSeq = '2'
@@ -1929,7 +1316,6 @@ AND ID <> 'PRINTING PPU'
 UNION ALL
 SELECT
     ID
-    ,Seq
     ,FakeID = Seq + 'N'
     ,ColumnN = RTRIM(ID)
     ,ColumnSeq = '3'
@@ -1938,33 +1324,29 @@ WHERE ArtworkUnit = ''
 AND ProductionUnit = ''
 AND Classify IN ({whereClassify})
 
-{sql_printingDetail}
+{sql_printingDetail_BaseUnion}
 
 UNION ALL
 SELECT
     ID = 'EMBROIDERY'
-    ,seq = ''
     ,FakeID = '9999ZZ'
     ,ColumnN = 'EMBROIDERY(SubCon)'
     ,ColumnSeq = '996'
 UNION ALL
 SELECT
     ID = 'EMBROIDERY'
-    ,seq = ''
     ,FakeID = '9999ZZ'
     ,ColumnN = 'EMBROIDERY(POSubcon)'
     ,ColumnSeq = '997'
 UNION ALL
 SELECT
     ID = 'PrintSubCon'
-    ,Seq = ''
     ,FakeID = '9999ZZ'
     ,ColumnN = 'POSubCon'
     ,ColumnSeq = '998'
 UNION ALL
 SELECT
     ID = 'PrintSubCon'
-    ,Seq = ''
     ,FakeID = '9999ZZ'
     ,ColumnN = 'SubCon'
     ,ColumnSeq = '999'
@@ -1974,44 +1356,44 @@ INTO #tmpSubProcess
 FROM #tmpArtworkType a
 
 SELECT
-    ID = 'TTL' + ID
-    ,Seq
-    ,FakeID = 'T' + FakeID
-    ,ColumnN = 'TTL_' + ColumnN
-    ,ColumnSeq
-    ,rno = (ROW_NUMBER() OVER (ORDER BY ID, ColumnSeq)) + 1000
-INTO #tmpTTL_Subprocess
-FROM #tmpSubProcess WITH (NOLOCK)
-WHERE ID <> 'PrintSubCon'
-AND ColumnN <> 'Printing LT'
-AND ColumnN <> 'InkType/color/size'
-
-SELECT
     ID
-   ,Seq
    ,FakeID
    ,ColumnN
-   ,ColumnSeq
-   ,rno = (ROW_NUMBER() OVER (ORDER BY a.rno)) + {model.ColumnsNum}
+   ,rno = (ROW_NUMBER() OVER (ORDER BY a.rno))
 INTO #tmpArtworkData
 FROM (
     SELECT *
     FROM #tmpSubProcess WITH (NOLOCK)
-
-    UNION ALL
-    SELECT *
-    FROM #tmpTTL_Subprocess
-
+    
     UNION ALL
     SELECT
         ID = 'TTLTMS'
-       ,Seq = ''
        ,FakeID = 'TTLTMS'
-       ,FakeID = 'TTL_TMS'
+       ,ColumnN = 'TTL_TMS'
        ,ColumnSeq = ''
        ,rno = '999'
-) a
 
+    UNION ALL
+    SELECT
+        ID = 'TTL' + ID
+        ,FakeID = 'T' + FakeID
+        ,ColumnN = 'TTL_' + ColumnN
+        ,ColumnSeq
+        ,rno = (ROW_NUMBER() OVER (ORDER BY ID, ColumnSeq)) + 1000--在 TTL_TMS 999 之後
+    FROM #tmpSubProcess WITH (NOLOCK)
+    --排除文字資訊, 不需要TTL_
+    WHERE ID <> 'PrintSubCon'
+    AND ColumnN <> 'EMBROIDERY(POSubcon)'
+    AND ColumnN <> 'EMBROIDERY(SubCon)'
+    --排除額外取得資訊欄位, 不需要TTL_
+    AND ColumnN <> 'Printing LT'--數值
+    AND ColumnN <> 'InkType/color/size'
+    --此處條件不知為啥沒有排除'EMBROIDERY(SubCon)','EMBROIDERY(POSubcon)'
+) a
+";
+
+            // 不同 ArtworkTypeID 不同計算規則
+            sqlcmd += $@"
 SELECT
     ot.ID
    ,ot.ArtworkTypeID
@@ -2026,7 +1408,7 @@ SELECT
    ,PUnitRno = IIF(ot.ArtworkTypeID = 'PRINTING PPU', a0.rno, a1.rno)
    ,NRno = a2.rno
    ,TAUnitRno = a3.rno
-   ,TPUnitRno = IIF(ot.ArtworkTypeID = 'PRINTING PPU', a3.rno, a4.rno)
+   ,TPUnitRno = IIF(ot.ArtworkTypeID = 'TTLPRINTING PPU', a3.rno, a4.rno)
    ,TNRno = a5.rno
    ,EMBROIDERYSubcon = IIF(ot.ArtworkTypeID = 'EMBROIDERY', IIF(ot.InhouseOSP = 'O', l.Abb, ot.LocalSuppID), '')
    ,EMBROIDERYPOSubcon = IIF(ot.ArtworkTypeID = 'EMBROIDERY', IIF(ot.InhouseOSP = 'O', EMP.Abb, ot.LocalSuppID), '')
@@ -2063,79 +1445,196 @@ OUTER APPLY (
 ) EMP
 WHERE EXISTS (SELECT ID FROM #tmpOrders o WITH (NOLOCK) WHERE ot.ID = o.ID)
 
-{sqloutput}
+--彙整 ColumnN 和計算 Value
+SELECT
+    a.ID
+    {seq}
+    ,[ColumnN] = AUnitRno.ColumnN
+    ,[Val] = CAST(
+        CASE
+            WHEN a.AUnitRno IS NOT NULL THEN a.Qty
+            ELSE NULL
+        END AS VARCHAR(100))
+INTO #tmp_ArtworkTypeValue
+FROM #tmp_LastArtworkType a
+INNER JOIN #tmpArtworkData AUnitRno ON a.AUnitRno = AUnitRno.rno
+INNER JOIN #tmpOrders b ON a.ID = b.ID
+WHERE a.ArtworkTypeID <> 'PRINTING PPU'
+
+UNION ALL
+SELECT
+    a.ID
+    {seq}
+    ,[ColumnN] = PUnitRno.ColumnN
+    ,[Val] = CAST(
+        CASE
+        WHEN a.PUnitRno IS NOT NULL THEN CASE
+                WHEN a.ProductionUnit = 'TMS' THEN a.TMS
+                ELSE a.Price
+            END
+        ELSE NULL
+        END AS VARCHAR(100))
+FROM #tmp_LastArtworkType a
+INNER JOIN #tmpArtworkData PUnitRno ON a.PUnitRno = PUnitRno.rno
+INNER JOIN #tmpOrders b ON a.ID = b.ID
+
+UNION ALL
+SELECT
+    a.ID
+    {seq}
+    ,[ColumnN] = NRno.ColumnN
+    ,[Val] = CAST(
+        CASE
+        WHEN a.NRno IS NOT NULL THEN a.Qty
+        ELSE NULL
+        END AS VARCHAR(100))
+FROM #tmp_LastArtworkType a
+INNER JOIN #tmpArtworkData NRno ON a.NRno = NRno.rno
+INNER JOIN #tmpOrders b ON a.ID = b.ID
+
+UNION ALL
+ --有 by Order_QtyShip.Seq
+SELECT
+    a.ID
+    {seq}
+    ,[ColumnN] = TAUnitRno.ColumnN
+    ,[Val] = CAST(
+        CASE
+        WHEN a.TAUnitRno IS NOT NULL THEN b.Qty * a.Qty
+        ELSE NULL
+        END AS VARCHAR(100))
+FROM #tmp_LastArtworkType a
+INNER JOIN #tmpArtworkData TAUnitRno ON a.TAUnitRno = TAUnitRno.rno
+INNER JOIN #tmpOrders b ON a.ID = b.ID
+WHERE a.ArtworkTypeID <> 'TTLPRINTING PPU'
+
+UNION ALL
+ --有 by Order_QtyShip.Seq
+SELECT
+    a.ID
+    {seq}
+    ,[ColumnN] = TPUnitRno.ColumnN
+    ,[Val] = CAST(
+        CASE
+        WHEN a.TPUnitRno IS NOT NULL THEN
+            CASE
+            WHEN a.ProductionUnit = 'TMS' THEN b.Qty * a.TMS
+            ELSE b.Qty * a.Price
+            END
+        ELSE NULL
+        END AS VARCHAR(100))
+FROM #tmp_LastArtworkType a
+INNER JOIN #tmpArtworkData TPUnitRno ON a.TPUnitRno = TPUnitRno.rno
+INNER JOIN #tmpOrders b ON a.ID = b.ID
+
+UNION ALL
+SELECT
+    a.ID
+    {seq}
+    ,[ColumnN] = TNRno.ColumnN
+    ,[Val] = CAST(
+        CASE
+        WHEN a.TNRno IS NOT NULL THEN b.Qty * a.Qty
+        ELSE NULL
+        END AS VARCHAR(100))
+FROM #tmp_LastArtworkType a
+INNER JOIN #tmpArtworkData TNRno ON a.TNRno = TNRno.rno
+INNER JOIN #tmpOrders b ON a.ID = b.ID
+
+UNION ALL
+SELECT
+    a.ID
+    {seq}
+    ,[ColumnN] = 'POSubCon'
+    ,[Val] = a.PoSupp
+FROM #tmp_LastArtworkType a
+INNER JOIN #tmpOrders b ON a.ID = b.ID
+WHERE ISNULL(a.PoSupp, '') <> ''
+
+UNION ALL
+SELECT
+    a.ID
+    {seq}
+    ,[ColumnN] = 'SubCon'
+    ,[Val] = a.Supp
+FROM #tmp_LastArtworkType a
+INNER JOIN #tmpOrders b ON a.ID = b.ID
+WHERE ISNULL(a.Supp, '') <> ''
+
+UNION ALL
+SELECT
+    a.ID
+    {seq}
+    ,[ColumnN] = 'EMBROIDERY(POSubcon)'
+    ,[Val] = a.EMBROIDERYPOSubcon
+FROM #tmp_LastArtworkType a
+INNER JOIN #tmpOrders b ON a.ID = b.ID
+WHERE ISNULL(a.EMBROIDERYPOSubcon, '') <> ''
+
+UNION ALL
+SELECT
+    a.ID
+    {seq}
+    ,[ColumnN] = 'EMBROIDERY(SubCon)'
+    ,[Val] = a.EMBROIDERYSubcon
+FROM #tmp_LastArtworkType a
+INNER JOIN #tmpOrders b ON a.ID = b.ID
+WHERE ISNULL(a.EMBROIDERYSubcon, '') <> ''
+
+UNION ALL
+ --有 by Order_QtyShip.Seq
+SELECT
+    b.ID
+    {seq}
+    ,[ColumnN] = 'TTL_TMS'
+    ,[Val] = CAST(b.Qty * b.CPU * (select StdTMS from System WITH (NOLOCK)) AS VARCHAR(100))
+FROM #tmpOrders b
+
+--正確狀況不會發散只會By OrdreID, 或By OrdreID,Seq
+SELECT
+    [OrderID] = t.ID
+    {seq}
+   ,[ColumnName] = t.ColumnN
+   ,[ColumnValue] = t.Val
+INTO #tmpArtworkValues
+FROM #tmp_ArtworkTypeValue t
+
+{sql_printingDetail_OutputUnion}
 ";
+            #endregion
+
+            #region 輸出 BI 或 PPIC R03
+            if (model.IsPowerBI)
+            {
+                // BI 更新到 P_PPICMasterList_Exten 只會By OrdreID
+                // 排除文字型態欄位, BI 的 ColumnValue 是數值欄位
+                sqlcmd += @"
+SELECT
+    [OrderID]
+    ,[ColumnName]
+    ,[ColumnValue] = ISNULL(TRY_CONVERT(NUMERIC(38, 6), [ColumnValue]), 0)
+FROM #tmpArtworkValues
+WHERE ColumnName NOT IN (
+    'Printing LT'
+    ,'InkType/Color/Size'
+    ,'EMBROIDERY(SubCon)'
+    ,'EMBROIDERY(POSubcon)'
+    ,'POSubCon'
+    ,'SubCon'
+)
+";
+            }
+            else
+            {
+                // PPIC R03
+                sqlcmd += $@"
+SELECT * FROM #tmpArtworkValues
+SELECT * FROM #tmpArtworkData ORDER BY rno
+";
+            }
+            #endregion
 
             return sqlcmd;
-        }
-
-        /// <summary>
-        /// PPIC R03 有勾選 Printing Detail
-        /// BI 沒有這段資訊
-        /// </summary>
-        private string GetPrintingDetail(PPIC_R03_ViewModel model)
-        {
-            return $@"
-SELECT DISTINCT ID INTO #tmpOrderID FROM #tmp
-SELECT DISTINCT
-    oa.ID
-   ,InkTypecolorsize = CONCAT(oa.InkType, '/', oa.Colors, ' ', '/', IIF(s.SmallLogo = 1, 'Small logo', 'Big logo'))
-   ,PrintingLT = CAST(plt.LeadTime + plt.AddLeadTime AS FLOAT)
-INTO #tmpOrder_Artwork
-FROM Order_Artwork oa WITH (NOLOCK)
-INNER JOIN Orders o WITH (NOLOCK) ON o.ID = oa.ID
-OUTER APPLY (SELECT SmallLogo = IIF(EXISTS(SELECT 1 FROM System WITH (NOLOCK) WHERE SmallLogoCM <= oa.Width OR SmallLogoCM <= oa.Length), 0, 1)) s
-OUTER APPLY (SELECT tmpRTL = IIF(o.Cpu = 0, 0, s.SewlineAvgCPU / o.Cpu) FROM System s WITH (NOLOCK)) tr
-OUTER APPLY (SELECT RTLQty = IIF(o.Qty < tmpRTL, o.Qty, tmpRTL)) r
-OUTER APPLY (SELECT Colors = IIF(oa.Colors = '', 0, oa.Colors)) c
-OUTER APPLY (SELECT ex = IIF(EXISTS (SELECT 1 FROM PrintLeadTime WITH (NOLOCK) WHERE InkType = oa.InkType), 1, 0)) e
-OUTER APPLY (
-    SELECT InkType, LeadTime, AddLeadTime
-    FROM PrintLeadTime plt WITH (NOLOCK)
-    WHERE plt.InkType = oa.InkType
-    AND plt.SmallLogo = s.SmallLogo
-    AND r.RTLQty BETWEEN plt.RTLQtyLowerBound AND plt.RTLQtyUpperBound
-    AND c.Colors BETWEEN plt.ColorsLowerBound AND plt.ColorsUpperBound
-) pEx
-OUTER APPLY (
-    SELECT InkType, LeadTime, AddLeadTime
-    FROM PrintLeadTime plt WITH (NOLOCK)
-    WHERE plt.SmallLogo = s.SmallLogo
-    AND plt.IsDefault = 1
-    AND r.RTLQty BETWEEN plt.RTLQtyLowerBound AND plt.RTLQtyUpperBound
-    AND c.Colors BETWEEN plt.ColorsLowerBound AND plt.ColorsUpperBound
-) pNEx
-OUTER APPLY (
-    SELECT
-        InkType = IIF(e.ex = 1, pEx.InkType, pnEx.InkType)
-       ,LeadTime = IIF(e.ex = 1, pEx.LeadTime, pnEx.LeadTime)
-       ,AddLeadTime = IIF(e.ex = 1, pEx.AddLeadTime, pnEx.AddLeadTime)
-) plt
-WHERE oa.ArtworkTypeID = 'Printing'
-AND oa.ID IN (SELECT ID FROM #tmpOrderID)
-
-SELECT
-    t.ID
-   ,a.PrintingLT
-   ,b.InkTypecolorsize
-FROM #tmpOrderID t
-OUTER APPLY (
-    SELECT PrintingLT = STUFF((
-        SELECT CONCAT(',', t2.PrintingLT)
-        FROM #tmpOrder_Artwork t2
-        WHERE t2.ID = t.id
-        ORDER BY PrintingLT DESC
-        FOR XML PATH ('')), 1, 1, '')
-) a
-OUTER APPLY (
-    SELECT InkTypecolorsize = STUFF((
-        SELECT CONCAT(',', t2.InkTypecolorsize)
-        FROM #tmpOrder_Artwork t2
-        WHERE t2.ID = t.id
-        ORDER BY PrintingLT DESC
-        FOR XML PATH ('')), 1, 1, '')
-) b
-";
         }
     }
 }

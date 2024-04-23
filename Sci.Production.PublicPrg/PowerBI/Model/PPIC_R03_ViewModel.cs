@@ -12,10 +12,6 @@ namespace Sci.Production.Prg.PowerBI.Model
     public class PPIC_R03_ViewModel
     {
         public bool IsPowerBI { get; set; }
-
-        // PPIC R03 固定欄位的總數量
-        public int ColumnsNum { get; set; }
-        public string P_type { get; set; }
         public DateTime? BuyerDelivery1 { get; set; }
         public DateTime? BuyerDelivery2 { get; set; }
         public DateTime? SciDelivery1 { get; set; }
