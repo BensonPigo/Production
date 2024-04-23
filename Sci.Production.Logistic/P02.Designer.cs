@@ -444,7 +444,8 @@
             // labProcessingBar
             // 
             this.labProcessingBar.AutoSize = true;
-            this.labProcessingBar.Location = new System.Drawing.Point(227, 13);
+            this.labProcessingBar.BackColor = System.Drawing.Color.Transparent;
+            this.labProcessingBar.Location = new System.Drawing.Point(228, 13);
             this.labProcessingBar.Name = "labProcessingBar";
             this.labProcessingBar.Size = new System.Drawing.Size(28, 17);
             this.labProcessingBar.TabIndex = 10;
@@ -462,9 +463,11 @@
             // progressBarProcessing
             // 
             this.progressBarProcessing.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.progressBarProcessing.BackColor = System.Drawing.SystemColors.Control;
             this.progressBarProcessing.Location = new System.Drawing.Point(144, 10);
             this.progressBarProcessing.Name = "progressBarProcessing";
             this.progressBarProcessing.Size = new System.Drawing.Size(208, 23);
+            this.progressBarProcessing.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
             this.progressBarProcessing.TabIndex = 8;
             // 
             // panel6

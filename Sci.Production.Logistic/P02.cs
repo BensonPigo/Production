@@ -11,8 +11,7 @@ using Sci.Production.PublicPrg;
 using System.Linq;
 using Sci.Production.Prg;
 using System.Text;
-using Sci.Production.Class;
-using System.Runtime.CompilerServices;
+
 
 namespace Sci.Production.Logistic
 {
@@ -588,6 +587,8 @@ where pd.CustCTN = '{dr["CustCTN"]}' and pd.CTNQty > 0 and pd.DisposeFromClog= 0
 
         private void GridImport_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
         {
+            this.gridImport.ValidateControl();
+            this.listControlBindingSource1.EndEdit();
             this.Countselectcount();
         }
 
@@ -598,8 +599,9 @@ where pd.CustCTN = '{dr["CustCTN"]}' and pd.CTNQty > 0 and pd.DisposeFromClog= 0
             DataGridViewColumn column = this.gridImport.Columns["Selected"];
             if (!MyUtility.Check.Empty(column) && !MyUtility.Check.Empty(this.listControlBindingSource1.DataSource))
             {
+                int selectCnt = this.gridImport.Rows.Cast<DataGridViewRow>().Where(row => row.Cells["selected"].Value.ToString().Equals("1")).Count();
                 int sint = ((DataTable)this.listControlBindingSource1.DataSource).Select("selected = 1").Length;
-                this.numSelectedCTNQty.Value = sint;
+                this.numSelectedCTNQty.Value = selectCnt;
                 this.numTotalCTNQty.Value = ((DataTable)this.listControlBindingSource1.DataSource).Rows.Count;
             }
         }
@@ -780,7 +782,6 @@ insert into ClogReceive (
         private void BackgroundDownloadSticker_RunWorkerCompleted(object sender, System.ComponentModel.RunWorkerCompletedEventArgs e)
         {
             // 檢查是否有勾選資料
-            this.gridImport.ValidateControl();
             this.listControlBindingSource1.EndEdit();
 
             // 使用Find撈出的全部資料
