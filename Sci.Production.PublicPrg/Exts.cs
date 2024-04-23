@@ -526,5 +526,37 @@ namespace Sci.Production.Prg
 
             return value.ToString();
         }
+
+        /// <summary>
+        /// DecimalToFraction
+        /// </summary>
+        /// <param name="number">number</param>
+        /// <returns>string</returns>
+        public static string DecimalToFraction(decimal number)
+        {
+            // 將小數轉換為分數
+            decimal epsilon = 0.0001M; // 適當的誤差範圍
+            int maxDenominator = 10; // 分母的最大值（1位數）
+
+            for (int denominator = 1; denominator <= maxDenominator; denominator++)
+            {
+                int numerator = (int)Math.Round(number * denominator);
+
+                // 檢查分子和分母是否超過1位數
+                if (numerator > 9 || denominator > 9)
+                {
+                    return "0/0";
+                }
+
+                // 檢查分數是否接近原始數字
+                if (Math.Abs(number - ((decimal)numerator / denominator)) < epsilon)
+                {
+                    return $"{numerator}/{denominator}";
+                }
+            }
+
+            // 找不到符合條件的分數
+            return "0/0";
+        }
     }
 }
