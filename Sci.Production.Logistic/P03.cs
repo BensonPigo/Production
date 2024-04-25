@@ -146,20 +146,19 @@ namespace Sci.Production.Logistic
             {
                 if ((rowIndex == -1) & (columIndex == 4))
                 {
-                    this.listControlBindingSource1.DataSource = null;
-
                     if (this.selectDataTable_DefaultView_Sort == "DESC")
                     {
                         this.selectDataTable.DefaultView.Sort = "rn1 DESC";
                         this.selectDataTable_DefaultView_Sort = string.Empty;
+                        ((DataTable)this.listControlBindingSource1.DataSource).DefaultView.Sort = " rn1 DESC";
                     }
                     else
                     {
                         this.selectDataTable.DefaultView.Sort = "rn1 ASC";
                         this.selectDataTable_DefaultView_Sort = "DESC";
+                        ((DataTable)this.listControlBindingSource1.DataSource).DefaultView.Sort = " rn1 ASC";
                     }
 
-                    this.listControlBindingSource1.DataSource = this.selectDataTable;
                     return;
                 }
             };
@@ -774,6 +773,12 @@ where pd.CustCTN = '{dr["CustCTN"]}' and pd.CTNQty > 0 and pd.DisposeFromClog= 0
 
             if (dt == null || dt.Rows.Count == 0)
             {
+                MyUtility.Msg.InfoBox("No data need to import!");
+                return;
+            }
+
+            if (dt.AsEnumerable().Any(row => row["Selected"].EqualDecimal(1)) == false)
+            {
                 MyUtility.Msg.InfoBox("Please select data first!");
                 return;
             }
@@ -831,8 +836,6 @@ where pd.CustCTN = '{dr["CustCTN"]}' and pd.CTNQty > 0 and pd.DisposeFromClog= 0
 
                 for (int i = 0; i < this.threadCnt; i++)
                 {
-                    //this.workers[i].RunWorkerAsync(i + 1); // 將索引作為參數傳遞給後台操作
-
                     int remainingRows = rowCnt - processedRows;
                     int rowsToProcess = Math.Min(batchSize, remainingRows);
                     this.workers[i].RunWorkerAsync(new object[] { this.selectDataTable, processedRows, rowsToProcess });
