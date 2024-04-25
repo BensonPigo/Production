@@ -159,67 +159,72 @@ where Zone <> ''";
             worksheet.Name = "PPIC_Master_List";
 
             #region Artwork 動態欄位. 因為效能寫在這, 資料量大時一年以上那種 1.用SQL做pivot會卡死, 2.用C#的DataTable做pivot也很卡 3.用C#雙迴圈預先準備DataTable也很卡
-            int startColumnIndex_Artwork = this.printData.Columns.Count + 1;
-            int startRowIndex = 2;
-
-            // 填充欄位名稱
-            for (int i = 0; i < this.dtArtworkData.Rows.Count; i++)
+            int artworkCount = 0;
+            if (this.ppic_R03_ViewModel.IncludeArtworkData || this.ppic_R03_ViewModel.IncludeArtworkDataKindIsPAP)
             {
-                int columnIndex = startColumnIndex_Artwork + i;
-                worksheet.Cells[1, columnIndex].Value = this.dtArtworkData.Rows[i]["ColumnN"];
-            }
+                artworkCount = this.dtArtworkData.Rows.Count;
+                int startColumnIndex_Artwork = this.printData.Columns.Count + 1;
+                int startRowIndex = 2;
 
-            excelapp.Cells.EntireColumn.AutoFit();
-
-            // 填充欄位值
-            List<object[,]> rowValuesList = new List<object[,]>();
-            foreach (DataRow mainRow in this.printData.Rows)
-            {
-                string spNo = MyUtility.Convert.GetString(mainRow["SPNO"]);
-                string filter;
-                if (this.ppic_R03_ViewModel.SeparateByQtyBdownByShipmode)
+                // 填充欄位名稱
+                for (int i = 0; i < this.dtArtworkData.Rows.Count; i++)
                 {
-                    filter = $"OrderID = '{spNo}' AND Seq = '{mainRow["Seq"]}'";
-                }
-                else
-                {
-                    filter = $"OrderID = '{spNo}'";
+                    int columnIndex = startColumnIndex_Artwork + i;
+                    worksheet.Cells[1, columnIndex].Value = this.dtArtworkData.Rows[i]["ColumnN"];
                 }
 
-                var drsArtwork = this.dtArtworkValues.Select(filter);
-                object[,] rowValues = new object[1, this.dtArtworkData.Rows.Count];
+                excelapp.Cells.EntireColumn.AutoFit();
 
-                // 將初始值設為 0，但對於特定的 ColumnN，不設為 0
-                for (int i = 0; i < rowValues.Length; i++)
+                // 填充欄位值
+                List<object[,]> rowValuesList = new List<object[,]>();
+                foreach (DataRow mainRow in this.printData.Rows)
                 {
-                    string columnName = this.dtArtworkData.Rows[i]["ColumnN"].ToString();
-                    if (!this.list.Contains(columnName)) // 不在指定清單中的列，預設為 0
+                    string spNo = MyUtility.Convert.GetString(mainRow["SPNO"]);
+                    string filter;
+                    if (this.ppic_R03_ViewModel.SeparateByQtyBdownByShipmode)
                     {
-                        rowValues[0, i] = 0;
+                        filter = $"OrderID = '{spNo}' AND Seq = '{mainRow["Seq"]}'";
                     }
-                }
-
-                foreach (DataRow dr in drsArtwork)
-                {
-                    string columnName = dr["ColumnName"].ToString();
-                    int columnIndex = Array.IndexOf(this.dtArtworkData.AsEnumerable().Select(r => r["ColumnN"].ToString()).ToArray(), columnName);
-                    if (columnIndex != -1) // Check if the columnName exists in dtArtworkData
+                    else
                     {
-                        rowValues[0, columnIndex] = dr["ColumnValue"];
+                        filter = $"OrderID = '{spNo}'";
                     }
+
+                    var drsArtwork = this.dtArtworkValues.Select(filter);
+                    object[,] rowValues = new object[1, this.dtArtworkData.Rows.Count];
+
+                    // 將初始值設為 0，但對於特定的 ColumnN，不設為 0
+                    for (int i = 0; i < rowValues.Length; i++)
+                    {
+                        string columnName = this.dtArtworkData.Rows[i]["ColumnN"].ToString();
+                        if (!this.list.Contains(columnName)) // 不在指定清單中的列，預設為 0
+                        {
+                            rowValues[0, i] = 0;
+                        }
+                    }
+
+                    foreach (DataRow dr in drsArtwork)
+                    {
+                        string columnName = dr["ColumnName"].ToString();
+                        int columnIndex = Array.IndexOf(this.dtArtworkData.AsEnumerable().Select(r => r["ColumnN"].ToString()).ToArray(), columnName);
+                        if (columnIndex != -1) // Check if the columnName exists in dtArtworkData
+                        {
+                            rowValues[0, columnIndex] = dr["ColumnValue"];
+                        }
+                    }
+
+                    rowValuesList.Add(rowValues);
                 }
 
-                rowValuesList.Add(rowValues);
-            }
-
-            // 將所有行的值填入工作表
-            for (int i = 0; i < rowValuesList.Count; i++)
-            {
-                worksheet.Cells[startRowIndex + i, startColumnIndex_Artwork].Resize(1, this.dtArtworkData.Rows.Count).Value = rowValuesList[i];
+                // 將所有行的值填入工作表
+                for (int i = 0; i < rowValuesList.Count; i++)
+                {
+                    worksheet.Cells[startRowIndex + i, startColumnIndex_Artwork].Resize(1, this.dtArtworkData.Rows.Count).Value = rowValuesList[i];
+                }
             }
             #endregion
 
-            worksheet.Range[worksheet.Cells[1, 1], worksheet.Cells[1, this.printData.Columns.Count + this.dtArtworkData.Rows.Count]].Interior.Color = Color.FromArgb(191, 191, 191); // 底色
+            worksheet.Range[worksheet.Cells[1, 1], worksheet.Cells[1, this.printData.Columns.Count + artworkCount]].Interior.Color = Color.FromArgb(191, 191, 191); // 底色
 
             // 若有 Seq 欄位,此處才移除,前面需要用
             if ((worksheet.Cells[1, 1] as Excel.Range).Value2?.ToString() == "Seq")
