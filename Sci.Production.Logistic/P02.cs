@@ -21,7 +21,6 @@ namespace Sci.Production.Logistic
     public partial class P02 : Win.Tems.QueryForm
     {
         private DataTable selectDataTable = new DataTable();
-        private DataRow[] selectedData;
 
         /// <summary>
         /// P02
@@ -57,7 +56,7 @@ namespace Sci.Production.Logistic
                 DataRow dr = this.gridImport.GetDataRow<DataRow>(e.RowIndex);
                 dr["selected"] = e.FormattedValue;
                 dr.EndEdit();
-                int sint = ((DataTable)this.listControlBindingSource1.DataSource).Select("selected = 1").Length;
+                int sint = this.gridImport.Rows.Cast<DataGridViewRow>().Where(row => row.Cells["Selected"].Value.ToString().Equals("1")).Count();
                 this.numSelectedCTNQty.Value = sint;
             };
             this.gridImport.IsEditingReadOnly = false;
@@ -93,20 +92,19 @@ namespace Sci.Production.Logistic
             {
                 if ((rowIndex == -1) & (columIndex == 4))
                 {
-                    this.listControlBindingSource1.DataSource = null;
-
                     if (this.selectDataTable_DefaultView_Sort == "DESC")
                     {
                         this.selectDataTable.DefaultView.Sort = "rn1 DESC";
                         this.selectDataTable_DefaultView_Sort = string.Empty;
+                        ((DataTable)this.listControlBindingSource1.DataSource).DefaultView.Sort = " rn1 DESC";
                     }
                     else
                     {
                         this.selectDataTable.DefaultView.Sort = "rn1 ASC";
                         this.selectDataTable_DefaultView_Sort = "DESC";
+                        ((DataTable)this.listControlBindingSource1.DataSource).DefaultView.Sort = " rn1 ASC";
                     }
 
-                    this.listControlBindingSource1.DataSource = this.selectDataTable;
                     return;
                 }
             };
@@ -527,25 +525,28 @@ where pd.CustCTN = '{dr["CustCTN"]}' and pd.CTNQty > 0 and pd.DisposeFromClog= 0
                 return;
             }
 
-            this.selectedData = dt.Select("Selected = 1");
-            if (this.selectedData.Length == 0)
+            if (dt.AsEnumerable().Any(row => row["Selected"].EqualDecimal(1)))
             {
-                MyUtility.Msg.WarningBox("No data need to import!");
-                return;
-            }
-
-            if (!this.backgroundDownloadSticker.IsBusy)
-            {
-                if (this.selectedData == null || this.selectDataTable.Rows.Count == 0)
+                this.selectDataTable = dt.AsEnumerable().Where(r => MyUtility.Convert.GetInt(r["selected"]) == 1).ToList().CopyToDataTable();
+                if (this.selectDataTable.Rows.Count <= 0)
                 {
+                    MyUtility.Msg.WarningBox("No data need to import!");
                     return;
                 }
 
-                this.progressBarProcessing.Maximum = this.selectedData.CopyToDataTable().Rows.Count;
+                if (!this.backgroundDownloadSticker.IsBusy)
+                {
+                    if (this.selectDataTable == null || this.selectDataTable.Rows.Count == 0)
+                    {
+                        return;
+                    }
 
-                // 先把UI介面鎖住
-                this.SetInterfaceLocked(true);
-                this.backgroundDownloadSticker.RunWorkerAsync();
+                    this.progressBarProcessing.Maximum = this.selectDataTable.Rows.Count;
+
+                    // 先把UI介面鎖住
+                    this.SetInterfaceLocked(true);
+                    this.backgroundDownloadSticker.RunWorkerAsync();
+                }
             }
         }
 
@@ -600,7 +601,6 @@ where pd.CustCTN = '{dr["CustCTN"]}' and pd.CTNQty > 0 and pd.DisposeFromClog= 0
             if (!MyUtility.Check.Empty(column) && !MyUtility.Check.Empty(this.listControlBindingSource1.DataSource))
             {
                 int selectCnt = this.gridImport.Rows.Cast<DataGridViewRow>().Where(row => row.Cells["selected"].Value.ToString().Equals("1")).Count();
-                int sint = ((DataTable)this.listControlBindingSource1.DataSource).Select("selected = 1").Length;
                 this.numSelectedCTNQty.Value = selectCnt;
                 this.numTotalCTNQty.Value = ((DataTable)this.listControlBindingSource1.DataSource).Rows.Count;
             }
@@ -613,14 +613,14 @@ where pd.CustCTN = '{dr["CustCTN"]}' and pd.CTNQty > 0 and pd.DisposeFromClog= 0
         {
             try
             {
-                DataTable dt = this.selectedData.CopyToDataTable();
+                DataTable dt = this.selectDataTable;
                 this.dtError = dt.Clone();
                 StringBuilder warningmsg = new StringBuilder();
                 this.backgroundDownloadSticker.ReportProgress(0);
                 string sqlUpdate = string.Empty;
 
                 this.progressCnt = 0;
-                foreach (DataRow dr in this.selectedData)
+                foreach (DataRow dr in dt.Rows)
                 {
                     warningmsg.Clear();
                     string checkPackSql = $@"
