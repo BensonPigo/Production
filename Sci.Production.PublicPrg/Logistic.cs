@@ -118,17 +118,17 @@ PackErrCTN = (
     from PackingList a, PackingList_Detail b 
     where a.id = b.id and (a.Type = 'B' or a.Type = 'L') and b.OrderID = '{0}' and b.DisposeFromClog = 0 and b.PackErrTransferDate is not null)
 ,FtyToClogTransit = (
-    SELECT SUM(pld.CTNQty)
+    SELECT ISNULL(SUM(pld.CTNQty), 0)
     FROM PackingList pl
     INNER JOIN PackingList_Detail pld ON pld.ID = pl.ID
     WHERE pld.OrderID = '{0}' AND pld.TransferDate IS NOT NULL AND pld.ReceiveDate  IS NULL)
 ,ClogToCFATansit = (
-    SELECT SUM(pld.CTNQty)
+    SELECT ISNULL(SUM(pld.CTNQty), 0)
     FROM PackingList pl
     INNER JOIN PackingList_Detail pld ON pld.ID = pl.ID
     WHERE pld.OrderID = '{0}' AND pld.TransferCFADate IS NOT NULL AND pld.CFAReceiveDate IS NULL AND pld.ClogLocationID = '2CFA')
 ,CFAToClogTransit = (
-    SELECT SUM(pld.CTNQty)
+    SELECT ISNULL(SUM(pld.CTNQty), 0)
     FROM PackingList pl
     INNER JOIN PackingList_Detail pld ON pld.ID = pl.ID
     WHERE pld.OrderID = '{0}' AND pld.TransferCFADate IS NULL AND pld.CFAReceiveDate IS NULL AND pld.CFAReturnClogDate IS NOT NULL AND pld.ClogLocationID = '2Clog')
