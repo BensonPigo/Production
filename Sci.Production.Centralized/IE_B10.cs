@@ -102,12 +102,17 @@ namespace Sci.Production.Centralized
                                 newFileName = newFileName.Replace(invalidChar.ToString(), string.Empty);
                             }
 
-                            string destination_fileName = $"B10_SewingMachineAttachment_{newFileName}-1{local_file_type}";
+                            string destination_fileName = $"B10_{newFileName}-1{local_file_type}";
 
                             File.Copy(local_path_file, this.destination_path + destination_fileName.Trim(), true);
 
                             // update picture1 path
                             DualResult result = Data.DBProxy.Current.Execute("ProductionTPE", $"update SewingMachineAttachment set Picture1 ='{destination_fileName.Trim()}' where ID=@ID", paras);
+
+                            if (!result)
+                            {
+                                this.ShowErr(result);
+                            }
 
                             this.picture1.ImageLocation = this.destination_path.Trim() + destination_fileName.Trim();
                             if (this.EditMode)
@@ -225,7 +230,7 @@ namespace Sci.Production.Centralized
                                 newFileName = newFileName.Replace(invalidChar.ToString(), string.Empty);
                             }
 
-                            string destination_fileName = $"B10_SewingMachineAttachment_{newFileName}-2{local_file_type}";
+                            string destination_fileName = $"B10_{newFileName}-2{local_file_type}";
 
                             File.Copy(local_path_file, this.destination_path + destination_fileName.Trim(), true);
 
