@@ -94,6 +94,7 @@
             this.label6 = new Sci.Win.UI.Label();
             this.numCW = new Sci.Win.UI.NumericBox();
             this.btnUpdateA2BData = new Sci.Win.UI.Button();
+            this.chkIsCustoms = new Sci.Win.UI.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -111,6 +112,7 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.chkIsCustoms);
             this.masterpanel.Controls.Add(this.numCW);
             this.masterpanel.Controls.Add(this.label6);
             this.masterpanel.Controls.Add(this.btnImport);
@@ -242,6 +244,7 @@
             this.masterpanel.Controls.SetChildIndex(this.btnImport, 0);
             this.masterpanel.Controls.SetChildIndex(this.label6, 0);
             this.masterpanel.Controls.SetChildIndex(this.numCW, 0);
+            this.masterpanel.Controls.SetChildIndex(this.chkIsCustoms, 0);
             // 
             // detailpanel
             // 
@@ -729,7 +732,7 @@
             this.txtpayterm_ftyTerms.DisplayBox1Binding = "";
             this.txtpayterm_ftyTerms.Location = new System.Drawing.Point(95, 81);
             this.txtpayterm_ftyTerms.Name = "txtpayterm_ftyTerms";
-            this.txtpayterm_ftyTerms.Size = new System.Drawing.Size(310, 23);
+            this.txtpayterm_ftyTerms.Size = new System.Drawing.Size(185, 23);
             this.txtpayterm_ftyTerms.TabIndex = 6;
             this.txtpayterm_ftyTerms.TextBox1Binding = "";
             // 
@@ -1060,6 +1063,19 @@
             this.btnUpdateA2BData.UseVisualStyleBackColor = true;
             this.btnUpdateA2BData.Click += new System.EventHandler(this.BtnUpdateA2BData_Click);
             // 
+            // chkIsCustoms
+            // 
+            this.chkIsCustoms.AutoSize = true;
+            this.chkIsCustoms.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.chkIsCustoms.IsSupportEditMode = false;
+            this.chkIsCustoms.Location = new System.Drawing.Point(286, 81);
+            this.chkIsCustoms.Name = "chkIsCustoms";
+            this.chkIsCustoms.ReadOnly = true;
+            this.chkIsCustoms.Size = new System.Drawing.Size(95, 21);
+            this.chkIsCustoms.TabIndex = 111;
+            this.chkIsCustoms.Text = "Is Customs";
+            this.chkIsCustoms.UseVisualStyleBackColor = true;
+            // 
             // P08
             // 
             this.ClientSize = new System.Drawing.Size(1008, 628);
@@ -1165,5 +1181,6 @@
         private Win.UI.NumericBox numCW;
         private Win.UI.Label label6;
         private Win.UI.Button btnUpdateA2BData;
+        private Win.UI.CheckBox chkIsCustoms;
     }
 }

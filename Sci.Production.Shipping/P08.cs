@@ -207,6 +207,7 @@ where sd.ID = '{0}'", masterID);
         {
             base.OnDetailEntered();
             this.RefreshIsFreightForwarder();
+            this.RefreshIsCustoms();
 
             // ChangeCombo2DataSource();
             #region set comboBox2 DataSource
@@ -868,8 +869,10 @@ If the application is for Air - Prepaid Invoice, please ensure that all item cod
             DualResult result;
             string oldBLNo = MyUtility.GetValue.Lookup($"select BLNo from ShippingAP with (nolock) where ID = '{this.CurrentMaintain["ID"]}'");
 
+            // 當BL新舊值不相同時，LocalSupp不是IsFreightForwar、IsCustoms的話，表示使用者會人工手動匯入，因此不能進行刪除動作
             if (this.haveEditShareFee ||
-                oldBLNo != this.CurrentMaintain["BLNo"].ToString())
+                (oldBLNo != this.CurrentMaintain["BLNo"].ToString()
+                    && ((this.checkIsFreightForwarder.Checked && this.IsExistsBLNo) || this.IsCustoms)))
             {
                 result = DBProxy.Current.Execute(null, string.Format("delete from ShareExpense where ShippingAPID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"])));
                 if (!result)
@@ -887,6 +890,15 @@ If the application is for Air - Prepaid Invoice, please ensure that all item cod
             }
 
             return base.ClickSavePre();
+        }
+
+        /// <inheritdoc/>
+        protected override void ClickSaveAfter()
+        {
+            base.ClickSaveAfter();
+
+            // 期望船務能再確認，但因P08有異動會先存檔才能點按鈕，有可能存完檔就關掉了
+            this.BtnShareExpense_Click(null, null);
         }
 
         private DualResult InitialShareExpense(DataRow drCurrentMaintain, bool checkIsFreightForwarder)
@@ -1856,6 +1868,7 @@ You can complete Account Payment only after the corresponding Number is updated,
             }
 
             this.RefreshIsFreightForwarder();
+            this.RefreshIsCustoms();
         }
 
         private void BtnIncludeFoundryRatio_Click(object sender, EventArgs e)
@@ -1873,6 +1886,11 @@ You can complete Account Payment only after the corresponding Number is updated,
             {
                 this.CheckNoExportChargesGMT(this.CurrentMaintain["BLNo"].ToString());
             }
+        }
+
+        private void RefreshIsCustoms()
+        {
+            this.chkIsCustoms.Checked = this.IsCustoms;
         }
 
         private bool CheckIsFreightForwarder(string localSuppID, out bool needDoCheckNoExportChargesGMT)
