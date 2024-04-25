@@ -101,8 +101,9 @@ select s.id
     ,Cancel=iif(o.Junk=1,'Y','' )
     ,[Inline Category] = (select CONCAT(s.SewingReasonIDForTypeIC, '-' + SR.Description) from SewingReason sr where sr.ID = s.SewingReasonIDForTypeIC and sr.Type='IC')
     ,[Low output Reason] = (select CONCAT(s.SewingReasonIDForTypeLO, '-' + SR.Description) from SewingReason sr where sr.ID = s.SewingReasonIDForTypeLO and sr.Type='LO')
-    ,[New Style/Repeat style] = dbo.IsRepeatStyleBySewingOutput(s.FactoryID, s.OutputDate, s.SewinglineID, s.Team, o.StyleUkey)
+    ,[New Style/Repeat style] = cast('' as varchar(20))
 	,[CumulateDateSimilar] = sd.CumulateSimilar
+	,o.StyleUkey
 into #tmpSewingDetail
 from System WITH (NOLOCK),SewingOutput s WITH (NOLOCK) 
 inner join SewingOutput_Detail sd WITH (NOLOCK) on sd.ID = s.ID
@@ -147,6 +148,23 @@ where	(@StartDate is null or s.OutputDate >= @StartDate) and (@EndDate is null o
 		(@Shift <> 'Subcon-In' or (s.Shift <> 'O' and o.LocalOrder = 1 and o.SubconInType <> 0)) and
 		(@Shift <> 'Subcon-Out' or s.Shift = 'O')
 
+SELECT	FactoryID,
+		OutputDate,
+		SewinglineID,
+		Team,
+		StyleUkey,
+		[NewStyleRepeatStyle] = dbo.IsRepeatStyleBySewingOutput(FactoryID, OutputDate, SewinglineID, Team, StyleUkey)
+INTO	#tmpNewStyleRepeatStyle
+from (	select distinct FactoryID, OutputDate, SewinglineID, Team, StyleUkey
+		from #tmpSewingDetail ) a
+
+update t set t.[New Style/Repeat style] = tp.NewStyleRepeatStyle
+from #tmpSewingDetail t
+inner join #tmpNewStyleRepeatStyle tp on	tp.FactoryID = t.FactoryID and
+											tp.OutputDate = t.OutputDate and 
+											tp.SewinglineID = t.SewinglineID and 
+											tp.Team = t.Team and
+											tp.StyleUkey = t.StyleUkey
 
 --By Sewing單號 & SewingDetail的Orderid,ComboType 作加總 WorkHour,QAQty,InlineQty
 select distinct OutputDate
