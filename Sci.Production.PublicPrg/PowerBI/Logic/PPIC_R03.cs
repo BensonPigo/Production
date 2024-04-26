@@ -543,7 +543,9 @@ CREATE NONCLUSTERED INDEX index_tmpOrders_ID ON #tmpOrders(ID ASC);
 LEFT JOIN #tmp_PackingList_Detail pld ON o.ID = pld.OrderID {sqlmaybePldSeq}
 LEFT JOIN #tmp_invAdj i ON o.ID = i.OrderID {sqlmaybeInvSeq}
 ";
-            sqlcmd += $@"
+            if (model.SeparateByQtyBdownByShipmode)
+            {
+                sqlcmd += $@"
 --暫存表 by OrderID,OrderShipmodeSeq
 SELECT
     pld.OrderID
@@ -582,6 +584,48 @@ INNER JOIN InvAdjust_Qty iq WITH (NOLOCK) ON i.ID = iq.ID
 WHERE EXISTS (SELECT 1 FROM #tmpOrders o WHERE i.OrderID = o.ID {sqlmaybeInvSeq})
 GROUP BY i.OrderID, i.OrderShipmodeSeq
 ";
+            }
+            else
+            {
+                sqlcmd += $@"
+--暫存表 by OrderID,OrderShipmodeSeq
+SELECT
+    pld.OrderID
+   ,ScanEditDate = MAX(pld.ScanEditDate)
+   ,PulloutQty = SUM(IIF(pl.PulloutID <> '', pld.ShipQty, 0))
+   ,PackingCTN = SUM(pld.CTNQty)
+   ,TotalCTN = SUM(IIF(pl.Type IN ('B', 'L') AND pld.DisposeFromClog = 0, pld.CTNQty, 0))
+   ,FtyCtn_Remaining = SUM(IIF(pl.Type IN ('B', 'L') AND pld.TransferDate IS NULL, pld.CTNQty, 0))--和 UpdateOrdersCTN 中的 FtyCtn 不一樣喔, 這是目前在工廠的剩餘紙箱數量
+   ,ClogCTN = SUM(IIF(pl.Type IN ('B', 'L') AND pld.DisposeFromClog = 0 AND pld.ReceiveDate IS NOT NULL AND pld.TransferCFADate IS NULL AND pld.CFAReturnClogDate IS NULL, pld.CTNQty, 0))
+   ,FtyToClogTransit = SUM(IIF(pld.TransferDate IS NOT NULL AND pld.ReceiveDate  IS NULL, pld.CTNQty, 0))
+   ,ClogToCFATansit = SUM(IIF(pld.TransferCFADate IS NOT NULL AND pld.CFAReceiveDate IS NULL AND pld.ClogLocationID = '2CFA', pld.CTNQty, 0))
+   ,CFACTN = SUM(IIF(pl.Type IN ('B', 'L') AND pld.DisposeFromClog = 0 AND pld.CFAReceiveDate IS NOT NULL, pld.CTNQty, 0))
+   ,CFAToClogTransit = SUM(IIF(pld.TransferCFADate IS NULL AND pld.CFAReceiveDate IS NULL AND pld.CFAReturnClogDate IS NOT NULL AND pld.ClogLocationID = '2Clog', pld.CTNQty, 0))
+   ,ClogLastReceiveDate = MAX(IIF(pl.Type IN ('B', 'L') AND pld.DisposeFromClog = 0, ReceiveDate, NULL))
+   ,PackErrCTN = SUM(IIF(pl.Type IN ('B', 'L') AND pld.DisposeFromClog = 0 AND pld.PackErrTransferDate IS NOT NULL, pld.CTNQty, 0))
+   ,PackingQty = SUM(IIF(pl.Type <> 'F', pld.ShipQty, 0))
+   ,PackingFOCQty = SUM(IIF(pl.Type = 'F', pld.ShipQty, 0))
+   ,BookingQty = SUM(IIF(pl.Type IN ('B', 'L') AND pl.INVNo <> '', pld.ShipQty, 0))
+   ,ClogRcvDate = MAX(ReceiveDate)
+   ,ActPulloutDate = MAX(pl.PulloutDate)
+INTO #tmp_PackingList_Detail
+FROM PackingList_Detail pld WITH (NOLOCK)
+INNER JOIN PackingList pl WITH (NOLOCK) ON pld.ID = pl.ID
+WHERE EXISTS (SELECT 1 FROM #tmpOrders o WHERE pld.OrderID = o.ID {sqlmaybePldSeq})
+GROUP BY pld.OrderID
+
+SELECT
+    i.OrderID
+   ,InvoiceAdjQty = SUM(iq.DiffQty)
+   ,FOCAdjQty = SUM(IIF(iq.Price = 0, iq.DiffQty, 0))
+INTO #tmp_invAdj
+FROM InvAdjust i WITH (NOLOCK)
+INNER JOIN InvAdjust_Qty iq WITH (NOLOCK) ON i.ID = iq.ID
+WHERE EXISTS (SELECT 1 FROM #tmpOrders o WHERE i.OrderID = o.ID {sqlmaybeInvSeq})
+GROUP BY i.OrderID
+";
+            }
+
             #endregion
 
             #region step 5-2 暫存表 因為效能, 需要(聚合/串接字串)的欄位先分別處理
