@@ -546,7 +546,7 @@ LEFT JOIN #tmp_invAdj i ON o.ID = i.OrderID {sqlmaybeInvSeq}
             if (model.SeparateByQtyBdownByShipmode)
             {
                 sqlcmd += $@"
---暫存表 by OrderID,OrderShipmodeSeq
+--暫存表 可 by OrderID,OrderShipmodeSeq 部分
 SELECT
     pld.OrderID
    ,pld.OrderShipmodeSeq
@@ -570,7 +570,7 @@ SELECT
 INTO #tmp_PackingList_Detail
 FROM PackingList_Detail pld WITH (NOLOCK)
 INNER JOIN PackingList pl WITH (NOLOCK) ON pld.ID = pl.ID
-WHERE EXISTS (SELECT 1 FROM #tmpOrders o WHERE pld.OrderID = o.ID {sqlmaybePldSeq})
+WHERE EXISTS (SELECT 1 FROM #tmpOrders o WHERE pld.OrderID = o.ID AND pld.OrderShipmodeSeq = o.Seq)
 GROUP BY pld.OrderID, pld.OrderShipmodeSeq
 
 SELECT
@@ -581,14 +581,14 @@ SELECT
 INTO #tmp_invAdj
 FROM InvAdjust i WITH (NOLOCK)
 INNER JOIN InvAdjust_Qty iq WITH (NOLOCK) ON i.ID = iq.ID
-WHERE EXISTS (SELECT 1 FROM #tmpOrders o WHERE i.OrderID = o.ID {sqlmaybeInvSeq})
+WHERE EXISTS (SELECT 1 FROM #tmpOrders o WHERE i.OrderID = o.ID AND i.OrderShipmodeSeq = o.Seq)
 GROUP BY i.OrderID, i.OrderShipmodeSeq
 ";
             }
             else
             {
                 sqlcmd += $@"
---暫存表 by OrderID,OrderShipmodeSeq
+--暫存表 可 by OrderID,OrderShipmodeSeq 部分
 SELECT
     pld.OrderID
    ,ScanEditDate = MAX(pld.ScanEditDate)
@@ -611,7 +611,7 @@ SELECT
 INTO #tmp_PackingList_Detail
 FROM PackingList_Detail pld WITH (NOLOCK)
 INNER JOIN PackingList pl WITH (NOLOCK) ON pld.ID = pl.ID
-WHERE EXISTS (SELECT 1 FROM #tmpOrders o WHERE pld.OrderID = o.ID {sqlmaybePldSeq})
+WHERE EXISTS (SELECT 1 FROM #tmpOrders o WHERE pld.OrderID = o.ID)
 GROUP BY pld.OrderID
 
 SELECT
@@ -621,7 +621,7 @@ SELECT
 INTO #tmp_invAdj
 FROM InvAdjust i WITH (NOLOCK)
 INNER JOIN InvAdjust_Qty iq WITH (NOLOCK) ON i.ID = iq.ID
-WHERE EXISTS (SELECT 1 FROM #tmpOrders o WHERE i.OrderID = o.ID {sqlmaybeInvSeq})
+WHERE EXISTS (SELECT 1 FROM #tmpOrders o WHERE i.OrderID = o.ID)
 GROUP BY i.OrderID
 ";
             }
