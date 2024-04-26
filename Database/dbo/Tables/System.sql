@@ -92,6 +92,7 @@ CREATE TABLE [dbo].[System] (
     [ImportDataPathDummy] [varchar](60) NOT NULL CONSTRAINT [DF_System_ImportDataPathDummy]  DEFAULT (''),
 	[ImportDataFileNameDummy] [varchar](60) NOT NULL CONSTRAINT [DF_System_ImportDataFileNameDummy]  DEFAULT (''),
 	[ExportDataPathDummy] [varchar](60) NOT NULL CONSTRAINT [DF_System_ExportDataPathDummy]  DEFAULT (''),
+	IEPath NVARCHAR(120) NOT NULL CONSTRAINT [DF_System_IEPath] Default '',
     CONSTRAINT [PK_RgCode] PRIMARY KEY CLUSTERED ([RgCode] ASC)
 );
 go

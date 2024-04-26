@@ -348,6 +348,17 @@ SELECT
 FROM Trade_To_Pms.dbo.Pattern_GL_Artwork TPGA WITH (NOLOCK)
 WHERE NOT EXISTS(SELECT 1 FROM Production.dbo.Pattern_GL_Artwork PGA WITH (NOLOCK) WHERE PGA.UKEY = TPGA. UKEY)
 ----------------------------------------------------------------------------
+
+----------------------------------SewingMachineAttachment----------------------------------
+
+/*UPDATE*/
+UPDATE t
+SET  t.Picture1 = ISNULL(s.Picture1,'')
+	,t.Picture2 = ISNULL(s.Picture2,'')
+FROM Production.dbo.SewingMachineAttachment t
+INNER JOIN Trade_To_Pms.dbo.SewingMachineAttachment s WITH(NOLOCK) ON t.ID = s.ID
+
+
 END
 
 
