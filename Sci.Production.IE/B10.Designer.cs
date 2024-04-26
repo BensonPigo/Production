@@ -29,11 +29,7 @@
         private void InitializeComponent()
         {
             this.tabPage1 = new System.Windows.Forms.TabPage();
-            this.btnPicture2Delete = new Sci.Win.UI.Button();
-            this.btnPicture2Attach = new Sci.Win.UI.Button();
             this.picture2 = new Sci.Win.UI.PictureBox();
-            this.btnPicture1Delete = new Sci.Win.UI.Button();
-            this.btnPicture1Attach = new Sci.Win.UI.Button();
             this.picture1 = new Sci.Win.UI.PictureBox();
             this.labelPicture2 = new Sci.Win.UI.Label();
             this.labelPicture1 = new Sci.Win.UI.Label();
@@ -78,10 +74,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.picture1)).BeginInit();
             this.SuspendLayout();
             // 
-            // detail
-            // 
-            this.detail.Size = new System.Drawing.Size(986, 597);
-            // 
             // detailcont
             // 
             this.detailcont.Controls.Add(this.editRemark);
@@ -113,12 +105,6 @@
             this.detailcont.Controls.Add(this.editDescription);
             this.detailcont.Controls.Add(this.labelDescription);
             this.detailcont.Controls.Add(this.labelID);
-            this.detailcont.Size = new System.Drawing.Size(986, 559);
-            // 
-            // detailbtm
-            // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 559);
-            this.detailbtm.Size = new System.Drawing.Size(986, 38);
             // 
             // browse
             // 
@@ -148,42 +134,16 @@
             // 
             // tabPage1
             // 
-            this.tabPage1.Controls.Add(this.btnPicture2Delete);
-            this.tabPage1.Controls.Add(this.btnPicture2Attach);
             this.tabPage1.Controls.Add(this.picture2);
-            this.tabPage1.Controls.Add(this.btnPicture1Delete);
-            this.tabPage1.Controls.Add(this.btnPicture1Attach);
             this.tabPage1.Controls.Add(this.picture1);
             this.tabPage1.Controls.Add(this.labelPicture2);
             this.tabPage1.Controls.Add(this.labelPicture1);
             this.tabPage1.Location = new System.Drawing.Point(4, 25);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(897, 395);
+            this.tabPage1.Size = new System.Drawing.Size(986, 597);
             this.tabPage1.TabIndex = 2;
             this.tabPage1.Text = "Picture";
-            // 
-            // btnPicture2Delete
-            // 
-            this.btnPicture2Delete.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnPicture2Delete.Location = new System.Drawing.Point(586, 6);
-            this.btnPicture2Delete.Name = "btnPicture2Delete";
-            this.btnPicture2Delete.Size = new System.Drawing.Size(63, 30);
-            this.btnPicture2Delete.TabIndex = 15;
-            this.btnPicture2Delete.Text = "Delete";
-            this.btnPicture2Delete.UseVisualStyleBackColor = true;
-            this.btnPicture2Delete.Click += new System.EventHandler(this.BtnPicture2Delete_Click);
-            // 
-            // btnPicture2Attach
-            // 
-            this.btnPicture2Attach.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnPicture2Attach.Location = new System.Drawing.Point(520, 6);
-            this.btnPicture2Attach.Name = "btnPicture2Attach";
-            this.btnPicture2Attach.Size = new System.Drawing.Size(63, 30);
-            this.btnPicture2Attach.TabIndex = 14;
-            this.btnPicture2Attach.Text = "Attach";
-            this.btnPicture2Attach.UseVisualStyleBackColor = true;
-            this.btnPicture2Attach.Click += new System.EventHandler(this.BtnPicture2Attach_Click);
             // 
             // picture2
             // 
@@ -195,28 +155,6 @@
             this.picture2.TabIndex = 13;
             this.picture2.TabStop = false;
             this.picture2.WaitOnLoad = true;
-            // 
-            // btnPicture1Delete
-            // 
-            this.btnPicture1Delete.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnPicture1Delete.Location = new System.Drawing.Point(137, 6);
-            this.btnPicture1Delete.Name = "btnPicture1Delete";
-            this.btnPicture1Delete.Size = new System.Drawing.Size(63, 30);
-            this.btnPicture1Delete.TabIndex = 12;
-            this.btnPicture1Delete.Text = "Delete";
-            this.btnPicture1Delete.UseVisualStyleBackColor = true;
-            this.btnPicture1Delete.Click += new System.EventHandler(this.BtnPicture1Delete_Click);
-            // 
-            // btnPicture1Attach
-            // 
-            this.btnPicture1Attach.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnPicture1Attach.Location = new System.Drawing.Point(71, 6);
-            this.btnPicture1Attach.Name = "btnPicture1Attach";
-            this.btnPicture1Attach.Size = new System.Drawing.Size(63, 30);
-            this.btnPicture1Attach.TabIndex = 11;
-            this.btnPicture1Attach.Text = "Attach";
-            this.btnPicture1Attach.UseVisualStyleBackColor = true;
-            this.btnPicture1Attach.Click += new System.EventHandler(this.BtnPicture1Attach_Click);
             // 
             // picture1
             // 
@@ -602,11 +540,7 @@
         private Win.UI.TextBox txtSupplier3BrandID;
         private Win.UI.TextBox txtSupplier2BrandID;
         private Win.UI.TextBox txtSupplier1BrandID;
-        private Win.UI.Button btnPicture2Delete;
-        private Win.UI.Button btnPicture2Attach;
         private Win.UI.PictureBox picture2;
-        private Win.UI.Button btnPicture1Delete;
-        private Win.UI.Button btnPicture1Attach;
         private Win.UI.PictureBox picture1;
         private Win.UI.Label labelPicture2;
         private Win.UI.Label labelPicture1;

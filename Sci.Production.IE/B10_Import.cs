@@ -76,13 +76,6 @@ namespace Sci.Production.IE
             this.grid2Data.Columns.Add("Supplier Brand-3", typeof(string));
             this.grid2Data.Columns.Add("Remark", typeof(string));
 
-            this.grid2Data.Columns.Add("Picture1_File", typeof(byte[]));
-            this.grid2Data.Columns.Add("Picture2_File", typeof(byte[]));
-            this.grid2Data.Columns.Add("Picture1", typeof(string));
-            this.grid2Data.Columns.Add("Picture2", typeof(string));
-            this.grid2Data.Columns.Add("HasPicture1", typeof(bool));
-            this.grid2Data.Columns.Add("HasPicture2", typeof(bool));
-
             this.grid2Data.Columns.Add("ErrMsg", typeof(string));
 
             this.listControlBindingSource2.DataSource = this.grid2Data;
@@ -106,14 +99,7 @@ namespace Sci.Production.IE
                 .Text("Supplier Part#-3", header: "Supplier Part#-3", width: Widths.AnsiChars(15))
                 .Text("Supplier Brand-3", header: "Supplier Brand-3", width: Widths.AnsiChars(15))
                 .Text("Remark", header: "Remark", width: Widths.AnsiChars(100))
-                .CheckBox("HasPicture1", header: "Has Picture1", width: Widths.AnsiChars(5), trueValue: 1, falseValue: 0)
-                .CheckBox("HasPicture2", header: "Has Picture2", width: Widths.AnsiChars(5), trueValue: 1, falseValue: 0)
                 .Text("ErrMsg", header: "Error Message", width: Widths.AnsiChars(100));
-
-            for (int i = 0; i < this.gridDetail.ColumnCount; i++)
-            {
-                //this.gridDetail.Columns[i].SortMode = DataGridViewColumnSortMode.NotSortable;
-            }
         }
 
         private void BtnAddExcel_Click(object sender, EventArgs e)
@@ -298,7 +284,7 @@ namespace Sci.Production.IE
                             }
 
                             #region 抓取Excel圖片
-
+                            /*
                             // 取得Sheet上的圖形集合
                             Shapes shapes = worksheet.Shapes;
 
@@ -357,6 +343,7 @@ namespace Sci.Production.IE
                                     }
                                 }
                             }
+                            */
                             #endregion
 
                             dr["Status"] = "Check & Import Completed.";
@@ -384,7 +371,8 @@ namespace Sci.Production.IE
 
             List<SqlParameter> para = new List<SqlParameter>();
 
-            foreach (DataRow dr in this.grid2Data.Rows)
+            #region 將圖片存下來
+            /*foreach (DataRow dr in this.grid2Data.Rows)
             {
                 byte[] picture1 = null;
                 if (dr["Picture1_File"] != null && dr["Picture1_File"] != DBNull.Value)
@@ -413,10 +401,8 @@ namespace Sci.Production.IE
                         oImage.Save(this.destination_path + fileName);
                     }
                 }
-            }
-
-            this.grid2Data.Columns.Remove("Picture1_File");
-            this.grid2Data.Columns.Remove("Picture2_File");
+            }*/
+            #endregion
 
             string sqlCmd = $@"-----選出符合條件可以塞的資料
 select [ID]
@@ -434,8 +420,6 @@ select [ID]
     ,[Supplier Part#-3]
     ,[Supplier Brand-3]
     ,[Remark]
-    ,Picture1 = ISNULL([Picture1] ,'')
-    ,Picture2 = ISNULL([Picture2] ,'')
     ,AddName = '{Sci.Env.User.UserID}'
     ,AddDate = GETDATE()
 INTO #InsertData
@@ -503,7 +487,7 @@ from #tmp t
 -----開始塞SewingMachineAttachment
 INSERT INTO dbo.SewingMachineAttachment
            (ID,MoldID,Description,DescriptionCN,MachineMasterGroupID,AttachmentTypeID,MeasurementID,FoldTypeID,Supplier1PartNo,Supplier1BrandID
-           ,Supplier2PartNo,Supplier2BrandID,Supplier3PartNo,Supplier3BrandID,Remark,Picture1,Picture2,AddName,AddDate)
+           ,Supplier2PartNo,Supplier2BrandID,Supplier3PartNo,Supplier3BrandID,Remark,AddName,AddDate)
 select *
 from #InsertData
 
@@ -524,11 +508,6 @@ drop table #InsertData ,#FailData
                 this.ShowErr("Import error.");
                 return;
             }
-
-            dt.Columns.Add("Picture1_File", typeof(byte[]));
-            dt.Columns.Add("Picture2_File", typeof(byte[]));
-            this.grid2Data.Columns.Add("Picture1_File", typeof(byte[]));
-            this.grid2Data.Columns.Add("Picture2_File", typeof(byte[]));
 
             foreach (DataRow row in dt.Rows)
             {
