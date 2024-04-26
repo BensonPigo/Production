@@ -160,7 +160,7 @@ WHERE 1=1
                 sqlCmd.Append(@"
 and oq.BuyerDelivery between @Buyerdelivery1 and @Buyerdelivery2
 AND f.IsProduceFty = 1
-AND o.Category IN ('B','G') 
+AND o.Category IN ('B','G','S') 
 " + Environment.NewLine);
             }
             else
@@ -332,10 +332,19 @@ select nb = ROW_NUMBER() over(Partition by n.ID order by c.AuditDate desc,c.Edit
 ,n.CFA3rdInspectDate
 ,n.CFARemark
 into #tmpFinal
-from #tmp n
-inner join #CFAInspectionRecord_OrderSEQ co on co.OrderID = n.ID and co.SEQ = n.SEQ
-inner join #CFAInspectionRecord c on c.id = co.id
-where c.Stage = 'Final'
+FROM #NeedCkeck n
+left join #CFAInspectionRecord_OrderSEQ co on co.OrderID = n.ID and co.SEQ = n.SEQ
+left join #CFAInspectionRecord c on c.id = co.id
+WHERE n.Stage = 'Final'
+AND NOT EXISTS (	
+	SELECT *
+	FROM #CFAInspectionRecord a
+	INNER JOIN #CFAInspectionRecord_OrderSEQ b ON a.ID = b.ID
+	WHERE b.OrderID =n.ID AND b.SEQ = b.SEQ 
+	AND a.Stage = 'Final' 
+	AND a.Status='Confirmed' 
+	AND (a.Result = 'Pass' OR a.Result='Fail but release')
+)
 
 
 /*-----Staggered-----*/
@@ -504,11 +513,34 @@ END
 ,n.CFA3rdInspectDate
 ,n.CFARemark 
 into #tmpStagger
-from #tmp n
-inner join #CFAInspectionRecord_OrderSEQ co on co.OrderID = n.ID and co.SEQ = n.SEQ
-inner join #CFAInspectionRecord c on c.id = co.id
-where c.Stage = 'Stagger'
-and not exists(select 1 from #tmpFinal t where t.ID = n.ID)
+FROM #NeedCkeck n
+left join #CFAInspectionRecord_OrderSEQ co on co.OrderID = n.ID and co.SEQ = n.SEQ
+left join #CFAInspectionRecord c on c.id = co.id
+WHERE n.Stage = 'Stagger' AND n.Category != 'Sample'	
+AND (
+		SELECT COUNT(DISTINCT CTNStartNo)
+		FROM #PackingList_Detail pd
+		WHERE pd.OrderID = n.ID 
+		AND pd.OrderShipmodeSeq = n.Seq
+		AND EXISTS(
+			SELECT 1
+			FROM #CFAInspectionRecord cf
+			INNER JOIN #CFAInspectionRecord_OrderSEQ cfo ON cf.ID = cfo.ID
+			WHERE cfo.OrderID=pd.OrderID AND cfo.SEQ=pd.OrderShipmodeSeq
+			AND cf.Stage='Stagger' AND cf.Status='Confirmed' AND cf.Result!='Pass'
+			AND (	
+					cfo.Carton = pd.CTNStartNo
+				OR cfo.Carton LIKE  pd.CTNStartNo +',%' 
+				OR cfo.Carton LIKE '%,'+  pd.CTNStartNo +',%' 
+				OR cfo.Carton LIKE '%,'+  pd.CTNStartNo
+			)
+        )
+) != 
+(
+	SELECT COUNT( DISTINCT CTNStartNo)
+	FROM #PackingList_Detail  
+	WHERE OrderID = n.ID AND OrderShipmodeSeq = n.Seq 
+)
 
 select 
 [Stage]
