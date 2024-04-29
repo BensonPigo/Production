@@ -42,6 +42,7 @@ namespace Sci.Production.Logistic
         /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
+            base.OnFormLoaded();
             this.gridScanDetail.DataSource = this.scanDetailBS;
             this.Helper.Controls.Grid.Generator(this.gridScanDetail)
                 .Text("Article", header: "Colorway", width: Widths.AnsiChars(8))
