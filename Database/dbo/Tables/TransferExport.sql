@@ -46,7 +46,7 @@
     [Junk] BIT NOT NULL CONSTRAINT [DF_TransferExport_Junk] DEFAULT ((0)), 
     [Airline] NVARCHAR(30) NOT NULL CONSTRAINT [DF_TransferExport_Airline] DEFAULT (''), 
     [Remark_Shipping] NVARCHAR(2000) NOT NULL CONSTRAINT [DF_TransferExport_Remark_Shipping] DEFAULT (''), 
-	[EntryNo] nvarchar(20) NOT NULL CONSTRAINT [DF_TransferExport_EntryNo] DEFAULT (''), 
+	[EntryNo] nvarchar(40) NOT NULL CONSTRAINT [DF_TransferExport_EntryNo] DEFAULT (''), 
     [SLT] BIT NOT NULL CONSTRAINT [DF_TransferExport_SLT] DEFAULT ((0)), 
     [NoImportCharges] BIT NOT NULL CONSTRAINT [DF_TransferExport_NoImportCharges] DEFAULT ((0)), 
     [Replacement] BIT NOT NULL CONSTRAINT [DF_TransferExport_Replacement] DEFAULT ((0)), 
