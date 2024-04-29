@@ -223,6 +223,7 @@
     <Compile Include="PowerBI\DataAccess\P_Import_ProductionKitsTracking.cs" />
     <Compile Include="PowerBI\DataAccess\P_Import_QAR31.cs" />
     <Compile Include="PowerBI\DataAccess\P_Import_QA_CFAMasterList.cs" />
+    <Compile Include="PowerBI\DataAccess\P_Import_PPICMasterList.cs" />
     <Compile Include="PowerBI\DataAccess\P_Import_SewingLineScheduleBIData.cs" />
     <Compile Include="PowerBI\DataAccess\P_Import_SewingLineScheduleBySP.cs" />
     <Compile Include="PowerBI\FormPage\Form1.cs">
@@ -241,6 +242,7 @@
     <Compile Include="PowerBI\Logic\Cutting_R13.cs" />
     <Compile Include="PowerBI\Logic\PPIC_R21.cs" />
     <Compile Include="PowerBI\Logic\PPIC_R02.cs" />
+    <Compile Include="PowerBI\Logic\PPIC_R03.cs" />
     <Compile Include="PowerBI\Logic\PPIC_R01.cs" />
     <Compile Include="PowerBI\Logic\QA_R31.cs" />
     <Compile Include="PowerBI\Logic\Warehouse_R16.cs" />
@@ -249,6 +251,7 @@
     <Compile Include="PowerBI\Model\Inline_R08_ViewModel.cs" />
     <Compile Include="PowerBI\Model\PPIC_R21_ViewModel.cs" />
     <Compile Include="PowerBI\Model\PPIC_R02_ViewModel.cs" />
+    <Compile Include="PowerBI\Model\PPIC_R03_ViewModel.cs" />
     <Compile Include="PowerBI\Model\PPIC_R01_ViewModel.cs" />
     <Compile Include="PowerBI\Model\PPIC_R16_ViewModel.cs" />
     <Compile Include="PowerBI\Model\QA_R31_ViewModel.cs" />
