@@ -242,8 +242,6 @@ DROP TABLE #allAccDetail
 
                     int colStart = 2;
                     int rowStart = 5;
-                    int colEnd = colStart; // 3 (c
-                    int rowEnd = rowStart; // 7
 
                     // Copy Column
                     for (int i = 0; i < inspectorList.Count - 2; i++)
@@ -251,7 +249,9 @@ DROP TABLE #allAccDetail
                         Excel.Range r = wksheet.get_Range("C1", "C1").EntireColumn;
                         r.Copy();
                         r.Insert(Excel.XlInsertShiftDirection.xlShiftDown, Excel.XlInsertFormatOrigin.xlFormatFromRightOrBelow); // 新增Column
-                        colEnd++;
+
+                        // Average欄位的公式會被異動，因此要改回來
+                        wksheet.Cells[rowStart + 3, colStart + 1] = "=ROUND(C7/COUNTA(A5:A6),1)";
                     }
 
                     // Copy Row
@@ -260,7 +260,6 @@ DROP TABLE #allAccDetail
                         Excel.Range r = wksheet.get_Range("A6", "A6").EntireRow;
                         r.Copy();
                         r.Insert(Excel.XlInsertShiftDirection.xlShiftDown, Excel.XlInsertFormatOrigin.xlFormatFromRightOrBelow); // 新增Row
-                        rowEnd++;
                     }
 
                     int userCtn = 0;
