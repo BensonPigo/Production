@@ -1,6 +1,6 @@
 ﻿namespace Sci.Production.Quality
 {
-    partial class R08
+    partial class R16
     {
         /// <summary>
         /// 設計工具所需的變數。
@@ -248,7 +248,7 @@
             this.labelInspected.Name = "labelInspected";
             this.labelInspected.Size = new System.Drawing.Size(105, 23);
             this.labelInspected.TabIndex = 7;
-            this.labelInspected.Text = "Inspected";
+            this.labelInspected.Text = "Inspector";
             // 
             // labelInspectionDate
             // 
@@ -274,14 +274,14 @@
             this.label10.TabIndex = 97;
             this.label10.Text = "Paper Size A4";
             // 
-            // R08
+            // R16
             // 
             this.ClientSize = new System.Drawing.Size(557, 279);
             this.Controls.Add(this.label10);
             this.Controls.Add(this.panel1);
-            this.Name = "R08";
+            this.Name = "R16";
             this.OnLineHelpID = "Sci.Win.Tems.PrintForm";
-            this.Text = "R08. Fabric Physical Inspection Daily Report";
+            this.Text = "R16. Accessory Inspection Daily Report";
             this.Controls.SetChildIndex(this.buttonCustomized, 0);
             this.Controls.SetChildIndex(this.checkUseCustomized, 0);
             this.Controls.SetChildIndex(this.txtVersion, 0);
