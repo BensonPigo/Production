@@ -553,6 +553,12 @@
     <Compile Include="WH_B03.Designer.cs">
       <DependentUpon>WH_B03.cs</DependentUpon>
     </Compile>
+    <Compile Include="WH_B11.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="WH_B11.Designer.cs">
+      <DependentUpon>WH_B11.cs</DependentUpon>
+    </Compile>
     <Compile Include="WH_B04.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -754,6 +760,10 @@
     </EmbeddedResource>
     <EmbeddedResource Include="WH_B03.resx">
       <DependentUpon>WH_B03.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="WH_B11.resx">
+      <DependentUpon>WH_B11.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="WH_B04.resx">

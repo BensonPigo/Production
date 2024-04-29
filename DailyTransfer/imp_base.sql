@@ -3377,48 +3377,83 @@ when not matched by source then
 
 --------WhseReason---------------
 
-Merge Production.dbo.WhseReason as t
-Using Trade_To_Pms.dbo.WhseReason as s
-on t.Type=s.Type and t.ID=s.ID
-when matched then
-	update set
-	t.Description= isnull( s.Description,''),
-	t.Remark= isnull( s.Remark,			 ''),
-	t.Junk= isnull( s.Junk,				 0),
-	t.ActionCode= isnull( s.ActionCode,	 ''),
-	t.AddName= isnull( s.AddName,		 ''),
-	t.AddDate=  s.AddDate,		
-	t.EditName= isnull( s.EditName,		 ''),
-	t.EditDate= s.EditDate,
-	t.No= s.No
-when not matched by target then
-	insert(Type
-	,ID
-	,Description
-	,Remark
-	,Junk
-	,ActionCode
-	,AddName
-	,AddDate
-	,EditName
-	,EditDate
-	,No
-	)
-	values(
-	isnull(s.Type,         ''),
-	isnull(s.ID,		   ''),
-	isnull(s.Description,  ''),
-	isnull(s.Remark,	   ''),
-	isnull(s.Junk,		   0),
-	isnull(s.ActionCode,   ''),
-	isnull(s.AddName,	   ''),
-	s.AddDate,	 
-	isnull(s.EditName,	   ''),
-	s.EditDate,	   
-	isnull(s.No			  ,0)
-	)
-when not matched by source then 
-	delete;	
+DELETE Production.dbo.WhseReason
+WHERE NOT EXISTS (
+    SELECT 1
+    FROM Trade_To_Pms.dbo.WhseReason AS s
+    WHERE Production.dbo.WhseReason.Type = s.Type AND Production.dbo.WhseReason.ID = s.ID
+);
+
+UPDATE t
+SET
+    t.Description = ISNULL(s.Description, ''),
+    t.Remark = ISNULL(s.Remark, ''),
+    t.Junk = ISNULL(s.Junk, 0),
+    t.ActionCode = ISNULL(s.ActionCode, ''),
+    t.AddName = ISNULL(s.AddName, ''),
+    t.AddDate = s.AddDate,
+    t.EditName = ISNULL(s.EditName, ''),
+    t.EditDate = s.EditDate,
+    t.No = ISNULL(s.No, 0)
+FROM Production.dbo.WhseReason AS t
+INNER JOIN Trade_To_Pms.dbo.WhseReason AS s ON t.Type = s.Type AND t.ID = s.ID
+WHERE s.Type <> 'DR'
+;
+
+UPDATE t
+SET
+    t.Description = ISNULL(s.Description, ''),
+    t.Junk = ISNULL(s.Junk, 0),
+    t.ActionCode = ISNULL(s.ActionCode, ''),
+    t.AddName = ISNULL(s.AddName, ''),
+    t.AddDate = s.AddDate,
+    t.EditName = IIF(s.EditDate IS NULL OR s.EditDate < t.EditDate, ISNULL(t.EditName, ''), ISNULL(s.EditName, '')),
+    t.EditDate = IIF(s.EditDate IS NULL OR s.EditDate < t.EditDate, t.EditDate, s.EditDate),
+    t.No = ISNULL(s.No, 0)
+FROM Production.dbo.WhseReason AS t
+INNER JOIN Trade_To_Pms.dbo.WhseReason AS s ON t.Type = s.Type AND t.ID = s.ID
+WHERE s.Type = 'DR'
+
+INSERT INTO Production.dbo.WhseReason (Type, ID, Description, Remark, Junk, ActionCode, AddName, AddDate, EditName, EditDate, No)
+SELECT 
+    ISNULL(Type, ''),
+    ISNULL(ID, ''),
+    ISNULL(Description, ''),
+    ISNULL(Remark, ''),
+    ISNULL(Junk, 0),
+    ISNULL(ActionCode, ''),
+    ISNULL(AddName, ''),
+    AddDate,
+    ISNULL(EditName, ''),
+    EditDate,
+    ISNULL(No, 0)
+FROM Trade_To_Pms.dbo.WhseReason AS s
+WHERE NOT EXISTS (
+    SELECT 1
+    FROM Production.dbo.WhseReason AS t
+    WHERE t.Type = s.Type AND t.ID = s.ID
+)
+AND s.Type <> 'DR'
+
+INSERT INTO Production.dbo.WhseReason (Type, ID, Description, Junk, ActionCode, AddName, AddDate, EditName, EditDate, No)
+SELECT 
+    ISNULL(Type, ''),
+    ISNULL(ID, ''),
+    ISNULL(Description, ''),
+    ISNULL(Junk, 0),
+    ISNULL(ActionCode, ''),
+    ISNULL(AddName, ''),
+    AddDate,
+    ISNULL(EditName, ''),
+    EditDate,
+    ISNULL(No, 0)
+FROM Trade_To_Pms.dbo.WhseReason AS s
+WHERE NOT EXISTS (
+    SELECT 1
+    FROM Production.dbo.WhseReason AS t
+    WHERE t.Type = s.Type AND t.ID = s.ID
+)
+AND s.Type = 'DR'
 
 --------ClogReason---------------
 

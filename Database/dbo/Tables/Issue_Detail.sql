@@ -1,31 +1,35 @@
 ﻿CREATE TABLE [dbo].[Issue_Detail] (
-    [Id]                   VARCHAR (13)    CONSTRAINT [DF_Issue_Detail_Id] DEFAULT ('') NOT NULL,
-    [Issue_SummaryUkey]    BIGINT          CONSTRAINT [DF_Issue_Detail_Issue_SummaryUkey] DEFAULT ((0)) NOT NULL,
-    [FtyInventoryUkey]     BIGINT          NULL,
-    [Qty]                  NUMERIC (11, 2) CONSTRAINT [DF_Issue_Detail_Qty] DEFAULT ((0)) NULL,
-    [MDivisionID]          VARCHAR (8)     CONSTRAINT [DF_Issue_Detail_MDivisionID] DEFAULT ('') NULL,
-    [POID]                 VARCHAR (13)    CONSTRAINT [DF_Issue_Detail_POID] DEFAULT ('') NULL,
-    [Seq1]                 VARCHAR (3)     CONSTRAINT [DF_Issue_Detail_Seq1] DEFAULT ('') NULL,
-    [Seq2]                 VARCHAR (2)     CONSTRAINT [DF_Issue_Detail_Seq2] DEFAULT ('') NULL,
-    [Roll]                 VARCHAR (8)     CONSTRAINT [DF_Issue_Detail_Roll] DEFAULT ('') NULL,
-    [Dyelot]               VARCHAR (8)     CONSTRAINT [DF_Issue_Detail_Dyelot] DEFAULT ('') NULL,
-    [StockType]            CHAR (1)        CONSTRAINT [DF_Issue_Detail_StockType] DEFAULT ('') NULL,
-    [ukey]                 BIGINT          IDENTITY (1, 1) NOT FOR REPLICATION NOT NULL,
-    [BarcodeNo]            VARCHAR (13)    NULL,
-    [OriQty]               NUMERIC (11, 2) NULL,
-    [CompleteTime]         DATETIME        NULL,
-    [IsQMS]                BIT             DEFAULT ((0)) NOT NULL,
-    [SentToWMS]            BIT             DEFAULT ((0)) NOT NULL,
-    [MINDReleaser]         VARCHAR (10)    CONSTRAINT [DF_Issue_Detail_MINDReleaser] DEFAULT ('') NOT NULL,
-    [MINDReleaseDate]      DATETIME        NULL,
-    [NeedUnroll]           BIT             CONSTRAINT [DF_Issue_Detail_NeedUnroll] DEFAULT ((0)) NOT NULL,
-    [M360MINDDispatchUkey] BIGINT          NULL,
-    [RemainingQty] NUMERIC(11, 2) NOT NULL DEFAULT ((0)), 
-    [DispatchScanTime]     DATETIME        NULL,
-    [DispatchScanner]      VARCHAR (10)    CONSTRAINT [DF_Issue_Detail_DispatchScanner] DEFAULT ('') NOT NULL,
+    [Id]                           VARCHAR (13)    CONSTRAINT [DF_Issue_Detail_Id] DEFAULT ('') NOT NULL,
+    [Issue_SummaryUkey]            BIGINT          CONSTRAINT [DF_Issue_Detail_Issue_SummaryUkey] DEFAULT ((0)) NOT NULL,
+    [FtyInventoryUkey]             BIGINT          NULL,
+    [Qty]                          NUMERIC (11, 2) CONSTRAINT [DF_Issue_Detail_Qty] DEFAULT ((0)) NULL,
+    [MDivisionID]                  VARCHAR (8)     CONSTRAINT [DF_Issue_Detail_MDivisionID] DEFAULT ('') NULL,
+    [POID]                         VARCHAR (13)    CONSTRAINT [DF_Issue_Detail_POID] DEFAULT ('') NULL,
+    [Seq1]                         VARCHAR (3)     CONSTRAINT [DF_Issue_Detail_Seq1] DEFAULT ('') NULL,
+    [Seq2]                         VARCHAR (2)     CONSTRAINT [DF_Issue_Detail_Seq2] DEFAULT ('') NULL,
+    [Roll]                         VARCHAR (8)     CONSTRAINT [DF_Issue_Detail_Roll] DEFAULT ('') NULL,
+    [Dyelot]                       VARCHAR (8)     CONSTRAINT [DF_Issue_Detail_Dyelot] DEFAULT ('') NULL,
+    [StockType]                    CHAR (1)        CONSTRAINT [DF_Issue_Detail_StockType] DEFAULT ('') NULL,
+    [ukey]                         BIGINT          IDENTITY (1, 1) NOT FOR REPLICATION NOT NULL,
+    [BarcodeNo]                    VARCHAR (13)    NULL,
+    [OriQty]                       NUMERIC (11, 2) NULL,
+    [CompleteTime]                 DATETIME        NULL,
+    [IsQMS]                        BIT             DEFAULT ((0)) NOT NULL,
+    [SentToWMS]                    BIT             DEFAULT ((0)) NOT NULL,
+    [MINDReleaser]                 VARCHAR (10)    CONSTRAINT [DF_Issue_Detail_MINDReleaser] DEFAULT ('') NOT NULL,
+    [MINDReleaseDate]              DATETIME        NULL,
+    [NeedUnroll]                   BIT             CONSTRAINT [DF_Issue_Detail_NeedUnroll] DEFAULT ((0)) NOT NULL,
+    [M360MINDDispatchUkey]         BIGINT          NULL,
+    [DispatchScanTime]             DATETIME        NULL,
+    [DispatchScanner]              VARCHAR (10)    CONSTRAINT [DF_Issue_Detail_DispatchScanner] DEFAULT ('') NOT NULL,
+    [RemainingQty]                 NUMERIC (11, 2) CONSTRAINT [DF_Issue_Detail_RemainingQty] DEFAULT ((0)) NOT NULL,
+    [M360MINDDispatchReasonID]     VARCHAR (5)     CONSTRAINT [DF_Issue_Detail_M360MINDDispatchReasonID] DEFAULT ('') NOT NULL,
+    [M360MINDDispatchReasonRemark] NVARCHAR (300)  CONSTRAINT [DF_Issue_Detail_M360MINDDispatchReasonRemark] DEFAULT ('') NOT NULL,
     CONSTRAINT [PK_Issue_Detail] PRIMARY KEY CLUSTERED ([ukey] ASC),
     CONSTRAINT [FK_Issue_Detail_Issue_Detail] FOREIGN KEY ([ukey]) REFERENCES [dbo].[Issue_Detail] ([ukey])
 );
+
+
 
 
 
@@ -211,3 +215,10 @@ EXEC sp_addextendedproperty @name = N'MS_Description',
     @level1name = N'Issue_Detail',
     @level2type = N'COLUMN',
     @level2name = N'RemainingQty'
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'其它原因的備註', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Issue_Detail', @level2type = N'COLUMN', @level2name = N'M360MINDDispatchReasonRemark';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'需預先Dispatch的原因的Ukey', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Issue_Detail', @level2type = N'COLUMN', @level2name = N'M360MINDDispatchReasonID';
+

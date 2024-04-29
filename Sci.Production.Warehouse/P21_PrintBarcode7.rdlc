@@ -569,7 +569,21 @@
                                 <TextRun>
                                   <Value>=Fields!WhseArrival.Value</Value>
                                   <Style>
+                                    <FontSize>7.5pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                  </Style>
+                                </TextRun>
+                                <TextRun>
+                                  <Value xml:space="preserve"> </Value>
+                                  <Style>
                                     <FontSize>8pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                  </Style>
+                                </TextRun>
+                                <TextRun>
+                                  <Value>=Fields!Relaxtime.Value</Value>
+                                  <Style>
+                                    <FontSize>7.5pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                   </Style>
                                 </TextRun>
@@ -733,6 +747,10 @@
         </Field>
         <Field Name="Refno">
           <DataField>Refno</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Relaxtime">
+          <DataField>Relaxtime</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="Roll">

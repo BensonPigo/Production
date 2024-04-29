@@ -196,6 +196,7 @@ select  [Sel] = 0
         ,[InspDate] = Format(fp.InspDate, 'yyyy/MM/dd')
         ,[FirRemark] = fp.Remark
         ,isd.id
+        ,fr.Relaxtime
 into #tmp
 from dbo.Issue_Detail isd WITH (NOLOCK) 
 left join dbo.PO_Supp_Detail psd WITH (NOLOCK) on psd.ID = isd.POID and  psd.SEQ1 = isd.Seq1 and psd.seq2 = isd.Seq2 
@@ -230,6 +231,8 @@ left join FIR with (nolock) on  FIR.POID = isd.POID and
 left join FIR_Physical fp with (nolock) on  fp.ID = FIR.ID and
                                             fp.Roll = isd.Roll and
                                             fp.Dyelot = isd.Dyelot
+LEFT JOIN [SciMES_RefnoRelaxtime] rr WITH (NOLOCK) ON rr.Refno = psd.Refno
+LEFT JOIN [SciMES_FabricRelaxation] fr WITH (NOLOCK) ON rr.FabricRelaxationID = fr.ID
 where isd.id = @ID
 
 select t.*,
@@ -253,6 +256,7 @@ select t.*,
         and wbt.TransactionID = t.id
         and wbt.Action = 'Confirm'
     )
+    ,Relaxtime
 from #tmp t
 
 drop table #tmp

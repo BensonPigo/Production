@@ -99,6 +99,7 @@ namespace Sci.Production.Warehouse
             .DateTime("RelaxationEndTime", header: "Relax\r\nEnd Time", width: Widths.AnsiChars(18), iseditingreadonly: true)
             .DateTime("DispatchTime", header: "Dispatch Time", width: Widths.AnsiChars(18), iseditingreadonly: true)
             .DateTime("FactoryReceivedTime", header: "Factory\r\nReceive Time", width: Widths.AnsiChars(18), iseditingreadonly: true)
+            .Text("RackLocationID", header: "Location Dispatched", width: Widths.AnsiChars(15), iseditingreadonly: true)
             ;
             #endregion
         }
@@ -241,6 +242,7 @@ namespace Sci.Production.Warehouse
                     , [Location] = dbo.Getlocation(f.ukey)
                     ,cl.SCIRefno
                     ,[issueid] = isu.id
+                    ,mmd.RackLocationID
 			into #issueDtl
 			from #CutList cl
 			inner join Issue isu on cl.ID = isu.CutplanID
@@ -385,6 +387,7 @@ namespace Sci.Production.Warehouse
             ,idt.Tone
             ,idt.LockDate
             ,idt.[Location]
+            ,idt.RackLocationID
 			from #issueDtl idt
 			order by idt.ID, idt.Refno, idt.Color, idt.Seq1, idt.Seq2, idt.Roll, idt.Dyelot
 
