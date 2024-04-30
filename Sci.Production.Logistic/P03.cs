@@ -970,12 +970,14 @@ where pd.CustCTN = '{dr["CustCTN"]}' and pd.CTNQty > 0 and pd.DisposeFromClog= 0
                 {
                     StringBuilder singleWarningmsg = new StringBuilder();
                     string checkPackSql = $@"
-            select CFAReturnClogDate, ReceiveDate, TransferCFADate, Remark, ReturnDate 
-            from PackingList_Detail WITH (NOLOCK)
-            where ID = '{dr["PackingListID"].ToString().Trim()}' 
-            and OrderID = '{dr["OrderID"].ToString().Trim()}'
-            and CTNStartNo = '{dr["CTNStartNo"].ToString().Trim()}'
-            and DisposeFromClog = 0";
+select pd.CFAReturnClogDate, pd.ReceiveDate, pd.TransferCFADate, pd.ReturnDate ,p.MDivisionID
+from PackingList_Detail pd WITH (NOLOCK)
+inner join PackingList p  WITH (NOLOCK) on p.id=pd.id
+where pd.ID = '{dr["PackingListID"].ToString().Trim()}'
+and pd.OrderID = '{dr["OrderID"].ToString().Trim()}'
+and pd.CTNStartNo = '{dr["CTNStartNo"].ToString().Trim()}'
+and pd.DisposeFromClog = 0
+";
                     if (!MyUtility.Check.Seek(checkPackSql, null, out DataRow drPackResult))
                     {
                         singleWarningmsg.Append($@"<CNT#: {dr["PackingListID"]}{dr["CTNStartNo"]}> does not exist!" + Environment.NewLine);
@@ -990,10 +992,6 @@ where pd.CustCTN = '{dr["CustCTN"]}' and pd.CTNQty > 0 and pd.DisposeFromClog= 0
                         else if (MyUtility.Convert.GetString(dr["Reason"]).ToUpper() == "OTHER" && MyUtility.Check.Empty(dr["ClogReasonRemark"]))
                         {
                             singleWarningmsg.Append($@"Please fill in [Remark] since [Reason] is equal to ""Other"" for PackId：{dr["PackingListID"]}, SP#：{dr["OrderID"]}, CTN#：{dr["CTNStartNo"]}." + Environment.NewLine);
-                        }
-                        else if (!MyUtility.Check.Empty(dr["Remark"].ToString().Trim()))
-                        {
-                            singleWarningmsg.Append($@"<CNT#: {dr["PackingListID"]}{dr["CTNStartNo"]}>This CTN# cannot be received, please check again." + Environment.NewLine);
                         }
                         else if (!(MyUtility.Check.Empty(drPackResult["TransferCFADate"]) && !MyUtility.Check.Empty(drPackResult["ReceiveDate"]) && MyUtility.Check.Empty(drPackResult["CFAReturnClogDate"])))
                         {
@@ -1010,6 +1008,10 @@ where pd.CustCTN = '{dr["CustCTN"]}' and pd.CTNQty > 0 and pd.DisposeFromClog= 0
             and PLCtnTrToRgCodeDate is not null"))
                         {
                             singleWarningmsg.Append($@"<PL#:{dr["PackingListID"]} already transfer to shipping factory, cannot return to production." + Environment.NewLine);
+                        }
+                        else if (drPackResult["MDivisionID"].ToString().ToUpper() != Env.User.Keyword.ToUpper())
+                        {
+                            singleWarningmsg.Append($@"<CNT#: {dr["PackingListID"]}{dr["CTNStartNo"]}>The order's M is not equal to login M." + Environment.NewLine);
                         }
 
                         // 代表都沒錯,可以單筆進行更新新增
