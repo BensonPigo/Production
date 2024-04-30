@@ -154,7 +154,6 @@
     <Build Include="dbo\Tables\PurchaseList.sql" />
     <Build Include="dbo\Tables\T_MtlStatusAnalisis.sql" />
     <Build Include="dbo\Tables\T_MtltoFTYAnalysis.sql" />
-    <Build Include="dbo\Stored Procedures\FTY\P_ImportOustandingPO_Fty.sql" />
     <Build Include="dbo\Tables\P_SubProInsReport.sql" />
     <Build Include="dbo\Stored Procedures\FTY\P_ImportSubProInsReport.sql" />
     <Build Include="dbo\Tables\T_ArtworkType.sql" />
@@ -228,6 +227,7 @@
     <Build Include="dbo\Tables\P_FabricDispatchRate.sql" />
     <Build Include="dbo\Tables\P_CFAMasterListRelatedrate.sql" />
     <Build Include="dbo\Tables\P_AdiCompReport.sql" />
+    <Build Include="dbo\Tables\P_OutstandingPOStatus.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Utility.dll" />
