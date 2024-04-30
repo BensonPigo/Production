@@ -878,6 +878,7 @@ where pd.CustCTN = '{dr["CustCTN"]}' and pd.CTNQty > 0 and pd.DisposeFromClog= 0
             else
             {
                 this.numSelectedCTNQty.Value = 0;
+                this.numTotalCTNQty.Value = 0;
             }
         }
 
