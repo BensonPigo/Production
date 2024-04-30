@@ -31,6 +31,8 @@ namespace Sci.Production.Prg.PowerBI.Logic
             P_IssueFabricByCuttingTransactionList,
             P_ProductionKitsTracking,
             P_PPICMASTERLIST,
+            P_OustandingPO,
+            P_OutstandingPOStatus,
         }
 
         /// <summary>
@@ -137,7 +139,7 @@ ORDER BY [Group], [SEQ], [NAME]";
                 string eDate_s = hasEndDate ? "Edate : " + eDate.Value.ToShortDateString() : string.Empty;
                 string sDate_s2 = hasStartDate2 ? "Sdate2 : " + sDate2.Value.ToShortDateString() : string.Empty;
                 string eDate_s2 = hasEndDate2 ? "Edate2 : " + eDate2.Value.ToShortDateString() : string.Empty;
-                string remark = $@"{dr["Source"]}{procedureNameS}{Environment.NewLine}{sDate_s}{Environment.NewLine}{eDate_s}{Environment.NewLine}{sDate_s2}{Environment.NewLine}{eDate_s2}";
+                string remark = $@"{dr["Source"]}{procedureNameS}{Environment.NewLine}{sDate_s}{Environment.NewLine}{eDate_s}{Environment.NewLine}{sDate_s2}{Environment.NewLine}{eDate_s2}{"GroupID:"}{dr["Group"]}{", SEQ:"}{dr["SEQ"]}";
                 int group = (int)dr["Group"];
                 int seq = (int)dr["SEQ"];
 
@@ -159,7 +161,10 @@ ORDER BY [Group], [SEQ], [NAME]";
                 executes.Add(model);
             }
 
-            return executes;
+            var executesOrderBy = from o in executes
+                     orderby o.Group, o.SEQ, o.ClassName
+                     select o;
+            return executesOrderBy.ToList();
         }
 
         /// <summary>
@@ -274,6 +279,12 @@ ORDER BY [Group], [SEQ], [NAME]";
                         break;
                     case ListName.P_PPICMASTERLIST:
                         result = new P_Import_PPICMasterListBIData().P_PPICMasterListBIData(item.SDate);
+                        break;
+                    case ListName.P_OustandingPO:
+                        result = new P_Import_OutstandingPO().P_OutstandingPO(item.SDate, item.EDate);
+                        break;
+                    case ListName.P_OutstandingPOStatus:
+                        result = new P_Import_OutstandingPOStatus().P_OutstandingPOStatus(item.SDate);
                         break;
                 }
             }
