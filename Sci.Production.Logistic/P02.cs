@@ -604,6 +604,11 @@ where pd.CustCTN = '{dr["CustCTN"]}' and pd.CTNQty > 0 and pd.DisposeFromClog= 0
                 this.numSelectedCTNQty.Value = selectCnt;
                 this.numTotalCTNQty.Value = ((DataTable)this.listControlBindingSource1.DataSource).Rows.Count;
             }
+            else
+            {
+                this.numSelectedCTNQty.Value = 0;
+                this.numTotalCTNQty.Value = 0;
+            }
         }
 
         private int progressCnt = 0;
