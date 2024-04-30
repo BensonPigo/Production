@@ -64,7 +64,11 @@
             this.lbTotalCTNQty = new Sci.Win.UI.Label();
             this.lbSelectedCTNQty = new Sci.Win.UI.Label();
             this.panel7 = new System.Windows.Forms.Panel();
+            this.labProcessingBar = new System.Windows.Forms.Label();
+            this.label4 = new Sci.Win.UI.Label();
+            this.progressBarProcessing = new System.Windows.Forms.ProgressBar();
             this.panel6 = new System.Windows.Forms.Panel();
+            this.backgroundDownloadSticker = new System.ComponentModel.BackgroundWorker();
             this.panel5.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gridImport)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
@@ -321,6 +325,7 @@
             this.txtfactory.BoolFtyGroupList = true;
             this.txtfactory.FilteMDivision = false;
             this.txtfactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtfactory.IsMultiselect = false;
             this.txtfactory.IsProduceFty = false;
             this.txtfactory.IssupportJunk = false;
             this.txtfactory.Location = new System.Drawing.Point(484, 34);
@@ -427,11 +432,43 @@
             // panel7
             // 
             this.panel7.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panel7.Controls.Add(this.labProcessingBar);
+            this.panel7.Controls.Add(this.label4);
+            this.panel7.Controls.Add(this.progressBarProcessing);
             this.panel7.Controls.Add(this.btnImportFromBarcode);
             this.panel7.Location = new System.Drawing.Point(3, 65);
             this.panel7.Name = "panel7";
             this.panel7.Size = new System.Drawing.Size(864, 42);
             this.panel7.TabIndex = 40;
+            // 
+            // labProcessingBar
+            // 
+            this.labProcessingBar.AutoSize = true;
+            this.labProcessingBar.BackColor = System.Drawing.Color.Transparent;
+            this.labProcessingBar.Location = new System.Drawing.Point(228, 13);
+            this.labProcessingBar.Name = "labProcessingBar";
+            this.labProcessingBar.Size = new System.Drawing.Size(28, 17);
+            this.labProcessingBar.TabIndex = 10;
+            this.labProcessingBar.Text = "0/0";
+            // 
+            // label4
+            // 
+            this.label4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.label4.Location = new System.Drawing.Point(8, 10);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(133, 23);
+            this.label4.TabIndex = 9;
+            this.label4.Text = "Processing progress";
+            // 
+            // progressBarProcessing
+            // 
+            this.progressBarProcessing.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.progressBarProcessing.BackColor = System.Drawing.SystemColors.Control;
+            this.progressBarProcessing.Location = new System.Drawing.Point(144, 10);
+            this.progressBarProcessing.Name = "progressBarProcessing";
+            this.progressBarProcessing.Size = new System.Drawing.Size(208, 23);
+            this.progressBarProcessing.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
+            this.progressBarProcessing.TabIndex = 8;
             // 
             // panel6
             // 
@@ -456,6 +493,14 @@
             this.panel6.Size = new System.Drawing.Size(864, 63);
             this.panel6.TabIndex = 39;
             // 
+            // backgroundDownloadSticker
+            // 
+            this.backgroundDownloadSticker.WorkerReportsProgress = true;
+            this.backgroundDownloadSticker.WorkerSupportsCancellation = true;
+            this.backgroundDownloadSticker.DoWork += new System.ComponentModel.DoWorkEventHandler(this.BackgroundDownloadSticker_DoWork);
+            this.backgroundDownloadSticker.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.BackgroundDownloadSticker_ProgressChanged);
+            this.backgroundDownloadSticker.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.BackgroundDownloadSticker_RunWorkerCompleted);
+            // 
             // P02
             // 
             this.ClientSize = new System.Drawing.Size(877, 512);
@@ -479,6 +524,7 @@
             this.panel3.ResumeLayout(false);
             this.panel3.PerformLayout();
             this.panel7.ResumeLayout(false);
+            this.panel7.PerformLayout();
             this.panel6.ResumeLayout(false);
             this.panel6.PerformLayout();
             this.ResumeLayout(false);
@@ -528,5 +574,9 @@
         private Win.UI.NumericBox numSelectedCTNQty;
         private Win.UI.Label lbTotalCTNQty;
         private Win.UI.Label lbSelectedCTNQty;
+        private System.Windows.Forms.Label labProcessingBar;
+        private Win.UI.Label label4;
+        private System.Windows.Forms.ProgressBar progressBarProcessing;
+        private System.ComponentModel.BackgroundWorker backgroundDownloadSticker;
     }
 }
