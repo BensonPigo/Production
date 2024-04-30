@@ -785,7 +785,6 @@ and p2.CFAReturnClogDate is null
                     if (!MyUtility.Check.Seek(checkPackSql, null, out DataRow drPackResult))
                     {
                         singleWarningmsg.Append($@"<CNT#: {dr["id"]}{dr["CTNStartNo"]}> does not exist!" + Environment.NewLine);
-                        continue;
                     }
                     else
                     {
