@@ -16,11 +16,11 @@ BEGIN
 	DECLARE @msg nvarchar(500) ='';
 	DECLARE @CTNQty int;
 	DECLARE @ShipQty int;
-	DECLARE @NW numeric(9,3);
-	DECLARE @GW numeric(9,3);
-	DECLARE @NNW numeric(9,3);
-	DECLARE @CBM numeric(10,4);
-	DECLARE @OtherCBM numeric(10,4);
+	DECLARE @NW numeric(9,2);
+	DECLARE @GW numeric(9,2);
+	DECLARE @NNW numeric(9,2);
+	DECLARE @CBM numeric(10,3);
+	DECLARE @OtherCBM numeric(10,3);
 	DECLARE @INVNo varchar(20);
 	DECLARE @HasCancelOrder bit;
 
@@ -52,10 +52,10 @@ BEGIN
 	
 	SET @CTNQty = (select isnull(CTNQty,0) from #Chk_CBM_GW)
 	SET @ShipQty = (select isnull(ShipQty,0) from #Chk_CBM_GW)
-	SET @NW = (select isnull(NW,0) from #Chk_CBM_GW)
-	SET @GW = (select isnull(GW,0) from #Chk_CBM_GW)
-	SET @NNW = (select isnull(NNW,0) from #Chk_CBM_GW)
-	SET @CBM = (select isnull(CBM,0) from #Chk_CBM_GW)
+	SET @NW = (select isnull(Round(NW,2),0) from #Chk_CBM_GW)
+	SET @GW = (select isnull(Round(GW,2),0) from #Chk_CBM_GW)
+	SET @NNW = (select isnull(Round(NNW,2),0) from #Chk_CBM_GW)
+	SET @CBM = (select isnull(Round(CBM,3),0) from #Chk_CBM_GW)
 
 	----判斷是否存在Order_Qty
 	--IF EXISTS(
