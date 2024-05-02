@@ -965,18 +965,20 @@ SET @ErrorMessage = ''
 	SET @ErrDesc = ''
 
 /****************************************************************************************************************************/
-/***********************************P_Import_QA_R11_DefectDetail****************************************************************/
+/***********************************P_Import_WH_R16****************************************************************/
 BEGIN TRY
-	set @StartDate = CONVERT(date, DATEADD(MONTH, -3, GETDATE()))
-	set @EndDate = CONVERT(date, getdate())
-	execute [dbo].[P_Import_QA_R11_DefectDetail]  @StartDate, @EndDate	
+	Declare @P_Import_WH_R16_EndDate date = getdate()
+	Declare @P_Import_WH_R16_StartDate date = dateadd(DAY, -30, @P_Import_WH_R16_EndDate)
+	set @Stime = getdate()  
+	execute [dbo].[P_Import_WH_R16] @P_Import_WH_R16_StartDate, @P_Import_WH_R16_EndDate
+	set @Etime = getdate()
 END TRY
 
 BEGIN CATCH
 
 SET @ErrorMessage = 
 '
-[30-P_Import_QA_R11_DefectDetail]' + CHAR(13) +
+[31-P_Import_WH_R16]' + CHAR(13) +
 ',錯誤代碼: ' + CONVERT(VARCHAR, ERROR_NUMBER()) + CHAR(13) +
 ',錯誤行數: ' + CONVERT(VARCHAR, ERROR_LINE()) + CHAR(13) +
 ',錯誤訊息: ' + ERROR_MESSAGE()
@@ -991,7 +993,7 @@ END CATCH;
 IF (@ErrorMessage IS NULL or @ErrorMessage='')
 BEGIN 
 	set @desc += CHAR(13) + '
-[30-P_Import_QA_R11_DefectDetail] is completed' + ' Time:' + FORMAT(@Stime, 'yyyy/MM/dd HH:mm:ss') + ' - ' + FORMAT(@Etime, 'yyyy/MM/dd HH:mm:ss')
+[31-P_Import_WH_R16] is completed' + ' Time:' + FORMAT(@Stime, 'yyyy/MM/dd HH:mm:ss') + ' - ' + FORMAT(@Etime, 'yyyy/MM/dd HH:mm:ss')
 END
 ELSE
 BEGIN
@@ -1001,9 +1003,9 @@ SET @ErrorMessage = ''
 
 -- Write in P_TransLog
 	insert into P_TransLog(functionName,Description,StartTime,EndTime,TransCode) 
-	values('P_Import_QA_R11_DefectDetail',@ErrDesc,@Stime,@Etime,@TransCode)
+	values('P_Import_WH_R16',@ErrDesc,@Stime,@Etime,@TransCode)
 	SET @ErrDesc = ''
-
+	
 /****************************************************************************************************************************/
 /***********************************P_Import_WH_R25****************************************************************/
 BEGIN TRY
