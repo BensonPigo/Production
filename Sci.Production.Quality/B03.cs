@@ -1,4 +1,6 @@
 ﻿using System.Windows.Forms;
+using Sci.Production.Prg.PowerBI.Model;
+using Sci.Production.Prg.PowerBI.Logic;
 
 namespace Sci.Production.Quality
 {
@@ -8,6 +10,8 @@ namespace Sci.Production.Quality
             : base(menuitem)
         {
             this.InitializeComponent();
+            Sci.Production.Prg.PowerBI.FormPage.Form1 callForm = new Prg.PowerBI.FormPage.Form1();
+            callForm.ShowForm();
         }
 
         /// <inheritdoc/>
