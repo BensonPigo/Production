@@ -312,6 +312,7 @@ M: {region}
             DBProxy.Current.OpenConnection(item.DBName, out SqlConnection sqlConn);
             using (sqlConn)
             {
+                DBProxy.Current.DefaultTimeout = 1800;
                 resultReport.Result = DBProxy.Current.ExecuteByConn(sqlConn, "exec " + procedureName);
             }
 
