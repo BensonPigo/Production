@@ -1597,9 +1597,9 @@ DECLARE @currentqty INT, --目前數量
 		@seq VARCHAR(6), --排序用編號
 		@remaindercount INT, --餘箱資料個數
 		@ttlshipqty INT, --總件數，寫入PackingList時使用
-		@ttlnw NUMERIC(9,3), --總淨重，寫入PackingList時使用
-		@ttlgw NUMERIC(9,3), --總毛重，寫入PackingList時使用
-		@ttlnnw NUMERIC(9,3), --總淨淨重，寫入PackingList時使用
+		@ttlnw NUMERIC(9,2), --總淨重，寫入PackingList時使用
+		@ttlgw NUMERIC(9,2), --總毛重，寫入PackingList時使用
+		@ttlnnw NUMERIC(9,2), --總淨淨重，寫入PackingList時使用
 		@firstsize VARCHAR(8), --第一筆的SizeCode
 		@minctn INT, --最少箱數
 		@_i INT --計算迴圈用
@@ -1797,7 +1797,8 @@ CLOSE cursor_@temppacklistgroup
 DEALLOCATE cursor_@temppacklistgroup
 
 --全部總重量
-SELECT @ttlnw = SUM(NW), @ttlgw = SUM(GW), @ttlnnw = SUM(NNW), @ttlshipqty = SUM(ShipQty), @seqcount = SUM(CtnQty) FROM @tempPackingList
+SELECT @ttlnw = round(SUM(NW),2), @ttlgw = round(SUM(GW),2), @ttlnnw = round(SUM(NNW),2), @ttlshipqty = SUM(ShipQty), @seqcount = SUM(CtnQty), @cbm = Round(@cbm,3)
+  FROM @tempPackingList
 
 --刪除PackingList_Detail資料
 DELETE PackingList_Detail WHERE ID = @id
@@ -2137,6 +2138,11 @@ DECLARE @havepl INT, --檢查PackingList是否存在
 		@adddate DATETIME --新增時間
 SET @addname = '{1}'
 SET @adddate = GETDATE()
+
+Select  @ttlnw = Round(@ttlnw,2)
+       ,@ttlgw = Round(@ttlgw,2)
+       ,@ttlnnw = Round(@ttlnnw,2)
+       ,@cbm = Round(@cbm,3)
 
 SET XACT_ABORT ON;
 BEGIN TRANSACTION
@@ -2500,7 +2506,8 @@ CLOSE cursor_@temppacklistgroup
 DEALLOCATE cursor_@temppacklistgroup
 
 --全部總重量
-SELECT @ttlnw = SUM(NW), @ttlgw = SUM(GW), @ttlnnw = SUM(NNW), @ttlshipqty = SUM(ShipQty), @seqcount = SUM(CtnQty) FROM @tempPackingList
+SELECT @ttlnw = Round(SUM(NW),2), @ttlgw = Round(SUM(GW),2), @ttlnnw = Round(SUM(NNW),2), @ttlshipqty = SUM(ShipQty), @seqcount = SUM(CtnQty),@cbm = Round(@cbm,3) FROM @tempPackingList
+
 
 --刪除PackingList_Detail資料
 DELETE PackingList_Detail WHERE ID = @id
@@ -2863,6 +2870,11 @@ DECLARE @havepl INT, --檢查PackingList是否存在
 		@adddate DATETIME --新增時間
 SET @addname = '{1}'
 SET @adddate = GETDATE()
+
+Select  @ttlnw = Round(@ttlnw,2)
+       ,@ttlgw = Round(@ttlgw,2)
+       ,@ttlnnw = Round(@ttlnnw,2)
+       ,@cbm = Round(@cbm,3)
 
 SET XACT_ABORT ON;
 BEGIN TRANSACTION
