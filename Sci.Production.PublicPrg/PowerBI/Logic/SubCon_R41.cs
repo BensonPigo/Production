@@ -26,30 +26,29 @@ namespace Sci.Production.Prg.PowerBI.Logic
         public Base_ViewModel GetSubprocessWIPData(SubCon_R41_ViewModel model)
         {
             Base_ViewModel base_ViewModel = new Base_ViewModel();
-            List<SqlParameter> listPar = new List<SqlParameter>
+            List<SqlParameter> listPar = new List<SqlParameter>();
+            if (model.IsPowerBI)
             {
-                new SqlParameter("@CutRefNo1", SqlDbType.Date) { Value = (object)model.CutRefNo1 ?? DBNull.Value },
-                new SqlParameter("@CutRefNo2", SqlDbType.Date) { Value = (object)model.CutRefNo2 ?? DBNull.Value },
-                new SqlParameter("@sp1", SqlDbType.VarChar, 20) { Value = model.SP1 },
-                new SqlParameter("@EstCuttingDate1", SqlDbType.Date) { Value = (object)model.EstCuttingDate1 ?? DBNull.Value },
-                new SqlParameter("@EstCuttingDate2", SqlDbType.Date) { Value = (object)model.EstCuttingDate2 ?? DBNull.Value },
-                new SqlParameter("@BundleCDate1", SqlDbType.Date) { Value = (object)model.BundleCDate1 ?? DBNull.Value },
-                new SqlParameter("@BundleCDate2", SqlDbType.Date) { Value = (object)model.BundleCDate2 ?? DBNull.Value },
-                new SqlParameter("@BundleScanDate1", SqlDbType.Date) { Value = (object)model.BundleScanDate1 ?? DBNull.Value },
-                new SqlParameter("@BundleScanDate2", SqlDbType.Date) { Value = (object)model.BundleScanDate2 ?? DBNull.Value },
-                new SqlParameter("@SewingInlineDate1", SqlDbType.Date) { Value = (object)model.SewingInlineDate1 ?? DBNull.Value },
-                new SqlParameter("@SewingInlineDate2", SqlDbType.Date) { Value = (object)model.SewingInlineDate2 ?? DBNull.Value },
-                new SqlParameter("@LastSewDate1", SqlDbType.Date) { Value = (object)model.LastSewDate1 ?? DBNull.Value },
-                new SqlParameter("@LastSewDate2", SqlDbType.Date) { Value = (object)model.LastSewDate2 ?? DBNull.Value },
-                new SqlParameter("@BuyerDelDate1", SqlDbType.Date) { Value = (object)model.BuyerDelDate1 ?? DBNull.Value },
-                new SqlParameter("@BuyerDelDate2", SqlDbType.Date) { Value = (object)model.BuyerDelDate2 ?? DBNull.Value },
-                new SqlParameter("@SubProcessList", SqlDbType.VarChar, 100) { Value = model.SubProcessList },
-                new SqlParameter("@MDivisionID", SqlDbType.VarChar, 10) { Value = model.MDivisionID },
-                new SqlParameter("@FactoryID", SqlDbType.VarChar, 10) { Value = model.FactoryID },
-                new SqlParameter("@ProcessLocation", SqlDbType.VarChar, 20) { Value = model.ProcessLocation },
-                new SqlParameter("@BIEditDate", SqlDbType.Date) { Value = (object)model.BIEditDate ?? DBNull.Value },
-                new SqlParameter("@IsPowerBI", SqlDbType.Bit) { Value = model.IsPowerBI },
-            };
+                listPar = new List<SqlParameter>
+                {
+                    new SqlParameter("@BIEditDate",  SqlDbType.VarChar, 20) { Value = Convert.ToDateTime(model.BIEditDate).ToString("yyyy/MM/dd") },
+                };
+            }
+            else
+            {
+                listPar = new List<SqlParameter>
+                {
+                    new SqlParameter("@CutRefNo1", SqlDbType.VarChar, 50) { Value = model.CutRefNo1 },
+                    new SqlParameter("@CutRefNo2", SqlDbType.VarChar, 50) { Value = model.CutRefNo2 },
+                    new SqlParameter("@sp1", SqlDbType.VarChar, 20) { Value = model.SP1 },
+                    new SqlParameter("@MDivisionID", SqlDbType.VarChar, 10) { Value = model.MDivisionID },
+                    new SqlParameter("@FactoryID", SqlDbType.VarChar, 10) { Value = model.FactoryID },
+                    new SqlParameter("@ProcessLocation", SqlDbType.VarChar, 20) { Value = model.ProcessLocation },
+                    new SqlParameter("@BIEditDate",  SqlDbType.VarChar, 20) { Value = Convert.ToDateTime(model.BIEditDate).ToString("yyyy/MM/dd") },
+                    new SqlParameter("@LastSewDateFrom", SqlDbType.VarChar, 20) { Value = Convert.ToDateTime(model.LastSewDate1).ToString("yyyy/MM/dd") },
+                    new SqlParameter("@LastSewDateTo", SqlDbType.VarChar, 20) { Value = Convert.ToDateTime(model.LastSewDate2).ToString("yyyy/MM/dd") },
+                };
+            }
 
             #region Append畫面上的條件
             StringBuilder sqlWhere = new StringBuilder();
@@ -60,16 +59,14 @@ namespace Sci.Production.Prg.PowerBI.Logic
             string whereBI = string.Empty;
             if (model.IsPowerBI)
             {
-                whereBI = string.Format(@"
+                whereBI = $@"
  and 
 (
-    b.Adddate >= '{0}'
-    or b.EditDate >= '{0}'
-    or bio.InComing >= '{0}'
-    or bio.OutGoing >= '{0}'
-)",
-Convert.ToDateTime(model.BIEditDate).ToString("yyyy/MM/dd")
-);
+    b.Adddate >= @BIEditDate
+    or b.EditDate >= @BIEditDate
+    or bio.InComing >= @BIEditDate
+    or bio.OutGoing >= @BIEditDate
+)";
             }
             else
             {
@@ -81,96 +78,96 @@ Convert.ToDateTime(model.BIEditDate).ToString("yyyy/MM/dd")
                 if (!MyUtility.Check.Empty(model.CutRefNo1))
                 {
                     joinWorkOrder = "inner join Workorder w WITH (NOLOCK, index(CutRefNo)) on b.CutRef = w.CutRef ";
-                    sqlWhereFirstQuery.Append(string.Format(@" and w.CutRef >= '{0}' ", model.CutRefNo1));
+                    sqlWhereFirstQuery.Append($@" and w.CutRef >= @CutRefNo1 ");
                 }
 
                 if (!MyUtility.Check.Empty(model.CutRefNo2))
                 {
                     joinWorkOrder = "inner join Workorder w WITH (NOLOCK, index(CutRefNo)) on b.CutRef = w.CutRef ";
-                    sqlWhereFirstQuery.Append(string.Format(@" and w.CutRef <= '{0}' ", model.CutRefNo2));
+                    sqlWhereFirstQuery.Append($@" and w.CutRef <= @CutRefNo2 ");
                 }
 
                 if (!MyUtility.Check.Empty(model.SP1))
                 {
-                    sqlWhereFirstQuery.Append(string.Format(@" and BDO.Orderid = '{0}'", model.SP1));
+                    sqlWhereFirstQuery.Append($@" and BDO.Orderid = @sp1");
                 }
 
                 if (!MyUtility.Check.Empty(model.BundleCDate1))
                 {
-                    sqlWhereFirstQuery.Append(string.Format(@" and b.Cdate >= '{0}'", Convert.ToDateTime(model.BundleCDate1).ToString("yyyy/MM/dd")));
+                    sqlWhereFirstQuery.Append($@" and b.Cdate >= '{Convert.ToDateTime(model.BundleCDate1).ToString("yyyy/MM/dd")}'");
                 }
 
                 if (!MyUtility.Check.Empty(model.BundleCDate2))
                 {
-                    sqlWhereFirstQuery.Append(string.Format(@" and b.Cdate <= '{0}'", Convert.ToDateTime(model.BundleCDate2).ToString("yyyy/MM/dd")));
+                    sqlWhereFirstQuery.Append($@" and b.Cdate <= '{Convert.ToDateTime(model.BundleCDate2).ToString("yyyy/MM/dd")}'");
                 }
 
                 if (!MyUtility.Check.Empty(model.BundleScanDate1) && !MyUtility.Check.Empty(model.BundleScanDate2))
                 {
-                    sqlWhere.Append(string.Format(@" and ((convert (date, bio.InComing) >= '{0}' and convert (date, bio.InComing) <= '{1}' ) or (convert (date, bio.OutGoing) >= '{0}' and convert (date, bio.OutGoing) <= '{1}'))", Convert.ToDateTime(model.BundleScanDate1).ToString("yyyy/MM/dd"), Convert.ToDateTime(model.BundleScanDate2).ToString("yyyy/MM/dd")));
-                    sqlWhereFirstQuery.Append(string.Format(@" and ((convert (date, bio.InComing) >= '{0}' and convert (date, bio.InComing) <= '{1}' ) or (convert (date, bio.OutGoing) >= '{0}' and convert (date, bio.OutGoing) <= '{1}'))", Convert.ToDateTime(model.BundleScanDate1).ToString("yyyy/MM/dd"), Convert.ToDateTime(model.BundleScanDate2).ToString("yyyy/MM/dd")));
+                    sqlWhere.Append($@" and ((convert (date, bio.InComing) >= '{Convert.ToDateTime(model.BundleScanDate1).ToString("yyyy/MM/dd")}' and convert (date, bio.InComing) <= '{Convert.ToDateTime(model.BundleScanDate2).ToString("yyyy/MM/dd")}' ) or (convert (date, bio.OutGoing) >= '{Convert.ToDateTime(model.BundleScanDate1).ToString("yyyy/MM/dd")}' and convert (date, bio.OutGoing) <= '{Convert.ToDateTime(model.BundleScanDate2).ToString("yyyy/MM/dd")}'))");
+                    sqlWhereFirstQuery.Append($@" and ((convert (date, bio.InComing) >= '{Convert.ToDateTime(model.BundleScanDate1).ToString("yyyy/MM/dd")}' and convert (date, bio.InComing) <= '{Convert.ToDateTime(model.BundleScanDate2).ToString("yyyy/MM/dd")}' ) or (convert (date, bio.OutGoing) >= '{Convert.ToDateTime(model.BundleScanDate1).ToString("yyyy/MM/dd")}' and convert (date, bio.OutGoing) <= '{Convert.ToDateTime(model.BundleScanDate2).ToString("yyyy/MM/dd")}'))");
                 }
                 else
                 {
                     if (!MyUtility.Check.Empty(model.BundleScanDate1))
                     {
-                        sqlWhere.Append(string.Format(@" and (convert (date, bio.InComing)  >= '{0}' or convert (date, bio.OutGoing) >= '{0}')", Convert.ToDateTime(model.BundleScanDate1).ToString("yyyy/MM/dd")));
-                        sqlWhereFirstQuery.Append(string.Format(@" and (convert (date, bio.InComing)  >= '{0}' or convert (date, bio.OutGoing) >= '{0}')", Convert.ToDateTime(model.BundleScanDate1).ToString("yyyy/MM/dd")));
+                        sqlWhere.Append($@" and (convert (date, bio.InComing)  >= '{Convert.ToDateTime(model.BundleScanDate1).ToString("yyyy/MM/dd")}' or convert (date, bio.OutGoing) >= '{Convert.ToDateTime(model.BundleScanDate1).ToString("yyyy/MM/dd")}')");
+                        sqlWhereFirstQuery.Append($@" and (convert (date, bio.InComing)  >= '{Convert.ToDateTime(model.BundleScanDate1).ToString("yyyy/MM/dd")}' or convert (date, bio.OutGoing) >= '{Convert.ToDateTime(model.BundleScanDate1).ToString("yyyy/MM/dd")}')");
                     }
 
                     if (!MyUtility.Check.Empty(model.BundleScanDate2))
                     {
-                        sqlWhere.Append(string.Format(@" and (convert (date, bio.InComing)  <= '{0}' or convert (date, bio.OutGoing) <= '{0}')", Convert.ToDateTime(model.BundleScanDate2).ToString("yyyy/MM/dd")));
-                        sqlWhereFirstQuery.Append(string.Format(@" and (convert (date, bio.InComing)  <= '{0}' or convert (date, bio.OutGoing) <= '{0}')", Convert.ToDateTime(model.BundleScanDate2).ToString("yyyy/MM/dd")));
+                        sqlWhere.Append($@" and (convert (date, bio.InComing)  <= '{Convert.ToDateTime(model.BundleScanDate2).ToString("yyyy/MM/dd")}' or convert (date, bio.OutGoing) <= '{Convert.ToDateTime(model.BundleScanDate2).ToString("yyyy/MM/dd")}')");
+                        sqlWhereFirstQuery.Append($@" and (convert (date, bio.InComing)  <= '{Convert.ToDateTime(model.BundleScanDate2).ToString("yyyy/MM/dd")}' or convert (date, bio.OutGoing) <= '{Convert.ToDateTime(model.BundleScanDate2).ToString("yyyy/MM/dd")}')");
                     }
                 }
 
                 if (!MyUtility.Check.Empty(model.MDivisionID))
                 {
-                    sqlWhereFirstQuery.Append(string.Format(@" and b.MDivisionid = '{0}'", model.MDivisionID));
+                    sqlWhereFirstQuery.Append(@" and b.MDivisionid = @MDivisionID");
                 }
 
                 if (!MyUtility.Check.Empty(model.FactoryID))
                 {
-                    sqlWhereFirstQuery.Append(string.Format(@" and o.FtyGroup = '{0}'", model.FactoryID));
+                    sqlWhereFirstQuery.Append(@" and o.FtyGroup = @FactoryID");
                 }
 
                 if (model.ProcessLocation != "ALL")
                 {
-                    sqlWhere.Append(string.Format(@" and isnull(bio.RFIDProcessLocationID,'') = '{0}'", model.ProcessLocation));
-                    sqlWhereFirstQuery.Append(string.Format(@" and isnull(bio.RFIDProcessLocationID,'') = '{0}'", model.ProcessLocation));
+                    sqlWhere.Append(@" and isnull(bio.RFIDProcessLocationID,'') = @ProcessLocation");
+                    sqlWhereFirstQuery.Append(@" and isnull(bio.RFIDProcessLocationID,'') = @ProcessLocation");
                 }
 
                 if (!MyUtility.Check.Empty(model.BuyerDelDate1))
                 {
-                    sqlWhereFirstQuery.Append(string.Format(@" and o.BuyerDelivery >= convert(date,'{0}')", Convert.ToDateTime(model.BuyerDelDate1).ToString("yyyy/MM/dd")));
+                    sqlWhereFirstQuery.Append($@" and o.BuyerDelivery >= convert(date,'{Convert.ToDateTime(model.BuyerDelDate1).ToString("yyyy/MM/dd")}')");
                 }
 
                 if (!MyUtility.Check.Empty(model.BuyerDelDate2))
                 {
-                    sqlWhereFirstQuery.Append(string.Format(@" and o.BuyerDelivery <= convert(date,'{0}')", Convert.ToDateTime(model.BuyerDelDate2).ToString("yyyy/MM/dd")));
+                    sqlWhereFirstQuery.Append($@" and o.BuyerDelivery <= convert(date,'{Convert.ToDateTime(model.BuyerDelDate2).ToString("yyyy/MM/dd")}')");
                 }
 
                 if (!MyUtility.Check.Empty(model.SewingInlineDate1))
                 {
-                    sqlWhereFirstQuery.Append(string.Format(@" and o.SewInLine >= convert(date,'{0}')", Convert.ToDateTime(model.SewingInlineDate1).ToString("yyyy/MM/dd")));
+                    sqlWhereFirstQuery.Append($@" and o.SewInLine >= convert(date,'{Convert.ToDateTime(model.SewingInlineDate1).ToString("yyyy/MM/dd")}')");
                 }
 
                 if (!MyUtility.Check.Empty(model.SewingInlineDate2))
                 {
-                    sqlWhereFirstQuery.Append(string.Format(@" and o.SewInLine <= convert(date,'{0}')", Convert.ToDateTime(model.SewingInlineDate2).ToString("yyyy/MM/dd")));
+                    sqlWhereFirstQuery.Append($@" and o.SewInLine <= convert(date,'{Convert.ToDateTime(model.SewingInlineDate2).ToString("yyyy/MM/dd")}')");
                 }
 
                 if (!MyUtility.Check.Empty(model.EstCuttingDate1))
                 {
                     joinWorkOrder = "inner join Workorder w WITH (NOLOCK, index(CutRefNo)) on b.CutRef = w.CutRef ";
-                    sqlWhereFirstQuery.Append(string.Format(@" and w.EstCutDate >= convert(date,'{0}')", Convert.ToDateTime(model.EstCuttingDate1).ToString("yyyy/MM/dd")));
+                    sqlWhereFirstQuery.Append($@" and w.EstCutDate >= convert(date,'{Convert.ToDateTime(model.EstCuttingDate1).ToString("yyyy/MM/dd")}')");
                 }
 
                 if (!MyUtility.Check.Empty(model.EstCuttingDate2))
                 {
                     joinWorkOrder = "inner join Workorder w WITH (NOLOCK, index(CutRefNo)) on b.CutRef = w.CutRef ";
-                    sqlWhereFirstQuery.Append(string.Format(@" and w.EstCutDate <= convert(date,'{0}')", Convert.ToDateTime(model.EstCuttingDate2).ToString("yyyy/MM/dd")));
+                    sqlWhereFirstQuery.Append($@" and w.EstCutDate <= convert(date,'{Convert.ToDateTime(model.EstCuttingDate2).ToString("yyyy/MM/dd")}')");
                 }
 
                 if (!MyUtility.Check.Empty(model.EstCuttingDate1) || !MyUtility.Check.Empty(model.EstCuttingDate2))
@@ -182,8 +179,6 @@ Convert.ToDateTime(model.BIEditDate).ToString("yyyy/MM/dd")
                 {
                     whereExistsLastSewDate = $@" and exists(select 1 from View_SewingInfoLocation vsis with (nolock) where vsis.OrderID = o.ID and vsis.LastSewDate between @LastSewDateFrom and @LastSewDateTo)";
                     whereSewDate = " and (tsi.LastSewDate between @LastSewDateFrom and @LastSewDateTo)";
-                    listPar.Add(new SqlParameter("@LastSewDateFrom", model.LastSewDate1));
-                    listPar.Add(new SqlParameter("@LastSewDateTo", model.LastSewDate2));
                 }
             }
             #endregion
@@ -399,7 +394,7 @@ where 1=1
 ");
 
             string sqlResult = $@"
-{sqlCmd.ToString()}
+{sqlCmd}
 
 ;with GetCutDateTmp as
 (
@@ -490,13 +485,13 @@ order by [Bundleno],[Sub-process],[RFIDProcessLocationID]
 drop table #result
 drop table #tmp_Workorder
 ";
-            base_ViewModel.Result = this.DBProxy.Select("Production", sqlResult, out DataTable dtResult);
+            base_ViewModel.Result = this.DBProxy.Select("Production", sqlResult, listPar, out DataTable dtResult);
             if (!base_ViewModel.Result)
             {
                 return base_ViewModel;
             }
 
-            base_ViewModel.DtArr = new DataTable[] { dtResult };
+            base_ViewModel.Dt = dtResult;
             return base_ViewModel;
         }
     }

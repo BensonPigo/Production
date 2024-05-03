@@ -35,7 +35,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                     throw resultReport.Result.GetException();
                 }
 
-                DataTable detailTable = resultReport.DtArr[0];
+                DataTable detailTable = resultReport.Dt;
                 if (!resultReport.Result)
                 {
                     throw resultReport.Result.GetException();
