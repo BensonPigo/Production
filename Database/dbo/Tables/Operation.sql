@@ -2,8 +2,8 @@
     [ID]                  VARCHAR (20)   CONSTRAINT [DF_Operation_ID] DEFAULT ('') NOT NULL,
     [FromGSD]             BIT            CONSTRAINT [DF_Operation_FromGSD] DEFAULT ((0)) NOT NULL,
     [CalibratedCode]      BIT            CONSTRAINT [DF_Operation_CalibratedCode] DEFAULT ((0)) NOT NULL,
-    [DescEN]              NVARCHAR (300) CONSTRAINT [DF_Operation_DescEN] DEFAULT ('') NOT NULL,
-    [DescCH]              NVARCHAR (300) CONSTRAINT [DF_Operation_DescCH] DEFAULT ('') NOT NULL,
+    [DescEN]              NVARCHAR (500) CONSTRAINT [DF_Operation_DescEN] DEFAULT ('') NOT NULL,
+    [DescCH]              NVARCHAR (500) CONSTRAINT [DF_Operation_DescCH] DEFAULT ('') NOT NULL,
     [MachineTypeID]       VARCHAR (10)   CONSTRAINT [DF_Operation_MachineTypeID] DEFAULT ('') NOT NULL,
     [MtlFactorID]         VARCHAR (3)    CONSTRAINT [DF_Operation_MtlFactorID] DEFAULT ('') NOT NULL,
     [ISO]                 VARCHAR (10)   CONSTRAINT [DF_Operation_ISO] DEFAULT ('') NOT NULL,
@@ -39,8 +39,8 @@
     [Hem]                 BIT            DEFAULT ((0)) NOT NULL,
     [Segment]             INT            CONSTRAINT [DF_Operation_Segment] DEFAULT ((0)) NOT NULL,
     [Tubular]             BIT            CONSTRAINT [DF_Operation_Tubular] DEFAULT ((0)) NOT NULL,
-    [DescVN]              NVARCHAR (300) DEFAULT ('') NOT NULL,
-    [DescKH]              NVARCHAR (300) DEFAULT ('') NOT NULL,
+    [DescVN]              NVARCHAR (500) DEFAULT ('') NOT NULL,
+    [DescKH]              NVARCHAR (500) DEFAULT ('') NOT NULL,
     CONSTRAINT [PK_Operation] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 
