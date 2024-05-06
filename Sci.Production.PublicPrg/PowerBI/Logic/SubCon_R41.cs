@@ -393,22 +393,19 @@ where 1=1
 {sqlWhere}
 ");
 
-            string sqlResult = $@"
-{sqlCmd}
+            sqlCmd.Append($@"
+select	r.[Cut Ref#],
+		r.M,
+		[EstCutDate] = MAX(w.EstCutDate),
+		[CuttingOutputDate] = MAX(co.cDate)
+into #tmpGetCutDateTmp
+from #result r
+inner join WorkOrder w with (nolock) on w.CutRef = r.[Cut Ref#] and w.id = r.[Master SP#]
+left join CuttingOutput_Detail cod with (nolock) on cod.WorkOrderUkey = w.Ukey
+left join CuttingOutput co  with (nolock) on co.ID = cod.ID
+where r.[Cut Ref#] <> ''
+group by r.[Cut Ref#],r.M
 
-;with GetCutDateTmp as
-(
-	select	r.[Cut Ref#],
-			r.M,
-			[EstCutDate] = MAX(w.EstCutDate),
-			[CuttingOutputDate] = MAX(co.cDate)
-	from #result r
-	inner join WorkOrder w with (nolock) on w.CutRef = r.[Cut Ref#] and w.id = r.[Master SP#]
-	left join CuttingOutput_Detail cod with (nolock) on cod.WorkOrderUkey = w.Ukey
-	left join CuttingOutput co  with (nolock) on co.ID = cod.ID
-    where r.[Cut Ref#] <> ''
-	group by r.[Cut Ref#],r.M
-)
 select
     [Bundleno] = isnull(r.[Bundleno],'') ,
     [RFIDProcessLocationID] = isnull(r.[RFIDProcessLocationID],''),
@@ -474,7 +471,7 @@ select
     ,[LastSewDate] = tsi.LastSewDate
     ,[SewQty] = isnull(tsi.SewQty,0)
 from #result r
-left join GetCutDateTmp gcd on r.[Cut Ref#] = gcd.[Cut Ref#] and r.M = gcd.M 
+left join #tmpGetCutDateTmp gcd on r.[Cut Ref#] = gcd.[Cut Ref#] and r.M = gcd.M 
 left join #tmpSewingInfo tsi on tsi.OrderId =   r.[SP#] and 
                                 tsi.Article = r.[Article]     and
                                 tsi.SizeCode  = r.[Size]   and
@@ -484,8 +481,9 @@ order by [Bundleno],[Sub-process],[RFIDProcessLocationID]
 
 drop table #result
 drop table #tmp_Workorder
-";
-            base_ViewModel.Result = this.DBProxy.Select("Production", sqlResult, listPar, out DataTable dtResult);
+drop table #tmpGetCutDateTmp
+");
+            base_ViewModel.Result = this.DBProxy.Select("Production", sqlCmd.ToString(), listPar, out DataTable dtResult);
             if (!base_ViewModel.Result)
             {
                 return base_ViewModel;
