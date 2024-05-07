@@ -51,6 +51,12 @@ namespace Sci.Production.Logistic
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
+            TextBox a = new TextBox
+            {
+                Text = Env.User.Keyword,
+            };
+            this.txtcloglocationLocationNo.MDivisionObjectName = a;
+
             Dictionary<string, string> comboBox1_RowSource = new Dictionary<string, string>
             {
                 { "1", string.Empty },
@@ -626,7 +632,8 @@ from (
                 -- 不在 CFA 送回 Clog 的路上
                 and PLD.CFAReturnClogDate is null
                 and PLD.CTNQty = 1
-                and orders.MDivisionID =  '{0}'", Env.User.Keyword));
+                and orders.MDivisionID =  '{0}'
+", Env.User.Keyword));
             #region 組條件
             if (listBarcodeImport == null)
             {
