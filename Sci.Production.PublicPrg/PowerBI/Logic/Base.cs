@@ -32,6 +32,7 @@ namespace Sci.Production.Prg.PowerBI.Logic
             P_ProductionKitsTracking,
             P_PPICMASTERLIST,
             P_FabricInspReport_ReceivingTransferIn,
+            P_MtlStatusAnalisis,
         }
 
         /// <summary>
@@ -278,6 +279,9 @@ ORDER BY [Group], [SEQ], [NAME]";
                         break;
                     case ListName.P_FabricInspReport_ReceivingTransferIn:
                         result = new P_Import_FabricInspReportReceivingTransferIn().P_FabricInspReportReceivingTransferIn(item.SDate, item.EDate);
+                        break;
+                    case ListName.P_MtlStatusAnalisis:
+                        result = new P_Import_MtlStatusAnalisis().P_MtlStatusAnalisis(item.SDate, item.EDate);
                         break;
                 }
             }
