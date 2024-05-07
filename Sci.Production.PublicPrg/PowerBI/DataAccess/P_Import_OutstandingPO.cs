@@ -179,6 +179,11 @@ left join #tmp s on t.FactoryID = s.FactoryID
 where t.BuyerDelivery between @StartDate and @EndDate
 	and s.ID IS NULL
 
+delete t
+from P_OustandingPO t
+where exists (select 1 from MainServer.Production.dbo.Order_QtyShip oq where t.OrderID = oq.Id)
+and t.Seq = ''
+
 delete P_OustandingPO
 where BuyerDelivery > @EndDate
 
