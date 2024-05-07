@@ -653,7 +653,7 @@ Carton has been output from the hanger system or transferred to clog.";
 
             // 刪除表身SP No.或Qty為空白的資料，檢查表身的Color Way與Size不可以為空值，順便填入Seq欄位值，計算CTNQty, ShipQty, NW, GW, NNW, CBM，重算表身Grid的Bal. Qty
             int i = 0, ctnQty = 0, shipQty = 0, needPackQty = 0, ttlShipQty = 0, count = 0, drCtnQty = 0;
-            double nw = 0.0, gw = 0.0, nnw = 0.0, cbm = 0.0;
+            decimal nw = 0.0m, gw = 0.0m, nnw = 0.0m, cbm = 0.0m;
             string ctnCBM;
             bool isNegativeBalQty = false;
             DataTable needPackData, tmpPackData;
@@ -706,15 +706,14 @@ Carton has been output from the hanger system or transferred to clog.";
                 drCtnQty = MyUtility.Check.Empty(dr["CTNQty"]) ? 0 : MyUtility.Convert.GetInt(dr["CTNQty"]);
                 ctnQty = ctnQty + drCtnQty;
                 shipQty = shipQty + MyUtility.Convert.GetInt(dr["ShipQty"]);
-                nw = MyUtility.Math.Round(nw + (MyUtility.Convert.GetDouble(dr["NW"]) * MyUtility.Convert.GetDouble(dr["CTNQty"])), 3);
-                gw = MyUtility.Math.Round(gw + (MyUtility.Convert.GetDouble(dr["GW"]) * MyUtility.Convert.GetDouble(dr["CTNQty"])), 3);
-                nnw = MyUtility.Math.Round(nnw + (MyUtility.Convert.GetDouble(dr["NNW"]) * MyUtility.Convert.GetDouble(dr["CTNQty"])), 3);
+                nw = nw + (MyUtility.Convert.GetDecimal(dr["NW"]) * MyUtility.Convert.GetDecimal(dr["CTNQty"]));
+                gw = gw + (MyUtility.Convert.GetDecimal(dr["GW"]) * MyUtility.Convert.GetDecimal(dr["CTNQty"]));
+                nnw = nnw + (MyUtility.Convert.GetDecimal(dr["NNW"]) * MyUtility.Convert.GetDecimal(dr["CTNQty"]));
                 if (drCtnQty > 0)
                 {
                     ctnCBM = MyUtility.GetValue.Lookup("CBM", dr["RefNo"].ToString(), "LocalItem", "RefNo");
 
-                    // ISP20181015 CBM抓到小數點後4位
-                    cbm = MyUtility.Math.Round(cbm + (MyUtility.Convert.GetDouble(ctnCBM) * drCtnQty), 4);
+                    cbm = cbm + (MyUtility.Convert.GetDecimal(ctnCBM) * drCtnQty);
                 }
                 #endregion
 
@@ -848,10 +847,12 @@ where InvA.OrderID = '{0}'
             // CTNQty, ShipQty, NW, GW, NNW, CBM
             this.CurrentMaintain["CTNQty"] = ctnQty;
             this.CurrentMaintain["ShipQty"] = shipQty;
-            this.CurrentMaintain["NW"] = nw;
-            this.CurrentMaintain["GW"] = gw;
-            this.CurrentMaintain["NNW"] = nnw;
-            this.CurrentMaintain["CBM"] = cbm;
+
+            // [ISP20240365] 裝箱重量四捨五入 NW、GW、NNW：2位，CBM：3位
+            this.CurrentMaintain["NW"] = MyUtility.Math.Round(nw, 2);
+            this.CurrentMaintain["GW"] = MyUtility.Math.Round(gw, 2);
+            this.CurrentMaintain["NNW"] = MyUtility.Math.Round(nnw, 2);
+            this.CurrentMaintain["CBM"] = MyUtility.Math.Round(cbm, 3);
 
             if (isNegativeBalQty)
             {
@@ -1338,7 +1339,7 @@ AND s.ShipGroup <> (
                             System.Data.SqlClient.SqlParameter ttlCBM = new System.Data.SqlClient.SqlParameter
                             {
                                 ParameterName = "@ttlCBM",
-                                Value = MyUtility.Convert.GetDouble(summaryData.Rows[0]["CBM"]) + MyUtility.Convert.GetDouble(this.CurrentMaintain["CBM"].ToString()),
+                                Value = MyUtility.Convert.GetDecimal(summaryData.Rows[0]["CBM"]) + MyUtility.Convert.GetDecimal(this.CurrentMaintain["CBM"].ToString()),
                             };
 
                             System.Data.SqlClient.SqlParameter iNVNo = new System.Data.SqlClient.SqlParameter

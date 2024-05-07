@@ -181,6 +181,10 @@ BEGIN
 	RAISERROR('ShareRule  - Starts',0,0)
 	select * into dbo.ShareRule from (select * from ProductionTPE.dbo.ShareRule) as tmp
 
+	-------------SewingMachineAttachment-------------------
+	RAISERROR('SewingMachineAttachment  - Starts',0,0)
+	select * into dbo.SewingMachineAttachment from (select * from ProductionTPE.dbo.SewingMachineAttachment ) as tmp
+
 	set transaction isolation level read committed
 END
 

@@ -365,6 +365,7 @@ select
     ,[TotalPointA] = isnull(fpta.TotalPoint, 0)
 	,[C_Grade_TOP3Defects] = isnull(CGradT3.Value,'')
 	,[A_Grade_TOP3Defects] = isnull(AGradT3.Value,'')
+    ,[CutTime] = Qty.CutTime
 into #tmpFinal
 from dbo.FIR F WITH (NOLOCK) 
 cross apply(
@@ -513,7 +514,7 @@ outer apply
 )ILT
 outer apply
 (
-	select Roll = count(Roll+Dyelot) from FIR_Shadebone fs where fs.ID =F.ID and fs.CutTime is not null
+	select Roll = count(Roll+Dyelot),CutTime=max(fs.CutTime) from FIR_Shadebone fs where fs.ID =F.ID and fs.CutTime is not null
 )
 Qty 
 outer apply
@@ -666,6 +667,7 @@ select
 	,tf.WeightDate
 	,tf.[Cut Shadeband Qty (Roll)]
 	,tf.[Cut Shadeband]
+    ,tf.CutTime
 	,tf.ShadeBond
 	,tf.ShadeboneInspector
 	,tf.ShadeBondDate

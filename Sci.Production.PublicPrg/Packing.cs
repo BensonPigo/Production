@@ -273,7 +273,7 @@ where a.ID = '{dr["StyleID"].ToString()}' and a.BrandID = '{packingListData["Bra
                 }
             }
 
-            double nw = 0, nnw = 0, ctnWeight = 0;
+            decimal nw = 0, nnw = 0, ctnWeight = 0;
             string localItemWeight;
             DataTable tmpPacklistWeight;
             result = DBProxy.Current.Select(null, "select CTNStartNo, NW, NNW, GW from PackingList_Detail WITH (NOLOCK) where 1=0", out tmpPacklistWeight);
@@ -332,16 +332,16 @@ where a.ID = '{dr["StyleID"].ToString()}' and a.BrandID = '{packingListData["Bra
                     nw = 0;
                     nnw = 0;
                     localItemWeight = MyUtility.GetValue.Lookup("CtnWeight", MyUtility.Convert.GetString(dr["RefNo"]), "LocalItem", "RefNo");
-                    ctnWeight = MyUtility.Math.Round(MyUtility.Convert.GetDouble(localItemWeight), 6);
+                    ctnWeight = MyUtility.Math.Round(MyUtility.Convert.GetDecimal(localItemWeight), 6);
                 }
 
                 string filter = string.Format("BrandID = '{0}' and StyleID = '{1}' and SeasonID = '{2}' and Article = '{3}' and SizeCode = '{4}'", packingListData["BrandID"].ToString(), dr["StyleID"].ToString(), dr["SeasonID"].ToString(), dr["Article"].ToString(), dr["SizeCode"].ToString());
                 weight = weightData.Select(filter);
                 if (weight.Length > 0)
                 {
-                    nw = nw + (MyUtility.Convert.GetDouble(weight[0]["NW"]) * MyUtility.Convert.GetInt(dr["ShipQty"]));
-                    nnw = nnw + (MyUtility.Convert.GetDouble(weight[0]["NNW"]) * MyUtility.Convert.GetInt(dr["ShipQty"]));
-                    dr["NWPerPcs"] = MyUtility.Convert.GetDouble(weight[0]["NW"]);
+                    nw = nw + (MyUtility.Convert.GetDecimal(weight[0]["NW"]) * MyUtility.Convert.GetInt(dr["ShipQty"]));
+                    nnw = nnw + (MyUtility.Convert.GetDecimal(weight[0]["NNW"]) * MyUtility.Convert.GetInt(dr["ShipQty"]));
+                    dr["NWPerPcs"] = MyUtility.Convert.GetDecimal(weight[0]["NW"]);
                 }
                 else
                 {
@@ -349,9 +349,9 @@ where a.ID = '{dr["StyleID"].ToString()}' and a.BrandID = '{packingListData["Bra
                     weight = weightData.Select(filter);
                     if (weight.Length > 0)
                     {
-                        nw = nw + (MyUtility.Convert.GetDouble(weight[0]["NW"]) * MyUtility.Convert.GetInt(dr["ShipQty"]));
-                        nnw = nnw + (MyUtility.Convert.GetDouble(weight[0]["NNW"]) * MyUtility.Convert.GetInt(dr["ShipQty"]));
-                        dr["NWPerPcs"] = MyUtility.Convert.GetDouble(weight[0]["NW"]);
+                        nw = nw + (MyUtility.Convert.GetDecimal(weight[0]["NW"]) * MyUtility.Convert.GetInt(dr["ShipQty"]));
+                        nnw = nnw + (MyUtility.Convert.GetDecimal(weight[0]["NNW"]) * MyUtility.Convert.GetInt(dr["ShipQty"]));
+                        dr["NWPerPcs"] = MyUtility.Convert.GetDecimal(weight[0]["NW"]);
                     }
                     else
                     {
@@ -3178,7 +3178,7 @@ where CustCD.value != @CustCD
 
             // 刪除表身SP No.或Qty為空白的資料，表身的CTN#, Ref No., Color Way與Size不可以為空值，計算CTNQty, ShipQty, NW, GW, NNW, CBM，重算表身Grid的Bal. Qty
             int i = 0, ctnQty = 0, shipQty = 0, ttlShipQty = 0, needPackQty = 0, count = 0;
-            double nw = 0.0, gw = 0.0, nnw = 0.0, cbm = 0.0;
+            decimal nw = 0.0m, gw = 0.0m, nnw = 0.0m, cbm = 0.0m;
             string filter = string.Empty, sqlCmd;
             bool isNegativeBalQty = false;
             DataTable needPackData, tmpPackData;
@@ -3237,13 +3237,13 @@ where CustCD.value != @CustCD
                 #region 計算CTNQty, ShipQty, NW, GW, NNW, CBM
                 ctnQty = ctnQty + MyUtility.Convert.GetInt(dr["CTNQty"]);
                 shipQty = shipQty + MyUtility.Convert.GetInt(dr["ShipQty"]);
-                nw = MyUtility.Math.Round(nw + MyUtility.Convert.GetDouble(dr["NW"]), 3);
-                gw = MyUtility.Math.Round(gw + MyUtility.Convert.GetDouble(dr["GW"]), 3);
-                nnw = MyUtility.Math.Round(nnw + MyUtility.Convert.GetDouble(dr["NNW"]), 3);
+                nw = nw + MyUtility.Convert.GetDecimal(dr["NW"]);
+                gw = gw + MyUtility.Convert.GetDecimal(dr["GW"]);
+                nnw = nnw + MyUtility.Convert.GetDecimal(dr["NNW"]);
                 if (MyUtility.Check.Empty(dr["CTNQty"]) || MyUtility.Convert.GetInt(dr["CTNQty"]) > 0)
                 {
                     // ISP20181015 CBM抓到小數點後4位
-                    cbm = cbm + (MyUtility.Convert.GetDouble(MyUtility.GetValue.Lookup("CBM", dr["RefNo"].ToString(), "LocalItem", "RefNo")) * MyUtility.Convert.GetInt(dr["CTNQty"]));
+                    cbm = cbm + (MyUtility.Convert.GetDecimal(MyUtility.GetValue.Lookup("CBM", dr["RefNo"].ToString(), "LocalItem", "RefNo")) * MyUtility.Convert.GetInt(dr["CTNQty"]));
                 }
 
                 #endregion
@@ -3437,10 +3437,12 @@ where oqd.Id = '{1}'
             // CTNQty, ShipQty, NW, GW, NNW, CBM
             currentMaintain["CTNQty"] = ctnQty;
             currentMaintain["ShipQty"] = shipQty;
-            currentMaintain["NW"] = nw;
-            currentMaintain["GW"] = gw;
-            currentMaintain["NNW"] = nnw;
-            currentMaintain["CBM"] = cbm;
+
+            // [ISP20240365] 裝箱重量四捨五入 NW、GW、NNW：2位，CBM：3位
+            currentMaintain["NW"] = MyUtility.Math.Round(nw, 2);
+            currentMaintain["GW"] = MyUtility.Math.Round(gw, 2);
+            currentMaintain["NNW"] = MyUtility.Math.Round(nnw, 2);
+            currentMaintain["CBM"] = MyUtility.Math.Round(cbm, 3);
 
             if (isNegativeBalQty)
             {
@@ -3506,29 +3508,31 @@ where ID = @INVNo";
                     SqlParameter sp3 = new SqlParameter
                     {
                         ParameterName = "@ttlNW",
-                        Value = MyUtility.Math.Round(MyUtility.Convert.GetDouble(summaryData.Rows[0]["NW"]) + MyUtility.Convert.GetDouble(currentMaintain["NW"]), 2),
+                        // ISP20240365 NW抓到小數點後2位
+                        Value = MyUtility.Math.Round(MyUtility.Convert.GetDecimal(summaryData.Rows[0]["NW"]) + MyUtility.Convert.GetDecimal(currentMaintain["NW"]), 2),
                     };
 
                     SqlParameter sp4 = new SqlParameter
                     {
                         ParameterName = "@ttlNNW",
-                        Value = MyUtility.Math.Round(MyUtility.Convert.GetDouble(summaryData.Rows[0]["NNW"]) + MyUtility.Convert.GetDouble(currentMaintain["NNW"]), 2),
+                        // ISP20240365 NNW抓到小數點後2位
+                        Value = MyUtility.Math.Round(MyUtility.Convert.GetDecimal(summaryData.Rows[0]["NNW"]) + MyUtility.Convert.GetDecimal(currentMaintain["NNW"]), 2),
                     };
 
                     SqlParameter sp5 = new SqlParameter
                     {
                         ParameterName = "@ttlGW",
 
-                        // ISP20181015 GW抓到小數點後3位
-                        Value = MyUtility.Math.Round(MyUtility.Convert.GetDouble(summaryData.Rows[0]["GW"]) + MyUtility.Convert.GetDouble(currentMaintain["GW"]), 3),
+                        // ISP20240365 GW抓到小數點後2位
+                        Value = MyUtility.Math.Round(MyUtility.Convert.GetDecimal(summaryData.Rows[0]["GW"]) + MyUtility.Convert.GetDecimal(currentMaintain["GW"]), 2),
                     };
 
                     SqlParameter sp6 = new SqlParameter
                     {
                         ParameterName = "@ttlCBM",
 
-                        // ISP20181015 CBM抓到小數點後4位
-                        Value = MyUtility.Convert.GetDouble(summaryData.Rows[0]["CBM"]) + MyUtility.Convert.GetDouble(currentMaintain["CBM"]),
+                        // ISP20240365 CBM抓到小數點後3位
+                        Value = MyUtility.Math.Round(MyUtility.Convert.GetDecimal(summaryData.Rows[0]["CBM"]) + MyUtility.Convert.GetDecimal(currentMaintain["CBM"]), 3),
                     };
 
                     SqlParameter sp7 = new SqlParameter

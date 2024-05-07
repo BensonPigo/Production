@@ -24,12 +24,15 @@ namespace Sci.Production.Prg.PowerBI.Logic
             P_CuttingScheduleOutputList,
             P_QAR31,
             P_QA_CFAMasterList,
+            P_CFAMasterListRelatedrate,
             P_CartonScanRate,
             P_CartonStatusTrackingList,
             P_FabricDispatchRate,
             P_IssueFabricByCuttingTransactionList,
             P_ProductionKitsTracking,
             P_PPICMASTERLIST,
+            P_FabricInspReport_ReceivingTransferIn,
+            P_MtlStatusAnalisis,
         }
 
         /// <summary>
@@ -250,6 +253,9 @@ ORDER BY [Group], [SEQ], [NAME]";
                     case ListName.P_QA_CFAMasterList:
                         result = new P_Import_QA_CFAMasterList().P_QA_CFAMasterList(item.SDate);
                         break;
+                    case ListName.P_CFAMasterListRelatedrate:
+                        result = new P_Import_CFAMasterListRelatedrate().P_CFAMasterListRelatedrate(item.SDate, item.EDate);
+                        break;
                     case ListName.P_SewingLineScheduleBySP:
                         result = new P_Import_SewingLineScheduleBySP().P_SewingLineScheduleBySP(item.SDate, item.EDate);
                         break;
@@ -270,6 +276,12 @@ ORDER BY [Group], [SEQ], [NAME]";
                         break;
                     case ListName.P_PPICMASTERLIST:
                         result = new P_Import_PPICMasterListBIData().P_PPICMasterListBIData(item.SDate);
+                        break;
+                    case ListName.P_FabricInspReport_ReceivingTransferIn:
+                        result = new P_Import_FabricInspReportReceivingTransferIn().P_FabricInspReportReceivingTransferIn(item.SDate, item.EDate);
+                        break;
+                    case ListName.P_MtlStatusAnalisis:
+                        result = new P_Import_MtlStatusAnalisis().P_MtlStatusAnalisis(item.SDate, item.EDate);
                         break;
                 }
             }
