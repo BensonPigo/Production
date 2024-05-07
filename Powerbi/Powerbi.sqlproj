@@ -172,7 +172,6 @@
     <Build Include="dbo\Tables\P_PPICMasterList_ArtworkType.sql" />
     <Build Include="dbo\Stored Procedures\FTY\P_Import_PPIC_MASTER_LIST_ArtWorkType.sql" />
     <Build Include="dbo\Tables\P_PPICMASTERLIST.sql" />
-    <Build Include="dbo\Stored Procedures\FTY\P_Import_MtlStatusAnalisis.sql" />
     <Build Include="dbo\Tables\P_InlineDefectSummary.sql" />
     <Build Include="dbo\Tables\P_InlineDefectDetail.sql" />
     <Build Include="dbo\Tables\P_ADIDASComplain_24Month.sql" />
@@ -204,7 +203,6 @@
     <Build Include="dbo\Tables\P_ProductionKitsTracking.sql" />
     <Build Include="dbo\Stored Procedures\FTY\P_Import_ICRAnalysis.sql" />
     <Build Include="dbo\Tables\P_ICRAnalysis.sql" />
-    <Build Include="dbo\Stored Procedures\FTY\P_Import_QA_R11_DefectDetail.sql" />
     <Build Include="dbo\Tables\P_FabricInspReport_ReceivingTransferIn.sql" />
     <Build Include="dbo\Stored Procedures\FTY\P_Import_ActualCutOutputReport.sql" />
     <Build Include="dbo\Tables\P_ImportScheduleList.sql" />

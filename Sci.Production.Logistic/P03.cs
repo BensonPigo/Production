@@ -12,6 +12,7 @@ using Sci.Production.PublicPrg;
 using System.Linq;
 using Sci.Production.Prg;
 using Sci.Win.Tools;
+using System.ComponentModel;
 
 namespace Sci.Production.Logistic
 {
@@ -35,7 +36,9 @@ namespace Sci.Production.Logistic
         }
 
         private DataTable selectDataTable;
+        private bool check_OnlyReqCarton;
         private string selectDataTable_DefaultView_Sort = string.Empty;
+        private int threadCnt = 0;
 
         /// <summary>
         /// SelectDataTable_DefaultView_Sort
@@ -66,8 +69,18 @@ namespace Sci.Production.Logistic
                 DataRow dr = this.gridReceiveDate.GetDataRow<DataRow>(e.RowIndex);
                 dr["selected"] = e.FormattedValue;
                 dr.EndEdit();
-                int sint = ((DataTable)this.listControlBindingSource1.DataSource).Select("selected = 1" + (this.chkOnlyReqCarton.Checked ? "AND FtyReqReturnDate IS NOT NULL" : string.Empty)).Length;
-                this.numSelectedCTNQty.Value = sint;
+
+                int selectCnt = 0;
+                if (this.chkOnlyReqCarton.Checked)
+                {
+                    selectCnt = this.gridReceiveDate.Rows.Cast<DataGridViewRow>().Where(row => row.Cells["selected"].Value.ToString().Equals("1") && !MyUtility.Check.Empty(row.Cells["FtyReqReturnDate"].Value)).Count();
+                }
+                else
+                {
+                    selectCnt = this.gridReceiveDate.Rows.Cast<DataGridViewRow>().Where(row => row.Cells["selected"].Value.ToString().Equals("1")).Count();
+                }
+
+                this.numSelectedCTNQty.Value = selectCnt;
             };
 
             col_Reason.EditingMouseDown += (s, e) =>
@@ -88,7 +101,7 @@ namespace Sci.Production.Logistic
                     return;
                 }
 
-                dr["ClogReasonID"] = MyUtility.GetValue.Lookup($@"select ID from ClogReason where [Description] = '{sele.GetSelectedString()}' and Type = 'CL' and Junk = 0 ", "Production"); ;
+                dr["ClogReasonID"] = MyUtility.GetValue.Lookup($@"select ID from ClogReason where [Description] = '{sele.GetSelectedString()}' and Type = 'CL' and Junk = 0 ", "Production");
                 e.EditingControl.Text = sele.GetSelectedString();
             };
 
@@ -128,20 +141,19 @@ namespace Sci.Production.Logistic
             {
                 if ((rowIndex == -1) & (columIndex == 4))
                 {
-                    this.listControlBindingSource1.DataSource = null;
-
                     if (this.selectDataTable_DefaultView_Sort == "DESC")
                     {
                         this.selectDataTable.DefaultView.Sort = "rn1 DESC";
                         this.selectDataTable_DefaultView_Sort = string.Empty;
+                        ((DataTable)this.listControlBindingSource1.DataSource).DefaultView.Sort = " rn1 DESC";
                     }
                     else
                     {
                         this.selectDataTable.DefaultView.Sort = "rn1 ASC";
                         this.selectDataTable_DefaultView_Sort = "DESC";
+                        ((DataTable)this.listControlBindingSource1.DataSource).DefaultView.Sort = " rn1 ASC";
                     }
 
-                    this.listControlBindingSource1.DataSource = this.selectDataTable;
                     return;
                 }
             };
@@ -155,6 +167,7 @@ namespace Sci.Production.Logistic
                 return;
             }
 
+            this.labProcessingBar.Text = "0/0";
             this.numSelectedCTNQty.Value = 0;
             this.numTotalCTNQty.Value = 0;
             StringBuilder sqlCmd = new StringBuilder();
@@ -309,6 +322,9 @@ order by rn ");
             this.listControlBindingSource1.DataSource = this.selectDataTable;
             this.numTotalCTNQty.Value = this.selectDataTable.Rows.Count;
             this.numSelectedCTNQty.Value = this.selectDataTable.Rows.Count;
+            this.backgroundDownloadSticker.ReportProgress(0);
+            this.labProcessingBar.Text = "0/0";
+            this.progressCnt = 0;
         }
 
         // Find
@@ -736,6 +752,8 @@ where pd.CustCTN = '{dr["CustCTN"]}' and pd.CTNQty > 0 and pd.DisposeFromClog= 0
             this.Grid_Filter();
         }
 
+        private System.ComponentModel.BackgroundWorker[] workers;
+
         // Save
         private void BtnSave_Click(object sender, EventArgs e)
         {
@@ -743,220 +761,83 @@ where pd.CustCTN = '{dr["CustCTN"]}' and pd.CTNQty > 0 and pd.DisposeFromClog= 0
             this.gridReceiveDate.ValidateControl();
             this.listControlBindingSource1.EndEdit();
             DataTable dt = (DataTable)this.listControlBindingSource1.DataSource;
+            this.dtError = dt.Clone();
+            this.check_OnlyReqCarton = this.chkOnlyReqCarton.Checked;
+            this.completeCnt = 0;
+            this.progressCnt = 0;
 
             if (dt == null || dt.Rows.Count == 0)
+            {
+                MyUtility.Msg.InfoBox("No data need to import!");
+                return;
+            }
+
+            if (dt.AsEnumerable().Any(row => row["Selected"].EqualDecimal(1)) == false)
             {
                 MyUtility.Msg.InfoBox("Please select data first!");
                 return;
             }
 
-            DataRow[] selectedData = this.chkOnlyReqCarton.Checked ? dt.Select("Selected = 1 AND FtyReqReturnDate IS NOT NULL") : dt.Select("Selected = 1");
-            if (selectedData.Length == 0)
+            if (this.chkOnlyReqCarton.Checked)
+            {
+                this.selectDataTable = dt.AsEnumerable().Where(r => MyUtility.Convert.GetInt(r["selected"]) == 1 && MyUtility.Check.Empty(r["FtyReqReturnDate"]) == false).ToList().CopyToDataTable();
+            }
+            else
+            {
+                this.selectDataTable = dt.AsEnumerable().Where(r => MyUtility.Convert.GetInt(r["selected"]) == 1).ToList().CopyToDataTable();
+            }
+
+            string returnMessage = string.Empty;
+            if (this.selectDataTable.Rows.Count == 0)
             {
                 MyUtility.Msg.WarningBox("No data need to import!");
                 return;
             }
 
-            foreach (DataRow dr in selectedData)
+            if (!this.backgroundDownloadSticker.IsBusy)
             {
-                string checkPackSql = $@"
-select CFAReturnClogDate, ReceiveDate, TransferCFADate, Remark, ReturnDate 
-from PackingList_Detail WITH (NOLOCK)
-where ID = '{dr["PackingListID"].ToString().Trim()}' 
-and OrderID = '{dr["OrderID"].ToString().Trim()}'
-and CTNStartNo = '{dr["CTNStartNo"].ToString().Trim()}'
-and DisposeFromClog = 0";
-
-                bool result = MyUtility.Check.Seek(checkPackSql, null, out DataRow drPackResult);
-
-                if (!result)
+                if (this.selectDataTable == null || this.selectDataTable.Rows.Count == 0)
                 {
-                    MyUtility.Msg.WarningBox($"<CTN#:{dr["PackingListID"]}{dr["CTNStartNo"]}> does not exist!");
                     return;
                 }
 
-                if (!MyUtility.Check.Empty(drPackResult["ReturnDate"]))
+                int rowCnt = this.selectDataTable.Rows.Count;
+                this.threadCnt = (rowCnt / 100) + (rowCnt % 100 == 0 ? 0 : 1);
+
+                // 初始化 workers 陣列
+                this.workers = new System.ComponentModel.BackgroundWorker[this.threadCnt];
+
+                // 初始化 ProgressBar
+                this.progressBarProcessing.Minimum = 0;
+                this.progressBarProcessing.Maximum = 100;
+                this.progressBarProcessing.Step = 1;
+
+                // 先把UI介面鎖住
+                this.SetInterfaceLocked(true);
+                this.backgroundDownloadSticker.ReportProgress(0);
+
+                // 初始化 BackgroundWorker
+                for (int i = 0; i < this.threadCnt; i++)
                 {
-                    MyUtility.Msg.WarningBox($@"<CNT#: {dr["PackingListID"]}{dr["CTNStartNo"]}> This CTN# has been return." + Environment.NewLine);
-                    return;
+                    this.workers[i] = new System.ComponentModel.BackgroundWorker();
+                    this.workers[i].WorkerReportsProgress = true;
+                    this.workers[i].DoWork += this.BackgroundDownloadSticker_DoWork;
+                    this.workers[i].ProgressChanged += this.BackgroundDownloadSticker_ProgressChanged;
+                    this.workers[i].RunWorkerCompleted += this.BackgroundDownloadSticker_RunWorkerCompleted;
                 }
 
-                if (MyUtility.Convert.GetString(dr["Reason"]).ToUpper() == "OTHER" && MyUtility.Check.Empty(dr["ClogReasonRemark"]))
+                int processedRows = 0;
+                int batchSize = 100;
+
+                for (int i = 0; i < this.threadCnt; i++)
                 {
-                    MyUtility.Msg.WarningBox($"Please fill in [Remark] since [Reason] is equal to \"Other\" for PackId：{dr["PackingListID"]}, SP#：{dr["OrderID"]}, CTN#：{dr["CTNStartNo"]}.");
-                    return;
+                    int remainingRows = rowCnt - processedRows;
+                    int rowsToProcess = Math.Min(batchSize, remainingRows);
+                    this.workers[i].RunWorkerAsync(new object[] { this.selectDataTable, processedRows, rowsToProcess });
+
+                    // 更新處理行數
+                    processedRows += rowsToProcess;
                 }
-
-                if (dr["Remark"].ToString().Trim() != string.Empty)
-                {
-                    MyUtility.Msg.WarningBox("Some data cannot be received, please check again.");
-                    return;
-                }
-
-                if (!(MyUtility.Check.Empty(drPackResult["TransferCFADate"]) && !MyUtility.Check.Empty(drPackResult["ReceiveDate"]) && MyUtility.Check.Empty(drPackResult["CFAReturnClogDate"])))
-                {
-                    MyUtility.Msg.WarningBox($@"<CTN#:{dr["PackingListID"]}{dr["CTNStartNo"]}> does not exist Clog!");
-                    return;
-                }
-
-                if (!MyUtility.Check.Empty(drPackResult["CFAReturnClogDate"]))
-                {
-                    MyUtility.Msg.WarningBox($@"<CTN#:{dr["PackingListID"]}> has CFA Return Clog Date!");
-                    return;
-                }
-            }
-
-            string wherePackID = selectedData.Select(s => $"'{s["PackingListID"].ToString()}'").Distinct().JoinToString(",");
-            DataTable dtTransedPack;
-            string sqlCheckTransedPack = $"select ID from PAckingList with (nolock) where ID in ({wherePackID}) and PLCtnTrToRgCodeDate is not null";
-            DualResult resultCheck = DBProxy.Current.Select(null, sqlCheckTransedPack, out dtTransedPack);
-            if (!resultCheck)
-            {
-                this.ShowErr(resultCheck);
-                return;
-            }
-
-            if (dtTransedPack.Rows.Count > 0)
-            {
-                string transedPackID = dtTransedPack.AsEnumerable().Select(s => s["ID"].ToString()).JoinToString(",");
-                MyUtility.Msg.WarningBox($"PL[{transedPackID}] already transfer to shipping factory, cannot return to production.");
-                return;
-            }
-
-            IList<string> cmds = new List<string>();
-            foreach (DataRow dr in selectedData)
-            {
-                DateTime? scanEditDate = null;
-                if (!MyUtility.Check.Empty(dr["ScanEditDate"].ToString()) && DateTime.TryParse(dr["ScanEditDate"].ToString(), out DateTime tempDate))
-                {
-                    scanEditDate = tempDate;
-                }
-
-                object dateTimeValue = scanEditDate.HasValue ? "'" + (object)scanEditDate.Value.ToString("yyyy-MM-dd HH:mm:ss") + "'" : "Null";
-                cmds.Add(
-                    string.Format(
-                        @"
-insert into ClogReturn(ReturnDate,MDivisionID,PackingListID,OrderID,CTNStartNo, AddDate,AddName,SCICtnNo,ClogReasonID,ClogReasonRemark)
-values (GETDATE(), '{0}', '{1}', '{2}', '{3}', GETDATE(), '{4}', '{5}', isnull('{6}',''), isnull('{7}',''));
-
-update pd 
-set TransferDate = null
-    , ReceiveDate = null
-    , ClogLocationId = ''
-    , ReturnDate = GETDATE()
-    , ClogReceiveCFADate =null
-    , ScanQty = 0 
-    , ScanEditDate = null
-    , ScanName = ''
-    , Lacking = 0
-    , ActCTNWeight = 0
-    , DRYReceiveDate  = null
-    , DRYTransferDate = null
-from PackingList_Detail pd
-where pd.ID = '{1}'
-and pd.CTNStartNo = '{3}'
-and pd.DisposeFromClog= 0 ;
-
-INSERT INTO [PackingScan_History]([MDivisionID],[PackingListID],[OrderID],[CTNStartNo],[SCICtnNo]
-	,[DeleteFrom],[ScanQty],[ScanEditDate],[ScanName],[AddName],[AddDate],[LackingQty])
-select '{0}' [MDivisionID]
-    ,'{1}' [PackingListID]
-    ,'{2}' [OrderID]
-    ,'{3}' [CTNStartNo]
-    ,'{5}' [SCICtnNo]
-    ,'Clog P03' [DeleteFrom]
-    ,{8} [ScanQty]
-    , {9} [ScanEditDate]
-    ,'{10}' [ScanName]
-    ,'{4}' [AddName]
-    ,GETDATE() [AddDate]
-    ,[LackingQty] = ( ISNULL( (
-                                SELECT SUM(pd.ShipQty)
-                                FROM PackingList_Detail pd
-                                WHERE  pd.ID = '{1}' AND pd.CTNStartNo = '{3}') 
-                            ,0) 
-                    );
-",
-                        Env.User.Keyword,
-                        MyUtility.Convert.GetString(dr["PackingListID"]),
-                        MyUtility.Convert.GetString(dr["OrderID"]),
-                        MyUtility.Convert.GetString(dr["CTNStartNo"]),
-                        Env.User.UserID,
-                        MyUtility.Convert.GetString(dr["SCICtnNo"]),
-                        MyUtility.Convert.GetString(dr["ClogReasonID"]),
-                        MyUtility.Convert.GetString(dr["ClogReasonRemark"]),
-                        MyUtility.Convert.GetInt(dr["ScanQty"]),
-                        dateTimeValue,
-                        MyUtility.Convert.GetString(dr["ScanName"])));
-            }
-
-            // Update Orders的資料
-            DataTable selectOrdersData = null;
-            try
-            {
-                MyUtility.Tool.ProcessWithDatatable(
-                    dt,
-                    "Selected,OrderID",
-                    @"select distinct OrderID from #tmp a where a.Selected = 1",
-                    out selectOrdersData);
-            }
-            catch (Exception ex)
-            {
-                MyUtility.Msg.ErrorBox("Prepare update orders data fail!\r\n" + ex.ToString());
-            }
-
-            DataTable resulttb;
-            DualResult result1 = Ict.Result.True, result2 = Ict.Result.True;
-
-            using (TransactionScope transactionScope = new TransactionScope(TransactionScopeOption.Required, new TimeSpan(0, 5, 0)))
-            {
-                try
-                {
-                    result1 = DBProxy.Current.Executes(null, cmds);
-
-                    if (result1 == false)
-                    {
-                        transactionScope.Dispose();
-                        MyUtility.Msg.WarningBox(result1.ToString());
-                        return;
-                    }
-
-                    DualResult prgResult = Prgs.UpdateOrdersCTN(selectOrdersData);
-
-                    if (prgResult == false)
-                    {
-                        transactionScope.Dispose();
-                        MyUtility.Msg.WarningBox(prgResult.ToString());
-                        return;
-                    }
-
-                    if (result2 == false)
-                    {
-                        transactionScope.Dispose();
-                        MyUtility.Msg.WarningBox(result2.ToString());
-                        return;
-                    }
-
-                    transactionScope.Complete();
-                    transactionScope.Dispose();
-                    this.ControlButton4Text("Close");
-                    MyUtility.Msg.InfoBox("Complete!!");
-                }
-                catch (Exception ex)
-                {
-                    transactionScope.Dispose();
-                    this.ShowErr("Commit transaction error.", ex);
-                    return;
-                }
-            }
-
-            if (dt.AsEnumerable().Any(row => !row["Selected"].EqualDecimal(1)))
-            {
-                this.listControlBindingSource1.DataSource = dt.AsEnumerable().Where(row => !row["Selected"].EqualDecimal(1)).CopyToDataTable();
-            }
-            else
-            {
-                this.listControlBindingSource1.DataSource = null;
             }
 
             this.Countselectcount();
@@ -981,12 +862,18 @@ select '{0}' [MDivisionID]
         private void Countselectcount()
         {
             this.gridReceiveDate.ValidateControl();
+            this.listControlBindingSource1.EndEdit();
             DataGridViewColumn column = this.gridReceiveDate.Columns["Selected"];
             if (!MyUtility.Check.Empty(column) && !MyUtility.Check.Empty(this.listControlBindingSource1.DataSource))
             {
-                int sint = ((DataTable)this.listControlBindingSource1.DataSource).Select("selected = 1").Length;
-                this.numSelectedCTNQty.Value = sint;
+                int selectCnt = this.gridReceiveDate.Rows.Cast<DataGridViewRow>().Where(row => row.Cells["selected"].Value.ToString().Equals("1")).Count();
+                this.numSelectedCTNQty.Value = selectCnt;
                 this.numTotalCTNQty.Value = ((DataTable)this.listControlBindingSource1.DataSource).Rows.Count;
+            }
+            else
+            {
+                this.numSelectedCTNQty.Value = 0;
+                this.numTotalCTNQty.Value = 0;
             }
         }
 
@@ -1064,6 +951,317 @@ select '{0}' [MDivisionID]
             }
 
             this.txtReason.Text = sele.GetSelectedString();
+        }
+
+        private DataTable dtError = new DataTable();
+        private int progressCnt = 0;
+
+        private void BackgroundDownloadSticker_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
+        {
+            try
+            {
+                int startIndex = (int)((object[])e.Argument)[1];
+                int count = (int)((object[])e.Argument)[2];
+
+                // 抓取分割跑多執行緒的table區間
+                DataTable dt = ((DataTable)((object[])e.Argument)[0]).AsEnumerable().Skip(startIndex).Take(count).CopyToDataTable();
+
+                foreach (DataRow dr in dt.Rows)
+                {
+                    StringBuilder singleWarningmsg = new StringBuilder();
+                    string checkPackSql = $@"
+select pd.CFAReturnClogDate, pd.ReceiveDate, pd.TransferCFADate, pd.ReturnDate ,p.MDivisionID
+from PackingList_Detail pd WITH (NOLOCK)
+inner join PackingList p  WITH (NOLOCK) on p.id=pd.id
+where pd.ID = '{dr["PackingListID"].ToString().Trim()}'
+and pd.OrderID = '{dr["OrderID"].ToString().Trim()}'
+and pd.CTNStartNo = '{dr["CTNStartNo"].ToString().Trim()}'
+and pd.DisposeFromClog = 0
+";
+                    if (!MyUtility.Check.Seek(checkPackSql, null, out DataRow drPackResult))
+                    {
+                        singleWarningmsg.Append($@"<CNT#: {dr["PackingListID"]}{dr["CTNStartNo"]}> does not exist!" + Environment.NewLine);
+                        continue;
+                    }
+                    else
+                    {
+                        if (!MyUtility.Check.Empty(drPackResult["ReturnDate"]))
+                        {
+                            singleWarningmsg.Append($@"<CNT#: {dr["PackingListID"]}{dr["CTNStartNo"]}>This CTN# has been return." + Environment.NewLine);
+                        }
+                        else if (MyUtility.Convert.GetString(dr["Reason"]).ToUpper() == "OTHER" && MyUtility.Check.Empty(dr["ClogReasonRemark"]))
+                        {
+                            singleWarningmsg.Append($@"Please fill in [Remark] since [Reason] is equal to ""Other"" for PackId：{dr["PackingListID"]}, SP#：{dr["OrderID"]}, CTN#：{dr["CTNStartNo"]}." + Environment.NewLine);
+                        }
+                        else if (!(MyUtility.Check.Empty(drPackResult["TransferCFADate"]) && !MyUtility.Check.Empty(drPackResult["ReceiveDate"]) && MyUtility.Check.Empty(drPackResult["CFAReturnClogDate"])))
+                        {
+                            singleWarningmsg.Append($@"<CTN#:{dr["PackingListID"]}{dr["CTNStartNo"]}> does not exist Clog!" + Environment.NewLine);
+                        }
+                        else if (!MyUtility.Check.Empty(drPackResult["CFAReturnClogDate"]))
+                        {
+                            singleWarningmsg.Append($@"<CTN#:{dr["PackingListID"]}> has CFA Return Clog Date!" + Environment.NewLine);
+                        }
+                        else if (MyUtility.Check.Seek($@"
+            select ID 
+            from PAckingList with (nolock) 
+            where ID = '{dr["PackingListID"]}'
+            and PLCtnTrToRgCodeDate is not null"))
+                        {
+                            singleWarningmsg.Append($@"<PL#:{dr["PackingListID"]} already transfer to shipping factory, cannot return to production." + Environment.NewLine);
+                        }
+                        else if (drPackResult["MDivisionID"].ToString().ToUpper() != Env.User.Keyword.ToUpper())
+                        {
+                            singleWarningmsg.Append($@"<CNT#: {dr["PackingListID"]}{dr["CTNStartNo"]}>The order's M is not equal to login M." + Environment.NewLine);
+                        }
+
+                        // 代表都沒錯,可以單筆進行更新新增
+                        else
+                        {
+                            DateTime? scanEditDate = null;
+                            if (!MyUtility.Check.Empty(dr["ScanEditDate"].ToString()) &&
+                                DateTime.TryParse(dr["ScanEditDate"].ToString(), out DateTime tempDate))
+                            {
+                                scanEditDate = tempDate;
+                            }
+
+                            object dateTimeValue = scanEditDate.HasValue ? "'" + (object)scanEditDate.Value.ToString("yyyy-MM-dd HH:mm:ss") + "'" : "Null";
+                            IList<string> cmds = new List<string>();
+                            cmds.Add(
+                           string.Format(
+                           @"
+            insert into ClogReturn(ReturnDate,MDivisionID,PackingListID,OrderID,CTNStartNo, AddDate,AddName,SCICtnNo,ClogReasonID,ClogReasonRemark)
+            values (GETDATE(), '{0}', '{1}', '{2}', '{3}', GETDATE(), '{4}', '{5}', isnull('{6}',''), isnull('{7}',''));
+
+            update pd 
+            set TransferDate = null
+                , ReceiveDate = null
+                , ClogLocationId = ''
+                , ReturnDate = GETDATE()
+                , ClogReceiveCFADate =null
+                , ScanQty = 0 
+                , ScanEditDate = null
+                , ScanName = ''
+                , Lacking = 0
+                , ActCTNWeight = 0
+                , DRYReceiveDate  = null
+                , DRYTransferDate = null
+            from PackingList_Detail pd
+            where pd.ID = '{1}'
+            and pd.CTNStartNo = '{3}'
+            and pd.DisposeFromClog= 0 ;
+
+            INSERT INTO [PackingScan_History]([MDivisionID],[PackingListID],[OrderID],[CTNStartNo],[SCICtnNo]
+            	,[DeleteFrom],[ScanQty],[ScanEditDate],[ScanName],[AddName],[AddDate],[LackingQty])
+            select '{0}' [MDivisionID]
+                ,'{1}' [PackingListID]
+                ,'{2}' [OrderID]
+                ,'{3}' [CTNStartNo]
+                ,'{5}' [SCICtnNo]
+                ,'Clog P03' [DeleteFrom]
+                ,{8} [ScanQty]
+                , {9} [ScanEditDate]
+                ,'{10}' [ScanName]
+                ,'{4}' [AddName]
+                ,GETDATE() [AddDate]
+                ,[LackingQty] = ( ISNULL( (
+                                            SELECT SUM(pd.ShipQty)
+                                            FROM PackingList_Detail pd
+                                            WHERE  pd.ID = '{1}' AND pd.CTNStartNo = '{3}') 
+                                        ,0) 
+                                );
+            ",
+                           Env.User.Keyword,
+                           MyUtility.Convert.GetString(dr["PackingListID"]),
+                           MyUtility.Convert.GetString(dr["OrderID"]),
+                           MyUtility.Convert.GetString(dr["CTNStartNo"]),
+                           Env.User.UserID,
+                           MyUtility.Convert.GetString(dr["SCICtnNo"]),
+                           MyUtility.Convert.GetString(dr["ClogReasonID"]),
+                           MyUtility.Convert.GetString(dr["ClogReasonRemark"]),
+                           MyUtility.Convert.GetInt(dr["ScanQty"]),
+                           dateTimeValue,
+                           MyUtility.Convert.GetString(dr["ScanName"])));
+
+                            // Update Orders的資料
+                            DataTable selectOrdersData = null;
+                            try
+                            {
+                                MyUtility.Tool.ProcessWithDatatable(
+                                    dt,
+                                    "Selected,OrderID",
+                                    @"select distinct OrderID from #tmp a where a.Selected = 1",
+                                    out selectOrdersData);
+                            }
+                            catch (Exception ex)
+                            {
+                                singleWarningmsg.Append($@"Prepare update orders data fail!\r\n" + ex.ToString() + Environment.NewLine);
+                            }
+
+                            DualResult result1 = Ict.Result.True;
+
+                            using (TransactionScope transactionScope = new TransactionScope(TransactionScopeOption.Required, new TimeSpan(0, 5, 0)))
+                            {
+                                try
+                                {
+                                    result1 = DBProxy.Current.Executes(null, cmds);
+
+                                    if (result1 == false)
+                                    {
+                                        transactionScope.Dispose();
+                                        singleWarningmsg.Append(result1.ToString() + Environment.NewLine);
+                                    }
+
+                                    DualResult prgResult = Prgs.UpdateOrdersCTN(selectOrdersData);
+
+                                    if (prgResult == false)
+                                    {
+                                        transactionScope.Dispose();
+                                        singleWarningmsg.Append(prgResult.ToString() + Environment.NewLine);
+                                    }
+
+                                    transactionScope.Complete();
+                                    transactionScope.Dispose();
+                                }
+                                catch (Exception ex)
+                                {
+                                    transactionScope.Dispose();
+                                    singleWarningmsg.Append("Commit transaction error." + ex + Environment.NewLine);
+                                }
+                            }
+                        }
+                    }
+
+                    // 更新進度條
+                    this.progressCnt++;
+
+                    double barPercentage = Math.Abs(MyUtility.Convert.GetDouble(this.progressCnt) / this.selectDataTable.Rows.Count) * 100;
+                    if (this.progressCnt == this.selectDataTable.Rows.Count)
+                    {
+                        ((System.ComponentModel.BackgroundWorker)sender).ReportProgress(MyUtility.Convert.GetInt(100));
+                    }
+                    else
+                    {
+                        ((System.ComponentModel.BackgroundWorker)sender).ReportProgress(MyUtility.Convert.GetInt(barPercentage));
+                    }
+
+                    if (singleWarningmsg.ToString().Length > 0)
+                    {
+                        DataRow drError = this.dtError.NewRow();
+                        dr["Remark"] = singleWarningmsg;
+                        dr.CopyTo(drError);
+                        this.dtError.Rows.Add(drError);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                e.Result = ex.ToString();
+            }
+        }
+
+        private void BackgroundDownloadSticker_ProgressChanged(object sender, System.ComponentModel.ProgressChangedEventArgs e)
+        {
+            if (this.selectDataTable != null && e.ProgressPercentage <= 100)
+            {
+                this.progressBarProcessing.Value = e.ProgressPercentage;
+                this.labProcessingBar.Text = $"{this.progressCnt}/{this.selectDataTable.Rows.Count}";
+            }
+        }
+
+        private void SetInterfaceLocked(bool isLocked)
+        {
+            // 鎖住或解鎖 UI 介面
+            this.chkOnlyReqCarton.Enabled = !isLocked;
+            this.btnFind.Enabled = !isLocked;
+            this.btnImportFromBarcode.Enabled = !isLocked;
+            this.btnSave.Enabled = !isLocked;
+            this.btnClose.Enabled = !isLocked;
+            this.pictureBox.Enabled = !isLocked;
+            this.txtReason.Enabled = !isLocked;
+            this.txtRemark.Enabled = !isLocked;
+
+            // 或者顯示一個等待光標等
+            Cursor.Current = isLocked ? Cursors.WaitCursor : Cursors.Default;
+        }
+
+        private int completeCnt = 0;
+
+        private void BackgroundDownloadSticker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            this.completeCnt++;
+            if (this.completeCnt == this.threadCnt)
+            {
+                // 檢查是否有勾選資料
+                this.gridReceiveDate.ValidateControl();
+                this.listControlBindingSource1.EndEdit();
+
+                // 使用Find撈出的全部資料
+                DataTable dt =
+                        (DataTable)this.listControlBindingSource1.DataSource;
+
+                if (this.dtError.Rows.Count > 0)
+                {
+                    MyUtility.Msg.WarningBox("Some carton cannot receive, please refer to field <Save Result>.");
+
+                    if (this.gridReceiveDate.Rows.Cast<DataGridViewRow>().Any(row => !row.Cells["Selected"].Value.ToString().Equals("1")))
+                    {
+                        /*
+                         沒勾選的放table #1
+                         有錯誤的放table #2
+                         再將2者合併一起, 畫面只會顯示沒勾的+有錯誤的
+                         最後再將Selected清空
+                         */
+
+                        DataTable dtCopy = dt.AsEnumerable().Where(r => MyUtility.Convert.GetInt(r["selected"]) == 0).ToList().CopyToDataTable();
+                        dtCopy.Merge(this.dtError, true, MissingSchemaAction.AddWithKey);
+                        foreach (DataRow dr in dtCopy.Rows)
+                        {
+                            if (MyUtility.Check.Empty(dr["Selected"]))
+                            {
+                                dr["Remark"] = string.Empty;
+                            }
+                            else
+                            {
+                                dr["Selected"] = false;
+                            }
+                        }
+
+                        this.listControlBindingSource1.DataSource = dtCopy;
+                    }
+                    else
+                    {
+                        foreach (DataRow dr in this.dtError.Rows)
+                        {
+                            dr["Selected"] = false;
+                        }
+
+                        this.listControlBindingSource1.DataSource = this.dtError;
+                    }
+
+                    ((DataTable)this.listControlBindingSource1.DataSource).DefaultView.Sort = " rn ASC";
+                }
+                else
+                {
+                    if (dt.AsEnumerable().Where(r => MyUtility.Convert.GetInt(r["selected"]) == 0).ToList().Count() == 0)
+                    {
+                        this.listControlBindingSource1.DataSource = null;
+                    }
+                    else
+                    {
+                        DataTable newdt = dt.AsEnumerable().Where(r => MyUtility.Convert.GetInt(r["selected"]) == 0).ToList().CopyToDataTable();
+                        this.listControlBindingSource1.DataSource = newdt;
+                    }
+
+                    this.ControlButton4Text("Close");
+                    MyUtility.Msg.InfoBox("Complete!!");
+                }
+
+                this.backgroundDownloadSticker.ReportProgress(0);
+                this.Countselectcount();
+
+                // 先把UI介面鎖住
+                this.SetInterfaceLocked(false);
+            }
         }
     }
 }

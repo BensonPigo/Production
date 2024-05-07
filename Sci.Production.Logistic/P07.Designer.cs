@@ -35,6 +35,9 @@
             this.BtnSave = new Sci.Win.UI.Button();
             this.BtnClose = new Sci.Win.UI.Button();
             this.panel7 = new System.Windows.Forms.Panel();
+            this.labProcessingBar = new System.Windows.Forms.Label();
+            this.label6 = new Sci.Win.UI.Label();
+            this.progressBarProcessing = new System.Windows.Forms.ProgressBar();
             this.btnImportFromBarcode = new Sci.Win.UI.Button();
             this.panel6 = new System.Windows.Forms.Panel();
             this.dateSciDelivery = new Sci.Win.UI.DateRange();
@@ -53,6 +56,8 @@
             this.labelSCIDelivery = new Sci.Win.UI.Label();
             this.shapeContainer1 = new Microsoft.VisualBasic.PowerPacks.ShapeContainer();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
+            this.shapeContainer2 = new Microsoft.VisualBasic.PowerPacks.ShapeContainer();
+            this.backgroundDownloadSticker = new System.ComponentModel.BackgroundWorker();
             this.panel3.SuspendLayout();
             this.panel1.SuspendLayout();
             this.panel7.SuspendLayout();
@@ -122,11 +127,39 @@
             // panel7
             // 
             this.panel7.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panel7.Controls.Add(this.labProcessingBar);
+            this.panel7.Controls.Add(this.label6);
+            this.panel7.Controls.Add(this.progressBarProcessing);
             this.panel7.Controls.Add(this.btnImportFromBarcode);
             this.panel7.Location = new System.Drawing.Point(5, 78);
             this.panel7.Name = "panel7";
             this.panel7.Size = new System.Drawing.Size(863, 42);
             this.panel7.TabIndex = 3;
+            // 
+            // labProcessingBar
+            // 
+            this.labProcessingBar.AutoSize = true;
+            this.labProcessingBar.Location = new System.Drawing.Point(230, 11);
+            this.labProcessingBar.Name = "labProcessingBar";
+            this.labProcessingBar.Size = new System.Drawing.Size(28, 17);
+            this.labProcessingBar.TabIndex = 56;
+            this.labProcessingBar.Text = "0/0";
+            // 
+            // label6
+            // 
+            this.label6.Location = new System.Drawing.Point(12, 8);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(133, 23);
+            this.label6.TabIndex = 54;
+            this.label6.Text = "Processing progress";
+            // 
+            // progressBarProcessing
+            // 
+            this.progressBarProcessing.Location = new System.Drawing.Point(148, 8);
+            this.progressBarProcessing.Name = "progressBarProcessing";
+            this.progressBarProcessing.Size = new System.Drawing.Size(196, 23);
+            this.progressBarProcessing.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
+            this.progressBarProcessing.TabIndex = 55;
             // 
             // btnImportFromBarcode
             // 
@@ -332,6 +365,23 @@
             // 
             this.openFileDialog1.FileName = "openFileDialog1";
             // 
+            // shapeContainer2
+            // 
+            this.shapeContainer2.Location = new System.Drawing.Point(0, 0);
+            this.shapeContainer2.Margin = new System.Windows.Forms.Padding(0);
+            this.shapeContainer2.Name = "shapeContainer2";
+            this.shapeContainer2.Size = new System.Drawing.Size(795, 155);
+            this.shapeContainer2.TabIndex = 0;
+            this.shapeContainer2.TabStop = false;
+            // 
+            // backgroundDownloadSticker
+            // 
+            this.backgroundDownloadSticker.WorkerReportsProgress = true;
+            this.backgroundDownloadSticker.WorkerSupportsCancellation = true;
+            this.backgroundDownloadSticker.DoWork += new System.ComponentModel.DoWorkEventHandler(this.BackgroundDownloadSticker_DoWork);
+            this.backgroundDownloadSticker.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.BackgroundDownloadSticker_ProgressChanged);
+            this.backgroundDownloadSticker.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.BackgroundDownloadSticker_RunWorkerCompleted);
+            // 
             // P07
             // 
             this.ClientSize = new System.Drawing.Size(873, 438);
@@ -347,6 +397,7 @@
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
             this.panel7.ResumeLayout(false);
+            this.panel7.PerformLayout();
             this.panel6.ResumeLayout(false);
             this.panel6.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gridDetail)).EndInit();
@@ -381,5 +432,10 @@
         private Win.UI.CheckBox chkCFA;
         private Win.UI.Button BtnSave;
         private Win.UI.Button BtnClose;
+        private System.Windows.Forms.Label labProcessingBar;
+        private Win.UI.Label label6;
+        private System.Windows.Forms.ProgressBar progressBarProcessing;
+        private Microsoft.VisualBasic.PowerPacks.ShapeContainer shapeContainer2;
+        private System.ComponentModel.BackgroundWorker backgroundDownloadSticker;
     }
 }

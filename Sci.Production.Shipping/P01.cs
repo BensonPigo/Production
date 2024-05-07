@@ -1424,11 +1424,12 @@ where a.ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
                 }
 
                 string subject = string.Format(
-                    @"<{0}> {1} for SP#{2}, DD{3} - {4}",
+                    @"<{0}> {1} for SP#{2}, DD{3}, Air Qty {4} - {5}",
                     MyUtility.Convert.GetString(listResponsible.JoinToString(",")),
                     MyUtility.Convert.GetString(this.CurrentMaintain["ID"]),
                     MyUtility.Convert.GetString(this.CurrentMaintain["OrderID"]),
-                    Convert.ToDateTime(this.CurrentMaintain["CDate"]).ToString("yyyyMMdd"),
+                    DateTime.Now.Date.ToString("yyyyMMdd"),
+                    this.CurrentMaintain["ShipQty"].ToString(),
                     MyUtility.Convert.GetString(this.CurrentMaintain["Status"]) == "Junked" ? "cancel" : "request");
 
                 bool isSciIcrNo = MyUtility.Check.Empty(this.CurrentMaintain["SCIICRNo"]);

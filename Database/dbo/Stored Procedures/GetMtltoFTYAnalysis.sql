@@ -121,62 +121,62 @@ declare @P_MtltoFTYAnalysis TABLE(
 		, SupdelRvsd = stockPO3.RevisedETD
 		, [ProdItem] = ISNULL(MtlType.ProductionType, '')
 		, KPILETA = main.EstLETA
-		, MaterialConfirm = iif(main.Confirm = 1, 'Y', '')
+		, MaterialConfirm = iif(main.Confirm = 1, 'Y', 'N')
 		, [SupplierGroup] = ISNULL(Supp.SuppGroupFabric, '')
 		, TransferBIDate = GETDATE()
 	From (
 		SELECT Orders.FactoryID
 			, Orders.BrandID
-			, Export.ETD
-			, Export.ETA
-			, Export.CloseDate
-			, Export.WhseArrival as ActDate
-			, Export_Detail.POID
-			, Export_Detail.Seq1
-			, Export_Detail.Seq2
+			, e.ETD
+			, e.ETA
+			, e.CloseDate
+			, e.WhseArrival as ActDate
+			, ed.POID
+			, ed.Seq1
+			, ed.Seq2
 			, Orders.CFMDate
 			, Orders.SCIDelivery
-			, Export_Detail.Refno
-			, Export_Detail.SCIRefno
-			, Export_Detail.Price
+			, ed.Refno
+			, ed.SCIRefno
+			, ed.Price
 			, po3.POUnit
 			, po3.Qty as PoQty
 			, po3.Foc as PoFoc
-			, Export_Detail.Qty as ShipQty
-			, Export_Detail.Foc as ShipFoc
-			, Export_Detail.Qty + Export_Detail.Foc as TTShipQty
-			, Export.ID
-			, Export.ShipmentTerm
+			, ed.Qty as ShipQty
+			, ed.Foc as ShipFoc
+			, ed.Qty + ed.Foc as TTShipQty
+			, e.ID
+			, e.ShipmentTerm
 			, po3.PINO
 			, po3.PIDate
 			, ColorID = po3Spec.Color
 			, Orders.SeasonID
 			, Orders.StyleID
 			, Orders.OrderTypeID
-			, Export.ShipModeID
+			, e.ShipModeID
 			, Orders.Category
 			, PO.PCHandle
 			, PO.POHandle
 			, PO.POSMR
-			, Export_Detail.SuppID
+			, ed.SuppID
 			, po3.StockPOID
 			, po3.StockSeq1
 			, po3.StockSeq2
 			, Fabric.WeaveTypeID
 			, iif(cfu.Junk = 1, 'Y', '') as FabricJunk
 			, iif(Fabric.Type = 'F', 'Fabric', 'Accessory') as FabricType
-			, Export.Confirm
+			, [Confirm] = po3.Complete
 			, GetSci.EstLETA
-		FROM [Production].dbo.Export WITH (NOLOCK)
-		Left join [Production].dbo.Export_Detail WITH (NOLOCK) on Export.ID = Export_Detail.ID
-		Left join [Production].dbo.PO_Supp_Detail po3 WITH (NOLOCK) on po3.ID = Export_Detail.POID and po3.Seq1 = Export_Detail.Seq1 and po3.Seq2 = Export_Detail.Seq2
+		FROM [Production].dbo.Export e WITH (NOLOCK)
+		Left join [Production].dbo.Export_Detail ed WITH (NOLOCK) on e.ID = ed.ID
+		Left join [Production].dbo.PO_Supp_Detail po3 WITH (NOLOCK) on po3.ID = ed.POID and po3.Seq1 = ed.Seq1 and po3.Seq2 = ed.Seq2
 		Outer apply [Production].dbo.GetPo3Spec(po3.ID, po3.Seq1, po3.Seq2) po3Spec
 		Left join [Production].dbo.PO WITH (NOLOCK) on PO.ID = po3.ID
 		Left join [Production].dbo.Orders WITH (NOLOCK) on Orders.ID = po3.ID
-		Left join [Production].dbo.Fabric WITH (NOLOCK) on Export_Detail.SciRefno = Fabric.SciRefno
-		Outer apply (Select * From [Production].dbo.CheckFabricUseful(Export_Detail.SCIRefno, Orders.SeasonID, Export_Detail.SuppID)) cfu
+		Left join [Production].dbo.Fabric WITH (NOLOCK) on ed.SciRefno = Fabric.SciRefno
+		Outer apply (Select * From [Production].dbo.CheckFabricUseful(ed.SCIRefno, Orders.SeasonID, ed.SuppID)) cfu
 		Outer apply [Production].dbo.GetSCI(Orders.POID, Orders.Category) as GetSci
-		Where Export.CloseDate >= @CloseDateFrom AND Export_Detail.PoType = 'G' 
+		Where e.CloseDate >= @CloseDateFrom AND ed.PoType = 'G' 
 
 	) main
 	inner join [Production].dbo.Factory WITH (NOLOCK) on main.FactoryID = Factory.ID and Factory.IsProduceFty = 1
@@ -201,7 +201,7 @@ declare @P_MtltoFTYAnalysis TABLE(
 			and tmpPO3.Seq1 = IIF(IsNull(main.StockPOID, '') = '' , main.Seq1, main.StockSeq1)
 			and tmpPO3.Seq2 = IIF(IsNull(main.StockPOID, '') = '' , main.Seq2, main.StockSeq2)
 	) stockPO3
-	Order by main.ID, main.POID, main.Seq1, main.Seq2	
+	Order by main.ID, main.POID, main.Seq1, main.Seq2
 
 
 	select * from @P_MtltoFTYAnalysis
