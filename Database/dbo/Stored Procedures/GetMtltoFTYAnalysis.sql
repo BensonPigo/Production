@@ -1,4 +1,4 @@
-﻿CREATE PROCEDURE  [dbo].[GetMtltoFTYAnalysis]
+﻿Create PROCEDURE  [dbo].[GetMtltoFTYAnalysis]
 	@CloseDateFrom Datetime = null
 AS
 begin
@@ -177,7 +177,6 @@ declare @P_MtltoFTYAnalysis TABLE(
 		Outer apply (Select * From [Production].dbo.CheckFabricUseful(ed.SCIRefno, Orders.SeasonID, ed.SuppID)) cfu
 		Outer apply [Production].dbo.GetSCI(Orders.POID, Orders.Category) as GetSci
 		Where e.CloseDate >= @CloseDateFrom AND ed.PoType = 'G' 
-
 	) main
 	inner join [Production].dbo.Factory WITH (NOLOCK) on main.FactoryID = Factory.ID and Factory.IsProduceFty = 1
 	Left join [Production].dbo.Supp WITH (NOLOCK) on main.SuppID = Supp.ID
