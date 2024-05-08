@@ -48,6 +48,7 @@ namespace Sci.Production.Prg.PowerBI.Logic
             P_WBScanRate,
             P_CuttingBCS,
             P_FabricStatus_And_IssueFabricTracking,
+            P_SimilarStyle,
         }
 
         /// <summary>
@@ -368,6 +369,9 @@ ORDER BY [Group], [SEQ], [NAME]";
                     default:
                         // Execute all Stored Procedures
                         result = this.ExecuteSP(item);
+                        break;
+                    case ListName.P_SimilarStyle:
+                        result = new P_Import_SimilarStyle().P_SimilarStyle(item.SDate);
                         break;
                 }
             }
