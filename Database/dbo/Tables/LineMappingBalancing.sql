@@ -31,6 +31,8 @@
     [AddDate] DATETIME  NULL,  
     [EditName] VARCHAR(10) CONSTRAINT [DF_LineMappingBalancing_EditName] DEFAULT ('') NOT NULL,  
     [EditDate] DATETIME NULL, 
+    [OriNoNumber] INT    CONSTRAINT [DF_LineMappingBalancing_OriNoNumber] DEFAULT (0) NOT NULL , 
+    [Reason] VARCHAR(5) CONSTRAINT [DF_LineMappingBalancing_Reason] DEFAULT ('') NOT NULL, 
     CONSTRAINT [PK_LineMappingBalancing] PRIMARY KEY CLUSTERED ([ID] ASC)
 )
 
@@ -162,3 +164,21 @@ EXEC sp_addextendedproperty @name = N'MS_Description',
     @level1name = N'LineMappingBalancing',
     @level2type = N'COLUMN',
     @level2name = N'AutomatedLineMappingID'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'紀錄從P05轉來時的站台數量，插入/刪除超過五站後，Save時會需要填表頭Reason',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'LineMappingBalancing',
+    @level2type = N'COLUMN',
+    @level2name = N'OriNoNumber'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'插入/刪除超過五站後，Save時需要填Reason，IEReason.Type = LN',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'LineMappingBalancing',
+    @level2type = N'COLUMN',
+    @level2name = N'Reason'

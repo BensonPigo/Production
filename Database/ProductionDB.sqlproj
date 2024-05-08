@@ -2914,6 +2914,7 @@
     <Build Include="dbo\Tables\MaterialDocument_Brand.sql" />
     <Build Include="dbo\Tables\ClogScanPack.sql" />
     <Build Include="dbo\Tables\ClogScanPack_Detail.sql" />
+    <Build Include="dbo\Tables\EmployeeAllocationSetting.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />

@@ -25,13 +25,15 @@ namespace Sci.Production.IE
         private DataTable dtAutomatedLineMapping_Detail;
         private DataTable dtSelectItemSource;
         private DataTable dtNoSelectItem = new DataTable();
+        private bool IsP05;
 
         /// <summary>
         /// P05_EditOperation
         /// </summary>
         /// <param name="dtAutomatedLineMapping_Detail">dtAutomatedLineMapping_Detail</param>
-        public P05_EditOperation(DataTable dtAutomatedLineMapping_Detail)
+        public P05_EditOperation(DataTable dtAutomatedLineMapping_Detail, bool IsP05 = true)
         {
+            this.IsP05 = IsP05;
             this.DialogResult = DialogResult.No;
 
             this.dtAutomatedLineMapping_Detail = dtAutomatedLineMapping_Detail;
@@ -295,16 +297,19 @@ namespace Sci.Production.IE
                .Text("MachineTypeID", header: "ST/MC", width: Widths.AnsiChars(10), iseditingreadonly: true, settings: colGroupOperation)
                .Text("MasterPlusGroup", header: "MC Group", width: Widths.AnsiChars(10), iseditingreadonly: true, settings: colGroupOperation)
                .Text("OperationDesc", header: "Operation", width: Widths.AnsiChars(13), iseditingreadonly: true, settings: colGroupOperation)
-               .Numeric("OriSewer", header: "Original" + Environment.NewLine + "Sewer", decimal_places: 4, width: Widths.AnsiChars(5), iseditingreadonly: true)
+               .Text("Annotation", header: "Annotation", width: Widths.AnsiChars(13), iseditingreadonly: true, settings: colGroupOperation)
+               .Numeric("OriSewer", header: "Original" + Environment.NewLine + "Sewer", decimal_places: 1, width: Widths.AnsiChars(5), iseditingreadonly: true)
                .Numeric("SewerDiffPercentageDesc", header: "Ori. %", width: Widths.AnsiChars(5), iseditingreadonly: true)
-               .Numeric("DivSewer", header: "Original" + Environment.NewLine + "Div. Sewer", decimal_places: 4, width: Widths.AnsiChars(5), iseditingreadonly: true)
+               .Numeric("DivSewer", header: "Original" + Environment.NewLine + "Div. Sewer", decimal_places: 1, width: Widths.AnsiChars(5), iseditingreadonly: true)
                .Numeric("UpdSewerDiffPercentage", header: "Update %", width: Widths.AnsiChars(5), iseditingreadonly: false, settings: colUpdSewer)
-               .Numeric("UpdDivSewer", header: "Update" + Environment.NewLine + "Div. Sewer", decimal_places: 4, width: Widths.AnsiChars(5), iseditingreadonly: false, settings: colUpdSewer);
+               .Numeric("UpdDivSewer", header: "Update" + Environment.NewLine + "Div. Sewer", decimal_places: 1, width: Widths.AnsiChars(5), iseditingreadonly: false, settings: colUpdSewer);
 
             this.gridEditOperation.Columns["UpdSewerDiffPercentage"].DefaultCellStyle.BackColor = Color.Pink;
             this.gridEditOperation.Columns["UpdSewerDiffPercentage"].DefaultCellStyle.ForeColor = Color.Red;
             this.gridEditOperation.Columns["UpdDivSewer"].DefaultCellStyle.BackColor = Color.Pink;
             this.gridEditOperation.Columns["UpdDivSewer"].DefaultCellStyle.ForeColor = Color.Red;
+
+            this.Text = this.IsP05 ? "P05. Edit No. Operation" : "P06. Edit No. Operation";
         }
 
         private void CaculateUpdSewerColumn(string colName, DataRow caculateRow)
@@ -342,10 +347,26 @@ namespace Sci.Production.IE
             }
 
             DataRow selectedRow = this.gridEditOperation.GetDataRow(this.gridEditOperation.SelectedRows[0].Index);
+
+            var oriNo = selectedRow["No"];
+
             DataRow newRow = this.dtAutomatedLineMapping_DetailCopy.NewRow();
+            // newRow["No"] = oriNo;
             newRow["Selected"] = true;
             newRow["UpdDivSewer"] = 0;
             newRow["UpdSewerDiffPercentage"] = 0;
+
+            var checkedNo = this.dtNoSelectItem.AsEnumerable().Select(s => s["No"].ToString()).ToList();
+            DataTable dt = (DataTable)this.gridEditOperationBs.DataSource;
+
+            var selectedRows = dt.AsEnumerable()
+                     .Where(row => checkedNo.Contains(row.Field<string>("No")))
+                     .CopyToDataTable();
+
+            //for (int i = this.gridEditOperation.SelectedRows[0].Index; i < selectedRows.Rows.Count; i++)
+            //{
+            //    int iNo = (int)selectedRows.Rows[i]["No"];
+            //}
 
             int insertIndex = this.dtAutomatedLineMapping_DetailCopy.Rows.IndexOf(selectedRow);
             this.dtAutomatedLineMapping_DetailCopy.Rows.InsertAt(newRow, insertIndex);
@@ -554,5 +575,7 @@ namespace Sci.Production.IE
                 this.gridEditOperationBs.DataSource = this.dtAutomatedLineMapping_DetailCopy;
             }
         }
+
+
     }
 }

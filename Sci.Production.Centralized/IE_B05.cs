@@ -193,6 +193,8 @@ where ID = '{this.CurrentMaintain["ID"]}'
                 .CheckBox("IsNonSewingLine", header: "Non-Sewing Line", width: Widths.AnsiChars(17), iseditable: true, trueValue: true, falseValue: false)
                 .CheckBox("IsNotShownInP01", header: "Not shown in P01", width: Widths.AnsiChars(17), iseditable: true, trueValue: true, falseValue: false)
                 .CheckBox("IsNotShownInP03", header: "Not shown in P03", width: Widths.AnsiChars(17), iseditable: true, trueValue: true, falseValue: false)
+                .CheckBox("IsNotShownInP05", header: "Not shown in P05", width: Widths.AnsiChars(17), iseditable: true, trueValue: true, falseValue: false)
+                .CheckBox("IsNotShownInP06", header: "Not shown in P06", width: Widths.AnsiChars(17), iseditable: true, trueValue: true, falseValue: false)
             ;
         }
 
@@ -252,21 +254,27 @@ when matched then update set
 		t.IsSubprocess = s.IsSubprocess,
 		t.IsNonSewingLine = s.IsNonSewingLine,
 		t.IsNotShownInP01 = s.IsNotShownInP01,
-		t.IsNotShownInP03 = s.IsNotShownInP03
+		t.IsNotShownInP03 = s.IsNotShownInP03,
+        t.IsNotShownInP05 = s.IsNotShownInP05,
+        t.IsNotShownInP06 = s.IsNotShownInP06
 when not matched by target then
 	insert([ID]
       ,[FactoryID]
       ,[IsSubprocess]
       ,[IsNonSewingLine]
       ,[IsNotShownInP01]
-      ,[IsNotShownInP03])
+      ,[IsNotShownInP03]
+      ,[IsNotShownInP05]
+      ,[IsNotShownInP06])
 	values(
 	   s.[ID]
       ,s.[FactoryID]
       ,s.[IsSubprocess]
       ,s.[IsNonSewingLine]
       ,s.[IsNotShownInP01]
-      ,s.[IsNotShownInP03])
+      ,s.[IsNotShownInP03]
+      ,s.[IsNotShownInP05]
+      ,s.[IsNotShownInP06])
 when not matched by source and t.ID = '{this.CurrentMaintain["ID"]}' then
 delete;
 ;	
@@ -312,6 +320,8 @@ delete;
             drData["IsNonSewingLine"] = false;
             drData["IsNotShownInP01"] = false;
             drData["IsNotShownInP03"] = false;
+            drData["IsNotShownInP05"] = false;
+            drData["IsNotShownInP06"] = false;
             dt.Rows.InsertAt(drData, 0);
             dt.AcceptChanges();
         }

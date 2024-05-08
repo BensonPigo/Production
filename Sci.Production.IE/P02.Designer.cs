@@ -218,7 +218,7 @@
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(827, 490);
+            this.browse.Size = new System.Drawing.Size(913, 490);
             // 
             // tabs
             // 
@@ -1098,8 +1098,6 @@
             this.shapeContainer4.Location = new System.Drawing.Point(0, 0);
             this.shapeContainer4.Margin = new System.Windows.Forms.Padding(0);
             this.shapeContainer4.Name = "shapeContainer1";
-            this.shapeContainer4.Shapes.AddRange(new Microsoft.VisualBasic.PowerPacks.Shape[] {
-            this.lineShape4});
             this.shapeContainer4.Size = new System.Drawing.Size(1031, 452);
             this.shapeContainer4.TabIndex = 54;
             this.shapeContainer4.TabStop = false;
@@ -1127,8 +1125,6 @@
             this.shapeContainer5.Location = new System.Drawing.Point(0, 0);
             this.shapeContainer5.Margin = new System.Windows.Forms.Padding(0);
             this.shapeContainer5.Name = "shapeContainer1";
-            this.shapeContainer5.Shapes.AddRange(new Microsoft.VisualBasic.PowerPacks.Shape[] {
-            this.lineShape4});
             this.shapeContainer5.Size = new System.Drawing.Size(1031, 452);
             this.shapeContainer5.TabIndex = 54;
             this.shapeContainer5.TabStop = false;
@@ -1156,8 +1152,6 @@
             this.shapeContainer6.Location = new System.Drawing.Point(0, 0);
             this.shapeContainer6.Margin = new System.Windows.Forms.Padding(0);
             this.shapeContainer6.Name = "shapeContainer1";
-            this.shapeContainer6.Shapes.AddRange(new Microsoft.VisualBasic.PowerPacks.Shape[] {
-            this.lineShape4});
             this.shapeContainer6.Size = new System.Drawing.Size(1031, 452);
             this.shapeContainer6.TabIndex = 54;
             this.shapeContainer6.TabStop = false;

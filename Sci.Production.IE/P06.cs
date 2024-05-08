@@ -7,6 +7,7 @@ using Sci.Production.CallPmsAPI;
 using Sci.Production.Class;
 using Sci.Production.Class.Command;
 using Sci.Production.PublicForm;
+using Sci.Win.Tools;
 using Sci.Win.UI;
 using System;
 using System.Collections.Generic;
@@ -14,6 +15,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using System.Windows.Forms.DataVisualization.Charting;
 using static Sci.Production.IE.AutoLineMappingGridSyncScroll;
@@ -60,6 +62,7 @@ AND ALMCS.Junk = 0
         {
             this.InitializeComponent();
             MyUtility.Tool.SetupCombox(this.comboPhase, 2, 1, ",,Final,Final");
+            this.gridicon.Append.Visible = false;
 
             this.splitLineMapping.Panel1.Controls.Add(this.detailgrid);
             this.gridCentralizedPPALeft.SupportEditMode = Win.UI.AdvEditModesReadOnly.True;
@@ -181,7 +184,7 @@ AND ALMCS.Junk = 0
         /// <inheritdoc/>
         protected override bool ClickPrint()
         {
-            new P06_Print(this.CurrentMaintain["ID"].ToString()).ShowDialog();
+            new P06_Print(this.CurrentMaintain["ID"].ToString(), (DataTable)this.gridLineMappingRight.DataSource).ShowDialog();
             return base.ClickPrint();
         }
 
@@ -205,20 +208,121 @@ AND ALMCS.Junk = 0
             string factoryID = (e.Master == null) ? string.Empty : e.Master["FactoryID"].ToString();
             this.DetailSelectCommand =
                 $@"
-select  cast(0 as bit) as Selected,
-        ad.*,
-        [PPADesc] = isnull(d.Name, ''),
-        [OperationDesc] = iif(isnull(op.DescEN, '') = '', ad.OperationID, op.DescEN),
-        [SewerDiffPercentageDesc] = round(ad.SewerDiffPercentage * 100, 0),
-        [TimeStudyDetailUkeyCnt] = Count(TimeStudyDetailUkey) over (partition by TimeStudyDetailUkey),
-        [EmployeeName] = e.Name,
-        [EmployeeSkill] = e.Skill
-from LineMappingBalancing_Detail ad WITH (NOLOCK)
-left join DropDownList d with (nolock) on d.ID = ad.PPA  and d.Type = 'PMS_IEPPA'
-left join Operation op with (nolock) on op.ID = ad.OperationID
-left join Employee e with (nolock) on e.FactoryID = '{factoryID}' and e.ID = ad.EmployeeID
-where ad.ID = '{masterID}'
-order by iif(ad.No = '', 'ZZ', ad.No), ad.Seq";
+                SELECT * 
+                FROM (
+                    SELECT *, [IsRow] = ROW_NUMBER() OVER(PARTITION BY EmployeeID, Ukey ORDER BY Junk ASC)
+                    FROM (
+                        SELECT 
+                            cast(0 as bit) as Selected,
+                            ad.*,
+                            [PPADesc] = isnull(d.Name, ''),
+                            [OperationDesc] = iif(isnull(op.DescEN, '') = '', ad.OperationID, op.DescEN),
+                            [SewerDiffPercentageDesc] = round(ad.SewerDiffPercentage * 100, 0),
+                            [TimeStudyDetailUkeyCnt] = Count(TimeStudyDetailUkey) over (partition by TimeStudyDetailUkey),
+                            [EmployeeName] = e.Name,
+                            [EmployeeSkill] = e.Skill,
+                            [IsNotShownInP06] = isnull(md.IsNotShownInP06,0),
+			                [Junk] = e.junk,
+			                [EstCycleTime] = CASE 
+						                  WHEN Effi.Effi_3_year = 0 THEN 
+							                  CAST(ad.GSD  / NULLIF(Effi.Effi_3_year, 0) AS DECIMAL(10, 2))
+						                  ELSE 
+							                  CAST(ad.GSD  / NULLIF(Effi_90_day.Effi_90_day, 0) AS DECIMAL(10, 2))
+						                END,
+			                Effi.Effi_3_year,
+			                Effi_90_day.Effi_90_day
+                        FROM LineMappingBalancing_Detail ad WITH (NOLOCK)
+                        LEFT JOIN DropDownList d WITH (NOLOCK) ON d.ID = ad.PPA AND d.Type = 'PMS_IEPPA'
+                        LEFT JOIN Operation op WITH (NOLOCK) ON op.ID = ad.OperationID
+                        LEFT JOIN Employee e WITH (NOLOCK) ON e.FactoryID = '{factoryID}' AND e.ID = ad.EmployeeID
+                        INNER JOIN LineMappingBalancing lmb ON lmb.ID = ad.ID
+                        LEFT JOIN MachineType_Detail md ON md.ID = ad.MachineTypeID AND md.FactoryID = lmb.FactoryID
+		                OUTER APPLY
+		                (
+			                SELECT
+			                [ST_MC_Type]
+			                ,[Motion]
+			                ,[Group_Header]
+			                ,[Part]
+			                ,[Attachment]
+			                ,[Effi_3_year] = AVG(CAST([Effi_3_year] AS DECIMAL(10, 2)))
+			                From
+			                (
+				                SELECT 
+				                [ST_MC_Type] =lmd.MachineTypeID
+				                ,[Motion] = Operation_P03.val
+				                ,[Group_Header] = tsd.[location] 
+				                ,[Part] = lmd.SewingMachineAttachmentID
+				                ,[Attachment] = lmd.Attachment
+				                ,Effi_3_year = Effi_3_year.VAL
+				                from Employee eo
+				                left JOIN LineMappingBalancing_Detail lmd WITH(NOLOCK) on lmd.EmployeeID = eo.ID　
+				                left JOIN LineMappingBalancing lm WITH(NOLOCK) on lm.id = lmd.ID
+				                left JOIN TimeStudy_Detail tsd WITH(NOLOCK) on lmd.OperationID = tsd.OperationID
+				                OUTER APPLY
+				                (
+				                select val = stuff((select distinct concat(',',Name)
+						                from OperationRef a
+						                inner JOIN IESELECTCODE b WITH(NOLOCK) on a.CodeID = b.ID and a.CodeType = b.Type
+						                where a.CodeType = '00007' and a.id = lmd.OperationID  for xml path('') ),1,1,'')
+				                )Operation_P03
+				                OUTER APPLY 
+				                (
+					                SELECT VAL = CAST(iif(oplmd.Cycle = 0,0,ROUND(oplmd.GSD/ oplmd.Cycle,2)*100) AS DECIMAL(10, 2))
+					                FROM LineMappingBalancing oplm 
+					                inner join LineMappingBalancing_Detail oplmd on oplm.ID = oplmd.ID
+					                WHERE OPLMD.EmployeeID = lmd.EmployeeID
+					                AND ((oplm.EditDate >= DATEADD(YEAR, -3, GETDATE()) and oplm.EditDate <= GETDATE()) or (oplm.AddDate >= DATEADD(YEAR, -3, GETDATE()) and oplm.AddDate <= GETDATE()))
+				                )Effi_3_year
+				                WHERE 
+				                eo.FactoryID = e.FactoryID and eo.ID = ad.EmployeeID AND
+				                ((lm.EditDate >= DATEADD(YEAR, -3, GETDATE()) and lm.EditDate <= GETDATE()) or (lm.AddDate >= DATEADD(YEAR, -3, GETDATE()) and lm.AddDate <= GETDATE()))
+			                )a
+			                GROUP BY [ST_MC_Type],[Motion], [Group_Header], [Part], [Attachment]
+		                )Effi
+		                OUTER APPLY
+		                (
+			                SELECT
+			                [ST_MC_Type]
+			                ,[Motion]
+			                ,[Effi_90_day] =AVG(CAST([Effi_90_day] AS DECIMAL(10, 2)))
+			                From
+			                (
+				                SELECT 
+				                [ST_MC_Type] =lmd.MachineTypeID
+				                ,[Motion] = Operation_P03.val
+				                ,Effi_90_day = Effi_90_day.VAL
+				                from Employee eo
+				                left JOIN LineMappingBalancing_Detail lmd WITH(NOLOCK) on lmd.EmployeeID = e.ID　
+				                left JOIN LineMappingBalancing lm WITH(NOLOCK) on lm.id = lmd.ID
+				                left JOIN TimeStudy_Detail tsd WITH(NOLOCK) on lmd.OperationID = tsd.OperationID
+				                OUTER APPLY
+				                (
+				                select val = stuff((select distinct concat(',',Name)
+						                from OperationRef a
+						                inner JOIN IESELECTCODE b WITH(NOLOCK) on a.CodeID = b.ID and a.CodeType = b.Type
+						                where a.CodeType = '00007' and a.id = lmd.OperationID  for xml path('') ),1,1,'')
+				                )Operation_P03
+				                OUTER APPLY 
+				                (
+					                SELECT VAL = FORMAT(CAST(iif(oplmd.Cycle = 0,0,ROUND(oplmd.GSD/ oplmd.Cycle,2)*100) AS DECIMAL(10, 2)), '0.00')
+					                FROM LineMappingBalancing oplm 
+					                inner join LineMappingBalancing_Detail oplmd on oplm.ID = oplmd.ID
+					                WHERE OPLMD.EmployeeID = lmd.EmployeeID
+					                AND ((oplm.EditDate >= DATEADD(DAY, -90, GETDATE()) and oplm.EditDate <= GETDATE()) or (oplm.AddDate >= DATEADD(DAY, -90, GETDATE()) and oplm.AddDate <= GETDATE()))
+				                )Effi_90_day
+				                WHERE 
+				                eo.FactoryID = e.FactoryID and eo.ID = ad.EmployeeID AND
+				                ((lm.EditDate >= DATEADD(day, -90, GETDATE()) and lm.EditDate <= GETDATE()) or (lm.AddDate >= DATEADD(day, -90, GETDATE()) and lm.AddDate <= GETDATE()))
+			                )a
+			                GROUP BY [ST_MC_Type],[Motion]
+		                )Effi_90_day
+                        WHERE ad.ID = '{masterID}'
+                    ) a
+                ) b
+                WHERE b.IsRow = 1
+                ORDER BY IIF(No = '', 'ZZ', No), Seq
+";
 
             return base.OnDetailSelectCommandPrepare(e);
         }
@@ -267,6 +371,22 @@ order by iif(ad.No = '', 'ZZ', ad.No), ad.Seq";
                     col.DefaultCellStyle.ForeColor = Color.Black;
                 }
             }
+
+            var sumData = this.DetailDatas.AsEnumerable().Where(r => r["EstCycleTime"] != DBNull.Value && r["EstCycleTime"] != null).Sum(r => Convert.ToDecimal(r["EstCycleTime"]));
+            var maxData = this.DetailDatas.AsEnumerable()
+            .Where(r => r["EstCycleTime"] != DBNull.Value && r["EstCycleTime"] != null)
+            .Select(r => Convert.ToDecimal(r["EstCycleTime"]))
+            .DefaultIfEmpty()
+            .Max();
+
+            decimal? numEstLBRValue = 0;
+            if (maxData != 0 && this.numericSewerManpower.Value != 0)
+            {
+                numEstLBRValue = sumData / maxData / this.numericSewerManpower.Value * 100;
+            }
+
+            this.numEstLBR.Value = numEstLBRValue;
+
         }
 
         /// <inheritdoc/>
@@ -420,6 +540,20 @@ where   ID = '{this.CurrentMaintain["ID"]}'
         /// <inheritdoc/>
         protected override bool ClickSaveBefore()
         {
+            int noCount = MyUtility.Convert.GetInt(this.CurrentMaintain["OriNoNumber"]);
+
+            if (noCount + 5 < this.DetailDatas.Count)
+            {
+                MyUtility.Msg.WarningBox("Please fill in <Reason>!");
+                return false;
+            }
+
+            if (noCount - 5 > this.DetailDatas.Count)
+            {
+                MyUtility.Msg.WarningBox("Please fill in <Reason>!");
+                return false;
+            }
+
             if (MyUtility.Check.Empty(this.CurrentMaintain["FactoryID"]))
             {
                 MyUtility.Msg.WarningBox("[Factory] cannot be empty.");
@@ -565,7 +699,7 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
 
                 dr["Cycle"] = e.FormattedValue;
 
-                this.RefreshLineMappingBalancingSummary();
+                this.RefreshLineMappingBalancingSummary(false);
             };
 
             colCycleTimePPA.CellValidating += (s, e) =>
@@ -625,28 +759,28 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
                 DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
                 bool isChecked = MyUtility.Convert.GetBool(e.FormattedValue);
 
-                // 第一筆勾選時，將上下各五筆No保留Enable，其餘disable不能勾選
-                if (isChecked && !this.DetailDatas.Any(row => (bool)row["Selected"]))
-                {
-                    var listNo = this.DetailDatas.OrderBy(row => row["No"]).Select(row => row["No"].ToString()).Distinct().ToList();
-                    int targetIndex = listNo.IndexOf(dr["No"].ToString());
-                    int skipCount = Math.Max(targetIndex - 5, 0); // 計算要跳過的元素個數
-                    int takeCount = (targetIndex < 6) ? targetIndex + 6 : 11; // 計算要取出的元素個數
+                //// 第一筆勾選時，將上下各五筆No保留Enable，其餘disable不能勾選
+                //if (isChecked && !this.DetailDatas.Any(row => (bool)row["Selected"]))
+                //{
+                //    var listNo = this.DetailDatas.OrderBy(row => row["No"]).Select(row => row["No"].ToString()).Distinct().ToList();
+                //    int targetIndex = listNo.IndexOf(dr["No"].ToString());
+                //    int skipCount = Math.Max(targetIndex - 5, 0); // 計算要跳過的元素個數
+                //    int takeCount = (targetIndex < 6) ? targetIndex + 6 : 11; // 計算要取出的元素個數
 
-                    var listEnableNo = listNo.Skip(skipCount).Take(takeCount).Where(row => row != dr["No"].ToString());
+                //    var listEnableNo = listNo.Skip(skipCount).Take(takeCount).Where(row => row != dr["No"].ToString());
 
-                    foreach (DataGridViewRow gridRow in this.detailgrid.Rows)
-                    {
-                        if (gridRow.Cells["No"].Value.ToString() == dr["No"].ToString())
-                        {
-                            continue;
-                        }
+                //    foreach (DataGridViewRow gridRow in this.detailgrid.Rows)
+                //    {
+                //        if (gridRow.Cells["No"].Value.ToString() == dr["No"].ToString())
+                //        {
+                //            continue;
+                //        }
 
-                        gridRow.Cells["Selected"].ReadOnly = !listEnableNo.Contains(gridRow.Cells["No"].Value.ToString());
-                    }
-                }
+                //        gridRow.Cells["Selected"].ReadOnly = !listEnableNo.Contains(gridRow.Cells["No"].Value.ToString());
+                //    }
+                //}
 
-                this.SelectedSameTimeStudyDetailUkey(dr["No"].ToString(), isChecked);
+                //this.SelectedSameTimeStudyDetailUkey(dr["No"].ToString(), isChecked);
 
                 // 如果取消勾選之後，資料中沒有一筆勾選的情況，將每筆資料的Selected read only回復
                 if (!isChecked && !this.DetailDatas.Any(row => (bool)row["Selected"]))
@@ -902,19 +1036,20 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
                .Text("No", header: "No", width: Widths.AnsiChars(4), iseditingreadonly: true)
                .CheckBox("Selected", string.Empty, trueValue: true, falseValue: false, iseditable: true, settings: colSelected)
                .Text("Location", header: "Location", width: Widths.AnsiChars(13), iseditingreadonly: true)
-               .Text("PPADesc", header: "PPA", width: Widths.AnsiChars(13), iseditingreadonly: true)
-               .CellMachineType("MachineTypeID", "ST/MC type", this, width: Widths.AnsiChars(10))
+               .Text("PPADesc", header: "PPA", width: Widths.AnsiChars(5), iseditingreadonly: true)
+               .CellMachineType("MachineTypeID", "ST/MC\r\ntype", this, width: Widths.AnsiChars(2))
                .Text("MasterPlusGroup", header: "MC Group", width: Widths.AnsiChars(10), settings: colMachineTypeID)
                .Text("OperationDesc", header: "Operation", width: Widths.AnsiChars(13), iseditingreadonly: true)
-               .Text("Annotation", header: "Annotation", width: Widths.AnsiChars(23), iseditingreadonly: true)
+               .Text("Annotation", header: "Annotation", width: Widths.AnsiChars(25), iseditingreadonly: true)
                .CellAttachment("Attachment", "Attachment", this, width: Widths.AnsiChars(10))
-               .CellPartID("SewingMachineAttachmentID", "Part ID", this, width: Widths.AnsiChars(25))
+               .CellPartID("SewingMachineAttachmentID", "Part ID", this, width: Widths.AnsiChars(10))
                .CellTemplate("Template", "Template", this, width: Widths.AnsiChars(10))
                .Numeric("GSD", header: "GSD Time", width: Widths.AnsiChars(5), decimal_places: 2, iseditingreadonly: true)
+               .Numeric("EstCycleTime", header: "Est. Cycle Time", width: Widths.AnsiChars(5), decimal_places: 2, iseditingreadonly: true)
                .Numeric("Cycle", header: "Cycle Time", width: Widths.AnsiChars(5), decimal_places: 2, settings: colCycleTime)
                .Numeric("SewerDiffPercentageDesc", header: "%", width: Widths.AnsiChars(5), iseditingreadonly: true)
-               .Numeric("DivSewer", header: "Div. Sewer", decimal_places: 4, width: Widths.AnsiChars(5), iseditingreadonly: true)
-               .Numeric("OriSewer", header: "Ori. Sewer", decimal_places: 4, width: Widths.AnsiChars(5), iseditingreadonly: true)
+               .Numeric("DivSewer", header: "Div. Sewer", decimal_places: 1, width: Widths.AnsiChars(5), iseditingreadonly: true)
+               .Numeric("OriSewer", header: "Ori. Sewer", decimal_places: 1, width: Widths.AnsiChars(5), iseditingreadonly: true)
                .CellThreadComboID("ThreadComboID", "Thread" + Environment.NewLine + "Combination", this, width: Widths.AnsiChars(10))
                .EditText("Notice", header: "Notice", width: Widths.AnsiChars(40));
 
@@ -934,12 +1069,15 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
 
             this.Helper.Controls.Grid.Generator(this.gridLineMappingRight)
                .Text("No", header: "No. Of" + Environment.NewLine + "Station", width: Widths.AnsiChars(10), iseditingreadonly: true)
-               .Text("TotalCycleTime", header: "Total" + Environment.NewLine + "Cycle Time", width: Widths.AnsiChars(10), iseditingreadonly: true)
+               .Text("sumGSDTime", header: "Total" + Environment.NewLine + "Cycle Time", width: Widths.AnsiChars(10), iseditingreadonly: true)
+               .Text("TotalCycleTime", header: "Total Cycle " + Environment.NewLine + "Time by (%)", width: Widths.AnsiChars(10), iseditingreadonly: true)
                .Text("OperatorLoading", header: "Operator" + Environment.NewLine + "Loading (%)", width: Widths.AnsiChars(10), iseditingreadonly: true)
                .Text("EmployeeID", header: "Operator ID", width: Widths.AnsiChars(10), settings: colOperator_ID)
                .Text("EmployeeName", header: "Operator" + Environment.NewLine + "Name", width: Widths.AnsiChars(10),settings: colOperator_Name)
+               .Numeric("EstTotalCycleTime", header: "Est. Total Cycle Time", width: Widths.AnsiChars(5), decimal_places: 2, iseditingreadonly: true)
                .Text("EmployeeSkill", header: "Skill", width: Widths.AnsiChars(10), iseditingreadonly: true)
-               .Text("OperatorEffi", header: "Effi (%)", width: Widths.AnsiChars(10), iseditingreadonly: true);
+               .Text("OperatorEffi", header: "Effi (%)", width: Widths.AnsiChars(10), iseditingreadonly: true)
+               .Numeric("EstOutputHr", header: "Est. Output/Hr", width: Widths.AnsiChars(5), decimal_places: 2, iseditingreadonly: true);
 
             this.Helper.Controls.Grid.Generator(this.gridCentralizedPPARight)
                .Text("No", header: "No. Of" + Environment.NewLine + "Station", width: Widths.AnsiChars(10), iseditingreadonly: true)
@@ -961,7 +1099,7 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
             this.gridCentralizedPPARight.Columns["No"].Frozen = true;
         }
 
-        /// <inheritdoc/>
+        /// <inheritdoc/> 
         protected override DualResult ClickSavePre()
         {
             // 因為這支程式在做某些操作時，Rowstate會亂掉，很難控制，所以直接在存檔前將資料庫的舊資料刪掉，再將detail rowstate都設定成Added來更新detail資料
@@ -1011,11 +1149,13 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
                 this.gridCentralizedPPALeftBS.Filter = "PPA = 'C' and IsNonSewingLine = 0";
                 this.centralizedPPAGrids.RefreshSubData();
             }
+
+            this.detailgridbs.Filter = "IsNotShownInP06 = 'False'"; // ISP20240132 隱藏工段
         }
 
-        private void RefreshLineMappingBalancingSummary()
+        private void RefreshLineMappingBalancingSummary(bool isSort = true)
         {
-            this.lineMappingGrids.RefreshSubData();
+            this.lineMappingGrids.RefreshSubData(isSort: isSort);
             if (this.lineMappingGrids.HighestGSD > 0)
             {
                 this.CurrentMaintain["HighestGSDTime"] = this.lineMappingGrids.HighestGSD;
@@ -1056,6 +1196,7 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
 
             // PPH
             this.CurrentMaintain["PPH"] = MyUtility.Math.Round(MyUtility.Convert.GetDecimal(this.CurrentMaintain["EOLR"]) * MyUtility.Convert.GetDecimal(this.CurrentMaintain["StyleCPU"]) / MyUtility.Convert.GetDecimal(this.CurrentMaintain["SewerManpower"]), 2);
+
         }
 
         private void BtnNotHitTargetReason_Click(object sender, EventArgs e)
@@ -1094,7 +1235,7 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
                 })
                 .ToList();
 
-            using (P05_EditOperation p06_EditOperation = new P05_EditOperation((DataTable)this.detailgridbs.DataSource))
+            using (P05_EditOperation p06_EditOperation = new P05_EditOperation((DataTable)this.detailgridbs.DataSource, false))
             {
                 DialogResult dialogResult = p06_EditOperation.ShowDialog();
                 if (dialogResult == DialogResult.OK)
@@ -1164,7 +1305,7 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
                 case "ALA":
                     strDept = $"'PRO'";
                     strPosition = $"'PCK','PRS','SEW','FSPR','LOP','STL','LL','SLS','SSLT'";
-                    strWhere = $@" and Dept in({strDept})  and Position in({strPosition})";
+                    strWhere = $@" and e.Dept in({strDept})  and e.Position in({strPosition})";
                     break;
                 case "ESP":
                 case "ES2":
@@ -1172,37 +1313,50 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
                 case "VSP":
                     strDept = $"'PRO'";
                     strPosition = $"'PAC','PRS','SEW','LL'";
-                    strWhere = $@" and Dept in({strDept})  and Position in({strPosition})";
+                    strWhere = $@" and e.Dept in({strDept})  and e.Position in({strPosition})";
                     break;
                 case "SPT":
                     strDept = $"'PRO'";
                     strPosition = $"'PAC','PRS','SEW','LL','SUP','PE','PIT','TL'";
-                    strWhere = $@" and Dept in({strDept})  and Position in({strPosition})";
+                    strWhere = $@" and e.Dept in({strDept})  and e.Position in({strPosition})";
                     break;
                 case "SNP":
                     strDept = $"'PRO'";
                     strPosition = $"'SEW','LL','PIT'";
-                    strWhere = $@" and Dept in({strDept})  and Position in({strPosition})";
+                    strWhere = $@" and e.Dept in({strDept})  and e.Position in({strPosition})";
                     break;
                 case "SPS":
                 case "SPR":
                     strDept = $"'SEW'";
                     strPosition = $"'SWR','TRNEE','Lneldr','LINSUP','PRSSR','PCKR'";
-                    strWhere = $@" and Dept in({strDept})  and Position in({strPosition})";
+                    strWhere = $@" and e.Dept in({strDept})  and e.Position in({strPosition})";
                     break;
             }
 
             if (!MyUtility.Check.Empty(iD))
             {
-                sqlWhere += $" and ID = '{iD}' ";
+                sqlWhere += $" and e.ID = '{iD}' ";
             }
 
             if (!MyUtility.Check.Empty(factoryID))
             {
-                sqlWhere += $" and FactoryID = '{factoryID}' ";
+                sqlWhere += $" and e.FactoryID = '{factoryID}' ";
             }
 
-            sqlCmd = "select ID,Name,FirstName,LastName,Section,Skill,SewingLineID,FactoryID from Employee WITH (NOLOCK) where ResignationDate is null " 
+            sqlCmd = $@"select 
+                        e.ID
+                        ,Name
+                        ,FirstName
+                        ,LastName
+                        ,Section
+                        ,Skill
+                        ,SewingLineID
+                        ,e.FactoryID 
+                        from Employee e WITH (NOLOCK)
+                        left join EmployeeAllocationSetting eas on e.FactoryID = eas.FactoryID and e.Dept = eas.Dept and e.Position = eas.Position 
+                        where ResignationDate is null 
+                        and e.FactoryID IN (select ID from Factory where FTYGroup = '{factoryID}')
+                        and eas.P06 = 1"
                 + sqlWhere
                 + strWhere
                 + (MyUtility.Check.Empty(lastName) ? string.Empty : $@" and LastName = '{lastName}' ")
@@ -1228,6 +1382,216 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
                 drDetail["EmployeeName"] = string.Empty;
                 drDetail["EmployeeSkill"] = string.Empty;
             }
+        }
+
+        private void TxtSewingline_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+            {
+                if (MyUtility.Check.Empty(this.txtfactory.Text))
+                {
+                    MyUtility.Msg.WarningBox("Please fill in [Factory] first!");
+                }
+            }
+        }
+
+        private void BtnLBRbyCycleTime_Click(object sender, EventArgs e)
+        {
+            /* 修改時，Print也要一起修改，因為公式一模一樣 */
+            new P06_Chart(MyUtility.Convert.GetString(this.CurrentMaintain["ID"])).ShowDialog();
+        }
+
+        private void BtnMachineSummary_Click(object sender, EventArgs e)
+        {
+            /* 修改時，Print也要一起修改，因為公式一模一樣 */
+            new P06_MachineSummary(MyUtility.Convert.GetString(this.CurrentMaintain["ID"])).ShowDialog();
+        }
+
+        private void BrnOperatorSummary_Click(object sender, EventArgs e)
+        {
+            new P06_OperatorSummary(MyUtility.Convert.GetString(this.CurrentMaintain["ID"])).ShowDialog();
+        }
+
+        private void BtnPrintDetail_Click(object sender, EventArgs e)
+        {
+            string excelName = "IE_P06";
+            DataTable dtSheet1 = (DataTable)this.detailgridbs.DataSource;
+
+            DataTable selectSheet1 = new DataTable();
+            selectSheet1.Columns.Add("No", typeof(string));
+            selectSheet1.Columns.Add("Location", typeof(string));
+            selectSheet1.Columns.Add("PPADesc", typeof(string));
+            selectSheet1.Columns.Add("MachineTypeID", typeof(string));
+            selectSheet1.Columns.Add("MasterPlusGroup", typeof(string));
+            selectSheet1.Columns.Add("OperationDesc", typeof(string));
+            selectSheet1.Columns.Add("Annotation", typeof(string));
+            selectSheet1.Columns.Add("Attachment", typeof(string));
+            selectSheet1.Columns.Add("SewingMachineAttachmentID", typeof(string));
+            selectSheet1.Columns.Add("Template", typeof(string));
+            selectSheet1.Columns.Add("GSD", typeof(decimal));
+            selectSheet1.Columns.Add("EstCycleTime", typeof(string));
+            selectSheet1.Columns.Add("Cycle", typeof(decimal));
+            selectSheet1.Columns.Add("SewerDiffPercentageDesc", typeof(string));
+            selectSheet1.Columns.Add("DivSewer", typeof(string));
+            selectSheet1.Columns.Add("OriSewer", typeof(string));
+            selectSheet1.Columns.Add("ThreadComboID", typeof(string));
+            selectSheet1.Columns.Add("Notice", typeof(string));
+
+            DataTable selectSheet2 = new DataTable();
+            selectSheet2.Columns.Add("No", typeof(string));
+            selectSheet2.Columns.Add("sumGSDTime", typeof(string));
+            selectSheet2.Columns.Add("TotalCycleTime", typeof(string));
+            selectSheet2.Columns.Add("OperatorLoading", typeof(string));
+            selectSheet2.Columns.Add("EmployeeID", typeof(string));
+            selectSheet2.Columns.Add("EmployeeName", typeof(string));
+            selectSheet2.Columns.Add("EstTotalCycleTime", typeof(string));
+            selectSheet2.Columns.Add("EmployeeSkill", typeof(string));
+            selectSheet2.Columns.Add("OperatorEffi", typeof(string));
+            selectSheet2.Columns.Add("EstOutputHr", typeof(string));
+
+            // 使用 LINQ 查询选择指定的列，并将结果添加到 DataTable 中
+            foreach (var row in dtSheet1.AsEnumerable())
+            {
+                selectSheet1.Rows.Add(
+                    row["No"].ToString(),
+                    row["Location"].ToString(),
+                    row["PPADesc"].ToString(),
+                    row["MachineTypeID"].ToString(),
+                    row["MasterPlusGroup"].ToString(),
+                    row["OperationDesc"].ToString(),
+                    row["Annotation"].ToString(),
+                    row["Attachment"].ToString(),
+                    row["SewingMachineAttachmentID"].ToString(),
+                    row["Template"].ToString(),
+                    row["GSD"].ToString(),
+                    row["EstCycleTime"].ToString(),
+                    row["Cycle"].ToString(),
+                    row["SewerDiffPercentageDesc"].ToString(),
+                    row["DivSewer"].ToString(),
+                    row["OriSewer"].ToString(),
+                    row["ThreadComboID"].ToString(),
+                    row["Notice"].ToString()
+                );
+            }
+
+            DataTable dtSheet2 = (DataTable)this.gridLineMappingRight.DataSource;
+
+            foreach (var row in dtSheet2.AsEnumerable())
+            {
+                selectSheet2.Rows.Add(
+                    row["No"].ToString(),
+                    row["sumGSDTime"].ToString(),
+                    row["TotalCycleTime"].ToString(),
+                    row["OperatorLoading"].ToString(),
+                    row["EmployeeID"].ToString(),
+                    row["EmployeeName"].ToString(),
+                    row["EstTotalCycleTime"].ToString(),
+                    row["EmployeeSkill"].ToString(),
+                    row["OperatorEffi"].ToString(),
+                    row["EstOutputHr"].ToString());
+            }
+
+            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + $"\\{excelName}.xltx"); // 預先開啟excel app
+            MyUtility.Excel.CopyToXls(selectSheet1, string.Empty, showExcel: false, xltfile: $"{excelName}.xltx", headerRow: 1, excelApp: objApp, wSheet: objApp.Sheets[1]);
+            MyUtility.Excel.CopyToXls(selectSheet2, string.Empty, showExcel: false, xltfile: $"{excelName}.xltx", headerRow: 1, excelApp: objApp, wSheet: objApp.Sheets[2]);
+            objApp.Cells.EntireRow.AutoFit();
+            objApp.Visible = true;
+            Marshal.ReleaseComObject(objApp);
+        }
+
+        /// <summary>
+        /// DetailGrid Insert、Append
+        /// </summary>
+        /// <param name="index">index</param>
+        protected override void OnDetailGridInsert(int index = 0)
+        {
+            this.detailgrid.AllowUserToAddRows = false;
+            base.OnDetailGridInsert(index);
+            DataTable oriDt = (DataTable)this.detailgridbs.DataSource;
+            if (index >= 0)
+            {
+                DataRow nextDataRow = oriDt.Rows[index];
+                nextDataRow["No"] = oriDt.Rows[index + 1]["No"];
+                nextDataRow["IsNotShownInP06"] = false;
+
+                bool isGo = false;
+                foreach (DataRow dataRow in this.DetailDatas)
+                {
+                    int indexs = oriDt.Rows.IndexOf(dataRow);
+                    string strNo = MyUtility.Convert.GetString(dataRow["No"]);
+                    int iUkey = MyUtility.Convert.GetInt(dataRow["Ukey"]);
+                    if (MyUtility.Convert.GetString(nextDataRow["No"]) == strNo)
+                    {
+                        if (indexs != index)
+                        {
+                            dataRow["No"] = MyUtility.Convert.GetString(MyUtility.Convert.GetInt(dataRow["No"]) + 1).PadLeft(2, '0');
+                        }
+
+                        isGo = true;
+                        continue;
+                    }
+
+                    if (isGo)
+                    {
+                        dataRow["No"] = MyUtility.Convert.GetString(MyUtility.Convert.GetInt(dataRow["No"]) + 1).PadLeft(2, '0');
+                    }
+                }
+
+                this.detailgridbs.DataSource = oriDt;
+            }
+            else if (index == -1)
+            {
+                var count = oriDt.AsEnumerable().Where(x => x.RowState != DataRowState.Deleted).Count();
+                if (count == 1)
+                {
+                    this.CurrentDetailData["IsShow"] = 1;
+                }
+            }
+        }
+
+        /// <inheritdoc/>
+        protected override void OnDetailGridRemoveClick()
+        {
+            if (this.CurrentMaintain == null || this.DetailDatas.Count == 0)
+            {
+                return;
+            }
+
+            DataTable dataTable = (DataTable)this.detailgridbs.DataSource;
+            string row = dataTable.AsEnumerable().Where(x=> x.RowState != DataRowState.Deleted).CopyToDataTable().Rows[this.detailgridbs.Position]["No"].ToString();
+            this.detailgrid.ValidateControl();
+            base.OnDetailGridRemoveClick();
+            bool isGo = false;
+            foreach (DataRow dataRow in this.DetailDatas)
+            {
+
+                if (dataRow["No"].ToString() == row)
+                {
+                    dataRow.Delete();
+                    isGo = true;
+                    continue;
+                }
+
+                if (isGo)
+                {
+                    int i = MyUtility.Convert.GetInt(dataRow["No"]);
+                    dataRow["No"] = MyUtility.Convert.GetString( i - 1).PadLeft(2, '0');
+                }
+            }
+
+            this.detailgridbs.DataSource = dataTable;
+        }
+
+        private void TxtReason_PopUp(object sender, TextBoxPopUpEventArgs e)
+        {
+            SelectItem sele = new SelectItem("select ID,Description from DropDownList where [Type] = 'PMS_IEReasonType'", "10,40", this.txtReason.Text);
+            DialogResult result = sele.ShowDialog();
+            if (result == DialogResult.Cancel)
+            {
+                return;
+            }
+
+            this.txtReason.Text = sele.GetSelectedString();
         }
     }
 }

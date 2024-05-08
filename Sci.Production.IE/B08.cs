@@ -6,6 +6,8 @@ using System.Windows.Forms;
 using Ict;
 using Sci.Data;
 using System.Runtime.InteropServices;
+using System.Drawing.Printing;
+using Ict.Win;
 
 namespace Sci.Production.IE
 {
@@ -14,6 +16,8 @@ namespace Sci.Production.IE
     /// </summary>
     public partial class B08 : Win.Tems.Input1
     {
+        private DataTable dtOperatorDetail;
+        private DataTable dtDetail;
         private int itemCount;
         /// <summary>
         /// B08
@@ -23,7 +27,14 @@ namespace Sci.Production.IE
             : base(menuitem)
         {
             this.InitializeComponent();
-            //this.DefaultFilter = "FactoryID = '" + Env.User.Factory + $"' ";
+            this.Helper.Controls.Grid.Generator(this.gridDetail)
+            .Text("ST_MC_Type", header: "ST/MC Type", width: Widths.AnsiChars(25), iseditingreadonly: true)
+            .Text("Motion", header: "Motion", width: Widths.AnsiChars(35), iseditingreadonly: true)
+            .Text("Effi_90_day", header: "90D Effi %", width: Widths.AnsiChars(15), iseditingreadonly: true)
+            .Text("Effi_180_day", header: "180D Effi %", width: Widths.AnsiChars(15), iseditingreadonly: true)
+            .Text("Effi_270_day", header: "270D Effi %", width: Widths.AnsiChars(15), iseditingreadonly: true)
+            .Text("Effi_360_day", header: "360D Effi %", width: Widths.AnsiChars(15), iseditingreadonly: true)
+            ;
         }
 
         /// <summary>
@@ -48,6 +59,248 @@ namespace Sci.Production.IE
 
                 this.ReloadDatas();
             };
+        }
+
+        /// <inheritdoc/>
+        protected override void OnDetailEntered()
+        {
+            base.OnDetailEntered();
+
+            string sqlcmd = $@"
+            SELECT
+            [ST_MC_Type]
+            ,[Motion]
+            ,[Group_Header]
+            ,[Part]
+            ,[Attachment]
+            ,[Effi_3_year] =FORMAT(AVG(CAST([Effi_3_year] AS DECIMAL(10, 2))), '0.00')
+            From
+            (
+                SELECT 
+                [ST_MC_Type] =lmd.MachineTypeID
+                ,[Motion] = Operation_P03.val
+                ,[Group_Header] = tsd.[location] 
+                ,[Part] = lmd.SewingMachineAttachmentID
+                ,[Attachment] = lmd.Attachment
+                ,Effi_3_year = Effi_3_year.VAL
+                from Employee e
+                left JOIN LineMapping_Detail lmd WITH(NOLOCK) on lmd.EmployeeID = e.ID　
+                left JOIN LineMapping lm WITH(NOLOCK) on lm.id = lmd.ID
+                left JOIN TimeStudy_Detail tsd WITH(NOLOCK) on lmd.OperationID = tsd.OperationID
+                OUTER APPLY
+                (
+                select val = stuff((select distinct concat(',',Name)
+		                from OperationRef a
+		                inner JOIN IESELECTCODE b WITH(NOLOCK) on a.CodeID = b.ID and a.CodeType = b.Type
+		                where a.CodeType = '00007' and a.id = lmd.OperationID  for xml path('') ),1,1,'')
+                )Operation_P03
+                OUTER APPLY 
+                (
+	                SELECT VAL = FORMAT(CAST(iif(oplmd.Cycle = 0,0,ROUND(oplmd.GSD/ oplmd.Cycle,2)*100) AS DECIMAL(10, 2)), '0.00')
+	                FROM LineMapping oplm 
+	                inner join LineMapping_Detail oplmd on oplm.ID = oplmd.ID
+	                WHERE OPLMD.EmployeeID = E.ID
+	                AND ((oplm.EditDate >= DATEADD(YEAR, -3, GETDATE()) and oplm.EditDate <= GETDATE()) or (oplm.AddDate >= DATEADD(YEAR, -3, GETDATE()) and oplm.AddDate <= GETDATE()))
+                )Effi_3_year
+	            WHERE 
+	            e.FactoryID = '{this.CurrentMaintain["FactoryID"]}' and e.ID = '{this.CurrentMaintain["ID"]}' AND
+				((lm.EditDate >= DATEADD(YEAR, -3, GETDATE()) and lm.EditDate <= GETDATE()) or (lm.AddDate >= DATEADD(YEAR, -3, GETDATE()) and lm.AddDate <= GETDATE()))
+            )a
+            GROUP BY [ST_MC_Type],[Motion], [Group_Header], [Part], [Attachment]
+
+            UNION ALL
+
+            SELECT
+            [ST_MC_Type]
+            ,[Motion]
+            ,[Group_Header]
+            ,[Part]
+            ,[Attachment]
+            ,[Effi_3_year] =FORMAT(AVG(CAST([Effi_3_year] AS DECIMAL(10, 2))), '0.00')
+            From
+            (
+	            SELECT 
+	            [ST_MC_Type] = lmbd.MachineTypeID
+	            ,[Motion] =  Operation_P06.val
+	            ,[Group_Header] = lmbd.[location]
+	            ,[Part] = lmbd.SewingMachineAttachmentID
+	            ,[Attachment] =  lmbd.Attachment
+	            ,Effi_3_year = Effi_3_year.VAL
+	            from Employee e
+	            INNER JOIN LineMappingBalancing_Detail lmbd on lmbd.EmployeeID = e.ID
+	            INNER JOIN LineMappingBalancing lmb on lmb.id = lmbd.ID
+	            OUTER APPLY
+	            (
+	            select val = stuff((select distinct concat(',',Name)
+		            from OperationRef a
+		            inner JOIN IESELECTCODE b WITH(NOLOCK) on a.CodeID = b.ID and a.CodeType = b.Type
+		            where a.CodeType = '00007' and a.id = lmbd.OperationID  for xml path('') ),1,1,'')
+	            )Operation_P06
+	            OUTER APPLY 
+	            (
+		            SELECT VAL = FORMAT(CAST(iif(oplmbd.Cycle = 0,0,ROUND(oplmbd.GSD/ oplmbd.Cycle,2)*100) AS DECIMAL(10, 2)), '0.00')
+		            FROM LineMappingBalancing oplmb 
+		            inner join LineMappingBalancing_Detail oplmbd on oplmb.ID = oplmbd.ID
+		            WHERE oplmbd.EmployeeID = E.ID
+		            AND ((oplmb.EditDate >= DATEADD(YEAR, -3, GETDATE()) and oplmb.EditDate <= GETDATE()) or (oplmb.AddDate >= DATEADD(YEAR, -3, GETDATE()) and oplmb.AddDate <= GETDATE()))
+	            )Effi_3_year
+	            where 
+	            e.FactoryID = '{this.CurrentMaintain["FactoryID"]}' and e.ID = '{this.CurrentMaintain["ID"]}' AND
+	            ((lmb.EditDate >= DATEADD(YEAR, -3, GETDATE()) and lmb.EditDate <= GETDATE()) or (lmb.AddDate >= DATEADD(YEAR, -3, GETDATE()) and lmb.AddDate <= GETDATE()))
+            )b
+            GROUP BY [ST_MC_Type],[Motion], [Group_Header], [Part], [Attachment]";
+            DualResult result = DBProxy.Current.Select(null, sqlcmd, out this.dtOperatorDetail);
+
+            if (!result)
+            {
+                MyUtility.Msg.WarningBox(result.ToString());
+                return;
+            }
+
+            this.btnOperationHistory.ForeColor = this.dtOperatorDetail.Rows.Count > 0 ? Color.Blue : Color.Black;
+
+            string sqlcmdDetail = $@"
+            SELECT
+            [ST_MC_Type]
+            ,[Motion]
+            ,[Effi_90_day] =FORMAT(AVG(CAST([Effi_90_day] AS DECIMAL(10, 2))), '0.00')
+            ,[Effi_180_day] =FORMAT(AVG(CAST([Effi_180_day] AS DECIMAL(10, 2))), '0.00')
+            ,[Effi_270_day] =FORMAT(AVG(CAST([Effi_270_day] AS DECIMAL(10, 2))), '0.00')
+            ,[Effi_360_day] =FORMAT(AVG(CAST([Effi_360_day] AS DECIMAL(10, 2))), '0.00')
+            From
+            (
+                SELECT 
+                [ST_MC_Type] =lmd.MachineTypeID
+                ,[Motion] = Operation_P03.val
+                ,Effi_90_day = Effi_90_day.VAL
+                ,Effi_180_day = Effi_180_day.VAL
+                ,Effi_270_day = Effi_270_day.VAL
+                ,Effi_360_day = Effi_360_day.VAL
+                from Employee e
+                left JOIN LineMapping_Detail lmd WITH(NOLOCK) on lmd.EmployeeID = e.ID　
+                left JOIN LineMapping lm WITH(NOLOCK) on lm.id = lmd.ID
+                left JOIN TimeStudy_Detail tsd WITH(NOLOCK) on lmd.OperationID = tsd.OperationID
+                OUTER APPLY
+                (
+                select val = stuff((select distinct concat(',',Name)
+		                from OperationRef a
+		                inner JOIN IESELECTCODE b WITH(NOLOCK) on a.CodeID = b.ID and a.CodeType = b.Type
+		                where a.CodeType = '00007' and a.id = lmd.OperationID  for xml path('') ),1,1,'')
+                )Operation_P03
+                OUTER APPLY 
+                (
+	                SELECT VAL = FORMAT(CAST(iif(oplmd.Cycle = 0,0,ROUND(oplmd.GSD/ oplmd.Cycle,2)*100) AS DECIMAL(10, 2)), '0.00')
+	                FROM LineMapping oplm 
+	                inner join LineMapping_Detail oplmd on oplm.ID = oplmd.ID
+	                WHERE OPLMD.EmployeeID = E.ID
+	                AND ((oplm.EditDate >= DATEADD(DAY, -90, GETDATE()) and oplm.EditDate <= GETDATE()) or (oplm.AddDate >= DATEADD(DAY, -90, GETDATE()) and oplm.AddDate <= GETDATE()))
+                )Effi_90_day
+                OUTER APPLY 
+                (
+	                SELECT VAL = FORMAT(CAST(iif(oplmd.Cycle = 0,0,ROUND(oplmd.GSD/ oplmd.Cycle,2)*100) AS DECIMAL(10, 2)), '0.00')
+	                FROM LineMapping oplm 
+	                inner join LineMapping_Detail oplmd on oplm.ID = oplmd.ID
+	                WHERE OPLMD.EmployeeID = E.ID
+	                AND ((oplm.EditDate >= DATEADD(DAY, -180, GETDATE()) and oplm.EditDate <= GETDATE()) or (oplm.AddDate >= DATEADD(DAY, -180, GETDATE()) and oplm.AddDate <= GETDATE()))
+                )Effi_180_day
+                OUTER APPLY 
+                (
+	                SELECT VAL = FORMAT(CAST(iif(oplmd.Cycle = 0,0,ROUND(oplmd.GSD/ oplmd.Cycle,2)*100) AS DECIMAL(10, 2)), '0.00')
+	                FROM LineMapping oplm 
+	                inner join LineMapping_Detail oplmd on oplm.ID = oplmd.ID
+	                WHERE OPLMD.EmployeeID = E.ID
+	                AND ((oplm.EditDate >= DATEADD(DAY, -270, GETDATE()) and oplm.EditDate <= GETDATE()) or (oplm.AddDate >= DATEADD(DAY, -270, GETDATE()) and oplm.AddDate <= GETDATE()))
+                )Effi_270_day
+                OUTER APPLY 
+                (
+	                SELECT VAL = FORMAT(CAST(iif(oplmd.Cycle = 0,0,ROUND(oplmd.GSD/ oplmd.Cycle,2)*100) AS DECIMAL(10, 2)), '0.00')
+	                FROM LineMapping oplm 
+	                inner join LineMapping_Detail oplmd on oplm.ID = oplmd.ID
+	                WHERE OPLMD.EmployeeID = E.ID
+	                AND ((oplm.EditDate >= DATEADD(DAY, -360, GETDATE()) and oplm.EditDate <= GETDATE()) or (oplm.AddDate >= DATEADD(DAY, -360, GETDATE()) and oplm.AddDate <= GETDATE()))
+                )Effi_360_day
+	            WHERE 
+	            e.FactoryID = '{this.CurrentMaintain["FactoryID"]}' and e.ID = '{this.CurrentMaintain["ID"]}' AND
+				((lm.EditDate >= DATEADD(YEAR, -3, GETDATE()) and lm.EditDate <= GETDATE()) or (lm.AddDate >= DATEADD(YEAR, -3, GETDATE()) and lm.AddDate <= GETDATE()))
+            )a
+            GROUP BY [ST_MC_Type],[Motion]
+
+            UNION ALL
+
+            SELECT
+            [ST_MC_Type]
+            ,[Motion]
+            ,[Effi_90_day] =FORMAT(AVG(CAST([Effi_90_day] AS DECIMAL(10, 2))), '0.00')
+            ,[Effi_180_day] =FORMAT(AVG(CAST([Effi_180_day] AS DECIMAL(10, 2))), '0.00')
+            ,[Effi_270_day] =FORMAT(AVG(CAST([Effi_270_day] AS DECIMAL(10, 2))), '0.00')
+            ,[Effi_360_day] =FORMAT(AVG(CAST([Effi_360_day] AS DECIMAL(10, 2))), '0.00')
+            From
+            (
+	            SELECT 
+	            [ST_MC_Type] = lmbd.MachineTypeID
+	            ,[Motion] =  Operation_P06.val
+	            ,Effi_90_day = Effi_90_day.VAL
+	            ,Effi_180_day = Effi_180_day.VAL
+	            ,Effi_270_day = Effi_270_day.VAL
+	            ,Effi_360_day = Effi_360_day.VAL
+	            from Employee e
+	            INNER JOIN LineMappingBalancing_Detail lmbd on lmbd.EmployeeID = e.ID
+	            INNER JOIN LineMappingBalancing lmb on lmb.id = lmbd.ID
+	            OUTER APPLY
+	            (
+	            select val = stuff((select distinct concat(',',Name)
+		            from OperationRef a
+		            inner JOIN IESELECTCODE b WITH(NOLOCK) on a.CodeID = b.ID and a.CodeType = b.Type
+		            where a.CodeType = '00007' and a.id = lmbd.OperationID  for xml path('') ),1,1,'')
+	            )Operation_P06
+	            OUTER APPLY 
+	            (
+		            SELECT VAL = FORMAT(CAST(iif(oplmbd.Cycle = 0,0,ROUND(oplmbd.GSD/ oplmbd.Cycle,2)*100) AS DECIMAL(10, 2)), '0.00')
+		            FROM LineMappingBalancing oplmb 
+		            inner join LineMappingBalancing_Detail oplmbd on oplmb.ID = oplmbd.ID
+		            WHERE oplmbd.EmployeeID = E.ID
+		            AND ((oplmb.EditDate >= DATEADD(DAY, -90, GETDATE()) and oplmb.EditDate <= GETDATE()) or (oplmb.AddDate >= DATEADD(DAY, -90, GETDATE()) and oplmb.AddDate <= GETDATE()))
+	            )Effi_90_day
+	            OUTER APPLY 
+	            (
+		            SELECT VAL = FORMAT(CAST(iif(oplmbd.Cycle = 0,0,ROUND(oplmbd.GSD/ oplmbd.Cycle,2)*100) AS DECIMAL(10, 2)), '0.00')
+		            FROM LineMappingBalancing oplmb 
+		            inner join LineMappingBalancing_Detail oplmbd on oplmb.ID = oplmbd.ID
+		            WHERE oplmbd.EmployeeID = E.ID
+		            AND ((oplmb.EditDate >= DATEADD(DAY, -180, GETDATE()) and oplmb.EditDate <= GETDATE()) or (oplmb.AddDate >= DATEADD(DAY, -180, GETDATE()) and oplmb.AddDate <= GETDATE()))
+	            )Effi_180_day
+	            OUTER APPLY 
+	            (
+		            SELECT VAL = FORMAT(CAST(iif(oplmbd.Cycle = 0,0,ROUND(oplmbd.GSD/ oplmbd.Cycle,2)*100) AS DECIMAL(10, 2)), '0.00')
+		            FROM LineMappingBalancing oplmb 
+		            inner join LineMappingBalancing_Detail oplmbd on oplmb.ID = oplmbd.ID
+		            WHERE oplmbd.EmployeeID = E.ID
+		            AND ((oplmb.EditDate >= DATEADD(DAY, -270, GETDATE()) and oplmb.EditDate <= GETDATE()) or (oplmb.AddDate >= DATEADD(DAY, -270, GETDATE()) and oplmb.AddDate <= GETDATE()))
+	            )Effi_270_day
+	            OUTER APPLY 
+	            (
+		            SELECT VAL = FORMAT(CAST(iif(oplmbd.Cycle = 0,0,ROUND(oplmbd.GSD/ oplmbd.Cycle,2)*100) AS DECIMAL(10, 2)), '0.00')
+		            FROM LineMappingBalancing oplmb 
+		            inner join LineMappingBalancing_Detail oplmbd on oplmb.ID = oplmbd.ID
+		            WHERE oplmbd.EmployeeID = E.ID
+		            AND ((oplmb.EditDate >= DATEADD(DAY, -360, GETDATE()) and oplmb.EditDate <= GETDATE()) or (oplmb.AddDate >= DATEADD(DAY, -360, GETDATE()) and oplmb.AddDate <= GETDATE()))
+	            )Effi_360_day
+	            where 
+	            e.FactoryID = '{this.CurrentMaintain["FactoryID"]}' and e.ID = '{this.CurrentMaintain["ID"]}' AND
+	            ((lmb.EditDate >= DATEADD(YEAR, -3, GETDATE()) and lmb.EditDate <= GETDATE()) or (lmb.AddDate >= DATEADD(YEAR, -3, GETDATE()) and lmb.AddDate <= GETDATE()))
+            )b
+            GROUP BY [ST_MC_Type],[Motion]";
+
+            DualResult result1 = DBProxy.Current.Select(null, sqlcmdDetail, out this.dtDetail);
+
+            if (!result1)
+            {
+                MyUtility.Msg.WarningBox(result.ToString());
+                return;
+            }
+
+            this.gridDetail.DataSource = this.dtDetail;
+
         }
 
         /// <summary>
@@ -165,7 +418,6 @@ You have checked <{this.itemCount}> Skills!!");
             this.txtSkill.BackColor = this.displayM.BackColor;
         }
 
-
         private void TxtSkill_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             if (this.EditMode)
@@ -255,6 +507,13 @@ You have checked <{this.itemCount}> Skills!!");
             this.queryfors.SelectedIndex = 0;
             this.DefaultWhere = $"JUNK = 0 {this.PAMS_Where()}";
             this.ReloadDatas();
+        }
+
+        /// <inheritdoc/>
+        private void BtnOperationHistory_Click(object sender, EventArgs e)
+        {
+            B08_Operation b08_Operation = new B08_Operation(this.dtOperatorDetail);
+            b08_Operation.ShowDialog(this);
         }
     }
 }

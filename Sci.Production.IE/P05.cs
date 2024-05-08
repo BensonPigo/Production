@@ -1,5 +1,6 @@
 ﻿using Ict;
 using Ict.Win;
+
 using Sci.Data;
 using Sci.Production.CallPmsAPI;
 using Sci.Production.Class;
@@ -29,6 +30,7 @@ namespace Sci.Production.IE
         private AutoLineMappingGridSyncScroll lineMappingGrids;
         private AutoLineMappingGridSyncScroll centralizedPPAGrids;
 
+        private int iBarchart = 0;
         private Win.UI.Button[] chartLBRButtons = new Win.UI.Button[]
         {
                 new Win.UI.Button(),
@@ -70,10 +72,13 @@ select  cast(0 as bit) as Selected,
         [PPADesc] = isnull(d.Name, ''),
         [OperationDesc] = iif(isnull(op.DescEN, '') = '', ad.OperationID, op.DescEN),
         [SewerDiffPercentageDesc] = round(ad.SewerDiffPercentage * 100, 0),
-        [TimeStudyDetailUkeyCnt] = Count(TimeStudyDetailUkey) over (partition by TimeStudyDetailUkey)
+        [TimeStudyDetailUkeyCnt] = Count(TimeStudyDetailUkey) over (partition by TimeStudyDetailUkey),
+		[IsNotShownInP05] = isnull(md.IsNotShownInP05,0) 
 from AutomatedLineMapping_Detail ad WITH (NOLOCK)
 left join DropDownList d with (nolock) on d.ID = ad.PPA  and d.Type = 'PMS_IEPPA'
 left join Operation op with (nolock) on op.ID = ad.OperationID
+inner join AutomatedLineMapping alm on alm.id = ad.ID
+LEFT join MachineType_Detail md on md.ID = ad.MachineTypeID and md.FactoryID = alm.FactoryID
 where {0}
 order by iif(ad.No = '', 'ZZ', ad.No), ad.Seq";
 
@@ -269,7 +274,6 @@ AND ALMCS.Junk = 0
             this.dtAutomatedLineMapping_DetailAuto.Clear();
             string masterID = (e.Master == null) ? string.Empty : e.Master["ID"].ToString();
             this.DetailSelectCommand = string.Format(this.sqlGetAutomatedLineMapping_Detail, $" ad.ID = '{masterID}'");
-
             return base.OnDetailSelectCommandPrepare(e);
         }
 
@@ -337,12 +341,14 @@ AND ALMCS.Junk = 0
         /// <inheritdoc/>
         protected override void ClickNewAfter()
         {
+            this.btnMachineSummary.Enabled = false;
             P05_CreateNewLineMapping p05_CreateNewLineMapping = new P05_CreateNewLineMapping(this, this.CurrentMaintain, (DataTable)this.detailgridbs.DataSource, this.dtAutomatedLineMapping_DetailTemp, this.dtAutomatedLineMapping_DetailAuto);
             p05_CreateNewLineMapping.ShowDialog();
             if (this.DetailDatas.Count == 0)
             {
                 base.ClickNewAfter();
                 this.DoDetailUndo(false);
+                this.btnMachineSummary.Enabled = true;
                 return;
             }
 
@@ -352,6 +358,7 @@ AND ALMCS.Junk = 0
             base.ClickNewAfter();
             this.txtfactory.ReadOnly = true;
             this.comboPhase.ReadOnly = true;
+            this.btnMachineSummary.Enabled = true;
 
         }
 
@@ -509,6 +516,12 @@ where   ID = '{this.CurrentMaintain["ID"]}'
         /// <inheritdoc/>
         protected override bool ClickSaveBefore()
         {
+
+            if (MyUtility.Msg.InfoBox("Are you sure you want to Confirm?", buttons: MessageBoxButtons.YesNo) == DialogResult.No)
+            {
+                return false;
+            }
+
             if (MyUtility.Check.Empty(this.CurrentMaintain["FactoryID"]))
             {
                 MyUtility.Msg.WarningBox("[Factory] cannot be empty.");
@@ -557,7 +570,8 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
         StyleID = '{this.CurrentMaintain["StyleID"]}' and
         SeasonID = '{this.CurrentMaintain["SeasonID"]}' and
         BrandID = '{this.CurrentMaintain["BrandID"]}' and
-        ComboType = '{this.CurrentMaintain["ComboType"]}'
+        ComboType = '{this.CurrentMaintain["ComboType"]}' and 
+        Phase = '{this.CurrentMaintain["Phase"]}'
 ";
                 this.CurrentMaintain["Version"] = MyUtility.Convert.GetInt(MyUtility.GetValue.Lookup(sqlGetVersion));
             }
@@ -658,27 +672,27 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
                 bool isChecked = MyUtility.Convert.GetBool(e.FormattedValue);
 
                 // 第一筆勾選時，將上下各五筆No保留Enable，其餘disable不能勾選
-                if (isChecked && !this.DetailDatas.Any(row => (bool)row["Selected"]))
-                {
-                    var listNo = this.DetailDatas.OrderBy(row => row["No"]).Select(row => row["No"].ToString()).Distinct().ToList();
-                    int targetIndex = listNo.IndexOf(dr["No"].ToString());
-                    int skipCount = Math.Max(targetIndex - 5, 0); // 計算要跳過的元素個數
-                    int takeCount = (targetIndex < 6) ? targetIndex + 6 : 11; // 計算要取出的元素個數
+                //if (isChecked && !this.DetailDatas.Any(row => (bool)row["Selected"]))
+                //{
+                //    var listNo = this.DetailDatas.OrderBy(row => row["No"]).Select(row => row["No"].ToString()).Distinct().ToList();
+                //    int targetIndex = listNo.IndexOf(dr["No"].ToString());
+                //    int skipCount = Math.Max(targetIndex - 5, 0); // 計算要跳過的元素個數
+                //    int takeCount = (targetIndex < 6) ? targetIndex + 6 : 11; // 計算要取出的元素個數
 
-                    var listEnableNo = listNo.Skip(skipCount).Take(takeCount).Where(row => row != dr["No"].ToString());
+                //    var listEnableNo = listNo.Skip(skipCount).Take(takeCount).Where(row => row != dr["No"].ToString());
 
-                    foreach (DataGridViewRow gridRow in this.detailgrid.Rows)
-                    {
-                        if (gridRow.Cells["No"].Value.ToString() == dr["No"].ToString())
-                        {
-                            continue;
-                        }
+                //    foreach (DataGridViewRow gridRow in this.detailgrid.Rows)
+                //    {
+                //        if (gridRow.Cells["No"].Value.ToString() == dr["No"].ToString())
+                //        {
+                //            continue;
+                //        }
 
-                        gridRow.Cells["Selected"].ReadOnly = !listEnableNo.Contains(gridRow.Cells["No"].Value.ToString());
-                    }
-                }
+                //        gridRow.Cells["Selected"].ReadOnly = !listEnableNo.Contains(gridRow.Cells["No"].Value.ToString());
+                //    }
+                //}
 
-                this.SelectedSameTimeStudyDetailUkey(dr["No"].ToString(), isChecked);
+                //this.SelectedSameTimeStudyDetailUkey(dr["No"].ToString(), isChecked);
 
                 // 如果取消勾選之後，資料中沒有一筆勾選的情況，將每筆資料的Selected read only回復
                 if (!isChecked && !this.DetailDatas.Any(row => (bool)row["Selected"]))
@@ -696,20 +710,20 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
                .Text("No", header: "No", width: Widths.AnsiChars(4), iseditingreadonly: true)
                .CheckBox("Selected", string.Empty, trueValue: true, falseValue: false, iseditable: true, settings: colSelected)
                .Text("Location", header: "Location", width: Widths.AnsiChars(13), iseditingreadonly: true)
-               .Text("PPADesc", header: "PPA", width: Widths.AnsiChars(13), iseditingreadonly: true)
+               .Text("PPADesc", header: "PPA", width: Widths.AnsiChars(5), iseditingreadonly: true)
                .CellMachineType("MachineTypeID", "ST/MC type", this, width: Widths.AnsiChars(10))
                .Text("MasterPlusGroup", header: "MC Group", width: Widths.AnsiChars(10), settings: colMachineTypeID)
                .Text("OperationDesc", header: "Operation", width: Widths.AnsiChars(13), iseditingreadonly: true)
                .Text("Annotation", header: "Annotation", width: Widths.AnsiChars(23), iseditingreadonly: true)
                .CellAttachment("Attachment", "Attachment", this, width: Widths.AnsiChars(10))
-               .CellPartID("SewingMachineAttachmentID", "Part ID", this, width: Widths.AnsiChars(25))
+               .CellPartID("SewingMachineAttachmentID", "Part ID", this, width: Widths.AnsiChars(10))
                .CellTemplate("Template", "Template", this, width: Widths.AnsiChars(10))
-               .Numeric("GSD", header: "GSD Time", width: Widths.AnsiChars(5), decimal_places: 2, iseditingreadonly: true)
-               .Numeric("SewerDiffPercentageDesc", header: "%", width: Widths.AnsiChars(6), iseditingreadonly: true)
-               .Numeric("DivSewer", header: "Div. Sewer", decimal_places: 4, width: Widths.AnsiChars(5), iseditingreadonly: true)
-               .Numeric("OriSewer", header: "Ori. Sewer", decimal_places: 4, width: Widths.AnsiChars(5), iseditingreadonly: true)
+               .Numeric("GSD", header: "GSD\r\nTime", width: Widths.AnsiChars(4), decimal_places: 2, iseditingreadonly: true)
+               .Numeric("SewerDiffPercentageDesc", header: "%", width: Widths.AnsiChars(3), iseditingreadonly: true)
+               .Numeric("DivSewer", header: "Div.\r\nSewer", decimal_places: 4, width: Widths.AnsiChars(5), iseditingreadonly: true)
+               .Numeric("OriSewer", header: "Ori.\r\nSewer", decimal_places: 4, width: Widths.AnsiChars(5), iseditingreadonly: true)
                .CellThreadComboID("ThreadComboID", "Thread" + Environment.NewLine + "Combination", this, width: Widths.AnsiChars(10))
-               .EditText("Notice", header: "Notice", width: Widths.AnsiChars(40));
+               .EditText("Notice", header: "Notice", width: Widths.AnsiChars(13));
 
             this.Helper.Controls.Grid.Generator(this.gridCentralizedPPALeft)
                .MaskedText("No", "##", header: "PPA No.", width: Widths.AnsiChars(4), settings: colPPANo)
@@ -722,11 +736,12 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
                .CellPartID("SewingMachineAttachmentID", "Part ID", this, width: Widths.AnsiChars(25))
                .CellTemplate("Template", "Template", this, width: Widths.AnsiChars(10))
                .Numeric("GSD", header: "GSD Time", decimal_places: 2, width: Widths.AnsiChars(5), iseditingreadonly: true)
-               .EditText("Notice", header: "Notice", width: Widths.AnsiChars(40));
+               .EditText("Notice", header: "Notice", width: Widths.AnsiChars(20));
 
             this.Helper.Controls.Grid.Generator(this.gridLineMappingRight)
                .Text("No", header: "No. Of" + Environment.NewLine + "Station", width: Widths.AnsiChars(10))
-               .Text("TotalGSDTime", header: "Total" + Environment.NewLine + "GSD Time", width: Widths.AnsiChars(10))
+               .Text("sumGSDTime", header: "Total" + Environment.NewLine + "GSD Time", width: Widths.AnsiChars(10))
+               .Text("TotalGSDTime", header: "Total GSD" + Environment.NewLine + "Time by (%)", width: Widths.AnsiChars(10))
                .Text("OperatorLoading", header: "Operator" + Environment.NewLine + "Loading (%)", width: Widths.AnsiChars(10));
 
             this.Helper.Controls.Grid.Generator(this.gridCentralizedPPARight)
@@ -911,6 +926,8 @@ from #tmp
                 this.gridCentralizedPPALeftBS.Filter = "PPA = 'C' and IsNonSewingLine = 0";
                 this.centralizedPPAGrids.RefreshSubData();
             }
+
+            this.detailgridbs.Filter = "IsNotShownInP05 = 'False'"; // ISP20240132 隱藏工段
         }
 
         private void RefreshAutomatedLineMappingSummary()
@@ -1084,7 +1101,7 @@ from #tmp
             int i = 0;
             int btnLocationY = MyUtility.Convert.GetInt(this.chartLBR.ChartAreas[0].AxisY.ValueToPixelPosition(50) + 5);
 
-            foreach (var point in this.chartLBR.Series[0].Points)
+             foreach (var point in  this.chartLBR.Series[0].Points)
             {
                 // 取得 Bar 的數值
                 double value = point.YValues[0];
@@ -1112,6 +1129,7 @@ from #tmp
                 if (point.XValue.ToString() == this.CurrentMaintain["SewerManpower"].ToString())
                 {
                     this.chartLBRButtons[i].FlatAppearance.BorderColor = this.BackColor;
+                    this.iBarchart = MyUtility.Convert.GetInt(point.XValue.ToString());
                 }
                 else
                 {
@@ -1165,20 +1183,21 @@ from #tmp
                 return;
             }
 
-            int firstDisplaySewermanpower = MyUtility.Convert.GetInt(((Win.UI.Button)sender).Text);
-            if (this.EditMode)
-            {
-                P05_LBR p05_LBR = new P05_LBR(firstDisplaySewermanpower, this.CurrentMaintain, (DataTable)this.detailgridbs.DataSource, this.dtAutomatedLineMapping_DetailTemp, this.dtAutomatedLineMapping_DetailAuto);
-                DialogResult dialogResult = p05_LBR.ShowDialog();
-                this.FilterGrid(dialogResult == DialogResult.OK);
-                this.RefreshAutomatedLineMappingSummary();
-                this.ShowLBRChart(this.CurrentMaintain);
-            }
-            else
-            {
-                P05_Compare p05_Compare = new P05_Compare(firstDisplaySewermanpower, this.CurrentMaintain, (DataTable)this.detailgridbs.DataSource, this.dtAutomatedLineMapping_DetailTemp, this.dtAutomatedLineMapping_DetailAuto);
-                p05_Compare.ShowDialog();
-            }
+            new P05_Chart(MyUtility.Convert.GetString(this.CurrentMaintain["ID"])).ShowDialog();
+            //int firstDisplaySewermanpower = MyUtility.Convert.GetInt(((Win.UI.Button)sender).Text);
+            //if (this.EditMode)
+            //{
+            //    P05_LBR p05_LBR = new P05_LBR(firstDisplaySewermanpower, this.CurrentMaintain, (DataTable)this.detailgridbs.DataSource, this.dtAutomatedLineMapping_DetailTemp, this.dtAutomatedLineMapping_DetailAuto);
+            //    DialogResult dialogResult = p05_LBR.ShowDialog();
+            //    this.FilterGrid(dialogResult == DialogResult.OK);
+            //    this.RefreshAutomatedLineMappingSummary();
+            //    this.ShowLBRChart(this.CurrentMaintain);
+            //}
+            //else
+            //{
+            //    P05_Compare p05_Compare = new P05_Compare(firstDisplaySewermanpower, this.CurrentMaintain, (DataTable)this.detailgridbs.DataSource, this.dtAutomatedLineMapping_DetailTemp, this.dtAutomatedLineMapping_DetailAuto);
+            //    p05_Compare.ShowDialog();
+            //}
         }
 
         private void BtnH_Click(object sender, EventArgs e)
@@ -1227,7 +1246,9 @@ INSERT INTO LineMappingBalancing (
 	   ,WorkHour
 	   ,Status
 	   ,AddName
-	   ,AddDate)
+	   ,AddDate
+       ,OriNoNumber
+       ,Reason)
 SELECT
 		alm.ID
 	   ,alm.StyleUKey
@@ -1253,6 +1274,8 @@ SELECT
 	   ,'New'
 	   ,'{Env.User.UserID}'
 	   ,GETDATE()
+       ,{this.DetailDatas.Count}
+       ,''
 FROM AutomatedLineMapping alm
 WHERE alm.ID = '{this.CurrentMaintain["ID"]}';
 
@@ -1372,6 +1395,26 @@ select [ID] = @ID
                 callP06.MdiParent = this.MdiParent;
                 callP06.ShowDirectQueryID(id);
             }
+        }
+
+        private void BtnLineMappingComparison_Click(object sender, EventArgs e)
+        {
+            P05_Compare p05_Compare = new P05_Compare(this.iBarchart, this.CurrentMaintain, (DataTable)this.detailgridbs.DataSource, this.dtAutomatedLineMapping_DetailTemp, this.dtAutomatedLineMapping_DetailAuto);
+            p05_Compare.ShowDialog();
+        }
+
+        private void BtnViewOperator_Click(object sender, EventArgs e)
+        {
+            P05_LBR p05_LBR = new P05_LBR(this.iBarchart, this.CurrentMaintain, (DataTable)this.detailgridbs.DataSource, this.dtAutomatedLineMapping_DetailTemp, this.dtAutomatedLineMapping_DetailAuto);
+            DialogResult dialogResult = p05_LBR.ShowDialog();
+            this.FilterGrid(dialogResult == DialogResult.OK);
+            this.RefreshAutomatedLineMappingSummary();
+            this.ShowLBRChart(this.CurrentMaintain);
+        }
+
+        private void BtnMachineSummary_Click(object sender, EventArgs e)
+        {
+            new P05_MachineSummary(MyUtility.Convert.GetString(this.CurrentMaintain["ID"])).ShowDialog();
         }
     }
 }

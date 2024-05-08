@@ -867,6 +867,8 @@ when matched then
 		,t.IsNonSewingLine	=isnull(s.IsNonSewingLine, 0)	    
 		,t.IsNotShownInP01	=isnull(s.IsNotShownInP01, 0)	    
 		,t.IsNotShownInP03	=isnull(s.IsNotShownInP03, 0)
+		,t.IsNotShownInP05	=isnull(s.IsNotShownInP05, 0)
+		,t.IsNotShownInP06	=isnull(s.IsNotShownInP06, 0)
 when not matched by target then
 	insert(
 		[ID]
@@ -875,6 +877,8 @@ when not matched by target then
 		,[IsNonSewingLine]
 		,[IsNotShownInP01]
 		,[IsNotShownInP03]
+		,[IsNotShownInP05]
+		,[IsNotShownInP06]
 	)
 	values(
 	   isnull(s.[ID], '')
@@ -883,6 +887,8 @@ when not matched by target then
       ,isnull(s.[IsNonSewingLine], 0)
       ,isnull(s.[IsNotShownInP01], 0)
       ,isnull(s.[IsNotShownInP03], 0)
+	  ,isnull(s.[IsNotShownInP05], 0)
+	  ,isnull(s.[IsNotShownInP06], 0)
 	)
 when not matched by source then
 	delete;

@@ -20,6 +20,9 @@
     [Thread_ComboID] VARCHAR(10) CONSTRAINT [DF_TimeStudy_Detail_Thread_ComboID] DEFAULT ('') not NULL,
     IsNonSewingLine BIT NOT NULL CONSTRAINT [DF_TimeStudy_Detail_IsNonSewingLine] DEFAULT ((0)), 
     [PPA] VARCHAR(2) NOT NULL DEFAULT (''), 
+    [Location]      VARCHAR(20)         CONSTRAINT [DF_TimeStudy_Detail_Location]    NOT NULL DEFAULT (''), 
+    [SewingSeq]     VARCHAR(4)          CONSTRAINT [DF_TimeStudy_Detail_SewingSeq]    NOT NULL DEFAULT (''), 
+    [DesignateSeq]  VARCHAR(4)          CONSTRAINT [DF_TimeStudy_Detail_DesignateSeq]    NOT NULL DEFAULT (''), 
     CONSTRAINT [PK_TimeStudy_Detail] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
 
@@ -88,3 +91,39 @@ CREATE NONCLUSTERED INDEX [IDSeq]
 
 
 GO
+
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'工段分類',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'TimeStudy_Detail',
+    @level2type = N'COLUMN',
+    @level2name = N'TimeStudy_Detail'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'自動排IE P05序號',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'TimeStudy_Detail',
+    @level2type = N'COLUMN',
+    @level2name = N'SewingSeq'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'指定排IE P05序號',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'TimeStudy_Detail',
+    @level2type = N'COLUMN',
+    @level2name = N'DesignateSeq'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'Location',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'TimeStudy_Detail',
+    @level2type = N'COLUMN',
+    @level2name = N'Location'
