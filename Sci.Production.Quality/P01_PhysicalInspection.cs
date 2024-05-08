@@ -1346,12 +1346,20 @@ where Fir.ID = '{this.FirID}'"));
             {
                 if (dr.RowState == DataRowState.Deleted)
                 {
-                    update_cmd = update_cmd + string.Format(
+                    string delete_cmd = string.Format(
                     @"
 Delete From Fir_physical Where DetailUkey = {0} ;
 Delete From FIR_Physical_Defect Where FIR_PhysicalDetailUKey = {0} ; 
 Delete From FIR_Physical_Defect_Realtime Where FIR_PhysicalDetailUKey = {0} ;",
                     dr["DetailUKey", DataRowVersion.Original]);
+
+                    #region 先刪除資料
+                    upResult = DBProxy.Current.Select(null, delete_cmd, out idenDt);
+                    if (!upResult)
+                    {
+                        return upResult;
+                    }
+                    #endregion
                     continue;
                 }
 
@@ -1376,6 +1384,20 @@ Delete From FIR_Physical_Defect_Realtime Where FIR_PhysicalDetailUKey = {0} ;",
                     string add_cmd = string.Empty;
 
                     var isGrandCCanUse = MyUtility.Convert.GetBool(dr["IsGrandCCanUse"]) ? 1 : 0;
+
+                    // 防止相同ID+Roll+Dyelot 存入Fir_Physical
+                    string sqlChk = $@"
+select 1 
+from Fir_Physical 
+where id = '{dr["ID"]}'
+and Roll = '{dr["roll"].ToString().Replace("'", "''")}'
+and Dyelot = '{dr["Dyelot"]}'
+";
+                    if (MyUtility.Check.Seek(sqlChk))
+                    {
+                        MyUtility.Msg.WarningBox($@"Roll = {dr["Roll"]} and Dyelit = {dr["Dyelot"]} cannot be duplicate!");
+                        return new DualResult(false, "Roll and Dyelot cannot be duplicate!");
+                    }
 
                     add_cmd = string.Format(
                     @"Insert into Fir_Physical
