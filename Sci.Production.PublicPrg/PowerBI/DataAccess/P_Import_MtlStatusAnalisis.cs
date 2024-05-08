@@ -60,7 +60,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
         private Base_ViewModel GetMtlStatusAnalisisData(DateTime? sDate, DateTime? eDate)
         {
             Base_ViewModel finalResult;
-            Data.DBProxy.Current.OpenConnection("PowerBI", out SqlConnection sqlConn);
+            Data.DBProxy.Current.OpenConnection("Production", out SqlConnection sqlConn);
             using (sqlConn)
             {
                 List<SqlParameter> sqlParameters = new List<SqlParameter>()
