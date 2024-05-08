@@ -263,7 +263,7 @@ CREATE NONCLUSTERED INDEX index_#CFAInspectionRecord ON #CFAInspectionRecord([ID
 			#region PowerBI
 			string sqlBI = $@"
 /*-----Final-----*/
-select nb = ROW_NUMBER() over(Partition by n.ID order by c.AuditDate desc,c.EditDate desc,c.AddDate)
+select nb = ROW_NUMBER() over(Partition by n.ID order by c.AuditDate desc,c.EditDate desc,c.AddDate desc)
 ,[Stage] = 'Final'
 ,[InspResult]=CASE WHEN NOT EXISTS(
 				SELECT 1 
@@ -348,7 +348,7 @@ AND NOT EXISTS (
 
 
 /*-----Staggered-----*/
-select nb = ROW_NUMBER() over(Partition by n.ID order by c.AuditDate desc,c.EditDate desc,c.AddDate)
+select nb = ROW_NUMBER() over(Partition by n.ID order by c.AuditDate desc,c.EditDate desc,c.AddDate desc)
 ,[Stage] = 'Stagger'
 ,[InspResult]=CASE WHEN EXISTS(
 					-- Result  - Fail的情況
@@ -542,79 +542,29 @@ AND (
 	WHERE OrderID = n.ID AND OrderShipmodeSeq = n.Seq 
 )
 
-select 
-[Stage]
-,[InspResult]
-,[NotYetInspCtn#]
-,[NotYetInspCtn]
-,[FailCtn#]
-,[FailCtn]
-,[Notyetinspqty]
-,[FailQty]
-,MDivisionID
-,FactoryID
-,BuyerDelivery
-,BrandID
-,ID
-,Category 
-,OrderTypeID
-,CustPoNo
-,StyleID
-,StyleName
-,SeasonID
-,[Dest]
-,Customize1
-,CustCDID
-,Seq
-,ShipModeID
-,[ColorWay]
-,SewLine
-,[TtlCtn]
-,[StaggeredCtn]
-,[ClogCtn] 
-,[ClogCtn%]
-,[LastCartonReceivedDate]
-,CFAFinalInspectDate
-,CFA3rdInspectDate
-,CFARemark 
-from #tmpFinal where nb=1
-	union all 
-select 
-[Stage]
-,[InspResult]
-,[NotYetInspCtn#]
-,[NotYetInspCtn]
-,[FailCtn#]
-,[FailCtn]
-,[Notyetinspqty]
-,[FailQty]
-,MDivisionID
-,FactoryID
-,BuyerDelivery
-,BrandID
-,ID
-,Category 
-,OrderTypeID
-,CustPoNo
-,StyleID
-,StyleName
-,SeasonID
-,[Dest]
-,Customize1
-,CustCDID
-,Seq
-,ShipModeID
-,[ColorWay]
-,SewLine
-,[TtlCtn]
-,[StaggeredCtn]
-,[ClogCtn] 
-,[ClogCtn%]
-,[LastCartonReceivedDate]
-,CFAFinalInspectDate
-,CFA3rdInspectDate
-,CFARemark 
-from #tmpStagger where nb=1
+-- 如果Final 和 Stage則優先取Final
+select *
+from (
+SELECT  rw = ROW_NUMBER() over(Partition by id order by iif(Stage = 'Final',1,0) desc),* 
+	FROM (
+		select 
+		[Stage],[InspResult],[NotYetInspCtn#],[NotYetInspCtn],[FailCtn#],[FailCtn],[Notyetinspqty]
+		,[FailQty],MDivisionID,FactoryID,BuyerDelivery,BrandID,ID,Category ,OrderTypeID
+		,CustPoNo,StyleID,StyleName,SeasonID,[Dest],Customize1,CustCDID,Seq,ShipModeID
+		,[ColorWay],SewLine,[TtlCtn],[StaggeredCtn],[ClogCtn] ,[ClogCtn%],[LastCartonReceivedDate]
+		,CFAFinalInspectDate,CFA3rdInspectDate,CFARemark 
+		from #tmpFinal where nb=1
+			union all 
+		select 
+		[Stage],[InspResult],[NotYetInspCtn#],[NotYetInspCtn],[FailCtn#],[FailCtn],[Notyetinspqty]
+		,[FailQty],MDivisionID,FactoryID,BuyerDelivery,BrandID,ID,Category ,OrderTypeID
+		,CustPoNo,StyleID,StyleName,SeasonID,[Dest],Customize1,CustCDID,Seq,ShipModeID
+		,[ColorWay],SewLine,[TtlCtn],[StaggeredCtn],[ClogCtn] ,[ClogCtn%],[LastCartonReceivedDate]
+		,CFAFinalInspectDate,CFA3rdInspectDate,CFARemark 
+		from #tmpStagger where nb=1
+	) A
+) a
+where rw = 1
 ";
 			#endregion
 			#region Outstanding WHERE
