@@ -289,54 +289,6 @@ SET @ErrorMessage = ''
 
 /****************************************************************************************************************************/
 
---Sunday Job) P_ImportAdiCompReport
-
-if (select DATEPART(WEEKDAY,GETDATE())) = 1
-BEGIN
-	BEGIN TRY
-		set @Stime = getdate()
-		EXEC P_ImportAdiCompReport
-		set @Etime = getdate()
-	END TRY
-
-	BEGIN CATCH
-
-	SET @ErrorMessage = 
-	'
-	[Sunday_Job-P_ImportAdiCompReport]' + CHAR(13) +
-	',錯誤代碼: ' + CONVERT(VARCHAR, ERROR_NUMBER()) + CHAR(13) +
-	',錯誤行數: ' + CONVERT(VARCHAR, ERROR_LINE()) + CHAR(13) +
-	',錯誤訊息: ' + ERROR_MESSAGE()
-
-	SET @ErrDesc = '錯誤代碼: ' + CONVERT(VARCHAR, ERROR_NUMBER()) +
-	',錯誤行數: ' + CONVERT(VARCHAR, ERROR_LINE())  +
-	',錯誤訊息: ' + ERROR_MESSAGE()
-
-	SET @ErrorStatus = 0
-
-	END CATCH;
-
-
-	IF (@ErrorMessage IS NULL or @ErrorMessage='')
-	BEGIN 
-		set @desc += CHAR(13) + '
-	[Sunday-Job-P_ImportAdiCompReport] is completed' + ' Time:' + FORMAT(@Stime, 'yyyy/MM/dd HH:mm:ss') + ' - ' + FORMAT(@Etime, 'yyyy/MM/dd HH:mm:ss')
-	END
-	ELSE
-	BEGIN
-		set @desc += CHAR(13) + @ErrorMessage
-	END
-	SET @ErrorMessage = ''
-
-	-- Write in P_TransLog
-		insert into P_TransLog(functionName,Description,StartTime,EndTime,TransCode) 
-		values('P_ImportAdiCompReport',@ErrDesc,@Stime,@Etime,@TransCode)
-
-		SET @ErrDesc = ''
-END
-
-/****************************************************************************************************************************/
-
 --P_SubProInsReport
 BEGIN TRY
 	set @Stime = getdate()  
@@ -543,47 +495,6 @@ SET @ErrorMessage = ''
 -- Write in P_TransLog
 	insert into P_TransLog(functionName,Description,StartTime,EndTime,TransCode) 
 	values('P_ImportADIDASComplain_24Month',@ErrDesc,@Stime,@Etime,@TransCode)
-
-	SET @ErrDesc = ''
-
-/****************************************************************************************************************************/
-/***********************************P_Import_MtltoFTYAnalysis****************************************************************/
-BEGIN TRY
-	set @Stime = getdate()  
-	execute [dbo].[P_Import_MtltoFTYAnalysis]
-	set @Etime = getdate()
-END TRY
-
-BEGIN CATCH
-
-SET @ErrorMessage = 
-'
-[18-P_Import_MtltoFTYAnalysis]' + CHAR(13) +
-',錯誤代碼: ' + CONVERT(VARCHAR, ERROR_NUMBER()) + CHAR(13) +
-',錯誤行數: ' + CONVERT(VARCHAR, ERROR_LINE()) + CHAR(13) +
-',錯誤訊息: ' + ERROR_MESSAGE()
-
-SET @ErrDesc = '錯誤代碼: ' + CONVERT(VARCHAR, ERROR_NUMBER()) +
-',錯誤行數: ' + CONVERT(VARCHAR, ERROR_LINE())  +
-',錯誤訊息: ' + ERROR_MESSAGE()
-
-SET @ErrorStatus = 0
-
-END CATCH;
-IF (@ErrorMessage IS NULL or @ErrorMessage='')
-BEGIN 
-	set @desc += CHAR(13) + '
-[18-P_Import_MtltoFTYAnalysis] is completed' + ' Time:' + FORMAT(@Stime, 'yyyy/MM/dd HH:mm:ss') + ' - ' + FORMAT(@Etime, 'yyyy/MM/dd HH:mm:ss')
-END
-ELSE
-BEGIN
-	set @desc += CHAR(13) + @ErrorMessage
-END
-SET @ErrorMessage = ''
-
--- Write in P_TransLog
-	insert into P_TransLog(functionName,Description,StartTime,EndTime,TransCode) 
-	values('P_MtltoFTYAnalysis',@ErrDesc,@Stime,@Etime,@TransCode)
 
 	SET @ErrDesc = ''
 
