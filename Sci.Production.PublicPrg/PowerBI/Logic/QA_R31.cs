@@ -951,7 +951,7 @@ AND NOT EXISTS (
 
             Base_ViewModel resultReport = new Base_ViewModel
             {
-                Result = this.DBProxy.Select("Production", sqlCmd.ToString(), listPar, out DataTable[] dataTables),
+                Result = this.DBProxy.Select("Production", sqlCmd.ToString(), listPar, out DataTable dt),
             };
 
             if (!resultReport.Result)
@@ -959,7 +959,7 @@ AND NOT EXISTS (
                 return resultReport;
             }
 
-            resultReport.DtArr = dataTables;
+            resultReport.Dt = dt;
             return resultReport;
         }
 

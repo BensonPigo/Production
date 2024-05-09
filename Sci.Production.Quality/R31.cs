@@ -116,7 +116,7 @@ namespace Sci.Production.Quality
                     return resultReport.Result;
                 }
 
-                this.printData = resultReport.DtArr[0];
+                this.printData = resultReport.Dt;
 
                 #endregion
             }
