@@ -188,6 +188,7 @@ select
         end
     , o.StyleID
     , WhseArrival = isnull(rd.WhseArrival, td.IssueDate)
+    , fr.Relaxtime
 from #tmpFrom sd
 inner join PO_Supp_Detail psd with(nolock) on psd.id = sd.POID and psd.SEQ1 = sd.Seq1 and psd.SEQ2 = sd.Seq2 and psd.FabricType = 'F'
 inner join Fabric with(nolock) on Fabric.SCIRefno = psd.SCIRefno
@@ -221,6 +222,8 @@ outer apply(
     and td.Dyelot = sd.Dyelot
     and td.StockType = sd.StockType
 )td
+LEFT JOIN [SciMES_RefnoRelaxtime] rr WITH (NOLOCK) ON rr.Refno = psd.Refno
+LEFT JOIN [SciMES_FabricRelaxation] fr WITH (NOLOCK) ON rr.FabricRelaxationID = fr.ID
 ORDER BY POID,Seq,Roll, Dyelot
 
 

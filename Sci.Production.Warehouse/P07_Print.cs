@@ -241,6 +241,7 @@ select
     ,Receiving.WhseArrival
     ,[Article] = isnull(psdsA.SpecValue, '')
     ,[Size] = isnull(psdsS.SpecValue, '')
+    ,fr.Relaxtime
 from dbo.Receiving_Detail R WITH (NOLOCK) 
 left join Receiving WITH (NOLOCK) on Receiving.id = R.id
 LEFT join dbo.PO_Supp_Detail psd WITH (NOLOCK) on psd.ID = R.POID and  psd.SEQ1 = R.Seq1 and psd.seq2 = R.Seq2 
@@ -289,6 +290,8 @@ OUTER APPLY(
 			    FOR XML PATH('') )
 			    , 1, 1, '')
     )Location
+LEFT JOIN [SciMES_RefnoRelaxtime] rr WITH (NOLOCK) ON rr.Refno = psd.Refno
+LEFT JOIN [SciMES_FabricRelaxation] fr WITH (NOLOCK) ON rr.FabricRelaxationID = fr.ID
 where R.id = @ID
 ";
 
