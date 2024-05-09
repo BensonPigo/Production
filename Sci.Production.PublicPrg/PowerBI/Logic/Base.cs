@@ -283,6 +283,7 @@ ORDER BY [Group], [SEQ], [NAME]";
                         break;
                     case ListName.P_MtlStatusAnalisis:
                         result = new P_Import_MtlStatusAnalisis().P_MtlStatusAnalisis(item.SDate, item.EDate);
+                        break;
                     case ListName.P_SubProInsReport:
                         result = new P_Import_SubProInsReport().P_SubProInsReport(item.SDate, item.EDate);
                         break;
