@@ -11,8 +11,6 @@ using Sci.Production.PublicPrg;
 using System.Linq;
 using Sci.Production.Prg;
 using System.Text;
-using static Ict.AsyncWorker;
-
 
 namespace Sci.Production.Logistic
 {
