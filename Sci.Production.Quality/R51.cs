@@ -1,5 +1,7 @@
 ﻿using Ict;
 using Sci.Data;
+using Sci.Production.Prg.PowerBI.Logic;
+using Sci.Production.Prg.PowerBI.Model;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -20,6 +22,9 @@ namespace Sci.Production.Quality
         private string sqlCol;
         private DataTable PrintData;
         private DataTable CustomColumnDt;
+        private string strM;
+        private string strFactory;
+        private string strShift;
 
         /// <inheritdoc/>
         public R51(ToolStripMenuItem menuitem)
@@ -34,9 +39,6 @@ namespace Sci.Production.Quality
         /// <inheritdoc/>
         protected override bool ValidateInput()
         {
-            this.Parameters.Clear();
-            this.Sqlcmd.Clear();
-            this.sqlCol = string.Empty;
             this.CustomColumnDt = null;
 
             if (this.dateInspectionDate.Value1.Empty() && this.txtSP.Text.Empty())
@@ -51,280 +53,36 @@ namespace Sci.Production.Quality
                 return false;
             }
 
-            string subProcessCondition = this.txtsubprocess.Text.Split(',').Select(s => $"'{s}'").JoinToString(",");
-            string formatCol;
-            string formatCol2 = string.Empty;
-            string formatCol3 = string.Empty;
-            string formatJoin;
-            string s_d = $@"
-outer apply(select ttlSecond_RD = sum(DATEDIFF(Second, StartResolveDate, EndResolveDate)) from SubProInsRecord_ResponseTeam where EndResolveDate is not null and SubProInsRecordUkey = SR.Ukey)ttlSecond_RD
-outer apply(
-	select SubProResponseTeamID = STUFF((
-		select CONCAT(',', SubProResponseTeamID)
-		from SubProInsRecord_ResponseTeam
-		where SubProInsRecordUkey = SR.Ukey
-		order by SubProResponseTeamID
-		for xml path('')
-	),1,1,'')
-)SubProResponseTeamID
-";
-
-            this.sqlCol = $@"select AssignColumn,DisplayName,SubProcessID from SubProCustomColumn where SubProcessID in ({subProcessCondition}) order by AssignColumn";
-            if (this.radioSummary.Checked)
-            {
-                formatJoin = @"outer apply (select [val] = sum(SRD.DefectQty)
-                                            from SubProInsRecord_Defect SRD WITH(NOLOCK)
-		                                    where SR.Ukey=SRD.SubProInsRecordUkey ) DefectQty" + s_d;
-                formatCol = "DefectQty.val,";
-            }
-            else if (this.radioDetail_DefectType.Checked)
-            {
-                formatJoin = @"
-left join SubProMachine m on SR.Machine = m.ID and SR.FactoryID = m.FactoryID and SR.SubProcessID = m.SubProcessID
-left join SubProInsRecord_Defect SRD on SR.Ukey = SRD.SubProInsRecordUkey" + s_d;
-                formatCol = @"m.Serial,
-[Junk] = iif(m.Junk = 1, 'Y', 'N'),
-m.Description,
-SRD.DefectCode,                                
-SRD.DefectQty,";
-            }
-            else if (this.radioDetail_Operator.Checked)
-            {
-                formatJoin = @" left join SubProInsRecord_Defect SRD on SR.Ukey = SRD.SubProInsRecordUkey
-                                left join SubProInsRecord_Operator sro with (nolock) on sro.SubProInsRecordUkey = SR.Ukey
-                                left join SubProOperator spo with (nolock) on spo.EmployeeID = sro.SubProOperatorEmployeeID
-                            " + s_d;
-                formatCol = @"  SRD.DefectCode,
-                                SRD.DefectQty,
-                                sro.SubProOperatorEmployeeID,
-                                [OperatorName] = iif(isnull(sro.SubProOperatorEmployeeID, '') = '', '', spo.FirstName + ' ' + spo.LastName),";
-            }
-            else
-            {
-                formatJoin = @"left join SubProInsRecord_Defect SRD on SR.Ukey = SRD.SubProInsRecordUkey
-left join SubProInsRecord_ResponseTeam SRR on SRR.SubProInsRecordUkey = SR.Ukey
-outer apply(select ttlSecond_RD = DATEDIFF(Second, StartResolveDate, EndResolveDate))ttlSecond_RD";
-                formatCol = @"  SRD.DefectCode,
-                                SRD.DefectQty,";
-                formatCol2 = $@"SRR.StartResolveDate,
-    SRR.EndResolveDate,
-";
-            }
-
-            #region where
-            StringBuilder sqlwhere1 = new StringBuilder();
-            StringBuilder sqlwhere2 = new StringBuilder();
-            StringBuilder declare = new StringBuilder();
-            if (!this.dateInspectionDate.Value1.Empty())
-            {
-                sqlwhere1.Append("\r\nand SR.InspectionDate between @InspectionDate1 and @InspectionDate2");
-                sqlwhere2.Append("\r\nand SR.InspectionDate between @InspectionDate1 and @InspectionDate2");
-                this.Parameters.Add(new SqlParameter("@InspectionDate1p", SqlDbType.Date) { Value = this.dateInspectionDate.Value1 });
-                this.Parameters.Add(new SqlParameter("@InspectionDate2p", SqlDbType.Date) { Value = this.dateInspectionDate.Value2 });
-                declare.Append("\r\ndeclare @InspectionDate1 Date = @InspectionDate1p\r\ndeclare @InspectionDate2 Date = @InspectionDate2p");
-            }
-
-            if (!this.txtSP.Text.Empty())
-            {
-                sqlwhere1.Append("\r\nand B.OrderID = @SP");
-                sqlwhere2.Append("\r\nand BR.OrderID = @SP");
-                this.Parameters.Add(new SqlParameter("@SPp", SqlDbType.VarChar, 13) { Value = this.txtSP.Text });
-                declare.Append("\r\ndeclare @SP varchar(13) = @SPp");
-            }
-
-            if (!this.txtstyle1.Text.Empty())
-            {
-                sqlwhere1.Append("\r\nand O.StyleID= @Style");
-                sqlwhere2.Append("\r\nand O.StyleID= @Style");
-                this.Parameters.Add(new SqlParameter("@Stylep", SqlDbType.VarChar, 15) { Value = this.txtstyle1.Text });
-                declare.Append("\r\ndeclare @Style varchar(15) = @Stylep");
-            }
-
-            sqlwhere1.Append($"\r\nand SR.SubProcessID in ({subProcessCondition})");
-            sqlwhere2.Append($"\r\nand SR.SubProcessID in ({subProcessCondition})");
-
-            if (!this.comboMDivision1.Text.Empty())
-            {
-                sqlwhere1.Append("\r\nand Fac.MDivisionID= @M");
-                sqlwhere2.Append("\r\nand Fac.MDivisionID= @M");
-                this.Parameters.Add(new SqlParameter("@Mp", SqlDbType.VarChar, 8) { Value = this.comboMDivision1.Text });
-                declare.Append("\r\ndeclare @M varchar(8) = @Mp");
-            }
-
-            if (!this.comboFactory1.Text.Empty())
-            {
-                sqlwhere1.Append("\r\nand SR.FactoryID = @F");
-                sqlwhere2.Append("\r\nand SR.FactoryID = @F");
-                this.Parameters.Add(new SqlParameter("@Fp", SqlDbType.VarChar, 8) { Value = this.comboFactory1.Text });
-                declare.Append("\r\ndeclare @F varchar(8) = @Fp");
-            }
-
-            if (!this.comboShift.Text.Empty())
-            {
-                sqlwhere1.Append("\r\nand SR.Shift = @Shift");
-                sqlwhere2.Append("\r\nand SR.Shift = @Shift");
-                this.Parameters.Add(new SqlParameter("@Shiftp", SqlDbType.VarChar, 5) { Value = this.comboShift.Text });
-                declare.Append("\r\ndeclare @Shift varchar(5) = @Shiftp");
-            }
-            #endregion
-            this.Sqlcmd.Append(declare);
-            this.Sqlcmd.Append($@"
-
-select 
-*
-into #SubProInsRecord
-from(
-	select  
-	* 
-	,RowNo = ROW_NUMBER() over(partition by BundleNo,SubProcessID order by Adddate desc)
-	from SubProInsRecord 
-)aa
-where RowNo = 1
-
-
-select
-    SR.FactoryID,
-    Fac.MDivisionID,
-    SR.SubProLocationID,
-	SR.InspectionDate,
-    O.SewInLine,
-	B.Sewinglineid,
-    SR.Shift,
-	[RFT] = iif(isnull(BD.Qty, 0) = 0, 0, round((isnull(BD.Qty, 0)- isnull(SR.RejectQty, 0)) / Cast(BD.Qty as float),2)),
-	SR.SubProcessID,
-	SR.BundleNo,
-    [Artwork] = Artwork.val,
-	B.OrderID,
-    Country.Alias,
-    s.AbbEN,
-    PSD.Refno,
-    o.BuyerDelivery,
-	BD.BundleGroup,
-    o.SeasonID,
-	O.styleID,
-	B.Colorid,
-	BD.SizeCode,
-    BD.PatternDesc,
-    B.Item,
-	BD.Qty,
-	SR.RejectQty,
-	SR.Machine,
-	{formatCol}
-	Inspector = (SELECT CONCAT(a.ID, ':', a.Name) from [ExtendServer].ManufacturingExecution.dbo.Pass1 a WITH (NOLOCK) where a.ID = SR.AddName),
-	SR.Remark,
-    AddDate2 = SR.AddDate,
-    SR.RepairedDatetime,
-	RepairedTime = iif(RepairedDatetime is null, null, ttlSecond),
-    {formatCol2}
-	ResolveTime = iif(isnull(ttlSecond_RD, 0) = 0, null, ttlSecond_RD),
-	SubProResponseTeamID
-    ,CustomColumn1
-into #tmp
-from #SubProInsRecord SR WITH (NOLOCK)
-Left join Bundle_Detail BD WITH (NOLOCK) on SR.BundleNo=BD.BundleNo
-Left join Bundle B WITH (NOLOCK) on BD.ID=B.ID
-Left join Orders O WITH (NOLOCK) on B.OrderID=O.ID
-left join Country on Country.ID = o.Dest
-Left JOIN WorkOrder WO ON WO.CutRef=B.CutRef and b.CutRef <> '' and wo.ID = b.POID and wo.OrderID =b.Orderid
-Left JOIN PO_Supp_Detail PSD WITH (NOLOCK) ON PSD.ID=WO.ID AND PSD.SEQ1 = WO.SEQ1 AND PSD.SEQ2=WO.SEQ2
-Left JOIN PO_SUPP PS WITH (NOLOCK) ON PS.ID= PSD.ID AND PS.SEQ1=PSD.SEQ1
-Left JOIN Supp S WITH (NOLOCK) ON S.ID=PS.SuppID
-outer apply(SELECT val =  Stuff((select distinct concat( '+',SubprocessId)   
-                                    from Bundle_Detail_Art bda with (nolock) 
-                                    where bda.Bundleno = BD.Bundleno
-                                    FOR XML PATH('')),1,1,'') ) Artwork
-outer apply(select MDivisionID from Factory f where f.ID = SR.FactoryID and f.Junk =0) Fac
-{formatJoin}
-outer apply(select ttlSecond = DATEDIFF(Second, SR.AddDate, RepairedDatetime)) ttlSecond
-Where 1=1
-");
-            this.Sqlcmd.Append(sqlwhere1);
-            this.Sqlcmd.Append($@"
-UNION
-
-select
-    SR.FactoryID,
-    Fac.MDivisionID,
-    SR.SubProLocationID,
-	SR.InspectionDate,
-    O.SewInLine,
-    BR.Sewinglineid,
-    SR.Shift,
-	[RFT] = iif(isnull(BRD.Qty, 0) = 0, 0, round((isnull(BRD.Qty, 0)- isnull(SR.RejectQty, 0)) / Cast(BRD.Qty as float),2)),
-	SR.SubProcessID,
-	SR.BundleNo,
-    [Artwork] = Artwork.val,
-	BR.OrderID,
-    Country.Alias,
-    s.AbbEN,
-    PSD.Refno,
-    o.BuyerDelivery,
-	BRD.BundleGroup,
-    o.SeasonID,
-	O.styleID,
-	BR.Colorid,
-	BRD.SizeCode,
-    BRD.PatternDesc,
-    BR.Item,
-	BRD.Qty,
-	SR.RejectQty,
-	SR.Machine,
-	{formatCol}
-	Inspector = (SELECT CONCAT(a.ID, ':', a.Name) from [ExtendServer].ManufacturingExecution.dbo.Pass1 a WITH (NOLOCK) where a.ID = SR.AddName),
-	SR.Remark,
-    AddDate2 = SR.AddDate,
-    SR.RepairedDatetime,
-	iif(RepairedDatetime is null, null, ttlSecond),
-    {formatCol2}
-	iif(isnull(ttlSecond_RD, 0) = 0, null, ttlSecond_RD),
-	SubProResponseTeamID
-    ,CustomColumn1--自定義欄位, 在最後一個若有變動,則輸出Excel部分也要一起改
-from #SubProInsRecord SR WITH (NOLOCK)
-Left join BundleReplacement_Detail BRD WITH (NOLOCK) on SR.BundleNo=BRD.BundleNo
-Left join BundleReplacement BR WITH (NOLOCK) on BRD.ID=BR.ID
-Left join Orders O WITH (NOLOCK) on BR.OrderID=O.ID
-left join Country on Country.ID = o.Dest
-Left join Bundle_Detail BD WITH (NOLOCK) on SR.BundleNo=BD.BundleNo
-Left JOIN Bundle B WITH (NOLOCK) ON BD.ID=B.ID
-Left JOIN WorkOrder WO ON WO.CutRef=B.CutRef and b.CutRef <> '' and wo.ID = b.POID and wo.OrderID =b.Orderid
-Left JOIN PO_Supp_Detail PSD WITH (NOLOCK) ON PSD.ID=WO.ID AND PSD.SEQ1 = WO.SEQ1 AND PSD.SEQ2=WO.SEQ2
-Left JOIN PO_SUPP PS WITH (NOLOCK) ON PS.ID= PSD.ID AND PS.SEQ1=PSD.SEQ1
-Left JOIN Supp S WITH (NOLOCK) ON S.ID=PS.SuppID
-outer apply(SELECT val =  Stuff((select distinct concat( '+',SubprocessId)   
-                                    from Bundle_Detail_Art bda with (nolock) 
-                                    where bda.Bundleno = SR.BundleNo
-                                    FOR XML PATH('')),1,1,'') ) Artwork
-outer apply(select MDivisionID from Factory f where f.ID = SR.FactoryID and f.Junk =0) Fac
-{formatJoin}
-outer apply(select ttlSecond = DATEDIFF(Second, SR.AddDate, RepairedDatetime)) ttlSecond
-Where 1=1
-");
-            this.Sqlcmd.Append(sqlwhere2);
-            this.Sqlcmd.Append(@"
-select *, BundleNoCT = COUNT(1) over(partition by t.BundleNo)
-into #tmp2
-from #tmp t
-
-select *
-into #tmp3
-from #tmp2 t
-where BundleNoCT = 1--綁包/補料都沒有,在第一段union會合併成一筆
-or (BundleNoCT > 1 and isnull(t.Orderid, '') <> '')--綁包/補料其中一個有
-
--- SubProInsRecord可能會有多筆相同BundleNo 和 SubProcessID, 所以只取AddDate最後一筆資料
--- by ISP20230577
-select * from #tmp3
-
-drop table #tmp,#tmp2,#tmp3
-
-");
-
+            this.strM = this.comboMDivision1.Text;
+            this.strFactory = this.comboFactory1.Text;
+            this.strShift = this.comboShift.Text;
             return true;
         }
 
         /// <inheritdoc/>
         protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
+            this.sqlCol = string.Empty;
+            string subProcessCondition = this.txtsubprocess.Text.Split(',').Select(s => $"'{s}'").JoinToString(",");
+            this.sqlCol = $@"select AssignColumn,DisplayName,SubProcessID from SubProCustomColumn where SubProcessID in ({subProcessCondition}) order by AssignColumn";
+
+            DBProxy.Current.DefaultTimeout = 600; // 加長時間成10分鐘, 避免time out
+            QA_R51 biModel = new QA_R51();
+            QA_R51_ViewModel qa_R51_Model = new QA_R51_ViewModel()
+            {
+                StartInspectionDate = this.dateInspectionDate.Value1,
+                EndInspectionDate = this.dateInspectionDate.Value2,
+                M = this.strM,
+                Factory = this.strFactory,
+                Shift = this.strShift,
+                SubProcess = subProcessCondition,
+                SP = this.txtSP.Text,
+                Style = this.txtstyle1.Text,
+                FormatType = this.radioSummary.Checked ? "Summary" : this.radioDetail_DefectType.Checked ? "DefectType" : this.radioDetail_Responseteam.Checked ? "ResponseTeam" : "Operator",
+                IsBI = false,
+            };
+
+            Base_ViewModel resultReport = biModel.Get_QA_R51(qa_R51_Model);
             if (!this.sqlCol.Empty())
             {
                 DualResult result = DBProxy.Current.Select(null, this.sqlCol, out this.CustomColumnDt);
@@ -332,9 +90,12 @@ drop table #tmp,#tmp2,#tmp3
                 {
                     return result;
                 }
-            } 
+            }
 
-            return DBProxy.Current.Select(null, this.Sqlcmd.ToString(), this.Parameters, out this.PrintData);
+            this.PrintData = resultReport.DtArr[0];
+
+            DBProxy.Current.DefaultTimeout = 300;  // timeout時間改回5分鐘
+            return Ict.Result.True;
         }
 
         /// <inheritdoc/>
