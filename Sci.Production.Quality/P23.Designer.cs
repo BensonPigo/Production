@@ -380,6 +380,7 @@
             this.Name = "P23";
             this.OnLineHelpID = "Sci.Win.Tems.QueryForm";
             this.Text = "P23. CFA Receive Carton Input";
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.P23_FormClosed);
             this.Controls.SetChildIndex(this.panel6, 0);
             this.Controls.SetChildIndex(this.panel7, 0);
             this.Controls.SetChildIndex(this.grid, 0);

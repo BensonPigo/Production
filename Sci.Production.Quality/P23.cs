@@ -558,12 +558,20 @@ order by p2.ID,p2.CTNStartNo
                 this.dtError = dt.Clone();
                 StringBuilder warningmsg = new StringBuilder();
                 this.backgroundDownloadSticker.ReportProgress(0);
-                string sqlUpdate = string.Empty;
 
                 this.progressCnt = 0;
                 foreach (DataRow dr in dt.Rows)
                 {
+                    string sqlUpdate = string.Empty;
                     warningmsg.Clear();
+
+                    // 這裡才是真正中斷backgroundworker執行緒操作
+                    if (this.backgroundDownloadSticker.CancellationPending)
+                    {
+                        e.Cancel = true;
+                        return;
+                    }
+
                     string checkPackSql = $@"
 select pd.TransferCFADate, P.MDivisionID,pl.Status,pd.CFAReceiveDate
 from PackingList_Detail pd WITH (NOLOCK)
@@ -752,6 +760,11 @@ from SplitString('{MyUtility.Convert.GetString(dr["OrderID"])}','/')
 
                 ((DataTable)this.listControlBindingSource1.DataSource).DefaultView.Sort = @" Id, CTNSTartNo";
             }
+            else if (e.Cancelled)
+            {
+                MyUtility.Msg.WarningBox("Operation has been cancelled.");
+                this.listControlBindingSource1.DataSource = null;
+            }
             else if (e.Result != null)
             {
                 MyUtility.Msg.WarningBox("error Msg: " + e.Result.ToString());
@@ -787,6 +800,14 @@ from SplitString('{MyUtility.Convert.GetString(dr["OrderID"])}','/')
 
             // 顯示WaitCursor
             Cursor.Current = isLocked ? Cursors.WaitCursor : Cursors.Default;
+        }
+
+        private void P23_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            if (this.backgroundDownloadSticker.IsBusy)
+            {
+                this.backgroundDownloadSticker.CancelAsync();
+            }
         }
     }
 }

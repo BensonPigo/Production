@@ -11,6 +11,7 @@ using Sci.Production.PublicPrg;
 using System.Linq;
 using Sci.Production.Prg;
 using System.Text;
+using static Ict.AsyncWorker;
 
 
 namespace Sci.Production.Logistic
@@ -627,6 +628,13 @@ where pd.CustCTN = '{dr["CustCTN"]}' and pd.CTNQty > 0 and pd.DisposeFromClog= 0
                 this.progressCnt = 0;
                 foreach (DataRow dr in dt.Rows)
                 {
+                    // 這裡才是真正中斷backgroundworker執行緒操作
+                    if (this.backgroundDownloadSticker.CancellationPending)
+                    {
+                        e.Cancel = true;
+                        return;
+                    }
+
                     warningmsg.Clear();
                     string checkPackSql = $@"
                     select pd.TransferDate, pd.ReceiveDate, pd.Remark, P.MDivisionID
@@ -833,6 +841,11 @@ insert into ClogReceive (
 
                 ((DataTable)this.listControlBindingSource1.DataSource).DefaultView.Sort = " rn1 ASC";
             }
+            else if (e.Cancelled)
+            {
+                MyUtility.Msg.WarningBox("Operation has been cancelled.");
+                this.listControlBindingSource1.DataSource = null;
+            }
             else if (e.Result != null)
             {
                 MyUtility.Msg.WarningBox("error Msg: " + e.Result.ToString());
@@ -870,6 +883,14 @@ insert into ClogReceive (
 
             // 顯示WaitCursor
             Cursor.Current = isLocked ? Cursors.WaitCursor : Cursors.Default;
+        }
+
+        private void P02_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            if (this.backgroundDownloadSticker.IsBusy)
+            {
+                this.backgroundDownloadSticker.CancelAsync();
+            }
         }
     }
 }
