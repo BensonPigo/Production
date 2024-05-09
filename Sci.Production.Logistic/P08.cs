@@ -76,6 +76,7 @@ namespace Sci.Production.Logistic
         {
             string strTransferStart = this.dateTransferDate.Value1.Empty() ? string.Empty : ((DateTime)this.dateTransferDate.Value1).ToString("yyyy/MM/dd");
             string strTransferEnd = this.dateTransferDate.Value2.Empty() ? string.Empty : ((DateTime)this.dateTransferDate.Value2).ToString("yyyy/MM/dd");
+            this.labProcessingBar.Text = "0/0";
 
             #region SqlParameter
             List<SqlParameter> listSQLParameter = new List<SqlParameter>
@@ -753,6 +754,13 @@ order by p2.ID,p2.CTNStartNo
                 this.progressCnt = 0;
                 foreach (DataRow dr in dt.Rows)
                 {
+                    // 這裡才是真正中斷backgroundworker執行緒操作
+                    if (this.backgroundDownloadSticker.CancellationPending)
+                    {
+                        e.Cancel = true;
+                        return;
+                    }
+
                     warningmsg.Clear();
                     string checkPackSql = $@"
 select p.Status ,p2.CFAReturnClogDate,p2.ClogReceiveCFADate
@@ -927,6 +935,11 @@ values(CONVERT(varchar(100), GETDATE(), 111),'{Env.User.Keyword}','{dr["OrderID"
                     this.listControlBindingSource1.DataSource = this.dtError;
                 }
             }
+            else if (e.Cancelled)
+            {
+                MyUtility.Msg.WarningBox("Operation has been cancelled.");
+                this.listControlBindingSource1.DataSource = null;
+            }
             else if (e.Result != null)
             {
                 MyUtility.Msg.WarningBox("error Msg: " + e.Result.ToString());
@@ -962,6 +975,14 @@ values(CONVERT(varchar(100), GETDATE(), 111),'{Env.User.Keyword}','{dr["OrderID"
 
             // 顯示WaitCursor
             Cursor.Current = isLocked ? Cursors.WaitCursor : Cursors.Default;
+        }
+
+        private void P08_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (this.backgroundDownloadSticker.IsBusy)
+            {
+                this.backgroundDownloadSticker.CancelAsync();
+            }
         }
     }
 }

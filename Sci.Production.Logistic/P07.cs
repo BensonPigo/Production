@@ -27,6 +27,7 @@ namespace Sci.Production.Logistic
         private System.ComponentModel.BackgroundWorker[] workers;
         private DataTable selectDataTable;
         private int completeCnt = 0;
+        private bool cancelWorker;
 
         /// <summary>
         /// P08
@@ -72,6 +73,7 @@ namespace Sci.Production.Logistic
             string strSciDeliveryEnd = this.dateSciDelivery.Value2.Empty() ? string.Empty : ((DateTime)this.dateSciDelivery.Value2).ToString("yyyy/MM/dd");
             string strReceiveDateStart = this.dateReceiveDate.Value1.Empty() ? string.Empty : ((DateTime)this.dateReceiveDate.Value1).ToString("yyyy/MM/dd");
             string strReceiveDateEnd = this.dateReceiveDate.Value2.Empty() ? string.Empty : ((DateTime)this.dateReceiveDate.Value2).ToString("yyyy/MM/dd");
+            this.labProcessingBar.Text = "0/0";
 
             #region SqlParameter
             List<SqlParameter> listSQLParameter = new List<SqlParameter>();
@@ -660,6 +662,7 @@ order by p2.ID,p2.CTNStartNo
             this.dtError = dt.Clone();
             this.completeCnt = 0;
             this.progressCnt = 0;
+            this.cancelWorker = false;
 
             if (MyUtility.Check.Empty(dt))
             {
@@ -770,6 +773,13 @@ order by p2.ID,p2.CTNStartNo
                 DataTable dt = ((DataTable)((object[])e.Argument)[0]).AsEnumerable().Skip(startIndex).Take(count).CopyToDataTable();
                 foreach (DataRow dr in dt.Rows)
                 {
+                    // 這裡才是真正中斷backgroundworker執行緒操作
+                    if (this.cancelWorker == true)
+                    {
+                        e.Cancel = true;
+                        return;
+                    }
+
                     StringBuilder singleWarningmsg = new StringBuilder();
                     string checkPackSql = $@"
 select p2.ReceiveDate ,p2.TransferCFADate ,p.Status 
@@ -912,6 +922,13 @@ values(CONVERT(varchar(100), GETDATE(), 111),'{Env.User.Keyword}','{dr["OrderID"
                 this.gridDetail.ValidateControl();
                 this.listControlBindingSource1.EndEdit();
 
+                if (e.Cancelled)
+                {
+                    MyUtility.Msg.WarningBox("Operation has been cancelled.");
+                    this.listControlBindingSource1.DataSource = null;
+                    return;
+                }
+
                 // 使用Find撈出的全部資料
                 DataTable dt =
                         (DataTable)this.listControlBindingSource1.DataSource;
@@ -989,6 +1006,20 @@ values(CONVERT(varchar(100), GETDATE(), 111),'{Env.User.Keyword}','{dr["OrderID"
 
             // 或者顯示一個等待光標等
             Cursor.Current = isLocked ? Cursors.WaitCursor : Cursors.Default;
+        }
+
+        private void P07_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (this.workers != null)
+            {
+                foreach (var item in this.workers.ToList())
+                {
+                    if (item.IsBusy)
+                    {
+                        this.cancelWorker = true;
+                    }
+                }
+            }
         }
     }
 }

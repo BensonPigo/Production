@@ -13,6 +13,7 @@ using System.Linq;
 using Sci.Production.Prg;
 using Sci.Win.Tools;
 using System.ComponentModel;
+using System.Runtime.CompilerServices;
 
 namespace Sci.Production.Logistic
 {
@@ -39,6 +40,7 @@ namespace Sci.Production.Logistic
         private bool check_OnlyReqCarton;
         private string selectDataTable_DefaultView_Sort = string.Empty;
         private int threadCnt = 0;
+        private bool cancelWorker;
 
         /// <summary>
         /// SelectDataTable_DefaultView_Sort
@@ -317,11 +319,12 @@ order by rn ");
                 {
                     this.ControlButton4Text("Cancel");
                 }
+
+                this.listControlBindingSource1.DataSource = this.selectDataTable;
+                this.numTotalCTNQty.Value = this.selectDataTable.Rows.Count;
+                this.numSelectedCTNQty.Value = this.selectDataTable.Rows.Count;
             }
 
-            this.listControlBindingSource1.DataSource = this.selectDataTable;
-            this.numTotalCTNQty.Value = this.selectDataTable.Rows.Count;
-            this.numSelectedCTNQty.Value = this.selectDataTable.Rows.Count;
             this.backgroundDownloadSticker.ReportProgress(0);
             this.labProcessingBar.Text = "0/0";
             this.progressCnt = 0;
@@ -765,6 +768,7 @@ where pd.CustCTN = '{dr["CustCTN"]}' and pd.CTNQty > 0 and pd.DisposeFromClog= 0
             this.check_OnlyReqCarton = this.chkOnlyReqCarton.Checked;
             this.completeCnt = 0;
             this.progressCnt = 0;
+            this.cancelWorker = false;
 
             if (dt == null || dt.Rows.Count == 0)
             {
@@ -968,6 +972,13 @@ where pd.CustCTN = '{dr["CustCTN"]}' and pd.CTNQty > 0 and pd.DisposeFromClog= 0
 
                 foreach (DataRow dr in dt.Rows)
                 {
+                    // 這裡才是真正中斷backgroundworker執行緒操作
+                    if (this.cancelWorker == true)
+                    {
+                        e.Cancel = true;
+                        return;
+                    }
+
                     StringBuilder singleWarningmsg = new StringBuilder();
                     string checkPackSql = $@"
 select pd.CFAReturnClogDate, pd.ReceiveDate, pd.TransferCFADate, pd.ReturnDate ,p.MDivisionID
@@ -1199,6 +1210,13 @@ and pd.DisposeFromClog = 0
                 DataTable dt =
                         (DataTable)this.listControlBindingSource1.DataSource;
 
+                if (e.Cancelled)
+                {
+                    MyUtility.Msg.WarningBox("Operation has been cancelled.");
+                    this.listControlBindingSource1.DataSource = null;
+                    return;
+                }
+
                 if (this.dtError.Rows.Count > 0)
                 {
                     MyUtility.Msg.WarningBox("Some carton cannot receive, please refer to field <Save Result>.");
@@ -1261,6 +1279,20 @@ and pd.DisposeFromClog = 0
 
                 // 先把UI介面鎖住
                 this.SetInterfaceLocked(false);
+            }
+        }
+
+        private void P03_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (this.workers != null)
+            {
+                foreach (var item in this.workers.ToList())
+                {
+                    if (item.IsBusy)
+                    {
+                        this.cancelWorker = true;
+                    }
+                }
             }
         }
     }
