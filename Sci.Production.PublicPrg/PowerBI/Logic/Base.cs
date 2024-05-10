@@ -188,7 +188,6 @@ ORDER BY [Group], [SEQ], [NAME]";
             }
 
             DateTime stratExecutedTime = DateTime.Now;
-            List<ExecutedList> executedListDetail = new List<ExecutedList>();
             List<ExecutedList> executedListEnd = new List<ExecutedList>();
 
             var results = executedList
@@ -197,6 +196,7 @@ ORDER BY [Group], [SEQ], [NAME]";
                 .AsOrdered()
                 .Select(item =>
                 {
+                    List<ExecutedList> executedListDetail = new List<ExecutedList>();
                     var results_detail = item
                         .OrderBy(x => x.SEQ)
                         .AsParallel()
