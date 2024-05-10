@@ -83,30 +83,29 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 string sql = @"	
 UPDATE t
 SET 
-	   t.[Wkno] = s.[Wkno]
-      ,t.[StyleID] = s.[StyleID]
-      ,t.[BrandID] = s.[BrandID]
-      ,t.[Supplier] = s.[Supplier]
-      ,t.[Refno] = s.[Refno]
-      ,t.[Color] = s.[Color]
-      ,t.[ArriveWHDate] = s.[ArriveWHDate]
-      ,t.[ArriveQty] = s.[ArriveQty]
-      ,t.[WeaveTypeID] = s.[WeaveTypeID]
-      ,t.[CutWidth] = s.[CutWidth]
-      ,t.[Weight] = s.[Weight]
-      ,t.[Composition] = s.[Composition]
-      ,t.[Desc] = s.[Desc]
-      ,t.[FabricConstructionID] = s.[FabricConstructionID]
-      ,t.[InspDate] = s.[InspDate]
-      ,t.[Result] = s.[Result]
-      ,t.[Grade] = s.[Grade]
-	  ,t.[DefectCode] = s.[DefectCode]
-      ,t.[DefectType] = s.[DefectType]
-      ,t.[DefectDesc] = s.[DefectDesc]
-      ,t.[Points] = s.[Points]
-      ,t.[DefectRate] = s.[DefectRate]
-      ,t.[Inspector] = s.[Inspector]
-       ,t.[EditDate] = s.[EditDate]
+	   t.[Wkno]                     = ISNULL(s.[Wkno], '')
+      ,t.[StyleID]                  = ISNULL(s.[StyleID], '')
+      ,t.[BrandID]                  = ISNULL(s.[BrandID], '')
+      ,t.[Supplier]                 = ISNULL(s.[Supplier], '')
+      ,t.[Refno]                    = ISNULL(s.[Refno], '')
+      ,t.[Color]                    = ISNULL(s.[Color], '')
+      ,t.[ArriveWHDate]             = s.[ArriveWHDate]
+      ,t.[ArriveQty]                = ISNULL(s.[ArriveQty], 0)
+      ,t.[WeaveTypeID]              = ISNULL(s.[WeaveTypeID], '')
+      ,t.[CutWidth]                 = ISNULL(s.[CutWidth], 0)
+      ,t.[Weight]                   = ISNULL(s.[Weight], 0)
+      ,t.[Composition]              = ISNULL(s.[Composition], '')
+      ,t.[Desc]                     = ISNULL(s.[Desc], '')
+      ,t.[FabricConstructionID]     = ISNULL(s.[FabricConstructionID], '')
+      ,t.[InspDate]                 = s.[InspDate]
+      ,t.[Result]                   = ISNULL(s.[Result], '')
+      ,t.[Grade]                    = ISNULL(s.[Grade], '')
+      ,t.[DefectType]               = ISNULL(s.[DefectType], '')
+      ,t.[DefectDesc]               = ISNULL(s.[DefectDesc], '')
+      ,t.[Points]                   = ISNULL(s.[Points], 0)
+      ,t.[DefectRate]               = ISNULL(s.[DefectRate], 0)
+      ,t.[Inspector]                = ISNULL(s.[Inspector], '')
+       ,t.[EditDate]                = s.[EditDate]
 from P_FabricInspReport_ReceivingTransferIn t 
 inner join #tmp s on t.POID = s.POID
 	and t.SEQ = s.SEQ
@@ -121,10 +120,36 @@ insert into P_FabricInspReport_ReceivingTransferIn (
 ,[Dyelot],[CutWidth],[Weight],[Composition],[Desc],[FabricConstructionID],[Roll],[InspDate],[Result],[Grade]
 ,[DefectCode],[DefectType],[DefectDesc],[Points],[DefectRate],[Inspector],[AddDate],[EditDate]
 )
-select 	   s.[POID],s.[SEQ],s.[Wkno],s.[ReceivingID],s.[StyleID],s.[BrandID],s.[Supplier],s.[Refno],s.[Color],s.[ArriveWHDate],s.[ArriveQty]
-,s.[WeaveTypeID],s.[Dyelot],s.[CutWidth],s.[Weight],s.[Composition],s.[Desc],s.[FabricConstructionID],s.[Roll],s.[InspDate]
-,s.[Result],s.[Grade],s.[DefectCode],s.[DefectType],s.[DefectDesc],s.[Points],s.[DefectRate],s.[Inspector]
-,s.[AddDate],s.[EditDate]
+select s.[POID]
+    , s.[SEQ]
+    , [Wkno]                    = ISNULL(s.[Wkno], '')
+    , s.[ReceivingID]
+    , [StyleID]                 = ISNULL(s.[StyleID], '')
+    , [BrandID]                 = ISNULL(s.[BrandID], '')
+    , [Supplier]                = ISNULL(s.[Supplier], '')
+    , [Refno]                   = ISNULL(s.[Refno], '')
+    , [Color]                   = ISNULL(s.[Color], '')
+    , s.[ArriveWHDate]
+    , [ArriveQty]               = ISNULL(s.[ArriveQty], 0)
+    , [WeaveTypeID]             = ISNULL(s.[WeaveTypeID], '')
+    , s.[Dyelot]
+    , [CutWidth]                = ISNULL(s.[CutWidth], 0)
+    , [Weight]                  = ISNULL(s.[Weight], 0)
+    , [Composition]             = ISNULL(s.[Composition], '')
+    , [Desc]                    = ISNULL(s.[Desc], '')
+    , [FabricConstructionID]    = ISNULL(s.[FabricConstructionID], '')
+    , s.[Roll]
+    , s.[InspDate]
+    , [Result]                  = ISNULL(s.[Result], '')
+    , [Grade]                   = ISNULL(s.[Grade], '')
+    , s.[DefectCode]
+    , [DefectType]              = ISNULL(s.[DefectType], '')
+    , [DefectDesc]              = ISNULL(s.[DefectDesc], '')
+    , [Points]                  = ISNULL(s.[Points], 0)
+    , [DefectRate]              = ISNULL(s.[DefectRate], 0)
+    , [Inspector]               = ISNULL(s.[Inspector], '')
+    , s.[AddDate]
+    , s.[EditDate]
 from #tmp s
 where not exists (
     select 1 from P_FabricInspReport_ReceivingTransferIn t 
