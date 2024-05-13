@@ -32,6 +32,9 @@
             this.btnSave = new Sci.Win.UI.Button();
             this.btnClose = new Sci.Win.UI.Button();
             this.panel7 = new System.Windows.Forms.Panel();
+            this.labProcessingBar = new System.Windows.Forms.Label();
+            this.label4 = new Sci.Win.UI.Label();
+            this.progressBarProcessing = new System.Windows.Forms.ProgressBar();
             this.btnImportFromBarcode = new Sci.Win.UI.Button();
             this.panel6 = new System.Windows.Forms.Panel();
             this.dateReceiveDate = new Sci.Win.UI.DateRange();
@@ -44,12 +47,13 @@
             this.txtPONo = new Sci.Win.UI.TextBox();
             this.labReceiveDate = new Sci.Win.UI.Label();
             this.grid = new Sci.Win.UI.Grid();
-            this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
+            this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.label1 = new Sci.Win.UI.Label();
             this.comboDropDownList1 = new Sci.Production.Class.ComboDropDownList(this.components);
             this.btnUpdateAll = new Sci.Win.UI.Button();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.backgroundDownloadSticker = new System.ComponentModel.BackgroundWorker();
             this.panel7.SuspendLayout();
             this.panel6.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.grid)).BeginInit();
@@ -83,11 +87,43 @@
             // panel7
             // 
             this.panel7.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panel7.Controls.Add(this.labProcessingBar);
+            this.panel7.Controls.Add(this.label4);
+            this.panel7.Controls.Add(this.progressBarProcessing);
             this.panel7.Controls.Add(this.btnImportFromBarcode);
             this.panel7.Location = new System.Drawing.Point(0, 64);
             this.panel7.Name = "panel7";
             this.panel7.Size = new System.Drawing.Size(864, 42);
             this.panel7.TabIndex = 46;
+            // 
+            // labProcessingBar
+            // 
+            this.labProcessingBar.AutoSize = true;
+            this.labProcessingBar.BackColor = System.Drawing.Color.Transparent;
+            this.labProcessingBar.Location = new System.Drawing.Point(228, 15);
+            this.labProcessingBar.Name = "labProcessingBar";
+            this.labProcessingBar.Size = new System.Drawing.Size(28, 17);
+            this.labProcessingBar.TabIndex = 50;
+            this.labProcessingBar.Text = "0/0";
+            // 
+            // label4
+            // 
+            this.label4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.label4.Location = new System.Drawing.Point(8, 12);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(133, 23);
+            this.label4.TabIndex = 49;
+            this.label4.Text = "Processing progress";
+            // 
+            // progressBarProcessing
+            // 
+            this.progressBarProcessing.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.progressBarProcessing.BackColor = System.Drawing.SystemColors.Control;
+            this.progressBarProcessing.Location = new System.Drawing.Point(144, 12);
+            this.progressBarProcessing.Name = "progressBarProcessing";
+            this.progressBarProcessing.Size = new System.Drawing.Size(208, 23);
+            this.progressBarProcessing.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
+            this.progressBarProcessing.TabIndex = 48;
             // 
             // btnImportFromBarcode
             // 
@@ -134,7 +170,7 @@
             this.dateReceiveDate.DateBox2.Size = new System.Drawing.Size(129, 23);
             this.dateReceiveDate.DateBox2.TabIndex = 1;
             this.dateReceiveDate.IsSupportEditMode = false;
-            this.dateReceiveDate.Location = new System.Drawing.Point(103, 34);
+            this.dateReceiveDate.Location = new System.Drawing.Point(144, 35);
             this.dateReceiveDate.Name = "dateReceiveDate";
             this.dateReceiveDate.Size = new System.Drawing.Size(280, 23);
             this.dateReceiveDate.TabIndex = 119;
@@ -143,7 +179,7 @@
             // 
             this.labelSPNo.Location = new System.Drawing.Point(8, 5);
             this.labelSPNo.Name = "labelSPNo";
-            this.labelSPNo.Size = new System.Drawing.Size(92, 23);
+            this.labelSPNo.Size = new System.Drawing.Size(133, 23);
             this.labelSPNo.TabIndex = 0;
             this.labelSPNo.Text = "SP#";
             // 
@@ -163,14 +199,14 @@
             this.txtPackID.BackColor = System.Drawing.Color.White;
             this.txtPackID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtPackID.IsSupportEditMode = false;
-            this.txtPackID.Location = new System.Drawing.Point(588, 5);
+            this.txtPackID.Location = new System.Drawing.Point(612, 5);
             this.txtPackID.Name = "txtPackID";
             this.txtPackID.Size = new System.Drawing.Size(145, 23);
             this.txtPackID.TabIndex = 5;
             // 
             // labelPackID
             // 
-            this.labelPackID.Location = new System.Drawing.Point(516, 5);
+            this.labelPackID.Location = new System.Drawing.Point(540, 5);
             this.labelPackID.Name = "labelPackID";
             this.labelPackID.Size = new System.Drawing.Size(69, 23);
             this.labelPackID.TabIndex = 4;
@@ -178,7 +214,7 @@
             // 
             // labelPONo
             // 
-            this.labelPONo.Location = new System.Drawing.Point(275, 5);
+            this.labelPONo.Location = new System.Drawing.Point(321, 5);
             this.labelPONo.Name = "labelPONo";
             this.labelPONo.Size = new System.Drawing.Size(49, 23);
             this.labelPONo.TabIndex = 2;
@@ -189,7 +225,7 @@
             this.txtSPNo.BackColor = System.Drawing.Color.White;
             this.txtSPNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtSPNo.IsSupportEditMode = false;
-            this.txtSPNo.Location = new System.Drawing.Point(103, 5);
+            this.txtSPNo.Location = new System.Drawing.Point(144, 5);
             this.txtSPNo.Name = "txtSPNo";
             this.txtSPNo.Size = new System.Drawing.Size(146, 23);
             this.txtSPNo.TabIndex = 1;
@@ -199,7 +235,7 @@
             this.txtPONo.BackColor = System.Drawing.Color.White;
             this.txtPONo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtPONo.IsSupportEditMode = false;
-            this.txtPONo.Location = new System.Drawing.Point(327, 5);
+            this.txtPONo.Location = new System.Drawing.Point(373, 5);
             this.txtPONo.Name = "txtPONo";
             this.txtPONo.Size = new System.Drawing.Size(153, 23);
             this.txtPONo.TabIndex = 3;
@@ -208,7 +244,7 @@
             // 
             this.labReceiveDate.Location = new System.Drawing.Point(8, 34);
             this.labReceiveDate.Name = "labReceiveDate";
-            this.labReceiveDate.Size = new System.Drawing.Size(92, 23);
+            this.labReceiveDate.Size = new System.Drawing.Size(133, 23);
             this.labReceiveDate.TabIndex = 18;
             this.labReceiveDate.Text = "Receive Date";
             // 
@@ -246,18 +282,19 @@
             // 
             this.label1.Location = new System.Drawing.Point(9, 119);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(92, 23);
+            this.label1.Size = new System.Drawing.Size(133, 23);
             this.label1.TabIndex = 50;
             this.label1.Text = "Return to";
             // 
             // comboDropDownList1
             // 
+            this.comboDropDownList1.AddAllItem = false;
             this.comboDropDownList1.BackColor = System.Drawing.Color.White;
             this.comboDropDownList1.EditMode = Sci.Win.UI.AdvEditModes.None;
             this.comboDropDownList1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboDropDownList1.FormattingEnabled = true;
             this.comboDropDownList1.IsSupportUnselect = true;
-            this.comboDropDownList1.Location = new System.Drawing.Point(104, 119);
+            this.comboDropDownList1.Location = new System.Drawing.Point(145, 119);
             this.comboDropDownList1.Name = "comboDropDownList1";
             this.comboDropDownList1.OldText = "";
             this.comboDropDownList1.Size = new System.Drawing.Size(121, 24);
@@ -267,7 +304,7 @@
             // btnUpdateAll
             // 
             this.btnUpdateAll.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnUpdateAll.Location = new System.Drawing.Point(231, 115);
+            this.btnUpdateAll.Location = new System.Drawing.Point(272, 115);
             this.btnUpdateAll.Name = "btnUpdateAll";
             this.btnUpdateAll.Size = new System.Drawing.Size(131, 30);
             this.btnUpdateAll.TabIndex = 52;
@@ -290,16 +327,27 @@
             this.panel1.Size = new System.Drawing.Size(870, 155);
             this.panel1.TabIndex = 53;
             // 
+            // backgroundDownloadSticker
+            // 
+            this.backgroundDownloadSticker.WorkerReportsProgress = true;
+            this.backgroundDownloadSticker.WorkerSupportsCancellation = true;
+            this.backgroundDownloadSticker.DoWork += new System.ComponentModel.DoWorkEventHandler(this.BackgroundDownloadSticker_DoWork);
+            this.backgroundDownloadSticker.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.BackgroundDownloadSticker_ProgressChanged);
+            this.backgroundDownloadSticker.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.BackgroundDownloadSticker_RunWorkerCompleted);
+            // 
             // P24
             // 
             this.ClientSize = new System.Drawing.Size(870, 559);
             this.Controls.Add(this.grid);
             this.Controls.Add(this.panel1);
             this.Name = "P24";
+            this.OnLineHelpID = "Sci.Win.Tems.QueryForm";
             this.Text = "P24. CFA Carton return Input";
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.P24_FormClosed);
             this.Controls.SetChildIndex(this.panel1, 0);
             this.Controls.SetChildIndex(this.grid, 0);
             this.panel7.ResumeLayout(false);
+            this.panel7.PerformLayout();
             this.panel6.ResumeLayout(false);
             this.panel6.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.grid)).EndInit();
@@ -332,5 +380,9 @@
         private Class.ComboDropDownList comboDropDownList1;
         private Win.UI.Button btnUpdateAll;
         private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.Label labProcessingBar;
+        private Win.UI.Label label4;
+        private System.Windows.Forms.ProgressBar progressBarProcessing;
+        private System.ComponentModel.BackgroundWorker backgroundDownloadSticker;
     }
 }
