@@ -82,6 +82,26 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                     new SqlParameter("@EDate", eDate),
                 };
                 string sql = @"	
+delete t
+from P_SewingLineSchedule t
+where exists (select 1 from #tmp s where t.APSNo = s.APSNo 
+										AND t.SewingDay = s.SewingDay 
+										AND t.SewingLineID = s.SewingLineID  
+										AND t.Sewer = s.Sewer 
+										AND t.FactoryID = s.FactoryID)
+and ((t.AddDate >= @SDate and  t.AddDate <= @EDate)
+	or (t.EditDate >= @SDate and t.EditDate <= @EDate)
+	or (t.SewingOffline >= @SDate and t.SewingOffline <= @EDate)
+)
+and exists (select 1 from P_SewingLineSchedule s where t.APSNo = s.APSNo 
+										AND t.SewingDay = s.SewingDay 
+										AND t.SewingLineID = s.SewingLineID  
+										AND t.Sewer = s.Sewer 
+										AND t.FactoryID = s.FactoryID
+			group by s.APSNo, s.SewingDay, s.SewingLineID, s.Sewer, s.FactoryID
+			having count(*) > 1	 
+)
+
 UPDATE t 
 	SET t.SewingStartTime =  s.SewingStartTime,
 		t.SewingEndTime =  s.SewingEndTime,
@@ -181,7 +201,7 @@ select 	s.APSNo, s.SewingLineID, s.SewingDay, s.SewingStartTime, s.SewingEndTime
 	s.[Subcon Qty],	s.[Std Qty for printing], s.StyleName, s.StdQtyEMB, s.EMBStitch, s.EMBStitchCnt, s.TtlQtyEMB,
 	s.PrintPcs, s.InlineCategory, s.StyleSeason, s.AddDate, s.EditDate
 from #tmp s
-where not exists (select 1 from P_SewingLineSchedule t where t.APSNo = s.APSNo 
+where not exists (select 1 from P_SewingLineSchedule t WITH(NOLOCK) where t.APSNo = s.APSNo 
 														AND t.SewingDay = s.SewingDay 
 														AND t.SewingLineID = s.SewingLineID  
 														AND t.Sewer = s.Sewer 
