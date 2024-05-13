@@ -131,6 +131,8 @@ ORDER BY [Group], [SEQ], [NAME]";
                 bool hasStartDate2 = (bool)dr["HasStartDate2"];
                 bool hasEndDate2 = (bool)dr["HasEndDate2"];
                 bool runOnSunday = (bool)dr["RunOnSunday"];
+                int group = (int)dr["Group"];
+                int seq = (int)dr["SEQ"];
                 DateTime? sDate = hasStartDate ? DateTime.Parse(this.GetSQLdate(dr["StartDateDefault"].ToString())) : (DateTime?)null;
                 DateTime? eDate = hasEndDate ? DateTime.Parse(this.GetSQLdate(dr["EndDateDefault"].ToString())) : (DateTime?)null;
                 DateTime? sDate2 = hasStartDate2 ? DateTime.Parse(this.GetSQLdate(dr["StartDateDefault2"].ToString())) : (DateTime?)null;
@@ -140,9 +142,7 @@ ORDER BY [Group], [SEQ], [NAME]";
                 string eDate_s = hasEndDate ? "Edate : " + eDate.Value.ToShortDateString() : string.Empty;
                 string sDate_s2 = hasStartDate2 ? "Sdate2 : " + sDate2.Value.ToShortDateString() : string.Empty;
                 string eDate_s2 = hasEndDate2 ? "Edate2 : " + eDate2.Value.ToShortDateString() : string.Empty;
-                string remark = $@"{dr["Source"]}{procedureNameS}{Environment.NewLine}{sDate_s}{Environment.NewLine}{eDate_s}{Environment.NewLine}{sDate_s2}{Environment.NewLine}{eDate_s2}";
-                int group = (int)dr["Group"];
-                int seq = (int)dr["SEQ"];
+                string remark = $@"{dr["Source"]}{procedureNameS}{Environment.NewLine}{sDate_s}{Environment.NewLine}{eDate_s}{Environment.NewLine}{sDate_s2}{Environment.NewLine}{eDate_s2}{"Group :" + group}{", SEQ :" + seq}";
 
                 ExecutedList model = new ExecutedList()
                 {
@@ -188,7 +188,6 @@ ORDER BY [Group], [SEQ], [NAME]";
             }
 
             DateTime stratExecutedTime = DateTime.Now;
-            List<ExecutedList> executedListDetail = new List<ExecutedList>();
             List<ExecutedList> executedListEnd = new List<ExecutedList>();
 
             var results = executedList
@@ -197,26 +196,46 @@ ORDER BY [Group], [SEQ], [NAME]";
                 .AsOrdered()
                 .Select(item =>
                 {
+                    List<ExecutedList> executedListDetail = new List<ExecutedList>();
                     var results_detail = item
                         .OrderBy(x => x.SEQ)
                         .AsParallel()
                         .AsSequential()
-                        .Select(detail => this.ExecuteSingle(detail))
-
-                        // .TakeWhile(model => model.Group == 0 || model.Success) // 只保留成功的结果
+                        .Select(detail =>
+                        {
+                            ExecutedList detailPararllelResult = this.ExecuteSingle(detail);
+                            executedListDetail.Add(detailPararllelResult);
+                            return detailPararllelResult;
+                        })
+                        .TakeWhile(model => model.Group == 0 || model.Success) // 只保留成功的结果
                         .ToList();
 
-                    foreach (var item_detail in results_detail)
-                    {
-                        executedListDetail.Add(item_detail);
-                    }
-
                     return executedListDetail;
-                });
+                })
+                .ToList();
 
             foreach (var item in results)
             {
                 executedListEnd.AddRange(item);
+            }
+
+            foreach (var item in executedList.Where(x => !executedListEnd.Any(y => y.ClassName == x.ClassName)))
+            {
+                string errMsg = "沒有執行";
+                var queryErrorGroup = executedListEnd.Where(x => x.Group == item.Group && x.SEQ < item.SEQ && x.Success == false);
+                if (queryErrorGroup.Any())
+                {
+                    errMsg = string.Join(",", queryErrorGroup.Select(x => x.ClassName)) + " 執行失敗";
+                }
+
+                executedListEnd.Add(new ExecutedList()
+                {
+                    ClassName = item.ClassName,
+                    Success = false,
+                    ExecuteSDate = DateTime.Now,
+                    ExecuteEDate = DateTime.Now,
+                    ErrorMsg = errMsg,
+                });
             }
 
             this.UpdateJobLogAndSendMail(executedListEnd, stratExecutedTime);
