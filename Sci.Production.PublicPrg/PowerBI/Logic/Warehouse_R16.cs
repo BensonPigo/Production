@@ -22,7 +22,7 @@ namespace Sci.Production.Prg.PowerBI.Logic
         }
 
         /// <inheritdoc/>
-        public Base_ViewModel GetIssueFabricByCuttingTransactionList(PPIC_R16_ViewModel model)
+        public Base_ViewModel GetIssueFabricByCuttingTransactionList(Warehouse_R16_ViewModel model)
         {
             List<SqlParameter> listPar = new List<SqlParameter>
             {
