@@ -6,6 +6,7 @@ using Ict;
 using Sci.Data;
 using System.Linq;
 using Sci.Production.PublicPrg;
+using System.Transactions;
 
 namespace Sci.Production.Shipping
 {
@@ -358,18 +359,25 @@ where vdd.ID = '{id}'
                     idu.Append(sqlUpdateVNConsumption_Detail_DetailWaste);
                 }
 
-                drResult = DBProxy.Current.Execute(null, idu.ToString());
-                if (!drResult)
+                TransactionScope transcation = new TransactionScope(TransactionScopeOption.Required, TimeSpan.FromMinutes(5));
+                using (transcation)
                 {
-                    this.ShowErr("Insert/Update datas error!", drResult);
-                }
-                else
-                {
+                    drResult = DBProxy.Current.Execute(null, idu.ToString());
+                    if (!drResult)
+                    {
+                        transcation.Dispose();
+                        this.ShowErr("Insert/Update datas error!", drResult);
+                        return;
+                    }
+
                     DataRow[] drsf = this.dtBatchImport.Select("remark <> ''");
                     this.numericFail.Value = drsf.Length;
                     DataTable distinctchk = this.dtBatchImport.DefaultView.ToTable(true, new string[] { "CustomSP", "checkS" });
                     DataRow[] drs2 = distinctchk.Select("checkS = 1");
                     this.numericSucessSP.Value = drs2.Length;
+
+                    transcation.Complete();
+                    transcation.Dispose();
                     MyUtility.Msg.InfoBox("Complete!!");
                 }
             }
