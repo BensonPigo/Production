@@ -25,7 +25,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 eDate = DateTime.Now;
             }
 
-            PPIC_R16_ViewModel model = new PPIC_R16_ViewModel()
+            Warehouse_R16_ViewModel model = new Warehouse_R16_ViewModel()
             {
                 IssueDateFrom = null,
                 IssueDateTo = null,

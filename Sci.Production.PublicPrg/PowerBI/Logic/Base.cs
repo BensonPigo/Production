@@ -34,6 +34,8 @@ namespace Sci.Production.Prg.PowerBI.Logic
             P_FabricInspReport_ReceivingTransferIn,
             P_MtlStatusAnalisis,
             P_SubProInsReport,
+            P_OustandingPO,
+            P_OutstandingPOStatus,
         }
 
         /// <summary>
@@ -162,7 +164,10 @@ ORDER BY [Group], [SEQ], [NAME]";
                 executes.Add(model);
             }
 
-            return executes;
+            var executesOrderBy = from o in executes
+                     orderby o.Group, o.SEQ, o.ClassName
+                     select o;
+            return executesOrderBy.ToList();
         }
 
         /// <summary>
@@ -305,6 +310,12 @@ ORDER BY [Group], [SEQ], [NAME]";
                         break;
                     case ListName.P_SubProInsReport:
                         result = new P_Import_SubProInsReport().P_SubProInsReport(item.SDate, item.EDate);
+                        break;
+                    case ListName.P_OustandingPO:
+                        result = new P_Import_OutstandingPO().P_OutstandingPO(item.SDate, item.EDate);
+                        break;
+                    case ListName.P_OutstandingPOStatus:
+                        result = new P_Import_OutstandingPOStatus().P_OutstandingPOStatus(item.SDate);
                         break;
                     default:
                         // Execute all Stored Procedures

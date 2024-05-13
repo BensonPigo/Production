@@ -221,6 +221,8 @@
     <Compile Include="PowerBI\DataAccess\P_Import_IssueFabricByCuttingTransactionList.cs" />
     <Compile Include="PowerBI\DataAccess\P_Import_MonthlySewingOutputSummary.cs" />
     <Compile Include="PowerBI\DataAccess\P_Import_MtlStatusAnalisis.cs" />
+    <Compile Include="PowerBI\DataAccess\P_Import_OutstandingPO.cs" />
+    <Compile Include="PowerBI\DataAccess\P_Import_OutstandingPOStatus.cs" />
     <Compile Include="PowerBI\DataAccess\P_Import_ProductionKitsTracking.cs" />
     <Compile Include="PowerBI\DataAccess\P_Import_QAR31.cs" />
     <Compile Include="PowerBI\DataAccess\P_Import_QA_CFAMasterList.cs" />
@@ -243,6 +245,7 @@
     </Compile>
     <Compile Include="PowerBI\Logic\Base.cs" />
     <Compile Include="PowerBI\Logic\Cutting_R13.cs" />
+    <Compile Include="PowerBI\Logic\PPIC_R16.cs" />
     <Compile Include="PowerBI\Logic\PPIC_R21.cs" />
     <Compile Include="PowerBI\Logic\PPIC_R02.cs" />
     <Compile Include="PowerBI\Logic\PPIC_R03.cs" />
@@ -254,11 +257,12 @@
     <Compile Include="PowerBI\Model\Base_ViewModel.cs" />
     <Compile Include="PowerBI\Model\Cutting_R13_ViewModel.cs" />
     <Compile Include="PowerBI\Model\Inline_R08_ViewModel.cs" />
+    <Compile Include="PowerBI\Model\PPIC_R16_ViewModel.cs" />
     <Compile Include="PowerBI\Model\PPIC_R21_ViewModel.cs" />
     <Compile Include="PowerBI\Model\PPIC_R02_ViewModel.cs" />
     <Compile Include="PowerBI\Model\PPIC_R03_ViewModel.cs" />
     <Compile Include="PowerBI\Model\PPIC_R01_ViewModel.cs" />
-    <Compile Include="PowerBI\Model\PPIC_R16_ViewModel.cs" />
+    <Compile Include="PowerBI\Model\Warehouse_R16_ViewModel.cs" />
     <Compile Include="PowerBI\Model\QA_R31_ViewModel.cs" />
     <Compile Include="PowerBI\Model\QA_R11_ViewModel.cs" />
     <Compile Include="PowerBI\Model\QA_R51_ViewModel.cs" />
