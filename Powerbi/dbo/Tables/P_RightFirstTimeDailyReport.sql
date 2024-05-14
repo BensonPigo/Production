@@ -20,7 +20,7 @@ CREATE TABLE [dbo].[P_RightFirstTimeDailyReport](
 	[InspectQty] [numeric](7, 0) NOT NULL,
 	[RejectQty] [numeric](7, 0) NOT NULL,
 	[RFTPercentage] [numeric](7, 2) NOT NULL,
-	[Over] [varchar](15) NULL,
+	[Over] [varchar](15) NOT NULL,
 	[QC] [decimal](15, 4) NOT NULL,
 	[Remark] [nvarchar](60) NOT NULL,
  CONSTRAINT [PK_P_RightFirstTimeDailyReport] PRIMARY KEY CLUSTERED 
