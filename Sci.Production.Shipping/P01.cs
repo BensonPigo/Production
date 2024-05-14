@@ -1410,7 +1410,7 @@ where a.ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
 
                 if (MyUtility.Convert.GetBool(this.CurrentMaintain["ResponsibleSCI"]))
                 {
-                    listResponsible.Add("SCI");
+                    listResponsible.Add("Marketing");
                 }
 
                 if (MyUtility.Convert.GetBool(this.CurrentMaintain["ResponsibleSupp"]))
