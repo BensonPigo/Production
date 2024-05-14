@@ -42,15 +42,15 @@ BrandID = case 	when o.BrandID != 'SUBCON-I' then o.BrandID
 Remark = isnull(r.Remark,''),
 RemarkSimilarStyle = isnull(simerRemark.rRemark,''),
 Type = iif((r.Remark != '' or isnull(simerRemark.rRemark,'') != '') and s.outPutDate between DateADD(month, -3, Getdate()) and GetDate(), 'Repeat', 'New Style' )
-from Orders o
-LEFT JOIN SewingOutput_Detail sd ON sd.OrderId = o.ID
-LEFT JOIN SewingOutput s ON sd.ID = s.ID
+from Orders o with (nolock)
+LEFT JOIN SewingOutput_Detail sd with (nolock) ON sd.OrderId = o.ID
+LEFT JOIN SewingOutput s with (nolock) ON sd.ID = s.ID
 Outer Apply(
 Select max(s1.OutputDate) as OutputDate, Min(s2.SewingLineID) as SewingLineID
-from Orders o2
-LEFT JOIN SewingOutput_Detail sd2 on sd2.OrderId = o2.ID
-LEFT JOIN SewingOutput s1 ON sd2.ID = s1.ID
-Inner Join SewingOutput s2 ON s2.ID = s1.ID and s1.OutputDate = s2.OutputDate
+from Orders o2 with (nolock)
+LEFT JOIN SewingOutput_Detail sd2 with (nolock) on sd2.OrderId = o2.ID
+LEFT JOIN SewingOutput s1 with (nolock) ON sd2.ID = s1.ID
+Inner Join SewingOutput s2 with (nolock) ON s2.ID = s1.ID and s1.OutputDate = s2.OutputDate
 where o2.StyleID = o.StyleID
 ) MaxSew
 Outer apply(
@@ -65,12 +65,12 @@ from ( SELECT  simer.StyleID
           FROM (
             SELECT DISTINCT * FROM 
 			     (SELECT StyleID = MasterStyleID, BrandID = MasterBrandID
-                  FROM  Style_SimilarStyle ss
+                  FROM  Style_SimilarStyle ss with (nolock)
                   WHERE EXISTS ( SELECT 1  FROM Style s with(nolock) 
 								 WHERE  s.Ukey = o.StyleUkey  AND ss.MasterStyleID = s.id  AND s.BrandID = ss.MasterBrandID )
                   UNION 
                   SELECT StyleID = MasterStyleID,  BrandID = MasterBrandID
-                  FROM  Style_SimilarStyle ss
+                  FROM  Style_SimilarStyle ss with (nolock)
                   WHERE EXISTS ( SELECT 1 FROM Style s with(nolock)
                                  WHERE  s.Ukey = o.StyleUkey AND ss.ChildrenStyleID = s.id AND s.BrandID = ss.ChildrenBrandID
                     )
@@ -79,8 +79,8 @@ from ( SELECT  simer.StyleID
 for xml path ('')), 1, 1, '' )
 else '' end
 ) as simerRemark
-outer apply( select BrandID from orders o1 where o.CustPONo = o1.id) Order2
-outer apply( select top 1 BrandID from Style where id = o.StyleID 
+outer apply( select BrandID from orders o1 with (nolock) where o.CustPONo = o1.id) Order2
+outer apply( select top 1 BrandID from Style with (nolock) where id = o.StyleID 
     and SeasonID = o.SeasonID and BrandID != 'SUBCON-I') StyleBrand
 where 1=1 
 {where}
