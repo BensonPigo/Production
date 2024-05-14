@@ -50,7 +50,7 @@ namespace Sci.Production.Warehouse
         /// <inheritdoc/>
         protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
-            PPIC_R16_ViewModel model = new PPIC_R16_ViewModel()
+            Warehouse_R16_ViewModel model = new Warehouse_R16_ViewModel()
             {
                 IssueDateFrom = this.issueDate1,
                 IssueDateTo = this.issueDate2,
