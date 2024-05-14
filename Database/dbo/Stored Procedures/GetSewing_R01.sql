@@ -202,9 +202,9 @@ BEGIN
 								  WHEN LastShift='O' then 'Subcon-Out'
 								  WHEN LastShift='I' then 'Subcon-In(Sister)'
 								  else 'Subcon-In(Non Sister)' end				
-			   , Team
-			   , SewingLineID
-			   , OrderId
+			   , #tmp1stFilter.Team
+			   , #tmp1stFilter.SewingLineID
+			   , #tmp1stFilter.OrderId
 			   , Style = IIF(Category='M',MockupStyle,OrderStyle) 
 			   , ComboType
 			   , CDCodeNew
@@ -213,8 +213,8 @@ BEGIN
 			   , Lining
 			   , Gender
 			   , Construction
-			   , ActManPower = IIF(SHIFT = 'O'
-									,MAX(ActManPower) OVER (PARTITION BY SHIFT,Team,SewingLineID)
+			   , ActManPower = IIF(#tmp1stFilter.SHIFT = 'O'
+									,MAX(ActManPower) OVER (PARTITION BY #tmp1stFilter.SHIFT,#tmp1stFilter.Team,#tmp1stFilter.SewingLineID)
 									,ActManPower)
 			   , WorkHour
 			   , ManHour = ActManPower * WorkHour
@@ -236,17 +236,26 @@ BEGIN
 	   									  , (ROUND(IIF(Category = 'M', MockupCPU * MockupCPUFactor
 	   						      									 , OrderCPU * OrderCPUFactor * Rate) * QAQty, 2) / (ROUND(ActManPower * WorkHour, 2) * 3600 / StdTMS)) * 100, 0)
 	   									  , 1) 
-			   , RFT = IIF(ori_InlineQty = 0, 0, ROUND(ori_QAQty* 1.0 / ori_InlineQty * 1.0 * 100 ,2))
+			   , RFT = RFTInfo.RFT
 			   , CumulateDate
 			   , InlineQty
 			   , Diff = QAQty - InlineQty
-				,FactoryID 
+			   , #tmp1stFilter.FactoryID 
 			   , LastShift
-			   , ComboType
 		into #tmp
 		from #tmp1stFilter
+		outer apply (
+			select RFT = isnull(Convert(float(50),Convert(FLOAT(50), round(((A.InspectQty-A.RejectQty)/ nullif(A.InspectQty, 0))*100,2))),0) 
+			from RFT A with (nolock) 
+			where A.OrderID=#tmp1stFilter.OrderId
+			and A.CDate=#tmp1stFilter.OutputDate
+			and A.SewinglineID=#tmp1stFilter.SewinglineID
+			and A.FactoryID=#tmp1stFilter.FactoryID
+			and A.Shift=#tmp1stFilter.Shift
+			and A.Team=#tmp1stFilter.Team 
+			) as RFTInfo
 		where 1 =1
-		order by LastShift,Team,SewingLineID,OrderId
+		order by LastShift,#tmp1stFilter.Team,#tmp1stFilter.SewingLineID,#tmp1stFilter.OrderId
 		---↓最後Select 
 		select * from #tmp where 1 =1 order by LastShift,Team,SewingLineID,OrderId
 ---------------------------------------------------------------------------------
