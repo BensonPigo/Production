@@ -61,14 +61,6 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             using (sqlConn)
             {
                 string sql = @"	
-Delete 
-p 
-From P_SimilarStyle p
-inner join #tmp t on p.OutputDate = t.OutputDate 
-and p.FactoryID = t.FactoryID 
-and p.StyleID = t.StyleID
-and p.BrandID = t.BrandID
-
 Insert into P_SimilarStyle
 select t.* from #tmp t
 where not exists(	select 1 
@@ -76,9 +68,23 @@ where not exists(	select 1
 					where p.OutputDate = t.OutputDate 
 					and p.FactoryID = t.FactoryID
 					and p.StyleID = t.StyleID 
-					and p.BrandID = t.BrandID
-)
+					and p.BrandID = t.BrandID )
 
+Delete P_SimilarStyle 
+where Not exists (  select 1 
+					from #tmp t
+					where P_SimilarStyle.OutputDate = t.OutputDate 
+					and P_SimilarStyle.FactoryID = t.FactoryID
+					and P_SimilarStyle.StyleID = t.StyleID 
+					and P_SimilarStyle.BrandID = t.BrandID )
+
+Update p Set Remark = t.Remark, RemarkSimilarStyle = t.RemarkSimilarStyle, Type = t.Type
+From P_SimilarStyle p
+inner join #tmp t on p.OutputDate = t.OutputDate 
+and p.FactoryID = t.FactoryID 
+and p.StyleID = t.StyleID
+and p.BrandID = t.BrandID
+and (p.Remark != t.Remark or p.RemarkSimilarStyle != t.RemarkSimilarStyle or p.Type != t.type)
 ";
 
                 result = MyUtility.Tool.ProcessWithDatatable(dt, null, sql, result: out DataTable dataTable, temptablename: "#tmp", conn: sqlConn, paramters: null);
