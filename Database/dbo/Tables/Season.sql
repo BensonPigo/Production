@@ -10,6 +10,7 @@
     [EditName]         VARCHAR (10) CONSTRAINT [DF_Season_EditName] DEFAULT ('') NOT NULL,
     [EditDate]         DATETIME     NULL,
     [SeasonForDisplay] VARCHAR (20) NULL,
+    [EndlineDisplay]   VARCHAR(20) CONSTRAINT [DF_Season_EndlineDisplay] DEFAULT ('') NOT NULL,
     CONSTRAINT [PK_Season] PRIMARY KEY CLUSTERED ([ID] ASC, [BrandID] ASC)
 );
 

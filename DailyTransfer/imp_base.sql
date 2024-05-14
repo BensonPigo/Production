@@ -221,6 +221,7 @@ INSERT INTO Production.dbo.Season
       ,EditName
       ,EditDate
       ,SeasonForDisplay
+	  ,EndlineDisplay
 )
 select 
        isnull(ID, '')
@@ -234,6 +235,7 @@ select
       ,isnull(EditName, '')
       ,EditDate
       ,SeasonForDisplay
+	  ,EndlineDisplay
 from Trade_To_Pms.dbo.Season as b WITH (NOLOCK)
 where not exists(select id from Production.dbo.Season as a WITH (NOLOCK) where a.id = b.id and a.BrandID = b.BrandID)
 
