@@ -154,7 +154,6 @@ namespace Sci.Production.Quality
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
             this.SetCount(this.printData.Rows.Count);
-            StringBuilder c = new StringBuilder();
             if (this.printData.Rows.Count <= 0)
             {
                 MyUtility.Msg.WarningBox("Data not found!");

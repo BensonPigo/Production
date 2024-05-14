@@ -36,6 +36,7 @@ namespace Sci.Production.Prg.PowerBI.Logic
             P_SubProInsReport,
             P_OustandingPO,
             P_OutstandingPOStatus,
+            P_SubprocessWIP,
         }
 
         /// <summary>
@@ -316,6 +317,9 @@ ORDER BY [Group], [SEQ], [NAME]";
                         break;
                     case ListName.P_OutstandingPOStatus:
                         result = new P_Import_OutstandingPOStatus().P_OutstandingPOStatus(item.SDate);
+                        break;
+                    case ListName.P_SubprocessWIP:
+                        result = new P_Import_SubprocessWIP().P_SubprocessWIP(item.SDate);
                         break;
                     default:
                         // Execute all Stored Procedures
