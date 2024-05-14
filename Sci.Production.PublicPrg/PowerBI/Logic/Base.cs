@@ -34,6 +34,7 @@ namespace Sci.Production.Prg.PowerBI.Logic
             P_FabricInspReport_ReceivingTransferIn,
             P_MtlStatusAnalisis,
             P_SubProInsReport,
+            P_SubprocessWIP,
         }
 
         /// <summary>
@@ -286,6 +287,9 @@ ORDER BY [Group], [SEQ], [NAME]";
                         break;
                     case ListName.P_SubProInsReport:
                         result = new P_Import_SubProInsReport().P_SubProInsReport(item.SDate, item.EDate);
+                        break;
+                    case ListName.P_SubprocessWIP:
+                        result = new P_Import_SubprocessWIP().P_SubprocessWIP(item.SDate);
                         break;
                     default:
                         // Execute all Stored Procedures
