@@ -185,6 +185,7 @@ left join Export ex with (nolock) on ex.ID = exd.ID
 select  F.MDivisionID
         ,O.FactoryID
         ,[Wkno] = wk.wkno
+        ,[Season] = O.SeasonID
         ,PS.id
         ,style = si.StyleID
 		,o.BrandID
@@ -206,9 +207,11 @@ select  F.MDivisionID
 						else PSD.FabricType 
 						end) + '-' + Fabric.MtlTypeID
 		,ds5.string
-        ,[Color] = iif(Fabric.MtlTypeID in ('EMB Thread', 'SP Thread', 'Thread') 
+        ,[Material Color] = iif(Fabric.MtlTypeID in ('EMB Thread', 'SP Thread', 'Thread') 
                 , IIF(isnull(PSD.SuppColor,'') = '',dbo.GetColorMultipleID(O.BrandID, psdsC.SpecValue),PSD.SuppColor)
                 , dbo.GetColorMultipleID(O.BrandID, psdsC.SpecValue))
+        ,[Article] = Article.Articlelist
+        ,[Color] = color.Colorlist
         ,PSD.Qty
         ,PSD.NETQty
         ,PSD.NETQty+PSD.LossQty
@@ -340,6 +343,72 @@ select wkno = stuff((
 	    for xml path('')
 	),1,1,'')
 )Wk
+Outer apply
+(
+SELECT Colorlist = STUFF((
+		SELECT CONCAT(',',ColorID)
+		FROM(   SELECT tc.ColorID
+				FROM dbo.Order_ColorCombo as tc with(nolock) 
+				INNER JOIN Order_BOA sb on sb.Id = o.POID and tc.FabricPanelCode = sb.FabricPanelCode 
+				LEFT JOIN Order_BOA_Article oba on oba.Order_BoAUkey = sb.Ukey
+				WHERE oba.Article is not null
+				AND tc.Id = o.POID 
+				UNION 
+				SELECT
+				tc.ColorID
+				FROM dbo.Order_ColorCombo as tc WITH(NOLOCK) 
+				INNER JOIN Order_BOA sb on sb.Id = o.POID  and tc.FabricPanelCode = sb.FabricPanelCode 
+				LEFT JOIN Order_BOA_Article oba on oba.Order_BoAUkey = sb.Ukey
+				WHERE oba.Article is null
+				AND tc.Id = o.POID 
+				UNION 
+				SELECT cc.ColorID
+				FROM dbo.Order_ColorCombo cc WITH(NOLOCK)
+				INNER join Order_BOF ob on ob.Id = o.POID and ob.FabricCode = cc.FabricCode
+				WHERE cc.Id = o.POID  
+				UNION
+				SELECT tcd.ColorID
+				FROM dbo.Style as s with(nolock)
+				INNER JOIN dbo.Style_ThreadColorCombo as tc WITH(NOLOCK) On tc.StyleUkey = s.Ukey
+				INNER JOIN dbo.Style_ThreadColorCombo_Detail as tcd WITH(NOLOCK) On tcd.Style_ThreadColorComboUkey = tc.Ukey
+				WHERE s.Ukey = o.StyleUkey
+			)AS x ORDER BY x.ColorID
+		 FOR XML PATH('')
+	 ),1,1,'')
+) AS color
+Outer apply
+(
+SELECT Articlelist = STUFF((
+		SELECT CONCAT(',',Article)
+		FROM(   SELECT oba.Article 
+				FROM  dbo.Order_ColorCombo AS tc WITH (NOLOCK) 
+				INNER JOIN Order_BOA sb ON sb.Id = o.POID and tc.FabricPanelCode = sb.FabricPanelCode 
+				LEFT JOIN Order_BOA_Article oba ON oba.Order_BoAUkey = sb.Ukey
+				WHERE oba.Article IS NOT NULL
+				AND tc.Id = o.POID
+				UNION 
+				SELECT tc.Article
+				FROM dbo.Order_ColorCombo AS tc WITH (NOLOCK) 
+				INNER JOIN Order_BOA sb WITH (NOLOCK) ON sb.Id = o.PoID  and tc.FabricPanelCode = sb.FabricPanelCode 
+				LEFT JOIN Order_BOA_Article oba WITH (NOLOCK) ON oba.Order_BoAUkey = sb.Ukey
+				WHERE oba.Article IS NULL
+				AND tc.Id = o.POID 
+				UNION 
+				SELECT  Article
+				FROM dbo.Order_ColorCombo cc WITH (NOLOCK)
+				INNER JOIN Order_BOF ob WITH (NOLOCK) ON ob.Id = o.POID and ob.FabricCode = cc.FabricCode
+				WHERE cc.ID = o.POID 
+				UNION
+				SELECT tcd.Article
+				FROM  dbo.Style AS s WITH (NOLOCK) 
+				INNER JOIN dbo.Style_ThreadColorCombo AS tc WITH (NOLOCK) ON tc.StyleUkey = s.Ukey
+				INNER JOIN dbo.Style_ThreadColorCombo_Detail AS tcd WITH (NOLOCK) ON tcd.Style_ThreadColorComboUkey = tc.Ukey
+				WHERE s.Ukey = o.StyleUkey
+			)AS x ORDER BY x.Article
+		 FOR XML PATH('')
+	 ),1,1,'')
+) AS Article
+
 where 1=1
 ");
 
