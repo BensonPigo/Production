@@ -207,6 +207,11 @@ from VNConsumption where 1=0";
 
             this.HideWaitMessage();
             MyUtility.Msg.InfoBox("Import Complete!!");
+
+            if (this.dtBatchImport.AsEnumerable().Where(x => !string.IsNullOrEmpty(x.Field<string>("Remark"))).Any())
+            {
+                MyUtility.Msg.InfoBox("Selected File contains error data, please check the Remark column to adjust the data!!");
+            }
         }
 
         private void BtnImport_Click(object sender, EventArgs e)
@@ -223,6 +228,12 @@ from VNConsumption where 1=0";
                 return;
             }
             #endregion
+
+            if (this.dtBatchImport.AsEnumerable().Where(x => !string.IsNullOrEmpty(x.Field<string>("Remark"))).Any())
+            {
+                MyUtility.Msg.ErrorBox("Selected File contains error data, please check the Remark column to adjust the data!!");
+                return;
+            }
 
             foreach (DataRow dr in drImportList)
             {
