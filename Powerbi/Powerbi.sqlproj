@@ -226,6 +226,7 @@
     <Build Include="dbo\Tables\P_QA_CFAMasterList.sql" />
     <Build Include="dbo\Tables\P_CartonScanRate.sql" />
     <Build Include="dbo\Tables\P_WBScanRate.sql" />
+    <Build Include="dbo\Tables\P_WIPBySPLine.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Utility.dll" />

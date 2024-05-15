@@ -219,6 +219,8 @@
     <Compile Include="PowerBI\DataAccess\P_Import_QA_CFAMasterList.cs" />
     <Compile Include="PowerBI\DataAccess\P_Import_SewingLineScheduleBIData.cs" />
     <Compile Include="PowerBI\DataAccess\P_Import_SewingLineScheduleBySP.cs" />
+    <Compile Include="PowerBI\DataAccess\P_Import_WIP.cs" />
+    <Compile Include="PowerBI\DataAccess\P_Import_WIPBySPLine.cs" />
     <Compile Include="PowerBI\FormPage\Form1.cs">
       <SubType>Form</SubType>
     </Compile>

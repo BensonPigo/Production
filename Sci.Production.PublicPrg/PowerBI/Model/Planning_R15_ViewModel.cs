@@ -83,6 +83,9 @@ namespace Sci.Production.Prg.PowerBI.Model
         public string SubprocessID { get; set; }
 
         /// <inheritdoc/>
+        public string RFIDProcessLocation { get; set; }
+
+        /// <inheritdoc/>
         public string ArtworkTypes { get; set; }
 
         /// <inheritdoc/>
@@ -93,5 +96,8 @@ namespace Sci.Production.Prg.PowerBI.Model
 
         /// <inheritdoc/>
         public bool IncludeCancelOrder { get; set; }
+
+        /// <inheritdoc/>
+        public string FormParameter { get; set; }
     }
 }
