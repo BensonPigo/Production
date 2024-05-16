@@ -13,6 +13,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
     /// <inheritdoc/>
     public class P_Import_MtlStatusAnalisis
     {
+        /// <inheritdoc/>
         public P_Import_MtlStatusAnalisis()
         {
             DBProxy.Current.DefaultTimeout = 7200;
@@ -344,6 +345,12 @@ drop table #tmpGarment, #tmpMMS
             using (sqlConn)
             {
                 string sql = @"	
+Delete p
+from POWERBIReportData.dbo.P_MtlStatusAnalisis p
+inner join [MainServer].[Production].[dbo].[Orders] o on p.SPNo = o.ID
+inner join [MainServer].[Production].[dbo].[Factory] f on o.FactoryID = f.ID
+where f.IsProduceFty = 0
+
 Delete p
 from POWERBIReportData.dbo.P_MtlStatusAnalisis p
 where exists (select 1 from #tmp t where t.PoID = p.[SPNo] and t.CloseDate = p.[Close_Date])
