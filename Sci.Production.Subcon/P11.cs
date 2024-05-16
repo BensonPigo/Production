@@ -93,6 +93,7 @@ where sd.SubConOutFty = '{subConOutFty}' and sd.ContractNumber = '{contractNumbe
             return base.OnDetailSelectCommandPrepare(e);
         }
 
+        private bool FirstCheckOutputQty = true;
         /// <inheritdoc/>
         protected override bool ClickSaveBefore()
         {
@@ -202,6 +203,23 @@ where   AccuOutputQty.val > sd.OutputQty
             {
                 MyUtility.Msg.WarningBox(errorMsg.ToString());
             }
+
+            #region 檢查OutputQty數量統計是否小於Order_Qty.Qty
+            foreach (DataRow dr in this.DetailDatas)
+            {
+                string sql = $@"select [Order Qty] = isnull(sum(Qty),0) from Order_Qty with (nolock) where id = '{dr["OrderID"]}' and Article = '{dr["Article"]}' group by Article";
+                decimal sumQty = MyUtility.Convert.GetDecimal(MyUtility.GetValue.Lookup(sql));
+                if (MyUtility.Convert.GetDecimal(dr["OutputQty"]) > sumQty)
+                {
+                    if (this.FirstCheckOutputQty)
+                    {
+                        MyUtility.Msg.WarningBox(string.Format("SP#:{0} apply qty over Order's qty, please check again and press save button if confirm.", dr["OrderID"].ToString()));
+                        this.FirstCheckOutputQty = false;
+                        return false;
+                    }
+                }
+            }
+            #endregion
 
             return base.ClickSaveBefore();
         }
