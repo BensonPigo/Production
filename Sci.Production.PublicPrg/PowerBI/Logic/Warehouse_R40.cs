@@ -79,6 +79,7 @@ namespace Sci.Production.Prg.PowerBI.Logic
 			string whereMind = string.Empty;
 			string selPowerBI = string.Empty;
 			string colPowerBI = string.Empty;
+			string isQRCodeCreatedByPMS = "iif (dbo.IsQRCodeCreatedByPMS(rd.MINDQRCode) = 1, 'Create from PMS', '')";
 
 			if (model.Status == "AlreadyUpdated")
 			{
@@ -111,8 +112,6 @@ namespace Sci.Production.Prg.PowerBI.Logic
 				selPowerBI = @", o.FtyGroup
 	, r.AddDate
 	, r.EditDate
-	, IsQRCodeCreatedByPMS1 = iif (dbo.IsQRCodeCreatedByPMS(rd.MINDQRCode) = 1, 'Y', '')
-	, StockType1 = rd.StockType
 ";
 				colPowerBI = @",FtyGroup
 	,CutShadebandTime --Cut Shadeband
@@ -122,8 +121,7 @@ namespace Sci.Production.Prg.PowerBI.Logic
 	,Checker --Checker
 	,AddDate
 	,EditDate
-	,IsQRCodeCreatedByPMS1
-	,StockType1
+	,rdStockType
 ";
 				if (model.AddEditDateStart.HasValue)
 				{
@@ -138,6 +136,8 @@ namespace Sci.Production.Prg.PowerBI.Logic
 					whereTransferIn += " and (o.AddDate <= @AddEditDateEnd or o.EditDate <= @AddEditDateEnd)";
 					listPar.Add(new SqlParameter("@AddEditDateEnd", model.AddEditDateEnd));
 				}
+
+				isQRCodeCreatedByPMS = "iif (dbo.IsQRCodeCreatedByPMS(rd.MINDQRCode) = 1, 'Y', '')";
 			}
 
 			string strSql = $@"
@@ -337,7 +337,7 @@ select
 	,rd.Fabric2LabBy
 	,rd.Fabric2LabTime
     ,rd.Checker
-    ,IsQRCodeCreatedByPMS = iif (dbo.IsQRCodeCreatedByPMS(rd.MINDQRCode) = 1, 'Create from PMS', '')
+    ,IsQRCodeCreatedByPMS = {isQRCodeCreatedByPMS}
     ,rd.MINDChecker
     ,rd.QRCode_PrintDate
     ,rd.MINDCheckAddDate
@@ -413,7 +413,7 @@ select
 	,rd.Fabric2LabBy
 	,rd.Fabric2LabTime
     ,rd.Checker
-    ,IsQRCodeCreatedByPMS = iif (dbo.IsQRCodeCreatedByPMS(rd.MINDQRCode) = 1, 'Create from PMS', '')
+    ,IsQRCodeCreatedByPMS = {isQRCodeCreatedByPMS}
     ,rd.MINDChecker
     ,rd.QRCode_PrintDate
     ,rd.MINDCheckAddDate

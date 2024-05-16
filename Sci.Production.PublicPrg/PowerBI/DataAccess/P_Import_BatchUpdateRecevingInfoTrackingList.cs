@@ -36,7 +36,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                     warehouse_R40.ArriveDateStart = firstDate;
                     warehouse_R40.AddEditDateEnd = null;
                     sDate = firstDate;
-                    eDate = DateTime.Now.AddYears(20);
+                    eDate = DateTime.Now.AddYears(100);
                 }
                 else
                 {
@@ -105,7 +105,7 @@ SET
 , t.Roll = s.Roll
 , t.Dyelot = s.Dyelot
 , t.StockQty = s.StockQty
-, t.StockType = s.StockType1
+, t.StockType = s.rdStockType
 , t.Location = s.Location
 , t.Weight = s.Weight
 , t.ActualWeight = s.ActualWeight
@@ -114,7 +114,7 @@ SET
 , t.Fabric2LabTime = s.Fabric2LabTime
 , t.Fabric2LabBy  = s.Fabric2LabBy
 , t.Checker  = s.Checker
-, t.IsQRCodeCreatedByPMS  = s.IsQRCodeCreatedByPMS1
+, t.IsQRCodeCreatedByPMS  = s.IsQRCodeCreatedByPMS
 , t.LastP26RemarkData = s.LastP26RemarkData
 , t.MINDChecker = s.MINDChecker
 , t.QRCode_PrintDate  = s.QRCode_PrintDate
@@ -132,7 +132,7 @@ from P_BatchUpdateRecevingInfoTrackingList t
 inner join #tmp s on t.ReceivingID = s.ReceivingID
 AND t.Poid = s.Poid 
 AND t.Seq = s.Seq 
-AND t.StockType = s.StockType1
+AND t.StockType = s.rdStockType
 AND t.Roll = s.Roll
 AND t.Dyelot = s.Dyelot
 
@@ -144,8 +144,8 @@ insert into P_BatchUpdateRecevingInfoTrackingList (
 ,Hold,Remark,AddDate,EditDate
 )
 select 	s.ReceivingID,s.ExportID,s.FtyGroup,s.Packages,s.ArriveDate,s.Poid,s.Seq,s.BrandID,s.refno,s.WeaveTypeID,s.Color,s.Roll
-,s.Dyelot,s.StockQty,s.StockType1,s.Location,s.Weight,s.ActualWeight,s.CutShadebandTime,s.CutBy,s.Fabric2LabTime,s.Fabric2LabBy
-,s.Checker,s.IsQRCodeCreatedByPMS1,s.LastP26RemarkData,s.MINDChecker,s.QRCode_PrintDate,s.MINDCheckAddDate,s.MINDCheckEditDate
+,s.Dyelot,s.StockQty,StockType = s.rdStockType,s.Location,s.Weight,s.ActualWeight,s.CutShadebandTime,s.CutBy,s.Fabric2LabTime,s.Fabric2LabBy
+,s.Checker,s.IsQRCodeCreatedByPMS,s.LastP26RemarkData,s.MINDChecker,s.QRCode_PrintDate,s.MINDCheckAddDate,s.MINDCheckEditDate
 ,s.AbbEN,s.ForInspection,s.ForInspectionTime,s.OneYardForWashing,s.Hold,s.Remark,s.AddDate,s.EditDate
 from #tmp s
 where not exists (
@@ -153,7 +153,7 @@ where not exists (
     where t.ReceivingID = s.ReceivingID 
     AND t.Poid = s.Poid 
 	AND t.Seq = s.Seq 
-	AND t.StockType = s.StockType1 
+	AND t.StockType = s.rdStockType
 	AND t.Roll = s.Roll
 	AND t.Dyelot = s.Dyelot
 )
@@ -165,11 +165,11 @@ where not exists (
     where t.ReceivingID = s.ReceivingID 
     AND t.Poid = s.Poid 
 	AND t.Seq = s.Seq 
-	AND t.StockType = s.StockType1 
+	AND t.StockType = s.rdStockType 
 	AND t.Roll = s.Roll
 	AND t.Dyelot = s.Dyelot
 )
-and ((t.AddDate >= @SDate and t.AddDate <= @EDate) or (t.EditDate >= @SDate and t.EditDate <= @EDate))
+and ((t.AddDate >= @SDate or t.EditDate >= @SDate) and (t.AddDate <= @EDate or t.EditDate <= @EDate))
 
 update b
 	set b.TransferDate = getdate()
