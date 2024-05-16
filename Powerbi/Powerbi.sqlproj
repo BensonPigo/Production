@@ -228,6 +228,8 @@
     <Build Include="dbo\Tables\P_FabricDispatchRate.sql" />
     <Build Include="dbo\Tables\P_CFAMasterListRelatedrate.sql" />
     <Build Include="dbo\Tables\P_AdiCompReport.sql" />
+    <Build Include="dbo\Tables\P_Changeover.sql" />
+    <Build Include="dbo\Stored Procedures\FTY\P_Import_Changeover.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Utility.dll" />
