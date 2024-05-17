@@ -394,49 +394,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             BEGIN
 	            insert into BITableInfo(Id, TransferDate)
 	            values('P_WIP', getdate())
-            END
-            -- P_WBScanRate
-            begin
-                SELECT [Date] = CAST(GETDATE() AS DATE)
-	                , f.FTYGroup
-	                , [WBScanRate] = CAST(IIF(ISNULL(SUM(p.SewQty), 0) = 0, 0, (SUM(p.RFIDSewingLineInQty) * 1.0 / SUM(p.SewQty)) * 100) AS DECIMAL(5, 2))
-	                , [TTLRFIDSewInlineQty] = SUM(p.RFIDSewingLineInQty)
-	                , [TTLSewQty] = SUM(p.SewQty)
-                INTO #tmp_P_WBScanRate
-                FROM P_WIP p
-                INNER JOIN [MainServer].[Production].[dbo].[Factory] f ON P.FactoryID = f.ID
-                WHERE p.SewInLine <= CAST(GETDATE() AS DATE)
-                AND p.SewOffLine >= CAST(GETDATE() AS DATE)
-                GROUP BY f.FTYGroup
-
-                UPDATE p
-	                SET p.WBScanRate = t.WBScanRate
-	                 , p.TTLRFIDSewInlineQty = t.TTLRFIDSewInlineQty
-	                 , p.TTLSewQty = t.TTLSewQty
-                FROM P_WBScanRate p
-                INNER JOIN #tmp_P_WBScanRate t ON t.[Date] = p.[Date] AND t.FTYGroup = p.Factory
-
-                INSERT INTO P_WBScanRate([Date], Factory, WBScanRate, TTLRFIDSewInlineQty, TTLSewQty)
-                SELECT [Date], FTYGroup, [WBScanRate], [TTLRFIDSewInlineQty], [TTLSewQty]
-                FROM #tmp_P_WBScanRate t 
-                WHERE NOT EXISTS (SELECT 1 FROM P_WBScanRate p　WHERE t.[Date] = p.[Date] AND t.FTYGroup = p.Factory)
-
-                if exists (select 1 from BITableInfo b where b.id = 'P_WBScanRate')
-                begin
-	                update b
-		                set b.TransferDate = getdate()
-	                from BITableInfo b
-	                where b.id = 'P_WBScanRate'
-                end
-                else 
-                begin
-	                insert into BITableInfo(Id, TransferDate)
-	                values('P_WBScanRate', getdate())
-                end
-            end
-            
-
-            ";
+            EN";
 
             DBProxy.Current.OpenConnection("PowerBI", out SqlConnection sqlConn);
             using (sqlConn)
