@@ -224,6 +224,8 @@
     <Build Include="dbo\Tables\P_CFAMasterListRelatedrate.sql" />
     <Build Include="dbo\Tables\P_AdiCompReport.sql" />
     <Build Include="dbo\Tables\P_OutstandingPOStatus.sql" />
+    <Build Include="dbo\Tables\P_SubProInsReportDailyRate.sql" />
+    <Build Include="dbo\Tables\P_SubProInsReportMonthlyRate.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Utility.dll" />

@@ -232,6 +232,8 @@
     <Compile Include="PowerBI\DataAccess\P_Import_SewingLineScheduleBySP.cs" />
     <Compile Include="PowerBI\DataAccess\P_Import_SubProInsReport.cs" />
     <Compile Include="PowerBI\DataAccess\P_Import_SubprocessWIP.cs" />
+    <Compile Include="PowerBI\DataAccess\P_Import_SubProInsReportDailyRate.cs" />
+    <Compile Include="PowerBI\DataAccess\P_Import_SubProInsReportMonthlyRate.cs" />
     <Compile Include="PowerBI\FormPage\Form1.cs">
       <SubType>Form</SubType>
     </Compile>
