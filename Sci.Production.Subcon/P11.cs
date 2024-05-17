@@ -15,6 +15,8 @@ namespace Sci.Production.Subcon
     /// <inheritdoc/>
     public partial class P11 : Win.Tems.Input6
     {
+        private bool FirstCheckOutputQty = true;
+
         /// <inheritdoc/>
         public P11(ToolStripMenuItem menuitem)
             : base(menuitem)
@@ -93,7 +95,6 @@ where sd.SubConOutFty = '{subConOutFty}' and sd.ContractNumber = '{contractNumbe
             return base.OnDetailSelectCommandPrepare(e);
         }
 
-        private bool FirstCheckOutputQty = true;
         /// <inheritdoc/>
         protected override bool ClickSaveBefore()
         {
@@ -205,18 +206,41 @@ where   AccuOutputQty.val > sd.OutputQty
             }
 
             #region 檢查OutputQty數量統計是否小於Order_Qty.Qty
-            foreach (DataRow dr in this.DetailDatas)
+
+            if (this.FirstCheckOutputQty)
             {
-                string sql = $@"select [Order Qty] = isnull(sum(Qty),0) from Order_Qty with (nolock) where id = '{dr["OrderID"]}' and Article = '{dr["Article"]}' group by Article";
-                decimal sumQty = MyUtility.Convert.GetDecimal(MyUtility.GetValue.Lookup(sql));
-                if (MyUtility.Convert.GetDecimal(dr["OutputQty"]) > sumQty)
+                sqlCheckSubconOutQty = @"
+alter table #tmp alter column OrderID varchar(13)
+select  sd.OrderID,
+        sd.Article,
+        sd.StyleID,
+        [Subcon Out Qty] = sd.OutputQty,
+        [Order_Qty Qty] = Order_Qty.Qty
+from    #tmp sd
+outer   apply( select Qty = isnull(sum(oq.Qty),0) from Order_Qty oq 
+               where oq.ID = sd.OrderID 
+                and oq.Article = sd.Article
+) Order_Qty
+where   Order_Qty.Qty < sd.OutputQty
+";
+                checkSubconOutQtyResult = MyUtility.Tool.ProcessWithDatatable(this.DetailDatas.CopyToDataTable(), "StyleID,SubConOutFty,OrderID,Article,OutputQty", sqlCheckSubconOutQty, out dtCheckSubconOutQtyResult);
+
+                if (!checkSubconOutQtyResult)
                 {
-                    if (this.FirstCheckOutputQty)
-                    {
-                        MyUtility.Msg.WarningBox(string.Format("SP#:{0} apply qty over Order's qty, please check again and press save button if confirm.", dr["OrderID"].ToString()));
-                        this.FirstCheckOutputQty = false;
-                        return false;
-                    }
+                    this.ShowErr(checkSubconOutQtyResult);
+                    return false;
+                }
+
+                if (dtCheckSubconOutQtyResult.Rows.Count > 0)
+                {
+                    var formMsg = MyUtility.Msg.ShowMsgGrid(dtCheckSubconOutQtyResult, "SP# apply qty over Order's qty, please check again and press save button if confirm.", "Warning");
+                    formMsg.Width = 900;
+                    formMsg.grid1.Columns[0].Width = 120;
+                    formMsg.grid1.Columns[2].Width = 100;
+                    formMsg.Visible = false;
+                    formMsg.ShowDialog();
+                    this.FirstCheckOutputQty = false;
+                    return false;
                 }
             }
             #endregion
