@@ -1,25 +1,17 @@
-﻿using Ict;
-using Microsoft.Office.Interop.Word;
-using Sci.Data;
+﻿using Sci.Data;
 using Sci.Production.Prg.PowerBI.Model;
 using Sci.Production.PublicPrg;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-using System.Data.SqlTypes;
-using System.Runtime.InteropServices.WindowsRuntime;
-using System.Text;
-using System.Web;
-using System.Web.Services.Description;
 
 namespace Sci.Production.Prg.PowerBI.Logic
 {
     /// <inheritdoc/>
     public class Planning_R15
     {
-
-        public int subprocessInoutColumnCount;
+        private int subprocessInoutColumnCount;
         private List<string> notExistsBundle_Detail_Art = new List<string>() { "SORTING", "LOADING", "SEWINGLINE" };
 
         /// <inheritdoc/>
@@ -537,12 +529,11 @@ namespace Sci.Production.Prg.PowerBI.Logic
 	            , [Last Sewn Date] = l.LastSewnDate
                 , #cte2.AVG_QAQTY
                 , [Est_offline] = DATEADD(DAY
-                                            , iif(isnull(#cte2.AVG_QAQTY, 0) = 0, 0
-                                                                                , ceiling((t.qty+t.FOCQty - #cte2.sewing_output) / (#cte2.AVG_QAQTY*1.0)))
-                                            , #cte2.firstSewingDate) 
+                                        , iif(isnull(#cte2.AVG_QAQTY, 0) = 0, 0
+                                        , ceiling((t.qty+t.FOCQty - #cte2.sewing_output) / (#cte2.AVG_QAQTY*1.0)))
+                                        , #cte2.firstSewingDate) 
                 , [Scanned_Qty] = PackDetail.ScanQty
-                , [pack_rate] = IIF(isnull(t.TotalCTN, 0) = 0, 0
-                                                            , round(t.ClogCTN / (t.TotalCTN * 1.0), 4) * 100 ) 
+                , [pack_rate] = IIF(isnull(t.TotalCTN, 0) = 0, 0, round(t.ClogCTN / (t.TotalCTN * 1.0), 4) * 100 ) 
                 , t.TotalCTN
                 , FtyCtn = t.TotalCTN - t.FtyCTN
                 , t.ClogCTN
@@ -717,7 +708,7 @@ namespace Sci.Production.Prg.PowerBI.Logic
                 , t.OrderID
                 , t.POID
 	            , T.[Buy Back]
-	            , [Cancelled] = IIF(t.Junk=1 ,'Y' ,'')  ------------------
+	            , [Cancelled] = IIF(t.Junk=1 ,'Y' ,'')
 	            , T.[Cancelled but Sill]
                 , Dest = Country.Alias
                 , t.StyleID

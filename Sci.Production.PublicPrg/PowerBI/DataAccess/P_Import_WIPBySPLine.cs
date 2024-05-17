@@ -5,9 +5,6 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Sci.Production.Prg.PowerBI.DataAccess
 {
@@ -73,12 +70,6 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
         {
             Base_ViewModel finalResult;
             string sqlCmd = $@"
-            -- 刪除
-            DELETE P_WIPBySPLine 
-            FROM P_WIPBySPLine p 
-            inner join #tmp t on t.OrderID = p.SPNO
-            where  p.SciDelivery between @StartDate and @EndDate
-            
              -- 更新
             UPDATE P SET						
              P.[MDivisionID]					=	ISNULL(T.[MDivisionID],'')
@@ -180,6 +171,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             ,P.[TMS]							=	ISNULL(T.[TMS],0)
             FROM P_WIPBySPLine P						
             INNER JOIN #tmp T ON P.SPNO = T.OrderID 
+
             -- 新增
             INSERT INTO P_WIPBySPLine
             (
@@ -383,6 +375,12 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             ,ISNULL(T.[TMS],0)
             FROM #tmp T
             WHERE NOT EXISTS(SELECT 1 FROM P_WIPBySPLine P WHERE P.SPNO = T.OrderID)
+
+            -- 刪除
+            DELETE P_WIPBySPLine 
+            FROM P_WIPBySPLine p 
+            inner join #tmp t on t.OrderID = p.SPNO
+            where  p.SciDelivery between @StartDate and @EndDate
 
             IF EXISTS (select 1 from BITableInfo b where b.id = 'P_WIPBySPLine')
             BEGIN
