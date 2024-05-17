@@ -113,15 +113,15 @@ namespace Sci.Production.Prg.PowerBI.Logic
 	, r.AddDate
 	, r.EditDate
 ";
-				colPowerBI = @",FtyGroup
+				colPowerBI = @",FtyGroup = isnull(FtyGroup, '')
 	,CutShadebandTime --Cut Shadeband
-	,CutBy --Cut Shadeband
+	,CutBy = isnull(CutBy, '') --Cut Shadeband
 	,Fabric2LabTime --Fabric to Lab
-	,Fabric2LabBy --Fabric to Lab
-	,Checker --Checker
+	,Fabric2LabBy = isnull(Fabric2LabBy, '') --Fabric to Lab
+	,Checker = isnull(Checker, '') --Checker
 	,AddDate
 	,EditDate
-	,rdStockType
+	,rdStockType = isnull(rdStockType, '')
 ";
 				if (model.AddEditDateStart.HasValue)
 				{
@@ -450,35 +450,35 @@ OUTER APPLY(
 where   psd.FabricType ='F' 
 {whereTransferIn}
 
-select  ReceivingID
-		,ExportID
-		,Packages
+select  ReceivingID = isnull(ReceivingID, '')
+		,ExportID = isnull(ExportID, '')
+		,Packages = isnull(Packages, '') 
 		,ArriveDate
-		,PoId
-		,Seq
-		,BrandID
-		,refno
-		,WeaveTypeID
-		,Color
-		,Roll
-		,Dyelot
-		,StockQty
-		,StockType
-		,Location
-		,Weight
-        ,ActualWeight
-        ,IsQRCodeCreatedByPMS
+		,PoId = isnull(PoId, '')
+		,Seq = isnull(Seq, '')
+		,BrandID = isnull(BrandID, '')
+		,refno = isnull(refno, '')
+		,WeaveTypeID = isnull(WeaveTypeID, '')
+		,Color = isnull(Color, '')
+		,Roll = isnull(Roll, '')
+		,Dyelot = isnull(Dyelot, '')
+		,StockQty = isnull(StockQty, 0)
+		,StockType = isnull(StockType, '')
+		,Location = isnull(Location, '')
+		,Weight = isnull(Weight, 0)
+        ,ActualWeight = isnull(ActualWeight, 0)
+        ,IsQRCodeCreatedByPMS = isnull(IsQRCodeCreatedByPMS, '')
         ,LastP26RemarkData = isnull(LastP26RemarkData,'')
-        ,MINDChecker
+        ,MINDChecker = isnull(MINDChecker, '')
         ,QRCode_PrintDate
         ,MINDCheckAddDate
         ,MINDCheckEditDate
-        ,AbbEN
-        ,ForInspection
-        ,ForInspectionTime
-        ,OneYardForWashing
-        ,Hold
-        ,Remark
+        ,AbbEN = isnull(AbbEN, '')
+        ,ForInspection = isnull(ForInspection, '')
+        ,ForInspectionTime = isnull(ForInspectionTime, 0)
+        ,OneYardForWashing = isnull(OneYardForWashing, '')
+        ,Hold = isnull(Hold, '')
+        ,Remark = isnull(Remark, '')
 		{colPowerBI}
 from #tmpMind rd
 OUTER APPLY(

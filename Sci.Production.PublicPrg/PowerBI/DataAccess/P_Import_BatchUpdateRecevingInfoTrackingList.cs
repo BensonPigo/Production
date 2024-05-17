@@ -171,11 +171,19 @@ where not exists (
 )
 and ((t.AddDate >= @SDate or t.EditDate >= @SDate) and (t.AddDate <= @EDate or t.EditDate <= @EDate))
 
-update b
-	set b.TransferDate = getdate()
-		, b.IS_Trans = 1
-from BITableInfo b
-where b.id = 'P_BatchUpdateRecevingInfoTrackingList'
+if exists(select 1 from BITableInfo where Id = 'P_BatchUpdateRecevingInfoTrackingList')
+begin
+    update b
+	    set b.TransferDate = getdate()
+		    , b.IS_Trans = 0
+    from BITableInfo b
+    where b.id = 'P_BatchUpdateRecevingInfoTrackingList'
+end
+else
+begin
+    insert into BITableInfo (Id, TransferDate, IS_Trans)
+    values ('P_BatchUpdateRecevingInfoTrackingList', getDate(), 0)
+end
 ";
                 finalResult = new Base_ViewModel()
                 {
