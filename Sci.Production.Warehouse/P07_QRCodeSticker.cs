@@ -254,6 +254,7 @@ namespace Sci.Production.Warehouse
                     StockType = "Stock Type:" + MyUtility.Convert.GetString(s["StockTypeName"]),
                     StyleID = "Style:" + MyUtility.Convert.GetString(s["StyleID"]),
                     WhseArrival = "Arrive WH Date:" + (MyUtility.Check.Empty(s["WhseArrival"]) ? string.Empty: ((DateTime)s["WhseArrival"]).ToString("yyyy/MM/dd")),
+                    Relaxtime = "RELAXATION:" + MyUtility.Convert.GetFloat(s["Relaxtime"]) + "HRS",
                     Image = Prgs.ImageToByte(MyUtility.Convert.GetString(s[qrcode]).ToBitmapQRcode(qrCodeWidth, qrCodeWidth)),
                 }).ToList();
 

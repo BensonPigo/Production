@@ -313,6 +313,7 @@ select [Sel] = 0
         end
     ,o.StyleID
     ,WhseArrival = TransferIn.IssueDate
+    ,fr.Relaxtime
 from TransferIn_Detail td WITH (NOLOCK) 
 left join TransferIn WITH (NOLOCK) on TransferIn.id = td.id
 left join dbo.PO_Supp_Detail psd WITH (NOLOCK) on psd.ID = td.POID and  psd.SEQ1 = td.Seq1 and psd.seq2 = td.Seq2 
@@ -344,6 +345,8 @@ OUTER APPLY(
 					FOR XML PATH('') )
 				, 1, 1, '')
 )Location
+LEFT JOIN [SciMES_RefnoRelaxtime] rr WITH (NOLOCK) ON rr.Refno = psd.Refno
+LEFT JOIN [SciMES_FabricRelaxation] fr WITH (NOLOCK) ON rr.FabricRelaxationID = fr.ID
 where td.id = @ID";
             DualResult result = DBProxy.Current.Select(string.Empty, sqlCmd, pars, out dt);
             return result;

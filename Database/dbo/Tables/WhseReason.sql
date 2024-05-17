@@ -2,7 +2,7 @@
     [Type]        VARCHAR (2)    CONSTRAINT [DF_WhseReason_Type] DEFAULT ('') NOT NULL,
     [ID]          VARCHAR (5)    CONSTRAINT [DF_WhseReason_ID] DEFAULT ('') NOT NULL,
     [Description] NVARCHAR (200) CONSTRAINT [DF_WhseReason_Description] DEFAULT ('') NOT NULL,
-    [Remark]      NVARCHAR (100) CONSTRAINT [DF_WhseReason_Remark] DEFAULT ('') NOT NULL,
+    [Remark]      NVARCHAR (300) CONSTRAINT [DF_WhseReason_Remark] DEFAULT ('') NOT NULL,
     [Junk]        BIT            CONSTRAINT [DF_WhseReason_Junk] DEFAULT ((0)) NOT NULL,
     [ActionCode]  VARCHAR (30)   CONSTRAINT [DF_WhseReason_ActionCode] DEFAULT ('') NOT NULL,
     [AddName]     VARCHAR (10)   CONSTRAINT [DF_WhseReason_AddName] DEFAULT ('') NOT NULL,
@@ -12,6 +12,8 @@
     [No]          DECIMAL (3)    CONSTRAINT [DF_WhseReason_No] DEFAULT ((0)) NOT NULL,
     CONSTRAINT [PK_WhseReason] PRIMARY KEY CLUSTERED ([Type] ASC, [ID] ASC)
 );
+
+
 
 
 
