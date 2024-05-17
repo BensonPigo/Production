@@ -1410,7 +1410,7 @@ where a.ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
 
                 if (MyUtility.Convert.GetBool(this.CurrentMaintain["ResponsibleSCI"]))
                 {
-                    listResponsible.Add("SCI");
+                    listResponsible.Add("Marketing");
                 }
 
                 if (MyUtility.Convert.GetBool(this.CurrentMaintain["ResponsibleSupp"]))
@@ -1428,7 +1428,7 @@ where a.ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
                     MyUtility.Convert.GetString(listResponsible.JoinToString(",")),
                     MyUtility.Convert.GetString(this.CurrentMaintain["ID"]),
                     MyUtility.Convert.GetString(this.CurrentMaintain["OrderID"]),
-                    DateTime.Now.Date.ToString("yyyyMMdd"),
+                    MyUtility.Check.Empty(this.dateBuyerDelivery.Value) ? string.Empty : Convert.ToDateTime(this.dateBuyerDelivery.Value).ToString("yyyyMMdd"),
                     this.CurrentMaintain["ShipQty"].ToString(),
                     MyUtility.Convert.GetString(this.CurrentMaintain["Status"]) == "Junked" ? "cancel" : "request");
 

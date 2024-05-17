@@ -36,6 +36,8 @@ namespace Sci.Production.Prg.PowerBI.Logic
             P_SubProInsReport,
             P_OustandingPO,
             P_OutstandingPOStatus,
+            P_SubprocessWIP,
+            P_RightFirstTimeDailyReport,
         }
 
         /// <summary>
@@ -316,6 +318,12 @@ ORDER BY [Group], [SEQ], [NAME]";
                         break;
                     case ListName.P_OutstandingPOStatus:
                         result = new P_Import_OutstandingPOStatus().P_OutstandingPOStatus(item.SDate);
+                        break;
+                    case ListName.P_SubprocessWIP:
+                        result = new P_Import_SubprocessWIP().P_SubprocessWIP(item.SDate);
+                        break;
+                    case ListName.P_RightFirstTimeDailyReport:
+                        result = new P_Import_RightFirstTimeDailyReport().P_RightFirstTimeDailyReport(item.SDate, item.EDate);
                         break;
                     default:
                         // Execute all Stored Procedures

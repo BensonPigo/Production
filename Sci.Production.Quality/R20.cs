@@ -1,5 +1,7 @@
 ﻿using Ict;
 using Sci.Data;
+using Sci.Production.Prg.PowerBI.Logic;
+using Sci.Production.Prg.PowerBI.Model;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -372,96 +374,6 @@ from #tmpnn
 
 drop table #tmpall,#tmpnn'
 EXEC sp_executesql @sql
-");
-            }
-            #endregion
-
-            #region radiobtn_AllData
-            if (this.radioAllData.Checked)
-            {
-                sqlCmd.Append(@"
-select
-	[Factory] = A.FACTORYID,
-	[CDate] = A.CDATE,
-	[OrderID] = A.ORDERID,
-    [Destination]=ct.Alias,
-	[Brand] = C.BRANDID,
-	[Style] = C.STYLEID,
-    c.BuyerDelivery ,
-	[CDCode] = C.CDCODEID,
-    sty.CDCodeNew,
-	sty.ProductType,
-	sty.FabricType,
-	sty.Lining,
-	sty.Gender,
-	sty.Construction,
-	[Team] = A.TEAM,
-	[Shift] = A.SHIFT,
-	[Line] = A.SEWINGLINEID,
-	[Cell] = E.SewingCell,
-	[InspectQty] = A.INSPECTQTY,
-	[RejectQty] = A.REJECTQTY,
-	[RFT (%)] = iif(isnull(a.InspectQty,0)=0,0,round((a.InspectQty-a.RejectQty)/a.InspectQty * 100,2)),
-	[Over] = A.Status,
-	[QC] = C.CPUFactor * C.CPU * A.RejectQty 
-    , [Remark] = A.Remark
-From DBO.Rft A WITH (NOLOCK) 
-INNER JOIN DBO.ORDERS C ON C.ID = A.OrderID
-INNEr JOIN Country ct WITH (NOLOCK)  ON ct.ID=c.Dest
-Outer Apply (
-	SELECT SewingCell 
-	FROM SewingLine WITH (NOLOCK) 
-	WHERE FactoryID = A.FactoryID AND ID = A.SewinglineID
-) E
-Outer apply (
-	SELECT ProductType = r2.Name
-		, FabricType = r1.Name
-		, Lining
-		, Gender
-		, Construction = d1.Name
-        , s.CDCodeNew
-	FROM Style s WITH(NOLOCK)
-	left join DropDownList d1 WITH(NOLOCK) on d1.type= 'StyleConstruction' and d1.ID = s.Construction
-	left join Reason r1 WITH(NOLOCK) on r1.ReasonTypeID= 'Fabric_Kind' and r1.ID = s.FabricType
-	left join Reason r2 WITH(NOLOCK) on r2.ReasonTypeID= 'Style_Apparel_Type' and r2.ID = s.ApparelType
-	where s.Ukey = C.StyleUkey
-)sty
-WHERE 1=1
-");
-                #region Append畫面上的條件
-                if (!MyUtility.Check.Empty(this.Period1))
-                {
-                    sqlCmd.Append(string.Format(@" and A.CDate >= '{0}' ", Convert.ToDateTime(this.Period1).ToString("yyyy/MM/dd")));
-                }
-
-                if (!MyUtility.Check.Empty(this.Period2))
-                {
-                    sqlCmd.Append(string.Format(@" and A.CDate <= '{0}' ", Convert.ToDateTime(this.Period2).ToString("yyyy/MM/dd")));
-                }
-
-                if (!MyUtility.Check.Empty(this.Factory))
-                {
-                    sqlCmd.Append(string.Format(" and A.FactoryID = '{0}'", this.Factory));
-                }
-
-                if (!MyUtility.Check.Empty(this.Brand))
-                {
-                    sqlCmd.Append(string.Format(" and C.BrandID = '{0}'", this.Brand));
-                }
-
-                if (!MyUtility.Check.Empty(this.Line))
-                {
-                    sqlCmd.Append(string.Format(" and A.SewinglineID = '{0}'", this.Line));
-                }
-
-                if (!MyUtility.Check.Empty(this.Cell))
-                {
-                    sqlCmd.Append(string.Format(" and (SELECT SewingCell FROM SewingLine WITH (NOLOCK) WHERE FactoryID = A.FactoryID AND ID = A.SewinglineID) = '0{0}' ", this.Cell));
-                }
-                #endregion
-
-                sqlCmd.Append(@"
-Order by [Factory], [CDate], [OrderID]
 ");
             }
             #endregion
@@ -890,11 +802,37 @@ drop table #tmpall
             }
             #endregion
 
-            DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), out this.printData);
-            if (!result)
+            if (this.radioAllData.Checked)
             {
-                DualResult failResult = new DualResult(false, "Query data fail\r\n" + result.ToString());
-                return failResult;
+                // 資料邏輯跟BI共用
+                QA_R20 biModel = new QA_R20();
+                QA_R20_ViewModel qa_R20_Model = new QA_R20_ViewModel()
+                {
+                    CDate1 = this.Period1,
+                    CDate2 = this.Period2,
+                    Factory = this.Factory,
+                    Brand = this.Brand,
+                    Line = this.Line,
+                    Cell = this.Cell,
+                    IsPowerBI = false,
+                };
+
+                Base_ViewModel resultReport = biModel.GetQA_R20Data(qa_R20_Model);
+                if (!resultReport.Result)
+                {
+                    return resultReport.Result;
+                }
+
+                this.printData = resultReport.Dt;
+            }
+            else
+            {
+                DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), out this.printData);
+                if (!result)
+                {
+                    DualResult failResult = new DualResult(false, "Query data fail\r\n" + result.ToString());
+                    return failResult;
+                }
             }
 
             return Ict.Result.True;
