@@ -401,6 +401,7 @@ and ContractNumber = '{this.CurrentMaintain["ContractNumber"]}'";
             base.OnDetailEntered();
             this.txtuser1.TextBox1.ReadOnly = true;
             this.label10.Text = this.CurrentMaintain["Status"].ToString();
+            this.FirstCheckOutputQty = true;
 
             this.btnBatchImport.Enabled = (this.EditMode == true && this.CurrentMaintain["Status"].ToString().ToUpper().EqualString("NEW"));
             this.btnSplitSP.Enabled = (this.EditMode == true && this.CurrentMaintain["Status"].ToString().ToUpper().EqualString("CONFIRMED"));
