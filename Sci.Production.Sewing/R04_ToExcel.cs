@@ -51,7 +51,8 @@ namespace Sci.Production.Sewing
 
             if (isR04 == true)
             {
-                objSheets.get_Range("G:I").EntireColumn.Delete();
+                objSheets.get_Range("G:J").EntireColumn.Delete();
+                dtR04.Columns.RemoveAt(6);
                 dtR04.Columns.RemoveAt(6);
                 dtR04.Columns.RemoveAt(6);
                 dtR04.Columns.RemoveAt(6);
