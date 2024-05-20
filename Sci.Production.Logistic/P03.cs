@@ -763,7 +763,6 @@ where pd.CustCTN = '{dr["CustCTN"]}' and pd.CTNQty > 0 and pd.DisposeFromClog= 0
             this.gridReceiveDate.ValidateControl();
             this.listControlBindingSource1.EndEdit();
             DataTable dt = (DataTable)this.listControlBindingSource1.DataSource;
-            this.dtError = dt.Clone();
             this.check_OnlyReqCarton = this.chkOnlyReqCarton.Checked;
             this.completeCnt = 0;
             this.progressCnt = 0;
@@ -774,6 +773,8 @@ where pd.CustCTN = '{dr["CustCTN"]}' and pd.CTNQty > 0 and pd.DisposeFromClog= 0
                 MyUtility.Msg.InfoBox("No data need to import!");
                 return;
             }
+
+            this.dtError = dt.Clone();
 
             if (dt.AsEnumerable().Any(row => row["Selected"].EqualDecimal(1)) == false)
             {
