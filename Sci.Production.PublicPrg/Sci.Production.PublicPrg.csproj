@@ -252,6 +252,7 @@
     <Compile Include="PowerBI\Logic\PPIC_R02.cs" />
     <Compile Include="PowerBI\Logic\PPIC_R03.cs" />
     <Compile Include="PowerBI\Logic\PPIC_R01.cs" />
+    <Compile Include="PowerBI\Logic\QA_R01.cs" />
     <Compile Include="PowerBI\Logic\QA_R20.cs" />
     <Compile Include="PowerBI\Logic\QA_R31.cs" />
     <Compile Include="PowerBI\Logic\Warehouse_R16.cs" />
@@ -266,6 +267,7 @@
     <Compile Include="PowerBI\Model\PPIC_R02_ViewModel.cs" />
     <Compile Include="PowerBI\Model\PPIC_R03_ViewModel.cs" />
     <Compile Include="PowerBI\Model\PPIC_R01_ViewModel.cs" />
+    <Compile Include="PowerBI\Model\QA_R01_ViewModel.cs" />
     <Compile Include="PowerBI\Model\Warehouse_R16_ViewModel.cs" />
     <Compile Include="PowerBI\Model\PPIC_R16_ViewModel.cs" />
     <Compile Include="PowerBI\Model\QA_R20_ViewModel.cs" />
