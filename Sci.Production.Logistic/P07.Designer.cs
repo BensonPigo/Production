@@ -391,6 +391,7 @@
             this.Name = "P07";
             this.OnLineHelpID = "Sci.Win.Tems.QueryForm";
             this.Text = "P07.Carton Transfer to CFA Input";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.P07_FormClosing);
             this.Controls.SetChildIndex(this.panel3, 0);
             this.Controls.SetChildIndex(this.gridDetail, 0);
             this.panel3.ResumeLayout(false);

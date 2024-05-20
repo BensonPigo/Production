@@ -744,6 +744,13 @@ where   a.ID = '{0}'",
                 this.progressCnt = 0;
                 foreach (DataRow dr in dt.Rows)
                 {
+                    // 這裡才是真正中斷backgroundworker執行緒操作
+                    if (this.backgroundDownloadSticker.CancellationPending)
+                    {
+                        e.Cancel = true;
+                        return;
+                    }
+
                     warningmsg.Clear();
                     string checkPackSql = $@"
 select pd.TransferDate, P.MDivisionID
@@ -947,6 +954,11 @@ values (GETDATE(),'{Env.User.Keyword}','{MyUtility.Convert.GetString(dr["Packing
 
                 ((DataTable)this.listControlBindingSource1.DataSource).DefaultView.Sort = " Id, OrderID, orderByCTNStartNo, CTNSTartNo";
             }
+            else if (e.Cancelled)
+            {
+                MyUtility.Msg.WarningBox("Operation has been cancelled.");
+                this.listControlBindingSource1.DataSource = null;
+            }
             else if (e.Result != null)
             {
                 MyUtility.Msg.WarningBox("error Msg: " + e.Result.ToString());
@@ -982,6 +994,14 @@ values (GETDATE(),'{Env.User.Keyword}','{MyUtility.Convert.GetString(dr["Packing
 
             // 顯示WaitCursor
             Cursor.Current = isLocked ? Cursors.WaitCursor : Cursors.Default;
+        }
+
+        private void P10_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            if (this.backgroundDownloadSticker.IsBusy)
+            {
+                this.backgroundDownloadSticker.CancelAsync();
+            }
         }
     }
 }
