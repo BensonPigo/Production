@@ -360,6 +360,7 @@
             this.Name = "P10";
             this.OnLineHelpID = "Sci.Win.Tems.QueryForm";
             this.Text = "P10. Carton Transfer To Clog Input";
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.P10_FormClosed);
             this.Controls.SetChildIndex(this.panel3, 0);
             this.Controls.SetChildIndex(this.panel4, 0);
             this.Controls.SetChildIndex(this.panel1, 0);

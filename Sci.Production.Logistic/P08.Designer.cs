@@ -44,6 +44,9 @@
             this.txtPONo = new Sci.Win.UI.TextBox();
             this.labReceiveDate = new Sci.Win.UI.Label();
             this.panel7 = new System.Windows.Forms.Panel();
+            this.labProcessingBar = new System.Windows.Forms.Label();
+            this.label4 = new Sci.Win.UI.Label();
+            this.progressBarProcessing = new System.Windows.Forms.ProgressBar();
             this.btnImportFromBarcode = new Sci.Win.UI.Button();
             this.btnUpdateAll = new Sci.Win.UI.Button();
             this.btnClose = new Sci.Win.UI.Button();
@@ -52,9 +55,6 @@
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.shapeContainer2 = new Microsoft.VisualBasic.PowerPacks.ShapeContainer();
-            this.labProcessingBar = new System.Windows.Forms.Label();
-            this.label4 = new Sci.Win.UI.Label();
-            this.progressBarProcessing = new System.Windows.Forms.ProgressBar();
             this.backgroundDownloadSticker = new System.ComponentModel.BackgroundWorker();
             this.panel1.SuspendLayout();
             this.panel6.SuspendLayout();
@@ -235,6 +235,35 @@
             this.panel7.Size = new System.Drawing.Size(831, 42);
             this.panel7.TabIndex = 46;
             // 
+            // labProcessingBar
+            // 
+            this.labProcessingBar.AutoSize = true;
+            this.labProcessingBar.BackColor = System.Drawing.Color.Transparent;
+            this.labProcessingBar.Location = new System.Drawing.Point(228, 13);
+            this.labProcessingBar.Name = "labProcessingBar";
+            this.labProcessingBar.Size = new System.Drawing.Size(28, 17);
+            this.labProcessingBar.TabIndex = 13;
+            this.labProcessingBar.Text = "0/0";
+            // 
+            // label4
+            // 
+            this.label4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.label4.Location = new System.Drawing.Point(8, 10);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(133, 23);
+            this.label4.TabIndex = 12;
+            this.label4.Text = "Processing progress";
+            // 
+            // progressBarProcessing
+            // 
+            this.progressBarProcessing.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.progressBarProcessing.BackColor = System.Drawing.SystemColors.Control;
+            this.progressBarProcessing.Location = new System.Drawing.Point(144, 10);
+            this.progressBarProcessing.Name = "progressBarProcessing";
+            this.progressBarProcessing.Size = new System.Drawing.Size(208, 23);
+            this.progressBarProcessing.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
+            this.progressBarProcessing.TabIndex = 11;
+            // 
             // btnImportFromBarcode
             // 
             this.btnImportFromBarcode.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
@@ -318,35 +347,6 @@
             this.shapeContainer2.TabIndex = 0;
             this.shapeContainer2.TabStop = false;
             // 
-            // labProcessingBar
-            // 
-            this.labProcessingBar.AutoSize = true;
-            this.labProcessingBar.BackColor = System.Drawing.Color.Transparent;
-            this.labProcessingBar.Location = new System.Drawing.Point(228, 13);
-            this.labProcessingBar.Name = "labProcessingBar";
-            this.labProcessingBar.Size = new System.Drawing.Size(28, 17);
-            this.labProcessingBar.TabIndex = 13;
-            this.labProcessingBar.Text = "0/0";
-            // 
-            // label4
-            // 
-            this.label4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.label4.Location = new System.Drawing.Point(8, 10);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(133, 23);
-            this.label4.TabIndex = 12;
-            this.label4.Text = "Processing progress";
-            // 
-            // progressBarProcessing
-            // 
-            this.progressBarProcessing.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.progressBarProcessing.BackColor = System.Drawing.SystemColors.Control;
-            this.progressBarProcessing.Location = new System.Drawing.Point(144, 10);
-            this.progressBarProcessing.Name = "progressBarProcessing";
-            this.progressBarProcessing.Size = new System.Drawing.Size(208, 23);
-            this.progressBarProcessing.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
-            this.progressBarProcessing.TabIndex = 11;
-            // 
             // backgroundDownloadSticker
             // 
             this.backgroundDownloadSticker.WorkerReportsProgress = true;
@@ -364,6 +364,7 @@
             this.Name = "P08";
             this.OnLineHelpID = "Sci.Win.Tems.QueryForm";
             this.Text = "P08.Clog Receive CFA Carton Input";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.P08_FormClosing);
             this.Controls.SetChildIndex(this.panel1, 0);
             this.Controls.SetChildIndex(this.grid, 0);
             this.panel1.ResumeLayout(false);

@@ -609,6 +609,7 @@
             this.Name = "P03";
             this.OnLineHelpID = "Sci.Win.Tems.QueryForm";
             this.Text = "P03. Clog Return Carton Input";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.P03_FormClosing);
             this.Controls.SetChildIndex(this.panel3, 0);
             this.Controls.SetChildIndex(this.panel4, 0);
             this.Controls.SetChildIndex(this.panel1, 0);
