@@ -40,7 +40,8 @@
     [UseRatioRule]              VARCHAR (1)    CONSTRAINT [DF_Brand_UseRatioRule] DEFAULT ('') NOT NULL,
     [UseRatioRule_Thick]        VARCHAR (1)    CONSTRAINT [DF_Brand_UseRatioRule_Thick] DEFAULT ('') NOT NULL,
     [Serial]                    TINYINT        CONSTRAINT [DF_Brand_Serial] DEFAULT ((0)) NOT NULL,
-    [ShipTermID] VARCHAR(5) NOT NULL DEFAULT (''), 
+    [ShipTermID]				VARCHAR(5)     CONSTRAINT [DF_Brand_ShipTermID] DEFAULT ('') NOT NULL,
+    [VendorForLLLInEndlineR12]	VARCHAR(6)	   CONSTRAINT [DF_Brand_VendorForLLLInEndlineR12] DEFAULT ('') NOT NULL,
     CONSTRAINT [PK_Brand] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 
@@ -190,11 +191,8 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'最後修�
 
 
 GO
-EXEC sp_addextendedproperty @name = N'MS_Description',
-    @value = N'出貨條件',
-    @level0type = N'SCHEMA',
-    @level0name = N'dbo',
-    @level1type = N'TABLE',
-    @level1name = N'Brand',
-    @level2type = N'COLUMN',
-    @level2name = N'ShipTermID'
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'出貨條件', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Brand', @level2type = N'COLUMN', @level2name = N'ShipTermID'
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'MES Endline R12上顯示的Vendor code', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Brand', @level2type = N'COLUMN', @level2name = N'VendorForLLLInEndlineR12';

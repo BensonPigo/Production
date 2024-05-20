@@ -46,26 +46,40 @@ namespace Sci.Production.Warehouse
             }
 
             string sqlcmd = $@"
-select 
-Sel = 0
- , RowNo = Row_Number() over (order by psd.Refno,isd.POID,isd.Roll)
- , SPNo = isd.POID
- , Seq = Concat (isd.Seq1, '-', isd.Seq2)
- , Roll = isd.Roll
- , Dyelot = isd.Dyelot
- , Refno = isnull (psd.Refno, '')
- , Color = isnull(psdsC.SpecValue, '')
- , Qty = isd.Qty
-from Issue_Detail isd
-left join Orders o on o.ID=isd.POID
-left join Po_Supp_Detail psd on isd.POID = psd.ID and isd.Seq1 = psd.SEQ1 and isd.Seq2 = psd.SEQ2
-left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
-where isd.ID = '{this.strIssueID}'
-order by RowNo
+SELECT
+    Sel = 0
+   ,RowNo = ROW_NUMBER() OVER (ORDER BY psd.Refno, isd.POID, isd.Roll)
+   ,SPNo = isd.POID
+   ,Seq = CONCAT(isd.Seq1, '-', isd.Seq2)
+   ,Roll = isd.Roll
+   ,Dyelot = isd.Dyelot
+   ,Refno = ISNULL(psd.Refno, '')
+   ,Color = ISNULL(psdsC.SpecValue, '')
+   ,Qty = isd.Qty
+   ,i.CutplanID
+   ,EstCutdate = FORMAT(EstCutdate.EstCutdate, 'yyyy/MM/dd')
+   ,Relaxtime = CONCAT(CAST(fr.Relaxtime AS FLOAT), ' hrs')
+   ,UnrollStartDate = FORMAT(fu.UnrollStartTime, 'yyyy/MM/dd')
+   ,UnrollStartTime = FORMAT(fu.UnrollStartTime, 'hh:mm:ss')
+   ,RelaxationEndDate= FORMAT(fu.RelaxationEndTime, 'yyyy/MM/dd')
+   ,RelaxationEndTime = FORMAT(fu.RelaxationEndTime, 'hh:mm:ss')
+FROM Issue_Detail isd
+INNER JOIN Issue i WITH (NOLOCK) ON i.ID = isd.ID
+INNER JOIN Cutplan cp WITH (NOLOCK) ON cp.ID = Ｉ.CutplanID
+LEFT JOIN Orders o WITH (NOLOCK) ON o.ID = isd.POID
+LEFT JOIN Po_Supp_Detail psd WITH (NOLOCK) ON isd.POID = psd.ID AND isd.Seq1 = psd.SEQ1 AND isd.Seq2 = psd.SEQ2
+LEFT JOIN PO_Supp_Detail_Spec psdsC WITH (NOLOCK) ON psdsC.ID = psd.id AND psdsC.seq1 = psd.seq1 AND psdsC.seq2 = psd.seq2 AND psdsC.SpecColumnID = 'Color'
+LEFT JOIN CutPlan_IssueCutDate cpi WITH (NOLOCK) ON cpi.ID = cp.ID AND cpi.Refno = psd.Refno AND cpi.Colorid = psdsC.SpecValue
+OUTER APPLY (SELECT EstCutdate = IIF(cpi.EstCutDate IS NOT NULL, cpi.EstCutDate, cp.EstCutdate)) EstCutdate
+LEFT JOIN [SciMES_RefnoRelaxtime] rr WITH (NOLOCK) ON rr.Refno = psd.Refno
+LEFT JOIN [SciMES_FabricRelaxation] fr WITH (NOLOCK) ON rr.FabricRelaxationID = fr.ID
+INNER JOIN WHBarcodeTransaction wbt WITH (NOLOCK) ON isd.Id = wbt.TransactionID AND isd.ukey = wbt.TransactionUkey AND wbt.Action = 'Confirm'
+LEFT JOIN Fabric_UnrollandRelax fu WITH (NOLOCK) ON fu.Barcode = wbt.To_NewBarcode
+WHERE isd.ID = '{this.strIssueID}'
+ORDER BY RowNo
 ";
-            DataTable dt;
-            DualResult result = DBProxy.Current.Select(string.Empty, sqlcmd, out dt);
-            if (result == false)
+            DualResult result = DBProxy.Current.Select(string.Empty, sqlcmd, out DataTable dt);
+            if (!result)
             {
                 this.ShowErr(result);
                 return;
@@ -106,6 +120,13 @@ order by NewRowNo";
                     Roll = row["Roll"].ToString().Trim(),
                     Dyelot = row["Dyelot"].ToString().Trim(),
                     Qty = Convert.ToDouble(row["Qty"]),
+                    CutplanID = MyUtility.Convert.GetString(row["CutplanID"]),
+                    EstCutdate = MyUtility.Convert.GetString(row["EstCutdate"]),
+                    Relaxtime = MyUtility.Convert.GetString(row["Relaxtime"]),
+                    UnrollStartDate = MyUtility.Convert.GetString(row["UnrollStartDate"]),
+                    UnrollStartTime = MyUtility.Convert.GetString(row["UnrollStartTime"]),
+                    RelaxationEndDate = MyUtility.Convert.GetString(row["RelaxationEndDate"]),
+                    RelaxationEndTime = MyUtility.Convert.GetString(row["RelaxationEndTime"]),
                 }).ToList();
 
                 ReportDefinition report = new ReportDefinition

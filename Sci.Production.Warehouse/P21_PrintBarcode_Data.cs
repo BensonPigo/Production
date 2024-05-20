@@ -20,6 +20,7 @@
         public string StyleID { get; set; }
         public string WhseArrival { get; set; }
         public byte[] Image { get; set; }
+        public string Relaxtime { get; set; }
     }
 #pragma warning restore SA1516 // Elements should be separated by blank line
 #pragma warning restore SA1600 // Elements should be documented

@@ -523,14 +523,40 @@ order by GarmentDefectCodeID,GarmentDefectTypeID
                 }
             }
 
-            DataTable dt;
-            string sql = string.Format(
-                @"select * from rft WITH (NOLOCK) where OrderID='{0}' and CDate='{1}' and SewinglineID = '{2}' 
-  and FactoryID='{3}' and [Shift]='{4}' and Team='{5}' ", this.txtSP.Text, ((DateTime)this.dateDate.Value).ToShortDateString(), this.txtLine.Text, this.displayFactory.Text, this.comboShift.SelectedValue, this.comboSewingTeam1.Text);
-            DBProxy.Current.Select(null, sql, out dt);
-            if (dt.Rows.Count > 0 && this.isNew)
+            string sql = @"
+select * from rft WITH (NOLOCK)
+where OrderID = @OrderID
+and CDate = @CDate
+and SewinglineID = @SewinglineID
+and FactoryID = @FactoryID
+and [Shift] = @Shift
+and Team = @Team
+";
+
+            List<SqlParameter> paras = new List<SqlParameter>();
+            paras.Add(new SqlParameter("@OrderID", this.txtSP.Text));
+            paras.Add(new SqlParameter("@CDate", ((DateTime)this.dateDate.Value).ToShortDateString()));
+            paras.Add(new SqlParameter("@SewinglineID", this.txtLine.Text));
+            paras.Add(new SqlParameter("@FactoryID", this.displayFactory.Text));
+            paras.Add(new SqlParameter("@Shift", this.comboShift.SelectedValue));
+            paras.Add(new SqlParameter("@Team", this.comboSewingTeam1.Text));
+
+            if (!this.isNew)
             {
-                // 如果是新增,才判斷ＳＰ＃是否存在
+                sql += "and ID != @ID";
+                paras.Add(new SqlParameter("@ID", this.CurrentMaintain["ID"]));
+            }
+
+            DataTable dt;
+            var res = DBProxy.Current.Select(null, sql, paras, out dt);
+            if (!res)
+            {
+                this.ShowErr(res);
+                return false;
+            }
+
+            if (dt.Rows.Count > 0)
+            {
                 MyUtility.Msg.WarningBox(" SP#,Shift,Team,Date,Factory can't be same in dataBase,please pick one least to change!");
                 return false;
             }
