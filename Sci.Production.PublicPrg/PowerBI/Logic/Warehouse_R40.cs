@@ -385,7 +385,7 @@ outer apply (
 where   psd.FabricType ='F' and r.Type = 'A'
 {whereReceiving}
 
-union all
+union 
 select
 	[ReceivingID] = r.ID
 	,[ExportID] = ''
@@ -475,7 +475,7 @@ select  ReceivingID = isnull(ReceivingID, '')
         ,MINDCheckEditDate
         ,AbbEN = isnull(AbbEN, '')
         ,ForInspection = isnull(ForInspection, '')
-        ,ForInspectionTime = isnull(ForInspectionTime, 0)
+        ,ForInspectionTime
         ,OneYardForWashing = isnull(OneYardForWashing, '')
         ,Hold = isnull(Hold, '')
         ,Remark = isnull(Remark, '')
