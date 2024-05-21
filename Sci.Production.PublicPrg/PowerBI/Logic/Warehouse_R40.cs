@@ -125,15 +125,15 @@ namespace Sci.Production.Prg.PowerBI.Logic
 ";
 				if (model.AddEditDateStart.HasValue)
 				{
-					whereReceiving += " and (o.AddDate >= @AddEditDateStart or o.EditDate >= @AddEditDateStart)";
-					whereTransferIn += " and (o.AddDate >= @AddEditDateStart or o.EditDate >= @AddEditDateStart)";
+					whereReceiving += " and (r.AddDate >= @AddEditDateStart or r.EditDate >= @AddEditDateStart)";
+					whereTransferIn += " and (r.AddDate >= @AddEditDateStart or r.EditDate >= @AddEditDateStart)";
 					listPar.Add(new SqlParameter("@AddEditDateStart", model.AddEditDateStart));
 				}
 
 				if (model.AddEditDateEnd.HasValue)
 				{
-					whereReceiving += " and (o.AddDate <= @AddEditDateEnd or o.EditDate <= @AddEditDateEnd)";
-					whereTransferIn += " and (o.AddDate <= @AddEditDateEnd or o.EditDate <= @AddEditDateEnd)";
+					whereReceiving += " and (r.AddDate <= @AddEditDateEnd or r.EditDate <= @AddEditDateEnd)";
+					whereTransferIn += " and (r.AddDate <= @AddEditDateEnd or r.EditDate <= @AddEditDateEnd)";
 					listPar.Add(new SqlParameter("@AddEditDateEnd", model.AddEditDateEnd));
 				}
 
