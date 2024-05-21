@@ -19,12 +19,12 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 
             if (!sDate.HasValue)
             {
-                sDate = DateTime.Parse(DateTime.Now.AddDays(-30).ToString("yyyy/MM/dd"));
+                sDate = DateTime.Parse(DateTime.Now.AddYears(-1).ToString("yyyy/MM/dd"));
             }
 
             if (!eDate.HasValue)
             {
-                eDate = DateTime.Parse(DateTime.Now.AddDays(+30).ToString("yyyy/MM/dd"));
+                eDate = DateTime.Parse(DateTime.Now.ToString("yyyy/MM/dd"));
             }
 
             try
@@ -70,107 +70,10 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
         {
             Base_ViewModel finalResult;
             string sqlCmd = $@"
-             -- 更新
-            UPDATE P SET						
-             P.[MDivisionID]					=	ISNULL(T.[MDivisionID],'')
-            ,P.[FactoryID]						=	ISNULL(T.[FactoryID],'')
-            ,P.[SewingLineID]					=	ISNULL(T.[SewingLineID],'')
-            ,P.[BuyerDelivery]					=	T.[OrdersBuyerDelivery]
-            ,P.[SciDelivery]					=	T.[SciDelivery]
-            ,P.[SewInLine]						=	T.[Inline]	
-            ,P.[SewOffLine]						=	T.[Offline]	
-            ,P.[IDD]							=	ISNULL(T.[val],'')
-            ,P.[BrandID]						=	ISNULL(T.[BrandID],'')
-            ,P.[MasterSP]						=	ISNULL(T.[POID],'')
-            ,P.[IsBuyBack]						=	ISNULL(T.[Buy Back],'')
-            ,P.[Cancelled]						=	ISNULL(T.[Cancelled],'')
-            ,P.[CancelledStillNeedProd]			=	ISNULL(T.[Cancelled but Sill],'')
-            ,P.[Dest]							=	ISNULL(T.[Dest],'')
-            ,P.[StyleID]						=	ISNULL(T.[StyleID],'')
-            ,P.[OrderTypeID]					=	ISNULL(T.[OrderTypeID],'')
-            ,P.[ShipMode]						=	ISNULL(T.[ShipModeList],'')
-            ,P.[PartialShipping]				=	ISNULL(T.[PartialShipping],'')
-            ,P.[OrderNo]						=	ISNULL(T.[OrderNo],'')
-            ,P.[PONO]							=	ISNULL(T.[CustPONo],'')
-            ,P.[ProgramID]						=	ISNULL(T.[ProgramID],'')
-            ,P.[CdCodeID]						=	ISNULL(T.[CdCodeID],'')
-            ,P.[CDCodeNew]						=	ISNULL(T.[CDCodeNew],'')	
-            ,P.[ProductType]					=	ISNULL(T.[ProductType],'')
-            ,P.[FabricType]						=	ISNULL(T.[FabricType],'')	
-            ,P.[Lining]							=	ISNULL(T.[Lining],'')	
-            ,P.[Gender]							=	ISNULL(T.[Gender],'')	
-            ,P.[Construction]					=	ISNULL(T.[Construction],'')
-            ,P.[KPILETA]						=	T.[KPILETA]
-            ,P.[SCHDLETA]						=	T.[LETA]
-            ,P.[ActMTLETA_MasterSP]			    =	T.[MTLETA]
-            ,P.[SewMTLETA_SP]					=	T.[SewETA]	
-            ,P.[PkgMTLETA_SP]					=	T.[PackETA]	
-            ,P.[Cpu]							=	ISNULL(T.[Cpu],0)
-            ,P.[TTLCPU]							=	ISNULL(T.[TTL CPU],0)	
-            ,P.[CPUClosed]						=	ISNULL(T.[CPU Closed],0)
-            ,P.[CPUBal]							=	ISNULL(T.[CPU bal],0)	
-            ,P.[Article]						=	ISNULL(T.[article_list],'')
-            ,P.[Qty]							=	ISNULL(T.[Qty],0)
-            ,P.[StandardOutput]					=	ISNULL(T.[StandardOutput],'')
-            ,P.[OrigArtwork]					=	ISNULL(T.[oriArtwork],'')
-            ,P.[AddedArtwork]					=	ISNULL(T.[AddedArtwork],'')	
-            ,P.[BundleArtwork]					=	ISNULL(T.[Artwork],'')
-            ,P.[SubProcessDest]					=	ISNULL(T.[SubProcessDest],'')
-            ,P.[EstCutDate]						=	T.[EstimatedCutDate]
-            ,P.[1stCutDate]						=	T.[first_cut_date]
-            ,P.[CutQty]							=	ISNULL(T.[cut_qty],0)
-            ,P.[RFIDCutQty]						=	ISNULL(T.[RFID Cut Qty],0)	
-            ,P.[RFIDSewingLineInQty]			=	ISNULL(T.[RFID SewingLine In Qty],0)
-            ,P.[RFIDLoadingQty]					=	ISNULL(T.[RFID Loading Qty],0)	
-            ,P.[RFIDEmbFarmInQty]				=	ISNULL(T.[RFID Emb Farm In Qty],0)
-            ,P.[RFIDEmbFarmOutQty]				=	ISNULL(T.[RFID Emb Farm Out Qty],0)	
-            ,P.[RFIDBondFarmInQty]				=	ISNULL(T.[RFID Bond Farm In Qty],0)
-            ,P.[RFIDBondFarmOutQty]				=	ISNULL(T.[RFID Bond Farm Out Qty],0)
-            ,P.[RFIDPrintFarmInQty]				=	ISNULL(T.[RFID Print Farm In Qty],0)
-            ,P.[RFIDPrintFarmOutQty]			=	ISNULL(T.[RFID Print Farm Out Qty],0)
-            ,P.[RFIDATFarmInQty]				=	ISNULL(T.[RFID AT Farm In Qty],0)
-            ,P.[RFIDATFarmOutQty]				=	ISNULL(T.[RFID AT Farm Out Qty],0)
-            ,P.[RFIDPadPrintFarmInQty]			=	ISNULL(T.[RFID Pad Print Farm In Qty],0)
-            ,P.[RFIDPadPrintFarmOutQty]			=	ISNULL(T.[RFID Pad Print Farm Out Qty],0)
-            ,P.[RFIDEmbossDebossFarmInQty]		=	ISNULL(T.[RFID Emboss Farm In Qty],0)	
-            ,P.[RFIDEmbossDebossFarmOutQty]		=	ISNULL(T.[RFID Emboss Farm Out Qty],0)
-            ,P.[RFIDHTFarmInQty]				=	ISNULL(T.[RFID HT Farm In Qty],0)
-            ,P.[RFIDHTFarmOutQty]				=	ISNULL(T.[RFID HT Farm Out Qty],0)
-            ,P.[SubProcessStatus]				=	ISNULL(T.[SubProcessStatus],'')	
-            ,P.[EmbQty]							=	ISNULL(T.[EMBROIDERY_qty],0)
-            ,P.[BondQty]						=	ISNULL(T.[BONDING_qty],0)
-            ,P.[PrintQty]						=	ISNULL(T.[PRINTING_qty],0)	
-            ,P.[SewQty]							=	ISNULL(T.[sewing_output],0)	
-            ,P.[SewBal]							=	ISNULL(T.[Balance],'')
-            ,P.[1stSewDate]						=	T.[firstSewingDate]
-            ,P.[LastSewDate]					=	T.[Last Sewn Date]
-            ,P.[AverageDailyOutput]				=	ISNULL(T.[AVG_QAQTY],0)
-            ,P.[EstOfflinedate]					=	T.[Est_offline]
-            ,P.[ScannedQty]						=	ISNULL(T.[Scanned_Qty],0)	
-            ,P.[PackedRate]						=	ISNULL(T.[pack_rate],0)
-            ,P.[TTLCTN]							=	ISNULL(T.[TotalCTN],0)
-            ,P.[FtyCTN]							=	ISNULL(T.[FtyCtn],0)
-            ,P.[cLogCTN]						=	ISNULL(T.[ClogCTN],0)
-            ,P.[CFACTN]							=	ISNULL(T.[CFACTN],0)	
-            ,P.[InspDate]						=	ISNULL(T.[InspDate],'')
-            ,P.[InspResult]						=	ISNULL(T.[InspResult],'')
-            ,P.[CFAName]						=	ISNULL(T.[CFA Name],'')
-            ,P.[ActPulloutDate]					=	T.[ActPulloutDate]	
-            ,P.[KPIDeliveryDate]				=	T.[FtyKPI]
-            ,P.[UpdateDeliveryReason]			=	ISNULL(T.[KPIChangeReason],'')
-            ,P.[PlanDate]						=	T.[PlanDate]	
-            ,P.[SMR]							=	ISNULL(T.[SMR],'')
-            ,P.[Handle]							=	ISNULL(T.[Handle],'')	
-            ,P.[Posmr]							=	ISNULL(T.[PO SMR],'')
-            ,P.[PoHandle]						=	ISNULL(T.[PO Handle],'')
-            ,P.[MCHandle]						=	ISNULL(T.[MC Handle],'')
-            ,P.[doxtype]						=	ISNULL(T.[DoxType],'')
-            ,P.[SpecialMark]					=	ISNULL(T.[SpecMark],'')
-            ,P.[GlobalFoundationRange]			=	ISNULL(T.[GFR],0)
-            ,P.[SampleReason]					=	ISNULL(T.[SampleReason],'')
-            ,P.[TMS]							=	ISNULL(T.[TMS],0)
-            FROM P_WIPBySPLine P						
-            INNER JOIN #tmp T ON P.SPNO = T.OrderID 
+              -- 刪除
+            DELETE P_WIPBySPLine 
+            FROM P_WIPBySPLine p 
+            where  p.SciDelivery between @StartDate and @EndDate
 
             -- 新增
             INSERT INTO P_WIPBySPLine
@@ -374,13 +277,6 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             ,ISNULL(T.[SampleReason],'')
             ,ISNULL(T.[TMS],0)
             FROM #tmp T
-            WHERE NOT EXISTS(SELECT 1 FROM P_WIPBySPLine P WHERE P.SPNO = T.OrderID)
-
-            -- 刪除
-            DELETE P_WIPBySPLine 
-            FROM P_WIPBySPLine p 
-            inner join #tmp t on t.OrderID = p.SPNO
-            where  p.SciDelivery between @StartDate and @EndDate
 
             IF EXISTS (select 1 from BITableInfo b where b.id = 'P_WIPBySPLine')
             BEGIN
