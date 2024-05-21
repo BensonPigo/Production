@@ -48,6 +48,19 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                     throw finalResult.Result.GetException();
                 }
 
+                // 用P_SubprocessWIP來更新SubprocessBCSByDays & SubprocessBCSByMonth
+                finalResult = new P_Import_SubprocessBCSByDays().UpdateBIData();
+                if (!finalResult.Result)
+                {
+                    throw finalResult.Result.GetException();
+                }
+
+                finalResult = new P_Import_SubprocessBCSByMonth().UpdateBIData();
+                if (!finalResult.Result)
+                {
+                    throw finalResult.Result.GetException();
+                }
+
                 finalResult.Result = new Ict.DualResult(true);
             }
             catch (Exception ex)

@@ -231,8 +231,10 @@
     <Compile Include="PowerBI\DataAccess\P_Import_FabricInspReportReceivingTransferIn.cs" />
     <Compile Include="PowerBI\DataAccess\P_Import_SewingLineScheduleBIData.cs" />
     <Compile Include="PowerBI\DataAccess\P_Import_SewingLineScheduleBySP.cs" />
+    <Compile Include="PowerBI\DataAccess\P_Import_SubprocessBCSByDays.cs" />
     <Compile Include="PowerBI\DataAccess\P_Import_SubProInsReport.cs" />
     <Compile Include="PowerBI\DataAccess\P_Import_SubprocessWIP.cs" />
+    <Compile Include="PowerBI\DataAccess\P_Import_SubprocessBCSByMonth.cs" />
     <Compile Include="PowerBI\FormPage\Form1.cs">
       <SubType>Form</SubType>
     </Compile>
