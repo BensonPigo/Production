@@ -379,9 +379,8 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             -- 刪除
             DELETE P_WIP 
             FROM P_WIP p 
-            inner join #tmp t on t.OrderID = p.SPNO
             where  p.SciDelivery between @StartDate and @EndDate
-            
+            and NOT EXISTS(SELECT 1 FROM #tmp t WHERE P.SPNO = T.OrderID)
 
             IF EXISTS (select 1 from BITableInfo b where b.id = 'P_WIP')
             BEGIN
@@ -394,7 +393,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             BEGIN
 	            insert into BITableInfo(Id, TransferDate)
 	            values('P_WIP', getdate())
-            EN";
+            END";
 
             DBProxy.Current.OpenConnection("PowerBI", out SqlConnection sqlConn);
             using (sqlConn)
