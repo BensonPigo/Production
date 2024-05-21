@@ -172,7 +172,7 @@ namespace Sci.Production.Quality
                 outer apply(select Result from SpreadingInspection_InsCutRef_Inspection  where SpreadingInspectionInsCutRefUkey = si.Ukey and Item = 'Marker Check')ip_mc
                 outer apply(select Result from SpreadingInspection_InsCutRef_Inspection  where SpreadingInspectionInsCutRefUkey = si.Ukey and Item = 'Hand Feel')ip_hf
                 outer apply(select Result from SpreadingInspection_InsCutRef_Inspection  where SpreadingInspectionInsCutRefUkey = si.Ukey and Item = 'Wrong Face Side')ip_ws
-                outer apply(select Result from SpreadingInspection_InsCutRef_Inspection  where SpreadingInspectionInsCutRefUkey = si.Ukey and Item = 'Short Width')ip_sw
+                outer apply(select Result from SpreadingInspection_InsCutRef_Inspection  where SpreadingInspectionInsCutRefUkey = si.Ukey and Item = 'Uneven Width')ip_sw
                 outer apply(select Result from SpreadingInspection_InsCutRef_Inspection  where SpreadingInspectionInsCutRefUkey = si.Ukey and Item = 'Machine Tension')ip_mt
                 outer apply(select Result from SpreadingInspection_InsCutRef_Inspection  where SpreadingInspectionInsCutRefUkey = si.Ukey and Item = 'Fabric Color')ip_fc
                 outer apply(select Result from SpreadingInspection_InsCutRef_Inspection  where SpreadingInspectionInsCutRefUkey = si.Ukey and Item = 'Insert Paper')ip_ip
