@@ -214,7 +214,7 @@ alter table #tmp alter column OrderID varchar(13)
 select  sd.OrderID,
         sd.Article,
         sd.StyleID,
-        [Subcon Out Qty] = TotalOutputQty.OutputQty,
+        [Subcon Out Qty] = TotalOutputQty.OutputQty + sd.OutputQty,
         [Order_Qty Qty] = Order_Qty.Qty
 from    #tmp sd
 outer   apply( select Qty = isnull(sum(oq.Qty),0) from Order_Qty oq 
@@ -224,10 +224,15 @@ outer   apply( select Qty = isnull(sum(oq.Qty),0) from Order_Qty oq
 outer   apply( select OutputQty = isnull(sum(sd2.OutputQty),0) from SubconOutContract_Detail sd2 
                where sd2.OrderID = sd.OrderID 
                 and sd2.Article = sd.Article
+                and not exists (select 1 from #tmp t where t.OrderId = sd2.OrderId 
+													and t.Article = sd2.Article 
+													and t.SubConOutFty = sd2.SubConOutFty 
+													and t.ContractNumber = sd2.ContractNumber 
+													and t.ComboType = sd2.ComboType)
 ) TotalOutputQty
-where   Order_Qty.Qty < TotalOutputQty.OutputQty
+where   Order_Qty.Qty < TotalOutputQty.OutputQty + sd.OutputQty
 ";
-                checkSubconOutQtyResult = MyUtility.Tool.ProcessWithDatatable(this.DetailDatas.CopyToDataTable(), "StyleID,SubConOutFty,OrderID,Article,OutputQty", sqlCheckSubconOutQty, out dtCheckSubconOutQtyResult);
+                checkSubconOutQtyResult = MyUtility.Tool.ProcessWithDatatable(this.DetailDatas.CopyToDataTable(), "StyleID,SubConOutFty,ContractNumber,ComboType,OrderID,Article,OutputQty", sqlCheckSubconOutQty, out dtCheckSubconOutQtyResult);
 
                 if (!checkSubconOutQtyResult)
                 {
