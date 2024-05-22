@@ -205,6 +205,7 @@ SET
       ,a.EditName		      =isnull(b.EditName, '')
       ,a.EditDate		      =b.EditDate
       ,a.SeasonForDisplay	  =b.SeasonForDisplay
+      ,a.EndlineDisplay		  =isnull(b.EndlineDisplay, '')
 
 from Production.dbo.Season as a inner join Trade_To_Pms.dbo.Season as b ON a.id=b.id and a.BrandID = b.BrandID
 -------------------------- INSERT INTO §ì
@@ -235,7 +236,7 @@ select
       ,isnull(EditName, '')
       ,EditDate
       ,SeasonForDisplay
-	  ,EndlineDisplay
+	  ,isnull(EndlineDisplay, '')
 from Trade_To_Pms.dbo.Season as b WITH (NOLOCK)
 where not exists(select id from Production.dbo.Season as a WITH (NOLOCK) where a.id = b.id and a.BrandID = b.BrandID)
 
