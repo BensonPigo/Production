@@ -44,7 +44,4 @@ where	o.SCIDelivery <= @DateEnd
 		and (o.Junk=0 or (o.Junk=1 and o.NeedProduction=1))
 		and o.IsForecast = 0
 		and o.LocalOrder = 0
-		and o.SewInLine is not null
-		and o.SewOffLine is not null
-
 END
