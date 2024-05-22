@@ -46,7 +46,7 @@ namespace Sci.Production.Quality
 select 
      Convert(date,CR.AddDate),
      CR.Shift,
-     [RFT] = Round(iif(CheckTimes.TotalCnt = 0, 0, (RollDyelot.EmptyCnt/CheckTimes.TotalCnt)*100),2),
+     [RFT] = Round(iif(CheckTimes.TotalCnt = 0, 0, (convert(decimal(6,3),RollDyelot.EmptyCnt)/CheckTimes.TotalCnt)*100),2),
      CR.CutRef,
      W.ID,
      O.StyleID,
