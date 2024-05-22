@@ -29,10 +29,10 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.panel1 = new Sci.Win.UI.Panel();
             this.panel2 = new Sci.Win.UI.Panel();
             this.panel3 = new Sci.Win.UI.Panel();
+            this.btnDownloadExcel = new Sci.Win.UI.Button();
             this.numericttlsp = new Sci.Win.UI.NumericBox();
             this.numericFail = new Sci.Win.UI.NumericBox();
             this.numericSucessSP = new Sci.Win.UI.NumericBox();
@@ -47,7 +47,6 @@
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.gridBatchImport = new Sci.Win.UI.Grid();
             this.panel5 = new Sci.Win.UI.Panel();
-            this.btnDownloadExcel = new Sci.Win.UI.Button();
             this.panel3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.gridBatchImport)).BeginInit();
@@ -65,7 +64,7 @@
             // panel2
             // 
             this.panel2.Dock = System.Windows.Forms.DockStyle.Right;
-            this.panel2.Location = new System.Drawing.Point(987, 0);
+            this.panel2.Location = new System.Drawing.Point(1697, 0);
             this.panel2.Name = "panel2";
             this.panel2.Size = new System.Drawing.Size(10, 526);
             this.panel2.TabIndex = 1;
@@ -87,8 +86,18 @@
             this.panel3.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel3.Location = new System.Drawing.Point(10, 0);
             this.panel3.Name = "panel3";
-            this.panel3.Size = new System.Drawing.Size(977, 44);
+            this.panel3.Size = new System.Drawing.Size(1687, 44);
             this.panel3.TabIndex = 2;
+            // 
+            // btnDownloadExcel
+            // 
+            this.btnDownloadExcel.Location = new System.Drawing.Point(513, 8);
+            this.btnDownloadExcel.Name = "btnDownloadExcel";
+            this.btnDownloadExcel.Size = new System.Drawing.Size(119, 30);
+            this.btnDownloadExcel.TabIndex = 12;
+            this.btnDownloadExcel.Text = "Download Excel";
+            this.btnDownloadExcel.UseVisualStyleBackColor = true;
+            this.btnDownloadExcel.Click += new System.EventHandler(this.BtnDownloadExcel_Click);
             // 
             // numericttlsp
             // 
@@ -245,20 +254,12 @@
             this.gridBatchImport.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.gridBatchImport.Location = new System.Drawing.Point(0, 0);
             this.gridBatchImport.Name = "gridBatchImport";
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridBatchImport.RowHeadersDefaultCellStyle = dataGridViewCellStyle1;
             this.gridBatchImport.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridBatchImport.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridBatchImport.RowTemplate.Height = 24;
             this.gridBatchImport.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridBatchImport.ShowCellToolTips = false;
-            this.gridBatchImport.Size = new System.Drawing.Size(977, 482);
+            this.gridBatchImport.Size = new System.Drawing.Size(1687, 482);
             this.gridBatchImport.TabIndex = 0;
             this.gridBatchImport.TabStop = false;
             // 
@@ -268,23 +269,13 @@
             this.panel5.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel5.Location = new System.Drawing.Point(10, 44);
             this.panel5.Name = "panel5";
-            this.panel5.Size = new System.Drawing.Size(977, 482);
+            this.panel5.Size = new System.Drawing.Size(1687, 482);
             this.panel5.TabIndex = 4;
-            // 
-            // btnDownloadExcel
-            // 
-            this.btnDownloadExcel.Location = new System.Drawing.Point(513, 8);
-            this.btnDownloadExcel.Name = "btnDownloadExcel";
-            this.btnDownloadExcel.Size = new System.Drawing.Size(119, 30);
-            this.btnDownloadExcel.TabIndex = 12;
-            this.btnDownloadExcel.Text = "Download Excel";
-            this.btnDownloadExcel.UseVisualStyleBackColor = true;
-            this.btnDownloadExcel.Click += new System.EventHandler(this.BtnDownloadExcel_Click);
             // 
             // B42_BatchImport
             // 
             this.CancelButton = this.btnClose;
-            this.ClientSize = new System.Drawing.Size(997, 526);
+            this.ClientSize = new System.Drawing.Size(1707, 526);
             this.Controls.Add(this.panel5);
             this.Controls.Add(this.panel3);
             this.Controls.Add(this.panel2);
