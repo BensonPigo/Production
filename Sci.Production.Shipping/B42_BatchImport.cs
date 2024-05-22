@@ -6,6 +6,7 @@ using Ict;
 using Sci.Data;
 using System.Linq;
 using Sci.Production.PublicPrg;
+using System.Transactions;
 
 namespace Sci.Production.Shipping
 {
@@ -206,6 +207,11 @@ from VNConsumption where 1=0";
 
             this.HideWaitMessage();
             MyUtility.Msg.InfoBox("Import Complete!!");
+
+            if (this.dtBatchImport.AsEnumerable().Where(x => !string.IsNullOrEmpty(x.Field<string>("Remark"))).Any())
+            {
+                MyUtility.Msg.InfoBox("Selected File contains error data, please check the Remark column to adjust the data!!");
+            }
         }
 
         private void BtnImport_Click(object sender, EventArgs e)
@@ -222,6 +228,12 @@ from VNConsumption where 1=0";
                 return;
             }
             #endregion
+
+            if (this.dtBatchImport.AsEnumerable().Where(x => !string.IsNullOrEmpty(x.Field<string>("Remark"))).Any())
+            {
+                MyUtility.Msg.ErrorBox("Selected File contains error data, please check the Remark column to adjust the data!!");
+                return;
+            }
 
             foreach (DataRow dr in drImportList)
             {
@@ -358,18 +370,25 @@ where vdd.ID = '{id}'
                     idu.Append(sqlUpdateVNConsumption_Detail_DetailWaste);
                 }
 
-                drResult = DBProxy.Current.Execute(null, idu.ToString());
-                if (!drResult)
+                TransactionScope transcation = new TransactionScope(TransactionScopeOption.Required, TimeSpan.FromMinutes(5));
+                using (transcation)
                 {
-                    this.ShowErr("Insert/Update datas error!", drResult);
-                }
-                else
-                {
+                    drResult = DBProxy.Current.Execute(null, idu.ToString());
+                    if (!drResult)
+                    {
+                        transcation.Dispose();
+                        this.ShowErr("Insert/Update datas error!", drResult);
+                        return;
+                    }
+
                     DataRow[] drsf = this.dtBatchImport.Select("remark <> ''");
                     this.numericFail.Value = drsf.Length;
                     DataTable distinctchk = this.dtBatchImport.DefaultView.ToTable(true, new string[] { "CustomSP", "checkS" });
                     DataRow[] drs2 = distinctchk.Select("checkS = 1");
                     this.numericSucessSP.Value = drs2.Length;
+
+                    transcation.Complete();
+                    transcation.Dispose();
                     MyUtility.Msg.InfoBox("Complete!!");
                 }
             }
