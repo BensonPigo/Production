@@ -542,18 +542,20 @@ order by p2.ID,p2.CTNStartNo
                 return;
             }
 
-            this.selectDataTable = dt.AsEnumerable().Where(r => MyUtility.Convert.GetInt(r["selected"]) == 1).ToList().CopyToDataTable();
-            if (this.selectDataTable.Rows.Count <= 0)
+            if (dt.AsEnumerable().Any(row => row["Selected"].EqualDecimal(1)) == false)
             {
-                MyUtility.Msg.WarningBox("Please select data first!");
+                MyUtility.Msg.InfoBox("Please select data first!");
                 return;
             }
+
+            this.selectDataTable = dt.AsEnumerable().Where(r => MyUtility.Convert.GetInt(r["selected"]) == 1).ToList().CopyToDataTable();
 
             this.ShowWaitMessage("Data Processing...");
             if (!this.backgroundDownloadSticker.IsBusy)
             {
                 if (this.selectDataTable == null || this.selectDataTable.Rows.Count == 0)
                 {
+                    this.HideWaitMessage();
                     return;
                 }
 

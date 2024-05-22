@@ -502,6 +502,12 @@ order by p2.ID,p2.CTNStartNo
                 return;
             }
 
+            if (dt.AsEnumerable().Any(row => row["Selected"].EqualDecimal(1)) == false)
+            {
+                MyUtility.Msg.InfoBox("Please select data first!");
+                return;
+            }
+
             this.selectDataTable = dt.AsEnumerable().Where(r => MyUtility.Convert.GetInt(r["selected"]) == 1).ToList().CopyToDataTable();
             if (this.selectDataTable.Rows.Count <= 0)
             {
@@ -514,6 +520,7 @@ order by p2.ID,p2.CTNStartNo
             {
                 if (this.selectDataTable == null || this.selectDataTable.Rows.Count == 0)
                 {
+                    this.HideWaitMessage();
                     return;
                 }
 
