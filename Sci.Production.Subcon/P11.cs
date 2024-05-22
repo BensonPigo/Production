@@ -993,5 +993,23 @@ where   o.MDivisionID = '{this.CurrentMaintain["MDivisionID"]}'
 
             this.RenewData();
         }
+
+        protected override void OnDetailGridAppendClick()
+        {
+            base.OnDetailGridAppendClick();
+            this.FirstCheckOutputQty = true;
+        }
+
+        protected override void OnDetailGridInsertClick()
+        {
+            base.OnDetailGridInsertClick();
+            this.FirstCheckOutputQty = true;
+        }
+
+        protected override void OnDetailGridRemoveClick()
+        {
+            base.OnDetailGridRemoveClick();
+            this.FirstCheckOutputQty = true;
+        }
     }
 }
