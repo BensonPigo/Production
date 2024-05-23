@@ -2618,7 +2618,7 @@ drop table #Child, #updateChild
             decimal sumWorkhour = 0;
             foreach (DataRow dr in drs)
             {
-                dr["WorkHour"] = MyUtility.Math.Round(MyUtility.Convert.GetDecimal(this.CurrentMaintain["WorkHour"]) * MyUtility.Convert.GetDecimal(dr["QAQty"]) * MyUtility.Convert.GetDecimal(dr["TMS"]) / ttlQtyTms, 3);
+                dr["WorkHour"] = ttlQtyTms == 0 ? 0 : MyUtility.Math.Round(MyUtility.Convert.GetDecimal(this.CurrentMaintain["WorkHour"]) * MyUtility.Convert.GetDecimal(dr["QAQty"]) * MyUtility.Convert.GetDecimal(dr["TMS"]) / ttlQtyTms, 3);
                 sumWorkhour += MyUtility.Convert.GetDecimal(dr["WorkHour"]);
             }
 
