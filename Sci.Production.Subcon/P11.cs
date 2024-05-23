@@ -137,6 +137,23 @@ where sd.SubConOutFty = '{subConOutFty}' and sd.ContractNumber = '{contractNumbe
             }
             #endregion
 
+            #region 檢查資料重複
+            string cmd = @"select distinct OrderID,Article,Combotype from #tmp";
+            DualResult checkDuplicate = MyUtility.Tool.ProcessWithDatatable(this.DetailDatas.CopyToDataTable(), "OrderID,Article,Combotype", cmd, out DataTable dtDuplicate);
+
+            if (!checkDuplicate)
+            {
+                this.ShowErr(checkDuplicate);
+                return false;
+            }
+
+            if (this.DetailDatas.Count() != dtDuplicate.Rows.Count)
+            {
+                this.ShowErr("'SP#,ComboType,Article' detail key cannot duplicate.");
+                return false;
+            }
+            #endregion
+
             #region 檢查Subcon Out Qty是否大於Accu. Subcon Out Qty
             string sqlCheckSubconOutQty = @"
 alter table #tmp alter column ContractNumber varchar(50)
