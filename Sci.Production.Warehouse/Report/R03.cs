@@ -458,12 +458,8 @@ select  F.MDivisionID
         ,[Material Color] = iif(Fabric.MtlTypeID in ('EMB Thread', 'SP Thread', 'Thread') 
                 , IIF(isnull(PSD.SuppColor,'') = '',dbo.GetColorMultipleID(O.BrandID, psdsC.SpecValue),PSD.SuppColor)
                 , dbo.GetColorMultipleID(O.BrandID, psdsC.SpecValue))
-        ,[Article] = Case When isnull(iif(acc.Article is null,iif(fab.Article is null,thread.Article,fab.Article),acc.Article ), '') = '' then nullArticle.Article 
-                          Else iif(acc.Article is null,iif(fab.Article is null,thread.Article,fab.Article),acc.Article ) 
-                          End
-        ,[Color] = Case When isnull(iif(acc.Color is null,iif(fab.Color is null,thread.Color ,fab.Color ),acc.Color ), '') = '' then nullColor.Color
-                        Else iif(acc.Color is null,iif(fab.Color is null,thread.Color ,fab.Color ),acc.Color )
-                        End
+		,[Article] = COALESCE(acc.Article, fab.Article, thread.Article, nullArticle.Article)
+		,[Color] =  COALESCE(acc.Color, fab.Color, thread.Color)
         ,PSD.Qty
         ,PSD.NETQty
         ,PSD.NETQty+PSD.LossQty
