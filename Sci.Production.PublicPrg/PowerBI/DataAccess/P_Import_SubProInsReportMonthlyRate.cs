@@ -78,7 +78,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 
             ----更新
             UPDATE P SET
-             P.[SubprocessRate] = 22 --ISNULL(T.[SubprocessRate],0)
+             P.[SubprocessRate] = ISNULL(T.[SubprocessRate],0)
             ,P.[TotalPassQty] = ISNULL(T.[TotalPassQty],0)
             ,P.[TotalQty] = ISNULL(T.[TotalQty],0)
             FROM P_SubProInsReportMonthlyRate P
