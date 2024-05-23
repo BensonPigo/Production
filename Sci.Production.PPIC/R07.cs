@@ -62,6 +62,14 @@ namespace Sci.Production.PPIC
 
             this._year = (int)this.numericUpDownYear.Value;
             this._month = (int)this.numericUpDownMonth.Value;
+
+            // ISP20240496
+            if (this._year < 2024)
+            {
+                this._year = 2024;
+                this._month = 1;
+            }
+
             this._mDivision = this.comboM.Text;
             this._factory = this.comboFactory.Text;
             this._startDate = Convert.ToDateTime(string.Format("{0}/{1}/1", MyUtility.Convert.GetString(this._year), MyUtility.Convert.GetString(this._month)));
