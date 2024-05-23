@@ -39,6 +39,7 @@ namespace Sci.Production.Prg.PowerBI.Logic
             P_SubprocessWIP,
             P_RightFirstTimeDailyReport,
             P_SDP,
+            P_BatchUpdateRecevingInfoTrackingList,
         }
 
         /// <summary>
@@ -310,6 +311,9 @@ ORDER BY [Group], [SEQ], [NAME]";
                         break;
                     case ListName.P_MtlStatusAnalisis:
                         result = new P_Import_MtlStatusAnalisis().P_MtlStatusAnalisis(item.SDate, item.EDate);
+                        break;
+                    case ListName.P_BatchUpdateRecevingInfoTrackingList:
+                        result = new P_Import_BatchUpdateRecevingInfoTrackingList().P_BatchUpdateRecevingInfoTrackingList(item.SDate, item.EDate);
                         break;
                     case ListName.P_SubProInsReport:
                         result = new P_Import_SubProInsReport().P_SubProInsReport(item.SDate, item.EDate);
