@@ -132,6 +132,18 @@ namespace Sci.Production.PPIC
                 return false;
             }
 
+            // ISP20240496
+            DateTime date2024 = DateTime.Parse("2024/01/01");
+            if (!this.SewingDate1.HasValue)
+            {
+                this.SewingDate1 = date2024;
+            }
+
+            if (DateTime.Compare(this.SewingDate1.Value, date2024) == -1)
+            {
+                this.SewingDate1 = date2024;
+            }
+
             return base.ValidateInput();
         }
 
