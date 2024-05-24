@@ -64,9 +64,9 @@ namespace Sci.Production.PPIC
             this._month = (int)this.numericUpDownMonth.Value;
 
             // ISP20240496
-            if (this._year < 2024)
+            if (this._year < 2023)
             {
-                this._year = 2024;
+                this._year = 2023;
                 this._month = 1;
             }
 
