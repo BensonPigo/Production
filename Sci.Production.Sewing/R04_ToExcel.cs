@@ -51,11 +51,6 @@ namespace Sci.Production.Sewing
 
             if (isR04 == true)
             {
-                objSheets.get_Range("G:J").EntireColumn.Delete();
-                dtR04.Columns.RemoveAt(6);
-                dtR04.Columns.RemoveAt(6);
-                dtR04.Columns.RemoveAt(6);
-                dtR04.Columns.RemoveAt(6);
                 bool result = MyUtility.Excel.CopyToXls(dtR04, string.Empty, xltfile: excelFile, headerRow: 1, excelApp: objApp);
                 if (!result)
                 {
