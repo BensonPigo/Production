@@ -34,13 +34,13 @@ namespace Sci.Production.Prg.PowerBI.Model
         public DateTime? EndSewingInLineDate { get; set; }
 
         /// <inheritdoc/>
-        public DateTime? StratEstCuttingDate { get; set; }
+        public DateTime? StartEstCuttingDate { get; set; }
 
         /// <inheritdoc/>
         public DateTime? EndEstCuttingDate { get; set; }
 
         /// <inheritdoc/>
-        public string StratWK { get; set; }
+        public string StartWK { get; set; }
 
         /// <inheritdoc/>
         public string EndWK { get; set; }

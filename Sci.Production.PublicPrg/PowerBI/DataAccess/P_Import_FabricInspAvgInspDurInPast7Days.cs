@@ -1,0 +1,130 @@
+﻿using Sci.Data;
+using Sci.Production.Prg.PowerBI.Model;
+using System;
+using System.Collections.Generic;
+using System.Data.SqlClient;
+
+
+namespace Sci.Production.Prg.PowerBI.DataAccess
+{
+    /// <inheritdoc/>
+    public class P_Import_FabricInspAvgInspDurInPast7Days
+    {
+        /// <inheritdoc/>
+        public Base_ViewModel P_FabricInspAvgInspDurInPast7Days(DateTime? sDate, DateTime? eDate)
+        {
+            Base_ViewModel finalResult = new Base_ViewModel();
+            if (!sDate.HasValue)
+            {
+                sDate = DateTime.Parse(DateTime.Now.AddDays(-7).ToString("yyyy/MM/dd"));
+            }
+
+            if (!eDate.HasValue)
+            {
+                sDate = DateTime.Parse(DateTime.Now.ToString("yyyy/MM/dd"));
+            }
+
+            try
+            {
+                // insert into PowerBI
+                finalResult = this.UpdateBIData(sDate.Value, eDate.Value);
+                if (!finalResult.Result)
+                {
+                    throw finalResult.Result.GetException();
+                }
+
+                finalResult.Result = new Ict.DualResult(true);
+            }
+            catch (Exception ex)
+            {
+                finalResult.Result = new Ict.DualResult(false, ex);
+            }
+
+            return finalResult;
+        }
+
+        /// <inheritdoc/>
+        private Base_ViewModel UpdateBIData(DateTime sDate, DateTime eDate)
+        {
+            Base_ViewModel finalResult;
+            DBProxy.Current.OpenConnection("PowerBI", out SqlConnection sqlConn);
+
+            string sqlcmd = $@"          
+            SELECT
+            [TransferDate] = A.TransferDate
+            ,[FactoryID] = A.FactoryID
+            ,[AvgInspDurInPast7Days] = CAST(SUM(A.[SumofDuration])  / SUM(A.[DataCount]) AS DECIMAL(10, 2))
+            into #tmp
+            FROM
+            (
+	            select 
+	            [TransferDate] =  FORMAT(P.PhysicalInspDate, 'yyyy/MM/dd')
+	            ,[FactoryID] = F.FTYGroup
+	            ,[SumofDuration ] = datediff(day,ArriveWHDate,PhysicalInspDate)
+	            ,[DataCount ] = COUNT(*)
+	            from P_FabricInspLabSummaryReport P
+	            inner join MainServer.Production.dbo.Factory F on P.FactoryID = F.ID AND F.IsProduceFty=1 and F.Junk=0
+	            Where PhysicalInspDate BETWEEN @StartDate and @EndDate
+	            GROUP BY P.PhysicalInspDate, F.FTYGroup,ArriveWHDate,PhysicalInspDate
+	
+            )A
+            group by A.FactoryID,A.TransferDate
+            
+            
+
+            ----更新
+            UPDATE P SET
+             P.[AvgInspDurInPast7Days] = ISNULL(T.[AvgInspDurInPast7Days],0)
+            FROM P_FabricInspAvgInspDurInPast7Days P
+            INNER JOIN #TMP T ON P.[TransferDate] = T.[TransferDate] AND P.[FactoryID] = T.[FactoryID]
+            
+            -----新增
+            INSERT INTO [dbo].[P_FabricInspAvgInspDurInPast7Days]
+            (
+	            [TransferDate]
+	            ,[FactoryID]
+	            ,[AvgInspDurInPast7Days]
+            )
+            SELECT
+             [TransferDate]
+            ,[FactoryID] = ISNULL(T.[FactoryID],'')
+            ,[AvgInspDurInPast7Days] = ISNULL(T.[AvgInspDurInPast7Days],0)
+            from #tmp T
+            Where NOT EXISTS(SELECT 1 FROM P_FabricInspAvgInspDurInPast7Days P WHERE P.[TransferDate] = T.[TransferDate] AND P.[FactoryID] = T.[FactoryID])   
+
+            ----- 刪除
+            DELETE P_FabricInspAvgInspDurInPast7Days WHERE TransferDate NOT BETWEEN  @StartDate AND @EndDate
+
+            IF EXISTS (SELECT 1 FROM BITableInfo B WHERE B.ID = 'P_FabricInspAvgInspDurInPast7Days')
+            BEGIN
+	            UPDATE B
+	            SET b.TransferDate = getdate()
+	            FROM BITableInfo B
+	            WHERE B.ID = 'P_FabricInspAvgInspDurInPast7Days'
+            END
+            ELSE 
+            BEGIN
+	            INSERT INTO BITableInfo(Id, TransferDate)
+	            VALUES('P_FabricInspAvgInspDurInPast7Days', GETDATE())
+            END
+            Drop Table #tmp
+            ";
+
+            using (sqlConn)
+            {
+                List<SqlParameter> sqlParameters = new List<SqlParameter>()
+                {
+                    new SqlParameter("@StartDate", sDate),
+                    new SqlParameter("@EndDate", eDate),
+
+                };
+                finalResult = new Base_ViewModel()
+                {
+                    Result = Data.DBProxy.Current.ExecuteByConn(conn: sqlConn, cmdtext: sqlcmd, parameters: sqlParameters),
+                };
+            }
+
+            return finalResult;
+        }
+    }
+}

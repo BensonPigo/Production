@@ -38,6 +38,8 @@ namespace Sci.Production.Prg.PowerBI.Logic
             P_OutstandingPOStatus,
             P_SubprocessWIP,
             P_RightFirstTimeDailyReport,
+            P_FabricInspLabSummaryReport,
+            P_FabricInspAvgInspDurInPast7Days,
         }
 
         /// <summary>
@@ -324,6 +326,12 @@ ORDER BY [Group], [SEQ], [NAME]";
                         break;
                     case ListName.P_RightFirstTimeDailyReport:
                         result = new P_Import_RightFirstTimeDailyReport().P_RightFirstTimeDailyReport(item.SDate, item.EDate);
+                        break;
+                    case ListName.P_FabricInspLabSummaryReport:
+                        result = new P_Import_FabricInspLabSummaryReport().P_FabricInspLabSummaryReport(item.SDate, item.EDate);
+                        break;
+                    case ListName.P_FabricInspAvgInspDurInPast7Days:
+                        result = new P_Import_FabricInspAvgInspDurInPast7Days().P_FabricInspAvgInspDurInPast7Days(item.SDate, item.EDate);
                         break;
                     default:
                         // Execute all Stored Procedures
