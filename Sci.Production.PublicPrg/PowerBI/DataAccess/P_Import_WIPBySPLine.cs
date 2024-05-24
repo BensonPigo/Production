@@ -38,6 +38,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                     SummaryBy = "3",
                     FormParameter = "1",
                     RFIDProcessLocation = string.Empty,
+                    IsBI = true,
                 };
 
                 Base_ViewModel resultReport = planning_R15.GetPlanning_R15(r15_vm, null);

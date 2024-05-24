@@ -1406,7 +1406,7 @@ namespace Sci.Production.Prg.PowerBI.Logic
 
             if (!model.IncludeCancelOrder)
             {
-                strWhere1 += " and o.Junk = 0 ";
+                strWhere1 += model.IsBI ? string.Empty : " and o.Junk = 0 ";
             }
 
             if (!model.StyleID.Empty())

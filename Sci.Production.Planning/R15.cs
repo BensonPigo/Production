@@ -198,6 +198,7 @@ namespace Sci.Production.Planning
                 ArtworkTypes = this.FormParameter == "2" ? this.artworktypes.ToString().Substring(0, this.artworktypes.ToString().Length - 1) : string.Empty,
                 RFIDProcessLocation = this.RFIDProcessLocation,
                 SubprocessID = this.subprocessID,
+                IsBI = false,
             };
 
             Planning_R15 planning_R15 = new Planning_R15();

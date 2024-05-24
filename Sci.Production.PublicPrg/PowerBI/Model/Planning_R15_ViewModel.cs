@@ -99,5 +99,8 @@ namespace Sci.Production.Prg.PowerBI.Model
 
         /// <inheritdoc/>
         public string FormParameter { get; set; }
+
+        /// <inheritdoc/>
+        public bool IsBI { get; set; }
     }
 }
