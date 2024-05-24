@@ -133,15 +133,15 @@ namespace Sci.Production.PPIC
             }
 
             // ISP20240496
-            DateTime date2024 = DateTime.Parse("2024/01/01");
+            DateTime date2023 = DateTime.Parse("2023/01/01");
             if (!this.SewingDate1.HasValue)
             {
-                this.SewingDate1 = date2024;
+                this.SewingDate1 = date2023;
             }
 
-            if (DateTime.Compare(this.SewingDate1.Value, date2024) == -1)
+            if (DateTime.Compare(this.SewingDate1.Value, date2023) == -1)
             {
-                this.SewingDate1 = date2024;
+                this.SewingDate1 = date2023;
             }
 
             return base.ValidateInput();
