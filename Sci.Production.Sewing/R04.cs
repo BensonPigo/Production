@@ -75,6 +75,18 @@ namespace Sci.Production.Sewing
             this.lining = this.comboLining1.Text;
             this.gender = this.comboGender1.Text;
             this.construction = this.comboConstruction1.Text;
+
+            // ISP20240512
+            DateTime date2023 = DateTime.Parse("2023/01/01");
+            if (!this.date1.HasValue)
+            {
+                this.date1 = date2023;
+            }
+
+            if (DateTime.Compare(this.date1.Value, date2023) == -1)
+            {
+                this.date1 = date2023;
+            }
             return base.ValidateInput();
         }
 

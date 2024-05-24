@@ -45,7 +45,7 @@ namespace Sci.Production.Sewing
             : base(menuitem)
         {
             this.InitializeComponent();
-            this.DefaultFilter = string.Format("FactoryID = '{0}' and Category = 'O'", Env.User.Factory);
+            this.DefaultFilter = string.Format("FactoryID = '{0}' and Category = 'O' and OutputDate >= '2023/01/01'", Env.User.Factory);
             this.comboSewingTeam1.SetDataSource();
             this.DoSubForm = new P01_QAOutput(this);
 
