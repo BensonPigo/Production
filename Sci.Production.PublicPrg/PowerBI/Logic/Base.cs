@@ -39,6 +39,7 @@ namespace Sci.Production.Prg.PowerBI.Logic
             P_SubprocessWIP,
             P_RightFirstTimeDailyReport,
             P_SDP,
+            P_CuttingBCS,
         }
 
         /// <summary>
@@ -328,6 +329,9 @@ ORDER BY [Group], [SEQ], [NAME]";
                         break;
                     case ListName.P_SDP:
                         result = new P_Import_SDP().P_SDP(item.SDate, item.EDate);
+                        break;
+                    case ListName.P_CuttingBCS:
+                        result = new P_Import_CuttingBCS().P_CuttingBCS(item.SDate, item.EDate);
                         break;
                     default:
                         // Execute all Stored Procedures
