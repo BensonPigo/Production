@@ -18,7 +18,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             QA_R01 biModel = new QA_R01();
             if (!sDate.HasValue)
             {
-                sDate = DateTime.Parse(DateTime.Now.AddMonths(-3).ToString("yyyy/MM/01"));
+                sDate = DateTime.Parse(DateTime.Now.AddMonths(-3).ToString("yyyy/MM/dd"));
             }
 
             if (!eDate.HasValue)
