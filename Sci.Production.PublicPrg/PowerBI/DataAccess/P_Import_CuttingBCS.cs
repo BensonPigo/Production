@@ -772,6 +772,16 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 					,[SupplyCutQtyVSStdQtyByLine]
 				from #tmp a
 				where not exists (select 1 from P_CuttingBCS b where a.OrderID = b.OrderID and a.SewingLineID = b.SewingLineID and a.RequestDate = b.RequestDate)
+
+				if exists(select 1 from BITableInfo where Id = 'P_CuttingBCS')
+				begin
+					update BITableInfo set TransferDate = getdate()
+					where Id = 'P_CuttingBCS'
+				end
+				else
+				begin
+					insert into BITableInfo(Id, TransferDate) values('P_CuttingBCS', GETDATE())
+				end
 				";
                 finalResult = new Base_ViewModel()
                 {
