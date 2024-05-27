@@ -42,6 +42,9 @@ namespace Sci.Production.Prg.PowerBI.Logic
             P_RightFirstTimeDailyReport,
             P_SDP,
             P_BatchUpdateRecevingInfoTrackingList,
+            P_WIP,
+            P_WIPBySPLine,
+            P_WBScanRate,
         }
 
         /// <summary>
@@ -340,6 +343,15 @@ ORDER BY [Group], [SEQ], [NAME]";
                         break;
                     case ListName.P_SDP:
                         result = new P_Import_SDP().P_SDP(item.SDate, item.EDate);
+                        break;
+                    case ListName.P_WIP:
+                        result = new P_Import_WIP().P_WIP(item.SDate, item.EDate);
+                        break;
+                    case ListName.P_WBScanRate:
+                        result = new P_Import_WBScanRate().P_WBScanRate(item.SDate);
+                        break;
+                    case ListName.P_WIPBySPLine:
+                        result = new P_Import_WIPBySPLine().P_WIPBySPLine(item.SDate, item.EDate);
                         break;
                     default:
                         // Execute all Stored Procedures
