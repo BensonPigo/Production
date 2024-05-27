@@ -77,7 +77,7 @@ select
 from CutInsRecord CR WITH(NOLOCK)
 outer apply(select Top 1 * from WorkOrder W WITH(NOLOCK) where CR.CutRef=W.CutRef )W
 Left join Orders O on W.ID=O.ID
-Left join Order_EachCons OE on W.ID=OE.ID and W.MarkerName=OE.MarkerName
+Left join Order_EachCons OE on W.ID=OE.ID and W.MarkerName=OE.MarkerName and OE.MarkerNo = W.MarkerNo and OE.MarkerVersion = W.MarkerVersion
 outer apply (select [val] = sum(CRD.DefectQty)
              from CutInsRecord_Defect CRD WITH(NOLOCK)
              where CR.Ukey = CRD.CutInsRecordUkey ) DefectQty
@@ -152,9 +152,6 @@ outer apply(
 )SizeCode
 outer apply(select Ratio = SUM(Qty) from WorkOrder_SizeRatio WS WITH(NOLOCK) where WS.WorkOrderUkey = W.Ukey)WS
 outer apply(select Layer = SUM(Layer) from WorkOrder W WITH(NOLOCK) where CR.CutRef=W.CutRef )Layer
-outer apply(select ttlMINUTE = DATEDIFF(MINUTE, CR.AddDate, CR.RepairedDatetime))ttlMINUTE
-outer apply(select ttlMINUTE_D = IIF(ttlMINUTE > 1440, ttlMINUTE - (ttlMINUTE / 1440) * 1440, ttlMINUTE))ttlMINUTE_D
-outer apply(select ttlMINUTE_D_HR = IIF(ttlMINUTE_D > 60, ttlMINUTE_D - (ttlMINUTE_D / 60) * 60, ttlMINUTE_D))ttlMINUTE_D_HR
 where 1=1";
             }
             else
@@ -194,7 +191,7 @@ select
 from CutInsRecord CR WITH(NOLOCK)
 outer apply(select Top 1 * from WorkOrder W WITH(NOLOCK) where CR.CutRef=W.CutRef )W
  left join Orders O WITH(NOLOCK) on W.ID=O.ID
- left join Order_EachCons OE WITH(NOLOCK) on W.ID=OE.ID and W.MarkerName=OE.MarkerName
+ left join Order_EachCons OE WITH(NOLOCK) on W.ID=OE.ID and W.MarkerName=OE.MarkerName and OE.MarkerNo = W.MarkerNo and OE.MarkerVersion = W.MarkerVersion
  left join CutInsRecord_RollDyelot CRR WITH(NOLOCK) ON  CR.Ukey = CRR.CutInsRecordUkey
 outer apply(select Ratio = SUM(Qty) from WorkOrder_SizeRatio WS WITH(NOLOCK) where WS.WorkOrderUkey = W.Ukey)WS
 outer apply(select Layer = SUM(Layer) from WorkOrder W WITH(NOLOCK) where CR.CutRef=W.CutRef )Layer
