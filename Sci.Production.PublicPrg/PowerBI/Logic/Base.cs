@@ -27,6 +27,7 @@ namespace Sci.Production.Prg.PowerBI.Logic
             P_CFAMasterListRelatedrate,
             P_CartonScanRate,
             P_CartonStatusTrackingList,
+            P_OutStandingHPMS,
             P_FabricDispatchRate,
             P_IssueFabricByCuttingTransactionList,
             P_ProductionKitsTracking,
@@ -292,6 +293,9 @@ ORDER BY [Group], [SEQ], [NAME]";
                         break;
                     case ListName.P_CartonStatusTrackingList:
                         result = new P_Import_CartonStatusTrackingList().P_CartonStatusTrackingList(item.SDate);
+                        break;
+                    case ListName.P_OutStandingHPMS:
+                        result = new P_Import_OutStandingHPMS().P_OutStandingHPMS(item.SDate);
                         break;
                     case ListName.P_FabricDispatchRate:
                         result = new P_Import_FabricDispatchRate().P_FabricDispatchRate(item.SDate);
