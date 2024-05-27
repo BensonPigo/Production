@@ -234,6 +234,9 @@
     <Compile Include="PowerBI\DataAccess\P_Import_SewingLineScheduleBySP.cs" />
     <Compile Include="PowerBI\DataAccess\P_Import_SubProInsReport.cs" />
     <Compile Include="PowerBI\DataAccess\P_Import_SubprocessWIP.cs" />
+    <Compile Include="PowerBI\DataAccess\P_Import_WBScanRate.cs" />
+    <Compile Include="PowerBI\DataAccess\P_Import_WIP.cs" />
+    <Compile Include="PowerBI\DataAccess\P_Import_WIPBySPLine.cs" />
     <Compile Include="PowerBI\FormPage\Form1.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -252,6 +255,7 @@
     <Compile Include="PowerBI\Logic\PPIC_R21.cs" />
     <Compile Include="PowerBI\Logic\PPIC_R02.cs" />
     <Compile Include="PowerBI\Logic\PPIC_R03.cs" />
+    <Compile Include="PowerBI\Logic\Planning_R15.cs" />
     <Compile Include="PowerBI\Logic\PPIC_R01.cs" />
     <Compile Include="PowerBI\Logic\QA_R20.cs" />
     <Compile Include="PowerBI\Logic\QA_R31.cs" />
@@ -266,6 +270,7 @@
     <Compile Include="PowerBI\Model\PPIC_R21_ViewModel.cs" />
     <Compile Include="PowerBI\Model\PPIC_R02_ViewModel.cs" />
     <Compile Include="PowerBI\Model\PPIC_R03_ViewModel.cs" />
+    <Compile Include="PowerBI\Model\Planning_R15_ViewModel.cs" />
     <Compile Include="PowerBI\Model\PPIC_R01_ViewModel.cs" />
     <Compile Include="PowerBI\Model\Warehouse_R16_ViewModel.cs" />
     <Compile Include="PowerBI\Model\PPIC_R16_ViewModel.cs" />
