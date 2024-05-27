@@ -341,6 +341,7 @@ ORDER BY [Group], [SEQ], [NAME]";
                         break;
                     case ListName.P_WIPBySPLine:
                         result = new P_Import_WIPBySPLine().P_WIPBySPLine(item.SDate, item.EDate);
+                        break;
                     case ListName.P_CuttingBCS:
                         result = new P_Import_CuttingBCS().P_CuttingBCS(item.SDate, item.EDate);
                         break;
