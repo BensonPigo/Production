@@ -310,10 +310,10 @@ Outer apply(
 	where ed.POID = pocl.ID
 ) pocl
 OUTER APPLY(
-	select [notCompleteCount] = SUM(iif(psd.Complete = 1, 0, 1))
-	from Production.dbo.PO_Supp_Detail psd with(nolock) 
-	where ed.PoID = psd.ID And ed.Seq1 = psd.Seq1 aND ed.Seq2 = psd.Seq2
-	and psd.Junk = 0		
+	select [notCompleteCount] = SUM(iif(po3.Complete = 1, 0, 1)) 
+	from Production.dbo.Export_Detail ed2 with(nolock) 
+	inner join Production.dbo.PO_Supp_Detail po3 with(nolock) on ed2.PoID = po3.ID And ed2.Seq1 = po3.Seq1 And ed2.Seq2 = po3.Seq2
+	where ed2.ID = e.ID and ed2.PoID = ed.PoID and po3.Junk = 0		
 ) psdComplete
 Where ed.POType ='G'
 And e.CloseDate Between @CloseDate_S And @CloseDate_E
