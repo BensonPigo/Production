@@ -217,6 +217,7 @@
     <Compile Include="PowerBI\DataAccess\P_Import_CartonStatusTrackingList.cs" />
     <Compile Include="PowerBI\DataAccess\P_Import_CuttingScheduleOutputList.cs" />
     <Compile Include="PowerBI\DataAccess\P_Import_FabricDispatchRate.cs" />
+    <Compile Include="PowerBI\DataAccess\P_Import_FabricStatusAndIssueFabricTracking.cs" />
     <Compile Include="PowerBI\DataAccess\P_Import_RightFirstTimeDailyReport.cs" />
     <Compile Include="PowerBI\DataAccess\P_Import_InlineDefec.cs" />
     <Compile Include="PowerBI\DataAccess\P_Import_IssueFabricByCuttingTransactionList.cs" />
@@ -247,6 +248,7 @@
     </Compile>
     <Compile Include="PowerBI\Logic\Base.cs" />
     <Compile Include="PowerBI\Logic\Cutting_R13.cs" />
+    <Compile Include="PowerBI\Logic\PPIC_R04.cs" />
     <Compile Include="PowerBI\Logic\PPIC_R16.cs" />
     <Compile Include="PowerBI\Logic\PPIC_R21.cs" />
     <Compile Include="PowerBI\Logic\PPIC_R02.cs" />
@@ -261,6 +263,7 @@
     <Compile Include="PowerBI\Model\Base_ViewModel.cs" />
     <Compile Include="PowerBI\Model\Cutting_R13_ViewModel.cs" />
     <Compile Include="PowerBI\Model\Inline_R08_ViewModel.cs" />
+    <Compile Include="PowerBI\Model\PPIC_R04_ViewModel.cs" />
     <Compile Include="PowerBI\Model\PPIC_R16_ViewModel.cs" />
     <Compile Include="PowerBI\Model\PPIC_R21_ViewModel.cs" />
     <Compile Include="PowerBI\Model\PPIC_R02_ViewModel.cs" />

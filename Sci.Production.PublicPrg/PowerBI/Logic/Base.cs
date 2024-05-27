@@ -38,6 +38,7 @@ namespace Sci.Production.Prg.PowerBI.Logic
             P_OutstandingPOStatus,
             P_SubprocessWIP,
             P_RightFirstTimeDailyReport,
+            P_FabricStatus_And_IssueFabricTracking,
         }
 
         /// <summary>
@@ -324,6 +325,9 @@ ORDER BY [Group], [SEQ], [NAME]";
                         break;
                     case ListName.P_RightFirstTimeDailyReport:
                         result = new P_Import_RightFirstTimeDailyReport().P_RightFirstTimeDailyReport(item.SDate, item.EDate);
+                        break;
+                    case ListName.P_FabricStatus_And_IssueFabricTracking:
+                        result = new P_Import_FabricStatusAndIssueFabricTracking().P_FabricStatusAndIssueFabricTracking(item.SDate);
                         break;
                     default:
                         // Execute all Stored Procedures
