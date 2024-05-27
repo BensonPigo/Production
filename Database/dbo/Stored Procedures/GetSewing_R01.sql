@@ -185,6 +185,7 @@ BEGIN
 							 ELSE t.Shift END
 			   , FtyType = f.Type
 			   , FtyCountry = f.CountryID
+			   , RFT = isnull(Convert(float(50),Convert(FLOAT(50), round(((A.InspectQty-A.RejectQty)/ nullif(A.InspectQty, 0))*100,2))),0)
 			   , CumulateDate = isnull(c.cumulate,1)
 		into #tmp1stFilter
 		from #tmpSewingGroup t
@@ -196,15 +197,21 @@ BEGIN
 						   and c.OrderId = t.OrderId 
 						   and c.ComboType = t.ComboType
 		left join Factory f WITH (NOLOCK) on t.FactoryID = f.ID
+		left join RFT A WITH (NOLOCK) on A.OrderID=t.OrderId
+										 and A.CDate=t.OutputDate
+										 and A.SewinglineID=t.SewinglineID
+										 and A.FactoryID=t.FactoryID
+										 and A.Shift=t.Shift
+										 and A.Team=t.Team
 		---↓最後組成
 		select Shift =    CASE    WHEN LastShift='D' then 'Day'
 								  WHEN LastShift='N' then 'Night'
 								  WHEN LastShift='O' then 'Subcon-Out'
 								  WHEN LastShift='I' then 'Subcon-In(Sister)'
 								  else 'Subcon-In(Non Sister)' end				
-			   , #tmp1stFilter.Team
-			   , #tmp1stFilter.SewingLineID
-			   , #tmp1stFilter.OrderId
+			   , Team
+			   , SewingLineID
+			   , OrderId
 			   , Style = IIF(Category='M',MockupStyle,OrderStyle) 
 			   , ComboType
 			   , CDCodeNew
@@ -213,8 +220,8 @@ BEGIN
 			   , Lining
 			   , Gender
 			   , Construction
-			   , ActManPower = IIF(#tmp1stFilter.SHIFT = 'O'
-									,MAX(ActManPower) OVER (PARTITION BY #tmp1stFilter.SHIFT,#tmp1stFilter.Team,#tmp1stFilter.SewingLineID)
+			   , ActManPower = IIF(SHIFT = 'O'
+									,MAX(ActManPower) OVER (PARTITION BY SHIFT,Team,SewingLineID)
 									,ActManPower)
 			   , WorkHour
 			   , ManHour = ActManPower * WorkHour
@@ -236,26 +243,16 @@ BEGIN
 	   									  , (ROUND(IIF(Category = 'M', MockupCPU * MockupCPUFactor
 	   						      									 , OrderCPU * OrderCPUFactor * Rate) * QAQty, 2) / (ROUND(ActManPower * WorkHour, 2) * 3600 / StdTMS)) * 100, 0)
 	   									  , 1) 
-			   , RFT = RFTInfo.RFT
+			   , RFT
 			   , CumulateDate
 			   , InlineQty
 			   , Diff = QAQty - InlineQty
-			   , #tmp1stFilter.FactoryID 
+			   , FactoryID 
 			   , LastShift
 		into #tmp
 		from #tmp1stFilter
-		outer apply (
-			select RFT = isnull(Convert(float(50),Convert(FLOAT(50), round(((A.InspectQty-A.RejectQty)/ nullif(A.InspectQty, 0))*100,2))),0) 
-			from RFT A with (nolock) 
-			where A.OrderID=#tmp1stFilter.OrderId
-			and A.CDate=#tmp1stFilter.OutputDate
-			and A.SewinglineID=#tmp1stFilter.SewinglineID
-			and A.FactoryID=#tmp1stFilter.FactoryID
-			and A.Shift=#tmp1stFilter.Shift
-			and A.Team=#tmp1stFilter.Team 
-			) as RFTInfo
 		where 1 =1
-		order by LastShift,#tmp1stFilter.Team,#tmp1stFilter.SewingLineID,#tmp1stFilter.OrderId
+		order by LastShift,Team,SewingLineID,OrderId
 		---↓最後Select 
 		select * from #tmp where 1 =1 order by LastShift,Team,SewingLineID,OrderId
 ---------------------------------------------------------------------------------

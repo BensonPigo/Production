@@ -234,21 +234,17 @@ and SunriseNid != 0
         /// <inheritdoc/>
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
-            string masterID = string.Empty;
-            string shift = string.Empty;
-            string outputDate = string.Empty;
-            string factoryID = string.Empty;
-            string sewingLineID = string.Empty;
-            string team = string.Empty;
-            if (e.Master != null)
+            if (e.Master == null)
             {
-                masterID = MyUtility.Convert.GetString(e.Master["ID"]);
-                outputDate = ((DateTime)e.Master["OutputDate"]).ToString("yyyy / MM / dd");
-                factoryID = e.Master["FactoryID"].ToString();
-                sewingLineID = e.Master["SewingLineID"].ToString();
-                team = e.Master["Team"].ToString();
-                shift = e.Master["Shift"].EqualString("D") ? "Day" : e.Master["Shift"].EqualString("N") ? "Night" : string.Empty;
+                return null;
             }
+
+            string masterID = MyUtility.Convert.GetString(e.Master["ID"]);
+            string shift = e.Master["Shift"].EqualString("D") ? "Day" : e.Master["Shift"].EqualString("N") ? "Night" : string.Empty;
+            string outputDate = ((DateTime)e.Master["OutputDate"]).ToString("yyyy / MM / dd");
+            string factoryID = e.Master["FactoryID"].ToString();
+            string sewingLineID = e.Master["SewingLineID"].ToString();
+            string team = e.Master["Team"].ToString();
 
             this.DetailSelectCommand =
                 $@"
@@ -2082,9 +2078,9 @@ using #tmp1 s
 on  t.orderid = s.orderid and t.Cdate = s.CDate and t.SewinglineID = s.SewinglineID and 
     t.FactoryID = s.FactoryID and t.MDivisionid = s.MDivisionid and t.Shift = s.Shift and t.Team = s.Team 
 when not matched by target then 
-insert([OrderID],[CDate],[SewinglineID],[FactoryID],[InspectQty],[RejectQty]
+insert([OrderID],[CDate],[SewinglineID],[FactoryID],[InspectQty],[RejectQty],[DefectQty]
         ,[Shift],[Team],[Status],[Remark],[AddName],[AddDate],[MDivisionid])
-values(s.[OrderID],s.[CDate],s.[SewinglineID],s.[FactoryID],s.[InspectQty],s.[RejectQty]
+values(s.[OrderID],s.[CDate],s.[SewinglineID],s.[FactoryID],s.[InspectQty],s.[RejectQty],0
         ,s.[Shift],s.[Team],s.[Status],s.[Remark],'{Env.User.UserID}',getdate(),s.[MDivisionid])
 output inserted.id into #td 
 ;
@@ -3488,7 +3484,7 @@ outer apply (
 	select RFT=isnull(Convert(float(50),Convert(FLOAT(50), round(((A.InspectQty-A.RejectQty)/ nullif(A.InspectQty, 0))*100,2))),0) 
 	from RFT A with (nolock) 
 	where A.OrderID=t.OrderId
-    ) as RFTInfo";
+) as RFTInfo";
             result = MyUtility.Tool.ProcessWithDatatable(sewDt1, string.Empty, sqlcmd, out sewDt1, paramters: listPar);
             if (!result)
             {

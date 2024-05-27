@@ -16,7 +16,7 @@ select
     O.SewInLine,
 	B.Sewinglineid,
     SR.Shift,
-	[RFT] = RFTInfo.RFT,
+	[RFT] = isnull(Convert(float(50),Convert(FLOAT(50), round(((A.InspectQty-A.RejectQty)/ nullif(A.InspectQty, 0))*100,2))),0),
 	SR.SubProcessID,
 	SR.BundleNo,
     [Artwork] = Artwork.val,
@@ -71,14 +71,10 @@ outer apply(
 )SubProResponseTeamID
 outer apply(select ttlSecond = DATEDIFF(Second, SR.AddDate, RepairedDatetime)) ttlSecond
 outer apply(select MDivisionID from Production.dbo.Factory f where f.ID = SR.FactoryID ) Fac
-outer apply (
-	select RFT = isnull(Convert(float(50),Convert(FLOAT(50), round(((A.InspectQty-A.RejectQty)/ nullif(A.InspectQty, 0))*100,2))),0) 
-	from RFT A with (nolock) 
-	where A.OrderID=B.OrderId
-	and A.SewinglineID=B.SewinglineID
-	and A.FactoryID=SR.FactoryID
-	and A.Shift=SR.Shift
-	) as RFTInfo
+left join Production.dbo.RFT A with (nolock) on A.OrderID=B.OrderId
+								 and A.SewinglineID=B.SewinglineID
+								 and A.FactoryID=SR.FactoryID
+								 and A.Shift=SR.Shift
 Where SR.InspectionDate between @StartDate and @EndDate
 UNION
 select
@@ -88,7 +84,7 @@ select
     O.SewInLine,
     BR.Sewinglineid,
     SR.Shift,
-	[RFT] = RFTInfo.RFT,
+	[RFT] = isnull(Convert(float(50),Convert(FLOAT(50), round(((A.InspectQty-A.RejectQty)/ nullif(A.InspectQty, 0))*100,2))),0),
 	SR.SubProcessID,
 	SR.BundleNo,
     [Artwork] = Artwork.val,
@@ -142,14 +138,10 @@ outer apply(
 )SubProResponseTeamID
 outer apply(select ttlSecond = DATEDIFF(Second, SR.AddDate, RepairedDatetime)) ttlSecond
 outer apply(select MDivisionID from Production.dbo.Factory f where f.ID = SR.FactoryID ) Fac
-outer apply (
-	select RFT = isnull(Convert(float(50),Convert(FLOAT(50), round(((A.InspectQty-A.RejectQty)/ nullif(A.InspectQty, 0))*100,2))),0) 
-	from RFT A with (nolock) 
-	where A.OrderID=BR.OrderId
-	and A.SewinglineID=BR.SewinglineID
-	and A.FactoryID=SR.FactoryID
-	and A.Shift=SR.Shift
-	) as RFTInfo
+left join Production.dbo.RFT A with (nolock) on A.OrderID=BR.OrderId
+								 and A.SewinglineID=BR.SewinglineID
+								 and A.FactoryID=SR.FactoryID
+								 and A.Shift=SR.Shift
 Where SR.InspectionDate between @StartDate and @EndDate
 ')
  
