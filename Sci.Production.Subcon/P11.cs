@@ -15,6 +15,8 @@ namespace Sci.Production.Subcon
     /// <inheritdoc/>
     public partial class P11 : Win.Tems.Input6
     {
+        private bool FirstCheckOutputQty = true;
+
         /// <inheritdoc/>
         public P11(ToolStripMenuItem menuitem)
             : base(menuitem)
@@ -135,6 +137,23 @@ where sd.SubConOutFty = '{subConOutFty}' and sd.ContractNumber = '{contractNumbe
             }
             #endregion
 
+            #region 檢查資料重複
+            string cmd = @"select distinct OrderID,Article,Combotype from #tmp";
+            DualResult checkDuplicate = MyUtility.Tool.ProcessWithDatatable(this.DetailDatas.CopyToDataTable(), "OrderID,Article,Combotype", cmd, out DataTable dtDuplicate);
+
+            if (!checkDuplicate)
+            {
+                this.ShowErr(checkDuplicate);
+                return false;
+            }
+
+            if (this.DetailDatas.Count() != dtDuplicate.Rows.Count)
+            {
+                this.ShowErr("'SP#,ComboType,Article' detail key cannot duplicate.");
+                return false;
+            }
+            #endregion
+
             #region 檢查Subcon Out Qty是否大於Accu. Subcon Out Qty
             string sqlCheckSubconOutQty = @"
 alter table #tmp alter column ContractNumber varchar(50)
@@ -202,6 +221,55 @@ where   AccuOutputQty.val > sd.OutputQty
             {
                 MyUtility.Msg.WarningBox(errorMsg.ToString());
             }
+
+            #region 檢查OutputQty數量統計是否小於Order_Qty.Qty
+
+            if (this.FirstCheckOutputQty)
+            {
+                sqlCheckSubconOutQty = @"
+alter table #tmp alter column OrderID varchar(13)
+select  sd.OrderID,
+        sd.Article,
+        sd.StyleID,
+        [Subcon Out Qty] = TotalOutputQty.OutputQty + sd.OutputQty,
+        [Order_Qty Qty] = Order_Qty.Qty
+from    #tmp sd
+outer   apply( select Qty = isnull(sum(oq.Qty),0) from Order_Qty oq 
+               where oq.ID = sd.OrderID 
+                and oq.Article = sd.Article
+) Order_Qty
+outer   apply( select OutputQty = isnull(sum(sd2.OutputQty),0) from SubconOutContract_Detail sd2 
+               where sd2.OrderID = sd.OrderID 
+                and sd2.Article = sd.Article
+                and not exists (select 1 from #tmp t where t.OrderId = sd2.OrderId 
+													and t.Article = sd2.Article 
+													and t.SubConOutFty = sd2.SubConOutFty 
+													and t.ContractNumber = sd2.ContractNumber 
+													and t.ComboType = sd2.ComboType)
+) TotalOutputQty
+where   Order_Qty.Qty < TotalOutputQty.OutputQty + sd.OutputQty
+";
+                checkSubconOutQtyResult = MyUtility.Tool.ProcessWithDatatable(this.DetailDatas.CopyToDataTable(), "StyleID,SubConOutFty,ContractNumber,ComboType,OrderID,Article,OutputQty", sqlCheckSubconOutQty, out dtCheckSubconOutQtyResult);
+
+                if (!checkSubconOutQtyResult)
+                {
+                    this.ShowErr(checkSubconOutQtyResult);
+                    return false;
+                }
+
+                if (dtCheckSubconOutQtyResult.Rows.Count > 0)
+                {
+                    var formMsg = MyUtility.Msg.ShowMsgGrid(dtCheckSubconOutQtyResult, "SP# apply qty over Order's qty, please check again and press save button if confirm.", "Warning");
+                    formMsg.Width = 900;
+                    formMsg.grid1.Columns[0].Width = 120;
+                    formMsg.grid1.Columns[2].Width = 100;
+                    formMsg.Visible = false;
+                    formMsg.ShowDialog();
+                    this.FirstCheckOutputQty = false;
+                    return false;
+                }
+            }
+            #endregion
 
             return base.ClickSaveBefore();
         }
@@ -359,6 +427,7 @@ and ContractNumber = '{this.CurrentMaintain["ContractNumber"]}'";
             base.OnDetailEntered();
             this.txtuser1.TextBox1.ReadOnly = true;
             this.label10.Text = this.CurrentMaintain["Status"].ToString();
+            this.FirstCheckOutputQty = true;
 
             this.btnBatchImport.Enabled = (this.EditMode == true && this.CurrentMaintain["Status"].ToString().ToUpper().EqualString("NEW"));
             this.btnSplitSP.Enabled = (this.EditMode == true && this.CurrentMaintain["Status"].ToString().ToUpper().EqualString("CONFIRMED"));
@@ -940,6 +1009,24 @@ where   o.MDivisionID = '{this.CurrentMaintain["MDivisionID"]}'
             }
 
             this.RenewData();
+        }
+
+        protected override void OnDetailGridAppendClick()
+        {
+            base.OnDetailGridAppendClick();
+            this.FirstCheckOutputQty = true;
+        }
+
+        protected override void OnDetailGridInsertClick()
+        {
+            base.OnDetailGridInsertClick();
+            this.FirstCheckOutputQty = true;
+        }
+
+        protected override void OnDetailGridRemoveClick()
+        {
+            base.OnDetailGridRemoveClick();
+            this.FirstCheckOutputQty = true;
         }
     }
 }

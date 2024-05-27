@@ -34,11 +34,14 @@ namespace Sci.Production.Prg.PowerBI.Logic
             P_FabricInspReport_ReceivingTransferIn,
             P_MtlStatusAnalisis,
             P_SubProInsReport,
+            P_SubProInsReportDailyRate,
+            P_SubProInsReportMonthlyRate,
             P_OustandingPO,
             P_OutstandingPOStatus,
             P_SubprocessWIP,
             P_RightFirstTimeDailyReport,
             P_SDP,
+            P_BatchUpdateRecevingInfoTrackingList,
             P_WIP,
             P_WIPBySPLine,
             P_WBScanRate,
@@ -315,8 +318,17 @@ ORDER BY [Group], [SEQ], [NAME]";
                     case ListName.P_MtlStatusAnalisis:
                         result = new P_Import_MtlStatusAnalisis().P_MtlStatusAnalisis(item.SDate, item.EDate);
                         break;
+                    case ListName.P_BatchUpdateRecevingInfoTrackingList:
+                        result = new P_Import_BatchUpdateRecevingInfoTrackingList().P_BatchUpdateRecevingInfoTrackingList(item.SDate, item.EDate);
+                        break;
                     case ListName.P_SubProInsReport:
                         result = new P_Import_SubProInsReport().P_SubProInsReport(item.SDate, item.EDate);
+                        break;
+                    case ListName.P_SubProInsReportDailyRate:
+                        result = new P_Import_SubProInsReportDailyRate().P_SubProInsReportDailyRate(item.SDate, item.EDate);
+                        break;
+                    case ListName.P_SubProInsReportMonthlyRate:
+                        result = new P_Import_SubProInsReportMonthlyRate().P_SubProInsReportMonthlyRate(item.SDate, item.EDate);
                         break;
                     case ListName.P_OustandingPO:
                         result = new P_Import_OutstandingPO().P_OutstandingPO(item.SDate, item.EDate);

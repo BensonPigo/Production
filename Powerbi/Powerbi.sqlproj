@@ -225,6 +225,11 @@
     <Build Include="dbo\Tables\P_AdiCompReport.sql" />
     <Build Include="dbo\Tables\P_OutstandingPOStatus.sql" />
     <Build Include="dbo\Tables\P_RightFirstTimeDailyReport.sql" />
+    <Build Include="dbo\Tables\P_SubprocessBCSByDays.sql" />
+    <Build Include="dbo\Tables\P_SubprocessBCSByMonth.sql" />
+    <Build Include="dbo\Tables\P_BatchUpdateRecevingInfoTrackingList.sql" />
+    <Build Include="dbo\Tables\P_SubProInsReportDailyRate.sql" />
+    <Build Include="dbo\Tables\P_SubProInsReportMonthlyRate.sql" />
     <Build Include="dbo\Tables\P_WIPBySPLine.sql" />
   </ItemGroup>
   <ItemGroup>
