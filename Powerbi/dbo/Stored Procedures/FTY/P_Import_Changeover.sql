@@ -1,7 +1,7 @@
 ﻿-- =============================================
 -- Description:	轉入P_StyleChangeover當日前後七天內的Inline資料
 -- =============================================
-CREATE PROCEDURE P_Import_Changeover
+CREATE PROCEDURE [dbo].[P_Import_Changeover]
 	@StartDate date,
 	@EndDate date	
 AS
@@ -59,47 +59,54 @@ BEGIN
 	,[ChgOverInTransferDate]  = isnull(
 	(
 		SELECT COUNT(*) 
-		FROM P_StyleChangeover with(nolock)
+		FROM P_StyleChangeover s with(nolock)
 		WHERE CONVERT(DATE, Inline) = CONVERT(DATE, d.Dates)
+		and s.factory = d.Factory
 	),0)
 	,[ChgOverIn1Day]  = isnull(
 	(
 		SELECT COUNT(*) 
-		FROM P_StyleChangeover with(nolock)
+		FROM P_StyleChangeover s with(nolock)
 		WHERE CONVERT(DATE, Inline) = DATEADD(DAY, 1, CONVERT(DATE, d.Dates))
+		and s.factory = d.Factory
 	),0)
 	,[ChgOverIn7Days] = isnull(
 	(
 		SELECT COUNT(*) 
-		FROM P_StyleChangeover with(nolock)
+		FROM P_StyleChangeover s with(nolock)
 		WHERE CONVERT(DATE, Inline) >= DATEADD(DAY, 1, CONVERT(DATE, d.Dates))
 		AND CONVERT(DATE, Inline) <= DATEADD(DAY, 7, CONVERT(DATE, d.Dates))
+		and s.factory = d.Factory
 	),0)
 	,[COTInPast1Day] = isnull(
 	(
 		SELECT CONVERT(numeric(8,2),AVG(isnull([COT(min)],0))) 
-		FROM P_StyleChangeover with(nolock)
+		FROM P_StyleChangeover s with(nolock)
 		WHERE CONVERT(DATE, Inline) = DATEADD(DAY, -1, CONVERT(DATE, d.Dates))
+		and s.factory = d.Factory
 	),0)
 	,[COTInPast7Days] = isnull(
 	(
 		SELECT CONVERT(numeric(8,2),AVG(isnull([COT(min)],0))) 
-		FROM P_StyleChangeover with(nolock)
+		FROM P_StyleChangeover s with(nolock)
 		WHERE CONVERT(DATE, Inline) BETWEEN DATEADD(DAY, -7, CONVERT(DATE, d.Dates)) 
 		AND DATEADD(DAY, -1, CONVERT(DATE, d.Dates))
+		and s.factory = d.Factory
 	),0)
 	,[COPTInPast1Day] = isnull(
 	(
 		SELECT CONVERT(numeric(8,2), AVG(isnull([COPT(min)],0))) 
-		FROM P_StyleChangeover with(nolock)
+		FROM P_StyleChangeover s with(nolock)
 		WHERE CONVERT(DATE, Inline) = DATEADD(DAY, -1, CONVERT(DATE, d.Dates))
+		and s.factory = d.Factory
 	),0)
 	,[COPTInPast7Days] = isnull(
 	(
 		SELECT CONVERT(numeric(8,2),AVG(isnull([COPT(min)],0))) 
-		FROM P_StyleChangeover with(nolock)
+		FROM P_StyleChangeover s with(nolock)
 		WHERE CONVERT(DATE, Inline) BETWEEN DATEADD(DAY, -7, CONVERT(DATE, d.Dates)) 
 		AND DATEADD(DAY, -1, CONVERT(DATE, d.Dates))
+		and s.factory = d.Factory
 	),0)
 	into #tmpFinal
 	from #tmpAllDate d
