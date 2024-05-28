@@ -58,9 +58,9 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 
             using (sqlConn)
             {
-                string sql = $@"	
-Update p Set Remark = t.Remark, 
-             RemarkSimilarStyle = t.RemarkSimilarStyle,
+                string sql = $@" 
+Update p Set Remark = isnull(t.Remark, ''), 
+             RemarkSimilarStyle = isnull(t.RemarkSimilarStyle, ''),
              Type = t.Type
 From P_SimilarStyle p
 inner join #tmp t on p.OutputDate = t.OutputDate 
@@ -82,8 +82,8 @@ Select  OutputDate,
         FactoryID, 
         StyleID, 
         BrandID, 
-        Remark, 
-        RemarkSimilarStyle, 
+        isnull(Remark, ''), 
+        isnull(RemarkSimilarStyle, ''), 
         Type
 From #tmp t
 Where not exists ( select 1 
@@ -102,10 +102,11 @@ Where Not exists ( select 1
 				   and P_SimilarStyle.StyleID = t.StyleID 
 				   and P_SimilarStyle.BrandID = t.BrandID 
                 )
-And OutputDate >= '{sdate.ToString("yyyy-MM-dd")}'
+And P_SimilarStyle.OutputDate >= '{sdate.ToString("yyyy-MM-dd")}'
+
 ";
 
-                result = MyUtility.Tool.ProcessWithDatatable(dt, null, sql, result: out DataTable dataTable, temptablename: "#tmp", conn: sqlConn, paramters: null);
+                result = MyUtility.Tool.ProcessWithDatatable(dt, null, sql,  out DataTable dataTable, conn: sqlConn, paramters: null);
             }
 
             finalResult.Result = new DualResult(true);
@@ -232,9 +233,9 @@ SELECT DISTINCT
         ISNULL(s.StyleID, '') AS StyleID,
         s.BrandID,
         Remark = MinSewingID.SewingLineID + '(' +  CONVERT(varchar, MaxDates.MaxOutputDate, 111)  + ')',
-        RmarkSimilarStyle = RmarkSimilarStyle.Rr,
+        RemarkSimilarStyle = RemarkSimilarStyle.Rr,
         [Type] = Case When MaxDates.MaxOutputDate between DateADD(MONTH, -3 ,s.OutputDate) and  s.OutputDate then 'Repeat'
-        When isnull(RmarkSimilarStyle.Rr,'') != '' then  'Repeat'
+        When isnull(RemarkSimilarStyle.Rr,'') != '' then  'Repeat'
         Else 'New'
         End
 FROM #tmp_SewingDate s
@@ -269,7 +270,7 @@ OUTER APPLY(
                                 AND cd.OutputDate = s.OutputDate
                                 AND cd.MaxOutputDate Between DATEADD(month, -3, cs.OutputDate) AND cs.OutputDate
             FOR XML PATH ('')), 1, 1, '' )
-) RmarkSimilarStyle
+) RemarkSimilarStyle
 ORDER BY s.outputdate DESC
 ");
 
