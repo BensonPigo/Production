@@ -275,6 +275,7 @@ Outer Apply(
 		                           AND cd.MaxOutputDate Between DATEADD(month, -3, cs.OutputDate) and cs.OutputDate
 		            for xml path ('')), 1, 1, '' )
 ) RmarkSimilarStyle
+ORDER BY s.outputdate DESC
 ");
 
             #endregion
