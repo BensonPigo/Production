@@ -474,19 +474,21 @@ namespace Sci.Production.Quality
                 )MT
                 outer apply
                 (
-                select val = Stuff((
-	                select (char(10) + pms_f_Type +'-'+ pms_f_EN)
-	                from (
-			                select 
-			                pms_f_Type = pms_fd.[Type],
-			                pms_f_EN = pms_fd.DescriptionEN
-			                from SciProduction_FabricDefect pms_fd with(nolock)
-			                where EXISTS (select 1 from SpreadingInspection_InsCutRef_Inspection_Detail siid2 with(nolock) 
-							                where siid2.SpreadingInspectionInsCutRefInspectionUkey = sii.Ukey
-							                and pms_fd.ID = siid2.ColumnValue )
-		                ) s
-	                for xml path ('')
-                ) , 1, 1, '')
+                select val= STUFF((
+					select concat('/',Concat(pms_fd.[Type] + '-' + pms_fd.DescriptionEN,Concat('(Roll:',Roll.val,')'))) 
+                    from SpreadingInspection_InsCutRef_Inspection_Detail siid2
+					Left join SciProduction_FabricDefect pms_fd on pms_fd.ID = siid2.ColumnValue 
+					outer apply(
+						select val= STUFF((
+							select Concat(',',siidr.Roll) 
+                            from SpreadingInspection_InsCutRef_Inspection_Detail_Roll siidr 
+							where siidr.SpreadingInspectionInsCutRefInspectionDetailUkey = siid2.Ukey
+						for xml path ('')
+						 ) , 1, 1, '')
+					)Roll
+					where siid2.SpreadingInspectionInsCutRefInspectionUkey = sii.Ukey
+				for xml path ('')
+				) , 1, 1, '')
                 )FD
                 outer apply(
 					 select min(convert(date,lista.AddDate)) as date1 
