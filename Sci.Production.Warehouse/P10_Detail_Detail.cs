@@ -103,8 +103,8 @@ select 0 as selected
        , [GMTWash] = isnull(GMTWash.val, '')
        , [Grade] = isnull(phy.Grade, '')
 	   , [ActualWidth] = phy.ActualWidth
-       , relax.Relaxtime
-       , [RelaxEndTime] = format(fur.RelaxationEndTime,'yyyy/MM/dd hh:mm:ss')
+       , [Relaxtime] = CONCAT(convert(int, relax.Relaxtime) ,' HRS')
+       , [RelaxEndTime] = format(fur.RelaxationEndTime,'yyyy/MM/dd HH:mm:ss')
 from dbo.PO_Supp_Detail psd WITH (NOLOCK) 
 inner join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
 inner join dbo.ftyinventory c WITH (NOLOCK) on c.poid = psd.id and c.seq1 = psd.seq1 and c.seq2 = psd.seq2 and c.stocktype = 'B'
@@ -212,7 +212,7 @@ order by d.GroupQty DESC,c.Dyelot,balanceqty DESC
                 .Text("GMTWash", header: "GMT Wash", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("Grade", header: "Grade", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("ActualWidth", header: "Act Width", width: Widths.AnsiChars(10), iseditingreadonly: true)
-                .Numeric("Relaxtime", header: "Relaxation", width: Widths.AnsiChars(10), decimal_places: 2, integer_places: 5, iseditingreadonly: true)
+                .Text("Relaxtime", header: "Relaxation", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("RelaxEndTime", header: "Relax End Time", width: Widths.AnsiChars(20), iseditingreadonly: true)
                 ;
 
