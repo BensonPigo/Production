@@ -31,10 +31,6 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 }
 
                 DataTable detailTable = resultReport.DtArr[0];
-                if (!resultReport.Result)
-                {
-                    throw resultReport.Result.GetException();
-                }
 
                 // insert into PowerBI
                 finalResult = this.UpdateBIData(detailTable);
@@ -125,9 +121,6 @@ inner join #tmp t on p.OutputDate = t.OutputDate
 
             // 基本資料
             sqlCmd.Append($@"
-WITH 
-SewingDate AS
-(
         SELECT o.StyleUkey,
                o.StyleID, 
                s.FactoryID,
@@ -136,43 +129,44 @@ SewingDate AS
 		       s.Shift,
 		       s.Team,
 	           sd.ComboType
+		  INTO #tmp_SewingDate
           FROM SewingOutput s
     INNER JOIN SewingOutput_Detail sd ON s.ID = sd.ID
     INNER JOIN Orders o ON sd.OrderId = o.ID
          WHERE 1=1
     {where}
       GROUP BY s.ID, s.OutputDate, o.StyleID, s.FactoryID, o.BrandID, o.StyleUkey,s.Shift,s.Team,sd.ComboType
-),
-MaxDates as(
+
             SELECT distinct  sdate.OutputDate,
 	                o.StyleID, 
 		            o.BrandID,
                     s.FactoryID,
 		            MaxOutputDate = max(s.OutputDate)
+				into #tmp_MaxDates
                 FROM SewingOutput s
         INNER JOIN SewingOutput_Detail sd ON s.ID = sd.ID
         INNER JOIN Orders o ON sd.OrderId = o.ID
-	    INNER JOIN SewingDate sdate ON sdate.BrandID = o.BrandID and sdate.FactoryID = s.FactoryID and sdate.StyleID = o.StyleID 
+	    INNER JOIN #tmp_SewingDate sdate ON sdate.BrandID = o.BrandID and sdate.FactoryID = s.FactoryID and sdate.StyleID = o.StyleID 
 	            WHERE  s.OutputDate < sdate.OutputDate
             GROUP BY sdate.OutputDate, o.StyleID, s.FactoryID, o.BrandID
-),
-MinSewingID AS (
+
                 SELECT Distinct
                         o.StyleID, 
                         s.FactoryID,
 		                o.BrandID,
                         md.OutputDate,
                         MIN(s.SewingLineID) AS SewingLineID
+					INTO #tmp_MinSewingID
                     FROM SewingOutput s
               INNER JOIN SewingOutput_Detail sd ON s.ID = sd.ID
               INNER JOIN Orders o ON sd.OrderId = o.ID
-	          INNER JOIN MaxDates md ON o.StyleID = md.StyleID 
+	          INNER JOIN #tmp_MaxDates md ON o.StyleID = md.StyleID 
                                     AND s.FactoryID = md.FactoryID
                                     AND s.OutputDate = md.MaxOutputDate
 						            AND md.BrandID = o.BrandID
                 GROUP BY o.StyleID, s.FactoryID, o.BrandID, md.OutputDate
-) ,
-childstyle as(
+
+
               SELECT Distinct
 		             sda.OutputDate,
 		             s.FactoryID,
@@ -180,10 +174,11 @@ childstyle as(
 	                 m.MasterStyleID,
 	                 m.MasterBrandID,
 		             MainStyleID = o.StyleID
+				into #tmp_childstyle
                 FROM SewingOutput s
           INNER JOIN SewingOutput_Detail sd ON s.ID = sd.ID
           INNER JOIN Orders o ON sd.OrderId = o.ID
-	      INNER JOIN SewingDate sda on sda.StyleID = o.StyleID and sda.BrandID = o.BrandID and sda.FactoryID = s.FactoryID and sda.OutputDate = s.OutputDate 
+	      INNER JOIN #tmp_SewingDate sda on sda.StyleID = o.StyleID and sda.BrandID = o.BrandID and sda.FactoryID = s.FactoryID and sda.OutputDate = s.OutputDate 
 	     Outer apply (
 		                select distinct MasterBrandID, MasterStyleID 
 		                from (
@@ -208,37 +203,37 @@ childstyle as(
                                           )
 		                        )m
 	                      )m
-) ,
-childMaxDates as(
+
                   SELECT cs.OutputDate,
-	                       cs.MasterStyleID, 
-		                   cs.MasterBrandID,
-                           s.FactoryID,
-		                   MaxOutputDate = max(s.OutputDate)
+	                     cs.MasterStyleID, 
+		                 cs.MasterBrandID,
+                         s.FactoryID,
+		                 MaxOutputDate = max(s.OutputDate)
+					INTO #tmp_childMaxDates
                     FROM SewingOutput s
               INNER JOIN SewingOutput_Detail sd ON s.ID = sd.ID
               INNER JOIN Orders o ON sd.OrderId = o.ID
-	          INNER JOIN childstyle cs ON cs.MasterBrandID = o.BrandID 
+	          INNER JOIN #tmp_childstyle cs ON cs.MasterBrandID = o.BrandID 
                                       and cs.FactoryID = s.FactoryID 
                                       and cs.MasterStyleID = o.StyleID 
 	               WHERE s.OutputDate < cs.OutputDate
                 GROUP BY cs.MasterStyleID, s.FactoryID, cs.MasterBrandID ,cs.OutputDate 
-) ,
-childMinSewingID AS (
+
                     SELECT  cs.MasterStyleID,  
                             s.FactoryID,
 		                    cs.MasterBrandID,
                             cs.OutputDate,
                             MIN(s.SewingLineID) AS SewingLineID
+					  INTO #tmp_childMinSewingID
                       FROM SewingOutput s
                 INNER JOIN SewingOutput_Detail sd ON s.ID = sd.ID
                 INNER JOIN Orders o ON sd.OrderId = o.ID
-	            INNER JOIN childMaxDates cs ON o.StyleID = cs.MasterStyleID 
+	            INNER JOIN #tmp_childMaxDates cs ON o.StyleID = cs.MasterStyleID 
                                            AND s.FactoryID = cs.FactoryID
                                            AND s.OutputDate = cs.MaxOutputDate
 						                   And cs.MasterBrandID = o.BrandID
                   GROUP BY cs.MasterStyleID, s.FactoryID, cs.MasterBrandID, cs.OutputDate
-)
+
 
    SELECT DISTINCT s.Outputdate,
                    s.FactoryID,
@@ -250,29 +245,29 @@ childMinSewingID AS (
 	                             When isnull(RmarkSimilarStyle.Rr,'') != '' then  'Repeat'
 			                     Else 'New'
 			                     End
-     FROM SewingDate s
-Left JOIN MaxDates ON s.StyleID = MaxDates.StyleID 
+     FROM #tmp_SewingDate s
+Left JOIN #tmp_MaxDates MaxDates ON s.StyleID = MaxDates.StyleID 
 				   AND s.FactoryID = MaxDates.FactoryID
 				   AND s.BrandID = MaxDates.BrandID
 				   AND s.OutputDate = MaxDates.OutputDate
 				   AND s.BrandID = MaxDates.BrandID
-Left JOIN MinSewingID ON MaxDates.StyleID = MinSewingID.StyleID 
+Left JOIN #tmp_MinSewingID MinSewingID ON MaxDates.StyleID = MinSewingID.StyleID 
                           AND s.FactoryID = MinSewingID.FactoryID
                           AND s.OutputDate = MinSewingID.OutputDate
 						  AND MinSewingID.BrandID = s.BrandID
-Left JOIN childstyle cs ON cs.OutputDate = s.OutputDate and cs.FactoryID = s.FactoryID and cs.BrandID = s.BrandID and cs.MainStyleID = s.StyleID
+Left JOIN #tmp_childstyle cs ON cs.OutputDate = s.OutputDate and cs.FactoryID = s.FactoryID and cs.BrandID = s.BrandID and cs.MainStyleID = s.StyleID
 Outer Apply(
             Select Rr = STUFF((
 		                        SELECT distinct ',' + cd.MasterStyleID + '→' + csid.SewingLineID + '(' + CONVERT(varchar, cd.MaxOutputDate, 111) + ')'
-		                          FROM childMaxDates cd
-                            INNER JOIN childMinSewingID csid ON cd.MasterBrandID = csid.MasterBrandID 
+		                          FROM #tmp_childMaxDates cd
+                            INNER JOIN #tmp_childMinSewingID csid ON cd.OutputDate = csid.OutputDate
                                                             AND cd.FactoryID = csid.FactoryID 
+                                                            AND cd.MasterBrandID = csid.MasterBrandID
                                                             AND cd.MasterStyleID = csid.MasterStyleID 
-                                                            AND cd.OutputDate = csid.OutputDate
-                            INNER JOIN childstyle cs ON cd.OutputDate = cs.OutputDate 
+                            INNER JOIN #tmp_childstyle cs ON cd.OutputDate = cs.OutputDate 
                                                     AND cd.FactoryID = cs.FactoryID 
                                                     AND cd.MasterBrandID = cs.MasterBrandID 
-                                                    AND cs.MainStyleID = s.StyleID
+                                                    AND cs.MasterStyleID = cd.MasterStyleID
                                  WHERE  cd.FactoryID = s.FactoryID
                                    AND cd.MasterBrandID = s.BrandID
                                    AND cs.MainStyleID = s.StyleID
