@@ -39,21 +39,195 @@ namespace Sci.Production.Quality
                 return false;
             }
 
-            string formatCol;
-            string formatJoin;
-
+            string sql;
             if (this.radioSummary.Checked)
             {
-                formatJoin = @"outer apply (select [val] = sum(CRD.DefectQty)
-                                            from CutInsRecord_Defect CRD WITH(NOLOCK)
-                                            where CR.Ukey = CRD.CutInsRecordUkey ) DefectQty";
-                formatCol = "DefectQty.val,";
+                sql = $@"
+select 
+     Convert(date,CR.AddDate),
+     CR.Shift,
+     [RFT] = Round(iif(CheckTimes.TotalCnt = 0, 0, (convert(decimal(6,3),RollDyelot.EmptyCnt)/CheckTimes.TotalCnt)*100),2),
+     CR.CutRef,
+     W.ID,
+     O.StyleID,
+     O.SeasonID,
+     Article.Article,
+     ColorID.Colorid,
+     Refno.Refno,
+     SizeCode.SizeCode,
+     W.FabricCombo,
+     WS.Ratio,
+     Layer.Layer,
+     CR.Machine,
+     [CuttingTable] = CR.CutCellId,
+     CR.MarkerLength,
+     OE.Width,
+     CR.CuttableWidth,
+     CR.ActualWidth,
+     CheckTimes.[Top],
+     CheckTimes.Middle,
+     CheckTimes.Bottom,
+     RollDyelot.InspRatio,
+     InspectQty = RollDyelot.DataCnt,
+     RejectQty = RollDyelot.NotEmptyCnt,
+     Inspector = (SELECT CONCAT(a.ID, ':', a.Name) from [ExtendServer].ManufacturingExecution.dbo.Pass1 a WITH (NOLOCK) where a.ID = CR.AddName),
+     CR.Remark,
+     CR.AddDate	
+from CutInsRecord CR WITH(NOLOCK)
+outer apply(select Top 1 * from WorkOrder W WITH(NOLOCK) where CR.CutRef=W.CutRef )W
+Left join Orders O on W.ID=O.ID
+Left join Order_EachCons OE on W.ID=OE.ID and W.MarkerName=OE.MarkerName and OE.MarkerNo = W.MarkerNo and OE.MarkerVersion = W.MarkerVersion
+outer apply (select  isnull(sum(iif(DefectCode = '',1,0)),0) EmptyCnt ,
+                     isnull(sum(iif(DefectCode != '',1,0)),0) NotEmptyCnt,
+                     isnull(sum(InspRatio),0) InspRatio,
+                     count(1) DataCnt
+               from CutInsRecord_RollDyelot where CutInsRecordUkey = CR.Ukey) RollDyelot
+outer apply (
+select [Top]=sum(iif(TMB = '1',1,0)),
+      Middle=sum(iif(TMB = '2',1,0)),
+      Bottom=sum(iif(TMB = '3',1,0)),
+      isnull(count(1),0) TotalCnt
+ from CutInsRecord_RollDyelot
+where CutInsRecordUkey = CR.Ukey ) CheckTimes
+outer apply(
+	select Roll = STUFF((
+		select CONCAT(CHAR(10), Roll)
+		from CutInsRecord_RollDyelot CRR WITH(NOLOCK)
+		where CR.Ukey=CRR.CutInsRecordUkey
+		order by CRR.Ukey
+		for XML path('')
+	),1,1,'')
+)Roll
+outer apply(
+	select Dyelot = STUFF((
+		select CONCAT(CHAR(10), Dyelot)
+		from CutInsRecord_RollDyelot CRR WITH(NOLOCK)
+		where CR.Ukey=CRR.CutInsRecordUkey
+		order by CRR.Ukey
+		for XML path('')
+	),1,1,'')
+)Dyelot
+outer apply(
+	select TicketYDS = STUFF((
+		select CONCAT(CHAR(10), TicketYDS)
+		from CutInsRecord_RollDyelot CRR WITH(NOLOCK)
+		where CR.Ukey=CRR.CutInsRecordUkey
+		order by CRR.Ukey
+		for XML path('')
+	),1,1,'')
+)TicketYDS
+outer apply(
+	select ColorID = STUFF((
+		select distinct CONCAT(',', ColorID)
+		from WorkOrder W WITH(NOLOCK)
+		where CR.CutRef=W.CutRef
+		for XML path('')
+	),1,1,'')
+)ColorID
+outer apply(
+	select Refno = STUFF((
+		select distinct CONCAT(',', Refno)
+		from WorkOrder W WITH(NOLOCK)
+		where CR.CutRef=W.CutRef
+		for XML path('')
+	),1,1,'')
+)Refno
+outer apply(
+	select Article = STUFF((
+		select distinct CONCAT(',', Article)
+		from WorkOrder_Distribute WD WITH(NOLOCK)
+		where W.Ukey=WD.WorkOrderUkey and WD.OrderID != 'EXCESS'
+		for XML path('')
+	),1,1,'')
+)Article
+outer apply(
+	select SizeCode = STUFF((
+		select distinct CONCAT(',', SizeCode)
+		from WorkOrder_Distribute WD WITH(NOLOCK)
+		where W.Ukey=WD.WorkOrderUkey and WD.OrderID != 'EXCESS'
+		for XML path('')
+	),1,1,'')
+)SizeCode
+outer apply(select Ratio = SUM(Qty) from WorkOrder_SizeRatio WS WITH(NOLOCK) where WS.WorkOrderUkey = W.Ukey)WS
+outer apply(select Layer = SUM(Layer) from WorkOrder W WITH(NOLOCK) where CR.CutRef=W.CutRef )Layer
+where 1=1";
             }
             else
             {
-                formatJoin = @"left join CutInsRecord_Defect CRD on CR.Ukey = CRD.CutInsRecordUkey";
-                formatCol = @"  CRD.DefectCode,
-                                CRD.DefectQty,";
+                sql = $@"
+select 
+    Convert(date,CR.AddDate),
+    CR.Shift,
+    CR.CutRef,
+    W.ID,
+    O.StyleID,
+    O.SeasonID,
+    Article.Article,
+    ColorID.Colorid,
+    Refno.Refno,
+    SizeCode.SizeCode,
+    W.FabricCombo,
+    WS.Ratio,
+    Layer.Layer,
+    CRR.Roll,
+    CRR.Dyelot,
+    CRR.TicketYDS,
+    CRR.CutPartName,
+    CRR.InspRatio,
+    TMBList.Name,
+    DeviationList.Name,
+    CRR.DefectCode,
+    CR.Machine,
+    [CuttingTable] = CR.CutCellId,
+    CR.MarkerLength,
+    OE.Width,
+    CR.CuttableWidth,
+    CR.ActualWidth,
+    Inspector = (SELECT CONCAT(a.ID, ':', a.Name) from [ExtendServer].ManufacturingExecution.dbo.Pass1 a WITH (NOLOCK) where a.ID = CR.AddName),
+    CR.Remark,
+    CR.AddDate
+from CutInsRecord CR WITH(NOLOCK)
+outer apply(select Top 1 * from WorkOrder W WITH(NOLOCK) where CR.CutRef=W.CutRef )W
+ left join Orders O WITH(NOLOCK) on W.ID=O.ID
+ left join Order_EachCons OE WITH(NOLOCK) on W.ID=OE.ID and W.MarkerName=OE.MarkerName and OE.MarkerNo = W.MarkerNo and OE.MarkerVersion = W.MarkerVersion
+ left join CutInsRecord_RollDyelot CRR WITH(NOLOCK) ON  CR.Ukey = CRR.CutInsRecordUkey
+outer apply(select Ratio = SUM(Qty) from WorkOrder_SizeRatio WS WITH(NOLOCK) where WS.WorkOrderUkey = W.Ukey)WS
+outer apply(select Layer = SUM(Layer) from WorkOrder W WITH(NOLOCK) where CR.CutRef=W.CutRef )Layer
+outer apply(
+	select ColorID = STUFF((
+		select distinct CONCAT(',', ColorID)
+		from WorkOrder W WITH(NOLOCK)
+		where CR.CutRef=W.CutRef
+		for XML path('')
+	),1,1,'')
+)ColorID
+outer apply(
+	select Refno = STUFF((
+		select distinct CONCAT(',', Refno)
+		from WorkOrder W WITH(NOLOCK)
+		where CR.CutRef=W.CutRef
+		for XML path('')
+	),1,1,'')
+)Refno
+outer apply(
+	select Article = STUFF((
+		select distinct CONCAT(',', Article)
+		from WorkOrder_Distribute WD WITH(NOLOCK)
+		where W.Ukey=WD.WorkOrderUkey and WD.OrderID != 'EXCESS'
+		for XML path('')
+	),1,1,'')
+)Article
+outer apply(
+	select SizeCode = STUFF((
+		select distinct CONCAT(',', SizeCode)
+		from WorkOrder_Distribute WD WITH(NOLOCK)
+		where W.Ukey=WD.WorkOrderUkey and WD.OrderID != 'EXCESS'
+		for XML path('')
+	),1,1,'')
+)SizeCode
+ left join DropDownList TMBList WITH(NOLOCK) on TMBList.type = 'PMS_CutInspTMB' and TMBList.ID = CRR.TMB
+ left join DropDownList DeviationList WITH(NOLOCK) on DeviationList.type = 'PMS_CutInspDeviation' and DeviationList.ID = CRR.DeviationValue
+where 1=1";
             }
 
             #region where
@@ -96,118 +270,7 @@ namespace Sci.Production.Quality
             }
             #endregion
 
-            this.Sqlcmd.Append($@"
-select
-	Convert(date,CR.AddDate),
-    CR.Shift,
-	[RFT] = iif(isnull(CR.InspectQty, 0) = 0, 0, round((isnull(CR.InspectQty, 0)- isnull(CR.RejectQty, 0)) / Cast(CR.InspectQty as float),2)),
-	CR.CutRef,
-	W.ID,
-	O.StyleID,
-	O.SeasonID,
-	Article.Article,
-	ColorID.Colorid,
-	Refno.Refno,
-	SizeCode.SizeCode,
-	W.FabricCombo,
-	WS.Ratio,
-	Layer.Layer,
-	Roll.Roll,
-	Dyelot.Dyelot,
-	TicketYDS.TicketYDS,
-	CR.Machine,
-	[CuttingTable] = CR.CutCellId,
-	CR.MarkerLength,
-	OE.Width,
-	CR.CuttableWidth,
-	CR.ActualWidth,
-	CR.Description,
-	CR.[Top],
-	CR.Middle,
-	CR.Bottom,
-	CR.InspRatio,
-	{formatCol}
-	CR.InspectQty,
-	CR.RejectQty,
-	Inspector = (SELECT CONCAT(a.ID, ':', a.Name) from [ExtendServer].ManufacturingExecution.dbo.Pass1 a WITH (NOLOCK) where a.ID = CR.AddName),
-	CR.Remark,
-    CR.AddDate,
-    CR.RepairedDatetime,
-	RepairedTime = iif(RepairedDatetime is null,null,
-		concat(IIF(ttlMINUTE > 1440, ttlMINUTE / 1440, 0), ' ',
-			IIF(ttlMINUTE_D > 60, ttlMINUTE_D / 60, 0), ':',
-			isnull(ttlMINUTE_D_HR, 0)))
-from CutInsRecord CR WITH(NOLOCK)
-outer apply(
-	select Roll = STUFF((
-		select CONCAT(CHAR(10), Roll)
-		from CutInsRecord_RollDyelot CRR WITH(NOLOCK)
-		where CR.Ukey=CRR.CutInsRecordUkey
-		order by CRR.Ukey
-		for XML path('')
-	),1,1,'')
-)Roll
-outer apply(
-	select Dyelot = STUFF((
-		select CONCAT(CHAR(10), Dyelot)
-		from CutInsRecord_RollDyelot CRR WITH(NOLOCK)
-		where CR.Ukey=CRR.CutInsRecordUkey
-		order by CRR.Ukey
-		for XML path('')
-	),1,1,'')
-)Dyelot
-outer apply(
-	select TicketYDS = STUFF((
-		select CONCAT(CHAR(10), TicketYDS)
-		from CutInsRecord_RollDyelot CRR WITH(NOLOCK)
-		where CR.Ukey=CRR.CutInsRecordUkey
-		order by CRR.Ukey
-		for XML path('')
-	),1,1,'')
-)TicketYDS
-{formatJoin}
-outer apply(select Top 1 * from WorkOrder W WITH(NOLOCK) where CR.CutRef=W.CutRef )W
-Left join Orders O on W.ID=O.ID
-Left join Order_EachCons OE on W.ID=OE.ID and W.MarkerName=OE.MarkerName
-outer apply(
-	select ColorID = STUFF((
-		select distinct CONCAT(',', ColorID)
-		from WorkOrder W WITH(NOLOCK)
-		where CR.CutRef=W.CutRef
-		for XML path('')
-	),1,1,'')
-)ColorID
-outer apply(
-	select Refno = STUFF((
-		select distinct CONCAT(',', Refno)
-		from WorkOrder W WITH(NOLOCK)
-		where CR.CutRef=W.CutRef
-		for XML path('')
-	),1,1,'')
-)Refno
-outer apply(
-	select Article = STUFF((
-		select distinct CONCAT(',', Article)
-		from WorkOrder_Distribute WD WITH(NOLOCK)
-		where W.Ukey=WD.WorkOrderUkey and WD.OrderID != 'EXCESS'
-		for XML path('')
-	),1,1,'')
-)Article
-outer apply(
-	select SizeCode = STUFF((
-		select distinct CONCAT(',', SizeCode)
-		from WorkOrder_Distribute WD WITH(NOLOCK)
-		where W.Ukey=WD.WorkOrderUkey and WD.OrderID != 'EXCESS'
-		for XML path('')
-	),1,1,'')
-)SizeCode
-outer apply(select Ratio = SUM(Qty) from WorkOrder_SizeRatio WS WITH(NOLOCK) where WS.WorkOrderUkey = W.Ukey)WS
-outer apply(select Layer = SUM(Layer) from WorkOrder W WITH(NOLOCK) where CR.CutRef=W.CutRef )Layer
-outer apply(select ttlMINUTE = DATEDIFF(MINUTE, CR.AddDate, CR.RepairedDatetime))ttlMINUTE
-outer apply(select ttlMINUTE_D = IIF(ttlMINUTE > 1440, ttlMINUTE - (ttlMINUTE / 1440) * 1440, ttlMINUTE))ttlMINUTE_D
-outer apply(select ttlMINUTE_D_HR = IIF(ttlMINUTE_D > 60, ttlMINUTE_D - (ttlMINUTE_D / 60) * 60, ttlMINUTE_D))ttlMINUTE_D_HR
-where 1=1
-");
+            this.Sqlcmd.Append(sql);
             this.Sqlcmd.Append(sqlwhere);
             return true;
         }
