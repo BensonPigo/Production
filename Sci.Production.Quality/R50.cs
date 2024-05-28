@@ -67,9 +67,8 @@ select
      CheckTimes.[Top],
      CheckTimes.Middle,
      CheckTimes.Bottom,
-     CR.InspRatio,
-     DefectQty.val,
-     InspectQty = CheckTimes.[Top] + CheckTimes.Middle + CheckTimes.Bottom,
+     RollDyelot.InspRatio,
+     InspectQty = RollDyelot.DataCnt,
      RejectQty = RollDyelot.NotEmptyCnt,
      Inspector = (SELECT CONCAT(a.ID, ':', a.Name) from [ExtendServer].ManufacturingExecution.dbo.Pass1 a WITH (NOLOCK) where a.ID = CR.AddName),
      CR.Remark,
@@ -78,11 +77,10 @@ from CutInsRecord CR WITH(NOLOCK)
 outer apply(select Top 1 * from WorkOrder W WITH(NOLOCK) where CR.CutRef=W.CutRef )W
 Left join Orders O on W.ID=O.ID
 Left join Order_EachCons OE on W.ID=OE.ID and W.MarkerName=OE.MarkerName and OE.MarkerNo = W.MarkerNo and OE.MarkerVersion = W.MarkerVersion
-outer apply (select [val] = sum(CRD.DefectQty)
-             from CutInsRecord_Defect CRD WITH(NOLOCK)
-             where CR.Ukey = CRD.CutInsRecordUkey ) DefectQty
 outer apply (select  isnull(sum(iif(DefectCode = '',1,0)),0) EmptyCnt ,
-                     isnull(sum(iif(DefectCode != '',1,0)),0) NotEmptyCnt  
+                     isnull(sum(iif(DefectCode != '',1,0)),0) NotEmptyCnt,
+                     isnull(sum(InspRatio),0) InspRatio,
+                     count(1) DataCnt
                from CutInsRecord_RollDyelot where CutInsRecordUkey = CR.Ukey) RollDyelot
 outer apply (
 select [Top]=sum(iif(TMB = '1',1,0)),
