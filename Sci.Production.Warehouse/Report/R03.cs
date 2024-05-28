@@ -274,7 +274,11 @@ left join Export ex with (nolock) on ex.ID = exd.ID
             sqlCmd.Append($@"
 --輔料們
 --輔料不指定給某個色組
-select  distinct ob.Id, ob.seq1, ob.SCIRefno ,SuppID
+select  distinct 
+ PSD.Id
+,PSD.seq1
+,ob.SCIRefno 
+,ps.SuppID
 ,Article.Article
 ,Color.Color
 into #tmpAccessory
@@ -282,6 +286,7 @@ from Order_BOA ob WITH (NOLOCK)
 inner join Order_ColorCombo occ WITH (NOLOCK)  on occ.id = ob.id and occ.FabricPanelCode = ob.FabricPanelCode
 left join Order_BOA_Article oba WITH (NOLOCK)  on oba.Order_BoAUkey = ob.Ukey
 inner join PO_Supp_Detail psd WITH (NOLOCK)  on psd.ID = ob.ID
+inner join dbo.PO_Supp PS WITH (NOLOCK) on PSD.id = PS.id and PSD.Seq1 = PS.Seq1
 inner join Orders o WITH (NOLOCK)  on o.ID = ob.ID
 outer apply(
     select wkno = stuff((
@@ -314,13 +319,18 @@ where 1=1
 and oba.Article is null --表示不指定
 union
 --輔料指定給某個色組
-select  distinct ob.Id, ob.seq1, ob.SCIRefno ,ob.SuppID
+select  distinct
+ob.Id
+,ob.seq1
+,ob.SCIRefno 
+,ps.SuppID
 ,a.Value
 ,b.Value
 from Order_BOA ob WITH (NOLOCK) 
 inner join Order_ColorCombo occ WITH (NOLOCK)  on occ.id = ob.id and occ.FabricPanelCode = ob.FabricPanelCode
 left join Order_BOA_Article oba WITH (NOLOCK)  on oba.Order_BoAUkey = ob.Ukey
 inner join PO_Supp_Detail psd WITH (NOLOCK)  on psd.ID = ob.ID
+inner join dbo.PO_Supp PS WITH (NOLOCK) on PSD.id = PS.id and PSD.Seq1 = PS.Seq1
 inner join Orders o WITH (NOLOCK)  on o.ID = ob.ID
 outer apply(
 select wkno = stuff((
@@ -353,7 +363,11 @@ where 1=1
 and a.Value is not null
 ------------------------------------------------------------------------------
 --主料
-select  distinct ob.Id, ob.seq1, ob.SCIRefno ,ob.SuppID
+select  distinct 
+ob.Id 
+,ob.seq1
+,ob.SCIRefno 
+,ob.SuppID
 ,Article.Article
 ,Color.Color
 into #tmpFabric
@@ -392,7 +406,10 @@ where 1=1
 
 ------------------------------------------------------------------
 --線
-select distinct o.Id, tccd.SCIRefno ,tccd.SuppID
+select distinct 
+psd.Id
+,tccd.SCIRefno 
+,ps.SuppID
 ,Article.Article
 ,Color.Color
 into #tmpThread
@@ -400,6 +417,7 @@ from Style_ThreadColorCombo tcc WITH (NOLOCK)
 Inner Join dbo.Style_ThreadColorCombo_Detail as tccd with(nolock) On tccd.Style_ThreadColorComboUkey = tcc.Ukey
 Inner Join orders o WITH (NOLOCK)  on o.styleukey = tcc.StyleUkey
 inner join PO_Supp_Detail psd WITH (NOLOCK)  on psd.ID = o.ID
+inner join dbo.PO_Supp PS WITH (NOLOCK) on PSD.id = PS.id and PSD.Seq1 = PS.Seq1
 outer apply(
 select wkno = stuff((
 	    select concat(char(10),ID)
@@ -593,7 +611,7 @@ select wkno = stuff((
 )Wk
 left join #tmpAccessory acc on acc.id = PSD.ID and acc.scirefno = PSD.sciRefno and acc.suppid = ps.SuppID and acc.seq1 = psd.Seq1 and psd.FabricType = 'A' and PSD.SEQ1 not like 'T%' 
 left join #tmpFabric fab on fab.id = PSD.ID and fab.scirefno = PSD.sciRefno and psd.FabricType = 'F'
-left join #tmpThread thread on thread.id = PSD.ID and thread.scirefno = PSD.sciRefno and thread.suppid = ps.SuppID and PSD.SEQ1 like 'T%' 
+left join #tmpThread thread on thread.id = PSD.ID and thread.scirefno = PSD.sciRefno and thread.suppid = ps.SuppID and (PSD.SEQ1 like 'T%' or PSD.SEQ1 like '7%')
 outer apply 
 (
     select Article = stuff((
