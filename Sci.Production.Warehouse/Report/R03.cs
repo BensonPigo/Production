@@ -275,18 +275,17 @@ left join Export ex with (nolock) on ex.ID = exd.ID
 --輔料們
 --輔料不指定給某個色組
 select  distinct 
- PSD.Id
-,PSD.seq1
-,ob.SCIRefno 
-,ps.SuppID
-,Article.Article
-,Color.Color
+        ob.Id
+       ,ob.seq1
+       ,ob.SCIRefno 
+       ,SuppID
+       ,Article.Article
+       ,Color.Color
 into #tmpAccessory
 from Order_BOA ob WITH (NOLOCK)
 inner join Order_ColorCombo occ WITH (NOLOCK)  on occ.id = ob.id and occ.FabricPanelCode = ob.FabricPanelCode
 left join Order_BOA_Article oba WITH (NOLOCK)  on oba.Order_BoAUkey = ob.Ukey
 inner join PO_Supp_Detail psd WITH (NOLOCK)  on psd.ID = ob.ID
-inner join dbo.PO_Supp PS WITH (NOLOCK) on PSD.id = PS.id and PSD.Seq1 = PS.Seq1
 inner join Orders o WITH (NOLOCK)  on o.ID = ob.ID
 outer apply(
     select wkno = stuff((
@@ -320,12 +319,12 @@ and oba.Article is null --表示不指定
 union
 --輔料指定給某個色組
 select  distinct
-ob.Id
-,ob.seq1
-,ob.SCIRefno 
-,ps.SuppID
-,a.Value
-,b.Value
+        ob.Id
+       ,ob.seq1
+       ,ob.SCIRefno 
+       ,ps.SuppID
+       ,a.Value
+       ,b.Value
 from Order_BOA ob WITH (NOLOCK) 
 inner join Order_ColorCombo occ WITH (NOLOCK)  on occ.id = ob.id and occ.FabricPanelCode = ob.FabricPanelCode
 left join Order_BOA_Article oba WITH (NOLOCK)  on oba.Order_BoAUkey = ob.Ukey
@@ -364,12 +363,12 @@ and a.Value is not null
 ------------------------------------------------------------------------------
 --主料
 select  distinct 
-ob.Id 
-,ob.seq1
-,ob.SCIRefno 
-,ob.SuppID
-,Article.Article
-,Color.Color
+        ob.Id 
+       ,ob.seq1
+       ,ob.SCIRefno 
+       ,ob.SuppID
+       ,Article.Article
+       ,Color.Color
 into #tmpFabric
 from Order_BOF ob WITH (NOLOCK) 
 inner join Order_ColorCombo occ WITH (NOLOCK)  on occ.id = ob.id and occ.FabricCode = ob.FabricCode
@@ -407,17 +406,16 @@ where 1=1
 ------------------------------------------------------------------
 --線
 select distinct 
-psd.Id
-,tccd.SCIRefno 
-,ps.SuppID
-,Article.Article
-,Color.Color
+        o.Id
+       ,tccd.SCIRefno 
+       ,SuppID
+       ,Article.Article
+       ,Color.Color
 into #tmpThread
 from Style_ThreadColorCombo tcc WITH (NOLOCK) 
 Inner Join dbo.Style_ThreadColorCombo_Detail as tccd with(nolock) On tccd.Style_ThreadColorComboUkey = tcc.Ukey
 Inner Join orders o WITH (NOLOCK)  on o.styleukey = tcc.StyleUkey
 inner join PO_Supp_Detail psd WITH (NOLOCK)  on psd.ID = o.ID
-inner join dbo.PO_Supp PS WITH (NOLOCK) on PSD.id = PS.id and PSD.Seq1 = PS.Seq1
 outer apply(
 select wkno = stuff((
 	    select concat(char(10),ID)
@@ -477,7 +475,7 @@ select  F.MDivisionID
                 , IIF(isnull(PSD.SuppColor,'') = '',dbo.GetColorMultipleID(O.BrandID, psdsC.SpecValue),PSD.SuppColor)
                 , dbo.GetColorMultipleID(O.BrandID, psdsC.SpecValue))
 		,[Article] = COALESCE(acc.Article, fab.Article, thread.Article, nullArticle.Article)
-		,[Color] =  COALESCE(acc.Color, fab.Color, thread.Color)
+		,[Color] =  COALESCE(acc.Color, acc7.Color, fab.Color, thread.Color, thread7.Color)
         ,PSD.Qty
         ,PSD.NETQty
         ,PSD.NETQty+PSD.LossQty
@@ -611,7 +609,27 @@ select wkno = stuff((
 )Wk
 left join #tmpAccessory acc on acc.id = PSD.ID and acc.scirefno = PSD.sciRefno and acc.suppid = ps.SuppID and acc.seq1 = psd.Seq1 and psd.FabricType = 'A' and PSD.SEQ1 not like 'T%' 
 left join #tmpFabric fab on fab.id = PSD.ID and fab.scirefno = PSD.sciRefno and psd.FabricType = 'F'
-left join #tmpThread thread on thread.id = PSD.ID and thread.scirefno = PSD.sciRefno and thread.suppid = ps.SuppID and (PSD.SEQ1 like 'T%' or PSD.SEQ1 like '7%')
+left join #tmpThread thread on thread.id = PSD.ID and thread.scirefno = PSD.sciRefno and thread.suppid = ps.SuppID and PSD.SEQ1 like 'T%'
+Outer Apply 
+(
+	select Color 
+	from #tmpAccessory acc 
+	Where acc.ID = PSD.ID 
+	and acc.scirefno = PSD.sciRefno 
+	and acc.seq1 = psd.OutputSeq1 
+	and psd.FabricType = 'A' 
+	and PSD.SEQ1 like '7%'
+) acc7
+Outer Apply 
+(
+	select top 1 Color 
+	from #tmpThread acc 
+	Where acc.ID = PSD.ID 
+	and acc.scirefno = PSD.sciRefno 
+	and psd.Seq1 like '7%'
+	and psd.OutputSeq1 like 'T%'
+) thread7
+
 outer apply 
 (
     select Article = stuff((
@@ -621,15 +639,7 @@ outer apply
         for xml path('')
     ),1,1,'')
 )nullArticle
-outer apply 
-(
-    select Color = stuff((
-        select DISTINCT ',' + ColorID
-        from Order_ColorCombo ob WITH (NOLOCK)
-        where ob.id = O.ID
-        for xml path('')
-    ),1,1,'')
-)nullColor
+
 Where 1=1
 {where}
 ");
