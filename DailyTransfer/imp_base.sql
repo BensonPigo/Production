@@ -5171,6 +5171,7 @@ update a set
 ,[Location] = isnull( b.[Location],'')
 ,[Seq] = isnull( b.[Seq],0)
 ,[Type] = isnull( b.[Type],'')
+,Category = isnull( b.Category,'')
 from production.dbo.GarmentTestShrinkage a
 inner join Trade_To_Pms.dbo.GarmentTestShrinkage b on a.Ukey = b.Ukey 
 
@@ -5179,13 +5180,15 @@ insert production.dbo.GarmentTestShrinkage
            ,[LocationGroup]
            ,[Location]
            ,[Seq]
-           ,[Type])
+           ,[Type]
+           ,Category)
 select
      isnull(a.[BrandID]        ,'')
     ,isnull(a.[LocationGroup]  ,'')
     ,isnull(a.[Location]       ,'')
     ,isnull(a.[Seq]            ,0)
     ,isnull(a.[Type]           ,'')
+    ,isnull(a.Category           ,'')
 from Trade_To_Pms.dbo.GarmentTestShrinkage a
 left join production.dbo.GarmentTestShrinkage b on  a.Ukey = b.Ukey 
 where b.BrandID is null
