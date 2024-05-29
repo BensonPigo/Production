@@ -322,14 +322,13 @@ select  distinct
         ob.Id
        ,ob.seq1
        ,ob.SCIRefno 
-       ,ps.SuppID
+       ,SuppID
        ,a.Value
        ,b.Value
 from Order_BOA ob WITH (NOLOCK) 
 inner join Order_ColorCombo occ WITH (NOLOCK)  on occ.id = ob.id and occ.FabricPanelCode = ob.FabricPanelCode
 left join Order_BOA_Article oba WITH (NOLOCK)  on oba.Order_BoAUkey = ob.Ukey
 inner join PO_Supp_Detail psd WITH (NOLOCK)  on psd.ID = ob.ID
-inner join dbo.PO_Supp PS WITH (NOLOCK) on PSD.id = PS.id and PSD.Seq1 = PS.Seq1
 inner join Orders o WITH (NOLOCK)  on o.ID = ob.ID
 outer apply(
 select wkno = stuff((
