@@ -47,6 +47,7 @@ namespace Sci.Production.Prg.PowerBI.Logic
             P_WIPBySPLine,
             P_WBScanRate,
             P_CuttingBCS,
+            P_FabricStatus_And_IssueFabricTracking,
         }
 
         /// <summary>
@@ -360,6 +361,9 @@ ORDER BY [Group], [SEQ], [NAME]";
                         break;
                     case ListName.P_CuttingBCS:
                         result = new P_Import_CuttingBCS().P_CuttingBCS(item.SDate, item.EDate);
+                        break;
+                    case ListName.P_FabricStatus_And_IssueFabricTracking:
+                        result = new P_Import_FabricStatusAndIssueFabricTracking().P_FabricStatusAndIssueFabricTracking(item.SDate);
                         break;
                     default:
                         // Execute all Stored Procedures
