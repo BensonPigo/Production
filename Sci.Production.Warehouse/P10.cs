@@ -370,17 +370,18 @@ outer apply(
                 return false;
             }
 
-            double sum = 0.00;
-            foreach (DataRow dr in this.DetailDatas)
-            {
-                sum += Convert.ToDouble(dr["qty"]);
-            }
+            // ISP20240493 Confirm時還是會再去確認一次數量，Issue_Summary就算寫入Qty為0的資料列也不影響結構
+            //double sum = 0.00;
+            //foreach (DataRow dr in this.DetailDatas)
+            //{
+            //    sum += Convert.ToDouble(dr["qty"]);
+            //}
 
-            if (sum == 0)
-            {
-                MyUtility.Msg.WarningBox("All Issue_Qty are zero", "Warning");
-                return false;
-            }
+            //if (sum == 0)
+            //{
+            //    MyUtility.Msg.WarningBox("All Issue_Qty are zero", "Warning");
+            //    return false;
+            //}
 
             // 取單號
             if (this.IsDetailInserting)

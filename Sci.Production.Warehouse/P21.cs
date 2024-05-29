@@ -141,6 +141,7 @@ namespace Sci.Production.Warehouse
                  .CheckBox("select", header: string.Empty, trueValue: 1, falseValue: 0, settings: col_Select)
                  .Text("ID", header: "Receiving ID", width: Widths.AnsiChars(14), iseditingreadonly: true)
                  .Text("ExportID", header: "WK#", width: Widths.AnsiChars(14), iseditingreadonly: true)
+                 .Numeric("Packages", header: "Packages", width: Widths.AnsiChars(10), decimal_places: 0, integer_places: 5, iseditingreadonly: true)
                  .Date("WhseArrival", header: "Arrive WH Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
                  .Text("poid", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
                  .Text("Seq", header: "Seq", width: Widths.AnsiChars(8), iseditingreadonly: true)
@@ -446,6 +447,7 @@ from
         ,fu.RelaxationStartTime
         ,fu.RelaxationEndTime
         ,[MCHandle] = dbo.GetPass1(o.MCHandle)
+        ,[Packages] = isnull(e.Packages,0)
     from  Receiving r with (nolock)
     inner join Receiving_Detail rd with (nolock) on r.ID = rd.ID
     inner join View_WH_Orders o with (nolock) on o.ID = rd.POID 
@@ -503,6 +505,16 @@ from
         inner join [ExtendServer].[ManufacturingExecution].[dbo].FabricRelaxation fr on rr.FabricRelaxationID = fr.ID
         where rr.Refno = psd.Refno
     ) Rel
+    outer apply(
+		select [Packages] = sum(e.Packages)
+		from Export e with (nolock)
+		where exists(
+			select 1
+			from export e2 with(nolock)
+			where e2.Blno = e.Blno
+			and r.ExportId = e2.ID
+		)
+	)e
     where r.MDivisionID  = '{Env.User.Keyword}'
     AND psd.FabricType ='F'
     {sqlWhere}
@@ -578,6 +590,7 @@ from
         ,fu.RelaxationStartTime
         ,fu.RelaxationEndTime
         ,[MCHandle] = dbo.GetPass1(o.MCHandle)
+        ,[Packages] = isnull(t.Packages,0)
     FROM TransferIn t with (nolock)
     INNER JOIN TransferIn_Detail td with (nolock) ON t.ID = td.ID
     INNER JOIN View_WH_Orders o with (nolock) ON o.ID = td.POID

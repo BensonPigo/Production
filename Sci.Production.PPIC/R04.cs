@@ -5,6 +5,8 @@ using System.Windows.Forms;
 using Ict;
 using Sci.Data;
 using System.Runtime.InteropServices;
+using Sci.Production.Prg.PowerBI.Model;
+using Sci.Production.Prg.PowerBI.Logic;
 
 namespace Sci.Production.PPIC
 {
@@ -79,6 +81,30 @@ namespace Sci.Production.PPIC
         {
             StringBuilder sqlCmd = new StringBuilder();
             StringBuilder sqlCondition = new StringBuilder();
+            DualResult result;
+
+            PPIC_R04 biModel = new PPIC_R04();
+            #region 與BI共用Data Logic
+            PPIC_R04_ViewModel ppic_R04 = new PPIC_R04_ViewModel()
+            {
+                ReportType = this.reportType == 0 ? "F" : "A",
+                ApvDate1 = this.date1,
+                ApvDate2 = this.date2,
+                MDivisionID = this.mDivision,
+                FactoryID = this.factory,
+                LeadTime = this.leadtime,
+            };
+
+            Base_ViewModel resultReport = biModel.GetPPIC_R04Data(ppic_R04);
+            if (!resultReport.Result)
+            {
+                return resultReport.Result;
+            }
+
+            this.printData = resultReport.Dt;
+
+            #endregion
+
             sqlCondition.Append(string.Format(@"where l.FabricType = '{0}' ", this.reportType == 0 ? "F" : "A"));
             if (!MyUtility.Check.Empty(this.date1))
             {
@@ -98,43 +124,6 @@ namespace Sci.Production.PPIC
             if (!MyUtility.Check.Empty(this.factory))
             {
                 sqlCondition.Append(string.Format(" and l.FactoryID = '{0}'", this.factory));
-            }
-
-            sqlCmd.Append($@"
-select distinct l.MDivisionID,l.FactoryID,l.ID,l.SewingLineID
-	,[SewingCell] = isnull(s.SewingCell,'')
-	,[StyleID] = isnull(o.StyleID,'')
-	,l.OrderID
-	,[Seq] = concat(ld.Seq1,' ',ld.Seq2)
-	,[ColorName] = isnull(c.Name,'')
-	,[Refno] = isnull(psd.Refno,'')
-	,l.ApvDate
-	,ld.RejectQty
-	,ld.RequestQty
-	,ld.IssueQty
-	,[FinishedDate] = IIF(l.Status= 'Received',l.EditDate,null)
-	,[Type] = IIF(l.Type='R','Replacement','Lacking')
-	,[Description] = isnull(IIF(l.FabricType = 'F',pr.Description,pr1.Description),PPICReasonID)
-	,[OnTime] = IIF(l.Status = 'Received',IIF(DATEDIFF(ss,l.ApvDate,l.EditDate) <= {this.leadtime.ToString()},'Y','N'),'N')
-	,l.Remark
-    ,ld.Process
-from Lack l WITH (NOLOCK) 
-inner join Lack_Detail ld WITH (NOLOCK) on l.ID = ld.ID
-left join SewingLine s WITH (NOLOCK) on s.ID = l.SewingLineID AND S.FactoryID=L.FactoryID
-left join Orders o WITH (NOLOCK) on o.ID = l.OrderID
-left join PO_Supp_Detail psd WITH (NOLOCK) on psd.ID = l.POID and psd.SEQ1 = ld.Seq1 and psd.SEQ2 = ld.Seq2
-left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
-left join Color c WITH (NOLOCK) on c.BrandId = o.BrandID and c.ID = isnull(psdsC.SpecValue ,'')
-left join PPICReason pr WITH (NOLOCK) on pr.Type = 'FL' and (pr.ID = ld.PPICReasonID or pr.ID = concat('FR','0',ld.PPICReasonID))
-left join PPICReason pr1 WITH (NOLOCK) on pr1.Type = 'AL' and (pr1.ID = ld.PPICReasonID or pr1.ID = concat('AR','0',ld.PPICReasonID))
-{sqlCondition}
-order by l.MDivisionID,l.FactoryID,l.ID
-");
-            DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), out this.printData);
-            if (!result)
-            {
-                DualResult failResult = new DualResult(false, "Query data fail\r\n" + result.ToString());
-                return failResult;
             }
 
             // 有資料的話才繼續撈資料
@@ -231,7 +220,7 @@ order by MDivisionID,FactoryID",
 
             excel.DisplayAlerts = false;
 
-            excel.Visible = false;
+            excel.Visible = true;
             for (int i = 0; i < this.pivotData.Rows.Count; i++)
             {
                 if (i > 0)
@@ -249,16 +238,16 @@ order by MDivisionID,FactoryID",
             // 填各工廠的明細資料
             string xlsFactory = string.Empty;
             int xlsSheet = 1, ttlCount = 0, intRowsStart = 7;
-            object[,] objArray = new object[1, 18];
+            object[,] objArray = new object[1, 19];
             foreach (DataRow dr in this.printData.Rows)
             {
                 if (MyUtility.Convert.GetString(dr["FactoryID"]) != xlsFactory)
                 {
                     if (xlsSheet != 1)
                     {
-                        worksheet.Cells[3, 5] = string.Format("=COUNTA(C7:C{0})", MyUtility.Convert.GetString(ttlCount + 6));
-                        worksheet.Cells[4, 5] = string.Format("=COUNTIF(Q7:Q{0},\"=Y\")", MyUtility.Convert.GetString(ttlCount + 6));
-                        worksheet.Cells[3, 16] = string.Format("=SUM(L7:L{0})", MyUtility.Convert.GetString(ttlCount + 6));
+                        worksheet.Cells[3, 5] = string.Format("=COUNTA(D7:D{0})", MyUtility.Convert.GetString(ttlCount + 6));
+                        worksheet.Cells[4, 5] = string.Format("=COUNTIF(R7:R{0},\"=Y\")", MyUtility.Convert.GetString(ttlCount + 6));
+                        worksheet.Cells[3, 16] = string.Format("=SUM(M7:M{0})", MyUtility.Convert.GetString(ttlCount + 6));
                     }
 
                     xlsSheet++;
@@ -275,30 +264,31 @@ order by MDivisionID,FactoryID",
 
                 objArray[0, 0] = dr["SewingCell"];
                 objArray[0, 1] = dr["SewingLineID"];
-                objArray[0, 2] = dr["ID"];
-                objArray[0, 3] = dr["StyleID"];
-                objArray[0, 4] = dr["OrderID"];
-                objArray[0, 5] = dr["Seq"];
-                objArray[0, 6] = dr["ColorName"];
-                objArray[0, 7] = dr["Refno"];
-                objArray[0, 8] = dr["ApvDate"];
-                objArray[0, 9] = dr["RejectQty"];
-                objArray[0, 10] = dr["RequestQty"];
-                objArray[0, 11] = dr["IssueQty"];
-                objArray[0, 12] = dr["FinishedDate"];
-                objArray[0, 13] = dr["Type"];
-                objArray[0, 14] = dr["Process"];
-                objArray[0, 15] = dr["Description"];
-                objArray[0, 16] = dr["OnTime"];
-                objArray[0, 17] = dr["Remark"];
+                objArray[0, 2] = dr["Department"];
+                objArray[0, 3] = dr["ID"];
+                objArray[0, 4] = dr["StyleID"];
+                objArray[0, 5] = dr["OrderID"];
+                objArray[0, 6] = dr["Seq"];
+                objArray[0, 7] = dr["ColorName"];
+                objArray[0, 8] = dr["Refno"];
+                objArray[0, 9] = dr["ApvDate"];
+                objArray[0, 10] = dr["RejectQty"];
+                objArray[0, 11] = dr["RequestQty"];
+                objArray[0, 12] = dr["IssueQty"];
+                objArray[0, 13] = dr["FinishedDate"];
+                objArray[0, 14] = dr["Type"];
+                objArray[0, 15] = dr["Process"];
+                objArray[0, 16] = dr["Description"];
+                objArray[0, 17] = dr["OnTime"];
+                objArray[0, 18] = dr["Remark"];
 
-                worksheet.Range[string.Format("A{0}:R{0}", intRowsStart)].Value2 = objArray;
+                worksheet.Range[string.Format("A{0}:S{0}", intRowsStart)].Value2 = objArray;
                 intRowsStart++;
             }
 
-            worksheet.Cells[3, 5] = string.Format("=COUNTA(C7:C{0})", MyUtility.Convert.GetString(ttlCount + 6));
-            worksheet.Cells[4, 5] = string.Format("=COUNTIF(Q7:Q{0},\"=Y\")", MyUtility.Convert.GetString(ttlCount + 6));
-            worksheet.Cells[3, 16] = string.Format("=SUM(L7:L{0})", MyUtility.Convert.GetString(ttlCount + 6));
+            worksheet.Cells[3, 5] = string.Format("=COUNTA(D7:D{0})", MyUtility.Convert.GetString(ttlCount + 6));
+            worksheet.Cells[4, 5] = string.Format("=COUNTIF(R7:R{0},\"=Y\")", MyUtility.Convert.GetString(ttlCount + 6));
+            worksheet.Cells[3, 16] = string.Format("=SUM(M7:M{0})", MyUtility.Convert.GetString(ttlCount + 6));
             for (int i = 2; i < xlsSheet + 1; i++)
             {
                 worksheet = excel.ActiveWorkbook.Worksheets[i];

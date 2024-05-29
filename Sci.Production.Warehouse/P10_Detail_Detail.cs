@@ -103,10 +103,13 @@ select 0 as selected
        , [GMTWash] = isnull(GMTWash.val, '')
        , [Grade] = isnull(phy.Grade, '')
 	   , [ActualWidth] = phy.ActualWidth
+       , [Relaxtime] = CONCAT(convert(int, relax.Relaxtime) ,' HRS')
+       , [RelaxEndTime] = format(fur.RelaxationEndTime,'yyyy/MM/dd HH:mm:ss')
 from dbo.PO_Supp_Detail psd WITH (NOLOCK) 
 inner join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
 inner join dbo.ftyinventory c WITH (NOLOCK) on c.poid = psd.id and c.seq1 = psd.seq1 and c.seq2 = psd.seq2 and c.stocktype = 'B'
 inner join cte d on d.Dyelot=c.Dyelot
+left join Fabric_UnrollandRelax fur on fur.Barcode = IIF(c.barcodeseq <> '',Concat (c.barcode, '-', c.barcodeseq),c.barcode )
 outer apply(
     select top 1 [val] =  case  when sr.Status = 'Confirmed' then 'Done'
 			                    when tt.Status = 'Confirmed' then 'Ongoing'
@@ -132,6 +135,13 @@ outer apply
 	inner join FIR_Physical fp on fp.id = f.ID
 	where f.poid = psd.id and f.SEQ1 =psd.seq1 and f.SEQ2 =psd.SEQ2 and fp.Roll =c.Roll and fp.Dyelot =c.Dyelot
 )as phy
+outer apply
+(
+    select fr.Relaxtime 
+    from [ExtendServer].ManufacturingExecution.dbo.RefnoRelaxtime rr
+    inner join [ExtendServer].ManufacturingExecution.dbo.FabricRelaxation fr on fr.id = rr.FabricRelaxationID
+    where Refno = psd.Refno
+)relax
 Where psd.id = '{this.dr_master["poid"]}' and c.lock = 0 and c.inqty - c.outqty + c.adjustqty - c.ReturnQty > 0 
 and psd.Refno='{this.dr_master["Refno"]}' and isnull(psdsC.SpecValue, '')='{this.dr_master["colorid"]}' {(this.Type == 0 ? " and ltrim(psd.seq1) between '01' and '99'" : string.Empty)}
 order by d.GroupQty DESC,c.Dyelot,balanceqty DESC
@@ -201,7 +211,10 @@ order by d.GroupQty DESC,c.Dyelot,balanceqty DESC
                 .Text("Tone", header: "Shade Band" + Environment.NewLine + "Tone/Grp", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("GMTWash", header: "GMT Wash", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("Grade", header: "Grade", width: Widths.AnsiChars(10), iseditingreadonly: true)
-                .Text("ActualWidth", header: "Act Width", width: Widths.AnsiChars(10), iseditingreadonly: true);
+                .Text("ActualWidth", header: "Act Width", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                .Text("Relaxtime", header: "Relaxation", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                .Text("RelaxEndTime", header: "Relax End Time", width: Widths.AnsiChars(20), iseditingreadonly: true)
+                ;
 
             this.gridRollNo.Columns["qty"].DefaultCellStyle.BackColor = Color.Pink;
         }
