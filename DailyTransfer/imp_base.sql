@@ -5171,6 +5171,7 @@ update a set
 ,[Location] = isnull( b.[Location],'')
 ,[Seq] = isnull( b.[Seq],0)
 ,[Type] = isnull( b.[Type],'')
+,Category = isnull( b.Category,'')
 from production.dbo.GarmentTestShrinkage a
 inner join Trade_To_Pms.dbo.GarmentTestShrinkage b on a.Ukey = b.Ukey 
 
@@ -5179,13 +5180,15 @@ insert production.dbo.GarmentTestShrinkage
            ,[LocationGroup]
            ,[Location]
            ,[Seq]
-           ,[Type])
+           ,[Type]
+           ,Category)
 select
      isnull(a.[BrandID]        ,'')
     ,isnull(a.[LocationGroup]  ,'')
     ,isnull(a.[Location]       ,'')
     ,isnull(a.[Seq]            ,0)
     ,isnull(a.[Type]           ,'')
+    ,isnull(a.Category           ,'')
 from Trade_To_Pms.dbo.GarmentTestShrinkage a
 left join production.dbo.GarmentTestShrinkage b on  a.Ukey = b.Ukey 
 where b.BrandID is null
@@ -6002,3 +6005,40 @@ WHERE not exists(
 )
 
 END
+
+
+/*MtlType_Brand */
+----------------------Delete
+Delete t
+from [Production].[dbo].MtlType_Brand as t with(nolock)
+left join [Trade_To_Pms].[dbo].MtlType_Brand  as s with(nolock)on t.ID = s.ID and t.BrandID = s.BrandID 
+where s.ID is null
+
+---------------------------UPDATE
+UPDATE a
+SET  a.BossLockDay = ISNULL(b.BossLockDay,0)
+	,a.IsSustainableMaterial = ISNULL(b.IsSustainableMaterial,0)
+	,a.IsSustainableMaterialforSMTT = ISNULL(b.IsSustainableMaterialforSMTT,0)
+	,a.IsBCIforSMTT = ISNULL(b.IsBCIforSMTT,0)
+from [Production].[dbo].MtlType_Brand as a with(nolock)
+inner join [Trade_To_Pms].[dbo].MtlType_Brand  as b with(nolock) on a.ID = b.ID and a.BrandID = b.BrandID
+
+-------------------------- INSERT INTO
+INSERT INTO [Production].[dbo].MtlType_Brand
+ (
+		ID
+		,BrandID
+		,BossLockDay
+		,IsSustainableMaterial
+		,IsSustainableMaterialforSMTT
+		,IsBCIforSMTT
+)
+SELECT
+		ID
+		,BrandID
+		,BossLockDay
+		,IsSustainableMaterial
+		,IsSustainableMaterialforSMTT
+		,IsBCIforSMTT
+from [Trade_To_Pms].[dbo].MtlType_Brand as b WITH (NOLOCK)
+where not exists (select 1 from [Production].[dbo].MtlType_Brand as a WITH (NOLOCK) where a.ID = b.ID )
