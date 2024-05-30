@@ -164,6 +164,7 @@ namespace Sci.Production.Planning
         /// <returns>DualResult</returns>
         protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
+            string artworkTypes_2 = this.isArtwork ? this.artworktypes.ToString().Substring(0, this.artworktypes.ToString().Length - 1) : string.Empty;
 
             Planning_R15_ViewModel r15_vm = new Planning_R15_ViewModel()
             {
@@ -195,7 +196,7 @@ namespace Sci.Production.Planning
                 IncludeAtworkData = this.checkIncludeArtowkData.Checked,
                 IncludeCancelOrder = this.chkIncludeCancelOrder.Checked,
                 FormParameter = this.formParameter,
-                ArtworkTypes = this.FormParameter == "2" ? this.artworktypes.ToString().Substring(0, this.artworktypes.ToString().Length - 1) : string.Empty,
+                ArtworkTypes = this.FormParameter == "2" ? artworkTypes_2 : string.Empty,
                 RFIDProcessLocation = this.RFIDProcessLocation,
                 SubprocessID = this.subprocessID,
                 IsBI = false,
@@ -205,6 +206,7 @@ namespace Sci.Production.Planning
             Base_ViewModel resultReport = planning_R15.GetPlanning_R15(r15_vm, this.dtArtworkType);
 
             this.printData = resultReport.DtArr[0];
+            this.subprocessInoutColumnCount = resultReport.DtArr[1].Rows.Count > 0 ? MyUtility.Convert.GetInt(resultReport.DtArr[1].Rows[0]["subprocessInoutColumnCount"]) : 0;
             DBProxy.Current.DefaultTimeout = 300;
             return Ict.Result.True;
         }
