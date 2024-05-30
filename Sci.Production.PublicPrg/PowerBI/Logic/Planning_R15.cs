@@ -1597,7 +1597,7 @@ namespace Sci.Production.Prg.PowerBI.Logic
             string subprocessIDtmp = Prgs.SubprocesstmpNoSymbol(strSubprocessID);
             if (summaryBy == 1 || summaryBy == 2)
             {
-                subprocessIDtmp = "QtyBySetPerSubprocess" + subprocessIDtmp;
+                subprocessIDtmp = subprocessIDtmp;
             }
 
             if (type == 2)
@@ -1633,10 +1633,10 @@ namespace Sci.Production.Prg.PowerBI.Logic
         private string FarmOutColumn(string subprocessColumnName, string strSubprocessID, int summaryBy = 0, int type = 0)
         {
             string subprocessIDtmp = Prgs.SubprocesstmpNoSymbol(strSubprocessID);
-            if (summaryBy == 1 || summaryBy == 2)
-            {
-                subprocessIDtmp = "QtyBySetPerSubprocess" + subprocessIDtmp;
-            }
+            //if (summaryBy == 1 || summaryBy == 2)
+            //{
+            //    subprocessIDtmp = "QtyBySetPerSubprocess" + subprocessIDtmp;
+            //}
 
             if (type == 2)
             {
