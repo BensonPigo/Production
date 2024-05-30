@@ -1380,6 +1380,8 @@ namespace Sci.Production.Prg.PowerBI.Logic
                 ,T.[Buy Back]
                 , T.[Cancelled but Sill]";
             }
+
+            sqlCmd += $@"Select [subprocessInoutColumnCount] = {this.subprocessInoutColumnCount}";
             #endregion 組SQL
 
             DBProxy.Current.OpenConnection("Production", out SqlConnection sqlConn);
@@ -1389,6 +1391,7 @@ namespace Sci.Production.Prg.PowerBI.Logic
                 {
                     Result = DBProxy.Current.Select("Production", sqlCmd, listPar, out System.Data.DataTable[] dataTables),
                 };
+
                 resultReport.DtArr = dataTables;
                 return resultReport;
             }
