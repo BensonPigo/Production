@@ -144,6 +144,7 @@ namespace Sci.Production.Prg.PowerBI.FormPage
 
             if (executedList.Count() > 0)
             {
+                this.ShowWaitMessage("Loading......");
                 Logic.Base biBase = new Logic.Base();
                 biBase.ExecuteAll(executedList);
             }

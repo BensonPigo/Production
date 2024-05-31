@@ -5,6 +5,7 @@ using System.Data.SqlClient;
 using System.Data;
 using System.Text;
 using Sci.Data;
+using Sci.Production.Class;
 
 namespace Sci.Production.Prg.PowerBI.Logic
 {
@@ -857,18 +858,17 @@ AND NOT EXISTS (
                 sqlCmd.Append(outstandingWHERE.JoinToString("UNION") + Environment.NewLine + "DROP TABLE #tmp,#NeedCkeck,#PackingList_Detail,#CFAInspectionRecord,#CFAInspectionRecord_OrderSEQ");
             }
 
-            Base_ViewModel resultReport = new Base_ViewModel
+            DBProxy.Current.OpenConnection("Production", out SqlConnection sqlConn);
+            using (sqlConn)
             {
-                Result = this.DBProxy.Select("Production", sqlCmd.ToString(), listPar, out DataTable dt),
-            };
+                Base_ViewModel resultReport = new Base_ViewModel
+                {
+                    Result = this.DBProxy.Select("Production", sqlCmd.ToString(), listPar, out DataTable dt),
+                };
 
-            if (!resultReport.Result)
-            {
+                resultReport.Dt = dt;
                 return resultReport;
             }
-
-            resultReport.Dt = dt;
-            return resultReport;
         }
 
         /// <summary>

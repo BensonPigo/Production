@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Sci.Production.Prg.PowerBI.Logic
 {
@@ -206,7 +207,9 @@ ORDER BY [Group], [SEQ], [NAME]";
             DateTime stratExecutedTime = DateTime.Now;
             List<ExecutedList> executedListEnd = new List<ExecutedList>();
 
-            var results = executedList
+            Task.Run(() =>
+            {
+                var results = executedList
                 .GroupBy(x => x.Group)
                 .AsParallel()
                 .AsOrdered()
@@ -215,8 +218,6 @@ ORDER BY [Group], [SEQ], [NAME]";
                     List<ExecutedList> executedListDetail = new List<ExecutedList>();
                     var results_detail = item
                         .OrderBy(x => x.SEQ)
-                        .AsParallel()
-                        .AsSequential()
                         .Select(detail =>
                         {
                             ExecutedList detailPararllelResult = this.ExecuteSingle(detail);
@@ -230,31 +231,29 @@ ORDER BY [Group], [SEQ], [NAME]";
                 })
                 .ToList();
 
-            foreach (var item in results)
-            {
-                executedListEnd.AddRange(item);
-            }
+                executedListEnd.AddRange(results.SelectMany(x => x));
 
-            foreach (var item in executedList.Where(x => !executedListEnd.Any(y => y.ClassName == x.ClassName)))
-            {
-                string errMsg = "沒有執行";
-                var queryErrorGroup = executedListEnd.Where(x => x.Group == item.Group && x.SEQ < item.SEQ && x.Success == false);
-                if (queryErrorGroup.Any())
+                foreach (var item in executedList.Where(x => !executedListEnd.Any(y => y.ClassName == x.ClassName)))
                 {
-                    errMsg = string.Join(",", queryErrorGroup.Select(x => x.ClassName)) + " 執行失敗";
+                    string errMsg = "沒有執行";
+                    var queryErrorGroup = executedListEnd.Where(x => x.Group == item.Group && x.SEQ < item.SEQ && !x.Success);
+                    if (queryErrorGroup.Any())
+                    {
+                        errMsg = string.Join(",", queryErrorGroup.Select(x => x.ClassName)) + " 執行失敗";
+                    }
+
+                    executedListEnd.Add(new ExecutedList()
+                    {
+                        ClassName = item.ClassName,
+                        Success = false,
+                        ExecuteSDate = DateTime.Now,
+                        ExecuteEDate = DateTime.Now,
+                        ErrorMsg = errMsg,
+                    });
                 }
 
-                executedListEnd.Add(new ExecutedList()
-                {
-                    ClassName = item.ClassName,
-                    Success = false,
-                    ExecuteSDate = DateTime.Now,
-                    ExecuteEDate = DateTime.Now,
-                    ErrorMsg = errMsg,
-                });
-            }
-
-            this.UpdateJobLogAndSendMail(executedListEnd, stratExecutedTime);
+                this.UpdateJobLogAndSendMail(executedListEnd, stratExecutedTime);
+            });
         }
 
         /// <summary>
