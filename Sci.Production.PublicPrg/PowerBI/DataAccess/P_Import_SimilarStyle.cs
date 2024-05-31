@@ -56,6 +56,9 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             DualResult result;
             DBProxy.Current.OpenConnection("PowerBI", out SqlConnection sqlConn);
 
+            List<SqlParameter> lisSqlParameter = new List<SqlParameter>();
+            lisSqlParameter.Add(new SqlParameter("@Date", sdate));
+
             using (sqlConn)
             {
                 string sql = $@" 
@@ -102,11 +105,11 @@ Where Not exists ( select 1
 				   and P_SimilarStyle.StyleID = t.StyleID 
 				   and P_SimilarStyle.BrandID = t.BrandID 
                 )
-And P_SimilarStyle.OutputDate >= '{sdate.ToString("yyyy-MM-dd")}'
+And P_SimilarStyle.OutputDate >= @Date
 
 ";
 
-                result = MyUtility.Tool.ProcessWithDatatable(dt, null, sql,  out DataTable dataTable, conn: sqlConn, paramters: null);
+                result = MyUtility.Tool.ProcessWithDatatable(dt, null, sql,  out DataTable dataTable, conn: sqlConn, paramters: lisSqlParameter);
             }
 
             finalResult.Result = new DualResult(true);
@@ -134,8 +137,7 @@ INTO #tmp_SewingDate
 FROM SewingOutput s
 INNER JOIN SewingOutput_Detail sd ON s.ID = sd.ID
 INNER JOIN Orders o ON sd.OrderId = o.ID
-WHERE 1=1
-and s.OutputDate >= @DATE
+WHERE s.OutputDate >= @DATE
 GROUP BY s.ID, s.OutputDate, o.StyleID, s.FactoryID, o.BrandID, o.StyleUkey,s.Shift,s.Team,sd.ComboType
 
 SELECT  distinct  
@@ -266,6 +268,7 @@ OUTER APPLY(
                                                               AND cs.MasterStyleID = cd.MasterStyleID
                                 WHERE  cd.FactoryID = s.FactoryID
                                 AND cd.MasterBrandID = s.BrandID
+								AND cd.MasterStyleID != s.StyleID
                                 AND cs.MainStyleID = s.StyleID
                                 AND cd.OutputDate = s.OutputDate
                                 AND cd.MaxOutputDate Between DATEADD(month, -3, cs.OutputDate) AND cs.OutputDate
@@ -277,7 +280,7 @@ ORDER BY s.outputdate DESC
             #endregion
 
             List<SqlParameter> paras = new List<SqlParameter>();
-            paras.Add(new SqlParameter("@Date", sdate.ToString("yyyy-MM-dd")));
+            paras.Add(new SqlParameter("@Date", sdate));
 
             Base_ViewModel resultReport = new Base_ViewModel
             {
