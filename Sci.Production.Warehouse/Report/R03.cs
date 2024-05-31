@@ -435,9 +435,13 @@ outer apply
 outer apply 
 (
     select Color = stuff((
-        select DISTINCT ',' + ColorID
-        from  Style_ThreadColorCombo_Detail tccd WITH (NOLOCK) 
-        where tccd.Style_ThreadColorComboUkey = tcc.Ukey
+        select DISTINCT ',' + tccd2.ColorID 
+		from Style_ThreadColorCombo tcc2 WITH (NOLOCK) 
+		Inner Join dbo.Style_ThreadColorCombo_Detail as tccd2 with(nolock) On tccd2.Style_ThreadColorComboUkey = tcc2.Ukey
+		Inner Join orders o2 WITH (NOLOCK)  on o2.styleukey = tcc2.StyleUkey
+		where 1=1
+		and o2.ID = o.ID
+		and tccd2.SCIRefNo = tccd.SCIRefNo
         for xml path('')
     ),1,1,'')
 )Color
@@ -474,7 +478,7 @@ select  F.MDivisionID
                 , IIF(isnull(PSD.SuppColor,'') = '',dbo.GetColorMultipleID(O.BrandID, psdsC.SpecValue),PSD.SuppColor)
                 , dbo.GetColorMultipleID(O.BrandID, psdsC.SpecValue))
 		,[Article] = COALESCE(acc.Article, fab.Article, thread.Article, nullArticle.Article)
-		,[Color] =  COALESCE(acc.Color, acc7.Color, fab.Color, thread.Color, thread7.Color)
+		,[Color] =  COALESCE(acc.Color, acc7.Color, acc50.Color, fab.Color, thread.Color, thread7.Color)
         ,PSD.Qty
         ,PSD.NETQty
         ,PSD.NETQty+PSD.LossQty
@@ -606,9 +610,10 @@ select wkno = stuff((
 	    for xml path('')
 	),1,1,'')
 )Wk
-left join #tmpAccessory acc on acc.id = PSD.ID and acc.scirefno = PSD.sciRefno and acc.suppid = ps.SuppID and acc.seq1 = psd.Seq1 and psd.FabricType = 'A' and PSD.SEQ1 not like 'T%' 
+left join #tmpAccessory acc on acc.id = PSD.ID and acc.scirefno = PSD.sciRefno and acc.seq1 = psd.Seq1 and psd.FabricType = 'A' and PSD.SEQ1 not like 'T%' 
 left join #tmpFabric fab on fab.id = PSD.ID and fab.scirefno = PSD.sciRefno and psd.FabricType = 'F'
 left join #tmpThread thread on thread.id = PSD.ID and thread.scirefno = PSD.sciRefno and thread.suppid = ps.SuppID and PSD.SEQ1 like 'T%'
+left join #tmpAccessory acc50 on acc50.SCIRefno = psd.SCIRefno and psd.SEQ1 like '5%' and psd.FabricType = 'A'
 Outer Apply 
 (
 	select Color 
