@@ -53,7 +53,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             SELECT
             [TransferDate] = A.TransferDate
             ,[FactoryID] = A.FactoryID
-            ,[AvgInspDurInPast7Days] = CAST(SUM(A.[SumofDuration])  / SUM(A.[DataCount]) AS DECIMAL(10, 2))
+            ,[AvgInspDurInPast7Days] = IIF(SUM(A.SumofDuration) = 0, 0, CAST(SUM(A.SumofDuration) / A.DataCount AS DECIMAL(10, 2)))
             into #tmp
             FROM
             (
@@ -61,14 +61,32 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 	            [TransferDate] =  FORMAT(P.PhysicalInspDate, 'yyyy/MM/dd')
 	            ,[FactoryID] = F.FTYGroup
 	            ,[SumofDuration ] = datediff(day,ArriveWHDate,PhysicalInspDate)
-	            ,[DataCount ] = COUNT(*)
+	            ,[DataCount] = op_Count.val
 	            from P_FabricInspLabSummaryReport P
 	            inner join MainServer.Production.dbo.Factory F on P.FactoryID = F.ID AND F.IsProduceFty=1 and F.Junk=0
+                OUTER APPLY
+	            (
+		            SELECT val = count(1) 
+		            FROM P_FabricInspLabSummaryReport op
+                    INNER JOIN MainServer.Production.dbo.Factory opF ON op.FactoryID = opF.ID AND opF.IsProduceFty = 1 AND opF.Junk = 0
+		            where 
+		            FORMAT(op.PhysicalInspDate, 'yyyy/MM/dd') = FORMAT(P.PhysicalInspDate, 'yyyy/MM/dd')
+                    AND op.PhysicalInspDate BETWEEN @StartDate and @EndDate
+		            AND opF.FTYGroup = F.FTYGroup
+                    AND op.PhysicalInspDate IS NOT NULL 
+                    AND op.ArriveWHDate IS NOT NULL
+                    AND op.Category = 'Bulk'
+                    AND op.NAPhysical <> 'Y'
+	            )op_Count
 	            Where PhysicalInspDate BETWEEN @StartDate and @EndDate
-	            GROUP BY P.PhysicalInspDate, F.FTYGroup,ArriveWHDate,PhysicalInspDate
+                AND P.PhysicalInspDate IS NOT NULL 
+                AND P.ArriveWHDate IS NOT NULL
+                AND P.Category = 'Bulk'
+                AND P.NAPhysical <> 'Y'
+	            GROUP BY FORMAT(P.PhysicalInspDate, 'yyyy/MM/dd'), F.FTYGroup,op_Count.val,ArriveWHDate,PhysicalInspDate
 	
             )A
-            group by A.FactoryID,A.TransferDate
+            GROUP BY A.TransferDate, A.FactoryID,A.DataCount
             
             
 
@@ -93,7 +111,11 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             Where NOT EXISTS(SELECT 1 FROM P_FabricInspAvgInspDurInPast7Days P WHERE P.[TransferDate] = T.[TransferDate] AND P.[FactoryID] = T.[FactoryID])   
 
             ----- 刪除
-            DELETE P_FabricInspAvgInspDurInPast7Days WHERE TransferDate NOT BETWEEN  @StartDate AND @EndDate
+            DELETE P
+            FROM P_FabricInspAvgInspDurInPast7Days P
+            WHERE 
+            NOT EXISTS (SELECT 1 FROM #TMP T WHERE T.TransferDate = P.TransferDate AND P.FactoryID = T.FactoryID)
+            AND TransferDate NOT BETWEEN  @StartDate AND @EndDate 
 
             IF EXISTS (SELECT 1 FROM BITableInfo B WHERE B.ID = 'P_FabricInspAvgInspDurInPast7Days')
             BEGIN
