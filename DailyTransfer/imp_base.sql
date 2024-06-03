@@ -6036,9 +6036,9 @@ INSERT INTO [Production].[dbo].MtlType_Brand
 SELECT
 		ID
 		,BrandID
-		,BossLockDay
-		,IsSustainableMaterial
-		,IsSustainableMaterialforSMTT
-		,IsBCIforSMTT
+		,ISNULL(BossLockDay,0)
+		,ISNULL(IsSustainableMaterial,0)
+		,ISNULL(IsSustainableMaterialforSMTT,0)
+		,ISNULL(IsBCIforSMTT,0)
 from [Trade_To_Pms].[dbo].MtlType_Brand as b WITH (NOLOCK)
 where not exists (select 1 from [Production].[dbo].MtlType_Brand as a WITH (NOLOCK) where a.ID = b.ID )
