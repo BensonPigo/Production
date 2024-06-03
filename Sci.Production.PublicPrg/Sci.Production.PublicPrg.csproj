@@ -267,7 +267,6 @@
     <Compile Include="PowerBI\Logic\PPIC_R03.cs" />
     <Compile Include="PowerBI\Logic\Planning_R15.cs" />
     <Compile Include="PowerBI\Logic\PPIC_R01.cs" />
-    <Compile Include="PowerBI\Logic\SimilarStyle.cs" />
     <Compile Include="PowerBI\Logic\Warehouse_R40.cs" />
     <Compile Include="PowerBI\Logic\QA_R20.cs" />
     <Compile Include="PowerBI\Logic\QA_R31.cs" />
