@@ -329,7 +329,7 @@ namespace Sci.Production.Quality
                 [InspectPoint] = sii.Item ,
                 [Result] = sii.Result,
                 [DefectCode] = case when sii.Item = 'Marker Check' then  + isnull(MC.val,'')
-				                when sii.Item = 'Short Width' then 'Fabric Width: ' + CONVERT( varchar, pms_f.Width) + CHAR(10) + 'Actual Width:' + siid.val
+				                when sii.Item = 'Uneven Width' then 'Fabric Width: ' + CONVERT( varchar, pms_f.Width) + CHAR(10) + 'Actual Width:' + siid.val
 				                when sii.Item = 'Machine Tension' then  isnull('Speed:'+ mt.val,'')
 				                when sii.Item = 'Fabric Defect' then isnull( fd.val,'')
 				                else '' end ,
