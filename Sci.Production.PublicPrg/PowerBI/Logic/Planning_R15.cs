@@ -262,7 +262,14 @@ namespace Sci.Production.Prg.PowerBI.Logic
                 foreach (var item in subprocessIDs)
                 {
                     string subprocessIDtmp = Prgs.SubprocesstmpNoSymbol(item);
-                    subprocessQtyColumnsSource += $@"left join #{subprocessIDtmp} on #{subprocessIDtmp}.OrderID = t.OrderID" + Environment.NewLine;
+                    if (model.SummaryBy == "1")
+                    {
+                        subprocessQtyColumnsSource += $@"left join #{subprocessIDtmp} on #{subprocessIDtmp}.OrderID = t.OrderID" + Environment.NewLine;
+                    }
+                    else
+                    {
+                        subprocessQtyColumnsSource += $@"left join #{subprocessIDtmp} on #{subprocessIDtmp}.OrderID = t.OrderID and #{subprocessIDtmp}.Article = t.Article and #{subprocessIDtmp}.SizeCode = t.SizeCode " + Environment.NewLine;
+                    }
                 }
             }
 
