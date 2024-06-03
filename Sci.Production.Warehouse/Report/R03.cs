@@ -285,7 +285,7 @@ into #tmpAccessory
 from Order_BOA ob WITH (NOLOCK)
 inner join Order_ColorCombo occ WITH (NOLOCK)  on occ.id = ob.id and occ.FabricPanelCode = ob.FabricPanelCode
 left join Order_BOA_Article oba WITH (NOLOCK)  on oba.Order_BoAUkey = ob.Ukey
-inner join PO_Supp_Detail psd WITH (NOLOCK)  on psd.ID = ob.ID
+inner join PO_Supp_Detail psd WITH (NOLOCK)  on psd.ID = ob.ID and ob.SCIRefno = psd.SCIRefno
 inner join Orders o WITH (NOLOCK)  on o.ID = ob.ID
 outer apply(
     select wkno = stuff((
@@ -328,7 +328,7 @@ select  distinct
 from Order_BOA ob WITH (NOLOCK) 
 inner join Order_ColorCombo occ WITH (NOLOCK)  on occ.id = ob.id and occ.FabricPanelCode = ob.FabricPanelCode
 left join Order_BOA_Article oba WITH (NOLOCK)  on oba.Order_BoAUkey = ob.Ukey
-inner join PO_Supp_Detail psd WITH (NOLOCK)  on psd.ID = ob.ID
+inner join PO_Supp_Detail psd WITH (NOLOCK)  on psd.ID = ob.ID and ob.SCIRefno = psd.SCIRefno
 inner join Orders o WITH (NOLOCK)  on o.ID = ob.ID
 outer apply(
 select wkno = stuff((
@@ -371,7 +371,7 @@ select  distinct
 into #tmpFabric
 from Order_BOF ob WITH (NOLOCK) 
 inner join Order_ColorCombo occ WITH (NOLOCK)  on occ.id = ob.id and occ.FabricCode = ob.FabricCode
-inner join PO_Supp_Detail psd WITH (NOLOCK)  on psd.ID = ob.ID
+inner join PO_Supp_Detail psd WITH (NOLOCK)  on psd.ID = ob.ID and ob.SCIRefno = psd.SCIRefno
 inner join Orders o WITH (NOLOCK)  on o.ID = ob.ID
 outer apply(
 select wkno = stuff((
@@ -414,7 +414,7 @@ into #tmpThread
 from Style_ThreadColorCombo tcc WITH (NOLOCK) 
 Inner Join dbo.Style_ThreadColorCombo_Detail as tccd with(nolock) On tccd.Style_ThreadColorComboUkey = tcc.Ukey
 Inner Join orders o WITH (NOLOCK)  on o.styleukey = tcc.StyleUkey
-inner join PO_Supp_Detail psd WITH (NOLOCK)  on psd.ID = o.ID
+inner join PO_Supp_Detail psd WITH (NOLOCK)  on psd.ID = o.ID and tccd.SCIRefno = psd.SCIRefno
 outer apply(
 select wkno = stuff((
 	    select concat(char(10),ID)
@@ -447,7 +447,44 @@ outer apply
 )Color
 where 1=1
 {where}
+------------------------------------------------------------------------------
+--50項用輔料(Color)
+SELECT Distinct ta.ID,
+				ta.SCIRefno,
+				s.color AS Color
+INTO #tmp50AccColor
+FROM  #tmpAccessory ta
+Outer apply(
+    select Color = stuff((
+                          select DISTINCT ',' + ColorID
+			              from  ( 
+                                  SELECT Distinct b.data AS ColorID
+					              FROM  #tmpAccessory ta2
+					              CROSS APPLY (Select data from dbo.SplitString(ta2.Color, ',') ) b
+					              WHERE ta2.ID = ta.ID and ta2.SciRefno = ta.SciRefno
+                                ) occ
+              for xml path('')
+          ),1,1,'')
+) as s
 
+--50項用輔料(Article)
+SELECT Distinct ta.ID,
+				ta.SCIRefno,
+				s.Article AS Article
+INTO #tmp50AccArticle
+FROM  #tmpAccessory ta
+Outer apply(
+    select Article = stuff((
+                            select DISTINCT ',' + Article
+			                from  (
+                                        SELECT Distinct b.data AS Article
+					                    FROM  #tmpAccessory ta2
+					                    CROSS APPLY (Select data from dbo.SplitString(ta2.Article, ',') ) b
+					                    WHERE ta2.ID = ta.ID and ta2.SciRefno = ta.SciRefno
+                                    ) occ
+                            for xml path('')
+    ),1,1,'')
+) as s
 
 select  F.MDivisionID
         ,O.FactoryID
@@ -477,8 +514,8 @@ select  F.MDivisionID
         ,[Material Color] = iif(Fabric.MtlTypeID in ('EMB Thread', 'SP Thread', 'Thread') 
                 , IIF(isnull(PSD.SuppColor,'') = '',dbo.GetColorMultipleID(O.BrandID, psdsC.SpecValue),PSD.SuppColor)
                 , dbo.GetColorMultipleID(O.BrandID, psdsC.SpecValue))
-		,[Article] = COALESCE(acc.Article, fab.Article, thread.Article, nullArticle.Article)
-		,[Color] =  COALESCE(acc.Color, acc7.Color, acc50.Color, fab.Color, thread.Color, thread7.Color)
+		,[Article] = COALESCE(acc.Article, acc50A.Article, fab.Article, thread.Article, nullArticle.Article)
+		,[Color] =  COALESCE(acc.Color, acc7.Color, acc50C.Color, fab.Color, thread.Color, thread7.Color)
         ,PSD.Qty
         ,PSD.NETQty
         ,PSD.NETQty+PSD.LossQty
@@ -613,7 +650,8 @@ select wkno = stuff((
 left join #tmpAccessory acc on acc.id = PSD.ID and acc.scirefno = PSD.sciRefno and acc.seq1 = psd.Seq1 and psd.FabricType = 'A' and PSD.SEQ1 not like 'T%' 
 left join #tmpFabric fab on fab.id = PSD.ID and fab.scirefno = PSD.sciRefno and psd.FabricType = 'F'
 left join #tmpThread thread on thread.id = PSD.ID and thread.scirefno = PSD.sciRefno and thread.suppid = ps.SuppID and PSD.SEQ1 like 'T%'
-left join #tmpAccessory acc50 on acc50.SCIRefno = psd.SCIRefno and psd.SEQ1 like '5%' and psd.FabricType = 'A' and psd.ID = acc50.ID
+left join #tmp50AccColor acc50C on psd.ID = acc50C.ID and acc50C.SCIRefno = psd.SCIRefno and psd.SEQ1 like '5%' and psd.FabricType = 'A'
+left join #tmp50AccArticle acc50A on psd.ID = acc50A.ID and acc50A.SCIRefno = psd.SCIRefno and psd.SEQ1 like '5%' and psd.FabricType = 'A'
 Outer Apply 
 (
 	select Color 
@@ -626,7 +664,7 @@ Outer Apply
 ) acc7
 Outer Apply 
 (
-	select top 1 Color 
+	select Color 
 	from #tmpThread acc 
 	Where acc.ID = PSD.ID 
 	and acc.scirefno = PSD.sciRefno 
