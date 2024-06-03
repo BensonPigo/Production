@@ -30,7 +30,6 @@ namespace Sci.Production.Sewing
         private DataGridViewGeneratorTextColumnSettings orderid = new DataGridViewGeneratorTextColumnSettings();
         private DataGridViewGeneratorTextColumnSettings combotype = new DataGridViewGeneratorTextColumnSettings();
         private DataGridViewGeneratorTextColumnSettings article = new DataGridViewGeneratorTextColumnSettings();
-        private DataGridViewGeneratorNumericColumnSettings inlineqty = new DataGridViewGeneratorNumericColumnSettings();
         private DataGridViewGeneratorTextColumnSettings SewingReasonID = new DataGridViewGeneratorTextColumnSettings();
         private Ict.Win.UI.DataGridViewTextBoxColumn textOrderIDSetting;
         private decimal? oldttlqaqty;
@@ -152,20 +151,15 @@ and SunriseNid != 0
 
             if (this.EditMode && this.detailgridbs.DataSource != null)
             {
-                // 重新計算表頭 QAQty, InlineQty, DefectQty
+                // 重新計算表頭 QAQty
                 if (((DataTable)this.detailgridbs.DataSource).AsEnumerable().Any(row => row.RowState != DataRowState.Deleted && row["AutoCreate"].EqualString("False")))
                 {
                     this.CurrentMaintain["QAQty"] = ((DataTable)this.detailgridbs.DataSource).AsEnumerable().Where(row => row.RowState != DataRowState.Deleted
                                                                                                                      && row["AutoCreate"].EqualString("False")).CopyToDataTable().Compute("SUM(QAQty)", string.Empty);
-                    this.CurrentMaintain["InlineQty"] = MyUtility.Convert.GetInt(this.CurrentMaintain["QAQty"]) + MyUtility.Convert.GetInt(this.CurrentMaintain["DefectQty"]);
-                    this.CurrentMaintain["DefectQty"] = ((DataTable)this.detailgridbs.DataSource).AsEnumerable().Where(row => row.RowState != DataRowState.Deleted
-                                                                                                                         && row["AutoCreate"].EqualString("False")).CopyToDataTable().Compute("SUM(DefectQty)", string.Empty);
                 }
                 else
                 {
                     this.CurrentMaintain["QAQty"] = 0;
-                    this.CurrentMaintain["InlineQty"] = 0;
-                    this.CurrentMaintain["DefectQty"] = 0;
                 }
             }
 
@@ -240,9 +234,20 @@ and SunriseNid != 0
         /// <inheritdoc/>
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
-            string masterID = (e.Master == null) ? string.Empty : MyUtility.Convert.GetString(e.Master["ID"]);
-            this.DetailSelectCommand = string.Format(
-                @"
+            if (e.Master == null)
+            {
+                return null;
+            }
+
+            string masterID = MyUtility.Convert.GetString(e.Master["ID"]);
+            string shift = e.Master["Shift"].EqualString("D") ? "Day" : e.Master["Shift"].EqualString("N") ? "Night" : string.Empty;
+            string outputDate = ((DateTime)e.Master["OutputDate"]).ToString("yyyy / MM / dd");
+            string factoryID = e.Master["FactoryID"].ToString();
+            string sewingLineID = e.Master["SewingLineID"].ToString();
+            string team = e.Master["Team"].ToString();
+
+            this.DetailSelectCommand =
+                $@"
 SET ARITHABORT ON
 select  sd.*
         , [RFT] = concat(convert(decimal(18,2), iif(isnull(rft.InspectQty, 0) = 0, 0.0, round((rft.InspectQty - rft.RejectQty) / rft.InspectQty * 100.0, 2))), '%')
@@ -253,6 +258,7 @@ select  sd.*
         , o.StyleUkey
         , [OrderCategory] = o.Category
         , [StyleRepeat] = dbo.IsRepeatStyleBySewingOutput(s.FactoryID, s.OutputDate, s.SewinglineID, s.Team, o.StyleUkey)
+        , [DQSOutput] = InspInfo.DQSOutputCount
 from SewingOutput_Detail sd WITH (NOLOCK)
 left join Orders o with (nolock) on o.ID = sd.OrderID
 left join SewingOutput s WITH (NOLOCK) on sd.ID = s.ID
@@ -262,9 +268,19 @@ outer apply( select top 1 * from Rft WITH (NOLOCK) where rft.OrderID = sd.OrderI
                                and rft.SewinglineID = s.SewingLineID 
                                and rft.Shift = s.Shift 
                                and rft.Team = s.Team) Rft
-where sd.ID = '{0}'
-order by sd.UKey",
-                masterID);
+outer apply(
+    select DQSOutputCount=count(1) 
+    from ManufacturingExecution.dbo.Inspection tmpInsp
+    where tmpInsp.InspectionDate= '{outputDate}'
+    and tmpInsp.FactoryID = '{factoryID}'
+    and tmpInsp.Line = '{sewingLineID}'
+    and tmpInsp.Team = '{team}'
+    and tmpInsp.Shift = '{shift}'
+    and tmpInsp.Status in ('Pass','Fixed')
+	and tmpInsp.OrderId = sd.OrderId
+    ) InspInfo
+where sd.ID = '{masterID}'
+order by sd.UKey";
             return base.OnDetailSelectCommandPrepare(e);
         }
 
@@ -766,21 +782,6 @@ where o.ID = '{0}' and o.StyleUkey = sl.StyleUkey", MyUtility.Convert.GetString(
                 }
             };
             #endregion
-            #region Prod. Output的Validatng
-            this.inlineqty.CellValidating += (s, e) =>
-            {
-                if (this.EditMode)
-                {
-                    DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
-                    if (MyUtility.Convert.GetInt(e.FormattedValue) != MyUtility.Convert.GetInt(dr["InlineQty"]))
-                    {
-                        dr["InlineQty"] = MyUtility.Convert.GetInt(e.FormattedValue);
-                        this.CalculateDefectQty(dr);
-                        dr.EndEdit();
-                    }
-                }
-            };
-            #endregion
             #region SewingReasonID右鍵開窗
             this.SewingReasonID.EditingMouseDown += (s, e) =>
             {
@@ -875,7 +876,6 @@ where o.ID = '{0}' and o.StyleUkey = sl.StyleUkey", MyUtility.Convert.GetString(
             #endregion
 
             Ict.Win.UI.DataGridViewTextBoxColumn textArticleSetting;
-            Ict.Win.UI.DataGridViewNumericBoxColumn numInLineQtySetting;
             Ict.Win.UI.DataGridViewNumericBoxColumn numWorkHourSetting;
             this.Helper.Controls.Grid.Generator(this.detailgrid)
                 .Text("OrderID", header: "SP#", width: Widths.AnsiChars(13), settings: this.orderid).Get(out this.textOrderIDSetting)
@@ -884,8 +884,7 @@ where o.ID = '{0}' and o.StyleUkey = sl.StyleUkey", MyUtility.Convert.GetString(
                 .Text("Color", header: "Color", width: Widths.AnsiChars(8), iseditingreadonly: true)
                 .Text("QAOutput", header: "QA Output", width: Widths.AnsiChars(30), iseditingreadonly: true, settings: this.qaoutput)
                 .Numeric("QAQty", header: "QA Ttl Output", width: Widths.AnsiChars(5), iseditingreadonly: true)
-                .Numeric("InlineQty", header: "Prod. Output", width: Widths.AnsiChars(5), settings: this.inlineqty).Get(out numInLineQtySetting)
-                .Numeric("DefectQty", header: "Defect Q’ty", width: Widths.AnsiChars(5), iseditingreadonly: true)
+                .Numeric("DQSOutput", header: "DQS Output", width: Widths.AnsiChars(5), iseditingreadonly: true)
                 .Numeric("WorkHour", header: "W’Hours", width: Widths.AnsiChars(5), decimal_places: 3, maximum: 999.999m, minimum: 0m).Get(out numWorkHourSetting)
                 .Numeric("TMS", header: "TMS", width: Widths.AnsiChars(5), iseditingreadonly: true)
 
@@ -913,7 +912,6 @@ where o.ID = '{0}' and o.StyleUkey = sl.StyleUkey", MyUtility.Convert.GetString(
 
                 bool isAutoCreate = data["AutoCreate"].EqualString("True");
                 textArticleSetting.IsEditingReadOnly = isAutoCreate;
-                numInLineQtySetting.IsEditingReadOnly = isAutoCreate;
                 numWorkHourSetting.IsEditingReadOnly = isAutoCreate;
 
                 this.DoSubForm.IsSupportDelete = !isAutoCreate;
@@ -952,7 +950,6 @@ where o.ID = '{0}' and o.StyleUkey = sl.StyleUkey", MyUtility.Convert.GetString(
                     }
 
                     dr.Cells["Article"].Style.ForeColor = isAutoCreate ? Color.Black : Color.Red;
-                    dr.Cells["InlineQty"].Style.ForeColor = isAutoCreate ? Color.Black : Color.Red;
                     dr.Cells["WorkHour"].Style.ForeColor = isAutoCreate ? Color.Black : Color.Red;
                     index++;
                 }
@@ -1007,22 +1004,9 @@ where o.ID = '{0}' and o.StyleUkey = sl.StyleUkey", MyUtility.Convert.GetString(
                 // 總計第三層 Qty 填入第二層 QAQty
                 e.Detail["QAQty"] = qAQty;
 
-                if (qAQty == 0)
-                {
-                    e.Detail["InlineQty"] = 0;
-                }
-                else
-                {
-                    e.Detail["InlineQty"] = e.Detail["RFT"].ToString().Substring(0, 4) == "0.00" ? qAQty : qAQty /
-                        (decimal.Parse(e.Detail["RFT"].ToString().Substring(0, 4)) / 100);
-                }
-
-                this.CalculateDefectQty(e.Detail);
-
                 // 總計第二層 Qty 填入第一層 QAQty
                 this.CurrentMaintain["QAQty"] = ((DataTable)this.detailgridbs.DataSource).AsEnumerable().Where(row => row.RowState != DataRowState.Deleted
                                                                                                                      && row["AutoCreate"].EqualString("False")).CopyToDataTable().Compute("SUM(QAQty)", string.Empty);
-                this.CurrentMaintain["InlineQty"] = MyUtility.Convert.GetInt(this.CurrentMaintain["QAQty"]) + MyUtility.Convert.GetInt(this.CurrentMaintain["DefectQty"]);
             }
 
             return base.ConvertSubDetailDatasFromDoSubForm(e);
@@ -1130,15 +1114,8 @@ and SunriseNid = 0
             return MyUtility.Math.Round(MyUtility.Convert.GetDecimal(dr["CPU"]) * MyUtility.Convert.GetDecimal(dr["CPUFactor"]) * (rate / 100) * MyUtility.Convert.GetDecimal(dr["StdTMS"]), 0);
         }
 
-        // 計算表身Grid的Defect Qty
-        private void CalculateDefectQty(DataRow dr)
-        {
-            dr["DefectQty"] = MyUtility.Convert.GetInt(dr["InlineQty"]) - MyUtility.Convert.GetInt(dr["QAQty"]);
-            this.CurrentMaintain["DefectQty"] = ((DataTable)this.detailgridbs.DataSource).Compute("SUM(DefectQty)", string.Empty);
-        }
-
         // 撈取RFT值
-        // Sewing P01 表身計算公式：SewingOutput_Detail.QAQty / SewingOutput_Detail.InlineQty
+        // Sewing P01 表身計算公式：SewingOutput_Detail.QAQty
         private void GetRFT(DataRow dr)
         {
             // sql參數
@@ -1193,8 +1170,6 @@ and Team = @team
             }
 
             dr["QAQty"] = 0;
-            dr["InlineQty"] = 0;
-            dr["DefectQty"] = 0;
         }
 
         // 產生SubDetail資料
@@ -1594,23 +1569,21 @@ and s.SewingLineID = '{0}'",
             }
             #endregion
 
-            #region 先算出QAQty,InLineQty,DefectQty,W/Hours
+            #region 先算出QAQty,W/Hours
             DataTable sumQty;
-            int gridQaQty, gridInlineQty, gridDefectQty; // 加總表身的QAQty,InLineQty,DefectQty
+            int gridQaQty; // 加總表身的QAQty
             decimal gridWHours = 0; // 加總表身W/Hours
             try
             {
                 string strSumQty = @"
 select isnull(sum(WorkHour),0) as sumWorkHour
        , isnull(sum(QAQty),0) as sumQaqty
-       , isnull(sum(InlineQty),0) as sumInlineQty
-       , isnull(sum(DefectQty),0) as sumDefectQty 
 from #tmp 
 where (OrderID <> '' or OrderID is not null) 
       and (ComboType <> '' or ComboType is not null) 
       and (Article <> '' or Article is not null)
       and Convert (bit, AutoCreate) != 1";
-                MyUtility.Tool.ProcessWithDatatable((DataTable)this.detailgridbs.DataSource, "WorkHour,QAQty,InlineQty,DefectQty,OrderID,ComboType,Article,AutoCreate", strSumQty, out sumQty, "#tmp");
+                MyUtility.Tool.ProcessWithDatatable((DataTable)this.detailgridbs.DataSource, "WorkHour,QAQty,OrderID,ComboType,Article,AutoCreate", strSumQty, out sumQty, "#tmp");
             }
             catch (Exception ex)
             {
@@ -1621,15 +1594,11 @@ where (OrderID <> '' or OrderID is not null)
             if (sumQty == null)
             {
                 gridQaQty = 0;
-                gridInlineQty = 0;
-                gridDefectQty = 0;
                 gridWHours = 0;
             }
             else
             {
                 gridQaQty = MyUtility.Convert.GetInt(sumQty.Rows[0]["sumQAQty"]);
-                gridInlineQty = MyUtility.Convert.GetInt(sumQty.Rows[0]["sumInlineQty"]);
-                gridDefectQty = MyUtility.Convert.GetInt(sumQty.Rows[0]["sumDefectQty"]);
                 gridWHours = MyUtility.Convert.GetDecimal(sumQty.Rows[0]["sumWorkHour"]);
             }
             #endregion
@@ -2043,8 +2012,6 @@ Type B= Cancel order selected as Buyback, formula: this output qty = [Cancel Ord
             #endregion
 
             this.CurrentMaintain["QAQty"] = gridQaQty;
-            this.CurrentMaintain["InlineQty"] = gridInlineQty;
-            this.CurrentMaintain["DefectQty"] = gridDefectQty;
             this.CurrentMaintain["TMS"] = MyUtility.Math.Round(gridTms, 0);
             this.CurrentMaintain["Efficiency"] = MyUtility.Convert.GetDecimal(this.CurrentMaintain["TMS"]) * MyUtility.Convert.GetDecimal(this.CurrentMaintain["ManHour"]) == 0 ? 0 : MyUtility.Convert.GetDecimal(gridQaQty) / (3600 / MyUtility.Convert.GetDecimal(this.CurrentMaintain["TMS"]) * MyUtility.Convert.GetDecimal(this.CurrentMaintain["ManHour"])) * 100;
 
@@ -2113,7 +2080,7 @@ on  t.orderid = s.orderid and t.Cdate = s.CDate and t.SewinglineID = s.Sewinglin
 when not matched by target then 
 insert([OrderID],[CDate],[SewinglineID],[FactoryID],[InspectQty],[RejectQty],[DefectQty]
         ,[Shift],[Team],[Status],[Remark],[AddName],[AddDate],[MDivisionid])
-values(s.[OrderID],s.[CDate],s.[SewinglineID],s.[FactoryID],s.[InspectQty],s.[RejectQty],s.[DefectQty]
+values(s.[OrderID],s.[CDate],s.[SewinglineID],s.[FactoryID],s.[InspectQty],s.[RejectQty],0
         ,s.[Shift],s.[Team],s.[Status],s.[Remark],'{Env.User.UserID}',getdate(),s.[MDivisionid])
 output inserted.id into #td 
 ;
@@ -2249,7 +2216,7 @@ where SD.QAQty!=SDD.SDD_Qty and SD.ID = '{this.CurrentMaintain["ID"]}'";
             // 有QAQty不相等的資料
             if (MyUtility.Check.Seek(chkQAQty_sql))
             {
-                string updQAQty_sql = $@"update SD set  SD.QAQty = SDD.SDD_Qty,SD.InlineQty = SDD.SDD_Qty,SD.DefectQty = 0 
+                string updQAQty_sql = $@"update SD set  SD.QAQty = SDD.SDD_Qty
 from  SewingOutput_Detail SD WITH (NOLOCK)
 outer apply 
 ( 
@@ -2264,7 +2231,7 @@ where SD.QAQty!=SDD.SDD_Qty and SD.ID = '{this.CurrentMaintain["ID"]}'";
                     this.ShowErr(updQAQty_result);
                 }
 
-                // 重新計算SewingOutput QAQty,InlineQty,DefectQty,TMS,Efficiency,detail workhours
+                // 重新計算SewingOutput QAQty,TMS,Efficiency,detail workhours
                 // 觸發edit->share <working hours> to SP#->save按鈕事件依照原本流程重算重存
                 this.toolbar.cmdEdit.PerformClick();
                 this.btnShareWorkingHoursToSP.PerformClick();
@@ -3125,8 +3092,6 @@ where 1=1
 Declare @ID varchar(13)
 Declare @WorkHour numeric(6,2)
 Declare @QAQty int
-Declare @DefectQty int
-Declare @InlineQty int
 Declare @TMS int
 Declare @Efficiency numeric(6,1)
 Declare @ManHour numeric(9,3)
@@ -3149,7 +3114,7 @@ FETCH NEXT FROM Sewingoutput_cursor INTO @ID,@WorkHour,@ManHour
 WHILE @@FETCH_STATUS = 0 --檢查是否有讀取到資料; WHILE用來處理迴圈，當為true時則進入迴圈執行
 BEGIN
 	--更新SewingOutput_Detail數量
-	update SD set  SD.QAQty = SDD.SDD_Qty,SD.InlineQty = SDD.SDD_Qty,SD.DefectQty = 0 
+	update SD set  SD.QAQty = SDD.SDD_Qty
 			from  SewingOutput_Detail SD WITH (NOLOCK)
 			outer apply 
 			( 
@@ -3183,8 +3148,6 @@ BEGIN
 
 	select
 	@QAQty = @AllQAQty,
-	@InlineQty = isnull(sum(isnull(InlineQty,0)),0),
-	@DefectQty = isnull(sum(isnull(DefectQty,0)),0),
 	@TMS = iif(@AllQAQty = 0,0,Round(sum(isnull(SD.TMS,0) * isnull(SD.QAQty,0) * 1.0 ) / @AllQAQty,0))
 	from SewingOutput_Detail SD WITH (NOLOCK)
 	where ID = @ID and AutoCreate = 0
@@ -3199,8 +3162,6 @@ BEGIN
 	end
 
 	update SewingOutput set	QAQty = @QAQty,
-							InlineQty = @InlineQty,
-							DefectQty = @DefectQty,
 							TMS = @TMS,
 							Efficiency = @Efficiency
 	where ID = @ID
@@ -3447,8 +3408,7 @@ select
 	, TMS=0
 	, HourlyStandardOutput = 0
 	, [QAQty] = sum(iif(ins.Status in ('Pass','Fixed'),1,0))
-	, [DefectQty] = sum(iif(ins.Status in ('Reject','Dispose'),1,0))
-	, [InlineQty] = count(1)
+    , [DQSOutput] = sum(iif(ins.Status in ('Pass','Fixed'),1,0))
 	, [ImportFromDQS] = 1
 	, [AutoCreate] = 0
 from inspection ins WITH (NOLOCK)
@@ -3489,9 +3449,9 @@ select t.OrderId
         where ss.OrderID = t.OrderID 
         and ss.ComboType = t.ComboType 
         and ss.SewingLineID = '{this.CurrentMaintain["SewingLineID"]}')
-,t.QAQty,t.DefectQty,t.InlineQty,t.ImportFromDQS,t.AutoCreate
+,t.QAQty,t.ImportFromDQS,t.AutoCreate
 ,ukey = 0
-,RFT = CONVERT(VARCHAR, convert(Decimal(5, 2), round((t.InlineQty - t.DefectQty) /  cast(t.InlineQty as decimal) * 100.0, 2))) + '%'
+,RFT = RFTInfo.RFT
 ,ID = '{this.CurrentMaintain["ID"]}'
 , [StyleRepeat] = dbo.IsRepeatStyleBySewingOutput('{this.CurrentMaintain["FactoryID"]}', @outputDate, '{this.CurrentMaintain["SewingLineID"]}', '{this.CurrentMaintain["Team"]}', o.StyleUkey)
 from #tmp t
@@ -3520,7 +3480,11 @@ outer apply(
 	    /100 * (select StdTMS from System WITH (NOLOCK))
     ,0)
 )O_Location
-";
+outer apply (
+	select RFT=isnull(Convert(float(50),Convert(FLOAT(50), round(((A.InspectQty-A.RejectQty)/ nullif(A.InspectQty, 0))*100,2))),0) 
+	from RFT A with (nolock) 
+	where A.OrderID=t.OrderId
+) as RFTInfo";
             result = MyUtility.Tool.ProcessWithDatatable(sewDt1, string.Empty, sqlcmd, out sewDt1, paramters: listPar);
             if (!result)
             {
@@ -3753,18 +3717,6 @@ order by a.OrderId,os.Seq
                 // 總計第三層 Qty 填入第二層 QAQty
                 item["QAQty"] = qAQty;
 
-                if (qAQty == 0)
-                {
-                    item["InlineQty"] = 0;
-                }
-                else
-                {
-                    item["InlineQty"] = item["RFT"].ToString().Substring(0, 4) == "0.00" ? qAQty : qAQty /
-                        (decimal.Parse(item["RFT"].ToString().Substring(0, 4)) / 100);
-                }
-
-                this.CalculateDefectQty(item);
-
                 string remark = string.Empty;
                 if (remarkList2.Count > 0)
                 {
@@ -3809,16 +3761,14 @@ order by a.OrderId,os.Seq
             // 總計第二層 Qty 填入第一層 QAQty
             this.CurrentMaintain["QAQty"] = ((DataTable)this.detailgridbs.DataSource).AsEnumerable().Where(row => row.RowState != DataRowState.Deleted
                                                                                                                  && row["AutoCreate"].EqualString("False")).CopyToDataTable().Compute("SUM(QAQty)", string.Empty);
-            this.CurrentMaintain["InlineQty"] = MyUtility.Convert.GetInt(this.CurrentMaintain["QAQty"]) + MyUtility.Convert.GetInt(this.CurrentMaintain["DefectQty"]);
 
             string rftfrommes = $@"
 select t.OrderId
 	, CDate='{((DateTime)this.CurrentMaintain["OutputDate"]).ToString("yyyy/MM/dd")}'
 	, SewinglineID='{this.CurrentMaintain["SewingLineID"]}'
 	, FactoryID = '{this.CurrentMaintain["FactoryID"]}'
-	, InspectQty= t.InlineQty - DiffInspectQty.Qty
-	, RejectQty= RejectData.Qty--t.DefectQty
-	, [DefectQty] = DefectData.Qty
+	, InspectQty= 0 - DiffInspectQty.Qty
+	, RejectQty= RejectData.Qty
 	, Shift='{this.CurrentMaintain["Shift"]}'
 	, Team = '{this.CurrentMaintain["Team"]}'
 	, Status='New'
@@ -3882,7 +3832,6 @@ SELECT  OrderId
 	, FactoryID 
 	, [InspectQty]=SUM(InspectQty)
 	, [RejectQty]= SUM(RejectQty)
-	, [DefectQty] =SUM(DefectQty)
 	, Shift
 	, Team
 	, Status

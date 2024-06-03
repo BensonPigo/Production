@@ -20,7 +20,6 @@ namespace Sci.Production.Sewing
     {
         private DataGridViewGeneratorTextColumnSettings orderID = new DataGridViewGeneratorTextColumnSettings();
         private DataGridViewGeneratorNumericColumnSettings qaqty = new DataGridViewGeneratorNumericColumnSettings();
-        private DataGridViewGeneratorNumericColumnSettings inlineqty = new DataGridViewGeneratorNumericColumnSettings();
 
         private DateTime? SewingMonthlyLockDate;
         private decimal systemTMS = 0;
@@ -80,9 +79,14 @@ where UnLockDate is null and SewingOutputID='{this.CurrentMaintain["ID"]}'";
                 @"select sd.*,mo.MockupID,mo.Qty,(select isnull(sum(QAQty),0) from SewingOutput_Detail WITH (NOLOCK) where OrderId = sd.OrderId and ID != sd.ID) as AccuQty,
 mo.Qty-(select isnull(sum(QAQty),0) from SewingOutput_Detail WITH (NOLOCK) where OrderId = sd.OrderId and ID != sd.ID) as VarQty,
 mo.Qty-(select isnull(sum(QAQty),0) from SewingOutput_Detail WITH (NOLOCK) where OrderId = sd.OrderId and ID != sd.ID)-sd.QAQty as BalQty,
-round(iif(sd.InlineQty = 0,0,sd.QAQty/sd.InlineQty),2)*100 as RFT
+RFTInfo.RFT as RFT
 from SewingOutput_Detail sd WITH (NOLOCK) 
 left join MockupOrder mo WITH (NOLOCK) on mo.ID = sd.OrderId
+outer apply (
+    select RFT = isnull(Convert(float(50),Convert(FLOAT(50), round(((A.InspectQty-A.RejectQty)/ nullif(A.InspectQty, 0))*100,2))),0) 
+    from RFT A WITH (NOLOCK) 
+    where A.OrderID = sd.OrderId
+    ) as RFTInfo
 where sd.ID = '{0}'",
                 masterID);
 
@@ -161,8 +165,6 @@ where   mo.Junk = 0
                                         dr["VarQty"] = 0;
                                         dr["QAQty"] = 0;
                                         dr["BalQty"] = 0;
-                                        dr["InlineQty"] = 0;
-                                        dr["DefectQty"] = 0;
                                         dr["WorkHour"] = 0;
                                         dr["RFT"] = 0;
                                         e.EditingControl.ValidateControl();
@@ -178,8 +180,6 @@ where   mo.Junk = 0
                                         dr["VarQty"] = MyUtility.Convert.GetInt(dr["Qty"]) - MyUtility.Convert.GetInt(dr["AccuQty"]);
                                         dr["QAQty"] = 0;
                                         dr["BalQty"] = MyUtility.Convert.GetInt(dr["Qty"]) - MyUtility.Convert.GetInt(dr["AccuQty"]) - MyUtility.Convert.GetInt(dr["QAQty"]);
-                                        dr["InlineQty"] = 0;
-                                        dr["DefectQty"] = 0;
                                         dr["WorkHour"] = 0;
                                         dr["RFT"] = 0;
                                     }
@@ -234,8 +234,6 @@ where   mo.Junk = 0
                             dr["VarQty"] = 0;
                             dr["QAQty"] = 0;
                             dr["BalQty"] = 0;
-                            dr["InlineQty"] = 0;
-                            dr["DefectQty"] = 0;
                             dr["WorkHour"] = 0;
                             dr["RFT"] = 0;
                             e.Cancel = true;
@@ -251,8 +249,6 @@ where   mo.Junk = 0
                             dr["VarQty"] = MyUtility.Convert.GetInt(dr["Qty"]) - MyUtility.Convert.GetInt(dr["AccuQty"]);
                             dr["QAQty"] = 0;
                             dr["BalQty"] = MyUtility.Convert.GetInt(dr["Qty"]) - MyUtility.Convert.GetInt(dr["AccuQty"]) - MyUtility.Convert.GetInt(dr["QAQty"]);
-                            dr["InlineQty"] = 0;
-                            dr["DefectQty"] = 0;
                             dr["WorkHour"] = 0;
                             dr["RFT"] = 0;
                         }
@@ -267,8 +263,6 @@ where   mo.Junk = 0
                         dr["VarQty"] = 0;
                         dr["QAQty"] = 0;
                         dr["BalQty"] = 0;
-                        dr["InlineQty"] = 0;
-                        dr["DefectQty"] = 0;
                         dr["WorkHour"] = 0;
                         dr["RFT"] = 0;
                     }
@@ -298,19 +292,6 @@ where   mo.Junk = 0
                 }
             };
 
-            this.inlineqty.CellValidating += (s, e) =>
-            {
-                if (this.EditMode)
-                {
-                    DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
-                    if (!MyUtility.Check.Empty(e.FormattedValue) && MyUtility.Convert.GetInt(e.FormattedValue) != MyUtility.Convert.GetInt(dr["InlineQty"]))
-                    {
-                        dr["InlineQty"] = MyUtility.Convert.GetInt(e.FormattedValue);
-                        this.ReCalculateDefectAndRFT(dr);
-                    }
-                }
-            };
-
             #endregion
 
             this.Helper.Controls.Grid.Generator(this.detailgrid)
@@ -322,10 +303,7 @@ where   mo.Junk = 0
                 .Numeric("VarQty", header: "Variance", width: Widths.AnsiChars(5), iseditingreadonly: true)
                 .Numeric("QAQty", header: "QA Output", width: Widths.AnsiChars(5), settings: this.qaqty)
                 .Numeric("BalQty", header: "Bal. Qty", width: Widths.AnsiChars(5), iseditingreadonly: true)
-                .Numeric("InlineQty", header: "Prod. Output", width: Widths.AnsiChars(5), settings: this.inlineqty)
-                .Numeric("DefectQty", header: "Defect Qty", width: Widths.AnsiChars(5), iseditingreadonly: true)
-                .Numeric("WorkHour", header: "W'Hours", decimal_places: 3, width: Widths.AnsiChars(5))
-                .Numeric("RFT", header: "RFT(%)", width: Widths.AnsiChars(5), iseditingreadonly: true);
+                .Numeric("WorkHour", header: "W'Hours", decimal_places: 3, width: Widths.AnsiChars(5));
         }
 
         /// <inheritdoc/>
@@ -333,7 +311,6 @@ where   mo.Junk = 0
         {
             base.OnDetailGridDelete();
             this.CurrentMaintain["QAQty"] = ((DataTable)this.detailgridbs.DataSource).DefaultView.ToTable().Compute("sum(QAQty)", string.Empty);
-            this.CurrentMaintain["InlineQty"] = ((DataTable)this.detailgridbs.DataSource).DefaultView.ToTable().Compute("sum(InlineQty)", string.Empty);
 
             DataTable tms;
             try
@@ -425,11 +402,11 @@ where   mo.Junk = 0
             this.CalculateManHour();
 
             DataTable sumQty;
-            int recCnt = 0, gridQaQty, gridInlineQty, gridDefectQty;
+            int recCnt = 0, gridQaQty;
             decimal gridWHours, gridTms = 0;
             try
             {
-                MyUtility.Tool.ProcessWithDatatable((DataTable)this.detailgridbs.DataSource, "WorkHour,QAQty,InlineQty,DefectQty,OrderID", "select isnull(sum(WorkHour),0) as sumWorkHour,isnull(sum(QAQty),0) as sumQaqty,isnull(sum(InlineQty),0) as sumInlineQty,isnull(sum(DefectQty),0) as sumDefectQty from #tmp where (OrderID <> '' or OrderID is not null)", out sumQty, "#tmp");
+                MyUtility.Tool.ProcessWithDatatable((DataTable)this.detailgridbs.DataSource, "WorkHour,QAQty,OrderID", "select isnull(sum(WorkHour),0) as sumWorkHour,isnull(sum(QAQty),0) as sumQaqty from #tmp where (OrderID <> '' or OrderID is not null)", out sumQty, "#tmp");
             }
             catch (Exception ex)
             {
@@ -440,15 +417,11 @@ where   mo.Junk = 0
             if (sumQty == null)
             {
                 gridQaQty = 0;
-                gridInlineQty = 0;
-                gridDefectQty = 0;
                 gridWHours = 0;
             }
             else
             {
                 gridQaQty = MyUtility.Convert.GetInt(sumQty.Rows[0]["sumQAQty"]);
-                gridInlineQty = MyUtility.Convert.GetInt(sumQty.Rows[0]["sumInlineQty"]);
-                gridDefectQty = MyUtility.Convert.GetInt(sumQty.Rows[0]["sumDefectQty"]);
                 gridWHours = MyUtility.Convert.GetDecimal(sumQty.Rows[0]["sumWorkHour"]);
             }
 
@@ -532,8 +505,6 @@ where   mo.Junk = 0
             }
 
             this.CurrentMaintain["QAQty"] = gridQaQty;
-            this.CurrentMaintain["InlineQty"] = gridInlineQty;
-            this.CurrentMaintain["DefectQty"] = gridDefectQty;
             this.CurrentMaintain["TMS"] = MyUtility.Math.Round(gridTms, 0);
             this.CurrentMaintain["Efficiency"] = MyUtility.Convert.GetDecimal(this.CurrentMaintain["TMS"]) * MyUtility.Convert.GetDecimal(this.CurrentMaintain["ManHour"]) == 0 ? 0 : MyUtility.Convert.GetDecimal(gridQaQty) / (3600 / MyUtility.Convert.GetDecimal(this.CurrentMaintain["TMS"]) * MyUtility.Convert.GetDecimal(this.CurrentMaintain["ManHour"])) * 100;
             return base.ClickSaveBefore();
@@ -663,8 +634,6 @@ where   mo.Junk = 0
 
         private void ReCalculateDefectAndRFT(DataRow dr)
         {
-            dr["DefectQty"] = MyUtility.Convert.GetInt(dr["InlineQty"]) - MyUtility.Convert.GetInt(dr["QAQty"]);
-            dr["RFT"] = MyUtility.Check.Empty(dr["InlineQty"]) ? 0 : MyUtility.Math.Round(MyUtility.Convert.GetInt(dr["QAQty"]) / MyUtility.Convert.GetDecimal(dr["InlineQty"]), 2) * 100;
         }
 
         // Share < working hours > to SP#

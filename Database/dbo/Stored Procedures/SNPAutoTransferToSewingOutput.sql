@@ -118,7 +118,6 @@ BEGIN
 				,ColorName as Article
 				, SizeName as SizeCode
 				,[QAQty]=sum(OutputQty) 
-				,[InlineQty]=sum(InputQty) --4/13 InputQty�g�J��Sewing P01���e����prod qty��
 				,[RowKey]=row_number()OVER (ORDER BY dDate ,WorkLine ,MONo ,ColorName ,SizeName)
 			into #tmp_Into_SewingOutput_Detail_Detail_with0
 			from #tOutputTotal
@@ -167,7 +166,6 @@ BEGIN
 									WHEN (LineTotal.SumQty + AlreadyInPMS.Qty) >= Order_Qty.Qty AND LineCount.Val>1 AND t.RowKey=MaxQty.RowKey THEN (Order_Qty.Qty - AlreadyInPMS.Qty - LineTotal.SumQty + ISNULL(t.QAQty,0) )  ----狀況[B-1]
 									ELSE ISNULL(t.QAQty,0)  ----狀況[B-2]
 									END
-					,t.[InlineQty]
 			INTO #tmp_Into_SewingOutput_Detail_Detail_1
 			FROM #tmp_Into_SewingOutput_Detail_Detail_with0 t
 			outer apply(
@@ -202,14 +200,14 @@ BEGIN
 				WHERE t.dDate=t2.dDate AND t.OrderId=t2.OrderId AND t.ComboType=t2.ComboType AND t.Article=t2.Article AND t.SizeCode=t2.SizeCode
 			)LineTotal  ----加總所有產線的產出數量
 			OUTER APPLY(
-				SELECT TOP 1 [Val]=MAX(t2.QAQty) ,t2.dDate  ,t2.OrderId  ,t2.ComboType  ,t2.Article  ,t2.SizeCode , t2.InlineQty ,t2.RowKey
+				SELECT TOP 1 [Val]=MAX(t2.QAQty) ,t2.dDate  ,t2.OrderId  ,t2.ComboType  ,t2.Article  ,t2.SizeCode ,t2.RowKey
 				FROM #tmp_Into_SewingOutput_Detail_Detail_with0 t2
 				WHERE t.dDate=t2.dDate 
 						AND t.OrderId=t2.OrderId 
 						AND t.ComboType=t2.ComboType 
 						AND t.Article=t2.Article 
 						AND t.SizeCode=t2.SizeCode
-				GROUP BY t2.dDate  ,t2.OrderId  ,t2.ComboType  ,t2.Article  ,t2.SizeCode , t2.InlineQty , t2.RowKey
+				GROUP BY t2.dDate  ,t2.OrderId  ,t2.ComboType  ,t2.Article  ,t2.SizeCode , t2.RowKey
 				ORDER BY [Val] DESC
 			)MaxQty  ----有生產 這個ComboType + OrderId + Article + SizeCode的產線當中，產出最高的那一條 (可能會有兩筆一模一樣的產出的，因此要抓TOP 1 的那一筆來扣)
 			OUTER APPLY(
@@ -250,11 +248,6 @@ BEGIN
 			, t3.ComboType
 			, Article
 			,[QAQty]= Sum(QAQty) 
-			,[InlineQty]=  sum(InlineQty)
-			--,[InlineQty]= CASE WHEN sum( ISNULL(FailCount,0) ) = 0 AND Sum(QAQty)=0 THEN sum(InlineQty) --�YtOutputTotal.FailQty�POutputQty����0���p�U�A�]�ݭn��InputQty�g�J��Sewing P01���e����prod qty���C
-			--				ELSE sum( ISNULL(FailCount,0) ) + Sum(QAQty)   --�쥻�p���k
-			--				END
-			,[DefectQty]= (sum( ISNULL(FailCount,0) ) + Sum(QAQty)) - Sum(QAQty) 
 			,[TMS] = TMS.CPU * TMS.CPUFactor * ( IIF(o.StyleUnit='PCS',100,IIF(Order_Rate.Rate is null,Style_Rate.Rate,Order_Rate.Rate) ) /100  ) * TMS.StdTMS--CPU * CPUFactor * (Rate/100) * StdTMS
 			into #tmp_Into_SewingOutput_Detail
 			from #tmp_Into_SewingOutput_Detail_Detail t3
@@ -316,8 +309,6 @@ BEGIN
 			[OutputDate]=dDate 
 			, [SewingLineID]=WorkLine 
 			, [QAQty]= Sum(QAQty) 
-			, [DefectQty]= sum(DefectQty) 
-			, [InlineQty]= sum(InlineQty) 
 			, [TMS]=IIF(SUM(QAQTY)=0
 							 , 0  
 							 , SUM(TMS * QAQTY) / SUM(QAQTY)
@@ -368,7 +359,7 @@ BEGIN
 			--Begin Insert
 
 			INSERT INTO SewingOutput 
-			(ID ,OutputDate ,SewingLineID ,QAQty ,DefectQty ,InlineQty ,TMS ,Manpower ,ManHour ,Efficiency 
+			(ID ,OutputDate ,SewingLineID ,QAQty ,TMS ,Manpower ,ManHour ,Efficiency 
 			,Shift ,Team ,Status ,LockDate ,WorkHour ,FactoryID ,MDivisionID , [Category], [SFCData], [AddName] , [AddDate] , [EditName]
 			, [EditDate], [SubconOutFty], [SubConOutContractNumber])
 			select 	
@@ -376,8 +367,6 @@ BEGIN
 			, [OutputDate]=CAST([OutputDate] AS DATE)
 			, [SewingLineID]=ISNULL(ProductionLineAllocation.SewingLineID,ts.[SewingLineID])
 			, ISNULL([QAQty] ,0)
-			, ISNULL([DefectQty] ,0)
-			, ISNULL([InlineQty] ,0)
 			, ISNULL([TMS] ,0)
 			, [Manpower]=0
 			, [Manhour]=0
@@ -415,8 +404,8 @@ BEGIN
 			--insert SewingOutput_Detail
 			INSERT INTO SewingOutput_Detail
 				([ID],[OrderId],[ComboType],[Article],[Color],[TMS]
-				,[HourlyStandardOutput],[WorkHour],[QAQty],[DefectQty]
-				,[InlineQty],[OldDetailKey],[AutoCreate],[SewingReasonID],[Remark])
+				,[HourlyStandardOutput],[WorkHour],[QAQty],[DQSOutput]
+				,[OldDetailKey],[AutoCreate],[SewingReasonID],[Remark])
 			SELECT 
 			[ID]= b.ID
 			,[OrderId]
@@ -427,8 +416,7 @@ BEGIN
 			,[HourlyStandardOutput]=NULL
 			,[WorkHour]=0
 			,[QAQty]=a.QAQty
-			,[DefectQty]=a.DefectQty
-			,[InlineQty]=a.InlineQty
+			,[DQSOutput]=a.QAQty
 			,[OldDetailKey]=NULL
 			,[AutoCreate]=0
 			,[SewingReasonID]= IIF(a.QAQty=0,'00001','') --�YQAQTY�A�w�]�N�Ĥ@��ReasionId
@@ -503,8 +491,6 @@ BEGIN
 			,[HourlyStandardOutput]=NULL
 			,[WorkHour]=0
 			,[QAQty]=a.QAQty
-			,[DefectQty]=a.DefectQty
-			,[InlineQty]=a.InlineQty
 			,[OldDetailKey]=NULL
 			,[AutoCreate]=0
 			,[SewingReasonID]=''
@@ -569,7 +555,6 @@ BEGIN
 							SUBSTRING(t.MONo, 1, CHARINDEX('-', t.MONo) - 1)
 							AND tRT.dDate=t.dDate AND tRT.WorkLine  = t.WorkLine 
 						)
-			, [DefectQty] = isnull(sum(Qty), 0)
 			, [Shift] = 'D'
 			, [Team] = 'A'
 			, [Status] = 'Confirmed'
@@ -603,7 +588,6 @@ BEGIN
 			,[FactoryID]
 			,[InspectQty]
 			,[RejectQty]
-			,[DefectQty]
 			,[Shift]
 			,[Team]
 			,[Status]
@@ -626,7 +610,7 @@ BEGIN
 			)
 
 			INSERT INTO RFT
-				([OrderID],[CDate],[SewinglineID],[FactoryID],[InspectQty],[RejectQty],[DefectQty]
+				([OrderID],[CDate],[SewinglineID],[FactoryID],[InspectQty],[RejectQty]
 				,[Shift],[Team],[Status],[Remark],[AddName],[AddDate],[EditName],[EditDate],[MDivisionid])
 			SELECT 
 			[OrderID]
@@ -635,7 +619,6 @@ BEGIN
 			,[FactoryID]
 			,[InspectQty]
 			,[RejectQty]
-			,[DefectQty]
 			,[Shift]
 			,[Team]
 			,[Status]
