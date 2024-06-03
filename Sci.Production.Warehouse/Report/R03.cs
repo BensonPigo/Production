@@ -613,7 +613,7 @@ select wkno = stuff((
 left join #tmpAccessory acc on acc.id = PSD.ID and acc.scirefno = PSD.sciRefno and acc.seq1 = psd.Seq1 and psd.FabricType = 'A' and PSD.SEQ1 not like 'T%' 
 left join #tmpFabric fab on fab.id = PSD.ID and fab.scirefno = PSD.sciRefno and psd.FabricType = 'F'
 left join #tmpThread thread on thread.id = PSD.ID and thread.scirefno = PSD.sciRefno and thread.suppid = ps.SuppID and PSD.SEQ1 like 'T%'
-left join #tmpAccessory acc50 on acc50.SCIRefno = psd.SCIRefno and psd.SEQ1 like '5%' and psd.FabricType = 'A'
+left join #tmpAccessory acc50 on acc50.SCIRefno = psd.SCIRefno and psd.SEQ1 like '5%' and psd.FabricType = 'A' and psd.ID = acc50.ID
 Outer Apply 
 (
 	select Color 
