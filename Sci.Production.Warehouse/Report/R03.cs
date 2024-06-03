@@ -3,6 +3,7 @@ using Sci.Data;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.SqlTypes;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
@@ -180,11 +181,315 @@ left join Export ex with (nolock) on ex.ID = exd.ID
             IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
             #endregion
 
+            string where = string.Empty;
+
+            if (!MyUtility.Check.Empty(this.sciDelivery1))
+            {
+                where += $@" and '{Convert.ToDateTime(this.sciDelivery1).ToString("yyyy/MM/dd")}' <= O.SciDelivery ";
+            }
+
+            if (!MyUtility.Check.Empty(this.sciDelivery2))
+            {
+                where += $@" and O.SciDelivery <= '{Convert.ToDateTime(this.sciDelivery2).ToString("yyyy/MM/dd")}'";
+            }
+
+            if (!MyUtility.Check.Empty(this.suppDelivery1) || !MyUtility.Check.Empty(this.suppDelivery2))
+            {
+                if (!MyUtility.Check.Empty(this.suppDelivery1))
+                {
+                   where += $@" and '{Convert.ToDateTime(this.suppDelivery1).ToString("yyyy/MM/dd")}' <= Coalesce(PSD.finaletd, PSD.CFMETD, PSD.SystemETD)";
+                }
+
+                if (!MyUtility.Check.Empty(this.suppDelivery2))
+                {
+                    where += $@" and Coalesce(PSD.finaletd, PSD.CFMETD, PSD.SystemETD) <= '{Convert.ToDateTime(this.suppDelivery2).ToString("yyyy/MM/dd")}'";
+                }
+            }
+
+            if (!MyUtility.Check.Empty(this.eta1) || !MyUtility.Check.Empty(this.eta2))
+            {
+                if (!MyUtility.Check.Empty(this.eta1))
+                {
+                    where += $@" and '{Convert.ToDateTime(this.eta1).ToString("yyyy/MM/dd")}' <= PSD.ETA";
+                }
+
+                if (!MyUtility.Check.Empty(this.eta2))
+                {
+                    where += $@" and PSD.ETA <= '{Convert.ToDateTime(this.eta2).ToString("yyyy/MM/dd")}'";
+                }
+            }
+
+            if (!MyUtility.Check.Empty(this.ata1) || !MyUtility.Check.Empty(this.ata2))
+            {
+                if (!MyUtility.Check.Empty(this.ata1))
+                {
+                    where += $@" and '{Convert.ToDateTime(this.ata1).ToString("yyyy/MM/dd")}' <= PSD.FinalETA";
+                }
+
+                if (!MyUtility.Check.Empty(this.ata2))
+                {
+                    where += $@" and  PSD.FinalETA <= '{Convert.ToDateTime(this.ata2).ToString("yyyy/MM/dd")}'";
+                }
+            }
+
+            if (!MyUtility.Check.Empty(this.spno1) && !MyUtility.Check.Empty(this.spno2))
+            {
+                // 若 sp 兩個都輸入則尋找 sp1 - sp2 區間的資料
+                where += $@" and PSD.id >= '{this.spno1.PadRight(10, '0')}' and PSD.id <= '{this.spno2.PadRight(10, 'Z')}'";
+            }
+
+            if (!MyUtility.Check.Empty(this.refno1) && !MyUtility.Check.Empty(this.refno2))
+            {
+                // Refno 兩個都輸入則尋找 Refno1 - Refno2 區間的資料
+                where += $@" and PSD.refno >= '{this.refno1}' and PSD.refno <= '{this.refno2}'";
+            }
+            else if (!MyUtility.Check.Empty(this.refno1))
+            {
+                // 只輸入 Refno1
+                where += $@" and PSD.refno like '{this.refno1}%'";
+            }
+            else if (!MyUtility.Check.Empty(this.refno2))
+            {
+                // 只輸入 Refno2
+                where += $@" and PSD.refno like '{this.refno2}%'";
+            }
+
+            if (!MyUtility.Check.Empty(this.wkNo1) && !MyUtility.Check.Empty(this.wkNo2))
+            {
+                // Refno 兩個都輸入則尋找 Refno1 - Refno2 區間的資料
+                where += $@" and wk.wkno between '{this.wkNo1}' and '{this.wkNo2}' ";
+            }
+            else if (!MyUtility.Check.Empty(this.wkNo1))
+            {
+                // 只輸入 Refno1
+                where += $" and wk.wkno like '{this.wkNo1}%'";
+            }
+            else if (!MyUtility.Check.Empty(this.wkNo2))
+            {
+                // 只輸入 Refno2
+                where += $" and wk.wkno like '{this.wkNo2}%'";
+            }
+
             StringBuilder sqlCmd = new StringBuilder();
             sqlCmd.Append($@"
+--輔料們
+--輔料不指定給某個色組
+select  distinct 
+        ob.Id
+       ,ob.seq1
+       ,ob.SCIRefno 
+       ,SuppID
+       ,Article.Article
+       ,Color.Color
+into #tmpAccessory
+from Order_BOA ob WITH (NOLOCK)
+inner join Order_ColorCombo occ WITH (NOLOCK)  on occ.id = ob.id and occ.FabricPanelCode = ob.FabricPanelCode
+left join Order_BOA_Article oba WITH (NOLOCK)  on oba.Order_BoAUkey = ob.Ukey
+inner join PO_Supp_Detail psd WITH (NOLOCK)  on psd.ID = ob.ID and ob.SCIRefno = psd.SCIRefno
+inner join Orders o WITH (NOLOCK)  on o.ID = ob.ID
+outer apply(
+    select wkno = stuff((
+	        select concat(char(10),ID)
+	        from Export_Detail with (nolock) 
+	        where POID = psd.id and Seq1 = psd.SEQ1 and Seq2 = psd.SEQ2
+	        for xml path('')
+	    ),1,1,'')
+)Wk
+outer apply 
+(
+    select Article = stuff((
+            select DISTINCT ',' + Article
+            from  Order_ColorCombo occ WITH (NOLOCK) 
+            where occ.id = ob.id and occ.FabricPanelCode = ob.FabricPanelCode
+            for xml path('')
+        ),1,1,'')
+)Article
+outer apply 
+(
+    select Color = stuff((
+            select DISTINCT ',' + ColorID
+            from  Order_ColorCombo occ WITH (NOLOCK) 
+            where occ.id = ob.id and occ.FabricPanelCode = ob.FabricPanelCode
+            for xml path('')
+        ),1,1,'')
+)Color
+where 1=1
+{where}
+and oba.Article is null --表示不指定
+union
+--輔料指定給某個色組
+select  distinct
+        ob.Id
+       ,ob.seq1
+       ,ob.SCIRefno 
+       ,SuppID
+       ,a.Value
+       ,b.Value
+from Order_BOA ob WITH (NOLOCK) 
+inner join Order_ColorCombo occ WITH (NOLOCK)  on occ.id = ob.id and occ.FabricPanelCode = ob.FabricPanelCode
+left join Order_BOA_Article oba WITH (NOLOCK)  on oba.Order_BoAUkey = ob.Ukey
+inner join PO_Supp_Detail psd WITH (NOLOCK)  on psd.ID = ob.ID and ob.SCIRefno = psd.SCIRefno
+inner join Orders o WITH (NOLOCK)  on o.ID = ob.ID
+outer apply(
+select wkno = stuff((
+	    select concat(char(10),ID)
+	    from Export_Detail with (nolock) 
+	    where POID = psd.id and Seq1 = psd.SEQ1 and Seq2 = psd.SEQ2
+	    for xml path('')
+	),1,1,'')
+)Wk
+outer apply 
+(
+    select Value = stuff((
+        select DISTINCT ',' + Article
+        from  Order_BOA_Article oba WITH (NOLOCK) 
+        where ob.ID =oba.ID and oba.Order_BoAUkey = ob.Ukey
+        for xml path('')
+    ),1,1,'')
+)a
+outer apply 
+(
+    select Value = stuff((
+        select DISTINCT ',' + ColorID
+        from  Order_BOA_Article oba WITH (NOLOCK) 
+        where ob.ID =oba.ID and oba.Order_BoAUkey = ob.Ukey
+        for xml path('')
+    ),1,1,'')
+)b
+where 1=1
+{where}
+and a.Value is not null
+------------------------------------------------------------------------------
+--主料
+select  distinct 
+        ob.Id 
+       ,ob.seq1
+       ,ob.SCIRefno 
+       ,ob.SuppID
+       ,Article.Article
+       ,Color.Color
+into #tmpFabric
+from Order_BOF ob WITH (NOLOCK) 
+inner join Order_ColorCombo occ WITH (NOLOCK)  on occ.id = ob.id and occ.FabricCode = ob.FabricCode
+inner join PO_Supp_Detail psd WITH (NOLOCK)  on psd.ID = ob.ID and ob.SCIRefno = psd.SCIRefno
+inner join Orders o WITH (NOLOCK)  on o.ID = ob.ID
+outer apply(
+select wkno = stuff((
+	    select concat(char(10),ID)
+	    from Export_Detail with (nolock) 
+	    where POID = psd.id and Seq1 = psd.SEQ1 and Seq2 = psd.SEQ2
+	    for xml path('')
+	),1,1,'')
+)Wk
+outer apply 
+(
+    select Article = stuff((
+        select DISTINCT ',' + Article
+        from  Order_ColorCombo occ WITH (NOLOCK) 
+        where occ.id = ob.id and occ.FabricCode = ob.FabricCode 
+        for xml path('')
+    ),1,1,'')
+)Article
+outer apply 
+(
+    select Color = stuff((
+        select DISTINCT ',' + ColorID
+        from  Order_ColorCombo occ WITH (NOLOCK) 
+        where occ.id = ob.id and occ.FabricCode  = ob.FabricCode 
+        for xml path('')
+    ),1,1,'')
+)Color
+where 1=1
+{where}
+
+------------------------------------------------------------------
+--線
+select distinct 
+        o.Id
+       ,tccd.SCIRefno 
+       ,SuppID
+       ,Article.Article
+       ,Color.Color
+into #tmpThread
+from Style_ThreadColorCombo tcc WITH (NOLOCK) 
+Inner Join dbo.Style_ThreadColorCombo_Detail as tccd with(nolock) On tccd.Style_ThreadColorComboUkey = tcc.Ukey
+Inner Join orders o WITH (NOLOCK)  on o.styleukey = tcc.StyleUkey
+inner join PO_Supp_Detail psd WITH (NOLOCK)  on psd.ID = o.ID and tccd.SCIRefno = psd.SCIRefno
+outer apply(
+select wkno = stuff((
+	    select concat(char(10),ID)
+	    from Export_Detail with (nolock) 
+	    where POID = psd.id and Seq1 = psd.SEQ1 and Seq2 = psd.SEQ2
+	    for xml path('')
+	),1,1,'')
+)Wk
+outer apply 
+(
+    select Article = stuff((
+        select DISTINCT ',' + Article
+        from  Style_ThreadColorCombo_Detail tccd WITH (NOLOCK) 
+        where tccd.Style_ThreadColorComboUkey = tcc.Ukey
+        for xml path('')
+    ),1,1,'')
+)Article
+outer apply 
+(
+    select Color = stuff((
+        select DISTINCT ',' + tccd2.ColorID 
+		from Style_ThreadColorCombo tcc2 WITH (NOLOCK) 
+		Inner Join dbo.Style_ThreadColorCombo_Detail as tccd2 with(nolock) On tccd2.Style_ThreadColorComboUkey = tcc2.Ukey
+		Inner Join orders o2 WITH (NOLOCK)  on o2.styleukey = tcc2.StyleUkey
+		where 1=1
+		and o2.ID = o.ID
+		and tccd2.SCIRefNo = tccd.SCIRefNo
+        for xml path('')
+    ),1,1,'')
+)Color
+where 1=1
+{where}
+------------------------------------------------------------------------------
+--50項用輔料(Color)
+SELECT Distinct ta.ID,
+				ta.SCIRefno,
+				s.color AS Color
+INTO #tmp50AccColor
+FROM  #tmpAccessory ta
+Outer apply(
+    select Color = stuff((
+                          select DISTINCT ',' + ColorID
+			              from  ( 
+                                  SELECT Distinct b.data AS ColorID
+					              FROM  #tmpAccessory ta2
+					              CROSS APPLY (Select data from dbo.SplitString(ta2.Color, ',') ) b
+					              WHERE ta2.ID = ta.ID and ta2.SciRefno = ta.SciRefno
+                                ) occ
+              for xml path('')
+          ),1,1,'')
+) as s
+
+--50項用輔料(Article)
+SELECT Distinct ta.ID,
+				ta.SCIRefno,
+				s.Article AS Article
+INTO #tmp50AccArticle
+FROM  #tmpAccessory ta
+Outer apply(
+    select Article = stuff((
+                            select DISTINCT ',' + Article
+			                from  (
+                                        SELECT Distinct b.data AS Article
+					                    FROM  #tmpAccessory ta2
+					                    CROSS APPLY (Select data from dbo.SplitString(ta2.Article, ',') ) b
+					                    WHERE ta2.ID = ta.ID and ta2.SciRefno = ta.SciRefno
+                                    ) occ
+                            for xml path('')
+    ),1,1,'')
+) as s
+
 select  F.MDivisionID
         ,O.FactoryID
         ,[Wkno] = wk.wkno
+        ,[Season] = O.SeasonID
         ,PS.id
         ,style = si.StyleID
 		,o.BrandID
@@ -206,9 +511,11 @@ select  F.MDivisionID
 						else PSD.FabricType 
 						end) + '-' + Fabric.MtlTypeID
 		,ds5.string
-        ,[Color] = iif(Fabric.MtlTypeID in ('EMB Thread', 'SP Thread', 'Thread') 
+        ,[Material Color] = iif(Fabric.MtlTypeID in ('EMB Thread', 'SP Thread', 'Thread') 
                 , IIF(isnull(PSD.SuppColor,'') = '',dbo.GetColorMultipleID(O.BrandID, psdsC.SpecValue),PSD.SuppColor)
                 , dbo.GetColorMultipleID(O.BrandID, psdsC.SpecValue))
+		,[Article] = COALESCE(acc.Article, acc50A.Article, fab.Article, thread.Article, nullArticle.Article)
+		,[Color] =  COALESCE(acc.Color, acc7.Color, acc50C.Color, fab.Color, thread.Color, thread7.Color)
         ,PSD.Qty
         ,PSD.NETQty
         ,PSD.NETQty+PSD.LossQty
@@ -237,14 +544,14 @@ select  F.MDivisionID
         ,O.KPILETA
         ,[MCHandle] = dbo.GetPass1(O.MCHandle)
         {sqlColSeparateByWK}
-from dbo.PO_Supp_Detail PSD
-join dbo.PO_Supp PS on PSD.id = PS.id and PSD.Seq1 = PS.Seq1
-join dbo.Supp S on S.id = PS.SuppID
-join dbo.Orders O on o.id = PSD.id
-join dbo.Factory F on f.id = o.FactoryId
-left join dbo.MDivisionPoDetail MDPD on MDPD.POID = PSD.ID and MDPD.Seq1 = PSD.Seq1 and MDPD.Seq2 = PSD.Seq2
-left join dbo.Fabric on fabric.SciRefno = psd.SciRefno
-left join dbo.MtlType mtl on mtl.ID = fabric.MtlTypeID
+from dbo.PO_Supp_Detail PSD WITH (NOLOCK) 
+join dbo.PO_Supp PS WITH (NOLOCK) on PSD.id = PS.id and PSD.Seq1 = PS.Seq1
+join dbo.Supp S WITH (NOLOCK)  on S.id = PS.SuppID
+join dbo.Orders O WITH (NOLOCK)  on o.id = PSD.id
+join dbo.Factory F WITH (NOLOCK) on f.id = o.FactoryId
+left join dbo.MDivisionPoDetail MDPD WITH (NOLOCK)  on MDPD.POID = PSD.ID and MDPD.Seq1 = PSD.Seq1 and MDPD.Seq2 = PSD.Seq2
+left join dbo.Fabric WITH (NOLOCK) on fabric.SciRefno = psd.SciRefno
+left join dbo.MtlType mtl WITH (NOLOCK)  on mtl.ID = fabric.MtlTypeID
 left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
 {sqlJoinSeparateByWK}
 outer apply(select StyleID from dbo.orders WITH (NOLOCK) where id = PS.id) si
@@ -311,7 +618,7 @@ outer apply
 	outer apply
 	(
 		Select ZipperName = DropDownList.Name
-		From Production.dbo.DropDownList
+		From Production.dbo.DropDownList WITH (NOLOCK)
 		Where Type = 'Zipper' And ID = iif(psdsZstockPO3.SpecValue is null,psdsZ.SpecValue ,psdsZstockPO3.SpecValue)
 	)zn
 	WHERE p.ID=PSD.id and p.seq1 = PSD.seq1 and p.seq2 = PSD.seq2
@@ -340,19 +647,46 @@ select wkno = stuff((
 	    for xml path('')
 	),1,1,'')
 )Wk
-where 1=1
+left join #tmpAccessory acc on acc.id = PSD.ID and acc.scirefno = PSD.sciRefno and acc.seq1 = psd.Seq1 and psd.FabricType = 'A' and PSD.SEQ1 not like 'T%' 
+left join #tmpFabric fab on fab.id = PSD.ID and fab.scirefno = PSD.sciRefno and psd.FabricType = 'F'
+left join #tmpThread thread on thread.id = PSD.ID and thread.scirefno = PSD.sciRefno and thread.suppid = ps.SuppID and PSD.SEQ1 like 'T%'
+left join #tmp50AccColor acc50C on psd.ID = acc50C.ID and acc50C.SCIRefno = psd.SCIRefno and psd.SEQ1 like '5%' and psd.FabricType = 'A'
+left join #tmp50AccArticle acc50A on psd.ID = acc50A.ID and acc50A.SCIRefno = psd.SCIRefno and psd.SEQ1 like '5%' and psd.FabricType = 'A'
+Outer Apply 
+(
+	select Color 
+	from #tmpAccessory acc 
+	Where acc.ID = PSD.ID 
+	and acc.scirefno = PSD.sciRefno 
+	and acc.seq1 = psd.OutputSeq1 
+	and psd.FabricType = 'A' 
+	and PSD.SEQ1 like '7%'
+) acc7
+Outer Apply 
+(
+	select Color 
+	from #tmpThread acc 
+	Where acc.ID = PSD.ID 
+	and acc.scirefno = PSD.sciRefno 
+	and psd.Seq1 like '7%'
+	and psd.OutputSeq1 like 'T%'
+) thread7
+
+outer apply 
+(
+    select Article = stuff((
+        select DISTINCT ',' + Article
+        from Order_ColorCombo ob WITH (NOLOCK)
+        where ob.id = O.ID
+        for xml path('')
+    ),1,1,'')
+)nullArticle
+
+Where 1=1
+{where}
 ");
 
             #region --- 條件組合  ---
-            if (!MyUtility.Check.Empty(this.sciDelivery1))
-            {
-                sqlCmd.Append(string.Format(@" and '{0}' <= O.SciDelivery ", Convert.ToDateTime(this.sciDelivery1).ToString("yyyy/MM/dd")));
-            }
-
-            if (!MyUtility.Check.Empty(this.sciDelivery2))
-            {
-                sqlCmd.Append(string.Format(@" and O.SciDelivery <= '{0}'", Convert.ToDateTime(this.sciDelivery2).ToString("yyyy/MM/dd")));
-            }
 
             if (!MyUtility.Check.Empty(this.style))
             {
@@ -366,69 +700,6 @@ where 1=1
                 sqlCmd.Append(" and O.seasonid = @season");
                 sp_season.Value = this.season;
                 cmds.Add(sp_season);
-            }
-
-            if (!MyUtility.Check.Empty(this.spno1) && !MyUtility.Check.Empty(this.spno2))
-            {
-                // 若 sp 兩個都輸入則尋找 sp1 - sp2 區間的資料
-                sqlCmd.Append(" and PSD.id >= @spno1 and PSD.id <= @spno2");
-                sp_spno1.Value = this.spno1.PadRight(10, '0');
-                sp_spno2.Value = this.spno2.PadRight(10, 'Z');
-                cmds.Add(sp_spno1);
-                cmds.Add(sp_spno2);
-            }
-            else if (!MyUtility.Check.Empty(this.spno1))
-            {
-                // 只有 sp1 輸入資料
-                sqlCmd.Append(" and PSD.id like @spno1 ");
-                sp_spno1.Value = this.spno1 + "%";
-                cmds.Add(sp_spno1);
-            }
-            else if (!MyUtility.Check.Empty(this.spno2))
-            {
-                // 只有 sp2 輸入資料
-                sqlCmd.Append(" and PSD.id like @spno2 ");
-                sp_spno2.Value = this.spno2 + "%";
-                cmds.Add(sp_spno2);
-            }
-
-            if (!MyUtility.Check.Empty(this.suppDelivery1) || !MyUtility.Check.Empty(this.suppDelivery2))
-            {
-                if (!MyUtility.Check.Empty(this.suppDelivery1))
-                {
-                    sqlCmd.Append(string.Format(@" and '{0}' <= Coalesce(PSD.finaletd, PSD.CFMETD, PSD.SystemETD)", Convert.ToDateTime(this.suppDelivery1).ToString("yyyy/MM/dd")));
-                }
-
-                if (!MyUtility.Check.Empty(this.suppDelivery2))
-                {
-                    sqlCmd.Append(string.Format(@" and Coalesce(PSD.finaletd, PSD.CFMETD, PSD.SystemETD) <= '{0}'", Convert.ToDateTime(this.suppDelivery2).ToString("yyyy/MM/dd")));
-                }
-            }
-
-            if (!MyUtility.Check.Empty(this.eta1) || !MyUtility.Check.Empty(this.eta2))
-            {
-                if (!MyUtility.Check.Empty(this.eta1))
-                {
-                    sqlCmd.Append(string.Format(@" and '{0}' <= PSD.ETA", Convert.ToDateTime(this.eta1).ToString("yyyy/MM/dd")));
-                }
-
-                if (!MyUtility.Check.Empty(this.eta2))
-                {
-                    sqlCmd.Append(string.Format(@" and PSD.ETA <= '{0}'", Convert.ToDateTime(this.eta2).ToString("yyyy/MM/dd")));
-                }
-            }
-
-            if (!MyUtility.Check.Empty(this.ata1) || !MyUtility.Check.Empty(this.ata2))
-            {
-                if (!MyUtility.Check.Empty(this.ata1))
-                {
-                    sqlCmd.Append(string.Format(@" and '{0}' <= PSD.FinalETA", Convert.ToDateTime(this.ata1).ToString("yyyy/MM/dd")));
-                }
-
-                if (!MyUtility.Check.Empty(this.ata2))
-                {
-                    sqlCmd.Append(string.Format(@" and PSD.FinalETA <= '{0}'", Convert.ToDateTime(this.ata2).ToString("yyyy/MM/dd")));
-                }
             }
 
             if (!MyUtility.Check.Empty(this.country))
@@ -467,55 +738,6 @@ where 1=1
                 sqlCmd.Append(string.Format(@" and PSD.FabricType = '{0}'", this.fabrictype));
             }
 
-            if (!MyUtility.Check.Empty(this.refno1) && !MyUtility.Check.Empty(this.refno2))
-            {
-                // Refno 兩個都輸入則尋找 Refno1 - Refno2 區間的資料
-                sqlCmd.Append(" and PSD.refno >= @refno1 and PSD.refno <= @refno2");
-                sp_refno1.Value = this.refno1;
-                sp_refno2.Value = this.refno2;
-                cmds.Add(sp_refno1);
-                cmds.Add(sp_refno2);
-            }
-            else if (!MyUtility.Check.Empty(this.refno1))
-            {
-                // 只輸入 Refno1
-                sqlCmd.Append(" and PSD.refno like @refno1");
-                sp_refno1.Value = this.refno1 + "%";
-                cmds.Add(sp_refno1);
-            }
-            else if (!MyUtility.Check.Empty(this.refno2))
-            {
-                // 只輸入 Refno2
-                sqlCmd.Append(" and PSD.refno like @refno2");
-                sp_refno2.Value = this.refno2 + "%";
-                cmds.Add(sp_refno2);
-            }
-
-            // Wkno 塞選條件
-            if (!MyUtility.Check.Empty(this.wkNo1) && !MyUtility.Check.Empty(this.wkNo2))
-            {
-                // Refno 兩個都輸入則尋找 Refno1 - Refno2 區間的資料
-                sqlCmd.Append(" and wk.wkno between @wkno1 and @wkno2 ");
-                sp_wkno1.Value = this.wkNo1;
-                sp_wkno2.Value = this.wkNo2;
-                cmds.Add(sp_wkno1);
-                cmds.Add(sp_wkno2);
-            }
-            else if (!MyUtility.Check.Empty(this.wkNo1))
-            {
-                // 只輸入 Refno1
-                sqlCmd.Append(" and wk.wkno like @wkno1");
-                sp_wkno1.Value = this.wkNo1 + "%";
-                cmds.Add(sp_wkno1);
-            }
-            else if (!MyUtility.Check.Empty(this.wkNo2))
-            {
-                // 只輸入 Refno2
-                sqlCmd.Append(" and wk.wkno like @wkno2");
-                sp_wkno2.Value = this.wkNo2 + "%";
-                cmds.Add(sp_wkno2);
-            }
-
             if (this.dwr == "Exclude")
             {
                 sqlCmd.Append($@" and fabric.DWR = 0");
@@ -544,6 +766,8 @@ where 1=1
             }
 
             #endregion
+
+            sqlCmd.Append(" drop table #tmpAccessory, #tmpFabric,#tmpThread");
 
             DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), cmds, out this.printData);
             if (!result)
@@ -579,11 +803,19 @@ where 1=1
 
             if (this.chkSeparateByWK.Checked)
             {
-                objApp.Sheets[1].Cells[1, 45].Value = "WK No.";
-                objApp.Sheets[1].Cells[1, 46].Value = "WK ETA";
-                objApp.Sheets[1].Cells[1, 47].Value = "WK Arrive W/H Date";
-                objApp.Sheets[1].Cells[1, 48].Value = "WK ShipQty";
-                objApp.Sheets[1].Cells[1, 49].Value = "WK F.O.C";
+                objApp.Sheets[1].Cells[1, 48].Value = "WK No.";
+                objApp.Sheets[1].Cells[1, 49].Value = "WK ETA";
+                objApp.Sheets[1].Cells[1, 50].Value = "WK Arrive W/H Date";
+                objApp.Sheets[1].Cells[1, 51].Value = "WK ShipQty";
+                objApp.Sheets[1].Cells[1, 52].Value = "WK F.O.C";
+            }
+            else
+            {
+                for (int colIndex = 52; colIndex >= 48; colIndex--)
+                {
+                    Excel.Range column = objApp.Columns[colIndex];
+                    column.Delete();
+                }
             }
 
             // Excel.Worksheet worksheet = objApp.Sheets[1];

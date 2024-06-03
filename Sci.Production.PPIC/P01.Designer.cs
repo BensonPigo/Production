@@ -3709,7 +3709,7 @@
             // checkOrganicCotton
             // 
             this.checkOrganicCotton.AutoSize = true;
-            this.checkOrganicCotton.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "OrganicCotton", true));
+            //this.checkOrganicCotton.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "OrganicCotton", true));
             this.checkOrganicCotton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.checkOrganicCotton.IsSupportEditMode = false;
             this.checkOrganicCotton.Location = new System.Drawing.Point(707, 415);
@@ -3717,7 +3717,7 @@
             this.checkOrganicCotton.ReadOnly = true;
             this.checkOrganicCotton.Size = new System.Drawing.Size(286, 19);
             this.checkOrganicCotton.TabIndex = 254;
-            this.checkOrganicCotton.Text = "Organic Cotton/Recycle Polyester/Recycle Nylon";
+            this.checkOrganicCotton.Text = "Use Sustainable Material";
             this.checkOrganicCotton.UseVisualStyleBackColor = true;
             // 
             // shapeContainer7

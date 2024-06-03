@@ -6005,3 +6005,40 @@ WHERE not exists(
 )
 
 END
+
+
+/*MtlType_Brand */
+----------------------Delete
+Delete t
+from [Production].[dbo].MtlType_Brand as t with(nolock)
+left join [Trade_To_Pms].[dbo].MtlType_Brand  as s with(nolock)on t.ID = s.ID and t.BrandID = s.BrandID 
+where s.ID is null
+
+---------------------------UPDATE
+UPDATE a
+SET  a.BossLockDay = ISNULL(b.BossLockDay,0)
+	,a.IsSustainableMaterial = ISNULL(b.IsSustainableMaterial,0)
+	,a.IsSustainableMaterialforSMTT = ISNULL(b.IsSustainableMaterialforSMTT,0)
+	,a.IsBCIforSMTT = ISNULL(b.IsBCIforSMTT,0)
+from [Production].[dbo].MtlType_Brand as a with(nolock)
+inner join [Trade_To_Pms].[dbo].MtlType_Brand  as b with(nolock) on a.ID = b.ID and a.BrandID = b.BrandID
+
+-------------------------- INSERT INTO
+INSERT INTO [Production].[dbo].MtlType_Brand
+ (
+		ID
+		,BrandID
+		,BossLockDay
+		,IsSustainableMaterial
+		,IsSustainableMaterialforSMTT
+		,IsBCIforSMTT
+)
+SELECT
+		ID
+		,BrandID
+		,ISNULL(BossLockDay,0)
+		,ISNULL(IsSustainableMaterial,0)
+		,ISNULL(IsSustainableMaterialforSMTT,0)
+		,ISNULL(IsBCIforSMTT,0)
+from [Trade_To_Pms].[dbo].MtlType_Brand as b WITH (NOLOCK)
+where not exists (select 1 from [Production].[dbo].MtlType_Brand as a WITH (NOLOCK) where a.ID = b.ID )

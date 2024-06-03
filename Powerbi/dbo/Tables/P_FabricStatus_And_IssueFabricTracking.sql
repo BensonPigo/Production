@@ -1,6 +1,7 @@
 ﻿CREATE TABLE [dbo].[P_FabricStatus_And_IssueFabricTracking](
 	[SewingCell] [varchar](2) NOT NULL,
 	[LineID] [varchar](5) NOT NULL,
+	[Department] [varchar](15) not null DEFAULT (''),
 	[ReplacementID] [varchar](13) NOT NULL,
 	[StyleID] [varchar](15) NOT NULL,
 	[SP] [varchar](13) NOT NULL,
