@@ -998,7 +998,7 @@ from(
             LEFT JOIN dbo.Style_RRLR_Report with(nolock) on Style_RRLR_Report.StyleUkey = orders.StyleUkey AND
                                                             Style_RRLR_Report.ColorID =  psdsC.SpecValue AND
                                                             Style_RRLR_Report.Refno = fabric.RefNo
-            left join #ArticleForThread aft on	aft.ID = m.POID		and
+            left join #ArticleForThread aft on	aft.ID = a.ID		and
 												aft.SuppId	   = b.SuppId	and
 												aft.SCIRefNo   = a.SCIRefNo	and
 												aft.ColorID	   = isnull(psdsC.SpecValue, '')	and
