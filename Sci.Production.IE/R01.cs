@@ -5,6 +5,7 @@ using System.Windows.Forms;
 using Ict;
 using Sci.Data;
 using System.Runtime.InteropServices;
+using System;
 
 namespace Sci.Production.IE
 {
@@ -26,7 +27,9 @@ namespace Sci.Production.IE
         private string phase;
         private bool latestVersion;
 
-        private DataTable printData;
+        private DataTable printData_Summary;
+        private DataTable printData_Detail_Station;
+        private DataTable printData_Detail_Operation;
         private StringBuilder sqlCmd = new StringBuilder();
 
         /// <summary>
@@ -122,241 +125,138 @@ namespace Sci.Production.IE
         /// <returns>DualResult</returns>
         protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
-            this.sqlCmd.Clear();
+            DualResult result;
+            StringBuilder cmdP03_Summary = new StringBuilder();
+            StringBuilder cmdP05_Summary = new StringBuilder();
+            StringBuilder cmdP06_Summary = new StringBuilder();
+            StringBuilder cmdP03_Station = new StringBuilder();
+            StringBuilder cmdP05_Station = new StringBuilder();
+            StringBuilder cmdP06_Station = new StringBuilder();
+            StringBuilder cmdP03_Operation = new StringBuilder();
+            StringBuilder cmdP05_Operation = new StringBuilder();
+            StringBuilder cmdP06_Operation = new StringBuilder();
 
             if (this.bolSummary)
             {
-                this.sqlCmd.Append(@"
-select
-	lm.FactoryID,
-	lm.StyleID,
-	lm.ComboType,
-	lm.SeasonID,
-    lm.Phase,
-	lm.BrandID,
-	lm.Version,
-	lm.SewingLineID,
-	lm.Team,
-	lm.CurrentOperators,
-	lm.StandardOutput,
-	lm.TaktTime,
-	lm.TotalGSD,
-	lm.TotalCycle,
-	IIF(lm.HighestCycle = 0,0,Round(3600.0/lm.HighestCycle,2)) as EOLR,
-	IIF(lm.HighestCycle*lm.CurrentOperators = 0,0,CONVERT(DECIMAL,lm.TotalGSD)/lm.HighestCycle/lm.CurrentOperators) as Eff,
-	EffTarget = EffTarget.Target / 100.0,
-	IIF(lm.HighestCycle*lm.CurrentOperators = 0,0,CONVERT(DECIMAL,lm.TotalCycle)/lm.HighestCycle/lm.CurrentOperators) as LB,
-	[LinebalancingTarget] = LinebalancingTarget.Target / 100.0,
-	[NotHitTargetType] =  iif(lm.Version = 1, 
-								(select TypeGroup from IEReasonLBRnotHit_1st where Ukey = lm.IEReasonLBRnotHit_1stUkey),
-								(select STUFF ((
-										select distinct CONCAT (',', a.TypeGroup) 
-											from (
-												select lbr.TypeGroup
-												from LineMapping_Detail l2 WITH (NOLOCK)
-												inner join IEReasonLBRNotHit_Detail lbr WITH (NOLOCK) on l2.IEReasonLBRNotHit_DetailUkey = lbr.Ukey and lbr.junk = 0
-												where lm.ID = l2.ID
-											) a 
-											for xml path('')
-									), 1, 1, ''))
-	) ,
-    [TotalNoofNotHitTarget] = iif(lm.Version = 1,0,(select cnt = iif(count(*) = 0, '', cast(count(*) as varchar))
-                    from (
-	                    select distinct l2.NO, l2.IEReasonLBRNotHit_DetailUkey
-	                    from LineMapping_Detail l2 WITH (NOLOCK)
-	                    where lm.ID = l2.ID
-	                    and ISNULL(l2.IEReasonLBRNotHit_DetailUkey, '') <> ''
-                    )a )),
-	[NotHitTargetReason] =  iif(lm.Version = 1, 
-								(select Name from IEReasonLBRnotHit_1st where Ukey = lm.IEReasonLBRnotHit_1stUkey),
-								(select STUFF ((
-									select distinct CONCAT (',', a.Name ) 
-										from (
-											select lbr.Name 
-											from LineMapping_Detail l2 WITH (NOLOCK)
-											inner join IEReasonLBRNotHit_Detail lbr WITH (NOLOCK) on l2.IEReasonLBRNotHit_DetailUkey = lbr.Ukey and lbr.junk = 0
-											where lm.ID = l2.ID
-										) a 
-										for xml path('')
-								), 1, 1, ''))
-	) ,
-	IIF(lm.TaktTime*lm.CurrentOperators = 0,0,CONVERT(DECIMAL,lm.TotalCycle)/lm.TaktTime/lm.CurrentOperators) as LLEF,
-	IIF(lm.HighestCycle * lm.CurrentOperators = 0,0,(ROUND(3600.0/lm.HighestCycle, 2) * (select isnull(CPU,0) from Style WITH (NOLOCK) where lm.BrandID = BrandID and lm.StyleID = ID and lm.SeasonID = SeasonID)/lm.CurrentOperators)) as PPH,
-	isnull((select Name from Pass1 WITH (NOLOCK) where ID = lm.AddName),'') as CreateBy,
-    lm.AddDate,
-	isnull((select Name from Pass1 WITH (NOLOCK) where ID = lm.EditName),'') as EditBy,
-    lm.EditDate
-into #tmp
-from LineMapping lm WITH (NOLOCK) 
-outer apply(
-	select top 1 c.Target
-	from factory f
-	left join ChgOverTarget c on c.MDivisionID= f.MDivisionID and c.EffectiveDate < iif(lm.Editdate is null,lm.adddate,lm.Editdate) and c. Type ='EFF.'
-	where f.id = lm.factoryid
-	order by EffectiveDate desc
-)EffTarget
-outer apply(
-	select top 1 c.Target
-	from factory f
-	left join ChgOverTarget c on c.MDivisionID= f.MDivisionID and c.EffectiveDate < iif(lm.Editdate is null,lm.adddate,lm.Editdate) and c. Type ='LBR'
-	where f.id = lm.factoryid
-	order by EffectiveDate desc
-)LinebalancingTarget 
-");
+                cmdP03_Summary = this.GetSummaryP03();
+                cmdP05_Summary = this.GetSummaryP05();
+                cmdP06_Summary = this.GetSummaryP06();
+
+                result = DBProxy.Current.Select(null, cmdP03_Summary.ToString(), out DataTable p03_Summary);
+                if (!result)
+                {
+                    DualResult failResult = new DualResult(false, "Query data fail\r\n" + result.ToString());
+                    return failResult;
+                }
+
+                result = DBProxy.Current.Select(null, cmdP05_Summary.ToString(), out DataTable p05_Summary);
+                if (!result)
+                {
+                    DualResult failResult = new DualResult(false, "Query data fail\r\n" + result.ToString());
+                    return failResult;
+                }
+
+                result = DBProxy.Current.Select(null, cmdP06_Summary.ToString(), out DataTable p06_Summary);
+                if (!result)
+                {
+                    DualResult failResult = new DualResult(false, "Query data fail\r\n" + result.ToString());
+                    return failResult;
+                }
+
+                this.printData_Summary = p03_Summary.Clone();
+                this.printData_Summary.Merge(p03_Summary);
+                this.printData_Summary.AcceptChanges();
+
+                // 欄位格式不一樣會導致merge失敗，用下面這個檢查
+                //foreach (DataColumn col in this.printData_Summary.Columns)
+                //{
+                //    string colName = col.ColumnName;
+                //    var tCol = p05_Summary.Columns[colName];
+
+                //    if (col.DataType != tCol.DataType)
+                //    {
+
+                //    }
+                //    else
+                //    {
+
+                //    }
+                //}
+
+                this.printData_Summary.Merge(p05_Summary, true);
+                this.printData_Summary.AcceptChanges();
+                this.printData_Summary.Merge(p06_Summary, true);
+                this.printData_Summary.AcceptChanges();
             }
             else
             {
-                // Detail
-                this.sqlCmd.Append(@"
-select distinct
-	lm.FactoryID,
-	lm.StyleID,
-	lm.ComboType,
-	lm.SeasonID,
-    lm.Phase,
-	lm.BrandID,
-	lm.Version,
-	lmd.No,
-	lmd.TotalCycle,
-	lmdavg.avgTotalCycle,
-	[diffCycle] = (lmdavg.avgTotalCycle - lmd.TotalCycle) / lmdavg.avgTotalCycle,
-	lbr.name
-into #tmp
-from LineMapping lm WITH (NOLOCK) 
-inner join LineMapping_Detail lmd WITH (NOLOCK) on lm.ID = lmd.ID
-left join IEReasonLBRNotHit_Detail lbr WITH (NOLOCK) on lmd.IEReasonLBRNotHit_DetailUkey = lbr.Ukey and lbr.junk = 0
-outer apply (
-	select avgTotalCycle = avg(TotalCycle)
-	from 
-	(
-		select ID, NO, TotalCycle
-		from LineMapping_Detail
-		where ID = lm.ID
-		and No <> '' 
-		group by ID, NO, TotalCycle
-	) lmdavg
-)lmdavg
-outer apply(
-	select top 1 c.Target
-	from factory f
-	left join ChgOverTarget c on c.MDivisionID= f.MDivisionID 
-				--and lm.status = 'Confirmed' 
-				--and c.EffectiveDate < lm.Editdate 
-				and c. Type ='LBR'
-	where f.id = lm.factoryid
-	order by EffectiveDate desc
-)LinebalancingTarget 
-");
-            }
+                cmdP03_Station = this.GetDetailP03_Station();
+                cmdP05_Station = this.GetDetailP05_Station();
+                cmdP06_Station = this.GetDetailP06_Station();
+                cmdP03_Operation = this.GetDetailP03_Operation();
+                cmdP05_Operation = this.GetDetailP05_Operation();
+                cmdP06_Operation = this.GetDetailP06_Operation();
 
-            this.sqlCmd.Append("where 1 = 1");
-            if (!this.bolSummary)
-            {
-                this.sqlCmd.Append(@" 
-and lmd.IsHide = 0
-");
-            }
-
-            if (this.bolBalancing)
-            {
-                if (this.bolSummary)
+                result = DBProxy.Current.Select(null, cmdP03_Station.ToString(), out DataTable p03_Station);
+                if (!result)
                 {
-                    this.sqlCmd.Append(@"
-and IIF(lm.HighestCycle*lm.CurrentOperators = 0,0,CONVERT(DECIMAL,lm.TotalCycle)/lm.HighestCycle/lm.CurrentOperators) * 100 < LinebalancingTarget.Target
-");
-                }
-                else
-                {
-                    this.sqlCmd.Append(@"
-and (((lmdavg.avgTotalCycle - lmd.TotalCycle) / lmdavg.avgTotalCycle) * 100 >  (100 - LinebalancingTarget.Target) 
-	or  ((lmdavg.avgTotalCycle - lmd.TotalCycle) / lmdavg.avgTotalCycle) * 100 < (100 - LinebalancingTarget.Target) * -1 )
-");
-                }
-            }
-
-            if (!MyUtility.Check.Empty(this.factory))
-            {
-                this.sqlCmd.Append(string.Format(" and lm.FactoryID = '{0}'", this.factory));
-            }
-
-            if (!MyUtility.Check.Empty(this.style))
-            {
-                this.sqlCmd.Append(string.Format(" and lm.StyleID = '{0}'", this.style));
-            }
-
-            if (!MyUtility.Check.Empty(this.season))
-            {
-                this.sqlCmd.Append(string.Format(" and lm.SeasonID = '{0}'", this.season));
-            }
-
-            if (!MyUtility.Check.Empty(this.team))
-            {
-                this.sqlCmd.Append(string.Format(" and lm.Team = '{0}'", this.team));
-            }
-
-            if (!MyUtility.Check.Empty(this.phase))
-            {
-                this.sqlCmd.Append(string.Format(" and lm.Phase = '{0}'", this.phase));
-            }
-
-            if (this.latestVersion)
-            {
-                this.sqlCmd.Append(@"
- and lm.Version = (
-	select MAX(l.Version)
-	from LineMapping l
-	where l.StyleUKey = lm.StyleUKey
-	and l.FactoryID = lm.FactoryID
-	and l.Phase = lm.Phase
-    and l.SewingLineID = lm.SewingLineID
-	group by l.StyleUKey, l.FactoryID,l.Phase,l.SewingLineID
- )
-");
-            }
-
-            this.sqlCmd.Append(@"select * from #tmp t");
-
-            #region Inline & Sewing Date is not null
-
-            if (this.dateSewingDate.Value1.HasValue || this.dateSewingDate.Value2.HasValue || this.dateInlineDate.Value1.HasValue || this.dateInlineDate.Value2.HasValue)
-            {
-                string dateQuery = string.Empty;
-                if (!MyUtility.Check.Empty(this.dateInlineDate.Value1))
-                {
-                    dateQuery += string.Format("and '{0}' <= convert(varchar(10), ss.Inline, 120) ", this.dateInlineDate.Value1.Value.ToString("yyyy-MM-dd"));
+                    DualResult failResult = new DualResult(false, "Query data fail\r\n" + result.ToString());
+                    return failResult;
                 }
 
-                if (!MyUtility.Check.Empty(this.dateInlineDate.Value2))
+                result = DBProxy.Current.Select(null, cmdP05_Station.ToString(), out DataTable p05_Station);
+                if (!result)
                 {
-                    dateQuery += string.Format("and convert(varchar(10), ss.Inline, 120) <= '{0}' ", this.dateInlineDate.Value2.Value.ToString("yyyy-MM-dd"));
+                    DualResult failResult = new DualResult(false, "Query data fail\r\n" + result.ToString());
+                    return failResult;
                 }
 
-                if (!MyUtility.Check.Empty(this.dateSewingDate.Value1))
+                result = DBProxy.Current.Select(null, cmdP06_Station.ToString(), out DataTable p06_Station);
+                if (!result)
                 {
-                    dateQuery += $@" 
-and (convert(date,ss.Inline) >= '{this.dateSewingDate.Value1.Value.ToString("yyyy/MM/dd")}' or ('{this.dateSewingDate.Value1.Value.ToString("yyyy/MM/dd")}' between convert(date,ss.Inline) and convert(date,ss.Offline)))";
+                    DualResult failResult = new DualResult(false, "Query data fail\r\n" + result.ToString());
+                    return failResult;
                 }
 
-                if (!MyUtility.Check.Empty(this.dateSewingDate.Value2))
+                result = DBProxy.Current.Select(null, cmdP03_Operation.ToString(), out DataTable p03_Operation);
+                if (!result)
                 {
-                    dateQuery += $@" 
-and (convert(date,ss.Offline) <= '{this.dateSewingDate.Value2.Value.ToString("yyyy/MM/dd")}' or ('{this.dateSewingDate.Value2.Value.ToString("yyyy/MM/dd")}' between convert(date,ss.Inline) and convert(date,ss.Offline)))";
+                    DualResult failResult = new DualResult(false, "Query data fail\r\n" + result.ToString());
+                    return failResult;
                 }
 
-                this.sqlCmd.Append($@"
- where exists(
-	select *
-	from SewingSchedule ss
-	join Orders o on ss.OrderID = o.ID
-	where 1=1
-	{dateQuery}
-	and o.StyleID = t.StyleID and o.SeasonID = t.SeasonID and o.BrandID = t.BrandID
- )
-");
+                result = DBProxy.Current.Select(null, cmdP05_Operation.ToString(), out DataTable p05_Operation);
+                if (!result)
+                {
+                    DualResult failResult = new DualResult(false, "Query data fail\r\n" + result.ToString());
+                    return failResult;
+                }
+
+                result = DBProxy.Current.Select(null, cmdP06_Operation.ToString(), out DataTable p06_Operation);
+                if (!result)
+                {
+                    DualResult failResult = new DualResult(false, "Query data fail\r\n" + result.ToString());
+                    return failResult;
+                }
+
+                this.printData_Detail_Station = p03_Station.Clone();
+                this.printData_Detail_Station.Merge(p03_Station);
+                this.printData_Detail_Station.AcceptChanges();
+                this.printData_Detail_Station.Merge(p05_Station, true);
+                this.printData_Detail_Station.AcceptChanges();
+                this.printData_Detail_Station.Merge(p06_Station, true);
+                this.printData_Detail_Station.AcceptChanges();
+
+                this.printData_Detail_Operation = p03_Operation.Clone();
+                this.printData_Detail_Operation.Merge(p03_Operation);
+                this.printData_Detail_Operation.AcceptChanges();
+                this.printData_Detail_Operation.Merge(p05_Operation, true);
+                this.printData_Detail_Operation.AcceptChanges();
+                this.printData_Detail_Operation.Merge(p06_Operation, true);
+                this.printData_Detail_Operation.AcceptChanges();
             }
-            #endregion
 
-            return Ict.Result.True;
+            return result;
         }
 
         /// <summary>
@@ -366,20 +266,24 @@ and (convert(date,ss.Offline) <= '{this.dateSewingDate.Value2.Value.ToString("yy
         /// <returns>bool</returns>
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
-            DualResult result = DBProxy.Current.Select(null, this.sqlCmd.ToString(), out this.printData);
-            if (!result)
-            {
-                this.ShowErr(result);
-                return false;
-            }
-
             // 顯示筆數於PrintForm上Count欄位
-            this.SetCount(this.printData.Rows.Count);
-
-            if (this.printData.Rows.Count <= 0)
+            if (this.bolSummary)
             {
-                MyUtility.Msg.WarningBox("Data not found!");
-                return false;
+                this.SetCount(this.printData_Summary.Rows.Count);
+                if (this.printData_Summary.Rows.Count <= 0)
+                {
+                    MyUtility.Msg.WarningBox("Data not found!");
+                    return false;
+                }
+            }
+            else
+            {
+                this.SetCount(this.printData_Detail_Station.Rows.Count);
+                if (this.printData_Detail_Station.Rows.Count <= 0)
+                {
+                    MyUtility.Msg.WarningBox("Data not found!");
+                    return false;
+                }
             }
 
             this.ShowWaitMessage("Starting EXCEL...");
@@ -391,7 +295,18 @@ and (convert(date,ss.Offline) <= '{this.dateSewingDate.Value2.Value.ToString("yy
                 return false;
             }
 
-            MyUtility.Excel.CopyToXls(this.printData, string.Empty, fileName + ".xltx", 1, false, null, excel);
+            if (this.bolSummary)
+            {
+                MyUtility.Excel.CopyToXls(this.printData_Summary, string.Empty, fileName + ".xltx", 1, showExcel: false, fieldList: null, excelApp: excel);
+            }
+            else
+            {
+                Microsoft.Office.Interop.Excel.Worksheet wsSheet = excel.ActiveWorkbook.Worksheets[1];
+                MyUtility.Excel.CopyToXls(this.printData_Detail_Station, string.Empty, fileName + ".xltx", 1, showExcel: false, fieldList: null, wSheet: wsSheet, excelApp: excel);
+                wsSheet = excel.ActiveWorkbook.Worksheets[2];
+                MyUtility.Excel.CopyToXls(this.printData_Detail_Operation, string.Empty, fileName + ".xltx", 1, showExcel: false, fieldList: null, wSheet: wsSheet, excelApp: excel);
+            }
+
             excel.Cells.EntireColumn.AutoFit();
             excel.Cells.EntireRow.AutoFit();
             this.HideWaitMessage();
@@ -495,6 +410,1563 @@ and (convert(date,ss.Offline) <= '{this.dateSewingDate.Value2.Value.ToString("yy
                 MyUtility.Msg.WarningBox("This Season is wrong!");
                 return;
             }
+        }
+
+        private StringBuilder GetDetailP03_Station()
+        {
+            StringBuilder cmd = new StringBuilder();
+
+            #region Inline & Sewing Date is not null
+
+            if (this.dateSewingDate.Value1.HasValue || this.dateSewingDate.Value2.HasValue || this.dateInlineDate.Value1.HasValue || this.dateInlineDate.Value2.HasValue)
+            {
+                string dateQuery = string.Empty;
+                if (!MyUtility.Check.Empty(this.dateInlineDate.Value1))
+                {
+                    dateQuery += string.Format("and '{0}' <= convert(varchar(10), ss.Inline, 120) ", this.dateInlineDate.Value1.Value.ToString("yyyy-MM-dd"));
+                }
+
+                if (!MyUtility.Check.Empty(this.dateInlineDate.Value2))
+                {
+                    dateQuery += string.Format("and convert(varchar(10), ss.Inline, 120) <= '{0}' ", this.dateInlineDate.Value2.Value.ToString("yyyy-MM-dd"));
+                }
+
+                if (!MyUtility.Check.Empty(this.dateSewingDate.Value1))
+                {
+                    dateQuery += $@" 
+and (convert(date,ss.Inline) >= '{this.dateSewingDate.Value1.Value.ToString("yyyy/MM/dd")}' or ('{this.dateSewingDate.Value1.Value.ToString("yyyy/MM/dd")}' between convert(date,ss.Inline) and convert(date,ss.Offline)))";
+                }
+
+                if (!MyUtility.Check.Empty(this.dateSewingDate.Value2))
+                {
+                    dateQuery += $@" 
+and (convert(date,ss.Offline) <= '{this.dateSewingDate.Value2.Value.ToString("yyyy/MM/dd")}' or ('{this.dateSewingDate.Value2.Value.ToString("yyyy/MM/dd")}' between convert(date,ss.Inline) and convert(date,ss.Offline)))";
+                }
+
+                cmd.Append($@"
+select *
+INTO #LineMapping
+from LineMapping t WITH (NOLOCK) 
+where exists(
+	select 1
+	from SewingSchedule ss
+	join Orders o on ss.OrderID = o.ID
+	where 1=1
+	{dateQuery}
+	and o.StyleID = t.StyleID and o.SeasonID = t.SeasonID and o.BrandID = t.BrandID
+ )
+
+");
+            }
+            #endregion
+
+            if (!MyUtility.Check.Empty(this.factory))
+            {
+                cmd.Append(string.Format(" and t.FactoryID = '{0}'", this.factory));
+            }
+
+            if (!MyUtility.Check.Empty(this.style))
+            {
+                cmd.Append(string.Format(" and t.StyleID = '{0}'", this.style));
+            }
+
+            if (!MyUtility.Check.Empty(this.season))
+            {
+                cmd.Append(string.Format(" and t.SeasonID = '{0}'", this.season));
+            }
+
+            if (!MyUtility.Check.Empty(this.team))
+            {
+                cmd.Append(string.Format(" and t.Team = '{0}'", this.team));
+            }
+
+            if (!MyUtility.Check.Empty(this.phase))
+            {
+                cmd.Append(string.Format(" and t.Phase = '{0}'", this.phase));
+            }
+
+            cmd.Append(@"
+
+select lmd.*
+INTO #LineMapping_Detail
+from #LineMapping lm
+inner join LineMapping_Detail lmd WITH (NOLOCK) on lm.ID = lmd.ID
+
+select distinct
+	lm.FactoryID,
+	lm.StyleID,
+	lm.ComboType,
+	lm.SeasonID,
+    lm.Phase,
+	lm.BrandID,
+    lm.SewingLineID,
+    lm.Team,
+	lm.Version,
+	lmd.No,
+    TotalGSD = DetailSum.TotalGSD,
+	ActCycleTime = DetailSum.TotalCycle, -- 公式：加總同No.的LineMapping_Detail.Cycle
+    GSDvsActTimeDiff = IIF(DetailSum.TotalCycle = 0, 0, (DetailSum.TotalCycle - DetailSum.TotalGSD) / DetailSum.TotalCycle ) , ---- 公式: ( [Act. Cycle Time] - [Ttl GSD time] ) / [Act. Cycle Time]
+	ActCycleTimeAvg = IIF(lm.CurrentOperators = 0, 0, DetailSum.TotalCycle / lm.CurrentOperators),  ---- 公式: [Total Cycle time] / [Current Oprts]
+	ActTimeDiffAvg = IIF( IIF(lm.CurrentOperators = 0, 0, DetailSum.TotalCycle / lm.CurrentOperators) = 0 ,0,  
+		(IIF(lm.CurrentOperators = 0, 0, DetailSum.TotalCycle / lm.CurrentOperators) - DetailSum.TotalCycle) / IIF(lm.CurrentOperators = 0, 0, DetailSum.TotalCycle / lm.CurrentOperators)
+		), 　---- 公式: ( [Act. Cycle Time (average)] - [ Act. Cycle time] ) / [Act. Cycle Time (average)]
+	NotHitTargetReason = lbr.name,
+    IsFrom = 'IE P03'
+from #LineMapping lm WITH (NOLOCK) 
+inner join #LineMapping_Detail lmd WITH (NOLOCK) on lm.ID = lmd.ID
+left join IEReasonLBRNotHit_Detail lbr WITH (NOLOCK) on lmd.IEReasonLBRNotHit_DetailUkey = lbr.Ukey and lbr.junk = 0
+outer apply (
+	select avgTotalCycle = avg(TotalCycle)
+	from 
+	(
+		select ID, NO, TotalCycle
+		from #LineMapping_Detail
+		where ID = lm.ID
+		and No <> '' 
+		group by ID, NO, TotalCycle
+	) lmdavg
+)lmdavg
+outer apply(
+	select top 1 c.Target
+	from factory f
+	left join ChgOverTarget c on c.MDivisionID= f.MDivisionID 
+				--and lm.status = 'Confirmed' 
+				--and c.EffectiveDate < lm.Editdate 
+				and c. Type ='LBR'
+	where f.id = lm.factoryid
+	order by EffectiveDate desc
+)LinebalancingTarget 
+OUTER APPLY(
+	select TotalCycle = SUM(lmdd.Cycle) * 1.0 ,TotalGSD = SUM(lmdd.GSD) * 1.0
+	from #LineMapping_Detail lmdd
+	where lm.ID = lmdd.ID and lmd.No=lmdd.No
+)DetailSum
+where lmd.IsHide = 0
+");
+
+            if (this.bolBalancing)
+            {
+                cmd.Append(@"
+and (((lmdavg.avgTotalCycle - lmd.TotalCycle) / lmdavg.avgTotalCycle) * 100 >  (100 - LinebalancingTarget.Target) 
+	or  ((lmdavg.avgTotalCycle - lmd.TotalCycle) / lmdavg.avgTotalCycle) * 100 < (100 - LinebalancingTarget.Target) * -1 )
+");
+            }
+
+            if (this.latestVersion)
+            {
+                cmd.Append(@"
+ and lm.Version = (
+	select MAX(l.Version)
+	from LineMapping l
+	where l.StyleUKey = lm.StyleUKey
+	and l.FactoryID = lm.FactoryID
+	and l.Phase = lm.Phase
+    and l.SewingLineID = lm.SewingLineID
+	group by l.StyleUKey, l.FactoryID,l.Phase,l.SewingLineID
+ )
+");
+            }
+
+            cmd.Append(Environment.NewLine + "DROP TABLE #LineMapping_Detail,#LineMapping ");
+            return cmd;
+        }
+
+        private StringBuilder GetDetailP05_Station()
+        {
+            StringBuilder cmd = new StringBuilder();
+
+            #region Inline & Sewing Date is not null
+
+            if (this.dateSewingDate.Value1.HasValue || this.dateSewingDate.Value2.HasValue || this.dateInlineDate.Value1.HasValue || this.dateInlineDate.Value2.HasValue)
+            {
+                string dateQuery = string.Empty;
+                if (!MyUtility.Check.Empty(this.dateInlineDate.Value1))
+                {
+                    dateQuery += string.Format("and '{0}' <= convert(varchar(10), ss.Inline, 120) ", this.dateInlineDate.Value1.Value.ToString("yyyy-MM-dd"));
+                }
+
+                if (!MyUtility.Check.Empty(this.dateInlineDate.Value2))
+                {
+                    dateQuery += string.Format("and convert(varchar(10), ss.Inline, 120) <= '{0}' ", this.dateInlineDate.Value2.Value.ToString("yyyy-MM-dd"));
+                }
+
+                if (!MyUtility.Check.Empty(this.dateSewingDate.Value1))
+                {
+                    dateQuery += $@" 
+and (convert(date,ss.Inline) >= '{this.dateSewingDate.Value1.Value.ToString("yyyy/MM/dd")}' or ('{this.dateSewingDate.Value1.Value.ToString("yyyy/MM/dd")}' between convert(date,ss.Inline) and convert(date,ss.Offline)))";
+                }
+
+                if (!MyUtility.Check.Empty(this.dateSewingDate.Value2))
+                {
+                    dateQuery += $@" 
+and (convert(date,ss.Offline) <= '{this.dateSewingDate.Value2.Value.ToString("yyyy/MM/dd")}' or ('{this.dateSewingDate.Value2.Value.ToString("yyyy/MM/dd")}' between convert(date,ss.Inline) and convert(date,ss.Offline)))";
+                }
+
+                cmd.Append($@"
+select *
+INTO #AutomatedLineMapping
+from AutomatedLineMapping t WITH (NOLOCK) 
+ where exists(
+	select 1
+	from SewingSchedule ss
+	join Orders o on ss.OrderID = o.ID
+	where 1=1
+	{dateQuery}
+	and o.StyleID = t.StyleID and o.SeasonID = t.SeasonID and o.BrandID = t.BrandID
+ )
+");
+            }
+            #endregion
+
+            if (!MyUtility.Check.Empty(this.factory))
+            {
+                cmd.Append(string.Format(" and t.FactoryID = '{0}'", this.factory));
+            }
+
+            if (!MyUtility.Check.Empty(this.style))
+            {
+                cmd.Append(string.Format(" and t.StyleID = '{0}'", this.style));
+            }
+
+            if (!MyUtility.Check.Empty(this.season))
+            {
+                cmd.Append(string.Format(" and t.SeasonID = '{0}'", this.season));
+            }
+
+            if (!MyUtility.Check.Empty(this.phase))
+            {
+                cmd.Append(string.Format(" and t.Phase = '{0}'", this.phase));
+            }
+
+            cmd.Append(@"
+select lmd.*
+INTO #AutomatedLineMapping_Detail
+from #AutomatedLineMapping lm
+inner join AutomatedLineMapping_Detail lmd WITH (NOLOCK) on lm.ID = lmd.ID
+
+select distinct
+	lm.FactoryID,
+	lm.StyleID,
+	lm.ComboType,
+	lm.SeasonID,
+    lm.Phase,
+	lm.BrandID,
+    SewingLineID = '',
+    Team = '',
+	lm.Version,
+	lmd.No,
+    TotalGSD = DetailSum.TotalGSD,
+	ActCycleTime = 0.0, -- P05沒有
+    GSDvsActTimeDiff = 0.0 , ----  P05沒有
+	ActCycleTimeAvg = 0.0,  ---- P05沒有
+	ActTimeDiffAvg = 0.0,　----  P05沒有
+	NotHitTargetReason = '',
+    IsFrom = 'IE P05'
+from #AutomatedLineMapping lm WITH (NOLOCK) 
+inner join #AutomatedLineMapping_Detail lmd WITH (NOLOCK) on lm.ID = lmd.ID
+OUTER APPLY(
+	select TotalGSD = SUM(lmdd.GSD)
+	from #AutomatedLineMapping_Detail lmdd
+	where lm.ID = lmdd.ID and lmd.No=lmdd.No
+)DetailSum
+where 1 = 1
+");
+
+            if (this.latestVersion)
+            {
+                cmd.Append(@"
+ and lm.Version = (
+	select MAX(l.Version)
+	from AutomatedLineMapping l
+	where l.StyleUKey = lm.StyleUKey
+	and l.FactoryID = lm.FactoryID
+	and l.Phase = lm.Phase
+	group by l.StyleUKey, l.FactoryID,l.Phase
+ )
+");
+            }
+
+
+            cmd.Append(Environment.NewLine + "DROP TABLE #AutomatedLineMapping,#AutomatedLineMapping_Detail  ");
+            return cmd;
+        }
+
+        private StringBuilder GetDetailP06_Station()
+        {
+            StringBuilder cmd = new StringBuilder();
+
+            #region Inline & Sewing Date is not null
+
+            if (this.dateSewingDate.Value1.HasValue || this.dateSewingDate.Value2.HasValue || this.dateInlineDate.Value1.HasValue || this.dateInlineDate.Value2.HasValue)
+            {
+                string dateQuery = string.Empty;
+                if (!MyUtility.Check.Empty(this.dateInlineDate.Value1))
+                {
+                    dateQuery += string.Format("and '{0}' <= convert(varchar(10), ss.Inline, 120) ", this.dateInlineDate.Value1.Value.ToString("yyyy-MM-dd"));
+                }
+
+                if (!MyUtility.Check.Empty(this.dateInlineDate.Value2))
+                {
+                    dateQuery += string.Format("and convert(varchar(10), ss.Inline, 120) <= '{0}' ", this.dateInlineDate.Value2.Value.ToString("yyyy-MM-dd"));
+                }
+
+                if (!MyUtility.Check.Empty(this.dateSewingDate.Value1))
+                {
+                    dateQuery += $@" 
+and (convert(date,ss.Inline) >= '{this.dateSewingDate.Value1.Value.ToString("yyyy/MM/dd")}' or ('{this.dateSewingDate.Value1.Value.ToString("yyyy/MM/dd")}' between convert(date,ss.Inline) and convert(date,ss.Offline)))";
+                }
+
+                if (!MyUtility.Check.Empty(this.dateSewingDate.Value2))
+                {
+                    dateQuery += $@" 
+and (convert(date,ss.Offline) <= '{this.dateSewingDate.Value2.Value.ToString("yyyy/MM/dd")}' or ('{this.dateSewingDate.Value2.Value.ToString("yyyy/MM/dd")}' between convert(date,ss.Inline) and convert(date,ss.Offline)))";
+                }
+
+                cmd.Append($@"
+select *
+INTO #LineMappingBalancing
+from LineMappingBalancing t WITH (NOLOCK) 
+where exists(
+	select 1
+	from SewingSchedule ss
+	join Orders o on ss.OrderID = o.ID
+	where 1=1
+	{dateQuery}
+	and o.StyleID = t.StyleID and o.SeasonID = t.SeasonID and o.BrandID = t.BrandID
+ )
+");
+            }
+            #endregion
+
+            if (!MyUtility.Check.Empty(this.factory))
+            {
+                cmd.Append(string.Format(" and t.FactoryID = '{0}'", this.factory));
+            }
+
+            if (!MyUtility.Check.Empty(this.style))
+            {
+                cmd.Append(string.Format(" and t.StyleID = '{0}'", this.style));
+            }
+
+            if (!MyUtility.Check.Empty(this.season))
+            {
+                cmd.Append(string.Format(" and t.SeasonID = '{0}'", this.season));
+            }
+
+            if (!MyUtility.Check.Empty(this.team))
+            {
+                cmd.Append(string.Format(" and t.Team = '{0}'", this.team));
+            }
+
+            if (!MyUtility.Check.Empty(this.phase))
+            {
+                cmd.Append(string.Format(" and t.Phase = '{0}'", this.phase));
+            }
+
+            cmd.Append(@"
+select lmd.*
+INTO #LineMappingBalancing_Detail
+from #LineMappingBalancing lm
+inner join LineMappingBalancing_Detail lmd WITH (NOLOCK) on lm.ID = lmd.ID
+
+select distinct
+	lm.FactoryID,
+	lm.StyleID,
+	lm.ComboType,
+	lm.SeasonID,
+    lm.Phase,
+	lm.BrandID,
+    lm.SewingLineID,
+    lm.Team,
+	lm.Version,
+	lmd.No,
+    TotalGSD = DetailSum.TotalGSD,
+	ActCycleTime = DetailSum.TotalCycle, -- 公式：加總同No.的LineMapping_Detail.Cycle
+    GSDvsActTimeDiff = IIF(DetailSum.TotalCycle = 0, 0, (DetailSum.TotalCycle - DetailSum.TotalGSD) / DetailSum.TotalCycle ) , ---- 公式: ( [Act. Cycle Time] - [Ttl GSD time] ) / [Act. Cycle Time]
+	ActCycleTimeAvg = IIF(lm. SewerManpower = 0, 0, DetailSum.TotalCycle / lm. SewerManpower),  ---- 公式: [Total Cycle time] / [Current Oprts]
+	ActTimeDiffAvg = IIF((DetailSum.TotalCycle / lm. SewerManpower) = 0, 0, ( (DetailSum.TotalCycle / lm. SewerManpower) - DetailSum.TotalCycle ) / (DetailSum.TotalCycle / lm. SewerManpower)),　---- 公式: ( [Act. Cycle Time (average)] - [ Act. Cycle time] ) / [Act. Cycle Time (average)]
+	NotHitTargetReason = '',
+    IsFrom = 'IE P06'
+into #tmp
+from #LineMappingBalancing lm WITH (NOLOCK) 
+inner join #LineMappingBalancing_Detail lmd WITH (NOLOCK) on lm.ID = lmd.ID
+outer apply (
+	select avgTotalCycle = avg(Cycle)
+	from 
+	(
+		select ID, NO, Cycle
+		from #LineMappingBalancing_Detail
+		where ID = lm.ID
+		and No <> '' 
+		group by ID, NO, Cycle
+	) lmdavg
+)lmdavg
+outer apply(
+	select top 1 c.Target
+	from factory f
+	left join ChgOverTarget c on c.MDivisionID= f.MDivisionID 
+				--and lm.status = 'Confirmed' 
+				--and c.EffectiveDate < lm.Editdate 
+				and c. Type ='LBR'
+	where f.id = lm.factoryid
+	order by EffectiveDate desc
+)LinebalancingTarget 
+OUTER APPLY(
+	select TotalCycle = SUM(lmdd.Cycle) ,TotalGSD = SUM(lmdd.GSD)
+	from #LineMappingBalancing_Detail lmdd
+	where lm.ID = lmdd.ID and lmd.No=lmdd.No
+)DetailSum
+where 1 = 1
+");
+
+            if (this.bolBalancing)
+            {
+                cmd.Append(@"
+and (((lmdavg.avgTotalCycle - DetailSum.TotalCycle) / lmdavg.avgTotalCycle) * 100 >  (100 - LinebalancingTarget.Target) 
+	or  ((lmdavg.avgTotalCycle - DetailSum.TotalCycle) / lmdavg.avgTotalCycle) * 100 < (100 - LinebalancingTarget.Target) * -1 )
+");
+            }
+
+            if (this.latestVersion)
+            {
+                cmd.Append(@"
+ and lm.Version = (
+	select MAX(l.Version)
+	from LineMappingBalancing l
+	where l.StyleUKey = lm.StyleUKey
+	and l.FactoryID = lm.FactoryID
+	and l.Phase = lm.Phase
+    and l.SewingLineID = lm.SewingLineID
+	group by l.StyleUKey, l.FactoryID,l.Phase,l.SewingLineID
+ )
+");
+            }
+
+            cmd.Append(Environment.NewLine + "DROP TABLE #LineMappingBalancing ,#LineMappingBalancing_Detail ");
+            return cmd;
+        }
+
+        private StringBuilder GetDetailP03_Operation()
+        {
+            StringBuilder cmd = new StringBuilder();
+
+            #region Inline & Sewing Date is not null
+
+            if (this.dateSewingDate.Value1.HasValue || this.dateSewingDate.Value2.HasValue || this.dateInlineDate.Value1.HasValue || this.dateInlineDate.Value2.HasValue)
+            {
+                string dateQuery = string.Empty;
+                if (!MyUtility.Check.Empty(this.dateInlineDate.Value1))
+                {
+                    dateQuery += string.Format("and '{0}' <= convert(varchar(10), ss.Inline, 120) ", this.dateInlineDate.Value1.Value.ToString("yyyy-MM-dd"));
+                }
+
+                if (!MyUtility.Check.Empty(this.dateInlineDate.Value2))
+                {
+                    dateQuery += string.Format("and convert(varchar(10), ss.Inline, 120) <= '{0}' ", this.dateInlineDate.Value2.Value.ToString("yyyy-MM-dd"));
+                }
+
+                if (!MyUtility.Check.Empty(this.dateSewingDate.Value1))
+                {
+                    dateQuery += $@" 
+and (convert(date,ss.Inline) >= '{this.dateSewingDate.Value1.Value.ToString("yyyy/MM/dd")}' or ('{this.dateSewingDate.Value1.Value.ToString("yyyy/MM/dd")}' between convert(date,ss.Inline) and convert(date,ss.Offline)))";
+                }
+
+                if (!MyUtility.Check.Empty(this.dateSewingDate.Value2))
+                {
+                    dateQuery += $@" 
+and (convert(date,ss.Offline) <= '{this.dateSewingDate.Value2.Value.ToString("yyyy/MM/dd")}' or ('{this.dateSewingDate.Value2.Value.ToString("yyyy/MM/dd")}' between convert(date,ss.Inline) and convert(date,ss.Offline)))";
+                }
+
+                cmd.Append($@"
+select *
+INTO #LineMapping
+from LineMapping t WITH (NOLOCK) 
+where exists(
+	select 1
+	from SewingSchedule ss
+	INNER join Orders o on ss.OrderID = o.ID
+	where 1=1
+	{dateQuery}
+	and o.StyleID = t.StyleID and o.SeasonID = t.SeasonID and o.BrandID = t.BrandID
+ )
+");
+            }
+            #endregion
+
+            if (!MyUtility.Check.Empty(this.factory))
+            {
+                cmd.Append(string.Format(" and t.FactoryID = '{0}'", this.factory));
+            }
+
+            if (!MyUtility.Check.Empty(this.style))
+            {
+                cmd.Append(string.Format(" and t.StyleID = '{0}'", this.style));
+            }
+
+            if (!MyUtility.Check.Empty(this.season))
+            {
+                cmd.Append(string.Format(" and t.SeasonID = '{0}'", this.season));
+            }
+
+            if (!MyUtility.Check.Empty(this.team))
+            {
+                cmd.Append(string.Format(" and t.Team = '{0}'", this.team));
+            }
+
+            if (!MyUtility.Check.Empty(this.phase))
+            {
+                cmd.Append(string.Format(" and t.Phase = '{0}'", this.phase));
+            }
+
+            cmd.Append(@"
+select lmd.*
+INTO #LineMapping_Detail
+from #LineMapping lm
+inner join LineMapping_Detail lmd WITH (NOLOCK) on lm.ID = lmd.ID
+
+select distinct
+	lm.ID,
+	lm.FactoryID,
+	lm.StyleID,
+	lm.ComboType,
+	lm.SeasonID,
+    lm.Phase,
+	lm.BrandID,
+    lm.SewingLineID,
+    lm.Team,
+	lm.Version,
+	lmd.No,
+    IsFrom = 'IE P03'
+into #tmp
+from #LineMapping lm WITH (NOLOCK) 
+inner join #LineMapping_Detail lmd WITH (NOLOCK) on lm.ID = lmd.ID
+outer apply (
+	select avgTotalCycle = avg(TotalCycle)
+	from 
+	(
+		select ID, NO, TotalCycle
+		from #LineMapping_Detail
+		where ID = lm.ID
+		and No <> '' 
+		group by ID, NO, TotalCycle
+	) lmdavg
+)lmdavg
+outer apply(
+	select top 1 c.Target
+	from factory f
+	left join ChgOverTarget c on c.MDivisionID= f.MDivisionID 
+				--and lm.status = 'Confirmed' 
+				--and c.EffectiveDate < lm.Editdate 
+				and c. Type ='LBR'
+	where f.id = lm.factoryid
+	order by EffectiveDate desc
+)LinebalancingTarget 
+where lmd.IsHide = 0
+");
+
+            if (this.bolBalancing)
+            {
+                cmd.Append(@"
+and (((lmdavg.avgTotalCycle - lmd.TotalCycle) / lmdavg.avgTotalCycle) * 100 >  (100 - LinebalancingTarget.Target) 
+	or  ((lmdavg.avgTotalCycle - lmd.TotalCycle) / lmdavg.avgTotalCycle) * 100 < (100 - LinebalancingTarget.Target) * -1 )
+");
+            }
+
+            if (this.latestVersion)
+            {
+                cmd.Append(@"
+ and lm.Version = (
+	select MAX(l.Version)
+	from LineMapping l
+	where l.StyleUKey = lm.StyleUKey
+	and l.FactoryID = lm.FactoryID
+	and l.Phase = lm.Phase
+    and l.SewingLineID = lm.SewingLineID
+	group by l.StyleUKey, l.FactoryID,l.Phase,l.SewingLineID
+ )
+");
+            }
+
+            cmd.Append(@"
+select     
+	t.FactoryID,
+	t.StyleID,
+	t.ComboType,
+	t.SeasonID,
+    t.Phase,
+	t.BrandID,
+    t.SewingLineID,
+    t.Team,
+	t.Version,
+	t.No,
+	MachineTypeID = MachineType.Val,
+	MasterPlusGroup = MasterPlusGroup.Val,
+	Operation = Operation.Val,
+	Annotation = Annotation.Val,
+	GSDTime = DetailSum.TotalGSD,
+	CycleTime = DetailSum.TotalCycle ,
+	Eff= iif(DetailSum.TotalCycle = 0,0,ROUND(DetailSum.TotalGSD/ DetailSum.TotalCycle,2)*100),
+    t.IsFrom
+from #tmp t
+OUTER APPLY(
+	select Val = STUFF( (
+		select DISTINCT ',' + MachineTypeID
+		from #LineMapping_Detail lmdd
+		where t.ID = lmdd.ID and t.No=lmdd.No
+		FOR XML PATH('')
+		),1,1,'')
+)MachineType
+OUTER APPLY(
+	select Val = STUFF( (
+		select DISTINCT ',' + MasterPlusGroup
+		from #LineMapping_Detail lmdd
+		where t.ID = lmdd.ID and t.No=lmdd.No
+		FOR XML PATH('')
+		),1,1,'')
+)MasterPlusGroup
+OUTER APPLY(
+	select Val = STUFF( (
+		select DISTINCT ',' + o.DescEN 
+		from #LineMapping_Detail lmdd
+		inner join Operation o on lmdd.OperationID = o.ID
+		where t.ID = lmdd.ID and t.No=lmdd.No
+		FOR XML PATH('')
+		),1,1,'')
+)Operation
+OUTER APPLY(
+	select Val = STUFF( (
+		select DISTINCT ',' + Annotation
+		from #LineMapping_Detail lmdd
+		where t.ID = lmdd.ID and t.No=lmdd.No
+		FOR XML PATH('')
+		),1,1,'')
+)Annotation
+OUTER APPLY(
+	select TotalCycle = SUM(lmdd.Cycle) * 1.0 ,TotalGSD = SUM(lmdd.GSD) * 1.0
+	from #LineMapping_Detail lmdd
+	where t.ID = lmdd.ID and t.No=lmdd.No
+)DetailSum
+
+
+");
+
+            cmd.Append(Environment.NewLine + "DROP TABLE #tmp,#LineMapping,#LineMapping_Detail ");
+            return cmd;
+        }
+
+        private StringBuilder GetDetailP05_Operation()
+        {
+            StringBuilder cmd = new StringBuilder();
+
+            #region Inline & Sewing Date is not null
+
+            if (this.dateSewingDate.Value1.HasValue || this.dateSewingDate.Value2.HasValue || this.dateInlineDate.Value1.HasValue || this.dateInlineDate.Value2.HasValue)
+            {
+                string dateQuery = string.Empty;
+                if (!MyUtility.Check.Empty(this.dateInlineDate.Value1))
+                {
+                    dateQuery += string.Format("and '{0}' <= convert(varchar(10), ss.Inline, 120) ", this.dateInlineDate.Value1.Value.ToString("yyyy-MM-dd"));
+                }
+
+                if (!MyUtility.Check.Empty(this.dateInlineDate.Value2))
+                {
+                    dateQuery += string.Format("and convert(varchar(10), ss.Inline, 120) <= '{0}' ", this.dateInlineDate.Value2.Value.ToString("yyyy-MM-dd"));
+                }
+
+                if (!MyUtility.Check.Empty(this.dateSewingDate.Value1))
+                {
+                    dateQuery += $@" 
+and (convert(date,ss.Inline) >= '{this.dateSewingDate.Value1.Value.ToString("yyyy/MM/dd")}' or ('{this.dateSewingDate.Value1.Value.ToString("yyyy/MM/dd")}' between convert(date,ss.Inline) and convert(date,ss.Offline)))";
+                }
+
+                if (!MyUtility.Check.Empty(this.dateSewingDate.Value2))
+                {
+                    dateQuery += $@" 
+and (convert(date,ss.Offline) <= '{this.dateSewingDate.Value2.Value.ToString("yyyy/MM/dd")}' or ('{this.dateSewingDate.Value2.Value.ToString("yyyy/MM/dd")}' between convert(date,ss.Inline) and convert(date,ss.Offline)))";
+                }
+
+                cmd.Append($@"
+select *
+INTO #AutomatedLineMapping
+from AutomatedLineMapping t WITH (NOLOCK) 
+ where exists(
+	select 1
+	from SewingSchedule ss
+	join Orders o on ss.OrderID = o.ID
+	where 1=1
+	{dateQuery}
+	and o.StyleID = t.StyleID and o.SeasonID = t.SeasonID and o.BrandID = t.BrandID
+ )
+");
+            }
+            #endregion
+
+            if (!MyUtility.Check.Empty(this.factory))
+            {
+                cmd.Append(string.Format(" and t.FactoryID = '{0}'", this.factory));
+            }
+
+            if (!MyUtility.Check.Empty(this.style))
+            {
+                cmd.Append(string.Format(" and t.StyleID = '{0}'", this.style));
+            }
+
+            if (!MyUtility.Check.Empty(this.season))
+            {
+                cmd.Append(string.Format(" and t.SeasonID = '{0}'", this.season));
+            }
+
+            if (!MyUtility.Check.Empty(this.phase))
+            {
+                cmd.Append(string.Format(" and t.Phase = '{0}'", this.phase));
+            }
+
+            cmd.Append(@"
+select lmd.*
+INTO #AutomatedLineMapping_Detail
+from #AutomatedLineMapping lm
+inner join AutomatedLineMapping_Detail lmd WITH (NOLOCK) on lm.ID = lmd.ID
+
+select distinct
+	t.ID,
+	t.FactoryID,
+	t.StyleID,
+	t.ComboType,
+	t.SeasonID,
+    t.Phase,
+	t.BrandID,
+    SewingLineID = '',
+    Team = '',
+	t.Version,
+	lmd.No,
+	MachineTypeID = MachineType.Val,
+	MasterPlusGroup = MasterPlusGroup.Val,
+	Operation = Operation.Val,
+	Annotation = Annotation.Val,
+	GSDTime = 0.0,
+	CycleTime = 0.0,
+	Eff= 0.0,
+    IsFrom = 'IE P05'
+from #AutomatedLineMapping t WITH (NOLOCK) 
+inner join #AutomatedLineMapping_Detail lmd WITH (NOLOCK) on t.ID = lmd.ID
+OUTER APPLY(
+	select Val = STUFF( (
+		select DISTINCT ',' + MachineTypeID
+		from #AutomatedLineMapping_Detail lmdd
+		where t.ID = lmdd.ID and lmd.No=lmdd.No
+		FOR XML PATH('')
+		),1,1,'')
+)MachineType
+OUTER APPLY(
+	select Val = STUFF( (
+		select DISTINCT ',' + MasterPlusGroup
+		from #AutomatedLineMapping_Detail lmdd
+		where t.ID = lmdd.ID and lmd.No=lmdd.No
+		FOR XML PATH('')
+		),1,1,'')
+)MasterPlusGroup
+OUTER APPLY(
+	select Val = STUFF( (
+		select DISTINCT ',' + o.DescEN 
+		from #AutomatedLineMapping_Detail lmdd
+		inner join Operation o on lmdd.OperationID = o.ID
+		where t.ID = lmdd.ID and lmd.No=lmdd.No
+		FOR XML PATH('')
+		),1,1,'')
+)Operation
+OUTER APPLY(
+	select Val = STUFF( (
+		select DISTINCT ',' + Annotation
+		from #AutomatedLineMapping_Detail lmdd
+		where t.ID = lmdd.ID and lmd.No=lmdd.No
+		FOR XML PATH('')
+		),1,1,'')
+)Annotation
+where 1=1
+");
+
+            if (this.latestVersion)
+            {
+                cmd.Append(@"
+ and t.Version = (
+	select MAX(l.Version)
+	from AutomatedLineMapping l
+	where l.StyleUKey = t.StyleUKey
+	and l.FactoryID = t.FactoryID
+	and l.Phase = t.Phase
+	group by l.StyleUKey, l.FactoryID,l.Phase
+ )
+");
+            }
+
+
+            cmd.Append(Environment.NewLine + "DROP TABLE #AutomatedLineMapping,#AutomatedLineMapping_Detail  ");
+            return cmd;
+        }
+
+        private StringBuilder GetDetailP06_Operation()
+        {
+            StringBuilder cmd = new StringBuilder();
+
+            #region Inline & Sewing Date is not null
+
+            if (this.dateSewingDate.Value1.HasValue || this.dateSewingDate.Value2.HasValue || this.dateInlineDate.Value1.HasValue || this.dateInlineDate.Value2.HasValue)
+            {
+                string dateQuery = string.Empty;
+                if (!MyUtility.Check.Empty(this.dateInlineDate.Value1))
+                {
+                    dateQuery += string.Format("and '{0}' <= convert(varchar(10), ss.Inline, 120) ", this.dateInlineDate.Value1.Value.ToString("yyyy-MM-dd"));
+                }
+
+                if (!MyUtility.Check.Empty(this.dateInlineDate.Value2))
+                {
+                    dateQuery += string.Format("and convert(varchar(10), ss.Inline, 120) <= '{0}' ", this.dateInlineDate.Value2.Value.ToString("yyyy-MM-dd"));
+                }
+
+                if (!MyUtility.Check.Empty(this.dateSewingDate.Value1))
+                {
+                    dateQuery += $@" 
+and (convert(date,ss.Inline) >= '{this.dateSewingDate.Value1.Value.ToString("yyyy/MM/dd")}' or ('{this.dateSewingDate.Value1.Value.ToString("yyyy/MM/dd")}' between convert(date,ss.Inline) and convert(date,ss.Offline)))";
+                }
+
+                if (!MyUtility.Check.Empty(this.dateSewingDate.Value2))
+                {
+                    dateQuery += $@" 
+and (convert(date,ss.Offline) <= '{this.dateSewingDate.Value2.Value.ToString("yyyy/MM/dd")}' or ('{this.dateSewingDate.Value2.Value.ToString("yyyy/MM/dd")}' between convert(date,ss.Inline) and convert(date,ss.Offline)))";
+                }
+
+                cmd.Append($@"
+select *
+INTO #LineMappingBalancing
+from LineMappingBalancing t WITH (NOLOCK) 
+where exists(
+	select 1
+	from SewingSchedule ss
+	INNER join Orders o on ss.OrderID = o.ID
+	where 1=1
+	{dateQuery}
+	and o.StyleID = t.StyleID and o.SeasonID = t.SeasonID and o.BrandID = t.BrandID
+ )
+");
+            }
+            #endregion
+
+            if (!MyUtility.Check.Empty(this.factory))
+            {
+                cmd.Append(string.Format(" and t.FactoryID = '{0}'", this.factory));
+            }
+
+            if (!MyUtility.Check.Empty(this.style))
+            {
+                cmd.Append(string.Format(" and t.StyleID = '{0}'", this.style));
+            }
+
+            if (!MyUtility.Check.Empty(this.season))
+            {
+                cmd.Append(string.Format(" and t.SeasonID = '{0}'", this.season));
+            }
+
+            if (!MyUtility.Check.Empty(this.team))
+            {
+                cmd.Append(string.Format(" and t.Team = '{0}'", this.team));
+            }
+
+            if (!MyUtility.Check.Empty(this.phase))
+            {
+                cmd.Append(string.Format(" and t.Phase = '{0}'", this.phase));
+            }
+
+            cmd.Append(@"
+select lmd.*
+INTO #LineMappingBalancing_Detail
+from #LineMappingBalancing lm
+inner join LineMappingBalancing_Detail lmd WITH (NOLOCK) on lm.ID = lmd.ID
+
+select distinct
+	lm.ID,
+	lm.FactoryID,
+	lm.StyleID,
+	lm.ComboType,
+	lm.SeasonID,
+    lm.Phase,
+	lm.BrandID,
+    lm.SewingLineID,
+    lm.Team,
+	lm.Version,
+	lmd.No,
+    IsFrom = 'IE P06'
+INTO #tmp
+from #LineMappingBalancing lm WITH (NOLOCK) 
+inner join #LineMappingBalancing_Detail lmd WITH (NOLOCK) on lm.ID = lmd.ID
+outer apply (
+	select avgTotalCycle = avg(Cycle)
+	from 
+	(
+		select ID, NO, Cycle
+		from #LineMappingBalancing_Detail
+		where ID = lm.ID
+		and No <> '' 
+		group by ID, NO, Cycle
+	) lmdavg
+)lmdavg
+outer apply(
+	select top 1 c.Target
+	from factory f
+	left join ChgOverTarget c on c.MDivisionID= f.MDivisionID 
+				--and lm.status = 'Confirmed' 
+				--and c.EffectiveDate < lm.Editdate 
+				and c. Type ='LBR'
+	where f.id = lm.factoryid
+	order by EffectiveDate desc
+)LinebalancingTarget 
+OUTER APPLY(
+	select TotalCycle = SUM(lmdd.Cycle) ,TotalGSD = SUM(lmdd.GSD)
+	from #LineMappingBalancing_Detail lmdd
+	where lm.ID = lmdd.ID and lmd.No=lmdd.No
+)DetailSum
+where 1=1 
+");
+
+            if (this.bolBalancing)
+            {
+                cmd.Append(@"
+and (((lmdavg.avgTotalCycle - DetailSum.TotalCycle) / lmdavg.avgTotalCycle) * 100 >  (100 - LinebalancingTarget.Target) 
+	or  ((lmdavg.avgTotalCycle - DetailSum.TotalCycle) / lmdavg.avgTotalCycle) * 100 < (100 - LinebalancingTarget.Target) * -1 )
+");
+            }
+
+            if (this.latestVersion)
+            {
+                cmd.Append(@"
+ and lm.Version = (
+	select MAX(l.Version)
+	from LineMappingBalancing l
+	where l.StyleUKey = lm.StyleUKey
+	and l.FactoryID = lm.FactoryID
+	and l.Phase = lm.Phase
+    and l.SewingLineID = lm.SewingLineID
+	group by l.StyleUKey, l.FactoryID,l.Phase,l.SewingLineID
+ )
+");
+            }
+
+            cmd.Append(@"
+select     
+	t.FactoryID,
+	t.StyleID,
+	t.ComboType,
+	t.SeasonID,
+    t.Phase,
+	t.BrandID,
+    t.SewingLineID,
+    t.Team,
+	t.Version,
+	t.No,
+	MachineTypeID = MachineType.Val,
+	MasterPlusGroup = MasterPlusGroup.Val,
+	Operation = Operation.Val,
+	Annotation = Annotation.Val,
+	GSDTime = DetailSum.TotalGSD,
+	CycleTime = DetailSum.TotalCycle ,
+	Eff= iif(DetailSum.TotalCycle = 0,0,ROUND(DetailSum.TotalGSD/ DetailSum.TotalCycle,2)*100),
+    t.IsFrom
+from #tmp t
+OUTER APPLY(
+	select Val = STUFF( (
+		select DISTINCT ',' + MachineTypeID
+		from #LineMappingBalancing_Detail lmdd
+		where t.ID = lmdd.ID and t.No=lmdd.No
+		FOR XML PATH('')
+		),1,1,'')
+)MachineType
+OUTER APPLY(
+	select Val = STUFF( (
+		select DISTINCT ',' + MasterPlusGroup
+		from #LineMappingBalancing_Detail lmdd
+		where t.ID = lmdd.ID and t.No=lmdd.No
+		FOR XML PATH('')
+		),1,1,'')
+)MasterPlusGroup
+OUTER APPLY(
+	select Val = STUFF( (
+		select DISTINCT ',' + o.DescEN 
+		from #LineMappingBalancing_Detail lmdd
+		inner join Operation o on lmdd.OperationID = o.ID
+		where t.ID = lmdd.ID and t.No=lmdd.No
+		FOR XML PATH('')
+		),1,1,'')
+)Operation
+OUTER APPLY(
+	select Val = STUFF( (
+		select DISTINCT ',' + Annotation
+		from #LineMappingBalancing_Detail lmdd
+		where t.ID = lmdd.ID and t.No=lmdd.No
+		FOR XML PATH('')
+		),1,1,'')
+)Annotation
+OUTER APPLY(
+	select TotalCycle = SUM(lmdd.Cycle) * 1.0 ,TotalGSD = SUM(lmdd.GSD) * 1.0
+	from #LineMappingBalancing_Detail lmdd
+	where t.ID = lmdd.ID and t.No=lmdd.No
+)DetailSum
+
+
+");
+
+            cmd.Append(Environment.NewLine + "DROP TABLE #tmp,#LineMappingBalancing,#LineMappingBalancing_Detail ");
+            return cmd;
+        }
+
+        private StringBuilder GetSummaryP03()
+        {
+            StringBuilder cmd = new StringBuilder();
+
+            #region Inline & Sewing Date is not null
+
+            if (this.dateSewingDate.Value1.HasValue || this.dateSewingDate.Value2.HasValue || this.dateInlineDate.Value1.HasValue || this.dateInlineDate.Value2.HasValue)
+            {
+                string dateQuery = string.Empty;
+                if (!MyUtility.Check.Empty(this.dateInlineDate.Value1))
+                {
+                    dateQuery += string.Format("and '{0}' <= convert(varchar(10), ss.Inline, 120) ", this.dateInlineDate.Value1.Value.ToString("yyyy-MM-dd"));
+                }
+
+                if (!MyUtility.Check.Empty(this.dateInlineDate.Value2))
+                {
+                    dateQuery += string.Format("and convert(varchar(10), ss.Inline, 120) <= '{0}' ", this.dateInlineDate.Value2.Value.ToString("yyyy-MM-dd"));
+                }
+
+                if (!MyUtility.Check.Empty(this.dateSewingDate.Value1))
+                {
+                    dateQuery += $@" 
+and (convert(date,ss.Inline) >= '{this.dateSewingDate.Value1.Value.ToString("yyyy/MM/dd")}' or ('{this.dateSewingDate.Value1.Value.ToString("yyyy/MM/dd")}' between convert(date,ss.Inline) and convert(date,ss.Offline)))";
+                }
+
+                if (!MyUtility.Check.Empty(this.dateSewingDate.Value2))
+                {
+                    dateQuery += $@" 
+and (convert(date,ss.Offline) <= '{this.dateSewingDate.Value2.Value.ToString("yyyy/MM/dd")}' or ('{this.dateSewingDate.Value2.Value.ToString("yyyy/MM/dd")}' between convert(date,ss.Inline) and convert(date,ss.Offline)))";
+                }
+
+                cmd.Append($@"
+select *
+INTO #LineMapping
+from LineMapping t WITH (NOLOCK) 
+where exists(
+	select 1
+	from SewingSchedule ss
+	join Orders o on ss.OrderID = o.ID
+	where 1=1
+	{dateQuery}
+	and o.StyleID = t.StyleID and o.SeasonID = t.SeasonID and o.BrandID = t.BrandID
+ )
+
+");
+            }
+            #endregion
+
+            if (!MyUtility.Check.Empty(this.factory))
+            {
+                cmd.Append(string.Format(" and t.FactoryID = '{0}'", this.factory));
+            }
+
+            if (!MyUtility.Check.Empty(this.style))
+            {
+                cmd.Append(string.Format(" and t.StyleID = '{0}'", this.style));
+            }
+
+            if (!MyUtility.Check.Empty(this.season))
+            {
+                cmd.Append(string.Format(" and t.SeasonID = '{0}'", this.season));
+            }
+
+            if (!MyUtility.Check.Empty(this.team))
+            {
+                cmd.Append(string.Format(" and t.Team = '{0}'", this.team));
+            }
+
+            if (!MyUtility.Check.Empty(this.phase))
+            {
+                cmd.Append(string.Format(" and t.Phase = '{0}'", this.phase));
+            }
+
+            cmd.Append(@"
+
+select lmd.*
+INTO #LineMapping_Detail
+from #LineMapping lm
+inner join LineMapping_Detail lmd WITH (NOLOCK) on lm.ID = lmd.ID
+
+select distinct
+	f.CountryID,
+	lm.FactoryID,
+	lm.StyleID,
+	lm.ComboType,
+	lm.SeasonID,
+    lm.Phase,
+	lm.BrandID,
+	s.Description,
+	lm.Version,
+	lm.SewingLineID,
+	lm.Team,
+
+	---- 公式：[Target / Hr.(100%)] * [No. of Hours]
+	[Daily Demand / Shift] = ((3600.0 * lm.CurrentOperators) / lm.TotalCycle) * lm.Workhour,
+
+	[Current # of Optrs] = Cast( lm.CurrentOperators as int),
+
+	---- 公式：( 3600 * [Current # of Optrs] ) / [Total Cycle Time]
+	[Target/Hr. (100%)] = (3600.0 * lm.CurrentOperators) / lm.TotalCycle,
+
+	---- 公式：( 3600 * [No. of Hours] ) / [Daily Demand / Shift]
+	[Takt Time] = ( 3600.0 * lm.Workhour ) / ( ((3600.0 * lm.CurrentOperators) / lm.TotalCycle) * lm.Workhour ),
+
+	[Total GSD Time] = lm.TotalGSD * 1.0,
+	[Total Cycle Time] = lm.TotalCycle * 1.0,
+	
+	---- 公式: [Total Cycle Time] / [Current # of Optrs]
+	[Avg. Cycle Time] = 1.0 * lm.TotalCycle / lm.CurrentOperators,
+
+	[CPU / PC] = s.CPU,
+	[No. of Hours] = lm.Workhour,
+
+    ---- P03 為空
+	[Optrs of Presser] = 0,
+    ---- P03 為空
+	[Optrs of Packer] = 0,
+
+	---- 公式：3600 / [Highest Cycle Time]
+	[EOLR] = 3600.0 / lm.HighestCycle,
+
+	[Efficiency %] = IIF(lm.HighestCycle*lm.CurrentOperators = 0 ,0 , 1.0 * lm.TotalGSD / lm.HighestCycle / lm.CurrentOperators ) ,
+
+	---- P03 公式：[Total Cycle Time] / [HighestCycle] / [Current # of Optrs] * 100
+	[Line Balancing %] = 1.0 * lm.TotalCycle / lm.HighestCycle / lm.CurrentOperators * 100,
+
+	[Target Line Balancing% ]= (select top 1 co.Target from ChgOverTarget co where co.Type = 'LBR') ,
+	[Not Hit Target Type] = ISNULL(i.TypeGroup ,'') ,
+	[Total No. of Not Hit Target ] = iif(lm.Version = 1,0,(select cnt = iif(count(*) = 0, '', cast(count(1) as varchar))
+                    from (
+	                    select distinct l2.NO, l2.IEReasonLBRNotHit_DetailUkey
+	                    from #LineMapping_Detail l2 WITH (NOLOCK)
+	                    where lm.ID = l2.ID
+	                    and ISNULL(l2.IEReasonLBRNotHit_DetailUkey, '') <> ''
+                    )a )),
+	[Not Hit Target Reason]=ISNULL(i.Name ,'') ,
+
+	---- 公式：[Total Cycle time] / [Takt Time] / [Current # of Optrs] * 100
+	[Lean Line Eff %] = 1.0 * lm.TotalCycle / ( ( 3600.0 * lm.Workhour ) / ( ((3600.0 * lm.CurrentOperators) / lm.TotalCycle) * lm.Workhour )) / lm.CurrentOperators * 100,
+
+	---- 公式：( [EOLR] * [CPU / PC] ) / [Current # of Optrs]
+	[PPH] = ( ( 3600.0 / lm.HighestCycle) * s.CPU ) / lm.CurrentOperators,
+
+	lm.Status,
+	[GSD Status] = lm.TimeStudyPhase,
+	[GSDVersion] = lm.TimeStudyVersion,
+	lm.AddName,
+	lm.AddDate,
+	lm.EditName,
+	lm.EditDate,
+    IsFrom = 'IE P03'
+from #LineMapping lm WITH (NOLOCK) 
+inner join Factory f on f.ID = lm.FactoryID
+inner join Style s on s.Ukey = lm.StyleUKey
+left join IEReasonLBRnotHit_1st i on i.Ukey = lm.IEReasonLBRNotHit_1stUkey
+outer apply(
+	select top 1 c.Target
+	from factory f
+	left join ChgOverTarget c on c.MDivisionID= f.MDivisionID and c.EffectiveDate < iif(lm.Editdate is null,lm.adddate,lm.Editdate) and c. Type ='LBR'
+	where f.id = lm.factoryid
+	order by EffectiveDate desc
+)LinebalancingTarget 
+where 1 = 1
+");
+
+            if (this.bolBalancing)
+            {
+                cmd.Append(@"
+and IIF(lm.HighestCycle*lm.CurrentOperators = 0,0,CONVERT(DECIMAL,lm.TotalCycle)/lm.HighestCycle/lm.CurrentOperators) * 100 < LinebalancingTarget.Target
+");
+            }
+
+            if (this.latestVersion)
+            {
+                cmd.Append(@"
+ and lm.Version = (
+	select MAX(l.Version)
+	from LineMapping l
+	where l.StyleUKey = lm.StyleUKey
+	and l.FactoryID = lm.FactoryID
+	and l.Phase = lm.Phase
+    and l.SewingLineID = lm.SewingLineID
+	group by l.StyleUKey, l.FactoryID,l.Phase,l.SewingLineID
+ )
+");
+            }
+
+            cmd.Append(Environment.NewLine + "DROP TABLE #LineMapping,#LineMapping_Detail ");
+
+            return cmd;
+        }
+
+        private StringBuilder GetSummaryP05()
+        {
+            StringBuilder cmd = new StringBuilder();
+
+            #region Inline & Sewing Date is not null
+
+            if (this.dateSewingDate.Value1.HasValue || this.dateSewingDate.Value2.HasValue || this.dateInlineDate.Value1.HasValue || this.dateInlineDate.Value2.HasValue)
+            {
+                string dateQuery = string.Empty;
+                if (!MyUtility.Check.Empty(this.dateInlineDate.Value1))
+                {
+                    dateQuery += string.Format("and '{0}' <= convert(varchar(10), ss.Inline, 120) ", this.dateInlineDate.Value1.Value.ToString("yyyy-MM-dd"));
+                }
+
+                if (!MyUtility.Check.Empty(this.dateInlineDate.Value2))
+                {
+                    dateQuery += string.Format("and convert(varchar(10), ss.Inline, 120) <= '{0}' ", this.dateInlineDate.Value2.Value.ToString("yyyy-MM-dd"));
+                }
+
+                if (!MyUtility.Check.Empty(this.dateSewingDate.Value1))
+                {
+                    dateQuery += $@" 
+and (convert(date,ss.Inline) >= '{this.dateSewingDate.Value1.Value.ToString("yyyy/MM/dd")}' or ('{this.dateSewingDate.Value1.Value.ToString("yyyy/MM/dd")}' between convert(date,ss.Inline) and convert(date,ss.Offline)))";
+                }
+
+                if (!MyUtility.Check.Empty(this.dateSewingDate.Value2))
+                {
+                    dateQuery += $@" 
+and (convert(date,ss.Offline) <= '{this.dateSewingDate.Value2.Value.ToString("yyyy/MM/dd")}' or ('{this.dateSewingDate.Value2.Value.ToString("yyyy/MM/dd")}' between convert(date,ss.Inline) and convert(date,ss.Offline)))";
+                }
+
+                cmd.Append($@"
+select *
+INTO #AutomatedLineMapping
+from AutomatedLineMapping t WITH (NOLOCK) 
+where exists(
+	select 1
+	from SewingSchedule ss
+	join Orders o on ss.OrderID = o.ID
+	where 1=1
+	{dateQuery}
+	and o.StyleID = t.StyleID and o.SeasonID = t.SeasonID and o.BrandID = t.BrandID
+ )
+
+");
+            }
+            #endregion
+
+            if (!MyUtility.Check.Empty(this.factory))
+            {
+                cmd.Append(string.Format(" and t.FactoryID = '{0}'", this.factory));
+            }
+
+            if (!MyUtility.Check.Empty(this.style))
+            {
+                cmd.Append(string.Format(" and t.StyleID = '{0}'", this.style));
+            }
+
+            if (!MyUtility.Check.Empty(this.season))
+            {
+                cmd.Append(string.Format(" and t.SeasonID = '{0}'", this.season));
+            }
+
+            if (!MyUtility.Check.Empty(this.phase))
+            {
+                cmd.Append(string.Format(" and t.Phase = '{0}'", this.phase));
+            }
+
+            cmd.Append(@"
+select lmd.*
+INTO #AutomatedLineMapping_Detail
+from #AutomatedLineMapping lm
+inner join AutomatedLineMapping_Detail lmd WITH (NOLOCK) on lm.ID = lmd.ID
+
+select distinct
+	f.CountryID,
+	lm.FactoryID,
+	lm.StyleID,
+	lm.ComboType,
+	lm.SeasonID,
+    lm.Phase,
+	lm.BrandID,
+	s.Description,
+	lm.Version,
+	SewingLineID = '',
+	Team = '',
+
+	---- 公式：P05沒有TotalCycle，所以為0
+	[Daily Demand / Shift] = 0.0,
+
+	[Current # of Optrs] = Cast( lm.SewerManpower as int),
+
+	---- 公式：P05沒有TotalCycle，所以為0
+	[Target/Hr. (100%)] = 0.0,
+
+	---- 公式：P05沒有TotalCycle，所以為0
+	[Takt Time] = 0.0,
+
+	[Total GSD Time] = lm.TotalGSDTime * 1.0,
+	[Total Cycle Time] = 0.0,
+	
+	---- 公式: P05沒有TotalCycle，所以為0
+	[Avg. Cycle Time] = 0.0,
+
+	[CPU / PC] = s.CPU,
+	[No. of Hours] = lm.Workhour,
+
+	[Optrs of Presser] = Cast( lm.PresserManpower as int),
+	[Optrs of Packer] =  Cast( lm.PackerManpower as int),
+
+	---- 公式：P05沒有Cycle，所以為0
+	[EOLR] = 0.0,
+
+	---- P05/P06呈現空白
+	[Efficiency %] = 0.0 ,
+
+	---- P05 公式：P05沒有TotalCycle，所以為0
+	[Line Balancing %] = 0.0,
+
+	[Target Line Balancing% ]= (select top 1 co.Target from ChgOverTarget co where co.Type = 'LBR') ,
+	[Not Hit Target Type] = '',
+	[Total No. of Not Hit Target ] = iif(lm.Version = 1,0,(select cnt = iif(count(*) = 0, '', cast(count(1) as varchar))
+                    from (
+	                    select distinct l2.NO, l2.Ukey
+	                    from #AutomatedLineMapping_Detail l2 WITH (NOLOCK)
+	                    where lm.ID = l2.ID
+	                    and ISNULL(l2.Ukey, '') <> ''
+                    )a )),
+	[Not Hit Target Reason] = '',
+
+	---- 公式：P05沒有TotalCycle，所以為0
+	[Lean Line Eff %] = 0.0,
+	
+	---- 公式：P05沒有Cycle，所以為0
+	[PPH] = 0.0,
+
+	lm.Status,
+	[GSD Status] = lm.TimeStudyStatus,
+	[GSDVersion] = lm.TimeStudyVersion,
+	lm.AddName,
+	lm.AddDate,
+	lm.EditName,
+	lm.EditDate,
+    IsFrom = 'IE P05'
+from #AutomatedLineMapping lm WITH (NOLOCK) 
+inner join Factory f on f.ID = lm.FactoryID
+inner join Style s on s.Ukey = lm.StyleUKey
+where 1 = 1
+");
+
+            if (this.latestVersion)
+            {
+                cmd.Append(@"
+ and lm.Version = (
+	select MAX(l.Version)
+	from #AutomatedLineMapping l
+	where l.StyleUKey = lm.StyleUKey
+	and l.FactoryID = lm.FactoryID
+	and l.Phase = lm.Phase
+	group by l.StyleUKey, l.FactoryID,l.Phase
+ )
+");
+            }
+
+            cmd.Append(Environment.NewLine + "DROP TABLE #AutomatedLineMapping,#AutomatedLineMapping_Detail ");
+
+            return cmd;
+        }
+
+        private StringBuilder GetSummaryP06()
+        {
+            StringBuilder cmd = new StringBuilder();
+
+            #region Inline & Sewing Date is not null
+
+            if (this.dateSewingDate.Value1.HasValue || this.dateSewingDate.Value2.HasValue || this.dateInlineDate.Value1.HasValue || this.dateInlineDate.Value2.HasValue)
+            {
+                string dateQuery = string.Empty;
+                if (!MyUtility.Check.Empty(this.dateInlineDate.Value1))
+                {
+                    dateQuery += string.Format("and '{0}' <= convert(varchar(10), ss.Inline, 120) ", this.dateInlineDate.Value1.Value.ToString("yyyy-MM-dd"));
+                }
+
+                if (!MyUtility.Check.Empty(this.dateInlineDate.Value2))
+                {
+                    dateQuery += string.Format("and convert(varchar(10), ss.Inline, 120) <= '{0}' ", this.dateInlineDate.Value2.Value.ToString("yyyy-MM-dd"));
+                }
+
+                if (!MyUtility.Check.Empty(this.dateSewingDate.Value1))
+                {
+                    dateQuery += $@" 
+and (convert(date,ss.Inline) >= '{this.dateSewingDate.Value1.Value.ToString("yyyy/MM/dd")}' or ('{this.dateSewingDate.Value1.Value.ToString("yyyy/MM/dd")}' between convert(date,ss.Inline) and convert(date,ss.Offline)))";
+                }
+
+                if (!MyUtility.Check.Empty(this.dateSewingDate.Value2))
+                {
+                    dateQuery += $@" 
+and (convert(date,ss.Offline) <= '{this.dateSewingDate.Value2.Value.ToString("yyyy/MM/dd")}' or ('{this.dateSewingDate.Value2.Value.ToString("yyyy/MM/dd")}' between convert(date,ss.Inline) and convert(date,ss.Offline)))";
+                }
+
+                cmd.Append($@"
+select *
+INTO #LineMappingBalancing
+from LineMappingBalancing t WITH (NOLOCK) 
+where exists(
+	select 1
+	from SewingSchedule ss
+	join Orders o on ss.OrderID = o.ID
+	where 1=1
+	{dateQuery}
+	and o.StyleID = t.StyleID and o.SeasonID = t.SeasonID and o.BrandID = t.BrandID
+ )
+
+");
+            }
+            #endregion
+
+            if (!MyUtility.Check.Empty(this.factory))
+            {
+                cmd.Append(string.Format(" and t.FactoryID = '{0}'", this.factory));
+            }
+
+            if (!MyUtility.Check.Empty(this.style))
+            {
+                cmd.Append(string.Format(" and t.StyleID = '{0}'", this.style));
+            }
+
+            if (!MyUtility.Check.Empty(this.season))
+            {
+                cmd.Append(string.Format(" and t.SeasonID = '{0}'", this.season));
+            }
+
+            if (!MyUtility.Check.Empty(this.team))
+            {
+                cmd.Append(string.Format(" and t.Team = '{0}'", this.team));
+            }
+
+            if (!MyUtility.Check.Empty(this.phase))
+            {
+                cmd.Append(string.Format(" and t.Phase = '{0}'", this.phase));
+            }
+
+            cmd.Append(@"
+
+select lmd.*
+INTO #LineMappingBalancing_Detail
+from #LineMappingBalancing lm
+inner join LineMappingBalancing_Detail lmd WITH (NOLOCK) on lm.ID = lmd.ID
+
+select distinct
+	f.CountryID,
+	lm.FactoryID,
+	lm.StyleID,
+	lm.ComboType,
+	lm.SeasonID,
+    lm.Phase,
+	lm.BrandID,
+	s.Description,
+	lm.Version,
+	lm.SewingLineID,
+	lm.Team,
+
+	---- 公式：[Target / Hr.(100%)] * [No. of Hours]
+	[Daily Demand / Shift] = ((3600.0 * lm.SewerManpower) / lm.TotalCycleTime) * lm.Workhour,
+
+	[Current # of Optrs] = Cast(lm.SewerManpower as int),
+
+	---- 公式：( 3600 * [Current # of Optrs] ) / [Total Cycle Time]
+	[Target/Hr. (100%)] = (3600.0 * lm.SewerManpower) / lm.TotalCycleTime,
+
+	---- 公式：( 3600 * [No. of Hours] ) / [Daily Demand / Shift]
+	[Takt Time] = ( 3600.0 * lm.Workhour ) / ( ((3600.0 * lm.SewerManpower) / lm.TotalCycleTime) * lm.Workhour ),
+
+	[Total GSD Time] = lm.TotalGSDTime * 1.0,
+	[Total Cycle Time] = lm.TotalCycleTime * 1.0,
+	
+	---- 公式: [Total Cycle Time] / [Current # of Optrs]
+	[Avg. Cycle Time] = 1.0 * lm.TotalCycleTime / lm.SewerManpower,
+
+	[CPU / PC] = s.CPU,
+	[No. of Hours] = lm.Workhour,
+
+    ---- P03 為空
+	[Optrs of Presser] = Cast( lm.PresserManpower as int),
+    ---- P03 為空
+	[Optrs of Packer] = Cast( lm.PackerManpower as int),
+
+	---- 公式：3600 / [Highest Cycle Time]
+	[EOLR] = 3600.0 / lm.HighestCycleTime,
+
+	[Efficiency %] = IIF(lm.HighestCycleTime*lm.SewerManpower = 0 ,0 , 1.0 * lm.TotalGSDTime / lm.HighestCycleTime / lm.SewerManpower ) ,
+
+	---- P03 公式：[Total Cycle Time] / [HighestCycle] / [Current # of Optrs] * 100
+	[Line Balancing %] = 1.0 * lm.TotalCycleTime / lm.HighestCycleTime / lm.SewerManpower * 100,
+
+	[Target Line Balancing% ]= (select top 1 co.Target from ChgOverTarget co where co.Type = 'LBR') ,
+	[Not Hit Target Type] = '',
+	[Total No. of Not Hit Target ] = iif(lm.Version = 1,0,(select cnt = iif(count(*) = 0, '', cast(count(1) as varchar))
+                    from (
+	                    select distinct l2.NO, l2.Ukey
+	                    from #LineMappingBalancing_Detail l2 WITH (NOLOCK)
+	                    where lm.ID = l2.ID
+	                    and ISNULL(l2.Ukey, '') <> ''
+                    )a )),
+	[Not Hit Target Reason]='',
+
+	---- 公式：[Total Cycle time] / [Takt Time] / [Current # of Optrs] * 100
+	[Lean Line Eff %] = 1.0 * lm.TotalCycleTime / ( ( 3600.0 * lm.Workhour ) / ( ((3600.0 * lm.SewerManpower) / lm.TotalCycleTime) * lm.Workhour )) / lm.SewerManpower * 100,
+
+	---- 公式：( [EOLR] * [CPU / PC] ) / [Current # of Optrs]
+	[PPH] = ( ( 3600.0 / lm.HighestCycleTime) * s.CPU ) / lm.SewerManpower,
+
+	lm.Status,
+	[GSD Status] = lm.TimeStudyStatus,
+	[GSDVersion] = lm.TimeStudyVersion,
+	lm.AddName,
+	lm.AddDate,
+	lm.EditName,
+	lm.EditDate,
+    IsFrom = 'IE P03'
+from #LineMappingBalancing lm WITH (NOLOCK) 
+inner join Factory f on f.ID = lm.FactoryID
+inner join Style s on s.Ukey = lm.StyleUKey
+outer apply(
+	select top 1 c.Target
+	from factory f
+	left join ChgOverTarget c on c.MDivisionID= f.MDivisionID and c.EffectiveDate < iif(lm.Editdate is null,lm.adddate,lm.Editdate) and c. Type ='LBR'
+	where f.id = lm.factoryid
+	order by EffectiveDate desc
+)LinebalancingTarget 
+where 1 = 1
+");
+
+            if (this.bolBalancing)
+            {
+                cmd.Append(@"
+and IIF(lm.HighestCycleTime*lm.SewerManpower = 0,0,CONVERT(DECIMAL,lm.TotalCycleTime)/lm.HighestCycleTime/lm.SewerManpower) * 100 < LinebalancingTarget.Target
+");
+            }
+
+            if (this.latestVersion)
+            {
+                cmd.Append(@"
+ and lm.Version = (
+	select MAX(l.Version)
+	from #LineMappingBalancing l
+	where l.StyleUKey = lm.StyleUKey
+	and l.FactoryID = lm.FactoryID
+	and l.Phase = lm.Phase
+    and l.SewingLineID = lm.SewingLineID
+	group by l.StyleUKey, l.FactoryID,l.Phase,l.SewingLineID
+ )
+");
+            }
+
+            cmd.Append(Environment.NewLine + "DROP TABLE #LineMappingBalancing,#LineMappingBalancing_Detail ");
+
+            return cmd;
         }
     }
 }
