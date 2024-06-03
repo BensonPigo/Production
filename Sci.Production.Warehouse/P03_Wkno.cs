@@ -29,6 +29,7 @@ this.dr["seq2"].ToString());
 
             string selectCommand1 = $@"
 SELECT   a.id
+       , a.Packages
        , a.ETD
 	   , a.ETA
 	   , a.WhseArrival
@@ -70,6 +71,7 @@ And b.seq2 = '{this.dr["Seq2"]}'
             this.gridWkno.DataSource = this.bindingSource1;
             this.Helper.Controls.Grid.Generator(this.gridWkno)
                  .Text("id", header: "WK#", width: Widths.AnsiChars(16))
+                 .Numeric("Packages", header: "Packages", width: Widths.AnsiChars(8), integer_places: 5, decimal_places: 0)
                  .Date("ETD", header: "ETD", width: Widths.AnsiChars(11))
                  .Date("ETA", header: "ETA", width: Widths.AnsiChars(11))
                  .Date("WhseArrival", header: "Arrive W/H Date", width: Widths.AnsiChars(12))
