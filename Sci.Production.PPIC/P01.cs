@@ -216,6 +216,10 @@ namespace Sci.Production.PPIC
             this.displayMTLCmpltSP.Value = MyUtility.Convert.GetString(this.CurrentMaintain["MTLComplete"]).ToUpper() == "TRUE" ? "Y" : string.Empty;
             this.displayOutstandingReason2.Value = MyUtility.GetValue.Lookup(string.Format("select Name from Reason WITH (NOLOCK) where ReasonTypeID = 'Delivery_OutStand' and ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["OutstandingReason"])));
             this.displayFinalUpdateOutstandingReasondate.Value = MyUtility.Check.Empty(this.CurrentMaintain["OutstandingDate"]) ? string.Empty : Convert.ToDateTime(this.CurrentMaintain["OutstandingDate"]).ToString(string.Format("{0}", Env.Cfg.DateTimeStringFormat));
+
+            bool isOrganicCotton = MyUtility.Convert.GetBool(MyUtility.GetValue.Lookup($@"select dbo.IsSustainableMaterial('{this.CurrentMaintain["ID"]}','')"));
+            this.checkOrganicCotton.Checked = isOrganicCotton;
+
             #region 填Description, Exception Form, Fty Remark, Style Apv欄位值
             string sqlCmd = string.Format(
                 @"
