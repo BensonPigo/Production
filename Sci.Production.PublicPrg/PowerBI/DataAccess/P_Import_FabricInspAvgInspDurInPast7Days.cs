@@ -53,14 +53,14 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             SELECT
             [TransferDate] = A.TransferDate
             ,[FactoryID] = A.FactoryID
-            ,[AvgInspDurInPast7Days] = IIF(SUM(A.SumofDuration) = 0, 0, CAST(SUM(A.SumofDuration) / A.DataCount AS DECIMAL(10, 2)))
+            ,[AvgInspDurInPast7Days] = IIF(SUM(A.SumofDuration) = 0, 0, ROUND(CAST(SUM(A.SumofDuration) as FLOAT) / A.DataCount, 2))
             into #tmp
             FROM
             (
 	            select 
-	            [TransferDate] =  FORMAT(P.PhysicalInspDate, 'yyyy/MM/dd')
+	            [TransferDate] =  FORMAT(GETDATE(), 'yyyy/MM/dd')
 	            ,[FactoryID] = F.FTYGroup
-	            ,[SumofDuration ] = datediff(day,ArriveWHDate,PhysicalInspDate)
+	            ,[SumofDuration ] = datediff(day,FORMAT(P.ArriveWHDate, 'yyyy/MM/dd'),FORMAT(P.PhysicalInspDate, 'yyyy/MM/dd'))
 	            ,[DataCount] = op_Count.val
 	            from P_FabricInspLabSummaryReport P
 	            inner join MainServer.Production.dbo.Factory F on P.FactoryID = F.ID AND F.IsProduceFty=1 and F.Junk=0
@@ -70,8 +70,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 		            FROM P_FabricInspLabSummaryReport op
                     INNER JOIN MainServer.Production.dbo.Factory opF ON op.FactoryID = opF.ID AND opF.IsProduceFty = 1 AND opF.Junk = 0
 		            where 
-		            FORMAT(op.PhysicalInspDate, 'yyyy/MM/dd') = FORMAT(P.PhysicalInspDate, 'yyyy/MM/dd')
-                    AND op.PhysicalInspDate BETWEEN @StartDate and @EndDate
+		            op.PhysicalInspDate BETWEEN @StartDate and @EndDate
 		            AND opF.FTYGroup = F.FTYGroup
                     AND op.PhysicalInspDate IS NOT NULL 
                     AND op.ArriveWHDate IS NOT NULL
@@ -82,13 +81,9 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 AND P.PhysicalInspDate IS NOT NULL 
                 AND P.ArriveWHDate IS NOT NULL
                 AND P.Category = 'Bulk'
-                AND P.NAPhysical <> 'Y'
-	            GROUP BY FORMAT(P.PhysicalInspDate, 'yyyy/MM/dd'), F.FTYGroup,op_Count.val,ArriveWHDate,PhysicalInspDate
-	
+                AND P.NAPhysical <> 'Y'	
             )A
             GROUP BY A.TransferDate, A.FactoryID,A.DataCount
-            
-            
 
             ----更新
             UPDATE P SET
