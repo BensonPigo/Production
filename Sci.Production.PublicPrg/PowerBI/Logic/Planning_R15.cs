@@ -1165,7 +1165,7 @@ namespace Sci.Production.Prg.PowerBI.Logic
                 string subprocessQtyColumnGroup = ", ss.SubProcessStatus";
                 if (model.FormParameter == "2")
                 {
-                    subprocessQtyColumns_Line = model.SubprocessID.Split(',').Length > 1 ? this.MultiSuboricessColumns(0, model.SubprocessID, 2) : this.SingleSubprocessColumn(0, model.SubprocessID, 2);
+                    subprocessQtyColumns_Line = model.SubprocessID.Split(',').Length > 1 ? this.MultiSuboricessColumns(2, model.SubprocessID, 2) : this.SingleSubprocessColumn(2, model.SubprocessID, 2);
                     subprocessQtyColumnsSource_Line = string.Empty;
                     subprocessQtyColumnGroup = string.Empty;
                 }
