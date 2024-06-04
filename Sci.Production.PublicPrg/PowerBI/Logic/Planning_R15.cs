@@ -262,7 +262,14 @@ namespace Sci.Production.Prg.PowerBI.Logic
                 foreach (var item in subprocessIDs)
                 {
                     string subprocessIDtmp = Prgs.SubprocesstmpNoSymbol(item);
-                    subprocessQtyColumnsSource += $@"left join #{subprocessIDtmp} on #{subprocessIDtmp}.OrderID = t.OrderID" + Environment.NewLine;
+                    if (model.SummaryBy == "1")
+                    {
+                        subprocessQtyColumnsSource += $@"left join #{subprocessIDtmp} on #{subprocessIDtmp}.OrderID = t.OrderID" + Environment.NewLine;
+                    }
+                    else
+                    {
+                        subprocessQtyColumnsSource += $@"left join #{subprocessIDtmp} on #{subprocessIDtmp}.OrderID = t.OrderID and #{subprocessIDtmp}.Article = t.Article and #{subprocessIDtmp}.SizeCode = t.SizeCode " + Environment.NewLine;
+                    }
                 }
             }
 
@@ -304,7 +311,7 @@ namespace Sci.Production.Prg.PowerBI.Logic
                         and SubProcessID in ('{string.Join("','", subprocessIDs)}')
                         group by s.OrderID, s.Article, s.SizeCode, s.SubprocessID 
                     )s
-                    group by s.OrderID, s.SubprocessID ";
+                    group by s.OrderID, s.SubprocessID " + Environment.NewLine;
                 }
                 else
                 {
@@ -320,7 +327,7 @@ namespace Sci.Production.Prg.PowerBI.Logic
                     from SetQtyBySubprocess s WITH (NOLOCK)
                     where exists (select 1 from #tmp_SetQtyBySubprocess_Last t where t.OrderID = s.OrderID and t.SubProcessID = s.SubProcessID and t.TransferTime = s.TransferTime)
                     and SubProcessID in ('{string.Join("','", subprocessIDs)}')
-                    group by s.OrderID, s.Article, s.SizeCode, s.SubprocessID ";
+                    group by s.OrderID, s.Article, s.SizeCode, s.SubprocessID" + Environment.NewLine;
                 }
 
                 foreach (var item in subprocessIDs)
@@ -950,11 +957,11 @@ namespace Sci.Production.Prg.PowerBI.Logic
                 sqlCmd += $@" order by {model.OrderBy}" + Environment.NewLine;
 
                 sqlCmd += $@" drop table #cte, #cte2, #tmp_PackingList_Detail, #imp_LastSewnDate;" + Environment.NewLine;
-                foreach (string subprocess in subprocessIDs)
-                {
-                    string whereSubprocess = Prgs.SubprocesstmpNoSymbol(subprocess);
-                    sqlCmd += $@" drop table #{Prgs.SubprocesstmpNoSymbol(subprocess)};" + Environment.NewLine;
-                }
+                //foreach (string subprocess in subprocessIDs)
+                //{
+                //    string whereSubprocess = Prgs.SubprocesstmpNoSymbol(subprocess);
+                //    sqlCmd += $@" drop table #{Prgs.SubprocesstmpNoSymbol(subprocess)};" + Environment.NewLine;
+                //}
             }
             else
             {
@@ -1101,10 +1108,10 @@ namespace Sci.Production.Prg.PowerBI.Logic
 
                 sqlCmd += $@" order by {model.OrderBy}, t.Article, t.SizeCode" + Environment.NewLine;
                 sqlCmd += $@" drop table #cte, #cte2, #tmp_PackingList_Detail;" + Environment.NewLine;
-                foreach (string subprocess in subprocessIDs)
-                {
-                    sqlCmd += $@" drop table #{Prgs.SubprocesstmpNoSymbol(subprocess)};" + Environment.NewLine;
-                }
+                //foreach (string subprocess in subprocessIDs)
+                //{
+                //    sqlCmd += $@" drop table #{Prgs.SubprocesstmpNoSymbol(subprocess)};" + Environment.NewLine;
+                //}
             }
 
             if (model.SummaryBy == "3")
@@ -1158,7 +1165,7 @@ namespace Sci.Production.Prg.PowerBI.Logic
                 string subprocessQtyColumnGroup = ", ss.SubProcessStatus";
                 if (model.FormParameter == "2")
                 {
-                    subprocessQtyColumns_Line = model.SubprocessID.Split(',').Length > 1 ? this.MultiSuboricessColumns(2) : this.SingleSubprocessColumn(2);
+                    subprocessQtyColumns_Line = model.SubprocessID.Split(',').Length > 1 ? this.MultiSuboricessColumns(2, model.SubprocessID, 2) : this.SingleSubprocessColumn(2, model.SubprocessID, 2);
                     subprocessQtyColumnsSource_Line = string.Empty;
                     subprocessQtyColumnGroup = string.Empty;
                 }
