@@ -3489,7 +3489,7 @@ outer apply(
 outer apply (
 	select RFT=isnull(Convert(float(50),Convert(FLOAT(50), round(((A.InspectQty-A.RejectQty)/ nullif(A.InspectQty, 0))*100,2))),0) 
 	from RFT A with (nolock) 
-	where A.OrderID=t.OrderId and CDate = '{((DateTime)this.CurrentMaintain["OutputDate"]).ToString("yyyy/MM/dd")}'
+	where A.OrderID=t.OrderId and CDate = '{((DateTime)this.CurrentMaintain["OutputDate"]).ToString("yyyy/MM/dd")}' and SewinglineID = '{this.txtsewinglineLine.Text}' 
 ) as RFTInfo";
             result = MyUtility.Tool.ProcessWithDatatable(sewDt1, string.Empty, sqlcmd, out sewDt1, paramters: listPar);
             if (!result)
