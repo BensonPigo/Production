@@ -236,7 +236,7 @@ and SunriseNid != 0
         {
             if (e.Master == null)
             {
-                return null;
+                return base.OnDetailSelectCommandPrepare(e);
             }
 
             string masterID = MyUtility.Convert.GetString(e.Master["ID"]);
@@ -258,7 +258,7 @@ select  sd.*
         , o.StyleUkey
         , [OrderCategory] = o.Category
         , [StyleRepeat] = dbo.IsRepeatStyleBySewingOutput(s.FactoryID, s.OutputDate, s.SewinglineID, s.Team, o.StyleUkey)
-        , [DQSOutput] = InspInfo.DQSOutputCount
+        , [DQSOutput] = isnull(InspInfo.DQSOutputCount,0)
 from SewingOutput_Detail sd WITH (NOLOCK)
 left join Orders o with (nolock) on o.ID = sd.OrderID
 left join SewingOutput s WITH (NOLOCK) on sd.ID = s.ID
@@ -324,6 +324,7 @@ select  a.*
 	, [Variance] = a.OrderQty-a.AccumQty
 	, [BalQty] = a.OrderQty-a.AccumQty-a.QAQty
 	, [Seq] = isnull(os.Seq,0)
+    , [DQSOutput] = 0
 from AllQty a
 left join Orders o WITH (NOLOCK) on a.OrderId = o.ID
 left join Order_SizeCode os WITH (NOLOCK) on os.Id = o.POID and os.SizeCode = a.SizeCode
@@ -434,7 +435,7 @@ where   ss.FactoryID = '{0}'
                             dr["Color"] = string.Empty;
                             dr["QAOutput"] = string.Empty;
                             dr["TMS"] = 0;
-                            dr["RFT"] = "0.00%";
+                            dr["RFT"] = "0.00";
                             dr.EndEdit();
                             return;
                         }
@@ -1153,7 +1154,7 @@ and Team = @team
             }
             else
             {
-                dr["RFT"] = "0.00%";
+                dr["RFT"] = "0.00";
             }
 
             dr.EndEdit();
@@ -1273,7 +1274,6 @@ order by a.OrderId,os.Seq",
             this.CurrentMaintain["Shift"] = "D";
             this.CurrentMaintain["Team"] = "A";
             this.CurrentDetailData["AutoCreate"] = 0;
-            this.CurrentDetailData["RFT"] = "0.00%";
             this.CurrentMaintain["MDivisionID"] = Env.User.Keyword;
         }
 
