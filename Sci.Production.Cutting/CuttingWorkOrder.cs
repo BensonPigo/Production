@@ -20,7 +20,7 @@ namespace Sci.Production.Cutting
         /// <param name="tableMiddleName">傳入字串 P02: ForPlanning 或 P09:ForOutput </param>
         /// <param name="sqlConnection">sqlConnection</param>
         /// <returns>DualResult</returns>
-        public DualResult InsertWorkOrder_Distribute(string id, List<long> listWorkOrderUkey, string tableMiddleName, SqlConnection sqlConnection)
+        public static DualResult InsertWorkOrder_Distribute(string id, List<long> listWorkOrderUkey, string tableMiddleName, SqlConnection sqlConnection)
         {
             string whereWorkOrderUkey = listWorkOrderUkey.Select(s => s.ToString()).JoinToString(",");
             string sqlInsertWorkOrder_Distribute = $@"
