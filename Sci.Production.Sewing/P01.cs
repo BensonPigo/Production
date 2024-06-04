@@ -17,6 +17,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Transactions;
 using System.Windows.Forms;
+using static Ict.Win.WinAPI;
 
 namespace Sci.Production.Sewing
 {
@@ -234,17 +235,23 @@ and SunriseNid != 0
         /// <inheritdoc/>
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
-            if (e.Master == null)
-            {
-                return null;
-            }
+            string shift = string.Empty;
+            string masterID = string.Empty;
+            string outputDate = string.Empty;
+            string factoryID = string.Empty;
+            string sewingLineID = string.Empty;
+            string team = string.Empty;
 
-            string masterID = MyUtility.Convert.GetString(e.Master["ID"]);
-            string shift = e.Master["Shift"].EqualString("D") ? "Day" : e.Master["Shift"].EqualString("N") ? "Night" : string.Empty;
-            string outputDate = ((DateTime)e.Master["OutputDate"]).ToString("yyyy / MM / dd");
-            string factoryID = e.Master["FactoryID"].ToString();
-            string sewingLineID = e.Master["SewingLineID"].ToString();
-            string team = e.Master["Team"].ToString();
+            if (e.Master != null)
+            {
+                string shiftValue = e.Master["Shift"].ToString();
+                shift = shiftValue == "D" ? "Day" : shiftValue == "N" ? "Night" : string.Empty;
+                masterID = MyUtility.Convert.GetString(e.Master["ID"]);
+                outputDate = ((DateTime)e.Master["OutputDate"]).ToString("yyyy / MM / dd");
+                factoryID = e.Master["FactoryID"].ToString();
+                sewingLineID = e.Master["SewingLineID"].ToString();
+                team = e.Master["Team"].ToString();
+            }
 
             this.DetailSelectCommand =
                 $@"
@@ -258,7 +265,7 @@ select  sd.*
         , o.StyleUkey
         , [OrderCategory] = o.Category
         , [StyleRepeat] = dbo.IsRepeatStyleBySewingOutput(s.FactoryID, s.OutputDate, s.SewinglineID, s.Team, o.StyleUkey)
-        , [DQSOutput] = InspInfo.DQSOutputCount
+        , [DQSOutput] = isnull(InspInfo.DQSOutputCount,0)
 from SewingOutput_Detail sd WITH (NOLOCK)
 left join Orders o with (nolock) on o.ID = sd.OrderID
 left join SewingOutput s WITH (NOLOCK) on sd.ID = s.ID
@@ -270,7 +277,7 @@ outer apply( select top 1 * from Rft WITH (NOLOCK) where rft.OrderID = sd.OrderI
                                and rft.Team = s.Team) Rft
 outer apply(
     select DQSOutputCount=count(1) 
-    from ManufacturingExecution.dbo.Inspection tmpInsp
+    from dbo.[SciMES_Inspection] tmpInsp
     where tmpInsp.InspectionDate= '{outputDate}'
     and tmpInsp.FactoryID = '{factoryID}'
     and tmpInsp.Line = '{sewingLineID}'
@@ -434,7 +441,7 @@ where   ss.FactoryID = '{0}'
                             dr["Color"] = string.Empty;
                             dr["QAOutput"] = string.Empty;
                             dr["TMS"] = 0;
-                            dr["RFT"] = "0.00%";
+                            dr["RFT"] = "0.00";
                             dr.EndEdit();
                             return;
                         }
@@ -1153,7 +1160,7 @@ and Team = @team
             }
             else
             {
-                dr["RFT"] = "0.00%";
+                dr["RFT"] = "0.00";
             }
 
             dr.EndEdit();
@@ -1273,7 +1280,6 @@ order by a.OrderId,os.Seq",
             this.CurrentMaintain["Shift"] = "D";
             this.CurrentMaintain["Team"] = "A";
             this.CurrentDetailData["AutoCreate"] = 0;
-            this.CurrentDetailData["RFT"] = "0.00%";
             this.CurrentMaintain["MDivisionID"] = Env.User.Keyword;
         }
 
@@ -3483,7 +3489,7 @@ outer apply(
 outer apply (
 	select RFT=isnull(Convert(float(50),Convert(FLOAT(50), round(((A.InspectQty-A.RejectQty)/ nullif(A.InspectQty, 0))*100,2))),0) 
 	from RFT A with (nolock) 
-	where A.OrderID=t.OrderId
+	where A.OrderID=t.OrderId and CDate = '{((DateTime)this.CurrentMaintain["OutputDate"]).ToString("yyyy/MM/dd")}' and SewinglineID = '{this.txtsewinglineLine.Text}' 
 ) as RFTInfo";
             result = MyUtility.Tool.ProcessWithDatatable(sewDt1, string.Empty, sqlcmd, out sewDt1, paramters: listPar);
             if (!result)
