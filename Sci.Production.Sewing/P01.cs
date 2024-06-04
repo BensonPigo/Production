@@ -17,6 +17,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Transactions;
 using System.Windows.Forms;
+using static Ict.Win.WinAPI;
 
 namespace Sci.Production.Sewing
 {
@@ -234,17 +235,23 @@ and SunriseNid != 0
         /// <inheritdoc/>
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
-            if (e.Master == null)
-            {
-                return base.OnDetailSelectCommandPrepare(e);
-            }
+            string shift = string.Empty;
+            string masterID = string.Empty;
+            string outputDate = string.Empty;
+            string factoryID = string.Empty;
+            string sewingLineID = string.Empty;
+            string team = string.Empty;
 
-            string masterID = MyUtility.Convert.GetString(e.Master["ID"]);
-            string shift = e.Master["Shift"].EqualString("D") ? "Day" : e.Master["Shift"].EqualString("N") ? "Night" : string.Empty;
-            string outputDate = ((DateTime)e.Master["OutputDate"]).ToString("yyyy / MM / dd");
-            string factoryID = e.Master["FactoryID"].ToString();
-            string sewingLineID = e.Master["SewingLineID"].ToString();
-            string team = e.Master["Team"].ToString();
+            if (e.Master != null)
+            {
+                string shiftValue = e.Master["Shift"].ToString();
+                shift = shiftValue == "D" ? "Day" : shiftValue == "N" ? "Night" : string.Empty;
+                masterID = MyUtility.Convert.GetString(e.Master["ID"]);
+                outputDate = ((DateTime)e.Master["OutputDate"]).ToString("yyyy / MM / dd");
+                factoryID = e.Master["FactoryID"].ToString();
+                sewingLineID = e.Master["SewingLineID"].ToString();
+                team = e.Master["Team"].ToString();
+            }
 
             this.DetailSelectCommand =
                 $@"
@@ -324,7 +331,6 @@ select  a.*
 	, [Variance] = a.OrderQty-a.AccumQty
 	, [BalQty] = a.OrderQty-a.AccumQty-a.QAQty
 	, [Seq] = isnull(os.Seq,0)
-    , [DQSOutput] = 0
 from AllQty a
 left join Orders o WITH (NOLOCK) on a.OrderId = o.ID
 left join Order_SizeCode os WITH (NOLOCK) on os.Id = o.POID and os.SizeCode = a.SizeCode
@@ -3483,7 +3489,7 @@ outer apply(
 outer apply (
 	select RFT=isnull(Convert(float(50),Convert(FLOAT(50), round(((A.InspectQty-A.RejectQty)/ nullif(A.InspectQty, 0))*100,2))),0) 
 	from RFT A with (nolock) 
-	where A.OrderID=t.OrderId
+	where A.OrderID=t.OrderId and CDate = '{((DateTime)this.CurrentMaintain["OutputDate"]).ToString("yyyy/MM/dd")}'
 ) as RFTInfo";
             result = MyUtility.Tool.ProcessWithDatatable(sewDt1, string.Empty, sqlcmd, out sewDt1, paramters: listPar);
             if (!result)
