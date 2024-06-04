@@ -270,7 +270,7 @@ outer apply( select top 1 * from Rft WITH (NOLOCK) where rft.OrderID = sd.OrderI
                                and rft.Team = s.Team) Rft
 outer apply(
     select DQSOutputCount=count(1) 
-    from ManufacturingExecution.dbo.Inspection tmpInsp
+    from dbo.[SciMES_Inspection] tmpInsp
     where tmpInsp.InspectionDate= '{outputDate}'
     and tmpInsp.FactoryID = '{factoryID}'
     and tmpInsp.Line = '{sewingLineID}'
