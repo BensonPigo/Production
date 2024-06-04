@@ -17,10 +17,10 @@ namespace Sci.Production.Cutting
         /// </summary>
         /// <param name="id">Cutting.ID</param>
         /// <param name="listWorkOrderUkey">listWorkOrderUkey</param>
-        /// <param name="tableMiddleName">傳入字串 P02: ForPlanning  P09:ForOutput </param>
+        /// <param name="tableMiddleName">傳入字串 P02: ForPlanning 或 P09:ForOutput </param>
         /// <param name="sqlConnection">sqlConnection</param>
         /// <returns>DualResult</returns>
-        private DualResult InsertWorkOrder_Distribute(string id, List<long> listWorkOrderUkey, string tableMiddleName, SqlConnection sqlConnection)
+        public DualResult InsertWorkOrder_Distribute(string id, List<long> listWorkOrderUkey, string tableMiddleName, SqlConnection sqlConnection)
         {
             string whereWorkOrderUkey = listWorkOrderUkey.Select(s => s.ToString()).JoinToString(",");
             string sqlInsertWorkOrder_Distribute = $@"
@@ -33,15 +33,12 @@ order by ukey
 
 select * from #tmpCutting
 
-
 select oq.ID, oq.Article, oq.SizeCode, [Qty] = Cast(isnull(oq.Qty, 0) as int), oc.ColorID, oc.PatternPanel, o.SewInLine
 from Orders o with (nolock)
 inner join Order_Qty oq with (nolock) on oq.ID = o.ID
 inner join Order_ColorCombo oc with (nolock) on oc.Id = o.POID and oc.Article = oq.Article
 where   o.POID = '{id}'
 order by o.SewInLine, oq.ID
-
-
 ";
             DualResult result = DBProxy.Current.SelectByConn(sqlConnection, sqlInsertWorkOrder_Distribute, out DataTable[] dtResults);
             if (!result)
