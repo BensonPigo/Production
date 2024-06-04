@@ -998,7 +998,7 @@ from(
             LEFT JOIN dbo.Style_RRLR_Report with(nolock) on Style_RRLR_Report.StyleUkey = orders.StyleUkey AND
                                                             Style_RRLR_Report.ColorID =  psdsC.SpecValue AND
                                                             Style_RRLR_Report.Refno = fabric.RefNo
-            left join #ArticleForThread aft on	aft.ID = m.POID		and
+            left join #ArticleForThread aft on	aft.ID = a.ID		and
 												aft.SuppId	   = b.SuppId	and
 												aft.SCIRefNo   = a.SCIRefNo	and
 												aft.ColorID	   = isnull(psdsC.SpecValue, '')	and
@@ -1169,7 +1169,7 @@ from(
         LEFT JOIN dbo.Factory f with(nolock) on o.FtyGroup=f.ID
         left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = a.id and psdsC.seq1 = a.seq1 and psdsC.seq2 = a.seq2 and psdsC.SpecColumnID = 'Color'
         left join PO_Supp_Detail_Spec psdsS WITH (NOLOCK) on psdsS.ID = a.id and psdsS.seq1 = a.seq1 and psdsS.seq2 = a.seq2 and psdsS.SpecColumnID = 'Size'
-		left join #ArticleForThread aft on	aft.ID = m.POID		and
+		left join #ArticleForThread aft on	aft.ID = a.ID		and
 									aft.SuppId	   = b.SuppId	and
 									aft.SCIRefNo   = a.SCIRefNo	and
 									aft.ColorID	   = isnull(psdsC.SpecValue, '')	and
